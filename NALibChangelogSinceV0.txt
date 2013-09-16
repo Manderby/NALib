@@ -1,0 +1,100 @@
+
+This file is part of NALib, a collection of C and C++ source code
+intended for didactical purposes. Full license notice at the bottom.
+
+
+-------------------------
+CHANGELOG since Version 0
+-------------------------
+
+This file contains information about changes in the package NALib. These are
+purely informational and any information found here is not guaranteed to be
+correct, complete or final.
+
+
+
+=========================================
+
+API functionality changes:
+- NAPointer can now store const or non-const data and distinguish been created
+  just like any other struct.
+- extended naCreateByteArrayWithSize with negative parameter.
+- naDecoupleByteArray: appendbytes always appends bytes at the end of the array
+  with comparable semantics as naCreateByteArrayWithSize.
+- Changed src parameter of naCreateArrayExtraction and naGetByteArrayByte
+  to non-const.
+- naInitEndiannessConverter becomes naCreateEndiannessConverter with the same
+  semantics as a constructor.
+- Range function parameters have changed its order!
+
+API additions:
+- naClearEndiannessConverter and naDestroyEndiannessConverter
+- naIsByteArrayEmpty
+- naGetByteArrayPointer
+- naNulli
+- NA_SYSTEM_ADDRESS_BYTES
+- NA_SIGNED_INTEGER_USES_TWOS_COMPLEMENT
+- NA$INT
+
+Varia:
+- Moved inline code into separate .h files
+- Initialization of struct fields now always uses naNull, if necessary
+- Rearranged API in file NABinaryData from smallest to biggest.
+- More debug checks in many files.
+- More and improved comments in many files.
+- Renamed the parameters of BinaryData to source and destination (s and d).
+- Changed the Readme
+
+
+
+Version 0 (first published 2013-July-09):
+=========================================
+
+Initial version with very basic functions. You have to start somewhere.
+
+- System detection, basic integer types, endianness detection, Error functions
+- Memory operations including: naSet, naCpy, naNull, naOne, naEqual, naSwap
+- Endianness conversion methods and struct NAEndiannessConverter
+- Allocation functions and struct NAPointer: A reference-counting pointer.
+- struct NAByteArray: Stores a Byte chunk. Can have sub-arrays.
+- struct NAArray: Stores elements of one size, can have sub-arrays.
+- Math constants like Pi, E, Square root of 2, ... Physical constants.
+- Math operators including: naSign, naInv, naSqrt, naCbrt, naAbs, naFloor,
+                            naCeil, naRound, naSin, naCos, naTan, naAsin,
+                            naAcos, naAtan, naAtan2, naLog, naLog10, naLog2,
+                            naExp, naExp2, naPow, naDegToRad, naRadToDeg
+- struct NAComplex: Complex numbers stored in cartesian format
+- Range functions including: naMin, naMax, naAlmostZero, naAlmostOne, naAlmost,
+                             naInside, naAlmostInside, naInNorm
+
+
+
+
+
+-----------------------
+
+Copyright (c) NALib, Tobias Stamm, Manderim GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the source-code.
+
+In case the source-code of this software is inaccessible to the end-user,
+the above copyright notice and this permission notice shall be included
+in any source-code which is dependent on this software and is accessible
+to the end-user.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

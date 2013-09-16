@@ -1,0 +1,523 @@
+
+// This file is part of NALib, a collection of C and C++ source code
+// intended for didactical purposes. Full license notice at the bottom.
+
+#ifndef NA_BINARY_DATA_INCLUDED
+#define NA_BINARY_DATA_INCLUDED
+
+#include "NASystem.h"
+#include "NAPointer.h"
+#include <string.h>
+
+// Fills the array of the d argument with the given bytes in increasing
+// address positions.
+static void naSet8    (void* d,
+                      NAByte b0);
+static void naSet16   (void* d,
+                      NAByte b0,  NAByte b1);
+static void naSet32   (void* d,
+                      NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3);
+static void naSet64   (void* d,
+                      NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
+                      NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7);
+static void naSet128  (void* d,
+                      NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
+                      NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
+                      NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
+                      NAByte b12, NAByte b13, NAByte b14, NAByte b15);
+
+
+// Copies the array s to array d byte-by-byte
+static void naCpy8    (void* d, const void* s);
+static void naCpy16   (void* d, const void* s);
+static void naCpy32   (void* d, const void* s);
+static void naCpy64   (void* d, const void* s);
+static void naCpy128  (void* d, const void* s);
+static void naCpyn    (void* d, const void* s, NAInt count);
+
+
+// Fills the given array with the value 0
+// naNulli sets 0 for the size of an NAInt.
+// naNulln sets 0 for the given number of Bytes.
+static void naNull8   (void* d);
+static void naNull16  (void* d);
+static void naNull32  (void* d);
+static void naNull64  (void* d);
+static void naNull128 (void* d);
+static void naNulli   (void* d);
+static void naNulln   (void* d, NAInt count);
+
+
+// Fills the given array with the value 1.
+// Warning: Value of 1, not bytewise or bitwise!
+// naOnei sets 1 for the size of an NAInt.
+// naOnen sets 1 for the given number of Bytes.
+static void naOne8   (void* d);
+static void naOne16  (void* d);
+static void naOne32  (void* d);
+static void naOne64  (void* d);
+static void naOne128 (void* d);
+static void naOnei   (void* d);
+static void naOnen   (void* d, NAInt count);
+
+
+// Compares the array of the first argument with the given bytes in increasing
+// address positions and returns NA_TRUE only if they are all equal.
+static NABool naEqual8   (const void* s,
+                               NAByte b0);
+static NABool naEqual16  (const void* s,
+                               NAByte b0,  NAByte b1);
+static NABool naEqual32  (const void* s,
+                               NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3);
+static NABool naEqual64  (const void* s,
+                               NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
+                               NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7);
+static NABool naEqual128 (const void* s,
+                               NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
+                               NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
+                               NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
+                               NAByte b12, NAByte b13, NAByte b14, NAByte b15);
+
+
+// Swaps the content of the two pointers with the given number of bits.
+static void naSwap8   (void* NA_RESTRICT a, void* NA_RESTRICT b);
+static void naSwap16  (void* NA_RESTRICT a, void* NA_RESTRICT b);
+static void naSwap32  (void* NA_RESTRICT a, void* NA_RESTRICT b);
+static void naSwap64  (void* NA_RESTRICT a, void* NA_RESTRICT b);
+static void naSwap128 (void* NA_RESTRICT a, void* NA_RESTRICT b);
+// Note: These functions are implemented with a well known swapping trick which
+// only works if the two pointers do not point to the same location. Therefore
+// restrict pointers make prefectly sense here.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ///////////////////////////////////////////////////////////////////////
+// Inline Implementations: See readme file for more expanation.
+// ///////////////////////////////////////////////////////////////////////
+
+
+
+static NA_INLINE void naSet8( void* d,
+                          NAByte b0){
+  register NAByte* p; // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!d)
+      {naCrash("naSet8", "Pointer is Null-Pointer."); return;}
+  #endif
+  p = (NAByte*)d;
+  *p = b0;
+}
+
+static NA_INLINE void naSet16( void* d,
+                           NAByte b0, NAByte b1){
+  register NAByte* p; // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!d)
+      {naCrash("naSet16", "Pointer is Null-Pointer."); return;}
+  #endif
+  p = (NAByte*)d;
+  *p++ = b0; *p = b1;
+}
+
+static NA_INLINE void naSet32( void* d,
+                           NAByte b0, NAByte b1, NAByte b2, NAByte b3){
+  register NAByte* p; // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!d)
+      {naCrash("naSet32", "Pointer is Null-Pointer."); return;}
+  #endif
+  p = (NAByte*)d;
+  *p++ = b0; *p++ = b1; *p++ = b2; *p = b3;
+}
+
+static NA_INLINE void naSet64( void* d,
+                           NAByte b0, NAByte b1, NAByte b2, NAByte b3,
+                           NAByte b4, NAByte b5, NAByte b6, NAByte b7){
+  register NAByte* p; // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!d)
+      {naCrash("naSet64", "Pointer is Null-Pointer."); return;}
+  #endif
+  p = (NAByte*)d;
+  *p++ = b0; *p++ = b1; *p++ = b2; *p++ = b3;
+  *p++ = b4; *p++ = b5; *p++ = b6; *p   = b7;
+}
+
+static NA_INLINE void naSet128( void* d,
+                            NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
+                            NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
+                            NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
+                            NAByte b12, NAByte b13, NAByte b14, NAByte b15){
+  register NAByte* p; // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!d)
+      {naCrash("naSet128", "Pointer is Null-Pointer."); return;}
+  #endif
+  p = (NAByte*)d;
+  *p++ = b0;  *p++ = b1;  *p++ = b2;  *p++ = b3;
+  *p++ = b4;  *p++ = b5;  *p++ = b6;  *p++ = b7;
+  *p++ = b8;  *p++ = b9;  *p++ = b10; *p++ = b11;
+  *p++ = b12; *p++ = b13; *p++ = b14; *p   = b15;
+}
+
+
+// ///////////////////////////////////////////////////////////
+// Copy multiple bytes from b to a
+// ///////////////////////////////////////////////////////////
+
+static void naCpy8  (void* d, const void* s){
+  *(uint8*)d = *(uint8*)s;
+}
+static void naCpy16 (void* d, const void* s){
+  *(uint16*)d = *(uint16*)s;
+}
+static void naCpy32 (void* d, const void* s){
+  *(uint32*)d = *(uint32*)s;
+}
+static void naCpy64 (void* d, const void* s){
+  *(uint64*)d = *(uint64*)s;
+}
+static void naCpy128(void* d, const void* s){
+  *(uint64*)d = *(uint64*)s;
+  d = ((NAByte*)d) + 8;
+  s = ((NAByte*)s) + 8;
+  *(uint64*)d = *(uint64*)s;
+}
+static void naCpyn(void* d, const void* s, NAInt count){
+  #ifndef NDEBUG
+    if(count < 1)
+      {naCrash("naCpyn", "count is < 1."); return;}
+  #endif
+  memcpy(d, s, count);
+}
+
+
+// ///////////////////////////////////////////////////////////
+// Nullifies the array
+// ///////////////////////////////////////////////////////////
+
+static void naNull8  (void* d){
+  *(uint8*)d = 0;
+}
+static void naNull16 (void* d){
+  *(uint16*)d = 0;
+}
+static void naNull32 (void* d){
+  *(uint32*)d = 0;
+}
+static void naNull64 (void* d){
+  *(uint64*)d = 0LL;
+}
+static void naNull128(void* d){
+  *(uint64*)d = 0LL;
+  d = ((NAByte*)d) + 8;
+  *(uint64*)d = 0LL;
+}
+static void naNulli(void* d){
+#if NA_SYSTEM_ADDRESS_BITS == 32
+  naNull32(d);
+#elif NA_SYSTEM_ADDRESS_BITS == 64
+  naNull64(d);
+#endif
+}
+static void naNulln(void* d, NAInt count){
+  #ifndef NDEBUG
+    if(count < 1)
+      naError("naNulln", "count is < 1.");
+  #endif
+  // Note that the bzero function does the same but is deprecated.
+  memset(d, 0, count);
+}
+
+
+
+static void naOne8  (void* d){
+  *(uint8*)d = 1;
+}
+static void naOne16 (void* d){
+  *(uint16*)d = 1;
+}
+static void naOne32 (void* d){
+  *(uint32*)d = 1;
+}
+static void naOne64 (void* d){
+  *(uint64*)d = 1LL;
+}
+static void naOne128(void* d){
+  #if NA_SYSTEM_ENDIANNESS == NA_ENDIANNESS_BIG
+    *(uint64*)d = 0LL;
+    d = ((NAByte*)d) + 8;
+    *(uint64*)d = 1LL;
+  #elif NA_SYSTEM_ENDIANNESS == NA_ENDIANNESS_LITTLE
+    *(uint64*)d = 1LL;
+    d = ((NAByte*)d) + 8;
+    *(uint64*)d = 0LL;
+  #else
+    #error Can not create code for unknown endianness
+  #endif
+}
+static void naOnei(void* d){
+#if NA_SYSTEM_ADDRESS_BITS == 32
+  naOne32(d);
+#elif NA_SYSTEM_ADDRESS_BITS == 64
+  naOne64(d);
+#endif
+}
+static void naOnen(void* d, NAInt count){
+  #ifndef NDEBUG
+    if(count < 1)
+      naError("naOnen", "count is < 1.");
+  #endif
+  memset(d, 0x00, count);
+  #if NA_SYSTEM_ENDIANNESS == NA_ENDIANNESS_BIG
+    ((uint8*)d)[count - 1] = 1;
+  #elif NA_SYSTEM_ENDIANNESS == NA_ENDIANNESS_LITTLE
+    ((uint8*)d)[0] = 1;
+  #else
+    #error Can not create code for unknown endianness
+  #endif
+}
+
+// ///////////////////////////////////////////////////////////
+// Compare multiple bytes to the contents of a given pointer
+// ///////////////////////////////////////////////////////////
+
+static NA_INLINE NABool naEqual8(const void* s, NAByte b0){
+  register NAByte* p; // Declaration before implementation. Needed for C90
+  #ifndef NDEBUG
+    if(!s)
+      {naCrash("naEqual8", "Pointer is Null-Pointer."); return NA_FALSE;}
+  #endif
+  p = (NAByte*)s;
+  if(*p   != b0){return NA_FALSE;}
+  return NA_TRUE;
+}
+
+static NA_INLINE NABool naEqual16(const void* s, NAByte b0, NAByte b1){
+  register NAByte* p; // Declaration before implementation. Needed for C90
+  #ifndef NDEBUG
+    if(!s)
+      {naCrash("naEqual16", "Pointer is Null-Pointer."); return NA_FALSE;}
+  #endif
+  p = (NAByte*)s;
+  if(*p++ != b0){return NA_FALSE;}
+  if(*p   != b1){return NA_FALSE;}
+  return NA_TRUE;
+}
+
+static NA_INLINE NABool naEqual32(const void* s,
+                               NAByte b0, NAByte b1, NAByte b2, NAByte b3){
+  register NAByte* p; // Declaration before implementation. Needed for C90
+  #ifndef NDEBUG
+    if(!s)
+      {naCrash("naEqual32", "Pointer is Null-Pointer."); return NA_FALSE;}
+  #endif
+  p = (NAByte*)s;
+  if(*p++ != b0){return NA_FALSE;}
+  if(*p++ != b1){return NA_FALSE;}
+  if(*p++ != b2){return NA_FALSE;}
+  if(*p   != b3){return NA_FALSE;}
+  return NA_TRUE;
+}
+
+static NA_INLINE NABool naEqual64(const void* s,
+                               NAByte b0, NAByte b1, NAByte b2, NAByte b3,
+                               NAByte b4, NAByte b5, NAByte b6, NAByte b7){
+  register NAByte* p; // Declaration before implementation. Needed for C90
+  #ifndef NDEBUG
+    if(!s)
+      {naCrash("naEqual64", "Pointer is Null-Pointer."); return NA_FALSE;}
+  #endif
+  p = (NAByte*)s;
+  if(*p++ != b0){return NA_FALSE;}
+  if(*p++ != b1){return NA_FALSE;}
+  if(*p++ != b2){return NA_FALSE;}
+  if(*p++ != b3){return NA_FALSE;}
+  if(*p++ != b4){return NA_FALSE;}
+  if(*p++ != b5){return NA_FALSE;}
+  if(*p++ != b6){return NA_FALSE;}
+  if(*p   != b7){return NA_FALSE;}
+  return NA_TRUE;
+}
+
+static NA_INLINE NABool naEqual128(const void* s,
+                              NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
+                              NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
+                              NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
+                              NAByte b12, NAByte b13, NAByte b14, NAByte b15){
+  register NAByte* p; // Declaration before implementation. Needed for C90
+  #ifndef NDEBUG
+    if(!s)
+      {naCrash("naEqual128", "Pointer is Null-Pointer."); return NA_FALSE;}
+  #endif
+  p = (NAByte*)s;
+  if(*p++ != b0) {return NA_FALSE;}
+  if(*p++ != b1) {return NA_FALSE;}
+  if(*p++ != b2) {return NA_FALSE;}
+  if(*p++ != b3) {return NA_FALSE;}
+  if(*p++ != b4) {return NA_FALSE;}
+  if(*p++ != b5) {return NA_FALSE;}
+  if(*p++ != b6) {return NA_FALSE;}
+  if(*p++ != b7) {return NA_FALSE;}
+  if(*p++ != b8) {return NA_FALSE;}
+  if(*p++ != b9) {return NA_FALSE;}
+  if(*p++ != b10){return NA_FALSE;}
+  if(*p++ != b11){return NA_FALSE;}
+  if(*p++ != b12){return NA_FALSE;}
+  if(*p++ != b13){return NA_FALSE;}
+  if(*p++ != b14){return NA_FALSE;}
+  if(*p   != b15){return NA_FALSE;}
+  return NA_TRUE;
+}
+
+
+
+// /////////////////////////////
+// Swap multibyte-values
+// /////////////////////////////
+
+static NA_INLINE void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b){
+  #ifndef NDEBUG
+    NAInt dist = (NAByte*)a-(NAByte*)b;
+    if((NAByte*)a<(NAByte*)b){dist = -dist;};
+    if(dist < 1)
+      naError("naSwap8", "Restrict pointers overlap.");
+    if(!a)
+      {naCrash("naSwap8", "Pointer a is Null-Pointer"); return;}
+    if(!b)
+      {naCrash("naSwap8", "Pointer b is Null-Pointer"); return;}
+  #endif
+  // Note: Do not write the following 3 lines as 1 line. The compiler might
+  // cache the result of the dereference operators!
+  *(uint8*)a^=*(uint8*)b;
+  *(uint8*)b^=*(uint8*)a;
+  *(uint8*)a^=*(uint8*)b;
+}
+
+static NA_INLINE void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
+  #ifndef NDEBUG
+    NAInt dist = (NAByte*)a-(NAByte*)b;
+    if((NAByte*)a<(NAByte*)b){dist = -dist;};
+    if(dist < 2)
+      naError("naSwap16", "Restrict pointers overlap.");
+    if(!a)
+      {naCrash("naSwap16", "Pointer a is Null-Pointer"); return;}
+    if(!b)
+      {naCrash("naSwap16", "Pointer b is Null-Pointer"); return;}
+  #endif
+  // Note: Do not write the following 3 lines as 1 line. The compiler might
+  // cache the result of the dereference operators!
+  *(uint16*)a^=*(uint16*)b;
+  *(uint16*)b^=*(uint16*)a;
+  *(uint16*)a^=*(uint16*)b;
+}
+
+static NA_INLINE void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
+  #ifndef NDEBUG
+    NAInt dist = (NAByte*)a-(NAByte*)b;
+    if((NAByte*)a<(NAByte*)b){dist = -dist;};
+    if(dist < 4)
+      naError("naSwap32", "Restrict pointers overlap.");
+    if(!a)
+      {naCrash("naSwap32", "Pointer a is Null-Pointer"); return;}
+    if(!b)
+      {naCrash("naSwap32", "Pointer b is Null-Pointer"); return;}
+  #endif
+  // Note: Do not write the following 3 lines as 1 line. The compiler might
+  // cache the result of the dereference operators!
+  *(uint32*)a^=*(uint32*)b;
+  *(uint32*)b^=*(uint32*)a;
+  *(uint32*)a^=*(uint32*)b;
+}
+
+static NA_INLINE void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
+  #ifndef NDEBUG
+    NAInt dist = (NAByte*)a-(NAByte*)b;
+    if((NAByte*)a<(NAByte*)b){dist = -dist;};
+    if(dist < 8)
+      naError("naSwap64", "Restrict pointers overlap.");
+    if(!a)
+      {naCrash("naSwap64", "Pointer a is Null-Pointer"); return;}
+    if(!b)
+      {naCrash("naSwap64", "Pointer b is Null-Pointer"); return;}
+  #endif
+  // Note: Do not write the following 3 lines as 1 line. The compiler might
+  // cache the result of the dereference operators!
+  *(uint64*)a^=*(uint64*)b;
+  *(uint64*)b^=*(uint64*)a;
+  *(uint64*)a^=*(uint64*)b;
+}
+
+static NA_INLINE void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
+  #ifndef NDEBUG
+    NAInt dist = (NAByte*)a-(NAByte*)b;
+    if((NAByte*)a<(NAByte*)b){dist = -dist;};
+    if(dist < 16)
+      naError("naSwap128", "Restrict pointers overlap.");
+    if(!a)
+      {naCrash("naSwap128", "Pointer a is Null-Pointer"); return;}
+    if(!b)
+      {naCrash("naSwap128", "Pointer b is Null-Pointer"); return;}
+  #endif
+  naSwap64(a, b);
+  a = ((NAByte*)a) + 8;
+  b = ((NAByte*)b) + 8;
+  naSwap64(a, b);
+}
+
+
+
+
+#endif // NA_BINARY_DATA_INCLUDED
+
+
+// Copyright (c) NALib, Tobias Stamm, Manderim GmbH
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the source-code.
+//
+// In case the source-code of this software is inaccessible to the end-user,
+// the above copyright notice and this permission notice shall be included
+// in any source-code which is dependent on this software and is accessible
+// to the end-user.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
