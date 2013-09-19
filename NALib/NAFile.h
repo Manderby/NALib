@@ -2,7 +2,6 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#include "NASystem.h"
 #include "NAString.h"
 
 #include <fcntl.h>
@@ -28,10 +27,10 @@
 
 // Mapping of standard library functions. They can be different depending on
 // the system compiled.
-static NAFileSize naLseek (int fd, NAFileSize offset, int origin);
-static int        naOpen  (const char* filename, int flags, int mode);
-static int        naClose (int fd);
-static NAFileSize naRead  (int fd, void* buffer, NAFileSize count);
+NA_INLINE_API NAFileSize naLseek (int fd, NAFileSize offset, int origin);
+NA_INLINE_API int        naOpen  (const char* filename, int flags, int mode);
+NA_INLINE_API int        naClose (int fd);
+NA_INLINE_API NAFileSize naRead  (int fd, void* buffer, NAFileSize count);
 
 
 typedef enum{
@@ -85,7 +84,7 @@ NAFileSize naFileComputeSize(const NAFile* file);
 
 
 
-static NA_INLINE NAFileSize naLseek(int fd, NAFileSize offset, int origin){
+NA_INLINE_API NAFileSize naLseek(int fd, NAFileSize offset, int origin){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     #if NA_SYSTEM_ADDRESS_BITS == 64
       return _lseeki64(fd, offset, origin);
@@ -98,7 +97,7 @@ static NA_INLINE NAFileSize naLseek(int fd, NAFileSize offset, int origin){
 }
 
 
-static NA_INLINE int naOpen(const char* filename, int flags, int mode){
+NA_INLINE_API int naOpen(const char* filename, int flags, int mode){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     int handle;
     _sopen_s(&handle, (const char*)filename, flags, _SH_DENYNO, mode);
@@ -109,7 +108,7 @@ static NA_INLINE int naOpen(const char* filename, int flags, int mode){
 }
 
 
-static NA_INLINE int naClose(int fd){
+NA_INLINE_API int naClose(int fd){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return _close(fd);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
@@ -118,7 +117,7 @@ static NA_INLINE int naClose(int fd){
 }
 
 
-static NA_INLINE NAFileSize naRead(int fd, void* buffer, NAFileSize count){
+NA_INLINE_API NAFileSize naRead(int fd, void* buffer, NAFileSize count){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return (NAFileSize)_read(fd, buffer, (unsigned int)count);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X

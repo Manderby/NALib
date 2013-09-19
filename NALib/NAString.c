@@ -4,6 +4,7 @@
 
 #include "NAString.h"
 #include <ctype.h>
+#include <stdarg.h>
 
 NAString* naCreateString(NAString* string){
   string = naAllocateIfNull(string, sizeof(NAString));
@@ -37,19 +38,27 @@ NAString* naCreateStringWithUTF8CString(NAString* string, const NAUTF8Char* ptr)
   if(!size){return naCreateString(string);}
   string = naAllocateIfNull(string, sizeof(NAString));
   naCreateByteArrayWithConstBuffer(&(string->array), ptr, size, NA_FALSE);
-
-  // doto: remove comment?
-  // Note that the NAByte* cast is dangerous as it overwrites the const. But
-  // the other solution would be to create a separate set of functions dealing
-  // with only const data. Which is (currently) not useful. Just be careful not
-  // to alter strings which are const. Your program likely will crash anyway.
-  // If you really want to be save, just decouple each String after creating.
-  //
   // C-Strings are always expected to be already Null-terminated, meaning: The
   // Byte with index [size] must be binary zero. As we are not copying but just
   // referencing the pointer, we can safely use the array without this byte
   // and still be able to say: We are null-terminated!
   string->flags = NA_STRING_NULL_TERMINATED;
+  return string;
+}
+
+
+NAString* naCreateStringWithFormat(NAString* string,
+                           const NAUTF8Char* format,
+                                             ...){
+  va_list argumentlist;
+  va_list argumentlist2;
+  va_start(argumentlist, format);
+  va_copy(argumentlist2, argumentlist);
+  NAInt strlen = naVarargStringSize(format, argumentlist);
+  naCreateStringWithSize(string, strlen);
+  naVsnprintf(naGetStringMutableUTF8Pointer(string), (size_t)(strlen+1), format, argumentlist2);
+  va_end(argumentlist);
+  va_end(argumentlist2);
   return string;
 }
 
@@ -88,9 +97,6 @@ NAString* naCreateStringExtraction( NAString* deststring,
   // Extract the string
   naCreateByteArrayExtraction(&(deststring->array), &(srcstring->array), offset, size);
   if(!naIsByteArrayEmpty(&(deststring->array))){
-    // Set the flags for an empty string.
-//    naNull32(&(deststring->flags));
-//  }else{
     // Set the flags of the dest string
     deststring->flags = srcstring->flags;
     destlastchar = naGetByteArrayMutableByte(&(deststring->array), -1);
@@ -135,12 +141,10 @@ NAInt naGetStringSize(const NAString* string){
 }
 
 
-const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
+const NAUTF8Char* naGetStringConstUTF8Pointer(const NAString* string){
   #ifndef NDEBUG
     if(!string)
-      {naCrash("naGetStringUTF8Pointer", "string is Null-Pointer."); return NA_NULL;}
-    if(!naIsStringEmpty(string) && !(string->flags & NA_STRING_NULL_TERMINATED))
-      naError("naGetStringUTF8Pointer", "string is not null-terminated.");
+      {naCrash("naGetStringConstUTF8Pointer", "string is Null-Pointer."); return NA_NULL;}
   #endif
   if(naIsStringEmpty(string)){
     return (const NAUTF8Char*)"";
@@ -156,6 +160,15 @@ const NAUTF8Char* naGetStringConstChar(const NAString* string, NAInt index){
   #endif
   return (const NAUTF8Char*)naGetByteArrayConstByte(&(string->array), index);
 }
+
+NAUTF8Char* naGetStringMutableUTF8Pointer(NAString* string){
+  #ifndef NDEBUG
+    if(!string)
+      {naCrash("naGetStringMutableUTF8Pointer", "string is Null-Pointer."); return NA_NULL;}
+  #endif
+  return (NAUTF8Char*)naGetByteArrayMutablePointer(&(string->array));
+}
+
 
 NAUTF8Char* naGetStringMutableChar(NAString* string, NAInt index){
   #ifndef NDEBUG
@@ -237,7 +250,7 @@ NAInt naGetStringCharacterEscapeSizeTowardsTrailing(NAString* string, NAInt offs
 
   if(string->flags & NA_STRING_ESCAPE_BACKSLASH){
     if(char0 == '\\'){
-        // Escaping the windows line ending
+      // Escaping the windows line ending
       if((char1 == '\r') && (char2 == '\n')){return 2;}
       // Escaping any 7-bit ASCII character. But not binary Null! Note: Do not
       // use something like (char1 < 128) because a char might be signed by
@@ -462,15 +475,15 @@ NAInt naGetStringLine(NAString* line, NAString* string, NABool skipempty){
 
 
 
-void naGetStringToken(NAString* token, NAString* string){
+void naParseStringToken(NAString* string, NAString* token){
   NAInt tokensize = 0;
   NAInt escapesize;
 
   #ifndef NDEBUG
     if(!string)
-      {naCrash("naGetStringToken", "string is Null-Pointer."); return;}
+      {naCrash("naParseStringToken", "string is Null-Pointer."); return;}
     if(token == string)
-      naError("naGetStringToken", "token and string shall not be the same.");
+      naError("naParseStringToken", "token and string shall not be the same.");
   #endif
   if(!token){
     token = naCreateString(NA_NULL);
@@ -493,7 +506,7 @@ void naGetStringToken(NAString* token, NAString* string){
     if(escapesize){
       #ifndef NDEBUG
         if(escapesize < 0)
-          naError("naGetStringToken", "Internal Error: escapesize should not be negative.");
+          naError("naParseStringToken", "Internal Error: escapesize should not be negative.");
       #endif
       tokensize += escapesize;
       charptr += escapesize;
@@ -525,15 +538,15 @@ void naGetStringToken(NAString* token, NAString* string){
 
 
 
-void naGetStringTokenDelimitedBy(NAString* token, NAString* string, NAUTF8Char delimiter){
+void naParseStringTokenWithDelimiter(NAString* string, NAString* token, NAUTF8Char delimiter){
   NAInt tokensize = 0;
   NAInt escapesize;
 
   #ifndef NDEBUG
     if(!string)
-      {naCrash("naGetStringTokenDelimitedBy", "string is Null-Pointer."); return;}
+      {naCrash("naParseStringTokenWithDelimiter", "string is Null-Pointer."); return;}
     if(token == string)
-      naError("naGetStringTokenDelimitedBy", "token and string shall not be the same.");
+      naError("naParseStringTokenWithDelimiter", "token and string shall not be the same.");
   #endif
   if(!token){
     token = naCreateString(NA_NULL);
@@ -551,7 +564,7 @@ void naGetStringTokenDelimitedBy(NAString* token, NAString* string, NAUTF8Char d
     if(escapesize){
       #ifndef NDEBUG
         if(escapesize < 0)
-          naError("naGetStringToken", "Internal Error: escapesize should not be negative.");
+          naError("naParseStringTokenWithDelimiter", "Internal Error: escapesize should not be negative.");
       #endif
       tokensize += escapesize;
       charptr += escapesize;
@@ -579,16 +592,17 @@ void naGetStringTokenDelimitedBy(NAString* token, NAString* string, NAUTF8Char d
 }
 
 
-//void naGetStringTokenEncapsulatedBy(  NAString* token,
-//                              NAString* string,
+// commented out because the autor does not like this function. todo.
+//void naParseStringTokenEncapsulatedBy(  NAString* string,
+//                              NAString* token,
 //                             NAUTF8Char startdelimiter,
 //                             NAUTF8Char enddelimiter,
 //                 NAStringEscapingMethod escapemethod){
 //  #ifndef NDEBUG
 //    if(!string)
-//      naError("naGetStringTokenEncapsulatedBy", "string is Null-Pointer.");
+//      naError("naParseStringTokenEncapsulatedBy", "string is Null-Pointer.");
 //    if(token == string)
-//      naError("naGetStringTokenEncapsulatedBy", "token and string shall not be the same.");
+//      naError("naParseStringTokenEncapsulatedBy", "token and string shall not be the same.");
 //  #endif
 //  if(!token){
 //    token = naCreateString(NA_NULL);
@@ -650,311 +664,258 @@ void naGetStringTokenDelimitedBy(NAString* token, NAString* string, NAUTF8Char d
 //
 //  return;
 //}
+// commented out because the autor does not like this function. todo.
 
 
-uint8 naGetStringUInt8(const NAString* string){
-  NAInt offset = 0;
-  uint8 value = 0;
-  const NAUTF8Char* curptr = naGetStringUTF8Pointer(string);
-
-  // Accumulate the value as long as there are decimal digits.
-  NAInt size = naGetStringSize(string);
-  while(offset < size){
-    if((*curptr >= '0') && (*curptr <= '9')){
-      uint8 nextvalue = value * 10 + (*curptr - '0');
-      if(nextvalue < value){
+NAInt naParseUTF8StringForDecimalUnsignedInteger(const NAUTF8Char* string,
+                                                           uint64* retint,
+                                                             NAInt maxbytecount,
+                                                            uint64 max){
+  NAInt bytesused = 0LL;
+  uint64 prevval = 0LL;
+  while(!maxbytecount || (bytesused < maxbytecount)){
+    register NAUTF8Char curchar = *string;
+    if((curchar < '0') || (curchar > '9')){break;}
+    if(retint){
+      *retint = *retint * 10LL + curchar - '0';
+      if((*retint < prevval) || (*retint > max)){
         #ifndef NDEBUG
-          naError("naGetStringUInt8", "The value overflowed.");
+          naError("naParseUTF8StringForDecimalUnsignedInteger", "The value overflowed.");
         #endif
-        return NA_UINT8_MAX;
+        *retint = max;
+        retint = NA_NULL; // Trick to overjump all remaining digits.
+      }else{
+        prevval = *retint;
       }
-      value = nextvalue;
-    }else{
-      return value;
     }
-    offset++;
-    curptr++;
+    bytesused++;
+    string++;
   }
-  
-  return value;
+  return bytesused;
 }
 
 
 
-uint16 naGetStringUInt16(const NAString* string){
-  NAInt offset = 0;
-  uint16 value = 0;
-  const NAUTF8Char* curptr = naGetStringUTF8Pointer(string);
+NAInt naParseUTF8StringForDecimalSignedInteger( const NAUTF8Char* string,
+                                                           int64* retint,
+                                                            NAInt maxbytecount,
+                                                            int64 min,
+                                                            int64 max){
+  int64 sign = 1;
+  NAInt bytesused = 0;
+  uint64 limit = max;
 
-  // Accumulate the value as long as there are decimal digits.
-  NAInt size = naGetStringSize(string);
-  while(offset < size){
-    if((*curptr >= '0') && (*curptr <= '9')){
-      uint16 nextvalue = value * 10 + (*curptr - '0');
-      if(nextvalue < value){
-        #ifndef NDEBUG
-          naError("naGetStringUInt16", "The value overflowed.");
-        #endif
-        return NA_UINT16_MAX;
-      }
-      value = nextvalue;
-    }else{
-      return value;
-    }
-    offset++;
-    curptr++;
+  // Check for a potential sign at the first character
+  if(*string == '+'){
+    bytesused = 1;
+    maxbytecount--;
+    string++;
+  }else if(*string == '-'){
+    sign = -1;
+    limit = min; // note that using integer arithmetic, this is correct.
+    bytesused = 1;
+    maxbytecount--;
+    string++;
   }
-  
-  return value;
-}
 
-
-
-uint32 naGetStringUInt32(const NAString* string){
-  NAInt offset = 0;
-  uint32 value = 0;
-  const NAUTF8Char* curptr = naGetStringUTF8Pointer(string);
-
-  // Accumulate the value as long as there are decimal digits.
-  NAInt size = naGetStringSize(string);
-  while(offset < size){
-    if((*curptr >= '0') && (*curptr <= '9')){
-      uint32 nextvalue = value * 10 + (*curptr - '0');
-      if(nextvalue < value){
-        #ifndef NDEBUG
-          naError("naGetStringUInt32", "The value overflowed.");
-        #endif
-        return NA_UINT32_MAX;
-      }
-      value = nextvalue;
-    }else{
-      return value;
-    }
-    offset++;
-    curptr++;
-  }
-  
-  return value;
+  uint64 intvalue;
+  bytesused += naParseUTF8StringForDecimalUnsignedInteger(string, &intvalue, maxbytecount, limit);
+  *retint = (sign * intvalue);
+  return bytesused;
 }
 
 
 
 
-uint64 naGetStringUInt64(const NAString* string){
-  NAInt offset = 0;
-  uint64 value = 0LL;
-  const NAUTF8Char* curptr = naGetStringUTF8Pointer(string);
-
-  // Accumulate the value as long as there are decimal digits.
+int8 naParseStringInt8(NAString* string, NABool skipdelimiter){
+  const NAUTF8Char* curptr = naGetStringConstUTF8Pointer(string);
   NAInt size = naGetStringSize(string);
-  while(offset < size){
-    if((*curptr >= '0') && (*curptr <= '9')){
-      uint64 nextvalue = value * 10LL + (*curptr - '0');
-      if(nextvalue < value){
-        #ifndef NDEBUG
-          naError("naGetStringUInt64", "The value overflowed.");
-        #endif
-        return NA_UINT64_MAX;
-      }
-      value = nextvalue;
-    }else{
-      return value;
-    }
-    offset++;
-    curptr++;
+  int64 intvalue;
+  NAInt bytesused = naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, size, NA_INT8_MIN, NA_INT8_MAX);
+  if(skipdelimiter && (size > bytesused)){
+    naCreateStringExtraction(string, string, bytesused+1, -1);
+  }else{
+    naCreateStringExtraction(string, string, bytesused, -1);
   }
-  
-  return value;
+  return (int8)intvalue;
 }
+
+
+int16 naParseStringInt16(NAString* string, NABool skipdelimiter){
+  const NAUTF8Char* curptr = naGetStringConstUTF8Pointer(string);
+  NAInt size = naGetStringSize(string);
+  int64 intvalue;
+  NAInt bytesused = naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, size, NA_INT16_MIN, NA_INT16_MAX);
+  if(skipdelimiter && (size > bytesused)){
+    naCreateStringExtraction(string, string, bytesused+1, -1);
+  }else{
+    naCreateStringExtraction(string, string, bytesused, -1);
+  }
+  return (int16)intvalue;
+}
+
+
+int32 naParseStringInt32(NAString* string, NABool skipdelimiter){
+  const NAUTF8Char* curptr = naGetStringConstUTF8Pointer(string);
+  NAInt size = naGetStringSize(string);
+  int64 intvalue;
+  NAInt bytesused = naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, size, NA_INT32_MIN, NA_INT32_MAX);
+  if(skipdelimiter && (size > bytesused)){
+    naCreateStringExtraction(string, string, bytesused+1, -1);
+  }else{
+    naCreateStringExtraction(string, string, bytesused, -1);
+  }
+  return (int32)intvalue;
+}
+
+
+int64 naParseStringInt64(NAString* string, NABool skipdelimiter){
+  const NAUTF8Char* curptr = naGetStringConstUTF8Pointer(string);
+  NAInt size = naGetStringSize(string);
+  int64 intvalue;
+  NAInt bytesused = naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, size, NA_INT64_MIN, NA_INT64_MAX);
+  if(skipdelimiter && (size > bytesused)){
+    naCreateStringExtraction(string, string, bytesused+1, -1);
+  }else{
+    naCreateStringExtraction(string, string, bytesused, -1);
+  }
+  return (int64)intvalue;
+}
+
+
+uint8 naParseStringUInt8(NAString* string, NABool skipdelimiter){
+  const NAUTF8Char* curptr = naGetStringConstUTF8Pointer(string);
+  NAInt size = naGetStringSize(string);
+  uint64 intvalue;
+  NAInt bytesused = naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, size, NA_UINT8_MAX);
+  if(skipdelimiter && (size > bytesused)){
+    naCreateStringExtraction(string, string, bytesused+1, -1);
+  }else{
+    naCreateStringExtraction(string, string, bytesused, -1);
+  }
+  return (uint8)intvalue;
+}
+
+
+uint16 naParseStringUInt16(NAString* string, NABool skipdelimiter){
+  const NAUTF8Char* curptr = naGetStringConstUTF8Pointer(string);
+  NAInt size = naGetStringSize(string);
+  uint64 intvalue;
+  NAInt bytesused = naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, size, NA_UINT16_MAX);
+  if(skipdelimiter && (size > bytesused)){
+    naCreateStringExtraction(string, string, bytesused+1, -1);
+  }else{
+    naCreateStringExtraction(string, string, bytesused, -1);
+  }
+  return (uint16)intvalue;
+}
+
+
+uint32 naParseStringUInt32(NAString* string, NABool skipdelimiter){
+  const NAUTF8Char* curptr = naGetStringConstUTF8Pointer(string);
+  NAInt size = naGetStringSize(string);
+  uint64 intvalue;
+  NAInt bytesused = naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, size, NA_UINT32_MAX);
+  if(skipdelimiter && (size > bytesused)){
+    naCreateStringExtraction(string, string, bytesused+1, -1);
+  }else{
+    naCreateStringExtraction(string, string, bytesused, -1);
+  }
+  return (uint32)intvalue;
+}
+
+
+uint64 naParseStringUInt64(NAString* string, NABool skipdelimiter){
+  const NAUTF8Char* curptr = naGetStringConstUTF8Pointer(string);
+  NAInt size = naGetStringSize(string);
+  uint64 intvalue;
+  NAInt bytesused = naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, size, NA_UINT64_MAX);
+  if(skipdelimiter && (size > bytesused)){
+    naCreateStringExtraction(string, string, bytesused+1, -1);
+  }else{
+    naCreateStringExtraction(string, string, bytesused, -1);
+  }
+  return (uint64)intvalue;
+}
+
 
 
 
 
 int8 naGetStringInt8(const NAString* string){
-  NAInt offset = 0;
-  int8 value = 0;
-  int8 sign = 1;
-  const NAUTF8Char* curptr = naGetStringUTF8Pointer(string);
-
-  // Check for a potential sign at the first character
-  if(*curptr == '+'){
-    sign = 1;
-    offset++;
-    curptr++;
-  }else if(*curptr == '-'){
-    sign = -1;
-    offset++;
-    curptr++;
-  }
-
-  // Accumulate the value as long as there are decimal digits.
+  const NAUTF8Char* curptr = naGetStringConstUTF8Pointer(string);
   NAInt size = naGetStringSize(string);
-  while(offset < size){
-    if((*curptr >= '0') && (*curptr <= '9')){
-      int8 nextvalue = value * 10 + sign * (*curptr - '0');
-      if((sign ==  1) && (nextvalue < value)){
-        #ifndef NDEBUG
-          naError("naGetStringInt8", "The value overflowed.");
-        #endif
-        return NA_INT8_MAX;
-      }
-      if((sign == -1) && (nextvalue > value)){
-        #ifndef NDEBUG
-          naError("naGetStringInt8", "The value underflowed.");
-        #endif
-        return NA_INT8_MIN;
-      }
-      value = nextvalue;
-    }else{
-      return value;
-    }
-    offset++;
-    curptr++;
-  }
-  
-  return value;
+  int64 intvalue;
+  naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, size, NA_INT8_MIN, NA_INT8_MAX);
+  return (int8)intvalue;
 }
-
 
 
 int16 naGetStringInt16(const NAString* string){
-  NAInt offset = 0;
-  int16 value = 0;
-  int16 sign = 1;
-  const NAUTF8Char* curptr = naGetStringUTF8Pointer(string);
-
-  // Check for a potential sign at the first character
-  if(*curptr == '+'){
-    sign = 1;
-    offset++;
-    curptr++;
-  }else if(*curptr == '-'){
-    sign = -1;
-    offset++;
-    curptr++;
-  }
-
-  // Accumulate the value as long as there are decimal digits.
+  const NAUTF8Char* curptr = naGetStringConstUTF8Pointer(string);
   NAInt size = naGetStringSize(string);
-  while(offset < size){
-    if((*curptr >= '0') && (*curptr <= '9')){
-      int16 nextvalue = value * 10 + sign * (*curptr - '0');
-      if((sign ==  1) && (nextvalue < value)){
-        #ifndef NDEBUG
-          naError("naGetStringInt16", "The value overflowed.");
-        #endif
-        return NA_INT16_MAX;
-      }
-      if((sign == -1) && (nextvalue > value)){
-        #ifndef NDEBUG
-          naError("naGetStringInt16", "The value underflowed.");
-        #endif
-        return NA_INT16_MIN;
-      }
-      value = nextvalue;
-    }else{
-      return value;
-    }
-    offset++;
-    curptr++;
-  }
-  
-  return value;
+  int64 intvalue;
+  naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, size, NA_INT16_MIN, NA_INT16_MAX);
+  return (int16)intvalue;
 }
-
 
 
 int32 naGetStringInt32(const NAString* string){
-  NAInt offset = 0;
-  int32 value = 0;
-  int32 sign = 1;
-  const NAUTF8Char* curptr = naGetStringUTF8Pointer(string);
-
-  // Check for a potential sign at the first character
-  if(*curptr == '+'){
-    sign = 1;
-    offset++;
-    curptr++;
-  }else if(*curptr == '-'){
-    sign = -1;
-    offset++;
-    curptr++;
-  }
-
-  // Accumulate the value as long as there are decimal digits.
+  const NAUTF8Char* curptr = naGetStringConstUTF8Pointer(string);
   NAInt size = naGetStringSize(string);
-  while(offset < size){
-    if((*curptr >= '0') && (*curptr <= '9')){
-      int32 nextvalue = value * 10 + sign * (*curptr - '0');
-      if((sign ==  1) && (nextvalue < value)){
-        #ifndef NDEBUG
-          naError("naGetStringInt32", "The value overflowed.");
-        #endif
-        return NA_INT32_MAX;
-      }
-      if((sign == -1) && (nextvalue > value)){
-        #ifndef NDEBUG
-          naError("naGetStringInt32", "The value underflowed.");
-        #endif
-        return NA_INT32_MIN;
-      }
-      value = nextvalue;
-    }else{
-      return value;
-    }
-    offset++;
-    curptr++;
-  }
-  
-  return value;
+  int64 intvalue;
+  naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, size, NA_INT32_MIN, NA_INT32_MAX);
+  return (int32)intvalue;
 }
-
 
 
 int64 naGetStringInt64(const NAString* string){
-  NAInt offset = 0;
-  int64 value = 0LL;
-  int64 sign = 1LL;
-  const NAUTF8Char* curptr = naGetStringUTF8Pointer(string);
-
-  // Check for a potential sign at the first character
-  if(*curptr == '+'){
-    sign = 1LL;
-    offset++;
-    curptr++;
-  }else if(*curptr == '-'){
-    sign = -1LL;
-    offset++;
-    curptr++;
-  }
-
-  // Accumulate the value as long as there are decimal digits.
+  const NAUTF8Char* curptr = naGetStringConstUTF8Pointer(string);
   NAInt size = naGetStringSize(string);
-  while(offset < size){
-    if((*curptr >= '0') && (*curptr <= '9')){
-      int64 nextvalue = value * 10LL + sign * (*curptr - '0');
-      if((sign ==  1LL) && (nextvalue < value)){
-        #ifndef NDEBUG
-          naError("naGetStringInt64", "The value overflowed.");
-        #endif
-        return NA_INT64_MAX;
-      }
-      if((sign == -1LL) && (nextvalue > value)){
-        #ifndef NDEBUG
-          naError("naGetStringInt64", "The value underflowed.");
-        #endif
-        return NA_INT64_MIN;
-      }
-      value = nextvalue;
-    }else{
-      return value;
-    }
-    offset++;
-    curptr++;
-  }
-  
-  return value;
+  int64 intvalue;
+  naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, size, NA_INT64_MIN, NA_INT64_MAX);
+  return (int64)intvalue;
 }
+
+
+uint8 naGetStringUInt8(const NAString* string){
+  const NAUTF8Char* curptr = naGetStringConstUTF8Pointer(string);
+  NAInt size = naGetStringSize(string);
+  uint64 intvalue;
+  naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, size, NA_UINT8_MAX);
+  return (uint8)intvalue;
+}
+
+
+uint16 naGetStringUInt16(const NAString* string){
+  const NAUTF8Char* curptr = naGetStringConstUTF8Pointer(string);
+  NAInt size = naGetStringSize(string);
+  uint64 intvalue;
+  naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, size, NA_UINT16_MAX);
+  return (uint16)intvalue;
+}
+
+
+uint32 naGetStringUInt32(const NAString* string){
+  const NAUTF8Char* curptr = naGetStringConstUTF8Pointer(string);
+  NAInt size = naGetStringSize(string);
+  uint64 intvalue;
+  naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, size, NA_UINT32_MAX);
+  return (uint32)intvalue;
+}
+
+
+uint64 naGetStringUInt64(const NAString* string){
+  const NAUTF8Char* curptr = naGetStringConstUTF8Pointer(string);
+  NAInt size = naGetStringSize(string);
+  uint64 intvalue;
+  naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, size, NA_UINT64_MAX);
+  return (uint64)intvalue;
+}
+
+
+
+
 
 
 

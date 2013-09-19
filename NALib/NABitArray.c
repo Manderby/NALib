@@ -586,6 +586,7 @@ NAString* naCreateStringBinFromBitArray(NAString* string,
 
 NAByteArray* naCreateByteArrayFromBitArray(NAByteArray* bytearray,
                                             NABitArray* bitarray){
+  int b;
   NAInt bytecount = naGetBitArrayCount(bitarray) / 8;
   bytearray = naCreateByteArrayWithSize(bytearray, -bytecount);
   if(!bytecount){return bytearray;}
@@ -596,7 +597,7 @@ NAByteArray* naCreateByteArrayFromBitArray(NAByteArray* bytearray,
   while(bytecount){
     *curbyte = 0;
     
-    for(int b=0; b<8; b++){
+    for(b=0; b<8; b++){
       *curbyte <<= 1;
       *curbyte |= *curbit;
       curbit--;

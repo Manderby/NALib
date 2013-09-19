@@ -34,8 +34,8 @@
 // in NALib, meaning an error might be detected though not resolved. And in
 // favor of simplicity, NALib will not get an exception handling soon.
 
-static void* naAllocate(NAInt size);
-static void* naAllocateIfNull(void* ptr, NAInt size);
+NA_INLINE_API void* naAllocate(NAInt size);
+NA_INLINE_API void* naAllocateIfNull(void* ptr, NAInt size);
 
 
 
@@ -67,7 +67,7 @@ struct NAPointer{
 // of the given size. The memory is uninitialized. The reference counter is
 // automatically set to 1 meaning that this NAPointer is owning the memory
 // and will delete it using free() when the reference count reaches 0.
-static NAPointer* naCreatePointerWithSize(NAPointer* pointer, NAInt size);
+NA_INLINE_API NAPointer* naCreatePointerWithSize(NAPointer* pointer, NAInt size);
 
 
 // Creates an NAPointer struct with the pointer of the given buffer
@@ -78,10 +78,10 @@ static NAPointer* naCreatePointerWithSize(NAPointer* pointer, NAInt size);
 //
 // Note: Use the const method whenever you can. The compiler will help you
 // detect const-safe-errors.
-static NAPointer* naCreatePointerWithConstBuffer(  NAPointer* pointer,
+NA_INLINE_API NAPointer* naCreatePointerWithConstBuffer(  NAPointer* pointer,
                                                   const void* buffer,
                                                        NABool takeownership);
-static NAPointer* naCreatePointerWithMutableBuffer(NAPointer* pointer,
+NA_INLINE_API NAPointer* naCreatePointerWithMutableBuffer(NAPointer* pointer,
                                                         void* buffer,
                                                        NABool takeownership);
 
@@ -94,13 +94,13 @@ static NAPointer* naCreatePointerWithMutableBuffer(NAPointer* pointer,
 // the risk you take with reference-counted pointers.
 //
 // Returns the pointer again. Makes it easier to write.
-static NAPointer* naRetainPointer(NAPointer* pointer);
+NA_INLINE_API NAPointer* naRetainPointer(NAPointer* pointer);
 
 
 // Releases the given pointer. If the refcount reaches 0, this NAPointer
 // is no longer needed and will be freed. If this NAPointer owns the data, it
 // will be automatically freed as well.
-static void naReleasePointer(NAPointer* pointer);
+NA_INLINE_API void naReleasePointer(NAPointer* pointer);
 
 
 // The following two functions return a pointer to the data. This function is
@@ -112,8 +112,8 @@ static void naReleasePointer(NAPointer* pointer);
 //   and C++: Simply create two functions where one returns a const pointer
 //   (or a reference in C++), the other one returns a non-const pointer (or
 //   reference). The first variant is an accessor, the second one a mutator.
-static const void* naGetPointerConstData  (const NAPointer* pointer);
-static       void* naGetPointerMutableData(      NAPointer* pointer);
+NA_INLINE_API const void* naGetPointerConstData  (const NAPointer* pointer);
+NA_INLINE_API       void* naGetPointerMutableData(      NAPointer* pointer);
 // Note that the second variant will return a non-const pointer even if the
 // data stored is not const. This is not safe but nontheless implemented in a
 // completely legal way. Feel free to make your application crash. Note however
@@ -147,7 +147,7 @@ static       void* naGetPointerMutableData(      NAPointer* pointer);
 // ///////////////////////////////////////////////////////////////////////
 
 
-static NA_INLINE void* naAllocate(NAInt size){
+NA_INLINE_API void* naAllocate(NAInt size){
   void* ptr; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(size < 1)
@@ -169,7 +169,7 @@ static NA_INLINE void* naAllocate(NAInt size){
 }
 
 
-static NA_INLINE void* naAllocateIfNull(void* ptr, NAInt size){
+NA_INLINE_API void* naAllocateIfNull(void* ptr, NAInt size){
   #ifndef NDEBUG
     if(size < 1)
       naError("naAllocateIfNull", "size is smaller than 1 .");
@@ -202,9 +202,9 @@ static NA_INLINE void* naAllocateIfNull(void* ptr, NAInt size){
 
 
 // This is a helper function. It should be hidden. todo.
-static NA_INLINE NAPointer* naCreatePointerStruct(NAPointer* pointer){
+NA_INLINE_API NAPointer* naCreatePointerStruct(NAPointer* pointer){
   if(!pointer){
-    pointer = naAllocate(sizeof(NAPointer));
+    pointer = (NAPointer*)naAllocate(sizeof(NAPointer));
     pointer->refcount = 1 | NA_POINTER_OWN_STRUCT;
   }else{
     pointer->refcount = 1;
@@ -213,7 +213,7 @@ static NA_INLINE NAPointer* naCreatePointerStruct(NAPointer* pointer){
 }
 
 
-static NA_INLINE NAPointer* naCreatePointerWithSize(NAPointer* pointer, NAInt size){
+NA_INLINE_API NAPointer* naCreatePointerWithSize(NAPointer* pointer, NAInt size){
   #ifndef NDEBUG
     if(size < 1)
       naError("naCreatePointerWithSize", "size is smaller than 1.");
@@ -225,7 +225,7 @@ static NA_INLINE NAPointer* naCreatePointerWithSize(NAPointer* pointer, NAInt si
 }
 
 
-static NA_INLINE NAPointer* naCreatePointerWithConstBuffer(NAPointer* pointer,
+NA_INLINE_API NAPointer* naCreatePointerWithConstBuffer(NAPointer* pointer,
                                                           const void* buffer,
                                                          NABool takeownership){
   #ifndef NDEBUG
@@ -243,7 +243,7 @@ static NA_INLINE NAPointer* naCreatePointerWithConstBuffer(NAPointer* pointer,
 
 
 
-static NA_INLINE NAPointer* naCreatePointerWithMutableBuffer(NAPointer* pointer,
+NA_INLINE_API NAPointer* naCreatePointerWithMutableBuffer(NAPointer* pointer,
                                                            void* buffer,
                                                          NABool takeownership){
   #ifndef NDEBUG
@@ -260,7 +260,7 @@ static NA_INLINE NAPointer* naCreatePointerWithMutableBuffer(NAPointer* pointer,
 
 
 
-static NA_INLINE NAPointer* naRetainPointer(NAPointer* pointer){
+NA_INLINE_API NAPointer* naRetainPointer(NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer)
       {naCrash("naRetainPointer", "pointer is Null-Pointer."); return NA_NULL;}
@@ -281,7 +281,7 @@ static NA_INLINE NAPointer* naRetainPointer(NAPointer* pointer){
 }
 
 
-static NA_INLINE void naReleasePointer(NAPointer* pointer){
+NA_INLINE_API void naReleasePointer(NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer)
       {naCrash("naReleasePointer", "pointer is Null-Pointer."); return;}
@@ -347,7 +347,7 @@ static NA_INLINE void naReleasePointer(NAPointer* pointer){
 // Note that this is one of the very, very rare situations, where a union type
 // actually makes sense.
 
-static NA_INLINE const void* naGetPointerConstData(const NAPointer* pointer){
+NA_INLINE_API const void* naGetPointerConstData(const NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer)
       {naCrash("naGetPointerData", "pointer is Null-Pointer."); return NA_NULL;}
@@ -355,7 +355,7 @@ static NA_INLINE const void* naGetPointerConstData(const NAPointer* pointer){
   return pointer->data.constd;
 }
 
-static NA_INLINE void* naGetPointerMutableData(NAPointer* pointer){
+NA_INLINE_API void* naGetPointerMutableData(NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer)
       {naCrash("naGetPointerData", "pointer is Null-Pointer."); return NA_NULL;}

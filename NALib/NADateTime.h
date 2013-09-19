@@ -5,7 +5,6 @@
 #ifndef NA_NA_DATETIME_DEFINED
 #define NA_NA_DATETIME_DEFINED
 
-#include "NASystem.h"
 #include "NAString.h"
 
 
@@ -21,8 +20,8 @@ static int naSleepS(NAInt  secs);
 typedef enum{
   NA_DATETIME_FORMAT_APACHE,                   // 01/Apr/234567:22:37:51 -0130
 //  NA_DATETIME_FORMAT_PM_MEASUREMENT,           // "01/04/234567:22:37"
-//  NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT,  // 234567-04-01T22:37:51-01:30
-//  NA_DATETIME_FORMAT_CONDENSEDDATE,            // 2345670401
+  NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT,  // 234567-04-01T22:37:51-01:30
+  NA_DATETIME_FORMAT_CONDENSEDDATE,            // 2345670401
   NA_DATETIME_FORMAT_NATURAL                   // 234567-04-01 22:37:51
 } NAAscDateTimeFormat;
 
@@ -62,14 +61,15 @@ typedef enum{
 
 
 typedef struct{
-  int64 year;   // year number in astronomic numbering (neg, 0 and pos)
-  int32 mon;    // month number in [0, 11].   Beware the 0-index!
-  int32 day;    // day number in [0, 30].     Beware the 0-index!
-  int32 hour;   // hour number in [0, 23]
-  int32 min;    // minute number in [0, 59]
-  int32 sec;    // second number in [0, 69] (may contain leap seconds)
-  int16 shift;  // time shift in minutes (positive or negative)
-  uint16 flags; // Various flags.
+  int64  year;   // year number in astronomic numbering (neg, 0 and pos)
+  int32  mon;    // month number in [0, 11].   Beware the 0-index!
+  int32  day;    // day number in [0, 30].     Beware the 0-index!
+  int32  hour;   // hour number in [0, 23]
+  int32  min;    // minute number in [0, 59]
+  int32  sec;    // second number in [0, 69] (may contain leap seconds)
+  uint32 nsec;   // Nanosecond number in [0, 999999999]
+  int16  shift;  // time shift in minutes (positive or negative)
+  uint16 flags;  // Various flags.
 } NADateTimeStruct;
 
 typedef struct{
@@ -79,18 +79,18 @@ typedef struct{
   int32  daysinmonth;  // number of days in this month (beware October 1582!)
   int32  weekday;      // 0 = Monday, 1 = Tuesday, ... 6 = Sunday
   int32  shiftsign;    // either +1 or -1
-  int32  shifthour;    // positive shift hour number in [0, 12]
+  int32  shifthour;    // positive shift hour number in [0, 14]
   int32  shiftmin;     // positive shift minute number in [0, 59]
-} DateTimeAttribute;
+} NADateTimeAttribute;
 
 
 
 //// Returns the month number (0-indexed) of an english month abbreviation.
 //// For example: "Nov" -> 10
-int32 naGetMonthNumberFromEnglishAbbreviation(const NAString* str);
+int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str);
 
 // Takes the current system clock and stores it in the given datetimestruct.
-static void naFillDateTimeStructWithNow(NADateTimeStruct* datetimestruct);
+//static void naFillDateTimeStructWithNow(NADateTimeStruct* datetimestruct);
 
 // Returns true if the given year number is a leap year.
 static NABool naIsLeapYearJulian      (int64 year);
@@ -101,23 +101,21 @@ static NABool naIsLeapYearGregorian   (int64 year);
 
 typedef struct NADateTime NADateTime;
 struct NADateTime{
-  int64  sisecs; // The number of SI-seconds since Jan 1st 1958, 00:00 + 00:00
-  uint32 nsecs;  // nanoseconds in range [0, 999999999]
+  int64  sisec;  // SI-second number starting Jan 1st 1958, 00:00 + 00:00
+  uint32 nsec;   // nanosecond number in range [0, 999999999]
   int16  shift;  // time shift in minutes
   uint16 flags;  // Various flags.
 };
 
 
-
-// Creates a new NADateTime struct. No initialization is performed whatsoever.
-NADateTime* naCreateDateTime(NADateTime* datetime);
-
-// Creates a new NADateTime struct with the current system clock.
-NADateTime* naCreateDateTimeWithNow(NADateTime* datetime);
+// Returns an NADateTime struct with the current system clock including the
+// systems timezone.
+// Want to implement a nanosecond-timer? This is the function for you. Together
+// with naGetDateTimeDiff.
+NADateTime naMakeDateTimeNow();
 
 // Create a new NADateTime struct with the values provided.
-NADateTime* naCreateDateTimeWithDateTimeStruct( NADateTime* datetime,
-                                    const NADateTimeStruct* datetimestruct);
+NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts);
 
 // Creates a new NADateTime struct with the given values. This function is a
 // convenience function which is easy to use and implement.
@@ -128,76 +126,91 @@ NADateTime* naCreateDateTimeWithDateTimeStruct( NADateTime* datetime,
 // the global setting, see below. If you want to set the timezone manually or
 // provide any additional information, use the constructor with the
 // NADateTimeStruct as an argument instead, it is much more powerful.
-NADateTime* naCreateDateTimeWithValues( NADateTime* datetime,
-                                              int64 year,
-                                              int32 mon,
-                                              int32 day,
-                                              int32 hour,
-                                              int32 min,
-                                              int32 sec);
+NADateTime naMakeDateTimeWithValues(  NADateTime* datetime,
+                                            int64 year,
+                                            int32 mon,
+                                            int32 day,
+                                            int32 hour,
+                                            int32 min,
+                                            int32 sec);
 
 
 // Creates a new NADateTime struct from a given string with a given format.
-NADateTime* naCreateDateTimeFromString(  NADateTime* datetime,
-                                     const NAString* string,
-                                 NAAscDateTimeFormat format);
+NADateTime naCreateDateTimeFromString(  NADateTime* datetime,
+                                    const NAString* string,
+                                NAAscDateTimeFormat format);
 
 // Creates a new NADateTime struct from a given data block with a given format.
-NADateTime* naCreateDateTimeFromPointer(  NADateTime* datetime,
-                                          const void* data,
-                                  NABinDateTimeFormat format);
+NADateTime naCreateDateTimeFromPointer(  NADateTime* datetime,
+                                         const void* data,
+                                 NABinDateTimeFormat format);
 
-//// Copy Constructor.
-//NADateTime(const NADateTime& datetime);
-//
+
 //// Create a new NADateTime object with the raw values.
-//NADateTime(int64 sisecs, int16 shift, uint16 flags);
+//NADateTime(int64 sisec, int16 shift, uint16 flags);
 //
 //
 //// While the init methods read values of a given format, the output methods
 //// write the values in the given format.
 //void output(Byte* data, NABinDateTimeFormat format) const;
-//
-//// Returns a string in the given format;
-//String getString(NAAscDateTimeFormat format = NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT) const;
-//
-//int64 getSISeconds() const;
-//
+
+// Returns a string in the given format;
+NAString* naCreateStringWithDateTime(NAString* string,
+                             const NADateTime* datetime,
+                           NAAscDateTimeFormat format);
+
 //// Returns other time and date structures needed for compatibility with
 //// the systems native date and time implementation.
 ////
 //// Warning: The tm_zone entry of the tm-struct is not yet working.
 ////  void getSystemTM(struct tm* systemtimestruct) const;
-////  void getSystemTimeSpec(struct timespec* systemtimespec) const;
-//
-//void setSISeconds(int64 newsecs);
-//void addSISeconds(int64 addsecs);
-//int16 getShift() const;
-//uint16 getFlags() const;
-//
-//// Fills the given struct with date and time values, splitted into all of its
-//// components. Returns a DateTimeAttribute with further information about
-//// this date.
-//DateTimeAttribute getNADateTimeStruct(NADateTimeStruct* datetimestruct) const;
-//// Same thing but expressed in timezone 00:00 wintertime
-//DateTimeAttribute getNADateTimeStructUTC(NADateTimeStruct* datetimestruct) const;
-//
-//// Alters timezone shift and summertime flag WITHOUT changing the real clock.
-//// For example: 2011-04-01T22:37:51+06:00
-//// becomes      2011-04-02T06:07:51-01:30
-//void setZone(int16 shiftminutes, NABool summertime);
-//// Alters timezone shift and summertime flag WITH changing the real clock.
-//// For example: 2011-04-01T22:37:51+06:00
-//// becomes      2011-04-01T22:37:51-01:30
-//// Note that if you are uncertain whether to use setZone or correctZone, this
-//// method is probably the wrong one. This method is only available for
-//// DateTimes which accidentally were stored with an incorrect time shift.
-//void correctZone(int16 shiftminutes, NABool summertime);
-//
-//// Returns NA_TRUE if the date has summertime.
-//NABool hasSummertime() const;
-//
-//
+
+// Converts between the default Unix time formats and NADateTime
+struct timespec naMakeTimeSpecFromDateTime(const NADateTime* datetime);
+struct timeval  naMakeTimeValFromDateTime (const NADateTime* datetime);
+struct timezone naMakeTimeZoneFromDateTime(const NADateTime* datetime);
+// if timezn is a Null-Pointer, the global timezone settings are used.
+NADateTime      naMakeDateTimeFromTimeSpec(const struct timespec* timesp,
+                                          const struct timezone* timezn);
+NADateTime      naMakeDateTimeFromTimeVal (const struct timeval* timevl,
+                                          const struct timezone* timezn);
+
+
+// Fills the given struct with date and time values, splitted into all of the
+// components of the given datetime. Fills an NADateTimeAttribute with further
+// information about this date if desired. The attribute can be NULL.
+void naFillDateTimeStruct(const NADateTime* datetime,
+                          NADateTimeStruct* dts,
+                       NADateTimeAttribute* dta);
+// Same thing but expressed in timezone 00:00 wintertime
+void naFillDateTimeStructUTC(const NADateTime* datetime,
+                             NADateTimeStruct* dts,
+                          NADateTimeAttribute* dta);
+
+// Alters timezone shift and summertime flag WITHOUT changing the real clock.
+// For example: 2011-04-01T22:37:51+06:00
+// becomes      2011-04-02T06:07:51-01:30
+void naSetDateTimeZone( NADateTime* datetime,
+                              int16 newshift,
+                             NABool summertime);
+// Alters timezone shift and summertime flag WITH changing the real clock.
+// For example: 2011-04-01T22:37:51+06:00
+// becomes      2011-04-01T22:37:51-01:30
+// Note that if you are uncertain whether to use setZone or correctZone, this
+// method is probably the wrong one. This method is only available for
+// DateTimes which accidentally were stored with an incorrect time shift.
+void naCorrectDateTimeZone( NADateTime* datetime,
+                                  int16 newshift,
+                                 NABool summertime);
+
+// Returns the difference in time. The returned value is in seconds.
+double naGetDateTimeDiff(const NADateTime* end, const NADateTime* start);
+
+// Returns NA_TRUE if the date has summertime.
+NABool naHasDateTimeSummerTime(const NADateTime* datetime);
+void naSetDateTimeSummertime(NADateTime* datetime, NABool summertime);
+
+
 //// ////////////////////////////
 //// STATIC METHODS
 //// ////////////////////////////
@@ -252,69 +265,69 @@ NADateTime* naCreateDateTimeFromPointer(  NADateTime* datetime,
 //// you corrected all NADateTime values!
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//// ///////////////////////////////////////////////////////////////////////
-//// Inline Implementations: See readme file for more expanation.
-//// ///////////////////////////////////////////////////////////////////////
-//
-//
-//
-//#if NA_SYSTEM == NA_SYSTEM_WINDOWS
-//#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-//  #include <unistd.h>
-//#endif
-//
-//
-//static NA_INLINE int naSleepU(NAInt usecs){
-//  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-//    Sleep((DWORD)(usecs/1000));
-//    return 0;
-//  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-//    return usleep((useconds_t)(usecs));
-//  #endif
-//}
-//
-//static NA_INLINE int naSleepM(NAInt msecs){
-//  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-//    Sleep((DWORD)(msecs));
-//    return 0;
-//  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-//    return usleep((useconds_t)(msecs*1000LL));
-//  #endif
-//}
-//
-//static NA_INLINE int naSleepS(NAInt secs){
-//  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-//    Sleep((DWORD)(secs*1000));
-//    return 0;
-//  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-//    return usleep((useconds_t)(secs*1000000LL));
-//  #endif
-//}
-//
-//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ///////////////////////////////////////////////////////////////////////
+// Inline Implementations: See readme file for more expanation.
+// ///////////////////////////////////////////////////////////////////////
+
+
+
+#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #include <unistd.h>
+#endif
+
+
+NA_INLINE_API int naSleepU(NAInt usecs){
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    Sleep((DWORD)(usecs/1000));
+    return 0;
+  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+    return usleep((useconds_t)(usecs));
+  #endif
+}
+
+NA_INLINE_API int naSleepM(NAInt msecs){
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    Sleep((DWORD)(msecs));
+    return 0;
+  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+    return usleep((useconds_t)(msecs*1000LL));
+  #endif
+}
+
+NA_INLINE_API int naSleepS(NAInt secs){
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    Sleep((DWORD)(secs*1000));
+    return 0;
+  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+    return usleep((useconds_t)(secs*1000000LL));
+  #endif
+}
+
+
 
 #endif // NA_NA_DATETIME_DEFINED
 

@@ -113,6 +113,15 @@ extern const char* na_boolean_strings[2];
 #else
 #endif
 
+#define NA_INLINE_API   NA_INLINE static
+// Note that inline functions are automatically declared static. This might
+// slightly increase the file size but safes a lot of trouble and makes the
+// source code more readable.
+// Also note that usually, the inline keyword should only be used at the
+// definition, not at the declaration where it should be ignored.
+// Nontheless, there are some situations where the compiler gets confused and
+// assumes a non-inlined function. When always declaring public functions as
+// inline, even at the declaration, this can not happen.
 
 
 
@@ -172,19 +181,19 @@ extern const char* na_boolean_strings[2];
 // provided manually to not be dependent on the various definitions of
 // char, short, int, long and long long.
 
-#define NA_UINT8_MAX  ((uint8) (0xff))
-#define NA_UINT16_MAX ((uint16)(0xffff))
-#define NA_UINT32_MAX ((uint32)(0xffffffff))
-#define NA_UINT64_MAX ((uint64)(0xffffffffffffffffLL))
+#define NA_UINT8_MAX  (0xff)
+#define NA_UINT16_MAX (0xffff)
+#define NA_UINT32_MAX (0xffffffff)
+#define NA_UINT64_MAX (0xffffffffffffffffLL)
 // note that the - 1 is needed to avoid warnings on some compilers
-#define NA_INT8_MAX   ((int8)  (0x7f))
-#define NA_INT8_MIN   ((int8)  (0x81 - 1))
-#define NA_INT16_MAX  ((int16) (0x7fff))
-#define NA_INT16_MIN  ((int16) (0x8001 - 1))
-#define NA_INT32_MAX  ((int32) (0x7fffffff))
-#define NA_INT32_MIN  ((int32) (0x80000001 - 1))
-#define NA_INT64_MAX  ((int64) (0x7fffffffffffffffLL))
-#define NA_INT64_MIN  ((int64) (0x8000000000000001LL - 1LL))
+#define NA_INT8_MAX   (0x7f)
+#define NA_INT8_MIN   (0x81 - 1)
+#define NA_INT16_MAX  (0x7fff)
+#define NA_INT16_MIN  (0x8001 - 1)
+#define NA_INT32_MAX  (0x7fffffff)
+#define NA_INT32_MIN  (0x80000001 - 1)
+#define NA_INT64_MAX  (0x7fffffffffffffffLL)
+#define NA_INT64_MIN  (0x8000000000000001LL - 1LL)
 
 
 

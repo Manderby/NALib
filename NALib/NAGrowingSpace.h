@@ -5,7 +5,6 @@
 #ifndef NA_GROWING_SPACE_DEFINED
 #define NA_GROWING_SPACE_DEFINED
 
-#include "NASystem.h"
 #include "NAArray.h"
 
 // This data structure provides the functionality of storing multiple elements
