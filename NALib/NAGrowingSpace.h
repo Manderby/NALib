@@ -2,8 +2,11 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#ifndef NA_GROWING_SPACE_DEFINED
-#define NA_GROWING_SPACE_DEFINED
+#ifndef NA_GROWING_SPACE_INCLUDED
+#define NA_GROWING_SPACE_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
 
 #include "NAArray.h"
 
@@ -48,7 +51,10 @@ void* naAddGrowingSpaceElement(NAGrowingSpace* space, void* elemptr);
 NAArray* naCreateArrayOutOfGrowingSpace(NAArray* array, NAGrowingSpace* space);
 
 
-#endif // NA_GROWING_SPACE_DEFINED
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
+#endif // NA_GROWING_SPACE_INCLUDED
 
 
 

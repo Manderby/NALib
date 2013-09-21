@@ -2,6 +2,12 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
+#ifndef NA_FILE_INCLUDED
+#define NA_FILE_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
+
 #include "NAString.h"
 
 #include <fcntl.h>
@@ -46,16 +52,16 @@ typedef struct NAFile{
 
 
 
-// Reads the full file and returns it as a new ByteArray.
-// Note that this is the preferred way to handle endianness-aware data: The
-// ByteArray structure has endianness conversions built in.
-// Delete the returned ByteArray using naDestroyByteArray.
+// Reads the full file and returns it as a new NAByteArray. This function is
+// useful if you read or store raw data.
+// Warning: The NAByteArray struct is not Endianness-aware! Use the reading
+// and writing functions of NAFile when handling multi-byte values.
 NAByteArray* naCreateByteArrayFromFilename(NAByteArray* array, const char* filename);
 
 // Reads the full file and returns it as a new String.
-// Note that this is the preferred way to handle ascii-files: The String
-// structure has many parsing functions.
-// Delete the returned String using naDestroyString.
+// Note that this is the preferred way to handle ASCII-files: Just read the
+// whole file into a string and then use the parsing functions of the NAString
+// type.
 NAString* naCreateStringFromFilename(NAString* string, const char* filename, NATextEncoding encoding);
 
 // Opens the file.
@@ -125,6 +131,11 @@ NA_INLINE_API NAFileSize naRead(int fd, void* buffer, NAFileSize count){
   #endif
 }
 
+
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
+#endif // NA_FILE_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH
 //

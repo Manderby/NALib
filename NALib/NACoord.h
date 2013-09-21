@@ -2,6 +2,11 @@
 //// This file is part of NALib, a collection of C and C++ source code
 //// intended for didactical purposes. Full license notice at the bottom.
 //
+//#ifndef NA_COORD_INCLUDED
+//#define NA_COORD_INCLUDED
+//#ifdef __cplusplus 
+//  extern "C"{
+//#endif
 //
 ////#include "NASystem.h"
 //#include "NARange.h"
@@ -56,6 +61,11 @@
 ////  if(y >= clamprect.endY()){y = clamprect.maxY();}
 //  return newpos;
 //}
+//
+//#ifdef __cplusplus 
+//  } // extern "C"
+//#endif
+//#endif // NA_COORD_INCLUDED
 //
 //// Copyright (c) NALib, Tobias Stamm, Manderim GmbH
 ////

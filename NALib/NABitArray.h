@@ -5,6 +5,9 @@
 
 #ifndef NA_BIT_ARRAY_INCLUDED
 #define NA_BIT_ARRAY_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
 
 
 #include "NABinaryData.h"
@@ -225,6 +228,9 @@ void naComputeBitArraySwapBytes(NABitArray* array);
 
 
 
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
 #endif // NA_BIT_ARRAY_INCLUDED
 
 

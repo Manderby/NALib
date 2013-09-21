@@ -4,6 +4,9 @@
 
 #ifndef NA_BYTE_ARRAY_INCLUDED
 #define NA_BYTE_ARRAY_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
 
 #include "NAPointer.h"
 #include "NABinaryData.h"
@@ -506,6 +509,9 @@ NA_INLINE_API NABool naIsByteArrayEmpty(const NAByteArray* array){
 }
 
 
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
 #endif // NA_BYTE_ARRAY_INCLUDED
 
 

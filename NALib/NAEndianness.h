@@ -3,6 +3,13 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 
+#ifndef NA_ENDIANNESS_INCLUDED
+#define NA_ENDIANNESS_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
+
+
 #include "NASystem.h"
 
 
@@ -710,6 +717,10 @@ NAInt naParseEndiannessMarker(const NAByte marker[4]){
   }
 }
 
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
+#endif // NA_ENDIANNESS_INCLUDED
 
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH

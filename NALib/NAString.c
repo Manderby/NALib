@@ -111,15 +111,14 @@ NAString* naCreateStringExtraction( NAString* deststring,
 
 
 
-void naClearString(NAString* string, NABool reinitialize){
+void naClearString(NAString* string){
   if(!naIsStringEmpty(string)){naClearByteArray(&(string->array));}
-  if(reinitialize){naCreateString(string);}
 }
 
 
 
 void naDestroyString(NAString* string){
-  naClearString(string, NA_FALSE);
+  naClearString(string);
   free(string);
 }
 
@@ -375,7 +374,8 @@ NAInt naGetStringLine(NAString* line, NAString* string, NABool skipempty){
   if(!line){
     line = naCreateString(NA_NULL);
   }else{
-    naClearString(line, NA_TRUE);
+    naClearString(line);
+    naCreateString(line);
   }
   // We now are sure that line is empty.
   
@@ -438,7 +438,8 @@ NAInt naGetStringLine(NAString* line, NAString* string, NABool skipempty){
     if(!found){
       // String has ended.
       if(!naIsStringEmpty(string)){naCreateStringExtraction(line, string, 0, -1);}
-      naClearString(string, NA_TRUE);
+      naClearString(string);
+      naCreateString(string);
       // line now contains the last characters of string.
     }else{
       naCreateStringExtraction(line, string, 0, linesize);
@@ -458,13 +459,14 @@ NAInt naGetStringLine(NAString* line, NAString* string, NABool skipempty){
         naSkipStringWhitespaces(&emptytest);
         if(naIsStringEmpty(&emptytest)){
           // If there are indeed just whitespaces, clear the line.
-          naClearString(line, NA_TRUE);
+          naClearString(line);
+          naCreateString(line);
           // emptytest will already have been cleared.
           // Go on with the next line if the string is not finished yet.
           if(found){continue;}
         }else{
           // Line has content. Clear the emptytest
-          naClearString(&emptytest, NA_FALSE);
+          naClearString(&emptytest);
         }
       }
     }
@@ -488,7 +490,8 @@ void naParseStringToken(NAString* string, NAString* token){
   if(!token){
     token = naCreateString(NA_NULL);
   }else{
-    naClearString(token, NA_TRUE);
+    naClearString(token);
+    naCreateString(token);
   }
   // We now are sure that token is empty.
   
@@ -531,7 +534,8 @@ void naParseStringToken(NAString* string, NAString* token){
   // Reaching here, no whitespace was found till the end of string.
   // String has ended. The token is the whole string.
   naCreateStringExtraction(token, string, 0, -1);
-  naClearString(string, NA_TRUE);
+  naClearString(string);
+  naCreateString(string);
 
   return;
 }
@@ -551,7 +555,8 @@ void naParseStringTokenWithDelimiter(NAString* string, NAString* token, NAUTF8Ch
   if(!token){
     token = naCreateString(NA_NULL);
   }else{
-    naClearString(token, NA_TRUE);
+    naClearString(token);
+    naCreateString(token);
   }
   // We now are sure that token is empty.
   if(naIsStringEmpty(string)){return;}
@@ -587,7 +592,8 @@ void naParseStringTokenWithDelimiter(NAString* string, NAString* token, NAUTF8Ch
   // Reaching here, no delimiter was found till the end of string.
   // String has ended. The token is the whole string.
   naCreateStringExtraction(token, string, 0, -1);
-  naClearString(string, NA_TRUE);
+  naClearString(string);
+  naCreateString(string);
   return;
 }
 

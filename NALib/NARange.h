@@ -22,6 +22,9 @@
 
 #ifndef NA_RANGE_INCLUDED
 #define NA_RANGE_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
 
 #include "NASystem.h"
 #include "NAMathConstants.h"
@@ -377,6 +380,9 @@ NA_INLINE_API NABool naInNormEE (double x){
 
 
 
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
 #endif // NA_RANGE_INCLUDED
 
 

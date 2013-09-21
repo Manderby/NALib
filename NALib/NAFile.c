@@ -77,7 +77,7 @@ void naFileReadBytes(NAFile* file, void* buffer, NAFileSize count){
 //    remainingbytesinbuffer = 0;
 //  }
   // now, if count does not fits into the buffer, read it without the buffer.
-//  if(count > MB_FILE_BUFFER_SIZE){
+//  if(count > NA_FILE_BUFFER_SIZE){
     file->pos += naRead(file->desc, buffer, count);
 //  }else{
 //    // else, use the buffer.

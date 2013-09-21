@@ -2,6 +2,12 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
+#ifndef NA_COMPLEX_INCLUDED
+#define NA_COMPLEX_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
+
 #include "NAMathOperators.h"
 
 
@@ -237,6 +243,11 @@ NA_INLINE_API static NAComplex naCosComplex(NAComplex a){
   return newcomplex;
 }
 
+
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
+#endif // NA_COMPLEX_INCLUDED
 
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH

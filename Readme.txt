@@ -14,6 +14,7 @@ Table of Content:
 5. Inline implementations
 6. Opaque types
 7. Symbol naming
+8. Default header and footer
 
 
 
@@ -264,6 +265,38 @@ does or expects as parameters is given. Like for example WithSize, FromFilename.
 Variables and printf arguments are rarely used in NALib. They have an
 appropriate description after the prefix.
 
+
+
+
+8. Default header and footer
+----------------------------
+At the top and at the bottom of each file, a short comment and license notice
+about NALib can be found.
+
+Aside from that, all header files are encapsulated by standard include-once
+directives:
+
+#ifndef NA_XXX_INCLUDED
+#define NA_XXX_INCLUDED
+...
+#endif // NA_XXX_INCLUDED
+
+Which allows you to simply include all header files as many times as you want
+without bumping into redefinitions.
+
+Further more, all header files are encapsulated by the standard c-linkage
+keyword:
+
+#ifdef __cplusplus 
+  extern "C"{
+#endif
+...
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
+
+Which allows you to include all header files both in C and C++ without linker
+errors.
 
 
 

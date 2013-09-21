@@ -2,8 +2,11 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#ifndef NA_STRING_DEFINED
-#define NA_STRING_DEFINED
+#ifndef NA_STRING_INCLUDED
+#define NA_STRING_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
 
 #include "NAByteArray.h"
 #include <stdarg.h>
@@ -54,7 +57,7 @@ typedef enum NANewLine{
   NA_STRING_NEWLINE_MAC9
 } NANewLine;
 
-#define NA_STRING_NULL_TERMINATED           0x0002
+#define NA_STRING_NULL_TERMINATED           0x0001
 
 
 // /////////////////////
@@ -133,7 +136,7 @@ NAString* naCreateStringExtraction( NAString* deststring,
                                         NAInt size);
 
 // Clears or deletes the given string.
-void naClearString(NAString* string, NABool reinitialize);
+void naClearString(NAString* string);
 void naDestroyString(NAString* string);
 
 
@@ -371,7 +374,10 @@ NA_INLINE_API NAInt naVarargStringSize(const NAUTF8Char* string, va_list args){
 
 
 
-#endif // NA_STRING_DEFINED
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
+#endif // NA_STRING_INCLUDED
 
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH

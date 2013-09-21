@@ -4,6 +4,9 @@
 
 #ifndef NA_ARRAY_INCLUDED
 #define NA_ARRAY_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
 
 #include "NAByteArray.h"
 
@@ -186,6 +189,9 @@ NA_INLINE_API NAInt naGetArrayCount(NAArray* array){
 }
 
 
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
 #endif // NA_ARRAY_INCLUDED
 
 

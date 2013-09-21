@@ -4,14 +4,12 @@
 
 #ifndef NA_MATH_CONSTANTS_INCLUDED
 #define NA_MATH_CONSTANTS_INCLUDED
-
 #ifdef __cplusplus 
-  #include <cfloat>
-  #include <cmath>
-#else
-  #include <float.h>
-  #include <math.h>
+  extern "C"{
 #endif
+
+#include <float.h>
+#include <math.h>
 
 // Fundamental mathematical constants. All macros are defined as float, double
 // and long double with the corresponding suffix.
@@ -310,6 +308,9 @@
 #define NA_FERMAT_PRIME_32     4294967297LL
 
 
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
 #endif // NA_MATH_CONSTANTS_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH

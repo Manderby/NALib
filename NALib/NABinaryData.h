@@ -4,6 +4,9 @@
 
 #ifndef NA_BINARY_DATA_INCLUDED
 #define NA_BINARY_DATA_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
 
 #include "NAPointer.h"
 #include <string.h>
@@ -492,6 +495,9 @@ NA_INLINE_API void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
 
 
 
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
 #endif // NA_BINARY_DATA_INCLUDED
 
 

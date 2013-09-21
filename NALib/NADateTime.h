@@ -2,8 +2,11 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#ifndef NA_NA_DATETIME_DEFINED
-#define NA_NA_DATETIME_DEFINED
+#ifndef NA_DATETIME_INCLUDED
+#define NA_DATETIME_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
 
 #include "NAString.h"
 
@@ -45,6 +48,7 @@ typedef enum{
 #define NA_SECONDS_IN_100_YEAR_PERIOD        (76LL * NA_SECONDS_IN_NORMAL_YEAR + 24LL * NA_SECONDS_IN_LEAP_YEAR)
 #define NA_SECONDS_IN_400_YEAR_PERIOD        (4LL * NA_SECONDS_IN_100_YEAR_PERIOD + NA_SECONDS_PER_DAY)
 
+// The macros above evaluate to the following numbers:
 // NA_SECONDS_PER_HOUR:                        3600
 // NA_SECONDS_PER_DAY:                        86400
 // NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR:   15638400
@@ -67,7 +71,7 @@ typedef struct{
   int32  hour;   // hour number in [0, 23]
   int32  min;    // minute number in [0, 59]
   int32  sec;    // second number in [0, 69] (may contain leap seconds)
-  uint32 nsec;   // Nanosecond number in [0, 999999999]
+  int32  nsec;   // Nanosecond number in [0, 999999999]
   int16  shift;  // time shift in minutes (positive or negative)
   uint16 flags;  // Various flags.
 } NADateTimeStruct;
@@ -85,24 +89,24 @@ typedef struct{
 
 
 
-//// Returns the month number (0-indexed) of an english month abbreviation.
-//// For example: "Nov" -> 10
+// Returns the month number (0-indexed) of an english month abbreviation.
+// For example: "Nov" -> 10
 int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str);
 
-// Takes the current system clock and stores it in the given datetimestruct.
-//static void naFillDateTimeStructWithNow(NADateTimeStruct* datetimestruct);
-
 // Returns true if the given year number is a leap year.
-static NABool naIsLeapYearJulian      (int64 year);
-static NABool naIsLeapYearGregorian   (int64 year);
+NABool naIsLeapYearJulian      (int64 year);
+NABool naIsLeapYearGregorian   (int64 year);
+// The following function returns the julian information for years <= 1582 and
+// the gregorian information for years > 1582.
+NABool naIsLeapYear            (int64 year);
 
 
 
-
+// Note that this type is not opaque.
 typedef struct NADateTime NADateTime;
 struct NADateTime{
   int64  sisec;  // SI-second number starting Jan 1st 1958, 00:00 + 00:00
-  uint32 nsec;   // nanosecond number in range [0, 999999999]
+  int32  nsec;   // nanosecond number in range [0, 999999999]
   int16  shift;  // time shift in minutes
   uint16 flags;  // Various flags.
 };
@@ -146,46 +150,39 @@ NADateTime naCreateDateTimeFromPointer(  NADateTime* datetime,
                                  NABinDateTimeFormat format);
 
 
-//// Create a new NADateTime object with the raw values.
-//NADateTime(int64 sisec, int16 shift, uint16 flags);
-//
-//
 //// While the init methods read values of a given format, the output methods
 //// write the values in the given format.
 //void output(Byte* data, NABinDateTimeFormat format) const;
+// todo
 
 // Returns a string in the given format;
 NAString* naCreateStringWithDateTime(NAString* string,
                              const NADateTime* datetime,
                            NAAscDateTimeFormat format);
 
-//// Returns other time and date structures needed for compatibility with
-//// the systems native date and time implementation.
-////
-//// Warning: The tm_zone entry of the tm-struct is not yet working.
-////  void getSystemTM(struct tm* systemtimestruct) const;
-
-// Converts between the default Unix time formats and NADateTime
+// Converts between the systems time formats and NADateTime
 struct timespec naMakeTimeSpecFromDateTime(const NADateTime* datetime);
 struct timeval  naMakeTimeValFromDateTime (const NADateTime* datetime);
 struct timezone naMakeTimeZoneFromDateTime(const NADateTime* datetime);
+struct tm       naMakeTMfromDateTime      (const NADateTime* datetime);
+// Computes the time shift in minutes including summer time, if applicable.
+int16           naMakeShiftFromTimeZone   (const struct timezone* timezn);
 // if timezn is a Null-Pointer, the global timezone settings are used.
 NADateTime      naMakeDateTimeFromTimeSpec(const struct timespec* timesp,
-                                          const struct timezone* timezn);
+                                           const struct timezone* timezn);
 NADateTime      naMakeDateTimeFromTimeVal (const struct timeval* timevl,
-                                          const struct timezone* timezn);
-
+                                           const struct timezone* timezn);
 
 // Fills the given struct with date and time values, splitted into all of the
 // components of the given datetime. Fills an NADateTimeAttribute with further
 // information about this date if desired. The attribute can be NULL.
-void naFillDateTimeStruct(const NADateTime* datetime,
-                          NADateTimeStruct* dts,
-                       NADateTimeAttribute* dta);
+void naExtractDateTimeInformation(const NADateTime* datetime,
+                                  NADateTimeStruct* dts,
+                               NADateTimeAttribute* dta);
 // Same thing but expressed in timezone 00:00 wintertime
-void naFillDateTimeStructUTC(const NADateTime* datetime,
-                             NADateTimeStruct* dts,
-                          NADateTimeAttribute* dta);
+void naExtractDateTimeUTCInformation(const NADateTime* datetime,
+                                     NADateTimeStruct* dts,
+                                  NADateTimeAttribute* dta);
 
 // Alters timezone shift and summertime flag WITHOUT changing the real clock.
 // For example: 2011-04-01T22:37:51+06:00
@@ -205,66 +202,78 @@ void naCorrectDateTimeZone( NADateTime* datetime,
 
 // Returns the difference in time. The returned value is in seconds.
 double naGetDateTimeDiff(const NADateTime* end, const NADateTime* start);
+// Adds the given difference to the datetime.
+void naAddDateTimeDifference(NADateTime* datetime, double difference);
+
+// Returns a human readable string of a second counter (including decimals)
+// For example: naCreateStringFromSeconds(12345678.12345678, 6)
+// creates the string "142d 21:21:18.123456"
+NAString* naCreateStringFromSecondDifference(NAString* string,
+                                                double difference,
+                                                 uint8 decimaldigits);
 
 // Returns NA_TRUE if the date has summertime.
 NABool naHasDateTimeSummerTime(const NADateTime* datetime);
 void naSetDateTimeSummertime(NADateTime* datetime, NABool summertime);
 
 
-//// ////////////////////////////
-//// STATIC METHODS
-//// ////////////////////////////
+// Global timezone settings
+// The NADateTime.c file defines a global timezone shift and a daylight
+// saving time flag. These global settings are automatically used for
+// constructors, input- and output methods where no explicit or implicit
+// information about the shift is available.
 //
-//// The NADateTime class stores a global timezone shift and a daylight
-//// saving time flag. These global settings are automatically used for
-//// constructors, input- and output methods where no explicit or implicit
-//// information about the shift is available.
+// Warning: These global settings are initialized to +00:00 wintertime on
+// program start!
 //
-//// Sets the time shift and daylight saving flag to the settings of the
-//// local machine.
-//static void setGlobalTimeShiftToLocalSetting();
-//// Sets a custom time shift and daylight saving flag.
-//static void setGlobalTimeShift(int16 shiftminutes, NABool summertime);
+// Use the following methods to manipulate the global settings:
 //
-//// Returns a human readable string of a second counter (including decimals)
-//// For example: NADateTime::secondsToString(12345678.12345678, 6)
-//// returns the string "142d 21:21:18.123456"
-//static String secondsToString(Real realseconds, uint8 decimaldigits);
+// Sets a custom time shift and daylight saving flag.
+void naSetGlobalTimeShift(int16 shiftminutes, NABool summertime);
+// Sets the time shift and daylight saving flag to the system settings of the
+// local machine. 
+void naSetGlobalTimeShiftToSystemSettings();
+
+
+
+
+
+
+// ////////////////////////////
+// LEAP SECOND CORRECTION
 //
+// Leap second information is published only up to a certain date. When you
+// store dates of future events for which the leap seconds are not know yet,
+// you must correct the dates when the leap second information has updated.
 //
-//// Returns true if the given year is a leap year. The first method will
-//// return the julian information for years <= 1582 and the gregorian
-//// information for years > 1582.
-//static NABool isLeapYear            (int64 year);
-//
-//
-//
-//// ////////////////////////////
-//// LEAP SECOND CORRECTION
-//// ////////////////////////////
-//
-//// Leap second information is published only up to a certain date. For
-//// highest accuracy, store the first uncertain second number of the current
-//// library version with your data.
-//static int64 getFirstUncertainSecondNumber();
-//// When the library upgrades, check for that value again and if higher,
-//// correct all NADateTime values using the correctLeapSeconds method. This
-//// method will correct dates only if needed or possible.
-//void correctLeapSeconds(int32 leapsecondcorrectionconstant);
-//// The correction method needs a constant as an input to identify the last
-//// valid date. Use the getLeapSecondCorrectionConstant method to get this
-//// constant (once per upgrade).
-//static int32 getLeapSecondCorrectionConstant(int64 olduncertainsecondnumber);
-//// The return value of this method also indicates whether a correction is
-//// needed or not. A value >= 0 means, that a correction is needed.
-//// Otherwise, no correction will be made. The following constants are used:
-//#define NO_CORRECTION_NEEDED              -1
-//#define INVALID_UNCERTAIN_SECOND_NUMBER   -2
-//#define NEW_LIBRARY_IS_OLDER_THAN_BEFORE  -3
-//// Don't forget to store the new uncertain second number with your data after
-//// you corrected all NADateTime values!
-//
-//
+// To do so, you just store a specific identifier together with your data: The
+// number of the first uncertain second of this library.
+int64 naGetFirstUncertainSecondNumber();
+
+// When the library updates, you can check if the new library has a new
+// uncertain second number. You do this by giving the uncertain second number
+// which you stored with your data to the following function:
+NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber);
+// The return value of this function is a number needed for an internal
+// structure not visible to the programmer. A value >= 0 means, that a
+// correction of your data might be required. If the value is < 0, no
+// correction is necessary or can/will be made. The following macros depict
+// further information about the negative constant:
+#define NO_CORRECTION_NEEDED              -1
+#define INVALID_UNCERTAIN_SECOND_NUMBER   -2
+#define NEW_LIBRARY_IS_OLDER_THAN_BEFORE  -3
+
+// To correct you data, go through all dates and send them to the following
+// function together with the akquired constant from above. This function will
+// correct dates only if needed or possible.
+void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
+                                           NAInt leapsecondcorrectionconstant);
+
+// When all your data is converted to the new library and you want to store
+// the corrected dates, don't forget to store the NEW uncertain second number
+// with your data! Otherwise it will be corrected again in the next run!
+
+
 
 
 
@@ -329,7 +338,10 @@ NA_INLINE_API int naSleepS(NAInt secs){
 
 
 
-#endif // NA_NA_DATETIME_DEFINED
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
+#endif // NA_DATETIME_INCLUDED
 
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH

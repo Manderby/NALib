@@ -18,6 +18,9 @@
 
 #ifndef NA_POINTER_INCLUDED
 #define NA_POINTER_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
 
 #include "NAMathOperators.h"
 
@@ -368,6 +371,9 @@ NA_INLINE_API void* naGetPointerMutableData(NAPointer* pointer){
 
 
 
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
 #endif // NA_POINTER_INCLUDED
 
 

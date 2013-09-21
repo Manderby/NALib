@@ -4,8 +4,10 @@
 
 #ifndef NA_MATH_OPERATORS_INCLUDED
 #define NA_MATH_OPERATORS_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
 
-//#include <cstdlib>
 #include "NASystem.h"
 #include "NAMathConstants.h"
 #include "NARange.h"
@@ -110,7 +112,9 @@ NA_INLINE_API float        naLog10f(float x);
 NA_INLINE_API double       naLog10(double x);
 
 // Returns the 2-logarithm
-// For the integer variants, it returns the rounded down log2. In other words
+NA_INLINE_API float        naLog2f(float x);
+NA_INLINE_API double       naLog2(double x);
+// The integer variants of log2, return the rounded down log2. In other words
 // the power of 2 which is greaterequal than x.
 // - 0 returns 0  -> 2^0 = 1
 // - 1 returns 0  -> 2^0 = 1
@@ -119,8 +123,6 @@ NA_INLINE_API double       naLog10(double x);
 // - 4 returns 2  -> 2^2 = 4
 // - 5 returns 3  -> 2^3 = 8
 // - ...
-NA_INLINE_API float        naLog2f(float x);
-NA_INLINE_API double       naLog2(double x);
 NA_INLINE_API int32        naLog2i32(int32 x);
 NA_INLINE_API int64        naLog2i64(int64 x);
 
@@ -542,6 +544,9 @@ NA_INLINE_API double naRadToDeg(double rad){
 
 
 
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
 #endif // NA_MATH_OPERATORS_INCLUDED
 
 

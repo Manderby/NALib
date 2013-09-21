@@ -4,6 +4,9 @@
 
 #ifndef NA_SYSTEM_INCLUDED
 #define NA_SYSTEM_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
 
 
 // The version of this very distribution. No sub-version or build number or
@@ -98,6 +101,9 @@ extern const char* na_boolean_strings[2];
 //
 // NA_API too is just here for explanation. It is not used in NALib, as it is
 // not available as a library. Hence its name: NALib = Not A Library.
+//
+// The definition of NA_RESTRICT and NA_INLINE are just mappings of built-in
+// keywords on different systems.
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   #define NA_HIDDEN
@@ -113,10 +119,15 @@ extern const char* na_boolean_strings[2];
 #else
 #endif
 
-#define NA_INLINE_API   NA_INLINE static
+#define NA_INLINE_API   static NA_INLINE
+// This function-signature prefix is used for all functions which are intended
+// for public use and shall preferably be inlined. Note that inline functions
+// must be visible at compile time and do not need a visibility attribute.
+//
 // Note that inline functions are automatically declared static. This might
 // slightly increase the file size but safes a lot of trouble and makes the
 // source code more readable.
+//
 // Also note that usually, the inline keyword should only be used at the
 // definition, not at the declaration where it should be ignored.
 // Nontheless, there are some situations where the compiler gets confused and
@@ -181,15 +192,15 @@ extern const char* na_boolean_strings[2];
 // provided manually to not be dependent on the various definitions of
 // char, short, int, long and long long.
 
-#define NA_UINT8_MAX  (0xff)
-#define NA_UINT16_MAX (0xffff)
-#define NA_UINT32_MAX (0xffffffff)
-#define NA_UINT64_MAX (0xffffffffffffffffLL)
+#define NA_UINT8_MAX  ((uint8)(0xffu))
+#define NA_UINT16_MAX ((uint16)(0xffffu))
+#define NA_UINT32_MAX (0xffffffffu)
+#define NA_UINT64_MAX (0xffffffffffffffffuLL)
 // note that the - 1 is needed to avoid warnings on some compilers
-#define NA_INT8_MAX   (0x7f)
-#define NA_INT8_MIN   (0x81 - 1)
-#define NA_INT16_MAX  (0x7fff)
-#define NA_INT16_MIN  (0x8001 - 1)
+#define NA_INT8_MAX   ((int8)(0x7f))
+#define NA_INT8_MIN   ((int8)(0x81 - 1))
+#define NA_INT16_MAX  ((int16)(0x7fff))
+#define NA_INT16_MIN  ((int16)(0x8001 - 1))
 #define NA_INT32_MAX  (0x7fffffff)
 #define NA_INT32_MIN  (0x80000001 - 1)
 #define NA_INT64_MAX  (0x7fffffffffffffffLL)
@@ -349,6 +360,9 @@ typedef int NABool;
 
 
 
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
 #endif // NA_SYSTEM_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH
