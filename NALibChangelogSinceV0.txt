@@ -13,37 +13,30 @@ correct, complete or final.
 
 
 
+Version 1 (first published 2013-September-23):
 =========================================
 
-API functionality changes:
-- NAPointer can now store const or non-const data and distinguish been created
-  just like any other struct.
-- extended naCreateByteArrayWithSize with negative parameter.
-- naDecoupleByteArray: appendbytes always appends bytes at the end of the array
-  with comparable semantics as naCreateByteArrayWithSize.
-- Changed src parameter of naCreateArrayExtraction and naGetByteArrayByte
-  to non-const.
-- naInitEndiannessConverter becomes naCreateEndiannessConverter with the same
-  semantics as a constructor.
-- Range function parameters have changed its order!
+Version 1 was intended to be the first public version. The author managed to
+reimplement all needed functions to drive 3 selling applications. There are
+still some important files remaining to be translated but NALib is ready for
+its debut.
 
-API additions:
-- naClearEndiannessConverter and naDestroyEndiannessConverter
-- naIsByteArrayEmpty
-- naGetByteArrayPointer
-- naNulli
-- NA_SYSTEM_ADDRESS_BYTES
-- NA_SIGNED_INTEGER_USES_TWOS_COMPLEMENT
-- NA$INT
+Many, many changes have been introduced since version 0. Too many to list them.
+So here are just the highlights:
 
-Varia:
-- Moved inline code into separate .h files
-- Initialization of struct fields now always uses naNull, if necessary
-- Rearranged API in file NABinaryData from smallest to biggest.
+- Several structs can now store const or non-const data.
+- Renamed lots of functions and macros to be consistend.
+- Wrote lots of text in the readme.txt file.
+- Added NAString struct, a struct storing UTF8-strings and providing useful
+  parsing functions.
+- Added NAFile struct, a struct handling all sorts of input and output files.
+- Added NADateTime struct, a struct for dates, times and even timers with
+  nano-second accuracy.
+- Added NABitArray struct, a struct capable of manipulating an arbitrary large
+  stream of bits.
 - More debug checks in many files.
 - More and improved comments in many files.
-- Renamed the parameters of BinaryData to source and destination (s and d).
-- Changed the Readme
+
 
 
 
