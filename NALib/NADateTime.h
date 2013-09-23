@@ -17,12 +17,16 @@ static int naSleepU(NAInt usecs);
 static int naSleepM(NAInt msecs);
 static int naSleepS(NAInt  secs);
 
+#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  typedef TIME_ZONE_INFORMATION NATimeZone;
+#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  typedef struct timezone NATimeZone;
+#endif
 
 // If not defined, the Asc and Bin formats will use 00:00 and wintertime as the
 // default timezone setting.
 typedef enum{
   NA_DATETIME_FORMAT_APACHE,                   // 01/Apr/234567:22:37:51 -0130
-//  NA_DATETIME_FORMAT_PM_MEASUREMENT,           // "01/04/234567:22:37"
   NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT,  // 234567-04-01T22:37:51-01:30
   NA_DATETIME_FORMAT_CONDENSEDDATE,            // 2345670401
   NA_DATETIME_FORMAT_NATURAL                   // 234567-04-01 22:37:51
@@ -161,17 +165,24 @@ NAString* naCreateStringWithDateTime(NAString* string,
                            NAAscDateTimeFormat format);
 
 // Converts between the systems time formats and NADateTime
-struct timespec naMakeTimeSpecFromDateTime(const NADateTime* datetime);
-struct timeval  naMakeTimeValFromDateTime (const NADateTime* datetime);
-struct timezone naMakeTimeZoneFromDateTime(const NADateTime* datetime);
 struct tm       naMakeTMfromDateTime      (const NADateTime* datetime);
 // Computes the time shift in minutes including summer time, if applicable.
-int16           naMakeShiftFromTimeZone   (const struct timezone* timezn);
+int16           naMakeShiftFromTimeZone   (const NATimeZone* timezn);
 // if timezn is a Null-Pointer, the global timezone settings are used.
-NADateTime      naMakeDateTimeFromTimeSpec(const struct timespec* timesp,
-                                           const struct timezone* timezn);
-NADateTime      naMakeDateTimeFromTimeVal (const struct timeval* timevl,
-                                           const struct timezone* timezn);
+
+#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  NADateTime      naMakeDateTimeFromFileTime(const FILETIME* filetime,
+                                             const NATimeZone* timezn);
+#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  struct timespec naMakeTimeSpecFromDateTime(const NADateTime* datetime);
+  struct timeval  naMakeTimeValFromDateTime (const NADateTime* datetime);
+  NATimeZone      naMakeTimeZoneFromDateTime(const NADateTime* datetime);
+  NADateTime      naMakeDateTimeFromTimeSpec(const struct timespec* timesp,
+                                             const NATimeZone* timezn);
+  NADateTime      naMakeDateTimeFromTimeVal (const struct timeval* timevl,
+                                             const NATimeZone* timezn);
+#endif
+
 
 // Fills the given struct with date and time values, splitted into all of the
 // components of the given datetime. Fills an NADateTimeAttribute with further

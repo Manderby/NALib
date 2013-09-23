@@ -411,15 +411,17 @@ NA_INLINE_API void naDestroyByteArray(NAByteArray* array){
 
 NA_INLINE_API void naDecoupleByteArray(NAByteArray* array,
                                                 NABool appendzerobytes){
+  // Declaration before implementation. Needed for C90.
+  NAInt arraysize;
+  NAByteArray* newarray;
   #ifndef NDEBUG
     if(!array)
       {naCrash("naDecoupleByteArray", "array is Null-Pointer."); return;}
   #endif
   // Note: Do not use realloc as ptr may point to a subset of NAPointer.
   // Instead, create a new object and copy manually.
-  NAInt arraysize = naGetByteArraySize(array);
+  arraysize = naGetByteArraySize(array);
   if(!arraysize){return;}
-  NAByteArray* newarray;
   if(appendzerobytes){
     newarray = naCreateByteArrayWithSize(NA_NULL, -arraysize);
   }else{

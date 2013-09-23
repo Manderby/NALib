@@ -28,10 +28,10 @@ typedef char NAUTF8Char;
 
 // System dependant mapping of string functions and macros
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-//  #include "windows.h"
-//  typedef WCHAR SystemChar;
+  #include "windows.h"
+  typedef WCHAR SystemChar;
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-//  typedef short SystemChar;
+  // typedef short SystemChar;  // unused at the moment
 #else
 #endif
 
@@ -140,6 +140,18 @@ NAString* naCreateStringExtraction( NAString* deststring,
                                         NAInt offset,
                                         NAInt size);
 
+// The following functions are system dependent.
+// Currently, this is only necessary on windows.
+#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  // Returns a newly allocated memory block containing the system-encoded
+  // string. Must be freed manually.
+  SystemChar* naCreateSystemStringFromString(const NAUTF8Char* utf8string,
+                                                         NAInt size);
+  // Creates a new NAString from a system-encoded string.
+  NAString* naCreateStringFromSystemString( NAString* string,
+                                          SystemChar* systemstring);
+#endif
+
 // Clears or deletes the given string.
 void naClearString(NAString* string);
 void naDestroyString(NAString* string);
@@ -231,7 +243,7 @@ void naSkipStringWhitespaces(NAString* string);
 // 1 when skipping empty lines. Will be 0 when the string is empty.
 // Warning: the two arguments shall not be the same as the result is
 // undefined.
-NAInt naParseStringLine(NAString* line, NAString* string, NABool skipempty);
+NAInt naParseStringLine(NAString* string, NAString* line, NABool skipempty);
 
 // Gathers the first token within string which is embraced by whitespaces.
 // The returned token will not have any leading or trailing whitespaces.

@@ -206,14 +206,17 @@ void naJumpFileOffsetRelative(NAFile* file, NAFileSize offset){
 // Helper function not visible to the programmer. Will make sure that there
 // are enough bytes in the buffer. Note that this function only works for
 // counts in uint16 range.
-NA_INLINE void naRequireFileReadBufferBytes(NAFile* file, uint16 count){
+// todo: should be hidden
+NA_INLINE static void naRequireFileReadBufferBytes(NAFile* file, uint16 count){
+  // Declaration before implementation. Needed for C90.
+  NAFileSize bytesread;
   if(file->remainingbytesinbuffer >= count){return;}  // enough bytes available
   // copy the remaining bytes to the beginning of the buffer.
   memcpy(file->buffer, file->bufptr, file->remainingbytesinbuffer);
   // Place the bufferpointer right after these bytes...
   file->bufptr = file->buffer + file->remainingbytesinbuffer;
   // ... and refill the remaining buffer
-  NAFileSize bytesread = naRead(file->desc, file->bufptr, NA_FILE_BUFFER_SIZE - file->remainingbytesinbuffer);
+  bytesread = naRead(file->desc, file->bufptr, NA_FILE_BUFFER_SIZE - file->remainingbytesinbuffer);
   // adjust all internal counters to reflect the new state.
   file->remainingbytesinbuffer += (uint16)bytesread;
   file->pos += bytesread;
@@ -229,7 +232,7 @@ void naReadFileBytes(NAFile* file, void* buf, NAFileSize count){
   // use the rest of the buffer, if available.
   if(count > file->remainingbytesinbuffer){
     memcpy(buf, file->bufptr, file->remainingbytesinbuffer);
-    buf += file->remainingbytesinbuffer;
+    buf = ((NAByte*)buf) + file->remainingbytesinbuffer;
     count -= file->remainingbytesinbuffer;
     file->remainingbytesinbuffer = 0;
   }
@@ -238,7 +241,7 @@ void naReadFileBytes(NAFile* file, void* buf, NAFileSize count){
     file->pos += naRead(file->desc, buf, (NAInt)count);
   }else{
     // else, use the buffer.
-    naRequireFileReadBufferBytes(file, count);
+    naRequireFileReadBufferBytes(file, (uint16)count);
     if(file->remainingbytesinbuffer < count){
       // The file must have ended and has less bytes stored than needed.
       memcpy(buf, file->bufptr, (size_t)file->remainingbytesinbuffer);
@@ -255,36 +258,40 @@ void naReadFileBytes(NAFile* file, void* buf, NAFileSize count){
 
 
 int8 naReadFileInt8(NAFile* file){
+  int8 value;
   naRequireFileReadBufferBytes(file, 1);
   if(naHasFileEnded(file)){return 0;}
-  int8 value = *((int8*)(file->bufptr));
+  value = *((int8*)(file->bufptr));
   file->converter.convert8(&value);
   file->bufptr += 1;
   file->remainingbytesinbuffer -= 1;
   return value;
 }
 int16 naReadFileInt16(NAFile* file){
+  int16 value;
   naRequireFileReadBufferBytes(file, 2);
   if(naHasFileEnded(file)){return 0;}
-  int16 value = *((int16*)(file->bufptr));
+  value = *((int16*)(file->bufptr));
   file->converter.convert16(&value);
   file->bufptr += 2;
   file->remainingbytesinbuffer -= 2;
   return value;
 }
 int32 naReadFileInt32(NAFile* file){
+  int32 value;
   naRequireFileReadBufferBytes(file, 4);
   if(naHasFileEnded(file)){return 0;}
-  int32 value = *((int32*)(file->bufptr));
+  value = *((int32*)(file->bufptr));
   file->converter.convert32(&value);
   file->bufptr += 4;
   file->remainingbytesinbuffer -= 4;
   return value;
 }
 int64 naReadFileInt64(NAFile* file){
+  int64 value;
   naRequireFileReadBufferBytes(file, 8);
   if(naHasFileEnded(file)){return 0;}
-  int64 value = *((int64*)(file->bufptr));
+  value = *((int64*)(file->bufptr));
   file->converter.convert64(&value);
   file->bufptr += 8;
   file->remainingbytesinbuffer -= 8;
@@ -293,36 +300,40 @@ int64 naReadFileInt64(NAFile* file){
 
 
 uint8 naReadFileUInt8(NAFile* file){
+  uint8 value;
   naRequireFileReadBufferBytes(file, 1);
   if(naHasFileEnded(file)){return 0;}
-  uint8 value = *((uint8*)(file->bufptr));
+  value = *((uint8*)(file->bufptr));
   file->converter.convert8(&value);
   file->bufptr += 1;
   file->remainingbytesinbuffer -= 1;
   return value;
 }
 uint16 naReadFileUInt16(NAFile* file){
+  uint16 value;
   naRequireFileReadBufferBytes(file, 2);
   if(naHasFileEnded(file)){return 0;}
-  uint16 value = *((uint16*)(file->bufptr));
+  value = *((uint16*)(file->bufptr));
   file->converter.convert16(&value);
   file->bufptr += 2;
   file->remainingbytesinbuffer -= 2;
   return value;
 }
 uint32 naReadFileUInt32(NAFile* file){
+  uint32 value;
   naRequireFileReadBufferBytes(file, 4);
   if(naHasFileEnded(file)){return 0;}
-  uint32 value = *((uint32*)(file->bufptr));
+  value = *((uint32*)(file->bufptr));
   file->converter.convert32(&value);
   file->bufptr += 4;
   file->remainingbytesinbuffer -= 4;
   return value;
 }
 uint64 naReadFileUInt64(NAFile* file){
+  uint64 value;
   naRequireFileReadBufferBytes(file, 8);
   if(naHasFileEnded(file)){return 0;}
-  uint64 value = *((uint64*)(file->bufptr));
+  value = *((uint64*)(file->bufptr));
   file->converter.convert64(&value);
   file->bufptr += 8;
   file->remainingbytesinbuffer -= 8;
@@ -331,18 +342,20 @@ uint64 naReadFileUInt64(NAFile* file){
 
 
 float naReadFileFloat(NAFile* file){
+  float value;
   naRequireFileReadBufferBytes(file, 4);
   if(naHasFileEnded(file)){return 0.f;}
-  float value = *((float*)(file->bufptr));
+  value = *((float*)(file->bufptr));
   file->converter.convert32(&value);
   file->bufptr += 4;
   file->remainingbytesinbuffer -= 4;
   return value;
 }
 double naReadFileDouble(NAFile* file){
+  double value;
   naRequireFileReadBufferBytes(file, 8);
   if(naHasFileEnded(file)){return 0.;}
-  double value = *((double*)(file->bufptr));
+  value = *((double*)(file->bufptr));
   file->converter.convert64(&value);
   file->bufptr += 8;
   file->remainingbytesinbuffer -= 8;
@@ -375,7 +388,8 @@ NAString* naCreateStringFromFile(NAString* string, NAFile* file, NAFileSize byte
 // Helper function not visible to the programmer. Will make sure that there
 // are enough bytes in the buffer. Note that this function only works for
 // counts in uint16 range.
-NA_INLINE void naRequireFileWriteBufferBytes(NAFile* file, uint16 count){
+// todo: should be hidden
+NA_INLINE static void naRequireFileWriteBufferBytes(NAFile* file, uint16 count){
   if(file->remainingbytesinbuffer >= count){
     return;
   }else{

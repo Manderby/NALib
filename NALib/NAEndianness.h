@@ -101,7 +101,7 @@ struct NAEndiannessConverter{
 // endiannesses available in NALib. Note that it does not really matter which
 // is the endianness1 and which is endianness2 as all converters can be used
 // bidirectional.
-NAEndiannessConverter naMakeEndiannessConverter( NAInt endianness1,
+NA_INLINE_API NAEndiannessConverter naMakeEndiannessConverter( NAInt endianness1,
                                                  NAInt endianness2);
 
 
@@ -110,7 +110,7 @@ NAEndiannessConverter naMakeEndiannessConverter( NAInt endianness1,
 // unknown endianness. This function is useful for dynamically checking for
 // endiannesses. If you simply are interested in the (static) endianness of
 // this system, check the NA_SYSTEM_ENDIANNESS macro.
-NABool naIsEndiannessNative(NAInt endianness);
+NA_INLINE_API NABool naIsEndiannessNative(NAInt endianness);
 
 
 // Use the following functions to write and read a 4-byte endianness
@@ -122,8 +122,8 @@ NABool naIsEndiannessNative(NAInt endianness);
 // - "BDdb" for Big Endian
 // - "bdDB" for Little Endian
 // Note that the marker will not likely change in the future.
-void  naFillEndiannessMarker (NAByte marker[4], NAInt endianness);
-NAInt naParseEndiannessMarker(const NAByte marker[4]);
+NA_INLINE_API void  naFillEndiannessMarker (NAByte marker[4], NAInt endianness);
+NA_INLINE_API NAInt naParseEndiannessMarker(const NAByte marker[4]);
 
 
 
@@ -597,7 +597,7 @@ NA_INLINE_API void naConvertArrayLittleBig128(void* buffer, NAInt count){
 
 
 
-NAEndiannessConverter naMakeEndiannessConverter(NAInt end1, NAInt end2){
+NA_INLINE_API NAEndiannessConverter naMakeEndiannessConverter(NAInt end1, NAInt end2){
   NAEndiannessConverter converter;
   #ifndef NDEBUG
     if((end1 < 0) || (end1 >= NA_ENDIANNESS_COUNT))
@@ -669,7 +669,7 @@ NABool naIsEndiannessNative(NAInt endianness){
 #endif
 
 
-void naFillEndiannessMarker(NAByte marker[4], NAInt endianness){
+NA_INLINE_API void naFillEndiannessMarker(NAByte marker[4], NAInt endianness){
   switch(endianness){
   case NA_ENDIANNESS_LITTLE:
     (*((uint32*)marker)) = NA_LITTLE_ENDIANNESS_MARKER;
@@ -683,7 +683,7 @@ void naFillEndiannessMarker(NAByte marker[4], NAInt endianness){
   }
 }
 
-NAInt naParseEndiannessMarker(const NAByte marker[4]){
+NA_INLINE_API NAInt naParseEndiannessMarker(const NAByte marker[4]){
   switch(*((uint32*)marker)){
   case NA_LITTLE_ENDIANNESS_MARKER:
     return NA_ENDIANNESS_LITTLE;

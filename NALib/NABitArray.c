@@ -44,6 +44,7 @@ NABitArray * naCreateBitArrayExtension( NABitArray* dstarray,
   NABit* dstptr;
   NABit leadbit;
   NABit trailbit;
+  NAInt srccount;
 
   #ifndef NDEBUG
     if(!srcarray)
@@ -58,7 +59,7 @@ NABitArray * naCreateBitArrayExtension( NABitArray* dstarray,
   i=0;
   dstptr = naGetByteArrayMutablePointer(&(dstarray->fullstorage));
   trailbit = NA_BIT0;
-  NAInt srccount = naGetBitArrayCount(srcarray);
+  srccount = naGetBitArrayCount(srcarray);
   
   if(srccount){
     NABit* srcptr = naGetBitArrayBit(srcarray, 0);
@@ -586,13 +587,15 @@ NAString* naCreateStringBinFromBitArray(NAString* string,
 
 NAByteArray* naCreateByteArrayFromBitArray(NAByteArray* bytearray,
                                             NABitArray* bitarray){
+  NAByte* curbyte;
+  NABit* curbit;
   int b;
   NAInt bytecount = naGetBitArrayCount(bitarray) / 8;
   bytearray = naCreateByteArrayWithSize(bytearray, -bytecount);
   if(!bytecount){return bytearray;}
   
-  NAByte* curbyte = naGetByteArrayMutablePointer(bytearray);
-  NABit* curbit = naGetBitArrayBit(bitarray, (bytecount - 1) * 8) + 7;
+  curbyte = naGetByteArrayMutablePointer(bytearray);
+  curbit = naGetBitArrayBit(bitarray, (bytecount - 1) * 8) + 7;
 
   while(bytecount){
     *curbyte = 0;

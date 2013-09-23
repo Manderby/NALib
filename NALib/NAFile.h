@@ -36,6 +36,7 @@
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   #include <windows.h>
+  #include <direct.h>
   #include <io.h>
   #include <share.h>
   #include <sys/stat.h>
@@ -435,8 +436,11 @@ NA_INLINE_API NABool naExists(const char* path){
 
 NA_INLINE_API NABool naIsDir(const char* path){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    return (GetFileAttributes(path.getSystemString())
+    SystemChar* sysstring = naCreateSystemStringFromString(path, 0);
+    NABool retvalue = (GetFileAttributes(sysstring)
             & FILE_ATTRIBUTE_DIRECTORY) ? NA_TRUE : NA_FALSE;
+    free(sysstring);
+    return retvalue;
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
     struct stat stat_struct;
     stat(path, &stat_struct);
@@ -447,8 +451,11 @@ NA_INLINE_API NABool naIsDir(const char* path){
 
 NA_INLINE_API NABool naIsHidden(const char* path){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    return (GetFileAttributes(path.getSystemString())
+    SystemChar* sysstring = naCreateSystemStringFromString(path, 0);
+    NABool retvalue = (GetFileAttributes(sysstring)
             & FILE_ATTRIBUTE_HIDDEN) ? NA_TRUE : NA_FALSE;
+    free(sysstring);
+    return retvalue;
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
     return (path[0] == '.');
   #endif
@@ -468,7 +475,7 @@ NA_INLINE_API NABool naCopyFile(const char* dstpath, const char* srcpath){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return (CopyFile( (LPCTSTR)(const char*)srcpath,
                       (LPCTSTR)(const char*)dstpath,
-                      NULL) != 0);
+                      NA_FALSE) != 0);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
     return (copyfile(srcpath, dstpath, NULL, COPYFILE_ALL) == 0);
   #endif

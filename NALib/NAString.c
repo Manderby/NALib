@@ -30,11 +30,13 @@ NAString* naCreateStringWithSize(NAString* string, NAInt size){
 
 
 NAString* naCreateStringWithUTF8CString(NAString* string, const NAUTF8Char* ptr){
+  // Declaration before implementation. Needed for C90.
+  NAInt size;
   #ifndef NDEBUG
     if(!ptr)
       {naCrash("naCreateStringWithUTF8CString", "ptr is Null-Pointer"); return NA_NULL;}
   #endif
-  NAInt size = naStrlen(ptr);
+  size = naStrlen(ptr);
   if(!size){return naCreateString(string);}
   string = naAllocateIfNull(string, sizeof(NAString));
   naCreateByteArrayWithConstBuffer(&(string->array), ptr, size, NA_FALSE);
@@ -61,11 +63,13 @@ NAString* naCreateStringWithFormat(NAString* string,
 NAString* naCreateStringWithArguments(NAString* string,
                               const NAUTF8Char* format,
                                         va_list argumentlist){
+  // Declaration before implementation. Needed for C90.
+  NAInt strlen;
   va_list argumentlist2;
   va_list argumentlist3;
   va_copy(argumentlist2, argumentlist);
   va_copy(argumentlist3, argumentlist);
-  NAInt strlen = naVarargStringSize(format, argumentlist2);
+  strlen = naVarargStringSize(format, argumentlist2);
   naCreateStringWithSize(string, strlen);
   naVsnprintf(naGetStringMutableUTF8Pointer(string), (size_t)(strlen+1), format, argumentlist3);
   va_end(argumentlist2);
@@ -120,6 +124,28 @@ NAString* naCreateStringExtraction( NAString* deststring,
   return deststring;
 }
 
+
+
+#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  SystemChar* naCreateSystemStringFromString(const NAUTF8Char* utf8string, NAInt size){
+    SystemChar* outstr;
+    NAInt newsize;
+    if(!size){size = naStrlen(utf8string);}
+    newsize = MultiByteToWideChar(CP_UTF8, 0, utf8string, size, NULL, 0);
+    outstr = (SystemChar*)malloc(sizeof(SystemChar) * (newsize + 1));
+    MultiByteToWideChar(CP_UTF8, 0, utf8string, size, outstr, newsize);
+    outstr[newsize] = 0;
+    return outstr;
+  }
+
+
+  NAString* naCreateStringFromSystemString( NAString* string, SystemChar* systemstring){
+    NAInt newsize = WideCharToMultiByte(CP_UTF8, 0, systemstring, -1, NULL, 0, NULL, NULL);
+    string = naCreateStringWithSize(string, newsize);
+    WideCharToMultiByte(CP_UTF8, 0, systemstring, -1, naGetStringMutableUTF8Pointer(string), newsize, NULL, NULL);
+    return string;
+  }
+#endif
 
 
 void naClearString(NAString* string){
@@ -205,12 +231,18 @@ NAInt naGetStringCharacterEscapeSizeTowardsTrailing(NAString* string, NAInt offs
   // Note: The flags can be combined with the binary OR operator. This means
   // that multiple flags can be active. Therefore all escape methods need to
   // be checked one by one.
+  
+  // Declaration before implementation. Needed for C90.
+  NAInt stringsize;
+  NAUTF8Char char0;
+  NAUTF8Char char1;
+  NAUTF8Char char2;
   #ifndef NDEBUG
     if(!string)
       {naCrash("naGetStringCharacterEscapeSizeTowardsTrailing", "string is Null-Pointer."); return 0;}
   #endif
   
-  NAInt stringsize = naGetStringSize(string);
+  stringsize = naGetStringSize(string);
   if(offset < 0){offset += stringsize;}
   #ifndef NDEBUG
     if(offset < 0)
@@ -221,9 +253,9 @@ NAInt naGetStringCharacterEscapeSizeTowardsTrailing(NAString* string, NAInt offs
 
   if(offset >= stringsize - 1){return 0;}
   
-  NAUTF8Char char0 = *naGetStringConstChar(string, offset);
-  NAUTF8Char char1 = *naGetStringConstChar(string, offset + 1);
-  NAUTF8Char char2 = '\0';
+  char0 = *naGetStringConstChar(string, offset);
+  char1 = *naGetStringConstChar(string, offset + 1);
+  char2 = '\0';
   if(offset < stringsize - 2){char2 = *naGetStringConstChar(string, offset + 2);}
 
   if(string->flags & NA_STRING_IS_INSIDE_DOUBLE_QUOTES){
@@ -277,12 +309,18 @@ NAInt naGetStringCharacterEscapeSizeTowardsLeading(NAString* string, NAInt offse
   // Note: The flags can be combined with the binary OR operator. This means
   // that multiple flags can be active. Therefore all escape methods need to
   // be checked one by one.
+  
+  // Declaration before implementation. Needed for C90.
+  NAInt stringsize;
+  NAUTF8Char char0;
+  NAUTF8Char char1;
+  NAUTF8Char char2;
   #ifndef NDEBUG
     if(!string)
       {naCrash("naGetStringCharacterEscapeSizeTowardsLeading", "string is Null-Pointer."); return 0;}
   #endif
   
-  NAInt stringsize = naGetStringSize(string);
+  stringsize = naGetStringSize(string);
   if(offset < 0){offset += stringsize;}
   #ifndef NDEBUG
     if(offset < 0)
@@ -293,9 +331,9 @@ NAInt naGetStringCharacterEscapeSizeTowardsLeading(NAString* string, NAInt offse
 
   if(offset < 1){return 0;}
   
-  NAUTF8Char char0 = *naGetStringConstChar(string, offset);
-  NAUTF8Char char1 = *naGetStringConstChar(string, offset - 1);
-  NAUTF8Char char2 = '\0';
+  char0 = *naGetStringConstChar(string, offset);
+  char1 = *naGetStringConstChar(string, offset - 1);
+  char2 = '\0';
   if(offset >= 2){char2 = *naGetStringConstChar(string, offset - 2);}
   
   if(string->flags & NA_STRING_IS_INSIDE_DOUBLE_QUOTES){
@@ -350,6 +388,10 @@ NAInt naGetStringCharacterEscapeSizeTowardsLeading(NAString* string, NAInt offse
 
 
 void naSkipStringWhitespaces(NAString* string){
+  // Declaration before implementation. Needed for C90.
+  NAInt stringsize;
+  const NAUTF8Char* charptr;
+
   #ifndef NDEBUG
     if(!string)
       {naCrash("naSkipStringWhitespaces", "Parameter is Null-Pointer."); return;}
@@ -358,8 +400,8 @@ void naSkipStringWhitespaces(NAString* string){
   // Note: There is no check for escape characters as so far, nobody ever used
   // a whitespace as an escape character. Therefore stripping whitespaces from
   // leading to trailing is safe without checking for escape characters.
-  NAInt stringsize = naGetStringSize(string);
-  const NAUTF8Char* charptr = naGetStringConstChar(string, 0);
+  stringsize = naGetStringSize(string);
+  charptr = naGetStringConstChar(string, 0);
   while(stringsize && (*charptr <= ' ')){
     stringsize--;
     charptr++;
@@ -369,12 +411,15 @@ void naSkipStringWhitespaces(NAString* string){
 
 
 
-NAInt naParseStringLine(NAString* line, NAString* string, NABool skipempty){
+NAInt naParseStringLine(NAString* string, NAString* line, NABool skipempty){
+  // Declaration before implementation. Needed for C90.
+  NAInt stringsize;
   NAString emptytest;
   NAInt numlines = 0;
   NAInt nextoffset = 0; // the start offset of the line after the current line
   NABool found;
-  
+  const NAUTF8Char* charptr;
+
   #ifndef NDEBUG
     if(!string)
       naError("naParseStringLine", "string is Null-Pointer.");
@@ -394,14 +439,14 @@ NAInt naParseStringLine(NAString* line, NAString* string, NABool skipempty){
   if(skipempty){
     naCreateString(&emptytest);
   }
-  NAInt stringsize = naGetStringSize(string);
+  stringsize = naGetStringSize(string);
   
   // This while-loop is here for the skipempty-test.
   while(1){
     NAInt linesize = 0;
     NAInt escapesize;
     found = NA_FALSE;
-    const NAUTF8Char* charptr = (NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
+    charptr = (NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
 
     while(linesize < stringsize){
       escapesize = naGetStringCharacterEscapeSizeTowardsTrailing(string, linesize);
@@ -489,6 +534,9 @@ NAInt naParseStringLine(NAString* line, NAString* string, NABool skipempty){
 
 
 void naParseStringToken(NAString* string, NAString* token){
+  // Declaration before implementation. Needed for C90.
+  NAInt stringsize;
+  const NAUTF8Char* charptr;
   NAInt tokensize = 0;
   NAInt escapesize;
 
@@ -512,8 +560,8 @@ void naParseStringToken(NAString* string, NAString* token){
   // We now are sure that token will not be empty. String now points to the
   // first non-whitespace character.
 
-  NAInt stringsize = naGetStringSize(string);
-  const NAUTF8Char* charptr = (NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
+  stringsize = naGetStringSize(string);
+  charptr = (NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
 
   while(tokensize < stringsize){
     escapesize = naGetStringCharacterEscapeSizeTowardsTrailing(string, tokensize);
@@ -554,8 +602,11 @@ void naParseStringToken(NAString* string, NAString* token){
 
 
 void naParseStringTokenWithDelimiter(NAString* string, NAString* token, NAUTF8Char delimiter){
+  // Declaration before implementation. Needed for C90.
+  NAInt stringsize;
   NAInt tokensize = 0;
   NAInt escapesize;
+  const NAUTF8Char* charptr;
 
   #ifndef NDEBUG
     if(!string)
@@ -572,8 +623,8 @@ void naParseStringTokenWithDelimiter(NAString* string, NAString* token, NAUTF8Ch
   // We now are sure that token is empty.
   if(naIsStringEmpty(string)){return;}
 
-  NAInt stringsize = naGetStringSize(string);
-  const NAUTF8Char* charptr = (NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
+  stringsize = naGetStringSize(string);
+  charptr = (NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
 
   while(tokensize < stringsize){
     escapesize = naGetStringCharacterEscapeSizeTowardsTrailing(string, tokensize);
@@ -721,6 +772,7 @@ NAInt naParseUTF8StringForDecimalSignedInteger( const NAUTF8Char* string,
   int64 sign = 1;
   NAInt bytesused = 0;
   uint64 limit = max;
+  uint64 intvalue;
 
   // Check for a potential sign at the first character
   if(*string == '+'){
@@ -735,7 +787,6 @@ NAInt naParseUTF8StringForDecimalSignedInteger( const NAUTF8Char* string,
     string++;
   }
 
-  uint64 intvalue;
   bytesused += naParseUTF8StringForDecimalUnsignedInteger(string, &intvalue, maxbytecount, limit);
   *retint = (sign * intvalue);
   return bytesused;
