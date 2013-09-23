@@ -76,13 +76,13 @@ static NAComplex  naCosComplex   (NAComplex a);
 // Inline Implementations: See readme file for more expanation.
 // ///////////////////////////////////////////////////////////////////////
 
-NA_INLINE_API static NAComplex naMakeComplex(double re, double im){
+NA_INLINE_API NAComplex naMakeComplex(double re, double im){
   NAComplex newcomplex = {re, im};
   return newcomplex;
 }
 
 
-NA_INLINE_API static NAComplex naMakeComplexFromPolar(double r, double phi){
+NA_INLINE_API NAComplex naMakeComplexFromPolar(double r, double phi){
   NAComplex newcomplex;
   #ifndef NDEBUG
     if(r<0.){
@@ -95,7 +95,7 @@ NA_INLINE_API static NAComplex naMakeComplexFromPolar(double r, double phi){
 }
 
 
-NA_INLINE_API static NAComplex naAddComplexReal(NAComplex a, double b){
+NA_INLINE_API NAComplex naAddComplexReal(NAComplex a, double b){
   NAComplex newcomplex = {
     a.re + b,
     a.im
@@ -104,7 +104,7 @@ NA_INLINE_API static NAComplex naAddComplexReal(NAComplex a, double b){
 }
 
 
-NA_INLINE_API static NAComplex naSubComplexReal(NAComplex a, double b){
+NA_INLINE_API NAComplex naSubComplexReal(NAComplex a, double b){
   NAComplex newcomplex = {
     a.re - b,
     a.im
@@ -113,7 +113,7 @@ NA_INLINE_API static NAComplex naSubComplexReal(NAComplex a, double b){
 }
 
 
-NA_INLINE_API static NAComplex naMulComplexReal(NAComplex a, double b){
+NA_INLINE_API NAComplex naMulComplexReal(NAComplex a, double b){
   NAComplex newcomplex = {
     a.re * b,
     a.im * b
@@ -122,7 +122,7 @@ NA_INLINE_API static NAComplex naMulComplexReal(NAComplex a, double b){
 }
 
 
-NA_INLINE_API static NAComplex naDivComplexReal(NAComplex a, double b){
+NA_INLINE_API NAComplex naDivComplexReal(NAComplex a, double b){
   double divisor = naInv(b);
   NAComplex newcomplex = {
     a.re * divisor,
@@ -132,7 +132,7 @@ NA_INLINE_API static NAComplex naDivComplexReal(NAComplex a, double b){
 }
 
 
-NA_INLINE_API static NAComplex naAddComplexComplex(NAComplex a, NAComplex b){
+NA_INLINE_API NAComplex naAddComplexComplex(NAComplex a, NAComplex b){
   NAComplex newcomplex = {
     a.re + b.re,
     a.im + b.im
@@ -141,7 +141,7 @@ NA_INLINE_API static NAComplex naAddComplexComplex(NAComplex a, NAComplex b){
 }
 
 
-NA_INLINE_API static NAComplex naSubComplexComplex(NAComplex a, NAComplex b){
+NA_INLINE_API NAComplex naSubComplexComplex(NAComplex a, NAComplex b){
   NAComplex newcomplex = {
     a.re - b.re,
     a.im - b.im
@@ -150,7 +150,7 @@ NA_INLINE_API static NAComplex naSubComplexComplex(NAComplex a, NAComplex b){
 }
 
 
-NA_INLINE_API static NAComplex naMulComplexComplex(NAComplex a, NAComplex b){
+NA_INLINE_API NAComplex naMulComplexComplex(NAComplex a, NAComplex b){
   NAComplex newcomplex = {
     a.re * b.re - a.im * b.im,
     a.re * b.im + a.im * b.re
@@ -159,7 +159,7 @@ NA_INLINE_API static NAComplex naMulComplexComplex(NAComplex a, NAComplex b){
 }
 
 
-NA_INLINE_API static NAComplex naDivComplexComplex(NAComplex a, NAComplex b){
+NA_INLINE_API NAComplex naDivComplexComplex(NAComplex a, NAComplex b){
   double divisor = naInv(naNormComplex(b));
   NAComplex newcomplex = {
     divisor * (a.re * b.re + a.im * b.im),
@@ -169,7 +169,7 @@ NA_INLINE_API static NAComplex naDivComplexComplex(NAComplex a, NAComplex b){
 }
 
 
-NA_INLINE_API static NAComplex naNegComplex(NAComplex a){
+NA_INLINE_API NAComplex naNegComplex(NAComplex a){
   NAComplex newcomplex = {
     -a.re,
     -a.im
@@ -178,7 +178,7 @@ NA_INLINE_API static NAComplex naNegComplex(NAComplex a){
 }
 
 
-NA_INLINE_API static NAComplex naInvComplex(NAComplex a){
+NA_INLINE_API NAComplex naInvComplex(NAComplex a){
   double divisor = naInv(naNormComplex(a));
   NAComplex newcomplex = {
     divisor * a.re,
@@ -188,7 +188,7 @@ NA_INLINE_API static NAComplex naInvComplex(NAComplex a){
 }
 
 
-NA_INLINE_API static NAComplex naConjComplex(NAComplex a){
+NA_INLINE_API NAComplex naConjComplex(NAComplex a){
   NAComplex newcomplex = {
     a.re,
     -a.im
@@ -197,22 +197,22 @@ NA_INLINE_API static NAComplex naConjComplex(NAComplex a){
 }
 
 
-NA_INLINE_API static double naNormComplex(NAComplex a){
+NA_INLINE_API double naNormComplex(NAComplex a){
   return a.re * a.re + a.im * a.im;
 }
 
 
-NA_INLINE_API static double naAbsComplex(NAComplex a){
+NA_INLINE_API double naAbsComplex(NAComplex a){
   return naSqrt(naNormComplex(a));
 }
 
 
-NA_INLINE_API static double naArgComplex(NAComplex a){
+NA_INLINE_API double naArgComplex(NAComplex a){
   return naAtan2(a.im, a.re);
 }
 
 
-NA_INLINE_API static NAComplex naExpComplex(NAComplex a){
+NA_INLINE_API NAComplex naExpComplex(NAComplex a){
   double exponent = naExp(a.re);
   NAComplex newcomplex = {
     exponent * naCos(a.im),
@@ -222,7 +222,7 @@ NA_INLINE_API static NAComplex naExpComplex(NAComplex a){
 }
 
 
-NA_INLINE_API static NAComplex naSinComplex(NAComplex a){
+NA_INLINE_API NAComplex naSinComplex(NAComplex a){
   double exponent1 = naExp(-a.im);
   double exponent2 = naExp(a.im);
   NAComplex newcomplex = {
@@ -233,7 +233,7 @@ NA_INLINE_API static NAComplex naSinComplex(NAComplex a){
 }
 
 
-NA_INLINE_API static NAComplex naCosComplex(NAComplex a){
+NA_INLINE_API NAComplex naCosComplex(NAComplex a){
   double exponent1 = naExp(-a.im);
   double exponent2 = naExp(a.im);
   NAComplex newcomplex = {

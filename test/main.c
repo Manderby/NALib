@@ -98,14 +98,14 @@ void printSystemTest(){
 //  printf("Little-Big-Endian-Conversion: %s\n", array8);
 //  printf("--------\n");
 //    
-//  naCreateEndiannessConverter(&endconv, NA_ENDIANNESS_NATIVE, NA_ENDIANNESS_BIG);
+//  endconv = naMakeEndiannessConverter(NA_ENDIANNESS_NATIVE, NA_ENDIANNESS_BIG);
 //  naSet32(array32, 'A','B','C','D');
 //  printf("Testing Dynamic converter Native to Big: %s", array32);
 //  endconv.convertArray32(array32, 1);
 //  printf(" -> %s\n", array32);
 //  naClearEndiannessConverter(&endconv);
 //  
-//  naCreateEndiannessConverter(&endconv, NA_ENDIANNESS_NATIVE, NA_ENDIANNESS_LITTLE);
+//  endconv = naMakeEndiannessConverter(NA_ENDIANNESS_NATIVE, NA_ENDIANNESS_LITTLE);
 //  naSet32(array32, 'A','B','C','D');
 //  printf("Testing Dynamic converter Native to Little: %s", array32);
 //  endconv.convertArray32(array32, 1);
@@ -269,19 +269,19 @@ void printSystemTest(){
 //  NAInt linenum = 0;
 //  printf("1\\n2\\r\\n\\n4\\r5 has lines:\n");
 //  string = naCreateStringWithUTF8CString(NULL, "abc\ndef\r\n\nghi\rjkl");
-//  linenum += naGetStringLine(token, string, NA_TRUE);
+//  linenum += naParseStringLine(token, string, NA_TRUE);
 //  naDecoupleString(token);
 //  printf(NA$INT": \"%s\"\n", linenum, naGetStringPrintfArgument(token));
-//  linenum += naGetStringLine(token, string, NA_TRUE);
+//  linenum += naParseStringLine(token, string, NA_TRUE);
 //  naDecoupleString(token);
 //  printf(NA$INT": \"%s\"\n", linenum, naGetStringPrintfArgument(token));
-//  linenum += naGetStringLine(token, string, NA_TRUE);
+//  linenum += naParseStringLine(token, string, NA_TRUE);
 //  naDecoupleString(token);
 //  printf(NA$INT": \"%s\"\n", linenum, naGetStringPrintfArgument(token));
-//  linenum += naGetStringLine(token, string, NA_TRUE);
+//  linenum += naParseStringLine(token, string, NA_TRUE);
 //  naDecoupleString(token);
 //  printf(NA$INT": \"%s\"\n", linenum, naGetStringPrintfArgument(token));
-//  linenum += naGetStringLine(token, string, NA_TRUE);
+//  linenum += naParseStringLine(token, string, NA_TRUE);
 //  naDecoupleString(token);
 //  printf(NA$INT": \"%s\"\n", linenum, naGetStringPrintfArgument(token));
 //  printf("Remaining string is empty: %s\n", na_boolean_strings[naIsStringEmpty(string)]);

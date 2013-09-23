@@ -84,6 +84,8 @@ NA_INLINE_API NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
 // completely untouched and will never be deleted, even if takeownership is
 // true.
 // There are two creation functions, one for const data and one for non-const.
+//
+// Use these functions to encapsulate your own raw buffers into an NAByteArray!
 NA_INLINE_API NAByteArray* naCreateByteArrayWithConstBuffer(
                                                 NAByteArray* array,
                                                  const void* buffer,

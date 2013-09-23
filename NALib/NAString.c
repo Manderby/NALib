@@ -51,14 +51,25 @@ NAString* naCreateStringWithFormat(NAString* string,
                            const NAUTF8Char* format,
                                              ...){
   va_list argumentlist;
-  va_list argumentlist2;
   va_start(argumentlist, format);
-  va_copy(argumentlist2, argumentlist);
-  NAInt strlen = naVarargStringSize(format, argumentlist);
-  naCreateStringWithSize(string, strlen);
-  naVsnprintf(naGetStringMutableUTF8Pointer(string), (size_t)(strlen+1), format, argumentlist2);
+  string = naCreateStringWithArguments(string, format, argumentlist);
   va_end(argumentlist);
+  return string;
+}
+
+
+NAString* naCreateStringWithArguments(NAString* string,
+                              const NAUTF8Char* format,
+                                        va_list argumentlist){
+  va_list argumentlist2;
+  va_list argumentlist3;
+  va_copy(argumentlist2, argumentlist);
+  va_copy(argumentlist3, argumentlist);
+  NAInt strlen = naVarargStringSize(format, argumentlist2);
+  naCreateStringWithSize(string, strlen);
+  naVsnprintf(naGetStringMutableUTF8Pointer(string), (size_t)(strlen+1), format, argumentlist3);
   va_end(argumentlist2);
+  va_end(argumentlist3);
   return string;
 }
 
@@ -358,7 +369,7 @@ void naSkipStringWhitespaces(NAString* string){
 
 
 
-NAInt naGetStringLine(NAString* line, NAString* string, NABool skipempty){
+NAInt naParseStringLine(NAString* line, NAString* string, NABool skipempty){
   NAString emptytest;
   NAInt numlines = 0;
   NAInt nextoffset = 0; // the start offset of the line after the current line
@@ -366,9 +377,9 @@ NAInt naGetStringLine(NAString* line, NAString* string, NABool skipempty){
   
   #ifndef NDEBUG
     if(!string)
-      naError("naGetStringLine", "string is Null-Pointer.");
+      naError("naParseStringLine", "string is Null-Pointer.");
     if(line == string)
-      naError("naGetStringLine", "line and string shall not be the same.");
+      naError("naParseStringLine", "line and string shall not be the same.");
   #endif
 
   if(!line){
@@ -397,7 +408,7 @@ NAInt naGetStringLine(NAString* line, NAString* string, NABool skipempty){
       if(escapesize){
         #ifndef NDEBUG
           if(escapesize < 0)
-            naError("naGetStringLine", "Internal Error: escapesize should not be negative.");
+            naError("naParseStringLine", "Internal Error: escapesize should not be negative.");
         #endif
         linesize += escapesize;
         charptr += escapesize;

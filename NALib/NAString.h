@@ -106,9 +106,9 @@ NAString* naCreateString(NAString* string);
 
 // Creates or fills a new String with the desired size and returns the
 // pointer. The internal storage will, after this creation, automatically have
-// a \0 at the end and therefore have a size of size+1. The programmer will
-// nontheless be presented with a usable string of the given size. The string
-// itself is marked as null-terminated.
+// a \0 at the end and therefore have a size of at least size+1. The programmer
+// will nontheless be presented with a usable string of the given size. The
+// string itself is marked as null-terminated.
 //
 // This function allocates storage-memory on the heap which will be freed
 // automatically when the string storage is no longer used.
@@ -126,6 +126,11 @@ NAString* naCreateStringWithUTF8CString(  NAString* string,
 NAString* naCreateStringWithFormat(NAString* string,
                            const NAUTF8Char* format,
                                              ...);
+// Does the same thing but with an existing va_list argument. The argumentlist
+// argument will not be altered by this function.
+NAString* naCreateStringWithArguments(NAString* string,
+                              const NAUTF8Char* format,
+                                        va_list argumentlist);
 
 // Fills deststring with a desired part of srcstring. Does not copy!
 // See naCreateByteArrayExtraction for an explanation of all arguments.
@@ -215,7 +220,7 @@ NAInt naGetStringCharacterEscapeSizeTowardsLeading( NAString* string,
 
 // naSkipStringWhitespaces searches from leading to trailing for the first char
 // which is > 32 (space) and adjusts offset and size accordingly. The string
-// might also empty after this function.
+// might be empty after this function.
 void naSkipStringWhitespaces(NAString* string);
 
 // Returns the next line delimited by CR, LF or CR-LF. The returned line will
@@ -226,7 +231,7 @@ void naSkipStringWhitespaces(NAString* string);
 // 1 when skipping empty lines. Will be 0 when the string is empty.
 // Warning: the two arguments shall not be the same as the result is
 // undefined.
-NAInt naGetStringLine(NAString* line, NAString* string, NABool skipempty);
+NAInt naParseStringLine(NAString* line, NAString* string, NABool skipempty);
 
 // Gathers the first token within string which is embraced by whitespaces.
 // The returned token will not have any leading or trailing whitespaces.
