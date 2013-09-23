@@ -308,21 +308,16 @@ void printStringTest(){
 }
 
 
-#define NA_START_GREGORIAN_PERIOD            (- NA_SECONDS_IN_NORMAL_YEAR - NA_SECONDS_IN_LEAP_YEAR - 13LL * NA_SECONDS_IN_4_YEAR_PERIOD - 4LL * NA_SECONDS_IN_NORMAL_YEAR - 3LL * NA_SECONDS_IN_100_YEAR_PERIOD - NA_SECONDS_PER_DAY - 4LL * NA_SECONDS_IN_4_YEAR_PERIOD - NA_SECONDS_IN_NORMAL_YEAR - (31LL+30LL+31LL-14LL) * NA_SECONDS_PER_DAY)
-// After julian Oct 4th 1582 directly comes gregorian Oct 15th 1582.
-// The year zero in astronomic year numbering. Equals year 1 BC.
-// This assumes the planned leap years by cesar.
-#define NA_YEAR_ZERO                         (NA_START_GREGORIAN_PERIOD - (31LL+31LL+30LL+4LL) * NA_SECONDS_PER_DAY - NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR - NA_SECONDS_IN_NORMAL_YEAR - NA_SECONDS_IN_LEAP_YEAR - 395LL * NA_SECONDS_IN_4_YEAR_PERIOD)
-#define NA_YEAR_ZERO_OF_GREGORIAN_PERIOD     (NA_START_GREGORIAN_PERIOD - (31LL+31LL+30LL+14LL) * NA_SECONDS_PER_DAY - NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR - NA_SECONDS_IN_NORMAL_YEAR - NA_SECONDS_IN_LEAP_YEAR - 19LL * NA_SECONDS_IN_4_YEAR_PERIOD - 4LL * NA_SECONDS_IN_NORMAL_YEAR - 3LL * NA_SECONDS_IN_100_YEAR_PERIOD - NA_SECONDS_PER_DAY - 3LL * NA_SECONDS_IN_400_YEAR_PERIOD)
-#define NA_GREG_SECONDS_TILL_BEGIN_1970    (3LL * NA_SECONDS_IN_4_YEAR_PERIOD)
-#define NA_GREG_SECONDS_SINCE_BEGIN_1601   (-NA_SECONDS_IN_NORMAL_YEAR - NA_SECONDS_IN_LEAP_YEAR - 13LL * NA_SECONDS_IN_4_YEAR_PERIOD - 4LL * NA_SECONDS_IN_NORMAL_YEAR - 2LL * NA_SECONDS_IN_100_YEAR_PERIOD - 24LL * NA_SECONDS_IN_4_YEAR_PERIOD - 3LL * NA_SECONDS_IN_NORMAL_YEAR)
-
 
 #include "../NALib/NADateTime.h"
 void printDateTimeTest(){
   NADateTime timer;
   NADateTime dt;
   NAString string;
+  NADateTimeStruct dts;
+  NADateTimeAttribute dta1;
+  NADateTimeAttribute dta2;
+  NABool errorfound = NA_FALSE;
   double timediff;
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     FILETIME filetime;
@@ -345,15 +340,24 @@ void printDateTimeTest(){
     naClearString(&string);
   #endif
 
-  dt.sisec = NA_GREG_SECONDS_SINCE_BEGIN_1601;
+  printf("Checking for Weekday computation errors...\n");
+  errorfound = NA_FALSE;
   dt.shift = 0;
-  naCreateStringWithDateTime(&string, &dt, NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT);
-  printf("Year Zero: %s\n", naGetStringConstUTF8Pointer(&string));
-  naClearString(&string);
-  dt.sisec = NA_GREG_SECONDS_SINCE_BEGIN_1601-1;
-  naCreateStringWithDateTime(&string, &dt, NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT);
-  printf("Year Zero: %s\n", naGetStringConstUTF8Pointer(&string));
-  naClearString(&string);
+  dt.sisec = -10LL * NA_SECONDS_IN_400_YEAR_PERIOD;
+  naExtractDateTimeInformation(&dt, &dts, &dta1);
+  for(dt.sisec = dt.sisec; dt.sisec < NA_SECONDS_IN_400_YEAR_PERIOD; dt.sisec += 11LL * NA_SECONDS_PER_HOUR){
+    naExtractDateTimeInformation(&dt, &dts, &dta2);
+    if((dta2.dayofyear != dta1.dayofyear) && (dta2.weekday != (dta1.weekday + 1) % 7)){
+      naCreateStringWithDateTime(&string, &dt, NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT);
+      printf("Weekday error: %s\n", naGetStringConstUTF8Pointer(&string));
+      naClearString(&string);
+      errorfound = NA_TRUE;
+    }
+    dta1 = dta2;
+  }
+  if(!errorfound){
+    printf("No errors found.\n");
+  }
 
   printf("Sleeping for 150 Milliseconds...\n");
   naSleepM(150);

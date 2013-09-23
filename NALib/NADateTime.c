@@ -924,7 +924,11 @@ void naExtractDateTimeInformation(const NADateTime* datetime,
     mon = dts->mon + 1;
     if(mon<3){mon+=12; y--;}
     K = (((y % 100) + 100) % 100);
-    J = (y / 100);
+    if(y<0){
+      J = ((y+1) / 100);
+    }else{
+      J = (y / 100);
+    }
     if(y<0){J--;}
     if((datetime->sisec + (dts->shift * NA_SECONDS_PER_MINUTE)) < NA_START_GREGORIAN_PERIOD){
       // Julian weedkday computation
