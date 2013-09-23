@@ -321,6 +321,8 @@ void printDateTimeTest(){
   double timediff;
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     FILETIME filetime;
+  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+    struct timespec timesp;
   #endif
 
   printf("Starting timer.\n");
@@ -337,6 +339,13 @@ void printDateTimeTest(){
     dt = naMakeDateTimeFromFileTime(&filetime, NA_NULL);
     naCreateStringWithDateTime(&string, &dt, NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT);
     printf("Windows zero date: %s\n", naGetStringConstUTF8Pointer(&string));
+    naClearString(&string);
+  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+    timesp.tv_nsec = 0;
+    timesp.tv_sec = 0;
+    dt = naMakeDateTimeFromTimeSpec(&timesp, NA_NULL);
+    naCreateStringWithDateTime(&string, &dt, NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT);
+    printf("Mac zero date: %s\n", naGetStringConstUTF8Pointer(&string));
     naClearString(&string);
   #endif
 
@@ -369,6 +378,8 @@ void printDateTimeTest(){
 
   printf("=======\n\n");
 }
+
+
 
 int main(int argc, const char * argv[]){
 
