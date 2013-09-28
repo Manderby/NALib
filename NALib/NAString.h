@@ -26,12 +26,23 @@
 #endif
 typedef char NAUTF8Char;
 
+
+// The tabs and newlines used on different systems. The native newline argument
+// NA$NL will be defined below.
+#define NA$NL_UNIX  "\n"
+#define NA$NL_MAC9  "\r"
+#define NA$NL_WIN   "\r\n"
+#define NA$TAB      "\t"
+
+
 // System dependant mapping of string functions and macros
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   #include "windows.h"
-  typedef WCHAR SystemChar;
+  typedef WCHAR SystemChar; // todo: must be dependant on predefined macro.
+  #define NA$NL NL_WIN
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
   // typedef short SystemChar;  // unused at the moment
+  #define NA$NL NL_UNIX
 #else
 #endif
 
@@ -39,13 +50,13 @@ typedef char NAUTF8Char;
 
 // Mapping of standard library functions. They can be different depending on
 // the system compiled.
-NA_INLINE_API NAInt naStrlen(           const NAUTF8Char* str);
-NA_INLINE_API NAInt naVsnprintf(              NAUTF8Char* buffer,
-                                                    NAInt size,
-                                        const NAUTF8Char* newstr,
-                                                  va_list argumentlist);
-NA_INLINE_API NAInt naVarargStringSize( const NAUTF8Char* string,
-                                                  va_list args);
+NA_IAPI NAInt naStrlen(           const NAUTF8Char* str);
+NA_IAPI NAInt naVsnprintf(              NAUTF8Char* buffer,
+                                              NAInt size,
+                                  const NAUTF8Char* newstr,
+                                            va_list argumentlist);
+NA_IAPI NAInt naVarargStringSize( const NAUTF8Char* string,
+                                            va_list args);
 
 
 
@@ -360,15 +371,15 @@ NABool naIsStringEqualToUTF8Pointer(const NAString* string,
 // Inline Implementations: See readme file for more expanation.
 // ///////////////////////////////////////////////////////////////////////
 
-NA_INLINE_API NAInt naStrlen(const NAUTF8Char* str){
+NA_IAPI NAInt naStrlen(const NAUTF8Char* str){
   return (NAInt)strlen((const char*)str);
 }
 
 
-NA_INLINE_API NAInt naVsnprintf(  NAUTF8Char* buffer,
-                                      NAInt size,
-                                      const NAUTF8Char *newstr,
-                                    va_list argumentlist){
+NA_IAPI NAInt naVsnprintf(  NAUTF8Char* buffer,
+                                  NAInt size,
+                      const NAUTF8Char *newstr,
+                                va_list argumentlist){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return (NAInt)_vsnprintf_s(buffer, (size_t)size, (size_t)size, newstr, argumentlist);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
@@ -377,7 +388,7 @@ NA_INLINE_API NAInt naVsnprintf(  NAUTF8Char* buffer,
 }
 
 
-NA_INLINE_API NAInt naVarargStringSize(const NAUTF8Char* string, va_list args){
+NA_IAPI NAInt naVarargStringSize(const NAUTF8Char* string, va_list args){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return (NAInt)_vscprintf(string, args);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X

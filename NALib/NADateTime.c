@@ -9,10 +9,10 @@
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   #include <time.h>
-  NA_INLINE_API void Localtime(struct tm* storage, const time_t* time){localtime_s(storage, time);}
+  NA_IAPI void Localtime(struct tm* storage, const time_t* time){localtime_s(storage, time);}
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
   #include <sys/time.h>
-  NA_INLINE_API void Localtime(struct tm* storage, const time_t* time){localtime_r(time, storage);}
+  NA_IAPI void Localtime(struct tm* storage, const time_t* time){localtime_r(time, storage);}
 #else
   #warning "System undefined"
 #endif
@@ -503,21 +503,6 @@ NADateTime naCreateDateTimeFromPointer(  NADateTime* datetime,
   return naMakeDateTimeWithDateTimeStruct(&dts);
 }
 
-
-
-
-void naClearDateTime(NADateTime* datetime){
-  #ifndef NDEBUG
-    if(!datetime)
-      {naCrash("naClearDateTime", "datetime is Null-Pointer."); return;}
-  #endif
-}
-
-
-void naDestroyDateTime(NADateTime* datetime){
-  naClearDateTime(datetime);
-  free(datetime);
-}
 
 
 

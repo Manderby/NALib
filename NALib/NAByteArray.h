@@ -49,7 +49,7 @@ struct NAByteArray{
 // Creates or fills a new, EMPTY ByteArray and returns the pointer to the
 // NAByteArray struct. Other than the struct itself, no additional memory will
 // be allocated.
-NA_INLINE_API NAByteArray* naCreateByteArray(NAByteArray* array);
+NA_IAPI NAByteArray* naCreateByteArray(NAByteArray* array);
 
 // Creates or fills a new ByteArray with the desired size and returns the
 // pointer. Allocates memory on the heap which will be freed automatically when
@@ -72,8 +72,8 @@ NA_INLINE_API NAByteArray* naCreateByteArray(NAByteArray* array);
 // be used for example for sentinels in pointer arrays. There, with negative
 // size, it is safe to read past the end of an array as you can be sure that
 // at least one pointer size after the array is filled with binary zero.
-NA_INLINE_API NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
-                                                               NAInt size);
+NA_IAPI NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
+                                                      NAInt size);
 
 // Creates or fills a new ByteArray which contains the data of the given
 // buffer WITHOUT copying. The size denotes the size of the buffer in bytes.
@@ -86,12 +86,11 @@ NA_INLINE_API NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
 // There are two creation functions, one for const data and one for non-const.
 //
 // Use these functions to encapsulate your own raw buffers into an NAByteArray!
-NA_INLINE_API NAByteArray* naCreateByteArrayWithConstBuffer(
+NA_IAPI NAByteArray* naCreateByteArrayWithConstBuffer(
                                                 NAByteArray* array,
                                                  const void* buffer,
-                                                       NAInt size,
-                                                      NABool takeownership);
-NA_INLINE_API NAByteArray* naCreateByteArrayWithMutableBuffer(
+                                                       NAInt size);
+NA_IAPI NAByteArray* naCreateByteArrayWithMutableBuffer(
                                                 NAByteArray* array,
                                                        void* buffer,
                                                        NAInt size,
@@ -133,15 +132,15 @@ NA_INLINE_API NAByteArray* naCreateByteArrayWithMutableBuffer(
 //
 // Warning: srcarray may be const but if dstarray ist the same as  srcarray,
 // srcarray may nontheless be altered!!!
-NA_INLINE_API NAByteArray* naCreateByteArrayExtraction(NAByteArray* dstarray,
-                                                    const NAByteArray* srcarray,
-                                                                 NAInt offset,
-                                                                 NAInt size);
+NA_IAPI NAByteArray* naCreateByteArrayExtraction( NAByteArray* dstarray,
+                                            const NAByteArray* srcarray,
+                                                         NAInt offset,
+                                                         NAInt size);
 
 // Clears or Deletes the given array. Any previously used storage is detached.
 // When the storage is no longer used, it gets deleted automatically.
-NA_INLINE_API void naClearByteArray  (NAByteArray* array);
-NA_INLINE_API void naDestroyByteArray(NAByteArray* array);
+NA_IAPI void naClearByteArray  (NAByteArray* array);
+NA_IAPI void naDestroyByteArray(NAByteArray* array);
 
 // COPIES the contents of the array to a separate storage and decouples it
 // from the existing storage. When the existing storage is no longer used, it
@@ -154,15 +153,13 @@ NA_INLINE_API void naDestroyByteArray(NAByteArray* array);
 // of the original array.
 //
 // COPIES ALWAYS!
-NA_INLINE_API void naDecoupleByteArray(NAByteArray* array,
-                                                NABool appendzerobytes);
+NA_IAPI void naDecoupleByteArray(NAByteArray* array,
+                                       NABool appendzerobytes);
 
 // Returns a pointer to the very first byte of the raw data array. Warning:
 // result is garbage if the array is empty. Notice: This function is speedy.
-NA_INLINE_API const NAByte* naGetByteArrayConstPointer  (
-                                                    const NAByteArray* array);
-NA_INLINE_API       NAByte* naGetByteArrayMutablePointer(
-                                                          NAByteArray* array);
+NA_IAPI const NAByte* naGetByteArrayConstPointer  (const NAByteArray* array);
+NA_IAPI       NAByte* naGetByteArrayMutablePointer(      NAByteArray* array);
 
 // Returns a POINTER to the byte at the given index. If index is negative, it
 // is searched from the end of the array. For example -1 denotes the last byte.
@@ -170,16 +167,16 @@ NA_INLINE_API       NAByte* naGetByteArrayMutablePointer(
 // Note that calling this function too often might not be a good idea with
 // respect to speed. Try getting a pointer using naGetByteArrayPointer or this
 // function and use pointer arithmetic afterwards.
-NA_INLINE_API const NAByte* naGetByteArrayConstByte  (const NAByteArray* array,
-                                                            NAInt index);
-NA_INLINE_API       NAByte* naGetByteArrayMutableByte(      NAByteArray* array,
-                                                            NAInt index);
+NA_IAPI const NAByte* naGetByteArrayConstByte  (const NAByteArray* array,
+                                                             NAInt index);
+NA_IAPI       NAByte* naGetByteArrayMutableByte(      NAByteArray* array,
+                                                             NAInt index);
 
 // Returns the number of bytes in this array.
-NA_INLINE_API NAInt naGetByteArraySize(const NAByteArray* array);
+NA_IAPI NAInt naGetByteArraySize(const NAByteArray* array);
 
 // Returns true if the array is empty.
-NA_INLINE_API NABool naIsByteArrayEmpty(const NAByteArray* array);
+NA_IAPI NABool naIsByteArrayEmpty(const NAByteArray* array);
 
 
 
@@ -204,15 +201,15 @@ NA_INLINE_API NABool naIsByteArrayEmpty(const NAByteArray* array);
 
 
 
-NA_INLINE_API NAByteArray* naCreateByteArray(NAByteArray* array){
+NA_IAPI NAByteArray* naCreateByteArray(NAByteArray* array){
   array = (NAByteArray*)naAllocateIfNull(array, sizeof(NAByteArray));
   naNulli(&(array->size));
   return array;
 }
 
 
-NA_INLINE_API NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
-                                                               NAInt size){
+NA_IAPI NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
+                                                      NAInt size){
   NAInt addsize;
   if(!size){  // if size is zero
     array = naCreateByteArray(array);
@@ -252,7 +249,7 @@ NA_INLINE_API NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
 
 
 
-NA_INLINE_API NAByteArray* naCreateByteArrayWithMutableBuffer(
+NA_IAPI NAByteArray* naCreateByteArrayWithMutableBuffer(
                                                 NAByteArray* array,
                                                        void* buffer,
                                                        NAInt size,
@@ -280,11 +277,10 @@ NA_INLINE_API NAByteArray* naCreateByteArrayWithMutableBuffer(
 
 
 
-NA_INLINE_API NAByteArray* naCreateByteArrayWithConstBuffer(
+NA_IAPI NAByteArray* naCreateByteArrayWithConstBuffer(
                                                 NAByteArray* array,
                                                  const void* buffer,
-                                                       NAInt size,
-                                                      NABool takeownership){
+                                                       NAInt size){
   #ifndef NDEBUG
     if(size < 0)
       naError("naCreateByteArrayWithConstBuffer", "size is negative.");
@@ -292,14 +288,10 @@ NA_INLINE_API NAByteArray* naCreateByteArrayWithConstBuffer(
       naError("naCreateByteArrayWithConstBuffer", "buffer is Null-Pointer.");
   #endif
   if(!size){  // if size is zero
-    #ifndef NDEBUG
-      if(takeownership)
-        naError("naCreateByteArrayWithConstBuffer", "Can not take ownership of buffer with size 0.");
-    #endif
     array = naCreateByteArray(array);
   }else{
     array = (NAByteArray*)naAllocateIfNull(array, sizeof(NAByteArray));
-    array->storage = naCreatePointerWithConstBuffer(NA_NULL, buffer, takeownership);
+    array->storage = naCreatePointerWithConstBuffer(NA_NULL, buffer);
     array->ptr.constp = (const NAByte*)naGetPointerConstData(array->storage);
     array->size = size;
   }
@@ -310,7 +302,7 @@ NA_INLINE_API NAByteArray* naCreateByteArrayWithConstBuffer(
 
 
 
-NA_INLINE_API NAByteArray* naCreateByteArrayExtraction(
+NA_IAPI NAByteArray* naCreateByteArrayExtraction(
                                           NAByteArray* dstarray,
                                     const NAByteArray* srcarray,
                                                  NAInt offset,
@@ -393,7 +385,7 @@ NA_INLINE_API NAByteArray* naCreateByteArrayExtraction(
 
 
 
-NA_INLINE_API void naClearByteArray(NAByteArray* array){
+NA_IAPI void naClearByteArray(NAByteArray* array){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naClearByteArray", "array is Null-Pointer."); return;}
@@ -402,15 +394,15 @@ NA_INLINE_API void naClearByteArray(NAByteArray* array){
 }
 
 
-NA_INLINE_API void naDestroyByteArray(NAByteArray* array){
+NA_IAPI void naDestroyByteArray(NAByteArray* array){
   naClearByteArray(array);
   free(array);
 }
 
 
 
-NA_INLINE_API void naDecoupleByteArray(NAByteArray* array,
-                                                NABool appendzerobytes){
+NA_IAPI void naDecoupleByteArray(NAByteArray* array,
+                                       NABool appendzerobytes){
   // Declaration before implementation. Needed for C90.
   NAInt arraysize;
   NAByteArray* newarray;
@@ -436,7 +428,7 @@ NA_INLINE_API void naDecoupleByteArray(NAByteArray* array,
 
 
 
-NA_INLINE_API const NAByte* naGetByteArrayConstPointer(const NAByteArray* array){
+NA_IAPI const NAByte* naGetByteArrayConstPointer(const NAByteArray* array){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naGetByteArrayConstPointer", "array is Null-Pointer."); return NA_NULL;}
@@ -446,7 +438,7 @@ NA_INLINE_API const NAByte* naGetByteArrayConstPointer(const NAByteArray* array)
   return array->ptr.constp;
 }
 
-NA_INLINE_API NAByte* naGetByteArrayMutablePointer(NAByteArray* array){
+NA_IAPI NAByte* naGetByteArrayMutablePointer(NAByteArray* array){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naGetByteArrayPointer", "array is Null-Pointer."); return NA_NULL;}
@@ -459,7 +451,7 @@ NA_INLINE_API NAByte* naGetByteArrayMutablePointer(NAByteArray* array){
 
 
 
-NA_INLINE_API NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt index){
+NA_IAPI NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt index){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naGetByteArrayByte", "array is Null-Pointer."); return NA_NULL;}
@@ -474,7 +466,8 @@ NA_INLINE_API NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt index)
   return &(array->ptr.p[index]);
 }
 
-NA_INLINE_API const NAByte* naGetByteArrayConstByte(const NAByteArray* array, NAInt index){
+NA_IAPI const NAByte* naGetByteArrayConstByte(const NAByteArray* array,
+                                                           NAInt index){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naGetByteArrayConstByte", "array is Null-Pointer."); return NA_NULL;}
@@ -491,7 +484,7 @@ NA_INLINE_API const NAByte* naGetByteArrayConstByte(const NAByteArray* array, NA
 
 
 
-NA_INLINE_API NAInt naGetByteArraySize(const NAByteArray* array){
+NA_IAPI NAInt naGetByteArraySize(const NAByteArray* array){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naGetByteArraySize", "array is Null-Pointer."); return 0;}
@@ -502,7 +495,7 @@ NA_INLINE_API NAInt naGetByteArraySize(const NAByteArray* array){
 }
 
 
-NA_INLINE_API NABool naIsByteArrayEmpty(const NAByteArray* array){
+NA_IAPI NABool naIsByteArrayEmpty(const NAByteArray* array){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naIsByteArrayEmpty", "array is Null-Pointer."); return 0;}

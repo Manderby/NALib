@@ -31,7 +31,7 @@
 /* Begin PBXFileReference section */
 		B9432B5D17E5BF5A0075F638 /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
 		B98DFBAB17F0CF9A007A62E7 /* NAArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAArray.h; sourceTree = "<group>"; };
-		B98DFBAC17F0CF9A007A62E7 /* NABinaryData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NABinaryData.h; sourceTree = "<group>"; };
+		B98DFBAC17F0CF9A007A62E7 /* NABinaryData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = NABinaryData.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		B98DFBAD17F0CF9A007A62E7 /* NABitArray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NABitArray.c; sourceTree = "<group>"; };
 		B98DFBAE17F0CF9A007A62E7 /* NABitArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NABitArray.h; sourceTree = "<group>"; };
 		B98DFBAF17F0CF9A007A62E7 /* NAByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAByteArray.h; sourceTree = "<group>"; };
@@ -54,6 +54,8 @@
 		B98DFBC017F0CF9A007A62E7 /* NASystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NASystem.h; sourceTree = "<group>"; };
 		B9B2EA121716922700943D91 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9B2EA151716922700943D91 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		B9CFBED217F2E21500AEC7CC /* NAVectorAlgebra.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAVectorAlgebra.h; sourceTree = "<group>"; };
+		B9CFBED317F3EBDE00AEC7CC /* NARandom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NARandom.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +90,8 @@
 				B98DFBBA17F0CF9A007A62E7 /* NAMathOperators.h */,
 				B98DFBBB17F0CF9A007A62E7 /* NAPointer.h */,
 				B98DFBBC17F0CF9A007A62E7 /* NARange.h */,
+				B9CFBED217F2E21500AEC7CC /* NAVectorAlgebra.h */,
+				B9CFBED317F3EBDE00AEC7CC /* NARandom.h */,
 				B98DFBBD17F0CF9A007A62E7 /* NAString.c */,
 				B98DFBBE17F0CF9A007A62E7 /* NAString.h */,
 				B98DFBBF17F0CF9A007A62E7 /* NASystem.c */,

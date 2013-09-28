@@ -11,7 +11,7 @@
 
 // The version of this very distribution. No sub-version or build number or
 // whatever. Just one single number.
-#define NA_LIB_VERSION 1
+#define NA_LIB_VERSION 2
 
 // The various Systems:
 #define NA_SYSTEM_MAC_OS_X  0
@@ -29,7 +29,8 @@
 // type NAInt. Unfortunately, these macros can not be defined as enums.
 
 
-// ASCII-Strings for the macros above. Defined in the implementation file
+// UTF8-Strings for the macros above and a boolean type (defined later in this
+// file). The variables are defined in the implementation file NASystem.c
 extern const char* na_system_strings[NA_SYSTEM_COUNT];
 extern const char* na_endianness_strings[NA_ENDIANNESS_COUNT];
 extern const char* na_boolean_strings[2];
@@ -37,7 +38,18 @@ extern const char* na_boolean_strings[2];
 
 
 // //////////////////////////////////////////
-// Try to figure out what system this is.
+// Preprocessor directives to figure out what system this is.
+//
+// Currently, there are two system configurations assumed:
+// - Mac OS X with GCC or Clang
+// - Windows with Microsoft Visual Studio compiler
+//
+// Note that the author is completely aware that the system is not bound to
+// a specific compiler. But these combinations are the ones having been used
+// during the last 10 Years by the author both for hobby and job.
+//
+// In the future, there might be more or different macros
+//
 // //////////////////////////////////////////
 
 // Interesting read: http://sourceforge.net/p/predef/wiki/OperatingSystems/
@@ -96,8 +108,8 @@ extern const char* na_boolean_strings[2];
 // other methods to define the exporting in external files.
 //
 // Usually, the NA_HIDDEN macro is not visible to the end user as it will
-// only be used on hidden parts (seem legit, doesn't it?). And as NALib does
-// not have any hidden parts, it is just listed here for reference.
+// only be used on hidden parts (seem legit, doesn't it?). But as NALib has
+// no need to hide code, it is listed here.
 //
 // NA_API too is just here for explanation. It is not used in NALib, as it is
 // not available as a library. Hence its name: NALib = Not A Library.
@@ -119,11 +131,12 @@ extern const char* na_boolean_strings[2];
 #else
 #endif
 
-#define NA_INLINE_API   static NA_INLINE
+
 // This function-signature prefix is used for all functions which are intended
-// for public use and shall preferably be inlined. Note that inline functions
-// must be visible at compile time and do not need a visibility attribute.
-//
+// for public use and shall preferably be inlined. IAPI is short for INLINE_API.
+// Note that inline functions must be visible at compile time and do not need
+// a visibility attribute.
+#define NA_IAPI   static NA_INLINE
 // Note that inline functions are automatically declared static. This might
 // slightly increase the file size but safes a lot of trouble and makes the
 // source code more readable.
@@ -131,8 +144,8 @@ extern const char* na_boolean_strings[2];
 // Also note that usually, the inline keyword should only be used at the
 // definition, not at the declaration where it should be ignored.
 // Nontheless, there are some situations where the compiler gets confused and
-// assumes a non-inlined function. When always declaring public functions as
-// inline, even at the declaration, this can not happen.
+// assumes a non-inlined function. When inline functions always get declared as
+// inline, this can not happen.
 
 
 
@@ -143,13 +156,17 @@ extern const char* na_boolean_strings[2];
 // We test if the current system has a (positive) integer encoding suitable for
 // NALib
 #if (0x10 >> 4) != 0x01
-  #warning "Unknown integer number encoding. Unknown if NALib will compile or run."
+  #warning "Unknown integer number encoding. NALib might not compile or run."
 #endif
 
-// We test what encoding is used for negative integers.
+// We test what encoding is used for negative integers. With this knowledge,
+// certain tasks might be speeded up a bit.
 #if (-1 & 3) == 3
   #define NA_SIGNED_INTEGER_USES_TWOS_COMPLEMENT
-  // This macro will speed some basic things up
+#elif (-1 & 3) == 2
+  #define NA_SIGNED_INTEGER_USES_ONES_COMPLEMENT
+#elif (-1 & 3) == 1
+  #define NA_SIGNED_INTEGER_USES_SIGN_MAGNITUDE
 #else
   #warning "Invalid signed integer encoding. NALib might not work properly."
 #endif
@@ -212,20 +229,26 @@ extern const char* na_boolean_strings[2];
 // Other Basic types used in NALib
 // ////////////////////////////////////
 
-// A NAByte is a type definition of a Byte.
+// An NAByte is a type definition of a Byte.
 // Defining an NAByte as an unsigned char (uint8) can be very handy. In NALib,
-// The NAByte type is often used when a memory block needs to be accessed byte
+// the NAByte type is often used when a memory block needs to be accessed byte
 // by byte. You could also use a void-pointer for that but void-pointers are
-// sometimes just a little too cumbersome to work with. Furthermore, a pointer
-// to an uint8 can be displayed by a debugger while a pointer to void can not.
+// sometimes just a little too cumbersome to work with and do not always have
+// a size defined depending on the standard used. Furthermore, a pointer to an
+// uint8 can be displayed by a debugger while a pointer to void can not.
 typedef uint8     NAByte;
 
+// NAInt
 // The NAInt type is an integer of the size which is needed for storing an
 // address. This means that this type is dependent on the system NALib is
 // compiled for. It can for example be 32 Bits on one and 64 Bits on another
 // architecture.
 //
-// Note that the NAInt type is signed! This means that for example in
+// NAInt will be used as the default integer type in NALib. Many fundamental
+// functions will return NAInt or expect it as an argument. Note that the NAInt
+// type is signed!
+//
+// As NAInt is also used by memory and array functions, this means that in
 // 32-Bit systems, only about 2 billion entries can be accessed with arrays
 // when using NALib. The author is perfectly aware of the fact that most
 // standard library functions use an unsigned integer for size_t, and that
@@ -241,11 +264,14 @@ typedef uint8     NAByte;
 // In addition to the type, there is the definition of a printf-argument macro.
 // This macro contains a dollar $ which in C and C++ is interpreted as a
 // symbol character. Although the dollar sign is not well known amongst C
-// programs, the author thinks it is a nice touch for a printf argument.
-// The other possibility would be to define something like NA_INT_ARG, which is
-// rather long. Use the macro for example like this:
+// programs and programmers don't usually like it, the author thinks it is a
+// nice touch for a printf argument. The other possibility would be to define
+// something like NA_INT_ARG, which is rather long. Some more printf arguments
+// can be found in the NAString.h header file. Use the macro for example
+// like this:
 //
-// printf("The array has " NA$INT " entries.", naGetArrayCount(array));
+// printf("The array has " NA$INT " entries." NA$NL, naGetArrayCount(array));
+//
 //
 // One serious drawback of a system-dependent definition is that NALib might
 // behave differently depending on the system it is compiled for. But it will
@@ -277,8 +303,10 @@ typedef uint8     NAByte;
 //
 // If void* is used plainly as a pointer to an untyped address, the author
 // thinks that it is best to just write void*, not some abscure type name.
+// Therefore, you won't find any type definition of NAVoid here.
 
 
+// NABool
 // Note that in NALib, the definition of NABool is explicitely set to "int" and
 // not char or unsigned char or not even NAInt. Just plain old "int".
 // This is unusual but most probably the easiest way to tell the compiler to 
@@ -299,7 +327,7 @@ typedef int NABool;
 
 // The definition of NA_NULL is usually set to the NA_NULL found in stdlib. The
 // new C11 standard however has a new keyword. Let's use it if it is available!
-// Note that stdlib is needed anyway for malloc free, exit which is needed
+// Note that stdlib is needed anyway for malloc, free and exit which is needed
 // later in the code.
 //
 // Also note that in the comments of NALib as well as in the error messages,
@@ -325,7 +353,20 @@ typedef int NABool;
 // the performance more or less considerably. If NDEBUG is defined however,
 // no tests are performed whatsoever.
 //
-// Note that all tests will emit errors on sterr in the following format:
+// When it comes to debugging, the macro NDEBUG is the only one being somewhat
+// standardized across all systems and compilers. It literally tells the
+// compiler to NOT-DEBUG, which means: When the macro is undefined, code
+// encapsulated in #ifndef NDEBUG will be compiled, otherwise not.
+//
+// Usually in IDEs (Integrated Development Environments), there are at least
+// two configurations per application: Debug and Release, sometimes also called
+// Development and Deployment. The Release-Configuration usually automatically
+// has the NDEBUG macro defined as a preprocessor build option. Not every IDE
+// does this by default though, so you might have to add it manually to the
+// build options.
+//
+// Note that all tests performed by code encapsulated by #ifndef NDEBUG will
+// emit errors on sterr in the following format:
 // Function_name: Errormessage\n
 // Therefore, a programmer can simply set a breakpoint in the denoted function
 // and start debugging.
@@ -340,17 +381,17 @@ typedef int NABool;
 
   // Prints an error. When this function gets called, the ongoing of the
   // application is undefined. Sometimes, the error might affect everything
-  // which comes after it, including crashing the application, sometimes, the
-  // error will just result in a NaN or even be corrected automatically.
-  // Nontheless, any error should be considered a potential risk for the
-  // application to eventually crash.
+  // which comes after it, sometimes, the  error will just result in a NaN or
+  // even be corrected automatically. Nontheless, any error should be
+  // considered a potential risk for the application to eventually crash.
   void naError(const char* functionsymbol, const char* message);
 
 
   // Prints a crash message.
   // This function is used when the application experiences a critical error
   // like dereferencing an invalid pointer. The application will almost
-  // certainly crash somewhen after this function call.
+  // certainly crash few steps after this function call. Have a look at the
+  // implementation if you want to crash deliberately.
   void naCrash(const char* functionsymbol, const char* message);
 
 #endif

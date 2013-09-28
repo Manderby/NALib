@@ -42,23 +42,23 @@
 #define NA_SQRT2l          1.41421356237309504880168872421L
 
 // Natural Logarithm of 2.
-// Used on systems which do not defined naLog2 natively.
-#define NA_LOGOF2f         0.693147180559945309417232121458f
-#define NA_LOGOF2          0.693147180559945309417232121458
-#define NA_LOGOF2l         0.693147180559945309417232121458L
+// Used on systems which do not define log2 natively.
+#define NA_INV_LOGOF2f     1.44269504088896340735992468100f
+#define NA_INV_LOGOF2      1.44269504088896340735992468100
+#define NA_INV_LOGOF2l     1.44269504088896340735992468100L
 
 // Natural Logarithm of 10.
-// Used on systems which do not defined naLog10 natively.
-#define NA_LOGOF10f        2.30258509299404568401799145468f
-#define NA_LOGOF10         2.30258509299404568401799145468
-#define NA_LOGOF10l        2.30258509299404568401799145468L
+// Used on systems which do not defined log10 natively.
+#define NA_INV_LOGOF10f    0.434294481903251827651128918917f
+#define NA_INV_LOGOF10     0.434294481903251827651128918917
+#define NA_INV_LOGOF10l    0.434294481903251827651128918917L
 
 // The smaller part of the golden ratio
 #define NA_GOLD_RATIOf     0.38196601125010515179541316563f
 #define NA_GOLD_RATIO      0.38196601125010515179541316563
 #define NA_GOLD_RATIOl     0.38196601125010515179541316563L
 
-// The gigger part of the golden ratio
+// The bigger part of the golden ratio
 #define NA_GOLD_RATIO_BIGf 0.618033988749894848204586834370f
 #define NA_GOLD_RATIO_BIG  0.618033988749894848204586834370
 #define NA_GOLD_RATIO_BIGl 0.618033988749894848204586834370L
@@ -99,7 +99,7 @@
   #define NA_INFINITYl       ((long double)INFINITY)
 #endif
 
-// The singularity is a very small number which corresponds to 10 times the
+// NA_SINGULARITY is a very small number which corresponds to 10 times the
 // smallest decimal digit accurately distinguishable by the corresponding
 // floating-point-type. This is different than the machine-epsilon, found in
 // the <float.h> or <cfloat> header files and has been useful to the author

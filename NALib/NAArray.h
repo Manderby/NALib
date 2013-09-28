@@ -42,31 +42,31 @@ struct NAArray{
 // ///////////////////////////
 
 // Creates an EMPTY array.
-NA_INLINE_API NAArray* naCreateArray(NAArray* array);
+NA_IAPI NAArray* naCreateArray(NAArray* array);
 
 // Creates or fills a new array with a given typesize in bytes and a count.
-NA_INLINE_API NAArray* naCreateArrayWithCount  (NAArray* array,
-                                            NAInt typesize,
-                                            NAInt count);
+NA_IAPI NAArray* naCreateArrayWithCount  (NAArray* array,
+                                             NAInt typesize,
+                                             NAInt count);
 
 // Fills dstarray with a desired part of srcarray.
 // See naCreateByteArrayExtraction for the explanation of all arguments.
-NA_INLINE_API NAArray* naCreateArrayExtraction( NAArray* dstarray,
-                                         NAArray* srcarray,
-                                            NAInt offset,
-                                            NAInt count);
+NA_IAPI NAArray* naCreateArrayExtraction( NAArray* dstarray,
+                                          NAArray* srcarray,
+                                             NAInt offset,
+                                             NAInt count);
 
 
 // Clears or destroys the given array.
-NA_INLINE_API void naClearArray  (NAArray* array);
-NA_INLINE_API void naDestroyArray(NAArray* array);
+NA_IAPI void naClearArray  (NAArray* array);
+NA_IAPI void naDestroyArray(NAArray* array);
 
 
 
 // Returns the pointer to the desired element. Note that if the array stores
 // pointers, this function will return a pointer to a pointer.
-NA_INLINE_API const void* naGetArrayConstElement  (const NAArray* array, NAInt index);
-NA_INLINE_API void*       naGetArrayMutableElement(      NAArray* array, NAInt index);
+NA_IAPI const void* naGetArrayConstElement  (const NAArray* array, NAInt index);
+NA_IAPI void*       naGetArrayMutableElement(      NAArray* array, NAInt index);
 
 // Returns the number of elements in this array. Beware: This is different
 // from naGetByteArraySize. The size returned by naGetByteArraySize is a size
@@ -74,7 +74,7 @@ NA_INLINE_API void*       naGetArrayMutableElement(      NAArray* array, NAInt i
 // Also note that this function requires a (costly) division operation. When
 // using it a lot, for example in a loop, it might be a good idea to store the
 // count in a variable.
-NA_INLINE_API NAInt naGetArrayCount(NAArray* array);
+NA_IAPI NAInt naGetArrayCount(NAArray* array);
 
 
 
@@ -96,7 +96,7 @@ NA_INLINE_API NAInt naGetArrayCount(NAArray* array);
 // Inline Implementations: See readme file for more expanation.
 // ///////////////////////////////////////////////////////////////////////
 
-NA_INLINE_API NAArray* naCreateArray(NAArray* array){
+NA_IAPI NAArray* naCreateArray(NAArray* array){
   array = naAllocateIfNull(array, sizeof(NAArray));
   naCreateByteArray(&(array->bytearray));
   naOnei(&(array->typesize));
@@ -104,9 +104,9 @@ NA_INLINE_API NAArray* naCreateArray(NAArray* array){
 }
 
 
-NA_INLINE_API NAArray* naCreateArrayWithCount(NAArray* array,
-                                                    NAInt typesize,
-                                                    NAInt count){
+NA_IAPI NAArray* naCreateArrayWithCount(NAArray* array,
+                                           NAInt typesize,
+                                           NAInt count){
   #ifndef NDEBUG
     if(typesize < 0)
       naError("naCreateArrayWithCount", "typesize is < 1.");
@@ -122,10 +122,10 @@ NA_INLINE_API NAArray* naCreateArrayWithCount(NAArray* array,
 }
 
 
-NA_INLINE_API NAArray* naCreateArrayExtraction(   NAArray* dstarray,
-                                    NAArray* srcarray,
-                                       NAInt offset,
-                                       NAInt count){
+NA_IAPI NAArray* naCreateArrayExtraction(   NAArray* dstarray,
+                                            NAArray* srcarray,
+                                               NAInt offset,
+                                               NAInt count){
   dstarray = naAllocateIfNull(dstarray, sizeof(NAArray));
 
   dstarray->typesize = srcarray->typesize;
@@ -137,7 +137,7 @@ NA_INLINE_API NAArray* naCreateArrayExtraction(   NAArray* dstarray,
 }
 
 
-NA_INLINE_API void naClearArray(NAArray* array){
+NA_IAPI void naClearArray(NAArray* array){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naClearArray", "array is Null-Pointer."); return;}
@@ -146,14 +146,13 @@ NA_INLINE_API void naClearArray(NAArray* array){
 }
 
 
-NA_INLINE_API void naDestroyArray(NAArray* array){
+NA_IAPI void naDestroyArray(NAArray* array){
   naClearArray(array);
   free(array);
 }
 
 
-NA_INLINE_API const void* naGetArrayConstElement(const NAArray* array,
-                                                             NAInt index){
+NA_IAPI const void* naGetArrayConstElement(const NAArray* array, NAInt index){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naGetArrayElement", "array is Null-Pointer."); return NA_NULL;}
@@ -164,7 +163,7 @@ NA_INLINE_API const void* naGetArrayConstElement(const NAArray* array,
                                   index * array->typesize);
 }
 
-NA_INLINE_API void* naGetArrayMutableElement(NAArray* array, NAInt index){
+NA_IAPI void* naGetArrayMutableElement(NAArray* array, NAInt index){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naGetArrayElement", "array is Null-Pointer."); return NA_NULL;}
@@ -177,7 +176,7 @@ NA_INLINE_API void* naGetArrayMutableElement(NAArray* array, NAInt index){
 
 
 
-NA_INLINE_API NAInt naGetArrayCount(NAArray* array){
+NA_IAPI NAInt naGetArrayCount(NAArray* array){
   NAInt bytesize;
   
   #ifndef NDEBUG

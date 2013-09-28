@@ -13,9 +13,9 @@
 
 // Puts the current thread on hold for the specified amount of time.
 // S = Seconds, M = Milliseconds, U = Microseconds.
-static int naSleepU(NAInt usecs);
-static int naSleepM(NAInt msecs);
-static int naSleepS(NAInt  secs);
+NA_IAPI int naSleepU(NAInt usecs);
+NA_IAPI int naSleepM(NAInt msecs);
+NA_IAPI int naSleepS(NAInt  secs);
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   typedef TIME_ZONE_INFORMATION NATimeZone;
@@ -320,7 +320,7 @@ void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
 #endif
 
 
-NA_INLINE_API int naSleepU(NAInt usecs){
+NA_IAPI int naSleepU(NAInt usecs){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     Sleep((DWORD)(usecs/1000));
     return 0;
@@ -329,7 +329,7 @@ NA_INLINE_API int naSleepU(NAInt usecs){
   #endif
 }
 
-NA_INLINE_API int naSleepM(NAInt msecs){
+NA_IAPI int naSleepM(NAInt msecs){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     Sleep((DWORD)(msecs));
     return 0;
@@ -338,7 +338,7 @@ NA_INLINE_API int naSleepM(NAInt msecs){
   #endif
 }
 
-NA_INLINE_API int naSleepS(NAInt secs){
+NA_IAPI int naSleepS(NAInt secs){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     Sleep((DWORD)(secs*1000));
     return 0;

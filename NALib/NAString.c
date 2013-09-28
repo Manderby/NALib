@@ -9,7 +9,6 @@
 NAString* naCreateString(NAString* string){
   string = naAllocateIfNull(string, sizeof(NAString));
   naCreateByteArray(&(string->array));
-//  naNull32(&(string->flags));
   return string;
 }
 
@@ -39,7 +38,7 @@ NAString* naCreateStringWithUTF8CString(NAString* string, const NAUTF8Char* ptr)
   size = naStrlen(ptr);
   if(!size){return naCreateString(string);}
   string = naAllocateIfNull(string, sizeof(NAString));
-  naCreateByteArrayWithConstBuffer(&(string->array), ptr, size, NA_FALSE);
+  naCreateByteArrayWithConstBuffer(&(string->array), ptr, size);
   // C-Strings are always expected to be already Null-terminated, meaning: The
   // Byte with index [size] must be binary zero. As we are not copying but just
   // referencing the pointer, we can safely use the array without this byte

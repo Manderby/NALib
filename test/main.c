@@ -381,6 +381,31 @@ void printDateTimeTest(){
 
 
 
+#include "../NALib/NARandom.h"
+void printRandomTest(){
+  printf("Random number with default seed: %f\n", naUniformRandZEf());
+  naSeedRand(0);
+  printf("Random number with time seed: %f\n", naUniformRandZEf());
+  printf("=======\n\n");
+}
+
+
+#include "../NALib/NAVectorAlgebra.h"
+void printVectorAlgebarTest(){
+  NAVec3f v1;
+  NAVec3f v2;
+  naSetV3fRandom(v1);
+  naSetV3fRandomSpherical(v2, NA_FALSE);
+  printf("Random Position: %f, %f, %f\n", v1[0], v1[1], v1[2]);
+  printf("Random Direction: %f, %f, %f\n", v2[0], v2[1], v2[2]);
+  printf("Position length: %f\n", naLengthV3f(v1));
+  printf("Direction length: %f\n", naLengthV3f(v2));
+  printf("=======\n\n");
+}
+
+
+
+
 int main(int argc, const char * argv[]){
 
   printSystemTest();
@@ -391,6 +416,8 @@ int main(int argc, const char * argv[]){
   printCoordTest();
   printStringTest();
   printDateTimeTest();
+  printRandomTest();
+  printVectorAlgebarTest();
   
   printf("\nPress enter to quit.\n");
   fgetc(stdin);

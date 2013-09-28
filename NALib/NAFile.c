@@ -207,12 +207,12 @@ void naJumpFileOffsetRelative(NAFile* file, NAFileSize offset){
 // are enough bytes in the buffer. Note that this function only works for
 // counts in uint16 range.
 // todo: should be hidden
-NA_INLINE static void naRequireFileReadBufferBytes(NAFile* file, uint16 count){
+NA_IAPI void naRequireFileReadBufferBytes(NAFile* file, uint16 count){
   // Declaration before implementation. Needed for C90.
   NAFileSize bytesread;
   if(file->remainingbytesinbuffer >= count){return;}  // enough bytes available
   // copy the remaining bytes to the beginning of the buffer.
-  memcpy(file->buffer, file->bufptr, file->remainingbytesinbuffer);
+  naCpyn(file->buffer, file->bufptr, file->remainingbytesinbuffer);
   // Place the bufferpointer right after these bytes...
   file->bufptr = file->buffer + file->remainingbytesinbuffer;
   // ... and refill the remaining buffer
@@ -231,7 +231,7 @@ void naReadFileBytes(NAFile* file, void* buf, NAFileSize count){
 
   // use the rest of the buffer, if available.
   if(count > file->remainingbytesinbuffer){
-    memcpy(buf, file->bufptr, file->remainingbytesinbuffer);
+    naCpyn(buf, file->bufptr, file->remainingbytesinbuffer);
     buf = ((NAByte*)buf) + file->remainingbytesinbuffer;
     count -= file->remainingbytesinbuffer;
     file->remainingbytesinbuffer = 0;
@@ -244,10 +244,10 @@ void naReadFileBytes(NAFile* file, void* buf, NAFileSize count){
     naRequireFileReadBufferBytes(file, (uint16)count);
     if(file->remainingbytesinbuffer < count){
       // The file must have ended and has less bytes stored than needed.
-      memcpy(buf, file->bufptr, (size_t)file->remainingbytesinbuffer);
+      naCpyn(buf, file->bufptr, (size_t)file->remainingbytesinbuffer);
       file->remainingbytesinbuffer = 0;
     }else{
-      memcpy(buf, file->bufptr, (size_t)count);
+      naCpyn(buf, file->bufptr, (size_t)count);
       file->bufptr += count;
       file->remainingbytesinbuffer -= (uint16)count;
     }
@@ -389,7 +389,7 @@ NAString* naCreateStringFromFile(NAString* string, NAFile* file, NAFileSize byte
 // are enough bytes in the buffer. Note that this function only works for
 // counts in uint16 range.
 // todo: should be hidden
-NA_INLINE static void naRequireFileWriteBufferBytes(NAFile* file, uint16 count){
+NA_IAPI void naRequireFileWriteBufferBytes(NAFile* file, uint16 count){
   if(file->remainingbytesinbuffer >= count){
     return;
   }else{
@@ -407,7 +407,7 @@ void naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize count){
     naWrite(file->desc, ptr, count);
   }else{
     naRequireFileWriteBufferBytes(file, (uint16)count);
-    memcpy(file->bufptr, ptr, (size_t)count);
+    naCpyn(file->bufptr, ptr, (size_t)count);
     file->bufptr += count;
     file->remainingbytesinbuffer -= (uint16)count;
   }
