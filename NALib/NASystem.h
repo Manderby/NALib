@@ -10,7 +10,7 @@
 
 
 // The version of this very distribution. No sub-version or build number or
-// whatever. Just one single number.
+// whatever. Just one single integer number.
 #define NA_LIB_VERSION 2
 
 // The various Systems:

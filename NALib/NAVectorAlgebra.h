@@ -1096,7 +1096,7 @@ NA_IAPI void naOrthogonalizeV2(NAVec2 d, const NAVec2 a, const NAVec2 b){
   if(bnorm == 0.){
     naCpyV2(d, a);
   }else{
-    naMadV2(d, a, b, - naDotV2(b, a) * naInvf(bnorm));
+    naMadV2(d, a, b, - naDotV2(b, a) * naInv(bnorm));
   }
 }
 NA_IAPI void naOrthogonalizeV3(NAVec3 d, const NAVec3 a, const NAVec3 b){
@@ -1104,7 +1104,7 @@ NA_IAPI void naOrthogonalizeV3(NAVec3 d, const NAVec3 a, const NAVec3 b){
   if(bnorm == 0.){
     naCpyV3(d, a);
   }else{
-    naMadV3(d, a, b, - naDotV3(b, a) * naInvf(bnorm));
+    naMadV3(d, a, b, - naDotV3(b, a) * naInv(bnorm));
   }
 }
 NA_IAPI void naOrthogonalizeV4(NAVec4 d, const NAVec4 a, const NAVec4 b){
@@ -1112,7 +1112,7 @@ NA_IAPI void naOrthogonalizeV4(NAVec4 d, const NAVec4 a, const NAVec4 b){
   if(bnorm == 0.){
     naCpyV4(d, a);
   }else{
-    naMadV4(d, a, b, - naDotV4(b, a) * naInvf(bnorm));
+    naMadV4(d, a, b, - naDotV4(b, a) * naInv(bnorm));
   }
 }
 
