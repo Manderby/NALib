@@ -98,8 +98,12 @@ NA_IAPI float        naAtanf(float x);
 NA_IAPI double       naAtan(double x);
 
 // Returns the arcus tangens of y/x in the range [-pi, +pi]
+// The angle function does the same, but assumes x and y stored as
+// xy[0] and xy[1] respectively.
 NA_IAPI float        naAtan2f(float y, float x);
 NA_IAPI double       naAtan2(double y, double x);
+NA_IAPI float        naAnglef(const float* xy);
+NA_IAPI double       naAngle(const double* xy);
 
 // Returns the natural logarithm
 NA_IAPI float        naLogf(float x);
@@ -147,6 +151,14 @@ NA_IAPI double       naDegToRad(double deg);
 NA_IAPI float        naRadToDegf(float rad);
 NA_IAPI double       naRadToDeg(double rad);
 
+// Angle functions. Assumes either x and y or r and theta to be stored in a
+// two dimensional vector.
+NA_IAPI void        naPolarToCartesianf(float*  xy, const float*  rtheta);
+NA_IAPI void        naPolarToCartesian (double* xy, const double* rtheta);
+
+// Same thing but the other way around.
+NA_IAPI void        naCartesianToPolarf(float*  rtheta, const float*  xy);
+NA_IAPI void        naCartesianToPolar (double* rtheta, const double* xy);
 
 
 
@@ -355,6 +367,7 @@ NA_IAPI double naAsin(double x){
   return asin(x);
 }
 
+
 NA_IAPI float naAcosf(float x){
   #ifndef NDEBUG
     if(!naInNormIIf(x)){naError("naAcosf", "naAcos of invalid value.");}
@@ -368,6 +381,7 @@ NA_IAPI double naAcos(double x){
   return acos(x);
 }
 
+
 NA_IAPI float naAtanf(float x){
   return atanf(x);
 }
@@ -375,12 +389,20 @@ NA_IAPI double naAtan(double x){
   return atan(x);
 }
 
+
 NA_IAPI float naAtan2f(float y, float x){
   return atan2f(y, x);
 }
 NA_IAPI double naAtan2(double y, double x){
   return atan2(y, x);
 }
+NA_IAPI float naAnglef(const float* xy){
+  return naAtan2f(xy[1], xy[0]);
+}
+NA_IAPI double naAngle(const double* xy){
+  return naAtan2(xy[1], xy[0]);
+}
+
 
 NA_IAPI float naExpf(float x){
   return expf(x);
@@ -545,6 +567,28 @@ NA_IAPI double naRadToDeg(double rad){
 
 
 
+NA_IAPI void naPolarToCartesianf(float* xy, const float* rtheta){
+  float r = rtheta[0];
+  xy[0] = r * naCosf(rtheta[1]);
+  xy[1] = r * naSinf(rtheta[1]);
+}
+NA_IAPI void naPolarToCartesian(double* xy, const double* rtheta){
+  double r = rtheta[0];
+  xy[0] = r * naCos(rtheta[1]);
+  xy[1] = r * naSin(rtheta[1]);
+}
+
+
+// Note that the sqrt computation could be done using naLengthV2 but this would
+// require NAVectorAlgebra.h to be included.
+NA_IAPI void naCartesianToPolarf(float* rtheta, const float* xy){
+  rtheta[0] = naSqrtf(xy[0] * xy[0] + xy[1] * xy[1]);
+  rtheta[1] = (rtheta[0] == 0.f) ? 0.f : naAnglef(xy);
+}
+NA_IAPI void naCartesianToPolar(double* rtheta, const double* xy){
+  rtheta[0] = naSqrt(xy[0] * xy[0] + xy[1] * xy[1]);
+  rtheta[1] = (rtheta[0] == 0.) ? 0. : naAngle(xy);
+}
 
 
 

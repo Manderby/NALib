@@ -168,9 +168,9 @@ NA_IAPI       NAByte* naGetByteArrayMutablePointer(      NAByteArray* array);
 // respect to speed. Try getting a pointer using naGetByteArrayPointer or this
 // function and use pointer arithmetic afterwards.
 NA_IAPI const NAByte* naGetByteArrayConstByte  (const NAByteArray* array,
-                                                             NAInt index);
+                                                             NAInt indx);
 NA_IAPI       NAByte* naGetByteArrayMutableByte(      NAByteArray* array,
-                                                             NAInt index);
+                                                             NAInt indx);
 
 // Returns the number of bytes in this array.
 NA_IAPI NAInt naGetByteArraySize(const NAByteArray* array);
@@ -451,35 +451,35 @@ NA_IAPI NAByte* naGetByteArrayMutablePointer(NAByteArray* array){
 
 
 
-NA_IAPI NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt index){
+NA_IAPI NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt indx){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naGetByteArrayByte", "array is Null-Pointer."); return NA_NULL;}
     if(naIsByteArrayEmpty(array))
       naError("naGetByteArrayByte", "array is empty");
   #endif
-  if(index < 0){index += naGetByteArraySize(array);}
+  if(indx < 0){indx += naGetByteArraySize(array);}
   #ifndef NDEBUG
-    if(!naInsidei(0, naGetByteArraySize(array), index))
+    if(!naInsidei(0, naGetByteArraySize(array), indx))
       naError("naGetByteArrayByte", "index out of bounds");
   #endif
-  return &(array->ptr.p[index]);
+  return &(array->ptr.p[indx]);
 }
 
 NA_IAPI const NAByte* naGetByteArrayConstByte(const NAByteArray* array,
-                                                           NAInt index){
+                                                           NAInt indx){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naGetByteArrayConstByte", "array is Null-Pointer."); return NA_NULL;}
     if(naIsByteArrayEmpty(array))
       naError("naGetByteArrayConstByte", "array is empty");
   #endif
-  if(index < 0){index += naGetByteArraySize(array);}
+  if(indx < 0){indx += naGetByteArraySize(array);}
   #ifndef NDEBUG
-    if(!naInsidei(0, naGetByteArraySize(array), index))
+    if(!naInsidei(0, naGetByteArraySize(array), indx))
       naError("naGetByteArrayConstByte", "index out of bounds");
   #endif
-  return &(array->ptr.constp[index]);
+  return &(array->ptr.constp[indx]);
 }
 
 

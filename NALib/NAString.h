@@ -191,8 +191,8 @@ const NAUTF8Char* naGetStringConstUTF8Pointer  (const NAString* string);
       NAUTF8Char* naGetStringMutableUTF8Pointer(      NAString* string);
 
 // Returns a pointer to the desired character.
-const NAUTF8Char* naGetStringConstChar  (const NAString* string, NAInt index);
-      NAUTF8Char* naGetStringMutableChar(      NAString* string, NAInt index);
+const NAUTF8Char* naGetStringConstChar  (const NAString* string, NAInt indx);
+      NAUTF8Char* naGetStringMutableChar(      NAString* string, NAInt indx);
 
 // Returns NA_TRUE if the string is empty.
 NABool naIsStringEmpty(const NAString* string);

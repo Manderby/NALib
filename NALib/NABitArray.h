@@ -157,7 +157,7 @@ void naDecoupleBitArray(NABitArray* array);
 // Returns the bit with the requested index. If index is negative, it
 // is searched from the end of the array. For example -1 denotes the last bit.
 // Warning: returns garbage if the array is empty.
-NABit* naGetBitArrayBit(NABitArray* bitarray, NAInt index);
+NABit* naGetBitArrayBit(NABitArray* bitarray, NAInt indx);
 
 // Returns the size of the bits array. Not the size of the full storage!
 NAInt naGetBitArrayCount(NABitArray* bitarray);

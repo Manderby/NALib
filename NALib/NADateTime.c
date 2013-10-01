@@ -9,10 +9,10 @@
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   #include <time.h>
-  NA_IAPI void Localtime(struct tm* storage, const time_t* time){localtime_s(storage, time);}
+  NA_IAPI void Localtime(struct tm* storage, const time_t* tme){localtime_s(storage, tme);}
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
   #include <sys/time.h>
-  NA_IAPI void Localtime(struct tm* storage, const time_t* time){localtime_r(time, storage);}
+  NA_IAPI void Localtime(struct tm* storage, const time_t* tme){localtime_r(tme, storage);}
 #else
   #warning "System undefined"
 #endif

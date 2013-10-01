@@ -314,7 +314,8 @@ void printDateTimeTest(){
   NADateTime timer;
   NADateTime dt;
   NAString string;
-  NADateTimeStruct dts;
+  NADateTimeStruct dts1;
+  NADateTimeStruct dts2;
   NADateTimeAttribute dta1;
   NADateTimeAttribute dta2;
   NABool errorfound = NA_FALSE;
@@ -349,19 +350,20 @@ void printDateTimeTest(){
     naClearString(&string);
   #endif
 
-  printf("Checking for Weekday computation errors...\n");
+  printf("Checking for errors...\n");
   errorfound = NA_FALSE;
   dt.shift = 0;
   dt.sisec = -10LL * NA_SECONDS_IN_400_YEAR_PERIOD;
-  naExtractDateTimeInformation(&dt, &dts, &dta1);
-  for(dt.sisec = dt.sisec; dt.sisec < NA_SECONDS_IN_400_YEAR_PERIOD; dt.sisec += 11LL * NA_SECONDS_PER_HOUR){
-    naExtractDateTimeInformation(&dt, &dts, &dta2);
+  naExtractDateTimeInformation(&dt, &dts1, &dta1);
+  for(dt.sisec = dt.sisec; dt.sisec < NA_SECONDS_IN_400_YEAR_PERIOD; dt.sisec += 23LL * NA_SECONDS_PER_HOUR){
+    naExtractDateTimeInformation(&dt, &dts2, &dta2);
     if((dta2.dayofyear != dta1.dayofyear) && (dta2.weekday != (dta1.weekday + 1) % 7)){
       naCreateStringWithDateTime(&string, &dt, NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT);
       printf("Weekday error: %s\n", naGetStringConstUTF8Pointer(&string));
       naClearString(&string);
       errorfound = NA_TRUE;
     }
+    dts1 = dts2;
     dta1 = dta2;
   }
   if(!errorfound){

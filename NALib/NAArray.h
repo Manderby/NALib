@@ -65,8 +65,8 @@ NA_IAPI void naDestroyArray(NAArray* array);
 
 // Returns the pointer to the desired element. Note that if the array stores
 // pointers, this function will return a pointer to a pointer.
-NA_IAPI const void* naGetArrayConstElement  (const NAArray* array, NAInt index);
-NA_IAPI void*       naGetArrayMutableElement(      NAArray* array, NAInt index);
+NA_IAPI const void* naGetArrayConstElement  (const NAArray* array, NAInt indx);
+NA_IAPI void*       naGetArrayMutableElement(      NAArray* array, NAInt indx);
 
 // Returns the number of elements in this array. Beware: This is different
 // from naGetByteArraySize. The size returned by naGetByteArraySize is a size
@@ -152,7 +152,7 @@ NA_IAPI void naDestroyArray(NAArray* array){
 }
 
 
-NA_IAPI const void* naGetArrayConstElement(const NAArray* array, NAInt index){
+NA_IAPI const void* naGetArrayConstElement(const NAArray* array, NAInt indx){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naGetArrayElement", "array is Null-Pointer."); return NA_NULL;}
@@ -160,10 +160,10 @@ NA_IAPI const void* naGetArrayConstElement(const NAArray* array, NAInt index){
       naError("naGetArrayElement", "array is empty, typesize is garbage");
   #endif
   return naGetByteArrayConstByte( &(array->bytearray),
-                                  index * array->typesize);
+                                  indx * array->typesize);
 }
 
-NA_IAPI void* naGetArrayMutableElement(NAArray* array, NAInt index){
+NA_IAPI void* naGetArrayMutableElement(NAArray* array, NAInt indx){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naGetArrayElement", "array is Null-Pointer."); return NA_NULL;}
@@ -171,7 +171,7 @@ NA_IAPI void* naGetArrayMutableElement(NAArray* array, NAInt index){
       naError("naGetArrayElement", "array is empty, typesize is garbage");
   #endif
   return naGetByteArrayMutableByte( &(array->bytearray),
-                                    index * array->typesize);
+                                    indx * array->typesize);
 }
 
 

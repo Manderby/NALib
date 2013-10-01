@@ -11,11 +11,18 @@ This file contains information about changes in the package NALib. These are
 purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
+Version 2 (first published 2013-September-23):
+=========================================
 
-- Cleanup of last version: Old code removed, beautification of API
-- Lots of comments added and improved
-- Added Random Generator functions
+Highlights:
 - Added Vector Algebra types and functions
+- Added Random Generator functions
+
+Other things:
+- Cleanup of last version: Old code removed, beautification of API
+- Renamed some parameters to avoid shadow warnings on certain compilers
+- Lots of comments added and improved
+- Added angle functions as Math operators
 - Added two more signed integer encoding macros
 - Changed tab and newline macros to be printf arguments and moved them to
   NAString.h. Added native newline macro NA$NL

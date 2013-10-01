@@ -401,12 +401,12 @@ void naDecoupleBitArray(NABitArray* bitarray){
 
 
 
-NABit* naGetBitArrayBit(NABitArray* bitarray, NAInt index){
+NABit* naGetBitArrayBit(NABitArray* bitarray, NAInt indx){
   #ifndef NDEBUG
     if(!bitarray)
       {naCrash("naGetBitArrayBit", "bitarray is Null-Pointer."); return NA_NULL;}
   #endif
-  return naGetByteArrayMutableByte(&(bitarray->bits), index);
+  return naGetByteArrayMutableByte(&(bitarray->bits), indx);
 }
 
 NAInt naGetBitArrayCount(NABitArray* bitarray){

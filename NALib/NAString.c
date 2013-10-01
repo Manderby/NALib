@@ -63,14 +63,14 @@ NAString* naCreateStringWithArguments(NAString* string,
                               const NAUTF8Char* format,
                                         va_list argumentlist){
   // Declaration before implementation. Needed for C90.
-  NAInt strlen;
+  NAInt stringlen;
   va_list argumentlist2;
   va_list argumentlist3;
   va_copy(argumentlist2, argumentlist);
   va_copy(argumentlist3, argumentlist);
-  strlen = naVarargStringSize(format, argumentlist2);
-  naCreateStringWithSize(string, strlen);
-  naVsnprintf(naGetStringMutableUTF8Pointer(string), (size_t)(strlen+1), format, argumentlist3);
+  stringlen = naVarargStringSize(format, argumentlist2);
+  naCreateStringWithSize(string, stringlen);
+  naVsnprintf(naGetStringMutableUTF8Pointer(string), (size_t)(stringlen+1), format, argumentlist3);
   va_end(argumentlist2);
   va_end(argumentlist3);
   return string;
@@ -188,12 +188,12 @@ const NAUTF8Char* naGetStringConstUTF8Pointer(const NAString* string){
   }
 }
 
-const NAUTF8Char* naGetStringConstChar(const NAString* string, NAInt index){
+const NAUTF8Char* naGetStringConstChar(const NAString* string, NAInt indx){
   #ifndef NDEBUG
     if(!string)
       {naCrash("naGetStringChar", "string is Null-Pointer."); return NA_NULL;}
   #endif
-  return (const NAUTF8Char*)naGetByteArrayConstByte(&(string->array), index);
+  return (const NAUTF8Char*)naGetByteArrayConstByte(&(string->array), indx);
 }
 
 NAUTF8Char* naGetStringMutableUTF8Pointer(NAString* string){
@@ -205,12 +205,12 @@ NAUTF8Char* naGetStringMutableUTF8Pointer(NAString* string){
 }
 
 
-NAUTF8Char* naGetStringMutableChar(NAString* string, NAInt index){
+NAUTF8Char* naGetStringMutableChar(NAString* string, NAInt indx){
   #ifndef NDEBUG
     if(!string)
       {naCrash("naGetStringMutableChar", "string is Null-Pointer."); return NA_NULL;}
   #endif
-  return (NAUTF8Char*)naGetByteArrayMutableByte(&(string->array), index);
+  return (NAUTF8Char*)naGetByteArrayMutableByte(&(string->array), indx);
 }
 
 
