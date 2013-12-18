@@ -217,17 +217,17 @@ NA_API extern const char* na_system_strings[NA_SYSTEM_COUNT];
 
 #define NA_UINT8_MAX  ((uint8)(0xffu))
 #define NA_UINT16_MAX ((uint16)(0xffffu))
-#define NA_UINT32_MAX (0xffffffffu)
-#define NA_UINT64_MAX (0xffffffffffffffffuLL)
+#define NA_UINT32_MAX ((uint32)(0xffffffffu))
+#define NA_UINT64_MAX ((uint64)(0xffffffffffffffffuLL))
 // note that the - 1 is needed to avoid warnings on some compilers
 #define NA_INT8_MAX   ((int8)(0x7f))
 #define NA_INT8_MIN   ((int8)(0x81 - 1))
 #define NA_INT16_MAX  ((int16)(0x7fff))
 #define NA_INT16_MIN  ((int16)(0x8001 - 1))
-#define NA_INT32_MAX  (0x7fffffff)
-#define NA_INT32_MIN  (0x80000001 - 1)
-#define NA_INT64_MAX  (0x7fffffffffffffffLL)
-#define NA_INT64_MIN  (0x8000000000000001LL - 1LL)
+#define NA_INT32_MAX  ((int32)(0x7fffffff))
+#define NA_INT32_MIN  ((int32)(0x80000001 - 1))
+#define NA_INT64_MAX  ((int64)(0x7fffffffffffffffLL))
+#define NA_INT64_MIN  ((int64)(0x8000000000000001LL - 1LL))
 
 
 
@@ -292,9 +292,13 @@ typedef uint8     NAByte;
 #if NA_SYSTEM_ADDRESS_BITS == 32
   typedef int32 NAInt;
   #define NA$INT "%d"
+  #define NA_INT_MAX NA_INT32_MAX
+  #define NA_INT_MIN NA_INT32_MIN
 #elif NA_SYSTEM_ADDRESS_BITS == 64
   typedef int64 NAInt;
   #define NA$INT "%lld"
+  #define NA_INT_MAX NA_INT64_MAX
+  #define NA_INT_MIN NA_INT64_MIN
 #else
   #warning "NAInt undefined"
 #endif
@@ -376,6 +380,12 @@ typedef int NABool;
 // Function_name: Errormessage\n
 // Therefore, a programmer can simply set a breakpoint in the denoted function
 // and start debugging.
+//
+// If due to some reason, setting a breakpoint does not work in the desired
+// function, you can simply set a breakpoint in the naError or naCrash function.
+// These two functions are explicitely NOT inlined and are defined in a separate
+// implementation file (and therefore a separate translation unit) due to that
+// reason.
 //
 // Also note that in NALib, any code executed within NDEBUG will not alter any
 // values. In other words: Except from speed differences and outputs to strerr,

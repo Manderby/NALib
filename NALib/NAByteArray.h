@@ -117,7 +117,7 @@ NA_IAPI NAByteArray* naCreateByteArrayWithMutableBuffer(
 // If dest ist equal to src and if the resulting array is empty, the storage
 // is automatically detached and freed if no longer used.
 //
-// Warning: srcarray may be const but if dstarray ist the same as  srcarray,
+// Warning: srcarray may be const but if dstarray ist the same as srcarray,
 // srcarray may nontheless be altered!!!
 NA_IAPI NAByteArray* naCreateByteArrayExtraction( NAByteArray* dstarray,
                                             const NAByteArray* srcarray,
@@ -456,14 +456,14 @@ NA_IDEF NAByte* naGetByteArrayMutablePointer(NAByteArray* array){
 NA_IDEF NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt indx){
   #ifndef NDEBUG
     if(!array)
-      {naCrash("naGetByteArrayByte", "array is Null-Pointer."); return NA_NULL;}
+      {naCrash("naGetByteArrayMutableByte", "array is Null-Pointer."); return NA_NULL;}
     if(naIsByteArrayEmpty(array))
-      naError("naGetByteArrayByte", "array is empty");
+      naError("naGetByteArrayMutableByte", "array is empty");
   #endif
   if(indx < 0){indx += naGetByteArraySize(array);}
   #ifndef NDEBUG
     if(!naInsidei(0, naGetByteArraySize(array), indx))
-      naError("naGetByteArrayByte", "index out of bounds");
+      naError("naGetByteArrayMutableByte", "indx out of bounds");
   #endif
   return &(array->ptr.p[indx]);
 }
@@ -479,7 +479,7 @@ NA_IDEF const NAByte* naGetByteArrayConstByte(const NAByteArray* array,
   if(indx < 0){indx += naGetByteArraySize(array);}
   #ifndef NDEBUG
     if(!naInsidei(0, naGetByteArraySize(array), indx))
-      naError("naGetByteArrayConstByte", "index out of bounds");
+      naError("naGetByteArrayConstByte", "indx out of bounds");
   #endif
   return &(array->ptr.constp[indx]);
 }

@@ -24,6 +24,8 @@
 // This array implementaiton is more for complex datastructure building. If
 // you are looking for a simple array of integers for example, better use the
 // traditional [] arrays.
+//
+// Important: You have to typecast the returned element-pointers!
 
 
 // Opaque type. See explanation in readme.txt
@@ -56,7 +58,19 @@ NA_IAPI void naClearArray  (NAArray* array);
 NA_IAPI void naDestroyArray(NAArray* array);
 
 
+// Returns a pointer to the very first element of the raw data array. Warning:
+// result is garbage if the array is empty. Notice: This function is speedy.
+NA_IAPI const void* naGetArrayConstPointer  (const NAArray* array);
+NA_IAPI       void* naGetArrayMutablePointer(      NAArray* array);
 
+
+// Returns a POINTER to the element at the given index. If indx is negative, it
+// is searched from the end of the array. For example -1 denotes the last
+// element.
+// Warning: result is garbage if the array is empty.
+// Note that calling this function too often might not be a good idea with
+// respect to speed. Try getting a pointer using naGetArrayPointer or this
+// function and use pointer arithmetic afterwards.
 // Returns the pointer to the desired element. Note that if the array stores
 // pointers, this function will return a pointer to a pointer.
 NA_IAPI const void* naGetArrayConstElement  (const NAArray* array, NAInt indx);
@@ -69,6 +83,9 @@ NA_IAPI void*       naGetArrayMutableElement(      NAArray* array, NAInt indx);
 // using it a lot, for example in a loop, it might be a good idea to store the
 // count in a variable.
 NA_IAPI NAInt naGetArrayCount(NAArray* array);
+
+// Returns true if the array is empty.
+NA_IAPI NABool naIsArrayEmpty(const NAArray* array);
 
 
 
@@ -187,6 +204,15 @@ NA_IDEF NAInt naGetArrayCount(NAArray* array){
   #endif
   bytesize = naGetByteArraySize(&(array->bytearray));
   return bytesize ? (bytesize / array->typesize) : 0;
+}
+
+
+NA_IAPI NABool naIsArrayEmpty(const NAArray* array){
+  #ifndef NDEBUG
+    if(!array)
+      {naCrash("naIsArrayEmpty", "array is Null-Pointer."); return 0;}
+  #endif
+  return naIsByteArrayEmpty(&(array->bytearray));
 }
 
 
