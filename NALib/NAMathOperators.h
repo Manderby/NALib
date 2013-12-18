@@ -40,6 +40,9 @@ NA_IAPI NAInt        naSigni  (NAInt x);
 NA_IAPI int32        naSigni32(int32 x);
 NA_IAPI int64        naSigni64(int64 x);
 
+// Returns true if the given number is NaN
+NA_IAPI NABool       naIsNaN(double x);
+
 // Returns 1/x
 NA_IAPI float        naInvf(float x);
 NA_IAPI double       naInv (double x);
@@ -209,6 +212,14 @@ NA_IAPI int64 naSigni64(int64 x){
   #else
     return (x<0)?-1LL:1LL;
   #endif
+}
+
+
+
+// Note that checking for NaN must be performed with the built-in isnan()-macro
+// or -function. Checking x == NA_NAN would return NA_FALSE always.
+NA_IAPI NABool naIsNaN(double x){
+  return isnan(x);
 }
 
 

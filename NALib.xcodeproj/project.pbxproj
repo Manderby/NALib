@@ -56,6 +56,8 @@
 		B9B2EA151716922700943D91 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		B9CFBED217F2E21500AEC7CC /* NAVectorAlgebra.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAVectorAlgebra.h; sourceTree = "<group>"; };
 		B9CFBED317F3EBDE00AEC7CC /* NARandom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NARandom.h; sourceTree = "<group>"; };
+		B9FDD3C0183F9C5500849D01 /* NAList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAList.h; sourceTree = "<group>"; };
+		B9FDD8BD1844429200849D01 /* NAByteMap2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAByteMap2D.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -73,10 +75,12 @@
 			isa = PBXGroup;
 			children = (
 				B98DFBAB17F0CF9A007A62E7 /* NAArray.h */,
+				B9FDD3C0183F9C5500849D01 /* NAList.h */,
 				B98DFBAC17F0CF9A007A62E7 /* NABinaryData.h */,
 				B98DFBAD17F0CF9A007A62E7 /* NABitArray.c */,
 				B98DFBAE17F0CF9A007A62E7 /* NABitArray.h */,
 				B98DFBAF17F0CF9A007A62E7 /* NAByteArray.h */,
+				B9FDD8BD1844429200849D01 /* NAByteMap2D.h */,
 				B98DFBB017F0CF9A007A62E7 /* NAComplex.h */,
 				B98DFBB117F0CF9A007A62E7 /* NACoord.h */,
 				B98DFBB217F0CF9A007A62E7 /* NADateTime.c */,
@@ -215,7 +219,6 @@
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -251,7 +254,6 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;

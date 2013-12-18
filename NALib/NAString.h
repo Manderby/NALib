@@ -151,6 +151,25 @@ NAString* naCreateStringExtraction( NAString* deststring,
                                         NAInt offset,
                                         NAInt size);
 
+
+// Creates a new string by encoding or decoding the characters of inputstring.
+//      |  Encoding example    |   Decoding example |  Notes
+// -----+----------------------+--------------------+----------------------
+// XML  |  " becomes &quot;    |   &quot; becomes " |  Do not use for HTML < 5
+// EPS  |  ( becomes \(        |   \(     becomes   |
+//
+// Note: Always creates a new string by copying the characters from the input.
+// Therefore, the two parameters MUST not be the same!
+// Warning: XML-Decoding does not support numeric entities yet.
+NAString* naCreateStringXMLEncoded( NAString* deststring,
+                              const NAString* inputstring);
+NAString* naCreateStringXMLDecoded( NAString* deststring,
+                              const NAString* inputstring);
+NAString* naCreateStringEPSEncoded( NAString* deststring,
+                              const NAString* inputstring);
+NAString* naCreateStringEPSDecoded( NAString* deststring,
+                              const NAString* inputstring);
+
 // The following functions are system dependent.
 // Currently, this is only necessary on windows.
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
@@ -167,6 +186,27 @@ NAString* naCreateStringExtraction( NAString* deststring,
 void naClearString(NAString* string);
 void naDestroyString(NAString* string);
 
+
+// Appending functions: The first argument will be altered such that it will
+// contain the concatenation of the two strings given. All characters will be
+// copied and the resulting string will be NULL-terminated.
+// Warning: Any NAString being an extraction of the first argument will still
+// point to the unaltered version of string after this function!
+void naAppendStringWithString(    NAString* string,
+                            const NAString* string2);
+// Appends an UTF-8 character
+void naAppendStringWithChar(     NAString* string,
+                                 NAUTF8Char newchar);
+// Appends an UTF-8 C-String formatted just like sprintf. You can use this
+// function to append C-Strings without arguments as well.
+void naAppendStringWithFormat(    NAString* string,
+                          const NAUTF8Char* format,
+                                            ...);
+// Does the same thing but with an existing va_list argument. The argumentlist
+// argument will not be altered by this function.
+void naAppendStringWithArguments( NAString* string,
+                          const NAUTF8Char* format,
+                                    va_list argumentlist);
 
 
 

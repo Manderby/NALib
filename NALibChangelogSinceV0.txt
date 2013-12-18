@@ -11,6 +11,30 @@ This file contains information about changes in the package NALib. These are
 purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
+
+- Added more comments and clarification.
+- Added naGetArrayConstPointer, naGetArrayMutablePointer, naIsArrayEmpty.
+- Added NA_INT_MIN and NA_INT_MAX for the generic NAInt type.
+- Added the min and max typecasts back in for all types
+- Added NACoord.h, a file containing NAPos, NASize and NARect for int and
+  floating point values.
+- Added naIsFileOpen
+- Added naCreateStringXMLEncoded, naCreateStringXMLDecoded,
+  naCreateStringEPSEncoded and naCreateStringEPSDecoded.
+- Added text encoding to NAFile. Though currently only UTF-8 is possible.
+  Consequently, added naSetFileTextEncoding and changed some APIs.
+- Added string concatenation functions: naAppendStringWithString,
+  naAppendStringWithChar naAppendStringWithFormat and
+  naAppendStringWithArguments
+- Added NAList, A double-chained list with built-in iteration. Very fast
+  and easy implementation using a sentinel.
+- Added NAByteArray2D
+- Added macro definition for NA_NAN and changed macro definitions for
+  NA_INFINITY. Added naIsNan function.
+
+
+
+
 Version 2 (first published 2013-September-23):
 =========================================
 
@@ -30,6 +54,8 @@ Other things:
   naCreateByteArrayWithConstBuffer
 - naCpy functions now expect restrict pointers.
 - Renamed NA_INLINE_API to NA_IAPI to save space.
+
+
 
 
 Version 1 (first published 2013-September-23):

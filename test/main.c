@@ -128,6 +128,9 @@ void printMathConstantsTest(){
   printf("float infinity: %e\n", NA_INFINITYf);
   printf("double infinity: %e\n", NA_INFINITY);
   printf("long double infinity: %Le\n", NA_INFINITYl);
+  printf("float NaN: %e\n", NA_NANf);
+  printf("double NaN: %e\n", NA_NAN);
+  printf("long double NaN: %Le\n", NA_NANl);
   printf("float singularity: %e\n",  NA_SINGULARITYf);
   printf("double singularity: %e\n",  NA_SINGULARITY);
   printf("long double singularity: %Le\n", NA_SINGULARITYl);
@@ -237,6 +240,7 @@ void printStringTest(){
   NAInt linenum = 0;
   NAString* token = naCreateString(NULL);
   NAString* string = naCreateStringWithUTF8CString(NULL, "  Hello World !");
+  NAString* string2 = naCreateString(NULL);
   
   printf("The string \"%s\"\nHas Tokens: ", naGetStringConstUTF8Pointer(string));
   naParseStringToken(string, token);
@@ -303,6 +307,38 @@ void printStringTest(){
   printf("Remaining string is empty: %s\n", na_boolean_strings[naIsStringEmpty(string)]);
 
   naDestroyString(string);
+  naDestroyString(string2);
+  string = naCreateStringWithUTF8CString(NA_NULL, "This \" text \' will < be > encoded &");
+  printf("\nEncoding and decoding String in XML:\n%s\n", naGetStringConstUTF8Pointer(string));
+  string2 = naCreateStringXMLEncoded(NA_NULL, string);
+  printf("Encoded: %s\n", naGetStringConstUTF8Pointer(string2));
+  naDestroyString(string);
+  string = naCreateStringXMLDecoded(NA_NULL, string2);
+  printf("Decoded: %s\n", naGetStringConstUTF8Pointer(string));
+  
+  naDestroyString(string);
+  naDestroyString(string2);
+  string = naCreateStringWithUTF8CString(NA_NULL, "This ( text ) will be \\ encoded");
+  printf("\nEncoding and decoding String in EPS:\n%s\n", naGetStringConstUTF8Pointer(string));
+  string2 = naCreateStringEPSEncoded(NA_NULL, string);
+  printf("Encoded: %s\n", naGetStringConstUTF8Pointer(string2));
+  naDestroyString(string);
+  string = naCreateStringEPSDecoded(NA_NULL, string2);
+  printf("Decoded: %s\n", naGetStringConstUTF8Pointer(string));
+
+  naDestroyString(string);
+  naDestroyString(string2);
+  string = naCreateStringWithUTF8CString(NA_NULL, "String1");
+  string2 = naCreateStringWithUTF8CString(NA_NULL, "String2");
+  naAppendStringWithString(string, string2);
+  printf("\nAppending: %s\n", naGetStringConstUTF8Pointer(string));
+  naDestroyString(string);
+  string = naCreateStringWithUTF8CString(NA_NULL, "String1");
+  naAppendStringWithFormat(string, "String%d", 3);
+  printf("Appending: %s\n", naGetStringConstUTF8Pointer(string));
+
+  naDestroyString(string);
+  naDestroyString(string2);
   naDestroyString(token);
   printf("=======\n\n");
 }
@@ -406,23 +442,70 @@ void printVectorAlgebarTest(){
 }
 
 
+#include "../NALib/NAList.h"
+void printListTest(){
+  NAInt* ivalue;
+  printf("Testing list\n");
+  NAList* list = naCreateList(NA_NULL);
+  NAInt values[5] = {1, 2, 3, 4, 5};
+  naAddListElementLast(list, &(values[0]));
+  naAddListElementLast(list, &(values[1]));
+  naAddListElementLast(list, &(values[2]));
+  naAddListElementLast(list, &(values[3]));
+  naAddListElementLast(list, &(values[4]));
+  naFirstListElement(list);
+  while((ivalue = (NAInt*)naGetListCurrentContent(list))){
+    printf(NA$INT " ", *ivalue);
+    naNextListElement(list);
+  }
+  printf("\n");
+  naLastListElement(list);
+  while((ivalue = (NAInt*)naGetListCurrentContent(list))){
+    printf(NA$INT " ", *ivalue);
+    naPrevListElement(list);
+  }
+  printf("\n");
+
+  printf("Removing Number 3 while iterating\n");
+  naFirstListElement(list);
+  while((ivalue = (NAInt*)naGetListCurrentContent(list))){
+    if(*ivalue == 3){
+      naRemoveListElementCurrent(list, NA_FALSE);
+    }else{
+      printf(NA$INT " ", *ivalue);
+    }
+    naNextListElement(list);
+  }
+  printf("\n");
+
+  naDestroyList(list);
+  printf("=======\n\n");
+}
+
+
+#include "../NALib/NAByteMap2D.h"
+void printByteMap2DTest(){
+  printf("=======\n\n");
+}
 
 
 int main(int argc, const char * argv[]){
 
-  printSystemTest();
-  printBinaryDataTest();
-  printMathConstantsTest();
-  printMathOperatorsTest();
-  printComplexTest();
-  printCoordTest();
-  printStringTest();
-  printDateTimeTest();
-  printRandomTest();
-  printVectorAlgebarTest();
+//  printSystemTest();
+//  printBinaryDataTest();
+//  printMathConstantsTest();
+//  printMathOperatorsTest();
+//  printComplexTest();
+//  printCoordTest();
+//  printStringTest();
+//  printDateTimeTest();
+//  printRandomTest();
+//  printVectorAlgebarTest();
+//  printListTest();
+  printByteMap2DTest();
   
-  printf("\nPress enter to quit.\n");
-  fgetc(stdin);
+//  printf("\nPress enter to quit.\n");
+//  fgetc(stdin);
 
   return 0;
 }

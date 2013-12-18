@@ -90,6 +90,7 @@ typedef struct NAFile{
   int desc;           // The descriptor
   NAFileSize pos;     // The byte position within the underlying file.
   NAEndiannessConverter converter;  // The endianness converter.
+  NATextEncoding textencoding; // The encoding of textual data.
   uint16 flags;       // various flags
   uint16 remainingbytesinbuffer;  // remaining bytes inside the buffer
   NAByte* bufptr;     // Pointer to the current byte in the buffer
@@ -99,7 +100,7 @@ typedef struct NAFile{
 
 
 // Important remark about ASCII and binary files:
-// File types can roughly be categorized into two classes: ASCII files and
+// File types can roughly be categorized into two categories: ASCII files and
 // binary files. Both file types have their Pros and Cons. Which one to use
 // is up to the user. The NAFile structure allows to read and write both type
 // of files.
@@ -151,8 +152,14 @@ NAByteArray* naCreateByteArrayFromFileContents(NAByteArray* array, const char* f
 //            The endianness converter is set to native. Writing is buffered by
 //            default.
 // Appending: Creates a new file or opens an existing file for appending. The
-//            write pointer is set to the end of the stream. The endianness
-//            converter is uninitialized! Text is auto-flushed by default.
+//            write pointer is set to the end of the stream. Text is auto-
+//            flushed by default. The endianness converter is uninitialized!
+//            This has been designed as appending usually only is used for
+//            textual files, not binary ones. And as the initialization of the
+//            binary converters takes a certain amount of time but the handling
+//            of append-files usually must be very speedy, the endianness
+//            converter is just uninitialized. You can initialize it using
+//            naSetFileEndianness.
 // If you don't know, what the mode argument means, use NA_FILE_MODE_DEFAULT.
 // You can change the buffering-behaviour using naSetFileAutoFlush.
 NAFile naOpenFileForReading(const char* filename);
@@ -165,6 +172,9 @@ NAFile naOpenFileForAppending(const char* filename, NAFileMode mode);
 // Stderr:    Standard error (file descriptor 2) as an appending file.
 // Stdin, stdout and stderr are unbuffered by default. You can change the
 // buffering-behaviour using naSetFileAutoFlush.
+// Note that in contrast to other appending files (see naOpenFileForAppending),
+// the binary converter is initialized and set to native for all standard
+// channels.
 NAFile naMakeFileAsStdin();
 NAFile naMakeFileAsStdout();
 NAFile naMakeFileAsStderr();
@@ -184,6 +194,12 @@ void naFlushFileBuffer(NAFile* file);
 //   before writing automatically.
 // Use endianness constants like NA_ENDIANNESS_BIG for the endianness argument.
 void naSetFileEndianness(NAFile* file, NAInt endianness);
+
+// Sets the text encoding of the file.
+// All methods reading or writing NAString structures or NAUTF8Char data will
+// automatically convert between the file encoding and the NAString encoding
+// (which is UTF-8). Currently, only the UTF-8 encoding is supported.
+void naSetFileTextEncoding(NAFile* file, NATextEncoding textencoding);
 
 // Only useful for Write-files. Defines, how writings should be flushed. The
 // NAFile struct by default uses a buffer to speed up writing. You can manually
@@ -206,6 +222,7 @@ void naSetFileNewLine(NAFile* file, uint16 newlineflag);
 
 // computes the filesize (from first to last NAByte).
 NAFileSize naComputeFileSize(const NAFile* file);
+NABool naIsFileOpen(const NAFile* file);
 NABool naHasFileEnded(const NAFile* file);
 
 // Readjusts the internal file pointer to the given offset.
@@ -244,13 +261,14 @@ double  naReadFileDouble(NAFile* file);
 // instead which directly reads the bytes to the array instead of copying them
 // from an internal buffer.
 // COPIES ALWAYS!
+// Note that the expected text encoding of the file can be defined using
+// naSetFileTextEncoding.
 NAByteArray* naCreateByteArrayFromFile(NAByteArray* array,
                                             NAFile* file,
                                          NAFileSize count);
 NAString*    naCreateStringFromFile(      NAString* string,
                                             NAFile* file,
-                                         NAFileSize bytecount,
-                                     NATextEncoding encoding);
+                                         NAFileSize bytecount);
 
 // //////////
 // BINARY WRITING
@@ -281,7 +299,7 @@ void naWriteFileByteArray( NAFile* file,
 
 
 // //////////
-// ASCII WRITING
+// TEXT WRITING (also called ASCII WRITING)
 // //////////
 
 // Writes a tab or a newline to the file. The newline character is dependent on
@@ -290,11 +308,10 @@ void naWriteFileTab(NAFile* file);
 void naWriteFileNewLine(NAFile* file);
 
 // Writes the given string to the file. If the string is null-terminated, that
-// NULL will not be written to the file. Newline characters are not converted!
-// Currently, only the UTF-8 encoding is possible.
+// NULL will NOT be written to the file. Newline characters are NOT converted!
+// The string will automatically be converted to the text encoding of the file.
 void naWriteFileString(    NAFile* file,
-                   const NAString* string,
-                    NATextEncoding encoding);
+                   const NAString* string);
 
 // Writes a string to the file which can be written like a printf format. You
 // can also use this function just to write a simple const char* string. The
@@ -313,8 +330,7 @@ void naWriteFileStringWithArguments(NAFile* file,
 // at the end. The newline character is dependent on the files setting. You can
 // change it using naSetFileNewLine.
 void naWriteFileLine(             NAFile* file,
-                          const NAString* string,
-                           NATextEncoding encoding);
+                          const NAString* string);
 void naWriteFileLineWithFormat(   NAFile* file,
                         const NAUTF8Char* format,
                                           ...);

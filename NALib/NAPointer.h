@@ -333,11 +333,11 @@ NA_IAPI void naReleasePointer(NAPointer* pointer){
 // The problem here is that C has no concept of accessors and mutators. Even
 // though the main difference is just the type returned, in C you can not
 // overload functions and hence you can not hide the distinction to the user.
-// There is the possibility to create a separate struct (or class) for each
-// type storing either const or non-const data. This ensures type-safety, but
-// forces the programmer to make the distinction at declaration level (which
-// can become very cumbersome) and maybe even convert between the two variants
-// which might be very costly and not beautiful at all.
+// There is the possibility to create two versions for each type storing either
+// const or non-const data. This ensures type-safety, but forces the programmer
+// to make the distinction at declaration level (which can become very
+// cumbersome) and maybe even convert between the two variants which might be
+// very costly and not beautiful at all.
 //
 // In this implementation, the author decided to use a union type storing
 // either a const or a non-const data pointer. When calling a constructor,

@@ -40,6 +40,15 @@ NA_IAPI int64        naMaxi64(int64  a,      int64  b);
 NA_IAPI float        naMaxf  (float  a,      float  b);
 NA_IAPI double       naMax   (double a,      double b);
 
+// Note that in many implementations, Min and Max are implemented as the
+// following macros:
+// #define NA_MAX(a, b) (((a)>(b))?(a):(b))
+// #define NA_MIN(a, b) (((a)<(b))?(a):(b))
+// Nontheless, these are not used here in NALib as they can not be debugged
+// as good as the functions: Quite often, the two parameters are only
+// available as an expression and hence are not shown in the compiler. When
+// using the functions, the two resulting values can be debugged when jumping
+// inside the min or max function.
 
 
 // naAlmostZero returns NA_TRUE, if the ABSOLUTE discance between x and 0 is
@@ -68,21 +77,21 @@ NA_IAPI NABool naAlmost (double x, double y);
 // inclusive, inclusive
 NA_IAPI NABool naInsideIIf(float  a, float  b, float  x);
 NA_IAPI NABool naInsideII (double a, double b, double x);
-NA_IAPI NABool naInsidei  (NAInt  a, NAInt  b, NAInt  x);
-NA_IAPI NABool naInsidei32(int32  a, int32  b, int32  x);
-NA_IAPI NABool naInsidei64(int64  a, int64  b, int64  x);
-
 // inclusive, exclusive
 NA_IAPI NABool naInsideIEf(float  a, float  b, float  x);
 NA_IAPI NABool naInsideIE (double a, double b, double x);
-
 // exclusive, inclusive
 NA_IAPI NABool naInsideEIf(float  a, float  b, float  x);
 NA_IAPI NABool naInsideEI (double a, double b, double x);
-
 // exclusive, exclusive
 NA_IAPI NABool naInsideEEf(float  a, float  b, float  x);
 NA_IAPI NABool naInsideEE (double a, double b, double x);
+
+// Integer variants. a denotes Min, b denotes Max. Comparison is always
+// inclusive - inclusive.
+NA_IAPI NABool naInsidei  (NAInt  a, NAInt  b, NAInt  x);
+NA_IAPI NABool naInsidei32(int32  a, int32  b, int32  x);
+NA_IAPI NABool naInsidei64(int64  a, int64  b, int64  x);
 
 
 
@@ -97,23 +106,23 @@ NA_IAPI NABool naAlmostInside (double a, double b, double x);
 
 // naInNorm returns true, if x is inside a normed range. The following norms
 // are impmemented:
-// naInNormZI: [ 0, 1]
+// naInNormZI: [ 0, 1 ]
 NA_IAPI NABool naInNormZIf(float x);
 NA_IAPI NABool naInNormZI (double x);
 
-// naInNormZE: [ 0, 1)
+// naInNormZE: [ 0, 1 )
 NA_IAPI NABool naInNormZEf(float x);
 NA_IAPI NABool naInNormZE (double x);
 
-// naInNormII: [-1, 1]
+// naInNormII: [-1, 1 ]
 NA_IAPI NABool naInNormIIf(float x);
 NA_IAPI NABool naInNormII (double x);
 
-// naInNormIE: [-1, 1)
+// naInNormIE: [-1, 1 )
 NA_IAPI NABool naInNormIEf(float x);
 NA_IAPI NABool naInNormIE (double x);
 
-// naInNormEE: (-1, 1)
+// naInNormEE: (-1, 1 )
 NA_IAPI NABool naInNormEEf(float x);
 NA_IAPI NABool naInNormEE (double x);
 

@@ -125,6 +125,201 @@ NAString* naCreateStringExtraction( NAString* deststring,
 
 
 
+
+NAString* naCreateStringXMLEncoded( NAString* deststring,
+                              const NAString* inputstring){
+  NAInt i;
+  #ifndef NDEBUG
+    if(!inputstring)
+      {naCrash("naCreateStringXMLEncoded", "input string is Null-Pointer."); return NA_NULL;}
+    if(deststring == inputstring)
+      naError("naCreateStringXMLEncoded", "The two parameters are the same.");
+  #endif
+  NAInt inputsize = naGetStringSize(inputstring);
+  if(!inputsize){return naCreateString(deststring);}
+  
+  // Count the required number of utf8 characters.
+  NAInt destsize = 0;
+  const NAUTF8Char* inptr = naGetStringConstUTF8Pointer(inputstring);
+  for(i=0; i<inputsize; i++){
+    switch(*inptr){
+    case '&': destsize += 5; break;
+    case '<': destsize += 4; break;
+    case '>': destsize += 4; break;
+    case '\"': destsize += 6; break;
+    case '\'': destsize += 6; break;
+    default: destsize += 1; break;
+    }
+    inptr++;
+  }
+
+  #ifndef NDEBUG
+    if(destsize <= 0)
+      naError("naCreateStringXMLEncoded", "encoded size invalid. String too long?");
+  #endif
+  // Create the string with the required length
+  deststring = naCreateStringWithSize(deststring, destsize);
+  inptr = naGetStringConstUTF8Pointer(inputstring);
+  NAUTF8Char* destptr = naGetStringMutableUTF8Pointer(deststring);
+
+  // Copy all characters and encode them if necessary.
+  for(i=0; i<inputsize; i++){
+    switch(*inptr){
+    case '&':  *destptr++ = '&'; *destptr++ = 'a'; *destptr++ = 'm'; *destptr++ = 'p'; *destptr++ = ';'; break;
+    case '<':  *destptr++ = '&'; *destptr++ = 'l'; *destptr++ = 't'; *destptr++ = ';'; break;
+    case '>':  *destptr++ = '&'; *destptr++ = 'g'; *destptr++ = 't'; *destptr++ = ';'; break;
+    case '\"': *destptr++ = '&'; *destptr++ = 'q'; *destptr++ = 'u'; *destptr++ = 'o'; *destptr++ = 't'; *destptr++ = ';'; break;
+    case '\'': *destptr++ = '&'; *destptr++ = 'a'; *destptr++ = 'p'; *destptr++ = 'o'; *destptr++ = 's'; *destptr++ = ';'; break;
+    default: *destptr++ = *inptr; break;
+    }
+    inptr++;
+  }
+
+  return deststring;
+}
+
+
+
+
+NAString* naCreateStringXMLDecoded( NAString* deststring,
+                              const NAString* inputstring){
+  #ifndef NDEBUG
+    if(!inputstring)
+      {naCrash("naCreateStringXMLDecoded", "input string is Null-Pointer."); return NA_NULL;}
+    if(deststring == inputstring)
+      naError("naCreateStringXMLDecoded", "The two parameters are the same.");
+  #endif
+
+  NAInt inputsize = naGetStringSize(inputstring);
+  if(!inputsize){return naCreateString(deststring);}
+
+  // Create a string with sufficient characters. As XML entities are always
+  // longer than their decoded character, we just use the same size.
+  deststring = naCreateStringWithSize(deststring, inputsize);
+  const NAUTF8Char* inptr = naGetStringConstUTF8Pointer(inputstring);
+  NAUTF8Char* destptr = naGetStringMutableUTF8Pointer(deststring);
+
+  // Copy all characters and decode them if necessary.
+  for(NAInt i=0; i<inputsize; i++){
+    if(inptr[i] == '&'){
+      if(((inputsize - i) >= 5) && (inptr[i+1] == 'a') && (inptr[i+2] == 'm') && (inptr[i+3] == 'p') && (inptr[i+4] == ';')){ *destptr++ = '&'; i += 4; }
+      else if(((inputsize - i) >= 4) && (inptr[i+1] == 'l') && (inptr[i+2] == 't') && (inptr[i+3] == ';')){ *destptr++ = '<'; i += 3; }
+      else if(((inputsize - i) >= 4) && (inptr[i+1] == 'g') && (inptr[i+2] == 't') && (inptr[i+3] == ';')){ *destptr++ = '>'; i += 3; }
+      else if(((inputsize - i) >= 6) && (inptr[i+1] == 'q') && (inptr[i+2] == 'u') && (inptr[i+3] == 'o') && (inptr[i+4] == 't') && (inptr[i+5] == ';')){ *destptr++ = '\"'; i += 5; }
+      else if(((inputsize - i) >= 6) && (inptr[i+1] == 'a') && (inptr[i+2] == 'p') && (inptr[i+3] == 'o') && (inptr[i+4] == 's') && (inptr[i+5] == ';')){ *destptr++ = '\''; i += 5; }
+      else{
+        *destptr++ = inptr[i];
+      }
+    }else{
+      *destptr++ = inptr[i];
+    }
+  }
+
+  // todo: numeric entities.
+
+  // The string is marked as NULL-Terminated. So we make sure this is the case.
+  *destptr = '\0';
+  // Finally, we shrink the string to its actual size
+  NAInt finalsize = destptr - naGetStringMutableUTF8Pointer(deststring);
+  naCreateStringExtraction(deststring, deststring, 0, finalsize);
+
+  return deststring;
+}
+
+
+
+NAString* naCreateStringEPSEncoded( NAString* deststring,
+                              const NAString* inputstring){
+  NAInt i;
+  #ifndef NDEBUG
+    if(!inputstring)
+      {naCrash("naCreateStringEPSEncoded", "input string is Null-Pointer."); return NA_NULL;}
+    if(deststring == inputstring)
+      naError("naCreateStringEPSEncoded", "The two parameters are the same.");
+  #endif
+  NAInt inputsize = naGetStringSize(inputstring);
+  if(!inputsize){return naCreateString(deststring);}
+  
+  // Count the required number of utf8 characters.
+  NAInt destsize = 0;
+  const NAUTF8Char* inptr = naGetStringConstUTF8Pointer(inputstring);
+  for(i=0; i<inputsize; i++){
+    switch(*inptr){
+    case '\\': destsize += 2; break;
+    case '(': destsize += 2; break;
+    case ')': destsize += 2; break;
+    default: destsize += 1; break;
+    }
+    inptr++;
+  }
+
+  #ifndef NDEBUG
+    if(destsize <= 0)
+      naError("naCreateStringEPSEncoded", "encoded size invalid. String too long?");
+  #endif
+  // Create the string with the required length
+  deststring = naCreateStringWithSize(deststring, destsize);
+  inptr = naGetStringConstUTF8Pointer(inputstring);
+  NAUTF8Char* destptr = naGetStringMutableUTF8Pointer(deststring);
+
+  // Copy all characters and encode them if necessary.
+  for(i=0; i<inputsize; i++){
+    switch(*inptr){
+    case '\\': *destptr++ = '\\'; *destptr++ = '\\'; break;
+    case '(':  *destptr++ = '\\'; *destptr++ = '(';  break;
+    case ')':  *destptr++ = '\\'; *destptr++ = ')';  break;
+    default: *destptr++ = *inptr; break;
+    }
+    inptr++;
+  }
+
+  return deststring;
+}
+
+
+NAString* naCreateStringEPSDecoded( NAString* deststring,
+                              const NAString* inputstring){
+  #ifndef NDEBUG
+    if(!inputstring)
+      {naCrash("naCreateStringEPSDecoded", "input string is Null-Pointer."); return NA_NULL;}
+    if(deststring == inputstring)
+      naError("naCreateStringEPSDecoded", "The two parameters are the same.");
+  #endif
+
+  NAInt inputsize = naGetStringSize(inputstring);
+  if(!inputsize){return naCreateString(deststring);}
+
+  // Create a string with sufficient characters. As EPS entities are always
+  // longer than their decoded character, we just use the same size.
+  deststring = naCreateStringWithSize(deststring, inputsize);
+  const NAUTF8Char* inptr = naGetStringConstUTF8Pointer(inputstring);
+  NAUTF8Char* destptr = naGetStringMutableUTF8Pointer(deststring);
+
+  // Copy all characters and decode them if necessary.
+  for(NAInt i=0; i<inputsize; i++){
+    if(inptr[i] == '\\'){
+      if(((inputsize - i) >= 2) && (inptr[i+1] == '\\')){     *destptr++ = '\\'; i += 1; }
+      else if(((inputsize - i) >= 2) && (inptr[i+1] == '(')){ *destptr++ = '(';  i += 1; }
+      else if(((inputsize - i) >= 2) && (inptr[i+1] == ')')){ *destptr++ = ')';  i += 1; }
+      else{
+        *destptr++ = inptr[i];
+      }
+    }else{
+      *destptr++ = inptr[i];
+    }
+  }
+
+  // The string is marked as NULL-Terminated. So we make sure this is the case.
+  *destptr = '\0';
+  // Finally, we shrink the string to its actual size
+  NAInt finalsize = destptr - naGetStringMutableUTF8Pointer(deststring);
+  naCreateStringExtraction(deststring, deststring, 0, finalsize);
+
+  return deststring;
+}
+
+
+
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   SystemChar* naCreateSystemStringFromString(const NAUTF8Char* utf8string, NAInt size){
     SystemChar* outstr;
@@ -156,6 +351,67 @@ void naClearString(NAString* string){
 void naDestroyString(NAString* string){
   naClearString(string);
   free(string);
+}
+
+
+
+
+void naAppendStringWithString(    NAString* string,
+                            const NAString* string2){
+  NAString newstring;
+  NAInt stringsize1 = naGetStringSize(string);
+  NAInt stringsize2 = naGetStringSize(string2);
+  naCreateStringWithSize(&newstring, stringsize1 + stringsize2);
+  naCpyn(naGetStringMutableUTF8Pointer(&newstring), naGetStringConstUTF8Pointer(string), stringsize1);
+  naCpyn(naGetStringMutableChar(&newstring, stringsize1), naGetStringConstUTF8Pointer(string2), stringsize2);
+  naClearString(string);
+  naCreateStringExtraction(string, &newstring, 0, -1);
+  naClearString(&newstring);
+}
+
+
+void naAppendStringWithChar(      NAString* string,
+                                 NAUTF8Char newchar){
+  NAString newstring;
+  NAInt stringsize = naGetStringSize(string);
+  naCreateStringWithSize(&newstring, stringsize + 1);
+  naCpyn(naGetStringMutableUTF8Pointer(&newstring), naGetStringConstUTF8Pointer(string), stringsize);
+  *naGetStringMutableChar(&newstring, -1) = newchar;
+  naClearString(string);
+  naCreateStringExtraction(string, &newstring, 0, -1);
+  naClearString(&newstring);
+}
+
+void naAppendStringWithFormat(    NAString* string,
+                          const NAUTF8Char* format,
+                                            ...){
+  va_list argumentlist;
+  va_start(argumentlist, format);
+  naAppendStringWithArguments(string, format, argumentlist);
+  va_end(argumentlist);
+}
+
+
+void naAppendStringWithArguments( NAString* string,
+                          const NAUTF8Char* format,
+                                    va_list argumentlist){
+  // Declaration before implementation. Needed for C90.
+  NAString newstring;
+  NAInt stringsize1 = naGetStringSize(string);
+  NAInt stringsize2;
+  va_list argumentlist2;
+  va_list argumentlist3;
+  va_copy(argumentlist2, argumentlist);
+  va_copy(argumentlist3, argumentlist);
+  stringsize2 = naVarargStringSize(format, argumentlist2);
+  naCreateStringWithSize(&newstring, stringsize1 + stringsize2);
+  naCpyn(naGetStringMutableUTF8Pointer(&newstring), naGetStringConstUTF8Pointer(string), stringsize1);
+  naVsnprintf(naGetStringMutableChar(&newstring, stringsize1), (size_t)(stringsize2+1), format, argumentlist3);
+  va_end(argumentlist2);
+  va_end(argumentlist3);
+  naClearString(string);
+  naCreateStringExtraction(string, &newstring, 0, -1);
+  naClearString(&newstring);
 }
 
 

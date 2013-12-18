@@ -75,28 +75,41 @@
 
 #define NA_THIRDf          0.33333333333333333333333333333f
 #define NA_THIRD           0.33333333333333333333333333333
-#define NA_THIRDl          0.33333333333333333333333333333l
+#define NA_THIRDl          0.33333333333333333333333333333L
 
 #define NA_ARBITRARY_BUT_CAREFULLY_CHOSEN_VALUE 42
 
-// The infinity definition is done here with the HUGE_VAL macros defined
+// The infinity definition can be done with the HUGE_VAL macros defined
 // in <math.h> or <cmath> but it is unclear whether they correspond to infinity
 // or just to a very large value. So far, the author never had problems with
-// this definition though.
+// them but the following expression with the division operator seems safer.
 #ifndef INFINITY
-  #ifndef HUGE_VALF
-    #define NA_INFINITYf       ((float)HUGE_VAL)
-    #define NA_INFINITY        HUGE_VAL
-    #define NA_INFINITYl       ((long double)HUGE_VAL)
-  #else
-    #define NA_INFINITYf       HUGE_VALF
-    #define NA_INFINITY        HUGE_VAL
-    #define NA_INFINITYl       HUGE_VALL
-  #endif
+  #define NA_INFINITYf        (1.f/0.f)
+  #define NA_INFINITY         (1. /0. )
+  #define NA_INFINITYl        (1.L/0.L)
+//  #ifndef HUGE_VALF
+//    #define NA_INFINITYf       ((float)HUGE_VAL)
+//    #define NA_INFINITY        HUGE_VAL
+//    #define NA_INFINITYl       ((long double)HUGE_VAL)
+//  #else
+//    #define NA_INFINITYf       HUGE_VALF
+//    #define NA_INFINITY        HUGE_VAL
+//    #define NA_INFINITYl       HUGE_VALL
+//  #endif
 #else
   #define NA_INFINITYf       ((float)INFINITY)
   #define NA_INFINITY        INFINITY
   #define NA_INFINITYl       ((long double)INFINITY)
+#endif
+
+#ifndef NAN
+  #define NA_NANf             (0.f/0.f)
+  #define NA_NAN              (0. /0. )
+  #define NA_NANl             (0.L/0.L)
+#else
+  #define NA_NANf             ((float)NAN)
+  #define NA_NAN              NAN
+  #define NA_NANl             ((long double)NAN)
 #endif
 
 // NA_SINGULARITY is a very small number which corresponds to 10 times the

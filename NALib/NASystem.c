@@ -37,7 +37,7 @@ const char* na_boolean_strings[2] = {
 };
 
 
-#ifndef NDEBUG
+#ifndef NDEBUGY
 
   // The error printing method. Errors will be emitted to the stderr output.
   // When NDEBUG is defined, these functions are OBSOLETE!
@@ -49,12 +49,14 @@ const char* na_boolean_strings[2] = {
 
 
   void naError(const char* functionsymbol, const char* message){
+    // Set a breakpoint here, if everything fails.
     fprintf(stderr, "Error in %s: %s\n", functionsymbol, message);
   }
 
 
 
   void naCrash(const char* functionsymbol, const char* message){
+    // Set a breakpoint here, if everything fails.
     fprintf(stderr, "Critical Error in %s: %s\n", functionsymbol, message);
     fprintf(stderr, "The application will likely crash...\n");
     // Uncomment the following line, if you want to crash deliberately. By

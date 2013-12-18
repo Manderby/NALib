@@ -85,9 +85,8 @@ NA_IAPI NAComplex naMakeComplex(double re, double im){
 NA_IAPI NAComplex naMakeComplexFromPolar(double r, double phi){
   NAComplex newcomplex;
   #ifndef NDEBUG
-    if(r<0.){
+    if(r<0.)
       naError("naMakeComplexFromPolar", "Radius is negative");
-    }
   #endif
   newcomplex.re = r * naCos(phi);
   newcomplex.im = r * naSin(phi);

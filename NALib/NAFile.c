@@ -11,6 +11,7 @@ NAString* naCreateStringFromFileContents(NAString* string, const char* filename,
   NAFile file;
   NAFileSize totalsize;
   file = naOpenFileForReading(filename);
+  naSetFileTextEncoding(&file, encoding);
   totalsize = naComputeFileSize(&file);
   #ifndef NDEBUG
     if(totalsize > NA_INT32_MAX){
@@ -49,6 +50,7 @@ NAFile naOpenFileForReading(const char* filename){
   file.desc = naOpen(filename, NA_FILE_OPEN_FLAGS_READ, NA_FILE_MODE_DEFAULT);
   file.pos = 0;
   file.converter = naMakeEndiannessConverter(NA_ENDIANNESS_NATIVE, NA_ENDIANNESS_NATIVE);
+  file.textencoding = NA_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_NEWLINE_NATIVE;
   if(file.desc < 0){
     file.flags |= NA_FILE_FLAG_EOF;
@@ -67,6 +69,7 @@ NAFile naOpenFileForWriting(const char* filename, NAFileMode mode){
   file.desc = naOpen(filename, NA_FILE_OPEN_FLAGS_WRITE, mode);
   file.pos = 0;
   file.converter = naMakeEndiannessConverter(NA_ENDIANNESS_NATIVE, NA_ENDIANNESS_NATIVE);
+  file.textencoding = NA_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_WRITING | NA_FILE_FLAG_NEWLINE_NATIVE;
   if(file.desc < 0){
     file.flags |= NA_FILE_FLAG_EOF;
@@ -84,6 +87,7 @@ NAFile naOpenFileForAppending(const char* filename, NAFileMode mode){
   NAFile file;
   file.desc = naOpen(filename, NA_FILE_OPEN_FLAGS_APPEND, mode);
   file.pos = 0;
+  file.textencoding = NA_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_WRITING | NA_FILE_FLAG_NEWLINE_NATIVE | NA_FILE_FLAG_AUTOFLUSH_TEXT;
   if(file.desc < 0){
     file.flags |= NA_FILE_FLAG_EOF;
@@ -102,6 +106,7 @@ NAFile naMakeFileAsStdin(){
   file.desc = 0;
   file.pos = 0;
   file.converter = naMakeEndiannessConverter(NA_ENDIANNESS_NATIVE, NA_ENDIANNESS_NATIVE);
+  file.textencoding = NA_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_STREAM | NA_FILE_FLAG_NEWLINE_NATIVE | NA_FILE_FLAG_AUTOFLUSH_ALL;
   file.remainingbytesinbuffer = 0;  // the buffer is empty at the moment.
   file.bufptr = file.buffer;
@@ -114,6 +119,7 @@ NAFile naMakeFileAsStdout(){
   file.desc = 1;
   file.pos = 0;
   file.converter = naMakeEndiannessConverter(NA_ENDIANNESS_NATIVE, NA_ENDIANNESS_NATIVE);
+  file.textencoding = NA_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_WRITING | NA_FILE_FLAG_STREAM | NA_FILE_FLAG_NEWLINE_NATIVE | NA_FILE_FLAG_AUTOFLUSH_ALL;
   file.remainingbytesinbuffer = NA_FILE_BUFFER_SIZE;
   file.bufptr = file.buffer;
@@ -126,6 +132,7 @@ NAFile naMakeFileAsStderr(){
   file.desc = 2;
   file.pos = 0;
   file.converter = naMakeEndiannessConverter(NA_ENDIANNESS_NATIVE, NA_ENDIANNESS_NATIVE);
+  file.textencoding = NA_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_WRITING | NA_FILE_FLAG_STREAM | NA_FILE_FLAG_NEWLINE_NATIVE | NA_FILE_FLAG_AUTOFLUSH_ALL;
   file.remainingbytesinbuffer = NA_FILE_BUFFER_SIZE;
   file.bufptr = file.buffer;
@@ -147,6 +154,11 @@ void naFlushFileBuffer(NAFile* file){
     file->bufptr = file->buffer;
     file->remainingbytesinbuffer = NA_FILE_BUFFER_SIZE;
   }
+}
+
+
+void naSetFileTextEncoding(NAFile* file, NATextEncoding textencoding){
+  file->textencoding = textencoding;
 }
 
 
@@ -175,6 +187,11 @@ NAFileSize naComputeFileSize(const NAFile* file){
   NAFileSize filesize = naLseek(file->desc, 0, SEEK_END);
   naLseek(file->desc, curpos, SEEK_SET);
   return filesize;
+}
+
+
+NABool naIsFileOpen(const NAFile* file){
+  return (file->desc >= 0);
 }
 
 
@@ -212,7 +229,9 @@ NA_IAPI void naRequireFileReadBufferBytes(NAFile* file, uint16 count){
   NAFileSize bytesread;
   if(file->remainingbytesinbuffer >= count){return;}  // enough bytes available
   // copy the remaining bytes to the beginning of the buffer.
-  naCpyn(file->buffer, file->bufptr, file->remainingbytesinbuffer);
+  if(file->remainingbytesinbuffer){
+    naCpyn(file->buffer, file->bufptr, file->remainingbytesinbuffer);
+  }
   // Place the bufferpointer right after these bytes...
   file->bufptr = file->buffer + file->remainingbytesinbuffer;
   // ... and refill the remaining buffer
@@ -227,10 +246,11 @@ NA_IAPI void naRequireFileReadBufferBytes(NAFile* file, uint16 count){
 
 
 void naReadFileBytes(NAFile* file, void* buf, NAFileSize count){
+  // todo make checks for write files.
   if(!count){return;}
 
   // use the rest of the buffer, if available.
-  if(count > file->remainingbytesinbuffer){
+  if((file->remainingbytesinbuffer) && (count > file->remainingbytesinbuffer)){
     naCpyn(buf, file->bufptr, file->remainingbytesinbuffer);
     buf = ((NAByte*)buf) + file->remainingbytesinbuffer;
     count -= file->remainingbytesinbuffer;
@@ -371,7 +391,7 @@ NAByteArray* naCreateByteArrayFromFile(NAByteArray* bytearray, NAFile* file, NAF
 }
 
 
-NAString* naCreateStringFromFile(NAString* string, NAFile* file, NAFileSize bytecount, NATextEncoding encoding){
+NAString* naCreateStringFromFile(NAString* string, NAFile* file, NAFileSize bytecount){
   string = naCreateStringWithSize(string, (NAInt)bytecount);
   naReadFileBytes(file, naGetStringMutableUTF8Pointer(string), bytecount);
   return string;
@@ -400,6 +420,7 @@ NA_IAPI void naRequireFileWriteBufferBytes(NAFile* file, uint16 count){
 
 
 void naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize count){
+  // todo make checks for read files.
   if(!count){return;}
   if( ((file->flags & NA_FILE_FLAG_AUTOFLUSH_MASK) >= NA_FILE_FLAG_AUTOFLUSH_MULTIBYTE)
       || (count >= NA_FILE_BUFFER_SIZE)){
@@ -567,7 +588,7 @@ void naWriteFileNewLine(NAFile* file){
 }
 
 
-void naWriteFileString(NAFile* file, const NAString* string, NATextEncoding encoding){
+void naWriteFileString(NAFile* file, const NAString* string){
   naWriteFileBytes(file, naGetStringConstUTF8Pointer(string), naGetStringSize(string));
   // todo: encoding.
 }
@@ -580,6 +601,7 @@ void naWriteFileStringWithFormat(NAFile* file,
   va_start(argumentlist, format);
   naWriteFileStringWithArguments(file, format, argumentlist);
   va_end(argumentlist);
+  // todo: encoding.
 }
 
 void naWriteFileStringWithArguments(NAFile* file,
@@ -587,19 +609,19 @@ void naWriteFileStringWithArguments(NAFile* file,
                                     va_list argumentlist){
   NAString string;
   naCreateStringWithArguments(&string, format, argumentlist);
-  naWriteFileString(file, &string, NA_ENCODING_UTF_8);
+  naWriteFileString(file, &string);
   naClearString(&string);
   if((file->flags & NA_FILE_FLAG_AUTOFLUSH_MASK) >= NA_FILE_FLAG_AUTOFLUSH_TEXT){
     naFlushFileBuffer(file);
   }
+  // todo: encoding.
 }
 
 
 
 void naWriteFileLine(             NAFile* file,
-                          const NAString* string,
-                           NATextEncoding encoding){
-  naWriteFileString(file, string, encoding);
+                          const NAString* string){
+  naWriteFileString(file, string);
   naWriteFileNewLine(file);
 }
 void naWriteFileLineWithFormat(   NAFile* file,

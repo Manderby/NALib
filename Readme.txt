@@ -47,7 +47,7 @@ As NALib is a C library, there are no constructors like in typical OOP
 languages and consequently, such initialization must be done manually by
 the programmer.
 
-In NALib, initialization-functions always start with createXXX. They
+In NALib, initialization-functions always start with naCreateXXX. They
 assume the given struct to be uninitialized and will overwrite all values.
 The struct itself can either be already allocated outside of the createXXX
 function (case A) or being automatically allocated within (case B):
@@ -63,10 +63,10 @@ A. If the given first argument of a createXXX function is NOT NULL, the
    When no longer used, these structs usually are destructed with the
    appropriate clearXXX function. See destructor explanation below.
 
-   To stay consistent with cas B, the pointer to the given struct
+   To stay consistent with case B, the pointer to the given struct
    is returned at the end of the function.
 
-B. If the given first argument of a createXXX function is a NULL-pointer,
+B. If the given first argument of an naCreateXXX function is a NULL-pointer,
    a new struct is allocated on the heap using malloc and at the end of the
    function, the pointer to that memory location is returned.
    Outside of the function, the returned pointer is usually stored in a
@@ -90,31 +90,23 @@ B. If the given first argument of a createXXX function is a NULL-pointer,
 
 3. Destructors
 --------------
-Structs which have been initialized using a createXXX function (see above)
+Structs which have been initialized using an naCreateXXX function (see above)
 must be deleted with the appropriate destructor.
 
 As NALib is a C library, there are no destructors like in typical OOP
 languages and consequently, such deletion must be done manually by
 the programmer.
 
-In NALib, destruction-functions either start with destroyXXX or clearXXX.
+In NALib, destruction-functions either start with naDestroyXXX or naClearXXX.
 Both functions expect a pointer to the struct and will perform all
-appropriate destructions. Basically, clearXXX will erase the contents.
-destroyXXX will call clearXXX first and free the given pointer after that.
+appropriate destructions. Basically, naClearXXX will erase the contents.
+naDestroyXXX will call naClearXXX first and free the given pointer after that.
 
 A. clearXXX functions are meant for variables whose content shall be erased
    but the memory of the struct itself shall not be freed.
 
-B. destroyXXX functions are meant for Pointers which shall be erased and
+B. destroyXXX functions are meant for pointers which shall be erased and
    freed completely from memory.
-
-Usually, both these functions only have one parameter: The pointer to the
-struct to clear/delete. Sometimes though, a programmer just wants to erase
-the contents of a variable but use it again immediately after that. Whereever
-this is useful, the clearXXX functions has a second argument "reinitialize"
-which does just that. If this argument is set to NA_TRUE, a createXXX function
-call will be performed automatically. If the argument is NA_FALSE, the values
-in thestruct are garbage.
 
 Usually, the cases listed here go in pairs with the cases listed in the
 Constructors explanation above. Meaning a case A constructor usually will
@@ -123,7 +115,7 @@ destructor. But in certain cases, a programmer might want to choose
 differently, for example to save time. If you choose so, just make sure
 you know what you are doing.
 
-Do not use the destroyXXX functions on stack variables!
+Do not use the naDestroyXXX functions on stack variables!
 
 
 
