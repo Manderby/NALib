@@ -222,9 +222,6 @@ NA_IAPI NABool naIsNaN(double x){
   return isnan(x);
 }
 
-
-
-
 NA_IDEF float naInvf(float x){
   #ifndef NDEBUG
     if(x == 0.f)

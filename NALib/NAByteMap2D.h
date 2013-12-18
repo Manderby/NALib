@@ -507,7 +507,7 @@ NA_IAPI void naReplaceByteMap2DValueWithValue( NAByteMap2D* map2d,
   #endif
   NAPosi leadpos = rect.pos;
   for(int v2=0; v2<rect.size.height; v2++){
-    Byte* dataptr = naGetByteMap2DMutableByte(map2d, leadpos);
+    NAByte* dataptr = naGetByteMap2DMutableByte(map2d, leadpos);
     for(int v1=0; v1<rect.size.width; v1++){
       if(*dataptr == originalvalue){*dataptr = newvalue;}
       dataptr++;
