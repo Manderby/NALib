@@ -27,19 +27,6 @@
 
 // Opaque type. See explanation in readme.txt
 typedef struct NAByteArray NAByteArray;
-struct NAByteArray{
-  NAPointer* storage;       // pointer to the storage of all bytes
-  union{                    // pointer to the first byte of this NAByteArray...
-    const NAByte* constp;   // ... which is either const ...
-          NAByte* p;        // ... or non-const.
-  } ptr;
-  NAInt size;               // size of this NAByteArray in bytes
-};
-// Note that ptr may not point to the same address as the data pointer stored
-// in the storage!
-//
-// If size is zero, the ByteArray is considered empty. In that case, the
-// other fields contain no useful information.
 
 
 // ///////////////////////////
@@ -200,15 +187,30 @@ NA_IAPI NABool naIsByteArrayEmpty(const NAByteArray* array);
 // ///////////////////////////////////////////////////////////////////////
 
 
+struct NAByteArray{
+  NAPointer* storage;       // pointer to the storage of all bytes
+  union{                    // pointer to the first byte of this NAByteArray...
+    const NAByte* constp;   // ... which is either const ...
+          NAByte* p;        // ... or non-const.
+  } ptr;
+  NAInt size;               // size of this NAByteArray in bytes
+};
+// Note that ptr may not point to the same address as the data pointer stored
+// in the storage!
+//
+// If size is zero, the ByteArray is considered empty. In that case, the
+// other fields contain no useful information.
 
-NA_IAPI NAByteArray* naCreateByteArray(NAByteArray* array){
+
+
+NA_IDEF NAByteArray* naCreateByteArray(NAByteArray* array){
   array = (NAByteArray*)naAllocateIfNull(array, sizeof(NAByteArray));
   naNulli(&(array->size));
   return array;
 }
 
 
-NA_IAPI NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
+NA_IDEF NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
                                                       NAInt size){
   NAInt addsize;
   if(!size){  // if size is zero
@@ -249,7 +251,7 @@ NA_IAPI NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
 
 
 
-NA_IAPI NAByteArray* naCreateByteArrayWithMutableBuffer(
+NA_IDEF NAByteArray* naCreateByteArrayWithMutableBuffer(
                                                 NAByteArray* array,
                                                        void* buffer,
                                                        NAInt size,
@@ -277,7 +279,7 @@ NA_IAPI NAByteArray* naCreateByteArrayWithMutableBuffer(
 
 
 
-NA_IAPI NAByteArray* naCreateByteArrayWithConstBuffer(
+NA_IDEF NAByteArray* naCreateByteArrayWithConstBuffer(
                                                 NAByteArray* array,
                                                  const void* buffer,
                                                        NAInt size){
@@ -302,7 +304,7 @@ NA_IAPI NAByteArray* naCreateByteArrayWithConstBuffer(
 
 
 
-NA_IAPI NAByteArray* naCreateByteArrayExtraction(
+NA_IDEF NAByteArray* naCreateByteArrayExtraction(
                                           NAByteArray* dstarray,
                                     const NAByteArray* srcarray,
                                                  NAInt offset,
@@ -385,7 +387,7 @@ NA_IAPI NAByteArray* naCreateByteArrayExtraction(
 
 
 
-NA_IAPI void naClearByteArray(NAByteArray* array){
+NA_IDEF void naClearByteArray(NAByteArray* array){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naClearByteArray", "array is Null-Pointer."); return;}
@@ -394,14 +396,14 @@ NA_IAPI void naClearByteArray(NAByteArray* array){
 }
 
 
-NA_IAPI void naDestroyByteArray(NAByteArray* array){
+NA_IDEF void naDestroyByteArray(NAByteArray* array){
   naClearByteArray(array);
   free(array);
 }
 
 
 
-NA_IAPI void naDecoupleByteArray(NAByteArray* array,
+NA_IDEF void naDecoupleByteArray(NAByteArray* array,
                                        NABool appendzerobytes){
   // Declaration before implementation. Needed for C90.
   NAInt arraysize;
@@ -428,7 +430,7 @@ NA_IAPI void naDecoupleByteArray(NAByteArray* array,
 
 
 
-NA_IAPI const NAByte* naGetByteArrayConstPointer(const NAByteArray* array){
+NA_IDEF const NAByte* naGetByteArrayConstPointer(const NAByteArray* array){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naGetByteArrayConstPointer", "array is Null-Pointer."); return NA_NULL;}
@@ -438,12 +440,12 @@ NA_IAPI const NAByte* naGetByteArrayConstPointer(const NAByteArray* array){
   return array->ptr.constp;
 }
 
-NA_IAPI NAByte* naGetByteArrayMutablePointer(NAByteArray* array){
+NA_IDEF NAByte* naGetByteArrayMutablePointer(NAByteArray* array){
   #ifndef NDEBUG
     if(!array)
-      {naCrash("naGetByteArrayPointer", "array is Null-Pointer."); return NA_NULL;}
+      {naCrash("naGetByteArrayMutablePointer", "array is Null-Pointer."); return NA_NULL;}
     if(naIsByteArrayEmpty(array))
-      naError("naGetByteArrayPointer", "array is empty");
+      naError("naGetByteArrayMutablePointer", "array is empty");
   #endif
   return array->ptr.p;
 }
@@ -451,7 +453,7 @@ NA_IAPI NAByte* naGetByteArrayMutablePointer(NAByteArray* array){
 
 
 
-NA_IAPI NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt indx){
+NA_IDEF NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt indx){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naGetByteArrayByte", "array is Null-Pointer."); return NA_NULL;}
@@ -466,7 +468,7 @@ NA_IAPI NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt indx){
   return &(array->ptr.p[indx]);
 }
 
-NA_IAPI const NAByte* naGetByteArrayConstByte(const NAByteArray* array,
+NA_IDEF const NAByte* naGetByteArrayConstByte(const NAByteArray* array,
                                                            NAInt indx){
   #ifndef NDEBUG
     if(!array)
@@ -484,7 +486,7 @@ NA_IAPI const NAByte* naGetByteArrayConstByte(const NAByteArray* array,
 
 
 
-NA_IAPI NAInt naGetByteArraySize(const NAByteArray* array){
+NA_IDEF NAInt naGetByteArraySize(const NAByteArray* array){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naGetByteArraySize", "array is Null-Pointer."); return 0;}
@@ -495,7 +497,7 @@ NA_IAPI NAInt naGetByteArraySize(const NAByteArray* array){
 }
 
 
-NA_IAPI NABool naIsByteArrayEmpty(const NAByteArray* array){
+NA_IDEF NABool naIsByteArrayEmpty(const NAByteArray* array){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naIsByteArrayEmpty", "array is Null-Pointer."); return 0;}

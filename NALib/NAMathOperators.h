@@ -189,21 +189,21 @@ NA_IAPI void        naCartesianToPolar (double* rtheta, const double* xy);
 #include "NARange.h"
 
 
-NA_IAPI NAInt naSigni(NAInt x){
+NA_IDEF NAInt naSigni(NAInt x){
 #if NA_SYSTEM_ADDRESS_BITS == 32
   return naSigni32(x);
 #elif NA_SYSTEM_ADDRESS_BITS == 64
   return naSigni64(x);
 #endif
 }
-NA_IAPI int32 naSigni32(int32 x){
+NA_IDEF int32 naSigni32(int32 x){
   #if defined NA_SIGNED_INTEGER_USES_TWOS_COMPLEMENT
     return ((x>>31)<<1)+1;
   #else
     return (x<0)?-1:1;
   #endif
 }
-NA_IAPI int64 naSigni64(int64 x){
+NA_IDEF int64 naSigni64(int64 x){
   #if defined NA_SIGNED_INTEGER_USES_TWOS_COMPLEMENT
     return ((x>>63)<<1)+1LL;
   #else
@@ -214,7 +214,7 @@ NA_IAPI int64 naSigni64(int64 x){
 
 
 
-NA_IAPI float naInvf(float x){
+NA_IDEF float naInvf(float x){
   #ifndef NDEBUG
     if(x == 0.f)
       naError("naInvf", "Division by zero.");
@@ -223,7 +223,7 @@ NA_IAPI float naInvf(float x){
   #endif
   return 1.f / x;
 }
-NA_IAPI double naInv(double x){
+NA_IDEF double naInv(double x){
   #ifndef NDEBUG
     if(x == 0.)
       naError("naInv", "Division by zero.");
@@ -234,13 +234,13 @@ NA_IAPI double naInv(double x){
 }
 
 
-NA_IAPI float naSqrtf(float x){
+NA_IDEF float naSqrtf(float x){
   #ifndef NDEBUG
     if(x < 0.f){naError("naSqrtf", "naSqrt of negative number.");}
   #endif
   return sqrtf(x);
 }
-NA_IAPI double naSqrt(double x){
+NA_IDEF double naSqrt(double x){
   #ifndef NDEBUG
     if(x < 0.){naError("naSqrt", "naSqrt of negative number.");}
   #endif
@@ -249,7 +249,7 @@ NA_IAPI double naSqrt(double x){
 
 
 
-NA_IAPI float naCbrtf(float x){
+NA_IDEF float naCbrtf(float x){
   #ifndef NDEBUG
     if(x < 0.f){naError("naCbrtf", "naCbrt of negative number.");}
   #endif
@@ -260,7 +260,7 @@ NA_IAPI float naCbrtf(float x){
   #endif
 }
 
-NA_IAPI double naCbrt(double x){
+NA_IDEF double naCbrt(double x){
   #ifndef NDEBUG
     if(x < 0.){naError("naCbrt", "naCbrt of negative number.");}
   #endif
@@ -272,57 +272,57 @@ NA_IAPI double naCbrt(double x){
 }
 
 
-NA_IAPI float naAbsf(float x){
+NA_IDEF float naAbsf(float x){
   return fabsf(x);
 }
-NA_IAPI double naAbs(double x){
+NA_IDEF double naAbs(double x){
   return fabs(x);
 }
-NA_IAPI NAInt naAbsi(NAInt x){
+NA_IDEF NAInt naAbsi(NAInt x){
 #if NA_SYSTEM_ADDRESS_BITS == 32
   return naAbsi32(x);
 #elif NA_SYSTEM_ADDRESS_BITS == 64
   return naAbsi64(x);
 #endif
 }
-NA_IAPI int8 naAbsi8(int8 x){
+NA_IDEF int8 naAbsi8(int8 x){
   return (int8)abs(x);
 }
-NA_IAPI int16 naAbsi16(int16 x){
+NA_IDEF int16 naAbsi16(int16 x){
   return (int16)abs(x);
 }
-NA_IAPI int32 naAbsi32(int32 x){
+NA_IDEF int32 naAbsi32(int32 x){
   return (int32)abs(x);
 }
-NA_IAPI int64 naAbsi64(int64 x){
+NA_IDEF int64 naAbsi64(int64 x){
   return (int64)llabs(x);
 }
 
 
-NA_IAPI float naFloorf(float x){
+NA_IDEF float naFloorf(float x){
   return floorf(x);
 }
-NA_IAPI double naFloor(double x){
+NA_IDEF double naFloor(double x){
   return floor(x);
 }
 
 
-NA_IAPI float naCeilf(float x){
+NA_IDEF float naCeilf(float x){
   return ceilf(x);
 }
-NA_IAPI double naCeil(double x){
+NA_IDEF double naCeil(double x){
   return ceil(x);
 }
 
 
-NA_IAPI float naRoundf(float x){
+NA_IDEF float naRoundf(float x){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return floorf(x + .5f);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
     return roundf(x);
   #endif
 }
-NA_IAPI double naRound(double x){
+NA_IDEF double naRound(double x){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return floor(x + .5);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
@@ -331,36 +331,36 @@ NA_IAPI double naRound(double x){
 }
 
 
-NA_IAPI float naSinf(float x){
+NA_IDEF float naSinf(float x){
   return sinf(x);
 }
-NA_IAPI double naSin(double x){
+NA_IDEF double naSin(double x){
   return sin(x);
 }
 
-NA_IAPI float naCosf(float x){
+NA_IDEF float naCosf(float x){
   return cosf(x);
 }
-NA_IAPI double naCos(double x){
+NA_IDEF double naCos(double x){
   return cos(x);
 }
 
-NA_IAPI float naTanf(float x){
+NA_IDEF float naTanf(float x){
   return tanf(x);
 }
-NA_IAPI double naTan(double x){
+NA_IDEF double naTan(double x){
   return tan(x);
 }
 
 
 
-NA_IAPI float naAsinf(float x){
+NA_IDEF float naAsinf(float x){
   #ifndef NDEBUG
     if(!naInNormIIf(x)){naError("naAsinf", "naAsin of invalid value.");}
   #endif
   return asinf(x);
 }
-NA_IAPI double naAsin(double x){
+NA_IDEF double naAsin(double x){
   #ifndef NDEBUG
     if(!naInNormII(x)){naError("naAsin", "naAsin of invalid value.");}
   #endif
@@ -368,13 +368,13 @@ NA_IAPI double naAsin(double x){
 }
 
 
-NA_IAPI float naAcosf(float x){
+NA_IDEF float naAcosf(float x){
   #ifndef NDEBUG
     if(!naInNormIIf(x)){naError("naAcosf", "naAcos of invalid value.");}
   #endif
   return acosf(x);
 }
-NA_IAPI double naAcos(double x){
+NA_IDEF double naAcos(double x){
   #ifndef NDEBUG
     if(!naInNormII(x)){naError("naAcos", "naAcos of invalid value.");}
   #endif
@@ -382,43 +382,43 @@ NA_IAPI double naAcos(double x){
 }
 
 
-NA_IAPI float naAtanf(float x){
+NA_IDEF float naAtanf(float x){
   return atanf(x);
 }
-NA_IAPI double naAtan(double x){
+NA_IDEF double naAtan(double x){
   return atan(x);
 }
 
 
-NA_IAPI float naAtan2f(float y, float x){
+NA_IDEF float naAtan2f(float y, float x){
   return atan2f(y, x);
 }
-NA_IAPI double naAtan2(double y, double x){
+NA_IDEF double naAtan2(double y, double x){
   return atan2(y, x);
 }
-NA_IAPI float naAnglef(const float* xy){
+NA_IDEF float naAnglef(const float* xy){
   return naAtan2f(xy[1], xy[0]);
 }
-NA_IAPI double naAngle(const double* xy){
+NA_IDEF double naAngle(const double* xy){
   return naAtan2(xy[1], xy[0]);
 }
 
 
-NA_IAPI float naExpf(float x){
+NA_IDEF float naExpf(float x){
   return expf(x);
 }
-NA_IAPI double naExp(double x){
+NA_IDEF double naExp(double x){
   return exp(x);
 }
 
 
-NA_IAPI float naLogf(float x){
+NA_IDEF float naLogf(float x){
   #ifndef NDEBUG
     if(x < 0.f){naError("naLogf", "Logarithm of negative number.");}
   #endif
   return logf(x);
 }
-NA_IAPI double naLog(double x){
+NA_IDEF double naLog(double x){
   #ifndef NDEBUG
     if(x < 0.){naError("naLog", "Logarithm of negative number.");}
   #endif
@@ -427,14 +427,14 @@ NA_IAPI double naLog(double x){
 
 
 
-NA_IAPI float naLog10f(float x){
+NA_IDEF float naLog10f(float x){
   #ifndef NDEBUG
     if(x < 0)
       naError("naLog10f", "Logarithm of negative number.");
   #endif
   return log10f(x);
 }
-NA_IAPI double naLog10(double x){
+NA_IDEF double naLog10(double x){
   #ifndef NDEBUG
     if(x < 0)
       naError("naLog10", "Logarithm of negative number.");
@@ -445,7 +445,7 @@ NA_IAPI double naLog10(double x){
 
 
 
-NA_IAPI float naLog2f(float x){
+NA_IDEF float naLog2f(float x){
   #ifndef NDEBUG
     if(x < 0.f){naError("naLog2f", "Logarithm of negative number.");}
   #endif
@@ -455,7 +455,7 @@ NA_IAPI float naLog2f(float x){
     return log2f(x);
   #endif
 }
-NA_IAPI double naLog2(double x){
+NA_IDEF double naLog2(double x){
   #ifndef NDEBUG
     if(x < 0.){naError("naLog2", "Logarithm of negative number.");}
   #endif
@@ -466,7 +466,7 @@ NA_IAPI double naLog2(double x){
   #endif
 }
 
-NA_IAPI int32 naLog2i32(int32 x){
+NA_IDEF int32 naLog2i32(int32 x){
   int32 retvalue; // Note: declaration before any other code.
   #ifndef NDEBUG
     if(x < 0)
@@ -478,7 +478,7 @@ NA_IAPI int32 naLog2i32(int32 x){
   while(x){retvalue++; x>>=1;}
   return retvalue;
 }
-NA_IAPI int64 naLog2i64(int64 x){
+NA_IDEF int64 naLog2i64(int64 x){
   int64 retvalue; // Note: declaration before any other code.
   #ifndef NDEBUG
     if(x < 0)
@@ -493,28 +493,28 @@ NA_IAPI int64 naLog2i64(int64 x){
 
 
 
-NA_IAPI float naExp2f(float x){
+NA_IDEF float naExp2f(float x){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return powf(2.f, x);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
     return exp2f(x);
   #endif
 }
-NA_IAPI double naExp2(double x){
+NA_IDEF double naExp2(double x){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return pow(2., x);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
     return exp2(x);
   #endif
 }
-NA_IAPI NAInt naExp2i(NAInt x){
+NA_IDEF NAInt naExp2i(NAInt x){
 #if NA_SYSTEM_ADDRESS_BITS == 32
   return naExp2i32(x);
 #elif NA_SYSTEM_ADDRESS_BITS == 64
   return naExp2i64(x);
 #endif
 }
-NA_IAPI int32 naExp2i32(int32 x){
+NA_IDEF int32 naExp2i32(int32 x){
   #ifndef NDEBUG
     if(x < 0)
       naError("naExp2i32", "Exponent negative. Will result in 0.");
@@ -523,7 +523,7 @@ NA_IAPI int32 naExp2i32(int32 x){
   #endif
   return 1<<x;
 }
-NA_IAPI int64 naExp2i64(int64 x){
+NA_IDEF int64 naExp2i64(int64 x){
   #ifndef NDEBUG
     if(x < 0)
       naError("naExp2i64", "Exponent negative. Will result in 0.");
@@ -535,14 +535,14 @@ NA_IAPI int64 naExp2i64(int64 x){
 
 
 
-NA_IAPI float naPowf(float b, float x){
+NA_IDEF float naPowf(float b, float x){
   #ifndef NDEBUG
     if(b < 0.f)
       naError("naPowf", "Base of power function smaller 0.");
   #endif
   return powf(b, x);
 }
-NA_IAPI double naPow(double b, double x){
+NA_IDEF double naPow(double b, double x){
   #ifndef NDEBUG
     if(b < 0.)
       naError("naPow", "Base of power function smaller 0.");
@@ -551,28 +551,28 @@ NA_IAPI double naPow(double b, double x){
 }
 
 
-NA_IAPI float naDegToRadf(float deg){
+NA_IDEF float naDegToRadf(float deg){
   return deg * NA_DEGREESf;
 }
-NA_IAPI double naDegToRad(double deg){
+NA_IDEF double naDegToRad(double deg){
   return deg * NA_DEGREES;
 }
 
-NA_IAPI float naRadToDegf(float rad){
+NA_IDEF float naRadToDegf(float rad){
   return rad * NA_DEG_PER_RADf;
 }
-NA_IAPI double naRadToDeg(double rad){
+NA_IDEF double naRadToDeg(double rad){
   return rad * NA_DEG_PER_RAD;
 }
 
 
 
-NA_IAPI void naPolarToCartesianf(float* xy, const float* rtheta){
+NA_IDEF void naPolarToCartesianf(float* xy, const float* rtheta){
   float r = rtheta[0];
   xy[0] = r * naCosf(rtheta[1]);
   xy[1] = r * naSinf(rtheta[1]);
 }
-NA_IAPI void naPolarToCartesian(double* xy, const double* rtheta){
+NA_IDEF void naPolarToCartesian(double* xy, const double* rtheta){
   double r = rtheta[0];
   xy[0] = r * naCos(rtheta[1]);
   xy[1] = r * naSin(rtheta[1]);
@@ -581,11 +581,11 @@ NA_IAPI void naPolarToCartesian(double* xy, const double* rtheta){
 
 // Note that the sqrt computation could be done using naLengthV2 but this would
 // require NAVectorAlgebra.h to be included.
-NA_IAPI void naCartesianToPolarf(float* rtheta, const float* xy){
+NA_IDEF void naCartesianToPolarf(float* rtheta, const float* xy){
   rtheta[0] = naSqrtf(xy[0] * xy[0] + xy[1] * xy[1]);
   rtheta[1] = (rtheta[0] == 0.f) ? 0.f : naAnglef(xy);
 }
-NA_IAPI void naCartesianToPolar(double* rtheta, const double* xy){
+NA_IDEF void naCartesianToPolar(double* rtheta, const double* xy){
   rtheta[0] = naSqrt(xy[0] * xy[0] + xy[1] * xy[1]);
   rtheta[1] = (rtheta[0] == 0.) ? 0. : naAngle(xy);
 }

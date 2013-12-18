@@ -6,12 +6,18 @@ intended for didactical purposes. Full license notice at the bottom.
 -------------------------
 CHANGELOG since Version 0
 -------------------------
-
 This file contains information about changes in the package NALib. These are
 purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
-Version 2 (first published 2013-September-23):
+
+- Changed prefix of inline functions to a macro which is different whether it
+  is a declaration or a definition.
+- Declared the visibility of all symbols
+- Removed some warnings.
+- Code beautification and comment enhancements.
+
+Version 2 (first published 2013-October-01):
 =========================================
 
 Highlights:

@@ -131,7 +131,7 @@ NA_IAPI NABool naEqual128( const void* s,
 #include <string.h>
 
 
-NA_IAPI void naCpy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s){
+NA_IDEF void naCpy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
     NAInt dist = (NAByte*)d-(NAByte*)s;
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
@@ -144,7 +144,7 @@ NA_IAPI void naCpy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #endif
   *(uint8*)d = *(uint8*)s;
 }
-NA_IAPI void naCpy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
+NA_IDEF void naCpy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
     NAInt dist = (NAByte*)d-(NAByte*)s;
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
@@ -157,7 +157,7 @@ NA_IAPI void naCpy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #endif
   *(uint16*)d = *(uint16*)s;
 }
-NA_IAPI void naCpy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
+NA_IDEF void naCpy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
     NAInt dist = (NAByte*)d-(NAByte*)s;
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
@@ -170,7 +170,7 @@ NA_IAPI void naCpy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #endif
   *(uint32*)d = *(uint32*)s;
 }
-NA_IAPI void naCpy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
+NA_IDEF void naCpy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
     NAInt dist = (NAByte*)d-(NAByte*)s;
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
@@ -183,7 +183,7 @@ NA_IAPI void naCpy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #endif
   *(uint64*)d = *(uint64*)s;
 }
-NA_IAPI void naCpy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
+NA_IDEF void naCpy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
     NAInt dist = (NAByte*)d-(NAByte*)s;
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
@@ -199,7 +199,7 @@ NA_IAPI void naCpy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
   s = ((NAByte*)s) + 8;
   *(uint64*)d = *(uint64*)s;
 }
-NA_IAPI void naCpyn(void* NA_RESTRICT d,
+NA_IDEF void naCpyn(void* NA_RESTRICT d,
               const void* NA_RESTRICT s,
                                 NAInt count){
   #ifndef NDEBUG
@@ -220,7 +220,7 @@ NA_IAPI void naCpyn(void* NA_RESTRICT d,
 // Swap multibyte-values
 // /////////////////////////////
 
-NA_IAPI void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b){
+NA_IDEF void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
     NAInt dist = (NAByte*)a-(NAByte*)b;
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
@@ -238,7 +238,7 @@ NA_IAPI void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b){
   *(uint8*)a^=*(uint8*)b;
 }
 
-NA_IAPI void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
+NA_IDEF void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
     NAInt dist = (NAByte*)a-(NAByte*)b;
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
@@ -256,7 +256,7 @@ NA_IAPI void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
   *(uint16*)a^=*(uint16*)b;
 }
 
-NA_IAPI void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
+NA_IDEF void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
     NAInt dist = (NAByte*)a-(NAByte*)b;
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
@@ -274,7 +274,7 @@ NA_IAPI void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
   *(uint32*)a^=*(uint32*)b;
 }
 
-NA_IAPI void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
+NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
     NAInt dist = (NAByte*)a-(NAByte*)b;
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
@@ -292,7 +292,7 @@ NA_IAPI void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
   *(uint64*)a^=*(uint64*)b;
 }
 
-NA_IAPI void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
+NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
     NAInt dist = (NAByte*)a-(NAByte*)b;
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
@@ -316,31 +316,31 @@ NA_IAPI void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
 // Nullifies the array
 // ///////////////////////////////////////////////////////////
 
-NA_IAPI void naNull8  (void* d){
+NA_IDEF void naNull8  (void* d){
   *(uint8*)d = 0;
 }
-NA_IAPI void naNull16 (void* d){
+NA_IDEF void naNull16 (void* d){
   *(uint16*)d = 0;
 }
-NA_IAPI void naNull32 (void* d){
+NA_IDEF void naNull32 (void* d){
   *(uint32*)d = 0;
 }
-NA_IAPI void naNull64 (void* d){
+NA_IDEF void naNull64 (void* d){
   *(uint64*)d = 0LL;
 }
-NA_IAPI void naNull128(void* d){
+NA_IDEF void naNull128(void* d){
   *(uint64*)d = 0LL;
   d = ((NAByte*)d) + 8;
   *(uint64*)d = 0LL;
 }
-NA_IAPI void naNulli(void* d){
+NA_IDEF void naNulli(void* d){
 #if NA_SYSTEM_ADDRESS_BITS == 32
   naNull32(d);
 #elif NA_SYSTEM_ADDRESS_BITS == 64
   naNull64(d);
 #endif
 }
-NA_IAPI void naNulln(void* d, NAInt count){
+NA_IDEF void naNulln(void* d, NAInt count){
   #ifndef NDEBUG
     if(count < 1)
       naError("naNulln", "count is < 1.");
@@ -351,19 +351,19 @@ NA_IAPI void naNulln(void* d, NAInt count){
 
 
 
-NA_IAPI void naOne8  (void* d){
+NA_IDEF void naOne8  (void* d){
   *(uint8*)d = 1;
 }
-NA_IAPI void naOne16 (void* d){
+NA_IDEF void naOne16 (void* d){
   *(uint16*)d = 1;
 }
-NA_IAPI void naOne32 (void* d){
+NA_IDEF void naOne32 (void* d){
   *(uint32*)d = 1;
 }
-NA_IAPI void naOne64 (void* d){
+NA_IDEF void naOne64 (void* d){
   *(uint64*)d = 1LL;
 }
-NA_IAPI void naOne128(void* d){
+NA_IDEF void naOne128(void* d){
   #if NA_SYSTEM_ENDIANNESS == NA_ENDIANNESS_BIG
     *(uint64*)d = 0LL;
     d = ((NAByte*)d) + 8;
@@ -376,14 +376,14 @@ NA_IAPI void naOne128(void* d){
     #error Can not create code for unknown endianness
   #endif
 }
-NA_IAPI void naOnei(void* d){
+NA_IDEF void naOnei(void* d){
 #if NA_SYSTEM_ADDRESS_BITS == 32
   naOne32(d);
 #elif NA_SYSTEM_ADDRESS_BITS == 64
   naOne64(d);
 #endif
 }
-NA_IAPI void naOnen(void* d, NAInt count){
+NA_IDEF void naOnen(void* d, NAInt count){
   #ifndef NDEBUG
     if(count < 1)
       naError("naOnen", "count is < 1.");
@@ -404,7 +404,7 @@ NA_IAPI void naOnen(void* d, NAInt count){
 // Set multiple bytes to the contents of a given pointer
 // ///////////////////////////////////////////////////////////
 
-NA_IAPI void naSet8( void* d,
+NA_IDEF void naSet8( void* d,
                     NAByte b0){
   register NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
@@ -415,7 +415,7 @@ NA_IAPI void naSet8( void* d,
   *p = b0;
 }
 
-NA_IAPI void naSet16( void* d,
+NA_IDEF void naSet16( void* d,
                      NAByte b0, NAByte b1){
   register NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
@@ -426,7 +426,7 @@ NA_IAPI void naSet16( void* d,
   *p++ = b0; *p = b1;
 }
 
-NA_IAPI void naSet32( void* d,
+NA_IDEF void naSet32( void* d,
                      NAByte b0, NAByte b1, NAByte b2, NAByte b3){
   register NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
@@ -437,7 +437,7 @@ NA_IAPI void naSet32( void* d,
   *p++ = b0; *p++ = b1; *p++ = b2; *p = b3;
 }
 
-NA_IAPI void naSet64( void* d,
+NA_IDEF void naSet64( void* d,
                      NAByte b0, NAByte b1, NAByte b2, NAByte b3,
                      NAByte b4, NAByte b5, NAByte b6, NAByte b7){
   register NAByte* p; // Declaration before implementation. Needed for C90.
@@ -450,7 +450,7 @@ NA_IAPI void naSet64( void* d,
   *p++ = b4; *p++ = b5; *p++ = b6; *p   = b7;
 }
 
-NA_IAPI void naSet128( void* d,
+NA_IDEF void naSet128( void* d,
                       NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
                       NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
                       NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
@@ -473,7 +473,7 @@ NA_IAPI void naSet128( void* d,
 // Compare multiple bytes to the contents of a given pointer
 // ///////////////////////////////////////////////////////////
 
-NA_IAPI NABool naEqual8(const void* s, NAByte b0){
+NA_IDEF NABool naEqual8(const void* s, NAByte b0){
   register NAByte* p; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
     if(!s)
@@ -484,7 +484,7 @@ NA_IAPI NABool naEqual8(const void* s, NAByte b0){
   return NA_TRUE;
 }
 
-NA_IAPI NABool naEqual16(const void* s, NAByte b0, NAByte b1){
+NA_IDEF NABool naEqual16(const void* s, NAByte b0, NAByte b1){
   register NAByte* p; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
     if(!s)
@@ -496,7 +496,7 @@ NA_IAPI NABool naEqual16(const void* s, NAByte b0, NAByte b1){
   return NA_TRUE;
 }
 
-NA_IAPI NABool naEqual32(const void* s,
+NA_IDEF NABool naEqual32(const void* s,
                               NAByte b0, NAByte b1, NAByte b2, NAByte b3){
   register NAByte* p; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
@@ -511,7 +511,7 @@ NA_IAPI NABool naEqual32(const void* s,
   return NA_TRUE;
 }
 
-NA_IAPI NABool naEqual64(const void* s,
+NA_IDEF NABool naEqual64(const void* s,
                               NAByte b0, NAByte b1, NAByte b2, NAByte b3,
                               NAByte b4, NAByte b5, NAByte b6, NAByte b7){
   register NAByte* p; // Declaration before implementation. Needed for C90
@@ -531,7 +531,7 @@ NA_IAPI NABool naEqual64(const void* s,
   return NA_TRUE;
 }
 
-NA_IAPI NABool naEqual128(const void* s,
+NA_IDEF NABool naEqual128(const void* s,
                                NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
                                NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
                                NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,

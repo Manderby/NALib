@@ -371,12 +371,12 @@ NABool naIsStringEqualToUTF8Pointer(const NAString* string,
 // Inline Implementations: See readme file for more expanation.
 // ///////////////////////////////////////////////////////////////////////
 
-NA_IAPI NAInt naStrlen(const NAUTF8Char* str){
+NA_IDEF NAInt naStrlen(const NAUTF8Char* str){
   return (NAInt)strlen((const char*)str);
 }
 
 
-NA_IAPI NAInt naVsnprintf(  NAUTF8Char* buffer,
+NA_IDEF NAInt naVsnprintf(  NAUTF8Char* buffer,
                                   NAInt size,
                       const NAUTF8Char *newstr,
                                 va_list argumentlist){
@@ -388,7 +388,7 @@ NA_IAPI NAInt naVsnprintf(  NAUTF8Char* buffer,
 }
 
 
-NA_IAPI NAInt naVarargStringSize(const NAUTF8Char* string, va_list args){
+NA_IDEF NAInt naVarargStringSize(const NAUTF8Char* string, va_list args){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return (NAInt)_vscprintf(string, args);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X

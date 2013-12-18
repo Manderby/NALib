@@ -154,56 +154,56 @@ NA_IAPI NABool naInNormEE (double x);
 
 
 
-NA_IAPI NAInt naMini(NAInt a, NAInt b){
+NA_IDEF NAInt naMini(NAInt a, NAInt b){
   return (a<b)?a:b;
 }
-NA_IAPI int32 naMini32(int32 a, int32 b){
+NA_IDEF int32 naMini32(int32 a, int32 b){
   return (a<b)?a:b;
 }
-NA_IAPI int64 naMini64(int64 a, int64 b){
+NA_IDEF int64 naMini64(int64 a, int64 b){
   return (a<b)?a:b;
 }
-NA_IAPI float naMinf(float a, float b){
+NA_IDEF float naMinf(float a, float b){
   return (a<b)?a:b;
 }
-NA_IAPI double naMin (double a, double b){
+NA_IDEF double naMin (double a, double b){
   return (a<b)?a:b;
 }
 
 
-NA_IAPI NAInt naMaxi  (NAInt a, NAInt b){
+NA_IDEF NAInt naMaxi  (NAInt a, NAInt b){
   return (a>b)?a:b;
 }
-NA_IAPI int32 naMaxi32(int32 a, int32 b){
+NA_IDEF int32 naMaxi32(int32 a, int32 b){
   return (a>b)?a:b;
 }
-NA_IAPI int64 naMaxi64(int64 a, int64 b){
+NA_IDEF int64 naMaxi64(int64 a, int64 b){
   return (a>b)?a:b;
 }
-NA_IAPI float naMaxf(float a, float b){
+NA_IDEF float naMaxf(float a, float b){
   return (a>b)?a:b;
 }
-NA_IAPI double naMax (double a, double b){
+NA_IDEF double naMax (double a, double b){
   return (a>b)?a:b;
 }
 
 
-NA_IAPI NABool naAlmostZerof (float x){
+NA_IDEF NABool naAlmostZerof (float x){
   return ((x < NA_SINGULARITYf) && (x > -NA_SINGULARITYf));
 }
-NA_IAPI NABool naAlmostZero  (double x){
+NA_IDEF NABool naAlmostZero  (double x){
   return ((x < NA_SINGULARITY) && (x > -NA_SINGULARITY));
 }
 
-NA_IAPI NABool naAlmostOnef (float x){
+NA_IDEF NABool naAlmostOnef (float x){
   return ((x < NA_SUP_NORMf) && (x > NA_SUB_NORMf));
 }
-NA_IAPI NABool naAlmostOne  (double x){
+NA_IDEF NABool naAlmostOne  (double x){
   return ((x < NA_SUP_NORM) && (x > NA_SUB_NORM));
 }
 
 
-NA_IAPI NABool naAlmostf(float x, float y){
+NA_IDEF NABool naAlmostf(float x, float y){
   if(naAlmostZerof(y)){
     if(naAlmostZerof(x)){
       return NA_TRUE;
@@ -219,7 +219,7 @@ NA_IAPI NABool naAlmostf(float x, float y){
     }
   }
 }
-NA_IAPI NABool naAlmost(double x, double y){
+NA_IDEF NABool naAlmost(double x, double y){
   if(naAlmostZero(y)){
     if(naAlmostZero(x)){
       return NA_TRUE;
@@ -239,35 +239,35 @@ NA_IAPI NABool naAlmost(double x, double y){
 
 
 // inclusive, inclusive
-NA_IAPI NABool naInsideIIf(float a, float b, float x){
+NA_IDEF NABool naInsideIIf(float a, float b, float x){
   #ifndef NDEBUG
     if(a>b)
       naError("naInsideIIf", "a is greater b. Will always return FALSE");
   #endif
   return (!((x < a) || (x > b)));
 }
-NA_IAPI NABool naInsideII(double a, double b, double x){
+NA_IDEF NABool naInsideII(double a, double b, double x){
   #ifndef NDEBUG
     if(a>b)
       naError("naInsideII", "a is greater b. Will always return FALSE");
   #endif
   return (!((x < a) || (x > b)));
 }
-NA_IAPI NABool naInsidei(NAInt a, NAInt b, NAInt x){
+NA_IDEF NABool naInsidei(NAInt a, NAInt b, NAInt x){
 #if NA_SYSTEM_ADDRESS_BITS == 32
   return naInsidei32(a, b, x);
 #elif NA_SYSTEM_ADDRESS_BITS == 64
   return naInsidei64(a, b, x);
 #endif
 }
-NA_IAPI NABool naInsidei32(int32 a, int32 b, int32 x){
+NA_IDEF NABool naInsidei32(int32 a, int32 b, int32 x){
   #ifndef NDEBUG
     if(a>b)
       naError("naInsidei32", "a is greater b. Will always return FALSE");
   #endif
   return (!((x < a) || (x > b)));
 }
-NA_IAPI NABool naInsidei64(int64 a, int64 b, int64 x){
+NA_IDEF NABool naInsidei64(int64 a, int64 b, int64 x){
   #ifndef NDEBUG
     if(a>b)
       naError("naInsidei64", "a is greater b. Will always return FALSE");
@@ -278,14 +278,14 @@ NA_IAPI NABool naInsidei64(int64 a, int64 b, int64 x){
 
 
 // inclusive, exclusive
-NA_IAPI NABool naInsideIEf(float a, float b, float x){
+NA_IDEF NABool naInsideIEf(float a, float b, float x){
   #ifndef NDEBUG
     if(!(a<b))
       naError("naInsideIEf", "a is greaterequal b. Will always return FALSE");
   #endif
   return (!(x < a) && (x < b));
 }
-NA_IAPI NABool naInsideIE(double a, double b, double x){
+NA_IDEF NABool naInsideIE(double a, double b, double x){
   #ifndef NDEBUG
     if(!(a<b))
       naError("naInsideIE", "a is greaterequal b. Will always return FALSE");
@@ -296,14 +296,14 @@ NA_IAPI NABool naInsideIE(double a, double b, double x){
 
 
 // exclusive, inclusive
-NA_IAPI NABool naInsideEIf(float a, float b, float x){
+NA_IDEF NABool naInsideEIf(float a, float b, float x){
   #ifndef NDEBUG
     if(!(a<b))
       naError("naInsideEIf", "a is greaterequal b. Will always return FALSE");
   #endif
   return ((x > a) && !(x > b));
 }
-NA_IAPI NABool naInsideEI(double a, double b, double x){
+NA_IDEF NABool naInsideEI(double a, double b, double x){
   #ifndef NDEBUG
     if(!(a<b))
       naError("naInsideEI", "a is greaterequal b. Will always return FALSE");
@@ -313,14 +313,14 @@ NA_IAPI NABool naInsideEI(double a, double b, double x){
 
 
 // exclusive, exclusive
-NA_IAPI NABool naInsideEEf(float a, float b, float x){
+NA_IDEF NABool naInsideEEf(float a, float b, float x){
   #ifndef NDEBUG
     if(!(a<b))
       naError("naInsideEEf", "a is greaterequal b. Will always return FALSE");
   #endif
   return ((x > a) && (x < b));
 }
-NA_IAPI NABool naInsideEE(double a, double b, double x){
+NA_IDEF NABool naInsideEE(double a, double b, double x){
   #ifndef NDEBUG
     if(!(a<b))
       naError("naInsideEE", "a is greaterequal b. Will always return FALSE");
@@ -333,7 +333,7 @@ NA_IAPI NABool naInsideEE(double a, double b, double x){
 // adjusting the range. This cound be anything else but as this is a function
 // which only needs to be almost accurate, the one function is chosen which is
 // simplest.
-NA_IAPI NABool naAlmostInsidef(float x, float a, float b){
+NA_IDEF NABool naAlmostInsidef(float x, float a, float b){
   #ifndef NDEBUG
     if(a>b)
       naError("naAlmostInsidef", "a is greater b.");
@@ -342,7 +342,7 @@ NA_IAPI NABool naAlmostInsidef(float x, float a, float b){
   b *= (b < 0.f) ? NA_SUB_NORMf : NA_SUP_NORMf;
   return naInsideEEf(a, b, x);
 }
-NA_IAPI NABool naAlmostInside(double x, double a, double b){
+NA_IDEF NABool naAlmostInside(double x, double a, double b){
   #ifndef NDEBUG
     if(a>b)
       naError("naAlmostInside", "a is greater b.");
@@ -354,46 +354,46 @@ NA_IAPI NABool naAlmostInside(double x, double a, double b){
 
 
 // naInNormZI: [ 0, 1]
-NA_IAPI NABool naInNormZIf(float x){
+NA_IDEF NABool naInNormZIf(float x){
   return !((x < 0.f) || (x > 1.f));
 }
-NA_IAPI NABool naInNormZI (double x){
+NA_IDEF NABool naInNormZI (double x){
   return !((x < 0.) || (x > 1.));
 }
 
 
 // naInNormZE: [ 0, 1)
-NA_IAPI NABool naInNormZEf(float x){
+NA_IDEF NABool naInNormZEf(float x){
   return (!(x < 0.f) && (x < 1.f));
 }
-NA_IAPI NABool naInNormZE (double x){
+NA_IDEF NABool naInNormZE (double x){
   return (!(x < 0.) && (x < 1.));
 }
 
 
 // naInNormII: [-1, 1]
-NA_IAPI NABool naInNormIIf(float x){
+NA_IDEF NABool naInNormIIf(float x){
   return !((x < -1.f) || (x > 1.f));
 }
-NA_IAPI NABool naInNormII (double x){
+NA_IDEF NABool naInNormII (double x){
   return !((x < -1.) || (x > 1.));
 }
 
 
 // naInNormIE: [-1, 1)
-NA_IAPI NABool naInNormIEf(float x){
+NA_IDEF NABool naInNormIEf(float x){
   return (!(x < -1.f) && (x < 1.f));
 }
-NA_IAPI NABool naInNormIE (double x){
+NA_IDEF NABool naInNormIE (double x){
   return (!(x < -1.) && (x < 1.));
 }
 
 
 // naInNormEE: (-1, 1)
-NA_IAPI NABool naInNormEEf(float x){
+NA_IDEF NABool naInNormEEf(float x){
   return ((x > -1.f) && (x < 1.f));
 }
-NA_IAPI NABool naInNormEE (double x){
+NA_IDEF NABool naInNormEE (double x){
   return ((x > -1.) && (x < 1.));
 }
 

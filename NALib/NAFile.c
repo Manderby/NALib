@@ -206,8 +206,12 @@ void naJumpFileOffsetRelative(NAFile* file, NAFileSize offset){
 // Helper function not visible to the programmer. Will make sure that there
 // are enough bytes in the buffer. Note that this function only works for
 // counts in uint16 range.
-// todo: should be hidden
-NA_IAPI void naRequireFileReadBufferBytes(NAFile* file, uint16 count){
+// This function is hidden to the user as it is just a supplementary helper
+// function which prepares the NAFile struct internally for an appropriate
+// action. Therefore the user shall not use it. Of course, in NALib hiding
+// something has not much use but it shows where the hidden attribute makes
+// sense.
+NA_IDEF NA_HIDDEN void naRequireFileReadBufferBytes(NAFile* file, uint16 count){
   // Declaration before implementation. Needed for C90.
   NAFileSize bytesread;
   if(file->remainingbytesinbuffer >= count){return;}  // enough bytes available
@@ -388,8 +392,12 @@ NAString* naCreateStringFromFile(NAString* string, NAFile* file, NAFileSize byte
 // Helper function not visible to the programmer. Will make sure that there
 // are enough bytes in the buffer. Note that this function only works for
 // counts in uint16 range.
-// todo: should be hidden
-NA_IAPI void naRequireFileWriteBufferBytes(NAFile* file, uint16 count){
+// This function is hidden to the user as it is just a supplementary helper
+// function which prepares the NAFile struct internally for an appropriate
+// action. Therefore the user shall not use it. Of course, in NALib hiding
+// something has not much use but it shows where the hidden attribute makes
+// sense.
+NA_IDEF NA_HIDDEN void naRequireFileWriteBufferBytes(NAFile* file, uint16 count){
   if(file->remainingbytesinbuffer >= count){
     return;
   }else{

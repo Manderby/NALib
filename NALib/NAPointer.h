@@ -152,7 +152,7 @@ NA_IAPI       void* naGetPointerMutableData(      NAPointer* pointer);
 
 #include "NAMathOperators.h"
 
-NA_IAPI void* naAllocate(NAInt size){
+NA_IDEF void* naAllocate(NAInt size){
   void* ptr; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(size < 1)
@@ -174,7 +174,7 @@ NA_IAPI void* naAllocate(NAInt size){
 }
 
 
-NA_IAPI void* naAllocateIfNull(void* ptr, NAInt size){
+NA_IDEF void* naAllocateIfNull(void* ptr, NAInt size){
   #ifndef NDEBUG
     if(size < 1)
       naError("naAllocateIfNull", "size is smaller than 1 .");
@@ -218,8 +218,11 @@ struct NAPointer{
                                       | NA_POINTER_CONST_DATA))
 
 
-// This is a helper function. It should be hidden. todo.
-NA_IAPI NAPointer* naCreatePointerStruct(NAPointer* pointer){
+// This is a helper function. It is hidden as the user shall not use it as it
+// is just a function which prepares the internal state of the NAPointer struct.
+// Of course, in NALib hiding something has not much use but it shows where
+// the hidden attribute makes sense.
+NA_IDEF NA_HIDDEN NAPointer* naCreatePointerStruct(NAPointer* pointer){
   if(!pointer){
     pointer = (NAPointer*)naAllocate(sizeof(NAPointer));
     pointer->refcount = 1 | NA_POINTER_OWN_STRUCT;
@@ -230,7 +233,7 @@ NA_IAPI NAPointer* naCreatePointerStruct(NAPointer* pointer){
 }
 
 
-NA_IAPI NAPointer* naCreatePointerWithSize(NAPointer* pointer, NAInt size){
+NA_IDEF NAPointer* naCreatePointerWithSize(NAPointer* pointer, NAInt size){
   #ifndef NDEBUG
     if(size < 1)
       naError("naCreatePointerWithSize", "size is smaller than 1.");
@@ -242,7 +245,7 @@ NA_IAPI NAPointer* naCreatePointerWithSize(NAPointer* pointer, NAInt size){
 }
 
 
-NA_IAPI NAPointer* naCreatePointerWithConstBuffer(  NAPointer* pointer,
+NA_IDEF NAPointer* naCreatePointerWithConstBuffer(  NAPointer* pointer,
                                                    const void* buffer){
   #ifndef NDEBUG
     if(!buffer)
@@ -256,7 +259,7 @@ NA_IAPI NAPointer* naCreatePointerWithConstBuffer(  NAPointer* pointer,
 
 
 
-NA_IAPI NAPointer* naCreatePointerWithMutableBuffer(NAPointer* pointer,
+NA_IDEF NAPointer* naCreatePointerWithMutableBuffer(NAPointer* pointer,
                                                          void* buffer,
                                                         NABool takeownership){
   #ifndef NDEBUG
@@ -273,7 +276,7 @@ NA_IAPI NAPointer* naCreatePointerWithMutableBuffer(NAPointer* pointer,
 
 
 
-NA_IAPI NAPointer* naRetainPointer(NAPointer* pointer){
+NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer)
       {naCrash("naRetainPointer", "pointer is Null-Pointer."); return NA_NULL;}
@@ -295,7 +298,7 @@ NA_IAPI NAPointer* naRetainPointer(NAPointer* pointer){
 }
 
 
-NA_IAPI void naReleasePointer(NAPointer* pointer){
+NA_IDEF void naReleasePointer(NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer)
       {naCrash("naReleasePointer", "pointer is Null-Pointer."); return;}
@@ -360,7 +363,7 @@ NA_IAPI void naReleasePointer(NAPointer* pointer){
 // Note that this is one of the very, very rare situations, where a union type
 // actually makes sense. See NAPointer declaration.
 
-NA_IAPI const void* naGetPointerConstData(const NAPointer* pointer){
+NA_IDEF const void* naGetPointerConstData(const NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer)
       {naCrash("naGetPointerData", "pointer is Null-Pointer."); return NA_NULL;}
@@ -368,7 +371,7 @@ NA_IAPI const void* naGetPointerConstData(const NAPointer* pointer){
   return pointer->data.constd;
 }
 
-NA_IAPI void* naGetPointerMutableData(NAPointer* pointer){
+NA_IDEF void* naGetPointerMutableData(NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer)
       {naCrash("naGetPointerData", "pointer is Null-Pointer."); return NA_NULL;}

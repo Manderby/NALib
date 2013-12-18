@@ -7,6 +7,10 @@
 
 
 
+struct NABitArray{
+  struct NAByteArray fullstorage;
+  struct NAByteArray bits;
+};
 
 
 
@@ -99,12 +103,11 @@ NABitArray* naCreateBitArrayExtraction( NABitArray* dstarray,
 }
 
 
-// Helper function. Does not need to be visible to the user and could be
-// declared with NA_HIDDEN. todo.
+// Helper function.
 // Returns the needed size of the array given the count parameter of the
 // createBitArrayFromXXXString functions and the expected count to store the
 // full bit array.
-NAInt getBitArraySizeHintCount(NAInt sizehint, NAInt desiredcount){
+NA_IDEF NAInt getBitArraySizeHintCount(NAInt sizehint, NAInt desiredcount){
   if(sizehint > 0){
     // When sizehint is positive, sizehint shall be used.
     return sizehint;
@@ -122,12 +125,11 @@ NAInt getBitArraySizeHintCount(NAInt sizehint, NAInt desiredcount){
 }
 
 
-// Helper function. Does not need to be visible to the user and could be
-// declared with NA_HIDDEN. todo.
+// Helper function.
 // Looks at the given sizehint and expands or extracts the given bitarray and
 // fills the padding bits with zero if necessary. Warning: expects fullstorage
 // to have enough bits allocated.
-void naEnsureBitArraySizeHint(NABitArray* bitarray, NAInt sizehint){
+NA_IDEF void naEnsureBitArraySizeHint(NABitArray* bitarray, NAInt sizehint){
   NAInt bitcount = naGetByteArraySize(&(bitarray->bits));
   NAInt arraycount = getBitArraySizeHintCount(sizehint, bitcount);
 

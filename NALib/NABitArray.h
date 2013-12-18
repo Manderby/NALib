@@ -76,14 +76,10 @@ typedef uint32 NANibble;  // A nibble consists of 4 Bits. Here in NALib, they
 
 // Opaque type. See explanation in readme.txt
 typedef struct NABitArray NABitArray;
-struct NABitArray{
-  struct NAByteArray fullstorage;
-  struct NAByteArray bits;
-};
 
 
 // Creates an empty bit array.
-NABitArray* naCreateBitArray(NABitArray* bitarray);
+NA_API NABitArray* naCreateBitArray(NABitArray* bitarray);
 
 
 // Creates a bit array with the specified count.
@@ -98,24 +94,25 @@ NABitArray* naCreateBitArray(NABitArray* bitarray);
 // - If count is zero, an empty bit array is returned.
 //
 // The returned bit array is always unititialized.
-NABitArray* naCreateBitArrayWithCount(NABitArray* bitarray, NAInt count);
+NA_API NABitArray* naCreateBitArrayWithCount( NABitArray* bitarray,
+                                                    NAInt count);
 
 
 // Creates a new array which is extended by a certain number of bits on both
 // ends. todo
-NABitArray * naCreateBitArrayExtension( NABitArray* dstarray,
-                          NABitArray* srcarray,
-                                NAInt offset,
-                                NAInt size);
+NA_API NABitArray * naCreateBitArrayExtension(NABitArray* dstarray,
+                                              NABitArray* srcarray,
+                                                    NAInt offset,
+                                                    NAInt size);
 
 // Will create an extraction of the given srcarray by referencing the values.
 // This function will not copy any storage. Use naDecoupleBitArray for that.
 // The resulting bit array will dereference the fullstorage in the given
 // range and set the bits array to that very same range.
-NABitArray* naCreateBitArrayExtraction( NABitArray* dstarray,
-                          NABitArray* srcarray,
-                                NAInt offset,
-                                NAInt size);
+NA_API NABitArray* naCreateBitArrayExtraction(NABitArray* dstarray,
+                                              NABitArray* srcarray,
+                                                    NAInt offset,
+                                                    NAInt size);
 
 // Creates a bit array from the given string. The string can contain binary
 // values, decimal values, hexadecimal values. The ASCII-function will create
@@ -132,51 +129,51 @@ NABitArray* naCreateBitArrayExtraction( NABitArray* dstarray,
 //   24, 32, ... bits, but never something in between.
 // Note that strings are always expected to be in natural reading order,
 // meaning, the trailing of the string contains the least significant values.
-NABitArray* naCreateBitArrayFromBinString(  NABitArray* bitarray,
-                                              NAString* string,
-                                                  NAInt sizehint);
-NABitArray* naCreateBitArrayFromDecString(  NABitArray* bitarray,
-                                              NAString* string,
-                                                  NAInt sizehint);
-NABitArray* naCreateBitArrayFromHexString(  NABitArray* bitarray,
-                                              NAString* string,
-                                                  NAInt sizehint);
-NABitArray* naCreateBitArrayFromASCIIString(NABitArray* bitarray, //todo make byte array.
-                                              NAString* string,
-                                                  NAInt sizehint);
+NA_API NABitArray* naCreateBitArrayFromBinString(  NABitArray* bitarray,
+                                                     NAString* string,
+                                                         NAInt sizehint);
+NA_API NABitArray* naCreateBitArrayFromDecString(  NABitArray* bitarray,
+                                                     NAString* string,
+                                                         NAInt sizehint);
+NA_API NABitArray* naCreateBitArrayFromHexString(  NABitArray* bitarray,
+                                                     NAString* string,
+                                                         NAInt sizehint);
+NA_API NABitArray* naCreateBitArrayFromASCIIString(NABitArray* bitarray, //todo make byte array.
+                                                     NAString* string,
+                                                         NAInt sizehint);
 
-void naClearBitArray(NABitArray* array);
-void naDestroyBitArray(NABitArray* array);
+NA_API void naClearBitArray(NABitArray* array);
+NA_API void naDestroyBitArray(NABitArray* array);
 
 // Will decouple the given array from its current storage by creating its own
 // storage with the precise size of the bits field. COPIES ALWAYS!
-void naDecoupleBitArray(NABitArray* array);
+NA_API void naDecoupleBitArray(NABitArray* array);
 
 
 
 // Returns the bit with the requested index. If index is negative, it
 // is searched from the end of the array. For example -1 denotes the last bit.
 // Warning: returns garbage if the array is empty.
-NABit* naGetBitArrayBit(NABitArray* bitarray, NAInt indx);
+NA_API NABit* naGetBitArrayBit(NABitArray* bitarray, NAInt indx);
 
 // Returns the size of the bits array. Not the size of the full storage!
-NAInt naGetBitArrayCount(NABitArray* bitarray);
+NA_API NAInt naGetBitArrayCount(NABitArray* bitarray);
 
 
 // Creates string representations of the given bitarray as an integer number.
-NAString* naCreateStringDecFromBitArray(NAString* string,
-                                    NABitArray* bitarray);
-NAString* naCreateStringHexFromBitArray(NAString* string,
-                                    NABitArray* bitarray);
-NAString* naCreateStringBinFromBitArray(NAString* string,
-                                    NABitArray* bitarray);
+NA_API NAString* naCreateStringDecFromBitArray(NAString* string,
+                                             NABitArray* bitarray);
+NA_API NAString* naCreateStringHexFromBitArray(NAString* string,
+                                             NABitArray* bitarray);
+NA_API NAString* naCreateStringBinFromBitArray(NAString* string,
+                                             NABitArray* bitarray);
 
 // Creates a byte array out of the given bit array. Every 8 bits are combined
 // into one single byte. The byte array is guaranteed to be null-terminated.
 // Careful: Only works properly when bitcount can be divided by 8! Use
 // naCreateBitArrayExtension first, if this is not the case.
-NAByteArray* naCreateByteArrayFromBitArray(NAByteArray* bytearray,
-                                            NABitArray* bitarray);
+NA_API NAByteArray* naCreateByteArrayFromBitArray(NAByteArray* bytearray,
+                                                   NABitArray* bitarray);
 
 
 // //////////////////////////////////
@@ -199,13 +196,13 @@ NAByteArray* naCreateByteArrayFromBitArray(NAByteArray* bytearray,
 
 // Adds two bit arrays and puts it into the storage of dstarray. All pointers
 // can be equal.
-NABit naComputeBitArrayAddBitArray( NABitArray* dstarray,
-                                    NABitArray* srcarray1,
-                                    NABitArray* srcarray2);
+NA_API NABit naComputeBitArrayAddBitArray( NABitArray* dstarray,
+                                           NABitArray* srcarray1,
+                                           NABitArray* srcarray2);
 
 // Multiplies the integer value of srcarray by 10 (Ten). The src pointer MUST
 // be different than the dst pointer!
-void naComputeBitArrayMulTen(NABitArray* dstarray, NABitArray* srcarray);
+NA_API void naComputeBitArrayMulTen(NABitArray* dstarray, NABitArray* srcarray);
 
 
 
@@ -216,15 +213,15 @@ void naComputeBitArrayMulTen(NABitArray* dstarray, NABitArray* srcarray);
 
 // Adds the integer value 1 to the bit array. A Wrap-around may occur.
 // Returns the carry.
-NABit naComputeBitArrayAddOne(NABitArray* array);
+NA_API NABit naComputeBitArrayAddOne(NABitArray* array);
 
 // Computes the one's and two's complement of the given array.
-void naComputeBitArrayOnesComplement(NABitArray* array);
-void naComputeBitArrayTwosComplement(NABitArray* array);
+NA_API void naComputeBitArrayOnesComplement(NABitArray* array);
+NA_API void naComputeBitArrayTwosComplement(NABitArray* array);
 
 // Swaps the byte order. Careful: Only works properly when bitcount can be
 // divided by 8! Use naCreateBitArrayExtension first, if this is not the case.
-void naComputeBitArraySwapBytes(NABitArray* array);
+NA_API void naComputeBitArraySwapBytes(NABitArray* array);
 
 
 

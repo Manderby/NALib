@@ -343,7 +343,7 @@ void naWriteFileLineWithArguments(NAFile* file,
 
 
 
-NA_IAPI NAFileSize naLseek(int fd, NAFileSize offset, int origin){
+NA_IDEF NAFileSize naLseek(int fd, NAFileSize offset, int origin){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     #if NA_SYSTEM_ADDRESS_BITS == 64
       return _lseeki64(fd, offset, origin);
@@ -361,7 +361,7 @@ NA_IAPI NAFileSize naLseek(int fd, NAFileSize offset, int origin){
 // just need the standard ways of accessing files.
 // Use NA_FILE_MODE_DEFAULT if you don't know what to use for the mode
 // argument.
-NA_IAPI int naOpen(const char* path, int flags, int mode){
+NA_IDEF int naOpen(const char* path, int flags, int mode){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     int handle;
     _sopen_s(&handle, path, flags, _SH_DENYNO, mode);
@@ -372,7 +372,7 @@ NA_IAPI int naOpen(const char* path, int flags, int mode){
 }
 
 
-NA_IAPI int naClose(int fd){
+NA_IDEF int naClose(int fd){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return _close(fd);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
@@ -381,7 +381,7 @@ NA_IAPI int naClose(int fd){
 }
 
 
-NA_IAPI NAFileSize naRead(int fd, void* buf, NAFileSize count){
+NA_IDEF NAFileSize naRead(int fd, void* buf, NAFileSize count){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return (NAFileSize)_read(fd, buf, (unsigned int)count);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
@@ -390,7 +390,7 @@ NA_IAPI NAFileSize naRead(int fd, void* buf, NAFileSize count){
 }
 
 
-NA_IAPI NAFileSize naWrite(int fd, const void* buf, NAFileSize count){
+NA_IDEF NAFileSize naWrite(int fd, const void* buf, NAFileSize count){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return (NAFileSize)_write(fd, buf, (size_t)count);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
@@ -401,7 +401,7 @@ NA_IAPI NAFileSize naWrite(int fd, const void* buf, NAFileSize count){
 
 // Use NA_DIR_MODE_DEFAULT if you don't know what to use for the mode
 // argument.
-NA_IAPI int naMkDir(const char* path, int mode){
+NA_IDEF int naMkDir(const char* path, int mode){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return _mkdir(path);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
@@ -410,7 +410,7 @@ NA_IAPI int naMkDir(const char* path, int mode){
 }
 
 
-NA_IAPI int naChDir(const char* path){
+NA_IDEF int naChDir(const char* path){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return _chdir(path);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
@@ -419,7 +419,7 @@ NA_IAPI int naChDir(const char* path){
 }
 
 
-NA_IAPI NABool naExists(const char* path){
+NA_IDEF NABool naExists(const char* path){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return !(_access(path, 0));
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
@@ -428,7 +428,7 @@ NA_IAPI NABool naExists(const char* path){
 }
 
 
-NA_IAPI NABool naIsDir(const char* path){
+NA_IDEF NABool naIsDir(const char* path){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     SystemChar* sysstring = naCreateSystemStringFromString(path, 0);
     NABool retvalue = (GetFileAttributes(sysstring)
@@ -443,7 +443,7 @@ NA_IAPI NABool naIsDir(const char* path){
 }
 
 
-NA_IAPI NABool naIsHidden(const char* path){
+NA_IDEF NABool naIsHidden(const char* path){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     SystemChar* sysstring = naCreateSystemStringFromString(path, 0);
     NABool retvalue = (GetFileAttributes(sysstring)
@@ -456,7 +456,7 @@ NA_IAPI NABool naIsHidden(const char* path){
 }
 
 
-NA_IAPI int naRemove(const char* path){
+NA_IDEF int naRemove(const char* path){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return remove(path);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
@@ -465,7 +465,7 @@ NA_IAPI int naRemove(const char* path){
 }
 
 
-NA_IAPI NABool naCopyFile(const char* dstpath, const char* srcpath){
+NA_IDEF NABool naCopyFile(const char* dstpath, const char* srcpath){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return (CopyFile( (LPCTSTR)(const char*)srcpath,
                       (LPCTSTR)(const char*)dstpath,

@@ -9,10 +9,10 @@
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   #include <time.h>
-  NA_IAPI void Localtime(struct tm* storage, const time_t* tme){localtime_s(storage, tme);}
+  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){localtime_s(storage, tme);}
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
   #include <sys/time.h>
-  NA_IAPI void Localtime(struct tm* storage, const time_t* tme){localtime_r(tme, storage);}
+  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){localtime_r(tme, storage);}
 #else
   #warning "System undefined"
 #endif
@@ -676,7 +676,7 @@ int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
   struct timespec naMakeTimeSpecFromDateTime(const NADateTime* datetime){
     struct timespec timesp;
     NAInt taiperiod = naGetTAIPeriodIndexForSISecond(datetime->sisec);
-    timesp.tv_sec = datetime->sisec - (naTAIPeriods[taiperiod].startsisec - naTAIPeriods[taiperiod].startgregsec);
+    timesp.tv_sec = (__darwin_time_t)(datetime->sisec - (naTAIPeriods[taiperiod].startsisec - naTAIPeriods[taiperiod].startgregsec));
     timesp.tv_sec -= NA_GREG_SECONDS_TILL_BEGIN_1970;
     timesp.tv_nsec = datetime->nsec;
     return timesp;

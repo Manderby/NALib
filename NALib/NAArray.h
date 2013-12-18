@@ -28,12 +28,6 @@
 
 // Opaque type. See explanation in readme.txt
 typedef struct NAArray NAArray;
-struct NAArray{
-  struct NAByteArray bytearray;  // The byte array
-  NAInt              typesize;   // The size in bytes of the stored type
-};
-// Note that an empty array is marked with 0 in the the size field of
-// bytearray. If that field is zero, all other fields are garbage.
 
 
 
@@ -96,7 +90,15 @@ NA_IAPI NAInt naGetArrayCount(NAArray* array);
 // Inline Implementations: See readme file for more expanation.
 // ///////////////////////////////////////////////////////////////////////
 
-NA_IAPI NAArray* naCreateArray(NAArray* array){
+struct NA_HIDDEN NAArray{
+  struct NAByteArray bytearray;  // The byte array
+  NAInt              typesize;   // The size in bytes of the stored type
+};
+// Note that an empty array is marked with 0 in the the size field of
+// bytearray. If that field is zero, all other fields are garbage.
+
+
+NA_IDEF NAArray* naCreateArray(NAArray* array){
   array = naAllocateIfNull(array, sizeof(NAArray));
   naCreateByteArray(&(array->bytearray));
   naOnei(&(array->typesize));
@@ -104,7 +106,7 @@ NA_IAPI NAArray* naCreateArray(NAArray* array){
 }
 
 
-NA_IAPI NAArray* naCreateArrayWithCount(NAArray* array,
+NA_IDEF NAArray* naCreateArrayWithCount(NAArray* array,
                                            NAInt typesize,
                                            NAInt count){
   #ifndef NDEBUG
@@ -122,7 +124,7 @@ NA_IAPI NAArray* naCreateArrayWithCount(NAArray* array,
 }
 
 
-NA_IAPI NAArray* naCreateArrayExtraction(   NAArray* dstarray,
+NA_IDEF NAArray* naCreateArrayExtraction(   NAArray* dstarray,
                                             NAArray* srcarray,
                                                NAInt offset,
                                                NAInt count){
@@ -137,7 +139,7 @@ NA_IAPI NAArray* naCreateArrayExtraction(   NAArray* dstarray,
 }
 
 
-NA_IAPI void naClearArray(NAArray* array){
+NA_IDEF void naClearArray(NAArray* array){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naClearArray", "array is Null-Pointer."); return;}
@@ -146,13 +148,13 @@ NA_IAPI void naClearArray(NAArray* array){
 }
 
 
-NA_IAPI void naDestroyArray(NAArray* array){
+NA_IDEF void naDestroyArray(NAArray* array){
   naClearArray(array);
   free(array);
 }
 
 
-NA_IAPI const void* naGetArrayConstElement(const NAArray* array, NAInt indx){
+NA_IDEF const void* naGetArrayConstElement(const NAArray* array, NAInt indx){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naGetArrayElement", "array is Null-Pointer."); return NA_NULL;}
@@ -163,7 +165,7 @@ NA_IAPI const void* naGetArrayConstElement(const NAArray* array, NAInt indx){
                                   indx * array->typesize);
 }
 
-NA_IAPI void* naGetArrayMutableElement(NAArray* array, NAInt indx){
+NA_IDEF void* naGetArrayMutableElement(NAArray* array, NAInt indx){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naGetArrayElement", "array is Null-Pointer."); return NA_NULL;}
@@ -176,7 +178,7 @@ NA_IAPI void* naGetArrayMutableElement(NAArray* array, NAInt indx){
 
 
 
-NA_IAPI NAInt naGetArrayCount(NAArray* array){
+NA_IDEF NAInt naGetArrayCount(NAArray* array){
   NAInt bytesize;
   
   #ifndef NDEBUG

@@ -11,7 +11,7 @@
 
 // The version of this very distribution. No sub-version or build number or
 // whatever. Just one single integer number.
-#define NA_LIB_VERSION 2
+#define NA_LIB_VERSION 3
 
 // The various Systems:
 #define NA_SYSTEM_MAC_OS_X  0
@@ -27,13 +27,6 @@
 #define NA_ENDIANNESS_COUNT   4
 // Note that when expecting the endianness as an argument, it will have the
 // type NAInt. Unfortunately, these macros can not be defined as enums.
-
-
-// UTF8-Strings for the macros above and a boolean type (defined later in this
-// file). The variables are defined in the implementation file NASystem.c
-extern const char* na_system_strings[NA_SYSTEM_COUNT];
-extern const char* na_endianness_strings[NA_ENDIANNESS_COUNT];
-extern const char* na_boolean_strings[2];
 
 
 
@@ -99,55 +92,68 @@ extern const char* na_boolean_strings[2];
 // System dependant mapping of global functions and macros
 // ////////////////////////////////////////////////////////////
 
+// The definition of NA_RESTRICT and NA_INLINE are just mappings of built-in
+// keywords on different systems.
+//
+// The NA_API and NA_HIDDEN macros mark the visibility of a symbol to the
+// user. IF NALib would be provided as a library (dll, lib or dylib), the
+// symbols marked with NA_API would be explicitely accessible, the ones with
+// NA_HIDDEN not. As NALib does not hide its code, both macros are just here
+// for explanation.
+//
 // A function declared with NA_HIDDEN will not be exported when building a
 // library. This means that this function will not be listed in the .lib file
 // on windows and will not be accessible anywhere when including the (.dll or
 // .dylib) library. A function declared with NA_API will explicitely be
 // exported. This is a system-independent implementation which allows the
 // programmer to define the exporting on a very low granularity. There exist
-// other methods to define the exporting in external files.
+// other methods to define the exporting in supplementary files.
 //
-// Usually, the NA_HIDDEN macro is not visible to the end user as it will
-// only be used on hidden parts (seem legit, doesn't it?). But as NALib has
-// no need to hide code, it is listed here.
-//
-// NA_API too is just here for explanation. It is not used in NALib, as it is
-// not available as a library. Hence its name: NALib = Not A Library.
-//
-// The definition of NA_RESTRICT and NA_INLINE are just mappings of built-in
-// keywords on different systems.
+// Usually, the NA_HIDDEN macro is defined in some other, hidden file as it
+// shall not be visible to the end user and will only be used on hidden parts.
+// This is not necessary but makes the code clean and helps detect functions
+// which should not be accessible to the user. In NALib, this does not matter.
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-  #define NA_HIDDEN
-  #define NA_API      __declspec(dllexport)
   #define NA_RESTRICT __restrict
   #define NA_INLINE   _inline
-  #define va_copy(d,s) ((d) = (s))
+  #define NA_HIDDEN
+  #define NA_API      __declspec(dllexport)
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-  #define NA_HIDDEN   __attribute__ ((visibility("hidden")))
-  #define NA_API      __attribute__ ((visibility("default")))
   #define NA_RESTRICT __restrict__
   #define NA_INLINE   inline
+  #define NA_HIDDEN   __attribute__ ((visibility("hidden")))
+  #define NA_API      __attribute__ ((visibility("default")))
 #else
 #endif
 
 
-// This function-signature prefix is used for all functions which are intended
-// for public use and shall preferably be inlined. IAPI is short for INLINE_API.
+// The following function-signature prefixes are used for all functions which
+// are intended for public use and shall preferably be inlined.
+// IAPI is short for INLINE_API and IDEF is short for INLINE_DEFINITION.
 // Note that inline functions must be visible at compile time and do not need
 // a visibility attribute.
-#define NA_IAPI   static NA_INLINE
-// Note that inline functions are automatically declared static. This might
-// slightly increase the file size but safes a lot of trouble and makes the
-// source code more readable.
+#define NA_IAPI   static NA_API
+#define NA_IDEF   static NA_INLINE
+// Note that with these prefixes, all inline functions are automatically
+// declared static in NALib. This might slightly increase the file size but
+// safes a lot of trouble and makes the source code more readable.
 //
-// Also note that usually, the inline keyword should only be used at the
-// definition, not at the declaration where it should be ignored.
-// Nontheless, there are some situations where the compiler gets confused and
-// assumes a non-inlined function. When inline functions always get declared as
-// inline, this can not happen.
+// Also note that there exist two prefixes as the inline keyword should only
+// be used at the definition, not at the declaration where it should be ignored.
 
 
+// UTF8-Strings for the macros above and a boolean type (defined later in this
+// file). The variables are defined in the implementation file NASystem.c
+NA_API extern const char* na_endianness_strings[NA_ENDIANNESS_COUNT];
+NA_API extern const char* na_boolean_strings[2];
+NA_API extern const char* na_system_strings[NA_SYSTEM_COUNT];
+
+
+#ifndef va_copy
+  // va_copy is missing on some systems
+  #define va_copy(d,s) ((d) = (s))
+#endif
 
 // /////////////////////////
 // The integer types
@@ -161,7 +167,7 @@ extern const char* na_boolean_strings[2];
 
 // We test what encoding is used for negative integers. With this knowledge,
 // certain tasks might be speeded up a bit.
-#if (-1 & 3) == 3
+#if   (-1 & 3) == 3
   #define NA_SIGNED_INTEGER_USES_TWOS_COMPLEMENT
 #elif (-1 & 3) == 2
   #define NA_SIGNED_INTEGER_USES_ONES_COMPLEMENT

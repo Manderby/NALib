@@ -62,7 +62,7 @@ NA_IAPI double naUniformRandZI();
 #include "NADateTime.h"
 
 
-NA_IAPI NAInt naRand(){
+NA_IDEF NAInt naRand(){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return rand();
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
@@ -71,7 +71,7 @@ NA_IAPI NAInt naRand(){
 }
 
 
-NA_IAPI void naSRand(uint32 seed){
+NA_IDEF void naSRand(uint32 seed){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     srand(seed);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
@@ -80,7 +80,7 @@ NA_IAPI void naSRand(uint32 seed){
 }
 
 
-NA_IAPI void naSeedRand(NAInt seed){
+NA_IDEF void naSeedRand(NAInt seed){
   if(seed){
     naSRand((uint32)seed);
   }else{
@@ -93,12 +93,12 @@ NA_IAPI void naSeedRand(NAInt seed){
 #define NA_INV_RAND_MAXf (1.f / RAND_MAX)
 #define NA_INV_RAND_MAX  (1.  / RAND_MAX)
 
-NA_IAPI float naUniformRandZEf(){
+NA_IDEF float naUniformRandZEf(){
   float rnd;
   do{rnd = (float)naRand();} while(rnd == RAND_MAX);
   return rnd * NA_INV_RAND_MAXf;
 }
-NA_IAPI double naUniformRandZE(){
+NA_IDEF double naUniformRandZE(){
   double rnd;
   do{rnd = (double)naRand();} while(rnd == RAND_MAX);
   return rnd * NA_INV_RAND_MAX;
@@ -106,10 +106,10 @@ NA_IAPI double naUniformRandZE(){
 
 
 
-NA_IAPI float naUniformRandZIf(){
+NA_IDEF float naUniformRandZIf(){
   return (float)naRand() * NA_INV_RAND_MAXf;
 }
-NA_IAPI double naUniformRandZI(){
+NA_IDEF double naUniformRandZI(){
   return (double)naRand() * NA_INV_RAND_MAX;
 }
 
