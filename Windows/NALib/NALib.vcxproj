@@ -18,6 +18,37 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\NALib\NABitArray.c" />
+    <ClCompile Include="..\..\NALib\NADateTime.c" />
+    <ClCompile Include="..\..\NALib\NAFile.c" />
+    <ClCompile Include="..\..\NALib\NAGrowingSpace.c" />
+    <ClCompile Include="..\..\NALib\NAString.c" />
+    <ClCompile Include="..\..\NALib\NASystem.c" />
+    <ClCompile Include="..\..\test\main.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\NALib\NAArray.h" />
+    <ClInclude Include="..\..\NALib\NABinaryData.h" />
+    <ClInclude Include="..\..\NALib\NABitArray.h" />
+    <ClInclude Include="..\..\NALib\NAByteArray.h" />
+    <ClInclude Include="..\..\NALib\NAByteMap2D.h" />
+    <ClInclude Include="..\..\NALib\NAComplex.h" />
+    <ClInclude Include="..\..\NALib\NACoord.h" />
+    <ClInclude Include="..\..\NALib\NADateTime.h" />
+    <ClInclude Include="..\..\NALib\NAEndianness.h" />
+    <ClInclude Include="..\..\NALib\NAFile.h" />
+    <ClInclude Include="..\..\NALib\NAGrowingSpace.h" />
+    <ClInclude Include="..\..\NALib\NAList.h" />
+    <ClInclude Include="..\..\NALib\NAMathConstants.h" />
+    <ClInclude Include="..\..\NALib\NAMathOperators.h" />
+    <ClInclude Include="..\..\NALib\NAPointer.h" />
+    <ClInclude Include="..\..\NALib\NARandom.h" />
+    <ClInclude Include="..\..\NALib\NARange.h" />
+    <ClInclude Include="..\..\NALib\NAString.h" />
+    <ClInclude Include="..\..\NALib\NASystem.h" />
+    <ClInclude Include="..\..\NALib\NAVectorAlgebra.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1124E544-AD40-4522-B156-D83B78B732DB}</ProjectGuid>
     <RootNamespace>NALib</RootNamespace>
@@ -106,33 +137,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\NALib\NAArray.c" />
-    <ClCompile Include="..\..\NALib\NABinaryData.c" />
-    <ClCompile Include="..\..\NALib\NABitArray.c" />
-    <ClCompile Include="..\..\NALib\NAFile.c" />
-    <ClCompile Include="..\..\NALib\NAGrowingSpace.c" />
-    <ClCompile Include="..\..\NALib\NAString.c" />
-    <ClCompile Include="..\..\NALib\NASystem.c" />
-    <ClCompile Include="..\..\NALib\NAUnused.c" />
-    <ClCompile Include="..\..\test\main.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\NALib\NAArray.h" />
-    <ClInclude Include="..\..\NALib\NABinaryData.h" />
-    <ClInclude Include="..\..\NALib\NABitArray.h" />
-    <ClInclude Include="..\..\NALib\NAComplex.h" />
-    <ClInclude Include="..\..\NALib\NACoord.h" />
-    <ClInclude Include="..\..\NALib\NAFile.h" />
-    <ClInclude Include="..\..\NALib\NAGrowingSpace.h" />
-    <ClInclude Include="..\..\NALib\NAMathConstants.h" />
-    <ClInclude Include="..\..\NALib\NAMathOperators.h" />
-    <ClInclude Include="..\..\NALib\NAPointer.h" />
-    <ClInclude Include="..\..\NALib\NARange.h" />
-    <ClInclude Include="..\..\NALib\NAString.h" />
-    <ClInclude Include="..\..\NALib\NASystem.h" />
-    <ClInclude Include="..\..\NALib\NAUnused.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

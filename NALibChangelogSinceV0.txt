@@ -46,6 +46,8 @@ Other things:
 - Removed the const strings for the system name, endianness and bool type. They
   are stored in the test file now.
 - Code beautification and comment enhancements.
+- Made SystemChar dependent on UNICODE macro on windows. Changed the according
+  converters.
 
 
 

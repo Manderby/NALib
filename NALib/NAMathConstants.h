@@ -82,20 +82,24 @@
 // The infinity definition can be done with the HUGE_VAL macros defined
 // in <math.h> or <cmath> but it is unclear whether they correspond to infinity
 // or just to a very large value. So far, the author never had problems with
-// them but the following expression with the division operator seems safer.
+// them. The definitions which are commented out work as well but will
+// produce warnings on some compilers.
 #ifndef INFINITY
-  #define NA_INFINITYf        (1.f/0.f)
-  #define NA_INFINITY         (1. /0. )
-  #define NA_INFINITYl        (1.L/0.L)
-//  #ifndef HUGE_VALF
-//    #define NA_INFINITYf       ((float)HUGE_VAL)
-//    #define NA_INFINITY        HUGE_VAL
-//    #define NA_INFINITYl       ((long double)HUGE_VAL)
-//  #else
-//    #define NA_INFINITYf       HUGE_VALF
-//    #define NA_INFINITY        HUGE_VAL
-//    #define NA_INFINITYl       HUGE_VALL
-//  #endif
+  //#define NA_INFINITYf       (FLT_MAX + FLT_MAX)
+  //#define NA_INFINITY        (DBL_MAX + DBL_MAX)
+  //#define NA_INFINITYl       (LDBL_MAX + LDBL_MAX)
+  //#define NA_INFINITYf       (1.f/0.f)
+  //#define NA_INFINITY        (1. /0. )
+  //#define NA_INFINITYl       (1.L/0.L)
+  #ifndef HUGE_VALF
+    #define NA_INFINITYf       ((float)HUGE_VAL)
+    #define NA_INFINITY        HUGE_VAL
+    #define NA_INFINITYl       ((long double)HUGE_VAL)
+  #else
+    #define NA_INFINITYf       HUGE_VALF
+    #define NA_INFINITY        HUGE_VAL
+    #define NA_INFINITYl       HUGE_VALL
+  #endif
 #else
   #define NA_INFINITYf       ((float)INFINITY)
   #define NA_INFINITY        INFINITY
@@ -103,9 +107,15 @@
 #endif
 
 #ifndef NAN
-  #define NA_NANf             (0.f/0.f)
-  #define NA_NAN              (0. /0. )
-  #define NA_NANl             (0.L/0.L)
+//  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    #define NA_NANf             (NA_INFINITYf - NA_INFINITYf)
+    #define NA_NAN              (NA_INFINITY  - NA_INFINITY)
+    #define NA_NANl             (NA_INFINITYl - NA_INFINITYl)
+  //#else
+  //  #define NA_NANf             (0.f/0.f)
+  //  #define NA_NAN              (0. /0. )
+  //  #define NA_NANl             (0.L/0.L)
+  //#endif
 #else
   #define NA_NANf             ((float)NAN)
   #define NA_NAN              NAN

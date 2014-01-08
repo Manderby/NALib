@@ -471,9 +471,10 @@ void printVectorAlgebarTest(){
 #include "../NALib/NAList.h"
 void printListTest(){
   NAInt* ivalue;
-  printf("Testing list\n");
-  NAList* list = naCreateList(NA_NULL);
+  NAList* list;
   NAInt values[5] = {1, 2, 3, 4, 5};
+  printf("Testing list\n");
+  list = naCreateList(NA_NULL);
   naAddListElementLast(list, &(values[0]));
   naAddListElementLast(list, &(values[1]));
   naAddListElementLast(list, &(values[2]));

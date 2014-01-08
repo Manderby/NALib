@@ -219,7 +219,11 @@ NA_IDEF int64 naSigni64(int64 x){
 // Note that checking for NaN must be performed with the built-in isnan()-macro
 // or -function. Checking x == NA_NAN would return NA_FALSE always.
 NA_IAPI NABool naIsNaN(double x){
-  return isnan(x);
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    return _isnan(x);
+  #else
+    return isnan(x);
+  #endif
 }
 
 NA_IDEF float naInvf(float x){

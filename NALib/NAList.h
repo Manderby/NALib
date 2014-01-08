@@ -129,11 +129,13 @@ NA_IAPI NAList* naCreateList(NAList* list){
 
 
 NA_IAPI void naClearList(NAList* list){
+  // Declaration before implementation. Needed for C90.
+  NAListElement* cur;
   #ifndef NDEBUG
     if(!list)
       {naCrash("naClearList", "list is Null-Pointer."); return;}
   #endif
-  NAListElement* cur = list->sentinel.next;
+  cur = list->sentinel.next;
   while(cur != &(list->sentinel)){
     NAListElement* next = cur->next;
     free(cur);

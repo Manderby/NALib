@@ -38,7 +38,14 @@ typedef char NAUTF8Char;
 // System dependant mapping of string functions and macros
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   #include "windows.h"
-  typedef WCHAR SystemChar; // todo: must be dependant on predefined macro.
+  // The SystemChar is a character type which denotes the one used in the
+  // project preferences. It is CHAR for "Multi Byte Character Set" and
+  // WCHAR for "Unicode character set".
+  #ifdef UNICODE
+    typedef WCHAR SystemChar;
+  #else
+    typedef CHAR SystemChar;
+  #endif
   #define NA$NL NL_WIN
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
   // typedef short SystemChar;  // unused at the moment
@@ -174,10 +181,11 @@ NAString* naCreateStringEPSDecoded( NAString* deststring,
 // Currently, this is only necessary on windows.
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   // Returns a newly allocated memory block containing the system-encoded
-  // string. Must be freed manually.
+  // string. If you do not provide the size, it will be automatically
+  // computed. The resulting string must be freed manually. COPIES ALWAYS!
   SystemChar* naCreateSystemStringFromString(const NAUTF8Char* utf8string,
                                                          NAInt size);
-  // Creates a new NAString from a system-encoded string.
+  // Creates a new NAString from a system-encoded string. COPIES ALWAYS!
   NAString* naCreateStringFromSystemString( NAString* string,
                                           SystemChar* systemstring);
 #endif

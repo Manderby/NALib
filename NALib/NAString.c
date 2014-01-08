@@ -128,19 +128,25 @@ NAString* naCreateStringExtraction( NAString* deststring,
 
 NAString* naCreateStringXMLEncoded( NAString* deststring,
                               const NAString* inputstring){
+  // Declaration before implementation. Needed for C90.
   NAInt i;
+  NAInt inputsize;
+  NAInt destsize;
+  const NAUTF8Char* inptr;
+  NAUTF8Char* destptr;
+
   #ifndef NDEBUG
     if(!inputstring)
       {naCrash("naCreateStringXMLEncoded", "input string is Null-Pointer."); return NA_NULL;}
     if(deststring == inputstring)
       naError("naCreateStringXMLEncoded", "The two parameters are the same.");
   #endif
-  NAInt inputsize = naGetStringSize(inputstring);
+  inputsize = naGetStringSize(inputstring);
   if(!inputsize){return naCreateString(deststring);}
   
   // Count the required number of utf8 characters.
-  NAInt destsize = 0;
-  const NAUTF8Char* inptr = naGetStringConstUTF8Pointer(inputstring);
+  destsize = 0;
+  inptr = naGetStringConstUTF8Pointer(inputstring);
   for(i=0; i<inputsize; i++){
     switch(*inptr){
     case '&': destsize += 5; break;
@@ -160,7 +166,7 @@ NAString* naCreateStringXMLEncoded( NAString* deststring,
   // Create the string with the required length
   deststring = naCreateStringWithSize(deststring, destsize);
   inptr = naGetStringConstUTF8Pointer(inputstring);
-  NAUTF8Char* destptr = naGetStringMutableUTF8Pointer(deststring);
+  destptr = naGetStringMutableUTF8Pointer(deststring);
 
   // Copy all characters and encode them if necessary.
   for(i=0; i<inputsize; i++){
@@ -183,6 +189,13 @@ NAString* naCreateStringXMLEncoded( NAString* deststring,
 
 NAString* naCreateStringXMLDecoded( NAString* deststring,
                               const NAString* inputstring){
+  // Declaration before implementation. Needed for C90.
+  NAInt inputsize;
+  const NAUTF8Char* inptr;
+  NAUTF8Char* destptr;
+  NAInt i;
+  NAInt finalsize;
+
   #ifndef NDEBUG
     if(!inputstring)
       {naCrash("naCreateStringXMLDecoded", "input string is Null-Pointer."); return NA_NULL;}
@@ -190,17 +203,16 @@ NAString* naCreateStringXMLDecoded( NAString* deststring,
       naError("naCreateStringXMLDecoded", "The two parameters are the same.");
   #endif
 
-  NAInt inputsize = naGetStringSize(inputstring);
+  inputsize = naGetStringSize(inputstring);
   if(!inputsize){return naCreateString(deststring);}
 
   // Create a string with sufficient characters. As XML entities are always
   // longer than their decoded character, we just use the same size.
   deststring = naCreateStringWithSize(deststring, inputsize);
-  const NAUTF8Char* inptr = naGetStringConstUTF8Pointer(inputstring);
-  NAUTF8Char* destptr = naGetStringMutableUTF8Pointer(deststring);
+  inptr = naGetStringConstUTF8Pointer(inputstring);
+  destptr = naGetStringMutableUTF8Pointer(deststring);
 
   // Copy all characters and decode them if necessary.
-  NAInt i;
   for(i=0; i<inputsize; i++){
     if(inptr[i] == '&'){
       if(((inputsize - i) >= 5) && (inptr[i+1] == 'a') && (inptr[i+2] == 'm') && (inptr[i+3] == 'p') && (inptr[i+4] == ';')){ *destptr++ = '&'; i += 4; }
@@ -221,7 +233,7 @@ NAString* naCreateStringXMLDecoded( NAString* deststring,
   // The string is marked as NULL-Terminated. So we make sure this is the case.
   *destptr = '\0';
   // Finally, we shrink the string to its actual size
-  NAInt finalsize = destptr - naGetStringMutableUTF8Pointer(deststring);
+  finalsize = destptr - naGetStringMutableUTF8Pointer(deststring);
   naCreateStringExtraction(deststring, deststring, 0, finalsize);
 
   return deststring;
@@ -231,19 +243,25 @@ NAString* naCreateStringXMLDecoded( NAString* deststring,
 
 NAString* naCreateStringEPSEncoded( NAString* deststring,
                               const NAString* inputstring){
+  // Declaration before implementation. Needed for C90.
   NAInt i;
+  NAInt inputsize;
+  NAInt destsize;
+  const NAUTF8Char* inptr;
+  NAUTF8Char* destptr;
+
   #ifndef NDEBUG
     if(!inputstring)
       {naCrash("naCreateStringEPSEncoded", "input string is Null-Pointer."); return NA_NULL;}
     if(deststring == inputstring)
       naError("naCreateStringEPSEncoded", "The two parameters are the same.");
   #endif
-  NAInt inputsize = naGetStringSize(inputstring);
+  inputsize = naGetStringSize(inputstring);
   if(!inputsize){return naCreateString(deststring);}
   
   // Count the required number of utf8 characters.
-  NAInt destsize = 0;
-  const NAUTF8Char* inptr = naGetStringConstUTF8Pointer(inputstring);
+  destsize = 0;
+  inptr = naGetStringConstUTF8Pointer(inputstring);
   for(i=0; i<inputsize; i++){
     switch(*inptr){
     case '\\': destsize += 2; break;
@@ -261,7 +279,7 @@ NAString* naCreateStringEPSEncoded( NAString* deststring,
   // Create the string with the required length
   deststring = naCreateStringWithSize(deststring, destsize);
   inptr = naGetStringConstUTF8Pointer(inputstring);
-  NAUTF8Char* destptr = naGetStringMutableUTF8Pointer(deststring);
+  destptr = naGetStringMutableUTF8Pointer(deststring);
 
   // Copy all characters and encode them if necessary.
   for(i=0; i<inputsize; i++){
@@ -280,6 +298,14 @@ NAString* naCreateStringEPSEncoded( NAString* deststring,
 
 NAString* naCreateStringEPSDecoded( NAString* deststring,
                               const NAString* inputstring){
+
+  // Declaration before implementation. Needed for C90.
+  NAInt i;
+  NAInt inputsize;
+  const NAUTF8Char* inptr;
+  NAUTF8Char* destptr;
+  NAInt finalsize;
+
   #ifndef NDEBUG
     if(!inputstring)
       {naCrash("naCreateStringEPSDecoded", "input string is Null-Pointer."); return NA_NULL;}
@@ -287,17 +313,16 @@ NAString* naCreateStringEPSDecoded( NAString* deststring,
       naError("naCreateStringEPSDecoded", "The two parameters are the same.");
   #endif
 
-  NAInt inputsize = naGetStringSize(inputstring);
+  inputsize = naGetStringSize(inputstring);
   if(!inputsize){return naCreateString(deststring);}
 
   // Create a string with sufficient characters. As EPS entities are always
   // longer than their decoded character, we just use the same size.
   deststring = naCreateStringWithSize(deststring, inputsize);
-  const NAUTF8Char* inptr = naGetStringConstUTF8Pointer(inputstring);
-  NAUTF8Char* destptr = naGetStringMutableUTF8Pointer(deststring);
+  inptr = naGetStringConstUTF8Pointer(inputstring);
+  destptr = naGetStringMutableUTF8Pointer(deststring);
 
   // Copy all characters and decode them if necessary.
-  NAInt i;
   for(i=0; i<inputsize; i++){
     if(inptr[i] == '\\'){
       if(((inputsize - i) >= 2) && (inptr[i+1] == '\\')){     *destptr++ = '\\'; i += 1; }
@@ -314,7 +339,7 @@ NAString* naCreateStringEPSDecoded( NAString* deststring,
   // The string is marked as NULL-Terminated. So we make sure this is the case.
   *destptr = '\0';
   // Finally, we shrink the string to its actual size
-  NAInt finalsize = destptr - naGetStringMutableUTF8Pointer(deststring);
+  finalsize = destptr - naGetStringMutableUTF8Pointer(deststring);
   naCreateStringExtraction(deststring, deststring, 0, finalsize);
 
   return deststring;
@@ -327,18 +352,30 @@ NAString* naCreateStringEPSDecoded( NAString* deststring,
     SystemChar* outstr;
     NAInt newsize;
     if(!size){size = naStrlen(utf8string);}
-    newsize = MultiByteToWideChar(CP_UTF8, 0, utf8string, size, NULL, 0);
-    outstr = (SystemChar*)malloc(sizeof(SystemChar) * (newsize + 1));
-    MultiByteToWideChar(CP_UTF8, 0, utf8string, size, outstr, newsize);
+    #ifdef UNICODE
+      newsize = MultiByteToWideChar(CP_UTF8, 0, utf8string, size, NULL, 0);
+      outstr = (SystemChar*)malloc(sizeof(SystemChar) * (newsize + 1));
+      MultiByteToWideChar(CP_UTF8, 0, utf8string, size, outstr, newsize);
+    #else
+      newsize = size;
+      outstr = (SystemChar*)malloc(sizeof(SystemChar) * (newsize + 1));
+      naCpyn(outstr, utf8string, newsize);
+    #endif
     outstr[newsize] = 0;
     return outstr;
   }
 
 
   NAString* naCreateStringFromSystemString( NAString* string, SystemChar* systemstring){
-    NAInt newsize = WideCharToMultiByte(CP_UTF8, 0, systemstring, -1, NULL, 0, NULL, NULL);
-    string = naCreateStringWithSize(string, newsize);
-    WideCharToMultiByte(CP_UTF8, 0, systemstring, -1, naGetStringMutableUTF8Pointer(string), newsize, NULL, NULL);
+    #ifdef UNICODE
+      NAInt newsize = WideCharToMultiByte(CP_UTF8, 0, systemstring, -1, NULL, 0, NULL, NULL);
+      string = naCreateStringWithSize(string, newsize);
+      WideCharToMultiByte(CP_UTF8, 0, systemstring, -1, naGetStringMutableUTF8Pointer(string), newsize, NULL, NULL);
+    #else
+      NAInt newsize = naStrlen(systemstring);
+      string = naCreateStringWithSize(string, newsize);
+      naCpyn(naGetStringMutableUTF8Pointer(string), systemstring, newsize);
+    #endif
     return string;
   }
 #endif

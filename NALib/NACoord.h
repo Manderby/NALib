@@ -253,13 +253,13 @@ NA_IHLP NABool naIsSizeiFieldValid(NAInt a){
   return (a >= 0);
 }
 
-NA_IHLP NABool naIsPosFieldUseful(NAInt a){
+NA_IHLP NABool naIsPosFieldUseful(double a){
   return !naIsNaN(a);
 }
 NA_IHLP NABool naIsPosiFieldUseful(NAInt a){
   return NA_TRUE;
 }
-NA_IHLP NABool naIsSizeFieldUseful(NAInt a){
+NA_IHLP NABool naIsSizeFieldUseful(double a){
   // Note that this test will return NA_FALSE if a is NaN.
   return (a > 0.);
 }
@@ -270,65 +270,77 @@ NA_IHLP NABool naIsSizeiFieldUseful(NAInt a){
 
 
 NA_IAPI NAPos naMakePos(double x, double y){
+  NAPos newpos;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!(naIsPosFieldValid(x) && naIsPosFieldValid(y)))
       naError("naMakePos", "Invalid values given.");
   #endif
-  NAPos newpos = {x, y};
+  newpos.x = x;
+  newpos.y = y;
   return newpos;
 }
 NA_IAPI NASize naMakeSize(double width, double height){
+  NASize newsize;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!(naIsSizeFieldValid(width) && naIsSizeFieldValid(height)))
       naError("naMakeSize", "Invalid values given.");
   #endif
-  NASize newsize = {width, height};
+  newsize.width = width;
+  newsize.height = height;
   return newsize;
 }
 NA_IAPI NARect naMakeRect(NAPos pos, NASize size){
+  NARect newrect;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!naIsPosValid(pos) || !naIsSizeValid(size))
       naError("naMakeRect", "Invalid values given.");
   #endif
-  NARect newrect = {pos, size};
+  newrect.pos = pos;
+  newrect.size = size;
   return newrect;
 }
 NA_IAPI NAPosi naMakePosi(NAInt x, NAInt y){
+  NAPosi newpos;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!(naIsPosiFieldValid(x) && naIsPosiFieldValid(y)))
       naError("naMakePosi", "Invalid values given.");
   #endif
-  NAPosi newpos = {x, y};
+  newpos.x = x;
+  newpos.y = y;
   return newpos;
 }
 NA_IAPI NASizei naMakeSizei(NAInt width, NAInt height){
+  NASizei newsize;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!(naIsSizeiFieldValid(width) && naIsSizeiFieldValid(height)))
       naError("naMakeSizei", "Invalid values given.");
     if(!(naIsSizeiFieldUseful(width) && naIsSizeiFieldUseful(height)))
       naError("naMakeSizei", "values given are not useful.");
   #endif
-  NASizei newsize = {width, height};
+  newsize.width = width;
+  newsize.height = height;
   return newsize;
 }
 NA_IAPI NARecti naMakeRecti(NAPosi pos, NASizei size){
+  NARecti newrect;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!naIsPosiValid(pos) || !naIsSizeiValid(size))
       naError("naMakeRecti", "Invalid values given.");
   #endif
-  NARecti newrect = {pos, size};
+  newrect.pos = pos;
+  newrect.size = size;
   return newrect;
 }
 
 
 NA_IAPI NARect naMakeRectWithPosAndPos(NAPos pos1, NAPos pos2){
+  NARect newrect;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!naIsPosValid(pos1))
       naError("naMakeRectWithPosAndPos", "pos1 is invalid.");
     if(!naIsPosValid(pos2))
       naError("naMakeRectWithPosAndPos", "pos2 is invalid.");
   #endif
-  NARect newrect;
   if(pos2.x > pos1.x){
     newrect.pos.x = pos1.x;
     newrect.size.width = (pos2.x - pos1.x);
@@ -348,6 +360,9 @@ NA_IAPI NARect naMakeRectWithPosAndPos(NAPos pos1, NAPos pos2){
 
 
 NA_IAPI NARect naMakeRectWithRectAndPos(NARect rect, NAPos pos){
+  // Declaration before implementation. Needed for C90.
+  NARect newrect;
+  double end;
   #ifndef NDEBUG
     if(naIsRectEmpty(rect))
       naError("naMakeRectWithRectAndPos", "rect is empty.");
@@ -356,8 +371,6 @@ NA_IAPI NARect naMakeRectWithRectAndPos(NARect rect, NAPos pos){
     if(!naIsPosValid(pos))
       naError("naMakeRectWithRectAndPos", "pos is invalid.");
   #endif
-  NARect newrect;
-  NAInt end;
   newrect.pos.x = naMin(rect.pos.x, pos.x);
   newrect.pos.y = naMin(rect.pos.y, pos.y);
   end = naGetRectEndX(rect);
@@ -369,6 +382,10 @@ NA_IAPI NARect naMakeRectWithRectAndPos(NARect rect, NAPos pos){
 
 
 NA_IAPI NARect naMakeRectWithRectAndRect(NARect rect1, NARect rect2){
+  // Declaration before implementation. Needed for C90.
+  NARect newrect;
+  double end1;
+  double end2;
   #ifndef NDEBUG
     if(naIsRectEmpty(rect1))
       naError("naMakeRectWithRectAndRect", "rect1 is empty.");
@@ -379,9 +396,6 @@ NA_IAPI NARect naMakeRectWithRectAndRect(NARect rect1, NARect rect2){
     if(!naIsRectValid(rect2))
       naError("naMakeRectWithRectAndRect", "rect2 is invalid.");
   #endif
-  NARect newrect;
-  NAInt end1;
-  NAInt end2;
   newrect.pos.x = naMin(rect1.pos.x, rect2.pos.x);
   newrect.pos.y = naMin(rect1.pos.y, rect2.pos.y);
   end1 = naGetRectEndX(rect1);
@@ -395,13 +409,13 @@ NA_IAPI NARect naMakeRectWithRectAndRect(NARect rect1, NARect rect2){
 
 
 NA_IAPI NARecti naMakeRectiWithPosiAndPosi(NAPosi pos1, NAPosi pos2){
+  NARecti newrect;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!naIsPosiValid(pos1))
       naError("naMakeRectiWithPosiAndPosi", "pos1 is invalid.");
     if(!naIsPosiValid(pos2))
       naError("naMakeRectiWithPosiAndPosi", "pos2 is invalid.");
   #endif
-  NARecti newrect;
   if(pos2.x > pos1.x){
     newrect.pos.x = pos1.x;
     newrect.size.width = (pos2.x - pos1.x) + 1;
@@ -421,6 +435,9 @@ NA_IAPI NARecti naMakeRectiWithPosiAndPosi(NAPosi pos1, NAPosi pos2){
 
 
 NA_IAPI NARecti naMakeRectiWithRectiAndPosi(NARecti rect, NAPosi pos){
+  // Declaration before implementation. Needed for C90.
+  NARecti newrect;
+  NAInt end;
   #ifndef NDEBUG
     if(naIsRectiEmpty(rect))
       naError("naMakeRectiWithRectiAndPosi", "rect is empty.");
@@ -429,8 +446,6 @@ NA_IAPI NARecti naMakeRectiWithRectiAndPosi(NARecti rect, NAPosi pos){
     if(!naIsPosiValid(pos))
       naError("naMakeRectiWithRectiAndPosi", "pos is invalid.");
   #endif
-  NARecti newrect;
-  NAInt end;
   newrect.pos.x = naMini(rect.pos.x, pos.x);
   newrect.pos.y = naMini(rect.pos.y, pos.y);
   end = naGetRectiEndX(rect);
@@ -443,6 +458,10 @@ NA_IAPI NARecti naMakeRectiWithRectiAndPosi(NARecti rect, NAPosi pos){
 
 
 NA_IAPI NARecti naMakeRectiWithRectiAndRecti(NARecti rect1, NARecti rect2){
+  // Declaration before implementation. Needed for C90.
+  NARecti newrect;
+  NAInt end1;
+  NAInt end2;
   #ifndef NDEBUG
     if(naIsRectiEmpty(rect1))
       naError("naMakeRectiWithRectiAndRecti", "rect1 is empty.");
@@ -453,9 +472,6 @@ NA_IAPI NARecti naMakeRectiWithRectiAndRecti(NARecti rect1, NARecti rect2){
     if(!naIsRectiValid(rect2))
       naError("naMakeRectiWithRectiAndRecti", "rect2 is invalid.");
   #endif
-  NARecti newrect;
-  NAInt end1;
-  NAInt end2;
   newrect.pos.x = naMini(rect1.pos.x, rect2.pos.x);
   newrect.pos.y = naMini(rect1.pos.y, rect2.pos.y);
   end1 = naGetRectiEndX(rect1);
@@ -470,6 +486,9 @@ NA_IAPI NARecti naMakeRectiWithRectiAndRecti(NARecti rect1, NARecti rect2){
 
 
 NA_IAPI NAPos naClampPosToRect(NAPos pos, NARect clamprect){
+  // Declaration before implementation. Needed for C90.
+  double end;
+  NAPos newpos;
   #ifndef NDEBUG
     if(!naIsPosValid(pos))
       naError("naClampPosToRect", "pos is invalid.");
@@ -478,8 +497,7 @@ NA_IAPI NAPos naClampPosToRect(NAPos pos, NARect clamprect){
     if(!naIsRectValid(clamprect))
       naError("naClampPosToRect", "clamprect is invalid.");
   #endif
-  double end;
-  NAPos newpos = pos;
+  newpos = pos;
   if(newpos.x < clamprect.pos.x) {newpos.x = clamprect.pos.x;}
   end = naGetRectEndX(clamprect);
   if(newpos.x > end){newpos.x = end;}
@@ -491,6 +509,9 @@ NA_IAPI NAPos naClampPosToRect(NAPos pos, NARect clamprect){
 
 
 NA_IAPI NARect naClampRectToRect(NARect rect, NARect clamprect){
+  // Declaration before implementation. Needed for C90.
+  double value;
+  NARect newrect;
   #ifndef NDEBUG
     if(naIsRectEmpty(rect))
       naError("naClampRectToRect", "rect is empty.");
@@ -501,10 +522,7 @@ NA_IAPI NARect naClampRectToRect(NARect rect, NARect clamprect){
     if(!naIsRectValid(clamprect))
       naError("naClampRectToRect", "clamprect is invalid.");
   #endif
-
-  double value;
-  NARect newrect = rect;
-  
+  newrect = rect;
   // Adjust horizontally
   value = clamprect.pos.x - newrect.pos.x;
   if(value > 0){
@@ -531,6 +549,9 @@ NA_IAPI NARect naClampRectToRect(NARect rect, NARect clamprect){
 
 
 NA_IAPI NAPosi naClampPosiToRecti(NAPosi pos, NARecti clamprect){
+  // Declaration before implementation. Needed for C90.
+  NAInt max;
+  NAPosi newpos;
   #ifndef NDEBUG
     if(!naIsPosiValid(pos))
       naError("naClampPosiToRecti", "pos is invalid.");
@@ -539,8 +560,7 @@ NA_IAPI NAPosi naClampPosiToRecti(NAPosi pos, NARecti clamprect){
     if(!naIsRectiValid(clamprect))
       naError("naClampPosiToRecti", "clamprect is invalid.");
   #endif
-  NAInt max;
-  NAPosi newpos = pos;
+  newpos = pos;
   if(newpos.x <  clamprect.pos.x) {newpos.x = clamprect.pos.x;}
   max = naGetRectiMaxX(clamprect);
   if(newpos.x > max){newpos.x = max;}
@@ -552,6 +572,9 @@ NA_IAPI NAPosi naClampPosiToRecti(NAPosi pos, NARecti clamprect){
 
 
 NA_IAPI NARecti naClampRectiToRecti(NARecti rect, NARecti clamprect){
+  // Declaration before implementation. Needed for C90.
+  NAInt value;
+  NARecti newrect;
   #ifndef NDEBUG
     if(naIsRectiEmpty(rect))
       naError("naClampRectiToRecti", "rect is empty.");
@@ -563,9 +586,8 @@ NA_IAPI NARecti naClampRectiToRecti(NARecti rect, NARecti clamprect){
       naError("naClampRectiToRecti", "clamprect is invalid.");
   #endif
 
-  NAInt value;
-  NARecti newrect = rect;
-  
+  newrect = rect;
+
   // Adjust horizontally
   value = clamprect.pos.x - newrect.pos.x;
   if(value > 0){
@@ -593,6 +615,9 @@ NA_IAPI NARecti naClampRectiToRecti(NARecti rect, NARecti clamprect){
 
 
 NA_IAPI NAPos naClampPosToRecti(NAPos pos, NARecti clamprect){
+  // Declaration before implementation. Needed for C90.
+  NAInt max;
+  NAPos newpos;
   #ifndef NDEBUG
     if(!naIsPosValid(pos))
       naError("naClampPosToRecti", "pos is invalid.");
@@ -601,8 +626,7 @@ NA_IAPI NAPos naClampPosToRecti(NAPos pos, NARecti clamprect){
     if(!naIsRectiValid(clamprect))
       naError("naClampPosToRecti", "clamprect is invalid.");
   #endif
-  NAInt max;
-  NAPos newpos = pos;
+  newpos = pos;
   if(newpos.x <  clamprect.pos.x) {newpos.x = clamprect.pos.x;}
   max = naGetRectiMaxX(clamprect);
   if(newpos.x > max){newpos.x = max;}

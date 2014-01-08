@@ -163,11 +163,13 @@ NA_IAPI NAByteMap2D* naCreateByteMap2D(NAByteMap2D* map2d){
 
 NA_IAPI NAByteMap2D* naCreateByteMap2DWithRecti(NAByteMap2D* map2d,
                                                      NARecti rect){
+  // Declaration before implementation. Needed for C90.
+  NAInt totalsize;
   #ifndef NDEBUG
     if(!naIsRectiValid(rect))
       naError("naCreateByteMap2DWithRecti", "rect is invalid.");
   #endif
-  NAInt totalsize = naGetRectiIndexCount(rect);
+  totalsize = naGetRectiIndexCount(rect);
   if(!totalsize){  // if total size is zero
     map2d = naCreateByteMap2D(map2d);
   }else{
@@ -201,6 +203,8 @@ NA_IAPI void naDestroyByteMap2D(NAByteMap2D* map2d){
 
 
 NA_IAPI void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect){
+  // Declaration before implementation. Needed for C90.
+  NAInt v2;
   #ifndef NDEBUG
     if(!map2d){
       naCrash("naEnhanceByteMap2DWithRecti", "map2d is Null-Pointer.");
@@ -254,7 +258,7 @@ NA_IAPI void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect){
       // Fill the middle
       if(leadbound1 || trailbound1){
         // The map has been horizontally enhanded. We need to copy line by line.
-        for(NAInt v2 = 0; v2 < map2d->rect.size.height; v2++){
+        for(v2 = 0; v2 < map2d->rect.size.height; v2++){
           if(leadbound1){
             naNulln(newdataptr, leadbound1);
             newdataptr += leadbound1;
@@ -307,6 +311,8 @@ NA_IAPI void naEnhanceByteMap2DAtPosi(NAByteMap2D* map2d, NAPosi pos){
 NA_IAPI void naFillByteMap2DWithValueInRecti( NAByteMap2D* map2d,
                                                    NARecti rect,
                                                     NAByte value){
+  // Declaration before implementation. Needed for C90.
+  NAInt v2;
   #ifndef NDEBUG
     if(!map2d){
       naCrash("naFillByteMap2DWithValueInRecti", "map2d is Null-Pointer.");
@@ -325,7 +331,7 @@ NA_IAPI void naFillByteMap2DWithValueInRecti( NAByteMap2D* map2d,
     memset(dstptr, value, naGetRectiIndexCount(rect));
   }else{
     NAPosi leadpos = rect.pos;
-    for(int v2 = 0; v2 < rect.size.height; v2++){
+    for(v2 = 0; v2 < rect.size.height; v2++){
       NAByte* dstptr = naGetByteMap2DMutableByte(map2d, leadpos);
       memset(dstptr, value, rect.size.width);
       leadpos.y++;
@@ -338,6 +344,10 @@ NA_IAPI void naFillByteMap2DWithValueInMaskedRecti(   NAByteMap2D* map2d,
                                                            NARecti rect,
                                                 const NAByteMap2D* mask,
                                                             NAByte value){
+  // Declaration before implementation. Needed for C90.
+  NAPosi leadpos;
+  NAInt v1;
+  NAInt v2;
   #ifndef NDEBUG
     if(!map2d){
       naCrash("naFillByteMap2DWithValueInMaskedRecti",
@@ -365,11 +375,11 @@ NA_IAPI void naFillByteMap2DWithValueInMaskedRecti(   NAByteMap2D* map2d,
       naError("naFillByteMap2DWithValueInMaskedRecti",
               "rect is not fully in mask.");
   #endif
-  NAPosi leadpos = rect.pos;
-  for(int v2 = 0; v2 < rect.size.height; v2++){
+  leadpos = rect.pos;
+  for(v2 = 0; v2 < rect.size.height; v2++){
     NAByte* dstptr = naGetByteMap2DMutableByte(map2d, leadpos);
     const NAByte* maskptr = naGetByteMap2DConstByte(mask, leadpos);
-    for(int v1 = 0; v1 < rect.size.width; v1++){
+    for(v1 = 0; v1 < rect.size.width; v1++){
       if(*maskptr){*dstptr = value;}
       dstptr++;
       maskptr++;
@@ -383,6 +393,10 @@ NA_IAPI void naFillByteMap2DWithByteMapInMaskedRecti( NAByteMap2D* map2d,
                                                            NARecti rect,
                                                 const NAByteMap2D* mask,
                                                 const NAByteMap2D* values){
+  // Declaration before implementation. Needed for C90.
+  NAPosi leadpos;
+  NAInt v1;
+  NAInt v2;
   #ifndef NDEBUG
     if(!map2d){
       naCrash("naFillByteMap2DWithByteMapInMaskedRecti",
@@ -421,12 +435,12 @@ NA_IAPI void naFillByteMap2DWithByteMapInMaskedRecti( NAByteMap2D* map2d,
       naError("naFillByteMap2DWithByteMapInMaskedRecti",
               "rect is not fully in values.");
   #endif
-  NAPosi leadpos = rect.pos;
-  for(int v2 = 0; v2 < rect.size.height; v2++){
+  leadpos = rect.pos;
+  for(v2 = 0; v2 < rect.size.height; v2++){
     NAByte* dstptr = naGetByteMap2DMutableByte(map2d, leadpos);
     const NAByte* maskptr = naGetByteMap2DConstByte(mask, leadpos);
     const NAByte* valueptr = naGetByteMap2DConstByte(values, leadpos);
-    for(int v1 = 0; v1 < rect.size.width; v1++){
+    for(v1 = 0; v1 < rect.size.width; v1++){
       if(*maskptr){*dstptr = *valueptr;}
       dstptr++;
       maskptr++;
@@ -440,6 +454,9 @@ NA_IAPI void naFillByteMap2DWithByteMapInMaskedRecti( NAByteMap2D* map2d,
 NA_IAPI void naFillByteMap2DWithByteMapInRecti(NAByteMap2D* map2d,
                                                     NARecti rect,
                                          const NAByteMap2D* values){
+  // Declaration before implementation. Needed for C90.
+  NAPosi leadpos;
+  NAInt v2;
   #ifndef NDEBUG
     if(!map2d){
       naCrash("naFillByteMap2DWithByteMapInMaskedRecti",
@@ -467,8 +484,8 @@ NA_IAPI void naFillByteMap2DWithByteMapInRecti(NAByteMap2D* map2d,
       naError("naFillByteMap2DWithByteMapInMaskedRecti",
               "rect is not fully in values.");
   #endif
-  NAPosi leadpos = rect.pos;
-  for(int v2 = 0; v2 < rect.size.height; v2++){
+  leadpos = rect.pos;
+  for(v2 = 0; v2 < rect.size.height; v2++){
     NAByte* dstptr = naGetByteMap2DMutableByte(map2d, leadpos);
     const NAByte* valueptr = naGetByteMap2DConstByte(values, leadpos);
     naCpyn(dstptr, valueptr, rect.size.width);
@@ -481,6 +498,10 @@ NA_IAPI void naReplaceByteMap2DValueWithValue( NAByteMap2D* map2d,
                                                     NARecti rect,
                                                      NAByte originalvalue,
                                                      NAByte newvalue){
+  // Declaration before implementation. Needed for C90.
+  NAPosi leadpos;
+  NAInt v1;
+  NAInt v2;
   #ifndef NDEBUG
     if(!map2d){ 
       naCrash("naReplaceByteMap2DValueWithValue", "map2d is Null-Pointer.");
@@ -498,10 +519,10 @@ NA_IAPI void naReplaceByteMap2DValueWithValue( NAByteMap2D* map2d,
     if(!naIsRectiInRecti(rect, map2d->rect))
       naError("naReplaceByteMap2DValueWithValue", "rect is not fully in map.");
   #endif
-  NAPosi leadpos = rect.pos;
-  for(int v2=0; v2<rect.size.height; v2++){
+  leadpos = rect.pos;
+  for(v2=0; v2<rect.size.height; v2++){
     NAByte* dataptr = naGetByteMap2DMutableByte(map2d, leadpos);
-    for(int v1=0; v1<rect.size.width; v1++){
+    for(v1=0; v1<rect.size.width; v1++){
       if(*dataptr == originalvalue){*dataptr = newvalue;}
       dataptr++;
     }
