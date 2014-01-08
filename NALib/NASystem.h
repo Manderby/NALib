@@ -94,7 +94,16 @@
 
 // The definition of NA_RESTRICT and NA_INLINE are just mappings of built-in
 // keywords on different systems.
-//
+
+#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #define NA_RESTRICT __restrict
+  #define NA_INLINE   _inline
+#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #define NA_RESTRICT __restrict__
+  #define NA_INLINE   inline
+#else
+#endif
+
 // The NA_API and NA_HIDDEN macros mark the visibility of a symbol to the
 // user. IF NALib would be provided as a library (dll, lib or dylib), the
 // symbols marked with NA_API would be explicitely accessible, the ones with
@@ -112,42 +121,42 @@
 // Usually, the NA_HIDDEN macro is defined in some other, hidden file as it
 // shall not be visible to the end user and will only be used on hidden parts.
 // This is not necessary but makes the code clean and helps detect functions
-// which should not be accessible to the user. In NALib, this does not matter.
+// which should not be accessible to the user. In NALib, this does not matter
+// and therefore the NA_HIDDEN macro is defined here.
+//
+// IAPI is short for INLINE_API and IDEF is short for INLINE_DEFINITION. These
+// two prefixes mark inline functions in NALib. But note that first, inline
+// functions do not need to be static and second the NA_IAPI should not contain
+// NA_INLINE. But as compilers tend to be difficult to handle, both macros
+// are static inline. Saves a lot of trouble. The static keyword may lead
+// to slightly bigger binaries. But so far, the author never had problems with
+// that.
+//
+// HLP is short for HELPER and IHLP is short for INLINE_HELPER. These two
+// macros denote helper functions which should not be accessible or visible
+// to the user. Helper functions are called from other functions and usually
+// are declared as well as defined once, and only once in an implementation
+// file, not an .h file. Again, in NALib, things are a little more transparent
+// so these macros are a mere hint for the programmer, not more.
+//
+// Also note that visibility attributes have no effect on inline functions as
+// they need to be visible to the compiler to inline.
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-  #define NA_RESTRICT __restrict
-  #define NA_INLINE   _inline
   #define NA_HIDDEN
   #define NA_API      __declspec(dllexport)
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-  #define NA_RESTRICT __restrict__
-  #define NA_INLINE   inline
   #define NA_HIDDEN   __attribute__ ((visibility("hidden")))
   #define NA_API      __attribute__ ((visibility("default")))
 #else
 #endif
 
-
-// The following function-signature prefixes are used for all functions which
-// are intended for public use and shall preferably be inlined.
-// IAPI is short for INLINE_API and IDEF is short for INLINE_DEFINITION.
-// Note that inline functions must be visible at compile time and do not need
-// a visibility attribute.
-#define NA_IAPI   static NA_API
+// Again, note that the following macros are just used for NALib, they may
+// very well differ in your own implementation!
+#define NA_IAPI   static NA_INLINE
 #define NA_IDEF   static NA_INLINE
-// Note that with these prefixes, all inline functions are automatically
-// declared static in NALib. This might slightly increase the file size but
-// safes a lot of trouble and makes the source code more readable.
-//
-// Also note that there exist two prefixes as the inline keyword should only
-// be used at the definition, not at the declaration where it should be ignored.
-
-
-// UTF8-Strings for the macros above and a boolean type (defined later in this
-// file). The variables are defined in the implementation file NASystem.c
-NA_API extern const char* na_endianness_strings[NA_ENDIANNESS_COUNT];
-NA_API extern const char* na_boolean_strings[2];
-NA_API extern const char* na_system_strings[NA_SYSTEM_COUNT];
+#define NA_HLP    NA_HIDDEN
+#define NA_IHLP   static NA_INLINE
 
 
 #ifndef va_copy
@@ -215,13 +224,13 @@ NA_API extern const char* na_system_strings[NA_SYSTEM_COUNT];
 // provided manually to not be dependent on the various definitions of
 // char, short, int, long and long long.
 
-#define NA_UINT8_MAX  ((uint8)(0xffu))
+#define NA_UINT8_MAX  ((uint8) (0xffu))
 #define NA_UINT16_MAX ((uint16)(0xffffu))
 #define NA_UINT32_MAX ((uint32)(0xffffffffu))
 #define NA_UINT64_MAX ((uint64)(0xffffffffffffffffuLL))
 // note that the - 1 is needed to avoid warnings on some compilers
-#define NA_INT8_MAX   ((int8)(0x7f))
-#define NA_INT8_MIN   ((int8)(0x81 - 1))
+#define NA_INT8_MAX   ((int8) (0x7f))
+#define NA_INT8_MIN   ((int8) (0x81 - 1))
 #define NA_INT16_MAX  ((int16)(0x7fff))
 #define NA_INT16_MIN  ((int16)(0x8001 - 1))
 #define NA_INT32_MAX  ((int32)(0x7fffffff))
@@ -268,16 +277,11 @@ typedef uint8     NAByte;
 // of just "int" would be unreliable.
 //
 // In addition to the type, there is the definition of a printf-argument macro.
-// This macro contains a dollar $ which in C and C++ is interpreted as a
-// symbol character. Although the dollar sign is not well known amongst C
-// programs and programmers don't usually like it, the author thinks it is a
-// nice touch for a printf argument. The other possibility would be to define
-// something like NA_INT_ARG, which is rather long. Some more printf arguments
-// can be found in the NAString.h header file. Use the macro for example
-// like this:
+// Use the macro for example like this:
 //
 // printf("The array has " NA$INT " entries." NA$NL, naGetArrayCount(array));
 //
+// Some more printf arguments can be found in the NAString.h header file.
 //
 // One serious drawback of a system-dependent definition is that NALib might
 // behave differently depending on the system it is compiled for. But it will
@@ -335,7 +339,7 @@ typedef int NABool;
 
 
 
-// The definition of NA_NULL is usually set to the NA_NULL found in stdlib. The
+// The definition of NA_NULL is usually set to the NULL found in stdlib. The
 // new C11 standard however has a new keyword. Let's use it if it is available!
 // Note that stdlib is needed anyway for malloc, free and exit which is needed
 // later in the code.
@@ -397,7 +401,7 @@ typedef int NABool;
 
   // Prints an error. When this function gets called, the ongoing of the
   // application is undefined. Sometimes, the error might affect everything
-  // which comes after it, sometimes, the  error will just result in a NaN or
+  // which comes after it, sometimes, the error will just result in a NaN or
   // even be corrected automatically. Nontheless, any error should be
   // considered a potential risk for the application to eventually crash.
   void naError(const char* functionsymbol, const char* message);

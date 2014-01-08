@@ -16,8 +16,8 @@
 // In NALib, coordinate computation is always performed straight-forward. Even
 // if the values don't make sense.
 //
-// When debugging, a lot of checks are performed by NALib to find invalid
-// values but checking for invalid values when not debugging would increase
+// Only when debugging, a lot of checks are performed by NALib to find invalid
+// values. Checking for invalid values when not debugging would increase
 // runtime considerably. The implementation would also become very complicated
 // as there are many special cases.
 //
@@ -34,22 +34,24 @@
 //       Use the appropriate functions to check if an element is empty.
 // Rect: A rectangle is considered valid, if its position and size is valid.
 //
-// Sizes or rects with zeros are considered "empty". But no special code will
-// be executed! This might lead to unexpected behaviour. When debugging, NALib
-// checks if a size or rect is empty where it should not be. But you as the
-// programmer have to take care of that in your code! 
+// Sizes or rects with zero width or height are considered "empty". But no
+// special code will be executed! This might lead to unexpected behaviour.
+// When debugging, NALib checks if a size or rect is empty where it should
+// not be. But you as the programmer have to take care of that in your code! 
 //
-// Negative sizes are not uncommon as well. A rect with a negative size can for
-// example be generated with naMakeRectWithStartAndEnd where the start and end
-// points are reversed. While not forbidden and perfectly meaningful, most
-// function only work properly with positive rects. Use the naMakeRectPositive
-// function to convert a negative (and hence invalid) rect into a positive one.
+// Negative sizes are not uncommon as well. While not forbidden and perfectly
+// meaningful, the functions of NALib only work properly with positive rects.
+// Use the naMakeRectPositive function to convert a negative (and hence
+// invalid) rect into a positive one.
 //
-// Also note that the integer variant of size and rect behaves differently than
+// Integer versus Floating-point
+// -----------------------------
+// Note that the integer variant of size and rect behaves differently than
 // the floating-point variant. The floating-point-variant treats sizes like
-// "inclusive". For example Rect(Pos(0., 0.), Size(5., 5.)) contains the point
-// Pos(5., 5.). The integer Rect(Pos(0, 0), Size(5, 5)) on the other hand only
-// contains Pos(4, 4) but not Pos(5, 5).
+// "inclusive". For example:
+// The floating-point Rect(Pos(0., 0.), Size(5., 5.)) contains Pos(5., 5.).
+// The integer        Rect(Pos(0 , 0 ), Size(5 , 5 )) contains Pos(4 , 4 )
+// but not Pos(5, 5).
 //
 // The integer variants are good for indexes. Therefore, the integer variants
 // of NARect denote both a "Max" and an "End". The "End" is computed pos+width.
@@ -100,15 +102,12 @@ NA_IAPI NAPosi    naMakePosi    (NAInt  x,      NAInt   y);
 NA_IAPI NASizei   naMakeSizei   (NAInt  width,  NAInt   height);
 NA_IAPI NARecti   naMakeRecti   (NAPosi pos,    NASizei size);
 
-// Create rects with start- end end-points. Note that the integer variant
-// either expects the max or the end value (max = end-1).
-NA_IAPI NARect    naMakeRectWithStartAndEnd (NAPos  start, NAPos  end);
-NA_IAPI NARecti   naMakeRectiWithStartAndEnd(NAPosi start, NAPosi end);
-NA_IAPI NARecti   naMakeRectiWithStartAndMax(NAPosi start, NAPosi max);
-
-// Create the bounding box of two elements.
+// Create the bounding box of two elements. The size of the resulting rect will
+// never be negative.
+NA_IAPI NARect    naMakeRectWithPosAndPos     (NAPos   pos1,  NAPos   pos2);
 NA_IAPI NARect    naMakeRectWithRectAndPos    (NARect  rect,  NAPos   pos);
 NA_IAPI NARect    naMakeRectWithRectAndRect   (NARect  rect1, NARect  rect2);
+NA_IAPI NARecti   naMakeRectiWithPosiAndPosi  (NAPosi  pos1,  NAPosi  pos2);
 NA_IAPI NARecti   naMakeRectiWithRectiAndPosi (NARecti rect,  NAPosi  pos);
 NA_IAPI NARecti   naMakeRectiWithRectiAndRecti(NARecti rect1, NARecti rect2);
 
@@ -149,6 +148,7 @@ NA_IAPI double    naGetRectEndY (NARect  rect);
 // Max returns position + size - 1
 // Count returns the total count width*height
 // IndexOf returns the index of the corresponding 1-dimensional array.
+NA_IAPI NAPosi    naGetRectiEnd         (NARecti rect);
 NA_IAPI NAInt     naGetRectiEndX        (NARecti rect);
 NA_IAPI NAInt     naGetRectiEndY        (NARecti rect);
 NA_IAPI NAInt     naGetRectiMaxX        (NARecti rect);
@@ -161,6 +161,9 @@ NA_IAPI NAInt     naGetRectiIndexOfPosi (NARecti rect, NAPosi pos);
 // (e f g h)   The result of naGetRectiIndexOfPosi with position (5, 6)
 // (i j k l)   returns 7, the index of 'h'
 
+
+// Testing functions
+// -----------------
 // Returns NA_TRUE when all values of the fields are valid. Will not perform
 // any debugging tests.
 NA_IAPI NABool    naIsPosValid  (NAPos   pos);
@@ -176,14 +179,37 @@ NA_IAPI NABool    naIsRectEmpty (NARect  rect);
 NA_IAPI NABool    naIsSizeiEmpty(NASizei size);
 NA_IAPI NABool    naIsRectiEmpty(NARecti rect);
 
-// positive and negative sizes and rects. Will not perform any debugging tests.
-NA_IAPI NABool    naIsSizePositive (NASize  size);
-NA_IAPI NABool    naIsRectPositive (NARect  rect);
-NA_IAPI NABool    naIsSizeiPositive(NASizei size);
-NA_IAPI NABool    naIsRectiPositive(NARecti rect);
+// Returns NA_TRUE for sizes with negative entries. Will not perform any
+// debugging tests.
+// Note from the author: These functions test for Negativity, not Positivity.
+// Using a negative word in a function name is usually not good practice as it
+// tends to lead to double negatives when reading the source code. There are
+// situations though when using a negative word is acceptable or even better
+// than its positive counterpart. Like here for example. Or the NDEBUG macro.
+// Or the "End of file" marker EOF for example. But such situations are rare.
+// Try to use positive words whenever possible! For example, use "IsInside"
+// rather than "IsOutside".
+NA_IAPI NABool    naIsSizeNegative (NASize  size);
+NA_IAPI NABool    naIsRectNegative (NARect  rect);
+NA_IAPI NABool    naIsSizeiNegative(NASizei size);
+NA_IAPI NABool    naIsRectiNegative(NARecti rect);
+
+// Returns NA_TRUE when all values of the element are useful. Will not perform
+// any debugging tests. Useful elements are defined to be not invalid, not
+// empty and not negative. Hence for example a rect is useful if it has no
+// invalid values, is positive and has a size greater than zero.
+// This function often is useful after an operation which might lead to
+// negative sizes, empty rects or otherwise invalid values.
+NA_IAPI NABool    naIsPosUseful  (NAPos   pos);
+NA_IAPI NABool    naIsSizeUseful (NASize  size);
+NA_IAPI NABool    naIsRectUseful (NARect  rect);
+NA_IAPI NABool    naIsPosiUseful (NAPosi  pos);
+NA_IAPI NABool    naIsSizeiUseful(NASizei size);
+NA_IAPI NABool    naIsRectiUseful(NARecti rect);
 
 // The naMakeRectPositive function ensures that the sizes of the given rect
-// are positive. If the sizes already were positive, they will not be changed.
+// are not negative. If the sizes already were positive or zero, they will not
+// be changed.
 // For example:  A rect with pos(4., 6.) and size (-2., 7.) will change to
 //            -> a rect with pos(2., 6.) and size ( 2., 7.) .
 // But: An integer rect with pos(4 , 6 ) and size (-2 , 7 ) will change to
@@ -213,17 +239,32 @@ NA_IAPI NARecti   naMakeRectiPositive(NARecti rect);
 
 
 // helper functions. Should be hidden. todo.
-NA_IAPI NABool naIsPosFieldValid(double a){
+NA_IHLP NABool naIsPosFieldValid(double a){
   return !naIsNaN(a);
 }
-NA_IAPI NABool naIsPosiFieldValid(NAInt a){
+NA_IHLP NABool naIsPosiFieldValid(NAInt a){
   return NA_TRUE;
 }
-NA_IAPI NABool naIsSizeFieldValid(double a){
+NA_IHLP NABool naIsSizeFieldValid(double a){
+  // Note that this test will return NA_FALSE if a is NaN.
   return (a >= 0.);
 }
-NA_IAPI NABool naIsSizeiFieldValid(NAInt a){
+NA_IHLP NABool naIsSizeiFieldValid(NAInt a){
   return (a >= 0);
+}
+
+NA_IHLP NABool naIsPosFieldUseful(NAInt a){
+  return !naIsNaN(a);
+}
+NA_IHLP NABool naIsPosiFieldUseful(NAInt a){
+  return NA_TRUE;
+}
+NA_IHLP NABool naIsSizeFieldUseful(NAInt a){
+  // Note that this test will return NA_FALSE if a is NaN.
+  return (a > 0.);
+}
+NA_IHLP NABool naIsSizeiFieldUseful(NAInt a){
+  return (a > 0);
 }
 
 
@@ -264,6 +305,8 @@ NA_IAPI NASizei naMakeSizei(NAInt width, NAInt height){
   #ifndef NDEBUG
     if(!(naIsSizeiFieldValid(width) && naIsSizeiFieldValid(height)))
       naError("naMakeSizei", "Invalid values given.");
+    if(!(naIsSizeiFieldUseful(width) && naIsSizeiFieldUseful(height)))
+      naError("naMakeSizei", "values given are not useful.");
   #endif
   NASizei newsize = {width, height};
   return newsize;
@@ -278,43 +321,28 @@ NA_IAPI NARecti naMakeRecti(NAPosi pos, NASizei size){
 }
 
 
-NA_IAPI NARect naMakeRectWithStartAndEnd(NAPos start, NAPos end){
+NA_IAPI NARect naMakeRectWithPosAndPos(NAPos pos1, NAPos pos2){
   #ifndef NDEBUG
-    if(!naIsPosValid(start))
-      naError("naMakeRectWithStartAndEnd", "start is invalid.");
-    if(!naIsPosValid(end))
-      naError("naMakeRectWithStartAndEnd", "end is invalid.");
+    if(!naIsPosValid(pos1))
+      naError("naMakeRectWithPosAndPos", "pos1 is invalid.");
+    if(!naIsPosValid(pos2))
+      naError("naMakeRectWithPosAndPos", "pos2 is invalid.");
   #endif
   NARect newrect;
-  newrect.pos = start;
-  newrect.size.width  = end.x - start.x;
-  newrect.size.height = end.y - start.y;
-  return newrect;
-}
-NA_IAPI NARecti naMakeRectiWithStartAndEnd(NAPosi start, NAPosi end){
-  #ifndef NDEBUG
-    if(!naIsPosiValid(start))
-      naError("naMakeRectiWithStartAndEnd", "start is invalid.");
-    if(!naIsPosiValid(end))
-      naError("naMakeRectiWithStartAndEnd", "end is invalid.");
-  #endif
-  NARecti newrect;
-  newrect.pos = start;
-  newrect.size.width  = end.x - start.x;
-  newrect.size.height = end.y - start.y;
-  return newrect;
-}
-NA_IAPI NARecti naMakeRectiWithStartAndMax(NAPosi start, NAPosi max){
-  #ifndef NDEBUG
-    if(!naIsPosiValid(start))
-      naError("naMakeRectiWithStartAndMax", "start is invalid.");
-    if(!naIsPosiValid(max))
-      naError("naMakeRectiWithStartAndMax", "max is invalid.");
-  #endif
-  NARecti newrect;
-  newrect.pos = start;
-  newrect.size.width  = (max.x - start.x) + 1;
-  newrect.size.height = (max.y - start.y) + 1;
+  if(pos2.x > pos1.x){
+    newrect.pos.x = pos1.x;
+    newrect.size.width = (pos2.x - pos1.x);
+  }else{
+    newrect.pos.x = pos2.x;
+    newrect.size.width = (pos1.x - pos2.x);
+  }
+  if(pos2.y > pos1.y){
+    newrect.pos.y = pos1.y;
+    newrect.size.height = (pos2.y - pos1.y);
+  }else{
+    newrect.pos.y = pos2.y;
+    newrect.size.height = (pos1.y - pos2.y);
+  }
   return newrect;
 }
 
@@ -366,6 +394,32 @@ NA_IAPI NARect naMakeRectWithRectAndRect(NARect rect1, NARect rect2){
 }
 
 
+NA_IAPI NARecti naMakeRectiWithPosiAndPosi(NAPosi pos1, NAPosi pos2){
+  #ifndef NDEBUG
+    if(!naIsPosiValid(pos1))
+      naError("naMakeRectiWithPosiAndPosi", "pos1 is invalid.");
+    if(!naIsPosiValid(pos2))
+      naError("naMakeRectiWithPosiAndPosi", "pos2 is invalid.");
+  #endif
+  NARecti newrect;
+  if(pos2.x > pos1.x){
+    newrect.pos.x = pos1.x;
+    newrect.size.width = (pos2.x - pos1.x) + 1;
+  }else{
+    newrect.pos.x = pos2.x;
+    newrect.size.width = (pos1.x - pos2.x) + 1;
+  }
+  if(pos2.y > pos1.y){
+    newrect.pos.y = pos1.y;
+    newrect.size.height = (pos2.y - pos1.y) + 1;
+  }else{
+    newrect.pos.y = pos2.y;
+    newrect.size.height = (pos1.y - pos2.y) + 1;
+  }
+  return newrect;
+}
+
+
 NA_IAPI NARecti naMakeRectiWithRectiAndPosi(NARecti rect, NAPosi pos){
   #ifndef NDEBUG
     if(naIsRectiEmpty(rect))
@@ -377,14 +431,14 @@ NA_IAPI NARecti naMakeRectiWithRectiAndPosi(NARecti rect, NAPosi pos){
   #endif
   NARecti newrect;
   NAInt end;
-  newrect.pos.x = naMin(rect.pos.x, pos.x);
-  newrect.pos.y = naMin(rect.pos.y, pos.y);
+  newrect.pos.x = naMini(rect.pos.x, pos.x);
+  newrect.pos.y = naMini(rect.pos.y, pos.y);
   end = naGetRectiEndX(rect);
   newrect.size.width  = (naMaxi(end, pos.x + 1) - newrect.pos.x);
   end = naGetRectiEndY(rect);
   newrect.size.height  = (naMaxi(end, pos.y + 1) - newrect.pos.y);
+  // Have you noticed the addition plus 1? It's important!
   return newrect;
-  // Have you noted the addition plus 1? It's important!
 }
 
 
@@ -511,7 +565,7 @@ NA_IAPI NARecti naClampRectiToRecti(NARecti rect, NARecti clamprect){
 
   NAInt value;
   NARecti newrect = rect;
-    
+  
   // Adjust horizontally
   value = clamprect.pos.x - newrect.pos.x;
   if(value > 0){
@@ -730,9 +784,9 @@ NA_IAPI NABool naIsRectiInRecti(NARecti rect, NARecti outerrect){
       naError("naIsRectiInRecti", "outerrect is invalid.");
   #endif
   return  ((rect.pos.x           >= outerrect.pos.x)
-        && (naGetRectiEndX(rect) <  naGetRectiEndX(outerrect))
+        && (naGetRectiEndX(rect) <=  naGetRectiEndX(outerrect))
         && (rect.pos.y           >= outerrect.pos.y)
-        && (naGetRectiEndY(rect) <  naGetRectiEndY(outerrect)));
+        && (naGetRectiEndY(rect) <=  naGetRectiEndY(outerrect)));
 }
 
 
@@ -754,6 +808,16 @@ NA_IAPI double naGetRectEndY (NARect  rect){
       naError("naGetRectEndY", "rect is invalid.");
   #endif
   return rect.pos.y + rect.size.height;
+}
+NA_IAPI NAPosi naGetRectiEnd (NARecti rect){
+  #ifndef NDEBUG
+    if(naIsRectiEmpty(rect))
+      naError("naGetRectiEnd", "rect is empty.");
+    if(!naIsRectiValid(rect))
+      naError("naGetRectiEnd", "rect is invalid.");
+  #endif
+  return naMakePosi(rect.pos.x + rect.size.width,
+                    rect.pos.y + rect.size.height);
 }
 NA_IAPI NAInt naGetRectiEndX(NARecti rect){
   #ifndef NDEBUG
@@ -851,18 +915,40 @@ NA_IAPI NABool naIsRectiEmpty(NARecti rect){
 }
 
 
-NA_IAPI NABool naIsSizePositive(NASize size){
-  return !((size.width < 0.) || (size.height < 0.));
+NA_IAPI NABool naIsSizeNegative(NASize size){
+  return ((size.width < 0.) || (size.height < 0.));
 }
-NA_IAPI NABool naIsRectPositive(NARect rect){
-  return naIsSizePositive(rect.size);
+NA_IAPI NABool naIsRectNegative(NARect rect){
+  return naIsSizeNegative(rect.size);
 }
-NA_IAPI NABool naIsSizeiPositive(NASizei size){
-  return !((size.width < 0) || (size.height < 0));
+NA_IAPI NABool naIsSizeiNegative(NASizei size){
+  return ((size.width < 0) || (size.height < 0));
 }
-NA_IAPI NABool naIsRectiPositive(NARecti rect){
-  return naIsSizeiPositive(rect.size);
+NA_IAPI NABool naIsRectiNegative(NARecti rect){
+  return naIsSizeiNegative(rect.size);
 }
+
+
+NA_IAPI NABool naIsPosUseful(NAPos pos){
+  return naIsPosFieldUseful(pos.x) && naIsPosFieldUseful(pos.y);
+}
+NA_IAPI NABool naIsSizeUseful(NASize size){
+  return naIsSizeFieldUseful(size.width) && naIsSizeFieldUseful(size.height);
+}
+NA_IAPI NABool naIsRectUseful(NARect rect){
+  return (naIsPosUseful(rect.pos) && naIsSizeUseful(rect.size));
+}
+NA_IAPI NABool naIsPosiUseful(NAPosi pos){
+  return naIsPosiFieldUseful(pos.x) && naIsPosiFieldUseful(pos.y);
+}
+NA_IAPI NABool naIsSizeiUseful(NASizei size){
+  return naIsSizeiFieldUseful(size.width) && naIsSizeiFieldUseful(size.height);
+}
+NA_IAPI NABool naIsRectiUseful(NARecti rect){
+  return (naIsPosiUseful(rect.pos) && naIsSizeiUseful(rect.size));
+}
+
+
 
 
 NA_IAPI NARect naMakeRectPositive(NARect rect){

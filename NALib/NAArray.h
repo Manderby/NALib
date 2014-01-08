@@ -107,7 +107,7 @@ NA_IAPI NABool naIsArrayEmpty(const NAArray* array);
 // Inline Implementations: See readme file for more expanation.
 // ///////////////////////////////////////////////////////////////////////
 
-struct NA_HIDDEN NAArray{
+struct NAArray{
   struct NAByteArray bytearray;  // The byte array
   NAInt              typesize;   // The size in bytes of the stored type
 };

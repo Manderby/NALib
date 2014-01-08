@@ -1,7 +1,30 @@
 
 #include <stdio.h>
 
+
+
+
+const char* na_boolean_strings[2] = {
+  "False",
+  "True"
+};
+
+
+
+
 #include "../NALib/NASystem.h"
+// Various values useful for outputting, debugging, ...
+const char* na_system_strings[NA_SYSTEM_COUNT] = {
+  "Mac OS X",
+  "Windows",
+  "Unknown"
+};
+const char* na_endianness_strings[NA_ENDIANNESS_COUNT] = {
+  "Native",
+  "Little",
+  "Big",
+  "Unknown",
+};
 void printSystemTest(){
   printf("System: %s\n", na_system_strings[NA_SYSTEM]);
   printf("Native Endianness: %s\n", na_endianness_strings[NA_SYSTEM_ENDIANNESS]);
@@ -391,7 +414,10 @@ void printDateTimeTest(){
   dt.shift = 0;
   dt.sisec = -10LL * NA_SECONDS_IN_400_YEAR_PERIOD;
   naExtractDateTimeInformation(&dt, &dts1, &dta1);
-  for(dt.sisec = dt.sisec; dt.sisec < NA_SECONDS_IN_400_YEAR_PERIOD; dt.sisec += 23LL * NA_SECONDS_PER_HOUR){
+  // Note that the initialization expression in the followin for-loop is empty.
+  // The author could write dt.sisec = dt.sisec but this may lead to warnings
+  // in some systems.
+  for(; dt.sisec < NA_SECONDS_IN_400_YEAR_PERIOD; dt.sisec += 23LL * NA_SECONDS_PER_HOUR){
     naExtractDateTimeInformation(&dt, &dts2, &dta2);
     if((dta2.dayofyear != dta1.dayofyear) && (dta2.weekday != (dta1.weekday + 1) % 7)){
       naCreateStringWithDateTime(&string, &dt, NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT);

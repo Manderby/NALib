@@ -200,7 +200,8 @@ NAString* naCreateStringXMLDecoded( NAString* deststring,
   NAUTF8Char* destptr = naGetStringMutableUTF8Pointer(deststring);
 
   // Copy all characters and decode them if necessary.
-  for(NAInt i=0; i<inputsize; i++){
+  NAInt i;
+  for(i=0; i<inputsize; i++){
     if(inptr[i] == '&'){
       if(((inputsize - i) >= 5) && (inptr[i+1] == 'a') && (inptr[i+2] == 'm') && (inptr[i+3] == 'p') && (inptr[i+4] == ';')){ *destptr++ = '&'; i += 4; }
       else if(((inputsize - i) >= 4) && (inptr[i+1] == 'l') && (inptr[i+2] == 't') && (inptr[i+3] == ';')){ *destptr++ = '<'; i += 3; }
@@ -296,7 +297,8 @@ NAString* naCreateStringEPSDecoded( NAString* deststring,
   NAUTF8Char* destptr = naGetStringMutableUTF8Pointer(deststring);
 
   // Copy all characters and decode them if necessary.
-  for(NAInt i=0; i<inputsize; i++){
+  NAInt i;
+  for(i=0; i<inputsize; i++){
     if(inptr[i] == '\\'){
       if(((inputsize - i) >= 2) && (inptr[i+1] == '\\')){     *destptr++ = '\\'; i += 1; }
       else if(((inputsize - i) >= 2) && (inptr[i+1] == '(')){ *destptr++ = '(';  i += 1; }

@@ -156,7 +156,7 @@ NAString* naCreateStringExtraction( NAString* deststring,
 //      |  Encoding example    |   Decoding example |  Notes
 // -----+----------------------+--------------------+----------------------
 // XML  |  " becomes &quot;    |   &quot; becomes " |  Do not use for HTML < 5
-// EPS  |  ( becomes \(        |   \(     becomes   |
+// EPS  |  ( becomes \(        |   \(     becomes ( |
 //
 // Note: Always creates a new string by copying the characters from the input.
 // Therefore, the two parameters MUST not be the same!
@@ -222,7 +222,7 @@ void naDecoupleString(NAString* string);
 // returns 5, no matter if the string is null-terminated or not.
 NAInt naGetStringSize(const NAString* string);
 
-// Returns a either a const or a non-const pointer to the first character of
+// Returns either a const or a non-const pointer to the first character of
 // this string. Use the const variant for printf %s arguments but make sure
 // the string is null-terminated. Use naDecoupleString if necessary. No debug
 // warning will be emitted if the string is not null-terminated!
@@ -307,7 +307,7 @@ void naParseStringToken(NAString* string, NAString* token);
 // Gathers the first token within string which ends in the given delimiter.
 // The delimiter will not be included. After this function, string will point
 // to the first character after the delimiter. Leading or trailing whitespaces
-// will not be stripped at all. Both string might also be empty after this
+// will not be stripped at all. Both strings might also be empty after this
 // function. Warning: the two arguments shall not be the same as the result is
 // undefined.
 void naParseStringTokenWithDelimiter( NAString* string,

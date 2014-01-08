@@ -17,24 +17,6 @@
 // For example: MyClass::mystaticvar = 52;
 
 
-// Various values useful for outputting, debugging, ...
-const char* na_system_strings[NA_SYSTEM_COUNT] = {
-  "Mac OS X",
-  "Windows",
-  "Unknown"
-};
-
-const char* na_endianness_strings[NA_ENDIANNESS_COUNT] = {
-  "Native",
-  "Little",
-  "Big",
-  "Unknown",
-};
-
-const char* na_boolean_strings[2] = {
-  "False",
-  "True"
-};
 
 
 #ifndef NDEBUGY

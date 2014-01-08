@@ -107,7 +107,7 @@ NABitArray* naCreateBitArrayExtraction( NABitArray* dstarray,
 // Returns the needed size of the array given the count parameter of the
 // createBitArrayFromXXXString functions and the expected count to store the
 // full bit array.
-NA_IDEF NAInt getBitArraySizeHintCount(NAInt sizehint, NAInt desiredcount){
+NA_IHLP NAInt getBitArraySizeHintCount(NAInt sizehint, NAInt desiredcount){
   if(sizehint > 0){
     // When sizehint is positive, sizehint shall be used.
     return sizehint;
@@ -129,7 +129,7 @@ NA_IDEF NAInt getBitArraySizeHintCount(NAInt sizehint, NAInt desiredcount){
 // Looks at the given sizehint and expands or extracts the given bitarray and
 // fills the padding bits with zero if necessary. Warning: expects fullstorage
 // to have enough bits allocated.
-NA_IDEF void naEnsureBitArraySizeHint(NABitArray* bitarray, NAInt sizehint){
+NA_IHLP void naEnsureBitArraySizeHint(NABitArray* bitarray, NAInt sizehint){
   NAInt bitcount = naGetByteArraySize(&(bitarray->bits));
   NAInt arraycount = getBitArraySizeHintCount(sizehint, bitcount);
 

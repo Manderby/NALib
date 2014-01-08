@@ -45,7 +45,7 @@ NA_IAPI void* naAllocateIfNull(void* ptr, NAInt size);
 
 
 // NAPointer
-// The following is the inplementation of a pointer having a reference count,
+// The following is the implementation of a pointer having a reference count,
 // as used in many modern languages. In C and C++, this must be implemented
 // manually.
 //
@@ -218,11 +218,12 @@ struct NAPointer{
                                       | NA_POINTER_CONST_DATA))
 
 
-// This is a helper function. It is hidden as the user shall not use it as it
-// is just a function which prepares the internal state of the NAPointer struct.
-// Of course, in NALib hiding something has not much use but it shows where
-// the hidden attribute makes sense.
-NA_IDEF NA_HIDDEN NAPointer* naCreatePointerStruct(NAPointer* pointer){
+// This is a helper function. It should be hidden as the user shall not use
+// it as it is just a function which prepares the internal state of the
+// NAPointer struct. Of course, in NALib hiding something has not much use
+// but it shows where the hidden attribute would make sense if the function
+// would not be inlined.
+NA_IHLP NAPointer* naCreatePointerStruct(NAPointer* pointer){
   if(!pointer){
     pointer = (NAPointer*)naAllocate(sizeof(NAPointer));
     pointer->refcount = 1 | NA_POINTER_OWN_STRUCT;

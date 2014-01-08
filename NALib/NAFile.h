@@ -185,7 +185,7 @@ void naCloseFile(NAFile* file);
 // Flushes the buffer. Only useful for writing files.
 void naFlushFileBuffer(NAFile* file);
 
-// Sets the endianness of the file and setups all converters.
+// Sets the endianness of the file and prepares all converters.
 // - If this file is a reading file, the endianness is the input encoding and
 //   every multi-byte value will be converted from input to native endianness
 //   after reading automatically.

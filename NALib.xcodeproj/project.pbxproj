@@ -56,6 +56,7 @@
 		B9B2EA151716922700943D91 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		B9CFBED217F2E21500AEC7CC /* NAVectorAlgebra.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAVectorAlgebra.h; sourceTree = "<group>"; };
 		B9CFBED317F3EBDE00AEC7CC /* NARandom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NARandom.h; sourceTree = "<group>"; };
+		B9E8D2C41861D57500D6CCC4 /* NALibChangelogSinceV0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NALibChangelogSinceV0.txt; sourceTree = "<group>"; };
 		B9FDD3C0183F9C5500849D01 /* NAList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAList.h; sourceTree = "<group>"; };
 		B9FDD8BD1844429200849D01 /* NAByteMap2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAByteMap2D.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -110,6 +111,7 @@
 				B98DFBAA17F0CF9A007A62E7 /* NALib */,
 				B9B2EA141716922700943D91 /* test */,
 				B9432B5D17E5BF5A0075F638 /* Readme.txt */,
+				B9E8D2C41861D57500D6CCC4 /* NALibChangelogSinceV0.txt */,
 				B9B2EA131716922700943D91 /* Products */,
 			);
 			sourceTree = "<group>";
