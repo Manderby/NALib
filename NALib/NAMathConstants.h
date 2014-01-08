@@ -107,15 +107,12 @@
 #endif
 
 #ifndef NAN
-//  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    #define NA_NANf             (NA_INFINITYf - NA_INFINITYf)
-    #define NA_NAN              (NA_INFINITY  - NA_INFINITY)
-    #define NA_NANl             (NA_INFINITYl - NA_INFINITYl)
-  //#else
   //  #define NA_NANf             (0.f/0.f)
   //  #define NA_NAN              (0. /0. )
   //  #define NA_NANl             (0.L/0.L)
-  //#endif
+  #define NA_NANf             (NA_INFINITYf - NA_INFINITYf)
+  #define NA_NAN              (NA_INFINITY  - NA_INFINITY)
+  #define NA_NANl             (NA_INFINITYl - NA_INFINITYl)
 #else
   #define NA_NANf             ((float)NAN)
   #define NA_NAN              NAN

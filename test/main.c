@@ -251,7 +251,33 @@ void printComplexTest(){
 
 #include "../NALib/NACoord.h"
 void printCoordTest(){
-//  printf("Inv of 3: %f\n", Inv(3));
+  NARecti rect;
+  NARecti rect2;
+  printf("Creating a Rectange with 2 corner points (8,7) and (3,4):\n");
+  rect = naMakeRectiWithPosiAndPosi(naMakePosi(8, 7), naMakePosi(3, 4));
+  printf("Recti(Posi("NA$INT", "NA$INT"), Sizei("NA$INT", "NA$INT"))\n", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height);
+  printf("Max X coordinate: "NA$INT"\n", naGetRectiMaxX(rect));
+  printf("End X coordinate: "NA$INT"\n", naGetRectiEndX(rect));
+  printf("Max Y coordinate: "NA$INT"\n", naGetRectiMaxY(rect));
+  printf("End Y coordinate: "NA$INT"\n", naGetRectiEndY(rect));
+  printf("Creating bounding box of this rect plus the point (12,16):\n");
+  rect2 = naMakeRectiWithRectiAndPosi(rect, naMakePosi(12, 16));
+  printf("Recti(Posi("NA$INT", "NA$INT"), Sizei("NA$INT", "NA$INT"))\n", rect2.pos.x, rect2.pos.y, rect2.size.width, rect2.size.height);
+  
+  printf("\nis Pos(7,10) in this rect? %s\n", na_boolean_strings[naIsPosiInRecti(naMakePosi(7, 10), rect2)]);
+  printf("is Pos(-7,10) in this rect? %s\n", na_boolean_strings[naIsPosiInRecti(naMakePosi(-7, 10), rect2)]);
+
+  printf("\nClamp the rect to the Recti(Posi(0,1), Sizei(7,7))\n");
+  rect = naClampRectiToRecti(rect2, naMakeRecti(naMakePosi(0, 1), naMakeSizei(7, 7)));
+  printf("Recti(Posi("NA$INT", "NA$INT"), Sizei("NA$INT", "NA$INT"))\n", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height);
+  
+  printf("\nCreating custom negative rect:\n");
+  rect.size.width = -2;
+  rect.size.height = -1;
+  printf("Recti(Posi("NA$INT", "NA$INT"), Sizei("NA$INT", "NA$INT"))\n", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height);
+  printf("Making this rect positive:\n");
+  rect2 = naMakeRectiPositive(rect);
+  printf("Recti(Posi("NA$INT", "NA$INT"), Sizei("NA$INT", "NA$INT"))\n", rect2.pos.x, rect2.pos.y, rect2.size.width, rect2.size.height);
   printf("=======\n\n");
 }
 
@@ -349,12 +375,13 @@ void printStringTest(){
   string = naCreateStringEPSDecoded(NA_NULL, string2);
   printf("Decoded: %s\n", naGetStringConstUTF8Pointer(string));
 
+  printf("\nConcatenation of strings:\n");
   naDestroyString(string);
   naDestroyString(string2);
   string = naCreateStringWithUTF8CString(NA_NULL, "String1");
   string2 = naCreateStringWithUTF8CString(NA_NULL, "String2");
   naAppendStringWithString(string, string2);
-  printf("\nAppending: %s\n", naGetStringConstUTF8Pointer(string));
+  printf("Appending: %s\n", naGetStringConstUTF8Pointer(string));
   naDestroyString(string);
   string = naCreateStringWithUTF8CString(NA_NULL, "String1");
   naAppendStringWithFormat(string, "String%d", 3);
@@ -473,19 +500,21 @@ void printListTest(){
   NAInt* ivalue;
   NAList* list;
   NAInt values[5] = {1, 2, 3, 4, 5};
-  printf("Testing list\n");
+  printf("Testing list. Adding 5 Elements...\n");
   list = naCreateList(NA_NULL);
   naAddListElementLast(list, &(values[0]));
   naAddListElementLast(list, &(values[1]));
   naAddListElementLast(list, &(values[2]));
   naAddListElementLast(list, &(values[3]));
   naAddListElementLast(list, &(values[4]));
+  printf("Iterating forward...\n");
   naFirstListElement(list);
   while((ivalue = (NAInt*)naGetListCurrentContent(list))){
     printf(NA$INT " ", *ivalue);
     naNextListElement(list);
   }
   printf("\n");
+  printf("Iterating backward...\n");
   naLastListElement(list);
   while((ivalue = (NAInt*)naGetListCurrentContent(list))){
     printf(NA$INT " ", *ivalue);
@@ -512,23 +541,24 @@ void printListTest(){
 
 #include "../NALib/NAByteMap2D.h"
 void printByteMap2DTest(){
+  printf("Testing ByteMap2D has not been developed yet.\n");
   printf("=======\n\n");
 }
 
 
 int main(int argc, const char * argv[]){
 
-//  printSystemTest();
-//  printBinaryDataTest();
-//  printMathConstantsTest();
-//  printMathOperatorsTest();
-//  printComplexTest();
-//  printCoordTest();
-//  printStringTest();
-//  printDateTimeTest();
-//  printRandomTest();
-//  printVectorAlgebarTest();
-//  printListTest();
+  printSystemTest();
+  printBinaryDataTest();
+  printMathConstantsTest();
+  printMathOperatorsTest();
+  printComplexTest();
+  printCoordTest();
+  printStringTest();
+  printDateTimeTest();
+  printRandomTest();
+  printVectorAlgebarTest();
+  printListTest();
   printByteMap2DTest();
   
 //  printf("\nPress enter to quit.\n");
