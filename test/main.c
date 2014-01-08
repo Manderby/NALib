@@ -548,6 +548,8 @@ void printByteMap2DTest(){
 
 int main(int argc, const char * argv[]){
 
+  printf("NALib Version %d\n\n", NA_LIB_VERSION);
+
   printSystemTest();
   printBinaryDataTest();
   printMathConstantsTest();
