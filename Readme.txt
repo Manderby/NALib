@@ -233,7 +233,6 @@ Suffix:
 - macros always have the prefix     NA_   and are UPPERCASE
 - functions always have the prefix  na    and are MixedCase
 - variables always have the prefix  na_   and are lowercase
-- printf arguments have the prefix  NA$   and are UPPERCASE
 
 Types are always typedef'd, meaning you won't have to write the struct keyword
 all the time when declaring variables. Also enums are typedef'd with a clear

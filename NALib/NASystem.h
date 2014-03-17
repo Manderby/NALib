@@ -94,73 +94,89 @@
 
 // The definition of NA_RESTRICT and NA_INLINE are just mappings of built-in
 // keywords on different systems.
-
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
-  #define NA_RESTRICT __restrict
-  #define NA_INLINE   _inline
-#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-  #define NA_RESTRICT __restrict__
-  #define NA_INLINE   inline
-#else
-#endif
-
-// The NA_API and NA_HIDDEN macros mark the visibility of a symbol to the
-// user. IF NALib would be provided as a library (dll, lib or dylib), the
-// symbols marked with NA_API would be explicitely accessible, the ones with
-// NA_HIDDEN not. As NALib does not hide its code, both macros are just here
-// for explanation.
 //
-// A function declared with NA_HIDDEN will not be exported when building a
-// library. This means that this function will not be listed in the .lib file
+// The NA_SYMBOL_HIDDEN and NA_SYMBOL_VISIBLE macros mark the visibility of a
+// symbol to the user. IF NALib would be provided as a library (dll, lib or
+// dylib), the symbols marked with NA_SYMBOL_VISIBLE would be explicitely
+// accessible, the ones with NA_SYMBOL_HIDDEN not. As NALib does not hide its
+// code, both macros are just here for explanation.
+//
+// A function declared with NA_SYMBOL_HIDDEN will not be exported when building
+// a library. This means that this function will not be listed in the .lib file
 // on windows and will not be accessible anywhere when including the (.dll or
-// .dylib) library. A function declared with NA_API will explicitely be
-// exported. This is a system-independent implementation which allows the
+// .dylib) library. A function declared with NA_SYMBOL_VISIBLE will explicitely
+// be exported. This is a system-independent implementation which allows the
 // programmer to define the exporting on a very low granularity. There exist
 // other methods to define the exporting in supplementary files.
 //
-// Usually, the NA_HIDDEN macro is defined in some other, hidden file as it
-// shall not be visible to the end user and will only be used on hidden parts.
-// This is not necessary but makes the code clean and helps detect functions
-// which should not be accessible to the user. In NALib, this does not matter
-// and therefore the NA_HIDDEN macro is defined here.
-//
-// IAPI is short for INLINE_API and IDEF is short for INLINE_DEFINITION. These
-// two prefixes mark inline functions in NALib. But note that first, inline
-// functions do not need to be static and second the NA_IAPI should not contain
-// NA_INLINE. But as compilers tend to be difficult to handle, both macros
-// are static inline. Saves a lot of trouble. The static keyword may lead
-// to slightly bigger binaries. But so far, the author never had problems with
-// that.
-//
-// HLP is short for HELPER and IHLP is short for INLINE_HELPER. These two
-// macros denote helper functions which should not be accessible or visible
-// to the user. Helper functions are called from other functions and usually
-// are declared as well as defined once, and only once in an implementation
-// file, not an .h file. Again, in NALib, things are a little more transparent
-// so these macros are a mere hint for the programmer, not more.
-//
-// Also note that visibility attributes have no effect on inline functions as
-// they need to be visible to the compiler to inline.
+// Usually, the NA_SYMBOL_HIDDEN macro is defined in some other, hidden file
+// as it shall not be visible to the end user and will only be used on hidden
+// parts. This is not necessary but makes the code clean and helps detect
+// functions which should not be accessible to the user. In NALib, this does
+// not matter and therefore the NA_SYMBOL_HIDDEN macro is defined here together
+// with the NA_SYMBOL_VISIBLE macro.
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-  #define NA_HIDDEN
-  #define NA_API      __declspec(dllexport)
+  #define NA_RESTRICT         __restrict
+  #define NA_INLINE           _inline
+  #define NA_SYMBOL_HIDDEN
+  #define NA_SYMBOL_VISIBLE   __declspec(dllexport)
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-  #define NA_HIDDEN   __attribute__ ((visibility("hidden")))
-  #define NA_API      __attribute__ ((visibility("default")))
+  #define NA_RESTRICT         __restrict__
+  #define NA_INLINE           inline
+  #define NA_SYMBOL_HIDDEN    __attribute__ ((visibility("hidden")))
+  #define NA_SYMBOL_VISIBLE   __attribute__ ((visibility("default")))
 #else
 #endif
 
+// The following macros mark the declarations and definitions of symbols
+// in NALib:
+//
+// NA_API marks the declaration of a function which is intended to be used by
+// the programmer. Its counterpart is NA_DEF which marks the implementation of
+// the appropriate function. NA_API functions are explicitely marked with
+// NA_VISIBLE and can only be found in header files. NA_DEF functions can only
+// be found in implementation files.
+//
+// Note that API stands for "Application Programming Interface" and DEF stands
+// for "Definition".
+//
+// NA_IAPI is short for NA_INLINE_API and NA_IDEF is short for NA_INLINE_DEF.
+// These two prefixes mark inline functions in NALib. But note that inline
+// functions do not need to be static. Even more so, the declaration of an
+// inline function should not be declared with the inline keyword. But as
+// compilers tend to be difficult and there are some versions out there which
+// may emit warnings, both macros are defined "static inline" in NALib. Saves
+// a lot of trouble. The static keyword may lead to slightly bigger binaries.
+// But so far, the author never had problems with that.
+//
+// NA_HLP is short for NA_HELPER and NA_IHLP is short for NA_INLINE_HELPER.
+// These two macros denote helper functions which should not be accessible
+// or visible to the user. Helper functions are called from other functions
+// and usually are declared and in the same instance defined once, and only
+// once in an implementation file, not a header file. Again, in NALib, things
+// are a little more transparent so these macros are a mere hint for the
+// programmer, not more.
+//
+// Also note that visibility attributes have no effect on inline functions as
+// they MUST be visible to the compiler in order for it to inline the code.
+// Hence in NALib, any visibility attribute is omitted with inline functions
+// as otherwise compilers would constantly emit annoying warnings.
+//
 // Again, note that the following macros are just used for NALib, they may
 // very well differ in your own implementation!
+
+#define NA_API    NA_SYMBOL_VISIBLE
+#define NA_DEF      
 #define NA_IAPI   static NA_INLINE
 #define NA_IDEF   static NA_INLINE
-#define NA_HLP    NA_HIDDEN
+#define NA_HLP    NA_SYMBOL_HIDDEN
 #define NA_IHLP   static NA_INLINE
 
 
 #ifndef va_copy
-  // va_copy is missing on some systems
+  // va_copy is missing on some systems. This is the definition which most
+  // probably works:
   #define va_copy(d,s) ((d) = (s))
 #endif
 
@@ -170,7 +186,7 @@
 
 // We test if the current system has a (positive) integer encoding suitable for
 // NALib
-#if (0x10 >> 4) != 0x01
+#if (0x01000000 >> 24) != 0x01
   #warning "Unknown integer number encoding. NALib might not compile or run."
 #endif
 
@@ -279,7 +295,7 @@ typedef uint8     NAByte;
 // In addition to the type, there is the definition of a printf-argument macro.
 // Use the macro for example like this:
 //
-// printf("The array has " NA$INT " entries." NA$NL, naGetArrayCount(array));
+// printf("The array has " NA_F_INT " entries." NA_NL, naGetArrayCount(array));
 //
 // Some more printf arguments can be found in the NAString.h header file.
 //
@@ -295,12 +311,12 @@ typedef uint8     NAByte;
 //
 #if NA_SYSTEM_ADDRESS_BITS == 32
   typedef int32 NAInt;
-  #define NA$INT "%d"
+  #define NA_F_INT "%d"
   #define NA_INT_MAX NA_INT32_MAX
   #define NA_INT_MIN NA_INT32_MIN
 #elif NA_SYSTEM_ADDRESS_BITS == 64
   typedef int64 NAInt;
-  #define NA$INT "%lld"
+  #define NA_F_INT "%lld"
   #define NA_INT_MAX NA_INT64_MAX
   #define NA_INT_MIN NA_INT64_MIN
 #else
@@ -337,6 +353,18 @@ typedef int NABool;
 #define NA_TRUE    1
 #define NA_FALSE   0
 
+
+// The following macro is used to suppress compiler warnings in functions
+// which do not make any use of a given parameter. This happens when function
+// signatures are chosen to match predefined function pointer types or shall
+// in general have a specific look. By using the given parameter as an
+// expression and casting the result to void makes the compiler think that
+// the parameter is used but has the explicit order to not use any
+// evaluated value.
+//
+// Be careful with this when using the volatile keyword.
+
+#define NA_UNUSED_PARAMETER(x) (void)(x)
 
 
 // The definition of NA_NULL is usually set to the NULL found in stdlib. The

@@ -133,24 +133,21 @@ NA_API NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts);
 // the global setting, see below. If you want to set the timezone manually or
 // provide any additional information, use the constructor with the
 // NADateTimeStruct as an argument instead, it is much more powerful.
-NA_API NADateTime naMakeDateTimeWithValues( NADateTime* datetime,
-                                                  int64 year,
-                                                  int32 mon,
-                                                  int32 day,
-                                                  int32 hour,
-                                                  int32 min,
-                                                  int32 sec);
+NA_API NADateTime naMakeDateTimeWithValues( int64 year,
+                                            int32 mon,
+                                            int32 day,
+                                            int32 hour,
+                                            int32 min,
+                                            int32 sec);
 
 
 // Creates a new NADateTime struct from a given string with a given format.
-NA_API NADateTime naCreateDateTimeFromString( NADateTime* datetime,
-                                          const NAString* string,
-                                      NAAscDateTimeFormat format);
+NA_API NADateTime naMakeDateTimeFromString( const NAString* string,
+                                          NAAscDateTimeFormat format);
 
 // Creates a new NADateTime struct from a given data block with a given format.
-NA_API NADateTime naCreateDateTimeFromPointer( NADateTime* datetime,
-                                               const void* data,
-                                       NABinDateTimeFormat format);
+NA_API NADateTime naMakeDateTimeFromPointer(  const void* data,
+                                        NABinDateTimeFormat format);
 
 
 //// While the init methods read values of a given format, the output methods

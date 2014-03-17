@@ -14,6 +14,32 @@ correct, complete or final.
 
 
 
+Version 4 (first published 2014-March-17):
+==============================================
+
+This version contains mostly beautification and bugfixes. No new structure
+was introduced.
+
+- Revisited the NA_API and related macros. Tried to make it more logically.
+- Added array-reading and -writing for basic datatypes in NAFile.
+- Moved the autoflush and newline macros of NAFile.h to the implementation
+  file. Added typed enums to the NAFile- and NAString-API instead. Removed old
+  NANewLine enums formerly found in the NAString.h file.
+- Moved a macro from NAString.h to its implementation file.
+- Added NA_UNUSED_PARAMETER macro. Removed some warnings.
+- Changed naCreateDateTimeFromString and naCreateDateTimeFromPointer to
+  naMakeDateTimeFromString and naMakeDateTimeFromPointer. Removed first
+  parameter.
+- The Dollar Sign $ has been removed from the macro identifier to avoid
+  warnings. The new macro names are: NA_NL_UNIX, NA_NL_MAC9, NA_NL_WIN, NA_NL,
+  NA_TAB and NA_F_INT (for the former NA$INT).
+- More and improved comments.
+- More debug checks. Removed some todos.
+- Small bugfixes
+
+
+
+
 Version 3 (first published 2014-January-8):
 ===========================================
 

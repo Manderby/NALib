@@ -7,13 +7,6 @@
 
 
 
-struct NABitArray{
-  struct NAByteArray fullstorage;
-  struct NAByteArray bits;
-};
-
-
-
 NABitArray* naCreateBitArray(NABitArray* bitarray){
   bitarray = naAllocateIfNull(bitarray, sizeof(NABitArray));
   // Create two empty byte arrays

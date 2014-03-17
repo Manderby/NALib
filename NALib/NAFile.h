@@ -13,20 +13,14 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#define NA_FILE_FLAG_EOF                  0x01
-#define NA_FILE_FLAG_WRITING              0x02
-#define NA_FILE_FLAG_STREAM               0x04
+// Input and output is handeled slightly differently on different systems. In
+// the header files of each system, there are different definitions of standard
+// C functions and hence, NALib is trying to map everything to one definition.
+// This requires to define certain things in advance before the NAFile struct
+// can be declared. This is cumbersome but there is no other meaningful place
+// to put such definitions.
 
-#define NA_FILE_FLAG_NEWLINE_MASK         0x30
-#define NA_FILE_FLAG_NEWLINE_UNIX         0x10
-#define NA_FILE_FLAG_NEWLINE_MAC9         0x20
-#define NA_FILE_FLAG_NEWLINE_WIN          0x30
 
-#define NA_FILE_FLAG_AUTOFLUSH_MASK       0xc0
-#define NA_FILE_FLAG_AUTOFLUSH_NONE       0x00
-#define NA_FILE_FLAG_AUTOFLUSH_TEXT       0x40
-#define NA_FILE_FLAG_AUTOFLUSH_MULTIBYTE  0x80
-#define NA_FILE_FLAG_AUTOFLUSH_ALL        0xc0
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   #include <windows.h>
@@ -46,7 +40,6 @@
   #define NA_FILE_OPEN_FLAGS_WRITE (O_WRONLY | O_CREAT | O_TRUNC | O_BINARY)
   #define NA_FILE_OPEN_FLAGS_APPEND (O_WRONLY | O_CREAT | O_APPEND | O_BINARY)
   #define NA_DIRECTORY_DELIMITER "\\"
-  #define NA_FILE_FLAG_NEWLINE_NATIVE NA_FILE_FLAG_NEWLINE_WIN
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
   #include <unistd.h>
   #include <dirent.h>
@@ -59,12 +52,15 @@
   #define NA_FILE_OPEN_FLAGS_WRITE (O_WRONLY | O_CREAT | O_TRUNC)
   #define NA_FILE_OPEN_FLAGS_APPEND (O_WRONLY | O_CREAT | O_APPEND)
   #define NA_DIRECTORY_DELIMITER "/"
-  #define NA_FILE_FLAG_NEWLINE_NATIVE NA_FILE_FLAG_NEWLINE_UNIX
 #endif
 
-// buffer must not be greater than 65536 as uint16 is used as counter.
-// buffer must not be smaller than 16 as BinaryData reader may require 16 Bytes.
 #define NA_FILE_BUFFER_SIZE 4096
+#if (NA_FILE_BUFFER_SIZE < 16) || (NA_FILE_BUFFER_SIZE > 65536)
+  #error "Invalid file buffer size"
+  // buffer must not be greater than 65536 as uint16 is used as counter.
+  // buffer must not be smaller than 16 as BinaryData reader may require
+  // 16 Bytes.
+#endif
 
 // Mapping of standard library functions. They can be different depending on
 // the system compiled.
@@ -81,67 +77,77 @@ NA_IAPI NABool     naIsHidden(const char* path);
 NA_IAPI int        naRemove  (const char* path);
 NA_IAPI NABool     naCopyFile(const char* dstpath, const char* srcpath);
 
+
+// The different flushing-behaviours
 typedef enum{
-  NA_ENCODING_UTF_8
-} NATextEncoding;
+  NA_FILE_AUTOFLUSH_NONE,       // Writing is buffered
+  NA_FILE_AUTOFLUSH_TEXT,       // Auto-flushes Strings, Lines and NewLines
+  NA_FILE_AUTOFLUSH_MULTIBYTE,  // Auto-flushes Strings, Lines and Byte arrays
+  NA_FILE_AUTOFLUSH_ALL         // No buffer. Auto-Flushing all output
+} NAFileAutoFlushing;
 
 
-typedef struct NAFile{
-  int desc;           // The descriptor
-  NAFileSize pos;     // The byte position within the underlying file.
-  NAEndiannessConverter converter;  // The endianness converter.
-  NATextEncoding textencoding; // The encoding of textual data.
-  uint16 flags;       // various flags
-  uint16 remainingbytesinbuffer;  // remaining bytes inside the buffer
-  NAByte* bufptr;     // Pointer to the current byte in the buffer
+
+typedef struct NAFile NAFile;
+struct NAFile{
+  int desc;                           // The descriptor
+  NAFileSize pos;                     // The byte position within file.
+  NAEndiannessConverter converter;    // The endianness converter.
+  NATextEncoding textencoding;        // The encoding of textual data.
+  uint16 flags;                       // various flags
+  uint16 remainingbytesinbuffer;      // remaining bytes inside the buffer
+  NAByte* bufptr;                     // Pointer to the current buffer-byte
   NAByte buffer[NA_FILE_BUFFER_SIZE]; // The buffer.
-} NAFile;
+};
 
 
 
-// Important remark about ASCII and binary files:
-// File types can roughly be categorized into two categories: ASCII files and
-// binary files. Both file types have their Pros and Cons. Which one to use
-// is up to the user. The NAFile structure allows to read and write both type
-// of files.
+// Important remark about text and binary files:
+// File types can roughly be split into two categories: Text files and
+// binary files. Text files are also known as ASCII files. Both file types
+// have their Pros and Cons. Which one to use is up to the user. The NAFile
+// structure allows to read and write both type of files.
 //
-// Writing files is usually done sequentially for both ASCII and binary files:
+// Writing files is usually done sequentially for both text and binary files:
 // You write some bytes or a string, then you write some other bytes or another
 // string, and so on, until the whole file is written.
 //
-// Reading binary files is also done moslty sequentially: You maybe read an
+// Reading binary files is also done mostly sequentially: You maybe read an
 // integer, then you read a float, and so on. Maybe you jump to a specific
 // location in the file and read on sequetially from there.
 //
-// Reading ASCII files on the other hand is usually done quite differently.
-// ASCII files are usually subdivided into a hierarchical structure. An easy
+// Reading text files on the other hand is usually done quite differently.
+// Text files are usually subdivided into a hierarchical structure. An easy
 // example is a logfile where each line is a sub-structure. XML-files for
 // example have very complex sub-structures where each struture can span
 // multiple lines or even the whole file. Parsing such files is anything but
 // sequential.
 //
-// Therefore, when reading an ASCII file, NALib encourages the programmer to
+// Therefore, when reading a text file, NALib encourages the programmer to
 // do the following: Read the whole file into an NAString struct by using a
 // single call to naCreateStringFromFileContents. After that, use the parsing
 // functions of the NAString struct.
 //
-// There are ASCII-reading functions in NAFile but they are slower and less
+// There are text-reading functions in NAFile but they are slower and less
 // powerful as the parsing functions of NAString.
 
 
 // Reads the full file and returns it as a new String.
-// Note that this is the preferred way to handle ASCII-files in NALib: Just
+// Note that this is the preferred way to handle text files in NALib: Just
 // read the whole file into a string and then use the parsing functions of
 // the NAString type.
 // The encoding defines what the file is encoded in. The resulting string will
 // be encoded in UTF-8. todo: Add more encodings.
-NAString* naCreateStringFromFileContents(NAString* string, const char* filename, NATextEncoding encoding);
+NAString* naCreateStringFromFileContents( NAString* string,
+                                        const char* filename,
+                                     NATextEncoding encoding);
 
 // Reads the full file and returns it as a new NAByteArray.
 // Warning: This function is only useful if you read or store raw data! The 
 // NAByteArray struct is not endianness-aware. Use the reading and writing
 // functions of NAFile when handling multi-byte values instead.
-NAByteArray* naCreateByteArrayFromFileContents(NAByteArray* array, const char* filename);
+NAByteArray* naCreateByteArrayFromFileContents(NAByteArray* array,
+                                                const char* filename);
 
 // Opens the file.
 // Reading:   Opens an existing file and places the read pointer to the first
@@ -182,50 +188,42 @@ NAFile naMakeFileAsStderr();
 // Closes the file. Note: Can close stdin, stdout and stderr!
 void naCloseFile(NAFile* file);
 
-// Flushes the buffer. Only useful for writing files.
+// Flushes the buffer. Only useful for writing files. Undefined behaviour for
+// reading files.
 void naFlushFileBuffer(NAFile* file);
 
 // Sets the endianness of the file and prepares all converters.
-// - If this file is a reading file, the endianness is the input encoding and
-//   every multi-byte value will be converted from input to native endianness
-//   after reading automatically.
-// - If this file is a writing file, the endianness is the output encoding and
-//   every multy-byte value will be converted from native to output endianness
-//   before writing automatically.
+// - If this file is a reading file, the endianness is the input encoding for
+//   binary values and every binary multi-byte value will be converted from
+//   input to native endianness while reading automatically.
+// - If this file is a writing file, the endianness is the output encoding for
+//   binary values and every binary multy-byte value will be converted from
+//   native to output endianness while writing automatically.
 // Use endianness constants like NA_ENDIANNESS_BIG for the endianness argument.
 void naSetFileEndianness(NAFile* file, NAInt endianness);
 
 // Sets the text encoding of the file.
 // All methods reading or writing NAString structures or NAUTF8Char data will
 // automatically convert between the file encoding and the NAString encoding
-// (which is UTF-8). Currently, only the UTF-8 encoding is supported.
+// (which is UTF-8). todo: Currently, only the UTF-8 encoding is supported.
 void naSetFileTextEncoding(NAFile* file, NATextEncoding textencoding);
 
-// Only useful for Write-files. Defines, how writings should be flushed. The
-// NAFile struct by default uses a buffer to speed up writing. You can manually
-// configure what will automatically be flushed using the following flags:
-// NA_FILE_FLAG_AUTOFLUSH_NONE    Writing is buffered
-// NA_FILE_FLAG_AUTOFLUSH_TEXT    Auto-flushes Strings, Lines and NewLines
-// NA_FILE_FLAG_AUTOFLUSH_ARRAY   Auto-flushes Strings, Lines and Byte arrays
-// NA_FILE_FLAG_AUTOFLUSH_ALL     No buffer. Auto-Flushing all output
-void naSetFileAutoFlush(NAFile* file, uint16 autoflushflag);
+// Only useful for write-files. Defines, how writings should be flushed. The
+// NAFile struct by default uses a buffer to speed up writing.
+void naSetFileAutoFlush(NAFile* file, NAFileAutoFlushing autoflushing);
 
 // Only useful for Write-files. Defines, how a line ending shall be encoded.
-// NA_FILE_FLAG_NEWLINE_UNIX     \n    Used in Unix, Linux, MacOSX
-// NA_FILE_FLAG_NEWLINE_MAC9     \r    Used in old Mac OS
-// NA_FILE_FLAG_NEWLINE_WIN      \r\n  Used in Windows
-// NA_FILE_FLAG_NEWLINE_NATIVE         Dependant on the local machines system
 // Note that this function only affects writeLine and writeNewLine calls. If
 // you somehow write a different line-ending for example as part of a string,
-// that line-ending will not be converted!
-void naSetFileNewLine(NAFile* file, uint16 newlineflag);
+// that line-ending will NOT be converted!
+void naSetFileNewLine(NAFile* file, NANewlineEncoding newlineencoding);
 
-// computes the filesize (from first to last NAByte).
+// Computes the filesize (from first to last byte).
 NAFileSize naComputeFileSize(const NAFile* file);
 NABool naIsFileOpen(const NAFile* file);
 NABool naHasFileEnded(const NAFile* file);
 
-// Readjusts the internal file pointer to the given offset.
+// Re-adjusts the internal file pointer to the given offset.
 void naJumpFileOffsetAbsolute(NAFile* file, NAFileSize offset);
 void naJumpFileOffsetRelative(NAFile* file, NAFileSize offset);
 
@@ -239,9 +237,10 @@ void naJumpFileOffsetRelative(NAFile* file, NAFileSize offset);
 // in buf. The buffer must be big enough, no overflow check is made. This is a
 // low-level function. The result of the naCreateByteArrayFromFile function is
 // more convenient to handle.
+// This function is NOT endianness-aware.
 void    naReadFileBytes (NAFile* file, void* buf, NAFileSize count);
 
-// Read different basic datatypes. Endianness-aware!
+// Read different basic datatypes. These functions ARE endianness-aware!
 int8    naReadFileInt8  (NAFile* file);
 int16   naReadFileInt16 (NAFile* file);
 int32   naReadFileInt32 (NAFile* file);
@@ -252,7 +251,24 @@ uint32  naReadFileUInt32(NAFile* file);
 uint64  naReadFileUInt64(NAFile* file);
 float   naReadFileFloat (NAFile* file);
 double  naReadFileDouble(NAFile* file);
-// todo: Add the same thing for array converters.
+
+// Read whole arrays of basic datatypes. If the given buf argument is a Null-
+// pointer, a sufficiently large memory block will be allocated on the heap
+// using malloc. This block must be freed manually! If the given argument is
+// not a Null-Pointer, the buffer at the given address is used and must be
+// big enough to hold count items. No overflow check will be performed. The
+// functions always return a pointer to the buffer.
+// These functions ARE endianness-aware!
+int8*   naReadFileArrayInt8  (NAFile* file, int8*   buf, NAInt count);
+int16*  naReadFileArrayInt16 (NAFile* file, int16*  buf, NAInt count);
+int32*  naReadFileArrayInt32 (NAFile* file, int32*  buf, NAInt count);
+int64*  naReadFileArrayInt64 (NAFile* file, int64*  buf, NAInt count);
+uint8*  naReadFileArrayUInt8 (NAFile* file, uint8*  buf, NAInt count);
+uint16* naReadFileArrayUInt16(NAFile* file, uint16* buf, NAInt count);
+uint32* naReadFileArrayUInt32(NAFile* file, uint32* buf, NAInt count);
+uint64* naReadFileArrayUInt64(NAFile* file, uint64* buf, NAInt count);
+float*  naReadFileArrayFloat (NAFile* file, float*  buf, NAInt count);
+double* naReadFileArrayDouble(NAFile* file, double* buf, NAInt count);
 
 // Creates or fills an NAByteArray or an NAString by reading the given number
 // of bytes from the file and then COPYING them to the array or string.
@@ -261,6 +277,7 @@ double  naReadFileDouble(NAFile* file);
 // instead which directly reads the bytes to the array instead of copying them
 // from an internal buffer.
 // COPIES ALWAYS!
+// The ByteArray function is NOT endianness-aware.
 // Note that the expected text encoding of the file can be defined using
 // naSetFileTextEncoding.
 NAByteArray* naCreateByteArrayFromFile(NAByteArray* array,
@@ -278,9 +295,10 @@ NAString*    naCreateStringFromFile(      NAString* string,
 // manipulation. The buffer must be big enough, no overflow check is made.
 // This is a low-level function. The naWriteFileByteArray function is more
 // convenient to handle if you are working with byte arrays.
+// This function is NOT endianness-aware.
 void naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize count);
 
-// Writes some standard data type. Endianness-aware!
+// Writes some standard data type. These functions ARE endianness-aware!
 void naWriteFileInt8  (NAFile* file, int8 value);
 void naWriteFileInt16 (NAFile* file, int16 value);
 void naWriteFileInt32 (NAFile* file, int32 value);
@@ -291,9 +309,22 @@ void naWriteFileUInt32(NAFile* file, uint32 value);
 void naWriteFileUInt64(NAFile* file, uint64 value);
 void naWriteFileFloat (NAFile* file, float value);
 void naWriteFileDouble(NAFile* file, double value);
-// todo: Add the same thing for array converters.
 
-// Writes a byte array to the file.
+// Writes whole arrays of basic datatypes. The buffer is expected to hold
+// count items. No overflow check will be performed.
+// These functions ARE endianness-aware!
+void naWriteFileArrayInt8  (NAFile* file, const int8* buf,   NAInt count);
+void naWriteFileArrayInt16 (NAFile* file, const int16* buf,  NAInt count);
+void naWriteFileArrayInt32 (NAFile* file, const int32* buf,  NAInt count);
+void naWriteFileArrayInt64 (NAFile* file, const int64* buf,  NAInt count);
+void naWriteFileArrayUInt8 (NAFile* file, const uint8* buf,  NAInt count);
+void naWriteFileArrayUInt16(NAFile* file, const uint16* buf, NAInt count);
+void naWriteFileArrayUInt32(NAFile* file, const uint32* buf, NAInt count);
+void naWriteFileArrayUInt64(NAFile* file, const uint64* buf, NAInt count);
+void naWriteFileArrayFloat (NAFile* file, const float* buf,  NAInt count);
+void naWriteFileArrayDouble(NAFile* file, const double* buf, NAInt count);
+
+// Writes a byte array to the file. This function is NOT endianness-aware.
 void naWriteFileByteArray( NAFile* file, 
                 const NAByteArray* array);
 

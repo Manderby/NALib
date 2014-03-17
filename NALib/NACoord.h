@@ -238,11 +238,12 @@ NA_IAPI NARecti   naMakeRectiPositive(NARecti rect);
 
 
 
-// helper functions. Should be hidden. todo.
+// helper functions. Should be hidden.
 NA_IHLP NABool naIsPosFieldValid(double a){
   return !naIsNaN(a);
 }
 NA_IHLP NABool naIsPosiFieldValid(NAInt a){
+  NA_UNUSED_PARAMETER(a);
   return NA_TRUE;
 }
 NA_IHLP NABool naIsSizeFieldValid(double a){
@@ -257,6 +258,7 @@ NA_IHLP NABool naIsPosFieldUseful(double a){
   return !naIsNaN(a);
 }
 NA_IHLP NABool naIsPosiFieldUseful(NAInt a){
+  NA_UNUSED_PARAMETER(a);
   return NA_TRUE;
 }
 NA_IHLP NABool naIsSizeFieldUseful(double a){

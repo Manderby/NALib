@@ -28,11 +28,27 @@ typedef char NAUTF8Char;
 
 
 // The tabs and newlines used on different systems. The native newline argument
-// NA$NL will be defined below.
-#define NA$NL_UNIX  "\n"
-#define NA$NL_MAC9  "\r"
-#define NA$NL_WIN   "\r\n"
-#define NA$TAB      "\t"
+// NA_NL will be defined below.
+#define NA_NL_UNIX  "\n"
+#define NA_NL_MAC9  "\r"
+#define NA_NL_WIN   "\r\n"
+#define NA_TAB      "\t"
+
+
+// The different newline-encodings as an enum type
+typedef enum{
+  NA_NEWLINE_UNIX,              // \n    Used in Unix, Linux, MacOSX
+  NA_NEWLINE_MAC9,              // \r    Used in old Mac OS
+  NA_NEWLINE_WIN,               // \r\n  Used in Windows
+  NA_NEWLINE_NATIVE             //       Dependant on the local machines system
+} NANewlineEncoding;
+
+
+// The different encodings of text files.
+// todo: Currently, there is just UTF-8. More to come.
+typedef enum{
+  NA_TEXT_ENCODING_UTF_8
+} NATextEncoding;
 
 
 // System dependant mapping of string functions and macros
@@ -46,10 +62,10 @@ typedef char NAUTF8Char;
   #else
     typedef CHAR SystemChar;
   #endif
-  #define NA$NL NL_WIN
+  #define NA_NL NL_WIN
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
   // typedef short SystemChar;  // unused at the moment
-  #define NA$NL NL_UNIX
+  #define NA_NL NL_UNIX
 #else
 #endif
 
@@ -65,17 +81,6 @@ NA_IAPI NAInt naVsnprintf(              NAUTF8Char* buffer,
 NA_IAPI NAInt naVarargStringSize( const NAUTF8Char* string,
                                             va_list args);
 
-
-
-
-typedef enum NANewLine{
-  NA_STRING_NEWLINE_NONE = 0,
-  NA_STRING_NEWLINE_UNIX,
-  NA_STRING_NEWLINE_WIN,
-  NA_STRING_NEWLINE_MAC9
-} NANewLine;
-
-#define NA_STRING_NULL_TERMINATED           0x0001
 
 
 // /////////////////////

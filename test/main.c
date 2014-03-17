@@ -255,29 +255,29 @@ void printCoordTest(){
   NARecti rect2;
   printf("Creating a Rectange with 2 corner points (8,7) and (3,4):\n");
   rect = naMakeRectiWithPosiAndPosi(naMakePosi(8, 7), naMakePosi(3, 4));
-  printf("Recti(Posi("NA$INT", "NA$INT"), Sizei("NA$INT", "NA$INT"))\n", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height);
-  printf("Max X coordinate: "NA$INT"\n", naGetRectiMaxX(rect));
-  printf("End X coordinate: "NA$INT"\n", naGetRectiEndX(rect));
-  printf("Max Y coordinate: "NA$INT"\n", naGetRectiMaxY(rect));
-  printf("End Y coordinate: "NA$INT"\n", naGetRectiEndY(rect));
+  printf("Recti(Posi("NA_F_INT", "NA_F_INT"), Sizei("NA_F_INT", "NA_F_INT"))\n", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height);
+  printf("Max X coordinate: "NA_F_INT"\n", naGetRectiMaxX(rect));
+  printf("End X coordinate: "NA_F_INT"\n", naGetRectiEndX(rect));
+  printf("Max Y coordinate: "NA_F_INT"\n", naGetRectiMaxY(rect));
+  printf("End Y coordinate: "NA_F_INT"\n", naGetRectiEndY(rect));
   printf("Creating bounding box of this rect plus the point (12,16):\n");
   rect2 = naMakeRectiWithRectiAndPosi(rect, naMakePosi(12, 16));
-  printf("Recti(Posi("NA$INT", "NA$INT"), Sizei("NA$INT", "NA$INT"))\n", rect2.pos.x, rect2.pos.y, rect2.size.width, rect2.size.height);
+  printf("Recti(Posi("NA_F_INT", "NA_F_INT"), Sizei("NA_F_INT", "NA_F_INT"))\n", rect2.pos.x, rect2.pos.y, rect2.size.width, rect2.size.height);
   
   printf("\nis Pos(7,10) in this rect? %s\n", na_boolean_strings[naIsPosiInRecti(naMakePosi(7, 10), rect2)]);
   printf("is Pos(-7,10) in this rect? %s\n", na_boolean_strings[naIsPosiInRecti(naMakePosi(-7, 10), rect2)]);
 
   printf("\nClamp the rect to the Recti(Posi(0,1), Sizei(7,7))\n");
   rect = naClampRectiToRecti(rect2, naMakeRecti(naMakePosi(0, 1), naMakeSizei(7, 7)));
-  printf("Recti(Posi("NA$INT", "NA$INT"), Sizei("NA$INT", "NA$INT"))\n", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height);
+  printf("Recti(Posi("NA_F_INT", "NA_F_INT"), Sizei("NA_F_INT", "NA_F_INT"))\n", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height);
   
   printf("\nCreating custom negative rect:\n");
   rect.size.width = -2;
   rect.size.height = -1;
-  printf("Recti(Posi("NA$INT", "NA$INT"), Sizei("NA$INT", "NA$INT"))\n", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height);
+  printf("Recti(Posi("NA_F_INT", "NA_F_INT"), Sizei("NA_F_INT", "NA_F_INT"))\n", rect.pos.x, rect.pos.y, rect.size.width, rect.size.height);
   printf("Making this rect positive:\n");
   rect2 = naMakeRectiPositive(rect);
-  printf("Recti(Posi("NA$INT", "NA$INT"), Sizei("NA$INT", "NA$INT"))\n", rect2.pos.x, rect2.pos.y, rect2.size.width, rect2.size.height);
+  printf("Recti(Posi("NA_F_INT", "NA_F_INT"), Sizei("NA_F_INT", "NA_F_INT"))\n", rect2.pos.x, rect2.pos.y, rect2.size.width, rect2.size.height);
   printf("=======\n\n");
 }
 
@@ -323,19 +323,19 @@ void printStringTest(){
   string = naCreateStringWithUTF8CString(NULL, "abc\ndef\r\n\nghi\rjkl");
   linenum += naParseStringLine(string, token, NA_TRUE);
   naDecoupleString(token);
-  printf(NA$INT": \"%s\"\n", linenum, naGetStringConstUTF8Pointer(token));
+  printf(NA_F_INT": \"%s\"\n", linenum, naGetStringConstUTF8Pointer(token));
   linenum += naParseStringLine(string, token, NA_TRUE);
   naDecoupleString(token);
-  printf(NA$INT": \"%s\"\n", linenum, naGetStringConstUTF8Pointer(token));
+  printf(NA_F_INT": \"%s\"\n", linenum, naGetStringConstUTF8Pointer(token));
   linenum += naParseStringLine(string, token, NA_TRUE);
   naDecoupleString(token);
-  printf(NA$INT": \"%s\"\n", linenum, naGetStringConstUTF8Pointer(token));
+  printf(NA_F_INT": \"%s\"\n", linenum, naGetStringConstUTF8Pointer(token));
   linenum += naParseStringLine(string, token, NA_TRUE);
   naDecoupleString(token);
-  printf(NA$INT": \"%s\"\n", linenum, naGetStringConstUTF8Pointer(token));
+  printf(NA_F_INT": \"%s\"\n", linenum, naGetStringConstUTF8Pointer(token));
   linenum += naParseStringLine(string, token, NA_TRUE);
   naDecoupleString(token);
-  printf(NA$INT": \"%s\"\n", linenum, naGetStringConstUTF8Pointer(token));
+  printf(NA_F_INT": \"%s\"\n", linenum, naGetStringConstUTF8Pointer(token));
   printf("Remaining string is empty: %s\n", na_boolean_strings[naIsStringEmpty(string)]);
 
   naDestroyString(string);
@@ -510,14 +510,14 @@ void printListTest(){
   printf("Iterating forward...\n");
   naFirstListElement(list);
   while((ivalue = (NAInt*)naGetListCurrentContent(list))){
-    printf(NA$INT " ", *ivalue);
+    printf(NA_F_INT " ", *ivalue);
     naNextListElement(list);
   }
   printf("\n");
   printf("Iterating backward...\n");
   naLastListElement(list);
   while((ivalue = (NAInt*)naGetListCurrentContent(list))){
-    printf(NA$INT " ", *ivalue);
+    printf(NA_F_INT " ", *ivalue);
     naPrevListElement(list);
   }
   printf("\n");
@@ -528,7 +528,7 @@ void printListTest(){
     if(*ivalue == 3){
       naRemoveListElementCurrent(list, NA_FALSE);
     }else{
-      printf(NA$INT " ", *ivalue);
+      printf(NA_F_INT " ", *ivalue);
     }
     naNextListElement(list);
   }
@@ -546,7 +546,7 @@ void printByteMap2DTest(){
 }
 
 
-int main(int argc, const char * argv[]){
+int main(void){
 
   printf("NALib Version %d\n\n", NA_LIB_VERSION);
 

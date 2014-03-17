@@ -19,7 +19,7 @@
 
 
 
-#ifndef NDEBUGY
+#ifndef NDEBUG
 
   // The error printing method. Errors will be emitted to the stderr output.
   // When NDEBUG is defined, these functions are OBSOLETE!

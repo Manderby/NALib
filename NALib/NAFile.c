@@ -6,6 +6,34 @@
 #include <stdlib.h>
 
 
+// Note that some of the following flags reflect the enum-types found in
+// NAFile.h and NAString.h. They are redefined here as macro flags as a
+// programmer might want to hide the actual implementation of something like
+// flags. An API on the other hand is much easier to use with an enum type.
+// The user of such an API makes less errors, the compiler can check for
+// errors and the debugger can print useful information.
+
+#define NA_FILE_FLAG_EOF                  0x01
+#define NA_FILE_FLAG_WRITING              0x02
+#define NA_FILE_FLAG_STREAM               0x04
+
+#define NA_FILE_FLAG_NEWLINE_MASK         0x30
+#define NA_FILE_FLAG_NEWLINE_UNIX         0x10
+#define NA_FILE_FLAG_NEWLINE_MAC9         0x20
+#define NA_FILE_FLAG_NEWLINE_WIN          0x30
+#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #define NA_FILE_FLAG_NEWLINE_NATIVE NA_FILE_FLAG_NEWLINE_WIN
+#else
+  #define NA_FILE_FLAG_NEWLINE_NATIVE NA_FILE_FLAG_NEWLINE_UNIX
+#endif
+
+#define NA_FILE_FLAG_AUTOFLUSH_MASK       0xc0
+#define NA_FILE_FLAG_AUTOFLUSH_NONE       0x00
+#define NA_FILE_FLAG_AUTOFLUSH_TEXT       0x40
+#define NA_FILE_FLAG_AUTOFLUSH_MULTIBYTE  0x80
+#define NA_FILE_FLAG_AUTOFLUSH_ALL        0xc0
+
+
 
 NAString* naCreateStringFromFileContents(NAString* string, const char* filename, NATextEncoding encoding){
   NAFile file;
@@ -14,9 +42,8 @@ NAString* naCreateStringFromFileContents(NAString* string, const char* filename,
   naSetFileTextEncoding(&file, encoding);
   totalsize = naComputeFileSize(&file);
   #ifndef NDEBUG
-    if(totalsize > NA_INT32_MAX){
+    if(totalsize > NA_INT32_MAX)
       naError("naCreateStringFromFileContents", "Trying to read more than 2 GiB of data from file");
-    }
   #endif
   // todo: encoding.
   string = naCreateStringWithSize(string, (NAInt)totalsize);
@@ -33,9 +60,8 @@ NAByteArray* naCreateByteArrayFromFileContents(NAByteArray* bytearray, const cha
   file = naOpenFileForReading(filename);
   totalsize = naComputeFileSize(&file);
   #ifndef NDEBUG
-    if(totalsize > NA_INT32_MAX){
+    if(totalsize > NA_INT32_MAX)
       naError("naCreateByteArrayFromFileContents", "Trying to read more than 2 GiB of data from file");
-    }
   #endif
   bytearray = naCreateByteArrayFromFile(bytearray, &file, totalsize);
   naCloseFile(&file);
@@ -50,7 +76,7 @@ NAFile naOpenFileForReading(const char* filename){
   file.desc = naOpen(filename, NA_FILE_OPEN_FLAGS_READ, NA_FILE_MODE_DEFAULT);
   file.pos = 0;
   file.converter = naMakeEndiannessConverter(NA_ENDIANNESS_NATIVE, NA_ENDIANNESS_NATIVE);
-  file.textencoding = NA_ENCODING_UTF_8;
+  file.textencoding = NA_TEXT_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_NEWLINE_NATIVE;
   if(file.desc < 0){
     file.flags |= NA_FILE_FLAG_EOF;
@@ -69,7 +95,7 @@ NAFile naOpenFileForWriting(const char* filename, NAFileMode mode){
   file.desc = naOpen(filename, NA_FILE_OPEN_FLAGS_WRITE, mode);
   file.pos = 0;
   file.converter = naMakeEndiannessConverter(NA_ENDIANNESS_NATIVE, NA_ENDIANNESS_NATIVE);
-  file.textencoding = NA_ENCODING_UTF_8;
+  file.textencoding = NA_TEXT_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_WRITING | NA_FILE_FLAG_NEWLINE_NATIVE;
   if(file.desc < 0){
     file.flags |= NA_FILE_FLAG_EOF;
@@ -87,7 +113,7 @@ NAFile naOpenFileForAppending(const char* filename, NAFileMode mode){
   NAFile file;
   file.desc = naOpen(filename, NA_FILE_OPEN_FLAGS_APPEND, mode);
   file.pos = 0;
-  file.textencoding = NA_ENCODING_UTF_8;
+  file.textencoding = NA_TEXT_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_WRITING | NA_FILE_FLAG_NEWLINE_NATIVE | NA_FILE_FLAG_AUTOFLUSH_TEXT;
   if(file.desc < 0){
     file.flags |= NA_FILE_FLAG_EOF;
@@ -106,7 +132,7 @@ NAFile naMakeFileAsStdin(){
   file.desc = 0;
   file.pos = 0;
   file.converter = naMakeEndiannessConverter(NA_ENDIANNESS_NATIVE, NA_ENDIANNESS_NATIVE);
-  file.textencoding = NA_ENCODING_UTF_8;
+  file.textencoding = NA_TEXT_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_STREAM | NA_FILE_FLAG_NEWLINE_NATIVE | NA_FILE_FLAG_AUTOFLUSH_ALL;
   file.remainingbytesinbuffer = 0;  // the buffer is empty at the moment.
   file.bufptr = file.buffer;
@@ -119,7 +145,7 @@ NAFile naMakeFileAsStdout(){
   file.desc = 1;
   file.pos = 0;
   file.converter = naMakeEndiannessConverter(NA_ENDIANNESS_NATIVE, NA_ENDIANNESS_NATIVE);
-  file.textencoding = NA_ENCODING_UTF_8;
+  file.textencoding = NA_TEXT_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_WRITING | NA_FILE_FLAG_STREAM | NA_FILE_FLAG_NEWLINE_NATIVE | NA_FILE_FLAG_AUTOFLUSH_ALL;
   file.remainingbytesinbuffer = NA_FILE_BUFFER_SIZE;
   file.bufptr = file.buffer;
@@ -132,7 +158,7 @@ NAFile naMakeFileAsStderr(){
   file.desc = 2;
   file.pos = 0;
   file.converter = naMakeEndiannessConverter(NA_ENDIANNESS_NATIVE, NA_ENDIANNESS_NATIVE);
-  file.textencoding = NA_ENCODING_UTF_8;
+  file.textencoding = NA_TEXT_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_WRITING | NA_FILE_FLAG_STREAM | NA_FILE_FLAG_NEWLINE_NATIVE | NA_FILE_FLAG_AUTOFLUSH_ALL;
   file.remainingbytesinbuffer = NA_FILE_BUFFER_SIZE;
   file.bufptr = file.buffer;
@@ -149,6 +175,10 @@ void naCloseFile(NAFile* file){
 
 
 void naFlushFileBuffer(NAFile* file){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naFlushFileBuffer", "Flushing buffer of read-file. Undefined behaviour.");
+  #endif
   if(NA_FILE_BUFFER_SIZE - file->remainingbytesinbuffer){
     naWrite(file->desc, file->buffer, NA_FILE_BUFFER_SIZE - file->remainingbytesinbuffer);
     file->bufptr = file->buffer;
@@ -166,23 +196,45 @@ void naSetFileEndianness(NAFile* file, NAInt endianness){
   file->converter = naMakeEndiannessConverter(endianness, NA_ENDIANNESS_NATIVE);
 }
 
-
-void naSetFileAutoFlush(NAFile* file, uint16 autoflushflag){
-  // todo: Only useful for writing files
+void naSetFileAutoFlush(NAFile* file, NAFileAutoFlushing autoflushing){
+  uint16 autoflushflag;
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naSetFileAutoFlush", "Setting the flushing behaviour is only useful for write-files.");
+  #endif
   file->flags &= ~NA_FILE_FLAG_AUTOFLUSH_MASK;
-  file->flags |= (autoflushflag & NA_FILE_FLAG_AUTOFLUSH_MASK);
+  switch(autoflushing){
+  case NA_FILE_AUTOFLUSH_NONE:      autoflushflag = NA_FILE_FLAG_AUTOFLUSH_NONE;      break;
+  case NA_FILE_AUTOFLUSH_TEXT:      autoflushflag = NA_FILE_FLAG_AUTOFLUSH_TEXT;      break;
+  case NA_FILE_AUTOFLUSH_MULTIBYTE: autoflushflag = NA_FILE_FLAG_AUTOFLUSH_MULTIBYTE; break;
+  case NA_FILE_AUTOFLUSH_ALL:       autoflushflag = NA_FILE_FLAG_AUTOFLUSH_ALL;       break;
+  }
+  file->flags |= autoflushflag;
 }
 
 
-void naSetFileNewLine(NAFile* file, uint16 newlineflag){
-  // todo: Only useful for writing files
+void naSetFileNewLine(NAFile* file, NANewlineEncoding newlineencoding){
+  uint16 newlineflag;
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naSetFileNewLine", "Setting the newline encoding is only useful for write-files.");
+  #endif
   file->flags &= ~NA_FILE_FLAG_NEWLINE_MASK;
-  file->flags |= (newlineflag & NA_FILE_FLAG_NEWLINE_MASK);
+  switch(newlineencoding){
+  case NA_NEWLINE_UNIX:   newlineflag = NA_FILE_FLAG_NEWLINE_UNIX;   break;
+  case NA_NEWLINE_MAC9:   newlineflag = NA_FILE_FLAG_NEWLINE_MAC9;   break;
+  case NA_NEWLINE_WIN:    newlineflag = NA_FILE_FLAG_NEWLINE_WIN;    break;
+  case NA_NEWLINE_NATIVE: newlineflag = NA_FILE_FLAG_NEWLINE_NATIVE; break;
+  }
+  file->flags |= newlineflag;
 }
 
 
 NAFileSize naComputeFileSize(const NAFile* file){
-  // todo: only useful for non-streams
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_STREAM))
+      naError("naComputeFileSize", "Computing the file-size not defined for streams. Undefined behaviour.");
+  #endif
   NAFileSize curpos = naLseek(file->desc, 0, SEEK_CUR);
   NAFileSize filesize = naLseek(file->desc, 0, SEEK_END);
   naLseek(file->desc, curpos, SEEK_SET);
@@ -196,24 +248,33 @@ NABool naIsFileOpen(const NAFile* file){
 
 
 NABool naHasFileEnded(const NAFile* file){
-  // todo: only partially useful for non-streams
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_STREAM))
+      naError("naHasFileEnded", "End of file not defined in stream. Undefined behaviour.");
+  #endif
   return file->flags & NA_FILE_FLAG_EOF;
 }
 
 
 void naJumpFileOffsetAbsolute(NAFile* file, NAFileSize offset){
-  // todo: only useful for non-streams
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_STREAM))
+      naError("naJumpFileOffsetAbsolute", "Jumping not defined for streams. Undefined behaviour.");
+  #endif
+  if((file->flags & NA_FILE_FLAG_WRITING)){naFlushFileBuffer(file);}
   naLseek(file->desc, offset, SEEK_SET);
   file->pos = offset;
   // The buffer must be flushed.
   file->bufptr = file->buffer;
   file->remainingbytesinbuffer = 0;
   // todo: the buffer might be reused if the offset is near the current position
-  // todo: flush buffer on write.
 }
 
 void naJumpFileOffsetRelative(NAFile* file, NAFileSize offset){
-  // todo: only useful for non-streams
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_STREAM))
+      naError("naJumpFileOffsetRelative", "Jumping not defined for streams. Undefined behaviour.");
+  #endif
   naJumpFileOffsetAbsolute(file, file->pos - file->remainingbytesinbuffer + offset);
 }
 
@@ -250,7 +311,10 @@ NA_HLP void naRequireFileReadBufferBytes(NAFile* file, uint16 count){
 
 
 void naReadFileBytes(NAFile* file, void* buf, NAFileSize count){
-  // todo make checks for write files.
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileBytes", "File is not a read-file.");
+  #endif
   if(!count){return;}
 
   // use the rest of the buffer, if available.
@@ -282,6 +346,10 @@ void naReadFileBytes(NAFile* file, void* buf, NAFileSize count){
 
 
 int8 naReadFileInt8(NAFile* file){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileInt8", "File is not a read-file.");
+  #endif
   int8 value;
   naRequireFileReadBufferBytes(file, 1);
   if(naHasFileEnded(file)){return 0;}
@@ -292,6 +360,10 @@ int8 naReadFileInt8(NAFile* file){
   return value;
 }
 int16 naReadFileInt16(NAFile* file){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileInt16", "File is not a read-file.");
+  #endif
   int16 value;
   naRequireFileReadBufferBytes(file, 2);
   if(naHasFileEnded(file)){return 0;}
@@ -302,6 +374,10 @@ int16 naReadFileInt16(NAFile* file){
   return value;
 }
 int32 naReadFileInt32(NAFile* file){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileInt32", "File is not a read-file.");
+  #endif
   int32 value;
   naRequireFileReadBufferBytes(file, 4);
   if(naHasFileEnded(file)){return 0;}
@@ -312,6 +388,10 @@ int32 naReadFileInt32(NAFile* file){
   return value;
 }
 int64 naReadFileInt64(NAFile* file){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileInt64", "File is not a read-file.");
+  #endif
   int64 value;
   naRequireFileReadBufferBytes(file, 8);
   if(naHasFileEnded(file)){return 0;}
@@ -324,6 +404,10 @@ int64 naReadFileInt64(NAFile* file){
 
 
 uint8 naReadFileUInt8(NAFile* file){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileUInt8", "File is not a read-file.");
+  #endif
   uint8 value;
   naRequireFileReadBufferBytes(file, 1);
   if(naHasFileEnded(file)){return 0;}
@@ -334,6 +418,10 @@ uint8 naReadFileUInt8(NAFile* file){
   return value;
 }
 uint16 naReadFileUInt16(NAFile* file){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileUInt16", "File is not a read-file.");
+  #endif
   uint16 value;
   naRequireFileReadBufferBytes(file, 2);
   if(naHasFileEnded(file)){return 0;}
@@ -344,6 +432,10 @@ uint16 naReadFileUInt16(NAFile* file){
   return value;
 }
 uint32 naReadFileUInt32(NAFile* file){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileUInt32", "File is not a read-file.");
+  #endif
   uint32 value;
   naRequireFileReadBufferBytes(file, 4);
   if(naHasFileEnded(file)){return 0;}
@@ -354,6 +446,10 @@ uint32 naReadFileUInt32(NAFile* file){
   return value;
 }
 uint64 naReadFileUInt64(NAFile* file){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileUInt64", "File is not a read-file.");
+  #endif
   uint64 value;
   naRequireFileReadBufferBytes(file, 8);
   if(naHasFileEnded(file)){return 0;}
@@ -366,6 +462,10 @@ uint64 naReadFileUInt64(NAFile* file){
 
 
 float naReadFileFloat(NAFile* file){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileFloat", "File is not a read-file.");
+  #endif
   float value;
   naRequireFileReadBufferBytes(file, 4);
   if(naHasFileEnded(file)){return 0.f;}
@@ -376,6 +476,10 @@ float naReadFileFloat(NAFile* file){
   return value;
 }
 double naReadFileDouble(NAFile* file){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileDouble", "File is not a read-file.");
+  #endif
   double value;
   naRequireFileReadBufferBytes(file, 8);
   if(naHasFileEnded(file)){return 0.;}
@@ -388,7 +492,135 @@ double naReadFileDouble(NAFile* file){
 
 
 
+int8* naReadFileArrayInt8(NAFile* file, int8* buf, NAInt count){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileArrayInt8", "File is not a read-file.");
+  #endif
+  buf = (int8*)naAllocateIfNull(buf, count * sizeof(int8));
+  while(count){
+    *buf++ = naReadFileInt8(file);
+    count--;
+  }
+  return buf;
+}
+int16* naReadFileArrayInt16(NAFile* file, int16* buf, NAInt count){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileArrayInt16", "File is not a read-file.");
+  #endif
+  buf = (int16*)naAllocateIfNull(buf, count * sizeof(int16));
+  while(count){
+    *buf++ = naReadFileInt16(file);
+    count--;
+  }
+  return buf;
+}
+int32* naReadFileArrayInt32(NAFile* file, int32* buf, NAInt count){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileArrayInt32", "File is not a read-file.");
+  #endif
+  buf = (int32*)naAllocateIfNull(buf, count * sizeof(int32));
+  while(count){
+    *buf++ = naReadFileInt32(file);
+    count--;
+  }
+  return buf;
+}
+int64* naReadFileArrayInt64(NAFile* file, int64* buf, NAInt count){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileArrayInt64", "File is not a read-file.");
+  #endif
+  buf = (int64*)naAllocateIfNull(buf, count * sizeof(int64));
+  while(count){
+    *buf++ = naReadFileInt64(file);
+    count--;
+  }
+  return buf;
+}
+uint8* naReadFileArrayUInt8(NAFile* file, uint8* buf, NAInt count){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileArrayUInt8", "File is not a read-file.");
+  #endif
+  buf = (uint8*)naAllocateIfNull(buf, count * sizeof(uint8));
+  while(count){
+    *buf++ = naReadFileUInt8(file);
+    count--;
+  }
+  return buf;
+}
+uint16* naReadFileArrayUInt16(NAFile* file, uint16* buf, NAInt count){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileArrayUInt16", "File is not a read-file.");
+  #endif
+  buf = (uint16*)naAllocateIfNull(buf, count * sizeof(uint16));
+  while(count){
+    *buf++ = naReadFileUInt16(file);
+    count--;
+  }
+  return buf;
+}
+uint32* naReadFileArrayUInt32(NAFile* file, uint32* buf, NAInt count){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileArrayUInt32", "File is not a read-file.");
+  #endif
+  buf = (uint32*)naAllocateIfNull(buf, count * sizeof(uint32));
+  while(count){
+    *buf++ = naReadFileUInt32(file);
+    count--;
+  }
+  return buf;
+}
+uint64* naReadFileArrayUInt64(NAFile* file, uint64* buf, NAInt count){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileArrayUInt64", "File is not a read-file.");
+  #endif
+  buf = (uint64*)naAllocateIfNull(buf, count * sizeof(uint64));
+  while(count){
+    *buf++ = naReadFileUInt64(file);
+    count--;
+  }
+  return buf;
+}
+float* naReadFileArrayFloat(NAFile* file, float* buf, NAInt count){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileArrayFloat", "File is not a read-file.");
+  #endif
+  buf = (float*)naAllocateIfNull(buf, count * sizeof(float));
+  while(count){
+    *buf++ = naReadFileFloat(file);
+    count--;
+  }
+  return buf;
+}
+double* naReadFileArrayDouble(NAFile* file, double* buf, NAInt count){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naReadFileArrayDouble", "File is not a read-file.");
+  #endif
+  buf = (double*)naAllocateIfNull(buf, count * sizeof(double));
+  while(count){
+    *buf++ = naReadFileDouble(file);
+    count--;
+  }
+  return buf;
+}
+
+
+
+
 NAByteArray* naCreateByteArrayFromFile(NAByteArray* bytearray, NAFile* file, NAFileSize count){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naCreateByteArrayFromFile", "File is not a read-file.");
+  #endif
   bytearray = naCreateByteArrayWithSize(bytearray, (NAInt)count);
   naReadFileBytes(file, naGetByteArrayMutablePointer(bytearray), count);
   return bytearray;
@@ -396,6 +628,10 @@ NAByteArray* naCreateByteArrayFromFile(NAByteArray* bytearray, NAFile* file, NAF
 
 
 NAString* naCreateStringFromFile(NAString* string, NAFile* file, NAFileSize bytecount){
+  #ifndef NDEBUG
+    if((file->flags & NA_FILE_FLAG_WRITING))
+      naError("naCreateStringFromFile", "File is not a read-file.");
+  #endif
   string = naCreateStringWithSize(string, (NAInt)bytecount);
   naReadFileBytes(file, naGetStringMutableUTF8Pointer(string), bytecount);
   return string;
@@ -428,7 +664,10 @@ NA_IHLP void naRequireFileWriteBufferBytes(NAFile* file, uint16 count){
 
 
 void naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize count){
-  // todo make checks for read files.
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileBytes", "File is not a write-file.");
+  #endif
   if(!count){return;}
   if( ((file->flags & NA_FILE_FLAG_AUTOFLUSH_MASK) >= NA_FILE_FLAG_AUTOFLUSH_MULTIBYTE)
       || (count >= NA_FILE_BUFFER_SIZE)){
@@ -444,6 +683,10 @@ void naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize count){
 
 
 void naWriteFileInt8(NAFile* file, int8 value){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileInt8", "File is not a write-file.");
+  #endif
   naRequireFileWriteBufferBytes(file, 1);
   file->converter.convert8(&value);
   *((int8*)file->bufptr) = value;
@@ -454,6 +697,10 @@ void naWriteFileInt8(NAFile* file, int8 value){
   }
 }
 void naWriteFileInt16(NAFile* file, int16 value){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileInt16", "File is not a write-file.");
+  #endif
   naRequireFileWriteBufferBytes(file, 2);
   file->converter.convert16(&value);
   *((int16*)file->bufptr) = value;
@@ -464,6 +711,10 @@ void naWriteFileInt16(NAFile* file, int16 value){
   }
 }
 void naWriteFileInt32(NAFile* file, int32 value){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileInt32", "File is not a write-file.");
+  #endif
   naRequireFileWriteBufferBytes(file, 4);
   file->converter.convert32(&value);
   *((int32*)file->bufptr) = value;
@@ -474,6 +725,10 @@ void naWriteFileInt32(NAFile* file, int32 value){
   }
 }
 void naWriteFileInt64(NAFile* file, int64 value){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileInt64", "File is not a write-file.");
+  #endif
   naRequireFileWriteBufferBytes(file, 8);
   file->converter.convert64(&value);
   *((int64*)file->bufptr) = value;
@@ -486,6 +741,10 @@ void naWriteFileInt64(NAFile* file, int64 value){
 
 
 void naWriteFileUInt8(NAFile* file, uint8 value){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileUInt8", "File is not a write-file.");
+  #endif
   naRequireFileWriteBufferBytes(file, 1);
   file->converter.convert8(&value);
   *((uint8*)file->bufptr) = value;
@@ -496,6 +755,10 @@ void naWriteFileUInt8(NAFile* file, uint8 value){
   }
 }
 void naWriteFileUInt16(NAFile* file, uint16 value){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileUInt16", "File is not a write-file.");
+  #endif
   naRequireFileWriteBufferBytes(file, 2);
   file->converter.convert16(&value);
   *((uint16*)file->bufptr) = value;
@@ -506,6 +769,10 @@ void naWriteFileUInt16(NAFile* file, uint16 value){
   }
 }
 void naWriteFileUInt32(NAFile* file, uint32 value){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileUInt32", "File is not a write-file.");
+  #endif
   naRequireFileWriteBufferBytes(file, 4);
   file->converter.convert32(&value);
   *((uint32*)file->bufptr) = value;
@@ -516,6 +783,10 @@ void naWriteFileUInt32(NAFile* file, uint32 value){
   }
 }
 void naWriteFileUInt64(NAFile* file, uint64 value){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileUInt64", "File is not a write-file.");
+  #endif
   naRequireFileWriteBufferBytes(file, 8);
   file->converter.convert64(&value);
   *((uint64*)file->bufptr) = value;
@@ -528,6 +799,10 @@ void naWriteFileUInt64(NAFile* file, uint64 value){
 
 
 void naWriteFileFloat(NAFile* file, float value){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileFloat", "File is not a write-file.");
+  #endif
   naRequireFileWriteBufferBytes(file, 4);
   file->converter.convert32(&value);
   *((float*)file->bufptr) = value;
@@ -538,6 +813,10 @@ void naWriteFileFloat(NAFile* file, float value){
   }
 }
 void naWriteFileDouble(NAFile* file, double value){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileDouble", "File is not a write-file.");
+  #endif
   naRequireFileWriteBufferBytes(file, 8);
   file->converter.convert64(&value);
   *((double*)file->bufptr) = value;
@@ -549,13 +828,125 @@ void naWriteFileDouble(NAFile* file, double value){
 }
 
 
+
+void naWriteFileArrayInt8(NAFile* file, const int8* buf, NAInt count){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileArrayInt8", "File is not a write-file.");
+  #endif
+  while(count){
+    naWriteFileInt8(file, *buf++);
+    count--;
+  }
+}
+void naWriteFileArrayInt16(NAFile* file, const int16* buf, NAInt count){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileArrayInt16", "File is not a write-file.");
+  #endif
+  while(count){
+    naWriteFileInt16(file, *buf++);
+    count--;
+  }
+}
+void naWriteFileArrayInt32(NAFile* file, const int32* buf, NAInt count){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileArrayInt32", "File is not a write-file.");
+  #endif
+  while(count){
+    naWriteFileInt32(file, *buf++);
+    count--;
+  }
+}
+void naWriteFileArrayInt64(NAFile* file, const int64* buf, NAInt count){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileArrayInt64", "File is not a write-file.");
+  #endif
+  while(count){
+    naWriteFileInt64(file, *buf++);
+    count--;
+  }
+}
+void naWriteFileArrayUInt8(NAFile* file, const uint8* buf, NAInt count){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileArrayUInt8", "File is not a write-file.");
+  #endif
+  while(count){
+    naWriteFileUInt8(file, *buf++);
+    count--;
+  }
+}
+void naWriteFileArrayUInt16(NAFile* file, const uint16* buf, NAInt count){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileArrayUInt16", "File is not a write-file.");
+  #endif
+  while(count){
+    naWriteFileUInt16(file, *buf++);
+    count--;
+  }
+}
+void naWriteFileArrayUInt32(NAFile* file, const uint32* buf, NAInt count){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileArrayUInt32", "File is not a write-file.");
+  #endif
+  while(count){
+    naWriteFileUInt32(file, *buf++);
+    count--;
+  }
+}
+void naWriteFileArrayUInt64(NAFile* file, const uint64* buf, NAInt count){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileArrayUInt64", "File is not a write-file.");
+  #endif
+  while(count){
+    naWriteFileUInt64(file, *buf++);
+    count--;
+  }
+}
+void naWriteFileArrayFloat(NAFile* file, const float* buf, NAInt count){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileArrayFloat", "File is not a write-file.");
+  #endif
+  while(count){
+    naWriteFileFloat(file, *buf++);
+    count--;
+  }
+}
+void naWriteFileArrayDouble(NAFile* file, const double* buf, NAInt count){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileArrayDouble", "File is not a write-file.");
+  #endif
+  while(count){
+    naWriteFileDouble(file, *buf++);
+    count--;
+  }
+}
+
+
+
 void naWriteFileByteArray(NAFile* file, const NAByteArray* array){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileByteArray", "File is not a write-file.");
+  #endif
   naWriteFileBytes(file, naGetByteArrayConstPointer(array), naGetByteArraySize(array));
 }
 
 
 
 void naWriteFileTab(NAFile* file){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileTab", "File is not a write-file.");
+  #endif
   naRequireFileWriteBufferBytes(file, 1);
   *((NAUTF8Char*)file->bufptr) = '\t';
   file->bufptr += 1;
@@ -567,6 +958,10 @@ void naWriteFileTab(NAFile* file){
 
 
 void naWriteFileNewLine(NAFile* file){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileNewLine", "File is not a write-file.");
+  #endif
   switch(file->flags & NA_FILE_FLAG_NEWLINE_MASK){
   case NA_FILE_FLAG_NEWLINE_MAC9:
     naRequireFileWriteBufferBytes(file, 1);
@@ -597,6 +992,10 @@ void naWriteFileNewLine(NAFile* file){
 
 
 void naWriteFileString(NAFile* file, const NAString* string){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileString", "File is not a write-file.");
+  #endif
   naWriteFileBytes(file, naGetStringConstUTF8Pointer(string), naGetStringSize(string));
   // todo: encoding.
 }
@@ -605,6 +1004,10 @@ void naWriteFileString(NAFile* file, const NAString* string){
 void naWriteFileStringWithFormat(NAFile* file,
                        const NAUTF8Char* format,
                                          ...){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileStringWithFormat", "File is not a write-file.");
+  #endif
   va_list argumentlist;
   va_start(argumentlist, format);
   naWriteFileStringWithArguments(file, format, argumentlist);
@@ -615,6 +1018,10 @@ void naWriteFileStringWithFormat(NAFile* file,
 void naWriteFileStringWithArguments(NAFile* file,
                           const NAUTF8Char* format,
                                     va_list argumentlist){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileStringWithArguments", "File is not a write-file.");
+  #endif
   NAString string;
   naCreateStringWithArguments(&string, format, argumentlist);
   naWriteFileString(file, &string);
@@ -629,12 +1036,20 @@ void naWriteFileStringWithArguments(NAFile* file,
 
 void naWriteFileLine(             NAFile* file,
                           const NAString* string){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileLine", "File is not a write-file.");
+  #endif
   naWriteFileString(file, string);
   naWriteFileNewLine(file);
 }
 void naWriteFileLineWithFormat(   NAFile* file,
                         const NAUTF8Char* format,
                                           ...){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileLineWithFormat", "File is not a write-file.");
+  #endif
   va_list argumentlist;
   va_start(argumentlist, format);
   naWriteFileLineWithArguments(file, format, argumentlist);
@@ -643,6 +1058,10 @@ void naWriteFileLineWithFormat(   NAFile* file,
 void naWriteFileLineWithArguments(NAFile* file,
                         const NAUTF8Char* format,
                                   va_list argumentlist){
+  #ifndef NDEBUG
+    if(!(file->flags & NA_FILE_FLAG_WRITING))
+      naError("naWriteFileLineWithArguments", "File is not a write-file.");
+  #endif
   naWriteFileStringWithArguments(file, format, argumentlist);
   naWriteFileNewLine(file);
 }

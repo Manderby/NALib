@@ -76,6 +76,10 @@ typedef uint32 NANibble;  // A nibble consists of 4 Bits. Here in NALib, they
 
 // Opaque type. See explanation in readme.txt
 typedef struct NABitArray NABitArray;
+struct NABitArray{
+  struct NAByteArray fullstorage;
+  struct NAByteArray bits;
+};
 
 
 // Creates an empty bit array.

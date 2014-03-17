@@ -9,10 +9,10 @@
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   #include <time.h>
-  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){localtime_s(storage, tme);}
+//  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){localtime_s(storage, tme);}
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
   #include <sys/time.h>
-  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){localtime_r(tme, storage);}
+//  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){localtime_r(tme, storage);}
 #else
   #warning "System undefined"
 #endif
@@ -61,7 +61,7 @@ typedef struct{
 } NATAIPeriod;
 
 // Leap second information:
-#define NA_NUMBER_OF_TAI_PERIODS 93
+#define NA_NUMBER_OF_TAI_PERIODS 94
 
 // This table stores all leap second entries since 1958. Every year has at
 // least 1 entry. Every entry defines, what the number of its first second is.
@@ -164,6 +164,7 @@ NATAIPeriod naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS] = {
   {1719792000, 1719792035, 2012, NA_START_JULY_FIRST},              // [90]
   {1735689600, 1735689635, 2013, NA_START_JANUARY_FIRST},
   {1767225600, 1767225635, 2014, NA_START_JANUARY_FIRST},
+  {1782864000, 1782864035, 2014, NA_START_JULY_FIRST},
   // the last entry is the first date with unknown future leap seconds.
   // everything up and including that date is known.
 };
@@ -186,7 +187,7 @@ NATAIPeriod naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS] = {
 
 
 
-NAInt naGetTAIPeriodIndexForSISecond(int64 sisecond){
+NA_DEF NAInt naGetTAIPeriodIndexForSISecond(int64 sisecond){
   NAInt l, r, m;
   // First, check the last 3 TAI periods. There is a high probability that a
   // given date is within the last 3 entries.
@@ -216,7 +217,7 @@ NAInt naGetTAIPeriodIndexForSISecond(int64 sisecond){
 
 
 
-NAInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond){
+NA_DEF NAInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond){
   NAInt l, r, m;
   // First, check the last 3 TAI periods. There is a high probability that a
   // given date is within the last 3 entries.
@@ -246,7 +247,7 @@ NAInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond){
 
 
 
-int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str){
+NA_DEF int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str){
   int i;
   for(i=0; i<NA_MONTHS_PER_YEAR; i++){
     if(naIsStringEqualToUTF8Pointer(str, na_monthenglishabbreviationnames[i])){return i;}
@@ -259,12 +260,12 @@ int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str){
 
 
 
-NABool naIsLeapYearJulian(int64 year){
+NA_DEF NABool naIsLeapYearJulian(int64 year){
   return !(year % 4);
 }
 
 
-NABool naIsLeapYearGregorian(int64 year){
+NA_DEF NABool naIsLeapYearGregorian(int64 year){
   if(!(year % 400)){return NA_TRUE;}
   if(!(year % 100)){return NA_FALSE;}
   if(!(year %   4)){return NA_TRUE;}
@@ -272,7 +273,7 @@ NABool naIsLeapYearGregorian(int64 year){
 }
 
 
-NABool naIsLeapYear(int64 year){
+NA_DEF NABool naIsLeapYear(int64 year){
   if(year <= 1582){
     return naIsLeapYearJulian(year);
   }else{
@@ -284,7 +285,7 @@ NABool naIsLeapYear(int64 year){
 
 
 
-NADateTime naMakeDateTimeNow(){
+NA_DEF NADateTime naMakeDateTimeNow(){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     FILETIME filetime;
     NATimeZone timezone;
@@ -303,7 +304,7 @@ NADateTime naMakeDateTimeNow(){
 
 
 
-NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
+NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
   NADateTime datetime;
 
   int64 remainingyears = dts->year;
@@ -390,14 +391,14 @@ NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
 
 
 
-NADateTime naMakeDateTimeWithValues( NADateTime* datetime, int64 year, int32 mon, int32 day, int32 hour, int32 min, int32 sec){
+NA_DEF NADateTime naMakeDateTimeWithValues(int64 year, int32 mon, int32 day, int32 hour, int32 min, int32 sec){
   NADateTimeStruct dts = {year, mon - 1, day - 1, hour, min, sec, 0, na_globaltimeshift, na_globalsummertime};
   return naMakeDateTimeWithDateTimeStruct(&dts);
 }
 
 
 
-NADateTime naCreateDateTimeFromString(NADateTime* datetime, const NAString* string, NAAscDateTimeFormat format){
+NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTimeFormat format){
   NAString str;
   NADateTimeStruct dts;
   NAString token;
@@ -476,9 +477,7 @@ NADateTime naCreateDateTimeFromString(NADateTime* datetime, const NAString* stri
 
 
 
-NADateTime naCreateDateTimeFromPointer(  NADateTime* datetime,
-                                          const void* data,
-                                  NABinDateTimeFormat format){
+NA_DEF NADateTime naMakeDateTimeFromPointer(const void* data, NABinDateTimeFormat format){
   NADateTimeStruct dts;
   uint16 valueu16;
   switch(format){
@@ -507,7 +506,7 @@ NADateTime naCreateDateTimeFromPointer(  NADateTime* datetime,
 
 
 //
-//void NADateTime::output(Byte* data, NABinDateTimeFormat format) const{
+//NA_DEF void NADateTime::output(Byte* data, NABinDateTimeFormat format) const{
 //  data = data;
 ////  NADateTimeStruct dts;
 ////  uint16 value;
@@ -533,7 +532,7 @@ NADateTime naCreateDateTimeFromPointer(  NADateTime* datetime,
 //
 //
 
-NAString* naCreateStringWithDateTime(NAString* string,
+NA_DEF NAString* naCreateStringWithDateTime(NAString* string,
                              const NADateTime* datetime,
                            NAAscDateTimeFormat format){
   NADateTimeStruct dts;
@@ -598,7 +597,7 @@ NAString* naCreateStringWithDateTime(NAString* string,
 
 
 
-struct tm naMakeTMfromDateTime(const NADateTime* datetime){
+NA_DEF struct tm naMakeTMfromDateTime(const NADateTime* datetime){
   struct tm systemtimestruct;
   NADateTimeStruct dts;
   NADateTimeAttribute dta;
@@ -624,7 +623,7 @@ struct tm naMakeTMfromDateTime(const NADateTime* datetime){
 }
 
 
-int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
+NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
   int16 shift;
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     shift = - (int16)timezn->Bias;
@@ -650,7 +649,7 @@ int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
 
-  NADateTime naMakeDateTimeFromFileTime(const FILETIME* filetime, const NATimeZone* timezn){
+  NA_DEF NADateTime naMakeDateTimeFromFileTime(const FILETIME* filetime, const NATimeZone* timezn){
     int64 nanosecs = ((int64)filetime->dwHighDateTime << 32) | filetime->dwLowDateTime;
     NADateTime datetime;
     NAInt taiperiod;
@@ -673,7 +672,7 @@ int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
 
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
 
-  struct timespec naMakeTimeSpecFromDateTime(const NADateTime* datetime){
+  NA_DEF struct timespec naMakeTimeSpecFromDateTime(const NADateTime* datetime){
     struct timespec timesp;
     NAInt taiperiod = naGetTAIPeriodIndexForSISecond(datetime->sisec);
     timesp.tv_sec = (__darwin_time_t)(datetime->sisec - (naTAIPeriods[taiperiod].startsisec - naTAIPeriods[taiperiod].startgregsec));
@@ -683,7 +682,7 @@ int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
   }
 
 
-  struct timeval naMakeTimeValFromDateTime(const NADateTime* datetime){
+  NA_DEF struct timeval naMakeTimeValFromDateTime(const NADateTime* datetime){
     struct timeval timevl;
     struct timespec timesp = naMakeTimeSpecFromDateTime(datetime);
     timevl.tv_sec = timesp.tv_sec;
@@ -692,7 +691,7 @@ int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
   }
 
 
-  NATimeZone naMakeTimeZoneFromDateTime(const NADateTime* datetime){
+  NA_DEF NATimeZone naMakeTimeZoneFromDateTime(const NADateTime* datetime){
     NATimeZone timezn;
     timezn.tz_minuteswest = -datetime->shift; // yes, its inverted.
     if(naHasDateTimeSummerTime(datetime)){
@@ -707,7 +706,7 @@ int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
   }
 
 
-  NADateTime naMakeDateTimeFromTimeSpec(const struct timespec* timesp, const NATimeZone* timezn){
+  NA_DEF NADateTime naMakeDateTimeFromTimeSpec(const struct timespec* timesp, const NATimeZone* timezn){
     NADateTime datetime;
     int64 datetimesec = timesp->tv_sec + NA_GREG_SECONDS_TILL_BEGIN_1970;
     if(datetimesec >= 0){
@@ -726,7 +725,7 @@ int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
   }
 
 
-  NADateTime naMakeDateTimeFromTimeVal(const struct timeval* timevl, const NATimeZone* timezn){
+  NA_DEF NADateTime naMakeDateTimeFromTimeVal(const struct timeval* timevl, const NATimeZone* timezn){
     struct timespec timesp = {timevl->tv_sec, timevl->tv_usec * 1000};
     return naMakeDateTimeFromTimeSpec(&timesp, timezn);
   }
@@ -737,7 +736,7 @@ int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
 
 
 
-void naExtractDateTimeInformation(const NADateTime* datetime,
+NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
                           NADateTimeStruct* dts,
                        NADateTimeAttribute* dta){
   int64 remainingsecs;
@@ -928,7 +927,7 @@ void naExtractDateTimeInformation(const NADateTime* datetime,
 
 
 
-void naExtractDateTimeUTCInformation(const NADateTime* datetime,
+NA_DEF void naExtractDateTimeUTCInformation(const NADateTime* datetime,
                              NADateTimeStruct* dts,
                           NADateTimeAttribute* dta){
   NADateTime utcdatetime = *datetime;
@@ -938,7 +937,7 @@ void naExtractDateTimeUTCInformation(const NADateTime* datetime,
 
 
 
-void naSetDateTimeZone( NADateTime* datetime,
+NA_DEF void naSetDateTimeZone( NADateTime* datetime,
                               int16 newshift,
                              NABool summertime){
   datetime->shift = newshift;
@@ -950,7 +949,7 @@ void naSetDateTimeZone( NADateTime* datetime,
 }
 
 
-void naCorrectDateTimeZone( NADateTime* datetime,
+NA_DEF void naCorrectDateTimeZone( NADateTime* datetime,
                                   int16 newshift,
                                  NABool summertime){
   datetime->sisec -= (datetime->shift * NA_SECONDS_PER_MINUTE);
@@ -959,7 +958,7 @@ void naCorrectDateTimeZone( NADateTime* datetime,
 }
 
 
-double naGetDateTimeDiff(const NADateTime* end, const NADateTime* start){
+NA_DEF double naGetDateTimeDiff(const NADateTime* end, const NADateTime* start){
   double sign = 1.;
   double diffsecs;
   double diffnsecs;
@@ -974,7 +973,7 @@ double naGetDateTimeDiff(const NADateTime* end, const NADateTime* start){
 }
 
 
-void naAddDateTimeDifference(NADateTime* datetime, double difference){
+NA_DEF void naAddDateTimeDifference(NADateTime* datetime, double difference){
   int64 fullsecs = (int64)difference;
   int32 nanosecs = (int32)((difference - (double)fullsecs) * 1e9);
   if(difference < 0){
@@ -989,7 +988,7 @@ void naAddDateTimeDifference(NADateTime* datetime, double difference){
 }
 
 
-NAString* naCreateStringFromSecondDifference(NAString* string,
+NA_DEF NAString* naCreateStringFromSecondDifference(NAString* string,
                                                 double difference,
                                                  uint8 decimaldigits){
   uint64 allseconds, powten, decimals;
@@ -1045,11 +1044,11 @@ NAString* naCreateStringFromSecondDifference(NAString* string,
 }
 
 
-NABool naHasDateTimeSummerTime(const NADateTime* datetime){
+NA_DEF NABool naHasDateTimeSummerTime(const NADateTime* datetime){
   return (datetime->flags & NA_DATETIME_FLAG_SUMMERTIME) ? NA_TRUE : NA_FALSE;
 }
 
-void naSetDateTimeSummertime(NADateTime* datetime, NABool summertime){
+NA_DEF void naSetDateTimeSummertime(NADateTime* datetime, NABool summertime){
   if(summertime){
     if(datetime->flags & NA_DATETIME_FLAG_SUMMERTIME){return;}
     datetime->flags |= NA_DATETIME_FLAG_SUMMERTIME;
@@ -1063,13 +1062,13 @@ void naSetDateTimeSummertime(NADateTime* datetime, NABool summertime){
 
 
 
-void naSetGlobalTimeShift(int16 shiftminutes, NABool summertime){
+NA_DEF void naSetGlobalTimeShift(int16 shiftminutes, NABool summertime){
   na_globaltimeshift = shiftminutes;
   na_globalsummertime = summertime;
 }
 
 
-void naSetGlobalTimeShiftToSystemSettings(){
+NA_DEF void naSetGlobalTimeShiftToSystemSettings(){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     NATimeZone curtimezone;
     GetTimeZoneInformation(&curtimezone);
@@ -1084,14 +1083,14 @@ void naSetGlobalTimeShiftToSystemSettings(){
 }
 
 
-int64 naGetFirstUncertainSecondNumber(){
+NA_DEF int64 naGetFirstUncertainSecondNumber(){
   // The first uncertain second number is here defined to be the first second
   // of the last known TAI period.
   return naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS-1].startsisec;
 }
 
 
-NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber){
+NA_DEF NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber){
   NAInt taiperiod;
   if(olduncertainsecondnumber < 0){printf("Invalid second number.\n"); return INVALID_UNCERTAIN_SECOND_NUMBER;}
   // Note that the last entry of the structure storing all TAI periods always
@@ -1110,7 +1109,7 @@ NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber){
 }
 
 
-void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
+NA_DEF void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
                                            NAInt leapsecondcorrectionconstant){
   NAInt taiperiod;
   if(leapsecondcorrectionconstant < 0){return;}

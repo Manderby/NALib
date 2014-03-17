@@ -6,6 +6,12 @@
 #include <ctype.h>
 #include <stdarg.h>
 
+
+#define NA_STRING_NULL_TERMINATED           0x0001
+
+
+
+
 NAString* naCreateString(NAString* string){
   string = naAllocateIfNull(string, sizeof(NAString));
   naCreateByteArray(&(string->array));

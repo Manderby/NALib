@@ -174,9 +174,6 @@ NA_IAPI NAInt naParseEndiannessMarker(const NAByte marker[4]);
 
 // //////////////////////////////////////////////////////////////////////
 // Convert between two same Endiannesses. Single converters
-//
-// Nothing needs to be converted. The buffer = buffer forces the compiler
-// to not emit warnings.
 // //////////////////////////////////////////////////////////////////////
 
 NA_IDEF void naConvertNative8(void* buffer){
@@ -184,7 +181,7 @@ NA_IDEF void naConvertNative8(void* buffer){
     if(!buffer)
       naError("naConvertN8", "Buffer is Null-Pointer");
   #endif
-  buffer = buffer;
+  NA_UNUSED_PARAMETER(buffer);
 }
 
 NA_IDEF void naConvertNative16(void* buffer){
@@ -192,7 +189,7 @@ NA_IDEF void naConvertNative16(void* buffer){
     if(!buffer)
       naError("naConvertN16", "Buffer is Null-Pointer");
   #endif
-  buffer = buffer;
+  NA_UNUSED_PARAMETER(buffer);
 }
 
 NA_IDEF void naConvertNative32(void* buffer){
@@ -200,7 +197,7 @@ NA_IDEF void naConvertNative32(void* buffer){
     if(!buffer)
       naError("naConvertN32", "Buffer is Null-Pointer");
   #endif
-  buffer = buffer;
+  NA_UNUSED_PARAMETER(buffer);
 }
 
 NA_IDEF void naConvertNative64(void* buffer){
@@ -208,7 +205,7 @@ NA_IDEF void naConvertNative64(void* buffer){
     if(!buffer)
       naError("naConvertN64", "Buffer is Null-Pointer");
   #endif
-  buffer = buffer;
+  NA_UNUSED_PARAMETER(buffer);
 }
 
 NA_IDEF void naConvertNative128(void* buffer){
@@ -216,15 +213,12 @@ NA_IDEF void naConvertNative128(void* buffer){
     if(!buffer)
       naError("naConvertN128", "Buffer is Null-Pointer");
   #endif
-  buffer = buffer;
+  NA_UNUSED_PARAMETER(buffer);
 }
 
 
 // //////////////////////////////
 // Convert between two same Endiannesses. Array converters
-//
-// Nothing needs to be converted. The buffer=buffer and count=count forces the
-// compiler to not emit warnings.
 // //////////////////////////////
 
 NA_IDEF void naConvertArrayNative8(void* buffer, NAInt count){
@@ -234,7 +228,8 @@ NA_IDEF void naConvertArrayNative8(void* buffer, NAInt count){
     if(!buffer)
       naError("naConvertArrayN8", "buffer is Null-Pointer");
   #endif
-  buffer=buffer; count=count;
+  NA_UNUSED_PARAMETER(buffer);
+  NA_UNUSED_PARAMETER(count);
 }
 
 NA_IDEF void naConvertArrayNative16(void* buffer, NAInt count){
@@ -244,7 +239,8 @@ NA_IDEF void naConvertArrayNative16(void* buffer, NAInt count){
     if(!buffer)
       naError("naConvertArrayN16", "buffer is Null-Pointer");
   #endif
-  buffer=buffer; count=count;
+  NA_UNUSED_PARAMETER(buffer);
+  NA_UNUSED_PARAMETER(count);
 }
 
 NA_IDEF void naConvertArrayNative32(void* buffer, NAInt count){
@@ -254,7 +250,8 @@ NA_IDEF void naConvertArrayNative32(void* buffer, NAInt count){
     if(!buffer)
       naError("naConvertArrayN32", "buffer is Null-Pointer");
   #endif
-  buffer=buffer; count=count;
+  NA_UNUSED_PARAMETER(buffer);
+  NA_UNUSED_PARAMETER(count);
 }
 
 NA_IDEF void naConvertArrayNative64(void* buffer, NAInt count){
@@ -264,7 +261,8 @@ NA_IDEF void naConvertArrayNative64(void* buffer, NAInt count){
     if(!buffer)
       naError("naConvertArrayN64", "buffer is Null-Pointer");
   #endif
-  buffer=buffer; count=count;
+  NA_UNUSED_PARAMETER(buffer);
+  NA_UNUSED_PARAMETER(count);
 }
 
 NA_IDEF void naConvertArrayNative128(void* buffer, NAInt count){
@@ -274,7 +272,8 @@ NA_IDEF void naConvertArrayNative128(void* buffer, NAInt count){
     if(!buffer)
       naError("naConvertArrayN128", "buffer is Null-Pointer");
   #endif
-  buffer=buffer; count=count;
+  NA_UNUSED_PARAMETER(buffer);
+  NA_UNUSED_PARAMETER(count);
 }
 
 
@@ -288,9 +287,7 @@ NA_IDEF void naConvertLittleBig8(void* buffer){
     if(!buffer)
       naError("naConvertLittleBig8", "Buffer is Null-Pointer");
   #endif
-  // Bytes don't need to be converted. The following line forces the compiler
-  // to not emit any warning.
-  buffer = buffer;
+  NA_UNUSED_PARAMETER(buffer);
 }
 
 NA_IDEF void naConvertLittleBig16(void* buffer){
@@ -355,9 +352,8 @@ NA_IDEF void naConvertArrayLittleBig8(void* buffer, NAInt count){
     if(!buffer)
       naError("naConvertArrayLittleBig8", "buffer is Null-Pointer");
   #endif
-  // Bytes don't need to be converted. The following line forces the compiler
-  // to not emit any warning.
-  buffer=buffer; count=count;
+  NA_UNUSED_PARAMETER(buffer);
+  NA_UNUSED_PARAMETER(count);
 }
 
 NA_IDEF void naConvertArrayLittleBig16(void* buffer, NAInt count){
@@ -625,7 +621,7 @@ NA_IDEF NAEndiannessConverter naMakeEndiannessConverter(NAInt end1, NAInt end2){
 
 
 
-NABool naIsEndiannessNative(NAInt endianness){
+NA_IAPI NABool naIsEndiannessNative(NAInt endianness){
   #ifndef NDEBUG
     if((endianness < 0) || (endianness >= NA_ENDIANNESS_COUNT))
       naError("naIsEndiannessNative", "endianness is invalid. Result is undefined.");

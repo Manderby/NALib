@@ -182,8 +182,8 @@ NA_IAPI void naPrevListElement(NAList* list){
 
 
 
-// This is a helper function. It should be hidden. todo.
-NA_IAPI void naInjectListElement(NAList* list, NAListElement* element, void* content){
+// This is a helper function. It should be hidden.
+NA_IHLP void naInjectListElement(NAList* list, NAListElement* element, void* content){
   element->content = content;
   element->next->prev = element;
   element->prev->next = element;
@@ -224,8 +224,8 @@ NA_IAPI void naAddListElementAfter(NAList* list, void* content){
 
 
 
-// This is a helper function. It should be hidden. todo.
-NA_IAPI void naEjectListElement(NAList* list, NAListElement* element, NABool movenext){
+// This is a helper function. It should be hidden.
+NA_IHLP void naEjectListElement(NAList* list, NAListElement* element, NABool movenext){
   if(element == &(list->sentinel)){return;}
   if(element == list->cur){list->cur = (movenext?(element->next):(element->prev));}
   element->prev->next = element->next;
