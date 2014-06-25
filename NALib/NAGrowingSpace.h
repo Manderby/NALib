@@ -8,7 +8,6 @@
   extern "C"{
 #endif
 
-#include "NAArray.h"
 
 // This data structure provides the functionality of storing multiple elements
 // of the same type but with a yet unknown count. This is useful when parsing
@@ -28,27 +27,67 @@
 // change.
 
 
+#include "NAArray.h"
+
 // Opaque type. See explanation in readme.txt
 typedef struct NAGrowingSpace NAGrowingSpace;
 struct NAGrowingSpace{
-  struct NAArray array;
-  NAInt          usedcount;  // The used number of elements in the storage.
+  NAArray array;
+  NAInt   usedcount;  // The used number of elements in the storage.
 };
 
 
-// Creates a new GrowingSpace with the desired type size.
+// Creates a new GrowingSpace with the desired type size. If initialcount is
+// 0, it will nontheless allocate space for 1 element
 NAGrowingSpace* naCreateGrowingSpace(NAGrowingSpace* space,
                                              NAInt typesize,
                                              NAInt initialcount);
 
-// Grows the Space by 1 element and copies the contents of the given pointer to
-// the new element. If element is NA_NULL, nothing is copied. The pointer to the
-// new element is returned.
+// Creates a duplicate of the given original space. Note that the new space
+// may not have the same amount of remaining available space!
+NAGrowingSpace* naDuplicateGrowingSpace(NAGrowingSpace* space,
+                                  const NAGrowingSpace* originalspace);
+
+// Clears or destroys the given array.
+void naClearGrowingSpace  (NAGrowingSpace* space, NADestructor destructor);
+void naDestroyGrowingSpace(NAGrowingSpace* space, NADestructor destructor);
+
+// Grows the space by 1 element. In both versions, the pointer to the new
+// element is returned. The "New" version leaves the new element uninitialized
+// but returns the new index in the given indexptr if available. The "Add"
+// version copies the contents of the given elemptr to the new element. If
+// elemptr is NA_NULL, nothing is copied.
+void* naNewGrowingSpaceElement(NAGrowingSpace* space, NAInt* indexptr);
 void* naAddGrowingSpaceElement(NAGrowingSpace* space, void* elemptr);
 
-// Dumps the used content of the growing space to array. The given growingspace
-// will automatically be freed and is invalid after this call.
-NAArray* naCreateArrayOutOfGrowingSpace(NAArray* array, NAGrowingSpace* space);
+// Returns a pointer to the very first element of the growing space. Warning:
+// result is garbage if the space is empty. Notice: This function is speedy.
+const void* naGetGrowingSpaceConstPointer  (const NAGrowingSpace* space);
+void*       naGetGrowingSpaceMutablePointer(      NAGrowingSpace* space);
+
+// Returns a POINTER to the element at the given index.
+// The index argument is threated the same way as with naGetArrayConstElement
+// or naGetArrayMutableElement.
+const void* naGetGrowingSpaceConstElement  (const NAGrowingSpace* space,
+                                                            NAInt indx);
+void*       naGetGrowingSpaceMutableElement(      NAGrowingSpace* space,
+                                                            NAInt indx);
+
+// Creates a new array with just the used content of the growing space.
+// If copying is NA_TRUE, the contents get copied to a new storage. If copying
+// is NA_FALSE, the storage of the growing space is used. You preferably will use
+// copying = NA_TRUE, when the growing space is only sparsely used and will
+// preferably use copying = NA_FALSE when the growing space is likely full.
+// NA_FALSE ist also useful if the resulting array will only be used shortly
+// and will be erased soon.
+// Note that either way, you can safely clear or destroy the growing space after
+// this function while still preserving the array with the used contents.
+NAArray* naCreateArrayOutOfGrowingSpace(    NAArray* array,
+                                     NAGrowingSpace* space,
+                                              NABool copying);
+
+// Returns the number of elements actually stored in the space
+NAInt naGetGrowingSpaceCount(const NAGrowingSpace* space);
 
 
 #ifdef __cplusplus 

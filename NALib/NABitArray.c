@@ -3,6 +3,7 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 #include "NABitArray.h"
+#include "NAString.h"
 
 
 

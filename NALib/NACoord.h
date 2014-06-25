@@ -27,7 +27,7 @@
 //
 // Following are the definitions of valid elements used in NALib:
 // Pos:  A position is considered valid if none of the fields is NaN.
-// Size: A size is considered valid, if both fields are positive or zero.
+// Size: A size is considered valid, if none of the fields is NaN.
 //       A size of zero is considered valid because this is commonly used to
 //       mark empty structures. But be careful! It is just NOT DEFINED as
 //       invalid. This means: No special code is executed for empty elements!
@@ -41,8 +41,8 @@
 //
 // Negative sizes are not uncommon as well. While not forbidden and perfectly
 // meaningful, the functions of NALib only work properly with positive rects.
-// Use the naMakeRectPositive function to convert a negative (and hence
-// invalid) rect into a positive one.
+// Use the naMakeRectPositive function to convert a negative rect into a
+// positive one.
 //
 // Integer versus Floating-point
 // -----------------------------
@@ -58,9 +58,9 @@
 // The "Max" is computed End-1. For example, use the End for the terminating
 // condition of a for-loop. Use the Max to access the last element.
 
-#include "NAMathConstants.h"
-#include "NAMathOperators.h"
-#include "NARange.h"
+
+#include "NASystem.h"
+
 
 typedef struct NAPos NAPos;
 struct NAPos{
@@ -104,12 +104,16 @@ NA_IAPI NARecti   naMakeRecti   (NAPosi pos,    NASizei size);
 
 // Create the bounding box of two elements. The size of the resulting rect will
 // never be negative.
-NA_IAPI NARect    naMakeRectWithPosAndPos     (NAPos   pos1,  NAPos   pos2);
-NA_IAPI NARect    naMakeRectWithRectAndPos    (NARect  rect,  NAPos   pos);
-NA_IAPI NARect    naMakeRectWithRectAndRect   (NARect  rect1, NARect  rect2);
-NA_IAPI NARecti   naMakeRectiWithPosiAndPosi  (NAPosi  pos1,  NAPosi  pos2);
-NA_IAPI NARecti   naMakeRectiWithRectiAndPosi (NARecti rect,  NAPosi  pos);
-NA_IAPI NARecti   naMakeRectiWithRectiAndRecti(NARecti rect1, NARecti rect2);
+// The Variants with E also allow the rects to be empty.
+NA_IAPI NARect    naMakeRectWithPosAndPos       (NAPos   pos1,  NAPos   pos2);
+NA_IAPI NARect    naMakeRectWithRectAndPos      (NARect  rect,  NAPos   pos);
+NA_IAPI NARect    naMakeRectWithRectAndRect     (NARect  rect1, NARect  rect2);
+NA_IAPI NARect    naMakeRectWithRectAndRectE    (NARect  rect1, NARect  rect2);
+NA_IAPI NARecti   naMakeRectiWithPosiAndPosi    (NAPosi  pos1,  NAPosi  pos2);
+NA_IAPI NARecti   naMakeRectiWithRectiAndPosi   (NARecti rect,  NAPosi  pos);
+NA_IAPI NARecti   naMakeRectiWithRectiAndPosiE  (NARecti rect,  NAPosi  pos);
+NA_IAPI NARecti   naMakeRectiWithRectiAndRecti  (NARecti rect1, NARecti rect2);
+NA_IAPI NARecti   naMakeRectiWithRectiAndRectiE (NARecti rect1, NARecti rect2);
 
 // Clamping functions. Returns the element which is completely within another.
 NA_IAPI NAPos     naClampPosToRect(NAPos pos, NARect clamprect);
@@ -127,6 +131,15 @@ NA_IAPI NABool    naEqualRect (NARect  rect1, NARect  rect2);
 NA_IAPI NABool    naEqualPosi (NAPosi  pos1,  NAPosi  pos2);
 NA_IAPI NABool    naEqualSizei(NASizei size1, NASizei size2);
 NA_IAPI NABool    naEqualRecti(NARecti rect1, NARecti rect2);
+
+// Adding and subtracting delta values: A delta is a size.
+// Adding a size to a position returns a position. Subtraction of two positions
+// from each other returns a size. 
+// The returned NASize can be negative or even invalid.
+NA_IAPI NAPos     naAddPosSize  (NAPos   pos,   NASize  size);
+NA_IAPI NAPosi    naAddPosiSizei(NAPosi  pos,   NASizei size);
+NA_IAPI NASize    naSubPosPos   (NAPos   pos1,  NAPos   pos2);
+NA_IAPI NASizei   naSubPosiPosi (NAPosi  pos1,  NAPosi  pos2);
 
 // Containing functions. Test if an element is within another.
 NA_IAPI NABool    naIsPosInSize   (NAPos   pos,  NASize  outersize);
@@ -230,44 +243,12 @@ NA_IAPI NARecti   naMakeRectiPositive(NARecti rect);
 
 
 
-
-
 // ///////////////////////////////////////////////////////////////////////
 // Inline Implementations: See readme file for more expanation.
 // ///////////////////////////////////////////////////////////////////////
 
 
-
-// helper functions. Should be hidden.
-NA_IHLP NABool naIsPosFieldValid(double a){
-  return !naIsNaN(a);
-}
-NA_IHLP NABool naIsPosiFieldValid(NAInt a){
-  NA_UNUSED_PARAMETER(a);
-  return NA_TRUE;
-}
-NA_IHLP NABool naIsSizeFieldValid(double a){
-  // Note that this test will return NA_FALSE if a is NaN.
-  return (a >= 0.);
-}
-NA_IHLP NABool naIsSizeiFieldValid(NAInt a){
-  return (a >= 0);
-}
-
-NA_IHLP NABool naIsPosFieldUseful(double a){
-  return !naIsNaN(a);
-}
-NA_IHLP NABool naIsPosiFieldUseful(NAInt a){
-  NA_UNUSED_PARAMETER(a);
-  return NA_TRUE;
-}
-NA_IHLP NABool naIsSizeFieldUseful(double a){
-  // Note that this test will return NA_FALSE if a is NaN.
-  return (a > 0.);
-}
-NA_IHLP NABool naIsSizeiFieldUseful(NAInt a){
-  return (a > 0);
-}
+#include "NARange.h"
 
 
 
@@ -276,6 +257,8 @@ NA_IAPI NAPos naMakePos(double x, double y){
   #ifndef NDEBUG
     if(!(naIsPosFieldValid(x) && naIsPosFieldValid(y)))
       naError("naMakePos", "Invalid values given.");
+    if(!(naIsPosFieldUseful(x) && naIsPosFieldUseful(y)))
+      naError("naMakePos", "Values given are not useful.");
   #endif
   newpos.x = x;
   newpos.y = y;
@@ -286,6 +269,8 @@ NA_IAPI NASize naMakeSize(double width, double height){
   #ifndef NDEBUG
     if(!(naIsSizeFieldValid(width) && naIsSizeFieldValid(height)))
       naError("naMakeSize", "Invalid values given.");
+    if(!(naIsSizeFieldUseful(width) && naIsSizeFieldUseful(height)))
+      naError("naMakeSize", "Values given are not useful.");
   #endif
   newsize.width = width;
   newsize.height = height;
@@ -296,6 +281,8 @@ NA_IAPI NARect naMakeRect(NAPos pos, NASize size){
   #ifndef NDEBUG
     if(!naIsPosValid(pos) || !naIsSizeValid(size))
       naError("naMakeRect", "Invalid values given.");
+    if(!naIsPosUseful(pos) || !naIsSizeUseful(size))
+      naError("naMakeRect", "Values given are not useful.");
   #endif
   newrect.pos = pos;
   newrect.size = size;
@@ -306,6 +293,8 @@ NA_IAPI NAPosi naMakePosi(NAInt x, NAInt y){
   #ifndef NDEBUG
     if(!(naIsPosiFieldValid(x) && naIsPosiFieldValid(y)))
       naError("naMakePosi", "Invalid values given.");
+    if(!(naIsPosiFieldUseful(x) && naIsPosiFieldUseful(y)))
+      naError("naMakePosi", "Values given are not useful.");
   #endif
   newpos.x = x;
   newpos.y = y;
@@ -317,7 +306,7 @@ NA_IAPI NASizei naMakeSizei(NAInt width, NAInt height){
     if(!(naIsSizeiFieldValid(width) && naIsSizeiFieldValid(height)))
       naError("naMakeSizei", "Invalid values given.");
     if(!(naIsSizeiFieldUseful(width) && naIsSizeiFieldUseful(height)))
-      naError("naMakeSizei", "values given are not useful.");
+      naError("naMakeSizei", "Values given are not useful.");
   #endif
   newsize.width = width;
   newsize.height = height;
@@ -328,6 +317,8 @@ NA_IAPI NARecti naMakeRecti(NAPosi pos, NASizei size){
   #ifndef NDEBUG
     if(!naIsPosiValid(pos) || !naIsSizeiValid(size))
       naError("naMakeRecti", "Invalid values given.");
+    if(!naIsPosiUseful(pos) || !naIsSizeiUseful(size))
+      naError("naMakeRecti", "Values given are not useful.");
   #endif
   newrect.pos = pos;
   newrect.size = size;
@@ -368,8 +359,8 @@ NA_IAPI NARect naMakeRectWithRectAndPos(NARect rect, NAPos pos){
   #ifndef NDEBUG
     if(naIsRectEmpty(rect))
       naError("naMakeRectWithRectAndPos", "rect is empty.");
-    if(!naIsRectValid(rect))
-      naError("naMakeRectWithRectAndPos", "rect is invalid.");
+    if(!naIsRectUseful(rect))
+      naError("naMakeRectWithRectAndPos", "rect is not useful.");
     if(!naIsPosValid(pos))
       naError("naMakeRectWithRectAndPos", "pos is invalid.");
   #endif
@@ -381,6 +372,7 @@ NA_IAPI NARect naMakeRectWithRectAndPos(NARect rect, NAPos pos){
   newrect.size.height  = (naMax(end, pos.y) - newrect.pos.y);
   return newrect;
 }
+
 
 
 NA_IAPI NARect naMakeRectWithRectAndRect(NARect rect1, NARect rect2){
@@ -398,6 +390,31 @@ NA_IAPI NARect naMakeRectWithRectAndRect(NARect rect1, NARect rect2){
     if(!naIsRectValid(rect2))
       naError("naMakeRectWithRectAndRect", "rect2 is invalid.");
   #endif
+  newrect.pos.x = naMin(rect1.pos.x, rect2.pos.x);
+  newrect.pos.y = naMin(rect1.pos.y, rect2.pos.y);
+  end1 = naGetRectEndX(rect1);
+  end2 = naGetRectEndX(rect2);
+  newrect.size.width  = naMax(end1, end2) - newrect.pos.x;
+  end1 = naGetRectEndY(rect1);
+  end2 = naGetRectEndY(rect2);
+  newrect.size.height  = naMax(end1, end2) - newrect.pos.y;
+  return newrect;
+}
+
+
+NA_IAPI NARect naMakeRectWithRectAndRectE(NARect rect1, NARect rect2){
+  // Declaration before implementation. Needed for C90.
+  NARect newrect;
+  double end1;
+  double end2;
+  #ifndef NDEBUG
+    if(!naIsRectValid(rect1))
+      naError("naMakeRectWithRectAndRect", "rect1 is invalid.");
+    if(!naIsRectValid(rect2))
+      naError("naMakeRectWithRectAndRect", "rect2 is invalid.");
+  #endif
+  if(naIsRectEmpty(rect1)){return rect2;}
+  if(naIsRectEmpty(rect2)){return rect1;}
   newrect.pos.x = naMin(rect1.pos.x, rect2.pos.x);
   newrect.pos.y = naMin(rect1.pos.y, rect2.pos.y);
   end1 = naGetRectEndX(rect1);
@@ -443,8 +460,8 @@ NA_IAPI NARecti naMakeRectiWithRectiAndPosi(NARecti rect, NAPosi pos){
   #ifndef NDEBUG
     if(naIsRectiEmpty(rect))
       naError("naMakeRectiWithRectiAndPosi", "rect is empty.");
-    if(!naIsRectiValid(rect))
-      naError("naMakeRectiWithRectiAndPosi", "rect is invalid.");
+    if(!naIsRectiUseful(rect))
+      naError("naMakeRectiWithRectiAndPosi", "rect is not useful.");
     if(!naIsPosiValid(pos))
       naError("naMakeRectiWithRectiAndPosi", "pos is invalid.");
   #endif
@@ -455,6 +472,32 @@ NA_IAPI NARecti naMakeRectiWithRectiAndPosi(NARecti rect, NAPosi pos){
   end = naGetRectiEndY(rect);
   newrect.size.height  = (naMaxi(end, pos.y + 1) - newrect.pos.y);
   // Have you noticed the addition plus 1? It's important!
+  return newrect;
+}
+
+
+NA_IAPI NARecti naMakeRectiWithRectiAndPosiE(NARecti rect, NAPosi pos){
+  // Declaration before implementation. Needed for C90.
+  NARecti newrect;
+  NAInt end;
+  #ifndef NDEBUG
+    if(!naIsRectiUseful(rect))
+      naError("naMakeRectiWithRectiAndPosi", "rect is not useful.");
+    if(!naIsPosiValid(pos))
+      naError("naMakeRectiWithRectiAndPosi", "pos is invalid.");
+  #endif
+  if(naIsRectiEmpty(rect)){
+    newrect.pos = pos;
+    newrect.size = naMakeSizei(1, 1);
+  }else{
+    newrect.pos.x = naMini(rect.pos.x, pos.x);
+    newrect.pos.y = naMini(rect.pos.y, pos.y);
+    end = naGetRectiEndX(rect);
+    newrect.size.width  = (naMaxi(end, pos.x + 1) - newrect.pos.x);
+    end = naGetRectiEndY(rect);
+    newrect.size.height  = (naMaxi(end, pos.y + 1) - newrect.pos.y);
+    // Have you noticed the addition plus 1? It's important!
+  }
   return newrect;
 }
 
@@ -474,6 +517,31 @@ NA_IAPI NARecti naMakeRectiWithRectiAndRecti(NARecti rect1, NARecti rect2){
     if(!naIsRectiValid(rect2))
       naError("naMakeRectiWithRectiAndRecti", "rect2 is invalid.");
   #endif
+  newrect.pos.x = naMini(rect1.pos.x, rect2.pos.x);
+  newrect.pos.y = naMini(rect1.pos.y, rect2.pos.y);
+  end1 = naGetRectiEndX(rect1);
+  end2 = naGetRectiEndX(rect2);
+  newrect.size.width  = naMaxi(end1, end2) - newrect.pos.x;
+  end1 = naGetRectiEndY(rect1);
+  end2 = naGetRectiEndY(rect2);
+  newrect.size.height  = naMaxi(end1, end2) - newrect.pos.y;
+  return newrect;
+}
+
+
+NA_IAPI NARecti naMakeRectiWithRectiAndRectiE(NARecti rect1, NARecti rect2){
+  // Declaration before implementation. Needed for C90.
+  NARecti newrect;
+  NAInt end1;
+  NAInt end2;
+  #ifndef NDEBUG
+    if(!naIsRectiValid(rect1))
+      naError("naMakeRectiWithRectiAndRecti", "rect1 is invalid.");
+    if(!naIsRectiValid(rect2))
+      naError("naMakeRectiWithRectiAndRecti", "rect2 is invalid.");
+  #endif
+  if(naIsRectiEmpty(rect1)){return rect2;}
+  if(naIsRectiEmpty(rect2)){return rect1;}
   newrect.pos.x = naMini(rect1.pos.x, rect2.pos.x);
   newrect.pos.y = naMini(rect1.pos.y, rect2.pos.y);
   end1 = naGetRectiEndX(rect1);
@@ -706,14 +774,68 @@ NA_IAPI NABool naEqualRecti(NARecti rect1, NARecti rect2){
 }
 
 
+
+
+NA_IAPI NAPos naAddPosSize(NAPos pos, NASize size){
+  NAPos newpos;
+  #ifndef NDEBUG
+    if(!naIsPosValid(pos))
+      naError("naAddPosSize", "pos is invalid.");
+    if(!naIsSizeValid(size))
+      naError("naAddPosSize", "size is invalid.");
+  #endif
+  newpos.x = pos.x + size.width;
+  newpos.y = pos.y + size.height;
+  return newpos;
+}
+NA_IAPI NAPosi naAddPosiSizei(NAPosi pos, NASizei size){
+  NAPosi newpos;
+  #ifndef NDEBUG
+    if(!naIsPosiValid(pos))
+      naError("naAddPosiSizei", "pos is invalid.");
+    if(!naIsSizeiValid(size))
+      naError("naAddPosiSizei", "size is invalid.");
+  #endif
+  newpos.x = pos.x + size.width;
+  newpos.y = pos.y + size.height;
+  return newpos;
+}
+
+NA_IAPI NASize naSubPosPos(NAPos pos1, NAPos pos2){
+  NASize newsize;
+  #ifndef NDEBUG
+    if(!naIsPosValid(pos1))
+      naError("naSubPosPos", "pos1 is invalid.");
+    if(!naIsPosValid(pos2))
+      naError("naSubPosPos", "pos2 is invalid.");
+  #endif
+  newsize.width  = pos1.x - pos2.x;
+  newsize.height = pos1.y - pos2.y;
+  return newsize;
+}
+NA_IAPI NASizei naSubPosiPosi(NAPosi pos1, NAPosi pos2){
+  NASizei newsize;
+  #ifndef NDEBUG
+    if(!naIsPosiValid(pos1))
+      naError("naSubPosiPosi", "pos1 is invalid.");
+    if(!naIsPosiValid(pos2))
+      naError("naSubPosiPosi", "pos2 is invalid.");
+  #endif
+  newsize.width  = pos1.x - pos2.x;
+  newsize.height = pos1.y - pos2.y;
+  return newsize;
+}
+
+
+
+
+
 NA_IAPI NABool naIsPosInSize(NAPos pos, NASize outersize){
   #ifndef NDEBUG
     if(!naIsPosValid(pos))
       naError("naIsPosInSize", "pos is invalid.");
-    if(naIsSizeEmpty(outersize))
-      naError("naIsPosInSize", "Inside test not valid for empty sizes.");
-    if(!naIsSizeValid(outersize))
-      naError("naIsPosInSize", "outersize is invalid.");
+    if(!naIsSizeUseful(outersize))
+      naError("naIsPosInSize", "Inside test not valid for sizes which are not useful.");
   #endif
   return !((pos.x < 0)
         || (pos.x > outersize.width)
@@ -736,12 +858,10 @@ NA_IAPI NABool naIsPosInRect(NAPos pos, NARect outerrect){
 }
 NA_IAPI NABool naIsSizeInSize(NASize size, NASize outersize){
   #ifndef NDEBUG
-    if(naIsSizeEmpty(size) || naIsSizeEmpty(outersize))
-      naError("naIsSizeInSize", "Inside test not valid for empty sizes.");
-    if(!naIsSizeValid(size))
-      naError("naIsSizeInSize", "size is invalid.");
-    if(!naIsSizeValid(outersize))
-      naError("naIsSizeInSize", "outersize is invalid.");
+    if(!naIsSizeUseful(size))
+      naError("naIsSizeInSize", "Inside test not valid if size is not useful.");
+    if(!naIsSizeUseful(outersize))
+      naError("naIsSizeInSize", "Inside test not valid if outersize is not useful.");
   #endif
   return !((size.width  > outersize.width)
         || (size.height > outersize.height));
@@ -764,10 +884,8 @@ NA_IAPI NABool naIsPosiInSizei(NAPosi pos, NASizei outersize){
   #ifndef NDEBUG
     if(!naIsPosiValid(pos))
       naError("naIsPosiInSizei", "pos is invalid.");
-    if(naIsSizeiEmpty(outersize))
-      naError("naIsPosiInSizei", "Inside test not valid for empty sizes.");
-    if(!naIsSizeiValid(outersize))
-      naError("naIsPosiInSizei", "outersize is invalid.");
+    if(naIsSizeiUseful(outersize))
+      naError("naIsPosiInSizei", "Inside test not valid for sizes which are not useful.");
   #endif
   return  ((pos.x >= 0)
         && (pos.x <  outersize.width)
@@ -790,12 +908,10 @@ NA_IAPI NABool naIsPosiInRecti(NAPosi pos, NARecti outerrect){
 }
 NA_IAPI NABool naIsSizeiInSizei(NASizei size, NASizei outersize){
   #ifndef NDEBUG
-    if(naIsSizeiEmpty(size) || naIsSizeiEmpty(outersize))
-      naError("naIsSizeInSize", "Inside test not valid for empty sizes.");
-    if(!naIsSizeiValid(size))
-      naError("naIsSizeiInSizei", "size is invalid.");
-    if(!naIsSizeiValid(outersize))
-      naError("naIsSizeiInSizei", "outersize is invalid.");
+    if(!naIsSizeiUseful(size))
+      naError("naIsSizeiInSizei", "Inside test not valid if size is not useful.");
+    if(!naIsSizeiUseful(outersize))
+      naError("naIsSizeiInSizei", "Inside test not valid if outersize is not useful.");
   #endif
   return !((size.width  > outersize.width)
         || (size.height > outersize.height));
@@ -1013,6 +1129,10 @@ NA_IAPI NARecti naMakeRectiPositive(NARecti rect){
   }
   return newrect;
 }
+
+
+
+
 
 
 

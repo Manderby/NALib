@@ -12,6 +12,49 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Version 5 (first published 2014-June-25):
+==============================================
+
+Highlights:
+- Added NAHeap. A yet quite incomplete and cumbersome-to-use implementation
+  of a very fast datastructure. Will be re-visited in the future. One of the
+  flags is not working yet.
+- Added NARectArea
+- Made const iteration of NAList possible. A little Hack but it works.
+- Changed naInNorm functions to naInsideNorm
+- Added NARange, NARangef and NARangei with lots of functions to NARange.h
+- Redefined the fields of naSize and naSizei to also be valid for negative
+  values.
+
+Other things:
+- Changed naEnhanceByteMap2DAtPosi to return mutable pointer to enhanced byte.
+- Added naMoveByteMap2DToPosi, naEmptyByteMap2D
+- Added naSubPos, naSubPosi
+- Added naMakeRectXXXE for empty rects
+- Moved Helper functions of single fields of NACoord to NARange.h. Added float.
+- Added naIsNaNf
+- Renamed insideEE, IE, EI and II with type suffix
+- Reorganized the API of NARange.h and NAVectorAlgebra.h
+- Fixed the parameters of naAlmostInside and alike. The API remains the same.
+- Recreated the header file dependency. Introduced global incomplete typedefs
+  in the System.h file.
+- Added some functions to NAGrowingSpace
+- Renamend NA_F_INT to NA_PRIi and changed it to NOT containt the percent sign.
+- made naGetArrayCount const.
+- Added a copying option to naCreateArrayOutOfGrowingSpace
+- Implemented naGetArrayConstPointer and naGetArrayMutablePointer
+- Added naGetArrayTypeSize and naDecoupleArray
+- Added NA_INVALID_INDEX to NAByteArray.h
+- Added ConstContent and MutableContent to NAList.
+- Added naGetGrowingSpaceConstPointer, naGetGrowingSpaceMutablePointer,
+  naGetGrowingSpaceConstElement and naGetGrowingSpaceMutableElement
+- Added NADestructor and changed naDestroyXXX and naClearXXX functions of
+  NAArray and NAGrowingSpace. Added a section about destructor callbacks in the
+  readme.txt file.
+- Added naNewGrowingSpaceElement and internal function naGrowGrowingSpaceByOne.
+  Not happy with the API yet. Might soon be revisited.
+
+
 
 
 Version 4 (first published 2014-March-17):

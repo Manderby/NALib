@@ -8,8 +8,9 @@
   extern "C"{
 #endif
 
-#include "NAPointer.h"
-#include "NABinaryData.h"
+
+#include "NASystem.h"
+
 
 // An NAByteMap2D stores a rectangular, two-dimensional field of bytes with a
 // specific origin and size. Its components can be accessed using the integer
@@ -45,8 +46,9 @@ struct NAByteMap2D{
 
 // Creates or fills a new, EMPTY ByteMap2D and returns the pointer to the
 // NAByteMap2D struct. Other than the struct itself, no additional memory will
-// be allocated. The width and height field of the rect are guaranteed to be
-// zero.
+// be allocated. An empty map is defined such that it does not need to be
+// cleared. No harm is done if you do it anyway.
+// The width and height field of the rect are guaranteed to be zero.
 NA_IAPI NAByteMap2D* naCreateByteMap2D(NAByteMap2D* map2d);
 
 // Creates or fills a new ByteMap2D with the desired rect and returns the
@@ -59,6 +61,9 @@ NA_IAPI NAByteMap2D* naCreateByteMap2DWithRecti( NAByteMap2D* map2d,
 NA_IAPI void naClearByteMap2D  (NAByteMap2D* map2d);
 NA_IAPI void naDestroyByteMap2D(NAByteMap2D* map2d);
 
+// Clears the given map and reinitializes it as an empty map
+NA_IAPI void naEmptyByteMap2D  (NAByteMap2D* map2d);
+
 // Enhances the given map such that it contains the given rect afterwards.
 // All newly created content (whether it is inside the given rect or somewhere
 // else) is initialized to binary zero. The old content is copied to the new
@@ -68,8 +73,8 @@ NA_IAPI void naDestroyByteMap2D(NAByteMap2D* map2d);
 NA_IAPI void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect);
 // Enhances the map such that the given position is inside the map.
 // Note: This is exactly the same as calling naEnhanceByteMap2DWithRecti with
-// a size of (1, 1).
-NA_IAPI void naEnhanceByteMap2DAtPosi(NAByteMap2D* map2d, NAPosi pos);
+// a size of (1, 1). Returns a mutable pointer to the NAByte at pos.
+NA_IAPI NAByte* naEnhanceByteMap2DAtPosi(NAByteMap2D* map2d, NAPosi pos);
 
 // Fills the map with the given value in the given rect. The rect must be fully
 // contained in the map!
@@ -130,7 +135,15 @@ NA_IAPI       NAByte* naGetByteMap2DMutableByte(      NAByteMap2D* map2d,
 NA_IAPI NABool naIsPosiInByteMap(NAPosi pos, const NAByteMap2D* map2d);
 // Returns the NARecti of the map. Note: Does NOT emits a warning if the map is
 // empty!
-NA_IAPI NARecti naGetByteMap2DRect(const NAByteMap2D* map2d);
+NA_IAPI NARecti naGetByteMap2DRecti(const NAByteMap2D* map2d);
+// Returns NA_TRUE if the map is empty.
+NA_IAPI NABool  naIsByteMap2DEmpty( const NAByteMap2D* map2d);
+
+
+// Moves the given map to the given absolute position or by the given relative
+// size.
+NA_IAPI void naMoveByteMap2DToPosi(NAByteMap2D* map2d, NAPosi pos);
+NA_IAPI void naMoveByteMap2DBySizei(NAByteMap2D* map2d, NASizei size);
 
 
 
@@ -151,6 +164,9 @@ NA_IAPI NARecti naGetByteMap2DRect(const NAByteMap2D* map2d);
 // Inline Implementations: See readme file for more expanation.
 // ///////////////////////////////////////////////////////////////////////
 
+
+#include "NAPointer.h"
+#include "NABinaryData.h"
 
 
 NA_IAPI NAByteMap2D* naCreateByteMap2D(NAByteMap2D* map2d){
@@ -200,6 +216,15 @@ NA_IAPI void naDestroyByteMap2D(NAByteMap2D* map2d){
   naClearByteMap2D(map2d);
   free(map2d);
 }
+
+
+NA_IAPI void naEmptyByteMap2D(NAByteMap2D* map2d){
+  // You could add a test if the map is empty but it is expected that this
+  // function will be called more often with non-empty maps.
+  naClearByteMap2D(map2d);
+  naCreateByteMap2D(map2d);
+}
+
 
 
 NA_IAPI void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect){
@@ -291,20 +316,25 @@ NA_IAPI void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect){
       map2d->rect = enhancedrect;
     }
   }
+  return;
 }
 
 
-NA_IAPI void naEnhanceByteMap2DAtPosi(NAByteMap2D* map2d, NAPosi pos){
+NA_IAPI NAByte* naEnhanceByteMap2DAtPosi(NAByteMap2D* map2d, NAPosi pos){
   #ifndef NDEBUG
-    if(!map2d)
-      {naCrash("naEnhanceByteMap2DAtPosi", "map2d is Null-Pointer."); return;}
+    if(!map2d){
+      naCrash("naEnhanceByteMap2DAtPosi", "map2d is Null-Pointer.");
+      return NA_NULL;
+    }
     if(!naIsRectiValid(map2d->rect))
       naError("naEnhanceByteMap2DAtPosi", "rect of map2d is invalid. "
                                           "Uninitialized struct?");
     if(!naIsPosiValid(pos))
       naError("naEnhanceByteMap2DAtPosi", "pos is invalid.");
   #endif
+  // todo: make own implementation
   naEnhanceByteMap2DWithRecti(map2d, naMakeRecti(pos, naMakeSizei(1, 1)));
+  return naGetByteMap2DMutableByte(map2d, pos);
 }
 
 
@@ -596,8 +626,8 @@ NA_IAPI NAByte* naGetByteMap2DMutableByte(NAByteMap2D* map2d, NAPosi pos){
                                          "Uninitialized struct?");
     if(!naIsPosiInRecti(pos, map2d->rect))
       naError("naGetByteMap2DMutableByte", "pos outside of map");
-    naIsPosiInRecti(pos, map2d->rect);
   #endif
+  NAInt indx = naGetRectiIndexOfPosi(map2d->rect, pos);
   return &(map2d->data[naGetRectiIndexOfPosi(map2d->rect, pos)]);
 }
 
@@ -619,7 +649,7 @@ NA_IAPI NABool naIsPosiInByteMap(NAPosi pos, const NAByteMap2D* map2d){
 }
 
 
-NA_IAPI NARecti naGetByteMap2DRect(const NAByteMap2D* map2d){
+NA_IAPI NARecti naGetByteMap2DRecti(const NAByteMap2D* map2d){
   #ifndef NDEBUG
     if(!map2d){
       naCrash("naGetByteMap2DRect", "map2d is Null-Pointer.");
@@ -639,6 +669,27 @@ NA_IAPI NARecti naGetByteMap2DRect(const NAByteMap2D* map2d){
   return map2d->rect;
 }
 
+
+NA_IAPI NABool naIsByteMap2DEmpty(const NAByteMap2D* map2d){
+  #ifndef NDEBUG
+    if(!map2d){
+      naCrash("naIsByteMap2DEmpty", "map2d is Null-Pointer.");
+      return NA_TRUE;
+    }
+  #endif
+  return naIsRectiEmpty(map2d->rect);
+}
+
+
+
+NA_IAPI void naMoveByteMap2DToPosi(NAByteMap2D* map2d, NAPosi pos){
+  map2d->rect.pos = pos;
+}
+
+
+NA_IAPI void naMoveByteMap2DBySizei(NAByteMap2D* map2d, NASizei size){
+  map2d->rect.pos = naAddPosiSizei(map2d->rect.pos, size);
+}
 
 
 

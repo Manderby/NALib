@@ -2,8 +2,8 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#include "NAString.h"
 #include "NADateTime.h"
+#include "NAString.h"
 #include "NABinaryData.h"
 #include "NAMathOperators.h"
 
@@ -183,6 +183,14 @@ NATAIPeriod naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS] = {
 // the UNIX system time has no leap seconds and is nulled in 1970
 #define NA_GREG_SECONDS_TILL_BEGIN_1970    (3LL * NA_SECONDS_IN_4_YEAR_PERIOD)
 #define NA_GREG_SECONDS_SINCE_BEGIN_1601   (-NA_SECONDS_IN_NORMAL_YEAR - NA_SECONDS_IN_LEAP_YEAR - 13LL * NA_SECONDS_IN_4_YEAR_PERIOD - 4LL * NA_SECONDS_IN_NORMAL_YEAR - 2LL * NA_SECONDS_IN_100_YEAR_PERIOD - 24LL * NA_SECONDS_IN_4_YEAR_PERIOD - 3LL * NA_SECONDS_IN_NORMAL_YEAR)
+
+
+// Prototypes:
+NAInt naGetTAIPeriodIndexForSISecond(int64 sisecond);
+NAInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond);
+NADateTime naMakeDateTimeNow();
+void naSetGlobalTimeShiftToSystemSettings();
+int64 naGetFirstUncertainSecondNumber();
 
 
 

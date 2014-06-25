@@ -18,9 +18,13 @@
 //
 // Additionally, a list stores a pointer to the current element which allows
 // you to iterate through the list easily and even remove elements while
-// traversing the list.
+// traversing the list. Changing the iterator is not considered changing the
+// list. Be aware!
 //
 // Important: You have to typecast the returned content-pointers!
+
+
+#include "NASystem.h"
 
 
 // The following struct should be opaque. Or even better: Completely invisible
@@ -62,14 +66,15 @@ NA_IAPI NAInt naGetListCount(NAList* list);
 // Every list has an internal pointer denoting the current element. You can
 // directly access the content of that element. If no current element is
 // set, NA_NULL is returned.
-NA_IAPI void* naGetListCurrentContent(NAList* list);
+NA_IAPI const void* naGetListConstContent  (const NAList* list);
+NA_IAPI       void* naGetListMutableContent(      NAList* list);
 // The following functions move the internal pointer. At start, the internal
 // pointer is not set. Reaching the head or tail of the list, the internal
 // pointer will be unset.
-NA_IAPI void naFirstListElement (NAList* list);
-NA_IAPI void naLastListElement  (NAList* list);
-NA_IAPI void naNextListElement  (NAList* list);
-NA_IAPI void naPrevListElement  (NAList* list);
+NA_IAPI void naFirstListElement (const NAList* list);
+NA_IAPI void naLastListElement  (const NAList* list);
+NA_IAPI void naNextListElement  (const NAList* list);
+NA_IAPI void naPrevListElement  (const NAList* list);
 // Note: You can safely use remove functions while iterating!
 
 
@@ -117,6 +122,9 @@ NA_IAPI void naRemoveListElementNext    (NAList* list);
 // Inline Implementations: See readme file for more expanation.
 // ///////////////////////////////////////////////////////////////////////
 
+#include "NAPointer.h"
+
+
 NA_IAPI NAList* naCreateList(NAList* list){
   list = (NAList*)naAllocateIfNull(list, sizeof(NAList));
   list->count = 0;
@@ -155,28 +163,36 @@ NA_IAPI NAInt naGetListCount(NAList* list){
 }
 
 
-NA_IAPI void* naGetListCurrentContent(NAList* list){
+NA_IAPI const void* naGetListConstContent(const NAList* list){
+  return list->cur->content;
+}
+
+NA_IAPI void* naGetListMutableContent(NAList* list){
   return list->cur->content;
 }
 
 
-NA_IAPI void naFirstListElement(NAList* list){
-  list->cur = list->sentinel.next;
+NA_IAPI void naFirstListElement(const NAList* list){
+  NAList* mutablelist = (NAList*)list;
+  mutablelist->cur = list->sentinel.next;
 }
 
 
-NA_IAPI void naLastListElement(NAList* list){
-  list->cur = list->sentinel.prev;
+NA_IAPI void naLastListElement(const NAList* list){
+  NAList* mutablelist = (NAList*)list;
+  mutablelist->cur = list->sentinel.prev;
 }
 
 
-NA_IAPI void naNextListElement(NAList* list){
-  list->cur = list->cur->next;
+NA_IAPI void naNextListElement(const NAList* list){
+  NAList* mutablelist = (NAList*)list;
+  mutablelist->cur = list->cur->next;
 }
 
 
-NA_IAPI void naPrevListElement(NAList* list){
-  list->cur = list->cur->prev;
+NA_IAPI void naPrevListElement(const NAList* list){
+  NAList* mutablelist = (NAList*)list;
+  mutablelist->cur = list->cur->prev;
 }
 
 

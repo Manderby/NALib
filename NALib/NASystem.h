@@ -9,6 +9,11 @@
 #endif
 
 
+// This is the base of the whole NALib implementation. Almost all files
+// include this file. It contains the most basic type definitions and
+// preprocessor macros.
+
+
 // The version of this very distribution. No sub-version or build number or
 // whatever. Just one single integer number.
 #define NA_LIB_VERSION 3
@@ -295,7 +300,7 @@ typedef uint8     NAByte;
 // In addition to the type, there is the definition of a printf-argument macro.
 // Use the macro for example like this:
 //
-// printf("The array has " NA_F_INT " entries." NA_NL, naGetArrayCount(array));
+// printf("The array has %" NA_PRIi " entries." NA_NL, naGetArrayCount(array));
 //
 // Some more printf arguments can be found in the NAString.h header file.
 //
@@ -311,12 +316,12 @@ typedef uint8     NAByte;
 //
 #if NA_SYSTEM_ADDRESS_BITS == 32
   typedef int32 NAInt;
-  #define NA_F_INT "%d"
+  #define NA_PRIi "d"
   #define NA_INT_MAX NA_INT32_MAX
   #define NA_INT_MIN NA_INT32_MIN
 #elif NA_SYSTEM_ADDRESS_BITS == 64
   typedef int64 NAInt;
-  #define NA_F_INT "%lld"
+  #define NA_PRIi "lld"
   #define NA_INT_MAX NA_INT64_MAX
   #define NA_INT_MIN NA_INT64_MIN
 #else
@@ -446,6 +451,20 @@ typedef int NABool;
 
 
 
+
+// Declaration of some types which are often used
+// If you have an error near such a type declaration, you probably must include
+// the according header file.
+typedef struct NAString     NAString;
+typedef struct NAByteArray  NAByteArray;
+typedef struct NAArray      NAArray;
+// These incomplete typedefs have been introduced to reduce circular
+// dependencies between header files.
+
+
+// This is the type of a destructor callback which is used by some naClearXXX
+// and naDestroyXXX functions. See readme for detailed informations.
+typedef void (*NADestructor)(void *);
 
 
 

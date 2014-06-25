@@ -8,8 +8,6 @@
   extern "C"{
 #endif
 
-#include "NAPointer.h"
-#include "NABinaryData.h"
 
 // NAByteArray
 //
@@ -25,9 +23,10 @@
 // NABitArray
 
 
-// Opaque type. See explanation in readme.txt
-typedef struct NAByteArray NAByteArray;
+#include "NASystem.h"
 
+// This macro can be used to indicate an invalid index into an array.
+#define NA_INVALID_INDEX -1
 
 // ///////////////////////////
 // Constructors and Destructors. Read the readme.txt for explanation.
@@ -85,7 +84,7 @@ NA_IAPI NAByteArray* naCreateByteArrayWithMutableBuffer(
 
 // Function naCreateByteArrayExtraction:
 // Creates or fills a new ByteArray with the contents of srcarray. The content
-// is not copied, but the dest array points to the same storage as srcarray
+// is NOT copied, but the dest array points to the same storage as srcarray
 // with an offset and size relative to the src array.
 //
 // Use this function to perform all sorts of manipulations (examples below):
@@ -185,6 +184,11 @@ NA_IAPI NABool naIsByteArrayEmpty(const NAByteArray* array);
 // ///////////////////////////////////////////////////////////////////////
 // Inline Implementations: See readme file for more expanation.
 // ///////////////////////////////////////////////////////////////////////
+
+
+#include "NAPointer.h"
+#include "NABinaryData.h"
+#include "NARange.h"
 
 
 struct NAByteArray{

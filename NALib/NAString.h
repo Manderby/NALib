@@ -8,10 +8,9 @@
   extern "C"{
 #endif
 
-#include "NAByteArray.h"
 #include <stdarg.h>
-#include <stdio.h>
 #include <limits.h>
+#include "NAByteArray.h"
 
 // Note that in NALib, a String is internally always encoded in UTF-8.
 // Strings also are considered to contain const values. A user might nontheless
@@ -53,7 +52,7 @@ typedef enum{
 
 // System dependant mapping of string functions and macros
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-  #include "windows.h"
+  #include <windows.h>
   // The SystemChar is a character type which denotes the one used in the
   // project preferences. It is CHAR for "Multi Byte Character Set" and
   // WCHAR for "Unicode character set".
@@ -99,10 +98,9 @@ NA_IAPI NAInt naVarargStringSize( const NAUTF8Char* string,
 
 
 // Opaque type. See explanation in readme.txt
-typedef struct NAString NAString;
 struct NAString{
-  struct NAByteArray array;
-  uint32             flags;
+  NAByteArray array;
+  uint32      flags;
 };
 // Note that an NAString is considered empty if the underlying array is empty.
 // If that is the case, flags contains garbage values.
@@ -423,6 +421,13 @@ NABool naIsStringEqualToUTF8Pointer(const NAString* string,
 // ///////////////////////////////////////////////////////////////////////
 // Inline Implementations: See readme file for more expanation.
 // ///////////////////////////////////////////////////////////////////////
+
+
+#include <stdarg.h>
+#include <stdio.h>
+#include <limits.h>
+
+
 
 NA_IDEF NAInt naStrlen(const NAUTF8Char* str){
   return (NAInt)strlen((const char*)str);

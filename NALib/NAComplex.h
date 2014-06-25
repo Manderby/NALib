@@ -8,7 +8,6 @@
   extern "C"{
 #endif
 
-#include "NAMathOperators.h"
 
 
 typedef struct NAComplex NAComplex;

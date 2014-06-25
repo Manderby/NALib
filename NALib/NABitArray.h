@@ -10,9 +10,7 @@
 #endif
 
 
-#include "NABinaryData.h"
-#include "NAString.h"
-#include "NAGrowingSpace.h"
+#include "NAByteArray.h"
 
 
 // A Bit is stored as an NAByte. Sounds strange but that's how NALib does it.

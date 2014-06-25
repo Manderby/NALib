@@ -25,6 +25,7 @@
 
 #include "NASystem.h"
 
+
 // These functions are the allocation functions of NALib. All functions in
 // NALib use these functions when allocating memory on the heap. The basic
 // function simply allocates using malloc. The naAllocateIfNull function takes
@@ -39,9 +40,6 @@
 
 NA_IAPI void* naAllocate      (           NAInt size);
 NA_IAPI void* naAllocateIfNull(void* ptr, NAInt size);
-
-
-
 
 
 // NAPointer
@@ -150,7 +148,6 @@ NA_IAPI       void* naGetPointerMutableData(      NAPointer* pointer);
 // Inline Implementations: See readme file for more expanation.
 // ///////////////////////////////////////////////////////////////////////
 
-#include "NAMathOperators.h"
 
 NA_IDEF void* naAllocate(NAInt size){
   void* ptr; // Declaration before implementation. Needed for C90.

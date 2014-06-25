@@ -10,6 +10,9 @@
 #endif
 
 
+#include "NASystem.h"
+
+
 // This file contains functions to generate pseudo random numbers.
 //
 // There exists a default random generator in the standard C libraries. This
@@ -60,7 +63,6 @@ NA_IAPI double naUniformRandZI();
 
 #include <stdlib.h>
 #include "NADateTime.h"
-
 
 NA_IDEF NAInt naRand(){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS

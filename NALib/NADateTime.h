@@ -8,7 +8,7 @@
   extern "C"{
 #endif
 
-#include "NAString.h"
+#include "NASystem.h"
 
 
 // Puts the current thread on hold for the specified amount of time.

@@ -8,7 +8,9 @@
   extern "C"{
 #endif
 
+
 #include "NASystem.h"
+
 
 // /////////////////////////////////
 // This file contains many standard math operators. All functions are defined
@@ -41,7 +43,8 @@ NA_IAPI int32        naSigni32(int32 x);
 NA_IAPI int64        naSigni64(int64 x);
 
 // Returns true if the given number is NaN
-NA_IAPI NABool       naIsNaN(double x);
+NA_IAPI NABool       naIsNaN (double x);
+NA_IAPI NABool       naIsNaNf(float  x);
 
 // Returns 1/x
 NA_IAPI float        naInvf(float x);
@@ -188,6 +191,7 @@ NA_IAPI void        naCartesianToPolar (double* rtheta, const double* xy);
 // ///////////////////////////////////////////////////////////////////////
 
 
+#include <math.h>
 #include "NAMathConstants.h"
 #include "NARange.h"
 
@@ -221,6 +225,14 @@ NA_IDEF int64 naSigni64(int64 x){
 NA_IAPI NABool naIsNaN(double x){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return _isnan(x);
+  #else
+    return isnan(x);
+  #endif
+}
+
+NA_IAPI NABool naIsNaNf(float x){
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    return _isnanf(x);  // todo
   #else
     return isnan(x);
   #endif
@@ -368,13 +380,13 @@ NA_IDEF double naTan(double x){
 
 NA_IDEF float naAsinf(float x){
   #ifndef NDEBUG
-    if(!naInNormIIf(x)){naError("naAsinf", "naAsin of invalid value.");}
+    if(!naInsideNormIIf(x)){naError("naAsinf", "naAsin of invalid value.");}
   #endif
   return asinf(x);
 }
 NA_IDEF double naAsin(double x){
   #ifndef NDEBUG
-    if(!naInNormII(x)){naError("naAsin", "naAsin of invalid value.");}
+    if(!naInsideNormII(x)){naError("naAsin", "naAsin of invalid value.");}
   #endif
   return asin(x);
 }
@@ -382,13 +394,13 @@ NA_IDEF double naAsin(double x){
 
 NA_IDEF float naAcosf(float x){
   #ifndef NDEBUG
-    if(!naInNormIIf(x)){naError("naAcosf", "naAcos of invalid value.");}
+    if(!naInsideNormIIf(x)){naError("naAcosf", "naAcos of invalid value.");}
   #endif
   return acosf(x);
 }
 NA_IDEF double naAcos(double x){
   #ifndef NDEBUG
-    if(!naInNormII(x)){naError("naAcos", "naAcos of invalid value.");}
+    if(!naInsideNormII(x)){naError("naAcos", "naAcos of invalid value.");}
   #endif
   return acos(x);
 }

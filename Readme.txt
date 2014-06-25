@@ -7,14 +7,15 @@ intended for didactical purposes. Full license notice at the bottom.
 
 Table of Content:
 -----------------
-1. Short Introduction
-2. Constructors
-3. Destructors
-4. C90 variable declarations
-5. Inline implementations
-6. Opaque types
-7. Symbol naming
-8. Default header and footer
+1.   Short Introduction
+2.   Constructors
+3.   Destructors
+3.1    Destructor callbacks for container structs
+4.   C90 variable declarations
+5.   Inline implementations
+6.   Opaque types
+7.   Symbol naming
+8.   Default header and footer
 
 
 
@@ -116,6 +117,50 @@ differently, for example to save time. If you choose so, just make sure
 you know what you are doing.
 
 Do not use the naDestroyXXX functions on stack variables!
+
+
+3.1 Destructor callbacks for container structs
+----------------------------------------------
+
+Container structs like NAArray or NAGrowingSpace provide naClearXXX and
+naDestroyXXX functions with an additional parameter: A destructor callback
+with the following function pointer type:
+
+typedef void (*NADestructor)(void *);
+
+The parameter is usually called "destructor" and allows you to provide a
+function pointer to a destruction function which will be called for every
+element in the container. Of course, this is only necessary if your elements
+actually need some sort of destruction.
+
+If for example you store complex objects in an NAArray whereas the fields of
+the objects need to be deallocated properly upon destruction, you do not have
+to iterate over the whole array and call your destructor manually for every
+element. All the proper destruction of your elements will be taken care of.
+
+You are nontheless free to use this destructor. When the destructor parameter
+is NA_NULL, no destruction will be performed on the single elements. Note that
+when using the destructor argument, your element destructor will be called by
+a function call which can be very costly for a lot of small elements.
+
+
+
+IMPORTANT:
+Beware that your destructor will always be called with a POINTER to the
+stored content. If for example, you have an array of integers, your
+destructor will get an "int *". If your array stores a pointer to int,
+your destructor will get an "int* *".
+
+In order to provide a clean API, the parameter of your destructor callback
+can be a pointer to any type you desire. But you must properly cast the
+function pointer when providing it to the naDestroyXXX or naClearXXX
+function. If you provide an incompatilbel function pointer type, the
+implementation will likely crash. Especially note that attributes like
+__fastcall will not work!
+
+Note that you can also use any of the naClearXXX and naDestroyXXX functions
+of NALib as callback functions as long as they only accept one parameter.
+Choose the correct one! And beware the pointer!
 
 
 

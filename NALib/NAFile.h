@@ -8,8 +8,8 @@
   extern "C"{
 #endif
 
-#include "NAString.h"
 #include "NAEndianness.h"
+#include "NAString.h"
 #include <sys/stat.h>
 #include <fcntl.h>
 
