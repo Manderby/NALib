@@ -15,7 +15,7 @@
 		B9604AF9195AD88C001BE45C /* NARectArea.c in Sources */ = {isa = PBXBuildFile; fileRef = B9604AED195AD88C001BE45C /* NARectArea.c */; };
 		B9604AFA195AD88C001BE45C /* NAString.c in Sources */ = {isa = PBXBuildFile; fileRef = B9604AEF195AD88C001BE45C /* NAString.c */; };
 		B9604AFB195AD88C001BE45C /* NASystem.c in Sources */ = {isa = PBXBuildFile; fileRef = B9604AF1195AD88C001BE45C /* NASystem.c */; };
-		B9B2EA161716922700943D91 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = B9B2EA151716922700943D91 /* main.c */; };
+		B9DD395619AB329500A0F139 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = B9DD395519AB329500A0F139 /* main.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -64,7 +64,7 @@
 		B9604AF2195AD88C001BE45C /* NASystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NASystem.h; sourceTree = "<group>"; };
 		B9604AF3195AD88C001BE45C /* NAVectorAlgebra.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAVectorAlgebra.h; sourceTree = "<group>"; };
 		B9B2EA121716922700943D91 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
-		B9B2EA151716922700943D91 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		B9DD395519AB329500A0F139 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = test/main.c; sourceTree = "<group>"; };
 		B9E8D2C41861D57500D6CCC4 /* NALibChangelogSinceV0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NALibChangelogSinceV0.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -121,7 +121,8 @@
 			isa = PBXGroup;
 			children = (
 				B9604AD4195AD88C001BE45C /* NALib */,
-				B9B2EA141716922700943D91 /* test */,
+				B9DD395419AB329500A0F139 /* test */,
+				B9DD395519AB329500A0F139 /* main.c */,
 				B9432B5D17E5BF5A0075F638 /* Readme.txt */,
 				B9E8D2C41861D57500D6CCC4 /* NALibChangelogSinceV0.txt */,
 				B9B2EA131716922700943D91 /* Products */,
@@ -136,10 +137,9 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B9B2EA141716922700943D91 /* test */ = {
+		B9DD395419AB329500A0F139 /* test */ = {
 			isa = PBXGroup;
 			children = (
-				B9B2EA151716922700943D91 /* main.c */,
 			);
 			path = test;
 			sourceTree = "<group>";
@@ -194,7 +194,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B9B2EA161716922700943D91 /* main.c in Sources */,
 				B9604AF4195AD88C001BE45C /* NABitArray.c in Sources */,
 				B9604AF5195AD88C001BE45C /* NADateTime.c in Sources */,
 				B9604AF6195AD88C001BE45C /* NAFile.c in Sources */,
@@ -203,6 +202,7 @@
 				B9604AF9195AD88C001BE45C /* NARectArea.c in Sources */,
 				B9604AFA195AD88C001BE45C /* NAString.c in Sources */,
 				B9604AFB195AD88C001BE45C /* NASystem.c in Sources */,
+				B9DD395619AB329500A0F139 /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

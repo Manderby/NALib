@@ -32,7 +32,7 @@ If you are curious on how NALib works, start at the most basic files:
 - NABinaryData.h  Memory manipulations
 
 For more information, visit
-http://manderc.manderby.com/nalib/index.php
+http://manderc.com/nalib/index.php
 
 Have fun, Tobias Stamm.
 

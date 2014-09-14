@@ -12,6 +12,42 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+- Corrected an awkward error in NAFile when Writing. Buffer was allocated
+  as a local array. Moved NA_FILE_BUFFER_SIZE to implementation file.
+- Added naCreateByteMap2DWithRectiCopyingBuffer
+- Added empty variants with E for naMakeSizeE, naMakeRectE, naMakeSizeiE and
+  naMakeRectiE. Corrected a debug error in naMakeRectiWithRectiAndPosiE.
+- Added NAMap2D
+- Added naClampByteMap2DToRecti
+
+
+Version 6 (first published 2014-August-25):
+==============================================
+
+Highlights:
+- Added Constants of NIST 2010 data. Added year setting as a macro
+- Altered the Array and ByteArray Extraction functions such that negative
+  values can be used.
+- Added naDuplicateList
+- Added naExp10 functions for various types.
+
+Other things:
+- Added naMakePositive and naMakeiPositiveInSize
+- The latest leap second information has been included
+- Added naFactorize and naBinom
+- Added naSwapi
+- Added NA_SQRTPI2
+- Added naCreateArrayWithConstBuffer and naCreateArrayWithMutableBuffer
+- In naCreateByteArrayWithConstBuffer, the buffer gets deleted immediately,
+  if size is 0 and takeownership is true.
+- Changed naCreateStringWithUTF8CString to naCreateStringWithUTF8CStringLiteral
+- Implemented naCreateByteArrayFromDateTime
+- Various small comment and code layout changes. More and improved comments.
+- The new website address has been put into the readme file.
+
+
+
+
 Version 5 (first published 2014-June-25):
 ==============================================
 

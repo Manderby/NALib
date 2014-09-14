@@ -288,7 +288,7 @@ void printCoordTest(){
 void printStringTest(){
   NAInt linenum = 0;
   NAString* token = naCreateString(NULL);
-  NAString* string = naCreateStringWithUTF8CString(NULL, "  Hello World !");
+  NAString* string = naCreateStringWithUTF8CStringLiteral(NULL, "  Hello World !");
   NAString* string2 = naCreateString(NULL);
   
   printf("The string \"%s\"\nHas Tokens: ", naGetStringConstUTF8Pointer(string));
@@ -304,7 +304,7 @@ void printStringTest(){
   printf("Remaining string is empty: %s\n", na_boolean_strings[naIsStringEmpty(string)]);
   
   naDestroyString(string);
-  string = naCreateStringWithUTF8CString(NULL, "3.44,6243,66,");
+  string = naCreateStringWithUTF8CStringLiteral(NULL, "3.44,6243,66,");
   printf("%s\nHas Comma-Tokens: ", naGetStringConstUTF8Pointer(string));
   naParseStringTokenWithDelimiter(string, token, ',');
   naDecoupleString(token);
@@ -320,7 +320,7 @@ void printStringTest(){
   naDestroyString(string);
   linenum = 0;
   printf("abc\\ndef\\r\\n\\nghi\\rjkl has lines:\n");
-  string = naCreateStringWithUTF8CString(NULL, "abc\ndef\r\n\nghi\rjkl");
+  string = naCreateStringWithUTF8CStringLiteral(NULL, "abc\ndef\r\n\nghi\rjkl");
   linenum += naParseStringLine(string, token, NA_TRUE);
   naDecoupleString(token);
   printf("%"NA_PRIi": \"%s\"\n", linenum, naGetStringConstUTF8Pointer(token));
@@ -341,7 +341,7 @@ void printStringTest(){
   naDestroyString(string);
   printf("Tokenization of string (This \"is \"\" a\" Test.)\n");
   printf("with double qoute encapsulation and double qoute escape by doubling:\n");
-  string = naCreateStringWithUTF8CString(NULL, "This \"is \"\" a\" Test.");
+  string = naCreateStringWithUTF8CStringLiteral(NULL, "This \"is \"\" a\" Test.");
   string->flags |= NA_STRING_ENCAPSULATE_DOUBLE_QUOTES;
   string->flags |= NA_STRING_ESCAPE_DOUBLE_QUOTE_DOUBLING_WITHIN_DOUBLE_QUOTES;
   naParseStringToken(string, token);
@@ -357,7 +357,7 @@ void printStringTest(){
 
   naDestroyString(string);
   naDestroyString(string2);
-  string = naCreateStringWithUTF8CString(NA_NULL, "This \" text \' will < be > encoded &");
+  string = naCreateStringWithUTF8CStringLiteral(NA_NULL, "This \" text \' will < be > encoded &");
   printf("\nEncoding and decoding String in XML:\n%s\n", naGetStringConstUTF8Pointer(string));
   string2 = naCreateStringXMLEncoded(NA_NULL, string);
   printf("Encoded: %s\n", naGetStringConstUTF8Pointer(string2));
@@ -367,7 +367,7 @@ void printStringTest(){
   
   naDestroyString(string);
   naDestroyString(string2);
-  string = naCreateStringWithUTF8CString(NA_NULL, "This ( text ) will be \\ encoded");
+  string = naCreateStringWithUTF8CStringLiteral(NA_NULL, "This ( text ) will be \\ encoded");
   printf("\nEncoding and decoding String in EPS:\n%s\n", naGetStringConstUTF8Pointer(string));
   string2 = naCreateStringEPSEncoded(NA_NULL, string);
   printf("Encoded: %s\n", naGetStringConstUTF8Pointer(string2));
@@ -378,12 +378,12 @@ void printStringTest(){
   printf("\nConcatenation of strings:\n");
   naDestroyString(string);
   naDestroyString(string2);
-  string = naCreateStringWithUTF8CString(NA_NULL, "String1");
-  string2 = naCreateStringWithUTF8CString(NA_NULL, "String2");
+  string = naCreateStringWithUTF8CStringLiteral(NA_NULL, "String1");
+  string2 = naCreateStringWithUTF8CStringLiteral(NA_NULL, "String2");
   naAppendStringWithString(string, string2);
   printf("Appending: %s\n", naGetStringConstUTF8Pointer(string));
   naDestroyString(string);
-  string = naCreateStringWithUTF8CString(NA_NULL, "String1");
+  string = naCreateStringWithUTF8CStringLiteral(NA_NULL, "String1");
   naAppendStringWithFormat(string, "String%d", 3);
   printf("Appending: %s\n", naGetStringConstUTF8Pointer(string));
 
@@ -563,8 +563,8 @@ int main(void){
   printListTest();
   printByteMap2DTest();
   
-//  printf("\nPress enter to quit.\n");
-//  fgetc(stdin);
+  printf("\nPress enter to quit.\n");
+  fgetc(stdin);
 
   return 0;
 }
