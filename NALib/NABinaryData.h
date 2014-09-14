@@ -33,6 +33,10 @@ NA_IAPI void naSwap128 (void* NA_RESTRICT a, void* NA_RESTRICT b);
 // only works if the two pointers do not point to the same location. Therefore
 // restrict pointers make prefectly sense here.
 
+// Swaps two NAInt
+NA_IAPI void naSwapi   (NAInt* NA_RESTRICT a, NAInt* NA_RESTRICT b);
+
+
 
 // Fills the given array with the value 0
 // naNulli sets 0 for the size of an NAInt.
@@ -309,6 +313,13 @@ NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
   naSwap64(a, b);
 }
 
+NA_IDEF void naSwapi(NAInt* NA_RESTRICT a, NAInt* NA_RESTRICT b){
+  #if NA_SYSTEM_ADDRESS_BITS == 32
+    naSwap32(a, b);
+  #elif NA_SYSTEM_ADDRESS_BITS == 64
+    naSwap64(a, b);
+  #endif
+}
 
 
 
@@ -334,11 +345,11 @@ NA_IDEF void naNull128(void* d){
   *(uint64*)d = 0LL;
 }
 NA_IDEF void naNulli(void* d){
-#if NA_SYSTEM_ADDRESS_BITS == 32
-  naNull32(d);
-#elif NA_SYSTEM_ADDRESS_BITS == 64
-  naNull64(d);
-#endif
+  #if NA_SYSTEM_ADDRESS_BITS == 32
+    naNull32(d);
+  #elif NA_SYSTEM_ADDRESS_BITS == 64
+    naNull64(d);
+  #endif
 }
 NA_IDEF void naNulln(void* d, NAInt count){
   #ifndef NDEBUG

@@ -60,6 +60,7 @@ void naDestroyGrowingSpace(NAGrowingSpace* space, NADestructor destructor){
 
 
 NA_INLINE static void* naGrowGrowingSpaceByOne(NAGrowingSpace* space){
+  void* dataptr;
   NAInt arraycount = naGetArrayCount(&(space->array));
   if(space->usedcount == arraycount){
     NAArray newarray;
@@ -68,7 +69,7 @@ NA_INLINE static void* naGrowGrowingSpaceByOne(NAGrowingSpace* space){
     naClearArray(&(space->array), NA_NULL);
     space->array = newarray;
   }
-  void* dataptr = naGetArrayMutableElement(&(space->array), space->usedcount);
+  dataptr = naGetArrayMutableElement(&(space->array), space->usedcount);
   space->usedcount++;
   return dataptr;
 }

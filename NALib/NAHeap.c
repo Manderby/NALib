@@ -211,12 +211,14 @@ NA_DEF void naDestroyHeap(NAHeap* heap){
 
 
 NA_DEF void naInsertHeapElement(NAHeap* heap, void* newptr, const void* newkey, NAInt* newbackpointer){
+  NAInt newindex;
+  NAHeapEntry* thedata;
   #ifndef NDEBUG
     if(heap->count == heap->maxcount)
       naError("naInsertHeapElement", "Heap overflow.");
   #endif
-  NAInt newindex = heap->movedown(heap->data, newkey, heap->count + 1);
-  NAHeapEntry* thedata = (NAHeapEntry*)(heap->data);
+  newindex = heap->movedown(heap->data, newkey, heap->count + 1);
+  thedata = (NAHeapEntry*)(heap->data);
   thedata[newindex].ptr = newptr;
   thedata[newindex].key = newkey;
   if(newbackpointer){
@@ -254,11 +256,12 @@ NA_DEF void* naGetHeapRoot(const NAHeap* heap){
 
 NA_DEF void* naRemoveHeapRoot(NAHeap* heap){
   NAHeapEntry* thedata = (NAHeapEntry*)(heap->data);
+  void* returnvalue;
   #ifndef NDEBUG
     if(heap->count == 0)
       naError("naRemoveHeapRoot", "Heap is empty.");
   #endif
-  void* returnvalue = thedata[1].ptr;
+  returnvalue = thedata[1].ptr;
   *(thedata[1].backpointer) = 0;
   heap->count--;
   if(heap->count){
@@ -272,6 +275,8 @@ NA_DEF void* naRemoveHeapRoot(NAHeap* heap){
 
 NA_DEF void naUpdateHeapElement(NAHeap* heap, NAInt backpointer){
   NAHeapEntry* thedata = (NAHeapEntry*)(heap->data);
+  NAHeapEntry tmp;
+  NAInt curindex;
   #ifndef NDEBUG
     if(backpointer > heap->count)
       naError("naUpdateHeapElement", "backpointer makes no sense.");
@@ -280,8 +285,7 @@ NA_DEF void naUpdateHeapElement(NAHeap* heap, NAInt backpointer){
     if(backpointer == 0)
       naError("naUpdateHeapElement", "backpointer says that element is not part of the heap.");
   #endif
-  NAHeapEntry tmp = thedata[backpointer];
-  NAInt curindex;
+  tmp = thedata[backpointer];
   curindex = heap->moveup(heap, tmp.key, backpointer);
   curindex = heap->movedown(thedata, tmp.key, curindex);
   thedata[curindex] = tmp;

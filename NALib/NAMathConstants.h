@@ -20,6 +20,10 @@
 //
 // Note that the constants are written with approximately 30 digits which is
 // more than enough even for long double.
+//
+// Note that all values are computed with maple like this:
+// Digits := 30;
+// evalf( Pi );
 
 // The famous pi constant
 #define NA_PIf             3.14159265358979323846264338328f
@@ -40,6 +44,11 @@
 #define NA_SQRT2f          1.41421356237309504880168872421f
 #define NA_SQRT2           1.41421356237309504880168872421
 #define NA_SQRT2l          1.41421356237309504880168872421L
+
+// Square root of 2 pi
+#define NA_SQRTPI2f        2.50662827463100050241576528481f
+#define NA_SQRTPI2         2.50662827463100050241576528481
+#define NA_SQRTPI2l        2.50662827463100050241576528481L
 
 // Natural Logarithm of 2.
 // Used on systems which do not define log2 natively.
@@ -155,11 +164,17 @@
 
 
 // The following constants are constants from physics, chemistry, mathematics,
-// all mixed together. These constants are directly from NIST based on
-// CODATA 2006:
+// all mixed together. All constants are provided only as double constants.
+// These constants are directly from NIST:
 // http://physics.nist.gov/constants
 //
-// All following constants are provided only as double constants.
+// Define, what year of the CODATA you would like to use. Possible values are
+// 2006, 2010
+// By default, NALib uses the latest setting.
+
+#ifndef NA_NIST_CODATA_YEAR
+  #define NA_NIST_CODATA_YEAR 2010
+#endif
 
 
 // Universal Constants
@@ -182,22 +197,41 @@
 // - PLANCK_TIME        Planck time, t_P in [s]
 // - LIGHT_SPEED_VAC    speed of light in vacuum, c_0 in [ms-1]
 
-#define NA_CHAR_IMP_VAC        376.730313461
-#define NA_ELEC_CONST          8.854187817e-12
-#define NA_MAG_CONST           12.566370614e-7
-#define NA_GRAV                6.67428e-11
-#define NA_GRAV_HBARC          6.70881e-39
-#define NA_PLANCK              6.62606896e-34
-#define NA_PLANCK_EVS          4.13566733e-15
-#define NA_PLANCK_2PI          1.054571628e-34
-#define NA_PLANCK_2PI_EVS      6.58211899e-16
-#define NA_PLANCK_2PIC         197.3269631
-#define NA_PLANCK_LEN          1.616252e-35
-#define NA_PLANCK_MASS         2.17644e-8
-#define NA_PLANCK_MASS_GEV     1.220892e19
-#define NA_PLANCK_TEMP         1.416785e32
-#define NA_PLANCK_TIME         5.39124e-44
-#define NA_LIGHT_SPEED_VAC     299792458.
+#if (NA_NIST_CODATA_YEAR == 2006)
+  #define NA_CHAR_IMP_VAC        376.730313461
+  #define NA_ELEC_CONST          8.854187817e-12
+  #define NA_MAG_CONST           12.566370614e-7
+  #define NA_GRAV                6.67428e-11
+  #define NA_GRAV_HBARC          6.70881e-39
+  #define NA_PLANCK              6.62606896e-34
+  #define NA_PLANCK_EVS          4.13566733e-15
+  #define NA_PLANCK_2PI          1.054571628e-34
+  #define NA_PLANCK_2PI_EVS      6.58211899e-16
+  #define NA_PLANCK_2PIC         197.3269631
+  #define NA_PLANCK_LEN          1.616252e-35
+  #define NA_PLANCK_MASS         2.17644e-8
+  #define NA_PLANCK_MASS_GEV     1.220892e19
+  #define NA_PLANCK_TEMP         1.416785e32
+  #define NA_PLANCK_TIME         5.39124e-44
+  #define NA_LIGHT_SPEED_VAC     299792458.
+#elif (NA_NIST_CODATA_YEAR == 2010)
+  #define NA_CHAR_IMP_VAC        376.730313461      // same as 2006
+  #define NA_ELEC_CONST          8.854187817e-12    // same as 2006
+  #define NA_MAG_CONST           12.566370614e-7    // same as 2006
+  #define NA_GRAV                6.67384e-11
+  #define NA_GRAV_HBARC          6.70837e-39
+  #define NA_PLANCK              6.62606957e-34
+  #define NA_PLANCK_EVS          4.135667516e-15
+  #define NA_PLANCK_2PI          1.054571726e-34
+  #define NA_PLANCK_2PI_EVS      6.58211928e-16
+  #define NA_PLANCK_2PIC         197.3269718
+  #define NA_PLANCK_LEN          1.616199e-35
+  #define NA_PLANCK_MASS         2.17651e-8
+  #define NA_PLANCK_MASS_GEV     1.220932e19
+  #define NA_PLANCK_TEMP         1.416833e32
+  #define NA_PLANCK_TIME         5.39106e-44
+  #define NA_LIGHT_SPEED_VAC     299792458.         // same as 2006
+#endif
 
 // Electromagnetic constants
 // - BOHR               Bohr magneton, mu_B in [JT-1]
@@ -220,23 +254,43 @@
 // - NUC_MAG_MHZT       nuclear magneton in MHz/T, mu_N/h in [MHzT-1]
 // - VON_KLITZING       von Klitzing constant, R_K in [Ohm]
 
-#define NA_BOHR                927.400915e-26
-#define NA_BOHR_EVT            5.7883817555e-5
-#define NA_BOHR_HZT            13.99624604e9
-#define NA_BOHR_MTESLA         46.6864515
-#define NA_BOHR_KT             0.6717131
-#define NA_COND_QUANT          7.7480917004e-5
-#define NA_COND_QUANT_INV      12906.4037787
-#define NA_E_CHARGE            1.602176487e-19
-#define NA_E_CHARGE_H          2.417989454e14
-#define NA_JOSEPHSON           483597.891e9
-#define NA_MAG_FLUX_QUANT      2.067833667e-15
-#define NA_NUC_MAG             5.05078324e-27
-#define NA_NUC_MAG_EVT         3.1524512326e-8
-#define NA_NUC_MAG_MTESLA      2.542623616e-2
-#define NA_NUC_MAG_KT          3.6582637e-4
-#define NA_NUC_MAG_MHZT        7.62259384
-#define NA_VON_KLITZING        25812.807557
+#if (NA_NIST_CODATA_YEAR == 2006)
+  #define NA_BOHR                927.400915e-26
+  #define NA_BOHR_EVT            5.7883817555e-5
+  #define NA_BOHR_HZT            13.99624604e9
+  #define NA_BOHR_MTESLA         46.6864515
+  #define NA_BOHR_KT             0.6717131
+  #define NA_COND_QUANT          7.7480917004e-5
+  #define NA_COND_QUANT_INV      12906.4037787
+  #define NA_E_CHARGE            1.602176487e-19
+  #define NA_E_CHARGE_H          2.417989454e14
+  #define NA_JOSEPHSON           483597.891e9
+  #define NA_MAG_FLUX_QUANT      2.067833667e-15
+  #define NA_NUC_MAG             5.05078324e-27
+  #define NA_NUC_MAG_EVT         3.1524512326e-8
+  #define NA_NUC_MAG_MTESLA      2.542623616e-2
+  #define NA_NUC_MAG_KT          3.6582637e-4
+  #define NA_NUC_MAG_MHZT        7.62259384
+  #define NA_VON_KLITZING        25812.807557
+#elif (NA_NIST_CODATA_YEAR == 2010)
+  #define NA_BOHR                927.400968e-26
+  #define NA_BOHR_EVT            5.7883818066e-5
+  #define NA_BOHR_HZT            13.99624555e9
+  #define NA_BOHR_MTESLA         46.6864498
+  #define NA_BOHR_KT             0.67171388
+  #define NA_COND_QUANT          7.7480917346e-5
+  #define NA_COND_QUANT_INV      12906.4037217
+  #define NA_E_CHARGE            1.602176565e-19
+  #define NA_E_CHARGE_H          2.417989348e14
+  #define NA_JOSEPHSON           483597.870e9
+  #define NA_MAG_FLUX_QUANT      2.067833758e-15
+  #define NA_NUC_MAG             5.05078353e-27
+  #define NA_NUC_MAG_EVT         3.1524512605e-8
+  #define NA_NUC_MAG_MTESLA      2.542623527e-2
+  #define NA_NUC_MAG_KT          3.6582682e-4
+  #define NA_NUC_MAG_MHZT        7.62259357
+  #define NA_VON_KLITZING        25812.807
+#endif
 
 // Physico-chemical constants
 // - ATOM_MASS          atomic mass constant, m_u in [kg]
@@ -255,7 +309,8 @@
 //                      in [Wm2sr-1]
 // - SECOND_RAD         second radiation constant, c_2 in [mK]
 //                      = PLANCK*LIGHT_SPEED_VAC/BOLTZMANN
-// - LOSCHMIDT          Loschmidt constant (273.15 K, 101.325 kPa), n_0 in [m-3]
+// - LOSCHMIDT_100      Loschmidt constant (273.15 K, 100 kPa), n_0 in [m-3]
+// - LOSCHMIDT_101      Loschmidt constant (273.15 K, 101.325 kPa), n_0 in [m-3]
 // - MOL_GAS            molar gas constant, R in [Jmol-1K-1]
 // - MOL_PLANCK         molar Planck constant, N_Ah in [Jsmol-1]
 // - MOL_PLANCK_C       molar Planck constant times c, N_Ahc in [Jm*mol-1]
@@ -271,29 +326,56 @@
 //                      in [HzK-1]
 // - WIEN_WAVE          Wien wavelength displacement law constant, b in [mK]
 
-#define NA_ATOM_MASS           1.660538782e-27
-#define NA_ATOM_MASS_ENERGY    1.492417830e-10
-#define NA_ATOM_MASS_MEV       931.494028
-#define NA_AVOGADRO            6.02214179e23
-#define NA_BOLTZMANN           1.3806504e-23
-#define NA_BOLTZMANN_EVK       8.617343e-5
-#define NA_BOLTZMANN_HZK       2.0836644e10
-#define NA_BOLTZMANN_MK        69.50356
-#define NA_FARADAY             96485.3399
-#define NA_FIRST_RAD           3.74177118e-16
-#define NA_FIRST_RAD_SPECT     1.191042759e-16
-#define NA_SECOND_RAD          1.4387752e-2
-#define NA_LOSCHMIDT           2.6867774e25
-#define NA_MOL_GAS             8.314472
-#define NA_MOL_PLANCK          3.9903126821e-10
-#define NA_MOL_PLANCK_C        0.11962656472
-#define NA_MOL_IDEAL_GAS_100   22.710981e-3
-#define NA_MOL_IDEAL_GAS_101   22.413996e-3
-#define NA_SACKUR_TETRODE_100  -1.1517047
-#define NA_SACKUR_TETRODE_101  -1.1648677
-#define NA_STEF_BOLTZ          5.670400e-8
-#define NA_WIEN_FREQ           5.878933e10
-#define NA_WIEN_WAVE           2.8977685e-3
+#if (NA_NIST_CODATA_YEAR == 2006)
+  #define NA_ATOM_MASS           1.660538782e-27
+  #define NA_ATOM_MASS_ENERGY    1.492417830e-10
+  #define NA_ATOM_MASS_MEV       931.494028
+  #define NA_AVOGADRO            6.02214179e23
+  #define NA_BOLTZMANN           1.3806504e-23
+  #define NA_BOLTZMANN_EVK       8.617343e-5
+  #define NA_BOLTZMANN_HZK       2.0836644e10
+  #define NA_BOLTZMANN_MK        69.50356
+  #define NA_FARADAY             96485.3399
+  #define NA_FIRST_RAD           3.74177118e-16
+  #define NA_FIRST_RAD_SPECT     1.191042759e-16
+  #define NA_SECOND_RAD          1.4387752e-2
+  #define NA_LOSCHMIDT_101       2.6867774e25
+  #define NA_MOL_GAS             8.314472
+  #define NA_MOL_PLANCK          3.9903126821e-10
+  #define NA_MOL_PLANCK_C        0.11962656472
+  #define NA_MOL_IDEAL_GAS_100   22.710981e-3
+  #define NA_MOL_IDEAL_GAS_101   22.413996e-3
+  #define NA_SACKUR_TETRODE_100  -1.1517047
+  #define NA_SACKUR_TETRODE_101  -1.1648677
+  #define NA_STEF_BOLTZ          5.670400e-8
+  #define NA_WIEN_FREQ           5.878933e10
+  #define NA_WIEN_WAVE           2.8977685e-3
+#elif (NA_NIST_CODATA_YEAR == 2010)
+  #define NA_ATOM_MASS           1.660538921e-27
+  #define NA_ATOM_MASS_ENERGY    1.492417954e-10
+  #define NA_ATOM_MASS_MEV       931.494061
+  #define NA_AVOGADRO            6.02214129e23
+  #define NA_BOLTZMANN           1.3806488e-23
+  #define NA_BOLTZMANN_EVK       8.6173324e-5
+  #define NA_BOLTZMANN_HZK       2.0836618e10
+  #define NA_BOLTZMANN_MK        69.503476
+  #define NA_FARADAY             96485.3365
+  #define NA_FIRST_RAD           3.74177153e-16
+  #define NA_FIRST_RAD_SPECT     1.191042869e-16
+  #define NA_SECOND_RAD          1.4387770e-2
+  #define NA_LOSCHMIDT_100       2.6516462e25
+  #define NA_LOSCHMIDT_101       2.6867805e25
+  #define NA_MOL_GAS             8.3144621
+  #define NA_MOL_PLANCK          3.9903127176e-10
+  #define NA_MOL_PLANCK_C        0.119626565779
+  #define NA_MOL_IDEAL_GAS_100   22.710953e-3
+  #define NA_MOL_IDEAL_GAS_101   22.413968e-3
+  #define NA_SACKUR_TETRODE_100  -1.1517078
+  #define NA_SACKUR_TETRODE_101  -1.1648708
+  #define NA_STEF_BOLTZ          5.670373e-8
+  #define NA_WIEN_FREQ           5.8789254e10
+  #define NA_WIEN_WAVE           2.8977721e-3
+#endif
 
 // Mathematical constants
 // - MERSENNE_PRIME_2       Mersenne Prime 2^2 -1

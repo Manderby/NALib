@@ -509,7 +509,7 @@ NAString* naCreateStringDecFromBitArray(NAString* string,
   }
   if(i == naGetStringSize(string)){
     naClearString(string);
-    naCreateStringWithUTF8CString(string, "0");
+    naCreateStringWithUTF8CStringLiteral(string, "0");
   }else{
     naCreateStringExtraction(string, string, i, -1);
   }

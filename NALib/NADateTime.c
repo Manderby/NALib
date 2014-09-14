@@ -5,6 +5,7 @@
 #include "NADateTime.h"
 #include "NAString.h"
 #include "NABinaryData.h"
+#include "NAEndianness.h"
 #include "NAMathOperators.h"
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
@@ -164,7 +165,7 @@ NATAIPeriod naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS] = {
   {1719792000, 1719792035, 2012, NA_START_JULY_FIRST},              // [90]
   {1735689600, 1735689635, 2013, NA_START_JANUARY_FIRST},
   {1767225600, 1767225635, 2014, NA_START_JANUARY_FIRST},
-  {1782864000, 1782864035, 2014, NA_START_JULY_FIRST},
+  {1798761600, 1798761635, 2015, NA_START_JANUARY_FIRST},
   // the last entry is the first date with unknown future leap seconds.
   // everything up and including that date is known.
 };
@@ -513,32 +514,46 @@ NA_DEF NADateTime naMakeDateTimeFromPointer(const void* data, NABinDateTimeForma
 
 
 
-//
-//NA_DEF void NADateTime::output(Byte* data, NABinDateTimeFormat format) const{
-//  data = data;
-////  NADateTimeStruct dts;
-////  uint16 value;
-//  switch(format){
-//  case NA_DATETIME_FORMAT_ICC_PROFILE:
-////    getNADateTimeStructUTC(&dts);
-////    // ICC section 5.1.1, page 4, dateTimeNumber
-////    value = dts.year;
-////    BinaryData::cpyBig16(&(data[ 0]), &value);
-////    value = dts.mon;
-////    BinaryData::cpyBig16(&(data[ 2]), &value);
-////    value = dts.day;
-////    BinaryData::cpyBig16(&(data[ 4]), &value);
-////    value = dts.hour;
-////    BinaryData::cpyBig16(&(data[ 6]), &value);
-////    value = dts.min;
-////    BinaryData::cpyBig16(&(data[ 8]), &value);
-////    value = dts.sec;
-////    BinaryData::cpyBig16(&(data[10]), &value);
-//    break;
-//  }
-//}
-//
-//
+
+NA_DEF NAByteArray* naCreateByteArrayFromDateTime( NAByteArray* bytearray, const NADateTime* datetime, NABinDateTimeFormat format){
+  // Declaration before Implementation. Needed for C90
+  uint16 valueu16;
+  NAByte* ptr;
+  NADateTimeStruct dts;
+  NADateTimeAttribute dta;
+  naExtractDateTimeInformation(datetime, &dts, &dta);
+
+  switch(format){
+  case NA_DATETIME_FORMAT_ICC_PROFILE:    
+    // ICC section 5.1.1, page 4, dateTimeNumber
+    naCreateByteArrayWithSize(bytearray, 12);
+    ptr = naGetByteArrayMutablePointer(bytearray);
+    
+    valueu16 = (uint16)dts.year;
+    naConvertNativeBig16(&valueu16);
+    naCpy16(&(ptr[ 0]), &valueu16);
+    valueu16 = (uint16)dts.mon;
+    naConvertNativeBig16(&valueu16);
+    naCpy16(&(ptr[ 2]), &valueu16);
+    valueu16 = (uint16)dts.day;
+    naConvertNativeBig16(&valueu16);
+    naCpy16(&(ptr[ 4]), &valueu16);
+    valueu16 = (uint16)dts.hour;
+    naConvertNativeBig16(&valueu16);
+    naCpy16(&(ptr[ 6]), &valueu16);
+    valueu16 = (uint16)dts.min;
+    naConvertNativeBig16(&valueu16);
+    naCpy16(&(ptr[ 8]), &valueu16);
+    valueu16 = (uint16)dts.sec;
+    naConvertNativeBig16(&valueu16);
+    naCpy16(&(ptr[10]), &valueu16);
+    break;
+  }
+
+  return bytearray;
+}
+
+
 
 NA_DEF NAString* naCreateStringWithDateTime(NAString* string,
                              const NADateTime* datetime,
@@ -1008,9 +1023,8 @@ NA_DEF NAString* naCreateStringFromSecondDifference(NAString* string,
 
   NABool needsign = NA_FALSE;
   if(difference<0){needsign = NA_TRUE; difference = -difference;}
-  // todo: make pow10 for integers
-  allseconds = (uint64)(difference * naPow(10., decimaldigits));
-  powten = (uint64)naPow(10., decimaldigits);
+  powten = naExp10i64(decimaldigits);
+  allseconds = (uint64)(difference * (double)powten);
   decimals = allseconds % powten;
   allseconds /= powten;
   seconds = allseconds % NA_SECONDS_PER_MINUTE;
@@ -1038,7 +1052,7 @@ NA_DEF NAString* naCreateStringFromSecondDifference(NAString* string,
   }
   
   if(needsign){
-    naCreateStringWithUTF8CString(&signstring, "-");
+    naCreateStringWithUTF8CStringLiteral(&signstring, "-");
   }else{
     naCreateString(&signstring);
   }

@@ -138,16 +138,28 @@ NA_IAPI int64        naLog2i64(int64 x);
 NA_IAPI float        naExpf(float x);
 NA_IAPI double       naExp(double x);
 
-// Returns the power of 2 function 2^x
+// Returns the exponent of 2 function 2^x
 NA_IAPI float        naExp2f  (float x);
 NA_IAPI double       naExp2   (double x);
 NA_IAPI NAInt        naExp2i  (NAInt x);
 NA_IAPI int32        naExp2i32(int32 x);
 NA_IAPI int64        naExp2i64(int64 x);
 
+// Returns the exponent of 10 function 10^x
+NA_IAPI float        naExp10f  (float x);
+NA_IAPI double       naExp10   (double x);
+NA_IAPI NAInt        naExp10i  (NAInt x);
+NA_IAPI int32        naExp10i32(int32 x);
+NA_IAPI int64        naExp10i64(int64 x);
+
 // Returns the power function b^x
 NA_IAPI float        naPowf(float b, float x);
 NA_IAPI double       naPow(double b, double x);
+
+// Factorizes the given value. !-Operator
+NA_IAPI NAInt        naFactorize(NAInt x);
+// Returns the binomial coefficient n over k
+NA_IAPI NAInt        naBinom(NAInt n, NAInt k);
 
 // Returns the the angle converted to radiants
 NA_IAPI float        naDegToRadf(float deg);
@@ -186,6 +198,7 @@ NA_IAPI void        naCartesianToPolar (double* rtheta, const double* xy);
 
 
 
+
 // ///////////////////////////////////////////////////////////////////////
 // Inline Implementations: See readme file for more expanation.
 // ///////////////////////////////////////////////////////////////////////
@@ -194,6 +207,7 @@ NA_IAPI void        naCartesianToPolar (double* rtheta, const double* xy);
 #include <math.h>
 #include "NAMathConstants.h"
 #include "NARange.h"
+#include "NABinaryData.h"
 
 
 NA_IDEF NAInt naSigni(NAInt x){
@@ -232,7 +246,7 @@ NA_IAPI NABool naIsNaN(double x){
 
 NA_IAPI NABool naIsNaNf(float x){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    return _isnanf(x);  // todo
+    return _isnan((double)x); // todo: Check again on windows
   #else
     return isnan(x);
   #endif
@@ -558,6 +572,41 @@ NA_IDEF int64 naExp2i64(int64 x){
 }
 
 
+NA_IDEF float naExp10f(float x){
+  return powf(10.f, x);
+}
+NA_IDEF double naExp10(double x){
+  return pow(10., x);
+}
+NA_IDEF NAInt naExp10i(NAInt x){
+#if NA_SYSTEM_ADDRESS_BITS == 32
+  return naExp10i32(x);
+#elif NA_SYSTEM_ADDRESS_BITS == 64
+  return naExp10i64(x);
+#endif
+}
+NA_IDEF int32 naExp10i32(int32 x){
+  int32 i;   // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(x > 9)
+      naError("naExp10i32", "Exponent of 10 exceeds integer range.");
+  #endif
+  i = 1;
+  while(x){i *= 10; x--;}
+  return i;
+}
+NA_IDEF int64 naExp10i64(int64 x){
+  int64 i;   // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(x > 18)
+      naError("naExp10i64", "Exponent of 10 exceeds integer range.");
+  #endif
+  i = 1;
+  while(x){i *= 10; x--;}
+  return i;
+}
+
+
 
 NA_IDEF float naPowf(float b, float x){
   #ifndef NDEBUG
@@ -573,6 +622,36 @@ NA_IDEF double naPow(double b, double x){
   #endif
   return pow(b, x);
 }
+
+
+
+
+
+
+NA_IDEF NAInt naFactorize(NAInt x){
+  NAInt result = 1;
+  while(x>1){result *= x--;}
+  return result;
+}
+
+NA_IDEF NAInt naBinom(NAInt n, NAInt k){
+  // Declaration before implementation. Needed for C90.
+  NAInt nminusk = n - k;
+  NAInt kfactor;
+  NAInt x;
+  NAInt nminuskfactor;
+  NAInt nfactor;
+  if(k > nminusk){naSwapi(&k, &nminusk);}
+  kfactor = 1;
+  x = 2;
+  while(x <= k){kfactor *= x++;}
+  nminuskfactor = kfactor;
+  while(x <= nminusk){nminuskfactor *= x++;}
+  nfactor = nminuskfactor;
+  while(x <= n){nfactor *= x++;}
+  return nfactor / (kfactor * nminuskfactor);
+}
+
 
 
 NA_IDEF float naDegToRadf(float deg){

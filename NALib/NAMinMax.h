@@ -144,13 +144,16 @@ NA_IDEF NABool naIsMinMax2iEmpty(NAMinMax2i minmax){
 
 NA_IDEF NAArray* naCreateAreasWithMinMax1iFromMinMax1iArray(NAArray* newarray, const NAArray* minmaxs){
 
+  NAGrowingSpace* segments;
+  NAInt curmin;
+  NAInt curmax;
   NAInt minmaxcount = naGetArrayCount(minmaxs);
   NAInt maxareasperdimension = (2 * minmaxcount - 1);
   NAHeap* rangeheap0min = naCreateHeap(NA_NULL, maxareasperdimension, NA_HEAP_USES_INT_KEY);
   NAHeap* rangeheap0max = naCreateHeap(NA_NULL, maxareasperdimension, NA_HEAP_USES_INT_KEY);
-
   // insert the min and max coordinates into the heaps
-  for(NAInt m=0; m<minmaxcount; m++){
+  NAInt m;
+  for(m=0; m<minmaxcount; m++){
     NAMinMax1i* minmax = (NAMinMax1i*)naGetArrayConstElement(minmaxs, m);
 //    if(naIsMinMax1iEmpty(*minmax)){continue;}
     naInsertHeapElement(rangeheap0min, minmax, &(minmax->min[0]), NA_NULL);
@@ -161,10 +164,10 @@ NA_IDEF NAArray* naCreateAreasWithMinMax1iFromMinMax1iArray(NAArray* newarray, c
     newarray = naCreateArray(newarray);
     return newarray;
   }
-  NAGrowingSpace* segments = naCreateGrowingSpace(NA_NULL, sizeof(NAMinMax1i), maxareasperdimension);
+  segments = naCreateGrowingSpace(NA_NULL, sizeof(NAMinMax1i), maxareasperdimension);
   
-  NAInt curmin = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0min))->min[0];
-  NAInt curmax = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0max))->max[0];
+  curmin = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0min))->min[0];
+  curmax = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0max))->max[0];
   while(NA_TRUE){
     // Remove all mins which are equal to the current min.
     while(!naIsHeapEmpty(rangeheap0min) && (curmin == ((NAMinMax1i*)naGetHeapRoot(rangeheap0min))->min[0])){

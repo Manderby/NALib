@@ -47,10 +47,10 @@ NA_IAPI void naSetV1f(NAVec1f d, float  a0);
 NA_IAPI void naSetV2f(NAVec2f d, float  a0, float  a1);
 NA_IAPI void naSetV3f(NAVec3f d, float  a0, float  a1, float  a2);
 NA_IAPI void naSetV4f(NAVec4f d, float  a0, float  a1, float  a2, float  a3);
-NA_IAPI void naSetV1i(NAVec1f d, NAInt  a0);
-NA_IAPI void naSetV2i(NAVec2f d, NAInt  a0, NAInt  a1);
-NA_IAPI void naSetV3i(NAVec3f d, NAInt  a0, NAInt  a1, NAInt  a2);
-NA_IAPI void naSetV4i(NAVec4f d, NAInt  a0, NAInt  a1, NAInt  a2, NAInt  a3);
+NA_IAPI void naSetV1i(NAVec1i d, NAInt  a0);
+NA_IAPI void naSetV2i(NAVec2i d, NAInt  a0, NAInt  a1);
+NA_IAPI void naSetV3i(NAVec3i d, NAInt  a0, NAInt  a1, NAInt  a2);
+NA_IAPI void naSetV4i(NAVec4i d, NAInt  a0, NAInt  a1, NAInt  a2, NAInt  a3);
 
 // Fills vector d with random values in [0, 1)
 NA_IAPI void naSetV1Random (NAVec1  d);
@@ -445,16 +445,16 @@ NA_IDEF void naSetV3f(NAVec3f d, float a0, float a1, float a2){
 NA_IDEF void naSetV4f(NAVec4f d, float a0, float a1, float a2, float a3){
   d[0] = a0; d[1] = a1; d[2] = a2; d[3] = a3;
 }
-NA_IDEF void naSetV1i(NAVec1f d, NAInt a0){
+NA_IDEF void naSetV1i(NAVec1i d, NAInt a0){
   d[0] = a0;
 }
-NA_IDEF void naSetV2i(NAVec2f d, NAInt a0, NAInt a1){
+NA_IDEF void naSetV2i(NAVec2i d, NAInt a0, NAInt a1){
   d[0] = a0; d[1] = a1;
 }
-NA_IDEF void naSetV3i(NAVec3f d, NAInt a0, NAInt a1, NAInt a2){
+NA_IDEF void naSetV3i(NAVec3i d, NAInt a0, NAInt a1, NAInt a2){
   d[0] = a0; d[1] = a1; d[2] = a2;
 }
-NA_IDEF void naSetV4i(NAVec4f d, NAInt a0, NAInt a1, NAInt a2, NAInt a3){
+NA_IDEF void naSetV4i(NAVec4i d, NAInt a0, NAInt a1, NAInt a2, NAInt a3){
   d[0] = a0; d[1] = a1; d[2] = a2; d[3] = a3;
 }
 

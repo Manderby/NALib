@@ -66,12 +66,12 @@ NA_IAPI NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
 // The programmer is responsible for that size does not overflows the buffer.
 // When takeownership is set to NA_TRUE, the array will deallocate the given
 // buffer with free() when it is no longer used. Note that size can not be
-// negative. If size is null, an empty array is created and the buffer is left
-// completely untouched and will never be deleted, even if takeownership is
-// true.
-// There are two creation functions, one for const data and one for non-const.
+// negative. If size is null, an empty array is created and the buffer will be
+// deleted immediately, if takeownership is true. You can not take ownership of
+// const buffers.
 //
 // Use these functions to encapsulate your own raw buffers into an NAByteArray!
+// There are two creation functions, one for const data and one for non-const.
 NA_IAPI NAByteArray* naCreateByteArrayWithConstBuffer(
                                                 NAByteArray* array,
                                                  const void* buffer,
@@ -255,34 +255,6 @@ NA_IDEF NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
 
 
 
-NA_IDEF NAByteArray* naCreateByteArrayWithMutableBuffer(
-                                                NAByteArray* array,
-                                                       void* buffer,
-                                                       NAInt size,
-                                                      NABool takeownership){
-  #ifndef NDEBUG
-    if(size < 0)
-      naError("naCreateByteArrayWithBuffer", "size is negative.");
-    if(!buffer)
-      naError("naCreateByteArrayWithBuffer", "buffer is Null-Pointer.");
-  #endif
-  if(!size){  // if size is zero
-    #ifndef NDEBUG
-      if(takeownership)
-        naError("naCreateByteArrayWithBuffer", "Can not take ownership of buffer with size 0.");
-    #endif
-    array = naCreateByteArray(array);
-  }else{
-    array = (NAByteArray*)naAllocateIfNull(array, sizeof(NAByteArray));
-    array->storage = naCreatePointerWithMutableBuffer(NA_NULL, buffer, takeownership);
-    array->ptr.p = (NAByte*)naGetPointerMutableData(array->storage);
-    array->size = size;
-  }
-  return array;
-}
-
-
-
 NA_IDEF NAByteArray* naCreateByteArrayWithConstBuffer(
                                                 NAByteArray* array,
                                                  const void* buffer,
@@ -306,6 +278,33 @@ NA_IDEF NAByteArray* naCreateByteArrayWithConstBuffer(
 
 
 
+NA_IDEF NAByteArray* naCreateByteArrayWithMutableBuffer(
+                                                NAByteArray* array,
+                                                       void* buffer,
+                                                       NAInt size,
+                                                      NABool takeownership){
+  #ifndef NDEBUG
+    if(size < 0)
+      naError("naCreateByteArrayWithBuffer", "size is negative.");
+    if(!buffer)
+      naError("naCreateByteArrayWithBuffer", "buffer is Null-Pointer.");
+  #endif
+  if(!size){  // if size is zero
+    array = naCreateByteArray(array);
+    if(takeownership){free(buffer);}
+  }else{
+    array = (NAByteArray*)naAllocateIfNull(array, sizeof(NAByteArray));
+    array->storage = naCreatePointerWithMutableBuffer(NA_NULL, buffer, takeownership);
+    array->ptr.p = (NAByte*)naGetPointerMutableData(array->storage);
+    array->size = size;
+  }
+  return array;
+}
+
+
+
+
+
 
 
 NA_IDEF NAByteArray* naCreateByteArrayExtraction(
@@ -314,7 +313,6 @@ NA_IDEF NAByteArray* naCreateByteArrayExtraction(
                                                  NAInt offset,
                                                  NAInt size){
   NAByte* newptr;
-  NAInt newsize;
 
   #ifndef NDEBUG
     if(!srcarray)
@@ -324,51 +322,10 @@ NA_IDEF NAByteArray* naCreateByteArrayExtraction(
   dstarray = (NAByteArray*)naAllocateIfNull(dstarray, sizeof(NAByteArray));
   // Note that dstarray may be equal to srcarray.
 
-  // First, set the offset and compute the size with the new offset.
+  naMakeiPositiveInSize(&offset, &size, naGetByteArraySize(srcarray));
   newptr = srcarray->ptr.p + offset;
-  newsize = naGetByteArraySize(srcarray) - offset;
-
-  if(offset < 0){
-    // If offset is negative
-    newptr += naGetByteArraySize(srcarray);
-    newsize -= naGetByteArraySize(srcarray);
-  }
-
-  if(newsize < 0){
-    #ifndef NDEBUG
-      naError("naCreateByteArrayExtraction", "Invalid offset leads to array overflow. Correcting to empty array.");
-    #endif
-    newsize = 0;
-  }else if(newsize > naGetByteArraySize(srcarray)){
-    #ifndef NDEBUG
-      naError("naCreateByteArrayExtraction", "Invalid offset leads to array underflow. Correcting to empty array.");
-    #endif
-    newsize = 0;
-  }else{
-    // The offset is valid. Now, adjust the size.
-    if(size < 0){ // negative size parameter
-      newsize += size + 1;
-      if(newsize < 0){
-        // When the resulting size is smaller than 0, underflow.
-        #ifndef NDEBUG
-          naError("naCreateByteArrayExtraction", "Invalid size leads to array underflow. Correcting to empty array.");
-        #endif
-        newsize = 0;
-      }
-    }else{ // positive size parameter
-      if(size <= newsize){
-        newsize = size;
-      }else{
-        // When the desired size is bigger than the size available, overflow.
-        #ifndef NDEBUG
-          naError("naCreateByteArrayExtraction", "Invalid size leads to array overflow. Correcting to empty array.");
-        #endif
-        newsize = 0;
-      }
-    }
-  }
-
-  if(!newsize){
+  
+  if(!size){
     // If the extraction results in an empty array...
     if(dstarray == srcarray){
       naClearByteArray(dstarray); // clear the old array.
@@ -383,7 +340,7 @@ NA_IDEF NAByteArray* naCreateByteArrayExtraction(
       dstarray->storage = naRetainPointer(srcarray->storage);
     }
     dstarray->ptr.p = newptr;
-    dstarray->size = newsize;
+    dstarray->size = size;
   }
   
   return dstarray;

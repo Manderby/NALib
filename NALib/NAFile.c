@@ -34,6 +34,15 @@
 #define NA_FILE_FLAG_AUTOFLUSH_ALL        0xc0
 
 
+#define NA_FILE_BUFFER_SIZE 4096
+#if (NA_FILE_BUFFER_SIZE < 16) || (NA_FILE_BUFFER_SIZE > 65536)
+  #error "Invalid file buffer size"
+  // buffer must not be greater than 65536 as uint16 is used as counter.
+  // buffer must not be smaller than 16 as BinaryData reader may require
+  // 16 Bytes.
+#endif
+
+
 
 NAString* naCreateStringFromFileContents(NAString* string, const char* filename, NATextEncoding encoding){
   NAFile file;
@@ -85,7 +94,8 @@ NAFile naOpenFileForReading(const char* filename){
     #endif
   }
   file.remainingbytesinbuffer = 0;  // the buffer is empty at the moment.
-  file.bufptr = file.buffer;
+  file.buf = naAllocate(NA_FILE_BUFFER_SIZE);
+  file.bufptr = file.buf;
   return file;
 }
 
@@ -104,7 +114,8 @@ NAFile naOpenFileForWriting(const char* filename, NAFileMode mode){
     #endif
   }
   file.remainingbytesinbuffer = NA_FILE_BUFFER_SIZE;
-  file.bufptr = file.buffer;
+  file.buf = naAllocate(NA_FILE_BUFFER_SIZE);
+  file.bufptr = file.buf;
   return file;
 }
 
@@ -122,7 +133,8 @@ NAFile naOpenFileForAppending(const char* filename, NAFileMode mode){
     #endif
   }
   file.remainingbytesinbuffer = NA_FILE_BUFFER_SIZE;
-  file.bufptr = file.buffer;
+  file.buf = naAllocate(NA_FILE_BUFFER_SIZE);
+  file.bufptr = file.buf;
   return file;
 }
 
@@ -135,7 +147,8 @@ NAFile naMakeFileAsStdin(){
   file.textencoding = NA_TEXT_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_STREAM | NA_FILE_FLAG_NEWLINE_NATIVE | NA_FILE_FLAG_AUTOFLUSH_ALL;
   file.remainingbytesinbuffer = 0;  // the buffer is empty at the moment.
-  file.bufptr = file.buffer;
+  file.buf = naAllocate(NA_FILE_BUFFER_SIZE);
+  file.bufptr = file.buf;
   return file;
 }
 
@@ -148,7 +161,8 @@ NAFile naMakeFileAsStdout(){
   file.textencoding = NA_TEXT_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_WRITING | NA_FILE_FLAG_STREAM | NA_FILE_FLAG_NEWLINE_NATIVE | NA_FILE_FLAG_AUTOFLUSH_ALL;
   file.remainingbytesinbuffer = NA_FILE_BUFFER_SIZE;
-  file.bufptr = file.buffer;
+  file.buf = naAllocate(NA_FILE_BUFFER_SIZE);
+  file.bufptr = file.buf;
   return file;
 }
 
@@ -161,7 +175,8 @@ NAFile naMakeFileAsStderr(){
   file.textencoding = NA_TEXT_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_WRITING | NA_FILE_FLAG_STREAM | NA_FILE_FLAG_NEWLINE_NATIVE | NA_FILE_FLAG_AUTOFLUSH_ALL;
   file.remainingbytesinbuffer = NA_FILE_BUFFER_SIZE;
-  file.bufptr = file.buffer;
+  file.buf = naAllocate(NA_FILE_BUFFER_SIZE);
+  file.bufptr = file.buf;
   return file;
 }
 
@@ -171,6 +186,7 @@ void naCloseFile(NAFile* file){
   // Note that stdin, stdout and stderr can be closed as well.
   naClose(file->desc);
   file->desc = -1;
+  free(file->buf);
 }
 
 
@@ -180,8 +196,8 @@ void naFlushFileBuffer(NAFile* file){
       naError("naFlushFileBuffer", "Flushing buffer of read-file. Undefined behaviour.");
   #endif
   if(NA_FILE_BUFFER_SIZE - file->remainingbytesinbuffer){
-    naWrite(file->desc, file->buffer, NA_FILE_BUFFER_SIZE - file->remainingbytesinbuffer);
-    file->bufptr = file->buffer;
+    naWrite(file->desc, file->buf, NA_FILE_BUFFER_SIZE - file->remainingbytesinbuffer);
+    file->bufptr = file->buf;
     file->remainingbytesinbuffer = NA_FILE_BUFFER_SIZE;
   }
 }
@@ -268,9 +284,11 @@ void naJumpFileOffsetAbsolute(NAFile* file, NAFileSize offset){
   naLseek(file->desc, offset, SEEK_SET);
   file->pos = offset;
   // The buffer must be flushed.
-  file->bufptr = file->buffer;
+  file->bufptr = file->buf;
   file->remainingbytesinbuffer = 0;
-  // todo: the buffer might be reused if the offset is near the current position
+  // Note that there might be the chance to reuse parts of the existing buffer
+  // when the jump was small. But jumping within a file occurs quite rarely and
+  // if so, a complete flush ist probably better nontheless.
 }
 
 void naJumpFileOffsetRelative(NAFile* file, NAFileSize offset){
@@ -298,16 +316,16 @@ NA_HLP void naRequireFileReadBufferBytes(NAFile* file, uint16 count){
   if(file->remainingbytesinbuffer >= count){return;}  // enough bytes available
   // copy the remaining bytes to the beginning of the buffer.
   if(file->remainingbytesinbuffer){
-    naCpyn(file->buffer, file->bufptr, file->remainingbytesinbuffer);
+    naCpyn(file->buf, file->bufptr, file->remainingbytesinbuffer);
   }
   // Place the bufferpointer right after these bytes...
-  file->bufptr = file->buffer + file->remainingbytesinbuffer;
+  file->bufptr = file->buf + file->remainingbytesinbuffer;
   // ... and refill the remaining buffer
   bytesread = naRead(file->desc, file->bufptr, NA_FILE_BUFFER_SIZE - file->remainingbytesinbuffer);
   // adjust all internal counters to reflect the new state.
   file->remainingbytesinbuffer += (uint16)bytesread;
   file->pos += bytesread;
-  file->bufptr = file->buffer;
+  file->bufptr = file->buf;
   if(file->remainingbytesinbuffer == 0){file->flags |= NA_FILE_FLAG_EOF;}
 }
 

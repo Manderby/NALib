@@ -135,12 +135,13 @@ NAString* naCreateString(NAString* string);
 // automatically when the string storage is no longer used.
 NAString* naCreateStringWithSize(NAString* string, NAInt size);
 
-// Creates a string out of a given C-String encoded in UTF8. This function
-// is useful for the programmers which like to write strings in the code
-// like "Hello World". This function takes such strings and wraps it into a
-// string struct. The string is marked explicitely as read-only. Note that
-// this works only reliable if the source-code itself is encoded in UTF-8.
-NAString* naCreateStringWithUTF8CString(  NAString* string,
+// Creates a string out of a given C-String written directly in the programming
+// code and encoded in UTF8. This function is useful for the programmers which
+// like to write strings in the code like "Hello World". This function takes
+// such strings and wraps it into a string struct. The string is marked
+// explicitely as read-only. Note that this works only reliable if the source-
+// code itself is encoded in UTF-8.
+NAString* naCreateStringWithUTF8CStringLiteral(  NAString* string,
                                   const NAUTF8Char* ptr);
 
 // Creates an NAString just like sprintf.

@@ -18,6 +18,7 @@ NA_IAPI int naSleepM(NAInt msecs);
 NA_IAPI int naSleepS(NAInt  secs);
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #include "Windows.h"
   typedef TIME_ZONE_INFORMATION NATimeZone;
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
   typedef struct timezone NATimeZone;
@@ -149,13 +150,12 @@ NA_API NADateTime naMakeDateTimeFromString( const NAString* string,
 NA_API NADateTime naMakeDateTimeFromPointer(  const void* data,
                                         NABinDateTimeFormat format);
 
+// Creates a byte array with the given format.
+NA_API NAByteArray* naCreateByteArrayFromDateTime( NAByteArray* bytearray,
+                                              const NADateTime* datetime,
+                                            NABinDateTimeFormat format);
 
-//// While the init methods read values of a given format, the output methods
-//// write the values in the given format.
-//void output(Byte* data, NABinDateTimeFormat format) const;
-// todo
-
-// Returns a string in the given format;
+// Creates a string in the given format.
 NA_API NAString* naCreateStringWithDateTime( NAString* string,
                                      const NADateTime* datetime,
                                    NAAscDateTimeFormat format);

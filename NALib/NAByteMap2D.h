@@ -56,6 +56,13 @@ NA_IAPI NAByteMap2D* naCreateByteMap2D(NAByteMap2D* map2d);
 // array is returned. Negative rects are invalid.
 NA_IAPI NAByteMap2D* naCreateByteMap2DWithRecti( NAByteMap2D* map2d,
                                                       NARecti rect);
+// Creates or fills a new ByteMap2D with the desired rect and COPIES the values
+// provided in buffer to a newly allocated area owned by this NAByteMap2D. The
+// buffer must be big enough to provide all data.
+NA_IAPI NAByteMap2D* naCreateByteMap2DWithRectiCopyingBuffer(
+                                                      NAByteMap2D* map2d,
+                                                           NARecti rect,
+                                                    const NAByte* buffer);
 
 // Clears or Deletes the given map.
 NA_IAPI void naClearByteMap2D  (NAByteMap2D* map2d);
@@ -75,6 +82,11 @@ NA_IAPI void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect);
 // Note: This is exactly the same as calling naEnhanceByteMap2DWithRecti with
 // a size of (1, 1). Returns a mutable pointer to the NAByte at pos.
 NA_IAPI NAByte* naEnhanceByteMap2DAtPosi(NAByteMap2D* map2d, NAPosi pos);
+
+// Clamps the map to the given rect. All data outside the rect will be
+// discarded. The given rect must be completely inside the existing map.
+NA_IAPI NAByte* naClampByteMap2DToRecti(NAByteMap2D* map2d, NARecti rect);
+
 
 // Fills the map with the given value in the given rect. The rect must be fully
 // contained in the map!
@@ -202,6 +214,17 @@ NA_IAPI NAByteMap2D* naCreateByteMap2DWithRecti(NAByteMap2D* map2d,
 }
 
 
+NA_IAPI NAByteMap2D* naCreateByteMap2DWithRectiCopyingBuffer(
+                                                      NAByteMap2D* map2d,
+                                                           NARecti rect,
+                                                    const NAByte* buffer){
+  map2d = naCreateByteMap2DWithRecti(map2d, rect);
+  if(map2d){
+    naCpyn(map2d->data, buffer, rect.size.width * rect.size.height);
+  }
+  return map2d;
+}
+
 
 NA_IAPI void naClearByteMap2D(NAByteMap2D* map2d){
   #ifndef NDEBUG
@@ -317,6 +340,29 @@ NA_IAPI void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect){
     }
   }
   return;
+}
+
+
+NA_IAPI NAByte* naClampByteMap2DToRecti(NAByteMap2D* map2d, NARecti rect){
+  #ifndef NDEBUG
+    if(!map2d){
+      naCrash("naClampByteMap2DToRecti", "map2d is Null-Pointer.");
+      return NA_NULL;
+    }
+    if(!naIsRectiValid(map2d->rect))
+      naError("naClampByteMap2DToRecti", "rect of map2d is invalid. "
+                                          "Uninitialized struct?");
+    if(!naIsRectiValid(rect))
+      naError("naClampByteMap2DToRecti", "rect is invalid.");
+    if(!naIsRectiInRecti(rect, map2d->rect))
+      naError("naClampByteMap2DToRecti", "rect is not contained in map rect.");
+  #endif
+  NAByteMap2D tmpbytemap;
+  naCreateByteMap2DWithRecti(&tmpbytemap, rect);
+  naFillByteMap2DWithByteMapInRecti(&tmpbytemap, rect, map2d);
+  free(map2d->data);
+  map2d->data = tmpbytemap.data;
+  map2d->rect = rect;
 }
 
 
@@ -614,6 +660,7 @@ NA_IAPI const NAByte* naGetByteMap2DConstByte(const NAByteMap2D* map2d,
 
 
 NA_IAPI NAByte* naGetByteMap2DMutableByte(NAByteMap2D* map2d, NAPosi pos){
+  NAInt indx;
   #ifndef NDEBUG
     if(!map2d){
       naCrash("naGetByteMap2DMutableByte", "map2d is Null-Pointer.");
@@ -627,7 +674,7 @@ NA_IAPI NAByte* naGetByteMap2DMutableByte(NAByteMap2D* map2d, NAPosi pos){
     if(!naIsPosiInRecti(pos, map2d->rect))
       naError("naGetByteMap2DMutableByte", "pos outside of map");
   #endif
-  NAInt indx = naGetRectiIndexOfPosi(map2d->rect, pos);
+  indx = naGetRectiIndexOfPosi(map2d->rect, pos);
   return &(map2d->data[naGetRectiIndexOfPosi(map2d->rect, pos)]);
 }
 

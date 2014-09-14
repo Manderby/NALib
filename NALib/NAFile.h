@@ -54,13 +54,6 @@
   #define NA_DIRECTORY_DELIMITER "/"
 #endif
 
-#define NA_FILE_BUFFER_SIZE 4096
-#if (NA_FILE_BUFFER_SIZE < 16) || (NA_FILE_BUFFER_SIZE > 65536)
-  #error "Invalid file buffer size"
-  // buffer must not be greater than 65536 as uint16 is used as counter.
-  // buffer must not be smaller than 16 as BinaryData reader may require
-  // 16 Bytes.
-#endif
 
 // Mapping of standard library functions. They can be different depending on
 // the system compiled.
@@ -97,7 +90,7 @@ struct NAFile{
   uint16 flags;                       // various flags
   uint16 remainingbytesinbuffer;      // remaining bytes inside the buffer
   NAByte* bufptr;                     // Pointer to the current buffer-byte
-  NAByte buffer[NA_FILE_BUFFER_SIZE]; // The buffer.
+  NAByte* buf;                        // The buffer.
 };
 
 
@@ -195,10 +188,10 @@ void naFlushFileBuffer(NAFile* file);
 // Sets the endianness of the file and prepares all converters.
 // - If this file is a reading file, the endianness is the input encoding for
 //   binary values and every binary multi-byte value will be converted from
-//   input to native endianness while reading automatically.
+//   input to native endianness automatically while reading.
 // - If this file is a writing file, the endianness is the output encoding for
 //   binary values and every binary multy-byte value will be converted from
-//   native to output endianness while writing automatically.
+//   native to output endianness automatically while writing.
 // Use endianness constants like NA_ENDIANNESS_BIG for the endianness argument.
 void naSetFileEndianness(NAFile* file, NAInt endianness);
 

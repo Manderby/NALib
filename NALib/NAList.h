@@ -52,6 +52,10 @@ struct NAList{
 // Creates an empty list.
 NA_IAPI NAList* naCreateList(NAList* list);
 
+// Creates an exact copy of originallist by replicating all elements in the
+// same order.
+NA_IAPI NAList* naDuplicateList(NAList* list, NAList* originallist);
+
 // Clears or destroys the given list. Note: This will free all list elements
 // but not the contents they store!
 NA_IAPI void naClearList  (NAList* list);
@@ -136,6 +140,20 @@ NA_IAPI NAList* naCreateList(NAList* list){
 }
 
 
+NA_IAPI NAList* naDuplicateList(NAList* list, NAList* originallist){
+  // Declaration before implementation. Needed for C90.
+  NAListElement* cur;
+  list = naCreateList(list);
+  cur = originallist->sentinel.next;
+  while(cur != &(originallist->sentinel)){
+    NAListElement* next = cur->next;
+    naAddListElementLast(list, cur->content);
+    cur = next;
+  }
+  return list;
+}
+
+
 NA_IAPI void naClearList(NAList* list){
   // Declaration before implementation. Needed for C90.
   NAListElement* cur;
@@ -174,6 +192,7 @@ NA_IAPI void* naGetListMutableContent(NAList* list){
 
 NA_IAPI void naFirstListElement(const NAList* list){
   NAList* mutablelist = (NAList*)list;
+
   mutablelist->cur = list->sentinel.next;
 }
 

@@ -70,9 +70,14 @@ NA_IAPI NAPointer* naCreatePointerWithSize(NAPointer* pointer,
 
 // Creates an NAPointer struct with the content of the given buffer.
 // WILL NOT COPY the contents. The given buffer can be located anywhere in
-// memory and can either be a const or a non-const (mutable) pointer.
-// When this pointer takes the ownership of a mutable pointer, it will delete
-// the memory using free() when the reference counter reaches 0.
+// memory and can either contain const or non-const (mutable) data. The buffer
+// itself can either be owned or not owned by NAPointer: When this NAPointer
+// takes the ownership of a buffer, it will delete the memory using free() when
+// the reference counter reaches 0. You can not take ownership of const buffers
+// like for example a string literal "Hello World".
+// When the reference counter reaches 0, the NAPointer struct itself will also
+// be freed automatically if the pointer argument of this constructor was
+// NA_NULL.
 //
 // Note: Use the const method whenever you can. The compiler will help you
 // detect const-safe-errors.

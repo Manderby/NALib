@@ -14,17 +14,33 @@
 
 NA_API NAArray* naCreateRectiAreaArray(NAArray* areaarray, NAInt numhabitants, ...){
   NAGrowingSpace minmax0space;
-  NAGrowingSpace minmax1space;
+  NAGrowingSpace minmax1space;  
+  NAInt masks[NA_SYSTEM_ADDRESS_BITS];
+  NAInt usefulhabitants;
+  va_list argumentlist;
+  NAInt h;
+  NAArray minmax0array;
+  NAArray minmax1array;
+  NAArray segments0;
+  NAArray segments1;
+  NAInt segmentcount0;
+  NAInt segmentcount1;
+  NAGrowingSpace space;
+  const NAMinMax1i* cursegment1;
+  const NAMinMax1i* cursegment0;
+  NAInt s0;
+  NAInt s1;
+  NAMinMax1i* curminmax0;
+  NAMinMax1i* curminmax1;
+  NAInt* curmask;
+
   naCreateGrowingSpace(&minmax0space, sizeof(NAMinMax1i), numhabitants);
   naCreateGrowingSpace(&minmax1space, sizeof(NAMinMax1i), numhabitants);
-  
-  NAInt masks[NA_SYSTEM_ADDRESS_BITS];
   naNulln(masks, NA_SYSTEM_ADDRESS_BITS * sizeof(NAInt));
   
-  NAInt usefulhabitants = 0;
-  va_list argumentlist;
+  usefulhabitants = 0;
   va_start(argumentlist, numhabitants);
-  for(NAInt h=0; h<numhabitants; h++){
+  for(h=0; h<numhabitants; h++){
     NARecti rect = va_arg(argumentlist, NARecti);
     if(naIsRectiUseful(rect)){
       NAMinMax1i newminmax0 = naMakeMinMax1iWithPosAndSize(rect.pos.x, rect.size.width);
@@ -37,32 +53,27 @@ NA_API NAArray* naCreateRectiAreaArray(NAArray* areaarray, NAInt numhabitants, .
   }
   va_end(argumentlist);
 
-  NAArray minmax0array;
-  NAArray minmax1array;
   naCreateArrayOutOfGrowingSpace(&minmax0array, &minmax0space, NA_FALSE);
   naCreateArrayOutOfGrowingSpace(&minmax1array, &minmax1space, NA_FALSE);
 
-  NAArray segments0;
-  NAArray segments1;
   naCreateAreasWithMinMax1iFromMinMax1iArray(&segments0, &minmax0array);
   naCreateAreasWithMinMax1iFromMinMax1iArray(&segments1, &minmax1array);
  
-  NAInt segmentcount0 = naGetArrayCount(&segments0);
-  NAInt segmentcount1 = naGetArrayCount(&segments1);
-  NAGrowingSpace space;
+  segmentcount0 = naGetArrayCount(&segments0);
+  segmentcount1 = naGetArrayCount(&segments1);
   naCreateGrowingSpace(&space, sizeof(NARectiArea), segmentcount0 * segmentcount1);
 
-  const NAMinMax1i* cursegment1 = naGetArrayConstPointer(&segments1);
-  for(NAInt s1=0; s1<segmentcount1; s1++){
-    const NAMinMax1i* cursegment0 = naGetArrayConstPointer(&segments0);
-    for(NAInt s0=0; s0<segmentcount0; s0++){
+  cursegment1 = naGetArrayConstPointer(&segments1);
+  for(s1=0; s1<segmentcount1; s1++){
+    cursegment0 = naGetArrayConstPointer(&segments0);
+    for(s0=0; s0<segmentcount0; s0++){
       NARectiArea newarea;
       newarea.rect = naMakeRectiFromMinMax1i(*cursegment0, *cursegment1);
       newarea.habitants = 0;
-      NAMinMax1i* curminmax0 = (NAMinMax1i*)naGetArrayConstPointer(&minmax0array);
-      NAMinMax1i* curminmax1 = (NAMinMax1i*)naGetArrayConstPointer(&minmax1array);
-      NAInt* curmask = masks;
-      for(NAInt h=0; h<usefulhabitants; h++){
+      curminmax0 = (NAMinMax1i*)naGetArrayConstPointer(&minmax0array);
+      curminmax1 = (NAMinMax1i*)naGetArrayConstPointer(&minmax1array);
+      curmask = masks;
+      for(h=0; h<usefulhabitants; h++){
         if((*curmask) && (naIsInsideMinMax1i(newarea.rect.pos.x, (*curminmax0))) && naIsInsideMinMax1i(newarea.rect.pos.y, (*curminmax1))){
           newarea.habitants |= *curmask;
         }

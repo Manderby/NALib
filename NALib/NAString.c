@@ -34,12 +34,12 @@ NAString* naCreateStringWithSize(NAString* string, NAInt size){
 }
 
 
-NAString* naCreateStringWithUTF8CString(NAString* string, const NAUTF8Char* ptr){
+NAString* naCreateStringWithUTF8CStringLiteral(NAString* string, const NAUTF8Char* ptr){
   // Declaration before implementation. Needed for C90.
   NAInt size;
   #ifndef NDEBUG
     if(!ptr)
-      {naCrash("naCreateStringWithUTF8CString", "ptr is Null-Pointer"); return NA_NULL;}
+      {naCrash("naCreateStringWithUTF8CStringLiteral", "ptr is Null-Pointer"); return NA_NULL;}
   #endif
   size = naStrlen(ptr);
   if(!size){return naCreateString(string);}

@@ -95,12 +95,17 @@ struct NARecti{
 
 
 // Create the various elements
+// The Variants with E also allow the sizes and rects to be empty or negative.
 NA_IAPI NAPos     naMakePos     (double x,      double  y);
 NA_IAPI NASize    naMakeSize    (double width,  double  height);
+NA_IAPI NASize    naMakeSizeE   (double width,  double  height);
 NA_IAPI NARect    naMakeRect    (NAPos  pos,    NASize  size);
+NA_IAPI NARect    naMakeRectE   (NAPos  pos,    NASize  size);
 NA_IAPI NAPosi    naMakePosi    (NAInt  x,      NAInt   y);
 NA_IAPI NASizei   naMakeSizei   (NAInt  width,  NAInt   height);
+NA_IAPI NASizei   naMakeSizeiE  (NAInt  width,  NAInt   height);
 NA_IAPI NARecti   naMakeRecti   (NAPosi pos,    NASizei size);
+NA_IAPI NARecti   naMakeRectiE  (NAPosi pos,    NASizei size);
 
 // Create the bounding box of two elements. The size of the resulting rect will
 // never be negative.
@@ -276,6 +281,16 @@ NA_IAPI NASize naMakeSize(double width, double height){
   newsize.height = height;
   return newsize;
 }
+NA_IAPI NASize naMakeSizeE(double width, double height){
+  NASize newsize;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsSizeFieldValid(width) && naIsSizeFieldValid(height)))
+      naError("naMakeSize", "Invalid values given.");
+  #endif
+  newsize.width = width;
+  newsize.height = height;
+  return newsize;
+}
 NA_IAPI NARect naMakeRect(NAPos pos, NASize size){
   NARect newrect;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
@@ -283,6 +298,16 @@ NA_IAPI NARect naMakeRect(NAPos pos, NASize size){
       naError("naMakeRect", "Invalid values given.");
     if(!naIsPosUseful(pos) || !naIsSizeUseful(size))
       naError("naMakeRect", "Values given are not useful.");
+  #endif
+  newrect.pos = pos;
+  newrect.size = size;
+  return newrect;
+}
+NA_IAPI NARect naMakeRectE(NAPos pos, NASize size){
+  NARect newrect;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!naIsPosValid(pos) || !naIsSizeValid(size))
+      naError("naMakeRect", "Invalid values given.");
   #endif
   newrect.pos = pos;
   newrect.size = size;
@@ -312,6 +337,16 @@ NA_IAPI NASizei naMakeSizei(NAInt width, NAInt height){
   newsize.height = height;
   return newsize;
 }
+NA_IAPI NASizei naMakeSizeiE(NAInt width, NAInt height){
+  NASizei newsize;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsSizeiFieldValid(width) && naIsSizeiFieldValid(height)))
+      naError("naMakeSizei", "Invalid values given.");
+  #endif
+  newsize.width = width;
+  newsize.height = height;
+  return newsize;
+}
 NA_IAPI NARecti naMakeRecti(NAPosi pos, NASizei size){
   NARecti newrect;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
@@ -319,6 +354,16 @@ NA_IAPI NARecti naMakeRecti(NAPosi pos, NASizei size){
       naError("naMakeRecti", "Invalid values given.");
     if(!naIsPosiUseful(pos) || !naIsSizeiUseful(size))
       naError("naMakeRecti", "Values given are not useful.");
+  #endif
+  newrect.pos = pos;
+  newrect.size = size;
+  return newrect;
+}
+NA_IAPI NARecti naMakeRectiE(NAPosi pos, NASizei size){
+  NARecti newrect;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!naIsPosiValid(pos) || !naIsSizeiValid(size))
+      naError("naMakeRecti", "Invalid values given.");
   #endif
   newrect.pos = pos;
   newrect.size = size;
@@ -481,8 +526,8 @@ NA_IAPI NARecti naMakeRectiWithRectiAndPosiE(NARecti rect, NAPosi pos){
   NARecti newrect;
   NAInt end;
   #ifndef NDEBUG
-    if(!naIsRectiUseful(rect))
-      naError("naMakeRectiWithRectiAndPosi", "rect is not useful.");
+    if(!naIsRectiValid(rect))
+      naError("naMakeRectiWithRectiAndPosi", "rect is invalid.");
     if(!naIsPosiValid(pos))
       naError("naMakeRectiWithRectiAndPosi", "pos is invalid.");
   #endif
@@ -1095,38 +1140,18 @@ NA_IAPI NABool naIsRectiUseful(NARecti rect){
 
 NA_IAPI NARect naMakeRectPositive(NARect rect){
   NARect newrect;
-  if(rect.size.width < 0.){
-    newrect.pos.x = rect.pos.x + rect.size.width;
-    newrect.size.width = -rect.size.width;
-  }else{
-    newrect.pos.x = rect.pos.x;
-    newrect.size.width = rect.size.width;
-  }
-  if(rect.size.height < 0.){
-    newrect.pos.y = rect.pos.y + rect.size.height;
-    newrect.size.height = -rect.size.height;
-  }else{
-    newrect.pos.y = rect.pos.y;
-    newrect.size.height = rect.size.height;
-  }
+  newrect = rect; // Do not put this into the initialization. The compiler
+                  // might not be able to optimize that.
+  naMakePositive(&(newrect.pos.x), &(newrect.size.width));
+  naMakePositive(&(newrect.pos.y), &(newrect.size.height));
   return newrect;
 }
 NA_IAPI NARecti naMakeRectiPositive(NARecti rect){
   NARecti newrect;
-  if(rect.size.width < 0){
-    newrect.pos.x = rect.pos.x + rect.size.width + 1; // important + 1 !
-    newrect.size.width = -rect.size.width;
-  }else{
-    newrect.pos.x = rect.pos.x;
-    newrect.size.width = rect.size.width;
-  }
-  if(rect.size.height < 0){
-    newrect.pos.y = rect.pos.y + rect.size.height + 1; // important + 1 !
-    newrect.size.height = -rect.size.height;
-  }else{
-    newrect.pos.y = rect.pos.y;
-    newrect.size.height = rect.size.height;
-  }
+  newrect = rect; // Do not put this into the initialization. The compiler
+                  // might not be able to optimize that.
+  naMakeiPositive(&(newrect.pos.x), &(newrect.size.width));
+  naMakeiPositive(&(newrect.pos.y), &(newrect.size.height));
   return newrect;
 }
 

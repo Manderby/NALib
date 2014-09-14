@@ -43,6 +43,30 @@ NA_IAPI NAArray* naCreateArrayWithCount  (NAArray* array,
                                              NAInt typesize,
                                              NAInt count);
 
+// Creates or fills a new Array which contains the data of the given buffer
+// WITHOUT copying. The count denotes the number of elements in the array, not
+// bytes! The programmer is responsible for that count does not overflows the
+// buffer.
+// When takeownership is set to NA_TRUE, the array will deallocate the given
+// buffer with free() when it is no longer used. Note that count can not be
+// negative. If count is null, an empty array is created and the buffer will be
+// deleted immediately, if takeownership is true. You can not take ownership of
+// const buffers.
+//
+// Use these functions to encapsulate your own raw buffers into an NAArray!
+// There are two creation functions, one for const data and one for non-const.
+NA_IAPI NAArray* naCreateArrayWithConstBuffer(
+                                          NAArray* array,
+                                       const void* buffer,
+                                             NAInt typesize,
+                                             NAInt count);
+NA_IAPI NAArray* naCreateArrayWithMutableBuffer(
+                                          NAArray* array,
+                                             void* buffer,
+                                             NAInt typesize,
+                                             NAInt count,
+                                            NABool takeownership);
+
 // Fills dstarray with a desired part of srcarray.
 // See naCreateByteArrayExtraction for the explanation of all arguments.
 NA_IAPI NAArray* naCreateArrayExtraction( NAArray* dstarray,
@@ -51,7 +75,8 @@ NA_IAPI NAArray* naCreateArrayExtraction( NAArray* dstarray,
                                              NAInt count);
 
 
-// Clears or destroys the given array.
+// Clears or destroys the given array. Calls the destructor on every element.
+// See Readme file for more information.
 NA_IAPI void naClearArray  (NAArray* array, NADestructor destructor);
 NA_IAPI void naDestroyArray(NAArray* array, NADestructor destructor);
 
@@ -151,17 +176,52 @@ NA_IDEF NAArray* naCreateArrayWithCount(NAArray* array,
 }
 
 
+NA_IDEF NAArray* naCreateArrayWithConstBuffer(
+                                          NAArray* array,
+                                       const void* buffer,
+                                             NAInt typesize,
+                                             NAInt count){
+  #ifndef NDEBUG
+    if(typesize <= 0)
+      naError("naCreateArrayWithConstBuffer", "typesize is smallerequal zero");
+  #endif
+  array = naAllocateIfNull(array, sizeof(NAArray));
+  naCreateByteArrayWithConstBuffer(&(array->bytearray), buffer, typesize * count);
+  array->typesize = typesize;
+  return array;
+}
+
+
+NA_IDEF NAArray* naCreateArrayWithMutableBuffer(
+                                          NAArray* array,
+                                             void* buffer,
+                                             NAInt typesize,
+                                             NAInt count,
+                                            NABool takeownership){
+  #ifndef NDEBUG
+    if(typesize <= 0)
+      naError("naCreateArrayWithConstBuffer", "typesize is smallerequal zero");
+  #endif
+  array = naAllocateIfNull(array, sizeof(NAArray));
+  naCreateByteArrayWithMutableBuffer(&(array->bytearray), buffer, typesize * count, takeownership);
+  array->typesize = typesize;
+  return array;
+}
+
+
 NA_IDEF NAArray* naCreateArrayExtraction(   NAArray* dstarray,
                                       const NAArray* srcarray,
                                                NAInt offset,
                                                NAInt count){
   dstarray = naAllocateIfNull(dstarray, sizeof(NAArray));
-
   dstarray->typesize = srcarray->typesize;
+
+  naMakeiPositiveInSize(&offset, &count, naGetArrayCount(srcarray));
+
   naCreateByteArrayExtraction(&(dstarray->bytearray),
                             &(srcarray->bytearray),
                             offset * srcarray->typesize,
-                            count * srcarray->typesize);  // todo: does not work with negative values!
+                            count * srcarray->typesize);
   return dstarray;
 }
 

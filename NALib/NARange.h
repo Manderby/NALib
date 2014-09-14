@@ -68,7 +68,7 @@ NA_IAPI NABool naAlmostOnef(float  x);
 
 // naAlmost returns NA_TRUE, if the RELATIVE distance between x and y is
 // smaller than NA_SINGULARITY. If y is close to 0, the absolute distance is
-// checked.
+// checked. Warning: These functions are slow.
 NA_IAPI NABool naAlmost (double x, double y);
 NA_IAPI NABool naAlmostf(float  x, float  y);
 
@@ -113,6 +113,7 @@ NA_IAPI NABool naAlmostInsidef(float  a, float  b, float  x);
 
 
 
+
 // ///////////////////////////////////
 // Normed Ranges
 // ///////////////////////////////////
@@ -146,8 +147,47 @@ NA_IAPI NABool naInsideNormEEf(float x);
 // Custom Ranges
 // ///////////////////////////////////
 
-// Additionally to the above min- and max-functions, there is the type NARange
-// which stores an pos and a size for one dimension.
+// Additionally to the above min- and max-functions, NALib provides a
+// datastructure NARange which holds an offset and a size for one dimension.
+// For simplification, offset is usually called pos. First however, some
+// helper functions working with single values rather than datastructures.
+
+// This function alters the given pos and size such that size will become
+// positive while retaining the depicted range. For example with doubles:
+// pos = 3. and size = -2. will become pos = 1. and size = 2. The resulting
+// range starts at 1. and ends at 1. + 2. = 3.
+// Note: When using integers, the end must be computed with -1. Therefore
+// the result differs:
+// pos = 3 and size = -2 will become pos = 2 and size = 2. The resulting
+// range starts at 2 and ends at (2 + 2) - 1 = 3
+// If size already was positive, nothing will be changed.
+NA_IAPI void naMakePositive      (double* NA_RESTRICT pos,
+                                  double* NA_RESTRICT size);
+NA_IAPI void naMakeiPositive     (NAInt*  NA_RESTRICT pos,
+                                  NAInt*  NA_RESTRICT size);
+
+// This function alters the given pos and size such that the resulting range
+// will be fully be contained in a range given by [0, containingsize] for
+// floating point values or [0, containingsize-1] for integers. Negative
+// values are treated as follows and in the following order:
+// - if pos is negative, it denotes the number of units from the end.
+//   For integers, pos = -1 therefore corresponds to size-1.
+// - If the size is now 0, the function will return.
+// - if size is negative, it denotes the size up and including to the given
+//   number of units from the end, meaning -1 denotes the last unit.
+// - if the pos and size combination somehow leads to a size of exactly 0,
+//   the resulting range will be empty without a warning emitted.
+// - If the pos and size combination somehow leads to an over- or underflow,
+//   a warning will be emitted if NDEBUG is defined. The resulting range will
+//   be empty.
+NA_IAPI void naMakePositiveInSize(  double* NA_RESTRICT pos,
+                                    double* NA_RESTRICT size,
+                                    double  containingsize);
+NA_IAPI void naMakeiPositiveInSize( NAInt*  NA_RESTRICT pos,
+                                    NAInt*  NA_RESTRICT size,
+                                    NAInt   containingsize);
+
+// These are the definitions of the datastructure:
 typedef struct NARange  NARange;
 typedef struct NARangef NARangef;
 typedef struct NARangei NARangei;
@@ -198,7 +238,7 @@ NA_IAPI NABool naInsideRangei  (NARangei range, NAInt  x);
 
 // naAlmostInside checks if the given value is almost or completely inside
 // the given values. Meaning, a small relative margin of NA_SINGULARITY on
-// both sides is considered.
+// both sides is considered. Warning: Slow.
 NA_IAPI NABool naAlmostInsideRange (NARange  range, double x);
 NA_IAPI NABool naAlmostInsideRangef(NARangef range, float  x);
 
@@ -522,6 +562,106 @@ NA_IHLP NABool naIsSizeiFieldUseful(NAInt a){
 
 
 
+NA_IDEF void naMakePositive(double* NA_RESTRICT pos, double* NA_RESTRICT size){
+  if(*size < 0.){
+    *pos = *pos + *size;
+    *size = -*size;
+  }
+}
+
+
+NA_IDEF void naMakeiPositive(NAInt* NA_RESTRICT pos, NAInt* NA_RESTRICT size){
+  if(*size < 0){
+    *pos = *pos + *size + 1; // important + 1 !
+    *size = -*size;
+  }
+}
+
+
+NA_IDEF void naMakePositiveInSize(double* NA_RESTRICT pos, double* NA_RESTRICT size, double containingsize){
+  // First, we ensure that pos is withing the containing range. After that
+  // we will look at the size parameter.
+  double remainingsize = containingsize - *pos;
+  if(*pos < 0){
+    *pos = *pos + containingsize;
+    remainingsize -= containingsize;
+  }
+  if(remainingsize < 0){
+    #ifndef NDEBUG
+      naError("naMakePositiveInSize", "Invalid pos leads to range overflow. Correcting to empty range.");
+    #endif
+    *size = 0;
+  }else if(remainingsize > containingsize){
+    #ifndef NDEBUG
+      naError("naMakePositiveInSize", "Invalid pos leads to range underflow. Correcting to empty range.");
+    #endif
+    *size = 0;
+  }else{
+    // The pos is positive. Now, adjust the size.
+    if(*size < 0){ // negative size parameter
+      *size = remainingsize + *size;
+      if(*size < 0){
+        // When the resulting size is smaller than 0, underflow.
+        #ifndef NDEBUG
+          naError("naMakePositiveInSize", "Invalid size leads to range underflow. Correcting to empty range.");
+        #endif
+        *size = 0;
+      }
+    }else{ // positive or 0 size parameter
+      if(*size > remainingsize){
+        // When the desired size is bigger than the size available, overflow.
+        #ifndef NDEBUG
+          naError("naMakePositiveInSize", "Invalid size leads to range overflow. Correcting to empty range.");
+        #endif
+        *size = 0;
+      }
+    }
+  }
+}
+
+
+NA_IDEF void naMakeiPositiveInSize(NAInt*  NA_RESTRICT pos, NAInt* NA_RESTRICT size, NAInt containingsize){
+  // First, we ensure that pos is withing the containing range. After that
+  // we will look at the size parameter.
+  NAInt remainingsize = containingsize - *pos;
+  if(*pos < 0){
+    *pos = *pos + containingsize;
+    remainingsize -= containingsize;
+  }
+  if(remainingsize < 0){
+    #ifndef NDEBUG
+      naError("naMakeiPositiveInSize", "Invalid pos leads to range overflow. Correcting to empty range.");
+    #endif
+    *size = 0;
+  }else if(remainingsize > containingsize){
+    #ifndef NDEBUG
+      naError("naMakeiPositiveInSize", "Invalid pos leads to range underflow. Correcting to empty range.");
+    #endif
+    *size = 0;
+  }else{
+    // The pos is positive. Now, adjust the size.
+    if(*size < 0){ // negative size parameter
+      *size = remainingsize + *size + 1;  // Important + 1 !
+      if(*size < 0){
+        // When the resulting size is smaller than 0, underflow.
+        #ifndef NDEBUG
+          naError("naMakeiPositiveInSize", "Invalid size leads to range underflow. Correcting to empty range.");
+        #endif
+        *size = 0;
+      }
+    }else{ // positive or 0 size parameter
+      if(*size > remainingsize){
+        // When the desired size is bigger than the size available, overflow.
+        #ifndef NDEBUG
+          naError("naMakeiPositiveInSize", "Invalid size leads to range overflow. Correcting to empty range.");
+        #endif
+        *size = 0;
+      }
+    }
+  }
+}
+
+
 NA_IDEF NARange naMakeRange(double pos, double size){
   NARange newrange; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
@@ -680,8 +820,10 @@ NA_IDEF NABool naAlmostInsideRange(NARange range, double x){
 //    if(a>b)
 //      naError("naAlmostInside", "a is greater b.");
   #endif
-  double a = a * ((a < 0.) ? NA_SUP_NORM : NA_SUB_NORM);
-  double b = b * ((b < 0.) ? NA_SUB_NORM : NA_SUP_NORM);
+  double a = range.pos;
+  double b = range.pos + range.size;
+  a = a * ((a < 0.) ? NA_SUP_NORM : NA_SUB_NORM);
+  b = b * ((b < 0.) ? NA_SUB_NORM : NA_SUP_NORM);
   return naInsideEE(a, b, x);
 }
 NA_IDEF NABool naAlmostInsideRangef(NARangef range, float x){
@@ -689,8 +831,10 @@ NA_IDEF NABool naAlmostInsideRangef(NARangef range, float x){
 //    if(a>b)
 //      naError("naAlmostInsidef", "a is greater b.");
   #endif
-  float a = a * ((a < 0.f) ? NA_SUP_NORMf : NA_SUB_NORMf);
-  float b = b * ((b < 0.f) ? NA_SUB_NORMf : NA_SUP_NORMf);
+  float a = range.pos;
+  float b = range.pos + range.size;
+  a = a * ((a < 0.f) ? NA_SUP_NORMf : NA_SUB_NORMf);
+  b = b * ((b < 0.f) ? NA_SUB_NORMf : NA_SUP_NORMf);
   return naInsidefEE(a, b, x);
 }
 
