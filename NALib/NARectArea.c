@@ -95,6 +95,7 @@ NA_API NAArray* naCreateRectiAreaArray(NAArray* areaarray, NAInt numhabitants, .
   naClearArray(&minmax1array, NA_NULL);
   naClearGrowingSpace(&minmax0space, NA_NULL);
   naClearGrowingSpace(&minmax1space, NA_NULL);
+  naClearGrowingSpace(&space, NA_NULL);
   return areaarray;
 }
 

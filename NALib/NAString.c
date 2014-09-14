@@ -75,7 +75,7 @@ NAString* naCreateStringWithArguments(NAString* string,
   va_copy(argumentlist2, argumentlist);
   va_copy(argumentlist3, argumentlist);
   stringlen = naVarargStringSize(format, argumentlist2);
-  naCreateStringWithSize(string, stringlen);
+  string = naCreateStringWithSize(string, stringlen);
   naVsnprintf(naGetStringMutableUTF8Pointer(string), (size_t)(stringlen+1), format, argumentlist3);
   va_end(argumentlist2);
   va_end(argumentlist3);
@@ -1041,6 +1041,7 @@ NAInt naParseUTF8StringForDecimalUnsignedInteger(const NAUTF8Char* string,
                                                             uint64 max){
   NAInt bytesused = 0LL;
   uint64 prevval = 0LL;
+  *retint = 0;
   while(!maxbytecount || (bytesused < maxbytecount)){
     register NAUTF8Char curchar = *string;
     if((curchar < '0') || (curchar > '9')){break;}
