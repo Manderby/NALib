@@ -166,7 +166,8 @@ NA_IDEF void* naAllocate(NAInt size){
     // This is the one place where the debug version differs from the non-debug
     // version:
       {naCrash("naAllocate", "out of memory.");
-        exit(1); return NA_NULL;}
+        exit(1);
+        return NA_NULL;}
     // The exit call has been introduced as this is such a severe problem
     // that all functions rely on its functionality. Also, modern code sanity
     // checks will see with this exit call that this is the place where the

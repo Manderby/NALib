@@ -162,66 +162,68 @@ NA_IDEF NAArray* naCreateAreasWithMinMax1iFromMinMax1iArray(NAArray* newarray, c
   
   if(naIsHeapEmpty(rangeheap0min)){
     newarray = naCreateArray(newarray);
-    return newarray;
-  }
-  segments = naCreateGrowingSpace(NA_NULL, sizeof(NAMinMax1i), maxareasperdimension);
-  
-  curmin = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0min))->min[0];
-  curmax = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0max))->max[0];
-  while(NA_TRUE){
-    // Remove all mins which are equal to the current min.
-    while(!naIsHeapEmpty(rangeheap0min) && (curmin == ((NAMinMax1i*)naGetHeapRoot(rangeheap0min))->min[0])){
-      naRemoveHeapRoot(rangeheap0min);
-    }
+  }else{
+    segments = naCreateGrowingSpace(NA_NULL, sizeof(NAMinMax1i), maxareasperdimension);
     
-    if(!naIsHeapEmpty(rangeheap0min)){
-      NAInt nextmin = ((NAMinMax1i*)naGetHeapRoot(rangeheap0min))->min[0];
-      if(nextmin <= curmax){
-        // Create a segment with the current min and one minus the next min
-        NAMinMax1i newsegment;
-        newsegment.min[0] = curmin;
-        newsegment.max[0] = nextmin - 1;
-        naAddGrowingSpaceElement(segments, &newsegment);
-        // Fetch the next min.
-        curmin = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0min))->min[0];
+    curmin = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0min))->min[0];
+    curmax = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0max))->max[0];
+    while(NA_TRUE){
+      // Remove all mins which are equal to the current min.
+      while(!naIsHeapEmpty(rangeheap0min) && (curmin == ((NAMinMax1i*)naGetHeapRoot(rangeheap0min))->min[0])){
+        naRemoveHeapRoot(rangeheap0min);
+      }
+      
+      if(!naIsHeapEmpty(rangeheap0min)){
+        NAInt nextmin = ((NAMinMax1i*)naGetHeapRoot(rangeheap0min))->min[0];
+        if(nextmin <= curmax){
+          // Create a segment with the current min and one minus the next min
+          NAMinMax1i newsegment;
+          newsegment.min[0] = curmin;
+          newsegment.max[0] = nextmin - 1;
+          naAddGrowingSpaceElement(segments, &newsegment);
+          // Fetch the next min.
+          curmin = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0min))->min[0];
+        }else{
+          // Create a segment with the current min and the current max
+          NAMinMax1i newsegment;
+          newsegment.min[0] = curmin;
+          newsegment.max[0] = curmax;
+          naAddGrowingSpaceElement(segments, &newsegment);
+          #ifndef NDEBUG
+            if(naIsHeapEmpty(rangeheap0max))
+              naError("naCreateAreasWithMinMax1iFromMinMax1iArray", "No more maxs while having mins. This should not happen.");
+          #endif
+          // Remove all maxs which are equal to the current max
+          while(curmax == ((NAMinMax1i*)naGetHeapRoot(rangeheap0max))->max[0]){
+            naRemoveHeapRoot(rangeheap0max);
+          }
+          // Setup the next min and fetch the new max.
+          curmin = curmax + 1;
+          curmax = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0max))->max[0];
+        }
       }else{
         // Create a segment with the current min and the current max
         NAMinMax1i newsegment;
-        newsegment.min[0] = curmin;
-        newsegment.max[0] = curmax;
+          newsegment.min[0] = curmin;
+          newsegment.max[0] = curmax;
         naAddGrowingSpaceElement(segments, &newsegment);
-        #ifndef NDEBUG
-          if(naIsHeapEmpty(rangeheap0max))
-            naError("naCreateAreasWithMinMax1iFromMinMax1iArray", "No more maxs while having mins. This should not happen.");
-        #endif
         // Remove all maxs which are equal to the current max
-        while(curmax == ((NAMinMax1i*)naGetHeapRoot(rangeheap0max))->max[0]){
+        while((!naIsHeapEmpty(rangeheap0max)) && (curmax == ((NAMinMax1i*)naGetHeapRoot(rangeheap0max))->max[0])){
           naRemoveHeapRoot(rangeheap0max);
         }
-        // Setup the next min and fetch the new max.
+        // If the max-heap is empty, everyhting is done.
+        if(naIsHeapEmpty(rangeheap0max)){break;}
         curmin = curmax + 1;
         curmax = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0max))->max[0];
       }
-    }else{
-      // Create a segment with the current min and the current max
-      NAMinMax1i newsegment;
-        newsegment.min[0] = curmin;
-        newsegment.max[0] = curmax;
-      naAddGrowingSpaceElement(segments, &newsegment);
-      // Remove all maxs which are equal to the current max
-      while((!naIsHeapEmpty(rangeheap0max)) && (curmax == ((NAMinMax1i*)naGetHeapRoot(rangeheap0max))->max[0])){
-        naRemoveHeapRoot(rangeheap0max);
-      }
-      // If the max-heap is empty, everyhting is done.
-      if(naIsHeapEmpty(rangeheap0max)){break;}
-      curmin = curmax + 1;
-      curmax = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0max))->max[0];
     }
-  }
 
-  newarray = naCreateArrayOutOfGrowingSpace(newarray, segments, NA_FALSE);
-  naDestroyGrowingSpace(segments, NA_NULL);
+    newarray = naCreateArrayOutOfGrowingSpace(newarray, segments, NA_FALSE);
+    naDestroyGrowingSpace(segments, NA_NULL);
+  }
   
+  naDestroyHeap(rangeheap0min);
+  naDestroyHeap(rangeheap0max);
   return newarray;
 }
 

@@ -19,6 +19,10 @@ correct, complete or final.
   naMakeRectiE. Corrected a debug error in naMakeRectiWithRectiAndPosiE.
 - Added NAMap2D
 - Added naClampByteMap2DToRecti
+- Fixed an error in naCreateByteArrayFromDateTime
+- Fixed some memory leaks and logical errors
+- naCreateByteMap2DWithRectiCopyingBuffer now works with empty rects
+- made some coordinate tests more reliable
 
 
 Version 6 (first published 2014-August-25):
@@ -44,7 +48,6 @@ Other things:
 - Implemented naCreateByteArrayFromDateTime
 - Various small comment and code layout changes. More and improved comments.
 - The new website address has been put into the readme file.
-
 
 
 

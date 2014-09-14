@@ -1089,16 +1089,16 @@ NA_IAPI NABool naIsRectiValid(NARecti rect){
 
 
 NA_IAPI NABool naIsSizeEmpty (NASize  size){
-  return ((size.width == 0.) || (size.height == 0.));
+  return ((size.width * size.height) == 0.);
 }
 NA_IAPI NABool naIsRectEmpty (NARect  rect){
-  return ((rect.size.width == 0.) || (rect.size.height == 0.));
+  return ((rect.size.width * rect.size.height) == 0.);
 }
 NA_IAPI NABool naIsSizeiEmpty(NASizei size){
-  return ((size.width == 0) || (size.height == 0));
+  return ((size.width * size.height) == 0);
 }
 NA_IAPI NABool naIsRectiEmpty(NARecti rect){
-  return ((rect.size.width == 0) || (rect.size.height == 0));
+  return ((rect.size.width * rect.size.height) == 0);
 }
 
 

@@ -185,6 +185,11 @@ NA_IAPI NAByteMap2D* naCreateByteMap2D(NAByteMap2D* map2d){
   map2d = (NAByteMap2D*)naAllocateIfNull(map2d, sizeof(NAByteMap2D));
   map2d->rect.size.width  = 0;
   map2d->rect.size.height = 0;
+//  map2d->data = NA_NULL;
+  // Note that setting the data is not really necessary as NALib always checks
+  // if the rect is empty before accessing the data. But some code-sanity
+  // checks get confused and therefore, it is safer to just initialize it to
+  // NA_NULL.
   return map2d;
 }
 
@@ -218,8 +223,13 @@ NA_IAPI NAByteMap2D* naCreateByteMap2DWithRectiCopyingBuffer(
                                                       NAByteMap2D* map2d,
                                                            NARecti rect,
                                                     const NAByte* buffer){
+  #ifndef NDEBUG
+    if(!buffer)
+      naCrash("naCreateByteMap2DWithRectiCopyingBuffer", "buffer is Null-Pointer.");
+  #endif
+//  if(naIsRectiEmpty(rect)){return naCreateByteMap2D(map2d);}
   map2d = naCreateByteMap2DWithRecti(map2d, rect);
-  if(map2d){
+  if(!naIsByteMap2DEmpty(map2d)){
     naCpyn(map2d->data, buffer, rect.size.width * rect.size.height);
   }
   return map2d;
@@ -254,10 +264,8 @@ NA_IAPI void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect){
   // Declaration before implementation. Needed for C90.
   NAInt v2;
   #ifndef NDEBUG
-    if(!map2d){
-      naCrash("naEnhanceByteMap2DWithRecti", "map2d is Null-Pointer.");
-      return;
-    }
+    if(!map2d)
+      {naCrash("naEnhanceByteMap2DWithRecti", "map2d is Null-Pointer."); return;}
     if(!naIsRectiValid(map2d->rect))
       naError("naEnhanceByteMap2DWithRecti",  "rect of map2d is invalid. "
                                               "Uninitialized struct?");
@@ -272,10 +280,10 @@ NA_IAPI void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect){
     NARecti enhancedrect = naMakeRectiWithRectiAndRecti(map2d->rect, rect);  
     NAInt totalsize = naGetRectiIndexCount(enhancedrect);
     #ifndef NDEBUG
-      if(!naIsRectiValid(enhancedrect))
+      if(!naIsRectiUseful(enhancedrect))
         naError("naEnhanceByteMap2DWithRecti", "enhanced rect is invalid");
-      if(totalsize < 0)
-        naError("naEnhanceByteMap2DWithRecti", "Total size exceeds int range");
+      if(totalsize <= 0)
+        {naCrash("naEnhanceByteMap2DWithRecti", "Total size invalid"); return;}
     #endif
 
 
@@ -325,12 +333,12 @@ NA_IAPI void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect){
         NAInt totaloldsize = naGetRectiIndexCount(map2d->rect);
         naCpyn(newdataptr, olddataptr, totaloldsize);
         newdataptr += totaloldsize;
-        olddataptr += totaloldsize;
+//        olddataptr += totaloldsize;
       }
       // Fill the bottom bound with binary zero.
       if(trailbound2){
         naNulln(newdataptr, trailbound2);
-        newdataptr += trailbound2;
+//        newdataptr += trailbound2;
       }
             
       // Delete the old data and attach the new one.
@@ -345,10 +353,8 @@ NA_IAPI void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect){
 
 NA_IAPI NAByte* naClampByteMap2DToRecti(NAByteMap2D* map2d, NARecti rect){
   #ifndef NDEBUG
-    if(!map2d){
-      naCrash("naClampByteMap2DToRecti", "map2d is Null-Pointer.");
-      return NA_NULL;
-    }
+    if(!map2d)
+      {naCrash("naClampByteMap2DToRecti", "map2d is Null-Pointer."); return NA_NULL;}
     if(!naIsRectiValid(map2d->rect))
       naError("naClampByteMap2DToRecti", "rect of map2d is invalid. "
                                           "Uninitialized struct?");
@@ -368,10 +374,8 @@ NA_IAPI NAByte* naClampByteMap2DToRecti(NAByteMap2D* map2d, NARecti rect){
 
 NA_IAPI NAByte* naEnhanceByteMap2DAtPosi(NAByteMap2D* map2d, NAPosi pos){
   #ifndef NDEBUG
-    if(!map2d){
-      naCrash("naEnhanceByteMap2DAtPosi", "map2d is Null-Pointer.");
-      return NA_NULL;
-    }
+    if(!map2d)
+      {naCrash("naEnhanceByteMap2DAtPosi", "map2d is Null-Pointer."); return NA_NULL;}
     if(!naIsRectiValid(map2d->rect))
       naError("naEnhanceByteMap2DAtPosi", "rect of map2d is invalid. "
                                           "Uninitialized struct?");
@@ -390,10 +394,8 @@ NA_IAPI void naFillByteMap2DWithValueInRecti( NAByteMap2D* map2d,
   // Declaration before implementation. Needed for C90.
   NAInt v2;
   #ifndef NDEBUG
-    if(!map2d){
-      naCrash("naFillByteMap2DWithValueInRecti", "map2d is Null-Pointer.");
-      return;
-    }
+    if(!map2d)
+      {naCrash("naFillByteMap2DWithValueInRecti", "map2d is Null-Pointer."); return;}
     if(!naIsRectiValid(map2d->rect))
       naError("naFillByteMap2DWithValueInRecti",  "rect of map2d is invalid. "
                                                   "Uninitialized struct?");
@@ -425,11 +427,8 @@ NA_IAPI void naFillByteMap2DWithValueInMaskedRecti(   NAByteMap2D* map2d,
   NAInt v1;
   NAInt v2;
   #ifndef NDEBUG
-    if(!map2d){
-      naCrash("naFillByteMap2DWithValueInMaskedRecti",
-              "map2d is Null-Pointer.");
-      return;
-    }
+    if(!map2d)
+      {naCrash("naFillByteMap2DWithValueInMaskedRecti", "map2d is Null-Pointer."); return;}
     if(!naIsRectiValid(map2d->rect))
       naError("naFillByteMap2DWithValueInMaskedRecti",
               "rect of map2d is invalid. Uninitialized struct?");
@@ -439,11 +438,8 @@ NA_IAPI void naFillByteMap2DWithValueInMaskedRecti(   NAByteMap2D* map2d,
     if(!naIsRectiInRecti(rect, map2d->rect))
       naError("naFillByteMap2DWithValueInMaskedRecti",
               "rect is not fully on map.");
-    if(!mask){
-      naCrash("naFillByteMap2DWithValueInMaskedRecti",
-              "mask is Null-Pointer.");
-      return;
-    }
+    if(!mask)
+      {naCrash("naFillByteMap2DWithValueInMaskedRecti", "mask is Null-Pointer."); return;}
     if(!naIsRectiValid(mask->rect))
       naError("naFillByteMap2DWithValueInMaskedRecti",
               "rect of mask is invalid. Uninitialized struct?");
@@ -474,11 +470,8 @@ NA_IAPI void naFillByteMap2DWithByteMapInMaskedRecti( NAByteMap2D* map2d,
   NAInt v1;
   NAInt v2;
   #ifndef NDEBUG
-    if(!map2d){
-      naCrash("naFillByteMap2DWithByteMapInMaskedRecti",
-              "map2d is Null-Pointer.");
-      return;
-    }
+    if(!map2d)
+      {naCrash("naFillByteMap2DWithByteMapInMaskedRecti", "map2d is Null-Pointer."); return;}
     if(!naIsRectiValid(map2d->rect))
       naError("naFillByteMap2DWithByteMapInMaskedRecti",
               "rect of map2d is invalid. Uninitialized struct?");
@@ -488,22 +481,16 @@ NA_IAPI void naFillByteMap2DWithByteMapInMaskedRecti( NAByteMap2D* map2d,
     if(!naIsRectiInRecti(rect, map2d->rect))
       naError("naFillByteMap2DWithByteMapInMaskedRecti",
               "rect is not fully on map.");
-    if(!mask){
-      naCrash("naFillByteMap2DWithByteMapInMaskedRecti",
-              "mask is Null-Pointer.");
-      return;
-    }
+    if(!mask)
+      {naCrash("naFillByteMap2DWithByteMapInMaskedRecti", "mask is Null-Pointer."); return;}
     if(!naIsRectiValid(mask->rect))
       naError("naFillByteMap2DWithByteMapInMaskedRecti",
               "rect of mask is invalid. Uninitialized struct?");
     if(!naIsRectiInRecti(rect, mask->rect))
       naError("naFillByteMap2DWithByteMapInMaskedRecti",
               "rect is not fully in mask.");
-    if(!values){
-      naCrash("naFillByteMap2DWithByteMapInMaskedRecti",
-              "values is Null-Pointer.");
-      return;
-    }
+    if(!values)
+      {naCrash("naFillByteMap2DWithByteMapInMaskedRecti", "values is Null-Pointer."); return;}
     if(!naIsRectiValid(values->rect))
       naError("naFillByteMap2DWithByteMapInMaskedRecti",
               "rect of values is invalid. Uninitialized struct?");
@@ -534,11 +521,8 @@ NA_IAPI void naFillByteMap2DWithByteMapInRecti(NAByteMap2D* map2d,
   NAPosi leadpos;
   NAInt v2;
   #ifndef NDEBUG
-    if(!map2d){
-      naCrash("naFillByteMap2DWithByteMapInMaskedRecti",
-              "map2d is Null-Pointer.");
-      return;
-    }
+    if(!map2d)
+      {naCrash("naFillByteMap2DWithByteMapInMaskedRecti", "map2d is Null-Pointer."); return;}
     if(!naIsRectiValid(map2d->rect))
       naError("naFillByteMap2DWithByteMapInMaskedRecti",
               "rect of map2d is invalid. Uninitialized struct?");
@@ -548,11 +532,8 @@ NA_IAPI void naFillByteMap2DWithByteMapInRecti(NAByteMap2D* map2d,
     if(!naIsRectiInRecti(rect, map2d->rect))
       naError("naFillByteMap2DWithByteMapInMaskedRecti",
               "rect is not fully on map.");
-    if(!values){
-      naCrash("naFillByteMap2DWithByteMapInMaskedRecti",
-              "values is Null-Pointer.");
-      return;
-    }
+    if(!values)
+      {naCrash("naFillByteMap2DWithByteMapInMaskedRecti", "values is Null-Pointer."); return;}
     if(!naIsRectiValid(values->rect))
       naError("naFillByteMap2DWithByteMapInMaskedRecti",
               "rect of values is invalid. Uninitialized struct?");
@@ -579,12 +560,10 @@ NA_IAPI void naReplaceByteMap2DValueWithValue( NAByteMap2D* map2d,
   NAInt v1;
   NAInt v2;
   #ifndef NDEBUG
-    if(!map2d){ 
-      naCrash("naReplaceByteMap2DValueWithValue", "map2d is Null-Pointer.");
-      return;
-    }
+    if(!map2d)
+      {naCrash("naReplaceByteMap2DValueWithValue", "map2d is Null-Pointer."); return;}
     if(naIsRectiEmpty(map2d->rect))
-      naCrash("naReplaceByteMap2DValueWithValue", "map2d is Empty.");
+      {naCrash("naReplaceByteMap2DValueWithValue", "map2d is Empty.");}
     if(!naIsRectiValid(map2d->rect))
       naError("naReplaceByteMap2DValueWithValue", "rect of map2d is invalid. "
                                                   "Uninitialized struct?");
@@ -609,12 +588,10 @@ NA_IAPI void naReplaceByteMap2DValueWithValue( NAByteMap2D* map2d,
 
 NA_IAPI const NAByte* naGetByteMap2DConstPointer(const NAByteMap2D* map2d){
   #ifndef NDEBUG
-    if(!map2d){
-      naCrash("naGetByteMap2DConstPointer", "map2d is Null-Pointer.");
-      return NA_NULL;
-    }
+    if(!map2d)
+      {naCrash("naGetByteMap2DConstPointer", "map2d is Null-Pointer."); return NA_NULL;}
     if(naIsRectiEmpty(map2d->rect))
-      naCrash("naGetByteMap2DConstPointer", "map2d is Empty.");
+      {naCrash("naGetByteMap2DConstPointer", "map2d is Empty."); return NA_NULL;}
     if(!naIsRectiValid(map2d->rect))
       naError("naGetByteMap2DConstPointer",  "rect of map2d is invalid. "
                                              "Uninitialized struct?");
@@ -625,12 +602,10 @@ NA_IAPI const NAByte* naGetByteMap2DConstPointer(const NAByteMap2D* map2d){
 
 NA_IAPI NAByte* naGetByteMap2DMutablePointer(NAByteMap2D* map2d){
   #ifndef NDEBUG
-    if(!map2d){
-      naCrash("naGetByteMap2DMutablePointer", "map2d is Null-Pointer.");
-      return NA_NULL;
-    }
+    if(!map2d)
+      {naCrash("naGetByteMap2DMutablePointer", "map2d is Null-Pointer."); return NA_NULL;}
     if(naIsRectiEmpty(map2d->rect))
-      naCrash("naGetByteMap2DMutablePointer", "map2d is Empty.");
+      {naCrash("naGetByteMap2DMutablePointer", "map2d is Empty."); return NA_NULL;}
     if(!naIsRectiValid(map2d->rect))
       naError("naGetByteMap2DMutablePointer",  "rect of map2d is invalid. "
                                                "Uninitialized struct?");
@@ -643,12 +618,10 @@ NA_IAPI NAByte* naGetByteMap2DMutablePointer(NAByteMap2D* map2d){
 NA_IAPI const NAByte* naGetByteMap2DConstByte(const NAByteMap2D* map2d,
                                                           NAPosi pos){
   #ifndef NDEBUG
-    if(!map2d){
-      naCrash("naGetByteMap2DConstByte", "map2d is Null-Pointer.");
-      return NA_NULL;
-    }
+    if(!map2d)
+      {naCrash("naGetByteMap2DConstByte", "map2d is Null-Pointer."); return NA_NULL;}
     if(naIsRectiEmpty(map2d->rect))
-      naCrash("naGetByteMap2DConstByte", "map2d is Empty.");
+      {naCrash("naGetByteMap2DConstByte", "map2d is Empty."); return NA_NULL;}
     if(!naIsRectiValid(map2d->rect))
       naError("naGetByteMap2DConstByte", "rect of map2d is invalid. "
                                          "Uninitialized struct?");
@@ -662,19 +635,17 @@ NA_IAPI const NAByte* naGetByteMap2DConstByte(const NAByteMap2D* map2d,
 NA_IAPI NAByte* naGetByteMap2DMutableByte(NAByteMap2D* map2d, NAPosi pos){
   NAInt indx;
   #ifndef NDEBUG
-    if(!map2d){
-      naCrash("naGetByteMap2DMutableByte", "map2d is Null-Pointer.");
-      return NA_NULL;
-    }
+    if(!map2d)
+      {naCrash("naGetByteMap2DMutableByte", "map2d is Null-Pointer."); return NA_NULL;}
     if(naIsRectiEmpty(map2d->rect))
-      naCrash("naGetByteMap2DMutableByte", "map2d is Empty.");
+      {naCrash("naGetByteMap2DMutableByte", "map2d is Empty."); return NA_NULL;}
     if(!naIsRectiValid(map2d->rect))
       naError("naGetByteMap2DMutableByte", "rect of map2d is invalid. "
                                          "Uninitialized struct?");
     if(!naIsPosiInRecti(pos, map2d->rect))
       naError("naGetByteMap2DMutableByte", "pos outside of map");
   #endif
-  indx = naGetRectiIndexOfPosi(map2d->rect, pos);
+//  indx = naGetRectiIndexOfPosi(map2d->rect, pos);
   return &(map2d->data[naGetRectiIndexOfPosi(map2d->rect, pos)]);
 }
 
@@ -682,12 +653,10 @@ NA_IAPI NAByte* naGetByteMap2DMutableByte(NAByteMap2D* map2d, NAPosi pos){
 
 NA_IAPI NABool naIsPosiInByteMap(NAPosi pos, const NAByteMap2D* map2d){
   #ifndef NDEBUG
-    if(!map2d){
-      naCrash("naIsPosiInByteMap", "map2d is Null-Pointer.");
-      return NA_FALSE;
-    }
+    if(!map2d)
+      {naCrash("naIsPosiInByteMap", "map2d is Null-Pointer."); return NA_FALSE;}
     if(naIsRectiEmpty(map2d->rect))
-      naCrash("naIsPosiInByteMap", "map2d is Empty.");
+      {naCrash("naIsPosiInByteMap", "map2d is Empty."); return NA_FALSE;}
     if(!naIsRectiValid(map2d->rect))
       naError("naIsPosiInByteMap", "rect of map2d is invalid. "
                                          "Uninitialized struct?");
@@ -698,10 +667,8 @@ NA_IAPI NABool naIsPosiInByteMap(NAPosi pos, const NAByteMap2D* map2d){
 
 NA_IAPI NARecti naGetByteMap2DRecti(const NAByteMap2D* map2d){
   #ifndef NDEBUG
-    if(!map2d){
-      naCrash("naGetByteMap2DRect", "map2d is Null-Pointer.");
-      return naMakeRecti(naMakePosi(0, 0), naMakeSizei(0, 0));
-    }
+    if(!map2d)
+      {naCrash("naGetByteMap2DRect", "map2d is Null-Pointer."); return naMakeRecti(naMakePosi(0, 0), naMakeSizei(0, 0));}
     // Note that the following empty-check has been removed. It is a warning
     // which is very annoying. At first, there existed a separate function
     // naIsByteMap2DEmpty to solve that but the author himself found this to
@@ -719,10 +686,8 @@ NA_IAPI NARecti naGetByteMap2DRecti(const NAByteMap2D* map2d){
 
 NA_IAPI NABool naIsByteMap2DEmpty(const NAByteMap2D* map2d){
   #ifndef NDEBUG
-    if(!map2d){
-      naCrash("naIsByteMap2DEmpty", "map2d is Null-Pointer.");
-      return NA_TRUE;
-    }
+    if(!map2d)
+      {naCrash("naIsByteMap2DEmpty", "map2d is Null-Pointer."); return NA_TRUE;}
   #endif
   return naIsRectiEmpty(map2d->rect);
 }

@@ -368,7 +368,7 @@ NA_IDEF void naDecoupleByteArray(NAByteArray* array,
                                        NABool appendzerobytes){
   // Declaration before implementation. Needed for C90.
   NAInt arraysize;
-  NAByteArray* newarray;
+  NAByteArray newarray;
   #ifndef NDEBUG
     if(!array)
       {naCrash("naDecoupleByteArray", "array is Null-Pointer."); return;}
@@ -378,15 +378,17 @@ NA_IDEF void naDecoupleByteArray(NAByteArray* array,
   arraysize = naGetByteArraySize(array);
   if(!arraysize){return;}
   if(appendzerobytes){
-    newarray = naCreateByteArrayWithSize(NA_NULL, -arraysize);
+    naCreateByteArrayWithSize(&newarray, -arraysize);
   }else{
-    newarray = naCreateByteArrayWithSize(NA_NULL, arraysize);
+    naCreateByteArrayWithSize(&newarray, arraysize);
   }
-  naCpyn(newarray->ptr.p, array->ptr.constp, arraysize);
+  naCpyn(newarray.ptr.p, array->ptr.constp, arraysize);
   naClearByteArray(array);
-  array->ptr = newarray->ptr;
-  array->size = newarray->size;
-  array->storage = newarray->storage;
+  array->size = newarray.size;
+  if(array->size){
+    array->ptr = newarray.ptr;
+    array->storage = newarray.storage;
+  }
 }
 
 

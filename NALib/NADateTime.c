@@ -487,6 +487,10 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
 
 
 NA_DEF NADateTime naMakeDateTimeFromPointer(const void* data, NABinDateTimeFormat format){
+  #ifndef NDEBUG
+    if(!data)
+      {naCrash("naMakeDateTimeFromPointer", "data is Null-Pointer."); return;}
+  #endif
   NADateTimeStruct dts;
   uint16 valueu16;
   switch(format){
@@ -526,7 +530,7 @@ NA_DEF NAByteArray* naCreateByteArrayFromDateTime( NAByteArray* bytearray, const
   switch(format){
   case NA_DATETIME_FORMAT_ICC_PROFILE:    
     // ICC section 5.1.1, page 4, dateTimeNumber
-    naCreateByteArrayWithSize(bytearray, 12);
+    bytearray = naCreateByteArrayWithSize(bytearray, 12);
     ptr = naGetByteArrayMutablePointer(bytearray);
     
     valueu16 = (uint16)dts.year;
