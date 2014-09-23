@@ -27,6 +27,7 @@
 //
 // Following are the definitions of valid elements used in NALib:
 // Pos:  A position is considered valid if none of the fields is NaN.
+//       Integer positions are always valid.
 // Size: A size is considered valid, if none of the fields is NaN.
 //       A size of zero is considered valid because this is commonly used to
 //       mark empty structures. But be careful! It is just NOT DEFINED as
@@ -93,6 +94,21 @@ struct NARecti{
   NASizei size;
 };
 
+typedef struct NABounds4 NABounds4;
+struct NABounds4{
+  double  top;
+  double  right;
+  double  bottom;
+  double  left;
+};
+typedef struct NABounds4i NABounds4i;
+struct NABounds4i{
+  NAInt  top;
+  NAInt  right;
+  NAInt  bottom;
+  NAInt  left;
+};
+
 
 // Create the various elements
 // The Variants with E also allow the sizes and rects to be empty or negative.
@@ -106,6 +122,9 @@ NA_IAPI NASizei   naMakeSizei   (NAInt  width,  NAInt   height);
 NA_IAPI NASizei   naMakeSizeiE  (NAInt  width,  NAInt   height);
 NA_IAPI NARecti   naMakeRecti   (NAPosi pos,    NASizei size);
 NA_IAPI NARecti   naMakeRectiE  (NAPosi pos,    NASizei size);
+
+NA_IAPI NABounds4   naMakeBounds4   (double top, double right, double bottom, double left);
+NA_IAPI NABounds4i  naMakeBounds4i  (NAInt top, NAInt right, NAInt bottom, NAInt left);
 
 // Create the bounding box of two elements. The size of the resulting rect will
 // never be negative.
@@ -369,6 +388,43 @@ NA_IAPI NARecti naMakeRectiE(NAPosi pos, NASizei size){
   newrect.size = size;
   return newrect;
 }
+
+
+
+
+NA_IAPI NABounds4 naMakeBounds4(double top, double right, double bottom, double left){
+  NABounds4 newbounds;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!naIsSizeFieldValid(top) || !naIsSizeFieldValid(right) || !naIsSizeFieldValid(bottom) || !naIsSizeFieldValid(left))
+      naError("naMakeBounds4", "Invalid values given.");
+    if((top < 0.) || (right < 0.) || (bottom < 0.) || (left < 0.))
+      naError("naMakeBounds4", "Invalid values given.");
+  #endif
+  newbounds.top = top;
+  newbounds.right = right;
+  newbounds.bottom = bottom;
+  newbounds.left = left;
+  return newbounds;
+}
+
+
+NA_IAPI NABounds4i naMakeBounds4i(NAInt top, NAInt right, NAInt bottom, NAInt left){
+  NABounds4i newbounds;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!naIsSizeiFieldValid(top) || !naIsSizeiFieldValid(right) || !naIsSizeiFieldValid(bottom) || !naIsSizeiFieldValid(left))
+      naError("naMakeBounds4i", "Invalid values given.");
+    if((top < 0) || (right < 0) || (bottom < 0) || (left < 0))
+      naError("naMakeBounds4i", "Invalid values given.");
+  #endif
+  newbounds.top = top;
+  newbounds.right = right;
+  newbounds.bottom = bottom;
+  newbounds.left = left;
+  return newbounds;
+}
+
+
+
 
 
 NA_IAPI NARect naMakeRectWithPosAndPos(NAPos pos1, NAPos pos2){

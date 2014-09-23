@@ -23,6 +23,7 @@ correct, complete or final.
 - Fixed some memory leaks and logical errors
 - naCreateByteMap2DWithRectiCopyingBuffer now works with empty rects
 - made some coordinate tests more reliable
+- Added NABounds4i
 
 
 Version 6 (first published 2014-August-25):

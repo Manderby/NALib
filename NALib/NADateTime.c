@@ -489,7 +489,7 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
 NA_DEF NADateTime naMakeDateTimeFromPointer(const void* data, NABinDateTimeFormat format){
   #ifndef NDEBUG
     if(!data)
-      {naCrash("naMakeDateTimeFromPointer", "data is Null-Pointer."); return;}
+      {naCrash("naMakeDateTimeFromPointer", "data is Null-Pointer."); return naMakeDateTimeNow();}
   #endif
   NADateTimeStruct dts;
   uint16 valueu16;

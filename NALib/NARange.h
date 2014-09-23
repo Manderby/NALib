@@ -150,7 +150,7 @@ NA_IAPI NABool naInsideNormEEf(float x);
 // Additionally to the above min- and max-functions, NALib provides a
 // datastructure NARange which holds an offset and a size for one dimension.
 // For simplification, offset is usually called pos. First however, some
-// helper functions working with single values rather than datastructures.
+// helper functions working with single values rather than datastructures:
 
 // This function alters the given pos and size such that size will become
 // positive while retaining the depicted range. For example with doubles:
@@ -166,7 +166,7 @@ NA_IAPI void naMakePositive      (double* NA_RESTRICT pos,
 NA_IAPI void naMakeiPositive     (NAInt*  NA_RESTRICT pos,
                                   NAInt*  NA_RESTRICT size);
 
-// This function alters the given pos and size such that the resulting range
+// This function alters negative pos and/or size such that the resulting range
 // will be fully be contained in a range given by [0, containingsize] for
 // floating point values or [0, containingsize-1] for integers. Negative
 // values are treated as follows and in the following order:
@@ -205,7 +205,7 @@ struct NARangei{
 };
 
 // Filling the structs with values. Note that the integer functions also
-// provide a function to work with end instead of max. end = max + 1
+// provide a function to work with end instead of max. (end = max + 1)
 NA_IAPI NARange  naMakeRange( double pos, double size);
 NA_IAPI NARangef naMakeRangef(float  pos, float  size);
 NA_IAPI NARangei naMakeRangei(NAInt  pos, NAInt  size);
@@ -518,7 +518,7 @@ NA_IHLP NABool naIsPosFieldValid(double a){
   return !naIsNaN(a);
 }
 NA_IHLP NABool naIsPosfFieldValid(float a){
-  return !naIsNaN(a);
+  return !naIsNaNf(a);
 }
 NA_IHLP NABool naIsPosiFieldValid(NAInt a){
   NA_UNUSED_PARAMETER(a);
