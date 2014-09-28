@@ -14,9 +14,6 @@
 // preprocessor macros.
 
 
-// The version of this very distribution. No sub-version or build number or
-// whatever. Just one single integer number.
-#define NA_LIB_VERSION 3
 
 // The various Systems:
 #define NA_SYSTEM_MAC_OS_X  0

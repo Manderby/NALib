@@ -1290,15 +1290,48 @@ uint64 naGetStringUInt64(const NAString* string){
 
 
 
-NABool naIsStringEqualToUTF8Pointer(const NAString* string,
-                                  const NAUTF8Char* ptr){
+NABool naEqualStringToUTF8CStringLiteral(const NAString* string,
+                                       const NAUTF8Char* ptr){
   NAInt stringsize = naGetStringSize(string);
   NAInt ptrsize = naStrlen(ptr);
   if(stringsize != ptrsize){return NA_FALSE;}
-  return !memcmp(string, ptr, (size_t)stringsize);
+  return !memcmp(naGetByteArrayConstPointer(&(string->array)), ptr, (size_t)stringsize);
 }
 
 
+
+NABool naEqualStringToString(     const NAString* string1,
+                                  const NAString* string2){
+  NAInt stringsize1 = naGetStringSize(string1);
+  NAInt stringsize2 = naGetStringSize(string2);
+  if(stringsize1 != stringsize2){return NA_FALSE;}
+  if(stringsize1 == 0){return NA_TRUE;}
+  return !memcmp(naGetByteArrayConstPointer(&(string1->array)), naGetByteArrayConstPointer(&(string2->array)), (size_t)stringsize1);
+}
+
+
+
+
+NABool naEqualUTF8CStringLiteralsCaseInsensitive( const NAUTF8Char* string1,
+                                                  const NAUTF8Char* string2){
+  NAInt i;  // declaration before implementaiton. Needed for C90
+  NAInt stringsize1 = naStrlen(string1);
+  NAInt stringsize2 = naStrlen(string2);
+  if(stringsize1 != stringsize2){return NA_FALSE;}
+  if(stringsize1 == 0){return NA_TRUE;}
+  const NAUTF8Char* curchar1ptr = string1;
+  const NAUTF8Char* curchar2ptr = string2;
+  for(i=0; i<stringsize1; i++){
+    NAUTF8Char curchar1;
+    NAUTF8Char curchar2;
+    if(isalpha(*curchar1ptr)){curchar1 = tolower(*curchar1ptr);}else{curchar1 = *curchar1ptr;}
+    if(isalpha(*curchar2ptr)){curchar2 = tolower(*curchar2ptr);}else{curchar2 = *curchar2ptr;}
+    if(curchar1 != curchar2){return NA_FALSE;}
+    curchar1ptr++;
+    curchar2ptr++;
+  }
+  return NA_TRUE;
+}
 
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH

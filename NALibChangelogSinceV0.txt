@@ -19,11 +19,17 @@ correct, complete or final.
   naMakeRectiE. Corrected a debug error in naMakeRectiWithRectiAndPosiE.
 - Added NAMap2D
 - Added naClampByteMap2DToRecti
+- Added error numbers to NADateTime and naGetDateTimeErrorString
 - Fixed an error in naCreateByteArrayFromDateTime
 - Fixed some memory leaks and logical errors
 - naCreateByteMap2DWithRectiCopyingBuffer now works with empty rects
 - made some coordinate tests more reliable
 - Added NABounds4i
+- Renamed naIsStringEqualToUTF8Pointer to naEqualStringToUTF8CStringLiteral.
+  Fixed a bug and added naEqualStringToString
+- naGetMonthNumberWithEnglishAbbreviation now returns -1 on failure. Added
+  naGetMonthNumberFromUTF8CStringLiteral for other input strings
+- Removed NA_LIB_VERSION. There must be a better solution in the future.
 
 
 Version 6 (first published 2014-August-25):

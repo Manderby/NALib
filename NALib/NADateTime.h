@@ -9,6 +9,7 @@
 #endif
 
 #include "NASystem.h"
+#include "NAString.h"
 
 
 // Puts the current thread on hold for the specified amount of time.
@@ -36,6 +37,19 @@ typedef enum{
 typedef enum{
   NA_DATETIME_FORMAT_ICC_PROFILE
 } NABinDateTimeFormat;
+
+typedef enum{
+  NA_DATETIME_ERROR_NONE = 0,
+  NA_DATETIME_ERROR_JULIAN_GREGORIAN_CHASM,
+  NA_DATETIME_ERROR_INVALID_MONTH_NUMBER,
+  NA_DATETIME_ERROR_INVALID_DAY_NUMBER,
+  NA_DATETIME_ERROR_INVALID_HOUR_NUMBER,
+  NA_DATETIME_ERROR_INVALID_MINUTE_NUMBER,
+  NA_DATETIME_ERROR_INVALID_SECOND_NUMBER,
+  NA_DATETIME_ERROR_COUNT
+} NADateTimeError;
+
+
 
 
 #define NA_SECONDS_PER_MINUTE                (60LL)
@@ -66,20 +80,21 @@ typedef enum{
 // NA_SECONDS_IN_400_YEAR_PERIOD:       12622780800
 
 
-#define NA_DATETIME_FLAG_SUMMERTIME 0x0001
+#define NA_DATETIME_FLAG_SUMMERTIME 0x01
 
 
 typedef struct NADateTimeStruct NADateTimeStruct;
 struct NADateTimeStruct{
-  int64  year;   // year number in astronomic numbering (neg, 0 and pos)
-  int32  mon;    // month number in [0, 11].   Beware the 0-index!
-  int32  day;    // day number in [0, 30].     Beware the 0-index!
-  int32  hour;   // hour number in [0, 23]
-  int32  min;    // minute number in [0, 59]
-  int32  sec;    // second number in [0, 69] (may contain leap seconds)
-  int32  nsec;   // Nanosecond number in [0, 999999999]
-  int16  shift;  // time shift in minutes (positive or negative)
-  uint16 flags;  // Various flags.
+  int64  year;      // year number in astronomic numbering (neg, 0 and pos)
+  int32  mon;       // month number in [0, 11].   Beware the 0-index!
+  int32  day;       // day number in [0, 30].     Beware the 0-index!
+  int32  hour;      // hour number in [0, 23]
+  int32  min;       // minute number in [0, 59]
+  int32  sec;       // second number in [0, 69] (may contain leap seconds)
+  int32  nsec;      // Nanosecond number in [0, 999999999]
+  int16  shift;     // time shift in minutes (positive or negative)
+  uint8  errornum;  // The errornum when constructed from a stamp.
+  uint8  flags;     // Various flags.
 };
 
 typedef struct NADateTimeAttribute NADateTimeAttribute;
@@ -96,16 +111,21 @@ struct NADateTimeAttribute{
 
 typedef struct NADateTime NADateTime;
 struct NADateTime{
-  int64  sisec;  // SI-second number starting Jan 1st 1958, 00:00 + 00:00
-  int32  nsec;   // nanosecond number in range [0, 999999999]
-  int16  shift;  // time shift in minutes
-  uint16 flags;  // Various flags.
+  int64  sisec;     // SI-second number starting Jan 1st 1958, 00:00 + 00:00
+  int32  nsec;      // nanosecond number in range [0, 999999999]
+  int16  shift;     // time shift in minutes
+  uint8  errornum;  // error number in case invalid values were given.
+  uint8  flags;     // Various flags.
 };
 
 
 // Returns the month number (0-indexed) of an english month abbreviation.
 // For example: "Nov" -> 10
 NA_API int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str);
+// Reads Strings like "November", abbreviations like "Nov" and numbers like "11"
+// and returns the 0-indexed month number. So, an input like "11" returns 10.
+// Comparison is done case-insensitive.
+NA_API int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str);
 
 // Returns true if the given year number is a leap year.
 NA_API NABool naIsLeapYearJulian      (int64 year);
@@ -149,6 +169,10 @@ NA_API NADateTime naMakeDateTimeFromString( const NAString* string,
 // Creates a new NADateTime struct from a given data block with a given format.
 NA_API NADateTime naMakeDateTimeFromPointer(  const void* data,
                                         NABinDateTimeFormat format);
+
+// Returns a pointer to a C-string containing an error message corresponding
+// to the given error number.
+NA_API const char* naGetDateTimeErrorString(uint8 errornum);
 
 // Creates a byte array with the given format.
 NA_API NAByteArray* naCreateByteArrayFromDateTime( NAByteArray* bytearray,

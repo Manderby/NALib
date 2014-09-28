@@ -400,8 +400,17 @@ uint32 naGetStringUInt32(const NAString* string);
 uint64 naGetStringUInt64(const NAString* string);
 
 // Tests if the content of the given pointer is equal to the contents of string.
-NABool naIsStringEqualToUTF8Pointer(const NAString* string,
-                                  const NAUTF8Char* ptr);
+NABool naEqualStringToUTF8CStringLiteral(const NAString* string,
+                                       const NAUTF8Char* ptr);
+// Tests the equality of two NAStrings
+NABool naEqualStringToString(     const NAString* string1,
+                                  const NAString* string2);
+// Compares two pointers case insensitive. Note that this function is not
+// fully developed and will likely change in the future. No collation setting
+// available yet. Currently, only ASCII characters in the range [32-126] are
+// considered.
+NABool naEqualUTF8CStringLiteralsCaseInsensitive( const NAUTF8Char* string1,
+                                                  const NAUTF8Char* string2);
 
 
 

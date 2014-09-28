@@ -22,8 +22,20 @@
 int16  na_globaltimeshift = 0;
 NABool na_globalsummertime = NA_FALSE;
 
-// Needed for certain NAAscDateTimeFormat
+const char* na_monthenglishnames[12] = {"January", "February", "March", "April", "Mai", "June", "July", "August", "September", "October", "November", "December"};
 const char* na_monthenglishabbreviationnames[12] = {"Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+const char* na_datetime_errorstrings[NA_DATETIME_ERROR_COUNT] = {
+  "No Error",
+  "Date lies between Julian and Gregorian calendar.",
+  "Invalid month number (0 is January).",
+  "Invalid day number (0 is first day of month)",
+  "Invalid hour number.",
+  "Invalid minute number.",
+  "Invalid second number.",
+};
+
+
 
 // stores the day index of the first day of each month both for a normal and
 // a leap year. This structure speeds up the implementation quite a bit
@@ -257,16 +269,39 @@ NA_DEF NAInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond){
 
 
 NA_DEF int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str){
-  int i;
+  int32 i;
   for(i=0; i<NA_MONTHS_PER_YEAR; i++){
-    if(naIsStringEqualToUTF8Pointer(str, na_monthenglishabbreviationnames[i])){return i;}
+    if(naEqualStringToUTF8CStringLiteral(str, na_monthenglishabbreviationnames[i])){return i;}
   }
   #ifndef NDEBUG
-    naError("naGetMonthNumberWithEnglishAbbreviation", "Month abbreviation unknown. Returning January.");
+    naError("naGetMonthNumberWithEnglishAbbreviation", "Month abbreviation unknown. Returning -1.");
   #endif
-  return 0;
+  return -1;
 }
 
+
+NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
+  int32 i;
+  NAInt len = naStrlen(str);
+  if(!len){return -1;}
+  for(i=0; i<NA_MONTHS_PER_YEAR; i++){
+    if(naEqualUTF8CStringLiteralsCaseInsensitive(str, na_monthenglishnames[i])){return i;}
+  }
+  for(i=0; i<NA_MONTHS_PER_YEAR; i++){
+    if(naEqualUTF8CStringLiteralsCaseInsensitive(str, na_monthenglishabbreviationnames[i])){return i;}
+  }
+  if(isnumber(str[0])){
+    NAString numberstring;
+    naCreateStringWithUTF8CStringLiteral(&numberstring, str);
+    int32 returnint = naGetStringInt32(&numberstring) - 1;
+    naClearString(&numberstring);
+    return returnint;
+  }
+  #ifndef NDEBUG
+    naError("naGetMonthNumberWithEnglishAbbreviation", "Month abbreviation unknown. Returning -1.");
+  #endif
+  return -1;
+}
 
 
 NA_DEF NABool naIsLeapYearJulian(int64 year){
@@ -315,6 +350,7 @@ NA_DEF NADateTime naMakeDateTimeNow(){
 
 NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
   NADateTime datetime;
+  datetime.errornum = NA_DATETIME_ERROR_NONE;
 
   int64 remainingyears = dts->year;
   int64 years400;
@@ -323,7 +359,7 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
   NABool isleap;
   NACalendarSystem calendarsystem;
   if((dts->year == 1582) && (dts->mon == 9) && (dts->day > 3) && (dts->day < 14)){
-    printf("The specified date does not exist. Assuming date in Julian calendar but might be different when outputted.\n");
+    datetime.errornum = NA_DATETIME_ERROR_JULIAN_GREGORIAN_CHASM;
   }
   if((dts->year < 1582) || ((dts->year == 1582) && ((dts->mon < 9) || ((dts->mon == 9) && (dts->day < 14))))){
     // julian system
@@ -354,17 +390,17 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
     datetime.sisec += NA_SECONDS_IN_LEAP_YEAR; remainingyears--;
     datetime.sisec += remainingyears * NA_SECONDS_IN_NORMAL_YEAR;
   }
-  if((dts->mon < 0) || (dts->mon > 11)){printf("Invalid month number.\n");}
+  if((dts->mon < 0) || (dts->mon > 11)){datetime.errornum = NA_DATETIME_ERROR_INVALID_MONTH_NUMBER;}
   datetime.sisec += na_cumulativemonthstartdays[2 * dts->mon + isleap] * NA_SECONDS_PER_DAY;
-  if((dts->day < 0) || ((na_cumulativemonthstartdays[2 * dts->mon + isleap] + dts->day) >= na_cumulativemonthstartdays[2 * (dts->mon + 1) + isleap])){printf("Invalid day of month.\n");}
+  if((dts->day < 0) || ((na_cumulativemonthstartdays[2 * dts->mon + isleap] + dts->day) >= na_cumulativemonthstartdays[2 * (dts->mon + 1) + isleap])){datetime.errornum = NA_DATETIME_ERROR_INVALID_DAY_NUMBER;}
   datetime.sisec += dts->day * NA_SECONDS_PER_DAY;
-  if((dts->hour < 0) || (dts->hour > 23)){printf("Invalid hour number.\n");}
+  if((dts->hour < 0) || (dts->hour > 23)){datetime.errornum = NA_DATETIME_ERROR_INVALID_HOUR_NUMBER;}
   datetime.sisec += dts->hour * NA_SECONDS_PER_HOUR;
-  if((dts->min < 0) || (dts->min > 59)){printf("Invalid minute number.\n");}
+  if((dts->min < 0) || (dts->min > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_MINUTE_NUMBER;}
   datetime.sisec += dts->min * NA_SECONDS_PER_MINUTE;
   if(calendarsystem == NA_CALENDAR_SYSTEM_GREGORIAN_WITH_LEAP_SECONDS){
     if(datetime.sisec >= naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec){
-      if((dts->sec < 0) || (dts->sec > 59)){printf("Invalid second number.\n");}
+      if((dts->sec < 0) || (dts->sec > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
       datetime.sisec += naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec - naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startgregsec;
     }else{
       NAInt r = naGetLatestTAIPeriodIndexForGregorianSecond(datetime.sisec);
@@ -375,19 +411,19 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
         if((naTAIPeriods[r+1].indicator == NA_POSITIVE_LEAP_SECONDS_JUNE) || (naTAIPeriods[r+1].indicator == NA_POSITIVE_LEAP_SECONDS_DECEMBER)){
           if(datetime.sisec >= naTAIPeriods[r+2].startsisec){
             // The leap seconds are overflown
-            printf("Invalid second number.\n");
+            datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;
           }
         }else{
           // The period overflown has no leap seconds
-          printf("Invalid second number.\n");
+          datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;
         }
       }else{
-        if((dts->sec < 0) || (dts->sec > 59)){printf("Invalid second number.\n");}
+        if((dts->sec < 0) || (dts->sec > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
       }
       datetime.sisec -= dts->sec;
     }
   }else{
-    if((dts->sec < 0) || (dts->sec > 59)){printf("Invalid second number.\n");}
+    if((dts->sec < 0) || (dts->sec > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
   }
   datetime.sisec += dts->sec;
   datetime.sisec -= (dts->shift * NA_SECONDS_PER_MINUTE);
@@ -413,6 +449,8 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
   NAString token;
   int16 int16value;
   
+  dts.nsec = 0;
+  
   naCreateStringExtraction(&str, string, 0, -1);
   naCreateString(&token);
 
@@ -436,12 +474,12 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
     break;
   case NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT:
     dts.year = naParseStringInt64(&str, NA_TRUE);
-    dts.mon = naParseStringInt32(&str, NA_TRUE);
-    dts.day = naParseStringInt32(&str, NA_TRUE);
+    dts.mon = naParseStringInt32(&str, NA_TRUE) - 1;
+    dts.day = naParseStringInt32(&str, NA_TRUE) - 1;
 
     dts.hour = naParseStringInt32(&str, NA_TRUE);
     dts.min = naParseStringInt32(&str, NA_TRUE);
-    dts.sec = naParseStringInt32(&str, NA_TRUE);
+    dts.sec = naParseStringInt32(&str, NA_FALSE   );
 
     dts.shift = naParseStringInt16(&str, NA_TRUE) * NA_MINUTES_PER_HOUR;
     if(dts.shift < 0){
@@ -516,6 +554,16 @@ NA_DEF NADateTime naMakeDateTimeFromPointer(const void* data, NABinDateTimeForma
 }
 
 
+
+NA_API const char* naGetDateTimeErrorString(uint8 errornum){
+  if(errornum >= NA_DATETIME_ERROR_COUNT){
+    #ifdef NDEBUG
+      naError("naGetDateTimeErrorString", "Error number invalid");
+    #endif
+    return NA_NULL;
+  }
+  return na_datetime_errorstrings[errornum];
+}
 
 
 
@@ -679,6 +727,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
   NA_DEF NADateTime naMakeDateTimeFromFileTime(const FILETIME* filetime, const NATimeZone* timezn){
     int64 nanosecs = ((int64)filetime->dwHighDateTime << 32) | filetime->dwLowDateTime;
     NADateTime datetime;
+    datetime.errornum = NA_DATETIME_ERROR_NONE;
     NAInt taiperiod;
     datetime.nsec = (nanosecs % 10000000) * 100;  // 100-nanosecond intervals.
     datetime.sisec = nanosecs / 10000000 + NA_GREG_SECONDS_SINCE_BEGIN_1601;
@@ -735,6 +784,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
 
   NA_DEF NADateTime naMakeDateTimeFromTimeSpec(const struct timespec* timesp, const NATimeZone* timezn){
     NADateTime datetime;
+    datetime.errornum = NA_DATETIME_ERROR_NONE;
     int64 datetimesec = timesp->tv_sec + NA_GREG_SECONDS_TILL_BEGIN_1970;
     if(datetimesec >= 0){
       NAInt taiperiod = naGetLatestTAIPeriodIndexForGregorianSecond(datetimesec);
@@ -789,6 +839,7 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
   dts->sec = 0;
   dts->nsec = datetime->nsec;
   dts->shift = datetime->shift;
+  dts->errornum = datetime->errornum;
   dts->flags = datetime->flags;
   remainingsecs = datetime->sisec + (dts->shift * NA_SECONDS_PER_MINUTE);
   
@@ -967,6 +1018,7 @@ NA_DEF void naExtractDateTimeUTCInformation(const NADateTime* datetime,
 NA_DEF void naSetDateTimeZone( NADateTime* datetime,
                               int16 newshift,
                              NABool summertime){
+  datetime->errornum = NA_DATETIME_ERROR_NONE;
   datetime->shift = newshift;
   if(summertime){
     datetime->flags |= NA_DATETIME_FLAG_SUMMERTIME;
@@ -979,6 +1031,7 @@ NA_DEF void naSetDateTimeZone( NADateTime* datetime,
 NA_DEF void naCorrectDateTimeZone( NADateTime* datetime,
                                   int16 newshift,
                                  NABool summertime){
+  datetime->errornum = NA_DATETIME_ERROR_NONE;
   datetime->sisec -= (datetime->shift * NA_SECONDS_PER_MINUTE);
   datetime->sisec += (newshift * NA_SECONDS_PER_MINUTE);
   naSetDateTimeZone(datetime, newshift, summertime);
@@ -1001,6 +1054,7 @@ NA_DEF double naGetDateTimeDiff(const NADateTime* end, const NADateTime* start){
 
 
 NA_DEF void naAddDateTimeDifference(NADateTime* datetime, double difference){
+  datetime->errornum = NA_DATETIME_ERROR_NONE;
   int64 fullsecs = (int64)difference;
   int32 nanosecs = (int32)((difference - (double)fullsecs) * 1e9);
   if(difference < 0){
@@ -1075,6 +1129,7 @@ NA_DEF NABool naHasDateTimeSummerTime(const NADateTime* datetime){
 }
 
 NA_DEF void naSetDateTimeSummertime(NADateTime* datetime, NABool summertime){
+  datetime->errornum = NA_DATETIME_ERROR_NONE;
   if(summertime){
     if(datetime->flags & NA_DATETIME_FLAG_SUMMERTIME){return;}
     datetime->flags |= NA_DATETIME_FLAG_SUMMERTIME;
@@ -1118,7 +1173,7 @@ NA_DEF int64 naGetFirstUncertainSecondNumber(){
 
 NA_DEF NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber){
   NAInt taiperiod;
-  if(olduncertainsecondnumber < 0){printf("Invalid second number.\n"); return INVALID_UNCERTAIN_SECOND_NUMBER;}
+  if(olduncertainsecondnumber < 0){return INVALID_UNCERTAIN_SECOND_NUMBER;}
   // Note that the last entry of the structure storing all TAI periods always
   // is a non-leap-second-entry.
   if(olduncertainsecondnumber == naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec){return NO_CORRECTION_NEEDED;}
@@ -1137,6 +1192,7 @@ NA_DEF NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber){
 
 NA_DEF void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
                                            NAInt leapsecondcorrectionconstant){
+  datetime->errornum = NA_DATETIME_ERROR_NONE;
   NAInt taiperiod;
   if(leapsecondcorrectionconstant < 0){return;}
   if(datetime->sisec < naTAIPeriods[leapsecondcorrectionconstant].startsisec){return;}
