@@ -7,6 +7,7 @@
 #include "NABinaryData.h"
 #include "NAEndianness.h"
 #include "NAMathOperators.h"
+#include "ctype.h"
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   #include <time.h>
