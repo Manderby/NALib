@@ -558,7 +558,7 @@ NA_DEF NADateTime naMakeDateTimeFromPointer(const void* data, NABinDateTimeForma
 
 NA_API const char* naGetDateTimeErrorString(uint8 errornum){
   if(errornum >= NA_DATETIME_ERROR_COUNT){
-    #ifdef NDEBUG
+    #ifndef NDEBUG
       naError("naGetDateTimeErrorString", "Error number invalid");
     #endif
     return NA_NULL;
