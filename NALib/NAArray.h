@@ -151,7 +151,7 @@ struct NAArray{
 
 
 NA_IDEF NAArray* naCreateArray(NAArray* array){
-  array = naAllocateIfNull(array, sizeof(NAArray));
+  array = (NAArray*)naAllocateIfNull(array, sizeof(NAArray));
   naCreateByteArray(&(array->bytearray));
   naOnei(&(array->typesize));
   return array;
