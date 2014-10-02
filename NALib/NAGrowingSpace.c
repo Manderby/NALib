@@ -134,12 +134,11 @@ void* naGetGrowingSpaceMutableElement(NAGrowingSpace* space, NAInt indx){
 
 
 NAArray* naCreateArrayOutOfGrowingSpace(NAArray* array, NAGrowingSpace* space, NABool copying){
-  array = naAllocateIfNull(array, sizeof(NAArray));
   if(copying){
-    naCreateArrayWithCount(array, space->array.typesize, space->usedcount);
+    array = naCreateArrayWithCount(array, space->array.typesize, space->usedcount);
     naCpyn(naGetByteArrayMutablePointer(&(array->bytearray)), naGetByteArrayMutablePointer(&(space->array.bytearray)), space->usedcount * space->array.typesize);
   }else{
-    naCreateArrayExtraction(array, &(space->array), 0, space->usedcount);
+    array = naCreateArrayExtraction(array, &(space->array), 0, space->usedcount);
   }
   return array;
 }
