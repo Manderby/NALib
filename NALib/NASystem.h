@@ -14,7 +14,6 @@
 // preprocessor macros.
 
 
-
 // The various Systems:
 #define NA_SYSTEM_MAC_OS_X  0
 #define NA_SYSTEM_WINDOWS   1
@@ -174,6 +173,8 @@
 #define NA_IDEF   static NA_INLINE
 #define NA_HLP    NA_SYMBOL_HIDDEN
 #define NA_IHLP   static NA_INLINE
+
+#define NA_NORETURN   _Noreturn
 
 
 #ifndef va_copy
@@ -421,10 +422,14 @@ typedef int NABool;
 // implementation file (and therefore a separate translation unit) due to that
 // reason.
 //
-// Also note that in NALib, any code executed within NDEBUG will not alter any
-// values. In other words: Except from speed differences and outputs to strerr,
-// NALib will NOT behave differently depending on NDEBUG being defined or not. 
-// There is just one exception: naAllocate.
+// Also note that in NALib, code executed within NDEBUG will not alter the
+// runtime execution. In other words: Except from speed differences and outputs
+// to strerr, NALib will NOT behave differently depending on NDEBUG being
+// defined or not. The only remark is that calls to naCrash will eventually
+// lead to an exit(EXIT_FAILURE) call before the real error is executed.
+// If you use code sanity checking (for example clang analyzer) you should
+// therefore always check with NDEBUG defined. Otherwise, the analyzer might
+// miss some errors.
 // /////////////////////////////////
 
 #ifndef NDEBUG
@@ -442,7 +447,7 @@ typedef int NABool;
   // like dereferencing an invalid pointer. The application will almost
   // certainly crash few steps after this function call. Have a look at the
   // implementation if you want to crash deliberately.
-  void naCrash(const char* functionsymbol, const char* message);
+  NA_NORETURN void naCrash(const char* functionsymbol, const char* message);
 
 #endif
 

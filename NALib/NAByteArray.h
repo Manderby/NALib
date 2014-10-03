@@ -82,6 +82,8 @@ NA_IAPI NAByteArray* naCreateByteArrayWithMutableBuffer(
                                                        NAInt size,
                                                       NABool takeownership);
 
+
+
 // Function naCreateByteArrayExtraction:
 // Creates or fills a new ByteArray with the contents of srcarray. The content
 // is NOT copied, but the dest array points to the same storage as srcarray
@@ -193,11 +195,11 @@ NA_IAPI NABool naIsByteArrayEmpty(const NAByteArray* array);
 
 struct NAByteArray{
   NAPointer* storage;       // pointer to the storage of all bytes
+  NAInt size;               // size of this NAByteArray in bytes
   union{                    // pointer to the first byte of this NAByteArray...
     const NAByte* constp;   // ... which is either const ...
           NAByte* p;        // ... or non-const.
   } ptr;
-  NAInt size;               // size of this NAByteArray in bytes
 };
 // Note that ptr may not point to the same address as the data pointer stored
 // in the storage!
@@ -209,27 +211,29 @@ struct NAByteArray{
 
 NA_IDEF NAByteArray* naCreateByteArray(NAByteArray* array){
   array = (NAByteArray*)naAllocateIfNull(array, sizeof(NAByteArray));
-  naNulli(&(array->size));
+  array->size = 0;
   return array;
 }
 
 
 NA_IDEF NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
                                                       NAInt size){
-  NAInt addsize;
+  NAInt fullsize;
   if(!size){  // if size is zero
     array = naCreateByteArray(array);
   }else{
     array = (NAByteArray*)naAllocateIfNull(array, sizeof(NAByteArray));
     if(size>0){
+      array->size = size;
       array->storage = naCreatePointerWithSize(NA_NULL, size);
+      array->ptr.p = (NAByte*)naGetPointerMutableData(array->storage);
     }else{
       // When size is negative, a number of bytes is appended to the array which
       // will be initialized with binary zero but will not be visible to the
       // programmer. The following holds true:
       // - The additional bytes are all guaranteed to be initialized with binary
       //   zero.
-      // - There are at least as many bytes appended as a address requires.
+      // - There are at least as many bytes appended as an address requires.
       //   Or more precise: 4 Bytes on 32 Bit systems, 8 Bytes on 64 Bit systems
       // - There are as many bytes allocated such that the total size is a
       //   multiple of an address size, meaning 4 or 8 Bytes depending on the
@@ -238,16 +242,12 @@ NA_IDEF NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
       //   the number of bytes needed for an address.
       // - The part without the additional bytes might partially become
       //   initialized with binary zero.
-      size = -size;
-      addsize = 2 * NA_SYSTEM_ADDRESS_BYTES - (size % NA_SYSTEM_ADDRESS_BYTES);
-      array->storage = naCreatePointerWithSize(NA_NULL, size + addsize);
-      
+      array->size = -size;
+      fullsize = array->size + 2 * NA_SYSTEM_ADDRESS_BYTES - (array->size % NA_SYSTEM_ADDRESS_BYTES);
+      array->storage = naCreatePointerWithSize(NA_NULL, fullsize);
       array->ptr.p = (NAByte*)naGetPointerMutableData(array->storage);
-      naNulli(&(array->ptr.p[size + addsize - 2 * NA_SYSTEM_ADDRESS_BYTES]));
-      naNulli(&(array->ptr.p[size + addsize - NA_SYSTEM_ADDRESS_BYTES]));
+      naNulln(&(array->ptr.p[fullsize - 2 * NA_SYSTEM_ADDRESS_BYTES]), 2 * NA_SYSTEM_ADDRESS_BYTES);
     }
-    array->ptr.p = (NAByte*)naGetPointerMutableData(array->storage);
-    array->size = size;
   }
   
   return array;
@@ -307,6 +307,8 @@ NA_IDEF NAByteArray* naCreateByteArrayWithMutableBuffer(
 
 
 
+
+
 NA_IDEF NAByteArray* naCreateByteArrayExtraction(
                                           NAByteArray* dstarray,
                                     const NAByteArray* srcarray,
@@ -315,8 +317,9 @@ NA_IDEF NAByteArray* naCreateByteArrayExtraction(
   NAByte* newptr;
 
   #ifndef NDEBUG
-    if(!srcarray)
-      {naCrash("naCreateByteArrayExtraction", "Source is Null-Pointer."); return NA_NULL;}
+    if(!srcarray){
+      naCrash("naCreateByteArrayExtraction", "Source is Null-Pointer.");
+    }
   #endif
 
   dstarray = (NAByteArray*)naAllocateIfNull(dstarray, sizeof(NAByteArray));
@@ -350,8 +353,9 @@ NA_IDEF NAByteArray* naCreateByteArrayExtraction(
 
 NA_IDEF void naClearByteArray(NAByteArray* array){
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naClearByteArray", "array is Null-Pointer."); return;}
+    if(!array){
+      naCrash("naClearByteArray", "array is Null-Pointer.");
+    }
   #endif
   if(!naIsByteArrayEmpty(array)){naReleasePointer(array->storage);}
 }
@@ -370,8 +374,9 @@ NA_IDEF void naDecoupleByteArray(NAByteArray* array,
   NAInt arraysize;
   NAByteArray newarray;
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naDecoupleByteArray", "array is Null-Pointer."); return;}
+    if(!array){
+      naCrash("naDecoupleByteArray", "array is Null-Pointer.");
+    }
   #endif
   // Note: Do not use realloc as ptr may point to a subset of NAPointer.
   // Instead, create a new object and copy manually.
@@ -385,9 +390,10 @@ NA_IDEF void naDecoupleByteArray(NAByteArray* array,
   naCpyn(newarray.ptr.p, array->ptr.constp, arraysize);
   naClearByteArray(array);
   array->size = newarray.size;
-  if(array->size){
+  if(newarray.size > 0){
     array->ptr = newarray.ptr;
-    array->storage = newarray.storage;
+    array->storage = naRetainPointer(newarray.storage);
+    naClearByteArray(&newarray);
   }
 }
 
@@ -395,18 +401,21 @@ NA_IDEF void naDecoupleByteArray(NAByteArray* array,
 
 NA_IDEF const NAByte* naGetByteArrayConstPointer(const NAByteArray* array){
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naGetByteArrayConstPointer", "array is Null-Pointer."); return NA_NULL;}
+    if(!array){
+      naCrash("naGetByteArrayConstPointer", "array is Null-Pointer.");
+    }
     if(naIsByteArrayEmpty(array))
       naError("naGetByteArrayConstPointer", "array is empty");
   #endif
   return array->ptr.constp;
 }
 
+
 NA_IDEF NAByte* naGetByteArrayMutablePointer(NAByteArray* array){
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naGetByteArrayMutablePointer", "array is Null-Pointer."); return NA_NULL;}
+    if(!array){
+      naCrash("naGetByteArrayMutablePointer", "array is Null-Pointer.");
+    }
     if(naIsByteArrayEmpty(array))
       naError("naGetByteArrayMutablePointer", "array is empty");
   #endif
@@ -418,8 +427,9 @@ NA_IDEF NAByte* naGetByteArrayMutablePointer(NAByteArray* array){
 
 NA_IDEF NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt indx){
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naGetByteArrayMutableByte", "array is Null-Pointer."); return NA_NULL;}
+    if(!array){
+      naCrash("naGetByteArrayMutableByte", "array is Null-Pointer.");
+    }
     if(naIsByteArrayEmpty(array))
       naError("naGetByteArrayMutableByte", "array is empty");
   #endif
@@ -434,8 +444,9 @@ NA_IDEF NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt indx){
 NA_IDEF const NAByte* naGetByteArrayConstByte(const NAByteArray* array,
                                                            NAInt indx){
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naGetByteArrayConstByte", "array is Null-Pointer."); return NA_NULL;}
+    if(!array){
+      naCrash("naGetByteArrayConstByte", "array is Null-Pointer.");
+    }
     if(naIsByteArrayEmpty(array))
       naError("naGetByteArrayConstByte", "array is empty");
   #endif
@@ -451,10 +462,12 @@ NA_IDEF const NAByte* naGetByteArrayConstByte(const NAByteArray* array,
 
 NA_IDEF NAInt naGetByteArraySize(const NAByteArray* array){
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naGetByteArraySize", "array is Null-Pointer."); return 0;}
-    if(array->size < 0)
-      naError("naGetByteArraySize", "returned size is negative. Uninitialized struct?");
+    if(!array){
+      naCrash("naGetByteArraySize", "array is Null-Pointer.");
+    }else{
+      if(array->size < 0)
+        naError("naGetByteArraySize", "returned size is negative. Uninitialized struct?");
+    }
   #endif
   return array->size;
 }
@@ -462,10 +475,12 @@ NA_IDEF NAInt naGetByteArraySize(const NAByteArray* array){
 
 NA_IDEF NABool naIsByteArrayEmpty(const NAByteArray* array){
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naIsByteArrayEmpty", "array is Null-Pointer."); return 0;}
-    if(array->size < 0)
-      naError("naIsByteArrayEmpty", "size is negative. Uninitialized struct?");
+    if(!array){
+      naCrash("naIsByteArrayEmpty", "array is Null-Pointer.");
+    }else{
+      if(array->size < 0)
+        naError("naIsByteArrayEmpty", "size is negative. Uninitialized struct?");
+    }
   #endif
   return (array->size == 0);
 }

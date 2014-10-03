@@ -9,7 +9,7 @@
 
 
 NABitArray* naCreateBitArray(NABitArray* bitarray){
-  bitarray = naAllocateIfNull(bitarray, sizeof(NABitArray));
+  bitarray = (NABitArray*)naAllocateIfNull(bitarray, sizeof(NABitArray));
   // Create two empty byte arrays
   naCreateByteArray(&(bitarray->fullstorage));
   naCreateByteArray(&(bitarray->bits));
@@ -32,7 +32,7 @@ NABitArray* naCreateBitArrayWithCount(NABitArray* bitarray, NAInt count){
 }
 
 
-NABitArray * naCreateBitArrayExtension( NABitArray* dstarray,
+NABitArray* naCreateBitArrayExtension( NABitArray* dstarray,
                           NABitArray* srcarray,
                           NAInt offset,
                           NAInt size){
@@ -251,8 +251,6 @@ NABitArray* naCreateBitArrayFromDecString(NABitArray* bitarray,
   }
   naClearBitArray(&nibble);
   naClearBitArray(&tenarray);
-  if(naGetBitArrayCount(bitarray)){
-  }
   naEnsureBitArraySizeHint(bitarray, sizehint);
   return bitarray;
 }
@@ -399,16 +397,18 @@ void naDecoupleBitArray(NABitArray* bitarray){
 
 NABit* naGetBitArrayBit(NABitArray* bitarray, NAInt indx){
   #ifndef NDEBUG
-    if(!bitarray)
-      {naCrash("naGetBitArrayBit", "bitarray is Null-Pointer."); return NA_NULL;}
+    if(!bitarray){
+      naCrash("naGetBitArrayBit", "bitarray is Null-Pointer.");
+    }
   #endif
   return naGetByteArrayMutableByte(&(bitarray->bits), indx);
 }
 
 NAInt naGetBitArrayCount(NABitArray* bitarray){
   #ifndef NDEBUG
-    if(!bitarray)
-      {naCrash("naGetBitArrayCount", "bitarray is Null-Pointer."); return 0;}
+    if(!bitarray){
+      naCrash("naGetBitArrayCount", "bitarray is Null-Pointer.");
+    }
   #endif
   return naGetByteArraySize(&(bitarray->bits));
 }
@@ -800,10 +800,12 @@ void naComputeBitArraySwapBytes(NABitArray* array){
   NABit* srcptr;
   NABit* dstptr;
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naComputeBitArraySwapBytes", "array is Null-Pointer."); return;}
-    if(naGetByteArraySize(&(array->bits)) % 8)
-      naError("naComputeBitArraySwapBytes", "size of bitarray can not be divided by 8.");
+    if(!array){
+      naCrash("naComputeBitArraySwapBytes", "array is Null-Pointer.");
+    }else{
+      if(naGetByteArraySize(&(array->bits)) % 8)
+        naError("naComputeBitArraySwapBytes", "size of bitarray can not be divided by 8.");
+    }
   #endif
 
   if(!naGetBitArrayCount(array)){return;}

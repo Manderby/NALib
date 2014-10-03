@@ -160,21 +160,33 @@ NA_IDEF void* naAllocate(NAInt size){
     if(size < 1)
       naError("naAllocate", "size is smaller than 1 .");
   #endif
-  ptr = malloc(size);
-  #ifndef NDEBUG
-    if(!ptr)
-    // This is the one place where the debug version differs from the non-debug
-    // version:
-      {naCrash("naAllocate", "out of memory.");
-        exit(1);
-        return NA_NULL;}
-    // The exit call has been introduced as this is such a severe problem
-    // that all functions rely on its functionality. Also, modern code sanity
-    // checks will see with this exit call that this is the place where the
-    // implementation simply gives up.
+  #ifdef __clang_analyzer__
+    if(size < 1)
+      exit(EXIT_FAILURE);
   #endif
+
+  ptr = malloc(size);
+  
+  // This is the one place where the debug version differs from the non-debug
+  // version.
+  #ifndef NDEBUG
+    if(ptr == NA_NULL){
+      naCrash("naAllocate", "Out of memory.");
+    }
+  #endif
+  
+  // Also note that a special macro is checked for clang analyzer as
+  // newer versions tend to complain a lot more about failed mallocs than
+  // before.
+  #ifdef __clang_analyzer__
+    if(ptr == NA_NULL){
+      exit(EXIT_FAILURE);
+    }
+  #endif
+
   return ptr;
 }
+
 
 
 NA_IDEF void* naAllocateIfNull(void* ptr, NAInt size){
@@ -182,6 +194,7 @@ NA_IDEF void* naAllocateIfNull(void* ptr, NAInt size){
     if(size < 1)
       naError("naAllocateIfNull", "size is smaller than 1 .");
   #endif
+
   if(ptr == NA_NULL){
     return naAllocate(size);
   }else{
@@ -282,13 +295,15 @@ NA_IDEF NAPointer* naCreatePointerWithMutableBuffer(NAPointer* pointer,
 
 NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
   #ifndef NDEBUG
-    if(!pointer)
-      {naCrash("naRetainPointer", "pointer is Null-Pointer."); return NA_NULL;}
-    // The next test can detect some erroneous behaviour in the code. Note
-    // however that most likely the true cause of the error did occur long
-    // before reaching here.
-    if((pointer->refcount & NA_POINTER_REFCOUNT_MASK) == 0)
-      naError("naRetainPointer", "Retaining NAPointer with a refcount of 0");
+    if(!pointer){
+      naCrash("naRetainPointer", "pointer is Null-Pointer.");
+    }else{
+      // The next test can detect some erroneous behaviour in the code. Note
+      // however that most likely the true cause of the error did occur long
+      // before reaching here.
+      if((pointer->refcount & NA_POINTER_REFCOUNT_MASK) == 0)
+        naError("naRetainPointer", "Retaining NAPointer with a refcount of 0");
+    }
   #endif
   pointer->refcount++;
   #ifndef NDEBUG
@@ -304,13 +319,15 @@ NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
 
 NA_IDEF void naReleasePointer(NAPointer* pointer){
   #ifndef NDEBUG
-    if(!pointer)
-      {naCrash("naReleasePointer", "pointer is Null-Pointer."); return;}
-    // The next test can detect some erroneous behaviour in the code. Note
-    // however that most likely the true cause of the error did occur long
-    // before reaching here.
-    if((pointer->refcount & NA_POINTER_REFCOUNT_MASK) == 0)
-      naError("naReleasePointer", "Releasing NAPointer with a refcount of 0");
+    if(!pointer){
+      naCrash("naReleasePointer", "pointer is Null-Pointer.");
+    }else{
+      // The next test can detect some erroneous behaviour in the code. Note
+      // however that most likely the true cause of the error did occur long
+      // before reaching here.
+      if((pointer->refcount & NA_POINTER_REFCOUNT_MASK) == 0)
+        naError("naReleasePointer", "Releasing NAPointer with a refcount of 0");
+    }
   #endif
   // Note that the author decided to always count to zero, even if it is clear
   // that the pointer will eventually be freed and the data will be lost in
@@ -369,18 +386,21 @@ NA_IDEF void naReleasePointer(NAPointer* pointer){
 
 NA_IDEF const void* naGetPointerConstData(const NAPointer* pointer){
   #ifndef NDEBUG
-    if(!pointer)
-      {naCrash("naGetPointerData", "pointer is Null-Pointer."); return NA_NULL;}
+    if(!pointer){
+      naCrash("naGetPointerData", "pointer is Null-Pointer.");
+    }
   #endif
   return pointer->data.constd;
 }
 
 NA_IDEF void* naGetPointerMutableData(NAPointer* pointer){
   #ifndef NDEBUG
-    if(!pointer)
-      {naCrash("naGetPointerData", "pointer is Null-Pointer."); return NA_NULL;}
-    if(pointer->refcount & NA_POINTER_CONST_DATA)
-      naError("naGetPointerData", "Accessing const data as non-const.");
+    if(!pointer){
+      naCrash("naGetPointerData", "pointer is Null-Pointer.");
+    }else{
+      if(pointer->refcount & NA_POINTER_CONST_DATA)
+        naError("naGetPointerData", "Accessing const data as non-const.");
+    }
   #endif
   return pointer->data.d;
 }

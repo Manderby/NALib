@@ -153,7 +153,7 @@ struct NAArray{
 NA_IDEF NAArray* naCreateArray(NAArray* array){
   array = (NAArray*)naAllocateIfNull(array, sizeof(NAArray));
   naCreateByteArray(&(array->bytearray));
-  naOnei(&(array->typesize));
+  array->typesize = 1;
   return array;
 }
 
@@ -228,8 +228,9 @@ NA_IDEF NAArray* naCreateArrayExtraction(   NAArray* dstarray,
 
 NA_IDEF void naClearArray(NAArray* array, NADestructor destructor){
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naClearArray", "array is Null-Pointer."); return;}
+    if(!array){
+      naCrash("naClearArray", "array is Null-Pointer.");
+    }
   #endif
 
   if(destructor){
@@ -259,19 +260,23 @@ NA_IAPI void naDecoupleArray(NAArray* array){
 
 NA_IAPI const void* naGetArrayConstPointer(const NAArray* array){
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naGetArrayConstPointer", "array is Null-Pointer."); return NA_NULL;}
-    if(naIsByteArrayEmpty(&(array->bytearray)))
-      naError("naGetArrayConstPointer", "array is empty, returned pointer is NULL");
+    if(!array){
+      naCrash("naGetArrayConstPointer", "array is Null-Pointer.");
+    }else{
+      if(naIsByteArrayEmpty(&(array->bytearray)))
+        naError("naGetArrayConstPointer", "array is empty, returned pointer is NULL");
+    }
   #endif
   return naGetByteArrayConstPointer(&(array->bytearray));
 }
 NA_IAPI void* naGetArrayMutablePointer(NAArray* array){
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naGetArrayMutablePointer", "array is Null-Pointer."); return NA_NULL;}
-    if(naIsByteArrayEmpty(&(array->bytearray)))
-      naError("naGetArrayMutablePointer", "array is empty, returned pointer is NULL");
+    if(!array){
+      naCrash("naGetArrayMutablePointer", "array is Null-Pointer.");
+    }else{
+      if(naIsByteArrayEmpty(&(array->bytearray)))
+        naError("naGetArrayMutablePointer", "array is empty, returned pointer is NULL");
+    }
   #endif
   return naGetByteArrayMutablePointer(&(array->bytearray));
 }
@@ -279,10 +284,12 @@ NA_IAPI void* naGetArrayMutablePointer(NAArray* array){
 
 NA_IDEF const void* naGetArrayConstElement(const NAArray* array, NAInt indx){
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naGetArrayConstElement", "array is Null-Pointer."); return NA_NULL;}
-    if(naIsByteArrayEmpty(&(array->bytearray)))
-      naError("naGetArrayConstElement", "array is empty, typesize is garbage");
+    if(!array){
+      naCrash("naGetArrayConstElement", "array is Null-Pointer.");
+    }else{
+      if(naIsByteArrayEmpty(&(array->bytearray)))
+        naError("naGetArrayConstElement", "array is empty, typesize is garbage");
+    }
   #endif
   return naGetByteArrayConstByte( &(array->bytearray),
                                   indx * array->typesize);
@@ -290,10 +297,12 @@ NA_IDEF const void* naGetArrayConstElement(const NAArray* array, NAInt indx){
 
 NA_IDEF void* naGetArrayMutableElement(NAArray* array, NAInt indx){
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naGetArrayMutableElement", "array is Null-Pointer."); return NA_NULL;}
-    if(naIsByteArrayEmpty(&(array->bytearray)))
-      naError("naGetArrayMutableElement", "array is empty, typesize is garbage");
+    if(!array){
+      naCrash("naGetArrayMutableElement", "array is Null-Pointer.");
+    }else{
+      if(naIsByteArrayEmpty(&(array->bytearray)))
+        naError("naGetArrayMutableElement", "array is empty, typesize is garbage");
+    }
   #endif
   return naGetByteArrayMutableByte( &(array->bytearray),
                                     indx * array->typesize);
@@ -305,8 +314,9 @@ NA_IDEF NAInt naGetArrayCount(const NAArray* array){
   NAInt bytesize;
   
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naGetArrayCount", "array is Null-Pointer."); return 0;}
+    if(!array){
+      naCrash("naGetArrayCount", "array is Null-Pointer.");
+    }
   #endif
   bytesize = naGetByteArraySize(&(array->bytearray));
   return bytesize ? (bytesize / array->typesize) : 0;
@@ -315,8 +325,9 @@ NA_IDEF NAInt naGetArrayCount(const NAArray* array){
 
 NA_IAPI NAInt naGetArrayTypeSize(const NAArray* array){
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naGetArrayTypeSize", "array is Null-Pointer."); return 0;}
+    if(!array){
+      naCrash("naGetArrayTypeSize", "array is Null-Pointer.");
+    }
   #endif
   return array->typesize;
 }
@@ -325,8 +336,9 @@ NA_IAPI NAInt naGetArrayTypeSize(const NAArray* array){
 
 NA_IAPI NABool naIsArrayEmpty(const NAArray* array){
   #ifndef NDEBUG
-    if(!array)
-      {naCrash("naIsArrayEmpty", "array is Null-Pointer."); return 0;}
+    if(!array){
+      naCrash("naIsArrayEmpty", "array is Null-Pointer.");
+    }
   #endif
   return naIsByteArrayEmpty(&(array->bytearray));
 }
