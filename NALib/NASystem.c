@@ -37,19 +37,11 @@
 
 
 
-  void naCrash(const char* functionsymbol, const char* message){
+  NA_NORETURN void naCrash(const char* functionsymbol, const char* message){
     // Set a breakpoint here, if everything fails.
     fprintf(stderr, "Critical Error in %s: %s\n", functionsymbol, message);
-    fprintf(stderr, "The application will likely crash...\n");
-    // Uncomment the following line, if you want to crash deliberately. By
-    // default, this line is commented out as it would change the behaviour of
-    // NALib depending on whether NDEBUG is defined or not.
-    //
-    // exit(1);
-    //
-    // Note that in the code, where naCrash is called, there always exists a
-    // return instruction afterwards. This helps the compiler and code sanity
-    // checks to determine that a function can not crash, except deliberately.
+    fprintf(stderr, "Crashing the application deliberately...\n");
+    exit(EXIT_FAILURE);
   }
 
 #endif

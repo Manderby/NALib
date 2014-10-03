@@ -38,8 +38,9 @@ NAString* naCreateStringWithUTF8CStringLiteral(NAString* string, const NAUTF8Cha
   // Declaration before implementation. Needed for C90.
   NAInt size;
   #ifndef NDEBUG
-    if(!ptr)
-      {naCrash("naCreateStringWithUTF8CStringLiteral", "ptr is Null-Pointer"); return NA_NULL;}
+    if(!ptr){
+      naCrash("naCreateStringWithUTF8CStringLiteral", "ptr is Null-Pointer");
+    }
   #endif
   size = naStrlen(ptr);
   if(!size){return naCreateString(string);}
@@ -92,8 +93,9 @@ NAString* naCreateStringExtraction( NAString* deststring,
   const NAByte* destlastchar;
 
   #ifndef NDEBUG
-    if(!srcstring)
-      {naCrash("naCreateStringExtraction", "src is Null-Pointer."); return NA_NULL;}
+    if(!srcstring){
+      naCrash("naCreateStringExtraction", "src is Null-Pointer.");
+    }
   #endif
   if(srcstring != deststring){
     deststring = naCreateString(deststring);
@@ -142,8 +144,9 @@ NAString* naCreateStringXMLEncoded( NAString* deststring,
   NAUTF8Char* destptr;
 
   #ifndef NDEBUG
-    if(!inputstring)
-      {naCrash("naCreateStringXMLEncoded", "input string is Null-Pointer."); return NA_NULL;}
+    if(!inputstring){
+      naCrash("naCreateStringXMLEncoded", "input string is Null-Pointer.");
+    }
     if(deststring == inputstring)
       naError("naCreateStringXMLEncoded", "The two parameters are the same.");
   #endif
@@ -203,8 +206,9 @@ NAString* naCreateStringXMLDecoded( NAString* deststring,
   NAInt finalsize;
 
   #ifndef NDEBUG
-    if(!inputstring)
-      {naCrash("naCreateStringXMLDecoded", "input string is Null-Pointer."); return NA_NULL;}
+    if(!inputstring){
+      naCrash("naCreateStringXMLDecoded", "input string is Null-Pointer.");
+    }
     if(deststring == inputstring)
       naError("naCreateStringXMLDecoded", "The two parameters are the same.");
   #endif
@@ -257,8 +261,9 @@ NAString* naCreateStringEPSEncoded( NAString* deststring,
   NAUTF8Char* destptr;
 
   #ifndef NDEBUG
-    if(!inputstring)
-      {naCrash("naCreateStringEPSEncoded", "input string is Null-Pointer."); return NA_NULL;}
+    if(!inputstring){
+      naCrash("naCreateStringEPSEncoded", "input string is Null-Pointer.");
+    }
     if(deststring == inputstring)
       naError("naCreateStringEPSEncoded", "The two parameters are the same.");
   #endif
@@ -313,8 +318,9 @@ NAString* naCreateStringEPSDecoded( NAString* deststring,
   NAInt finalsize;
 
   #ifndef NDEBUG
-    if(!inputstring)
-      {naCrash("naCreateStringEPSDecoded", "input string is Null-Pointer."); return NA_NULL;}
+    if(!inputstring){
+      naCrash("naCreateStringEPSDecoded", "input string is Null-Pointer.");
+    }
     if(deststring == inputstring)
       naError("naCreateStringEPSDecoded", "The two parameters are the same.");
   #endif
@@ -479,8 +485,9 @@ NAInt naGetStringSize(const NAString* string){
 
 const NAUTF8Char* naGetStringConstUTF8Pointer(const NAString* string){
   #ifndef NDEBUG
-    if(!string)
-      {naCrash("naGetStringConstUTF8Pointer", "string is Null-Pointer."); return NA_NULL;}
+    if(!string){
+      naCrash("naGetStringConstUTF8Pointer", "string is Null-Pointer.");
+    }
   #endif
   if(naIsStringEmpty(string)){
     return (const NAUTF8Char*)"";
@@ -491,16 +498,18 @@ const NAUTF8Char* naGetStringConstUTF8Pointer(const NAString* string){
 
 const NAUTF8Char* naGetStringConstChar(const NAString* string, NAInt indx){
   #ifndef NDEBUG
-    if(!string)
-      {naCrash("naGetStringChar", "string is Null-Pointer."); return NA_NULL;}
+    if(!string){
+      naCrash("naGetStringChar", "string is Null-Pointer.");
+    }
   #endif
   return (const NAUTF8Char*)naGetByteArrayConstByte(&(string->array), indx);
 }
 
 NAUTF8Char* naGetStringMutableUTF8Pointer(NAString* string){
   #ifndef NDEBUG
-    if(!string)
-      {naCrash("naGetStringMutableUTF8Pointer", "string is Null-Pointer."); return NA_NULL;}
+    if(!string){
+      naCrash("naGetStringMutableUTF8Pointer", "string is Null-Pointer.");
+    }
   #endif
   return (NAUTF8Char*)naGetByteArrayMutablePointer(&(string->array));
 }
@@ -508,8 +517,9 @@ NAUTF8Char* naGetStringMutableUTF8Pointer(NAString* string){
 
 NAUTF8Char* naGetStringMutableChar(NAString* string, NAInt indx){
   #ifndef NDEBUG
-    if(!string)
-      {naCrash("naGetStringMutableChar", "string is Null-Pointer."); return NA_NULL;}
+    if(!string){
+      naCrash("naGetStringMutableChar", "string is Null-Pointer.");
+    }
   #endif
   return (NAUTF8Char*)naGetByteArrayMutableByte(&(string->array), indx);
 }
@@ -517,8 +527,9 @@ NAUTF8Char* naGetStringMutableChar(NAString* string, NAInt indx){
 
 NABool naIsStringEmpty(const NAString* string){
   #ifndef NDEBUG
-    if(!string)
-      {naCrash("naIsStringEmpty", "string is Null-Pointer."); return NA_TRUE;}
+    if(!string){
+      naCrash("naIsStringEmpty", "string is Null-Pointer.");
+    }
   #endif
   return naIsByteArrayEmpty(&(string->array));
 }
@@ -538,8 +549,9 @@ NAInt naGetStringCharacterEscapeSizeTowardsTrailing(NAString* string, NAInt offs
   NAUTF8Char char1;
   NAUTF8Char char2;
   #ifndef NDEBUG
-    if(!string)
-      {naCrash("naGetStringCharacterEscapeSizeTowardsTrailing", "string is Null-Pointer."); return 0;}
+    if(!string){
+      naCrash("naGetStringCharacterEscapeSizeTowardsTrailing", "string is Null-Pointer.");
+    }
   #endif
   
   stringsize = naGetStringSize(string);
@@ -616,8 +628,9 @@ NAInt naGetStringCharacterEscapeSizeTowardsLeading(NAString* string, NAInt offse
   NAUTF8Char char1;
   NAUTF8Char char2;
   #ifndef NDEBUG
-    if(!string)
-      {naCrash("naGetStringCharacterEscapeSizeTowardsLeading", "string is Null-Pointer."); return 0;}
+    if(!string){
+      naCrash("naGetStringCharacterEscapeSizeTowardsLeading", "string is Null-Pointer.");
+    }
   #endif
   
   stringsize = naGetStringSize(string);
@@ -693,8 +706,9 @@ void naSkipStringWhitespaces(NAString* string){
   const NAUTF8Char* charptr;
 
   #ifndef NDEBUG
-    if(!string)
-      {naCrash("naSkipStringWhitespaces", "Parameter is Null-Pointer."); return;}
+    if(!string){
+      naCrash("naSkipStringWhitespaces", "Parameter is Null-Pointer.");
+    }
   #endif
   if(naIsStringEmpty(string)){return;}
   // Note: There is no check for escape characters as so far, nobody ever used
@@ -841,8 +855,9 @@ void naParseStringToken(NAString* string, NAString* token){
   NAInt escapesize;
 
   #ifndef NDEBUG
-    if(!string)
-      {naCrash("naParseStringToken", "string is Null-Pointer."); return;}
+    if(!string){
+      naCrash("naParseStringToken", "string is Null-Pointer.");
+    }
     if(token == string)
       naError("naParseStringToken", "token and string shall not be the same.");
   #endif
@@ -909,8 +924,9 @@ void naParseStringTokenWithDelimiter(NAString* string, NAString* token, NAUTF8Ch
   const NAUTF8Char* charptr;
 
   #ifndef NDEBUG
-    if(!string)
-      {naCrash("naParseStringTokenWithDelimiter", "string is Null-Pointer."); return;}
+    if(!string){
+      naCrash("naParseStringTokenWithDelimiter", "string is Null-Pointer.");
+    }
     if(token == string)
       naError("naParseStringTokenWithDelimiter", "token and string shall not be the same.");
   #endif

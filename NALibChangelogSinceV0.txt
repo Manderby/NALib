@@ -30,7 +30,11 @@ correct, complete or final.
 - naGetMonthNumberWithEnglishAbbreviation now returns -1 on failure. Added
   naGetMonthNumberFromUTF8CStringLiteral for other input strings
 - Removed NA_LIB_VERSION. There must be a better solution in the future.
-
+- Added a clang specific macro check in naAllocate
+- Removed all naNull and naOne except naNulln.
+- Added NA_NORETURN
+- naCrash is now a _Noreturn function and crashes deliberately. All return
+  instructions after the naCrash call have been erased.
 
 Version 6 (first published 2014-August-25):
 ==============================================

@@ -35,8 +35,9 @@ NAGrowingSpace* naDuplicateGrowingSpace(NAGrowingSpace* space, const NAGrowingSp
 
 void naClearGrowingSpace(NAGrowingSpace* space, NADestructor destructor){
   #ifndef NDEBUG
-    if(!space)
-      {naCrash("naClearGrowingSpace", "space is Null-Pointer."); return;}
+    if(!space){
+      naCrash("naClearGrowingSpace", "space is Null-Pointer.");
+    }
   #endif
 
   if(destructor){
@@ -91,20 +92,24 @@ void* naAddGrowingSpaceElement(NAGrowingSpace* space, void* elemptr){
 
 const void* naGetGrowingSpaceConstPointer(const NAGrowingSpace* space){
   #ifndef NDEBUG
-    if(!space)
-      {naCrash("naGetGrowingSpaceConstPointer", "space is Null-Pointer."); return NA_NULL;}
-    if(naIsArrayEmpty(&(space->array)))
-      naError("naGetGrowingSpaceConstPointer", "space is empty, returned pointer is NULL");
+    if(!space){
+      naCrash("naGetGrowingSpaceConstPointer", "space is Null-Pointer.");
+    }else{
+      if(naIsArrayEmpty(&(space->array)))
+        naError("naGetGrowingSpaceConstPointer", "space is empty, returned pointer is NULL");
+    }
   #endif
   return naGetArrayConstPointer(&(space->array));
 }
 
 void* naGetGrowingSpaceMutablePointer(NAGrowingSpace* space){
   #ifndef NDEBUG
-    if(!space)
-      {naCrash("naGetGrowingSpaceMutablePointer", "space is Null-Pointer."); return NA_NULL;}
-    if(naIsArrayEmpty(&(space->array)))
-      naError("naGetGrowingSpaceMutablePointer", "space is empty, returned pointer is NULL");
+    if(!space){
+      naCrash("naGetGrowingSpaceMutablePointer", "space is Null-Pointer.");
+    }else{
+      if(naIsArrayEmpty(&(space->array)))
+        naError("naGetGrowingSpaceMutablePointer", "space is empty, returned pointer is NULL");
+    }
   #endif
   return naGetArrayMutablePointer(&(space->array));
 }
@@ -112,20 +117,24 @@ void* naGetGrowingSpaceMutablePointer(NAGrowingSpace* space){
 
 const void* naGetGrowingSpaceConstElement(const NAGrowingSpace* space, NAInt indx){
   #ifndef NDEBUG
-    if(!space)
-      {naCrash("naGetGrowingSpaceConstElement", "space is Null-Pointer."); return NA_NULL;}
-    if(naIsArrayEmpty(&(space->array)))
-      naError("naGetGrowingSpaceConstElement", "space is empty, typesize is garbage");
+    if(!space){
+      naCrash("naGetGrowingSpaceConstElement", "space is Null-Pointer.");
+    }else{
+      if(naIsArrayEmpty(&(space->array)))
+        naError("naGetGrowingSpaceConstElement", "space is empty, typesize is garbage");
+    }
   #endif
   return naGetArrayConstElement(&(space->array), indx);
 }
 
 void* naGetGrowingSpaceMutableElement(NAGrowingSpace* space, NAInt indx){
   #ifndef NDEBUG
-    if(!space)
-      {naCrash("naGetGrowingSpaceMutableElement", "space is Null-Pointer."); return NA_NULL;}
-    if(naIsArrayEmpty(&(space->array)))
-      naError("naGetGrowingSpaceMutableElement", "space is empty, typesize is garbage");
+    if(!space){
+      naCrash("naGetGrowingSpaceMutableElement", "space is Null-Pointer.");
+    }else{
+      if(naIsArrayEmpty(&(space->array)))
+        naError("naGetGrowingSpaceMutableElement", "space is empty, typesize is garbage");
+    }
   #endif
   return naGetArrayMutableElement(&(space->array), indx);
 }
