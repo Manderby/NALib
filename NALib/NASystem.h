@@ -174,7 +174,15 @@
 #define NA_HLP    NA_SYMBOL_HIDDEN
 #define NA_IHLP   static NA_INLINE
 
-#define NA_NORETURN   _Noreturn
+#if defined __STDC_VERSION__
+  #if __STDC_VERSION__ >= 201112L // This indicates the C11 standard
+    #define NA_NORETURN   _Noreturn
+  #else
+    #define NA_NORETURN
+  #endif
+#else
+  #define NA_NORETURN
+#endif
 
 
 #ifndef va_copy

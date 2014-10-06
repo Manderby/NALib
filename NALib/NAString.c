@@ -94,7 +94,8 @@ NAString* naCreateStringExtraction( NAString* deststring,
 
   #ifndef NDEBUG
     if(!srcstring){
-      naCrash("naCreateStringExtraction", "src is Null-Pointer.");
+      naCrash("naCreateStringExtraction", "srcstring is Null-Pointer.");
+      return NA_NULL;
     }
   #endif
   if(srcstring != deststring){
@@ -551,6 +552,7 @@ NAInt naGetStringCharacterEscapeSizeTowardsTrailing(NAString* string, NAInt offs
   #ifndef NDEBUG
     if(!string){
       naCrash("naGetStringCharacterEscapeSizeTowardsTrailing", "string is Null-Pointer.");
+      return 0;
     }
   #endif
   
@@ -630,6 +632,7 @@ NAInt naGetStringCharacterEscapeSizeTowardsLeading(NAString* string, NAInt offse
   #ifndef NDEBUG
     if(!string){
       naCrash("naGetStringCharacterEscapeSizeTowardsLeading", "string is Null-Pointer.");
+      return 0;
     }
   #endif
   

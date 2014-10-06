@@ -37,6 +37,7 @@ void naClearGrowingSpace(NAGrowingSpace* space, NADestructor destructor){
   #ifndef NDEBUG
     if(!space){
       naCrash("naClearGrowingSpace", "space is Null-Pointer.");
+      return;
     }
   #endif
 

@@ -165,8 +165,9 @@ NA_HLP NAInt naHeapMoveUpMinInt(NAHeap* heap, const void* key, NAInt curindex){
 NA_DEF NAHeap* naCreateHeap(NAHeap* heap, NAInt count, NAInt flags){
   #ifndef NDEBUG
     // there is always count + 1 elements stored in the array.
-    if(count >= NA_INT_MAX)
-      {naCrash("naCreateHeap", "Heap count is too big."); return NA_NULL;}
+    if(count >= NA_INT_MAX){
+      naCrash("naCreateHeap", "Heap count is too big.");
+    }
     if(count <= 0)
       naError("naCreateHeap", "Heap count smallerequal zero.");
   #endif
@@ -192,8 +193,7 @@ NA_DEF NAHeap* naCreateHeap(NAHeap* heap, NAInt count, NAInt flags){
     break;
   default:
     #ifndef NDEBUG
-      naDestroyHeap(heap);
-      {naCrash("naCreateHeap", "flag combination not implemented yet."); return NA_NULL;}
+      naCrash("naCreateHeap", "flag combination not implemented yet.");
     #endif
     break;
   }
@@ -203,8 +203,10 @@ NA_DEF NAHeap* naCreateHeap(NAHeap* heap, NAInt count, NAInt flags){
 
 NA_DEF void naClearHeap(NAHeap* heap){
   #ifndef NDEBUG
-    if(!heap)
-      {naCrash("naClearHeap", "heap is Null-Pointer."); return;}
+    if(!heap){
+      naCrash("naClearHeap", "heap is Null-Pointer.");
+      return;
+    }
   #endif
   free(heap->data);
 }
@@ -212,8 +214,9 @@ NA_DEF void naClearHeap(NAHeap* heap){
 
 NA_DEF void naDestroyHeap(NAHeap* heap){
   #ifndef NDEBUG
-    if(!heap)
-      {naCrash("naDestroyHeap", "heap is Null-Pointer."); return;}
+    if(!heap){
+      naCrash("naDestroyHeap", "heap is Null-Pointer.");
+    }
   #endif
   naClearHeap(heap);
   free(heap);
@@ -248,8 +251,10 @@ NA_DEF void naInsertHeapElement(NAHeap* heap, void* newptr, const void* newkey, 
 
 NA_DEF NABool naIsHeapEmpty (const NAHeap* heap){
   #ifndef NDEBUG
-    if(!heap)
-      {naCrash("naIsHeapEmpty", "heap is Null-Pointer."); return NA_TRUE;}
+    if(!heap){
+      naCrash("naIsHeapEmpty", "heap is Null-Pointer.");
+      return NA_TRUE;
+    }
   #endif
   return (heap->count == 0);
 }

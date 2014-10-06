@@ -12,29 +12,37 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Version 7 (first published 2014-October-6):
+==============================================
+
+This version contains mostly bugfixes and necessary enhancements.
+
 - Corrected an awkward error in NAFile when Writing. Buffer was allocated
   as a local array. Moved NA_FILE_BUFFER_SIZE to implementation file.
-- Added naCreateByteMap2DWithRectiCopyingBuffer
+- Added naCreateByteMap2DWithRectiCopyingBuffer. Works with empty rects.
 - Added empty variants with E for naMakeSizeE, naMakeRectE, naMakeSizeiE and
   naMakeRectiE. Corrected a debug error in naMakeRectiWithRectiAndPosiE.
-- Added NAMap2D
+- Added NAMap2D, the same as NAByteMap2D but storing arbitrary objects. Not
+  the full API available yet.
 - Added naClampByteMap2DToRecti
+- Renamed naIsPosiInByteMap to naIsPosiInByteMap2D
 - Added error numbers to NADateTime and naGetDateTimeErrorString
 - Fixed an error in naCreateByteArrayFromDateTime
-- Fixed some memory leaks and logical errors
-- naCreateByteMap2DWithRectiCopyingBuffer now works with empty rects
-- made some coordinate tests more reliable
-- Added NABounds4i
-- Renamed naIsStringEqualToUTF8Pointer to naEqualStringToUTF8CStringLiteral.
-  Fixed a bug and added naEqualStringToString
 - naGetMonthNumberWithEnglishAbbreviation now returns -1 on failure. Added
   naGetMonthNumberFromUTF8CStringLiteral for other input strings
+- Fixed some memory leaks and logical errors
+- made some coordinate tests more reliable
+- Added NABounds4 and NABounds4i
+- Renamed naIsStringEqualToUTF8Pointer to naEqualStringToUTF8CStringLiteral.
+  Fixed a bug and added naEqualStringToString
 - Removed NA_LIB_VERSION. There must be a better solution in the future.
+- Removed all naNull and naOne functions except naNulln.
 - Added a clang specific macro check in naAllocate
-- Removed all naNull and naOne except naNulln.
-- Added NA_NORETURN
-- naCrash is now a _Noreturn function and crashes deliberately. All return
-  instructions after the naCrash call have been erased.
+- Added NA_NORETURN. naCrash is now a _Noreturn function and crashes
+  deliberately. Reorganized naCrash and successive naError calls. Most
+  return instructions after the naCrash call have been erased.
+
+
 
 Version 6 (first published 2014-August-25):
 ==============================================
