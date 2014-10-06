@@ -246,7 +246,7 @@ NA_IAPI NABool naIsNaN(double x){
 
 NA_IAPI NABool naIsNaNf(float x){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    return _isnan((double)x); // todo: Check again on windows
+    return _isnan((double)x);
   #else
     return isnan(x);
   #endif

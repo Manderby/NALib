@@ -357,6 +357,7 @@ NA_IDEF void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect){
 
 
 NA_IDEF NAByte* naClampByteMap2DToRecti(NAByteMap2D* map2d, NARecti rect){
+  NAByteMap2D tmpbytemap; // declaration before implementation. Needed for C90
   #ifndef NDEBUG
     if(!map2d){
       naCrash("naClampByteMap2DToRecti", "map2d is Null-Pointer.");
@@ -370,7 +371,6 @@ NA_IDEF NAByte* naClampByteMap2DToRecti(NAByteMap2D* map2d, NARecti rect){
         naError("naClampByteMap2DToRecti", "rect is not contained in map rect.");
     }
   #endif
-  NAByteMap2D tmpbytemap;
   naCreateByteMap2DWithRecti(&tmpbytemap, rect);
   naFillByteMap2DWithByteMapInRecti(&tmpbytemap, rect, map2d);
   free(map2d->data);
@@ -666,7 +666,6 @@ NA_IDEF const NAByte* naGetByteMap2DConstByte(const NAByteMap2D* map2d,
 
 
 NA_IDEF NAByte* naGetByteMap2DMutableByte(NAByteMap2D* map2d, NAPosi pos){
-  NAInt indx;
   #ifndef NDEBUG
     if(!map2d){
       naCrash("naGetByteMap2DMutableByte", "map2d is Null-Pointer.");

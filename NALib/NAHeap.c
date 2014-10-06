@@ -163,6 +163,7 @@ NA_HLP NAInt naHeapMoveUpMinInt(NAHeap* heap, const void* key, NAInt curindex){
 
 
 NA_DEF NAHeap* naCreateHeap(NAHeap* heap, NAInt count, NAInt flags){
+  NAInt entrysize;
   #ifndef NDEBUG
     // there is always count + 1 elements stored in the array.
     if(count >= NA_INT_MAX){
@@ -178,7 +179,7 @@ NA_DEF NAHeap* naCreateHeap(NAHeap* heap, NAInt count, NAInt flags){
     heap->maxcount = count;
   #endif
 
-  NAInt entrysize = sizeof(NAHeapEntry);
+  entrysize = sizeof(NAHeapEntry);
   heap->count = 0;
   heap->data = naAllocate((count + 1) * entrysize);
   
