@@ -94,7 +94,8 @@ NAString* naCreateStringExtraction( NAString* deststring,
 
   #ifndef NDEBUG
     if(!srcstring){
-      naCrash("naCreateStringExtraction", "src is Null-Pointer.");
+      naCrash("naCreateStringExtraction", "srcstring is Null-Pointer.");
+      return NA_NULL;
     }
   #endif
   if(srcstring != deststring){
@@ -551,6 +552,7 @@ NAInt naGetStringCharacterEscapeSizeTowardsTrailing(NAString* string, NAInt offs
   #ifndef NDEBUG
     if(!string){
       naCrash("naGetStringCharacterEscapeSizeTowardsTrailing", "string is Null-Pointer.");
+      return 0;
     }
   #endif
   
@@ -630,6 +632,7 @@ NAInt naGetStringCharacterEscapeSizeTowardsLeading(NAString* string, NAInt offse
   #ifndef NDEBUG
     if(!string){
       naCrash("naGetStringCharacterEscapeSizeTowardsLeading", "string is Null-Pointer.");
+      return 0;
     }
   #endif
   
@@ -1330,13 +1333,17 @@ NABool naEqualStringToString(     const NAString* string1,
 
 NABool naEqualUTF8CStringLiteralsCaseInsensitive( const NAUTF8Char* string1,
                                                   const NAUTF8Char* string2){
-  NAInt i;  // declaration before implementaiton. Needed for C90
+  // declaration before implementaiton. Needed for C90
+  NAInt i;
+  const NAUTF8Char* curchar1ptr;
+  const NAUTF8Char* curchar2ptr;
+
   NAInt stringsize1 = naStrlen(string1);
   NAInt stringsize2 = naStrlen(string2);
   if(stringsize1 != stringsize2){return NA_FALSE;}
   if(stringsize1 == 0){return NA_TRUE;}
-  const NAUTF8Char* curchar1ptr = string1;
-  const NAUTF8Char* curchar2ptr = string2;
+  curchar1ptr = string1;
+  curchar2ptr = string2;
   for(i=0; i<stringsize1; i++){
     NAUTF8Char curchar1;
     NAUTF8Char curchar2;

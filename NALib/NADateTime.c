@@ -291,10 +291,11 @@ NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
   for(i=0; i<NA_MONTHS_PER_YEAR; i++){
     if(naEqualUTF8CStringLiteralsCaseInsensitive(str, na_monthenglishabbreviationnames[i])){return i;}
   }
-  if(isnumber(str[0])){
+  if(isdigit(str[0])){
+    int32 returnint;
     NAString numberstring;
     naCreateStringWithUTF8CStringLiteral(&numberstring, str);
-    int32 returnint = naGetStringInt32(&numberstring) - 1;
+    returnint = naGetStringInt32(&numberstring) - 1;
     naClearString(&numberstring);
     return returnint;
   }
@@ -351,7 +352,6 @@ NA_DEF NADateTime naMakeDateTimeNow(){
 
 NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
   NADateTime datetime;
-  datetime.errornum = NA_DATETIME_ERROR_NONE;
 
   int64 remainingyears = dts->year;
   int64 years400;
@@ -359,6 +359,9 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
   int64 years4;
   NABool isleap;
   NACalendarSystem calendarsystem;
+
+  datetime.errornum = NA_DATETIME_ERROR_NONE;
+
   if((dts->year == 1582) && (dts->mon == 9) && (dts->day > 3) && (dts->day < 14)){
     datetime.errornum = NA_DATETIME_ERROR_JULIAN_GREGORIAN_CHASM;
   }
@@ -526,13 +529,15 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
 
 
 NA_DEF NADateTime naMakeDateTimeFromPointer(const void* data, NABinDateTimeFormat format){
+  NADateTimeStruct dts;
+  uint16 valueu16;
+
   #ifndef NDEBUG
     if(!data){
       naCrash("naMakeDateTimeFromPointer", "data is Null-Pointer.");
     }
   #endif
-  NADateTimeStruct dts;
-  uint16 valueu16;
+
   switch(format){
   case NA_DATETIME_FORMAT_ICC_PROFILE:
     // ICC section 5.1.1, page 4, dateTimeNumber
@@ -727,10 +732,11 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
 
   NA_DEF NADateTime naMakeDateTimeFromFileTime(const FILETIME* filetime, const NATimeZone* timezn){
-    int64 nanosecs = ((int64)filetime->dwHighDateTime << 32) | filetime->dwLowDateTime;
     NADateTime datetime;
-    datetime.errornum = NA_DATETIME_ERROR_NONE;
     NAInt taiperiod;
+    int64 nanosecs = ((int64)filetime->dwHighDateTime << 32) | filetime->dwLowDateTime;
+
+    datetime.errornum = NA_DATETIME_ERROR_NONE;
     datetime.nsec = (nanosecs % 10000000) * 100;  // 100-nanosecond intervals.
     datetime.sisec = nanosecs / 10000000 + NA_GREG_SECONDS_SINCE_BEGIN_1601;
     if(datetime.sisec >= 0){
@@ -1056,9 +1062,9 @@ NA_DEF double naGetDateTimeDiff(const NADateTime* end, const NADateTime* start){
 
 
 NA_DEF void naAddDateTimeDifference(NADateTime* datetime, double difference){
-  datetime->errornum = NA_DATETIME_ERROR_NONE;
   int64 fullsecs = (int64)difference;
   int32 nanosecs = (int32)((difference - (double)fullsecs) * 1e9);
+  datetime->errornum = NA_DATETIME_ERROR_NONE;
   if(difference < 0){
     datetime->nsec += nanosecs;
     if(datetime->nsec < 0){fullsecs--; datetime->nsec += 1000000000;}
@@ -1194,8 +1200,8 @@ NA_DEF NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber){
 
 NA_DEF void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
                                            NAInt leapsecondcorrectionconstant){
-  datetime->errornum = NA_DATETIME_ERROR_NONE;
   NAInt taiperiod;
+  datetime->errornum = NA_DATETIME_ERROR_NONE;
   if(leapsecondcorrectionconstant < 0){return;}
   if(datetime->sisec < naTAIPeriods[leapsecondcorrectionconstant].startsisec){return;}
   
