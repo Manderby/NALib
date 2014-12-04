@@ -59,6 +59,7 @@ NAString* naCreateStringWithMutableUTF8Buffer(NAString* string, NAUTF8Char* buff
   string = naAllocateIfNull(string, sizeof(NAString));
   naCreateByteArrayWithMutableBuffer(&(string->array), buffer, size, takeownership);
   string->flags = 0;
+  return string;
 }
 
 
