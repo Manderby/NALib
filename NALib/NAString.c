@@ -495,6 +495,7 @@ const NAUTF8Char* naGetStringConstUTF8Pointer(const NAString* string){
   #ifndef NDEBUG
     if(!string){
       naCrash("naGetStringConstUTF8Pointer", "string is Null-Pointer.");
+      return NA_NULL;
     }
   #endif
   if(naIsStringEmpty(string)){
