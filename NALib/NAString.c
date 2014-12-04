@@ -55,6 +55,13 @@ NAString* naCreateStringWithUTF8CStringLiteral(NAString* string, const NAUTF8Cha
 }
 
 
+NAString* naCreateStringWithMutableUTF8Buffer(NAString* string, NAUTF8Char* buffer, NAInt size, NABool takeownership){
+  string = naAllocateIfNull(string, sizeof(NAString));
+  naCreateByteArrayWithMutableBuffer(&(string->array), buffer, size, takeownership);
+  string->flags = 0;
+}
+
+
 NAString* naCreateStringWithFormat(NAString* string,
                            const NAUTF8Char* format,
                                              ...){
@@ -493,6 +500,11 @@ const NAUTF8Char* naGetStringConstUTF8Pointer(const NAString* string){
   if(naIsStringEmpty(string)){
     return (const NAUTF8Char*)"";
   }else{
+    #ifndef NDEBUG
+      if(!(string->flags & NA_STRING_NULL_TERMINATED)){
+        naError("naGetStringConstUTF8Pointer", "string is not Null-Terminated.");
+      }
+    #endif
     return (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
   }
 }

@@ -347,6 +347,15 @@ NA_DEF NADateTime naMakeDateTimeNow(){
 }
 
 
+NA_API NADateTime naMakeDateTimeWithNALibSecondNumber(uint64 secondnumber){
+  NADateTime datetime;
+  datetime.sisec = secondnumber;
+  datetime.nsec = 0;
+  datetime.shift = 0;
+  datetime.errornum = NA_DATETIME_ERROR_NONE;
+  datetime.flags = 0;
+  return datetime;
+}
 
 
 

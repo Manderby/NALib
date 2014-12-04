@@ -236,11 +236,17 @@ NA_IDEF int64 naSigni64(int64 x){
 
 // Note that checking for NaN must be performed with the built-in isnan()-macro
 // or -function. Checking x == NA_NAN would return NA_FALSE always.
+// Due to a mis-definition in OS X, Linking between C and C++ does not work
+// with the isnan macro. The author is not aware of a portable solution.
 NA_IAPI NABool naIsNaN(double x){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return _isnan(x);
   #else
-    return isnan(x);
+    #ifndef isnan
+      return NA_FALSE;
+    #else
+      return isnan(x);
+    #endif
   #endif
 }
 
@@ -248,7 +254,11 @@ NA_IAPI NABool naIsNaNf(float x){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return _isnan((double)x);
   #else
-    return isnan(x);
+    #ifndef isnan
+      return NA_FALSE;
+    #else
+      return isnan(x);
+    #endif
   #endif
 }
 

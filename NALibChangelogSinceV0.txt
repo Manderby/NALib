@@ -13,6 +13,14 @@ correct, complete or final.
 
 
 
+- Added naMakeDateTimeWithNALibSecondNumber
+- Added a cplusplus macro for isnan which is necessary on Mac OS X
+- Added naMakeRectWithRectAndBorder and naMakeRectiWithRectiAndBorder
+- Changed many NA_IAPI to NA_IDEF in NACoord.h
+- Added another check for null terminated strings
+- Added naCreateStringWithMutableUTF8Buffer
+
+
 Version 7 (first published 2014-October-6):
 ==============================================
 

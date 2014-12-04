@@ -142,6 +142,10 @@ NA_API NABool naIsLeapYear            (int64 year);
 // with naGetDateTimeDiff.
 NA_API NADateTime naMakeDateTimeNow();
 
+// Returns an NADateTime struct with the given second number interpreted like
+// in NALib. Nanoseconds and Timeshift will be zero.
+NA_API NADateTime naMakeDateTimeWithNALibSecondNumber(uint64 secondnumber);
+
 // Create a new NADateTime struct with the values provided.
 NA_API NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts);
 

@@ -144,6 +144,14 @@ NAString* naCreateStringWithSize(NAString* string, NAInt size);
 NAString* naCreateStringWithUTF8CStringLiteral(  NAString* string,
                                   const NAUTF8Char* ptr);
 
+// Creates a string with the given size and uses the given buffer. The buffer
+// must be big enough! When ownership is set to true, this string will free
+// the buffer when getting deleted.
+NAString* naCreateStringWithMutableUTF8Buffer(  NAString* string,
+                                              NAUTF8Char* buffer,
+                                                    NAInt size,
+                                                   NABool takeownership);
+
 // Creates an NAString just like sprintf.
 NAString* naCreateStringWithFormat(NAString* string,
                            const NAUTF8Char* format,
