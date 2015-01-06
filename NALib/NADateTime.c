@@ -75,7 +75,7 @@ typedef struct{
 } NATAIPeriod;
 
 // Leap second information:
-#define NA_NUMBER_OF_TAI_PERIODS 94
+#define NA_NUMBER_OF_TAI_PERIODS 96
 
 // This table stores all leap second entries since 1958. Every year has at
 // least 1 entry. Every entry defines, what the number of its first second is.
@@ -179,6 +179,8 @@ NATAIPeriod naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS] = {
   {1735689600, 1735689635, 2013, NA_START_JANUARY_FIRST},
   {1767225600, 1767225635, 2014, NA_START_JANUARY_FIRST},
   {1798761600, 1798761635, 2015, NA_START_JANUARY_FIRST},
+  {1814400000, 1814400035, 2015, NA_POSITIVE_LEAP_SECONDS_JUNE},    // + 1
+  {1814400000, 1814400036, 2015, NA_START_JULY_FIRST},
   // the last entry is the first date with unknown future leap seconds.
   // everything up and including that date is known.
 };
@@ -450,7 +452,7 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
 
 
 NA_DEF NADateTime naMakeDateTimeWithValues(int64 year, int32 mon, int32 day, int32 hour, int32 min, int32 sec){
-  NADateTimeStruct dts = {year, mon - 1, day - 1, hour, min, sec, 0, na_globaltimeshift, na_globalsummertime};
+  NADateTimeStruct dts = {year, mon - 1, day - 1, hour, min, sec, 0, na_globaltimeshift, NA_DATETIME_ERROR_NONE, na_globalsummertime};
   return naMakeDateTimeWithDateTimeStruct(&dts);
 }
 

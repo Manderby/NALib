@@ -59,6 +59,7 @@ NAString* naCreateStringWithMutableUTF8Buffer(NAString* string, NAUTF8Char* buff
   string = naAllocateIfNull(string, sizeof(NAString));
   naCreateByteArrayWithMutableBuffer(&(string->array), buffer, size, takeownership);
   string->flags = 0;
+  return string;
 }
 
 
@@ -113,10 +114,10 @@ NAString* naCreateStringExtraction( NAString* deststring,
   // If src is empty, return an empty string. But check if this is intentional
   // or an error:
   if(naIsStringEmpty(srcstring)){
-    #ifndef NDEBUG
-      if(offset || size)
-        naError("naCreateStringExtraction", "Invalid string extraction of empty string.");
-    #endif
+//    #ifndef NDEBUG
+//      if(offset || size)
+//        naError("naCreateStringExtraction", "Invalid string extraction of empty string.");
+//    #endif
     return deststring;
   }
   
@@ -421,8 +422,8 @@ void naAppendStringWithString(    NAString* string,
   NAInt stringsize1 = naGetStringSize(string);
   NAInt stringsize2 = naGetStringSize(string2);
   naCreateStringWithSize(&newstring, stringsize1 + stringsize2);
-  naCpyn(naGetStringMutableUTF8Pointer(&newstring), naGetStringConstUTF8Pointer(string), stringsize1);
-  naCpyn(naGetStringMutableChar(&newstring, stringsize1), naGetStringConstUTF8Pointer(string2), stringsize2);
+  if(stringsize1){naCpyn(naGetStringMutableUTF8Pointer(&newstring), naGetStringConstUTF8Pointer(string), stringsize1);}
+  if(stringsize2){naCpyn(naGetStringMutableChar(&newstring, stringsize1), naGetStringConstUTF8Pointer(string2), stringsize2);}
   naClearString(string);
   naCreateStringExtraction(string, &newstring, 0, -1);
   naClearString(&newstring);
@@ -464,7 +465,7 @@ void naAppendStringWithArguments( NAString* string,
   va_copy(argumentlist3, argumentlist);
   stringsize2 = naVarargStringSize(format, argumentlist2);
   naCreateStringWithSize(&newstring, stringsize1 + stringsize2);
-  naCpyn(naGetStringMutableUTF8Pointer(&newstring), naGetStringConstUTF8Pointer(string), stringsize1);
+  if(stringsize1){naCpyn(naGetStringMutableUTF8Pointer(&newstring), naGetStringConstUTF8Pointer(string), stringsize1);}
   naVsnprintf(naGetStringMutableChar(&newstring, stringsize1), (size_t)(stringsize2+1), format, argumentlist3);
   va_end(argumentlist2);
   va_end(argumentlist3);

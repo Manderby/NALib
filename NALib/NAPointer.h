@@ -158,7 +158,7 @@ NA_IDEF void* naAllocate(NAInt size){
   void* ptr; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(size < 1)
-      naError("naAllocate", "size is smaller than 1 .");
+      naError("naAllocate", "size is smaller than 1.");
   #endif
   #ifdef __clang_analyzer__
     if(size < 1)
@@ -192,7 +192,7 @@ NA_IDEF void* naAllocate(NAInt size){
 NA_IDEF void* naAllocateIfNull(void* ptr, NAInt size){
   #ifndef NDEBUG
     if(size < 1)
-      naError("naAllocateIfNull", "size is smaller than 1 .");
+      naError("naAllocateIfNull", "size is smaller than 1.");
   #endif
 
   if(ptr == NA_NULL){

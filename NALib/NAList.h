@@ -75,10 +75,14 @@ NA_IAPI       void* naGetListMutableContent(      NAList* list);
 // The following functions move the internal pointer. At start, the internal
 // pointer is not set. Reaching the head or tail of the list, the internal
 // pointer will be unset.
-NA_IAPI void naFirstListElement (const NAList* list);
-NA_IAPI void naLastListElement  (const NAList* list);
-NA_IAPI void naNextListElement  (const NAList* list);
-NA_IAPI void naPrevListElement  (const NAList* list);
+NA_IAPI void naFirstListElement   (const NAList* list);
+NA_IAPI void naLastListElement    (const NAList* list);
+NA_IAPI void naNextListElement    (const NAList* list);
+NA_IAPI void naPrevListElement    (const NAList* list);
+// Moves the internal pointer to the element storing the desired content.
+// Returns true, if found and false if not. If not found, the internal pointer
+// will not be changed.
+NA_IAPI NABool naLocateListElement(const NAList* list, void* content);
 // Note: You can safely use remove functions while iterating!
 
 
@@ -101,12 +105,13 @@ NA_IAPI void naAddListElementAfter  (NAList* list, void* content);
 // The internal pointer will be moved to the previous element. If movenext is
 // NA_TRUE, the internal pointer will be moved to the next element.
 // Note: Remove functions free the memory of the corresponding NAListElement but
-// do not free the memory of the content!
-NA_IAPI void naRemoveListElementFirst   (NAList* list, NABool movenext);
-NA_IAPI void naRemoveListElementLast    (NAList* list, NABool movenext);
-NA_IAPI void naRemoveListElementPrev    (NAList* list);
-NA_IAPI void naRemoveListElementCurrent (NAList* list, NABool movenext);
-NA_IAPI void naRemoveListElementNext    (NAList* list);
+// do not free the memory of the content! A pointer to the previously stored
+// content is returned.
+NA_IAPI void* naRemoveListElementFirst   (NAList* list, NABool movenext);
+NA_IAPI void* naRemoveListElementLast    (NAList* list, NABool movenext);
+NA_IAPI void* naRemoveListElementPrev    (NAList* list);
+NA_IAPI void* naRemoveListElementCurrent (NAList* list, NABool movenext);
+NA_IAPI void* naRemoveListElementNext    (NAList* list);
 
 
 
@@ -129,7 +134,7 @@ NA_IAPI void naRemoveListElementNext    (NAList* list);
 #include "NAPointer.h"
 
 
-NA_IAPI NAList* naCreateList(NAList* list){
+NA_IDEF NAList* naCreateList(NAList* list){
   list = (NAList*)naAllocateIfNull(list, sizeof(NAList));
   list->count = 0;
   list->sentinel.content = NA_NULL;
@@ -140,7 +145,7 @@ NA_IAPI NAList* naCreateList(NAList* list){
 }
 
 
-NA_IAPI NAList* naDuplicateList(NAList* list, NAList* originallist){
+NA_IDEF NAList* naDuplicateList(NAList* list, NAList* originallist){
   // Declaration before implementation. Needed for C90.
   NAListElement* cur;
   list = naCreateList(list);
@@ -154,7 +159,7 @@ NA_IAPI NAList* naDuplicateList(NAList* list, NAList* originallist){
 }
 
 
-NA_IAPI void naClearList(NAList* list){
+NA_IDEF void naClearList(NAList* list){
   // Declaration before implementation. Needed for C90.
   NAListElement* cur;
   #ifndef NDEBUG
@@ -171,50 +176,65 @@ NA_IAPI void naClearList(NAList* list){
 }
 
 
-NA_IAPI void naDestroyList(NAList* list){
+NA_IDEF void naDestroyList(NAList* list){
   naClearList(list);
   free(list);
 }
 
 
-NA_IAPI NAInt naGetListCount(NAList* list){
+NA_IDEF NAInt naGetListCount(NAList* list){
   return list->count;
 }
 
 
-NA_IAPI const void* naGetListConstContent(const NAList* list){
+NA_IDEF const void* naGetListConstContent(const NAList* list){
   return list->cur->content;
 }
 
-NA_IAPI void* naGetListMutableContent(NAList* list){
+NA_IDEF void* naGetListMutableContent(NAList* list){
   return list->cur->content;
 }
 
 
-NA_IAPI void naFirstListElement(const NAList* list){
+NA_IDEF void naFirstListElement(const NAList* list){
   NAList* mutablelist = (NAList*)list;
 
   mutablelist->cur = list->sentinel.next;
 }
 
 
-NA_IAPI void naLastListElement(const NAList* list){
+NA_IDEF void naLastListElement(const NAList* list){
   NAList* mutablelist = (NAList*)list;
   mutablelist->cur = list->sentinel.prev;
 }
 
 
-NA_IAPI void naNextListElement(const NAList* list){
+NA_IDEF void naNextListElement(const NAList* list){
   NAList* mutablelist = (NAList*)list;
   mutablelist->cur = list->cur->next;
 }
 
 
-NA_IAPI void naPrevListElement(const NAList* list){
+NA_IDEF void naPrevListElement(const NAList* list){
   NAList* mutablelist = (NAList*)list;
   mutablelist->cur = list->cur->prev;
 }
 
+
+NA_IDEF NABool naLocateListElement(const NAList* list, void* content){
+  NAList* mutablelist = (NAList*)list;
+  NAListElement* curelement = list->sentinel.next;
+  while(curelement != &(list->sentinel)){
+    if(curelement->content == content){
+      mutablelist->cur = curelement;
+      return NA_TRUE;
+    }
+    curelement = curelement->next;
+  }
+  // Reaching here, content could not be found. Do not change the internal
+  // pointer but return NA_FALSE
+  return NA_FALSE;
+}
 
 
 
@@ -227,7 +247,7 @@ NA_IHLP void naInjectListElement(NAList* list, NAListElement* element, void* con
 }
 
 
-NA_IAPI void naAddListElementFirst(NAList* list, void* content){
+NA_IDEF void naAddListElementFirst(NAList* list, void* content){
   NAListElement* newelement = (NAListElement*)naAllocate(sizeof(NAListElement));
   newelement->next = list->sentinel.next;
   newelement->prev = &(list->sentinel);
@@ -235,7 +255,7 @@ NA_IAPI void naAddListElementFirst(NAList* list, void* content){
 }
 
 
-NA_IAPI void naAddListElementLast(NAList* list, void* content){
+NA_IDEF void naAddListElementLast(NAList* list, void* content){
   NAListElement* newelement = (NAListElement*)naAllocate(sizeof(NAListElement));
   newelement->next = &(list->sentinel);
   newelement->prev = list->sentinel.prev;
@@ -243,7 +263,7 @@ NA_IAPI void naAddListElementLast(NAList* list, void* content){
 }
 
 
-NA_IAPI void naAddListElementBefore(NAList* list, void* content){
+NA_IDEF void naAddListElementBefore(NAList* list, void* content){
   NAListElement* newelement = (NAListElement*)naAllocate(sizeof(NAListElement));
   newelement->next = list->cur;
   newelement->prev = list->cur->prev;
@@ -251,7 +271,7 @@ NA_IAPI void naAddListElementBefore(NAList* list, void* content){
 }
 
 
-NA_IAPI void naAddListElementAfter(NAList* list, void* content){
+NA_IDEF void naAddListElementAfter(NAList* list, void* content){
   NAListElement* newelement = (NAListElement*)naAllocate(sizeof(NAListElement));
   newelement->next = list->cur->next;
   newelement->prev = list->cur;
@@ -261,34 +281,36 @@ NA_IAPI void naAddListElementAfter(NAList* list, void* content){
 
 
 // This is a helper function. It should be hidden.
-NA_IHLP void naEjectListElement(NAList* list, NAListElement* element, NABool movenext){
-  if(element == &(list->sentinel)){return;}
+NA_IHLP void* naEjectListElement(NAList* list, NAListElement* element, NABool movenext){
+  if(element == &(list->sentinel)){return NA_NULL;}
   if(element == list->cur){list->cur = (movenext?(element->next):(element->prev));}
   element->prev->next = element->next;
   element->next->prev = element->prev;
   list->count--;
+  void* contentpointer = element->content;
   free(element);
+  return contentpointer;
 }
 
 
-NA_IAPI void naRemoveListElementFirst(NAList* list, NABool movenext){
-  naEjectListElement(list, list->sentinel.next, movenext);
+NA_IDEF void* naRemoveListElementFirst(NAList* list, NABool movenext){
+  return naEjectListElement(list, list->sentinel.next, movenext);
 }
 
-NA_IAPI void naRemoveListElementLast(NAList* list, NABool movenext){
-  naEjectListElement(list, list->sentinel.prev, movenext);
+NA_IDEF void* naRemoveListElementLast(NAList* list, NABool movenext){
+  return naEjectListElement(list, list->sentinel.prev, movenext);
 }
 
-NA_IAPI void naRemoveListElementPrev(NAList* list){
-  naEjectListElement(list, list->cur->prev, NA_TRUE);
+NA_IDEF void* naRemoveListElementPrev(NAList* list){
+  return naEjectListElement(list, list->cur->prev, NA_TRUE);
 }
 
-NA_IAPI void naRemoveListElementCurrent(NAList* list, NABool movenext){
-  naEjectListElement(list, list->cur, movenext);
+NA_IDEF void* naRemoveListElementCurrent(NAList* list, NABool movenext){
+  return naEjectListElement(list, list->cur, movenext);
 }
 
-NA_IAPI void naRemoveListElementNext(NAList* list){
-  naEjectListElement(list, list->cur->next, NA_TRUE);
+NA_IDEF void* naRemoveListElementNext(NAList* list){
+  return naEjectListElement(list, list->cur->next, NA_TRUE);
 }
 
 

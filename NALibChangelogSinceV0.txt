@@ -19,6 +19,9 @@ correct, complete or final.
 - Changed many NA_IAPI to NA_IDEF in NACoord.h
 - Added another check for null terminated strings
 - Added naCreateStringWithMutableUTF8Buffer
+- Added naLocateListElement and changed some macros in the file
+- Remove functions of NAList now return a pointer to the content
+- Added latest leap second according tu bulletin C 49
 
 
 Version 7 (first published 2014-October-6):
