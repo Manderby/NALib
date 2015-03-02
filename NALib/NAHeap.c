@@ -138,6 +138,7 @@ NA_HLP NAInt naHeapMoveUpMaxInt(NAHeap* heap, const void* key, NAInt curindex){
 NA_DEF NAHeap* naCreateHeap(NAHeap* heap, NAInt count, NAInt flags){
   NAInt entrysize;
   #ifndef NDEBUG
+    NAHeap* originalheapparameter = heap;
     // there is always count + 1 elements stored in the array.
     if(count >= NA_INT_MAX){
       naCrash("naCreateHeap", "Heap count is too big.");
@@ -188,7 +189,11 @@ NA_DEF NAHeap* naCreateHeap(NAHeap* heap, NAInt count, NAInt flags){
   default:
     #ifndef NDEBUG
       naCrash("naCreateHeap", "flag combination not implemented.");
-      free(heap->data);
+      if(originalheapparameter){
+        naClearHeap(heap);
+      }else{
+        naDestroyHeap(heap);
+      }
       return NA_NULL;
     #endif
     break;
