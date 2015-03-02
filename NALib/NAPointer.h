@@ -172,6 +172,7 @@ NA_IDEF void* naAllocate(NAInt size){
   #ifndef NDEBUG
     if(ptr == NA_NULL){
       naCrash("naAllocate", "Out of memory.");
+      return NA_NULL;
     }
   #endif
   
@@ -297,6 +298,7 @@ NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer){
       naCrash("naRetainPointer", "pointer is Null-Pointer.");
+      return NA_NULL;
     }else{
       // The next test can detect some erroneous behaviour in the code. Note
       // however that most likely the true cause of the error did occur long
@@ -321,6 +323,7 @@ NA_IDEF void naReleasePointer(NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer){
       naCrash("naReleasePointer", "pointer is Null-Pointer.");
+      return;
     }else{
       // The next test can detect some erroneous behaviour in the code. Note
       // however that most likely the true cause of the error did occur long
@@ -388,6 +391,7 @@ NA_IDEF const void* naGetPointerConstData(const NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer){
       naCrash("naGetPointerData", "pointer is Null-Pointer.");
+      return NA_NULL;
     }
   #endif
   return pointer->data.constd;
@@ -397,6 +401,7 @@ NA_IDEF void* naGetPointerMutableData(NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer){
       naCrash("naGetPointerData", "pointer is Null-Pointer.");
+      return NA_NULL;
     }else{
       if(pointer->refcount & NA_POINTER_CONST_DATA)
         naError("naGetPointerData", "Accessing const data as non-const.");

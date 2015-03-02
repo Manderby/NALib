@@ -400,6 +400,7 @@ NABit* naGetBitArrayBit(NABitArray* bitarray, NAInt indx){
   #ifndef NDEBUG
     if(!bitarray){
       naCrash("naGetBitArrayBit", "bitarray is Null-Pointer.");
+      return NA_NULL;
     }
   #endif
   return naGetByteArrayMutableByte(&(bitarray->bits), indx);
@@ -409,6 +410,7 @@ NAInt naGetBitArrayCount(NABitArray* bitarray){
   #ifndef NDEBUG
     if(!bitarray){
       naCrash("naGetBitArrayCount", "bitarray is Null-Pointer.");
+      return 0;
     }
   #endif
   return naGetByteArraySize(&(bitarray->bits));
@@ -803,6 +805,7 @@ void naComputeBitArraySwapBytes(NABitArray* array){
   #ifndef NDEBUG
     if(!array){
       naCrash("naComputeBitArraySwapBytes", "array is Null-Pointer.");
+      return;
     }else{
       if(naGetByteArraySize(&(array->bits)) % 8)
         naError("naComputeBitArraySwapBytes", "size of bitarray can not be divided by 8.");

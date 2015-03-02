@@ -545,7 +545,9 @@ NA_DEF NADateTime naMakeDateTimeFromPointer(const void* data, NABinDateTimeForma
 
   #ifndef NDEBUG
     if(!data){
+      NADateTime dummytime = naMakeDateTimeNow();
       naCrash("naMakeDateTimeFromPointer", "data is Null-Pointer.");
+      return dummytime;
     }
   #endif
 

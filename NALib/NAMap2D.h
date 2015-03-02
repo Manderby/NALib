@@ -104,6 +104,7 @@ NA_IDEF void naClearMap2D(NAMap2D* map2d){
   #ifndef NDEBUG
     if(!map2d){
       naCrash("naClearMap2D", "map2d is Null-Pointer.");
+      return;
     }
   #endif
   naClearByteMap2D(&(map2d->bytemap));
@@ -137,6 +138,7 @@ NA_IDEF const void* naGetMap2DConstPointer(const NAMap2D* map2d){
   #ifndef NDEBUG
     if(!map2d){
       naCrash("naGetMap2DConstPointer", "map2d is Null-Pointer.");
+      return NA_NULL;
     }
   #endif
   return naGetByteMap2DConstPointer(&(map2d->bytemap));
@@ -147,6 +149,7 @@ NA_IDEF void* naGetMap2DMutablePointer(NAMap2D* map2d){
   #ifndef NDEBUG
     if(!map2d){
       naCrash("naGetMap2DMutablePointer", "map2d is Null-Pointer.");
+      return NA_NULL;
     }
   #endif
   return naGetByteMap2DMutablePointer(&(map2d->bytemap));
@@ -175,6 +178,7 @@ NA_IDEF NABool naIsPosiInMap2D(NAPosi pos, const NAMap2D* map2d){
   #ifndef NDEBUG
     if(!map2d){
       naCrash("naIsPosiInMap", "map2d is Null-Pointer.");
+      return NA_FALSE;
     }
   #endif
   return naIsPosiInByteMap2D(pos, &(map2d->bytemap));

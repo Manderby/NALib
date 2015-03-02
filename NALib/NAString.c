@@ -41,6 +41,7 @@ NAString* naCreateStringWithUTF8CStringLiteral(NAString* string, const NAUTF8Cha
   #ifndef NDEBUG
     if(!ptr){
       naCrash("naCreateStringWithUTF8CStringLiteral", "ptr is Null-Pointer");
+      return NA_NULL;
     }
   #endif
   size = naStrlen(ptr);
@@ -156,6 +157,7 @@ NAString* naCreateStringXMLEncoded( NAString* deststring,
   #ifndef NDEBUG
     if(!inputstring){
       naCrash("naCreateStringXMLEncoded", "input string is Null-Pointer.");
+      return NA_NULL;
     }
     if(deststring == inputstring)
       naError("naCreateStringXMLEncoded", "The two parameters are the same.");
@@ -218,6 +220,7 @@ NAString* naCreateStringXMLDecoded( NAString* deststring,
   #ifndef NDEBUG
     if(!inputstring){
       naCrash("naCreateStringXMLDecoded", "input string is Null-Pointer.");
+      return NA_NULL;
     }
     if(deststring == inputstring)
       naError("naCreateStringXMLDecoded", "The two parameters are the same.");
@@ -273,6 +276,7 @@ NAString* naCreateStringEPSEncoded( NAString* deststring,
   #ifndef NDEBUG
     if(!inputstring){
       naCrash("naCreateStringEPSEncoded", "input string is Null-Pointer.");
+      return NA_NULL;
     }
     if(deststring == inputstring)
       naError("naCreateStringEPSEncoded", "The two parameters are the same.");
@@ -330,6 +334,7 @@ NAString* naCreateStringEPSDecoded( NAString* deststring,
   #ifndef NDEBUG
     if(!inputstring){
       naCrash("naCreateStringEPSDecoded", "input string is Null-Pointer.");
+      return NA_NULL;
     }
     if(deststring == inputstring)
       naError("naCreateStringEPSDecoded", "The two parameters are the same.");
@@ -516,6 +521,7 @@ const NAUTF8Char* naGetStringConstChar(const NAString* string, NAInt indx){
   #ifndef NDEBUG
     if(!string){
       naCrash("naGetStringChar", "string is Null-Pointer.");
+      return NA_NULL;
     }
   #endif
   return (const NAUTF8Char*)naGetByteArrayConstByte(&(string->array), indx);
@@ -525,6 +531,7 @@ NAUTF8Char* naGetStringMutableUTF8Pointer(NAString* string){
   #ifndef NDEBUG
     if(!string){
       naCrash("naGetStringMutableUTF8Pointer", "string is Null-Pointer.");
+      return NA_NULL;
     }
   #endif
   return (NAUTF8Char*)naGetByteArrayMutablePointer(&(string->array));
@@ -535,6 +542,7 @@ NAUTF8Char* naGetStringMutableChar(NAString* string, NAInt indx){
   #ifndef NDEBUG
     if(!string){
       naCrash("naGetStringMutableChar", "string is Null-Pointer.");
+      return NA_NULL;
     }
   #endif
   return (NAUTF8Char*)naGetByteArrayMutableByte(&(string->array), indx);
@@ -545,6 +553,7 @@ NABool naIsStringEmpty(const NAString* string){
   #ifndef NDEBUG
     if(!string){
       naCrash("naIsStringEmpty", "string is Null-Pointer.");
+      return NA_TRUE;
     }
   #endif
   return naIsByteArrayEmpty(&(string->array));
@@ -726,6 +735,7 @@ void naSkipStringWhitespaces(NAString* string){
   #ifndef NDEBUG
     if(!string){
       naCrash("naSkipStringWhitespaces", "Parameter is Null-Pointer.");
+      return;
     }
   #endif
   if(naIsStringEmpty(string)){return;}
@@ -875,6 +885,7 @@ void naParseStringToken(NAString* string, NAString* token){
   #ifndef NDEBUG
     if(!string){
       naCrash("naParseStringToken", "string is Null-Pointer.");
+      return;
     }
     if(token == string)
       naError("naParseStringToken", "token and string shall not be the same.");
@@ -944,6 +955,7 @@ void naParseStringTokenWithDelimiter(NAString* string, NAString* token, NAUTF8Ch
   #ifndef NDEBUG
     if(!string){
       naCrash("naParseStringTokenWithDelimiter", "string is Null-Pointer.");
+      return;
     }
     if(token == string)
       naError("naParseStringTokenWithDelimiter", "token and string shall not be the same.");

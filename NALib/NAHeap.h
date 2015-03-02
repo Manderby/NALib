@@ -129,6 +129,7 @@ NA_IDEF void naDestroyHeap(NAHeap* heap){
   #ifndef NDEBUG
     if(!heap){
       naCrash("naDestroyHeap", "heap is Null-Pointer.");
+      return;
     }
   #endif
   naClearHeap(heap);

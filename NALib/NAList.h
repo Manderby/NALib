@@ -185,6 +185,7 @@ NA_IDEF void naEmptyList(NAList* list, NADestructor destructor){
   #ifndef NDEBUG
     if(!list){
       naCrash("naClearList", "list is Null-Pointer.");
+      return;
     }
   #endif
   cur = list->sentinel.next;

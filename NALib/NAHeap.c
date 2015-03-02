@@ -141,6 +141,7 @@ NA_DEF NAHeap* naCreateHeap(NAHeap* heap, NAInt count, NAInt flags){
     // there is always count + 1 elements stored in the array.
     if(count >= NA_INT_MAX){
       naCrash("naCreateHeap", "Heap count is too big.");
+      return NA_NULL;
     }
     if(count <= 0)
       naError("naCreateHeap", "Heap count smallerequal zero.");
@@ -187,6 +188,8 @@ NA_DEF NAHeap* naCreateHeap(NAHeap* heap, NAInt count, NAInt flags){
   default:
     #ifndef NDEBUG
       naCrash("naCreateHeap", "flag combination not implemented.");
+      free(heap->data);
+      return NA_NULL;
     #endif
     break;
   }

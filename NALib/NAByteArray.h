@@ -216,6 +216,7 @@ NA_IDEF void naClearByteArray(NAByteArray* array){
   #ifndef NDEBUG
     if(!array){
       naCrash("naClearByteArray", "array is Null-Pointer.");
+      return;
     }
   #endif
   if(!naIsByteArrayEmpty(array)){naReleasePointer(array->storage);}
@@ -234,6 +235,7 @@ NA_IDEF const NAByte* naGetByteArrayConstPointer(const NAByteArray* array){
   #ifndef NDEBUG
     if(!array){
       naCrash("naGetByteArrayConstPointer", "array is Null-Pointer.");
+      return NA_NULL;
     }
     if(naIsByteArrayEmpty(array))
       naError("naGetByteArrayConstPointer", "array is empty");
@@ -247,6 +249,7 @@ NA_IDEF NAByte* naGetByteArrayMutablePointer(NAByteArray* array){
   #ifndef NDEBUG
     if(!array){
       naCrash("naGetByteArrayMutablePointer", "array is Null-Pointer.");
+      return NA_NULL;
     }
     if(naIsByteArrayEmpty(array))
       naError("naGetByteArrayMutablePointer", "array is empty");
@@ -260,6 +263,7 @@ NA_IDEF NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt indx){
   #ifndef NDEBUG
     if(!array){
       naCrash("naGetByteArrayMutableByte", "array is Null-Pointer.");
+      return NA_NULL;
     }
     if(naIsByteArrayEmpty(array))
       naError("naGetByteArrayMutableByte", "array is empty");
@@ -278,6 +282,7 @@ NA_IDEF const NAByte* naGetByteArrayConstByte(const NAByteArray* array, NAInt in
   #ifndef NDEBUG
     if(!array){
       naCrash("naGetByteArrayConstByte", "array is Null-Pointer.");
+      return NA_NULL;
     }
     if(naIsByteArrayEmpty(array))
       naError("naGetByteArrayConstByte", "array is empty");
@@ -296,6 +301,7 @@ NA_IDEF NAInt naGetByteArraySize(const NAByteArray* array){
   #ifndef NDEBUG
     if(!array){
       naCrash("naGetByteArraySize", "array is Null-Pointer.");
+      return 0;
     }else{
       if(array->size < 0)
         naError("naGetByteArraySize", "returned size is negative. Uninitialized struct?");
@@ -310,6 +316,7 @@ NA_IDEF NABool naIsByteArrayEmpty(const NAByteArray* array){
   #ifndef NDEBUG
     if(!array){
       naCrash("naIsByteArrayEmpty", "array is Null-Pointer.");
+      return NA_TRUE;
     }else{
       if(array->size < 0)
         naError("naIsByteArrayEmpty", "size is negative. Uninitialized struct?");

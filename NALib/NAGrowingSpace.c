@@ -58,23 +58,16 @@ NA_DEF void naClearGrowingSpace(NAGrowingSpace* space, NADestructor destructor){
 
   naFirstListElement(&(space->arrays));
   arraycount = naGetListCount(&(space->arrays));
-  for(i=0; i<(arraycount - 1); i++){
+  for(i=0; i<arraycount; i++){
     curarray = naGetListMutableContent(&(space->arrays));
-    if(destructor){
-      NAByte* curptr = naGetByteArrayMutablePointer(curarray);
-      for(k=0; k<NA_GROWING_SPACE_SINGLE_ARRAY_SIZE; k++){
-        destructor(curptr);
-        curptr += space->typesize;
-      }
+    NAInt remainingcount;
+    if(i == arraycount - 1){
+      remainingcount = space->usedcount % NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
+    }else{
+      remainingcount = NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
     }
-    naDestroyByteArray(curarray);
-    naNextListElement(&(space->arrays));
-  }
-  // Destroy the last array
-  if(curarray){
     if(destructor){
       NAByte* curptr = naGetByteArrayMutablePointer(curarray);
-      NAInt remainingcount = space->usedcount % NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
       for(k=0; k<remainingcount; k++){
         destructor(curptr);
         curptr += space->typesize;
