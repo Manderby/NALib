@@ -176,7 +176,7 @@ NA_IAPI       void* naGetPointerMutableData(      NAPointer* pointer);
 
 
 NA_IDEF void* naAllocate(NAInt size){
-  void* ptr; // Declaration before implementation. Needed for C90.
+  NAByte* ptr; // Declaration before implementation. Needed for C90.
   NAInt fullsize;
   #ifndef NDEBUG
     if(size == 0)

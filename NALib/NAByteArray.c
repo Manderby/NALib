@@ -106,7 +106,6 @@ NA_DEF NAByteArray* naCreateByteArrayExtraction(NAByteArray* dstarray, const NAB
 NA_DEF void naDecoupleByteArray(NAByteArray* array, NABool appendzerobytes){
   // Declaration before implementation. Needed for C90.
   NAInt arraysize;
-  NAByteArray newarray;
   NAByte* buf;
   #ifndef NDEBUG
     if(!array){

@@ -33,8 +33,8 @@ Highlights:
   and made them non-inline.
 
 Other things:
-- Changed naCreatePointerWithSize such that negative sizes can be given. If
-  the size is negative, the latest Bytes are filled with Null.
+- Changed naAllocate and naCreatePointerWithSize such that negative sizes
+  can be given. If size is negative, the latest Bytes are filled with Null.
 - Added Constructor to NAGrowingSpace creator.
 - Changed naNewGrowingSpaceElement. No more indexes.
 - Removed naAddGrowingSpaceElement, naGetGrowingSpaceConstPointer and
