@@ -58,11 +58,14 @@ NA_IAPI NAList* naDuplicateList(NAList* list, NAList* originallist);
 
 // Clears or destroys the given list. Note: This will free all list elements
 // but not the contents they store!
-NA_IAPI void naClearList  (NAList* list);
-NA_IAPI void naDestroyList(NAList* list);
+NA_IAPI void naClearList  (NAList* list, NADestructor destructor);
+NA_IAPI void naDestroyList(NAList* list, NADestructor destructor);
+
+// Empties the list. See implementation for difference to naClearList
+NA_IAPI void naEmptyList  (NAList* list, NADestructor destructor);
 
 // Returns the number of elements in this list.
-NA_IAPI NAInt naGetListCount(NAList* list);
+NA_IAPI NAInt naGetListCount(const NAList* list);
 
 
 // Iteration functions
@@ -72,6 +75,7 @@ NA_IAPI NAInt naGetListCount(NAList* list);
 // set, NA_NULL is returned.
 NA_IAPI const void* naGetListConstContent  (const NAList* list);
 NA_IAPI       void* naGetListMutableContent(      NAList* list);
+
 // The following functions move the internal pointer. At start, the internal
 // pointer is not set. Reaching the head or tail of the list, the internal
 // pointer will be unset.
@@ -159,7 +163,23 @@ NA_IDEF NAList* naDuplicateList(NAList* list, NAList* originallist){
 }
 
 
-NA_IDEF void naClearList(NAList* list){
+NA_IDEF void naClearList(NAList* list, NADestructor destructor){
+  naEmptyList(list, destructor);
+}
+
+
+NA_IDEF void naDestroyList(NAList* list, NADestructor destructor){
+  naClearList(list, destructor);
+  free(list);
+}
+
+
+// The difference between naEmptyList and naClearList is that Clear should
+// be called with a semantic of invalidating the list whereas Empty simply
+// empties the list. Due to the implementation in NALib, this makes no
+// difference but should nontheless be distinguished. For other datastructures
+// like NAHeap, this equality does not hold.
+NA_IDEF void naEmptyList(NAList* list, NADestructor destructor){
   // Declaration before implementation. Needed for C90.
   NAListElement* cur;
   #ifndef NDEBUG
@@ -170,19 +190,16 @@ NA_IDEF void naClearList(NAList* list){
   cur = list->sentinel.next;
   while(cur != &(list->sentinel)){
     NAListElement* next = cur->next;
+    if(destructor){destructor(cur->content);}
     free(cur);
     cur = next;
   }
 }
 
 
-NA_IDEF void naDestroyList(NAList* list){
-  naClearList(list);
-  free(list);
-}
 
 
-NA_IDEF NAInt naGetListCount(NAList* list){
+NA_IDEF NAInt naGetListCount(const NAList* list){
   return list->count;
 }
 
@@ -282,12 +299,13 @@ NA_IDEF void naAddListElementAfter(NAList* list, void* content){
 
 // This is a helper function. It should be hidden.
 NA_IHLP void* naEjectListElement(NAList* list, NAListElement* element, NABool movenext){
+  void* contentpointer; // Declaration before Implementation. Needed for C90
   if(element == &(list->sentinel)){return NA_NULL;}
   if(element == list->cur){list->cur = (movenext?(element->next):(element->prev));}
   element->prev->next = element->next;
   element->next->prev = element->prev;
   list->count--;
-  void* contentpointer = element->content;
+  contentpointer = element->content;
   free(element);
   return contentpointer;
 }

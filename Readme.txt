@@ -8,9 +8,11 @@ intended for didactical purposes. Full license notice at the bottom.
 Table of Content:
 -----------------
 1.   Short Introduction
-2.   Constructors
-3.   Destructors
-3.1    Destructor callbacks for container structs
+2.   Creation and deletion of memory and structs
+2.1    Constructors
+2.2    Destructors
+2.3    Callbacks for container structs
+3.   -
 4.   C90 variable declarations
 5.   Inline implementations
 6.   Opaque types
@@ -41,8 +43,37 @@ Have fun, Tobias Stamm.
 
 
 
-2. Constructors
----------------
+2 Creation and deletion of memory and structs
+---------------------------------------------
+You can use the default malloc and free functions to create memory blocks
+as you like. NALib nontheless provides two allocation methods (which can
+be deallocated using free):
+
+- naAllocate        Allocates the given number of bytes.
+- naAllocateIfNull  Same as naAllocate but the space will only be allocated
+                    if the pointer provided is NA_NULL.
+
+Other than these basic allocation methods, NALib offers creation and deletion
+functions for many structs.
+
+The naming scheme guides you:
+
+- naMakeXXX:    Returns the struct as a value.
+- naFillXXX:    Expects the first argument to be a pointer to the struct.
+- naCreateXXX:  Expects either a pointer to an existing block in memory or
+                NA_NULL if you want NALib to allocate the memory. In any case:
+                Returns the pointer to the struct. See section 2.1 for more
+                information.
+- naClearXXX:   Expects a pointer to a struct in which the memory shall be
+                whiped. The pointer itself is not deallocated though. See
+                section 2.2 for more information.
+- naDestroyXXX: Same thing as naClearXXX, but the pointer is deallocated. See
+                section 2.2 for more information.
+
+
+
+2.1 Constructors
+-----------------
 Quite often, structs must be initialized before being able to use them.
 As NALib is a C library, there are no constructors like in typical OOP
 languages and consequently, such initialization must be done manually by
@@ -89,8 +120,8 @@ B. If the given first argument of an naCreateXXX function is a NULL-pointer,
 
 
 
-3. Destructors
---------------
+2.2 Destructors
+---------------
 Structs which have been initialized using an naCreateXXX function (see above)
 must be deleted with the appropriate destructor.
 
@@ -119,51 +150,66 @@ you know what you are doing.
 Do not use the naDestroyXXX functions on stack variables!
 
 
-3.1 Destructor callbacks for container structs
-----------------------------------------------
-
-Container structs like NAArray or NAGrowingSpace provide naClearXXX and
-naDestroyXXX functions with an additional parameter: A destructor callback
-with the following function pointer type:
-
-typedef void (*NADestructor)(void *);
-
-The parameter is usually called "destructor" and allows you to provide a
-function pointer to a destruction function which will be called for every
-element in the container. Of course, this is only necessary if your elements
-actually need some sort of destruction.
-
-If for example you store complex objects in an NAArray whereas the fields of
-the objects need to be deallocated properly upon destruction, you do not have
-to iterate over the whole array and call your destructor manually for every
-element. All the proper destruction of your elements will be taken care of.
-
-You are nontheless free to use this destructor. When the destructor parameter
-is NA_NULL, no destruction will be performed on the single elements. Note that
-when using the destructor argument, your element destructor will be called by
-a function call which can be very costly for a lot of small elements.
 
 
+2.3 Callbacks for container structs
+-----------------------------------
+Some container structs like NAArray or NAGrowingSpace provide naCreateXXX,
+naClearXXX and naDestroyXXX functions with an additional parameter:
+A constructor or destructor callback with the following signature:
+
+typedef void* (*NAConstructor)(void *);
+typedef void  (*NADestructor) (void *);
+
+The parameter is usually called "constructor" or "destructor" and allows
+you to provide a function pointer to a construction or destruction function
+which will be called for every element in the container. Of course, this is
+only necessary if your elements actually need some sort of construction or
+destruction.
+
+Constructor example: You store complex objects in a NAGrowingSpace whereas
+each object must perform certain initialization before it can properly be
+used. The NAGrowingSpace structure will call the appropriate constructor
+for all new elements whenever the space grows.
+
+Destructor example: You store complex objects in an NAArray whereas the fields
+of the objects need to be deallocated properly upon destruction, you do not
+have to iterate over the whole array and call your destructor manually for
+every element. All the proper destruction of your elements will be taken care
+of.
+
+You are nontheless free to use these callbacks. When the according parameter
+is NA_NULL, no construction or destruction will be performed on the single
+elements. Note that when using the callback argument, your element constructor
+or destructor will be called by a function call which can be very costly for
+a lot of small elements.
 
 IMPORTANT:
-Beware that your destructor will always be called with a POINTER to the
-stored content. If for example, you have an array of integers, your
-destructor will get an "int *". If your array stores a pointer to int,
-your destructor will get an "int* *".
+Beware that your constructor or destructor will always be called with a
+POINTER to the stored content. If for example, you have an array of integers,
+your callback will get an "int *". If your array stores a pointer to int,
+your callback will get an "int* *".
 
-In order to provide a clean API, the parameter of your destructor callback
-can be a pointer to any type you desire. But you must properly cast the
-function pointer when providing it to the naDestroyXXX or naClearXXX
-function. If you provide an incompatilbel function pointer type, the
-implementation will likely crash. Especially note that attributes like
-__fastcall will not work!
+The return value of the constructor callback will be ignored.
 
-Note that you can also use any of the naClearXXX and naDestroyXXX functions
-of NALib as callback functions as long as they only accept one parameter.
-Choose the correct one! And beware the pointer!
+In order to provide a clean API, the input- and return-parameter of your
+callback can be a pointer to any type you desire. But you must properly
+cast the function pointer when providing it to the naCreateXXX, naDestroyXXX
+or naClearXXX function with (NAConstructor) or (NADesctuctor). If you provide
+an incompatibel function pointer type, the implementation will likely crash.
+Especially note that attributes like __fastcall will not work!
+
+Note that you can also use any of the functions of NALib as callback
+functions as long as they only accept the correct parameters. Choose the
+correct one! And beware the pointer!
 
 
 
+
+3 Section 3
+-----------
+Looking for section 3? Currently there is none due to reordering of the
+contents of this file. Don't worry about it.
 
 
 

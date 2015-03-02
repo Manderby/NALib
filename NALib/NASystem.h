@@ -171,7 +171,7 @@
 #define NA_DEF      
 #define NA_IAPI   static NA_INLINE
 #define NA_IDEF   static NA_INLINE
-#define NA_HLP    NA_SYMBOL_HIDDEN
+#define NA_HLP    static NA_SYMBOL_HIDDEN
 #define NA_IHLP   static NA_INLINE
 
 #if defined __STDC_VERSION__
@@ -472,9 +472,11 @@ typedef struct NAArray      NAArray;
 // dependencies between header files.
 
 
-// This is the type of a destructor callback which is used by some naClearXXX
-// and naDestroyXXX functions. See readme for detailed informations.
-typedef void (*NADestructor)(void *);
+// This is the type of a constructor and destructor callback which is used by
+// some naCreateXXX as well as some naClearXXX and naDestroyXXX functions.
+// See readme for detailed informations.
+typedef void* (*NAConstructor)(void *);
+typedef void  (*NADestructor) (void *);
 
 
 

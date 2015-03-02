@@ -75,6 +75,10 @@ NA_IAPI NABool naIsPosiInMap2D(NAPosi pos, const NAMap2D* map2d);
 
 
 
+
+
+
+
 NA_IDEF NAMap2D* naCreateMap2D(NAMap2D* map2d, NAInt typesize){
   map2d = (NAMap2D*)naAllocateIfNull(map2d, sizeof(NAMap2D));
   map2d->typesize = typesize;

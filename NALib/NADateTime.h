@@ -109,11 +109,13 @@ struct NADateTimeAttribute{
   int32  shiftmin;     // positive shift minute number in [0, 59]
 };
 
+// This is the core time struct of NALib. It uses precisely 128 Bits and stores
+// both date, time and a nanosecond timer.
 typedef struct NADateTime NADateTime;
 struct NADateTime{
   int64  sisec;     // SI-second number starting Jan 1st 1958, 00:00 + 00:00
   int32  nsec;      // nanosecond number in range [0, 999999999]
-  int16  shift;     // time shift in minutes
+  int16  shift;     // time shift in minutes (positive and negative)
   uint8  errornum;  // error number in case invalid values were given.
   uint8  flags;     // Various flags.
 };

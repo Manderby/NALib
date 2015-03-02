@@ -131,16 +131,16 @@ NA_API NABitArray* naCreateBitArrayExtraction(NABitArray* dstarray,
 //   24, 32, ... bits, but never something in between.
 // Note that strings are always expected to be in natural reading order,
 // meaning, the trailing of the string contains the least significant values.
-NA_API NABitArray* naCreateBitArrayFromBinString(  NABitArray* bitarray,
+NA_API NABitArray* naCreateBitArrayWithBinString(  NABitArray* bitarray,
                                                      NAString* string,
                                                          NAInt sizehint);
-NA_API NABitArray* naCreateBitArrayFromDecString(  NABitArray* bitarray,
+NA_API NABitArray* naCreateBitArrayWithDecString(  NABitArray* bitarray,
                                                      NAString* string,
                                                          NAInt sizehint);
-NA_API NABitArray* naCreateBitArrayFromHexString(  NABitArray* bitarray,
+NA_API NABitArray* naCreateBitArrayWithHexString(  NABitArray* bitarray,
                                                      NAString* string,
                                                          NAInt sizehint);
-NA_API NABitArray* naCreateBitArrayFromASCIIString(NABitArray* bitarray, //todo make byte array.
+NA_API NABitArray* naCreateBitArrayWithASCIIString(NABitArray* bitarray, //todo make byte array.
                                                      NAString* string,
                                                          NAInt sizehint);
 

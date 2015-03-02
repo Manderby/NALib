@@ -5,19 +5,6 @@
 #include "NASystem.h"
 
 
-// This is an example of how extern variables should be defined. For example,
-// the na_system_strings variable is defined as extern in the NASystems.h file.
-// But it is defined and hence instanciated (as a global variable) here.
-//
-// The header file will be included by potentially many other files but this
-// implementation file will be compiled once, and only once. Hence, the
-// variable will also be instanciated only once.
-//
-// Note for C++: Member statics must be defined with the appropriate Namespace.
-// For example: MyClass::mystaticvar = 52;
-
-
-
 
 #ifndef NDEBUG
 

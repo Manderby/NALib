@@ -27,7 +27,7 @@
 // Important: You have to typecast the returned element-pointers!
 
 
-#include "NASystem.h"
+#include "NAMinMax.h"
 
 
 
@@ -168,7 +168,7 @@ NA_IDEF NAArray* naCreateArrayWithCount(NAArray* array,
       naError("naCreateArrayWithCount", "count is < 0.");
   #endif
   if(!count){return naCreateArray(array);}
-  array = naAllocateIfNull(array, sizeof(NAArray));
+  array = (NAArray*)naAllocateIfNull(array, sizeof(NAArray));
   naCreateByteArrayWithSize(&(array->bytearray), typesize * count);
   // Note that if count was 0, the typesize is irrelevant.
   array->typesize = typesize;
@@ -185,7 +185,7 @@ NA_IDEF NAArray* naCreateArrayWithConstBuffer(
     if(typesize <= 0)
       naError("naCreateArrayWithConstBuffer", "typesize is smallerequal zero");
   #endif
-  array = naAllocateIfNull(array, sizeof(NAArray));
+  array = (NAArray*)naAllocateIfNull(array, sizeof(NAArray));
   naCreateByteArrayWithConstBuffer(&(array->bytearray), buffer, typesize * count);
   array->typesize = typesize;
   return array;
@@ -202,7 +202,7 @@ NA_IDEF NAArray* naCreateArrayWithMutableBuffer(
     if(typesize <= 0)
       naError("naCreateArrayWithConstBuffer", "typesize is smallerequal zero");
   #endif
-  array = naAllocateIfNull(array, sizeof(NAArray));
+  array = (NAArray*)naAllocateIfNull(array, sizeof(NAArray));
   naCreateByteArrayWithMutableBuffer(&(array->bytearray), buffer, typesize * count, takeownership);
   array->typesize = typesize;
   return array;
@@ -213,10 +213,10 @@ NA_IDEF NAArray* naCreateArrayExtraction(   NAArray* dstarray,
                                       const NAArray* srcarray,
                                                NAInt offset,
                                                NAInt count){
-  dstarray = naAllocateIfNull(dstarray, sizeof(NAArray));
+  dstarray = (NAArray*)naAllocateIfNull(dstarray, sizeof(NAArray));
   dstarray->typesize = srcarray->typesize;
 
-  naMakeiPositiveInSize(&offset, &count, naGetArrayCount(srcarray));
+  naMakePositiveiInSize(&offset, &count, naGetArrayCount(srcarray));
 
   naCreateByteArrayExtraction(&(dstarray->bytearray),
                             &(srcarray->bytearray),

@@ -85,7 +85,7 @@ NA_IAPI NAByte* naEnhanceByteMap2DAtPosi(NAByteMap2D* map2d, NAPosi pos);
 
 // Clamps the map to the given rect. All data outside the rect will be
 // discarded. The given rect must be completely inside the existing map.
-NA_IAPI NAByte* naClampByteMap2DToRecti(NAByteMap2D* map2d, NARecti rect);
+NA_IAPI void naClampByteMap2DToRecti(NAByteMap2D* map2d, NARecti rect);
 
 
 // Fills the map with the given value in the given rect. The rect must be fully
@@ -356,7 +356,7 @@ NA_IDEF void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect){
 }
 
 
-NA_IDEF NAByte* naClampByteMap2DToRecti(NAByteMap2D* map2d, NARecti rect){
+NA_IDEF void naClampByteMap2DToRecti(NAByteMap2D* map2d, NARecti rect){
   NAByteMap2D tmpbytemap; // declaration before implementation. Needed for C90
   #ifndef NDEBUG
     if(!map2d){

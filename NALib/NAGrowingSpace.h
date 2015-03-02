@@ -10,84 +10,87 @@
 
 
 // This data structure provides the functionality of storing multiple elements
-// of the same type but with a yet unknown count. This is useful when parsing
-// files without prior knowledge of the number of elements stored.
+// of the same type but with a yet unknown count. The number of elements
+// stored is only limited by the available memory.
 //
 // Usage: Create a growing space and add each element one by one. When you
 // are finished adding elements, dump everything into a desired structure
-// like an array or a list. Any other usage is not encouraged.
+// like an array or a list. Or just leave the elements in this structure and
+// delete them all together when you are finished using them. Any other usage
+// is not encouraged.
 //
-// Implementation note: The growing space is implemented as an array which
-// grows in increments of the power of 2. First, the array is empty but
-// provides space for 1 element. Later on it provides space for 2, 4, 8, ...
-// elements. Everytime, the provided space increases, the whole array gets
-// copied bit by bit.
+// Implementation note: The growing space had previously been implemented
+// with an array which got copied everytime the space had to grow. This is
+// no more! NAGrowing space now stores elements in a list of arrays. Therefore,
+// the addresses of your elements will not change as long as they are stored
+// in the growing space. This is a huge advantage!
 //
-// Warning: Do not store pointers to any of the contents. They might likely
-// change.
-
+// There is also a disadvantage: Traversing the space one-by-one can only be
+// done efficiently using an iterator. Which is not implemented yet.
+//
+// IMPORTANT:
+// NAGrowingSpace is not a Pool structure! Deletion or recycling of elements
+// is not provided. NAGrowingSpace is a strictly growing structure which is
+// especially good at providing quick space for single elements which
+// simply need to be stored somewhere where the programmer does not want to
+// care about.
+//
+// Use this structure when you are building up collections, for example:
+// When parsing files without prior knowledge of the number of elements stored.
+// Creating a bunch of particles in a physically based simulation.
+// Creating an unknown number of edges within a point cloud.
+// And many more examples. Turns out the author uses this structure more and
+// more.
 
 #include "NAArray.h"
+#include "NAList.h"
 
 // Opaque type. See explanation in readme.txt
 typedef struct NAGrowingSpace NAGrowingSpace;
 struct NAGrowingSpace{
-  NAArray array;
-  NAInt   usedcount;  // The used number of elements in the storage.
+  NAList        arrays;     // List of NAByteArray*
+  NAInt         typesize;   // The size in bytes of the stored type
+  NAInt         usedcount;  // The used number of elements in the storage.
+  NAConstructor constructor;
 };
 
 
-// Creates a new GrowingSpace with the desired type size. If initialcount is
-// 0, it will nontheless allocate space for 1 element
-NAGrowingSpace* naCreateGrowingSpace(NAGrowingSpace* space,
-                                             NAInt typesize,
-                                             NAInt initialcount);
+// Creates a new NAGrowingSpace with the desired type size.
+NA_API NAGrowingSpace* naCreateGrowingSpace(NAGrowingSpace* space,
+                                                      NAInt typesize,
+                                              NAConstructor constructor);
 
-// Creates a duplicate of the given original space. Note that the new space
-// may not have the same amount of remaining available space!
-NAGrowingSpace* naDuplicateGrowingSpace(NAGrowingSpace* space,
-                                  const NAGrowingSpace* originalspace);
+// Clears or destroys the given space.
+NA_API void naClearGrowingSpace  (NAGrowingSpace* space, NADestructor destructor);
+NA_API void naDestroyGrowingSpace(NAGrowingSpace* space, NADestructor destructor);
 
-// Clears or destroys the given array.
-void naClearGrowingSpace  (NAGrowingSpace* space, NADestructor destructor);
-void naDestroyGrowingSpace(NAGrowingSpace* space, NADestructor destructor);
-
-// Grows the space by 1 element. In both versions, the pointer to the new
-// element is returned. The "New" version leaves the new element uninitialized
-// but returns the new index in the given indexptr if available. The "Add"
-// version copies the contents of the given elemptr to the new element. If
-// elemptr is NA_NULL, nothing is copied.
-void* naNewGrowingSpaceElement(NAGrowingSpace* space, NAInt* indexptr);
-void* naAddGrowingSpaceElement(NAGrowingSpace* space, void* elemptr);
-
-// Returns a pointer to the very first element of the growing space. Warning:
-// result is garbage if the space is empty. Notice: This function is speedy.
-const void* naGetGrowingSpaceConstPointer  (const NAGrowingSpace* space);
-void*       naGetGrowingSpaceMutablePointer(      NAGrowingSpace* space);
+// Grows the space by 1 element. The pointer to the new element is returned.
+// The returned pointer points to an uninitialized space.
+NA_API void* naNewGrowingSpaceElement(NAGrowingSpace* space);
 
 // Returns a POINTER to the element at the given index.
-// The index argument is threated the same way as with naGetArrayConstElement
+// The indx argument is treated the same way as with naGetArrayConstElement
 // or naGetArrayMutableElement.
-const void* naGetGrowingSpaceConstElement  (const NAGrowingSpace* space,
-                                                            NAInt indx);
-void*       naGetGrowingSpaceMutableElement(      NAGrowingSpace* space,
-                                                            NAInt indx);
+// Warning: Do not use the result as an interation pointer. The elements
+// are NOT stored in a single array!
+// These functions are slow! Use Iterators instead. Unfortunately, they are
+// not yet implemented. todo
+NA_API const void* naGetGrowingSpaceConstElement  (const NAGrowingSpace* space,
+                                                                   NAInt indx);
+NA_API void*       naGetGrowingSpaceMutableElement(      NAGrowingSpace* space,
+                                                                   NAInt indx);
 
 // Creates a new array with just the used content of the growing space.
-// If copying is NA_TRUE, the contents get copied to a new storage. If copying
-// is NA_FALSE, the storage of the growing space is used. You preferably will use
-// copying = NA_TRUE, when the growing space is only sparsely used and will
-// preferably use copying = NA_FALSE when the growing space is likely full.
-// NA_FALSE ist also useful if the resulting array will only be used shortly
-// and will be erased soon.
-// Note that either way, you can safely clear or destroy the growing space after
-// this function while still preserving the array with the used contents.
-NAArray* naCreateArrayOutOfGrowingSpace(    NAArray* array,
-                                     NAGrowingSpace* space,
-                                              NABool copying);
+// All used contents will be copied. If you stored pointers to the elements
+// in the growing space somewhere in your code, these pointers will still point
+// to the elements stored in the growing space!
+NA_API NAArray* naCreateArrayOutOfGrowingSpace(    NAArray* array,
+                                            NAGrowingSpace* space);
 
 // Returns the number of elements actually stored in the space
-NAInt naGetGrowingSpaceCount(const NAGrowingSpace* space);
+NA_API NAInt naGetGrowingSpaceCount(const NAGrowingSpace* space);
+
+
 
 
 #ifdef __cplusplus 

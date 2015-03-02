@@ -444,7 +444,7 @@ NABool naEqualUTF8CStringLiteralsCaseInsensitive( const NAUTF8Char* string1,
 #include <stdarg.h>
 #include <stdio.h>
 #include <limits.h>
-
+#include <string.h>
 
 
 NA_IDEF NAInt naStrlen(const NAUTF8Char* str){

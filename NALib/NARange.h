@@ -5,16 +5,21 @@
 
 // ///////////////////////////
 // This file contains many functions helping the programmer to work with
-// comparing values and ranges. In NALib, ranges are simply defined by a
-// start value and an end value and are considered to be one-dimensional.
+// one-dimensional ranges. The datastructure NARange holds an offset and a size
+// for one dimension. For simplification, offset is called pos.
+//
+// Ranges are an intuitive way to handle one-dimensional spans. The two-
+// dimensional complement would be NARect. If you rather store min and max
+// values, look for NAMinMax1 and NAMinMax2. If you want to use ranges in
+// a different way, look for the basic range functions in NAMathOperators.
 //
 // Most of the functions here could be written as macros. But in NALib, they
 // are explicitely implemented as inline functions. This helps when debugging
 // and reduces unwanted implicit arithmetic conversions.
 //
 // Range functions are not especially difficult to understand or implement but
-// take a lot of code writing. You are free to explore all the implementation
-// but there really isn't much to see. Seriously.
+// take a lot of code writing. You are free to explore all the inline code
+// below but there really isn't much to see.
 // ///////////////////////////
 
 
@@ -25,222 +30,119 @@
 #endif
 
 
+#include "NAMinMax.h"
 
-
-// ///////////////////////////////////
-// Functions for testing single values
-// ///////////////////////////////////
-
-
-// naMin and naMax return the minimum or maximum of two values.
-NA_IAPI double       naMin   (double a,      double b);
-NA_IAPI float        naMinf  (float  a,      float  b);
-NA_IAPI NAInt        naMini  (NAInt  a,      NAInt  b);
-NA_IAPI int32        naMini32(int32  a,      int32  b);
-NA_IAPI int64        naMini64(int64  a,      int64  b);
-
-NA_IAPI double       naMax   (double a,      double b);
-NA_IAPI float        naMaxf  (float  a,      float  b);
-NA_IAPI NAInt        naMaxi  (NAInt  a,      NAInt  b);
-NA_IAPI int32        naMaxi32(int32  a,      int32  b);
-NA_IAPI int64        naMaxi64(int64  a,      int64  b);
-
-// Note that in many implementations, Min and Max are implemented as the
-// following macros:
-// #define NA_MAX(a, b) (((a)>(b))?(a):(b))
-// #define NA_MIN(a, b) (((a)<(b))?(a):(b))
-// Nontheless, these are not used here in NALib as they can not be debugged
-// as good as the functions: Quite often, the two parameters are only
-// available as an expression and hence are not shown in the compiler. When
-// using the functions, the two resulting values can be debugged when jumping
-// inside the min or max function.
-
-
-// naAlmostZero returns NA_TRUE, if the ABSOLUTE discance between x and 0 is
-// smaller than NA_SINGULARITY.
-NA_IAPI NABool naAlmostZero (double x);
-NA_IAPI NABool naAlmostZerof(float  x);
-
-// naAlmostOne returns NA_TRUE, if the ABSOLUTE discance between x and 1 is
-// smaller than NA_SINGULARITY.
-NA_IAPI NABool naAlmostOne (double x);
-NA_IAPI NABool naAlmostOnef(float  x);
-
-// naAlmost returns NA_TRUE, if the RELATIVE distance between x and y is
-// smaller than NA_SINGULARITY. If y is close to 0, the absolute distance is
-// checked. Warning: These functions are slow.
-NA_IAPI NABool naAlmost (double x, double y);
-NA_IAPI NABool naAlmostf(float  x, float  y);
-
-
-
-// ///////////////////////////////////
-// Functions for testing value ranges
-// ///////////////////////////////////
-
-// naInside returns true, if x is inside the span depicted by a and b. The
-// value a should be smaller than b. The letters I and E depict whether a or b
-// are compared inclusive or exclusive. For example:
-// naInsideIE(3, 7, x) corresponds to a range of [3,7).
-
-// inclusive, inclusive
-NA_IAPI NABool naInsideII (double a, double b, double x);
-NA_IAPI NABool naInsidefII(float  a, float  b, float  x);
-// inclusive, exclusive
-NA_IAPI NABool naInsideIE (double a, double b, double x); // use these if you
-NA_IAPI NABool naInsidefIE(float  a, float  b, float  x); // are uncertain.
-// exclusive, inclusive
-NA_IAPI NABool naInsideEI (double a, double b, double x);
-NA_IAPI NABool naInsidefEI(float  a, float  b, float  x);
-// exclusive, exclusive
-NA_IAPI NABool naInsideEE (double a, double b, double x);
-NA_IAPI NABool naInsidefEE(float  a, float  b, float  x);
-
-// Integer variants. a denotes Min, b denotes Max. Comparison is always
-// inclusive - inclusive.
-NA_IAPI NABool naInsidei  (NAInt  a, NAInt  b, NAInt  x);
-NA_IAPI NABool naInsidei32(int32  a, int32  b, int32  x);
-NA_IAPI NABool naInsidei64(int64  a, int64  b, int64  x);
-
-
-
-// naAlmostInside checks if the given value is almost or completely inside
-// the given values. Meaning, a small relative margin of NA_SINGULARITY on
-// both sides is considered. Takes into consideration that a or b might be
-// negative.
-NA_IAPI NABool naAlmostInside (double a, double b, double x);
-NA_IAPI NABool naAlmostInsidef(float  a, float  b, float  x);
-
-
-
-
-// ///////////////////////////////////
-// Normed Ranges
-// ///////////////////////////////////
-
-
-// naInsideNorm returns true, if x is inside a normed range. The following norms
-// are impmemented:
-// naInsideNormZI: [ 0, 1 ]
-NA_IAPI NABool naInsideNormZI (double x);
-NA_IAPI NABool naInsideNormZIf(float x);
-
-// naInsideNormZE: [ 0, 1 )
-NA_IAPI NABool naInsideNormZE (double x);
-NA_IAPI NABool naInsideNormZEf(float x);
-
-// naInsideNormII: [-1, 1 ]
-NA_IAPI NABool naInsideNormII (double x);
-NA_IAPI NABool naInsideNormIIf(float x);
-
-// naInsideNormIE: [-1, 1 )
-NA_IAPI NABool naInsideNormIE (double x);
-NA_IAPI NABool naInsideNormIEf(float x);
-
-// naInsideNormEE: (-1, 1 )
-NA_IAPI NABool naInsideNormEE (double x);
-NA_IAPI NABool naInsideNormEEf(float x);
-
-
-
-// ///////////////////////////////////
-// Custom Ranges
-// ///////////////////////////////////
-
-// Additionally to the above min- and max-functions, NALib provides a
-// datastructure NARange which holds an offset and a size for one dimension.
-// For simplification, offset is usually called pos. First however, some
-// helper functions working with single values rather than datastructures:
-
-// This function alters the given pos and size such that size will become
-// positive while retaining the depicted range. For example with doubles:
-// pos = 3. and size = -2. will become pos = 1. and size = 2. The resulting
-// range starts at 1. and ends at 1. + 2. = 3.
-// Note: When using integers, the end must be computed with -1. Therefore
-// the result differs:
-// pos = 3 and size = -2 will become pos = 2 and size = 2. The resulting
-// range starts at 2 and ends at (2 + 2) - 1 = 3
-// If size already was positive, nothing will be changed.
-NA_IAPI void naMakePositive      (double* NA_RESTRICT pos,
-                                  double* NA_RESTRICT size);
-NA_IAPI void naMakeiPositive     (NAInt*  NA_RESTRICT pos,
-                                  NAInt*  NA_RESTRICT size);
-
-// This function alters negative pos and/or size such that the resulting range
-// will be fully be contained in a range given by [0, containingsize] for
-// floating point values or [0, containingsize-1] for integers. Negative
-// values are treated as follows and in the following order:
-// - if pos is negative, it denotes the number of units from the end.
-//   For integers, pos = -1 therefore corresponds to size-1.
-// - If the size is now 0, the function will return.
-// - if size is negative, it denotes the size up and including to the given
-//   number of units from the end, meaning -1 denotes the last unit.
-// - if the pos and size combination somehow leads to a size of exactly 0,
-//   the resulting range will be empty without a warning emitted.
-// - If the pos and size combination somehow leads to an over- or underflow,
-//   a warning will be emitted if NDEBUG is defined. The resulting range will
-//   be empty.
-NA_IAPI void naMakePositiveInSize(  double* NA_RESTRICT pos,
-                                    double* NA_RESTRICT size,
-                                    double  containingsize);
-NA_IAPI void naMakeiPositiveInSize( NAInt*  NA_RESTRICT pos,
-                                    NAInt*  NA_RESTRICT size,
-                                    NAInt   containingsize);
 
 // These are the definitions of the datastructure:
 typedef struct NARange  NARange;
 typedef struct NARangef NARangef;
 typedef struct NARangei NARangei;
-struct NARange{
-  double pos;
-  double size;
-};
-struct NARangef{
-  float pos;
-  float size;
-};
-struct NARangei{
-  NAInt pos;
-  NAInt size;
-};
 
-// Filling the structs with values. Note that the integer functions also
-// provide a function to work with end instead of max. (end = max + 1)
-NA_IAPI NARange  naMakeRange( double pos, double size);
-NA_IAPI NARangef naMakeRangef(float  pos, float  size);
-NA_IAPI NARangei naMakeRangei(NAInt  pos, NAInt  size);
-NA_IAPI NARange  naMakeRangeWithMinAndMax( double min, double max);
-NA_IAPI NARangef naMakeRangefWithMinAndMax(float  min, float  max);
-NA_IAPI NARangei naMakeRangeiWithMinAndMax(NAInt  min, NAInt  max);
-NA_IAPI NARangei naMakeRangeiWithMinAndEnd(NAInt  min, NAInt  end);
+// Please excuse this formatting. It is usually not recommended but here, it
+// would be much more confusing if written otherwise.
+struct NARange{   double pos; double size;};
+struct NARangef{  float  pos; float  size;};
+struct NARangei{  NAInt  pos; NAInt  size;};
 
 
+// Note that when working with integers, there is a crucial distinction between
+// min-max pairs and start-end pairs.
+//
+// Min-Max is the discrete definition of a range [min, max]. The start-end
+// pair on the other hand defines a range of [start, end-1]. This has proven
+// useful in certain cases but if you are unsure about what to use, use the
+// min-max pairs.
+//
+// You could use the start-end pair for example in a for-loop:
+// for(i = start; i < end; i++){}
+
+
+// Creating the structs with values.
+NA_IAPI NARange  naMakeRange  (double pos, double size);
+NA_IAPI NARangef naMakeRangef (float  pos, float  size);
+NA_IAPI NARangei naMakeRangei (NAInt  pos, NAInt  size);
+// Filling the given struct pointers with values
+NA_IAPI void     naFillRange  (NARange*  range, double pos, double size);
+NA_IAPI void     naFillRangef (NARangef* range, float  pos, float  size);
+NA_IAPI void     naFillRangei (NARangei* range, NAInt  pos, NAInt  size);
+
+
+// Creating the structs with start and end values. Integer ranges can also
+// be created using min and max.
+NA_IAPI NARange  naMakeRangeWithStartAndEnd (double start, double end);
+NA_IAPI NARangef naMakeRangefWithStartAndEnd(float  start, float  end);
+NA_IAPI NARangei naMakeRangeiWithStartAndEnd(NAInt  start, NAInt  end);
+NA_IAPI NARangei naMakeRangeiWithMinAndMax  (NAInt  min,   NAInt  max);
+// Filling the given struct pointers.
+NA_IAPI void     naFillRangeWithStartAndEnd (NARange*  range, double start, double end);
+NA_IAPI void     naFillRangefWithStartAndEnd(NARangef* range, float  start, float  end);
+NA_IAPI void     naFillRangeiWithStartAndEnd(NARangei* range, NAInt  start, NAInt  end);
+NA_IAPI void     naFillRangeiWithMinAndMax  (NARangei* range, NAInt  min,   NAInt  max);
+
+
+// Convert from and to the NAMinMax structure.
+NA_IAPI NARange     naMakeRangeWithMinMax1    (NAMinMax1  minmax);
+NA_IAPI NARangef    naMakeRangefWithMinMax1f  (NAMinMax1f minmax);
+NA_IAPI NARangei    naMakeRangeiWithMinMax1i  (NAMinMax1i minmax);
+NA_IAPI NAMinMax1   naMakeMinMax1WithRange    (NARange    range);
+NA_IAPI NAMinMax1f  naMakeMinMax1fWithRangef  (NARangef   range);
+NA_IAPI NAMinMax1i  naMakeMinMax1iWithRangei  (NARangei   range);
+// Convert by using pointers.
+NA_IAPI void        naFillRangeWithMinMax1    (NARange*    range,  NAMinMax1*  minmax);
+NA_IAPI void        naFillRangefWithMinMax1f  (NARangef*   range,  NAMinMax1f* minmax);
+NA_IAPI void        naFillRangeiWithMinMax1i  (NARangei*   range,  NAMinMax1i* minmax);
+NA_IAPI void        naFillMinMax1WithRange    (NAMinMax1*  minmax, NARange*    range);
+NA_IAPI void        naFillMinMax1fWithRangef  (NAMinMax1f* minmax, NARangef*   range);
+NA_IAPI void        naFillMinMax1iWithRangei  (NAMinMax1i* minmax, NARangei*   range);
+
+
+// Perform Range checks similar to the ones found in NAMathOperators.
 // naInsideRange returns true, if x is inside the range. The letters I and E
-// depict whether the range's min and max shall be compared inclusive or
-// exclusive.
+// show how the range's min and max will be compared: Inclusive or Exclusive.
 // For example: naInsideIE({3, 7}, x) corresponds to a range of [3,7).
-
-// inclusive, inclusive
 NA_IAPI NABool naInsideRangeII (NARange  range, double x);
 NA_IAPI NABool naInsideRangefII(NARangef range, float  x);
-// inclusive, exclusive
 NA_IAPI NABool naInsideRangeIE (NARange  range, double x); // Use these if you
 NA_IAPI NABool naInsideRangefIE(NARangef range, float  x); // are uncertain.
-// exclusive, inclusive
 NA_IAPI NABool naInsideRangeEI (NARange  range, double x);
 NA_IAPI NABool naInsideRangefEI(NARangef range, float  x);
-// exclusive, exclusive
 NA_IAPI NABool naInsideRangeEE (NARange  range, double x);
 NA_IAPI NABool naInsideRangefEE(NARangef range, float  x);
-
-// Integer variants. Comparison is always inclusive - inclusive.
+// Integer variant. Comparison is always inclusive - inclusive.
 NA_IAPI NABool naInsideRangei  (NARangei range, NAInt  x);
+
 
 // naAlmostInside checks if the given value is almost or completely inside
 // the given values. Meaning, a small relative margin of NA_SINGULARITY on
 // both sides is considered. Warning: Slow.
 NA_IAPI NABool naAlmostInsideRange (NARange  range, double x);
 NA_IAPI NABool naAlmostInsideRangef(NARangef range, float  x);
+
+
+// Consistency checks
+NA_IAPI NABool naIsRangeValid     (NARange  range);
+NA_IAPI NABool naIsRangefValid    (NARangef range);
+NA_IAPI NABool naIsRangeiValid    (NARangei range);
+NA_IAPI NABool naIsRangeEmpty     (NARange  range);
+NA_IAPI NABool naIsRangefEmpty    (NARangef range);
+NA_IAPI NABool naIsRangeiEmpty    (NARangei range);
+NA_IAPI NABool naIsRangeNegative  (NARange  range);
+NA_IAPI NABool naIsRangefNegative (NARangef range);
+NA_IAPI NABool naIsRangeiNegative (NARangei range);
+NA_IAPI NABool naIsRangeUseful    (NARange  range);
+NA_IAPI NABool naIsRangefUseful   (NARangef range);
+NA_IAPI NABool naIsRangeiUseful   (NARangei range);
+
+
+// Returns the end of the given range which is (pos + size). For the integer
+// variant, there also exists a max function whitch returns (pos + size - 1).
+NA_IAPI double naGetRangeEnd   (NARange  range);
+NA_IAPI float  naGetRangefEnd  (NARangef range);
+NA_IAPI NAInt  naGetRangeiEnd  (NARangei range);
+NA_IAPI NAInt  naGetRangeiMax  (NARangei range);
+
+
+
 
 
 
@@ -257,416 +159,13 @@ NA_IAPI NABool naAlmostInsideRangef(NARangef range, float  x);
 #include "NAMathOperators.h"
 
 
-// Note that the smaller- or greater-operator often is faster than the
-// smallerequal- or greaterequal-operator.
-// (a<=b) will always be written as !(a>b)
-// (a>=b) will always be written as !(a<b)
-
-
-
-NA_IDEF double naMin (double a, double b){
-  return (a<b)?a:b;
-}
-NA_IDEF float naMinf(float a, float b){
-  return (a<b)?a:b;
-}
-NA_IDEF NAInt naMini(NAInt a, NAInt b){
-  return (a<b)?a:b;
-}
-NA_IDEF int32 naMini32(int32 a, int32 b){
-  return (a<b)?a:b;
-}
-NA_IDEF int64 naMini64(int64 a, int64 b){
-  return (a<b)?a:b;
-}
-
-
-NA_IDEF double naMax (double a, double b){
-  return (a>b)?a:b;
-}
-NA_IDEF float naMaxf(float a, float b){
-  return (a>b)?a:b;
-}
-NA_IDEF NAInt naMaxi  (NAInt a, NAInt b){
-  return (a>b)?a:b;
-}
-NA_IDEF int32 naMaxi32(int32 a, int32 b){
-  return (a>b)?a:b;
-}
-NA_IDEF int64 naMaxi64(int64 a, int64 b){
-  return (a>b)?a:b;
-}
-
-
-NA_IDEF NABool naAlmostZero  (double x){
-  return ((x < NA_SINGULARITY) && (x > -NA_SINGULARITY));
-}
-NA_IDEF NABool naAlmostZerof (float x){
-  return ((x < NA_SINGULARITYf) && (x > -NA_SINGULARITYf));
-}
-
-NA_IDEF NABool naAlmostOne  (double x){
-  return ((x < NA_SUP_NORM) && (x > NA_SUB_NORM));
-}
-NA_IDEF NABool naAlmostOnef (float x){
-  return ((x < NA_SUP_NORMf) && (x > NA_SUB_NORMf));
-}
-
-
-NA_IDEF NABool naAlmost(double x, double y){
-  if(naAlmostZero(y)){
-    if(naAlmostZero(x)){
-      return NA_TRUE;
-    }else{
-      return naAlmostZero(x-y);
-    }
-  }else{
-    double relativeerror = x/y;
-    if(relativeerror < 0.){
-      return naAlmostOne(-relativeerror);
-    }else{
-      return naAlmostOne(relativeerror);
-    }
-  }
-}
-NA_IDEF NABool naAlmostf(float x, float y){
-  if(naAlmostZerof(y)){
-    if(naAlmostZerof(x)){
-      return NA_TRUE;
-    }else{
-      return naAlmostZerof(x-y);
-    }
-  }else{
-    float relativeerror = x/y;
-    if(relativeerror < 0.f){
-      return naAlmostOnef(-relativeerror);
-    }else{
-      return naAlmostOnef(relativeerror);
-    }
-  }
-}
-
-
-
-// inclusive, inclusive
-NA_IDEF NABool naInsideII(double a, double b, double x){
-  #ifndef NDEBUG
-    if(a>b)
-      naError("naInsideII", "a is greater b. Will always return FALSE");
-  #endif
-  return (!((x < a) || (x > b)));
-}
-NA_IDEF NABool naInsidefII(float a, float b, float x){
-  #ifndef NDEBUG
-    if(a>b)
-      naError("naInsidefII", "a is greater b. Will always return FALSE");
-  #endif
-  return (!((x < a) || (x > b)));
-}
-
-NA_IDEF NABool naInsidei(NAInt a, NAInt b, NAInt x){
-#if NA_SYSTEM_ADDRESS_BITS == 32
-  return naInsidei32(a, b, x);
-#elif NA_SYSTEM_ADDRESS_BITS == 64
-  return naInsidei64(a, b, x);
-#endif
-}
-NA_IDEF NABool naInsidei32(int32 a, int32 b, int32 x){
-  #ifndef NDEBUG
-    if(a>b)
-      naError("naInsidei32", "a is greater b. Will always return FALSE");
-  #endif
-  return (!((x < a) || (x > b)));
-}
-NA_IDEF NABool naInsidei64(int64 a, int64 b, int64 x){
-  #ifndef NDEBUG
-    if(a>b)
-      naError("naInsidei64", "a is greater b. Will always return FALSE");
-  #endif
-  return (!((x < a) || (x > b)));
-}
-
-
-
-// inclusive, exclusive
-NA_IDEF NABool naInsideIE(double a, double b, double x){
-  #ifndef NDEBUG
-    if(!(a<b))
-      naError("naInsideIE", "a is greaterequal b. Will always return FALSE");
-  #endif
-  return (!(x < a) && (x < b));
-}
-NA_IDEF NABool naInsidefIE(float a, float b, float x){
-  #ifndef NDEBUG
-    if(!(a<b))
-      naError("naInsidefIE", "a is greaterequal b. Will always return FALSE");
-  #endif
-  return (!(x < a) && (x < b));
-}
-
-
-
-// exclusive, inclusive
-NA_IDEF NABool naInsideEI(double a, double b, double x){
-  #ifndef NDEBUG
-    if(!(a<b))
-      naError("naInsideEI", "a is greaterequal b. Will always return FALSE");
-  #endif
-  return ((x > a) && !(x > b));
-}
-NA_IDEF NABool naInsidefEI(float a, float b, float x){
-  #ifndef NDEBUG
-    if(!(a<b))
-      naError("naInsidefEI", "a is greaterequal b. Will always return FALSE");
-  #endif
-  return ((x > a) && !(x > b));
-}
-
-
-// exclusive, exclusive
-NA_IDEF NABool naInsideEE(double a, double b, double x){
-  #ifndef NDEBUG
-    if(!(a<b))
-      naError("naInsideEE", "a is greaterequal b. Will always return FALSE");
-  #endif
-  return ((x > a) && (x < b));
-}
-NA_IDEF NABool naInsidefEE(float a, float b, float x){
-  #ifndef NDEBUG
-    if(!(a<b))
-      naError("naInsidefEE", "a is greaterequal b. Will always return FALSE");
-  #endif
-  return ((x > a) && (x < b));
-}
-
-
-// Note that for the naAlmostInside functions, naInsideEE is used after
-// adjusting the range. This cound be anything else but as this is a function
-// which only needs to be almost accurate, the one function is chosen which is
-// simplest.
-NA_IDEF NABool naAlmostInside(double a, double b, double x){
-  #ifndef NDEBUG
-    if(a>b)
-      naError("naAlmostInside", "a is greater b.");
-  #endif
-  a *= (a < 0.) ? NA_SUP_NORM : NA_SUB_NORM;
-  b *= (b < 0.) ? NA_SUB_NORM : NA_SUP_NORM;
-  return naInsideEE(a, b, x);
-}
-NA_IDEF NABool naAlmostInsidef(float a, float b, float x){
-  #ifndef NDEBUG
-    if(a>b)
-      naError("naAlmostInsidef", "a is greater b.");
-  #endif
-  a *= (a < 0.f) ? NA_SUP_NORMf : NA_SUB_NORMf;
-  b *= (b < 0.f) ? NA_SUB_NORMf : NA_SUP_NORMf;
-  return naInsidefEE(a, b, x);
-}
-
-
-// naInsideNormZI: [ 0, 1]
-NA_IDEF NABool naInsideNormZI (double x){
-  return !((x < 0.) || (x > 1.));
-}
-NA_IDEF NABool naInsideNormZIf(float x){
-  return !((x < 0.f) || (x > 1.f));
-}
-
-
-// naInsideNormZE: [ 0, 1)
-NA_IDEF NABool naInsideNormZE (double x){
-  return (!(x < 0.) && (x < 1.));
-}
-NA_IDEF NABool naInsideNormZEf(float x){
-  return (!(x < 0.f) && (x < 1.f));
-}
-
-
-// naInsideNormII: [-1, 1]
-NA_IDEF NABool naInsideNormII (double x){
-  return !((x < -1.) || (x > 1.));
-}
-NA_IDEF NABool naInsideNormIIf(float x){
-  return !((x < -1.f) || (x > 1.f));
-}
-
-
-// naInsideNormIE: [-1, 1)
-NA_IDEF NABool naInsideNormIE (double x){
-  return (!(x < -1.) && (x < 1.));
-}
-NA_IDEF NABool naInsideNormIEf(float x){
-  return (!(x < -1.f) && (x < 1.f));
-}
-
-
-// naInsideNormEE: (-1, 1)
-NA_IDEF NABool naInsideNormEE (double x){
-  return ((x > -1.) && (x < 1.));
-}
-NA_IDEF NABool naInsideNormEEf(float x){
-  return ((x > -1.f) && (x < 1.f));
-}
-
-
-
-
-
-
-// helper functions. Should be hidden.
-NA_IHLP NABool naIsPosFieldValid(double a){
-  return !naIsNaN(a);
-}
-NA_IHLP NABool naIsPosfFieldValid(float a){
-  return !naIsNaNf(a);
-}
-NA_IHLP NABool naIsPosiFieldValid(NAInt a){
-  NA_UNUSED_PARAMETER(a);
-  return NA_TRUE;
-}
-
-NA_IHLP NABool naIsSizeFieldValid(double a){
-  return !naIsNaN(a);
-}
-NA_IHLP NABool naIsSizefFieldValid(float a){
-  return !naIsNaNf(a);
-}
-NA_IHLP NABool naIsSizeiFieldValid(NAInt a){
-  NA_UNUSED_PARAMETER(a);
-  return NA_TRUE;
-}
-
-NA_IHLP NABool naIsPosFieldUseful(double a){
-  return !naIsNaN(a);
-}
-NA_IHLP NABool naIsPosfFieldUseful(float a){
-  return !naIsNaNf(a);
-}
-NA_IHLP NABool naIsPosiFieldUseful(NAInt a){
-  NA_UNUSED_PARAMETER(a);
-  return NA_TRUE;
-}
-
-NA_IHLP NABool naIsSizeFieldUseful(double a){
-  // Note that this test will return NA_FALSE if a is NaN.
-  return (a > 0.);
-}
-NA_IHLP NABool naIsSizefFieldUseful(float a){
-  // Note that this test will return NA_FALSE if a is NaN.
-  return (a > 0.);
-}
-NA_IHLP NABool naIsSizeiFieldUseful(NAInt a){
-  return (a > 0);
-}
-
-
-
-
-NA_IDEF void naMakePositive(double* NA_RESTRICT pos, double* NA_RESTRICT size){
-  if(*size < 0.){
-    *pos = *pos + *size;
-    *size = -*size;
-  }
-}
-
-
-NA_IDEF void naMakeiPositive(NAInt* NA_RESTRICT pos, NAInt* NA_RESTRICT size){
-  if(*size < 0){
-    *pos = *pos + *size + 1; // important + 1 !
-    *size = -*size;
-  }
-}
-
-
-NA_IDEF void naMakePositiveInSize(double* NA_RESTRICT pos, double* NA_RESTRICT size, double containingsize){
-  // First, we ensure that pos is withing the containing range. After that
-  // we will look at the size parameter.
-  double remainingsize = containingsize - *pos;
-  if(*pos < 0){
-    *pos = *pos + containingsize;
-    remainingsize -= containingsize;
-  }
-  if(remainingsize < 0){
-    #ifndef NDEBUG
-      naError("naMakePositiveInSize", "Invalid pos leads to range overflow. Correcting to empty range.");
-    #endif
-    *size = 0;
-  }else if(remainingsize > containingsize){
-    #ifndef NDEBUG
-      naError("naMakePositiveInSize", "Invalid pos leads to range underflow. Correcting to empty range.");
-    #endif
-    *size = 0;
-  }else{
-    // The pos is positive. Now, adjust the size.
-    if(*size < 0){ // negative size parameter
-      *size = remainingsize + *size;
-      if(*size < 0){
-        // When the resulting size is smaller than 0, underflow.
-        #ifndef NDEBUG
-          naError("naMakePositiveInSize", "Invalid size leads to range underflow. Correcting to empty range.");
-        #endif
-        *size = 0;
-      }
-    }else{ // positive or 0 size parameter
-      if(*size > remainingsize){
-        // When the desired size is bigger than the size available, overflow.
-        #ifndef NDEBUG
-          naError("naMakePositiveInSize", "Invalid size leads to range overflow. Correcting to empty range.");
-        #endif
-        *size = 0;
-      }
-    }
-  }
-}
-
-
-NA_IDEF void naMakeiPositiveInSize(NAInt*  NA_RESTRICT pos, NAInt* NA_RESTRICT size, NAInt containingsize){
-  // First, we ensure that pos is withing the containing range. After that
-  // we will look at the size parameter.
-  NAInt remainingsize = containingsize - *pos;
-  if(*pos < 0){
-    *pos = *pos + containingsize;
-    remainingsize -= containingsize;
-  }
-  if(remainingsize < 0){
-    #ifndef NDEBUG
-      naError("naMakeiPositiveInSize", "Invalid pos leads to range overflow. Correcting to empty range.");
-    #endif
-    *size = 0;
-  }else if(remainingsize > containingsize){
-    #ifndef NDEBUG
-      naError("naMakeiPositiveInSize", "Invalid pos leads to range underflow. Correcting to empty range.");
-    #endif
-    *size = 0;
-  }else{
-    // The pos is positive. Now, adjust the size.
-    if(*size < 0){ // negative size parameter
-      *size = remainingsize + *size + 1;  // Important + 1 !
-      if(*size < 0){
-        // When the resulting size is smaller than 0, underflow.
-        #ifndef NDEBUG
-          naError("naMakeiPositiveInSize", "Invalid size leads to range underflow. Correcting to empty range.");
-        #endif
-        *size = 0;
-      }
-    }else{ // positive or 0 size parameter
-      if(*size > remainingsize){
-        // When the desired size is bigger than the size available, overflow.
-        #ifndef NDEBUG
-          naError("naMakeiPositiveInSize", "Invalid size leads to range overflow. Correcting to empty range.");
-        #endif
-        *size = 0;
-      }
-    }
-  }
-}
-
-
 NA_IDEF NARange naMakeRange(double pos, double size){
   NARange newrange; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsPosFieldValid(pos) && naIsSizeFieldValid(size)))
+    if(!(naIsPosValueValid(pos) && naIsSizeValueValid(size)))
       naError("naMakeRange", "Invalid values given.");
+    if(!naIsSizeValueUseful(size))
+      naError("naMakeRange", "size is not useful.");
   #endif
   newrange.pos = pos;
   newrange.size = size;
@@ -675,8 +174,10 @@ NA_IDEF NARange naMakeRange(double pos, double size){
 NA_IDEF NARangef naMakeRangef(float pos, float size){
   NARangef newrange; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsPosfFieldValid(pos) && naIsSizefFieldValid(size)))
+    if(!(naIsPosValueValidf(pos) && naIsSizeValueValidf(size)))
       naError("naMakeRangef", "Invalid values given.");
+    if(!naIsSizeValueUsefulf(size))
+      naError("naMakeRange", "size is not useful.");
   #endif
   newrange.pos = pos;
   newrange.size = size;
@@ -685,8 +186,10 @@ NA_IDEF NARangef naMakeRangef(float pos, float size){
 NA_IDEF NARangei naMakeRangei(NAInt pos, NAInt size){
   NARangei newrange; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsPosiFieldValid(pos) && naIsSizeiFieldValid(size)))
+    if(!(naIsPosValueValidi(pos) && naIsSizeValueValidi(size)))
       naError("naMakeRangei", "Invalid values given.");
+    if(!naIsSizeValueUsefuli(size))
+      naError("naMakeRange", "size is not useful.");
   #endif
   newrange.pos = pos;
   newrange.size = size;
@@ -694,149 +197,305 @@ NA_IDEF NARangei naMakeRangei(NAInt pos, NAInt size){
 }
 
 
-NA_IDEF NARange naMakeRangeWithMinAndMax(double min, double max){
+NA_IDEF void naFillRange(NARange* range, double pos, double size){
+  #ifndef NDEBUG
+    if(!(naIsPosValueValid(pos) && naIsSizeValueValid(size)))
+      naError("naFillRange", "Invalid values given.");
+    if(!naIsSizeValueUseful(size))
+      naError("naFillRange", "size is not useful.");
+  #endif
+  range->pos = pos;
+  range->size = size;
+}
+NA_IDEF void naFillRangef(NARangef* range, float pos, float size){
+  #ifndef NDEBUG
+    if(!(naIsPosValueValidf(pos) && naIsSizeValueValidf(size)))
+      naError("naFillRangef", "Invalid values given.");
+    if(!naIsSizeValueUsefulf(size))
+      naError("naFillRangef", "size is not useful.");
+  #endif
+  range->pos = pos;
+  range->size = size;
+}
+NA_IDEF void naFillRangei(NARangei* range, NAInt pos, NAInt size){
+  #ifndef NDEBUG
+    if(!(naIsPosValueValidi(pos) && naIsSizeValueValidi(size)))
+      naError("naFillRangei", "Invalid values given.");
+    if(!naIsSizeValueUsefuli(size))
+      naError("naFillRangei", "size is not useful.");
+  #endif
+  range->pos = pos;
+  range->size = size;
+}
+
+
+NA_IDEF NARange naMakeRangeWithStartAndEnd(double start, double end){
   NARange newrange; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsPosFieldValid(min) && naIsPosFieldValid(max)))
-      naError("naMakeRangeWithMinAndMax", "Invalid values given.");
+    if(!(naIsPosValueValid(start) && naIsPosValueValid(end)))
+      naError("naMakeRangeWithStartAndEnd", "Invalid values given.");
   #endif
-  newrange.pos = min;
-  newrange.size = max - min;
+  newrange.pos = start;
+  newrange.size = naStartAndEndToSize(start, end);
   return newrange;
 }
-NA_IDEF NARangef naMakeRangefWithMinAndMax(float min, float max){
+NA_IDEF NARangef naMakeRangefWithStartAndEnd(float start, float end){
   NARangef newrange; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsPosfFieldValid(min) && naIsPosfFieldValid(max)))
-      naError("naMakeRangefWithMinAndMax", "Invalid values given.");
+    if(!(naIsPosValueValidf(start) && naIsPosValueValidf(end)))
+      naError("naMakeRangefWithStartAndEnd", "Invalid values given.");
   #endif
-  newrange.pos = min;
-  newrange.size = max - min;
+  newrange.pos = start;
+  newrange.size = naStartAndEndToSizef(start, end);
+  return newrange;
+}
+NA_IDEF NARangei naMakeRangeiWithStartAndEnd(NAInt start, NAInt end){
+  NARangei newrange; // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsPosValueValidi(start) && naIsPosValueValidi(end)))
+      naError("naMakeRangeiWithStartAndEnd", "Invalid values given.");
+  #endif
+  newrange.pos = start;
+  newrange.size = naStartAndEndToSizei(start, end);
   return newrange;
 }
 NA_IDEF NARangei naMakeRangeiWithMinAndMax(NAInt min, NAInt max){
   NARangei newrange; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsPosiFieldValid(min) && naIsPosiFieldValid(max)))
+    if(!(naIsPosValueValidi(min) && naIsPosValueValidi(max)))
       naError("naMakeRangeiWithMinAndMax", "Invalid values given.");
   #endif
   newrange.pos = min;
-  newrange.size = max - min + 1;  // note the +1.
+  newrange.size = naMinAndMaxToSizei(min, max);
   return newrange;
 }
-NA_IDEF NARangei naMakeRangeiWithMinAndEnd(NAInt min, NAInt end){
-  NARangei newrange; // Declaration before implementation. Needed for C90.
+
+
+
+NA_IDEF void naFillRangeWithStartAndEnd(NARange* range, double start, double end){
   #ifndef NDEBUG
-    if(!(naIsPosiFieldValid(min) && naIsPosiFieldValid(end)))
-      naError("naMakeRangeiWithMinAndEnd", "Invalid values given.");
+    if(!(naIsPosValueValid(start) && naIsPosValueValid(end)))
+      naError("naMakeRangeWithStartAndEnd", "Invalid values given.");
   #endif
-  newrange.pos = min;
-  newrange.size = end - min;
+  range->pos = start;
+  range->size = naStartAndEndToSize(start, end);
+}
+NA_IDEF void naFillRangefWithStartAndEnd(NARangef* range, float start, float end){
+  #ifndef NDEBUG
+    if(!(naIsPosValueValidf(start) && naIsPosValueValidf(end)))
+      naError("naMakeRangefWithStartAndEnd", "Invalid values given.");
+  #endif
+  range->pos = start;
+  range->size = naStartAndEndToSizef(start, end);
+}
+NA_IDEF void naFillRangeiWithStartAndEnd(NARangei* range, NAInt start, NAInt end){
+  #ifndef NDEBUG
+    if(!(naIsPosValueValidi(start) && naIsPosValueValidi(end)))
+      naError("naMakeRangeiWithStartAndEnd", "Invalid values given.");
+  #endif
+  range->pos = start;
+  range->size = naStartAndEndToSizei(start, end);
+}
+NA_IDEF void naFillRangeiWithMinAndMax(NARangei* range, NAInt min, NAInt max){
+  #ifndef NDEBUG
+    if(!(naIsPosValueValidi(min) && naIsPosValueValidi(max)))
+      naError("naMakeRangeiWithMinAndMax", "Invalid values given.");
+  #endif
+  range->pos = min;
+  range->size = naMinAndMaxToSizei(min, max);
+}
+
+
+
+NA_IDEF NARange naMakeRangeWithMinMax1(NAMinMax1 minmax){
+  NARange newrange;
+  newrange.pos = minmax.start[0];
+  newrange.size = naStartAndEndToSize(minmax.start[0], minmax.end[0]);
   return newrange;
 }
+NA_IDEF NARangef naMakeRangefWithMinMax1f(NAMinMax1f minmax){
+  NARangef newrange;
+  newrange.pos = minmax.start[0];
+  newrange.size = naStartAndEndToSizef(minmax.start[0], minmax.end[0]);
+  return newrange;
+}
+NA_IDEF NARangei naMakeRangeiWithMinMax1i(NAMinMax1i minmax){
+  NARangei newrange;
+  newrange.pos = minmax.min[0];
+  newrange.size = naMinAndMaxToSizei(minmax.min[0], minmax.max[0]);
+  return newrange;
+}
+NA_IDEF NAMinMax1 naMakeMinMax1WithRange(NARange range){
+  NAMinMax1 newminmax;
+  newminmax.start[0] = range.pos;
+  newminmax.end[0] = naGetRangeEnd(range);
+  return newminmax;
+}
+NA_IDEF NAMinMax1f naMakeMinMax1fWithRangef(NARangef range){
+  NAMinMax1f newminmax;
+  newminmax.start[0] = range.pos;
+  newminmax.end[0] = naGetRangefEnd(range);
+  return newminmax;
+}
+NA_IDEF NAMinMax1i naMakeMinMax1iWithRangei(NARangei range){
+  NAMinMax1i newminmax;
+  newminmax.min[0] = range.pos;
+  newminmax.max[0] = naGetRangeiMax(range);
+  return newminmax;
+}
+
+
+
+NA_IDEF void naFillRangeWithMinMax1(NARange* range, NAMinMax1* minmax){
+  range->pos = minmax->start[0];
+  range->size = naStartAndEndToSize(minmax->start[0], minmax->end[0]);
+}
+NA_IDEF void naFillRangefWithMinMax1f(NARangef* range, NAMinMax1f* minmax){
+  range->pos = minmax->start[0];
+  range->size = naStartAndEndToSizef(minmax->start[0], minmax->end[0]);
+}
+NA_IDEF void naFillRangeiWithMinMax1i(NARangei* range, NAMinMax1i* minmax){
+  range->pos = minmax->min[0];
+  range->size = naMinAndMaxToSizei(minmax->min[0], minmax->max[0]);
+}
+NA_IDEF void naFillMinMax1WithRange(NAMinMax1* minmax, NARange* range){
+  minmax->start[0] = range->pos;
+  minmax->end[0] = naGetRangeEnd(*range);
+}
+NA_IDEF void naFillMinMax1fWithRangef(NAMinMax1f* minmax, NARangef* range){
+  minmax->start[0] = range->pos;
+  minmax->end[0] = naGetRangefEnd(*range);
+}
+NA_IDEF void naFillMinMax1iWithRangei(NAMinMax1i* minmax, NARangei* range){
+  minmax->min[0] = range->pos;
+  minmax->max[0] = naGetRangeiMax(*range);
+}
+
 
 
 
 // inclusive, inclusive
 NA_IDEF NABool naInsideRangeII(NARange range, double x){
-  #ifndef NDEBUG
-//    if(a>b)
-//      naError("naInsideII", "a is greater b. Will always return FALSE");
-  #endif
-  return (!((x < range.pos) || (x > (range.pos + range.size))));
+  return naInsideII(range.pos, naGetRangeEnd(range), x);
 }
 NA_IDEF NABool naInsideRangefII(NARangef range, float x){
-  #ifndef NDEBUG
-//    if(a>b)
-//      naError("naInsidefII", "a is greater b. Will always return FALSE");
-  #endif
-  return (!((x < range.pos) || (x > (range.pos + range.size))));
+  return naInsidefII(range.pos, naGetRangefEnd(range), x);
 }
-
-NA_IDEF NABool naInsideRangei(NARangei range, NAInt x){
-  return (!((x < range.pos) || (x > (range.pos + range.size))));
-}
-
-
-
-// inclusive, exclusive
 NA_IDEF NABool naInsideRangeIE(NARange range, double x){
-  #ifndef NDEBUG
-//    if(!(a<b))
-//      naError("naInsideIE", "a is greaterequal b. Will always return FALSE");
-  #endif
-  return (!(x < range.pos) && (x < (range.pos + range.size)));
+  return naInsideIE(range.pos, naGetRangeEnd(range), x);
 }
 NA_IDEF NABool naInsideRangefIE(NARangef range, float x){
-  #ifndef NDEBUG
-//    if(!(a<b))
-//      naError("naInsidefIE", "a is greaterequal b. Will always return FALSE");
-  #endif
-  return (!(x < range.pos) && (x < (range.pos + range.size)));
+  return naInsidefIE(range.pos, naGetRangefEnd(range), x);
 }
-
-
-
-// exclusive, inclusive
 NA_IDEF NABool naInsideRangeEI(NARange range, double x){
-  #ifndef NDEBUG
-//    if(!(a<b))
-//      naError("naInsideEI", "a is greaterequal b. Will always return FALSE");
-  #endif
-  return ((x > range.pos) && !(x > (range.pos + range.size)));
+  return naInsideEI(range.pos, naGetRangeEnd(range), x);
 }
 NA_IDEF NABool naInsideRangefEI(NARangef range, float x){
-  #ifndef NDEBUG
-//    if(!(a<b))
-//      naError("naInsidefEI", "a is greaterequal b. Will always return FALSE");
-  #endif
-  return ((x > range.pos) && !(x > (range.pos + range.size)));
+  return naInsidefEI(range.pos, naGetRangefEnd(range), x);
 }
-
-
-// exclusive, exclusive
 NA_IDEF NABool naInsideRangeEE(NARange range, double x){
-  #ifndef NDEBUG
-//    if(!(a<b))
-//      naError("naInsideEE", "a is greaterequal b. Will always return FALSE");
-  #endif
-  return ((x > range.pos) && (x < (range.pos + range.size)));
+  return naInsideEE(range.pos, naGetRangeEnd(range), x);
 }
 NA_IDEF NABool naInsideRangefEE(NARangef range, float x){
-  #ifndef NDEBUG
-//    if(!(a<b))
-//      naError("naInsidefEE", "a is greaterequal b. Will always return FALSE");
-  #endif
-  return ((x > range.pos) && (x < (range.pos + range.size)));
+  return naInsidefEE(range.pos, naGetRangefEnd(range), x);
 }
 
 
-// Note that for the naAlmostInside functions, naInsideEE is used after
-// adjusting the range. This cound be anything else but as this is a function
-// which only needs to be almost accurate, the one function is chosen which is
-// simplest.
+
+NA_IDEF NABool naInsideRangei(NARangei range, NAInt x){
+  return naInsidei(range.pos, naGetRangeiMax(range), x);
+}
+
+
+
 NA_IDEF NABool naAlmostInsideRange(NARange range, double x){
-  #ifndef NDEBUG
-//    if(a>b)
-//      naError("naAlmostInside", "a is greater b.");
-  #endif
-  double a = range.pos;
-  double b = range.pos + range.size;
-  a = a * ((a < 0.) ? NA_SUP_NORM : NA_SUB_NORM);
-  b = b * ((b < 0.) ? NA_SUB_NORM : NA_SUP_NORM);
-  return naInsideEE(a, b, x);
+  return naAlmostInside(range.pos, naGetRangeEnd(range), x);
 }
 NA_IDEF NABool naAlmostInsideRangef(NARangef range, float x){
-  #ifndef NDEBUG
-//    if(a>b)
-//      naError("naAlmostInsidef", "a is greater b.");
-  #endif
-  float a = range.pos;
-  float b = range.pos + range.size;
-  a = a * ((a < 0.f) ? NA_SUP_NORMf : NA_SUB_NORMf);
-  b = b * ((b < 0.f) ? NA_SUB_NORMf : NA_SUP_NORMf);
-  return naInsidefEE(a, b, x);
+  return naAlmostInsidef(range.pos, naGetRangefEnd(range), x);
 }
+
+
+
+NA_IDEF NABool naIsRangeValid(NARange range){
+  return naIsPosValueValid(range.pos) && naIsSizeValueValid(range.size);
+}
+NA_IDEF NABool naIsRangefValid(NARangef range){
+  return naIsPosValueValidf(range.pos) && naIsSizeValueValidf(range.size);
+}
+NA_IDEF NABool naIsRangeiValid(NARangei range){
+  return naIsPosValueValidi(range.pos) && naIsSizeValueValidi(range.size);
+}
+NA_IDEF NABool naIsRangeEmpty(NARange range){
+  return naIsSizeValueEmpty(range.size);
+}
+NA_IDEF NABool naIsRangefEmpty(NARangef range){
+  return naIsSizeValueEmptyf(range.size);
+}
+NA_IDEF NABool naIsRangeiEmpty(NARangei range){
+  return naIsSizeValueEmptyi(range.size);
+}
+NA_IDEF NABool naIsRangeNegative(NARange range){
+  return naIsSizeValueNegative(range.size);
+}
+NA_IDEF NABool naIsRangefNegative(NARangef range){
+  return naIsSizeValueNegativef(range.size);
+}
+NA_IDEF NABool naIsRangeiNegative(NARangei range){
+  return naIsSizeValueNegativei(range.size);
+}
+NA_IDEF NABool naIsRangeUseful(NARange range){
+  return (naIsPosValueUseful(range.pos) && naIsSizeValueUseful(range.size));
+}
+NA_IDEF NABool naIsRangefUseful(NARangef range){
+  return (naIsPosValueUsefulf(range.pos) && naIsSizeValueUsefulf(range.size));
+}
+NA_IDEF NABool naIsRangeiUseful(NARangei range){
+  return (naIsPosValueUsefuli(range.pos) && naIsSizeValueUsefuli(range.size));
+}
+
+
+NA_IDEF double naGetRangeEnd(NARange range){
+  #ifndef NDEBUG
+    if(naIsRangeEmpty(range))
+      naError("naGetRangeEnd", "range is empty.");
+    if(!naIsRangeValid(range))
+      naError("naGetRangeEnd", "range is invalid.");
+  #endif
+  return naPosAndSizeToEnd(range.pos, range.size);
+}
+NA_IDEF float naGetRangefEnd(NARangef range){
+  #ifndef NDEBUG
+    if(naIsRangefEmpty(range))
+      naError("naGetRangeEnd", "range is empty.");
+    if(!naIsRangefValid(range))
+      naError("naGetRangeEnd", "range is invalid.");
+  #endif
+  return naPosAndSizeToEndf(range.pos, range.size);
+}
+NA_IDEF NAInt naGetRangeiEnd(NARangei range){
+  #ifndef NDEBUG
+    if(naIsRangeiEmpty(range))
+      naError("naGetRangeEnd", "range is empty.");
+    if(!naIsRangeiValid(range))
+      naError("naGetRangeEnd", "range is invalid.");
+  #endif
+  return naPosAndSizeToEndi(range.pos, range.size);
+}
+NA_IDEF NAInt naGetRangeiMax(NARangei range){
+  #ifndef NDEBUG
+    if(naIsRangeiEmpty(range))
+      naError("naGetRangeEnd", "range is empty.");
+    if(!naIsRangeiValid(range))
+      naError("naGetRangeEnd", "range is invalid.");
+  #endif
+  return naPosAndSizeToMaxi(range.pos, range.size);
+}
+
+
+
+
+
 
 
 

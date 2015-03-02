@@ -23,21 +23,30 @@ struct NAHeap{
   NAInt (*moveup)  (NAHeap* heap, const void* key, NAInt curindex);
 };
 
-// Use this flag in the constructor if you want the heap to be a max-heap.
-// If this flag is not present, the heap will be a min-heap. This flag
-// is currently not working.
-#define NA_HEAP_IS_MAX_HEAP       0x0001
-// Use this flag in the constructor if you want the heap to use int-keyvalues.
-// If this flag is not present, the heap will use double-values.
+// Use the following flags to define what type the key is.
+// If this flag is 0 or not present, the heap will use double-value keys.
+#define NA_HEAP_USES_DOUBLE_KEY   0x0000
+#define NA_HEAP_USES_FLOAT_KEY    0x0001
 #define NA_HEAP_USES_INT_KEY      0x0002
+#define NA_HEAP_DATATYPE_MASK     0x0003
+// Use the following flags to define if the heap shall be a min- or a max-heap.
+// If this flag is 0 ir not present, the heap will be a min-heap.
+#define NA_HEAP_IS_MIN_HEAP       0x0000
+#define NA_HEAP_IS_MAX_HEAP       0x0004
 
 // Creates a new heap. The count parameter denotes the number of elements which
 // the heap must hold and the flags denote a combination of the macros above.
-NA_API NAHeap* naCreateHeap (NAHeap* heap, NAInt count, NAInt flags);
+NA_API NAHeap* naCreateHeap   (NAHeap* heap, NAInt count, NAInt flags);
 
 // Clears or deletes the given heap.
-NA_API void    naClearHeap  (NAHeap* heap);
-NA_API void    naDestroyHeap(NAHeap* heap);
+NA_IAPI void   naClearHeap    (NAHeap* heap);
+NA_IAPI void   naDestroyHeap  (NAHeap* heap);
+
+// Empties the heap without deallocating the memory
+NA_IAPI void   naEmptyHeap    (NAHeap* heap);
+
+// Returns NA_TRUE if the heap does not contain any elements.
+NA_IAPI NABool naIsHeapEmpty  (const NAHeap* heap);
 
 // Adds a new element to the heap.
 // Provide a pointer to your element as well as a pointer to the key value. The
@@ -65,20 +74,102 @@ NA_API void naInsertHeapElement(NAHeap* heap,
 
 // Returns the root element of the heap.
 // The Remove-Function will additionally remove the root element of the heap. 
-NA_API void*       naGetHeapRoot   (const NAHeap* heap);
-NA_API void*       naRemoveHeapRoot(      NAHeap* heap);
+NA_IAPI void*       naGetHeapRoot   (const NAHeap* heap);
+NA_API  void*       naRemoveHeapRoot(      NAHeap* heap);
+
+// Returns the key of the root element.
+NA_IAPI const void* naGetHeapRootKey(const NAHeap* heap);
 
 // Use this function if the key of an element inside the heap has changed.
 // The heap will re-order the element correctly. To identify the element, you
 // need to provide the backpointer of the element which you have stored when
 // inserting the element into the heap with naInsertHeapElement.
+//
+// If the stored backpointer is 0, the element is consideren to be not in the
+// heap.
 NA_API void        naUpdateHeapElement(   NAHeap* heap,
                                             NAInt backpointer);
 
-// Returns NA_TRUE if the heap does not contain any elements.
-NA_API NABool      naIsHeapEmpty   (const NAHeap* heap);
 
 
+
+
+
+
+
+// ///////////////////////////////////////////////////////////////////////
+// Inline Implementations: See readme file for more expanation.
+// ///////////////////////////////////////////////////////////////////////
+
+
+// The structure internally used to store a single entry. This whould normally
+// be hidden to the user.
+
+typedef struct NAHeapEntry NAHeapEntry;
+struct NAHeapEntry{
+  void*       ptr;
+  const void* key;
+  NAInt*      backpointer;
+};
+
+
+
+NA_IDEF void naClearHeap(NAHeap* heap){
+  #ifndef NDEBUG
+    if(!heap){
+      naCrash("naClearHeap", "heap is Null-Pointer.");
+      return;
+    }
+  #endif
+  free(heap->data);
+}
+
+
+NA_IDEF void naDestroyHeap(NAHeap* heap){
+  #ifndef NDEBUG
+    if(!heap){
+      naCrash("naDestroyHeap", "heap is Null-Pointer.");
+    }
+  #endif
+  naClearHeap(heap);
+  free(heap);
+}
+
+
+NA_IDEF void naEmptyHeap(NAHeap* heap){
+  heap->count = 0;
+}
+
+
+NA_IDEF NABool naIsHeapEmpty (const NAHeap* heap){
+  #ifndef NDEBUG
+    if(!heap){
+      naCrash("naIsHeapEmpty", "heap is Null-Pointer.");
+      return NA_TRUE;
+    }
+  #endif
+  return (heap->count == 0);
+}
+
+
+NA_IDEF void* naGetHeapRoot(const NAHeap* heap){
+  NAHeapEntry* thedata = (NAHeapEntry*)(heap->data);
+  #ifndef NDEBUG
+    if(heap->count == 0)
+      naError("naGetHeapRoot", "Heap is empty.");
+  #endif
+  return thedata[1].ptr;
+}
+
+
+NA_IDEF const void* naGetHeapRootKey(const NAHeap* heap){
+  NAHeapEntry* thedata = (NAHeapEntry*)(heap->data);
+  #ifndef NDEBUG
+    if(heap->count == 0)
+      naError("naGetHeapRoot", "Heap is empty.");
+  #endif
+  return thedata[1].key;
+}
 
 
 

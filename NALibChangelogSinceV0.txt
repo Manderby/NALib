@@ -13,15 +13,44 @@ correct, complete or final.
 
 
 
+Version 8 (first published 2015-February-28):
+==============================================
+
+Highlights:
+- Complete reorganization of NAMinMax, NARange, NAPos, NASize and NARect.
+  All is dependent on NAMinMax now and there is a distinction between
+  min-max and start-end.
+- Continued NAHeap implementation. Removed an awkward error which
+  caused the NAHeap structure to not do its job at all. Now works with
+  multiple key types and both as min and max heap.
+- Added Constructor callbacks. More to come. Readme file changed.
+- Reimplemented NAGrowingSpace. It now stores the content in a growing
+  list of NAByteArrays. Advantage: The elements always keep their address.
+  Disadvantage: NAGrowingSpace can no longer be accessed like an array.
+  Will need to implement iteraters sooner or later. Not yet perfect but
+  API fit for the future.
+- Moved many inline functions of NAByteArray to an implementation file
+  and made them non-inline.
+
+Other things:
+- Added Constructor to NAGrowingSpace creator.
+- Changed naNewGrowingSpaceElement. No more indexes.
+- Removed naAddGrowingSpaceElement, naGetGrowingSpaceConstPointer and
+  naGetGrowingSpaceMutablePointer, naDuplicateGrowingSpace
+- Added Destructor to NAList destructor
 - Added naMakeDateTimeWithNALibSecondNumber
 - Added a cplusplus macro for isnan which is necessary on Mac OS X
 - Added naMakeRectWithRectAndBorder and naMakeRectiWithRectiAndBorder
-- Changed many NA_IAPI to NA_IDEF in NACoord.h
 - Added another check for null terminated strings
 - Added naCreateStringWithMutableUTF8Buffer
 - Added naLocateListElement and changed some macros in the file
 - Remove functions of NAList now return a pointer to the content
 - Added latest leap second according tu bulletin C 49
+- Moved many basic functions to NAMathOperators.h
+- Renamed IsInside to Inside
+- Renamed some symbols containing From to With
+- Removed NA_INVALID_INDEX
+- Improvement of some comments and some error checks
 
 
 Version 7 (first published 2014-October-6):

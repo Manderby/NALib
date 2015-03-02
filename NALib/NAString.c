@@ -2,6 +2,7 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
+#include "NABinaryData.h"
 #include "NAString.h"
 #include <ctype.h>
 #include <stdarg.h>
@@ -375,11 +376,11 @@ NAString* naCreateStringEPSDecoded( NAString* deststring,
     if(!size){size = naStrlen(utf8string);}
     #ifdef UNICODE
       newsize = MultiByteToWideChar(CP_UTF8, 0, utf8string, size, NULL, 0);
-      outstr = (SystemChar*)malloc(sizeof(SystemChar) * (newsize + 1));
+      outstr = (SystemChar*)naAllocate(sizeof(SystemChar) * (newsize + 1));
       MultiByteToWideChar(CP_UTF8, 0, utf8string, size, outstr, newsize);
     #else
       newsize = size;
-      outstr = (SystemChar*)malloc(sizeof(SystemChar) * (newsize + 1));
+      outstr = (SystemChar*)naAllocate(sizeof(SystemChar) * (newsize + 1));
       naCpyn(outstr, utf8string, newsize);
     #endif
     outstr[newsize] = 0;

@@ -2,6 +2,7 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
+#include "NABinaryData.h"
 #include "NABitArray.h"
 #include "NAString.h"
 
@@ -147,7 +148,7 @@ NA_IHLP void naEnsureBitArraySizeHint(NABitArray* bitarray, NAInt sizehint){
 
 
 
-NABitArray* naCreateBitArrayFromBinString(NABitArray* bitarray,
+NABitArray* naCreateBitArrayWithBinString(NABitArray* bitarray,
                                             NAString* string,
                                                 NAInt sizehint){
   NAInt stringsize;
@@ -200,7 +201,7 @@ NABitArray* naCreateBitArrayFromBinString(NABitArray* bitarray,
 
 
 
-NABitArray* naCreateBitArrayFromDecString(NABitArray* bitarray,
+NABitArray* naCreateBitArrayWithDecString(NABitArray* bitarray,
                                             NAString* string,
                                                 NAInt sizehint){
   NAInt stringsize;
@@ -256,7 +257,7 @@ NABitArray* naCreateBitArrayFromDecString(NABitArray* bitarray,
 }
 
 
-NABitArray* naCreateBitArrayFromHexString(NABitArray* bitarray,
+NABitArray* naCreateBitArrayWithHexString(NABitArray* bitarray,
                                             NAString* string,
                                                 NAInt sizehint){
   NAInt stringsize;
@@ -319,7 +320,7 @@ NABitArray* naCreateBitArrayFromHexString(NABitArray* bitarray,
 
 
 
-NABitArray* naCreateBitArrayFromASCIIString(NABitArray* bitarray,
+NABitArray* naCreateBitArrayWithASCIIString(NABitArray* bitarray,
                                               NAString* string,
                                                   NAInt sizehint){
   NAInt stringsize;

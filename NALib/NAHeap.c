@@ -6,15 +6,6 @@
 #include "NAPointer.h"
 
 
-typedef struct NAHeapEntry NAHeapEntry;
-struct NAHeapEntry{
-  void*       ptr;
-  const void* key;
-  NAInt*      backpointer;
-};
-
-
-
 
 
 // Movedown functions.
@@ -22,33 +13,43 @@ struct NAHeapEntry{
 // return value is the index in which the key can safely be inserted. The
 // curindex points at the starting position and the element at curindex is
 // assumed to be empty (or contain no useful information).
-
-// Min Heap, double key
-NA_HLP NAInt naHeapMoveDownMinDouble(void* data, const void* key, NAInt curindex){
-  NAHeapEntry* thedata = (NAHeapEntry*)data;
-  const double* thekey = (const double*)key;
-  NAInt nextindex = curindex / 2;
-  while((nextindex > 0) && (*((double*)thedata[nextindex].key) > *thekey)){
-    thedata[curindex] = thedata[nextindex];
-    *(thedata[curindex].backpointer) = curindex;
-    curindex = nextindex;
-    nextindex /= 2;
-  }
+//
+// These functions will be stored as function pointers according to the flags
+// set on creation. Therefore, they are not marked as inline.
+//
+// The core of the functions is implemented as a macro and reused in the
+// different helper functions to reduce writing effort and allow for future
+// extensions with more types.
+#define NA_HEAPMOVEDOWN(type, dontlowerkeyif)\
+  NAHeapEntry* thedata = (NAHeapEntry*)data;\
+  const type* thekey = (const type*)key;\
+  NAInt nextindex = curindex / 2;\
+  while((nextindex > 0) && (*((type*)thedata[nextindex].key) dontlowerkeyif *thekey)){\
+    thedata[curindex] = thedata[nextindex];\
+    *(thedata[curindex].backpointer) = curindex;\
+    curindex = nextindex;\
+    nextindex /= 2;\
+  }\
   return curindex;
+
+NA_HLP NAInt naHeapMoveDownMinDouble(void* data, const void* key, NAInt curindex){
+  NA_HEAPMOVEDOWN(double, >)
+}
+NA_HLP NAInt naHeapMoveDownMinFloat(void* data, const void* key, NAInt curindex){
+  NA_HEAPMOVEDOWN(float, >)
+}
+NA_HLP NAInt naHeapMoveDownMinInt(void* data, const void* key, NAInt curindex){
+  NA_HEAPMOVEDOWN(NAInt, >)
 }
 
-// Min Heap, NAInt key
-NA_HLP NAInt naHeapMoveDownMinInt(void* data, const void* key, NAInt curindex){
-  NAHeapEntry* thedata = (NAHeapEntry*)data;
-  const NAInt* thekey = (const NAInt*)key;
-  NAInt nextindex = curindex / 2;
-  while((nextindex > 0) && (*((NAInt*)thedata[nextindex].key) > *thekey)){
-    thedata[curindex] = thedata[nextindex];
-    *(thedata[curindex].backpointer) = curindex;
-    curindex = nextindex;
-    nextindex /= 2;
-  }
-  return curindex;
+NA_HLP NAInt naHeapMoveDownMaxDouble(void* data, const void* key, NAInt curindex){
+  NA_HEAPMOVEDOWN(double, <)
+}
+NA_HLP NAInt naHeapMoveDownMaxFloat(void* data, const void* key, NAInt curindex){
+  NA_HEAPMOVEDOWN(float, <)
+}
+NA_HLP NAInt naHeapMoveDownMaxInt(void* data, const void* key, NAInt curindex){
+  NA_HEAPMOVEDOWN(NAInt, <)
 }
 
 
@@ -56,109 +57,81 @@ NA_HLP NAInt naHeapMoveDownMinInt(void* data, const void* key, NAInt curindex){
 // Assumes the given index to point at an element which is empty (or contains
 // no useful information). Performs a reordering of the heap such that the
 // given key can be inserted at a suitable index and returns this index.
+//
+// These functions will be stored as function pointers according to the flags
+// set on creation. Therefore, they are not marked as inline.
+//
+// The core of the functions is implemented as a macro and reused in the
+// different helper functions to reduce writing effort and allow for future
+// extensions with more types.
 
-// Min Heap, double key
+#define NA_HEAPMOVEUP(type, dontraisekeyif)\
+  NAHeapEntry* thedata = (NAHeapEntry*)(heap->data);\
+  const type* thekey = (const type*)key;\
+  \
+  NAInt indexl = curindex * 2 + 0;\
+  NAInt indexr = curindex * 2 + 1;\
+  /* as long as there is at least one possible position... */ \
+  while(NA_TRUE){\
+    if(indexl > heap->count){\
+      /* reached the leaf */\
+      break;\
+    }else if(indexr > heap->count){\
+      /* only the left element must be checked. */ \
+      if(*(const type*)(thedata[indexl].key) dontraisekeyif *thekey){\
+        thedata[curindex] = thedata[indexl];\
+        *(thedata[curindex].backpointer) = curindex;\
+        curindex = indexl;\
+      }\
+      /* as the leaves have been reached, no need to perform another loop. */ \
+      break;\
+    }else if(*(const type*)(thedata[indexl].key) dontraisekeyif *(const type*)(thedata[indexr].key)){\
+      /* the left element is more important than the right */ \
+      if(*(const type*)(thedata[indexl].key) dontraisekeyif *thekey){\
+        /* the left is more important than the key */ \
+        thedata[curindex] = thedata[indexl];\
+        *(thedata[curindex].backpointer) = curindex;\
+        curindex = indexl;\
+      }else{\
+        /* noone is more important. */ \
+        break;\
+      }\
+    }else{\
+      /* the right element is more important than the left */ \
+      if(*(const type*)(thedata[indexr].key) dontraisekeyif *thekey){\
+        /* the right is more important than the key */ \
+        thedata[curindex] = thedata[indexr];\
+        *(thedata[curindex].backpointer) = curindex;\
+        curindex = indexr;\
+      }else{\
+        /* noone is more important. */ \
+        break;\
+      }\
+    }\
+    indexl = curindex * 2 + 0;\
+    indexr = curindex * 2 + 1;\
+  }\
+  return curindex;
+
 NA_HLP NAInt naHeapMoveUpMinDouble(NAHeap* heap, const void* key, NAInt curindex){
-  NAHeapEntry* thedata = (NAHeapEntry*)(heap->data);
-  const double* thekey = (const double*)key;
-
-  NAInt indexl = curindex * 2 + 0;
-  NAInt indexr = curindex * 2 + 1;
-  // as long as there is at least one possible position...
-  while(NA_TRUE){
-    if(indexl > heap->count){
-      // reached the leave
-      break;
-    }else if(indexr > heap->count){
-      // only the left element must be checked.
-      if(*(const double*)(thedata[indexl].key) < *thekey){
-        thedata[curindex] = thedata[indexl];
-        *(thedata[curindex].backpointer) = curindex;
-        curindex = indexl;
-      }
-      // as the leafes have been reached, no need to perform another loop.
-      break;
-    }else if(thedata[indexl].key < thedata[indexr].key){
-      // the left element is smaller than the right
-      if(*(const double*)(thedata[indexl].key) < *thekey){
-        // the left is smaller than the key
-        thedata[curindex] = thedata[indexl];
-        *(thedata[curindex].backpointer) = curindex;
-        curindex = indexl;
-      }else{
-        // noone is smaller.
-        break;
-      }
-    }else{
-      // the right element is smaller than the left
-      if(*(const double*)(thedata[indexr].key) < *thekey){
-        // the right is smaller than the key
-        thedata[curindex] = thedata[indexr];
-        *(thedata[curindex].backpointer) = curindex;
-        curindex = indexr;
-      }else{
-        // noone is smaller.
-        break;
-      }
-    }
-    indexl = curindex * 2 + 0;
-    indexr = curindex * 2 + 1;
-  }
-  return curindex;
+  NA_HEAPMOVEUP(double, <)
 }
-
-
-
-// Min Heap, NAInt key
+NA_HLP NAInt naHeapMoveUpMinFloat(NAHeap* heap, const void* key, NAInt curindex){
+  NA_HEAPMOVEUP(float, <)
+}
 NA_HLP NAInt naHeapMoveUpMinInt(NAHeap* heap, const void* key, NAInt curindex){
-  NAHeapEntry* thedata = (NAHeapEntry*)(heap->data);
-  const NAInt* thekey = (const NAInt*)key;
-
-  NAInt indexl = curindex * 2 + 0;
-  NAInt indexr = curindex * 2 + 1;
-  // as long as there is at least one possible position...
-  while(NA_TRUE){
-    if(indexl > heap->count){
-      // reached the leave
-      break;
-    }else if(indexr > heap->count){
-      // only the left element must be checked.
-      if(*(const NAInt*)(thedata[indexl].key) < *thekey){
-        thedata[curindex] = thedata[indexl];
-        *(thedata[curindex].backpointer) = curindex;
-        curindex = indexl;
-      }
-      // as the leafes have been reached, no need to perform another loop.
-      break;
-    }else if(thedata[indexl].key < thedata[indexr].key){
-      // the left element is smaller than the right
-      if(*(const NAInt*)(thedata[indexl].key) < *thekey){
-        // the left is smaller than the key
-        thedata[curindex] = thedata[indexl];
-        *(thedata[curindex].backpointer) = curindex;
-        curindex = indexl;
-      }else{
-        // noone is smaller.
-        break;
-      }
-    }else{
-      // the right element is smaller than the left
-      if(*(const NAInt*)(thedata[indexr].key) < *thekey){
-        // the right is smaller than the key
-        thedata[curindex] = thedata[indexr];
-        *(thedata[curindex].backpointer) = curindex;
-        curindex = indexr;
-      }else{
-        // noone is smaller.
-        break;
-      }
-    }
-    indexl = curindex * 2 + 0;
-    indexr = curindex * 2 + 1;
-  }
-  return curindex;
+  NA_HEAPMOVEUP(NAInt, <)
 }
 
+NA_HLP NAInt naHeapMoveUpMaxDouble(NAHeap* heap, const void* key, NAInt curindex){
+  NA_HEAPMOVEUP(double, >)
+}
+NA_HLP NAInt naHeapMoveUpMaxFloat(NAHeap* heap, const void* key, NAInt curindex){
+  NA_HEAPMOVEUP(float, >)
+}
+NA_HLP NAInt naHeapMoveUpMaxInt(NAHeap* heap, const void* key, NAInt curindex){
+  NA_HEAPMOVEUP(NAInt, >)
+}
 
 
 
@@ -183,44 +156,41 @@ NA_DEF NAHeap* naCreateHeap(NAHeap* heap, NAInt count, NAInt flags){
   heap->count = 0;
   heap->data = naAllocate((count + 1) * entrysize);
   
-  switch(flags){
-  case 0:
-    heap->movedown = naHeapMoveDownMinDouble;
-    heap->moveup   = naHeapMoveUpMinDouble;
+  switch(flags & NA_HEAP_DATATYPE_MASK){
+  case NA_HEAP_USES_DOUBLE_KEY:
+    if(flags & NA_HEAP_IS_MAX_HEAP){
+      heap->movedown = naHeapMoveDownMaxDouble;
+      heap->moveup   = naHeapMoveUpMaxDouble;
+    }else{
+      heap->movedown = naHeapMoveDownMinDouble;
+      heap->moveup   = naHeapMoveUpMinDouble;
+    }
+    break;
+  case NA_HEAP_USES_FLOAT_KEY:
+    if(flags & NA_HEAP_IS_MAX_HEAP){
+      heap->movedown = naHeapMoveDownMaxFloat;
+      heap->moveup   = naHeapMoveUpMaxFloat;
+    }else{
+      heap->movedown = naHeapMoveDownMinFloat;
+      heap->moveup   = naHeapMoveUpMinFloat;
+    }
     break;
   case NA_HEAP_USES_INT_KEY:
-    heap->movedown = naHeapMoveDownMinInt;
-    heap->moveup   = naHeapMoveUpMinInt;
+    if(flags & NA_HEAP_IS_MAX_HEAP){
+      heap->movedown = naHeapMoveDownMaxInt;
+      heap->moveup   = naHeapMoveUpMaxInt;
+    }else{
+      heap->movedown = naHeapMoveDownMinInt;
+      heap->moveup   = naHeapMoveUpMinInt;
+    }
     break;
   default:
     #ifndef NDEBUG
-      naCrash("naCreateHeap", "flag combination not implemented yet.");
+      naCrash("naCreateHeap", "flag combination not implemented.");
     #endif
     break;
   }
   return heap;
-}
-
-
-NA_DEF void naClearHeap(NAHeap* heap){
-  #ifndef NDEBUG
-    if(!heap){
-      naCrash("naClearHeap", "heap is Null-Pointer.");
-      return;
-    }
-  #endif
-  free(heap->data);
-}
-
-
-NA_DEF void naDestroyHeap(NAHeap* heap){
-  #ifndef NDEBUG
-    if(!heap){
-      naCrash("naDestroyHeap", "heap is Null-Pointer.");
-    }
-  #endif
-  naClearHeap(heap);
-  free(heap);
 }
 
 
@@ -250,27 +220,6 @@ NA_DEF void naInsertHeapElement(NAHeap* heap, void* newptr, const void* newkey, 
 
 
 
-NA_DEF NABool naIsHeapEmpty (const NAHeap* heap){
-  #ifndef NDEBUG
-    if(!heap){
-      naCrash("naIsHeapEmpty", "heap is Null-Pointer.");
-      return NA_TRUE;
-    }
-  #endif
-  return (heap->count == 0);
-}
-
-
-NA_DEF void* naGetHeapRoot(const NAHeap* heap){
-  NAHeapEntry* thedata = (NAHeapEntry*)(heap->data);
-  #ifndef NDEBUG
-    if(heap->count == 0)
-      naError("naGetHeapRoot", "Heap is empty.");
-  #endif
-  return thedata[1].ptr;
-}
-
-
 NA_DEF void* naRemoveHeapRoot(NAHeap* heap){
   NAHeapEntry* thedata = (NAHeapEntry*)(heap->data);
   void* returnvalue;
@@ -288,6 +237,7 @@ NA_DEF void* naRemoveHeapRoot(NAHeap* heap){
   }
   return returnvalue;
 }
+
 
 
 NA_DEF void naUpdateHeapElement(NAHeap* heap, NAInt backpointer){
