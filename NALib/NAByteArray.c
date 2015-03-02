@@ -6,37 +6,16 @@
 #include "NAMinMax.h"
 
 
+
+
 NA_DEF NAByteArray* naCreateByteArrayWithSize(NAByteArray* array, NAInt size){
-  NAInt fullsize;
   if(!size){  // if size is zero
     array = naCreateByteArray(array);
   }else{
     array = (NAByteArray*)naAllocateIfNull(array, sizeof(NAByteArray));
-    if(size>0){
-      array->size = size;
-      array->storage = naCreatePointerWithSize(NA_NULL, size);
-      array->ptr.p = (NAByte*)naGetPointerMutableData(array->storage);
-    }else{
-      // When size is negative, a number of bytes is appended to the array which
-      // will be initialized with binary zero but will not be visible to the
-      // programmer. The following holds true:
-      // - The additional bytes are all guaranteed to be initialized with binary
-      //   zero.
-      // - There are at least as many bytes appended as an address requires.
-      //   Or more precise: 4 Bytes on 32 Bit systems, 8 Bytes on 64 Bit systems
-      // - There are as many bytes allocated such that the total size is a
-      //   multiple of an address size, meaning 4 or 8 Bytes depending on the
-      //   system (32 Bit or 64 Bit).
-      // - The total size (including the desired space) is at minimum 2 times
-      //   the number of bytes needed for an address.
-      // - The part without the additional bytes might partially become
-      //   initialized with binary zero.
-      array->size = -size;
-      fullsize = array->size + 2 * NA_SYSTEM_ADDRESS_BYTES - (array->size % NA_SYSTEM_ADDRESS_BYTES);
-      array->storage = naCreatePointerWithSize(NA_NULL, fullsize);
-      array->ptr.p = (NAByte*)naGetPointerMutableData(array->storage);
-      naNulln(&(array->ptr.p[fullsize - 2 * NA_SYSTEM_ADDRESS_BYTES]), 2 * NA_SYSTEM_ADDRESS_BYTES);
-    }
+    array->storage = naCreatePointerWithSize(NA_NULL, size);
+    array->size = naAbsi(size);
+    array->ptr.p = (NAByte*)naGetPointerMutableData(array->storage);
   }
   
   return array;
@@ -128,6 +107,7 @@ NA_DEF void naDecoupleByteArray(NAByteArray* array, NABool appendzerobytes){
   // Declaration before implementation. Needed for C90.
   NAInt arraysize;
   NAByteArray newarray;
+  NAByte* buf;
   #ifndef NDEBUG
     if(!array){
       naCrash("naDecoupleByteArray", "array is Null-Pointer.");
@@ -139,18 +119,13 @@ NA_DEF void naDecoupleByteArray(NAByteArray* array, NABool appendzerobytes){
   arraysize = naGetByteArraySize(array);
   if(!arraysize){return;}
   if(appendzerobytes){
-    naCreateByteArrayWithSize(&newarray, -arraysize);
+    buf = naAllocate(-arraysize);
   }else{
-    naCreateByteArrayWithSize(&newarray, arraysize);
+    buf = naAllocate(arraysize);
   }
-  naCpyn(newarray.ptr.p, array->ptr.constp, arraysize);
+  naCpyn(buf, array->ptr.constp, arraysize);
   naClearByteArray(array);
-  array->size = newarray.size;
-  if(newarray.size > 0){
-    array->ptr = newarray.ptr;
-    array->storage = naRetainPointer(newarray.storage);
-    naClearByteArray(&newarray);
-  }
+  naCreateByteArrayWithMutableBuffer(array, buf, naAbsi(arraysize), NA_TRUE);
 }
 
 

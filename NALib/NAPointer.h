@@ -33,13 +33,29 @@
 // pointer to that memory is returned. If the pointer is not NA_NULL, nothing
 // is allocated, the same pointer is returned.
 //
+// When size is negative, a certain number of bytes is appended to the memory
+// block which will be initialized with binary zero but will not be visible to
+// the programmer. The following holds true:
+// - The additional bytes are all guaranteed to be initialized with binary
+//   zero.
+// - There are at least as many bytes appended as an address requires.
+//   Or more precise: 4 Bytes on 32 Bit systems, 8 Bytes on 64 Bit systems
+// - There are as many bytes allocated such that the total size is a
+//   multiple of an address size, meaning 4 or 8 Bytes depending on the
+//   system (32 Bit or 64 Bit).
+// - The total size (including the desired space) is at minimum 2 times
+//   the number of bytes needed for an address.
+// - The part without the additional bytes might partially become
+//   initialized with binary zero.
+NA_IAPI void* naAllocate      (           NAInt size);
+NA_IAPI void* naAllocateIfNull(void* ptr, NAInt size);
+// Authors note:
+//
 // Having only one or two allocation function helps detecting basic memory
 // errors. Note however that there does not exist any exception handling
 // in NALib, meaning an error might be detected though not resolved. And in
 // favor of simplicity, NALib will not get exception handling soon.
 
-NA_IAPI void* naAllocate      (           NAInt size);
-NA_IAPI void* naAllocateIfNull(void* ptr, NAInt size);
 
 
 // NAPointer
@@ -64,6 +80,8 @@ typedef struct NAPointer NAPointer;
 // memory and will delete it automatically using free() when the reference
 // count reaches zero. When the given pointer argument was a Null-Pointer,
 // the NAPointer struct itself will be deleted automatically as well.
+//
+// You can also send negative sizes. See naAllocate for explanation.
 NA_IAPI NAPointer* naCreatePointerWithSize(NAPointer* pointer,
                                                 NAInt size);
 
@@ -154,18 +172,29 @@ NA_IAPI       void* naGetPointerMutableData(      NAPointer* pointer);
 // ///////////////////////////////////////////////////////////////////////
 
 
+#include "NABinaryData.h"
+
+
 NA_IDEF void* naAllocate(NAInt size){
   void* ptr; // Declaration before implementation. Needed for C90.
+  NAInt fullsize;
   #ifndef NDEBUG
-    if(size < 1)
-      naError("naAllocate", "size is smaller than 1.");
+    if(size == 0)
+      naError("naAllocate", "size is zero.");
   #endif
   #ifdef __clang_analyzer__
     if(size < 1)
       exit(EXIT_FAILURE);
   #endif
 
-  ptr = malloc(size);
+  if(size>0){
+    ptr = malloc(size);
+  }else{
+    fullsize = -size + 2 * NA_SYSTEM_ADDRESS_BYTES - (-size % NA_SYSTEM_ADDRESS_BYTES);
+    ptr = malloc(fullsize);
+    naNulln(&(ptr[fullsize - 2 * NA_SYSTEM_ADDRESS_BYTES]), 2 * NA_SYSTEM_ADDRESS_BYTES);
+  }
+
   
   // This is the one place where the debug version differs from the non-debug
   // version.
@@ -223,6 +252,7 @@ struct NAPointer{
 };
 
 
+
 // These are the flags stored in the refcount field. They occupy the most
 // significant bits. Note that it would be possible to use a bit field for
 // this but the author decided to use masks, as bit fields might introduce
@@ -253,8 +283,8 @@ NA_IHLP NAPointer* naCreatePointerStruct(NAPointer* pointer){
 
 NA_IDEF NAPointer* naCreatePointerWithSize(NAPointer* pointer, NAInt size){
   #ifndef NDEBUG
-    if(size < 1)
-      naError("naCreatePointerWithSize", "size is smaller than 1.");
+    if(size == 0)
+      naError("naCreatePointerWithSize", "size is zero.");
   #endif
   pointer = naCreatePointerStruct(pointer);
   pointer->data.d = naAllocate(size);
