@@ -182,16 +182,12 @@ NA_IDEF void* naAllocate(NAInt size){
     if(size == 0)
       naError("naAllocate", "size is zero.");
   #endif
-  #ifdef __clang_analyzer__
-    if(size < 1)
-      exit(EXIT_FAILURE);
-  #endif
 
   if(size>0){
-    ptr = malloc(size);
+    ptr = (NAByte*)malloc(size);
   }else{
     fullsize = -size + 2 * NA_SYSTEM_ADDRESS_BYTES - (-size % NA_SYSTEM_ADDRESS_BYTES);
-    ptr = malloc(fullsize);
+    ptr = (NAByte*)malloc(fullsize);
     naNulln(&(ptr[fullsize - 2 * NA_SYSTEM_ADDRESS_BYTES]), 2 * NA_SYSTEM_ADDRESS_BYTES);
   }
 
@@ -201,19 +197,15 @@ NA_IDEF void* naAllocate(NAInt size){
   #ifndef NDEBUG
     if(ptr == NA_NULL){
       naCrash("naAllocate", "Out of memory.");
-      return NA_NULL;
+      // Also note that a special macro is checked for clang analyzer as
+      // newer versions tend to complain a lot more about failed mallocs than
+      // before.
+      #ifdef __clang_analyzer__
+        exit(EXIT_FAILURE);
+      #endif
     }
   #endif
   
-  // Also note that a special macro is checked for clang analyzer as
-  // newer versions tend to complain a lot more about failed mallocs than
-  // before.
-  #ifdef __clang_analyzer__
-    if(ptr == NA_NULL){
-      exit(EXIT_FAILURE);
-    }
-  #endif
-
   return ptr;
 }
 
@@ -221,8 +213,8 @@ NA_IDEF void* naAllocate(NAInt size){
 
 NA_IDEF void* naAllocateIfNull(void* ptr, NAInt size){
   #ifndef NDEBUG
-    if(size < 1)
-      naError("naAllocateIfNull", "size is smaller than 1.");
+    if(size == 0)
+      naError("naAllocateIfNull", "size is zero.");
   #endif
 
   if(ptr == NA_NULL){

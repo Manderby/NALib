@@ -162,10 +162,10 @@ NA_HLP void naMakePositive      (double* NA_RESTRICT pos,
 NA_HLP void naMakePositivei     (NAInt*  NA_RESTRICT pos,
                                  NAInt*  NA_RESTRICT size);
                                  
-// This function alters negative integer pos and/or integer size such that the
-// resulting range will be fully be contained in a range given by
-// [0, containingsize-1] for integers. Negative values are treated as follows
-// and in the following order:
+// This function returns a pair of positive integers (positivepos,positivesize)
+// out of a possibly negative pair (pos,size) such that the resulting range
+// will be fully contained in a range given by [0, containingsize-1].
+// Negative values are treated as follows and in the following order:
 // - if pos is negative, it denotes the number of units from the end.
 //   For integers, pos = -1 therefore corresponds to size-1.
 // - If the size is now 0, the function will return.
@@ -176,9 +176,11 @@ NA_HLP void naMakePositivei     (NAInt*  NA_RESTRICT pos,
 // - If the pos and size combination somehow leads to an over- or underflow,
 //   a warning will be emitted if NDEBUG is defined. The resulting range will
 //   be empty.
-NA_HLP void naMakePositiveiInSize(  NAInt*  NA_RESTRICT pos,
-                                    NAInt*  NA_RESTRICT size,
-                                    NAInt   containingsize);
+NA_HLP void naMakePositiveiInSize(  NAUInt* NA_RESTRICT positivepos,
+                                    NAUInt* NA_RESTRICT positivesize,
+                                    NAInt               pos,
+                                    NAInt               size,
+                                    NAUInt              containingsize);
 
 // The following functions are mostly used in other datastructures such as
 // NARect and NARange. They define the default semantics against which values
@@ -567,46 +569,57 @@ NA_IHLP void naMakePositivei(NAInt* NA_RESTRICT pos, NAInt* NA_RESTRICT size){
 }
 
 
-NA_IHLP void naMakePositiveiInSize(NAInt*  NA_RESTRICT pos, NAInt* NA_RESTRICT size, NAInt containingsize){
+NA_IHLP void naMakePositiveiInSize(NAUInt* NA_RESTRICT positivepos, NAUInt* NA_RESTRICT positivesize, NAInt pos, NAInt size, NAUInt containingsize){
   // First, we ensure that pos is withing the containing range. After that
   // we will look at the size parameter.
-  NAInt remainingsize = containingsize - *pos;
-  if(*pos < 0){
-    *pos = *pos + containingsize;
+  NAInt remainingsize = containingsize - pos;
+  if(pos < 0){
+    pos += containingsize;
     remainingsize -= containingsize;
   }
   if(remainingsize < 0){
     #ifndef NDEBUG
       naError("naMakePositiveiInSize", "Invalid pos leads to range overflow. Correcting to empty range.");
     #endif
-    *size = 0;
-  }else if(remainingsize > containingsize){
+    *positivepos = 0;
+    *positivesize = 0;
+  }else if((NAUInt)remainingsize > containingsize){
     #ifndef NDEBUG
       naError("naMakePositiveiInSize", "Invalid pos leads to range underflow. Correcting to empty range.");
     #endif
-    *size = 0;
+    *positivepos = 0;
+    *positivesize = 0;
   }else{
+    *positivepos = pos;
     // The pos is positive. Now, adjust the size.
-    if(*size < 0){ // negative size parameter
-      *size = remainingsize + *size + 1;  // Important + 1 !
-      if(*size < 0){
+    if(size < 0){ // negative size parameter
+      size = remainingsize + size + 1;  // Important + 1 !
+      if(size < 0){
         // When the resulting size is smaller than 0, underflow.
         #ifndef NDEBUG
           naError("naMakePositiveiInSize", "Invalid size leads to range underflow. Correcting to empty range.");
         #endif
-        *size = 0;
+        *positivepos = 0;
+        *positivesize = 0;
+      }else{
+        *positivesize = size;
       }
     }else{ // positive or 0 size parameter
-      if(*size > remainingsize){
+      if(size > remainingsize){
         // When the desired size is bigger than the size available, overflow.
         #ifndef NDEBUG
           naError("naMakePositiveiInSize", "Invalid size leads to range overflow. Correcting to empty range.");
         #endif
-        *size = 0;
+        *positivepos = 0;
+        *positivesize = 0;
+      }else{
+        *positivesize = size;
       }
     }
   }
 }
+
+
 
 
 NA_IHLP NABool naIsPosValueValid(double a){

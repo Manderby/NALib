@@ -285,7 +285,7 @@ NA_DEF int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str){
 
 NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
   int32 i;
-  NAInt len = naStrlen(str);
+  NAUInt len = naStrlen(str);
   if(!len){return -1;}
   for(i=0; i<NA_MONTHS_PER_YEAR; i++){
     if(naEqualUTF8CStringLiteralsCaseInsensitive(str, na_monthenglishnames[i])){return i;}

@@ -167,8 +167,19 @@ which will be called for every element in the container. Of course, this is
 only necessary if your elements actually need some sort of construction or
 destruction.
 
+Creating a datastructure with a constructor should always! be paired with
+clearing or destroying the datastructure with the corresponding desctructor.
+
+If you just need to do some harmeless initialization and no real construction
+(memory allocation and such), you might want to create the struct plainly and
+then run a foreach-function which accepts a mutator callback:
+
+typedef void  (*NAMutator) (void *);
+
+Beware: Do not mix these function pointers!
+
 Constructor example: You store complex objects in a NAGrowingSpace whereas
-each object must perform certain initialization before it can properly be
+each object must perform certain allocations before it can properly be
 used. The NAGrowingSpace structure will call the appropriate constructor
 for all new elements whenever the space grows.
 

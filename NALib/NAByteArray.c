@@ -66,6 +66,8 @@ NA_DEF NAByteArray* naCreateByteArrayWithMutableBuffer(NAByteArray* array, void*
 
 NA_DEF NAByteArray* naCreateByteArrayExtraction(NAByteArray* dstarray, const NAByteArray* srcarray, NAInt offset, NAInt size){
   NAByte* newptr;
+  NAUInt positiveoffset;
+  NAUInt positivesize;
 
   #ifndef NDEBUG
     if(!srcarray){
@@ -77,16 +79,16 @@ NA_DEF NAByteArray* naCreateByteArrayExtraction(NAByteArray* dstarray, const NAB
   dstarray = (NAByteArray*)naAllocateIfNull(dstarray, sizeof(NAByteArray));
   // Note that dstarray may be equal to srcarray.
 
-  naMakePositiveiInSize(&offset, &size, naGetByteArraySize(srcarray));
-  newptr = srcarray->ptr.p + offset;
+  naMakePositiveiInSize(&positiveoffset, &positivesize, offset, size, naGetByteArraySize(srcarray));
+  newptr = srcarray->ptr.p + positiveoffset;
   
-  if(!size){
+  if(!positivesize){
     // If the extraction results in an empty array...
     if(dstarray == srcarray){
       naClearByteArray(dstarray); // clear the old array.
-      naCreateByteArray(dstarray);
+      dstarray = naCreateByteArray(dstarray);
     }else{
-      naCreateByteArray(dstarray);
+      dstarray = naCreateByteArray(dstarray);
     }
   }else{
     // The resulting array has content!
@@ -95,7 +97,7 @@ NA_DEF NAByteArray* naCreateByteArrayExtraction(NAByteArray* dstarray, const NAB
       dstarray->storage = naRetainPointer(srcarray->storage);
     }
     dstarray->ptr.p = newptr;
-    dstarray->size = size;
+    dstarray->size = positivesize;
   }
   
   return dstarray;
@@ -105,7 +107,7 @@ NA_DEF NAByteArray* naCreateByteArrayExtraction(NAByteArray* dstarray, const NAB
 
 NA_DEF void naDecoupleByteArray(NAByteArray* array, NABool appendzerobytes){
   // Declaration before implementation. Needed for C90.
-  NAInt arraysize;
+  NAUInt arraysize;
   NAByte* buf;
   #ifndef NDEBUG
     if(!array){

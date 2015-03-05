@@ -9,6 +9,9 @@
 #endif
 
 
+#define NA_VERSION 9
+
+
 // This is the base of the whole NALib implementation. Almost all files
 // include this file. It contains the most basic type definitions and
 // preprocessor macros.
@@ -306,7 +309,8 @@ typedef uint8     NAByte;
 // In addition to the type, there is the definition of a printf-argument macro.
 // Use the macro for example like this:
 //
-// printf("The array has %" NA_PRIi " entries." NA_NL, naGetArrayCount(array));
+// printf("The point is at X coordinate %" NA_PRIi " NA_NL, pos.x);
+// printf("The array has %" NA_PRIu " entries." NA_NL, naGetArrayCount(array));
 //
 // Some more printf arguments can be found in the NAString.h header file.
 //
@@ -322,12 +326,16 @@ typedef uint8     NAByte;
 //
 #if NA_SYSTEM_ADDRESS_BITS == 32
   typedef int32 NAInt;
+  typedef uint32 NAUInt;
   #define NA_PRIi "d"
+  #define NA_PRIu "u"
   #define NA_INT_MAX NA_INT32_MAX
   #define NA_INT_MIN NA_INT32_MIN
 #elif NA_SYSTEM_ADDRESS_BITS == 64
   typedef int64 NAInt;
+  typedef uint64 NAUInt;
   #define NA_PRIi "lld"
+  #define NA_PRIu "llu"
   #define NA_INT_MAX NA_INT64_MAX
   #define NA_INT_MIN NA_INT64_MIN
 #else
@@ -477,6 +485,7 @@ typedef struct NAArray      NAArray;
 // See readme for detailed informations.
 typedef void* (*NAConstructor)(void *);
 typedef void  (*NADestructor) (void *);
+typedef void  (*NAMutator)    (void *);
 
 
 

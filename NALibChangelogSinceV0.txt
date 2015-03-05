@@ -13,6 +13,16 @@ correct, complete or final.
 
 
 
+- Added NAUInt, an unsigned integer with 32 or 64 Bits.
+- Changed naMakePositiveiInSize to return two NAUInt pointers.
+- Several implementation changes in NAArray. Added helper function for empty
+  array and Constructor calls.
+- Added NAMutator function pointer type for interation.
+- Added naForeachArray.
+- Re-Added a version macro NA_VERSION
+- Changed the test.c file. Very small. Just a version printout.
+
+
 Version 8 (first published 2015-February-28):
 ==============================================
 

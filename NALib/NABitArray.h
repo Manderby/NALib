@@ -159,7 +159,7 @@ NA_API void naDecoupleBitArray(NABitArray* array);
 NA_API NABit* naGetBitArrayBit(NABitArray* bitarray, NAInt indx);
 
 // Returns the size of the bits array. Not the size of the full storage!
-NA_API NAInt naGetBitArrayCount(NABitArray* bitarray);
+NA_API NAUInt naGetBitArrayCount(NABitArray* bitarray);
 
 
 // Creates string representations of the given bitarray as an integer number.

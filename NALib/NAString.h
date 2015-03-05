@@ -72,12 +72,12 @@ typedef enum{
 
 // Mapping of standard library functions. They can be different depending on
 // the system compiled.
-NA_IAPI NAInt naStrlen(           const NAUTF8Char* str);
-NA_IAPI NAInt naVsnprintf(              NAUTF8Char* buffer,
-                                              NAInt size,
+NA_IAPI NAUInt naStrlen(          const NAUTF8Char* str);
+NA_IAPI NAUInt naVsnprintf(             NAUTF8Char* buffer,
+                                             NAUInt size,
                                   const NAUTF8Char* newstr,
                                             va_list argumentlist);
-NA_IAPI NAInt naVarargStringSize( const NAUTF8Char* string,
+NA_IAPI NAUInt naVarargStringSize(const NAUTF8Char* string,
                                             va_list args);
 
 
@@ -196,7 +196,7 @@ NAString* naCreateStringEPSDecoded( NAString* deststring,
   // string. If you do not provide the size, it will be automatically
   // computed. The resulting string must be freed manually. COPIES ALWAYS!
   SystemChar* naCreateSystemStringFromString(const NAUTF8Char* utf8string,
-                                                         NAInt size);
+                                                        NAUInt size);
   // Creates a new NAString from a system-encoded string. COPIES ALWAYS!
   NAString* naCreateStringFromSystemString( NAString* string,
                                           SystemChar* systemstring);
@@ -240,7 +240,7 @@ void naDecoupleString(NAString* string);
 // Returns the size of the string in BYTES. If the string is Null-terminated,
 // the terminating Null-character is NOT counted. Therefore "Hello" always
 // returns 5, no matter if the string is null-terminated or not.
-NAInt naGetStringSize(const NAString* string);
+NAUInt naGetStringSize(const NAString* string);
 
 // Returns either a const or a non-const pointer to the first character of
 // this string. Use the const variant for printf %s arguments but make sure
@@ -361,15 +361,15 @@ void naParseStringTokenWithDelimiter( NAString* string,
 // If the parsed value exceeds max, retint will be max and a warning will be
 // emitted when debugging. But note that the returned number of bytes contains
 // all digits considered.
-NAInt naParseUTF8StringForDecimalUnsignedInteger(const NAUTF8Char* string,
+NAUInt naParseUTF8StringForDecimalUnsignedInteger(const NAUTF8Char* string,
                                                            uint64* retint,
-                                                             NAInt maxbytecount,
+                                                            NAUInt maxbytecount,
                                                             uint64 max);
 // Same as above but parses a signed integer. Note that there is an addidional
 // min parameter.
-NAInt naParseUTF8StringForDecimalSignedInteger( const NAUTF8Char* string,
+NAUInt naParseUTF8StringForDecimalSignedInteger( const NAUTF8Char* string,
                                                            int64* retint,
-                                                            NAInt maxbytecount,
+                                                           NAUInt maxbytecount,
                                                             int64 min,
                                                             int64 max);
 
@@ -447,14 +447,14 @@ NABool naEqualUTF8CStringLiteralsCaseInsensitive( const NAUTF8Char* string1,
 #include <string.h>
 
 
-NA_IDEF NAInt naStrlen(const NAUTF8Char* str){
-  return (NAInt)strlen((const char*)str);
+NA_IDEF NAUInt naStrlen(const NAUTF8Char* str){
+  return (NAUInt)strlen((const char*)str);
 }
 
 
-NA_IDEF NAInt naVsnprintf(  NAUTF8Char* buffer,
-                                  NAInt size,
-                      const NAUTF8Char *newstr,
+NA_IDEF NAUInt naVsnprintf(  NAUTF8Char* buffer,
+                                 NAUInt size,
+                      const NAUTF8Char* newstr,
                                 va_list argumentlist){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return (NAInt)_vsnprintf_s(buffer, (size_t)size, (size_t)size, newstr, argumentlist);
@@ -464,7 +464,7 @@ NA_IDEF NAInt naVsnprintf(  NAUTF8Char* buffer,
 }
 
 
-NA_IDEF NAInt naVarargStringSize(const NAUTF8Char* string, va_list args){
+NA_IDEF NAUInt naVarargStringSize(const NAUTF8Char* string, va_list args){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return (NAInt)_vscprintf(string, args);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X

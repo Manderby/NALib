@@ -163,7 +163,7 @@ NA_DEF NAArray* naCreateArrayOutOfGrowingSpace(NAArray* array, NAGrowingSpace* s
   NAInt bytearraysize;
   NAInt remainingcount;
   NAInt i;
-  array = naCreateArrayWithCount(array, space->typesize, space->usedcount);
+  array = naCreateArrayWithCount(array, space->typesize, space->usedcount, NA_NULL);
   arrayptr = naGetArrayMutablePointer(array);
   bytearraycount = naGetListCount(&(space->arrays));
   bytearraysize = NA_GROWING_SPACE_SINGLE_ARRAY_SIZE * space->typesize;

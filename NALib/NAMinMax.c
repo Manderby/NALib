@@ -12,12 +12,12 @@ NA_DEF NAArray* naCreateAreasWithMinMax1iFromMinMax1iArray(NAArray* newarray, co
   NAGrowingSpace* segments;
   NAInt curmin;
   NAInt curmax;
-  NAInt minmaxcount = naGetArrayCount(minmaxs);
+  NAUInt minmaxcount = naGetArrayCount(minmaxs);
   NAInt maxareasperdimension = (2 * minmaxcount - 1);
   NAHeap* rangeheap0min = naCreateHeap(NA_NULL, maxareasperdimension, NA_HEAP_USES_INT_KEY);
   NAHeap* rangeheap0max = naCreateHeap(NA_NULL, maxareasperdimension, NA_HEAP_USES_INT_KEY);
   // insert the min and max coordinates into the heaps
-  NAInt m;
+  NAUInt m;
   for(m=0; m<minmaxcount; m++){
     NAMinMax1i* minmax = (NAMinMax1i*)naGetArrayConstElement(minmaxs, m);
 //    if(naIsMinMax1iEmpty(*minmax)){continue;}
