@@ -52,6 +52,7 @@ struct NAGrowingSpace{
   NAInt         typesize;   // The size in bytes of the stored type
   NAInt         usedcount;  // The used number of elements in the storage.
   NAConstructor constructor;
+  NAInt         cur;        // The index in the current array if available.
 };
 
 
@@ -68,13 +69,26 @@ NA_API void naDestroyGrowingSpace(NAGrowingSpace* space, NADestructor destructor
 // The returned pointer points to an uninitialized space.
 NA_API void* naNewGrowingSpaceElement(NAGrowingSpace* space);
 
+// Iteration functions
+//
+// Every growing space has an internal pointer denoting the current element.
+// You can directly access the content of that element. If no current element
+// is set, NA_NULL is returned.
+NA_API const void* naGetGrowingSpaceConstContent  (const NAGrowingSpace* space);
+NA_API       void* naGetGrowingSpaceMutableContent(      NAGrowingSpace* space);
+
+// The following functions move the internal pointer. At start, the internal
+// pointer is not set.
+NA_API void naFirstGrowingSpaceElement(const NAGrowingSpace* space);
+NA_API void naNextGrowingSpaceElement(const NAGrowingSpace* space);
+
 // Returns a POINTER to the element at the given index.
 // The indx argument is treated the same way as with naGetArrayConstElement
 // or naGetArrayMutableElement.
-// Warning: Do not use the result as an interation pointer. The elements
-// are NOT stored in a single array!
-// These functions are slow! Use Iterators instead. Unfortunately, they are
-// not yet implemented. todo
+// Warning: Do not use the result as an interation pointer. The elements are
+// NOT stored in a single array!
+// These functions are very slow! Use Iterators instead. Unfortunately, they
+// are not yet implemented. todo
 NA_API const void* naGetGrowingSpaceConstElement  (const NAGrowingSpace* space,
                                                                    NAInt indx);
 NA_API void*       naGetGrowingSpaceMutableElement(      NAGrowingSpace* space,

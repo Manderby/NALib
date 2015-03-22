@@ -18,7 +18,9 @@ correct, complete or final.
 - Several implementation changes in NAArray. Added helper function for empty
   array and Constructor calls.
 - Added NAMutator function pointer type for interation.
-- Added naForeachArray.
+- Added iterator for NAGrowingSpace
+- Added naForeachArray
+- Added naIsListAtFirst and naIsListAtLast
 - Re-Added a version macro NA_VERSION
 - Changed the test.c file. Very small. Just a version printout.
 
