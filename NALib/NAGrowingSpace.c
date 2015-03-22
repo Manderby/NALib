@@ -103,6 +103,49 @@ NA_DEF void* naNewGrowingSpaceElement(NAGrowingSpace* space){
 
 
 
+NA_DEF const void* naGetGrowingSpaceConstContent(const NAGrowingSpace* space){
+  const NAByteArray* curarray;
+  curarray = naGetListConstContent(&(space->arrays));
+  if(!curarray){return NA_NULL;}
+  return naGetByteArrayConstByte(curarray, space->cur * space->typesize);
+}
+
+
+
+NA_DEF void* naGetGrowingSpaceMutableContent(NAGrowingSpace* space){
+  NAGrowingSpace* mutablespace = (NAGrowingSpace*)space;
+  NAByteArray* curarray;
+  curarray = naGetListMutableContent(&(mutablespace->arrays));
+  if(!curarray){return NA_NULL;}
+  return naGetByteArrayMutableByte(curarray, space->cur * mutablespace->typesize);
+}
+
+
+
+NA_DEF void naFirstGrowingSpaceElement(const NAGrowingSpace* space){
+  NAGrowingSpace* mutablespace = (NAGrowingSpace*)space;
+  naFirstListElement(&(mutablespace->arrays));
+  mutablespace->cur = 0;
+}
+
+
+
+NA_DEF void naNextGrowingSpaceElement(const NAGrowingSpace* space){
+  NAGrowingSpace* mutablespace = (NAGrowingSpace*)space;
+  NAUInt remainingcount = NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
+  if(naIsListAtLast(&(mutablespace->arrays))){
+    remainingcount = space->usedcount % NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
+    if(remainingcount == 0){remainingcount = NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;}
+  }
+  mutablespace->cur++;
+  if(mutablespace->cur == remainingcount){
+    naNextListElement(&(mutablespace->arrays));
+    mutablespace->cur = 0;
+  }
+}
+
+
+
 NA_DEF const void* naGetGrowingSpaceConstElement(const NAGrowingSpace* space, NAInt indx){
   // Declaration before Implementation. Needed for C90
   NAInt arrayindex;

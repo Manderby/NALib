@@ -23,6 +23,8 @@ correct, complete or final.
 - Added NAArray.c implementation file and moved some functions there.
 - Added naForeachArray.
 - Added naSwap for more base types
+- Added iterator for NAGrowingSpace
+- Added naIsListAtFirst and naIsListAtLast
 - Re-Added a version macro NA_VERSION
 - Changed the test.c file. Very small. Just a version printout.
 

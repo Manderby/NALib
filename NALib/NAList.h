@@ -89,6 +89,9 @@ NA_IAPI void naPrevListElement    (const NAList* list);
 NA_IAPI NABool naLocateListElement(const NAList* list, void* content);
 // Note: You can safely use remove functions while iterating!
 
+// Returns whether the list is at a certain position
+NA_IAPI NABool naIsListAtFirst    (const NAList* list);
+NA_IAPI NABool naIsListAtLast     (const NAList* list);
 
 // Adds the given content at the desired position of the list.
 // First:   New element becomes first element of the list
@@ -236,6 +239,16 @@ NA_IDEF void naNextListElement(const NAList* list){
 NA_IDEF void naPrevListElement(const NAList* list){
   NAList* mutablelist = (NAList*)list;
   mutablelist->cur = list->cur->prev;
+}
+
+
+NA_IDEF NABool naIsListAtFirst(const NAList* list){
+  return (list->sentinel.next == list->cur);
+}
+
+
+NA_IDEF NABool naIsListAtLast(const NAList* list){
+  return (list->sentinel.prev == list->cur);
 }
 
 
