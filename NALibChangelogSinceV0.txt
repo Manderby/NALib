@@ -13,12 +13,16 @@ correct, complete or final.
 
 
 
-- Added NAUInt, an unsigned integer with 32 or 64 Bits.
+- Added NA_HAPI, NA_HDEF, NA_HIAPI and NA_HIDEF macros
+- Added NAUInt, an unsigned integer with 32 or 64 Bits. Changed many functions
+  now accepting an NAUInt instead of an NAInt.
 - Changed naMakePositiveiInSize to return two NAUInt pointers.
 - Several implementation changes in NAArray. Added helper function for empty
   array and Constructor calls.
 - Added NAMutator function pointer type for interation.
+- Added NAArray.c implementation file and moved some functions there.
 - Added naForeachArray.
+- Added naSwap for more base types
 - Re-Added a version macro NA_VERSION
 - Changed the test.c file. Very small. Just a version printout.
 

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		906B3C071ABD987F00040B48 /* NAArray.c in Sources */ = {isa = PBXBuildFile; fileRef = 906B3C061ABD987F00040B48 /* NAArray.c */; };
 		B983AB9E1AA509990009D0E8 /* NABitArray.c in Sources */ = {isa = PBXBuildFile; fileRef = B983AB7E1AA509990009D0E8 /* NABitArray.c */; };
 		B983AB9F1AA509990009D0E8 /* NAByteArray.c in Sources */ = {isa = PBXBuildFile; fileRef = B983AB801AA509990009D0E8 /* NAByteArray.c */; };
 		B983ABA01AA509990009D0E8 /* NADateTime.c in Sources */ = {isa = PBXBuildFile; fileRef = B983AB851AA509990009D0E8 /* NADateTime.c */; };
@@ -33,6 +34,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		906B3C061ABD987F00040B48 /* NAArray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAArray.c; sourceTree = "<group>"; };
 		B9432B5D17E5BF5A0075F638 /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
 		B983AB7C1AA509990009D0E8 /* NAArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAArray.h; sourceTree = "<group>"; };
 		B983AB7D1AA509990009D0E8 /* NABinaryData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NABinaryData.h; sourceTree = "<group>"; };
@@ -88,6 +90,7 @@
 			isa = PBXGroup;
 			children = (
 				B983AB7C1AA509990009D0E8 /* NAArray.h */,
+				906B3C061ABD987F00040B48 /* NAArray.c */,
 				B983AB7D1AA509990009D0E8 /* NABinaryData.h */,
 				B983AB7E1AA509990009D0E8 /* NABitArray.c */,
 				B983AB7F1AA509990009D0E8 /* NABitArray.h */,
@@ -202,6 +205,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				906B3C071ABD987F00040B48 /* NAArray.c in Sources */,
 				B9DD395619AB329500A0F139 /* main.c in Sources */,
 				B983AB9E1AA509990009D0E8 /* NABitArray.c in Sources */,
 				B983AB9F1AA509990009D0E8 /* NAByteArray.c in Sources */,
@@ -245,6 +249,7 @@
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
@@ -300,6 +305,7 @@
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;

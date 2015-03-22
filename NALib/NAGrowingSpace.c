@@ -15,7 +15,7 @@
 
 
 
-NA_HLP void naAddGrowingSpaceNewSpace(NAGrowingSpace* space){
+NA_HDEF void naAddGrowingSpaceNewSpace(NAGrowingSpace* space){
   NAByteArray* newarray = naCreateByteArrayWithSize(NA_NULL, NA_GROWING_SPACE_SINGLE_ARRAY_SIZE * space->typesize);
   if(space->constructor){
     NAByte* curptr = naGetByteArrayMutablePointer(newarray);
@@ -30,7 +30,7 @@ NA_HLP void naAddGrowingSpaceNewSpace(NAGrowingSpace* space){
 
 
 
-NA_DEF NAGrowingSpace* naCreateGrowingSpace(NAGrowingSpace* space, NAInt typesize, NAConstructor constructor){
+NA_DEF NAGrowingSpace* naCreateGrowingSpace(NAGrowingSpace* space, NAUInt typesize, NAConstructor constructor){
   #ifndef NDEBUG
     if(typesize <= 0)
       naError("naCreateGrowingSpace", "typesize is invalid.");

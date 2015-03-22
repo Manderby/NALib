@@ -27,8 +27,10 @@
 // Important: You have to typecast the returned element-pointers!
 
 
-#include "NAMinMax.h"
+#include "NASystem.h"
 
+
+typedef struct NAArray NAArray;
 
 
 // ///////////////////////////
@@ -40,7 +42,7 @@ NA_IAPI NAArray* naCreateArray(NAArray* array);
 
 // Creates or fills a new NAArray struct with a given typesize in bytes and a
 // count. Calls the constructor on every element if not NA_NULL.
-NA_IAPI NAArray* naCreateArrayWithCount  (NAArray* array,
+NA_API  NAArray* naCreateArrayWithCount  (NAArray* array,
                                             NAUInt typesize,
                                             NAUInt count,
                                      NAConstructor constructor);
@@ -60,12 +62,12 @@ NA_IAPI NAArray* naCreateArrayWithCount  (NAArray* array,
 //
 // Note that NALib does provide an API for calling constructors on preallocated
 // buffers. If you really need to do that, you have to do this manually.
-NA_IAPI NAArray* naCreateArrayWithConstBuffer(
+NA_API  NAArray* naCreateArrayWithConstBuffer(
                                           NAArray* array,
                                        const void* buffer,
                                             NAUInt typesize,
                                             NAUInt count);
-NA_IAPI NAArray* naCreateArrayWithMutableBuffer(
+NA_API  NAArray* naCreateArrayWithMutableBuffer(
                                           NAArray* array,
                                              void* buffer,
                                             NAUInt typesize,
@@ -75,7 +77,7 @@ NA_IAPI NAArray* naCreateArrayWithMutableBuffer(
 // Fills dstarray with a desired part of srcarray.
 // offset and count can be negative: See naCreateByteArrayExtraction for the
 // explanation of the arguments.
-NA_IAPI NAArray* naCreateArrayExtraction( NAArray* dstarray,
+NA_API  NAArray* naCreateArrayExtraction( NAArray* dstarray,
                                     const NAArray* srcarray,
                                              NAInt offset,
                                              NAInt count);
@@ -148,6 +150,7 @@ NA_IAPI NABool naIsArrayEmpty(const NAArray* array);
 
 
 #include "NAByteArray.h"
+#include "NAMinMax.h"
 
 
 struct NAArray{
@@ -160,7 +163,7 @@ struct NAArray{
 // This is a small helper function used for the naCreate functions. Note that
 // naCreateByteArray is defined inline whereas other creation functions of
 // NAByteArray are not.
-NA_IHLP NAArray* naInitializeEmptyArray(NAArray* array){
+NA_HIDEF NAArray* naInitializeEmptyArray(NAArray* array){
   array = (NAArray*)naAllocateIfNull(array, sizeof(NAArray));
   naCreateByteArray(&(array->bytearray));
   return array;
@@ -174,87 +177,6 @@ NA_IDEF NAArray* naCreateArray(NAArray* array){
   // result in bad values.
   array->typesize = 1;
   return array;
-}
-
-
-
-NA_IDEF NAArray* naCreateArrayWithCount(NAArray* array, NAUInt typesize, NAUInt count, NAConstructor constructor){
-  #ifndef NDEBUG
-    if(typesize < 1)
-      naError("naCreateArrayWithCount", "typesize is < 1.");
-  #endif
-  if(!count){
-    array = naInitializeEmptyArray(array);
-  }else{
-    array = (NAArray*)naAllocateIfNull(array, sizeof(NAArray));
-    naCreateByteArrayWithSize(&(array->bytearray), typesize * count);
-  }
-  array->typesize = typesize;
-
-  if(constructor){
-    // Note that you shall not call naForeachArray with the constructor. The
-    // function pointers are not generally compatible.
-    NAByte* ptr = naGetByteArrayMutablePointer(&(array->bytearray));
-    while(count){
-      constructor(ptr);
-      ptr += array->typesize;
-      count--;
-    }
-  }
-
-  return array;
-}
-
-
-
-NA_IDEF NAArray* naCreateArrayWithConstBuffer(NAArray* array, const void* buffer, NAUInt typesize, NAUInt count){
-  #ifndef NDEBUG
-    if(typesize < 1)
-      naError("naCreateArrayWithConstBuffer", "typesize is < 1");
-  #endif
-  if(!count){
-    array = naInitializeEmptyArray(array);
-  }else{
-    array = (NAArray*)naAllocateIfNull(array, sizeof(NAArray));
-    naCreateByteArrayWithConstBuffer(&(array->bytearray), buffer, typesize * count);
-  }
-  array->typesize = typesize;
-  return array;
-}
-
-
-
-NA_IDEF NAArray* naCreateArrayWithMutableBuffer(NAArray* array, void* buffer, NAUInt typesize, NAUInt count, NABool takeownership){
-  #ifndef NDEBUG
-    if(typesize < 1)
-      naError("naCreateArrayWithMutableBuffer", "typesize is < 1");
-  #endif
-  // Note that here, in contrast to naCreateArrayWithConstBuffer, no test
-  // is made if count is zero. With that, the takeownership parameter can
-  // correctly be handeled and the buffer can be automatically free'd if count
-  // is zero.
-  array = (NAArray*)naAllocateIfNull(array, sizeof(NAArray));
-  naCreateByteArrayWithMutableBuffer(&(array->bytearray), buffer, typesize * count, takeownership);
-  array->typesize = typesize;
-  return array;
-}
-
-
-
-NA_IDEF NAArray* naCreateArrayExtraction(NAArray* dstarray, const NAArray* srcarray, NAInt offset, NAInt count){
-  NAUInt positiveoffset;
-  NAUInt positivecount;
-  
-  dstarray = (NAArray*)naAllocateIfNull(dstarray, sizeof(NAArray));
-  dstarray->typesize = srcarray->typesize;
-
-  naMakePositiveiInSize(&positiveoffset, &positivecount, offset, count, naGetArrayCount(srcarray));
-
-  naCreateByteArrayExtraction(&(dstarray->bytearray),
-                            &(srcarray->bytearray),
-                            positiveoffset * srcarray->typesize,
-                            positivecount * srcarray->typesize);
-  return dstarray;
 }
 
 

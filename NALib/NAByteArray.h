@@ -25,6 +25,10 @@
 
 #include "NASystem.h"
 
+
+typedef struct NAByteArray  NAByteArray;
+
+
 // ///////////////////////////
 // Constructors and Destructors. Read the readme.txt for explanation.
 // ///////////////////////////
@@ -72,11 +76,11 @@ NA_API NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
 NA_API NAByteArray* naCreateByteArrayWithConstBuffer(
                                                 NAByteArray* array,
                                                  const void* buffer,
-                                                       NAInt size);
+                                                      NAUInt size);
 NA_API NAByteArray* naCreateByteArrayWithMutableBuffer(
                                                 NAByteArray* array,
                                                        void* buffer,
-                                                       NAInt size,
+                                                      NAUInt size,
                                                       NABool takeownership);
 
 

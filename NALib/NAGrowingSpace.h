@@ -26,7 +26,7 @@
 // in the growing space. This is a huge advantage!
 //
 // There is also a disadvantage: Traversing the space one-by-one can only be
-// done efficiently using an iterator. Which is not implemented yet.
+// done efficiently using an iterator.
 //
 // IMPORTANT:
 // NAGrowingSpace is not a Pool structure! Deletion or recycling of elements
@@ -36,9 +36,9 @@
 // care about.
 //
 // Use this structure when you are building up collections, for example:
-// When parsing files without prior knowledge of the number of elements stored.
-// Creating a bunch of particles in a physically based simulation.
-// Creating an unknown number of edges within a point cloud.
+// - parsing files without prior knowledge of the number of elements stored.
+// - Creating a bunch of particles in a physically based simulation.
+// - Creating an unknown number of edges within a point cloud.
 // And many more examples. Turns out the author uses this structure more and
 // more.
 
@@ -49,15 +49,15 @@
 typedef struct NAGrowingSpace NAGrowingSpace;
 struct NAGrowingSpace{
   NAList        arrays;     // List of NAByteArray*
-  NAInt         typesize;   // The size in bytes of the stored type
-  NAInt         usedcount;  // The used number of elements in the storage.
+  NAUInt        typesize;   // The size in bytes of the stored type
+  NAUInt        usedcount;  // The used number of elements in the storage.
   NAConstructor constructor;
 };
 
 
 // Creates a new NAGrowingSpace with the desired type size.
 NA_API NAGrowingSpace* naCreateGrowingSpace(NAGrowingSpace* space,
-                                                      NAInt typesize,
+                                                     NAUInt typesize,
                                               NAConstructor constructor);
 
 // Clears or destroys the given space.
