@@ -58,7 +58,8 @@ functions for many structs.
 
 The naming scheme guides you:
 
-- naMakeXXX:    Returns the struct as a value.
+- naMakeXXX:    Returns the struct as a value. Only very basic structs will
+                provide such functions.
 - naFillXXX:    Expects the first argument to be a pointer to the struct.
 - naCreateXXX:  Expects either a pointer to an existing block in memory or
                 NA_NULL if you want NALib to allocate the memory. In any case:

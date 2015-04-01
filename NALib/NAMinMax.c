@@ -92,6 +92,57 @@ NA_DEF NAArray* naCreateAreasWithMinMax1iFromMinMax1iArray(NAArray* newarray, co
 
 
 
+NA_HDEF void naMakePositiveiInSize(NAUInt* NA_RESTRICT positivepos, NAUInt* NA_RESTRICT positivesize, NAInt pos, NAInt size, NAUInt containingsize){
+  // First, we ensure that pos is withing the containing range. After that
+  // we will look at the size parameter.
+  NAInt remainingsize = containingsize - pos;
+  if(pos < 0){
+    pos += containingsize;
+    remainingsize -= containingsize;
+  }
+  if(remainingsize < 0){
+    #ifndef NDEBUG
+      naError("naMakePositiveiInSize", "Invalid pos leads to range overflow. Correcting to empty range.");
+    #endif
+    *positivepos = 0;
+    *positivesize = 0;
+  }else if((NAUInt)remainingsize > containingsize){
+    #ifndef NDEBUG
+      naError("naMakePositiveiInSize", "Invalid pos leads to range underflow. Correcting to empty range.");
+    #endif
+    *positivepos = 0;
+    *positivesize = 0;
+  }else{
+    *positivepos = pos;
+    // The pos is positive. Now, adjust the size.
+    if(size < 0){ // negative size parameter
+      size = remainingsize + size + 1;  // Important + 1 !
+      if(size < 0){
+        // When the resulting size is smaller than 0, underflow.
+        #ifndef NDEBUG
+          naError("naMakePositiveiInSize", "Invalid size leads to range underflow. Correcting to empty range.");
+        #endif
+        *positivepos = 0;
+        *positivesize = 0;
+      }else{
+        *positivesize = size;
+      }
+    }else{ // positive or 0 size parameter
+      if(size > remainingsize){
+        // When the desired size is bigger than the size available, overflow.
+        #ifndef NDEBUG
+          naError("naMakePositiveiInSize", "Invalid size leads to range overflow. Correcting to empty range.");
+        #endif
+        *positivepos = 0;
+        *positivesize = 0;
+      }else{
+        *positivesize = size;
+      }
+    }
+  }
+}
+
+
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH
 //

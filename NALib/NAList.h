@@ -318,7 +318,7 @@ NA_IDEF NABool naLocateListIndex(const NAList* list, NAInt indx){
 
 
 // This is a helper function. It should be hidden.
-NA_IHLP void naInjectListElement(NAList* list, NAListElement* element, void* content){
+NA_HIDEF void naInjectListElement(NAList* list, NAListElement* element, void* content){
   element->content = content;
   element->next->prev = element;
   element->prev->next = element;
@@ -360,7 +360,7 @@ NA_IDEF void naAddListElementAfter(NAList* list, void* content){
 
 
 // This is a helper function. It should be hidden.
-NA_IHLP void* naEjectListElement(NAList* list, NAListElement* element, NABool movenext){
+NA_HIDEF void* naEjectListElement(NAList* list, NAListElement* element, NABool movenext){
   void* contentpointer; // Declaration before Implementation. Needed for C90
   if(element == &(list->sentinel)){return NA_NULL;}
   if(element == list->cur){list->cur = (movenext?(element->next):(element->prev));}

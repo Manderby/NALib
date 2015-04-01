@@ -98,12 +98,7 @@ NA_IAPI NAUInt naVarargStringSize(const NAUTF8Char* string,
 
 
 // Opaque type. See explanation in readme.txt
-struct NAString{
-  NAByteArray array;
-  uint32      flags;
-};
-// Note that an NAString is considered empty if the underlying array is empty.
-// If that is the case, flags contains garbage values.
+typedef struct NAString NAString;
 
 
 // Terminology:
@@ -476,6 +471,16 @@ NABool naEqualUTF8CStringLiteralsCaseInsensitive( const NAUTF8Char* string1,
 #include <stdio.h>
 #include <limits.h>
 #include <string.h>
+
+
+
+struct NAString{
+  NAByteArray array;
+  uint32      flags;
+};
+// Note that an NAString is considered empty if the underlying array is empty.
+// If that is the case, flags contains garbage values.
+
 
 
 NA_IDEF NAUInt naStrlen(const NAUTF8Char* str){

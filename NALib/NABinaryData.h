@@ -20,7 +20,7 @@ NA_IAPI void naCpy64   (void* NA_RESTRICT d, const void* NA_RESTRICT s);
 NA_IAPI void naCpy128  (void* NA_RESTRICT d, const void* NA_RESTRICT s);
 NA_IAPI void naCpyn    (void* NA_RESTRICT d,
                   const void* NA_RESTRICT s,
-                                    NAInt count);
+                                   NAUInt count);
 
 
 // Swaps the content of the two pointers with the given number of bits.
@@ -33,13 +33,16 @@ NA_IAPI void naSwap128 (void* NA_RESTRICT a, void* NA_RESTRICT b);
 // only works if the two pointers do not point to the same location. Therefore
 // restrict pointers make prefectly sense here.
 
-// Swaps two NAInt
-NA_IAPI void naSwapi   (NAInt* NA_RESTRICT a, NAInt* NA_RESTRICT b);
+// Swaps two Variables
+NA_IAPI void naSwap    (double* NA_RESTRICT a, double* NA_RESTRICT b);
+NA_IAPI void naSwapf   (float*  NA_RESTRICT a, float*  NA_RESTRICT b);
+NA_IAPI void naSwapi   (NAInt*  NA_RESTRICT a, NAInt*  NA_RESTRICT b);
+NA_IAPI void naSwapu   (NAUInt* NA_RESTRICT a, NAUInt* NA_RESTRICT b);
 
 
 
-// Fills the given array with the value 0
-NA_IAPI void naNulln   (void* d, NAInt count);
+// Fills the given buffer with the value 0 for count bytes
+NA_IAPI void naNulln   (void* d, NAUInt count);
 
 
 
@@ -117,7 +120,7 @@ NA_IAPI NABool naEqual128( const void* s,
 
 NA_IDEF void naCpy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)d-(NAByte*)s;
+    NAInt dist = (NAByte*)d - (NAByte*)s;
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 1)
       naError("naCpy8", "Restrict pointers overlap.");
@@ -134,7 +137,7 @@ NA_IDEF void naCpy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s){
 }
 NA_IDEF void naCpy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)d-(NAByte*)s;
+    NAInt dist = (NAByte*)d - (NAByte*)s;
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 2)
       naError("naCpy16", "Restrict pointers overlap.");
@@ -151,7 +154,7 @@ NA_IDEF void naCpy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
 }
 NA_IDEF void naCpy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)d-(NAByte*)s;
+    NAInt dist = (NAByte*)d - (NAByte*)s;
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 4)
       naError("naCpy32", "Restrict pointers overlap.");
@@ -168,7 +171,7 @@ NA_IDEF void naCpy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
 }
 NA_IDEF void naCpy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)d-(NAByte*)s;
+    NAInt dist = (NAByte*)d - (NAByte*)s;
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 8)
       naError("naCpy64", "Restrict pointers overlap.");
@@ -185,7 +188,7 @@ NA_IDEF void naCpy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
 }
 NA_IDEF void naCpy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)d-(NAByte*)s;
+    NAInt dist = (NAByte*)d - (NAByte*)s;
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 16)
       naError("naCpy128", "Restrict pointers overlap.");
@@ -205,7 +208,7 @@ NA_IDEF void naCpy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
 }
 NA_IDEF void naCpyn(void* NA_RESTRICT d,
               const void* NA_RESTRICT s,
-                                NAInt count){
+                               NAUInt count){
   #ifndef NDEBUG
     if(!d){
       naCrash("naCpy8", "Pointer d is Null-Pointer.");
@@ -232,7 +235,7 @@ NA_IDEF void naCpyn(void* NA_RESTRICT d,
 
 NA_IDEF void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)a-(NAByte*)b;
+    NAInt dist = (NAByte*)a - (NAByte*)b;
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
     if(dist < 1)
       naError("naSwap8", "Restrict pointers overlap.");
@@ -254,7 +257,7 @@ NA_IDEF void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b){
 
 NA_IDEF void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)a-(NAByte*)b;
+    NAInt dist = (NAByte*)a - (NAByte*)b;
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
     if(dist < 2)
       naError("naSwap16", "Restrict pointers overlap.");
@@ -276,7 +279,7 @@ NA_IDEF void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
 
 NA_IDEF void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)a-(NAByte*)b;
+    NAInt dist = (NAByte*)a - (NAByte*)b;
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
     if(dist < 4)
       naError("naSwap32", "Restrict pointers overlap.");
@@ -298,7 +301,7 @@ NA_IDEF void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
 
 NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)a-(NAByte*)b;
+    NAInt dist = (NAByte*)a - (NAByte*)b;
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
     if(dist < 8)
       naError("naSwap64", "Restrict pointers overlap.");
@@ -320,7 +323,7 @@ NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
 
 NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)a-(NAByte*)b;
+    NAInt dist = (NAByte*)a - (NAByte*)b;
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
     if(dist < 16)
       naError("naSwap128", "Restrict pointers overlap.");
@@ -339,7 +342,26 @@ NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
   naSwap64(a, b);
 }
 
+
+
+
+NA_IDEF void naSwap(double* NA_RESTRICT a, double* NA_RESTRICT b){
+  naSwap64(a, b);
+}
+
+NA_IDEF void naSwapf(float* NA_RESTRICT a, float* NA_RESTRICT b){
+  naSwap32(a, b);
+}
+
 NA_IDEF void naSwapi(NAInt* NA_RESTRICT a, NAInt* NA_RESTRICT b){
+  #if NA_SYSTEM_ADDRESS_BITS == 32
+    naSwap32(a, b);
+  #elif NA_SYSTEM_ADDRESS_BITS == 64
+    naSwap64(a, b);
+  #endif
+}
+
+NA_IDEF void naSwapu(NAUInt* NA_RESTRICT a, NAUInt* NA_RESTRICT b){
   #if NA_SYSTEM_ADDRESS_BITS == 32
     naSwap32(a, b);
   #elif NA_SYSTEM_ADDRESS_BITS == 64
@@ -353,7 +375,7 @@ NA_IDEF void naSwapi(NAInt* NA_RESTRICT a, NAInt* NA_RESTRICT b){
 // Fills all bytes with null values
 // ///////////////////////////////////////////////////////////
 
-NA_IDEF void naNulln(void* d, NAInt count){
+NA_IDEF void naNulln(void* d, NAUInt count){
   #ifndef NDEBUG
     if(count < 1)
       naError("naNulln", "count is < 1.");

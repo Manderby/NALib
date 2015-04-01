@@ -23,10 +23,8 @@ NA_DEF NAByteArray* naCreateByteArrayWithSize(NAByteArray* array, NAInt size){
 
 
 
-NA_DEF NAByteArray* naCreateByteArrayWithConstBuffer( NAByteArray* array, const void* buffer, NAInt size){
+NA_DEF NAByteArray* naCreateByteArrayWithConstBuffer( NAByteArray* array, const void* buffer, NAUInt size){
   #ifndef NDEBUG
-    if(size < 0)
-      naError("naCreateByteArrayWithConstBuffer", "size is negative.");
     if(!buffer)
       naError("naCreateByteArrayWithConstBuffer", "buffer is Null-Pointer.");
   #endif
@@ -43,10 +41,8 @@ NA_DEF NAByteArray* naCreateByteArrayWithConstBuffer( NAByteArray* array, const 
 
 
 
-NA_DEF NAByteArray* naCreateByteArrayWithMutableBuffer(NAByteArray* array, void* buffer, NAInt size, NABool takeownership){
+NA_DEF NAByteArray* naCreateByteArrayWithMutableBuffer(NAByteArray* array, void* buffer, NAUInt size, NABool takeownership){
   #ifndef NDEBUG
-    if(size < 0)
-      naError("naCreateByteArrayWithBuffer", "size is negative.");
     if(!buffer)
       naError("naCreateByteArrayWithBuffer", "buffer is Null-Pointer.");
   #endif

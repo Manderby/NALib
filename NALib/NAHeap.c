@@ -32,23 +32,23 @@
   }\
   return curindex;
 
-NA_HLP NAInt naHeapMoveDownMinDouble(void* data, const void* key, NAInt curindex){
+NA_HIDEF NAInt naHeapMoveDownMinDouble(void* data, const void* key, NAInt curindex){
   NA_HEAPMOVEDOWN(double, >)
 }
-NA_HLP NAInt naHeapMoveDownMinFloat(void* data, const void* key, NAInt curindex){
+NA_HIDEF NAInt naHeapMoveDownMinFloat(void* data, const void* key, NAInt curindex){
   NA_HEAPMOVEDOWN(float, >)
 }
-NA_HLP NAInt naHeapMoveDownMinInt(void* data, const void* key, NAInt curindex){
+NA_HIDEF NAInt naHeapMoveDownMinInt(void* data, const void* key, NAInt curindex){
   NA_HEAPMOVEDOWN(NAInt, >)
 }
 
-NA_HLP NAInt naHeapMoveDownMaxDouble(void* data, const void* key, NAInt curindex){
+NA_HIDEF NAInt naHeapMoveDownMaxDouble(void* data, const void* key, NAInt curindex){
   NA_HEAPMOVEDOWN(double, <)
 }
-NA_HLP NAInt naHeapMoveDownMaxFloat(void* data, const void* key, NAInt curindex){
+NA_HIDEF NAInt naHeapMoveDownMaxFloat(void* data, const void* key, NAInt curindex){
   NA_HEAPMOVEDOWN(float, <)
 }
-NA_HLP NAInt naHeapMoveDownMaxInt(void* data, const void* key, NAInt curindex){
+NA_HIDEF NAInt naHeapMoveDownMaxInt(void* data, const void* key, NAInt curindex){
   NA_HEAPMOVEDOWN(NAInt, <)
 }
 
@@ -113,23 +113,23 @@ NA_HLP NAInt naHeapMoveDownMaxInt(void* data, const void* key, NAInt curindex){
   }\
   return curindex;
 
-NA_HLP NAInt naHeapMoveUpMinDouble(NAHeap* heap, const void* key, NAInt curindex){
+NA_HIDEF NAInt naHeapMoveUpMinDouble(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEUP(double, <)
 }
-NA_HLP NAInt naHeapMoveUpMinFloat(NAHeap* heap, const void* key, NAInt curindex){
+NA_HIDEF NAInt naHeapMoveUpMinFloat(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEUP(float, <)
 }
-NA_HLP NAInt naHeapMoveUpMinInt(NAHeap* heap, const void* key, NAInt curindex){
+NA_HIDEF NAInt naHeapMoveUpMinInt(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEUP(NAInt, <)
 }
 
-NA_HLP NAInt naHeapMoveUpMaxDouble(NAHeap* heap, const void* key, NAInt curindex){
+NA_HIDEF NAInt naHeapMoveUpMaxDouble(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEUP(double, >)
 }
-NA_HLP NAInt naHeapMoveUpMaxFloat(NAHeap* heap, const void* key, NAInt curindex){
+NA_HIDEF NAInt naHeapMoveUpMaxFloat(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEUP(float, >)
 }
-NA_HLP NAInt naHeapMoveUpMaxInt(NAHeap* heap, const void* key, NAInt curindex){
+NA_HIDEF NAInt naHeapMoveUpMaxInt(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEUP(NAInt, >)
 }
 

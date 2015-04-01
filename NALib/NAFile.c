@@ -310,7 +310,7 @@ void naJumpFileOffsetRelative(NAFile* file, NAFileSize offset){
 // appropriate action. Therefore the user shall not use it. Of course, in
 // NALib hiding something has not much use but it shows where the hidden
 // attribute makes sense.
-NA_HLP void naRequireFileReadBufferBytes(NAFile* file, uint16 count){
+NA_HDEF void naRequireFileReadBufferBytes(NAFile* file, uint16 count){
   // Declaration before implementation. Needed for C90.
   NAFileSize bytesread;
   if(file->remainingbytesinbuffer >= count){return;}  // enough bytes available
@@ -684,7 +684,7 @@ NAString* naCreateStringFromFile(NAString* string, NAFile* file, NAFileSize byte
 // action. Therefore the user shall not use it. Of course, in NALib hiding
 // something has not much use but it shows where the hidden attribute makes
 // sense.
-NA_IHLP void naRequireFileWriteBufferBytes(NAFile* file, uint16 count){
+NA_HIDEF void naRequireFileWriteBufferBytes(NAFile* file, uint16 count){
   if(file->remainingbytesinbuffer >= count){
     return;
   }else{

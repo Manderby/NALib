@@ -238,7 +238,7 @@ struct NAPointer{
     const void* constd; // ... const data or ...
     void*       d;      // ... non-const (mutable) data.
   } data;
-  NAInt refcount;       // Reference count.
+  NAUInt refcount;      // Reference count.
                         // This field also stores some flags, embedded within
                         // the number.
 };
@@ -262,7 +262,7 @@ struct NAPointer{
 // NAPointer struct. Of course, in NALib hiding something has not much use
 // but it shows where the hidden attribute would make sense if the function
 // would not be inlined.
-NA_IHLP NAPointer* naCreatePointerStruct(NAPointer* pointer){
+NA_HIDEF NAPointer* naCreatePointerStruct(NAPointer* pointer){
   if(!pointer){
     pointer = (NAPointer*)naAllocate(sizeof(NAPointer));
     pointer->refcount = 1 | NA_POINTER_OWN_STRUCT;
