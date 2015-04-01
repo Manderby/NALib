@@ -45,8 +45,8 @@ NA_IAPI void   naDestroyHeap  (NAHeap* heap);
 // Empties the heap without deallocating the memory
 NA_IAPI void   naEmptyHeap    (NAHeap* heap);
 
-// Returns NA_TRUE if the heap does not contain any elements.
-NA_IAPI NABool naIsHeapEmpty  (const NAHeap* heap);
+// Returns the number of elements stored
+NA_IAPI NAUInt naGetHeapCount (const NAHeap* heap);
 
 // Adds a new element to the heap.
 // Provide a pointer to your element as well as a pointer to the key value. The
@@ -142,14 +142,14 @@ NA_IDEF void naEmptyHeap(NAHeap* heap){
 }
 
 
-NA_IDEF NABool naIsHeapEmpty (const NAHeap* heap){
+NA_IDEF NAUInt naGetHeapCount (const NAHeap* heap){
   #ifndef NDEBUG
     if(!heap){
-      naCrash("naIsHeapEmpty", "heap is Null-Pointer.");
+      naCrash("naGetHeapCount", "heap is Null-Pointer.");
       return NA_TRUE;
     }
   #endif
-  return (heap->count == 0);
+  return heap->count;
 }
 
 

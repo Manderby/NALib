@@ -4,6 +4,7 @@
 
 #include "NABinaryData.h"
 #include "NAString.h"
+#include "NAURL.h"
 #include <ctype.h>
 #include <stdarg.h>
 
@@ -146,6 +147,24 @@ NAString* naCreateStringExtraction( NAString* deststring,
   return deststring;
 }
 
+
+
+NAString* naCreateStringWithBasenameOfFilename(NAString* deststring, const NAString* filename){
+  NAInt dotpos = naGetStringCharacterRPos(filename, NA_SUFFIX_DELIMITER);
+  if(dotpos){
+    return naCreateStringExtraction(deststring, filename, 0, dotpos-1);
+  }else{
+    return naCreateString(deststring);
+  }
+}
+NAString* naCreateStringWithSuffixOfFilename(NAString* deststring, const NAString* filename){
+  NAInt dotpos = naGetStringCharacterRPos(filename, NA_SUFFIX_DELIMITER);
+  if(dotpos){
+    return naCreateStringExtraction(deststring, filename, dotpos+1, -1);
+  }else{
+    return naCreateString(deststring);
+  }
+}
 
 
 
@@ -573,6 +592,32 @@ NABool naIsStringEmpty(const NAString* string){
 
 
 
+NAInt naGetStringCharacterPos(  const NAString* string, NAUTF8Char ch){
+  const NAUTF8Char* curchar;
+  NAUInt i;
+  NAUInt stringsize = naGetStringSize(string);
+  curchar = naGetStringConstUTF8Pointer(string);
+  for(i=0; i<stringsize; i++){
+    if(*curchar == ch){return i;}
+    curchar++;
+  }
+  // Not found
+  return -1;
+}
+NAInt naGetStringCharacterRPos( const NAString* string, NAUTF8Char ch){
+  const NAUTF8Char* curchar;
+  NAInt i;
+  NAInt negativestringsize = (-1 - naGetStringSize(string));
+  curchar = naGetStringConstChar(string, -1);
+  for(i=-1; i>negativestringsize; i--){
+    if(*curchar == ch){return i;}
+    curchar--;
+  }
+  // Not found
+  return 0;
+}
+
+
 
 NAInt naGetStringCharacterEscapeSizeTowardsTrailing(NAString* string, NAInt offset){
   // Note: The flags can be combined with the binary OR operator. This means
@@ -996,6 +1041,67 @@ void naParseStringTokenWithDelimiter(NAString* string, NAString* token, NAUTF8Ch
       // a certain delimiter character but it is escaped.
     }else{
       if(*charptr == delimiter){
+        // delimiter found which is not escaped.
+        // Remember, we are sure that token is not empty.
+        naCreateStringExtraction(token, string, 0, tokensize);
+        naCreateStringExtraction(string, string, tokensize + 1, -1);
+        return;
+      }
+    }
+    tokensize++;
+    charptr++;
+  }
+
+
+  // Reaching here, no delimiter was found till the end of string.
+  // String has ended. The token is the whole string.
+  naCreateStringExtraction(token, string, 0, -1);
+  naClearString(string);
+  naCreateString(string);
+  return;
+}
+
+
+void naParseStringPathComponent(NAString* string, NAString* token){
+  // Declaration before implementation. Needed for C90.
+  NAUInt stringsize;
+  NAUInt tokensize = 0;
+  NAInt escapesize;
+  const NAUTF8Char* charptr;
+
+  #ifndef NDEBUG
+    if(!string){
+      naCrash("naParseStringTokenWithDelimiter", "string is Null-Pointer.");
+      return;
+    }
+    if(token == string)
+      naError("naParseStringTokenWithDelimiter", "token and string shall not be the same.");
+  #endif
+  if(!token){
+    token = naCreateString(NA_NULL);
+  }else{
+    naClearString(token);
+    naCreateString(token);
+  }
+  // We now are sure that token is empty.
+  if(naIsStringEmpty(string)){return;}
+
+  stringsize = naGetStringSize(string);
+  charptr = (NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
+
+  while(tokensize < stringsize){
+    escapesize = naGetStringCharacterEscapeSizeTowardsTrailing(string, tokensize);
+    if(escapesize){
+      #ifndef NDEBUG
+        if(escapesize < 0)
+          naError("naParseStringTokenWithDelimiter", "Internal Error: escapesize should not be negative.");
+      #endif
+      tokensize += escapesize;
+      charptr += escapesize;
+      // this surely is no delimiter. Yes, an escape sequence may represent
+      // a certain delimiter character but it is escaped.
+    }else{
+      if((*charptr == NA_PATH_DELIMITER_UNIX) || *charptr == NA_PATH_DELIMITER_WIN){
         // delimiter found which is not escaped.
         // Remember, we are sure that token is not empty.
         naCreateStringExtraction(token, string, 0, tokensize);

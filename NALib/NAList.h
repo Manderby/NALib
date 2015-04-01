@@ -83,11 +83,20 @@ NA_IAPI void naFirstListElement   (const NAList* list);
 NA_IAPI void naLastListElement    (const NAList* list);
 NA_IAPI void naNextListElement    (const NAList* list);
 NA_IAPI void naPrevListElement    (const NAList* list);
-// Moves the internal pointer to the element storing the desired content.
-// Returns true, if found and false if not. If not found, the internal pointer
-// will not be changed.
-NA_IAPI NABool naLocateListElement(const NAList* list, void* content);
 // Note: You can safely use remove functions while iterating!
+
+// Moves the internal pointer to the element storing the desired content or
+// being located at the given index. If the given index is negative, it denotes
+// the element from the end of the list, whereas -1 denotes the last element.
+//
+// Warning: These functions are very slow!
+//
+// If the element is not found or the index is not within the list range, the
+// internal pointer will be unset.
+// Returns true, if the element is found and false if not.
+//
+NA_IAPI NABool naLocateListElement(const NAList* list, void* content);
+NA_IDEF NABool naLocateListIndex(const NAList* list, NAInt indx);
 
 // Returns whether the list is at a certain position
 NA_IAPI NABool naIsListAtFirst    (const NAList* list);
@@ -265,6 +274,45 @@ NA_IDEF NABool naLocateListElement(const NAList* list, void* content){
   // Reaching here, content could not be found. Do not change the internal
   // pointer but return NA_FALSE
   return NA_FALSE;
+}
+
+
+NA_IDEF NABool naLocateListIndex(const NAList* list, NAInt indx){
+  NAList* mutablelist = (NAList*)list;
+  if(indx < 0){indx += list->count;}
+  if(indx < 0){
+    #ifndef NDEBUG
+      naError("naLocateListIndex", "Negative index underflows the range of the list");
+    #endif
+    mutablelist->cur = &(mutablelist->sentinel);
+    return NA_FALSE;
+  }
+  if(indx >= list->count){
+    #ifndef NDEBUG
+      naError("naLocateListIndex", "Index overflows the range of the list");
+    #endif
+    mutablelist->cur = &(mutablelist->sentinel);
+    return NA_FALSE;
+  }
+  
+  if(indx < (list->count / 2)){
+    // Go from leading to trailing
+    mutablelist->cur = list->sentinel.next;
+    while(indx){
+      mutablelist->cur = mutablelist->cur->next;
+      indx--;
+    }
+  }else{
+    // Go from trailing to leading
+    mutablelist->cur = list->sentinel.prev;
+    indx = indx - list->count + 1;
+    while(indx){
+      mutablelist->cur = mutablelist->cur->prev;
+      indx++;
+    }
+  }
+
+  return NA_TRUE;
 }
 
 

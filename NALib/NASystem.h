@@ -174,7 +174,7 @@
 #define NA_DEF      
 #define NA_IAPI   static NA_INLINE
 #define NA_IDEF   static NA_INLINE
-#define NA_HLP    static NA_SYMBOL_HIDDEN
+#define NA_HLP    static
 #define NA_IHLP   static NA_INLINE
 
 #if defined __STDC_VERSION__

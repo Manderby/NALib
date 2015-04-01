@@ -12,7 +12,14 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+- Added NAURL
+- Removed NA_DIRECTORY_DELIMITER and added NA_PATH_DELIMITER
+- Added naParseStringPathComponent, naCreateStringWithBasenameOfFilename,
+  naCreateStringWithSuffixOfFilename
 
+- Added NA_SQRT3
+- Added naNullV functions to nullify vectors.
+- Added naGetHeapCount, deleted naIsHeapEmpty
 - Added NAUInt, an unsigned integer with 32 or 64 Bits.
 - Changed naMakePositiveiInSize to return two NAUInt pointers.
 - Several implementation changes in NAArray. Added helper function for empty
@@ -22,6 +29,7 @@ correct, complete or final.
 - Added naForeachArray
 - Added naIsListAtFirst and naIsListAtLast
 - Re-Added a version macro NA_VERSION
+- Added naLocateListIndex.
 - Changed the test.c file. Very small. Just a version printout.
 
 

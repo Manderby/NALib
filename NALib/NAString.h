@@ -170,6 +170,15 @@ NAString* naCreateStringExtraction( NAString* deststring,
                                         NAInt offset,
                                         NAInt size);
 
+// The following two functions allow you to get either the basename or the
+// suffix of a filename. For example, the file "document.txt" returns the
+// basename "document" and the suffix "txt".
+// The suffix is detected by the first dot '.' from the right. If no such
+// dot is found, suffix is empty.
+NAString* naCreateStringWithBasenameOfFilename(NAString* deststring,
+                                        const NAString* filename);
+NAString* naCreateStringWithSuffixOfFilename(NAString* deststring,
+                                        const NAString* filename);
 
 // Creates a new string by encoding or decoding the characters of inputstring.
 //      |  Encoding example    |   Decoding example |  Notes
@@ -250,7 +259,12 @@ NAUInt naGetStringSize(const NAString* string);
 const NAUTF8Char* naGetStringConstUTF8Pointer  (const NAString* string);
       NAUTF8Char* naGetStringMutableUTF8Pointer(      NAString* string);
 
-// Returns a pointer to the desired character.
+// Returns a pointer to the desired character. If index is negative, it
+// is searched from the end of the array. For example -1 denotes the last byte.
+// Warning: result is garbage if the array is empty.
+// Note that calling this function too often might not be a good idea with
+// respect to speed. Try getting a pointer using naGetStringConstUTF8Pointer or
+// this function and use pointer arithmetic afterwards.
 const NAUTF8Char* naGetStringConstChar  (const NAString* string, NAInt indx);
       NAUTF8Char* naGetStringMutableChar(      NAString* string, NAInt indx);
 
@@ -265,6 +279,14 @@ NABool naIsStringEmpty(const NAString* string);
 // searching for desired values. Beware: Some functions change NAStrings!
 // ////////////////////////////
 
+// Returns the index of the first occurence of the given character in string.
+// The first variant searches from leading to trailing. The RPos-variant
+// searches from trailing to leading instead. The first variant returns a 
+// positive index if found and -1 if not found. The RPos variant returns a
+// negative index if found and 0 if not found. This index can directly be used
+// as an index for other string functions (positive and negative)
+NAInt naGetStringCharacterPos(  const NAString* string, NAUTF8Char ch);
+NAInt naGetStringCharacterRPos( const NAString* string, NAUTF8Char ch);
 
 // naGetStringCharacterEscapeSize TowardsTrailing and TowardsLeading:
 // These two functions test if the character at offset is the beginning or the
@@ -333,6 +355,15 @@ void naParseStringToken(NAString* string, NAString* token);
 void naParseStringTokenWithDelimiter( NAString* string,
                                       NAString* token,
                                      NAUTF8Char delimiter);
+
+// Gathers the first token within string which ends in a path delimiter. Both
+// path delimiters / and \ are detected. The delimiter will not be included.
+// After this function, string will point to the first character after the
+// delimiter. Leading or trailing whitespaces will not be stripped at all.
+// Both strings might also be empty after this function. Warning: the two
+// arguments shall not be the same as the result is undefined.
+void naParseStringPathComponent(      NAString* string,
+                                      NAString* token);
 
 // Gathers the string which is encapsulated by the given delimiter pair. The
 // Delimiters will not be included. After this function, string will point to

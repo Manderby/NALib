@@ -137,16 +137,16 @@ NA_API NAArray*     naCreateAreasWithMinMax1iFromMinMax1iArray(
 
 // Converts an integer denoting an end or max to its counterpart. Also does
 // some checks if the values over- or underflow.
-NA_HLP NAInt  naEndToMaxi(NAInt end);
-NA_HLP NAInt  naMaxToEndi(NAInt max);
-NA_HLP double naPosAndSizeToEnd   (double  pos,   double size);
-NA_HLP float  naPosAndSizeToEndf  (float   pos,   float  size);
-NA_HLP NAInt  naPosAndSizeToEndi  (NAInt   pos,   NAInt  size);
-NA_HLP NAInt  naPosAndSizeToMaxi  (NAInt   pos,   NAInt  size);
-NA_HLP double naStartAndEndToSize (double  start, double end);
-NA_HLP float  naStartAndEndToSizef(float   start, float  end);
-NA_HLP NAInt  naStartAndEndToSizei(NAInt   start, NAInt  end);
-NA_HLP NAInt  naMinAndMaxToSizei  (NAInt   min,   NAInt  max);
+NA_IHLP NAInt  naEndToMaxi(NAInt end);
+NA_IHLP NAInt  naMaxToEndi(NAInt max);
+NA_IHLP double naPosAndSizeToEnd   (double  pos,   double size);
+NA_IHLP float  naPosAndSizeToEndf  (float   pos,   float  size);
+NA_IHLP NAInt  naPosAndSizeToEndi  (NAInt   pos,   NAInt  size);
+NA_IHLP NAInt  naPosAndSizeToMaxi  (NAInt   pos,   NAInt  size);
+NA_IHLP double naStartAndEndToSize (double  start, double end);
+NA_IHLP float  naStartAndEndToSizef(float   start, float  end);
+NA_IHLP NAInt  naStartAndEndToSizei(NAInt   start, NAInt  end);
+NA_IHLP NAInt  naMinAndMaxToSizei  (NAInt   min,   NAInt  max);
 
 // This function alters the given pos and size such that size will become
 // positive while retaining the depicted range. For example with doubles:
@@ -188,12 +188,12 @@ NA_HLP void naMakePositiveiInSize(  NAUInt* NA_RESTRICT positivepos,
 // not useful when negative.
 
 // VALID means: Anything but NaN. Integer values therefore are always valid.
-NA_HLP NABool naIsPosValueValid(double a);
-NA_HLP NABool naIsPosValueValidf(float a);
-NA_HLP NABool naIsPosValueValidi(NAInt a);
-NA_HLP NABool naIsSizeValueValid(double a);
-NA_HLP NABool naIsSizeValueValidf(float a);
-NA_HLP NABool naIsSizeValueValidi(NAInt a);
+NA_IHLP NABool naIsPosValueValid(double a);
+NA_IHLP NABool naIsPosValueValidf(float a);
+NA_IHLP NABool naIsPosValueValidi(NAInt a);
+NA_IHLP NABool naIsSizeValueValid(double a);
+NA_IHLP NABool naIsSizeValueValidf(float a);
+NA_IHLP NABool naIsSizeValueValidi(NAInt a);
 
 // EMPTY means: Precisely Zero.
 NA_HLP NABool naIsSizeValueEmpty(double a);
@@ -210,18 +210,18 @@ NA_HLP NABool naIsSizeValueEmptyi(NAInt a);
 // Or the "End of file" marker EOF for example. But such situations are rare.
 // Try to use positive words whenever possible! For example, test for "Inside"
 // rather than "Outside".
-NA_HLP NABool naIsSizeValueNegative(double a);
-NA_HLP NABool naIsSizeValueNegativef(float a);
-NA_HLP NABool naIsSizeValueNegativei(NAInt a);
+NA_IHLP NABool naIsSizeValueNegative(double a);
+NA_IHLP NABool naIsSizeValueNegativef(float a);
+NA_IHLP NABool naIsSizeValueNegativei(NAInt a);
 
 // USEFUL means: Positions must be valid. Sizes must be valid, not empty and
 // not negative.
-NA_HLP NABool naIsPosValueUseful(double a);
-NA_HLP NABool naIsPosValueUsefulf(float a);
-NA_HLP NABool naIsPosValueUsefuli(NAInt a);
-NA_HLP NABool naIsSizeValueUseful(double a);
-NA_HLP NABool naIsSizeValueUsefulf(float a);
-NA_HLP NABool naIsSizeValueUsefuli(NAInt a);
+NA_IHLP NABool naIsPosValueUseful(double a);
+NA_IHLP NABool naIsPosValueUsefulf(float a);
+NA_IHLP NABool naIsPosValueUsefuli(NAInt a);
+NA_IHLP NABool naIsSizeValueUseful(double a);
+NA_IHLP NABool naIsSizeValueUsefulf(float a);
+NA_IHLP NABool naIsSizeValueUsefuli(NAInt a);
 
 
 
