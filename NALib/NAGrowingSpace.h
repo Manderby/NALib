@@ -52,7 +52,7 @@ struct NAGrowingSpace{
   NAUInt        typesize;   // The size in bytes of the stored type
   NAUInt        usedcount;  // The used number of elements in the storage.
   NAConstructor constructor;
-  NAInt         cur;        // The index in the current array if available.
+  NAUInt        cur;        // The index in the current array if available.
 };
 
 
@@ -82,18 +82,6 @@ NA_API       void* naGetGrowingSpaceMutableContent(      NAGrowingSpace* space);
 NA_API void naFirstGrowingSpaceElement(const NAGrowingSpace* space);
 NA_API void naNextGrowingSpaceElement(const NAGrowingSpace* space);
 
-// Returns a POINTER to the element at the given index.
-// The indx argument is treated the same way as with naGetArrayConstElement
-// or naGetArrayMutableElement.
-// Warning: Do not use the result as an interation pointer. The elements are
-// NOT stored in a single array!
-// These functions are very slow! Use Iterators instead. Unfortunately, they
-// are not yet implemented. todo
-NA_API const void* naGetGrowingSpaceConstElement  (const NAGrowingSpace* space,
-                                                                   NAInt indx);
-NA_API void*       naGetGrowingSpaceMutableElement(      NAGrowingSpace* space,
-                                                                   NAInt indx);
-
 // Creates a new array with just the used content of the growing space.
 // All used contents will be copied. If you stored pointers to the elements
 // in the growing space somewhere in your code, these pointers will still point
@@ -102,7 +90,7 @@ NA_API NAArray* naCreateArrayOutOfGrowingSpace(    NAArray* array,
                                             NAGrowingSpace* space);
 
 // Returns the number of elements actually stored in the space
-NA_API NAInt naGetGrowingSpaceCount(const NAGrowingSpace* space);
+NA_API NAUInt naGetGrowingSpaceCount(const NAGrowingSpace* space);
 
 
 

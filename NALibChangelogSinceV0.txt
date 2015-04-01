@@ -15,7 +15,7 @@ correct, complete or final.
 
 - Added NA_HAPI, NA_HDEF, NA_HIAPI and NA_HIDEF macros
 - Added NAUInt, an unsigned integer with 32 or 64 Bits. Changed many functions
-  now accepting an NAUInt instead of an NAInt.
+  now accepting or returning an NAUInt instead of an NAInt.
 - Changed naMakePositiveiInSize to return two NAUInt pointers.
 - Several implementation changes in NAArray. Added helper function for empty
   array and Constructor calls.
@@ -23,7 +23,8 @@ correct, complete or final.
 - Added NAArray.c implementation file and moved some functions there.
 - Added naForeachArray.
 - Added naSwap for more base types
-- Added iterator for NAGrowingSpace
+- Added Iiterator for NAGrowingSpace. Deleted naGetGrowingSpaceConstElement
+  and naGetGrowingSpaceMutableElement
 - Added naIsListAtFirst and naIsListAtLast
 - Re-Added a version macro NA_VERSION
 - Changed the test.c file. Very small. Just a version printout.
