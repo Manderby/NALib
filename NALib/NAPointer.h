@@ -188,10 +188,10 @@ NA_IDEF void* naAllocate(NAInt size){
   #endif
 
   if(size>0){
-    ptr = malloc(size);
+    ptr = (NAByte*)malloc(size);
   }else{
     fullsize = -size + 2 * NA_SYSTEM_ADDRESS_BYTES - (-size % NA_SYSTEM_ADDRESS_BYTES);
-    ptr = malloc(fullsize);
+    ptr = (NAByte*)malloc(fullsize);
     naNulln(&(ptr[fullsize - 2 * NA_SYSTEM_ADDRESS_BYTES]), 2 * NA_SYSTEM_ADDRESS_BYTES);
   }
 
