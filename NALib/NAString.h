@@ -13,8 +13,9 @@
 #include "NAByteArray.h"
 
 // Note that in NALib, a String is internally always encoded in UTF-8.
-// Strings also are considered to contain const values. A user might nontheless
-// access and alter the contents using the array.ptr field.
+// Further more, the contents of a string can not be altered after its
+// creation. But you can change the position and size of a string to
+// reflect a part of the original string.
 
 // Note that the definition of an UTF-8 char here is the built-in char type.
 // The uint8 or int8 type can not be used as it is defined to be incompatible
@@ -118,17 +119,7 @@ typedef struct NAString NAString;
 
 // Creates or fills a new, EMPTY String and returns the pointer.
 // flags is set to 0.
-NAString* naCreateString(NAString* string);
-
-// Creates or fills a new String with the desired size and returns the
-// pointer. The internal storage will, after this creation, automatically have
-// a \0 at the end and therefore have a size of at least size+1. The programmer
-// will nontheless be presented with a usable string of the given size. The
-// string itself is marked as null-terminated.
-//
-// This function allocates storage-memory on the heap which will be freed
-// automatically when the string storage is no longer used.
-NAString* naCreateStringWithSize(NAString* string, NAInt size);
+NA_API NAString* naCreateString(NAString* string);
 
 // Creates a string out of a given C-String written directly in the programming
 // code and encoded in UTF8. This function is useful for the programmers which
@@ -136,44 +127,47 @@ NAString* naCreateStringWithSize(NAString* string, NAInt size);
 // such strings and wraps it into a string struct. The string is marked
 // explicitely as read-only. Note that this works only reliable if the source-
 // code itself is encoded in UTF-8.
-NAString* naCreateStringWithUTF8CStringLiteral(  NAString* string,
-                                  const NAUTF8Char* ptr);
+NA_API NAString* naCreateStringWithUTF8CStringLiteral(  NAString* string,
+                                                const NAUTF8Char* ptr);
 
 // Creates a string with the given size and uses the given buffer. The buffer
 // must be big enough! When ownership is set to true, this string will free
 // the buffer when getting deleted.
-NAString* naCreateStringWithMutableUTF8Buffer(  NAString* string,
-                                              NAUTF8Char* buffer,
-                                                    NAInt size,
-                                                   NABool takeownership);
+//
+// When size is negative, the absolute value will be used but the buffer is
+// expected to be null-terminated (the null character is not in size).
+NA_API NAString* naCreateStringWithMutableUTF8Buffer(  NAString* string,
+                                                     NAUTF8Char* buffer,
+                                                           NAInt size,
+                                                          NABool takeownership);
 
 // Creates an NAString just like sprintf.
-NAString* naCreateStringWithFormat(NAString* string,
-                           const NAUTF8Char* format,
-                                             ...);
-// Does the same thing but with an existing va_list argument. The argumentlist
+NA_API NAString* naCreateStringWithFormat(NAString* string,
+                                   const NAUTF8Char* format,
+                                                     ...);
+  // Does the same thing but with an existing va_list argument. The argumentlist
 // argument will not be altered by this function.
-NAString* naCreateStringWithArguments(NAString* string,
-                              const NAUTF8Char* format,
-                                        va_list argumentlist);
+NA_API NAString* naCreateStringWithArguments(NAString* string,
+                                     const NAUTF8Char* format,
+                                               va_list argumentlist);
 
 // Fills deststring with a desired part of srcstring. Does not copy!
 // See naCreateByteArrayExtraction for an explanation of all arguments.
 // Use offset = 0 and size = -1 to reference the whole string.
-NAString* naCreateStringExtraction( NAString* deststring,
-                              const NAString* srcstring,
-                                        NAInt offset,
-                                        NAInt size);
+NA_API NAString* naCreateStringExtraction( NAString* deststring,
+                                     const NAString* srcstring,
+                                               NAInt offset,
+                                               NAInt size);
 
 // The following two functions allow you to get either the basename or the
 // suffix of a filename. For example, the file "document.txt" returns the
 // basename "document" and the suffix "txt".
 // The suffix is detected by the first dot '.' from the right. If no such
 // dot is found, suffix is empty.
-NAString* naCreateStringWithBasenameOfFilename(NAString* deststring,
-                                        const NAString* filename);
-NAString* naCreateStringWithSuffixOfFilename(NAString* deststring,
-                                        const NAString* filename);
+NA_API NAString* naCreateStringWithBasenameOfFilename(NAString* deststring,
+                                                const NAString* filename);
+NA_API NAString* naCreateStringWithSuffixOfFilename(NAString* deststring,
+                                              const NAString* filename);
 
 // Creates a new string by encoding or decoding the characters of inputstring.
 //      |  Encoding example    |   Decoding example |  Notes
@@ -184,14 +178,14 @@ NAString* naCreateStringWithSuffixOfFilename(NAString* deststring,
 // Note: Always creates a new string by copying the characters from the input.
 // Therefore, the two parameters MUST not be the same!
 // Warning: XML-Decoding does not support numeric entities yet.
-NAString* naCreateStringXMLEncoded( NAString* deststring,
-                              const NAString* inputstring);
-NAString* naCreateStringXMLDecoded( NAString* deststring,
-                              const NAString* inputstring);
-NAString* naCreateStringEPSEncoded( NAString* deststring,
-                              const NAString* inputstring);
-NAString* naCreateStringEPSDecoded( NAString* deststring,
-                              const NAString* inputstring);
+NA_API NAString* naCreateStringXMLEncoded( NAString* deststring,
+                                     const NAString* inputstring);
+NA_API NAString* naCreateStringXMLDecoded( NAString* deststring,
+                                     const NAString* inputstring);
+NA_API NAString* naCreateStringEPSEncoded( NAString* deststring,
+                                     const NAString* inputstring);
+NA_API NAString* naCreateStringEPSDecoded( NAString* deststring,
+                                     const NAString* inputstring);
 
 // The following functions are system dependent.
 // Currently, this is only necessary on windows.
@@ -199,16 +193,16 @@ NAString* naCreateStringEPSDecoded( NAString* deststring,
   // Returns a newly allocated memory block containing the system-encoded
   // string. If you do not provide the size, it will be automatically
   // computed. The resulting string must be freed manually. COPIES ALWAYS!
-  SystemChar* naCreateSystemStringFromString(const NAUTF8Char* utf8string,
-                                                        NAUInt size);
+  NA_API SystemChar* naCreateSystemStringFromString(const NAUTF8Char* utf8str,
+                                                               NAUInt size);
   // Creates a new NAString from a system-encoded string. COPIES ALWAYS!
-  NAString* naCreateStringFromSystemString( NAString* string,
-                                          SystemChar* systemstring);
+  NA_API NAString* naCreateStringFromSystemString( NAString* string,
+                                                 SystemChar* systemstring);
 #endif
 
 // Clears or deletes the given string.
-void naClearString(NAString* string);
-void naDestroyString(NAString* string);
+NA_API void naClearString(NAString* string);
+NA_API void naDestroyString(NAString* string);
 
 
 // Appending functions: The first argument will be altered such that it will
@@ -216,55 +210,53 @@ void naDestroyString(NAString* string);
 // copied and the resulting string will be NULL-terminated.
 // Warning: Any NAString being an extraction of the first argument will still
 // point to the unaltered version of string after this function!
-void naAppendStringWithString(    NAString* string,
-                            const NAString* string2);
+NA_API void naAppendStringWithString(    NAString* string,
+                                   const NAString* string2);
 // Appends an UTF-8 character
-void naAppendStringWithChar(     NAString* string,
-                                 NAUTF8Char newchar);
+NA_API void naAppendStringWithChar(     NAString* string,
+                                       NAUTF8Char newchar);
 // Appends an UTF-8 C-String formatted just like sprintf. You can use this
 // function to append C-Strings without arguments as well.
-void naAppendStringWithFormat(    NAString* string,
-                          const NAUTF8Char* format,
-                                            ...);
+NA_API void naAppendStringWithFormat(    NAString* string,
+                                 const NAUTF8Char* format,
+                                                   ...);
 // Does the same thing but with an existing va_list argument. The argumentlist
 // argument will not be altered by this function.
-void naAppendStringWithArguments( NAString* string,
-                          const NAUTF8Char* format,
-                                    va_list argumentlist);
+NA_API void naAppendStringWithArguments( NAString* string,
+                                 const NAUTF8Char* format,
+                                           va_list argumentlist);
 
 
 
 // COPIES the contents of the string to a separate storage and decouples it
 // from the existing storage. After this function, the decoupled string is
 // ensured to be null-terminated. Copies always!
-void naDecoupleString(NAString* string);
+NA_API void naDecoupleString(NAString* string);
 
 
 
 // Returns the size of the string in BYTES. If the string is Null-terminated,
 // the terminating Null-character is NOT counted. Therefore "Hello" always
 // returns 5, no matter if the string is null-terminated or not.
-NAUInt naGetStringSize(const NAString* string);
+NA_API NAUInt naGetStringSize(const NAString* string);
 
-// Returns either a const or a non-const pointer to the first character of
-// this string. Use the const variant for printf %s arguments but make sure
-// the string is null-terminated. Use naDecoupleString if necessary. No debug
-// warning will be emitted if the string is not null-terminated!
+// Returns a const pointer to the first character of this string. Use
+// this for example for printf %s arguments but make sure the string is
+// null-terminated. Use naDecoupleString if necessary. No debug warning will
+// be emitted if the string is not null-terminated!
 // When the string is empty, a pointer to a const char '\0' is returned.
-const NAUTF8Char* naGetStringConstUTF8Pointer  (const NAString* string);
-      NAUTF8Char* naGetStringMutableUTF8Pointer(      NAString* string);
+NA_API const NAUTF8Char* naGetStringUTF8Pointer  (const NAString* string);
 
 // Returns a pointer to the desired character. If index is negative, it
 // is searched from the end of the array. For example -1 denotes the last byte.
 // Warning: result is garbage if the array is empty.
 // Note that calling this function too often might not be a good idea with
-// respect to speed. Try getting a pointer using naGetStringConstUTF8Pointer or
+// respect to speed. Try getting a pointer using naGetStringUTF8Pointer or
 // this function and use pointer arithmetic afterwards.
-const NAUTF8Char* naGetStringConstChar  (const NAString* string, NAInt indx);
-      NAUTF8Char* naGetStringMutableChar(      NAString* string, NAInt indx);
+NA_API const NAUTF8Char* naGetStringChar  (const NAString* string, NAInt indx);
 
 // Returns NA_TRUE if the string is empty.
-NABool naIsStringEmpty(const NAString* string);
+NA_API NABool naIsStringEmpty(const NAString* string);
 
 
 
@@ -280,8 +272,8 @@ NABool naIsStringEmpty(const NAString* string);
 // positive index if found and -1 if not found. The RPos variant returns a
 // negative index if found and 0 if not found. This index can directly be used
 // as an index for other string functions (positive and negative)
-NAInt naGetStringCharacterPos(  const NAString* string, NAUTF8Char ch);
-NAInt naGetStringCharacterRPos( const NAString* string, NAUTF8Char ch);
+NA_API NAInt naGetStringCharacterPos(  const NAString* string, NAUTF8Char ch);
+NA_API NAInt naGetStringCharacterRPos( const NAString* string, NAUTF8Char ch);
 
 // naGetStringCharacterEscapeSize TowardsTrailing and TowardsLeading:
 // These two functions test if the character at offset is the beginning or the
@@ -312,16 +304,16 @@ NAInt naGetStringCharacterRPos( const NAString* string, NAUTF8Char ch);
 // The offset argument can be positive or negative. A negative offset searches
 // the position size-offset. For example -1 denotes the last character.
 //
-NAInt naGetStringCharacterEscapeSizeTowardsTrailing(NAString* string,
-                                                        NAInt offset);
-NAInt naGetStringCharacterEscapeSizeTowardsLeading( NAString* string,
-                                                        NAInt offset);
+NA_API NAInt naGetStringCharacterEscapeSizeTowardsTrailing(NAString* string,
+                                                               NAInt offset);
+NA_API NAInt naGetStringCharacterEscapeSizeTowardsLeading( NAString* string,
+                                                               NAInt offset);
 
 
 // naSkipStringWhitespaces searches from leading to trailing for the first char
 // which is > 32 (space) and adjusts offset and size accordingly. The string
 // might be empty after this function.
-void naSkipStringWhitespaces(NAString* string);
+NA_API void naSkipStringWhitespaces(NAString* string);
 
 // Returns the next line delimited by CR, LF or CR-LF. The returned line will
 // not contain any line-ending characters but all other whitespaces (ord <= 32)
@@ -331,7 +323,7 @@ void naSkipStringWhitespaces(NAString* string);
 // 1 when skipping empty lines. Will be 0 when the string is empty.
 // Warning: the two arguments shall not be the same as the result is
 // undefined.
-NAInt naParseStringLine(NAString* string, NAString* line, NABool skipempty);
+NA_API NAInt naParseStringLine(NAString* string, NAString* line, NABool skipempty);
 
 // Gathers the first token within string which is embraced by whitespaces.
 // The returned token will not have any leading or trailing whitespaces.
@@ -339,7 +331,7 @@ NAInt naParseStringLine(NAString* string, NAString* line, NABool skipempty);
 // not being a whitespace. Both strings might be empty after this function.
 // Warning: the two arguments shall not be the same as the result is
 // undefined.
-void naParseStringToken(NAString* string, NAString* token);
+NA_API void naParseStringToken(NAString* string, NAString* token);
 
 // Gathers the first token within string which ends in the given delimiter.
 // The delimiter will not be included. After this function, string will point
@@ -347,9 +339,9 @@ void naParseStringToken(NAString* string, NAString* token);
 // will not be stripped at all. Both strings might also be empty after this
 // function. Warning: the two arguments shall not be the same as the result is
 // undefined.
-void naParseStringTokenWithDelimiter( NAString* string,
-                                      NAString* token,
-                                     NAUTF8Char delimiter);
+NA_API void naParseStringTokenWithDelimiter( NAString* string,
+                                             NAString* token,
+                                            NAUTF8Char delimiter);
 
 // Gathers the first token within string which ends in a path delimiter. Both
 // path delimiters / and \ are detected. The delimiter will not be included.
@@ -357,8 +349,8 @@ void naParseStringTokenWithDelimiter( NAString* string,
 // delimiter. Leading or trailing whitespaces will not be stripped at all.
 // Both strings might also be empty after this function. Warning: the two
 // arguments shall not be the same as the result is undefined.
-void naParseStringPathComponent(      NAString* string,
-                                      NAString* token);
+NA_API void naParseStringPathComponent(      NAString* string,
+                                             NAString* token);
 
 // Gathers the string which is encapsulated by the given delimiter pair. The
 // Delimiters will not be included. After this function, string will point to
@@ -387,17 +379,17 @@ void naParseStringPathComponent(      NAString* string,
 // If the parsed value exceeds max, retint will be max and a warning will be
 // emitted when debugging. But note that the returned number of bytes contains
 // all digits considered.
-NAUInt naParseUTF8StringForDecimalUnsignedInteger(const NAUTF8Char* string,
-                                                           uint64* retint,
-                                                            NAUInt maxbytecount,
-                                                            uint64 max);
+NA_API NAUInt naParseUTF8StringForDecimalUnsignedInteger(const NAUTF8Char* string,
+                                                                   uint64* retint,
+                                                                    NAUInt maxbytecount,
+                                                                    uint64 max);
 // Same as above but parses a signed integer. Note that there is an addidional
 // min parameter.
-NAUInt naParseUTF8StringForDecimalSignedInteger( const NAUTF8Char* string,
-                                                           int64* retint,
-                                                           NAUInt maxbytecount,
-                                                            int64 min,
-                                                            int64 max);
+NA_API NAUInt naParseUTF8StringForDecimalSignedInteger( const NAUTF8Char* string,
+                                                                   int64* retint,
+                                                                   NAUInt maxbytecount,
+                                                                    int64 min,
+                                                                    int64 max);
 
 // Parses the given string for an integer value and returns the value in the
 // desired type. Note: These are parsing functions which alter string such that
@@ -414,37 +406,37 @@ NAUInt naParseUTF8StringForDecimalSignedInteger( const NAUTF8Char* string,
 //
 // If any of the strings exceeds the type range, the maximal / minimal value
 // of that type is returned. When debugging, a warning is emitted.
-int8   naParseStringInt8  (NAString* string, NABool skipdelimiter);
-int16  naParseStringInt16 (NAString* string, NABool skipdelimiter);
-int32  naParseStringInt32 (NAString* string, NABool skipdelimiter);
-int64  naParseStringInt64 (NAString* string, NABool skipdelimiter);
-uint8  naParseStringUInt8 (NAString* string, NABool skipdelimiter);
-uint16 naParseStringUInt16(NAString* string, NABool skipdelimiter);
-uint32 naParseStringUInt32(NAString* string, NABool skipdelimiter);
-uint64 naParseStringUInt64(NAString* string, NABool skipdelimiter);
+NA_API int8   naParseStringInt8  (NAString* string, NABool skipdelimiter);
+NA_API int16  naParseStringInt16 (NAString* string, NABool skipdelimiter);
+NA_API int32  naParseStringInt32 (NAString* string, NABool skipdelimiter);
+NA_API int64  naParseStringInt64 (NAString* string, NABool skipdelimiter);
+NA_API uint8  naParseStringUInt8 (NAString* string, NABool skipdelimiter);
+NA_API uint16 naParseStringUInt16(NAString* string, NABool skipdelimiter);
+NA_API uint32 naParseStringUInt32(NAString* string, NABool skipdelimiter);
+NA_API uint64 naParseStringUInt64(NAString* string, NABool skipdelimiter);
 
 // Returns the appropriate representation while leaving the string untouched.
-int8   naGetStringInt8  (const NAString* string);
-int16  naGetStringInt16 (const NAString* string);
-int32  naGetStringInt32 (const NAString* string);
-int64  naGetStringInt64 (const NAString* string);
-uint8  naGetStringUInt8 (const NAString* string);
-uint16 naGetStringUInt16(const NAString* string);
-uint32 naGetStringUInt32(const NAString* string);
-uint64 naGetStringUInt64(const NAString* string);
+NA_API int8   naGetStringInt8  (const NAString* string);
+NA_API int16  naGetStringInt16 (const NAString* string);
+NA_API int32  naGetStringInt32 (const NAString* string);
+NA_API int64  naGetStringInt64 (const NAString* string);
+NA_API uint8  naGetStringUInt8 (const NAString* string);
+NA_API uint16 naGetStringUInt16(const NAString* string);
+NA_API uint32 naGetStringUInt32(const NAString* string);
+NA_API uint64 naGetStringUInt64(const NAString* string);
 
 // Tests if the content of the given pointer is equal to the contents of string.
-NABool naEqualStringToUTF8CStringLiteral(const NAString* string,
-                                       const NAUTF8Char* ptr);
+NA_API NABool naEqualStringToUTF8CStringLiteral(const NAString* string,
+                                              const NAUTF8Char* ptr);
 // Tests the equality of two NAStrings
-NABool naEqualStringToString(     const NAString* string1,
-                                  const NAString* string2);
+NA_API NABool naEqualStringToString(     const NAString* string1,
+                                         const NAString* string2);
 // Compares two pointers case insensitive. Note that this function is not
 // fully developed and will likely change in the future. No collation setting
 // available yet. Currently, only ASCII characters in the range [32-126] are
 // considered.
-NABool naEqualUTF8CStringLiteralsCaseInsensitive( const NAUTF8Char* string1,
-                                                  const NAUTF8Char* string2);
+NA_API NABool naEqualUTF8CStringLiteralsCaseInsensitive( const NAUTF8Char* string1,
+                                                         const NAUTF8Char* string2);
 
 
 

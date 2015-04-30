@@ -12,30 +12,53 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
-- Added NAURL
-- Removed NA_DIRECTORY_DELIMITER and added NA_PATH_DELIMITER
-- Added naParseStringPathComponent, naCreateStringWithBasenameOfFilename,
-  naCreateStringWithSuffixOfFilename
+Version 9 (first published 2015-April-30):
+==============================================
 
+- Redesigned iteration functions of NAList
+- Added NAPointerContent, a pointer storing const or mutable data.
+- Added NAURL. Still very rough, but it's a start.
+- Made several changes to NAString: naCreateStringWithMutableUTF8Buffer can
+  receive a negative size to define that the string is null-terminated.
+  Deleted naCreateStringWithSize, naGetStringMutableUTF8Pointer and
+  naGetStringMutableChar. Altered naGetStringConstUTF8Pointer and
+  naGetStringConstChar to naGetStringUTF8Pointer and naGetStringChar. Therefore
+  an NAString is now always const after creation.
+  Consequently changed implementations in NABitArray, NAFile, NAString.
+- NABitArray has been removed from this package. Was way too specific to be
+  in a code collection
+- NAHeap now stores const or mutable data. A new flag defines if the heap
+  stores backpointers or not. Even faster than before!
+
+- Made NA_API and NA_DEF hidden
+- Added NA_API and NA_DEF for String and File functions
 - Added NA_SQRT3
+- Simplified NAPointer according using the new NAPointerContent
+- Added naAllocNALibStruct, an internal macro for simplification and maybe
+  (maybe!) future garbage collection.
 - Added naNullV functions to nullify vectors.
 - Added naGetHeapCount, deleted naIsHeapEmpty
 - Added NA_HAPI, NA_HDEF, NA_HIAPI and NA_HIDEF macros
 - Added NAUInt, an unsigned integer with 32 or 64 Bits. Changed many functions
-  now accepting or returning an NAUInt instead of an NAInt.
+  now accepting or returning an NAUInt instead of an NAInt. Todo: recheck all
+  inputs to not exceed the max value of a signed int where necessary.
 - Changed naMakePositiveiInSize to return two NAUInt pointers.
-- Several implementation changes in NAArray. Added helper function for empty
-  array and Constructor calls.
-- Added NAMutator function pointer type for interation.
+- Removed NA_DIRECTORY_DELIMITER and added NA_PATH_DELIMITER
+- Added naParseStringPathComponent, naCreateStringWithBasenameOfFilename,
+  naCreateStringWithSuffixOfFilename
 - Added NAArray.c implementation file and moved some functions there.
-- Added naForeachArray.
+- Several implementation changes in NAArray. Added helper function for empty
+  array and Constructor calls. Added naForeachArray.
+- Added NAMutator function pointer type for interation.
 - Added naSwap for more base types
-- Added Iiterator for NAGrowingSpace. Deleted naGetGrowingSpaceConstElement
+- Added iterator for NAGrowingSpace. Deleted naGetGrowingSpaceConstElement
   and naGetGrowingSpaceMutableElement
 - Added naIsListAtFirst and naIsListAtLast
-- Re-Added a version macro NA_VERSION
 - Added naLocateListIndex.
+- Re-Added a version macro NA_VERSION
 - Changed the test.c file. Very small. Just a version printout.
+
+
 
 
 Version 8 (first published 2015-February-28):

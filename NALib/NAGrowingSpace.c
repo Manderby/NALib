@@ -25,7 +25,7 @@ NA_HDEF void naAddGrowingSpaceNewSpace(NAGrowingSpace* space){
       curptr += space->typesize;
     }
   }
-  naAddListElementLast(&(space->arrays), newarray);
+  naAddListLastMutable(&(space->arrays), newarray);
 }
 
 
@@ -35,7 +35,7 @@ NA_DEF NAGrowingSpace* naCreateGrowingSpace(NAGrowingSpace* space, NAUInt typesi
     if(typesize <= 0)
       naError("naCreateGrowingSpace", "typesize is invalid.");
   #endif
-  space = naAllocateIfNull(space, sizeof(NAGrowingSpace));
+  space = naAllocNALibStruct(space, NAGrowingSpace);
   naCreateList(&(space->arrays));
   space->typesize = typesize;
   space->usedcount = 0;
@@ -56,11 +56,11 @@ NA_DEF void naClearGrowingSpace(NAGrowingSpace* space, NADestructor destructor){
     }
   #endif
 
-  naFirstListElement(&(space->arrays));
+  naFirstList(&(space->arrays));
   arraycount = naGetListCount(&(space->arrays));
   for(i=0; i<arraycount; i++){
-    curarray = naGetListMutableContent(&(space->arrays));
     NAUInt remainingcount;
+    curarray = naIterateListMutable(&(space->arrays), 1);
     if(i == arraycount - 1){
       remainingcount = space->usedcount % NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
     }else{
@@ -74,7 +74,6 @@ NA_DEF void naClearGrowingSpace(NAGrowingSpace* space, NADestructor destructor){
       }
     }
     naDestroyByteArray(curarray);
-    naNextListElement(&(space->arrays));
   }
 
   naClearList(&(space->arrays), NA_NULL);
@@ -94,18 +93,27 @@ NA_DEF void* naNewGrowingSpaceElement(NAGrowingSpace* space){
   NAUInt subindex;
   NAUInt fullcount = naGetListCount(&(space->arrays)) * NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
   if(space->usedcount == fullcount){naAddGrowingSpaceNewSpace(space);}
-  naLastListElement(&(space->arrays));
-  lastarray = naGetListMutableContent(&(space->arrays));
+  lastarray = naGetListLastMutable(&(space->arrays));
   subindex = space->usedcount % NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
   space->usedcount++;
   return naGetByteArrayMutableByte(lastarray, subindex * space->typesize);
+  
+//  space->usedcount++;
+//  NAUInt arraycount = naGetArrayCount(&(space->bytearrays));
+//  NAUInt endindex = 1 << arraycount;
+//  if(space->usedcount == endindex){
+//    naAddGrowingSpaceNewSpace(space);
+//    arraycount++;
+//    endindex <<= 1;
+//  }
+//  lastarray = naGetArrayMutableElement(&(space->bytearrays), -1);
+//  subindex = arraycount - (1 << (arraycount - 1));
 }
 
 
 
 NA_DEF const void* naGetGrowingSpaceConstContent(const NAGrowingSpace* space){
-  const NAByteArray* curarray;
-  curarray = naGetListConstContent(&(space->arrays));
+  const NAByteArray* curarray = naGetListCurrentConst(&(space->arrays));
   if(!curarray){return NA_NULL;}
   return naGetByteArrayConstByte(curarray, space->cur * space->typesize);
 }
@@ -114,8 +122,7 @@ NA_DEF const void* naGetGrowingSpaceConstContent(const NAGrowingSpace* space){
 
 NA_DEF void* naGetGrowingSpaceMutableContent(NAGrowingSpace* space){
   NAGrowingSpace* mutablespace = (NAGrowingSpace*)space;
-  NAByteArray* curarray;
-  curarray = naGetListMutableContent(&(mutablespace->arrays));
+  NAByteArray* curarray = naGetListCurrentMutable(&(mutablespace->arrays));
   if(!curarray){return NA_NULL;}
   return naGetByteArrayMutableByte(curarray, space->cur * mutablespace->typesize);
 }
@@ -124,7 +131,7 @@ NA_DEF void* naGetGrowingSpaceMutableContent(NAGrowingSpace* space){
 
 NA_DEF void naFirstGrowingSpaceElement(const NAGrowingSpace* space){
   NAGrowingSpace* mutablespace = (NAGrowingSpace*)space;
-  naFirstListElement(&(mutablespace->arrays));
+  naFirstList(&(mutablespace->arrays));
   mutablespace->cur = 0;
 }
 
@@ -139,7 +146,7 @@ NA_DEF void naNextGrowingSpaceElement(const NAGrowingSpace* space){
   }
   mutablespace->cur++;
   if(mutablespace->cur == remainingcount){
-    naNextListElement(&(mutablespace->arrays));
+    naIterateList(&(mutablespace->arrays), 1);
     mutablespace->cur = 0;
   }
 }
@@ -158,19 +165,19 @@ NA_DEF NAArray* naCreateArrayOutOfGrowingSpace(NAArray* array, NAGrowingSpace* s
   bytearraycount = naGetListCount(&(space->arrays));
   if(bytearraycount){
     bytearraysize = NA_GROWING_SPACE_SINGLE_ARRAY_SIZE * space->typesize;
-    naFirstListElement(&(space->arrays));
+    naFirstList(&(space->arrays));
     // Copy all full arrays as a whole
     for(i=0; i<(bytearraycount-1); i++){
-      const NAByteArray* curarray = naGetListConstContent(&(space->arrays));
+      const NAByteArray* curarray = naGetListCurrentConst(&(space->arrays));
       const NAByte* firstbyte = naGetByteArrayConstPointer(curarray);
       naCpyn(arrayptr, firstbyte, bytearraysize);
       arrayptr += bytearraysize;
-      naNextListElement(&(space->arrays));
+      naIterateList(&(space->arrays), 1);
     }
     // Copy the contents of the last array, if any.
     remainingcount = space->usedcount % NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
     if(remainingcount){
-      const NAByteArray* curarray = naGetListConstContent(&(space->arrays));
+      const NAByteArray* curarray = naGetListCurrentConst(&(space->arrays));
       const NAByte* firstbyte = naGetByteArrayConstPointer(curarray);
       naCpyn(arrayptr, firstbyte, remainingcount * space->typesize);
     }

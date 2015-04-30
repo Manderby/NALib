@@ -65,30 +65,31 @@ NA_IDEF NAURL* naCreateURL(NAURL* url){
 NA_IDEF NAURL* naCreateURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string){
   NAUTF8Char curchar;
   NAString inputstring;
+  NAString pathcomponent;
+  NAString* newpathcomponent;
 
   url = naCreateURL(url); 
   if(!string){return url;} 
   naCreateStringWithUTF8CStringLiteral(&inputstring, string);
 
-  curchar = *naGetStringConstUTF8Pointer(&inputstring);
+  curchar = *naGetStringUTF8Pointer(&inputstring);
   if((curchar == NA_PATH_DELIMITER_UNIX) || (curchar == NA_PATH_DELIMITER_WIN)){
     url->status |= NA_URL_PATH_ABSOLUTE;
     naCreateStringExtraction(&inputstring, &inputstring, 1, -1);
   }
   
-  NAString pathcomponent;
   naCreateString(&pathcomponent);
   while(naGetStringSize(&inputstring)){
     // Test for erroneous duplicate or ending delimiters
-    curchar = *naGetStringConstUTF8Pointer(&inputstring);
+    curchar = *naGetStringUTF8Pointer(&inputstring);
     if((curchar == NA_PATH_DELIMITER_UNIX) || (curchar == NA_PATH_DELIMITER_WIN)){
       naCreateStringExtraction(&inputstring, &inputstring, 1, -1);
       continue;
     }
     
     naParseStringPathComponent(&inputstring, &pathcomponent);
-    NAString* newpathcomponent = naCreateStringExtraction(NA_NULL, &pathcomponent, 0, -1);
-    naAddListElementLast(&(url->path), newpathcomponent);
+    newpathcomponent = naCreateStringExtraction(NA_NULL, &pathcomponent, 0, -1);
+    naAddListLastMutable(&(url->path), newpathcomponent);
   }
   return url;
 }
@@ -109,8 +110,7 @@ NA_IDEF void naDestroyURL(NAURL* url){
 
 NA_IDEF NAString* naCreateStringWithURLFilename(NAString* string, NAURL* url){
   if(naGetListCount(&(url->path))){
-    naLastListElement(&(url->path));
-    const NAString* lastcomponent = naGetListConstContent(&(url->path));
+    const NAString* lastcomponent = naGetListLastConst(&(url->path));
     return naCreateStringExtraction(string, lastcomponent, 0, -1);
   }else{
     return naCreateString(string);

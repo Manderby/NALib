@@ -182,7 +182,7 @@ NA_IAPI void naMoveByteMap2DBySizei(NAByteMap2D* map2d, NASizei size);
 
 
 NA_IDEF NAByteMap2D* naCreateByteMap2D(NAByteMap2D* map2d){
-  map2d = (NAByteMap2D*)naAllocateIfNull(map2d, sizeof(NAByteMap2D));
+  map2d = naAllocNALibStruct(map2d, NAByteMap2D);
   map2d->rect.size.width  = 0;
   map2d->rect.size.height = 0;
 //  map2d->data = NA_NULL;
@@ -206,7 +206,7 @@ NA_IDEF NAByteMap2D* naCreateByteMap2DWithRecti(NAByteMap2D* map2d,
   if(!totalsize){  // if total size is zero
     map2d = naCreateByteMap2D(map2d);
   }else{
-    map2d = (NAByteMap2D*)naAllocateIfNull(map2d, sizeof(NAByteMap2D));
+    map2d = naAllocNALibStruct(map2d, NAByteMap2D);
     #ifndef NDEBUG
       if(naIsRectiValid(rect) && (totalsize < 0))
         naError("naCreateByteMap2DWithRecti", "Total size exceeds int range");

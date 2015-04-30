@@ -1120,7 +1120,7 @@ NA_DEF NAString* naCreateStringFromSecondDifference(NAString* string,
   if(decimaldigits){
     NAString decimalformatstring;
     naCreateStringWithFormat(&decimalformatstring, ".%%0%dlld", decimaldigits);
-    naCreateStringWithFormat(&decimalstring, naGetStringConstUTF8Pointer(&decimalformatstring), decimals);
+    naCreateStringWithFormat(&decimalstring, naGetStringUTF8Pointer(&decimalformatstring), decimals);
     naClearString(&decimalformatstring);
   }else{
     naCreateString(&decimalstring);
@@ -1140,7 +1140,7 @@ NA_DEF NAString* naCreateStringFromSecondDifference(NAString* string,
     naCreateString(&signstring);
   }
   
-  naCreateStringWithFormat(string, "%s%s%s%s", naGetStringConstUTF8Pointer(&signstring), naGetStringConstUTF8Pointer(&daystring), naGetStringConstUTF8Pointer(&timestring), naGetStringConstUTF8Pointer(&decimalstring));
+  naCreateStringWithFormat(string, "%s%s%s%s", naGetStringUTF8Pointer(&signstring), naGetStringUTF8Pointer(&daystring), naGetStringUTF8Pointer(&timestring), naGetStringUTF8Pointer(&decimalstring));
   naClearString(&decimalstring);
   naClearString(&timestring);
   naClearString(&daystring);
@@ -1196,8 +1196,8 @@ NA_DEF int64 naGetFirstUncertainSecondNumber(){
 }
 
 
-NA_DEF NAUInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber){
-  NAUInt taiperiod;
+NA_DEF NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber){
+  NAInt taiperiod;
   if(olduncertainsecondnumber < 0){return INVALID_UNCERTAIN_SECOND_NUMBER;}
   // Note that the last entry of the structure storing all TAI periods always
   // is a non-leap-second-entry.
@@ -1216,7 +1216,7 @@ NA_DEF NAUInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber){
 
 
 NA_DEF void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
-                                           NAUInt leapsecondcorrectionconstant){
+                                           NAInt leapsecondcorrectionconstant){
   NAUInt taiperiod;
   datetime->errornum = NA_DATETIME_ERROR_NONE;
   if(leapsecondcorrectionconstant < 0){return;}

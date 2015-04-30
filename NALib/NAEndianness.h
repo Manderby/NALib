@@ -221,8 +221,6 @@ NA_IDEF void naConvertNative128(void* buffer){
 
 NA_IDEF void naConvertArrayNative8(void* buffer, NAUInt count){
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayN8", "count is negative");
     if(!buffer)
       naError("naConvertArrayN8", "buffer is Null-Pointer");
   #endif
@@ -232,8 +230,6 @@ NA_IDEF void naConvertArrayNative8(void* buffer, NAUInt count){
 
 NA_IDEF void naConvertArrayNative16(void* buffer, NAUInt count){
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayN16", "count is negative");
     if(!buffer)
       naError("naConvertArrayN16", "buffer is Null-Pointer");
   #endif
@@ -243,8 +239,6 @@ NA_IDEF void naConvertArrayNative16(void* buffer, NAUInt count){
 
 NA_IDEF void naConvertArrayNative32(void* buffer, NAUInt count){
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayN32", "count is negative");
     if(!buffer)
       naError("naConvertArrayN32", "buffer is Null-Pointer");
   #endif
@@ -254,8 +248,6 @@ NA_IDEF void naConvertArrayNative32(void* buffer, NAUInt count){
 
 NA_IDEF void naConvertArrayNative64(void* buffer, NAUInt count){
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayN64", "count is negative");
     if(!buffer)
       naError("naConvertArrayN64", "buffer is Null-Pointer");
   #endif
@@ -265,8 +257,6 @@ NA_IDEF void naConvertArrayNative64(void* buffer, NAUInt count){
 
 NA_IDEF void naConvertArrayNative128(void* buffer, NAUInt count){
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayN128", "count is negative");
     if(!buffer)
       naError("naConvertArrayN128", "buffer is Null-Pointer");
   #endif
@@ -353,8 +343,6 @@ NA_IDEF void naConvertLittleBig128(void* buffer){
 
 NA_IDEF void naConvertArrayLittleBig8(void* buffer, NAUInt count){
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayLittleBig8", "count is negative");
     if(!buffer)
       naError("naConvertArrayLittleBig8", "buffer is Null-Pointer");
   #endif
@@ -365,8 +353,6 @@ NA_IDEF void naConvertArrayLittleBig8(void* buffer, NAUInt count){
 NA_IDEF void naConvertArrayLittleBig16(void* buffer, NAUInt count){
   NAUInt i; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayLittleBig16", "count is negative");
     if(!buffer)
       naError("naConvertArrayLittleBig16", "buffer is Null-Pointer");
   #endif
@@ -379,8 +365,6 @@ NA_IDEF void naConvertArrayLittleBig16(void* buffer, NAUInt count){
 NA_IDEF void naConvertArrayLittleBig32(void* buffer, NAUInt count){
   NAUInt i; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayLittleBig32", "count is negative");
     if(!buffer)
       naError("naConvertArrayLittleBig32", "buffer is Null-Pointer");
   #endif
@@ -393,8 +377,6 @@ NA_IDEF void naConvertArrayLittleBig32(void* buffer, NAUInt count){
 NA_IDEF void naConvertArrayLittleBig64(void* buffer, NAUInt count){
   NAUInt i; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayLittleBig64", "count is negative");
     if(!buffer)
       naError("naConvertArrayLittleBig64", "buffer is Null-Pointer");
   #endif
@@ -407,8 +389,6 @@ NA_IDEF void naConvertArrayLittleBig64(void* buffer, NAUInt count){
 NA_IDEF void naConvertArrayLittleBig128(void* buffer, NAUInt count){
   NAUInt i; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayLittleBig128", "count is negative");
     if(!buffer)
       naError("naConvertArrayLittleBig128", "buffer is Null-Pointer");
   #endif

@@ -21,8 +21,8 @@ NA_DEF NAArray* naCreateAreasWithMinMax1iFromMinMax1iArray(NAArray* newarray, co
   for(m=0; m<minmaxcount; m++){
     NAMinMax1i* minmax = (NAMinMax1i*)naGetArrayConstElement(minmaxs, m);
 //    if(naIsMinMax1iEmpty(*minmax)){continue;}
-    naInsertHeapElement(rangeheap0min, minmax, &(minmax->min[0]), NA_NULL);
-    naInsertHeapElement(rangeheap0max, minmax, &(minmax->max[0]), NA_NULL);
+    naInsertHeapElementMutable(rangeheap0min, minmax, &(minmax->min[0]), NA_NULL);
+    naInsertHeapElementMutable(rangeheap0max, minmax, &(minmax->max[0]), NA_NULL);
   }
   
   if(naGetHeapCount(rangeheap0min) == 0){
@@ -30,23 +30,23 @@ NA_DEF NAArray* naCreateAreasWithMinMax1iFromMinMax1iArray(NAArray* newarray, co
   }else{
     segments = naCreateGrowingSpace(NA_NULL, sizeof(NAMinMax1i), NA_NULL);
     
-    curmin = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0min))->min[0];
-    curmax = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0max))->max[0];
+    curmin = ((NAMinMax1i*)naRemoveHeapRootMutable(rangeheap0min))->min[0];
+    curmax = ((NAMinMax1i*)naRemoveHeapRootMutable(rangeheap0max))->max[0];
     while(NA_TRUE){
       // Remove all mins which are equal to the current min.
-      while(naGetHeapCount(rangeheap0min) && (curmin == ((NAMinMax1i*)naGetHeapRoot(rangeheap0min))->min[0])){
-        naRemoveHeapRoot(rangeheap0min);
+      while(naGetHeapCount(rangeheap0min) && (curmin == ((NAMinMax1i*)naGetHeapRootMutable(rangeheap0min))->min[0])){
+        naRemoveHeapRootMutable(rangeheap0min);
       }
       
       if(naGetHeapCount(rangeheap0min)){
-        NAInt nextmin = ((NAMinMax1i*)naGetHeapRoot(rangeheap0min))->min[0];
+        NAInt nextmin = ((NAMinMax1i*)naGetHeapRootMutable(rangeheap0min))->min[0];
         if(nextmin <= curmax){
           // Create a segment with the current min and one minus the next min
           NAMinMax1i* newsegment = naNewGrowingSpaceElement(segments);
           newsegment->min[0] = curmin;
           newsegment->max[0] = nextmin - 1;
           // Fetch the next min.
-          curmin = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0min))->min[0];
+          curmin = ((NAMinMax1i*)naRemoveHeapRootMutable(rangeheap0min))->min[0];
         }else{
           // Create a segment with the current min and the current max
           NAMinMax1i* newsegment = naNewGrowingSpaceElement(segments);
@@ -57,12 +57,12 @@ NA_DEF NAArray* naCreateAreasWithMinMax1iFromMinMax1iArray(NAArray* newarray, co
               naError("naCreateAreasWithMinMax1iFromMinMax1iArray", "No more maxs while having mins. This should not happen.");
           #endif
           // Remove all maxs which are equal to the current max
-          while(curmax == ((NAMinMax1i*)naGetHeapRoot(rangeheap0max))->max[0]){
-            naRemoveHeapRoot(rangeheap0max);
+          while(curmax == ((NAMinMax1i*)naGetHeapRootMutable(rangeheap0max))->max[0]){
+            naRemoveHeapRootMutable(rangeheap0max);
           }
           // Setup the next min and fetch the new max.
           curmin = curmax + 1;
-          curmax = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0max))->max[0];
+          curmax = ((NAMinMax1i*)naRemoveHeapRootMutable(rangeheap0max))->max[0];
         }
       }else{
         // Create a segment with the current min and the current max
@@ -70,13 +70,13 @@ NA_DEF NAArray* naCreateAreasWithMinMax1iFromMinMax1iArray(NAArray* newarray, co
         newsegment->min[0] = curmin;
         newsegment->max[0] = curmax;
         // Remove all maxs which are equal to the current max
-        while((naGetHeapCount(rangeheap0max)) && (curmax == ((NAMinMax1i*)naGetHeapRoot(rangeheap0max))->max[0])){
-          naRemoveHeapRoot(rangeheap0max);
+        while((naGetHeapCount(rangeheap0max)) && (curmax == ((NAMinMax1i*)naGetHeapRootMutable(rangeheap0max))->max[0])){
+          naRemoveHeapRootMutable(rangeheap0max);
         }
         // If the max-heap is empty, everyhting is done.
         if(naGetHeapCount(rangeheap0max) == 0){break;}
         curmin = curmax + 1;
-        curmax = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0max))->max[0];
+        curmax = ((NAMinMax1i*)naRemoveHeapRootMutable(rangeheap0max))->max[0];
       }
     }
 
