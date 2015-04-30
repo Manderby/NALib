@@ -39,7 +39,6 @@
   #define NA_FILE_OPEN_FLAGS_READ (O_RDONLY | O_BINARY)
   #define NA_FILE_OPEN_FLAGS_WRITE (O_WRONLY | O_CREAT | O_TRUNC | O_BINARY)
   #define NA_FILE_OPEN_FLAGS_APPEND (O_WRONLY | O_CREAT | O_APPEND | O_BINARY)
-  #define NA_DIRECTORY_DELIMITER "\\"
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
   #include <unistd.h>
   #include <dirent.h>
@@ -51,7 +50,6 @@
   #define NA_FILE_OPEN_FLAGS_READ (O_RDONLY)
   #define NA_FILE_OPEN_FLAGS_WRITE (O_WRONLY | O_CREAT | O_TRUNC)
   #define NA_FILE_OPEN_FLAGS_APPEND (O_WRONLY | O_CREAT | O_APPEND)
-  #define NA_DIRECTORY_DELIMITER "/"
 #endif
 
 
@@ -131,16 +129,16 @@ struct NAFile{
 // the NAString type.
 // The encoding defines what the file is encoded in. The resulting string will
 // be encoded in UTF-8. todo: Add more encodings.
-NAString* naCreateStringFromFileContents( NAString* string,
-                                        const char* filename,
-                                     NATextEncoding encoding);
+NA_API NAString* naCreateStringFromFileContents( NAString* string,
+                                               const char* filename,
+                                            NATextEncoding encoding);
 
 // Reads the full file and returns it as a new NAByteArray.
 // Warning: This function is only useful if you read or store raw data! The 
 // NAByteArray struct is not endianness-aware. Use the reading and writing
 // functions of NAFile when handling multi-byte values instead.
-NAByteArray* naCreateByteArrayFromFileContents(NAByteArray* array,
-                                                const char* filename);
+NA_API NAByteArray* naCreateByteArrayFromFileContents(NAByteArray* array,
+                                                       const char* filename);
 
 // Opens the file.
 // Reading:   Opens an existing file and places the read pointer to the first
@@ -161,9 +159,9 @@ NAByteArray* naCreateByteArrayFromFileContents(NAByteArray* array,
 //            naSetFileEndianness.
 // If you don't know, what the mode argument means, use NA_FILE_MODE_DEFAULT.
 // You can change the buffering-behaviour using naSetFileAutoFlush.
-NAFile naOpenFileForReading(const char* filename);
-NAFile naOpenFileForWriting(const char* filename, NAFileMode mode);
-NAFile naOpenFileForAppending(const char* filename, NAFileMode mode);
+NA_API NAFile naOpenFileForReading(const char* filename);
+NA_API NAFile naOpenFileForWriting(const char* filename, NAFileMode mode);
+NA_API NAFile naOpenFileForAppending(const char* filename, NAFileMode mode);
 
 // Makes an NAFile struct wrapped around the standard channels.
 // Stdin:     Standard input (file descriptor 0) as a reading file.
@@ -174,16 +172,16 @@ NAFile naOpenFileForAppending(const char* filename, NAFileMode mode);
 // Note that in contrast to other appending files (see naOpenFileForAppending),
 // the binary converter is initialized and set to native for all standard
 // channels.
-NAFile naMakeFileAsStdin();
-NAFile naMakeFileAsStdout();
-NAFile naMakeFileAsStderr();
+NA_API NAFile naMakeFileAsStdin();
+NA_API NAFile naMakeFileAsStdout();
+NA_API NAFile naMakeFileAsStderr();
 
 // Closes the file. Note: Can close stdin, stdout and stderr!
-void naCloseFile(NAFile* file);
+NA_API void naCloseFile(NAFile* file);
 
 // Flushes the buffer. Only useful for writing files. Undefined behaviour for
 // reading files.
-void naFlushFileBuffer(NAFile* file);
+NA_API void naFlushFileBuffer(NAFile* file);
 
 // Sets the endianness of the file and prepares all converters.
 // - If this file is a reading file, the endianness is the input encoding for
@@ -193,32 +191,32 @@ void naFlushFileBuffer(NAFile* file);
 //   binary values and every binary multy-byte value will be converted from
 //   native to output endianness automatically while writing.
 // Use endianness constants like NA_ENDIANNESS_BIG for the endianness argument.
-void naSetFileEndianness(NAFile* file, NAInt endianness);
+NA_API void naSetFileEndianness(NAFile* file, NAInt endianness);
 
 // Sets the text encoding of the file.
 // All methods reading or writing NAString structures or NAUTF8Char data will
 // automatically convert between the file encoding and the NAString encoding
 // (which is UTF-8). todo: Currently, only the UTF-8 encoding is supported.
-void naSetFileTextEncoding(NAFile* file, NATextEncoding textencoding);
+NA_API void naSetFileTextEncoding(NAFile* file, NATextEncoding textencoding);
 
 // Only useful for write-files. Defines, how writings should be flushed. The
 // NAFile struct by default uses a buffer to speed up writing.
-void naSetFileAutoFlush(NAFile* file, NAFileAutoFlushing autoflushing);
+NA_API void naSetFileAutoFlush(NAFile* file, NAFileAutoFlushing autoflushing);
 
 // Only useful for Write-files. Defines, how a line ending shall be encoded.
 // Note that this function only affects writeLine and writeNewLine calls. If
 // you somehow write a different line-ending for example as part of a string,
 // that line-ending will NOT be converted!
-void naSetFileNewLine(NAFile* file, NANewlineEncoding newlineencoding);
+NA_API void naSetFileNewLine(NAFile* file, NANewlineEncoding newlineencoding);
 
 // Computes the filesize (from first to last byte).
-NAFileSize naComputeFileSize(const NAFile* file);
-NABool naIsFileOpen(const NAFile* file);
-NABool naHasFileEnded(const NAFile* file);
+NA_API NAFileSize naComputeFileSize(const NAFile* file);
+NA_API NABool naIsFileOpen(const NAFile* file);
+NA_API NABool naHasFileEnded(const NAFile* file);
 
 // Re-adjusts the internal file pointer to the given offset.
-void naJumpFileOffsetAbsolute(NAFile* file, NAFileSize offset);
-void naJumpFileOffsetRelative(NAFile* file, NAFileSize offset);
+NA_API void naJumpFileOffsetAbsolute(NAFile* file, NAFileSize offset);
+NA_API void naJumpFileOffsetRelative(NAFile* file, NAFileSize offset);
 
 
 
@@ -231,19 +229,19 @@ void naJumpFileOffsetRelative(NAFile* file, NAFileSize offset);
 // low-level function. The result of the naCreateByteArrayFromFile function is
 // more convenient to handle.
 // This function is NOT endianness-aware.
-void    naReadFileBytes (NAFile* file, void* buf, NAFileSize count);
+NA_API void    naReadFileBytes (NAFile* file, void* buf, NAFileSize count);
 
 // Read different basic datatypes. These functions ARE endianness-aware!
-int8    naReadFileInt8  (NAFile* file);
-int16   naReadFileInt16 (NAFile* file);
-int32   naReadFileInt32 (NAFile* file);
-int64   naReadFileInt64 (NAFile* file);
-uint8   naReadFileUInt8 (NAFile* file);
-uint16  naReadFileUInt16(NAFile* file);
-uint32  naReadFileUInt32(NAFile* file);
-uint64  naReadFileUInt64(NAFile* file);
-float   naReadFileFloat (NAFile* file);
-double  naReadFileDouble(NAFile* file);
+NA_API int8    naReadFileInt8  (NAFile* file);
+NA_API int16   naReadFileInt16 (NAFile* file);
+NA_API int32   naReadFileInt32 (NAFile* file);
+NA_API int64   naReadFileInt64 (NAFile* file);
+NA_API uint8   naReadFileUInt8 (NAFile* file);
+NA_API uint16  naReadFileUInt16(NAFile* file);
+NA_API uint32  naReadFileUInt32(NAFile* file);
+NA_API uint64  naReadFileUInt64(NAFile* file);
+NA_API float   naReadFileFloat (NAFile* file);
+NA_API double  naReadFileDouble(NAFile* file);
 
 // Read whole arrays of basic datatypes. If the given buf argument is a Null-
 // pointer, a sufficiently large memory block will be allocated on the heap
@@ -252,16 +250,16 @@ double  naReadFileDouble(NAFile* file);
 // big enough to hold count items. No overflow check will be performed. The
 // functions always return a pointer to the buffer.
 // These functions ARE endianness-aware!
-int8*   naReadFileArrayInt8  (NAFile* file, int8*   buf, NAInt count);
-int16*  naReadFileArrayInt16 (NAFile* file, int16*  buf, NAInt count);
-int32*  naReadFileArrayInt32 (NAFile* file, int32*  buf, NAInt count);
-int64*  naReadFileArrayInt64 (NAFile* file, int64*  buf, NAInt count);
-uint8*  naReadFileArrayUInt8 (NAFile* file, uint8*  buf, NAInt count);
-uint16* naReadFileArrayUInt16(NAFile* file, uint16* buf, NAInt count);
-uint32* naReadFileArrayUInt32(NAFile* file, uint32* buf, NAInt count);
-uint64* naReadFileArrayUInt64(NAFile* file, uint64* buf, NAInt count);
-float*  naReadFileArrayFloat (NAFile* file, float*  buf, NAInt count);
-double* naReadFileArrayDouble(NAFile* file, double* buf, NAInt count);
+NA_API int8*   naReadFileArrayInt8  (NAFile* file, int8*   buf, NAInt count);
+NA_API int16*  naReadFileArrayInt16 (NAFile* file, int16*  buf, NAInt count);
+NA_API int32*  naReadFileArrayInt32 (NAFile* file, int32*  buf, NAInt count);
+NA_API int64*  naReadFileArrayInt64 (NAFile* file, int64*  buf, NAInt count);
+NA_API uint8*  naReadFileArrayUInt8 (NAFile* file, uint8*  buf, NAInt count);
+NA_API uint16* naReadFileArrayUInt16(NAFile* file, uint16* buf, NAInt count);
+NA_API uint32* naReadFileArrayUInt32(NAFile* file, uint32* buf, NAInt count);
+NA_API uint64* naReadFileArrayUInt64(NAFile* file, uint64* buf, NAInt count);
+NA_API float*  naReadFileArrayFloat (NAFile* file, float*  buf, NAInt count);
+NA_API double* naReadFileArrayDouble(NAFile* file, double* buf, NAInt count);
 
 // Creates or fills an NAByteArray or an NAString by reading the given number
 // of bytes from the file and then COPYING them to the array or string.
@@ -273,12 +271,12 @@ double* naReadFileArrayDouble(NAFile* file, double* buf, NAInt count);
 // The ByteArray function is NOT endianness-aware.
 // Note that the expected text encoding of the file can be defined using
 // naSetFileTextEncoding.
-NAByteArray* naCreateByteArrayFromFile(NAByteArray* array,
-                                            NAFile* file,
-                                         NAFileSize count);
-NAString*    naCreateStringFromFile(      NAString* string,
-                                            NAFile* file,
-                                         NAFileSize bytecount);
+NA_API NAByteArray* naCreateByteArrayFromFile(NAByteArray* array,
+                                                   NAFile* file,
+                                                NAFileSize count);
+NA_API NAString*    naCreateStringFromFile(      NAString* string,
+                                                   NAFile* file,
+                                                NAFileSize bytecount);
 
 // //////////
 // BINARY WRITING
@@ -289,37 +287,37 @@ NAString*    naCreateStringFromFile(      NAString* string,
 // This is a low-level function. The naWriteFileByteArray function is more
 // convenient to handle if you are working with byte arrays.
 // This function is NOT endianness-aware.
-void naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize count);
+NA_API void naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize count);
 
 // Writes some standard data type. These functions ARE endianness-aware!
-void naWriteFileInt8  (NAFile* file, int8 value);
-void naWriteFileInt16 (NAFile* file, int16 value);
-void naWriteFileInt32 (NAFile* file, int32 value);
-void naWriteFileInt64 (NAFile* file, int64 value);
-void naWriteFileUInt8 (NAFile* file, uint8 value);
-void naWriteFileUInt16(NAFile* file, uint16 value);
-void naWriteFileUInt32(NAFile* file, uint32 value);
-void naWriteFileUInt64(NAFile* file, uint64 value);
-void naWriteFileFloat (NAFile* file, float value);
-void naWriteFileDouble(NAFile* file, double value);
+NA_API void naWriteFileInt8  (NAFile* file, int8 value);
+NA_API void naWriteFileInt16 (NAFile* file, int16 value);
+NA_API void naWriteFileInt32 (NAFile* file, int32 value);
+NA_API void naWriteFileInt64 (NAFile* file, int64 value);
+NA_API void naWriteFileUInt8 (NAFile* file, uint8 value);
+NA_API void naWriteFileUInt16(NAFile* file, uint16 value);
+NA_API void naWriteFileUInt32(NAFile* file, uint32 value);
+NA_API void naWriteFileUInt64(NAFile* file, uint64 value);
+NA_API void naWriteFileFloat (NAFile* file, float value);
+NA_API void naWriteFileDouble(NAFile* file, double value);
 
 // Writes whole arrays of basic datatypes. The buffer is expected to hold
 // count items. No overflow check will be performed.
 // These functions ARE endianness-aware!
-void naWriteFileArrayInt8  (NAFile* file, const int8* buf,   NAInt count);
-void naWriteFileArrayInt16 (NAFile* file, const int16* buf,  NAInt count);
-void naWriteFileArrayInt32 (NAFile* file, const int32* buf,  NAInt count);
-void naWriteFileArrayInt64 (NAFile* file, const int64* buf,  NAInt count);
-void naWriteFileArrayUInt8 (NAFile* file, const uint8* buf,  NAInt count);
-void naWriteFileArrayUInt16(NAFile* file, const uint16* buf, NAInt count);
-void naWriteFileArrayUInt32(NAFile* file, const uint32* buf, NAInt count);
-void naWriteFileArrayUInt64(NAFile* file, const uint64* buf, NAInt count);
-void naWriteFileArrayFloat (NAFile* file, const float* buf,  NAInt count);
-void naWriteFileArrayDouble(NAFile* file, const double* buf, NAInt count);
+NA_API void naWriteFileArrayInt8  (NAFile* file, const int8* buf,   NAInt count);
+NA_API void naWriteFileArrayInt16 (NAFile* file, const int16* buf,  NAInt count);
+NA_API void naWriteFileArrayInt32 (NAFile* file, const int32* buf,  NAInt count);
+NA_API void naWriteFileArrayInt64 (NAFile* file, const int64* buf,  NAInt count);
+NA_API void naWriteFileArrayUInt8 (NAFile* file, const uint8* buf,  NAInt count);
+NA_API void naWriteFileArrayUInt16(NAFile* file, const uint16* buf, NAInt count);
+NA_API void naWriteFileArrayUInt32(NAFile* file, const uint32* buf, NAInt count);
+NA_API void naWriteFileArrayUInt64(NAFile* file, const uint64* buf, NAInt count);
+NA_API void naWriteFileArrayFloat (NAFile* file, const float* buf,  NAInt count);
+NA_API void naWriteFileArrayDouble(NAFile* file, const double* buf, NAInt count);
 
 // Writes a byte array to the file. This function is NOT endianness-aware.
-void naWriteFileByteArray( NAFile* file, 
-                const NAByteArray* array);
+NA_API void naWriteFileByteArray( NAFile* file, 
+                       const NAByteArray* array);
 
 
 // //////////
@@ -328,39 +326,39 @@ void naWriteFileByteArray( NAFile* file,
 
 // Writes a tab or a newline to the file. The newline character is dependent on
 // the files setting. You can change it using naSetFileNewLine.
-void naWriteFileTab(NAFile* file);
-void naWriteFileNewLine(NAFile* file);
+NA_API void naWriteFileTab(NAFile* file);
+NA_API void naWriteFileNewLine(NAFile* file);
 
 // Writes the given string to the file. If the string is null-terminated, that
 // NULL will NOT be written to the file. Newline characters are NOT converted!
 // The string will automatically be converted to the text encoding of the file.
-void naWriteFileString(    NAFile* file,
-                   const NAString* string);
+NA_API void naWriteFileString(    NAFile* file,
+                         const NAString* string);
 
 // Writes a string to the file which can be written like a printf format. You
 // can also use this function just to write a simple const char* string. The
 // encoding is UTF-8.
-void naWriteFileStringWithFormat(NAFile* file,
-                       const NAUTF8Char* format,
-                                         ...);
+NA_API void naWriteFileStringWithFormat(NAFile* file,
+                              const NAUTF8Char* format,
+                                                ...);
 // Same as naWriteFileStringWithFormat but with an existing va_list argument.
 // The argumentlist argument will not be altered by this function. The encoding
 // is UTF-8.
-void naWriteFileStringWithArguments(NAFile* file,
-                          const NAUTF8Char* format,
-                                    va_list argumentlist);
+NA_API void naWriteFileStringWithArguments(NAFile* file,
+                                 const NAUTF8Char* format,
+                                           va_list argumentlist);
 
 // Same as the functions above but automatically appends a newline character
 // at the end. The newline character is dependent on the files setting. You can
 // change it using naSetFileNewLine.
-void naWriteFileLine(             NAFile* file,
-                          const NAString* string);
-void naWriteFileLineWithFormat(   NAFile* file,
-                        const NAUTF8Char* format,
-                                          ...);
-void naWriteFileLineWithArguments(NAFile* file,
-                        const NAUTF8Char* format,
-                                  va_list argumentlist);
+NA_API void naWriteFileLine(             NAFile* file,
+                                 const NAString* string);
+NA_API void naWriteFileLineWithFormat(   NAFile* file,
+                               const NAUTF8Char* format,
+                                                 ...);
+NA_API void naWriteFileLineWithArguments(NAFile* file,
+                               const NAUTF8Char* format,
+                                         va_list argumentlist);
 
 
 

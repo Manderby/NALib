@@ -24,13 +24,13 @@ NA_API NAArray* naCreateRectiAreaArray(NAArray* areaarray, NAInt numhabitants, .
   NAArray minmax1array;
   NAArray segments0;
   NAArray segments1;
-  NAInt segmentcount0;
-  NAInt segmentcount1;
+  NAUInt segmentcount0;
+  NAUInt segmentcount1;
   NAGrowingSpace space;
   const NAMinMax1i* cursegment1;
   const NAMinMax1i* cursegment0;
-  NAInt s0;
-  NAInt s1;
+  NAUInt s0;
+  NAUInt s1;
   NAMinMax1i* curminmax0;
   NAMinMax1i* curminmax1;
   NAInt* curmask;

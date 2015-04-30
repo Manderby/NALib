@@ -15,27 +15,27 @@
 
 
 
-NA_HLP void naAddGrowingSpaceNewSpace(NAGrowingSpace* space){
+NA_HDEF void naAddGrowingSpaceNewSpace(NAGrowingSpace* space){
   NAByteArray* newarray = naCreateByteArrayWithSize(NA_NULL, NA_GROWING_SPACE_SINGLE_ARRAY_SIZE * space->typesize);
   if(space->constructor){
     NAByte* curptr = naGetByteArrayMutablePointer(newarray);
-    NAInt i;
+    NAUInt i;
     for(i=0; i<NA_GROWING_SPACE_SINGLE_ARRAY_SIZE; i++){
       space->constructor(curptr);
       curptr += space->typesize;
     }
   }
-  naAddListElementLast(&(space->arrays), newarray);
+  naAddListLastMutable(&(space->arrays), newarray);
 }
 
 
 
-NA_DEF NAGrowingSpace* naCreateGrowingSpace(NAGrowingSpace* space, NAInt typesize, NAConstructor constructor){
+NA_DEF NAGrowingSpace* naCreateGrowingSpace(NAGrowingSpace* space, NAUInt typesize, NAConstructor constructor){
   #ifndef NDEBUG
     if(typesize <= 0)
       naError("naCreateGrowingSpace", "typesize is invalid.");
   #endif
-  space = naAllocateIfNull(space, sizeof(NAGrowingSpace));
+  space = naAllocNALibStruct(space, NAGrowingSpace);
   naCreateList(&(space->arrays));
   space->typesize = typesize;
   space->usedcount = 0;
@@ -47,8 +47,8 @@ NA_DEF NAGrowingSpace* naCreateGrowingSpace(NAGrowingSpace* space, NAInt typesiz
 
 NA_DEF void naClearGrowingSpace(NAGrowingSpace* space, NADestructor destructor){
   NAByteArray* curarray = NA_NULL; // Declaration before Implementation.
-  NAInt arraycount;
-  NAInt i, k;
+  NAUInt arraycount;
+  NAUInt i, k;
   #ifndef NDEBUG
     if(!space){
       naCrash("naClearGrowingSpace", "space is Null-Pointer.");
@@ -56,11 +56,11 @@ NA_DEF void naClearGrowingSpace(NAGrowingSpace* space, NADestructor destructor){
     }
   #endif
 
-  naFirstListElement(&(space->arrays));
+  naFirstList(&(space->arrays));
   arraycount = naGetListCount(&(space->arrays));
   for(i=0; i<arraycount; i++){
-    curarray = naGetListMutableContent(&(space->arrays));
-    NAInt remainingcount;
+    NAUInt remainingcount;
+    curarray = naIterateListMutable(&(space->arrays), 1);
     if(i == arraycount - 1){
       remainingcount = space->usedcount % NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
     }else{
@@ -74,7 +74,6 @@ NA_DEF void naClearGrowingSpace(NAGrowingSpace* space, NADestructor destructor){
       }
     }
     naDestroyByteArray(curarray);
-    naNextListElement(&(space->arrays));
   }
 
   naClearList(&(space->arrays), NA_NULL);
@@ -91,97 +90,97 @@ NA_DEF void naDestroyGrowingSpace(NAGrowingSpace* space, NADestructor destructor
 
 NA_DEF void* naNewGrowingSpaceElement(NAGrowingSpace* space){
   NAByteArray* lastarray; // Declaration before Implementation. Needed for C90
-  NAInt subindex;
-  NAInt fullcount = naGetListCount(&(space->arrays)) * NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
+  NAUInt subindex;
+  NAUInt fullcount = naGetListCount(&(space->arrays)) * NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
   if(space->usedcount == fullcount){naAddGrowingSpaceNewSpace(space);}
-  naLastListElement(&(space->arrays));
-  lastarray = naGetListMutableContent(&(space->arrays));
+  lastarray = naGetListLastMutable(&(space->arrays));
   subindex = space->usedcount % NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
   space->usedcount++;
   return naGetByteArrayMutableByte(lastarray, subindex * space->typesize);
+  
+//  space->usedcount++;
+//  NAUInt arraycount = naGetArrayCount(&(space->bytearrays));
+//  NAUInt endindex = 1 << arraycount;
+//  if(space->usedcount == endindex){
+//    naAddGrowingSpaceNewSpace(space);
+//    arraycount++;
+//    endindex <<= 1;
+//  }
+//  lastarray = naGetArrayMutableElement(&(space->bytearrays), -1);
+//  subindex = arraycount - (1 << (arraycount - 1));
 }
 
 
 
-NA_DEF const void* naGetGrowingSpaceConstElement(const NAGrowingSpace* space, NAInt indx){
-  // Declaration before Implementation. Needed for C90
-  NAInt arrayindex;
-  NAInt subindex;
-  NAInt i;
-  const NAByteArray* curarray;
-  #ifndef NDEBUG
-    if(!space){
-      naCrash("naGetGrowingSpaceConstElement", "space is Null-Pointer.");
-      return NA_NULL;
-    }
-    if(indx < 0)
-      naError("naGetGrowingSpaceConstElement", "Given index is negative.");
-    if(indx >= space->usedcount)
-      naError("naGetGrowingSpaceConstElement", "Given index overflows the available space.");
-  #endif
-  arrayindex = indx / NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
-  subindex = indx % NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
-  naFirstListElement(&(space->arrays));
-  for(i=0; i<arrayindex; i++){naNextListElement(&(space->arrays));}
-  curarray = naGetListConstContent(&(space->arrays));
-  return naGetByteArrayConstByte(curarray, subindex * space->typesize);
+NA_DEF const void* naGetGrowingSpaceConstContent(const NAGrowingSpace* space){
+  const NAByteArray* curarray = naGetListCurrentConst(&(space->arrays));
+  if(!curarray){return NA_NULL;}
+  return naGetByteArrayConstByte(curarray, space->cur * space->typesize);
 }
 
 
 
-NA_DEF void* naGetGrowingSpaceMutableElement(NAGrowingSpace* space, NAInt indx){
-  // Declaration before Implementation. Needed for C90
-  NAInt arrayindex;
-  NAInt subindex;
-  NAInt i;
-  NAByteArray* curarray;
-  #ifndef NDEBUG
-    if(!space){
-      naCrash("naGetGrowingSpaceMutableElement", "space is Null-Pointer.");
-      return NA_NULL;
-    }
-    if(indx < 0)
-      naError("naGetGrowingSpaceMutableElement", "Given index is negative.");
-    if(indx >= space->usedcount)
-      naError("naGetGrowingSpaceMutableElement", "Given index overflows the available space.");
-  #endif
-  arrayindex = indx / NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
-  subindex = indx % NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
-  naFirstListElement(&(space->arrays));
-  for(i=0; i<arrayindex; i++){naNextListElement(&(space->arrays));}
-  curarray = naGetListMutableContent(&(space->arrays));
-  return naGetByteArrayMutableByte(curarray, subindex * space->typesize);
+NA_DEF void* naGetGrowingSpaceMutableContent(NAGrowingSpace* space){
+  NAGrowingSpace* mutablespace = (NAGrowingSpace*)space;
+  NAByteArray* curarray = naGetListCurrentMutable(&(mutablespace->arrays));
+  if(!curarray){return NA_NULL;}
+  return naGetByteArrayMutableByte(curarray, space->cur * mutablespace->typesize);
 }
 
+
+
+NA_DEF void naFirstGrowingSpaceElement(const NAGrowingSpace* space){
+  NAGrowingSpace* mutablespace = (NAGrowingSpace*)space;
+  naFirstList(&(mutablespace->arrays));
+  mutablespace->cur = 0;
+}
+
+
+
+NA_DEF void naNextGrowingSpaceElement(const NAGrowingSpace* space){
+  NAGrowingSpace* mutablespace = (NAGrowingSpace*)space;
+  NAUInt remainingcount = NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
+  if(naIsListAtLast(&(mutablespace->arrays))){
+    remainingcount = space->usedcount % NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
+    if(remainingcount == 0){remainingcount = NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;}
+  }
+  mutablespace->cur++;
+  if(mutablespace->cur == remainingcount){
+    naIterateList(&(mutablespace->arrays), 1);
+    mutablespace->cur = 0;
+  }
+}
 
 
 
 NA_DEF NAArray* naCreateArrayOutOfGrowingSpace(NAArray* array, NAGrowingSpace* space){
   // Declaration before Implementation. Needed for C90
   NAByte* arrayptr;
-  NAInt bytearraycount;
-  NAInt bytearraysize;
-  NAInt remainingcount;
-  NAInt i;
-  array = naCreateArrayWithCount(array, space->typesize, space->usedcount);
+  NAUInt bytearraycount;
+  NAUInt bytearraysize;
+  NAUInt remainingcount;
+  NAUInt i;
+  array = naCreateArrayWithCount(array, space->typesize, space->usedcount, NA_NULL);
   arrayptr = naGetArrayMutablePointer(array);
   bytearraycount = naGetListCount(&(space->arrays));
-  bytearraysize = NA_GROWING_SPACE_SINGLE_ARRAY_SIZE * space->typesize;
-  naFirstListElement(&(space->arrays));
-  // Copy all full arrays as a whole
-  for(i=0; i<(bytearraycount-1); i++){
-    const NAByteArray* curarray = naGetListConstContent(&(space->arrays));
-    const NAByte* firstbyte = naGetByteArrayConstPointer(curarray);
-    naCpyn(arrayptr, firstbyte, bytearraysize);
-    arrayptr += bytearraysize;
-    naNextListElement(&(space->arrays));
-  }
-  // Copy the contents of the last array, if any.
-  remainingcount = space->usedcount % NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
-  if(remainingcount){
-    const NAByteArray* curarray = naGetListConstContent(&(space->arrays));
-    const NAByte* firstbyte = naGetByteArrayConstPointer(curarray);
-    naCpyn(arrayptr, firstbyte, remainingcount * space->typesize);
+  if(bytearraycount){
+    bytearraysize = NA_GROWING_SPACE_SINGLE_ARRAY_SIZE * space->typesize;
+    naFirstList(&(space->arrays));
+    // Copy all full arrays as a whole
+    for(i=0; i<(bytearraycount-1); i++){
+      const NAByteArray* curarray = naGetListCurrentConst(&(space->arrays));
+      const NAByte* firstbyte = naGetByteArrayConstPointer(curarray);
+      naCpyn(arrayptr, firstbyte, bytearraysize);
+      arrayptr += bytearraysize;
+      naIterateList(&(space->arrays), 1);
+    }
+    // Copy the contents of the last array, if any.
+    remainingcount = space->usedcount % NA_GROWING_SPACE_SINGLE_ARRAY_SIZE;
+    if(remainingcount){
+      const NAByteArray* curarray = naGetListCurrentConst(&(space->arrays));
+      const NAByte* firstbyte = naGetByteArrayConstPointer(curarray);
+      naCpyn(arrayptr, firstbyte, remainingcount * space->typesize);
+    }
   }
 
   return array;
@@ -189,7 +188,7 @@ NA_DEF NAArray* naCreateArrayOutOfGrowingSpace(NAArray* array, NAGrowingSpace* s
 
 
 
-NA_DEF NAInt naGetGrowingSpaceCount(const NAGrowingSpace* space){
+NA_DEF NAUInt naGetGrowingSpaceCount(const NAGrowingSpace* space){
   return space->usedcount;
 }
 

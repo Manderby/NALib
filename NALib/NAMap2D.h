@@ -80,7 +80,7 @@ NA_IAPI NABool naIsPosiInMap2D(NAPosi pos, const NAMap2D* map2d);
 
 
 NA_IDEF NAMap2D* naCreateMap2D(NAMap2D* map2d, NAInt typesize){
-  map2d = (NAMap2D*)naAllocateIfNull(map2d, sizeof(NAMap2D));
+  map2d = naAllocNALibStruct(map2d, NAMap2D);
   map2d->typesize = typesize;
   naCreateByteMap2D(&(map2d->bytemap));
   return map2d;
@@ -90,7 +90,7 @@ NA_IDEF NAMap2D* naCreateMap2D(NAMap2D* map2d, NAInt typesize){
 NA_IDEF NAMap2D* naCreateMap2DWithRecti(NAMap2D* map2d,
                                           NAInt typesize,
                                          NARecti rect){
-  map2d = (NAMap2D*)naAllocateIfNull(map2d, sizeof(NAMap2D));
+  map2d = naAllocNALibStruct(map2d, NAMap2D);
   NARecti xrect = rect;
   xrect.size.width *= typesize;
   map2d->typesize = typesize;

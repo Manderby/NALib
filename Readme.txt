@@ -58,7 +58,8 @@ functions for many structs.
 
 The naming scheme guides you:
 
-- naMakeXXX:    Returns the struct as a value.
+- naMakeXXX:    Returns the struct as a value. Only very basic structs will
+                provide such functions.
 - naFillXXX:    Expects the first argument to be a pointer to the struct.
 - naCreateXXX:  Expects either a pointer to an existing block in memory or
                 NA_NULL if you want NALib to allocate the memory. In any case:
@@ -167,8 +168,19 @@ which will be called for every element in the container. Of course, this is
 only necessary if your elements actually need some sort of construction or
 destruction.
 
+Creating a datastructure with a constructor should always! be paired with
+clearing or destroying the datastructure with the corresponding desctructor.
+
+If you just need to do some harmeless initialization and no real construction
+(memory allocation and such), you might want to create the struct plainly and
+then run a foreach-function which accepts a mutator callback:
+
+typedef void  (*NAMutator) (void *);
+
+Beware: Do not mix these function pointers!
+
 Constructor example: You store complex objects in a NAGrowingSpace whereas
-each object must perform certain initialization before it can properly be
+each object must perform certain allocations before it can properly be
 used. The NAGrowingSpace structure will call the appropriate constructor
 for all new elements whenever the space grows.
 

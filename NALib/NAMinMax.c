@@ -12,57 +12,57 @@ NA_DEF NAArray* naCreateAreasWithMinMax1iFromMinMax1iArray(NAArray* newarray, co
   NAGrowingSpace* segments;
   NAInt curmin;
   NAInt curmax;
-  NAInt minmaxcount = naGetArrayCount(minmaxs);
+  NAUInt minmaxcount = naGetArrayCount(minmaxs);
   NAInt maxareasperdimension = (2 * minmaxcount - 1);
   NAHeap* rangeheap0min = naCreateHeap(NA_NULL, maxareasperdimension, NA_HEAP_USES_INT_KEY);
   NAHeap* rangeheap0max = naCreateHeap(NA_NULL, maxareasperdimension, NA_HEAP_USES_INT_KEY);
   // insert the min and max coordinates into the heaps
-  NAInt m;
+  NAUInt m;
   for(m=0; m<minmaxcount; m++){
     NAMinMax1i* minmax = (NAMinMax1i*)naGetArrayConstElement(minmaxs, m);
 //    if(naIsMinMax1iEmpty(*minmax)){continue;}
-    naInsertHeapElement(rangeheap0min, minmax, &(minmax->min[0]), NA_NULL);
-    naInsertHeapElement(rangeheap0max, minmax, &(minmax->max[0]), NA_NULL);
+    naInsertHeapElementMutable(rangeheap0min, minmax, &(minmax->min[0]), NA_NULL);
+    naInsertHeapElementMutable(rangeheap0max, minmax, &(minmax->max[0]), NA_NULL);
   }
   
-  if(naIsHeapEmpty(rangeheap0min)){
+  if(naGetHeapCount(rangeheap0min) == 0){
     newarray = naCreateArray(newarray);
   }else{
     segments = naCreateGrowingSpace(NA_NULL, sizeof(NAMinMax1i), NA_NULL);
     
-    curmin = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0min))->min[0];
-    curmax = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0max))->max[0];
+    curmin = ((NAMinMax1i*)naRemoveHeapRootMutable(rangeheap0min))->min[0];
+    curmax = ((NAMinMax1i*)naRemoveHeapRootMutable(rangeheap0max))->max[0];
     while(NA_TRUE){
       // Remove all mins which are equal to the current min.
-      while(!naIsHeapEmpty(rangeheap0min) && (curmin == ((NAMinMax1i*)naGetHeapRoot(rangeheap0min))->min[0])){
-        naRemoveHeapRoot(rangeheap0min);
+      while(naGetHeapCount(rangeheap0min) && (curmin == ((NAMinMax1i*)naGetHeapRootMutable(rangeheap0min))->min[0])){
+        naRemoveHeapRootMutable(rangeheap0min);
       }
       
-      if(!naIsHeapEmpty(rangeheap0min)){
-        NAInt nextmin = ((NAMinMax1i*)naGetHeapRoot(rangeheap0min))->min[0];
+      if(naGetHeapCount(rangeheap0min)){
+        NAInt nextmin = ((NAMinMax1i*)naGetHeapRootMutable(rangeheap0min))->min[0];
         if(nextmin <= curmax){
           // Create a segment with the current min and one minus the next min
           NAMinMax1i* newsegment = naNewGrowingSpaceElement(segments);
           newsegment->min[0] = curmin;
           newsegment->max[0] = nextmin - 1;
           // Fetch the next min.
-          curmin = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0min))->min[0];
+          curmin = ((NAMinMax1i*)naRemoveHeapRootMutable(rangeheap0min))->min[0];
         }else{
           // Create a segment with the current min and the current max
           NAMinMax1i* newsegment = naNewGrowingSpaceElement(segments);
           newsegment->min[0] = curmin;
           newsegment->max[0] = curmax;
           #ifndef NDEBUG
-            if(naIsHeapEmpty(rangeheap0max))
+            if(naGetHeapCount(rangeheap0max) == 0)
               naError("naCreateAreasWithMinMax1iFromMinMax1iArray", "No more maxs while having mins. This should not happen.");
           #endif
           // Remove all maxs which are equal to the current max
-          while(curmax == ((NAMinMax1i*)naGetHeapRoot(rangeheap0max))->max[0]){
-            naRemoveHeapRoot(rangeheap0max);
+          while(curmax == ((NAMinMax1i*)naGetHeapRootMutable(rangeheap0max))->max[0]){
+            naRemoveHeapRootMutable(rangeheap0max);
           }
           // Setup the next min and fetch the new max.
           curmin = curmax + 1;
-          curmax = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0max))->max[0];
+          curmax = ((NAMinMax1i*)naRemoveHeapRootMutable(rangeheap0max))->max[0];
         }
       }else{
         // Create a segment with the current min and the current max
@@ -70,13 +70,13 @@ NA_DEF NAArray* naCreateAreasWithMinMax1iFromMinMax1iArray(NAArray* newarray, co
         newsegment->min[0] = curmin;
         newsegment->max[0] = curmax;
         // Remove all maxs which are equal to the current max
-        while((!naIsHeapEmpty(rangeheap0max)) && (curmax == ((NAMinMax1i*)naGetHeapRoot(rangeheap0max))->max[0])){
-          naRemoveHeapRoot(rangeheap0max);
+        while((naGetHeapCount(rangeheap0max)) && (curmax == ((NAMinMax1i*)naGetHeapRootMutable(rangeheap0max))->max[0])){
+          naRemoveHeapRootMutable(rangeheap0max);
         }
         // If the max-heap is empty, everyhting is done.
-        if(naIsHeapEmpty(rangeheap0max)){break;}
+        if(naGetHeapCount(rangeheap0max) == 0){break;}
         curmin = curmax + 1;
-        curmax = ((NAMinMax1i*)naRemoveHeapRoot(rangeheap0max))->max[0];
+        curmax = ((NAMinMax1i*)naRemoveHeapRootMutable(rangeheap0max))->max[0];
       }
     }
 
@@ -90,6 +90,57 @@ NA_DEF NAArray* naCreateAreasWithMinMax1iFromMinMax1iArray(NAArray* newarray, co
 }
 
 
+
+
+NA_HDEF void naMakePositiveiInSize(NAUInt* NA_RESTRICT positivepos, NAUInt* NA_RESTRICT positivesize, NAInt pos, NAInt size, NAUInt containingsize){
+  // First, we ensure that pos is withing the containing range. After that
+  // we will look at the size parameter.
+  NAInt remainingsize = containingsize - pos;
+  if(pos < 0){
+    pos += containingsize;
+    remainingsize -= containingsize;
+  }
+  if(remainingsize < 0){
+    #ifndef NDEBUG
+      naError("naMakePositiveiInSize", "Invalid pos leads to range overflow. Correcting to empty range.");
+    #endif
+    *positivepos = 0;
+    *positivesize = 0;
+  }else if((NAUInt)remainingsize > containingsize){
+    #ifndef NDEBUG
+      naError("naMakePositiveiInSize", "Invalid pos leads to range underflow. Correcting to empty range.");
+    #endif
+    *positivepos = 0;
+    *positivesize = 0;
+  }else{
+    *positivepos = pos;
+    // The pos is positive. Now, adjust the size.
+    if(size < 0){ // negative size parameter
+      size = remainingsize + size + 1;  // Important + 1 !
+      if(size < 0){
+        // When the resulting size is smaller than 0, underflow.
+        #ifndef NDEBUG
+          naError("naMakePositiveiInSize", "Invalid size leads to range underflow. Correcting to empty range.");
+        #endif
+        *positivepos = 0;
+        *positivesize = 0;
+      }else{
+        *positivesize = size;
+      }
+    }else{ // positive or 0 size parameter
+      if(size > remainingsize){
+        // When the desired size is bigger than the size available, overflow.
+        #ifndef NDEBUG
+          naError("naMakePositiveiInSize", "Invalid size leads to range overflow. Correcting to empty range.");
+        #endif
+        *positivepos = 0;
+        *positivesize = 0;
+      }else{
+        *positivesize = size;
+      }
+    }
+  }
+}
 
 
 

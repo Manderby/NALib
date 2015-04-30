@@ -3,9 +3,11 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 
-// In this file, basic functionality of pointers is implemented.
-// NALib usually uses the native pointers of C and C++ but for some types, a
-// special kind of pointer is more appropriate.
+// In this file, basic functionality of memory allocation and pointers is
+// implemented.
+//
+// NALib usually uses the native pointers of C and C++ but for some types,
+// special kinds of pointers are more appropriate.
 // 
 // Other programming languages are based on pointers with reference counting
 // which point to objects which are automatically allocated and deallocated
@@ -56,8 +58,82 @@ NA_IAPI void* naAllocateIfNull(void* ptr, NAInt size);
 // in NALib, meaning an error might be detected though not resolved. And in
 // favor of simplicity, NALib will not get exception handling soon.
 
+// The following macro is used in all NALib structs where creation is
+// necessary. This macro should not be used by other people as it might
+// (might!) be the start of a future garbage collection implementation.
+#define naAllocNALibStruct(ptr, structname)\
+  (structname*)naAllocateIfNull(ptr, sizeof(structname))
 
 
+
+// ////////////////////////
+// NAPointerContent
+//
+// Certain structs like NAList or NAPointer distinguish between const and
+// non-const (mutable) data. The NAPointerContent struct delivers this
+// distinction by providing both an Accessor or a Mutator to a pointer.
+//
+// The problem is that C has no concept of accessors and mutators. Even
+// though the main difference is just the type returned, in C you can not
+// overload functions and hence you can not hide the distinction to the user.
+// There is the possibility to create two versions for each struct type storing
+// either const or non-const data. This ensures type-safety, but forces the
+// programmer to make the distinction at declaration level (which can become
+// very cumbersome) and maybe even force him to convert between the two
+// variants which might be very costly and not beautiful at all.
+//
+// In this implementation, the author decided to use a union type storing
+// either a const or a non-const data pointer. Furthermore, when NDEBUG is
+// not defined, an additional flag is stored with the pointer defining if
+// the pointer stores const or non-const data. With this, NALib is able to
+// detect const errors during debugging. When NDEBUG is defined, this flag
+// will not exists an no checks will be performed whatsoever, hence always
+// assuming a mutable pointer.
+//
+// This idea is not entirely type-save and not too beautiful as well, but is
+// much easier to write programs with, as the programmer has to differentiate
+// between the two uses only when necessary.
+//
+// If the programmer uses a mutator on const data, an error will be emitted.
+// You can of course ignore these errors and hope that the application does not
+// crash, but you should really make sure no const data gets mutated.
+//
+// Note that when NDEBUG is defined, this struct will be completely optimized
+// out by modern compilers, resulting in nothing but a simple memory pointer.
+
+// Opaque type. See explanation in readme.txt
+typedef struct NAPointerContent NAPointerContent;
+
+// Fills the given NAPointerContent struct with either a const or a non-const
+// pointer.
+NA_IAPI void naFillPointerContentConst   (NAPointerContent* content,
+                                                 const void* data);
+NA_IAPI void naFillPointerContentMutable (NAPointerContent* content,
+                                                       void* data);
+
+// Returns NA_TRUE, if the pointer stores const data. This function only is
+// useful when debugging. When NDEBUG is defined, this function always returns
+// NA_FALSE.
+NA_IAPI NABool naIsPointerContentConst(NAPointerContent* content);
+
+// The following two functions return either a const or a mutable pointer.
+//
+// Beware that the second variant will return a non-const pointer even if the
+// data stored originally was const. When NDEBUG is not defined, NALib will
+// check if such an invalid access of const data is occuring and will emit a
+// warning. If the content of the pointer is a NULL pointer, no warning will
+// be emitted.
+//
+// When NDEBUG is defined, the two functions are equal and no test will be
+// performed whatsoever.
+NA_IAPI const void* naGetPointerContentConst(const NAPointerContent* content);
+NA_IAPI       void* naGetPointerContentMutable(NAPointerContent* content);
+
+
+
+
+
+// ////////////////////////
 // NAPointer
 // The following is the implementation of a pointer having a reference count,
 // as used in many modern languages. In C and C++, this must be implemented
@@ -66,8 +142,16 @@ NA_IAPI void* naAllocateIfNull(void* ptr, NAInt size);
 // As having a reference count is not always useful in C and C++, only a few
 // structs of NALib like the NAByteArray actually use the NAPointer structure.
 //
+// Quite often at the very base of all implementations, you have to let go
+// all the beautiful code designs learned in school and university. Sometimes,
+// there is just no other way than cheating and bit fiddling.
+//
 // This implementation defines the ownership of the data and the struct itself
 // using some bits of the refcount field.
+// This allows to create very fast code and condition-checks but yet saves lots
+// of space while giving up only a small part of the value-range, which, as a
+// sidenote, would in this implementation still be sufficient to theoretically
+// fill the whole memory with references without ever overflowing.
 
 
 // Opaque type. See explanation in readme.txt
@@ -105,7 +189,6 @@ NA_IAPI NAPointer* naCreatePointerWithMutableBuffer( NAPointer* pointer,
                                                           void* buffer,
                                                          NABool takeownership);
 
-
 // Retains the given pointer. Meaning: There is one more codeblock which is
 // using this NAPointer. This NAPointer will not be freed as long as that
 // codeblock does not releases this NAPointer.
@@ -136,14 +219,6 @@ NA_IAPI void naReleasePointer(NAPointer* pointer);
 //   reference). The first variant is an accessor, the second one a mutator.
 NA_IAPI const void* naGetPointerConstData  (const NAPointer* pointer);
 NA_IAPI       void* naGetPointerMutableData(      NAPointer* pointer);
-// Note that the second variant will return a non-const pointer even if the
-// data stored originally was const. This is not safe but nontheless programmed
-// in a completely legal way using union types. Note however that NAPointer
-// remembers how you first created the data: const or non-const. When NDEBUG
-// is undefined, an error will be emitted while trying to mutate const data.
-//
-// See implementation below for more details and to hear what the author was
-// thinking.
 
 
 
@@ -182,10 +257,6 @@ NA_IDEF void* naAllocate(NAInt size){
     if(size == 0)
       naError("naAllocate", "size is zero.");
   #endif
-  #ifdef __clang_analyzer__
-    if(size < 1)
-      exit(EXIT_FAILURE);
-  #endif
 
   if(size>0){
     ptr = (NAByte*)malloc(size);
@@ -201,19 +272,15 @@ NA_IDEF void* naAllocate(NAInt size){
   #ifndef NDEBUG
     if(ptr == NA_NULL){
       naCrash("naAllocate", "Out of memory.");
-      return NA_NULL;
+      // Also note that a special macro is checked for clang analyzer as
+      // newer versions tend to complain a lot more about failed mallocs than
+      // before.
+      #ifdef __clang_analyzer__
+        exit(EXIT_FAILURE);
+      #endif
     }
   #endif
   
-  // Also note that a special macro is checked for clang analyzer as
-  // newer versions tend to complain a lot more about failed mallocs than
-  // before.
-  #ifdef __clang_analyzer__
-    if(ptr == NA_NULL){
-      exit(EXIT_FAILURE);
-    }
-  #endif
-
   return ptr;
 }
 
@@ -221,8 +288,8 @@ NA_IDEF void* naAllocate(NAInt size){
 
 NA_IDEF void* naAllocateIfNull(void* ptr, NAInt size){
   #ifndef NDEBUG
-    if(size < 1)
-      naError("naAllocateIfNull", "size is smaller than 1.");
+    if(size == 0)
+      naError("naAllocateIfNull", "size is zero.");
   #endif
 
   if(ptr == NA_NULL){
@@ -234,6 +301,89 @@ NA_IDEF void* naAllocateIfNull(void* ptr, NAInt size){
 
 
 
+// //////////////////////////
+// NAPointerContent
+// //////////////////////////
+
+// Opaque type. typedef is above. See explanation in readme.txt
+struct NAPointerContent{
+  union{                // A union storing either ...
+    const void* constd; // ... const data or ...
+    void*       d;      // ... non-const (mutable) data.
+  } data;
+  #ifndef NDEBUG
+    int flags;          // This field stores some flags.
+  #endif
+};
+// Note that this is one of the very, very rare situations, where a union type
+// actually makes sense. See NAPointerContent definition.
+
+
+#ifndef NDEBUG
+  #define NA_POINTER_CONTENT_CONST_DATA     0x01
+#endif
+
+
+
+NA_IDEF void naFillPointerContentConst(NAPointerContent* content,
+                                              const void* data){
+  content->data.constd = data;
+  #ifndef NDEBUG
+    content->flags = NA_POINTER_CONTENT_CONST_DATA;
+  #endif
+}
+
+
+NA_IDEF void naFillPointerContentMutable(NAPointerContent* content,
+                                                      void* data){
+  content->data.d = data;
+  #ifndef NDEBUG
+    content->flags = 0;
+  #endif
+}
+
+
+NA_IDEF NABool naIsPointerContentConst(NAPointerContent* content){
+  #ifndef NDEBUG
+    return (content->flags & NA_POINTER_CONTENT_CONST_DATA);
+  #else
+    NA_UNUSED_PARAMETER(content);
+    return NA_FALSE;
+  #endif
+}
+
+
+NA_IDEF const void* naGetPointerContentConst(const NAPointerContent* content){
+  #ifndef NDEBUG
+    if(!content){
+      naCrash("naGetPointerContentConst", "content is Null-Pointer.");
+      return NA_NULL;
+    }
+  #endif
+  return content->data.constd;
+}
+
+
+
+NA_IDEF void* naGetPointerContentMutable(NAPointerContent* content){
+  #ifndef NDEBUG
+    if(!content){
+      naCrash("naGetPointerContentMutable", "content is Null-Pointer.");
+      return NA_NULL;
+    }else{
+      if(content->data.d == NA_NULL){return NA_NULL;}
+      if(content->flags & NA_POINTER_CONTENT_CONST_DATA)
+        naError("naGetPointerContentMutable", "Accessing const data as non-const.");
+    }
+  #endif
+  return content->data.d;
+}
+
+
+
+
+
+
 
 
 // //////////////////////////
@@ -242,11 +392,8 @@ NA_IDEF void* naAllocateIfNull(void* ptr, NAInt size){
 
 // Opaque type. typedef is above. See explanation in readme.txt
 struct NAPointer{
-  union{                // A union storing either ...
-    const void* constd; // ... const data or ...
-    void*       d;      // ... non-const (mutable) data.
-  } data;
-  NAInt refcount;       // Reference count.
+  NAPointerContent content;
+  NAUInt refcount;      // Reference count.
                         // This field also stores some flags, embedded within
                         // the number.
 };
@@ -258,11 +405,9 @@ struct NAPointer{
 // this but the author decided to use masks, as bit fields might introduce
 // unnecessary algorithmic CPU operations when accessing refcount.
 #define NA_POINTER_OWN_STRUCT     ((NAInt)1 << (NA_SYSTEM_ADDRESS_BITS - 1))
-#define NA_POINTER_OWN_DATA       ((NAInt)1 << (NA_SYSTEM_ADDRESS_BITS - 2))
-#define NA_POINTER_CONST_DATA     ((NAInt)1 << (NA_SYSTEM_ADDRESS_BITS - 3))
+#define NA_POINTER_OWN_DATA       ((NAInt)2 << (NA_SYSTEM_ADDRESS_BITS - 1))
 #define NA_POINTER_REFCOUNT_MASK  (~(   NA_POINTER_OWN_STRUCT\
-                                      | NA_POINTER_OWN_DATA\
-                                      | NA_POINTER_CONST_DATA))
+                                      | NA_POINTER_OWN_DATA))
 
 
 // This is a helper function. It should be hidden as the user shall not use
@@ -270,7 +415,7 @@ struct NAPointer{
 // NAPointer struct. Of course, in NALib hiding something has not much use
 // but it shows where the hidden attribute would make sense if the function
 // would not be inlined.
-NA_IHLP NAPointer* naCreatePointerStruct(NAPointer* pointer){
+NA_HIDEF NAPointer* naCreatePointerStruct(NAPointer* pointer){
   if(!pointer){
     pointer = (NAPointer*)naAllocate(sizeof(NAPointer));
     pointer->refcount = 1 | NA_POINTER_OWN_STRUCT;
@@ -281,16 +426,18 @@ NA_IHLP NAPointer* naCreatePointerStruct(NAPointer* pointer){
 }
 
 
+
 NA_IDEF NAPointer* naCreatePointerWithSize(NAPointer* pointer, NAInt size){
   #ifndef NDEBUG
     if(size == 0)
       naError("naCreatePointerWithSize", "size is zero.");
   #endif
   pointer = naCreatePointerStruct(pointer);
-  pointer->data.d = naAllocate(size);
+  naFillPointerContentMutable(&(pointer->content), naAllocate(size));
   pointer->refcount |= NA_POINTER_OWN_DATA;
   return pointer;
 }
+
 
 
 NA_IDEF NAPointer* naCreatePointerWithConstBuffer(  NAPointer* pointer,
@@ -300,8 +447,7 @@ NA_IDEF NAPointer* naCreatePointerWithConstBuffer(  NAPointer* pointer,
       naError("naCreatePointerWithConstBuffer", "buffer is Null-Pointer.");
   #endif
   pointer = naCreatePointerStruct(pointer);
-  pointer->data.constd = buffer;
-  pointer->refcount |= NA_POINTER_CONST_DATA;
+  naFillPointerContentConst(&(pointer->content), buffer);
   return pointer;
 }
 
@@ -317,7 +463,7 @@ NA_IDEF NAPointer* naCreatePointerWithMutableBuffer(NAPointer* pointer,
       naError("naCreatePointerWithMutableBuffer", "invalid ownership");
   #endif
   pointer = naCreatePointerStruct(pointer);
-  pointer->data.d = buffer;
+  naFillPointerContentMutable(&(pointer->content), buffer);
   pointer->refcount |= (takeownership * NA_POINTER_OWN_DATA);
   return pointer;
 }
@@ -349,6 +495,7 @@ NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
 }
 
 
+
 NA_IDEF void naReleasePointer(NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer){
@@ -369,7 +516,7 @@ NA_IDEF void naReleasePointer(NAPointer* pointer){
   // NDEBUG is not defined, this can be detected!
   pointer->refcount--;
   if((pointer->refcount & NA_POINTER_REFCOUNT_MASK) == 0){
-    if(pointer->refcount & NA_POINTER_OWN_DATA){free(pointer->data.d);}
+    if(pointer->refcount & NA_POINTER_OWN_DATA){free(naGetPointerContentMutable(&(pointer->content)));}
     if(pointer->refcount & NA_POINTER_OWN_STRUCT){free(pointer);}
   }
   // Note that other programming languages have incorporated this very idea
@@ -381,63 +528,14 @@ NA_IDEF void naReleasePointer(NAPointer* pointer){
 
 
 
-// Accessor and mutator
-//
-// Quite often at the very base of all implementations, you have to let go
-// all the beautiful code designs learned in school and university. Sometimes,
-// there is just no other way than cheating and bit fiddling.
-//
-// The problem here is that C has no concept of accessors and mutators. Even
-// though the main difference is just the type returned, in C you can not
-// overload functions and hence you can not hide the distinction to the user.
-// There is the possibility to create two versions for each type storing either
-// const or non-const data. This ensures type-safety, but forces the programmer
-// to make the distinction at declaration level (which can become very
-// cumbersome) and maybe even convert between the two variants which might be
-// very costly and not beautiful at all.
-//
-// In this implementation, the author decided to use a union type storing
-// either a const or a non-const data pointer. When calling a constructor,
-// a specific flag defines what is stored.
-//
-// This is not entirely type-save, meaning you can use the mutator on const
-// data. This is not beatuiful, but is much easier to write programs with, as
-// the programmer has to differentiate between the two uses only when necessary.
-// If the programmer uses a mutator on const data, an error will be emitted.
-// You can of course ignore these errors and hope that the application does not
-// crash, but you should really make sure no const data gets mutated.
-//
-// By the way:
-// The const-flag is stored among other flags as part of the refcount field.
-// This allows to create very fast code and condition-checks but yet saves lots
-// of space while giving up only a small part of the value-range, which, as a
-// sidenote, would in this implementation still be sufficient to theoretically
-// fill the whole memory with references without ever overflowing.
-//
-// Note that this is one of the very, very rare situations, where a union type
-// actually makes sense. See NAPointer declaration.
-
 NA_IDEF const void* naGetPointerConstData(const NAPointer* pointer){
-  #ifndef NDEBUG
-    if(!pointer){
-      naCrash("naGetPointerData", "pointer is Null-Pointer.");
-      return NA_NULL;
-    }
-  #endif
-  return pointer->data.constd;
+  return naGetPointerContentConst(&(pointer->content));
 }
 
+
+
 NA_IDEF void* naGetPointerMutableData(NAPointer* pointer){
-  #ifndef NDEBUG
-    if(!pointer){
-      naCrash("naGetPointerData", "pointer is Null-Pointer.");
-      return NA_NULL;
-    }else{
-      if(pointer->refcount & NA_POINTER_CONST_DATA)
-        naError("naGetPointerData", "Accessing const data as non-const.");
-    }
-  #endif
-  return pointer->data.d;
+  return naGetPointerContentMutable(&(pointer->content));
 }
 
 

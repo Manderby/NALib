@@ -26,7 +26,7 @@
 // in the growing space. This is a huge advantage!
 //
 // There is also a disadvantage: Traversing the space one-by-one can only be
-// done efficiently using an iterator. Which is not implemented yet.
+// done efficiently using an iterator.
 //
 // IMPORTANT:
 // NAGrowingSpace is not a Pool structure! Deletion or recycling of elements
@@ -36,9 +36,9 @@
 // care about.
 //
 // Use this structure when you are building up collections, for example:
-// When parsing files without prior knowledge of the number of elements stored.
-// Creating a bunch of particles in a physically based simulation.
-// Creating an unknown number of edges within a point cloud.
+// - parsing files without prior knowledge of the number of elements stored.
+// - Creating a bunch of particles in a physically based simulation.
+// - Creating an unknown number of edges within a point cloud.
 // And many more examples. Turns out the author uses this structure more and
 // more.
 
@@ -48,16 +48,18 @@
 // Opaque type. See explanation in readme.txt
 typedef struct NAGrowingSpace NAGrowingSpace;
 struct NAGrowingSpace{
+  NAArray       bytearrays; // Array of NAByteArray*
   NAList        arrays;     // List of NAByteArray*
-  NAInt         typesize;   // The size in bytes of the stored type
-  NAInt         usedcount;  // The used number of elements in the storage.
+  NAUInt        typesize;   // The size in bytes of the stored type
+  NAUInt        usedcount;  // The used number of elements in the storage.
   NAConstructor constructor;
+  NAUInt        cur;        // The index in the current array if available.
 };
 
 
 // Creates a new NAGrowingSpace with the desired type size.
 NA_API NAGrowingSpace* naCreateGrowingSpace(NAGrowingSpace* space,
-                                                      NAInt typesize,
+                                                     NAUInt typesize,
                                               NAConstructor constructor);
 
 // Clears or destroys the given space.
@@ -68,17 +70,18 @@ NA_API void naDestroyGrowingSpace(NAGrowingSpace* space, NADestructor destructor
 // The returned pointer points to an uninitialized space.
 NA_API void* naNewGrowingSpaceElement(NAGrowingSpace* space);
 
-// Returns a POINTER to the element at the given index.
-// The indx argument is treated the same way as with naGetArrayConstElement
-// or naGetArrayMutableElement.
-// Warning: Do not use the result as an interation pointer. The elements
-// are NOT stored in a single array!
-// These functions are slow! Use Iterators instead. Unfortunately, they are
-// not yet implemented. todo
-NA_API const void* naGetGrowingSpaceConstElement  (const NAGrowingSpace* space,
-                                                                   NAInt indx);
-NA_API void*       naGetGrowingSpaceMutableElement(      NAGrowingSpace* space,
-                                                                   NAInt indx);
+// Iteration functions
+//
+// Every growing space has an internal pointer denoting the current element.
+// You can directly access the content of that element. If no current element
+// is set, NA_NULL is returned.
+NA_API const void* naGetGrowingSpaceConstContent  (const NAGrowingSpace* space);
+NA_API       void* naGetGrowingSpaceMutableContent(      NAGrowingSpace* space);
+
+// The following functions move the internal pointer. At start, the internal
+// pointer is not set.
+NA_API void naFirstGrowingSpaceElement(const NAGrowingSpace* space);
+NA_API void naNextGrowingSpaceElement(const NAGrowingSpace* space);
 
 // Creates a new array with just the used content of the growing space.
 // All used contents will be copied. If you stored pointers to the elements
@@ -88,7 +91,7 @@ NA_API NAArray* naCreateArrayOutOfGrowingSpace(    NAArray* array,
                                             NAGrowingSpace* space);
 
 // Returns the number of elements actually stored in the space
-NA_API NAInt naGetGrowingSpaceCount(const NAGrowingSpace* space);
+NA_API NAUInt naGetGrowingSpaceCount(const NAGrowingSpace* space);
 
 
 

@@ -14,9 +14,9 @@
 
 // Puts the current thread on hold for the specified amount of time.
 // S = Seconds, M = Milliseconds, U = Microseconds.
-NA_IAPI int naSleepU(NAInt usecs);
-NA_IAPI int naSleepM(NAInt msecs);
-NA_IAPI int naSleepS(NAInt  secs);
+NA_IAPI int naSleepU(NAUInt usecs);
+NA_IAPI int naSleepM(NAUInt msecs);
+NA_IAPI int naSleepS(NAUInt  secs);
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   #include "Windows.h"
@@ -304,7 +304,7 @@ NA_API NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber);
 // function together with the akquired constant from above. This function will
 // correct dates only if needed or possible.
 NA_API void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
-                                           NAInt leapsecondcorrectionconstant);
+                                          NAInt leapsecondcorrectionconstant);
 
 // When all your data is converted to the new library and you want to store
 // the corrected dates, don't forget to store the NEW uncertain second number
@@ -346,7 +346,7 @@ NA_API void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
 #endif
 
 
-NA_IDEF int naSleepU(NAInt usecs){
+NA_IDEF int naSleepU(NAUInt usecs){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     Sleep((DWORD)(usecs/1000));
     return 0;
@@ -355,7 +355,7 @@ NA_IDEF int naSleepU(NAInt usecs){
   #endif
 }
 
-NA_IDEF int naSleepM(NAInt msecs){
+NA_IDEF int naSleepM(NAUInt msecs){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     Sleep((DWORD)(msecs));
     return 0;
@@ -364,7 +364,7 @@ NA_IDEF int naSleepM(NAInt msecs){
   #endif
 }
 
-NA_IDEF int naSleepS(NAInt secs){
+NA_IDEF int naSleepS(NAUInt secs){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     Sleep((DWORD)(secs*1000));
     return 0;

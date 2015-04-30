@@ -9,6 +9,9 @@
 #endif
 
 
+#define NA_VERSION 9
+
+
 // This is the base of the whole NALib implementation. Almost all files
 // include this file. It contains the most basic type definitions and
 // preprocessor macros.
@@ -47,7 +50,16 @@
 // //////////////////////////////////////////
 
 // Interesting read: http://sourceforge.net/p/predef/wiki/OperatingSystems/
-#if defined __APPLE__ && __MACH__
+#if defined _WIN32
+  #define NA_SYSTEM NA_SYSTEM_WINDOWS
+  #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_LITTLE
+  #if defined _WIN64
+    #define NA_SYSTEM_ADDRESS_BITS 64
+  #else
+    #define NA_SYSTEM_ADDRESS_BITS 32
+  #endif
+
+#elif defined __APPLE__ && __MACH__
   #define NA_SYSTEM NA_SYSTEM_MAC_OS_X
   #if defined __LITTLE_ENDIAN__
     #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_LITTLE
@@ -60,15 +72,6 @@
     #define NA_SYSTEM_ADDRESS_BITS 32
   #endif
   
-#elif (defined _WIN64) || (defined _WIN32)
-  #define NA_SYSTEM NA_SYSTEM_WINDOWS
-  #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_LITTLE
-  #if defined _WIN64
-    #define NA_SYSTEM_ADDRESS_BITS 64
-  #else
-    #define NA_SYSTEM_ADDRESS_BITS 32
-  #endif
-
 #else
   #warning "System not detected"
 #endif
@@ -135,9 +138,8 @@
 //
 // NA_API marks the declaration of a function which is intended to be used by
 // the programmer. Its counterpart is NA_DEF which marks the implementation of
-// the appropriate function. NA_API functions are explicitely marked with
-// NA_VISIBLE and can only be found in header files. NA_DEF functions can only
-// be found in implementation files.
+// the appropriate function. NA_API functions can only be found in header
+// files. NA_DEF functions can only be found in implementation files.
 //
 // Note that API stands for "Application Programming Interface" and DEF stands
 // for "Definition".
@@ -151,14 +153,6 @@
 // a lot of trouble. The static keyword may lead to slightly bigger binaries.
 // But so far, the author never had problems with that.
 //
-// NA_HLP is short for NA_HELPER and NA_IHLP is short for NA_INLINE_HELPER.
-// These two macros denote helper functions which should not be accessible
-// or visible to the user. Helper functions are called from other functions
-// and usually are declared and in the same instance defined once, and only
-// once in an implementation file, not a header file. Again, in NALib, things
-// are a little more transparent so these macros are a mere hint for the
-// programmer, not more.
-//
 // Also note that visibility attributes have no effect on inline functions as
 // they MUST be visible to the compiler in order for it to inline the code.
 // Hence in NALib, any visibility attribute is omitted with inline functions
@@ -166,13 +160,26 @@
 //
 // Again, note that the following macros are just used for NALib, they may
 // very well differ in your own implementation!
-
-#define NA_API    NA_SYMBOL_VISIBLE
-#define NA_DEF      
+#define NA_API    NA_SYMBOL_HIDDEN
+#define NA_DEF    NA_SYMBOL_HIDDEN
 #define NA_IAPI   static NA_INLINE
 #define NA_IDEF   static NA_INLINE
-#define NA_HLP    static NA_SYMBOL_HIDDEN
-#define NA_IHLP   static NA_INLINE
+
+// Additionally, there are definitions of so called HELPER functions.
+// Helper functions should not be accessible or visible to the user. Helper
+// functions are called from other functions and usually are declared in
+// the same instance and defined once, and only once in an implementation file,
+// not a header file. Again, in NALib, things are a little more transparent so
+// these macros are a mere hint for the programmer, not more.
+#define NA_HAPI   NA_SYMBOL_HIDDEN
+#define NA_HDEF   NA_SYMBOL_HIDDEN
+#define NA_HIAPI  static NA_INLINE
+#define NA_HIDEF  static NA_INLINE
+// Authors comment: Note that all symbols are declared and defined very
+// restrictive. Meaning: No function or variable of NALib will show up in a
+// library which is built with NALib.
+
+
 
 #if defined __STDC_VERSION__
   #if __STDC_VERSION__ >= 201112L // This indicates the C11 standard
@@ -290,15 +297,20 @@ typedef uint8     NAByte;
 // functions will return NAInt or expect it as an argument. Note that the NAInt
 // type is signed!
 //
-// As NAInt is also used by memory and array functions, this means that in
-// 32-Bit systems, only about 2 billion entries can be accessed with arrays
-// when using NALib. The author is perfectly aware of the fact that most
-// standard library functions use an unsigned integer for size_t, and that
-// NALib therefore will have some minor limitations regarding memory usage.
-// But the author has been convinced by the simplicity and elegance of just
-// using signed integers during the last couple of years. It makes programming
-// and debugging so much easier. And in 64 Bit systems, the memory limitations
-// will not be a problem for a couple of years coming.
+// Starting with NALib Version 9, there also exists NAUInt, the unsigned
+// variant. Many functions have been changed which explicitely require or
+// return an unsigned integer. This helps detecting errors as a compiler can
+// emit warnings on sign differences.
+//
+// The signed variant NAInt is also used by memory and array functions. This
+// means that in 32-Bit systems, only about 2 billion entries can be accessed
+// with arrays when using NALib. The author is perfectly aware of the fact
+// that most standard library functions use an unsigned integer for size_t,
+// and that NALib therefore will have some minor limitations regarding memory
+// usage. But the author has been convinced by the simplicity and elegance of
+// just using signed integers during the last couple of years. It makes
+// programming and debugging so much easier. And in 64 Bit systems, the memory
+// limitations will not be a problem for a couple of years coming.
 //
 // Note that integers with explicitely defined sizes are used. The definition
 // of just "int" would be unreliable.
@@ -306,7 +318,8 @@ typedef uint8     NAByte;
 // In addition to the type, there is the definition of a printf-argument macro.
 // Use the macro for example like this:
 //
-// printf("The array has %" NA_PRIi " entries." NA_NL, naGetArrayCount(array));
+// printf("The point is at X coordinate %" NA_PRIi " NA_NL, pos.x);
+// printf("The array has %" NA_PRIu " entries." NA_NL, naGetArrayCount(array));
 //
 // Some more printf arguments can be found in the NAString.h header file.
 //
@@ -322,12 +335,16 @@ typedef uint8     NAByte;
 //
 #if NA_SYSTEM_ADDRESS_BITS == 32
   typedef int32 NAInt;
+  typedef uint32 NAUInt;
   #define NA_PRIi "d"
+  #define NA_PRIu "u"
   #define NA_INT_MAX NA_INT32_MAX
   #define NA_INT_MIN NA_INT32_MIN
 #elif NA_SYSTEM_ADDRESS_BITS == 64
   typedef int64 NAInt;
+  typedef uint64 NAUInt;
   #define NA_PRIi "lld"
+  #define NA_PRIu "llu"
   #define NA_INT_MAX NA_INT64_MAX
   #define NA_INT_MIN NA_INT64_MIN
 #else
@@ -355,7 +372,7 @@ typedef uint8     NAByte;
 // author, that in modern computers, speed is more important than space as
 // opposed to earlier times where wasting space was a complete no-go. When
 // using lots of Boolean values, there are better ways to store them than in
-// NABools anyway: Use C-style-masks or have a look at NABitArray.
+// NABools anyway: Use C-style-masks or have a look at BitArray.
 //
 // Also note that there is no distinction between C and C++. Therefore, NALib
 // never uses the bool type or the true and false keywords.
@@ -384,7 +401,7 @@ typedef int NABool;
 // later in the code.
 //
 // Also note that in the comments of NALib as well as in the error messages,
-// it will most of the time be called "Null-Pointer". In the implementation
+// it will oftem times be called "Null-Pointer". In the implementation
 // however, NA_NULL is used.
 
 #include <stdlib.h>
@@ -401,7 +418,7 @@ typedef int NABool;
 // /////////////////////////////////
 // Debugging:
 //
-// The folowing definitions will only be defined if NDEBUG is undefined.
+// The following definitions will only be defined if NDEBUG is undefined.
 // Many functions of NALib will perform many tests which will slow down
 // the performance more or less considerably. If NDEBUG is defined however,
 // no tests are performed whatsoever.
@@ -462,14 +479,6 @@ typedef int NABool;
 
 
 
-// Declaration of some types which are often used
-// If you have an error near such a type declaration, you probably must include
-// the according header file.
-typedef struct NAString     NAString;
-typedef struct NAByteArray  NAByteArray;
-typedef struct NAArray      NAArray;
-// These incomplete typedefs have been introduced to reduce circular
-// dependencies between header files.
 
 
 // This is the type of a constructor and destructor callback which is used by
@@ -477,6 +486,7 @@ typedef struct NAArray      NAArray;
 // See readme for detailed informations.
 typedef void* (*NAConstructor)(void *);
 typedef void  (*NADestructor) (void *);
+typedef void  (*NAMutator)    (void *);
 
 
 

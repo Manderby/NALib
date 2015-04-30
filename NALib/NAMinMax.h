@@ -48,6 +48,7 @@
 
 
 #include "NAVectorAlgebra.h"
+#include "NAArray.h"
 
 
 typedef struct NAMinMax1  NAMinMax1;
@@ -137,16 +138,16 @@ NA_API NAArray*     naCreateAreasWithMinMax1iFromMinMax1iArray(
 
 // Converts an integer denoting an end or max to its counterpart. Also does
 // some checks if the values over- or underflow.
-NA_HLP NAInt  naEndToMaxi(NAInt end);
-NA_HLP NAInt  naMaxToEndi(NAInt max);
-NA_HLP double naPosAndSizeToEnd   (double  pos,   double size);
-NA_HLP float  naPosAndSizeToEndf  (float   pos,   float  size);
-NA_HLP NAInt  naPosAndSizeToEndi  (NAInt   pos,   NAInt  size);
-NA_HLP NAInt  naPosAndSizeToMaxi  (NAInt   pos,   NAInt  size);
-NA_HLP double naStartAndEndToSize (double  start, double end);
-NA_HLP float  naStartAndEndToSizef(float   start, float  end);
-NA_HLP NAInt  naStartAndEndToSizei(NAInt   start, NAInt  end);
-NA_HLP NAInt  naMinAndMaxToSizei  (NAInt   min,   NAInt  max);
+NA_HIAPI NAInt  naEndToMaxi(NAInt end);
+NA_HIAPI NAInt  naMaxToEndi(NAInt max);
+NA_HIAPI double naPosAndSizeToEnd   (double  pos,   double size);
+NA_HIAPI float  naPosAndSizeToEndf  (float   pos,   float  size);
+NA_HIAPI NAInt  naPosAndSizeToEndi  (NAInt   pos,   NAInt  size);
+NA_HIAPI NAInt  naPosAndSizeToMaxi  (NAInt   pos,   NAInt  size);
+NA_HIAPI double naStartAndEndToSize (double  start, double end);
+NA_HIAPI float  naStartAndEndToSizef(float   start, float  end);
+NA_HIAPI NAInt  naStartAndEndToSizei(NAInt   start, NAInt  end);
+NA_HIAPI NAInt  naMinAndMaxToSizei  (NAInt   min,   NAInt  max);
 
 // This function alters the given pos and size such that size will become
 // positive while retaining the depicted range. For example with doubles:
@@ -157,15 +158,15 @@ NA_HLP NAInt  naMinAndMaxToSizei  (NAInt   min,   NAInt  max);
 // pos = 3 and size = -2 will become pos = 2 and size = 2. The resulting
 // range starts at 2 and ends at (2 + 2) - 1 = 3
 // If size already was positive, nothing will be changed.
-NA_HLP void naMakePositive      (double* NA_RESTRICT pos,
-                                 double* NA_RESTRICT size);
-NA_HLP void naMakePositivei     (NAInt*  NA_RESTRICT pos,
-                                 NAInt*  NA_RESTRICT size);
+NA_HIAPI void naMakePositive      (double* NA_RESTRICT pos,
+                                   double* NA_RESTRICT size);
+NA_HIAPI void naMakePositivei     (NAInt*  NA_RESTRICT pos,
+                                   NAInt*  NA_RESTRICT size);
                                  
-// This function alters negative integer pos and/or integer size such that the
-// resulting range will be fully be contained in a range given by
-// [0, containingsize-1] for integers. Negative values are treated as follows
-// and in the following order:
+// This function returns a pair of positive integers (positivepos,positivesize)
+// out of a possibly negative pair (pos,size) such that the resulting range
+// will be fully contained in a range given by [0, containingsize-1].
+// Negative values are treated as follows and in the following order:
 // - if pos is negative, it denotes the number of units from the end.
 //   For integers, pos = -1 therefore corresponds to size-1.
 // - If the size is now 0, the function will return.
@@ -176,9 +177,11 @@ NA_HLP void naMakePositivei     (NAInt*  NA_RESTRICT pos,
 // - If the pos and size combination somehow leads to an over- or underflow,
 //   a warning will be emitted if NDEBUG is defined. The resulting range will
 //   be empty.
-NA_HLP void naMakePositiveiInSize(  NAInt*  NA_RESTRICT pos,
-                                    NAInt*  NA_RESTRICT size,
-                                    NAInt   containingsize);
+NA_HAPI void naMakePositiveiInSize(  NAUInt* NA_RESTRICT positivepos,
+                                     NAUInt* NA_RESTRICT positivesize,
+                                     NAInt               pos,
+                                     NAInt               size,
+                                     NAUInt              containingsize);
 
 // The following functions are mostly used in other datastructures such as
 // NARect and NARange. They define the default semantics against which values
@@ -186,17 +189,17 @@ NA_HLP void naMakePositiveiInSize(  NAInt*  NA_RESTRICT pos,
 // not useful when negative.
 
 // VALID means: Anything but NaN. Integer values therefore are always valid.
-NA_HLP NABool naIsPosValueValid(double a);
-NA_HLP NABool naIsPosValueValidf(float a);
-NA_HLP NABool naIsPosValueValidi(NAInt a);
-NA_HLP NABool naIsSizeValueValid(double a);
-NA_HLP NABool naIsSizeValueValidf(float a);
-NA_HLP NABool naIsSizeValueValidi(NAInt a);
+NA_HIAPI NABool naIsPosValueValid(double a);
+NA_HIAPI NABool naIsPosValueValidf(float a);
+NA_HIAPI NABool naIsPosValueValidi(NAInt a);
+NA_HIAPI NABool naIsSizeValueValid(double a);
+NA_HIAPI NABool naIsSizeValueValidf(float a);
+NA_HIAPI NABool naIsSizeValueValidi(NAInt a);
 
 // EMPTY means: Precisely Zero.
-NA_HLP NABool naIsSizeValueEmpty(double a);
-NA_HLP NABool naIsSizeValueEmptyf(float a);
-NA_HLP NABool naIsSizeValueEmptyi(NAInt a);
+NA_HIAPI NABool naIsSizeValueEmpty(double a);
+NA_HIAPI NABool naIsSizeValueEmptyf(float a);
+NA_HIAPI NABool naIsSizeValueEmptyi(NAInt a);
 
 // NEGATIVE means: Smaller than Zero.
 //
@@ -208,18 +211,18 @@ NA_HLP NABool naIsSizeValueEmptyi(NAInt a);
 // Or the "End of file" marker EOF for example. But such situations are rare.
 // Try to use positive words whenever possible! For example, test for "Inside"
 // rather than "Outside".
-NA_HLP NABool naIsSizeValueNegative(double a);
-NA_HLP NABool naIsSizeValueNegativef(float a);
-NA_HLP NABool naIsSizeValueNegativei(NAInt a);
+NA_HIAPI NABool naIsSizeValueNegative(double a);
+NA_HIAPI NABool naIsSizeValueNegativef(float a);
+NA_HIAPI NABool naIsSizeValueNegativei(NAInt a);
 
 // USEFUL means: Positions must be valid. Sizes must be valid, not empty and
 // not negative.
-NA_HLP NABool naIsPosValueUseful(double a);
-NA_HLP NABool naIsPosValueUsefulf(float a);
-NA_HLP NABool naIsPosValueUsefuli(NAInt a);
-NA_HLP NABool naIsSizeValueUseful(double a);
-NA_HLP NABool naIsSizeValueUsefulf(float a);
-NA_HLP NABool naIsSizeValueUsefuli(NAInt a);
+NA_HIAPI NABool naIsPosValueUseful(double a);
+NA_HIAPI NABool naIsPosValueUsefulf(float a);
+NA_HIAPI NABool naIsPosValueUsefuli(NAInt a);
+NA_HIAPI NABool naIsSizeValueUseful(double a);
+NA_HIAPI NABool naIsSizeValueUsefulf(float a);
+NA_HIAPI NABool naIsSizeValueUsefuli(NAInt a);
 
 
 
@@ -477,21 +480,21 @@ NA_IDEF NABool naIsMinMax2iEmpty(NAMinMax2i minmax){
 
 
 
-NA_IHLP NAInt naEndToMaxi(NAInt end){
+NA_HIDEF NAInt naEndToMaxi(NAInt end){
   #ifndef NDEBUG
     if(end == NA_INT_MIN)
       naError("naEndToMaxi", "Integer underflow");
   #endif
   return end - 1;
 }
-NA_IHLP NAInt naMaxToEndi(NAInt max){
+NA_HIDEF NAInt naMaxToEndi(NAInt max){
   #ifndef NDEBUG
     if(max == NA_INT_MAX)
       naError("naMaxToEndi", "Integer overflow");
   #endif
   return max + 1;
 }
-NA_IHLP double naPosAndSizeToEnd(double pos, double size){
+NA_HIDEF double naPosAndSizeToEnd(double pos, double size){
   double result = pos + size;
   #ifndef NDEBUG
     if(!naIsPosValueValid(result)){
@@ -500,7 +503,7 @@ NA_IHLP double naPosAndSizeToEnd(double pos, double size){
   #endif
   return result;
 }
-NA_IHLP float naPosAndSizeToEndf(float pos, float size){
+NA_HIDEF float naPosAndSizeToEndf(float pos, float size){
   float result = pos + size;
   #ifndef NDEBUG
     if(!naIsPosValueValidf(result)){
@@ -509,7 +512,7 @@ NA_IHLP float naPosAndSizeToEndf(float pos, float size){
   #endif
   return result;
 }
-NA_IHLP NAInt naPosAndSizeToEndi(NAInt pos, NAInt size){
+NA_HIDEF NAInt naPosAndSizeToEndi(NAInt pos, NAInt size){
   NAInt result = pos + size;
   #ifndef NDEBUG
     if(size > 0){
@@ -522,7 +525,7 @@ NA_IHLP NAInt naPosAndSizeToEndi(NAInt pos, NAInt size){
   #endif
   return result;
 }
-NA_IHLP NAInt naPosAndSizeToMaxi(NAInt pos, NAInt size){
+NA_HIDEF NAInt naPosAndSizeToMaxi(NAInt pos, NAInt size){
   NAInt result = naEndToMaxi(pos + size);
   #ifndef NDEBUG
     if(size > 0){
@@ -537,21 +540,21 @@ NA_IHLP NAInt naPosAndSizeToMaxi(NAInt pos, NAInt size){
 }
 
 
-NA_IHLP double naStartAndEndToSize(double min, double end){
+NA_HIDEF double naStartAndEndToSize(double min, double end){
   return end - min;
 }
-NA_IHLP float naStartAndEndToSizef(float min, float end){
+NA_HIDEF float naStartAndEndToSizef(float min, float end){
   return end - min;
 }
-NA_IHLP NAInt  naStartAndEndToSizei(NAInt min, NAInt end){
+NA_HIDEF NAInt  naStartAndEndToSizei(NAInt min, NAInt end){
   return end - min;
 }
-NA_IHLP NAInt  naMinAndMaxToSizei(NAInt min, NAInt max){
+NA_HIDEF NAInt  naMinAndMaxToSizei(NAInt min, NAInt max){
   return naMaxToEndi(max) - min;
 }
 
 
-NA_IHLP void naMakePositive(double* NA_RESTRICT pos, double* NA_RESTRICT size){
+NA_HIDEF void naMakePositive(double* NA_RESTRICT pos, double* NA_RESTRICT size){
   if(*size < 0.){
     *pos = *pos + *size;
     *size = -*size;
@@ -559,7 +562,7 @@ NA_IHLP void naMakePositive(double* NA_RESTRICT pos, double* NA_RESTRICT size){
 }
 
 
-NA_IHLP void naMakePositivei(NAInt* NA_RESTRICT pos, NAInt* NA_RESTRICT size){
+NA_HIDEF void naMakePositivei(NAInt* NA_RESTRICT pos, NAInt* NA_RESTRICT size){
   if(*size < 0){
     *pos = *pos + *size + 1; // important + 1 !
     *size = -*size;
@@ -567,113 +570,71 @@ NA_IHLP void naMakePositivei(NAInt* NA_RESTRICT pos, NAInt* NA_RESTRICT size){
 }
 
 
-NA_IHLP void naMakePositiveiInSize(NAInt*  NA_RESTRICT pos, NAInt* NA_RESTRICT size, NAInt containingsize){
-  // First, we ensure that pos is withing the containing range. After that
-  // we will look at the size parameter.
-  NAInt remainingsize = containingsize - *pos;
-  if(*pos < 0){
-    *pos = *pos + containingsize;
-    remainingsize -= containingsize;
-  }
-  if(remainingsize < 0){
-    #ifndef NDEBUG
-      naError("naMakePositiveiInSize", "Invalid pos leads to range overflow. Correcting to empty range.");
-    #endif
-    *size = 0;
-  }else if(remainingsize > containingsize){
-    #ifndef NDEBUG
-      naError("naMakePositiveiInSize", "Invalid pos leads to range underflow. Correcting to empty range.");
-    #endif
-    *size = 0;
-  }else{
-    // The pos is positive. Now, adjust the size.
-    if(*size < 0){ // negative size parameter
-      *size = remainingsize + *size + 1;  // Important + 1 !
-      if(*size < 0){
-        // When the resulting size is smaller than 0, underflow.
-        #ifndef NDEBUG
-          naError("naMakePositiveiInSize", "Invalid size leads to range underflow. Correcting to empty range.");
-        #endif
-        *size = 0;
-      }
-    }else{ // positive or 0 size parameter
-      if(*size > remainingsize){
-        // When the desired size is bigger than the size available, overflow.
-        #ifndef NDEBUG
-          naError("naMakePositiveiInSize", "Invalid size leads to range overflow. Correcting to empty range.");
-        #endif
-        *size = 0;
-      }
-    }
-  }
-}
-
-
-NA_IHLP NABool naIsPosValueValid(double a){
+NA_HIDEF NABool naIsPosValueValid(double a){
   return !naIsNaN(a);
 }
-NA_IHLP NABool naIsPosValueValidf(float a){
+NA_HIDEF NABool naIsPosValueValidf(float a){
   return !naIsNaNf(a);
 }
-NA_IHLP NABool naIsPosValueValidi(NAInt a){
+NA_HIDEF NABool naIsPosValueValidi(NAInt a){
   NA_UNUSED_PARAMETER(a);
   return NA_TRUE;
 }
 
-NA_IHLP NABool naIsSizeValueValid(double a){
+NA_HIDEF NABool naIsSizeValueValid(double a){
   return !naIsNaN(a);
 }
-NA_IHLP NABool naIsSizeValueValidf(float a){
+NA_HIDEF NABool naIsSizeValueValidf(float a){
   return !naIsNaNf(a);
 }
-NA_IHLP NABool naIsSizeValueValidi(NAInt a){
+NA_HIDEF NABool naIsSizeValueValidi(NAInt a){
   NA_UNUSED_PARAMETER(a);
   return NA_TRUE;
 }
 
-NA_IHLP NABool naIsSizeValueEmpty(double a){
+NA_HIDEF NABool naIsSizeValueEmpty(double a){
   return (a == 0.);
 }
-NA_IHLP NABool naIsSizeValueEmptyf(float a){
+NA_HIDEF NABool naIsSizeValueEmptyf(float a){
   return (a == 0.f);
 }
-NA_IHLP NABool naIsSizeValueEmptyi(NAInt a){
+NA_HIDEF NABool naIsSizeValueEmptyi(NAInt a){
   return (a == 0);
 }
 
 
-NA_IHLP NABool naIsSizeValueNegative(double a){
+NA_HIDEF NABool naIsSizeValueNegative(double a){
   return (a < 0.);
 }
-NA_IHLP NABool naIsSizeValueNegativef(float a){
+NA_HIDEF NABool naIsSizeValueNegativef(float a){
   return (a < 0.f);
 }
-NA_IHLP NABool naIsSizeValueNegativei(NAInt a){
+NA_HIDEF NABool naIsSizeValueNegativei(NAInt a){
   return (a < 0);
 }
 
 
-NA_IHLP NABool naIsPosValueUseful(double a){
+NA_HIDEF NABool naIsPosValueUseful(double a){
   return !naIsNaN(a);
 }
-NA_IHLP NABool naIsPosValueUsefulf(float a){
+NA_HIDEF NABool naIsPosValueUsefulf(float a){
   return !naIsNaNf(a);
 }
-NA_IHLP NABool naIsPosValueUsefuli(NAInt a){
+NA_HIDEF NABool naIsPosValueUsefuli(NAInt a){
   NA_UNUSED_PARAMETER(a);
   return NA_TRUE;
 }
 
 
-NA_IHLP NABool naIsSizeValueUseful(double a){
+NA_HIDEF NABool naIsSizeValueUseful(double a){
   // Note that this test will return NA_FALSE if a is NaN.
   return (a > 0.);
 }
-NA_IHLP NABool naIsSizeValueUsefulf(float a){
+NA_HIDEF NABool naIsSizeValueUsefulf(float a){
   // Note that this test will return NA_FALSE if a is NaN.
   return (a > 0.);
 }
-NA_IHLP NABool naIsSizeValueUsefuli(NAInt a){
+NA_HIDEF NABool naIsSizeValueUsefuli(NAInt a){
   return (a > 0);
 }
 

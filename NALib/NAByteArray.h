@@ -20,10 +20,14 @@
 // providing an offset and a size relative to another NAByteArray. This allows
 // for very fast and convenient parsing of byte streams without copying
 // the bytes over and over again. This struct is also used by NAString and
-// NABitArray
+// BitArray
 
 
 #include "NASystem.h"
+
+
+typedef struct NAByteArray  NAByteArray;
+
 
 // ///////////////////////////
 // Constructors and Destructors. Read the readme.txt for explanation.
@@ -72,11 +76,11 @@ NA_API NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
 NA_API NAByteArray* naCreateByteArrayWithConstBuffer(
                                                 NAByteArray* array,
                                                  const void* buffer,
-                                                       NAInt size);
+                                                      NAUInt size);
 NA_API NAByteArray* naCreateByteArrayWithMutableBuffer(
                                                 NAByteArray* array,
                                                        void* buffer,
-                                                       NAInt size,
+                                                      NAUInt size,
                                                       NABool takeownership);
 
 
@@ -163,7 +167,7 @@ NA_IAPI       NAByte* naGetByteArrayMutableByte(      NAByteArray* array,
                                                              NAInt indx);
 
 // Returns the number of bytes in this array.
-NA_IAPI NAInt naGetByteArraySize(const NAByteArray* array);
+NA_IAPI NAUInt naGetByteArraySize(const NAByteArray* array);
 
 // Returns true if the array is empty.
 NA_IAPI NABool naIsByteArrayEmpty(const NAByteArray* array);
@@ -190,7 +194,7 @@ NA_IAPI NABool naIsByteArrayEmpty(const NAByteArray* array);
 
 struct NAByteArray{
   NAPointer* storage;       // pointer to the storage of all bytes
-  NAInt size;               // size of this NAByteArray in bytes
+  NAUInt size;              // size of this NAByteArray in bytes
   union{                    // pointer to the first byte of this NAByteArray...
     const NAByte* constp;   // ... which is either const ...
           NAByte* p;        // ... or non-const.
@@ -205,7 +209,7 @@ struct NAByteArray{
 
 
 NA_IDEF NAByteArray* naCreateByteArray(NAByteArray* array){
-  array = (NAByteArray*)naAllocateIfNull(array, sizeof(NAByteArray));
+  array = naAllocNALibStruct(array, NAByteArray);
   array->size = 0;
   return array;
 }
@@ -297,14 +301,11 @@ NA_IDEF const NAByte* naGetByteArrayConstByte(const NAByteArray* array, NAInt in
 
 
 
-NA_IDEF NAInt naGetByteArraySize(const NAByteArray* array){
+NA_IDEF NAUInt naGetByteArraySize(const NAByteArray* array){
   #ifndef NDEBUG
     if(!array){
       naCrash("naGetByteArraySize", "array is Null-Pointer.");
       return 0;
-    }else{
-      if(array->size < 0)
-        naError("naGetByteArraySize", "returned size is negative. Uninitialized struct?");
     }
   #endif
   return array->size;
@@ -317,9 +318,6 @@ NA_IDEF NABool naIsByteArrayEmpty(const NAByteArray* array){
     if(!array){
       naCrash("naIsByteArrayEmpty", "array is Null-Pointer.");
       return NA_TRUE;
-    }else{
-      if(array->size < 0)
-        naError("naIsByteArrayEmpty", "size is negative. Uninitialized struct?");
     }
   #endif
   return (array->size == 0);

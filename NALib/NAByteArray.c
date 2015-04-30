@@ -12,7 +12,7 @@ NA_DEF NAByteArray* naCreateByteArrayWithSize(NAByteArray* array, NAInt size){
   if(!size){  // if size is zero
     array = naCreateByteArray(array);
   }else{
-    array = (NAByteArray*)naAllocateIfNull(array, sizeof(NAByteArray));
+    array = naAllocNALibStruct(array, NAByteArray);
     array->storage = naCreatePointerWithSize(NA_NULL, size);
     array->size = naAbsi(size);
     array->ptr.p = (NAByte*)naGetPointerMutableData(array->storage);
@@ -23,17 +23,15 @@ NA_DEF NAByteArray* naCreateByteArrayWithSize(NAByteArray* array, NAInt size){
 
 
 
-NA_DEF NAByteArray* naCreateByteArrayWithConstBuffer( NAByteArray* array, const void* buffer, NAInt size){
+NA_DEF NAByteArray* naCreateByteArrayWithConstBuffer( NAByteArray* array, const void* buffer, NAUInt size){
   #ifndef NDEBUG
-    if(size < 0)
-      naError("naCreateByteArrayWithConstBuffer", "size is negative.");
     if(!buffer)
       naError("naCreateByteArrayWithConstBuffer", "buffer is Null-Pointer.");
   #endif
   if(!size){  // if size is zero
     array = naCreateByteArray(array);
   }else{
-    array = (NAByteArray*)naAllocateIfNull(array, sizeof(NAByteArray));
+    array = naAllocNALibStruct(array, NAByteArray);
     array->storage = naCreatePointerWithConstBuffer(NA_NULL, buffer);
     array->ptr.constp = (const NAByte*)naGetPointerConstData(array->storage);
     array->size = size;
@@ -43,10 +41,8 @@ NA_DEF NAByteArray* naCreateByteArrayWithConstBuffer( NAByteArray* array, const 
 
 
 
-NA_DEF NAByteArray* naCreateByteArrayWithMutableBuffer(NAByteArray* array, void* buffer, NAInt size, NABool takeownership){
+NA_DEF NAByteArray* naCreateByteArrayWithMutableBuffer(NAByteArray* array, void* buffer, NAUInt size, NABool takeownership){
   #ifndef NDEBUG
-    if(size < 0)
-      naError("naCreateByteArrayWithBuffer", "size is negative.");
     if(!buffer)
       naError("naCreateByteArrayWithBuffer", "buffer is Null-Pointer.");
   #endif
@@ -54,7 +50,7 @@ NA_DEF NAByteArray* naCreateByteArrayWithMutableBuffer(NAByteArray* array, void*
     array = naCreateByteArray(array);
     if(takeownership){free(buffer);}
   }else{
-    array = (NAByteArray*)naAllocateIfNull(array, sizeof(NAByteArray));
+    array = naAllocNALibStruct(array, NAByteArray);
     array->storage = naCreatePointerWithMutableBuffer(NA_NULL, buffer, takeownership);
     array->ptr.p = (NAByte*)naGetPointerMutableData(array->storage);
     array->size = size;
@@ -66,6 +62,8 @@ NA_DEF NAByteArray* naCreateByteArrayWithMutableBuffer(NAByteArray* array, void*
 
 NA_DEF NAByteArray* naCreateByteArrayExtraction(NAByteArray* dstarray, const NAByteArray* srcarray, NAInt offset, NAInt size){
   NAByte* newptr;
+  NAUInt positiveoffset;
+  NAUInt positivesize;
 
   #ifndef NDEBUG
     if(!srcarray){
@@ -74,19 +72,19 @@ NA_DEF NAByteArray* naCreateByteArrayExtraction(NAByteArray* dstarray, const NAB
     }
   #endif
 
-  dstarray = (NAByteArray*)naAllocateIfNull(dstarray, sizeof(NAByteArray));
+  dstarray = naAllocNALibStruct(dstarray, NAByteArray);
   // Note that dstarray may be equal to srcarray.
 
-  naMakePositiveiInSize(&offset, &size, naGetByteArraySize(srcarray));
-  newptr = srcarray->ptr.p + offset;
+  naMakePositiveiInSize(&positiveoffset, &positivesize, offset, size, naGetByteArraySize(srcarray));
+  newptr = srcarray->ptr.p + positiveoffset;
   
-  if(!size){
+  if(!positivesize){
     // If the extraction results in an empty array...
     if(dstarray == srcarray){
       naClearByteArray(dstarray); // clear the old array.
-      naCreateByteArray(dstarray);
+      dstarray = naCreateByteArray(dstarray);
     }else{
-      naCreateByteArray(dstarray);
+      dstarray = naCreateByteArray(dstarray);
     }
   }else{
     // The resulting array has content!
@@ -95,7 +93,7 @@ NA_DEF NAByteArray* naCreateByteArrayExtraction(NAByteArray* dstarray, const NAB
       dstarray->storage = naRetainPointer(srcarray->storage);
     }
     dstarray->ptr.p = newptr;
-    dstarray->size = size;
+    dstarray->size = positivesize;
   }
   
   return dstarray;

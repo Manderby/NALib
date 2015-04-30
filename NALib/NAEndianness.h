@@ -31,11 +31,11 @@ NA_IAPI  void naConvertNative16(             void* buffer);
 NA_IAPI  void naConvertNative32(             void* buffer);
 NA_IAPI  void naConvertNative64(             void* buffer);
 NA_IAPI  void naConvertNative128(            void* buffer);
-NA_IAPI  void naConvertArrayNative8(         void* buffer, NAInt count);
-NA_IAPI  void naConvertArrayNative16(        void* buffer, NAInt count);
-NA_IAPI  void naConvertArrayNative32(        void* buffer, NAInt count);
-NA_IAPI  void naConvertArrayNative64(        void* buffer, NAInt count);
-NA_IAPI  void naConvertArrayNative128(       void* buffer, NAInt count);
+NA_IAPI  void naConvertArrayNative8(         void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNative16(        void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNative32(        void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNative64(        void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNative128(       void* buffer, NAUInt count);
 
 // Conversion between Little and Big Endianness
 NA_IAPI  void naConvertLittleBig8(           void* buffer);
@@ -43,11 +43,11 @@ NA_IAPI  void naConvertLittleBig16(          void* buffer);
 NA_IAPI  void naConvertLittleBig32(          void* buffer);
 NA_IAPI  void naConvertLittleBig64(          void* buffer);
 NA_IAPI  void naConvertLittleBig128(         void* buffer);
-NA_IAPI  void naConvertArrayLittleBig8(      void* buffer, NAInt count);
-NA_IAPI  void naConvertArrayLittleBig16(     void* buffer, NAInt count);
-NA_IAPI  void naConvertArrayLittleBig32(     void* buffer, NAInt count);
-NA_IAPI  void naConvertArrayLittleBig64(     void* buffer, NAInt count);
-NA_IAPI  void naConvertArrayLittleBig128(    void* buffer, NAInt count);
+NA_IAPI  void naConvertArrayLittleBig8(      void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayLittleBig16(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayLittleBig32(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayLittleBig64(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayLittleBig128(    void* buffer, NAUInt count);
 
 // Conversion between Native and Little Endianness
 NA_IAPI  void naConvertNativeLittle8(        void* buffer);
@@ -55,11 +55,11 @@ NA_IAPI  void naConvertNativeLittle16(       void* buffer);
 NA_IAPI  void naConvertNativeLittle32(       void* buffer);
 NA_IAPI  void naConvertNativeLittle64(       void* buffer);
 NA_IAPI  void naConvertNativeLittle128(      void* buffer);
-NA_IAPI  void naConvertArrayNativeLittle8(   void* buffer, NAInt count);
-NA_IAPI  void naConvertArrayNativeLittle16(  void* buffer, NAInt count);
-NA_IAPI  void naConvertArrayNativeLittle32(  void* buffer, NAInt count);
-NA_IAPI  void naConvertArrayNativeLittle64(  void* buffer, NAInt count);
-NA_IAPI  void naConvertArrayNativeLittle128( void* buffer, NAInt count);
+NA_IAPI  void naConvertArrayNativeLittle8(   void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNativeLittle16(  void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNativeLittle32(  void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNativeLittle64(  void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNativeLittle128( void* buffer, NAUInt count);
 
 // Conversion between Native and Big Endianness
 NA_IAPI  void naConvertNativeBig8(           void* buffer);
@@ -67,11 +67,11 @@ NA_IAPI  void naConvertNativeBig16(          void* buffer);
 NA_IAPI  void naConvertNativeBig32(          void* buffer);
 NA_IAPI  void naConvertNativeBig64(          void* buffer);
 NA_IAPI  void naConvertNativeBig128(         void* buffer);
-NA_IAPI  void naConvertArrayNativeBig8(      void* buffer, NAInt count);
-NA_IAPI  void naConvertArrayNativeBig16(     void* buffer, NAInt count);
-NA_IAPI  void naConvertArrayNativeBig32(     void* buffer, NAInt count);
-NA_IAPI  void naConvertArrayNativeBig64(     void* buffer, NAInt count);
-NA_IAPI  void naConvertArrayNativeBig128(    void* buffer, NAInt count);
+NA_IAPI  void naConvertArrayNativeBig8(      void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNativeBig16(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNativeBig32(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNativeBig64(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNativeBig128(    void* buffer, NAUInt count);
 
 
 
@@ -81,7 +81,7 @@ NA_IAPI  void naConvertArrayNativeBig128(    void* buffer, NAInt count);
 // Use the naMakeEndiannessConverter function to fill the structure.
 // After creation, you can use the function-pointers stored in the
 // NAEndiannessConverter struct directly.
-// Note: This is not an opaque type.
+// Note: This is NOT an opaque type.
 typedef struct NAEndiannessConverter NAEndiannessConverter;
 struct NAEndiannessConverter{
   void (*convert8)        (void* buffer);
@@ -89,11 +89,11 @@ struct NAEndiannessConverter{
   void (*convert32)       (void* buffer);
   void (*convert64)       (void* buffer);
   void (*convert128)      (void* buffer);
-  void (*convertArray8)   (void* buffer, NAInt count);
-  void (*convertArray16)  (void* buffer, NAInt count);
-  void (*convertArray32)  (void* buffer, NAInt count);
-  void (*convertArray64)  (void* buffer, NAInt count);
-  void (*convertArray128) (void* buffer, NAInt count);
+  void (*convertArray8)   (void* buffer, NAUInt count);
+  void (*convertArray16)  (void* buffer, NAUInt count);
+  void (*convertArray32)  (void* buffer, NAUInt count);
+  void (*convertArray64)  (void* buffer, NAUInt count);
+  void (*convertArray128) (void* buffer, NAUInt count);
 };
 
 
@@ -219,10 +219,8 @@ NA_IDEF void naConvertNative128(void* buffer){
 // Convert between two same Endiannesses. Array converters
 // //////////////////////////////
 
-NA_IDEF void naConvertArrayNative8(void* buffer, NAInt count){
+NA_IDEF void naConvertArrayNative8(void* buffer, NAUInt count){
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayN8", "count is negative");
     if(!buffer)
       naError("naConvertArrayN8", "buffer is Null-Pointer");
   #endif
@@ -230,10 +228,8 @@ NA_IDEF void naConvertArrayNative8(void* buffer, NAInt count){
   NA_UNUSED_PARAMETER(count);
 }
 
-NA_IDEF void naConvertArrayNative16(void* buffer, NAInt count){
+NA_IDEF void naConvertArrayNative16(void* buffer, NAUInt count){
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayN16", "count is negative");
     if(!buffer)
       naError("naConvertArrayN16", "buffer is Null-Pointer");
   #endif
@@ -241,10 +237,8 @@ NA_IDEF void naConvertArrayNative16(void* buffer, NAInt count){
   NA_UNUSED_PARAMETER(count);
 }
 
-NA_IDEF void naConvertArrayNative32(void* buffer, NAInt count){
+NA_IDEF void naConvertArrayNative32(void* buffer, NAUInt count){
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayN32", "count is negative");
     if(!buffer)
       naError("naConvertArrayN32", "buffer is Null-Pointer");
   #endif
@@ -252,10 +246,8 @@ NA_IDEF void naConvertArrayNative32(void* buffer, NAInt count){
   NA_UNUSED_PARAMETER(count);
 }
 
-NA_IDEF void naConvertArrayNative64(void* buffer, NAInt count){
+NA_IDEF void naConvertArrayNative64(void* buffer, NAUInt count){
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayN64", "count is negative");
     if(!buffer)
       naError("naConvertArrayN64", "buffer is Null-Pointer");
   #endif
@@ -263,10 +255,8 @@ NA_IDEF void naConvertArrayNative64(void* buffer, NAInt count){
   NA_UNUSED_PARAMETER(count);
 }
 
-NA_IDEF void naConvertArrayNative128(void* buffer, NAInt count){
+NA_IDEF void naConvertArrayNative128(void* buffer, NAUInt count){
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayN128", "count is negative");
     if(!buffer)
       naError("naConvertArrayN128", "buffer is Null-Pointer");
   #endif
@@ -351,10 +341,8 @@ NA_IDEF void naConvertLittleBig128(void* buffer){
 // Conversions Little to Big and vice versa. Array converters
 // //////////////////////////////
 
-NA_IDEF void naConvertArrayLittleBig8(void* buffer, NAInt count){
+NA_IDEF void naConvertArrayLittleBig8(void* buffer, NAUInt count){
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayLittleBig8", "count is negative");
     if(!buffer)
       naError("naConvertArrayLittleBig8", "buffer is Null-Pointer");
   #endif
@@ -362,11 +350,9 @@ NA_IDEF void naConvertArrayLittleBig8(void* buffer, NAInt count){
   NA_UNUSED_PARAMETER(count);
 }
 
-NA_IDEF void naConvertArrayLittleBig16(void* buffer, NAInt count){
-  NAInt i; // Declaration before implementation. Needed for C90
+NA_IDEF void naConvertArrayLittleBig16(void* buffer, NAUInt count){
+  NAUInt i; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayLittleBig16", "count is negative");
     if(!buffer)
       naError("naConvertArrayLittleBig16", "buffer is Null-Pointer");
   #endif
@@ -376,11 +362,9 @@ NA_IDEF void naConvertArrayLittleBig16(void* buffer, NAInt count){
   }
 }
 
-NA_IDEF void naConvertArrayLittleBig32(void* buffer, NAInt count){
-  NAInt i; // Declaration before implementation. Needed for C90
+NA_IDEF void naConvertArrayLittleBig32(void* buffer, NAUInt count){
+  NAUInt i; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayLittleBig32", "count is negative");
     if(!buffer)
       naError("naConvertArrayLittleBig32", "buffer is Null-Pointer");
   #endif
@@ -390,11 +374,9 @@ NA_IDEF void naConvertArrayLittleBig32(void* buffer, NAInt count){
   }
 }
 
-NA_IDEF void naConvertArrayLittleBig64(void* buffer, NAInt count){
-  NAInt i; // Declaration before implementation. Needed for C90
+NA_IDEF void naConvertArrayLittleBig64(void* buffer, NAUInt count){
+  NAUInt i; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayLittleBig64", "count is negative");
     if(!buffer)
       naError("naConvertArrayLittleBig64", "buffer is Null-Pointer");
   #endif
@@ -404,11 +386,9 @@ NA_IDEF void naConvertArrayLittleBig64(void* buffer, NAInt count){
   }
 }
 
-NA_IDEF void naConvertArrayLittleBig128(void* buffer, NAInt count){
-  NAInt i; // Declaration before implementation. Needed for C90
+NA_IDEF void naConvertArrayLittleBig128(void* buffer, NAUInt count){
+  NAUInt i; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
-    if(count < 0)
-      naError("naConvertArrayLittleBig128", "count is negative");
     if(!buffer)
       naError("naConvertArrayLittleBig128", "buffer is Null-Pointer");
   #endif
@@ -448,19 +428,19 @@ NA_IDEF void naConvertArrayLittleBig128(void* buffer, NAInt count){
   }
 
   // Native <-> Little. Array converters
-  NA_IDEF void naConvertArrayNativeLittle8(  void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeLittle8(  void* buffer, NAUInt count){
     naConvertArrayNative8(buffer, count);
   }
-  NA_IDEF void naConvertArrayNativeLittle16( void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeLittle16( void* buffer, NAUInt count){
     naConvertArrayNative16(buffer, count);
   }
-  NA_IDEF void naConvertArrayNativeLittle32( void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeLittle32( void* buffer, NAUInt count){
     naConvertArrayNative32(buffer, count);
   }
-  NA_IDEF void naConvertArrayNativeLittle64( void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeLittle64( void* buffer, NAUInt count){
     naConvertArrayNative64(buffer, count);
   }
-  NA_IDEF void naConvertArrayNativeLittle128(void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeLittle128(void* buffer, NAUInt count){
     naConvertArrayNative128(buffer, count);
   }
 
@@ -482,19 +462,19 @@ NA_IDEF void naConvertArrayLittleBig128(void* buffer, NAInt count){
   }
 
   // Native <-> Big. Array converters
-  NA_IDEF void naConvertArrayNativeBig8(  void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeBig8(  void* buffer, NAUInt count){
     naConvertArrayLittleBig8(buffer, count);
   }
-  NA_IDEF void naConvertArrayNativeBig16( void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeBig16( void* buffer, NAUInt count){
     naConvertArrayLittleBig16(buffer, count);
   }
-  NA_IDEF void naConvertArrayNativeBig32( void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeBig32( void* buffer, NAUInt count){
     naConvertArrayLittleBig32(buffer, count);
   }
-  NA_IDEF void naConvertArrayNativeBig64( void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeBig64( void* buffer, NAUInt count){
     naConvertArrayLittleBig64(buffer, count);
   }
-  NA_IDEF void naConvertArrayNativeBig128(void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeBig128(void* buffer, NAUInt count){
     naConvertArrayLittleBig128(buffer, count);
   }
 
@@ -518,19 +498,19 @@ NA_IDEF void naConvertArrayLittleBig128(void* buffer, NAInt count){
   }
 
   // Native <-> Little. Array converters
-  NA_IDEF void naConvertArrayNativeLittle8(  void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeLittle8(  void* buffer, NAUInt count){
     naConvertArrayLittleBig8(buffer, count);
   }
-  NA_IDEF void naConvertArrayNativeLittle16( void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeLittle16( void* buffer, NAUInt count){
     naConvertArrayLittleBig16(buffer, count);
   }
-  NA_IDEF void naConvertArrayNativeLittle32( void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeLittle32( void* buffer, NAUInt count){
     naConvertArrayLittleBig32(buffer, count);
   }
-  NA_IDEF void naConvertArrayNativeLittle64( void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeLittle64( void* buffer, NAUInt count){
     naConvertArrayLittleBig64(buffer, count);
   }
-  NA_IDEF void naConvertArrayNativeLittle128(void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeLittle128(void* buffer, NAUInt count){
     naConvertArrayLittleBig128(buffer, count);
   }
 
@@ -552,19 +532,19 @@ NA_IDEF void naConvertArrayLittleBig128(void* buffer, NAInt count){
   }
 
   // Native <-> Big. Array converters
-  NA_IDEF void naConvertArrayNativeBig8(  void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeBig8(  void* buffer, NAUInt count){
     naConvertArrayN8(buffer, count);
   }
-  NA_IDEF void naConvertArrayNativeBig16( void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeBig16( void* buffer, NAUInt count){
     naConvertArrayN16(buffer, count);
   }
-  NA_IDEF void naConvertArrayNativeBig32( void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeBig32( void* buffer, NAUInt count){
     naConvertArrayN32(buffer, count);
   }
-  NA_IDEF void naConvertArrayNativeBig64( void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeBig64( void* buffer, NAUInt count){
     naConvertArrayN64(buffer, count);
   }
-  NA_IDEF void naConvertArrayNativeBig128(void* buffer, NAInt count){
+  NA_IDEF void naConvertArrayNativeBig128(void* buffer, NAUInt count){
     naConvertArrayN128(buffer, count);
   }
 
