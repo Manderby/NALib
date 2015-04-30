@@ -15,7 +15,7 @@ NA_DEF NAArray* naCreateArrayWithCount(NAArray* array, NAUInt typesize, NAUInt c
   if(!count){
     array = naInitializeEmptyArray(array);
   }else{
-    array = (NAArray*)naAllocateIfNull(array, sizeof(NAArray));
+    array = naAllocNALibStruct(array, NAArray);
     naCreateByteArrayWithSize(&(array->bytearray), typesize * count);
   }
   array->typesize = typesize;
@@ -44,7 +44,7 @@ NA_DEF NAArray* naCreateArrayWithConstBuffer(NAArray* array, const void* buffer,
   if(!count){
     array = naInitializeEmptyArray(array);
   }else{
-    array = (NAArray*)naAllocateIfNull(array, sizeof(NAArray));
+    array = naAllocNALibStruct(array, NAArray);
     naCreateByteArrayWithConstBuffer(&(array->bytearray), buffer, typesize * count);
   }
   array->typesize = typesize;
@@ -62,7 +62,7 @@ NA_DEF NAArray* naCreateArrayWithMutableBuffer(NAArray* array, void* buffer, NAU
   // is made if count is zero. With that, the takeownership parameter can
   // correctly be handeled and the buffer can be automatically free'd if count
   // is zero.
-  array = (NAArray*)naAllocateIfNull(array, sizeof(NAArray));
+  array = naAllocNALibStruct(array, NAArray);
   naCreateByteArrayWithMutableBuffer(&(array->bytearray), buffer, typesize * count, takeownership);
   array->typesize = typesize;
   return array;
@@ -74,7 +74,7 @@ NA_DEF NAArray* naCreateArrayExtraction(NAArray* dstarray, const NAArray* srcarr
   NAUInt positiveoffset;
   NAUInt positivecount;
   
-  dstarray = (NAArray*)naAllocateIfNull(dstarray, sizeof(NAArray));
+  dstarray = naAllocNALibStruct(dstarray, NAArray);
   dstarray->typesize = srcarray->typesize;
 
   naMakePositiveiInSize(&positiveoffset, &positivecount, offset, count, naGetArrayCount(srcarray));

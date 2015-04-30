@@ -1120,7 +1120,7 @@ NA_DEF NAString* naCreateStringFromSecondDifference(NAString* string,
   if(decimaldigits){
     NAString decimalformatstring;
     naCreateStringWithFormat(&decimalformatstring, ".%%0%dlld", decimaldigits);
-    naCreateStringWithFormat(&decimalstring, naGetStringConstUTF8Pointer(&decimalformatstring), decimals);
+    naCreateStringWithFormat(&decimalstring, naGetStringUTF8Pointer(&decimalformatstring), decimals);
     naClearString(&decimalformatstring);
   }else{
     naCreateString(&decimalstring);
@@ -1140,7 +1140,7 @@ NA_DEF NAString* naCreateStringFromSecondDifference(NAString* string,
     naCreateString(&signstring);
   }
   
-  naCreateStringWithFormat(string, "%s%s%s%s", naGetStringConstUTF8Pointer(&signstring), naGetStringConstUTF8Pointer(&daystring), naGetStringConstUTF8Pointer(&timestring), naGetStringConstUTF8Pointer(&decimalstring));
+  naCreateStringWithFormat(string, "%s%s%s%s", naGetStringUTF8Pointer(&signstring), naGetStringUTF8Pointer(&daystring), naGetStringUTF8Pointer(&timestring), naGetStringUTF8Pointer(&decimalstring));
   naClearString(&decimalstring);
   naClearString(&timestring);
   naClearString(&daystring);

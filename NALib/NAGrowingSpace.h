@@ -48,6 +48,7 @@
 // Opaque type. See explanation in readme.txt
 typedef struct NAGrowingSpace NAGrowingSpace;
 struct NAGrowingSpace{
+  NAArray       bytearrays; // Array of NAByteArray*
   NAList        arrays;     // List of NAByteArray*
   NAUInt        typesize;   // The size in bytes of the stored type
   NAUInt        usedcount;  // The used number of elements in the storage.

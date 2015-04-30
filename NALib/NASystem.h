@@ -50,7 +50,16 @@
 // //////////////////////////////////////////
 
 // Interesting read: http://sourceforge.net/p/predef/wiki/OperatingSystems/
-#if defined __APPLE__ && __MACH__
+#if defined _WIN32
+  #define NA_SYSTEM NA_SYSTEM_WINDOWS
+  #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_LITTLE
+  #if defined _WIN64
+    #define NA_SYSTEM_ADDRESS_BITS 64
+  #else
+    #define NA_SYSTEM_ADDRESS_BITS 32
+  #endif
+
+#elif defined __APPLE__ && __MACH__
   #define NA_SYSTEM NA_SYSTEM_MAC_OS_X
   #if defined __LITTLE_ENDIAN__
     #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_LITTLE
@@ -63,15 +72,6 @@
     #define NA_SYSTEM_ADDRESS_BITS 32
   #endif
   
-#elif (defined _WIN64) || (defined _WIN32)
-  #define NA_SYSTEM NA_SYSTEM_WINDOWS
-  #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_LITTLE
-  #if defined _WIN64
-    #define NA_SYSTEM_ADDRESS_BITS 64
-  #else
-    #define NA_SYSTEM_ADDRESS_BITS 32
-  #endif
-
 #else
   #warning "System not detected"
 #endif
@@ -138,9 +138,8 @@
 //
 // NA_API marks the declaration of a function which is intended to be used by
 // the programmer. Its counterpart is NA_DEF which marks the implementation of
-// the appropriate function. NA_API functions are explicitely marked with
-// NA_VISIBLE and can only be found in header files. NA_DEF functions can only
-// be found in implementation files.
+// the appropriate function. NA_API functions can only be found in header
+// files. NA_DEF functions can only be found in implementation files.
 //
 // Note that API stands for "Application Programming Interface" and DEF stands
 // for "Definition".
@@ -161,8 +160,8 @@
 //
 // Again, note that the following macros are just used for NALib, they may
 // very well differ in your own implementation!
-#define NA_API    NA_SYMBOL_VISIBLE
-#define NA_DEF      
+#define NA_API    NA_SYMBOL_HIDDEN
+#define NA_DEF    NA_SYMBOL_HIDDEN
 #define NA_IAPI   static NA_INLINE
 #define NA_IDEF   static NA_INLINE
 
@@ -176,6 +175,9 @@
 #define NA_HDEF   NA_SYMBOL_HIDDEN
 #define NA_HIAPI  static NA_INLINE
 #define NA_HIDEF  static NA_INLINE
+// Authors comment: Note that all symbols are declared and defined very
+// restrictive. Meaning: No function or variable of NALib will show up in a
+// library which is built with NALib.
 
 
 
@@ -370,7 +372,7 @@ typedef uint8     NAByte;
 // author, that in modern computers, speed is more important than space as
 // opposed to earlier times where wasting space was a complete no-go. When
 // using lots of Boolean values, there are better ways to store them than in
-// NABools anyway: Use C-style-masks or have a look at NABitArray.
+// NABools anyway: Use C-style-masks or have a look at BitArray.
 //
 // Also note that there is no distinction between C and C++. Therefore, NALib
 // never uses the bool type or the true and false keywords.

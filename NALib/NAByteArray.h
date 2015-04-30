@@ -20,7 +20,7 @@
 // providing an offset and a size relative to another NAByteArray. This allows
 // for very fast and convenient parsing of byte streams without copying
 // the bytes over and over again. This struct is also used by NAString and
-// NABitArray
+// BitArray
 
 
 #include "NASystem.h"
@@ -209,7 +209,7 @@ struct NAByteArray{
 
 
 NA_IDEF NAByteArray* naCreateByteArray(NAByteArray* array){
-  array = (NAByteArray*)naAllocateIfNull(array, sizeof(NAByteArray));
+  array = naAllocNALibStruct(array, NAByteArray);
   array->size = 0;
   return array;
 }

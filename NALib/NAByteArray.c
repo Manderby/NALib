@@ -12,7 +12,7 @@ NA_DEF NAByteArray* naCreateByteArrayWithSize(NAByteArray* array, NAInt size){
   if(!size){  // if size is zero
     array = naCreateByteArray(array);
   }else{
-    array = (NAByteArray*)naAllocateIfNull(array, sizeof(NAByteArray));
+    array = naAllocNALibStruct(array, NAByteArray);
     array->storage = naCreatePointerWithSize(NA_NULL, size);
     array->size = naAbsi(size);
     array->ptr.p = (NAByte*)naGetPointerMutableData(array->storage);
@@ -31,7 +31,7 @@ NA_DEF NAByteArray* naCreateByteArrayWithConstBuffer( NAByteArray* array, const 
   if(!size){  // if size is zero
     array = naCreateByteArray(array);
   }else{
-    array = (NAByteArray*)naAllocateIfNull(array, sizeof(NAByteArray));
+    array = naAllocNALibStruct(array, NAByteArray);
     array->storage = naCreatePointerWithConstBuffer(NA_NULL, buffer);
     array->ptr.constp = (const NAByte*)naGetPointerConstData(array->storage);
     array->size = size;
@@ -50,7 +50,7 @@ NA_DEF NAByteArray* naCreateByteArrayWithMutableBuffer(NAByteArray* array, void*
     array = naCreateByteArray(array);
     if(takeownership){free(buffer);}
   }else{
-    array = (NAByteArray*)naAllocateIfNull(array, sizeof(NAByteArray));
+    array = naAllocNALibStruct(array, NAByteArray);
     array->storage = naCreatePointerWithMutableBuffer(NA_NULL, buffer, takeownership);
     array->ptr.p = (NAByte*)naGetPointerMutableData(array->storage);
     array->size = size;
@@ -72,7 +72,7 @@ NA_DEF NAByteArray* naCreateByteArrayExtraction(NAByteArray* dstarray, const NAB
     }
   #endif
 
-  dstarray = (NAByteArray*)naAllocateIfNull(dstarray, sizeof(NAByteArray));
+  dstarray = naAllocNALibStruct(dstarray, NAByteArray);
   // Note that dstarray may be equal to srcarray.
 
   naMakePositiveiInSize(&positiveoffset, &positivesize, offset, size, naGetByteArraySize(srcarray));
@@ -103,7 +103,7 @@ NA_DEF NAByteArray* naCreateByteArrayExtraction(NAByteArray* dstarray, const NAB
 
 NA_DEF void naDecoupleByteArray(NAByteArray* array, NABool appendzerobytes){
   // Declaration before implementation. Needed for C90.
-  NAUInt arraysize;
+  NAInt arraysize;
   NAByte* buf;
   #ifndef NDEBUG
     if(!array){

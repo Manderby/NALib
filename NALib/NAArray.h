@@ -164,7 +164,7 @@ struct NAArray{
 // naCreateByteArray is defined inline whereas other creation functions of
 // NAByteArray are not.
 NA_HIDEF NAArray* naInitializeEmptyArray(NAArray* array){
-  array = (NAArray*)naAllocateIfNull(array, sizeof(NAArray));
+  array = naAllocNALibStruct(array, NAArray);
   naCreateByteArray(&(array->bytearray));
   return array;
 }
@@ -211,12 +211,15 @@ NA_IDEF void naDecoupleArray(NAArray* array){
 
 
 NA_IDEF void naForeachArray(NAArray* array, NAMutator mutator){
+  // Declaration before implementation. Needed for C90
+  NAUInt count;
+  NAByte* ptr;
   #ifndef NDEBUG
     if(!mutator)
       naError("naForeachArray", "Mutator is Null");
   #endif
-  NAUInt count = naGetArrayCount(array);
-  NAByte* ptr = naGetByteArrayMutablePointer(&(array->bytearray));
+  count = naGetArrayCount(array);
+  ptr = naGetByteArrayMutablePointer(&(array->bytearray));
   while(count){
     mutator(ptr);
     ptr += array->typesize;
