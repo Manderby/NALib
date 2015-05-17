@@ -137,6 +137,9 @@ NA_IAPI double        naCeil(double x);
 NA_IAPI float         naRoundf(float x);
 NA_IAPI double        naRound(double x);
 
+// Returns the modular value. Return value is always positive.
+NA_IAPI double        naMod(double x, double mod);
+
 // Returns the sinus
 NA_IAPI float         naSinf(float x);
 NA_IAPI double        naSin(double x);
@@ -570,6 +573,13 @@ NA_IDEF double naRound(double x){
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
     return round(x);
   #endif
+}
+
+
+NA_IAPI double naMod(double x, double mod){
+  double count = naFloor(x / mod);
+  if(x<0){count += 1.;}
+  return x - count * mod;
 }
 
 

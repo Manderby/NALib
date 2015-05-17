@@ -12,9 +12,18 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Highlights:
+
+Other things:
+- Added naMakePosiWithAlignment, naGetRectiEndPos, naGetRectiMaxPos
+- Changed naGetRectiIndexOfPosi to naGetRectiIndexOfPosiRowFirst and added
+  ColumnFirst and made the return type unsigned
+
+
 Version 9 (first published 2015-April-30):
 ==============================================
 
+Highlights:
 - Redesigned iteration functions of NAList
 - Added NAPointerContent, a pointer storing const or mutable data.
 - Added NAURL. Still very rough, but it's a start.
@@ -30,6 +39,7 @@ Version 9 (first published 2015-April-30):
 - NAHeap now stores const or mutable data. A new flag defines if the heap
   stores backpointers or not. Even faster than before!
 
+Other things:
 - Made NA_API and NA_DEF hidden
 - Added NA_API and NA_DEF for String and File functions
 - Added NA_SQRT3
@@ -102,6 +112,8 @@ Other things:
 - Removed NA_INVALID_INDEX
 - Re-entered return instructions after naCrash calls.
 - Improvement of some comments and some error checks
+
+
 
 
 Version 7 (first published 2014-October-6):

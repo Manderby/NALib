@@ -101,6 +101,10 @@ NA_IAPI NARecti   naMakeRectiE  (NAPosi pos,    NASizei size);
 NA_IAPI NABounds4   naMakeBounds4   (double top, double right, double bottom, double left);
 NA_IAPI NABounds4i  naMakeBounds4i  (NAInt top, NAInt right, NAInt bottom, NAInt left);
 
+// Creates a new pos which is floored to a multiple of alignment. Also works
+// for negative positions.
+NA_IAPI NAPosi    naMakePosiWithAlignment(NAPosi pos, NARecti alignrect);
+
 // Convert from and to the NAMinMax structure.
 NA_IAPI NARect      naMakeRectWithMinMax1   (NAMinMax1  minmax0, NAMinMax1  minmax1);
 NA_IAPI NARecti     naMakeRectiWithMinMax1i (NAMinMax1i minmax0, NAMinMax1i minmax1);
@@ -172,24 +176,38 @@ NA_IAPI NABool    naIsRectiInRecti(NARecti rect, NARecti outerrect);
 NA_IAPI double    naGetRectEndX (NARect  rect);
 NA_IAPI double    naGetRectEndY (NARect  rect);
 
-// Index functions of NARecti. Treats the rect as a description of a
-// 2-dimensional array with row-first ordering. (default C ordering)
+// Raw Index functions. Assuming a 2-dimensional array with row-first
+// or column-first ordering. Row-first is the default C ordering.
+NA_IAPI NAUInt   naGetIndexWithOriginAndPosiRowFirst(   NAPosi origin,
+                                                        NAPosi pos,
+                                                        NAUInt width);
+NA_IAPI NAUInt   naGetIndexWithOriginAndPosiColumnFirst(NAPosi origin,
+                                                        NAPosi pos,
+                                                        NAUInt height);
+
+// Computes the positions opposite to the origin (pos) of the rect.
 // End returns position + size
 // Max returns position + size - 1
-// Count returns the total count width*height
-// IndexOf returns the index of the corresponding 1-dimensional array.
 NA_IAPI NAPosi    naGetRectiEnd         (NARecti rect);
 NA_IAPI NAInt     naGetRectiEndX        (NARecti rect);
 NA_IAPI NAInt     naGetRectiEndY        (NARecti rect);
+NA_IAPI NAPosi    naGetRectiEndPos      (NARecti rect);
 NA_IAPI NAInt     naGetRectiMaxX        (NARecti rect);
 NA_IAPI NAInt     naGetRectiMaxY        (NARecti rect);
-NA_IAPI NAInt     naGetRectiIndexCount  (NARecti rect);
-NA_IAPI NAInt     naGetRectiIndexOfPosi (NARecti rect, NAPosi pos);
+NA_IAPI NAPosi    naGetRectiMaxPos      (NARecti rect);
+
+// Count returns the total count width*height of a rect
+// IndexOf returns the index of the corresponding 1-dimensional array.
+// Note that row-first is the default C ordering.
+NA_IAPI NAInt     naGetRectiIndexCount              (NARecti rect);
+NA_IAPI NAUInt    naGetRectiIndexOfPosiRowFirst     (NARecti rect, NAPosi pos);
+NA_IAPI NAUInt    naGetRectiIndexOfPosiColumnFirst  (NARecti rect, NAPosi pos);
 // Example:    Rect(Pos(2, 5), Size(4, 3)) describes a 2D-field. It stores
 //             a corresponding 1D-Array {a, b, c, d, e, f, g, h, i, j, k, l}.
 // (a b c d)   End is (6, 8), Max is (5, 7). Count is 3*4 = 12
 // (e f g h)   The result of naGetRectiIndexOfPosi with position (5, 6)
 // (i j k l)   returns 7, the index of 'h'
+
 
 
 // Testing functions
@@ -383,7 +401,6 @@ NA_IDEF NARecti naMakeRectiE(NAPosi pos, NASizei size){
 
 
 
-
 NA_IDEF NABounds4 naMakeBounds4(double top, double right, double bottom, double left){
   NABounds4 newbounds;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
@@ -413,6 +430,27 @@ NA_IDEF NABounds4i naMakeBounds4i(NAInt top, NAInt right, NAInt bottom, NAInt le
   newbounds.bottom = bottom;
   newbounds.left = left;
   return newbounds;
+}
+
+
+
+NA_IDEF NAPosi naMakePosiWithAlignment(NAPosi pos, NARecti alignrect){
+  NAPosi newpos;
+  pos.x -= alignrect.pos.x;
+  pos.y -= alignrect.pos.y;
+  if(pos.x < 0){
+    newpos.x = (((pos.x + 1) / alignrect.size.width) - 1) * alignrect.size.width;
+  }else{
+    newpos.x = (pos.x / alignrect.size.width) * alignrect.size.width;
+  }
+  if(pos.y < 0){
+    newpos.y = (((pos.y + 1) / alignrect.size.height) - 1) * alignrect.size.height;
+  }else{
+    newpos.y = (pos.y / alignrect.size.height) * alignrect.size.height;
+  }
+  newpos.x += alignrect.pos.x;
+  newpos.y += alignrect.pos.y;
+  return newpos;
 }
 
 
@@ -614,7 +652,7 @@ NA_IDEF NARecti naMakeRectiWithPosiAndPosi(NAPosi pos1, NAPosi pos2){
 NA_IDEF NARecti naMakeRectiWithRectiAndPosi(NARecti rect, NAPosi pos){
   // Declaration before implementation. Needed for C90.
   NARecti newrect;
-  NAInt end;
+  NAInt max;
   #ifndef NDEBUG
     if(naIsRectiEmpty(rect))
       naError("naMakeRectiWithRectiAndPosi", "rect is empty.");
@@ -627,10 +665,10 @@ NA_IDEF NARecti naMakeRectiWithRectiAndPosi(NARecti rect, NAPosi pos){
   newrect.pos.y = naMini(rect.pos.y, pos.y);
   // Note: We do compute the end instead of the max, because this may require
   // one less instruction. Save whatever you can!
-  end = naGetRectiMaxX(rect);
-  newrect.size.width  = naStartAndEndToSizei(newrect.pos.x, naMaxi(end, naMaxToEndi(pos.x)));
-  end = naGetRectiMaxY(rect);
-  newrect.size.height = naStartAndEndToSizei(newrect.pos.y, naMaxi(end, naMaxToEndi(pos.y)));
+  max = naGetRectiMaxX(rect);
+  newrect.size.width  = naMinAndMaxToSizei(newrect.pos.x, naMaxi(max, pos.x));
+  max = naGetRectiMaxY(rect);
+  newrect.size.height = naMinAndMaxToSizei(newrect.pos.y, naMaxi(max, pos.y));
   return newrect;
 }
 
@@ -638,7 +676,7 @@ NA_IDEF NARecti naMakeRectiWithRectiAndPosi(NARecti rect, NAPosi pos){
 NA_IDEF NARecti naMakeRectiWithRectiAndPosiE(NARecti rect, NAPosi pos){
   // Declaration before implementation. Needed for C90.
   NARecti newrect;
-  NAInt end;
+  NAInt max;
   #ifndef NDEBUG
     if(!naIsRectiValid(rect))
       naError("naMakeRectiWithRectiAndPosi", "rect is invalid.");
@@ -653,10 +691,10 @@ NA_IDEF NARecti naMakeRectiWithRectiAndPosiE(NARecti rect, NAPosi pos){
     newrect.pos.y = naMini(rect.pos.y, pos.y);
     // Note: We do compute the end instead of the max, because this may require
     // one less instruction. Save whatever you can!
-    end = naGetRectiMaxX(rect);
-    newrect.size.width  = naStartAndEndToSizei(newrect.pos.x, naMaxi(end, naMaxToEndi(pos.x)));
-    end = naGetRectiMaxY(rect);
-    newrect.size.height = naStartAndEndToSizei(newrect.pos.y, naMaxi(end, naMaxToEndi(pos.y)));
+    max = naGetRectiMaxX(rect);
+    newrect.size.width  = naMinAndMaxToSizei(newrect.pos.x, naMaxi(max, pos.x));
+    max = naGetRectiMaxY(rect);
+    newrect.size.height = naMinAndMaxToSizei(newrect.pos.y, naMaxi(max, pos.y));
   }
   return newrect;
 }
@@ -1115,6 +1153,13 @@ NA_IDEF NABool naIsRectiInRecti(NARecti rect, NARecti outerrect){
 }
 
 
+NA_IDEF NAUInt naGetIndexWithOriginAndPosiRowFirst(NAPosi origin, NAPosi pos, NAUInt width){
+  return (pos.y - origin.y) * width + (pos.x - origin.x);
+}
+NA_IDEF NAUInt naGetIndexWithOriginAndPosiColumnFirst(NAPosi origin, NAPosi pos, NAUInt height){
+  return (pos.x - origin.x) * height + (pos.y - origin.y);
+}
+
 
 NA_IDEF double naGetRectEndX (NARect  rect){
   #ifndef NDEBUG
@@ -1161,6 +1206,12 @@ NA_IDEF NAInt naGetRectiEndY(NARecti rect){
   #endif
   return naPosAndSizeToEndi(rect.pos.y, rect.size.height);
 }
+NA_IDEF NAPosi naGetRectiEndPos(NARecti rect){
+  NAPosi newpos;
+  newpos.x = naGetRectiEndX(rect);
+  newpos.y = naGetRectiEndY(rect);
+  return newpos;
+}
 NA_IDEF NAInt naGetRectiMaxX(NARecti rect){
   #ifndef NDEBUG
     if(naIsRectiEmpty(rect))
@@ -1179,6 +1230,12 @@ NA_IDEF NAInt naGetRectiMaxY(NARecti rect){
   #endif
   return naPosAndSizeToMaxi(rect.pos.y, rect.size.height);
 }
+NA_IDEF NAPosi naGetRectiMaxPos(NARecti rect){
+  NAPosi newpos;
+  newpos.x = naGetRectiMaxX(rect);
+  newpos.y = naGetRectiMaxY(rect);
+  return newpos;
+}
 NA_IDEF NAInt naGetRectiIndexCount(NARecti rect){
   #ifndef NDEBUG
     if(naIsRectiEmpty(rect))
@@ -1188,9 +1245,7 @@ NA_IDEF NAInt naGetRectiIndexCount(NARecti rect){
   #endif
   return rect.size.width * rect.size.height;
 }
-
-
-NA_IDEF NAInt naGetRectiIndexOfPosi(NARecti rect, NAPosi pos){
+NA_IDEF NAUInt naGetRectiIndexOfPosiRowFirst(NARecti rect, NAPosi pos){
   #ifndef NDEBUG
     if(naIsRectiEmpty(rect))
       naError("naGetRectiIndexOfPosi", "rect is empty.");
@@ -1201,7 +1256,20 @@ NA_IDEF NAInt naGetRectiIndexOfPosi(NARecti rect, NAPosi pos){
     if(!naIsPosiInRecti(pos, rect))
       naError("naGetRectiIndexOfPosi", "pos is not inside rect.");
   #endif
-  return (pos.y - rect.pos.y) * rect.size.width + (pos.x - rect.pos.x);
+  return naGetIndexWithOriginAndPosiRowFirst(rect.pos, pos, rect.size.width);
+}
+NA_IDEF NAUInt naGetRectiIndexOfPosiColumnFirst(NARecti rect, NAPosi pos){
+  #ifndef NDEBUG
+    if(naIsRectiEmpty(rect))
+      naError("naGetRectiIndexOfPosi", "rect is empty.");
+    if(!naIsRectiValid(rect))
+      naError("naGetRectiIndexOfPosi", "rect is invalid.");
+    if(!naIsPosiValid(pos))
+      naError("naGetRectiIndexOfPosi", "pos is invalid.");
+    if(!naIsPosiInRecti(pos, rect))
+      naError("naGetRectiIndexOfPosi", "pos is not inside rect.");
+  #endif
+  return naGetIndexWithOriginAndPosiColumnFirst(rect.pos, pos, rect.size.height);
 }
 
 

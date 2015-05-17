@@ -69,6 +69,7 @@
 		B9A9A0191AF2085300CC6EFF /* NAURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAURL.h; sourceTree = "<group>"; };
 		B9A9A01A1AF2085300CC6EFF /* NAVectorAlgebra.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAVectorAlgebra.h; sourceTree = "<group>"; };
 		B9B2EA121716922700943D91 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
+		B9B440051AF260D3008B184C /* NAQuadTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAQuadTree.h; sourceTree = "<group>"; };
 		B9DD395519AB329500A0F139 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = test/main.c; sourceTree = "<group>"; };
 		B9E8D2C41861D57500D6CCC4 /* NALibChangelogSinceV0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NALibChangelogSinceV0.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -97,6 +98,7 @@
 				B9A9A0001AF2085300CC6EFF /* NACoord.h */,
 				B9A9A0011AF2085300CC6EFF /* NADateTime.c */,
 				B9A9A0021AF2085300CC6EFF /* NADateTime.h */,
+				B9B440051AF260D3008B184C /* NAQuadTree.h */,
 				B9A9A0031AF2085300CC6EFF /* NAEndianness.h */,
 				B9A9A0041AF2085300CC6EFF /* NAFile.c */,
 				B9A9A0051AF2085300CC6EFF /* NAFile.h */,

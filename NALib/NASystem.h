@@ -484,6 +484,7 @@ typedef int NABool;
 // This is the type of a constructor and destructor callback which is used by
 // some naCreateXXX as well as some naClearXXX and naDestroyXXX functions.
 // See readme for detailed informations.
+typedef void* (*NAAllocator)  (void);
 typedef void* (*NAConstructor)(void *);
 typedef void  (*NADestructor) (void *);
 typedef void  (*NAMutator)    (void *);
