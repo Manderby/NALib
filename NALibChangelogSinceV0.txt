@@ -18,6 +18,7 @@ Other things:
 - Added naMakePosiWithAlignment, naGetRectiEndPos, naGetRectiMaxPos
 - Changed naGetRectiIndexOfPosi to naGetRectiIndexOfPosiRowFirst and added
   ColumnFirst and made the return type unsigned
+- Fixed an awkward error in NAPointer which caused data to be not owned.
 
 
 Version 9 (first published 2015-April-30):

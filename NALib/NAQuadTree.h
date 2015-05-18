@@ -166,12 +166,12 @@ NA_HIDEF NAQuadTreeNode* naDuplicateQuadTreeNode(NAQuadTree* newtree, NAQuadTree
       }
     }
   }
-  if(newtree->callbacks.nodeallocator){
-    NAInt size = newnode->childrect[0].size.width * 2;
-    newnode->nodedata = newtree->callbacks.nodeallocator(naMakeRecti(newnode->childrect[0].pos, naMakeSizei(size, size)));
-  }else{
-    newnode->nodedata = NA_NULL;
-  }
+//  if(newtree->callbacks.nodeallocator){
+//    NAInt size = newnode->childrect[0].size.width * 2;
+//    newnode->nodedata = newtree->callbacks.nodeallocator(naMakeRecti(newnode->childrect[0].pos, naMakeSizei(size, size)));
+//  }else{
+//    newnode->nodedata = NA_NULL;
+//  }
   return newnode;
 }
 
@@ -213,6 +213,7 @@ NA_HIDEF void naDestroyQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* node){
   if(node->child[2]){naDestroyQuadTreeNodeSegment(tree, node, 2);}
   if(node->child[3]){naDestroyQuadTreeNodeSegment(tree, node, 3);}
   if(tree->callbacks.nodedestructor){tree->callbacks.nodedestructor(node->nodedata);}
+  free(node);
 }
 
 
@@ -249,6 +250,8 @@ NA_IAPI NAQuadTree* naCreateQuadTreeDuplicate(NAQuadTree* newtree, const NAQuadT
       naNextGrowingSpaceElement(&leafs);
       curleaf = naGetGrowingSpaceMutableContent(&leafs);
     }
+    
+    naClearGrowingSpace(&leafs, NA_NULL);
   }
   return newtree;
 }
@@ -347,14 +350,17 @@ NA_IDEF NAQuadTree* naCreateQuadTreeWithDeserialization(NAQuadTree* tree, const 
     int64 posx = *((const int64*)dataptr); dataptr += sizeof(int64);
     int64 posy = *((const int64*)dataptr); dataptr += sizeof(int64);
     datasize -= 2 * sizeof(int64);
+    // Create the leaf temporarily but delete it immediately and recreate it
+    // as a deserialization.
     naLocateQuadTreePosi(tree, naMakePosi(posx, posy), NA_TRUE);
-    void* newdata = naGetQuadTreeMutable(tree, NA_NULL);
+    callbacks.datadestructor(tree->curnode->child[tree->cursegment]);
     tree->curnode->child[tree->cursegment] = callbacks.deserialize(naMakeRecti(naMakePosi(posx, posy), naMakeSizei(minchildsize, minchildsize)), dataptr);
     naUpdateQuadTreeLeaf(tree, tree->curnode, tree->cursegment);
     uint64 bytesread = callbacks.serialize(NA_NULL, tree->curnode->child[tree->cursegment]);
     dataptr += bytesread;
     datasize -= bytesread;
   }
+  return tree;
 }
 
 
@@ -386,7 +392,7 @@ NA_IAPI void naSerializeQuadTree(const NAQuadTree* tree, void* buf, uint64* byte
       naError("naCreateQuadTreeWithDeserialization", "Callbacks required for serialization");
     if(!bytesize)
       naError("naCreateQuadTreeWithDeserialization", "bytesize required to read/store byte size");
-    if(*bytesize == 0)
+    if(buf && (*bytesize == 0))
       naError("naCreateQuadTreeWithDeserialization", "bytesize is zero");
   #endif
   NAGrowingSpace leafs;

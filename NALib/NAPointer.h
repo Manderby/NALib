@@ -405,7 +405,7 @@ struct NAPointer{
 // this but the author decided to use masks, as bit fields might introduce
 // unnecessary algorithmic CPU operations when accessing refcount.
 #define NA_POINTER_OWN_STRUCT     ((NAInt)1 << (NA_SYSTEM_ADDRESS_BITS - 1))
-#define NA_POINTER_OWN_DATA       ((NAInt)2 << (NA_SYSTEM_ADDRESS_BITS - 1))
+#define NA_POINTER_OWN_DATA       ((NAInt)1 << (NA_SYSTEM_ADDRESS_BITS - 2))
 #define NA_POINTER_REFCOUNT_MASK  (~(   NA_POINTER_OWN_STRUCT\
                                       | NA_POINTER_OWN_DATA))
 
