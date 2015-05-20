@@ -343,7 +343,7 @@ NA_API void naParseStringToken(NAString* string, NAString* token);
 // will not be stripped at all. Both strings might also be empty after this
 // function. Warning: the two arguments shall not be the same as the result is
 // undefined.
-NA_API void naParseStringTokenWithDelimiter( NAString* string,
+NA_API NAString* naParseStringTokenWithDelimiter( NAString* string,
                                              NAString* token,
                                             NAUTF8Char delimiter);
 

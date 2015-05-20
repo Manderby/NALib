@@ -986,7 +986,7 @@ NA_DEF void naParseStringToken(NAString* string, NAString* token){
 
 
 
-NA_DEF void naParseStringTokenWithDelimiter(NAString* string, NAString* token, NAUTF8Char delimiter){
+NA_DEF NAString* naParseStringTokenWithDelimiter(NAString* string, NAString* token, NAUTF8Char delimiter){
   // Declaration before implementation. Needed for C90.
   NAUInt stringsize;
   NAUInt tokensize = 0;
@@ -1008,7 +1008,7 @@ NA_DEF void naParseStringTokenWithDelimiter(NAString* string, NAString* token, N
     naCreateString(token);
   }
   // We now are sure that token is empty.
-  if(naIsStringEmpty(string)){return;}
+  if(naIsStringEmpty(string)){return token;}
 
   stringsize = naGetStringSize(string);
   charptr = (NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
@@ -1043,7 +1043,7 @@ NA_DEF void naParseStringTokenWithDelimiter(NAString* string, NAString* token, N
   naCreateStringExtraction(token, string, 0, -1);
   naClearString(string);
   naCreateString(string);
-  return;
+  return token;
 }
 
 
