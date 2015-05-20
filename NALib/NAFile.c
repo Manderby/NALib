@@ -55,7 +55,9 @@ NA_DEF NAString* naCreateStringFromFileContents(NAString* string, const char* fi
       naError("naCreateStringFromFileContents", "Trying to read more than 2 GiB of data from file");
   #endif
   // todo: encoding.
- return naCreateStringFromFile(string, &file, totalsize);
+ string = naCreateStringFromFile(string, &file, totalsize);
+ naCloseFile(&file);
+ return string;
 }
 
 

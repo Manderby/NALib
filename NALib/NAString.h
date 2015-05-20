@@ -210,19 +210,23 @@ NA_API void naDestroyString(NAString* string);
 // copied and the resulting string will be NULL-terminated.
 // Warning: Any NAString being an extraction of the first argument will still
 // point to the unaltered version of string after this function!
-NA_API void naAppendStringWithString(    NAString* string,
+NA_API NAString* naCreateStringWithStringAppendingString(    NAString* string,
+                                   const NAString* string1,
                                    const NAString* string2);
 // Appends an UTF-8 character
-NA_API void naAppendStringWithChar(     NAString* string,
+NA_API NAString* naCreateStringWithStringAppendingChar(     NAString* string,
+                                       const NAString* originalstring,
                                        NAUTF8Char newchar);
 // Appends an UTF-8 C-String formatted just like sprintf. You can use this
 // function to append C-Strings without arguments as well.
-NA_API void naAppendStringWithFormat(    NAString* string,
+NA_API NAString* naCreateStringWithStringAppendingFormat(    NAString* string,
+                                 const NAString* originalstring,
                                  const NAUTF8Char* format,
                                                    ...);
 // Does the same thing but with an existing va_list argument. The argumentlist
 // argument will not be altered by this function.
-NA_API void naAppendStringWithArguments( NAString* string,
+NA_API NAString* naCreateStringWithStringAppendingArguments( NAString* string,
+                                 const NAString* originalstring,
                                  const NAUTF8Char* format,
                                            va_list argumentlist);
 

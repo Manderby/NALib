@@ -12,13 +12,20 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+
 Highlights:
+- Added NAQuadTree. A structure storing integer quad trees with arbitrary
+  contents and many callbacks
 
 Other things:
 - Added naMakePosiWithAlignment, naGetRectiEndPos, naGetRectiMaxPos
 - Changed naGetRectiIndexOfPosi to naGetRectiIndexOfPosiRowFirst and added
   ColumnFirst and made the return type unsigned
 - Fixed an awkward error in NAPointer which caused data to be not owned.
+- Fixed a memory leak in naCreateStringFromFileContents
+- Altered naAppendString functions to naCreateString functions and fixed
+  some potential memory leaks.
+
 
 
 Version 9 (first published 2015-April-30):

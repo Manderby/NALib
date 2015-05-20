@@ -448,51 +448,49 @@ NA_DEF void naDestroyString(NAString* string){
 
 
 
-NA_DEF void naAppendStringWithString(    NAString* string,
+NA_DEF NAString* naCreateStringWithStringAppendingString(    NAString* string,
+                            const NAString* string1,
                             const NAString* string2){
-  NAString newstring;
-  NAUInt stringsize1 = naGetStringSize(string);
+  NAUInt stringsize1 = naGetStringSize(string1);
   NAUInt stringsize2 = naGetStringSize(string2);
   NAInt totalstringsize = stringsize1 + stringsize2;
   NAUTF8Char* stringbuf = naAllocate(-totalstringsize);
-  naCreateStringWithMutableUTF8Buffer(&newstring, stringbuf, -totalstringsize, NA_TRUE);
-  if(stringsize1){naCpyn(stringbuf, naGetStringUTF8Pointer(string), stringsize1);}
+  if(stringsize1){naCpyn(stringbuf, naGetStringUTF8Pointer(string1), stringsize1);}
   if(stringsize2){naCpyn(&(stringbuf[stringsize1]), naGetStringUTF8Pointer(string2), stringsize2);}
-  naClearString(string);
-  naCreateStringExtraction(string, &newstring, 0, -1);
-  naClearString(&newstring);
+  string = naCreateStringWithMutableUTF8Buffer(string, stringbuf, -totalstringsize, NA_TRUE);
+  return string;
 }
 
 
-NA_DEF void naAppendStringWithChar(      NAString* string,
+NA_DEF NAString* naCreateStringWithStringAppendingChar(      NAString* string,
+                                 const NAString* originalstring,
                                  NAUTF8Char newchar){
-  NAString newstring;
-  NAUInt stringsize = naGetStringSize(string);
+  NAUInt stringsize = naGetStringSize(originalstring);
   NAInt totalstringsize = stringsize + 1;
   NAUTF8Char* stringbuf = naAllocate(-totalstringsize);
-  naCreateStringWithMutableUTF8Buffer(&newstring, stringbuf, -totalstringsize, NA_TRUE);
-  naCpyn(stringbuf, naGetStringUTF8Pointer(string), stringsize);
+  naCpyn(stringbuf, naGetStringUTF8Pointer(originalstring), stringsize);
   stringbuf[stringsize] = newchar;
-  naClearString(string);
-  naCreateStringExtraction(string, &newstring, 0, -1);
-  naClearString(&newstring);
+  string = naCreateStringWithMutableUTF8Buffer(string, stringbuf, -totalstringsize, NA_TRUE);
+  return string;
 }
 
-NA_DEF void naAppendStringWithFormat(    NAString* string,
+NA_DEF NAString* naCreateStringWithStringAppendingFormat(    NAString* string,
+                          const NAString* originalstring,
                           const NAUTF8Char* format,
                                             ...){
   va_list argumentlist;
   va_start(argumentlist, format);
-  naAppendStringWithArguments(string, format, argumentlist);
+  string = naCreateStringWithStringAppendingArguments(string, originalstring, format, argumentlist);
   va_end(argumentlist);
+  return string;
 }
 
 
-NA_DEF void naAppendStringWithArguments( NAString* string,
+NA_DEF NAString* naCreateStringWithStringAppendingArguments( NAString* string,
+                          const NAString* originalstring,
                           const NAUTF8Char* format,
                                     va_list argumentlist){
   // Declaration before implementation. Needed for C90.
-  NAString newstring;
   NAUInt stringsize1 = naGetStringSize(string);
   NAUInt stringsize2;
   NAInt totalstringsize;
@@ -502,8 +500,8 @@ NA_DEF void naAppendStringWithArguments( NAString* string,
 
   #ifndef NDEBUG
     if(!string){
-      naCrash("naAppendStringWithArguments", "string is Null-Pointer.");
-      return;
+      naCrash("naCreateStringWithStringAppendingArguments", "string is Null-Pointer.");
+      return NA_NULL;
     }
   #endif
   va_copy(argumentlist2, argumentlist);
@@ -511,14 +509,12 @@ NA_DEF void naAppendStringWithArguments( NAString* string,
   stringsize2 = naVarargStringSize(format, argumentlist2);
   totalstringsize = stringsize1 + stringsize2;
   stringbuf = naAllocate(-totalstringsize);
-  naCreateStringWithMutableUTF8Buffer(&newstring, stringbuf, -totalstringsize, NA_TRUE);
   if(stringsize1){naCpyn(stringbuf, naGetStringUTF8Pointer(string), stringsize1);}
   naVsnprintf(&(stringbuf[stringsize1]), stringsize2 + 1, format, argumentlist3);
   va_end(argumentlist2);
   va_end(argumentlist3);
-  naClearString(string);
-  naCreateStringExtraction(string, &newstring, 0, -1);
-  naClearString(&newstring);
+  string = naCreateStringWithMutableUTF8Buffer(string, stringbuf, -totalstringsize, NA_TRUE);
+  return string;
 }
 
 
