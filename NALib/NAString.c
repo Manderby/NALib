@@ -996,7 +996,7 @@ NA_DEF NAString* naParseStringTokenWithDelimiter(NAString* string, NAString* tok
   #ifndef NDEBUG
     if(!string){
       naCrash("naParseStringTokenWithDelimiter", "string is Null-Pointer.");
-      return;
+      return NA_NULL;
     }
     if(token == string)
       naError("naParseStringTokenWithDelimiter", "token and string shall not be the same.");
@@ -1030,7 +1030,7 @@ NA_DEF NAString* naParseStringTokenWithDelimiter(NAString* string, NAString* tok
         // Remember, we are sure that token is not empty.
         naCreateStringExtraction(token, string, 0, tokensize);
         naCreateStringExtraction(string, string, tokensize + 1, -1);
-        return;
+        return token;
       }
     }
     tokensize++;
