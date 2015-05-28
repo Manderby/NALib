@@ -259,10 +259,26 @@ NA_IDEF void* naAllocate(NAInt size){
   #endif
 
   if(size>0){
-    ptr = (NAByte*)malloc(size);
+    #ifndef NDEBUG
+//      if(size > SIZE_MAX)
+//        naError("naAllocate", "given size overflows size_t type.");
+    #endif
+    ptr = (NAByte*)malloc((size_t)size);
   }else{
+    #ifndef NDEBUG
+      if(size == NA_INT_MIN)
+        naError("naAllocate", "given negative size owerflows NAInt type.");
+//      if(-size > SIZE_MAX)
+//        naError("naAllocate", "given negative size overflows size_t type.");
+    #endif
     fullsize = -size + 2 * NA_SYSTEM_ADDRESS_BYTES - (-size % NA_SYSTEM_ADDRESS_BYTES);
-    ptr = (NAByte*)malloc(fullsize);
+    #ifndef NDEBUG
+      if(fullsize < -size)
+        naError("naAllocate", "given size including zero filled endbytes overflows NAInt type.");
+//      if(fullsize > SIZE_MAX)
+//        naError("naAllocate", "given size including zero filled endbytes overflows size_t type.");
+    #endif
+    ptr = (NAByte*)malloc((size_t)fullsize);
     naNulln(&(ptr[fullsize - 2 * NA_SYSTEM_ADDRESS_BYTES]), 2 * NA_SYSTEM_ADDRESS_BYTES);
   }
 
@@ -347,7 +363,7 @@ NA_IDEF NABool naIsPointerContentConst(NAPointerContent* content){
   #ifndef NDEBUG
     return (content->flags & NA_POINTER_CONTENT_CONST_DATA);
   #else
-    NA_UNUSED_PARAMETER(content);
+    NA_UNUSED(content);
     return NA_FALSE;
   #endif
 }
@@ -404,8 +420,8 @@ struct NAPointer{
 // significant bits. Note that it would be possible to use a bit field for
 // this but the author decided to use masks, as bit fields might introduce
 // unnecessary algorithmic CPU operations when accessing refcount.
-#define NA_POINTER_OWN_STRUCT     ((NAInt)1 << (NA_SYSTEM_ADDRESS_BITS - 1))
-#define NA_POINTER_OWN_DATA       ((NAInt)1 << (NA_SYSTEM_ADDRESS_BITS - 2))
+#define NA_POINTER_OWN_STRUCT     ((NAUInt)1 << (NA_SYSTEM_ADDRESS_BITS - 1))
+#define NA_POINTER_OWN_DATA       ((NAUInt)1 << (NA_SYSTEM_ADDRESS_BITS - 2))
 #define NA_POINTER_REFCOUNT_MASK  (~(   NA_POINTER_OWN_STRUCT\
                                       | NA_POINTER_OWN_DATA))
 

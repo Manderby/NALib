@@ -18,6 +18,8 @@ Highlights:
   contents and many callbacks
 
 Other things:
+- Removed lots of pedantic warnings
+- Renamed NA_UNUSED_PARAMETER to NA_UNUSED
 - Added naMakePosiWithAlignment, naGetRectiEndPos, naGetRectiMaxPos
 - Changed naGetRectiIndexOfPosi to naGetRectiIndexOfPosiRowFirst and added
   ColumnFirst and made the return type unsigned

@@ -255,7 +255,7 @@ NA_HDEF NAInt naHeapMoveUpMaxIntBack(NAHeap* heap, const void* key, NAInt curind
 NA_HDEF void naInsertHeapElementConstNoBack(NAHeap* heap, const void* ptr, const void* key, NAInt* backpointer){
   NAInt newindex;
   NAHeapNoBackEntry* thedata;
-  NA_UNUSED_PARAMETER(backpointer);
+  NA_UNUSED(backpointer);
   #ifndef NDEBUG
     if(heap->count == heap->maxcount)
       naError("naInsertHeapElementConstNoBack", "Heap overflow.");
@@ -300,7 +300,7 @@ NA_HDEF void naInsertHeapElementConstBack(NAHeap* heap, const void* ptr, const v
 NA_HDEF void naInsertHeapElementMutableNoBack(NAHeap* heap, void* ptr, const void* key, NAInt* backpointer){
   NAInt newindex;
   NAHeapNoBackEntry* thedata;
-  NA_UNUSED_PARAMETER(backpointer);
+  NA_UNUSED(backpointer);
   #ifndef NDEBUG
     if(heap->count == heap->maxcount)
       naError("naInsertHeapElementMutableNoBack", "Heap overflow.");
@@ -418,8 +418,8 @@ NA_HDEF void* naRemoveHeapRootMutableBack(NAHeap* heap){
 
 
 NA_HDEF void naUpdateHeapElementNoBack(NAHeap* heap, NAInt backpointer){
-  NA_UNUSED_PARAMETER(heap);
-  NA_UNUSED_PARAMETER(backpointer);
+  NA_UNUSED(heap);
+  NA_UNUSED(backpointer);
   #ifndef NDEBUG
     naError("naUpdateHeapElementNoBack", "Can not update heap as he stores no backpointers. Function has no effect");
   #endif

@@ -577,7 +577,7 @@ NA_HIDEF NABool naIsPosValueValidf(float a){
   return !naIsNaNf(a);
 }
 NA_HIDEF NABool naIsPosValueValidi(NAInt a){
-  NA_UNUSED_PARAMETER(a);
+  NA_UNUSED(a);
   return NA_TRUE;
 }
 
@@ -588,7 +588,7 @@ NA_HIDEF NABool naIsSizeValueValidf(float a){
   return !naIsNaNf(a);
 }
 NA_HIDEF NABool naIsSizeValueValidi(NAInt a){
-  NA_UNUSED_PARAMETER(a);
+  NA_UNUSED(a);
   return NA_TRUE;
 }
 
@@ -621,7 +621,7 @@ NA_HIDEF NABool naIsPosValueUsefulf(float a){
   return !naIsNaNf(a);
 }
 NA_HIDEF NABool naIsPosValueUsefuli(NAInt a){
-  NA_UNUSED_PARAMETER(a);
+  NA_UNUSED(a);
   return NA_TRUE;
 }
 

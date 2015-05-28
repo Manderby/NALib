@@ -392,7 +392,7 @@ typedef int NABool;
 //
 // Be careful with this when using the volatile keyword.
 
-#define NA_UNUSED_PARAMETER(x) (void)(x)
+#define NA_UNUSED(x) (void)(x)
 
 
 // The definition of NA_NULL is usually set to the NULL found in stdlib. The

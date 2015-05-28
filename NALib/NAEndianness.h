@@ -179,7 +179,7 @@ NA_IDEF void naConvertNative8(void* buffer){
     if(!buffer)
       naError("naConvertN8", "Buffer is Null-Pointer");
   #endif
-  NA_UNUSED_PARAMETER(buffer);
+  NA_UNUSED(buffer);
 }
 
 NA_IDEF void naConvertNative16(void* buffer){
@@ -187,7 +187,7 @@ NA_IDEF void naConvertNative16(void* buffer){
     if(!buffer)
       naError("naConvertN16", "Buffer is Null-Pointer");
   #endif
-  NA_UNUSED_PARAMETER(buffer);
+  NA_UNUSED(buffer);
 }
 
 NA_IDEF void naConvertNative32(void* buffer){
@@ -195,7 +195,7 @@ NA_IDEF void naConvertNative32(void* buffer){
     if(!buffer)
       naError("naConvertN32", "Buffer is Null-Pointer");
   #endif
-  NA_UNUSED_PARAMETER(buffer);
+  NA_UNUSED(buffer);
 }
 
 NA_IDEF void naConvertNative64(void* buffer){
@@ -203,7 +203,7 @@ NA_IDEF void naConvertNative64(void* buffer){
     if(!buffer)
       naError("naConvertN64", "Buffer is Null-Pointer");
   #endif
-  NA_UNUSED_PARAMETER(buffer);
+  NA_UNUSED(buffer);
 }
 
 NA_IDEF void naConvertNative128(void* buffer){
@@ -211,7 +211,7 @@ NA_IDEF void naConvertNative128(void* buffer){
     if(!buffer)
       naError("naConvertN128", "Buffer is Null-Pointer");
   #endif
-  NA_UNUSED_PARAMETER(buffer);
+  NA_UNUSED(buffer);
 }
 
 
@@ -224,8 +224,8 @@ NA_IDEF void naConvertArrayNative8(void* buffer, NAUInt count){
     if(!buffer)
       naError("naConvertArrayN8", "buffer is Null-Pointer");
   #endif
-  NA_UNUSED_PARAMETER(buffer);
-  NA_UNUSED_PARAMETER(count);
+  NA_UNUSED(buffer);
+  NA_UNUSED(count);
 }
 
 NA_IDEF void naConvertArrayNative16(void* buffer, NAUInt count){
@@ -233,8 +233,8 @@ NA_IDEF void naConvertArrayNative16(void* buffer, NAUInt count){
     if(!buffer)
       naError("naConvertArrayN16", "buffer is Null-Pointer");
   #endif
-  NA_UNUSED_PARAMETER(buffer);
-  NA_UNUSED_PARAMETER(count);
+  NA_UNUSED(buffer);
+  NA_UNUSED(count);
 }
 
 NA_IDEF void naConvertArrayNative32(void* buffer, NAUInt count){
@@ -242,8 +242,8 @@ NA_IDEF void naConvertArrayNative32(void* buffer, NAUInt count){
     if(!buffer)
       naError("naConvertArrayN32", "buffer is Null-Pointer");
   #endif
-  NA_UNUSED_PARAMETER(buffer);
-  NA_UNUSED_PARAMETER(count);
+  NA_UNUSED(buffer);
+  NA_UNUSED(count);
 }
 
 NA_IDEF void naConvertArrayNative64(void* buffer, NAUInt count){
@@ -251,8 +251,8 @@ NA_IDEF void naConvertArrayNative64(void* buffer, NAUInt count){
     if(!buffer)
       naError("naConvertArrayN64", "buffer is Null-Pointer");
   #endif
-  NA_UNUSED_PARAMETER(buffer);
-  NA_UNUSED_PARAMETER(count);
+  NA_UNUSED(buffer);
+  NA_UNUSED(count);
 }
 
 NA_IDEF void naConvertArrayNative128(void* buffer, NAUInt count){
@@ -260,8 +260,8 @@ NA_IDEF void naConvertArrayNative128(void* buffer, NAUInt count){
     if(!buffer)
       naError("naConvertArrayN128", "buffer is Null-Pointer");
   #endif
-  NA_UNUSED_PARAMETER(buffer);
-  NA_UNUSED_PARAMETER(count);
+  NA_UNUSED(buffer);
+  NA_UNUSED(count);
 }
 
 
@@ -275,7 +275,7 @@ NA_IDEF void naConvertLittleBig8(void* buffer){
     if(!buffer)
       naError("naConvertLittleBig8", "Buffer is Null-Pointer");
   #endif
-  NA_UNUSED_PARAMETER(buffer);
+  NA_UNUSED(buffer);
 }
 
 NA_IDEF void naConvertLittleBig16(void* buffer){
@@ -346,8 +346,8 @@ NA_IDEF void naConvertArrayLittleBig8(void* buffer, NAUInt count){
     if(!buffer)
       naError("naConvertArrayLittleBig8", "buffer is Null-Pointer");
   #endif
-  NA_UNUSED_PARAMETER(buffer);
-  NA_UNUSED_PARAMETER(count);
+  NA_UNUSED(buffer);
+  NA_UNUSED(count);
 }
 
 NA_IDEF void naConvertArrayLittleBig16(void* buffer, NAUInt count){
