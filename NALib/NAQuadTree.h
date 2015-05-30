@@ -57,6 +57,7 @@ typedef struct NAQuadTreeCallbacks_struct{
 // minchildsize denotes the minimal size of an element.
 NA_API NAQuadTree* naCreateQuadTree(NAQuadTree* tree, NAInt minchildsize, NAQuadTreeCallbacks callbacks);
 NA_API NAQuadTree* naCreateQuadTreeDuplicate(NAQuadTree* newtree, const NAQuadTree* duptree);
+NA_DEF NAQuadTree* naCreateQuadTreeDuplicateWithMaskTree(NAQuadTree* newtree, NAQuadTree* duptree, NAQuadTree* masktree);
 NA_API NAQuadTree* naCreateQuadTreeDuplicateWithShift(NAQuadTree* newtree, NAQuadTree* duptree, NASizei shift);
 NA_API NAQuadTree* naCreateQuadTreeWithDeserialization(NAQuadTree* tree, const void* buf, NAQuadTreeCallbacks callbacks);
 NA_API void naEmptyQuadTree(NAQuadTree* tree);

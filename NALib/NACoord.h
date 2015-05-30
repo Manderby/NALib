@@ -98,6 +98,20 @@ NA_IAPI NASizei   naMakeSizeiE  (NAInt  width,  NAInt   height);
 NA_IAPI NARecti   naMakeRecti   (NAPosi pos,    NASizei size);
 NA_IAPI NARecti   naMakeRectiE  (NAPosi pos,    NASizei size);
 
+// Mac OS X specific stuff
+#ifdef CGGEOMETRY_H_
+NA_IAPI NAPos     naMakePosWithCGPoint(CGPoint cgpoint);
+NA_IAPI NASize    naMakeSizeWithCGSize(CGSize cgsize);
+NA_IAPI NARect    naMakeRectWithCGRect(CGRect cgrect);
+#endif
+#ifdef _APPKITDEFINES_H
+NA_IAPI NAPos     naMakePosWithNSPoint(NSPoint nspoint);
+NA_IAPI NASize    naMakeSizeWithNSSize(NSSize nssize);
+NA_IAPI NARect    naMakeRectWithNSRect(NSRect nsrect);
+#endif
+
+NA_IAPI NAPos     naMakePosWithSizeCenteredInRect(NASize size, NARect rect);
+
 NA_IAPI NABounds4   naMakeBounds4   (double top, double right, double bottom, double left);
 NA_IAPI NABounds4i  naMakeBounds4i  (NAInt top, NAInt right, NAInt bottom, NAInt left);
 
@@ -399,6 +413,80 @@ NA_IDEF NARecti naMakeRectiE(NAPosi pos, NASizei size){
   return newrect;
 }
 
+
+#ifdef CGGEOMETRY_H_
+NA_IDEF NAPos naMakePosWithCGPoint(CGPoint cgpoint){
+  NAPos newpos;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsPosValueValid(cgpoint.x) && naIsPosValueValid(cgpoint.y)))
+      naError("naMakePosWithCGPoint", "Invalid values given.");
+    if(!(naIsPosValueUseful(cgpoint.x) && naIsPosValueUseful(cgpoint.y)))
+      naError("naMakePosWithCGPoint", "Values given are not useful.");
+  #endif
+  newpos.x = cgpoint.x;
+  newpos.y = cgpoint.y;
+  return newpos;
+}
+NA_IAPI NASize naMakeSizeWithCGSize(CGSize cgsize){
+  NASize newsize;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsSizeValueValid(cgsize.width) && naIsSizeValueValid(cgsize.height)))
+      naError("naMakeSizeWithCGSize", "Invalid values given.");
+    if(!(naIsSizeValueUseful(cgsize.width) && naIsSizeValueUseful(cgsize.height)))
+      naError("naMakeSizeWithCGSize", "Values given are not useful.");
+  #endif
+  newsize.width = cgsize.width;
+  newsize.height = cgsize.height;
+  return newsize;
+}
+NA_IAPI NARect naMakeRectWithCGRect(CGRect cgrect){
+  NARect newrect;  // Declaration before implementation. Needed for C90.
+  newrect.pos = naMakePosWithCGPoint(cgrect.origin);
+  newrect.size = naMakeSizeWithCGSize(cgrect.size);
+  return newrect;
+}
+#endif
+
+
+#ifdef _APPKITDEFINES_H
+NA_IAPI NAPos naMakePosWithNSPoint(NSPoint nspoint){
+  NAPos newpos;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsPosValueValid(nspoint.x) && naIsPosValueValid(nspoint.y)))
+      naError("naMakePosWithNSPoint", "Invalid values given.");
+    if(!(naIsPosValueUseful(nspoint.x) && naIsPosValueUseful(nspoint.y)))
+      naError("naMakePosWithNSPoint", "Values given are not useful.");
+  #endif
+  newpos.x = nspoint.x;
+  newpos.y = nspoint.y;
+  return newpos;
+}
+NA_IAPI NASize naMakeSizeWithNSSize(NSSize nssize){
+  NASize newsize;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsSizeValueValid(nssize.width) && naIsSizeValueValid(nssize.height)))
+      naError("naMakeSizeWithNSSize", "Invalid values given.");
+    if(!(naIsSizeValueUseful(nssize.width) && naIsSizeValueUseful(nssize.height)))
+      naError("naMakeSizeWithNSSize", "Values given are not useful.");
+  #endif
+  newsize.width = nssize.width;
+  newsize.height = nssize.height;
+  return newsize;
+}
+NA_IAPI NARect naMakeRectWithNSRect(NSRect nsrect){
+  NARect newrect;  // Declaration before implementation. Needed for C90.
+  newrect.pos = naMakePosWithNSPoint(nsrect.origin);
+  newrect.size = naMakeSizeWithNSSize(nsrect.size);
+  return newrect;
+}
+#endif
+
+NA_IDEF NAPos naMakePosWithSizeCenteredInRect(NASize size, NARect rect){
+  NAPos newpos;
+  newpos.x = rect.pos.x + 0.5 * (rect.size.width - size.width);
+  newpos.y = rect.pos.y + 0.5 * (rect.size.height - size.height);
+  return newpos;
+}
 
 
 NA_IDEF NABounds4 naMakeBounds4(double top, double right, double bottom, double left){

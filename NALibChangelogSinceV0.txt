@@ -27,6 +27,7 @@ Other things:
 - Fixed a memory leak in naCreateStringFromFileContents
 - Altered naAppendString functions to naCreateString functions and fixed
   some potential memory leaks.
+- Added euler constant 2.718...
 
 
 
