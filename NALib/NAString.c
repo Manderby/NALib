@@ -490,6 +490,7 @@ NA_DEF NAString* naCreateStringWithStringAppendingArguments( NAString* string,
                           const NAString* originalstring,
                           const NAUTF8Char* format,
                                     va_list argumentlist){
+  NA_UNUSED(originalstring);
   // Declaration before implementation. Needed for C90.
   NAUInt stringsize1 = naGetStringSize(string);
   NAUInt stringsize2;

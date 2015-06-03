@@ -34,7 +34,7 @@ typedef void  (*NAQuadTreeNodeDestructor)(void* ptr);
 // objects for the given rect. Returning Null is a bad thing.
 typedef void* (*NAQuadTreeDataAllocator)(NARecti rect, const void* copydata);
 typedef void  (*NAQuadTreeDataDestructor)(void* ptr);
-typedef void* (*NAQuadTreeDataCopier)(const void* dstdata, NARecti dstrect, const void* copydata, NARecti copyrect);
+typedef void  (*NAQuadTreeDataCopier)(const void* dstdata, NARecti dstrect, const void* copydata, NARecti copyrect);
 // Segment is either a number in [0 - 3] denoting the child which has been
 // changed or -1 if there is no particular child.
 typedef NABool(*NAQuadTreeLeafChanged)(void* nodedata, NAInt segment, void* const leafdata[4]);

@@ -157,7 +157,6 @@ NA_IDEF void* naGetMap2DMutablePointer(NAMap2D* map2d){
 
 
 NA_IDEF const void* naGetMap2DConstValue(const NAMap2D* map2d, NAPosi pos){
-  NAInt indx;
   NAPosi xpos = pos;
   xpos.x = naGetByteMap2DRecti(&(map2d->bytemap)).pos.x;
   xpos.x += (pos.x - xpos.x) * map2d->typesize;
@@ -166,7 +165,6 @@ NA_IDEF const void* naGetMap2DConstValue(const NAMap2D* map2d, NAPosi pos){
 
 
 NA_IDEF void* naGetMap2DMutableValue(NAMap2D* map2d, NAPosi pos){
-  NAInt indx;
   NAPosi xpos = pos;
   xpos.x = naGetByteMap2DRecti(&(map2d->bytemap)).pos.x;
   xpos.x += (pos.x - xpos.x) * map2d->typesize;

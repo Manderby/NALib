@@ -245,7 +245,7 @@ NA_DEF NAQuadTree* naCreateQuadTreeWithDeserialization(NAQuadTree* tree, const v
   const NAByte* dataptr = buf;
   uint64 datasize = *((const uint64*)dataptr); dataptr += sizeof(uint64);
   uint64 minchildsize = *((const uint64*)dataptr); dataptr += sizeof(uint64);
-  tree = naCreateQuadTree(tree, minchildsize, callbacks);
+  tree = naCreateQuadTree(tree, (NAInt)minchildsize, callbacks);
   datasize -= 2 * sizeof(uint64);
   while(datasize){
     int64 posx = *((const int64*)dataptr); dataptr += sizeof(int64);
@@ -253,9 +253,9 @@ NA_DEF NAQuadTree* naCreateQuadTreeWithDeserialization(NAQuadTree* tree, const v
     datasize -= 2 * sizeof(int64);
     // Create the leaf temporarily but delete it immediately and recreate it
     // as a deserialization.
-    naLocateQuadTreePosi(tree, naMakePosi(posx, posy), NA_TRUE);
+    naLocateQuadTreePosi(tree, naMakePosi((NAInt)posx, (NAInt)posy), NA_TRUE);
     callbacks.datadestructor(tree->curnode->child[tree->cursegment]);
-    tree->curnode->child[tree->cursegment] = callbacks.deserialize(naMakeRecti(naMakePosi(posx, posy), naMakeSizei(minchildsize, minchildsize)), dataptr);
+    tree->curnode->child[tree->cursegment] = callbacks.deserialize(naMakeRecti(naMakePosi((NAInt)posx, (NAInt)posy), naMakeSizei((NAInt)minchildsize, (NAInt)minchildsize)), dataptr);
     naUpdateQuadTreeLeaf(tree, tree->curnode, tree->cursegment);
     uint64 bytesread = callbacks.serialize(NA_NULL, tree->curnode->child[tree->cursegment]);
     dataptr += bytesread;

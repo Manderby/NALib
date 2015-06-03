@@ -324,7 +324,7 @@ NA_API void naSkipStringWhitespaces(NAString* string);
 // are still there. When skipempty is NA_TRUE, lines containing nothing but
 // whitespaces will be skipped.
 // Returns the number of lines read. Will usually be 1 but will be greater than
-// 1 when skipping empty lines. Will be 0 when the string is empty.
+// 1 when skipping empty lines. Will be 0 when the string argument was empty.
 // Warning: the two arguments shall not be the same as the result is
 // undefined.
 NA_API NAInt naParseStringLine(NAString* string, NAString* line, NABool skipempty);
