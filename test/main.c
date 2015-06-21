@@ -23,8 +23,27 @@ void printSystemTest(){
 }
 
 
+#include "../NALib/NAPool.h"
+
 int main(void){
   printSystemTest();
+  
+  int test1 = 5;
+  int test2 = 6;
+  int* ret;
+  NAPool pool;
+  naCreatePoolEmpty(&pool, 10);
+  naSpitPool(&pool, &test1);
+  naSpitPool(&pool, &test2);
+  naSpitPool(&pool, &test1);
+  ret = naSuckPool(&pool);
+  printf("%d\n", *ret);
+  ret = naSuckPool(&pool);
+  printf("%d\n", *ret);
+//  ret = naSuckPool(&pool);
+//  printf("%d\n", *ret);
+  naClearPool(&pool);
+  
   printf("\nPress enter to quit.\n");
   fgetc(stdin);
   return 0;

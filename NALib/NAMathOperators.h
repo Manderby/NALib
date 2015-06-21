@@ -70,9 +70,11 @@ NA_IAPI NABool        naAlmostOnef  (float  x);
 NA_IAPI NABool        naAlmost      (double x, double y);
 NA_IAPI NABool        naAlmostf     (float  x, float  y);
 
-// Returns true if the given number is NaN
+// Returns true if the given number is NaN, infinite.
 NA_IAPI NABool        naIsNaN (double x);
 NA_IAPI NABool        naIsNaNf(float  x);
+NA_IAPI NABool        naIsInfinite(double x);
+NA_IAPI NABool        naIsInfinitef(float x);
 
 // naMin and naMax return the minimum or maximum of two values.
 //
@@ -421,6 +423,21 @@ NA_IAPI NABool naIsNaNf(float x){
     #else
       return isnan(x);
     #endif
+  #endif
+}
+
+NA_IAPI NABool naIsInfinite(double x){
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    return _isinf(x);
+  #else
+    return isinf(x);
+  #endif
+}
+NA_IAPI NABool naIsInfinitef(float x){
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    return _isinf(x);
+  #else
+    return isinf(x);
   #endif
 }
 
