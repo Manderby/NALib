@@ -104,7 +104,9 @@ NA_IAPI NAPos     naMakePosWithCGPoint(CGPoint cgpoint);
 NA_IAPI NASize    naMakeSizeWithCGSize(CGSize cgsize);
 NA_IAPI NARect    naMakeRectWithCGRect(CGRect cgrect);
 #endif
-#ifdef _APPKITDEFINES_H
+#if defined __OBJC__ && defined __AVAILABILITYMACROS__
+// Note: In order to make this compile, you need to include "NACoord.h" AFTER
+// including <Cocoa/Cocoa.h>
 NA_IAPI NAPos     naMakePosWithNSPoint(NSPoint nspoint);
 NA_IAPI NASize    naMakeSizeWithNSSize(NSSize nssize);
 NA_IAPI NARect    naMakeRectWithNSRect(NSRect nsrect);
@@ -448,7 +450,7 @@ NA_IAPI NARect naMakeRectWithCGRect(CGRect cgrect){
 #endif
 
 
-#ifdef _APPKITDEFINES_H
+#if defined __OBJC__ && defined __AVAILABILITYMACROS__
 NA_IAPI NAPos naMakePosWithNSPoint(NSPoint nspoint){
   NAPos newpos;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG

@@ -13,6 +13,15 @@
 
 
 
+//NA_DEF NAStructInfo naGetStringStructInfo(){
+//  static NAStructInfo stringstructinfo = {
+//    sizeof(NAString),
+//    naCreateString,
+//    naClearString
+//  };
+//  return stringstructinfo;
+//}
+
 
 NA_DEF NAString* naCreateString(NAString* string){
   string = naAllocNALibStruct(string, NAString);
@@ -827,6 +836,7 @@ NA_DEF NAInt naParseStringLine(NAString* string, NAString* line, NABool skipempt
   
   // This while-loop is here for the skipempty-test.
   while(1){
+    if(naIsStringEmpty(string)){return 0;}
     NAUInt linesize = 0;
     NAInt escapesize;
     found = NA_FALSE;

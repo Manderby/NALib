@@ -117,6 +117,8 @@ typedef struct NAString NAString;
 // Constructors and Destructors. Read the readme.txt for explanation.
 // ///////////////////////////
 
+//NA_API  NAStructInfo naGetStringStructInfo();
+
 // Creates or fills a new, EMPTY String and returns the pointer.
 // flags is set to 0.
 NA_API NAString* naCreateString(NAString* string);

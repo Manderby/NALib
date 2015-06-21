@@ -491,6 +491,14 @@ typedef void  (*NAMutator)    (void *);
 
 
 
+typedef struct NAStructInfo NAStructInfo;
+struct NAStructInfo{
+  NAUInt structsize;
+  NAConstructor constructor;
+  NADestructor destructor;
+};
+
+
 #ifdef __cplusplus 
   } // extern "C"
 #endif

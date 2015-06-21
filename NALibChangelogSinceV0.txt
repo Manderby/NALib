@@ -16,6 +16,8 @@ correct, complete or final.
 Highlights:
 - Added NAQuadTree. A structure storing integer quad trees with arbitrary
   contents and many callbacks
+- Added NAPool.
+- Added NAStack
 
 Other things:
 - Removed lots of pedantic warnings
@@ -28,6 +30,7 @@ Other things:
 - Altered naAppendString functions to naCreateString functions and fixed
   some potential memory leaks.
 - Added euler constant 2.718...
+- added naIsInfinity
 
 
 
