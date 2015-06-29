@@ -186,8 +186,7 @@ NA_API NAByteArray* naCreateByteArrayFromDateTime( NAByteArray* bytearray,
                                             NABinDateTimeFormat format);
 
 // Creates a string in the given format.
-NA_API NAString* naCreateStringWithDateTime( NAString* string,
-                                     const NADateTime* datetime,
+NA_API NAString* naNewStringWithDateTime(const NADateTime* datetime,
                                    NAAscDateTimeFormat format);
 
 // Converts between the systems time formats and NADateTime
@@ -243,10 +242,9 @@ NA_API double naGetDateTimeDiff(const NADateTime* end, const NADateTime* start);
 NA_API void naAddDateTimeDifference(NADateTime* datetime, double difference);
 
 // Returns a human readable string of a second counter (including decimals)
-// For example: naCreateStringFromSeconds(12345678.12345678, 6)
+// For example: naNewStringFromSecondDifference(12345678.12345678, 6)
 // creates the string "142d 21:21:18.123456"
-NA_API NAString* naCreateStringFromSecondDifference( NAString* string,
-                                                        double difference,
+NA_API NAString* naNewStringFromSecondDifference(       double difference,
                                                          uint8 decimaldigits);
 
 // Returns NA_TRUE if the date has summertime.

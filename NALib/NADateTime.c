@@ -299,10 +299,9 @@ NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
   }
   if(isdigit(str[0])){
     int32 returnint;
-    NAString numberstring;
-    naCreateStringWithUTF8CStringLiteral(&numberstring, str);
-    returnint = naGetStringInt32(&numberstring) - 1;
-    naClearString(&numberstring);
+    NAString* numberstring = naNewStringWithUTF8CStringLiteral(str);
+    returnint = naGetStringInt32(numberstring) - 1;
+    naDelete(numberstring);
     return returnint;
   }
   #ifndef NDEBUG
@@ -463,61 +462,61 @@ NA_DEF NADateTime naMakeDateTimeWithValues(int64 year, int32 mon, int32 day, int
 
 
 NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTimeFormat format){
-  NAString str;
+  NAString* str;
   NADateTimeStruct dts;
-  NAString token;
+  NAString* token;
   int16 int16value;
   
   dts.nsec = 0;
   
-  naCreateStringExtraction(&str, string, 0, -1);
-  naCreateString(&token);
+  str = naNewStringExtraction(string, 0, -1);
+  token = naNewString();
 
   switch(format){
   case NA_DATETIME_FORMAT_APACHE:
-    dts.day = naParseStringInt32(&str, NA_TRUE);
-    naParseStringTokenWithDelimiter(&str, &token, '/');
-    dts.mon = naGetMonthNumberWithEnglishAbbreviation(&token);
-    naClearString(&token);
-    dts.year = naParseStringInt64(&str, NA_TRUE);
+    dts.day = naParseStringInt32(str, NA_TRUE);
+    token = naParseStringTokenWithDelimiter(str, '/');
+    dts.mon = naGetMonthNumberWithEnglishAbbreviation(token);
+    naDelete(token);
+    dts.year = naParseStringInt64(str, NA_TRUE);
     
-    dts.hour = naParseStringInt32(&str, NA_TRUE);
-    dts.min = naParseStringInt32(&str, NA_TRUE);
-    dts.sec = naParseStringInt32(&str, NA_TRUE);
+    dts.hour = naParseStringInt32(str, NA_TRUE);
+    dts.min = naParseStringInt32(str, NA_TRUE);
+    dts.sec = naParseStringInt32(str, NA_TRUE);
 
     // The remaining string contains the time shift
-    int16value = naGetStringInt16(&str);
+    int16value = naGetStringInt16(str);
     dts.shift = (int16value / 100) * NA_MINUTES_PER_HOUR;
     dts.shift += int16value % 100;
     dts.flags = 0;
     break;
   case NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT:
-    dts.year = naParseStringInt64(&str, NA_TRUE);
-    dts.mon = naParseStringInt32(&str, NA_TRUE) - 1;
-    dts.day = naParseStringInt32(&str, NA_TRUE) - 1;
+    dts.year = naParseStringInt64(str, NA_TRUE);
+    dts.mon = naParseStringInt32(str, NA_TRUE) - 1;
+    dts.day = naParseStringInt32(str, NA_TRUE) - 1;
 
-    dts.hour = naParseStringInt32(&str, NA_TRUE);
-    dts.min = naParseStringInt32(&str, NA_TRUE);
-    dts.sec = naParseStringInt32(&str, NA_FALSE   );
+    dts.hour = naParseStringInt32(str, NA_TRUE);
+    dts.min = naParseStringInt32(str, NA_TRUE);
+    dts.sec = naParseStringInt32(str, NA_FALSE   );
 
-    dts.shift = naParseStringInt16(&str, NA_TRUE) * NA_MINUTES_PER_HOUR;
+    dts.shift = naParseStringInt16(str, NA_TRUE) * NA_MINUTES_PER_HOUR;
     if(dts.shift < 0){
-      dts.shift -= naGetStringInt16(&str);
+      dts.shift -= naGetStringInt16(str);
     }else{
-      dts.shift += naGetStringInt16(&str);
+      dts.shift += naGetStringInt16(str);
     }
     dts.flags = 0;
     break;
   case NA_DATETIME_FORMAT_CONDENSEDDATE:
-    naCreateStringExtraction(&token, &str, 0, -5);
-    dts.year = naGetStringInt64(&token);
-    naClearString(&token);
-    naCreateStringExtraction(&token, &str, -4, -3);
-    dts.mon = naGetStringInt32(&token);
-    naClearString(&token);
-    naCreateStringExtraction(&token, &str, -2, -1);
-    dts.day = naGetStringInt32(&token);
-    naClearString(&token);
+    token = naNewStringExtraction(str, 0, -5);
+    dts.year = naGetStringInt64(token);
+    naDelete(token);
+    token = naNewStringExtraction(str, -4, -3);
+    dts.mon = naGetStringInt32(token);
+    naDelete(token);
+    token = naNewStringExtraction(str, -2, -1);
+    dts.day = naGetStringInt32(token);
+    naDelete(token);
     dts.hour = 0;
     dts.min = 0;
     dts.sec = 0;
@@ -525,18 +524,20 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
     dts.flags = 0;
     break;
   case NA_DATETIME_FORMAT_NATURAL:
-    dts.year = naParseStringInt64(&str, NA_TRUE);
-    dts.mon = naParseStringInt32(&str, NA_TRUE);
-    dts.day = naParseStringInt32(&str, NA_TRUE);
+    dts.year = naParseStringInt64(str, NA_TRUE);
+    dts.mon = naParseStringInt32(str, NA_TRUE);
+    dts.day = naParseStringInt32(str, NA_TRUE);
 
-    dts.hour = naParseStringInt32(&str, NA_TRUE);
-    dts.min = naParseStringInt32(&str, NA_TRUE);
-    dts.sec = naGetStringInt32(&str);
+    dts.hour = naParseStringInt32(str, NA_TRUE);
+    dts.min = naParseStringInt32(str, NA_TRUE);
+    dts.sec = naGetStringInt32(str);
 
     dts.shift = 0;
     dts.flags = 0;
     break;
   }
+  
+  naDelete(token);
   return naMakeDateTimeWithDateTimeStruct(&dts);
 }
 
@@ -631,17 +632,16 @@ NA_DEF NAByteArray* naCreateByteArrayFromDateTime( NAByteArray* bytearray, const
 
 
 
-NA_DEF NAString* naCreateStringWithDateTime(NAString* string,
-                             const NADateTime* datetime,
+NA_DEF NAString* naNewStringWithDateTime(const NADateTime* datetime,
                            NAAscDateTimeFormat format){
+  NAString* string;
   NADateTimeStruct dts;
   NADateTimeAttribute dta;
   naExtractDateTimeInformation(datetime, &dts, &dta);
   
   switch(format){
   case NA_DATETIME_FORMAT_APACHE:
-    naCreateStringWithFormat(string,
-                "%02d/%s/%lld:%02d:%02d:%02d %c%02d%02d",
+    string = naNewStringWithFormat("%02d/%s/%lld:%02d:%02d:%02d %c%02d%02d",
                 dts.day + 1,
                 na_monthenglishabbreviationnames[dts.mon],
                 dts.year,
@@ -653,8 +653,7 @@ NA_DEF NAString* naCreateStringWithDateTime(NAString* string,
                 dta.shiftmin);
     break;
   case NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT:
-    naCreateStringWithFormat(string,
-                "%lld-%02d-%02dT%02d:%02d:%02d%c%02d:%02d",
+    string = naNewStringWithFormat("%lld-%02d-%02dT%02d:%02d:%02d%c%02d:%02d",
                 dts.year,
                 dts.mon + 1,
                 dts.day + 1,
@@ -666,15 +665,13 @@ NA_DEF NAString* naCreateStringWithDateTime(NAString* string,
                 dta.shiftmin);
     break;
   case NA_DATETIME_FORMAT_CONDENSEDDATE:
-    naCreateStringWithFormat(string,
-                "%lld%02d%02d",
+    string = naNewStringWithFormat("%lld%02d%02d",
                 dts.year,
                 dts.mon + 1,
                 dts.day + 1);
     break;
   case NA_DATETIME_FORMAT_NATURAL:
-    naCreateStringWithFormat(string,
-                "%lld-%02d-%02d %02d:%02d:%02d",
+    string = naNewStringWithFormat("%lld-%02d-%02d %02d:%02d:%02d",
                 dts.year,
                 dts.mon + 1,
                 dts.day + 1,
@@ -1094,15 +1091,15 @@ NA_DEF void naAddDateTimeDifference(NADateTime* datetime, double difference){
 }
 
 
-NA_DEF NAString* naCreateStringFromSecondDifference(NAString* string,
-                                                double difference,
+NA_DEF NAString* naNewStringFromSecondDifference(double difference,
                                                  uint8 decimaldigits){
   uint64 allseconds, powten, decimals;
   uint8 seconds, minutes, hours;
-  NAString decimalstring;
-  NAString timestring;
-  NAString daystring;
-  NAString signstring;
+  NAString* decimalstring;
+  NAString* timestring;
+  NAString* daystring;
+  NAString* signstring;
+  NAString* string;
 
   NABool needsign = NA_FALSE;
   if(difference<0){needsign = NA_TRUE; difference = -difference;}
@@ -1118,33 +1115,33 @@ NA_DEF NAString* naCreateStringFromSecondDifference(NAString* string,
   allseconds /= NA_HOURS_PER_DAY;
   
   if(decimaldigits){
-    NAString decimalformatstring;
-    naCreateStringWithFormat(&decimalformatstring, ".%%0%dlld", decimaldigits);
-    naCreateStringWithFormat(&decimalstring, naGetStringUTF8Pointer(&decimalformatstring), decimals);
-    naClearString(&decimalformatstring);
+    NAString* decimalformatstring;
+    decimalformatstring = naNewStringWithFormat(".%%0%dlld", decimaldigits);
+    decimalstring = naNewStringWithFormat(naGetStringUTF8Pointer(decimalformatstring), decimals);
+    naDelete(decimalformatstring);
   }else{
-    naCreateString(&decimalstring);
+    decimalstring = naNewString();
   }
   
-  naCreateStringWithFormat(&timestring, "%02d:%02d:%02d", hours, minutes, seconds);
+  timestring = naNewStringWithFormat("%02d:%02d:%02d", hours, minutes, seconds);
   
   if(allseconds){
-    naCreateStringWithFormat(&daystring, "%lldd ", allseconds);
+    daystring = naNewStringWithFormat("%lldd ", allseconds);
   }else{
-    naCreateString(&daystring);
+    daystring = naNewString();
   }
   
   if(needsign){
-    naCreateStringWithUTF8CStringLiteral(&signstring, "-");
+    signstring = naNewStringWithUTF8CStringLiteral("-");
   }else{
-    naCreateString(&signstring);
+    signstring = naNewString();
   }
   
-  naCreateStringWithFormat(string, "%s%s%s%s", naGetStringUTF8Pointer(&signstring), naGetStringUTF8Pointer(&daystring), naGetStringUTF8Pointer(&timestring), naGetStringUTF8Pointer(&decimalstring));
-  naClearString(&decimalstring);
-  naClearString(&timestring);
-  naClearString(&daystring);
-  naClearString(&signstring);
+  string = naNewStringWithFormat("%s%s%s%s", naGetStringUTF8Pointer(signstring), naGetStringUTF8Pointer(daystring), naGetStringUTF8Pointer(timestring), naGetStringUTF8Pointer(decimalstring));
+  naDelete(decimalstring);
+  naDelete(timestring);
+  naDelete(daystring);
+  naDelete(signstring);
   return string;
 }
 

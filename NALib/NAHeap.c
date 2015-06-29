@@ -252,7 +252,7 @@ NA_HDEF NAInt naHeapMoveUpMaxIntBack(NAHeap* heap, const void* key, NAInt curind
 
 
 
-NA_HDEF void naInsertHeapElementConstNoBack(NAHeap* heap, const void* ptr, const void* key, NAInt* backpointer){
+NA_HDEF void naInsertHeapElementConstNoBack(NAHeap* heap, const void* data, const void* key, NAInt* backpointer){
   NAInt newindex;
   NAHeapNoBackEntry* thedata;
   NA_UNUSED(backpointer);
@@ -264,14 +264,14 @@ NA_HDEF void naInsertHeapElementConstNoBack(NAHeap* heap, const void* ptr, const
   #endif
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapNoBackEntry*)(heap->data);
-  naFillPointerContentConst(&(thedata[newindex].ptr), ptr);
+  naFillLValueConst(&(thedata[newindex].ptr), data);
   thedata[newindex].key = key;
   heap->count++;
 }
 
 
 
-NA_HDEF void naInsertHeapElementConstBack(NAHeap* heap, const void* ptr, const void* key, NAInt* backpointer){
+NA_HDEF void naInsertHeapElementConstBack(NAHeap* heap, const void* data, const void* key, NAInt* backpointer){
   NAInt newindex;
   NAHeapBackEntry* thedata;
   #ifndef NDEBUG
@@ -280,7 +280,7 @@ NA_HDEF void naInsertHeapElementConstBack(NAHeap* heap, const void* ptr, const v
   #endif
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapBackEntry*)(heap->data);
-  naFillPointerContentConst(&(thedata[newindex].ptr), ptr);
+  naFillLValueConst(&(thedata[newindex].ptr), data);
   thedata[newindex].key = key;
   if(backpointer){
     thedata[newindex].backpointer = backpointer;
@@ -297,7 +297,7 @@ NA_HDEF void naInsertHeapElementConstBack(NAHeap* heap, const void* ptr, const v
 
 
 
-NA_HDEF void naInsertHeapElementMutableNoBack(NAHeap* heap, void* ptr, const void* key, NAInt* backpointer){
+NA_HDEF void naInsertHeapElementMutableNoBack(NAHeap* heap, void* data, const void* key, NAInt* backpointer){
   NAInt newindex;
   NAHeapNoBackEntry* thedata;
   NA_UNUSED(backpointer);
@@ -309,14 +309,14 @@ NA_HDEF void naInsertHeapElementMutableNoBack(NAHeap* heap, void* ptr, const voi
   #endif
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapNoBackEntry*)(heap->data);
-  naFillPointerContentMutable(&(thedata[newindex].ptr), ptr);
+  naFillLValueMutable(&(thedata[newindex].ptr), data);
   thedata[newindex].key = key;
   heap->count++;
 }
 
 
 
-NA_HDEF void naInsertHeapElementMutableBack(NAHeap* heap, void* ptr, const void* key, NAInt* backpointer){
+NA_HDEF void naInsertHeapElementMutableBack(NAHeap* heap, void* data, const void* key, NAInt* backpointer){
   NAInt newindex;
   NAHeapBackEntry* thedata;
   #ifndef NDEBUG
@@ -325,7 +325,7 @@ NA_HDEF void naInsertHeapElementMutableBack(NAHeap* heap, void* ptr, const void*
   #endif
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapBackEntry*)(heap->data);
-  naFillPointerContentMutable(&(thedata[newindex].ptr), ptr);
+  naFillLValueMutable(&(thedata[newindex].ptr), data);
   thedata[newindex].key = key;
   if(backpointer){
     thedata[newindex].backpointer = backpointer;
@@ -349,7 +349,7 @@ NA_HDEF const void* naRemoveHeapRootConstNoBack(NAHeap* heap){
     if(heap->count == 0)
       naError("naRemoveHeapRootConst", "Heap is empty.");
   #endif
-  returnvalue = naGetPointerContentConst(&(thedata[1].ptr));
+  returnvalue = naGetLValueConst(&(thedata[1].ptr));
   heap->count--;
   if(heap->count){
     NAInt curindex = heap->moveup(heap, thedata[heap->count + 1].key, 1);
@@ -367,7 +367,7 @@ NA_HDEF const void* naRemoveHeapRootConstBack(NAHeap* heap){
     if(heap->count == 0)
       naError("naRemoveHeapRootConst", "Heap is empty.");
   #endif
-  returnvalue = naGetPointerContentConst(&(thedata[1].ptr));
+  returnvalue = naGetLValueConst(&(thedata[1].ptr));
   *(thedata[1].backpointer) = 0;
   heap->count--;
   if(heap->count){
@@ -387,7 +387,7 @@ NA_HDEF void* naRemoveHeapRootMutableNoBack(NAHeap* heap){
     if(heap->count == 0)
       naError("naRemoveHeapRootMutable", "Heap is empty.");
   #endif
-  returnvalue = naGetPointerContentMutable(&(thedata[1].ptr));
+  returnvalue = naGetLValueMutable(&(thedata[1].ptr));
   heap->count--;
   if(heap->count){
     NAInt curindex = heap->moveup(heap, thedata[heap->count + 1].key, 1);
@@ -404,7 +404,7 @@ NA_HDEF void* naRemoveHeapRootMutableBack(NAHeap* heap){
     if(heap->count == 0)
       naError("naRemoveHeapRootMutable", "Heap is empty.");
   #endif
-  returnvalue = naGetPointerContentMutable(&(thedata[1].ptr));
+  returnvalue = naGetLValueMutable(&(thedata[1].ptr));
   *(thedata[1].backpointer) = 0;
   heap->count--;
   if(heap->count){

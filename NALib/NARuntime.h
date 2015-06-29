@@ -2,47 +2,45 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#include "NASystem.h"
-#include <unistd.h>
-
-
-NAUInt naGetSystemMemoryPageSize(){
-  return (NAUInt)sysconf(_SC_PAGESIZE);
-}
-
-
-NAUInt naGetSystemMemoryPageSizeMask(){
-  return ~(NAUInt)(naGetSystemMemoryPageSize() - 1);
-}
-
-
-
-#ifndef NDEBUG
-
-  // The error printing method. Errors will be emitted to the stderr output.
-  // When NDEBUG is defined, these functions are OBSOLETE!
-  #ifdef __cplusplus
-    #include <cstdio>
-  #else
-    #include <stdio.h>
-  #endif
-
-
-  void naError(const char* functionsymbol, const char* message){
-    // Set a breakpoint here, if everything fails.
-    fprintf(stderr, "Error in %s: %s\n", functionsymbol, message);
-  }
-
-
-
-  NA_NORETURN void naCrash(const char* functionsymbol, const char* message){
-    // Set a breakpoint here, if everything fails.
-    fprintf(stderr, "Critical Error in %s: %s\n", functionsymbol, message);
-    fprintf(stderr, "Crashing the application deliberately...\n");
-    exit(EXIT_FAILURE);
-  }
-
+#ifndef NA_RUNTIME_INCLUDED
+#define NA_RUNTIME_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
 #endif
+
+
+#include "NASystem.h"
+
+
+typedef struct NATypeInfo NATypeInfo;
+struct NATypeInfo{
+  NAUInt typesize;
+  NADestructor desctructor;
+};
+
+
+typedef void* NATypeIdentifier;
+
+
+NA_API void               naStartRuntime();
+NA_API NATypeIdentifier   naManageRuntimeType(NATypeInfo* typeinfo);
+NA_API void               naStopRuntime();
+
+NA_API void*              naNew(NATypeIdentifier typeidentifier);
+NA_API void               naDelete(void* pointer);
+
+
+
+// Here, the author decided to put everything into implementation files
+// and not provide inline functions.
+
+
+
+
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
+#endif // NA_RUNTIME_INCLUDED
 
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH

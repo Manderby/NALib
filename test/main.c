@@ -23,26 +23,14 @@ void printSystemTest(){
 }
 
 
-#include "../NALib/NAPool.h"
+#include "../NALib/NAString.h"
 
 int main(void){
   printSystemTest();
   
-  int test1 = 5;
-  int test2 = 6;
-  int* ret;
-  NAPool pool;
-  naCreatePoolEmpty(&pool, 10);
-  naSpitPool(&pool, &test1);
-  naSpitPool(&pool, &test2);
-  naSpitPool(&pool, &test1);
-  ret = naSuckPool(&pool);
-  printf("%d\n", *ret);
-  ret = naSuckPool(&pool);
-  printf("%d\n", *ret);
-//  ret = naSuckPool(&pool);
-//  printf("%d\n", *ret);
-  naClearPool(&pool);
+//  naStartRuntime();
+//  NAString* string = naNewString();
+//  naDelete(string);
   
   printf("\nPress enter to quit.\n");
   fgetc(stdin);

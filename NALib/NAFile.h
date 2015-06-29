@@ -12,6 +12,7 @@
 #include "NAString.h"
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <stdio.h>
 
 // Input and output is handeled slightly differently on different systems. In
 // the header files of each system, there are different definitions of standard
@@ -116,7 +117,7 @@ struct NAFile{
 //
 // Therefore, when reading a text file, NALib encourages the programmer to
 // do the following: Read the whole file into an NAString struct by using a
-// single call to naCreateStringFromFileContents. After that, use the parsing
+// single call to naNewStringFromFileContents. After that, use the parsing
 // functions of the NAString struct.
 //
 // There are text-reading functions in NAFile but they are slower and less
@@ -129,8 +130,7 @@ struct NAFile{
 // the NAString type.
 // The encoding defines what the file is encoded in. The resulting string will
 // be encoded in UTF-8. todo: Add more encodings.
-NA_API NAString* naCreateStringFromFileContents( NAString* string,
-                                               const char* filename,
+NA_API NAString* naNewStringFromFileContents(  const char* filename,
                                             NATextEncoding encoding);
 
 // Reads the full file and returns it as a new NAByteArray.
@@ -264,7 +264,7 @@ NA_API double* naReadFileArrayDouble(NAFile* file, double* buf, NAInt count);
 // Creates or fills an NAByteArray or an NAString by reading the given number
 // of bytes from the file and then COPYING them to the array or string.
 // Note: If you want the whole file as an NAByteArray or NAString, use the
-// naCreateByteArrayFromFileContents or naCreateStringFromFileContents function
+// naCreateByteArrayFromFileContents or naNewStringFromFileContents function
 // instead which directly reads the bytes to the array instead of copying them
 // from an internal buffer.
 // COPIES ALWAYS!
@@ -274,8 +274,7 @@ NA_API double* naReadFileArrayDouble(NAFile* file, double* buf, NAInt count);
 NA_API NAByteArray* naCreateByteArrayFromFile(NAByteArray* array,
                                                    NAFile* file,
                                                 NAFileSize count);
-NA_API NAString*    naCreateStringFromFile(      NAString* string,
-                                                   NAFile* file,
+NA_API NAString*    naNewStringFromFile(           NAFile* file,
                                                 NAFileSize bytecount);
 
 // //////////
@@ -287,7 +286,9 @@ NA_API NAString*    naCreateStringFromFile(      NAString* string,
 // This is a low-level function. The naWriteFileByteArray function is more
 // convenient to handle if you are working with byte arrays.
 // This function is NOT endianness-aware.
-NA_API void naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize count);
+// Note that due to consistency with NAByteArray, count can also be negative
+// which will simply be converted to the absolute number.
+NA_API void naWriteFileBytes(NAFile* file, const void* ptr, NAInt count);
 
 // Writes some standard data type. These functions ARE endianness-aware!
 NA_API void naWriteFileInt8  (NAFile* file, int8 value);

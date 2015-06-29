@@ -12,10 +12,6 @@
 #include "NAList.h"
 
 
-#define NA_PATH_DELIMITER_UNIX '/'
-#define NA_PATH_DELIMITER_WIN  '\\'
-#define NA_SUFFIX_DELIMITER    '.'
-
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   #define NA_PATH_DELIMITER_SYSTEM NA_PATH_DELIMITER_WIN
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
@@ -47,7 +43,7 @@ NA_IAPI void naDestroyURL(NAURL* url);
 // Note that there is no distinction if the last component is the name of a
 // folder or of a file. If the file has a suffix, it is contained in the
 // returned string.
-NA_IAPI NAString* naCreateStringWithURLFilename(NAString* string, NAURL* url);
+NA_IAPI NAString* naNewStringWithURLFilename(NAURL* url);
 
 
 
@@ -62,34 +58,34 @@ NA_IDEF NAURL* naCreateURL(NAURL* url){
 }
 
 
+
+
+
 NA_IDEF NAURL* naCreateURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string){
   NAUTF8Char curchar;
-  NAString inputstring;
-  NAString pathcomponent;
-  NAString* newpathcomponent;
+  NAString* inputstring;
+  NAString* pathcomponent;
 
   url = naCreateURL(url); 
   if(!string){return url;} 
-  naCreateStringWithUTF8CStringLiteral(&inputstring, string);
+  inputstring = naNewStringWithUTF8CStringLiteral(string);
 
-  curchar = *naGetStringUTF8Pointer(&inputstring);
+  curchar = *naGetStringUTF8Pointer(inputstring);
   if((curchar == NA_PATH_DELIMITER_UNIX) || (curchar == NA_PATH_DELIMITER_WIN)){
     url->status |= NA_URL_PATH_ABSOLUTE;
-    naCreateStringExtraction(&inputstring, &inputstring, 1, -1);
+    inputstring = naNewStringExtraction(inputstring, 1, -1);
   }
   
-  naCreateString(&pathcomponent);
-  while(naGetStringSize(&inputstring)){
+  while(naGetStringSize(inputstring)){
     // Test for erroneous duplicate or ending delimiters
-    curchar = *naGetStringUTF8Pointer(&inputstring);
+    curchar = *naGetStringUTF8Pointer(inputstring);
     if((curchar == NA_PATH_DELIMITER_UNIX) || (curchar == NA_PATH_DELIMITER_WIN)){
-      naCreateStringExtraction(&inputstring, &inputstring, 1, -1);
+      inputstring = naNewStringExtraction(inputstring, 1, -1);
       continue;
     }
     
-    naParseStringPathComponent(&inputstring, &pathcomponent);
-    newpathcomponent = naCreateStringExtraction(NA_NULL, &pathcomponent, 0, -1);
-    naAddListLastMutable(&(url->path), newpathcomponent);
+    pathcomponent = naParseStringPathComponent(inputstring);
+    naAddListLastMutable(&(url->path), pathcomponent);
   }
   return url;
 }
@@ -97,7 +93,7 @@ NA_IDEF NAURL* naCreateURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* s
 
 
 NA_IDEF void naClearURL(NAURL* url){
-  naClearList(&(url->path), (NADestructor)naDestroyString);
+  naClearList(&(url->path), NA_NULL);
 }
 
 
@@ -108,12 +104,12 @@ NA_IDEF void naDestroyURL(NAURL* url){
 }
 
 
-NA_IDEF NAString* naCreateStringWithURLFilename(NAString* string, NAURL* url){
+NA_IDEF NAString* naNewStringWithURLFilename(NAURL* url){
   if(naGetListCount(&(url->path))){
     const NAString* lastcomponent = naGetListLastConst(&(url->path));
-    return naCreateStringExtraction(string, lastcomponent, 0, -1);
+    return naNewStringExtraction(lastcomponent, 0, -1);
   }else{
-    return naCreateString(string);
+    return naNewString();
   }
 }
 

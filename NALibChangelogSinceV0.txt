@@ -16,10 +16,20 @@ correct, complete or final.
 Highlights:
 - Added NAQuadTree. A structure storing integer quad trees with arbitrary
   contents and many callbacks
-- Added NAPool.
+- Added NAPool
 - Added NAStack
+- Added a small runtime system for pool allocation of NAString structs.
+- Changed all naCreateString methods to naNewString
 
 Other things:
+- NAByteArray now has negative size when last bytes are binary zero
+- Renamed NAPointerContent to NALValue. Added null-termination and array
+  detection.
+- Added NA_INVALID_INDEX to NAByteArray
+- String escaping has been removed
+- Added naGetSystemMemoryPageSize and naGetSystemMemoryPageSizeMask
+- Changed some parameter types of various functions
+- Added naAllocatePageAligned, naGetZeroFillSize, naIsByteArrayZeroTerminated
 - Removed lots of pedantic warnings
 - Renamed NA_UNUSED_PARAMETER to NA_UNUSED
 - Added naMakePosiWithAlignment, naGetRectiEndPos, naGetRectiMaxPos
