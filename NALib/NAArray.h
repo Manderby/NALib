@@ -290,7 +290,7 @@ NA_IDEF void* naGetArrayMutableElement(NAArray* array, NAInt indx){
 
 
 NA_IDEF NAUInt naGetArrayCount(const NAArray* array){
-  NAUInt bytesize;
+  NAInt bytesize;
   
   #ifndef NDEBUG
     if(!array){
@@ -299,6 +299,10 @@ NA_IDEF NAUInt naGetArrayCount(const NAArray* array){
     }
   #endif
   bytesize = naGetByteArraySize(&(array->bytearray));
+  #ifndef NDEBUG
+    if(bytesize < 0)
+      naError("naGetArrayCount", "ByteArray count was negative. Do not create Arrays with negative sizes!");
+  #endif
   // Note that an empty array has a typesize of 1.
   return bytesize / array->typesize;
 }

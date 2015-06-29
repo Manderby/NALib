@@ -2,48 +2,95 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#include "NASystem.h"
-#include <unistd.h>
-
-
-NAUInt naGetSystemMemoryPageSize(){
-  return (NAUInt)sysconf(_SC_PAGESIZE);
-}
-
-
-NAUInt naGetSystemMemoryPageSizeMask(){
-  return ~(NAUInt)(naGetSystemMemoryPageSize() - 1);
-}
-
-
-
-#ifndef NDEBUG
-
-  // The error printing method. Errors will be emitted to the stderr output.
-  // When NDEBUG is defined, these functions are OBSOLETE!
-  #ifdef __cplusplus
-    #include <cstdio>
-  #else
-    #include <stdio.h>
-  #endif
-
-
-  void naError(const char* functionsymbol, const char* message){
-    // Set a breakpoint here, if everything fails.
-    fprintf(stderr, "Error in %s: %s\n", functionsymbol, message);
-  }
-
-
-
-  NA_NORETURN void naCrash(const char* functionsymbol, const char* message){
-    // Set a breakpoint here, if everything fails.
-    fprintf(stderr, "Critical Error in %s: %s\n", functionsymbol, message);
-    fprintf(stderr, "Crashing the application deliberately...\n");
-    exit(EXIT_FAILURE);
-  }
-
+#ifndef NA_STACK_INCLUDED
+#define NA_STACK_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
 #endif
 
+
+
+
+
+typedef struct NAStack NAStack;
+struct NAStack{
+  void** pointers;
+  NAUInt maxcount;
+  NAUInt cur;
+};
+
+
+
+NAStack* naCreateStack(NAStack* stack, NAUInt maxcount){
+  stack = naAllocNALibStruct(stack, NAStack);
+  stack->pointers = naAllocate(sizeof(void*) * maxcount);
+  stack->maxcount = maxcount;
+  stack->cur = 0;
+  return stack;
+}
+
+
+
+naClearStack(NAStack* stack){
+  free(stack->pointers);
+}
+
+
+
+naDestroyStack(NAStack* stack){
+  naClearStack(stack);
+  free(stack);
+}
+
+
+
+void naPushStack(NAStack* stack, void* pointer){
+  #ifndef NDEBUG
+    if(stack->cur == stack->maxcount)
+      naError("naPushStack", "Stack is full");
+  #endif
+  stack->pointers[stack->cur] = pointer;
+  stack->cur++;
+}
+
+
+
+void* naPopStack(NAStack* stack){
+  #ifndef NDEBUG
+    if(stack->cur == 0)
+      naError("naPopStack", "Stack is empty");
+  #endif
+  stack->cur--;
+  return stack->pointers[stack->cur];
+}
+
+
+
+void* naTopStack(NAStack* stack){
+  #ifndef NDEBUG
+    if(stack->cur == 0)
+      naError("naTopStack", "Stack is empty");
+  #endif
+  return stack->pointers[stack->cur - 1];
+}
+
+
+
+NABool naIsStackEmpty(NAStack* stack){
+  return (stack->cur == 0);
+}
+
+
+
+NABool naIsStackFull(NAStack* stack){
+  return (stack->cur == stack->maxcount);
+}
+
+
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
+#endif // NA_STACK_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH
 //

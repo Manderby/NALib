@@ -28,12 +28,7 @@
 #include "NASystem.h"
 
 
-// These functions are the allocation functions of NALib. All functions in
-// NALib use these functions when allocating memory on the heap. The basic
-// function simply allocates using malloc. The naAllocateIfNull function takes
-// an additional ptr argument. If ptr is NA_NULL, memory is allocated and the
-// pointer to that memory is returned. If the pointer is not NA_NULL, nothing
-// is allocated, the same pointer is returned.
+// ZERO FILL RULES
 //
 // When size is negative, a certain number of bytes is appended to the memory
 // block which will be initialized with binary zero but will not be visible to
@@ -49,8 +44,21 @@
 //   the number of bytes needed for an address.
 // - The part without the additional bytes might partially become
 //   initialized with binary zero.
+//
+// The following function returns for a given negative size, how big a buffer
+// must be to include the appended zero bytes.
+NA_IAPI NAUInt naGetNullTerminationSize(NAInt size);
+
+// These functions are the allocation functions of NALib. All functions in
+// NALib use these functions when allocating memory on the heap. The basic
+// function simply allocates using malloc. The naAllocateIfNull function takes
+// an additional ptr argument. If ptr is NA_NULL, memory is allocated and the
+// pointer to that memory is returned. If the pointer is not NA_NULL, nothing
+// is allocated, the same pointer is returned.
+//
 NA_IAPI void* naAllocate      (           NAInt size);
 NA_IAPI void* naAllocateIfNull(void* ptr, NAInt size);
+NA_IAPI void* naAllocatePageAligned(      NAInt size);
 // Authors note:
 //
 // Having only one or two allocation function helps detecting basic memory
@@ -67,13 +75,22 @@ NA_IAPI void* naAllocateIfNull(void* ptr, NAInt size);
 
 
 // ////////////////////////
-// NAPointerContent
+// NALValue
 //
 // Certain structs like NAList or NAPointer distinguish between const and
-// non-const (mutable) data. The NAPointerContent struct delivers this
+// non-const (mutable) data. The NALValue struct delivers this
 // distinction by providing both an Accessor or a Mutator to a pointer.
 //
-// The problem is that C has no concept of accessors and mutators. Even
+// Furthermore, NALValue allows you to tag a pointer with various flags
+// like if it denotes an array or not and whether that array is null-terminated
+// or not.
+//
+// When compiling with NDEBUG, NALValue will optimize to a simpe C-Pointer.
+// No tags will be available and no code is executed. But during debugging,
+// using NALValue can greatly improve your code-safety.
+//
+// The problem is that C has no concept of how to specifically handle a
+// pointer, and especially how to use accessors and mutators. Even
 // though the main difference is just the type returned, in C you can not
 // overload functions and hence you can not hide the distinction to the user.
 // There is the possibility to create two versions for each struct type storing
@@ -102,19 +119,16 @@ NA_IAPI void* naAllocateIfNull(void* ptr, NAInt size);
 // out by modern compilers, resulting in nothing but a simple memory pointer.
 
 // Opaque type. See explanation in readme.txt
-typedef struct NAPointerContent NAPointerContent;
+typedef struct NALValue NALValue;
 
-// Fills the given NAPointerContent struct with either a const or a non-const
+// Fills the given NALValue struct with either a const or a non-const
 // pointer.
-NA_IAPI void naFillPointerContentConst   (NAPointerContent* content,
-                                                 const void* data);
-NA_IAPI void naFillPointerContentMutable (NAPointerContent* content,
-                                                       void* data);
-
-// Returns NA_TRUE, if the pointer stores const data. This function only is
-// useful when debugging. When NDEBUG is defined, this function always returns
-// NA_FALSE.
-NA_IAPI NABool naIsPointerContentConst(NAPointerContent* content);
+NA_IAPI void naFillLValueConst  (NALValue* lvalue, const void* data);
+NA_IAPI void naFillLValueMutable(NALValue* lvalue,       void* data);
+NA_IAPI void naFillLValueSub    ( NALValue* dstlvalue,
+                                  const NALValue* srclvalue,
+                                  NAUInt offset,
+                                  NAUInt size);
 
 // The following two functions return either a const or a mutable pointer.
 //
@@ -126,9 +140,22 @@ NA_IAPI NABool naIsPointerContentConst(NAPointerContent* content);
 //
 // When NDEBUG is defined, the two functions are equal and no test will be
 // performed whatsoever.
-NA_IAPI const void* naGetPointerContentConst(const NAPointerContent* content);
-NA_IAPI       void* naGetPointerContentMutable(NAPointerContent* content);
+NA_IAPI const void* naGetLValueConst(      const NALValue* lvalue);
+NA_IAPI       void* naGetLValueMutable(          NALValue* lvalue);
+NA_IAPI const void* naGetLValueOffsetConst(const NALValue* lvalue, NAUInt indx);
+NA_IAPI       void* naGetLValueOffsetMutable(    NALValue* lvalue, NAUInt indx);
 
+// The following functions are only available when debugging.
+#ifndef NDEBUG
+  NA_IAPI void naMarkLValueWithVisibleSize(NALValue* lvalue, NAUInt visiblesize);
+  NA_IAPI void naMarkLValueWithAccessibleSize(NALValue* lvalue, NAUInt visiblesize, NABool nullterminated);
+  NA_IAPI NABool naIsLValueNullTerminated(const NALValue* lvalue);
+#endif
+
+// Returns NA_TRUE, if the pointer stores const data. This function only is
+// useful when debugging. When NDEBUG is defined, this function always returns
+// NA_FALSE.
+NA_IAPI NABool naIsLValueConst(NALValue* lvalue);
 
 
 
@@ -220,7 +247,7 @@ NA_IAPI void naReleasePointer(NAPointer* pointer);
 NA_IAPI const void* naGetPointerConstData  (const NAPointer* pointer);
 NA_IAPI       void* naGetPointerMutableData(      NAPointer* pointer);
 
-
+NA_IAPI NALValue naGetPointerLValue(const NAPointer* pointer);
 
 
 
@@ -250,6 +277,18 @@ NA_IAPI       void* naGetPointerMutableData(      NAPointer* pointer);
 #include "NABinaryData.h"
 
 
+
+NA_IAPI NAUInt naGetNullTerminationSize(NAInt size){
+  #ifndef NDEBUG
+    if(size >= 0)
+      naError("naGetNullTerminationSize", "size is positive");
+  #endif
+  return -size + 2 * NA_SYSTEM_ADDRESS_BYTES - (-size % NA_SYSTEM_ADDRESS_BYTES);
+}
+
+
+
+
 NA_IDEF void* naAllocate(NAInt size){
   NAByte* ptr; // Declaration before implementation. Needed for C90.
   NAInt fullsize;
@@ -260,26 +299,21 @@ NA_IDEF void* naAllocate(NAInt size){
 
   if(size>0){
     #ifndef NDEBUG
-//      if(size > SIZE_MAX)
-//        naError("naAllocate", "given size overflows size_t type.");
     #endif
     ptr = (NAByte*)malloc((size_t)size);
   }else{
     #ifndef NDEBUG
       if(size == NA_INT_MIN)
         naError("naAllocate", "given negative size owerflows NAInt type.");
-//      if(-size > SIZE_MAX)
-//        naError("naAllocate", "given negative size overflows size_t type.");
     #endif
-    fullsize = -size + 2 * NA_SYSTEM_ADDRESS_BYTES - (-size % NA_SYSTEM_ADDRESS_BYTES);
+    fullsize = naGetNullTerminationSize(size);
     #ifndef NDEBUG
       if(fullsize < -size)
         naError("naAllocate", "given size including zero filled endbytes overflows NAInt type.");
-//      if(fullsize > SIZE_MAX)
-//        naError("naAllocate", "given size including zero filled endbytes overflows size_t type.");
     #endif
     ptr = (NAByte*)malloc((size_t)fullsize);
-    naNulln(&(ptr[fullsize - 2 * NA_SYSTEM_ADDRESS_BYTES]), 2 * NA_SYSTEM_ADDRESS_BYTES);
+    *(NAUInt*)(&(ptr[fullsize - 2 * NA_SYSTEM_ADDRESS_BYTES])) = 0;
+    *(NAUInt*)(&(ptr[fullsize - 1 * NA_SYSTEM_ADDRESS_BYTES])) = 0;
   }
 
   
@@ -317,84 +351,211 @@ NA_IDEF void* naAllocateIfNull(void* ptr, NAInt size){
 
 
 
+
+NA_IDEF void* naAllocatePageAligned(NAInt size){
+  #ifdef NA_C11
+    return aligned_alloc(size, naGetSystemMemoryPageSize());
+  #else
+    return valloc(size);
+  #endif
+}
+
+
+
+
 // //////////////////////////
-// NAPointerContent
+// NALValue
 // //////////////////////////
 
 // Opaque type. typedef is above. See explanation in readme.txt
-struct NAPointerContent{
+struct NALValue{
   union{                // A union storing either ...
     const void* constd; // ... const data or ...
     void*       d;      // ... non-const (mutable) data.
   } data;
   #ifndef NDEBUG
-    int flags;          // This field stores some flags.
+    NAUInt flags;               // This field stores some flags.
+    NAUInt visiblesize;         // nof bytes of the visible byte storage
+    NAUInt accessiblebytecount; // nof bytes of the accessible byte storage
   #endif
 };
 // Note that this is one of the very, very rare situations, where a union type
-// actually makes sense. See NAPointerContent definition.
-
+// actually makes sense.
+// Also note that NALValue will be fully optimized to a simple C-pointer
+// when NDEBUG is defined.
 
 #ifndef NDEBUG
-  #define NA_POINTER_CONTENT_CONST_DATA     0x01
+  #define NA_LVALUE_CONST_DATA                0x01
+  #define NA_LVALUE_HAS_VISIBLE_BYTECOUNT     0x02
+  #define NA_LVALUE_HAS_ACCESSIBLE_BYTECOUNT  0x04
+  #define NA_LVALUE_NULL_TERMINATED           0x08
 #endif
 
 
 
-NA_IDEF void naFillPointerContentConst(NAPointerContent* content,
-                                              const void* data){
-  content->data.constd = data;
+NA_IDEF void naFillLValueConst(NALValue* lvalue, const void* data){
+  lvalue->data.constd = data;
   #ifndef NDEBUG
-    content->flags = NA_POINTER_CONTENT_CONST_DATA;
+    lvalue->flags = NA_LVALUE_CONST_DATA;
   #endif
 }
 
 
-NA_IDEF void naFillPointerContentMutable(NAPointerContent* content,
-                                                      void* data){
-  content->data.d = data;
+
+NA_IDEF void naFillLValueMutable(NALValue* lvalue, void* data){
+  lvalue->data.d = data;
   #ifndef NDEBUG
-    content->flags = 0;
+    lvalue->flags = 0;
   #endif
 }
 
 
-NA_IDEF NABool naIsPointerContentConst(NAPointerContent* content){
+
+NA_IDEF void naFillLValueSub(NALValue* dstlvalue, const NALValue* srclvalue, NAUInt offset, NAUInt size){
+  dstlvalue->data.constd = naGetLValueOffsetConst(srclvalue, offset);
   #ifndef NDEBUG
-    return (content->flags & NA_POINTER_CONTENT_CONST_DATA);
+    dstlvalue->flags = srclvalue->flags;
+    dstlvalue->visiblesize = size;
+    if(offset + size < srclvalue->visiblesize){
+      dstlvalue->flags &= ~NA_LVALUE_NULL_TERMINATED;
+      dstlvalue->accessiblebytecount = dstlvalue->visiblesize;
+    }else if(offset + size > srclvalue->visiblesize){
+      naError("naFillLValueSub", "new offset and size overflows storage");
+    }else{
+      dstlvalue->accessiblebytecount -= offset;
+    }
   #else
-    NA_UNUSED(content);
+    NA_UNUSED(size);
+  #endif
+}
+
+
+
+NA_IDEF const void* naGetLValueConst(const NALValue* lvalue){
+  #ifndef NDEBUG
+    if(!lvalue){
+      naCrash("naGetLValueConst", "lvalue is Null-Pointer.");
+      return NA_NULL;
+    }
+  #endif
+  return lvalue->data.constd;
+}
+
+
+
+NA_IDEF void* naGetLValueMutable(NALValue* lvalue){
+  #ifndef NDEBUG
+    if(!lvalue){
+      naCrash("naGetLValueMutable", "lvalue is Null-Pointer.");
+      return NA_NULL;
+    }
+    // An NALValue often stores Null-Pointers. In that case, just return
+    // Null and do not emit any warning.
+    if(lvalue->data.d == NA_NULL){return NA_NULL;}
+    if(lvalue->flags & NA_LVALUE_CONST_DATA)
+      naError("naGetLValueMutable", "Accessing const data as non-const.");
+  #endif
+  return lvalue->data.d;
+}
+
+
+
+NA_IDEF const void* naGetLValueOffsetConst(const NALValue* lvalue, NAUInt indx){
+  #ifndef NDEBUG
+    if(!lvalue){
+      naCrash("naGetLValueOffsetConst", "lvalue is Null-Pointer.");
+      return NA_NULL;
+    }
+    if((lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT) && (indx >= lvalue->visiblesize))
+      if((lvalue->flags & NA_LVALUE_HAS_ACCESSIBLE_BYTECOUNT) && (indx >= lvalue->accessiblebytecount))
+        naError("naGetLValueOffsetConst", "index out of accessible bounds");
+      else
+        naError("naGetLValueOffsetConst", "index out of visible bounds");
+  #endif
+  return &(((const NAByte*)(lvalue->data.constd))[indx]);
+}
+
+
+
+NA_IDEF void* naGetLValueOffsetMutable(NALValue* lvalue, NAUInt indx){
+  #ifndef NDEBUG
+    if(!lvalue){
+      naCrash("naGetLValueOffsetMutable", "lvalue is Null-Pointer.");
+      return NA_NULL;
+    }
+    // An NALValue often stores Null-Pointers. In that case, just return
+    // Null and do not emit any warning.
+    if(lvalue->data.d == NA_NULL){return NA_NULL;}
+    if(lvalue->flags & NA_LVALUE_CONST_DATA)
+      naError("naGetLValueOffsetMutable", "Accessing const data as non-const.");
+    if((lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT) && (indx >= lvalue->visiblesize))
+      if((lvalue->flags & NA_LVALUE_HAS_ACCESSIBLE_BYTECOUNT) && (indx >= lvalue->accessiblebytecount))
+        naError("naGetLValueOffsetMutable", "index out of accessible bounds");
+      else
+        naError("naGetLValueOffsetMutable", "index out of visible bounds");
+  #endif
+  return &(((NAByte*)(lvalue->data.d))[indx]);
+}
+
+
+#ifndef NDEBUG
+
+
+
+  NA_IDEF void naMarkLValueWithVisibleSize(NALValue* lvalue, NAUInt visiblesize){
+    if(!lvalue)
+      {naCrash("naMarkLValueWithVisibleSize", "lvalue was null"); return;}
+    if(lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT)
+      naError("naMarkLValueWithVisibleSize", "visible size already marked");
+    lvalue->flags |= NA_LVALUE_HAS_VISIBLE_BYTECOUNT;
+    lvalue->visiblesize = visiblesize;
+  }
+  
+  
+
+  NA_IDEF void naMarkLValueWithAccessibleSize(NALValue* lvalue, NAUInt accessiblesize, NABool nullterminated){
+    if(!lvalue)
+      {naCrash("naMarkLValueWithVisibleSize", "lvalue was null"); return;}
+    if(!(lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT))
+      naError("naMarkLValueWithVisibleSize", "visible size must be marked first");
+    if(lvalue->flags & NA_LVALUE_HAS_ACCESSIBLE_BYTECOUNT)
+      naError("naMarkLValueWithVisibleSize", "accessible size already marked");
+    lvalue->flags |= NA_LVALUE_HAS_ACCESSIBLE_BYTECOUNT;
+    lvalue->accessiblebytecount = accessiblesize;
+    if(nullterminated){lvalue->flags |= NA_LVALUE_NULL_TERMINATED;}
+    NAUInt nullindx = lvalue->visiblesize;
+    while(nullindx < lvalue->accessiblebytecount){
+      if(((NAByte*)(lvalue->data.constd))[nullindx] != 0)
+        naError("naMarkLValueWithVisibleSize", "promised null-termination is not null");
+      nullindx++;
+    }
+  }
+
+
+
+  NA_IDEF NABool naIsLValueNullTerminated(const NALValue* lvalue){
+    if(!lvalue)
+      {naCrash("naIsLValueNullTerminated", "lvalue was null"); return NA_FALSE;}
+    if(!(lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT))
+      naError("naIsLValueNullTerminated", "No size information present. Result is possibly wrong");
+    return (lvalue->flags & NA_LVALUE_NULL_TERMINATED);
+  }
+  
+  
+  
+#endif
+
+
+
+
+NA_IDEF NABool naIsLValueConst(NALValue* lvalue){
+  #ifndef NDEBUG
+    return (lvalue->flags & NA_LVALUE_CONST_DATA);
+  #else
+    NA_UNUSED(lvalue);
     return NA_FALSE;
   #endif
 }
-
-
-NA_IDEF const void* naGetPointerContentConst(const NAPointerContent* content){
-  #ifndef NDEBUG
-    if(!content){
-      naCrash("naGetPointerContentConst", "content is Null-Pointer.");
-      return NA_NULL;
-    }
-  #endif
-  return content->data.constd;
-}
-
-
-
-NA_IDEF void* naGetPointerContentMutable(NAPointerContent* content){
-  #ifndef NDEBUG
-    if(!content){
-      naCrash("naGetPointerContentMutable", "content is Null-Pointer.");
-      return NA_NULL;
-    }else{
-      if(content->data.d == NA_NULL){return NA_NULL;}
-      if(content->flags & NA_POINTER_CONTENT_CONST_DATA)
-        naError("naGetPointerContentMutable", "Accessing const data as non-const.");
-    }
-  #endif
-  return content->data.d;
-}
-
 
 
 
@@ -408,7 +569,7 @@ NA_IDEF void* naGetPointerContentMutable(NAPointerContent* content){
 
 // Opaque type. typedef is above. See explanation in readme.txt
 struct NAPointer{
-  NAPointerContent content;
+  NALValue lvalue;
   NAUInt refcount;      // Reference count.
                         // This field also stores some flags, embedded within
                         // the number.
@@ -449,7 +610,16 @@ NA_IDEF NAPointer* naCreatePointerWithSize(NAPointer* pointer, NAInt size){
       naError("naCreatePointerWithSize", "size is zero.");
   #endif
   pointer = naCreatePointerStruct(pointer);
-  naFillPointerContentMutable(&(pointer->content), naAllocate(size));
+  naFillLValueMutable(&(pointer->lvalue), naAllocate(size));
+  #ifndef NDEBUG
+    if(size<0){
+      naMarkLValueWithVisibleSize(&(pointer->lvalue), -size);
+      naMarkLValueWithAccessibleSize(&(pointer->lvalue), naGetNullTerminationSize(size), NA_TRUE);
+    }else{
+      naMarkLValueWithVisibleSize(&(pointer->lvalue), size);
+      naMarkLValueWithAccessibleSize(&(pointer->lvalue), size, NA_FALSE);
+    }
+  #endif
   pointer->refcount |= NA_POINTER_OWN_DATA;
   return pointer;
 }
@@ -463,7 +633,7 @@ NA_IDEF NAPointer* naCreatePointerWithConstBuffer(  NAPointer* pointer,
       naError("naCreatePointerWithConstBuffer", "buffer is Null-Pointer.");
   #endif
   pointer = naCreatePointerStruct(pointer);
-  naFillPointerContentConst(&(pointer->content), buffer);
+  naFillLValueConst(&(pointer->lvalue), buffer);
   return pointer;
 }
 
@@ -479,7 +649,7 @@ NA_IDEF NAPointer* naCreatePointerWithMutableBuffer(NAPointer* pointer,
       naError("naCreatePointerWithMutableBuffer", "invalid ownership");
   #endif
   pointer = naCreatePointerStruct(pointer);
-  naFillPointerContentMutable(&(pointer->content), buffer);
+  naFillLValueMutable(&(pointer->lvalue), buffer);
   pointer->refcount |= (takeownership * NA_POINTER_OWN_DATA);
   return pointer;
 }
@@ -532,7 +702,7 @@ NA_IDEF void naReleasePointer(NAPointer* pointer){
   // NDEBUG is not defined, this can be detected!
   pointer->refcount--;
   if((pointer->refcount & NA_POINTER_REFCOUNT_MASK) == 0){
-    if(pointer->refcount & NA_POINTER_OWN_DATA){free(naGetPointerContentMutable(&(pointer->content)));}
+    if(pointer->refcount & NA_POINTER_OWN_DATA){free(naGetLValueMutable(&(pointer->lvalue)));}
     if(pointer->refcount & NA_POINTER_OWN_STRUCT){free(pointer);}
   }
   // Note that other programming languages have incorporated this very idea
@@ -545,15 +715,19 @@ NA_IDEF void naReleasePointer(NAPointer* pointer){
 
 
 NA_IDEF const void* naGetPointerConstData(const NAPointer* pointer){
-  return naGetPointerContentConst(&(pointer->content));
+  return naGetLValueConst(&(pointer->lvalue));
 }
 
 
 
 NA_IDEF void* naGetPointerMutableData(NAPointer* pointer){
-  return naGetPointerContentMutable(&(pointer->content));
+  return naGetLValueMutable(&(pointer->lvalue));
 }
 
+
+NA_IDEF NALValue naGetPointerLValue(const NAPointer* pointer){
+  return pointer->lvalue;
+}
 
 
 

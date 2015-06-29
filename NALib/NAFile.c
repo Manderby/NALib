@@ -44,7 +44,8 @@
 
 
 
-NA_DEF NAString* naCreateStringFromFileContents(NAString* string, const char* filename, NATextEncoding encoding){
+NA_DEF NAString* naNewStringFromFileContents(const char* filename, NATextEncoding encoding){
+  NAString* string;
   NAFile file;
   NAFileSize totalsize;
   file = naOpenFileForReading(filename);
@@ -52,10 +53,10 @@ NA_DEF NAString* naCreateStringFromFileContents(NAString* string, const char* fi
   totalsize = naComputeFileSize(&file);
   #ifndef NDEBUG
     if(totalsize > NA_INT32_MAX)
-      naError("naCreateStringFromFileContents", "Trying to read more than 2 GiB of data from file");
+      naError("naNewStringFromFileContents", "Trying to read more than 2 GiB of data from file");
   #endif
   // todo: encoding.
- string = naCreateStringFromFile(string, &file, totalsize);
+ string = naNewStringFromFile(&file, totalsize);
  naCloseFile(&file);
  return string;
 }
@@ -657,15 +658,15 @@ NA_DEF NAByteArray* naCreateByteArrayFromFile(NAByteArray* bytearray, NAFile* fi
 }
 
 
-NA_DEF NAString* naCreateStringFromFile(NAString* string, NAFile* file, NAFileSize bytecount){
+NA_DEF NAString* naNewStringFromFile(NAFile* file, NAFileSize bytecount){
   NAUTF8Char* stringbuf;
   #ifndef NDEBUG
     if((file->flags & NA_FILE_FLAG_WRITING))
-      naError("naCreateStringFromFile", "File is not a read-file.");
+      naError("naNewStringFromFile", "File is not a read-file.");
   #endif
   stringbuf = naAllocate(-(NAInt)bytecount);
   naReadFileBytes(file, stringbuf, bytecount);
-  return naCreateStringWithMutableUTF8Buffer(string, stringbuf, -(NAInt)bytecount, NA_TRUE);
+  return naNewStringWithMutableUTF8Buffer(stringbuf, -(NAInt)bytecount, NA_TRUE);
   // todo: encoding.
 }
 
@@ -694,12 +695,13 @@ NA_HIDEF void naRequireFileWriteBufferBytes(NAFile* file, uint16 count){
 
 
 
-NA_DEF void naWriteFileBytes(NAFile* file, const void* ptr, NAFileSize count){
+NA_DEF void naWriteFileBytes(NAFile* file, const void* ptr, NAInt count){
   #ifndef NDEBUG
     if(!(file->flags & NA_FILE_FLAG_WRITING))
       naError("naWriteFileBytes", "File is not a write-file.");
   #endif
   if(!count){return;}
+  if(count < 0){count = -count;}
   if( ((file->flags & NA_FILE_FLAG_AUTOFLUSH_MASK) >= NA_FILE_FLAG_AUTOFLUSH_MULTIBYTE)
       || (count >= NA_FILE_BUFFER_SIZE)){
     naFlushFileBuffer(file);
@@ -1051,14 +1053,14 @@ NA_DEF void naWriteFileStringWithArguments(NAFile* file,
                           const NAUTF8Char* format,
                                     va_list argumentlist){
   // Declaration before implementation. Needed for C90.
-  NAString string;
+  NAString* string;
   #ifndef NDEBUG
     if(!(file->flags & NA_FILE_FLAG_WRITING))
       naError("naWriteFileStringWithArguments", "File is not a write-file.");
   #endif
-  naCreateStringWithArguments(&string, format, argumentlist);
-  naWriteFileString(file, &string);
-  naClearString(&string);
+  string = naNewStringWithArguments(format, argumentlist);
+  naWriteFileString(file, string);
+  naDelete(string);
   if((file->flags & NA_FILE_FLAG_AUTOFLUSH_MASK) >= NA_FILE_FLAG_AUTOFLUSH_TEXT){
     naFlushFileBuffer(file);
   }

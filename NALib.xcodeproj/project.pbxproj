@@ -18,6 +18,7 @@
 		B92A508C1B24FAF400F1D36A /* NARectArea.c in Sources */ = {isa = PBXBuildFile; fileRef = B92A507B1B24FAF300F1D36A /* NARectArea.c */; };
 		B92A508D1B24FAF400F1D36A /* NAString.c in Sources */ = {isa = PBXBuildFile; fileRef = B92A507E1B24FAF300F1D36A /* NAString.c */; };
 		B92A508E1B24FAF400F1D36A /* NASystem.c in Sources */ = {isa = PBXBuildFile; fileRef = B92A50801B24FAF300F1D36A /* NASystem.c */; };
+		B97625B41B3865E2000CF081 /* NARuntime.c in Sources */ = {isa = PBXBuildFile; fileRef = B97625B31B3865E2000CF081 /* NARuntime.c */; };
 		B9DD395619AB329500A0F139 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = B9DD395519AB329500A0F139 /* main.c */; };
 /* End PBXBuildFile section */
 
@@ -51,7 +52,7 @@
 		B92A506A1B24FAF300F1D36A /* NAGrowingSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAGrowingSpace.h; sourceTree = "<group>"; };
 		B92A506B1B24FAF300F1D36A /* NAHeap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAHeap.c; sourceTree = "<group>"; };
 		B92A506C1B24FAF300F1D36A /* NAHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAHeap.h; sourceTree = "<group>"; };
-		B92A506D1B24FAF300F1D36A /* NAInfPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAInfPool.h; sourceTree = "<group>"; };
+		B92A506D1B24FAF300F1D36A /* NARuntime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NARuntime.h; sourceTree = "<group>"; };
 		B92A506E1B24FAF300F1D36A /* NAList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAList.h; sourceTree = "<group>"; };
 		B92A506F1B24FAF300F1D36A /* NAMap2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAMap2D.h; sourceTree = "<group>"; };
 		B92A50701B24FAF300F1D36A /* NAMathConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAMathConstants.h; sourceTree = "<group>"; };
@@ -75,6 +76,7 @@
 		B92A50821B24FAF300F1D36A /* NAURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAURL.h; sourceTree = "<group>"; };
 		B92A50831B24FAF300F1D36A /* NAVectorAlgebra.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAVectorAlgebra.h; sourceTree = "<group>"; };
 		B9432B5D17E5BF5A0075F638 /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
+		B97625B31B3865E2000CF081 /* NARuntime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NARuntime.c; sourceTree = "<group>"; };
 		B9B2EA121716922700943D91 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9DD395519AB329500A0F139 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		B9E8D2C41861D57500D6CCC4 /* NALibChangelogSinceV0.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NALibChangelogSinceV0.txt; sourceTree = "<group>"; };
@@ -111,7 +113,8 @@
 				B92A506A1B24FAF300F1D36A /* NAGrowingSpace.h */,
 				B92A506B1B24FAF300F1D36A /* NAHeap.c */,
 				B92A506C1B24FAF300F1D36A /* NAHeap.h */,
-				B92A506D1B24FAF300F1D36A /* NAInfPool.h */,
+				B92A506D1B24FAF300F1D36A /* NARuntime.h */,
+				B97625B31B3865E2000CF081 /* NARuntime.c */,
 				B92A506E1B24FAF300F1D36A /* NAList.h */,
 				B92A506F1B24FAF300F1D36A /* NAMap2D.h */,
 				B92A50701B24FAF300F1D36A /* NAMathConstants.h */,
@@ -227,6 +230,7 @@
 				B92A508C1B24FAF400F1D36A /* NARectArea.c in Sources */,
 				B92A508D1B24FAF400F1D36A /* NAString.c in Sources */,
 				B92A508E1B24FAF400F1D36A /* NASystem.c in Sources */,
+				B97625B41B3865E2000CF081 /* NARuntime.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,7 +278,7 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_VERSION = "";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
@@ -328,7 +332,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				GCC_VERSION = "";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;

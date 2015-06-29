@@ -172,12 +172,12 @@ struct NAHeap{
 // below no matter what struct type is stored.
 typedef struct NAHeapNoBackEntry NAHeapNoBackEntry;
 struct NAHeapNoBackEntry{
-  NAPointerContent  ptr;
+  NALValue  ptr;
   const void*       key;
 };
 typedef struct NAHeapBackEntry NAHeapBackEntry;
 struct NAHeapBackEntry{
-  NAPointerContent  ptr;
+  NALValue  ptr;
   const void*       key;
   NAInt*            backpointer;
 };
@@ -246,7 +246,7 @@ NA_IDEF const void* naGetHeapRootConst(const NAHeap* heap){
     if(heap->count == 0)
       naError("naGetHeapRootConst", "Heap is empty.");
   #endif
-  return naGetPointerContentConst(&(rootelem->ptr));
+  return naGetLValueConst(&(rootelem->ptr));
 }
 
 
@@ -259,7 +259,7 @@ NA_IDEF void* naGetHeapRootMutable(const NAHeap* heap){
     if(heap->count == 0)
       naError("naGetHeapRootMutable", "Heap is empty.");
   #endif
-  return naGetPointerContentMutable(&(rootelem->ptr));
+  return naGetLValueMutable(&(rootelem->ptr));
 }
 
 

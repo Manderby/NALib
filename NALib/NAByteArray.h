@@ -13,18 +13,19 @@
 //
 // An NAByteArray stores an array of raw bytes by dereferencing a storage.
 // Every ByteArray has a pointer to an internal storage, a data pointer and a
-// size.
+// size. When size is negative, the last bytes of the storage are filled with
+// binary zero.
 //
 // Multiple NAByteArrays can point to the same storage. Meaning: Multiple
 // NAByteArrays can point to different sections of the same byte stream by
 // providing an offset and a size relative to another NAByteArray. This allows
 // for very fast and convenient parsing of byte streams without copying
-// the bytes over and over again. This struct is also used by NAString and
-// BitArray
+// the bytes over and over again. This struct is also used by NAString
 
 
 #include "NASystem.h"
 
+#define NA_INVALID_INDEX NA_INT_MIN
 
 typedef struct NAByteArray  NAByteArray;
 
@@ -62,25 +63,34 @@ NA_IAPI NAByteArray* naCreateByteArray(NAByteArray* array);
 NA_API NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
                                                       NAInt size);
 
-// Creates or fills a new ByteArray which contains the data of the given
+// Use the following functions to encapsulate your own raw buffers into an
+// NAByteArray!
+//
+// There are two creation functions, one for const data and one for non-const.
+//
+// Creates or fills a new NAByteArray which contains the data of the given
 // buffer WITHOUT copying. The size denotes the size of the buffer in bytes.
 // The programmer is responsible for that size does not overflows the buffer.
 // When takeownership is set to NA_TRUE, the array will deallocate the given
-// buffer with free() when it is no longer used. Note that size can not be
-// negative. If size is null, an empty array is created and the buffer will be
-// deleted immediately, if takeownership is true. You can not take ownership of
-// const buffers.
+// buffer with free() when it is no longer used. If size is null, an empty
+// array is created. Beware that in that case, if takeownership is true, the
+// buffer will be deleted immediately.
 //
-// Use these functions to encapsulate your own raw buffers into an NAByteArray!
-// There are two creation functions, one for const data and one for non-const.
+// You can not take ownership of const buffers.
+//
+// If size is negative, the buffer is EXPECTED to be oversized by an unknown
+// amount of bytes and that these bytes are filled with binary zeros. The
+// oversized bytes will NEVER be accessed by NALib but they are assumed to be
+// there. For example the buffer for the string literal "Hello" can be defined
+// with size -5.
 NA_API NAByteArray* naCreateByteArrayWithConstBuffer(
                                                 NAByteArray* array,
                                                  const void* buffer,
-                                                      NAUInt size);
+                                                       NAInt size);
 NA_API NAByteArray* naCreateByteArrayWithMutableBuffer(
                                                 NAByteArray* array,
                                                        void* buffer,
-                                                      NAUInt size,
+                                                       NAInt size,
                                                       NABool takeownership);
 
 
@@ -131,19 +141,22 @@ NA_API NAByteArray* naCreateByteArrayExtraction( NAByteArray* dstarray,
 NA_IAPI void naClearByteArray  (NAByteArray* array);
 NA_IAPI void naDestroyByteArray(NAByteArray* array);
 
+// Empties the array.
+NA_IAPI void naEmptyByteArray  (NAByteArray* array);
+
 // COPIES the contents of the array to a separate storage and decouples it
 // from the existing storage. When the existing storage is no longer used, it
 // gets deleted automatically.
-// If appendzerobytes is true, a specific number of bytes are added at the end
+// If appendnulltermination is true, a specific number of bytes are added at the end
 // and initialized with binary zero. The specific number of bytes is defined by
 // the naCreateByteArrayWithSize function. See there for more information. If
-// appendzerobytes is false, no bytes are appended. The returned ByteArray
+// appendnulltermination is false, no bytes are appended. The returned ByteArray
 // itself will NOT contain any additional zero bytes but instead have the size
 // of the original array.
 //
 // COPIES ALWAYS!
 NA_API void naDecoupleByteArray(NAByteArray* array,
-                                       NABool appendzerobytes);
+                                       NABool appendnulltermination);
 
 
 // ///////////////////////////////
@@ -166,11 +179,18 @@ NA_IAPI const NAByte* naGetByteArrayConstByte  (const NAByteArray* array,
 NA_IAPI       NAByte* naGetByteArrayMutableByte(      NAByteArray* array,
                                                              NAInt indx);
 
-// Returns the number of bytes in this array.
+// Returns the number of bytes in this array. Note that the function always
+// returns a positive number even if the array was created with a negative one.
+// This function is speedy!
 NA_IAPI NAUInt naGetByteArraySize(const NAByteArray* array);
 
 // Returns true if the array is empty.
 NA_IAPI NABool naIsByteArrayEmpty(const NAByteArray* array);
+
+#ifndef NDEBUG
+  // Returns true if the array is zero-terminated beyound the actual array.
+  NA_IDEF NABool naIsByteArrayNullTerminated(const NAByteArray* array);
+#endif
 
 
 
@@ -189,22 +209,22 @@ NA_IAPI NABool naIsByteArrayEmpty(const NAByteArray* array);
 
 #include "NAPointer.h"
 #ifndef NDEBUG
+  // required for out-of-bounds test
   #include "NAMathOperators.h"
 #endif
 
 struct NAByteArray{
-  NAPointer* storage;       // pointer to the storage of all bytes
-  NAUInt size;              // size of this NAByteArray in bytes
-  union{                    // pointer to the first byte of this NAByteArray...
-    const NAByte* constp;   // ... which is either const ...
-          NAByte* p;        // ... or non-const.
-  } ptr;
+  NAPointer* storage;   // pointer to the storage of all bytes
+  NAUInt size;          // size of this NAByteArray in bytes. Always positive.
+  NALValue lvalue;      // pointer to the first byte of this NAByteArray
 };
 // Note that ptr may not point to the same address as the data pointer stored
 // in the storage!
 //
 // If size is zero, the ByteArray is considered empty. In that case, the
 // other fields contain no useful information.
+
+
 
 
 
@@ -218,12 +238,10 @@ NA_IDEF NAByteArray* naCreateByteArray(NAByteArray* array){
 
 NA_IDEF void naClearByteArray(NAByteArray* array){
   #ifndef NDEBUG
-    if(!array){
-      naCrash("naClearByteArray", "array is Null-Pointer.");
-      return;
-    }
+    if(!array)
+      {naCrash("naClearByteArray", "array is Null-Pointer."); return;}
   #endif
-  if(!naIsByteArrayEmpty(array)){naReleasePointer(array->storage);}
+  if(array->size){naReleasePointer(array->storage);}
 }
 
 
@@ -235,16 +253,23 @@ NA_IDEF void naDestroyByteArray(NAByteArray* array){
 
 
 
+NA_IAPI void naEmptyByteArray(NAByteArray* array){
+  naClearByteArray(array);
+  array->size = 0;
+}
+
+
+
 NA_IDEF const NAByte* naGetByteArrayConstPointer(const NAByteArray* array){
   #ifndef NDEBUG
     if(!array){
       naCrash("naGetByteArrayConstPointer", "array is Null-Pointer.");
       return NA_NULL;
     }
-    if(naIsByteArrayEmpty(array))
-      naError("naGetByteArrayConstPointer", "array is empty");
+    if(!array->size)
+      naError("naGetByteArrayConstPointer", "array is empty. Result is garbage");
   #endif
-  return array->ptr.constp;
+  return naGetLValueConst(&(array->lvalue));
 }
 
 
@@ -255,29 +280,10 @@ NA_IDEF NAByte* naGetByteArrayMutablePointer(NAByteArray* array){
       naCrash("naGetByteArrayMutablePointer", "array is Null-Pointer.");
       return NA_NULL;
     }
-    if(naIsByteArrayEmpty(array))
-      naError("naGetByteArrayMutablePointer", "array is empty");
+    if(!array->size)
+      naError("naGetByteArrayMutablePointer", "array is empty. Result is garbage");
   #endif
-  return array->ptr.p;
-}
-
-
-
-NA_IDEF NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt indx){
-  #ifndef NDEBUG
-    if(!array){
-      naCrash("naGetByteArrayMutableByte", "array is Null-Pointer.");
-      return NA_NULL;
-    }
-    if(naIsByteArrayEmpty(array))
-      naError("naGetByteArrayMutableByte", "array is empty");
-  #endif
-  if(indx < 0){indx += naGetByteArraySize(array);}
-  #ifndef NDEBUG
-    if(!naInsidei(0, naGetByteArraySize(array), indx))
-      naError("naGetByteArrayMutableByte", "indx out of bounds");
-  #endif
-  return &(array->ptr.p[indx]);
+  return naGetLValueMutable(&(array->lvalue));
 }
 
 
@@ -288,15 +294,38 @@ NA_IDEF const NAByte* naGetByteArrayConstByte(const NAByteArray* array, NAInt in
       naCrash("naGetByteArrayConstByte", "array is Null-Pointer.");
       return NA_NULL;
     }
-    if(naIsByteArrayEmpty(array))
-      naError("naGetByteArrayConstByte", "array is empty");
+    if(!array->size)
+      naError("naGetByteArrayConstByte", "array is empty. Result is garbage");
+    if(indx == NA_INVALID_INDEX)
+      naError("naGetByteArrayConstByte", "Invalid index");
   #endif
-  if(indx < 0){indx += naGetByteArraySize(array);}
+  if(indx < 0){indx += array->size;}
   #ifndef NDEBUG
-    if(!naInsidei(0, naGetByteArraySize(array), indx))
+    if(!naInsidei(0, array->size, indx))
       naError("naGetByteArrayConstByte", "indx out of bounds");
   #endif
-  return &(array->ptr.constp[indx]);
+  return naGetLValueOffsetConst(&(array->lvalue), indx);
+}
+
+
+
+NA_IDEF NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt indx){
+  #ifndef NDEBUG
+    if(!array){
+      naCrash("naGetByteArrayMutableByte", "array is Null-Pointer.");
+      return NA_NULL;
+    }
+    if(!array->size)
+      naError("naGetByteArrayMutableByte", "array is empty. Result is garbage");
+    if(indx == NA_INVALID_INDEX)
+      naError("naGetByteArrayMutableByte", "Invalid index");
+  #endif
+  if(indx < 0){indx += array->size;}
+  #ifndef NDEBUG
+    if(!naInsidei(0, array->size, indx))
+      naError("naGetByteArrayMutableByte", "indx out of bounds");
+  #endif
+  return naGetLValueOffsetMutable(&(array->lvalue), indx);
 }
 
 
@@ -323,6 +352,16 @@ NA_IDEF NABool naIsByteArrayEmpty(const NAByteArray* array){
   return (array->size == 0);
 }
 
+
+#ifndef NDEBUG
+  NA_IDEF NABool naIsByteArrayNullTerminated(const NAByteArray* array){
+    if(!array){
+      naCrash("naIsByteArrayNullTerminated", "array is Null-Pointer.");
+      return NA_TRUE;
+    }
+    return naIsLValueNullTerminated(&(array->lvalue));
+  }
+#endif
 
 
 

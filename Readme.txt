@@ -70,6 +70,8 @@ The naming scheme guides you:
                 section 2.2 for more information.
 - naDestroyXXX: Same thing as naClearXXX, but the pointer is deallocated. See
                 section 2.2 for more information.
+- naNewXXX:     Uses the NARuntime system to quickly provide a pointer.
+- naDelete:     Deletes a pointer allocated with naNewXXX.
 
 
 

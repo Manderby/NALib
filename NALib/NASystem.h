@@ -91,7 +91,6 @@
 // The number of bytes per address
 #define NA_SYSTEM_ADDRESS_BYTES (NA_SYSTEM_ADDRESS_BITS>>3)
 
-
 // ////////////////////////////////////////////////////////////
 // System dependant mapping of global functions and macros
 // ////////////////////////////////////////////////////////////
@@ -180,15 +179,11 @@
 // library which is built with NALib.
 
 
-
+// NALib also works with older standards but if C11 is detected, it is used.
 #if defined __STDC_VERSION__
   #if __STDC_VERSION__ >= 201112L // This indicates the C11 standard
-    #define NA_NORETURN   _Noreturn
-  #else
-    #define NA_NORETURN
+    #define NA_C11
   #endif
-#else
-  #define NA_NORETURN
 #endif
 
 
@@ -403,16 +398,24 @@ typedef int NABool;
 // Also note that in the comments of NALib as well as in the error messages,
 // it will oftem times be called "Null-Pointer". In the implementation
 // however, NA_NULL is used.
+//
+// The NORETURN macro expands to _Noreturn only in C11
 
 #include <stdlib.h>
-#if defined __STDC_VERSION__
-  #if __STDC_VERSION__ >= 201112L // This indicates the C11 standard
-    #define NA_NULL nullptr
-  #endif
-#endif
-#ifndef NA_NULL
+#ifdef NA_C11
+  #define NA_NULL nullptr
+  #define NA_NORETURN _Noreturn
+#else
   #define NA_NULL NULL
+  #define NA_NORETURN
 #endif
+
+
+// Returns the number of bytes used per memory page as well as a mask which
+// you can AND to an address to get the base address of a page.
+NAUInt naGetSystemMemoryPageSize();
+NAUInt naGetSystemMemoryPageSizeMask();
+
 
 
 // /////////////////////////////////
