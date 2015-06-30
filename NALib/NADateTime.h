@@ -181,7 +181,7 @@ NA_API NADateTime naMakeDateTimeFromPointer(  const void* data,
 NA_API const char* naGetDateTimeErrorString(uint8 errornum);
 
 // Creates a byte array with the given format.
-NA_API NAByteArray* naCreateByteArrayFromDateTime( NAByteArray* bytearray,
+NA_API NAByteArray* naInitByteArrayFromDateTime( NAByteArray* bytearray,
                                               const NADateTime* datetime,
                                             NABinDateTimeFormat format);
 

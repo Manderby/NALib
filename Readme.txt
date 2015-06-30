@@ -9,10 +9,8 @@ Table of Content:
 -----------------
 1.   Short Introduction
 2.   Creation and deletion of memory and structs
-2.1    Constructors
-2.2    Destructors
-2.3    Callbacks for container structs
-3.   -
+2.3    DEPRECATED - Callbacks for container structs
+3.   Runtime System
 4.   C90 variable declarations
 5.   Inline implementations
 6.   Opaque types
@@ -46,117 +44,109 @@ Have fun, Tobias Stamm.
 2 Creation and deletion of memory and structs
 ---------------------------------------------
 You can use the default malloc and free functions to create memory blocks
-as you like. NALib nontheless provides two allocation methods (which can
-be deallocated using free):
+as you like. NALib nontheless provides its own allocation methods (which are
+basically mappings to malloc and free):
 
-- naAllocate        Allocates the given number of bytes.
-- naAllocateIfNull  Same as naAllocate but the space will only be allocated
-                    if the pointer provided is NA_NULL.
+- naMalloc            Allocates the given number of bytes.
+- naMallocIfNull      Same as naMalloc but the space will only be allocated
+                      if the pointer provided is NA_NULL.
+- naMallocPageAligned Allocates the given number of bytes but the first byte
+                      will be aligned to a page boundary.
+- naAlloc             Allocates space for the given NALib structure. Use it
+                      for example like this: NAArray* a = naAlloc(NAArray);
+- naFree              Frees the memory allocated with above functions.
+
+
+Additionally, starting with NALib version 10, you can use the following
+two functions (See section 3 for more information):
+
+- naNew:        Uses the NARuntime system to quickly provide a pointer.
+- naDelete:     Deletes a pointer allocated with naNew.
+
 
 Other than these basic allocation methods, NALib offers creation and deletion
 functions for many structs.
 
 The naming scheme guides you:
 
-- naMakeXXX:    Returns the struct as a value. Only very basic structs will
-                provide such functions.
+
+- naMakeXXX:    Returns the struct as a value. Only very basic structs (pod)
+                will provide such functions.
 - naFillXXX:    Expects the first argument to be a pointer to the struct.
-- naCreateXXX:  Expects either a pointer to an existing block in memory or
-                NA_NULL if you want NALib to allocate the memory. In any case:
-                Returns the pointer to the struct. See section 2.1 for more
-                information.
+                Again, only basic structs (pod) will offer such functions.
+- naInitXXX:    Expects a pointer to an existing block in memory. Returns the
+                pointer again. See section 2.1 for more information.
 - naClearXXX:   Expects a pointer to a struct in which the memory shall be
                 whiped. The pointer itself is not deallocated though. See
                 section 2.2 for more information.
-- naDestroyXXX: Same thing as naClearXXX, but the pointer is deallocated. See
-                section 2.2 for more information.
-- naNewXXX:     Uses the NARuntime system to quickly provide a pointer.
-- naDelete:     Deletes a pointer allocated with naNewXXX.
+- naNewXXX:     Starting with NALib version 10, certain structs like NAString
+                have been restricted to be managed by the runtime system. These
+                structs do not provide naInitXXX_functions but naNewXXX-
+                functions instead.
 
 
+Simple structs like NAPos are very basic structs and are generally called
+pod (plain old data). Such structs do not need special care when creating
+or deleting them. But more complex structs do.
 
-2.1 Constructors
------------------
-Quite often, structs must be initialized before being able to use them.
-As NALib is a C library, there are no constructors like in typical OOP
-languages and consequently, such initialization must be done manually by
-the programmer.
+Complex structs must be initialized before being able to use them and must
+be destroyed when not needed anymore. As NALib is a C library, there are no
+constructors or destructors like in typical OOP languages and consequently,
+such initialization must be done manually by the programmer.
 
-In NALib, initialization-functions always start with naCreateXXX. They
-assume the given struct to be uninitialized and will overwrite all values.
-The struct itself can either be already allocated outside of the createXXX
-function (case A) or being automatically allocated within (case B):
+In NALib, construction-functions always start with naInitXXX and desctruction-
+functions always start with naClearXXX. naInitXXX-functions usually assume
+the given struct to be uninitialized and will overwrite all values. naClearXXX-
+functions expect a pointer to an initialized struct and will perform all
+necessary destructions. Beware that naClearXXX will only erase the contents but
+not the pointer itself.
 
-A. If the given first argument of a createXXX function is NOT NULL, the
-   struct at the given pointer is used. Outside of the function, the
-   given struct is usually already stored in a variable and a pointer to
-   that variable is used in the function call. For example:
-
-   NAByteArray myarray;
-   naCreateByteArrayWithSize(&myarray, 1234);
-
-   When no longer used, these structs usually are destructed with the
-   appropriate clearXXX function. See destructor explanation below.
-
-   To stay consistent with case B, the pointer to the given struct
-   is returned at the end of the function.
-
-B. If the given first argument of an naCreateXXX function is a NULL-pointer,
-   a new struct is allocated on the heap using malloc and at the end of the
-   function, the pointer to that memory location is returned.
-   Outside of the function, the returned pointer is usually stored in a
-   pointer variable. For example:
-
-   NAByteArray* myarray = naCreateByteArrayWithSize(NA_NULL, 1234);
-
-   When no longer used, these structs usually are deleted using the
-   appropriate destroyXXX function. See destructor explanation below.
-
-   Important notice: Using a NULL-pointer might seem to be the easiest way
-   when createing new structs. But each time, a new (likely small) space
-   must be allocated on the heap and later be freed again. In contrast to
-   modern programming languages, C is not optimized for this case and might
-   result in quite noticeable speed drops.
+The struct itself must always be allocated outside of the naInitXXX
+function. According to the functions listed in section 1, you have the
+following scenarios:
 
 
+A) Use the pointer to an existing struct:
+NAArray myarray;
+naInitArray(&myarray);
+naClearArray(&myarray);
 
 
+B) Allocate with malloc, naMalloc or naAlloc and delete with free or naFree:
+NAArray* myarray1;
+NAArray* myarray2;
+NAArray* myarray3;
+myarray1 = naInitArray(malloc(sizeof(NAArray)));
+myarray2 = naInitArray(naMalloc(sizeof(NAArray)));
+myarray3 = naInitArray(naAlloc(NAArray));
+naClearArray(myarray1);
+naClearArray(myarray2);
+naClearArray(myarray3);
+free(myarray1);
+naFree(myarray2);
+naFree(myarray3);
 
 
-2.2 Destructors
----------------
-Structs which have been initialized using an naCreateXXX function (see above)
-must be deleted with the appropriate destructor.
+C) Allocate with naNew and delete with naDelete:
+NAArray* myarray;
+myarray = naInitArray(naNew(NAArray));
+naDelete(myarray);
 
-As NALib is a C library, there are no destructors like in typical OOP
-languages and consequently, such deletion must be done manually by
-the programmer.
 
-In NALib, destruction-functions either start with naDestroyXXX or naClearXXX.
-Both functions expect a pointer to the struct and will perform all
-appropriate destructions. Basically, naClearXXX will erase the contents.
-naDestroyXXX will call naClearXXX first and free the given pointer after that.
+The cases listed here are usual scenarios. But in certain cases, a programmer
+might want to choose differently, for example to save time. If you choose so,
+just make sure you know what you are doing.
 
-A. clearXXX functions are meant for variables whose content shall be erased
-   but the memory of the struct itself shall not be freed.
+Do not use the free-functions on stack variables!
 
-B. destroyXXX functions are meant for pointers which shall be erased and
-   freed completely from memory.
 
-Usually, the cases listed here go in pairs with the cases listed in the
-Constructors explanation above. Meaning a case A constructor usually will
-require a case A destructor and a case B constructor usually a case B
-destructor. But in certain cases, a programmer might want to choose
-differently, for example to save time. If you choose so, just make sure
-you know what you are doing.
-
-Do not use the naDestroyXXX functions on stack variables!
 
 
 
 
 2.3 Callbacks for container structs
 -----------------------------------
+-- LEGACY AND DEPRECATED - WILL BE REMOVED IN ONE OF THE NEXT VERSIONS --
 Some container structs like NAArray or NAGrowingSpace provide naCreateXXX,
 naClearXXX and naDestroyXXX functions with an additional parameter:
 A constructor or destructor callback with the following signature:
@@ -220,10 +210,38 @@ correct one! And beware the pointer!
 
 
 
-3 Section 3
+
+3 Runtime System
 -----------
-Looking for section 3? Currently there is none due to reordering of the
-contents of this file. Don't worry about it.
+Starting with NALib version 10, there exists a small Runtime System which can
+be used if desired. Currently, it mainly provides inifinitely large pools for
+NALib structures for quick allocation and pointer management.
+
+The author decided to add such a system because of the NAString struct which
+becomes way easier to manage when strings are always provided as pointers.
+Therefore, the naInitString-functions have been replaced by naNewString-
+functions which do not accept an input pointer anymore but instead always
+return a pointer allocated with naNew.
+
+Warning: NALib version 10 only provides the runtime system for NAString.
+
+In order to manage the pointers, an instance of NARuntime must be created
+before any naNew function can be called. When NDEBUG is undefined, a friendly
+warning tells you to start the runtime system. You can start it by a simple
+call to
+
+naStartRuntime();
+
+When you no longer need the runtime system, you can stop it using
+
+naStopRuntime();
+
+The runtime system will be enhanced in future versions to other NALib structs
+and probably even custom types. Other enhancements of the runtime system may
+be possible like deallocation pools or even some sort of garbage collection
+or (in the far future) just-in-time compilation.
+
+
 
 
 

@@ -214,7 +214,7 @@ NA_IDEF NAByteMap2D* naCreateByteMap2DWithRecti(NAByteMap2D* map2d,
       if(naIsRectiValid(rect) && (totalsize < 0))
         naError("naCreateByteMap2DWithRecti", "Total size exceeds int range");
     #endif
-    map2d->map.data = (NAByte*)naAllocate(totalsize);
+    map2d->map.data = (NAByte*)naMalloc(totalsize);
     naNulln(map2d->map.data, totalsize);
   }
   return map2d;
@@ -301,7 +301,7 @@ NA_IDEF void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect){
     if(!naEqualRecti(enhancedrect, map2d->map.rect)){
       // If the enhanced rect is different than the current rect, enhance!
       NAByte* olddataptr = map2d->map.data;
-      NAByte* newdata = naAllocate(totalsize);
+      NAByte* newdata = naMalloc(totalsize);
       NAByte* newdataptr = newdata;
       
       // Compute the bounds.

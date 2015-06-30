@@ -16,7 +16,7 @@
 
 
 NA_HDEF void naAddGrowingSpaceNewSpace(NAGrowingSpace* space){
-  NAByteArray* newarray = naCreateByteArrayWithSize(NA_NULL, NA_GROWING_SPACE_SINGLE_ARRAY_SIZE * space->typesize);
+  NAByteArray* newarray = naInitByteArrayWithSize(naAlloc(NAByteArray), NA_GROWING_SPACE_SINGLE_ARRAY_SIZE * space->typesize);
   if(space->constructor){
     NAByte* curptr = naGetByteArrayMutablePointer(newarray);
     NAUInt i;
@@ -73,7 +73,8 @@ NA_DEF void naClearGrowingSpace(NAGrowingSpace* space, NADestructor destructor){
         curptr += space->typesize;
       }
     }
-    naDestroyByteArray(curarray);
+    naClearByteArray(curarray);
+    naFree(curarray);
   }
 
   naClearList(&(space->arrays), NA_NULL);

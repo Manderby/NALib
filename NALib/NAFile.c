@@ -63,16 +63,16 @@ NA_DEF NAString* naNewStringFromFileContents(const char* filename, NATextEncodin
 
 
 
-NA_DEF NAByteArray* naCreateByteArrayFromFileContents(NAByteArray* bytearray, const char* filename){
+NA_DEF NAByteArray* naInitByteArrayFromFileContents(NAByteArray* bytearray, const char* filename){
   NAFile file;
   NAFileSize totalsize;
   file = naOpenFileForReading(filename);
   totalsize = naComputeFileSize(&file);
   #ifndef NDEBUG
     if(totalsize > NA_INT32_MAX)
-      naError("naCreateByteArrayFromFileContents", "Trying to read more than 2 GiB of data from file");
+      naError("naInitByteArrayFromFileContents", "Trying to read more than 2 GiB of data from file");
   #endif
-  bytearray = naCreateByteArrayFromFile(bytearray, &file, totalsize);
+  bytearray = naInitByteArrayFromFile(bytearray, &file, totalsize);
   naCloseFile(&file);
   return bytearray;
 }
@@ -94,7 +94,7 @@ NA_DEF NAFile naOpenFileForReading(const char* filename){
     #endif
   }
   file.remainingbytesinbuffer = 0;  // the buffer is empty at the moment.
-  file.buf = naAllocate(NA_FILE_BUFFER_SIZE);
+  file.buf = naMalloc(NA_FILE_BUFFER_SIZE);
   file.bufptr = file.buf;
   return file;
 }
@@ -114,7 +114,7 @@ NA_DEF NAFile naOpenFileForWriting(const char* filename, NAFileMode mode){
     #endif
   }
   file.remainingbytesinbuffer = NA_FILE_BUFFER_SIZE;
-  file.buf = naAllocate(NA_FILE_BUFFER_SIZE);
+  file.buf = naMalloc(NA_FILE_BUFFER_SIZE);
   file.bufptr = file.buf;
   return file;
 }
@@ -133,7 +133,7 @@ NA_DEF NAFile naOpenFileForAppending(const char* filename, NAFileMode mode){
     #endif
   }
   file.remainingbytesinbuffer = NA_FILE_BUFFER_SIZE;
-  file.buf = naAllocate(NA_FILE_BUFFER_SIZE);
+  file.buf = naMalloc(NA_FILE_BUFFER_SIZE);
   file.bufptr = file.buf;
   return file;
 }
@@ -147,7 +147,7 @@ NA_DEF NAFile naMakeFileAsStdin(){
   file.textencoding = NA_TEXT_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_STREAM | NA_FILE_FLAG_NEWLINE_NATIVE | NA_FILE_FLAG_AUTOFLUSH_ALL;
   file.remainingbytesinbuffer = 0;  // the buffer is empty at the moment.
-  file.buf = naAllocate(NA_FILE_BUFFER_SIZE);
+  file.buf = naMalloc(NA_FILE_BUFFER_SIZE);
   file.bufptr = file.buf;
   return file;
 }
@@ -161,7 +161,7 @@ NA_DEF NAFile naMakeFileAsStdout(){
   file.textencoding = NA_TEXT_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_WRITING | NA_FILE_FLAG_STREAM | NA_FILE_FLAG_NEWLINE_NATIVE | NA_FILE_FLAG_AUTOFLUSH_ALL;
   file.remainingbytesinbuffer = NA_FILE_BUFFER_SIZE;
-  file.buf = naAllocate(NA_FILE_BUFFER_SIZE);
+  file.buf = naMalloc(NA_FILE_BUFFER_SIZE);
   file.bufptr = file.buf;
   return file;
 }
@@ -175,7 +175,7 @@ NA_DEF NAFile naMakeFileAsStderr(){
   file.textencoding = NA_TEXT_ENCODING_UTF_8;
   file.flags = NA_FILE_FLAG_WRITING | NA_FILE_FLAG_STREAM | NA_FILE_FLAG_NEWLINE_NATIVE | NA_FILE_FLAG_AUTOFLUSH_ALL;
   file.remainingbytesinbuffer = NA_FILE_BUFFER_SIZE;
-  file.buf = naAllocate(NA_FILE_BUFFER_SIZE);
+  file.buf = naMalloc(NA_FILE_BUFFER_SIZE);
   file.bufptr = file.buf;
   return file;
 }
@@ -528,7 +528,7 @@ NA_DEF int8* naReadFileArrayInt8(NAFile* file, int8* buf, NAInt count){
     if((file->flags & NA_FILE_FLAG_WRITING))
       naError("naReadFileArrayInt8", "File is not a read-file.");
   #endif
-  buf = (int8*)naAllocateIfNull(buf, count * sizeof(int8));
+  buf = (int8*)naMallocIfNull(buf, count * sizeof(int8));
   while(count){
     *buf++ = naReadFileInt8(file);
     count--;
@@ -540,7 +540,7 @@ NA_DEF int16* naReadFileArrayInt16(NAFile* file, int16* buf, NAInt count){
     if((file->flags & NA_FILE_FLAG_WRITING))
       naError("naReadFileArrayInt16", "File is not a read-file.");
   #endif
-  buf = (int16*)naAllocateIfNull(buf, count * sizeof(int16));
+  buf = (int16*)naMallocIfNull(buf, count * sizeof(int16));
   while(count){
     *buf++ = naReadFileInt16(file);
     count--;
@@ -552,7 +552,7 @@ NA_DEF int32* naReadFileArrayInt32(NAFile* file, int32* buf, NAInt count){
     if((file->flags & NA_FILE_FLAG_WRITING))
       naError("naReadFileArrayInt32", "File is not a read-file.");
   #endif
-  buf = (int32*)naAllocateIfNull(buf, count * sizeof(int32));
+  buf = (int32*)naMallocIfNull(buf, count * sizeof(int32));
   while(count){
     *buf++ = naReadFileInt32(file);
     count--;
@@ -564,7 +564,7 @@ NA_DEF int64* naReadFileArrayInt64(NAFile* file, int64* buf, NAInt count){
     if((file->flags & NA_FILE_FLAG_WRITING))
       naError("naReadFileArrayInt64", "File is not a read-file.");
   #endif
-  buf = (int64*)naAllocateIfNull(buf, count * sizeof(int64));
+  buf = (int64*)naMallocIfNull(buf, count * sizeof(int64));
   while(count){
     *buf++ = naReadFileInt64(file);
     count--;
@@ -576,7 +576,7 @@ NA_DEF uint8* naReadFileArrayUInt8(NAFile* file, uint8* buf, NAInt count){
     if((file->flags & NA_FILE_FLAG_WRITING))
       naError("naReadFileArrayUInt8", "File is not a read-file.");
   #endif
-  buf = (uint8*)naAllocateIfNull(buf, count * sizeof(uint8));
+  buf = (uint8*)naMallocIfNull(buf, count * sizeof(uint8));
   while(count){
     *buf++ = naReadFileUInt8(file);
     count--;
@@ -588,7 +588,7 @@ NA_DEF uint16* naReadFileArrayUInt16(NAFile* file, uint16* buf, NAInt count){
     if((file->flags & NA_FILE_FLAG_WRITING))
       naError("naReadFileArrayUInt16", "File is not a read-file.");
   #endif
-  buf = (uint16*)naAllocateIfNull(buf, count * sizeof(uint16));
+  buf = (uint16*)naMallocIfNull(buf, count * sizeof(uint16));
   while(count){
     *buf++ = naReadFileUInt16(file);
     count--;
@@ -600,7 +600,7 @@ NA_DEF uint32* naReadFileArrayUInt32(NAFile* file, uint32* buf, NAInt count){
     if((file->flags & NA_FILE_FLAG_WRITING))
       naError("naReadFileArrayUInt32", "File is not a read-file.");
   #endif
-  buf = (uint32*)naAllocateIfNull(buf, count * sizeof(uint32));
+  buf = (uint32*)naMallocIfNull(buf, count * sizeof(uint32));
   while(count){
     *buf++ = naReadFileUInt32(file);
     count--;
@@ -612,7 +612,7 @@ NA_DEF uint64* naReadFileArrayUInt64(NAFile* file, uint64* buf, NAInt count){
     if((file->flags & NA_FILE_FLAG_WRITING))
       naError("naReadFileArrayUInt64", "File is not a read-file.");
   #endif
-  buf = (uint64*)naAllocateIfNull(buf, count * sizeof(uint64));
+  buf = (uint64*)naMallocIfNull(buf, count * sizeof(uint64));
   while(count){
     *buf++ = naReadFileUInt64(file);
     count--;
@@ -624,7 +624,7 @@ NA_DEF float* naReadFileArrayFloat(NAFile* file, float* buf, NAInt count){
     if((file->flags & NA_FILE_FLAG_WRITING))
       naError("naReadFileArrayFloat", "File is not a read-file.");
   #endif
-  buf = (float*)naAllocateIfNull(buf, count * sizeof(float));
+  buf = (float*)naMallocIfNull(buf, count * sizeof(float));
   while(count){
     *buf++ = naReadFileFloat(file);
     count--;
@@ -636,7 +636,7 @@ NA_DEF double* naReadFileArrayDouble(NAFile* file, double* buf, NAInt count){
     if((file->flags & NA_FILE_FLAG_WRITING))
       naError("naReadFileArrayDouble", "File is not a read-file.");
   #endif
-  buf = (double*)naAllocateIfNull(buf, count * sizeof(double));
+  buf = (double*)naMallocIfNull(buf, count * sizeof(double));
   while(count){
     *buf++ = naReadFileDouble(file);
     count--;
@@ -647,12 +647,12 @@ NA_DEF double* naReadFileArrayDouble(NAFile* file, double* buf, NAInt count){
 
 
 
-NA_DEF NAByteArray* naCreateByteArrayFromFile(NAByteArray* bytearray, NAFile* file, NAFileSize count){
+NA_DEF NAByteArray* naInitByteArrayFromFile(NAByteArray* bytearray, NAFile* file, NAFileSize count){
   #ifndef NDEBUG
     if((file->flags & NA_FILE_FLAG_WRITING))
-      naError("naCreateByteArrayFromFile", "File is not a read-file.");
+      naError("naInitByteArrayFromFile", "File is not a read-file.");
   #endif
-  bytearray = naCreateByteArrayWithSize(bytearray, (NAInt)count);
+  bytearray = naInitByteArrayWithSize(bytearray, (NAInt)count);
   naReadFileBytes(file, naGetByteArrayMutablePointer(bytearray), count);
   return bytearray;
 }
@@ -664,7 +664,7 @@ NA_DEF NAString* naNewStringFromFile(NAFile* file, NAFileSize bytecount){
     if((file->flags & NA_FILE_FLAG_WRITING))
       naError("naNewStringFromFile", "File is not a read-file.");
   #endif
-  stringbuf = naAllocate(-(NAInt)bytecount);
+  stringbuf = naMalloc(-(NAInt)bytecount);
   naReadFileBytes(file, stringbuf, bytecount);
   return naNewStringWithMutableUTF8Buffer(stringbuf, -(NAInt)bytecount, NA_TRUE);
   // todo: encoding.

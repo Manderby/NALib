@@ -9,7 +9,7 @@
 #endif
 
 
-#define NA_VERSION 9
+#define NA_VERSION 10
 
 
 // This is the base of the whole NALib implementation. Almost all files

@@ -51,7 +51,7 @@ NA_IAPI NAString* naNewStringWithURLFilename(NAURL* url);
 
 
 NA_IDEF NAURL* naCreateURL(NAURL* url){
-  url = naAllocateIfNull(url, sizeof(NAURL));
+  url = naMallocIfNull(url, sizeof(NAURL));
   url->status = 0;
   naCreateList(&(url->path));
   return url;

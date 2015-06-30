@@ -592,7 +592,7 @@ NA_API const char* naGetDateTimeErrorString(uint8 errornum){
 
 
 
-NA_DEF NAByteArray* naCreateByteArrayFromDateTime( NAByteArray* bytearray, const NADateTime* datetime, NABinDateTimeFormat format){
+NA_DEF NAByteArray* naInitByteArrayFromDateTime( NAByteArray* bytearray, const NADateTime* datetime, NABinDateTimeFormat format){
   // Declaration before Implementation. Needed for C90
   uint16 valueu16;
   NAByte* ptr;
@@ -603,7 +603,7 @@ NA_DEF NAByteArray* naCreateByteArrayFromDateTime( NAByteArray* bytearray, const
   switch(format){
   case NA_DATETIME_FORMAT_ICC_PROFILE:    
     // ICC section 5.1.1, page 4, dateTimeNumber
-    bytearray = naCreateByteArrayWithSize(bytearray, 12);
+    bytearray = naInitByteArrayWithSize(bytearray, 12);
     ptr = naGetByteArrayMutablePointer(bytearray);
     
     valueu16 = (uint16)dts.year;

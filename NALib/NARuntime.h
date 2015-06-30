@@ -12,6 +12,7 @@
 #include "NASystem.h"
 
 
+
 typedef struct NATypeInfo NATypeInfo;
 struct NATypeInfo{
   NAUInt typesize;
@@ -20,13 +21,15 @@ struct NATypeInfo{
 
 
 typedef void* NATypeIdentifier;
+extern NATypeIdentifier na_NAString_identifier;
 
 
 NA_API void               naStartRuntime();
 NA_API NATypeIdentifier   naManageRuntimeType(NATypeInfo* typeinfo);
 NA_API void               naStopRuntime();
 
-NA_API void*              naNew(NATypeIdentifier typeidentifier);
+#define naNew(type)       naNewStruct(na_ ## type ## _identifier)
+NA_API void*              naNewStruct(NATypeIdentifier typeidentifier);
 NA_API void               naDelete(void* pointer);
 
 

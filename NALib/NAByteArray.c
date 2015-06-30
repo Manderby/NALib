@@ -7,12 +7,14 @@
 
 
 
-
-NA_DEF NAByteArray* naCreateByteArrayWithSize(NAByteArray* array, NAInt size){
+NA_DEF NAByteArray* naInitByteArrayWithSize(NAByteArray* array, NAInt size){
+  #ifndef NDEBUG
+    if(!array)
+      {naCrash("naInitByteArrayWithSize", "array is Null-Pointer."); return NA_NULL;}
+  #endif
   if(!size){  // if size is zero
-    array = naCreateByteArray(array);
+    array = naInitByteArray(array);
   }else{
-    array = naAllocNALibStruct(array, NAByteArray);
     array->storage = naCreatePointerWithSize(NA_NULL, size);
     array->size = naAbsi(size);
     array->lvalue = naGetPointerLValue(array->storage);
@@ -22,15 +24,16 @@ NA_DEF NAByteArray* naCreateByteArrayWithSize(NAByteArray* array, NAInt size){
 
 
 
-NA_DEF NAByteArray* naCreateByteArrayWithConstBuffer( NAByteArray* array, const void* buffer, NAInt size){
+NA_DEF NAByteArray* naInitByteArrayWithConstBuffer(NAByteArray* array, const void* buffer, NAInt size){
   #ifndef NDEBUG
+    if(!array)
+      {naCrash("naInitByteArrayWithConstBuffer", "array is Null-Pointer."); return NA_NULL;}
     if(!buffer)
-      naError("naCreateByteArrayWithConstBuffer", "buffer is Null-Pointer.");
+      naError("naInitByteArrayWithConstBuffer", "buffer is Null-Pointer.");
   #endif
   if(!size){  // if size is zero
-    array = naCreateByteArray(array);
+    array = naInitByteArray(array);
   }else{
-    array = naAllocNALibStruct(array, NAByteArray);
     array->storage = naCreatePointerWithConstBuffer(NA_NULL, buffer);
     array->size = naAbsi(size);
     array->lvalue = naGetPointerLValue(array->storage);
@@ -52,16 +55,17 @@ NA_DEF NAByteArray* naCreateByteArrayWithConstBuffer( NAByteArray* array, const 
 
 
 
-NA_DEF NAByteArray* naCreateByteArrayWithMutableBuffer(NAByteArray* array, void* buffer, NAInt size, NABool takeownership){
+NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* buffer, NAInt size, NABool takeownership){
   #ifndef NDEBUG
+    if(!array)
+      {naCrash("naInitByteArrayWithMutableBuffer", "array is Null-Pointer."); return NA_NULL;}
     if(!buffer)
-      naError("naCreateByteArrayWithBuffer", "buffer is Null-Pointer.");
+      naError("naInitByteArrayWithMutableBuffer", "buffer is Null-Pointer.");
   #endif
   if(!size){  // if size is zero
-    array = naCreateByteArray(array);
+    array = naInitByteArray(array);
     if(takeownership){free(buffer);}
   }else{
-    array = naAllocNALibStruct(array, NAByteArray);
     array->storage = naCreatePointerWithMutableBuffer(NA_NULL, buffer, takeownership);
     array->size = naAbsi(size);
     array->lvalue = naGetPointerLValue(array->storage);
@@ -83,20 +87,21 @@ NA_DEF NAByteArray* naCreateByteArrayWithMutableBuffer(NAByteArray* array, void*
 
 
 
-NA_DEF NAByteArray* naCreateByteArrayExtraction(NAByteArray* dstarray, const NAByteArray* srcarray, NAInt offset, NAInt size){
+NA_DEF NAByteArray* naInitByteArrayExtraction(NAByteArray* dstarray, const NAByteArray* srcarray, NAInt offset, NAInt size){
   NALValue newlvalue;
   NAUInt positiveoffset;
   NAUInt positivesize;
 
   #ifndef NDEBUG
+    if(!dstarray)
+      {naCrash("naInitByteArrayExtraction", "dstarray is Null-Pointer."); return NA_NULL;}
     if(!srcarray){
-      naCrash("naCreateByteArrayExtraction", "Source is Null-Pointer.");
-      return NA_NULL;
-    }
+      naCrash("naInitByteArrayExtraction", "srcarray is Null-Pointer."); return NA_NULL;}
   #endif
 
-  dstarray = naAllocNALibStruct(dstarray, NAByteArray);
-  // Note that dstarray may be equal to srcarray.
+  // Note that dstarray may be equal to srcarray. If so, dstarray is assumed
+  // to be a valid bytearray. Otherwise, dstarray is expected to be
+  // uninitialized.
 
   naMakePositiveiInSize(&positiveoffset, &positivesize, offset, size, srcarray->size);
   naFillLValueSub(&newlvalue, &(srcarray->lvalue), positiveoffset, positivesize);
@@ -105,14 +110,11 @@ NA_DEF NAByteArray* naCreateByteArrayExtraction(NAByteArray* dstarray, const NAB
     // If the extraction results in an empty array...
     if(dstarray == srcarray){
       naClearByteArray(dstarray); // clear the old array.
-      dstarray = naCreateByteArray(dstarray);
-    }else{
-      dstarray = naCreateByteArray(dstarray);
     }
+    dstarray = naInitByteArray(dstarray);
   }else{
     // The resulting array has content!
     if(dstarray != srcarray){
-      dstarray = naCreateByteArray(dstarray);
       dstarray->storage = naRetainPointer(srcarray->storage);
     }
     dstarray->size = positivesize;
@@ -139,10 +141,10 @@ NA_DEF void naDecoupleByteArray(NAByteArray* array, NABool appendnulltermination
   arraysize = array->size;
   if(!arraysize){return;}
   if(appendnulltermination){arraysize = -arraysize;}
-  buf = naAllocate(arraysize);
+  buf = naMalloc(arraysize);
   naCpyn(buf, naGetLValueConst(&(array->lvalue)), naAbsi(arraysize));
   naClearByteArray(array);
-  naCreateByteArrayWithMutableBuffer(array, buf, arraysize, NA_TRUE);
+  naInitByteArrayWithMutableBuffer(array, buf, arraysize, NA_TRUE);
 }
 
 

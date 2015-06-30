@@ -51,14 +51,16 @@ NA_IAPI NAUInt naGetNullTerminationSize(NAInt size);
 
 // These functions are the allocation functions of NALib. All functions in
 // NALib use these functions when allocating memory on the heap. The basic
-// function simply allocates using malloc. The naAllocateIfNull function takes
+// function simply allocates using malloc. The naMallocIfNull function takes
 // an additional ptr argument. If ptr is NA_NULL, memory is allocated and the
 // pointer to that memory is returned. If the pointer is not NA_NULL, nothing
 // is allocated, the same pointer is returned.
 //
-NA_IAPI void* naAllocate      (           NAInt size);
-NA_IAPI void* naAllocateIfNull(void* ptr, NAInt size);
-NA_IAPI void* naAllocatePageAligned(      NAInt size);
+NA_IAPI void* naMalloc(             NAInt size);
+NA_IAPI void* naMallocIfNull(       void* ptr, NAInt size);
+NA_IAPI void* naMallocPageAligned(  NAInt size);
+#define naAlloc(structname)         (structname*)naMalloc(sizeof(structname))
+NA_IAPI void  naFree(               void* ptr);
 // Authors note:
 //
 // Having only one or two allocation function helps detecting basic memory
@@ -70,7 +72,8 @@ NA_IAPI void* naAllocatePageAligned(      NAInt size);
 // necessary. This macro should not be used by other people as it might
 // (might!) be the start of a future garbage collection implementation.
 #define naAllocNALibStruct(ptr, structname)\
-  (structname*)naAllocateIfNull(ptr, sizeof(structname))
+  (structname*)naMallocIfNull(ptr, sizeof(structname))
+
 
 
 
@@ -192,7 +195,7 @@ typedef struct NAPointer NAPointer;
 // count reaches zero. When the given pointer argument was a Null-Pointer,
 // the NAPointer struct itself will be deleted automatically as well.
 //
-// You can also send negative sizes. See naAllocate for explanation.
+// You can also send negative sizes. See naMalloc for explanation.
 NA_IAPI NAPointer* naCreatePointerWithSize(NAPointer* pointer,
                                                 NAInt size);
 
@@ -289,12 +292,12 @@ NA_IAPI NAUInt naGetNullTerminationSize(NAInt size){
 
 
 
-NA_IDEF void* naAllocate(NAInt size){
+NA_IDEF void* naMalloc(NAInt size){
   NAByte* ptr; // Declaration before implementation. Needed for C90.
   NAInt fullsize;
   #ifndef NDEBUG
     if(size == 0)
-      naError("naAllocate", "size is zero.");
+      naError("naMalloc", "size is zero.");
   #endif
 
   if(size>0){
@@ -304,12 +307,12 @@ NA_IDEF void* naAllocate(NAInt size){
   }else{
     #ifndef NDEBUG
       if(size == NA_INT_MIN)
-        naError("naAllocate", "given negative size owerflows NAInt type.");
+        naError("naMalloc", "given negative size owerflows NAInt type.");
     #endif
     fullsize = naGetNullTerminationSize(size);
     #ifndef NDEBUG
       if(fullsize < -size)
-        naError("naAllocate", "given size including zero filled endbytes overflows NAInt type.");
+        naError("naMalloc", "given size including zero filled endbytes overflows NAInt type.");
     #endif
     ptr = (NAByte*)malloc((size_t)fullsize);
     *(NAUInt*)(&(ptr[fullsize - 2 * NA_SYSTEM_ADDRESS_BYTES])) = 0;
@@ -321,7 +324,7 @@ NA_IDEF void* naAllocate(NAInt size){
   // version.
   #ifndef NDEBUG
     if(ptr == NA_NULL){
-      naCrash("naAllocate", "Out of memory.");
+      naCrash("naMalloc", "Out of memory.");
       // Also note that a special macro is checked for clang analyzer as
       // newer versions tend to complain a lot more about failed mallocs than
       // before.
@@ -336,14 +339,14 @@ NA_IDEF void* naAllocate(NAInt size){
 
 
 
-NA_IDEF void* naAllocateIfNull(void* ptr, NAInt size){
+NA_IDEF void* naMallocIfNull(void* ptr, NAInt size){
   #ifndef NDEBUG
     if(size == 0)
-      naError("naAllocateIfNull", "size is zero.");
+      naError("naMallocIfNull", "size is zero.");
   #endif
 
   if(ptr == NA_NULL){
-    return naAllocate(size);
+    return naMalloc(size);
   }else{
     return ptr;
   }
@@ -352,7 +355,7 @@ NA_IDEF void* naAllocateIfNull(void* ptr, NAInt size){
 
 
 
-NA_IDEF void* naAllocatePageAligned(NAInt size){
+NA_IDEF void* naMallocPageAligned(NAInt size){
   #ifdef NA_C11
     return aligned_alloc(size, naGetSystemMemoryPageSize());
   #else
@@ -360,6 +363,11 @@ NA_IDEF void* naAllocatePageAligned(NAInt size){
   #endif
 }
 
+
+
+NA_IAPI void naFree(void* ptr){
+  free(ptr);
+}
 
 
 
@@ -466,11 +474,12 @@ NA_IDEF const void* naGetLValueOffsetConst(const NALValue* lvalue, NAUInt indx){
       naCrash("naGetLValueOffsetConst", "lvalue is Null-Pointer.");
       return NA_NULL;
     }
-    if((lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT) && (indx >= lvalue->visiblesize))
+    if((lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT) && (indx >= lvalue->visiblesize)){
       if((lvalue->flags & NA_LVALUE_HAS_ACCESSIBLE_BYTECOUNT) && (indx >= lvalue->accessiblebytecount))
         naError("naGetLValueOffsetConst", "index out of accessible bounds");
       else
         naError("naGetLValueOffsetConst", "index out of visible bounds");
+    }
   #endif
   return &(((const NAByte*)(lvalue->data.constd))[indx]);
 }
@@ -488,11 +497,12 @@ NA_IDEF void* naGetLValueOffsetMutable(NALValue* lvalue, NAUInt indx){
     if(lvalue->data.d == NA_NULL){return NA_NULL;}
     if(lvalue->flags & NA_LVALUE_CONST_DATA)
       naError("naGetLValueOffsetMutable", "Accessing const data as non-const.");
-    if((lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT) && (indx >= lvalue->visiblesize))
+    if((lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT) && (indx >= lvalue->visiblesize)){
       if((lvalue->flags & NA_LVALUE_HAS_ACCESSIBLE_BYTECOUNT) && (indx >= lvalue->accessiblebytecount))
         naError("naGetLValueOffsetMutable", "index out of accessible bounds");
       else
         naError("naGetLValueOffsetMutable", "index out of visible bounds");
+    }
   #endif
   return &(((NAByte*)(lvalue->data.d))[indx]);
 }
@@ -594,7 +604,7 @@ struct NAPointer{
 // would not be inlined.
 NA_HIDEF NAPointer* naCreatePointerStruct(NAPointer* pointer){
   if(!pointer){
-    pointer = (NAPointer*)naAllocate(sizeof(NAPointer));
+    pointer = (NAPointer*)naAlloc(NAPointer);
     pointer->refcount = 1 | NA_POINTER_OWN_STRUCT;
   }else{
     pointer->refcount = 1;
@@ -610,7 +620,7 @@ NA_IDEF NAPointer* naCreatePointerWithSize(NAPointer* pointer, NAInt size){
       naError("naCreatePointerWithSize", "size is zero.");
   #endif
   pointer = naCreatePointerStruct(pointer);
-  naFillLValueMutable(&(pointer->lvalue), naAllocate(size));
+  naFillLValueMutable(&(pointer->lvalue), naMalloc(size));
   #ifndef NDEBUG
     if(size<0){
       naMarkLValueWithVisibleSize(&(pointer->lvalue), -size);

@@ -23,7 +23,7 @@ struct NAStack{
 
 NAStack* naCreateStack(NAStack* stack, NAUInt maxcount){
   stack = naAllocNALibStruct(stack, NAStack);
-  stack->pointers = naAllocate(sizeof(void*) * maxcount);
+  stack->pointers = naMalloc(maxcount * sizeof(void*));
   stack->maxcount = maxcount;
   stack->cur = 0;
   return stack;
