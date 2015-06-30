@@ -54,7 +54,7 @@ NA_HIDEF void* naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
     if(coretypeinfo->typeinfo.typesize > (na_runtime->pagesize - sizeof(NACorePool)))
       naError("naEnhanceCorePool", "Element is too big");
   #endif
-  NACorePool* corepool = (NACorePool*)naAllocatePageAligned(na_runtime->pagesize);
+  NACorePool* corepool = (NACorePool*)naMallocPageAligned(na_runtime->pagesize);
   corepool->coretypeinfo = coretypeinfo;
 
   // Reduce the elemcount by 1 to set the last entry to NULL
@@ -96,7 +96,7 @@ NA_HIDEF void naShrinkCorePool(NACorePool* corepool){
 
 
 
-NA_DEF void* naNew(NATypeIdentifier typeidentifier){
+NA_DEF void* naNewStruct(NATypeIdentifier typeidentifier){
   NACoreTypeInfo* coretypeinfo = (NACoreTypeInfo*)typeidentifier;
   #ifndef NDEBUG
     if(!na_runtime)
@@ -141,7 +141,7 @@ NA_DEF void naStartRuntime(){
     if(sizeof(NACorePool) != (8 * NA_SYSTEM_ADDRESS_BYTES))
       naError("naStartRuntime", "NACorePool struct encoding misaligned");
   #endif
-  na_runtime = naAllocate(sizeof(NARuntime));
+  na_runtime = naAlloc(NARuntime);
   na_runtime->pagesize = naGetSystemMemoryPageSize();
   na_runtime->pagesizemask = naGetSystemMemoryPageSizeMask();
   naPrepareStringRuntime();
@@ -150,7 +150,7 @@ NA_DEF void naStartRuntime(){
 
 
 NA_DEF NATypeIdentifier naManageRuntimeType(NATypeInfo* typeinfo){
-  NACoreTypeInfo* coretypeinfo = naAllocate(sizeof(NACoreTypeInfo));
+  NACoreTypeInfo* coretypeinfo = naAlloc(NACoreTypeInfo);
   coretypeinfo->typeinfo = *typeinfo;
   coretypeinfo->curpool = NA_NULL;
   naEnhanceCorePool(coretypeinfo);

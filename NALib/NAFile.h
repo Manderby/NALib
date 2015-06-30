@@ -137,7 +137,7 @@ NA_API NAString* naNewStringFromFileContents(  const char* filename,
 // Warning: This function is only useful if you read or store raw data! The 
 // NAByteArray struct is not endianness-aware. Use the reading and writing
 // functions of NAFile when handling multi-byte values instead.
-NA_API NAByteArray* naCreateByteArrayFromFileContents(NAByteArray* array,
+NA_API NAByteArray* naInitByteArrayFromFileContents(NAByteArray* array,
                                                        const char* filename);
 
 // Opens the file.
@@ -226,7 +226,7 @@ NA_API void naJumpFileOffsetRelative(NAFile* file, NAFileSize offset);
 
 // Reads the given number of bytes and stores it without further manipulation
 // in buf. The buffer must be big enough, no overflow check is made. This is a
-// low-level function. The result of the naCreateByteArrayFromFile function is
+// low-level function. The result of the naInitByteArrayFromFile function is
 // more convenient to handle.
 // This function is NOT endianness-aware.
 NA_API void    naReadFileBytes (NAFile* file, void* buf, NAFileSize count);
@@ -264,14 +264,14 @@ NA_API double* naReadFileArrayDouble(NAFile* file, double* buf, NAInt count);
 // Creates or fills an NAByteArray or an NAString by reading the given number
 // of bytes from the file and then COPYING them to the array or string.
 // Note: If you want the whole file as an NAByteArray or NAString, use the
-// naCreateByteArrayFromFileContents or naNewStringFromFileContents function
+// naInitByteArrayFromFileContents or naNewStringFromFileContents function
 // instead which directly reads the bytes to the array instead of copying them
 // from an internal buffer.
 // COPIES ALWAYS!
 // The ByteArray function is NOT endianness-aware.
 // Note that the expected text encoding of the file can be defined using
 // naSetFileTextEncoding.
-NA_API NAByteArray* naCreateByteArrayFromFile(NAByteArray* array,
+NA_API NAByteArray* naInitByteArrayFromFile(NAByteArray* array,
                                                    NAFile* file,
                                                 NAFileSize count);
 NA_API NAString*    naNewStringFromFile(           NAFile* file,

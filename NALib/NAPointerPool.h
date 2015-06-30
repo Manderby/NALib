@@ -25,8 +25,8 @@ struct NAPointerPool{
 
 void naExpandPointerPool(NAPointerPool* pointerpool){
   NAUInt subcount = 1 << pointerpool->arraycount;
-  pointerpool->data[pointerpool->arraycount] = naAllocate(typesize * subcount);
-  pointerpool->pointer[pointerpool->arraycount] = naAllocate(sizeof(void*) * subcount);
+  pointerpool->data[pointerpool->arraycount] = naMalloc(typesize * subcount);
+  pointerpool->pointer[pointerpool->arraycount] = naMalloc(subcount * sizeof(void*));
   pointerpool->usedcount[pointerpool->arraycount] = 0;
   NAByte* dataptr = pointerpool->data[pointerpool->arraycount];
   void** pointerptr = pointerpool->pointer[pointerpool->arraycount];

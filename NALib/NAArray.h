@@ -75,7 +75,7 @@ NA_API  NAArray* naCreateArrayWithMutableBuffer(
                                             NABool takeownership);
 
 // Fills dstarray with a desired part of srcarray.
-// offset and count can be negative: See naCreateByteArrayExtraction for the
+// offset and count can be negative: See naInitByteArrayExtraction for the
 // explanation of the arguments.
 NA_API  NAArray* naCreateArrayExtraction( NAArray* dstarray,
                                     const NAArray* srcarray,
@@ -161,11 +161,11 @@ struct NAArray{
 
 
 // This is a small helper function used for the naCreate functions. Note that
-// naCreateByteArray is defined inline whereas other creation functions of
+// naInitByteArray is defined inline whereas other creation functions of
 // NAByteArray are not.
 NA_HIDEF NAArray* naInitializeEmptyArray(NAArray* array){
   array = naAllocNALibStruct(array, NAArray);
-  naCreateByteArray(&(array->bytearray));
+  naInitByteArray(&(array->bytearray));
   return array;
 }
 

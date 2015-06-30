@@ -12,25 +12,24 @@ NA_DEF NAArray* naCreateArrayWithCount(NAArray* array, NAUInt typesize, NAUInt c
     if(typesize < 1)
       naError("naCreateArrayWithCount", "typesize is < 1.");
   #endif
+  array->typesize = typesize;
   if(!count){
     array = naInitializeEmptyArray(array);
   }else{
     array = naAllocNALibStruct(array, NAArray);
-    naCreateByteArrayWithSize(&(array->bytearray), typesize * count);
-  }
-  array->typesize = typesize;
-
-  if(constructor){
-    // Note that you shall not call naForeachArray with the constructor. The
-    // function pointers are not generally compatible.
-    NAByte* ptr = naGetByteArrayMutablePointer(&(array->bytearray));
-    while(count){
-      constructor(ptr);
-      ptr += array->typesize;
-      count--;
+    naInitByteArrayWithSize(&(array->bytearray), typesize * count);
+    if(constructor){
+      // Note that you shall not call naForeachArray with the constructor. The
+      // function pointers are not generally compatible.
+      NAByte* ptr = naGetByteArrayMutablePointer(&(array->bytearray));
+      while(count){
+        constructor(ptr);
+        ptr += array->typesize;
+        count--;
+      }
     }
   }
-
+  
   return array;
 }
 
@@ -41,13 +40,13 @@ NA_DEF NAArray* naCreateArrayWithConstBuffer(NAArray* array, const void* buffer,
     if(typesize < 1)
       naError("naCreateArrayWithConstBuffer", "typesize is < 1");
   #endif
+  array->typesize = typesize;
   if(!count){
     array = naInitializeEmptyArray(array);
   }else{
     array = naAllocNALibStruct(array, NAArray);
-    naCreateByteArrayWithConstBuffer(&(array->bytearray), buffer, typesize * count);
+    naInitByteArrayWithConstBuffer(&(array->bytearray), buffer, typesize * count);
   }
-  array->typesize = typesize;
   return array;
 }
 
@@ -58,13 +57,13 @@ NA_DEF NAArray* naCreateArrayWithMutableBuffer(NAArray* array, void* buffer, NAU
     if(typesize < 1)
       naError("naCreateArrayWithMutableBuffer", "typesize is < 1");
   #endif
+  array->typesize = typesize;
   // Note that here, in contrast to naCreateArrayWithConstBuffer, no test
   // is made if count is zero. With that, the takeownership parameter can
   // correctly be handeled and the buffer can be automatically free'd if count
   // is zero.
   array = naAllocNALibStruct(array, NAArray);
-  naCreateByteArrayWithMutableBuffer(&(array->bytearray), buffer, typesize * count, takeownership);
-  array->typesize = typesize;
+  naInitByteArrayWithMutableBuffer(&(array->bytearray), buffer, typesize * count, takeownership);
   return array;
 }
 
@@ -74,12 +73,12 @@ NA_DEF NAArray* naCreateArrayExtraction(NAArray* dstarray, const NAArray* srcarr
   NAUInt positiveoffset;
   NAUInt positivecount;
   
-  dstarray = naAllocNALibStruct(dstarray, NAArray);
   dstarray->typesize = srcarray->typesize;
+  dstarray = naAllocNALibStruct(dstarray, NAArray);
 
   naMakePositiveiInSize(&positiveoffset, &positivecount, offset, count, naGetArrayCount(srcarray));
 
-  naCreateByteArrayExtraction(&(dstarray->bytearray),
+  naInitByteArrayExtraction(&(dstarray->bytearray),
                             &(srcarray->bytearray),
                             positiveoffset * srcarray->typesize,
                             positivecount * srcarray->typesize);

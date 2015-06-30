@@ -37,7 +37,7 @@ typedef struct NAByteArray  NAByteArray;
 // Creates or fills a new, EMPTY ByteArray and returns the pointer to the
 // NAByteArray struct. Other than the struct itself, no additional memory will
 // be allocated.
-NA_IAPI NAByteArray* naCreateByteArray(NAByteArray* array);
+NA_IAPI NAByteArray* naInitByteArray(NAByteArray* array);
 
 // Creates or fills a new ByteArray with the desired size and returns the
 // pointer. Allocates memory on the heap which will be freed automatically when
@@ -60,8 +60,7 @@ NA_IAPI NAByteArray* naCreateByteArray(NAByteArray* array);
 // be used for example for sentinels in pointer arrays. There, with negative
 // size, it is safe to read past the end of an array as you can be sure that
 // at least one pointer size after the array is filled with binary zero.
-NA_API NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
-                                                      NAInt size);
+NA_API NAByteArray* naInitByteArrayWithSize(NAByteArray* array, NAInt size);
 
 // Use the following functions to encapsulate your own raw buffers into an
 // NAByteArray!
@@ -83,11 +82,11 @@ NA_API NAByteArray* naCreateByteArrayWithSize(NAByteArray* array,
 // oversized bytes will NEVER be accessed by NALib but they are assumed to be
 // there. For example the buffer for the string literal "Hello" can be defined
 // with size -5.
-NA_API NAByteArray* naCreateByteArrayWithConstBuffer(
+NA_API NAByteArray* naInitByteArrayWithConstBuffer(
                                                 NAByteArray* array,
                                                  const void* buffer,
                                                        NAInt size);
-NA_API NAByteArray* naCreateByteArrayWithMutableBuffer(
+NA_API NAByteArray* naInitByteArrayWithMutableBuffer(
                                                 NAByteArray* array,
                                                        void* buffer,
                                                        NAInt size,
@@ -95,13 +94,14 @@ NA_API NAByteArray* naCreateByteArrayWithMutableBuffer(
 
 
 
-// Function naCreateByteArrayExtraction:
+// Function naInitByteArrayExtraction:
 // Creates or fills a new ByteArray with the contents of srcarray. The content
 // is NOT copied, but the dest array points to the same storage as srcarray
 // with an offset and size relative to the src array.
 //
+// dstarray can be the same as srcarray!
+//
 // Use this function to perform all sorts of manipulations (examples below):
-// - dstarray can be the same as srcarray
 // - if offset is negative, it denotes the number of bytes from the end.
 //   Note that the end has index [size], meaning -1 denotes the index [size-1]
 //   which is the last element.
@@ -131,7 +131,7 @@ NA_API NAByteArray* naCreateByteArrayWithMutableBuffer(
 //
 // Warning: srcarray may be const but if dstarray ist the same as srcarray,
 // srcarray may nontheless be altered!!!
-NA_API NAByteArray* naCreateByteArrayExtraction( NAByteArray* dstarray,
+NA_API NAByteArray* naInitByteArrayExtraction( NAByteArray* dstarray,
                                             const NAByteArray* srcarray,
                                                          NAInt offset,
                                                          NAInt size);
@@ -139,7 +139,6 @@ NA_API NAByteArray* naCreateByteArrayExtraction( NAByteArray* dstarray,
 // Clears or Deletes the given array. Any previously used storage is detached.
 // When the storage is no longer used, it gets deleted automatically.
 NA_IAPI void naClearByteArray  (NAByteArray* array);
-NA_IAPI void naDestroyByteArray(NAByteArray* array);
 
 // Empties the array.
 NA_IAPI void naEmptyByteArray  (NAByteArray* array);
@@ -149,7 +148,7 @@ NA_IAPI void naEmptyByteArray  (NAByteArray* array);
 // gets deleted automatically.
 // If appendnulltermination is true, a specific number of bytes are added at the end
 // and initialized with binary zero. The specific number of bytes is defined by
-// the naCreateByteArrayWithSize function. See there for more information. If
+// the naInitByteArrayWithSize function. See there for more information. If
 // appendnulltermination is false, no bytes are appended. The returned ByteArray
 // itself will NOT contain any additional zero bytes but instead have the size
 // of the original array.
@@ -228,8 +227,11 @@ struct NAByteArray{
 
 
 
-NA_IDEF NAByteArray* naCreateByteArray(NAByteArray* array){
-  array = naAllocNALibStruct(array, NAByteArray);
+NA_IDEF NAByteArray* naInitByteArray(NAByteArray* array){
+  #ifndef NDEBUG
+    if(!array)
+      {naCrash("naInitByteArray", "array is Null-Pointer."); return;}
+  #endif
   array->size = 0;
   return array;
 }
@@ -242,13 +244,6 @@ NA_IDEF void naClearByteArray(NAByteArray* array){
       {naCrash("naClearByteArray", "array is Null-Pointer."); return;}
   #endif
   if(array->size){naReleasePointer(array->storage);}
-}
-
-
-
-NA_IDEF void naDestroyByteArray(NAByteArray* array){
-  naClearByteArray(array);
-  free(array);
 }
 
 

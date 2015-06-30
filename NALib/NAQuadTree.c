@@ -8,7 +8,7 @@
 
 // Allocates and initializes a new and empty QuadTree node. The rects of all
 // childs are initialized but no leafs are set or allocated.
-NA_HDEF NAQuadTreeNode* naAllocateQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* parentnode, NAPosi origin, NAInt childsize){
+NA_HDEF NAQuadTreeNode* naMallocQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* parentnode, NAPosi origin, NAInt childsize){
   NAQuadTreeNode* node = naAllocNALibStruct(NA_NULL, NAQuadTreeNode);
   naNulln(node, sizeof(NAQuadTreeNode));
 
@@ -74,7 +74,7 @@ NA_DEF NAQuadTree* naCreateQuadTree(NAQuadTree* tree, NAInt minchildsize, NAQuad
 
 NA_HDEF NAQuadTreeNode* naDuplicateQuadTreeNode(NAQuadTree* newtree, NAQuadTreeNode* parentnode, NAQuadTreeNode* oldnode, NAQuadTree* contenttree){
   NAInt s;
-  NAQuadTreeNode* newnode = naAllocateQuadTreeNode(newtree, parentnode, oldnode->childrect[0].pos, oldnode->childrect[0].size.width);
+  NAQuadTreeNode* newnode = naMallocQuadTreeNode(newtree, parentnode, oldnode->childrect[0].pos, oldnode->childrect[0].size.width);
   newnode->parentnode = parentnode;
   for(s=0; s<4; s++){
     newnode->child[s] = NA_NULL;
@@ -365,7 +365,7 @@ NA_HDEF NABool naLocateQuadTreeNodePosi(NAQuadTree* tree, NAQuadTreeNode* node, 
           naUpdateQuadTreeLeaf(tree, node, segment);
         }else{
           // The node can be further subdivided.
-          node->child[segment] = naAllocateQuadTreeNode(tree, node, node->childrect[segment].pos, node->childrect[segment].size.width / 2);
+          node->child[segment] = naMallocQuadTreeNode(tree, node, node->childrect[segment].pos, node->childrect[segment].size.width / 2);
           // Go on searching in the sub node. Note that when the sub just
           // had been created, NA_FALSE must be returned. Therefore we ignore
           // the return value of this function and return NA_FALSE later.
@@ -404,7 +404,7 @@ NA_HDEF NABool naLocateQuadTreeNodePosi(NAQuadTree* tree, NAQuadTreeNode* node, 
           segment |= 1; alignrect.pos.x -= noderect.size.width;
         }
         if(pos.y < noderect.pos.y){segment |= 2; alignrect.pos.y -= noderect.size.height;}
-        node->parentnode = naAllocateQuadTreeNode(tree, NA_NULL, alignrect.pos, noderect.size.width);
+        node->parentnode = naMallocQuadTreeNode(tree, NA_NULL, alignrect.pos, noderect.size.width);
         tree->root = node->parentnode;
         // Attach this node to the new parent
         node->parentnode->child[segment] = node;
@@ -456,7 +456,7 @@ NA_DEF NABool naLocateQuadTreePosi(NAQuadTree* tree, NAPosi pos, NABool create){
     if(create){
       NARecti alignrect = naMakeRecti(naMakePosi(0, 0), naMakeSizei(tree->minchildsize * 2, tree->minchildsize * 2));
       NAPosi origin = naMakePosiWithAlignment(pos, alignrect);
-      tree->root = naAllocateQuadTreeNode(tree, NA_NULL, origin, tree->minchildsize);
+      tree->root = naMallocQuadTreeNode(tree, NA_NULL, origin, tree->minchildsize);
       tree->curnode = tree->root;
       tree->cursegment = naGetQuadTreeNodeSegment(tree->root, pos);
       tree->curnode->child[tree->cursegment] = tree->callbacks.dataallocator(tree->curnode->childrect[tree->cursegment], NA_NULL);

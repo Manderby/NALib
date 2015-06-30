@@ -128,7 +128,7 @@ NA_API NAString* naNewStringWithArguments(const NAUTF8Char* format,
                                                va_list argumentlist);
 
 // Fills deststring with a desired part of srcstring. Does not copy!
-// See naCreateByteArrayExtraction for an explanation of all arguments.
+// See naInitByteArrayExtraction for an explanation of all arguments.
 // Use offset = 0 and size = -1 to reference the whole string.
 NA_API NAString* naNewStringExtraction(const NAString* srcstring,
                                                NAInt offset,

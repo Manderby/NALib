@@ -35,7 +35,7 @@ struct NAPool{
 
 NA_DEF NAPool* naCreatePoolEmpty(NAPool* pool, NAUInt count){
   naAllocNALibStruct(pool, NAPool);
-  pool->drops = naAllocate(count * sizeof(void*));
+  pool->drops = naMalloc(count * sizeof(void*));
   pool->count = count;
   pool->cur = 0;
   pool->storagearray = NA_NULL;
@@ -45,24 +45,24 @@ NA_DEF NAPool* naCreatePoolEmpty(NAPool* pool, NAUInt count){
 
 NA_DEF NAPool* naCreatePoolFilled(NAPool* pool, NAUInt count, const NAStructInfo* structinfo, NABool aspointerarray){
   naAllocNALibStruct(pool, NAPool);
-  pool->drops = naAllocate(count * sizeof(void*));
+  pool->drops = naMalloc(count * sizeof(void*));
   pool->count = count;
   pool->cur = count;
   pool->structinfo = structinfo;
   pool->storageispointerarray = aspointerarray;
   if(pool->storageispointerarray){
-    pool->storagearray = naAllocate(count * sizeof(void*));
+    pool->storagearray = naMalloc(count * sizeof(void*));
     void** dropptr = pool->drops;
     void** storageptr = pool->storagearray;
     for(NAUInt i=0; i<pool->count; i++){
-      *storageptr = naAllocate(structinfo->structsize);
+      *storageptr = naMalloc(structinfo->structsize);
       if(pool->structinfo->constructor){structinfo->constructor(*storageptr);}
       *dropptr = *storageptr;
       dropptr++;
       storageptr++;
     }
   }else{
-    pool->storagearray = naAllocate(count * structinfo->structsize);
+    pool->storagearray = naMalloc(count * structinfo->structsize);
     void** dropptr = pool->drops;
     NAByte* storageptr = (NAByte*)pool->storagearray;
     for(NAUInt i=0; i<pool->count; i++){

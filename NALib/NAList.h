@@ -406,7 +406,7 @@ NA_HIDEF void naInjectMutableListElement(NAList* list, NAListElement* element, v
 
 
 NA_IDEF void naAddListFirstConst(NAList* list, const void* content){
-  NAListElement* newelement = (NAListElement*)naAllocate(sizeof(NAListElement));
+  NAListElement* newelement = (NAListElement*)naAlloc(NAListElement);
   newelement->next = list->sentinel.next;
   newelement->prev = &(list->sentinel);
   naInjectConstListElement(list, newelement, content);
@@ -414,7 +414,7 @@ NA_IDEF void naAddListFirstConst(NAList* list, const void* content){
 
 
 NA_IDEF void naAddListFirstMutable(NAList* list, void* content){
-  NAListElement* newelement = (NAListElement*)naAllocate(sizeof(NAListElement));
+  NAListElement* newelement = (NAListElement*)naAlloc(NAListElement);
   newelement->next = list->sentinel.next;
   newelement->prev = &(list->sentinel);
   naInjectMutableListElement(list, newelement, content);
@@ -422,7 +422,7 @@ NA_IDEF void naAddListFirstMutable(NAList* list, void* content){
 
 
 NA_IDEF void naAddListLastConst(NAList* list, const void* content){
-  NAListElement* newelement = (NAListElement*)naAllocate(sizeof(NAListElement));
+  NAListElement* newelement = (NAListElement*)naAlloc(NAListElement);
   newelement->next = &(list->sentinel);
   newelement->prev = list->sentinel.prev;
   naInjectConstListElement(list, newelement, content);
@@ -430,7 +430,7 @@ NA_IDEF void naAddListLastConst(NAList* list, const void* content){
 
 
 NA_IDEF void naAddListLastMutable(NAList* list, void* content){
-  NAListElement* newelement = (NAListElement*)naAllocate(sizeof(NAListElement));
+  NAListElement* newelement = (NAListElement*)naAlloc(NAListElement);
   newelement->next = &(list->sentinel);
   newelement->prev = list->sentinel.prev;
   naInjectMutableListElement(list, newelement, content);
@@ -438,7 +438,7 @@ NA_IDEF void naAddListLastMutable(NAList* list, void* content){
 
 
 NA_IDEF void naAddListBeforeConst(NAList* list, const void* content){
-  NAListElement* newelement = (NAListElement*)naAllocate(sizeof(NAListElement));
+  NAListElement* newelement = (NAListElement*)naAlloc(NAListElement);
   newelement->next = list->cur;
   newelement->prev = list->cur->prev;
   naInjectConstListElement(list, newelement, content);
@@ -446,7 +446,7 @@ NA_IDEF void naAddListBeforeConst(NAList* list, const void* content){
 
 
 NA_IDEF void naAddListBeforeMutable(NAList* list, void* content){
-  NAListElement* newelement = (NAListElement*)naAllocate(sizeof(NAListElement));
+  NAListElement* newelement = (NAListElement*)naAlloc(NAListElement);
   newelement->next = list->cur;
   newelement->prev = list->cur->prev;
   naInjectMutableListElement(list, newelement, content);
@@ -454,7 +454,7 @@ NA_IDEF void naAddListBeforeMutable(NAList* list, void* content){
 
 
 NA_IDEF void naAddListAfterConst(NAList* list, const void* content){
-  NAListElement* newelement = (NAListElement*)naAllocate(sizeof(NAListElement));
+  NAListElement* newelement = (NAListElement*)naAlloc(NAListElement);
   newelement->next = list->cur->next;
   newelement->prev = list->cur;
   naInjectConstListElement(list, newelement, content);
@@ -462,7 +462,7 @@ NA_IDEF void naAddListAfterConst(NAList* list, const void* content){
 
 
 NA_IDEF void naAddListAfterMutable(NAList* list, void* content){
-  NAListElement* newelement = (NAListElement*)naAllocate(sizeof(NAListElement));
+  NAListElement* newelement = (NAListElement*)naAlloc(NAListElement);
   newelement->next = list->cur->next;
   newelement->prev = list->cur;
   naInjectMutableListElement(list, newelement, content);

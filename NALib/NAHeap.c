@@ -474,7 +474,7 @@ NA_DEF NAHeap* naCreateHeap(NAHeap* heap, NAInt count, NAInt flags){
     
     entrysize = sizeof(NAHeapNoBackEntry);
     heap->count = 0;
-    heap->data = naAllocate((count + 1) * entrysize);
+    heap->data = naMalloc((count + 1) * entrysize);
     heap->root = &(((NAHeapNoBackEntry*)heap->data)[1]);
 
     heap->insertConst = naInsertHeapElementConstNoBack;
@@ -529,7 +529,7 @@ NA_DEF NAHeap* naCreateHeap(NAHeap* heap, NAInt count, NAInt flags){
     
     entrysize = sizeof(NAHeapBackEntry);
     heap->count = 0;
-    heap->data = naAllocate((count + 1) * entrysize);
+    heap->data = naMalloc((count + 1) * entrysize);
     heap->root = &(((NAHeapBackEntry*)heap->data)[1]);
 
     heap->insertConst = naInsertHeapElementConstBack;
