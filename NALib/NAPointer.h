@@ -466,11 +466,12 @@ NA_IDEF const void* naGetLValueOffsetConst(const NALValue* lvalue, NAUInt indx){
       naCrash("naGetLValueOffsetConst", "lvalue is Null-Pointer.");
       return NA_NULL;
     }
-    if((lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT) && (indx >= lvalue->visiblesize))
+    if((lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT) && (indx >= lvalue->visiblesize)){
       if((lvalue->flags & NA_LVALUE_HAS_ACCESSIBLE_BYTECOUNT) && (indx >= lvalue->accessiblebytecount))
         naError("naGetLValueOffsetConst", "index out of accessible bounds");
       else
         naError("naGetLValueOffsetConst", "index out of visible bounds");
+    }
   #endif
   return &(((const NAByte*)(lvalue->data.constd))[indx]);
 }
@@ -488,11 +489,12 @@ NA_IDEF void* naGetLValueOffsetMutable(NALValue* lvalue, NAUInt indx){
     if(lvalue->data.d == NA_NULL){return NA_NULL;}
     if(lvalue->flags & NA_LVALUE_CONST_DATA)
       naError("naGetLValueOffsetMutable", "Accessing const data as non-const.");
-    if((lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT) && (indx >= lvalue->visiblesize))
+    if((lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT) && (indx >= lvalue->visiblesize)){
       if((lvalue->flags & NA_LVALUE_HAS_ACCESSIBLE_BYTECOUNT) && (indx >= lvalue->accessiblebytecount))
         naError("naGetLValueOffsetMutable", "index out of accessible bounds");
       else
         naError("naGetLValueOffsetMutable", "index out of visible bounds");
+    }
   #endif
   return &(((NAByte*)(lvalue->data.d))[indx]);
 }
