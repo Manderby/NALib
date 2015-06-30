@@ -41,6 +41,12 @@ struct NARuntime{
 NARuntime* na_runtime = NA_NULL;
 
 
+// These are the (hidden) string type identifier for the NALib runtime system.
+// Will be set when calling naPrepareStringRuntime or naStartRuntime. This
+// will likely change in the near future.
+NATypeIdentifier na_NAString_identifier = NA_NULL;
+NATypeIdentifier na_NAPointer_identifier = NA_NULL;
+
 
 
 
@@ -145,6 +151,7 @@ NA_DEF void naStartRuntime(){
   na_runtime->pagesize = naGetSystemMemoryPageSize();
   na_runtime->pagesizemask = naGetSystemMemoryPageSizeMask();
   naPrepareStringRuntime();
+  naPreparePointerRuntime();
 }
 
 

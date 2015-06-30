@@ -60,7 +60,6 @@
 		B92A50721B24FAF300F1D36A /* NAMinMax.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAMinMax.c; sourceTree = "<group>"; };
 		B92A50731B24FAF300F1D36A /* NAMinMax.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAMinMax.h; sourceTree = "<group>"; };
 		B92A50741B24FAF300F1D36A /* NAPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAPointer.h; sourceTree = "<group>"; };
-		B92A50751B24FAF300F1D36A /* NAPointerPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAPointerPool.h; sourceTree = "<group>"; };
 		B92A50761B24FAF300F1D36A /* NAPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAPool.h; sourceTree = "<group>"; };
 		B92A50771B24FAF300F1D36A /* NAQuadTree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAQuadTree.c; sourceTree = "<group>"; };
 		B92A50781B24FAF300F1D36A /* NAQuadTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAQuadTree.h; sourceTree = "<group>"; };
@@ -122,7 +121,6 @@
 				B92A50721B24FAF300F1D36A /* NAMinMax.c */,
 				B92A50731B24FAF300F1D36A /* NAMinMax.h */,
 				B92A50741B24FAF300F1D36A /* NAPointer.h */,
-				B92A50751B24FAF300F1D36A /* NAPointerPool.h */,
 				B92A50761B24FAF300F1D36A /* NAPool.h */,
 				B92A50771B24FAF300F1D36A /* NAQuadTree.c */,
 				B92A50781B24FAF300F1D36A /* NAQuadTree.h */,

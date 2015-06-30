@@ -462,7 +462,7 @@ NA_IDEF NABool naExists(const char* path){
 
 NA_IDEF NABool naIsDir(const char* path){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    SystemChar* sysstring = naCreateSystemStringFromString(path, 0);
+    SystemChar* sysstring = naAllocSystemStringFromString(path, 0);
     NABool retvalue = (GetFileAttributes(sysstring)
             & FILE_ATTRIBUTE_DIRECTORY) ? NA_TRUE : NA_FALSE;
     free(sysstring);
@@ -477,7 +477,7 @@ NA_IDEF NABool naIsDir(const char* path){
 
 NA_IDEF NABool naIsHidden(const char* path){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    SystemChar* sysstring = naCreateSystemStringFromString(path, 0);
+    SystemChar* sysstring = naAllocSystemStringFromString(path, 0);
     NABool retvalue = (GetFileAttributes(sysstring)
             & FILE_ATTRIBUTE_HIDDEN) ? NA_TRUE : NA_FALSE;
     free(sysstring);

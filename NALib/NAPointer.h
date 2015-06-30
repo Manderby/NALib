@@ -26,6 +26,9 @@
 
 
 #include "NASystem.h"
+#include "NARuntime.h"
+
+
 
 
 // ZERO FILL RULES
@@ -67,12 +70,6 @@ NA_IAPI void  naFree(               void* ptr);
 // errors. Note however that there does not exist any exception handling
 // in NALib, meaning an error might be detected though not resolved. And in
 // favor of simplicity, NALib will not get exception handling soon.
-
-// The following macro is used in all NALib structs where creation is
-// necessary. This macro should not be used by other people as it might
-// (might!) be the start of a future garbage collection implementation.
-#define naAllocNALibStruct(ptr, structname)\
-  (structname*)naMallocIfNull(ptr, sizeof(structname))
 
 
 
@@ -196,8 +193,7 @@ typedef struct NAPointer NAPointer;
 // the NAPointer struct itself will be deleted automatically as well.
 //
 // You can also send negative sizes. See naMalloc for explanation.
-NA_IAPI NAPointer* naCreatePointerWithSize(NAPointer* pointer,
-                                                NAInt size);
+NA_IAPI NAPointer* naNewPointerWithSize(NAInt size);
 
 
 // Creates an NAPointer struct with the content of the given buffer.
@@ -213,11 +209,9 @@ NA_IAPI NAPointer* naCreatePointerWithSize(NAPointer* pointer,
 //
 // Note: Use the const method whenever you can. The compiler will help you
 // detect const-safe-errors.
-NA_IAPI NAPointer* naCreatePointerWithConstBuffer(   NAPointer* pointer,
-                                                    const void* buffer);
-NA_IAPI NAPointer* naCreatePointerWithMutableBuffer( NAPointer* pointer,
-                                                          void* buffer,
-                                                         NABool takeownership);
+NA_IAPI NAPointer* naNewPointerWithConstBuffer(   const void* buffer);
+NA_IAPI NAPointer* naNewPointerWithMutableBuffer(       void* buffer,
+                                                       NABool takeownership);
 
 // Retains the given pointer. Meaning: There is one more codeblock which is
 // using this NAPointer. This NAPointer will not be freed as long as that
@@ -591,10 +585,8 @@ struct NAPointer{
 // significant bits. Note that it would be possible to use a bit field for
 // this but the author decided to use masks, as bit fields might introduce
 // unnecessary algorithmic CPU operations when accessing refcount.
-#define NA_POINTER_OWN_STRUCT     ((NAUInt)1 << (NA_SYSTEM_ADDRESS_BITS - 1))
-#define NA_POINTER_OWN_DATA       ((NAUInt)1 << (NA_SYSTEM_ADDRESS_BITS - 2))
-#define NA_POINTER_REFCOUNT_MASK  (~(   NA_POINTER_OWN_STRUCT\
-                                      | NA_POINTER_OWN_DATA))
+#define NA_POINTER_OWN_DATA       ((NAUInt)1 << (NA_SYSTEM_ADDRESS_BITS - 1))
+#define NA_POINTER_REFCOUNT_MASK  (~(NA_POINTER_OWN_DATA))
 
 
 // This is a helper function. It should be hidden as the user shall not use
@@ -602,24 +594,20 @@ struct NAPointer{
 // NAPointer struct. Of course, in NALib hiding something has not much use
 // but it shows where the hidden attribute would make sense if the function
 // would not be inlined.
-NA_HIDEF NAPointer* naCreatePointerStruct(NAPointer* pointer){
-  if(!pointer){
-    pointer = (NAPointer*)naAlloc(NAPointer);
-    pointer->refcount = 1 | NA_POINTER_OWN_STRUCT;
-  }else{
-    pointer->refcount = 1;
-  }
+NA_HIDEF NAPointer* naNewPointerStruct(){
+  NAPointer* pointer = naNew(NAPointer);
+  pointer->refcount = 1;
   return pointer;
 }
 
 
 
-NA_IDEF NAPointer* naCreatePointerWithSize(NAPointer* pointer, NAInt size){
+NA_IDEF NAPointer* naNewPointerWithSize(NAInt size){
   #ifndef NDEBUG
     if(size == 0)
-      naError("naCreatePointerWithSize", "size is zero.");
+      naError("naNewPointerWithSize", "size is zero.");
   #endif
-  pointer = naCreatePointerStruct(pointer);
+  NAPointer* pointer = naNewPointerStruct();
   naFillLValueMutable(&(pointer->lvalue), naMalloc(size));
   #ifndef NDEBUG
     if(size<0){
@@ -636,29 +624,27 @@ NA_IDEF NAPointer* naCreatePointerWithSize(NAPointer* pointer, NAInt size){
 
 
 
-NA_IDEF NAPointer* naCreatePointerWithConstBuffer(  NAPointer* pointer,
-                                                   const void* buffer){
+NA_IDEF NAPointer* naNewPointerWithConstBuffer(const void* buffer){
   #ifndef NDEBUG
     if(!buffer)
-      naError("naCreatePointerWithConstBuffer", "buffer is Null-Pointer.");
+      naError("naNewPointerWithConstBuffer", "buffer is Null-Pointer.");
   #endif
-  pointer = naCreatePointerStruct(pointer);
+  NAPointer* pointer = naNewPointerStruct();
   naFillLValueConst(&(pointer->lvalue), buffer);
   return pointer;
 }
 
 
 
-NA_IDEF NAPointer* naCreatePointerWithMutableBuffer(NAPointer* pointer,
-                                                         void* buffer,
-                                                        NABool takeownership){
+NA_IDEF NAPointer* naNewPointerWithMutableBuffer(void* buffer,
+                                                NABool takeownership){
   #ifndef NDEBUG
     if(!buffer)
-      naError("naCreatePointerWithMutableBuffer", "buffer is Null-Pointer.");
+      naError("naNewPointerWithMutableBuffer", "buffer is Null-Pointer.");
     if((takeownership != NA_FALSE) && (takeownership != NA_TRUE))
-      naError("naCreatePointerWithMutableBuffer", "invalid ownership");
+      naError("naNewPointerWithMutableBuffer", "invalid ownership");
   #endif
-  pointer = naCreatePointerStruct(pointer);
+  NAPointer* pointer = naNewPointerStruct();
   naFillLValueMutable(&(pointer->lvalue), buffer);
   pointer->refcount |= (takeownership * NA_POINTER_OWN_DATA);
   return pointer;
@@ -712,8 +698,7 @@ NA_IDEF void naReleasePointer(NAPointer* pointer){
   // NDEBUG is not defined, this can be detected!
   pointer->refcount--;
   if((pointer->refcount & NA_POINTER_REFCOUNT_MASK) == 0){
-    if(pointer->refcount & NA_POINTER_OWN_DATA){free(naGetLValueMutable(&(pointer->lvalue)));}
-    if(pointer->refcount & NA_POINTER_OWN_STRUCT){free(pointer);}
+    naDelete(pointer);
   }
   // Note that other programming languages have incorporated this very idea
   // of self-organized reference-counting pointers deeply within its core.
@@ -739,6 +724,20 @@ NA_IDEF NALValue naGetPointerLValue(const NAPointer* pointer){
   return pointer->lvalue;
 }
 
+
+
+NA_HIDEF void naClearPointer(NAPointer* pointer){
+  if(pointer->refcount & NA_POINTER_OWN_DATA){free(naGetLValueMutable(&(pointer->lvalue)));}
+}
+
+
+
+NA_HIDEF void naPreparePointerRuntime(){
+  NATypeInfo typeinfo;
+  typeinfo.typesize = sizeof(NAPointer);
+  typeinfo.desctructor = (NADestructor)naClearPointer;
+  na_NAPointer_identifier = naManageRuntimeType(&typeinfo);
+}
 
 
 #ifdef __cplusplus 

@@ -56,24 +56,23 @@ struct NAByteMap2D{
 // be allocated. An empty map is defined such that it does not need to be
 // cleared. No harm is done if you do it anyway.
 // The width and height field of the rect are guaranteed to be zero.
-NA_IAPI NAByteMap2D* naCreateByteMap2D(NAByteMap2D* map2d);
+NA_IAPI NAByteMap2D* naInitByteMap2D(NAByteMap2D* map2d);
 
 // Creates or fills a new NAByteMap2D with the desired rect and returns the
 // pointer. Allocates memory on the heap. If the rect size is empty, an empty
 // array is returned. Negative rects are invalid.
-NA_IAPI NAByteMap2D* naCreateByteMap2DWithRecti( NAByteMap2D* map2d,
+NA_IAPI NAByteMap2D* naInitByteMap2DWithRecti( NAByteMap2D* map2d,
                                                       NARecti rect);
 // Creates or fills a new ByteMap2D with the desired rect and COPIES the values
 // provided in buffer to a newly allocated area owned by this NAByteMap2D. The
 // buffer must be big enough to provide all data.
-NA_IAPI NAByteMap2D* naCreateByteMap2DWithRectiCopyingBuffer(
+NA_IAPI NAByteMap2D* naInitByteMap2DWithRectiCopyingBuffer(
                                                       NAByteMap2D* map2d,
                                                            NARecti rect,
                                                     const NAByte* buffer);
 
-// Clears or Deletes the given map.
+// Clears the given map.
 NA_IAPI void naClearByteMap2D  (NAByteMap2D* map2d);
-NA_IAPI void naDestroyByteMap2D(NAByteMap2D* map2d);
 
 // Clears the given map and reinitializes it as an empty map
 NA_IAPI void naEmptyByteMap2D  (NAByteMap2D* map2d);
@@ -188,31 +187,35 @@ NA_IAPI void naMoveByteMap2DBySizei(NAByteMap2D* map2d, NASizei size);
 #include "NABinaryData.h"
 
 
-NA_IDEF NAByteMap2D* naCreateByteMap2D(NAByteMap2D* map2d){
-  map2d = naAllocNALibStruct(map2d, NAByteMap2D);
+NA_IDEF NAByteMap2D* naInitByteMap2D(NAByteMap2D* map2d){
+  #ifndef NDEBUG
+    if(!map2d)
+      {naCrash("naInitByteMap2DWithRectiCopyingBuffer", "map2d is NULL"); return NA_NULL;}
+  #endif
   map2d->map.rect.size.width  = 0;
   map2d->map.rect.size.height = 0;
   return map2d;
 }
 
 
-NA_IDEF NAByteMap2D* naCreateByteMap2DWithRecti(NAByteMap2D* map2d,
+NA_IDEF NAByteMap2D* naInitByteMap2DWithRecti(NAByteMap2D* map2d,
                                                      NARecti rect){
   // Declaration before implementation. Needed for C90.
   NAInt totalsize;
   #ifndef NDEBUG
+    if(!map2d)
+      {naCrash("naInitByteMap2DWithRectiCopyingBuffer", "map2d is NULL"); return NA_NULL;}
     if(!naIsRectiValid(rect))
-      naError("naCreateByteMap2DWithRecti", "rect is invalid.");
+      naError("naInitByteMap2DWithRecti", "rect is invalid.");
   #endif
   totalsize = naGetRectiIndexCount(rect);
   if(!totalsize){  // if total size is zero
-    map2d = naCreateByteMap2D(map2d);
+    map2d = naInitByteMap2D(map2d);
   }else{
-    map2d = naAllocNALibStruct(map2d, NAByteMap2D);
     map2d->map.rect = rect;
     #ifndef NDEBUG
       if(naIsRectiValid(rect) && (totalsize < 0))
-        naError("naCreateByteMap2DWithRecti", "Total size exceeds int range");
+        naError("naInitByteMap2DWithRecti", "Total size exceeds int range");
     #endif
     map2d->map.data = (NAByte*)naMalloc(totalsize);
     naNulln(map2d->map.data, totalsize);
@@ -221,18 +224,20 @@ NA_IDEF NAByteMap2D* naCreateByteMap2DWithRecti(NAByteMap2D* map2d,
 }
 
 
-NA_IDEF NAByteMap2D* naCreateByteMap2DWithRectiCopyingBuffer(
+NA_IDEF NAByteMap2D* naInitByteMap2DWithRectiCopyingBuffer(
                                                       NAByteMap2D* map2d,
                                                            NARecti rect,
                                                     const NAByte* buffer){
   #ifndef NDEBUG
+    if(!map2d)
+      {naCrash("naInitByteMap2DWithRectiCopyingBuffer", "map2d is NULL"); return NA_NULL;}
     if(!buffer){
-      naCrash("naCreateByteMap2DWithRectiCopyingBuffer", "buffer is Null-Pointer.");
+      naCrash("naInitByteMap2DWithRectiCopyingBuffer", "buffer is Null-Pointer.");
       return NA_NULL;
     }
   #endif
-//  if(naIsRectiEmpty(rect)){return naCreateByteMap2D(map2d);}
-  map2d = naCreateByteMap2DWithRecti(map2d, rect);
+//  if(naIsRectiEmpty(rect)){return naInitByteMap2D(map2d);}
+  map2d = naInitByteMap2DWithRecti(map2d, rect);
   if(!naIsByteMap2DEmpty(map2d)){
     naCpyn(map2d->map.data, buffer, rect.size.width * rect.size.height);
   }
@@ -251,17 +256,11 @@ NA_IDEF void naClearByteMap2D(NAByteMap2D* map2d){
 }
 
 
-NA_IDEF void naDestroyByteMap2D(NAByteMap2D* map2d){
-  naClearByteMap2D(map2d);
-  free(map2d);
-}
-
-
 NA_IDEF void naEmptyByteMap2D(NAByteMap2D* map2d){
   // You could add a test if the map is empty but it is expected that this
   // function will be called more often with non-empty maps.
   naClearByteMap2D(map2d);
-  naCreateByteMap2D(map2d);
+  naInitByteMap2D(map2d);
 }
 
 
@@ -284,7 +283,7 @@ NA_IDEF void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect){
   if(naIsRectiEmpty(map2d->map.rect)){
     // the storage is empty. Create a new one.
     naClearByteMap2D(map2d);
-    naCreateByteMap2DWithRecti(map2d, rect);
+    naInitByteMap2DWithRecti(map2d, rect);
   }else{
     NARecti enhancedrect = naMakeRectiWithRectiAndRecti(map2d->map.rect, rect);  
     NAInt totalsize = naGetRectiIndexCount(enhancedrect);
@@ -378,7 +377,7 @@ NA_IDEF void naClampByteMap2DToRecti(NAByteMap2D* map2d, NARecti rect){
         naError("naClampByteMap2DToRecti", "rect is not contained in map rect.");
     }
   #endif
-  naCreateByteMap2DWithRecti(&tmpbytemap, rect);
+  naInitByteMap2DWithRecti(&tmpbytemap, rect);
   naFillByteMap2DWithByteMapInRecti(&tmpbytemap, rect, map2d);
   free(map2d->map.data);
   map2d->map.data = tmpbytemap.map.data;

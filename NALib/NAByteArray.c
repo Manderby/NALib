@@ -15,7 +15,7 @@ NA_DEF NAByteArray* naInitByteArrayWithSize(NAByteArray* array, NAInt size){
   if(!size){  // if size is zero
     array = naInitByteArray(array);
   }else{
-    array->storage = naCreatePointerWithSize(NA_NULL, size);
+    array->storage = naNewPointerWithSize(size);
     array->size = naAbsi(size);
     array->lvalue = naGetPointerLValue(array->storage);
   }
@@ -34,7 +34,7 @@ NA_DEF NAByteArray* naInitByteArrayWithConstBuffer(NAByteArray* array, const voi
   if(!size){  // if size is zero
     array = naInitByteArray(array);
   }else{
-    array->storage = naCreatePointerWithConstBuffer(NA_NULL, buffer);
+    array->storage = naNewPointerWithConstBuffer(buffer);
     array->size = naAbsi(size);
     array->lvalue = naGetPointerLValue(array->storage);
     #ifndef NDEBUG
@@ -66,7 +66,7 @@ NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* b
     array = naInitByteArray(array);
     if(takeownership){free(buffer);}
   }else{
-    array->storage = naCreatePointerWithMutableBuffer(NA_NULL, buffer, takeownership);
+    array->storage = naNewPointerWithMutableBuffer(buffer, takeownership);
     array->size = naAbsi(size);
     array->lvalue = naGetPointerLValue(array->storage);
     #ifndef NDEBUG

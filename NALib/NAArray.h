@@ -38,11 +38,11 @@ typedef struct NAArray NAArray;
 // ///////////////////////////
 
 // Creates an NAArray struct denoting an EMPTY array.
-NA_IAPI NAArray* naCreateArray(NAArray* array);
+NA_IAPI NAArray* naInitArray(NAArray* array);
 
 // Creates or fills a new NAArray struct with a given typesize in bytes and a
 // count. Calls the constructor on every element if not NA_NULL.
-NA_API  NAArray* naCreateArrayWithCount  (NAArray* array,
+NA_API  NAArray* naInitArrayWithCount  (NAArray* array,
                                             NAUInt typesize,
                                             NAUInt count,
                                      NAConstructor constructor);
@@ -62,12 +62,12 @@ NA_API  NAArray* naCreateArrayWithCount  (NAArray* array,
 //
 // Note that NALib does provide an API for calling constructors on preallocated
 // buffers. If you really need to do that, you have to do this manually.
-NA_API  NAArray* naCreateArrayWithConstBuffer(
+NA_API  NAArray* naInitArrayWithConstBuffer(
                                           NAArray* array,
                                        const void* buffer,
                                             NAUInt typesize,
                                             NAUInt count);
-NA_API  NAArray* naCreateArrayWithMutableBuffer(
+NA_API  NAArray* naInitArrayWithMutableBuffer(
                                           NAArray* array,
                                              void* buffer,
                                             NAUInt typesize,
@@ -77,15 +77,14 @@ NA_API  NAArray* naCreateArrayWithMutableBuffer(
 // Fills dstarray with a desired part of srcarray.
 // offset and count can be negative: See naInitByteArrayExtraction for the
 // explanation of the arguments.
-NA_API  NAArray* naCreateArrayExtraction( NAArray* dstarray,
+NA_API  NAArray* naInitArrayExtraction( NAArray* dstarray,
                                     const NAArray* srcarray,
                                              NAInt offset,
                                              NAInt count);
 
-// Clears or destroys the given array. Calls the destructor on every element
+// Clears the given array. Calls the destructor on every element
 // if not NA_NULL. See Readme file for more information.
 NA_IAPI void naClearArray  (NAArray* array, NADestructor destructor);
-NA_IAPI void naDestroyArray(NAArray* array, NADestructor destructor);
 
 
 // COPIES the contents of the array to a separate storage and decouples it
@@ -160,19 +159,12 @@ struct NAArray{
 
 
 
-// This is a small helper function used for the naCreate functions. Note that
-// naInitByteArray is defined inline whereas other creation functions of
-// NAByteArray are not.
-NA_HIDEF NAArray* naInitializeEmptyArray(NAArray* array){
-  array = naAllocNALibStruct(array, NAArray);
+NA_IDEF NAArray* naInitArray(NAArray* array){
+  #ifndef NDEBUG
+    if(!array)
+      {naCrash("naInitArray", "array is NULL"); return NA_NULL;}
+  #endif
   naInitByteArray(&(array->bytearray));
-  return array;
-}
-
-
-
-NA_IDEF NAArray* naCreateArray(NAArray* array){
-  array = naInitializeEmptyArray(array);
   // The typesize is set to 1 such that calls to naGetArraySize will not
   // result in bad values.
   array->typesize = 1;
@@ -193,13 +185,6 @@ NA_IDEF void naClearArray(NAArray* array, NADestructor destructor){
   #endif
   if(destructor){naForeachArray(array, destructor);}
   naClearByteArray(&(array->bytearray));
-}
-
-
-
-NA_IDEF void naDestroyArray(NAArray* array, NADestructor destructor){
-  naClearArray(array, destructor);
-  free(array);
 }
 
 

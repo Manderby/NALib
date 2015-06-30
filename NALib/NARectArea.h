@@ -14,7 +14,7 @@
 
 // /////////////////////////////////
 // An NARectiArea is a rect with up to 8 inabitants, depicted by the bits
-// of an uint32. See naCreateRectiAreaArray for more information.
+// of an uint32. See naInitArrayWithRectiAreaArray for more information.
 
 typedef struct NARectiArea NARectiArea;
 struct NARectiArea{
@@ -31,7 +31,7 @@ struct NARectiArea{
 // (potentially many) areas which they form and returns these areas in an
 // NAArray of NARectiArea.
 // Note that certain resulting areas may have been combined together.
-NA_API NAArray* naCreateRectiAreaArray( NAArray* areaarray,
+NA_API NAArray* naInitArrayWithRectiAreaArray( NAArray* areaarray,
                                            NAInt numhabitants,
                                                  ...);
 

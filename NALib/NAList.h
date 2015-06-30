@@ -33,17 +33,16 @@ typedef struct NAList NAList;
 
 
 // Creates an empty list.
-NA_IAPI NAList* naCreateList(NAList* list);
+NA_IAPI NAList* naInitList(NAList* list);
 
 // Creates an exact copy of originallist by replicating all elements in the
-// same order.
-NA_IAPI NAList* naDuplicateList(NAList* list, NAList* originallist);
+// same order. The two list pointers must not be the same.
+NA_IAPI NAList* naCopyList(NAList* list, NAList* originallist);
 
-// Clears or destroys the given list. Note: This will free all list elements
+// Clears the given list. Note: This will free all list elements
 // but not the contents they store! You can send a destructor though which
 // might clear and destroy all elements.
 NA_IAPI void    naClearList  (NAList* list, NADestructor destructor);
-NA_IAPI void    naDestroyList(NAList* list, NADestructor destructor);
 
 // Empties the list. See implementation for difference to naClearList
 NA_IAPI void    naEmptyList  (NAList* list, NADestructor destructor);
@@ -196,8 +195,11 @@ struct NAList{
 };
 
 
-NA_IDEF NAList* naCreateList(NAList* list){
-  list = naAllocNALibStruct(list, NAList);
+NA_IDEF NAList* naInitList(NAList* list){
+  #ifndef NDEBUG
+    if(!list)
+      {naCrash("naInitList", "list is NULL"); return NA_NULL;}
+  #endif
   list->count = 0;
   naFillLValueMutable(&(list->sentinel.lvalue), NA_NULL);
   list->sentinel.next = &(list->sentinel);
@@ -207,10 +209,10 @@ NA_IDEF NAList* naCreateList(NAList* list){
 }
 
 
-NA_IDEF NAList* naDuplicateList(NAList* list, NAList* originallist){
+NA_IDEF NAList* naCopyList(NAList* list, NAList* originallist){
   // Declaration before implementation. Needed for C90.
   NAListElement* cur;
-  list = naCreateList(list);
+  list = naInitList(list);
   cur = originallist->sentinel.next;
   while(cur != &(originallist->sentinel)){
     NAListElement* next = cur->next;
@@ -227,12 +229,6 @@ NA_IDEF NAList* naDuplicateList(NAList* list, NAList* originallist){
 
 NA_IDEF void naClearList(NAList* list, NADestructor destructor){
   naEmptyList(list, destructor);
-}
-
-
-NA_IDEF void naDestroyList(NAList* list, NADestructor destructor){
-  naClearList(list, destructor);
-  free(list);
 }
 
 

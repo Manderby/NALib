@@ -121,7 +121,7 @@ NA_IAPI NABool      naIsMinMax2iEmpty(NAMinMax2i minmax);
 //                                   Will result in the following 6 areas:
 //  |---|-----|-|---|-------|---|
 //
-NA_API NAArray*     naCreateAreasWithMinMax1iFromMinMax1iArray(
+NA_API NAArray*     naInitArrayWithMinMax1iAreasFromMinMax1iArray(
                                                   NAArray* newarray,
                                             const NAArray* minmaxs);
 

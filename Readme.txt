@@ -223,7 +223,8 @@ Therefore, the naInitString-functions have been replaced by naNewString-
 functions which do not accept an input pointer anymore but instead always
 return a pointer allocated with naNew.
 
-Warning: NALib version 10 only provides the runtime system for NAString.
+Warning: NALib version 10 only provides the runtime system for NAString and
+NAPointer.
 
 In order to manage the pointers, an instance of NARuntime must be created
 before any naNew function can be called. When NDEBUG is undefined, a friendly

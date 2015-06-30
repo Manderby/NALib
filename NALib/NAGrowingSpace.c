@@ -30,13 +30,14 @@ NA_HDEF void naAddGrowingSpaceNewSpace(NAGrowingSpace* space){
 
 
 
-NA_DEF NAGrowingSpace* naCreateGrowingSpace(NAGrowingSpace* space, NAUInt typesize, NAConstructor constructor){
+NA_DEF NAGrowingSpace* naInitGrowingSpace(NAGrowingSpace* space, NAUInt typesize, NAConstructor constructor){
   #ifndef NDEBUG
+    if(!space)
+      {naCrash("naInitGrowingSpace", "space is NULL"); return NA_NULL;}
     if(typesize <= 0)
-      naError("naCreateGrowingSpace", "typesize is invalid.");
+      naError("naInitGrowingSpace", "typesize is invalid.");
   #endif
-  space = naAllocNALibStruct(space, NAGrowingSpace);
-  naCreateList(&(space->arrays));
+  naInitList(&(space->arrays));
   space->typesize = typesize;
   space->usedcount = 0;
   space->constructor = constructor;
@@ -78,13 +79,6 @@ NA_DEF void naClearGrowingSpace(NAGrowingSpace* space, NADestructor destructor){
   }
 
   naClearList(&(space->arrays), NA_NULL);
-}
-
-
-
-NA_DEF void naDestroyGrowingSpace(NAGrowingSpace* space, NADestructor destructor){
-  naClearGrowingSpace(space, destructor);
-  free(space);
 }
 
 
@@ -154,14 +148,14 @@ NA_DEF void naNextGrowingSpaceElement(const NAGrowingSpace* space){
 
 
 
-NA_DEF NAArray* naCreateArrayOutOfGrowingSpace(NAArray* array, NAGrowingSpace* space){
+NA_DEF NAArray* naInitArrayWithGrowingSpace(NAArray* array, NAGrowingSpace* space){
   // Declaration before Implementation. Needed for C90
   NAByte* arrayptr;
   NAUInt bytearraycount;
   NAUInt bytearraysize;
   NAUInt remainingcount;
   NAUInt i;
-  array = naCreateArrayWithCount(array, space->typesize, space->usedcount, NA_NULL);
+  array = naInitArrayWithCount(array, space->typesize, space->usedcount, NA_NULL);
   arrayptr = naGetArrayMutablePointer(array);
   bytearraycount = naGetListCount(&(space->arrays));
   if(bytearraycount){

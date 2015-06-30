@@ -7,15 +7,19 @@
 #include "NAGrowingSpace.h"
 
 
-NA_DEF NAArray* naCreateAreasWithMinMax1iFromMinMax1iArray(NAArray* newarray, const NAArray* minmaxs){
+NA_DEF NAArray* naInitArrayWithMinMax1iAreasFromMinMax1iArray(NAArray* array, const NAArray* minmaxs){
+  #ifndef NDEBUG
+    if(!array)
+      {naCrash("", "array is NULL"); return NA_NULL;}
+  #endif
 
   NAGrowingSpace* segments;
   NAInt curmin;
   NAInt curmax;
   NAUInt minmaxcount = naGetArrayCount(minmaxs);
   NAInt maxareasperdimension = (2 * minmaxcount - 1);
-  NAHeap* rangeheap0min = naCreateHeap(NA_NULL, maxareasperdimension, NA_HEAP_USES_INT_KEY);
-  NAHeap* rangeheap0max = naCreateHeap(NA_NULL, maxareasperdimension, NA_HEAP_USES_INT_KEY);
+  NAHeap* rangeheap0min = naInitHeap(NA_NULL, maxareasperdimension, NA_HEAP_USES_INT_KEY);
+  NAHeap* rangeheap0max = naInitHeap(NA_NULL, maxareasperdimension, NA_HEAP_USES_INT_KEY);
   // insert the min and max coordinates into the heaps
   NAUInt m;
   for(m=0; m<minmaxcount; m++){
@@ -26,9 +30,9 @@ NA_DEF NAArray* naCreateAreasWithMinMax1iFromMinMax1iArray(NAArray* newarray, co
   }
   
   if(naGetHeapCount(rangeheap0min) == 0){
-    newarray = naCreateArray(newarray);
+    array = naInitArray(array);
   }else{
-    segments = naCreateGrowingSpace(NA_NULL, sizeof(NAMinMax1i), NA_NULL);
+    segments = naInitGrowingSpace(NA_NULL, sizeof(NAMinMax1i), NA_NULL);
     
     curmin = ((NAMinMax1i*)naRemoveHeapRootMutable(rangeheap0min))->min[0];
     curmax = ((NAMinMax1i*)naRemoveHeapRootMutable(rangeheap0max))->max[0];
@@ -54,7 +58,7 @@ NA_DEF NAArray* naCreateAreasWithMinMax1iFromMinMax1iArray(NAArray* newarray, co
           newsegment->max[0] = curmax;
           #ifndef NDEBUG
             if(naGetHeapCount(rangeheap0max) == 0)
-              naError("naCreateAreasWithMinMax1iFromMinMax1iArray", "No more maxs while having mins. This should not happen.");
+              naError("naInitArrayWithMinMax1iAreasFromMinMax1iArray", "No more maxs while having mins. This should not happen.");
           #endif
           // Remove all maxs which are equal to the current max
           while(curmax == ((NAMinMax1i*)naGetHeapRootMutable(rangeheap0max))->max[0]){
@@ -80,13 +84,17 @@ NA_DEF NAArray* naCreateAreasWithMinMax1iFromMinMax1iArray(NAArray* newarray, co
       }
     }
 
-    newarray = naCreateArrayOutOfGrowingSpace(newarray, segments);
-    naDestroyGrowingSpace(segments, NA_NULL);
+    array = naInitArrayWithGrowingSpace(array, segments);
+    naClearGrowingSpace(segments, NA_NULL);
+    naFree(segments);
   }
   
-  naDestroyHeap(rangeheap0min);
-  naDestroyHeap(rangeheap0max);
-  return newarray;
+  naClearHeap(rangeheap0min);
+  naClearHeap(rangeheap0max);
+  naFree(rangeheap0min);
+  naFree(rangeheap0max);
+  
+  return array;
 }
 
 

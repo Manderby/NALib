@@ -136,7 +136,7 @@ NA_API NAByteArray* naInitByteArrayExtraction( NAByteArray* dstarray,
                                                          NAInt offset,
                                                          NAInt size);
 
-// Clears or Deletes the given array. Any previously used storage is detached.
+// Clears the given array. Any previously used storage is detached.
 // When the storage is no longer used, it gets deleted automatically.
 NA_IAPI void naClearByteArray  (NAByteArray* array);
 
@@ -230,7 +230,7 @@ struct NAByteArray{
 NA_IDEF NAByteArray* naInitByteArray(NAByteArray* array){
   #ifndef NDEBUG
     if(!array)
-      {naCrash("naInitByteArray", "array is Null-Pointer."); return;}
+      {naCrash("naInitByteArray", "array is Null-Pointer."); return NA_NULL;}
   #endif
   array->size = 0;
   return array;

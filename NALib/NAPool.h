@@ -15,10 +15,9 @@
 
 typedef struct NAPool NAPool;
 
-NA_API NAPool* naCreatePoolEmpty(NAPool* pool, NAUInt count);
-NA_API NAPool* naCreatePoolFilled(NAPool* pool, NAUInt count, const NAStructInfo* structinfo, NABool aspointerarray);
+NA_API NAPool* naInitPoolEmpty(NAPool* pool, NAUInt count);
+NA_API NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, const NAStructInfo* structinfo, NABool aspointerarray);
 NA_API void naClearPool(NAPool* pool);
-NA_API void naDestroyPool(NAPool* pool);
 
 
 struct NAPool{
@@ -33,8 +32,11 @@ struct NAPool{
 
 
 
-NA_DEF NAPool* naCreatePoolEmpty(NAPool* pool, NAUInt count){
-  naAllocNALibStruct(pool, NAPool);
+NA_DEF NAPool* naInitPoolEmpty(NAPool* pool, NAUInt count){
+  #ifndef NDEBUG
+    if(!pool)
+      {naCrash("naInitPoolEmpty", "pool is NULL"); return NA_NULL;}
+  #endif
   pool->drops = naMalloc(count * sizeof(void*));
   pool->count = count;
   pool->cur = 0;
@@ -43,8 +45,11 @@ NA_DEF NAPool* naCreatePoolEmpty(NAPool* pool, NAUInt count){
 
 
 
-NA_DEF NAPool* naCreatePoolFilled(NAPool* pool, NAUInt count, const NAStructInfo* structinfo, NABool aspointerarray){
-  naAllocNALibStruct(pool, NAPool);
+NA_DEF NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, const NAStructInfo* structinfo, NABool aspointerarray){
+  #ifndef NDEBUG
+    if(!pool)
+      {naCrash("naInitPoolFilled", "pool is NULL"); return NA_NULL;}
+  #endif
   pool->drops = naMalloc(count * sizeof(void*));
   pool->count = count;
   pool->cur = count;
@@ -104,13 +109,6 @@ NA_DEF void naClearPool(NAPool* pool){
     #endif
   }
   free(pool->drops);
-}
-
-
-
-NA_DEF void naDestroyPool(NAPool* pool){
-  naClearPool(pool);
-  free(pool);
 }
 
 

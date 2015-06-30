@@ -19,11 +19,6 @@ struct NAString{
 
 
 
-// This is the (hidden) string type identifier for the NALib runtime system.
-// Will be set when calling naPrepareStringRuntime or naStartRuntime. This
-// will likely change in the near future.
-NATypeIdentifier na_NAString_identifier = NA_NULL;
-
 
 
 
@@ -412,7 +407,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
 
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-//  NA_DEF SystemChar* naCreateSystemStringFromString(const NAUTF8Char* utf8string, NAUInt size){
+//  NA_DEF SystemChar* naAllocSystemStringFromString(const NAUTF8Char* utf8string, NAUInt size){
 //    SystemChar* outstr;
 //    NAUInt newsize;
 //    if(!size){size = naStrlen(utf8string);}
@@ -1198,7 +1193,7 @@ NA_HDEF void naClearString(NAString* string){
 
 
 
-NA_DEF void naPrepareStringRuntime(){
+NA_HDEF void naPrepareStringRuntime(){
   NATypeInfo typeinfo;
   typeinfo.typesize = sizeof(NAString);
   typeinfo.desctructor = (NADestructor)naClearString;

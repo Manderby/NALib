@@ -21,8 +21,11 @@ struct NAStack{
 
 
 
-NAStack* naCreateStack(NAStack* stack, NAUInt maxcount){
-  stack = naAllocNALibStruct(stack, NAStack);
+NAStack* naInitStack(NAStack* stack, NAUInt maxcount){
+  #ifndef NDEBUG
+    if(!stack)
+      {naCrash("naInitStack", "stack is NULL"); return NA_NULL;}
+  #endif
   stack->pointers = naMalloc(maxcount * sizeof(void*));
   stack->maxcount = maxcount;
   stack->cur = 0;
@@ -33,13 +36,6 @@ NAStack* naCreateStack(NAStack* stack, NAUInt maxcount){
 
 naClearStack(NAStack* stack){
   free(stack->pointers);
-}
-
-
-
-naDestroyStack(NAStack* stack){
-  naClearStack(stack);
-  free(stack);
 }
 
 

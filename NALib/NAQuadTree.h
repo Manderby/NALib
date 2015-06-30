@@ -55,14 +55,13 @@ typedef struct NAQuadTreeCallbacks_struct{
 } NAQuadTreeCallbacks;
 
 // minchildsize denotes the minimal size of an element.
-NA_API NAQuadTree* naCreateQuadTree(NAQuadTree* tree, NAInt minchildsize, NAQuadTreeCallbacks callbacks);
-NA_API NAQuadTree* naCreateQuadTreeDuplicate(NAQuadTree* newtree, const NAQuadTree* duptree);
-NA_DEF NAQuadTree* naCreateQuadTreeDuplicateWithMaskTree(NAQuadTree* newtree, NAQuadTree* duptree, NAQuadTree* masktree);
-NA_API NAQuadTree* naCreateQuadTreeDuplicateWithShift(NAQuadTree* newtree, NAQuadTree* duptree, NASizei shift);
-NA_API NAQuadTree* naCreateQuadTreeWithDeserialization(NAQuadTree* tree, const void* buf, NAQuadTreeCallbacks callbacks);
+NA_API NAQuadTree* naInitQuadTree(NAQuadTree* tree, NAInt minchildsize, NAQuadTreeCallbacks callbacks);
+NA_API NAQuadTree* naCopyQuadTree(NAQuadTree* newtree, const NAQuadTree* duptree);
+NA_DEF NAQuadTree* naCopyQuadTreeWithMaskTree(NAQuadTree* newtree, NAQuadTree* duptree, NAQuadTree* masktree);
+NA_API NAQuadTree* naCopyQuadTreeWithShift(NAQuadTree* newtree, NAQuadTree* duptree, NASizei shift);
+NA_API NAQuadTree* naInitQuadTreeWithDeserialization(NAQuadTree* tree, const void* buf, NAQuadTreeCallbacks callbacks);
 NA_API void naEmptyQuadTree(NAQuadTree* tree);
 NA_API void naClearQuadTree(NAQuadTree* tree);
-NA_API void naDestroyQuadTree(NAQuadTree* tree);
 NA_API void naSerializeQuadTree(const NAQuadTree* tree, void* buf, uint64* bytesize);
 
 NA_API NABool naIsQuadTreeEmpty(NAQuadTree* tree);
@@ -84,8 +83,8 @@ NA_API        void naRemoveQuadTreeLeaf(NAQuadTree* tree);
 // The rect is considered to be filled. When create is set to NA_TRUE, any
 // chunk overlapping with the given rect which was not created will be created
 // after this function.
-NA_API NAGrowingSpace* naCreateGrowingSpaceWithQuadTreeChunks(NAGrowingSpace* space, NAQuadTree* tree);
-NA_API NAGrowingSpace* naCreateGrowingSpaceWithQuadTreeChunksInRecti(NAGrowingSpace* space, NAQuadTree* tree, NARecti rect, NABool create);
+NA_API NAGrowingSpace* naInitGrowingSpaceWithQuadTreeChunks(NAGrowingSpace* space, NAQuadTree* tree);
+NA_API NAGrowingSpace* naInitGrowingSpaceWithQuadTreeChunksInRecti(NAGrowingSpace* space, NAQuadTree* tree, NARecti rect, NABool create);
 
 // Starts at the current object and traverses upwards the tree by calling
 // the appropriate callback functions.
@@ -99,7 +98,7 @@ NA_API void* naGetQuadTreeRootNodeData(NAQuadTree* tree);
 
 typedef struct NAQuadTreeNode NAQuadTreeNode;
 // Prototype
-NA_HAPI void naDestroyQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* node);
+NA_HAPI void naDeallocQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* node);
 NA_HAPI void naUpdateQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* curnode, NAPosi curpos);
 NA_HAPI void naUpdateQuadTreeLeaf(NAQuadTree* tree, NAQuadTreeNode* leafparent, NAInt segment);
 

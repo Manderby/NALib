@@ -450,22 +450,19 @@ NA_HDEF void naUpdateHeapElementBack(NAHeap* heap, NAInt backpointer){
 // This is the one function where all the function pointers of the NAHeap
 // structure are set. After this function, these pointers can no longer be
 // changed and therefore define the behaviour of the heap until its deletion.
-NA_DEF NAHeap* naCreateHeap(NAHeap* heap, NAInt count, NAInt flags){
+NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
   NAInt entrysize;
   #ifndef NDEBUG
-    NAHeap* originalheapparameter = heap;
+    if(!heap)
+      {naCrash("naInitHeap", "heap is NULL"); return NA_NULL;}
     // there is always count + 1 elements stored in the array.
     if(count >= NA_INT_MAX){
-      naCrash("naCreateHeap", "Heap count is too big.");
+      naCrash("naInitHeap", "Heap count is too big.");
       return NA_NULL;
     }
     if(count <= 0)
-      naError("naCreateHeap", "Heap count smallerequal zero.");
-  #endif
+      naError("naInitHeap", "Heap count smallerequal zero.");
 
-  heap = naAllocNALibStruct(heap, NAHeap);
-
-  #ifndef NDEBUG
     heap->maxcount = count;
   #endif
   
@@ -513,12 +510,7 @@ NA_DEF NAHeap* naCreateHeap(NAHeap* heap, NAInt count, NAInt flags){
       break;
     default:
       #ifndef NDEBUG
-        naCrash("naCreateHeap", "flag combination not implemented.");
-        if(originalheapparameter){
-          naClearHeap(heap);
-        }else{
-          naDestroyHeap(heap);
-        }
+        naCrash("naInitHeap", "flag combination not implemented.");
         return NA_NULL;
       #endif
       break;
@@ -568,12 +560,7 @@ NA_DEF NAHeap* naCreateHeap(NAHeap* heap, NAInt count, NAInt flags){
       break;
     default:
       #ifndef NDEBUG
-        naCrash("naCreateHeap", "flag combination not implemented.");
-        if(originalheapparameter){
-          naClearHeap(heap);
-        }else{
-          naDestroyHeap(heap);
-        }
+        naCrash("naInitHeap", "flag combination not implemented.");
         return NA_NULL;
       #endif
       break;

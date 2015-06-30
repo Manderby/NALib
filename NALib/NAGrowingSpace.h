@@ -58,13 +58,12 @@ struct NAGrowingSpace{
 
 
 // Creates a new NAGrowingSpace with the desired type size.
-NA_API NAGrowingSpace* naCreateGrowingSpace(NAGrowingSpace* space,
+NA_API NAGrowingSpace* naInitGrowingSpace(NAGrowingSpace* space,
                                                      NAUInt typesize,
                                               NAConstructor constructor);
 
-// Clears or destroys the given space.
+// Clears the given space.
 NA_API void naClearGrowingSpace  (NAGrowingSpace* space, NADestructor destructor);
-NA_API void naDestroyGrowingSpace(NAGrowingSpace* space, NADestructor destructor);
 
 // Grows the space by 1 element. The pointer to the new element is returned.
 // The returned pointer points to an uninitialized space.
@@ -87,7 +86,7 @@ NA_API void naNextGrowingSpaceElement(const NAGrowingSpace* space);
 // All used contents will be copied. If you stored pointers to the elements
 // in the growing space somewhere in your code, these pointers will still point
 // to the elements stored in the growing space!
-NA_API NAArray* naCreateArrayOutOfGrowingSpace(    NAArray* array,
+NA_API NAArray* naInitArrayWithGrowingSpace(    NAArray* array,
                                             NAGrowingSpace* space);
 
 // Returns the number of elements actually stored in the space

@@ -26,18 +26,17 @@ struct NAMap2D{
 // cleared. No harm is done if you do it anyway.
 // The width and height field of the underlying NAByteMap2D's rect field are
 // guaranteed to be zero.
-NA_IAPI NAMap2D* naCreateMap2D(NAMap2D* map2d, NAInt typesize);
+NA_IAPI NAMap2D* naInitMap2D(NAMap2D* map2d, NAInt typesize);
 
 // Creates or fills a new NAMap2D with the desired rect and returns the
 // pointer. Allocates memory on the heap. If the rect size is empty, an empty
 // array is returned. Negative rects are invalid.
-NA_IAPI NAMap2D* naCreateMap2DWithRecti(NAMap2D* map2d,
+NA_IAPI NAMap2D* naInitMap2DWithRecti(NAMap2D* map2d,
                                           NAInt typesize,
                                          NARecti rect);
 
-// Clears or Deletes the given map.
+// Clears the given map.
 NA_IAPI void naClearMap2D(NAMap2D* map2d);
-NA_IAPI void naDestroyMap2D(NAMap2D* map2d);
 
 // Clears the given map and reinitializes it as an empty map
 NA_IAPI void naEmptyMap2D(NAMap2D* map2d);
@@ -79,22 +78,28 @@ NA_IAPI NABool naIsPosiInMap2D(NAPosi pos, const NAMap2D* map2d);
 
 
 
-NA_IDEF NAMap2D* naCreateMap2D(NAMap2D* map2d, NAInt typesize){
-  map2d = naAllocNALibStruct(map2d, NAMap2D);
+NA_IDEF NAMap2D* naInitMap2D(NAMap2D* map2d, NAInt typesize){
+  #ifndef NDEBUG
+    if(!map2d)
+      {naCrash("naInitMap2D", "map2d is NULL"); return NA_NULL;}
+  #endif
   map2d->typesize = typesize;
-  naCreateByteMap2D(&(map2d->bytemap));
+  naInitByteMap2D(&(map2d->bytemap));
   return map2d;
 }
 
 
-NA_IDEF NAMap2D* naCreateMap2DWithRecti(NAMap2D* map2d,
+NA_IDEF NAMap2D* naInitMap2DWithRecti(NAMap2D* map2d,
                                           NAInt typesize,
                                          NARecti rect){
-  map2d = naAllocNALibStruct(map2d, NAMap2D);
+  #ifndef NDEBUG
+    if(!map2d)
+      {naCrash("naInitMap2DWithRecti", "map2d is NULL"); return NA_NULL;}
+  #endif
   NARecti xrect = rect;
   xrect.size.width *= typesize;
   map2d->typesize = typesize;
-  naCreateByteMap2DWithRecti(&(map2d->bytemap), xrect);
+  naInitByteMap2DWithRecti(&(map2d->bytemap), xrect);
   return map2d;
 }
 
@@ -111,15 +116,9 @@ NA_IDEF void naClearMap2D(NAMap2D* map2d){
 }
 
 
-NA_IDEF void naDestroyMap2D(NAMap2D* map2d){
-  naClearMap2D(map2d);
-  free(map2d);
-}
-
-
 NA_IDEF void naEmptyMap2D(NAMap2D* map2d){
   naClearMap2D(map2d);
-  naCreateMap2D(map2d, map2d->typesize);
+  naInitMap2D(map2d, map2d->typesize);
 }
 
 

@@ -14,21 +14,26 @@ correct, complete or final.
 
 
 Highlights:
-- Added NAQuadTree. A structure storing integer quad trees with arbitrary
-  contents and many callbacks
-- Added NAPool
-- Added NAStack
+- Complete redesign of memory structure.
 - Added a small runtime system for pool allocation of NAString structs.
 - naCreateXXX functions are now called naInitXXX functions and do take a
   pointer as first argument which must be not null! Creation of such pointers
   can either be done with malloc, naMalloc, naAlloc, naNew or by providing
   a pointer to an existing struct.
 - Changed all naCreateString methods to naNewString
+- Added NAQuadTree. A structure storing integer quad trees with arbitrary
+  contents and many callbacks
+- Added NAPool
+- Added NAStack
 
 Other things:
+- Renamed naDuplicateList to naCopyList
+- Removed naAllocNALibStruct
 - NAByteArray now has negative size when last bytes are binary zero
 - Renamed NAPointerContent to NALValue. Added null-termination and array
   detection.
+- NAPointer only works with the Runtime System: Renamed naCreatePointer to
+  naNewPointer
 - Renamed naAllocateXXX functions to naMallocXXX. Added naFree.
 - naDestroyXXX functions have been removed. Use naFree or free to deallocate.
 - Changed and renamed naAllocNALibStruct to naAlloc. Now unconditional alloc.

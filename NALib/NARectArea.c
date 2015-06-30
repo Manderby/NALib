@@ -13,7 +13,7 @@
 #include "NAGrowingSpace.h"
 
 
-NA_API NAArray* naCreateRectiAreaArray(NAArray* areaarray, NAInt numhabitants, ...){
+NA_API NAArray* naInitArrayWithRectiAreaArray(NAArray* areaarray, NAInt numhabitants, ...){
   NAGrowingSpace minmax0space;
   NAGrowingSpace minmax1space;  
   NAInt masks[NA_SYSTEM_ADDRESS_BITS];
@@ -35,8 +35,8 @@ NA_API NAArray* naCreateRectiAreaArray(NAArray* areaarray, NAInt numhabitants, .
   NAMinMax1i* curminmax1;
   NAInt* curmask;
 
-  naCreateGrowingSpace(&minmax0space, sizeof(NAMinMax1i), NA_NULL);
-  naCreateGrowingSpace(&minmax1space, sizeof(NAMinMax1i), NA_NULL);
+  naInitGrowingSpace(&minmax0space, sizeof(NAMinMax1i), NA_NULL);
+  naInitGrowingSpace(&minmax1space, sizeof(NAMinMax1i), NA_NULL);
   naNulln(masks, NA_SYSTEM_ADDRESS_BITS * sizeof(NAInt));
   
   usefulhabitants = 0;
@@ -56,15 +56,15 @@ NA_API NAArray* naCreateRectiAreaArray(NAArray* areaarray, NAInt numhabitants, .
   }
   va_end(argumentlist);
 
-  naCreateArrayOutOfGrowingSpace(&minmax0array, &minmax0space);
-  naCreateArrayOutOfGrowingSpace(&minmax1array, &minmax1space);
+  naInitArrayWithGrowingSpace(&minmax0array, &minmax0space);
+  naInitArrayWithGrowingSpace(&minmax1array, &minmax1space);
 
-  naCreateAreasWithMinMax1iFromMinMax1iArray(&segments0, &minmax0array);
-  naCreateAreasWithMinMax1iFromMinMax1iArray(&segments1, &minmax1array);
+  naInitArrayWithMinMax1iAreasFromMinMax1iArray(&segments0, &minmax0array);
+  naInitArrayWithMinMax1iAreasFromMinMax1iArray(&segments1, &minmax1array);
  
   segmentcount0 = naGetArrayCount(&segments0);
   segmentcount1 = naGetArrayCount(&segments1);
-  naCreateGrowingSpace(&space, sizeof(NARectiArea), NA_NULL);
+  naInitGrowingSpace(&space, sizeof(NARectiArea), NA_NULL);
 
   cursegment1 = naGetArrayConstPointer(&segments1);
   for(s1=0; s1<segmentcount1; s1++){
@@ -89,7 +89,7 @@ NA_API NAArray* naCreateRectiAreaArray(NAArray* areaarray, NAInt numhabitants, .
     cursegment1++;
   }
 
-  areaarray = naCreateArrayOutOfGrowingSpace(areaarray, &space);
+  areaarray = naInitArrayWithGrowingSpace(areaarray, &space);
 
   naClearArray(&segments0, NA_NULL);
   naClearArray(&segments1, NA_NULL);

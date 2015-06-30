@@ -162,7 +162,7 @@ NA_API NAString* naNewStringEPSDecoded(const NAString* inputstring);
   // Returns a newly allocated memory block containing the system-encoded
   // string. If you do not provide the size, it will be automatically
   // computed. The resulting string must be freed manually. COPIES ALWAYS!
-  NA_API SystemChar* naCreateSystemStringFromString(const NAUTF8Char* utf8str,
+  NA_API SystemChar* naAllocSystemStringFromString(const NAUTF8Char* utf8str,
                                                                NAUInt size);
   // Creates a new NAString from a system-encoded string. COPIES ALWAYS!
   NA_API NAString* naNewStringFromSystemString(SystemChar* systemstring);

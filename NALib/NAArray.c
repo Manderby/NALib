@@ -7,16 +7,17 @@
 #include "NAArray.h"
 
 
-NA_DEF NAArray* naCreateArrayWithCount(NAArray* array, NAUInt typesize, NAUInt count, NAConstructor constructor){
+NA_DEF NAArray* naInitArrayWithCount(NAArray* array, NAUInt typesize, NAUInt count, NAConstructor constructor){
   #ifndef NDEBUG
+    if(!array)
+      {naCrash("naInitArrayWithCount", "array is NULL"); return NA_NULL;}
     if(typesize < 1)
-      naError("naCreateArrayWithCount", "typesize is < 1.");
+      naError("naInitArrayWithCount", "typesize is < 1.");
   #endif
   array->typesize = typesize;
   if(!count){
-    array = naInitializeEmptyArray(array);
+    naInitByteArray(&(array->bytearray));
   }else{
-    array = naAllocNALibStruct(array, NAArray);
     naInitByteArrayWithSize(&(array->bytearray), typesize * count);
     if(constructor){
       // Note that you shall not call naForeachArray with the constructor. The
@@ -35,16 +36,17 @@ NA_DEF NAArray* naCreateArrayWithCount(NAArray* array, NAUInt typesize, NAUInt c
 
 
 
-NA_DEF NAArray* naCreateArrayWithConstBuffer(NAArray* array, const void* buffer, NAUInt typesize, NAUInt count){
+NA_DEF NAArray* naInitArrayWithConstBuffer(NAArray* array, const void* buffer, NAUInt typesize, NAUInt count){
   #ifndef NDEBUG
+    if(!array)
+      {naCrash("naInitArrayWithConstBuffer", "array is NULL"); return NA_NULL;}
     if(typesize < 1)
-      naError("naCreateArrayWithConstBuffer", "typesize is < 1");
+      naError("naInitArrayWithConstBuffer", "typesize is < 1");
   #endif
   array->typesize = typesize;
   if(!count){
-    array = naInitializeEmptyArray(array);
+    naInitByteArray(&(array->bytearray));
   }else{
-    array = naAllocNALibStruct(array, NAArray);
     naInitByteArrayWithConstBuffer(&(array->bytearray), buffer, typesize * count);
   }
   return array;
@@ -52,29 +54,35 @@ NA_DEF NAArray* naCreateArrayWithConstBuffer(NAArray* array, const void* buffer,
 
 
 
-NA_DEF NAArray* naCreateArrayWithMutableBuffer(NAArray* array, void* buffer, NAUInt typesize, NAUInt count, NABool takeownership){
+NA_DEF NAArray* naInitArrayWithMutableBuffer(NAArray* array, void* buffer, NAUInt typesize, NAUInt count, NABool takeownership){
   #ifndef NDEBUG
+    if(!array)
+      {naCrash("naInitArrayWithMutableBuffer", "array is NULL"); return NA_NULL;}
     if(typesize < 1)
-      naError("naCreateArrayWithMutableBuffer", "typesize is < 1");
+      naError("naInitArrayWithMutableBuffer", "typesize is < 1");
   #endif
   array->typesize = typesize;
-  // Note that here, in contrast to naCreateArrayWithConstBuffer, no test
+  // Note that here, in contrast to naInitArrayWithConstBuffer, no test
   // is made if count is zero. With that, the takeownership parameter can
   // correctly be handeled and the buffer can be automatically free'd if count
   // is zero.
-  array = naAllocNALibStruct(array, NAArray);
+  naInitByteArray(&(array->bytearray));
   naInitByteArrayWithMutableBuffer(&(array->bytearray), buffer, typesize * count, takeownership);
   return array;
 }
 
 
 
-NA_DEF NAArray* naCreateArrayExtraction(NAArray* dstarray, const NAArray* srcarray, NAInt offset, NAInt count){
+NA_DEF NAArray* naInitArrayExtraction(NAArray* dstarray, const NAArray* srcarray, NAInt offset, NAInt count){
+  #ifndef NDEBUG
+    if(!dstarray)
+      {naCrash("naInitArrayExtraction", "dstarray is NULL"); return NA_NULL;}
+  #endif
   NAUInt positiveoffset;
   NAUInt positivecount;
   
   dstarray->typesize = srcarray->typesize;
-  dstarray = naAllocNALibStruct(dstarray, NAArray);
+  naInitByteArray(&(dstarray->bytearray));
 
   naMakePositiveiInSize(&positiveoffset, &positivecount, offset, count, naGetArrayCount(srcarray));
 

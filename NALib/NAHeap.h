@@ -18,7 +18,7 @@
 // the programmer. It is guaranteed that the root element always is the minimal
 // or maximal value of the whole heap. To define, what kind of key the heap
 // stores and whether it shall be a min- or a max-heap, you use the appropriate
-// flags when using naCreateHeap.
+// flags when using naInitHeap.
 //
 // You use a heap by inserting elements one-by-one in any order. To do so, you
 // provide a pointer to your element as well as a pointer to the key value.
@@ -76,11 +76,10 @@ typedef struct NAHeap NAHeap;
 
 // Creates a new heap. The count parameter denotes the number of elements which
 // the heap must hold and the flags denote a combination of the macros above.
-NA_API NAHeap* naCreateHeap   (NAHeap* heap, NAInt count, NAInt flags);
+NA_API NAHeap* naInitHeap   (NAHeap* heap, NAInt count, NAInt flags);
 
-// Clears or deletes the given heap.
+// Clears the given heap.
 NA_IAPI void   naClearHeap    (NAHeap* heap);
-NA_IAPI void   naDestroyHeap  (NAHeap* heap);
 
 // Empties the heap without deallocating the memory
 NA_IAPI void   naEmptyHeap    (NAHeap* heap);
@@ -162,7 +161,7 @@ struct NAHeap{
 // be hidden to the user.
 //
 // There are two different structures. The second is used only when the
-// backpointer-flag is set when calling naCreateHeap. Note that the distinction
+// backpointer-flag is set when calling naInitHeap. Note that the distinction
 // of the two structs is made using function pointers and a pointer to the root
 // element which makes the implementation rather complicated to read. But it
 // is blazingly fast.
@@ -192,18 +191,6 @@ NA_IDEF void naClearHeap(NAHeap* heap){
     }
   #endif
   free(heap->data);
-}
-
-
-NA_IDEF void naDestroyHeap(NAHeap* heap){
-  #ifndef NDEBUG
-    if(!heap){
-      naCrash("naDestroyHeap", "heap is Null-Pointer.");
-      return;
-    }
-  #endif
-  naClearHeap(heap);
-  free(heap);
 }
 
 

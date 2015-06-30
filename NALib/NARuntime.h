@@ -22,6 +22,7 @@ struct NATypeInfo{
 
 typedef void* NATypeIdentifier;
 extern NATypeIdentifier na_NAString_identifier;
+extern NATypeIdentifier na_NAPointer_identifier;
 
 
 NA_API void               naStartRuntime();

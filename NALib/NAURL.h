@@ -28,16 +28,16 @@ struct NAURL{
 };
 
 
-NA_IAPI NAURL* naCreateURL(NAURL* url);
+// Creates an empty URL
+NA_IAPI NAURL* naInitURL(NAURL* url);
 
 // - Both delimiters / and \ will be detected.
 // - If the path starts with a path delimiter, it is considered absolute.
 //   Example: /usr/local is an absolute path, src/NALib is not.
 // - Erroneous duplicate path delimiters or ending delimiters will be ignored.
 //   Example: /usr//local/ results in /usr/local
-NA_IAPI NAURL* naCreateURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string);
+NA_IAPI NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string);
 NA_IAPI void naClearURL(NAURL* url);
-NA_IAPI void naDestroyURL(NAURL* url);
 
 // Creates a new string containing just the last path component.
 // Note that there is no distinction if the last component is the name of a
@@ -50,10 +50,13 @@ NA_IAPI NAString* naNewStringWithURLFilename(NAURL* url);
 
 
 
-NA_IDEF NAURL* naCreateURL(NAURL* url){
-  url = naMallocIfNull(url, sizeof(NAURL));
+NA_IDEF NAURL* naInitURL(NAURL* url){
+  #ifndef NDEBUG
+    if(!url)
+      {naCrash("naInitURL", "url is NULL"); return NA_NULL;}
+  #endif
   url->status = 0;
-  naCreateList(&(url->path));
+  naInitList(&(url->path));
   return url;
 }
 
@@ -61,12 +64,12 @@ NA_IDEF NAURL* naCreateURL(NAURL* url){
 
 
 
-NA_IDEF NAURL* naCreateURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string){
+NA_IDEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string){
   NAUTF8Char curchar;
   NAString* inputstring;
   NAString* pathcomponent;
 
-  url = naCreateURL(url); 
+  url = naInitURL(url); 
   if(!string){return url;} 
   inputstring = naNewStringWithUTF8CStringLiteral(string);
 
@@ -96,12 +99,6 @@ NA_IDEF void naClearURL(NAURL* url){
   naClearList(&(url->path), NA_NULL);
 }
 
-
-
-NA_IDEF void naDestroyURL(NAURL* url){
-  naClearURL(url);
-  free(url);
-}
 
 
 NA_IDEF NAString* naNewStringWithURLFilename(NAURL* url){
