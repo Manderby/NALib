@@ -14,34 +14,37 @@ correct, complete or final.
 
 
 Highlights:
-- Complete redesign of memory structure.
-- Added a small runtime system for pool allocation of NAString structs.
+- Complete revisit of NAString. Lots of changes. Certain APIs have not been
+  reenabled just yet. Do not upgrade if you rely on certain XML or parse
+  functions.
+- Complete redesign of memory structure. Added a small runtime system for
+  pool allocation of NAString and NAPointer structs.
 - naCreateXXX functions are now called naInitXXX functions and do take a
-  pointer as first argument which must be not null! Creation of such pointers
+  pointer as first argument which must be non-null! Creation of such pointers
   can either be done with malloc, naMalloc, naAlloc, naNew or by providing
   a pointer to an existing struct.
-- Changed all naCreateString methods to naNewString
 - Added NAQuadTree. A structure storing integer quad trees with arbitrary
   contents and many callbacks
-- Added NAPool
-- Added NAStack
+- Added NAPool (yet undocumented)
+- Added NAStack (yet undocumented)
 
 Other things:
+- Changed all naCreateString methods to naNewString
 - Renamed naDuplicateList to naCopyList
 - Removed naAllocNALibStruct
-- NAByteArray now has negative size when last bytes are binary zero
 - Renamed NAPointerContent to NALValue. Added null-termination and array
   detection.
 - NAPointer only works with the Runtime System: Renamed naCreatePointer to
   naNewPointer
 - Renamed naAllocateXXX functions to naMallocXXX. Added naFree.
-- naDestroyXXX functions have been removed. Use naFree or free to deallocate.
 - Changed and renamed naAllocNALibStruct to naAlloc. Now unconditional alloc.
+- naDestroyXXX functions have been removed. Use naFree or free to deallocate.
 - Added NA_INVALID_INDEX to NAByteArray
 - String escaping has been removed
-- Added naGetSystemMemoryPageSize and naGetSystemMemoryPageSizeMask
+- Added naGetSystemMemoryPageSize and naGetSystemMemoryPageSizeMask,
+  naAllocatePageAligned and naFreePageAligned, naGetZeroFillSize,
+  naIsByteArrayZeroTerminated
 - Changed some parameter types of various functions
-- Added naAllocatePageAligned, naGetZeroFillSize, naIsByteArrayZeroTerminated
 - Removed lots of pedantic warnings
 - Renamed NA_UNUSED_PARAMETER to NA_UNUSED
 - Added naMakePosiWithAlignment, naGetRectiEndPos, naGetRectiMaxPos

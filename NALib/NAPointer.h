@@ -353,7 +353,11 @@ NA_IDEF void* naMallocPageAligned(NAInt size){
   #ifdef NA_C11
     return aligned_alloc(size, naGetSystemMemoryPageSize());
   #else
-    return valloc(size);
+    #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+      return _aligned_malloc(size, naGetSystemMemoryPageSize());
+    #else
+      return valloc(size);
+    #endif
   #endif
 }
 
@@ -363,6 +367,15 @@ NA_IAPI void naFree(void* ptr){
   free(ptr);
 }
 
+
+
+NA_IDEF void naFreePageAligned(void* ptr){
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    _aligned_free(ptr);
+  #else
+    free(ptr);
+  #endif
+}
 
 
 // //////////////////////////
@@ -518,6 +531,7 @@ NA_IDEF void* naGetLValueOffsetMutable(NALValue* lvalue, NAUInt indx){
   
 
   NA_IDEF void naMarkLValueWithAccessibleSize(NALValue* lvalue, NAUInt accessiblesize, NABool nullterminated){
+    NAUInt nullindx;
     if(!lvalue)
       {naCrash("naMarkLValueWithVisibleSize", "lvalue was null"); return;}
     if(!(lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT))
@@ -527,7 +541,7 @@ NA_IDEF void* naGetLValueOffsetMutable(NALValue* lvalue, NAUInt indx){
     lvalue->flags |= NA_LVALUE_HAS_ACCESSIBLE_BYTECOUNT;
     lvalue->accessiblebytecount = accessiblesize;
     if(nullterminated){lvalue->flags |= NA_LVALUE_NULL_TERMINATED;}
-    NAUInt nullindx = lvalue->visiblesize;
+    nullindx = lvalue->visiblesize;
     while(nullindx < lvalue->accessiblebytecount){
       if(((NAByte*)(lvalue->data.constd))[nullindx] != 0)
         naError("naMarkLValueWithVisibleSize", "promised null-termination is not null");
@@ -603,11 +617,12 @@ NA_HIDEF NAPointer* naNewPointerStruct(){
 
 
 NA_IDEF NAPointer* naNewPointerWithSize(NAInt size){
+  NAPointer* pointer;
   #ifndef NDEBUG
     if(size == 0)
       naError("naNewPointerWithSize", "size is zero.");
   #endif
-  NAPointer* pointer = naNewPointerStruct();
+  pointer = naNewPointerStruct();
   naFillLValueMutable(&(pointer->lvalue), naMalloc(size));
   #ifndef NDEBUG
     if(size<0){
@@ -625,11 +640,12 @@ NA_IDEF NAPointer* naNewPointerWithSize(NAInt size){
 
 
 NA_IDEF NAPointer* naNewPointerWithConstBuffer(const void* buffer){
+  NAPointer* pointer;
   #ifndef NDEBUG
     if(!buffer)
       naError("naNewPointerWithConstBuffer", "buffer is Null-Pointer.");
   #endif
-  NAPointer* pointer = naNewPointerStruct();
+  pointer = naNewPointerStruct();
   naFillLValueConst(&(pointer->lvalue), buffer);
   return pointer;
 }
@@ -638,13 +654,14 @@ NA_IDEF NAPointer* naNewPointerWithConstBuffer(const void* buffer){
 
 NA_IDEF NAPointer* naNewPointerWithMutableBuffer(void* buffer,
                                                 NABool takeownership){
+  NAPointer* pointer;
   #ifndef NDEBUG
     if(!buffer)
       naError("naNewPointerWithMutableBuffer", "buffer is Null-Pointer.");
     if((takeownership != NA_FALSE) && (takeownership != NA_TRUE))
       naError("naNewPointerWithMutableBuffer", "invalid ownership");
   #endif
-  NAPointer* pointer = naNewPointerStruct();
+  pointer = naNewPointerStruct();
   naFillLValueMutable(&(pointer->lvalue), buffer);
   pointer->refcount |= (takeownership * NA_POINTER_OWN_DATA);
   return pointer;

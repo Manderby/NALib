@@ -58,7 +58,7 @@ NA_DEF NA_INLINE NAString* naNewString(void){
 NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
   // Declaration before implementation. Needed for C90.
   NAString* string;
-  NAUInt size;
+  NAInt size;
   
   #ifndef NDEBUG
     if(!ptr){
@@ -67,7 +67,7 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
     }
   #endif
   
-  size = naStrlen(ptr);
+  size = (NAInt)naStrlen(ptr);
   if(size){
     string = naNew(NAString);
     // C-Strings are always expected to be Null-terminated, meaning: The Byte
@@ -887,14 +887,16 @@ NA_DEF NAString* naParseStringPathComponent(NAString* string){
 
 
 NA_DEF NAUInt naParseUTF8StringForDecimalUnsignedInteger(const NAUTF8Char* string, uint64* retint, NAUInt maxcharcount, uint64 max){
+  NAUInt bytesused;
+  uint64 prevval;
   #ifndef NDEBUG
     if(!retint)
       {naCrash("naParseUTF8StringForDecimalUnsignedInteger", "retint is NULL"); return 0;}
     if(!maxcharcount)
       naError("naParseUTF8StringForDecimalUnsignedInteger", "maxcharcount is 0");
   #endif
-  NAUInt bytesused = 0LL;
-  uint64 prevval = 0LL;
+  bytesused = 0;
+  prevval = 0LL;
   *retint = 0LL;
   while(bytesused < maxcharcount){
     if((*string < '0') || (*string > '9')){break;}

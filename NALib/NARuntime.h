@@ -35,8 +35,8 @@ NA_API void               naDelete(void* pointer);
 
 
 
-// Here, the author decided to put everything into implementation files
-// and not provide inline functions.
+// The author decided to put everything into implementation files
+// and to not provide inline functions.
 
 
 

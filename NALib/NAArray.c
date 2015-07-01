@@ -74,12 +74,12 @@ NA_DEF NAArray* naInitArrayWithMutableBuffer(NAArray* array, void* buffer, NAUIn
 
 
 NA_DEF NAArray* naInitArrayExtraction(NAArray* dstarray, const NAArray* srcarray, NAInt offset, NAInt count){
+  NAUInt positiveoffset;
+  NAUInt positivecount;
   #ifndef NDEBUG
     if(!dstarray)
       {naCrash("naInitArrayExtraction", "dstarray is NULL"); return NA_NULL;}
   #endif
-  NAUInt positiveoffset;
-  NAUInt positivecount;
   
   dstarray->typesize = srcarray->typesize;
   naInitByteArray(&(dstarray->bytearray));

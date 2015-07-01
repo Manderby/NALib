@@ -128,7 +128,7 @@ NA_DEF NAByteArray* naInitByteArrayExtraction(NAByteArray* dstarray, const NAByt
 
 NA_DEF void naDecoupleByteArray(NAByteArray* array, NABool appendnulltermination){
   // Declaration before implementation. Needed for C90.
-  NAUInt arraysize;
+  NAInt arraysize;
   NAByte* buf;
   #ifndef NDEBUG
     if(!array){
@@ -138,7 +138,7 @@ NA_DEF void naDecoupleByteArray(NAByteArray* array, NABool appendnulltermination
   #endif
   // Note: Do not use realloc as ptr may point to a subset of NAPointer.
   // Instead, create a new object and copy manually.
-  arraysize = array->size;
+  arraysize = (NAInt)array->size;
   if(!arraysize){return;}
   if(appendnulltermination){arraysize = -arraysize;}
   buf = naMalloc(arraysize);

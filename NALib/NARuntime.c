@@ -52,6 +52,8 @@ NATypeIdentifier na_NAPointer_identifier = NA_NULL;
 
 
 NA_HIDEF void* naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
+  NACorePool* corepool;
+  void** curunused;
   #ifndef NDEBUG
     if(coretypeinfo->typeinfo.typesize < NA_SYSTEM_ADDRESS_BYTES)
       naError("naEnhanceCorePool", "Element is too small");
@@ -60,12 +62,12 @@ NA_HIDEF void* naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
     if(coretypeinfo->typeinfo.typesize > (na_runtime->pagesize - sizeof(NACorePool)))
       naError("naEnhanceCorePool", "Element is too big");
   #endif
-  NACorePool* corepool = (NACorePool*)naMallocPageAligned(na_runtime->pagesize);
+  corepool = (NACorePool*)naMallocPageAligned(na_runtime->pagesize);
   corepool->coretypeinfo = coretypeinfo;
 
   // Reduce the elemcount by 1 to set the last entry to NULL
   corepool->usedcount = ((na_runtime->pagesize - sizeof(NACorePool)) / coretypeinfo->typeinfo.typesize) - 1;
-  void** curunused = (void**)(((NAByte*)corepool) + sizeof(NACorePool));
+  curunused = (void**)(((NAByte*)corepool) + sizeof(NACorePool));
   corepool->firstunused = curunused;
   while(corepool->usedcount){
     void** nextunused = (void**)((NAByte*)curunused + coretypeinfo->typeinfo.typesize);
@@ -96,13 +98,14 @@ NA_HIDEF void naShrinkCorePool(NACorePool* corepool){
   if(corepool->coretypeinfo->curpool == corepool){corepool->coretypeinfo->curpool = corepool->nextpool;}
   corepool->prevpool->nextpool = corepool->nextpool;
   corepool->nextpool->prevpool = corepool->prevpool;
-  free(corepool);
+  naFreePageAligned(corepool);
 }
 
 
 
 
 NA_DEF void* naNewStruct(NATypeIdentifier typeidentifier){
+  void* pointer;
   NACoreTypeInfo* coretypeinfo = (NACoreTypeInfo*)typeidentifier;
   #ifndef NDEBUG
     if(!na_runtime)
@@ -113,7 +116,7 @@ NA_DEF void* naNewStruct(NATypeIdentifier typeidentifier){
       {naCrash("naNew", "No pool present"); return NA_NULL;}
   #endif
   
-  void* pointer = coretypeinfo->curpool->firstunused;
+  pointer = coretypeinfo->curpool->firstunused;
   if(!pointer){pointer = naEnhanceCorePool(typeidentifier);}
   coretypeinfo->curpool->usedcount++;
   coretypeinfo->curpool->firstunused = *((void**)coretypeinfo->curpool->firstunused);
@@ -124,12 +127,13 @@ NA_DEF void* naNewStruct(NATypeIdentifier typeidentifier){
 
 
 NA_DEF void naDelete(void* pointer){
+  NACorePool* corepool;
   #ifndef NDEBUG
     if(!na_runtime)
       naCrash("naNew", "Runtime not running. Use naStartRuntime()");
   #endif
   // Delete the struct with the destructor
-  NACorePool* corepool = (NACorePool*)((NAUInt)pointer & na_runtime->pagesizemask);
+  corepool = (NACorePool*)((NAUInt)pointer & na_runtime->pagesizemask);
   if(corepool->coretypeinfo->typeinfo.desctructor){corepool->coretypeinfo->typeinfo.desctructor(pointer);}
   *((void**)pointer) = corepool->firstunused;
   corepool->firstunused = pointer;

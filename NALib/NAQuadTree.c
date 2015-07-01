@@ -142,12 +142,14 @@ NA_DEF NAQuadTree* naCopyQuadTree(NAQuadTree* newtree, const NAQuadTree* duptree
   #endif
   newtree = naInitQuadTree(newtree, duptree->minchildsize, duptree->callbacks);
   if(duptree->root){
+    NAGrowingSpace leafs;
+    NAMapi* curleaf;
+
     newtree->root = naDuplicateQuadTreeNode(newtree, NA_NULL, duptree->root, NA_NULL); // todo const safe
     
-    NAGrowingSpace leafs;
     naInitGrowingSpaceWithQuadTreeChunks(&leafs, (NAQuadTree*)newtree);  // todo const save
     naFirstGrowingSpaceElement(&leafs);
-    NAMapi* curleaf = naGetGrowingSpaceMutableContent(&leafs);
+    curleaf = naGetGrowingSpaceMutableContent(&leafs);
     while(curleaf){
       naLocateQuadTreePosi(newtree, curleaf->rect.pos, NA_FALSE);
       naUpdateQuadTreeLeaf(newtree, newtree->curnode, newtree->cursegment);
@@ -177,6 +179,20 @@ NA_DEF NAQuadTree* naCopyQuadTreeWithMaskTree(NAQuadTree* newtree, NAQuadTree* d
 
 
 NA_DEF NAQuadTree* naCopyQuadTreeWithShift(NAQuadTree* newtree, NAQuadTree* duptree, NASizei shift){
+  NAUInt x1bound;
+  NAUInt y1bound;
+  NAUInt x2bound;
+  NAUInt y2bound;
+  NARecti rect0;
+  NARecti rect1;
+  NARecti rect2;
+  NARecti rect3;
+  
+  NARecti alignrect;
+  NAPosi alignpos1;
+  NAPosi alignpos2;
+  NAPosi origin;
+
   #ifndef NDEBUG
     if(!newtree)
       {naCrash("naCopyQuadTreeWithShift", "newtree is NULL"); return NA_NULL;}
@@ -186,56 +202,59 @@ NA_DEF NAQuadTree* naCopyQuadTreeWithShift(NAQuadTree* newtree, NAQuadTree* dupt
   newtree = naInitQuadTree(newtree, duptree->minchildsize, duptree->callbacks);
   if(!duptree->root){return newtree;}
 
-  NAUInt x1bound = ((shift.width % duptree->minchildsize) + duptree->minchildsize ) % duptree->minchildsize;
-  NAUInt y1bound = ((shift.height % duptree->minchildsize) + duptree->minchildsize ) % duptree->minchildsize;
-  NAUInt x2bound = duptree->minchildsize - x1bound;
-  NAUInt y2bound = duptree->minchildsize - y1bound;
-  NARecti rect0 = naMakeRectiE(naMakePosi(shift.width, shift.height), naMakeSizeiE(x2bound, y2bound));
-  NARecti rect1 = naMakeRectiE(naMakePosi(shift.width + x2bound, shift.height), naMakeSizeiE(x1bound, y2bound));
-  NARecti rect2 = naMakeRectiE(naMakePosi(shift.width, shift.height + y2bound), naMakeSizeiE(x2bound, y1bound));
-  NARecti rect3 = naMakeRectiE(naMakePosi(shift.width + x2bound, shift.height + y2bound), naMakeSizeiE(x1bound, y1bound));
+  x1bound = ((shift.width % duptree->minchildsize) + duptree->minchildsize ) % duptree->minchildsize;
+  y1bound = ((shift.height % duptree->minchildsize) + duptree->minchildsize ) % duptree->minchildsize;
+  x2bound = duptree->minchildsize - x1bound;
+  y2bound = duptree->minchildsize - y1bound;
+  rect0 = naMakeRectiE(naMakePosi(shift.width, shift.height), naMakeSizeiE(x2bound, y2bound));
+  rect1 = naMakeRectiE(naMakePosi(shift.width + x2bound, shift.height), naMakeSizeiE(x1bound, y2bound));
+  rect2 = naMakeRectiE(naMakePosi(shift.width, shift.height + y2bound), naMakeSizeiE(x2bound, y1bound));
+  rect3 = naMakeRectiE(naMakePosi(shift.width + x2bound, shift.height + y2bound), naMakeSizeiE(x1bound, y1bound));
   
-  NARecti alignrect = naMakeRecti(naMakePosi(0, 0), naMakeSizei(duptree->minchildsize, duptree->minchildsize));
-  NAPosi alignpos1 = naMakePosiWithAlignment(duptree->root->childrect[0].pos, alignrect);
-  NAPosi alignpos2 = naMakePosiWithAlignment(naGetRectiMaxPos(duptree->root->childrect[3]), alignrect);
-  NAPosi origin;
+  alignrect = naMakeRecti(naMakePosi(0, 0), naMakeSizei(duptree->minchildsize, duptree->minchildsize));
+  alignpos1 = naMakePosiWithAlignment(duptree->root->childrect[0].pos, alignrect);
+  alignpos2 = naMakePosiWithAlignment(naGetRectiMaxPos(duptree->root->childrect[3]), alignrect);
   for(origin.y = alignpos1.y; origin.y <= alignpos2.y; origin.y += duptree->minchildsize){
     for(origin.x = alignpos1.x; origin.x <= alignpos2.x; origin.x += duptree->minchildsize){
       NABool found = naLocateQuadTreePosi(duptree, origin, NA_FALSE);
       const NAByte* dupdata = naGetQuadTreeMutable(duptree, NA_NULL);
       if(found){
+        NAPosi neworigin;
+        NAByte* newdata;
+        NARecti duprect;
+        NARecti newrect;
         // We have a leaf with data. Now, we create all leafes in the new tree
         // containing the shifted leaf. There are max 4 new leaves.
         if(!naIsRectiEmpty(rect0)){
-          NAPosi neworigin = naMakePosi(origin.x + rect0.pos.x, origin.y + rect0.pos.y);
+          neworigin = naMakePosi(origin.x + rect0.pos.x, origin.y + rect0.pos.y);
           naLocateQuadTreePosi(newtree, neworigin, NA_TRUE);
-          NAByte* newdata = naGetQuadTreeMutable(newtree, NA_NULL);
-          NARecti duprect = naMakeRecti(naMakePosi(0, 0), rect0.size);
-          NARecti newrect = naMakeRecti(naMakePosi(x1bound, y1bound), rect0.size);
+          newdata = naGetQuadTreeMutable(newtree, NA_NULL);
+          duprect = naMakeRecti(naMakePosi(0, 0), rect0.size);
+          newrect = naMakeRecti(naMakePosi(x1bound, y1bound), rect0.size);
           duptree->callbacks.datacopier(newdata, newrect, dupdata, duprect);
         }
         if(!naIsRectiEmpty(rect1)){
-          NAPosi neworigin = naMakePosi(origin.x + rect1.pos.x, origin.y + rect1.pos.y);
+          neworigin = naMakePosi(origin.x + rect1.pos.x, origin.y + rect1.pos.y);
           naLocateQuadTreePosi(newtree, neworigin, NA_TRUE);
-          NAByte* newdata = naGetQuadTreeMutable(newtree, NA_NULL);
-          NARecti duprect = naMakeRecti(naMakePosi(x2bound, 0), rect1.size);
-          NARecti newrect = naMakeRecti(naMakePosi(0, y1bound), rect1.size);
+          newdata = naGetQuadTreeMutable(newtree, NA_NULL);
+          duprect = naMakeRecti(naMakePosi(x2bound, 0), rect1.size);
+          newrect = naMakeRecti(naMakePosi(0, y1bound), rect1.size);
           duptree->callbacks.datacopier(newdata, newrect, dupdata, duprect);
         }
         if(!naIsRectiEmpty(rect2)){
-          NAPosi neworigin = naMakePosi(origin.x + rect2.pos.x, origin.y + rect2.pos.y);
+          neworigin = naMakePosi(origin.x + rect2.pos.x, origin.y + rect2.pos.y);
           naLocateQuadTreePosi(newtree, neworigin, NA_TRUE);
-          NAByte* newdata = naGetQuadTreeMutable(newtree, NA_NULL);
-          NARecti duprect = naMakeRecti(naMakePosi(0, y2bound), rect2.size);
-          NARecti newrect = naMakeRecti(naMakePosi(x1bound, 0), rect2.size);
+          newdata = naGetQuadTreeMutable(newtree, NA_NULL);
+          duprect = naMakeRecti(naMakePosi(0, y2bound), rect2.size);
+          newrect = naMakeRecti(naMakePosi(x1bound, 0), rect2.size);
           duptree->callbacks.datacopier(newdata, newrect, dupdata, duprect);
         }
         if(!naIsRectiEmpty(rect3)){
-          NAPosi neworigin = naMakePosi(origin.x + rect3.pos.x, origin.y + rect3.pos.y);
+          neworigin = naMakePosi(origin.x + rect3.pos.x, origin.y + rect3.pos.y);
           naLocateQuadTreePosi(newtree, neworigin, NA_TRUE);
-          NAByte* newdata = naGetQuadTreeMutable(newtree, NA_NULL);
-          NARecti duprect = naMakeRecti(naMakePosi(x2bound, y2bound), rect3.size);
-          NARecti newrect = naMakeRecti(naMakePosi(0, 0), rect3.size);
+          newdata = naGetQuadTreeMutable(newtree, NA_NULL);
+          duprect = naMakeRecti(naMakePosi(x2bound, y2bound), rect3.size);
+          newrect = naMakeRecti(naMakePosi(0, 0), rect3.size);
           duptree->callbacks.datacopier(newdata, newrect, dupdata, duprect);
         }
       }
@@ -247,6 +266,9 @@ NA_DEF NAQuadTree* naCopyQuadTreeWithShift(NAQuadTree* newtree, NAQuadTree* dupt
 
 
 NA_DEF NAQuadTree* naInitQuadTreeWithDeserialization(NAQuadTree* tree, const void* buf, NAQuadTreeCallbacks callbacks){
+  const NAByte* dataptr;
+  uint64 datasize;
+  uint64 minchildsize;
   #ifndef NDEBUG
     if(!tree)
       {naCrash("naCopyQuadTreeWithShift", "tree is NULL"); return NA_NULL;}
@@ -255,14 +277,16 @@ NA_DEF NAQuadTree* naInitQuadTreeWithDeserialization(NAQuadTree* tree, const voi
       return NA_NULL;
     }
   #endif
-  const NAByte* dataptr = buf;
-  uint64 datasize = *((const uint64*)dataptr); dataptr += sizeof(uint64);
-  uint64 minchildsize = *((const uint64*)dataptr); dataptr += sizeof(uint64);
+  dataptr = buf;
+  datasize = *((const uint64*)dataptr); dataptr += sizeof(uint64);
+  minchildsize = *((const uint64*)dataptr); dataptr += sizeof(uint64);
   tree = naInitQuadTree(tree, (NAInt)minchildsize, callbacks);
   datasize -= 2 * sizeof(uint64);
   while(datasize){
-    int64 posx = *((const int64*)dataptr); dataptr += sizeof(int64);
-    int64 posy = *((const int64*)dataptr); dataptr += sizeof(int64);
+    int64 posx, posy;
+    uint64 bytesread;
+    posx = *((const int64*)dataptr); dataptr += sizeof(int64);
+    posy = *((const int64*)dataptr); dataptr += sizeof(int64);
     datasize -= 2 * sizeof(int64);
     // Create the leaf temporarily but delete it immediately and recreate it
     // as a deserialization.
@@ -270,7 +294,7 @@ NA_DEF NAQuadTree* naInitQuadTreeWithDeserialization(NAQuadTree* tree, const voi
     callbacks.datadestructor(tree->curnode->child[tree->cursegment]);
     tree->curnode->child[tree->cursegment] = callbacks.deserialize(naMakeRecti(naMakePosi((NAInt)posx, (NAInt)posy), naMakeSizei((NAInt)minchildsize, (NAInt)minchildsize)), dataptr);
     naUpdateQuadTreeLeaf(tree, tree->curnode, tree->cursegment);
-    uint64 bytesread = callbacks.serialize(NA_NULL, tree->curnode->child[tree->cursegment]);
+    bytesread = callbacks.serialize(NA_NULL, tree->curnode->child[tree->cursegment]);
     dataptr += bytesread;
     datasize -= bytesread;
   }
@@ -294,6 +318,8 @@ NA_DEF void naClearQuadTree(NAQuadTree* tree){
 
 
 NA_DEF void naSerializeQuadTree(const NAQuadTree* tree, void* buf, uint64* bytesize){
+  NAGrowingSpace leafs;
+  const NAMapi* curmap;
   #ifndef NDEBUG
     if(!(tree->callbacks.serialize))
       naError("naSerializeQuadTree", "Callbacks required for serialization");
@@ -304,9 +330,7 @@ NA_DEF void naSerializeQuadTree(const NAQuadTree* tree, void* buf, uint64* bytes
     if(buf && (*bytesize == 0))
       naError("naSerializeQuadTree", "bytesize is zero");
   #endif
-  NAGrowingSpace leafs;
   naInitGrowingSpaceWithQuadTreeChunks(&leafs, (NAQuadTree*)tree);  // todo const save
-  const NAMapi* curmap;
 
   if(!buf){
     *bytesize = sizeof(uint64) * 2; // datasize and minchildsize
@@ -400,12 +424,13 @@ NA_HDEF NABool naLocateQuadTreeNodePosi(NAQuadTree* tree, NAQuadTreeNode* node, 
         // (negative and positive in x and y), we align the super node such
         // that more space is allocated in the direction of where to store the
         // new data.
+        NAUInt segment;
         NARecti alignrect;
         alignrect.pos.x = noderect.pos.x;
         alignrect.pos.y = noderect.pos.y;
         alignrect.size.width = noderect.size.width * 2;
         alignrect.size.height = noderect.size.height * 2;
-        NAUInt segment = 0;
+        segment = 0;
         if(pos.x < noderect.pos.x){
           segment |= 1; alignrect.pos.x -= noderect.size.width;
         }
@@ -532,13 +557,17 @@ NA_DEF void naRemoveQuadTreeLeaf(NAQuadTree* tree){
 
 
 NA_DEF NAGrowingSpace* naInitGrowingSpaceWithQuadTreeChunks(NAGrowingSpace* space, NAQuadTree* tree){
+  NARecti alignrect;
+  NAPosi alignpos1;
+  NAPosi alignpos2;
+  NAPosi origin;
   naInitGrowingSpace(space, sizeof(NAMapi), NA_NULL);
   if(!tree->root){return space;}
   
-  NARecti alignrect = naMakeRecti(naMakePosi(0, 0), naMakeSizei(tree->minchildsize, tree->minchildsize));
-  NAPosi alignpos1 = naMakePosiWithAlignment(tree->root->childrect[0].pos, alignrect);
-  NAPosi alignpos2 = naMakePosiWithAlignment(naGetRectiMaxPos(tree->root->childrect[3]), alignrect);
-  NAPosi origin;
+  alignrect = naMakeRecti(naMakePosi(0, 0), naMakeSizei(tree->minchildsize, tree->minchildsize));
+  alignpos1 = naMakePosiWithAlignment(tree->root->childrect[0].pos, alignrect);
+  alignpos2 = naMakePosiWithAlignment(naGetRectiMaxPos(tree->root->childrect[3]), alignrect);
+
   for(origin.y = alignpos1.y; origin.y <= alignpos2.y; origin.y += tree->minchildsize){
     for(origin.x = alignpos1.x; origin.x <= alignpos2.x; origin.x += tree->minchildsize){
       NABool found = naLocateQuadTreePosi(tree, origin, NA_FALSE);
@@ -554,11 +583,11 @@ NA_DEF NAGrowingSpace* naInitGrowingSpaceWithQuadTreeChunks(NAGrowingSpace* spac
 
 
 NA_DEF NAGrowingSpace* naInitGrowingSpaceWithQuadTreeChunksInRecti(NAGrowingSpace* space, NAQuadTree* tree, NARecti rect, NABool create){
+  NAPosi origin;
   NARecti alignrect = naMakeRecti(naMakePosi(0, 0), naMakeSizei(tree->minchildsize, tree->minchildsize));
   NAPosi alignpos1 = naMakePosiWithAlignment(rect.pos, alignrect);
   NAPosi alignpos2 = naMakePosiWithAlignment(naGetRectiMaxPos(rect), alignrect);
   naInitGrowingSpace(space, sizeof(NAMapi), NA_NULL);
-  NAPosi origin;
   for(origin.y = alignpos1.y; origin.y <= alignpos2.y; origin.y += tree->minchildsize){
     for(origin.x = alignpos1.x; origin.x <= alignpos2.x; origin.x += tree->minchildsize){
       NABool found = naLocateQuadTreePosi(tree, origin, create);
@@ -577,13 +606,13 @@ NA_HDEF void naUpdateQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* curnode, NAP
   NABool bubble = NA_TRUE;
   while(bubble && curnode->parentnode && tree->callbacks.childchanged){
     NAUInt segment;
+    const void* childdata[4];
     if(naIsPosiInRecti(curpos, naMakeRecti(curnode->childrect[0].pos, naMakeSizei(curnode->childrect[0].size.width * 2, curnode->childrect[0].size.width * 2)))){
       segment = naGetQuadTreeNodeSegment(curnode->parentnode, curpos);
     }else{
       segment = -1;
     }
     curnode = curnode->parentnode;
-    const void* childdata[4];
     childdata[0] = (curnode->child[0]) ? (((NAQuadTreeNode*)(curnode->child[0]))->nodedata) : NA_NULL;
     childdata[1] = (curnode->child[1]) ? (((NAQuadTreeNode*)(curnode->child[1]))->nodedata) : NA_NULL;
     childdata[2] = (curnode->child[2]) ? (((NAQuadTreeNode*)(curnode->child[2]))->nodedata) : NA_NULL;

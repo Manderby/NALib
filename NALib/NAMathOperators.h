@@ -428,14 +428,14 @@ NA_IAPI NABool naIsNaNf(float x){
 
 NA_IAPI NABool naIsInfinite(double x){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    return _isinf(x);
+    return !_finite(x);
   #else
     return isinf(x);
   #endif
 }
 NA_IAPI NABool naIsInfinitef(float x){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    return _isinf(x);
+    return _finite((double)x);
   #else
     return isinf(x);
   #endif

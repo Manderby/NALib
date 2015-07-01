@@ -525,13 +525,13 @@ NA_IDEF NABounds4i naMakeBounds4i(NAInt top, NAInt right, NAInt bottom, NAInt le
 
 
 NA_IDEF NAPosi naMakePosiWithAlignment(NAPosi pos, NARecti alignrect){
+  NAPosi newpos;
   #ifndef NDEBUG
     if((alignrect.size.width == 0) || (alignrect.size.height == 0)){
       naCrash("naMakePosiWithAlignment", "alignment rect is empty");
       return naMakePosi(0, 0);
     }
   #endif
-  NAPosi newpos;
   pos.x -= alignrect.pos.x;
   pos.y -= alignrect.pos.y;
   if(pos.x < 0){

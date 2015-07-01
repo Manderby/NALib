@@ -487,7 +487,6 @@ NAUInt naGetSystemMemoryPageSizeMask();
 // This is the type of a constructor and destructor callback which is used by
 // some naInitXXX as well as some naClearXXX functions.
 // See readme for detailed informations.
-typedef void* (*NAAllocator)  (void);
 typedef void* (*NAConstructor)(void *);
 typedef void  (*NADestructor) (void *);
 typedef void  (*NAMutator)    (void *);

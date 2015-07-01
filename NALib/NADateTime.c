@@ -708,7 +708,7 @@ NA_DEF struct tm naMakeTMfromDateTime(const NADateTime* datetime){
   systemtimestruct.tm_yday = dta.dayofyear;
   systemtimestruct.tm_isdst = naHasDateTimeSummerTime(datetime)?1:0;
   #if NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    systemtimestruct.tm_gmtoff = dts.shift * NA_SECONDS_PER_MINUTE;
+    systemtimestruct.tm_gmtoff = (long)(dts.shift * NA_SECONDS_PER_MINUTE);
     if(naHasDateTimeSummerTime(datetime)){
       systemtimestruct.tm_zone = tzname[1];
     }else{
@@ -774,7 +774,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
     struct timespec timesp;
     NAUInt taiperiod = naGetTAIPeriodIndexForSISecond(datetime->sisec);
     timesp.tv_sec = (__darwin_time_t)(datetime->sisec - (naTAIPeriods[taiperiod].startsisec - naTAIPeriods[taiperiod].startgregsec));
-    timesp.tv_sec -= NA_GREG_SECONDS_TILL_BEGIN_1970;
+    timesp.tv_sec -= (__darwin_time_t)NA_GREG_SECONDS_TILL_BEGIN_1970;
     timesp.tv_nsec = datetime->nsec;
     return timesp;
   }

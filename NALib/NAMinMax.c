@@ -8,20 +8,25 @@
 
 
 NA_DEF NAArray* naInitArrayWithMinMax1iAreasFromMinMax1iArray(NAArray* array, const NAArray* minmaxs){
+  NAGrowingSpace* segments;
+  NAInt curmin;
+  NAInt curmax;
+  NAUInt minmaxcount;
+  NAInt maxareasperdimension;
+  NAHeap* rangeheap0min;
+  NAHeap* rangeheap0max;
+  NAUInt m;
+
   #ifndef NDEBUG
     if(!array)
       {naCrash("", "array is NULL"); return NA_NULL;}
   #endif
 
-  NAGrowingSpace* segments;
-  NAInt curmin;
-  NAInt curmax;
-  NAUInt minmaxcount = naGetArrayCount(minmaxs);
-  NAInt maxareasperdimension = (2 * minmaxcount - 1);
-  NAHeap* rangeheap0min = naInitHeap(NA_NULL, maxareasperdimension, NA_HEAP_USES_INT_KEY);
-  NAHeap* rangeheap0max = naInitHeap(NA_NULL, maxareasperdimension, NA_HEAP_USES_INT_KEY);
+  minmaxcount = naGetArrayCount(minmaxs);
+  maxareasperdimension = (2 * minmaxcount - 1);
+  rangeheap0min = naInitHeap(NA_NULL, maxareasperdimension, NA_HEAP_USES_INT_KEY);
+  rangeheap0max = naInitHeap(NA_NULL, maxareasperdimension, NA_HEAP_USES_INT_KEY);
   // insert the min and max coordinates into the heaps
-  NAUInt m;
   for(m=0; m<minmaxcount; m++){
     NAMinMax1i* minmax = (NAMinMax1i*)naGetArrayConstElement(minmaxs, m);
 //    if(naIsMinMax1iEmpty(*minmax)){continue;}

@@ -81,7 +81,8 @@ NA_IAPI NAUInt naStrlen(const NAUTF8Char* str);
 
 
 
-// Opaque type. See explanation in readme.txt
+// Opaque type. You won't find an inline declaration further below. The
+// NAString type is just too fragile. You can only use it as a pointer.
 typedef struct NAString NAString;
 
 
