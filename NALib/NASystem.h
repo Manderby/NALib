@@ -9,12 +9,12 @@
 #endif
 
 
-#define NA_VERSION 10
-
-
 // This is the base of the whole NALib implementation. Almost all files
 // include this file. It contains the most basic type definitions and
 // preprocessor macros.
+
+
+#define NA_VERSION 11
 
 
 // The various Systems:
@@ -43,7 +43,7 @@
 //
 // Note that the author is completely aware that the system is not bound to
 // a specific compiler. But these combinations are the ones having been used
-// during the last 10 Years by the author both for hobby and job.
+// during the last 10 years by the author both for hobby and job.
 //
 // In the future, there might be more or different macros
 //
@@ -86,10 +86,29 @@
   #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_UNKNOWN
 #endif
 
-
-
 // The number of bytes per address
-#define NA_SYSTEM_ADDRESS_BYTES (NA_SYSTEM_ADDRESS_BITS>>3)
+#define NA_SYSTEM_ADDRESS_BYTES (NA_SYSTEM_ADDRESS_BITS >> 3)
+
+
+
+// NALib detects, what c standards are used.
+#if defined __STDC__
+  #define NA_C89
+  #define NA_C90
+#endif
+#if defined __STDC_VERSION__
+  #if __STDC_VERSION__ >= 199409L
+    #define NA_C94
+  #endif
+  #if __STDC_VERSION__ >= 199901L
+    #define NA_C99
+  #endif
+  #if __STDC_VERSION__ >= 201112L
+    #define NA_C11
+  #endif
+#endif
+
+
 
 // ////////////////////////////////////////////////////////////
 // System dependant mapping of global functions and macros
@@ -98,37 +117,45 @@
 // The definition of NA_RESTRICT and NA_INLINE are just mappings of built-in
 // keywords on different systems.
 //
-// The NA_SYMBOL_HIDDEN and NA_SYMBOL_VISIBLE macros mark the visibility of a
-// symbol to the user. IF NALib would be provided as a library (dll, lib or
-// dylib), the symbols marked with NA_SYMBOL_VISIBLE would be explicitely
-// accessible, the ones with NA_SYMBOL_HIDDEN not. As NALib does not hide its
-// code, both macros are just here for explanation.
+// A function declared with NA_LINKER_NO_EXPORT will not be exported when
+// building a library. This means that this function will not be listed in the
+// .lib file on windows and will not be accessible anywhere when including the
+// (.dll or .dylib) library. A function declared with NA_LINKER_EXPORT will
+// explicitely be exported. This is a system-independent implementation which
+// allows the programmer to define the exporting on a very low granularity.
+// There exist other methods to define the exporting in supplementary files.
 //
-// A function declared with NA_SYMBOL_HIDDEN will not be exported when building
-// a library. This means that this function will not be listed in the .lib file
-// on windows and will not be accessible anywhere when including the (.dll or
-// .dylib) library. A function declared with NA_SYMBOL_VISIBLE will explicitely
-// be exported. This is a system-independent implementation which allows the
-// programmer to define the exporting on a very low granularity. There exist
-// other methods to define the exporting in supplementary files.
+// As NALib is not intended to be compiled as a library, all functions are
+// either declared static inline or with NA_LINKER_NO_EXPORT. NA_LINKER_EXPORT
+// will never be used but you may use it in your own code.
 //
-// Usually, the NA_SYMBOL_HIDDEN macro is defined in some other, hidden file
+// Usually, the NA_LINKER_NO_EXPORT macro is defined in some other, hidden file
 // as it shall not be visible to the end user and will only be used on hidden
 // parts. This is not necessary but makes the code clean and helps detect
 // functions which should not be accessible to the user. In NALib, this does
-// not matter and therefore the NA_SYMBOL_HIDDEN macro is defined here together
-// with the NA_SYMBOL_VISIBLE macro.
+// not matter and therefore the NA_LINKER_NO_EXPORT macro is defined here together
+// with the NA_LINKER_EXPORT macro.
+
+#if defined NA_C99
+  #define NA_INLINE             inline
+  #define NA_RESTRICT           restrict
+#endif
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-  #define NA_RESTRICT         __restrict
-  #define NA_INLINE           _inline
-  #define NA_SYMBOL_HIDDEN
-  #define NA_SYMBOL_VISIBLE   __declspec(dllexport)
+  #if !defined NA_RESTRICT
+    #define NA_RESTRICT          __restrict
+  #endif
+  #if !defined NA_INLINE
+    #define NA_INLINE           _inline
+  #endif
+  #define NA_LINKER_NO_EXPORT
+  #define NA_LINKER_EXPORT      __declspec(dllexport)
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-  #define NA_RESTRICT         __restrict__
-  #define NA_INLINE           inline
-  #define NA_SYMBOL_HIDDEN    __attribute__ ((visibility("hidden")))
-  #define NA_SYMBOL_VISIBLE   __attribute__ ((visibility("default")))
+  #if !defined NA_RESTRICT
+    #define NA_RESTRICT         __restrict__
+  #endif
+  #define NA_LINKER_NO_EXPORT   __attribute__ ((visibility("hidden")))
+  #define NA_LINKER_EXPORT      __attribute__ ((visibility("default")))
 #else
 #endif
 
@@ -159,8 +186,8 @@
 //
 // Again, note that the following macros are just used for NALib, they may
 // very well differ in your own implementation!
-#define NA_API    NA_SYMBOL_HIDDEN
-#define NA_DEF    NA_SYMBOL_HIDDEN
+#define NA_API    NA_LINKER_NO_EXPORT
+#define NA_DEF    NA_LINKER_NO_EXPORT
 #define NA_IAPI   static NA_INLINE
 #define NA_IDEF   static NA_INLINE
 
@@ -170,21 +197,13 @@
 // the same instance and defined once, and only once in an implementation file,
 // not a header file. Again, in NALib, things are a little more transparent so
 // these macros are a mere hint for the programmer, not more.
-#define NA_HAPI   NA_SYMBOL_HIDDEN
-#define NA_HDEF   NA_SYMBOL_HIDDEN
+#define NA_HAPI   NA_LINKER_NO_EXPORT
+#define NA_HDEF   NA_LINKER_NO_EXPORT
 #define NA_HIAPI  static NA_INLINE
 #define NA_HIDEF  static NA_INLINE
 // Authors comment: Note that all symbols are declared and defined very
 // restrictive. Meaning: No function or variable of NALib will show up in a
 // library which is built with NALib.
-
-
-// NALib also works with older standards but if C11 is detected, it is used.
-#if defined __STDC_VERSION__
-  #if __STDC_VERSION__ >= 201112L // This indicates the C11 standard
-    #define NA_C11
-  #endif
-#endif
 
 
 #ifndef va_copy
@@ -193,12 +212,15 @@
   #define va_copy(d,s) ((d) = (s))
 #endif
 
+
+
+
 // /////////////////////////
 // The integer types
 // /////////////////////////
 
 // We test if the current system has a (positive) integer encoding suitable for
-// NALib
+// NALib. Some obscure compilers might handle this differently.
 #if (0x01000000 >> 24) != 0x01
   #warning "Unknown integer number encoding. NALib might not compile or run."
 #endif
@@ -215,9 +237,8 @@
   #warning "Invalid signed integer encoding. NALib might not work properly."
 #endif
 
-// The following basic integer types might also be defined using the typedefs
-// provided in <stdint.h> or <cstdint>. As these files do not necessarily exist
-// in all systems, the typedefs are provided differently in NALib.
+// Definition of basic integer types. Depending on the C-standard and depending
+// on the system the typedefs are provided differently in NALib.
 //
 // Note that these types do not have the NA prefix. The author decided that
 // these types are too fundamental such that they do not need to be marked with
@@ -226,7 +247,17 @@
 // implementation is likely incompatible. Please send the author an email if
 // that happends.
 
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+#if defined NA_C99
+  #include <stdint.h>
+  typedef uint64_t          uint64;
+  typedef uint32_t          uint32;
+  typedef uint16_t          uint16;
+  typedef uint8_t           uint8;
+  typedef int64_t           int64;
+  typedef int32_t           int32;
+  typedef int16_t           int16;
+  typedef int8_t            int8;
+#elif NA_SYSTEM == NA_SYSTEM_WINDOWS
   typedef unsigned __int64  uint64;
   typedef unsigned __int32  uint32;
   typedef unsigned __int16  uint16;
@@ -246,6 +277,7 @@
   typedef int16_t           int16;
   typedef int8_t            int8;
 #else
+  #warning "Don't know how to define basic integer types."
 #endif
 
 // Note that the following macros might also be defined using the values
@@ -253,36 +285,66 @@
 // provided manually to not be dependent on the various definitions of
 // char, short, int, long and long long.
 
-#define NA_UINT8_MAX  ((uint8) (0xffu))
-#define NA_UINT16_MAX ((uint16)(0xffffu))
-#define NA_UINT32_MAX ((uint32)(0xffffffffu))
-#define NA_UINT64_MAX ((uint64)(0xffffffffffffffffuLL))
-// note that the - 1 is needed to avoid warnings on some compilers
-#define NA_INT8_MAX   ((int8) (0x7f))
-#define NA_INT8_MIN   ((int8) (0x81 - 1))
-#define NA_INT16_MAX  ((int16)(0x7fff))
-#define NA_INT16_MIN  ((int16)(0x8001 - 1))
-#define NA_INT32_MAX  ((int32)(0x7fffffff))
-#define NA_INT32_MIN  ((int32)(0x80000001 - 1))
-#define NA_INT64_MAX  ((int64)(0x7fffffffffffffffLL))
-#define NA_INT64_MIN  ((int64)(0x8000000000000001LL - 1LL))
-
+#if defined NA_C99
+  // In C99, the values are defined in stdint.h (included above)
+  #define NA_UINT8_MAX  UINT8_MAX
+  #define NA_UINT16_MAX UINT16_MAX
+  #define NA_UINT32_MAX UINT32_MAX
+  #define NA_UINT64_MAX UINT64_MAX
+  #define NA_INT8_MAX   INT8_MAX
+  #define NA_INT8_MIN   INT8_MIN
+  #define NA_INT16_MAX  INT16_MAX
+  #define NA_INT16_MIN  INT16_MIN
+  #define NA_INT32_MAX  INT32_MAX
+  #define NA_INT32_MIN  INT32_MIN
+  #define NA_INT64_MAX  INT64_MAX
+  #define NA_INT64_MIN  INT64_MIN
+#else
+  #define NA_UINT8_MAX  ((uint8) (0xffu))
+  #define NA_UINT16_MAX ((uint16)(0xffffu))
+  #define NA_UINT32_MAX ((uint32)(0xffffffffu))
+  #define NA_UINT64_MAX ((uint64)(0xffffffffffffffffuLL))
+  // note that the - 1 is needed to avoid warnings on some compilers
+  #define NA_INT8_MAX   ((int8) (0x7f))
+  #define NA_INT8_MIN   ((int8) (0x81 - 1))
+  #define NA_INT16_MAX  ((int16)(0x7fff))
+  #define NA_INT16_MIN  ((int16)(0x8001 - 1))
+  #define NA_INT32_MAX  ((int32)(0x7fffffff))
+  #define NA_INT32_MIN  ((int32)(0x80000001 - 1))
+  #define NA_INT64_MAX  ((int64)(0x7fffffffffffffffLL))
+  #define NA_INT64_MIN  ((int64)(0x8000000000000001LL - 1LL))
+#endif
 
 
 // ////////////////////////////////////
 // Other Basic types used in NALib
 // ////////////////////////////////////
 
+// Currently, NALib assumes a Byte to consist of precisely 8 bits. This is
+// reflected in various enumerations and fundamental types like NAByte and
+// NAUTF8Char. With this macro, we make sure, our code compiles just on the
+// systems which have 8-Bit Bytes.
+#include <limits.h>
+#if CHAR_BIT != 8
+  #error "NALib can not work properly with chars unequal 8 bits."
+#endif
+
 // An NAByte is a type definition of a Byte.
-// Defining an NAByte as an unsigned char (uint8) can be very handy. In NALib,
-// the NAByte type is often used when a memory block needs to be accessed byte
-// by byte. You could also use a void-pointer for that but void-pointers are
-// sometimes just a little too cumbersome to work with and do not always have
-// a size defined depending on the standard used. Furthermore, a pointer to an
-// uint8 can be displayed by a debugger while a pointer to void can not.
-typedef uint8     NAByte;
+//
+// Defining an NAByte as an uint8 can be very handy. In NALib, the NAByte type
+// is often used when a memory block needs to be accessed byte by byte. You
+// could also use a void-pointer for that but void-pointers are sometimes just
+// a little too cumbersome to work with and do not always have a size defined
+// depending on the standard used. Furthermore, a pointer to an uint8 can be
+// displayed by a debugger while a pointer to void can not.
+// Why not using the signed variant? Because there are many implementations
+// using enumerations which go beyound 127 and do not want to use negative
+// numbers.
+typedef uint8 NAByte;
+
 
 // NAInt
+//
 // The NAInt type is an integer of the size which is needed for storing an
 // address. This means that this type is dependent on the system NALib is
 // compiled for. It can for example be 32 Bits on one and 64 Bits on another
@@ -335,6 +397,8 @@ typedef uint8     NAByte;
   #define NA_PRIu "u"
   #define NA_INT_MAX NA_INT32_MAX
   #define NA_INT_MIN NA_INT32_MIN
+  #define NA_ZERO 0
+  #define NA_ONE  1
 #elif NA_SYSTEM_ADDRESS_BITS == 64
   typedef int64 NAInt;
   typedef uint64 NAUInt;
@@ -342,9 +406,40 @@ typedef uint8     NAByte;
   #define NA_PRIu "llu"
   #define NA_INT_MAX NA_INT64_MAX
   #define NA_INT_MIN NA_INT64_MIN
+  #define NA_ZERO 0LL
+  #define NA_ONE  1LL
 #else
   #warning "NAInt undefined"
 #endif
+
+
+
+// NABool
+// Note that in NALib, the definition of NABool is explicitely set to "int" and
+// not char or unsigned char or not even NAInt. Just plain old "int".
+// This is unusual but most probably the easiest way to tell the compiler to 
+// use whatever he likes as long as it's fast. it is in the believe of the
+// author, that in modern computers, speed is more important than space as
+// opposed to earlier times where wasting space was a complete no-go. When
+// using lots of Boolean values, there are better ways to store them than in
+// NABools anyway: Use C-style-masks.
+//
+// Also note that there is no distinction between C and C++. Therefore, NALib
+// never uses the bool type or the true and false keywords. Also the macros
+// available in C11 are unused.
+//
+typedef int NABool;
+#define NA_TRUE    1
+#define NA_FALSE   0
+
+
+
+
+// These functions are here for core functions like memory functions to
+// be very explicit in how the code should compile
+NA_IDEF NABool naIsIntStrictlyPositive(NAInt x){return (x  > NA_ZERO);}
+NA_IDEF NABool naIsIntZero(NAInt x)            {return (x == NA_ZERO);}
+NA_IDEF NABool naIsIntNegative(NAInt x)        {return (x  < NA_ZERO);}
 
 
 // Note that in NALib, there is no base typedef for a void* or a const void*
@@ -359,22 +454,6 @@ typedef uint8     NAByte;
 // Therefore, you won't find any type definition of NAVoid here.
 
 
-// NABool
-// Note that in NALib, the definition of NABool is explicitely set to "int" and
-// not char or unsigned char or not even NAInt. Just plain old "int".
-// This is unusual but most probably the easiest way to tell the compiler to 
-// use whatever he likes as long as it's fast. it is in the believe of the
-// author, that in modern computers, speed is more important than space as
-// opposed to earlier times where wasting space was a complete no-go. When
-// using lots of Boolean values, there are better ways to store them than in
-// NABools anyway: Use C-style-masks or have a look at BitArray.
-//
-// Also note that there is no distinction between C and C++. Therefore, NALib
-// never uses the bool type or the true and false keywords.
-//
-typedef int NABool;
-#define NA_TRUE    1
-#define NA_FALSE   0
 
 
 // The following macro is used to suppress compiler warnings in functions
@@ -392,8 +471,8 @@ typedef int NABool;
 
 // The definition of NA_NULL is usually set to the NULL found in stdlib. The
 // new C11 standard however has a new keyword. Let's use it if it is available!
-// Note that stdlib is needed anyway for malloc, free and exit which is needed
-// later in the code.
+// Note that stdlib is needed anyway for malloc, free and exit which is most
+// probably needed anyway.
 //
 // Also note that in the comments of NALib as well as in the error messages,
 // it will oftem times be called "Null-Pointer". In the implementation
@@ -411,10 +490,6 @@ typedef int NABool;
 #endif
 
 
-// Returns the number of bytes used per memory page as well as a mask which
-// you can AND to an address to get the base address of a page.
-NAUInt naGetSystemMemoryPageSize();
-NAUInt naGetSystemMemoryPageSizeMask();
 
 
 
@@ -438,8 +513,8 @@ NAUInt naGetSystemMemoryPageSizeMask();
 // does this by default though, so you might have to add it manually to the
 // build options.
 //
-// Note that all tests performed by code encapsulated by #ifndef NDEBUG will
-// emit errors on sterr in the following format:
+// Note that in NALib, all tests performed by code encapsulated by
+// #ifndef NDEBUG will emit errors on sterr in the following format:
 // Function_name: Errormessage\n
 // Therefore, a programmer can simply set a breakpoint in the denoted function
 // and start debugging.
@@ -456,8 +531,8 @@ NAUInt naGetSystemMemoryPageSizeMask();
 // defined or not. The only remark is that calls to naCrash will eventually
 // lead to an exit(EXIT_FAILURE) call before the real error is executed.
 // If you use code sanity checking (for example clang analyzer) you should
-// therefore always check with NDEBUG defined. Otherwise, the analyzer might
-// miss some errors.
+// therefore always check both with and without NDEBUG defined. Otherwise,
+// the analyzer might miss some errors.
 // /////////////////////////////////
 
 #ifndef NDEBUG
@@ -473,8 +548,7 @@ NAUInt naGetSystemMemoryPageSizeMask();
   // Prints a crash message.
   // This function is used when the application experiences a critical error
   // like dereferencing an invalid pointer. The application will almost
-  // certainly crash few steps after this function call. Have a look at the
-  // implementation if you want to crash deliberately.
+  // certainly crash few steps after this function call.
   NA_NORETURN void naCrash(const char* functionsymbol, const char* message);
 
 #endif

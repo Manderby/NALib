@@ -97,10 +97,6 @@ NA_API void* naGetQuadTreeRootNodeData(NAQuadTree* tree);
 
 
 typedef struct NAQuadTreeNode NAQuadTreeNode;
-// Prototype
-NA_HAPI void naDeallocQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* node);
-NA_HAPI void naUpdateQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* curnode, NAPosi curpos);
-NA_HAPI void naUpdateQuadTreeLeaf(NAQuadTree* tree, NAQuadTreeNode* leafparent, NAInt segment);
 
 
 #define NA_QUADTREE_CHILD_IS_LEAF 0x01

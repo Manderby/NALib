@@ -358,6 +358,21 @@ Suffix:
 - functions always have the prefix  na    and are MixedCase
 - variables always have the prefix  na_   and are lowercase
 
+Further more, symbols are declared with the following prefixes:
+
+Declaration | Definition | Explanation
+------------+------------+------------------------
+NA_API      | NA_DEF     | Public normal functions. Default calling convention.
+            |            | API will not be exported when linking.
+NA_IAPI     | NA_IDEF    | Public inline functions. Code will likely be inlined.
+            |            | Declared static to prevent duplicate definitions and
+            |            | to not export API when linking.
+NA_HAPI     | NA_HDEF    | Helper function. Default calling convention. Belongs
+            |            | to internal code of NALib. Would normally not be
+            |            | visible to the programmer but in NALib, you can
+            |            | look it up. API is not exported when linking.
+NA_HIAPI    | NA_HIDEF   | Inline helper function. Same thing but inlined.
+
 Types are always typedef'd, meaning you won't have to write the struct keyword
 all the time when declaring variables. Also enums are typedef'd with a clear
 name. Examples: NAInt, NAArray, NATextEncoding

@@ -179,11 +179,11 @@
 // http://physics.nist.gov/constants
 //
 // Define, what year of the CODATA you would like to use. Possible values are
-// 2006, 2010
+// 2006, 2010, 2014
 // By default, NALib uses the latest setting.
 
 #ifndef NA_NIST_CODATA_YEAR
-  #define NA_NIST_CODATA_YEAR 2010
+  #define NA_NIST_CODATA_YEAR 2014
 #endif
 
 
@@ -241,6 +241,23 @@
   #define NA_PLANCK_TEMP         1.416833e32
   #define NA_PLANCK_TIME         5.39106e-44
   #define NA_LIGHT_SPEED_VAC     299792458.         // same as 2006
+#elif (NA_NIST_CODATA_YEAR == 2014)
+  #define NA_CHAR_IMP_VAC        376.730313461      // same as 2010
+  #define NA_ELEC_CONST          8.854187817e-12    // same as 2010
+  #define NA_MAG_CONST           12.566370614e-7    // same as 2010
+  #define NA_GRAV                6.67408e-11
+  #define NA_GRAV_HBARC          6.70861e-39
+  #define NA_PLANCK              6.626070040e-34
+  #define NA_PLANCK_EVS          4.135667662e-15
+  #define NA_PLANCK_2PI          1.054571800e-34
+  #define NA_PLANCK_2PI_EVS      6.582119514e-16
+  #define NA_PLANCK_2PIC         197.3269788
+  #define NA_PLANCK_LEN          1.616229e-35
+  #define NA_PLANCK_MASS         2.176470e-8
+  #define NA_PLANCK_MASS_GEV     1.220910e19
+  #define NA_PLANCK_TEMP         1.416808e32
+  #define NA_PLANCK_TIME         5.39116e-44
+  #define NA_LIGHT_SPEED_VAC     299792458.         // same as 2010
 #endif
 
 // Electromagnetic constants
@@ -300,6 +317,24 @@
   #define NA_NUC_MAG_KT          3.6582682e-4
   #define NA_NUC_MAG_MHZT        7.62259357
   #define NA_VON_KLITZING        25812.807
+#elif (NA_NIST_CODATA_YEAR == 2014)
+  #define NA_BOHR                927.4009994e-26
+  #define NA_BOHR_EVT            5.7883818012e-5
+  #define NA_BOHR_HZT            13.996245042e9
+  #define NA_BOHR_MTESLA         46.68644814
+  #define NA_BOHR_KT             0.67171405
+  #define NA_COND_QUANT          7.7480917310e-5
+  #define NA_COND_QUANT_INV      12906.4037278
+  #define NA_E_CHARGE            1.6021766208e-19
+  #define NA_E_CHARGE_H          2.417989262e14
+  #define NA_JOSEPHSON           483597.8525e9
+  #define NA_MAG_FLUX_QUANT      2.067833831e-15
+  #define NA_NUC_MAG             5.050783699e-27
+  #define NA_NUC_MAG_EVT         3.1524512550e-8
+  #define NA_NUC_MAG_MTESLA      2.542623432e-2
+  #define NA_NUC_MAG_KT          3.6582690e-4
+  #define NA_NUC_MAG_MHZT        7.622593285
+  #define NA_VON_KLITZING        25812.8074555
 #endif
 
 // Physico-chemical constants
@@ -385,6 +420,31 @@
   #define NA_STEF_BOLTZ          5.670373e-8
   #define NA_WIEN_FREQ           5.8789254e10
   #define NA_WIEN_WAVE           2.8977721e-3
+#elif (NA_NIST_CODATA_YEAR == 2014)
+  #define NA_ATOM_MASS           1.660539040e-27
+  #define NA_ATOM_MASS_ENERGY    1.492418062e-10
+  #define NA_ATOM_MASS_MEV       931.4940954
+  #define NA_AVOGADRO            6.022140857e23
+  #define NA_BOLTZMANN           1.38064852e-23
+  #define NA_BOLTZMANN_EVK       8.6173303e-5
+  #define NA_BOLTZMANN_HZK       2.0836612e10
+  #define NA_BOLTZMANN_MK        69.503457
+  #define NA_FARADAY             96485.33289
+  #define NA_FIRST_RAD           3.741771790e-16
+  #define NA_FIRST_RAD_SPECT     1.191042953e-16
+  #define NA_SECOND_RAD          1.43877736e-2
+  #define NA_LOSCHMIDT_100       2.6516467e25
+  #define NA_LOSCHMIDT_101       2.6867811e25
+  #define NA_MOL_GAS             8.3144598
+  #define NA_MOL_PLANCK          3.9903127110e-10
+  #define NA_MOL_PLANCK_C        0.119626565582
+  #define NA_MOL_IDEAL_GAS_100   22.710947e-3
+  #define NA_MOL_IDEAL_GAS_101   22.413962e-3
+  #define NA_SACKUR_TETRODE_100  -1.1517084
+  #define NA_SACKUR_TETRODE_101  -1.1648714
+  #define NA_STEF_BOLTZ          5.670367e-8
+  #define NA_WIEN_FREQ           5.8789238e10
+  #define NA_WIEN_WAVE           2.8977729e-3
 #endif
 
 // Mathematical constants

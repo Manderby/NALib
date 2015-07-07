@@ -9,7 +9,6 @@
 #endif
 
 #include <stdarg.h>
-#include <limits.h>
 #include "NAByteArray.h"
 #include "NARuntime.h"
 
@@ -18,13 +17,10 @@
 // creation. But you can change the position and size of a string to
 // reflect a part of the original string.
 
-// Note that the definition of an UTF-8 char here is the built-in char type.
-// The uint8 or int8 type can not be used as it is defined to be incompatible
-// with char. We add the following preprocessor directive to make sure, our
-// code can work properly.
-#if CHAR_BIT != 8
-  #error "NALib can not currently work with chars unequal 8 bits."
-#endif
+// Note that NAUTF8Char is defined as char to simplify debugging.
+// Types like NAByte, int8 or uint8 can not be used as it these are
+// defined to be incompatible with char. But at least we can be sure that
+// a char consists of 8 Bits. See definition of NAByte for that.
 typedef char NAUTF8Char;
 
 
@@ -47,12 +43,6 @@ typedef enum{
   NA_NEWLINE_NATIVE             //       Dependant on the local machines system
 } NANewlineEncoding;
 
-
-// The different encodings of text data.
-// todo: Currently, there is just UTF-8. More to come.
-typedef enum{
-  NA_TEXT_ENCODING_UTF_8
-} NATextEncoding;
 
 
 // System dependant mapping of string functions and macros
@@ -413,9 +403,12 @@ NA_API void naPrepareStringRuntime();
 // //////////////////////////////////
 
 
+#include <string.h>
+
+
+
 NA_IDEF NAUInt naStrlen(const NAUTF8Char* str){
   return (NAUInt)strlen((const char*)str);
-  // todo: check if there are secure functions in C11
 }
 
 

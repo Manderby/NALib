@@ -3,27 +3,6 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 #include "NASystem.h"
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
-  #include <Windows.h>
-#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-  #include <unistd.h>
-#endif
-
-
-NAUInt naGetSystemMemoryPageSize(){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    SYSTEM_INFO info;
-    GetSystemInfo(&info);
-    return (NAUInt)info.dwPageSize;
-  #else
-    return (NAUInt)sysconf(_SC_PAGESIZE);
-  #endif
-}
-
-
-NAUInt naGetSystemMemoryPageSizeMask(){
-  return ~(NAUInt)(naGetSystemMemoryPageSize() - 1);
-}
 
 
 

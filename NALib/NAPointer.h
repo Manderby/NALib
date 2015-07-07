@@ -2,20 +2,19 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-
-// In this file, basic functionality of memory allocation and pointers is
-// implemented.
+// ////////////////////////////////////////////////////////
 //
-// NALib usually uses the native pointers of C and C++ but for some types,
-// special kinds of pointers are more appropriate.
-// 
-// Other programming languages are based on pointers with reference counting
-// which point to objects which are automatically allocated and deallocated
-// by a clever runtime-system. In NALib, such pointers are only used where
-// necessary. The native pointers are fine for most purposes.
+// In this file, basic functionality of memory handling is implemented. There
+// are multiple levels on which you can operate.
+// The following things can be found here:
 //
-// If somebody ever wants to write a runtime-system for NALib, this file
-// would be a good place to start.
+// - Accessing core informations about the memory system
+// - Basic Memory allocation and freeing.
+// - NALValue: Handling of Lvalues, being mutable or const pointers
+// - NAPointer: Handling of reference counted Lvalues with automatic deletion.
+// - Handling of inifinte pools for new and delete functions.
+//
+// ////////////////////////////////////////////////////////
 
 
 #ifndef NA_POINTER_INCLUDED
@@ -30,43 +29,57 @@
 
 
 
+// //////////////////////////////////////
+// Accessing core informations about the memory system
+// //////////////////////////////////////
 
-// ZERO FILL RULES
-//
-// When size is negative, a certain number of bytes is appended to the memory
-// block which will be initialized with binary zero but will not be visible to
-// the programmer. The following holds true:
-// - The additional bytes are all guaranteed to be initialized with binary
-//   zero.
-// - There are at least as many bytes appended as an address requires.
-//   Or more precise: 4 Bytes on 32 Bit systems, 8 Bytes on 64 Bit systems
-// - There are as many bytes allocated such that the total size is a
-//   multiple of an address size, meaning 4 or 8 Bytes depending on the
-//   system (32 Bit or 64 Bit).
-// - The total size (including the desired space) is at minimum 2 times
-//   the number of bytes needed for an address.
-// - The part without the additional bytes might partially become
-//   initialized with binary zero.
-//
-// The following function returns for a given negative size, how big a buffer
-// must be to include the appended zero bytes.
-NA_IAPI NAUInt naGetNullTerminationSize(NAInt size);
+// Returns the number of bytes used per memory page as well as a mask which
+// you can combine with & (AND) with a pointer to get the page-aligned address
+// of that pointer.
+NA_IAPI NAUInt naGetSystemMemoryPageSize();
+NA_IAPI NAUInt naGetSystemMemoryPageSizeMask();
 
-// These functions are the allocation functions of NALib. All functions in
-// NALib use these functions when allocating memory on the heap. The basic
-// function simply allocates using malloc. The naMallocIfNull function takes
-// an additional ptr argument. If ptr is NA_NULL, memory is allocated and the
-// pointer to that memory is returned. If the pointer is not NA_NULL, nothing
-// is allocated, the same pointer is returned.
+
+
+
+// //////////////////////////////////////
+// Basic Memory allocation and freeing
+// //////////////////////////////////////
+
+// The following functions are the allocation functions of NALib. All functions
+// in NALib use these functions when allocating memory on the heap.
+//
+// naMalloc             Allocates the given size of bytes on the heap using
+//                      malloc. If size is negative, zero-filled bytes are
+//                      appended at the end. See explanation below.
+// naMallocIfNull       Same thing but only if the given ptr is NULL. If ptr is
+//                      NA_NULL, memo ry is allocated and the pointer to that
+//                      memory is returned. If the pointer is not NA_NULL,
+//                      nothing is allocated and the same pointer is returned.
+// naAlloc              This is a macro which expands to naMalloc but can be
+//                      used to allocate enough space for a struct type. For
+//                      exampe, you can simply write array = naAlloc(NAArray);
+// naMallocAligned      The given size is allocated and the returned pointer
+//                      is guaranteed to be aligned on the given bound. Such
+//                      a pointer must be freed with naFreePageAligned. Beware
+//                      that size here can not be negative!
+// naMallocPageAligned  Same thing but the bound is the memory-page boundary.
+// naFree               Deallocates a pointer previously allocated with one of
+//                      the above functions or the default C memory allocation
+//                      functions like malloc.
+// naFreePageAligned    Deallocates a page-aligned pointer previously allocated
+//                      with naMallocPageAligned.
 //
 NA_IAPI void* naMalloc(             NAInt size);
 NA_IAPI void* naMallocIfNull(       void* ptr, NAInt size);
-NA_IAPI void* naMallocPageAligned(  NAInt size);
-#define naAlloc(structname)         (structname*)naMalloc(sizeof(structname))
+#define       naAlloc(structname)   (structname*)naMalloc(sizeof(structname))
+NA_IAPI void* naMallocAligned(      NAUInt size, NAUInt align);
+NA_IAPI void* naMallocPageAligned(  NAUInt size);
 NA_IAPI void  naFree(               void* ptr);
+NA_IDEF void  naFreePageAligned(    void* ptr);
+
 // Authors note:
-//
-// Having only one or two allocation function helps detecting basic memory
+// Having only a handful allocation function helps detecting basic memory
 // errors. Note however that there does not exist any exception handling
 // in NALib, meaning an error might be detected though not resolved. And in
 // favor of simplicity, NALib will not get exception handling soon.
@@ -74,20 +87,26 @@ NA_IAPI void  naFree(               void* ptr);
 
 
 
+
+
+
+
+
 // ////////////////////////
 // NALValue
 //
-// Certain structs like NAList or NAPointer distinguish between const and
+// Certain structs like NAList or NAArray distinguish between const and
 // non-const (mutable) data. The NALValue struct delivers this
 // distinction by providing both an Accessor or a Mutator to a pointer.
 //
-// Furthermore, NALValue allows you to tag a pointer with various flags
-// like if it denotes an array or not and whether that array is null-terminated
-// or not.
+// In NALib, the author decided to use a union type storing either a const or
+// a non-const data pointer. This idea is not entirely type-save but is much
+// easier to write programs with, as the programmer has to differentiate
+// between const and non-const only when necessary.
 //
-// When compiling with NDEBUG, NALValue will optimize to a simpe C-Pointer.
-// No tags will be available and no code is executed. But during debugging,
-// using NALValue can greatly improve your code-safety.
+// If the programmer uses a mutator on const data, an error will be emitted.
+// You can of course ignore these errors and hope that the application does not
+// crash, but you should really make sure no const data gets mutated.
 //
 // The problem is that C has no concept of how to specifically handle a
 // pointer, and especially how to use accessors and mutators. Even
@@ -99,87 +118,99 @@ NA_IAPI void  naFree(               void* ptr);
 // very cumbersome) and maybe even force him to convert between the two
 // variants which might be very costly and not beautiful at all.
 //
-// In this implementation, the author decided to use a union type storing
-// either a const or a non-const data pointer. Furthermore, when NDEBUG is
-// not defined, an additional flag is stored with the pointer defining if
-// the pointer stores const or non-const data. With this, NALib is able to
-// detect const errors during debugging. When NDEBUG is defined, this flag
-// will not exists an no checks will be performed whatsoever, hence always
-// assuming a mutable pointer.
+// Above all, NALib allows you to tag Lvalues with various flags like if the
+// pointer denotes an array and whether that array is null-terminated or not.
+// During runtime, NALib checks if all accesses are fine.
 //
-// This idea is not entirely type-save and not too beautiful as well, but is
-// much easier to write programs with, as the programmer has to differentiate
-// between the two uses only when necessary.
-//
-// If the programmer uses a mutator on const data, an error will be emitted.
-// You can of course ignore these errors and hope that the application does not
-// crash, but you should really make sure no const data gets mutated.
-//
-// Note that when NDEBUG is defined, this struct will be completely optimized
-// out by modern compilers, resulting in nothing but a simple memory pointer.
+// During debugging, using NALValue can greatly improve your code-safety.
+// Note however, that all the features of Lvalues are only avaliable when
+// debugging. When compiling with NDEBUG, all your code will still compile just
+// fine but NALValue will optimize to a simple (mutable) C-Pointer. No tags
+// will be available and no code is executed.
 
 // Opaque type. See explanation in readme.txt
 typedef struct NALValue NALValue;
 
-// Fills the given NALValue struct with either a const or a non-const
-// pointer.
-NA_IAPI void naFillLValueConst  (NALValue* lvalue, const void* data);
-NA_IAPI void naFillLValueMutable(NALValue* lvalue,       void* data);
-NA_IAPI void naFillLValueSub    ( NALValue* dstlvalue,
-                                  const NALValue* srclvalue,
-                                  NAUInt offset,
-                                  NAUInt size);
+// Fills the given NALValue struct with either a const or a non-const pointer.
+NA_IAPI NALValue naMakeLValueConst  (const void* data);
+NA_IAPI NALValue naMakeLValueMutable(      void* data);
 
-// The following two functions return either a const or a mutable pointer.
+// Fills the given lvalue with a new memory block of the given size. The size
+// parameter can be negative. See naMalloc function for more information.
+NA_IDEF NALValue naMakeLValueWithSize(NAInt size);
+
+// Assumes srclvalue to be a byte array and dstlvalue to become a sub-array.
+// The offset and size must be given in bytes and are always positive!
+NA_IAPI NALValue naMakeLValueSub( const NALValue* srclvalue,
+                                           NAUInt offset,
+                                           NAUInt size);
+
+// Note that the creation function are naMakeXXX functions which makes it
+// easy to implement. But the remaining functions require to provide a pointer.
+
+// The following functions return either a const or a mutable pointer.
 //
-// Beware that the second variant will return a non-const pointer even if the
-// data stored originally was const. When NDEBUG is not defined, NALib will
-// check if such an invalid access of const data is occuring and will emit a
-// warning. If the content of the pointer is a NULL pointer, no warning will
-// be emitted.
+// When NDEBUG is not defined, NALib will check if a const value is accessed
+// as a mutator and will emit a warning if so. If the content of the pointer
+// is a NULL pointer, no warning will be emitted.
 //
-// When NDEBUG is defined, the two functions are equal and no test will be
-// performed whatsoever.
+// When NDEBUG is defined, the const and mutable functions behave equally and
+// no test will be performed whatsoever.
 NA_IAPI const void* naGetLValueConst(      const NALValue* lvalue);
 NA_IAPI       void* naGetLValueMutable(          NALValue* lvalue);
+// Same thing but with lvalue denoting a byte-array whereas the returned
+// pointer will be a pointer to the given (unsigned!) index in bytes.
+// If NDEBUG is defined, the indx argument will be completely ignored.
 NA_IAPI const void* naGetLValueOffsetConst(const NALValue* lvalue, NAUInt indx);
 NA_IAPI       void* naGetLValueOffsetMutable(    NALValue* lvalue, NAUInt indx);
-
-// The following functions are only available when debugging.
-#ifndef NDEBUG
-  NA_IAPI void naMarkLValueWithVisibleSize(NALValue* lvalue, NAUInt visiblesize);
-  NA_IAPI void naMarkLValueWithAccessibleSize(NALValue* lvalue, NAUInt visiblesize, NABool nullterminated);
-  NA_IAPI NABool naIsLValueNullTerminated(const NALValue* lvalue);
-#endif
 
 // Returns NA_TRUE, if the pointer stores const data. This function only is
 // useful when debugging. When NDEBUG is defined, this function always returns
 // NA_FALSE.
 NA_IAPI NABool naIsLValueConst(NALValue* lvalue);
 
+// The following functions are only available when debugging. Beware: You may
+// have to encapsulate some of your own code with #ifndef NDEBUG to compile!
+#ifndef NDEBUG
+  // The visible size denotes the size which can be filled with content.
+  NA_IAPI void naMarkLValueWithVisibleSize(NALValue* lvalue, NAUInt visiblebytecount);
+  // The accessible size denotes the size which can be safely accessed without
+  // creating a system signal. This is for example used when a pointer denotes
+  // an offset inside an array or for zero-filled arrays (see above).
+  NA_IAPI void naMarkLValueWithAccessibleSize(NALValue* lvalue, NAUInt visiblebytecount, NABool nullterminated);
+  // Returns true if the lvalue denotes an array which is null-terminated.
+  NA_IAPI NABool naIsLValueNullTerminated(const NALValue* lvalue);
+#endif
+// Authors note:
+// Why have these last functions been encapsulated into NDEBUG clauses? Because
+// behaviour is undefined when the information is not available. And the author
+// does not want to propose any assumption in that case. You have to find a
+// solution for yourself!
+
+
+
+
 
 
 
 // ////////////////////////
 // NAPointer
-// The following is the implementation of a pointer having a reference count,
-// as used in many modern languages. In C and C++, this must be implemented
-// manually.
 //
-// As having a reference count is not always useful in C and C++, only a few
+// NALib usually uses the native pointers of C and C++ but for some types,
+// special kinds of pointers are more appropriate. The following is the
+// implementation of a pointer having a reference count, as used in many
+// modern languages. In C and C++, this must be implemented manually.
+//
+// NAPointer stores a pointer which can be accessed by multiple codeblock, each
+// "retaining" the NAPointer at start and "releasing" him at the end. When
+// finally, no codeblock uses an NAPointer anymore, the pointer deallocates
+// itself automatically.
+//
+// Having a reference count is not always useful in C and C++. Only a few
 // structs of NALib like the NAByteArray actually use the NAPointer structure.
 //
-// Quite often at the very base of all implementations, you have to let go
-// all the beautiful code designs learned in school and university. Sometimes,
-// there is just no other way than cheating and bit fiddling.
-//
-// This implementation defines the ownership of the data and the struct itself
-// using some bits of the refcount field.
-// This allows to create very fast code and condition-checks but yet saves lots
-// of space while giving up only a small part of the value-range, which, as a
-// sidenote, would in this implementation still be sufficient to theoretically
-// fill the whole memory with references without ever overflowing.
-
+// Note that starting with NALib version 10, NAPointers require the NARuntime
+// system.
 
 // Opaque type. See explanation in readme.txt
 typedef struct NAPointer NAPointer;
@@ -189,29 +220,22 @@ typedef struct NAPointer NAPointer;
 // of the given size in bytes. The memory is uninitialized. The reference
 // counter is automatically set to 1. This NAPointer is owning the allocated
 // memory and will delete it automatically using free() when the reference
-// count reaches zero. When the given pointer argument was a Null-Pointer,
-// the NAPointer struct itself will be deleted automatically as well.
-//
-// You can also send negative sizes. See naMalloc for explanation.
+// count reaches zero.
+// You can also send negative sizes. See above for explanation.
 NA_IAPI NAPointer* naNewPointerWithSize(NAInt size);
 
-
 // Creates an NAPointer struct with the content of the given buffer.
-// WILL NOT COPY the contents. The given buffer can be located anywhere in
-// memory and can either contain const or non-const (mutable) data. The buffer
-// itself can either be owned or not owned by NAPointer: When this NAPointer
-// takes the ownership of a buffer, it will delete the memory using free() when
-// the reference counter reaches 0. You can not take ownership of const buffers
-// like for example a string literal "Hello World".
-// When the reference counter reaches 0, the NAPointer struct itself will also
-// be freed automatically if the pointer argument of this constructor was
-// NA_NULL.
+// WILL NOT COPY the contents! The given buffer can be located anywhere in
+// memory and can either contain const or non-const (mutable) data. A mutable
+// buffer can either be owned or not owned by NAPointer: When this NAPointer
+// takes the ownership of a mutable buffer, it will delete the memory using
+// free() when the reference counter reaches 0. You can never take ownership
+// of const buffers like for example a string literal "Hello World".
 //
-// Note: Use the const method whenever you can. The compiler will help you
-// detect const-safe-errors.
-NA_IAPI NAPointer* naNewPointerWithConstBuffer(   const void* buffer);
-NA_IAPI NAPointer* naNewPointerWithMutableBuffer(       void* buffer,
-                                                       NABool takeownership);
+// Note: Use the const method whenever you can. The compiler and runtime system
+// will help you detect const-safe-errors.
+NA_IAPI NAPointer* naNewPointerWithLValue(    NALValue lvalue,
+                                                NABool takeownership);
 
 // Retains the given pointer. Meaning: There is one more codeblock which is
 // using this NAPointer. This NAPointer will not be freed as long as that
@@ -224,13 +248,10 @@ NA_IAPI NAPointer* naNewPointerWithMutableBuffer(       void* buffer,
 // referenceofmyvalue = naRetainPointer(myvalue);
 NA_IAPI NAPointer* naRetainPointer(NAPointer* pointer);
 
-
 // Releases the given NAPointer. If the refcount reaches 0, this NAPointer
 // is no longer needed. If this NAPointer owns the data, it will be freed
-// automatically. If this NAPointer was originally created with a Null-Pointer
-// argument, the struct itself will be freed as well.
+// automatically. The struct itself will be deleted by the runtime system.
 NA_IAPI void naReleasePointer(NAPointer* pointer);
-
 
 // The following two functions return a pointer to the data. This function is
 // not particularily beautiful when it comes to readability or writeability but
@@ -244,9 +265,8 @@ NA_IAPI void naReleasePointer(NAPointer* pointer);
 NA_IAPI const void* naGetPointerConstData  (const NAPointer* pointer);
 NA_IAPI       void* naGetPointerMutableData(      NAPointer* pointer);
 
-NA_IAPI NALValue naGetPointerLValue(const NAPointer* pointer);
-
-
+// Authors note:
+// The last two functions are equivalent when NDEBUG is defined.
 
 
 
@@ -270,15 +290,64 @@ NA_IAPI NALValue naGetPointerLValue(const NAPointer* pointer);
 // Inline Implementations: See readme file for more expanation.
 // ///////////////////////////////////////////////////////////////////////
 
+#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #include <Windows.h>
+#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #include <unistd.h>
+#endif
 
-#include "NABinaryData.h"
+
+// //////////////////////////////////////
+// Accessing informations about the memory system
+// //////////////////////////////////////
+
+
+NA_IDEF NAUInt naGetSystemMemoryPageSize(){
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    SYSTEM_INFO info;
+    GetSystemInfo(&info);
+    return (NAUInt)info.dwPageSize;
+  #else
+    return (NAUInt)sysconf(_SC_PAGESIZE);
+  #endif
+}
 
 
 
-NA_IAPI NAUInt naGetNullTerminationSize(NAInt size){
+NA_IDEF NAUInt naGetSystemMemoryPageSizeMask(){
+  return ~(NAUInt)(naGetSystemMemoryPageSize() - NA_ONE);
+}
+
+
+
+// Zero fill
+//
+// The following function returns for a given negative size, how big a buffer
+// must be to include the appended zero bytes.
+//
+// The allocation functions of NALib expect a positive or negative size. If the
+// size is negative, the absolute value is used to allocate sufficient space
+// but a certain number of bytes is appended to the memory block which will
+// be initialized with binary zero but will not be visible to the programmer.
+// 
+// The following holds true:
+//
+// - The additional bytes are all guaranteed to be initialized with binary
+//   zero.
+// - There are AT LEAST as many bytes appended as an address requires.
+//   Or more precise: 4 Bytes on 32 Bit systems, 8 Bytes on 64 Bit systems
+// - There are as many bytes allocated such that the total size of the
+//   allocated block is a multiple of an address size, meaning 4 or 8 Bytes
+//   depending on the system (32 Bit or 64 Bit).
+// - The total size (including the desired space) is at minimum 2 times
+//   the number of bytes needed for an address.
+// - The part without the additional bytes might partially become
+//   initialized with binary zero.
+
+NA_HIDEF NAUInt naGetNullTerminationSize(NAInt size){
   #ifndef NDEBUG
-    if(size >= 0)
-      naError("naGetNullTerminationSize", "size is positive");
+    if(!naIsIntNegative(size))
+      naError("naGetNullTerminationSize", "size is not negative");
   #endif
   return -size + 2 * NA_SYSTEM_ADDRESS_BYTES - (-size % NA_SYSTEM_ADDRESS_BYTES);
 }
@@ -286,17 +355,26 @@ NA_IAPI NAUInt naGetNullTerminationSize(NAInt size){
 
 
 
+
+
+
+
+// ////////////////////////////////////////////
+// Basic Memory allocation and freeing
+// ////////////////////////////////////////////
+
+
 NA_IDEF void* naMalloc(NAInt size){
+  // ptr is declared as NAByte to simplify accessing individual bytes later
+  // in this functions.
   NAByte* ptr; // Declaration before implementation. Needed for C90.
-  NAInt fullsize;
+  NAUInt fullsize;
   #ifndef NDEBUG
-    if(size == 0)
+    if(naIsIntZero(size))
       naError("naMalloc", "size is zero.");
   #endif
 
-  if(size>0){
-    #ifndef NDEBUG
-    #endif
+  if(naIsIntStrictlyPositive(size)){
     ptr = (NAByte*)malloc((size_t)size);
   }else{
     #ifndef NDEBUG
@@ -305,27 +383,17 @@ NA_IDEF void* naMalloc(NAInt size){
     #endif
     fullsize = naGetNullTerminationSize(size);
     #ifndef NDEBUG
-      if(fullsize < -size)
+      if((NAInt)fullsize < -size)
         naError("naMalloc", "given size including zero filled endbytes overflows NAInt type.");
     #endif
     ptr = (NAByte*)malloc((size_t)fullsize);
-    *(NAUInt*)(&(ptr[fullsize - 2 * NA_SYSTEM_ADDRESS_BYTES])) = 0;
-    *(NAUInt*)(&(ptr[fullsize - 1 * NA_SYSTEM_ADDRESS_BYTES])) = 0;
+    *(NAUInt*)(&(ptr[fullsize - 2 * NA_SYSTEM_ADDRESS_BYTES])) = NA_ZERO;
+    *(NAUInt*)(&(ptr[fullsize - 1 * NA_SYSTEM_ADDRESS_BYTES])) = NA_ZERO;
   }
 
-  
-  // This is the one place where the debug version differs from the non-debug
-  // version.
   #ifndef NDEBUG
-    if(ptr == NA_NULL){
-      naCrash("naMalloc", "Out of memory.");
-      // Also note that a special macro is checked for clang analyzer as
-      // newer versions tend to complain a lot more about failed mallocs than
-      // before.
-      #ifdef __clang_analyzer__
-        exit(EXIT_FAILURE);
-      #endif
-    }
+    if(!ptr)
+      {naCrash("naMalloc", "Out of memory."); return NA_NULL;}
   #endif
   
   return ptr;
@@ -335,10 +403,9 @@ NA_IDEF void* naMalloc(NAInt size){
 
 NA_IDEF void* naMallocIfNull(void* ptr, NAInt size){
   #ifndef NDEBUG
-    if(size == 0)
+    if(naIsIntZero(size))
       naError("naMallocIfNull", "size is zero.");
   #endif
-
   if(ptr == NA_NULL){
     return naMalloc(size);
   }else{
@@ -348,8 +415,23 @@ NA_IDEF void* naMallocIfNull(void* ptr, NAInt size){
 
 
 
+NA_IDEF void* naMallocAligned(NAUInt size, NAUInt align){
+  #ifdef NA_C11
+    return aligned_alloc(size, align);
+  #else
+    #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+      return _aligned_malloc(size, align);
+    #else
+      void* retptr;
+      posix_memalign(&retptr, align, size);
+      return retptr;
+    #endif
+  #endif
+}
 
-NA_IDEF void* naMallocPageAligned(NAInt size){
+
+
+NA_IDEF void* naMallocPageAligned(NAUInt size){
   #ifdef NA_C11
     return aligned_alloc(size, naGetSystemMemoryPageSize());
   #else
@@ -378,26 +460,55 @@ NA_IDEF void naFreePageAligned(void* ptr){
 }
 
 
+
+
+
+
 // //////////////////////////
 // NALValue
 // //////////////////////////
 
 // Opaque type. typedef is above. See explanation in readme.txt
 struct NALValue{
-  union{                // A union storing either ...
-    const void* constd; // ... const data or ...
-    void*       d;      // ... non-const (mutable) data.
+  union{                    // A union storing either ...
+    const NAByte* constd;   // ... const data or ...
+    NAByte*       d;        // ... non-const (mutable) data.
   } data;
   #ifndef NDEBUG
     NAUInt flags;               // This field stores some flags.
-    NAUInt visiblesize;         // nof bytes of the visible byte storage
+    NAUInt visiblebytecount;    // nof bytes of the visible byte storage
     NAUInt accessiblebytecount; // nof bytes of the accessible byte storage
   #endif
 };
 // Note that this is one of the very, very rare situations, where a union type
-// actually makes sense.
+// actually makes sense. Also note that the pointers are here declared as
+// NAByte pointers. This makes it easier to write the accessing functions.
+//
 // Also note that NALValue will be fully optimized to a simple C-pointer
 // when NDEBUG is defined.
+//
+// Authors note:
+// The decision to include so many debugging information arose over many
+// iterations. Mainly NAString was the cause of pushing debugging information
+// deeply into the core functionality of NALib. They should be here to help
+// with very fundamental datastructures like an NAByteArray but not to distract
+// on higher levels. Further more, questions like "Is String Null-Terminated"
+// should not be decided during (release) runtime. Therefore, the NALValue
+// implementation both supports but also limits the use of debug information
+// depending whether you compile for debug or release.
+//
+// There would be the possibility to add such debug information to any pointer
+// returned by naMalloc and similar functions. The information could be hidden
+// in fields not visible to the user. But as naMalloc is basically just a
+// wrapper for malloc, the two must be interchangable. Trying to use debug
+// fields of a pointer which is not allocated with naMalloc may be more
+// devastating than helpful. Therefore, the NALValue struct was added which
+// provides both a useful extension to differentiate between const and mutable
+// as well as additional debugging functions for all who want to really make
+// sure their code is doing what is expected.
+//
+// If you simply want to store a pointer without any knowledge of const or
+// mutable and without any debugging information, just use a normal C-pointer.
 
 #ifndef NDEBUG
   #define NA_LVALUE_CONST_DATA                0x01
@@ -408,40 +519,81 @@ struct NALValue{
 
 
 
-NA_IDEF void naFillLValueConst(NALValue* lvalue, const void* data){
-  lvalue->data.constd = data;
+NA_IDEF NALValue naMakeLValueConst(const void* data){
+  NALValue lvalue;
+  lvalue.data.constd = data;
   #ifndef NDEBUG
-    lvalue->flags = NA_LVALUE_CONST_DATA;
+    lvalue.flags = NA_LVALUE_CONST_DATA;
   #endif
+  return lvalue;
 }
 
 
 
-NA_IDEF void naFillLValueMutable(NALValue* lvalue, void* data){
-  lvalue->data.d = data;
+NA_IDEF NALValue naMakeLValueMutable(void* data){
+  NALValue lvalue;
+  lvalue.data.d = data;
   #ifndef NDEBUG
-    lvalue->flags = 0;
+    lvalue.flags = NA_ZERO;
   #endif
+  return lvalue;
 }
 
 
 
-NA_IDEF void naFillLValueSub(NALValue* dstlvalue, const NALValue* srclvalue, NAUInt offset, NAUInt size){
-  dstlvalue->data.constd = naGetLValueOffsetConst(srclvalue, offset);
+NA_IDEF NALValue naMakeLValueWithSize(NAInt size){
+  NALValue lvalue;
   #ifndef NDEBUG
-    dstlvalue->flags = srclvalue->flags;
-    dstlvalue->visiblesize = size;
-    if(offset + size < srclvalue->visiblesize){
-      dstlvalue->flags &= ~NA_LVALUE_NULL_TERMINATED;
-      dstlvalue->accessiblebytecount = dstlvalue->visiblesize;
-    }else if(offset + size > srclvalue->visiblesize){
-      naError("naFillLValueSub", "new offset and size overflows storage");
+    if(naIsIntZero(size))
+      naError("naMakeLValueWithSize", "size is zero.");
+  #endif
+  lvalue.data.d = naMalloc(size);
+  #ifndef NDEBUG
+    if(naIsIntNegative(size)){
+      naMarkLValueWithVisibleSize(&lvalue, -size);
+      naMarkLValueWithAccessibleSize(&lvalue, naGetNullTerminationSize(size), NA_TRUE);
     }else{
-      dstlvalue->accessiblebytecount -= offset;
+      naMarkLValueWithVisibleSize(&lvalue, size);
+      naMarkLValueWithAccessibleSize(&lvalue, size, NA_FALSE);
+    }
+  #endif
+  return lvalue;
+}
+
+
+
+NA_IDEF NALValue naMakeLValueSub(const NALValue* srclvalue, NAUInt offset, NAUInt size){
+  NALValue dstlvalue;
+  dstlvalue.data.constd = naGetLValueOffsetConst(srclvalue, offset);
+  #ifndef NDEBUG
+    // Now, we set the sizes and decide if certain flags still are valid.
+    dstlvalue.flags = srclvalue->flags;
+    dstlvalue.visiblebytecount = size;
+    dstlvalue.accessiblebytecount = dstlvalue.accessiblebytecount - offset;
+    if(!(srclvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT)){
+      // When no size information is available, the NALValue struct has no
+      // purpose.
+      naError("naMakeLValueSub", "No size information available. Cannot debug.");
+    }else{
+      if((offset + size) < srclvalue->visiblebytecount){
+        // The (offset,size) pair implies the dst array to be smaller than the
+        // src array. Therefore, null-termination is no more.
+        dstlvalue.flags &= ~NA_LVALUE_NULL_TERMINATED;
+      }else if((srclvalue->flags & NA_LVALUE_HAS_ACCESSIBLE_BYTECOUNT) && ((offset + size) > srclvalue->accessiblebytecount)){
+        // the (offset,size) pair overflows the accessible size. Very bad!
+        naError("naMakeLValueSub", "new offset and size overflows storage");
+      }else if((offset + size) > srclvalue->visiblebytecount){
+        // the (offset,size) pair overflows the visible size. Ok, but not clean.
+        naError("naMakeLValueSub", "new offset and size overflows visible storage");
+      }else{
+        // the (offset,size) pair ends precisely at where the src array ends.
+        // The flags therefore do not change. Nothing to do here.
+      }
     }
   #else
     NA_UNUSED(size);
   #endif
+  return dstlvalue;
 }
 
 
@@ -460,12 +612,10 @@ NA_IDEF const void* naGetLValueConst(const NALValue* lvalue){
 
 NA_IDEF void* naGetLValueMutable(NALValue* lvalue){
   #ifndef NDEBUG
-    if(!lvalue){
-      naCrash("naGetLValueMutable", "lvalue is Null-Pointer.");
-      return NA_NULL;
-    }
+    if(!lvalue)
+      {naCrash("naGetLValueMutable", "lvalue is Null-Pointer."); return NA_NULL;}
     // An NALValue often stores Null-Pointers. In that case, just return
-    // Null and do not emit any warning.
+    // NA_NULL and do not emit any warning.
     if(lvalue->data.d == NA_NULL){return NA_NULL;}
     if(lvalue->flags & NA_LVALUE_CONST_DATA)
       naError("naGetLValueMutable", "Accessing const data as non-const.");
@@ -477,55 +627,54 @@ NA_IDEF void* naGetLValueMutable(NALValue* lvalue){
 
 NA_IDEF const void* naGetLValueOffsetConst(const NALValue* lvalue, NAUInt indx){
   #ifndef NDEBUG
-    if(!lvalue){
-      naCrash("naGetLValueOffsetConst", "lvalue is Null-Pointer.");
-      return NA_NULL;
-    }
-    if((lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT) && (indx >= lvalue->visiblesize)){
+    if(!lvalue)
+      {naCrash("naGetLValueOffsetConst", "lvalue is Null-Pointer."); return NA_NULL;}
+    if((lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT) && (indx >= lvalue->visiblebytecount)){
       if((lvalue->flags & NA_LVALUE_HAS_ACCESSIBLE_BYTECOUNT) && (indx >= lvalue->accessiblebytecount))
         naError("naGetLValueOffsetConst", "index out of accessible bounds");
       else
         naError("naGetLValueOffsetConst", "index out of visible bounds");
     }
   #endif
-  return &(((const NAByte*)(lvalue->data.constd))[indx]);
+  return &(lvalue->data.constd[indx]);
 }
 
 
 
 NA_IDEF void* naGetLValueOffsetMutable(NALValue* lvalue, NAUInt indx){
   #ifndef NDEBUG
-    if(!lvalue){
-      naCrash("naGetLValueOffsetMutable", "lvalue is Null-Pointer.");
-      return NA_NULL;
-    }
+    if(!lvalue)
+      {naCrash("naGetLValueOffsetMutable", "lvalue is Null-Pointer."); return NA_NULL;}
     // An NALValue often stores Null-Pointers. In that case, just return
-    // Null and do not emit any warning.
+    // NA_NULL and do not emit any warning.
     if(lvalue->data.d == NA_NULL){return NA_NULL;}
     if(lvalue->flags & NA_LVALUE_CONST_DATA)
       naError("naGetLValueOffsetMutable", "Accessing const data as non-const.");
-    if((lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT) && (indx >= lvalue->visiblesize)){
+    if((lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT) && (indx >= lvalue->visiblebytecount)){
       if((lvalue->flags & NA_LVALUE_HAS_ACCESSIBLE_BYTECOUNT) && (indx >= lvalue->accessiblebytecount))
         naError("naGetLValueOffsetMutable", "index out of accessible bounds");
       else
         naError("naGetLValueOffsetMutable", "index out of visible bounds");
     }
   #endif
-  return &(((NAByte*)(lvalue->data.d))[indx]);
+  return &(lvalue->data.d[indx]);
 }
+
 
 
 #ifndef NDEBUG
 
-
-
-  NA_IDEF void naMarkLValueWithVisibleSize(NALValue* lvalue, NAUInt visiblesize){
+  NA_IDEF void naMarkLValueWithVisibleSize(NALValue* lvalue, NAUInt visiblebytecount){
     if(!lvalue)
-      {naCrash("naMarkLValueWithVisibleSize", "lvalue was null"); return;}
+      {naCrash("naMarkLValueWithVisibleSize", "lvalue is null"); return;}
     if(lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT)
       naError("naMarkLValueWithVisibleSize", "visible size already marked");
+    if(naIsIntZero(visiblebytecount))
+      naError("naMarkLValueWithVisibleSize", "visible size is zero");
+    if(naIsIntNegative((NAInt)visiblebytecount))
+      naError("naMarkLValueWithVisibleSize", "visible size overflows NAInt range");
     lvalue->flags |= NA_LVALUE_HAS_VISIBLE_BYTECOUNT;
-    lvalue->visiblesize = visiblesize;
+    lvalue->visiblebytecount = visiblebytecount;
   }
   
   
@@ -533,18 +682,24 @@ NA_IDEF void* naGetLValueOffsetMutable(NALValue* lvalue, NAUInt indx){
   NA_IDEF void naMarkLValueWithAccessibleSize(NALValue* lvalue, NAUInt accessiblesize, NABool nullterminated){
     NAUInt nullindx;
     if(!lvalue)
-      {naCrash("naMarkLValueWithVisibleSize", "lvalue was null"); return;}
+      {naCrash("naMarkLValueWithAccessibleSize", "lvalue is null"); return;}
     if(!(lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT))
-      naError("naMarkLValueWithVisibleSize", "visible size must be marked first");
+      naError("naMarkLValueWithAccessibleSize", "visible size must be marked first");
     if(lvalue->flags & NA_LVALUE_HAS_ACCESSIBLE_BYTECOUNT)
-      naError("naMarkLValueWithVisibleSize", "accessible size already marked");
+      naError("naMarkLValueWithAccessibleSize", "accessible size already marked");
+    if(naIsIntNegative((NAInt)accessiblesize))
+      naError("naMarkLValueWithAccessibleSize", "accessible size overflows NAInt range");
+    if(naIsIntZero(accessiblesize))
+      naError("naMarkLValueWithAccessibleSize", "accessible size is zero");
     lvalue->flags |= NA_LVALUE_HAS_ACCESSIBLE_BYTECOUNT;
     lvalue->accessiblebytecount = accessiblesize;
     if(nullterminated){lvalue->flags |= NA_LVALUE_NULL_TERMINATED;}
-    nullindx = lvalue->visiblesize;
+    
+    // Now, we check if the last bytes are indeed zero
+    nullindx = lvalue->visiblebytecount;
     while(nullindx < lvalue->accessiblebytecount){
-      if(((NAByte*)(lvalue->data.constd))[nullindx] != 0)
-        naError("naMarkLValueWithVisibleSize", "promised null-termination is not null");
+      if(lvalue->data.constd[nullindx] != '\0')
+        naError("naMarkLValueWithAccessibleSize", "promised null-termination is not null");
       nullindx++;
     }
   }
@@ -554,12 +709,10 @@ NA_IDEF void* naGetLValueOffsetMutable(NALValue* lvalue, NAUInt indx){
   NA_IDEF NABool naIsLValueNullTerminated(const NALValue* lvalue){
     if(!lvalue)
       {naCrash("naIsLValueNullTerminated", "lvalue was null"); return NA_FALSE;}
-    if(!(lvalue->flags & NA_LVALUE_HAS_VISIBLE_BYTECOUNT))
-      naError("naIsLValueNullTerminated", "No size information present. Result is possibly wrong");
+    if(!(lvalue->flags & NA_LVALUE_HAS_ACCESSIBLE_BYTECOUNT))
+      naError("naIsLValueNullTerminated", "No accessible size information present. LValue may or may not be null-terminated.");
     return (lvalue->flags & NA_LVALUE_NULL_TERMINATED);
   }
-  
-  
   
 #endif
 
@@ -593,79 +746,42 @@ struct NAPointer{
                         // the number.
 };
 
+// Quite often at the very base of all implementations, you have to let go
+// all the beautiful code designs learned in school and university. Sometimes,
+// there is just no other way than cheating and bit fiddling. In NALib, the
+// ownership of the data is stored using some bits of the refcount field.
+//
+// This allows to create very fast code and condition-checks but yet saves lots
+// of space while giving up only a small part of the value-range, which, as a
+// sidenote, would in this implementation still be sufficient to theoretically
+// fill the whole memory with references without ever overflowing.
 
-
-// These are the flags stored in the refcount field. They occupy the most
-// significant bits. Note that it would be possible to use a bit field for
+// This is the flags stored in the refcount field. It occupies the most
+// significant bit. Note that it would be possible to use a bit field for
 // this but the author decided to use masks, as bit fields might introduce
 // unnecessary algorithmic CPU operations when accessing refcount.
+//
+// Note that in previous versions, there had been additional flags but these
+// have been eliminated or placed elsewhere.
 #define NA_POINTER_OWN_DATA       ((NAUInt)1 << (NA_SYSTEM_ADDRESS_BITS - 1))
 #define NA_POINTER_REFCOUNT_MASK  (~(NA_POINTER_OWN_DATA))
 
 
-// This is a helper function. It should be hidden as the user shall not use
-// it as it is just a function which prepares the internal state of the
-// NAPointer struct. Of course, in NALib hiding something has not much use
-// but it shows where the hidden attribute would make sense if the function
-// would not be inlined.
-NA_HIDEF NAPointer* naNewPointerStruct(){
-  NAPointer* pointer = naNew(NAPointer);
-  pointer->refcount = 1;
-  return pointer;
-}
 
 
 
-NA_IDEF NAPointer* naNewPointerWithSize(NAInt size){
+NA_IDEF NAPointer* naNewPointerWithLValue(NALValue lvalue, NABool takeownership){
   NAPointer* pointer;
   #ifndef NDEBUG
-    if(size == 0)
-      naError("naNewPointerWithSize", "size is zero.");
+  if(takeownership && naIsLValueConst(&lvalue))
+    naError("naNewPointerWithLValue", "Taking ownership of const lvalue.");
   #endif
-  pointer = naNewPointerStruct();
-  naFillLValueMutable(&(pointer->lvalue), naMalloc(size));
-  #ifndef NDEBUG
-    if(size<0){
-      naMarkLValueWithVisibleSize(&(pointer->lvalue), -size);
-      naMarkLValueWithAccessibleSize(&(pointer->lvalue), naGetNullTerminationSize(size), NA_TRUE);
-    }else{
-      naMarkLValueWithVisibleSize(&(pointer->lvalue), size);
-      naMarkLValueWithAccessibleSize(&(pointer->lvalue), size, NA_FALSE);
-    }
-  #endif
-  pointer->refcount |= NA_POINTER_OWN_DATA;
+  pointer = naNew(NAPointer);
+  pointer->lvalue = lvalue;
+  pointer->refcount = 1 | (takeownership * NA_POINTER_OWN_DATA);
   return pointer;
 }
 
-
-
-NA_IDEF NAPointer* naNewPointerWithConstBuffer(const void* buffer){
-  NAPointer* pointer;
-  #ifndef NDEBUG
-    if(!buffer)
-      naError("naNewPointerWithConstBuffer", "buffer is Null-Pointer.");
-  #endif
-  pointer = naNewPointerStruct();
-  naFillLValueConst(&(pointer->lvalue), buffer);
-  return pointer;
-}
-
-
-
-NA_IDEF NAPointer* naNewPointerWithMutableBuffer(void* buffer,
-                                                NABool takeownership){
-  NAPointer* pointer;
-  #ifndef NDEBUG
-    if(!buffer)
-      naError("naNewPointerWithMutableBuffer", "buffer is Null-Pointer.");
-    if((takeownership != NA_FALSE) && (takeownership != NA_TRUE))
-      naError("naNewPointerWithMutableBuffer", "invalid ownership");
-  #endif
-  pointer = naNewPointerStruct();
-  naFillLValueMutable(&(pointer->lvalue), buffer);
-  pointer->refcount |= (takeownership * NA_POINTER_OWN_DATA);
-  return pointer;
-}
 
 
 
@@ -737,11 +853,6 @@ NA_IDEF void* naGetPointerMutableData(NAPointer* pointer){
 }
 
 
-NA_IDEF NALValue naGetPointerLValue(const NAPointer* pointer){
-  return pointer->lvalue;
-}
-
-
 
 NA_HIDEF void naClearPointer(NAPointer* pointer){
   if(pointer->refcount & NA_POINTER_OWN_DATA){free(naGetLValueMutable(&(pointer->lvalue)));}
@@ -755,6 +866,8 @@ NA_HIDEF void naPreparePointerRuntime(){
   typeinfo.desctructor = (NADestructor)naClearPointer;
   na_NAPointer_identifier = naManageRuntimeType(&typeinfo);
 }
+
+
 
 
 #ifdef __cplusplus 

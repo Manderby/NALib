@@ -168,7 +168,7 @@ NA_HIAPI void naMakePositivei     (NAInt*  NA_RESTRICT pos,
 // will be fully contained in a range given by [0, containingsize-1].
 // Negative values are treated as follows and in the following order:
 // - if pos is negative, it denotes the number of units from the end.
-//   For integers, pos = -1 therefore corresponds to size-1.
+//   For integers, pos -1 therefore corresponds to size-1.
 // - If the size is now 0, the function will return.
 // - if size is negative, it denotes the size up and including to the given
 //   number of units from the end, meaning -1 denotes the last unit.

@@ -8,6 +8,8 @@
 #include "NAString.h"
 
 
+//#define NA_POOL_SIZE_EQUALS_PAGESIZE
+#define NA_CUSTOM_POOL_SIZE (1 << 16)
 
 
 typedef struct NACorePool NACorePool;
@@ -32,8 +34,8 @@ struct NACorePool{
 };
 
 struct NARuntime{
-  NAUInt pagesize;
-  NAUInt pagesizemask;
+  NAUInt poolsize;
+  NAUInt poolsizemask;
 };
 
 
@@ -59,14 +61,14 @@ NA_HIDEF void* naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
       naError("naEnhanceCorePool", "Element is too small");
   #endif
   #ifndef NDEBUG
-    if(coretypeinfo->typeinfo.typesize > (na_runtime->pagesize - sizeof(NACorePool)))
+    if(coretypeinfo->typeinfo.typesize > (na_runtime->poolsize - sizeof(NACorePool)))
       naError("naEnhanceCorePool", "Element is too big");
   #endif
-  corepool = (NACorePool*)naMallocPageAligned(na_runtime->pagesize);
+  corepool = (NACorePool*)naMallocAligned(na_runtime->poolsize, na_runtime->poolsize);
   corepool->coretypeinfo = coretypeinfo;
 
   // Reduce the elemcount by 1 to set the last entry to NULL
-  corepool->usedcount = ((na_runtime->pagesize - sizeof(NACorePool)) / coretypeinfo->typeinfo.typesize) - 1;
+  corepool->usedcount = ((na_runtime->poolsize - sizeof(NACorePool)) / coretypeinfo->typeinfo.typesize) - 1;
   curunused = (void**)(((NAByte*)corepool) + sizeof(NACorePool));
   corepool->firstunused = curunused;
   while(corepool->usedcount){
@@ -133,7 +135,7 @@ NA_DEF void naDelete(void* pointer){
       naCrash("naNew", "Runtime not running. Use naStartRuntime()");
   #endif
   // Delete the struct with the destructor
-  corepool = (NACorePool*)((NAUInt)pointer & na_runtime->pagesizemask);
+  corepool = (NACorePool*)((NAUInt)pointer & na_runtime->poolsizemask);
   if(corepool->coretypeinfo->typeinfo.desctructor){corepool->coretypeinfo->typeinfo.desctructor(pointer);}
   *((void**)pointer) = corepool->firstunused;
   corepool->firstunused = pointer;
@@ -152,8 +154,13 @@ NA_DEF void naStartRuntime(){
       naError("naStartRuntime", "NACorePool struct encoding misaligned");
   #endif
   na_runtime = naAlloc(NARuntime);
-  na_runtime->pagesize = naGetSystemMemoryPageSize();
-  na_runtime->pagesizemask = naGetSystemMemoryPageSizeMask();
+  #if defined NA_POOL_SIZE_EQUALS_PAGESIZE
+    na_runtime->poolsize = naGetSystemMemoryPageSize();
+    na_runtime->poolsizemask = naGetSystemMemoryPageSizeMask();
+  #else
+    na_runtime->poolsize = NA_CUSTOM_POOL_SIZE;
+    na_runtime->poolsizemask = ~(NAUInt)(NA_CUSTOM_POOL_SIZE - NA_ONE);
+  #endif
   naPrepareStringRuntime();
   naPreparePointerRuntime();
 }

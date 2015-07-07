@@ -23,14 +23,56 @@ void printSystemTest(){
 }
 
 
+
 #include "../NALib/NAString.h"
+#include "../NALib/NAByteArray.h"
+#include "../NALib/NADateTime.h"
+#define TESTSIZE 10000000
 
 int main(void){
   printSystemTest();
   
-//  naStartRuntime();
-//  NAString* string = naNewString();
-//  naDelete(string);
+  NADateTime time1;
+  NADateTime time2;
+  
+  naStartRuntime();
+  
+  NAString* newstring;
+    newstring = malloc(sizeof(NAByteArray));
+    free(newstring);
+    newstring = naMalloc(sizeof(NAByteArray));
+    naFree(newstring);
+    newstring = naNew(NAString);
+    naDelete(newstring);
+  
+  time1 = naMakeDateTimeNow();
+  for(int i=0; i<TESTSIZE; i++){
+    newstring = malloc(sizeof(NAByteArray));
+    naInitByteArray(newstring);
+    naClearByteArray(newstring);
+    free(newstring);
+  }
+  time2 = naMakeDateTimeNow();
+  printf("Time diff: %f\n", naGetDateTimeDiff(&time2, &time1));
+
+  time1 = naMakeDateTimeNow();
+  for(int i=0; i<TESTSIZE; i++){
+    newstring = naMalloc(sizeof(NAByteArray));
+    naInitByteArray(newstring);
+    naClearByteArray(newstring);
+    naFree(newstring);
+  }
+  time2 = naMakeDateTimeNow();
+  printf("Time diff: %f\n", naGetDateTimeDiff(&time2, &time1));
+
+  time1 = naMakeDateTimeNow();
+  for(int i=0; i<TESTSIZE; i++){
+    newstring = naNewString();
+    naDelete(newstring);
+  }
+  time2 = naMakeDateTimeNow();
+  printf("Time diff: %f\n", naGetDateTimeDiff(&time2, &time1));
+  
   
   printf("\nPress enter to quit.\n");
   fgetc(stdin);

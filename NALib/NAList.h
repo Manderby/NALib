@@ -181,7 +181,7 @@ NA_IAPI NABool naIsListAtLast             (const NAList* list);
 typedef struct NAListElement NAListElement;
 
 struct NAListElement{
-  NALValue lvalue;  // A pointer to the stored content
+  NALValue lvalue;      // A pointer to the stored content
   NAListElement* next;  // A pointer to the next element
   NAListElement* prev;  // A pointer to the previous element
 };
@@ -201,7 +201,7 @@ NA_IDEF NAList* naInitList(NAList* list){
       {naCrash("naInitList", "list is NULL"); return NA_NULL;}
   #endif
   list->count = 0;
-  naFillLValueMutable(&(list->sentinel.lvalue), NA_NULL);
+  list->sentinel.lvalue = naMakeLValueMutable(NA_NULL);
   list->sentinel.next = &(list->sentinel);
   list->sentinel.prev = &(list->sentinel);
   list->cur           = &(list->sentinel);
@@ -388,13 +388,13 @@ NA_IDEF NABool naLocateListIndex(const NAList* list, NAInt indx){
 
 // These are helper functions. They should be hidden.
 NA_HIDEF void naInjectConstListElement(NAList* list, NAListElement* element, const void* data){
-  naFillLValueConst(&(element->lvalue), data);
+  element->lvalue = naMakeLValueConst(data);
   element->next->prev = element;
   element->prev->next = element;
   list->count++;
 }
 NA_HIDEF void naInjectMutableListElement(NAList* list, NAListElement* element, void* data){
-  naFillLValueMutable(&(element->lvalue), data);
+  element->lvalue = naMakeLValueMutable(data);
   element->next->prev = element;
   element->prev->next = element;
   list->count++;

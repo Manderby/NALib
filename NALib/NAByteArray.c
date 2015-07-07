@@ -15,9 +15,9 @@ NA_DEF NAByteArray* naInitByteArrayWithSize(NAByteArray* array, NAInt size){
   if(!size){  // if size is zero
     array = naInitByteArray(array);
   }else{
-    array->storage = naNewPointerWithSize(size);
+    array->lvalue = naMakeLValueWithSize(size);
+    array->storage = naNewPointerWithLValue(array->lvalue, NA_TRUE);
     array->size = naAbsi(size);
-    array->lvalue = naGetPointerLValue(array->storage);
   }
   return array;
 }
@@ -31,16 +31,13 @@ NA_DEF NAByteArray* naInitByteArrayWithConstBuffer(NAByteArray* array, const voi
     if(!buffer)
       naError("naInitByteArrayWithConstBuffer", "buffer is Null-Pointer.");
   #endif
-  if(!size){  // if size is zero
+  if(naIsIntZero(size)){
     array = naInitByteArray(array);
   }else{
-    array->storage = naNewPointerWithConstBuffer(buffer);
-    array->size = naAbsi(size);
-    array->lvalue = naGetPointerLValue(array->storage);
+    array->lvalue = naMakeLValueConst(buffer);
     #ifndef NDEBUG
-      // Note that we mark the lvalue but not the NAPointer. Also note that
-      // the accessiblesize is the same as the visible size because the true
-      // amount of null-terminating bytes is unknown.
+      // Note that the accessiblesize is the same as the visible size because
+      // the true amount of null-terminating bytes is unknown.
       if(size<0){
         naMarkLValueWithVisibleSize(&(array->lvalue), -size);
         naMarkLValueWithAccessibleSize(&(array->lvalue), -size, NA_TRUE);
@@ -49,6 +46,8 @@ NA_DEF NAByteArray* naInitByteArrayWithConstBuffer(NAByteArray* array, const voi
         naMarkLValueWithAccessibleSize(&(array->lvalue), size, NA_FALSE);
       }
     #endif
+    array->storage = naNewPointerWithLValue(array->lvalue, NA_FALSE);
+    array->size = naAbsi(size);
   }
   return array;
 }
@@ -66,9 +65,7 @@ NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* b
     array = naInitByteArray(array);
     if(takeownership){free(buffer);}
   }else{
-    array->storage = naNewPointerWithMutableBuffer(buffer, takeownership);
-    array->size = naAbsi(size);
-    array->lvalue = naGetPointerLValue(array->storage);
+    array->lvalue = naMakeLValueMutable(buffer);
     #ifndef NDEBUG
       // Note that we mark the lvalue but not the NAPointer. Also note that
       // the accessiblesize is the same as the visible size because the true
@@ -81,6 +78,8 @@ NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* b
         naMarkLValueWithAccessibleSize(&(array->lvalue), size, NA_FALSE);
       }
     #endif
+    array->storage = naNewPointerWithLValue(array->lvalue, takeownership);
+    array->size = naAbsi(size);
   }
   return array;
 }
@@ -104,7 +103,7 @@ NA_DEF NAByteArray* naInitByteArrayExtraction(NAByteArray* dstarray, const NAByt
   // uninitialized.
 
   naMakePositiveiInSize(&positiveoffset, &positivesize, offset, size, srcarray->size);
-  naFillLValueSub(&newlvalue, &(srcarray->lvalue), positiveoffset, positivesize);
+  newlvalue = naMakeLValueSub(&(srcarray->lvalue), positiveoffset, positivesize);
   
   if(!positivesize){
     // If the extraction results in an empty array...

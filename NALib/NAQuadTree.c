@@ -5,6 +5,11 @@
 #include "NAQuadTree.h"
 
 
+// Prototype
+NA_HAPI void naDeallocQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* node);
+NA_HAPI void naUpdateQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* curnode, NAPosi curpos);
+NA_HAPI void naUpdateQuadTreeLeaf(NAQuadTree* tree, NAQuadTreeNode* leafparent, NAInt segment);
+
 
 // Allocates and initializes a new and empty QuadTree node. The rects of all
 // childs are initialized but no leafs are set or allocated.
@@ -421,20 +426,19 @@ NA_HDEF NABool naLocateQuadTreeNodePosi(NAQuadTree* tree, NAQuadTreeNode* node, 
       // parent of this node as well as the new root for the whole tree.
       if(create){
         // Note that in order to achieve a full coverage of the whole space
-        // (negative and positive in x and y), we align the super node such
-        // that more space is allocated in the direction of where to store the
-        // new data.
+        // (negative and positive in x and y), we align the super in a cyclic
+        // way. First, the tree is expanded to the bottom right, then to the
+        // bottom left, then to the top right, then to the top left and then
+        // it start anew with expansion to the bottom right. And so on.
         NAUInt segment;
         NARecti alignrect;
         alignrect.pos.x = noderect.pos.x;
         alignrect.pos.y = noderect.pos.y;
         alignrect.size.width = noderect.size.width * 2;
         alignrect.size.height = noderect.size.height * 2;
-        segment = 0;
-        if(pos.x < noderect.pos.x){
-          segment |= 1; alignrect.pos.x -= noderect.size.width;
-        }
-        if(pos.y < noderect.pos.y){segment |= 2; alignrect.pos.y -= noderect.size.height;}
+        segment = naLog2i(alignrect.size.width) % 4;
+        if(segment & 1){alignrect.pos.x -= noderect.size.width;}
+        if(segment & 2){alignrect.pos.y -= noderect.size.height;}
         node->parentnode = naAllocQuadTreeNode(tree, NA_NULL, alignrect.pos, noderect.size.width);
         tree->root = node->parentnode;
         // Attach this node to the new parent

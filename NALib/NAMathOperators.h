@@ -194,6 +194,7 @@ NA_IAPI double        naLog10(double x);
 // - ...
 NA_IAPI float         naLog2f(float x);
 NA_IAPI double        naLog2(double x);
+NA_IDEF NAInt         naLog2i(NAInt x);
 NA_IAPI int32         naLog2i32(int32 x);
 NA_IAPI int64         naLog2i64(int64 x);
 
@@ -758,6 +759,13 @@ NA_IDEF int64 naLog2i64(int64 x){
   retvalue = 0;
   while(x){retvalue++; x>>=1;}
   return retvalue;
+}
+NA_IDEF NAInt naLog2i(NAInt x){
+  #if NA_SYSTEM_ADDRESS_BITS == 32
+    return naLog2i32(x);
+  #elif NA_SYSTEM_ADDRESS_BITS == 64
+    return naLog2i64(x);
+  #endif
 }
 
 

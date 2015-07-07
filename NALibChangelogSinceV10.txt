@@ -1,0 +1,97 @@
+
+This file is part of NALib, a collection of C and C++ source code
+intended for didactical purposes. Full license notice at the bottom.
+
+
+-------------------------
+CHANGELOG since Version 10
+-------------------------
+
+This file contains information about changes in the package NALib. These are
+purely informational and any information found here is not guaranteed to be
+correct, complete or final.
+
+
+- Added CODATA 2014 from NIST for physical constants
+
+
+- Added NA_ZERO, NA_ONE, naIsIntStrictlyPositive, naIsIntZero, naIsIntNegative
+- NAUTF8Char is now typedefed as NAByte. Macro check for Bytes being 8 bits
+  wide moved to NASystem.h
+- Changed NA_SYMBOL_VISIBLE and NA_SYMBOL_HIDDEN to NA_LINKER_EXPORT and
+  NA_LINKER_NO_EXPORT
+- Removed naNewPointerStruct. Moved code directly to the other constructors.
+- Removed naGetPointerLValue.
+- Replaced naNewPointerWithConstBuffer and naNewPointerWithMutableBuffer with
+  naNewPointerWithLValue.
+- Changed naFillLValueXXX functions to naMakeLValueXXX
+- Added more C-standard macros and made many definitions dependent on that.
+- Made some benchmarks and therefore added a custom pool size instead of
+  relying on the memory page size. Added NA_POOL_SIZE_EQUALS_PAGESIZE and
+  NA_CUSTOM_POOL_SIZE.
+- Removed string encoding. NALib currently is only capable to handle UTF-8.
+  It is just too much to rewrite all encodings from scratch. For now.
+- Added naLog2i
+- NAQuadTree now expands in 4 cycles such that a tree will always be the same
+  no matter how he is constructed.
+- Added Leap Second entry according to bulletin C 50
+
+
+Version 10 (first published 2015-July-1):
+==============================================
+
+This changelog file starts with NALib version 10.
+
+A full changelog of version 10 and earlier versions are described in other
+files. Here, only a recapitulation of the most important things of NALib is
+described:
+
+NALib is a source code collection provided with a very open license for
+everyone to use. It is a pure C library which has been derived from a private
+C++ library more than a decade in the making.
+
+NALib provides code for various data formats and algorithms commonly used
+every day in a software engineers work. It compiles with clang and gcc on
+Mac OS X as well as with Visual-C on Windows. Other systems may or may not
+be supported. The collection has been used to drive several commercial
+applications on Mac and Windows.
+
+During the first 10 version iterations, continuous improvements have been made
+in order to simplify the API, add code safety, provide debugging helpers and
+to enhance the collection. From the start, the documentation of NALib was
+embedded withing the source files, mainly the header files. The documentation
+is supposed to be didactical for people to understand what is going on in the
+code and which API should be used under what circumstances.
+
+
+
+
+
+
+-----------------------
+
+Copyright (c) NALib, Tobias Stamm, Manderim GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the source-code.
+
+In case the source-code of this software is inaccessible to the end-user,
+the above copyright notice and this permission notice shall be included
+in any source-code which is dependent on this software and is accessible
+to the end-user.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

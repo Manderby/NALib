@@ -12,7 +12,6 @@
 
 struct NAString{
   NAByteArray array;
-//  NATextEncoding encoding;
 };
 // Note that an NAString is considered empty if the underlying array is empty.
 // If that is the case, encoding contains garbage values.

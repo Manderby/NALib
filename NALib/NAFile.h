@@ -85,7 +85,6 @@ struct NAFile{
   int desc;                           // The descriptor
   NAFileSize pos;                     // The byte position within file.
   NAEndiannessConverter converter;    // The endianness converter.
-  NATextEncoding textencoding;        // The encoding of textual data.
   uint16 flags;                       // various flags
   uint16 remainingbytesinbuffer;      // remaining bytes inside the buffer
   NAByte* bufptr;                     // Pointer to the current buffer-byte
@@ -128,10 +127,8 @@ struct NAFile{
 // Note that this is the preferred way to handle text files in NALib: Just
 // read the whole file into a string and then use the parsing functions of
 // the NAString type.
-// The encoding defines what the file is encoded in. The resulting string will
-// be encoded in UTF-8. todo: Add more encodings.
-NA_API NAString* naNewStringFromFileContents(  const char* filename,
-                                            NATextEncoding encoding);
+// Important! Only UTF-8 is supported for now!
+NA_API NAString* naNewStringFromFileContents(  const char* filename);
 
 // Reads the full file and returns it as a new NAByteArray.
 // Warning: This function is only useful if you read or store raw data! The 
@@ -192,12 +189,6 @@ NA_API void naFlushFileBuffer(NAFile* file);
 //   native to output endianness automatically while writing.
 // Use endianness constants like NA_ENDIANNESS_BIG for the endianness argument.
 NA_API void naSetFileEndianness(NAFile* file, NAInt endianness);
-
-// Sets the text encoding of the file.
-// All methods reading or writing NAString structures or NAUTF8Char data will
-// automatically convert between the file encoding and the NAString encoding
-// (which is UTF-8). todo: Currently, only the UTF-8 encoding is supported.
-NA_API void naSetFileTextEncoding(NAFile* file, NATextEncoding textencoding);
 
 // Only useful for write-files. Defines, how writings should be flushed. The
 // NAFile struct by default uses a buffer to speed up writing.
@@ -269,8 +260,6 @@ NA_API double* naReadFileArrayDouble(NAFile* file, double* buf, NAInt count);
 // from an internal buffer.
 // COPIES ALWAYS!
 // The ByteArray function is NOT endianness-aware.
-// Note that the expected text encoding of the file can be defined using
-// naSetFileTextEncoding.
 NA_API NAByteArray* naInitByteArrayFromFile(NAByteArray* array,
                                                    NAFile* file,
                                                 NAFileSize count);

@@ -264,7 +264,7 @@ NA_HDEF void naInsertHeapElementConstNoBack(NAHeap* heap, const void* data, cons
   #endif
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapNoBackEntry*)(heap->data);
-  naFillLValueConst(&(thedata[newindex].ptr), data);
+  thedata[newindex].ptr = naMakeLValueConst(data);
   thedata[newindex].key = key;
   heap->count++;
 }
@@ -280,7 +280,7 @@ NA_HDEF void naInsertHeapElementConstBack(NAHeap* heap, const void* data, const 
   #endif
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapBackEntry*)(heap->data);
-  naFillLValueConst(&(thedata[newindex].ptr), data);
+  thedata[newindex].ptr = naMakeLValueConst(data);
   thedata[newindex].key = key;
   if(backpointer){
     thedata[newindex].backpointer = backpointer;
@@ -309,7 +309,7 @@ NA_HDEF void naInsertHeapElementMutableNoBack(NAHeap* heap, void* data, const vo
   #endif
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapNoBackEntry*)(heap->data);
-  naFillLValueMutable(&(thedata[newindex].ptr), data);
+  thedata[newindex].ptr = naMakeLValueMutable(data);
   thedata[newindex].key = key;
   heap->count++;
 }
@@ -325,7 +325,7 @@ NA_HDEF void naInsertHeapElementMutableBack(NAHeap* heap, void* data, const void
   #endif
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapBackEntry*)(heap->data);
-  naFillLValueMutable(&(thedata[newindex].ptr), data);
+  thedata[newindex].ptr = naMakeLValueMutable(data);
   thedata[newindex].key = key;
   if(backpointer){
     thedata[newindex].backpointer = backpointer;
