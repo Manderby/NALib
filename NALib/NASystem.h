@@ -92,22 +92,39 @@
 
 
 // NALib detects, what c standards are used.
-#if defined __STDC__
-  #define NA_C89
-  #define NA_C90
-#endif
-#if defined __STDC_VERSION__
-  #if __STDC_VERSION__ >= 199409L
-    #define NA_C94
+#ifndef __cplusplus
+  // This is a C compilation
+  
+  #if defined __STDC__
+    #define NA_C89
+    #define NA_C90
   #endif
-  #if __STDC_VERSION__ >= 199901L
+  #if defined __STDC_VERSION__
+    #if __STDC_VERSION__ >= 199409L
+      #define NA_C94
+    #endif
+    #if __STDC_VERSION__ >= 199901L
+      #define NA_C99
+    #endif
+    #if __STDC_VERSION__ >= 201112L
+      #define NA_C11
+      #warn c11
+    #endif
+  #endif
+
+#else
+
+  // This is a C++ compilation
+  // Note that this macro test is not fully coorect but it serves the purpose
+  // of running this c library alongside c++ code
+  #if __cplusplus >= 199711L
     #define NA_C99
   #endif
-  #if __STDC_VERSION__ >= 201112L
+  #if __cplusplus >= 201103L
     #define NA_C11
+    #warn c11
   #endif
 #endif
-
 
 
 // ////////////////////////////////////////////////////////////
@@ -138,7 +155,12 @@
 
 #if defined NA_C99
   #define NA_INLINE             inline
-  #define NA_RESTRICT           restrict
+  #ifdef __cplusplus
+    // c++ does not handles restrict consistently. So we just omit it.
+    #define NA_RESTRICT
+  #else
+    #define NA_RESTRICT           restrict
+  #endif
 #endif
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS

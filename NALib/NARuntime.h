@@ -44,7 +44,7 @@ NA_API void               naStartRuntime();
 NA_API NATypeIdentifier   naManageRuntimeType(NATypeInfo* typeinfo);
 NA_API void               naStopRuntime();
 
-#define naNew(type)       naNewStruct(na_ ## type ## _identifier)
+#define naNew(type)       (type*)naNewStruct(na_ ## type ## _identifier)
 NA_API void*              naNewStruct(NATypeIdentifier typeidentifier);
 NA_API void               naDelete(void* pointer);
 

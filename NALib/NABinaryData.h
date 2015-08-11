@@ -395,7 +395,7 @@ NA_IDEF void naNulln(void* d, NAUInt count){
 
 NA_IDEF void naFill8( void* d,
                     NAByte b0){
-  register NAByte* p; // Declaration before implementation. Needed for C90.
+  NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!d){
       naCrash("naFill8", "Pointer is Null-Pointer.");
@@ -408,7 +408,7 @@ NA_IDEF void naFill8( void* d,
 
 NA_IDEF void naFill16( void* d,
                      NAByte b0, NAByte b1){
-  register NAByte* p; // Declaration before implementation. Needed for C90.
+  NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!d){
       naCrash("naFill16", "Pointer is Null-Pointer.");
@@ -421,7 +421,7 @@ NA_IDEF void naFill16( void* d,
 
 NA_IDEF void naFill32( void* d,
                      NAByte b0, NAByte b1, NAByte b2, NAByte b3){
-  register NAByte* p; // Declaration before implementation. Needed for C90.
+  NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!d){
       naCrash("naFill32", "Pointer is Null-Pointer.");
@@ -435,7 +435,7 @@ NA_IDEF void naFill32( void* d,
 NA_IDEF void naFill64( void* d,
                      NAByte b0, NAByte b1, NAByte b2, NAByte b3,
                      NAByte b4, NAByte b5, NAByte b6, NAByte b7){
-  register NAByte* p; // Declaration before implementation. Needed for C90.
+  NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!d){
       naCrash("naFill64", "Pointer is Null-Pointer.");
@@ -452,7 +452,7 @@ NA_IDEF void naFill128( void* d,
                       NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
                       NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
                       NAByte b12, NAByte b13, NAByte b14, NAByte b15){
-  register NAByte* p; // Declaration before implementation. Needed for C90.
+  NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!d){
       naCrash("naFill128", "Pointer is Null-Pointer.");
@@ -473,7 +473,7 @@ NA_IDEF void naFill128( void* d,
 // ///////////////////////////////////////////////////////////
 
 NA_IDEF NABool naEqual8(const void* s, NAByte b0){
-  register NAByte* p; // Declaration before implementation. Needed for C90
+  NAByte* p; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
     if(!s){
       naCrash("naEqual8", "Pointer is Null-Pointer.");
@@ -486,7 +486,7 @@ NA_IDEF NABool naEqual8(const void* s, NAByte b0){
 }
 
 NA_IDEF NABool naEqual16(const void* s, NAByte b0, NAByte b1){
-  register NAByte* p; // Declaration before implementation. Needed for C90
+  NAByte* p; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
     if(!s){
       naCrash("naEqual16", "Pointer is Null-Pointer.");
@@ -501,7 +501,7 @@ NA_IDEF NABool naEqual16(const void* s, NAByte b0, NAByte b1){
 
 NA_IDEF NABool naEqual32(const void* s,
                               NAByte b0, NAByte b1, NAByte b2, NAByte b3){
-  register NAByte* p; // Declaration before implementation. Needed for C90
+  NAByte* p; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
     if(!s){
       naCrash("naEqual32", "Pointer is Null-Pointer.");
@@ -519,7 +519,7 @@ NA_IDEF NABool naEqual32(const void* s,
 NA_IDEF NABool naEqual64(const void* s,
                               NAByte b0, NAByte b1, NAByte b2, NAByte b3,
                               NAByte b4, NAByte b5, NAByte b6, NAByte b7){
-  register NAByte* p; // Declaration before implementation. Needed for C90
+  NAByte* p; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
     if(!s){
       naCrash("naEqual64", "Pointer is Null-Pointer.");
@@ -543,7 +543,7 @@ NA_IDEF NABool naEqual128(const void* s,
                                NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
                                NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
                                NAByte b12, NAByte b13, NAByte b14, NAByte b15){
-  register NAByte* p; // Declaration before implementation. Needed for C90
+  NAByte* p; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
     if(!s){
       naCrash("naEqual128", "Pointer is Null-Pointer.");

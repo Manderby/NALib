@@ -31,6 +31,7 @@ Highlights:
   naFillM33WithRotationAngles in NAVectorAlgebra.h
 
 Other things:
+- Added macro check for c++ standard keyword detection.
 - Changed count value of NAList to NAUInt
 - Added another macro check for va_copy
 - Moved NAPointer to NARuntime.h, renamed NAPointer.h to NAMemory.h

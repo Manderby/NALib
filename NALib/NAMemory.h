@@ -389,8 +389,8 @@ NA_IDEF void naFreePageAligned(void* ptr){
 // Opaque type. typedef is above. See explanation in readme.txt
 struct NALValue{
   union{                    // A union storing either ...
-    const NAByte* constd;   // ... const data or ...
-    NAByte*       d;        // ... non-const (mutable) data.
+    const void* constd;     // ... const data or ...
+    void*       d;          // ... non-const (mutable) data.
   } data;
   #ifndef NDEBUG
     NAUInt flags;               // This field stores some flags.
@@ -555,7 +555,7 @@ NA_IDEF const void* naGetLValueOffsetConst(const NALValue* lvalue, NAUInt indx){
         naError("naGetLValueOffsetConst", "index out of visible bounds");
     }
   #endif
-  return &(lvalue->data.constd[indx]);
+  return &(((const NAByte*)(lvalue->data.constd))[indx]);
 }
 
 
@@ -576,7 +576,7 @@ NA_IDEF void* naGetLValueOffsetMutable(NALValue* lvalue, NAUInt indx){
         naError("naGetLValueOffsetMutable", "index out of visible bounds");
     }
   #endif
-  return &(lvalue->data.d[indx]);
+  return &(((NAByte*)(lvalue->data.d))[indx]);
 }
 
 
@@ -617,7 +617,7 @@ NA_IDEF void* naGetLValueOffsetMutable(NALValue* lvalue, NAUInt indx){
     // Now, we check if the last bytes are indeed zero
     nullindx = lvalue->visiblebytecount;
     while(nullindx < lvalue->accessiblebytecount){
-      if(lvalue->data.constd[nullindx] != '\0')
+      if(((const NAByte*)(lvalue->data.constd))[nullindx] != '\0')
         naError("naMarkLValueWithAccessibleSize", "promised null-termination is not null");
       nullindx++;
     }

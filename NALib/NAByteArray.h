@@ -264,7 +264,7 @@ NA_IDEF const NAByte* naGetByteArrayConstPointer(const NAByteArray* array){
     if(!array->size)
       naError("naGetByteArrayConstPointer", "array is empty. Result is garbage");
   #endif
-  return naGetLValueConst(&(array->lvalue));
+  return (const NAByte*)naGetLValueConst(&(array->lvalue));
 }
 
 
@@ -278,7 +278,7 @@ NA_IDEF NAByte* naGetByteArrayMutablePointer(NAByteArray* array){
     if(!array->size)
       naError("naGetByteArrayMutablePointer", "array is empty. Result is garbage");
   #endif
-  return naGetLValueMutable(&(array->lvalue));
+  return (NAByte*)naGetLValueMutable(&(array->lvalue));
 }
 
 
@@ -299,7 +299,7 @@ NA_IDEF const NAByte* naGetByteArrayConstByte(const NAByteArray* array, NAInt in
     if(!naInsidei(0, array->size, indx))
       naError("naGetByteArrayConstByte", "indx out of bounds");
   #endif
-  return naGetLValueOffsetConst(&(array->lvalue), indx);
+  return (const NAByte*)naGetLValueOffsetConst(&(array->lvalue), indx);
 }
 
 
@@ -320,7 +320,7 @@ NA_IDEF NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt indx){
     if(!naInsidei(0, array->size, indx))
       naError("naGetByteArrayMutableByte", "indx out of bounds");
   #endif
-  return naGetLValueOffsetMutable(&(array->lvalue), indx);
+  return (NAByte*)naGetLValueOffsetMutable(&(array->lvalue), indx);
 }
 
 
