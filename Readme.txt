@@ -27,8 +27,8 @@ Table of Content:
 - Any documentation can be found within the source files or in this file.
 
 If you are curious on how NALib works, start at the most basic files:
-- NAPointer.h     Functions to work with pointers
 - NASystem.h      Functions, Macros and Definitions, System-Dependancy
+- NAMemory.h      Functions to work with the memory
 - NABinaryData.h  Memory manipulations
 
 For more information, visit

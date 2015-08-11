@@ -560,17 +560,17 @@ NA_DEF NADateTime naMakeDateTimeFromPointer(const void* data, NABinDateTimeForma
   switch(format){
   case NA_DATETIME_FORMAT_ICC_PROFILE:
     // ICC section 5.1.1, page 4, dateTimeNumber
-    naCpy16(&valueu16, ((NAByte*)data) + 0);
+    naCopy16(&valueu16, ((NAByte*)data) + 0);
     dts.year = valueu16;
-    naCpy16(&valueu16, ((NAByte*)data) + 2);
+    naCopy16(&valueu16, ((NAByte*)data) + 2);
     dts.mon = valueu16;
-    naCpy16(&valueu16, ((NAByte*)data) + 4);
+    naCopy16(&valueu16, ((NAByte*)data) + 4);
     dts.day = valueu16;
-    naCpy16(&valueu16, ((NAByte*)data) + 6);
+    naCopy16(&valueu16, ((NAByte*)data) + 6);
     dts.hour = valueu16;
-    naCpy16(&valueu16, ((NAByte*)data) + 8);
+    naCopy16(&valueu16, ((NAByte*)data) + 8);
     dts.min = valueu16;
-    naCpy16(&valueu16, ((NAByte*)data) + 10);
+    naCopy16(&valueu16, ((NAByte*)data) + 10);
     dts.sec = valueu16;
     dts.shift = 0;
     dts.flags = 0;
@@ -609,22 +609,22 @@ NA_DEF NAByteArray* naInitByteArrayFromDateTime( NAByteArray* bytearray, const N
     
     valueu16 = (uint16)dts.year;
     naConvertNativeBig16(&valueu16);
-    naCpy16(&(ptr[ 0]), &valueu16);
+    naCopy16(&(ptr[ 0]), &valueu16);
     valueu16 = (uint16)dts.mon;
     naConvertNativeBig16(&valueu16);
-    naCpy16(&(ptr[ 2]), &valueu16);
+    naCopy16(&(ptr[ 2]), &valueu16);
     valueu16 = (uint16)dts.day;
     naConvertNativeBig16(&valueu16);
-    naCpy16(&(ptr[ 4]), &valueu16);
+    naCopy16(&(ptr[ 4]), &valueu16);
     valueu16 = (uint16)dts.hour;
     naConvertNativeBig16(&valueu16);
-    naCpy16(&(ptr[ 6]), &valueu16);
+    naCopy16(&(ptr[ 6]), &valueu16);
     valueu16 = (uint16)dts.min;
     naConvertNativeBig16(&valueu16);
-    naCpy16(&(ptr[ 8]), &valueu16);
+    naCopy16(&(ptr[ 8]), &valueu16);
     valueu16 = (uint16)dts.sec;
     naConvertNativeBig16(&valueu16);
-    naCpy16(&(ptr[10]), &valueu16);
+    naCopy16(&(ptr[10]), &valueu16);
     break;
   }
 

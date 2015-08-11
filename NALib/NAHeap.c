@@ -3,7 +3,7 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 #include "NAHeap.h"
-#include "NAPointer.h"
+#include "NAMemory.h"
 
 
 // First note, that a heap structure is basically very simple and could

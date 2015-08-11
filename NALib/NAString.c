@@ -417,7 +417,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
 //    #else
 //      newsize = size;
 //      outstr = (SystemChar*)naMalloc((newsize + 1) * sizeof(SystemChar));
-//      naCpyn(outstr, utf8string, newsize);
+//      naCopyn(outstr, utf8string, newsize);
 //    #endif
 //    outstr[newsize] = 0;
 //    return outstr;
@@ -436,7 +436,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
 //      newsize = naStrlen(systemstring);
 //      stringbuf = naMalloc(-newsize);
 //      string = naNewStringWithMutableUTF8Buffer(string, stringbuf, -newsize, NA_TRUE);
-//      naCpyn(stringbuf, systemstring, newsize);
+//      naCopyn(stringbuf, systemstring, newsize);
 //    #endif
 //    return string;
 //  }
@@ -450,8 +450,8 @@ NA_DEF void naAppendStringString(NAString* originalstring, const NAString* strin
   NAInt totalstringsize = stringsize1 + stringsize2;
   if(totalstringsize){
     NAUTF8Char* stringbuf = naMalloc(-totalstringsize);
-    if(stringsize1){naCpyn(stringbuf, naGetByteArrayConstPointer(&(originalstring->array)), stringsize1);}
-    if(stringsize2){naCpyn(&(stringbuf[stringsize1]), naGetByteArrayConstPointer(&(string2->array)), stringsize2);}
+    if(stringsize1){naCopyn(stringbuf, naGetByteArrayConstPointer(&(originalstring->array)), stringsize1);}
+    if(stringsize2){naCopyn(&(stringbuf[stringsize1]), naGetByteArrayConstPointer(&(string2->array)), stringsize2);}
     naClearByteArray(&(originalstring->array));
     naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_TRUE);
   }else{
@@ -465,7 +465,7 @@ NA_DEF void naAppendStringChar(NAString* originalstring, NAUTF8Char newchar){
   NAUInt stringsize = naGetStringSize(originalstring);
   NAInt totalstringsize = stringsize + 1;
   NAUTF8Char* stringbuf = naMalloc(-totalstringsize);
-  if(stringsize){naCpyn(stringbuf, naGetByteArrayConstPointer(&(originalstring->array)), stringsize);}
+  if(stringsize){naCopyn(stringbuf, naGetByteArrayConstPointer(&(originalstring->array)), stringsize);}
   stringbuf[stringsize] = newchar;
   naClearByteArray(&(originalstring->array));
   naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_TRUE);
@@ -503,7 +503,7 @@ NA_DEF void naAppendStringArguments(NAString* originalstring, const NAUTF8Char* 
   totalstringsize = stringsize1 + stringsize2;
   if(totalstringsize){
     stringbuf = naMalloc(-totalstringsize);
-    if(stringsize1){naCpyn(stringbuf, naGetByteArrayConstPointer(&(originalstring->array)), stringsize1);}
+    if(stringsize1){naCopyn(stringbuf, naGetByteArrayConstPointer(&(originalstring->array)), stringsize1);}
     va_copy(argumentlist2, argumentlist);
     naVsnprintf(&(stringbuf[stringsize1]), stringsize2 + 1, format, argumentlist2);
     va_end(argumentlist2);

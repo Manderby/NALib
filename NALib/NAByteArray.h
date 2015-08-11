@@ -206,7 +206,7 @@ NA_IAPI NABool naIsByteArrayEmpty(const NAByteArray* array);
 // ///////////////////////////////////////////////////////////////////////
 
 
-#include "NAPointer.h"
+#include "NARuntime.h"
 #ifndef NDEBUG
   // required for out-of-bounds test
   #include "NAMathOperators.h"

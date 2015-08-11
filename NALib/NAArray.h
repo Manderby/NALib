@@ -149,7 +149,7 @@ NA_IAPI NABool naIsArrayEmpty(const NAArray* array);
 
 
 #include "NAByteArray.h"
-#include "NAMinMax.h"
+#include "NACoord.h"
 
 
 struct NAArray{

@@ -155,7 +155,7 @@ struct NAHeap{
 // stored at array index 1, a pointer to that location is needed as the two
 // structs differ in size whether they do or do not store backpointers.
 
-#include "NAPointer.h"
+#include "NAMemory.h"
 
 // The structures internally used to store a single entry. They whould normally
 // be hidden to the user.

@@ -3,18 +3,45 @@ This file is part of NALib, a collection of C and C++ source code
 intended for didactical purposes. Full license notice at the bottom.
 
 
--------------------------
-CHANGELOG since Version 10
--------------------------
+--------------------------
+CHANGELOG Versions 10 - 20
+--------------------------
 
 This file contains information about changes in the package NALib. These are
 purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+
+
+
+Highlights:
 - Added CODATA 2014 from NIST for physical constants
+- Added Leap Second entry according to bulletin C 50
+- Added third dimension to NACoord.h: NAVertex, NAVolume and NABox. Moved
+  NARange to the same file. Consequently, generalizing some APIs.
+- Greatly documented NAQuadTree and changed implementation to be non-redundant.
+  Some API changes introduced.
+- Added NAOctTree
+- Renamed all naCpyXXX to naCopyXXX. Renamed all naSetXXX to naFillXXX which
+  are not state machine functions.
+- Changed all NAVecXXX and NAMatXXX parameters to their direct pointer
+  equivalent. For example NAVec3f now is typed float*
+- Added Quaternion 3D rotations in naFillM33WithRotationAlongAxis and
+  naFillM33WithRotationAngles in NAVectorAlgebra.h
 
-
+Other things:
+- Changed count value of NAList to NAUInt
+- Added another macro check for va_copy
+- Moved NAPointer to NARuntime.h, renamed NAPointer.h to NAMemory.h
+- Added intersection functions to naCoord.h
+- Added Iteration for naQuadTree and naOctTree. Removed obsolete GrowingSpace
+  functions consequently. Iteration is way faster!
+- Removed naFillRangeXXX, naInsideRange and naAlmostInsideRange functions.
+- Removed NARectArea.h, NARectArea.c, NAMinMax.h, NAMinMax.c and NARange.h
+  Consequently, moved some functions elsewhere or deleted them.
+- NAByteMap.h and NAMap2D.h are not deleted yet. We'll see how these files
+  turn out in the near future.
 - Added NA_ZERO, NA_ONE, naIsIntStrictlyPositive, naIsIntZero, naIsIntNegative
 - NAUTF8Char is now typedefed as NAByte. Macro check for Bytes being 8 bits
   wide moved to NASystem.h
@@ -34,7 +61,9 @@ correct, complete or final.
 - Added naLog2i
 - NAQuadTree now expands in 4 cycles such that a tree will always be the same
   no matter how he is constructed.
-- Added Leap Second entry according to bulletin C 50
+- naSeedRand now returns the seed created when using 0
+
+
 
 
 Version 10 (first published 2015-July-1):

@@ -4,10 +4,13 @@
 
 
 #include "NARuntime.h"
-#include "NAPointer.h"
+#include "NAMemory.h"
 #include "NAString.h"
 
 
+// Turns out, the pagesize is far too small to result in good speed
+// improvements. The custom size can result in up to 2 times faster allocation
+// and deallocation on some systems.
 //#define NA_POOL_SIZE_EQUALS_PAGESIZE
 #define NA_CUSTOM_POOL_SIZE (1 << 16)
 

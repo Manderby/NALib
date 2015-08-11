@@ -3,7 +3,7 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 #include "NAByteArray.h"
-#include "NAMinMax.h"
+#include "NACoord.h"
 
 
 
@@ -141,7 +141,7 @@ NA_DEF void naDecoupleByteArray(NAByteArray* array, NABool appendnulltermination
   if(!arraysize){return;}
   if(appendnulltermination){arraysize = -arraysize;}
   buf = naMalloc(arraysize);
-  naCpyn(buf, naGetLValueConst(&(array->lvalue)), naAbsi(arraysize));
+  naCopyn(buf, naGetLValueConst(&(array->lvalue)), naAbsi(arraysize));
   naClearByteArray(array);
   naInitByteArrayWithMutableBuffer(array, buf, arraysize, NA_TRUE);
 }

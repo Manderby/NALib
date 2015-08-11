@@ -4,7 +4,7 @@ intended for didactical purposes. Full license notice at the bottom.
 
 
 -------------------------
-CHANGELOG since Version 0
+CHANGELOG Versions 0 - 10
 -------------------------
 
 This file contains information about changes in the package NALib. These are

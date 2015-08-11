@@ -38,7 +38,7 @@ NA_IAPI void  naSRand(uint32 seed);
 // Seeds the random generator with the provided seed. If seed is 0, a seed will
 // be chosen dependent on the system time. Not suitable for security business
 // but good enough for pretty much all other uses.
-NA_IAPI void naSeedRand(NAInt seed);
+NA_IAPI uint32 naSeedRand(uint32 seed);
 
 // Returns a uniformly disributed random value within interval [0,1)
 NA_IAPI float  naUniformRandZEf();
@@ -82,13 +82,15 @@ NA_IDEF void naSRand(uint32 seed){
 }
 
 
-NA_IDEF void naSeedRand(NAInt seed){
+NA_IDEF uint32 naSeedRand(uint32 seed){
   if(seed){
-    naSRand((uint32)seed);
+    seed = (uint32)seed;
   }else{
     NADateTime dt = naMakeDateTimeNow();
-    naSRand((int32)dt.sisec ^ dt.nsec);
+    seed = (int32)dt.sisec ^ dt.nsec;
   }
+  naSRand((uint32)seed);
+  return seed;
 }
 
 

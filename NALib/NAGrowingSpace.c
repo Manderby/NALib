@@ -165,7 +165,7 @@ NA_DEF NAArray* naInitArrayWithGrowingSpace(NAArray* array, NAGrowingSpace* spac
     for(i=0; i<(bytearraycount-1); i++){
       const NAByteArray* curarray = naGetListCurrentConst(&(space->arrays));
       const NAByte* firstbyte = naGetByteArrayConstPointer(curarray);
-      naCpyn(arrayptr, firstbyte, bytearraysize);
+      naCopyn(arrayptr, firstbyte, bytearraysize);
       arrayptr += bytearraysize;
       naIterateList(&(space->arrays), 1);
     }
@@ -174,7 +174,7 @@ NA_DEF NAArray* naInitArrayWithGrowingSpace(NAArray* array, NAGrowingSpace* spac
     if(remainingcount){
       const NAByteArray* curarray = naGetListCurrentConst(&(space->arrays));
       const NAByte* firstbyte = naGetByteArrayConstPointer(curarray);
-      naCpyn(arrayptr, firstbyte, remainingcount * space->typesize);
+      naCopyn(arrayptr, firstbyte, remainingcount * space->typesize);
     }
   }
 

@@ -13,12 +13,12 @@
 
 
 // Copies the array s to array d byte-by-byte
-NA_IAPI void naCpy8    (void* NA_RESTRICT d, const void* NA_RESTRICT s);
-NA_IAPI void naCpy16   (void* NA_RESTRICT d, const void* NA_RESTRICT s);
-NA_IAPI void naCpy32   (void* NA_RESTRICT d, const void* NA_RESTRICT s);
-NA_IAPI void naCpy64   (void* NA_RESTRICT d, const void* NA_RESTRICT s);
-NA_IAPI void naCpy128  (void* NA_RESTRICT d, const void* NA_RESTRICT s);
-NA_IAPI void naCpyn    (void* NA_RESTRICT d,
+NA_IAPI void naCopy8    (void* NA_RESTRICT d, const void* NA_RESTRICT s);
+NA_IAPI void naCopy16   (void* NA_RESTRICT d, const void* NA_RESTRICT s);
+NA_IAPI void naCopy32   (void* NA_RESTRICT d, const void* NA_RESTRICT s);
+NA_IAPI void naCopy64   (void* NA_RESTRICT d, const void* NA_RESTRICT s);
+NA_IAPI void naCopy128  (void* NA_RESTRICT d, const void* NA_RESTRICT s);
+NA_IAPI void naCopyn    (void* NA_RESTRICT d,
                   const void* NA_RESTRICT s,
                                    NAUInt count);
 
@@ -48,16 +48,16 @@ NA_IAPI void naNulln   (void* d, NAUInt count);
 
 // Fills the array of the d argument with the given bytes in increasing
 // address positions.
-NA_IAPI void naSet8(   void* d,
+NA_IAPI void naFill8(   void* d,
                       NAByte b0);
-NA_IAPI void naSet16(  void* d,
+NA_IAPI void naFill16(  void* d,
                       NAByte b0,  NAByte b1);
-NA_IAPI void naSet32(  void* d,
+NA_IAPI void naFill32(  void* d,
                       NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3);
-NA_IAPI void naSet64(  void* d,
+NA_IAPI void naFill64(  void* d,
                       NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
                       NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7);
-NA_IAPI void naSet128( void* d,
+NA_IAPI void naFill128( void* d,
                       NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
                       NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
                       NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
@@ -118,86 +118,86 @@ NA_IAPI NABool naEqual128( const void* s,
 #include <string.h>
 
 
-NA_IDEF void naCpy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s){
+NA_IDEF void naCopy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
     NAInt dist = (NAByte*)d - (NAByte*)s;
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 1)
-      naError("naCpy8", "Restrict pointers overlap.");
+      naError("naCopy8", "Restrict pointers overlap.");
     if(!d){
-      naCrash("naCpy8", "Pointer d is Null-Pointer.");
+      naCrash("naCopy8", "Pointer d is Null-Pointer.");
       return;
     }
     if(!s){
-      naCrash("naCpy8", "Pointer s is Null-Pointer.");
+      naCrash("naCopy8", "Pointer s is Null-Pointer.");
       return;
     }
   #endif
   *(uint8*)d = *(uint8*)s;
 }
-NA_IDEF void naCpy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
+NA_IDEF void naCopy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
     NAInt dist = (NAByte*)d - (NAByte*)s;
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 2)
-      naError("naCpy16", "Restrict pointers overlap.");
+      naError("naCopy16", "Restrict pointers overlap.");
     if(!d){
-      naCrash("naCpy16", "Pointer d is Null-Pointer.");
+      naCrash("naCopy16", "Pointer d is Null-Pointer.");
       return;
     }
     if(!s){
-      naCrash("naCpy16", "Pointer s is Null-Pointer.");
+      naCrash("naCopy16", "Pointer s is Null-Pointer.");
       return;
     }
   #endif
   *(uint16*)d = *(uint16*)s;
 }
-NA_IDEF void naCpy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
+NA_IDEF void naCopy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
     NAInt dist = (NAByte*)d - (NAByte*)s;
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 4)
-      naError("naCpy32", "Restrict pointers overlap.");
+      naError("naCopy32", "Restrict pointers overlap.");
     if(!d){
-      naCrash("naCpy32", "Pointer d is Null-Pointer.");
+      naCrash("naCopy32", "Pointer d is Null-Pointer.");
       return;
     }
     if(!s){
-      naCrash("naCpy32", "Pointer s is Null-Pointer.");
+      naCrash("naCopy32", "Pointer s is Null-Pointer.");
       return;
     }
   #endif
   *(uint32*)d = *(uint32*)s;
 }
-NA_IDEF void naCpy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
+NA_IDEF void naCopy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
     NAInt dist = (NAByte*)d - (NAByte*)s;
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 8)
-      naError("naCpy64", "Restrict pointers overlap.");
+      naError("naCopy64", "Restrict pointers overlap.");
     if(!d){
-      naCrash("naCpy64", "Pointer d is Null-Pointer.");
+      naCrash("naCopy64", "Pointer d is Null-Pointer.");
       return;
     }
     if(!s){
-      naCrash("naCpy64", "Pointer s is Null-Pointer.");
+      naCrash("naCopy64", "Pointer s is Null-Pointer.");
       return;
     }
   #endif
   *(uint64*)d = *(uint64*)s;
 }
-NA_IDEF void naCpy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
+NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
     NAInt dist = (NAByte*)d - (NAByte*)s;
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 16)
-      naError("naCpy128", "Restrict pointers overlap.");
+      naError("naCopy128", "Restrict pointers overlap.");
     if(!d){
-      naCrash("naCpy128", "Pointer d is Null-Pointer.");
+      naCrash("naCopy128", "Pointer d is Null-Pointer.");
       return;
     }
     if(!s){
-      naCrash("naCpy128", "Pointer s is Null-Pointer.");
+      naCrash("naCopy128", "Pointer s is Null-Pointer.");
       return;
     }
   #endif
@@ -206,20 +206,20 @@ NA_IDEF void naCpy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
   s = ((NAByte*)s) + 8;
   *(uint64*)d = *(uint64*)s;
 }
-NA_IDEF void naCpyn(void* NA_RESTRICT d,
+NA_IDEF void naCopyn(void* NA_RESTRICT d,
               const void* NA_RESTRICT s,
                                NAUInt count){
   #ifndef NDEBUG
     if(!d){
-      naCrash("naCpy8", "Pointer d is Null-Pointer.");
+      naCrash("naCopy8", "Pointer d is Null-Pointer.");
       return;
     }
     if(!s){
-      naCrash("naCpy8", "Pointer s is Null-Pointer.");
+      naCrash("naCopy8", "Pointer s is Null-Pointer.");
       return;
     }
     if(count < 1){
-      naCrash("naCpyn", "count is < 1.");
+      naCrash("naCopyn", "count is < 1.");
       return;
     }
   #endif
@@ -393,12 +393,12 @@ NA_IDEF void naNulln(void* d, NAUInt count){
 // Set multiple bytes to the contents of a given pointer
 // ///////////////////////////////////////////////////////////
 
-NA_IDEF void naSet8( void* d,
+NA_IDEF void naFill8( void* d,
                     NAByte b0){
   register NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!d){
-      naCrash("naSet8", "Pointer is Null-Pointer.");
+      naCrash("naFill8", "Pointer is Null-Pointer.");
       return;
     }
   #endif
@@ -406,12 +406,12 @@ NA_IDEF void naSet8( void* d,
   *p = b0;
 }
 
-NA_IDEF void naSet16( void* d,
+NA_IDEF void naFill16( void* d,
                      NAByte b0, NAByte b1){
   register NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!d){
-      naCrash("naSet16", "Pointer is Null-Pointer.");
+      naCrash("naFill16", "Pointer is Null-Pointer.");
       return;
     }
   #endif
@@ -419,12 +419,12 @@ NA_IDEF void naSet16( void* d,
   *p++ = b0; *p = b1;
 }
 
-NA_IDEF void naSet32( void* d,
+NA_IDEF void naFill32( void* d,
                      NAByte b0, NAByte b1, NAByte b2, NAByte b3){
   register NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!d){
-      naCrash("naSet32", "Pointer is Null-Pointer.");
+      naCrash("naFill32", "Pointer is Null-Pointer.");
       return;
     }
   #endif
@@ -432,13 +432,13 @@ NA_IDEF void naSet32( void* d,
   *p++ = b0; *p++ = b1; *p++ = b2; *p = b3;
 }
 
-NA_IDEF void naSet64( void* d,
+NA_IDEF void naFill64( void* d,
                      NAByte b0, NAByte b1, NAByte b2, NAByte b3,
                      NAByte b4, NAByte b5, NAByte b6, NAByte b7){
   register NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!d){
-      naCrash("naSet64", "Pointer is Null-Pointer.");
+      naCrash("naFill64", "Pointer is Null-Pointer.");
       return;
     }
   #endif
@@ -447,7 +447,7 @@ NA_IDEF void naSet64( void* d,
   *p++ = b4; *p++ = b5; *p++ = b6; *p   = b7;
 }
 
-NA_IDEF void naSet128( void* d,
+NA_IDEF void naFill128( void* d,
                       NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
                       NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
                       NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
@@ -455,7 +455,7 @@ NA_IDEF void naSet128( void* d,
   register NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!d){
-      naCrash("naSet128", "Pointer is Null-Pointer.");
+      naCrash("naFill128", "Pointer is Null-Pointer.");
       return;
     }
   #endif

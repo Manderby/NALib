@@ -206,10 +206,15 @@
 // library which is built with NALib.
 
 
-#ifndef va_copy
-  // va_copy is missing on some systems. This is the definition which most
-  // probably works:
-  #define va_copy(d,s) ((d) = (s))
+// va_copy is defined since C99. But before, you had to use something like
+// the following if not available.
+#ifndef NA_C99
+  #ifndef va_copy
+    #define va_copy(d,s) (memcpy (&d, &s, sizeof (va_list)))
+    // This definition is proposed to be the most secure fallback solution. But
+    // on many systems, the following definition works as well:
+    // #define va_copy(d,s) ((d) = (s))
+  #endif
 #endif
 
 

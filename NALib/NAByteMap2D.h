@@ -19,6 +19,13 @@ struct NAMapi{
 };
 
 
+typedef struct NAMap3i NAMap3i;
+struct NAMap3i{
+  NABoxi box;       // The origin and size of the map
+  void* data;       // the pointer to the data;
+};
+
+
 
 // An NAByteMap2D stores a rectangular, two-dimensional field of bytes with a
 // specific origin and size. Its components can be accessed using the integer
@@ -183,7 +190,7 @@ NA_IAPI void naMoveByteMap2DBySizei(NAByteMap2D* map2d, NASizei size);
 // ///////////////////////////////////////////////////////////////////////
 
 
-#include "NAPointer.h"
+#include "NAMemory.h"
 #include "NABinaryData.h"
 
 
@@ -239,7 +246,7 @@ NA_IDEF NAByteMap2D* naInitByteMap2DWithRectiCopyingBuffer(
 //  if(naIsRectiEmpty(rect)){return naInitByteMap2D(map2d);}
   map2d = naInitByteMap2DWithRecti(map2d, rect);
   if(!naIsByteMap2DEmpty(map2d)){
-    naCpyn(map2d->map.data, buffer, rect.size.width * rect.size.height);
+    naCopyn(map2d->map.data, buffer, rect.size.width * rect.size.height);
   }
   return map2d;
 }
@@ -329,7 +336,7 @@ NA_IDEF void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect){
             naNulln(newdataptr, leadbound1);
             newdataptr += leadbound1;
           }
-          naCpyn(newdataptr, olddataptr, map2d->map.rect.size.width);
+          naCopyn(newdataptr, olddataptr, map2d->map.rect.size.width);
           newdataptr += map2d->map.rect.size.width;
           olddataptr += map2d->map.rect.size.width;
           if(trailbound1){
@@ -341,7 +348,7 @@ NA_IDEF void naEnhanceByteMap2DWithRecti(NAByteMap2D* map2d, NARecti rect){
         // The map has NOT been horizontally enhanced. Just copy the whole old
         // data block to the new one.
         NAInt totaloldsize = naGetRectiIndexCount(map2d->map.rect);
-        naCpyn(newdataptr, olddataptr, totaloldsize);
+        naCopyn(newdataptr, olddataptr, totaloldsize);
         newdataptr += totaloldsize;
 //        olddataptr += totaloldsize;
       }
@@ -585,7 +592,7 @@ NA_IDEF void naFillByteMap2DWithByteMapInRecti(NAByteMap2D* map2d,
   for(v2 = 0; v2 < rect.size.height; v2++){
     NAByte* dstptr = naGetByteMap2DMutableByte(map2d, leadpos);
     const NAByte* valueptr = naGetByteMap2DConstByte(values, leadpos);
-    naCpyn(dstptr, valueptr, rect.size.width);
+    naCopyn(dstptr, valueptr, rect.size.width);
     leadpos.y++;
   }
 }

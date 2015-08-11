@@ -303,7 +303,7 @@ NA_HDEF void naRequireFileReadBufferBytes(NAFile* file, uint16 count){
   if(file->remainingbytesinbuffer >= count){return;}  // enough bytes available
   // copy the remaining bytes to the beginning of the buffer.
   if(file->remainingbytesinbuffer){
-    naCpyn(file->buf, file->bufptr, file->remainingbytesinbuffer);
+    naCopyn(file->buf, file->bufptr, file->remainingbytesinbuffer);
   }
   // Place the bufferpointer right after these bytes...
   file->bufptr = file->buf + file->remainingbytesinbuffer;
@@ -327,7 +327,7 @@ NA_DEF void naReadFileBytes(NAFile* file, void* buf, NAFileSize count){
 
   // use the rest of the buffer, if available.
   if((file->remainingbytesinbuffer) && (count > file->remainingbytesinbuffer)){
-    naCpyn(buf, file->bufptr, file->remainingbytesinbuffer);
+    naCopyn(buf, file->bufptr, file->remainingbytesinbuffer);
     buf = ((NAByte*)buf) + file->remainingbytesinbuffer;
     count -= file->remainingbytesinbuffer;
     file->remainingbytesinbuffer = 0;
@@ -340,10 +340,10 @@ NA_DEF void naReadFileBytes(NAFile* file, void* buf, NAFileSize count){
     naRequireFileReadBufferBytes(file, (uint16)count);
     if(file->remainingbytesinbuffer < count){
       // The file must have ended and has less bytes stored than needed.
-      naCpyn(buf, file->bufptr, (size_t)file->remainingbytesinbuffer);
+      naCopyn(buf, file->bufptr, (size_t)file->remainingbytesinbuffer);
       file->remainingbytesinbuffer = 0;
     }else{
-      naCpyn(buf, file->bufptr, (size_t)count);
+      naCopyn(buf, file->bufptr, (size_t)count);
       file->bufptr += count;
       file->remainingbytesinbuffer -= (uint16)count;
     }
@@ -694,7 +694,7 @@ NA_DEF void naWriteFileBytes(NAFile* file, const void* ptr, NAInt count){
     naWrite(file->desc, ptr, count);
   }else{
     naRequireFileWriteBufferBytes(file, (uint16)count);
-    naCpyn(file->bufptr, ptr, (size_t)count);
+    naCopyn(file->bufptr, ptr, (size_t)count);
     file->bufptr += count;
     file->remainingbytesinbuffer -= (uint16)count;
   }

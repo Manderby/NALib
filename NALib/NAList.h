@@ -48,7 +48,7 @@ NA_IAPI void    naClearList  (NAList* list, NADestructor destructor);
 NA_IAPI void    naEmptyList  (NAList* list, NADestructor destructor);
 
 // Returns the number of elements in this list.
-NA_IAPI NAInt   naGetListCount(const NAList* list);
+NA_IAPI NAUInt  naGetListCount(const NAList* list);
 
 
 // ///////////////////////////
@@ -132,7 +132,7 @@ NA_IAPI       void* naGetListNextMutable      (const NAList* list);
 // access the current element. Note that for accessing the current element,
 // the use of naGetListCurrent would be preferable.
 NA_IAPI const void* naIterateListConst    (const NAList* list, NAInt step);
-NA_IAPI       void* naIterateListMutable  (const NAList* list, NAInt step);
+NA_IAPI       void* naIterateListMutable  (      NAList* list, NAInt step);
 
 // With the following functions, you can initialize the internal pointer.
 NA_IAPI void naFirstList                  (const NAList* list);
@@ -173,7 +173,7 @@ NA_IAPI NABool naIsListAtLast             (const NAList* list);
 // Inline Implementations: See readme file for more expanation.
 // ///////////////////////////////////////////////////////////////////////
 
-#include "NAPointer.h"
+#include "NAMemory.h"
 
 
 // The following struct should be opaque. Or even better: Completely invisible
@@ -187,7 +187,7 @@ struct NAListElement{
 };
 
 struct NAList{
-  NAInt count;            // The number of elements stored in this list.
+  NAUInt count;            // The number of elements stored in this list.
   NAListElement sentinel; // The sentinel of the list.
                           // Stores the first and last element of the list
                           // as next and prev pointer. The content is NA_NULL.
@@ -258,7 +258,7 @@ NA_IDEF void naEmptyList(NAList* list, NADestructor destructor){
 
 
 
-NA_IDEF NAInt naGetListCount(const NAList* list){
+NA_IDEF NAUInt naGetListCount(const NAList* list){
   return list->count;
 }
 
@@ -309,7 +309,7 @@ NA_IDEF const void* naIterateListConst(const NAList* list, NAInt step){
 
 
 
-NA_IDEF void* naIterateListMutable(const NAList* list, NAInt step){
+NA_IDEF void* naIterateListMutable(NAList* list, NAInt step){
   void* returnptr; // Declaration before implementation. C90
   if(list->cur == &(list->sentinel)){return NA_NULL;}
   returnptr = naGetLValueMutable(&(list->cur->lvalue));
