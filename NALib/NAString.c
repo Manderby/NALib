@@ -1146,14 +1146,14 @@ NA_DEF NABool naEqualStringToUTF8CStringLiteral(const NAString* string, const NA
 
 
 
-//NA_DEF NABool naEqualStringToString(     const NAString* string1,
-//                                  const NAString* string2){
-//  NAUInt stringsize1 = naGetStringSize(string1);
-//  NAUInt stringsize2 = naGetStringSize(string2);
-//  if(stringsize1 != stringsize2){return NA_FALSE;}
-//  if(stringsize1 == 0){return NA_TRUE;}
-//  return !memcmp(naGetByteArrayConstPointer(&(string1->array)), naGetByteArrayConstPointer(&(string2->array)), (size_t)stringsize1);
-//}
+NA_DEF NABool naEqualStringToString(     const NAString* string1,
+                                  const NAString* string2){
+  NAUInt stringsize1 = naGetStringSize(string1);
+  NAUInt stringsize2 = naGetStringSize(string2);
+  if(stringsize1 != stringsize2){return NA_FALSE;}
+  if(stringsize1 == 0){return NA_TRUE;}
+  return !memcmp(naGetByteArrayConstPointer(&(string1->array)), naGetByteArrayConstPointer(&(string2->array)), (size_t)stringsize1);
+}
 
 
 

@@ -356,7 +356,7 @@ NA_IDEF NABool naLocateListIndex(const NAList* list, NAInt indx){
     mutablelist->cur = &(mutablelist->sentinel);
     return NA_FALSE;
   }
-  if(indx >= list->count){
+  if(indx >= (NAInt)list->count){
     #ifndef NDEBUG
       naError("naLocateListIndex", "Index overflows the range of the list");
     #endif
@@ -364,7 +364,7 @@ NA_IDEF NABool naLocateListIndex(const NAList* list, NAInt indx){
     return NA_FALSE;
   }
   
-  if(indx < (list->count / 2)){
+  if(indx < ((NAInt)list->count / 2)){
     // Go from leading to trailing
     mutablelist->cur = list->sentinel.next;
     while(indx){

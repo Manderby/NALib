@@ -53,12 +53,13 @@ NA_HDEF void naComputeOctTreeAlignment(NAUInt childsize, NAVertexi childorigin, 
   // In order to achieve a full coverage of the whole space
   // (negative and positive in all dimensions), we align parent nodes
   // in a cyclic way.
+  NABoxi alignbox;
   NAVertexi alignorigin = childorigin;
   NAInt cycle = naLog2i(childsize) % 8;
   if(cycle & 1){alignorigin.x -= childsize;}
   if(cycle & 2){alignorigin.y -= childsize;}
   if(cycle & 4){alignorigin.z -= childsize;}
-  NABoxi alignbox = naMakeBoxi(alignorigin, naMakeVolumei(childsize * 2, childsize * 2, childsize * 2));
+  alignbox = naMakeBoxi(alignorigin, naMakeVolumei(childsize * 2, childsize * 2, childsize * 2));
   *parentorigin = naMakeVertexiWithAlignment(childorigin, alignbox);
   *childsegment = 0;
   if(parentorigin->x != childorigin.x){*childsegment |= 1;}
@@ -106,9 +107,10 @@ NA_HDEF NAOctTreeNode* naAddOctTreeNodeParent(NAOctTree* tree, NAOctTreeNode* ch
 
   NAInt childsegment;
   NAVertexi parentorigin;
+  NAOctTreeNode* node;
   naComputeOctTreeAlignment(childnode->childsize * 2, childnode->childorigin[0], &parentorigin, &childsegment);
   
-  NAOctTreeNode* node = naAllocOctTreeNode(
+  node = naAllocOctTreeNode(
           childnode->childsize * 2,
           -1,
           NA_NULL,
@@ -170,6 +172,7 @@ NA_HDEF void naCopyOctTreeNode(NAOctTree* newtree, NAOctTreeNode* parentnode, NA
     }
     if(newtree->callbacks.leafchanged){newtree->callbacks.leafchanged(node->nodedata, -1, (const void* const) node->child);}
   }else{
+    const void* childdata[8];
     if(oldnode->child[0]){naCopyOctTreeNode(newtree, node, 0, oldnode->child[0], contenttree);}
     if(oldnode->child[1]){naCopyOctTreeNode(newtree, node, 1, oldnode->child[1], contenttree);}
     if(oldnode->child[2]){naCopyOctTreeNode(newtree, node, 2, oldnode->child[2], contenttree);}
@@ -178,7 +181,6 @@ NA_HDEF void naCopyOctTreeNode(NAOctTree* newtree, NAOctTreeNode* parentnode, NA
     if(oldnode->child[5]){naCopyOctTreeNode(newtree, node, 5, oldnode->child[5], contenttree);}
     if(oldnode->child[6]){naCopyOctTreeNode(newtree, node, 6, oldnode->child[6], contenttree);}
     if(oldnode->child[7]){naCopyOctTreeNode(newtree, node, 7, oldnode->child[7], contenttree);}
-    const void* childdata[8];
     naCreateOctTreeNodeChildData(childdata, node);
     if(newtree->callbacks.childchanged){newtree->callbacks.childchanged(node->nodedata, -1, childdata);}
   }
@@ -380,6 +382,8 @@ NA_DEF NAOctTree* naCopyOctTreeWithShift(NAOctTree* newtree, const NAOctTree* du
   NABoxi box5;
   NABoxi box6;
   NABoxi box7;
+  const void* dupchunk;
+  NAVertexi origin;
 
   #ifndef NDEBUG
     if(!newtree)
@@ -405,8 +409,6 @@ NA_DEF NAOctTree* naCopyOctTreeWithShift(NAOctTree* newtree, const NAOctTree* du
   box6 = naMakeBoxiE(naMakeVertexi(shift.width, shift.height + y2bound, shift.depth + z2bound), naMakeVolumeiE(x2bound, y1bound, z1bound));
   box7 = naMakeBoxiE(naMakeVertexi(shift.width + x2bound, shift.height + y2bound, shift.depth + z2bound), naMakeVolumeiE(x1bound, y1bound, z1bound));
   
-  const void* dupchunk;
-  NAVertexi origin;
   naFirstOctTree(duptree);
   while((dupchunk = naIterateOctTreeConst(duptree, &origin))){
     NAVertexi neworigin;
@@ -551,6 +553,8 @@ NA_HDEF NAOctTreeNode* naLocateOctTreeNode(NAOctTree* tree, NAOctTreeNode* node,
 
 
 NA_HDEF NAOctTreeNode* naLocateOctTreeLeafParent(NAOctTree* tree, NAVertexi coord, NABool create, const void* serialdata, NABool* didcreate, NAInt* leafsegment){
+  NAOctTreeNode* node;
+
   if(tree->visitnode){
     // We start looking at the visit node.
     return naLocateOctTreeNode(tree, tree->visitnode, coord, create, serialdata, didcreate, leafsegment);
@@ -568,7 +572,7 @@ NA_HDEF NAOctTreeNode* naLocateOctTreeLeafParent(NAOctTree* tree, NAVertexi coor
     NAVertexi rootorigin;
     naComputeOctTreeAlignment(tree->leafsize, leaforigin, &rootorigin, leafsegment);
 
-    NAOctTreeNode* node = naAllocOctTreeNode(
+    node = naAllocOctTreeNode(
             tree->leafsize,
             -1,
             NA_NULL,
@@ -596,6 +600,8 @@ NA_DEF NAOctTree* naInitOctTreeWithDeserialization(NAOctTree* tree, const void* 
   const NAByte* dataptr;
   uint64 datasize;
   uint64 leafsize;
+  NAInt leafsegment;
+  NAOctTreeNode* node;
   #ifndef NDEBUG
     if(!tree)
       {naCrash("naCopyOctTreeWithShift", "tree is NULL"); return NA_NULL;}
@@ -618,8 +624,7 @@ NA_DEF NAOctTree* naInitOctTreeWithDeserialization(NAOctTree* tree, const void* 
     datasize -= 3 * sizeof(int64);
     // Create the leaf temporarily but delete it immediately and recreate it
     // as a deserialization.
-    NAInt leafsegment;
-    NAOctTreeNode* node = naLocateOctTreeLeafParent(tree, naMakeVertexi((NAInt)posx, (NAInt)posy, (NAInt)posz), NA_TRUE, dataptr, NA_NULL, &leafsegment);
+    node = naLocateOctTreeLeafParent(tree, naMakeVertexi((NAInt)posx, (NAInt)posy, (NAInt)posz), NA_TRUE, dataptr, NA_NULL, &leafsegment);
     bytesread = callbacks.serialize(NA_NULL, node->child[leafsegment], tree->leafsize);
     dataptr += bytesread;
     datasize -= bytesread;
@@ -667,10 +672,10 @@ NA_DEF void naSerializeOctTree(const NAOctTree* tree, void* buf, uint64* bytesiz
     }
   }else{
     NAByte* dataptr = buf;
+    NAVertexi origin;
     *((uint64*)dataptr) = *bytesize; dataptr += sizeof(uint64);
     *((uint64*)dataptr) = tree->leafsize; dataptr += sizeof(uint64);
 
-    NAVertexi origin;
     while((curleaf = naIterateOctTreeConst(tree, &origin))){
       *((int64*)dataptr) = origin.x; dataptr += sizeof(int64);
       *((int64*)dataptr) = origin.y; dataptr += sizeof(int64);
@@ -771,8 +776,8 @@ NA_DEF void naFirstOctTree(const NAOctTree* tree){
 
 
 NA_DEF const void* naIterateOctTreeConst(const NAOctTree* tree, NAVertexi* origin){
-  if(!tree->root){return NA_NULL;}
   void* retptr;
+  if(!tree->root){return NA_NULL;}
   if(tree->curnode){
     retptr = tree->curnode->child[tree->cursegment];
     if(origin){*origin = tree->curnode->childorigin[tree->cursegment];}
@@ -786,8 +791,8 @@ NA_DEF const void* naIterateOctTreeConst(const NAOctTree* tree, NAVertexi* origi
 
 
 NA_DEF void* naIterateOctTreeMutable(NAOctTree* tree, NAVertexi* origin){
-  if(!tree->root){return NA_NULL;}
   void* retptr;
+  if(!tree->root){return NA_NULL;}
   if(tree->curnode){
     retptr = tree->curnode->child[tree->cursegment];
     if(origin){*origin = tree->curnode->childorigin[tree->cursegment];}
@@ -847,8 +852,8 @@ NA_DEF void naFirstOctTreeInBox(const NAOctTree* tree, NABoxi box){
 
 
 NA_DEF const void* naIterateOctTreeInBoxConst(const NAOctTree* tree, NAVertexi* origin, NABoxi box){
-  if(!tree->root){return NA_NULL;}
   void* retptr;
+  if(!tree->root){return NA_NULL;}
   if(tree->curnode){
     retptr = tree->curnode->child[tree->cursegment];
     if(origin){*origin = tree->curnode->childorigin[tree->cursegment];}
@@ -862,8 +867,8 @@ NA_DEF const void* naIterateOctTreeInBoxConst(const NAOctTree* tree, NAVertexi* 
 
 
 NA_DEF void* naIterateOctTreeInBoxMutable(NAOctTree* tree, NAVertexi* origin, NABoxi box){
-  if(!tree->root){return NA_NULL;}
   void* retptr;
+  if(!tree->root){return NA_NULL;}
   if(tree->curnode){
     retptr = tree->curnode->child[tree->cursegment];
     if(origin){*origin = tree->curnode->childorigin[tree->cursegment];}
@@ -878,10 +883,12 @@ NA_DEF void* naIterateOctTreeInBoxMutable(NAOctTree* tree, NAVertexi* origin, NA
 
 NA_DEF void naSetOctTreeInBox(NAOctTree* tree, NABoxi box, NAOctTreeDataSetter datasetter, const void* userdata){
   NABoxi chunkbox;
+  NAVertexi start;
+  NAVertexi end;
   chunkbox = naMakeBoxi(naMakeVertexi(0, 0, 0), naMakeVolumei(tree->leafsize, tree->leafsize, tree->leafsize));
 
-  NAVertexi start = naMakeVertexiWithAlignment(box.vertex, chunkbox);
-  NAVertexi end = naGetBoxiEnd(box);
+  start = naMakeVertexiWithAlignment(box.vertex, chunkbox);
+  end = naGetBoxiEnd(box);
   
   for(chunkbox.vertex.z = start.z; chunkbox.vertex.z < end.z; chunkbox.vertex.z += tree->leafsize){
     for(chunkbox.vertex.y = start.y; chunkbox.vertex.y < end.y; chunkbox.vertex.y += tree->leafsize){

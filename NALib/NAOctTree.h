@@ -164,12 +164,6 @@ typedef void* (*NAOctTreeDeserializer)(     NAVertexi origin,
 
 
 
-typedef void* (*NAOctTreeMutexCreate)(void);
-typedef void  (*NAOctTreeMutexDestroy)(void* mutex);
-typedef void  (*NAOctTreeMutexLock)(void* mutex);
-typedef void  (*NAOctTreeMutexUnlock)(void* mutex);
-
-
 // This is the callback struct you can use to create an NAOctTree. After
 // creation, these functions can no longer be changed.
 typedef struct NAOctTreeCallbacks_struct{
@@ -182,10 +176,6 @@ typedef struct NAOctTreeCallbacks_struct{
   NAOctTreeChildChanged     childchanged;
   NAOctTreeSerializer       serialize;
   NAOctTreeDeserializer     deserialize;
-  NAOctTreeMutexCreate      createmutex;
-  NAOctTreeMutexDestroy     destroymutex;
-  NAOctTreeMutexLock        lockmutex;
-  NAOctTreeMutexUnlock      unlockmutex;
 } NAOctTreeCallbacks;
 
 // A typedef of an opaque type not accessible to the programmer.
@@ -200,7 +190,6 @@ struct NAOctTree{
   NAOctTreeNode* visitnode;    // visitnode stores tha last node visited. This
   NAOctTreeNode* curnode;      // Makes searching in the tree very fast.
   NAUInt cursegment;           // curnode and cursegment are for the iteration
-  void* mutex;                 // A mutex for milti-threading.
 };
 
 
