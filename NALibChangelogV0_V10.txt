@@ -42,7 +42,7 @@ Other things:
 - Renamed naAllocateXXX functions to naMallocXXX. Added naFree.
 - Changed and renamed naAllocNALibStruct to naAlloc. Now unconditional alloc.
 - naDestroyXXX functions have been removed. Use naFree or free to deallocate.
-- Added NA_INVALID_INDEX to NAByteArray
+- Added NA_INVALID_MEMORY_INDEX to NAByteArray
 - String escaping has been removed
 - Added naGetSystemMemoryPageSize and naGetSystemMemoryPageSizeMask,
   naAllocatePageAligned and naFreePageAligned, naGetZeroFillSize,
@@ -151,7 +151,7 @@ Other things:
 - Moved many basic functions to NAMathOperators.h
 - Renamed IsInside to Inside
 - Renamed some symbols containing From to With
-- Removed NA_INVALID_INDEX
+- Removed NA_INVALID_MEMORY_INDEX
 - Re-entered return instructions after naCrash calls.
 - Improvement of some comments and some error checks
 
@@ -248,7 +248,7 @@ Other things:
 - Added a copying option to naCreateArrayOutOfGrowingSpace
 - Implemented naGetArrayConstPointer and naGetArrayMutablePointer
 - Added naGetArrayTypeSize and naDecoupleArray
-- Added NA_INVALID_INDEX to NAByteArray.h
+- Added NA_INVALID_MEMORY_INDEX to NAByteArray.h
 - Added ConstContent and MutableContent to NAList.
 - Added naGetGrowingSpaceConstPointer, naGetGrowingSpaceMutablePointer,
   naGetGrowingSpaceConstElement and naGetGrowingSpaceMutableElement
@@ -281,7 +281,7 @@ was introduced.
   warnings. The new macro names are: NA_NL_UNIX, NA_NL_MAC9, NA_NL_WIN, NA_NL,
   NA_TAB and NA_F_INT (for the former NA$INT).
 - More and improved comments.
-- More debug checks. Removed some todos.
+- More debug checks. Removed some to-dos.
 - Small bugfixes
 
 

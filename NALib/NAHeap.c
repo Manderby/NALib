@@ -64,43 +64,43 @@
 
 // These functions will be stored as function pointers according to the flags
 // set on creation. Therefore, they are not marked as inline.
-NA_HDEF NAInt naHeapMoveDownMinDoubleNoBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveDownMinDoubleNoBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEDOWN_NOBACK(double, >)
 }
-NA_HDEF NAInt naHeapMoveDownMinFloatNoBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveDownMinFloatNoBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEDOWN_NOBACK(float, >)
 }
-NA_HDEF NAInt naHeapMoveDownMinIntNoBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveDownMinIntNoBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEDOWN_NOBACK(NAInt, >)
 }
 
-NA_HDEF NAInt naHeapMoveDownMaxDoubleNoBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveDownMaxDoubleNoBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEDOWN_NOBACK(double, <)
 }
-NA_HDEF NAInt naHeapMoveDownMaxFloatNoBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveDownMaxFloatNoBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEDOWN_NOBACK(float, <)
 }
-NA_HDEF NAInt naHeapMoveDownMaxIntNoBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveDownMaxIntNoBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEDOWN_NOBACK(NAInt, <)
 }
 
-NA_HDEF NAInt naHeapMoveDownMinDoubleBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveDownMinDoubleBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEDOWN_BACK(double, >)
 }
-NA_HDEF NAInt naHeapMoveDownMinFloatBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveDownMinFloatBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEDOWN_BACK(float, >)
 }
-NA_HDEF NAInt naHeapMoveDownMinIntBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveDownMinIntBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEDOWN_BACK(NAInt, >)
 }
 
-NA_HDEF NAInt naHeapMoveDownMaxDoubleBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveDownMaxDoubleBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEDOWN_BACK(double, <)
 }
-NA_HDEF NAInt naHeapMoveDownMaxFloatBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveDownMaxFloatBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEDOWN_BACK(float, <)
 }
-NA_HDEF NAInt naHeapMoveDownMaxIntBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveDownMaxIntBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEDOWN_BACK(NAInt, <)
 }
 
@@ -117,8 +117,8 @@ NA_HDEF NAInt naHeapMoveDownMaxIntBack(NAHeap* heap, const void* key, NAInt curi
   NAHeapNoBackEntry* thedata = (NAHeapNoBackEntry*)(heap->data);\
   const type* thekey = (const type*)key;\
   \
-  NAInt indexl = curindex * 2 + 0;\
-  NAInt indexr = curindex * 2 + 1;\
+  NAUInt indexl = curindex * 2 + 0;\
+  NAUInt indexr = curindex * 2 + 1;\
   /* as long as there is at least one possible position... */ \
   while(NA_TRUE){\
     if(indexl > heap->count){\
@@ -164,8 +164,8 @@ NA_HDEF NAInt naHeapMoveDownMaxIntBack(NAHeap* heap, const void* key, NAInt curi
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);\
   const type* thekey = (const type*)key;\
   \
-  NAInt indexl = curindex * 2 + 0;\
-  NAInt indexr = curindex * 2 + 1;\
+  NAUInt indexl = curindex * 2 + 0;\
+  NAUInt indexr = curindex * 2 + 1;\
   /* as long as there is at least one possible position... */ \
   while(NA_TRUE){\
     if(indexl > heap->count){\
@@ -210,44 +210,68 @@ NA_HDEF NAInt naHeapMoveDownMaxIntBack(NAHeap* heap, const void* key, NAInt curi
 
 // These functions will be stored as function pointers according to the flags
 // set on creation. Therefore, they are not marked as inline.
-NA_HDEF NAInt naHeapMoveUpMinDoubleNoBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveUpMinDoubleNoBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEUP_NOBACK(double, <)
 }
-NA_HDEF NAInt naHeapMoveUpMinFloatNoBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveUpMinFloatNoBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEUP_NOBACK(float, <)
 }
-NA_HDEF NAInt naHeapMoveUpMinIntNoBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveUpMinIntNoBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEUP_NOBACK(NAInt, <)
 }
 
-NA_HDEF NAInt naHeapMoveUpMaxDoubleNoBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveUpMaxDoubleNoBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEUP_NOBACK(double, >)
 }
-NA_HDEF NAInt naHeapMoveUpMaxFloatNoBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveUpMaxFloatNoBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEUP_NOBACK(float, >)
 }
-NA_HDEF NAInt naHeapMoveUpMaxIntNoBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveUpMaxIntNoBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEUP_NOBACK(NAInt, >)
 }
 
-NA_HDEF NAInt naHeapMoveUpMinDoubleBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveUpMinDoubleBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEUP_BACK(double, <)
 }
-NA_HDEF NAInt naHeapMoveUpMinFloatBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveUpMinFloatBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEUP_BACK(float, <)
 }
-NA_HDEF NAInt naHeapMoveUpMinIntBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveUpMinIntBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEUP_BACK(NAInt, <)
 }
 
-NA_HDEF NAInt naHeapMoveUpMaxDoubleBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveUpMaxDoubleBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEUP_BACK(double, >)
 }
-NA_HDEF NAInt naHeapMoveUpMaxFloatBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveUpMaxFloatBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEUP_BACK(float, >)
 }
-NA_HDEF NAInt naHeapMoveUpMaxIntBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveUpMaxIntBack(NAHeap* heap, const void* key, NAUInt curindex){
   NA_HEAPMOVEUP_BACK(NAInt, >)
+}
+
+
+
+NA_HDEF void naGrowHeap(NAHeap* heap){
+  NAUInt entrysize = (NAByte*)(heap->root) - (NAByte*)(heap->data);
+  void* newdata = naMalloc((-heap->maxcount * 2 + 1) * entrysize);
+  naCopyn(newdata, heap->data, (heap->count + 1) * entrysize);
+  naFree(heap->data);
+  heap->data = newdata;
+  heap->root = (NAByte*)(heap->data) + entrysize;
+  heap->maxcount *= 2;
+}
+
+
+
+NA_HDEF void naShrinkHeap(NAHeap* heap){
+  NAUInt entrysize = (NAByte*)(heap->root) - (NAByte*)(heap->data);
+  void* newdata = naMalloc((-heap->maxcount / 2 + 1) * entrysize);
+  naCopyn(newdata, heap->data, (heap->count + 1) * entrysize);
+  naFree(heap->data);
+  heap->data = newdata;
+  heap->root = (NAByte*)(heap->data) + entrysize;
+  heap->maxcount /= 2;
 }
 
 
@@ -257,14 +281,15 @@ NA_HDEF void naInsertHeapElementConstNoBack(NAHeap* heap, const void* data, cons
   NAHeapNoBackEntry* thedata;
   NA_UNUSED(backpointer);
   #ifndef NDEBUG
-    if(heap->count == heap->maxcount)
+    if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
       naError("naInsertHeapElementConstNoBack", "Heap overflow.");
     if(backpointer)
       naError("naInsertHeapElementConstNoBack", "Heap dos not store backpointers. packpointer should be null. Ignored.");
   #endif
+  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapNoBackEntry*)(heap->data);
-  thedata[newindex].ptr = naMakeLValueConst(data);
+  thedata[newindex].ptr = naMakePtrWithConstBuffer(data, NA_ZERO, NA_ZERO);
   thedata[newindex].key = key;
   heap->count++;
 }
@@ -275,12 +300,13 @@ NA_HDEF void naInsertHeapElementConstBack(NAHeap* heap, const void* data, const 
   NAInt newindex;
   NAHeapBackEntry* thedata;
   #ifndef NDEBUG
-    if(heap->count == heap->maxcount)
+    if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
       naError("naInsertHeapElementConstBack", "Heap overflow.");
   #endif
+  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapBackEntry*)(heap->data);
-  thedata[newindex].ptr = naMakeLValueConst(data);
+  thedata[newindex].ptr = naMakePtrWithConstBuffer(data, NA_ZERO, NA_ZERO);
   thedata[newindex].key = key;
   if(backpointer){
     thedata[newindex].backpointer = backpointer;
@@ -302,14 +328,15 @@ NA_HDEF void naInsertHeapElementMutableNoBack(NAHeap* heap, void* data, const vo
   NAHeapNoBackEntry* thedata;
   NA_UNUSED(backpointer);
   #ifndef NDEBUG
-    if(heap->count == heap->maxcount)
+    if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
       naError("naInsertHeapElementMutableNoBack", "Heap overflow.");
     if(backpointer)
       naError("naInsertHeapElementMutableNoBack", "Heap dos not store backpointers. packpointer should be null. Ignored.");
   #endif
+  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapNoBackEntry*)(heap->data);
-  thedata[newindex].ptr = naMakeLValueMutable(data);
+  thedata[newindex].ptr = naMakePtrWithMutableBuffer(data, NA_ZERO, NA_ZERO);
   thedata[newindex].key = key;
   heap->count++;
 }
@@ -320,12 +347,13 @@ NA_HDEF void naInsertHeapElementMutableBack(NAHeap* heap, void* data, const void
   NAInt newindex;
   NAHeapBackEntry* thedata;
   #ifndef NDEBUG
-    if(heap->count == heap->maxcount)
+    if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
       naError("naInsertHeapElementMutableBack", "Heap overflow.");
   #endif
+  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapBackEntry*)(heap->data);
-  thedata[newindex].ptr = naMakeLValueMutable(data);
+  thedata[newindex].ptr = naMakePtrWithMutableBuffer(data, NA_ZERO, NA_ZERO);
   thedata[newindex].key = key;
   if(backpointer){
     thedata[newindex].backpointer = backpointer;
@@ -349,12 +377,13 @@ NA_HDEF const void* naRemoveHeapRootConstNoBack(NAHeap* heap){
     if(heap->count == 0)
       naError("naRemoveHeapRootConst", "Heap is empty.");
   #endif
-  returnvalue = naGetLValueConst(&(thedata[1].ptr));
+  returnvalue = naGetPtrConst(&(thedata[1].ptr));
   heap->count--;
   if(heap->count){
     NAInt curindex = heap->moveup(heap, thedata[heap->count + 1].key, 1);
     thedata[curindex] = thedata[heap->count + 1];
   }
+  if(heap->maxcount < 0 && ((NAInt)heap->count < -heap->maxcount / 4)){naShrinkHeap(heap);}
   return returnvalue;
 }
 
@@ -367,7 +396,7 @@ NA_HDEF const void* naRemoveHeapRootConstBack(NAHeap* heap){
     if(heap->count == 0)
       naError("naRemoveHeapRootConst", "Heap is empty.");
   #endif
-  returnvalue = naGetLValueConst(&(thedata[1].ptr));
+  returnvalue = naGetPtrConst(&(thedata[1].ptr));
   *(thedata[1].backpointer) = 0;
   heap->count--;
   if(heap->count){
@@ -375,6 +404,7 @@ NA_HDEF const void* naRemoveHeapRootConstBack(NAHeap* heap){
     thedata[curindex] = thedata[heap->count + 1];
     *(thedata[curindex].backpointer) = curindex;
   }
+  if(heap->maxcount < 0 && ((NAInt)heap->count < -heap->maxcount / 4)){naShrinkHeap(heap);}
   return returnvalue;
 }
 
@@ -387,12 +417,13 @@ NA_HDEF void* naRemoveHeapRootMutableNoBack(NAHeap* heap){
     if(heap->count == 0)
       naError("naRemoveHeapRootMutable", "Heap is empty.");
   #endif
-  returnvalue = naGetLValueMutable(&(thedata[1].ptr));
+  returnvalue = naGetPtrMutable(&(thedata[1].ptr));
   heap->count--;
   if(heap->count){
     NAInt curindex = heap->moveup(heap, thedata[heap->count + 1].key, 1);
     thedata[curindex] = thedata[heap->count + 1];
   }
+  if(heap->maxcount < 0 && ((NAInt)heap->count < -heap->maxcount / 4)){naShrinkHeap(heap);}
   return returnvalue;
 }
 
@@ -404,7 +435,7 @@ NA_HDEF void* naRemoveHeapRootMutableBack(NAHeap* heap){
     if(heap->count == 0)
       naError("naRemoveHeapRootMutable", "Heap is empty.");
   #endif
-  returnvalue = naGetLValueMutable(&(thedata[1].ptr));
+  returnvalue = naGetPtrMutable(&(thedata[1].ptr));
   *(thedata[1].backpointer) = 0;
   heap->count--;
   if(heap->count){
@@ -412,12 +443,13 @@ NA_HDEF void* naRemoveHeapRootMutableBack(NAHeap* heap){
     thedata[curindex] = thedata[heap->count + 1];
     *(thedata[curindex].backpointer) = curindex;
   }
+  if(heap->maxcount < 0 && ((NAInt)heap->count < -heap->maxcount / 4)){naShrinkHeap(heap);}
   return returnvalue;
 }
 
 
 
-NA_HDEF void naUpdateHeapElementNoBack(NAHeap* heap, NAInt backpointer){
+NA_HDEF void naUpdateHeapElementNoBack(NAHeap* heap, NAUInt backpointer){
   NA_UNUSED(heap);
   NA_UNUSED(backpointer);
   #ifndef NDEBUG
@@ -427,15 +459,13 @@ NA_HDEF void naUpdateHeapElementNoBack(NAHeap* heap, NAInt backpointer){
 
 
 
-NA_HDEF void naUpdateHeapElementBack(NAHeap* heap, NAInt backpointer){
+NA_HDEF void naUpdateHeapElementBack(NAHeap* heap, NAUInt backpointer){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   NAHeapBackEntry tmp;
   NAInt curindex;
   #ifndef NDEBUG
     if(backpointer > heap->count)
       naError("naUpdateHeapElement", "backpointer makes no sense.");
-    if(backpointer < 0)
-      naError("naUpdateHeapElement", "backpointer is invalid.");
     if(backpointer == 0)
       naError("naUpdateHeapElement", "backpointer says that element is not part of the heap.");
   #endif
@@ -460,18 +490,26 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
       naCrash("naInitHeap", "Heap count is too big.");
       return NA_NULL;
     }
-    if(count <= 0)
-      naError("naInitHeap", "Heap count smallerequal zero.");
-
-    heap->maxcount = count;
+    // Note that the following case count==0 could be automatically converted
+    // to -1. But there might be a different use in the future. Therefore, we
+    // define these two values to be invalid now.
+    if(count == 0)
+      naError("naInitHeap", "count == 0 is not allowed.");
+    // Make sure, the negative count is a power of 2.
+    if(count < 0){
+      NAInt countpower = naLog2i(-count);
+      if((NAInt)naPow(2, countpower) != -count)
+        naError("naInitHeap", "negative count must be a power of 2.");
+    }
   #endif
+  heap->maxcount = count;
   
   if(!(flags & NA_HEAP_STORES_BACKPOINTERS)){
     // entries store no backpointers
     
     entrysize = sizeof(NAHeapNoBackEntry);
     heap->count = 0;
-    heap->data = naMalloc((count + 1) * entrysize);
+    heap->data = naMalloc((naAbsi(heap->maxcount) + 1) * entrysize);
     heap->root = &(((NAHeapNoBackEntry*)heap->data)[1]);
 
     heap->insertConst = naInsertHeapElementConstNoBack;
@@ -521,7 +559,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
     
     entrysize = sizeof(NAHeapBackEntry);
     heap->count = 0;
-    heap->data = naMalloc((count + 1) * entrysize);
+    heap->data = naMalloc((naAbsi(heap->maxcount) + 1) * entrysize);
     heap->root = &(((NAHeapBackEntry*)heap->data)[1]);
 
     heap->insertConst = naInsertHeapElementConstBack;

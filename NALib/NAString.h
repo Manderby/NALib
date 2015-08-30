@@ -230,7 +230,7 @@ NA_API NABool naIsStringEmpty(const NAString* string);
 // If startpos is negative, the character is searched from trailing to leading.
 // A negative startpos denotes the character from the end of the string. For
 // example, -1 denotes the character at [stringsize - 1].
-// When the character is not found, NA_INVALID_INDEX is returned.
+// When the character is not found, NA_INVALID_MEMORY_INDEX is returned.
 NA_API NAInt naGetStringCharacterPos(  const NAString* string,
                                             NAUTF8Char ch,
                                                  NAInt startpos);

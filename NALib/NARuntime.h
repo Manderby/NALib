@@ -31,13 +31,14 @@
 typedef struct NATypeInfo NATypeInfo;
 struct NATypeInfo{
   NAUInt typesize;
-  NADestructor desctructor;
+  NADestructor destructor;
 };
 
 
 typedef void* NATypeIdentifier;
 extern NATypeIdentifier na_NAString_identifier;
 extern NATypeIdentifier na_NAPointer_identifier;
+extern NATypeIdentifier na_NAListElement_identifier;
 
 
 NA_API void               naStartRuntime();
@@ -123,9 +124,16 @@ NA_IAPI void naReleasePointer(NAPointer* pointer);
 //   reference). The first variant is an accessor, the second one a mutator.
 NA_IAPI const void* naGetPointerConstData  (const NAPointer* pointer);
 NA_IAPI       void* naGetPointerMutableData(      NAPointer* pointer);
-
 // Authors note:
-// The last two functions are equivalent when NDEBUG is defined.
+// These two functions are equivalent when NDEBUG is defined.
+
+// Additionally, you can access the data stored in the given pointer by
+// getting one of the base memory structs:
+NA_IAPI NAPtr         naGetPointerPtr(         NAPointer* pointer);
+NA_IAPI NALValue      naGetPointerLValue(      NAPointer* pointer);
+NA_IAPI NAMemoryBlock naGetPointerMemoryBlock( NAPointer* pointer);
+NA_IAPI NACArray      naGetPointerCArray(      NAPointer* pointer);
+
 
 
 
@@ -155,33 +163,55 @@ NA_IAPI       void* naGetPointerMutableData(      NAPointer* pointer);
 
 // Opaque type. typedef is above. See explanation in readme.txt
 struct NAPointer{
-  NALValue lvalue;
+  union{
+    NAPtr         ptr;
+    NALValue      lvalue;
+    NAMemoryBlock memblock;
+    NACArray      carray;
+  } data;
   NAUInt refcount;      // Reference count.
-                        // This field also stores some flags, embedded within
-                        // the number.
+  NAUInt flags;         // Various flags.
 };
 
-// Quite often at the very base of all implementations, you have to let go
-// all the beautiful code designs learned in school and university. Sometimes,
-// there is just no other way than cheating and bit fiddling. In NALib, the
-// ownership of the data is stored using some bits of the refcount field.
+// Starting with NALib version 12, the author had to decide how to store the
+// different base memory structs in an NAPointer. There is the possibility to
+// store a pointer to such a struct which is very compact but would introduce
+// a double-derefenciation, and the actual data had to be stored at another
+// place, possibly again allocated with malloc.
 //
-// This allows to create very fast code and condition-checks but yet saves lots
-// of space while giving up only a small part of the value-range, which, as a
-// sidenote, would in this implementation still be sufficient to theoretically
-// fill the whole memory with references without ever overflowing.
-
-// This is the flags stored in the refcount field. It occupies the most
-// significant bit. Note that it would be possible to use a bit field for
-// this but the author decided to use masks, as bit fields might introduce
-// unnecessary algorithmic CPU operations when accessing refcount.
+// Therefore, the author decided to use a union-type to store the values
+// directly. This is quite a bit costly in terms of memory consumption but
+// as reference counted pointers are still a very rare thing in NALib, it
+// seemd right to the author.
 //
-// Note that in previous versions, there had been additional flags but these
-// have been eliminated or placed elsewhere.
-#define NA_POINTER_OWN_DATA       ((NAUInt)1 << (NA_SYSTEM_ADDRESS_BITS - 1))
-#define NA_POINTER_REFCOUNT_MASK  (~(NA_POINTER_OWN_DATA))
+// Additionally, as this struct suddenly became way bigger than it was before
+// version 12, the author decided, to separate refcount and flags. Before, they
+// occupied the same integer and were filtered using bitmasks. Now, they occupy
+// two integers but are easier to understand and debug.
 
 
+
+// These are the flags stored in the flags field.
+#define NA_POINTER_OWN_DATA         0x01
+#define NA_POINTER_STORES_TYPESIZE  0x02
+#define NA_POINTER_STORES_BYTESIZE  0x04
+
+
+
+
+
+NA_IDEF NAPointer* naNewPointerWithPtr(NAPtr ptr, NABool takeownership){
+  NAPointer* pointer;
+  #ifndef NDEBUG
+  if(takeownership && naIsPtrConst(&ptr))
+    naError("naNewPointerWithPtr", "Taking ownership of const ptr.");
+  #endif
+  pointer = naNew(NAPointer);
+  pointer->data.ptr = ptr;
+  pointer->refcount = 1;
+  pointer->flags = (takeownership * NA_POINTER_OWN_DATA);
+  return pointer;
+}
 
 
 
@@ -192,11 +222,41 @@ NA_IDEF NAPointer* naNewPointerWithLValue(NALValue lvalue, NABool takeownership)
     naError("naNewPointerWithLValue", "Taking ownership of const lvalue.");
   #endif
   pointer = naNew(NAPointer);
-  pointer->lvalue = lvalue;
-  pointer->refcount = 1 | (takeownership * NA_POINTER_OWN_DATA);
+  pointer->data.lvalue = lvalue;
+  pointer->refcount = 1;
+  pointer->flags = (takeownership * NA_POINTER_OWN_DATA) | NA_POINTER_STORES_TYPESIZE;
   return pointer;
 }
 
+
+
+NA_IDEF NAPointer* naNewPointerWithMemoryBlock(NAMemoryBlock memblock, NABool takeownership){
+  NAPointer* pointer;
+  #ifndef NDEBUG
+  if(takeownership && naIsMemoryBlockConst(&memblock))
+    naError("naNewPointerWithMemoryBlock", "Taking ownership of const memblock.");
+  #endif
+  pointer = naNew(NAPointer);
+  pointer->data.memblock = memblock;
+  pointer->refcount = 1;
+  pointer->flags = (takeownership * NA_POINTER_OWN_DATA) | NA_POINTER_STORES_BYTESIZE;
+  return pointer;
+}
+
+
+
+NA_IDEF NAPointer* naNewPointerWithCArray(NACArray carray, NABool takeownership){
+  NAPointer* pointer;
+  #ifndef NDEBUG
+  if(takeownership && naIsCArrayConst(&carray))
+    naError("naNewPointerWithCArray", "Taking ownership of const carray.");
+  #endif
+  pointer = naNew(NAPointer);
+  pointer->data.carray = carray;
+  pointer->refcount = 1;
+  pointer->flags = (takeownership * NA_POINTER_OWN_DATA) | NA_POINTER_STORES_BYTESIZE | NA_POINTER_STORES_TYPESIZE;
+  return pointer;
+}
 
 
 
@@ -209,16 +269,15 @@ NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
       // The next test can detect some erroneous behaviour in the code. Note
       // however that most likely the true cause of the error did occur long
       // before reaching here.
-      if((pointer->refcount & NA_POINTER_REFCOUNT_MASK) == 0)
+      if(pointer->refcount == NA_ZERO)
         naError("naRetainPointer", "Retaining NAPointer with a refcount of 0");
     }
   #endif
   pointer->refcount++;
   #ifndef NDEBUG
     // If refcount now suddenly becomes zero, there was either an error earlier
-    // or the object has been retained too many times. Overflow. This is a very
-    // serious situation as the flags will be changed.
-    if((pointer->refcount & NA_POINTER_REFCOUNT_MASK) == 0)
+    // or the object has been retained too many times. Overflow.
+    if(pointer->refcount == NA_ZERO)
       naError("naRetainPointer", "Reference count overflow");
   #endif
   return pointer;
@@ -235,7 +294,7 @@ NA_IDEF void naReleasePointer(NAPointer* pointer){
       // The next test can detect some erroneous behaviour in the code. Note
       // however that most likely the true cause of the error did occur long
       // before reaching here.
-      if((pointer->refcount & NA_POINTER_REFCOUNT_MASK) == 0)
+      if(pointer->refcount == NA_ZERO)
         naError("naReleasePointer", "Releasing NAPointer with a refcount of 0");
     }
   #endif
@@ -245,32 +304,91 @@ NA_IDEF void naReleasePointer(NAPointer* pointer){
   // done correctly, an NAPointer is released too often. When refcount is 0 and
   // NDEBUG is not defined, this can be detected!
   pointer->refcount--;
-  if((pointer->refcount & NA_POINTER_REFCOUNT_MASK) == 0){
+  if(pointer->refcount == NA_ZERO){
     naDelete(pointer);
   }
   // Note that other programming languages have incorporated this very idea
   // of self-organized reference-counting pointers deeply within its core.
   // Their runtime-systems keep giant pools of free objects at hand and take
   // care of detecting and collecting unused objects. In C and C++, no such
-  // mechanisms exist. You could write one though.
+  // mechanisms exist. NARuntime is a small example of such a system.
 }
 
 
 
 NA_IDEF const void* naGetPointerConstData(const NAPointer* pointer){
-  return naGetLValueConst(&(pointer->lvalue));
+  return naGetPtrConst(&(pointer->data.ptr));
 }
 
 
 
 NA_IDEF void* naGetPointerMutableData(NAPointer* pointer){
-  return naGetLValueMutable(&(pointer->lvalue));
+  return naGetPtrMutable(&(pointer->data.ptr));
 }
 
 
 
+NA_IDEF NAPtr naGetPointerPtr(NAPointer* pointer){
+  #ifndef NDEBUG
+    if((pointer->flags & NA_POINTER_STORES_TYPESIZE) && !(pointer->flags & NA_POINTER_STORES_BYTESIZE))
+      naError("naGetPointerPtr", "This pointer stores an NALValue, not an NAPtr");
+    if(!(pointer->flags & NA_POINTER_STORES_TYPESIZE) && (pointer->flags & NA_POINTER_STORES_BYTESIZE))
+      naError("naGetPointerPtr", "This pointer stores an NAMemoryBlock, not an NAPtr");
+    if((pointer->flags & NA_POINTER_STORES_TYPESIZE) && (pointer->flags & NA_POINTER_STORES_BYTESIZE))
+      naError("naGetPointerPtr", "This pointer stores an NACArray, not an NAPtr");
+  #endif
+  return pointer->data.ptr;
+}
+
+
+
+NA_IDEF NALValue naGetPointerLValue(NAPointer* pointer){
+  #ifndef NDEBUG
+    if(!(pointer->flags & NA_POINTER_STORES_TYPESIZE) && !(pointer->flags & NA_POINTER_STORES_BYTESIZE))
+      naError("naGetPointerLValue", "This pointer stores an NAPtr, not an NALValue");
+    if(!(pointer->flags & NA_POINTER_STORES_TYPESIZE) && (pointer->flags & NA_POINTER_STORES_BYTESIZE))
+      naError("naGetPointerLValue", "This pointer stores an NAMemoryBlock, not an NALValue");
+    if((pointer->flags & NA_POINTER_STORES_TYPESIZE) && (pointer->flags & NA_POINTER_STORES_BYTESIZE))
+      naError("naGetPointerLValue", "This pointer stores an NACArray, not an NALValue");
+  #endif
+  return pointer->data.lvalue;
+}
+
+
+
+NA_IDEF NAMemoryBlock naGetPointerMemoryBlock(NAPointer* pointer){
+  #ifndef NDEBUG
+    if(!(pointer->flags & NA_POINTER_STORES_TYPESIZE) && !(pointer->flags & NA_POINTER_STORES_BYTESIZE))
+      naError("naGetPointerMemoryBlock", "This pointer stores an NAPtr, not an NAMemoryBlock");
+    if((pointer->flags & NA_POINTER_STORES_TYPESIZE) && !(pointer->flags & NA_POINTER_STORES_BYTESIZE))
+      naError("naGetPointerMemoryBlock", "This pointer stores an NALValue, not an NAMemoryBlock");
+    if((pointer->flags & NA_POINTER_STORES_TYPESIZE) && (pointer->flags & NA_POINTER_STORES_BYTESIZE))
+      naError("naGetPointerMemoryBlock", "This pointer stores an NACArray, not an NAMemoryBlock");
+  #endif
+  return pointer->data.memblock;
+}
+
+
+
+NA_IDEF NACArray naGetPointerCArray(NAPointer* pointer){
+  #ifndef NDEBUG
+    if(!(pointer->flags & NA_POINTER_STORES_TYPESIZE) && !(pointer->flags & NA_POINTER_STORES_BYTESIZE))
+      naError("naGetPointerCArray", "This pointer stores an NAPtr, not an NACArray");
+    if((pointer->flags & NA_POINTER_STORES_TYPESIZE) && !(pointer->flags & NA_POINTER_STORES_BYTESIZE))
+      naError("naGetPointerCArray", "This pointer stores an NALValue, not an NACArray");
+    if((pointer->flags & NA_POINTER_STORES_TYPESIZE) && !(pointer->flags & NA_POINTER_STORES_BYTESIZE))
+      naError("naGetPointerCArray", "This pointer stores an NALValue, not an NACArray");
+  #endif
+  return pointer->data.carray;
+}
+
+
+
+
 NA_HIDEF void naClearPointer(NAPointer* pointer){
-  if(pointer->refcount & NA_POINTER_OWN_DATA){free(naGetLValueMutable(&(pointer->lvalue)));}
+  if(pointer->flags & NA_POINTER_OWN_DATA){
+    free(naGetPtrMutable(&(pointer->data.ptr)));
+  }
 }
 
 
@@ -278,7 +396,7 @@ NA_HIDEF void naClearPointer(NAPointer* pointer){
 NA_HIDEF void naPreparePointerRuntime(){
   NATypeInfo typeinfo;
   typeinfo.typesize = sizeof(NAPointer);
-  typeinfo.desctructor = (NADestructor)naClearPointer;
+  typeinfo.destructor = (NADestructor)naClearPointer;
   na_NAPointer_identifier = naManageRuntimeType(&typeinfo);
 }
 

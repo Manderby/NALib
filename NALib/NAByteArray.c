@@ -3,7 +3,6 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 #include "NAByteArray.h"
-#include "NACoord.h"
 
 
 
@@ -11,75 +10,51 @@ NA_DEF NAByteArray* naInitByteArrayWithSize(NAByteArray* array, NAInt size){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naInitByteArrayWithSize", "array is Null-Pointer."); return NA_NULL;}
+    if(size == NA_INVALID_MEMORY_SIZE)
+      naError("naInitByteArrayWithSize", "Invalid size given.");
   #endif
   if(!size){  // if size is zero
     array = naInitByteArray(array);
   }else{
-    array->lvalue = naMakeLValueWithSize(size);
-    array->storage = naNewPointerWithLValue(array->lvalue, NA_TRUE);
-    array->size = naAbsi(size);
+    array->memblock = naMakeMemoryBlockWithBytesize(size);
+    array->storage = naNewPointerWithMemoryBlock(array->memblock, NA_TRUE);
   }
   return array;
 }
 
 
 
-NA_DEF NAByteArray* naInitByteArrayWithConstBuffer(NAByteArray* array, const void* buffer, NAInt size){
+NA_DEF NAByteArray* naInitByteArrayWithConstBuffer(NAByteArray* array, const void* buffer, NAInt bytesize){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naInitByteArrayWithConstBuffer", "array is Null-Pointer."); return NA_NULL;}
     if(!buffer)
       naError("naInitByteArrayWithConstBuffer", "buffer is Null-Pointer.");
   #endif
-  if(naIsIntZero(size)){
+  if(naIsIntZero(bytesize)){
     array = naInitByteArray(array);
   }else{
-    array->lvalue = naMakeLValueConst(buffer);
-    #ifndef NDEBUG
-      // Note that the accessiblesize is the same as the visible size because
-      // the true amount of null-terminating bytes is unknown.
-      if(size<0){
-        naMarkLValueWithVisibleSize(&(array->lvalue), -size);
-        naMarkLValueWithAccessibleSize(&(array->lvalue), -size, NA_TRUE);
-      }else{
-        naMarkLValueWithVisibleSize(&(array->lvalue), size);
-        naMarkLValueWithAccessibleSize(&(array->lvalue), size, NA_FALSE);
-      }
-    #endif
-    array->storage = naNewPointerWithLValue(array->lvalue, NA_FALSE);
-    array->size = naAbsi(size);
+    array->memblock = naMakeMemoryBlockWithConstBuffer(buffer, bytesize);
+    array->storage = naNewPointerWithMemoryBlock(array->memblock, NA_FALSE);
   }
   return array;
 }
 
 
 
-NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* buffer, NAInt size, NABool takeownership){
+NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* buffer, NAInt bytesize, NABool takeownership){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naInitByteArrayWithMutableBuffer", "array is Null-Pointer."); return NA_NULL;}
     if(!buffer)
       naError("naInitByteArrayWithMutableBuffer", "buffer is Null-Pointer.");
   #endif
-  if(!size){  // if size is zero
+  if(!bytesize){  // if size is zero
     array = naInitByteArray(array);
     if(takeownership){free(buffer);}
   }else{
-    array->lvalue = naMakeLValueMutable(buffer);
-    #ifndef NDEBUG
-      // Note that we mark the lvalue but not the NAPointer. Also note that
-      // the accessiblesize is the same as the visible size because the true
-      // amount of null-terminating bytes is unknown.
-      if(size<0){
-        naMarkLValueWithVisibleSize(&(array->lvalue), -size);
-        naMarkLValueWithAccessibleSize(&(array->lvalue), -size, NA_TRUE);
-      }else{
-        naMarkLValueWithVisibleSize(&(array->lvalue), size);
-        naMarkLValueWithAccessibleSize(&(array->lvalue), size, NA_FALSE);
-      }
-    #endif
-    array->storage = naNewPointerWithLValue(array->lvalue, takeownership);
-    array->size = naAbsi(size);
+    array->memblock = naMakeMemoryBlockWithMutableBuffer(buffer, bytesize);
+    array->storage = naNewPointerWithMemoryBlock(array->memblock, takeownership);
   }
   return array;
 }
@@ -87,7 +62,7 @@ NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* b
 
 
 NA_DEF NAByteArray* naInitByteArrayExtraction(NAByteArray* dstarray, const NAByteArray* srcarray, NAInt offset, NAInt size){
-  NALValue newlvalue;
+  NAMemoryBlock newmemblock;
   NAUInt positiveoffset;
   NAUInt positivesize;
 
@@ -102,10 +77,9 @@ NA_DEF NAByteArray* naInitByteArrayExtraction(NAByteArray* dstarray, const NAByt
   // to be a valid bytearray. Otherwise, dstarray is expected to be
   // uninitialized.
 
-  naMakePositiveiInSize(&positiveoffset, &positivesize, offset, size, srcarray->size);
-  newlvalue = naMakeLValueSub(&(srcarray->lvalue), positiveoffset, positivesize);
+  naMakeIntegerRangePositiveInSize(&positiveoffset, &positivesize, offset, size, naGetMemoryBlockBytesize(&(srcarray->memblock)));
   
-  if(!positivesize){
+  if(positivesize == 0){
     // If the extraction results in an empty array...
     if(dstarray == srcarray){
       naClearByteArray(dstarray); // clear the old array.
@@ -113,11 +87,11 @@ NA_DEF NAByteArray* naInitByteArrayExtraction(NAByteArray* dstarray, const NAByt
     dstarray = naInitByteArray(dstarray);
   }else{
     // The resulting array has content!
+    newmemblock = naMakeMemoryBlockWithExtraction(&(srcarray->memblock), positiveoffset, positivesize);
     if(dstarray != srcarray){
       dstarray->storage = naRetainPointer(srcarray->storage);
     }
-    dstarray->size = positivesize;
-    dstarray->lvalue = newlvalue;
+    dstarray->memblock = newmemblock;
   }
   
   return dstarray;
@@ -137,11 +111,11 @@ NA_DEF void naDecoupleByteArray(NAByteArray* array, NABool appendnulltermination
   #endif
   // Note: Do not use realloc as ptr may point to a subset of NAPointer.
   // Instead, create a new object and copy manually.
-  arraysize = (NAInt)array->size;
+  arraysize = (NAInt)naGetMemoryBlockBytesize(&(array->memblock));
   if(!arraysize){return;}
   if(appendnulltermination){arraysize = -arraysize;}
   buf = naMalloc(arraysize);
-  naCopyn(buf, naGetLValueConst(&(array->lvalue)), naAbsi(arraysize));
+  naCopyn(buf, naGetMemoryBlockConstPointer(&(array->memblock)), naAbsi(arraysize));
   naClearByteArray(array);
   naInitByteArrayWithMutableBuffer(array, buf, arraysize, NA_TRUE);
 }

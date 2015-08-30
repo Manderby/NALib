@@ -158,7 +158,7 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt offset, 
 NA_DEF NAString* naNewStringWithBasenameOfFilename(const NAString* filename){
   NAInt dotpos = naGetStringCharacterPos(filename, NA_SUFFIX_DELIMITER, -1);
   // If dotpos is invalid, return the full string.
-  if(dotpos == NA_INVALID_INDEX){
+  if(dotpos == NA_INVALID_MEMORY_INDEX){
     return naNewStringExtraction(filename, 0, -1);
   }else{
     return naNewStringExtraction(filename, 0, dotpos);
@@ -169,7 +169,7 @@ NA_DEF NAString* naNewStringWithBasenameOfFilename(const NAString* filename){
 
 NA_DEF NAString* naNewStringWithSuffixOfFilename(const NAString* filename){
   NAInt dotpos = naGetStringCharacterPos(filename, NA_SUFFIX_DELIMITER, -1);
-  if(dotpos == NA_INVALID_INDEX){
+  if(dotpos == NA_INVALID_MEMORY_INDEX){
     return naNewString();
   }else{
     return naNewStringExtraction(filename, dotpos + 1, -1);
@@ -559,7 +559,7 @@ NA_DEF const NAUTF8Char* naGetStringChar(const NAString* string, NAInt indx){
       naCrash("naGetStringChar", "string is Null-Pointer.");
       return NA_NULL;
     }
-    if(indx == NA_INVALID_INDEX)
+    if(indx == NA_INVALID_MEMORY_INDEX)
       naError("naGetStringChar", "Invalid index");
   #endif
   return (const NAUTF8Char*)naGetByteArrayConstByte(&(string->array), indx);
@@ -598,7 +598,7 @@ NA_DEF NAInt naGetStringCharacterPos(const NAString* string, NAUTF8Char ch, NAIn
     }
   }
   // Not found
-  return NA_INVALID_INDEX;
+  return NA_INVALID_MEMORY_INDEX;
 }
 
 
@@ -1197,7 +1197,7 @@ NA_HDEF void naClearString(NAString* string){
 NA_HDEF void naPrepareStringRuntime(){
   NATypeInfo typeinfo;
   typeinfo.typesize = sizeof(NAString);
-  typeinfo.desctructor = (NADestructor)naClearString;
+  typeinfo.destructor = (NADestructor)naClearString;
   na_NAString_identifier = naManageRuntimeType(&typeinfo);
 }
 

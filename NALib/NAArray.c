@@ -84,7 +84,7 @@ NA_DEF NAArray* naInitArrayExtraction(NAArray* dstarray, const NAArray* srcarray
   dstarray->typesize = srcarray->typesize;
   naInitByteArray(&(dstarray->bytearray));
 
-  naMakePositiveiInSize(&positiveoffset, &positivecount, offset, count, naGetArrayCount(srcarray));
+  naMakeIntegerRangePositiveInSize(&positiveoffset, &positivecount, offset, count, naGetArrayCount(srcarray));
 
   naInitByteArrayExtraction(&(dstarray->bytearray),
                             &(srcarray->bytearray),

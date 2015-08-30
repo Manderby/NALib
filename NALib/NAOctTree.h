@@ -52,6 +52,9 @@
 // square) leafsize of the data box. When copydata is non-Null, it points
 // to already existing chunk data which shall be copied to the new chunk. This
 // will be the case when duplicating an NAOctTree.
+// The userdata parameter contains whatever you defined upon creation of the
+// tree within the NAOctTreeCallbacks struct. With this, it is for example
+// possible to allocate data from a user defined pool-structure.
 // Note that both origin and leafsize are just here for information. You may or
 // may not use them. And you will probably not need to store them. But you may
 // if you really want to.
@@ -61,12 +64,14 @@
 // leafsize.
 typedef void* (*NAOctTreeLeafAllocator)(   NAVertexi origin,
                                             NAUInt leafsize,
+                                             void* userdata,
                                        const void* copydata);
 
 // The destruction function of your leaf-chunks. This callback always must be
 // present. The pointer given is a pointer created when NAOctTreeLeafAllocator
-// was called.
-typedef void  (*NAOctTreeLeafDeallocator)(   void* leafdata);
+// was called. The userdata is the same as desribed in the allocator function.
+typedef void  (*NAOctTreeLeafDeallocator)(   void* leafdata,
+                                             void* userdata);
 
 // This callback is required when shifting an NAOctTree. You are given two
 // chunk data pointers, two origins and a volume.
@@ -176,6 +181,8 @@ typedef struct NAOctTreeCallbacks_struct{
   NAOctTreeChildChanged     childchanged;
   NAOctTreeSerializer       serialize;
   NAOctTreeDeserializer     deserialize;
+  void*                     userdata;         // custom pointer sent to
+                                              // various callback functions.
 } NAOctTreeCallbacks;
 
 // A typedef of an opaque type not accessible to the programmer.

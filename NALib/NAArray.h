@@ -60,8 +60,9 @@ NA_API  NAArray* naInitArrayWithCount  (NAArray* array,
 // Use these functions to encapsulate your own raw buffers into an NAArray.
 // There are two creation functions, one for const data and one for non-const.
 //
-// Note that NALib does provide an API for calling constructors on preallocated
-// buffers. If you really need to do that, you have to do this manually.
+// Note that NALib does NOT provide an API for calling constructors on
+// preallocated buffers. If you really need to do that, you have to do this
+// manually.
 NA_API  NAArray* naInitArrayWithConstBuffer(
                                           NAArray* array,
                                        const void* buffer,

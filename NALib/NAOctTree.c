@@ -152,23 +152,23 @@ NA_HDEF void naCopyOctTreeNode(NAOctTree* newtree, NAOctTreeNode* parentnode, NA
     if(contenttree){
       // Note that in contrast to the else case, we create an empty node if
       // there is no content available.
-      if(oldnode->child[0]){node->child[0] = newtree->callbacks.leafallocator(node->childorigin[0], newtree->leafsize, naGetOctTreeLeafConst(contenttree, node->childorigin[0], NA_NULL));}
-      if(oldnode->child[1]){node->child[1] = newtree->callbacks.leafallocator(node->childorigin[1], newtree->leafsize, naGetOctTreeLeafConst(contenttree, node->childorigin[1], NA_NULL));}
-      if(oldnode->child[2]){node->child[2] = newtree->callbacks.leafallocator(node->childorigin[2], newtree->leafsize, naGetOctTreeLeafConst(contenttree, node->childorigin[2], NA_NULL));}
-      if(oldnode->child[3]){node->child[3] = newtree->callbacks.leafallocator(node->childorigin[3], newtree->leafsize, naGetOctTreeLeafConst(contenttree, node->childorigin[3], NA_NULL));}
-      if(oldnode->child[4]){node->child[4] = newtree->callbacks.leafallocator(node->childorigin[4], newtree->leafsize, naGetOctTreeLeafConst(contenttree, node->childorigin[4], NA_NULL));}
-      if(oldnode->child[5]){node->child[5] = newtree->callbacks.leafallocator(node->childorigin[5], newtree->leafsize, naGetOctTreeLeafConst(contenttree, node->childorigin[5], NA_NULL));}
-      if(oldnode->child[6]){node->child[6] = newtree->callbacks.leafallocator(node->childorigin[6], newtree->leafsize, naGetOctTreeLeafConst(contenttree, node->childorigin[6], NA_NULL));}
-      if(oldnode->child[7]){node->child[7] = newtree->callbacks.leafallocator(node->childorigin[7], newtree->leafsize, naGetOctTreeLeafConst(contenttree, node->childorigin[7], NA_NULL));}
+      if(oldnode->child[0]){node->child[0] = newtree->callbacks.leafallocator(node->childorigin[0], newtree->leafsize, newtree->callbacks.userdata, naGetOctTreeLeafConst(contenttree, node->childorigin[0], NA_NULL));}
+      if(oldnode->child[1]){node->child[1] = newtree->callbacks.leafallocator(node->childorigin[1], newtree->leafsize, newtree->callbacks.userdata, naGetOctTreeLeafConst(contenttree, node->childorigin[1], NA_NULL));}
+      if(oldnode->child[2]){node->child[2] = newtree->callbacks.leafallocator(node->childorigin[2], newtree->leafsize, newtree->callbacks.userdata, naGetOctTreeLeafConst(contenttree, node->childorigin[2], NA_NULL));}
+      if(oldnode->child[3]){node->child[3] = newtree->callbacks.leafallocator(node->childorigin[3], newtree->leafsize, newtree->callbacks.userdata, naGetOctTreeLeafConst(contenttree, node->childorigin[3], NA_NULL));}
+      if(oldnode->child[4]){node->child[4] = newtree->callbacks.leafallocator(node->childorigin[4], newtree->leafsize, newtree->callbacks.userdata, naGetOctTreeLeafConst(contenttree, node->childorigin[4], NA_NULL));}
+      if(oldnode->child[5]){node->child[5] = newtree->callbacks.leafallocator(node->childorigin[5], newtree->leafsize, newtree->callbacks.userdata, naGetOctTreeLeafConst(contenttree, node->childorigin[5], NA_NULL));}
+      if(oldnode->child[6]){node->child[6] = newtree->callbacks.leafallocator(node->childorigin[6], newtree->leafsize, newtree->callbacks.userdata, naGetOctTreeLeafConst(contenttree, node->childorigin[6], NA_NULL));}
+      if(oldnode->child[7]){node->child[7] = newtree->callbacks.leafallocator(node->childorigin[7], newtree->leafsize, newtree->callbacks.userdata, naGetOctTreeLeafConst(contenttree, node->childorigin[7], NA_NULL));}
     }else{
-      if(oldnode->child[0]){node->child[0] = newtree->callbacks.leafallocator(node->childorigin[0], newtree->leafsize, oldnode->child[0]);}
-      if(oldnode->child[1]){node->child[1] = newtree->callbacks.leafallocator(node->childorigin[1], newtree->leafsize, oldnode->child[1]);}
-      if(oldnode->child[2]){node->child[2] = newtree->callbacks.leafallocator(node->childorigin[2], newtree->leafsize, oldnode->child[2]);}
-      if(oldnode->child[3]){node->child[3] = newtree->callbacks.leafallocator(node->childorigin[3], newtree->leafsize, oldnode->child[3]);}
-      if(oldnode->child[4]){node->child[4] = newtree->callbacks.leafallocator(node->childorigin[4], newtree->leafsize, oldnode->child[4]);}
-      if(oldnode->child[5]){node->child[5] = newtree->callbacks.leafallocator(node->childorigin[5], newtree->leafsize, oldnode->child[5]);}
-      if(oldnode->child[6]){node->child[6] = newtree->callbacks.leafallocator(node->childorigin[6], newtree->leafsize, oldnode->child[6]);}
-      if(oldnode->child[7]){node->child[7] = newtree->callbacks.leafallocator(node->childorigin[7], newtree->leafsize, oldnode->child[7]);}
+      if(oldnode->child[0]){node->child[0] = newtree->callbacks.leafallocator(node->childorigin[0], newtree->leafsize, newtree->callbacks.userdata, oldnode->child[0]);}
+      if(oldnode->child[1]){node->child[1] = newtree->callbacks.leafallocator(node->childorigin[1], newtree->leafsize, newtree->callbacks.userdata, oldnode->child[1]);}
+      if(oldnode->child[2]){node->child[2] = newtree->callbacks.leafallocator(node->childorigin[2], newtree->leafsize, newtree->callbacks.userdata, oldnode->child[2]);}
+      if(oldnode->child[3]){node->child[3] = newtree->callbacks.leafallocator(node->childorigin[3], newtree->leafsize, newtree->callbacks.userdata, oldnode->child[3]);}
+      if(oldnode->child[4]){node->child[4] = newtree->callbacks.leafallocator(node->childorigin[4], newtree->leafsize, newtree->callbacks.userdata, oldnode->child[4]);}
+      if(oldnode->child[5]){node->child[5] = newtree->callbacks.leafallocator(node->childorigin[5], newtree->leafsize, newtree->callbacks.userdata, oldnode->child[5]);}
+      if(oldnode->child[6]){node->child[6] = newtree->callbacks.leafallocator(node->childorigin[6], newtree->leafsize, newtree->callbacks.userdata, oldnode->child[6]);}
+      if(oldnode->child[7]){node->child[7] = newtree->callbacks.leafallocator(node->childorigin[7], newtree->leafsize, newtree->callbacks.userdata, oldnode->child[7]);}
     }
     if(newtree->callbacks.leafchanged){newtree->callbacks.leafchanged(node->nodedata, -1, (const void* const) node->child);}
   }else{
@@ -192,14 +192,14 @@ NA_HDEF void naCopyOctTreeNode(NAOctTree* newtree, NAOctTreeNode* parentnode, NA
 // Deallocates one node.
 NA_HDEF void naDeallocOctTreeNode(NAOctTree* tree, NAOctTreeNode* node){
   if(node->childsize == tree->leafsize){
-    if(node->child[0]){tree->callbacks.leafdeallocator(node->child[0]);}
-    if(node->child[1]){tree->callbacks.leafdeallocator(node->child[1]);}
-    if(node->child[2]){tree->callbacks.leafdeallocator(node->child[2]);}
-    if(node->child[3]){tree->callbacks.leafdeallocator(node->child[3]);}
-    if(node->child[4]){tree->callbacks.leafdeallocator(node->child[4]);}
-    if(node->child[5]){tree->callbacks.leafdeallocator(node->child[5]);}
-    if(node->child[6]){tree->callbacks.leafdeallocator(node->child[6]);}
-    if(node->child[7]){tree->callbacks.leafdeallocator(node->child[7]);}
+    if(node->child[0]){tree->callbacks.leafdeallocator(node->child[0], tree->callbacks.userdata);}
+    if(node->child[1]){tree->callbacks.leafdeallocator(node->child[1], tree->callbacks.userdata);}
+    if(node->child[2]){tree->callbacks.leafdeallocator(node->child[2], tree->callbacks.userdata);}
+    if(node->child[3]){tree->callbacks.leafdeallocator(node->child[3], tree->callbacks.userdata);}
+    if(node->child[4]){tree->callbacks.leafdeallocator(node->child[4], tree->callbacks.userdata);}
+    if(node->child[5]){tree->callbacks.leafdeallocator(node->child[5], tree->callbacks.userdata);}
+    if(node->child[6]){tree->callbacks.leafdeallocator(node->child[6], tree->callbacks.userdata);}
+    if(node->child[7]){tree->callbacks.leafdeallocator(node->child[7], tree->callbacks.userdata);}
   }else{
     if(node->child[0]){naDeallocOctTreeNode(tree, node->child[0]);}
     if(node->child[1]){naDeallocOctTreeNode(tree, node->child[1]);}
@@ -498,7 +498,7 @@ NA_HDEF NAOctTreeNode* naLocateOctTreeNode(NAOctTree* tree, NAOctTreeNode* node,
           if(serialdata){
             node->child[segment] = tree->callbacks.deserialize(node->childorigin[segment], tree->leafsize, serialdata);
           }else{
-            node->child[segment] = tree->callbacks.leafallocator(node->childorigin[segment], tree->leafsize, NA_NULL);
+            node->child[segment] = tree->callbacks.leafallocator(node->childorigin[segment], tree->leafsize, tree->callbacks.userdata, NA_NULL);
           }
           #ifndef NDEBUG
             if(!node->child[segment])
@@ -582,7 +582,7 @@ NA_HDEF NAOctTreeNode* naLocateOctTreeLeafParent(NAOctTree* tree, NAVertexi coor
     if(serialdata){
       node->child[*leafsegment] = tree->callbacks.deserialize(leaforigin, tree->leafsize, serialdata);
     }else{
-      node->child[*leafsegment] = tree->callbacks.leafallocator(leaforigin, tree->leafsize, NA_NULL);
+      node->child[*leafsegment] = tree->callbacks.leafallocator(leaforigin, tree->leafsize, tree->callbacks.userdata, NA_NULL);
     }
     tree->root = node;
 
@@ -944,7 +944,7 @@ NA_DEF void naRemoveOctTreeLeaf(NAOctTree* tree, NAVertexi coord){
   if(!node){return;}
   
   // First, we destroy the data of the leaf chunk
-  tree->callbacks.leafdeallocator(node->child[leafsegment]);
+  tree->callbacks.leafdeallocator(node->child[leafsegment], tree->callbacks.userdata);
   node->child[leafsegment] = NA_NULL;
 
   // Test if there are other childs in the current parent.

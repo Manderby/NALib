@@ -12,6 +12,47 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Version 12 (first published 2015-August-30):
+==============================================
+
+- Complete reorganization of base memory structs: Three new structs are
+  introduced: NACArray, NAMemoryBlock and NAPtr. The NAPtr is the same as
+  NALValue before, NALValue is now something different. In total, there are
+  now four structs which corresponds to four combinations of having a bytesize
+  and typesize available per pointer or not. The NAPointer struct distinguishes
+  between all of them. NAPointer now much bigger and stores flags separate from
+  refcount.
+- NAGrowingSpace now grows exponentially. Slight changes to API. Simplified
+  whole implementation and made it inline again. NAGrowingSpace.c is removed.
+- Greatly enhanced NAVectorAlgebra.h to have many more checks, E and S variants
+  and more documentation. The API has beed changed for double-vectors and
+  double-matrices. The now need the type ending d. Slightly changed semantics
+  for naNormalize and naOrthogonalize and some matrix functions. Corrected Bug
+  in naOrthonormalize.
+- NAHeap now shrinks and grows automatically, if desired.
+- Fully implemented NAPool.
+
+- QuadTree and OctTree Allocators and Deallocators now have a userdata param.
+  Warning: Not located at the last parameter!
+- NAList now uses the runtime with NAListElement
+- Added naGetHeapMaxCount
+- Added naTransposeMXX functions for transposing matrices. Added RowFirst and
+  ColumnFirst for Matrix filling
+- Added naIsListEmpty
+- Removed constructor and destructor from NAGrowingSpace. Removed
+  naInitArrayWithGrowingSpace.
+- NAPointer can now be constructed with either NAPtr, NALValue, NAMemoryBlock
+  or NACArray.
+- Added iteration functions for NAByteArray but commented it out later again.
+- Added Array iteration for NAGrowingSpace
+- Renamed NA_INVALID_INDEX to NA_INVALID_MEMORY_INDEX, added
+  NA_INVALID_MEMORY_SIZE and moved them to NAMemory.h
+- Added more checks in NAMemory.h
+- Renamed naMakePositiveiInSize to naMakeIntegerRangePositiveInSize and
+  moved it to NAMathOperators.h
+- Improved documentation in some files
+- Renamed the Changelog files to reflect the Versions contained.
+
 
 
 Version 11 (first published 2015-August-16):
@@ -46,8 +87,7 @@ Other things:
 - NAByteMap.h and NAMap2D.h are not deleted yet. We'll see how these files
   turn out in the near future.
 - Added NA_ZERO, NA_ONE, naIsIntStrictlyPositive, naIsIntZero, naIsIntNegative
-- NAUTF8Char is now typedefed as NAByte. Macro check for Bytes being 8 bits
-  wide moved to NASystem.h
+- Macro check for Bytes being 8 bits wide moved to NASystem.h
 - Changed NA_SYMBOL_VISIBLE and NA_SYMBOL_HIDDEN to NA_LINKER_EXPORT and
   NA_LINKER_NO_EXPORT
 - Removed naNewPointerStruct. Moved code directly to the other constructors.

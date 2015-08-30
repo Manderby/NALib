@@ -6,6 +6,7 @@
 #include "NARuntime.h"
 #include "NAMemory.h"
 #include "NAString.h"
+#include "NAList.h"
 
 
 // Turns out, the pagesize is far too small to result in good speed
@@ -51,6 +52,7 @@ NARuntime* na_runtime = NA_NULL;
 // will likely change in the near future.
 NATypeIdentifier na_NAString_identifier = NA_NULL;
 NATypeIdentifier na_NAPointer_identifier = NA_NULL;
+NATypeIdentifier na_NAListElement_identifier = NA_NULL;
 
 
 
@@ -139,7 +141,7 @@ NA_DEF void naDelete(void* pointer){
   #endif
   // Delete the struct with the destructor
   corepool = (NACorePool*)((NAUInt)pointer & na_runtime->poolsizemask);
-  if(corepool->coretypeinfo->typeinfo.desctructor){corepool->coretypeinfo->typeinfo.desctructor(pointer);}
+  if(corepool->coretypeinfo->typeinfo.destructor){corepool->coretypeinfo->typeinfo.destructor(pointer);}
   *((void**)pointer) = corepool->firstunused;
   corepool->firstunused = pointer;
   corepool->usedcount--;
@@ -166,6 +168,7 @@ NA_DEF void naStartRuntime(){
   #endif
   naPrepareStringRuntime();
   naPreparePointerRuntime();
+  naPrepareListElementRuntime();
 }
 
 
@@ -186,6 +189,8 @@ NA_DEF void naStopRuntime(){
       naCrash("naStopRuntime", "Runtime not running");
   #endif
 }
+
+
 
 
 

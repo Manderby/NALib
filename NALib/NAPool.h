@@ -9,98 +9,124 @@
 #endif
 
 
+// This file contains a very simple pool structure which can hold a fixed
+// amount drops. Drops are either arbitrary pointers or pointers to elements
+// stored in an internal memory block.
+//
+// You use the pool by sucking drops out of it or spitting drops back.
+//
+// You can either create the pool empty or filled. If you create the pool
+// empty, the pool is a simple pointer pool to which you can spit any pointer
+// you like. If you create the pool filled, a memory block is allocated large
+// enough to hold the given number of elements. The drops are pointing inside
+// this memory block which is at your service when sucking out drops. You
+// should not spit back drops which are not part of that pre-allocated memory.
+
+
+
 #include "NASystem.h"
-#include "NAPointer.h"
 
 
 typedef struct NAPool NAPool;
 
-NA_API NAPool* naInitPoolEmpty(NAPool* pool, NAUInt count);
-NA_API NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, const NAStructInfo* structinfo, NABool aspointerarray);
-NA_API void naClearPool(NAPool* pool);
+
+// Creates a new pointer pool with the given maximum count. The pool is empty
+// and can be filled with whatever drops you like.
+NA_IAPI NAPool* naInitPoolEmpty(NAPool* pool, NAUInt count);
+
+// Creates a new pool pre-filled with count elements with the given typesize.
+NA_IAPI NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, NAUInt typesize);
+
+// Clears the pool. Depending whether you created the pool empty or filled,
+// your pool should be in the same state now.
+NA_IAPI void naClearPool(NAPool* pool);
+
+// Suchs a drop from the pool or spits one back.
+NA_IAPI void* naSuckPool(NAPool* pool);
+NA_IAPI void  naSpitPool(NAPool* pool, void* drop);
+
+// Returns information about the number of elements stored in the pool.
+NA_IAPI NAUInt naGetPoolCount(NAPool* pool);
+NA_IAPI NAUInt naGetPoolRemainingCount(NAPool* pool);
+NA_IAPI NABool naIsPoolEmpty(NAPool* pool);
+NA_IAPI NABool naIsPoolFull(NAPool* pool);
+
+// Calls the mutator-function for each element inside the pool.
+NA_IAPI void naForeachPool(const NAPool* pool, NAMutator mutator);
+
+
+
+
+
+// ///////////////////////////////////////////////////////////////////////
+// Inline Implementations: See readme file for more expanation.
+//
 
 
 struct NAPool{
-  void** drops;
-  NAUInt count;
-  NAUInt cur;
-
-  void* storagearray;
-  NABool storageispointerarray;
-  const NAStructInfo* structinfo;
+  NAByte** drops;       // The drops, speaking: Pointers.
+  NAUInt count;         // The maximum count of drops in this pool.
+  NAUInt cur;           // The current position in the drops array.
+  void* storagearray;   // The storage of elements, if pool is created filled.
+  #ifndef NDEBUG
+    NAUInt typesize;    // The typesize is just for debugging.
+  #endif
 };
 
 
 
-NA_DEF NAPool* naInitPoolEmpty(NAPool* pool, NAUInt count){
+NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, NAUInt count){
   #ifndef NDEBUG
     if(!pool)
       {naCrash("naInitPoolEmpty", "pool is NULL"); return NA_NULL;}
+    if(count == 0)
+      naError("naInitPoolEmpty", "count is 0");
   #endif
   pool->drops = naMalloc(count * sizeof(void*));
   pool->count = count;
   pool->cur = 0;
   pool->storagearray = NA_NULL;
+  return pool;
 }
 
 
 
-NA_DEF NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, const NAStructInfo* structinfo, NABool aspointerarray){
+NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, NAUInt typesize){
   #ifndef NDEBUG
     if(!pool)
       {naCrash("naInitPoolFilled", "pool is NULL"); return NA_NULL;}
+    if(count == 0)
+      naError("naInitPoolFilled", "count is 0");
+    if(typesize == 0)
+      naError("naInitPoolFilled", "typesize is 0");
   #endif
   pool->drops = naMalloc(count * sizeof(void*));
   pool->count = count;
   pool->cur = count;
-  pool->structinfo = structinfo;
-  pool->storageispointerarray = aspointerarray;
-  if(pool->storageispointerarray){
-    pool->storagearray = naMalloc(count * sizeof(void*));
-    void** dropptr = pool->drops;
-    void** storageptr = pool->storagearray;
-    for(NAUInt i=0; i<pool->count; i++){
-      *storageptr = naMalloc(structinfo->structsize);
-      if(pool->structinfo->constructor){structinfo->constructor(*storageptr);}
-      *dropptr = *storageptr;
-      dropptr++;
-      storageptr++;
-    }
-  }else{
-    pool->storagearray = naMalloc(count * structinfo->structsize);
-    void** dropptr = pool->drops;
-    NAByte* storageptr = (NAByte*)pool->storagearray;
-    for(NAUInt i=0; i<pool->count; i++){
-      if(pool->structinfo->constructor){structinfo->constructor(storageptr);}
-      *dropptr = storageptr;
-      dropptr++;
-      storageptr += structinfo->structsize;
-    }
+  pool->storagearray = naMalloc(count * typesize);
+  #ifndef NDEBUG
+    pool->typesize = typesize;
+  #endif
+
+  // Insert all elements to the drop array.
+  NAByte** dropptr = pool->drops;
+  NAByte* storageptr = (NAByte*)pool->storagearray;
+  for(NAUInt i=0; i<pool->count; i++){
+    *dropptr = storageptr;
+    dropptr++;
+    storageptr += typesize;
   }
+  return pool;
 }
 
 
 
-NA_DEF void naClearPool(NAPool* pool){
+NA_IDEF void naClearPool(NAPool* pool){
   if(pool->storagearray){
     #ifndef NDEBUG
       if(pool->cur != pool->count)
         naError("naClearPool", "Pool was created filled but is not filled now.");
     #endif
-    if(pool->storageispointerarray){
-      void** storageptr = pool->storagearray;
-      for(NAUInt i=0; i<pool->count; i++){
-        if(pool->structinfo->destructor){pool->structinfo->destructor(*storageptr);}
-        free(*storageptr);
-        storageptr++;
-      }
-    }else{
-      NAByte* storageptr = (NAByte*)pool->storagearray;
-      for(NAUInt i=0; i<pool->count; i++){
-        if(pool->structinfo->destructor){pool->structinfo->destructor(storageptr);}
-        storageptr += pool->structinfo->structsize;
-      }
-    }
     free(pool->storagearray);
   }else{
     #ifndef NDEBUG
@@ -113,13 +139,7 @@ NA_DEF void naClearPool(NAPool* pool){
 
 
 
-NA_DEF NAUInt naGetPoolRemainingCount(NAPool* pool){
-  return pool->count - pool->cur;
-}
-
-
-
-NA_DEF void* naSuckPool(NAPool* pool){
+NA_IDEF void* naSuckPool(NAPool* pool){
   #ifndef NDEBUG
     if(pool->cur == 0)
       naError("naSuckPool", "Pool is empty");
@@ -130,13 +150,40 @@ NA_DEF void* naSuckPool(NAPool* pool){
 
 
 
-NA_DEF void naSpitPool(NAPool* pool, void* element){
+NA_IDEF void naSpitPool(NAPool* pool, void* drop){
   #ifndef NDEBUG
     if(pool->cur == pool->count)
       naError("naSpitPool", "Pool is full");
+    if(pool->storagearray && (!naInsidei((NAByte*)drop - (NAByte*)pool->storagearray, 0, pool->typesize * pool->count)))
+      naError("naSpitPool", "Pool was created filled. This drop does not seem to be a drop of this pool.");
   #endif
-  pool->drops[pool->cur] = element;
+  pool->drops[pool->cur] = drop;
   pool->cur++;
+}
+
+
+
+NA_IDEF NAUInt naGetPoolCount(NAPool* pool){
+  return pool->cur;
+}
+NA_IDEF NAUInt naGetPoolRemainingCount(NAPool* pool){
+  return pool->count - pool->cur;
+}
+NA_IDEF NABool naIsPoolEmpty(NAPool* pool){
+  return (pool->cur == 0);
+}
+NA_IDEF NABool naIsPoolFull(NAPool* pool){
+  return (pool->cur == pool->cur);
+}
+
+
+
+NA_IDEF void naForeachPool(const NAPool* pool, NAMutator mutator){
+  NAByte** curptr = pool->drops;
+  for(NAUInt i=0; i<pool->cur; i++){
+    mutator(*curptr);
+    curptr++;
+  }
 }
 
 

@@ -298,7 +298,29 @@ NA_IAPI NABool naInsideNormIEf(float x);
 NA_IAPI NABool naInsideNormEE (double x);
 NA_IAPI NABool naInsideNormEEf(float x);
 
-
+// This function returns a pair of positive integers (positivepos,positivesize)
+// out of a possibly negative pair (pos,size) such that the resulting range
+// will be fully contained in a range given by [0, containingsize-1].
+// Negative values are treated as follows and in the following order:
+// - if pos is negative, it denotes the number of units from the end.
+//   For integers, pos -1 therefore corresponds to size-1.
+// - If the size is now 0, the function will return.
+// - if size is negative, it denotes the size up and including to the given
+//   number of units from the end, meaning -1 denotes the last unit.
+// - if the pos and size combination somehow leads to a resulting size of
+//   exactly 0, the resulting range will be empty without a warning emitted.
+// - If the pos and size combination somehow leads to an over- or underflow,
+//   a warning will be emitted if NDEBUG is defined. The resulting range will
+//   be empty.
+NA_HIAPI void naMakeIntegerRangePositiveInSize(
+                                    NAUInt* NA_RESTRICT positivepos,
+                                    NAUInt* NA_RESTRICT positivesize,
+                                    NAInt               pos,
+                                    NAInt               size,
+                                    NAUInt              containingsize);
+// This function is declared as a helper function. It is used by some core
+// implementations of NAByteArray. It seems much more useful in this file
+// though.
 
 
 
@@ -1097,6 +1119,57 @@ NA_IDEF NABool naInsideNormEEf(float x){
 
 
 
+
+
+NA_HIDEF void naMakeIntegerRangePositiveInSize(NAUInt* NA_RESTRICT positivepos, NAUInt* NA_RESTRICT positivesize, NAInt pos, NAInt size, NAUInt containingsize){
+  // First, we ensure that pos is withing the containing range. After that
+  // we will look at the size parameter.
+  NAInt remainingsize = containingsize - pos;
+  if(pos < 0){
+    pos += containingsize;
+    remainingsize -= containingsize;
+  }
+  if(remainingsize < 0){
+    #ifndef NDEBUG
+      naError("naMakeIntegerRangePositiveInSize", "Invalid pos leads to range overflow. Correcting to empty range.");
+    #endif
+    *positivepos = 0;
+    *positivesize = 0;
+  }else if((NAUInt)remainingsize > containingsize){
+    #ifndef NDEBUG
+      naError("naMakeIntegerRangePositiveInSize", "Invalid pos leads to range underflow. Correcting to empty range.");
+    #endif
+    *positivepos = 0;
+    *positivesize = 0;
+  }else{
+    *positivepos = pos;
+    // The pos is positive. Now, adjust the size.
+    if(size < 0){ // negative size parameter
+      size = remainingsize + size + 1;  // Important + 1 !
+      if(size < 0){
+        // When the resulting size is smaller than 0, underflow.
+        #ifndef NDEBUG
+          naError("naMakeIntegerRangePositiveInSize", "Invalid size leads to range underflow. Correcting to empty range.");
+        #endif
+        *positivepos = 0;
+        *positivesize = 0;
+      }else{
+        *positivesize = size;
+      }
+    }else{ // positive or 0 size parameter
+      if(size > remainingsize){
+        // When the desired size is bigger than the size available, overflow.
+        #ifndef NDEBUG
+          naError("naMakeIntegerRangePositiveInSize", "Invalid size leads to range overflow. Correcting to empty range.");
+        #endif
+        *positivepos = 0;
+        *positivesize = 0;
+      }else{
+        *positivesize = size;
+      }
+    }
+  }
+}
 
 
 
