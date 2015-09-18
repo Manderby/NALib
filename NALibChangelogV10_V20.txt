@@ -12,6 +12,17 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+
+todo: componentwise division Matrix. Division with E. Determinant
+
+- Renamed Scale and componentwise div functions in NAVectorAlgebra to MulComp
+  and DivComp. Added componentwise multiplication and division of Matrices.
+- Added Determinant computation and Matrix equality tests in NAVectorAlgebra.h
+- Fixed some type conversion and equal pointer bugs in NAVectorAlgebra.h
+- Fixed some erroneous checks in NAVectorAlgebra.h
+- Added float versions of rotation matrix functions
+
+
 Version 12 (first published 2015-August-30):
 ==============================================
 

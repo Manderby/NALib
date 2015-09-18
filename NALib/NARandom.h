@@ -41,12 +41,12 @@ NA_IAPI void  naSRand(uint32 seed);
 NA_IAPI uint32 naSeedRand(uint32 seed);
 
 // Returns a uniformly disributed random value within interval [0,1)
-NA_IAPI float  naUniformRandZEf();
 NA_IAPI double naUniformRandZE();
+NA_IAPI float  naUniformRandZEf();
 
 // Returns a uniformly disributed random value within interval [0,1]
-NA_IAPI float  naUniformRandZIf();
 NA_IAPI double naUniformRandZI();
+NA_IAPI float  naUniformRandZIf();
 
 
 
@@ -94,29 +94,29 @@ NA_IDEF uint32 naSeedRand(uint32 seed){
 }
 
 
-#define NA_INV_RAND_MAXf (1.f / RAND_MAX)
 #define NA_INV_RAND_MAX  (1.  / RAND_MAX)
+#define NA_INV_RAND_MAXf (1.f / RAND_MAX)
 
-NA_IDEF float naUniformRandZEf(){
-  float rnd;
-  do{rnd = (float)naRand();} while(rnd == RAND_MAX);
-  return rnd * NA_INV_RAND_MAXf;
-}
 NA_IDEF double naUniformRandZE(){
   double rnd;
   do{rnd = (double)naRand();} while(rnd == RAND_MAX);
   return rnd * NA_INV_RAND_MAX;
 }
-
-
-
-NA_IDEF float naUniformRandZIf(){
-  return (float)naRand() * NA_INV_RAND_MAXf;
+NA_IDEF float naUniformRandZEf(){
+  float rnd;
+  do{rnd = (float)naRand();} while(rnd == RAND_MAX);
+  return rnd * NA_INV_RAND_MAXf;
 }
+    
+
+
 NA_IDEF double naUniformRandZI(){
   return (double)naRand() * NA_INV_RAND_MAX;
 }
-
+NA_IDEF float naUniformRandZIf(){
+  return (float)naRand() * NA_INV_RAND_MAXf;
+}
+    
 
 
 #ifdef __cplusplus 
