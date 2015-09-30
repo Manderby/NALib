@@ -15,6 +15,7 @@ correct, complete or final.
 
 todo: componentwise division Matrix. Division with E. Determinant
 
+- Added File access methode naAccess
 - Renamed Scale and componentwise div functions in NAVectorAlgebra to MulComp
   and DivComp. Added componentwise multiplication and division of Matrices.
 - Added Determinant computation and Matrix equality tests in NAVectorAlgebra.h

@@ -68,6 +68,7 @@ NA_IAPI NABool     naIsDir   (const char* path);
 NA_IAPI NABool     naIsHidden(const char* path);
 NA_IAPI int        naRemove  (const char* path);
 NA_IAPI NABool     naCopyFile(const char* dstpath, const char* srcpath);
+NA_IAPI NABool     naAccess  (const char* path, NABool exists, NABool read, NABool write, NABool execute);
 
 
 // The different flushing-behaviours
@@ -497,6 +498,15 @@ NA_IDEF NABool naCopyFile(const char* dstpath, const char* srcpath){
 }
 
 
+
+NA_IAPI NABool naAccess(const char* path, NABool exists, NABool read, NABool write, NABool execute){
+  int testmode = 0;
+  testmode |= (exists?F_OK:0);
+  testmode |= (read?R_OK:0);
+  testmode |= (write?W_OK:0);
+  testmode |= (execute?X_OK:0);
+  return (access(path, testmode) == 0);
+}
 
 
 
