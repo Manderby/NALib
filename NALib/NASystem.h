@@ -108,7 +108,6 @@
     #endif
     #if __STDC_VERSION__ >= 201112L
       #define NA_C11
-      #warn c11
     #endif
   #endif
 
@@ -122,7 +121,6 @@
   #endif
   #if __cplusplus >= 201103L
     #define NA_C11
-    #warn c11
   #endif
 #endif
 
@@ -509,7 +507,11 @@ NA_IDEF NABool naIsIntNegative(NAInt x)        {return (x  < NA_ZERO);}
 
 #include <stdlib.h>
 #ifdef NA_C11
-  #define NA_NULL nullptr
+  #ifdef __cplusplus
+    #define NA_NULL nullptr
+  #else
+    #define NA_NULL NULL
+  #endif
   #define NA_NORETURN _Noreturn
 #else
   #define NA_NULL NULL

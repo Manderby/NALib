@@ -151,9 +151,9 @@ NA_IAPI       void* naIterateListMutable  (      NAList* list, NAInt step);
 // internal pointer will be unset.
 // Returns NA_TRUE, if the element is found and NA_FALSE if not.
 //
-// Warning: These functions are very slow!
-NA_IAPI NABool naLocateListPointer        (const NAList* list, void* content);
-NA_IAPI NABool naLocateListIndex          (const NAList* list, NAInt indx);
+// Warning: These functions are very slow! And they are not inlined.
+NA_API NABool naLocateListPointer        (const NAList* list, void* content);
+NA_API NABool naLocateListIndex          (const NAList* list, NAInt indx);
 
 // Moves the internal pointer forward or backwards.
 // If no internal pointer is set, NA_NULL is returned and the internal pointer
@@ -168,6 +168,8 @@ NA_IAPI NABool naIsListAtLast             (const NAList* list);
 
 
 
+// A helper function for the runtime system.
+NA_HAPI void naPrepareListElementRuntime();
 
 
 
@@ -342,61 +344,6 @@ NA_IDEF NABool naIsListAtLast(const NAList* list){
   return (list->sentinel.prev == list->cur);
 }
 
-
-
-NA_IDEF NABool naLocateListPointer(const NAList* list, void* content){
-  NAList* mutablelist = (NAList*)list;
-  NAListElement* curelement = list->sentinel.next;
-  while(curelement != &(list->sentinel)){
-    if(naGetPtrConst(&(curelement->ptr)) == content){
-      mutablelist->cur = curelement;
-      return NA_TRUE;
-    }
-    curelement = curelement->next;
-  }
-  // Reaching here, content could not be found. Do not change the internal
-  // pointer but return NA_FALSE
-  return NA_FALSE;
-}
-
-
-NA_IDEF NABool naLocateListIndex(const NAList* list, NAInt indx){
-  NAList* mutablelist = (NAList*)list;
-  if(indx < 0){indx += list->count;}
-  if(indx < 0){
-    #ifndef NDEBUG
-      naError("naLocateListIndex", "Negative index underflows the range of the list");
-    #endif
-    mutablelist->cur = &(mutablelist->sentinel);
-    return NA_FALSE;
-  }
-  if(indx >= (NAInt)list->count){
-    #ifndef NDEBUG
-      naError("naLocateListIndex", "Index overflows the range of the list");
-    #endif
-    mutablelist->cur = &(mutablelist->sentinel);
-    return NA_FALSE;
-  }
-  
-  if(indx < ((NAInt)list->count / 2)){
-    // Go from leading to trailing
-    mutablelist->cur = list->sentinel.next;
-    while(indx){
-      mutablelist->cur = mutablelist->cur->next;
-      indx--;
-    }
-  }else{
-    // Go from trailing to leading
-    mutablelist->cur = list->sentinel.prev;
-    indx = indx - list->count + 1;
-    while(indx){
-      mutablelist->cur = mutablelist->cur->prev;
-      indx++;
-    }
-  }
-
-  return NA_TRUE;
-}
 
 
 
@@ -680,12 +627,6 @@ NA_IDEF void* naGetListNextMutable(const NAList* list){
 
 
 
-NA_HDEF static void naPrepareListElementRuntime(){
-  NATypeInfo typeinfo;
-  typeinfo.typesize = sizeof(NAListElement);
-  typeinfo.destructor = NA_NULL;
-  na_NAListElement_identifier = naManageRuntimeType(&typeinfo);
-}
 
 
 

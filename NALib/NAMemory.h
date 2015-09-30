@@ -508,6 +508,7 @@ NA_HIDEF NAUInt naGetNullTerminationSize(NAInt size){
 // ////////////////////////////////////////////
 
 
+
 NA_IDEF void* naMalloc(NAInt size){
   // ptr is declared as NAByte to simplify accessing individual bytes later
   // in this functions.
@@ -560,9 +561,11 @@ NA_IDEF void* naMallocIfNull(void* ptr, NAInt size){
 
 
 NA_IDEF void* naMallocAligned(NAUInt size, NAUInt align){
-  #ifdef NA_C11
-    return aligned_alloc(size, align);
-  #else
+  // commented out because due to some strange reason, this does not work with
+  // clang.
+//  #if defined NA_C11 && !defined __cplusplus
+//    return aligned_alloc(size, align);
+//  #else
     #if NA_SYSTEM == NA_SYSTEM_WINDOWS
       return _aligned_malloc(size, align);
     #else
@@ -570,21 +573,23 @@ NA_IDEF void* naMallocAligned(NAUInt size, NAUInt align){
       posix_memalign(&retptr, align, size);
       return retptr;
     #endif
-  #endif
+//  #endif
 }
 
 
 
 NA_IDEF void* naMallocPageAligned(NAUInt size){
-  #ifdef NA_C11
-    return aligned_alloc(size, naGetSystemMemoryPageSize());
-  #else
+  // commented out because due to some strange reason, this does not work with
+  // clang.
+//  #if defined NA_C11 && !defined __cplusplus
+//    return aligned_alloc(size, naGetSystemMemoryPageSize());
+//  #else
     #if NA_SYSTEM == NA_SYSTEM_WINDOWS
       return _aligned_malloc(size, naGetSystemMemoryPageSize());
     #else
       return valloc(size);
     #endif
-  #endif
+//  #endif
 }
 
 

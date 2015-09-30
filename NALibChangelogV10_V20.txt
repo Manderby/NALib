@@ -15,6 +15,8 @@ correct, complete or final.
 
 todo: componentwise division Matrix. Division with E. Determinant
 
+- Moved slow and helper functions of NAList.h to NAList.c
+- Changed the C11 macro of NA_NULL to NULL.
 - Added File access methode naAccess
 - Renamed Scale and componentwise div functions in NAVectorAlgebra to MulComp
   and DivComp. Added componentwise multiplication and division of Matrices.
