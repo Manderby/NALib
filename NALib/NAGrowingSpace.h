@@ -116,9 +116,10 @@ struct NAGrowingSpace{
 // has the size given to naInitGrowingSpace
 NA_HIDEF void naAddGrowingSpaceNewSpace(NAGrowingSpace* space){
   NAUInt newelementcount;
+  void* newarray;
   NAUInt arraycount = naGetListCount(&(space->arrays));
   newelementcount = 1 << (arraycount + space->minimalexp);
-  void* newarray = naMalloc(newelementcount * space->typesize);
+  newarray = naMalloc(newelementcount * space->typesize);
   naAddListLastMutable(&(space->arrays), newarray);
 }
 
@@ -163,7 +164,7 @@ NA_IDEF void naClearGrowingSpace(NAGrowingSpace* space){
     naFree(curarray);
   }
 
-  naClearList(&(space->arrays), NA_NULL);
+  naClearList(&(space->arrays));
 }
 
 
@@ -172,11 +173,13 @@ NA_IDEF void* naNewGrowingSpaceElement(NAGrowingSpace* space){
   // Declaration before Implementation. Needed for C90
   NAUInt subindex;
   NAUInt baseindex;
+  NAUInt arraycount;
+  NAUInt availablespace;
 
   space->usedcount++;
-  NAUInt arraycount = naGetListCount(&(space->arrays));
+  arraycount = naGetListCount(&(space->arrays));
   
-  NAUInt availablespace = (1 << (arraycount + space->minimalexp)) - (1 << space->minimalexp);
+  availablespace = (1 << (arraycount + space->minimalexp)) - (1 << space->minimalexp);
 
   if(space->usedcount > availablespace){
     naAddGrowingSpaceNewSpace(space);
@@ -200,8 +203,9 @@ NA_IDEF const void* naGetGrowingSpaceConstContent(const NAGrowingSpace* space){
 
 
 NA_IDEF void* naGetGrowingSpaceMutableContent(const NAGrowingSpace* space){
+  void* curarray;
   if(naGetListCount(&(space->arrays)) == NA_ZERO){return NA_NULL;}
-  void* curarray = naGetListCurrentMutable(&(space->arrays));
+  curarray = naGetListCurrentMutable(&(space->arrays));
   if(!curarray){return NA_NULL;}
   return &(((NAByte*)curarray)[space->cur * space->typesize]);
 }

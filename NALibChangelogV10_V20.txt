@@ -13,8 +13,21 @@ correct, complete or final.
 
 
 
+- Added user interface in NAUI
+- Added threading NAThreading
+
 todo: componentwise division Matrix. Division with E. Determinant
 
+- Revisited the readme file
+- Removed NAConstructor.
+- Removed NADestructor in NAArray and NAList. Added naForeach with NAMutator.
+- Renamed NADestructor to NATypeDestructor and only use it in NARuntime.
+- Removed NAStructInfo. This was an unused relict of the time of implementing
+  NARuntime.
+- Moved the naSleep functions to NAThreading.h
+- Removed many implicit conversions from NAVectorAlgebra.h
+- Made it compile under VisualStudio again.
+- Added NA_ZERO_DEGREES
 - Moved slow and helper functions of NAList.h to NAList.c
 - Changed the C11 macro of NA_NULL to NULL.
 - Added File access methode naAccess

@@ -171,6 +171,7 @@ NA_IAPI NARect    naMakeRectWithCGRect(CGRect cgrect);
 NA_IAPI NAPos     naMakePosWithNSPoint(NSPoint nspoint);
 NA_IAPI NASize    naMakeSizeWithNSSize(NSSize nssize);
 NA_IAPI NARect    naMakeRectWithNSRect(NSRect nsrect);
+NA_IAPI NSRect    naMakeNSRectWithRect(NARect narect);
 #endif
 
 
@@ -940,7 +941,7 @@ NA_IDEF NAPos naMakePosWithCGPoint(CGPoint cgpoint){
   newpos.y = cgpoint.y;
   return newpos;
 }
-NA_IAPI NASize naMakeSizeWithCGSize(CGSize cgsize){
+NA_IDEF NASize naMakeSizeWithCGSize(CGSize cgsize){
   NASize newsize;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!(naIsSizeValueValid(cgsize.width) && naIsSizeValueValid(cgsize.height)))
@@ -952,7 +953,7 @@ NA_IAPI NASize naMakeSizeWithCGSize(CGSize cgsize){
   newsize.height = cgsize.height;
   return newsize;
 }
-NA_IAPI NARect naMakeRectWithCGRect(CGRect cgrect){
+NA_IDEF NARect naMakeRectWithCGRect(CGRect cgrect){
   NARect newrect;  // Declaration before implementation. Needed for C90.
   newrect.pos = naMakePosWithCGPoint(cgrect.origin);
   newrect.size = naMakeSizeWithCGSize(cgrect.size);
@@ -962,7 +963,7 @@ NA_IAPI NARect naMakeRectWithCGRect(CGRect cgrect){
 
 
 #if defined __OBJC__ && defined __AVAILABILITYMACROS__
-NA_IAPI NAPos naMakePosWithNSPoint(NSPoint nspoint){
+NA_IDEF NAPos naMakePosWithNSPoint(NSPoint nspoint){
   NAPos newpos;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!(naIsPosValueValid(nspoint.x) && naIsPosValueValid(nspoint.y)))
@@ -974,7 +975,7 @@ NA_IAPI NAPos naMakePosWithNSPoint(NSPoint nspoint){
   newpos.y = nspoint.y;
   return newpos;
 }
-NA_IAPI NASize naMakeSizeWithNSSize(NSSize nssize){
+NA_IDEF NASize naMakeSizeWithNSSize(NSSize nssize){
   NASize newsize;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!(naIsSizeValueValid(nssize.width) && naIsSizeValueValid(nssize.height)))
@@ -986,10 +987,15 @@ NA_IAPI NASize naMakeSizeWithNSSize(NSSize nssize){
   newsize.height = nssize.height;
   return newsize;
 }
-NA_IAPI NARect naMakeRectWithNSRect(NSRect nsrect){
+NA_IDEF NARect naMakeRectWithNSRect(NSRect nsrect){
   NARect newrect;  // Declaration before implementation. Needed for C90.
   newrect.pos = naMakePosWithNSPoint(nsrect.origin);
   newrect.size = naMakeSizeWithNSSize(nsrect.size);
+  return newrect;
+}
+NA_IDEF NSRect naMakeNSRectWithRect(NARect narect){
+  NSRect newrect;  // Declaration before implementation. Needed for C90.
+  newrect = NSMakeRect(narect.pos.x, narect.pos.y, narect.size.width, narect.size.height);
   return newrect;
 }
 #endif

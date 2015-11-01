@@ -12,12 +12,6 @@
 #include "NAString.h"
 
 
-// Puts the current thread on hold for the specified amount of time.
-// S = Seconds, M = Milliseconds, U = Microseconds.
-NA_IAPI int naSleepU(NAUInt usecs);
-NA_IAPI int naSleepM(NAUInt msecs);
-NA_IAPI int naSleepS(NAUInt  secs);
-
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   #include "Windows.h"
   typedef TIME_ZONE_INFORMATION NATimeZone;
@@ -310,66 +304,6 @@ NA_API void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ///////////////////////////////////////////////////////////////////////
-// Inline Implementations: See readme file for more expanation.
-// ///////////////////////////////////////////////////////////////////////
-
-
-
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
-#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-  #include <unistd.h>
-#endif
-
-
-NA_IDEF int naSleepU(NAUInt usecs){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    Sleep((DWORD)(usecs/1000));
-    return 0;
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    return usleep((useconds_t)(usecs));
-  #endif
-}
-
-NA_IDEF int naSleepM(NAUInt msecs){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    Sleep((DWORD)(msecs));
-    return 0;
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    return usleep((useconds_t)(msecs*1000LL));
-  #endif
-}
-
-NA_IDEF int naSleepS(NAUInt secs){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    Sleep((DWORD)(secs*1000));
-    return 0;
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    return usleep((useconds_t)(secs*1000000LL));
-  #endif
-}
 
 
 

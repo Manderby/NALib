@@ -41,7 +41,7 @@ NA_IAPI NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, NAUInt typesize);
 // your pool should be in the same state now.
 NA_IAPI void naClearPool(NAPool* pool);
 
-// Suchs a drop from the pool or spits one back.
+// Sucks a drop from the pool or spits one back.
 NA_IAPI void* naSuckPool(NAPool* pool);
 NA_IAPI void  naSpitPool(NAPool* pool, void* drop);
 
@@ -92,6 +92,10 @@ NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, NAUInt count){
 
 
 NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, NAUInt typesize){
+  NAByte** dropptr;
+  NAByte* storageptr;
+  NAUInt i;
+
   #ifndef NDEBUG
     if(!pool)
       {naCrash("naInitPoolFilled", "pool is NULL"); return NA_NULL;}
@@ -109,9 +113,9 @@ NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, NAUInt typesize){
   #endif
 
   // Insert all elements to the drop array.
-  NAByte** dropptr = pool->drops;
-  NAByte* storageptr = (NAByte*)pool->storagearray;
-  for(NAUInt i=0; i<pool->count; i++){
+  dropptr = pool->drops;
+  storageptr = (NAByte*)pool->storagearray;
+  for(i=0; i<pool->count; i++){
     *dropptr = storageptr;
     dropptr++;
     storageptr += typesize;
@@ -179,8 +183,9 @@ NA_IDEF NABool naIsPoolFull(NAPool* pool){
 
 
 NA_IDEF void naForeachPool(const NAPool* pool, NAMutator mutator){
+  NAUInt i;
   NAByte** curptr = pool->drops;
-  for(NAUInt i=0; i<pool->cur; i++){
+  for(i=0; i<pool->cur; i++){
     mutator(*curptr);
     curptr++;
   }

@@ -206,6 +206,8 @@
 // - PLANCK_TEMP        Planck temperature, T_P in [K]
 // - PLANCK_TIME        Planck time, t_P in [s]
 // - LIGHT_SPEED_VAC    speed of light in vacuum, c_0 in [ms-1]
+//
+// - NA_ZERO_DEGREES_CELSIUS    273.15 Kelvin.
 
 #if (NA_NIST_CODATA_YEAR == 2006)
   #define NA_CHAR_IMP_VAC        376.730313461
@@ -259,6 +261,8 @@
   #define NA_PLANCK_TIME         5.39116e-44
   #define NA_LIGHT_SPEED_VAC     299792458.         // same as 2010
 #endif
+
+#define NA_ZERO_DEGREES_CELSIUS  273.15
 
 // Electromagnetic constants
 // - BOHR               Bohr magneton, mu_B in [JT-1]

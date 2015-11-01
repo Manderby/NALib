@@ -7,7 +7,7 @@
 #include "NAArray.h"
 
 
-NA_DEF NAArray* naInitArrayWithCount(NAArray* array, NAUInt typesize, NAUInt count, NAConstructor constructor){
+NA_DEF NAArray* naInitArrayWithCount(NAArray* array, NAUInt typesize, NAUInt count){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naInitArrayWithCount", "array is NULL"); return NA_NULL;}
@@ -19,16 +19,6 @@ NA_DEF NAArray* naInitArrayWithCount(NAArray* array, NAUInt typesize, NAUInt cou
     naInitByteArray(&(array->bytearray));
   }else{
     naInitByteArrayWithSize(&(array->bytearray), typesize * count);
-    if(constructor){
-      // Note that you shall not call naForeachArray with the constructor. The
-      // function pointers are not generally compatible.
-      NAByte* ptr = naGetByteArrayMutablePointer(&(array->bytearray));
-      while(count){
-        constructor(ptr);
-        ptr += array->typesize;
-        count--;
-      }
-    }
   }
   
   return array;

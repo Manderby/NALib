@@ -1,6 +1,6 @@
 
 NALib Readme
-This file is part of NALib, a collection of C and C++ source code
+This file is part of NALib, a collection of C source code
 intended for didactical purposes. Full license notice at the bottom.
 ====================
 
@@ -8,8 +8,10 @@ intended for didactical purposes. Full license notice at the bottom.
 Table of Content:
 -----------------
 1.   Short Introduction
-2.   Creation and deletion of memory and structs
-2.3    DEPRECATED - Callbacks for container structs
+2    Memory and Structs
+2.1    Creation and deletion of memory blocks
+2.2    Initializating and Clearing of structs
+2.3    Foreach Callbacks and iteration functions
 3.   Runtime System
 4.   C90 variable declarations
 5.   Inline implementations
@@ -40,9 +42,23 @@ Have fun, Tobias Stamm.
 
 
 
+2. Memory and Structs
+---------------------
 
-2 Creation and deletion of memory and structs
----------------------------------------------
+NALib is a collection of C code. The C programming language has no notion of
+object oriented programming (OOP) and therefore relies on simpler concepts
+like memory blocks, pointers and structs (sometimes called "records" in other
+languages).
+
+A huge deal of programming in C and hence programming with NALib is to create
+and delete pointers and structs as well as using them with callbacks and
+iterators. The following chapters will give you an overview of how to do all
+that in NALib.
+
+
+
+2.1 Creation and deletion of memory blocks
+------------------------------------------
 You can use the default malloc and free functions to create memory blocks
 as you like. NALib nontheless provides its own allocation methods (which are
 basically mappings to malloc and free):
@@ -50,12 +66,16 @@ basically mappings to malloc and free):
 - naMalloc            Allocates the given number of bytes.
 - naMallocIfNull      Same as naMalloc but the space will only be allocated
                       if the pointer provided is NA_NULL.
-- naMallocPageAligned Allocates the given number of bytes but the first byte
-                      will be aligned to a page boundary.
 - naAlloc             Allocates space for the given NALib structure. Use it
                       for example like this: NAArray* a = naAlloc(NAArray);
 - naFree              Frees the memory allocated with above functions.
 
+You can also allocate memory on byte numbers or even page boundaries:
+
+- naMallocAligned     Allocates memory aligne to a certain byte number.
+- naMallocPageAligned Allocates the given number of bytes but the first byte
+                      will be aligned to a page boundary.
+- naFreePageAligned   Frees the aligned memory.
 
 Additionally, starting with NALib version 10, you can use the following
 two functions (See section 3 for more information):
@@ -64,8 +84,13 @@ two functions (See section 3 for more information):
 - naDelete:     Deletes a pointer allocated with naNew.
 
 
-Other than these basic allocation methods, NALib offers creation and deletion
-functions for many structs.
+
+
+2.2 Initializating and Clearing of structs
+-------------------------
+
+Other than these basic memory allocation methods, NALib offers creation and
+deletion functions for many structs.
 
 The naming scheme guides you:
 
@@ -74,11 +99,9 @@ The naming scheme guides you:
                 will provide such functions.
 - naFillXXX:    Expects the first argument to be a pointer to the struct.
                 Again, only basic structs (pod) will offer such functions.
-- naInitXXX:    Expects a pointer to an existing block in memory. Returns the
-                pointer again. See section 2.1 for more information.
-- naClearXXX:   Expects a pointer to a struct in which the memory shall be
-                whiped. The pointer itself is not deallocated though. See
-                section 2.2 for more information.
+- naInitXXX:    Expects a pointer to an existing struct in memory. Returns the
+                pointer again.
+- naClearXXX:   Expects a pointer to a struct which shall be cleared.
 - naNewXXX:     Starting with NALib version 10, certain structs like NAString
                 have been restricted to be managed by the runtime system. These
                 structs do not provide naInitXXX_functions but naNewXXX-
@@ -95,14 +118,17 @@ constructors or destructors like in typical OOP languages and consequently,
 such initialization must be done manually by the programmer.
 
 In NALib, construction-functions always start with naInitXXX and desctruction-
-functions always start with naClearXXX. naInitXXX-functions usually assume
-the given struct to be uninitialized and will overwrite all values. naClearXXX-
-functions expect a pointer to an initialized struct and will perform all
-necessary destructions. Beware that naClearXXX will only erase the contents but
-not the pointer itself.
+functions always start with naClearXXX.
+
+naInitXXX-functions usually assume the given struct to be uninitialized and
+will overwrite all values.
+
+naClearXXX-functions expect a pointer to an initialized struct and will perform
+all necessary destructions. Beware that naClearXXX will only erase the contents
+but not the pointer itself.
 
 The struct itself must always be allocated outside of the naInitXXX
-function. According to the functions listed in section 1, you have the
+function. According to the functions listed in section 2.1, you have the
 following scenarios:
 
 
@@ -128,8 +154,7 @@ naFree(myarray3);
 
 
 C) Allocate with naNew and delete with naDelete:
-NAArray* myarray;
-myarray = naInitArray(naNew(NAArray));
+NAArray* myarray = naInitArray(naNew(NAArray));
 naDelete(myarray);
 
 
@@ -144,69 +169,50 @@ Do not use the free-functions on stack variables!
 
 
 
-2.3 Callbacks for container structs
------------------------------------
--- LEGACY AND DEPRECATED - WILL BE REMOVED IN ONE OF THE NEXT VERSIONS --
-Some container structs like NAArray or NAGrowingSpace provide naCreateXXX,
-naClearXXX and naDestroyXXX functions with an additional parameter:
-A constructor or destructor callback with the following signature:
+2.3 Foreach Callbacks and iteration functions for container structs
+-------------------------------------------------------------------
 
-typedef void* (*NAConstructor)(void *);
-typedef void  (*NADestructor) (void *);
+Some container structs like NAArray or NAList provide naForeachXXX functions
+with an additional parameter: A mutator callback with the following signature:
 
-The parameter is usually called "constructor" or "destructor" and allows
-you to provide a function pointer to a construction or destruction function
-which will be called for every element in the container. Of course, this is
-only necessary if your elements actually need some sort of construction or
-destruction.
+typedef void (*NAMutator)(void *);
 
-Creating a datastructure with a constructor should always! be paired with
-clearing or destroying the datastructure with the corresponding desctructor.
+This parameter allows you to provide a function pointer to a mutation function
+which will be called for every element in the container.
 
-If you just need to do some harmeless initialization and no real construction
-(memory allocation and such), you might want to create the struct plainly and
-then run a foreach-function which accepts a mutator callback:
-
-typedef void  (*NAMutator) (void *);
-
-Beware: Do not mix these function pointers!
-
-Constructor example: You store complex objects in a NAGrowingSpace whereas
-each object must perform certain allocations before it can properly be
-used. The NAGrowingSpace structure will call the appropriate constructor
-for all new elements whenever the space grows.
-
-Destructor example: You store complex objects in an NAArray whereas the fields
-of the objects need to be deallocated properly upon destruction, you do not
-have to iterate over the whole array and call your destructor manually for
-every element. All the proper destruction of your elements will be taken care
-of.
-
-You are nontheless free to use these callbacks. When the according parameter
-is NA_NULL, no construction or destruction will be performed on the single
-elements. Note that when using the callback argument, your element constructor
-or destructor will be called by a function call which can be very costly for
-a lot of small elements.
+You can use mutators to simply mutate all elements in a container struct. But
+you can also use them to initialize all elements after a call to naInitXXX and
+to desctruct all elements before a call to naClearXXX.
 
 IMPORTANT:
-Beware that your constructor or destructor will always be called with a
-POINTER to the stored content. If for example, you have an array of integers,
-your callback will get an "int *". If your array stores a pointer to int,
-your callback will get an "int* *".
+Beware that your mutator will always be called with a POINTER to the content.
+If for example, you have an array of integers, your callback will get "int *".
+If your array stores a pointer to int, your callback will get "int* *".
 
-The return value of the constructor callback will be ignored.
+Note that you can also use any of the functions of NALib as callback functions
+as long as they accept only one pointer parameter and return void.
 
-In order to provide a clean API, the input- and return-parameter of your
-callback can be a pointer to any type you desire. But you must properly
-cast the function pointer when providing it to the naCreateXXX, naDestroyXXX
-or naClearXXX function with (NAConstructor) or (NADesctuctor). If you provide
-an incompatibel function pointer type, the implementation will likely crash.
-Especially note that attributes like __fastcall will not work!
+You may have to cast mutation functions to NAMutator.
 
-Note that you can also use any of the functions of NALib as callback
-functions as long as they only accept the correct parameters. Choose the
-correct one! And beware the pointer!
+Apart from NAMutator functions, many container structs have built-in
+iteration functions. In NALib, you usually initialize a struct with a call
+to one of the following functions:
 
+- naFirstXXX
+- naLastXXX
+- naLocateXXX
+
+After having initialized the iteration, you iterate using a function like this:
+
+- naIterateXXX
+
+Such a function iterates through a struct and provides the pointer it pointed
+to BEFORE calling this function. The comments at the different naIterateXXX
+functions will tell you more.
+
+Note that the iteration only works on a per-instance basis. This means that
+you can not have two iterations running on the same structure. This also means
+that multithreaded environments must be careful when iterating!
 
 
 
@@ -222,9 +228,6 @@ becomes way easier to manage when strings are always provided as pointers.
 Therefore, the naInitString-functions have been replaced by naNewString-
 functions which do not accept an input pointer anymore but instead always
 return a pointer allocated with naNew.
-
-Warning: NALib version 10 only provides the runtime system for NAString and
-NAPointer.
 
 In order to manage the pointers, an instance of NARuntime must be created
 before any naNew function can be called. When NDEBUG is undefined, a friendly
@@ -306,7 +309,7 @@ typedef struct NAArray NAArray;
 This line tells the compiler that NAArray shall be used as a type. After this
 line, the compiler expects a declaration somewhere and allows the programmer to
 use the type by just using its name. The actual declaration of this type can
-be written anywhere but in NALib is always given immediately after that line
+be written anywhere but in NALib is always given somewhen after that line
 by the following lines starting with something like
 
 struct NAArray{
@@ -331,16 +334,16 @@ is accessed by a pointer. The potential of C and C++ though gets limited
 fundamentally, as types can not contain reference-types whose declaration is
 unknown.
 
-To not limit the functionality, all types are directly declared after its
-typedef. This allows NALib to inline lots of code and hence become very fast.
-The programmer though has to take the responsibility to not access any of the
-fields of an opaque type directly. Always use the API!
+To not limit the functionality, all such types are declared somewhen after its
+typedef in the same header file. This allows NALib to inline lots of code and
+hence become very fast. The programmer though has to take the responsibility
+to not access any of the fields of an opaque type directly. Always use the API!
 
 Note that if you want to create a library where the types become opaque but
 can nontheless be accessed by your own implementation, collect all opaque type
 declarations into one header file which will be included by the implementation
 files and must be present during compilation. During distribution, remove that
-header file from the package. It's tricky but it works.
+header file from the package. It's tricky, but it works.
 
 
 
@@ -375,25 +378,29 @@ NA_HIAPI    | NA_HIDEF   | Inline helper function. Same thing but inlined.
 
 Types are always typedef'd, meaning you won't have to write the struct keyword
 all the time when declaring variables. Also enums are typedef'd with a clear
-name. Examples: NAInt, NAArray, NATextEncoding
+name. Examples: NAAscDateTimeFormat, NATextEncoding
 
 Some macros have just one identifier after the prefix. These macros denote
 key values often used in all of the source code. Examples: NA_NULL, NA_RESTRICT
 
 Some other macros have multiple identifiers after the prefix. The first
 identifier denotes the topic which the macros are used for. The remaining
-identifiers are a more and more defined description of what the macro describes.
+identifiers are a more and more refined description of what the macro describes.
 Examples: NA_SYSTEM_WINDOWS, NA_ENDIANNESS_BIG
 
 Functions have a description of what they do after the prefix. The first word
-after the prefix is usually a verb, such as Convert, Create or Get. After that
+after the prefix is usually a verb, such as Convert, Locate or Get. After that
 comes usually a type upon which the function operates. For example Array or
-String but also something like i8 or 32, denoting an integer with 8 bits or an
-array with 32 bits. After that, a more concrete description of what the function
-does or expects as parameters is given. Like for example WithSize, FromFilename.
+String but also something like i8 or 32, denoting an integer with 8 bits or a
+memory block with 32 bits. After that, a more concrete description of what the
+function does or expects as parameters is given. Like for example WithSize,
+FromFilename.
 
 Variables and printf arguments are rarely used in NALib. They have an
-appropriate description after the prefix.
+appropriate description after the prefix like for example
+
+na_monthenglishabbreviationnames, na_runtime
+NA_PRIi, NA_TAB, NA_NL_UNIX
 
 
 

@@ -1197,7 +1197,7 @@ NA_HDEF void naClearString(NAString* string){
 NA_HDEF void naPrepareStringRuntime(){
   NATypeInfo typeinfo;
   typeinfo.typesize = sizeof(NAString);
-  typeinfo.destructor = (NADestructor)naClearString;
+  typeinfo.destructor = (NATypeDestructor)naClearString;
   na_NAString_identifier = naManageRuntimeType(&typeinfo);
 }
 

@@ -39,18 +39,24 @@ NA_IAPI NAList* naInitList(NAList* list);
 // same order. The two list pointers must not be the same.
 NA_IAPI NAList* naCopyList(NAList* list, NAList* originallist);
 
-// Clears the given list. Note: This will free all list elements
-// but not the contents they store! You can send a destructor though which
-// might clear and destroy all elements.
-NA_IAPI void    naClearList  (NAList* list, NADestructor destructor);
+// Clears or empties the given list. Note: This will free all list elements
+// but not the contents they store! Use naForeachList or iteration for that.
+//
+// The difference between naEmptyList and naClearList is that Clear should be
+// called with a semantic of invalidating the list whereas Empty simply empties
+// the list. Due to the implementation in NALib, this makes no difference but
+// should nontheless be distinguished. For other datastructures like NAHeap,
+// this equality does not hold.
+NA_IAPI void    naClearList  (NAList* list);
+NA_IAPI void    naEmptyList  (NAList* list);
 
-// Empties the list. See implementation for difference to naClearList
-NA_IAPI void    naEmptyList  (NAList* list, NADestructor destructor);
+// Traverses the whole list and calls the mutator on each element. A pointer
+// to each element will be given to the mutator.
+NA_IAPI void    naForeachList  (NAList* list, NAMutator mutator);
 
 // Returns the informations about the number of elements in this list.
 NA_IAPI NAUInt  naGetListCount(const NAList* list);
 NA_IAPI NABool  naIsListEmpty(const NAList* list);
-
 
 // ///////////////////////////
 // Adding elements
@@ -158,6 +164,8 @@ NA_API NABool naLocateListIndex          (const NAList* list, NAInt indx);
 // Moves the internal pointer forward or backwards.
 // If no internal pointer is set, NA_NULL is returned and the internal pointer
 // is not touched at all.
+// Note: You can use naIterateListConst or naIterateListMutable to directly
+// get the current element.
 NA_IAPI void naIterateList                (const NAList* list, NAInt step);
 
 // Returns whether the list is at a certain position
@@ -237,17 +245,12 @@ NA_IDEF NAList* naCopyList(NAList* list, NAList* originallist){
 }
 
 
-NA_IDEF void naClearList(NAList* list, NADestructor destructor){
-  naEmptyList(list, destructor);
+NA_IDEF void naClearList(NAList* list){
+  naEmptyList(list);
 }
 
 
-// The difference between naEmptyList and naClearList is that Clear should
-// be called with a semantic of invalidating the list whereas Empty simply
-// empties the list. Due to the implementation in NALib, this makes no
-// difference but should nontheless be distinguished. For other datastructures
-// like NAHeap, this equality does not hold.
-NA_IDEF void naEmptyList(NAList* list, NADestructor destructor){
+NA_IDEF void naEmptyList(NAList* list){
   // Declaration before implementation. Needed for C90.
   NAListElement* cur;
   #ifndef NDEBUG
@@ -259,12 +262,31 @@ NA_IDEF void naEmptyList(NAList* list, NADestructor destructor){
   cur = list->sentinel.next;
   while(cur != &(list->sentinel)){
     NAListElement* next = cur->next;
-    if(destructor){destructor(naGetPtrMutable(&(cur->ptr)));}
     naDelete(cur);
     cur = next;
   }
 }
 
+
+
+NA_IDEF void naForeachList(NAList* list, NAMutator mutator){
+  // Declaration before implementation. Needed for C90.
+  NAListElement* cur;
+  #ifndef NDEBUG
+    if(!list){
+      naCrash("naForeachList", "list is Null-Pointer.");
+      return;
+    }
+    if(!mutator)
+      naCrash("naForeachList", "mutator is Null-Pointer.");
+  #endif
+  cur = list->sentinel.next;
+  while(cur != &(list->sentinel)){
+    NAListElement* next = cur->next;
+    mutator(naGetPtrMutable(&(cur->ptr)));
+    cur = next;
+  }
+}
 
 
 
@@ -292,6 +314,8 @@ NA_IDEF void naLastList(const NAList* list){
 
 
 
+// Note: You can use naIterateListConst or naIterateListMutable to directly
+// get the current element.
 NA_IDEF void naIterateList(const NAList* list, NAInt step){
   NAList* mutablelist = (NAList*)list;
   while(step > 0){

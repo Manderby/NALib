@@ -14,7 +14,7 @@
 // preprocessor macros.
 
 
-#define NA_VERSION 12
+#define NA_VERSION 13
 
 
 // The various Systems:
@@ -47,9 +47,21 @@
 //
 // In the future, there might be more or different macros
 //
+// Interesting read: http://sourceforge.net/p/predef/wiki/OperatingSystems/
+//
 // //////////////////////////////////////////
 
-// Interesting read: http://sourceforge.net/p/predef/wiki/OperatingSystems/
+// The core constants of the systems.
+//
+// NA_SYSTEM              One of the macros above like NA_SYSTEM_WINDOWS.
+// NA_SYSTEM_ENDIANNESS   One of the macros above like NA_ENDIANNESS_BIG.
+// NA_SYSTEM_ADDRESS_BITS The bits used for an address. Currently 32 or 64
+//
+// Use these macros in preprocessor directives like
+// #if NASYSTEM == NA_SYSTEM_WINDOWS
+// ...
+// #endif
+//
 #if defined _WIN32
   #define NA_SYSTEM NA_SYSTEM_WINDOWS
   #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_LITTLE
@@ -86,7 +98,7 @@
   #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_UNKNOWN
 #endif
 
-// The number of bytes per address
+// The number of bytes per address. Currently 4 or 8
 #define NA_SYSTEM_ADDRESS_BYTES (NA_SYSTEM_ADDRESS_BITS >> 3)
 
 
@@ -114,7 +126,7 @@
 #else
 
   // This is a C++ compilation
-  // Note that this macro test is not fully coorect but it serves the purpose
+  // Note that this macro test is not fully correct but it serves the purpose
   // of running this c library alongside c++ code
   #if __cplusplus >= 199711L
     #define NA_C99
@@ -133,16 +145,17 @@
 // keywords on different systems.
 //
 // A function declared with NA_LINKER_NO_EXPORT will not be exported when
-// building a library. This means that this function will not be listed in the
-// .lib file on windows and will not be accessible anywhere when including the
-// (.dll or .dylib) library. A function declared with NA_LINKER_EXPORT will
+// building a program or library. This means that this function will not be
+// listed in the .lib file on windows and will not be accessible anywhere when
+// including the (.dll or .dylib) library. Also, any binary will be fully
+// stripped from such symbols. A function declared with NA_LINKER_EXPORT will
 // explicitely be exported. This is a system-independent implementation which
 // allows the programmer to define the exporting on a very low granularity.
 // There exist other methods to define the exporting in supplementary files.
 //
 // As NALib is not intended to be compiled as a library, all functions are
 // either declared static inline or with NA_LINKER_NO_EXPORT. NA_LINKER_EXPORT
-// will never be used but you may use it in your own code.
+// will never be used in NALib but you may use it in your own code.
 //
 // Usually, the NA_LINKER_NO_EXPORT macro is defined in some other, hidden file
 // as it shall not be visible to the end user and will only be used on hidden
@@ -223,7 +236,7 @@
 #define NA_HIDEF  static NA_INLINE
 // Authors comment: Note that all symbols are declared and defined very
 // restrictive. Meaning: No function or variable of NALib will show up in a
-// library which is built with NALib.
+// program which is built with NALib.
 
 
 // va_copy is defined since C99. But before, you had to use something like
@@ -495,7 +508,7 @@ NA_IDEF NABool naIsIntNegative(NAInt x)        {return (x  < NA_ZERO);}
 
 
 // The definition of NA_NULL is usually set to the NULL found in stdlib. The
-// new C11 standard however has a new keyword. Let's use it if it is available!
+// new C++11 standard however has a new keyword. Let's use it if it is there!
 // Note that stdlib is needed anyway for malloc, free and exit which is most
 // probably needed anyway.
 //
@@ -525,7 +538,7 @@ NA_IDEF NABool naIsIntNegative(NAInt x)        {return (x  < NA_ZERO);}
 // /////////////////////////////////
 // Debugging:
 //
-// The following definitions will only be defined if NDEBUG is undefined.
+// The following functions will only be defined if NDEBUG is undefined.
 // Many functions of NALib will perform many tests which will slow down
 // the performance more or less considerably. If NDEBUG is defined however,
 // no tests are performed whatsoever.
@@ -587,21 +600,13 @@ NA_IDEF NABool naIsIntNegative(NAInt x)        {return (x  < NA_ZERO);}
 
 
 
-// This is the type of a constructor and destructor callback which is used by
-// some naInitXXX as well as some naClearXXX functions.
-// See readme for detailed informations.
-typedef void* (*NAConstructor)(void *);
-typedef void  (*NADestructor) (void *);
+// This is the type of a general mutator callback which is used by some
+// naForeachXXX functions.
 typedef void  (*NAMutator)    (void *);
 
 
 
-typedef struct NAStructInfo NAStructInfo;
-struct NAStructInfo{
-  NAUInt structsize;
-  NAConstructor constructor;
-  NADestructor destructor;
-};
+
 
 
 #ifdef __cplusplus 

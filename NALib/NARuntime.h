@@ -28,10 +28,12 @@
 //
 // The most important two functions are naNew and naDelete.
 
+typedef void  (*NATypeDestructor) (void *);
+
 typedef struct NATypeInfo NATypeInfo;
 struct NATypeInfo{
   NAUInt typesize;
-  NADestructor destructor;
+  NATypeDestructor destructor;
 };
 
 
@@ -396,7 +398,7 @@ NA_HIDEF void naClearPointer(NAPointer* pointer){
 NA_HIDEF void naPreparePointerRuntime(){
   NATypeInfo typeinfo;
   typeinfo.typesize = sizeof(NAPointer);
-  typeinfo.destructor = (NADestructor)naClearPointer;
+  typeinfo.destructor = (NATypeDestructor)naClearPointer;
   na_NAPointer_identifier = naManageRuntimeType(&typeinfo);
 }
 

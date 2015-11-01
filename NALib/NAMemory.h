@@ -482,13 +482,14 @@ NA_IDEF NAUInt naGetSystemMemoryPageSizeMask(){
 //   initialized with binary zero.
 
 NA_HIDEF NAUInt naGetNullTerminationSize(NAInt size){
+  NAInt returnsize;
   #ifndef NDEBUG
     if(!naIsIntNegative(size))
       naError("naGetNullTerminationSize", "size is not negative");
     if(size == NA_INVALID_MEMORY_SIZE)
       naError("naGetNullTerminationSize", "invalid size given");
   #endif
-  NAInt returnsize = -size + 2 * NA_SYSTEM_ADDRESS_BYTES - (-size % NA_SYSTEM_ADDRESS_BYTES);
+  returnsize = -size + 2 * NA_SYSTEM_ADDRESS_BYTES - (-size % NA_SYSTEM_ADDRESS_BYTES);
   #ifndef NDEBUG
     if(returnsize < 0)
       naError("naGetNullTerminationSize", "given negative size is too close to the minimal integer value");
@@ -725,7 +726,7 @@ struct NAPtr{
 
 
 
-NAPtr naMakePtr(){
+NA_IDEF NAPtr naMakePtr(){
   NAPtr ptr;
   ptr.data.d = NA_NULL;
   #ifndef NDEBUG

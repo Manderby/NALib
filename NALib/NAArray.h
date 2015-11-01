@@ -41,11 +41,10 @@ typedef struct NAArray NAArray;
 NA_IAPI NAArray* naInitArray(NAArray* array);
 
 // Creates or fills a new NAArray struct with a given typesize in bytes and a
-// count. Calls the constructor on every element if not NA_NULL.
+// count.
 NA_API  NAArray* naInitArrayWithCount  (NAArray* array,
                                             NAUInt typesize,
-                                            NAUInt count,
-                                     NAConstructor constructor);
+                                            NAUInt count);
 
 // Creates or fills a new NAArray struct which contains the data of the given
 // buffer WITHOUT copying. The count denotes the number of elements in the
@@ -83,9 +82,8 @@ NA_API  NAArray* naInitArrayExtraction( NAArray* dstarray,
                                              NAInt offset,
                                              NAInt count);
 
-// Clears the given array. Calls the destructor on every element
-// if not NA_NULL. See Readme file for more information.
-NA_IAPI void naClearArray  (NAArray* array, NADestructor destructor);
+// Clears the given array.
+NA_IAPI void naClearArray  (NAArray* array);
 
 
 // COPIES the contents of the array to a separate storage and decouples it
@@ -174,7 +172,7 @@ NA_IDEF NAArray* naInitArray(NAArray* array){
 
 
 
-NA_IDEF void naClearArray(NAArray* array, NADestructor destructor){
+NA_IDEF void naClearArray(NAArray* array){
   #ifndef NDEBUG
     if(!array){
       naCrash("naClearArray", "array is Null-Pointer.");
@@ -184,7 +182,6 @@ NA_IDEF void naClearArray(NAArray* array, NADestructor destructor){
     // with a constructor callback. You are responsible to pair constructors
     // and destructors appropriately.
   #endif
-  if(destructor){naForeachArray(array, destructor);}
   naClearByteArray(&(array->bytearray));
 }
 

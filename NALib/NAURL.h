@@ -96,7 +96,7 @@ NA_IDEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* str
 
 
 NA_IDEF void naClearURL(NAURL* url){
-  naClearList(&(url->path), NA_NULL);
+  naClearList(&(url->path));
 }
 
 
