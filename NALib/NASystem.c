@@ -25,11 +25,17 @@
 
 
   NA_NORETURN void naCrash(const char* functionsymbol, const char* message){
-    // Set a breakpoint here, if everything fails.
+    // Set a breakpoint here, if everytahing fails.
     fprintf(stderr, "Critical Error in %s: %s\n", functionsymbol, message);
     fprintf(stderr, "Crashing the application deliberately...\n");
     exit(EXIT_FAILURE);
   }
+
+
+  NAUInt na_debug_mem_bytecount = 0;
+  NAUInt na_debug_mem_alignedbytecount = 0;
+  NABool na_debug_mem_count_bytes = NA_FALSE;
+
 
 #endif
 

@@ -3,55 +3,55 @@
 
 // Threading, Sleeping
 //
-// Note that for now, on Windows, the native threading functions of WINAPI are
-// used. On Mac, Grand Central Dispatch is used. There are implementations
-// planned for posix- as well as for C11-Threads. But so far, they are not
-// implemented yet here.
+// Note that in NALib, on Windows, the native threading functions of WINAPI are
+// used. On Mac, Grand Central Dispatch (GCD) is used. In the future, there
+// might be implementations planned for posix- as well as for C11-Threads. But
+// so far, they are not implemented yet.
 
+//
+// todo: Some functions start with New, but they actually use malloc. It works
+// But needs to be carefully thought trough again.
+//
 
 // Threading works differently on many systems and many frameworks. The data
 // structures used are also completely different. Therefore, all datatypes here
-// are declared as void*. In the implementation file, these void* are casted
-// to their explicit type.
+// are declared as void*.
 typedef void* NAThread;
 typedef void* NAMutex;
-typedef void* NAWait;
-
-
-// The function prototype for any threaded or otherwise called function.
-typedef void (*NACallingFunction)(void*);
+typedef void* NAAlarm;
 
 
 
 // ///////////////////////////////////
-// Sleeping and timed calling of functions
+// Sleeping
 //
 // The accuracy of the timing depends on the system but should be at least in
 // the reign of some milli-seconds.
 
 // Puts the current thread on hold for the specified amount of time.
 // S = Seconds, M = Milliseconds, U = Microseconds.
+// The return value behaves the same as the usleep function on Mac OS X, where
+// a value of 0 denotes success. On Windows, the return value is always 0.
 NA_IAPI int naSleepU(NAUInt usecs);
 NA_IAPI int naSleepM(NAUInt msecs);
 NA_IAPI int naSleepS(NAUInt  secs);
-// Executes the given function in the given number of seconds with the given
-// arg. Note that the timediff is given as a double.
-NA_IAPI void naCallUIElementInSeconds(     NACallingFunction function,
-                                                      void* uielement,
-                                                     double timediff);
+
 
 
 // ///////////////////////////////////
 // Threads
+//
+// Threads are simple to use parallel execution structures. You simply create
+// a thread by giving him a function to execute and an argument to pass. Then,
+// you start the thread and it will run parallel to your current execution.
 
 // Creates a new thread with a start function and an argument.
-// You can give a thread a name. This will be used on some systems when
-// debugging. Note that neither threadname nor arg will be owned by the
-// thread. You have to take care of deletion of any memory after naClearThread
-// by yourself.
-NA_IAPI NAThread naNewThread(         const char* threadname,
-                                NACallingFunction function,
-                                            void* arg);
+// You can give a thread a name, which is currently unused. todo. This will
+// be used on some systems when debugging later on. Note that both threadname
+// and arg will NOT be owned by the thread.
+NA_IAPI NAThread naNewThread( const char* threadname,
+                                   NAFunc function,
+                                    void* arg);
 // Clears all memory structures concerning the given thread. Will not clear
 // the arg or threadname given to naNewThread. If the thread is still running,
 // behaviour is undefined.
@@ -63,40 +63,57 @@ NA_IAPI void naRunThread(NAThread thread);
 
 // //////////////////////////////////
 // Mutex
+//
+// A mutex is a simple structure which is open for precisely one thread only.
+// As long as one thread has a mutex locked, any other thread is locked out and
+// waits without doing anything. Threads which are locked out wait until the
+// mutex is unlocked again, giving one of the waiting threads the opportunity
+// to lock the mutex.
 
 // Create and clear a mutex.
 NA_IAPI NAMutex naNewMutex();
 NA_IAPI void naClearMutex(NAMutex mutex);
-// Locks and unlocks a mutex. The locking waits forever.
+// Locks and unlocks a mutex. Waiting threads wait forever.
 NA_IAPI void naLockMutex(NAMutex mutex);
 NA_IAPI void naUnlockMutex(NAMutex mutex);
-// Tries to lock the mutex but returns after the given timeout if not
-// successful. Returns NA_TRUE if the lock was successful and NA_FALSE if the
-// timeout occured or if there was any kind of error.
-NA_IAPI NABool naTryMutex(NAMutex mutex, double timeout);
 // Returns NA_TRUE if the mutex is locked or NA_FALSE otherwise.
 NA_IAPI NABool naIsMutexLocked(NAMutex mutex);
+// Tries to lock the mutex but returns immediately even if not successful.
+// Returns NA_TRUE if the lock was successful and NA_FALSE if it was not
+// successful for any reason. Note that this implementation will return
+// NA_FALSE even if it is the current thread which has locked a mutex. This
+// is a difference to the behaviour of Mutexes in WINAPI but is now solved
+// consistently along all systems.
+NA_IAPI NABool naTryMutex(NAMutex mutex);
 
 
 
 // //////////////////////////////////
-// Wait
-
-// An NAWait is a structure for two threads. One goes to sleep using
-// naStartWait and thus is locked for a certain time until another thread gives
-// a wakeup call by calling naSignalWait. The waiting thread can also be woken
-// up by a timeout. When a thread calls naSignalWait without another thread
-// waiting, nothing happends.
+// Alarm
 //
-// Creates and clears a wait structure.
-NA_IAPI NAWait naNewWait();
-NA_IAPI void naClearWait(NAWait wait);
-// Locks the current thread until some other thread calls naSignalWait or
-// until the timeout occurs.
-// Returns NA_TRUE, if the wait was signaled or NA_FALSE if the timeout occured.
-NA_IAPI NABool naStartWait(NAWait wait, double maxwaittime);
-// Sends a signal to anyone waiting on that NAWait structure.
-NA_IAPI void naSignalWait(NAWait wait);
+// An alarm is a quick notifying structure for at least two threads. One
+// thread goes to sleep using naAwaitAlarm and thus is locked for a certain
+// time until another thread gives a wakeup call by calling naTriggerAlarm.
+// The waiting thread can also be woken up by a timeout.
+//
+// Note that when a thread calls naTriggerAlarm without another thread
+// awaiting it, nothing happends. If shortly afterwards, a thread starts
+// awaiting the alarm, he will not detect such triggers but instead start
+// to sleep until the timeout or yet another trigger occurs. If you need
+// all triggers to be detected, you should consider using a reference
+// counter in combination with a mutex.
+//
+// Creates and clears an alarm structure.
+NA_IAPI NAAlarm naNewAlarm();
+NA_IAPI void naClearAlarm(NAAlarm alarm);
+// Locks the current thread until some other thread calls naTriggerAlarm or
+// until the timeout occurs. Returns NA_TRUE, if the alarm was triggered or
+// NA_FALSE if the timeout occured. If maxwaittime is exactly 0, the function
+// waits indefinitely. If maxwaittime is negative, an error is emitted when
+// debugging. Make sure no accidental zero value is given!
+NA_IAPI NABool naAwaitAlarm(NAAlarm alarm, double maxwaittime);
+// Sends a signal to anyone waiting on that NAAlarm structure.
+NA_IAPI void naTriggerAlarm(NAAlarm alarm);
 
 
 
@@ -114,35 +131,15 @@ NA_IAPI void naSignalWait(NAWait wait);
 // ///////////////////////////////////////////////////////////////////////
 
 
-// Note that traditinally, a thred only executes one function and thus in
-// some implementations, creating a thread immediately runs the thread as well.
-// To stay consistent and give a higher flexibility, in NALib, the function
-// to call as well as the argument is stored in a structure and the thread
-// will be created when needed. Also note that with this struct, the queues
-// used in Grand Central Dispatch can easily be disguised as threads. This is
-// of course a strong limitation to the power of timed queues but it is the
-// only way of recreating someting like threads.
-typedef struct NAThreadStruct NAThreadStruct;
 
 
 #include "NAMemory.h"
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   #include <windows.h>
-  struct NAThreadStruct{
-    HANDLE thread;
-    NACallingFunction function;
-    void* arg;
-  };
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
   #include <unistd.h>
   #include <dispatch/dispatch.h>
-  struct NAThreadStruct{
-    const char* name;
-    dispatch_queue_t queue;
-    NACallingFunction function;
-    void* arg;
-  };
   // Workaround for XCode 3 where the following macro is not defined:
   #ifndef DISPATCH_QUEUE_SERIAL
     #define DISPATCH_QUEUE_SERIAL NULL
@@ -151,9 +148,16 @@ typedef struct NAThreadStruct NAThreadStruct;
 
 
 
+
+
+
+// ////////////////////////////
+// SLEEPING
+// ////////////////////////////
+
 NA_IDEF int naSleepU(NAUInt usecs){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    Sleep((DWORD)(usecs/1000));
+    Sleep((DWORD)(usecs / 1000));
     return 0;
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
     return usleep((useconds_t)(usecs));
@@ -167,7 +171,7 @@ NA_IDEF int naSleepM(NAUInt msecs){
     Sleep((DWORD)(msecs));
     return 0;
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    return usleep((useconds_t)(msecs*1000LL));
+    return usleep((useconds_t)(msecs * 1000LL));
   #endif
 }
 
@@ -175,72 +179,80 @@ NA_IDEF int naSleepM(NAUInt msecs){
 
 NA_IDEF int naSleepS(NAUInt secs){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    Sleep((DWORD)(secs*1000));
+    Sleep((DWORD)(secs * 1000));
     return 0;
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    return usleep((useconds_t)(secs*1000000LL));
+    return usleep((useconds_t)(secs * 1000000LL));
   #endif
 }
 
 
 
-// On windows, we need to reroute a timer function using a specific callback.
+
+
+
+
+
+// ////////////////////////////
+// THREADS
+// ////////////////////////////
+
+// Note that traditinally, a thred only executes one function and thus in
+// some implementations, creating a thread immediately runs the thread as well.
+// To stay consistent and give a higher flexibility, in NALib, the function
+// to call as well as the argument is stored in a structure and the thread
+// will be created when needed. Also note that with this struct, the queues
+// used in Grand Central Dispatch can easily be disguised as threads. This is
+// of course a strong limitation to the power of timed queues but it is the
+// only way of recreating someting like threads.
+
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-  NA_HDEF static VOID CALLBACK naCallUIElementInSecondsCallback(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime){
-    PostMessage(hwnd, WM_PAINT, (WPARAM)NA_NULL, (LPARAM)NA_NULL);
-  }
+  typedef HANDLE            NANativeThread;
+#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  typedef dispatch_queue_t  NANativeThread;
 #endif
 
 
-NA_IDEF void naCallUIElementInSeconds(NACallingFunction function, void* nativeID, double timediff){
+typedef struct NAThreadStruct NAThreadStruct;
+struct NAThreadStruct{
+  const char* name;
+  NANativeThread nativeThread;
+  NAFunc function;
+  void* arg;
+};
+
+
+
+NA_IDEF NAThread naNewThread(const char* threadname, NAFunc function, void* arg){
+  NAThreadStruct* threadstruct = naAlloc(NAThreadStruct);
+  threadstruct->name = threadname;  // todo
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    UINT_PTR test;
-    test = SetTimer(nativeID, (UINT_PTR)NA_NULL, (UINT)(1000 * timediff), naCallUIElementInSecondsCallback);
+    threadstruct->nativeThread = NA_NULL; // Note that on windows, creating the thread would immediately start it.
   #else
-    dispatch_time_t nexttime = dispatch_time(DISPATCH_TIME_NOW, 1000000000 * timediff);
-    dispatch_queue_t queue = dispatch_get_current_queue();
-    dispatch_after_f(nexttime, queue, nativeID, function);
+    threadstruct->nativeThread = dispatch_queue_create(threadname, DISPATCH_QUEUE_SERIAL);
   #endif
-}
-
-
-
-
-
-
-
-NA_IDEF NAThread naNewThread(const char* threadname, NACallingFunction function, void* arg){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    NAThreadStruct* threadstruct = naAlloc(NAThreadStruct);
-    threadstruct->function = function;
-    threadstruct->arg = arg;
-    threadstruct->thread = NA_NULL;
-    return threadstruct;
-  #else
-    NAThreadStruct* threadstruct = naAlloc(NAThreadStruct);
-    threadstruct->name = threadname;
-    threadstruct->queue = dispatch_queue_create(threadname, DISPATCH_QUEUE_SERIAL);
-    threadstruct->function = function;
-    threadstruct->arg = arg;
-    return threadstruct;
-  #endif
+  threadstruct->function = function;
+  threadstruct->arg = arg;
+  return threadstruct;
 }
 
 
 
 NA_IDEF void naClearThread(NAThread thread){
+  NAThreadStruct* threadstruct = (NAThreadStruct*)thread;
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    NAThreadStruct* threadstruct = (NAThreadStruct*)thread;
-    naFree(threadstruct);
+    CloseHandle(threadstruct->nativeThread);
   #else
-    NAThreadStruct* threadstruct = (NAThreadStruct*)thread;
-    dispatch_release(threadstruct->queue);
-    naFree(threadstruct);
+    dispatch_release(threadstruct->nativeThread);
   #endif
+  naFree(threadstruct);
 }
 
 
+
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  // Windows has a different callback type. We need to call this function first
+  // in order to call our true callback function.
   NA_HDEF static DWORD __stdcall naRunWindowsThread(LPVOID arg){
     NAThreadStruct* thread = (NAThreadStruct*)arg;
     thread->function(thread->arg);
@@ -249,13 +261,13 @@ NA_IDEF void naClearThread(NAThread thread){
 #endif
 
 
+
 NA_IDEF void naRunThread(NAThread thread){
+  NAThreadStruct* threadstruct = (NAThreadStruct*)thread;
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    NAThreadStruct* threadstruct = (NAThreadStruct*)thread;
-    threadstruct->thread = CreateThread(NULL, 0, naRunWindowsThread, threadstruct, 0, 0);
+    threadstruct->nativeThread = CreateThread(NULL, 0, naRunWindowsThread, threadstruct, 0, 0);
   #else
-    NAThreadStruct* threadstruct = (NAThreadStruct*)thread;
-    dispatch_async_f(threadstruct->queue, threadstruct->arg, threadstruct->function);
+    dispatch_async_f(threadstruct->nativeThread, threadstruct->arg, threadstruct->function);
   #endif
 }
 
@@ -263,21 +275,53 @@ NA_IDEF void naRunThread(NAThread thread){
 
 
 
+
+
+// ////////////////////////////
+// MUTEXES
+// ////////////////////////////
+
+
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+
+  // There are two ways to implement mutexes on windows: "Critical section" or
+  // "Mutex". But as up to now, the author had some problems with the "Mutex"
+  // implementation, we just use the "Critical section" which is faster anyway.
+  // todo.
+  #define NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
+
+  // On windows, we need a more complex structure to really make a mutex being
+  // lockable just once.
   typedef struct NAWindowsMutex NAWindowsMutex;
+
   struct NAWindowsMutex{
-//    CRITICAL_SECTION criticalsection;
-    HANDLE mutex;
+    #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
+      CRITICAL_SECTION criticalsection;
+    #else
+      HANDLE mutex;
+    #endif
     NABool islockedbythisthread;
   };
+  // Note that the islockedbythisthread will only be changed by the thread
+  // which has locked the mutex and therefore will only evaluate to TRUE, when
+  // the thread already has locked it. This is how we detect if the current
+  // thread makes a double lock. The native "Threads" and "Critical sections"
+  // of Windows do not do that. They allow mutliple locking as long as it is
+  // the same thread. The author thinks that this is inconsistent and therefore
+  // has implemented mutexes like this to be the same on all systems.
+
 #endif
+
 
 
 NA_IDEF NAMutex naNewMutex(){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     NAWindowsMutex* windowsmutex = naAlloc(NAWindowsMutex);
-    windowsmutex->mutex = CreateMutex(NULL, FALSE, NULL);
-    //InitializeCriticalSection(&(windowsmutex->criticalsection));
+    #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
+      InitializeCriticalSection(&(windowsmutex->criticalsection));
+    #else
+      windowsmutex->mutex = CreateMutex(NULL, FALSE, NULL);
+    #endif
     windowsmutex->islockedbythisthread = NA_FALSE;
     return windowsmutex;
   #else
@@ -291,8 +335,11 @@ NA_IDEF NAMutex naNewMutex(){
 NA_IDEF void naClearMutex(NAMutex mutex){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;
-    CloseHandle(windowsmutex->mutex);
-    //DeleteCriticalSection(&(windowsmutex->criticalsection));
+    #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
+      DeleteCriticalSection(&(windowsmutex->criticalsection));
+    #else
+      CloseHandle(windowsmutex->mutex);
+    #endif
     naFree(windowsmutex);
   #else
     dispatch_release(mutex);
@@ -305,11 +352,14 @@ NA_IDEF void naClearMutex(NAMutex mutex){
 NA_IDEF void naLockMutex(NAMutex mutex){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;
-    WaitForSingleObject(windowsmutex->mutex, INFINITE);
-    //EnterCriticalSection(&(windowsmutex->criticalsection));
+    #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
+      EnterCriticalSection(&(windowsmutex->criticalsection));
+    #else
+      WaitForSingleObject(windowsmutex->mutex, INFINITE);
+    #endif
     #ifndef NDEBUG
       if(windowsmutex->islockedbythisthread)
-        naError("naLockMutex", "Mutex was already locked by this thread.");
+        naError("naLockMutex", "Mutex was already locked by this thread. This is not how Mutexes in NALib work.");
     #endif
     windowsmutex->islockedbythisthread = NA_TRUE;
    #else
@@ -324,11 +374,14 @@ NA_IDEF void naUnlockMutex(NAMutex mutex){
     NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;
     #ifndef NDEBUG
       if(!naIsMutexLocked(mutex))
-        naError("naUnlockMutex", "Mutex was not locked locked by this thread.");
+        naError("naUnlockMutex", "Mutex was not locked locked.");
     #endif
     windowsmutex->islockedbythisthread = NA_FALSE;
-    ReleaseMutex(windowsmutex->mutex);
-    //LeaveCriticalSection(&(windowsmutex->criticalsection));
+    #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
+      LeaveCriticalSection(&(windowsmutex->criticalsection));
+    #else
+      ReleaseMutex(windowsmutex->mutex);
+    #endif
   #else
     dispatch_semaphore_signal(mutex);
   #endif
@@ -336,32 +389,8 @@ NA_IDEF void naUnlockMutex(NAMutex mutex){
 
 
 
-NA_IDEF NABool naTryMutex(NAMutex mutex, double timeout){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;
-    DWORD retvalue = WaitForSingleObject(mutex, (DWORD)(1000. * timeout));
-    if(retvalue == WAIT_OBJECT_0){
-      return NA_FALSE;
-    }else{
-      return !(windowsmutex->islockedbythisthread);
-    }
-    //BOOL retvalue = TryEnterCriticalSection(&(windowsmutex->criticalsection));
-    //if(retvalue == 0){
-    //  return NA_FALSE;
-    //}else{
-    //  return !(windowsmutex->islockedbythisthread);
-    //}
-  #else
-    long retvalue = dispatch_semaphore_wait(mutex, dispatch_time(DISPATCH_TIME_NOW, 1000000000. * timeout));
-    return (retvalue?NA_FALSE:NA_TRUE);
-  #endif
-}
-
-
-
-
 NA_IDEF NABool naIsMutexLocked(NAMutex mutex){
-  NABool hasjustbeenlocked = naTryMutex(mutex, 0);
+  NABool hasjustbeenlocked = naTryMutex(mutex);
   if(hasjustbeenlocked){
     naUnlockMutex(mutex);
     return NA_FALSE;
@@ -372,65 +401,122 @@ NA_IDEF NABool naIsMutexLocked(NAMutex mutex){
 
 
 
-
-
-NA_IDEF NAWait naNewWait(){
+NA_IDEF NABool naTryMutex(NAMutex mutex){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    HANDLE wait = CreateSemaphore(NULL, 0, 1, NULL);
-    return wait;
+    NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;
+    #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
+      BOOL retvalue = TryEnterCriticalSection(&(windowsmutex->criticalsection));
+      if(retvalue == 0){
+        return NA_FALSE;
+      }else{
+        if(windowsmutex->islockedbythisthread){
+          LeaveCriticalSection(&(windowsmutex->criticalsection));
+          return NA_FALSE;
+        }else{
+          windowsmutex->islockedbythisthread = NA_TRUE;
+          return NA_TRUE;
+        }
+      }
+    #else
+      DWORD retvalue = WaitForSingleObject(windowsmutex->mutex, 0);
+      if(retvalue == WAIT_OBJECT_0){
+        return NA_FALSE;
+      }else{
+        // somehow, this does not work yet. use Critical section.
+        if(windowsmutex->islockedbythisthread){
+          ReleaseMutex(windowsmutex->mutex);
+          return NA_FALSE;
+        }else{
+          windowsmutex->islockedbythisthread = NA_TRUE;
+          return NA_TRUE;
+        }
+      }
+    #endif
   #else
-    NAWait wait = dispatch_semaphore_create(0);
-    return wait;
+    long retvalue = dispatch_semaphore_wait(mutex, DISPATCH_TIME_NOW);
+    return (retvalue ? NA_FALSE : NA_TRUE);
   #endif
 }
 
 
 
-NA_IDEF void naClearWait(NAWait wait){
+
+
+
+
+// ////////////////////////////
+// ALARMS
+// ////////////////////////////
+
+
+#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  typedef HANDLE            NANativeAlarm;
+#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  typedef dispatch_semaphore_t  NANativeAlarm;
+#endif
+
+
+
+NA_IDEF NAAlarm naNewAlarm(){
+  NANativeAlarm alarm;
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    CloseHandle(wait);
+    alarm = CreateEvent(NULL, FALSE, FALSE, NULL);
   #else
-    dispatch_release(wait);
+    alarm = dispatch_semaphore_create(0);
+  #endif
+  return alarm;
+}
+
+
+
+NA_IDEF void naClearAlarm(NAAlarm alarm){
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    CloseHandle(alarm);
+  #else
+    dispatch_release(alarm);
   #endif
 }
 
 
 
-NA_IDEF NABool naStartWait(NAWait wait, double maxwaittime){
+NA_IDEF NABool naAwaitAlarm(NAAlarm alarm, double maxwaittime){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     DWORD result;
+    #ifndef NDEBUG
+      if(maxwaittime < 0.)
+        naError("naAwaitAlarm", "maxwaittime should not be negative. Beware of the zero!");
+    #endif
+    ResetEvent(alarm);
     if(maxwaittime == 0){
-      result = WaitForSingleObject(wait, INFINITE);
+      result = WaitForSingleObject(alarm, INFINITE);
     }else{
-      result = WaitForSingleObject(wait, (DWORD)(1000. * maxwaittime));
+      result = WaitForSingleObject(alarm, (DWORD)(1000. * maxwaittime));
     }
-    if(result == WAIT_OBJECT_0){
-      // The wait has been signaled. Reenable the wait.
-      WaitForSingleObject(wait, 0);
-      return NA_TRUE;
-    }else{
-      return NA_FALSE;
-    }
+    return (result == WAIT_OBJECT_0);
   #else
     long result;
+    #ifndef NDEBUG
+      if(maxwaittime < 0.)
+        naError("naAwaitAlarm", "maxwaittime should not be negative. Beware of the zero!");
+    #endif
     if(maxwaittime == 0){
-      result = dispatch_semaphore_wait(wait, DISPATCH_TIME_FOREVER);
+      result = dispatch_semaphore_wait(alarm, DISPATCH_TIME_FOREVER);
     }else{
       dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, 1000000000. * maxwaittime);
-      result = dispatch_semaphore_wait(wait, timeout);
+      result = dispatch_semaphore_wait(alarm, timeout);
     }
-    return(result?NA_FALSE:NA_TRUE);
+    return (result ? NA_FALSE : NA_TRUE);
   #endif
 }
 
 
 
 
-NA_IDEF void naSignalWait(NAWait wait){
+NA_IDEF void naTriggerAlarm(NAAlarm alarm){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    ReleaseSemaphore(wait, 1, NULL);
+    SetEvent(alarm);
   #else
-    dispatch_semaphore_signal(wait);
+    dispatch_semaphore_signal(alarm);
   #endif
 }
 

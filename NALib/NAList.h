@@ -27,16 +27,21 @@
 #include "NASystem.h"
 
 
-
+// The NAList struct is opaque, see notes below in the inline implementation.
 typedef struct NAList NAList;
-
+// The NAListPos is an opaque type for the NAListElement struct defined below.
+// With this trick, the real type remains hidden to the user and the API is
+// clean and easy to understand.
+typedef const void* NAListPos;
 
 
 // Creates an empty list.
 NA_IAPI NAList* naInitList(NAList* list);
 
 // Creates an exact copy of originallist by replicating all elements in the
-// same order. The two list pointers must not be the same.
+// same order. The two list pointers must not be the same. If you are using
+// NAListPos locators, the locators will keep the location of the original
+// list.
 NA_IAPI NAList* naCopyList(NAList* list, NAList* originallist);
 
 // Clears or empties the given list. Note: This will free all list elements
@@ -52,7 +57,7 @@ NA_IAPI void    naEmptyList  (NAList* list);
 
 // Traverses the whole list and calls the mutator on each element. A pointer
 // to each element will be given to the mutator.
-NA_IAPI void    naForeachList  (NAList* list, NAMutator mutator);
+NA_IAPI void    naForeachList  (NAList* list, NAFunc mutator);
 
 // Returns the informations about the number of elements in this list.
 NA_IAPI NAUInt  naGetListCount(const NAList* list);
@@ -66,38 +71,48 @@ NA_IAPI NABool  naIsListEmpty(const NAList* list);
 // Last:    New element becomes last element of the list
 // Before:  New element becomes element before the current element.
 // After:   New element becomes element after the current element.
-// Note: If the internal pointer is not set, Before behaves the same as Last
-// and After behaves the same as First.
-NA_IAPI void naAddListFirstConst    (NAList* list, const void* content);
-NA_IAPI void naAddListFirstMutable  (NAList* list, void* content);
-NA_IAPI void naAddListLastConst     (NAList* list, const void* content);
-NA_IAPI void naAddListLastMutable   (NAList* list, void* content);
-NA_IAPI void naAddListBeforeConst   (NAList* list, const void* content);
-NA_IAPI void naAddListBeforeMutable (NAList* list, void* content);
-NA_IAPI void naAddListAfterConst    (NAList* list, const void* content);
-NA_IAPI void naAddListAfterMutable  (NAList* list, void* content);
+//
+// Note: The internal pointer is not altered at all when adding elements. If
+// the internal pointer is not set, Before behaves the same as Last and After
+// behaves the same as First.
+//
+// The return value is a position locator which the user can store (for example
+// within the element itself) for later use to quickly access specific elements
+// within a list or move an element within or even between lists. If you have
+// no intention to use that value, you may simply ignore it. This locator will
+// always reflect the current position and list the element is stored in, as
+// long as the element is not explicitely removed from a list. You do not need
+// to adjust it in any way.
+NA_IAPI NAListPos naAddListFirstConst    (NAList* list, const void* content);
+NA_IAPI NAListPos naAddListFirstMutable  (NAList* list,       void* content);
+NA_IAPI NAListPos naAddListLastConst     (NAList* list, const void* content);
+NA_IAPI NAListPos naAddListLastMutable   (NAList* list,       void* content);
+NA_IAPI NAListPos naAddListBeforeConst   (NAList* list, const void* content);
+NA_IAPI NAListPos naAddListBeforeMutable (NAList* list,       void* content);
+NA_IAPI NAListPos naAddListAfterConst    (NAList* list, const void* content);
+NA_IAPI NAListPos naAddListAfterMutable  (NAList* list,       void* content);
 
 
 // /////////////////////////////
 // Removing elements
 //
 // Remove functions. Removes the desired element from the list.
-// The movenext parameter denotes how the internal pointer shall move in case
-// the current element is the element which is removed. If movenext is NA_FALSE
-// The internal pointer will be moved to the previous element. If movenext is
+// The advance parameter denotes how the internal pointer shall move in case
+// the current element is the element which is removed. If advance is NA_FALSE
+// The internal pointer will be moved to the previous element. If advance is
 // NA_TRUE, the internal pointer will be moved to the next element.
 // Note: Remove functions free the memory of the corresponding NAListElement but
 // do not free the memory of the content! But the mutable variants return a
 // pointer to the previously stored content such that you can erase it if
 // you need to.
-NA_IAPI void  naRemoveListFirstConst    (NAList* list, NABool movenext);
-NA_IAPI void* naRemoveListFirstMutable  (NAList* list, NABool movenext);
-NA_IAPI void  naRemoveListLastConst     (NAList* list, NABool movenext);
-NA_IAPI void* naRemoveListLastMutable   (NAList* list, NABool movenext);
+NA_IAPI void  naRemoveListFirstConst    (NAList* list, NABool advance);
+NA_IAPI void* naRemoveListFirstMutable  (NAList* list, NABool advance);
+NA_IAPI void  naRemoveListLastConst     (NAList* list, NABool advance);
+NA_IAPI void* naRemoveListLastMutable   (NAList* list, NABool advance);
 NA_IAPI void  naRemoveListPrevConst     (NAList* list);
 NA_IAPI void* naRemoveListPrevMutable   (NAList* list);
-NA_IAPI void  naRemoveListCurrentConst  (NAList* list, NABool movenext);
-NA_IAPI void* naRemoveListCurrentMutable(NAList* list, NABool movenext);
+NA_IAPI void  naRemoveListCurrentConst  (NAList* list, NABool advance);
+NA_IAPI void* naRemoveListCurrentMutable(NAList* list, NABool advance);
 NA_IAPI void  naRemoveListNextConst     (NAList* list);
 NA_IAPI void* naRemoveListNextMutable   (NAList* list);
 
@@ -119,12 +134,39 @@ NA_IAPI const void* naGetListNextConst        (const NAList* list);
 NA_IAPI       void* naGetListNextMutable      (const NAList* list);
 
 
+// /////////////////////////////////////////////
+// Reordering functions
+//
+// The move functions remove the CURRENT element from the srclist and move them
+// to dstlist at the position indicated by the function name. These functions
+// are VERY FAST! Way faster than locating a specific element, removing it and
+// re-adding it.
+//
+// Use these functions in conjunction with naLocateListPos. It is the fastest
+// way to transfer specific elements from one list to another.
+//
+// The advance parameter behaves the same as with the remove functions.
+//
+// The dstlist can be the same as srclist.
+//
+// See implementation for more details.
+NA_IAPI void naMoveListFirst (NAList* srclist, NABool advance, NAList* dstlist);
+NA_IAPI void naMoveListLast  (NAList* srclist, NABool advance, NAList* dstlist);
+NA_IAPI void naMoveListBefore(NAList* srclist, NABool advance, NAList* dstlist);
+NA_IAPI void naMoveListAfter (NAList* srclist, NABool advance, NAList* dstlist);
+
+// The exchange function splits the list into two parts BEFORE the current
+// element and re-attaches the whole list before that at the end of the list.
+// For example when D is current, ABCDEFG becomes DEFGABC.
+// The current element will point to the first element after this function.
+NA_IAPI void naExchangeListParts(NAList* list);
+
 
 // ////////////////////////////////////
 // Iteration functions
 //
 // Every list has an internal index denoting the current element. The
-// programmer can controll and access this element with iteration functions.
+// programmer can control and access this element with iteration functions.
 // If no current element is set, NA_NULL is returned as a content. A typical
 // example of iteration is the following:
 //
@@ -134,10 +176,34 @@ NA_IAPI       void* naGetListNextMutable      (const NAList* list);
 // }
 //
 // Note: You can safely use remove functions while iterating!
+// ////////////////////////////////////
 
-// With the following functions, you can initialize the internal pointer.
-NA_IAPI void naFirstList                  (const NAList* list);
-NA_IAPI void naLastList                   (const NAList* list);
+
+// The following functions move the internal pointer to a desired element.
+//
+// You can simply set the position to the first or last element or you can
+// position it using the position you got when adding new elements to the list.
+// You can also search for specific elements by pointer or index with the
+// Locate functions.
+//
+// Warning: While the First, Last and Position functions are VERY fast, the
+// Locate functions are VERY slow! And they are not inlined. If you really need
+// to locate elements within a list, try to go for the Position solution. But
+// you need to store the NAListPos when adding elements.
+//
+// If the given index is negative, it denotes the element from the end of the
+// list, whereas -1 denotes the last element.
+//
+// The Pointer and Index variants will return NA_FALSE, if the element has not
+// been found and NA_TRUE if it has been found. If not found, the internal
+// pointer will be unset. All other variants will always return NA_TRUE.
+//
+NA_IAPI NABool naFirstList           (const NAList* list);
+NA_IAPI NABool naLastList            (const NAList* list);
+NA_IAPI NABool naPositionList        (const NAList* list, NAListPos listpos);
+NA_API  NABool naLocateListPointer   (const NAList* list, void* content);
+NA_API  NABool naLocateListIndex     (const NAList* list, NAInt indx);
+
 
 // Returns the current element and then iterates the given steps forward or
 // backwards by using positive or negative numbers. If step is 0, you simply
@@ -148,20 +214,8 @@ NA_IAPI void naLastList                   (const NAList* list);
 NA_IAPI const void* naIterateListConst    (const NAList* list, NAInt step);
 NA_IAPI       void* naIterateListMutable  (      NAList* list, NAInt step);
 
-// The locate-functions move the internal pointer to the element storing the
-// desired content pointer or being located at the given index. If the given
-// index is negative, it denotes the element from the end of the list, whereas
-// -1 denotes the last element.
-//
-// If the element is not found or the index is not within the list range, the
-// internal pointer will be unset.
-// Returns NA_TRUE, if the element is found and NA_FALSE if not.
-//
-// Warning: These functions are very slow! And they are not inlined.
-NA_API NABool naLocateListPointer        (const NAList* list, void* content);
-NA_API NABool naLocateListIndex          (const NAList* list, NAInt indx);
 
-// Moves the internal pointer forward or backwards.
+// Moves the internal pointer forward or backwards without accessing content.
 // If no internal pointer is set, NA_NULL is returned and the internal pointer
 // is not touched at all.
 // Note: You can use naIterateListConst or naIterateListMutable to directly
@@ -169,8 +223,9 @@ NA_API NABool naLocateListIndex          (const NAList* list, NAInt indx);
 NA_IAPI void naIterateList                (const NAList* list, NAInt step);
 
 // Returns whether the list is at a certain position
-NA_IAPI NABool naIsListAtFirst            (const NAList* list);
-NA_IAPI NABool naIsListAtLast             (const NAList* list);
+NA_IAPI NABool naIsListAtFirst     (const NAList* list);
+NA_IAPI NABool naIsListAtLast      (const NAList* list);
+NA_IAPI NABool naIsListAtPosition  (const NAList* list, NAListPos listpos);
 
 
 
@@ -201,6 +256,9 @@ struct NAListElement{
   NAPtr ptr;            // A pointer to the stored content
   NAListElement* next;  // A pointer to the next element
   NAListElement* prev;  // A pointer to the previous element
+  #ifndef NDEBUG
+    NAList* list;       // A list pointer just for debugging.
+  #endif
 };
 
 struct NAList{
@@ -269,7 +327,7 @@ NA_IDEF void naEmptyList(NAList* list){
 
 
 
-NA_IDEF void naForeachList(NAList* list, NAMutator mutator){
+NA_IDEF void naForeachList(NAList* list, NAFunc mutator){
   // Declaration before implementation. Needed for C90.
   NAListElement* cur;
   #ifndef NDEBUG
@@ -300,17 +358,31 @@ NA_IDEF NABool naIsListEmpty(const NAList* list){
 }
 
 
-NA_IDEF void naFirstList(const NAList* list){
+NA_IDEF NABool naFirstList(const NAList* list){
   NAList* mutablelist = (NAList*)list;
   mutablelist->cur = list->sentinel.next;
+  return NA_TRUE;
 }
 
 
-NA_IDEF void naLastList(const NAList* list){
+NA_IDEF NABool naLastList(const NAList* list){
   NAList* mutablelist = (NAList*)list;
   mutablelist->cur = list->sentinel.prev;
+  return NA_TRUE;
 }
 
+
+
+NA_IDEF NABool naPositionList(const NAList* list, NAListPos listpos){
+  NAList* mutablelist = (NAList*)list;
+  NAListElement* element = (NAListElement*)listpos;
+  #ifndef NDEBUG
+    if(element->list != list)
+      naError("naLocateListPos", "The element at the given pos is not part of the given list.");
+  #endif
+  mutablelist->cur = element;
+  return NA_TRUE;
+}
 
 
 
@@ -370,141 +442,182 @@ NA_IDEF NABool naIsListAtLast(const NAList* list){
 
 
 
+NA_IDEF NABool naIsListAtPosition(const NAList* list, NAListPos listpos){
+  #ifndef NDEBUG
+    NAListElement* element = (NAListElement*)listpos;
+    if(element->list != list)
+      naError("naIsListAtPosition", "The given position is not part of the given list");
+  #endif
+  return (list->cur == listpos);
+}
+
+
 
 // These are helper functions. They should be hidden.
 NA_HIDEF void naInjectConstListElement(NAList* list, NAListElement* element, const void* data){
   element->ptr = naMakePtrWithConstBuffer(data, NA_ZERO, NA_ZERO);
   element->next->prev = element;
   element->prev->next = element;
+  #ifndef NDEBUG
+    element->list = list;
+  #endif
   list->count++;
 }
 NA_HIDEF void naInjectMutableListElement(NAList* list, NAListElement* element, void* data){
   element->ptr = naMakePtrWithMutableBuffer(data, NA_ZERO, NA_ZERO);
   element->next->prev = element;
   element->prev->next = element;
+  #ifndef NDEBUG
+    element->list = list;
+  #endif
   list->count++;
 }
 
 
-NA_IDEF void naAddListFirstConst(NAList* list, const void* content){
+NA_IDEF NAListPos naAddListFirstConst(NAList* list, const void* content){
   NAListElement* newelement = naNew(NAListElement);
   newelement->next = list->sentinel.next;
   newelement->prev = &(list->sentinel);
   naInjectConstListElement(list, newelement, content);
+  return newelement;
 }
 
 
-NA_IDEF void naAddListFirstMutable(NAList* list, void* content){
+NA_IDEF NAListPos naAddListFirstMutable(NAList* list, void* content){
   NAListElement* newelement = naNew(NAListElement);
   newelement->next = list->sentinel.next;
   newelement->prev = &(list->sentinel);
   naInjectMutableListElement(list, newelement, content);
+  return newelement;
 }
 
 
-NA_IDEF void naAddListLastConst(NAList* list, const void* content){
+NA_IDEF NAListPos naAddListLastConst(NAList* list, const void* content){
   NAListElement* newelement = naNew(NAListElement);
   newelement->next = &(list->sentinel);
   newelement->prev = list->sentinel.prev;
   naInjectConstListElement(list, newelement, content);
+  return newelement;
 }
 
 
-NA_IDEF void naAddListLastMutable(NAList* list, void* content){
+NA_IDEF NAListPos naAddListLastMutable(NAList* list, void* content){
   NAListElement* newelement = naNew(NAListElement);
   newelement->next = &(list->sentinel);
   newelement->prev = list->sentinel.prev;
   naInjectMutableListElement(list, newelement, content);
+  return newelement;
 }
 
 
-NA_IDEF void naAddListBeforeConst(NAList* list, const void* content){
+NA_IDEF NAListPos naAddListBeforeConst(NAList* list, const void* content){
   NAListElement* newelement = naNew(NAListElement);
   newelement->next = list->cur;
   newelement->prev = list->cur->prev;
   naInjectConstListElement(list, newelement, content);
+  return newelement;
 }
 
 
-NA_IDEF void naAddListBeforeMutable(NAList* list, void* content){
+NA_IDEF NAListPos naAddListBeforeMutable(NAList* list, void* content){
   NAListElement* newelement = naNew(NAListElement);
   newelement->next = list->cur;
   newelement->prev = list->cur->prev;
   naInjectMutableListElement(list, newelement, content);
+  return newelement;
 }
 
 
-NA_IDEF void naAddListAfterConst(NAList* list, const void* content){
+NA_IDEF NAListPos naAddListAfterConst(NAList* list, const void* content){
   NAListElement* newelement = naNew(NAListElement);
   newelement->next = list->cur->next;
   newelement->prev = list->cur;
   naInjectConstListElement(list, newelement, content);
+  return newelement;
 }
 
 
-NA_IDEF void naAddListAfterMutable(NAList* list, void* content){
+NA_IDEF NAListPos naAddListAfterMutable(NAList* list, void* content){
   NAListElement* newelement = naNew(NAListElement);
   newelement->next = list->cur->next;
   newelement->prev = list->cur;
   naInjectMutableListElement(list, newelement, content);
+  return newelement;
 }
 
 
 
 // These are helper functions. They should be hidden.
-NA_HIDEF void naEjectListConst(NAList* list, NAListElement* element, NABool movenext){
-  if(element == &(list->sentinel)){return;}
-  if(element == list->cur){list->cur = (movenext?(element->next):(element->prev));}
+NA_HIDEF void naEjectListConst(NAList* list, NAListElement* element, NABool advance, NABool deleteelement){
+  if(element == &(list->sentinel)){
+    #ifndef NDEBUG
+      naError("naEjectListConst", "Trying to eject sentinel element. Will return without doing anything. Try to stop before that.");
+    #endif
+    return;
+  }
+  if(element == list->cur){list->cur = (advance?(element->next):(element->prev));}
   element->prev->next = element->next;
   element->next->prev = element->prev;
+  #ifndef NDEBUG
+    element->list = NA_NULL;  // This will capture some errors.
+  #endif
   list->count--;
-  naDelete(element);
+  if(deleteelement){naDelete(element);}
 }
-NA_HIDEF void* naEjectListMutable(NAList* list, NAListElement* element, NABool movenext){
+#include <stdio.h>
+NA_HIDEF void* naEjectListMutable(NAList* list, NAListElement* element, NABool advance, NABool deleteelement){
   void* contentpointer; // Declaration before Implementation. Needed for C90
-  if(element == &(list->sentinel)){return NA_NULL;}
+  if(element == &(list->sentinel)){
+    #ifndef NDEBUG
+      naError("naEjectListMutable", "Trying to eject sentinel element. Will return NULL without doing anything. Try to stop before that.");
+    #endif
+    return NA_NULL;
+  }
   if(element == list->cur){
-    list->cur = (movenext?(element->next):(element->prev));
+    list->cur = (advance?(element->next):(element->prev));
   }
   element->prev->next = element->next;
   element->next->prev = element->prev;
+  #ifndef NDEBUG
+    element->list = NA_NULL;  // This will capture some errors.
+  #endif
   list->count--;
   contentpointer = naGetPtrMutable(&(element->ptr));
-  naDelete(element);
+  if(deleteelement){naDelete(element);}
   return contentpointer;
 }
 
 
-NA_IDEF void naRemoveListFirstConst(NAList* list, NABool movenext){
+NA_IDEF void naRemoveListFirstConst(NAList* list, NABool advance){
   #ifndef NDEBUG
     if(list->count == 0)
       naError("naRemoveListFirstConst", "List is empty");
   #endif
-  naEjectListConst(list, list->sentinel.next, movenext);
+  naEjectListConst(list, list->sentinel.next, advance, NA_TRUE);
 }
 
-NA_IDEF void* naRemoveListFirstMutable(NAList* list, NABool movenext){
+NA_IDEF void* naRemoveListFirstMutable(NAList* list, NABool advance){
   #ifndef NDEBUG
     if(list->count == 0)
       naError("naRemoveListFirstMutable", "List is empty");
   #endif
-  return naEjectListMutable(list, list->sentinel.next, movenext);
+  return naEjectListMutable(list, list->sentinel.next, advance, NA_TRUE);
 }
 
-NA_IDEF void naRemoveListLastConst(NAList* list, NABool movenext){
+NA_IDEF void naRemoveListLastConst(NAList* list, NABool advance){
   #ifndef NDEBUG
     if(list->count == 0)
       naError("naRemoveListLastConst", "List is empty");
   #endif
-  naEjectListConst(list, list->sentinel.prev, movenext);
+  naEjectListConst(list, list->sentinel.prev, advance, NA_TRUE);
 }
 
-NA_IDEF void* naRemoveListLastMutable(NAList* list, NABool movenext){
+NA_IDEF void* naRemoveListLastMutable(NAList* list, NABool advance){
   #ifndef NDEBUG
     if(list->count == 0)
       naError("naRemoveListLastMutable", "List is empty");
   #endif
-  return naEjectListMutable(list, list->sentinel.prev, movenext);
+  return naEjectListMutable(list, list->sentinel.prev, advance, NA_TRUE);
 }
 
 NA_IDEF void naRemoveListPrevConst(NAList* list){
@@ -512,7 +625,7 @@ NA_IDEF void naRemoveListPrevConst(NAList* list){
     if(list->count == 0)
       naError("naRemoveListPrevConst", "List is empty");
   #endif
-  naEjectListConst(list, list->cur->prev, NA_TRUE);
+  naEjectListConst(list, list->cur->prev, NA_TRUE, NA_TRUE);
 }
 
 NA_IDEF void* naRemoveListPrevMutable(NAList* list){
@@ -520,23 +633,23 @@ NA_IDEF void* naRemoveListPrevMutable(NAList* list){
     if(list->count == 0)
       naError("naRemoveListPrevMutable", "List is empty");
   #endif
-  return naEjectListMutable(list, list->cur->prev, NA_TRUE);
+  return naEjectListMutable(list, list->cur->prev, NA_TRUE, NA_TRUE);
 }
 
-NA_IDEF void naRemoveListCurrentConst(NAList* list, NABool movenext){
+NA_IDEF void naRemoveListCurrentConst(NAList* list, NABool advance){
   #ifndef NDEBUG
     if(list->count == 0)
       naError("naRemoveListCurrentConst", "List is empty");
   #endif
-  naEjectListConst(list, list->cur, movenext);
+  naEjectListConst(list, list->cur, advance, NA_TRUE);
 }
 
-NA_IDEF void* naRemoveListCurrentMutable(NAList* list, NABool movenext){
+NA_IDEF void* naRemoveListCurrentMutable(NAList* list, NABool advance){
   #ifndef NDEBUG
     if(list->count == 0)
       naError("naRemoveListCurrentMutable", "List is empty");
   #endif
-  return naEjectListMutable(list, list->cur, movenext);
+  return naEjectListMutable(list, list->cur, advance, NA_TRUE);
 }
 
 NA_IDEF void naRemoveListNextConst(NAList* list){
@@ -544,7 +657,7 @@ NA_IDEF void naRemoveListNextConst(NAList* list){
     if(list->count == 0)
       naError("naRemoveListNextConst", "List is empty");
   #endif
-  naEjectListConst(list, list->cur->next, NA_TRUE);
+  naEjectListConst(list, list->cur->next, NA_TRUE, NA_TRUE);
 }
 
 NA_IDEF void* naRemoveListNextMutable(NAList* list){
@@ -552,7 +665,7 @@ NA_IDEF void* naRemoveListNextMutable(NAList* list){
     if(list->count == 0)
       naError("naRemoveListNextMutable", "List is empty");
   #endif
-  return naEjectListMutable(list, list->cur->next, NA_TRUE);
+  return naEjectListMutable(list, list->cur->next, NA_TRUE, NA_TRUE);
 }
 
 
@@ -650,6 +763,107 @@ NA_IDEF void* naGetListNextMutable(const NAList* list){
 }
 
 
+
+
+// Helper Function for injection of existing list elements.
+NA_HIDEF void naInjectExistingListElement(NAList* list, NAListElement* element){
+  element->next->prev = element;
+  element->prev->next = element;
+  #ifndef NDEBUG
+    element->list = list;
+  #endif
+  list->count++;
+}
+
+
+// When transfering an element from one list to another, you basically have to
+// locate it within the source list, remove it, adjust the internal pointer of
+// the souce list if necessary and re-add it to the dstlist. This a very costly
+// process as there is a delete and new call for the NAListElement.
+//
+// To simplify the whole transfer process, these move functions keep the
+// existing NAListElement and simply adjust the pointers. To not overcomplicate
+// the API, only the current element can be transferred. To locate it, you can
+// use the NAListPos you get when adding elements to a list or any of the
+// iteration functions.
+//
+// Note a detail: The NAListPos is defined const, but we take the liberty to
+// use it as mutable. Bad coding style, but who cares when the type is opaque.
+NA_IDEF void naMoveListFirst(NAList* srclist, NABool advance, NAList* dstlist){
+  NAListElement* element;
+  #ifndef NDEBUG
+    if(srclist->cur == &(srclist->sentinel))
+      naError("naMoveListFirst", "List has no current element set.");
+  #endif
+  element = srclist->cur;
+  naEjectListConst(srclist, srclist->cur, advance, NA_FALSE);
+  element->next = dstlist->sentinel.next;
+  element->prev = &(dstlist->sentinel);
+  naInjectExistingListElement(dstlist, element);
+}
+
+
+NA_IDEF void naMoveListLast(NAList* srclist, NABool advance, NAList* dstlist){
+  NAListElement* element;
+  #ifndef NDEBUG
+    if(srclist->cur == &(srclist->sentinel))
+      naError("naMoveListLast", "List has no current element set.");
+  #endif
+  element = srclist->cur;
+  naEjectListConst(srclist, srclist->cur, advance, NA_FALSE);
+  element->next = &(dstlist->sentinel);
+  element->prev = dstlist->sentinel.prev;
+  naInjectExistingListElement(dstlist, element);
+}
+
+
+NA_IDEF void naMoveListBefore(NAList* srclist, NABool advance, NAList* dstlist){
+  NAListElement* element;
+  #ifndef NDEBUG
+    if(srclist->cur == &(srclist->sentinel))
+      naError("naMoveListBefore", "List has no current element set.");
+  #endif
+  element = srclist->cur;
+  naEjectListConst(srclist, srclist->cur, advance, NA_FALSE);
+  element->next = dstlist->cur;
+  element->prev = dstlist->cur->prev;
+  naInjectExistingListElement(dstlist, element);
+}
+
+
+NA_IDEF void naMoveListAfter(NAList* srclist, NABool advance, NAList* dstlist){
+  NAListElement* element;
+  #ifndef NDEBUG
+    if(srclist->cur == &(srclist->sentinel))
+      naError("naMoveListAfter", "List has no current element set.");
+  #endif
+  element = srclist->cur;
+  naEjectListConst(srclist, srclist->cur, advance, NA_FALSE);
+  element->next = dstlist->cur->next;
+  element->prev = dstlist->cur;
+  naInjectExistingListElement(dstlist, element);
+}
+
+
+
+NA_IDEF void naExchangeListParts(NAList* list){
+  NAListElement* first;
+  NAListElement* prev;
+//  #ifndef NDEBUG
+//    if(list->cur == &(list->sentinel))
+//      naError("naMoveListAfter", "List has no current element set.");
+//  #endif
+  if(&(list->sentinel) == list->cur){return;}
+  if(list->sentinel.next == list->cur){return;}
+  first = list->sentinel.next;
+  prev = list->cur->prev;
+  first->prev = list->sentinel.prev;
+  list->sentinel.prev->next = first;
+  list->sentinel.next = list->cur;
+  list->cur->prev = &(list->sentinel);
+  list->sentinel.prev = prev;
+  prev->next = &(list->sentinel);
+}
 
 
 

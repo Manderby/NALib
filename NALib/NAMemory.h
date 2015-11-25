@@ -83,11 +83,16 @@ NA_IAPI NAUInt naGetSystemMemoryPageSizeMask();
 //
 // naMallocAligned      The given size is allocated and the returned pointer
 //                      is guaranteed to be aligned on the given bound. Such
-//                      a pointer must be freed with naFreePageAligned. Beware
+//                      a pointer must be freed with naFreeAligned. Beware
 //                      that size here can not be negative!
 // naMallocPageAligned  Same thing but the bound is the memory-page boundary.
-// naFreePageAligned    Deallocates a page-aligned pointer previously allocated
-//                      with naMallocAligned or naMallocPageAligned.
+// naFreeAligned        Deallocates any aligned pointer previously allocated
+//                      with naMallocAligned or naMallocPageAligned. Note: This
+//                      differs with known implementations on unix-like systems.
+//                      But unfortunately, not all systems follow the norm and
+//                      so a custom solution had to be made. Just make sure
+//                      You always free aligned what you alloced aligned. See
+//                      implementation for more details.
 //
 NA_IAPI void* naMalloc(             NAInt size);
 NA_IAPI void* naMallocIfNull(       void* ptr, NAInt size);
@@ -96,13 +101,32 @@ NA_IAPI void  naFree(               void* ptr);
 
 NA_IAPI void* naMallocAligned(      NAUInt size, NAUInt align);
 NA_IAPI void* naMallocPageAligned(  NAUInt size);
-NA_IAPI void  naFreePageAligned(    void* ptr);
+NA_IAPI void  naFreeAligned(        void* ptr);
 
 // Authors note:
 // Having only a handful allocation function helps detecting basic memory
 // errors. Note however that there does not exist any exception handling
 // in NALib, meaning an error might be detected though not resolved. And in
 // favor of simplicity, NALib will not get exception handling soon.
+
+
+
+// The following three functions are for debugging. You can start counting
+// the number of bytes allocated using the start function and stop counting
+// using the stop function. The start function will reset the byte counter
+// to zero. Using the continue function, the counter will not be reset.
+//
+// These functions will all be NOP (no operation) when NDEBUG is defined.
+NA_IAPI void naStartMemoryObservation();
+NA_IAPI void naStopMemoryObservation();
+NA_IAPI void naContinueMemoryObservation();
+// Use the following functions to retrieve the number of bytes allocated. You
+// can distinguish between aligned and unaligned allocations or just use the
+// total sum. Note that aligned bytecount only counts the bytes visible to
+// the programmer.
+NA_IAPI NAUInt naGetMemoryObservation();
+NA_IAPI NAUInt naGetMemoryObservationAligned();
+NA_IAPI NAUInt naGetMemoryObservationUnaligned();
 
 
 
@@ -429,6 +453,7 @@ NA_IAPI NABool naIsCArrayConst(NACArray* carray);
   #include <Windows.h>
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
   #include <unistd.h>
+  #include "malloc/malloc.h"
 #endif
 
 #include "NAMathOperators.h"
@@ -509,6 +534,13 @@ NA_HIDEF NAUInt naGetNullTerminationSize(NAInt size){
 // ////////////////////////////////////////////
 
 
+#ifndef NDEBUG
+  extern NAUInt na_debug_mem_bytecount;
+  extern NAUInt na_debug_mem_alignedbytecount;
+  extern NABool na_debug_mem_count_bytes;
+#endif
+
+
 
 NA_IDEF void* naMalloc(NAInt size){
   // ptr is declared as NAByte to simplify accessing individual bytes later
@@ -522,6 +554,11 @@ NA_IDEF void* naMalloc(NAInt size){
 
   if(naIsIntStrictlyPositive(size)){
     ptr = (NAByte*)malloc((size_t)size);
+    #ifndef NDEBUG
+      if(na_debug_mem_count_bytes){
+        na_debug_mem_bytecount += size;
+      }
+    #endif
   }else{
     #ifndef NDEBUG
       if(size == NA_INT_MIN)
@@ -533,6 +570,11 @@ NA_IDEF void* naMalloc(NAInt size){
         naError("naMalloc", "given size including zero filled endbytes overflows NAInt type.");
     #endif
     ptr = (NAByte*)malloc((size_t)fullsize);
+    #ifndef NDEBUG
+      if(na_debug_mem_count_bytes){
+        na_debug_mem_bytecount += fullsize;
+      }
+    #endif
     *(NAUInt*)(&(ptr[fullsize - 2 * NA_SYSTEM_ADDRESS_BYTES])) = NA_ZERO;
     *(NAUInt*)(&(ptr[fullsize - 1 * NA_SYSTEM_ADDRESS_BYTES])) = NA_ZERO;
   }
@@ -562,34 +604,58 @@ NA_IDEF void* naMallocIfNull(void* ptr, NAInt size){
 
 
 NA_IDEF void* naMallocAligned(NAUInt size, NAUInt align){
+  void* retptr;
+  // Usually, aligned memory can be created in unix like systems using the
+  // following three methods. Unfortunately, none of them work reliably on
+  // Mac OS X.
+  // - aligned_alloc under C11 is unreliable when using clang
+  // - posix_memalign returns misaligned pointers in Snow Leopard
+  // - malloc_zone_memalign same thing as posix_memalign
+  // Therefore, a custom implementation is used which is costly but what
+  // the hell.
+    
   // commented out because due to some strange reason, this does not work with
   // clang.
 //  #if defined NA_C11 && !defined __cplusplus
 //    return aligned_alloc(size, align);
 //  #else
     #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-      return _aligned_malloc(size, align);
+      retptr = _aligned_malloc(size, align);
     #else
-      void* retptr;
-      posix_memalign(&retptr, align, size);
-      return retptr;
+      void *mem = malloc(size+align+sizeof(void*));
+      void **ptr = (void**)((long)(mem+align+sizeof(void*)) & ~(align-1));
+      ptr[-1] = mem;
+      retptr = ptr;
+//      retptr = malloc_zone_memalign(malloc_default_zone(), align, size);
+//      posix_memalign(&retptr, align, size);
+    #endif
+    #ifndef NDEBUG
+      if(na_debug_mem_count_bytes){
+        na_debug_mem_alignedbytecount += size;
+      }
     #endif
 //  #endif
+  #ifndef NDEBUG
+    if(((NAUInt)retptr & (NAUInt)(align - NA_ONE)) != 0)
+      naError("naMallocAligned", "pointer unaligned.");
+  #endif
+  return retptr;
 }
 
 
 
 NA_IDEF void* naMallocPageAligned(NAUInt size){
+  return naMallocAligned(size, naGetSystemMemoryPageSize());
   // commented out because due to some strange reason, this does not work with
   // clang.
 //  #if defined NA_C11 && !defined __cplusplus
 //    return aligned_alloc(size, naGetSystemMemoryPageSize());
 //  #else
-    #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-      return _aligned_malloc(size, naGetSystemMemoryPageSize());
-    #else
-      return valloc(size);
-    #endif
+//    #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+//      return _aligned_malloc(size, naGetSystemMemoryPageSize());
+//    #else
+//      return valloc(size);
+//    #endif
 //  #endif
 }
 
@@ -601,11 +667,56 @@ NA_IAPI void naFree(void* ptr){
 
 
 
-NA_IDEF void naFreePageAligned(void* ptr){
+NA_IDEF void naFreeAligned(void* ptr){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     _aligned_free(ptr);
   #else
-    free(ptr);
+    free(((void**)ptr)[-1]);
+//    free(ptr);
+  #endif
+}
+
+
+
+
+
+
+NA_IDEF void naStartMemoryObservation(){
+  #ifndef NDEBUG
+    na_debug_mem_count_bytes = NA_TRUE;
+    na_debug_mem_bytecount = 0;
+    na_debug_mem_alignedbytecount = 0;
+  #endif
+}
+NA_IDEF void naStopMemoryObservation(){
+  #ifndef NDEBUG
+    na_debug_mem_count_bytes = NA_FALSE;
+  #endif
+}
+NA_IDEF void naContinueMemoryObservation(){
+  #ifndef NDEBUG
+    na_debug_mem_count_bytes = NA_TRUE;
+  #endif
+}
+NA_IDEF NAUInt naGetMemoryObservation(){
+  #ifndef NDEBUG
+    return na_debug_mem_bytecount + na_debug_mem_alignedbytecount;
+  #else
+    return 0;
+  #endif
+}
+NA_IDEF NAUInt naGetMemoryObservationUnaligned(){
+  #ifndef NDEBUG
+    return na_debug_mem_bytecount;
+  #else
+    return 0;
+  #endif
+}
+NA_IDEF NAUInt naGetMemoryObservationAligned(){
+  #ifndef NDEBUG
+    return na_debug_mem_alignedbytecount;
+  #else
+    return 0;
   #endif
 }
 

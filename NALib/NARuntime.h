@@ -389,7 +389,7 @@ NA_IDEF NACArray naGetPointerCArray(NAPointer* pointer){
 
 NA_HIDEF void naClearPointer(NAPointer* pointer){
   if(pointer->flags & NA_POINTER_OWN_DATA){
-    free(naGetPtrMutable(&(pointer->data.ptr)));
+    naFree(naGetPtrMutable(&(pointer->data.ptr)));
   }
 }
 

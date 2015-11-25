@@ -936,6 +936,44 @@ NA_HDEF void naRemoveOctTreeNode(NAOctTree* tree, NAOctTreeNode* node){
 
 
 
+// This methods checks if the root of the tree has only one child. As long
+// as there is only one child in the root, the root is transferred to that
+// very child to save memory and allow garbage collectors to collect.
+NA_HDEF void naAdjustOctTreeRoot(NAOctTree* tree){
+  while(1){
+    if(tree->root->childsize == tree->leafsize){
+      // The root node has only leafes as childs.
+      return;
+    }else{
+      // We count how many children there are.
+      NAUInt i;
+      NAUInt childcount = 0;
+      NAUInt lastchildindex = 0;
+      NAOctTreeNode* lastchild;
+      for(i=0; i<8; i++){if(tree->root->child[i]){childcount++; lastchildindex = i;}}
+      #ifndef NDEBUG
+        if(!childcount)
+          naError("naAdjustOctTreeRoot", "Root should not be empty.");
+      #endif
+      // If there are more than 1 child, return.
+      if(childcount > 1){return;}
+      // Now, the root has only one child node which now is stored in lastchild.
+      // We adjust the child to become the new root.
+      lastchild = tree->root->child[lastchildindex];
+      lastchild->parentnode = NA_NULL;
+      lastchild->segmentinparent = -1;
+      // We remove the child from the current root
+      tree->root->child[lastchildindex] = NA_NULL;
+      // ... deallocate the current root
+      naDeallocOctTreeNode(tree, tree->root);
+      // ...and set the new root.
+      tree->root = lastchild;
+    }
+  }
+}
+
+
+
 NA_DEF void naRemoveOctTreeLeaf(NAOctTree* tree, NAVertexi coord){
   NAOctTreeNode* node;
   NAInt leafsegment;
@@ -954,6 +992,10 @@ NA_DEF void naRemoveOctTreeLeaf(NAOctTree* tree, NAVertexi coord){
   }else{
     // If there are no more childs, we remove the node.
     naRemoveOctTreeNode(tree, node);
+  }
+  if(tree->root){
+    // Now, if the root has only one child left, we adjust the tree accordingly.
+    naAdjustOctTreeRoot(tree);
   }
   // Removing always nullifies the last visit.
   tree->visitnode = NA_NULL;

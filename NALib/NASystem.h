@@ -47,21 +47,9 @@
 //
 // In the future, there might be more or different macros
 //
-// Interesting read: http://sourceforge.net/p/predef/wiki/OperatingSystems/
-//
 // //////////////////////////////////////////
 
-// The core constants of the systems.
-//
-// NA_SYSTEM              One of the macros above like NA_SYSTEM_WINDOWS.
-// NA_SYSTEM_ENDIANNESS   One of the macros above like NA_ENDIANNESS_BIG.
-// NA_SYSTEM_ADDRESS_BITS The bits used for an address. Currently 32 or 64
-//
-// Use these macros in preprocessor directives like
-// #if NASYSTEM == NA_SYSTEM_WINDOWS
-// ...
-// #endif
-//
+// Interesting read: http://sourceforge.net/p/predef/wiki/OperatingSystems/
 #if defined _WIN32
   #define NA_SYSTEM NA_SYSTEM_WINDOWS
   #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_LITTLE
@@ -98,7 +86,7 @@
   #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_UNKNOWN
 #endif
 
-// The number of bytes per address. Currently 4 or 8
+// The number of bytes per address
 #define NA_SYSTEM_ADDRESS_BYTES (NA_SYSTEM_ADDRESS_BITS >> 3)
 
 
@@ -126,7 +114,7 @@
 #else
 
   // This is a C++ compilation
-  // Note that this macro test is not fully correct but it serves the purpose
+  // Note that this macro test is not fully coorect but it serves the purpose
   // of running this c library alongside c++ code
   #if __cplusplus >= 199711L
     #define NA_C99
@@ -145,17 +133,16 @@
 // keywords on different systems.
 //
 // A function declared with NA_LINKER_NO_EXPORT will not be exported when
-// building a program or library. This means that this function will not be
-// listed in the .lib file on windows and will not be accessible anywhere when
-// including the (.dll or .dylib) library. Also, any binary will be fully
-// stripped from such symbols. A function declared with NA_LINKER_EXPORT will
+// building a library. This means that this function will not be listed in the
+// .lib file on windows and will not be accessible anywhere when including the
+// (.dll or .dylib) library. A function declared with NA_LINKER_EXPORT will
 // explicitely be exported. This is a system-independent implementation which
 // allows the programmer to define the exporting on a very low granularity.
 // There exist other methods to define the exporting in supplementary files.
 //
 // As NALib is not intended to be compiled as a library, all functions are
 // either declared static inline or with NA_LINKER_NO_EXPORT. NA_LINKER_EXPORT
-// will never be used in NALib but you may use it in your own code.
+// will never be used but you may use it in your own code.
 //
 // Usually, the NA_LINKER_NO_EXPORT macro is defined in some other, hidden file
 // as it shall not be visible to the end user and will only be used on hidden
@@ -236,7 +223,7 @@
 #define NA_HIDEF  static NA_INLINE
 // Authors comment: Note that all symbols are declared and defined very
 // restrictive. Meaning: No function or variable of NALib will show up in a
-// program which is built with NALib.
+// library which is built with NALib.
 
 
 // va_copy is defined since C99. But before, you had to use something like
@@ -453,20 +440,23 @@ typedef uint8 NAByte;
 
 
 // NABool
-// Note that in NALib, the definition of NABool is explicitely set to "int" and
-// not char or unsigned char or not even NAInt. Just plain old "int".
-// This is unusual but most probably the easiest way to tell the compiler to 
-// use whatever he likes as long as it's fast. it is in the believe of the
-// author, that in modern computers, speed is more important than space as
-// opposed to earlier times where wasting space was a complete no-go. When
-// using lots of Boolean values, there are better ways to store them than in
-// NABools anyway: Use C-style-masks.
+// Note that in NALib, the definition of NABool is explicitely set to NAUInt
+// and not char or unsigned char. This is unusual but most probably the easiest
+// way to use whatever the current processor can use as its fastest integer.
+// It is in the believe of the author, that in modern computers, speed is more
+// important than space as opposed to earlier times where wasting space was a
+// complete no-go. When using lots of Boolean values, there are better ways to
+// store them than in NABools anyway: Use C-style-masks.
+//
+// Note that before NALib version 13, NABool had been defined with "int". This
+// procudes several warnings though on certain machines, therefore, the newer
+// NAUInt typedef had been applied.
 //
 // Also note that there is no distinction between C and C++. Therefore, NALib
 // never uses the bool type or the true and false keywords. Also the macros
 // available in C11 are unused.
 //
-typedef int NABool;
+typedef NAUInt NABool;
 #define NA_TRUE    1
 #define NA_FALSE   0
 
@@ -508,7 +498,7 @@ NA_IDEF NABool naIsIntNegative(NAInt x)        {return (x  < NA_ZERO);}
 
 
 // The definition of NA_NULL is usually set to the NULL found in stdlib. The
-// new C++11 standard however has a new keyword. Let's use it if it is there!
+// new C11 standard however has a new keyword. Let's use it if it is available!
 // Note that stdlib is needed anyway for malloc, free and exit which is most
 // probably needed anyway.
 //
@@ -538,7 +528,7 @@ NA_IDEF NABool naIsIntNegative(NAInt x)        {return (x  < NA_ZERO);}
 // /////////////////////////////////
 // Debugging:
 //
-// The following functions will only be defined if NDEBUG is undefined.
+// The following definitions will only be defined if NDEBUG is undefined.
 // Many functions of NALib will perform many tests which will slow down
 // the performance more or less considerably. If NDEBUG is defined however,
 // no tests are performed whatsoever.
@@ -600,10 +590,12 @@ NA_IDEF NABool naIsIntNegative(NAInt x)        {return (x  < NA_ZERO);}
 
 
 
-// This is the type of a general mutator callback which is used by some
-// naForeachXXX functions.
-typedef void  (*NAMutator)    (void *);
-
+// This is the type of a general callback which is used by:
+// - Mutator functions for naForeachXXX functions.
+// - Application start functions
+// - Threading start functions
+// - Timed functions
+typedef void (*NAFunc) (void*);
 
 
 

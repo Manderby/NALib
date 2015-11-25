@@ -12,27 +12,43 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Highlights:
+- Added user interface in NAUI. Very rudimentary just usable for one OpenGL
+  view. But you have to start somewhere.
+- Added threading NAThreading.h
+- List elements can now be quickly transfered from one list to anoter.
+  Added NAListPos to quickly locate list elements. Get the pos when adding
+  new elements and use it in naLocateListPos and naMoveListXXX.
 
-- Added user interface in NAUI
-- Added threading NAThreading
-
-todo: componentwise division Matrix. Division with E. Determinant
-
+Other things:
+- Added memory observation functions for debugging.
+- Added slow methods naIsSizeiEmptySlow, naIsRectiEmptySlow,
+  naIsVolumeiEmptySlow, naIsBoxiEmptySlow. Refined some debug checks
+- NABool is now typedef'd as NAUInt instead of int. Removed some warnings.
+- Found some serious bugs with aligned allocations in earlier versions of
+  Mac OS X. Changed naFreePageAligned to naFreeAligned and reprogrammed
+  a workaround.
+- Added naExchangeListParts
+- Added naAdjustOctTreeRoot and naAdjustQuadTreeRoot. The tree now adjusts
+  its root automatically, when it has only one child node.
 - Revisited the readme file
+- Added NAFunc, a general calling function type
 - Removed NAConstructor.
-- Removed NADestructor in NAArray and NAList. Added naForeach with NAMutator.
+- Removed NADestructor in NAArray and NAList.
 - Renamed NADestructor to NATypeDestructor and only use it in NARuntime.
 - Removed NAStructInfo. This was an unused relict of the time of implementing
   NARuntime.
 - Moved the naSleep functions to NAThreading.h
 - Removed many implicit conversions from NAVectorAlgebra.h
 - Made it compile under VisualStudio again.
-- Added NA_ZERO_DEGREES
+- Added NA_ZERO_DEGREES to the math constants
 - Moved slow and helper functions of NAList.h to NAList.c
 - Changed the C11 macro of NA_NULL to NULL.
 - Added File access methode naAccess
 - Renamed Scale and componentwise div functions in NAVectorAlgebra to MulComp
   and DivComp. Added componentwise multiplication and division of Matrices.
+  Added InvComp for vectors and matrices.
+- Renamed matrix inversion to naInvXXX
 - Added Determinant computation and Matrix equality tests in NAVectorAlgebra.h
 - Fixed some type conversion and equal pointer bugs in NAVectorAlgebra.h
 - Fixed some erroneous checks in NAVectorAlgebra.h

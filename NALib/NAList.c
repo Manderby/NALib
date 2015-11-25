@@ -5,6 +5,8 @@
 
 
 
+
+
 NA_DEF NABool naLocateListPointer(const NAList* list, void* content){
   NAList* mutablelist = (NAList*)list;
   NAListElement* curelement = list->sentinel.next;

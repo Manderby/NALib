@@ -52,7 +52,7 @@ NA_IAPI NABool naIsPoolEmpty(NAPool* pool);
 NA_IAPI NABool naIsPoolFull(NAPool* pool);
 
 // Calls the mutator-function for each element inside the pool.
-NA_IAPI void naForeachPool(const NAPool* pool, NAMutator mutator);
+NA_IAPI void naForeachPool(const NAPool* pool, NAFunc mutator);
 
 
 
@@ -182,7 +182,7 @@ NA_IDEF NABool naIsPoolFull(NAPool* pool){
 
 
 
-NA_IDEF void naForeachPool(const NAPool* pool, NAMutator mutator){
+NA_IDEF void naForeachPool(const NAPool* pool, NAFunc mutator){
   NAUInt i;
   NAByte** curptr = pool->drops;
   for(i=0; i<pool->cur; i++){
