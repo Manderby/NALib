@@ -78,6 +78,12 @@ NA_IAPI NABool naIsPosiInMap2D(NAPosi pos, const NAMap2D* map2d);
 
 
 
+// ///////////////////////////////////////////////////////////////////////
+// Inline Implementations: See readme file for more expanation.
+// ///////////////////////////////////////////////////////////////////////
+
+
+
 NA_IDEF NAMap2D* naInitMap2D(NAMap2D* map2d, NAInt typesize){
   #ifndef NDEBUG
     if(!map2d)

@@ -54,7 +54,7 @@ NARuntime* na_runtime = NA_NULL;
 // will likely change in the near future.
 NATypeIdentifier na_NAString_identifier = NA_NULL;
 NATypeIdentifier na_NAPointer_identifier = NA_NULL;
-NATypeIdentifier na_NAListElement_identifier = NA_NULL;
+NATypeIdentifier na_NAPNG_identifier = NA_NULL;
 
 
 

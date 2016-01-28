@@ -132,26 +132,26 @@ NA_IAPI NAUInt naGetMemoryObservationUnaligned();
 
 
 // ///////////////////////////////
-// Core memory structs: NAPtr, NALValue, NAMemoryBlock, NACArray
+// Core memory structs: NAPtr, NALValue, NAMemoryBlock, NACArray, NABuf
 //
-// Following are the declarations and definitions of the four base memory
-// structs used in NALib. They seem confusing at first but are very simple
-// to understand.
+// Following are the declarations and definitions of the very fundamental
+// base memory structs used in NALib. They seem confusing at first but are
+// very simple to understand.
 //
 // Basically, they all store a C-Pointer. But a C-Pointer can denote anything
-// from a single byte up to an array of large structs. The four base structs
+// from a single byte up to an array of large structs. The base structs
 // are here to distinguish between them. Basically, they store the following
 // information:
 //
-//                | C-Pointer const and mutable  |  Typesize  |  Total bytesize
-// ---------------+------------------------------+------------+----------------
-// NAPtr          |               X              |      -     |        -
-// NALValue       |               X              |      X     |        -
-// NAMemoryBlock  |               X              |      -     |        X
-// NACArray       |               X              |      X     |        X
+// NAPtr          A plain pointer. Nothing more
+// NALValue       A pointer with a typesize, denoting a localizable value.
+// NAMemoryBlock  A pointer to a bunch of bytes
+// NACArray       A pointer to a bunch of values
+// NABuf          A pointer to a bunch of bytes, only partially being used.
 //
 // At the core, an NAPtr stores a C-Pointer and the information whether it
-// is const or mutable.
+// is const or mutable. When debugging, it also stores information about
+// the size of the memory being pointed at and how it is null terminated.
 //
 // An NALValue stores a pointer which denotes a variable placed in memory.
 // It has a typesize.
@@ -159,11 +159,14 @@ NA_IAPI NAUInt naGetMemoryObservationUnaligned();
 // An NAMemoryBlock stores a bunch of bytes. No typesize but a total size
 // of bytes is available.
 //
-// An NACArray finally is the combination of all things. It stores a pointer,
+// An NACArray is the combination of the last two structs. It stores a pointer,
 // a total number of bytes available and the typesize of the units stored
 // in that array. The number of elements in the array can be computed by
 // dividing the total bytesize by the typesize. See API for the corresponding
 // function call.
+//
+// An NABuf is a buffer with a fixed maximal bytesize and a counter how many
+// bytes actually are in use.
 //
 // ///////////////////////////////
 
@@ -181,7 +184,7 @@ NA_IAPI NAUInt naGetMemoryObservationUnaligned();
 //
 // This struct also serves as the core of memory consistency checking when
 // debugging. An NAPtr stores many additional information which are not
-// accessible to the programmer and would not be available when just using
+// accessible to the programmer but would not be available when just using
 // plain C pointers. NALib tags NAPtr values with various flags like if the
 // pointer denotes an array and whether that array is null-terminated or not.
 // During runtime, NALib checks if all accesses are fine and no buffer
@@ -205,7 +208,7 @@ NA_IAPI NAUInt naGetMemoryObservationUnaligned();
 // overload functions and hence you can not hide the distinction to the user.
 //
 // In NALib, the author decided to use a union type storing either a const or
-// a non-const data pointer. This idea is not entirely type-save but is much
+// a non-const data pointer. This idea is not entirely type-safe but is much
 // easier to write programs with, as the programmer has to differentiate
 // between const and non-const only when necessary.
 //
@@ -216,10 +219,10 @@ NA_IAPI NAUInt naGetMemoryObservationUnaligned();
 // variants which might be very costly and not beautiful at all.
 //
 // NAPtr is the base of all memory structs.
-// NALValue, NAMemoryBlock and NACArray are all dependent on NAPtr and declare
-// it as the first entry in their struct declaration. Therefore, it is safe
-// to access any other memory struct typecastet as an NAPtr. See NAPointer for
-// an example.
+// NALValue, NAMemoryBlock, NACArray and NABuf are all dependent on NAPtr and
+// declare it as the first entry in their struct declaration. Therefore, it is
+// safe to access any other memory struct typecastet as an NAPtr. See NAPointer
+// for an example.
 
 
 typedef struct NAPtr NAPtr;
@@ -233,6 +236,9 @@ NA_IAPI NAPtr naMakePtr();
 // use naMakeLValueWithTypesize or naMakeMemoryBlockWithBytesize.
 NA_IAPI NAPtr naMakePtrWithSize(NAInt size);
 
+// Deletes the memory stored in ptr with free.
+NA_IAPI void naClearPtr(NAPtr* ptr);
+
 // Fills the given NAPtr struct with either a const or a non-const pointer.
 // The bytesizehint is a hint when debugging. For an explanation of that
 // parameter, see naMakeMemoryBlockWithConstBuffer. In the same way, the
@@ -245,7 +251,7 @@ NA_IAPI NAPtr naMakePtrWithMutableBuffer(      void* data,
                                                NAInt bytesizehint,
                                               NAUInt zerofillhint);
 
-// Assumes srcptr to be a byte array and creates an NAPtr referencing an
+// Assumes srcptr to be an array of bytes and creates an NAPtr referencing an
 // extraction thereof. DOES NOT COPY!
 // The offset and size must be given in bytes and are always positive! The size
 // is only a hint which helps detecting errors during debugging. When NDEBUG is
@@ -253,20 +259,21 @@ NA_IAPI NAPtr naMakePtrWithMutableBuffer(      void* data,
 NA_IAPI NAPtr naMakePtrWithExtraction(  const NAPtr* srcptr,
                                               NAUInt offset,
                                               NAUInt bytesizehint);
-
-// Note that the creation function are naMakeXXX functions which makes it
-// easy to implement. But the remaining functions require to provide a pointer.
+    
+// Note that the creation functions of NAPtr are naMakeXXX functions which
+// makes it easy to implement. But the remaining functions require to provide
+// a pointer.
 
 // The following functions return either a const or a mutable pointer.
 //
 // When NDEBUG is NOT defined, NALib will check if a const value is accessed
 // as a mutator and will emit a warning if so. If the content of the pointer
-// is a NULL pointer, no warning will be emitted.
+// is a NULL pointer, NO warning will be emitted.
 //
 // When NDEBUG IS defined, the const and mutable functions behave equally and
 // no test will be performed whatsoever.
-NA_IAPI const void* naGetPtrConst(const NAPtr* ptr);
-NA_IAPI void* naGetPtrMutable(NAPtr* ptr);
+NA_IAPI const void* naGetPtrConst   (const NAPtr* ptr);
+NA_IAPI       void* naGetPtrMutable (      NAPtr* ptr);
 
 // Returns NA_TRUE, if the pointer stores const data. This function only is
 // useful when debugging. When NDEBUG is defined, this function always returns
@@ -290,11 +297,14 @@ NA_IAPI NALValue naMakeLValue();
 // Create a new lvalue of the given size. The size parameter MUST be positive.
 NA_IAPI NALValue naMakeLValueWithTypesize(NAUInt typesize);
 
-// Uses the given buffer WITHOUT copying as an lvalue with the given typesize.
-NA_IAPI NALValue naMakeLValueWithConstBuffer(   const void* buffer,
+// Uses the given bufptr WITHOUT copying as an lvalue with the given typesize.
+NA_IAPI NALValue naMakeLValueWithConstBuffer(   const void* bufptr,
                                                      NAUInt typesize);
-NA_IAPI NALValue naMakeLValueWithMutableBuffer(       void* buffer,
+NA_IAPI NALValue naMakeLValueWithMutableBuffer(       void* bufptr,
                                                      NAUInt typesize);
+
+// Deletes the memory for the value buffer.
+NA_IAPI void naClearLValue(NALValue* lvalue);
 
 // Returns informations about the typesize of the given lvalue.
 NA_IAPI NAUInt naGetLValueTypesize(const NALValue* lvalue);
@@ -322,17 +332,17 @@ NA_IAPI NAMemoryBlock naMakeMemoryBlock();
 // parameter can be negative. See naMalloc function for more information.
 NA_IAPI NAMemoryBlock naMakeMemoryBlockWithBytesize(NAInt bytesize);
 
-// Uses the given buffer WITHOUT copying as a memory block with the given size.
+// Uses the given bufptr WITHOUT copying as a memory block with the given size.
 // The programmer is responsible that the given size is not overflowing the
 // buffer.
 // The bytesize can be negative. If so, the absolute value of bytesize is
-// used but the given buffer is expected to to have one or more bytes appended
+// used but the given bufptr is expected to to have one or more bytes appended
 // which are filled with binary zero. Hence, the array can safely be assumed to
 // be null-terminated. This also serves as a hint for functions like
 // naMakePtrWithConstBuffer
-NA_IAPI NAMemoryBlock naMakeMemoryBlockWithConstBuffer( const void* buffer,
+NA_IAPI NAMemoryBlock naMakeMemoryBlockWithConstBuffer( const void* bufptr,
                                                               NAInt bytesize);
-NA_IAPI NAMemoryBlock naMakeMemoryBlockWithMutableBuffer(     void* buffer,
+NA_IAPI NAMemoryBlock naMakeMemoryBlockWithMutableBuffer(     void* bufptr,
                                                               NAInt bytesize);
 
 // Makes a new NAMemoryBlock struct containing a sub-part of the given source
@@ -343,9 +353,18 @@ NA_IAPI NAMemoryBlock naMakeMemoryBlockWithExtraction(
                                                           NAUInt offset,
                                                           NAUInt bytesize);
 
-// Returns size information about the memory block.
+// Deletes the memory for the memory block.
+NA_IAPI void naClearMemoryBlock(NAMemoryBlock* memblock);
+
+// Returns size information about the memory block. The maxindex returns
+// size-1 but will emit an error when NDEBUG is undefined and the size is 0.
 NA_IAPI NAUInt naGetMemoryBlockBytesize(const NAMemoryBlock* memblock);
+NA_IDEF NAUInt naGetMemoryBlockMaxIndex(const NAMemoryBlock* memblock);
 NA_IAPI NABool naIsMemoryBlockEmpty(const NAMemoryBlock* memblock);
+
+// Invalidates the memory block by setting its bytesize to 0. No access can
+// be performed anymore. But the size can be retrieved.
+NA_IAPI void naVoidMemoryBlock(NAMemoryBlock* memblock);
 
 // Returns either a const or mutable pointer to the first byte of the given
 // memory block
@@ -364,6 +383,7 @@ NA_IAPI NABool naIsMemoryBlockConst(NAMemoryBlock* memblock);
 // A debugging function returning true, if the given memory block is declared
 // to be null terminated. If NDEBUG is defined, this function is undefined
 // and not available. The author does not want to propose any assumption.
+// Therefore it is also marked as a helper function.
 #ifndef NDEBUG
   NA_HIAPI NABool naIsMemoryBlockNullTerminated(const NAMemoryBlock* memblock);
 #endif
@@ -386,21 +406,21 @@ NA_IAPI NACArray naMakeCArray();
 // count parameter can be negative. See naMalloc function for more information.
 NA_IAPI NACArray naMakeCArrayWithTypesizeAndCount(NAUInt typesize, NAInt count);
 
-// Uses the given buffer WITHOUT copying as a C array with the given typesize
+// Uses the given bufptr WITHOUT copying as a C array with the given typesize
 // and element count. The programmer is responsible that the given sizes are
 // not overflowing the buffer.
 // The count can be negative. If so, the absolute value of count is used but
-// the given buffer is expected to to have at least typesize bytes appended
+// the given bufptr is expected to to have at least typesize bytes appended
 // which are filled with binary zero. Hence, the array can be assumed to
 // be null-terminated. This also serves as a hint for functions like
 // naMakePtrWithConstBuffer.
 // Note that the additional typesize bytes is special. naMalloc only guarantees
 // zero filling up to a certain number of bytes. You have to be careful if you
 // want to use negative sizes with NACArray.
-NA_IAPI NACArray naMakeCArrayWithConstBuffer(   const void* buffer,
+NA_IAPI NACArray naMakeCArrayWithConstBuffer(   const void* bufptr,
                                                      NAUInt typesize,
                                                       NAInt count);
-NA_IAPI NACArray naMakeCArrayWithMutableBuffer(       void* buffer,
+NA_IAPI NACArray naMakeCArrayWithMutableBuffer(       void* bufptr,
                                                      NAUInt typesize,
                                                       NAInt count);
 
@@ -410,6 +430,9 @@ NA_IAPI NACArray naMakeCArrayWithMutableBuffer(       void* buffer,
 NA_IAPI NACArray naMakeCArrayWithExtraction(const NACArray* srccarray,
                                                      NAUInt offset,
                                                      NAUInt count);
+
+// Deletes the memory for the array.
+NA_IAPI void naClearCArray(NACArray* carray);
 
 // Returns size information about the memory block.
 NA_IAPI NAUInt naGetCArrayBytesize( const NACArray* carray);
@@ -432,11 +455,55 @@ NA_IAPI NABool naIsCArrayConst(NACArray* carray);
 // A debugging function returning true, if the given memory block is declared
 // to be null terminated. If NDEBUG is defined, this function is undefined
 // and not available. The author does not want to propose any assumption.
+// Therefore it is also marked as a helper function.
 #ifndef NDEBUG
   NA_HIAPI NABool naIsCArrayNullTerminated(const NACArray* carray);
 #endif
 
 
+
+
+
+// ////////////////////////
+// NABuf
+// ////////////////////////
+
+typedef struct NABuf NABuf;
+
+// Returns a buf which is empty.
+NA_IAPI NABuf naMakeBuf();
+
+// Creates a new buf with the given sizes. In contrast to the other
+// base memory structs, both size parameter must be positive.
+// usedsize can be 0 but maxsize must be greater than 0.
+NA_IAPI NABuf naMakeBufWithSize(NAInt maxsize, NAInt usedsize);
+
+// Deletes the memory for the buffer.
+NA_IAPI void naClearBuf(NABuf* buf);
+
+// Returns size information about the memory block.
+NA_IAPI NAUInt naGetBufMaxSize(const NABuf* buf);
+NA_IAPI NAUInt naGetBufUsedSize(const NABuf* buf);
+NA_IDEF NAUInt naGetBufRemainingSize(const NABuf* buf);
+// Returns true if there is no used byte in the buf.
+NA_IAPI NABool naIsBufEmpty(const NABuf* buf);
+
+// Returns either a const or mutable pointer to the current byte of the given
+// buf. The current byte is the byte yet not being used.
+NA_IAPI const void* naGetBufConstUsedPointer(const NABuf* buf);
+NA_IAPI void*       naGetBufMutableUsedPointer(    NABuf* buf);
+// Increments the used size by the given number of bytes. Will emit an error
+// when the buffer overflows when NDEBUG is not defined.
+NA_IAPI void        naAdvanceBuf(NABuf* buf, NAUInt bytesize);
+
+// Returns either a const or mutable pointer to the first byte of the full
+// buf. Emits an error when the buf is empty when NDEBUG is undefined.
+NA_IAPI const void* naGetBufConstFirstPointer(   const NABuf* buf);
+NA_IAPI       void* naGetBufMutableFirstPointer(       NABuf* buf);
+
+// Returns true if this buf stores const content. Only useful when debugging.
+// When NDEBUG is defined, this function always returns NA_FALSE.
+NA_IAPI NABool naIsBufConst(NABuf* buf);
 
 
 
@@ -457,6 +524,7 @@ NA_IAPI NABool naIsCArrayConst(NACArray* carray);
 #endif
 
 #include "NAMathOperators.h"
+#include "NAValueHelper.h"
 
 
 // //////////////////////////////////////
@@ -506,7 +574,7 @@ NA_IDEF NAUInt naGetSystemMemoryPageSizeMask(){
 // - The part without the additional bytes might partially become
 //   initialized with binary zero.
 
-NA_HIDEF NAUInt naGetNullTerminationSize(NAInt size){
+NA_HIDEF NAInt naGetNullTerminationSize(NAInt size){
   NAInt returnsize;
   #ifndef NDEBUG
     if(!naIsIntNegative(size))
@@ -519,7 +587,7 @@ NA_HIDEF NAUInt naGetNullTerminationSize(NAInt size){
     if(returnsize < 0)
       naError("naGetNullTerminationSize", "given negative size is too close to the minimal integer value");
   #endif
-  return (NAUInt)returnsize;
+  return returnsize;
 }
 
 
@@ -546,7 +614,7 @@ NA_IDEF void* naMalloc(NAInt size){
   // ptr is declared as NAByte to simplify accessing individual bytes later
   // in this functions.
   NAByte* ptr; // Declaration before implementation. Needed for C90.
-  NAUInt fullsize;
+  NAInt fullsize;
   #ifndef NDEBUG
     if(naIsIntZero(size))
       naError("naMalloc", "size is zero.");
@@ -566,7 +634,7 @@ NA_IDEF void* naMalloc(NAInt size){
     #endif
     fullsize = naGetNullTerminationSize(size);
     #ifndef NDEBUG
-      if((NAInt)fullsize < -size)
+      if(fullsize < -size)
         naError("naMalloc", "given size including zero filled endbytes overflows NAInt type.");
     #endif
     ptr = (NAByte*)malloc((size_t)fullsize);
@@ -623,7 +691,7 @@ NA_IDEF void* naMallocAligned(NAUInt size, NAUInt align){
       retptr = _aligned_malloc(size, align);
     #else
       void *mem = malloc(size+align+sizeof(void*));
-      void **ptr = (void**)((long)(mem+align+sizeof(void*)) & ~(align-1));
+      void **ptr = (void**)((long)((NAByte*)mem+align+sizeof(void*)) & ~(align-1));
       ptr[-1] = mem;
       retptr = ptr;
 //      retptr = malloc_zone_memalign(malloc_default_zone(), align, size);
@@ -782,33 +850,29 @@ struct NAPtr{
 
 
 
-  NA_HIDEF void naMarkPtrWithVisibleSize(NAPtr* ptr, NAUInt visiblebytecount){
-    if(naIsIntNegative((NAInt)visiblebytecount))
-      naError("naMarkPtrWithVisibleSize", "visiblebytecount seems to be negative but should be unsigned.");
+  NA_HIDEF void naMarkPtrWithVisibleSize(NAPtr* ptr, NAInt visiblebytecount){
+    if(naIsIntNegative(visiblebytecount))
+      naError("naMarkPtrWithVisibleSize", "visiblebytecount should not be negative.");
     if(!ptr)
       {naCrash("naMarkPtrWithVisibleSize", "ptr is null"); return;}
     if(ptr->flags & NA_PTR_HAS_VISIBLE_BYTECOUNT)
       naError("naMarkPtrWithVisibleSize", "visible size already marked");
-    if(naIsIntNegative((NAInt)visiblebytecount))
-      naError("naMarkPtrWithVisibleSize", "visible size overflows NAInt range");
     ptr->flags |= NA_PTR_HAS_VISIBLE_BYTECOUNT;
     ptr->visiblebytecount = visiblebytecount;
   }
   
   
 
-  NA_HIDEF void naMarkPtrWithAccessibleSize(NAPtr* ptr, NAUInt accessiblesize, NABool nullterminated){
+  NA_HIDEF void naMarkPtrWithAccessibleSize(NAPtr* ptr, NAInt accessiblesize, NABool nullterminated){
     NAUInt nullindx;
-    if(naIsIntNegative((NAInt)accessiblesize))
-      naError("naMarkPtrWithAccessibleSize", "accessiblesize seems to be negative but should be unsigned.");
     if(!ptr)
       {naCrash("naMarkPtrWithAccessibleSize", "ptr is null"); return;}
     if(!(ptr->flags & NA_PTR_HAS_VISIBLE_BYTECOUNT))
       naError("naMarkPtrWithAccessibleSize", "visible size must be marked first");
     if(ptr->flags & NA_PTR_HAS_ACCESSIBLE_BYTECOUNT)
       naError("naMarkPtrWithAccessibleSize", "accessible size already marked");
-    if(naIsIntNegative((NAInt)accessiblesize))
-      naError("naMarkPtrWithAccessibleSize", "accessible size overflows NAInt range");
+    if(naIsIntNegative(accessiblesize))
+      naError("naMarkPtrWithAccessibleSize", "accessiblesize should not be negative.");
     ptr->flags |= NA_PTR_HAS_ACCESSIBLE_BYTECOUNT;
     ptr->accessiblebytecount = accessiblesize;
     if(nullterminated){ptr->flags |= NA_PTR_NULL_TERMINATED;}
@@ -826,9 +890,9 @@ struct NAPtr{
 
   NA_HIDEF NABool naIsPtrNullTerminated(const NAPtr* ptr){
     if(!ptr)
-      {naCrash("naIsPtrNullTerminated", "ptr was null"); return NA_FALSE;}
+      {naCrash("naIsPtrNullTerminated", "ptr is null"); return NA_FALSE;}
     if(!(ptr->flags & NA_PTR_HAS_ACCESSIBLE_BYTECOUNT))
-      naError("naIsPtrNullTerminated", "No accessible size information present. Ptr may or may not be null-terminated.");
+      naError("naIsPtrNullTerminated", "No accessible size information present. Ptr may or may not be null-terminated. Return value is always false.");
     return (ptr->flags & NA_PTR_NULL_TERMINATED);
   }
   
@@ -851,6 +915,9 @@ NA_IDEF NAPtr naMakePtr(){
 
 
 
+// Note: Size 0 ist not allowed. Allowing it would introduce an if statement
+// which should not exist at this low level function. A debug error will fire
+// and you have to deal with zero sizes in higher level functions.
 NA_IDEF NAPtr naMakePtrWithSize(NAInt size){
   NAPtr ptr;
   #ifndef NDEBUG
@@ -873,6 +940,12 @@ NA_IDEF NAPtr naMakePtrWithSize(NAInt size){
 
 
 
+NA_IDEF void naClearPtr(NAPtr* ptr){
+  naFree(ptr->data.d);
+}
+
+
+
 NA_IDEF NAPtr naMakePtrWithConstBuffer(const void* data, NAInt bytesizehint, NAUInt zerofillhint){
   NAPtr ptr;
   ptr.data.constd = data;
@@ -881,7 +954,8 @@ NA_IDEF NAPtr naMakePtrWithConstBuffer(const void* data, NAInt bytesizehint, NAU
     if(naIsIntNegative(bytesizehint)){
       naMarkPtrWithVisibleSize(&ptr, -bytesizehint);
       naMarkPtrWithAccessibleSize(&ptr, -bytesizehint + zerofillhint, NA_TRUE);
-    }else if(naIsIntStrictlyPositive(bytesizehint)){
+    }else{
+      // Note that when bytesizehint is zero, zerofillhint is obsolete.
       naMarkPtrWithVisibleSize(&ptr, bytesizehint);
       naMarkPtrWithAccessibleSize(&ptr, bytesizehint, NA_FALSE);
     }
@@ -904,7 +978,8 @@ NA_IDEF NAPtr naMakePtrWithMutableBuffer(void* data, NAInt bytesizehint, NAUInt 
     if(naIsIntNegative(bytesizehint)){
       naMarkPtrWithVisibleSize(&ptr, -bytesizehint);
       naMarkPtrWithAccessibleSize(&ptr, -bytesizehint + zerofillhint, NA_TRUE);
-    }else if(naIsIntStrictlyPositive(bytesizehint)){
+    }else{
+      // Note that when bytesizehint is zero, zerofillhint is obsolete.
       naMarkPtrWithVisibleSize(&ptr, bytesizehint);
       naMarkPtrWithAccessibleSize(&ptr, bytesizehint, NA_FALSE);
     }
@@ -1005,7 +1080,7 @@ NA_IDEF NABool naIsPtrConst(NAPtr* ptr){
 // Opaque type. typedef is above. See explanation in readme.txt
 struct NALValue{
   NAPtr   ptr;          // pointer to the first byte
-  NAUInt  typesize;     // size of the unit in bytes. Always positive.
+  NAInt   typesize;     // size of the unit in bytes. Always positive.
 };
 
 
@@ -1024,15 +1099,17 @@ NA_IDEF NALValue naMakeLValue(){
 
 
 
+// Typesize must never be zero. When debugging, an error will be emitted and
+// you have to deal with the problem in a higher level function.
 NA_IDEF NALValue naMakeLValueWithTypesize(NAUInt typesize){
   NALValue lvalue;
   #ifndef NDEBUG
     if(naIsIntZero(typesize))
       naError("naMakeLValueWithTypesize", "typesize is zero.");
     if(naIsIntNegative((NAInt)typesize))
-      naError("naMakeLValueWithTypesize", "typesize seems to be negative but should be unsigned.");
+      naError("naMakeLValueWithTypesize", "typesize appears to be negative when interpreted as a signed integer. This is not allowed.");
   #endif
-  lvalue.ptr = naMakePtrWithSize(typesize);
+  lvalue.ptr = naMakePtrWithSize((NAInt)typesize);
   lvalue.typesize = typesize;
   return lvalue;
 }
@@ -1061,6 +1138,12 @@ NA_IDEF NALValue naMakeLValueWithMutableBuffer(void* buffer, NAUInt typesize){
   lvalue.ptr = naMakePtrWithMutableBuffer(buffer, typesize, NA_ZERO);
   lvalue.typesize = typesize;
   return lvalue;
+}
+
+
+
+NA_IDEF void naClearLValue(NALValue* lvalue){
+  naClearPtr(&(lvalue->ptr));
 }
 
 
@@ -1157,6 +1240,8 @@ NA_IDEF NAMemoryBlock naMakeMemoryBlock(){
 
 
 
+// bytesize must never be zero. When debugging, an error will be emitted and
+// you have to deal with the problem in a higher level function.
 NA_IDEF NAMemoryBlock naMakeMemoryBlockWithBytesize(NAInt bytesize){
   NAMemoryBlock memblock;
   #ifndef NDEBUG
@@ -1172,10 +1257,6 @@ NA_IDEF NAMemoryBlock naMakeMemoryBlockWithBytesize(NAInt bytesize){
 
 NA_IDEF NAMemoryBlock naMakeMemoryBlockWithConstBuffer(const void* buffer, NAInt bytesize){
   NAMemoryBlock memblock;
-  #ifndef NDEBUG
-    if(naIsIntZero(bytesize))
-      naError("naMakeMemoryBlockWithBytesize", "bytesize is zero.");
-  #endif
   memblock.ptr = naMakePtrWithConstBuffer(buffer, bytesize, 1);
   memblock.bytesize = naAbsi(bytesize);
   return memblock;
@@ -1185,10 +1266,6 @@ NA_IDEF NAMemoryBlock naMakeMemoryBlockWithConstBuffer(const void* buffer, NAInt
 
 NA_IDEF NAMemoryBlock naMakeMemoryBlockWithMutableBuffer(void* buffer, NAInt bytesize){
   NAMemoryBlock memblock;
-  #ifndef NDEBUG
-    if(naIsIntZero(bytesize))
-      naError("naMakeMemoryBlockWithBytesize", "bytesize is zero.");
-  #endif
   memblock.ptr = naMakePtrWithMutableBuffer(buffer, bytesize, 1);
   memblock.bytesize = naAbsi(bytesize);
   return memblock;
@@ -1215,6 +1292,12 @@ NA_IDEF NAMemoryBlock naMakeMemoryBlockWithExtraction(const NAMemoryBlock* srcme
 
 
 
+NA_IDEF void naClearMemoryBlock(NAMemoryBlock* memblock){
+  naClearPtr(&(memblock->ptr));
+}
+
+
+
 NA_IDEF NAUInt naGetMemoryBlockBytesize(const NAMemoryBlock* memblock){
   #ifndef NDEBUG
     if(!memblock){
@@ -1227,6 +1310,20 @@ NA_IDEF NAUInt naGetMemoryBlockBytesize(const NAMemoryBlock* memblock){
 
 
 
+NA_IDEF NAUInt naGetMemoryBlockMaxIndex(const NAMemoryBlock* memblock){
+  #ifndef NDEBUG
+    if(!memblock){
+      naCrash("naGetMemoryBlockMaxIndex", "memblock is Null-Pointer.");
+      return NA_TRUE;
+    }
+    if(naIsMemoryBlockEmpty(memblock))
+      naError("naGetMemoryBlockConstPointer", "memblock is empty.");
+  #endif
+  return naEndToMaxi(memblock->bytesize);
+}
+
+
+
 NA_IDEF NABool naIsMemoryBlockEmpty(const NAMemoryBlock* memblock){
   #ifndef NDEBUG
     if(!memblock){
@@ -1235,6 +1332,18 @@ NA_IDEF NABool naIsMemoryBlockEmpty(const NAMemoryBlock* memblock){
     }
   #endif
   return (memblock->bytesize == NA_ZERO);
+}
+
+
+
+NA_IDEF void naVoidMemoryBlock(NAMemoryBlock* memblock){
+  #ifndef NDEBUG
+    if(!memblock){
+      naCrash("naIsMemoryBlockEmpty", "memblock is Null-Pointer.");
+      return;
+    }
+  #endif
+  memblock->bytesize = NA_ZERO;
 }
 
 
@@ -1309,6 +1418,12 @@ NA_IDEF void* naGetMemoryBlockMutableByte(NAMemoryBlock* memblock, NAUInt indx){
 
 NA_IDEF NABool naIsMemoryBlockConst(NAMemoryBlock* memblock){
   #ifndef NDEBUG
+    if(!memblock){
+      naCrash("naIsMemoryBlockConst", "memblock is Null-Pointer.");
+      return NA_TRUE;
+    }
+    if(naIsMemoryBlockEmpty(memblock))
+      naError("naIsMemoryBlockConst", "memblock is empty.");
     return naIsPtrConst(&(memblock->ptr));
   #else
     NA_UNUSED(memblock);
@@ -1326,6 +1441,8 @@ NA_IDEF NABool naIsMemoryBlockConst(NAMemoryBlock* memblock){
         naCrash("naIsMemoryBlockNullTerminated", "memblock is Null-Pointer.");
         return NA_TRUE;
       }
+      if(naIsMemoryBlockEmpty(memblock))
+        naError("naIsMemoryBlockNullTerminated", "memblock is empty.");
     #endif
     return naIsPtrNullTerminated(&(memblock->ptr));
   }
@@ -1363,16 +1480,21 @@ NA_IDEF NACArray naMakeCArray(){
 
 
 
+// Typesize must never be zero. When debugging, an error will be emitted and
+// you have to deal with the problem in a higher level function.
 NA_IDEF NACArray naMakeCArrayWithTypesizeAndCount(NAUInt typesize, NAInt count){
   NACArray carray;
+  NAInt totalbytecount = (NAInt)typesize * count;;
   #ifndef NDEBUG
     if(naIsIntNegative((NAInt)typesize))
-      naError("naMakeCArrayWithTypesizeAndCount", "typesize seems to be negative but should be unsigned.");
+      naError("naMakeCArrayWithTypesizeAndCount", "typesize appears to be negative when interpreted as a signed integer. This is not allowed.");
     if(naIsIntZero(count))
       naError("naMakeCArrayWithTypesizeAndCount", "count is zero.");
+    if(naSigni(count) != naSigni(totalbytecount))
+      naError("naMakeCArrayWithTypesizeAndCount", "count and typesize overflow the integer range.");
   #endif
-  carray.ptr = naMakePtrWithSize(typesize * count);
-  carray.bytesize = naAbsi(typesize * count);
+  carray.ptr = naMakePtrWithSize(totalbytecount);
+  carray.bytesize = naAbsi(totalbytecount);
   carray.typesize = typesize;
   return carray;
 }
@@ -1384,8 +1506,6 @@ NA_IDEF NACArray naMakeCArrayWithConstBuffer(const void* buffer, NAUInt typesize
   #ifndef NDEBUG
     if(naIsIntNegative((NAInt)typesize))
       naError("naMakeCArrayWithConstBuffer", "typesize seems to be negative but should be unsigned.");
-    if(naIsIntZero(count))
-      naError("naMakeCArrayWithConstBuffer", "count is zero.");
   #endif
   carray.ptr = naMakePtrWithConstBuffer(buffer, typesize * count, typesize);
   carray.bytesize = naAbsi(typesize * count);
@@ -1399,8 +1519,6 @@ NA_IDEF NACArray naMakeCArrayWithMutableBuffer(void* buffer, NAUInt typesize, NA
   #ifndef NDEBUG
     if(naIsIntNegative((NAInt)typesize))
       naError("naMakeCArrayWithMutableBuffer", "typesize seems to be negative but should be unsigned.");
-    if(naIsIntZero(count))
-      naError("naMakeCArrayWithMutableBuffer", "count is zero.");
   #endif
   carray.ptr = naMakePtrWithMutableBuffer(buffer, typesize * count, typesize);
   carray.bytesize = naAbsi(typesize * count);
@@ -1424,6 +1542,12 @@ NA_IDEF NACArray naMakeCArrayWithExtraction(const NACArray* srccarray, NAUInt of
   dstcarray.ptr = naMakePtrWithExtraction(&(srccarray->ptr), offset * srccarray->typesize, count * srccarray->typesize);
   dstcarray.bytesize = count * srccarray->typesize;
   return dstcarray;
+}
+
+
+
+NA_IDEF void naClearCArray(NACArray* carray){
+  naClearPtr(&(carray->ptr));
 }
 
 
@@ -1559,6 +1683,195 @@ NA_IDEF NABool naIsCArrayConst(NACArray* carray){
 
 #endif
 
+
+
+
+
+
+
+
+
+
+
+
+// //////////////////////////
+// NABuf
+// //////////////////////////
+
+struct NABuf{
+  NAPtr   ptr;          // pointer to the first byte
+  NAUInt  bytesize;     // total size of the buf in bytes. Always positive.
+  NAUInt  usedsize;     // size of the used bytes. Always positive.
+};
+
+
+
+NA_IDEF NABuf naMakeBuf(){
+  NABuf buf;
+  // Note that we do not initialize the ptr with naMakePtr. Relying solely on
+  // the size field is non-redundant, saves some time and sometimes even helps
+  // detecting whether you initialized your structs correctly as certain
+  // compilers will add guards to non-initialized pointers and will fire
+  // with an exception.
+  buf.bytesize = NA_ZERO;
+  buf.usedsize = NA_ZERO;
+  return buf;
+}
+
+
+
+// maxsize must never be zero. When debugging, an error will be emitted and
+// you have to deal with the problem in a higher level function.
+NA_IDEF NABuf naMakeBufWithSize(NAInt maxsize, NAInt usedsize){
+  NABuf buf;
+  #ifndef NDEBUG
+    if(naIsIntZero(maxsize))
+      naError("naMakeBufWithMaxSize", "maxsize is zero.");
+    if(naIsIntNegative(maxsize))
+      naError("naMakeBufWithMaxSize", "maxsize must be positive. Zero fill check might fail with NABuf");
+    if(naIsIntNegative(usedsize))
+      naError("naMakeBufWithMaxSize", "usedsize must be positive.");
+    if(usedsize > maxsize)
+      naError("naMakeBufWithMaxSize", "maxsize can not be smaller than usedsize.");
+  #endif
+  buf.ptr = naMakePtrWithSize(maxsize);
+  buf.bytesize = maxsize;
+  buf.usedsize = usedsize;
+  return buf;
+}
+
+
+
+NA_IDEF void naClearBuf(NABuf* buf){
+  naClearPtr(&(buf->ptr));
+}
+
+
+
+NA_IDEF NAUInt naGetBufMaxSize(const NABuf* buf){
+  #ifndef NDEBUG
+    if(!buf){
+      naCrash("naGetBufMaxSize", "buf is Null-Pointer.");
+      return NA_TRUE;
+    }
+  #endif
+  return buf->bytesize;
+}
+
+
+
+NA_IDEF NAUInt naGetBufUsedSize(const NABuf* buf){
+  #ifndef NDEBUG
+    if(!buf){
+      naCrash("naGetBufUsedSize", "buf is Null-Pointer.");
+      return NA_TRUE;
+    }
+  #endif
+  return buf->usedsize;
+}
+
+
+
+NA_IDEF NAUInt naGetBufRemainingSize(const NABuf* buf){
+  #ifndef NDEBUG
+    if(!buf){
+      naCrash("naGetBufRemainingSize", "buf is Null-Pointer.");
+      return NA_TRUE;
+    }
+  #endif
+  return buf->bytesize - buf->usedsize;
+}
+
+
+
+NA_IDEF NABool naIsBufEmpty(const NABuf* buf){
+  #ifndef NDEBUG
+    if(!buf){
+      naCrash("naIsBufEmpty", "buf is Null-Pointer.");
+      return NA_TRUE;
+    }
+  #endif
+  return (buf->usedsize == NA_ZERO);
+}
+
+
+
+
+
+NA_IDEF const void* naGetBufConstUsedPointer(const NABuf* buf){
+  #ifndef NDEBUG
+    if(!buf){
+      naCrash("naGetBufConstUsedPointer", "buf is Null-Pointer.");
+      return NA_NULL;
+    }
+  #endif
+  return &(((const NAByte*)(naGetPtrConst(&(buf->ptr))))[buf->usedsize]);
+}
+
+
+
+NA_IDEF void* naGetBufMutableUsedPointer(NABuf* buf){
+  #ifndef NDEBUG
+    if(!buf){
+      naCrash("naGetBufMutableUsedPointer", "buf is Null-Pointer.");
+      return NA_NULL;
+    }
+  #endif
+  return &(((NAByte*)(naGetPtrMutable(&(buf->ptr))))[buf->usedsize]);
+}
+
+
+
+NA_IDEF void naAdvanceBuf(NABuf* buf, NAUInt bytesize){
+  #ifndef NDEBUG
+    if(!buf){
+      naCrash("naAdvanceBuf", "buf is Null-Pointer.");
+      return;
+    }
+    if((buf->usedsize + bytesize) > buf->bytesize)
+      naError("naAdvanceBuf", "buf overflows.");
+  #endif
+  buf->usedsize += bytesize;
+}
+
+
+
+NA_IDEF const void* naGetBufConstFirstPointer(const NABuf* buf){
+  #ifndef NDEBUG
+    if(!buf){
+      naCrash("naGetBufConstUsedPointer", "buf is Null-Pointer.");
+      return NA_NULL;
+    }
+    if(naIsBufEmpty(buf))
+      naError("naGetBufConstUsedPointer", "buf is empty.");
+  #endif
+  return naGetPtrConst(&(buf->ptr));
+}
+
+
+
+NA_IDEF void* naGetBufMutableFirstPointer(NABuf* buf){
+  #ifndef NDEBUG
+    if(!buf){
+      naCrash("naGetBufMutableUsedPointer", "buf is Null-Pointer.");
+      return NA_NULL;
+    }
+    if(naIsBufEmpty(buf))
+      naError("naGetBufMutableUsedPointer", "buf is empty.");
+  #endif
+  return naGetPtrMutable(&(buf->ptr));
+}
+
+
+
+NA_IDEF NABool naIsBufConst(NABuf* buf){
+  #ifndef NDEBUG
+    return naIsPtrConst(&(buf->ptr));
+  #else
+    NA_UNUSED(buf);
+    return NA_FALSE;
+  #endif
+}
 
 
 

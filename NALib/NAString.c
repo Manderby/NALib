@@ -83,9 +83,9 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
 
 
 
-NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt size, NABool takeownership){
+NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt size, NAPointerCleanup ownership){
   NAString* string = naNew(NAString);
-  naInitByteArrayWithMutableBuffer(&(string->array), buffer, size, takeownership);
+  naInitByteArrayWithMutableBuffer(&(string->array), buffer, size, ownership);
   return string;
 }
 
@@ -161,7 +161,7 @@ NA_DEF NAString* naNewStringWithBasenameOfFilename(const NAString* filename){
   if(dotpos == NA_INVALID_MEMORY_INDEX){
     return naNewStringExtraction(filename, 0, -1);
   }else{
-    return naNewStringExtraction(filename, 0, dotpos);
+    return naNewStringExtraction(filename, 0, dotpos - 1);
   }
 }
 

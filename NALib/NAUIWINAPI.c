@@ -195,6 +195,7 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 //        wglMakeCurrent(GetDC(naGetUINativeID(&(openglview->uielement))), openglview->hRC);
 
         hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW, NA_NULL);
+        //uielement->refreshrequested = NA_FALSE;
       EndPaint(hWnd, &ps);
     }
     break;
@@ -753,6 +754,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 //  return rect;
 //}
 
+#ifdef __gl_h_
 
 NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, double width, double height){
 	
@@ -808,6 +810,8 @@ NA_API void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds){
   SetWindowPos(naGetUINativeID(openglview), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
 }
 
+
+#endif
 
 
 NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage){

@@ -3,6 +3,7 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 #include "NAByteArray.h"
+#include "NAValueHelper.h"
 
 
 
@@ -16,8 +17,11 @@ NA_DEF NAByteArray* naInitByteArrayWithSize(NAByteArray* array, NAInt size){
   if(!size){  // if size is zero
     array = naInitByteArray(array);
   }else{
-    array->memblock = naMakeMemoryBlockWithBytesize(size);
-    array->storage = naNewPointerWithMemoryBlock(array->memblock, NA_TRUE);
+    NAMemoryBlock* newstorageblock = naAlloc(NAMemoryBlock);
+    *newstorageblock = naMakeMemoryBlockWithBytesize(size);
+    array->storage = naNewPointerMutable(newstorageblock, NA_POINTER_CLEANUP_FREE, (NAFunc)naClearMemoryBlock);
+    array->memblock = naMakeMemoryBlockWithExtraction(newstorageblock, 0, naGetMemoryBlockBytesize(newstorageblock));
+    array->indx = NA_INVALID_MEMORY_INDEX;
   }
   return array;
 }
@@ -25,37 +29,48 @@ NA_DEF NAByteArray* naInitByteArrayWithSize(NAByteArray* array, NAInt size){
 
 
 NA_DEF NAByteArray* naInitByteArrayWithConstBuffer(NAByteArray* array, const void* buffer, NAInt bytesize){
+  NAMemoryBlock* newstorageblock;
   #ifndef NDEBUG
     if(!array)
       {naCrash("naInitByteArrayWithConstBuffer", "array is Null-Pointer."); return NA_NULL;}
     if(!buffer)
       naError("naInitByteArrayWithConstBuffer", "buffer is Null-Pointer.");
   #endif
+  newstorageblock = naAlloc(NAMemoryBlock);
   if(naIsIntZero(bytesize)){
-    array = naInitByteArray(array);
+    *newstorageblock = naMakeMemoryBlock();
   }else{
-    array->memblock = naMakeMemoryBlockWithConstBuffer(buffer, bytesize);
-    array->storage = naNewPointerWithMemoryBlock(array->memblock, NA_FALSE);
+    *newstorageblock = naMakeMemoryBlockWithConstBuffer(buffer, bytesize);
   }
+  array->storage = naNewPointerMutable(newstorageblock, NA_POINTER_CLEANUP_FREE, NA_NULL);
+  array->memblock = naMakeMemoryBlockWithExtraction(newstorageblock, 0, naGetMemoryBlockBytesize(newstorageblock));
+  array->indx = NA_INVALID_MEMORY_INDEX;
   return array;
 }
 
 
 
 NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* buffer, NAInt bytesize, NABool takeownership){
+  NAMemoryBlock* newstorageblock;
   #ifndef NDEBUG
     if(!array)
       {naCrash("naInitByteArrayWithMutableBuffer", "array is Null-Pointer."); return NA_NULL;}
     if(!buffer)
       naError("naInitByteArrayWithMutableBuffer", "buffer is Null-Pointer.");
   #endif
-  if(!bytesize){  // if size is zero
-    array = naInitByteArray(array);
-    if(takeownership){free(buffer);}
+  newstorageblock = naAlloc(NAMemoryBlock);
+  if(naIsIntZero(bytesize)){
+    *newstorageblock = naMakeMemoryBlock();
   }else{
-    array->memblock = naMakeMemoryBlockWithMutableBuffer(buffer, bytesize);
-    array->storage = naNewPointerWithMemoryBlock(array->memblock, takeownership);
+    *newstorageblock = naMakeMemoryBlockWithMutableBuffer(buffer, bytesize);
   }
+  if(takeownership){
+    array->storage = naNewPointerMutable(newstorageblock, NA_POINTER_CLEANUP_FREE, (NAFunc)naClearMemoryBlock);
+  }else{
+    array->storage = naNewPointerMutable(newstorageblock, NA_POINTER_CLEANUP_FREE, NA_NULL);
+  }
+  array->memblock = naMakeMemoryBlockWithExtraction(newstorageblock, 0, naGetMemoryBlockBytesize(newstorageblock));
+  array->indx = NA_INVALID_MEMORY_INDEX;
   return array;
 }
 
@@ -79,21 +94,16 @@ NA_DEF NAByteArray* naInitByteArrayExtraction(NAByteArray* dstarray, const NAByt
 
   naMakeIntegerRangePositiveInSize(&positiveoffset, &positivesize, offset, size, naGetMemoryBlockBytesize(&(srcarray->memblock)));
   
-  if(positivesize == 0){
-    // If the extraction results in an empty array...
-    if(dstarray == srcarray){
-      naClearByteArray(dstarray); // clear the old array.
-    }
-    dstarray = naInitByteArray(dstarray);
-  }else{
-    // The resulting array has content!
-    newmemblock = naMakeMemoryBlockWithExtraction(&(srcarray->memblock), positiveoffset, positivesize);
-    if(dstarray != srcarray){
-      dstarray->storage = naRetainPointer(srcarray->storage);
-    }
-    dstarray->memblock = newmemblock;
-  }
+  if(!positivesize){return naInitByteArray(dstarray);}
   
+  // The resulting array has content!
+  newmemblock = naMakeMemoryBlockWithExtraction(&(srcarray->memblock), positiveoffset, positivesize);
+  if(dstarray != srcarray){
+    dstarray->storage = naRetainPointer(srcarray->storage);
+  }
+  dstarray->memblock = newmemblock;
+  
+  dstarray->indx = NA_INVALID_MEMORY_INDEX;
   return dstarray;
 }
 
@@ -112,12 +122,24 @@ NA_DEF void naDecoupleByteArray(NAByteArray* array, NABool appendnulltermination
   // Note: Do not use realloc as ptr may point to a subset of NAPointer.
   // Instead, create a new object and copy manually.
   arraysize = (NAInt)naGetMemoryBlockBytesize(&(array->memblock));
-  if(!arraysize){return;}
+  if(!arraysize){
+    naEmptyByteArray(array);
+    return;
+  }
   if(appendnulltermination){arraysize = -arraysize;}
   buf = naMalloc(arraysize);
   naCopyn(buf, naGetMemoryBlockConstPointer(&(array->memblock)), naAbsi(arraysize));
   naClearByteArray(array);
-  naInitByteArrayWithMutableBuffer(array, buf, arraysize, NA_TRUE);
+
+  // Note that now, you could initialize the array with a call to
+  //
+   naInitByteArrayWithMutableBuffer(array, buf, arraysize, NA_TRUE);
+  //
+  // But code-sanity checks do not recognize this function to be owning the
+  // buffer and therefore, it is should be done explicitely.
+  //
+  // But not for now.
+  // todo.
 }
 
 

@@ -75,7 +75,7 @@ typedef struct{
 } NATAIPeriod;
 
 // Leap second information:
-#define NA_NUMBER_OF_TAI_PERIODS 97
+#define NA_NUMBER_OF_TAI_PERIODS 98
 
 // This table stores all leap second entries since 1958. Every year has at
 // least 1 entry. Every entry defines, what the number of its first second is.
@@ -181,7 +181,8 @@ NATAIPeriod naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS] = {
   {1798761600, 1798761635, 2015, NA_START_JANUARY_FIRST},
   {1814400000, 1814400035, 2015, NA_POSITIVE_LEAP_SECONDS_JUNE},    // + 1
   {1814400000, 1814400036, 2015, NA_START_JULY_FIRST},
-  {1830297600, 1830297636, 2015, NA_START_JANUARY_FIRST},
+  {1830297600, 1830297636, 2016, NA_START_JANUARY_FIRST},
+  {1846022400, 1846022436, 2016, NA_START_JULY_FIRST},
   // the last entry is the first date with unknown future leap seconds.
   // everything up and including that date is known.
 };
@@ -545,36 +546,36 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
 
 
 
-NA_DEF NADateTime naMakeDateTimeFromPointer(const void* data, NABinDateTimeFormat format){
+NA_DEF NADateTime naMakeDateTimeFromBuffer(NABuffer* buffer, NABinDateTimeFormat format){
   NADateTimeStruct dts;
-  uint16 valueu16;
 
-  #ifndef NDEBUG
-    if(!data){
-      naCrash("naMakeDateTimeFromPointer", "data is Null-Pointer.");
-      return naMakeDateTimeNow();
-    }
-  #endif
+  dts.nsec = 0;
 
   switch(format){
   case NA_DATETIME_FORMAT_ICC_PROFILE:
     // ICC section 5.1.1, page 4, dateTimeNumber
-    naCopy16(&valueu16, ((NAByte*)data) + 0);
-    dts.year = valueu16;
-    naCopy16(&valueu16, ((NAByte*)data) + 2);
-    dts.mon = valueu16;
-    naCopy16(&valueu16, ((NAByte*)data) + 4);
-    dts.day = valueu16;
-    naCopy16(&valueu16, ((NAByte*)data) + 6);
-    dts.hour = valueu16;
-    naCopy16(&valueu16, ((NAByte*)data) + 8);
-    dts.min = valueu16;
-    naCopy16(&valueu16, ((NAByte*)data) + 10);
-    dts.sec = valueu16;
+    dts.year  = naReadBufferUInt16(buffer);
+    dts.mon   = naReadBufferUInt16(buffer);
+    dts.day   = naReadBufferUInt16(buffer);
+    dts.hour  = naReadBufferUInt16(buffer);
+    dts.min   = naReadBufferUInt16(buffer);
+    dts.sec   = naReadBufferUInt16(buffer);
+    dts.shift = 0;
+    dts.flags = 0;
+    break;
+
+  case NA_DATETIME_FORMAT_PNG:
+    dts.year  = naReadBufferUInt16(buffer);
+    dts.mon   = naReadBufferUInt8(buffer);
+    dts.day   = naReadBufferUInt8(buffer);
+    dts.hour  = naReadBufferUInt8(buffer);
+    dts.min   = naReadBufferUInt8(buffer);
+    dts.sec   = naReadBufferUInt8(buffer);
     dts.shift = 0;
     dts.flags = 0;
     break;
   }
+  
   return naMakeDateTimeWithDateTimeStruct(&dts);
 }
 
@@ -625,6 +626,18 @@ NA_DEF NAByteArray* naInitByteArrayFromDateTime( NAByteArray* bytearray, const N
     naConvertNativeBig16(&valueu16);
     naCopy16(&(ptr[10]), &valueu16);
     break;
+
+  case NA_DATETIME_FORMAT_PNG:
+//    dts.year  = naReadBufferUInt16(buffer);
+//    dts.mon   = naReadBufferUInt8(buffer);
+//    dts.day   = naReadBufferUInt8(buffer);
+//    dts.hour  = naReadBufferUInt8(buffer);
+//    dts.min   = naReadBufferUInt8(buffer);
+//    dts.sec   = naReadBufferUInt8(buffer);
+//    dts.shift = 0;
+//    dts.flags = 0;
+    break;
+
   }
 
   return bytearray;

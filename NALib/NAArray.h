@@ -28,6 +28,7 @@
 
 
 #include "NASystem.h"
+#include "NARuntime.h"
 
 
 typedef struct NAArray NAArray;
@@ -72,7 +73,7 @@ NA_API  NAArray* naInitArrayWithMutableBuffer(
                                              void* buffer,
                                             NAUInt typesize,
                                             NAUInt count,
-                                            NABool takeownership);
+                                  NAPointerCleanup ownership);
 
 // Fills dstarray with a desired part of srcarray.
 // offset and count can be negative: See naInitByteArrayExtraction for the
@@ -119,6 +120,7 @@ NA_IAPI       void* naGetArrayMutableElement(      NAArray* array, NAInt indx);
 // using it a lot, for example in a loop, it might be a good idea to store the
 // count in a variable.
 NA_IAPI NAUInt naGetArrayCount(const NAArray* array);
+NA_IAPI NAUInt naGetArrayMaxIndex(const NAArray* array);
 
 // Returns the number of bytes needed to store one element.
 NA_IAPI NAUInt naGetArrayTypeSize(const NAArray* array);
@@ -128,6 +130,85 @@ NA_IAPI NABool naIsArrayEmpty(const NAArray* array);
 
 
 
+
+// ////////////////////////////////////
+// Iteration functions
+//
+// Every NAArray has an internal index denoting the current element.
+// The programmer can control and access this element with iteration functions.
+// If no current element is set, NA_NULL is returned as a pointer. A typical
+// example of iteration is the following:
+//
+// NAArray* myarray;
+// void* curelement;
+// naFirstArray(myarray);
+// while((curelement = naIterateArrayMutable(myarray, 1))){
+//   Do stuff with curelement.
+// }
+//
+// You should enclose the while-condition in additional parantheses such that
+// a compiler knows that the returned pointer must be evaluated as a condition.
+//
+// Note that all iteration functions are inline. They are somewhat fast. But
+// walking through an array using pointer arithmetic is still faster as there
+// are quite a few if conditions to check when iterating. An iterator has some
+// advantages in certain situations though, as the position within the array
+// is stored persistently.
+//
+// When being inside the while scope, the array itself already points to the
+// element AFTER iteration.
+//
+// Do NOT use a for-loop for iteration! Although it would not matter much with
+// the NAArray structure, it nontheless should be kept consistent with other
+// structures using iteration functions, see NAList for example.
+// Also, it is very hard to read.
+
+// With the following functions, you can initialize the internal pointer.
+NA_IAPI void naFirstArray                  (const NAArray* array);
+NA_IAPI void naLastArray                   (const NAArray* array);
+
+// Returns a pointer to the current element in retelement and iterates the
+// given steps forward or backwards by using positive or negative numbers. If
+// the returned byte is valid (inside the range of the array), the function
+// returns NA_TRUE. If it is not valid, the function returns NA_NULL, but the
+// returned pointer in retbyte will be computed just as if it was valid.
+//
+// If step is 0, you simply access the current element. Note that for accessing
+// the current element, the use of naGetArrayCurrent would be preferable.
+NA_IAPI const void* naIterateArrayConst    (     const NAArray* array,
+                                                     NAInt step);
+NA_IAPI void* naIterateArrayMutable  (           NAArray* array,
+                                                     NAInt step);
+
+// Returns a pointer to the current element without moving the internal index.
+NA_IAPI const void* naGetArrayCurrentConst     (const NAArray* array);
+NA_IAPI       void* naGetArrayCurrentMutable   (const NAArray* array);
+
+// Returns the current index
+NA_IAPI NAUInt       naGetArrayCurrentIndex      (const NAArray* array);
+// Returns the remaining number of elements starting at the current element.
+// Will emit a warning if the current index is not set.
+NA_IDEF NAUInt       naGetArrayRemainingCount    (const NAArray* array);
+
+// The locate-function set the internal pointer to the index given. If the
+// given index is negative, it denotes the element from the end of the array,
+// whereas -1 denotes the last element.
+//
+// If the index is not within the array range, the internal pointer will be
+// unset. Returns NA_TRUE if the index was inside range and NA_FALSE if not.
+NA_IAPI NABool naLocateArrayIndex          (const NAArray* array,
+                                                     NAInt indx);
+
+// Moves the internal pointer forward or backwards without accessing the
+// content.
+NA_IAPI void naIterateArray                (const NAArray* array,
+                                                     NAInt step);
+
+// Returns whether the array is at a certain position.
+// This functions return garbage if the array is empty!
+// Returns NA_FALSE when the internal index is not set.
+NA_IAPI NABool naIsArrayAtFirst            (const NAArray* array);
+NA_IAPI NABool naIsArrayAtLast             (const NAArray* array);
 
 
 
@@ -164,7 +245,7 @@ NA_IDEF NAArray* naInitArray(NAArray* array){
       {naCrash("naInitArray", "array is NULL"); return NA_NULL;}
   #endif
   naInitByteArray(&(array->bytearray));
-  // The typesize is set to 1 such that calls to naGetArraySize will not
+  // The typesize is set to 1 such that calls to naGetArrayCount will not
   // result in bad values.
   array->typesize = 1;
   return array;
@@ -292,6 +373,20 @@ NA_IDEF NAUInt naGetArrayCount(const NAArray* array){
 
 
 
+NA_IDEF NAUInt naGetArrayMaxIndex(const NAArray* array){
+  #ifndef NDEBUG
+    if(!array){
+      naCrash("naGetArraySize", "array is Null-Pointer.");
+      return 0;
+    }
+    if(naIsArrayEmpty(array))
+      naError("naGetArraySize", "array is empty.");
+  #endif
+  return naEndToMaxi(naGetArrayCount(array));
+}
+
+
+
 NA_IDEF NAUInt naGetArrayTypeSize(const NAArray* array){
   #ifndef NDEBUG
     if(!array){
@@ -312,6 +407,171 @@ NA_IDEF NABool naIsArrayEmpty(const NAArray* array){
     }
   #endif
   return naIsByteArrayEmpty(&(array->bytearray));
+}
+
+
+
+
+
+
+
+
+
+NA_IDEF void naFirstArray(const NAArray* array){
+  #ifndef NDEBUG
+    if(!array){
+      naCrash("naFirstArray", "array is Null-Pointer.");
+      return;
+    }
+  #endif
+  naFirstByteArray(&(array->bytearray));
+}
+
+
+
+NA_IDEF void naLastArray(const NAArray* array){
+  #ifndef NDEBUG
+    if(!array){
+      naCrash("naLastArray", "array is Null-Pointer.");
+      return;
+    }
+  #endif
+  naLastByteArray(&(array->bytearray));
+}
+
+
+
+NA_IDEF const void* naIterateArrayConst(const NAArray* array, NAInt step){
+  #ifndef NDEBUG
+    if(!array){
+      naCrash("naIterateArrayConst", "array is Null-Pointer.");
+      return NA_NULL;
+    }
+    if(naIsArrayEmpty(array))
+      naError("naIterateArrayConst", "array is empty.");
+  #endif
+  return naIterateByteArrayConst(&(array->bytearray), step * naGetArrayTypeSize(array));
+}
+
+
+
+NA_IDEF void* naIterateArrayMutable(NAArray* array, NAInt step){
+  #ifndef NDEBUG
+    if(!array){
+      naCrash("naIterateArrayMutable", "array is Null-Pointer.");
+      return NA_NULL;
+    }
+    if(naIsArrayEmpty(array))
+      naError("naIterateArrayMutable", "array is empty.");
+  #endif
+  return naIterateByteArrayMutable(&(array->bytearray), step * naGetArrayTypeSize(array));
+}
+
+
+
+NA_IDEF const void* naGetArrayCurrentConst(const NAArray* array){
+  #ifndef NDEBUG
+    if(!array){
+      naCrash("naGetArrayCurrentConst", "array is Null-Pointer.");
+      return NA_NULL;
+    }
+  #endif
+  return naGetByteArrayCurrentConst(&(array->bytearray));
+}
+
+
+
+NA_IDEF void* naGetArrayCurrentMutable(const NAArray* array){
+  #ifndef NDEBUG
+    if(!array){
+      naCrash("naGetArrayCurrentConst", "array is Null-Pointer.");
+      return NA_NULL;
+    }
+  #endif
+  return naGetByteArrayCurrentMutable(&(array->bytearray));
+}
+
+
+
+NA_IDEF NAUInt naGetArrayCurrentIndex(const NAArray* array){
+  NAUInt byteindex;
+  #ifndef NDEBUG
+    if(!array){
+      naCrash("naGetArrayCurrentIndex", "array is Null-Pointer.");
+      return NA_INVALID_MEMORY_INDEX;
+    }
+  #endif
+  byteindex = naGetByteArrayCurrentIndex(&(array->bytearray));
+  #ifndef NDEBUG
+    if(byteindex % naGetArrayTypeSize(array))
+      naError("naGetArrayCurrentIndex", "Internal error: Internal index is misaligned.");
+  #endif
+  return byteindex / naGetArrayTypeSize(array);
+}
+
+
+
+NA_IDEF NAUInt naGetArrayRemainingCount(const NAArray* array){
+  #ifndef NDEBUG
+    if(!array){
+      naCrash("naGetArrayRemainingSize", "array is Null-Pointer.");
+      return 0;
+    }
+  #endif
+  return naGetArrayCount(array) - naGetArrayCurrentIndex(array);
+}
+
+
+NA_IDEF NABool naLocateArrayIndex(const NAArray* array, NAInt indx){
+  #ifndef NDEBUG
+    if(!array){
+      naCrash("naFirstArray", "array is Null-Pointer.");
+      return 0;
+    }
+  #endif
+  return naLocateByteArrayIndex(&(array->bytearray), indx * naGetArrayTypeSize(array));
+}
+
+
+
+NA_IDEF void naIterateArray(const NAArray* array, NAInt step){
+  #ifndef NDEBUG
+    if(!array){
+      naCrash("naIterateArray", "array is Null-Pointer.");
+      return;
+    }
+    if(naIsArrayEmpty(array))
+      naError("naIterateArray", "array is empty.");
+  #endif
+  naIterateByteArray(&(array->bytearray), step * naGetArrayTypeSize(array));
+}
+
+
+
+NA_IDEF NABool naIsArrayAtFirst(const NAArray* array){
+  #ifndef NDEBUG
+    if(!array){
+      naCrash("naIsArrayAtFirst", "array is Null-Pointer.");
+      return NA_FALSE;
+    }
+    if(naIsArrayEmpty(array))
+      naError("naIsArrayAtFirst", "array is empty. Result is garbage");
+  #endif
+  return (naGetArrayCurrentIndex(array) == 0);
+}
+
+
+
+NA_IDEF NABool naIsArrayAtLast(const NAArray* array){
+  #ifndef NDEBUG
+    if(!array){
+      naCrash("naIsArrayAtLast", "array is Null-Pointer.");
+      return NA_FALSE;
+    }
+    if(naIsArrayEmpty(array))
+      naError("naIsArrayAtLast", "array is empty. Result is garbage");
+  #endif
+  return (naGetArrayCurrentIndex(array) == naGetArrayMaxIndex(array));
 }
 
 

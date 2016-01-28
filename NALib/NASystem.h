@@ -14,7 +14,7 @@
 // preprocessor macros.
 
 
-#define NA_VERSION 13
+#define NA_VERSION 14
 
 
 // The various Systems:
@@ -24,10 +24,11 @@
 #define NA_SYSTEM_COUNT     3
 
 // The various Endianness-Settings:
-#define NA_ENDIANNESS_NATIVE  0
+#define NA_ENDIANNESS_UNKNOWN 0 // Behaves the same as native.
 #define NA_ENDIANNESS_LITTLE  1
 #define NA_ENDIANNESS_BIG     2
-#define NA_ENDIANNESS_UNKNOWN 3 // Behaves the same as native.
+#define NA_ENDIANNESS_NETWORK 2 // Same as BIG
+#define NA_ENDIANNESS_NATIVE  3
 #define NA_ENDIANNESS_COUNT   4
 // Note that when expecting the endianness as an argument, it will have the
 // type NAInt. Unfortunately, these macros can not be defined as enums.
@@ -422,6 +423,7 @@ typedef uint8 NAByte;
   #define NA_PRIu "u"
   #define NA_INT_MAX NA_INT32_MAX
   #define NA_INT_MIN NA_INT32_MIN
+  #define NA_UINT_MAX NA_UINT32_MAX
   #define NA_ZERO 0
   #define NA_ONE  1
 #elif NA_SYSTEM_ADDRESS_BITS == 64
@@ -431,6 +433,7 @@ typedef uint8 NAByte;
   #define NA_PRIu "llu"
   #define NA_INT_MAX NA_INT64_MAX
   #define NA_INT_MIN NA_INT64_MIN
+  #define NA_UINT_MAX NA_UINT64_MAX
   #define NA_ZERO 0LL
   #define NA_ONE  1LL
 #else
@@ -462,14 +465,6 @@ typedef NAUInt NABool;
 
 
 
-
-// These functions are here for core functions like memory functions to
-// be very explicit in how the code should compile
-NA_IDEF NABool naIsIntStrictlyPositive(NAInt x){return (x  > NA_ZERO);}
-NA_IDEF NABool naIsIntZero(NAInt x)            {return (x == NA_ZERO);}
-NA_IDEF NABool naIsIntNegative(NAInt x)        {return (x  < NA_ZERO);}
-
-
 // Note that in NALib, there is no base typedef for a void* or a const void*
 // pointer. Some libraries or frameworks define them with names such as
 // NAVoid, NAPtr, NABuffer, NABuf, NAIn, NAOut, NAInOut or such alike. The
@@ -481,6 +476,23 @@ NA_IDEF NABool naIsIntNegative(NAInt x)        {return (x  < NA_ZERO);}
 // thinks that it is best to just write void*, not some abscure type name.
 // Therefore, you won't find any type definition of NAVoid here.
 
+
+
+
+// What you find though is the definition of NAMutablePtrPtr and NAConstPtrPtr.
+// These are two convenience declarations which are here especially for the
+// iteration functions. Such functions expect the programmer to send a pointer
+// to a pointer, whereas the type of the second pointer may by arbitrary.
+//
+// Certain compilers emit warnings, when such a pointer-pointer is not casted
+// correctly. Therefore, such functions are declared with the following types
+// which expect a void pointer but will be treated as a pointer to a pointer
+// in the implementation.
+//
+// This is not very beautiful, but convenient.
+//
+//typedef void* NAMutablePtrPtr;
+//typedef void* NAConstPtrPtr;
 
 
 
@@ -596,8 +608,6 @@ NA_IDEF NABool naIsIntNegative(NAInt x)        {return (x  < NA_ZERO);}
 // - Threading start functions
 // - Timed functions
 typedef void (*NAFunc) (void*);
-
-
 
 
 

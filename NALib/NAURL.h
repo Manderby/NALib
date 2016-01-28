@@ -50,6 +50,13 @@ NA_IAPI NAString* naNewStringWithURLFilename(NAURL* url);
 
 
 
+
+// ///////////////////////////////////////////////////////////////////////
+// Inline Implementations: See readme file for more expanation.
+// ///////////////////////////////////////////////////////////////////////
+
+
+
 NA_IDEF NAURL* naInitURL(NAURL* url){
   #ifndef NDEBUG
     if(!url)

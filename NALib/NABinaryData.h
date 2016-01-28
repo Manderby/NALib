@@ -9,6 +9,12 @@
 #endif
 
 
+// This file contains multiple functions dealing with binary data.
+//
+// Aside from copying, swapping or comparing bytes, there are also some
+// encoding and decoding functions as well as Checksums.
+
+
 #include "NASystem.h"
 
 
@@ -40,6 +46,14 @@ NA_IAPI void naSwapi   (NAInt*  NA_RESTRICT a, NAInt*  NA_RESTRICT b);
 NA_IAPI void naSwapu   (NAUInt* NA_RESTRICT a, NAUInt* NA_RESTRICT b);
 
 
+// Compares the array of the first argument with the array of the second
+// argument and returns NA_TRUE only if they are all equal.
+NA_IAPI NABool naEqual8(  void* NA_RESTRICT a, void* NA_RESTRICT b);
+NA_IAPI NABool naEqual16( void* NA_RESTRICT a, void* NA_RESTRICT b);
+NA_IAPI NABool naEqual32( void* NA_RESTRICT a, void* NA_RESTRICT b);
+NA_IAPI NABool naEqual64( void* NA_RESTRICT a, void* NA_RESTRICT b);
+NA_IAPI NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b);
+
 
 // Fills the given buffer with the value 0 for count bytes
 NA_IAPI void naNulln   (void* d, NAUInt count);
@@ -48,16 +62,16 @@ NA_IAPI void naNulln   (void* d, NAUInt count);
 
 // Fills the array of the d argument with the given bytes in increasing
 // address positions.
-NA_IAPI void naFill8(   void* d,
+NA_IAPI void naFill8WithBytes(   void* d,
                       NAByte b0);
-NA_IAPI void naFill16(  void* d,
+NA_IAPI void naFill16WithBytes(  void* d,
                       NAByte b0,  NAByte b1);
-NA_IAPI void naFill32(  void* d,
+NA_IAPI void naFill32WithBytes(  void* d,
                       NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3);
-NA_IAPI void naFill64(  void* d,
+NA_IAPI void naFill64WithBytes(  void* d,
                       NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
                       NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7);
-NA_IAPI void naFill128( void* d,
+NA_IAPI void naFill128WithBytes( void* d,
                       NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
                       NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
                       NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
@@ -66,16 +80,16 @@ NA_IAPI void naFill128( void* d,
 
 // Compares the array of the first argument with the given bytes in increasing
 // address positions and returns NA_TRUE only if they are all equal.
-NA_IAPI NABool naEqual8(   const void* s,
+NA_IAPI NABool naEqual8WithBytes(   const void* s,
                                 NAByte b0);
-NA_IAPI NABool naEqual16(  const void* s,
+NA_IAPI NABool naEqual16WithBytes(  const void* s,
                                 NAByte b0,  NAByte b1);
-NA_IAPI NABool naEqual32(  const void* s,
+NA_IAPI NABool naEqual32WithBytes(  const void* s,
                                 NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3);
-NA_IAPI NABool naEqual64(  const void* s,
+NA_IAPI NABool naEqual64WithBytes(  const void* s,
                                 NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
                                 NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7);
-NA_IAPI NABool naEqual128( const void* s,
+NA_IAPI NABool naEqual128WithBytes( const void* s,
                                 NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
                                 NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
                                 NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
@@ -83,8 +97,21 @@ NA_IAPI NABool naEqual128( const void* s,
 
 
 
+// Checksums
+
+typedef struct NAChecksum NAChecksum;
+
+typedef enum{
+  NA_CHECKSUM_TYPE_CRC_PNG,
+  NA_CHECKSUM_TYPE_ADLER_32, // Used in ZLIB
+} NAChecksumType;
 
 
+NA_API NAChecksum* naInitChecksum(NAChecksum* checksum, NAChecksumType type);
+NA_API void naClearChecksum(NAChecksum* checksum);
+NA_API void naResetChecksum(NAChecksum* checksum);
+NA_API void naAccumulateChecksum(NAChecksum* checksum, const NAByte* buf, NAInt size);
+NA_API uint32 naGetChecksumResult(NAChecksum* checksum);
 
 
 
@@ -371,6 +398,29 @@ NA_IDEF void naSwapu(NAUInt* NA_RESTRICT a, NAUInt* NA_RESTRICT b){
 
 
 
+
+
+NA_IDEF NABool naEqual8(  void* NA_RESTRICT a, void* NA_RESTRICT b){
+  return (*((uint8*)a) == *((uint8*)b));
+}
+NA_IDEF NABool naEqual16( void* NA_RESTRICT a, void* NA_RESTRICT b){
+  return (*((uint16*)a) == *((uint16*)b));
+}
+NA_IDEF NABool naEqual32( void* NA_RESTRICT a, void* NA_RESTRICT b){
+  return (*((uint32*)a) == *((uint32*)b));
+}
+NA_IDEF NABool naEqual64( void* NA_RESTRICT a, void* NA_RESTRICT b){
+  return (*((uint64*)a) == *((uint64*)b));
+}
+NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b){
+  if(*((uint64*)&((((NAByte*)a)[0]))) != *((uint64*)&((((NAByte*)b)[0])))){return NA_FALSE;}
+  if(*((uint64*)&((((NAByte*)a)[8]))) != *((uint64*)&((((NAByte*)b)[8])))){return NA_FALSE;}
+  return NA_TRUE;
+}
+
+
+
+
 // ///////////////////////////////////////////////////////////
 // Fills all bytes with null values
 // ///////////////////////////////////////////////////////////
@@ -393,12 +443,12 @@ NA_IDEF void naNulln(void* d, NAUInt count){
 // Set multiple bytes to the contents of a given pointer
 // ///////////////////////////////////////////////////////////
 
-NA_IDEF void naFill8( void* d,
+NA_IDEF void naFill8WithBytes( void* d,
                     NAByte b0){
   NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!d){
-      naCrash("naFill8", "Pointer is Null-Pointer.");
+      naCrash("naFill8WithBytes", "Pointer is Null-Pointer.");
       return;
     }
   #endif
@@ -406,12 +456,12 @@ NA_IDEF void naFill8( void* d,
   *p = b0;
 }
 
-NA_IDEF void naFill16( void* d,
+NA_IDEF void naFill16WithBytes( void* d,
                      NAByte b0, NAByte b1){
   NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!d){
-      naCrash("naFill16", "Pointer is Null-Pointer.");
+      naCrash("naFill16WithBytes", "Pointer is Null-Pointer.");
       return;
     }
   #endif
@@ -419,12 +469,12 @@ NA_IDEF void naFill16( void* d,
   *p++ = b0; *p = b1;
 }
 
-NA_IDEF void naFill32( void* d,
+NA_IDEF void naFill32WithBytes( void* d,
                      NAByte b0, NAByte b1, NAByte b2, NAByte b3){
   NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!d){
-      naCrash("naFill32", "Pointer is Null-Pointer.");
+      naCrash("naFill32WithBytes", "Pointer is Null-Pointer.");
       return;
     }
   #endif
@@ -432,13 +482,13 @@ NA_IDEF void naFill32( void* d,
   *p++ = b0; *p++ = b1; *p++ = b2; *p = b3;
 }
 
-NA_IDEF void naFill64( void* d,
+NA_IDEF void naFill64WithBytesBytes( void* d,
                      NAByte b0, NAByte b1, NAByte b2, NAByte b3,
                      NAByte b4, NAByte b5, NAByte b6, NAByte b7){
   NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!d){
-      naCrash("naFill64", "Pointer is Null-Pointer.");
+      naCrash("naFill64WithBytesBytes", "Pointer is Null-Pointer.");
       return;
     }
   #endif
@@ -447,7 +497,7 @@ NA_IDEF void naFill64( void* d,
   *p++ = b4; *p++ = b5; *p++ = b6; *p   = b7;
 }
 
-NA_IDEF void naFill128( void* d,
+NA_IDEF void naFill128WithBytes( void* d,
                       NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
                       NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
                       NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
@@ -455,7 +505,7 @@ NA_IDEF void naFill128( void* d,
   NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!d){
-      naCrash("naFill128", "Pointer is Null-Pointer.");
+      naCrash("naFill128WithBytes", "Pointer is Null-Pointer.");
       return;
     }
   #endif
@@ -472,11 +522,11 @@ NA_IDEF void naFill128( void* d,
 // Compare multiple bytes to the contents of a given pointer
 // ///////////////////////////////////////////////////////////
 
-NA_IDEF NABool naEqual8(const void* s, NAByte b0){
+NA_IDEF NABool naEqual8WithBytes(const void* s, NAByte b0){
   NAByte* p; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
     if(!s){
-      naCrash("naEqual8", "Pointer is Null-Pointer.");
+      naCrash("naEqual8WithBytes", "Pointer is Null-Pointer.");
       return NA_FALSE;
     }
   #endif
@@ -485,11 +535,11 @@ NA_IDEF NABool naEqual8(const void* s, NAByte b0){
   return NA_TRUE;
 }
 
-NA_IDEF NABool naEqual16(const void* s, NAByte b0, NAByte b1){
+NA_IDEF NABool naEqual16WithBytes(const void* s, NAByte b0, NAByte b1){
   NAByte* p; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
     if(!s){
-      naCrash("naEqual16", "Pointer is Null-Pointer.");
+      naCrash("naEqual16WithBytes", "Pointer is Null-Pointer.");
       return NA_FALSE;
     }
   #endif
@@ -499,12 +549,12 @@ NA_IDEF NABool naEqual16(const void* s, NAByte b0, NAByte b1){
   return NA_TRUE;
 }
 
-NA_IDEF NABool naEqual32(const void* s,
+NA_IDEF NABool naEqual32WithBytes(const void* s,
                               NAByte b0, NAByte b1, NAByte b2, NAByte b3){
   NAByte* p; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
     if(!s){
-      naCrash("naEqual32", "Pointer is Null-Pointer.");
+      naCrash("naEqual32WithBytes", "Pointer is Null-Pointer.");
       return NA_FALSE;
     }
   #endif
@@ -516,13 +566,13 @@ NA_IDEF NABool naEqual32(const void* s,
   return NA_TRUE;
 }
 
-NA_IDEF NABool naEqual64(const void* s,
+NA_IDEF NABool naEqual64WithBytes(const void* s,
                               NAByte b0, NAByte b1, NAByte b2, NAByte b3,
                               NAByte b4, NAByte b5, NAByte b6, NAByte b7){
   NAByte* p; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
     if(!s){
-      naCrash("naEqual64", "Pointer is Null-Pointer.");
+      naCrash("naEqual64WithBytes", "Pointer is Null-Pointer.");
       return NA_FALSE;
     }
   #endif
@@ -538,7 +588,7 @@ NA_IDEF NABool naEqual64(const void* s,
   return NA_TRUE;
 }
 
-NA_IDEF NABool naEqual128(const void* s,
+NA_IDEF NABool naEqual128WithBytes(const void* s,
                                NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
                                NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
                                NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
@@ -546,7 +596,7 @@ NA_IDEF NABool naEqual128(const void* s,
   NAByte* p; // Declaration before implementation. Needed for C90
   #ifndef NDEBUG
     if(!s){
-      naCrash("naEqual128", "Pointer is Null-Pointer.");
+      naCrash("naEqual128WithBytes", "Pointer is Null-Pointer.");
       return NA_FALSE;
     }
   #endif
@@ -569,6 +619,17 @@ NA_IDEF NABool naEqual128(const void* s,
   if(*p   != b15){return NA_FALSE;}
   return NA_TRUE;
 }
+
+
+
+struct NAChecksum{
+  NAChecksumType type;
+  void* data;
+};
+
+
+
+
 
 
 

@@ -264,24 +264,55 @@ NA_API       void* naGetOctTreeLeafMutable(      NAOctTree* tree,
                                                      NABool*  didcreate,
                                                       NAVertexi* origin);
 
+// ////////////////////////////////////
+// Iteration functions
+//
+// Every tree has an internal pointer denoting the current leaf. The
+// programmer can control and access this leaf with iteration functions.
+// If no current leaf is set, NA_NULL is returned as a pointer. The easiest
+// way to implement an iteration is using a while loop:
+//
+// NAOctTree* mytree;
+// void* curleaf;
+// naFirstOctTree(mytree);
+// while((curleaf = naIterateOctTreeMutable(mytree))){
+//   Do stuff with curleaf.
+// }
+//
+// You should enclose the while-condition in additional parantheses such that
+// a compiler knows that the returned pointer must be evaluated as a condition.
+//
+// Note: You can safely use the remove function on curleaf while iterating.
+//
+// When being inside the while scope, the list itself already points to the
+// leaf AFTER iteration.
+//
+// Do NOT use a for-loop for iteration! The internal pointer may, depending on
+// how you write the for-loop, not point to the leaf AFTER iteration which
+// can be devastating when removing leafs. Also, it is very hard to read.
+// ////////////////////////////////////
+
+
 // Moves the internal pointer to the first most leaf.
-NA_API        void naFirstOctTree(         const NAOctTree* tree);
-// Returns the current leaf but moves the internal pointer to the next leaf.
-// The origin of the current leaf will be stored in origin when not Null.
-NA_API  const void* naIterateOctTreeConst(   const NAOctTree* tree,
-                                                        NAVertexi* origin);
-NA_API        void* naIterateOctTreeMutable(       NAOctTree* tree,
-                                                        NAVertexi* origin);
+NA_API        void naFirstOctTree(            const NAOctTree* tree);
+// Returns the current leaf and moves the internal pointer to the next leaf.
+// If there is no leaf available, the function will return NA_NULL.
+// The origin of the current leaf will be stored in origin when the argument
+// is not Null.
+NA_API const void* naIterateOctTreeConst(     const NAOctTree* tree,
+                                                    NAVertexi* origin);
+NA_API void* naIterateOctTreeMutable(              NAOctTree* tree,
+                                                    NAVertexi* origin);
 
 // Same as above but only iterates upon leafs which overlap with the given box.
-NA_API        void naFirstOctTreeInBox(    const NAOctTree* tree,
-                                                      NABoxi box);
-NA_API  const void* naIterateOctTreeInBoxConst(   const NAOctTree* tree,
-                                                              NAVertexi* origin,
-                                                              NABoxi box);
-NA_API        void* naIterateOctTreeInBoxMutable(       NAOctTree* tree,
-                                                              NAVertexi* origin,
-                                                              NABoxi box);
+NA_API        void naFirstOctTreeInBox(       const NAOctTree* tree,
+                                                        NABoxi box);
+NA_API const void* naIterateOctTreeInBoxConst(     const NAOctTree* tree,
+                                                    NAVertexi* origin,
+                                                        NABoxi box);
+NA_API void* naIterateOctTreeInBoxMutable(         NAOctTree* tree,
+                                                    NAVertexi* origin,
+                                                        NABoxi box);
 
 // Function pointer used for the set iteration naSetOctTreeInBox. This
 // callback is called for multiple chunks of a tree.

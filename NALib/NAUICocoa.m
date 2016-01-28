@@ -139,7 +139,7 @@ NA_DEF void naStartApplication(NAFunc prestartup, NAFunc poststartup, void* arg)
 
   NSDate* distantfuture = [NSDate distantFuture];
   while(1){
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    pool = [[NSAutoreleasePool alloc] init];
       NSEvent* curevent = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:distantfuture inMode:NSDefaultRunLoopMode dequeue:YES];
       if(curevent){naDispatchUIElementCommandCocoa(curevent);}
     [pool drain];
@@ -367,6 +367,7 @@ NA_DEF NARect naGetUIElementRect(void* uielement, void* relativeelement, NABool 
 
 @implementation NANativeView
 - (void)drawRect:(NSRect)dirtyRect{
+  NA_UNUSED(dirtyRect);
 }
 @end
 
@@ -393,10 +394,12 @@ NA_DEF NARect naGetUIElementRect(void* uielement, void* relativeelement, NABool 
 //  [NSEvent setMouseCoalescingEnabled:NO];
 }
 - (void)mouseEntered:(NSEvent *)theEvent{
+  NA_UNUSED(theEvent);
   naSetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
   naDispatchUIElementCommand(nalibwindow, NA_UI_COMMAND_MOUSE_ENTERED, NA_NULL);
 }
 - (void)mouseExited:(NSEvent *)theEvent{
+  NA_UNUSED(theEvent);
   naSetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
   naDispatchUIElementCommand(nalibwindow, NA_UI_COMMAND_MOUSE_EXITED, NA_NULL);
 }
@@ -406,6 +409,8 @@ NA_DEF NARect naGetUIElementRect(void* uielement, void* relativeelement, NABool 
 
 
 NA_DEF NAWindow* naNewWindow(const char* title, double posx, double posy, double width, double height, NABool resizeable){
+  NA_UNUSED(title);
+  NA_UNUSED(resizeable);
   NAWindow* window = naAlloc(NAWindow);
   window->windowedframe = naMakeRect(naMakePos(posx, posy), naMakeSize(width, height));
   window->fullscreen = NA_FALSE;
@@ -462,6 +467,7 @@ NA_HDEF void naReleaseWindowMouseTracking(NAWindow* window){
 
 
 NA_DEF void naClearWindow(NAWindow* window){
+  NA_UNUSED(window);
 }
 
 
@@ -602,7 +608,10 @@ NA_DEF void naSwapOpenGLBuffer(NAOpenGLView* openglview){
   [[(NANativeOpenGLView*)(openglview->uielement.nativeID) openGLContext] flushBuffer];
 }
 
-NA_DEF void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds){}
+NA_DEF void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds){
+  NA_UNUSED(openglview);
+  NA_UNUSED(bounds);
+}
 
 
 
@@ -610,6 +619,7 @@ NA_DEF void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds){}
 
 
 NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage){
+  NA_UNUSED(sendmovemessage);
   NARect viewrect;
   NSRect screenframe;
   CGPoint centerpos;

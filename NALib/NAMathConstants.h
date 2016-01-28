@@ -452,36 +452,38 @@
 #endif
 
 // Mathematical constants
-// - MERSENNE_PRIME_2       Mersenne Prime 2^2 -1
-// - MERSENNE_PRIME_3       Mersenne Prime 2^3 -1
-// - MERSENNE_PRIME_5       Mersenne Prime 2^5 -1
-// - MERSENNE_PRIME_7       Mersenne Prime 2^7 -1
-// - MERSENNE_PRIME_13      Mersenne Prime 2^13-1
-// - MERSENNE_PRIME_17      Mersenne Prime 2^17-1
-// - MERSENNE_PRIME_19      Mersenne Prime 2^19-1
-// - MERSENNE_PRIME_31      Mersenne Prime 2^31-1
-// - MERSENNE_PRIME_61      Mersenne Prime 2^61-1
-// - FERMAT_PRIME_1         Fermat Prime 2^1 +1
-// - FERMAT_PRIME_2         Fermat Prime 2^2 +1
-// - FERMAT_PRIME_4         Fermat Prime 2^4 +1
-// - FERMAT_PRIME_8         Fermat Prime 2^8 +1
-// - FERMAT_PRIME_16        Fermat Prime 2^16+1
-// - FERMAT_PRIME_32        Fermat Prime 2^32+1
-#define NA_MERSENNE_PRIME_2    3
-#define NA_MERSENNE_PRIME_3    7
-#define NA_MERSENNE_PRIME_5    31
-#define NA_MERSENNE_PRIME_7    127
-#define NA_MERSENNE_PRIME_13   8191
-#define NA_MERSENNE_PRIME_17   131071
-#define NA_MERSENNE_PRIME_19   524287
-#define NA_MERSENNE_PRIME_31   2147483647
-#define NA_MERSENNE_PRIME_61   2305843009213693951LL
-#define NA_FERMAT_PRIME_0      3
-#define NA_FERMAT_PRIME_2      5
-#define NA_FERMAT_PRIME_4      17
-#define NA_FERMAT_PRIME_8      257
-#define NA_FERMAT_PRIME_16     65537
-#define NA_FERMAT_PRIME_32     4294967297LL
+// - PRIME_MERSENNE_2       Mersenne Prime 2^2 -1
+// - PRIME_MERSENNE_3       Mersenne Prime 2^3 -1
+// - PRIME_MERSENNE_5       Mersenne Prime 2^5 -1
+// - PRIME_MERSENNE_7       Mersenne Prime 2^7 -1
+// - PRIME_MERSENNE_13      Mersenne Prime 2^13-1
+// - PRIME_MERSENNE_17      Mersenne Prime 2^17-1
+// - PRIME_MERSENNE_19      Mersenne Prime 2^19-1
+// - PRIME_MERSENNE_31      Mersenne Prime 2^31-1
+// - PRIME_MERSENNE_61      Mersenne Prime 2^61-1
+// - PRIME_FERMAT_1         Fermat Prime 2^1 +1
+// - PRIME_FERMAT_2         Fermat Prime 2^2 +1
+// - PRIME_FERMAT_4         Fermat Prime 2^4 +1
+// - PRIME_FERMAT_8         Fermat Prime 2^8 +1
+// - PRIME_FERMAT_16        Fermat Prime 2^16+1
+// - PRIME_FERMAT_32        Fermat Prime 2^32+1
+// - PRIME_BEFORE_2_16      Largest prime before 2^16
+#define NA_PRIME_MERSENNE_2    3
+#define NA_PRIME_MERSENNE_3    7
+#define NA_PRIME_MERSENNE_5    31
+#define NA_PRIME_MERSENNE_7    127
+#define NA_PRIME_MERSENNE_13   8191
+#define NA_PRIME_MERSENNE_17   131071
+#define NA_PRIME_MERSENNE_19   524287
+#define NA_PRIME_MERSENNE_31   2147483647
+#define NA_PRIME_MERSENNE_61   2305843009213693951LL
+#define NA_PRIME_FERMAT_0      3
+#define NA_PRIME_FERMAT_2      5
+#define NA_PRIME_FERMAT_4      17
+#define NA_PRIME_FERMAT_8      257
+#define NA_PRIME_FERMAT_16     65537
+#define NA_PRIME_FERMAT_32     4294967297LL
+#define NA_PRIME_BEFORE_2_16   65521
 
 
 #ifdef __cplusplus 

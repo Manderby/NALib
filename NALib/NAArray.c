@@ -44,7 +44,7 @@ NA_DEF NAArray* naInitArrayWithConstBuffer(NAArray* array, const void* buffer, N
 
 
 
-NA_DEF NAArray* naInitArrayWithMutableBuffer(NAArray* array, void* buffer, NAUInt typesize, NAUInt count, NABool takeownership){
+NA_DEF NAArray* naInitArrayWithMutableBuffer(NAArray* array, void* buffer, NAUInt typesize, NAUInt count, NAPointerCleanup ownership){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naInitArrayWithMutableBuffer", "array is NULL"); return NA_NULL;}
@@ -57,7 +57,7 @@ NA_DEF NAArray* naInitArrayWithMutableBuffer(NAArray* array, void* buffer, NAUIn
   // correctly be handeled and the buffer can be automatically free'd if count
   // is zero.
   naInitByteArray(&(array->bytearray));
-  naInitByteArrayWithMutableBuffer(&(array->bytearray), buffer, typesize * count, takeownership);
+  naInitByteArrayWithMutableBuffer(&(array->bytearray), buffer, typesize * count, ownership);
   return array;
 }
 

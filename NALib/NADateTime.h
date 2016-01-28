@@ -10,6 +10,7 @@
 
 #include "NASystem.h"
 #include "NAString.h"
+#include "NABuffer.h"
 
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
@@ -29,7 +30,8 @@ typedef enum{
 } NAAscDateTimeFormat;
 
 typedef enum{
-  NA_DATETIME_FORMAT_ICC_PROFILE
+  NA_DATETIME_FORMAT_ICC_PROFILE,
+  NA_DATETIME_FORMAT_PNG
 } NABinDateTimeFormat;
 
 typedef enum{
@@ -166,8 +168,8 @@ NA_API NADateTime naMakeDateTimeWithValues( int64 year,
 NA_API NADateTime naMakeDateTimeFromString( const NAString* string,
                                           NAAscDateTimeFormat format);
 
-// Creates a new NADateTime struct from a given data block with a given format.
-NA_API NADateTime naMakeDateTimeFromPointer(  const void* data,
+// Creates a new NADateTime struct from a given buffer with a given format.
+NA_API NADateTime naMakeDateTimeFromBuffer(  NABuffer* buffer,
                                         NABinDateTimeFormat format);
 
 // Returns a pointer to a C-string containing an error message corresponding

@@ -299,6 +299,10 @@ NA_IAPI NAVolume  naSubVertexPos      (NAVertex   vertex1,  NAVertex  vertex2);
 NA_IAPI NAVolumei naSubVertexiVertexi (NAVertexi  vertex1,  NAVertexi vertex2);
 
 // Containing functions. Test if an element is within another.
+NA_IAPI NABool    naIsValueInRange    (double  value,  NARange  outerrange);
+NA_IAPI NABool    naIsValueInRangef   (float   value,  NARangef outerrange);
+NA_IAPI NABool    naIsValueInRangei   (NAInt   value,  NARangei outerrange);
+
 NA_IAPI NABool    naIsPosInSize   (NAPos   pos,  NASize  outersize);
 NA_IAPI NABool    naIsPosInRect   (NAPos   pos,  NARect  outerrect);
 NA_IAPI NABool    naIsSizeInSize  (NASize  size, NASize  outersize);
@@ -525,85 +529,6 @@ NA_IAPI NABoxi    naMakeBoxiPositive(NABoxi box);
 
 
 
-// ///////////////////////////////////
-// HELPER FUNCTIONS
-
-
-// Most functions above use the following helper functions, which are also
-// used in other files. You may use the functions for your own code if you
-// like but they are mostly written here for completeness and are marked
-// as helper functions.
-
-// Converts an integer denoting an end or max to its counterpart. Also does
-// some checks if the values over- or underflow.
-NA_HIAPI NAInt  naEndToMaxi(NAInt end);
-NA_HIAPI NAInt  naMaxToEndi(NAInt max);
-NA_HIAPI double naOriginAndLengthToEnd   (double  pos,   double size);
-NA_HIAPI float  naOriginAndLengthToEndf  (float   pos,   float  size);
-NA_HIAPI NAInt  naOriginAndLengthToEndi  (NAInt   pos,   NAInt  size);
-NA_HIAPI NAInt  naOriginAndLengthToMaxi  (NAInt   pos,   NAInt  size);
-NA_HIAPI double naStartAndEndToLength (double  start, double end);
-NA_HIAPI float  naStartAndEndToLengthf(float   start, float  end);
-NA_HIAPI NAInt  naStartAndEndToLengthi(NAInt   start, NAInt  end);
-NA_HIAPI NAInt  naMinAndMaxToLengthi  (NAInt   min,   NAInt  max);
-
-// This function alters the given pos and size such that size will become
-// positive while retaining the depicted range. For example with doubles:
-// pos = 3. and size = -2. will become pos = 1. and size = 2. The resulting
-// range starts at 1. and ends at 1. + 2. = 3.
-// Note: When using integers, the end must be computed with -1. Therefore
-// the result differs:
-// pos = 3 and size = -2 will become pos = 2 and size = 2. The resulting
-// range starts at 2 and ends at (2 + 2) - 1 = 3
-// If size already was positive, nothing will be changed.
-NA_HIAPI void naMakePositive      (double* NA_RESTRICT pos,
-                                   double* NA_RESTRICT size);
-NA_HIAPI void naMakePositivei     (NAInt*  NA_RESTRICT pos,
-                                   NAInt*  NA_RESTRICT size);
-                                 
-
-// The following functions are mostly used in other datastructures such as
-// NARect and NARange. They define the default semantics against which values
-// are checked in NALib when debugging. For example, a size is defined to be
-// not useful when negative.
-
-// VALID means: Anything but NaN. Integer values therefore are always valid.
-NA_HIAPI NABool naIsPosValueValid(double a);
-NA_HIAPI NABool naIsPosValueValidf(float a);
-NA_HIAPI NABool naIsPosValueValidi(NAInt a);
-NA_HIAPI NABool naIsSizeValueValid(double a);
-NA_HIAPI NABool naIsSizeValueValidf(float a);
-NA_HIAPI NABool naIsSizeValueValidi(NAInt a);
-
-// EMPTY means: Precisely Zero.
-NA_HIAPI NABool naIsSizeValueEmpty(double a);
-NA_HIAPI NABool naIsSizeValueEmptyf(float a);
-NA_HIAPI NABool naIsSizeValueEmptyi(NAInt a);
-
-// NEGATIVE means: Smaller than Zero.
-//
-// Note from the author: These functions test for Negativity, not Positivity.
-// Using a negative word in a function name is usually not good practice as it
-// tends to lead to double negatives when reading the source code. There are
-// situations though when using a negative word is acceptable or even better
-// than its positive counterpart. Like here for example. Or the NDEBUG macro.
-// Or the "End of file" marker EOF for example. But such situations are rare.
-// Try to use positive words whenever possible! For example, test for "Inside"
-// rather than "Outside".
-NA_HIAPI NABool naIsSizeValueNegative(double a);
-NA_HIAPI NABool naIsSizeValueNegativef(float a);
-NA_HIAPI NABool naIsSizeValueNegativei(NAInt a);
-
-// USEFUL means: Positions must be valid. Sizes must be valid, not empty and
-// not negative.
-NA_HIAPI NABool naIsPosValueUseful(double a);
-NA_HIAPI NABool naIsPosValueUsefulf(float a);
-NA_HIAPI NABool naIsPosValueUsefuli(NAInt a);
-NA_HIAPI NABool naIsSizeValueUseful(double a);
-NA_HIAPI NABool naIsSizeValueUsefulf(float a);
-NA_HIAPI NABool naIsSizeValueUsefuli(NAInt a);
-
-
 
 
 
@@ -616,7 +541,7 @@ NA_HIAPI NABool naIsSizeValueUsefuli(NAInt a);
 
 
 #include "NAMathOperators.h"
-
+#include "NAValueHelper.h"
 
 
 NA_IDEF NARange naMakeRange(double offset, double length){
@@ -2319,6 +2244,39 @@ NA_IDEF NAVolumei naSubVertexiVertexi(NAVertexi vertex1, NAVertexi vertex2){
 
 
 
+NA_IDEF NABool naIsValueInRange(double value, NARange outerrange){
+  #ifndef NDEBUG
+    if(!naIsPosValueValid(value))
+      naError("naIsValueInRange", "value is invalid.");
+    if(!naIsRangeUseful(outerrange))
+      naError("naIsValueInRange", "Inside test not valid for ranges which are not useful.");
+  #endif
+  return !((value < outerrange.offset)
+        || (value > naGetRangeEnd(outerrange)));
+}
+NA_IDEF NABool naIsValueInRangef(float value, NARangef outerrange){
+  #ifndef NDEBUG
+    if(!naIsPosValueValidf(value))
+      naError("naIsValueInRangef", "value is invalid.");
+    if(!naIsRangefUseful(outerrange))
+      naError("naIsValueInRangef", "Inside test not valid for ranges which are not useful.");
+  #endif
+  return !((value < outerrange.offset)
+        || (value > naGetRangefEnd(outerrange)));
+}
+NA_IDEF NABool naIsValueInRangei(NAInt value, NARangei outerrange){
+  #ifndef NDEBUG
+    if(!naIsPosValueValidi(value))
+      naError("naIsValueInRangei", "value is invalid.");
+    if(!naIsRangeiUseful(outerrange))
+      naError("naIsValueInRangei", "Inside test not valid for ranges which are not useful.");
+  #endif
+  return !((value < outerrange.offset)
+        || (value > naGetRangeiMax(outerrange)));
+}
+
+
+
 
 NA_IDEF NABool naIsPosInSize(NAPos pos, NASize outersize){
   #ifndef NDEBUG
@@ -2386,7 +2344,7 @@ NA_IDEF NABool naIsPosiInRecti(NAPosi pos, NARecti outerrect){
   #ifndef NDEBUG
     if(!naIsPosiValid(pos))
       naError("naIsPosiInRecti", "pos is invalid.");
-    if(naIsRectiEmpty(outerrect))
+    if(naIsRectiEmptySlow(outerrect))
       naError("naIsPosiInRecti", "Inside test not valid for empty rects.");
     if(!naIsRectiValid(outerrect))
       naError("naIsPosiInRecti", "outerrect is invalid.");
@@ -3109,166 +3067,6 @@ NA_IDEF NABoxi naMakeBoxiPositive(NABoxi box){
 
 
 
-
-
-
-NA_HIDEF NAInt naEndToMaxi(NAInt end){
-  #ifndef NDEBUG
-    if(end == NA_INT_MIN)
-      naError("naEndToMaxi", "Integer underflow");
-  #endif
-  return end - 1;
-}
-NA_HIDEF NAInt naMaxToEndi(NAInt max){
-  #ifndef NDEBUG
-    if(max == NA_INT_MAX)
-      naError("naMaxToEndi", "Integer overflow");
-  #endif
-  return max + 1;
-}
-NA_HIDEF double naOriginAndLengthToEnd(double origin, double length){
-  double result = origin + length;
-  #ifndef NDEBUG
-    if(!naIsPosValueValid(result)){
-      naError("naOriginAndLengthToEnd", "result invalid");
-    }
-  #endif
-  return result;
-}
-NA_HIDEF float naOriginAndLengthToEndf(float origin, float length){
-  float result = origin + length;
-  #ifndef NDEBUG
-    if(!naIsPosValueValidf(result)){
-      naError("naOriginAndLengthToEndf", "result invalid");
-    }
-  #endif
-  return result;
-}
-NA_HIDEF NAInt naOriginAndLengthToEndi(NAInt origin, NAInt length){
-  NAInt result = origin + length;
-  #ifndef NDEBUG
-    if(length > 0){
-      if(result < origin)
-        naError("naOriginAndLengthToEndi", "Integer overflow");
-    }else{
-      if(result > origin)
-        naError("naOriginAndLengthToEndi", "Integer underflow");
-    }
-  #endif
-  return result;
-}
-NA_HIDEF NAInt naOriginAndLengthToMaxi(NAInt origin, NAInt length){
-  NAInt result = naEndToMaxi(origin + length);
-  #ifndef NDEBUG
-    if(length > 0){
-      if(result < origin)
-        naError("naOriginAndLengthToMaxi", "Integer overflow");
-    }else{
-      if(result > origin)
-        naError("naOriginAndLengthToMaxi", "Integer underflow");
-    }
-  #endif
-  return result;
-}
-
-
-NA_HIDEF double naStartAndEndToLength(double min, double end){
-  return end - min;
-}
-NA_HIDEF float naStartAndEndToLengthf(float min, float end){
-  return end - min;
-}
-NA_HIDEF NAInt  naStartAndEndToLengthi(NAInt min, NAInt end){
-  return end - min;
-}
-NA_HIDEF NAInt  naMinAndMaxToLengthi(NAInt min, NAInt max){
-  return naMaxToEndi(max) - min;
-}
-
-
-NA_HIDEF void naMakePositive(double* NA_RESTRICT pos, double* NA_RESTRICT size){
-  if(*size < 0.){
-    *pos = *pos + *size;
-    *size = -*size;
-  }
-}
-
-
-NA_HIDEF void naMakePositivei(NAInt* NA_RESTRICT pos, NAInt* NA_RESTRICT size){
-  if(*size < 0){
-    *pos = *pos + *size + 1; // important + 1 !
-    *size = -*size;
-  }
-}
-
-
-NA_HIDEF NABool naIsPosValueValid(double a){
-  return !naIsNaN(a);
-}
-NA_HIDEF NABool naIsPosValueValidf(float a){
-  return !naIsNaNf(a);
-}
-NA_HIDEF NABool naIsPosValueValidi(NAInt a){
-  NA_UNUSED(a);
-  return NA_TRUE;
-}
-
-NA_HIDEF NABool naIsSizeValueValid(double a){
-  return !naIsNaN(a);
-}
-NA_HIDEF NABool naIsSizeValueValidf(float a){
-  return !naIsNaNf(a);
-}
-NA_HIDEF NABool naIsSizeValueValidi(NAInt a){
-  NA_UNUSED(a);
-  return NA_TRUE;
-}
-
-NA_HIDEF NABool naIsSizeValueEmpty(double a){
-  return (a == 0.);
-}
-NA_HIDEF NABool naIsSizeValueEmptyf(float a){
-  return (a == 0.f);
-}
-NA_HIDEF NABool naIsSizeValueEmptyi(NAInt a){
-  return (a == 0);
-}
-
-
-NA_HIDEF NABool naIsSizeValueNegative(double a){
-  return (a < 0.);
-}
-NA_HIDEF NABool naIsSizeValueNegativef(float a){
-  return (a < 0.f);
-}
-NA_HIDEF NABool naIsSizeValueNegativei(NAInt a){
-  return (a < 0);
-}
-
-
-NA_HIDEF NABool naIsPosValueUseful(double a){
-  return !naIsNaN(a);
-}
-NA_HIDEF NABool naIsPosValueUsefulf(float a){
-  return !naIsNaNf(a);
-}
-NA_HIDEF NABool naIsPosValueUsefuli(NAInt a){
-  NA_UNUSED(a);
-  return NA_TRUE;
-}
-
-
-NA_HIDEF NABool naIsSizeValueUseful(double a){
-  // Note that this test will return NA_FALSE if a is NaN.
-  return (a > 0.);
-}
-NA_HIDEF NABool naIsSizeValueUsefulf(float a){
-  // Note that this test will return NA_FALSE if a is NaN.
-  return (a > 0.);
-}
-NA_HIDEF NABool naIsSizeValueUsefuli(NAInt a){
-  return (a > 0);
-}
 
 
 

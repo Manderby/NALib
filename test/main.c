@@ -37,12 +37,36 @@ void printSystemTest(){
 
 //#include "../NALib/NAMemory.h"
 //#include "../NALib/NAUI.h"
-//#include "../NALib/NARuntime.h"
+#include "../NALib/NARuntime.h"
+#include "../NALib/NAPNG.h"
+#include "../NALib/NAMemory.h"
+
 
 int main(void){
+  NAPNG* inpng;
+  NAPNG* outpng;
+  void* srcdata;
+  void* dstdata;
+
   printSystemTest();
   
-//  naStartRuntime();
+  naStartRuntime();
+
+//  inpng = naInitPNGWithFile(naAlloc(NAPNG), "manderby.png");
+  inpng = naInitPNGWithFile(naAlloc(NAPNG), "/Users/stammt/Desktop/programme/NALib/manderby.png");
+  outpng = naInitPNG(naAlloc(NAPNG), naGetPNGSize(inpng), naGetPNGColorType(inpng), naGetPNGBitDepth(inpng));
+
+  srcdata = naGetPNGPixelData(inpng);
+  dstdata = naGetPNGPixelData(outpng);
+  naCopyn(dstdata, srcdata, naGetPNGPixelDataSize(inpng));
+  
+  naWritePNGToFile(outpng, "output.png");
+
+  naClearPNG(inpng);
+  naClearPNG(outpng);
+  naFree(inpng);
+  naFree(outpng);
+  
 //  naStartDefaultApplication();
 //  naInitUI();
 //  
@@ -52,7 +76,7 @@ int main(void){
 //  naRunUI();
 //  
 //  naClearUI();
-//  naStopRuntime();
+  naStopRuntime();
   
   printf("\nPress enter to quit.\n");
   fgetc(stdin);

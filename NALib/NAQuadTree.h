@@ -265,24 +265,55 @@ NA_API       void* naGetQuadTreeLeafMutable(      NAQuadTree* tree,
                                                      NABool*  didcreate,
                                                       NAPosi* origin);
 
+
+// ////////////////////////////////////
+// Iteration functions
+//
+// Every tree has an internal pointer denoting the current leaf. The
+// programmer can control and access this leaf with iteration functions.
+// If no current leaf is set, NA_NULL is returned as a pointer. The easiest
+// way to implement an iteration is using a while loop:
+//
+// NAQuadTree* mytree;
+// void* curleaf;
+// naFirstQuadTree(mytree);
+// while((curleaf = naIterateQuadTreeMutable(mytree))){
+//   Do stuff with curleaf.
+// }
+//
+// You should enclose the while-condition in additional parantheses such that
+// a compiler knows that the returned pointer must be evaluated as a condition.
+//
+// Note: You can safely use the remove function on curleaf while iterating.
+//
+// When being inside the while scope, the list itself already points to the
+// leaf AFTER iteration.
+//
+// Do NOT use a for-loop for iteration! The internal pointer may, depending on
+// how you write the for-loop, not point to the leaf AFTER iteration which
+// can be devastating when removing leafs. Also, it is very hard to read.
+// ////////////////////////////////////
+
 // Moves the internal pointer to the first most leaf.
 NA_API        void naFirstQuadTree(         const NAQuadTree* tree);
-// Returns the current leaf but moves the internal pointer to the next leaf.
-// The origin of the current leaf will be stored in origin when not Null.
-NA_API  const void* naIterateQuadTreeConst(   const NAQuadTree* tree,
-                                                        NAPosi* origin);
-NA_API        void* naIterateQuadTreeMutable(       NAQuadTree* tree,
-                                                        NAPosi* origin);
+// Returns the current leaf and moves the internal pointer to the next leaf.
+// If there is no leaf available, the function will return NA_NULL.
+// The origin of the current leaf will be stored in origin when the argument
+// is not Null.
+NA_API const void* naIterateQuadTreeConst(       const NAQuadTree* tree,
+                                                      NAPosi* origin);
+NA_API void* naIterateQuadTreeMutable(           NAQuadTree* tree,
+                                                      NAPosi* origin);
 
 // Same as above but only iterates upon leafs which overlap with the given rect.
-NA_API        void naFirstQuadTreeInRect(    const NAQuadTree* tree,
+NA_API void naFirstQuadTreeInRect(          const NAQuadTree* tree,
                                                       NARecti rect);
-NA_API  const void* naIterateQuadTreeInRectConst(   const NAQuadTree* tree,
-                                                              NAPosi* origin,
-                                                              NARecti rect);
-NA_API        void* naIterateQuadTreeInRectMutable(       NAQuadTree* tree,
-                                                              NAPosi* origin,
-                                                              NARecti rect);
+NA_API const void* naIterateQuadTreeInRectConst( const NAQuadTree* tree,
+                                                      NAPosi* origin,
+                                                      NARecti rect);
+NA_API void* naIterateQuadTreeInRectMutable(     NAQuadTree* tree,
+                                                      NAPosi* origin,
+                                                      NARecti rect);
 
 // Function pointer used for the set iteration naSetQuadTreeInRect. This
 // callback is called for multiple chunks of a tree.

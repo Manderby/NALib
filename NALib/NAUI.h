@@ -312,11 +312,12 @@ NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullscreen);
 NA_API NABool naIsWindowFullscreen(NAWindow* window);
 //NA_API NARect naGetWindowRect(NAWindow* window);
 
-NA_API NAOpenGLView* naNewOpenGLView(NAWindow* window, double width, double height);
-// Swaps the OpenGL buffer.
-NA_API void naSwapOpenGLBuffer(NAOpenGLView* openglview);
-NA_API void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds);
-
+#ifdef __gl_h_
+  NA_API NAOpenGLView* naNewOpenGLView(NAWindow* window, double width, double height);
+  // Swaps the OpenGL buffer.
+  NA_API void naSwapOpenGLBuffer(NAOpenGLView* openglview);
+  NA_API void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds);
+#endif
 
 NA_API void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage);
 NA_API void naShowMouse();

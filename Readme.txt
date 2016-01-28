@@ -101,7 +101,8 @@ The naming scheme guides you:
                 Again, only basic structs (pod) will offer such functions.
 - naInitXXX:    Expects a pointer to an existing struct in memory. Returns the
                 pointer again.
-- naClearXXX:   Expects a pointer to a struct which shall be cleared.
+- naClearXXX:   Expects a pointer to a struct which shall be cleared. Is used
+                both by pod and non-pod structs.
 - naNewXXX:     Starting with NALib version 10, certain structs like NAString
                 have been restricted to be managed by the runtime system. These
                 structs do not provide naInitXXX_functions but naNewXXX-

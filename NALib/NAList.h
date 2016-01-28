@@ -83,6 +83,9 @@ NA_IAPI NABool  naIsListEmpty(const NAList* list);
 // always reflect the current position and list the element is stored in, as
 // long as the element is not explicitely removed from a list. You do not need
 // to adjust it in any way.
+//
+// Beware: You should not add NULL pointers to a list. Iteration will not
+// work properly then.
 NA_IAPI NAListPos naAddListFirstConst    (NAList* list, const void* content);
 NA_IAPI NAListPos naAddListFirstMutable  (NAList* list,       void* content);
 NA_IAPI NAListPos naAddListLastConst     (NAList* list, const void* content);
@@ -122,16 +125,26 @@ NA_IAPI void* naRemoveListNextMutable   (NAList* list);
 //
 // Beware! These functions are no iteration functions. The internal pointer
 // is NOT moved. Just the desired element is returned.
-NA_IAPI const void* naGetListFirstConst       (const NAList* list);
-NA_IAPI       void* naGetListFirstMutable     (const NAList* list);
-NA_IAPI const void* naGetListLastConst        (const NAList* list);
-NA_IAPI       void* naGetListLastMutable      (const NAList* list);
-NA_IAPI const void* naGetListPrevConst        (const NAList* list);
-NA_IAPI       void* naGetListPrevMutable      (const NAList* list);
-NA_IAPI const void* naGetListCurrentConst     (const NAList* list);
-NA_IAPI       void* naGetListCurrentMutable   (const NAList* list);
-NA_IAPI const void* naGetListNextConst        (const NAList* list);
-NA_IAPI       void* naGetListNextMutable      (const NAList* list);
+NA_IAPI const void* naGetListFirstConst     (const NAList* list);
+NA_IAPI       void* naGetListFirstMutable   (const NAList* list);
+NA_IAPI const void* naGetListLastConst      (const NAList* list);
+NA_IAPI       void* naGetListLastMutable    (const NAList* list);
+NA_IAPI const void* naGetListPrevConst      (const NAList* list);
+NA_IAPI       void* naGetListPrevMutable    (const NAList* list);
+NA_IAPI const void* naGetListCurrentConst   (const NAList* list);
+NA_IAPI       void* naGetListCurrentMutable (const NAList* list);
+NA_IAPI const void* naGetListNextConst      (const NAList* list);
+NA_IAPI       void* naGetListNextMutable    (const NAList* list);
+
+
+// List position functions. Use the given NAListPos argument to retrieve the
+// element it points to or to advance retrieve the previous or next element.
+// If there is no previous or next element, NA_NULL will be returned.
+NA_IAPI NAListPos   naGetListPosition       (const NAList* list);
+NA_IAPI const void* naGetListPositionConst  (const NAList* list, NAListPos pos);
+NA_IAPI       void* naGetListPositionMutable(const NAList* list, NAListPos pos);
+NA_IAPI NAListPos   naGetListPositionNext   (const NAList* list, NAListPos pos);
+NA_IAPI NAListPos   naGetListPositionPrev   (const NAList* list, NAListPos pos);
 
 
 // /////////////////////////////////////////////
@@ -165,17 +178,30 @@ NA_IAPI void naExchangeListParts(NAList* list);
 // ////////////////////////////////////
 // Iteration functions
 //
-// Every list has an internal index denoting the current element. The
+// Every list has an internal pointer denoting the current element. The
 // programmer can control and access this element with iteration functions.
-// If no current element is set, NA_NULL is returned as a content. A typical
-// example of iteration is the following:
+// If no current element is set, NA_NULL is returned as a pointer. The easiest
+// way to implement an iteration is using a while loop:
 //
+// NAList* mylist;
+// void* curelement;
 // naFirstList(mylist);
 // while((curelement = naIterateListMutable(mylist, 1))){
-//   do stuff with curelement.
+//   Do stuff with curelement.
 // }
 //
-// Note: You can safely use remove functions while iterating!
+// You should enclose the while-condition in additional parantheses such that
+// a compiler knows that the returned pointer must be evaluated as a condition.
+//
+// Note: You can safely use remove functions while iterating. But sure that
+// you remove the correct one!
+//
+// When being inside the while scope, the list itself already points to the
+// element AFTER iteration.
+//
+// Do NOT use a for-loop for iteration! The internal pointer may, depending on
+// how you write the for-loop, not point to the element AFTER iteration which
+// can be devastating when removing elements. Also, it is very hard to read.
 // ////////////////////////////////////
 
 
@@ -204,22 +230,18 @@ NA_IAPI NABool naPositionList        (const NAList* list, NAListPos listpos);
 NA_API  NABool naLocateListPointer   (const NAList* list, void* content);
 NA_API  NABool naLocateListIndex     (const NAList* list, NAInt indx);
 
-
-// Returns the current element and then iterates the given steps forward or
-// backwards by using positive or negative numbers. If step is 0, you simply
-// access the current element. Note that for accessing the current element,
-// the use of naGetListCurrent would be preferable.
-// If no internal pointer is set, NA_NULL is returned and the internal pointer
-// is not touched at all.
+// Returns the current element and iterates the given steps forward or
+// backwards by using positive or negative numbers. If there is no current
+// element available, the function returns NA_NULL.
+//
+// If step is 0, you simply access the current element. Note that for
+// accessing the current element, the use of naGetListCurrent would be
+// preferable.
 NA_IAPI const void* naIterateListConst    (const NAList* list, NAInt step);
 NA_IAPI       void* naIterateListMutable  (      NAList* list, NAInt step);
 
-
 // Moves the internal pointer forward or backwards without accessing content.
-// If no internal pointer is set, NA_NULL is returned and the internal pointer
-// is not touched at all.
-// Note: You can use naIterateListConst or naIterateListMutable to directly
-// get the current element.
+// If no internal pointer is set, the internal pointer is not touched at all.
 NA_IAPI void naIterateList                (const NAList* list, NAInt step);
 
 // Returns whether the list is at a certain position
@@ -377,10 +399,12 @@ NA_IDEF NABool naPositionList(const NAList* list, NAListPos listpos){
   NAList* mutablelist = (NAList*)list;
   NAListElement* element = (NAListElement*)listpos;
   #ifndef NDEBUG
+    if(!listpos)
+      naError("naLocateListPos", "The element given is a Null Pointer.");
     if(element->list != list)
       naError("naLocateListPos", "The element at the given pos is not part of the given list.");
   #endif
-  mutablelist->cur = element;
+    mutablelist->cur = element;
   return NA_TRUE;
 }
 
@@ -391,18 +415,10 @@ NA_IDEF NABool naPositionList(const NAList* list, NAListPos listpos){
 NA_IDEF void naIterateList(const NAList* list, NAInt step){
   NAList* mutablelist = (NAList*)list;
   while(step > 0){
-    #ifndef NDEBUG
-      if(!naGetPtrConst(&(list->cur->ptr)))
-        naError("naIterateListConst", "Iteration overflows");
-    #endif
     mutablelist->cur = list->cur->next;
     step--;
   }
   while(step < 0){
-    #ifndef NDEBUG
-      if(!naGetPtrConst(&(list->cur->ptr)))
-        naError("naIterateListConst", "Iteration underflows");
-    #endif
     mutablelist->cur = list->cur->prev;
     step++;
   }
@@ -411,21 +427,19 @@ NA_IDEF void naIterateList(const NAList* list, NAInt step){
 
 
 NA_IDEF const void* naIterateListConst(const NAList* list, NAInt step){
-  const void* returnptr;  // Declaration before implementation. C90
-  if(list->cur == &(list->sentinel)){return NA_NULL;}
-  returnptr = naGetPtrConst(&(list->cur->ptr));
-  if(step){naIterateList(list, step);}
-  return returnptr;
+  const void* retptr;
+  retptr = naGetPtrConst(&(list->cur->ptr));
+  naIterateList(list, step);
+  return retptr;
 }
 
 
 
 NA_IDEF void* naIterateListMutable(NAList* list, NAInt step){
-  void* returnptr; // Declaration before implementation. C90
-  if(list->cur == &(list->sentinel)){return NA_NULL;}
-  returnptr = naGetPtrMutable(&(list->cur->ptr));
-  if(step){naIterateList(list, step);}
-  return returnptr;
+  void* retptr;
+  retptr = naGetPtrMutable(&(list->cur->ptr));
+  naIterateList(list, step);
+  return retptr;
 }
 
 
@@ -475,7 +489,12 @@ NA_HIDEF void naInjectMutableListElement(NAList* list, NAListElement* element, v
 
 
 NA_IDEF NAListPos naAddListFirstConst(NAList* list, const void* content){
-  NAListElement* newelement = naNew(NAListElement);
+  NAListElement* newelement;
+  #ifndef NDEBUG
+    if(!content)
+      naError("naAddListFirstConst", "content is Null-Pointer. May lead to errors when iterating");
+  #endif
+  newelement = naNew(NAListElement);
   newelement->next = list->sentinel.next;
   newelement->prev = &(list->sentinel);
   naInjectConstListElement(list, newelement, content);
@@ -484,7 +503,12 @@ NA_IDEF NAListPos naAddListFirstConst(NAList* list, const void* content){
 
 
 NA_IDEF NAListPos naAddListFirstMutable(NAList* list, void* content){
-  NAListElement* newelement = naNew(NAListElement);
+  NAListElement* newelement;
+  #ifndef NDEBUG
+    if(!content)
+      naError("naAddListFirstMutable", "content is Null-Pointer. May lead to errors when iterating");
+  #endif
+  newelement = naNew(NAListElement);
   newelement->next = list->sentinel.next;
   newelement->prev = &(list->sentinel);
   naInjectMutableListElement(list, newelement, content);
@@ -493,7 +517,12 @@ NA_IDEF NAListPos naAddListFirstMutable(NAList* list, void* content){
 
 
 NA_IDEF NAListPos naAddListLastConst(NAList* list, const void* content){
-  NAListElement* newelement = naNew(NAListElement);
+  NAListElement* newelement;
+  #ifndef NDEBUG
+    if(!content)
+      naError("naAddListLastConst", "content is Null-Pointer. May lead to errors when iterating");
+  #endif
+  newelement = naNew(NAListElement);
   newelement->next = &(list->sentinel);
   newelement->prev = list->sentinel.prev;
   naInjectConstListElement(list, newelement, content);
@@ -502,7 +531,12 @@ NA_IDEF NAListPos naAddListLastConst(NAList* list, const void* content){
 
 
 NA_IDEF NAListPos naAddListLastMutable(NAList* list, void* content){
-  NAListElement* newelement = naNew(NAListElement);
+  NAListElement* newelement;
+  #ifndef NDEBUG
+    if(!content)
+      naError("naAddListLastMutable", "content is Null-Pointer. May lead to errors when iterating");
+  #endif
+  newelement = naNew(NAListElement);
   newelement->next = &(list->sentinel);
   newelement->prev = list->sentinel.prev;
   naInjectMutableListElement(list, newelement, content);
@@ -511,7 +545,12 @@ NA_IDEF NAListPos naAddListLastMutable(NAList* list, void* content){
 
 
 NA_IDEF NAListPos naAddListBeforeConst(NAList* list, const void* content){
-  NAListElement* newelement = naNew(NAListElement);
+  NAListElement* newelement;
+  #ifndef NDEBUG
+    if(!content)
+      naError("naAddListBeforeConst", "content is Null-Pointer. May lead to errors when iterating");
+  #endif
+  newelement = naNew(NAListElement);
   newelement->next = list->cur;
   newelement->prev = list->cur->prev;
   naInjectConstListElement(list, newelement, content);
@@ -520,7 +559,12 @@ NA_IDEF NAListPos naAddListBeforeConst(NAList* list, const void* content){
 
 
 NA_IDEF NAListPos naAddListBeforeMutable(NAList* list, void* content){
-  NAListElement* newelement = naNew(NAListElement);
+  NAListElement* newelement;
+  #ifndef NDEBUG
+    if(!content)
+      naError("naAddListBeforeMutable", "content is Null-Pointer. May lead to errors when iterating");
+  #endif
+  newelement = naNew(NAListElement);
   newelement->next = list->cur;
   newelement->prev = list->cur->prev;
   naInjectMutableListElement(list, newelement, content);
@@ -529,7 +573,12 @@ NA_IDEF NAListPos naAddListBeforeMutable(NAList* list, void* content){
 
 
 NA_IDEF NAListPos naAddListAfterConst(NAList* list, const void* content){
-  NAListElement* newelement = naNew(NAListElement);
+  NAListElement* newelement;
+  #ifndef NDEBUG
+    if(!content)
+      naError("naAddListAfterConst", "content is Null-Pointer. May lead to errors when iterating");
+  #endif
+  newelement = naNew(NAListElement);
   newelement->next = list->cur->next;
   newelement->prev = list->cur;
   naInjectConstListElement(list, newelement, content);
@@ -538,7 +587,12 @@ NA_IDEF NAListPos naAddListAfterConst(NAList* list, const void* content){
 
 
 NA_IDEF NAListPos naAddListAfterMutable(NAList* list, void* content){
-  NAListElement* newelement = naNew(NAListElement);
+  NAListElement* newelement;
+  #ifndef NDEBUG
+    if(!content)
+      naError("naAddListAfterMutable", "content is Null-Pointer. May lead to errors when iterating");
+  #endif
+  newelement = naNew(NAListElement);
   newelement->next = list->cur->next;
   newelement->prev = list->cur;
   naInjectMutableListElement(list, newelement, content);
@@ -569,7 +623,7 @@ NA_HIDEF void* naEjectListMutable(NAList* list, NAListElement* element, NABool a
   void* contentpointer; // Declaration before Implementation. Needed for C90
   if(element == &(list->sentinel)){
     #ifndef NDEBUG
-      naError("naEjectListMutable", "Trying to eject sentinel element. Will return NULL without doing anything. Try to stop before that.");
+      naError("naEjectListMutable", "Trying to eject sentinel element. Will return NULL without doing anything. Try to stop removing elements before that.");
     #endif
     return NA_NULL;
   }
@@ -763,6 +817,84 @@ NA_IDEF void* naGetListNextMutable(const NAList* list){
 }
 
 
+
+
+
+
+NA_IDEF NAListPos naGetListPosition(const NAList* list){
+  if(list->cur == &(list->sentinel)){
+    return NA_NULL;
+  }else{
+    return list->cur;
+  }
+}
+
+
+NA_IDEF const void* naGetListPositionConst(const NAList* list, NAListPos pos){
+  NAListElement* element = (NAListElement*)pos;
+  #ifndef NDEBUG
+    if(list->count == 0)
+      naError("naGetListPositionConst", "List is empty");
+    if(element->list != list)
+      naError("naGetListPositionConst", "The given position is not part of the given list");
+  #else
+    NA_UNUSED(list);
+  #endif
+  if(!pos){return NA_NULL;} // security return. Only needed for code sanity checks.
+  return naGetPtrConst(&(element->ptr));
+}
+
+
+NA_IDEF void* naGetListPositionMutable(const NAList* list, NAListPos pos){
+  NAListElement* element = (NAListElement*)pos;
+  #ifndef NDEBUG
+    if(!pos){
+      naCrash("naGetListPositionMutable", "pos is a NULL pointer");
+      return NA_NULL;
+    }
+    if(list->count == 0)
+      naError("naGetListPositionMutable", "List is empty");
+    if(element->list != list)
+      naError("naGetListPositionMutable", "The given position is not part of the given list");
+  #else
+    NA_UNUSED(list);
+  #endif
+  if(!pos){return NA_NULL;} // security return. Only needed for code sanity checks.
+  return naGetPtrMutable(&(element->ptr));
+}
+
+
+NA_IDEF NAListPos naGetListPositionNext(const NAList* list, NAListPos pos){
+  NAListElement* element = (NAListElement*)pos;
+  #ifndef NDEBUG
+    if(list->count == 0)
+      naError("naGetListPositionNext", "List is empty");
+    if(element->list != list)
+      naError("naGetListPositionNext", "The given position is not part of the given list");
+  #endif
+  if(!pos){return NA_NULL;} // security return. Only needed for code sanity checks.
+  if(element->next == &(list->sentinel)){
+    return NA_NULL;
+  }else{
+    return (NAListPos)(element->next);
+  }
+}
+
+
+NA_IDEF NAListPos naGetListPositionPrev(const NAList* list, NAListPos pos){
+  NAListElement* element = (NAListElement*)pos;
+  #ifndef NDEBUG
+    if(list->count == 0)
+      naError("naGetListPositionPrev", "List is empty");
+    if(element->list != list)
+      naError("naGetListPositionPrev", "The given position is not part of the given list");
+  #endif
+  if(element->prev == &(list->sentinel)){
+    return NA_NULL;
+  }else{
+    return (NAListPos)(element->prev);
+  }
+}
 
 
 // Helper Function for injection of existing list elements.

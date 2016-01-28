@@ -136,7 +136,11 @@ NA_DEF void naClearUI(void){
 
 
 NA_DEF void naRefreshUIElement(void* uielement, double timediff){
-  naCallFunctionInSeconds(naRefreshUIElementNow, uielement, timediff);
+//  NAUIElement* element = (NAUIElement*)uielement;
+  //if(!element->refreshrequested){
+  //  element->refreshrequested = NA_TRUE;
+    naCallFunctionInSeconds(naRefreshUIElementNow, uielement, timediff);
+  //}
 }
 
 
@@ -165,6 +169,7 @@ NA_HDEF NAUIElement* naInitUIElement(NAUIElement* uielement, NAUIElement* parent
   element->parent = parent;
   element->elementtype = elementtype;
   element->nativeID = nativeID;
+  //element->refreshrequested = NA_FALSE;
   naInitList(&(element->childs));
   naInitList(&(element->reactions));
   naAddUIElement(element);

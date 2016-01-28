@@ -40,6 +40,7 @@ struct NAUIElement{
   NAList childs;
   NAList reactions;
   void* nativeID;  // The native object
+  //NABool refreshrequested;
 };
 
 

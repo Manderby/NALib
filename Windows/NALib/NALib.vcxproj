@@ -19,40 +19,61 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\NALib\NAArray.c" />
+    <ClCompile Include="..\..\NALib\NABinaryData.c" />
+    <ClCompile Include="..\..\NALib\NABuffer.c" />
+    <ClCompile Include="..\..\NALib\NAByteArray.c" />
+    <ClCompile Include="..\..\NALib\NADateTime.c" />
+    <ClCompile Include="..\..\NALib\NADeflate.c" />
+    <ClCompile Include="..\..\NALib\NAHeap.c" />
+    <ClCompile Include="..\..\NALib\NAList.c" />
+    <ClCompile Include="..\..\NALib\NAOctTree.c" />
+    <ClCompile Include="..\..\NALib\NAPNG.c" />
+    <ClCompile Include="..\..\NALib\NAQuadTree.c" />
+    <ClCompile Include="..\..\NALib\NARuntime.c" />
+    <ClCompile Include="..\..\NALib\NAString.c" />
+    <ClCompile Include="..\..\NALib\NASystem.c" />
+    <ClCompile Include="..\..\NALib\NAUI.c" />
+    <ClCompile Include="..\..\NALib\NAUIWINAPI.c" />
+    <ClCompile Include="..\..\test\main.c" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="..\..\NALib\NAArray.h" />
     <ClInclude Include="..\..\NALib\NABinaryData.h" />
-    <ClInclude Include="..\..\NALib\NABitArray.h" />
+    <ClInclude Include="..\..\NALib\NABuffer.h" />
     <ClInclude Include="..\..\NALib\NAByteArray.h" />
     <ClInclude Include="..\..\NALib\NAByteMap2D.h" />
     <ClInclude Include="..\..\NALib\NAComplex.h" />
     <ClInclude Include="..\..\NALib\NACoord.h" />
     <ClInclude Include="..\..\NALib\NADateTime.h" />
+    <ClInclude Include="..\..\NALib\NADeflate.h" />
     <ClInclude Include="..\..\NALib\NAEndianness.h" />
     <ClInclude Include="..\..\NALib\NAFile.h" />
     <ClInclude Include="..\..\NALib\NAGrowingSpace.h" />
     <ClInclude Include="..\..\NALib\NAHeap.h" />
     <ClInclude Include="..\..\NALib\NAList.h" />
+    <ClInclude Include="..\..\NALib\NAMap2D.h" />
     <ClInclude Include="..\..\NALib\NAMathConstants.h" />
     <ClInclude Include="..\..\NALib\NAMathOperators.h" />
-    <ClInclude Include="..\..\NALib\NAMinMax.h" />
-    <ClInclude Include="..\..\NALib\NAPointer.h" />
+    <ClInclude Include="..\..\NALib\NAMemory.h" />
+    <ClInclude Include="..\..\NALib\NAOctTree.h" />
+    <ClInclude Include="..\..\NALib\NAPNG.h" />
+    <ClInclude Include="..\..\NALib\NAPool.h" />
+    <ClInclude Include="..\..\NALib\NAQuadTree.h" />
     <ClInclude Include="..\..\NALib\NARandom.h" />
-    <ClInclude Include="..\..\NALib\NARange.h" />
-    <ClInclude Include="..\..\NALib\NARectArea.h" />
+    <ClInclude Include="..\..\NALib\NARuntime.h" />
+    <ClInclude Include="..\..\NALib\NAStack.h" />
     <ClInclude Include="..\..\NALib\NAString.h" />
     <ClInclude Include="..\..\NALib\NASystem.h" />
+    <ClInclude Include="..\..\NALib\NAThreading.h" />
+    <ClInclude Include="..\..\NALib\NAUI.h" />
+    <ClInclude Include="..\..\NALib\NAUIHiddenAPI.h" />
+    <ClInclude Include="..\..\NALib\NAURL.h" />
+    <ClInclude Include="..\..\NALib\NAValueHelper.h" />
     <ClInclude Include="..\..\NALib\NAVectorAlgebra.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\NALib\NABitArray.c" />
-    <ClCompile Include="..\..\NALib\NADateTime.c" />
-    <ClCompile Include="..\..\NALib\NAFile.c" />
-    <ClCompile Include="..\..\NALib\NAGrowingSpace.c" />
-    <ClCompile Include="..\..\NALib\NAHeap.c" />
-    <ClCompile Include="..\..\NALib\NARectArea.c" />
-    <ClCompile Include="..\..\NALib\NAString.c" />
-    <ClCompile Include="..\..\NALib\NASystem.c" />
-    <ClCompile Include="..\..\test\main.c" />
+    <None Include="..\..\NALib\NAUICocoa.m" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1124E544-AD40-4522-B156-D83B78B732DB}</ProjectGuid>

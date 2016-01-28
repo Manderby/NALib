@@ -614,7 +614,7 @@ NA_IAPI NABool naIsEndiannessNative(NAInt endianness){
   #endif
   return ( (endianness == NA_ENDIANNESS_NATIVE)
         || (endianness == NA_ENDIANNESS_UNKNOWN)
-        || (endianness == NA_SYSTEM_ENDIANNESS));
+        || (endianness == NA_SYSTEM_ENDIANNESS) );
 }
 
 

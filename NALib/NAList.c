@@ -62,6 +62,7 @@ NA_DEF NABool naLocateListIndex(const NAList* list, NAInt indx){
 }
 
 
+NATypeIdentifier na_NAListElement_identifier = NA_NULL;
 
 NA_HDEF void naPrepareListElementRuntime(){
   NATypeInfo typeinfo;

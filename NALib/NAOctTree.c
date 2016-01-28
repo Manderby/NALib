@@ -776,7 +776,7 @@ NA_DEF void naFirstOctTree(const NAOctTree* tree){
 
 
 NA_DEF const void* naIterateOctTreeConst(const NAOctTree* tree, NAVertexi* origin){
-  void* retptr;
+  const void* retptr;
   if(!tree->root){return NA_NULL;}
   if(tree->curnode){
     retptr = tree->curnode->child[tree->cursegment];
@@ -852,7 +852,7 @@ NA_DEF void naFirstOctTreeInBox(const NAOctTree* tree, NABoxi box){
 
 
 NA_DEF const void* naIterateOctTreeInBoxConst(const NAOctTree* tree, NAVertexi* origin, NABoxi box){
-  void* retptr;
+  const void* retptr;
   if(!tree->root){return NA_NULL;}
   if(tree->curnode){
     retptr = tree->curnode->child[tree->cursegment];
@@ -980,6 +980,11 @@ NA_DEF void naRemoveOctTreeLeaf(NAOctTree* tree, NAVertexi coord){
   
   node = naLocateOctTreeLeafParent(tree, coord, NA_FALSE, NA_NULL, NA_FALSE, &leafsegment);
   if(!node){return;}
+  
+  #ifndef NDEBUG
+    if(node == tree->curnode)
+      naError("naRemoveOctTreeLeaf", "Removing the node currently iterating on");
+  #endif
   
   // First, we destroy the data of the leaf chunk
   tree->callbacks.leafdeallocator(node->child[leafsegment], tree->callbacks.userdata);

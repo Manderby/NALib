@@ -7,9 +7,71 @@ intended for didactical purposes. Full license notice at the bottom.
 CHANGELOG Versions 10 - 20
 --------------------------
 
+
+
+Version 14 (first published 2016-January-XX):
+==============================================
+
 This file contains information about changes in the package NALib. These are
 purely informational and any information found here is not guaranteed to be
 correct, complete or final.
+
+
+- Added NADeflate, an implementation of the RFC 1951 deflate decompression
+  algorithm.
+- Added NAPNG, a structure, able to read PNG files. The most important ones
+  for now. Not fully supported and might have memory leaks!
+- Introducing NABuffer, replacing all NAFile reading and writing. NAFile
+  is now just a low level descriptor replacement.
+- Added iterator for NAByteArray and NAArray.
+- Collected all helper functions in a new file: NAValueHelper.h
+- Added another base memory struct: NABuf, a memory block with a used count.
+- Added CRC and Adler Checksum to NABinaryData.
+- Reimplemented NAPointer to store pointers instead of structs. Way easier now
+  and is now able to add reference counting to any pointer. But requires double
+  dereferenciation.
+
+- Added naIsValueInRange functions
+- Added NA_UINT_MAX
+- Removed some warnings.
+- Fixed a very dangerous bug in NAByteArray which could have lead to serious
+  problems and which would not have been easy to debug.
+- Added clear functions for all base memory structs
+- Added naGetListPosition, naGetListPositionNext and naGetListPositionPrev.
+- Tried to change iterator functions to return a boolean and return the pointer
+  in a parameter. But this failed and had been reversed again. Comments added.
+- Added some warnings in NAList because Null pointers should not be added.
+- Changes in NADateTime according to Leap second Bulletin C 51. Fixed the leap
+  second macro for January 2016.
+- Renamed Prime number constants
+- Replaced naMakeDateTimeFromPointer with naMakeDateTimeFromBuffer. Added
+  binary NADateTime format NA_DATETIME_FORMAT_PNG.
+- Added 8 and 16 Bit implementations for naSigni, naMini and naMaxi. Added
+  inline implementation of naAbsi.
+- Revisited and perfected some NAMemory structs.
+- NAMemoryBlocks can now store 0 bytes. Implementation of NAByteArray now much
+  simpler.
+- NAByteArray now stores an NAPointer even if it is empty.
+- Added naNewPointer() which creates a reference to a NULL pointer
+- Renamed naFill8 to naFill8WithBytes and naEqual8 to naEqual8WithBytes.
+  Warning: the old API names of naEqual have new meaning now: Compares two
+  pointers, instead of a pointer with bytes. Newly added.
+- Added NA_ENDIANNESS_NETWORK which is the same as NA_ENDIANNESS_BIG
+- NAFile.c has been deleted. All implementations inline in NAFile.h
+- Corrected some index debug checks
+- Added naGetByteArrayMaxIndex;
+- Added naVoidMemoryBlock, naGetMemoryBlockMaxIndex and some more debug checks
+  in NAMemory.h
+- Added new buffer flushing behaviour: AUTO and NONE.
+- Enhanced NAPointer to allow NABuf to be stored as a base memory struct.
+- Enhanded base memory structs with clear function. Enhanced the readme.
+- Exchanged Endianness Unknown and Native such that unknown is now zero.
+- naInitByteArrayWithFileContents returns NULL, when file not opened.
+
+
+
+Version 13 (first published 2015-November-26):
+==============================================
 
 
 Highlights:

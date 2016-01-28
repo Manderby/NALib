@@ -275,7 +275,7 @@ was introduced.
 - Moved a macro from NAString.h to its implementation file.
 - Added NA_UNUSED_PARAMETER macro. Removed some warnings.
 - Changed naCreateDateTimeFromString and naCreateDateTimeFromPointer to
-  naMakeDateTimeFromString and naMakeDateTimeFromPointer. Removed first
+  naMakeDateTimeFromString and naMakeDateTimeFromBuffer. Removed first
   parameter.
 - The Dollar Sign $ has been removed from the macro identifier to avoid
   warnings. The new macro names are: NA_NL_UNIX, NA_NL_MAC9, NA_NL_WIN, NA_NL,
