@@ -9,7 +9,7 @@ CHANGELOG Versions 10 - 20
 
 
 
-Version 14 (first published 2016-January-XX):
+Version 14 (first published 2016-January-28):
 ==============================================
 
 This file contains information about changes in the package NALib. These are
@@ -20,7 +20,7 @@ correct, complete or final.
 - Added NADeflate, an implementation of the RFC 1951 deflate decompression
   algorithm.
 - Added NAPNG, a structure, able to read PNG files. The most important ones
-  for now. Not fully supported and might have memory leaks!
+  for now. Not fully supported and might still have memory leaks!
 - Introducing NABuffer, replacing all NAFile reading and writing. NAFile
   is now just a low level descriptor replacement.
 - Added iterator for NAByteArray and NAArray.
@@ -31,6 +31,8 @@ correct, complete or final.
   and is now able to add reference counting to any pointer. But requires double
   dereferenciation.
 
+- Added naEndToMaxi32, naEndToMaxi64, naMaxToEndi32 and naMaxToEndi64
+- Corrected naNewStringWithBasenameOfFilename.
 - Added naIsValueInRange functions
 - Added NA_UINT_MAX
 - Removed some warnings.
