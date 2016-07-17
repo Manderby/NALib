@@ -1,0 +1,177 @@
+// !$*UTF8*$!
+{
+	B985CF811B1B29670016803D /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = B985CF9C1B1B29B90016803D /* tzcreator */;
+		activeTarget = B985CF991B1B29B90016803D /* tzcreator */;
+		addToTargets = (
+			B985CF991B1B29B90016803D /* tzcreator */,
+		);
+		breakpoints = (
+			B985D0E81B1B32720016803D /* tzcreator.c:94 */,
+		);
+		codeSenseManager = B985CF861B1B29670016803D /* Code sense */;
+		executables = (
+			B985CF9C1B1B29B90016803D /* tzcreator */,
+		);
+		ignoreBreakpointsInProjectsDict = {
+		};
+		perUserDictionary = {
+			PBXPerProjectTemplateStateSaveDate = 457211723;
+			PBXWorkspaceStateSaveDate = 457211723;
+		};
+		sourceControlManager = B985CF851B1B29670016803D /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	B985CF851B1B29670016803D /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	B985CF861B1B29670016803D /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	B985CF991B1B29B90016803D /* tzcreator */ = {
+		activeExec = 0;
+		executables = (
+			B985CF9C1B1B29B90016803D /* tzcreator */,
+		);
+	};
+	B985CF9C1B1B29B90016803D /* tzcreator */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+			"PBXLSLaunchAction-0" = {
+				PBXLSLaunchAction = 0;
+				PBXLSLaunchStartAction = 1;
+				PBXLSLaunchStdioStyle = 2;
+				PBXLSLaunchStyle = 0;
+				class = PBXLSRunLaunchConfig;
+				commandLineArgs = (
+				);
+				displayName = "Executable Runner";
+				environment = {
+				};
+				identifier = com.apple.Xcode.launch.runConfig;
+				remoteHostInfo = "";
+				startActionInfo = "";
+			};
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = tzcreator;
+		savedGlobals = {
+		};
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+		startupPath = "<<ProjectDirectory>>";
+		variableFormatDictionary = {
+		};
+	};
+	B985D04B1B1B2AFC0016803D /* tzcreator.c */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {451, 1778}}";
+			sepNavSelRange = "{2458, 0}";
+			sepNavVisRange = "{2361, 134}";
+			sepNavWindowFrame = "{{391, 88}, {889, 690}}";
+		};
+	};
+	B985D05A1B1B2B4E0016803D /* NABinaryData.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {668, 8400}}";
+			sepNavSelRange = "{6780, 0}";
+			sepNavVisRange = "{6615, 227}";
+			sepNavWindowFrame = "{{38, 62}, {889, 690}}";
+		};
+	};
+	B985D05B1B1B2B4E0016803D /* NAByteArray.c */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {668, 2142}}";
+			sepNavSelRange = "{3513, 0}";
+			sepNavVisRange = "{2893, 309}";
+			sepNavWindowFrame = "{{15, 83}, {889, 690}}";
+		};
+	};
+	B985D05C1B1B2B4E0016803D /* NAByteArray.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {842, 4914}}";
+			sepNavSelRange = "{8659, 0}";
+			sepNavVisRange = "{7878, 1436}";
+			sepNavWindowFrame = "{{15, 83}, {889, 690}}";
+		};
+	};
+	B985D0631B1B2B4E0016803D /* NAFile.c */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {732, 15820}}";
+			sepNavSelRange = "{1678, 30}";
+			sepNavVisRange = "{1658, 520}";
+			sepNavWindowFrame = "{{61, 41}, {889, 690}}";
+		};
+	};
+	B985D0641B1B2B4E0016803D /* NAFile.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {842, 7756}}";
+			sepNavSelRange = "{1569, 20}";
+			sepNavVisRange = "{748, 1870}";
+			sepNavWindowFrame = "{{84, 20}, {889, 690}}";
+		};
+	};
+	B985D0761B1B2B4E0016803D /* NAString.c */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {842, 21280}}";
+			sepNavSelRange = "{26377, 17}";
+			sepNavVisRange = "{25597, 1417}";
+			sepNavWindowFrame = "{{38, 62}, {889, 690}}";
+		};
+	};
+	B985D0771B1B2B4E0016803D /* NAString.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {842, 7588}}";
+			sepNavSelRange = "{22843, 11}";
+			sepNavVisRange = "{22512, 931}";
+			sepNavWindowFrame = "{{54, 88}, {889, 690}}";
+		};
+	};
+	B985D0E81B1B32720016803D /* tzcreator.c:94 */ = {
+		isa = PBXFileBreakpoint;
+		actions = (
+		);
+		breakpointStyle = 0;
+		continueAfterActions = 0;
+		countType = 0;
+		delayBeforeContinue = 0;
+		fileReference = B985D04B1B1B2AFC0016803D /* tzcreator.c */;
+		functionName = "createTimeData()";
+		hitCount = 1;
+		ignoreCount = 0;
+		lineNumber = 94;
+		location = creator;
+		modificationTime = 454767333.292248;
+		originalNumberOfMultipleMatches = 1;
+		state = 1;
+	};
+}

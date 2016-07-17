@@ -1,0 +1,302 @@
+
+This file is part of NALib, a collection of C and C++ source code
+intended for didactical purposes. Full license notice at the bottom.
+
+
+--------------------------
+CHANGELOG Versions 10 - 20
+--------------------------
+
+This file contains information about changes in the package NALib. These are
+purely informational and any information found here is not guaranteed to be
+correct, complete or final.
+
+Version 15 (first published 2016-July-17):
+==============================================
+
+- Added NA_FILESIZE_BITS and NA_FILESIZE_MAX to NAFile.h
+- Removed several warnings under VS Community 2015
+- Removed the typecasts of the integer limits in NASystem.h
+- Latest leap second according to Bulletin C 52
+- Cleanup of NAPointer. Added NA_POINTER_DELETE_FLAG to ensure nobody deletes
+  an NAPointer directly.
+- Removed naIsIntStrictlyPositive, naIsIntZero, naIsIntNegative
+- naMallocIfNull has been erased.
+- Made naError and naCrash accept variadic arguments.
+- Added macros NA_CPP98 and NA_CPP11 and corrected many typedefs and defines
+  in NASystem.h
+- Added NA_ENDIANNESS_HOST which is the same as NA_ENDIANNESS_NATIVE
+- Renumbered the system macros such that NA_SYSTEM_UNKNOWN is 0.
+- Finally removed the code sanity warning with naDecoupleString
+- Added a default clause in NADateTime to prevent warnings.
+- Moved inclusion of stdarg.h to NASystem to reduce warnings on some systems.
+- Greatly enhanced the comments.
+- Made small adjustments in NAFile.h like renamed naJumpFileRelative to
+  naSeekFileRelative.
+- Added naGetCwd and naNewStringWithCurrentWorkingDirectory
+- Added NA_SCNi, NA_SCNu and naScanDecimal;
+- Made NABuf 64Bit always
+- Changed NAQuadTreeNodeDestructor to NAQuadTreeNodeDeallocator. Same with Oct.
+
+
+
+Version 14 (first published 2016-January-28):
+==============================================
+
+- Added NADeflate, an implementation of the RFC 1951 deflate decompression
+  algorithm.
+- Added NAPNG, a structure, able to read PNG files. The most important ones
+  for now. Not fully supported and might still have memory leaks!
+- Introducing NABuffer, replacing all NAFile reading and writing. NAFile
+  is now just a low level descriptor replacement.
+- Added iterator for NAByteArray and NAArray.
+- Collected all helper functions in a new file: NAValueHelper.h
+- Added another base memory struct: NABuf, a memory block with a used count.
+- Added CRC and Adler Checksum to NABinaryData.
+- Reimplemented NAPointer to store pointers instead of structs. Way easier now
+  and is now able to add reference counting to any pointer. But requires double
+  dereferenciation.
+
+- Added naEndToMaxi32, naEndToMaxi64, naMaxToEndi32 and naMaxToEndi64
+- Corrected naNewStringWithBasenameOfFilename.
+- Added naIsValueInRange functions
+- Added NA_UINT_MAX
+- Removed some warnings.
+- Fixed a very dangerous bug in NAByteArray which could have lead to serious
+  problems and which would not have been easy to debug.
+- Added clear functions for all base memory structs
+- Added naGetListPosition, naGetListPositionNext and naGetListPositionPrev.
+- Tried to change iterator functions to return a boolean and return the pointer
+  in a parameter. But this failed and had been reversed again. Comments added.
+- Added some warnings in NAList because Null pointers should not be added.
+- Changes in NADateTime according to Leap second Bulletin C 51. Fixed the leap
+  second macro for January 2016.
+- Renamed Prime number constants
+- Replaced naMakeDateTimeFromPointer with naMakeDateTimeFromBuffer. Added
+  binary NADateTime format NA_DATETIME_FORMAT_PNG.
+- Added 8 and 16 Bit implementations for naSigni, naMini and naMaxi. Added
+  inline implementation of naAbsi.
+- Revisited and perfected some NAMemory structs.
+- NAMemoryBlocks can now store 0 bytes. Implementation of NAByteArray now much
+  simpler.
+- NAByteArray now stores an NAPointer even if it is empty.
+- Added naNewPointer() which creates a reference to a NULL pointer
+- Renamed naFill8 to naFill8WithBytes and naEqual8 to naEqual8WithBytes.
+  Warning: the old API names of naEqual have new meaning now: Compares two
+  pointers, instead of a pointer with bytes. Newly added.
+- Added NA_ENDIANNESS_NETWORK which is the same as NA_ENDIANNESS_BIG
+- NAFile.c has been deleted. All implementations inline in NAFile.h
+- Corrected some index debug checks
+- Added naGetByteArrayMaxIndex;
+- Added naVoidMemoryBlock, naGetMemoryBlockMaxIndex and some more debug checks
+  in NAMemory.h
+- Added new buffer flushing behaviour: AUTO and NONE.
+- Enhanced NAPointer to allow NABuf to be stored as a base memory struct.
+- Enhanded base memory structs with clear function. Enhanced the readme.
+- Exchanged Endianness Unknown and Native such that unknown is now zero.
+- naInitByteArrayWithFileContents returns NULL, when file not opened.
+
+
+
+Version 13 (first published 2015-November-26):
+==============================================
+
+
+Highlights:
+- Added user interface in NAUI. Very rudimentary just usable for one OpenGL
+  view. But you have to start somewhere.
+- Added threading NAThreading.h
+- List elements can now be quickly transfered from one list to anoter.
+  Added NAListPos to quickly locate list elements. Get the pos when adding
+  new elements and use it in naLocateListPos and naMoveListXXX.
+
+Other things:
+- Added memory observation functions for debugging.
+- Added slow methods naIsSizeiEmptySlow, naIsRectiEmptySlow,
+  naIsVolumeiEmptySlow, naIsBoxiEmptySlow. Refined some debug checks
+- NABool is now typedef'd as NAUInt instead of int. Removed some warnings.
+- Found some serious bugs with aligned allocations in earlier versions of
+  Mac OS X. Changed naFreePageAligned to naFreeAligned and reprogrammed
+  a workaround.
+- Added naExchangeListParts
+- Added naAdjustOctTreeRoot and naAdjustQuadTreeRoot. The tree now adjusts
+  its root automatically, when it has only one child node.
+- Revisited the readme file
+- Added NAFunc, a general calling function type
+- Removed NAConstructor.
+- Removed NADestructor in NAArray and NAList.
+- Renamed NADestructor to NATypeDestructor and only use it in NARuntime.
+- Removed NAStructInfo. This was an unused relict of the time of implementing
+  NARuntime.
+- Moved the naSleep functions to NAThreading.h
+- Removed many implicit conversions from NAVectorAlgebra.h
+- Made it compile under VisualStudio again.
+- Added NA_ZERO_DEGREES to the math constants
+- Moved slow and helper functions of NAList.h to NAList.c
+- Changed the C11 macro of NA_NULL to NULL.
+- Added File access methode naAccess
+- Renamed Scale and componentwise div functions in NAVectorAlgebra to MulComp
+  and DivComp. Added componentwise multiplication and division of Matrices.
+  Added InvComp for vectors and matrices.
+- Renamed matrix inversion to naInvXXX
+- Added Determinant computation and Matrix equality tests in NAVectorAlgebra.h
+- Fixed some type conversion and equal pointer bugs in NAVectorAlgebra.h
+- Fixed some erroneous checks in NAVectorAlgebra.h
+- Added float versions of rotation matrix functions
+
+
+Version 12 (first published 2015-August-30):
+==============================================
+
+- Complete reorganization of base memory structs: Three new structs are
+  introduced: NACArray, NAMemoryBlock and NAPtr. The NAPtr is the same as
+  NALValue before, NALValue is now something different. In total, there are
+  now four structs which corresponds to four combinations of having a bytesize
+  and typesize available per pointer or not. The NAPointer struct distinguishes
+  between all of them. NAPointer now much bigger and stores flags separate from
+  refcount.
+- NAGrowingSpace now grows exponentially. Slight changes to API. Simplified
+  whole implementation and made it inline again. NAGrowingSpace.c is removed.
+- Greatly enhanced NAVectorAlgebra.h to have many more checks, E and S variants
+  and more documentation. The API has beed changed for double-vectors and
+  double-matrices. The now need the type ending d. Slightly changed semantics
+  for naNormalize and naOrthogonalize and some matrix functions. Corrected Bug
+  in naOrthonormalize.
+- NAHeap now shrinks and grows automatically, if desired.
+- Fully implemented NAPool.
+
+- QuadTree and OctTree Allocators and Deallocators now have a userdata param.
+  Warning: Not located at the last parameter!
+- NAList now uses the runtime with NAListElement
+- Added naGetHeapMaxCount
+- Added naTransposeMXX functions for transposing matrices. Added RowFirst and
+  ColumnFirst for Matrix filling
+- Added naIsListEmpty
+- Removed constructor and destructor from NAGrowingSpace. Removed
+  naInitArrayWithGrowingSpace.
+- NAPointer can now be constructed with either NAPtr, NALValue, NAMemoryBlock
+  or NACArray.
+- Added iteration functions for NAByteArray but commented it out later again.
+- Added Array iteration for NAGrowingSpace
+- Renamed NA_INVALID_INDEX to NA_INVALID_MEMORY_INDEX, added
+  NA_INVALID_MEMORY_SIZE and moved them to NAMemory.h
+- Added more checks in NAMemory.h
+- Renamed naMakePositiveiInSize to naMakeIntegerRangePositiveInSize and
+  moved it to NAMathOperators.h
+- Improved documentation in some files
+- Renamed the Changelog files to reflect the Versions contained.
+
+
+
+Version 11 (first published 2015-August-16):
+==============================================
+
+Highlights:
+- Added CODATA 2014 from NIST for physical constants
+- Added Leap Second entry according to bulletin C 50
+- Added third dimension to NACoord.h: NAVertex, NAVolume and NABox. Moved
+  NARange to the same file. Consequently, generalizing some APIs.
+- Greatly documented NAQuadTree and changed implementation to be non-redundant.
+  Some API changes introduced.
+- Added NAOctTree
+- Renamed all naCpyXXX to naCopyXXX. Renamed all naSetXXX to naFillXXX which
+  are not state machine functions.
+- Changed all NAVecXXX and NAMatXXX parameters to their direct pointer
+  equivalent. For example NAVec3f now is typed float*
+- Added Quaternion 3D rotations in naFillM33WithRotationAlongAxis and
+  naFillM33WithRotationAngles in NAVectorAlgebra.h
+
+Other things:
+- Added macro check for c++ standard keyword detection.
+- Changed count value of NAList to NAUInt
+- Added another macro check for va_copy
+- Moved NAPointer to NARuntime.h, renamed NAPointer.h to NAMemory.h
+- Added intersection functions to naCoord.h
+- Added Iteration for naQuadTree and naOctTree. Removed obsolete GrowingSpace
+  functions consequently. Iteration is way faster!
+- Removed naFillRangeXXX, naInsideRange and naAlmostInsideRange functions.
+- Removed NARectArea.h, NARectArea.c, NAMinMax.h, NAMinMax.c and NARange.h
+  Consequently, moved some functions elsewhere or deleted them.
+- NAByteMap.h and NAMap2D.h are not deleted yet. We'll see how these files
+  turn out in the near future.
+- Added NA_ZERO, NA_ONE, naIsIntStrictlyPositive, naIsIntZero, naIsIntNegative
+- Macro check for Bytes being 8 bits wide moved to NASystem.h
+- Changed NA_SYMBOL_VISIBLE and NA_SYMBOL_HIDDEN to NA_LINKER_EXPORT and
+  NA_LINKER_NO_EXPORT
+- Removed naNewPointerStruct. Moved code directly to the other constructors.
+- Removed naGetPointerLValue.
+- Replaced naNewPointerWithConstBuffer and naNewPointerWithMutableBuffer with
+  naNewPointerWithLValue.
+- Changed naFillLValueXXX functions to naMakeLValueXXX
+- Added more C-standard macros and made many definitions dependent on that.
+- Made some benchmarks and therefore added a custom pool size instead of
+  relying on the memory page size. Added NA_POOL_SIZE_EQUALS_PAGESIZE and
+  NA_CUSTOM_POOL_SIZE.
+- Removed string encoding. NALib currently is only capable to handle UTF-8.
+  It is just too much to rewrite all encodings from scratch. For now.
+- Added naLog2i
+- NAQuadTree now expands in 4 cycles such that a tree will always be the same
+  no matter how he is constructed.
+- naSeedRand now returns the seed created when using 0
+
+
+
+
+Version 10 (first published 2015-July-1):
+==============================================
+
+This changelog file starts with NALib version 10.
+
+A full changelog of version 10 and earlier versions are described in other
+files. Here, only a recapitulation of the most important things of NALib is
+described:
+
+NALib is a source code collection provided with a very open license for
+everyone to use. It is a pure C library which has been derived from a private
+C++ library more than a decade in the making.
+
+NALib provides code for various data formats and algorithms commonly used
+every day in a software engineers work. It compiles with clang and gcc on
+Mac OS X as well as with Visual-C on Windows. Other systems may or may not
+be supported. The collection has been used to drive several commercial
+applications on Mac and Windows.
+
+During the first 10 version iterations, continuous improvements have been made
+in order to simplify the API, add code safety, provide debugging helpers and
+to enhance the collection. From the start, the documentation of NALib was
+embedded withing the source files, mainly the header files. The documentation
+is supposed to be didactical for people to understand what is going on in the
+code and which API should be used under what circumstances.
+
+
+
+
+
+
+-----------------------
+
+Copyright (c) NALib, Tobias Stamm, Manderim GmbH
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the source-code.
+
+In case the source-code of this software is inaccessible to the end-user,
+the above copyright notice and this permission notice shall be included
+in any source-code which is dependent on this software and is accessible
+to the end-user.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
