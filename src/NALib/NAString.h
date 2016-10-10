@@ -9,7 +9,7 @@
 #endif
 
 #include "NAByteArray.h"
-#include "NARuntime.h"
+#include "NAMemory.h"
 
 // Note that in NALib, a String is internally always encoded in UTF-8.
 // Further more, the contents of a string can not be altered after its
@@ -64,7 +64,7 @@ typedef enum{
 
 
 
-NA_IAPI NAUInt naStrlen(const NAUTF8Char* str);
+NA_API NAUInt naStrlen(const NAUTF8Char* str);
 
 
 
@@ -381,34 +381,6 @@ NA_API NABool naEqualUTF8CStringLiteralsCaseInsensitive( const NAUTF8Char* strin
                                                          const NAUTF8Char* string2);
 
 
-
-
-
-
-// Use this to register the NAString struct for use in the Runtime. Note that
-// at the moment naStartRuntime does this for you.
-NA_API void naPrepareStringRuntime();
-
-
-
-
-
-
-
-
-
-// ///////////////////////////////////////////////////////////////////////
-// Inline Implementations: See readme file for more expanation.
-// ///////////////////////////////////////////////////////////////////////
-
-
-#include <string.h>
-
-
-
-NA_IDEF NAUInt naStrlen(const NAUTF8Char* str){
-  return (NAUInt)strlen((const char*)str);
-}
 
 
 

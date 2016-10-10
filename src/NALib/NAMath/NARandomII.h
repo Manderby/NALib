@@ -2,62 +2,70 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#ifndef NA_URL_INCLUDED
-#define NA_URL_INCLUDED
-#ifdef __cplusplus 
-  extern "C"{
-#endif
 
 
-#include "NAList.h"
-
-
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
-  #define NA_PATH_DELIMITER_SYSTEM NA_PATH_DELIMITER_WIN
-#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-  #define NA_PATH_DELIMITER_SYSTEM NA_PATH_DELIMITER_UNIX
-#endif
-
-
-#define NA_URL_PATH_ABSOLUTE 0x01
-
-typedef struct NAURL NAURL;
-struct NAURL{
-  uint32 status;
-  NAList path;
-};
-
-
-// Creates an empty URL
-NA_IAPI NAURL* naInitURL(NAURL* url);
-
-// - Both delimiters / and \ will be detected.
-// - If the path starts with a path delimiter, it is considered absolute.
-//   Example: /usr/local is an absolute path, src/NALib is not.
-// - Erroneous duplicate path delimiters or ending delimiters will be ignored.
-//   Example: /usr//local/ results in /usr/local
-NA_IAPI NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string);
-NA_IAPI void naClearURL(NAURL* url);
-
-// Creates a new string containing just the last path component.
-// Note that there is no distinction if the last component is the name of a
-// folder or of a file. If the file has a suffix, it is contained in the
-// returned string.
-NA_IAPI NAString* naNewStringWithURLFilename(NAURL* url);
+// This file contains inline implementations of the file NARandom.h
+// Do not include this file directly! It will automatically be included when
+// including "NARandom.h"
 
 
 
+#include <stdlib.h>
+#include "NADateTime.h"
+
+NA_IDEF NAInt naRand(){
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    return rand();
+  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+    return rand();
+  #endif
+}
 
 
-// Inline implementations are in a separate file:
-#include "NACore/NAURLII.h"
+NA_IDEF void naSRand(uint32 seed){
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    srand(seed);
+  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+    srand(seed);
+  #endif
+}
 
 
+NA_IDEF uint32 naSeedRand(uint32 seed){
+  if(seed){
+    seed = (uint32)seed;
+  }else{
+    NADateTime dt = naMakeDateTimeNow();
+    seed = (int32)dt.sisec ^ dt.nsec;
+  }
+  naSRand((uint32)seed);
+  return seed;
+}
 
-#ifdef __cplusplus 
-  } // extern "C"
-#endif
-#endif // NA_ARRAY_INCLUDED
+
+#define NA_INV_RAND_MAX  (1.  / RAND_MAX)
+#define NA_INV_RAND_MAXf (1.f / RAND_MAX)
+
+NA_IDEF double naUniformRandZE(){
+  double rnd;
+  do{rnd = (double)naRand();} while(rnd == RAND_MAX);
+  return rnd * NA_INV_RAND_MAX;
+}
+NA_IDEF float naUniformRandZEf(){
+  float rnd;
+  do{rnd = (float)naRand();} while(rnd == RAND_MAX);
+  return rnd * NA_INV_RAND_MAXf;
+}
+    
+
+
+NA_IDEF double naUniformRandZI(){
+  return (double)naRand() * NA_INV_RAND_MAX;
+}
+NA_IDEF float naUniformRandZIf(){
+  return (float)naRand() * NA_INV_RAND_MAXf;
+}
+    
 
 
 

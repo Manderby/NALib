@@ -134,20 +134,6 @@ NA_HIAPI void naMakeIntegerRangePositiveInSize(
 
 
 
-
-
-
-
-
-
-// //////////////////////////////////////////
-// Inline Implementations. See Readme file.
-// //////////////////////////////////////////
-
-
-
-
-
 NA_HIDEF int32 naEndToMaxi32(int32 end){
   #ifndef NDEBUG
     if(end == NA_INT32_MIN)

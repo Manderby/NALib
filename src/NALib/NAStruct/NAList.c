@@ -1,7 +1,8 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#include "NAList.h"
+#include "../NAList.h"
+
 
 
 
@@ -62,14 +63,6 @@ NA_DEF NABool naLocateListIndex(const NAList* list, NAInt indx){
 }
 
 
-NATypeIdentifier na_NAListElement_identifier = NA_NULL;
-
-NA_HDEF void naPrepareListElementRuntime(){
-  NATypeInfo typeinfo;
-  typeinfo.typesize = sizeof(NAListElement);
-  typeinfo.destructor = NA_NULL;
-  na_NAListElement_identifier = naManageRuntimeType(&typeinfo);
-}
 
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH

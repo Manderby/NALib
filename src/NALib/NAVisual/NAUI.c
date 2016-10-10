@@ -2,62 +2,63 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#ifndef NA_URL_INCLUDED
-#define NA_URL_INCLUDED
-#ifdef __cplusplus 
-  extern "C"{
-#endif
+#include "NAUICoreAPI.h"
 
 
-#include "NAList.h"
+// This file contains function implementations which are directly forwarding
+// to a function in the CoreUI implementations.
 
 
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
-  #define NA_PATH_DELIMITER_SYSTEM NA_PATH_DELIMITER_WIN
-#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-  #define NA_PATH_DELIMITER_SYSTEM NA_PATH_DELIMITER_UNIX
-#endif
+// ///////////////////////////////////
+// APPLICATION
+// ///////////////////////////////////
 
 
-#define NA_URL_PATH_ABSOLUTE 0x01
-
-typedef struct NAURL NAURL;
-struct NAURL{
-  uint32 status;
-  NAList path;
-};
-
-
-// Creates an empty URL
-NA_IAPI NAURL* naInitURL(NAURL* url);
-
-// - Both delimiters / and \ will be detected.
-// - If the path starts with a path delimiter, it is considered absolute.
-//   Example: /usr/local is an absolute path, src/NALib is not.
-// - Erroneous duplicate path delimiters or ending delimiters will be ignored.
-//   Example: /usr//local/ results in /usr/local
-NA_IAPI NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string);
-NA_IAPI void naClearURL(NAURL* url);
-
-// Creates a new string containing just the last path component.
-// Note that there is no distinction if the last component is the name of a
-// folder or of a file. If the file has a suffix, it is contained in the
-// returned string.
-NA_IAPI NAString* naNewStringWithURLFilename(NAURL* url);
+NA_DEF void naStopApplication(void){
+  naStopCoreApplication();
+}
 
 
 
+NA_DEF NAApplication* naGetApplication(void){
+  return (NAApplication*)naGetCoreApplication();
+}
 
 
-// Inline implementations are in a separate file:
-#include "NACore/NAURLII.h"
+
+// ///////////////////////////////////
+// UI ELEMENT
+// ///////////////////////////////////
+
+NA_DEF NAUIElementType naGetUIElementType(NAUIElement* element){
+  return naGetCoreUIElementType((NACoreUIElement*)element);
+}
 
 
 
-#ifdef __cplusplus 
-  } // extern "C"
-#endif
-#endif // NA_ARRAY_INCLUDED
+NA_DEF NAUIElement* naGetUIElementParent(NAUIElement* uielement){
+  return naGetCoreUIElementParent((NACoreUIElement*)uielement);
+}
+
+
+
+NA_DEF NAWindow* naGetUIElementWindow(NAUIElement* uielement){
+  return naGetCoreUIElementWindow(uielement);
+}
+
+
+
+NA_DEF NANativeID naGetUIElementNativeID(NAUIElement* element){
+  return naGetCoreUIElementNativeID((NACoreUIElement*)element);
+}
+
+
+
+NA_DEF void naRefreshUIElement(NAUIElement* uielement, double timediff){
+  naRefreshCoreUIElement(uielement, timediff);
+}
+
+
 
 
 

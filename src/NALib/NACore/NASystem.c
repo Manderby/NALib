@@ -2,7 +2,8 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#include "NASystem.h"
+#include "../NASystem.h"
+
 
 
 
@@ -49,7 +50,10 @@
   NABool na_debug_mem_count_bytes = NA_FALSE;
 
 
+
 #endif
+
+
 
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH

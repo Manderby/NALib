@@ -3,14 +3,57 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 
-#include "NAPNG.h"
-#include "NABuffer.h"
-#include "NADeflate.h"
+#include "../NAPNG.h"
+#include "../NABuffer.h"
+#include "../NADeflate.h"
 
 // Reference: http://www.w3.org/TR/PNG
 
 #define NA_PNG_FLAGS_IHDR_AVAILABLE       0x01
 #define NA_PNG_FLAGS_sRGB_AVAILABLE       0x02
+
+
+#include "../NAList.h"
+#include "../NAVectorAlgebra.h"
+
+typedef enum{
+  NA_PIXEL_UNIT_UNDEFINED,
+  NA_PIXEL_UNIT_RATIO,
+  NA_PIXEL_UNIT_PER_INCH,
+  NA_PIXEL_UNIT_PER_METER,
+} NAPixelUnit;
+
+typedef enum{
+  NA_PNG_INTERLACE_NONE = 0,
+  NA_PNG_INTERLACE_ADAM7 = 1,
+} NAPNGInterlaceMethod;
+
+struct NAPNG{
+  NASizei size;
+  NAList chunks;
+  uint32 flags;
+  int8 bitdepth;
+  NAPNGColorType colortype;
+  int8 compressionmethod;
+  int8 filtermethod;
+  float gamma;
+  NAVec2f whitepoint;
+  NAVec2f redprimary;
+  NAVec2f greenprimary;
+  NAVec2f blueprimary;
+  uint8 significantbits[4];
+  NAVec2f pixeldimensions;
+  NAPixelUnit pixelunit;
+  NADateTime modificationdate;
+  NAPNGInterlaceMethod interlacemethod;
+
+  NAByte* pixeldata;
+  NABuffer filtereddata;
+};
+
+
+NA_HAPI void naDestructPNG(NAPNG* png);
+NA_RUNTIME_TYPE(NAPNG, naDestructPNG);
 
 
 typedef enum{
@@ -579,13 +622,41 @@ NA_HDEF void naReadPNGzTXtChunk(NAPNG* png, NAPNGChunk* ztxt){
 
 
 
+NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colortype, NAUInt bitdepth){
+  NAUInt bpp;
+  NAPNG* png = naNew(NAPNG);
+  
+  #ifndef NDEBUG
+    if(bitdepth != 8)
+      naError("naInitPNG", "Sorry, bitdepth must be 8 for now. Everything else will be implemented later.");
+    if((colortype != NA_PNG_COLORTYPE_TRUECOLOR) && (colortype != NA_PNG_COLORTYPE_TRUECOLOR_ALPHA))
+      naError("naInitPNG", "Sorry, colortype must be truecolor with or without alpha. Everything else will be implemented later.");
+  #endif
+  naInitList(&(png->chunks));
+  png->flags = 0;
+  png->bitdepth = (uint8)bitdepth;
+  png->compressionmethod = 0;
+  png->interlacemethod = NA_PNG_INTERLACE_NONE;
+  png->filtermethod = 0;
+  naSetPNGDefaultColorimetry(png);
+  png->pixeldimensions[0] = 1.;
+  png->pixeldimensions[1] = 1.;
+  png->pixelunit = NA_PIXEL_UNIT_RATIO;
+  png->size = size;
+  png->colortype = colortype;
+  
+  bpp = naGetPNGBytesPerPixel(colortype);
+  png->pixeldata = naMalloc(size.width * size.height * bpp);
+  
+  return png;
+}
 
 
 
-NA_DEF NAPNG* naInitPNGWithFile(NAPNG* png, const char* filename){
+NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   NABuffer* buffer;
   NAByte magic[8];
-  NAPNGChunk* curchunk;
+  NAPNG* png = naNew(NAPNG);
   
   naInitList(&(png->chunks));
   png->flags = 0;
@@ -610,7 +681,7 @@ NA_DEF NAPNG* naInitPNGWithFile(NAPNG* png, const char* filename){
   }
   
   while(1){
-    curchunk = naAllocPNGChunkFromBuffer(buffer);
+    NAPNGChunk* curchunk = naAllocPNGChunkFromBuffer(buffer);
     if(curchunk->type == NA_PNG_CHUNK_TYPE_IEND){break;}
     naAddListLastMutable(&(png->chunks), curchunk);
   }
@@ -618,8 +689,9 @@ NA_DEF NAPNG* naInitPNGWithFile(NAPNG* png, const char* filename){
   // Create the buffer to hold the decompressed data
   naInitBuffer(&(png->filtereddata));
   
-  naFirstList(&(png->chunks));
-  while((curchunk = naIterateListMutable(&(png->chunks), 1))){
+  naRewindList(&(png->chunks));
+  while(naIterateList(&(png->chunks), 1)){
+    NAPNGChunk* curchunk = naGetListCurrentMutable(&(png->chunks));
     switch(curchunk->type){
     case NA_PNG_CHUNK_TYPE_IHDR:  naReadPNGIHDRChunk(png, curchunk);  break;
     case NA_PNG_CHUNK_TYPE_PLTE:  naReadPNGPLTEChunk(png, curchunk);  break;
@@ -656,37 +728,6 @@ NA_DEF NAPNG* naInitPNGWithFile(NAPNG* png, const char* filename){
 
 
 
-
-NA_DEF NAPNG* naInitPNG(NAPNG* png, NASizei size, NAPNGColorType colortype, NAUInt bitdepth){
-  NAUInt bpp;
-  
-  #ifndef NDEBUG
-    if(bitdepth != 8)
-      naError("naInitPNG", "Sorry, bitdepth must be 8 for now. Everything else will be implemented later.");
-    if((colortype != NA_PNG_COLORTYPE_TRUECOLOR) && (colortype != NA_PNG_COLORTYPE_TRUECOLOR_ALPHA))
-      naError("naInitPNG", "Sorry, colortype must be truecolor with or without alpha. Everything else will be implemented later.");
-  #endif
-  naInitList(&(png->chunks));
-  png->flags = 0;
-  png->bitdepth = (uint8)bitdepth;
-  png->compressionmethod = 0;
-  png->interlacemethod = NA_PNG_INTERLACE_NONE;
-  png->filtermethod = 0;
-  naSetPNGDefaultColorimetry(png);
-  png->pixeldimensions[0] = 1.;
-  png->pixeldimensions[1] = 1.;
-  png->pixelunit = NA_PIXEL_UNIT_RATIO;
-  png->size = size;
-  png->colortype = colortype;
-  
-  bpp = naGetPNGBytesPerPixel(colortype);
-  png->pixeldata = naMalloc(size.width * size.height * bpp);
-  
-  return png;
-}
-
-
-
 NA_DEF void* naGetPNGPixelData(NAPNG* png){
   return png->pixeldata;
 }
@@ -720,7 +761,6 @@ NA_DEF NAUInt naGetPNGBitDepth(NAPNG* png){
 
 NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
   NABuffer outbuffer;
-  NAPNGChunk* curchunk;
   NAChecksum checksum;
   NAFile outfile;
 
@@ -733,8 +773,9 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
 
   naWriteBufferBytes(&outbuffer, na_png_magic, 8);
 
-  naFirstList(&(png->chunks));
-  while((curchunk = naIterateListMutable(&(png->chunks), 1))){
+  naRewindList(&(png->chunks));
+  while(naIterateList(&(png->chunks), 1)){
+    NAPNGChunk* curchunk = naGetListCurrentMutable(&(png->chunks));
     naFixBufferMaxPos(&(curchunk->data));
     
     curchunk->length = naGetBufferSize(&(curchunk->data));
@@ -766,7 +807,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
 
 // This is the destructor for a PNG. It is marked as a helper as it should
 // only be called by the runtime system
-NA_DEF void naClearPNG(NAPNG* png){
+NA_HDEF void naDestructPNG(NAPNG* png){
   naForeachList(&(png->chunks), (NAFunc)naDeallocPNGChunk);
   naClearList(&(png->chunks));
 }

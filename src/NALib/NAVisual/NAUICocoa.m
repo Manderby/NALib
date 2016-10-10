@@ -10,113 +10,25 @@
 // you can simply delete the .m File from your source tree.
 
 #ifdef __OBJC__
-#import <Cocoa/Cocoa.h>
-#include <objc/message.h>
-
-#include "NAUIHiddenAPI.h"
 #if NA_SYSTEM == NA_SYSTEM_MAC_OS_X
 // Now, we are sure, we compile with Objective-C and on MacOSX. The two
 // #if directives will be closed at the very bottom of this file.
 
+#include "NAUICocoa.h"
 #include "NAMemory.h"
-
-
 #include "NACoord.h"
 #include "NAThreading.h"
 
 
 
-struct NAApplication{
-  NAUIElement uielement;
-//  NSAutoreleasePool* autoreleasepool;
-  NABool ismousevisible;
-};
-
-struct NAScreen{
-  NAUIElement uielement;
-};
-
-
-struct NAWindow{
-  NAUIElement uielement;
-  NABool fullscreen;
-  NARect windowedframe;
-  NAUInt trackingcount;
-  NSTrackingArea* trackingarea;
-};
-
-
-struct NAOpenGLView{
-  NAUIElement uielement;
-};
 
 
 
 
 
-
-
-
-
-typedef struct NAUI NAUI;
-extern NAUI* na_ui;
-
-
-
-//@interface NAApplicationStartup : NSObject <NSApplicationDelegate>{
-//  NAApplicationStartup* myself;
-//  NAFunc startupfunction;
-//  id olddelegate;
-//}
-//@end
-//
-//@implementation NAApplicationStartup
-//- (void)applicationDidFinishLaunching:(NSNotification *)notification{
-//
-//  naInitBareUI();
-//  NAApplication* app = naAlloc(NAApplication);
-//  naInitUIElement(&(app->uielement), NA_NULL, NA_UI_APPLICATION, NSApp);
-//
-//  if(startupfunction){startupfunction();}
-//  [NSApp setDelegate:olddelegate];
-//  if(olddelegate){
-//    [olddelegate applicationDidFinishLaunching:notification];
-//  }
-////  [self release];
-//}
-//- (void)setMyself:(NAApplicationStartup*)newmyself{myself = newmyself;}
-//- (void)setStartupFunction:(NAFunc)newfunction{startupfunction = newfunction;}
-//- (void)setOldDelegate:(id)newolddelegate{olddelegate = newolddelegate;}
-//@end
-
-
-
-NA_DEF void naCallFunctionInSeconds(NAFunc function, void* arg, double timediff){
-  dispatch_time_t nexttime = dispatch_time(DISPATCH_TIME_NOW, 1000000000 * timediff);
-  dispatch_queue_t queue = dispatch_get_current_queue();
-  dispatch_after_f(nexttime, queue, arg, function);
-}
-
-
-
-NA_HDEF NABool naDispatchUIElementCommandCocoa(NSEvent* event){
-//  NSEventType type = [event type];
-  [NSApp sendEvent:event];
-  return NA_TRUE;
-}
-
-
-
-NA_HDEF void naStartupNALibApplication(void){
-  naInitBareUI();
-  NAApplication* app = naAlloc(NAApplication);
-  naInitUIElement(&(app->uielement), NA_NULL, NA_UI_APPLICATION, NSApp);
-}
-
-
-NA_DEF void naOpenConsoleWindow(){
-  // Does nothing on the Mac
-}
+// ///////////////////////////////////
+// APPLICATION
+// ///////////////////////////////////
 
 
 NA_DEF void naStartApplication(NAFunc prestartup, NAFunc poststartup, void* arg){
@@ -125,36 +37,50 @@ NA_DEF void naStartApplication(NAFunc prestartup, NAFunc poststartup, void* arg)
 //  ( (id (*)(id, SEL)) objc_msgSend)(objc_getClass("NSApplication"), sel_registerName("sharedApplication"));
 
   [NSApplication sharedApplication];
-
-  naInitBareUI();
-  NAApplication* app = naAlloc(NAApplication);
-  naInitUIElement(&(app->uielement), NA_NULL, NA_UI_APPLICATION, NSApp);
-  app->ismousevisible = NA_TRUE;
+  naStartCoreApplication(sizeof(NACocoaApplication), NSApp);
 
   NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    if(prestartup){prestartup(arg);}
+    if(prestartup && (prestartup != NA_NULLFUNC)){prestartup(arg);}
     [NSApp finishLaunching];
-    if(poststartup){poststartup(arg);}
+    if(poststartup && (poststartup != NA_NULLFUNC)){poststartup(arg);}
   [pool drain];
 
   NSDate* distantfuture = [NSDate distantFuture];
-  while(1){
+  while(naIsCoreApplicationRunning()){
     pool = [[NSAutoreleasePool alloc] init];
       NSEvent* curevent = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:distantfuture inMode:NSDefaultRunLoopMode dequeue:YES];
-      if(curevent){naDispatchUIElementCommandCocoa(curevent);}
+      if(curevent){[NSApp sendEvent:curevent];}
     [pool drain];
   }
+  
+  naClearCoreApplication();
+}
+
+
+
+NA_DEF void naCallApplicationFunctionInSeconds(NAFunc function, void* arg, double timediff){
+  dispatch_time_t nexttime = dispatch_time(DISPATCH_TIME_NOW, 1000000000 * timediff);
+  dispatch_queue_t queue = dispatch_get_current_queue();
+  dispatch_after_f(nexttime, queue, arg, function);
+}
+
+
+
+NA_DEF void naOpenConsoleWindow(void){
+  // Does nothing on the Mac
 }
 
 
 
 
-NA_DEF void cubFlushGarbageMemory(){
-  #ifndef NDEBUG
-    if(!NSApp)
-      {naCrash("naInitUI", "You need to have an active NSApplication. See API for more information.");return;}
-  #endif
 
+// ///////////////////////////////////
+// UI ELEMENT
+// ///////////////////////////////////
+
+
+NA_DEF void naRefreshUIElementNow(NAUIElement* uielement){
+  [((NSView*)naGetUIElementNativeID(uielement)) setNeedsDisplay:YES];
 }
 
 
@@ -172,61 +98,6 @@ NA_DEF void cubFlushGarbageMemory(){
 
 
 
-
-
-
-
-//NA_DEF NAUInt naRunUI(){
-//  #ifndef NDEBUG
-//    if(!na_ui)
-//      {naCrash("naRunUI", "UI not initialized.");return 0;}
-//    if(!NSApp)
-//      {naCrash("naRunUI", "You need to have an active NSApplication. See API for more information.");return 0;}
-//    if(CFRunLoopGetCurrent() != CFRunLoopGetMain())
-//      naError("naRunUI", "The UI should run in the main loop");
-//  #endif
-//  
-////  CFRunLoopRef testref = CFRunLoopGetCurrent();
-////  CFRunLoopRef testref2 = CFRunLoopGetMain();
-//  
-////  NAApplication* app = naGetApplication();
-//  
-////  naGetApplication()->autoreleasepool = [[NSAutoreleasePool alloc] init];
-////  [NSApp run];
-////  NSAutoreleasePool* pool;
-//
-//  NSDate* distantfuture = [NSDate distantFuture];
-//  while(1){
-//    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-//    NSEvent* curevent = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:distantfuture inMode:NSDefaultRunLoopMode dequeue:YES];
-//    if(curevent){
-//      naDispatchUIElementCommandCocoa(curevent);
-//    }
-////    [curevent release];
-////  cubFlushGarbageMemory();
-//    [pool drain];
-////  [NSAutoreleasePool showPools];
-////    cubFlushGarbageMemory();
-//  }
-//  return 0;
-//
-//}
-
-
-
-
-
-
-
-
-
-
-
-
-
-NA_HDEF void naRefreshUIElementNow(void* uielement){
-  [((NSView*)naGetUINativeID(uielement)) setNeedsDisplay:YES];
-}
 
 
 
@@ -244,12 +115,12 @@ NA_HDEF NARect naGetApplicationAbsoluteRect(){
 
 
 
-NA_HDEF NARect naGetScreenAbsoluteRect(NAUIElement* screen){
+NA_HDEF NARect naGetScreenAbsoluteRect(NACoreUIElement* screen){
   NARect rect;
   NSRect frame;
   NSRect mainframe;
   mainframe = [[NSScreen mainScreen] frame];
-  frame = [(NSScreen*)(naGetUINativeID(screen)) frame];
+  frame = [(NSScreen*)(naGetUIElementNativeID((NAUIElement*)screen)) frame];
   rect.pos.x = frame.origin.x;
   rect.pos.y = mainframe.size.height - frame.size.height - frame.origin.y;
   rect.size.width = frame.size.width;
@@ -259,12 +130,13 @@ NA_HDEF NARect naGetScreenAbsoluteRect(NAUIElement* screen){
 
 
 
-NA_HDEF NARect naGetWindowAbsoluteInnerRect(NAUIElement* window){
+NA_HDEF NARect naGetWindowAbsoluteInnerRect(NACoreUIElement* window){
   NARect rect;
   NSRect contentrect;
   NSRect windowframe;
-  contentrect = [[(NSWindow*)(naGetUINativeID(window)) contentView] frame];
-  windowframe = [(NSWindow*)(naGetUINativeID(window)) frame];
+  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+  contentrect = [[nativewindow contentView] frame];
+  windowframe = [nativewindow frame];
   rect.pos.x = windowframe.origin.x + contentrect.origin.x;
   rect.pos.y = windowframe.origin.y + contentrect.origin.y;
   rect.size.width = contentrect.size.width;
@@ -274,10 +146,11 @@ NA_HDEF NARect naGetWindowAbsoluteInnerRect(NAUIElement* window){
 
 
 
-NA_HDEF NARect naGetWindowAbsoluteOuterRect(NAUIElement* window){
+NA_HDEF NARect naGetWindowAbsoluteOuterRect(NACoreUIElement* window){
   NARect rect;
   NSRect windowframe;
-  windowframe = [(NSWindow*)(naGetUINativeID(window)) frame];
+  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+  windowframe = [nativewindow frame];
   rect.pos.x = windowframe.origin.x;
   rect.pos.y = windowframe.origin.y;
   rect.size.width = windowframe.size.width;
@@ -287,13 +160,13 @@ NA_HDEF NARect naGetWindowAbsoluteOuterRect(NAUIElement* window){
 
 
 
-NA_HDEF NARect naGetViewAbsoluteInnerRect(NAUIElement* view){
+NA_HDEF NARect naGetViewAbsoluteInnerRect(NACoreUIElement* view){
   NARect rect;
   NSRect contentrect;
   NARect windowrect;
   // Warning: does not work when frame unequal bounds.
-  contentrect = [(NSView*)(naGetUINativeID(view)) frame];
-  windowrect = naGetWindowAbsoluteInnerRect((NAUIElement*)naGetUIElementWindow(view));
+  contentrect = [(NSView*)(naGetUIElementNativeID((NAUIElement*)view)) frame];
+  windowrect = naGetWindowAbsoluteInnerRect((NACoreUIElement*)naGetUIElementWindow((NAUIElement*)view));
   rect.pos.x = windowrect.pos.x + contentrect.origin.x;
   rect.pos.y = windowrect.pos.y + contentrect.origin.y;
   rect.size.width = contentrect.size.width;
@@ -303,27 +176,27 @@ NA_HDEF NARect naGetViewAbsoluteInnerRect(NAUIElement* view){
 
 
 
-NA_DEF NARect naGetUIElementRect(void* uielement, void* relativeelement, NABool includebounds){
+NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeuielement, NABool includebounds){
   NARect rect;
   NARect relrect;
-  NAUIElement* element;
-  NAUIElement* relelement;
+  NACoreUIElement* element;
+  NACoreUIElement* relelement;
   
-  element = (NAUIElement*)uielement;
-  relelement = (NAUIElement*)relativeelement;
+  element = (NACoreUIElement*)uielement;
+  relelement = (NACoreUIElement*)relativeuielement;
   NAApplication* app = naGetApplication();
   
   // First, let's handle the root case: Returning the application rect.
-  if(element == (NAUIElement*)app){
+  if(element == (NACoreUIElement*)app){
     #ifndef NDEBUG
-      if(relativeelement && (relativeelement != app))
+      if(relelement && (relelement != (NACoreUIElement*)app))
         naError("naGetUIElementRect", "The relative element is invalid for the given uielement, which seems to be the application.");
     #endif
     return naGetApplicationAbsoluteRect();
   }
   
   // Now, we find the appropriate relative element.
-  if(!relelement){relelement = naGetUIElementParent(element);}
+  if(!relelement){relelement = (NACoreUIElement*)naGetUIElementParent((NAUIElement*)element);}
   
   switch(element->elementtype){
   case NA_UI_APPLICATION: rect = naGetApplicationAbsoluteRect(); break;
@@ -362,8 +235,6 @@ NA_DEF NARect naGetUIElementRect(void* uielement, void* relativeelement, NABool 
 
 
 
-@interface NANativeView : NSView
-@end
 
 @implementation NANativeView
 - (void)drawRect:(NSRect)dirtyRect{
@@ -374,93 +245,94 @@ NA_DEF NARect naGetUIElementRect(void* uielement, void* relativeelement, NABool 
 
 
 
-@interface NANativeWindow : NSWindow <NSWindowDelegate>{
-  NAWindow* nalibwindow;
-}
-@end
 
 @implementation NANativeWindow
-- (id) initWithNALibWindow:(NAWindow*)nawindow contentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag screen:(NSScreen *)screen{
+- (id) initWithCocoaWindow:(NACocoaWindow*)nawindow contentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag screen:(NSScreen *)screen{
   self = [super initWithContentRect:contentRect styleMask:aStyle backing:bufferingType defer:flag screen:screen];
-  nalibwindow = nawindow;
+  cocoawindow = nawindow;
   return self;
 }
-- (NAWindow*) nalibwindow{return nalibwindow;}
+- (NACocoaWindow*) cocoawindow{return cocoawindow;}
 - (void)mouseMoved:(NSEvent *)theEvent{
 //  double deltaX = [theEvent deltaX];
 //  double deltaY = [theEvent deltaY];
   naSetMouseMovedByDiff([theEvent deltaX], [theEvent deltaY]);
-  naDispatchUIElementCommand(nalibwindow, NA_UI_COMMAND_MOUSE_MOVED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)cocoawindow, NA_UI_COMMAND_MOUSE_MOVED, NA_NULL);
 //  [NSEvent setMouseCoalescingEnabled:NO];
 }
 - (void)mouseEntered:(NSEvent *)theEvent{
   NA_UNUSED(theEvent);
   naSetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
-  naDispatchUIElementCommand(nalibwindow, NA_UI_COMMAND_MOUSE_ENTERED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)cocoawindow, NA_UI_COMMAND_MOUSE_ENTERED, NA_NULL);
 }
 - (void)mouseExited:(NSEvent *)theEvent{
   NA_UNUSED(theEvent);
   naSetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
-  naDispatchUIElementCommand(nalibwindow, NA_UI_COMMAND_MOUSE_EXITED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)cocoawindow, NA_UI_COMMAND_MOUSE_EXITED, NA_NULL);
 }
 @end
 
 
 
 
-NA_DEF NAWindow* naNewWindow(const char* title, double posx, double posy, double width, double height, NABool resizeable){
+NA_DEF NAWindow* naNewWindow(const char* title, NARect rect, NABool resizeable){
   NA_UNUSED(title);
   NA_UNUSED(resizeable);
-  NAWindow* window = naAlloc(NAWindow);
-  window->windowedframe = naMakeRect(naMakePos(posx, posy), naMakeSize(width, height));
-  window->fullscreen = NA_FALSE;
-  window->trackingcount = 0;
-  window->trackingarea = nil;
+  NACocoaWindow* cocoawindow = naAlloc(NACocoaWindow);
+  cocoawindow->corewindow.windowedframe = rect;
+  cocoawindow->corewindow.fullscreen = NA_FALSE;
+  cocoawindow->trackingcount = 0;
+  cocoawindow->trackingarea = nil;
   
-  NSRect contentRect = naMakeNSRectWithRect(window->windowedframe);
-  void* nativeID = [[NANativeWindow alloc] initWithNALibWindow:window contentRect:contentRect styleMask:NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask backing:NSBackingStoreBuffered defer:NO screen:[NSScreen mainScreen]];
+  NSRect contentRect = naMakeNSRectWithRect(cocoawindow->corewindow.windowedframe);
+  void* nativeID = [[NANativeWindow alloc] initWithCocoaWindow:cocoawindow contentRect:contentRect styleMask:NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask backing:NSBackingStoreBuffered defer:NO screen:[NSScreen mainScreen]];
   NANativeView* nativeView = [[[NANativeView alloc] initWithFrame:[[(NANativeWindow*)nativeID contentView] frame]] autorelease];
   [(NANativeWindow*)nativeID setDelegate:(NANativeWindow*)nativeID];
   [(NANativeWindow*)nativeID setContentView:nativeView];
   [(NANativeWindow*)nativeID setInitialFirstResponder:[(NANativeWindow*)nativeID contentView]];
-  naInitUIElement(&(window->uielement), (NAUIElement*)naGetApplication(), NA_UI_WINDOW, nativeID);
-  return window;
+  naRegisterCoreUIElement(&(cocoawindow->corewindow.uielement), (NACoreUIElement*)naGetApplication(), NA_UI_WINDOW, nativeID);
+  return (NAWindow*)cocoawindow;
 }
 
 
 
-NA_HDEF void naRenewWindowMouseTracking(NAWindow* window){
-  window->trackingarea = [[NSTrackingArea alloc] initWithRect:[[(NSWindow*)naGetUINativeID(window) contentView] bounds]
+NA_HDEF void naRenewWindowMouseTracking(NACocoaWindow* cocoawindow){
+  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)cocoawindow));
+  cocoawindow->trackingarea = [[NSTrackingArea alloc] initWithRect:[[nativewindow contentView] bounds]
       options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveWhenFirstResponder
-      owner:(NSWindow*)naGetUINativeID(window) userInfo:nil];
-  [[(NSWindow*)naGetUINativeID(window) contentView] addTrackingArea:window->trackingarea];
+      owner:nativewindow userInfo:nil];
+  [[nativewindow contentView] addTrackingArea:cocoawindow->trackingarea];
 }
 
 
 
-NA_HDEF void naClearWindowMouseTracking(NAWindow* window){
-  [[(NSWindow*)naGetUINativeID(window) contentView] removeTrackingArea:window->trackingarea];
-  [window->trackingarea release];
-  window->trackingarea = nil;
+NA_HDEF void naClearWindowMouseTracking(NACocoaWindow* cocoawindow){
+  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)cocoawindow));
+  [[nativewindow contentView] removeTrackingArea:cocoawindow->trackingarea];
+  [cocoawindow->trackingarea release];
+  cocoawindow->trackingarea = nil;
 }
 
 
 
 NA_HDEF void naRetainWindowMouseTracking(NAWindow* window){
-  window->trackingcount++;
-  if(window->trackingcount == 1){
-    [(NSWindow*)naGetUINativeID(window) setAcceptsMouseMovedEvents:YES];
-    naRenewWindowMouseTracking(window);
+  NACocoaWindow* cocoawindow = (NACocoaWindow*)window;
+  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+  cocoawindow->trackingcount++;
+  if(cocoawindow->trackingcount == 1){
+    [nativewindow setAcceptsMouseMovedEvents:YES];
+    naRenewWindowMouseTracking(cocoawindow);
   }
 }
 
 
 
-NA_HDEF void naReleaseWindowMouseTracking(NAWindow* window){
-  window->trackingcount--;
-  if(window->trackingcount == 0){
-    [(NSWindow*)naGetUINativeID(window) setAcceptsMouseMovedEvents:NO];
-    naClearWindowMouseTracking(window);
+NA_HDEF void naReleaseWindowMouseTracking(NACocoaWindow* cocoawindow){
+  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)cocoawindow));
+  cocoawindow->trackingcount--;
+  if(cocoawindow->trackingcount == 0){
+    [nativewindow setAcceptsMouseMovedEvents:NO];
+    naClearWindowMouseTracking(cocoawindow);
   }
 }
 
@@ -473,53 +345,55 @@ NA_DEF void naClearWindow(NAWindow* window){
 
 
 NA_DEF void naShowWindow(NAWindow* window){
-  [(NANativeWindow*)(naGetUINativeID(&(window->uielement))) makeKeyAndOrderFront:NA_NULL];
+  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+  [nativewindow makeKeyAndOrderFront:NA_NULL];
 }
 
 
 
-NA_DEF void naSetWindowContentView(NAWindow* window, void* uielement){
-  if(window->trackingarea){naClearWindowMouseTracking(window);}
-  NAUIElement* element = (NAUIElement*)uielement;
-  [(NANativeWindow*)(naGetUINativeID(&(window->uielement))) setContentView:element->nativeID];
-  [(NSWindow*)naGetUINativeID(window) setInitialFirstResponder:[(NSWindow*)naGetUINativeID(window) contentView]];
-  if(window->trackingcount){naRenewWindowMouseTracking(window);}
+NA_DEF void naSetWindowContentView(NAWindow* window, NAUIElement* uielement){
+  NACocoaWindow* cocoawindow = (NACocoaWindow*)window;
+  if(cocoawindow->trackingarea){naClearWindowMouseTracking(cocoawindow);}
+  NACoreUIElement* element = (NACoreUIElement*)uielement;
+  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+  [nativewindow setContentView:element->nativeID];
+  [(NSWindow*)naGetUIElementNativeID((NAUIElement*)window) setInitialFirstResponder:[nativewindow contentView]];
+  if(cocoawindow->trackingcount){naRenewWindowMouseTracking(cocoawindow);}
 }
 
 
 
 NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullscreen){
-  if(fullscreen == window->fullscreen){return;}
+  NACoreWindow* corewindow = (NACoreWindow*)window;
+  if(fullscreen == corewindow->fullscreen){return;}
+  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
   if(fullscreen){
-    window->windowedframe = naMakeRectWithNSRect([(NSWindow*)(window->uielement.nativeID) frame]);
-    [(NSWindow*)(naGetUINativeID(&(window->uielement))) setStyleMask:NSBorderlessWindowMask];
-    [(NSWindow*)(naGetUINativeID(&(window->uielement))) setFrame:[[NSScreen mainScreen] frame] display:YES];
-    [(NSWindow*)(naGetUINativeID(&(window->uielement))) setLevel:kCGScreenSaverWindowLevel];
+    corewindow->windowedframe = naMakeRectWithNSRect([(NSWindow*)(corewindow->uielement.nativeID) frame]);
+    [nativewindow setStyleMask:NSBorderlessWindowMask];
+    [nativewindow setFrame:[[NSScreen mainScreen] frame] display:YES];
+    [nativewindow setLevel:kCGScreenSaverWindowLevel];
   }else{
-    [(NSWindow*)(naGetUINativeID(&(window->uielement))) setStyleMask:NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask];
-    [(NSWindow*)(naGetUINativeID(&(window->uielement))) setFrame:naMakeNSRectWithRect(window->windowedframe) display:YES];
-    [(NSWindow*)(naGetUINativeID(&(window->uielement))) setLevel:NSNormalWindowLevel];
+    [nativewindow setStyleMask:NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask];
+    [nativewindow setFrame:naMakeNSRectWithRect(corewindow->windowedframe) display:YES];
+    [nativewindow setLevel:NSNormalWindowLevel];
   }
-  window->fullscreen = fullscreen;
+  corewindow->fullscreen = fullscreen;
   // Setting the first responder again is necessary as otherwise the first
   // responder is lost.
-  [(NSWindow*)(naGetUINativeID(&(window->uielement))) makeFirstResponder:[(NSWindow*)(naGetUINativeID(&(window->uielement))) contentView]];
+  [nativewindow makeFirstResponder:[nativewindow contentView]];
 }
 
 
 
 NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
-  return window->fullscreen;
+  NACoreWindow* corewindow = (NACoreWindow*)window;
+  return corewindow->fullscreen;
 }
 
 
 
 
 
-@interface NANativeOpenGLView : NSOpenGLView{
-  NAOpenGLView* nalibopenglview;
-}
-@end
 
 @implementation NANativeOpenGLView
 - (id)initWithNALibView:(NAOpenGLView*)naopenglview frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat{
@@ -541,21 +415,21 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 - (void)drawRect:(NSRect)dirtyRect{
 //    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
   [[self openGLContext] makeCurrentContext];
-  naDispatchUIElementCommand(nalibopenglview, NA_UI_COMMAND_REDRAW, &dirtyRect);
+  naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_REDRAW, &dirtyRect);
 //    [pool release];
 }
 - (void)reshape{
   [[self openGLContext] update];
   NARect bounds = naMakeRectWithNSRect([self bounds]);
-  naDispatchUIElementCommand(nalibopenglview, NA_UI_COMMAND_RESHAPE, &bounds);
+  naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_RESHAPE, &bounds);
 }
 - (void)keyDown:(NSEvent *)theEvent{
   NAUIKeyCode keyCode = [theEvent keyCode];
-  naDispatchUIElementCommand(nalibopenglview, NA_UI_COMMAND_KEYDOWN, &keyCode);
+  naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_KEYDOWN, &keyCode);
 }
 - (void)keyUp:(NSEvent *)theEvent{
   NAUIKeyCode keyCode = [theEvent keyCode];
-  naDispatchUIElementCommand(nalibopenglview, NA_UI_COMMAND_KEYUP, &keyCode);
+  naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_KEYUP, &keyCode);
 }
 - (void)flagsChanged:(NSEvent *)theEvent{
   NAUIKeyCode keyCode;
@@ -565,13 +439,13 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
   NABool command = ([theEvent modifierFlags] & NSCommandKeyMask)  ?NA_TRUE:NA_FALSE;
   
   keyCode = NA_KEYCODE_SHIFT;
-  naDispatchUIElementCommand(nalibopenglview, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+  naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
   keyCode = NA_KEYCODE_OPTION;
-  naDispatchUIElementCommand(nalibopenglview, (alt?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+  naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, (alt?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
   keyCode = NA_KEYCODE_CONTROL;
-  naDispatchUIElementCommand(nalibopenglview, (control?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+  naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, (control?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
   keyCode = NA_KEYCODE_LEFT_COMMAND;
-  naDispatchUIElementCommand(nalibopenglview, (command?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+  naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, (command?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
 }
 @end
 
@@ -579,7 +453,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 
 
 NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, double width, double height){
-  NAOpenGLView* openglview = naAlloc(NAOpenGLView);
+  NACoreOpenGLView* coreopenglview = naAlloc(NACoreOpenGLView);
 
   // Configure the OpenGL Context and initialize this object.
   NSOpenGLPixelFormatAttribute attr[] = {
@@ -591,7 +465,7 @@ NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, double width, double heig
 		0 };
 	NSOpenGLPixelFormat *pixelformat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attr] autorelease];
   NSRect frameRect = NSMakeRect(0.f, 0.f, (CGFloat)width, (CGFloat)height);
-  void* nativeID = [[[NANativeOpenGLView alloc] initWithNALibView:openglview frame:frameRect pixelFormat:pixelformat] autorelease];
+  void* nativeID = [[[NANativeOpenGLView alloc] initWithNALibView:coreopenglview frame:frameRect pixelFormat:pixelformat] autorelease];
   
 //  if([self respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
 //    #if defined __MAC_10_7
@@ -599,13 +473,14 @@ NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, double width, double heig
 //    #endif
 //  }
 
-  naInitUIElement(&(openglview->uielement), (NAUIElement*)window, NA_UI_OPENGLVIEW, nativeID);
-  return openglview;
+  naRegisterCoreUIElement(&(coreopenglview->uielement), (NACoreUIElement*)window, NA_UI_OPENGLVIEW, nativeID);
+  return coreopenglview;
 }
 
 
 NA_DEF void naSwapOpenGLBuffer(NAOpenGLView* openglview){
-  [[(NANativeOpenGLView*)(openglview->uielement.nativeID) openGLContext] flushBuffer];
+  NACoreOpenGLView* coreopenglview = (NACoreOpenGLView*)openglview;
+  [[(NANativeOpenGLView*)(coreopenglview->uielement.nativeID) openGLContext] flushBuffer];
 }
 
 NA_DEF void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds){
@@ -623,7 +498,7 @@ NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmove
   NARect viewrect;
   NSRect screenframe;
   CGPoint centerpos;
-  viewrect = naGetUIElementRect(uielement, naGetApplication(), includebounds);
+  viewrect = naGetUIElementRect(uielement, (NAUIElement*)naGetApplication(), includebounds);
   screenframe = [[NSScreen mainScreen] frame];
 //  centerpos.x = viewrect.pos.x + viewrect.size.width * .5f;
 //  centerpos.y = viewrect.pos.y + viewrect.size.height * .5f;
@@ -637,19 +512,19 @@ NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmove
 
 
 NA_DEF void naShowMouse(){
-  NAApplication* app = naGetApplication();
-  if(!app->ismousevisible){
+  NACoreApplication* coreapp = (NACoreApplication*)naGetApplication();
+  if(!(coreapp->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE)){
     CGDisplayShowCursor(kCGDirectMainDisplay);
-    app->ismousevisible = NA_TRUE;
+    coreapp->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
   }
 }
 
 
 NA_DEF void naHideMouse(){
-  NAApplication* app = naGetApplication();
-  if(app->ismousevisible){
+  NACoreApplication* coreapp = (NACoreApplication*)naGetApplication();
+  if(coreapp->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE){
     CGDisplayHideCursor(kCGDirectMainDisplay);
-    app->ismousevisible = NA_FALSE;
+    coreapp->flags &= ~NA_APPLICATION_FLAG_MOUSE_VISIBLE;
   }
 }
 

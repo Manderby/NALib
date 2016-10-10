@@ -11,6 +11,41 @@ This file contains information about changes in the package NALib. These are
 purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
+
+Highlights:
+- Moving all implementations into folders, leaving the API alone in the base
+  directory. Moving all inline implementation in separate files in these
+  folders too.
+- Reprogrammed iteration of NAList
+- Added NACircularBuffer
+- Revisited base memory structs. Moved NARuntime into NAMemory. Many changes.
+  Runtime System can now be extended to custom types with NA_RUNTIME_TYPE.
+
+Other things:
+- Corrected the scanf constnats SCNi back to int instead of long.
+- Added naNulln32 and naNulln64
+- Added naMakeRectS, naMakeRectSE, naMakeRectiS and naMakeRectiSE
+- Heap Shrinking is not performed automatically anymore. Added
+  naShrinkHeapIfNecessary.
+- Added a flag NA_RUNTIME_USES_NEW_DELETE to test the runtime
+- Added a non-fully functional check if memory gets allocated in the
+  main thread.
+- Revisied the UI. Better but far from fully functional.
+- NAPointer now uses the NAPtr struct as its base. Removed naNewPointerConst,
+  renamed naNewPointerMutable to naNewPointer.
+- Corrected an awkward error in naPointer. The refcount mask was inverted.
+- Added NANewNullPointer. Renamed naMakePtr to naMakeNullPtr.
+- Added NA_NULLFUNC
+- Moved Pointer cleanup to NAMemory.h. Renamed NA_POINTER_CLEANUP_XXX to
+  NA_MEMORY_CLEANUP_XXX. Added NA_MEMORY_CLEANUP_UNDEFINED to prevent errors.
+- Renamed naClearPtr, naFreePtr, naFreeAlignedPtr and naDeletePtr.
+- Ditched NATypeDestructor in favor of NAFunc.
+- Changed NAPNG implementation to use New and Delete.
+- Moved inlineable code of NADateTime into new inline file.
+- Updated the readme-file.
+- Enhanced documentation.
+
+
 Version 15 (first published 2016-July-17):
 ==============================================
 
@@ -43,6 +78,7 @@ Version 15 (first published 2016-July-17):
 Version 14 (first published 2016-January-28):
 ==============================================
 
+Highlights:
 - Added NADeflate, an implementation of the RFC 1951 deflate decompression
   algorithm.
 - Added NAPNG, a structure, able to read PNG files. The most important ones
@@ -57,6 +93,7 @@ Version 14 (first published 2016-January-28):
   and is now able to add reference counting to any pointer. But requires double
   dereferenciation.
 
+Other things:
 - Added naEndToMaxi32, naEndToMaxi64, naMaxToEndi32 and naMaxToEndi64
 - Corrected naNewStringWithBasenameOfFilename.
 - Added naIsValueInRange functions

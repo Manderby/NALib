@@ -23,7 +23,7 @@
 
 
 // The version number of this NALib distribution.
-#define NA_VERSION 15
+#define NA_VERSION 16
 
 
 // The various Systems:
@@ -468,10 +468,10 @@ typedef uint8 NAByte;
 #if NA_SYSTEM_ADDRESS_BITS == 32
   typedef int32 NAInt;
   typedef uint32 NAUInt;
-  #define NA_PRIi "ld"
-  #define NA_PRIu "lu"
-  #define NA_SCNi "ld"
-  #define NA_SCNu "lu"
+  #define NA_PRIi "d"
+  #define NA_PRIu "u"
+  #define NA_SCNi "d"
+  #define NA_SCNu "u"
   #define NA_INT_MAX NA_INT32_MAX
   #define NA_INT_MIN NA_INT32_MIN
   #define NA_UINT_MAX NA_UINT32_MAX
@@ -538,15 +538,6 @@ typedef uint8 NAByte;
 
 
 
-// This is the type of a general callback which is used by:
-// - Mutator functions for naForeachXXX functions.
-// - Application start functions
-// - Threading start functions
-// - Timed functions
-typedef void (*NAFunc) (void*);
-
-
-
 // The following macro is used to suppress compiler warnings in functions
 // which do not make any use of a given parameter. This happens when function
 // signatures are chosen to match predefined function pointer types or shall
@@ -583,6 +574,20 @@ typedef void (*NAFunc) (void*);
   #define NA_NULL NULL
   #define NA_NORETURN
 #endif
+
+
+
+// This is the type of a general callback which is used by:
+// - Mutator functions for naForeachXXX functions.
+// - Application start functions
+// - Threading start functions
+// - Timed functions
+//
+// In some cases, you may not want to send a function, therefore sending Null.
+// But it is much more cleaner if you send NA_NULLFUNC which is typecasted as
+// an NAFunc.
+typedef void (*NAFunc) (void*);
+#define NA_NULLFUNC ((NAFunc)NA_NULL)
 
 
 

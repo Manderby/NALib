@@ -1,0 +1,206 @@
+
+// This file is part of NALib, a collection of C and C++ source code
+// intended for didactical purposes. Full license notice at the bottom.
+
+
+// This file contains inline implementations of the file NAHeap.h
+// Do not include this file directly! It will automatically be included when
+// including "NAHeap.h"
+
+
+
+// The NAHeap structure. This would normally be hidden to the user.
+// Note that this implementation uses a lot of function pointers. See
+// implementation file for more information.
+struct NAHeap{
+  NAUInt count;
+  void* data;
+  void* root; // Pointer to the first byte of the root element
+  NAInt maxcount; // heap holds max elements. If this value is < 0, the
+                  // heap grows automatically.
+  void        (*insertConst)      (NAHeap*, const void*, const void*, NAInt*);
+  void        (*insertMutable)    (NAHeap*,       void*, const void*, NAInt*);
+  const void* (*removeConst)      (NAHeap*);
+  void*       (*removeMutable)    (NAHeap*);
+  const void* (*removePosConst)   (NAHeap*, NAUInt);
+  void*       (*removePosMutable) (NAHeap*, NAUInt);
+  void        (*updateBack)       (NAHeap*, NAUInt);
+  NAInt       (*movedown)         (NAHeap*, const void*, NAUInt);
+  NAInt       (*moveup)           (NAHeap*, const void*, NAUInt);
+};
+// The root field is needed because the inline functions below have no idea
+// whether the heap stores backpointers or not. But as the root element is
+// stored at array index 1, a pointer to that location is needed as the two
+// structs differ in size whether they do or do not store backpointers.
+
+#include "NAMemory.h"
+
+// The structures internally used to store a single entry. They whould normally
+// be hidden to the user.
+//
+// There are two different structures. The second is used only when the
+// backpointer-flag is set when calling naInitHeap. Note that the distinction
+// of the two structs is made using function pointers and a pointer to the root
+// element which makes the implementation rather complicated to read. But it
+// is blazingly fast.
+//
+// The important thing is that the ptr and key field are at the same position
+// in the struct such that they can be accessed by the inlined functions
+// below no matter what struct type is stored.
+typedef struct NAHeapNoBackEntry NAHeapNoBackEntry;
+struct NAHeapNoBackEntry{
+  NAPtr             ptr;
+  const void*       key;
+};
+typedef struct NAHeapBackEntry NAHeapBackEntry;
+struct NAHeapBackEntry{
+  NAPtr             ptr;
+  const void*       key;
+  NAInt*            backpointer;
+};
+
+
+
+NA_IDEF void naClearHeap(NAHeap* heap){
+  #ifndef NDEBUG
+    if(!heap){
+      naCrash("naClearHeap", "heap is Null-Pointer.");
+      return;
+    }
+  #endif
+  free(heap->data);
+}
+
+
+NA_IDEF void naEmptyHeap(NAHeap* heap){
+  heap->count = 0;
+}
+
+
+NA_IDEF NAUInt naGetHeapCount (const NAHeap* heap){
+  #ifndef NDEBUG
+    if(!heap){
+      naCrash("naGetHeapCount", "heap is Null-Pointer.");
+      return NA_TRUE;
+    }
+  #endif
+  return heap->count;
+}
+
+
+NA_IDEF NAInt naGetHeapMaxCount(const NAHeap* heap){
+  #ifndef NDEBUG
+    if(!heap){
+      naCrash("naGetHeapCount", "heap is Null-Pointer.");
+      return 0;
+    }
+  #endif
+  return heap->maxcount;
+}
+
+
+NA_IDEF void naInsertHeapElementConst(  NAHeap* heap,
+                                    const void* ptr,
+                                    const void* key,
+                                         NAInt* backpointer){
+  heap->insertConst(heap, ptr, key, backpointer);
+}
+NA_IDEF void naInsertHeapElementMutable( NAHeap* heap,
+                                          void* ptr,
+                                    const void* key,
+                                         NAInt* backpointer){
+  heap->insertMutable(heap, ptr, key, backpointer);
+}
+
+
+NA_IDEF const void* naGetHeapRootConst(const NAHeap* heap){
+  // Note that it is irrelevant whether the heap stores elements with or
+  // without backpoitners. The ptr and key field are always at the same
+  // position.
+  NAHeapNoBackEntry* rootelem = (NAHeapNoBackEntry*)(heap->root);
+  #ifndef NDEBUG
+    if(heap->count == 0)
+      naError("naGetHeapRootConst", "Heap is empty.");
+  #endif
+  return naGetPtrConst(&(rootelem->ptr));
+}
+
+
+NA_IDEF void* naGetHeapRootMutable(const NAHeap* heap){
+  // Note that it is irrelevant whether the heap stores elements with or
+  // without backpoitners. The ptr and key field are always at the same
+  // position.
+  NAHeapNoBackEntry* rootelem = (NAHeapNoBackEntry*)(heap->root);
+  #ifndef NDEBUG
+    if(heap->count == 0)
+      naError("naGetHeapRootMutable", "Heap is empty.");
+  #endif
+  return naGetPtrMutable(&(rootelem->ptr));
+}
+
+
+NA_IDEF const void* naRemoveHeapRootConst(NAHeap* heap){
+  return heap->removeConst(heap);
+}
+NA_IDEF void* naRemoveHeapRootMutable(NAHeap* heap){
+  return heap->removeMutable(heap);
+}
+
+
+NA_IDEF const void* naGetHeapRootKey(const NAHeap* heap){
+  // Note that it is irrelevant whether the heap stores elements with or
+  // without backpoitners. The ptr and key field are always at the same
+  // position.
+  NAHeapNoBackEntry* rootelem = (NAHeapNoBackEntry*)(heap->root);
+  #ifndef NDEBUG
+    if(heap->count == 0)
+      naError("naGetHeapRoot", "Heap is empty.");
+  #endif
+  return rootelem->key;
+}
+
+
+NA_IDEF void naUpdateHeapElement(NAHeap* heap, NAInt backpointer){
+  heap->updateBack(heap, backpointer);
+}
+
+
+
+NA_IDEF const void* naRemoveHeapPosConst(NAHeap* heap, NAUInt backpointer){
+  return heap->removePosConst(heap, backpointer);
+}
+
+
+
+NA_IDEF void* naRemoveHeapPosMutable(NAHeap* heap, NAUInt backpointer){
+  return heap->removePosMutable(heap, backpointer);
+}
+
+
+
+
+// Copyright (c) NALib, Tobias Stamm, Manderim GmbH
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the source-code.
+//
+// In case the source-code of this software is inaccessible to the end-user,
+// the above copyright notice and this permission notice shall be included
+// in any source-code which is dependent on this software and is accessible
+// to the end-user.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

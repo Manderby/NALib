@@ -4,7 +4,7 @@
 
 
 
-#include "NAArray.h"
+#include "../NAArray.h"
 
 
 NA_DEF NAArray* naInitArrayWithCount(NAArray* array, NAUInt typesize, NAUInt count){

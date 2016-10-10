@@ -3,19 +3,18 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 
-#include "NARuntime.h"
-#include "NAMemory.h"
-#include "NAString.h"
-#include "NAList.h"
+#include "../NAMemory.h"
+#include "../NAString.h"
+#include "../NAList.h"
 
 
-
+//#define NA_RUNTIME_USES_NEW_DELETE
 
 // Turns out, the pagesize is far too small to result in good speed
 // improvements. The custom size can result in up to 2 times faster allocation
 // and deallocation on some systems.
 #define NA_POOL_SIZE_EQUALS_PAGESIZE
-//#define NA_CUSTOM_POOL_SIZE (1 << 16)
+#define NA_CUSTOM_POOL_SIZE (1 << 16)
 
 
 typedef struct NACorePool NACorePool;
@@ -24,8 +23,9 @@ typedef struct NARuntime NARuntime;
 
 
 struct NACoreTypeInfo{
-  NACorePool* curpool;
-  NATypeInfo typeinfo;
+  NACorePool*       curpool;
+  NAUInt            typesize;
+  NAFunc            destructor;
 };
 
 struct NACorePool{
@@ -49,26 +49,17 @@ struct NARuntime{
 NARuntime* na_runtime = NA_NULL;
 
 
-// These are the (hidden) string type identifier for the NALib runtime system.
-// Will be set when calling naPrepareStringRuntime or naStartRuntime. This
-// will likely change in the near future.
-NATypeIdentifier na_NAString_identifier = NA_NULL;
-NATypeIdentifier na_NAPointer_identifier = NA_NULL;
-NATypeIdentifier na_NAPNG_identifier = NA_NULL;
-
-
-
 
 
 NA_HIDEF void* naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
   NACorePool* corepool;
   void** curunused;
   #ifndef NDEBUG
-    if(coretypeinfo->typeinfo.typesize < NA_SYSTEM_ADDRESS_BYTES)
+    if(coretypeinfo->typesize < NA_SYSTEM_ADDRESS_BYTES)
       naError("naEnhanceCorePool", "Element is too small");
   #endif
   #ifndef NDEBUG
-    if(coretypeinfo->typeinfo.typesize > (na_runtime->poolsize - sizeof(NACorePool)))
+    if(coretypeinfo->typesize > (na_runtime->poolsize - sizeof(NACorePool)))
       naError("naEnhanceCorePool", "Element is too big");
   #endif
 
@@ -82,12 +73,12 @@ NA_HIDEF void* naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
   #endif
 
   // Reduce the elemcount by 1 to later set the last entry to NULL
-  corepool->usedcount = ((na_runtime->poolsize - sizeof(NACorePool)) / coretypeinfo->typeinfo.typesize) - 1;
+  corepool->usedcount = ((na_runtime->poolsize - sizeof(NACorePool)) / coretypeinfo->typesize) - 1;
   curunused = (void**)(((NAByte*)corepool) + sizeof(NACorePool));
   corepool->firstunused = curunused;
   // Enumerate all positions with the succeeding free position
   while(corepool->usedcount){
-    void** nextunused = (void**)((NAByte*)curunused + coretypeinfo->typeinfo.typesize);
+    void** nextunused = (void**)((NAByte*)curunused + coretypeinfo->typesize);
     *curunused = nextunused;
     curunused = nextunused;
     corepool->usedcount--;
@@ -131,58 +122,86 @@ NA_HIDEF void naShrinkCorePool(NACorePool* corepool){
 
 
 
-NA_DEF void* naNewStruct(NATypeIdentifier typeidentifier){
+NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
+
   void* pointer;
-  NACoreTypeInfo* coretypeinfo = (NACoreTypeInfo*)typeidentifier;
+  NACoreTypeInfo* coretypeinfo = (NACoreTypeInfo*)typeinfo;
+  
   #ifndef NDEBUG
     if(!na_runtime)
       naCrash("naNew", "Runtime not running. Use naStartRuntime()");
     if(!coretypeinfo)
       {naCrash("naNew", "Given type identifier is Null-Pointer"); return NA_NULL;}
-    if(!coretypeinfo->curpool)
-      {naCrash("naNew", "No runtime pool present"); return NA_NULL;}
   #endif
+
+  #if defined NA_RUNTIME_USES_NEW_DELETE
+
+    NACoreTypeInfo** basepointer = naMalloc(sizeof(NACoreTypeInfo*) + coretypeinfo->typesize);
+    pointer = basepointer + 1;
+    *basepointer = coretypeinfo;
+    return pointer;
   
-  // We get the next unused pointer.
-  pointer = coretypeinfo->curpool->firstunused;
-  // If none is available, we enhance the pool.
-  if(!pointer){pointer = naEnhanceCorePool(typeidentifier);}
+  #else
+
+    if(!coretypeinfo->curpool){
+        naEnhanceCorePool(coretypeinfo);
+    }
   
-  // The current pool can now advance the first-pointer to the next one.
-  coretypeinfo->curpool->firstunused = *((void**)coretypeinfo->curpool->firstunused);
-  coretypeinfo->curpool->usedcount++;
+    // We get the next unused pointer.
+    pointer = coretypeinfo->curpool->firstunused;
+    // If none is available, we enhance the pool.
+    if(!pointer){pointer = naEnhanceCorePool(coretypeinfo);}
+    
+    // The current pool can now advance the first-pointer to the next one.
+    coretypeinfo->curpool->firstunused = *((void**)coretypeinfo->curpool->firstunused);
+    coretypeinfo->curpool->usedcount++;
+    
+    #ifndef NDEBUG
+      if(coretypeinfo->curpool != (NACorePool*)((NAUInt)pointer & na_runtime->poolsizemask))
+      naError("naNewStruct", "Pointer seems to be outside of pool");
+    #endif
+    
+    // Now, the pointer points to a space which can be constructed.
+    return pointer;
   
-  #ifndef NDEBUG
-    if(coretypeinfo->curpool != (NACorePool*)((NAUInt)pointer & na_runtime->poolsizemask))
-    naError("naNewStruct", "Pointer seems to be outside of pool");
   #endif
-  
-  // Now, the pointer points to a space which can be constructed.
-  return pointer;
 }
 
 
 
 NA_DEF void naDelete(void* pointer){
-  NACorePool* corepool;
+  NACorePool* corepool; // Declaration before definition. Needed for C90
+
   #ifndef NDEBUG
     if(!na_runtime)
       naCrash("naNew", "Runtime not running. Use naStartRuntime()");
   #endif
-  // Find the corepool entry at the beginning of the pool.
-  corepool = (NACorePool*)((NAUInt)pointer & na_runtime->poolsizemask);
-  #ifndef NDEBUG
-    if(corepool->dummy1 != corepool)
-      naError("naDelete", "Pointer seems not to be from a pool");
-    if(corepool->dummy2 != (NAByte*)((NAUInt)corepool + na_runtime->poolsize - 1))
-      naError("naDelete", "Pointer seems not to be from a pool");
+
+  #if defined NA_RUNTIME_USES_NEW_DELETE
+  
+    NACoreTypeInfo** basepointer = (((NACoreTypeInfo**)pointer) - 1);
+    if((*basepointer)->destructor){(*basepointer)->destructor(pointer);}
+    naFree(basepointer);
+  
+  #else
+
+    // Find the corepool entry at the beginning of the pool.
+    corepool = (NACorePool*)((NAUInt)pointer & na_runtime->poolsizemask);
+    #ifndef NDEBUG
+      if(corepool->dummy1 != corepool)
+        naError("naDelete", "Pointer seems not to be from a pool");
+      if(corepool->dummy2 != (NAByte*)((NAUInt)corepool + na_runtime->poolsize - 1))
+        naError("naDelete", "Pointer seems not to be from a pool");
+    #endif
+    // Delete the struct with the destructor
+    if(corepool->coretypeinfo->destructor){corepool->coretypeinfo->destructor(pointer);}
+    *((void**)pointer) = corepool->firstunused;
+    corepool->firstunused = pointer;
+    corepool->usedcount--;
+    if((!corepool->usedcount) && (corepool->nextpool != corepool)){naShrinkCorePool(corepool);}
+
   #endif
-  // Delete the struct with the destructor
-  if(corepool->coretypeinfo->typeinfo.destructor){corepool->coretypeinfo->typeinfo.destructor(pointer);}
-  *((void**)pointer) = corepool->firstunused;
-  corepool->firstunused = pointer;
-  corepool->usedcount--;
-  if((!corepool->usedcount) && (corepool->nextpool != corepool)){naShrinkCorePool(corepool);}
+
 }
 
 
@@ -203,20 +222,9 @@ NA_DEF void naStartRuntime(){
     na_runtime->poolsize = NA_CUSTOM_POOL_SIZE;
     na_runtime->poolsizemask = ~(NAUInt)(NA_CUSTOM_POOL_SIZE - NA_ONE);
   #endif
-  naPrepareStringRuntime();
-  naPreparePointerRuntime();
-  naPrepareListElementRuntime();
 }
 
 
-
-NA_DEF NATypeIdentifier naManageRuntimeType(NATypeInfo* typeinfo){
-  NACoreTypeInfo* coretypeinfo = naAlloc(NACoreTypeInfo);
-  coretypeinfo->typeinfo = *typeinfo;
-  coretypeinfo->curpool = NA_NULL;
-  naEnhanceCorePool(coretypeinfo);
-  return coretypeinfo;
-}
 
 
 
@@ -234,26 +242,30 @@ NA_DEF void naStopRuntime(){
 
 
 // This function is not inlined as it must be called by naDelete.
-NA_HDEF void naClearPointer(NAPointer* pointer){
+NA_HDEF void naDestructPointer(NAPointer* pointer){
   #ifndef NDEBUG
-    if(!(pointer->refcount | NA_POINTER_DELETE_FLAG))
-      naError("naClearPointer", "Do not call naDelete on an NAPointer directly, always use naReleasePointer!");
-      pointer->refcount &= ~NA_POINTER_DELETE_FLAG;
+    if(!(pointer->refcount & NA_POINTER_DELETE_FROM_DECREF))
+      naError("naDestructPointer", "You should never call naDelete on a Pointer! Use naPointerRelease.");
   #endif
-  if(pointer->deallocator){
-    pointer->deallocator(pointer->data.d);
+  if(pointer->deallocator && (pointer->deallocator != NA_NULLFUNC)){
+    pointer->deallocator(naGetPtrMutable(&(pointer->ptr)));
   }
-  switch((NAPointerCleanup)(pointer->refcount >> NA_POINTER_CLEANUP_BITSHIFT)){
-  case NA_POINTER_CLEANUP_NONE:
+  switch((NAPointerCleanup)(pointer->refcount >> NA_MEMORY_CLEANUP_BITSHIFT)){
+  case NA_MEMORY_CLEANUP_UNDEFINED:
+    #ifndef NDEBUG
+      naError("naDestructPointer", "invalid cleanup option");
+    #endif
     break;
-  case NA_POINTER_CLEANUP_FREE:
-    naFree(pointer->data.d);
+  case NA_MEMORY_CLEANUP_NONE:
     break;
-  case NA_POINTER_CLEANUP_FREE_ALIGNED:
-    naFreeAligned(pointer->data.d);
+  case NA_MEMORY_CLEANUP_FREE:
+    naFreePtr(&(pointer->ptr));
     break;
-  case NA_POINTER_CLEANUP_DELETE:
-    naDelete(pointer->data.d);
+  case NA_MEMORY_CLEANUP_FREE_ALIGNED:
+    naFreeAlignedPtr(&(pointer->ptr));
+    break;
+  case NA_MEMORY_CLEANUP_DELETE:
+    naDeletePtr(&(pointer->ptr));
     break;
   }
 }

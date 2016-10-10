@@ -2,62 +2,59 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#ifndef NA_URL_INCLUDED
-#define NA_URL_INCLUDED
+#ifndef NA_CIRCULAR_BUFFER_INCLUDED
+#define NA_CIRCULAR_BUFFER_INCLUDED
 #ifdef __cplusplus 
   extern "C"{
 #endif
 
 
-#include "NAList.h"
+// A circular buffer is a buffer with a maximal number of elements but which
+// can be read like a list: First in First out (FIFO). You push elements which
+// get appended at the tail of the list and you pull elements which are at the
+// head of the list.
+//
+// It is called a circular buffer as the buffer is allocated as an array of
+// elements but which are wrapped around at the end such that the one element
+// after the last one of the array will again be the first one.
+//
+// This implementation stores void pointers. The implementation allocates
+// space for exactly count+1 elements. The additional element is required to
+// guarantee proper function of the circular structure.
 
 
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
-  #define NA_PATH_DELIMITER_SYSTEM NA_PATH_DELIMITER_WIN
-#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-  #define NA_PATH_DELIMITER_SYSTEM NA_PATH_DELIMITER_UNIX
-#endif
+// The full type definition is in the file "NACircularBufferII.h"
+typedef struct NACircularBuffer NACircularBuffer;
 
 
-#define NA_URL_PATH_ABSOLUTE 0x01
 
-typedef struct NAURL NAURL;
-struct NAURL{
-  uint32 status;
-  NAList path;
-};
+// Creates a circular buffer with sufficient space for the given number of
+// void-Pointers.
+NACircularBuffer* naInitCircularBuffer(NACircularBuffer* buffer, NAInt count);
 
+// Clears the circular buffer. Does not deletes the content-pointers!
+void naClearCircularBuffer(NACircularBuffer* buffer);
 
-// Creates an empty URL
-NA_IAPI NAURL* naInitURL(NAURL* url);
+// Returns the head of the filled buffer and moves the buffer forward.
+void* naPullCircularBuffer(NACircularBuffer* buffer);
 
-// - Both delimiters / and \ will be detected.
-// - If the path starts with a path delimiter, it is considered absolute.
-//   Example: /usr/local is an absolute path, src/NALib is not.
-// - Erroneous duplicate path delimiters or ending delimiters will be ignored.
-//   Example: /usr//local/ results in /usr/local
-NA_IAPI NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string);
-NA_IAPI void naClearURL(NAURL* url);
-
-// Creates a new string containing just the last path component.
-// Note that there is no distinction if the last component is the name of a
-// folder or of a file. If the file has a suffix, it is contained in the
-// returned string.
-NA_IAPI NAString* naNewStringWithURLFilename(NAURL* url);
-
+// Puts one element at the tail of the buffer. Does not copy any content, only
+// stores the pointer!
+void naPushCircularBuffer(NACircularBuffer* buffer, void* newdata);
 
 
 
 
 // Inline implementations are in a separate file:
-#include "NACore/NAURLII.h"
+#include "NAStruct/NACircularBufferII.h"
+
 
 
 
 #ifdef __cplusplus 
   } // extern "C"
 #endif
-#endif // NA_ARRAY_INCLUDED
+#endif // NA_CIRCULAR_BUFFER_INCLUDED
 
 
 

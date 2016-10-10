@@ -3,8 +3,8 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 
-#include "NADeflate.h"
-#include "NAMemory.h"
+#include "../NADeflate.h"
+#include "../NAMemory.h"
 
 
 typedef struct NAHuffmanCodeTree NAHuffmanCodeTree;

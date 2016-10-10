@@ -15,8 +15,8 @@
 // ///////////////////////////
 
 
-#include "NAUI.h"
-#include "NAList.h"
+#include "../NAUI.h"
+#include "../NAList.h"
 
 
 // Very much the same as the native ID, there are certain types which are
@@ -25,23 +25,111 @@
 // possible casts on all systems.
 
 
+typedef struct NAReaction           NAReaction;
+typedef struct NACoreUIElement      NACoreUIElement;
+typedef struct NACoreApplication    NACoreApplication;
+typedef struct NACoreWindow         NACoreWindow;
+typedef struct NACoreOpenGLView     NACoreOpenGLView;
+
+
+// Performs all necessary initialization of the UI independent of the system.
+// The naInitUI functions are system dependent and will call this function
+// before doing anything else.
+NA_HAPI void naStartCoreApplication(NAInt bytesize, NANativeID nativeID);
+NA_HAPI void naStopCoreApplication();
+NA_HAPI void naClearCoreApplication(void);
+NA_HAPI NACoreApplication* naGetCoreApplication(void);
+NA_HAPI NABool naIsCoreApplicationRunning(void);
+
+
+// UIElements
+NA_HAPI void naRegisterCoreUIElement( NACoreUIElement* coreuielement,
+                                      NACoreUIElement* parent,
+                                       NAUIElementType elementtype,
+                                                 void* nativeID);
+NA_HAPI void naUnregisterCoreUIElement(NACoreUIElement* coreuielement);
+NA_HAPI NAUIElementType naGetCoreUIElementType(NACoreUIElement* coreuielement);
+NA_HAPI NANativeID naGetCoreUIElementNativeID(NACoreUIElement* coreuielement);
+NA_HAPI void naRefreshCoreUIElement(  NACoreUIElement* coreuielement,
+                                                double timediff);
+NA_HAPI NACoreUIElement* naGetCoreUIElementParent(NACoreUIElement* coreuielement);
+NA_HAPI NACoreWindow* naGetCoreUIElementWindow(NACoreUIElement* coreuielement);
+
+
+
+
+
+
+
+
+
+struct NAReaction{
+  void* controller;
+  NAReactionHandler handler;
+  NAUICommand command;
+};
+
 
 // The base type of any ui element. All ui element struct definitions have
-// an NAUIElement as the first entry.
-// Each UIElement is a struct storing an NAUIElement as its first entry. The
-// definition of NAUIElement should normally be hidden to the user. You can
-// find it further below in this file.
-//
-// You can cast all elements as an NAUIElement*. Nontheless, as casting can
-typedef struct NAUIElement NAUIElement;
-struct NAUIElement{
+// an NACoreUIElement as the first entry.
+// The definition of NACoreUIElement should normally be hidden to the user. So,
+// there exists a public NAUIElement type which
+// is just a typedef of a void*. But internally, every UI element has the
+// following struct as its base:
+struct NACoreUIElement{
   NAUIElementType elementtype;
-  NAUIElement* parent;
+  NACoreUIElement* parent;
   NAList childs;
   NAList reactions;
   void* nativeID;  // The native object
-  //NABool refreshrequested;
 };
+
+
+struct NACoreApplication{
+  NACoreUIElement uielement;
+  NAList uielements;   // A list of all ui elements.
+  NACursorInfo    mouse; // The mouse cursor info
+  NAInt           flags;
+};
+
+
+#define NA_APPLICATION_FLAG_RUNNING         0x01
+#define NA_APPLICATION_FLAG_MOUSE_VISIBLE   0x02
+
+
+//struct NAWindow{
+//  NACoreUIElement uielement;
+//  NABool fullscreen;
+//  NARect windowedframe;
+//  NASize size;
+//  NABounds4 bounds;
+//};
+
+
+struct NAScreen{
+  NACoreUIElement uielement;
+};
+
+
+
+struct NACoreOpenGLView{
+  NACoreUIElement uielement;
+};
+
+
+
+struct NACoreWindow{
+  NACoreUIElement uielement;
+  NABool fullscreen;
+  NARect windowedframe;
+};
+
+
+
+
+
+
+
 
 
 // //////////////////////////////////////////
@@ -52,7 +140,7 @@ struct NAUIElement{
 // gathered here. You are free to use them but note that these are supposed to
 // be helper functions.
 
-#include "NAList.h"
+#include "../NAList.h"
 
 
 
@@ -60,20 +148,11 @@ struct NAUIElement{
 
 
 
+NA_HAPI void naRetainWindowMouseTracking(NAWindow* window);
 
 
-// Performs all necessary initialization of the UI independent of the system.
-// The naInitUI functions are system dependent and will call this function
-// before doing anything else.
-NA_HAPI void naInitBareUI(void);
 
-// Adds an ui element to the hidden ui instance.
-NA_HAPI void naAddUIElement(void* element);
 
-NA_HAPI NAUIElement* naInitUIElement(  NAUIElement* uielement,
-                                NAUIElement* parent,
-                             NAUIElementType elementtype,
-                                      void* nativeID);
 
 // Returns a pointer to the gui element which uses the given native ID.
 // Every gui element which is handeled by NALib uses a native struct which is
@@ -96,20 +175,18 @@ NA_HAPI void* naGetUINALibEquivalent(void* nativeID);
 // processed by the calling function. This is especially important on Windows
 // where non-handling of certain events might interrupt the whole messaging
 // chain.
-NA_HAPI NABool naDispatchUIElementCommand(  void* uielement,
+NA_HAPI NABool naDispatchUIElementCommand(  NACoreUIElement* element,
                                     NAUICommand command,
                                    void* arg);
 
 
 
-NA_HAPI void naRetainWindowMouseTracking(NAWindow* window);
 
 NA_HAPI void naSetMouseWarpedTo(NAPos newpos);
 NA_HAPI void naSetMouseMovedByDiff(double deltaX, double deltaY);
 NA_HAPI void naSetMouseEnteredAtPos(NAPos newpos);
 NA_HAPI void naSetMouseExitedAtPos(NAPos newpos);
 
-NA_HAPI void       naRefreshUIElementNow (void* uielement);
 
 
 

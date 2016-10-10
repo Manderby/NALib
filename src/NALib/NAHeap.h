@@ -59,6 +59,9 @@
 //
 // Note that heaps are a very fast datastructure! One of the authors favourites!
 
+
+
+// The full type definition is in the file "NAHeapII.h"
 typedef struct NAHeap NAHeap;
 
 // Use the following flags to define what type the key is.
@@ -76,12 +79,15 @@ typedef struct NAHeap NAHeap;
 
 // Creates a new heap. The count parameter denotes the number of elements which
 // the heap must hold and the flags denote a combination of the macros above.
-// If count is negative, the heap grows and shrinks automatically. The absolute
-// value of the negative count denotes the initial size of the heap. Must be a
-// negative power of 2. The value 0 is invalid for count.
 //
-// Growing occurs when no more space is available and shrinking occurs, when
-// the available space is four times the needed space. Grows in power of 2.
+// If count is negative, the heap grows automatically if needed. The absolute
+// value of the negative count denotes the initial size of the heap and must
+// be a power of 2. The value 0 is invalid for count. Grows only when needed
+// and grows in power of 2. Note that shrinking does NOT occur automatically.
+// You need to call naShrinkHeapIfNecessary for that.
+//
+// Beware in multithreaded environments that growing and shrinking requires
+// memory allocation and deallocation.
 NA_API NAHeap* naInitHeap   (NAHeap* heap, NAInt count, NAInt flags);
 
 // Clears the given heap.
@@ -96,6 +102,10 @@ NA_IAPI NAUInt naGetHeapCount (const NAHeap* heap);
 // Returns the maximum number of elements that can be stored. Result is
 // negative when a negative count was given to naInitHeap.
 NA_IAPI NAInt  naGetHeapMaxCount(const NAHeap* heap);
+
+// Shrinks the heap if at least three quarters of the heap are unused. Can only
+// be called if the initial count given to naInitHeap was negative.
+NA_API void naShrinkHeapIfNecessary(NAHeap* heap);
 
 // Adds a new element to the heap. See text above for more information.
 NA_IAPI void naInsertHeapElementConst(    NAHeap* heap,
@@ -127,173 +137,19 @@ NA_IAPI const void* naGetHeapRootKey(const NAHeap* heap);
 //
 // If the stored backpointer is 0, the element is considered to not be in the
 // heap.
-NA_IAPI void naUpdateHeapElement(NAHeap* heap, NAInt backpointer);
+NA_IAPI void naUpdateHeapElement(           NAHeap* heap, NAInt backpointer);
+
+// If you have such a backpointer, you can also remove an element.
+NA_IAPI const void* naRemoveHeapPosConst(   NAHeap* heap, NAUInt backpointer);
+NA_IAPI void*       naRemoveHeapPosMutable( NAHeap* heap, NAUInt backpointer);
 
 
 
 
+// Inline implementations are in a separate file:
+#include "NAStruct/NAHeapII.h"
 
 
-
-
-
-
-// ///////////////////////////////////////////////////////////////////////
-// Inline Implementations: See readme file for more expanation.
-// ///////////////////////////////////////////////////////////////////////
-
-// The NAHeap structure. This would normally be hidden to the user.
-// Note that this implementation uses a lot of function pointers. See
-// implementation file for more information.
-struct NAHeap{
-  NAUInt count;
-  void* data;
-  void* root; // Pointer to the first byte of the root element
-  NAInt maxcount; // heap holds max elements. If this value is <= 0, the
-                  // heap grows and shrinks automatically.
-  void        (*insertConst)  (NAHeap*, const void*, const void*, NAInt*);
-  void        (*insertMutable)(NAHeap*,       void*, const void*, NAInt*);
-  const void* (*removeConst)  (NAHeap*);
-  void*       (*removeMutable)(NAHeap*);
-  void        (*updateBack)   (NAHeap*, NAUInt);
-  NAInt       (*movedown)     (NAHeap*, const void*, NAUInt);
-  NAInt       (*moveup)       (NAHeap*, const void*, NAUInt);
-};
-// The root field is needed because the inline functions below have no idea
-// whether the heap stores backpointers or not. But as the root element is
-// stored at array index 1, a pointer to that location is needed as the two
-// structs differ in size whether they do or do not store backpointers.
-
-#include "NAMemory.h"
-
-// The structures internally used to store a single entry. They whould normally
-// be hidden to the user.
-//
-// There are two different structures. The second is used only when the
-// backpointer-flag is set when calling naInitHeap. Note that the distinction
-// of the two structs is made using function pointers and a pointer to the root
-// element which makes the implementation rather complicated to read. But it
-// is blazingly fast.
-//
-// The important thing is that the ptr and key field are at the same position
-// in the struct such that they can be accessed by the inlined functions
-// below no matter what struct type is stored.
-typedef struct NAHeapNoBackEntry NAHeapNoBackEntry;
-struct NAHeapNoBackEntry{
-  NAPtr             ptr;
-  const void*       key;
-};
-typedef struct NAHeapBackEntry NAHeapBackEntry;
-struct NAHeapBackEntry{
-  NAPtr             ptr;
-  const void*       key;
-  NAInt*            backpointer;
-};
-
-
-
-NA_IDEF void naClearHeap(NAHeap* heap){
-  #ifndef NDEBUG
-    if(!heap){
-      naCrash("naClearHeap", "heap is Null-Pointer.");
-      return;
-    }
-  #endif
-  free(heap->data);
-}
-
-
-NA_IDEF void naEmptyHeap(NAHeap* heap){
-  heap->count = 0;
-}
-
-
-NA_IDEF NAUInt naGetHeapCount (const NAHeap* heap){
-  #ifndef NDEBUG
-    if(!heap){
-      naCrash("naGetHeapCount", "heap is Null-Pointer.");
-      return NA_TRUE;
-    }
-  #endif
-  return heap->count;
-}
-
-
-NA_IDEF NAInt naGetHeapMaxCount(const NAHeap* heap){
-  #ifndef NDEBUG
-    if(!heap){
-      naCrash("naGetHeapCount", "heap is Null-Pointer.");
-      return 0;
-    }
-  #endif
-  return heap->maxcount;
-}
-
-
-NA_IDEF void naInsertHeapElementConst(  NAHeap* heap,
-                                    const void* ptr,
-                                    const void* key,
-                                         NAInt* backpointer){
-  heap->insertConst(heap, ptr, key, backpointer);
-}
-NA_IDEF void naInsertHeapElementMutable( NAHeap* heap,
-                                          void* ptr,
-                                    const void* key,
-                                         NAInt* backpointer){
-  heap->insertMutable(heap, ptr, key, backpointer);
-}
-
-
-NA_IDEF const void* naGetHeapRootConst(const NAHeap* heap){
-  // Note that it is irrelevant whether the heap stores elements with or
-  // without backpoitners. The ptr and key field are always at the same
-  // position.
-  NAHeapNoBackEntry* rootelem = (NAHeapNoBackEntry*)(heap->root);
-  #ifndef NDEBUG
-    if(heap->count == 0)
-      naError("naGetHeapRootConst", "Heap is empty.");
-  #endif
-  return naGetPtrConst(&(rootelem->ptr));
-}
-
-
-NA_IDEF void* naGetHeapRootMutable(const NAHeap* heap){
-  // Note that it is irrelevant whether the heap stores elements with or
-  // without backpoitners. The ptr and key field are always at the same
-  // position.
-  NAHeapNoBackEntry* rootelem = (NAHeapNoBackEntry*)(heap->root);
-  #ifndef NDEBUG
-    if(heap->count == 0)
-      naError("naGetHeapRootMutable", "Heap is empty.");
-  #endif
-  return naGetPtrMutable(&(rootelem->ptr));
-}
-
-
-NA_IDEF const void* naRemoveHeapRootConst(NAHeap* heap){
-  return heap->removeConst(heap);
-}
-NA_IDEF void* naRemoveHeapRootMutable(NAHeap* heap){
-  return heap->removeMutable(heap);
-}
-
-
-NA_IDEF const void* naGetHeapRootKey(const NAHeap* heap){
-  // Note that it is irrelevant whether the heap stores elements with or
-  // without backpoitners. The ptr and key field are always at the same
-  // position.
-  NAHeapNoBackEntry* rootelem = (NAHeapNoBackEntry*)(heap->root);
-  #ifndef NDEBUG
-    if(heap->count == 0)
-      naError("naGetHeapRoot", "Heap is empty.");
-  #endif
-  return rootelem->key;
-}
-
-
-NA_IDEF void naUpdateHeapElement(NAHeap* heap, NAInt backpointer){
-  heap->updateBack(heap, backpointer);
-}
 
 
 

@@ -2,12 +2,12 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#include "NADateTime.h"
-#include "NAString.h"
-#include "NABinaryData.h"
-#include "NAEndianness.h"
-#include "NAMathOperators.h"
+#include "../NADateTime.h"
+#include "../NAString.h"
+#include "../NABinaryData.h"
+#include "../NAMathOperators.h"
 #include "ctype.h"
+
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   #include <time.h>
@@ -18,6 +18,7 @@
 #else
   #warning "System undefined"
 #endif
+
 
 // The global timezone setting.
 int16  na_globaltimeshift = 0;
@@ -314,26 +315,6 @@ NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
 }
 
 
-NA_DEF NABool naIsLeapYearJulian(int64 year){
-  return !(year % 4);
-}
-
-
-NA_DEF NABool naIsLeapYearGregorian(int64 year){
-  if(!(year % 400)){return NA_TRUE;}
-  if(!(year % 100)){return NA_FALSE;}
-  if(!(year %   4)){return NA_TRUE;}
-  return NA_FALSE;
-}
-
-
-NA_DEF NABool naIsLeapYear(int64 year){
-  if(year <= 1582){
-    return naIsLeapYearJulian(year);
-  }else{
-    return naIsLeapYearGregorian(year);
-  }
-}
 
 
 
@@ -355,15 +336,6 @@ NA_DEF NADateTime naMakeDateTimeNow(){
 }
 
 
-NA_API NADateTime naMakeDateTimeWithNALibSecondNumber(uint64 secondnumber){
-  NADateTime datetime;
-  datetime.sisec = secondnumber;
-  datetime.nsec = 0;
-  datetime.shift = 0;
-  datetime.errornum = NA_DATETIME_ERROR_NONE;
-  datetime.flags = 0;
-  return datetime;
-}
 
 
 
@@ -457,10 +429,6 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
 
 
 
-NA_DEF NADateTime naMakeDateTimeWithValues(int64 year, int32 mon, int32 day, int32 hour, int32 min, int32 sec){
-  NADateTimeStruct dts = {year, mon - 1, day - 1, hour, min, sec, 0, na_globaltimeshift, NA_DATETIME_ERROR_NONE, (uint8)na_globalsummertime};
-  return naMakeDateTimeWithDateTimeStruct(&dts);
-}
 
 
 
@@ -582,7 +550,7 @@ NA_DEF NADateTime naMakeDateTimeFromBuffer(NABuffer* buffer, NABinDateTimeFormat
 
 
 
-NA_API const char* naGetDateTimeErrorString(uint8 errornum){
+NA_DEF const char* naGetDateTimeErrorString(uint8 errornum){
   if(errornum >= NA_DATETIME_ERROR_COUNT){
     #ifndef NDEBUG
       naError("naGetDateTimeErrorString", "Error number invalid");
@@ -734,6 +702,7 @@ NA_DEF struct tm naMakeTMfromDateTime(const NADateTime* datetime){
   #endif
   return systemtimestruct;
 }
+
 
 
 NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
@@ -1044,68 +1013,6 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
 
 
 
-NA_DEF void naExtractDateTimeUTCInformation(const NADateTime* datetime,
-                             NADateTimeStruct* dts,
-                          NADateTimeAttribute* dta){
-  NADateTime utcdatetime = *datetime;
-  naSetDateTimeZone(&utcdatetime, 0, NA_FALSE);
-  naExtractDateTimeInformation(&utcdatetime, dts, dta);
-}
-
-
-
-NA_DEF void naSetDateTimeZone( NADateTime* datetime,
-                              int16 newshift,
-                             NABool summertime){
-  datetime->errornum = NA_DATETIME_ERROR_NONE;
-  datetime->shift = newshift;
-  if(summertime){
-    datetime->flags |= NA_DATETIME_FLAG_SUMMERTIME;
-  }else{
-    datetime->flags &= ~NA_DATETIME_FLAG_SUMMERTIME;
-  }
-}
-
-
-NA_DEF void naCorrectDateTimeZone( NADateTime* datetime,
-                                  int16 newshift,
-                                 NABool summertime){
-  datetime->errornum = NA_DATETIME_ERROR_NONE;
-  datetime->sisec -= (datetime->shift * NA_SECONDS_PER_MINUTE);
-  datetime->sisec += (newshift * NA_SECONDS_PER_MINUTE);
-  naSetDateTimeZone(datetime, newshift, summertime);
-}
-
-
-NA_DEF double naGetDateTimeDiff(const NADateTime* end, const NADateTime* start){
-  double sign = 1.;
-  double diffsecs;
-  double diffnsecs;
-  if(end->sisec < start->sisec){
-    sign = -1;
-    diffsecs = (double)(start->sisec - end->sisec);
-  }else{
-    diffsecs = (double)(end->sisec - start->sisec);
-  }
-  diffnsecs = ((double)end->nsec - (double)start->nsec) / 1e9;
-  return sign * (diffsecs + diffnsecs);
-}
-
-
-NA_DEF void naAddDateTimeDifference(NADateTime* datetime, double difference){
-  int64 fullsecs = (int64)difference;
-  int32 nanosecs = (int32)((difference - (double)fullsecs) * 1e9);
-  datetime->errornum = NA_DATETIME_ERROR_NONE;
-  if(difference < 0){
-    datetime->nsec += nanosecs;
-    if(datetime->nsec < 0){fullsecs--; datetime->nsec += 1000000000;}
-    datetime->sisec += fullsecs;
-  }else{
-    datetime->nsec += nanosecs;
-    if(datetime->nsec > 999999999){fullsecs++; datetime->nsec -= 1000000000;}
-    datetime->sisec += fullsecs;
-  }
-}
 
 
 NA_DEF NAString* naNewStringFromSecondDifference(double difference,
@@ -1163,51 +1070,7 @@ NA_DEF NAString* naNewStringFromSecondDifference(double difference,
 }
 
 
-NA_DEF NABool naHasDateTimeSummerTime(const NADateTime* datetime){
-  return (datetime->flags & NA_DATETIME_FLAG_SUMMERTIME) ? NA_TRUE : NA_FALSE;
-}
 
-NA_DEF void naSetDateTimeSummertime(NADateTime* datetime, NABool summertime){
-  datetime->errornum = NA_DATETIME_ERROR_NONE;
-  if(summertime){
-    if(datetime->flags & NA_DATETIME_FLAG_SUMMERTIME){return;}
-    datetime->flags |= NA_DATETIME_FLAG_SUMMERTIME;
-    datetime->shift += NA_MINUTES_PER_HOUR;
-  }else{
-    if(!(datetime->flags & NA_DATETIME_FLAG_SUMMERTIME)){return;}
-    datetime->flags &= ~NA_DATETIME_FLAG_SUMMERTIME;
-    datetime->shift -= NA_MINUTES_PER_HOUR;
-  }
-}
-
-
-
-NA_DEF void naSetGlobalTimeShift(int16 shiftminutes, NABool summertime){
-  na_globaltimeshift = shiftminutes;
-  na_globalsummertime = summertime;
-}
-
-
-NA_DEF void naSetGlobalTimeShiftToSystemSettings(){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    NATimeZone curtimezone;
-    GetTimeZoneInformation(&curtimezone);
-    na_globaltimeshift = naMakeShiftFromTimeZone(&curtimezone);
-    na_globalsummertime = ((curtimezone.DaylightBias) ? NA_TRUE : NA_FALSE);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    NATimeZone curtimezone;
-    gettimeofday(NULL, &curtimezone);
-    na_globaltimeshift = naMakeShiftFromTimeZone(&curtimezone);
-    na_globalsummertime = ((curtimezone.tz_dsttime) ? NA_TRUE : NA_FALSE);
-  #endif
-}
-
-
-NA_DEF int64 naGetFirstUncertainSecondNumber(){
-  // The first uncertain second number is here defined to be the first second
-  // of the last known TAI period.
-  return naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS-1].startsisec;
-}
 
 
 NA_DEF NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber){
@@ -1229,6 +1092,31 @@ NA_DEF NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber){
 }
 
 
+
+NA_DEF void naSetGlobalTimeShiftToSystemSettings(){
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    NATimeZone curtimezone;
+    GetTimeZoneInformation(&curtimezone);
+    na_globaltimeshift = naMakeShiftFromTimeZone(&curtimezone);
+    na_globalsummertime = ((curtimezone.DaylightBias) ? NA_TRUE : NA_FALSE);
+  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+    NATimeZone curtimezone;
+    gettimeofday(NULL, &curtimezone);
+    na_globaltimeshift = naMakeShiftFromTimeZone(&curtimezone);
+    na_globalsummertime = ((curtimezone.tz_dsttime) ? NA_TRUE : NA_FALSE);
+  #endif
+}
+
+
+
+NA_DEF int64 naGetFirstUncertainSecondNumber(){
+  // The first uncertain second number is here defined to be the first second
+  // of the last known TAI period.
+  return naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS-1].startsisec;
+}
+
+
+
 NA_DEF void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
                                            NAInt leapsecondcorrectionconstant){
   NAUInt taiperiod;
@@ -1248,6 +1136,9 @@ NA_DEF void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
   taiperiod = naGetLatestTAIPeriodIndexForGregorianSecond(datetime->sisec);
   datetime->sisec += (naTAIPeriods[taiperiod].startsisec - naTAIPeriods[taiperiod].startgregsec);
 }
+
+
+
 
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH

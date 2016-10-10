@@ -3,21 +3,22 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 
+/*
 
-#include "NAUIHiddenAPI.h"
+#include "NAUICoreAPI.h"
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
 // Now, we are sure, we compile with Objective-C and on MacOSX. The two
 // #if directives will be closed at the very bottom of this file.
 
-#include "NAMemory.h"
+#include "../NAMemory.h"
 
 
 
 
 
 
-#include "NACoord.h"
-#include "NAThreading.h"
+#include "../NACoord.h"
+#include "../NAThreading.h"
 #include <stdio.h>
 #include <windows.h>
 
@@ -26,14 +27,13 @@
 
 #define CUB_WINDOW_IGNORE_MOUSE_WARP  0x01
 
-struct NAApplication{
-  NAUIElement uielement;
+struct NAWINAPIApplication{
+  NACoreApplication coreapp;
   NAList timers;
-  NABool ismousevisible;
 };
 
 struct NAWindow{
-  NAUIElement uielement;
+  NAUIElement* uielement;
   NABool fullscreen;
   NARect windowedframe;
   NAUInt flags;
@@ -42,7 +42,7 @@ struct NAWindow{
 };
 
 struct NAOpenGLView{
-  NAUIElement uielement;
+  NAUIElement* uielement;
   HGLRC hRC;    // The rendering context for OpenGL
 };
 
@@ -88,6 +88,8 @@ NA_DEF void naOpenConsoleWindow(){
 
 
 
+
+
 // On windows, we need to reroute a timer function using a specific callback.
 struct NATimerStruct{
   UINT key;
@@ -125,7 +127,7 @@ NA_HDEF NABool naExecuteApplicationTimer(UINT timerid){
 }
 
 
-NA_DEF void naCallFunctionInSeconds(NAFunc function, void* arg, double timediff){
+NA_DEF void naCallApplicationFunctionInSeconds(NAFunc function, void* arg, double timediff){
   NATimerStruct* timerstruct = naAlloc(NATimerStruct);
   timerstruct->func = function;
   timerstruct->arg = arg;
@@ -198,7 +200,7 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
       BeginPaint(hWnd, &ps);
 
         //if(uielement is opengl)
-//        wglMakeCurrent(GetDC(naGetUINativeID(&(openglview->uielement))), openglview->hRC);
+//        wglMakeCurrent(GetDC(naGetUIElementNativeID(&(openglview->uielement))), openglview->hRC);
 
         hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW, NA_NULL);
         //uielement->refreshrequested = NA_FALSE;
@@ -319,18 +321,18 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 NA_API void naStartApplication(  NAFunc prestartup,
                                  NAFunc poststartup,
                                   void* arg){
-  NAApplication* app;
+  NAApplication app;
   WNDCLASS wc;
   ATOM atom;
   MSG message;
 
-  naInitBareUI();
+  naInitCoreUI();
   app = naAlloc(NAApplication);
-  naInitUIElement((NAUIElement*)app, NA_NULL, NA_UI_APPLICATION, GetModuleHandle(NULL));
+  naRegisterCoreUIElement((NAUIElement*)app, NA_NULL, NA_UI_APPLICATION, GetModuleHandle(NULL));
   naInitList(&(app->timers));
   app->ismousevisible = NA_TRUE;
 
-  if(prestartup){prestartup(arg);}
+  if(prestartup && (prestartup != NA_NULLFUNC)){prestartup(arg);}
 
   // Register the window classes
   naNulln(&wc, sizeof(WNDCLASS));
@@ -359,7 +361,7 @@ NA_API void naStartApplication(  NAFunc prestartup,
 	wc.lpszClassName = TEXT("NAView");
 	RegisterClass( &wc );
 
-  if(poststartup){poststartup(arg);}
+  if(poststartup && (poststartup != NA_NULLFUNC)){poststartup(arg);}
 
 
   while(1){
@@ -381,9 +383,6 @@ NA_API void naStartApplication(  NAFunc prestartup,
 
 
 
-NA_DEF void cubFlushGarbageMemory(){
-  // On windows, we do nothing.
-}
 
 
 
@@ -392,7 +391,7 @@ NA_DEF void cubFlushGarbageMemory(){
 
 
 NA_HDEF void naRefreshUIElementNow (void* uielement){
-  PostMessage(naGetUINativeID(uielement), WM_PAINT, (WPARAM)NA_NULL, (LPARAM)NA_NULL);
+  PostMessage(naGetUIElementNativeID(uielement), WM_PAINT, (WPARAM)NA_NULL, (LPARAM)NA_NULL);
 }
 
 
@@ -484,7 +483,7 @@ NA_DEF NARect naGetUIElementRect(void* uielement, void* relativeelement, NABool 
   NARect relrect;
   NAUIElement* element;
   NAUIElement* relelement;
-  NAApplication* app;
+  NAApplication app;
   
   element = (NAUIElement*)uielement;
   relelement = (NAUIElement*)relativeelement;
@@ -626,12 +625,12 @@ NA_DEF NAWindow* naNewWindow(const char* title, double posx, double posy, double
 		TEXT("NAWindow"), title, 
 		style,
 		windowrect.left, windowrect.top, windowrect.right - windowrect.left, windowrect.bottom - windowrect.top,
-		NULL, NULL, naGetUINativeID(naGetApplication()), NULL);
+		NULL, NULL, naGetUIElementNativeID(naGetApplication()), NULL);
 
   //lasterror = GetLastError();
 	//hDC = GetDC(hWnd);
 
-  naInitUIElement((NAUIElement*)window, (NAUIElement*)naGetApplication(), NA_UI_WINDOW, hWnd);
+  naRegisterCoreUIElement((NAUIElement*)window, (NAUIElement*)naGetApplication(), NA_UI_WINDOW, hWnd);
 
   window->flags = 0;
   window->trackingcount = 0;
@@ -644,16 +643,16 @@ NA_DEF NAWindow* naNewWindow(const char* title, double posx, double posy, double
 
 
 NA_HDEF void naRenewWindowMouseTracking(NAWindow* window){
-  //window->trackingarea = [[NSTrackingArea alloc] initWithRect:[[(NSWindow*)naGetUINativeID(window) contentView] bounds]
+  //window->trackingarea = [[NSTrackingArea alloc] initWithRect:[[(NSWindow*)naGetUIElementNativeID(window) contentView] bounds]
   //    options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveWhenFirstResponder
-  //    owner:(NSWindow*)naGetUINativeID(window) userInfo:nil];
-  //[[(NSWindow*)naGetUINativeID(window) contentView] addTrackingArea:window->trackingarea];
+  //    owner:(NSWindow*)naGetUIElementNativeID(window) userInfo:nil];
+  //[[(NSWindow*)naGetUIElementNativeID(window) contentView] addTrackingArea:window->trackingarea];
 }
 
 
 
 NA_HDEF void naClearWindowMouseTracking(NAWindow* window){
-  //[[(NSWindow*)naGetUINativeID(window) contentView] removeTrackingArea:window->trackingarea];
+  //[[(NSWindow*)naGetUIElementNativeID(window) contentView] removeTrackingArea:window->trackingarea];
   //[window->trackingarea release];
   //window->trackingarea = nil;
 }
@@ -663,7 +662,7 @@ NA_HDEF void naClearWindowMouseTracking(NAWindow* window){
 NA_HDEF void naRetainWindowMouseTracking(NAWindow* window){
   window->trackingcount++;
   //if(window->trackingcount == 1){
-  //  [(NSWindow*)naGetUINativeID(window) setAcceptsMouseMovedEvents:YES];
+  //  [(NSWindow*)naGetUIElementNativeID(window) setAcceptsMouseMovedEvents:YES];
   //  naRenewWindowMouseTracking(window);
   //}
 }
@@ -673,19 +672,19 @@ NA_HDEF void naRetainWindowMouseTracking(NAWindow* window){
 NA_HDEF void naReleaseWindowMouseTracking(NAWindow* window){
   window->trackingcount--;
   //if(window->trackingcount == 0){
-  //  [(NSWindow*)naGetUINativeID(window) setAcceptsMouseMovedEvents:NO];
+  //  [(NSWindow*)naGetUIElementNativeID(window) setAcceptsMouseMovedEvents:NO];
   //  naClearWindowMouseTracking(window);
   //}
 }
 
 NA_DEF void naClearWindow(NAWindow* window){
-	DestroyWindow(naGetUINativeID(window));
+	DestroyWindow(naGetUIElementNativeID(window));
 }
 
 
 
 NA_DEF void naShowWindow(NAWindow* window){
-  ShowWindow(naGetUINativeID(window), SW_SHOW);
+  ShowWindow(naGetUIElementNativeID(window), SW_SHOW);
 }
 
 
@@ -726,15 +725,15 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullscreen){
     screenSettings.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
 
     style = WS_POPUP;
-    SetWindowLongPtr(naGetUINativeID(window), GWL_STYLE, style);
-    SetWindowPos(naGetUINativeID(window), HWND_TOPMOST, (int)screenrect.pos.x, (int)(screenrect.pos.y - screenrect.pos.y), (int)screenrect.size.width, (int)screenrect.size.height, SWP_SHOWWINDOW);
+    SetWindowLongPtr(naGetUIElementNativeID(window), GWL_STYLE, style);
+    SetWindowPos(naGetUIElementNativeID(window), HWND_TOPMOST, (int)screenrect.pos.x, (int)(screenrect.pos.y - screenrect.pos.y), (int)screenrect.size.width, (int)screenrect.size.height, SWP_SHOWWINDOW);
     //ChangeDisplaySettings(NULL, 0);
     ChangeDisplaySettings(&screenSettings, CDS_FULLSCREEN);
   }else{
     newrect = window->windowedframe;
     style = WS_OVERLAPPEDWINDOW;
-    SetWindowLongPtr(naGetUINativeID(window), GWL_STYLE, style);
-    SetWindowPos(naGetUINativeID(window), HWND_NOTOPMOST, (int)window->windowedframe.pos.x, (int)(screenrect.size.height - window->windowedframe.pos.y), (int)window->windowedframe.size.width, (int)window->windowedframe.size.height, SWP_SHOWWINDOW);
+    SetWindowLongPtr(naGetUIElementNativeID(window), GWL_STYLE, style);
+    SetWindowPos(naGetUIElementNativeID(window), HWND_NOTOPMOST, (int)window->windowedframe.pos.x, (int)(screenrect.size.height - window->windowedframe.pos.y), (int)window->windowedframe.size.width, (int)window->windowedframe.size.height, SWP_SHOWWINDOW);
     ChangeDisplaySettings(NULL, 0);
   }
 
@@ -754,7 +753,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 //  NARect rect;
 //  WINDOWINFO windowinfo;
 //  windowinfo.cbSize = sizeof(WINDOWINFO);
-//  GetWindowInfo(naGetUINativeID(window), &windowinfo);
+//  GetWindowInfo(naGetUIElementNativeID(window), &windowinfo);
 //  rect.size.width = windowinfo.rcWindow.right - windowinfo.rcWindow.left;
 //  rect.size.height = windowinfo.rcWindow.bottom - windowinfo.rcWindow.top;
 //  return rect;
@@ -774,10 +773,10 @@ NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, double width, double heig
 		TEXT("NAView"), "OpenGL View", 
 		WS_CHILD | WS_VISIBLE | ES_READONLY,
 		0, 0, (int)width, (int)height,
-		naGetUINativeID(window), NULL, naGetUINativeID(naGetApplication()), NULL );
+		naGetUIElementNativeID(window), NULL, naGetUIElementNativeID(naGetApplication()), NULL );
 
   openglview = naAlloc(NAOpenGLView);
-  naInitUIElement((NAUIElement*)openglview, (NAUIElement*)window, NA_UI_OPENGLVIEW, hWnd);
+  naRegisterCoreUIElement((NAUIElement*)openglview, (NAUIElement*)window, NA_UI_OPENGLVIEW, hWnd);
 
   hDC = GetDC(hWnd); 
 
@@ -806,14 +805,14 @@ NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, double width, double heig
 
 
 NA_DEF void naSwapOpenGLBuffer(NAOpenGLView* openglview){
-  SwapBuffers(GetDC(naGetUINativeID(&(openglview->uielement))));
+  SwapBuffers(GetDC(naGetUIElementNativeID(&(openglview->uielement))));
 }
 
 
 
 NA_API void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds){
   //NARect windowrect = naGetUIElementRect(naGetUIElementParent(openglview), naGetApplication(), NA_FALSE);
-  SetWindowPos(naGetUINativeID(openglview), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
+  SetWindowPos(naGetUIElementNativeID(openglview), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
 }
 
 
@@ -838,7 +837,7 @@ NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmove
 
 
 NA_DEF void naShowMouse(){
-  NAApplication* app = naGetApplication();
+  NAApplication app = naGetApplication();
   if(!app->ismousevisible){
     ShowCursor(1);
     app->ismousevisible = NA_TRUE;
@@ -847,7 +846,7 @@ NA_DEF void naShowMouse(){
 
 
 NA_DEF void naHideMouse(){
-  NAApplication* app = naGetApplication();
+  NAApplication app = naGetApplication();
   if(app->ismousevisible){
     ShowCursor(0);
     app->ismousevisible = NA_FALSE;
@@ -856,6 +855,8 @@ NA_DEF void naHideMouse(){
 
 
 #endif // NA_SYSTEM == NA_SYSTEM_WINDOWS
+
+*/
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH
 //

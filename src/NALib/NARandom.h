@@ -54,69 +54,9 @@ NA_IAPI float  naUniformRandZIf();
 
 
 
+// Inline implementations are in a separate file:
+#include "NAMath/NARandomII.h"
 
-
-
-// ///////////////////////////////////////////////////////////////////////
-// Inline Implementations: See readme file for more expanation.
-// ///////////////////////////////////////////////////////////////////////
-
-#include <stdlib.h>
-#include "NADateTime.h"
-
-NA_IDEF NAInt naRand(){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    return rand();
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    return rand();
-  #endif
-}
-
-
-NA_IDEF void naSRand(uint32 seed){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    srand(seed);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    srand(seed);
-  #endif
-}
-
-
-NA_IDEF uint32 naSeedRand(uint32 seed){
-  if(seed){
-    seed = (uint32)seed;
-  }else{
-    NADateTime dt = naMakeDateTimeNow();
-    seed = (int32)dt.sisec ^ dt.nsec;
-  }
-  naSRand((uint32)seed);
-  return seed;
-}
-
-
-#define NA_INV_RAND_MAX  (1.  / RAND_MAX)
-#define NA_INV_RAND_MAXf (1.f / RAND_MAX)
-
-NA_IDEF double naUniformRandZE(){
-  double rnd;
-  do{rnd = (double)naRand();} while(rnd == RAND_MAX);
-  return rnd * NA_INV_RAND_MAX;
-}
-NA_IDEF float naUniformRandZEf(){
-  float rnd;
-  do{rnd = (float)naRand();} while(rnd == RAND_MAX);
-  return rnd * NA_INV_RAND_MAXf;
-}
-    
-
-
-NA_IDEF double naUniformRandZI(){
-  return (double)naRand() * NA_INV_RAND_MAX;
-}
-NA_IDEF float naUniformRandZIf(){
-  return (float)naRand() * NA_INV_RAND_MAXf;
-}
-    
 
 
 #ifdef __cplusplus 

@@ -35,44 +35,17 @@ void printSystemTest(){
 
 
 
-#include "../NALib/NARuntime.h"
+#include "../NALib/NAString.h"
 #include "../NALib/NAPNG.h"
 #include "../NALib/NAMemory.h"
+#include "../NALib/NADateTime.h"
 
+  #define TESTCOUNT 1000000
 
 int main(void){
-  //NAPNG* inpng;
-  //NAPNG* outpng;
-  //void* srcdata;
-  //void* dstdata;
-
   printSystemTest();
   
   naStartRuntime();
-
-  //inpng = naInitPNGWithFile(naAlloc(NAPNG), "/Users/stammt/Desktop/programme/NALib/manderby.png");
-  //outpng = naInitPNG(naAlloc(NAPNG), naGetPNGSize(inpng), naGetPNGColorType(inpng), naGetPNGBitDepth(inpng));
-
-  //srcdata = naGetPNGPixelData(inpng);
-  //dstdata = naGetPNGPixelData(outpng);
-  //naCopyn(dstdata, srcdata, naGetPNGPixelDataSize(inpng));
-  //
-  //naWritePNGToFile(outpng, "output.png");
-
-  //naClearPNG(inpng);
-  //naClearPNG(outpng);
-  //naFree(inpng);
-  //naFree(outpng);
-  
-//  naStartDefaultApplication();
-//  naInitUI();
-//  
-//  NAWindow* window = naNewWindow("Brob", 0, 0, 500, 800, NA_TRUE);
-//  naShowWindow(window);
-//  
-//  naRunUI();
-//  
-//  naClearUI();
   naStopRuntime();
   
   printf("\nPress enter to quit.\n");

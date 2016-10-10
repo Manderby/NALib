@@ -20,6 +20,9 @@
   typedef struct timezone NATimeZone;
 #endif
 
+
+
+
 // If not defined, the Asc and Bin formats will use 00:00 and wintertime as the
 // default timezone setting.
 typedef enum{
@@ -76,9 +79,15 @@ typedef enum{
 // NA_SECONDS_IN_400_YEAR_PERIOD:       12622780800
 
 
-#define NA_DATETIME_FLAG_SUMMERTIME 0x01
+// This is the core time struct of NALib. It uses precisely 128 Bits and stores
+// both date, time and a nanosecond timer.
+//
+// The full type definition is in the file "NADateTimeII.h"
+typedef struct NADateTime NADateTime;
 
 
+// These are the structs accessible to the programmer. He can both construct
+// date and time and readout information thereof.
 typedef struct NADateTimeStruct NADateTimeStruct;
 struct NADateTimeStruct{
   int64  year;      // year number in astronomic numbering (neg, 0 and pos)
@@ -105,16 +114,6 @@ struct NADateTimeAttribute{
   int32  shiftmin;     // positive shift minute number in [0, 59]
 };
 
-// This is the core time struct of NALib. It uses precisely 128 Bits and stores
-// both date, time and a nanosecond timer.
-typedef struct NADateTime NADateTime;
-struct NADateTime{
-  int64  sisec;     // SI-second number starting Jan 1st 1958, 00:00 + 00:00
-  int32  nsec;      // nanosecond number in range [0, 999999999]
-  int16  shift;     // time shift in minutes (positive and negative)
-  uint8  errornum;  // error number in case invalid values were given.
-  uint8  flags;     // Various flags.
-};
 
 
 // Returns the month number (0-indexed) of an english month abbreviation.
@@ -126,11 +125,11 @@ NA_API int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str);
 NA_API int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str);
 
 // Returns true if the given year number is a leap year.
-NA_API NABool naIsLeapYearJulian      (int64 year);
-NA_API NABool naIsLeapYearGregorian   (int64 year);
+NA_IAPI NABool naIsLeapYearJulian      (int64 year);
+NA_IAPI NABool naIsLeapYearGregorian   (int64 year);
 // The following function returns the julian information for years <= 1582 and
 // the gregorian information for years > 1582.
-NA_API NABool naIsLeapYear            (int64 year);
+NA_IAPI NABool naIsLeapYear            (int64 year);
 
 
 
@@ -142,7 +141,7 @@ NA_API NADateTime naMakeDateTimeNow();
 
 // Returns an NADateTime struct with the given second number interpreted like
 // in NALib. Nanoseconds and Timeshift will be zero.
-NA_API NADateTime naMakeDateTimeWithNALibSecondNumber(uint64 secondnumber);
+NA_IAPI NADateTime naMakeDateTimeWithNALibSecondNumber(uint64 secondnumber);
 
 // Create a new NADateTime struct with the values provided.
 NA_API NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts);
@@ -156,12 +155,12 @@ NA_API NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts);
 // the global setting, see below. If you want to set the timezone manually or
 // provide any additional information, use the constructor with the
 // NADateTimeStruct as an argument instead, it is much more powerful.
-NA_API NADateTime naMakeDateTimeWithValues( int64 year,
-                                            int32 mon,
-                                            int32 day,
-                                            int32 hour,
-                                            int32 min,
-                                            int32 sec);
+NA_IAPI NADateTime naMakeDateTimeWithValues(  int64 year,
+                                              int32 mon,
+                                              int32 day,
+                                              int32 hour,
+                                              int32 min,
+                                              int32 sec);
 
 
 // Creates a new NADateTime struct from a given string with a given format.
@@ -212,14 +211,14 @@ NA_API void naExtractDateTimeInformation(const NADateTime* datetime,
                                          NADateTimeStruct* dts,
                                       NADateTimeAttribute* dta);
 // Same thing but expressed in timezone 00:00 wintertime
-NA_API void naExtractDateTimeUTCInformation(const NADateTime* datetime,
+NA_IAPI void naExtractDateTimeUTCInformation(const NADateTime* datetime,
                                             NADateTimeStruct* dts,
                                          NADateTimeAttribute* dta);
 
 // Alters timezone shift and summertime flag WITHOUT changing the real clock.
 // For example: 2011-04-01T22:37:51+06:00
 // becomes      2011-04-02T06:07:51-01:30
-NA_API void naSetDateTimeZone(NADateTime* datetime,
+NA_IAPI void naSetDateTimeZone(NADateTime* datetime,
                                     int16 newshift,
                                    NABool summertime);
 // Alters timezone shift and summertime flag WITH changing the real clock.
@@ -228,14 +227,14 @@ NA_API void naSetDateTimeZone(NADateTime* datetime,
 // Note that if you are uncertain whether to use setZone or correctZone, this
 // method is probably the wrong one. This method is only available for
 // DateTimes which accidentally were stored with an incorrect time shift.
-NA_API void naCorrectDateTimeZone(NADateTime* datetime,
+NA_IAPI void naCorrectDateTimeZone(NADateTime* datetime,
                                         int16 newshift,
                                        NABool summertime);
 
 // Returns the difference in time. The returned value is in seconds.
-NA_API double naGetDateTimeDiff(const NADateTime* end, const NADateTime* start);
+NA_IAPI double naGetDateTimeDiff(const NADateTime* end, const NADateTime* start);
 // Adds the given difference to the datetime.
-NA_API void naAddDateTimeDifference(NADateTime* datetime, double difference);
+NA_IAPI void naAddDateTimeDifference(NADateTime* datetime, double difference);
 
 // Returns a human readable string of a second counter (including decimals)
 // For example: naNewStringFromSecondDifference(12345678.12345678, 6)
@@ -244,8 +243,8 @@ NA_API NAString* naNewStringFromSecondDifference(       double difference,
                                                          uint8 decimaldigits);
 
 // Returns NA_TRUE if the date has summertime.
-NA_API NABool naHasDateTimeSummerTime(const NADateTime* datetime);
-NA_API void naSetDateTimeSummertime(NADateTime* datetime, NABool summertime);
+NA_IAPI NABool naHasDateTimeSummerTime(const NADateTime* datetime);
+NA_IAPI void naSetDateTimeSummertime(NADateTime* datetime, NABool summertime);
 
 
 // Global timezone settings
@@ -260,7 +259,7 @@ NA_API void naSetDateTimeSummertime(NADateTime* datetime, NABool summertime);
 // Use the following methods to manipulate the global settings:
 //
 // Sets a custom time shift and daylight saving flag.
-NA_API void naSetGlobalTimeShift(int16 shiftminutes, NABool summertime);
+NA_IAPI void naSetGlobalTimeShift(int16 shiftminutes, NABool summertime);
 // Sets the time shift and daylight saving flag to the system settings of the
 // local machine. 
 NA_API void naSetGlobalTimeShiftToSystemSettings();
@@ -306,6 +305,9 @@ NA_API void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
 
 
 
+
+// Inline implementations are in a separate file:
+#include "NACore/NADateTimeII.h"
 
 
 

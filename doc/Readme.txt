@@ -64,8 +64,6 @@ as you like. NALib nontheless provides its own allocation methods (which are
 basically mappings to malloc and free):
 
 - naMalloc            Allocates the given number of bytes.
-- naMallocIfNull      Same as naMalloc but the space will only be allocated
-                      if the pointer provided is NA_NULL.
 - naAlloc             Allocates space for the given NALib structure. Use it
                       for example like this: NAArray* a = naAlloc(NAArray);
 - naFree              Frees the memory allocated with above functions.
@@ -176,7 +174,7 @@ Do not use the free-functions on stack variables!
 Some container structs like NAArray or NAList provide naForeachXXX functions
 with an additional parameter: A mutator callback with the following signature:
 
-typedef void (*NAMutator)(void *);
+typedef void (*NAFunc)(void *);
 
 This parameter allows you to provide a function pointer to a mutation function
 which will be called for every element in the container.
@@ -193,9 +191,9 @@ If your array stores a pointer to int, your callback will get "int* *".
 Note that you can also use any of the functions of NALib as callback functions
 as long as they accept only one pointer parameter and return void.
 
-You may have to cast mutation functions to NAMutator.
+You may have to cast mutation functions to NAFunc.
 
-Apart from NAMutator functions, many container structs have built-in
+Apart from NAFunc functions, many container structs have built-in
 iteration functions. In NALib, you usually initialize a struct with a call
 to one of the following functions:
 
@@ -220,9 +218,10 @@ that multithreaded environments must be careful when iterating!
 
 3 Runtime System
 -----------
-Starting with NALib version 10, there exists a small Runtime System which can
-be used if desired. Currently, it mainly provides inifinitely large pools for
-NALib structures for quick allocation and pointer management.
+Since NALib version 10, there exists a small Runtime System which needs to be
+running for certain structs. It mainly provided inifinitely large pools for
+specific NALib structures for quick allocation. Starting with NALib version 16,
+that runtime system can easily be enhanced for custom types.
 
 The author decided to add such a system because of the NAString struct which
 becomes way easier to manage when strings are always provided as pointers.
@@ -241,10 +240,9 @@ When you no longer need the runtime system, you can stop it using
 
 naStopRuntime();
 
-The runtime system will be enhanced in future versions to other NALib structs
-and probably even custom types. Other enhancements of the runtime system may
-be possible like deallocation pools or even some sort of garbage collection
-or (in the far future) just-in-time compilation.
+The runtime system may be enhanced in future versions like with deallocation
+pools or even some sort of garbage collection or (in the far future)
+just-in-time compilation.
 
 
 
@@ -294,9 +292,11 @@ Yet another way is to copy all implementation code to a separate file and
 include that file at the end of the header file. Some suffixes known are
 .hpp .ii .inl .tpl .hxx. But there is no standard.
 
-The author has decided to include them at the end of the header files. This
-makes the files longer but everything is in one place, the IDEs have no
-trouble finding the symbols and the debugger works well as well.
+Starting with NALib version 16, the author decided to move any inline
+implementation into a separate header file, for example NAArray.h has an
+additional NAArrayII.h file. This II-File (Inline Implementation) is stored
+in a folder so that the main .h-File remains in the base folder visible to
+anyone.
 
 
 

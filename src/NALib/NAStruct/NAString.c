@@ -2,11 +2,12 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#include "NABinaryData.h"
-#include "NAString.h"
-#include "NAURL.h"
+#include "../NABinaryData.h"
+#include "../NAString.h"
+#include "../NAURL.h"
 #include <ctype.h>
 #include <stdio.h>
+#include <string.h>
 
 
 struct NAString{
@@ -16,6 +17,8 @@ struct NAString{
 // If that is the case, encoding contains garbage values.
 
 
+NA_HDEF void naDestructString(NAString* string);
+NA_RUNTIME_TYPE(NAString, naDestructString);
 
 
 
@@ -40,6 +43,15 @@ NA_IDEF NAUInt naVarargStringSize(const NAUTF8Char* string, va_list args){
     return (NAInt)naVsnprintf(NA_NULL, 0, string, args);
   #endif
 }
+
+
+
+// This is the destructor for a string. It is marked as a helper as it should
+// only be called by the runtime system
+NA_HDEF void naDestructString(NAString* string){
+  if(!naIsStringEmpty(string)){naClearByteArray(&(string->array));}
+}
+
 
 
 
@@ -113,7 +125,7 @@ NA_DEF NAString* naNewStringWithArguments(const NAUTF8Char* format, va_list argu
   if(stringlen){
     NAUTF8Char* stringbuf = naMalloc(-(NAInt)stringlen);
     naVsnprintf(stringbuf, stringlen + 1, format, argumentlist3);
-    string = naNewStringWithMutableUTF8Buffer(stringbuf, -(NAInt)stringlen, NA_TRUE);
+    string = naNewStringWithMutableUTF8Buffer(stringbuf, -(NAInt)stringlen, NA_MEMORY_CLEANUP_FREE);
   }else{
     string = naNewString();
   }
@@ -232,7 +244,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
     inptr++;
   }
 
-  return naNewStringWithMutableUTF8Buffer(stringbuf, -destsize, NA_TRUE);
+  return naNewStringWithMutableUTF8Buffer(stringbuf, -destsize, NA_MEMORY_CLEANUP_FREE);
 }
 
 
@@ -261,7 +273,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
 //  // Create a string with sufficient characters. As XML entities are always
 //  // longer than their decoded character, we just use the same size.
 //  stringbuf = naMalloc(-inputsize);
-//  string = naNewStringWithMutableUTF8Buffer(stringbuf, -inputsize, NA_TRUE);
+//  string = naNewStringWithMutableUTF8Buffer(stringbuf, -inputsize, NA_MEMORY_CLEANUP_FREE);
 //  inptr = naGetStringUTF8Pointer(inputstring);
 //  destptr = stringbuf;
 //
@@ -332,7 +344,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
 //  #endif
 //  // Create the string with the required length
 //  stringbuf = naMalloc(-destsize);
-//  string = naNewStringWithMutableUTF8Buffer(stringbuf, -destsize, NA_TRUE);
+//  string = naNewStringWithMutableUTF8Buffer(stringbuf, -destsize, NA_MEMORY_CLEANUP_FREE);
 //  inptr = naGetStringUTF8Pointer(inputstring);
 //  destptr = stringbuf;
 //
@@ -375,7 +387,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
 //  // Create a string with sufficient characters. As EPS entities are always
 //  // longer than their decoded character, we just use the same size.
 //  stringbuf = naMalloc(-inputsize);
-//  string = naNewStringWithMutableUTF8Buffer(stringbuf, -inputsize, NA_TRUE);
+//  string = naNewStringWithMutableUTF8Buffer(stringbuf, -inputsize, NA_MEMORY_CLEANUP_FREE);
 //  inptr = naGetStringUTF8Pointer(inputstring);
 //  destptr = stringbuf;
 //
@@ -429,12 +441,12 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
 //    #ifdef UNICODE
 //      newsize = WideCharToMultiByte(CP_UTF8, 0, systemstring, -1, NULL, 0, NULL, NULL);
 //      stringbuf = naMalloc(-newsize);
-//      string = naNewStringWithMutableUTF8Buffer(string, stringbuf, -newsize, NA_TRUE);
+//      string = naNewStringWithMutableUTF8Buffer(string, stringbuf, -newsize, NA_MEMORY_CLEANUP_FREE);
 //      WideCharToMultiByte(CP_UTF8, 0, systemstring, -1, stringbuf, newsize, NULL, NULL);
 //    #else
 //      newsize = naStrlen(systemstring);
 //      stringbuf = naMalloc(-newsize);
-//      string = naNewStringWithMutableUTF8Buffer(string, stringbuf, -newsize, NA_TRUE);
+//      string = naNewStringWithMutableUTF8Buffer(string, stringbuf, -newsize, NA_MEMORY_CLEANUP_FREE);
 //      naCopyn(stringbuf, systemstring, newsize);
 //    #endif
 //    return string;
@@ -452,7 +464,7 @@ NA_DEF void naAppendStringString(NAString* originalstring, const NAString* strin
     if(stringsize1){naCopyn(stringbuf, naGetByteArrayConstPointer(&(originalstring->array)), stringsize1);}
     if(stringsize2){naCopyn(&(stringbuf[stringsize1]), naGetByteArrayConstPointer(&(string2->array)), stringsize2);}
     naClearByteArray(&(originalstring->array));
-    naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_TRUE);
+    naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_MEMORY_CLEANUP_FREE);
   }else{
     // The string was empty and remains empty. Nothing to be done here.
   }
@@ -467,7 +479,7 @@ NA_DEF void naAppendStringChar(NAString* originalstring, NAUTF8Char newchar){
   if(stringsize){naCopyn(stringbuf, naGetByteArrayConstPointer(&(originalstring->array)), stringsize);}
   stringbuf[stringsize] = newchar;
   naClearByteArray(&(originalstring->array));
-  naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_TRUE);
+  naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_MEMORY_CLEANUP_FREE);
 }
 
 
@@ -507,7 +519,7 @@ NA_DEF void naAppendStringArguments(NAString* originalstring, const NAUTF8Char* 
     naVsnprintf(&(stringbuf[stringsize1]), stringsize2 + 1, format, argumentlist2);
     va_end(argumentlist2);
     naClearByteArray(&(originalstring->array));
-    naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_TRUE);
+    naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_MEMORY_CLEANUP_FREE);
   }else{
     // The string was empty and remains empty. Nothing to be done here.
   }
@@ -738,7 +750,7 @@ NA_DEF void naSkipStringWhitespaces(NAString* string){
 //          if(found){continue;}
 //        }else{
 //          // Line has content. Clear the emptytest
-//          naClearString(&emptytest);
+//          naDestructString(&emptytest);
 //        }
 //      }
 //    }
@@ -1184,21 +1196,10 @@ NA_DEF NABool naEqualUTF8CStringLiteralsCaseInsensitive( const NAUTF8Char* strin
 
 
 
-
-// This is the destructor for a string. It is marked as a helper as it should
-// only be called by the runtime system
-NA_HDEF void naClearString(NAString* string){
-  if(!naIsStringEmpty(string)){naClearByteArray(&(string->array));}
+NA_DEF NAUInt naStrlen(const NAUTF8Char* str){
+  return (NAUInt)strlen((const char*)str);
 }
 
-
-
-NA_HDEF void naPrepareStringRuntime(){
-  NATypeInfo typeinfo;
-  typeinfo.typesize = sizeof(NAString);
-  typeinfo.destructor = (NATypeDestructor)naClearString;
-  na_NAString_identifier = naManageRuntimeType(&typeinfo);
-}
 
 
 

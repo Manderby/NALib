@@ -11,7 +11,7 @@
 
 
 #include "NAFile.h"
-#include "NAEndianness.h"
+#include "NABinaryData.h"
 
 
 // Important remark about text and binary files:
@@ -46,6 +46,7 @@
 
 
 
+// The full type definition is in the file "NABufferII.h"
 typedef struct NABuffer NABuffer;
 
 // NABufInt must be 64 bits at all times!
@@ -375,39 +376,11 @@ NA_API void naWriteBufferLineWithArguments(NABuffer* buffer,
 
 
 
+// Inline implementations are in a separate file:
+#include "NAStruct/NABufferII.h"
 
 
 
-
-
-
-// /////////////////////////////////////////////////////
-// Inline Implementations. See Readme
-// /////////////////////////////////////////////////////
-
-
-#include "NAList.h"
-#include "NARuntime.h"
-#include "NACoord.h"
-
-struct NABuffer{
-  NAPointer* storage;               // The storage of the whole buffer.
-  NAPointer* srcdst;                // The source or dest of the buffer.
-  
-  NABufInt minpos;                  // The minimal absolute position
-  NABufInt maxpos;                  // THe maximal absolute position
-  
-  NABufInt readpos;                 // The current absolute reading position
-  NABufInt writepos;                // The current absolute writing position.
-  NAListPos readpartposition;       // The part of the buffer currently reading
-  NAListPos writepartposition;      // The part of the buffer currently writing
-  uint8 readbit;                    // The current bit number for reading
-  uint8 writebit;                   // The current bit number for writing
-
-  NAUInt flags;                     // various flags
-  NAInt endianness;                 // The current endianness
-  NAEndiannessConverter converter;  // The endianness converter.
-};
 
 
 

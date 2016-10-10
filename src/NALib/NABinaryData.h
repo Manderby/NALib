@@ -12,7 +12,8 @@
 // This file contains multiple functions dealing with binary data.
 //
 // Aside from copying, swapping or comparing bytes, there are also some
-// encoding and decoding functions as well as Checksums.
+// encoding and decoding functions, Endianness conversions as well as
+// Checksums.
 
 
 #include "NASystem.h"
@@ -97,8 +98,132 @@ NA_IAPI NABool naEqual128WithBytes( const void* s,
 
 
 
-// Checksums
 
+// ////////////////////
+// Endianness
+// ////////////////////
+
+
+// Static Endianness conversions.
+// Use those if you know exactly from which source endianness to which
+// destination endianness you want to convert. If you don't know it at
+// compile-time, use the NAEndiannessConverter below or NAByteArray.
+//
+// Will convert the data directly within the buffer
+// provided. All converters work in both ways, for example Little to Big
+// will also convert Big to Little.
+//
+// The Array-variants convert a whole array with count elements. The
+// non-Array-variants convert only one single value.
+
+// Conversion between two same Endiannesses.
+NA_IAPI  void naConvertNative8(              void* buffer);
+NA_IAPI  void naConvertNative16(             void* buffer);
+NA_IAPI  void naConvertNative32(             void* buffer);
+NA_IAPI  void naConvertNative64(             void* buffer);
+NA_IAPI  void naConvertNative128(            void* buffer);
+NA_IAPI  void naConvertArrayNative8(         void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNative16(        void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNative32(        void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNative64(        void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNative128(       void* buffer, NAUInt count);
+
+// Conversion between Little and Big Endianness
+NA_IAPI  void naConvertLittleBig8(           void* buffer);
+NA_IAPI  void naConvertLittleBig16(          void* buffer);
+NA_IAPI  void naConvertLittleBig32(          void* buffer);
+NA_IAPI  void naConvertLittleBig64(          void* buffer);
+NA_IAPI  void naConvertLittleBig128(         void* buffer);
+NA_IAPI  void naConvertArrayLittleBig8(      void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayLittleBig16(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayLittleBig32(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayLittleBig64(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayLittleBig128(    void* buffer, NAUInt count);
+
+// Conversion between Native and Little Endianness
+NA_IAPI  void naConvertNativeLittle8(        void* buffer);
+NA_IAPI  void naConvertNativeLittle16(       void* buffer);
+NA_IAPI  void naConvertNativeLittle32(       void* buffer);
+NA_IAPI  void naConvertNativeLittle64(       void* buffer);
+NA_IAPI  void naConvertNativeLittle128(      void* buffer);
+NA_IAPI  void naConvertArrayNativeLittle8(   void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNativeLittle16(  void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNativeLittle32(  void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNativeLittle64(  void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNativeLittle128( void* buffer, NAUInt count);
+
+// Conversion between Native and Big Endianness
+NA_IAPI  void naConvertNativeBig8(           void* buffer);
+NA_IAPI  void naConvertNativeBig16(          void* buffer);
+NA_IAPI  void naConvertNativeBig32(          void* buffer);
+NA_IAPI  void naConvertNativeBig64(          void* buffer);
+NA_IAPI  void naConvertNativeBig128(         void* buffer);
+NA_IAPI  void naConvertArrayNativeBig8(      void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNativeBig16(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNativeBig32(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNativeBig64(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertArrayNativeBig128(    void* buffer, NAUInt count);
+
+
+
+// If you have dynamically defined endiannesses, use an NAEndiannessConverter.
+// Use the naMakeEndiannessConverter function to fill the structure.
+// After creation, you can use the function-pointers stored in the
+// NAEndiannessConverter struct directly.
+//
+// These are the structs accessible to the programmer.
+
+typedef struct NAEndiannessConverter NAEndiannessConverter;
+
+struct NAEndiannessConverter{
+  void (*convert8)        (void* buffer);
+  void (*convert16)       (void* buffer);
+  void (*convert32)       (void* buffer);
+  void (*convert64)       (void* buffer);
+  void (*convert128)      (void* buffer);
+  void (*convertArray8)   (void* buffer, NAUInt count);
+  void (*convertArray16)  (void* buffer, NAUInt count);
+  void (*convertArray32)  (void* buffer, NAUInt count);
+  void (*convertArray64)  (void* buffer, NAUInt count);
+  void (*convertArray128) (void* buffer, NAUInt count);
+};
+
+
+// Returns an NAEndiannessConverter structure with all converters for all
+// endiannesses available in NALib. Note that it does not really matter which
+// is the endianness1 and which is endianness2 as all converters can be used
+// bidirectional.
+NA_IAPI NAEndiannessConverter naMakeEndiannessConverter(NAInt endianness1,
+                                                        NAInt endianness2);
+
+
+// naIsEndiannessNative returns NA_TRUE if the given endianness is the same as
+// the endianness of this system. Also returns NA_TRUE when sending native or
+// unknown endianness. This function is useful for dynamically checking for
+// endiannesses. If you simply are interested in the (static) endianness of
+// this system, check the NA_SYSTEM_ENDIANNESS macro.
+NA_IAPI NABool naIsEndiannessNative(NAInt endianness);
+
+
+// Use the following functions to write and read a 4-byte endianness
+// marker. This is useful for files which state what endianness they
+// are encoded with. Important notice: Read and write the marker as a
+// raw 4-byte-array, not as a 4-byte-entity!
+//
+// The markers are
+// - "BDdb" for Big Endian
+// - "bdDB" for Little Endian
+// Note that the marker will not likely change in the future.
+NA_IAPI void  naFillEndiannessMarker (NAByte marker[4], NAInt endianness);
+NA_IAPI NAInt naParseEndiannessMarker(const NAByte marker[4]);
+
+
+
+// ////////////////////
+// Checksums
+// ////////////////////
+
+// The full type definition is in the file "NABinaryDataII.h"
 typedef struct NAChecksum NAChecksum;
 
 typedef enum{
@@ -117,521 +242,8 @@ NA_API uint32 naGetChecksumResult(NAChecksum* checksum);
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ///////////////////////////////////////////////////////////////////////
-// Inline Implementations: See readme file for more expanation.
-// ///////////////////////////////////////////////////////////////////////
-
-
-#include <string.h>
-
-
-NA_IDEF void naCopy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s){
-  #ifndef NDEBUG
-    NAInt dist = (NAByte*)d - (NAByte*)s;
-    if((NAByte*)d<(NAByte*)s){dist = -dist;};
-    if(dist < 1)
-      naError("naCopy8", "Restrict pointers overlap.");
-    if(!d){
-      naCrash("naCopy8", "Pointer d is Null-Pointer.");
-      return;
-    }
-    if(!s){
-      naCrash("naCopy8", "Pointer s is Null-Pointer.");
-      return;
-    }
-  #endif
-  *(uint8*)d = *(uint8*)s;
-}
-NA_IDEF void naCopy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
-  #ifndef NDEBUG
-    NAInt dist = (NAByte*)d - (NAByte*)s;
-    if((NAByte*)d<(NAByte*)s){dist = -dist;};
-    if(dist < 2)
-      naError("naCopy16", "Restrict pointers overlap.");
-    if(!d){
-      naCrash("naCopy16", "Pointer d is Null-Pointer.");
-      return;
-    }
-    if(!s){
-      naCrash("naCopy16", "Pointer s is Null-Pointer.");
-      return;
-    }
-  #endif
-  *(uint16*)d = *(uint16*)s;
-}
-NA_IDEF void naCopy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
-  #ifndef NDEBUG
-    NAInt dist = (NAByte*)d - (NAByte*)s;
-    if((NAByte*)d<(NAByte*)s){dist = -dist;};
-    if(dist < 4)
-      naError("naCopy32", "Restrict pointers overlap.");
-    if(!d){
-      naCrash("naCopy32", "Pointer d is Null-Pointer.");
-      return;
-    }
-    if(!s){
-      naCrash("naCopy32", "Pointer s is Null-Pointer.");
-      return;
-    }
-  #endif
-  *(uint32*)d = *(uint32*)s;
-}
-NA_IDEF void naCopy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
-  #ifndef NDEBUG
-    NAInt dist = (NAByte*)d - (NAByte*)s;
-    if((NAByte*)d<(NAByte*)s){dist = -dist;};
-    if(dist < 8)
-      naError("naCopy64", "Restrict pointers overlap.");
-    if(!d){
-      naCrash("naCopy64", "Pointer d is Null-Pointer.");
-      return;
-    }
-    if(!s){
-      naCrash("naCopy64", "Pointer s is Null-Pointer.");
-      return;
-    }
-  #endif
-  *(uint64*)d = *(uint64*)s;
-}
-NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
-  #ifndef NDEBUG
-    NAInt dist = (NAByte*)d - (NAByte*)s;
-    if((NAByte*)d<(NAByte*)s){dist = -dist;};
-    if(dist < 16)
-      naError("naCopy128", "Restrict pointers overlap.");
-    if(!d){
-      naCrash("naCopy128", "Pointer d is Null-Pointer.");
-      return;
-    }
-    if(!s){
-      naCrash("naCopy128", "Pointer s is Null-Pointer.");
-      return;
-    }
-  #endif
-  *(uint64*)d = *(uint64*)s;
-  d = ((NAByte*)d) + 8;
-  s = ((NAByte*)s) + 8;
-  *(uint64*)d = *(uint64*)s;
-}
-NA_IDEF void naCopyn(void* NA_RESTRICT d,
-              const void* NA_RESTRICT s,
-                               NAUInt count){
-  #ifndef NDEBUG
-    if(!d){
-      naCrash("naCopy8", "Pointer d is Null-Pointer.");
-      return;
-    }
-    if(!s){
-      naCrash("naCopy8", "Pointer s is Null-Pointer.");
-      return;
-    }
-    if(count < 1){
-      naCrash("naCopyn", "count is %" NA_PRIu " which is smaller than 1.", count);
-      return;
-    }
-  #endif
-  memcpy(d, s, count);
-}
-
-
-
-
-// /////////////////////////////
-// Swap multibyte-values
-// /////////////////////////////
-
-NA_IDEF void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b){
-  #ifndef NDEBUG
-    NAInt dist = (NAByte*)a - (NAByte*)b;
-    if((NAByte*)a<(NAByte*)b){dist = -dist;};
-    if(dist < 1)
-      naError("naSwap8", "Restrict pointers overlap.");
-    if(!a){
-      naCrash("naSwap8", "Pointer a is Null-Pointer");
-      return;
-    }
-    if(!b){
-      naCrash("naSwap8", "Pointer b is Null-Pointer");
-      return;
-    }
-  #endif
-  // Note: Do not write the following 3 lines as 1 line. The compiler might
-  // cache the result of the dereference operators!
-  *(uint8*)a^=*(uint8*)b;
-  *(uint8*)b^=*(uint8*)a;
-  *(uint8*)a^=*(uint8*)b;
-}
-
-NA_IDEF void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
-  #ifndef NDEBUG
-    NAInt dist = (NAByte*)a - (NAByte*)b;
-    if((NAByte*)a<(NAByte*)b){dist = -dist;};
-    if(dist < 2)
-      naError("naSwap16", "Restrict pointers overlap.");
-    if(!a){
-      naCrash("naSwap16", "Pointer a is Null-Pointer");
-      return;
-    }
-    if(!b){
-      naCrash("naSwap16", "Pointer b is Null-Pointer");
-      return;
-    }
-  #endif
-  // Note: Do not write the following 3 lines as 1 line. The compiler might
-  // cache the result of the dereference operators!
-  *(uint16*)a^=*(uint16*)b;
-  *(uint16*)b^=*(uint16*)a;
-  *(uint16*)a^=*(uint16*)b;
-}
-
-NA_IDEF void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
-  #ifndef NDEBUG
-    NAInt dist = (NAByte*)a - (NAByte*)b;
-    if((NAByte*)a<(NAByte*)b){dist = -dist;};
-    if(dist < 4)
-      naError("naSwap32", "Restrict pointers overlap.");
-    if(!a){
-      naCrash("naSwap32", "Pointer a is Null-Pointer");
-      return;
-    }
-    if(!b){
-      naCrash("naSwap32", "Pointer b is Null-Pointer");
-      return;
-    }
-  #endif
-  // Note: Do not write the following 3 lines as 1 line. The compiler might
-  // cache the result of the dereference operators!
-  *(uint32*)a^=*(uint32*)b;
-  *(uint32*)b^=*(uint32*)a;
-  *(uint32*)a^=*(uint32*)b;
-}
-
-NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
-  #ifndef NDEBUG
-    NAInt dist = (NAByte*)a - (NAByte*)b;
-    if((NAByte*)a<(NAByte*)b){dist = -dist;};
-    if(dist < 8)
-      naError("naSwap64", "Restrict pointers overlap.");
-    if(!a){
-      naCrash("naSwap64", "Pointer a is Null-Pointer");
-      return;
-    }
-    if(!b){
-      naCrash("naSwap64", "Pointer b is Null-Pointer");
-      return;
-    }
-  #endif
-  // Note: Do not write the following 3 lines as 1 line. The compiler might
-  // cache the result of the dereference operators!
-  *(uint64*)a^=*(uint64*)b;
-  *(uint64*)b^=*(uint64*)a;
-  *(uint64*)a^=*(uint64*)b;
-}
-
-NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
-  #ifndef NDEBUG
-    NAInt dist = (NAByte*)a - (NAByte*)b;
-    if((NAByte*)a<(NAByte*)b){dist = -dist;};
-    if(dist < 16)
-      naError("naSwap128", "Restrict pointers overlap.");
-    if(!a){
-      naCrash("naSwap128", "Pointer a is Null-Pointer");
-      return;
-    }
-    if(!b){
-      naCrash("naSwap128", "Pointer b is Null-Pointer");
-      return;
-    }
-  #endif
-  naSwap64(a, b);
-  a = ((NAByte*)a) + 8;
-  b = ((NAByte*)b) + 8;
-  naSwap64(a, b);
-}
-
-
-
-
-NA_IDEF void naSwap(double* NA_RESTRICT a, double* NA_RESTRICT b){
-  naSwap64(a, b);
-}
-
-NA_IDEF void naSwapf(float* NA_RESTRICT a, float* NA_RESTRICT b){
-  naSwap32(a, b);
-}
-
-NA_IDEF void naSwapi(NAInt* NA_RESTRICT a, NAInt* NA_RESTRICT b){
-  #if NA_SYSTEM_ADDRESS_BITS == 32
-    naSwap32(a, b);
-  #elif NA_SYSTEM_ADDRESS_BITS == 64
-    naSwap64(a, b);
-  #endif
-}
-
-NA_IDEF void naSwapu(NAUInt* NA_RESTRICT a, NAUInt* NA_RESTRICT b){
-  #if NA_SYSTEM_ADDRESS_BITS == 32
-    naSwap32(a, b);
-  #elif NA_SYSTEM_ADDRESS_BITS == 64
-    naSwap64(a, b);
-  #endif
-}
-
-
-
-
-
-NA_IDEF NABool naEqual8(  void* NA_RESTRICT a, void* NA_RESTRICT b){
-  return (*((uint8*)a) == *((uint8*)b));
-}
-NA_IDEF NABool naEqual16( void* NA_RESTRICT a, void* NA_RESTRICT b){
-  return (*((uint16*)a) == *((uint16*)b));
-}
-NA_IDEF NABool naEqual32( void* NA_RESTRICT a, void* NA_RESTRICT b){
-  return (*((uint32*)a) == *((uint32*)b));
-}
-NA_IDEF NABool naEqual64( void* NA_RESTRICT a, void* NA_RESTRICT b){
-  return (*((uint64*)a) == *((uint64*)b));
-}
-NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b){
-  if(*((uint64*)&((((NAByte*)a)[0]))) != *((uint64*)&((((NAByte*)b)[0])))){return NA_FALSE;}
-  if(*((uint64*)&((((NAByte*)a)[8]))) != *((uint64*)&((((NAByte*)b)[8])))){return NA_FALSE;}
-  return NA_TRUE;
-}
-
-
-
-
-// ///////////////////////////////////////////////////////////
-// Fills all bytes with null values
-// ///////////////////////////////////////////////////////////
-
-NA_IDEF void naNulln(void* d, NAUInt count){
-  #ifndef NDEBUG
-    if(count < 1)
-      naError("naNulln", "count is < 1.");
-  #endif
-  // Note that the bzero function does the same but is deprecated.
-  memset(d, 0, count);
-}
-
-
-
-
-
-
-// ///////////////////////////////////////////////////////////
-// Set multiple bytes to the contents of a given pointer
-// ///////////////////////////////////////////////////////////
-
-NA_IDEF void naFill8WithBytes( void* d,
-                    NAByte b0){
-  NAByte* p; // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!d){
-      naCrash("naFill8WithBytes", "Pointer is Null-Pointer.");
-      return;
-    }
-  #endif
-  p = (NAByte*)d;
-  *p = b0;
-}
-
-NA_IDEF void naFill16WithBytes( void* d,
-                     NAByte b0, NAByte b1){
-  NAByte* p; // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!d){
-      naCrash("naFill16WithBytes", "Pointer is Null-Pointer.");
-      return;
-    }
-  #endif
-  p = (NAByte*)d;
-  *p++ = b0; *p = b1;
-}
-
-NA_IDEF void naFill32WithBytes( void* d,
-                     NAByte b0, NAByte b1, NAByte b2, NAByte b3){
-  NAByte* p; // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!d){
-      naCrash("naFill32WithBytes", "Pointer is Null-Pointer.");
-      return;
-    }
-  #endif
-  p = (NAByte*)d;
-  *p++ = b0; *p++ = b1; *p++ = b2; *p = b3;
-}
-
-NA_IDEF void naFill64WithBytesBytes( void* d,
-                     NAByte b0, NAByte b1, NAByte b2, NAByte b3,
-                     NAByte b4, NAByte b5, NAByte b6, NAByte b7){
-  NAByte* p; // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!d){
-      naCrash("naFill64WithBytesBytes", "Pointer is Null-Pointer.");
-      return;
-    }
-  #endif
-  p = (NAByte*)d;
-  *p++ = b0; *p++ = b1; *p++ = b2; *p++ = b3;
-  *p++ = b4; *p++ = b5; *p++ = b6; *p   = b7;
-}
-
-NA_IDEF void naFill128WithBytes( void* d,
-                      NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
-                      NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
-                      NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
-                      NAByte b12, NAByte b13, NAByte b14, NAByte b15){
-  NAByte* p; // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!d){
-      naCrash("naFill128WithBytes", "Pointer is Null-Pointer.");
-      return;
-    }
-  #endif
-  p = (NAByte*)d;
-  *p++ = b0;  *p++ = b1;  *p++ = b2;  *p++ = b3;
-  *p++ = b4;  *p++ = b5;  *p++ = b6;  *p++ = b7;
-  *p++ = b8;  *p++ = b9;  *p++ = b10; *p++ = b11;
-  *p++ = b12; *p++ = b13; *p++ = b14; *p   = b15;
-}
-
-
-
-// ///////////////////////////////////////////////////////////
-// Compare multiple bytes to the contents of a given pointer
-// ///////////////////////////////////////////////////////////
-
-NA_IDEF NABool naEqual8WithBytes(const void* s, NAByte b0){
-  NAByte* p; // Declaration before implementation. Needed for C90
-  #ifndef NDEBUG
-    if(!s){
-      naCrash("naEqual8WithBytes", "Pointer is Null-Pointer.");
-      return NA_FALSE;
-    }
-  #endif
-  p = (NAByte*)s;
-  if(*p   != b0){return NA_FALSE;}
-  return NA_TRUE;
-}
-
-NA_IDEF NABool naEqual16WithBytes(const void* s, NAByte b0, NAByte b1){
-  NAByte* p; // Declaration before implementation. Needed for C90
-  #ifndef NDEBUG
-    if(!s){
-      naCrash("naEqual16WithBytes", "Pointer is Null-Pointer.");
-      return NA_FALSE;
-    }
-  #endif
-  p = (NAByte*)s;
-  if(*p++ != b0){return NA_FALSE;}
-  if(*p   != b1){return NA_FALSE;}
-  return NA_TRUE;
-}
-
-NA_IDEF NABool naEqual32WithBytes(const void* s,
-                              NAByte b0, NAByte b1, NAByte b2, NAByte b3){
-  NAByte* p; // Declaration before implementation. Needed for C90
-  #ifndef NDEBUG
-    if(!s){
-      naCrash("naEqual32WithBytes", "Pointer is Null-Pointer.");
-      return NA_FALSE;
-    }
-  #endif
-  p = (NAByte*)s;
-  if(*p++ != b0){return NA_FALSE;}
-  if(*p++ != b1){return NA_FALSE;}
-  if(*p++ != b2){return NA_FALSE;}
-  if(*p   != b3){return NA_FALSE;}
-  return NA_TRUE;
-}
-
-NA_IDEF NABool naEqual64WithBytes(const void* s,
-                              NAByte b0, NAByte b1, NAByte b2, NAByte b3,
-                              NAByte b4, NAByte b5, NAByte b6, NAByte b7){
-  NAByte* p; // Declaration before implementation. Needed for C90
-  #ifndef NDEBUG
-    if(!s){
-      naCrash("naEqual64WithBytes", "Pointer is Null-Pointer.");
-      return NA_FALSE;
-    }
-  #endif
-  p = (NAByte*)s;
-  if(*p++ != b0){return NA_FALSE;}
-  if(*p++ != b1){return NA_FALSE;}
-  if(*p++ != b2){return NA_FALSE;}
-  if(*p++ != b3){return NA_FALSE;}
-  if(*p++ != b4){return NA_FALSE;}
-  if(*p++ != b5){return NA_FALSE;}
-  if(*p++ != b6){return NA_FALSE;}
-  if(*p   != b7){return NA_FALSE;}
-  return NA_TRUE;
-}
-
-NA_IDEF NABool naEqual128WithBytes(const void* s,
-                               NAByte b0,  NAByte b1,  NAByte b2,  NAByte b3,
-                               NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
-                               NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
-                               NAByte b12, NAByte b13, NAByte b14, NAByte b15){
-  NAByte* p; // Declaration before implementation. Needed for C90
-  #ifndef NDEBUG
-    if(!s){
-      naCrash("naEqual128WithBytes", "Pointer is Null-Pointer.");
-      return NA_FALSE;
-    }
-  #endif
-  p = (NAByte*)s;
-  if(*p++ != b0) {return NA_FALSE;}
-  if(*p++ != b1) {return NA_FALSE;}
-  if(*p++ != b2) {return NA_FALSE;}
-  if(*p++ != b3) {return NA_FALSE;}
-  if(*p++ != b4) {return NA_FALSE;}
-  if(*p++ != b5) {return NA_FALSE;}
-  if(*p++ != b6) {return NA_FALSE;}
-  if(*p++ != b7) {return NA_FALSE;}
-  if(*p++ != b8) {return NA_FALSE;}
-  if(*p++ != b9) {return NA_FALSE;}
-  if(*p++ != b10){return NA_FALSE;}
-  if(*p++ != b11){return NA_FALSE;}
-  if(*p++ != b12){return NA_FALSE;}
-  if(*p++ != b13){return NA_FALSE;}
-  if(*p++ != b14){return NA_FALSE;}
-  if(*p   != b15){return NA_FALSE;}
-  return NA_TRUE;
-}
-
-
-
-struct NAChecksum{
-  NAChecksumType type;
-  void* data;
-};
-
-
-
-
-
-
+// Inline implementations are in a separate file:
+#include "NACore/NABinaryDataII.h"
 
 
 

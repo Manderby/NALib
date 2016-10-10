@@ -5,78 +5,89 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\NALib\NAArray.c" />
-    <ClCompile Include="..\..\..\NALib\NABinaryData.c" />
-    <ClCompile Include="..\..\..\NALib\NABuffer.c" />
-    <ClCompile Include="..\..\..\NALib\NAByteArray.c" />
-    <ClCompile Include="..\..\..\NALib\NADateTime.c" />
-    <ClCompile Include="..\..\..\NALib\NADeflate.c" />
-    <ClCompile Include="..\..\..\NALib\NAHeap.c" />
-    <ClCompile Include="..\..\..\NALib\NAList.c" />
-    <ClCompile Include="..\..\..\NALib\NAOctTree.c" />
-    <ClCompile Include="..\..\..\NALib\NAPNG.c" />
-    <ClCompile Include="..\..\..\NALib\NAQuadTree.c" />
-    <ClCompile Include="..\..\..\NALib\NARuntime.c" />
-    <ClCompile Include="..\..\..\NALib\NAString.c" />
-    <ClCompile Include="..\..\..\NALib\NASystem.c" />
-    <ClCompile Include="..\..\..\NALib\NAUI.c" />
-    <ClCompile Include="..\..\..\NALib\NAUIWINAPI.c" />
-    <ClCompile Include="..\..\..\test\main.c" />
+    <ClInclude Include="..\..\..\src\NALib\NAArray.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABinaryData.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABuffer.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAByteArray.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAByteMap2D.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACircularBuffer.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAComplex.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACoord.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACore\NABinaryDataII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACore\NADateTimeII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAFileII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAMemoryII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAThreadingII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAURLII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAValueHelper.h" />
+    <ClInclude Include="..\..\..\src\NALib\NADateTime.h" />
+    <ClInclude Include="..\..\..\src\NALib\NADeflate.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAFile.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAGrowingSpace.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAHeap.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAList.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAMap2D.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAMathConstants.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAMathOperators.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAMath\NAComplexII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAMath\NACoordII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAMath\NAMathOperatorsII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAMath\NARandomII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAMath\NAVectorAlgebraII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAMemory.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAOctTree.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAPNG.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAPool.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAQuadTree.h" />
+    <ClInclude Include="..\..\..\src\NALib\NARandom.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStack.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAString.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAArrayII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NABufferII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAByteArrayII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAByteMap2DII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NACircularBufferII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAGrowingSpaceII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAHeapII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAListII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAMap2DII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAPoolII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NASystem.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAThreading.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAUI.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAURL.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAVectorAlgebra.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAVisual\NAUICocoa.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAVisual\NAUICoreAPI.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\NALib\NAArray.h" />
-    <ClInclude Include="..\..\..\NALib\NABinaryData.h" />
-    <ClInclude Include="..\..\..\NALib\NABuffer.h" />
-    <ClInclude Include="..\..\..\NALib\NAByteArray.h" />
-    <ClInclude Include="..\..\..\NALib\NAByteMap2D.h" />
-    <ClInclude Include="..\..\..\NALib\NAComplex.h" />
-    <ClInclude Include="..\..\..\NALib\NACoord.h" />
-    <ClInclude Include="..\..\..\NALib\NADateTime.h" />
-    <ClInclude Include="..\..\..\NALib\NADeflate.h" />
-    <ClInclude Include="..\..\..\NALib\NAEndianness.h" />
-    <ClInclude Include="..\..\..\NALib\NAFile.h" />
-    <ClInclude Include="..\..\..\NALib\NAGrowingSpace.h" />
-    <ClInclude Include="..\..\..\NALib\NAHeap.h" />
-    <ClInclude Include="..\..\..\NALib\NAList.h" />
-    <ClInclude Include="..\..\..\NALib\NAMap2D.h" />
-    <ClInclude Include="..\..\..\NALib\NAMathConstants.h" />
-    <ClInclude Include="..\..\..\NALib\NAMathOperators.h" />
-    <ClInclude Include="..\..\..\NALib\NAMemory.h" />
-    <ClInclude Include="..\..\..\NALib\NAOctTree.h" />
-    <ClInclude Include="..\..\..\NALib\NAPNG.h" />
-    <ClInclude Include="..\..\..\NALib\NAPool.h" />
-    <ClInclude Include="..\..\..\NALib\NAQuadTree.h" />
-    <ClInclude Include="..\..\..\NALib\NARandom.h" />
-    <ClInclude Include="..\..\..\NALib\NARuntime.h" />
-    <ClInclude Include="..\..\..\NALib\NAStack.h" />
-    <ClInclude Include="..\..\..\NALib\NAString.h" />
-    <ClInclude Include="..\..\..\NALib\NASystem.h" />
-    <ClInclude Include="..\..\..\NALib\NAThreading.h" />
-    <ClInclude Include="..\..\..\NALib\NAUI.h" />
-    <ClInclude Include="..\..\..\NALib\NAUIHiddenAPI.h" />
-    <ClInclude Include="..\..\..\NALib\NAURL.h" />
-    <ClInclude Include="..\..\..\NALib\NAValueHelper.h" />
-    <ClInclude Include="..\..\..\NALib\NAVectorAlgebra.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\..\NALib\NAUICocoa.m" />
+    <ClCompile Include="..\..\..\src\NALib\NACore\NABinaryData.c" />
+    <ClCompile Include="..\..\..\src\NALib\NACore\NADateTime.c" />
+    <ClCompile Include="..\..\..\src\NALib\NACore\NAMemory.c" />
+    <ClCompile Include="..\..\..\src\NALib\NACore\NASystem.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAArray.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NABuffer.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAByteArray.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAHeap.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAList.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAOctTree.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAQuadTree.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAString.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAVisual\NADeflate.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAVisual\NAPNG.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUI.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUICoreAPI.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUIWINAPI.c" />
+    <ClCompile Include="..\..\..\src\test\main.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{80979BEB-BBC7-4565-BDA3-C09E177FB92C}</ProjectGuid>
+    <ProjectGuid>{BE63F596-929D-4507-88B3-04758771747F}</ProjectGuid>
     <RootNamespace>NALibTest</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -85,18 +96,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
-    <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -108,13 +108,7 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -128,29 +122,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-    </ClCompile>
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-    </ClCompile>
-    <Link>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>

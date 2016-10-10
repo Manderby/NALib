@@ -19,18 +19,7 @@
 #include "NASystem.h"
 #include "NACoord.h"
 
-// NALib provides a simple implementation for UI.
-//
-// Here, you can define Applications, Windows, Buttons, Sliders, etc.
-
-typedef struct NAApplication  NAApplication;
-typedef struct NAScreen       NAScreen;
-typedef struct NAWindow       NAWindow;
-typedef struct NAOpenGLView   NAOpenGLView;
-
-
-// /////////////////////
-// Concerning graphical user interfaces (GUIs):
+// NALib provides a simple implementation for Graphical User Interfaces (GUI).
 //
 // GUIs are implemented in various ways across all systems and there is no
 // general solution to how one should design a GUI. Therefore, NALib combines
@@ -41,19 +30,124 @@ typedef struct NAOpenGLView   NAOpenGLView;
 // user interface elements to that application one by one. The topmost ui
 // element is the application itself. From there, you can access the screens
 // and add Windows. Windows may contain views and subviews where you place
-// elements like buttons, sliders, OpenGL views, ...
+// elements like buttons, sliders, OpenGL views, etc.
 //
-// User interactions can be captured by defining sp called "reactions".
+// User interactions can be captured by defining so called "reactions".
 //
-
 // Note that UI implementation of NALib automatically makes use of
 // multi-threading. Therefore, when including this file on Mac OS X,
 // grand central dispatch (GCD) will automatically be included.
 // On Windows, the default WINAPI threads will be used.
 
 
+/////////////////////////////////////
+// User Interface Elements
+//
+// In NALib, the whole application structure is understood to consist of UI
+// elements. They have a clear hierarchical ordering:
+// - Application
+// - Screen
+// - Window
+// - View
+// - Subviews...
+// - Elements like Buttons, Sliders, ...
+//
+// In NALib, the implementation of the corresponding structs is hidden in
+// system dependent files but all structs are typedef'd as void here. You will
+// interact with the NALib GUI by providing pointers to these void types. This
+// makes it easy to use any ui element with any ui function where a NAUIElement
+// is expected.
+
+typedef void  NAUIElement;
+
+typedef void  NAApplication;
+typedef void  NAScreen;
+typedef void  NAWindow;
+typedef void  NAOpenGLView;
+
+
+
+// Each of the hidden structs can identify themselves as what they are.
+// In order to find out what a specific UI element is, you can use the
+// the following enums and function.
+
+typedef enum{
+  NA_UI_APPLICATION,
+  NA_UI_SCREEN,
+  NA_UI_WINDOW,
+  NA_UI_OPENGLVIEW,
+} NAUIElementType;
+
+NA_API NAUIElementType naGetUIElementType(NAUIElement* uielement);
+
+
+// Any ui element has a strict hierarchical ordering: Application - Screen -
+// Window - View - Subview - Subsubview ... You can get the parent element
+// with this function. The parent of the Application will be NA_NULL.
+NA_API NAUIElement* naGetUIElementParent  (NAUIElement* uielement);
+
+// You can get the window of any ui element except for application and screen
+// elements. An application or screen element will return NA_NULL. A window
+// element will return itself and any other ui element will return the window
+// it is contained in.
+NA_API NAWindow*  naGetUIElementWindow  (NAUIElement* uielement);
+
+// In NALib, all coordinates of the UI are described in a mathematical, right-
+// handed coordinate system. The origin of the global coordinate system is
+// at the lower left screen corner of the main screen.
+//
+// Using naGetUIElementRect, you can get the rect of any ui element relative
+// to another element. If you send the NAApplication instance as the relative
+// element, (using naGetApplication), you will get global coordinates. If you
+// send NA_NULL as the relative element, you will get coordinates relative to
+// the parent element.
+//
+// Note that the includebounds argument only works for windows for now. It
+// returns either the content rectangle (client rectangle) or the window
+// outer frame.
+NA_API NARect naGetUIElementRect(   NAUIElement* uielement,
+                                    NAUIElement* relativeuielement,
+                                    NABool includebounds);
+
+// You can ask any ui element to refresh its contents. This will cause the
+// element to be displayed anew. The time difference defines when the refresh
+// shall occur in seconds. Note that even when using the Now variant or a value
+// of 0 as timediff, the redraw method will not execute immediately but put a
+// message to the default message queue of the application. Therefore, this
+// function will always immediately return.
+NA_API void naRefreshUIElementNow (NAUIElement* uielement);
+NA_API void naRefreshUIElement    (NAUIElement* uielement, double timediff);
+
+
+// Native IDs
+//
+// NALib always acts as a layer on top of the native UI implementation of a
+// system. No matter if it is Macintosh or Windows, you can get the native
+// structures used in the corresponding UI systems with naGetUIElementNativeID.
+// This allows you to do with the user interface elements whatever you need to
+// do.
+//
+// Windows: The native framework used is WINAPI and the nativeID you get is a
+// HWND handle. If the user interface element is the application itself, you
+// get a HINSTANCE handle.
+//
+// Macintosh: NALib is using the Cocoa framework as the native UI. This means
+// that in the background, NALib implements certain Objective-C methods to
+// provide a UI most closely possible to a native experience. The nativeID
+// corresponds to NSResponder*. Note that also NSApplication inherits from
+// NSResponder.
+//
+// Use the following function to retrieve the native ID for any ui element:
+
+typedef void*  NANativeID;
+
+NA_API NANativeID naGetUIElementNativeID(NAUIElement* element);
+
+
+
+
 // ////////////////////////////////
-// Running the application.
+// The application
 //
 // On each system, there is at some point a so called message loop where the
 // system informs NALib that the user performed an action on a ui element which
@@ -89,7 +183,7 @@ NA_API void naStartApplication(  NAFunc prestartup,
 // prestartup:
 // The prestartup function is here for initialization of global variables
 // which have nothing to do with UI. Especially on a Mac, this function is
-// intended to not execute Objective-C code although you of couse may. This
+// intended to not execute Objective-C code although you of course may. This
 // function is rarely used but it is here for you if you really need it.
 //
 // poststartup:
@@ -101,18 +195,30 @@ NA_API void naStartApplication(  NAFunc prestartup,
 //
 // Note that both in the prestartup as well as the poststartup function, the
 // global NAApplication struct of NALib is ready to be used. You can get this
-// struct using the following call. See naGetUINativeID to get the native app
-// pointer HINSTANCE (on Windows) or NSApp (on a Macintosh).
+// struct using the following call. See naGetUIElementNativeID to get the
+// native app pointer HINSTANCE (on Windows) or NSApp (on a Macintosh).
 
-NA_API NAApplication*  naGetApplication(void);
+// The message loop will run indefinitely until the application is terminated
+// by a signal or it recieves a stop message using the following function: This
+// Will send a stop message to the application which will then in the next
+// schedule will stop the run message loop and eventually return from the call
+// to naStartApplication. All attached memory of the application will be freed
+// and the application will not be able to run again!
+NA_API void naStopApplication(void);
 
-// todo stopping the application
+// If you need to get the application itself, use this function:
+NA_API NAApplication* naGetApplication(void);
 
-// On Mac systems, you can ask to flush the current NSAutoreleasePool once
-// naStartApplication had been called with the following function. This
-// function does nothing on Windows.
-
-NA_API void   cubFlushGarbageMemory();
+// Executes the given function in the given number of seconds with the given
+// arg by posting a message on the main execute loop. This function returns
+// immediately. Note that the timediff is given as a double.
+//
+// Note that this function is not defined in the NAThreading.h file because
+// it only makes sense if there is a message loop which only exists when
+// running a UI.
+NA_API void naCallApplicationFunctionInSeconds(  NAFunc function,
+                                                  void* arg,
+                                                 double timediff);
 
 // When using a GUI on windows, you will sooner or later have to set the
 // subsystem in the project properties->linker->system to /SUBSYSTEM:WINDOWS.
@@ -127,99 +233,23 @@ NA_API void   cubFlushGarbageMemory();
 // will NOT automatically hide the console when NDEBUG is defined! This
 // function does nothing on a Mac.
 
-NA_API void naOpenConsoleWindow();
+NA_API void naOpenConsoleWindow(void);
 
 
 
 
-/////////////////////////////////////
-// User Interface Elements
-//
-// In NALib, the whole application structure is understood to consist of UI
-// elements. They have a clear hierarchical ordering:
-// - Application
-// - Screen
-// - Window
-// - View
-// - Subviews...
-//
-// In NALib, the implementation of the corresponding structs is hidden in the
-// NAUIHiddenAPI.h file but all structs are typedef'd on the top of this file.
-// See NAApplication or NAWindow for example.
-//
-// Each of these structs contains a hidden structure identifying the elements
-// as what they are. A ui element therefore can be sent to any of the following
-// ui functions where a void* is expected.
-//
-// You as a programmer can identify the type of a void* uielement by quering
-// its type:
 
-typedef enum{
-  NA_UI_APPLICATION,
-  NA_UI_SCREEN,
-  NA_UI_WINDOW,
-  NA_UI_OPENGLVIEW,
-} NAUIElementType;
 
-// Returns the type of the given ui element.
-NA_API NAUIElementType naGetUIElementType(void* uielement);
 
-// Native IDs
-//
-// NALib always acts as a layer on top of the native UI implementation of a
-// system. No matter if it is Macintosh or Windows, you can get the native
-// structures used in the corresponding UI systems with naGetUINativeID. This
-// allows you to do with the user interface elements whatever you need to do.
-//
-// Windows: The native framework used is WINAPI and the nativeID you get is a
-// HWND handle. If the user interface element is the application itself, you
-// get a HINSTANCE handle.
-//
-// Macintosh: NALib is using the Cocoa framework as the native UI. This means
-// that in the background, NALib implements certain Objective-C methods to
-// provide a UI most closely possible to a native experience. The nativeID
-// corresponds to NSResponder*. Note that also NSApplication inherits from
-// NSResponder.
-//
-// Use the following function to retrieve the native ID for any ui element
 
-void* naGetUINativeID(void* uielement);
 
-// Any ui element has a strict hierarchical ordering: Application - Screen -
-// Window - View - Subview - Subsubview ... You can get the parent element
-// with this function. The parent of the Application will be NA_NULL.
-NA_API void*      naGetUIElementParent  (void* uielement);
 
-// You can get the window of any ui element except for application and screen
-// elements. An application or screen element will return NA_NULL. A window
-// element will return itself and any other ui element will return the window
-// it is contained in.
-NA_API NAWindow*  naGetUIElementWindow  (void* uielement);
 
-// In NALib, all coordinates of the UI are described in a mathematical, right-
-// handed coordinate system. The origin of the global coordinate system is
-// at the lower left screen corner of the main screen.
-//
-// Using naGetUIElementRect, you can get the rect of any ui element relative
-// to another element. If you send the NAApplication instance as the relative
-// element, (using naGetApplication), you will get global coordinates. If you
-// send NA_NULL as the relative element, you will get coordinates relative to
-// the parent element.
-//
-// Note that the includebounds argument only works for windows for now. It
-// returns either the content rectangle (client rectangle) or the window
-// outer frame.
-NA_API NARect naGetUIElementRect(   void* uielement,
-                                    void* relativeelement,
-                                   NABool includebounds);
 
-// You can ask any ui element to refrehs its contents. This will cause the
-// element to be displayed anew. The time difference defines when the refresh
-// shall occur in seconds. Note that using a value of 0 as timediff will not
-// actually execute the redraw method immediately but put a message to the
-// default message queue of the application. Therefore, this function will
-// always immediately return.
-NA_API void       naRefreshUIElement    (void* uielement, double timediff);
+
+
+
+
 
 
 
@@ -246,22 +276,24 @@ typedef enum{
 // prototype NAReactionHandler.
 
 typedef NABool (*NAReactionHandler)(  void* controller,
-                                      void* uielement,
+                               NAUIElement* uielement,
                                 NAUICommand command,
                                       void* arg);
 
 NA_API void naAddUIReaction(          void* controller,
-                                      void* uielement,
+                               NAUIElement* uielement,
                                 NAUICommand command,
                           NAReactionHandler handler);
 
 
 // The function naAddUIReaction and the function prototype NAReactionHandler
-// work in pairs. The controller given to naAddUIReaction will be set as the
-// first parameter of the reaction handler. The uielement is the element where
-// the command occurs and the command sent is the command observed.
+// work in pairs. The controller given to naAddUIReaction is an arbitrary void
+// pointer which simply will be set as the first parameter of the reaction
+// handler. You probably will use either NA_NULL or some kind of master control
+// struct for that, hence the name controller. The uielement is the element
+// where the command occurs and the command sent is the command observed.
 //
-// The argument sent to the reaction handler is dependent on the command:
+// The arg sent to the reaction handler is dependent on the command:
 //
 // command       arg type     arg
 // ----------------------------------------------------------------------
@@ -296,18 +328,27 @@ NA_API void naAddUIReaction(          void* controller,
 
 
 
+typedef struct NACursorInfo NACursorInfo;
+struct NACursorInfo{
+  NAPos pos;
+  NAPos prevpos;
+};
 
 
-// Also part of the UI is the cursor of the mouse.
-typedef struct NACursorInfo   NACursorInfo;
+
+
+
+NA_API NAWindow* naNewWindow(const char* title, NARect rect, NABool resizeable);
+
+
+
 
 
 
 NA_API NARect naGetMainScreenRect();
 
-NA_API NAWindow* naNewWindow(const char* title, double posx, double posy, double width, double height, NABool resizeable);
 NA_API void naShowWindow(NAWindow* window);
-NA_API void naSetWindowContentView(NAWindow* window, void* uielement);
+NA_API void naSetWindowContentView(NAWindow* window, NAUIElement* uielement);
 NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullscreen);
 NA_API NABool naIsWindowFullscreen(NAWindow* window);
 //NA_API NARect naGetWindowRect(NAWindow* window);
@@ -328,12 +369,6 @@ NA_API NAPos naGetCursorPos(const NACursorInfo* cursorinfo);
 NA_API NASize naGetCursorDelta(const NACursorInfo* cursorinfo);
 
 
-// Executes the given function in the given number of seconds with the given
-// arg by posting a message on the main execute loop. This function returns
-// immediately. Note that the timediff is given as a double.
-NA_API void naCallFunctionInSeconds(     NAFunc function,
-                                           void* arg,
-                                         double timediff);
 // Note that although this API would perfectly fit into the NAThreading.h file,
 // it is located here as it only makes sense to use when an application with
 // a message loop is running.

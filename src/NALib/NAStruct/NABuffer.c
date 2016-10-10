@@ -4,9 +4,8 @@
 
 
 
-#include "NABuffer.h"
-#include "NAEndianness.h"
-#include "NAList.h"
+#include "../NABuffer.h"
+#include "../NAList.h"
 
 
 #define NA_BUFFER_SIZE 4096
@@ -138,7 +137,7 @@ NA_HDEF NAByte* naGetBufferPartDataPointer(NABufferPart* part, NABufInt abspos){
 
 // Clears a buffer part.
 NA_HDEF void naClearBufferPart(NABufferPart* part){
-  naClearBuf(&(part->buf));
+  naFreeBuf(&(part->buf));
 }
 
 // Clears all buffer parts in the list and clears the list itself.
@@ -159,11 +158,11 @@ NA_HDEF void naClearBufferPartList(NAList* bufpartlist){
 NA_DEF NABuffer* naInitBufferInputtingFromFile(NABuffer* buffer, const char* filename){
   NAFile* readfile;
   NAList* bufpartlist = naInitList(naAlloc(NAList));
-  buffer->storage = naNewPointerMutable(bufpartlist, NA_POINTER_CLEANUP_FREE, (NAFunc)naClearBufferPartList);
+  buffer->storage = naNewPointer(bufpartlist, NA_MEMORY_CLEANUP_FREE, (NAFunc)naClearBufferPartList);
   
   readfile = naAlloc(NAFile);
   *readfile = naMakeFileReadingFilename(filename);
-  buffer->srcdst = naNewPointerMutable(readfile, NA_POINTER_CLEANUP_FREE, (NAFunc)naCloseFile);
+  buffer->srcdst = naNewPointer(readfile, NA_MEMORY_CLEANUP_FREE, (NAFunc)naCloseFile);
 
   buffer->minpos = 0;
   buffer->maxpos = -1;
@@ -197,11 +196,11 @@ NA_DEF NABuffer* naInitBufferInputtingFromByteArray(NABuffer* buffer, const NABy
       naError("naInitBufferInputtingFromByteArray", "Array is empty");
   #endif
   bufpartlist = naInitList(naAlloc(NAList));
-  buffer->storage = naNewPointerMutable(bufpartlist, NA_POINTER_CLEANUP_FREE, (NAFunc)naClearBufferPartList);
+  buffer->storage = naNewPointer(bufpartlist, NA_MEMORY_CLEANUP_FREE, (NAFunc)naClearBufferPartList);
 
   srcdstarray = naAlloc(NAByteArray);
   naInitByteArrayExtraction(srcdstarray, array, 0, -1);
-  buffer->srcdst = naNewPointerMutable(srcdstarray, NA_POINTER_CLEANUP_FREE, (NAFunc)naClearByteArray);
+  buffer->srcdst = naNewPointer(srcdstarray, NA_MEMORY_CLEANUP_FREE, (NAFunc)naClearByteArray);
 
   buffer->minpos = 0;
   buffer->maxpos = (NABufInt)naEndToMaxi(naGetByteArraySize(array));
@@ -270,9 +269,9 @@ NA_DEF NABuffer* naInitBufferInputtingFromBufferExtraction(NABuffer* buffer, NAB
 
 NA_DEF NABuffer* naInitBuffer(NABuffer* buffer){
   NAList* bufpartlist = naInitList(naAlloc(NAList));
-  buffer->storage = naNewPointerMutable(bufpartlist, NA_POINTER_CLEANUP_FREE, (NAFunc)naClearBufferPartList);
+  buffer->storage = naNewPointer(bufpartlist, NA_MEMORY_CLEANUP_FREE, (NAFunc)naClearBufferPartList);
 
-  buffer->srcdst = naNewPointerConst(NA_NULL);
+  buffer->srcdst = naNewNullPointer();
 
   buffer->minpos = 0;
   buffer->maxpos = -1;
@@ -301,7 +300,7 @@ NA_DEF NABuffer* naInitBuffer(NABuffer* buffer){
 
 //NA_DEF NABuffer* naInitBufferOutputtingToFile(NABuffer* buffer, const char* filename, NAFileMode mode){
 //  NAList* bufpartlist = naInitList(naAlloc(NAList));
-//  buffer->storage = naNewPointerMutable(bufpartlist, NA_POINTER_CLEANUP_FREE, naClearList);
+//  buffer->storage = naNewPointer(bufpartlist, NA_MEMORY_CLEANUP_FREE, naClearList);
 //
 //  buffer->srcdst = naAlloc(NAFile);
 //  *((NAFile*)(buffer->srcdst)) = naMakeFileWritingFilename(filename, mode);
@@ -332,7 +331,7 @@ NA_DEF NABuffer* naInitBuffer(NABuffer* buffer){
 //
 //NA_DEF NABuffer* naInitBufferOutputtingToStdout(NABuffer* buffer){
 //  NAList* bufpartlist = naInitList(naAlloc(NAList));
-//  buffer->storage = naNewPointerMutable(bufpartlist, NA_POINTER_CLEANUP_FREE, naClearList);
+//  buffer->storage = naNewPointer(bufpartlist, NA_MEMORY_CLEANUP_FREE, naClearList);
 //
 //  buffer->srcdst = naAlloc(NAFile);
 //  *((NAFile*)(buffer->srcdst)) = naMakeFileWritingStdout();
@@ -361,7 +360,7 @@ NA_DEF NABuffer* naInitBuffer(NABuffer* buffer){
 //
 //NA_DEF NABuffer* naInitBufferOutputtingToStderr(NABuffer* buffer){
 //  NAList* bufpartlist = naInitList(naAlloc(NAList));
-//  buffer->storage = naNewPointerMutable(bufpartlist, NA_POINTER_CLEANUP_FREE, naClearList);
+//  buffer->storage = naNewPointer(bufpartlist, NA_MEMORY_CLEANUP_FREE, naClearList);
 //
 //  buffer->srcdst = naAlloc(NAFile);
 //  *((NAFile*)(buffer->srcdst)) = naMakeFileWritingStderr();
@@ -390,7 +389,7 @@ NA_DEF NABuffer* naInitBuffer(NABuffer* buffer){
 //
 //NA_DEF NABuffer* naInitBufferOutputtingToVoid(NABuffer* buffer){
 //  NAList* bufpartlist = naInitList(naAlloc(NAList));
-//  buffer->storage = naNewPointerMutable(bufpartlist, NA_POINTER_CLEANUP_FREE, naClearList);
+//  buffer->storage = naNewPointer(bufpartlist, NA_MEMORY_CLEANUP_FREE, naClearList);
 //
 //  buffer->srcdst = NA_NULL;
 //
@@ -419,6 +418,7 @@ NA_DEF NABuffer* naInitBuffer(NABuffer* buffer){
 
 
 NA_DEF void naFlushBuffer(NABuffer* buffer){
+  NA_UNUSED(buffer);
 //  if(naGetBufferKind(buffer) == NA_BUFFER_KIND_OUTPUT){
 //    if((buffer->flags & NA_BUFFER_FLAG_SRCDST_MASK) == NA_BUFFER_FLAG_SRCDST_NONE){
 //      return;
@@ -594,7 +594,7 @@ NA_API NABufInt naComputeBufferMaxPos(NABuffer* buffer){
       naError("naComputeBufferMaxPos", "Can compute max pos only for files and bytearrays");
   #endif
   if((buffer->flags & NA_BUFFER_FLAG_SRCDST_MASK) == NA_BUFFER_FLAG_SRCDST_FILE){
-    buffer->maxpos = naEndToMaxi(naComputeFileSize((NAFile*)naGetPointerMutable(buffer->srcdst)));
+    buffer->maxpos = naEndToMaxi64(naComputeFileSize((NAFile*)naGetPointerMutable(buffer->srcdst)));
   }
   buffer->flags |= NA_BUFFER_FLAG_MAXPOS_KNOWN;
   buffer->flags &= ~NA_BUFFER_FLAG_CAN_EXTEND;
@@ -627,7 +627,6 @@ NA_DEF NABool naIsBufferReadAtEnd(const NABuffer* buffer){
 
 NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file, NABool atabsoluteposition){
   NAList* buflist;
-  NABufferPart* curpart;
   #ifndef NDEBUG
     if(atabsoluteposition)
       naError("naWriteBufferToFile", "atabsoluteposition must be NA_FALSE for now. Will be implemented later.");
@@ -636,8 +635,9 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file, NABool atabsolut
     NA_UNUSED(atabsoluteposition);
   #endif
   buflist = naGetPointerMutable(buffer->storage);
-  naFirstList(buflist);
-  while((curpart = naIterateListMutable(buflist, 1))){
+  naRewindList(buflist);
+  while(naIterateList(buflist, 1)){
+    NABufferPart* curpart = naGetListCurrentMutable(buflist);
     #ifndef NDEBUG
         if ((NA_SYSTEM_INT_BITS < 64) && (naGetBufUsedSize(&(curpart->buf)) > NA_INT_MAX))
           naError("naWriteBufferToFile", "buf size overflows int range, while int has less than 64 bits in this configuration.");
@@ -841,7 +841,7 @@ NA_HDEF void naReadBufferPart(NABuffer* buffer, NABufferPart* part){
     printf("not yet implemented");
   }
   if(naIsBufferSecure(buffer) && (readbytes < desiredbytes)){
-    naNulln(&(((NAByte*)naGetBufMutableFirstPointer(&(part->buf)))[readbytes]), desiredbytes - readbytes);
+    naNulln64(&(((NAByte*)naGetBufMutableFirstPointer(&(part->buf)))[readbytes]), desiredbytes - readbytes);
   }
 }
 
@@ -855,7 +855,7 @@ NA_HIDEF NABufferPart* naLocateBufferList(NAList* buflist, NABufInt abspos){
   
   curpart = naGetListCurrentMutable(buflist);
   if(!curpart){
-    naFirstList(buflist);
+    naLocateListIndex(buflist, 0);
     curpart = naGetListCurrentMutable(buflist);
   }
   // Now we are sure, curpart is a part of the list
@@ -942,7 +942,7 @@ NA_HIDEF void naEnhanceBuffer(NABuffer* buffer, NABufInt count, NABool forwritin
 
       // curpart contains the curpos. If there is not yet a part pointer
       // set, we set it now:
-      if(!(*bufferpartposition)){*bufferpartposition = naGetListPosition(buflist);}
+      if(!(*bufferpartposition)){*bufferpartposition = naGetListCurrentPosition(buflist);}
 
       endindex = naGetBufferPartEndIndex(curpart);
       remainingsize = endindex - curpos;
@@ -1087,7 +1087,7 @@ NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum)
     if(count > remainingbytes){
       naAccumulateChecksum(checksum, src, (NAInt)remainingbytes);
       buffer->readpos += remainingbytes;
-      buffer->readpartposition = naGetListPositionNext(buflist, buffer->readpartposition);
+      buffer->readpartposition = naGetListNextPosition(buflist, buffer->readpartposition);
       count -= remainingbytes;
     }else{
       naAccumulateChecksum(checksum, src, (NAInt)count);
@@ -1144,7 +1144,7 @@ NA_DEF void naRetrieveBufferBytes(NABuffer* buffer, void* ptr, NABufInt count, N
     if(count > remainingbytes){
       naCopyn(ptr, src, (NAUInt)remainingbytes);
       buffer->readpos += remainingbytes;
-      buffer->readpartposition = naGetListPositionNext(buflist, buffer->readpartposition);
+      buffer->readpartposition = naGetListNextPosition(buflist, buffer->readpartposition);
       count -= remainingbytes;
       *((NAByte**)(&ptr)) += remainingbytes;
     }else{
@@ -1634,7 +1634,7 @@ NA_DEF void naStoreBufferBytes(NABuffer* buffer, const void* ptr, NABufInt count
     if(count > remainingbytes){
       naCopyn(dst, ptr, (NAUInt)remainingbytes);
       buffer->writepos += remainingbytes;
-      buffer->writepartposition = naGetListPositionNext(buflist, buffer->writepartposition);
+      buffer->writepartposition = naGetListNextPosition(buflist, buffer->writepartposition);
       *((NAByte**)(&ptr)) += remainingbytes;
       count -= remainingbytes;
     }else{
@@ -1721,7 +1721,6 @@ NA_DEF void naWriteBufferStringWithArguments(NABuffer* buffer,
 
 NA_DEF void naWriteBufferBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer, NABufInt count){
   NAList* srcbuflist;
-  NABufferPart* curpart;
   
   #ifndef NDEBUG
     if(count < 0)
@@ -1736,8 +1735,8 @@ NA_DEF void naWriteBufferBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer, NABufI
 //  #endif
 //  naFirstList(srcbuflist);
   naLocateBufferList(srcbuflist, srcbuffer->readpos);
-  while((curpart = naIterateListMutable(srcbuflist, 1))){
-    // todo: This might not be correct in all cases.
+  while(NA_TRUE){
+    NABufferPart* curpart = naGetListCurrentMutable(srcbuflist);
     NABufInt remainingsize = naGetBufferPartEndIndex(curpart) - srcbuffer->readpos;
     void* srcptr = naGetBufferPartDataPointer(curpart, srcbuffer->readpos);
     if(remainingsize > count){
@@ -1750,6 +1749,7 @@ NA_DEF void naWriteBufferBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer, NABufI
       count -= remainingsize;
     }
     if(count == 0){break;}
+    naIterateList(srcbuflist, 1);
   }
 }
 

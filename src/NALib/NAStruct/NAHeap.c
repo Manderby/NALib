@@ -2,8 +2,8 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#include "NAHeap.h"
-#include "NAMemory.h"
+#include "../NAHeap.h"
+#include "../NAMemory.h"
 
 
 // First note, that a heap structure is basically very simple and could
@@ -264,14 +264,20 @@ NA_HDEF void naGrowHeap(NAHeap* heap){
 
 
 
-NA_HDEF void naShrinkHeap(NAHeap* heap){
-  NAUInt entrysize = (NAByte*)(heap->root) - (NAByte*)(heap->data);
-  void* newdata = naMalloc((-heap->maxcount / 2 + 1) * entrysize);
-  naCopyn(newdata, heap->data, (heap->count + 1) * entrysize);
-  naFree(heap->data);
-  heap->data = newdata;
-  heap->root = (NAByte*)(heap->data) + entrysize;
-  heap->maxcount /= 2;
+NA_DEF void naShrinkHeapIfNecessary(NAHeap* heap){
+  #ifndef NDEBUG
+    if(heap->maxcount > 0)
+      naError("naShrinkHeapIfNecessary", "Heap defined with a fixed size.");
+  #endif
+  if((NAInt)heap->count < -heap->maxcount / 4){
+    NAUInt entrysize = (NAByte*)(heap->root) - (NAByte*)(heap->data);
+    void* newdata = naMalloc((-heap->maxcount / 2 + 1) * entrysize);
+    naCopyn(newdata, heap->data, (heap->count + 1) * entrysize);
+    naFree(heap->data);
+    heap->data = newdata;
+    heap->root = (NAByte*)(heap->data) + entrysize;
+    heap->maxcount /= 2;
+  }
 }
 
 
@@ -336,7 +342,7 @@ NA_HDEF void naInsertHeapElementMutableNoBack(NAHeap* heap, void* data, const vo
   if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapNoBackEntry*)(heap->data);
-  thedata[newindex].ptr = naMakePtrWithMutableBuffer(data, NA_ZERO, NA_ZERO);
+  thedata[newindex].ptr = naMakePtrWithMutableBuffer(data, NA_ZERO, NA_ZERO, NA_MEMORY_CLEANUP_NONE);
   thedata[newindex].key = key;
   heap->count++;
 }
@@ -353,7 +359,7 @@ NA_HDEF void naInsertHeapElementMutableBack(NAHeap* heap, void* data, const void
   if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapBackEntry*)(heap->data);
-  thedata[newindex].ptr = naMakePtrWithMutableBuffer(data, NA_ZERO, NA_ZERO);
+  thedata[newindex].ptr = naMakePtrWithMutableBuffer(data, NA_ZERO, NA_ZERO, NA_MEMORY_CLEANUP_NONE);
   thedata[newindex].key = key;
   if(backpointer){
     thedata[newindex].backpointer = backpointer;
@@ -383,7 +389,6 @@ NA_HDEF const void* naRemoveHeapRootConstNoBack(NAHeap* heap){
     NAInt curindex = heap->moveup(heap, thedata[heap->count + 1].key, 1);
     thedata[curindex] = thedata[heap->count + 1];
   }
-  if(heap->maxcount < 0 && ((NAInt)heap->count < -heap->maxcount / 4)){naShrinkHeap(heap);}
   return returnvalue;
 }
 
@@ -404,7 +409,6 @@ NA_HDEF const void* naRemoveHeapRootConstBack(NAHeap* heap){
     thedata[curindex] = thedata[heap->count + 1];
     *(thedata[curindex].backpointer) = curindex;
   }
-  if(heap->maxcount < 0 && ((NAInt)heap->count < -heap->maxcount / 4)){naShrinkHeap(heap);}
   return returnvalue;
 }
 
@@ -423,7 +427,6 @@ NA_HDEF void* naRemoveHeapRootMutableNoBack(NAHeap* heap){
     NAInt curindex = heap->moveup(heap, thedata[heap->count + 1].key, 1);
     thedata[curindex] = thedata[heap->count + 1];
   }
-  if(heap->maxcount < 0 && ((NAInt)heap->count < -heap->maxcount / 4)){naShrinkHeap(heap);}
   return returnvalue;
 }
 
@@ -443,10 +446,73 @@ NA_HDEF void* naRemoveHeapRootMutableBack(NAHeap* heap){
     thedata[curindex] = thedata[heap->count + 1];
     *(thedata[curindex].backpointer) = curindex;
   }
-  if(heap->maxcount < 0 && ((NAInt)heap->count < -heap->maxcount / 4)){naShrinkHeap(heap);}
   return returnvalue;
 }
 
+
+
+NA_HDEF const void* naRemoveHeapPosConstNoBack(NAHeap* heap, NAUInt backpointer){
+  NA_UNUSED(heap);
+  NA_UNUSED(backpointer);
+  #ifndef NDEBUG
+    naError("naRemoveHeapPosConstNoBack", "Can not update heap as he stores no backpointers. Function has no effect");
+  #endif
+  return NA_NULL;
+}
+
+
+
+NA_HDEF const void* naRemoveHeapPosConstBack(NAHeap* heap, NAUInt backpointer){
+  NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
+  const void* returnvalue;
+  #ifndef NDEBUG
+    if(backpointer > heap->count)
+      naError("naRemovePosRootConstBack", "backpointer makes no sense.");
+    if(backpointer == 0)
+      naError("naRemovePosRootConstBack", "backpointer says that element is not part of the heap.");
+  #endif
+  returnvalue = naGetPtrConst(&(thedata[backpointer].ptr));
+  *(thedata[backpointer].backpointer) = 0;
+  heap->count--;
+  if(heap->count){
+    NAInt curindex = heap->moveup(heap, thedata[heap->count + 1].key, backpointer);
+    thedata[curindex] = thedata[heap->count + 1];
+    *(thedata[curindex].backpointer) = curindex;
+  }
+  return returnvalue;
+}
+
+
+
+NA_HDEF void* naRemoveHeapPosMutableNoBack(NAHeap* heap, NAUInt backpointer){
+  NA_UNUSED(heap);
+  NA_UNUSED(backpointer);
+  #ifndef NDEBUG
+    naError("naRemoveHeapPosMutableNoBack", "Can not update heap as he stores no backpointers. Function has no effect");
+  #endif
+  return NA_NULL;
+}
+
+
+NA_HDEF void* naRemoveHeapPosMutableBack(NAHeap* heap, NAUInt backpointer){
+  NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
+  void* returnvalue;
+  #ifndef NDEBUG
+    if(backpointer > heap->count)
+      naError("naRemoveHeapPosMutableBack", "backpointer makes no sense.");
+    if(backpointer == 0)
+      naError("naRemoveHeapPosMutableBack", "backpointer says that element is not part of the heap.");
+  #endif
+  returnvalue = naGetPtrMutable(&(thedata[backpointer].ptr));
+  *(thedata[backpointer].backpointer) = 0;
+  heap->count--;
+  if(heap->count){
+    NAInt curindex = heap->moveup(heap, thedata[heap->count + 1].key, backpointer);
+    thedata[curindex] = thedata[heap->count + 1];
+    *(thedata[curindex].backpointer) = curindex;
+  }
+  return returnvalue;
+}
 
 
 NA_HDEF void naUpdateHeapElementNoBack(NAHeap* heap, NAUInt backpointer){
@@ -516,6 +582,8 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
     heap->insertMutable = naInsertHeapElementMutableNoBack;
     heap->removeConst = naRemoveHeapRootConstNoBack;
     heap->removeMutable = naRemoveHeapRootMutableNoBack;
+    heap->removePosConst = naRemoveHeapPosConstNoBack;
+    heap->removePosMutable = naRemoveHeapPosMutableNoBack;
     heap->updateBack = naUpdateHeapElementNoBack;
 
     switch(flags & NA_HEAP_DATATYPE_MASK){
@@ -566,6 +634,8 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
     heap->insertMutable = naInsertHeapElementMutableBack;
     heap->removeConst = naRemoveHeapRootConstBack;
     heap->removeMutable = naRemoveHeapRootMutableBack;
+    heap->removePosConst = naRemoveHeapPosConstBack;
+    heap->removePosMutable = naRemoveHeapPosMutableBack;
     heap->updateBack = naUpdateHeapElementBack;
     
     switch(flags & NA_HEAP_DATATYPE_MASK){

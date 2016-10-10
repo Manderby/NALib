@@ -24,10 +24,8 @@ typedef enum{
 
 
 
-NA_API NAPNG* naInitPNGWithFile(NAPNG* png, const char* filename);
-NA_API NAPNG* naInitPNG(NAPNG* png, NASizei size, NAPNGColorType colortype, NAUInt bitdepth);
-
-NA_API void naClearPNG(NAPNG* png);
+NA_API NAPNG* naNewPNG(NASizei size, NAPNGColorType colortype, NAUInt bitdepth);
+NA_API NAPNG* naNewPNGWithFile(const char* filename);
 
 NA_API void* naGetPNGPixelData(NAPNG* png);
 NA_API NAUInt naGetPNGPixelDataSize(NAPNG* png);
@@ -39,49 +37,6 @@ NA_API NAUInt naGetPNGBytesPerPixel(NAPNGColorType colortype);
 
 NA_API void naWritePNGToFile(NAPNG* png, const char* filename);
 
-
-// /////////////////////////////////////////////
-// Inline Implementations
-// /////////////////////////////////////////////
-
-
-#include "NAList.h"
-#include "NAVectorAlgebra.h"
-
-typedef enum{
-  NA_PIXEL_UNIT_UNDEFINED,
-  NA_PIXEL_UNIT_RATIO,
-  NA_PIXEL_UNIT_PER_INCH,
-  NA_PIXEL_UNIT_PER_METER,
-} NAPixelUnit;
-
-typedef enum{
-  NA_PNG_INTERLACE_NONE = 0,
-  NA_PNG_INTERLACE_ADAM7 = 1,
-} NAPNGInterlaceMethod;
-
-struct NAPNG{
-  NASizei size;
-  NAList chunks;
-  uint32 flags;
-  int8 bitdepth;
-  NAPNGColorType colortype;
-  int8 compressionmethod;
-  int8 filtermethod;
-  float gamma;
-  NAVec2f whitepoint;
-  NAVec2f redprimary;
-  NAVec2f greenprimary;
-  NAVec2f blueprimary;
-  uint8 significantbits[4];
-  NAVec2f pixeldimensions;
-  NAPixelUnit pixelunit;
-  NADateTime modificationdate;
-  NAPNGInterlaceMethod interlacemethod;
-
-  NAByte* pixeldata;
-  NABuffer filtereddata;
-};
 
 
 
