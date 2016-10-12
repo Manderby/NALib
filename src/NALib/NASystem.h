@@ -59,10 +59,9 @@
 // a specific compiler. But these combinations are the ones having been used
 // during the last 10 years by the author both for hobby and job.
 //
-// In the future, there might be more or different macros
-// //////////////////////////////////////////
-
 // Interesting read: http://sourceforge.net/p/predef/wiki/OperatingSystems/
+//
+// In the future, there might be more or different macros
 #if defined _WIN32
   #define NA_SYSTEM NA_SYSTEM_WINDOWS
   #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_LITTLE
@@ -552,9 +551,9 @@ typedef uint8 NAByte;
 
 
 // The definition of NA_NULL is usually set to the NULL found in stdlib. The
-// new C11 standard however has a new keyword. Let's use it if it is available!
-// Note that stdlib is needed anyway for malloc, free and exit which is most
-// probably needed anyway.
+// new C++11 standard however has a new keyword. Let's use it if it is
+// available! Note that stdlib is needed anyway for malloc, free and exit
+// which is most probably needed anyway.
 //
 // Also note that in the comments of NALib as well as in the error messages,
 // it will oftem times be called "Null-Pointer". In the implementation
@@ -582,10 +581,13 @@ typedef uint8 NAByte;
 // - Application start functions
 // - Threading start functions
 // - Timed functions
+// - General callback functions
 //
 // In some cases, you may not want to send a function, therefore sending Null.
 // But it is much more cleaner if you send NA_NULLFUNC which is typecasted as
-// an NAFunc.
+// an NAFunc. Note that the author tried to add an actual function which checks
+// if being called when NDEBUG is defined, but this turned out to be more
+// cumbersome than helpful. Therefore, it is just a casted NA_NULL.
 typedef void (*NAFunc) (void*);
 #define NA_NULLFUNC ((NAFunc)NA_NULL)
 
@@ -648,7 +650,6 @@ typedef void (*NAFunc) (void*);
 // If you use code sanity checking (for example clang analyzer) you should
 // therefore always check both with and without NDEBUG defined. Otherwise,
 // the analyzer might miss some errors.
-// /////////////////////////////////
 
 #ifndef NDEBUG
 

@@ -12,6 +12,9 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Version 16 (first published 2016-October-11):
+==============================================
+
 Highlights:
 - Moving all implementations into folders, leaving the API alone in the base
   directory. Moving all inline implementation in separate files in these
@@ -30,7 +33,7 @@ Other things:
 - Added a flag NA_RUNTIME_USES_NEW_DELETE to test the runtime
 - Added a non-fully functional check if memory gets allocated in the
   main thread.
-- Revisied the UI. Better but far from fully functional.
+- Revisited the UI. Better but far from fully functional.
 - NAPointer now uses the NAPtr struct as its base. Removed naNewPointerConst,
   renamed naNewPointerMutable to naNewPointer.
 - Corrected an awkward error in naPointer. The refcount mask was inverted.

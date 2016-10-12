@@ -2,50 +2,64 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#include "../NASystem.h"
+
+#include "NAUICoreAPI.h"
+
+#if NA_SYSTEM == NA_SYSTEM_WINDOWS
 
 
-
-
-#ifndef NDEBUG
-
-  // The error printing method. Errors will be emitted to the stderr output.
-  // When NDEBUG is defined, these functions are OBSOLETE!
-  #ifdef __cplusplus
-    #include <cstdio>
-  #else
-    #include <stdio.h>
-  #endif
-
-
-  void naError(const char* functionsymbol, const char* text, ...){
-    va_list argumentlist;
-    va_start(argumentlist, text);
-    // Set a breakpoint here, if everything fails.
-    fprintf(stderr, "Error in %s: ", functionsymbol);
-    vfprintf(stderr, text, argumentlist);
-    fprintf(stderr, "\n");
-    va_end(argumentlist);
-  }
-
-
-
-  NA_NORETURN void naCrash(const char* functionsymbol, const char* text, ...){
-    va_list argumentlist;
-    va_start(argumentlist, text);
-    // Set a breakpoint here, if everything fails.
-    fprintf(stderr, "Critical Error in %s: ", functionsymbol);
-    vfprintf(stderr, text, argumentlist);
-    fprintf(stderr, "\nCrashing the application deliberately...\n");
-    va_end(argumentlist);
-    exit(EXIT_FAILURE);
-  }
-
-
+#include <windows.h>
+#ifdef __gl_h_
+  #include <GL/GL.h>
 #endif
 
+#define CUB_WINDOW_IGNORE_MOUSE_WARP  0x01
 
 
+
+// The struct NAWINAPIApplication stores a list of timers which could otherwise
+// not be done.
+typedef struct NAWINAPIApplication NAWINAPIApplication;
+struct NAWINAPIApplication {
+  NACoreApplication coreapp;
+  NAList timers;
+};
+
+
+
+// The following struct stores all relevant data which will then be stored in
+// a list of the running NAWINAPIApplication.
+typedef struct NATimerStruct NATimerStruct;
+struct NATimerStruct {
+  UINT key;
+  NAFunc func;
+  void* arg;
+};
+
+
+typedef struct NAWINAPIWindow NAWINAPIWindow;
+struct NAWINAPIWindow {
+  NACoreWindow corewindow;
+  uint32 flags;
+  NAUInt trackingcount;
+  NABool fullscreen;
+  NARect windowedframe;
+  NASize size;
+  NABounds4 bounds;
+};
+
+
+typedef struct NAWINAPIOpenGLView NAWINAPIOpenGLView;
+struct NAWINAPIOpenGLView {
+  NACoreOpenGLView coreopenglview;
+  HGLRC hRC;    // The rendering context for OpenGL
+};
+
+
+
+
+
+#endif // NA_SYSTEM == NA_SYSTEM_WINDOWS
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH
 //

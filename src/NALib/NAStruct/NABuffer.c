@@ -913,9 +913,6 @@ NA_HIDEF void naEnhanceBuffer(NABuffer* buffer, NABufInt count, NABool forwritin
     if(!naIsPosInBufferPart(curpart, curpos)){*bufferpartposition = NA_NULL;}
   }
   
-//  if(curpos == 4095){
-//    int asdf = 1;
-//  }
   
   // Note: newly created parts always start at the precise position defined
   // by curpos. The lenght of the new parts though are adjusted to be of a
@@ -1511,9 +1508,6 @@ NA_DEF void naReadBufferArrayUInt8(NABuffer* buffer, uint8* buf, NABufInt count)
     if(buffer->readbit != 0)
       naError("naReadBufferArrayUInt8", "Bit offset not 0.");
   #endif
-//  if(buffer->readpos + count > 4096){
-//    printf("asdf");
-//  }
   naEnhanceBuffer(buffer, count * 1, NA_FALSE);
   naRetrieveBufferBytes(buffer, buf, count * 1, 0);
   buffer->converter.convertArray8(buf, (NAUInt)count);
@@ -1766,10 +1760,6 @@ NA_DEF void naRepeatBufferBytes(NABuffer* buffer, NABufInt count){
   #endif
   // todo: make this faster.
   while(count){
-//    if(buffer->writepos > 4094){
-//      int asdf = 5;
-//      printf("%d\n", buffer->writepos);
-//    }
     NAByte curbyte = naReadBufferUInt8(buffer);
     naWriteBufferUInt8(buffer, curbyte);
     count--;

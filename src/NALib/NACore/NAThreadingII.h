@@ -151,7 +151,7 @@ NA_IDEF void naRunThread(NAThread thread){
 
 NA_IDEF NABool isMainThread(){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    return NA_FALSE;  // todo: This is of course wrong.
+    return NA_TRUE;  // todo: This is of course wrong.
   #else
     return (dispatch_get_main_queue() == dispatch_get_current_queue());
   #endif

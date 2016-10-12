@@ -35,6 +35,9 @@ struct NACorePool{
   void* firstrecycle;
   NACorePool* prevpool;
   NACorePool* nextpool;
+  // The following two fields are dummy entries not used in release versions.
+  // They shall not be removed though as the total amount of bytes used for
+  // an NACorePool shall be 8 times an address size.
   void* dummy1; // used in debugging. Points at first byte of the whole pool
   void* dummy2; // used in debugging. Points at last byte of the whole pool
 };
@@ -48,6 +51,12 @@ struct NARuntime{
 
 NARuntime* na_runtime = NA_NULL;
 
+
+#ifndef NDEBUG
+  NAInt na_debug_mem_bytecount = 0;
+  NAInt na_debug_mem_invisiblebytecount = 0;
+  NABool na_debug_mem_count_bytes = NA_FALSE;
+#endif
 
 
 
@@ -247,7 +256,7 @@ NA_HDEF void naDestructPointer(NAPointer* pointer){
     if(!(pointer->refcount & NA_POINTER_DELETE_FROM_DECREF))
       naError("naDestructPointer", "You should never call naDelete on a Pointer! Use naPointerRelease.");
   #endif
-  if(pointer->deallocator && (pointer->deallocator != NA_NULLFUNC)){
+  if(pointer->deallocator){
     pointer->deallocator(naGetPtrMutable(&(pointer->ptr)));
   }
   switch((NAPointerCleanup)(pointer->refcount >> NA_MEMORY_CLEANUP_BITSHIFT)){

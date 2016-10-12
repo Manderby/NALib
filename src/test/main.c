@@ -40,7 +40,7 @@ void printSystemTest(){
 #include "../NALib/NAMemory.h"
 #include "../NALib/NADateTime.h"
 
-  #define TESTCOUNT 1000000
+#define TESTCOUNT 1000000
 
 int main(void){
   printSystemTest();

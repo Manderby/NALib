@@ -598,7 +598,7 @@ NA_IDEF void naForeachList(NAList* list, NAFunc mutator){
       naCrash("naForeachList", "list is Null-Pointer.");
       return;
     }
-    if(!mutator || (mutator == NA_NULLFUNC))
+    if(!mutator)
       naError("naForeachList", "mutator is Null-Pointer.");
   #endif
   list->cur = list->sentinel.next;

@@ -5,10 +5,38 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\NALib\NACore\NABinaryData.c" />
+    <ClCompile Include="..\..\..\src\NALib\NACore\NADateTime.c" />
+    <ClCompile Include="..\..\..\src\NALib\NACore\NAMemory.c" />
+    <ClCompile Include="..\..\..\src\NALib\NACore\NASystem.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAArray.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NABuffer.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAByteArray.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAHeap.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAList.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAOctTree.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAQuadTree.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAString.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAVisual\NADeflate.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAVisual\NAPNG.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUI.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUICoreAPI.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUIWINAPI.c" />
+    <ClCompile Include="..\..\..\src\test\main.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\NALib\NAArray.h" />
@@ -65,26 +93,7 @@
     <ClInclude Include="..\..\..\src\NALib\NAVectorAlgebra.h" />
     <ClInclude Include="..\..\..\src\NALib\NAVisual\NAUICocoa.h" />
     <ClInclude Include="..\..\..\src\NALib\NAVisual\NAUICoreAPI.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\src\NALib\NACore\NABinaryData.c" />
-    <ClCompile Include="..\..\..\src\NALib\NACore\NADateTime.c" />
-    <ClCompile Include="..\..\..\src\NALib\NACore\NAMemory.c" />
-    <ClCompile Include="..\..\..\src\NALib\NACore\NASystem.c" />
-    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAArray.c" />
-    <ClCompile Include="..\..\..\src\NALib\NAStruct\NABuffer.c" />
-    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAByteArray.c" />
-    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAHeap.c" />
-    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAList.c" />
-    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAOctTree.c" />
-    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAQuadTree.c" />
-    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAString.c" />
-    <ClCompile Include="..\..\..\src\NALib\NAVisual\NADeflate.c" />
-    <ClCompile Include="..\..\..\src\NALib\NAVisual\NAPNG.c" />
-    <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUI.c" />
-    <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUICoreAPI.c" />
-    <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUIWINAPI.c" />
-    <ClCompile Include="..\..\..\src\test\main.c" />
+    <ClInclude Include="..\..\..\src\NALib\NAVisual\NAUIWINAPI.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BE63F596-929D-4507-88B3-04758771747F}</ProjectGuid>
@@ -96,7 +105,18 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -108,7 +128,13 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -122,7 +148,29 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>MaxSpeed</Optimization>

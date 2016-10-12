@@ -3,12 +3,25 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 
+// This file gets only included by the NAUICocoa.m file. We need to include
+// NASystem first to check if NA_SYSTEM ist MAC_OS_X.
+
+#include "NASystem.h"
+
 
 #ifdef __OBJC__
 #if NA_SYSTEM == NA_SYSTEM_MAC_OS_X
 
+
+// Reaching here, the first thing we must do is include Cocoa. If this is
+// done anywhere later, the compiler might crash.
 #import <Cocoa/Cocoa.h>
-#include <objc/message.h>
+// After that, we are free to include whatever we want.
+
+
+
+//#include <objc/message.h>
+
 #include "NAUICoreAPI.h"
 
 
@@ -44,6 +57,7 @@ struct NACocoaWindow{
   NAOpenGLView* nalibopenglview;
 }
 @end
+
 
 
 

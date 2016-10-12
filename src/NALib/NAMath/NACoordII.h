@@ -20,8 +20,8 @@
 
 
 
-#include "NAMathOperators.h"
-#include "NACore/NAValueHelper.h"
+#include "../NAMathOperators.h"
+#include "../NACore/NAValueHelper.h"
 
 
 NA_IDEF NARange naMakeRange(double offset, double length){

@@ -59,7 +59,7 @@ NA_IDEF void naForeachArray(NAArray* array, NAFunc mutator){
   NAUInt count;
   NAByte* ptr;
   #ifndef NDEBUG
-    if(!mutator || (mutator == NA_NULLFUNC))
+    if(!mutator)
       naError("naForeachArray", "Mutator is Null");
   #endif
   count = naGetArrayCount(array);

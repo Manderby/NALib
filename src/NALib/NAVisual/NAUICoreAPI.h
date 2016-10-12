@@ -2,8 +2,8 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#ifndef NA_UI_HIDDEN_API_INCLUDED
-#define NA_UI_HIDDEN_API_INCLUDED
+#ifndef NA_UI_CORE_API_INCLUDED
+#define NA_UI_CORE_API_INCLUDED
 #ifdef __cplusplus 
   extern "C"{
 #endif
@@ -54,6 +54,8 @@ NA_HAPI void naRefreshCoreUIElement(  NACoreUIElement* coreuielement,
                                                 double timediff);
 NA_HAPI NACoreUIElement* naGetCoreUIElementParent(NACoreUIElement* coreuielement);
 NA_HAPI NACoreWindow* naGetCoreUIElementWindow(NACoreUIElement* coreuielement);
+
+NA_HAPI void naRefreshUIElementNow(NAUIElement* uielement);
 
 
 
@@ -144,7 +146,6 @@ struct NACoreWindow{
 
 
 
-  typedef struct NATimerStruct NATimerStruct;
 
 
 
@@ -193,7 +194,7 @@ NA_HAPI void naSetMouseExitedAtPos(NAPos newpos);
 #ifdef __cplusplus 
   } // extern "C"
 #endif
-#endif // NA_UI_HIDDEN_API_INCLUDED
+#endif // NA_UI_CORE_API_INCLUDED
 
 
 

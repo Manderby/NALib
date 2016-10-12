@@ -115,7 +115,6 @@ NA_API NARect naGetUIElementRect(   NAUIElement* uielement,
 // of 0 as timediff, the redraw method will not execute immediately but put a
 // message to the default message queue of the application. Therefore, this
 // function will always immediately return.
-NA_API void naRefreshUIElementNow (NAUIElement* uielement);
 NA_API void naRefreshUIElement    (NAUIElement* uielement, double timediff);
 
 
@@ -233,7 +232,7 @@ NA_API void naCallApplicationFunctionInSeconds(  NAFunc function,
 // will NOT automatically hide the console when NDEBUG is defined! This
 // function does nothing on a Mac.
 
-NA_API void naOpenConsoleWindow(void);
+NA_API void naOpenConsoleWindow(const char* windowtitle);
 
 
 

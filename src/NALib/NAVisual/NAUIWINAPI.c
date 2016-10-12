@@ -3,145 +3,36 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 
-/*
+#include "NAUIWINAPI.h"
 
-#include "NAUICoreAPI.h"
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-// Now, we are sure, we compile with Objective-C and on MacOSX. The two
-// #if directives will be closed at the very bottom of this file.
-
-#include "../NAMemory.h"
+// Now, we are sure, we compile for windows. The #if directive will be
+// closed at the bottom of this file.
 
 
-
-
-
-
-#include "../NACoord.h"
-#include "../NAThreading.h"
-#include <stdio.h>
-#include <windows.h>
-
-
-
-
-#define CUB_WINDOW_IGNORE_MOUSE_WARP  0x01
-
-struct NAWINAPIApplication{
-  NACoreApplication coreapp;
-  NAList timers;
-};
-
-struct NAWindow{
-  NAUIElement* uielement;
-  NABool fullscreen;
-  NARect windowedframe;
-  NAUInt flags;
-  TRACKMOUSEEVENT  trackingevent;
-  NAUInt trackingcount;
-};
-
-struct NAOpenGLView{
-  NAUIElement* uielement;
-  HGLRC hRC;    // The rendering context for OpenGL
-};
-
-
-
-
-#if (NA_SYSTEM_ADDRESS_BITS == 64)
-  typedef intptr_t NAWINAPIHANDLE;
-#elif (NA_SYSTEM_ADDRESS_BITS == 32)
-  typedef long NAWINAPIHANDLE;
-#else
-  #error "Undefined system address size"
-#endif
-
-
-#include <io.h>
-#include <fcntl.h>
-NA_DEF void naOpenConsoleWindow(){
-    int outHandle, errHandle, inHandle;
-    FILE *outFile, *errFile, *inFile;
-    CONSOLE_SCREEN_BUFFER_INFO coninfo;
-    AllocConsole();
-    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo);
-    coninfo.dwSize.Y = 9999;
-    SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), coninfo.dwSize);
-
-    outHandle = _open_osfhandle((NAWINAPIHANDLE)GetStdHandle(STD_OUTPUT_HANDLE), _O_TEXT);
-    errHandle = _open_osfhandle((NAWINAPIHANDLE)GetStdHandle(STD_ERROR_HANDLE),_O_TEXT);
-    inHandle = _open_osfhandle((NAWINAPIHANDLE)GetStdHandle(STD_INPUT_HANDLE),_O_TEXT );
-
-    outFile = _fdopen(outHandle, "w" );
-    errFile = _fdopen(errHandle, "w");
-    inFile =  _fdopen(inHandle, "r");
-
-    *stdout = *outFile;
-    *stderr = *errFile;
-    *stdin = *inFile;
-
-    setvbuf( stdout, NULL, _IONBF, 0 );
-    setvbuf( stderr, NULL, _IONBF, 0 );
-    setvbuf( stdin, NULL, _IONBF, 0 );
-}
+#include "../NAList.h"
 
 
 
 
 
-// On windows, we need to reroute a timer function using a specific callback.
-struct NATimerStruct{
-  UINT key;
-  NAFunc func;
-  void* arg;
-};
-
-NA_HAPI void naAddApplicationTimer(NATimerStruct* timerstruct);
-NA_HAPI NABool naExecuteApplicationTimer(UINT timerid);
-
-NA_HDEF static VOID CALLBACK naTimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime){
-  //todo something is wrong here with the type.
-  naExecuteApplicationTimer((UINT)idEvent);
-}
 
 
-NA_HDEF void naAddApplicationTimer(NATimerStruct* timerstruct){
-  NAApplication* app = naGetApplication();
-  naAddListLastMutable(&(app->timers), timerstruct);
-}
+// ///////////////////////////////////
+// WINDOW CALLBACK
+// ///////////////////////////////////
 
+// This is the one and only, master of destruction, defender of chaos and
+// pimp of the century function handling all and everything using the most
+// beautiful and highly pattern-absent spaghetti coding structure ever
+// seen to mankind.
+//
+// Send me a fax if you have a better idea. It works.
 
-NA_HDEF NABool naExecuteApplicationTimer(UINT timerid){
-  NATimerStruct* curstruct;
-  NAApplication* app = naGetApplication();
-  while((curstruct = naIterateListMutable(&(app->timers), 1))){
-    if(curstruct->key == timerid){
-      naRemoveListPrevMutable(&(app->timers));
-      curstruct->func(curstruct->arg);
-      naFree(curstruct);
-      return NA_TRUE;
-    }
-  }
-  return NA_FALSE;
-}
-
-
-NA_DEF void naCallApplicationFunctionInSeconds(NAFunc function, void* arg, double timediff){
-  NATimerStruct* timerstruct = naAlloc(NATimerStruct);
-  timerstruct->func = function;
-  timerstruct->arg = arg;
-  //todo something is wrong here with the type.
-  timerstruct->key = (UINT)SetTimer((HWND)NA_NULL, (UINT_PTR)NA_NULL, (UINT)(1000 * timediff), naTimerCallbackFunction);
-  naAddApplicationTimer(timerstruct);
-}
-
-
-
-LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam){
+LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
   NAWindow* window;
   NARect rect;
-	PAINTSTRUCT ps; // Paint information. Needed for WM_PAINT messages
+  PAINTSTRUCT ps; // Paint information. Needed for WM_PAINT messages
   NABool hasbeenhandeled = NA_FALSE;
   NAUIKeyCode keycode;
   UINT scancode;
@@ -149,8 +40,8 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
   NAPos pos;
   const NACursorInfo* cursorinfo;
 
-  NAUIElement* uielement = naGetUINALibEquivalent(hWnd);
-  if(!uielement){
+  NACoreUIElement* uielement = (NACoreUIElement*)naGetUINALibEquivalent(hWnd);
+  if (!uielement) {
     // If we do not have the hWnd registered in NALib UI, we do not process it. Simply
     // deletage it to the default window procedure and return.
     return DefWindowProc(hWnd, message, wParam, lParam);
@@ -163,7 +54,7 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
   //  return 0;
   //}
 
-  switch (message){
+  switch (message) {
   case WM_SHOWWINDOW:
     // wParam: true for show, false for hide
     // lParam: status of window
@@ -178,7 +69,7 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     rect.pos.x = (double)((int)(short)LOWORD(lParam));
     rect.pos.y = (double)((int)(short)HIWORD(lParam));
     hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE, &rect);
-    if(hasbeenhandeled){naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW, NA_NULL);}
+    if (hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW, NA_NULL); }
     break;
 
   case WM_SIZE:
@@ -190,30 +81,30 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     rect.size.width = LOWORD(lParam);
     rect.size.height = HIWORD(lParam);
     hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE, &rect);
-    if(hasbeenhandeled){naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW, NA_NULL);}
+    if (hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW, NA_NULL); }
     break;
 
   case WM_PAINT:
     // wParam: Unused
     // lParam: Unused
-    if(uielement->elementtype == NA_UI_OPENGLVIEW){
+    if (uielement->elementtype == NA_UI_OPENGLVIEW) {
       BeginPaint(hWnd, &ps);
 
-        //if(uielement is opengl)
-//        wglMakeCurrent(GetDC(naGetUIElementNativeID(&(openglview->uielement))), openglview->hRC);
+      //if(uielement is opengl)
+      //        wglMakeCurrent(GetDC(naGetUIElementNativeID(&(openglview->uielement))), openglview->hRC);
 
-        hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW, NA_NULL);
-        //uielement->refreshrequested = NA_FALSE;
+      hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW, NA_NULL);
+      //uielement->refreshrequested = NA_FALSE;
       EndPaint(hWnd, &ps);
     }
     break;
- 
+
   case WM_ERASEBKGND:
     hasbeenhandeled = NA_TRUE;
-  //  if(window->eraseBackground()){
-  //    DefWindowProc(hWnd, message, wParam, lParam);
-  //  }else{
-  //  }
+    //  if(window->eraseBackground()){
+    //    DefWindowProc(hWnd, message, wParam, lParam);
+    //  }else{
+    //  }
     break;
 
   case WM_TIMER:
@@ -224,9 +115,9 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     break;
 
   case WM_HSCROLL:
-  //  uielement = window->getUIElement((HWND)lParam);
-  //  if(!uielement){return 0;}
-  //  uielement->dispatchCommand(LOWORD(wParam), 0); // note that this is the loword
+    //  uielement = window->getUIElement((HWND)lParam);
+    //  if(!uielement){return 0;}
+    //  uielement->dispatchCommand(LOWORD(wParam), 0); // note that this is the loword
     break;
 
   case WM_KEYDOWN:
@@ -247,7 +138,7 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     break;
 
   case WM_MOUSELEAVE:
-  //  window->mouseLeave();
+    //  window->mouseLeave();
     break;
 
   case WM_MOUSEMOVE:
@@ -259,55 +150,56 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     //  window->flags &= ~CUB_WINDOW_IGNORE_MOUSE_WARP;
     //  hasbeenhandeled = NA_TRUE;
     //}else{
-      // todo: this should be GET_X_LPARAM and GET_Y_LPARAM
-      // but is undefined somehow.
-      size.width = LOWORD(lParam);
-      size.height = HIWORD(lParam);
-      rect = naGetUIElementRect(uielement, naGetApplication(), NA_FALSE);
-      size.width += rect.pos.x;
-      size.height += rect.pos.y;
-      cursorinfo = naGetMouseInfo();
-      pos = naGetCursorPos(cursorinfo);
-      naSetMouseMovedByDiff(size.width - pos.x, size.height - pos.y);
-      hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_MOUSE_MOVED, &size);
+    // todo: this should be GET_X_LPARAM and GET_Y_LPARAM
+    // but is undefined somehow.
+    size.width = LOWORD(lParam);
+    size.height = HIWORD(lParam);
+    rect = naGetUIElementRect(uielement, naGetApplication(), NA_FALSE);
+    size.width += rect.pos.x;
+    size.height += rect.pos.y;
+    cursorinfo = naGetMouseInfo();
+    pos = naGetCursorPos(cursorinfo);
+    naSetMouseMovedByDiff(size.width - pos.x, size.height - pos.y);
+    hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_MOUSE_MOVED, &size);
     //}
     break;
 
   case WM_LBUTTONUP:
-  //  window->leftMouseUp(LOWORD(lParam), HIWORD(lParam), wParam);
+    //  window->leftMouseUp(LOWORD(lParam), HIWORD(lParam), wParam);
     break;
 
   case WM_COMMAND:
-  //  uielement = window->getUIElement((HWND)lParam);
-  //  if(!uielement){return 0;}
-  //  uielement->dispatchCommand(HIWORD(wParam), 0);
+    //  uielement = window->getUIElement((HWND)lParam);
+    //  if(!uielement){return 0;}
+    //  uielement->dispatchCommand(HIWORD(wParam), 0);
     break;
 
   case WM_NOTIFY:
-  //  uielement = window->getUIElement(((LPNMHDR)lParam)->hwndFrom);
-  //  if(!uielement){return 0;}
-  //  uielement->dispatchCommand(((LPNMHDR)lParam)->code, lParam);
+    //  uielement = window->getUIElement(((LPNMHDR)lParam)->hwndFrom);
+    //  if(!uielement){return 0;}
+    //  uielement->dispatchCommand(((LPNMHDR)lParam)->code, lParam);
     break;
 
   case WM_USER:
-  //  uielement = window->getUIElement((HWND)lParam);
-  //  if(!uielement){return 0;}
-  //  uielement->dispatchCommand(HIWORD(wParam), 0);
+    //  uielement = window->getUIElement((HWND)lParam);
+    //  if(!uielement){return 0;}
+    //  uielement->dispatchCommand(HIWORD(wParam), 0);
     break;
 
   case WM_CLOSE:
-  //  window->close();
-  //  if(!::gui->numwindows){PostQuitMessage(0);}
+    //  window->close();
+    //  if(!::gui->numwindows){PostQuitMessage(0);}
     break;
- 
+
   default:
     break;
 
   }
 
-  if(hasbeenhandeled){
+  if (hasbeenhandeled) {
     return 0;
-  }else{
+  }
+  else {
     return DefWindowProc(hWnd, message, wParam, lParam);
   }
 }
@@ -316,55 +208,92 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
 
 
+// ///////////////////////////////////
+// TIMER
+// ///////////////////////////////////
 
 
-NA_API void naStartApplication(  NAFunc prestartup,
-                                 NAFunc poststartup,
-                                  void* arg){
-  NAApplication app;
-  WNDCLASS wc;
-  ATOM atom;
+// This is the native WINAPI callback function. It finds the corresponding
+// registered timer struct of the application and executes the function
+// stored in that struct with the stored argument.
+//
+// Definitely not the fastest and best method. But as for now, it's ok. todo.
+NA_HDEF static VOID CALLBACK naTimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
+  //todo something is wrong here with the type.
+  UINT timerkey = (UINT)idEvent;
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  naRewindList(&(app->timers));
+  while (naIterateList(&(app->timers), 1)) {
+    NATimerStruct* curstruct = (NATimerStruct*)naGetListCurrentMutable(&(app->timers));
+    if (curstruct->key == timerkey) {
+      naRemoveListCurrentMutable(&(app->timers), NA_FALSE);
+      KillTimer(hwnd, idEvent);
+      curstruct->func(curstruct->arg);
+      naFree(curstruct);
+      return;
+    }
+  }
+}
+
+
+
+
+// ///////////////////////////////////
+// APPLICATION
+// ///////////////////////////////////
+
+
+NA_API void naStartApplication(NAFunc prestartup, NAFunc poststartup, void* arg){
+  // Declaration before definition. Needed for C90:
+  NAWINAPIApplication* app;
+  WNDCLASS wndclass;
   MSG message;
+  NANativeID nativeApp;
 
-  naInitCoreUI();
-  app = naAlloc(NAApplication);
-  naRegisterCoreUIElement((NAUIElement*)app, NA_NULL, NA_UI_APPLICATION, GetModuleHandle(NULL));
+  // Start the WINAPI application and set the native ID of the application.
+  nativeApp = GetModuleHandle(NULL);
+  naStartCoreApplication(sizeof(NAWINAPIApplication), nativeApp);
+
+  // Init the timer list.
+  app = (NAWINAPIApplication*)naGetApplication();
   naInitList(&(app->timers));
-  app->ismousevisible = NA_TRUE;
 
-  if(prestartup && (prestartup != NA_NULLFUNC)){prestartup(arg);}
+  // Call prestartup if desired.
+  if(prestartup){prestartup(arg);}
 
-  // Register the window classes
-  naNulln(&wc, sizeof(WNDCLASS));
-	wc.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = WindowCallback;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = 0;
-	wc.hInstance = GetModuleHandle(NULL);
-	wc.hIcon = LoadIcon( NULL, IDI_APPLICATION );
-	wc.hCursor = LoadCursor( NULL, IDC_ARROW );
-	wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE+1);
-	wc.lpszMenuName = NULL;
-	wc.lpszClassName = TEXT("NAWindow");
-	atom = RegisterClass( &wc );
+  // Register the window class
+  naNulln(&wndclass, sizeof(WNDCLASS));
+	wndclass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+	wndclass.lpfnWndProc = WindowCallback;
+	wndclass.cbClsExtra = 0;
+	wndclass.cbWndExtra = 0;
+	wndclass.hInstance = nativeApp;
+	wndclass.hIcon = LoadIcon( NULL, IDI_APPLICATION );
+	wndclass.hCursor = LoadCursor( NULL, IDC_ARROW );
+	wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
+	wndclass.lpszMenuName = NULL;
+	wndclass.lpszClassName = TEXT("NAWindow");
+	RegisterClass(&wndclass);
 
-  naNulln(&wc, sizeof(WNDCLASS));
-	wc.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = WindowCallback;
-	wc.cbClsExtra = 0;
-	wc.cbWndExtra = 0;
-	wc.hInstance = GetModuleHandle(NULL);
-	wc.hIcon = LoadIcon( NULL, IDI_APPLICATION );
-	wc.hCursor = LoadCursor( NULL, IDC_ARROW );
-	wc.hbrBackground = (HBRUSH)(COLOR_BTNFACE+1);
-	wc.lpszMenuName = NULL;
-	wc.lpszClassName = TEXT("NAView");
-	RegisterClass( &wc );
+  // Register the view class
+  naNulln(&wndclass, sizeof(WNDCLASS));
+	wndclass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+	wndclass.lpfnWndProc = WindowCallback;
+	wndclass.cbClsExtra = 0;
+	wndclass.cbWndExtra = 0;
+	wndclass.hInstance = nativeApp;
+	wndclass.hIcon = LoadIcon( NULL, IDI_APPLICATION );
+	wndclass.hCursor = LoadCursor( NULL, IDC_ARROW );
+	wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
+	wndclass.lpszMenuName = NULL;
+	wndclass.lpszClassName = TEXT("NAView");
+	RegisterClass(&wndclass);
 
-  if(poststartup && (poststartup != NA_NULLFUNC)){poststartup(arg);}
+  // Call poststartup if desired.
+  if(poststartup){poststartup(arg);}
 
-
-  while(1){
+  // Start the event loop.
+  while(naIsCoreApplicationRunning()){
     BOOL response = GetMessage(&message, 0, 0, 0);
     if(response == 0){break;}
     if (response == -1){
@@ -379,20 +308,117 @@ NA_API void naStartApplication(  NAFunc prestartup,
     }
   }
 
+  naClearCoreApplication();
+}
+
+
+
+NA_DEF void naCallApplicationFunctionInSeconds(NAFunc function, void* arg, double timediff){
+  NAWINAPIApplication* app;
+  NATimerStruct* timerstruct = naAlloc(NATimerStruct);
+  timerstruct->func = function;
+  timerstruct->arg = arg;
+  // todo: Check type
+  timerstruct->key = (UINT)SetTimer((HWND)NA_NULL, (UINT_PTR)NA_NULL, (UINT)(1000 * timediff), naTimerCallbackFunction);
+  app = (NAWINAPIApplication*)naGetApplication();
+  naAddListLastMutable(&(app->timers), timerstruct);
+}
+
+
+
+#if (NA_SYSTEM_ADDRESS_BITS == 64)
+  typedef intptr_t NAWINAPIHANDLE;
+#elif (NA_SYSTEM_ADDRESS_BITS == 32)
+  typedef long NAWINAPIHANDLE;
+#else
+  #error "Undefined system address size"
+#endif
+
+
+
+#include <io.h>
+#include <fcntl.h>
+NA_DEF void naOpenConsoleWindow(const char* windowtitle){
+//  int outHandle, errHandle, inHandle;
+  FILE *outFile;
+  FILE *errFile;
+  FILE *inFile;
+//  CONSOLE_SCREEN_BUFFER_INFO coninfo;
+  AllocConsole();
+  SetConsoleTitle(windowtitle);
+//    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo);
+//    coninfo.dwSize.Y = 9999;
+//    SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), coninfo.dwSize);
+
+  freopen_s(&inFile, "CONIN$", "r", stdin);
+  freopen_s(&outFile, "CONOUT$", "w", stdout);
+  freopen_s(&errFile, "CONERR$", "w", stderr);
+
+  //outHandle = _open_osfhandle((NAWINAPIHANDLE)GetStdHandle(STD_OUTPUT_HANDLE), _O_TEXT);
+  //errHandle = _open_osfhandle((NAWINAPIHANDLE)GetStdHandle(STD_ERROR_HANDLE),_O_TEXT);
+  //inHandle = _open_osfhandle((NAWINAPIHANDLE)GetStdHandle(STD_INPUT_HANDLE),_O_TEXT );
+
+  //outFile = _fdopen(outHandle, "w" );
+  //errFile = _fdopen(errHandle, "w");
+  //inFile =  _fdopen(inHandle, "r");
+
+  //*stdout = *outFile;
+  //*stderr = *errFile;
+  //*stdin = *inFile;
+
+  //setvbuf( stdout, NULL, _IONBF, 0 );
+  //setvbuf( stderr, NULL, _IONBF, 0 );
+  //setvbuf( stdin, NULL, _IONBF, 0 );
+
 }
 
 
 
 
 
+// ///////////////////////////////////
+// UI ELEMENT
+// ///////////////////////////////////
 
-
-
-
-
-NA_HDEF void naRefreshUIElementNow (void* uielement){
+NA_HDEF void naRefreshUIElementNow(NAUIElement* uielement){
   PostMessage(naGetUIElementNativeID(uielement), WM_PAINT, (WPARAM)NA_NULL, (LPARAM)NA_NULL);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -427,9 +453,12 @@ NA_HDEF NARect naGetWindowAbsoluteInnerRect(NAUIElement* window){
   NARect screenrect;
   RECT contentrect;
   POINT testpoint = {0, 0};
+  NACoreUIElement* corewindow;
 
-  GetClientRect(window->nativeID, &contentrect);
-  ClientToScreen(window->nativeID, &testpoint);
+  corewindow = (NACoreUIElement*)window;
+
+  GetClientRect(corewindow->nativeID, &contentrect);
+  ClientToScreen(corewindow->nativeID, &testpoint);
 
   screenrect = naGetMainScreenRect();
 
@@ -446,8 +475,11 @@ NA_HDEF NARect naGetWindowAbsoluteOuterRect(NAUIElement* window){
   NARect rect;
   NARect screenrect;
   RECT windowrect;
+  NACoreUIElement* corewindow;
 
-  GetWindowRect(window->nativeID, &windowrect);
+  corewindow = (NACoreUIElement*)window;
+
+  GetWindowRect(corewindow->nativeID, &windowrect);
   screenrect = naGetMainScreenRect();
 
   rect.pos.x = windowrect.left;
@@ -464,9 +496,12 @@ NA_HDEF NARect naGetViewAbsoluteInnerRect(NAUIElement* view){
   NARect screenrect;
   RECT contentrect;
   POINT testpoint = {0, 0};
+  NACoreUIElement* coreview;
 
-  GetClientRect(view->nativeID, &contentrect);
-  ClientToScreen(view->nativeID, &testpoint);
+  coreview = (NACoreUIElement*)view;
+
+  GetClientRect(coreview->nativeID, &contentrect);
+  ClientToScreen(coreview->nativeID, &testpoint);
   screenrect = naGetMainScreenRect();
 
   rect.pos.x = testpoint.x;
@@ -478,19 +513,19 @@ NA_HDEF NARect naGetViewAbsoluteInnerRect(NAUIElement* view){
 
 
 
-NA_DEF NARect naGetUIElementRect(void* uielement, void* relativeelement, NABool includebounds){
+NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeelement, NABool includebounds){
   NARect rect;
   NARect relrect;
-  NAUIElement* element;
-  NAUIElement* relelement;
-  NAApplication app;
+  NACoreUIElement* coreelement;
+  NACoreUIElement* corerelelement;
+  NAWINAPIApplication* app;
   
-  element = (NAUIElement*)uielement;
-  relelement = (NAUIElement*)relativeelement;
-  app = naGetApplication();
+  coreelement = (NACoreUIElement*)uielement;
+  corerelelement = (NACoreUIElement*)relativeelement;
+  app = (NAWINAPIApplication*)naGetApplication();
   
   // First, let's handle the root case: Returning the application rect.
-  if(element == (NAUIElement*)app){
+  if(coreelement == (NACoreUIElement*)app){
     #ifndef NDEBUG
       if(relativeelement && (relativeelement != app))
         naError("naGetUIElementRect", "The relative element is invalid for the given uielement, which seems to be the application.");
@@ -499,26 +534,26 @@ NA_DEF NARect naGetUIElementRect(void* uielement, void* relativeelement, NABool 
   }
   
   // Now, we find the appropriate relative element.
-  if(!relelement){relelement = naGetUIElementParent(element);}
+  if(!corerelelement){corerelelement = naGetUIElementParent(coreelement);}
   
-  switch(element->elementtype){
+  switch(coreelement->elementtype){
   case NA_UI_APPLICATION: rect = naGetApplicationAbsoluteRect(); break;
-  case NA_UI_SCREEN:      rect = naGetScreenAbsoluteRect(element); break;
+  case NA_UI_SCREEN:      rect = naGetScreenAbsoluteRect(coreelement); break;
   case NA_UI_WINDOW:
     if(includebounds){
-      rect = naGetWindowAbsoluteOuterRect(element);
+      rect = naGetWindowAbsoluteOuterRect(coreelement);
     }else{
-      rect = naGetWindowAbsoluteInnerRect(element);
+      rect = naGetWindowAbsoluteInnerRect(coreelement);
     }
     break;
-  case NA_UI_OPENGLVIEW:  rect = naGetViewAbsoluteInnerRect(element); break;
+  case NA_UI_OPENGLVIEW:  rect = naGetViewAbsoluteInnerRect(coreelement); break;
   }
   
-  switch(relelement->elementtype){
+  switch(corerelelement->elementtype){
   case NA_UI_APPLICATION: relrect = naGetApplicationAbsoluteRect(); break;
-  case NA_UI_SCREEN:      relrect = naGetScreenAbsoluteRect(relelement); break;
-  case NA_UI_WINDOW:      relrect = naGetWindowAbsoluteInnerRect(relelement); break;
-  case NA_UI_OPENGLVIEW:  relrect = naGetViewAbsoluteInnerRect(relelement); break;
+  case NA_UI_SCREEN:      relrect = naGetScreenAbsoluteRect(corerelelement); break;
+  case NA_UI_WINDOW:      relrect = naGetWindowAbsoluteInnerRect(corerelelement); break;
+  case NA_UI_OPENGLVIEW:  relrect = naGetViewAbsoluteInnerRect(corerelelement); break;
   }
   
   rect.pos.x = rect.pos.x - relrect.pos.x;
@@ -590,11 +625,11 @@ NA_API NARect naGetMainScreenRect(){
 
 
 
-NA_DEF NAWindow* naNewWindow(const char* title, double posx, double posy, double width, double height, NABool resizeable){
+NA_DEF NAWindow* naNewWindow(const char* title, NARect rect, NABool resizeable){
   DWORD style;
   HWND hWnd;
   RECT windowrect;
-  NAWindow* window = naAlloc(NAWindow);
+  NAWINAPIWindow* window = naAlloc(NAWINAPIWindow);
   NARect screenrect;
   //DWORD lasterror;
 
@@ -615,10 +650,10 @@ NA_DEF NAWindow* naNewWindow(const char* title, double posx, double posy, double
   if(!resizeable){style &= ~WS_THICKFRAME;}
   screenrect = naGetMainScreenRect();
 
-  windowrect.top = (int)(screenrect.size.height - posy - height);
-  windowrect.right = (int)(posx + width);
-  windowrect.bottom = (int)(screenrect.size.height - posy);
-  windowrect.left = (int)posx;
+  windowrect.top = (int)(screenrect.size.height - rect.pos.y - rect.size.height);
+  windowrect.right = (int)(rect.pos.x + rect.size.width);
+  windowrect.bottom = (int)(screenrect.size.height - rect.pos.y);
+  windowrect.left = (int)rect.pos.x;
   AdjustWindowRect(&windowrect, style, NA_FALSE);
 
 	hWnd = CreateWindow( 
@@ -630,7 +665,7 @@ NA_DEF NAWindow* naNewWindow(const char* title, double posx, double posy, double
   //lasterror = GetLastError();
 	//hDC = GetDC(hWnd);
 
-  naRegisterCoreUIElement((NAUIElement*)window, (NAUIElement*)naGetApplication(), NA_UI_WINDOW, hWnd);
+  naRegisterCoreUIElement((NACoreUIElement*)window, (NAUIElement*)naGetApplication(), NA_UI_WINDOW, hWnd);
 
   window->flags = 0;
   window->trackingcount = 0;
@@ -660,8 +695,9 @@ NA_HDEF void naClearWindowMouseTracking(NAWindow* window){
 
 
 NA_HDEF void naRetainWindowMouseTracking(NAWindow* window){
-  window->trackingcount++;
-  //if(window->trackingcount == 1){
+  NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)window;
+  winapiwindow->trackingcount++;
+  //if(winapiwindow->trackingcount == 1){
   //  [(NSWindow*)naGetUIElementNativeID(window) setAcceptsMouseMovedEvents:YES];
   //  naRenewWindowMouseTracking(window);
   //}
@@ -670,8 +706,9 @@ NA_HDEF void naRetainWindowMouseTracking(NAWindow* window){
 
 
 NA_HDEF void naReleaseWindowMouseTracking(NAWindow* window){
-  window->trackingcount--;
-  //if(window->trackingcount == 0){
+  NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)window;
+  winapiwindow->trackingcount--;
+  //if(winapiwindow->trackingcount == 0){
   //  [(NSWindow*)naGetUIElementNativeID(window) setAcceptsMouseMovedEvents:NO];
   //  naClearWindowMouseTracking(window);
   //}
@@ -690,7 +727,8 @@ NA_DEF void naShowWindow(NAWindow* window){
 
 
 NA_DEF void naSetWindowContentView(NAWindow* window, void* uielement){
-  naAddListLastMutable(&(window->uielement.childs), uielement); // todo: this is a hack just for now.
+  NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)window;
+  naAddListLastMutable(&(winapiwindow->corewindow.uielement.childs), uielement); // todo: this is a hack just for now.
   //NAUIElement* element = (NAUIElement*)uielement;
   //[(NANativeWindow*)(window->uielement.nativeID) setContentView:element->nativeID];
 }
@@ -702,9 +740,10 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullscreen){
   //NABool hasbeenhandeled;
   NARect newrect;
   NARect screenrect;
+  NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)window;
 
-  if(fullscreen == window->fullscreen){return;}
-  window->fullscreen = fullscreen;
+  if(fullscreen == winapiwindow->fullscreen){return;}
+  winapiwindow->fullscreen = fullscreen;
 
   //HWND taskbar = FindWindow(TEXT("Shell_TrayWnd"), NULL);
   //HWND startbutton = FindWindow(TEXT("Button"), NULL);
@@ -713,7 +752,7 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullscreen){
 
   if(fullscreen){
     DEVMODE screenSettings;
-    window->windowedframe = naGetUIElementRect(window, naGetApplication(), NA_TRUE);
+    winapiwindow->windowedframe = naGetUIElementRect(window, naGetApplication(), NA_TRUE);
 
     newrect = naGetMainScreenRect(NA_NULL);
     
@@ -730,10 +769,10 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullscreen){
     //ChangeDisplaySettings(NULL, 0);
     ChangeDisplaySettings(&screenSettings, CDS_FULLSCREEN);
   }else{
-    newrect = window->windowedframe;
+    newrect = winapiwindow->windowedframe;
     style = WS_OVERLAPPEDWINDOW;
     SetWindowLongPtr(naGetUIElementNativeID(window), GWL_STYLE, style);
-    SetWindowPos(naGetUIElementNativeID(window), HWND_NOTOPMOST, (int)window->windowedframe.pos.x, (int)(screenrect.size.height - window->windowedframe.pos.y), (int)window->windowedframe.size.width, (int)window->windowedframe.size.height, SWP_SHOWWINDOW);
+    SetWindowPos(naGetUIElementNativeID(window), HWND_NOTOPMOST, (int)winapiwindow->windowedframe.pos.x, (int)(screenrect.size.height - winapiwindow->windowedframe.pos.y), (int)winapiwindow->windowedframe.size.width, (int)winapiwindow->windowedframe.size.height, SWP_SHOWWINDOW);
     ChangeDisplaySettings(NULL, 0);
   }
 
@@ -744,7 +783,8 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullscreen){
 
 
 NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
-  return window->fullscreen;
+  NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)window;
+  return winapiwindow->fullscreen;
 }
 
 
@@ -767,16 +807,16 @@ NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, double width, double heig
   HDC hDC;
  	PIXELFORMATDESCRIPTOR pfd;
   int format;
-  NAOpenGLView* openglview;
+  NAWINAPIOpenGLView* openglview;
 
 	hWnd = CreateWindow( 
 		TEXT("NAView"), "OpenGL View", 
 		WS_CHILD | WS_VISIBLE | ES_READONLY,
 		0, 0, (int)width, (int)height,
-		naGetUIElementNativeID(window), NULL, naGetUIElementNativeID(naGetApplication()), NULL );
+		(HWND)naGetUIElementNativeID(window), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
 
-  openglview = naAlloc(NAOpenGLView);
-  naRegisterCoreUIElement((NAUIElement*)openglview, (NAUIElement*)window, NA_UI_OPENGLVIEW, hWnd);
+  openglview = naAlloc(NAWINAPIOpenGLView);
+  naRegisterCoreUIElement((NACoreUIElement*)openglview, (NACoreUIElement*)window, NA_UI_OPENGLVIEW, hWnd);
 
   hDC = GetDC(hWnd); 
 
@@ -805,14 +845,15 @@ NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, double width, double heig
 
 
 NA_DEF void naSwapOpenGLBuffer(NAOpenGLView* openglview){
-  SwapBuffers(GetDC(naGetUIElementNativeID(&(openglview->uielement))));
+  NAWINAPIOpenGLView* winapiopenglview = (NAWINAPIOpenGLView*)openglview;
+  SwapBuffers(GetDC((HWND)naGetUIElementNativeID(&(winapiopenglview->coreopenglview.uielement))));
 }
 
 
 
 NA_API void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds){
   //NARect windowrect = naGetUIElementRect(naGetUIElementParent(openglview), naGetApplication(), NA_FALSE);
-  SetWindowPos(naGetUIElementNativeID(openglview), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
+  SetWindowPos((HWND)naGetUIElementNativeID(openglview), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
 }
 
 
@@ -837,26 +878,25 @@ NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmove
 
 
 NA_DEF void naShowMouse(){
-  NAApplication app = naGetApplication();
-  if(!app->ismousevisible){
-    ShowCursor(1);
-    app->ismousevisible = NA_TRUE;
-  }
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  //if(!app->ismousevisible){
+  //  ShowCursor(1);
+  //  app->ismousevisible = NA_TRUE;
+  //}
 }
 
 
 NA_DEF void naHideMouse(){
-  NAApplication app = naGetApplication();
-  if(app->ismousevisible){
-    ShowCursor(0);
-    app->ismousevisible = NA_FALSE;
-  }
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  //if(app->ismousevisible){
+  //  ShowCursor(0);
+  //  app->ismousevisible = NA_FALSE;
+  //}
 }
 
 
 #endif // NA_SYSTEM == NA_SYSTEM_WINDOWS
 
-*/
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH
 //

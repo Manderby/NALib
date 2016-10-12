@@ -127,11 +127,11 @@ NA_HDEF NANativeID naGetCoreUIElementNativeID(NACoreUIElement* coreuielement){
 
 
 NA_HDEF void naRefreshCoreUIElement(NACoreUIElement* coreuielement, double timediff){
-//  if(timediff == 0.){
-//    naRefreshUIElementNow(coreuielement);
-//  }else{
+  //if(timediff == 0.){
+  //  naRefreshUIElementNow(coreuielement);
+  //}else{
     naCallApplicationFunctionInSeconds(naRefreshUIElementNow, coreuielement, timediff);
-//  }
+  //}
 }
 
 

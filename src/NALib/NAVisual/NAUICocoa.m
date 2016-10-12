@@ -9,12 +9,15 @@
 // will simply be ignored and hence nothing is linked. If this is not the case,
 // you can simply delete the .m File from your source tree.
 
+
+#include "NAUICocoa.h"
+
+
 #ifdef __OBJC__
 #if NA_SYSTEM == NA_SYSTEM_MAC_OS_X
 // Now, we are sure, we compile with Objective-C and on MacOSX. The two
 // #if directives will be closed at the very bottom of this file.
 
-#include "NAUICocoa.h"
 #include "NAMemory.h"
 #include "NACoord.h"
 #include "NAThreading.h"
@@ -36,15 +39,21 @@ NA_DEF void naStartApplication(NAFunc prestartup, NAFunc poststartup, void* arg)
   // is requires since a later version of Objective-C
 //  ( (id (*)(id, SEL)) objc_msgSend)(objc_getClass("NSApplication"), sel_registerName("sharedApplication"));
 
+  // Start the Cocoa application and set the native ID of the application.
   [NSApplication sharedApplication];
   naStartCoreApplication(sizeof(NACocoaApplication), NSApp);
 
+  // Put an autorelease pool in place for the startup sequence.
   NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-    if(prestartup && (prestartup != NA_NULLFUNC)){prestartup(arg);}
+    // Call prestartup if desired.
+    if(prestartup){prestartup(arg);}
+    // Let the Macintosh System know that the app is ready to run.
     [NSApp finishLaunching];
-    if(poststartup && (poststartup != NA_NULLFUNC)){poststartup(arg);}
+    // Call poststartup if desired.
+    if(poststartup){poststartup(arg);}
   [pool drain];
 
+  // Start the event loop.
   NSDate* distantfuture = [NSDate distantFuture];
   while(naIsCoreApplicationRunning()){
     pool = [[NSAutoreleasePool alloc] init];
@@ -53,6 +62,7 @@ NA_DEF void naStartApplication(NAFunc prestartup, NAFunc poststartup, void* arg)
     [pool drain];
   }
   
+  // When reaching here, the application had been stopped.
   naClearCoreApplication();
 }
 
@@ -66,7 +76,8 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAFunc function, void* arg, doubl
 
 
 
-NA_DEF void naOpenConsoleWindow(void){
+NA_DEF void naOpenConsoleWindow(const char* windowtitle){
+  NA_UNUSED(windowtitle);
   // Does nothing on the Mac
 }
 
