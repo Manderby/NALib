@@ -23,7 +23,7 @@
 
 
 // The version number of this NALib distribution.
-#define NA_VERSION 16
+#define NA_VERSION 17
 
 
 // The various Systems:
@@ -386,7 +386,7 @@
   #error "NALib can not work properly with chars unequal 8 bits."
 #endif
 
-// Also, we want to know what the default size of an int is. It will be stored
+// Also, we want to know what the default bytesize of an int is. It will be stored
 // in the NA_SYSTEM_INT_BITS macro. This might be different to what the
 // NA_SYSTEM_ADDRESS_BITS is.
 #if UINT_MAX == NA_UINT32_MAX
@@ -394,7 +394,7 @@
 #elif UINT_MAX == NA_UINT64_MAX
   #define NA_SYSTEM_INT_BITS 64
 #else
-  #warning "System uses default int size other than 32 or 64."
+  #warning "System uses default int bytesize other than 32 or 64."
   #define NA_SYSTEM_INT_BITS 32
 #endif
 
@@ -405,7 +405,7 @@
 // Defining an NAByte as an uint8 can be very handy. In NALib, the NAByte type
 // is often used when a memory block needs to be accessed byte by byte. You
 // could also use a void-pointer for that but void-pointers are sometimes just
-// a little too cumbersome to work with and do not always have a size defined
+// a little too cumbersome to work with and do not always have a bytesize defined
 // depending on the standard used. Furthermore, a pointer to an uint8 can be
 // displayed by a debugger while a pointer to void can not.
 // Why not using the signed variant? Because there are many implementations
@@ -416,7 +416,7 @@ typedef uint8 NAByte;
 
 // NAInt and NAUInt
 //
-// The NAInt type is an integer of the size which is needed for storing an
+// The NAInt type is an integer of the bytesize which is needed for storing an
 // address. This means that this type is dependent on the system NALib is
 // compiled for. It can for example be 32 Bits on one and 64 Bits on another
 // architecture.

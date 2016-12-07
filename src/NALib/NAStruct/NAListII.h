@@ -362,7 +362,7 @@ NA_IDEF void* naRemoveListNextMutable(NAList* list){
 NA_IDEF const void* naGetListFirstConst(const NAList* list){
   #ifndef NDEBUG
     if(list->count == 0)
-      naError("naRemoveListNextMutable", "List is empty");
+      naError("naGetListFirstConst", "List is empty");
   #endif
   return naGetPtrConst(&(list->sentinel.next->ptr));
 }
@@ -371,7 +371,7 @@ NA_IDEF const void* naGetListFirstConst(const NAList* list){
 NA_IDEF void* naGetListFirstMutable(const NAList* list){
   #ifndef NDEBUG
     if(list->count == 0)
-      naError("naRemoveListNextMutable", "List is empty");
+      naError("naGetListFirstMutable", "List is empty");
   #endif
   return naGetPtrMutable(&(list->sentinel.next->ptr));
 }
@@ -380,7 +380,7 @@ NA_IDEF void* naGetListFirstMutable(const NAList* list){
 NA_IDEF const void* naGetListLastConst(const NAList* list){
   #ifndef NDEBUG
     if(list->count == 0)
-      naError("naRemoveListNextMutable", "List is empty");
+      naError("naGetListLastConst", "List is empty");
   #endif
   return naGetPtrConst(&(list->sentinel.prev->ptr));
 }
@@ -389,7 +389,7 @@ NA_IDEF const void* naGetListLastConst(const NAList* list){
 NA_IDEF void* naGetListLastMutable(const NAList* list){
   #ifndef NDEBUG
     if(list->count == 0)
-      naError("naRemoveListNextMutable", "List is empty");
+      naError("naGetListLastMutable", "List is empty");
   #endif
   return naGetPtrMutable(&(list->sentinel.prev->ptr));
 }
@@ -398,7 +398,7 @@ NA_IDEF void* naGetListLastMutable(const NAList* list){
 NA_IDEF const void* naGetListPrevConst(const NAList* list){
   #ifndef NDEBUG
     if(list->count == 0)
-      naError("naRemoveListNextMutable", "List is empty");
+      naError("naGetListPrevConst", "List is empty");
   #endif
   return naGetPtrConst(&(list->cur->prev->ptr));
 }
@@ -407,26 +407,32 @@ NA_IDEF const void* naGetListPrevConst(const NAList* list){
 NA_IDEF void* naGetListPrevMutable(const NAList* list){
   #ifndef NDEBUG
     if(list->count == 0)
-      naError("naRemoveListNextMutable", "List is empty");
+      naError("naGetListPrevMutable", "List is empty");
   #endif
   return naGetPtrMutable(&(list->cur->prev->ptr));
 }
 
 
 NA_IDEF const void* naGetListCurrentConst(const NAList* list){
-  #ifndef NDEBUG
-    if(list->count == 0)
-      naError("naRemoveListNextMutable", "List is empty");
-  #endif
+// Note: This warning has been removed in Version 17 because the warning
+// was unnecessary and overcomplicated implementation. The return value
+// will be NA_NULL anyway.
+//  #ifndef NDEBUG
+//    if(list->count == 0)
+//      naError("naGetListCurrentConst", "List is empty");
+//  #endif
   return naGetPtrConst(&(list->cur->ptr));
 }
 
 
 NA_IDEF void* naGetListCurrentMutable(const NAList* list){
-  #ifndef NDEBUG
-    if(list->count == 0)
-      naError("naRemoveListNextMutable", "List is empty");
-  #endif
+// Note: This warning has been removed in Version 17 because the warning
+// was unnecessary and overcomplicated implementation. The return value
+// will be NA_NULL anyway.
+//  #ifndef NDEBUG
+//    if(list->count == 0)
+//      naError("naGetListCurrentMutable", "List is empty");
+//  #endif
   return naGetPtrMutable(&(list->cur->ptr));
 }
 
@@ -434,7 +440,7 @@ NA_IDEF void* naGetListCurrentMutable(const NAList* list){
 NA_IDEF const void* naGetListNextConst(const NAList* list){
   #ifndef NDEBUG
     if(list->count == 0)
-      naError("naRemoveListNextMutable", "List is empty");
+      naError("naGetListNextConst", "List is empty");
   #endif
   return naGetPtrConst(&(list->cur->next->ptr));
 }
@@ -443,7 +449,7 @@ NA_IDEF const void* naGetListNextConst(const NAList* list){
 NA_IDEF void* naGetListNextMutable(const NAList* list){
   #ifndef NDEBUG
     if(list->count == 0)
-      naError("naRemoveListNextMutable", "List is empty");
+      naError("naGetListNextMutable", "List is empty");
   #endif
   return naGetPtrMutable(&(list->cur->next->ptr));
 }
@@ -452,10 +458,10 @@ NA_IDEF void* naGetListNextMutable(const NAList* list){
 // Note that the list would not be necessary when NDEBUG is undefined. But we
 // force the programmer to be specific what list he wants to access so we can
 // so some consistency checks if this truely what he wants.
-NA_IDEF const void* naGetListPositionConst(const NAList* list, NAListPos pos){
-  NAListElement* element = (NAListElement*)pos;
+NA_IDEF const void* naGetListPositionConst(const NAList* list, NAListPos listpos){
+  NAListElement* element = (NAListElement*)listpos;
   #ifndef NDEBUG
-    if(!pos){
+    if(!listpos){
       naCrash("naGetListPositionConst", "pos is a Null-Pointer");
       return NA_NULL;
     }
@@ -472,10 +478,10 @@ NA_IDEF const void* naGetListPositionConst(const NAList* list, NAListPos pos){
 
 
 
-NA_IDEF void* naGetListPositionMutable(const NAList* list, NAListPos pos){
-  NAListElement* element = (NAListElement*)pos;
+NA_IDEF void* naGetListPositionMutable(const NAList* list, NAListPos listpos){
+  NAListElement* element = (NAListElement*)listpos;
   #ifndef NDEBUG
-    if(!pos){
+    if(!listpos){
       naCrash("naGetListPositionMutable", "pos is a Null-Pointer");
       return NA_NULL;
     }
@@ -516,37 +522,23 @@ NA_IDEF NABool naIsListAtLast(const NAList* list){
 
 
 
-NA_IDEF NABool naIsListAtPosition(const NAList* list, NAListPos pos){
+NA_IDEF NABool naIsListAtPosition(const NAList* list, NAListPos listpos){
   #ifndef NDEBUG
-    NAListElement* element = (NAListElement*)pos;
+    NAListElement* element = (NAListElement*)listpos;
     if(list->count == 0)
       naError("naIsListAtLast", "List is empty");
     if(element->list != list)
       naError("naIsListAtPosition", "The given position is not part of the given list");
   #endif
-  return (list->cur == pos);
+  return (list->cur == listpos);
 }
 
 
 
-NA_IDEF NAListPos naGetListCurrentPosition(const NAList* list){
+NA_IDEF NAListPos naGetListNextPosition(const NAList* list, NAListPos listpos){
+  NAListElement* element = (NAListElement*)listpos;
   #ifndef NDEBUG
-    if(list->count == 0)
-      naError("naGetListNextPosition", "List is empty");
-  #endif
-  if(list->cur == &(list->sentinel)){
-    return NA_NULL;
-  }else{
-    return list->cur;
-  }
-}
-
-
-
-NA_IDEF NAListPos naGetListNextPosition(const NAList* list, NAListPos pos){
-  NAListElement* element = (NAListElement*)pos;
-  #ifndef NDEBUG
-    if(!pos){
+    if(!listpos){
       naCrash("naGetListNextPosition", "pos is a Null-Pointer");
       return NA_NULL;
     }
@@ -565,10 +557,24 @@ NA_IDEF NAListPos naGetListNextPosition(const NAList* list, NAListPos pos){
 
 
 
-NA_IDEF NAListPos naGetListPrevPosition(const NAList* list, NAListPos pos){
-  NAListElement* element = (NAListElement*)pos;
+NA_IDEF NAListPos naGetListCurrentPosition(const NAList* list){
   #ifndef NDEBUG
-    if(!pos){
+    if(list->count == 0)
+      naError("naGetListNextPosition", "List is empty");
+  #endif
+  if(list->cur == &(list->sentinel)){
+    return NA_NULL;
+  }else{
+    return list->cur;
+  }
+}
+
+
+
+NA_IDEF NAListPos naGetListPrevPosition(const NAList* list, NAListPos listpos){
+  NAListElement* element = (NAListElement*)listpos;
+  #ifndef NDEBUG
+    if(!listpos){
       naCrash("naGetListPrevPosition", "pos is a Null-Pointer");
       return NA_NULL;
     }
@@ -758,6 +764,48 @@ NA_IDEF void naMoveListFirstToLast(NAList* src, NABool advance, NAList* dst){
   element->next = &(dst->sentinel);
   element->prev = dst->sentinel.prev;
   naInjectExistingListElement(dst, element);
+}
+
+
+NA_IDEF void naMoveListTrailingToLast(NAList* src, NAList* dst){
+  NAListElement* element;
+  NAUInt movecount = 1;
+  
+  if(naIsListEmpty(src)){return;}
+  
+  // Move to the first element if the list is rewinded.
+  element = src->cur;
+  if(element == &(src->sentinel)){
+    element = src->sentinel.next;
+  }
+
+  // Reroute the cur element from src to dst
+  element->prev->next = &(src->sentinel);
+  src->sentinel.prev = element->prev;
+  src->cur = &(src->sentinel);
+
+  // Reroute the cur element
+  element->prev = dst->sentinel.prev;
+  dst->sentinel.prev->next = element;
+  
+  // count the number of moved elements
+  while(element->next != &(src->sentinel)){
+    movecount++;
+    element = element->next;
+  }
+  
+  // Reroute the last element from src to dst
+  element->next = &(dst->sentinel);
+  dst->sentinel.prev = element;
+  
+  #ifndef NDEBUG
+    if(src->count < movecount)
+      naError("naMoveListTrailingToLast", "Internal error: List count negative.");
+  #endif
+  
+//  printf("%d, %d\n", (int)src->count, (int)movecount);
+  src->count -= movecount;
+  dst->count += movecount;
 }
 
 

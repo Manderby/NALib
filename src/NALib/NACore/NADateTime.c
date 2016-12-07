@@ -573,7 +573,7 @@ NA_DEF NAByteArray* naInitByteArrayFromDateTime( NAByteArray* bytearray, const N
   switch(format){
   case NA_DATETIME_FORMAT_ICC_PROFILE:    
     // ICC section 5.1.1, page 4, dateTimeNumber
-    bytearray = naInitByteArrayWithSize(bytearray, 12);
+    bytearray = naInitByteArrayWithBytesize(bytearray, 12);
     ptr = naGetByteArrayMutablePointer(bytearray);
     
     valueu16 = (uint16)dts.year;

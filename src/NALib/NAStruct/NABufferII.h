@@ -14,20 +14,15 @@
 #include "NACoord.h"
 
 struct NABuffer{
-  NAPointer* storage;               // The storage of the whole buffer.
-  NAPointer* srcdst;                // The source or dest of the buffer.
-  
-  NABufInt minpos;                  // The minimal absolute position
-  NABufInt maxpos;                  // THe maximal absolute position
-  
-  NABufInt readpos;                 // The current absolute reading position
-  NABufInt writepos;                // The current absolute writing position.
-  NAListPos readpartposition;       // The part of the buffer currently reading
-  NAListPos writepartposition;      // The part of the buffer currently writing
-  uint8 readbit;                    // The current bit number for reading
-  uint8 writebit;                   // The current bit number for writing
-
   NAUInt flags;                     // various flags
+  NAPointer* storage;               // The buffer storage. List of buffer parts.
+  NARangei range;                   // The total range of this buffer
+  void* source;                     // The source of the buffer.
+
+  NAListPos curlistpos;             // The listpos of the current part
+  NABufInt curoffset;               // The current absolute offset
+  uint8 curbit;                     // The current bit number
+
   NAInt endianness;                 // The current endianness
   NAEndiannessConverter converter;  // The endianness converter.
 };

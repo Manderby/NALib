@@ -102,12 +102,12 @@ NA_API NAWindow*  naGetUIElementWindow  (NAUIElement* uielement);
 // send NA_NULL as the relative element, you will get coordinates relative to
 // the parent element.
 //
-// Note that the includebounds argument only works for windows for now. It
+// Note that the includeborder argument only works for windows for now. It
 // returns either the content rectangle (client rectangle) or the window
 // outer frame.
 NA_API NARect naGetUIElementRect(   NAUIElement* uielement,
                                     NAUIElement* relativeuielement,
-                                    NABool includebounds);
+                                    NABool includeborder);
 
 // You can ask any ui element to refresh its contents. This will cause the
 // element to be displayed anew. The time difference defines when the refresh
@@ -274,31 +274,32 @@ typedef enum{
 // command occurs, a function handler will be called with the function
 // prototype NAReactionHandler.
 
-typedef NABool (*NAReactionHandler)(  void* controller,
+typedef NABool (*NAReactionHandler)(  void* controllerdata,
                                NAUIElement* uielement,
                                 NAUICommand command,
                                       void* arg);
 
-NA_API void naAddUIReaction(          void* controller,
+NA_API void naAddUIReaction(          void* controllerdata,
                                NAUIElement* uielement,
                                 NAUICommand command,
                           NAReactionHandler handler);
 
 
 // The function naAddUIReaction and the function prototype NAReactionHandler
-// work in pairs. The controller given to naAddUIReaction is an arbitrary void
-// pointer which simply will be set as the first parameter of the reaction
-// handler. You probably will use either NA_NULL or some kind of master control
-// struct for that, hence the name controller. The uielement is the element
-// where the command occurs and the command sent is the command observed.
+// work in pairs. The controllerdata given to naAddUIReaction is an arbitrary
+// void pointer which simply will be set as the first parameter of the
+// reaction handler. You probably will use either NA_NULL or some kind of
+// master control struct for that, hence the name controller. The uielement
+// is the NAUIElement where the command occurs and the command sent is the
+// command observed.
 //
 // The arg sent to the reaction handler is dependent on the command:
 //
 // command       arg type     arg
 // ----------------------------------------------------------------------
 // INIT          -            NA_NULL
-// REDRAW        NARect*      Rect of the uielement needed to be redrawn.
-// RESHAPE       NARect*      The new position and size relative to the parent.
+// REDRAW        NARect*      Outer rect of the uielement relative to parent.
+// RESHAPE       NARect*      Outer rect relative to parent.
 // KEYDOWN       NAUIKeyCode* The keycode of the key pressed.
 // KEYUP         NAUIKeyCode* The keycode of the key pressed.
 // MOUSE_MOVED   -            NA_NULL
@@ -306,6 +307,9 @@ NA_API void naAddUIReaction(          void* controller,
 // MOUSE_EXITED  -            NA_NULL
 //
 // The INIT method will be called once per element.
+//
+// The KEYDOWN and KEYUP method will only be called to a window but may
+// propagate to parent elements.
 //
 // You can have as many reactions as you like for any number of elements. They
 // will be stored separately for every ui element in a list which will always
@@ -336,7 +340,7 @@ struct NACursorInfo{
 
 
 
-
+// rect is the outer rect of the window.
 NA_API NAWindow* naNewWindow(const char* title, NARect rect, NABool resizeable);
 
 
@@ -352,12 +356,20 @@ NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullscreen);
 NA_API NABool naIsWindowFullscreen(NAWindow* window);
 //NA_API NARect naGetWindowRect(NAWindow* window);
 
-#ifdef __gl_h_
-  NA_API NAOpenGLView* naNewOpenGLView(NAWindow* window, double width, double height);
+//#ifdef __gl_h_
+  // the initfunc will be called with initdata as the input parameter as
+  // soon as there is an OpenGLContext available. You can put there all
+  // initialization necessary like for example uploading of textures to the
+  // GPU.
+  // Note that the initFunc will be called...
+  // Win: Right within the naNewOpenGLView
+  // Mac: when prepareOpenGL is called (which may be as late as when the
+  //      view comes onsceen)
+  NA_API NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAFunc initfunc, void* initdata);
   // Swaps the OpenGL buffer.
   NA_API void naSwapOpenGLBuffer(NAOpenGLView* openglview);
   NA_API void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds);
-#endif
+//#endif
 
 NA_API void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage);
 NA_API void naShowMouse();

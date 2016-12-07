@@ -24,39 +24,51 @@
 #include "../NACore/NAValueHelper.h"
 
 
-NA_IDEF NARange naMakeRange(double offset, double length){
+NA_IDEF NARange naMakeRange(double origin, double length){
   NARange newrange; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsPosValueValid(offset) && naIsSizeValueValid(length)))
+    if(!(naIsOffsetValueValid(origin) && naIsLengthValueValid(length)))
       naError("naMakeRange", "Invalid values given.");
-    if(!naIsSizeValueUseful(length))
+    if(!naIsLengthValueUseful(length))
       naError("naMakeRange", "length is not useful.");
   #endif
-  newrange.offset = offset;
+  newrange.origin = origin;
   newrange.length = length;
   return newrange;
 }
-NA_IDEF NARangef naMakeRangef(float offset, float length){
+NA_IDEF NARangef naMakeRangef(float origin, float length){
   NARangef newrange; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsPosValueValidf(offset) && naIsSizeValueValidf(length)))
+    if(!(naIsOffsetValueValidf(origin) && naIsLengthValueValidf(length)))
       naError("naMakeRangef", "Invalid values given.");
-    if(!naIsSizeValueUsefulf(length))
-      naError("naMakeRange", "length is not useful.");
+    if(!naIsLengthValueUsefulf(length))
+      naError("naMakeRangef", "length is not useful.");
   #endif
-  newrange.offset = offset;
+  newrange.origin = origin;
   newrange.length = length;
   return newrange;
 }
-NA_IDEF NARangei naMakeRangei(NAInt offset, NAInt length){
+NA_IDEF NARangei naMakeRangei(NAInt origin, NAInt length){
   NARangei newrange; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsPosValueValidi(offset) && naIsSizeValueValidi(length)))
+    if(!(naIsOffsetValueValidi(origin) && naIsLengthValueValidi(length)))
       naError("naMakeRangei", "Invalid values given.");
-    if(!naIsSizeValueUsefuli(length))
-      naError("naMakeRange", "length is not useful.");
+    if(!naIsLengthValueUsefuli(length))
+      naError("naMakeRangei", "length is not useful.");
   #endif
-  newrange.offset = offset;
+  newrange.origin = origin;
+  newrange.length = length;
+  return newrange;
+}
+NA_IDEF NARangei naMakeRangeiE(NAInt origin, NAInt length){
+  NARangei newrange; // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsOffsetValueValidi(origin) && naIsLengthValueValidi(length)))
+      naError("naMakeRangeiE", "Invalid values given.");
+    if(!naIsLengthValueValidi(length))
+      naError("naMakeRangeiE", "length is not valid.");
+  #endif
+  newrange.origin = origin;
   newrange.length = length;
   return newrange;
 }
@@ -66,22 +78,49 @@ NA_IDEF NARangei naMakeRangei(NAInt offset, NAInt length){
 NA_IDEF NAPos naMakePos(double x, double y){
   NAPos newpos;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsPosValueValid(x) && naIsPosValueValid(y)))
+    if(!(naIsOffsetValueValid(x) && naIsOffsetValueValid(y)))
       naError("naMakePos", "Invalid values given.");
-    if(!(naIsPosValueUseful(x) && naIsPosValueUseful(y)))
+    if(!(naIsOffsetValueUseful(x) && naIsOffsetValueUseful(y)))
       naError("naMakePos", "Values given are not useful.");
   #endif
   newpos.x = x;
   newpos.y = y;
   return newpos;
 }
+NA_IDEF NAPosi naMakePosi(NAInt x, NAInt y){
+  NAPosi newpos;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsOffsetValueValidi(x) && naIsOffsetValueValidi(y)))
+      naError("naMakePosi", "Invalid values given.");
+    if(!(naIsOffsetValueUsefuli(x) && naIsOffsetValueUsefuli(y)))
+      naError("naMakePosi", "Values given are not useful.");
+  #endif
+  newpos.x = x;
+  newpos.y = y;
+  return newpos;
+}
+
+
+
 NA_IDEF NASize naMakeSize(double width, double height){
   NASize newsize;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsSizeValueValid(width) && naIsSizeValueValid(height)))
+    if(!(naIsLengthValueValid(width) && naIsLengthValueValid(height)))
       naError("naMakeSize", "Invalid values given.");
-    if(!(naIsSizeValueUseful(width) && naIsSizeValueUseful(height)))
+    if(!(naIsLengthValueUseful(width) && naIsLengthValueUseful(height)))
       naError("naMakeSize", "Values given are not useful.");
+  #endif
+  newsize.width = width;
+  newsize.height = height;
+  return newsize;
+}
+NA_IDEF NASizei naMakeSizei(NAInt width, NAInt height){
+  NASizei newsize;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsLengthValueValidi(width) && naIsLengthValueValidi(height)))
+      naError("naMakeSizei", "Invalid values given.");
+    if(!(naIsLengthValueUsefuli(width) && naIsLengthValueUsefuli(height)))
+      naError("naMakeSizei", "Values given are not useful.");
   #endif
   newsize.width = width;
   newsize.height = height;
@@ -90,13 +129,26 @@ NA_IDEF NASize naMakeSize(double width, double height){
 NA_IDEF NASize naMakeSizeE(double width, double height){
   NASize newsize;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsSizeValueValid(width) && naIsSizeValueValid(height)))
+    if(!(naIsLengthValueValid(width) && naIsLengthValueValid(height)))
       naError("naMakeSize", "Invalid values given.");
   #endif
   newsize.width = width;
   newsize.height = height;
   return newsize;
 }
+NA_IDEF NASizei naMakeSizeiE(NAInt width, NAInt height){
+  NASizei newsize;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsLengthValueValidi(width) && naIsLengthValueValidi(height)))
+      naError("naMakeSizei", "Invalid values given.");
+  #endif
+  newsize.width = width;
+  newsize.height = height;
+  return newsize;
+}
+
+
+
 NA_IDEF NARect naMakeRect(NAPos pos, NASize size){
   NARect newrect;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
@@ -104,6 +156,18 @@ NA_IDEF NARect naMakeRect(NAPos pos, NASize size){
       naError("naMakeRect", "Invalid values given.");
     if(!naIsPosUseful(pos) || !naIsSizeUseful(size))
       naError("naMakeRect", "Values given are not useful.");
+  #endif
+  newrect.pos = pos;
+  newrect.size = size;
+  return newrect;
+}
+NA_IDEF NARecti naMakeRecti(NAPosi pos, NASizei size){
+  NARecti newrect;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!naIsPosiValid(pos) || !naIsSizeiValid(size))
+      naError("naMakeRecti", "Invalid values given.");
+    if(!naIsPosiUseful(pos) || !naIsSizeiUseful(size))
+      naError("naMakeRecti", "Values given are not useful.");
   #endif
   newrect.pos = pos;
   newrect.size = size;
@@ -119,77 +183,6 @@ NA_IDEF NARect naMakeRectE(NAPos pos, NASize size){
   newrect.size = size;
   return newrect;
 }
-NA_IDEF NARect naMakeRectS(double x, double y, double width, double height){
-  NARect newrect;  // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!naIsPosValueValid(x) || !naIsPosValueValid(y) || !naIsSizeValueValid(width) || !naIsSizeValueValid(height))
-      naError("naMakeRectS", "Invalid values given.");
-    if(!naIsPosValueUseful(x) || !naIsPosValueUseful(y) || !naIsSizeValueUseful(width) || !naIsSizeValueUseful(height))
-      naError("naMakeRectS", "Values given are not useful.");
-  #endif
-  newrect.pos = naMakePos(x, y);
-  newrect.size = naMakeSize(width, height);
-  return newrect;
-}
-NA_IDEF NARect naMakeRectSE(double x, double y, double width, double height){
-  NARect newrect;  // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!naIsPosValueValid(x) || !naIsPosValueValid(y) || !naIsSizeValueValid(width) || !naIsSizeValueValid(height))
-      naError("naMakeRectSE", "Invalid values given.");
-  #endif
-  newrect.pos = naMakePos(x, y);
-  newrect.size = naMakeSizeE(width, height);
-  return newrect;
-}
-
-
-
-NA_IDEF NAPosi naMakePosi(NAInt x, NAInt y){
-  NAPosi newpos;  // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!(naIsPosValueValidi(x) && naIsPosValueValidi(y)))
-      naError("naMakePosi", "Invalid values given.");
-    if(!(naIsPosValueUsefuli(x) && naIsPosValueUsefuli(y)))
-      naError("naMakePosi", "Values given are not useful.");
-  #endif
-  newpos.x = x;
-  newpos.y = y;
-  return newpos;
-}
-NA_IDEF NASizei naMakeSizei(NAInt width, NAInt height){
-  NASizei newsize;  // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!(naIsSizeValueValidi(width) && naIsSizeValueValidi(height)))
-      naError("naMakeSizei", "Invalid values given.");
-    if(!(naIsSizeValueUsefuli(width) && naIsSizeValueUsefuli(height)))
-      naError("naMakeSizei", "Values given are not useful.");
-  #endif
-  newsize.width = width;
-  newsize.height = height;
-  return newsize;
-}
-NA_IDEF NASizei naMakeSizeiE(NAInt width, NAInt height){
-  NASizei newsize;  // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!(naIsSizeValueValidi(width) && naIsSizeValueValidi(height)))
-      naError("naMakeSizei", "Invalid values given.");
-  #endif
-  newsize.width = width;
-  newsize.height = height;
-  return newsize;
-}
-NA_IDEF NARecti naMakeRecti(NAPosi pos, NASizei size){
-  NARecti newrect;  // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!naIsPosiValid(pos) || !naIsSizeiValid(size))
-      naError("naMakeRecti", "Invalid values given.");
-    if(!naIsPosiUseful(pos) || !naIsSizeiUseful(size))
-      naError("naMakeRecti", "Values given are not useful.");
-  #endif
-  newrect.pos = pos;
-  newrect.size = size;
-  return newrect;
-}
 NA_IDEF NARecti naMakeRectiE(NAPosi pos, NASizei size){
   NARecti newrect;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
@@ -200,22 +193,44 @@ NA_IDEF NARecti naMakeRectiE(NAPosi pos, NASizei size){
   newrect.size = size;
   return newrect;
 }
+NA_IDEF NARect naMakeRectS(double x, double y, double width, double height){
+  NARect newrect;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!naIsOffsetValueValid(x) || !naIsOffsetValueValid(y) || !naIsLengthValueValid(width) || !naIsLengthValueValid(height))
+      naError("naMakeRectS", "Invalid values given.");
+    if(!naIsOffsetValueUseful(x) || !naIsOffsetValueUseful(y) || !naIsLengthValueUseful(width) || !naIsLengthValueUseful(height))
+      naError("naMakeRectS", "Values given are not useful.");
+  #endif
+  newrect.pos = naMakePos(x, y);
+  newrect.size = naMakeSize(width, height);
+  return newrect;
+}
 NA_IDEF NARecti naMakeRectiS(NAInt x, NAInt y, NAInt width, NAInt height){
   NARecti newrect;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!naIsPosValueValidi(x) || !naIsPosValueValidi(y) || !naIsSizeValueValidi(width) || !naIsSizeValueValidi(height))
+    if(!naIsOffsetValueValidi(x) || !naIsOffsetValueValidi(y) || !naIsLengthValueValidi(width) || !naIsLengthValueValidi(height))
       naError("naMakeRectiS", "Invalid values given.");
-    if(!naIsPosValueUsefuli(x) || !naIsPosValueUsefuli(y) || !naIsSizeValueUsefuli(width) || !naIsSizeValueUsefuli(height))
+    if(!naIsOffsetValueUsefuli(x) || !naIsOffsetValueUsefuli(y) || !naIsLengthValueUsefuli(width) || !naIsLengthValueUsefuli(height))
       naError("naMakeRectiS", "Values given are not useful.");
   #endif
   newrect.pos = naMakePosi(x, y);
   newrect.size = naMakeSizei(width, height);
   return newrect;
 }
+NA_IDEF NARect naMakeRectSE(double x, double y, double width, double height){
+  NARect newrect;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!naIsOffsetValueValid(x) || !naIsOffsetValueValid(y) || !naIsLengthValueValid(width) || !naIsLengthValueValid(height))
+      naError("naMakeRectSE", "Invalid values given.");
+  #endif
+  newrect.pos = naMakePos(x, y);
+  newrect.size = naMakeSizeE(width, height);
+  return newrect;
+}
 NA_IDEF NARecti naMakeRectiSE(NAInt x, NAInt y, NAInt width, NAInt height){
   NARecti newrect;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!naIsPosValueValidi(x) || !naIsPosValueValidi(y) || !naIsSizeValueValidi(width) || !naIsSizeValueValidi(height))
+    if(!naIsOffsetValueValidi(x) || !naIsOffsetValueValidi(y) || !naIsLengthValueValidi(width) || !naIsLengthValueValidi(height))
       naError("naMakeRectiSE", "Invalid values given.");
   #endif
   newrect.pos = naMakePosi(x, y);
@@ -224,10 +239,11 @@ NA_IDEF NARecti naMakeRectiSE(NAInt x, NAInt y, NAInt width, NAInt height){
 }
 
 
+
 NA_IDEF NABounds4 naMakeBounds4(double top, double right, double bottom, double left){
   NABounds4 newbounds;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!naIsSizeValueValid(top) || !naIsSizeValueValid(right) || !naIsSizeValueValid(bottom) || !naIsSizeValueValid(left))
+    if(!naIsLengthValueValid(top) || !naIsLengthValueValid(right) || !naIsLengthValueValid(bottom) || !naIsLengthValueValid(left))
       naError("naMakeBounds4", "Invalid values given.");
     if((top < 0.) || (right < 0.) || (bottom < 0.) || (left < 0.))
       naError("naMakeBounds4", "Invalid values given.");
@@ -238,12 +254,10 @@ NA_IDEF NABounds4 naMakeBounds4(double top, double right, double bottom, double 
   newbounds.left = left;
   return newbounds;
 }
-
-
 NA_IDEF NABounds4i naMakeBounds4i(NAInt top, NAInt right, NAInt bottom, NAInt left){
   NABounds4i newbounds;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!naIsSizeValueValidi(top) || !naIsSizeValueValidi(right) || !naIsSizeValueValidi(bottom) || !naIsSizeValueValidi(left))
+    if(!naIsLengthValueValidi(top) || !naIsLengthValueValidi(right) || !naIsLengthValueValidi(bottom) || !naIsLengthValueValidi(left))
       naError("naMakeBounds4i", "Invalid values given.");
     if((top < 0) || (right < 0) || (bottom < 0) || (left < 0))
       naError("naMakeBounds4i", "Invalid values given.");
@@ -260,9 +274,9 @@ NA_IDEF NABounds4i naMakeBounds4i(NAInt top, NAInt right, NAInt bottom, NAInt le
 NA_IDEF NAVertex naMakeVertex(double x, double y, double z){
   NAVertex newvertex;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsPosValueValid(x) && naIsPosValueValid(y) && naIsPosValueValid(z)))
+    if(!(naIsOffsetValueValid(x) && naIsOffsetValueValid(y) && naIsOffsetValueValid(z)))
       naError("naMakeVertex", "Invalid values given.");
-    if(!(naIsPosValueUseful(x) && naIsPosValueUseful(y) && naIsPosValueUseful(z)))
+    if(!(naIsOffsetValueUseful(x) && naIsOffsetValueUseful(y) && naIsOffsetValueUseful(z)))
       naError("naMakeVertex", "Values given are not useful.");
   #endif
   newvertex.x = x;
@@ -270,13 +284,42 @@ NA_IDEF NAVertex naMakeVertex(double x, double y, double z){
   newvertex.z = z;
   return newvertex;
 }
+NA_IDEF NAVertexi naMakeVertexi(NAInt x, NAInt y, NAInt z){
+  NAVertexi newvertex;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsOffsetValueValidi(x) && naIsOffsetValueValidi(y) && naIsOffsetValueValidi(z)))
+      naError("naMakeVertexi", "Invalid values given.");
+    if(!(naIsOffsetValueUsefuli(x) && naIsOffsetValueUsefuli(y) && naIsOffsetValueUsefuli(z)))
+      naError("naMakeVertexi", "Values given are not useful.");
+  #endif
+  newvertex.x = x;
+  newvertex.y = y;
+  newvertex.z = z;
+  return newvertex;
+}
+
+
+
 NA_IDEF NAVolume naMakeVolume(double width, double height, double depth){
   NAVolume newvolume;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsSizeValueValid(width) && naIsSizeValueValid(height) && naIsSizeValueValid(depth)))
+    if(!(naIsLengthValueValid(width) && naIsLengthValueValid(height) && naIsLengthValueValid(depth)))
       naError("naMakeVolume", "Invalid values given.");
-    if(!(naIsSizeValueUseful(width) && naIsSizeValueUseful(height) && naIsSizeValueUseful(depth)))
+    if(!(naIsLengthValueUseful(width) && naIsLengthValueUseful(height) && naIsLengthValueUseful(depth)))
       naError("naMakeVolume", "Values given are not useful.");
+  #endif
+  newvolume.width = width;
+  newvolume.height = height;
+  newvolume.depth = depth;
+  return newvolume;
+}
+NA_IDEF NAVolumei naMakeVolumei(NAInt width, NAInt height, NAInt depth){
+  NAVolumei newvolume;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsLengthValueValidi(width) && naIsLengthValueValidi(height) && naIsLengthValueValidi(depth)))
+      naError("naMakeVolumei", "Invalid values given.");
+    if(!(naIsLengthValueUsefuli(width) && naIsLengthValueUsefuli(height) && naIsLengthValueUsefuli(depth)))
+      naError("naMakeVolumei", "Values given are not useful.");
   #endif
   newvolume.width = width;
   newvolume.height = height;
@@ -286,7 +329,7 @@ NA_IDEF NAVolume naMakeVolume(double width, double height, double depth){
 NA_IDEF NAVolume naMakeVolumeE(double width, double height, double depth){
   NAVolume newvolume;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsSizeValueValid(width) && naIsSizeValueValid(height) && naIsSizeValueValid(depth)))
+    if(!(naIsLengthValueValid(width) && naIsLengthValueValid(height) && naIsLengthValueValid(depth)))
       naError("naMakeVolume", "Invalid values given.");
   #endif
   newvolume.width = width;
@@ -294,6 +337,20 @@ NA_IDEF NAVolume naMakeVolumeE(double width, double height, double depth){
   newvolume.depth = depth;
   return newvolume;
 }
+NA_IDEF NAVolumei naMakeVolumeiE(NAInt width, NAInt height, NAInt depth){
+  NAVolumei newvolume;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsLengthValueValidi(width) && naIsLengthValueValidi(height) && naIsLengthValueValidi(depth)))
+      naError("naMakeVolumei", "Invalid values given.");
+  #endif
+  newvolume.width = width;
+  newvolume.height = height;
+  newvolume.depth = depth;
+  return newvolume;
+}
+
+
+
 NA_IDEF NABox naMakeBox(NAVertex vertex, NAVolume volume){
   NABox newbox;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
@@ -306,57 +363,6 @@ NA_IDEF NABox naMakeBox(NAVertex vertex, NAVolume volume){
   newbox.volume = volume;
   return newbox;
 }
-NA_IDEF NABox naMakeBoxE(NAVertex vertex, NAVolume volume){
-  NABox newbox;  // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!naIsVertexValid(vertex) || !naIsVolumeValid(volume))
-      naError("naMakeBox", "Invalid values given.");
-  #endif
-  newbox.vertex = vertex;
-  newbox.volume = volume;
-  return newbox;
-}
-
-
-
-
-NA_IDEF NAVertexi naMakeVertexi(NAInt x, NAInt y, NAInt z){
-  NAVertexi newvertex;  // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!(naIsPosValueValidi(x) && naIsPosValueValidi(y) && naIsPosValueValidi(z)))
-      naError("naMakeVertexi", "Invalid values given.");
-    if(!(naIsPosValueUsefuli(x) && naIsPosValueUsefuli(y) && naIsPosValueUsefuli(z)))
-      naError("naMakeVertexi", "Values given are not useful.");
-  #endif
-  newvertex.x = x;
-  newvertex.y = y;
-  newvertex.z = z;
-  return newvertex;
-}
-NA_IDEF NAVolumei naMakeVolumei(NAInt width, NAInt height, NAInt depth){
-  NAVolumei newvolume;  // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!(naIsSizeValueValidi(width) && naIsSizeValueValidi(height) && naIsSizeValueValidi(depth)))
-      naError("naMakeVolumei", "Invalid values given.");
-    if(!(naIsSizeValueUsefuli(width) && naIsSizeValueUsefuli(height) && naIsSizeValueUsefuli(depth)))
-      naError("naMakeVolumei", "Values given are not useful.");
-  #endif
-  newvolume.width = width;
-  newvolume.height = height;
-  newvolume.depth = depth;
-  return newvolume;
-}
-NA_IDEF NAVolumei naMakeVolumeiE(NAInt width, NAInt height, NAInt depth){
-  NAVolumei newvolume;  // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!(naIsSizeValueValidi(width) && naIsSizeValueValidi(height) && naIsSizeValueValidi(depth)))
-      naError("naMakeVolumei", "Invalid values given.");
-  #endif
-  newvolume.width = width;
-  newvolume.height = height;
-  newvolume.depth = depth;
-  return newvolume;
-}
 NA_IDEF NABoxi naMakeBoxi(NAVertexi vertex, NAVolumei volume){
   NABoxi newbox;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
@@ -364,6 +370,32 @@ NA_IDEF NABoxi naMakeBoxi(NAVertexi vertex, NAVolumei volume){
       naError("naMakeBoxi", "Invalid values given.");
     if(!naIsVertexiUseful(vertex) || !naIsVolumeiUseful(volume))
       naError("naMakeBoxi", "Values given are not useful.");
+  #endif
+  newbox.vertex = vertex;
+  newbox.volume = volume;
+  return newbox;
+}
+NA_IDEF NABox naMakeBoxS(double x, double y, double z, double width, double height, double depth){
+  NABox newbox;  // Declaration before implementation. Needed for C90.
+  // We do not test for bad values at this point as it is already done in
+  // the following Make functions.
+  newbox.vertex = naMakeVertex(x, y, z);
+  newbox.volume = naMakeVolume(width, height, depth);
+  return newbox;
+}
+NA_IDEF NABoxi naMakeBoxiS(NAInt x, NAInt y, NAInt z, NAInt width, NAInt height, NAInt depth){
+  NABoxi newbox;  // Declaration before implementation. Needed for C90.
+  // We do not test for bad values at this point as it is already done in
+  // the following Make functions.
+  newbox.vertex = naMakeVertexi(x, y, z);
+  newbox.volume = naMakeVolumei(width, height, depth);
+  return newbox;
+}
+NA_IDEF NABox naMakeBoxE(NAVertex vertex, NAVolume volume){
+  NABox newbox;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!naIsVertexValid(vertex) || !naIsVolumeValid(volume))
+      naError("naMakeBox", "Invalid values given.");
   #endif
   newbox.vertex = vertex;
   newbox.volume = volume;
@@ -379,7 +411,22 @@ NA_IDEF NABoxi naMakeBoxiE(NAVertexi vertex, NAVolumei volume){
   newbox.volume = volume;
   return newbox;
 }
-
+NA_IDEF NABox naMakeBoxSE(double x, double y, double z, double width, double height, double depth){
+  NABox newbox;  // Declaration before implementation. Needed for C90.
+  // We do not test for bad values at this point as it is already done in
+  // the following Make functions.
+  newbox.vertex = naMakeVertex(x, y, z);
+  newbox.volume = naMakeVolumeE(width, height, depth);
+  return newbox;
+}
+NA_IDEF NABoxi naMakeBoxiSE(NAInt x, NAInt y, NAInt z, NAInt width, NAInt height, NAInt depth){
+  NABoxi newbox;  // Declaration before implementation. Needed for C90.
+  // We do not test for bad values at this point as it is already done in
+  // the following Make functions.
+  newbox.vertex = naMakeVertexi(x, y, z);
+  newbox.volume = naMakeVolumeiE(width, height, depth);
+  return newbox;
+}
 
 
 
@@ -387,9 +434,9 @@ NA_IDEF NABoxi naMakeBoxiE(NAVertexi vertex, NAVolumei volume){
 NA_IDEF NAPos naMakePosWithCGPoint(CGPoint cgpoint){
   NAPos newpos;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsPosValueValid(cgpoint.x) && naIsPosValueValid(cgpoint.y)))
+    if(!(naIsOffsetValueValid(cgpoint.x) && naIsOffsetValueValid(cgpoint.y)))
       naError("naMakePosWithCGPoint", "Invalid values given.");
-    if(!(naIsPosValueUseful(cgpoint.x) && naIsPosValueUseful(cgpoint.y)))
+    if(!(naIsOffsetValueUseful(cgpoint.x) && naIsOffsetValueUseful(cgpoint.y)))
       naError("naMakePosWithCGPoint", "Values given are not useful.");
   #endif
   newpos.x = cgpoint.x;
@@ -399,9 +446,9 @@ NA_IDEF NAPos naMakePosWithCGPoint(CGPoint cgpoint){
 NA_IDEF NASize naMakeSizeWithCGSize(CGSize cgsize){
   NASize newsize;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsSizeValueValid(cgsize.width) && naIsSizeValueValid(cgsize.height)))
+    if(!(naIsLengthValueValid(cgsize.width) && naIsLengthValueValid(cgsize.height)))
       naError("naMakeSizeWithCGSize", "Invalid values given.");
-    if(!(naIsSizeValueUseful(cgsize.width) && naIsSizeValueUseful(cgsize.height)))
+    if(!(naIsLengthValueUseful(cgsize.width) && naIsLengthValueUseful(cgsize.height)))
       naError("naMakeSizeWithCGSize", "Values given are not useful.");
   #endif
   newsize.width = cgsize.width;
@@ -417,13 +464,14 @@ NA_IDEF NARect naMakeRectWithCGRect(CGRect cgrect){
 #endif
 
 
+
 #if defined __OBJC__ && defined __AVAILABILITYMACROS__
 NA_IDEF NAPos naMakePosWithNSPoint(NSPoint nspoint){
   NAPos newpos;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsPosValueValid(nspoint.x) && naIsPosValueValid(nspoint.y)))
+    if(!(naIsOffsetValueValid(nspoint.x) && naIsOffsetValueValid(nspoint.y)))
       naError("naMakePosWithNSPoint", "Invalid values given.");
-    if(!(naIsPosValueUseful(nspoint.x) && naIsPosValueUseful(nspoint.y)))
+    if(!(naIsOffsetValueUseful(nspoint.x) && naIsOffsetValueUseful(nspoint.y)))
       naError("naMakePosWithNSPoint", "Values given are not useful.");
   #endif
   newpos.x = nspoint.x;
@@ -433,9 +481,9 @@ NA_IDEF NAPos naMakePosWithNSPoint(NSPoint nspoint){
 NA_IDEF NASize naMakeSizeWithNSSize(NSSize nssize){
   NASize newsize;  // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
-    if(!(naIsSizeValueValid(nssize.width) && naIsSizeValueValid(nssize.height)))
+    if(!(naIsLengthValueValid(nssize.width) && naIsLengthValueValid(nssize.height)))
       naError("naMakeSizeWithNSSize", "Invalid values given.");
-    if(!(naIsSizeValueUseful(nssize.width) && naIsSizeValueUseful(nssize.height)))
+    if(!(naIsLengthValueUseful(nssize.width) && naIsLengthValueUseful(nssize.height)))
       naError("naMakeSizeWithNSSize", "Values given are not useful.");
   #endif
   newsize.width = nssize.width;
@@ -456,6 +504,722 @@ NA_IDEF NSRect naMakeNSRectWithRect(NARect narect){
 #endif
 
 
+
+NA_IDEF NAPosi naMakePosiWithAlignment(NAPosi origin, NARecti alignrect){
+  NAPosi neworigin;
+  #ifndef NDEBUG
+    if(naIsRectiEmptySlow(alignrect)){
+      naCrash("naMakePosiWithAlignment", "alignment rect is empty");
+      return naMakePosi(0, 0);
+    }
+  #endif
+  neworigin.x = naAlignValue(origin.x, alignrect.pos.x, alignrect.size.width);
+  neworigin.y = naAlignValue(origin.y, alignrect.pos.y, alignrect.size.height);
+  return neworigin;
+}
+NA_IDEF NAVertexi naMakeVertexiWithAlignment(NAVertexi origin, NABoxi alignbox){
+  NAVertexi neworigin;
+  #ifndef NDEBUG
+    if(naIsBoxiEmptySlow(alignbox)){
+      naCrash("naMakePosiWithAlignment", "alignment box is empty");
+      return naMakeVertexi(0, 0, 0);
+    }
+  #endif
+  neworigin.x = naAlignValue(origin.x, alignbox.vertex.x, alignbox.volume.width);
+  neworigin.y = naAlignValue(origin.y, alignbox.vertex.y, alignbox.volume.height);
+  neworigin.z = naAlignValue(origin.z, alignbox.vertex.z, alignbox.volume.depth);
+  return neworigin;
+}
+
+
+
+NA_IDEF NARange naMakeRangeWithStartAndEnd(double start, double end){
+  NARange newrange; // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsOffsetValueValid(start) && naIsOffsetValueValid(end)))
+      naError("naMakeRangeWithStartAndEnd", "Invalid values given.");
+  #endif
+  newrange.origin = start;
+  newrange.length = naMakeLengthWithStartAndEnd(start, end);
+  return newrange;
+}
+NA_IDEF NARangef naMakeRangefWithStartAndEnd(float start, float end){
+  NARangef newrange; // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsOffsetValueValidf(start) && naIsOffsetValueValidf(end)))
+      naError("naMakeRangefWithStartAndEnd", "Invalid values given.");
+  #endif
+  newrange.origin = start;
+  newrange.length = naMakeLengthWithStartAndEndf(start, end);
+  return newrange;
+}
+NA_IDEF NARangei naMakeRangeiWithStartAndEnd(NAInt start, NAInt end){
+  NARangei newrange; // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsOffsetValueValidi(start) && naIsOffsetValueValidi(end)))
+      naError("naMakeRangeiWithStartAndEnd", "Invalid values given.");
+  #endif
+  newrange.origin = start;
+  newrange.length = naMakeLengthWithStartAndEndi(start, end);
+  return newrange;
+}
+NA_IDEF NARangei naMakeRangeiWithMinAndMax(NAInt min, NAInt max){
+  NARangei newrange; // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!(naIsOffsetValueValidi(min) && naIsOffsetValueValidi(max)))
+      naError("naMakeRangeiWithMinAndMax", "Invalid values given.");
+    if(max < min)
+      naError("naMakeRangeiWithMinAndMax", "min should be smallerequal to max.");
+  #endif
+  newrange.origin = min;
+  newrange.length = naMakeLengthWithMinAndMaxi(min, max);
+  return newrange;
+}
+NA_IDEF NARangei naMakeRangeiWithRangeAndOffset(NARangei range, NAInt offset){
+  NARangei newrange; // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!naIsOffsetValueValidi(offset))
+      naError("naMakeRangeiWithRangeAndOffset", "Invalid offset given.");
+  #endif
+  if(naIsRangeiEmpty(range)){
+    newrange.length = 1;
+    newrange.origin = offset;
+  }else if(offset < range.origin){
+    newrange.length = naMakeLengthWithStartAndEndi(offset, naGetRangeiEnd(range));
+    newrange.origin = offset;
+  }else if(offset > naGetRangeiMax(range)){
+    newrange.length = naMakeLengthWithMinAndMaxi(range.origin, offset);
+    newrange.origin = range.origin;
+  }else{
+    newrange = range;
+  }
+  return newrange;
+}
+NA_IDEF NARangei naMakeRangeiWithRangeAndRange (NARangei range1, NARangei range2){
+  NARangei newrange; // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!naIsRangeiValid(range1))
+      naError("naMakeRangeiWithRangeAndRange", "Invalid range 1 given.");
+    if(!naIsRangeiValid(range2))
+      naError("naMakeRangeiWithRangeAndRange", "Invalid range 2 given.");
+  #endif
+  if(naIsRangeiEmpty(range1) && naIsRangeiEmpty(range2)){
+    newrange = naMakeRangei(0, 0);
+  }else if(naIsRangeiEmpty(range1)){
+    newrange = range2;
+  }else if(naIsRangeiEmpty(range2)){
+    newrange = range1;
+  }else{
+    newrange = naMakeRangeiWithStartAndEnd(naMini(range1.origin, range2.origin), naMaxi(naGetRangeiEnd(range1), naGetRangeiEnd(range2)));
+  }
+  return newrange;
+}
+
+
+
+NA_IDEF NARect naMakeRectWithPosAndPos(NAPos pos1, NAPos pos2){
+  NARect newrect;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!naIsPosValid(pos1))
+      naError("naMakeRectWithPosAndPos", "pos1 is invalid.");
+    if(!naIsPosValid(pos2))
+      naError("naMakeRectWithPosAndPos", "pos2 is invalid.");
+  #endif
+  if(pos2.x > pos1.x){
+    newrect.pos.x = pos1.x;
+    newrect.size.width = naMakeLengthWithStartAndEnd(pos1.x, pos2.x);
+  }else{
+    newrect.pos.x = pos2.x;
+    newrect.size.width = naMakeLengthWithStartAndEnd(pos2.x, pos1.x);
+  }
+  if(pos2.y > pos1.y){
+    newrect.pos.y = pos1.y;
+    newrect.size.height = naMakeLengthWithStartAndEnd(pos1.y, pos2.y);
+  }else{
+    newrect.pos.y = pos2.y;
+    newrect.size.height = naMakeLengthWithStartAndEnd(pos2.y, pos1.y);
+  }
+  return newrect;
+}
+NA_IDEF NARect naMakeRectWithRectAndPos(NARect rect, NAPos pos){
+  // Declaration before implementation. Needed for C90.
+  NARect newrect;
+  double end;
+  #ifndef NDEBUG
+    if(naIsRectEmpty(rect))
+      naError("naMakeRectWithRectAndPos", "rect is empty.");
+    if(!naIsRectUseful(rect))
+      naError("naMakeRectWithRectAndPos", "rect is not useful.");
+    if(!naIsPosValid(pos))
+      naError("naMakeRectWithRectAndPos", "pos is invalid.");
+  #endif
+  newrect.pos.x = naMin(rect.pos.x, pos.x);
+  newrect.pos.y = naMin(rect.pos.y, pos.y);
+  end = naGetRectEndX(rect);
+  newrect.size.width  = naMakeLengthWithStartAndEnd(newrect.pos.x, naMax(end, pos.x));
+  end = naGetRectEndY(rect);
+  newrect.size.height = naMakeLengthWithStartAndEnd(newrect.pos.y, naMax(end, pos.y));
+  return newrect;
+}
+NA_IDEF NARect naMakeRectWithRectAndRect(NARect rect1, NARect rect2){
+  // Declaration before implementation. Needed for C90.
+  NARect newrect;
+  double end1;
+  double end2;
+  #ifndef NDEBUG
+    if(naIsRectEmpty(rect1))
+      naError("naMakeRectWithRectAndRect", "rect1 is empty.");
+    if(!naIsRectValid(rect1))
+      naError("naMakeRectWithRectAndRect", "rect1 is invalid.");
+    if(naIsRectEmpty(rect2))
+      naError("naMakeRectWithRectAndRect", "rect2 is empty.");
+    if(!naIsRectValid(rect2))
+      naError("naMakeRectWithRectAndRect", "rect2 is invalid.");
+  #endif
+  newrect.pos.x = naMin(rect1.pos.x, rect2.pos.x);
+  newrect.pos.y = naMin(rect1.pos.y, rect2.pos.y);
+  end1 = naGetRectEndX(rect1);
+  end2 = naGetRectEndX(rect2);
+  newrect.size.width  = naMakeLengthWithStartAndEnd(newrect.pos.x, naMax(end1, end2));
+  end1 = naGetRectEndY(rect1);
+  end2 = naGetRectEndY(rect2);
+  newrect.size.height  = naMakeLengthWithStartAndEnd(newrect.pos.y, naMax(end1, end2));
+  return newrect;
+}
+NA_IDEF NARect naMakeRectWithRectAndRectE(NARect rect1, NARect rect2){
+  // Declaration before implementation. Needed for C90.
+  NARect newrect;
+  double end1;
+  double end2;
+  #ifndef NDEBUG
+    if(!naIsRectValid(rect1))
+      naError("naMakeRectWithRectAndRect", "rect1 is invalid.");
+    if(!naIsRectValid(rect2))
+      naError("naMakeRectWithRectAndRect", "rect2 is invalid.");
+  #endif
+  if(naIsRectEmpty(rect1)){return rect2;}
+  if(naIsRectEmpty(rect2)){return rect1;}
+  newrect.pos.x = naMin(rect1.pos.x, rect2.pos.x);
+  newrect.pos.y = naMin(rect1.pos.y, rect2.pos.y);
+  end1 = naGetRectEndX(rect1);
+  end2 = naGetRectEndX(rect2);
+  newrect.size.width  = naMakeLengthWithStartAndEnd(newrect.pos.x, naMax(end1, end2));
+  end1 = naGetRectEndY(rect1);
+  end2 = naGetRectEndY(rect2);
+  newrect.size.height  = naMakeLengthWithStartAndEnd(newrect.pos.y, naMax(end1, end2));
+  return newrect;
+}
+NA_IDEF NARecti naMakeRectiWithPosAndPos(NAPosi pos1, NAPosi pos2){
+  NARecti newrect;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!naIsPosiValid(pos1))
+      naError("naMakeRectiWithPosAndPos", "pos1 is invalid.");
+    if(!naIsPosiValid(pos2))
+      naError("naMakeRectiWithPosAndPos", "pos2 is invalid.");
+  #endif
+  if(pos2.x > pos1.x){
+    newrect.pos.x = pos1.x;
+    newrect.size.width = naMakeLengthWithMinAndMaxi(pos1.x, pos2.x);
+  }else{
+    newrect.pos.x = pos2.x;
+    newrect.size.width = naMakeLengthWithMinAndMaxi(pos2.x, pos1.x);
+  }
+  if(pos2.y > pos1.y){
+    newrect.pos.y = pos1.y;
+    newrect.size.height = naMakeLengthWithMinAndMaxi(pos1.y, pos2.y);
+  }else{
+    newrect.pos.y = pos2.y;
+    newrect.size.height = naMakeLengthWithMinAndMaxi(pos2.y, pos1.y);
+  }
+  return newrect;
+}
+NA_IDEF NARecti naMakeRectiWithRectAndPos(NARecti rect, NAPosi pos){
+  // Declaration before implementation. Needed for C90.
+  NARecti newrect;
+  NAInt max;
+  #ifndef NDEBUG
+    if(naIsRectiEmptySlow(rect))
+      naError("naMakeRectiWithRectAndPos", "rect is empty.");
+    if(!naIsRectiUseful(rect))
+      naError("naMakeRectiWithRectAndPos", "rect is not useful.");
+    if(!naIsPosiValid(pos))
+      naError("naMakeRectiWithRectAndPos", "pos is invalid.");
+  #endif
+  newrect.pos.x = naMini(rect.pos.x, pos.x);
+  newrect.pos.y = naMini(rect.pos.y, pos.y);
+  // Note: We do compute the end instead of the max, because this may require
+  // one less instruction. Save whatever you can!
+  max = naGetRectiMaxX(rect);
+  newrect.size.width  = naMakeLengthWithMinAndMaxi(newrect.pos.x, naMaxi(max, pos.x));
+  max = naGetRectiMaxY(rect);
+  newrect.size.height = naMakeLengthWithMinAndMaxi(newrect.pos.y, naMaxi(max, pos.y));
+  return newrect;
+}
+NA_IDEF NARecti naMakeRectiWithRectAndPosE(NARecti rect, NAPosi pos){
+  // Declaration before implementation. Needed for C90.
+  NARecti newrect;
+  NAInt max;
+  #ifndef NDEBUG
+    if(!naIsRectiValid(rect))
+      naError("naMakeRectiWithRectAndPos", "rect is invalid.");
+    if(!naIsPosiValid(pos))
+      naError("naMakeRectiWithRectAndPos", "pos is invalid.");
+  #endif
+  if(naIsRectiEmpty(rect)){
+    newrect.pos = pos;
+    newrect.size = naMakeSizei(1, 1);
+  }else{
+    newrect.pos.x = naMini(rect.pos.x, pos.x);
+    newrect.pos.y = naMini(rect.pos.y, pos.y);
+    // Note: We do compute the end instead of the max, because this may require
+    // one less instruction. Save whatever you can!
+    max = naGetRectiMaxX(rect);
+    newrect.size.width  = naMakeLengthWithMinAndMaxi(newrect.pos.x, naMaxi(max, pos.x));
+    max = naGetRectiMaxY(rect);
+    newrect.size.height = naMakeLengthWithMinAndMaxi(newrect.pos.y, naMaxi(max, pos.y));
+  }
+  return newrect;
+}
+NA_IDEF NARecti naMakeRectiWithRectAndRect(NARecti rect1, NARecti rect2){
+  // Declaration before implementation. Needed for C90.
+  NARecti newrect;
+  NAInt end1;
+  NAInt end2;
+  #ifndef NDEBUG
+    if(naIsRectiEmptySlow(rect1))
+      naError("naMakeRectiWithRectAndRect", "rect1 is empty.");
+    if(!naIsRectiValid(rect1))
+      naError("naMakeRectiWithRectAndRect", "rect1 is invalid.");
+    if(naIsRectiEmptySlow(rect2))
+      naError("naMakeRectiWithRectAndRect", "rect2 is empty.");
+    if(!naIsRectiValid(rect2))
+      naError("naMakeRectiWithRectAndRect", "rect2 is invalid.");
+  #endif
+  newrect.pos.x = naMini(rect1.pos.x, rect2.pos.x);
+  newrect.pos.y = naMini(rect1.pos.y, rect2.pos.y);
+  end1 = naGetRectiEndX(rect1);
+  end2 = naGetRectiEndX(rect2);
+  newrect.size.width  = naMakeLengthWithStartAndEndi(newrect.pos.x, naMaxi(end1, end2));
+  end1 = naGetRectiEndY(rect1);
+  end2 = naGetRectiEndY(rect2);
+  newrect.size.height = naMakeLengthWithStartAndEndi(newrect.pos.y, naMaxi(end1, end2));
+  return newrect;
+}
+NA_IDEF NARecti naMakeRectiWithRectAndRectE(NARecti rect1, NARecti rect2){
+  // Declaration before implementation. Needed for C90.
+  NARecti newrect;
+  NAInt end1;
+  NAInt end2;
+  #ifndef NDEBUG
+    if(!naIsRectiValid(rect1))
+      naError("naMakeRectiWithRectAndRect", "rect1 is invalid.");
+    if(!naIsRectiValid(rect2))
+      naError("naMakeRectiWithRectAndRect", "rect2 is invalid.");
+  #endif
+  if(naIsRectiEmpty(rect1)){return rect2;}
+  if(naIsRectiEmpty(rect2)){return rect1;}
+  newrect.pos.x = naMini(rect1.pos.x, rect2.pos.x);
+  newrect.pos.y = naMini(rect1.pos.y, rect2.pos.y);
+  end1 = naGetRectiEndX(rect1);
+  end2 = naGetRectiEndX(rect2);
+  newrect.size.width  = naMakeLengthWithStartAndEndi(newrect.pos.x, naMaxi(end1, end2));
+  end1 = naGetRectiEndY(rect1);
+  end2 = naGetRectiEndY(rect2);
+  newrect.size.height = naMakeLengthWithStartAndEndi(newrect.pos.y, naMaxi(end1, end2));
+  return newrect;
+}
+
+
+
+NA_IDEF NABox naMakeBoxWithVertexAndVertex(NAVertex vertex1, NAVertex vertex2){
+  NABox newbox;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!naIsVertexValid(vertex1))
+      naError("naMakeBoxWithVertexAndVertex", "vertex1 is invalid.");
+    if(!naIsVertexValid(vertex2))
+      naError("naMakeBoxWithVertexAndVertex", "vertex2 is invalid.");
+  #endif
+  if(vertex2.x > vertex1.x){
+    newbox.vertex.x = vertex1.x;
+    newbox.volume.width = naMakeLengthWithStartAndEnd(vertex1.x, vertex2.x);
+  }else{
+    newbox.vertex.x = vertex2.x;
+    newbox.volume.width = naMakeLengthWithStartAndEnd(vertex2.x, vertex1.x);
+  }
+  if(vertex2.y > vertex1.y){
+    newbox.vertex.y = vertex1.y;
+    newbox.volume.height = naMakeLengthWithStartAndEnd(vertex1.y, vertex2.y);
+  }else{
+    newbox.vertex.y = vertex2.y;
+    newbox.volume.height = naMakeLengthWithStartAndEnd(vertex2.y, vertex1.y);
+  }
+  if(vertex2.z > vertex1.z){
+    newbox.vertex.z = vertex1.z;
+    newbox.volume.depth = naMakeLengthWithStartAndEnd(vertex1.z, vertex2.z);
+  }else{
+    newbox.vertex.z = vertex2.z;
+    newbox.volume.depth = naMakeLengthWithStartAndEnd(vertex2.z, vertex1.z);
+  }
+  return newbox;
+}
+NA_IDEF NABox naMakeBoxWithBoxAndVertex(NABox box, NAVertex vertex){
+  // Declaration before implementation. Needed for C90.
+  NABox newbox;
+  double end;
+  #ifndef NDEBUG
+    if(naIsBoxEmpty(box))
+      naError("naMakeBoxWithBoxAndVertex", "box is empty.");
+    if(!naIsBoxUseful(box))
+      naError("naMakeBoxWithBoxAndVertex", "box is not useful.");
+    if(!naIsVertexValid(vertex))
+      naError("naMakeBoxWithBoxAndVertex", "vertex is invalid.");
+  #endif
+  newbox.vertex.x = naMin(box.vertex.x, vertex.x);
+  newbox.vertex.y = naMin(box.vertex.y, vertex.y);
+  newbox.vertex.z = naMin(box.vertex.z, vertex.z);
+  end = naGetBoxEndX(box);
+  newbox.volume.width  = naMakeLengthWithStartAndEnd(newbox.vertex.x, naMax(end, vertex.x));
+  end = naGetBoxEndY(box);
+  newbox.volume.height = naMakeLengthWithStartAndEnd(newbox.vertex.y, naMax(end, vertex.y));
+  end = naGetBoxEndZ(box);
+  newbox.volume.depth = naMakeLengthWithStartAndEnd(newbox.vertex.z, naMax(end, vertex.z));
+  return newbox;
+}
+NA_IDEF NABox naMakeBoxWithBoxAndBox(NABox box1, NABox box2){
+  // Declaration before implementation. Needed for C90.
+  NABox newbox;
+  double end1;
+  double end2;
+  #ifndef NDEBUG
+    if(naIsBoxEmpty(box1))
+      naError("naMakeBoxWithBoxAndBox", "box1 is empty.");
+    if(!naIsBoxValid(box1))
+      naError("naMakeBoxWithBoxAndBox", "box1 is invalid.");
+    if(naIsBoxEmpty(box2))
+      naError("naMakeBoxWithBoxAndBox", "box2 is empty.");
+    if(!naIsBoxValid(box2))
+      naError("naMakeBoxWithBoxAndBox", "box2 is invalid.");
+  #endif
+  newbox.vertex.x = naMin(box1.vertex.x, box2.vertex.x);
+  newbox.vertex.y = naMin(box1.vertex.y, box2.vertex.y);
+  newbox.vertex.z = naMin(box1.vertex.z, box2.vertex.z);
+  end1 = naGetBoxEndX(box1);
+  end2 = naGetBoxEndX(box2);
+  newbox.volume.width  = naMakeLengthWithStartAndEnd(newbox.vertex.x, naMax(end1, end2));
+  end1 = naGetBoxEndY(box1);
+  end2 = naGetBoxEndY(box2);
+  newbox.volume.height  = naMakeLengthWithStartAndEnd(newbox.vertex.y, naMax(end1, end2));
+  end1 = naGetBoxEndZ(box1);
+  end2 = naGetBoxEndZ(box2);
+  newbox.volume.depth  = naMakeLengthWithStartAndEnd(newbox.vertex.z, naMax(end1, end2));
+  return newbox;
+}
+NA_IDEF NABox naMakeBoxWithBoxAndBoxE(NABox box1, NABox box2){
+  // Declaration before implementation. Needed for C90.
+  NABox newbox;
+  double end1;
+  double end2;
+  #ifndef NDEBUG
+    if(!naIsBoxValid(box1))
+      naError("naMakeBoxWithBoxAndBox", "box1 is invalid.");
+    if(!naIsBoxValid(box2))
+      naError("naMakeBoxWithBoxAndBox", "box2 is invalid.");
+  #endif
+  if(naIsBoxEmpty(box1)){return box2;}
+  if(naIsBoxEmpty(box2)){return box1;}
+  newbox.vertex.x = naMin(box1.vertex.x, box2.vertex.x);
+  newbox.vertex.y = naMin(box1.vertex.y, box2.vertex.y);
+  newbox.vertex.z = naMin(box1.vertex.z, box2.vertex.z);
+  end1 = naGetBoxEndX(box1);
+  end2 = naGetBoxEndX(box2);
+  newbox.volume.width  = naMakeLengthWithStartAndEnd(newbox.vertex.x, naMax(end1, end2));
+  end1 = naGetBoxEndY(box1);
+  end2 = naGetBoxEndY(box2);
+  newbox.volume.height  = naMakeLengthWithStartAndEnd(newbox.vertex.y, naMax(end1, end2));
+  end1 = naGetBoxEndZ(box1);
+  end2 = naGetBoxEndZ(box2);
+  newbox.volume.depth  = naMakeLengthWithStartAndEnd(newbox.vertex.z, naMax(end1, end2));
+  return newbox;
+}
+NA_IDEF NABoxi naMakeBoxiWithVertexAndVertex(NAVertexi vertex1, NAVertexi vertex2){
+  NABoxi newbox;  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!naIsVertexiValid(vertex1))
+      naError("naMakeBoxiWithVertexAndVertex", "vertex1 is invalid.");
+    if(!naIsVertexiValid(vertex2))
+      naError("naMakeBoxiWithVertexAndVertex", "vertex2 is invalid.");
+  #endif
+  if(vertex2.x > vertex1.x){
+    newbox.vertex.x = vertex1.x;
+    newbox.volume.width = naMakeLengthWithMinAndMaxi(vertex1.x, vertex2.x);
+  }else{
+    newbox.vertex.x = vertex2.x;
+    newbox.volume.width = naMakeLengthWithMinAndMaxi(vertex2.x, vertex1.x);
+  }
+  if(vertex2.y > vertex1.y){
+    newbox.vertex.y = vertex1.y;
+    newbox.volume.height = naMakeLengthWithMinAndMaxi(vertex1.y, vertex2.y);
+  }else{
+    newbox.vertex.y = vertex2.y;
+    newbox.volume.height = naMakeLengthWithMinAndMaxi(vertex2.y, vertex1.y);
+  }
+  if(vertex2.z > vertex1.z){
+    newbox.vertex.z = vertex1.z;
+    newbox.volume.depth = naMakeLengthWithMinAndMaxi(vertex1.z, vertex2.z);
+  }else{
+    newbox.vertex.z = vertex2.z;
+    newbox.volume.depth = naMakeLengthWithMinAndMaxi(vertex2.z, vertex1.z);
+  }
+  return newbox;
+}
+NA_IDEF NABoxi naMakeBoxiWithBoxAndVertex(NABoxi box, NAVertexi vertex){
+  // Declaration before implementation. Needed for C90.
+  NABoxi newbox;
+  NAInt max;
+  #ifndef NDEBUG
+    if(naIsBoxiEmptySlow(box))
+      naError("naMakeBoxiWithBoxAndVertex", "box is empty.");
+    if(!naIsBoxiUseful(box))
+      naError("naMakeBoxiWithBoxAndVertex", "box is not useful.");
+    if(!naIsVertexiValid(vertex))
+      naError("naMakeBoxiWithBoxAndVertex", "vertex is invalid.");
+  #endif
+  newbox.vertex.x = naMini(box.vertex.x, vertex.x);
+  newbox.vertex.y = naMini(box.vertex.y, vertex.y);
+  newbox.vertex.z = naMini(box.vertex.z, vertex.z);
+  // Note: We do compute the end instead of the max, because this may require
+  // one less instruction. Save whatever you can!
+  max = naGetBoxiMaxX(box);
+  newbox.volume.width  = naMakeLengthWithMinAndMaxi(newbox.vertex.x, naMaxi(max, vertex.x));
+  max = naGetBoxiMaxY(box);
+  newbox.volume.height = naMakeLengthWithMinAndMaxi(newbox.vertex.y, naMaxi(max, vertex.y));
+  max = naGetBoxiMaxZ(box);
+  newbox.volume.depth = naMakeLengthWithMinAndMaxi(newbox.vertex.z, naMaxi(max, vertex.z));
+  return newbox;
+}
+NA_IDEF NABoxi naMakeBoxiWithBoxAndVertexE(NABoxi box, NAVertexi vertex){
+  // Declaration before implementation. Needed for C90.
+  NABoxi newbox;
+  NAInt max;
+  #ifndef NDEBUG
+    if(!naIsBoxiValid(box))
+      naError("naMakeBoxiWithBoxAndVertex", "box is invalid.");
+    if(!naIsVertexiValid(vertex))
+      naError("naMakeBoxiWithBoxAndVertex", "vertex is invalid.");
+  #endif
+  if(naIsBoxiEmpty(box)){
+    newbox.vertex = vertex;
+    newbox.volume = naMakeVolumei(1, 1, 1);
+  }else{
+    newbox.vertex.x = naMini(box.vertex.x, vertex.x);
+    newbox.vertex.y = naMini(box.vertex.y, vertex.y);
+    newbox.vertex.z = naMini(box.vertex.z, vertex.z);
+    // Note: We do compute the end instead of the max, because this may require
+    // one less instruction. Save whatever you can!
+    max = naGetBoxiMaxX(box);
+    newbox.volume.width  = naMakeLengthWithMinAndMaxi(newbox.vertex.x, naMaxi(max, vertex.x));
+    max = naGetBoxiMaxY(box);
+    newbox.volume.height = naMakeLengthWithMinAndMaxi(newbox.vertex.y, naMaxi(max, vertex.y));
+    max = naGetBoxiMaxZ(box);
+    newbox.volume.depth = naMakeLengthWithMinAndMaxi(newbox.vertex.z, naMaxi(max, vertex.z));
+  }
+  return newbox;
+}
+NA_IDEF NABoxi naMakeBoxiWithBoxAndBox(NABoxi box1, NABoxi box2){
+  // Declaration before implementation. Needed for C90.
+  NABoxi newbox;
+  NAInt end1;
+  NAInt end2;
+  #ifndef NDEBUG
+    if(naIsBoxiEmptySlow(box1))
+      naError("naMakeBoxiWithBoxAndBox", "box1 is empty.");
+    if(!naIsBoxiValid(box1))
+      naError("naMakeBoxiWithBoxAndBox", "box1 is invalid.");
+    if(naIsBoxiEmptySlow(box2))
+      naError("naMakeBoxiWithBoxAndBox", "box2 is empty.");
+    if(!naIsBoxiValid(box2))
+      naError("naMakeBoxiWithBoxAndBox", "box2 is invalid.");
+  #endif
+  newbox.vertex.x = naMini(box1.vertex.x, box2.vertex.x);
+  newbox.vertex.y = naMini(box1.vertex.y, box2.vertex.y);
+  newbox.vertex.z = naMini(box1.vertex.z, box2.vertex.z);
+  end1 = naGetBoxiEndX(box1);
+  end2 = naGetBoxiEndX(box2);
+  newbox.volume.width  = naMakeLengthWithStartAndEndi(newbox.vertex.x, naMaxi(end1, end2));
+  end1 = naGetBoxiEndY(box1);
+  end2 = naGetBoxiEndY(box2);
+  newbox.volume.height = naMakeLengthWithStartAndEndi(newbox.vertex.y, naMaxi(end1, end2));
+  end1 = naGetBoxiEndZ(box1);
+  end2 = naGetBoxiEndZ(box2);
+  newbox.volume.depth = naMakeLengthWithStartAndEndi(newbox.vertex.z, naMaxi(end1, end2));
+  return newbox;
+}
+NA_IDEF NABoxi naMakeBoxiWithBoxAndBoxE(NABoxi box1, NABoxi box2){
+  // Declaration before implementation. Needed for C90.
+  NABoxi newbox;
+  NAInt end1;
+  NAInt end2;
+  #ifndef NDEBUG
+    if(!naIsBoxiValid(box1))
+      naError("naMakeBoxiWithBoxAndBox", "box1 is invalid.");
+    if(!naIsBoxiValid(box2))
+      naError("naMakeBoxiWithBoxAndBox", "box2 is invalid.");
+  #endif
+  if(naIsBoxiEmpty(box1)){return box2;}
+  if(naIsBoxiEmpty(box2)){return box1;}
+  newbox.vertex.x = naMini(box1.vertex.x, box2.vertex.x);
+  newbox.vertex.y = naMini(box1.vertex.y, box2.vertex.y);
+  newbox.vertex.z = naMini(box1.vertex.z, box2.vertex.z);
+  end1 = naGetBoxiEndX(box1);
+  end2 = naGetBoxiEndX(box2);
+  newbox.volume.width  = naMakeLengthWithStartAndEndi(newbox.vertex.x, naMaxi(end1, end2));
+  end1 = naGetBoxiEndY(box1);
+  end2 = naGetBoxiEndY(box2);
+  newbox.volume.height = naMakeLengthWithStartAndEndi(newbox.vertex.y, naMaxi(end1, end2));
+  end1 = naGetBoxiEndZ(box1);
+  end2 = naGetBoxiEndZ(box2);
+  newbox.volume.depth = naMakeLengthWithStartAndEndi(newbox.vertex.z, naMaxi(end1, end2));
+  return newbox;
+}
+
+
+
+NA_IDEF NARangei naMakeRangeiWithRangeIntersection(NARangei range1, NARangei range2){
+  NARangei newrange;
+  NAInt end1;
+  NAInt end2;
+  #ifndef NDEBUG
+    if(!naIsRangeiValid(range1))
+      naError("naMakeRangeiWithRangeAndRange", "range1 is invalid.");
+    if(!naIsRangeiValid(range2))
+      naError("naMakeRangeiWithRangeAndRange", "range2 is invalid.");
+  #endif
+  newrange.origin = naMaxi(range1.origin, range2.origin);
+  end1 = naGetRangeiEnd(range1);
+  end2 = naGetRangeiEnd(range2);
+  newrange.length  = naMakeLengthWithStartAndEndi(newrange.origin, naMini(end1, end2));
+  return newrange;
+}
+NA_IDEF NARecti naMakeRectiWithRectIntersection(NARecti rect1, NARecti rect2){
+  NARecti newrect;
+  NAInt end1;
+  NAInt end2;
+  #ifndef NDEBUG
+    if(!naIsRectiValid(rect1))
+      naError("naMakeRectiWithRectAndRect", "rect1 is invalid.");
+    if(!naIsRectiValid(rect2))
+      naError("naMakeRectiWithRectAndRect", "rect2 is invalid.");
+  #endif
+  newrect.pos.x = naMaxi(rect1.pos.x, rect2.pos.x);
+  newrect.pos.y = naMaxi(rect1.pos.y, rect2.pos.y);
+  end1 = naGetRectiEndX(rect1);
+  end2 = naGetRectiEndX(rect2);
+  newrect.size.width  = naMakeLengthWithStartAndEndi(newrect.pos.x, naMini(end1, end2));
+  end1 = naGetRectiEndY(rect1);
+  end2 = naGetRectiEndY(rect2);
+  newrect.size.height  = naMakeLengthWithStartAndEndi(newrect.pos.y, naMini(end1, end2));
+  return newrect;
+}
+NA_IDEF NABoxi naMakeBoxiWithBoxIntersection(NABoxi box1, NABoxi box2){
+  NABoxi newbox;
+  NAInt end1;
+  NAInt end2;
+  #ifndef NDEBUG
+    if(!naIsBoxiValid(box1))
+      naError("naMakeBoxiWithBoxAndBox", "box1 is invalid.");
+    if(!naIsBoxiValid(box2))
+      naError("naMakeBoxiWithBoxAndBox", "box2 is invalid.");
+  #endif
+  newbox.vertex.x = naMaxi(box1.vertex.x, box2.vertex.x);
+  newbox.vertex.y = naMaxi(box1.vertex.y, box2.vertex.y);
+  newbox.vertex.z = naMaxi(box1.vertex.z, box2.vertex.z);
+  end1 = naGetBoxiEndX(box1);
+  end2 = naGetBoxiEndX(box2);
+  newbox.volume.width  = naMakeLengthWithStartAndEndi(newbox.vertex.x, naMini(end1, end2));
+  end1 = naGetBoxiEndY(box1);
+  end2 = naGetBoxiEndY(box2);
+  newbox.volume.height  = naMakeLengthWithStartAndEndi(newbox.vertex.y, naMini(end1, end2));
+  end1 = naGetBoxiEndZ(box1);
+  end2 = naGetBoxiEndZ(box2);
+  newbox.volume.depth  = naMakeLengthWithStartAndEndi(newbox.vertex.z, naMini(end1, end2));
+  return newbox;
+}
+
+
+
+NA_IDEF NARect naMakeRectWithRectAndBorder(NARect rect, double border){
+  NARect newrect;
+  newrect.pos.x = rect.pos.x - border;
+  newrect.pos.y = rect.pos.y - border;
+  newrect.size.width = rect.size.width + 2 * border;
+  newrect.size.height = rect.size.height + 2 * border;
+  return newrect;
+}
+NA_IDEF NARecti naMakeRectiWithRectAndBorder(NARecti rect, NAInt border){
+  NARecti newrect;
+  newrect.pos.x = rect.pos.x - border;
+  newrect.pos.y = rect.pos.y - border;
+  newrect.size.width = rect.size.width + 2 * border;
+  newrect.size.height = rect.size.height + 2 * border;
+  return newrect;
+}
+
+
+
+NA_IDEF NABox naMakeBoxWithBoxAndBorder(NABox box, double border){
+  NABox newbox;
+  newbox.vertex.x = box.vertex.x - border;
+  newbox.vertex.y = box.vertex.y - border;
+  newbox.vertex.z = box.vertex.z - border;
+  newbox.volume.width = box.volume.width + 2 * border;
+  newbox.volume.height = box.volume.height + 2 * border;
+  newbox.volume.depth = box.volume.depth + 2 * border;
+  return newbox;
+}
+NA_IDEF NABoxi naMakeBoxiWithBoxAndBorder(NABoxi box, NAInt border){
+  NABoxi newbox;
+  newbox.vertex.x = box.vertex.x - border;
+  newbox.vertex.y = box.vertex.y - border;
+  newbox.vertex.z = box.vertex.z - border;
+  newbox.volume.width = box.volume.width + 2 * border;
+  newbox.volume.height = box.volume.height + 2 * border;
+  newbox.volume.depth = box.volume.depth + 2 * border;
+  return newbox;
+}
+
+
+
+NA_IDEF NARect naMakeRectPositive(NARect rect){
+  naMakePositive(&(rect.pos.x), &(rect.size.width));
+  naMakePositive(&(rect.pos.y), &(rect.size.height));
+  return rect;
+}
+NA_IDEF NARecti naMakeRectiPositive(NARecti rect){
+  naMakePositivei(&(rect.pos.x), &(rect.size.width));
+  naMakePositivei(&(rect.pos.y), &(rect.size.height));
+  return rect;
+}
+
+
+
+NA_IDEF NABox naMakeBoxPositive(NABox box){
+  naMakePositive(&(box.vertex.x), &(box.volume.width));
+  naMakePositive(&(box.vertex.y), &(box.volume.height));
+  naMakePositive(&(box.vertex.z), &(box.volume.depth));
+  return box;
+}
+NA_IDEF NABoxi naMakeBoxiPositive(NABoxi box){
+  naMakePositivei(&(box.vertex.x), &(box.volume.width));
+  naMakePositivei(&(box.vertex.y), &(box.volume.height));
+  naMakePositivei(&(box.vertex.z), &(box.volume.depth));
+  return box;
+}
+
+
+
+// /////////////////////////////////
+// COPY
+// /////////////////////////////////
 
 NA_IDEF void naCopyPos(NAPos* posd,  NAPos* poss){
   posd->x = poss->x;
@@ -515,15 +1279,33 @@ NA_IDEF void naCopyBoxi(NABoxi* boxd,  NABoxi* boxs){
 
 
 
+// /////////////////////////////////
+// GET
+// /////////////////////////////////
+
+NA_IDEF NAPos naGetRectCenter(NARect rect){
+  NAPos newpos;
+  newpos.x = rect.pos.x + 0.5 * rect.size.width;
+  newpos.y = rect.pos.y + 0.5 * rect.size.height;
+  return newpos;
+}
+NA_IDEF NAVertex naGetBoxCenter(NABox box){
+  NAVertex newvertex;
+  newvertex.x = box.vertex.x + 0.5 * box.volume.width;
+  newvertex.y = box.vertex.y + 0.5 * box.volume.height;
+  newvertex.z = box.vertex.z + 0.5 * box.volume.depth;
+  return newvertex;
+}
 
 
-NA_IDEF NAPos naMakePosWithSizeCenteredInRect(NASize size, NARect rect){
+
+NA_IDEF NAPos naGetRectCenteredSizeOffset(NARect rect, NASize size){
   NAPos newpos;
   newpos.x = rect.pos.x + 0.5 * (rect.size.width - size.width);
   newpos.y = rect.pos.y + 0.5 * (rect.size.height - size.height);
   return newpos;
 }
-NA_IDEF NAVertex naMakeVertexWithVolumeCenteredInBox(NAVolume volume, NABox box){
+NA_IDEF NAVertex naGetBoxCeneteredVolumeOffset(NABox box, NAVolume volume){
   NAVertex newvertex;
   newvertex.x = box.vertex.x + 0.5 * (box.volume.width - volume.width);
   newvertex.y = box.vertex.y + 0.5 * (box.volume.height - volume.height);
@@ -533,693 +1315,79 @@ NA_IDEF NAVertex naMakeVertexWithVolumeCenteredInBox(NAVolume volume, NABox box)
 
 
 
+// /////////////////////////////////
+// CLAMP
+// /////////////////////////////////
 
-NA_IDEF NAInt naAlignCoord(NAInt x, NAInt offset, NAInt align){
-  NAInt shiftx = x - offset;
-  if(shiftx < 0){
-    return ((((shiftx + 1) / align) - 1) * align) + offset;
-  }else{
-    return (((shiftx) / align) * align) + offset;
-  }
-}
-
-
-
-NA_IDEF NAPosi naMakePosiWithAlignment(NAPosi pos, NARecti alignrect){
-  NAPosi newpos;
-  #ifndef NDEBUG
-    if(naIsRectiEmptySlow(alignrect)){
-      naCrash("naMakePosiWithAlignment", "alignment rect is empty");
-      return naMakePosi(0, 0);
-    }
-  #endif
-  newpos.x = naAlignCoord(pos.x, alignrect.pos.x, alignrect.size.width);
-  newpos.y = naAlignCoord(pos.y, alignrect.pos.y, alignrect.size.height);
-  return newpos;
-}
-NA_IDEF NAVertexi naMakeVertexiWithAlignment(NAVertexi vertex, NABoxi alignbox){
-  NAVertexi newvertex;
-  #ifndef NDEBUG
-    if(naIsBoxiEmptySlow(alignbox)){
-      naCrash("naMakePosiWithAlignment", "alignment box is empty");
-      return naMakeVertexi(0, 0, 0);
-    }
-  #endif
-  newvertex.x = naAlignCoord(vertex.x, alignbox.vertex.x, alignbox.volume.width);
-  newvertex.y = naAlignCoord(vertex.y, alignbox.vertex.y, alignbox.volume.height);
-  newvertex.z = naAlignCoord(vertex.z, alignbox.vertex.z, alignbox.volume.depth);
-  return newvertex;
-}
-
-
-
-
-NA_IDEF NARange naMakeRangeWithStartAndEnd(double start, double end){
-  NARange newrange; // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!(naIsPosValueValid(start) && naIsPosValueValid(end)))
-      naError("naMakeRangeWithStartAndEnd", "Invalid values given.");
-  #endif
-  newrange.offset = start;
-  newrange.length = naStartAndEndToLength(start, end);
-  return newrange;
-}
-NA_IDEF NARangef naMakeRangefWithStartAndEnd(float start, float end){
-  NARangef newrange; // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!(naIsPosValueValidf(start) && naIsPosValueValidf(end)))
-      naError("naMakeRangefWithStartAndEnd", "Invalid values given.");
-  #endif
-  newrange.offset = start;
-  newrange.length = naStartAndEndToLengthf(start, end);
-  return newrange;
-}
-NA_IDEF NARangei naMakeRangeiWithStartAndEnd(NAInt start, NAInt end){
-  NARangei newrange; // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!(naIsPosValueValidi(start) && naIsPosValueValidi(end)))
-      naError("naMakeRangeiWithStartAndEnd", "Invalid values given.");
-  #endif
-  newrange.offset = start;
-  newrange.length = naStartAndEndToLengthi(start, end);
-  return newrange;
-}
-NA_IDEF NARangei naMakeRangeiWithMinAndMax(NAInt min, NAInt max){
-  NARangei newrange; // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!(naIsPosValueValidi(min) && naIsPosValueValidi(max)))
-      naError("naMakeRangeiWithMinAndMax", "Invalid values given.");
-  #endif
-  newrange.offset = min;
-  newrange.length = naMinAndMaxToLengthi(min, max);
-  return newrange;
-}
-
-
-
-
-NA_IDEF NARect naMakeRectWithPosAndPos(NAPos pos1, NAPos pos2){
-  NARect newrect;  // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!naIsPosValid(pos1))
-      naError("naMakeRectWithPosAndPos", "pos1 is invalid.");
-    if(!naIsPosValid(pos2))
-      naError("naMakeRectWithPosAndPos", "pos2 is invalid.");
-  #endif
-  if(pos2.x > pos1.x){
-    newrect.pos.x = pos1.x;
-    newrect.size.width = naStartAndEndToLength(pos1.x, pos2.x);
-  }else{
-    newrect.pos.x = pos2.x;
-    newrect.size.width = naStartAndEndToLength(pos2.x, pos1.x);
-  }
-  if(pos2.y > pos1.y){
-    newrect.pos.y = pos1.y;
-    newrect.size.height = naStartAndEndToLength(pos1.y, pos2.y);
-  }else{
-    newrect.pos.y = pos2.y;
-    newrect.size.height = naStartAndEndToLength(pos2.y, pos1.y);
-  }
-  return newrect;
-}
-
-
-NA_IDEF NARect naMakeRectWithRectAndPos(NARect rect, NAPos pos){
+NA_IDEF NARangei naClampRangeiToRange(NARangei range, NARangei clamprange){
   // Declaration before implementation. Needed for C90.
-  NARect newrect;
-  double end;
-  #ifndef NDEBUG
-    if(naIsRectEmpty(rect))
-      naError("naMakeRectWithRectAndPos", "rect is empty.");
-    if(!naIsRectUseful(rect))
-      naError("naMakeRectWithRectAndPos", "rect is not useful.");
-    if(!naIsPosValid(pos))
-      naError("naMakeRectWithRectAndPos", "pos is invalid.");
-  #endif
-  newrect.pos.x = naMin(rect.pos.x, pos.x);
-  newrect.pos.y = naMin(rect.pos.y, pos.y);
-  end = naGetRectEndX(rect);
-  newrect.size.width  = naStartAndEndToLength(newrect.pos.x, naMax(end, pos.x));
-  end = naGetRectEndY(rect);
-  newrect.size.height = naStartAndEndToLength(newrect.pos.y, naMax(end, pos.y));
-  return newrect;
-}
-
-
-
-NA_IDEF NARect naMakeRectWithRectAndRect(NARect rect1, NARect rect2){
-  // Declaration before implementation. Needed for C90.
-  NARect newrect;
-  double end1;
-  double end2;
-  #ifndef NDEBUG
-    if(naIsRectEmpty(rect1))
-      naError("naMakeRectWithRectAndRect", "rect1 is empty.");
-    if(!naIsRectValid(rect1))
-      naError("naMakeRectWithRectAndRect", "rect1 is invalid.");
-    if(naIsRectEmpty(rect2))
-      naError("naMakeRectWithRectAndRect", "rect2 is empty.");
-    if(!naIsRectValid(rect2))
-      naError("naMakeRectWithRectAndRect", "rect2 is invalid.");
-  #endif
-  newrect.pos.x = naMin(rect1.pos.x, rect2.pos.x);
-  newrect.pos.y = naMin(rect1.pos.y, rect2.pos.y);
-  end1 = naGetRectEndX(rect1);
-  end2 = naGetRectEndX(rect2);
-  newrect.size.width  = naStartAndEndToLength(newrect.pos.x, naMax(end1, end2));
-  end1 = naGetRectEndY(rect1);
-  end2 = naGetRectEndY(rect2);
-  newrect.size.height  = naStartAndEndToLength(newrect.pos.y, naMax(end1, end2));
-  return newrect;
-}
-
-
-NA_IDEF NARect naMakeRectWithRectAndRectE(NARect rect1, NARect rect2){
-  // Declaration before implementation. Needed for C90.
-  NARect newrect;
-  double end1;
-  double end2;
-  #ifndef NDEBUG
-    if(!naIsRectValid(rect1))
-      naError("naMakeRectWithRectAndRect", "rect1 is invalid.");
-    if(!naIsRectValid(rect2))
-      naError("naMakeRectWithRectAndRect", "rect2 is invalid.");
-  #endif
-  if(naIsRectEmpty(rect1)){return rect2;}
-  if(naIsRectEmpty(rect2)){return rect1;}
-  newrect.pos.x = naMin(rect1.pos.x, rect2.pos.x);
-  newrect.pos.y = naMin(rect1.pos.y, rect2.pos.y);
-  end1 = naGetRectEndX(rect1);
-  end2 = naGetRectEndX(rect2);
-  newrect.size.width  = naStartAndEndToLength(newrect.pos.x, naMax(end1, end2));
-  end1 = naGetRectEndY(rect1);
-  end2 = naGetRectEndY(rect2);
-  newrect.size.height  = naStartAndEndToLength(newrect.pos.y, naMax(end1, end2));
-  return newrect;
-}
-
-
-NA_IDEF NARecti naMakeRectiWithPosiAndPosi(NAPosi pos1, NAPosi pos2){
-  NARecti newrect;  // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!naIsPosiValid(pos1))
-      naError("naMakeRectiWithPosiAndPosi", "pos1 is invalid.");
-    if(!naIsPosiValid(pos2))
-      naError("naMakeRectiWithPosiAndPosi", "pos2 is invalid.");
-  #endif
-  if(pos2.x > pos1.x){
-    newrect.pos.x = pos1.x;
-    newrect.size.width = naMinAndMaxToLengthi(pos1.x, pos2.x);
-  }else{
-    newrect.pos.x = pos2.x;
-    newrect.size.width = naMinAndMaxToLengthi(pos2.x, pos1.x);
-  }
-  if(pos2.y > pos1.y){
-    newrect.pos.y = pos1.y;
-    newrect.size.height = naMinAndMaxToLengthi(pos1.y, pos2.y);
-  }else{
-    newrect.pos.y = pos2.y;
-    newrect.size.height = naMinAndMaxToLengthi(pos2.y, pos1.y);
-  }
-  return newrect;
-}
-
-
-NA_IDEF NARecti naMakeRectiWithRectiAndPosi(NARecti rect, NAPosi pos){
-  // Declaration before implementation. Needed for C90.
-  NARecti newrect;
-  NAInt max;
-  #ifndef NDEBUG
-    if(naIsRectiEmptySlow(rect))
-      naError("naMakeRectiWithRectiAndPosi", "rect is empty.");
-    if(!naIsRectiUseful(rect))
-      naError("naMakeRectiWithRectiAndPosi", "rect is not useful.");
-    if(!naIsPosiValid(pos))
-      naError("naMakeRectiWithRectiAndPosi", "pos is invalid.");
-  #endif
-  newrect.pos.x = naMini(rect.pos.x, pos.x);
-  newrect.pos.y = naMini(rect.pos.y, pos.y);
-  // Note: We do compute the end instead of the max, because this may require
-  // one less instruction. Save whatever you can!
-  max = naGetRectiMaxX(rect);
-  newrect.size.width  = naMinAndMaxToLengthi(newrect.pos.x, naMaxi(max, pos.x));
-  max = naGetRectiMaxY(rect);
-  newrect.size.height = naMinAndMaxToLengthi(newrect.pos.y, naMaxi(max, pos.y));
-  return newrect;
-}
-
-
-NA_IDEF NARecti naMakeRectiWithRectiAndPosiE(NARecti rect, NAPosi pos){
-  // Declaration before implementation. Needed for C90.
-  NARecti newrect;
-  NAInt max;
-  #ifndef NDEBUG
-    if(!naIsRectiValid(rect))
-      naError("naMakeRectiWithRectiAndPosi", "rect is invalid.");
-    if(!naIsPosiValid(pos))
-      naError("naMakeRectiWithRectiAndPosi", "pos is invalid.");
-  #endif
-  if(naIsRectiEmpty(rect)){
-    newrect.pos = pos;
-    newrect.size = naMakeSizei(1, 1);
-  }else{
-    newrect.pos.x = naMini(rect.pos.x, pos.x);
-    newrect.pos.y = naMini(rect.pos.y, pos.y);
-    // Note: We do compute the end instead of the max, because this may require
-    // one less instruction. Save whatever you can!
-    max = naGetRectiMaxX(rect);
-    newrect.size.width  = naMinAndMaxToLengthi(newrect.pos.x, naMaxi(max, pos.x));
-    max = naGetRectiMaxY(rect);
-    newrect.size.height = naMinAndMaxToLengthi(newrect.pos.y, naMaxi(max, pos.y));
-  }
-  return newrect;
-}
-
-
-NA_IDEF NARecti naMakeRectiWithRectiAndRecti(NARecti rect1, NARecti rect2){
-  // Declaration before implementation. Needed for C90.
-  NARecti newrect;
-  NAInt end1;
-  NAInt end2;
-  #ifndef NDEBUG
-    if(naIsRectiEmptySlow(rect1))
-      naError("naMakeRectiWithRectiAndRecti", "rect1 is empty.");
-    if(!naIsRectiValid(rect1))
-      naError("naMakeRectiWithRectiAndRecti", "rect1 is invalid.");
-    if(naIsRectiEmptySlow(rect2))
-      naError("naMakeRectiWithRectiAndRecti", "rect2 is empty.");
-    if(!naIsRectiValid(rect2))
-      naError("naMakeRectiWithRectiAndRecti", "rect2 is invalid.");
-  #endif
-  newrect.pos.x = naMini(rect1.pos.x, rect2.pos.x);
-  newrect.pos.y = naMini(rect1.pos.y, rect2.pos.y);
-  end1 = naGetRectiEndX(rect1);
-  end2 = naGetRectiEndX(rect2);
-  newrect.size.width  = naStartAndEndToLengthi(newrect.pos.x, naMaxi(end1, end2));
-  end1 = naGetRectiEndY(rect1);
-  end2 = naGetRectiEndY(rect2);
-  newrect.size.height = naStartAndEndToLengthi(newrect.pos.y, naMaxi(end1, end2));
-  return newrect;
-}
-
-
-NA_IDEF NARecti naMakeRectiWithRectiAndRectiE(NARecti rect1, NARecti rect2){
-  // Declaration before implementation. Needed for C90.
-  NARecti newrect;
-  NAInt end1;
-  NAInt end2;
-  #ifndef NDEBUG
-    if(!naIsRectiValid(rect1))
-      naError("naMakeRectiWithRectiAndRecti", "rect1 is invalid.");
-    if(!naIsRectiValid(rect2))
-      naError("naMakeRectiWithRectiAndRecti", "rect2 is invalid.");
-  #endif
-  if(naIsRectiEmpty(rect1)){return rect2;}
-  if(naIsRectiEmpty(rect2)){return rect1;}
-  newrect.pos.x = naMini(rect1.pos.x, rect2.pos.x);
-  newrect.pos.y = naMini(rect1.pos.y, rect2.pos.y);
-  end1 = naGetRectiEndX(rect1);
-  end2 = naGetRectiEndX(rect2);
-  newrect.size.width  = naStartAndEndToLengthi(newrect.pos.x, naMaxi(end1, end2));
-  end1 = naGetRectiEndY(rect1);
-  end2 = naGetRectiEndY(rect2);
-  newrect.size.height = naStartAndEndToLengthi(newrect.pos.y, naMaxi(end1, end2));
-  return newrect;
-}
-
-
-
-NA_IDEF NABox naMakeBoxWithVertexAndVertex(NAVertex vertex1, NAVertex vertex2){
-  NABox newbox;  // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!naIsVertexValid(vertex1))
-      naError("naMakeBoxWithVertexAndVertex", "vertex1 is invalid.");
-    if(!naIsVertexValid(vertex2))
-      naError("naMakeBoxWithVertexAndVertex", "vertex2 is invalid.");
-  #endif
-  if(vertex2.x > vertex1.x){
-    newbox.vertex.x = vertex1.x;
-    newbox.volume.width = naStartAndEndToLength(vertex1.x, vertex2.x);
-  }else{
-    newbox.vertex.x = vertex2.x;
-    newbox.volume.width = naStartAndEndToLength(vertex2.x, vertex1.x);
-  }
-  if(vertex2.y > vertex1.y){
-    newbox.vertex.y = vertex1.y;
-    newbox.volume.height = naStartAndEndToLength(vertex1.y, vertex2.y);
-  }else{
-    newbox.vertex.y = vertex2.y;
-    newbox.volume.height = naStartAndEndToLength(vertex2.y, vertex1.y);
-  }
-  if(vertex2.z > vertex1.z){
-    newbox.vertex.z = vertex1.z;
-    newbox.volume.depth = naStartAndEndToLength(vertex1.z, vertex2.z);
-  }else{
-    newbox.vertex.z = vertex2.z;
-    newbox.volume.depth = naStartAndEndToLength(vertex2.z, vertex1.z);
-  }
-  return newbox;
-}
-
-
-NA_IDEF NABox naMakeBoxWithBoxAndVertex(NABox box, NAVertex vertex){
-  // Declaration before implementation. Needed for C90.
-  NABox newbox;
-  double end;
-  #ifndef NDEBUG
-    if(naIsBoxEmpty(box))
-      naError("naMakeBoxWithBoxAndVertex", "box is empty.");
-    if(!naIsBoxUseful(box))
-      naError("naMakeBoxWithBoxAndVertex", "box is not useful.");
-    if(!naIsVertexValid(vertex))
-      naError("naMakeBoxWithBoxAndVertex", "vertex is invalid.");
-  #endif
-  newbox.vertex.x = naMin(box.vertex.x, vertex.x);
-  newbox.vertex.y = naMin(box.vertex.y, vertex.y);
-  newbox.vertex.z = naMin(box.vertex.z, vertex.z);
-  end = naGetBoxEndX(box);
-  newbox.volume.width  = naStartAndEndToLength(newbox.vertex.x, naMax(end, vertex.x));
-  end = naGetBoxEndY(box);
-  newbox.volume.height = naStartAndEndToLength(newbox.vertex.y, naMax(end, vertex.y));
-  end = naGetBoxEndZ(box);
-  newbox.volume.depth = naStartAndEndToLength(newbox.vertex.z, naMax(end, vertex.z));
-  return newbox;
-}
-
-
-
-NA_IDEF NABox naMakeBoxWithBoxAndBox(NABox box1, NABox box2){
-  // Declaration before implementation. Needed for C90.
-  NABox newbox;
-  double end1;
-  double end2;
-  #ifndef NDEBUG
-    if(naIsBoxEmpty(box1))
-      naError("naMakeBoxWithBoxAndBox", "box1 is empty.");
-    if(!naIsBoxValid(box1))
-      naError("naMakeBoxWithBoxAndBox", "box1 is invalid.");
-    if(naIsBoxEmpty(box2))
-      naError("naMakeBoxWithBoxAndBox", "box2 is empty.");
-    if(!naIsBoxValid(box2))
-      naError("naMakeBoxWithBoxAndBox", "box2 is invalid.");
-  #endif
-  newbox.vertex.x = naMin(box1.vertex.x, box2.vertex.x);
-  newbox.vertex.y = naMin(box1.vertex.y, box2.vertex.y);
-  newbox.vertex.z = naMin(box1.vertex.z, box2.vertex.z);
-  end1 = naGetBoxEndX(box1);
-  end2 = naGetBoxEndX(box2);
-  newbox.volume.width  = naStartAndEndToLength(newbox.vertex.x, naMax(end1, end2));
-  end1 = naGetBoxEndY(box1);
-  end2 = naGetBoxEndY(box2);
-  newbox.volume.height  = naStartAndEndToLength(newbox.vertex.y, naMax(end1, end2));
-  end1 = naGetBoxEndZ(box1);
-  end2 = naGetBoxEndZ(box2);
-  newbox.volume.depth  = naStartAndEndToLength(newbox.vertex.z, naMax(end1, end2));
-  return newbox;
-}
-
-
-NA_IDEF NABox naMakeBoxWithBoxAndBoxE(NABox box1, NABox box2){
-  // Declaration before implementation. Needed for C90.
-  NABox newbox;
-  double end1;
-  double end2;
-  #ifndef NDEBUG
-    if(!naIsBoxValid(box1))
-      naError("naMakeBoxWithBoxAndBox", "box1 is invalid.");
-    if(!naIsBoxValid(box2))
-      naError("naMakeBoxWithBoxAndBox", "box2 is invalid.");
-  #endif
-  if(naIsBoxEmpty(box1)){return box2;}
-  if(naIsBoxEmpty(box2)){return box1;}
-  newbox.vertex.x = naMin(box1.vertex.x, box2.vertex.x);
-  newbox.vertex.y = naMin(box1.vertex.y, box2.vertex.y);
-  newbox.vertex.z = naMin(box1.vertex.z, box2.vertex.z);
-  end1 = naGetBoxEndX(box1);
-  end2 = naGetBoxEndX(box2);
-  newbox.volume.width  = naStartAndEndToLength(newbox.vertex.x, naMax(end1, end2));
-  end1 = naGetBoxEndY(box1);
-  end2 = naGetBoxEndY(box2);
-  newbox.volume.height  = naStartAndEndToLength(newbox.vertex.y, naMax(end1, end2));
-  end1 = naGetBoxEndZ(box1);
-  end2 = naGetBoxEndZ(box2);
-  newbox.volume.depth  = naStartAndEndToLength(newbox.vertex.z, naMax(end1, end2));
-  return newbox;
-}
-
-
-NA_IDEF NABoxi naMakeBoxiWithVertexiAndVertexi(NAVertexi vertex1, NAVertexi vertex2){
-  NABoxi newbox;  // Declaration before implementation. Needed for C90.
-  #ifndef NDEBUG
-    if(!naIsVertexiValid(vertex1))
-      naError("naMakeBoxiWithVertexiAndVertexi", "vertex1 is invalid.");
-    if(!naIsVertexiValid(vertex2))
-      naError("naMakeBoxiWithVertexiAndVertexi", "vertex2 is invalid.");
-  #endif
-  if(vertex2.x > vertex1.x){
-    newbox.vertex.x = vertex1.x;
-    newbox.volume.width = naMinAndMaxToLengthi(vertex1.x, vertex2.x);
-  }else{
-    newbox.vertex.x = vertex2.x;
-    newbox.volume.width = naMinAndMaxToLengthi(vertex2.x, vertex1.x);
-  }
-  if(vertex2.y > vertex1.y){
-    newbox.vertex.y = vertex1.y;
-    newbox.volume.height = naMinAndMaxToLengthi(vertex1.y, vertex2.y);
-  }else{
-    newbox.vertex.y = vertex2.y;
-    newbox.volume.height = naMinAndMaxToLengthi(vertex2.y, vertex1.y);
-  }
-  if(vertex2.z > vertex1.z){
-    newbox.vertex.z = vertex1.z;
-    newbox.volume.depth = naMinAndMaxToLengthi(vertex1.z, vertex2.z);
-  }else{
-    newbox.vertex.z = vertex2.z;
-    newbox.volume.depth = naMinAndMaxToLengthi(vertex2.z, vertex1.z);
-  }
-  return newbox;
-}
-
-
-NA_IDEF NABoxi naMakeBoxiWithBoxiAndVertexi(NABoxi box, NAVertexi vertex){
-  // Declaration before implementation. Needed for C90.
-  NABoxi newbox;
-  NAInt max;
-  #ifndef NDEBUG
-    if(naIsBoxiEmptySlow(box))
-      naError("naMakeBoxiWithBoxiAndVertexi", "box is empty.");
-    if(!naIsBoxiUseful(box))
-      naError("naMakeBoxiWithBoxiAndVertexi", "box is not useful.");
-    if(!naIsVertexiValid(vertex))
-      naError("naMakeBoxiWithBoxiAndVertexi", "vertex is invalid.");
-  #endif
-  newbox.vertex.x = naMini(box.vertex.x, vertex.x);
-  newbox.vertex.y = naMini(box.vertex.y, vertex.y);
-  newbox.vertex.z = naMini(box.vertex.z, vertex.z);
-  // Note: We do compute the end instead of the max, because this may require
-  // one less instruction. Save whatever you can!
-  max = naGetBoxiMaxX(box);
-  newbox.volume.width  = naMinAndMaxToLengthi(newbox.vertex.x, naMaxi(max, vertex.x));
-  max = naGetBoxiMaxY(box);
-  newbox.volume.height = naMinAndMaxToLengthi(newbox.vertex.y, naMaxi(max, vertex.y));
-  max = naGetBoxiMaxZ(box);
-  newbox.volume.depth = naMinAndMaxToLengthi(newbox.vertex.z, naMaxi(max, vertex.z));
-  return newbox;
-}
-
-
-NA_IDEF NABoxi naMakeBoxiWithBoxiAndVertexiE(NABoxi box, NAVertexi vertex){
-  // Declaration before implementation. Needed for C90.
-  NABoxi newbox;
-  NAInt max;
-  #ifndef NDEBUG
-    if(!naIsBoxiValid(box))
-      naError("naMakeBoxiWithBoxiAndVertexi", "box is invalid.");
-    if(!naIsVertexiValid(vertex))
-      naError("naMakeBoxiWithBoxiAndVertexi", "vertex is invalid.");
-  #endif
-  if(naIsBoxiEmpty(box)){
-    newbox.vertex = vertex;
-    newbox.volume = naMakeVolumei(1, 1, 1);
-  }else{
-    newbox.vertex.x = naMini(box.vertex.x, vertex.x);
-    newbox.vertex.y = naMini(box.vertex.y, vertex.y);
-    newbox.vertex.z = naMini(box.vertex.z, vertex.z);
-    // Note: We do compute the end instead of the max, because this may require
-    // one less instruction. Save whatever you can!
-    max = naGetBoxiMaxX(box);
-    newbox.volume.width  = naMinAndMaxToLengthi(newbox.vertex.x, naMaxi(max, vertex.x));
-    max = naGetBoxiMaxY(box);
-    newbox.volume.height = naMinAndMaxToLengthi(newbox.vertex.y, naMaxi(max, vertex.y));
-    max = naGetBoxiMaxZ(box);
-    newbox.volume.depth = naMinAndMaxToLengthi(newbox.vertex.z, naMaxi(max, vertex.z));
-  }
-  return newbox;
-}
-
-
-NA_IDEF NABoxi naMakeBoxiWithBoxiAndBoxi(NABoxi box1, NABoxi box2){
-  // Declaration before implementation. Needed for C90.
-  NABoxi newbox;
-  NAInt end1;
-  NAInt end2;
-  #ifndef NDEBUG
-    if(naIsBoxiEmptySlow(box1))
-      naError("naMakeBoxiWithBoxiAndBoxi", "box1 is empty.");
-    if(!naIsBoxiValid(box1))
-      naError("naMakeBoxiWithBoxiAndBoxi", "box1 is invalid.");
-    if(naIsBoxiEmptySlow(box2))
-      naError("naMakeBoxiWithBoxiAndBoxi", "box2 is empty.");
-    if(!naIsBoxiValid(box2))
-      naError("naMakeBoxiWithBoxiAndBoxi", "box2 is invalid.");
-  #endif
-  newbox.vertex.x = naMini(box1.vertex.x, box2.vertex.x);
-  newbox.vertex.y = naMini(box1.vertex.y, box2.vertex.y);
-  newbox.vertex.z = naMini(box1.vertex.z, box2.vertex.z);
-  end1 = naGetBoxiEndX(box1);
-  end2 = naGetBoxiEndX(box2);
-  newbox.volume.width  = naStartAndEndToLengthi(newbox.vertex.x, naMaxi(end1, end2));
-  end1 = naGetBoxiEndY(box1);
-  end2 = naGetBoxiEndY(box2);
-  newbox.volume.height = naStartAndEndToLengthi(newbox.vertex.y, naMaxi(end1, end2));
-  end1 = naGetBoxiEndZ(box1);
-  end2 = naGetBoxiEndZ(box2);
-  newbox.volume.depth = naStartAndEndToLengthi(newbox.vertex.z, naMaxi(end1, end2));
-  return newbox;
-}
-
-
-NA_IDEF NABoxi naMakeBoxiWithBoxiAndBoxiE(NABoxi box1, NABoxi box2){
-  // Declaration before implementation. Needed for C90.
-  NABoxi newbox;
-  NAInt end1;
-  NAInt end2;
-  #ifndef NDEBUG
-    if(!naIsBoxiValid(box1))
-      naError("naMakeBoxiWithBoxiAndBoxi", "box1 is invalid.");
-    if(!naIsBoxiValid(box2))
-      naError("naMakeBoxiWithBoxiAndBoxi", "box2 is invalid.");
-  #endif
-  if(naIsBoxiEmpty(box1)){return box2;}
-  if(naIsBoxiEmpty(box2)){return box1;}
-  newbox.vertex.x = naMini(box1.vertex.x, box2.vertex.x);
-  newbox.vertex.y = naMini(box1.vertex.y, box2.vertex.y);
-  newbox.vertex.z = naMini(box1.vertex.z, box2.vertex.z);
-  end1 = naGetBoxiEndX(box1);
-  end2 = naGetBoxiEndX(box2);
-  newbox.volume.width  = naStartAndEndToLengthi(newbox.vertex.x, naMaxi(end1, end2));
-  end1 = naGetBoxiEndY(box1);
-  end2 = naGetBoxiEndY(box2);
-  newbox.volume.height = naStartAndEndToLengthi(newbox.vertex.y, naMaxi(end1, end2));
-  end1 = naGetBoxiEndZ(box1);
-  end2 = naGetBoxiEndZ(box2);
-  newbox.volume.depth = naStartAndEndToLengthi(newbox.vertex.z, naMaxi(end1, end2));
-  return newbox;
-}
-
-
-
-NA_IDEF NARangei naMakeRangeiWithRangeiIntersection(NARangei range1, NARangei range2){
+  double value;
   NARangei newrange;
-  NAInt end1;
-  NAInt end2;
   #ifndef NDEBUG
-    if(!naIsRangeiValid(range1))
-      naError("naMakeRangeiWithRangeiAndRangei", "range1 is invalid.");
-    if(!naIsRangeiValid(range2))
-      naError("naMakeRangeiWithRangeiAndRangei", "range2 is invalid.");
+    if(naIsRangeiEmpty(range))
+      naError("naClampRangeiToRange", "range is empty.");
+    if(!naIsRangeiValid(range))
+      naError("naClampRangeiToRange", "range is invalid.");
+    if(naIsRangeiEmpty(clamprange))
+      naError("naClampRangeiToRange", "clamprange is empty.");
+    if(!naIsRangeiValid(clamprange))
+      naError("naClampRangeiToRange", "clamprange is invalid.");
   #endif
-  newrange.offset = naMaxi(range1.offset, range2.offset);
-  end1 = naGetRangeiEnd(range1);
-  end2 = naGetRangeiEnd(range2);
-  newrange.length  = naStartAndEndToLengthi(newrange.offset, naMini(end1, end2));
+  newrange = range;
+
+  value = clamprange.origin - newrange.origin;
+  if(value > 0){
+    newrange.length -= value;
+    newrange.origin = clamprange.origin;
+  }
+  value = naGetRangeiEnd(clamprange);
+  if(naGetRangeiEnd(newrange) > value){
+    newrange.length = value - newrange.origin;
+  }
+  
   return newrange;
 }
-NA_IDEF NARecti naMakeRectiWithRectiIntersection(NARecti rect1, NARecti rect2){
-  NARecti newrect;
-  NAInt end1;
-  NAInt end2;
+NA_IDEF NARangei naClampRangeiToMin(NARangei range, NAInt min){
+  // Declaration before implementation. Needed for C90.
+  double value;
+  NARangei newrange;
   #ifndef NDEBUG
-    if(!naIsRectiValid(rect1))
-      naError("naMakeRectiWithRectiAndRecti", "rect1 is invalid.");
-    if(!naIsRectiValid(rect2))
-      naError("naMakeRectiWithRectiAndRecti", "rect2 is invalid.");
+    if(naIsRangeiEmpty(range))
+      naError("naClampRangeiToMin", "range is empty.");
+    if(!naIsRangeiValid(range))
+      naError("naClampRangeiToMin", "range is invalid.");
+    if(!naIsOffsetValueValidi(min))
+      naError("naClampRangeiToMin", "min is invalid.");
   #endif
-  newrect.pos.x = naMaxi(rect1.pos.x, rect2.pos.x);
-  newrect.pos.y = naMaxi(rect1.pos.y, rect2.pos.y);
-  end1 = naGetRectiEndX(rect1);
-  end2 = naGetRectiEndX(rect2);
-  newrect.size.width  = naStartAndEndToLengthi(newrect.pos.x, naMini(end1, end2));
-  end1 = naGetRectiEndY(rect1);
-  end2 = naGetRectiEndY(rect2);
-  newrect.size.height  = naStartAndEndToLengthi(newrect.pos.y, naMini(end1, end2));
-  return newrect;
+  newrange = range;
+
+  value = min - newrange.origin;
+  if(value > 0){
+    newrange.length -= value;
+    newrange.origin = min;
+  }
+  return newrange;
 }
-NA_IDEF NABoxi naMakeBoxiWithBoxiIntersection(NABoxi box1, NABoxi box2){
-  NABoxi newbox;
-  NAInt end1;
-  NAInt end2;
+NA_IDEF NARangei naClampRangeiToEnd(NARangei range, NAInt end){
+  // Declaration before implementation. Needed for C90.
+  double value;
+  NARangei newrange;
   #ifndef NDEBUG
-    if(!naIsBoxiValid(box1))
-      naError("naMakeBoxiWithBoxiAndBoxi", "box1 is invalid.");
-    if(!naIsBoxiValid(box2))
-      naError("naMakeBoxiWithBoxiAndBoxi", "box2 is invalid.");
+    if(naIsRangeiEmpty(range))
+      naError("naClampRangeiToMin", "range is empty.");
+    if(!naIsRangeiValid(range))
+      naError("naClampRangeiToMin", "range is invalid.");
+    if(!naIsOffsetValueValidi(end))
+      naError("naClampRangeiToMin", "min is invalid.");
   #endif
-  newbox.vertex.x = naMaxi(box1.vertex.x, box2.vertex.x);
-  newbox.vertex.y = naMaxi(box1.vertex.y, box2.vertex.y);
-  newbox.vertex.z = naMaxi(box1.vertex.z, box2.vertex.z);
-  end1 = naGetBoxiEndX(box1);
-  end2 = naGetBoxiEndX(box2);
-  newbox.volume.width  = naStartAndEndToLengthi(newbox.vertex.x, naMini(end1, end2));
-  end1 = naGetBoxiEndY(box1);
-  end2 = naGetBoxiEndY(box2);
-  newbox.volume.height  = naStartAndEndToLengthi(newbox.vertex.y, naMini(end1, end2));
-  end1 = naGetBoxiEndZ(box1);
-  end2 = naGetBoxiEndZ(box2);
-  newbox.volume.depth  = naStartAndEndToLengthi(newbox.vertex.z, naMini(end1, end2));
-  return newbox;
-}
+  newrange = range;
 
-
-
-NA_IDEF NARect naMakeRectWithRectAndBorder(NARect rect, double border){
-  NARect newrect;
-  newrect.pos.x = rect.pos.x - border;
-  newrect.pos.y = rect.pos.y - border;
-  newrect.size.width = rect.size.width + 2 * border;
-  newrect.size.height = rect.size.height + 2 * border;
-  return newrect;
-}
-NA_IDEF NARecti naMakeRectiWithRectiAndBorder(NARecti rect, NAInt border){
-  NARecti newrect;
-  newrect.pos.x = rect.pos.x - border;
-  newrect.pos.y = rect.pos.y - border;
-  newrect.size.width = rect.size.width + 2 * border;
-  newrect.size.height = rect.size.height + 2 * border;
-  return newrect;
-}
-
-
-
-NA_IDEF NABox naMakeBoxWithBoxAndBorder(NABox box, double border){
-  NABox newbox;
-  newbox.vertex.x = box.vertex.x - border;
-  newbox.vertex.y = box.vertex.y - border;
-  newbox.vertex.z = box.vertex.z - border;
-  newbox.volume.width = box.volume.width + 2 * border;
-  newbox.volume.height = box.volume.height + 2 * border;
-  newbox.volume.depth = box.volume.depth + 2 * border;
-  return newbox;
-}
-NA_IDEF NABoxi naMakeBoxiWithBoxiAndBorder(NABoxi box, NAInt border){
-  NABoxi newbox;
-  newbox.vertex.x = box.vertex.x - border;
-  newbox.vertex.y = box.vertex.y - border;
-  newbox.vertex.z = box.vertex.z - border;
-  newbox.volume.width = box.volume.width + 2 * border;
-  newbox.volume.height = box.volume.height + 2 * border;
-  newbox.volume.depth = box.volume.depth + 2 * border;
-  return newbox;
+  value = end;
+  if(naGetRangeiEnd(newrange) > value){
+    newrange.length = value - newrange.origin;
+  }
+  
+  return newrange;
 }
 
 
@@ -1245,8 +1413,27 @@ NA_IDEF NAPos naClampPosToRect(NAPos pos, NARect clamprect){
   if(newpos.y > end){newpos.y = end;}
   return newpos;
 }
-
-
+NA_IDEF NAPosi naClampPosiToRect(NAPosi pos, NARecti clamprect){
+  // Declaration before implementation. Needed for C90.
+  NAInt max;
+  NAPosi newpos;
+  #ifndef NDEBUG
+    if(!naIsPosiValid(pos))
+      naError("naClampPosiToRect", "pos is invalid.");
+    if(naIsRectiEmptySlow(clamprect))
+      naError("naClampPosiToRect", "clamprect is empty.");
+    if(!naIsRectiValid(clamprect))
+      naError("naClampPosiToRect", "clamprect is invalid.");
+  #endif
+  newpos = pos;
+  if(newpos.x <  clamprect.pos.x) {newpos.x = clamprect.pos.x;}
+  max = naGetRectiMaxX(clamprect);
+  if(newpos.x > max){newpos.x = max;}
+  if(newpos.y <  clamprect.pos.y) {newpos.y = clamprect.pos.y;}
+  max = naGetRectiMaxY(clamprect);
+  if(newpos.y > max){newpos.y = max;}
+  return newpos;
+}
 NA_IDEF NARect naClampRectToRect(NARect rect, NARect clamprect){
   // Todo: use helper functions in this function.
   // Declaration before implementation. Needed for C90.
@@ -1286,45 +1473,20 @@ NA_IDEF NARect naClampRectToRect(NARect rect, NARect clamprect){
   }
   return newrect;
 }
-
-
-NA_IDEF NAPosi naClampPosiToRecti(NAPosi pos, NARecti clamprect){
-  // Declaration before implementation. Needed for C90.
-  NAInt max;
-  NAPosi newpos;
-  #ifndef NDEBUG
-    if(!naIsPosiValid(pos))
-      naError("naClampPosiToRecti", "pos is invalid.");
-    if(naIsRectiEmptySlow(clamprect))
-      naError("naClampPosiToRecti", "clamprect is empty.");
-    if(!naIsRectiValid(clamprect))
-      naError("naClampPosiToRecti", "clamprect is invalid.");
-  #endif
-  newpos = pos;
-  if(newpos.x <  clamprect.pos.x) {newpos.x = clamprect.pos.x;}
-  max = naGetRectiMaxX(clamprect);
-  if(newpos.x > max){newpos.x = max;}
-  if(newpos.y <  clamprect.pos.y) {newpos.y = clamprect.pos.y;}
-  max = naGetRectiMaxY(clamprect);
-  if(newpos.y > max){newpos.y = max;}
-  return newpos;
-}
-
-
-NA_IDEF NARecti naClampRectiToRecti(NARecti rect, NARecti clamprect){
+NA_IDEF NARecti naClampRectiToRect(NARecti rect, NARecti clamprect){
   // Todo: use helper functions in this function.
   // Declaration before implementation. Needed for C90.
   NAInt value;
   NARecti newrect;
   #ifndef NDEBUG
     if(naIsRectiEmptySlow(rect))
-      naError("naClampRectiToRecti", "rect is empty.");
+      naError("naClampRectiToRect", "rect is empty.");
     if(!naIsRectiValid(rect))
-      naError("naClampRectiToRecti", "rect is invalid.");
+      naError("naClampRectiToRect", "rect is invalid.");
     if(naIsRectiEmptySlow(clamprect))
-      naError("naClampRectiToRecti", "clamprect is empty.");
+      naError("naClampRectiToRect", "clamprect is empty.");
     if(!naIsRectiValid(clamprect))
-      naError("naClampRectiToRecti", "clamprect is invalid.");
+      naError("naClampRectiToRect", "clamprect is invalid.");
   #endif
 
   newrect = rect;
@@ -1383,8 +1545,30 @@ NA_IDEF NAVertex naClampVertexToBox(NAVertex vertex, NABox clampbox){
   if(newvertex.z > end){newvertex.z = end;}
   return newvertex;
 }
-
-
+NA_IDEF NAVertexi naClampVertexiToBox(NAVertexi vertex, NABoxi clampbox){
+  // Declaration before implementation. Needed for C90.
+  NAInt max;
+  NAVertexi newvertex;
+  #ifndef NDEBUG
+    if(!naIsVertexiValid(vertex))
+      naError("naClampVertexiToBox", "vertex is invalid.");
+    if(naIsBoxiEmptySlow(clampbox))
+      naError("naClampVertexiToBox", "clampbox is empty.");
+    if(!naIsBoxiValid(clampbox))
+      naError("naClampVertexiToBox", "clampbox is invalid.");
+  #endif
+  newvertex = vertex;
+  if(newvertex.x <  clampbox.vertex.x) {newvertex.x = clampbox.vertex.x;}
+  max = naGetBoxiMaxX(clampbox);
+  if(newvertex.x > max){newvertex.x = max;}
+  if(newvertex.y <  clampbox.vertex.y) {newvertex.y = clampbox.vertex.y;}
+  max = naGetBoxiMaxY(clampbox);
+  if(newvertex.y > max){newvertex.y = max;}
+  if(newvertex.z <  clampbox.vertex.z) {newvertex.z = clampbox.vertex.z;}
+  max = naGetBoxiMaxZ(clampbox);
+  if(newvertex.z > max){newvertex.z = max;}
+  return newvertex;
+}
 NA_IDEF NABox naClampBoxToBox(NABox box, NABox clampbox){
   // Todo: use helper functions in this function.
   // Declaration before implementation. Needed for C90.
@@ -1435,48 +1619,20 @@ NA_IDEF NABox naClampBoxToBox(NABox box, NABox clampbox){
   }
   return newbox;
 }
-
-
-NA_IDEF NAVertexi naClampVertexiToBoxi(NAVertexi vertex, NABoxi clampbox){
-  // Declaration before implementation. Needed for C90.
-  NAInt max;
-  NAVertexi newvertex;
-  #ifndef NDEBUG
-    if(!naIsVertexiValid(vertex))
-      naError("naClampVertexiToBoxi", "vertex is invalid.");
-    if(naIsBoxiEmptySlow(clampbox))
-      naError("naClampVertexiToBoxi", "clampbox is empty.");
-    if(!naIsBoxiValid(clampbox))
-      naError("naClampVertexiToBoxi", "clampbox is invalid.");
-  #endif
-  newvertex = vertex;
-  if(newvertex.x <  clampbox.vertex.x) {newvertex.x = clampbox.vertex.x;}
-  max = naGetBoxiMaxX(clampbox);
-  if(newvertex.x > max){newvertex.x = max;}
-  if(newvertex.y <  clampbox.vertex.y) {newvertex.y = clampbox.vertex.y;}
-  max = naGetBoxiMaxY(clampbox);
-  if(newvertex.y > max){newvertex.y = max;}
-  if(newvertex.z <  clampbox.vertex.z) {newvertex.z = clampbox.vertex.z;}
-  max = naGetBoxiMaxZ(clampbox);
-  if(newvertex.z > max){newvertex.z = max;}
-  return newvertex;
-}
-
-
-NA_IDEF NABoxi naClampBoxiToBoxi(NABoxi box, NABoxi clampbox){
+NA_IDEF NABoxi naClampBoxiToBox(NABoxi box, NABoxi clampbox){
   // Todo: use helper functions in this function.
   // Declaration before implementation. Needed for C90.
   NAInt value;
   NABoxi newbox;
   #ifndef NDEBUG
     if(naIsBoxiEmptySlow(box))
-      naError("naClampBoxiToBoxi", "box is empty.");
+      naError("naClampBoxiToBox", "box is empty.");
     if(!naIsBoxiValid(box))
-      naError("naClampBoxiToBoxi", "box is invalid.");
+      naError("naClampBoxiToBox", "box is invalid.");
     if(naIsBoxiEmptySlow(clampbox))
-      naError("naClampBoxiToBoxi", "clampbox is empty.");
+      naError("naClampBoxiToBox", "clampbox is empty.");
     if(!naIsBoxiValid(clampbox))
-      naError("naClampBoxiToBoxi", "clampbox is invalid.");
+      naError("naClampBoxiToBox", "clampbox is invalid.");
   #endif
 
   newbox = box;
@@ -1523,6 +1679,21 @@ NA_IDEF NABoxi naClampBoxiToBoxi(NABoxi box, NABoxi clampbox){
 }
 
 
+// ///////////////////////////////////
+// EQUAL
+// ///////////////////////////////////
+
+NA_IDEF NABool naEqualRangei(NARangei range1, NARangei range2){
+  #ifndef NDEBUG
+    if(!naIsRangeiValid(range1))
+      naError("naEqualPos", "range1 is invalid.");
+    if(!naIsRangeiValid(range2))
+      naError("naEqualPos", "range2 is invalid.");
+  #endif
+  return ((range1.origin == range2.origin) && (range1.length == range2.length));
+}
+
+
 
 NA_IDEF NABool naEqualPos(NAPos pos1, NAPos pos2){
   #ifndef NDEBUG
@@ -1530,6 +1701,15 @@ NA_IDEF NABool naEqualPos(NAPos pos1, NAPos pos2){
       naError("naEqualPos", "pos1 is invalid.");
     if(!naIsPosValid(pos2))
       naError("naEqualPos", "pos2 is invalid.");
+  #endif
+  return ((pos1.x == pos2.x) && (pos1.y == pos2.y));
+}
+NA_IDEF NABool naEqualPosi(NAPosi pos1, NAPosi pos2){
+  #ifndef NDEBUG
+    if(!naIsPosiValid(pos1))
+      naError("naEqualPosi", "pos1 is invalid.");
+    if(!naIsPosiValid(pos2))
+      naError("naEqualPosi", "pos2 is invalid.");
   #endif
   return ((pos1.x == pos2.x) && (pos1.y == pos2.y));
 }
@@ -1544,6 +1724,17 @@ NA_IDEF NABool naEqualSize(NASize size1, NASize size2){
   #endif
   return ((size1.width == size2.width) && (size1.height == size2.height));
 }
+NA_IDEF NABool naEqualSizei(NASizei size1, NASizei size2){
+  #ifndef NDEBUG
+    if(naIsSizeiEmpty(size1) || naIsSizeiEmpty(size2))
+      naError("naEqualSizei", "Equality test not valid for empty sizes.");
+    if(!naIsSizeiValid(size1))
+      naError("naEqualSizei", "size1 is invalid.");
+    if(!naIsSizeiValid(size2))
+      naError("naEqualSizei", "size2 is invalid.");
+  #endif
+  return ((size1.width == size2.width) && (size1.height == size2.height));
+}
 NA_IDEF NABool naEqualRect(NARect rect1, NARect rect2){
   #ifndef NDEBUG
     if(naIsRectEmpty(rect1) || naIsRectEmpty(rect2))
@@ -1555,26 +1746,6 @@ NA_IDEF NABool naEqualRect(NARect rect1, NARect rect2){
   #endif
   return     (naEqualPos (rect1.pos,  rect2.pos)
           &&  naEqualSize(rect1.size, rect2.size));
-}
-NA_IDEF NABool naEqualPosi(NAPosi pos1, NAPosi pos2){
-  #ifndef NDEBUG
-    if(!naIsPosiValid(pos1))
-      naError("naEqualPosi", "pos1 is invalid.");
-    if(!naIsPosiValid(pos2))
-      naError("naEqualPosi", "pos2 is invalid.");
-  #endif
-  return ((pos1.x == pos2.x) && (pos1.y == pos2.y));
-}
-NA_IDEF NABool naEqualSizei(NASizei size1, NASizei size2){
-  #ifndef NDEBUG
-    if(naIsSizeiEmpty(size1) || naIsSizeiEmpty(size2))
-      naError("naEqualSizei", "Equality test not valid for empty sizes.");
-    if(!naIsSizeiValid(size1))
-      naError("naEqualSizei", "size1 is invalid.");
-    if(!naIsSizeiValid(size2))
-      naError("naEqualSizei", "size2 is invalid.");
-  #endif
-  return ((size1.width == size2.width) && (size1.height == size2.height));
 }
 NA_IDEF NABool naEqualRecti(NARecti rect1, NARecti rect2){
   #ifndef NDEBUG
@@ -1600,6 +1771,15 @@ NA_IDEF NABool naEqualVertex(NAVertex vertex1, NAVertex vertex2){
   #endif
   return ((vertex1.x == vertex2.x) && (vertex1.y == vertex2.y) && (vertex1.z == vertex2.z));
 }
+NA_IDEF NABool naEqualVertexi(NAVertexi vertex1, NAVertexi vertex2){
+  #ifndef NDEBUG
+    if(!naIsVertexiValid(vertex1))
+      naError("naEqualVertexi", "vertex1 is invalid.");
+    if(!naIsVertexiValid(vertex2))
+      naError("naEqualVertexi", "vertex2 is invalid.");
+  #endif
+  return ((vertex1.x == vertex2.x) && (vertex1.y == vertex2.y) && (vertex1.z == vertex2.z));
+}
 NA_IDEF NABool naEqualVolume(NAVolume volume1, NAVolume volume2){
   #ifndef NDEBUG
     if(naIsVolumeEmpty(volume1) || naIsVolumeEmpty(volume2))
@@ -1608,6 +1788,17 @@ NA_IDEF NABool naEqualVolume(NAVolume volume1, NAVolume volume2){
       naError("naEqualVolume", "volume1 is invalid.");
     if(!naIsVolumeValid(volume2))
       naError("naEqualVolume", "volume2 is invalid.");
+  #endif
+  return ((volume1.width == volume2.width) && (volume1.height == volume2.height) && (volume1.depth == volume2.depth));
+}
+NA_IDEF NABool naEqualVolumei(NAVolumei volume1, NAVolumei volume2){
+  #ifndef NDEBUG
+    if(naIsVolumeiEmpty(volume1) || naIsVolumeiEmpty(volume2))
+      naError("naEqualVolumei", "Equality test not valid for empty volumes.");
+    if(!naIsVolumeiValid(volume1))
+      naError("naEqualVolumei", "volume1 is invalid.");
+    if(!naIsVolumeiValid(volume2))
+      naError("naEqualVolumei", "volume2 is invalid.");
   #endif
   return ((volume1.width == volume2.width) && (volume1.height == volume2.height) && (volume1.depth == volume2.depth));
 }
@@ -1622,26 +1813,6 @@ NA_IDEF NABool naEqualBox(NABox box1, NABox box2){
   #endif
   return     (naEqualVertex (box1.vertex,  box2.vertex)
           &&  naEqualVolume(box1.volume, box2.volume));
-}
-NA_IDEF NABool naEqualVertexi(NAVertexi vertex1, NAVertexi vertex2){
-  #ifndef NDEBUG
-    if(!naIsVertexiValid(vertex1))
-      naError("naEqualVertexi", "vertex1 is invalid.");
-    if(!naIsVertexiValid(vertex2))
-      naError("naEqualVertexi", "vertex2 is invalid.");
-  #endif
-  return ((vertex1.x == vertex2.x) && (vertex1.y == vertex2.y) && (vertex1.z == vertex2.z));
-}
-NA_IDEF NABool naEqualVolumei(NAVolumei volume1, NAVolumei volume2){
-  #ifndef NDEBUG
-    if(naIsVolumeiEmpty(volume1) || naIsVolumeiEmpty(volume2))
-      naError("naEqualVolumei", "Equality test not valid for empty volumes.");
-    if(!naIsVolumeiValid(volume1))
-      naError("naEqualVolumei", "volume1 is invalid.");
-    if(!naIsVolumeiValid(volume2))
-      naError("naEqualVolumei", "volume2 is invalid.");
-  #endif
-  return ((volume1.width == volume2.width) && (volume1.height == volume2.height) && (volume1.depth == volume2.depth));
 }
 NA_IDEF NABool naEqualBoxi(NABoxi box1, NABoxi box2){
   #ifndef NDEBUG
@@ -1658,6 +1829,9 @@ NA_IDEF NABool naEqualBoxi(NABoxi box1, NABoxi box2){
 
 
 
+// ///////////////////////////////////////
+// ADD SUB
+// ///////////////////////////////////////
 
 NA_IDEF NAPos naAddPosSize(NAPos pos, NASize size){
   NAPos newpos;
@@ -1671,13 +1845,13 @@ NA_IDEF NAPos naAddPosSize(NAPos pos, NASize size){
   newpos.y = pos.y + size.height;
   return newpos;
 }
-NA_IDEF NAPosi naAddPosiSizei(NAPosi pos, NASizei size){
+NA_IDEF NAPosi naAddPosiSize(NAPosi pos, NASizei size){
   NAPosi newpos;
   #ifndef NDEBUG
     if(!naIsPosiValid(pos))
-      naError("naAddPosiSizei", "pos is invalid.");
+      naError("naAddPosiSize", "pos is invalid.");
     if(!naIsSizeiValid(size))
-      naError("naAddPosiSizei", "size is invalid.");
+      naError("naAddPosiSize", "size is invalid.");
   #endif
   newpos.x = pos.x + size.width;
   newpos.y = pos.y + size.height;
@@ -1696,13 +1870,13 @@ NA_IDEF NASize naSubPosPos(NAPos pos1, NAPos pos2){
   newsize.height = pos1.y - pos2.y;
   return newsize;
 }
-NA_IDEF NASizei naSubPosiPosi(NAPosi pos1, NAPosi pos2){
+NA_IDEF NASizei naSubPosiPos(NAPosi pos1, NAPosi pos2){
   NASizei newsize;
   #ifndef NDEBUG
     if(!naIsPosiValid(pos1))
-      naError("naSubPosiPosi", "pos1 is invalid.");
+      naError("naSubPosiPos", "pos1 is invalid.");
     if(!naIsPosiValid(pos2))
-      naError("naSubPosiPosi", "pos2 is invalid.");
+      naError("naSubPosiPos", "pos2 is invalid.");
   #endif
   newsize.width  = pos1.x - pos2.x;
   newsize.height = pos1.y - pos2.y;
@@ -1724,13 +1898,13 @@ NA_IDEF NAVertex naAddVertexVolume(NAVertex vertex, NAVolume volume){
   newvertex.z = vertex.z + volume.depth;
   return newvertex;
 }
-NA_IDEF NAVertexi naAddVertexiVolumei(NAVertexi vertex, NAVolumei volume){
+NA_IDEF NAVertexi naAddVertexiVolume(NAVertexi vertex, NAVolumei volume){
   NAVertexi newvertex;
   #ifndef NDEBUG
     if(!naIsVertexiValid(vertex))
-      naError("naAddVertexiVolumei", "vertex is invalid.");
+      naError("naAddVertexiVolume", "vertex is invalid.");
     if(!naIsVolumeiValid(volume))
-      naError("naAddVertexiVolumei", "volume is invalid.");
+      naError("naAddVertexiVolume", "volume is invalid.");
   #endif
   newvertex.x = vertex.x + volume.width;
   newvertex.y = vertex.y + volume.height;
@@ -1751,13 +1925,13 @@ NA_IDEF NAVolume naSubVertexPos(NAVertex vertex1, NAVertex vertex2){
   newvolume.depth  = vertex1.z - vertex2.z;
   return newvolume;
 }
-NA_IDEF NAVolumei naSubVertexiVertexi(NAVertexi vertex1, NAVertexi vertex2){
+NA_IDEF NAVolumei naSubVertexiVertex(NAVertexi vertex1, NAVertexi vertex2){
   NAVolumei newvolume;
   #ifndef NDEBUG
     if(!naIsVertexiValid(vertex1))
-      naError("naSubVertexiVertexi", "vertex1 is invalid.");
+      naError("naSubVertexiVertex", "vertex1 is invalid.");
     if(!naIsVertexiValid(vertex2))
-      naError("naSubVertexiVertexi", "vertex2 is invalid.");
+      naError("naSubVertexiVertex", "vertex2 is invalid.");
   #endif
   newvolume.width  = vertex1.x - vertex2.x;
   newvolume.height = vertex1.y - vertex2.y;
@@ -1767,135 +1941,148 @@ NA_IDEF NAVolumei naSubVertexiVertexi(NAVertexi vertex1, NAVertexi vertex2){
 
 
 
+// ///////////////////////////////////////
+// CONTAIN
+// ///////////////////////////////////////
 
-NA_IDEF NABool naIsValueInRange(double value, NARange outerrange){
+NA_IDEF NABool naContainsRangeOffset(NARange outerrange, double offset){
   #ifndef NDEBUG
-    if(!naIsPosValueValid(value))
-      naError("naIsValueInRange", "value is invalid.");
+    if(!naIsOffsetValueValid(offset))
+      naError("naContainsRangeOffset", "offset is invalid.");
     if(!naIsRangeUseful(outerrange))
-      naError("naIsValueInRange", "Inside test not valid for ranges which are not useful.");
+      naError("naContainsRangeOffset", "Inside test not valid for ranges which are not useful.");
   #endif
-  return !((value < outerrange.offset)
-        || (value > naGetRangeEnd(outerrange)));
+  return !((offset < outerrange.origin)
+        || (offset > naGetRangeEnd(outerrange)));
 }
-NA_IDEF NABool naIsValueInRangef(float value, NARangef outerrange){
+NA_IDEF NABool naContainsRangefOffset(NARangef outerrange, float offset){
   #ifndef NDEBUG
-    if(!naIsPosValueValidf(value))
-      naError("naIsValueInRangef", "value is invalid.");
+    if(!naIsOffsetValueValidf(offset))
+      naError("naContainsRangefOffset", "offset is invalid.");
     if(!naIsRangefUseful(outerrange))
-      naError("naIsValueInRangef", "Inside test not valid for ranges which are not useful.");
+      naError("naContainsRangefOffset", "Inside test not valid for ranges which are not useful.");
   #endif
-  return !((value < outerrange.offset)
-        || (value > naGetRangefEnd(outerrange)));
+  return !((offset < outerrange.origin)
+        || (offset > naGetRangefEnd(outerrange)));
 }
-NA_IDEF NABool naIsValueInRangei(NAInt value, NARangei outerrange){
+NA_IDEF NABool naContainsRangeiOffset(NARangei outerrange, NAInt offset){
   #ifndef NDEBUG
-    if(!naIsPosValueValidi(value))
-      naError("naIsValueInRangei", "value is invalid.");
+    if(!naIsOffsetValueValidi(offset))
+      naError("naContainsRangeiOffset", "offset is invalid.");
     if(!naIsRangeiUseful(outerrange))
-      naError("naIsValueInRangei", "Inside test not valid for ranges which are not useful.");
+      naError("naContainsRangeiOffset", "Inside test not valid for ranges which are not useful.");
   #endif
-  return !((value < outerrange.offset)
-        || (value > naGetRangeiMax(outerrange)));
+  return !((offset < outerrange.origin)
+        || (offset > naGetRangeiMax(outerrange)));
+}
+NA_IDEF NABool naContainsRangeiRange(NARangei outerrange, NARangei range){
+  #ifndef NDEBUG
+    if(!naIsRangeiUseful(range))
+      naError("naContainsRangeiRange", "Inside test not valid if range is not useful.");
+    if(!naIsRangeiUseful(outerrange))
+      naError("naContainsRangeiRange", "Inside test not valid if outerrange is not useful.");
+  #endif
+  return  ((range.origin           >= outerrange.origin)
+        && (naGetRangeiEnd(range) <=  naGetRangeiEnd(outerrange)));
 }
 
 
 
 
-NA_IDEF NABool naIsPosInSize(NAPos pos, NASize outersize){
+NA_IDEF NABool naContainsSizePos(NASize outersize, NAPos pos){
   #ifndef NDEBUG
     if(!naIsPosValid(pos))
-      naError("naIsPosInSize", "pos is invalid.");
+      naError("naContainsSizePos", "pos is invalid.");
     if(!naIsSizeUseful(outersize))
-      naError("naIsPosInSize", "Inside test not valid for sizes which are not useful.");
+      naError("naContainsSizePos", "Inside test not valid for sizes which are not useful.");
   #endif
   return !((pos.x < 0)
         || (pos.x > outersize.width)
         || (pos.y < 0)
         || (pos.y > outersize.height));
 }
-NA_IDEF NABool naIsPosInRect(NAPos pos, NARect outerrect){
-  #ifndef NDEBUG
-    if(!naIsPosValid(pos))
-      naError("naIsPosInRect", "pos is invalid.");
-    if(naIsRectEmpty(outerrect))
-      naError("naIsPosInRect", "Inside test not valid for empty rects.");
-    if(!naIsRectValid(outerrect))
-      naError("naIsPosInRect", "outerrect is invalid.");
-  #endif
-  return !((pos.x < outerrect.pos.x)
-        || (pos.x > naGetRectEndX(outerrect))
-        || (pos.y < outerrect.pos.y)
-        || (pos.y > naGetRectEndY(outerrect)));
-}
-NA_IDEF NABool naIsSizeInSize(NASize size, NASize outersize){
-  #ifndef NDEBUG
-    if(!naIsSizeUseful(size))
-      naError("naIsSizeInSize", "Inside test not valid if size is not useful.");
-    if(!naIsSizeUseful(outersize))
-      naError("naIsSizeInSize", "Inside test not valid if outersize is not useful.");
-  #endif
-  return !((size.width  > outersize.width)
-        || (size.height > outersize.height));
-}
-NA_IDEF NABool naIsRectInRect(NARect rect, NARect outerrect){
-  #ifndef NDEBUG
-    if(naIsRectEmpty(rect) || naIsRectEmpty(outerrect))
-      naError("naIsRectInRect", "Inside test not valid for empty rects.");
-    if(!naIsRectValid(rect))
-      naError("naIsRectInRect", "rect is invalid.");
-    if(!naIsRectValid(outerrect))
-      naError("naIsRectInRect", "outerrect is invalid.");
-  #endif
-  return !((rect.pos.x          < outerrect.pos.x)
-        || (naGetRectEndX(rect) > naGetRectEndX(outerrect))
-        || (rect.pos.y          < outerrect.pos.y)
-        || (naGetRectEndY(rect) > naGetRectEndY(outerrect)));
-}
-NA_IDEF NABool naIsPosiInSizei(NAPosi pos, NASizei outersize){
+NA_IDEF NABool naContainsSizeiPos(NASizei outersize, NAPosi pos){
   #ifndef NDEBUG
     if(!naIsPosiValid(pos))
-      naError("naIsPosiInSizei", "pos is invalid.");
+      naError("naContainsSizeiPos", "pos is invalid.");
     if(naIsSizeiUseful(outersize))
-      naError("naIsPosiInSizei", "Inside test not valid for sizes which are not useful.");
+      naError("naContainsSizeiPos", "Inside test not valid for sizes which are not useful.");
   #endif
   return  ((pos.x >= 0)
         && (pos.x <  outersize.width)
         && (pos.y >= 0)
         && (pos.y <  outersize.height));
 }
-NA_IDEF NABool naIsPosiInRecti(NAPosi pos, NARecti outerrect){
+NA_IDEF NABool naContainsRectPos(NARect outerrect, NAPos pos){
+  #ifndef NDEBUG
+    if(!naIsPosValid(pos))
+      naError("naContainsRectPos", "pos is invalid.");
+    if(naIsRectEmpty(outerrect))
+      naError("naContainsRectPos", "Inside test not valid for empty rects.");
+    if(!naIsRectValid(outerrect))
+      naError("naContainsRectPos", "outerrect is invalid.");
+  #endif
+  return !((pos.x < outerrect.pos.x)
+        || (pos.x > naGetRectEndX(outerrect))
+        || (pos.y < outerrect.pos.y)
+        || (pos.y > naGetRectEndY(outerrect)));
+}
+NA_IDEF NABool naContainsRectiPos(NARecti outerrect, NAPosi pos){
   #ifndef NDEBUG
     if(!naIsPosiValid(pos))
-      naError("naIsPosiInRecti", "pos is invalid.");
+      naError("naContainsRectiPos", "pos is invalid.");
     if(naIsRectiEmptySlow(outerrect))
-      naError("naIsPosiInRecti", "Inside test not valid for empty rects.");
+      naError("naContainsRectiPos", "Inside test not valid for empty rects.");
     if(!naIsRectiValid(outerrect))
-      naError("naIsPosiInRecti", "outerrect is invalid.");
+      naError("naContainsRectiPos", "outerrect is invalid.");
   #endif
   return  ((pos.x >= outerrect.pos.x)
         && (pos.x <  naGetRectiEndX(outerrect))
         && (pos.y >= outerrect.pos.y)
         && (pos.y <  naGetRectiEndY(outerrect)));
 }
-NA_IDEF NABool naIsSizeiInSizei(NASizei size, NASizei outersize){
+NA_IDEF NABool naContainsSizeSize(NASize outersize, NASize size){
   #ifndef NDEBUG
-    if(!naIsSizeiUseful(size))
-      naError("naIsSizeiInSizei", "Inside test not valid if size is not useful.");
-    if(!naIsSizeiUseful(outersize))
-      naError("naIsSizeiInSizei", "Inside test not valid if outersize is not useful.");
+    if(!naIsSizeUseful(size))
+      naError("naContainsSizeSize", "Inside test not valid if size is not useful.");
+    if(!naIsSizeUseful(outersize))
+      naError("naContainsSizeSize", "Inside test not valid if outersize is not useful.");
   #endif
   return !((size.width  > outersize.width)
         || (size.height > outersize.height));
 }
-NA_IDEF NABool naIsRectiInRecti(NARecti rect, NARecti outerrect){
+NA_IDEF NABool naContainsSizeiSize(NASizei outersize, NASizei size){
+  #ifndef NDEBUG
+    if(!naIsSizeiUseful(size))
+      naError("naContainsSizeiSize", "Inside test not valid if size is not useful.");
+    if(!naIsSizeiUseful(outersize))
+      naError("naContainsSizeiSize", "Inside test not valid if outersize is not useful.");
+  #endif
+  return !((size.width  > outersize.width)
+        || (size.height > outersize.height));
+}
+NA_IDEF NABool naContainsRectRect(NARect outerrect, NARect rect){
+  #ifndef NDEBUG
+    if(naIsRectEmpty(rect) || naIsRectEmpty(outerrect))
+      naError("naContainsRectRect", "Inside test not valid for empty rects.");
+    if(!naIsRectValid(rect))
+      naError("naContainsRectRect", "rect is invalid.");
+    if(!naIsRectValid(outerrect))
+      naError("naContainsRectRect", "outerrect is invalid.");
+  #endif
+  return !((rect.pos.x          < outerrect.pos.x)
+        || (naGetRectEndX(rect) > naGetRectEndX(outerrect))
+        || (rect.pos.y          < outerrect.pos.y)
+        || (naGetRectEndY(rect) > naGetRectEndY(outerrect)));
+}
+NA_IDEF NABool naContainsRectiRect(NARecti outerrect, NARecti rect){
   #ifndef NDEBUG
     if(naIsRectiEmpty(rect) || naIsRectiEmpty(outerrect))
-      naError("naIsRectiInRecti", "Inside test not valid for empty rects.");
+      naError("naContainsRectiRect", "Inside test not valid for empty rects.");
     if(!naIsRectiValid(rect))
-      naError("naIsRectiInRecti", "rect is invalid.");
+      naError("naContainsRectiRect", "rect is invalid.");
     if(!naIsRectiValid(outerrect))
-      naError("naIsRectiInRecti", "outerrect is invalid.");
+      naError("naContainsRectiRect", "outerrect is invalid.");
   #endif
   return  ((rect.pos.x           >= outerrect.pos.x)
         && (naGetRectiEndX(rect) <=  naGetRectiEndX(outerrect))
@@ -1905,12 +2092,12 @@ NA_IDEF NABool naIsRectiInRecti(NARecti rect, NARecti outerrect){
 
 
 
-NA_IDEF NABool naIsVertexInVolume(NAVertex vertex, NAVolume outervolume){
+NA_IDEF NABool naContainsVolumeVertex(NAVolume outervolume, NAVertex vertex){
   #ifndef NDEBUG
     if(!naIsVertexValid(vertex))
-      naError("naIsVertexInVolume", "vertex is invalid.");
+      naError("naContainsVolumeVertex", "vertex is invalid.");
     if(!naIsVolumeUseful(outervolume))
-      naError("naIsVertexInVolume", "Inside test not valid for volumes which are not useful.");
+      naError("naContainsVolumeVertex", "Inside test not valid for volumes which are not useful.");
   #endif
   return !((vertex.x < 0)
         || (vertex.x > outervolume.width)
@@ -1919,55 +2106,12 @@ NA_IDEF NABool naIsVertexInVolume(NAVertex vertex, NAVolume outervolume){
         || (vertex.z < 0)
         || (vertex.z > outervolume.depth));
 }
-NA_IDEF NABool naIsVertexInBox(NAVertex vertex, NABox outerbox){
-  #ifndef NDEBUG
-    if(!naIsVertexValid(vertex))
-      naError("naIsVertexInBox", "vertex is invalid.");
-    if(naIsBoxEmpty(outerbox))
-      naError("naIsVertexInBox", "Inside test not valid for empty boxs.");
-    if(!naIsBoxValid(outerbox))
-      naError("naIsVertexInBox", "outerbox is invalid.");
-  #endif
-  return !((vertex.x < outerbox.vertex.x)
-        || (vertex.x > naGetBoxEndX(outerbox))
-        || (vertex.y < outerbox.vertex.y)
-        || (vertex.y > naGetBoxEndY(outerbox))
-        || (vertex.z < outerbox.vertex.z)
-        || (vertex.z > naGetBoxEndZ(outerbox)));
-}
-NA_IDEF NABool naIsVolumeInVolume(NAVolume volume, NAVolume outervolume){
-  #ifndef NDEBUG
-    if(!naIsVolumeUseful(volume))
-      naError("naIsVolumeInVolume", "Inside test not valid if volume is not useful.");
-    if(!naIsVolumeUseful(outervolume))
-      naError("naIsVolumeInVolume", "Inside test not valid if outervolume is not useful.");
-  #endif
-  return !((volume.width  > outervolume.width)
-        || (volume.height > outervolume.height)
-        || (volume.depth  > outervolume.depth));
-}
-NA_IDEF NABool naIsBoxInBox(NABox box, NABox outerbox){
-  #ifndef NDEBUG
-    if(naIsBoxEmpty(box) || naIsBoxEmpty(outerbox))
-      naError("naIsBoxInBox", "Inside test not valid for empty boxs.");
-    if(!naIsBoxValid(box))
-      naError("naIsBoxInBox", "box is invalid.");
-    if(!naIsBoxValid(outerbox))
-      naError("naIsBoxInBox", "outerbox is invalid.");
-  #endif
-  return !((box.vertex.x          < outerbox.vertex.x)
-        || (naGetBoxEndX(box) > naGetBoxEndX(outerbox))
-        || (box.vertex.y          < outerbox.vertex.y)
-        || (naGetBoxEndY(box) > naGetBoxEndY(outerbox))
-        || (box.vertex.z          < outerbox.vertex.z)
-        || (naGetBoxEndZ(box) > naGetBoxEndZ(outerbox)));
-}
-NA_IDEF NABool naIsVertexiInVolumei(NAVertexi vertex, NAVolumei outervolume){
+NA_IDEF NABool naContainsVolumeiVertex(NAVolumei outervolume, NAVertexi vertex){
   #ifndef NDEBUG
     if(!naIsVertexiValid(vertex))
-      naError("naIsVertexiInVolumei", "vertex is invalid.");
+      naError("naContainsVolumeiVertex", "vertex is invalid.");
     if(naIsVolumeiUseful(outervolume))
-      naError("naIsVertexiInVolumei", "Inside test not valid for volumes which are not useful.");
+      naError("naContainsVolumeiVertex", "Inside test not valid for volumes which are not useful.");
   #endif
   return  ((vertex.x >= 0)
         && (vertex.x <  outervolume.width)
@@ -1976,14 +2120,30 @@ NA_IDEF NABool naIsVertexiInVolumei(NAVertexi vertex, NAVolumei outervolume){
         && (vertex.z >= 0)
         && (vertex.z <  outervolume.depth));
 }
-NA_IDEF NABool naIsVertexiInBoxi(NAVertexi vertex, NABoxi outerbox){
+NA_IDEF NABool naContainsBoxVertex(NABox outerbox, NAVertex vertex){
+  #ifndef NDEBUG
+    if(!naIsVertexValid(vertex))
+      naError("naContainsBoxVertex", "vertex is invalid.");
+    if(naIsBoxEmpty(outerbox))
+      naError("naContainsBoxVertex", "Inside test not valid for empty boxs.");
+    if(!naIsBoxValid(outerbox))
+      naError("naContainsBoxVertex", "outerbox is invalid.");
+  #endif
+  return !((vertex.x < outerbox.vertex.x)
+        || (vertex.x > naGetBoxEndX(outerbox))
+        || (vertex.y < outerbox.vertex.y)
+        || (vertex.y > naGetBoxEndY(outerbox))
+        || (vertex.z < outerbox.vertex.z)
+        || (vertex.z > naGetBoxEndZ(outerbox)));
+}
+NA_IDEF NABool naContainsBoxiVertex(NABoxi outerbox, NAVertexi vertex){
   #ifndef NDEBUG
     if(!naIsVertexiValid(vertex))
-      naError("naIsVertexiInBoxi", "vertex is invalid.");
+      naError("naContainsBoxiVertex", "vertex is invalid.");
     if(naIsBoxiEmptySlow(outerbox))
-      naError("naIsVertexiInBoxi", "Inside test not valid for empty boxs.");
+      naError("naContainsBoxiVertex", "Inside test not valid for empty boxs.");
     if(!naIsBoxiValid(outerbox))
-      naError("naIsVertexiInBoxi", "outerbox is invalid.");
+      naError("naContainsBoxiVertex", "outerbox is invalid.");
   #endif
   return  ((vertex.x >= outerbox.vertex.x)
         && (vertex.x <  naGetBoxiEndX(outerbox))
@@ -1992,25 +2152,52 @@ NA_IDEF NABool naIsVertexiInBoxi(NAVertexi vertex, NABoxi outerbox){
         && (vertex.z >= outerbox.vertex.z)
         && (vertex.z <  naGetBoxiEndZ(outerbox)));
 }
-NA_IDEF NABool naIsVolumeiInVolumei(NAVolumei volume, NAVolumei outervolume){
+NA_IDEF NABool naContainsVolumeVolume(NAVolume outervolume, NAVolume volume){
   #ifndef NDEBUG
-    if(!naIsVolumeiUseful(volume))
-      naError("naIsVolumeiInVolumei", "Inside test not valid if volume is not useful.");
-    if(!naIsVolumeiUseful(outervolume))
-      naError("naIsVolumeiInVolumei", "Inside test not valid if outervolume is not useful.");
+    if(!naIsVolumeUseful(volume))
+      naError("naContainsVolumeVolume", "Inside test not valid if volume is not useful.");
+    if(!naIsVolumeUseful(outervolume))
+      naError("naContainsVolumeVolume", "Inside test not valid if outervolume is not useful.");
   #endif
   return !((volume.width  > outervolume.width)
         || (volume.height > outervolume.height)
         || (volume.depth  > outervolume.depth));
 }
-NA_IDEF NABool naIsBoxiInBoxi(NABoxi box, NABoxi outerbox){
+NA_IDEF NABool naContainsVolumeiVolume(NAVolumei outervolume, NAVolumei volume){
+  #ifndef NDEBUG
+    if(!naIsVolumeiUseful(volume))
+      naError("naContainsVolumeiVolume", "Inside test not valid if volume is not useful.");
+    if(!naIsVolumeiUseful(outervolume))
+      naError("naContainsVolumeiVolume", "Inside test not valid if outervolume is not useful.");
+  #endif
+  return !((volume.width  > outervolume.width)
+        || (volume.height > outervolume.height)
+        || (volume.depth  > outervolume.depth));
+}
+NA_IDEF NABool naContainsBoxBox(NABox outerbox, NABox box){
+  #ifndef NDEBUG
+    if(naIsBoxEmpty(box) || naIsBoxEmpty(outerbox))
+      naError("naContainsBoxBox", "Inside test not valid for empty boxs.");
+    if(!naIsBoxValid(box))
+      naError("naContainsBoxBox", "box is invalid.");
+    if(!naIsBoxValid(outerbox))
+      naError("naContainsBoxBox", "outerbox is invalid.");
+  #endif
+  return !((box.vertex.x          < outerbox.vertex.x)
+        || (naGetBoxEndX(box) > naGetBoxEndX(outerbox))
+        || (box.vertex.y          < outerbox.vertex.y)
+        || (naGetBoxEndY(box) > naGetBoxEndY(outerbox))
+        || (box.vertex.z          < outerbox.vertex.z)
+        || (naGetBoxEndZ(box) > naGetBoxEndZ(outerbox)));
+}
+NA_IDEF NABool naContainsBoxiBox(NABoxi outerbox, NABoxi box){
   #ifndef NDEBUG
     if(naIsBoxiEmpty(box) || naIsBoxiEmpty(outerbox))
-      naError("naIsBoxiInBoxi", "Inside test not valid for empty boxs.");
+      naError("naContainsBoxiBox", "Inside test not valid for empty boxs.");
     if(!naIsBoxiValid(box))
-      naError("naIsBoxiInBoxi", "box is invalid.");
+      naError("naContainsBoxiBox", "box is invalid.");
     if(!naIsBoxiValid(outerbox))
-      naError("naIsBoxiInBoxi", "outerbox is invalid.");
+      naError("naContainsBoxiBox", "outerbox is invalid.");
   #endif
   return  ((box.vertex.x           >= outerbox.vertex.x)
         && (naGetBoxiEndX(box) <=  naGetBoxiEndX(outerbox))
@@ -2030,7 +2217,7 @@ NA_IDEF double naGetRangeEnd(NARange range){
     if(!naIsRangeValid(range))
       naError("naGetRangeEnd", "range is invalid.");
   #endif
-  return naOriginAndLengthToEnd(range.offset, range.length);
+  return naMakeEndWithStartAndLength(range.origin, range.length);
 }
 NA_IDEF float naGetRangefEnd(NARangef range){
   #ifndef NDEBUG
@@ -2039,7 +2226,7 @@ NA_IDEF float naGetRangefEnd(NARangef range){
     if(!naIsRangefValid(range))
       naError("naGetRangeEnd", "range is invalid.");
   #endif
-  return naOriginAndLengthToEndf(range.offset, range.length);
+  return naMakeEndWithStartAndLengthf(range.origin, range.length);
 }
 
 
@@ -2051,7 +2238,7 @@ NA_IDEF double naGetRectEndX (NARect  rect){
     if(!naIsRectValid(rect))
       naError("naGetRectEndX", "rect is invalid.");
   #endif
-  return naOriginAndLengthToEnd(rect.pos.x, rect.size.width);
+  return naMakeEndWithStartAndLength(rect.pos.x, rect.size.width);
 }
 NA_IDEF double naGetRectEndY (NARect  rect){
   #ifndef NDEBUG
@@ -2060,7 +2247,7 @@ NA_IDEF double naGetRectEndY (NARect  rect){
     if(!naIsRectValid(rect))
       naError("naGetRectEndY", "rect is invalid.");
   #endif
-  return naOriginAndLengthToEnd(rect.pos.y, rect.size.height);
+  return naMakeEndWithStartAndLength(rect.pos.y, rect.size.height);
 }
 
 
@@ -2072,7 +2259,7 @@ NA_IDEF double naGetBoxEndX (NABox  box){
     if(!naIsBoxValid(box))
       naError("naGetBoxEndX", "box is invalid.");
   #endif
-  return naOriginAndLengthToEnd(box.vertex.x, box.volume.width);
+  return naMakeEndWithStartAndLength(box.vertex.x, box.volume.width);
 }
 NA_IDEF double naGetBoxEndY (NABox  box){
   #ifndef NDEBUG
@@ -2081,7 +2268,7 @@ NA_IDEF double naGetBoxEndY (NABox  box){
     if(!naIsBoxValid(box))
       naError("naGetBoxEndY", "box is invalid.");
   #endif
-  return naOriginAndLengthToEnd(box.vertex.y, box.volume.height);
+  return naMakeEndWithStartAndLength(box.vertex.y, box.volume.height);
 }
 NA_IDEF double naGetBoxEndZ (NABox  box){
   #ifndef NDEBUG
@@ -2090,7 +2277,7 @@ NA_IDEF double naGetBoxEndZ (NABox  box){
     if(!naIsBoxValid(box))
       naError("naGetBoxEndZ", "box is invalid.");
   #endif
-  return naOriginAndLengthToEnd(box.vertex.z, box.volume.depth);
+  return naMakeEndWithStartAndLength(box.vertex.z, box.volume.depth);
 }
 
 
@@ -2102,7 +2289,7 @@ NA_IDEF NAInt naGetRangeiEnd(NARangei range){
     if(!naIsRangeiValid(range))
       naError("naGetRangeEnd", "range is invalid.");
   #endif
-  return naOriginAndLengthToEndi(range.offset, range.length);
+  return naMakeEndWithStartAndLengthi(range.origin, range.length);
 }
 NA_IDEF NAInt naGetRangeiMax(NARangei range){
   #ifndef NDEBUG
@@ -2111,7 +2298,7 @@ NA_IDEF NAInt naGetRangeiMax(NARangei range){
     if(!naIsRangeiValid(range))
       naError("naGetRangeEnd", "range is invalid.");
   #endif
-  return naOriginAndLengthToMaxi(range.offset, range.length);
+  return naMakeMaxWithMinAndLengthi(range.origin, range.length);
 }
 
 
@@ -2133,7 +2320,7 @@ NA_IDEF NAInt naGetRectiEndX(NARecti rect){
     if(!naIsRectiValid(rect))
       naError("naGetRectiEndX", "rect is invalid.");
   #endif
-  return naOriginAndLengthToEndi(rect.pos.x, rect.size.width);
+  return naMakeEndWithStartAndLengthi(rect.pos.x, rect.size.width);
 }
 NA_IDEF NAInt naGetRectiEndY(NARecti rect){
   #ifndef NDEBUG
@@ -2142,13 +2329,16 @@ NA_IDEF NAInt naGetRectiEndY(NARecti rect){
     if(!naIsRectiValid(rect))
       naError("naGetRectiEndY", "rect is invalid.");
   #endif
-  return naOriginAndLengthToEndi(rect.pos.y, rect.size.height);
+  return naMakeEndWithStartAndLengthi(rect.pos.y, rect.size.height);
 }
-NA_IDEF NAPosi naGetRectiEndPos(NARecti rect){
-  NAPosi newpos;
-  newpos.x = naGetRectiEndX(rect);
-  newpos.y = naGetRectiEndY(rect);
-  return newpos;
+NA_IDEF NAPosi naGetRectiMax(NARecti rect){
+  #ifndef NDEBUG
+    if(naIsRectiEmptySlow(rect))
+      naError("naGetRectiMax", "rect is empty.");
+    if(!naIsRectiValid(rect))
+      naError("naGetRectiMax", "rect is invalid.");
+  #endif
+  return naMakePosi(naGetRectiMaxX(rect), naGetRectiMaxY(rect));
 }
 NA_IDEF NAInt naGetRectiMaxX(NARecti rect){
   #ifndef NDEBUG
@@ -2157,7 +2347,7 @@ NA_IDEF NAInt naGetRectiMaxX(NARecti rect){
     if(!naIsRectiValid(rect))
       naError("naGetRectiMaxX", "rect is invalid.");
   #endif
-  return naOriginAndLengthToMaxi(rect.pos.x, rect.size.width);
+  return naMakeMaxWithMinAndLengthi(rect.pos.x, rect.size.width);
 }
 NA_IDEF NAInt naGetRectiMaxY(NARecti rect){
   #ifndef NDEBUG
@@ -2166,13 +2356,7 @@ NA_IDEF NAInt naGetRectiMaxY(NARecti rect){
     if(!naIsRectiValid(rect))
       naError("naGetRectiMaxY", "rect is invalid.");
   #endif
-  return naOriginAndLengthToMaxi(rect.pos.y, rect.size.height);
-}
-NA_IDEF NAPosi naGetRectiMaxPos(NARecti rect){
-  NAPosi newpos;
-  newpos.x = naGetRectiMaxX(rect);
-  newpos.y = naGetRectiMaxY(rect);
-  return newpos;
+  return naMakeMaxWithMinAndLengthi(rect.pos.y, rect.size.height);
 }
 
 
@@ -2193,7 +2377,7 @@ NA_IDEF NAInt naGetBoxiEndX(NABoxi box){
     if(!naIsBoxiValid(box))
       naError("naGetBoxiEndX", "box is invalid.");
   #endif
-  return naOriginAndLengthToEndi(box.vertex.x, box.volume.width);
+  return naMakeEndWithStartAndLengthi(box.vertex.x, box.volume.width);
 }
 NA_IDEF NAInt naGetBoxiEndY(NABoxi box){
   #ifndef NDEBUG
@@ -2202,7 +2386,7 @@ NA_IDEF NAInt naGetBoxiEndY(NABoxi box){
     if(!naIsBoxiValid(box))
       naError("naGetBoxiEndY", "box is invalid.");
   #endif
-  return naOriginAndLengthToEndi(box.vertex.y, box.volume.height);
+  return naMakeEndWithStartAndLengthi(box.vertex.y, box.volume.height);
 }
 NA_IDEF NAInt naGetBoxiEndZ(NABoxi box){
   #ifndef NDEBUG
@@ -2211,13 +2395,16 @@ NA_IDEF NAInt naGetBoxiEndZ(NABoxi box){
     if(!naIsBoxiValid(box))
       naError("naGetBoxiEndZ", "box is invalid.");
   #endif
-  return naOriginAndLengthToEndi(box.vertex.z, box.volume.depth);
+  return naMakeEndWithStartAndLengthi(box.vertex.z, box.volume.depth);
 }
-NA_IDEF NAVertexi naGetBoxiEndVertex(NABoxi box){
-  NAVertexi newvertex;
-  newvertex.x = naGetBoxiEndX(box);
-  newvertex.y = naGetBoxiEndY(box);
-  return newvertex;
+NA_IDEF NAVertexi naGetBoxiMax (NABoxi box){
+  #ifndef NDEBUG
+    if(naIsBoxiEmptySlow(box))
+      naError("naGetBoxiMax", "box is empty.");
+    if(!naIsBoxiValid(box))
+      naError("naGetBoxiMax", "box is invalid.");
+  #endif
+  return naMakeVertexi(naGetBoxiMaxX(box), naGetBoxiMaxY(box), naGetBoxiMaxZ(box));
 }
 NA_IDEF NAInt naGetBoxiMaxX(NABoxi box){
   #ifndef NDEBUG
@@ -2226,7 +2413,7 @@ NA_IDEF NAInt naGetBoxiMaxX(NABoxi box){
     if(!naIsBoxiValid(box))
       naError("naGetBoxiMaxX", "box is invalid.");
   #endif
-  return naOriginAndLengthToMaxi(box.vertex.x, box.volume.width);
+  return naMakeMaxWithMinAndLengthi(box.vertex.x, box.volume.width);
 }
 NA_IDEF NAInt naGetBoxiMaxY(NABoxi box){
   #ifndef NDEBUG
@@ -2235,7 +2422,7 @@ NA_IDEF NAInt naGetBoxiMaxY(NABoxi box){
     if(!naIsBoxiValid(box))
       naError("naGetBoxiMaxY", "box is invalid.");
   #endif
-  return naOriginAndLengthToMaxi(box.vertex.y, box.volume.height);
+  return naMakeMaxWithMinAndLengthi(box.vertex.y, box.volume.height);
 }
 NA_IDEF NAInt naGetBoxiMaxZ(NABoxi box){
   #ifndef NDEBUG
@@ -2244,27 +2431,21 @@ NA_IDEF NAInt naGetBoxiMaxZ(NABoxi box){
     if(!naIsBoxiValid(box))
       naError("naGetBoxiMaxZ", "box is invalid.");
   #endif
-  return naOriginAndLengthToMaxi(box.vertex.z, box.volume.depth);
-}
-NA_IDEF NAVertexi naGetBoxiMaxVertex(NABoxi box){
-  NAVertexi newvertex;
-  newvertex.x = naGetBoxiMaxX(box);
-  newvertex.y = naGetBoxiMaxY(box);
-  return newvertex;
+  return naMakeMaxWithMinAndLengthi(box.vertex.z, box.volume.depth);
 }
 
 
 
-NA_IDEF NAUInt naGetIndexWithOriginAndPosiRowFirst(NAPosi origin, NAPosi pos, NAUInt width){
-  return ((pos.y - origin.y)) * width + (pos.x - origin.x);
+NA_IDEF NAUInt naGetIndexWithOriginAndPosRowFirst(NAPosi origin, NAPosi offset, NAUInt width){
+  return ((offset.y - origin.y)) * width + (offset.x - origin.x);
 }
-NA_IDEF NAUInt naGetIndexWithOriginAndPosiColumnFirst(NAPosi origin, NAPosi pos, NAUInt height){
-  return ((pos.x - origin.x)) * height + (pos.y - origin.y);
+NA_IDEF NAUInt naGetIndexWithOriginAndPosColumnFirst(NAPosi origin, NAPosi offset, NAUInt height){
+  return ((offset.x - origin.x)) * height + (offset.y - origin.y);
 }
-NA_IDEF NAUInt naGetIndexWithOriginAndVertexiRowFirst(NAVertexi origin, NAVertexi vertex, NAUInt width, NAUInt height){
+NA_IDEF NAUInt naGetIndexWithOriginAndVertexRowFirst(NAVertexi origin, NAVertexi vertex, NAUInt width, NAUInt height){
   return (((vertex.z - origin.z)) * height + (vertex.y - origin.y)) * width + (vertex.x - origin.x);
 }
-NA_IDEF NAUInt naGetIndexWithOriginAndVertexiColumnFirst(NAVertexi origin, NAVertexi vertex, NAUInt depth, NAUInt height){
+NA_IDEF NAUInt naGetIndexWithOriginAndVertexColumnFirst(NAVertexi origin, NAVertexi vertex, NAUInt depth, NAUInt height){
   return ((vertex.x - origin.x) * height + (vertex.y - origin.y)) * depth + (vertex.z - origin.z);
 }
 
@@ -2280,31 +2461,31 @@ NA_IDEF NAInt naGetRectiIndexCount(NARecti rect){
   #endif
   return rect.size.width * rect.size.height;
 }
-NA_IDEF NAUInt naGetRectiIndexOfPosiRowFirst(NARecti rect, NAPosi pos){
+NA_IDEF NAUInt naGetRectiIndexOfPosRowFirst(NARecti rect, NAPosi pos){
   #ifndef NDEBUG
     if(naIsRectiEmptySlow(rect))
-      naError("naGetRectiIndexOfPosiRowFirst", "rect is empty.");
+      naError("naGetRectiIndexOfPosRowFirst", "rect is empty.");
     if(!naIsRectiValid(rect))
-      naError("naGetRectiIndexOfPosiRowFirst", "rect is invalid.");
+      naError("naGetRectiIndexOfPosRowFirst", "rect is invalid.");
     if(!naIsPosiValid(pos))
-      naError("naGetRectiIndexOfPosiRowFirst", "pos is invalid.");
-    if(!naIsPosiInRecti(pos, rect))
-      naError("naGetRectiIndexOfPosiRowFirst", "pos is not inside rect.");
+      naError("naGetRectiIndexOfPosRowFirst", "pos is invalid.");
+    if(!naContainsRectiPos(rect, pos))
+      naError("naGetRectiIndexOfPosRowFirst", "pos is not inside rect.");
   #endif
-  return naGetIndexWithOriginAndPosiRowFirst(rect.pos, pos, rect.size.width);
+  return naGetIndexWithOriginAndPosRowFirst(rect.pos, pos, rect.size.width);
 }
-NA_IDEF NAUInt naGetRectiIndexOfPosiColumnFirst(NARecti rect, NAPosi pos){
+NA_IDEF NAUInt naGetRectiIndexOfPosColumnFirst(NARecti rect, NAPosi pos){
   #ifndef NDEBUG
     if(naIsRectiEmptySlow(rect))
-      naError("naGetRectiIndexOfPosiColumnFirst", "rect is empty.");
+      naError("naGetRectiIndexOfPosColumnFirst", "rect is empty.");
     if(!naIsRectiValid(rect))
-      naError("naGetRectiIndexOfPosiColumnFirst", "rect is invalid.");
+      naError("naGetRectiIndexOfPosColumnFirst", "rect is invalid.");
     if(!naIsPosiValid(pos))
-      naError("naGetRectiIndexOfPosiColumnFirst", "pos is invalid.");
-    if(!naIsPosiInRecti(pos, rect))
-      naError("naGetRectiIndexOfPosiColumnFirst", "pos is not inside rect.");
+      naError("naGetRectiIndexOfPosColumnFirst", "pos is invalid.");
+    if(!naContainsRectiPos(rect, pos))
+      naError("naGetRectiIndexOfPosColumnFirst", "pos is not inside rect.");
   #endif
-  return naGetIndexWithOriginAndPosiColumnFirst(rect.pos, pos, rect.size.height);
+  return naGetIndexWithOriginAndPosColumnFirst(rect.pos, pos, rect.size.height);
 }
 
 
@@ -2318,58 +2499,58 @@ NA_IDEF NAInt naGetBoxiIndexCount(NABoxi box){
   #endif
   return box.volume.width * box.volume.height * box.volume.depth;
 }
-NA_IDEF NAUInt naGetBoxiIndexOfVertexiRowFirst(NABoxi box, NAVertexi vertex){
+NA_IDEF NAUInt naGetBoxiIndexOfVertexRowFirst(NABoxi box, NAVertexi vertex){
   #ifndef NDEBUG
     if(naIsBoxiEmptySlow(box))
-      naError("naGetBoxiIndexOfVertexiRowFirst", "box is empty.");
+      naError("naGetBoxiIndexOfVertexRowFirst", "box is empty.");
     if(!naIsBoxiValid(box))
-      naError("naGetBoxiIndexOfVertexiRowFirst", "box is invalid.");
+      naError("naGetBoxiIndexOfVertexRowFirst", "box is invalid.");
     if(!naIsVertexiValid(vertex))
-      naError("naGetBoxiIndexOfVertexiRowFirst", "vertex is invalid.");
-    if(!naIsVertexiInBoxi(vertex, box))
-      naError("naGetBoxiIndexOfVertexiRowFirst", "vertex is not inside box.");
+      naError("naGetBoxiIndexOfVertexRowFirst", "vertex is invalid.");
+    if(!naContainsBoxiVertex(box, vertex))
+      naError("naGetBoxiIndexOfVertexRowFirst", "vertex is not inside box.");
   #endif
-  return naGetIndexWithOriginAndVertexiRowFirst(box.vertex, vertex, box.volume.width, box.volume.height);
+  return naGetIndexWithOriginAndVertexRowFirst(box.vertex, vertex, box.volume.width, box.volume.height);
 }
-NA_IDEF NAUInt naGetBoxiIndexOfVertexiColumnFirst(NABoxi box, NAVertexi vertex){
+NA_IDEF NAUInt naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex){
   #ifndef NDEBUG
     if(naIsBoxiEmptySlow(box))
-      naError("naGetBoxiIndexOfVertexiColumnFirst", "box is empty.");
+      naError("naGetBoxiIndexOfVertexColumnFirst", "box is empty.");
     if(!naIsBoxiValid(box))
-      naError("naGetBoxiIndexOfVertexiColumnFirst", "box is invalid.");
+      naError("naGetBoxiIndexOfVertexColumnFirst", "box is invalid.");
     if(!naIsVertexiValid(vertex))
-      naError("naGetBoxiIndexOfVertexiColumnFirst", "vertex is invalid.");
-    if(!naIsVertexiInBoxi(vertex, box))
-      naError("naGetBoxiIndexOfVertexiColumnFirst", "vertex is not inside box.");
+      naError("naGetBoxiIndexOfVertexColumnFirst", "vertex is invalid.");
+    if(!naContainsBoxiVertex(box, vertex))
+      naError("naGetBoxiIndexOfVertexColumnFirst", "vertex is not inside box.");
   #endif
-  return naGetIndexWithOriginAndVertexiColumnFirst(box.vertex, vertex, box.volume.depth, box.volume.height);
+  return naGetIndexWithOriginAndVertexColumnFirst(box.vertex, vertex, box.volume.depth, box.volume.height);
 }
 
 
 
 NA_IDEF NABool naIsRangeValid(NARange range){
-  return naIsPosValueValid(range.offset) && naIsSizeValueValid(range.length);
+  return naIsOffsetValueValid(range.origin) && naIsLengthValueValid(range.length);
 }
 NA_IDEF NABool naIsRangefValid(NARangef range){
-  return naIsPosValueValidf(range.offset) && naIsSizeValueValidf(range.length);
+  return naIsOffsetValueValidf(range.origin) && naIsLengthValueValidf(range.length);
 }
 NA_IDEF NABool naIsRangeiValid(NARangei range){
-  return naIsPosValueValidi(range.offset) && naIsSizeValueValidi(range.length);
+  return naIsOffsetValueValidi(range.origin) && naIsLengthValueValidi(range.length);
 }
 
 
 
 NA_IDEF NABool naIsPosValid(NAPos pos){
-  return naIsPosValueValid(pos.x) && naIsPosValueValid(pos.y);
+  return naIsOffsetValueValid(pos.x) && naIsOffsetValueValid(pos.y);
 }
 NA_IDEF NABool naIsPosiValid(NAPosi pos){
-  return naIsPosValueValidi(pos.x) && naIsPosValueValidi(pos.y);
+  return naIsOffsetValueValidi(pos.x) && naIsOffsetValueValidi(pos.y);
 }
 NA_IDEF NABool naIsSizeValid(NASize size){
-  return naIsSizeValueValid(size.width) && naIsSizeValueValid(size.height);
+  return naIsLengthValueValid(size.width) && naIsLengthValueValid(size.height);
 }
 NA_IDEF NABool naIsSizeiValid(NASizei size){
-  return naIsSizeValueValidi(size.width) && naIsSizeValueValidi(size.height);
+  return naIsLengthValueValidi(size.width) && naIsLengthValueValidi(size.height);
 }
 NA_IDEF NABool naIsRectValid(NARect rect){
   return (naIsPosValid(rect.pos) && naIsSizeValid(rect.size));
@@ -2381,16 +2562,16 @@ NA_IDEF NABool naIsRectiValid(NARecti rect){
 
 
 NA_IDEF NABool naIsVertexValid(NAVertex vertex){
-  return naIsPosValueValid(vertex.x) && naIsPosValueValid(vertex.y) && naIsPosValueValid(vertex.z);
+  return naIsOffsetValueValid(vertex.x) && naIsOffsetValueValid(vertex.y) && naIsOffsetValueValid(vertex.z);
 }
 NA_IDEF NABool naIsVertexiValid(NAVertexi vertex){
-  return naIsPosValueValidi(vertex.x) && naIsPosValueValidi(vertex.y) && naIsPosValueValidi(vertex.z);
+  return naIsOffsetValueValidi(vertex.x) && naIsOffsetValueValidi(vertex.y) && naIsOffsetValueValidi(vertex.z);
 }
 NA_IDEF NABool naIsVolumeValid(NAVolume volume){
-  return naIsSizeValueValid(volume.width) && naIsSizeValueValid(volume.height) && naIsSizeValueValid(volume.depth);
+  return naIsLengthValueValid(volume.width) && naIsLengthValueValid(volume.height) && naIsLengthValueValid(volume.depth);
 }
 NA_IDEF NABool naIsVolumeiValid(NAVolumei volume){
-  return naIsSizeValueValidi(volume.width) && naIsSizeValueValidi(volume.height) && naIsSizeValueValidi(volume.depth);
+  return naIsLengthValueValidi(volume.width) && naIsLengthValueValidi(volume.height) && naIsLengthValueValidi(volume.depth);
 }
 NA_IDEF NABool naIsBoxValid(NABox box){
   return (naIsVertexValid(box.vertex) && naIsVolumeValid(box.volume));
@@ -2402,30 +2583,30 @@ NA_IDEF NABool naIsBoxiValid(NABoxi box){
 
 
 NA_IDEF NABool naIsRangeEmpty(NARange range){
-  return naIsSizeValueEmpty(range.length);
+  return naIsLengthValueEmpty(range.length);
 }
 NA_IDEF NABool naIsRangefEmpty(NARangef range){
-  return naIsSizeValueEmptyf(range.length);
+  return naIsLengthValueEmptyf(range.length);
 }
 NA_IDEF NABool naIsRangeiEmpty(NARangei range){
-  return naIsSizeValueEmptyi(range.length);
+  return naIsLengthValueEmptyi(range.length);
 }
 
 
 
 NA_IDEF NABool naIsSizeEmpty (NASize size){
-  return naIsSizeValueEmpty(size.width * size.height);
+  return naIsLengthValueEmpty(size.width * size.height);
 }
 NA_IDEF NABool naIsSizeiEmpty(NASizei size){
   NAInt totalsize = size.width * size.height;
   #ifndef NDEBUG
-    if(naIsSizeValueEmptyi(totalsize) && !naIsSizeValueEmptyi(size.width) && !naIsSizeValueEmptyi(size.height))
+    if(naIsLengthValueEmptyi(totalsize) && !naIsLengthValueEmptyi(size.width) && !naIsLengthValueEmptyi(size.height))
       naError("naIsSizeiEmpty", "You experience a rare occasion of integer overflow. Consider using naIsSizeiEmptySlow");
   #endif
-  return naIsSizeValueEmptyi(totalsize);
+  return naIsLengthValueEmptyi(totalsize);
 }
 NA_IDEF NABool naIsSizeiEmptySlow(NASizei size){
-  return (naIsSizeValueEmptyi(size.width) || naIsSizeValueEmptyi(size.height));
+  return (naIsLengthValueEmptyi(size.width) || naIsLengthValueEmptyi(size.height));
 }
 NA_IDEF NABool naIsRectEmpty (NARect rect){
   return naIsSizeEmpty(rect.size);
@@ -2440,18 +2621,18 @@ NA_IDEF NABool naIsRectiEmptySlow(NARecti rect){
 
 
 NA_IDEF NABool naIsVolumeEmpty (NAVolume volume){
-  return naIsSizeValueEmpty(volume.width * volume.height * volume.depth);
+  return naIsLengthValueEmpty(volume.width * volume.height * volume.depth);
 }
 NA_IDEF NABool naIsVolumeiEmpty(NAVolumei volume){
   NAInt totalvolume = volume.width * volume.height * volume.depth;
   #ifndef NDEBUG
-    if(naIsSizeValueEmptyi(totalvolume) && !naIsSizeValueEmptyi(volume.width) && !naIsSizeValueEmptyi(volume.height) && !naIsSizeValueEmptyi(volume.depth))
+    if(naIsLengthValueEmptyi(totalvolume) && !naIsLengthValueEmptyi(volume.width) && !naIsLengthValueEmptyi(volume.height) && !naIsLengthValueEmptyi(volume.depth))
       naError("naIsVolumeiEmpty", "You experience a rare occasion of integer overflow. Consider using naIsVolumeiEmptySlow");
   #endif
-  return naIsSizeValueEmptyi(totalvolume);
+  return naIsLengthValueEmptyi(totalvolume);
 }
 NA_IDEF NABool naIsVolumeiEmptySlow(NAVolumei volume){
-  return (naIsSizeValueEmptyi(volume.width) || naIsSizeValueEmptyi(volume.height) || naIsSizeValueEmptyi(volume.depth));
+  return (naIsLengthValueEmptyi(volume.width) || naIsLengthValueEmptyi(volume.height) || naIsLengthValueEmptyi(volume.depth));
 }
 NA_IDEF NABool naIsBoxEmpty (NABox box){
   return naIsVolumeEmpty(box.volume);
@@ -2466,22 +2647,22 @@ NA_IDEF NABool naIsBoxiEmptySlow(NABoxi box){
 
 
 NA_IDEF NABool naIsRangeNegative(NARange range){
-  return naIsSizeValueNegative(range.length);
+  return naIsLengthValueNegative(range.length);
 }
 NA_IDEF NABool naIsRangefNegative(NARangef range){
-  return naIsSizeValueNegativef(range.length);
+  return naIsLengthValueNegativef(range.length);
 }
 NA_IDEF NABool naIsRangeiNegative(NARangei range){
-  return naIsSizeValueNegativei(range.length);
+  return naIsLengthValueNegativei(range.length);
 }
 
 
 
 NA_IDEF NABool naIsSizeNegative(NASize size){
-  return (naIsSizeValueNegative(size.width) || naIsSizeValueNegative(size.height));
+  return (naIsLengthValueNegative(size.width) || naIsLengthValueNegative(size.height));
 }
 NA_IDEF NABool naIsSizeiNegative(NASizei size){
-  return (naIsSizeValueNegativei(size.width) || naIsSizeValueNegativei(size.height));
+  return (naIsLengthValueNegativei(size.width) || naIsLengthValueNegativei(size.height));
 }
 NA_IDEF NABool naIsRectNegative(NARect rect){
   return naIsSizeNegative(rect.size);
@@ -2493,10 +2674,10 @@ NA_IDEF NABool naIsRectiNegative(NARecti rect){
 
 
 NA_IDEF NABool naIsVolumeNegative(NAVolume volume){
-  return (naIsSizeValueNegative(volume.width) || naIsSizeValueNegative(volume.height) || naIsSizeValueNegative(volume.depth));
+  return (naIsLengthValueNegative(volume.width) || naIsLengthValueNegative(volume.height) || naIsLengthValueNegative(volume.depth));
 }
 NA_IDEF NABool naIsVolumeiNegative(NAVolumei volume){
-  return (naIsSizeValueNegativei(volume.width) || naIsSizeValueNegativei(volume.height) || naIsSizeValueNegativei(volume.depth));
+  return (naIsLengthValueNegativei(volume.width) || naIsLengthValueNegativei(volume.height) || naIsLengthValueNegativei(volume.depth));
 }
 NA_IDEF NABool naIsBoxNegative(NABox box){
   return naIsVolumeNegative(box.volume);
@@ -2508,28 +2689,28 @@ NA_IDEF NABool naIsBoxiNegative(NABoxi box){
 
 
 NA_IDEF NABool naIsRangeUseful(NARange range){
-  return (naIsPosValueUseful(range.offset) && naIsSizeValueUseful(range.length));
+  return (naIsOffsetValueUseful(range.origin) && naIsLengthValueUseful(range.length));
 }
 NA_IDEF NABool naIsRangefUseful(NARangef range){
-  return (naIsPosValueUsefulf(range.offset) && naIsSizeValueUsefulf(range.length));
+  return (naIsOffsetValueUsefulf(range.origin) && naIsLengthValueUsefulf(range.length));
 }
 NA_IDEF NABool naIsRangeiUseful(NARangei range){
-  return (naIsPosValueUsefuli(range.offset) && naIsSizeValueUsefuli(range.length));
+  return (naIsOffsetValueUsefuli(range.origin) && naIsLengthValueUsefuli(range.length));
 }
 
 
 
 NA_IDEF NABool naIsPosUseful(NAPos pos){
-  return naIsPosValueUseful(pos.x) && naIsPosValueUseful(pos.y);
+  return naIsOffsetValueUseful(pos.x) && naIsOffsetValueUseful(pos.y);
 }
 NA_IDEF NABool naIsPosiUseful(NAPosi pos){
-  return naIsPosValueUsefuli(pos.x) && naIsPosValueUsefuli(pos.y);
+  return naIsOffsetValueUsefuli(pos.x) && naIsOffsetValueUsefuli(pos.y);
 }
 NA_IDEF NABool naIsSizeUseful(NASize size){
-  return naIsSizeValueUseful(size.width) && naIsSizeValueUseful(size.height);
+  return naIsLengthValueUseful(size.width) && naIsLengthValueUseful(size.height);
 }
 NA_IDEF NABool naIsSizeiUseful(NASizei size){
-  return naIsSizeValueUsefuli(size.width) && naIsSizeValueUsefuli(size.height);
+  return naIsLengthValueUsefuli(size.width) && naIsLengthValueUsefuli(size.height);
 }
 NA_IDEF NABool naIsRectUseful(NARect rect){
   return (naIsPosUseful(rect.pos) && naIsSizeUseful(rect.size));
@@ -2540,16 +2721,16 @@ NA_IDEF NABool naIsRectiUseful(NARecti rect){
 
 
 NA_IDEF NABool naIsVertexUseful(NAVertex vertex){
-  return naIsPosValueUseful(vertex.x) && naIsPosValueUseful(vertex.y) && naIsPosValueUseful(vertex.x);
+  return naIsOffsetValueUseful(vertex.x) && naIsOffsetValueUseful(vertex.y) && naIsOffsetValueUseful(vertex.x);
 }
 NA_IDEF NABool naIsVertexiUseful(NAVertexi vertex){
-  return naIsPosValueUsefuli(vertex.x) && naIsPosValueUsefuli(vertex.y) && naIsPosValueUsefuli(vertex.x);
+  return naIsOffsetValueUsefuli(vertex.x) && naIsOffsetValueUsefuli(vertex.y) && naIsOffsetValueUsefuli(vertex.x);
 }
 NA_IDEF NABool naIsVolumeUseful(NAVolume volume){
-  return naIsSizeValueUseful(volume.width) && naIsSizeValueUseful(volume.height) && naIsSizeValueUseful(volume.depth);
+  return naIsLengthValueUseful(volume.width) && naIsLengthValueUseful(volume.height) && naIsLengthValueUseful(volume.depth);
 }
 NA_IDEF NABool naIsVolumeiUseful(NAVolumei volume){
-  return naIsSizeValueUsefuli(volume.width) && naIsSizeValueUsefuli(volume.height) && naIsSizeValueUsefuli(volume.depth);
+  return naIsLengthValueUsefuli(volume.width) && naIsLengthValueUsefuli(volume.height) && naIsLengthValueUsefuli(volume.depth);
 }
 NA_IDEF NABool naIsBoxUseful(NABox box){
   return (naIsVertexUseful(box.vertex) && naIsVolumeUseful(box.volume));
@@ -2561,31 +2742,6 @@ NA_IDEF NABool naIsBoxiUseful(NABoxi box){
 
 
 
-NA_IDEF NARect naMakeRectPositive(NARect rect){
-  naMakePositive(&(rect.pos.x), &(rect.size.width));
-  naMakePositive(&(rect.pos.y), &(rect.size.height));
-  return rect;
-}
-NA_IDEF NARecti naMakeRectiPositive(NARecti rect){
-  naMakePositivei(&(rect.pos.x), &(rect.size.width));
-  naMakePositivei(&(rect.pos.y), &(rect.size.height));
-  return rect;
-}
-
-
-
-NA_IDEF NABox naMakeBoxPositive(NABox box){
-  naMakePositive(&(box.vertex.x), &(box.volume.width));
-  naMakePositive(&(box.vertex.y), &(box.volume.height));
-  naMakePositive(&(box.vertex.z), &(box.volume.depth));
-  return box;
-}
-NA_IDEF NABoxi naMakeBoxiPositive(NABoxi box){
-  naMakePositivei(&(box.vertex.x), &(box.volume.width));
-  naMakePositivei(&(box.vertex.y), &(box.volume.height));
-  naMakePositivei(&(box.vertex.z), &(box.volume.depth));
-  return box;
-}
 
 
 

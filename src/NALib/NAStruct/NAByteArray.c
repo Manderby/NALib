@@ -7,18 +7,18 @@
 
 
 
-NA_DEF NAByteArray* naInitByteArrayWithSize(NAByteArray* array, NAInt size){
+NA_DEF NAByteArray* naInitByteArrayWithBytesize(NAByteArray* array, NAInt bytesize){
   #ifndef NDEBUG
     if(!array)
-      {naCrash("naInitByteArrayWithSize", "array is Null-Pointer."); return NA_NULL;}
-    if(size == NA_INVALID_MEMORY_SIZE)
-      naError("naInitByteArrayWithSize", "Invalid size given.");
+      {naCrash("naInitByteArrayWithBytesize", "array is Null-Pointer."); return NA_NULL;}
+    if(bytesize == NA_INVALID_MEMORY_BYTESIZE)
+      naError("naInitByteArrayWithBytesize", "Invalid bytesize given.");
   #endif
-  if(!size){  // if size is zero
+  if(!bytesize){  // if bytesize is zero
     array = naInitByteArray(array);
   }else{
     NAMemoryBlock* newstorageblock = naAlloc(NAMemoryBlock);
-    *newstorageblock = naMakeMemoryBlockWithBytesize(size);
+    *newstorageblock = naMakeMemoryBlockWithBytesize(bytesize);
     array->storage = naNewPointer(newstorageblock, NA_MEMORY_CLEANUP_FREE, (NAFunc)naFreeMemoryBlock);
     array->memblock = naMakeMemoryBlockWithExtraction(newstorageblock, 0, naGetMemoryBlockBytesize(newstorageblock));
     array->indx = NA_INVALID_MEMORY_INDEX;
@@ -76,7 +76,7 @@ NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* b
 
 
 
-NA_DEF NAByteArray* naInitByteArrayExtraction(NAByteArray* dstarray, const NAByteArray* srcarray, NAInt offset, NAInt size){
+NA_DEF NAByteArray* naInitByteArrayExtraction(NAByteArray* dstarray, const NAByteArray* srcarray, NAInt byteoffset, NAInt bytesize){
   NAMemoryBlock newmemblock;
   NAUInt positiveoffset;
   NAUInt positivesize;
@@ -92,7 +92,7 @@ NA_DEF NAByteArray* naInitByteArrayExtraction(NAByteArray* dstarray, const NAByt
   // to be a valid bytearray. Otherwise, dstarray is expected to be
   // uninitialized.
 
-  naMakeIntegerRangePositiveInSize(&positiveoffset, &positivesize, offset, size, naGetMemoryBlockBytesize(&(srcarray->memblock)));
+  naMakeIntegerRangePositiveInLength(&positiveoffset, &positivesize, byteoffset, bytesize, naGetMemoryBlockBytesize(&(srcarray->memblock)));
   
   if(!positivesize){return naInitByteArray(dstarray);}
   

@@ -205,10 +205,10 @@ NA_DEF void naAddUIReaction(void* controller, NAUIElement* uielement, NAUIComman
   #ifndef NDEBUG
     if((command == NA_UI_COMMAND_RESHAPE) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
       naError("naAddUIReaction", "Only windows can receyve RESHAPE commands.");
-    if((command == NA_UI_COMMAND_KEYDOWN) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
-      naError("naAddUIReaction", "Only windows can receyve KEYDOWN commands.");
-    if((command == NA_UI_COMMAND_KEYUP) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
-      naError("naAddUIReaction", "Only windows can receyve KEYUP commands.");
+//    if((command == NA_UI_COMMAND_KEYDOWN) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
+//      naError("naAddUIReaction", "Only windows can receyve KEYDOWN commands.");
+//    if((command == NA_UI_COMMAND_KEYUP) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
+//      naError("naAddUIReaction", "Only windows can receyve KEYUP commands.");
     if((command == NA_UI_COMMAND_MOUSE_MOVED) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
       naError("naAddUIReaction", "Only windows can receyve MOUSE_MOVED commands.");
     if((command == NA_UI_COMMAND_MOUSE_ENTERED) && (naGetUIElementType(uielement) != NA_UI_WINDOW))

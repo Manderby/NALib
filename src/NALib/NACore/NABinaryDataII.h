@@ -103,7 +103,7 @@ NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
 }
 NA_IDEF void naCopyn(void* NA_RESTRICT d,
               const void* NA_RESTRICT s,
-                               NAUInt count){
+                               NAUInt bytesize){
   #ifndef NDEBUG
     if(!d){
       naCrash("naCopy8", "Pointer d is Null-Pointer.");
@@ -113,12 +113,12 @@ NA_IDEF void naCopyn(void* NA_RESTRICT d,
       naCrash("naCopy8", "Pointer s is Null-Pointer.");
       return;
     }
-    if(count < 1){
-      naCrash("naCopyn", "count is %" NA_PRIu " which is smaller than 1.", count);
+    if(bytesize < 1){
+      naCrash("naCopyn", "count is %" NA_PRIu " which is smaller than 1.", bytesize);
       return;
     }
   #endif
-  memcpy(d, s, count);
+  memcpy(d, s, bytesize);
 }
 
 
@@ -293,31 +293,31 @@ NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b){
 // Fills all bytes with null values
 // ///////////////////////////////////////////////////////////
 
-NA_IDEF void naNulln32(void* d, uint32 count){
+NA_IDEF void naNulln32(void* d, uint32 bytesize){
   #ifndef NDEBUG
-    if(count < NA_ONE_32)
+    if(bytesize < NA_ONE_32)
       naError("naNulln32", "count is < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
-  memset(d, 0, count);
+  memset(d, 0, bytesize);
 }
 
-NA_IDEF void naNulln64(void* d, uint64 count){
+NA_IDEF void naNulln64(void* d, uint64 bytesize){
   #ifndef NDEBUG
-    if(count < NA_ONE_64)
+    if(bytesize < NA_ONE_64)
       naError("naNulln64", "count is < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
-  memset(d, 0, (size_t)count);
+  memset(d, 0, (size_t)bytesize);
 }
 
-NA_IDEF void naNulln(void* d, NAUInt count){
+NA_IDEF void naNulln(void* d, NAUInt bytesize){
   #if NA_SYSTEM_ADDRESS_BITS == 32
-    naNulln32(d, count);
+    naNulln32(d, bytesize);
   #elif NA_SYSTEM_ADDRESS_BITS == 64
-    naNulln64(d, count);
+    naNulln64(d, bytesize);
   #else
-    #error "Integer size unknown"
+    #error "Integer bytesize unknown"
   #endif
 }
 
@@ -368,13 +368,13 @@ NA_IDEF void naFill32WithBytes( void* d,
   *p++ = b0; *p++ = b1; *p++ = b2; *p = b3;
 }
 
-NA_IDEF void naFill64WithBytesBytes( void* d,
+NA_IDEF void naFill64WithBytes( void* d,
                      NAByte b0, NAByte b1, NAByte b2, NAByte b3,
                      NAByte b4, NAByte b5, NAByte b6, NAByte b7){
   NAByte* p; // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!d){
-      naCrash("naFill64WithBytesBytes", "Pointer is Null-Pointer.");
+      naCrash("naFill64WithBytes", "Pointer is Null-Pointer.");
       return;
     }
   #endif

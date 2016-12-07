@@ -21,7 +21,7 @@
 // During the last 10 years, there were barely any of 'em.
 //
 // Nontheless, you can use the following typedefs to easily create vectors and
-// matrices of prefedined type and size:
+// matrices of prefedined type and bytesize:
 
 typedef double NAVec1d[1];
 typedef double NAVec2d[2];
@@ -46,12 +46,12 @@ typedef float  NAMat44f[16];
 // In vector algebra, many combinations of datatypes, vector and matrix sizes
 // and special cases exist. In NALib, the API uses the following naming scheme:
 //
-// naDoStructSizeTypeSomethingES
+// naDoStructCountTypeSomethingES
 //
 // na           The prefix always available in NALib functions.
 // Do           A verb denoting what will be done. For example Fill or Add.
 // Struct       Either a V for vector or M for matrix.
-// Size         The number of elements of the struct. For example 3 for a
+// Count        The number of elements of the struct. For example 3 for a
 //              3D-vector or 44 for a 4x4 matrix.
 // Type         The type of the elements. Following are the possible entries:
 //              d    double
@@ -115,7 +115,7 @@ typedef float  NAMat44f[16];
 // Implementation note:
 // The check if two arrays are misaligned is done using pointer arithmetic.
 // It is so far unknown how these checks work out when the pointers are not
-// aligned to the size of their element type like float or double. But most
+// aligned to the bytesize of their element type like float or double. But most
 // likely, such misalignments will show very quickly elsewhere.
 //
 // Until this day, misalignments have never been a real issue as they usually
@@ -609,7 +609,7 @@ NA_IAPI void naMirrorV4fS(float*  NA_RESTRICT d, const float*  NA_RESTRICT n);
 // Scales the vector a to a length of 1. Returns the scaled vector in d and the
 // length of the vector before scaling as a return value.
 // The E-variant allows d to be equal to a
-// The S-variant normalizes the given vector.
+// The S-variant normalizes the given vector itself.
 // If the length of the vector was close to or equal to zero, a warning is
 // emitted. In that case, you might want to call naLength first and divide the
 // vector by yourself, if it is non-zero.

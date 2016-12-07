@@ -81,7 +81,7 @@ typedef struct NAHeap NAHeap;
 // the heap must hold and the flags denote a combination of the macros above.
 //
 // If count is negative, the heap grows automatically if needed. The absolute
-// value of the negative count denotes the initial size of the heap and must
+// value of the negative count denotes the initial count of heap elements and must
 // be a power of 2. The value 0 is invalid for count. Grows only when needed
 // and grows in power of 2. Note that shrinking does NOT occur automatically.
 // You need to call naShrinkHeapIfNecessary for that.

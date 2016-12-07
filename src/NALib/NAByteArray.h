@@ -13,12 +13,12 @@
 //
 // An NAByteArray stores an array of raw bytes by dereferencing a storage.
 // Every ByteArray has a pointer to an internal storage, a data pointer and a
-// size. Upon creation of an NAByteArray, the last bytes of the storage can
+// bytesize. Upon creation of an NAByteArray, the last bytes of the storage can
 // automatically filled with binary zero.
 //
 // Multiple NAByteArrays can point to the same storage. Meaning: Multiple
 // NAByteArrays can point to different sections of the same byte stream by
-// providing an offset and a size relative to another NAByteArray. This allows
+// providing an byteoffset and a bytesize relative to another NAByteArray. This allows
 // for very fast and convenient parsing of byte streams without copying
 // the bytes over and over again.
 //
@@ -45,28 +45,28 @@ typedef struct NAByteArray NAByteArray;
 // This function is speedy. No additional memory will be allocated.
 NA_IAPI NAByteArray* naInitByteArray(NAByteArray* array);
 
-// Creates or fills a new NAByteArray with the desired size and returns the
+// Creates or fills a new NAByteArray with the desired bytesize and returns the
 // given pointer. Allocates memory on the heap which will be freed
 // automatically when the array storage is no longer used.
 //
-// If size is zero, an empty array is returned.
+// If bytesize is zero, an empty array is returned.
 //
-// When size is positive, the precise amount of bytes is allocated and the
+// When bytesize is positive, the precise amount of bytes is allocated and the
 // whole memory block will be uninitialized.
 //
-// If size is negative, the absolute value of size is used but it will
+// If bytesize is negative, the absolute value of bytesize is used but it will
 // automatically be expanded by a certain number of bytes at the end of the
 // array. It is guaranteed that there are at least 4 Bytes appended on 32 Bit
 // systems and 8 Bytes on 64 Bit systems and it is guaranteed that these bytes
 // are initialized with binary zero. See the implementation for more details.
 // The returned NAByteArray itself will NOT contain any additional bytes but
-// instead have the exact same size as given as argument.
+// instead have the exact same bytesize as given as argument.
 //
-// The negative size is used for example for zero-terminated strings or can
+// The negative bytesize is used for example for zero-terminated strings or can
 // be used for example for sentinels in pointer arrays. There, with negative
-// size, it is safe to read past the end of an array as you can be sure that
-// at least one pointer size after the array is filled with binary zero.
-NA_API NAByteArray* naInitByteArrayWithSize(NAByteArray* array, NAInt size);
+// bytesize, it is safe to read past the end of an array as you can be sure that
+// at least one pointersize after the array is filled with binary zero.
+NA_API NAByteArray* naInitByteArrayWithBytesize(NAByteArray* array, NAInt bytesize);
 
 // Use the following functions to encapsulate your own raw buffers into an
 // NAByteArray!
@@ -74,20 +74,20 @@ NA_API NAByteArray* naInitByteArrayWithSize(NAByteArray* array, NAInt size);
 // There are two creation functions, one for const data and one for non-const.
 //
 // Creates or fills a new NAByteArray which contains the data of the given
-// buffer WITHOUT copying. The size denotes the size of the buffer in bytes.
-// The programmer is responsible for that size does not overflows the buffer.
+// buffer WITHOUT copying. The bytesize denotes the size of the buffer in bytes.
+// The programmer is responsible for that bytesize does not overflows the buffer.
 // When takeownership is set to NA_TRUE, the array will deallocate the given
-// buffer with free() when it is no longer used. If size is null, an empty
+// buffer with free() when it is no longer used. If bytesize is null, an empty
 // array is created. But note that if takeownership is true, the buffer will
 // still be referenced and deleted only upon clearing the NAByteArray.
 //
 // You can not take ownership of const buffers.
 //
-// If size is negative, the buffer is EXPECTED to be oversized by an unknown
+// If bytesize is negative, the buffer is EXPECTED to be oversized by an unknown
 // amount of bytes and that these bytes are filled with binary zeros. The
 // oversized bytes will NEVER be accessed by this NAByteArray but they are
 // assumed to be there. For example the buffer for the C-string literal "Hello"
-// can be safely packed into an NAByteArray with size -5.
+// can be safely packed into an NAByteArray with bytesize -5.
 NA_API NAByteArray* naInitByteArrayWithConstBuffer(
                                                 NAByteArray* array,
                                                  const void* buffer,
@@ -103,24 +103,24 @@ NA_API NAByteArray* naInitByteArrayWithMutableBuffer(
 // Function naInitByteArrayExtraction:
 // Creates or fills a new ByteArray with the contents of srcarray. The content
 // is NOT copied, but the dest array points to the same storage as srcarray
-// with an offset and size relative to the src array.
+// with a byteoffset and bytesize relative to the src array.
 //
 // dstarray can be the same as srcarray!
 //
 // Use this function to perform all sorts of manipulations (examples below):
-// - if offset is negative, it denotes the number of bytes from the end.
-//   Note that the end has index [size], meaning -1 denotes the index [size-1]
+// - if byteoffset is negative, it denotes the number of bytes from the end.
+//   Note that the end has index [bytesize], meaning -1 denotes the index [bytesize-1]
 //   which is the last byte.
-// - If the size is 0, the resulting ByteArray is empty.
-// - if size is negative, it denotes the size up and including to the given
+// - If the bytesize is 0, the resulting ByteArray is empty.
+// - if bytesize is negative, it denotes the size up and including to the given
 //   number of bytes from the end, meaning -1 denotes the last byte.
-// - if the offset and size combination somehow leads to a size of exactly 0,
+// - if the byteoffset and bytesize combination somehow leads to a bytesize of exactly 0,
 //   the resulting ByteArray will be empty without a warning emitted.
-// - If the offset and size combination somehow leads to an over- or underflow,
+// - If the byteoffset and bytesize combination somehow leads to an over- or underflow,
 //   a warning will be emitted if NDEBUG is defined. The resulting array will
 //   be empty.
 //
-// Example: Array ABCDEF with the pair (offset, size):
+// Example: Array ABCDEF with the pair (byteoffset, bytesize):
 // - ( 2,  2)   ->   CD   (extraction)
 // - ( 2, -1)   ->   CDEF (truncate head from left)
 // - (-2, -1)   ->     EF (truncate head from right)
@@ -128,8 +128,8 @@ NA_API NAByteArray* naInitByteArrayWithMutableBuffer(
 // - ( 0, -3)   -> ABCD   (truncate tail from right)
 // - (-3, -2)   ->    DE  (mix it as you desire)
 // - ( 0, -1)   -> ABCDEF (exact duplicate)
-// - ( 1,  0)   ->        (empty array because of desired size == 0)
-// - ( 2, -5)   ->        (empty array because of resulting size == 0)
+// - ( 1,  0)   ->        (empty array because of desired bytesize == 0)
+// - ( 2, -5)   ->        (empty array because of resulting bytesize == 0)
 // - (-9,  9)   ->        (empty array with warning when debugging)
 //
 // If dest is equal to src and if the resulting array is empty, the storage
@@ -139,8 +139,8 @@ NA_API NAByteArray* naInitByteArrayWithMutableBuffer(
 // srcarray may nontheless be altered!!!
 NA_API NAByteArray* naInitByteArrayExtraction( NAByteArray* dstarray,
                                             const NAByteArray* srcarray,
-                                                         NAInt offset,
-                                                         NAInt size);
+                                                         NAInt byteoffset,
+                                                         NAInt bytesize);
 
 // Clears the given array. Any previously used storage is detached.
 // When the storage is no longer used, it gets deleted automatically.
@@ -157,10 +157,10 @@ NA_IAPI void naEmptyByteArray  (NAByteArray* array);
 // gets deleted automatically.
 // If appendnulltermination is true, a certain number of bytes are added at the
 // end of the newly created byte array and are initialized with binary zero.
-// The specific number of bytes is defined by the naInitByteArrayWithSize
+// The specific number of bytes is defined by the naInitByteArrayWithBytesize
 // function. See there for more information. If appendnulltermination is false,
 // no bytes are appended. The returned ByteArray itself will NOT contain any
-// additional zero bytes but instead have the size of the original array.
+// additional zero bytes but instead have the bytesize of the original array.
 //
 // COPIES ALWAYS!
 //
@@ -199,13 +199,13 @@ NA_IAPI       NAByte* naGetByteArrayMutableByte(      NAByteArray* array,
 // Returns the number of bytes in this array. Note that the function always
 // returns a positive number even if the array was created with a negative one.
 // This function is speedy!
-// The MaxIndex function returns size-1 but will emit an error when NDEBUG is
-// undefined and size is 0.
-NA_IAPI NAUInt naGetByteArraySize(const NAByteArray* array);
+// The MaxIndex function returns bytesize-1 but will emit an error when NDEBUG is
+// undefined and bytesize is 0.
+NA_IAPI NAUInt naGetByteArrayBytesize(const NAByteArray* array);
 NA_IDEF NAUInt naGetByteArrayMaxIndex(const NAByteArray* array);
 
 // Returns true if the array is empty. This is a convenience function which
-// does the same thing as calling naGetByteArraySize and testing for size == 0.
+// does the same thing as calling naGetByteArrayBytesize and testing for bytesize == 0.
 // Sometimes, it helps to have english plain text in the API.
 NA_IAPI NABool naIsByteArrayEmpty(const NAByteArray* array);
 
@@ -280,7 +280,7 @@ NA_IAPI       void* naGetByteArrayCurrentMutable   (const NAByteArray* array);
 NA_IAPI       NAUInt naGetByteArrayCurrentIndex     (const NAByteArray* array);
 // Returns the remaining number of bytes after the current index. Will emit
 // a warning if the index is unset.
-NA_IAPI       NAUInt naGetByteArrayRemainingSize    (const NAByteArray* array);
+NA_IAPI       NAUInt naGetByteArrayRemainingBytesize    (const NAByteArray* array);
 
 // The locate-function set the internal pointer to the index given. If the
 // given index is negative, it denotes the byte from the end of the array,

@@ -8,10 +8,10 @@
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
 
 
-#include <windows.h>
-#ifdef __gl_h_
-  #include <GL/GL.h>
-#endif
+//#include <windows.h>
+//#ifdef __gl_h_
+//  #include <GL/GL.h>
+//#endif
 
 #define CUB_WINDOW_IGNORE_MOUSE_WARP  0x01
 

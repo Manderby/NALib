@@ -129,10 +129,11 @@ struct NAPNGChunk{
 };
 
 
-NA_HDEF void naSetPNGDefaultColorimetry(NAPNG* png){
+NA_HDEF void naSetPNGsRGBColorimetry(NAPNG* png){
+  // This corresponds to the sRGB space.
   png->gamma = 45455.f / 100000.f;
   naFillV2f(png->whitepoint,    31270.f / 100000.f, 32900.f / 100000.f);
-  naFillV2f(png->redprimary,    64000.f / 100000.f, 64000.f / 100000.f);
+  naFillV2f(png->redprimary,    64000.f / 100000.f, 33000.f / 100000.f);
   naFillV2f(png->greenprimary,  30000.f / 100000.f, 60000.f / 100000.f);
   naFillV2f(png->blueprimary,   15000.f / 100000.f,  6000.f / 100000.f);
 }
@@ -148,7 +149,7 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABuffer* buffer){
   chunk->length = naReadBufferUInt32(buffer);
   #ifndef NDEBUG
     if(chunk->length > (1U<<31)-1U)
-      naError("naAllocPNGChunkFromBuffer", "length should not exceed 2^32-1.");
+      naError("naAllocPNGChunkFromBuffer", "length should not exceed 2^31-1.");
   #endif
 
   naReadBufferBytes(buffer, chunk->typename, 4);
@@ -166,6 +167,8 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABuffer* buffer){
 //      printf("Undefined Chunkname %c%c%c%c\n", chunkname[0], chunkname[1], chunkname[2], chunkname[3]);
 //    }
   #endif
+  
+  naReadBuffer(buffer, chunk->length);
   
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
   naAccumulateChecksum(&checksum, chunk->typename, 4);
@@ -245,7 +248,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
   NAUInt bytesperline = png->size.width * bpp;
   
   png->pixeldata = naMalloc(sizeof(NAByte) * png->size.width * png->size.height * bpp);
-  naSeekBufferReadAbsolute(&(png->filtereddata), 0);
+  naSeekBufferAbsolute(&(png->filtereddata), 0);
   curbyte = png->pixeldata;
   
   upbuffer = naMalloc(bytesperline);
@@ -334,7 +337,7 @@ NA_DEF void naFilterData(NAPNG* png){
     pixeldata += png->size.width * bpp;
   }
 
-  naFixBufferMaxPos(&(png->filtereddata));
+  naDetermineBufferBytesize(&(png->filtereddata));
 }
 
 
@@ -516,7 +519,7 @@ NA_HDEF void naReadPNGsRGBChunk(NAPNG* png, NAPNGChunk* srgb){
   // As this implementation is not yet capable of color management, we ignore
   // the gAMA and cHRM values and set them to the following:
   NA_UNUSED(intent);
-  naSetPNGDefaultColorimetry(png);
+  naSetPNGsRGBColorimetry(png);
   png->flags |= NA_PNG_FLAGS_sRGB_AVAILABLE;
 }
 
@@ -638,9 +641,9 @@ NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colortype, NAUInt bitdepth){
   png->compressionmethod = 0;
   png->interlacemethod = NA_PNG_INTERLACE_NONE;
   png->filtermethod = 0;
-  naSetPNGDefaultColorimetry(png);
-  png->pixeldimensions[0] = 1.;
-  png->pixeldimensions[1] = 1.;
+  naSetPNGsRGBColorimetry(png);
+  png->pixeldimensions[0] = 1.f;
+  png->pixeldimensions[1] = 1.f;
   png->pixelunit = NA_PIXEL_UNIT_RATIO;
   png->size = size;
   png->colortype = colortype;
@@ -656,22 +659,28 @@ NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colortype, NAUInt bitdepth){
 NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   NABuffer* buffer;
   NAByte magic[8];
-  NAPNG* png = naNew(NAPNG);
   
+  NAPNG* png = naNew(NAPNG);
   naInitList(&(png->chunks));
+  
+  // Set the default values. Needed if no appropriate chunk is available.
   png->flags = 0;
-  naSetPNGDefaultColorimetry(png);
-  png->pixeldimensions[0] = 1.;
-  png->pixeldimensions[1] = 1.;
+  naSetPNGsRGBColorimetry(png);
+  png->pixeldimensions[0] = 1.f;
+  png->pixeldimensions[1] = 1.f;
   png->pixelunit = NA_PIXEL_UNIT_RATIO;
   
   buffer = naInitBufferInputtingFromFile(naAlloc(NABuffer), filename);
-  naComputeBufferMaxPos(buffer);
+  naDetermineBufferBytesize(buffer);
+  // If the buffer is empty, there is no png to read.
   if(naIsBufferReadAtEnd(buffer)){
     goto NAEndReadingPNG;
   }
+  
+  // Important! RFC 1950 is big endianed (network endianness)
   naSetBufferEndianness(buffer, NA_ENDIANNESS_NETWORK);
 
+  // Read the magic numbers. If they do not match, this is no png file.
   naReadBufferBytes(buffer, magic, 8);
   if(!naEqual64(magic, na_png_magic)){
     #ifndef NDEBUG
@@ -680,6 +689,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
     goto NAEndReadingPNG;
   }
   
+  // Read the chunks until the IEND chunk is read.
   while(1){
     NAPNGChunk* curchunk = naAllocPNGChunkFromBuffer(buffer);
     if(curchunk->type == NA_PNG_CHUNK_TYPE_IEND){break;}
@@ -734,7 +744,7 @@ NA_DEF void* naGetPNGPixelData(NAPNG* png){
 
 
 
-NA_DEF NAUInt naGetPNGPixelDataSize(NAPNG* png){
+NA_DEF NAUInt naGetPNGPixelDataBytesize(NAPNG* png){
   NAUInt bpp = naGetPNGBytesPerPixel(png->colortype);
   return png->size.width * png->size.height * bpp;
 }
@@ -776,20 +786,20 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
   naRewindList(&(png->chunks));
   while(naIterateList(&(png->chunks), 1)){
     NAPNGChunk* curchunk = naGetListCurrentMutable(&(png->chunks));
-    naFixBufferMaxPos(&(curchunk->data));
+    naDetermineBufferBytesize(&(curchunk->data));
     
-    curchunk->length = naGetBufferSize(&(curchunk->data));
+    curchunk->length = naDetermineBufferBytesize(&(curchunk->data));
     naWriteBufferUInt32(&outbuffer, (uint32)curchunk->length);
     
     naCopy32(curchunk->typename, na_png_chunk_type_names[curchunk->type]);
     naWriteBufferBytes(&outbuffer, curchunk->typename, 4);
     
-    naWriteBufferBuffer(&outbuffer, &(curchunk->data), naGetBufferSize(&(curchunk->data)));
+    naWriteBufferBuffer(&outbuffer, &(curchunk->data), naDetermineBufferBytesize(&(curchunk->data)));
     
     naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
     naAccumulateChecksum(&checksum, curchunk->typename, 4);
     if(curchunk->length){
-      naSeekBufferReadLocal(&(curchunk->data), 0);
+      naSeekBufferLocal(&(curchunk->data), 0);
       naAccumulateBufferToChecksum(&(curchunk->data), &checksum);
     }
     curchunk->crc = naGetChecksumResult(&checksum);

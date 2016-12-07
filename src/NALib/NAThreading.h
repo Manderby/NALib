@@ -33,12 +33,14 @@ typedef void* NAAlarm;
 // the reign of some milli-seconds.
 
 // Puts the current thread on hold for the specified amount of time.
-// S = Seconds, M = Milliseconds, U = Microseconds.
+// S = Seconds, M = Milliseconds, U = Microseconds, N = Nanoseconds
 // The return value behaves the same as the usleep function on Mac OS X, where
 // a value of 0 denotes success. On Windows, the return value is always 0.
+// Note that the S variant uses a double value.
+NA_IAPI int naSleepN(NAUInt nsecs);
 NA_IAPI int naSleepU(NAUInt usecs);
 NA_IAPI int naSleepM(NAUInt msecs);
-NA_IAPI int naSleepS(NAUInt  secs);
+NA_IAPI int naSleepS(double secs);
 
 
 
@@ -63,11 +65,6 @@ NA_IAPI void naClearThread(NAThread thread);
 // Calling this function will execute the thread once.
 NA_IAPI void naRunThread(NAThread thread);
 
-// Returns NA_TRUE if the current execution is in the main thread.
-// Warning! Implementation not guaranteed to succeed and incomplete under
-// Windows! todo.
-NA_IAPI NABool isMainThread();
-
 // //////////////////////////////////
 // Mutex
 //
@@ -83,8 +80,6 @@ NA_IAPI void naClearMutex(NAMutex mutex);
 // Locks and unlocks a mutex. Waiting threads wait forever.
 NA_IAPI void naLockMutex(NAMutex mutex);
 NA_IAPI void naUnlockMutex(NAMutex mutex);
-// Returns NA_TRUE if the mutex is locked or NA_FALSE otherwise.
-NA_IAPI NABool naIsMutexLocked(NAMutex mutex);
 // Tries to lock the mutex but returns immediately even if not successful.
 // Returns NA_TRUE if the lock was successful and NA_FALSE if it was not
 // successful for any reason. Note that this implementation will return
@@ -93,6 +88,17 @@ NA_IAPI NABool naIsMutexLocked(NAMutex mutex);
 // consistently along all systems.
 NA_IAPI NABool naTryMutex(NAMutex mutex);
 
+#ifndef NDEBUG
+  // Returns NA_TRUE if the mutex is locked or NA_FALSE otherwise.
+  // Beware!
+  // This function is not guaranteed to return a meaningful result. While in
+  // general, this function may return the actual state of the mutex
+  // correctly, it may happen that during the time of returning the result
+  // and using it, the state of the mutex might already have changed.
+  // Do not use this function in release code! It is only intended for quick
+  // checks.
+  NA_IAPI NABool naIsMutexLocked(NAMutex mutex);
+#endif
 
 
 // //////////////////////////////////

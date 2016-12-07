@@ -90,7 +90,7 @@ typedef struct NADateTime NADateTime;
 // date and time and readout information thereof.
 typedef struct NADateTimeStruct NADateTimeStruct;
 struct NADateTimeStruct{
-  int64  year;      // year number in astronomic numbering (neg, 0 and pos)
+  int64  year;      // year number in astronomic numbering (-, 0 and +)
   int32  mon;       // month number in [0, 11].   Beware the 0-index!
   int32  day;       // day number in [0, 30].     Beware the 0-index!
   int32  hour;      // hour number in [0, 23]

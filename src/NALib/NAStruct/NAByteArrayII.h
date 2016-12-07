@@ -18,7 +18,7 @@ struct NAByteArray{
 // Note that the memory block may not point to the same address as the data
 // pointer stored in the storage!
 //
-// If the size of the memory block is zero, the NAByteArray is considered
+// If the bytesize of the memory block is zero, the NAByteArray is considered
 // empty. In that case, the other fields contain no useful information.
 
 
@@ -92,7 +92,7 @@ NA_IDEF const NAByte* naGetByteArrayConstByte(const NAByteArray* array, NAInt in
     if(naIsMemoryBlockEmpty(&(array->memblock)))
       naError("naGetByteArrayConstByte", "array is empty. Result may be garbage");
   #endif
-  if(indx < 0){indx += naGetByteArraySize(array);}
+  if(indx < 0){indx += naGetByteArrayBytesize(array);}
   #ifndef NDEBUG
     if(!naInsidei(0, naGetMemoryBlockMaxIndex(&(array->memblock)), indx))
       naError("naGetByteArrayMutableByte", "indx out of bounds");
@@ -111,7 +111,7 @@ NA_IDEF NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt indx){
     if(naIsMemoryBlockEmpty(&(array->memblock)))
       naError("naGetByteArrayMutableByte", "array is empty. Result may be garbage");
   #endif
-  if(indx < 0){indx += naGetByteArraySize(array);}
+  if(indx < 0){indx += naGetByteArrayBytesize(array);}
   #ifndef NDEBUG
     if(!naInsidei(0, naGetMemoryBlockMaxIndex(&(array->memblock)), indx))
       naError("naGetByteArrayMutableByte", "indx out of bounds");
@@ -121,10 +121,10 @@ NA_IDEF NAByte* naGetByteArrayMutableByte(NAByteArray* array, NAInt indx){
 
 
 
-NA_IDEF NAUInt naGetByteArraySize(const NAByteArray* array){
+NA_IDEF NAUInt naGetByteArrayBytesize(const NAByteArray* array){
   #ifndef NDEBUG
     if(!array){
-      naCrash("naGetByteArraySize", "array is Null-Pointer.");
+      naCrash("naGetByteArrayBytesize", "array is Null-Pointer.");
       return 0;
     }
   #endif
@@ -136,13 +136,13 @@ NA_IDEF NAUInt naGetByteArraySize(const NAByteArray* array){
 NA_IDEF NAUInt naGetByteArrayMaxIndex(const NAByteArray* array){
   #ifndef NDEBUG
     if(!array){
-      naCrash("naGetByteArraySize", "array is Null-Pointer.");
+      naCrash("naGetByteArrayBytesize", "array is Null-Pointer.");
       return 0;
     }
     if(naIsByteArrayEmpty(array))
-      naError("naGetByteArraySize", "array is empty.");
+      naError("naGetByteArrayBytesize", "array is empty.");
   #endif
-  return naEndToMaxi(naGetByteArraySize(array));
+  return naMakeMaxWithEndi(naGetByteArrayBytesize(array));
 }
 
 
@@ -196,7 +196,7 @@ NA_IDEF void naLastByteArray(const NAByteArray* array){
       return;
     }
   #endif
-  mutablearray->indx = naGetByteArraySize(array) - 1;
+  mutablearray->indx = naGetByteArrayBytesize(array) - 1;
 }
 
 
@@ -297,18 +297,18 @@ NA_IDEF NAUInt naGetByteArrayCurrentIndex(const NAByteArray* array){
 
 
 
-NA_IDEF NAUInt naGetByteArrayRemainingSize(const NAByteArray* array){
+NA_IDEF NAUInt naGetByteArrayRemainingBytesize(const NAByteArray* array){
   NAUInt retvalue;
   #ifndef NDEBUG
     if(!array){
-      naCrash("naGetByteArrayRemainingSize", "array is Null-Pointer.");
+      naCrash("naGetByteArrayRemainingBytesize", "array is Null-Pointer.");
       return 0;
     }
   #endif
-  retvalue = naGetByteArraySize(array) - array->indx;
+  retvalue = naGetByteArrayBytesize(array) - array->indx;
   #ifndef NDEBUG
-    if(!naInsidei(0, naGetByteArraySize(array), retvalue))
-      naError("naGetByteArrayRemainingSize", "return value does not fit array bounds.");
+    if(!naInsidei(0, naGetByteArrayBytesize(array), retvalue))
+      naError("naGetByteArrayRemainingBytesize", "return value does not fit array bounds.");
   #endif
   return retvalue;
 }
@@ -323,7 +323,7 @@ NA_IDEF NABool naLocateByteArrayIndex(const NAByteArray* array, NAInt indx){
       return 0;
     }
   #endif
-  if(indx < 0){indx += naGetByteArraySize(array);}
+  if(indx < 0){indx += naGetByteArrayBytesize(array);}
   mutablearray->indx = indx;
   return naInsidei(0, naGetMemoryBlockMaxIndex(&(array->memblock)), indx);
 }

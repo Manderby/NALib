@@ -70,7 +70,7 @@ NA_DEF void naStartApplication(NAFunc prestartup, NAFunc poststartup, void* arg)
 
 NA_DEF void naCallApplicationFunctionInSeconds(NAFunc function, void* arg, double timediff){
   dispatch_time_t nexttime = dispatch_time(DISPATCH_TIME_NOW, 1000000000 * timediff);
-  dispatch_queue_t queue = dispatch_get_current_queue();
+  dispatch_queue_t queue = dispatch_get_main_queue();
   dispatch_after_f(nexttime, queue, arg, function);
 }
 
@@ -187,7 +187,7 @@ NA_HDEF NARect naGetViewAbsoluteInnerRect(NACoreUIElement* view){
 
 
 
-NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeuielement, NABool includebounds){
+NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeuielement, NABool includeborder){
   NARect rect;
   NARect relrect;
   NACoreUIElement* element;
@@ -213,7 +213,7 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
   case NA_UI_APPLICATION: rect = naGetApplicationAbsoluteRect(); break;
   case NA_UI_SCREEN:      rect = naGetScreenAbsoluteRect(element); break;
   case NA_UI_WINDOW:
-    if(includebounds){
+    if(includeborder){
       rect = naGetWindowAbsoluteOuterRect(element);
     }else{
       rect = naGetWindowAbsoluteInnerRect(element);
@@ -407,9 +407,11 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 
 
 @implementation NANativeOpenGLView
-- (id)initWithNALibView:(NAOpenGLView*)naopenglview frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat{
+- (id)initWithNALibView:(NAOpenGLView*)naopenglview frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAFunc)newinitFunc initData:(void*)newinitData{
   self = [super initWithFrame:frameRect pixelFormat:pixelformat];
   nalibopenglview = naopenglview;
+  initFunc = newinitFunc;
+  initData = newinitData;
   return self;
 }
 - (BOOL)acceptsFirstResponder{
@@ -422,12 +424,16 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
   // this is not done, sometimes, the double buffer will not work properly.
   GLint swapInt = 1;
   [[self openGLContext] setValues:&swapInt forParameter:NSOpenGLCPSwapInterval];
+
+  // Now the OpenGL context is created and current. We can initialize it
+  // if necessary.
+  if(initFunc){
+    initFunc(initData);
+  }
 }
 - (void)drawRect:(NSRect)dirtyRect{
-//    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
   [[self openGLContext] makeCurrentContext];
   naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_REDRAW, &dirtyRect);
-//    [pool release];
 }
 - (void)reshape{
   [[self openGLContext] update];
@@ -463,7 +469,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 
 
 
-NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, double width, double height){
+NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAFunc initfunc, void* initdata){
   NACoreOpenGLView* coreopenglview = naAlloc(NACoreOpenGLView);
 
   // Configure the OpenGL Context and initialize this object.
@@ -475,8 +481,8 @@ NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, double width, double heig
     NSOpenGLPFAAllowOfflineRenderers, // lets OpenGL know this context is offline renderer aware
 		0 };
 	NSOpenGLPixelFormat *pixelformat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attr] autorelease];
-  NSRect frameRect = NSMakeRect(0.f, 0.f, (CGFloat)width, (CGFloat)height);
-  void* nativeID = [[[NANativeOpenGLView alloc] initWithNALibView:coreopenglview frame:frameRect pixelFormat:pixelformat] autorelease];
+  NSRect frameRect = NSMakeRect(0.f, 0.f, (CGFloat)size.width, (CGFloat)size.height);
+  void* nativeID = [[[NANativeOpenGLView alloc] initWithNALibView:coreopenglview frame:frameRect pixelFormat:pixelformat initFunc:initfunc initData:initdata] autorelease];
   
 //  if([self respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
 //    #if defined __MAC_10_7

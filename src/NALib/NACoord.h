@@ -14,7 +14,7 @@
 // positions and lenghts on 1-D, 2-D and 3-D coordinate systems. Namely:
 //
 // 1-D: NARange
-// 2-D: NAPos, NASize, NARect, NABounds4
+// 2-D: NAPos, NASize, NARect
 // 3-D: NAVertex, NAVolume, NABox
 //
 // When coordinate functions are used, they usually are used a lot hence having
@@ -38,17 +38,71 @@
 // well being very secure.
 //
 //
+// About the naming of the elements:
+//
+// There is no final solution on how to name certain fields of the coord
+// struct as they are used in various situations while programming. NALib
+// tries to be somewhat consistent concerning the following naming scheme:
+//
+// pos      A "pos" denotes a position. In NALib, it is only used with the
+//          NAPos type which is a two-dimensional position (x, y).
+// origin   An "origin" always has the semantic meaning of a starting point
+//          and does not exist as its own type. An origin can have various
+//          types, sometimes denoting a coordinate or some kind of position
+//          within a structure like a tree.
+// offset   An "offset" denotes a position relative to a base like zero, an
+//          origin or some other kind of starting point. An offset sometimes
+//          is denoted with a one-word like "byteoffset" or "charoffset".
+//
+// start    A "start" is the first value of a range. It does not matter if
+//          the range is of floating point or integer type. Semantically, it
+//          is different to the "min" value, as "start" can be greater than
+//          end and hence giving a range a negative length.
+// end      The "end" is the counterpart of the "start": It denotes the last
+//          value of a range. Note that the floating point "end" is different
+//          from the integer "end". See paragraph below.
+// min      The "min" has the semantical meaning of the minimal value of a
+//          range. But it nontheless is always returning the first value of
+//          a range. In case a range has a negative length and hence the
+//          first value being greater than the last, a warning will be
+//          emitted. The "min" value is only needed in integer ranges in
+//          combination with the "max" value.
+// max      The "max" value is only used for integer ranges and denotes one
+//          value before the end. This is especially useful when working with
+//          indices.
+//
+// size     A "size" is in natural speaking the general term for anything
+//          using some kind of space to be existent. In NALib correspondingly,
+//          a size describes the amount of bytes used in RAM. But to avoid
+//          confusion, such a size is always denoted as a one-word like
+//          "Bytesize", "Typesize", "Filesize" or "Pagesize" but never as
+//          a plain "Size".
+//          "NASize" on the other hand is a struct which stores two-dimensional
+//          coordinate data (width, height) and in the corresponding situations
+//          is always refered to as "size".
+// length   A "length" is everything which has a one-dimensional size whereas
+//          it has a semantic meaning of a "whole" rather than being a
+//          collection of individual elements. A length can be looked at as
+//          a measurement and can be both continuous (with floating point) or
+//          discrete (with integer) and it can also be negative.
+// count    A "count" is used, where the focus is on individual elements like
+//          for example the number of elements in a list or an array. A count
+//          should always be positive. In case that a count is negative, it
+//          has a special meaning and is documented in the NALib API.
+//
+//
 // Integer versus Floating-point
 // -----------------------------
 // Note that the integer variant of the structs behaves differently than
-// the floating-point variant. The floating-point-variant treats sizes like
-// "inclusive". For example:
-// The floating-point Rect (Pos (0., 0.), Size (5., 5.)) contains Pos (5., 5.).
-// The integer        Recti(Posi(0 , 0 ), Sizei(5 , 5 )) contains Posi(4 , 4 )
-// but not Posi(5, 5).
+// the floating-point variant.
+// The floating-point-variant treats sizes [inclusive - inclusive]
+// The integer-       variant treats sizes [inclusive - exclusive)
+// For example:
+// The floating-point Range  (origin:0, length:5) contains offset 5.
+// The integer        Rangei (origin:0, length:5) contains offset 4 but not 5.
 //
-// The integer variants are good for indexes. Therefore, the integer variants
-// of NARect denote both a "Max" and an "End". The "End" is computed pos+width.
+// The integer variants are good for indexes. Therefore, all integer variants
+// denote both a "Max" and an "End". The "End" is computed offset+size.
 // The "Max" is computed End-1. For example, use the End for the terminating
 // condition of a for-loop. Use the Max to access the last element.
 
@@ -73,9 +127,6 @@ typedef struct NASizei    NASizei;
 typedef struct NARect     NARect;
 typedef struct NARecti    NARecti;
 
-typedef struct NABounds4  NABounds4;
-typedef struct NABounds4i NABounds4i;
-
 // 3-D Coordinates: Vertex, Volume and Box
 typedef struct NAVertex   NAVertex;
 typedef struct NAVertexi  NAVertexi;
@@ -84,32 +135,35 @@ typedef struct NAVolumei  NAVolumei;
 typedef struct NABox      NABox;
 typedef struct NABoxi     NABoxi;
 
+// 2-D Coordinates: Bounds (Top-Right-Bottom-Left)
+typedef struct NABounds4  NABounds4;
+typedef struct NABounds4i NABounds4i;
+
 // The types are presented as non-opaque as the programmer wants to access the
 // parts of the structs.
 //
 // Please excuse this formatting. It is usually not recommended but here, it
 // would be much more confusing if written otherwise.
-struct NARange{   double offset;   double length;};
-struct NARangef{  float  offset;   float  length;};
-struct NARangei{  NAInt  offset;   NAInt  length;};
+struct NARange{     double origin;   double length;};
+struct NARangef{    float  origin;   float  length;};
+struct NARangei{    NAInt  origin;   NAInt  length;};
 
-struct NAPos{     double x;     double  y;     };
-struct NAPosi{    NAInt  x;     NAInt   y;     };
-struct NASize{    double width; double  height;};
-struct NASizei{   NAInt  width; NAInt   height;};
-struct NARect{    NAPos  pos;   NASize  size;  };
-struct NARecti{   NAPosi pos;   NASizei size;  };
+struct NAPos{       double x;     double  y;     };
+struct NAPosi{      NAInt  x;     NAInt   y;     };
+struct NASize{      double width; double  height;};
+struct NASizei{     NAInt  width; NAInt   height;};
+struct NARect{      NAPos  pos;   NASize  size;  };
+struct NARecti{     NAPosi pos;   NASizei size;  };
 
-struct NABounds4{ double top;   double  right; double bottom; double left;};
-struct NABounds4i{NAInt  top;   NAInt   right; NAInt  bottom; NAInt  left;};
+struct NAVertex{    double    x;      double    y;        double  z;   };
+struct NAVertexi{   NAInt     x;      NAInt     y;        NAInt   z;   };
+struct NAVolume{    double    width;  double    height;   double depth;};
+struct NAVolumei{   NAInt     width;  NAInt     height;   NAInt  depth;};
+struct NABox{       NAVertex  vertex; NAVolume  volume;};
+struct NABoxi{      NAVertexi vertex; NAVolumei volume;};
 
-struct NAVertex{  double    x;      double    y;        double  z;   };
-struct NAVertexi{ NAInt     x;      NAInt     y;        NAInt   z;   };
-struct NAVolume{  double    width;  double    height;   double depth;};
-struct NAVolumei{ NAInt     width;  NAInt     height;   NAInt  depth;};
-struct NABox{     NAVertex  vertex; NAVolume  volume;};
-struct NABoxi{    NAVertexi vertex; NAVolumei volume;};
-
+struct NABounds4{   double top;   double  right; double bottom; double left;};
+struct NABounds4i{  NAInt  top;   NAInt   right; NAInt  bottom; NAInt  left;};
 
 
 
@@ -117,65 +171,132 @@ struct NABoxi{    NAVertexi vertex; NAVolumei volume;};
 // Create the various elements
 // The Variants with E also allow the sizes and rects to be empty or negative.
 // The Variants with S expect scalar values instead of structs
-NA_IAPI NARange  naMakeRange  (double offset, double length);
-NA_IAPI NARangef naMakeRangef (float  offset, float  length);
-NA_IAPI NARangei naMakeRangei (NAInt  offset, NAInt  length);
+NA_IAPI NARange  naMakeRange  (double origin, double length);
+NA_IAPI NARangef naMakeRangef (float  origin, float  length);
+NA_IAPI NARangei naMakeRangei (NAInt  origin, NAInt  length);
+NA_IAPI NARangei naMakeRangeiE(NAInt  origin, NAInt  length);
 
 NA_IAPI NAPos    naMakePos    (double x,      double  y);
-NA_IAPI NASize   naMakeSize   (double width,  double  height);
-NA_IAPI NASize   naMakeSizeE  (double width,  double  height);
-NA_IAPI NARect   naMakeRect   (NAPos  pos,    NASize  size);
-NA_IAPI NARect   naMakeRectE  (NAPos  pos,    NASize  size);
-NA_IAPI NARect   naMakeRectS  (double x, double y, double width, double height);
-NA_IAPI NARect   naMakeRectSE (double x, double y, double width, double height);
-
 NA_IAPI NAPosi   naMakePosi   (NAInt  x,      NAInt   y);
+
+NA_IAPI NASize   naMakeSize   (double width,  double  height);
 NA_IAPI NASizei  naMakeSizei  (NAInt  width,  NAInt   height);
+NA_IAPI NASize   naMakeSizeE  (double width,  double  height);
 NA_IAPI NASizei  naMakeSizeiE (NAInt  width,  NAInt   height);
+
+NA_IAPI NARect   naMakeRect   (NAPos  pos,    NASize  size);
 NA_IAPI NARecti  naMakeRecti  (NAPosi pos,    NASizei size);
+NA_IAPI NARect   naMakeRectE  (NAPos  pos,    NASize  size);
 NA_IAPI NARecti  naMakeRectiE (NAPosi pos,    NASizei size);
-NA_IAPI NARecti  naMakeRectiS (NAInt x, NAInt y, NAInt width, NAInt height);
-NA_IAPI NARecti  naMakeRectiSE(NAInt x, NAInt y, NAInt width, NAInt height);
+NA_IAPI NARect   naMakeRectS  (double x, double y, double width, double height);
+NA_IAPI NARecti  naMakeRectiS (NAInt  x, NAInt  y, NAInt  width, NAInt  height);
+NA_IAPI NARect   naMakeRectSE (double x, double y, double width, double height);
+NA_IAPI NARecti  naMakeRectiSE(NAInt  x, NAInt  y, NAInt  width, NAInt  height);
 
-NA_IAPI NABounds4   naMakeBounds4 (double top,
-                                   double right,
-                                   double bottom,
-                                   double left);
-NA_IAPI NABounds4i  naMakeBounds4i(NAInt  top,
-                                   NAInt  right,
-                                   NAInt  bottom,
-                                   NAInt  left);
+NA_IAPI NABounds4  naMakeBounds4 (double top, double right, double bottom, double left);
+NA_IAPI NABounds4i naMakeBounds4i(NAInt  top, NAInt  right, NAInt  bottom, NAInt  left);
 
-NA_IAPI NAVertex    naMakeVertex  (double   x,     double y,      double z);
-NA_IAPI NAVolume    naMakeVolume  (double   width, double height, double depth);
-NA_IAPI NAVolume    naMakeVolumeE (double   width, double height, double depth);
-NA_IAPI NABox       naMakeBox     (NAVertex pos,   NAVolume size);
-NA_IAPI NABox       naMakeBoxE    (NAVertex pos,   NAVolume size);
+NA_IAPI NAVertex    naMakeVertex  (double x, double y, double z);
+NA_IAPI NAVertexi   naMakeVertexi (NAInt  x, NAInt  y, NAInt  z);
 
-NA_IAPI NAVertexi   naMakeVertexi (NAInt x,      NAInt y,       NAInt z);
-NA_IAPI NAVolumei   naMakeVolumei (NAInt width,  NAInt height,  NAInt depth);
-NA_IAPI NAVolumei   naMakeVolumeiE(NAInt width,  NAInt height,  NAInt depth);
-NA_IAPI NABoxi      naMakeBoxi    (NAVertexi pos,  NAVolumei size);
-NA_IAPI NABoxi      naMakeBoxiE   (NAVertexi pos,  NAVolumei size);
+NA_IAPI NAVolume    naMakeVolume  (double  width, double height, double depth);
+NA_IAPI NAVolumei   naMakeVolumei (NAInt   width, NAInt  height, NAInt  depth);
+NA_IAPI NAVolume    naMakeVolumeE (double  width, double height, double depth);
+NA_IAPI NAVolumei   naMakeVolumeiE(NAInt   width, NAInt  height, NAInt  depth);
+
+NA_IAPI NABox       naMakeBox     (NAVertex  vertex,  NAVolume  volume);
+NA_IAPI NABoxi      naMakeBoxi    (NAVertexi vertex,  NAVolumei volume);
+NA_IAPI NABox       naMakeBoxS    (double x, double y, double z, double width, double height, double depth);
+NA_IAPI NABoxi      naMakeBoxiS   (NAInt  x, NAInt  y, NAInt  z, NAInt  width, NAInt  height, NAInt  depth);
+NA_IAPI NABox       naMakeBoxE    (NAVertex  vertex,  NAVolume  volume);
+NA_IAPI NABoxi      naMakeBoxiE   (NAVertexi vertex,  NAVolumei volume);
+NA_IAPI NABox       naMakeBoxSE   (double x, double y, double z, double width, double height, double depth);
+NA_IAPI NABoxi      naMakeBoxiSE  (NAInt  x, NAInt  y, NAInt  z, NAInt  width, NAInt  height, NAInt  depth);
 
 
 // Mac OS X specific stuff
 #ifdef CGGEOMETRY_H_
 NA_IAPI NAPos     naMakePosWithCGPoint(CGPoint cgpoint);
-NA_IAPI NASize    naMakeSizeWithCGSize(CGSize cgsize);
-NA_IAPI NARect    naMakeRectWithCGRect(CGRect cgrect);
+NA_IAPI NASize    naMakeSizeWithCGSize(CGSize  cgsize);
+NA_IAPI NARect    naMakeRectWithCGRect(CGRect  cgrect);
 #endif
 #if defined __OBJC__ && defined __AVAILABILITYMACROS__
 // Note: In order to make this compile, you need to include "NACoord.h" AFTER
 // including <Cocoa/Cocoa.h>
 NA_IAPI NAPos     naMakePosWithNSPoint(NSPoint nspoint);
-NA_IAPI NASize    naMakeSizeWithNSSize(NSSize nssize);
-NA_IAPI NARect    naMakeRectWithNSRect(NSRect nsrect);
-NA_IAPI NSRect    naMakeNSRectWithRect(NARect narect);
+NA_IAPI NASize    naMakeSizeWithNSSize(NSSize  nssize);
+NA_IAPI NARect    naMakeRectWithNSRect(NSRect  nsrect);
+NA_IAPI NSRect    naMakeNSRectWithRect(NARect  narect);
 #endif
 
+// Creates a new origin which is the given origin floored to a multiple of
+// the given alignment. Also works for negative input offsets.
+NA_IAPI NAPosi    naMakePosiWithAlignment    (NAPosi    origin, NARecti alignrect);
+NA_IAPI NAVertexi naMakeVertexiWithAlignment (NAVertexi origin, NABoxi  alignbox);
 
-// Copies the contents of source to dest
+// Create the bounding box of two elements. The range, size or volume of the
+// resulting struct will never be negative. Note that the integer variant of
+// NARange also allows to be made with min and max instead of start and end.
+// The naMakeRectiWithPosAndPos and naMakeBoxiWithVertexAndVertex functions
+// assume the two vertexes to be inside the desired rect or box.
+//
+// The Variants with E also allow the rects to be empty.
+NA_IAPI NARange  naMakeRangeWithStartAndEnd    (double   start,  double end);
+NA_IAPI NARangef naMakeRangefWithStartAndEnd   (float    start,  float  end);
+NA_IAPI NARangei naMakeRangeiWithStartAndEnd   (NAInt    start,  NAInt  end);
+NA_IAPI NARangei naMakeRangeiWithMinAndMax     (NAInt    min,    NAInt  max);
+NA_IAPI NARangei naMakeRangeiWithRangeAndOffset(NARangei range,  NAInt  offset);
+NA_IAPI NARangei naMakeRangeiWithRangeAndRange (NARangei range1, NARangei range2);
+
+NA_IAPI NARect  naMakeRectWithPosAndPos    (NAPos   pos1,  NAPos   pos2);
+NA_IAPI NARect  naMakeRectWithRectAndPos   (NARect  rect,  NAPos   pos);
+NA_IAPI NARect  naMakeRectWithRectAndRect  (NARect  rect1, NARect  rect2);
+NA_IAPI NARect  naMakeRectWithRectAndRectE (NARect  rect1, NARect  rect2);
+NA_IAPI NARecti naMakeRectiWithPosAndPos   (NAPosi  pos1,  NAPosi  pos2);
+NA_IAPI NARecti naMakeRectiWithRectAndPos  (NARecti rect,  NAPosi  pos);
+NA_IAPI NARecti naMakeRectiWithRectAndPosE (NARecti rect,  NAPosi  pos);
+NA_IAPI NARecti naMakeRectiWithRectAndRect (NARecti rect1, NARecti rect2);
+NA_IAPI NARecti naMakeRectiWithRectAndRectE(NARecti rect1, NARecti rect2);
+
+NA_IAPI NABox  naMakeBoxWithVertexAndVertex (NAVertex  vertex1, NAVertex  vertex2);
+NA_IAPI NABox  naMakeBoxWithBoxAndVertex    (NABox     box,     NAVertex  vertex);
+NA_IAPI NABox  naMakeBoxWithBoxAndBoxE      (NABox     box1,    NABox     box2);
+NA_IAPI NABoxi naMakeBoxiWithVertexAndVertex(NAVertexi vertex1, NAVertexi vertex2);
+NA_IAPI NABoxi naMakeBoxiWithBoxAndVertex   (NABoxi    box,     NAVertexi vertex);
+NA_IAPI NABoxi naMakeBoxiWithBoxAndVertexE  (NABoxi    box,     NAVertexi vertex);
+NA_IAPI NABoxi naMakeBoxiWithBoxAndBox      (NABoxi    box1,    NABoxi    box2);
+NA_IAPI NABoxi naMakeBoxiWithBoxAndBoxE     (NABoxi    box1,    NABoxi    box2);
+
+// Returns the intersection of the two elements. May be empty or negative.
+// Note: This is basically the inverse of naMakeBoxiWithBoxAndBox. Use
+// the naIsXXXUseful tests to test if the resulting element actually is a
+// valid intersection.
+NA_IAPI NARangei naMakeRangeiWithRangeIntersection(NARangei range1, NARangei range2);
+NA_IAPI NARecti  naMakeRectiWithRectIntersection  (NARecti  rect1,  NARecti  rect2);
+NA_IAPI NABoxi   naMakeBoxiWithBoxIntersection    (NABoxi   box1,   NABoxi   box2);
+
+// Creates a new rect by adding the given border around the given rect.
+NA_IAPI NARect    naMakeRectWithRectAndBorder  (NARect  rect, double border);
+NA_IAPI NARecti   naMakeRectiWithRectAndBorder (NARecti rect, NAInt  border);
+
+NA_IAPI NABox     naMakeBoxWithBoxAndBorder    (NABox  box, double border);
+NA_IAPI NABoxi    naMakeBoxiWithBoxAndBorder   (NABoxi box, NAInt  border);
+
+// The naMakeRectPositive function ensures that the sizes of the given rect
+// are not negative. If the sizes already were positive or zero, they will not
+// be changed.
+// For example:  A rect with pos(4., 6.) and size (-2., 7.) will change to
+//            -> a rect with pos(2., 6.) and size ( 2., 7.) .
+// But: An integer rect with pos(4 , 6 ) and size (-2 , 7 ) will change to
+//            -> a rect with pos(3 , 6 ) and size ( 2 , 7 ) !
+// Will not perform any debugging tests.
+NA_IAPI NARect    naMakeRectPositive (NARect  rect);
+NA_IAPI NARecti   naMakeRectiPositive(NARecti rect);
+
+NA_IAPI NABox     naMakeBoxPositive (NABox  box);
+NA_IAPI NABoxi    naMakeBoxiPositive(NABoxi box);
+
+// Copies the contents of source s to destination d
 NA_IAPI void      naCopyPos       (NAPos*   posd,   NAPos*   poss);
 NA_IAPI void      naCopyPosi      (NAPosi*  posd,   NAPosi*  poss);
 NA_IAPI void      naCopySize      (NASize*  sized,  NASize*  sizes);
@@ -190,98 +311,43 @@ NA_IAPI void      naCopyVolumei   (NAVolumei* volumed,  NAVolumei* volumes);
 NA_IAPI void      naCopyBox       (NABox*  boxd,  NABox*  boxs);
 NA_IAPI void      naCopyBoxi      (NABoxi* boxd,  NABoxi* boxs);
 
-// Returns the starting offset of a size or volume being centered within a
-// given rect or box.
-NA_IAPI NAPos     naMakePosWithSizeCenteredInRect(NASize size, NARect rect);
-NA_IAPI NAVertex  naMakeVertexWithVolumeCenteredInBox(NAVolume volume,
-                                                         NABox box);
+// Returns the center position / vertex
+NA_IAPI NAPos     naGetRectCenter(NARect rect);
+NA_IAPI NAVertex  naGetBoxCenter (NABox box);
+// Returns the offset of a size or volume being centered within a given rect
+// or box relative to the origin of that rect or box.
+NA_IAPI NAPos     naGetRectCenteredSizeOffset  (NARect rect, NASize   size);
+NA_IAPI NAVertex  naGetBoxCeneteredVolumeOffset(NABox  box,  NAVolume volume);
 
-// Creates a new pos which is floored to a multiple of alignment. Also works
-// for negative positions.
-NA_IAPI NAPosi    naMakePosiWithAlignment(NAPosi pos, NARecti alignrect);
-NA_IAPI NAVertexi naMakeVertexiWithAlignment(NAVertexi vertex, NABoxi alignbox);
+// Clamping functions. Returns the new range.
+NA_IAPI NARangei  naClampRangeiToRange(NARangei range, NARangei clamprange);
+NA_IAPI NARangei  naClampRangeiToMin  (NARangei range, NAInt    min);
+NA_IAPI NARangei  naClampRangeiToEnd  (NARangei range, NAInt    end);
 
+NA_IAPI NAPos     naClampPosToRect  (NAPos   pos,  NARect  clamprect);
+NA_IAPI NAPosi    naClampPosiToRect (NAPosi  pos,  NARecti clamprect);
+NA_IAPI NARect    naClampRectToRect (NARect  rect, NARect  clamprect);
+NA_IAPI NARecti   naClampRectiToRect(NARecti rect, NARecti clamprect);
 
-// Create the bounding box of two elements. The size of the resulting rect will
-// never be negative. Note that the integer variant of NARange also allows to
-// be made with start and end instead with min and max.
-//
-// The Variants with E also allow the rects to be empty.
-NA_IAPI NARange  naMakeRangeWithStartAndEnd (double start, double end);
-NA_IAPI NARangef naMakeRangefWithStartAndEnd(float  start, float  end);
-NA_IAPI NARangei naMakeRangeiWithStartAndEnd(NAInt  start, NAInt  end);
-NA_IAPI NARangei naMakeRangeiWithMinAndMax  (NAInt  min,   NAInt  max);
-
-NA_IAPI NARect    naMakeRectWithPosAndPos       (NAPos   pos1,  NAPos   pos2);
-NA_IAPI NARect    naMakeRectWithRectAndPos      (NARect  rect,  NAPos   pos);
-NA_IAPI NARect    naMakeRectWithRectAndRect     (NARect  rect1, NARect  rect2);
-NA_IAPI NARect    naMakeRectWithRectAndRectE    (NARect  rect1, NARect  rect2);
-NA_IAPI NARecti   naMakeRectiWithPosiAndPosi    (NAPosi  pos1,  NAPosi  pos2);
-NA_IAPI NARecti   naMakeRectiWithRectiAndPosi   (NARecti rect,  NAPosi  pos);
-NA_IAPI NARecti   naMakeRectiWithRectiAndPosiE  (NARecti rect,  NAPosi  pos);
-NA_IAPI NARecti   naMakeRectiWithRectiAndRecti  (NARecti rect1, NARecti rect2);
-NA_IAPI NARecti   naMakeRectiWithRectiAndRectiE (NARecti rect1, NARecti rect2);
-
-NA_IAPI NABox  naMakeBoxWithVertexAndVertex     ( NAVertex vertex1,
-                                                  NAVertex vertex2);
-NA_IAPI NABox  naMakeBoxWithBoxAndVertex        (    NABox box,
-                                                  NAVertex vertex);
-NA_IAPI NABox  naMakeBoxWithBoxAndRect          (    NABox box1,
-                                                     NABox box2);
-NA_IAPI NABox  naMakeBoxWithBoxAndBoxE          (    NABox box1,
-                                                     NABox box2);
-NA_IAPI NABoxi naMakeBoxiWithVertexiAndVertexi  (NAVertexi vertex1,
-                                                 NAVertexi vertex2);
-NA_IAPI NABoxi naMakeBoxiWithBoxiAndVertexi     (   NABoxi box,
-                                                 NAVertexi vertex);
-NA_IAPI NABoxi naMakeBoxiWithBoxiAndVertexiE    (   NABoxi box,
-                                                 NAVertexi vertex);
-NA_IAPI NABoxi naMakeBoxiWithBoxiAndBoxi        (   NABoxi box1,
-                                                    NABoxi box2);
-NA_IAPI NABoxi naMakeBoxiWithBoxiAndBoxiE       (   NABoxi box1,
-                                                    NABoxi box2);
-
-// Returns the intersection of the two elements. May be empty or negative.
-// Note: This is basically the inverse of naMakeBoxiWithBoxiAndBoxi. Use
-// the naIsXXXUseful tests to test if the resulting element actually is a
-// valid intersection.
-NA_IAPI NARangei naMakeRangeiWithRangeiIntersection   ( NARangei  range1,
-                                                        NARangei  range2);
-NA_IAPI NARecti  naMakeRectiWithRectiIntersection     ( NARecti   rect1,
-                                                        NARecti   rect2);
-NA_IAPI NABoxi   naMakeBoxiWithBoxiIntersection       ( NABoxi    box1,
-                                                        NABoxi    box2);
-
-// Creates a new rect by adding the given border around the given rect.
-NA_IAPI NARect    naMakeRectWithRectAndBorder   (NARect  rect, double border);
-NA_IAPI NARecti   naMakeRectiWithRectiAndBorder (NARecti rect, NAInt  border);
-
-NA_IAPI NABox     naMakeBoxWithBoxAndBorder   (NABox  box, double border);
-NA_IAPI NABoxi    naMakeBoxiWithBoxiAndBorder (NABoxi box, NAInt border);
-
-// Clamping functions. Returns the element which is completely within another.
-NA_IAPI NAPos     naClampPosToRect(NAPos pos, NARect clamprect);
-NA_IAPI NARect    naClampRectToRect(NARect rect, NARect clamprect);
-NA_IAPI NAPosi    naClampPosiToRecti(NAPosi pos, NARecti clamprect);
-NA_IAPI NARecti   naClampRectiToRecti(NARecti rect, NARecti clamprect);
-
-NA_IAPI NAVertex  naClampVertexToBox(NAVertex vertex, NABox clampbox);
-NA_IAPI NABox     naClampBoxToBox(NABox box, NABox clampbox);
-NA_IAPI NAVertexi naClampVertexiToBoxi(NAVertexi vertex, NABoxi clampbox);
-NA_IAPI NABoxi    naClampBoxiToBoxi(NABoxi box, NABoxi clampbox);
+NA_IAPI NAVertex  naClampVertexToBox (NAVertex  vertex, NABox  clampbox);
+NA_IAPI NAVertexi naClampVertexiToBox(NAVertexi vertex, NABoxi clampbox);
+NA_IAPI NABox     naClampBoxToBox    (NABox     box,    NABox  clampbox);
+NA_IAPI NABoxi    naClampBoxiToBox   (NABoxi    box,    NABoxi clampbox);
 
 // Use the following functions to make equality tests (==) between elements.
+NA_IAPI NABool    naEqualRangei(NARangei range1, NARangei range2);
+
 NA_IAPI NABool    naEqualPos  (NAPos   pos1,  NAPos   pos2);
-NA_IAPI NABool    naEqualSize (NASize  size1, NASize  size2);
-NA_IAPI NABool    naEqualRect (NARect  rect1, NARect  rect2);
 NA_IAPI NABool    naEqualPosi (NAPosi  pos1,  NAPosi  pos2);
+NA_IAPI NABool    naEqualSize (NASize  size1, NASize  size2);
 NA_IAPI NABool    naEqualSizei(NASizei size1, NASizei size2);
+NA_IAPI NABool    naEqualRect (NARect  rect1, NARect  rect2);
 NA_IAPI NABool    naEqualRecti(NARecti rect1, NARecti rect2);
 
 NA_IAPI NABool    naEqualVertex (NAVertex  vertex1, NAVertex  vertex2);
+NA_IAPI NABool    naEqualVertexi(NAVertexi vertex1, NAVertexi vertex2);
 NA_IAPI NABool    naEqualVolume (NAVolume  volume1, NAVolume  volume2);
 NA_IAPI NABool    naEqualBox    (NABox     box1,    NABox     box2);
-NA_IAPI NABool    naEqualVertexi(NAVertexi vertex1, NAVertexi vertex2);
 NA_IAPI NABool    naEqualVolumei(NAVolumei volume1, NAVolumei volume2);
 NA_IAPI NABool    naEqualBoxi   (NABoxi    box1,    NABoxi    box2);
 
@@ -290,103 +356,90 @@ NA_IAPI NABool    naEqualBoxi   (NABoxi    box1,    NABoxi    box2);
 // from each other returns a size.
 //
 // The returned NASize can be negative or even invalid.
-NA_IAPI NAPos     naAddPosSize  (NAPos   pos,   NASize  size);
-NA_IAPI NAPosi    naAddPosiSizei(NAPosi  pos,   NASizei size);
-NA_IAPI NASize    naSubPosPos   (NAPos   pos1,  NAPos   pos2);
-NA_IAPI NASizei   naSubPosiPosi (NAPosi  pos1,  NAPosi  pos2);
+NA_IAPI NAPos     naAddPosSize (NAPos   pos,   NASize  size);
+NA_IAPI NAPosi    naAddPosiSize(NAPosi  pos,   NASizei size);
+NA_IAPI NASize    naSubPosPos  (NAPos   pos1,  NAPos   pos2);
+NA_IAPI NASizei   naSubPosiPos (NAPosi  pos1,  NAPosi  pos2);
 
-NA_IAPI NAVertex  naAddVertexVolume   (NAVertex   vertex,   NAVolume  volume);
-NA_IAPI NAVertexi naAddVertexiVolumei (NAVertexi  vertex,   NAVolumei volume);
-NA_IAPI NAVolume  naSubVertexPos      (NAVertex   vertex1,  NAVertex  vertex2);
-NA_IAPI NAVolumei naSubVertexiVertexi (NAVertexi  vertex1,  NAVertexi vertex2);
+NA_IAPI NAVertex  naAddVertexVolume (NAVertex   vertex,   NAVolume  volume);
+NA_IAPI NAVertexi naAddVertexiVolume(NAVertexi  vertex,   NAVolumei volume);
+NA_IAPI NAVolume  naSubVertexPos    (NAVertex   vertex1,  NAVertex  vertex2);
+NA_IAPI NAVolumei naSubVertexiVertex(NAVertexi  vertex1,  NAVertexi vertex2);
 
 // Containing functions. Test if an element is within another.
-NA_IAPI NABool    naIsValueInRange    (double  value,  NARange  outerrange);
-NA_IAPI NABool    naIsValueInRangef   (float   value,  NARangef outerrange);
-NA_IAPI NABool    naIsValueInRangei   (NAInt   value,  NARangei outerrange);
+NA_IAPI NABool    naContainsRangeOffset (NARange  outerrange, double   offset);
+NA_IAPI NABool    naContainsRangefOffset(NARangef outerrange, float    offset);
+NA_IAPI NABool    naContainsRangeiOffset(NARangei outerrange, NAInt    offset);
+NA_IAPI NABool    naContainsRangeiRange (NARangei outerrange, NARangei range);
 
-NA_IAPI NABool    naIsPosInSize   (NAPos   pos,  NASize  outersize);
-NA_IAPI NABool    naIsPosInRect   (NAPos   pos,  NARect  outerrect);
-NA_IAPI NABool    naIsSizeInSize  (NASize  size, NASize  outersize);
-NA_IAPI NABool    naIsRectInRect  (NARect  rect, NARect  outerrect);
-NA_IAPI NABool    naIsPosiInSizei (NAPosi  pos,  NASizei outersize);
-NA_IAPI NABool    naIsPosiInRecti (NAPosi  pos,  NARecti outerrect);
-NA_IAPI NABool    naIsSizeiInSizei(NASizei size, NASizei outersize);
-NA_IAPI NABool    naIsRectiInRecti(NARecti rect, NARecti outerrect);
+NA_IAPI NABool    naContainsSizePos  (NASize  outersize, NAPos   pos);
+NA_IAPI NABool    naContainsSizeiPos (NASizei outersize, NAPosi  pos);
+NA_IAPI NABool    naContainsRectPos  (NARect  outerrect, NAPos   pos);
+NA_IAPI NABool    naContainsRectiPos (NARecti outerrect, NAPosi  pos);
+NA_IAPI NABool    naContainsSizeSize (NASize  outersize, NASize  size);
+NA_IAPI NABool    naContainsSizeiSize(NASizei outersize, NASizei size);
+NA_IAPI NABool    naContainsRectRect (NARect  outerrect, NARect  rect);
+NA_IAPI NABool    naContainsRectiRect(NARecti outerrect, NARecti rect);
 
-NA_IAPI NABool    naIsVertexInVolume  (NAVertex  vertex, NAVolume  outervolume);
-NA_IAPI NABool    naIsVertexInBox  (NAVertex  vertex, NABox  outerbox);
-NA_IAPI NABool    naIsVolumeInVolume  (NAVolume  volume, NAVolume  outervolume);
-NA_IAPI NABool    naIsBoxInBox  (NABox  box, NABox  outerbox);
-NA_IAPI NABool    naIsVertexiInVolumei(NAVertexi vertex, NAVolumei outervolume);
-NA_IAPI NABool    naIsVertexiInBoxi(NAVertexi vertex, NABoxi outerbox);
-NA_IAPI NABool    naIsVolumeiInVolumei(NAVolumei volume, NAVolumei outervolume);
-NA_IAPI NABool    naIsBoxiInBoxi(NABoxi box, NABoxi outerbox);
+NA_IAPI NABool    naContainsVolumeVertex (NAVolume  outervolume, NAVertex  vertex);
+NA_IAPI NABool    naContainsVolumeiVertex(NAVolumei outervolume, NAVertexi vertex);
+NA_IAPI NABool    naContainsBoxVertex    (NABox     outerbox,    NAVertex  vertex);
+NA_IAPI NABool    naContainsBoxiVertex   (NABoxi    outerbox,    NAVertexi vertex);
+NA_IAPI NABool    naContainsVolumeVolume (NAVolume  outervolume, NAVolume  volume);
+NA_IAPI NABool    naContainsVolumeiVolume(NAVolumei outervolume, NAVolumei volume);
+NA_IAPI NABool    naContainsBoxBox       (NABox     outerbox,    NABox     box);
+NA_IAPI NABool    naContainsBoxiBox      (NABoxi    outerbox,    NABoxi    box);
 
 // Get the End-Point of a rect. Is the same as origin + size.
-NA_IAPI double    naGetRangeEnd   (NARange  range);
-NA_IAPI float     naGetRangefEnd  (NARangef range);
+NA_IAPI double    naGetRangeEnd (NARange  range);
+NA_IAPI float     naGetRangefEnd(NARangef range);
 
 NA_IAPI double    naGetRectEndX (NARect  rect);
 NA_IAPI double    naGetRectEndY (NARect  rect);
 
-NA_IAPI double    naGetBoxEndX (NABox  box);
-NA_IAPI double    naGetBoxEndY (NABox  box);
-NA_IAPI double    naGetBoxEndZ (NABox  box);
+NA_IAPI double    naGetBoxEndX  (NABox  box);
+NA_IAPI double    naGetBoxEndY  (NABox  box);
+NA_IAPI double    naGetBoxEndZ  (NABox  box);
 
-// Computes the positions opposite to the origin (pos) of the rect.
-// End returns position + size
-// Max returns position + size - 1
-NA_IAPI NAInt     naGetRangeiEnd      (NARangei range);
-NA_IAPI NAInt     naGetRangeiMax      (NARangei range);
+// Computes the positions opposite to the origin of the rect.
+// End returns origin + size
+// Max returns oritin + size - 1
+NA_IAPI NAInt     naGetRangeiEnd (NARangei range);
+NA_IAPI NAInt     naGetRangeiMax (NARangei range);
 
-NA_IAPI NAPosi    naGetRectiEnd         (NARecti rect);
-NA_IAPI NAInt     naGetRectiEndX        (NARecti rect);
-NA_IAPI NAInt     naGetRectiEndY        (NARecti rect);
-NA_IAPI NAPosi    naGetRectiEndPos      (NARecti rect);
-NA_IAPI NAInt     naGetRectiMaxX        (NARecti rect);
-NA_IAPI NAInt     naGetRectiMaxY        (NARecti rect);
-NA_IAPI NAPosi    naGetRectiMaxPos      (NARecti rect);
+NA_IAPI NAPosi    naGetRectiEnd  (NARecti rect);
+NA_IAPI NAInt     naGetRectiEndX (NARecti rect);
+NA_IAPI NAInt     naGetRectiEndY (NARecti rect);
+NA_IAPI NAPosi    naGetRectiMax  (NARecti rect);
+NA_IAPI NAInt     naGetRectiMaxX (NARecti rect);
+NA_IAPI NAInt     naGetRectiMaxY (NARecti rect);
 
-NA_IAPI NAVertexi naGetBoxiEnd         (NABoxi box);
-NA_IAPI NAInt     naGetBoxiEndX        (NABoxi box);
-NA_IAPI NAInt     naGetBoxiEndY        (NABoxi box);
-NA_IAPI NAInt     naGetBoxiEndZ        (NABoxi box);
-NA_IAPI NAVertexi naGetBoxiEndVertex   (NABoxi box);
-NA_IAPI NAInt     naGetBoxiMaxX        (NABoxi box);
-NA_IAPI NAInt     naGetBoxiMaxY        (NABoxi box);
-NA_IAPI NAInt     naGetBoxiMaxZ        (NABoxi box);
-NA_IAPI NAVertexi naGetBoxiMaxVertex   (NABoxi box);
+NA_IAPI NAVertexi naGetBoxiEnd   (NABoxi box);
+NA_IAPI NAInt     naGetBoxiEndX  (NABoxi box);
+NA_IAPI NAInt     naGetBoxiEndY  (NABoxi box);
+NA_IAPI NAInt     naGetBoxiEndZ  (NABoxi box);
+NA_IAPI NAVertexi naGetBoxiMax   (NABoxi box);
+NA_IAPI NAInt     naGetBoxiMaxX  (NABoxi box);
+NA_IAPI NAInt     naGetBoxiMaxY  (NABoxi box);
+NA_IAPI NAInt     naGetBoxiMaxZ  (NABoxi box);
 
 // Raw Index functions. Assuming a 2-dimensional or 3-dimensional array with
 // row-first or column-first ordering. Row-first is the default C ordering.
-NA_IAPI NAUInt   naGetIndexWithOriginAndPosiRowFirst(       NAPosi origin,
-                                                            NAPosi pos,
-                                                            NAUInt width);
-NA_IAPI NAUInt   naGetIndexWithOriginAndPosiColumnFirst(    NAPosi origin,
-                                                            NAPosi pos,
-                                                            NAUInt height);
-NA_IAPI NAUInt   naGetIndexWithOriginAndVertexiRowFirst(    NAVertexi origin,
-                                                            NAVertexi vertex,
-                                                            NAUInt width,
-                                                            NAUInt height);
-NA_IAPI NAUInt   naGetIndexWithOriginAndVertexiColumnFirst( NAVertexi origin,
-                                                            NAVertexi vertex,
-                                                            NAUInt depth,
-                                                            NAUInt height);
+NA_IAPI NAUInt   naGetIndexWithOriginAndPosRowFirst(       NAPosi    origin, NAPosi    offset, NAUInt width);
+NA_IAPI NAUInt   naGetIndexWithOriginAndPosColumnFirst(    NAPosi    origin, NAPosi    offset, NAUInt height);
+NA_IAPI NAUInt   naGetIndexWithOriginAndVertexRowFirst(    NAVertexi origin, NAVertexi vertex, NAUInt width, NAUInt height);
+NA_IAPI NAUInt   naGetIndexWithOriginAndVertexColumnFirst( NAVertexi origin, NAVertexi vertex, NAUInt depth, NAUInt height);
 
-// Count returns the total count width*height of a rect
+// Count returns the total number of indices (width*height) within a rect.
 // IndexOf returns the index of the corresponding 1-dimensional array.
 // Note that row-first is the default C ordering.
-NA_IAPI NAInt     naGetRectiIndexCount              (NARecti rect);
-NA_IAPI NAUInt    naGetRectiIndexOfPosiRowFirst     (NARecti rect, NAPosi pos);
-NA_IAPI NAUInt    naGetRectiIndexOfPosiColumnFirst  (NARecti rect, NAPosi pos);
+NA_IAPI NAInt     naGetRectiIndexCount             (NARecti rect);
+NA_IAPI NAUInt    naGetRectiIndexOfPosRowFirst     (NARecti rect, NAPosi pos);
+NA_IAPI NAUInt    naGetRectiIndexOfPosColumnFirst  (NARecti rect, NAPosi pos);
 
-NA_IAPI NAInt     naGetBoxiIndexCount                 (NABoxi box);
-NA_IAPI NAUInt    naGetBoxiIndexOfVertexiRowFirst     (NABoxi box,
-                                                          NAVertexi vertex);
-NA_IAPI NAUInt    naGetBoxiIndexOfVertexiColumnFirst  (NABoxi box,
-                                                          NAVertexi vertex);
+NA_IAPI NAInt     naGetBoxiIndexCount              (NABoxi box);
+NA_IAPI NAUInt    naGetBoxiIndexOfVertexRowFirst   (NABoxi box, NAVertexi vertex);
+NA_IAPI NAUInt    naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex);
 // Example:    Rect(Pos(2, 5), Size(4, 3)) describes a 2D-field. It stores
 //             a corresponding 1D-Array {a, b, c, d, e, f, g, h, i, j, k, l}.
 // (a b c d)   End is (6, 8), Max is (5, 7). Count is 3*4 = 12
@@ -457,12 +510,12 @@ NA_IAPI NABool    naIsRectEmpty     (NARect  rect);
 NA_IAPI NABool    naIsRectiEmpty    (NARecti rect);
 NA_IAPI NABool    naIsRectiEmptySlow(NARecti rect);
 
-NA_IAPI NABool    naIsVolumeEmpty     (NAVolume   volume);
-NA_IAPI NABool    naIsVolumeiEmpty    (NAVolumei  volume);
+NA_IAPI NABool    naIsVolumeEmpty     (NAVolume  volume);
+NA_IAPI NABool    naIsVolumeiEmpty    (NAVolumei volume);
 NA_IDEF NABool    naIsVolumeiEmptySlow(NAVolumei volume);
-NA_IAPI NABool    naIsBoxEmpty        (NABox      box);
-NA_IAPI NABool    naIsBoxiEmpty       (NABoxi     box);
-NA_IAPI NABool    naIsBoxiEmptySlow   (NABoxi     box);
+NA_IAPI NABool    naIsBoxEmpty        (NABox     box);
+NA_IAPI NABool    naIsBoxiEmpty       (NABoxi    box);
+NA_IAPI NABool    naIsBoxiEmptySlow   (NABoxi    box);
 
 // Returns NA_TRUE for sizes with negative entries. Will not perform any
 // debugging tests.
@@ -512,19 +565,6 @@ NA_IAPI NABool    naIsVolumeiUseful (NAVolumei volume);
 NA_IAPI NABool    naIsBoxUseful  (NABox  box);
 NA_IAPI NABool    naIsBoxiUseful (NABoxi box);
 
-// The naMakeRectPositive function ensures that the sizes of the given rect
-// are not negative. If the sizes already were positive or zero, they will not
-// be changed.
-// For example:  A rect with pos(4., 6.) and size (-2., 7.) will change to
-//            -> a rect with pos(2., 6.) and size ( 2., 7.) .
-// But: An integer rect with pos(4 , 6 ) and size (-2 , 7 ) will change to
-//            -> a rect with pos(3 , 6 ) and size ( 2 , 7 ) !
-// Will not perform any debugging tests.
-NA_IAPI NARect    naMakeRectPositive (NARect  rect);
-NA_IAPI NARecti   naMakeRectiPositive(NARecti rect);
-
-NA_IAPI NABox     naMakeBoxPositive (NABox  box);
-NA_IAPI NABoxi    naMakeBoxiPositive(NABoxi box);
 
 
 

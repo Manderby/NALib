@@ -25,7 +25,7 @@
 // //////////////////////////////////////
 
 
-NA_IDEF NAUInt naGetSystemMemoryPageSize(){
+NA_IDEF NAUInt naGetSystemMemoryPagesize(){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     SYSTEM_INFO info;
     GetSystemInfo(&info);
@@ -37,19 +37,19 @@ NA_IDEF NAUInt naGetSystemMemoryPageSize(){
 
 
 
-NA_IDEF NAUInt naGetSystemMemoryPageSizeMask(){
-  return ~(NAUInt)(naGetSystemMemoryPageSize() - NA_ONE);
+NA_IDEF NAUInt naGetSystemMemoryPagesizeMask(){
+  return ~(NAUInt)(naGetSystemMemoryPagesize() - NA_ONE);
 }
 
 
 
 // Zero fill
 //
-// The following function returns for a given negative size, how big a buffer
+// The following function returns for a given negative bytesize, how big a buffer
 // must be, to include the appended zero bytes.
 //
-// The allocation functions of NALib expect a positive or negative size. If the
-// size is negative, the absolute value is used to allocate sufficient space
+// The allocation functions of NALib expect a positive or negative bytesize. If the
+// bytesize is negative, the absolute value is used to allocate sufficient space
 // but a certain number of bytes is appended to the memory block which will
 // be initialized with binary zero but will not be visible to the programmer.
 // 
@@ -59,28 +59,28 @@ NA_IDEF NAUInt naGetSystemMemoryPageSizeMask(){
 //   zero.
 // - There are AT LEAST as many bytes appended as an address requires.
 //   Or more precise: 4 Bytes on 32 Bit systems, 8 Bytes on 64 Bit systems
-// - There are as many bytes allocated such that the total size of the
-//   allocated block is a multiple of an address size, meaning 4 or 8 Bytes
+// - There are as many bytes allocated such that the total bytesize of the
+//   allocated block is a multiple of an address bytesize, meaning 4 or 8 Bytes
 //   depending on the system (32 Bit or 64 Bit).
-// - The total size (including the desired space) is at minimum 2 times
+// - The total bytesize (including the desired space) is at minimum 2 times
 //   the number of bytes needed for an address.
 // - The part without the additional bytes might partially become
 //   initialized with binary zero.
 
-NA_HIDEF NAInt naGetNullTerminationSize(NAInt size){
-  NAInt returnsize;
+NA_HIDEF NAInt naGetNullTerminationBytesize(NAInt bytesize){
+  NAInt returnbytesize;
   #ifndef NDEBUG
-    if((size >= NA_ZERO))
-      naError("naGetNullTerminationSize", "size is not negative");
-    if(size == NA_INVALID_MEMORY_SIZE)
-      naError("naGetNullTerminationSize", "invalid size given");
+    if((bytesize >= NA_ZERO))
+      naError("naGetNullTerminationBytesize", "size is not negative");
+    if(bytesize == NA_INVALID_MEMORY_BYTESIZE)
+      naError("naGetNullTerminationBytesize", "invalid size given");
   #endif
-  returnsize = -size + (NA_SYSTEM_ADDRESS_BYTES << 1) - (-size % NA_SYSTEM_ADDRESS_BYTES);
+  returnbytesize = -bytesize + (NA_SYSTEM_ADDRESS_BYTES << 1) - (-bytesize % NA_SYSTEM_ADDRESS_BYTES);
   #ifndef NDEBUG
-    if(returnsize < NA_ZERO)
-      naError("naGetNullTerminationSize", "given negative size is too close to the minimal integer value");
+    if(returnbytesize < NA_ZERO)
+      naError("naGetNullTerminationBytesize", "given negative size is too close to the minimal integer value");
   #endif
-  return returnsize;
+  return returnbytesize;
 }
 
 
@@ -96,51 +96,46 @@ NA_HIDEF NAInt naGetNullTerminationSize(NAInt size){
 
 
 #ifndef NDEBUG
-  extern NAInt  na_debug_mem_bytecount;
-  extern NAInt  na_debug_mem_invisiblebytecount;
-  extern NABool na_debug_mem_count_bytes;
+  extern NAInt  na_debug_mem_bytesize;
+  extern NAInt  na_debug_mem_invisiblebytesize;
+  extern NABool na_debug_mem_observe_bytes;
   #include "NAThreading.h"
 #endif
 
 
 
-NA_IDEF void* naMalloc(NAInt size){
+NA_IDEF void* naMalloc(NAInt bytesize){
   NAByte* ptr; // Declaration before implementation. Needed for C90.
   NAInt fullsize;
   // ptr is declared as NAByte to simplify accessing individual bytes later
   // in this functions.
 
   #ifndef NDEBUG
-    if(!isMainThread())
-      naError("naMalloc", "Not executed in main thread.");
-  #endif
-
-  #ifndef NDEBUG
-    if(size == NA_ZERO)
+    if(bytesize == NA_ZERO)
       naError("naMalloc", "size is zero.");
   #endif
 
-  if(size > NA_ZERO){
-    ptr = (NAByte*)malloc((size_t)size);
+  if(bytesize > NA_ZERO){
+    ptr = (NAByte*)malloc((size_t)bytesize);
     #ifndef NDEBUG
-      if(na_debug_mem_count_bytes){
-        na_debug_mem_bytecount += size;
+      if(na_debug_mem_observe_bytes){
+        na_debug_mem_bytesize += bytesize;
       }
     #endif
   }else{
     #ifndef NDEBUG
-      if(size == NA_INT_MIN)
+      if(bytesize == NA_INT_MIN)
         naError("naMalloc", "given negative size owerflows NAInt type.");
     #endif
-    fullsize = naGetNullTerminationSize(size);
+    fullsize = naGetNullTerminationBytesize(bytesize);
     #ifndef NDEBUG
-      if(fullsize < -size)
+      if(fullsize < -bytesize)
         naError("naMalloc", "given size including zero filled endbytes overflows NAInt type.");
     #endif
     ptr = (NAByte*)malloc((size_t)fullsize);
     #ifndef NDEBUG
-      if(na_debug_mem_count_bytes){
-        na_debug_mem_bytecount += fullsize;
+      if(na_debug_mem_observe_bytes){
+        na_debug_mem_bytesize += fullsize;
       }
     #endif
     *(NAUInt*)(&(ptr[fullsize - 2 * NA_SYSTEM_ADDRESS_BYTES])) = NA_ZERO;
@@ -162,7 +157,7 @@ NA_IDEF void naFree(void* ptr){
 
 
 
-NA_IDEF void* naMallocAligned(NAUInt size, NAUInt align){
+NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
   void* retptr;
   // Usually, aligned memory can be created in unix like systems using the
   // following three methods. Unfortunately, none of them work reliably on
@@ -173,16 +168,12 @@ NA_IDEF void* naMallocAligned(NAUInt size, NAUInt align){
   // Therefore, a custom implementation is used which is costly but what
   // the hell.
     
-  #ifndef NDEBUG
-    if(!isMainThread())
-      naError("naMalloc", "Not executed in main thread.");
-  #endif
 
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    retptr = _aligned_malloc(size, align);
+    retptr = _aligned_malloc(bytesize, align);
   #else
     // Allocate a full align and a pointer more than required.
-    void* mem = malloc(size + align + sizeof(void*));
+    void* mem = malloc(bytesize + align + sizeof(void*));
     // make a pointer point to the first byte being aligned within the memory
     // allocated in mem which comes after align bytes and a pointer size.
     void** ptr = (void**)((size_t)((NAByte*)mem + align + sizeof(void*)) & ~(align - NA_ONE));
@@ -193,9 +184,9 @@ NA_IDEF void* naMallocAligned(NAUInt size, NAUInt align){
   #endif
   
   #ifndef NDEBUG
-    if(na_debug_mem_count_bytes){
-      na_debug_mem_bytecount += size;
-      na_debug_mem_invisiblebytecount += align + sizeof(void*);
+    if(na_debug_mem_observe_bytes){
+      na_debug_mem_bytesize += bytesize;
+      na_debug_mem_invisiblebytesize += align + sizeof(void*);
     }
   #endif
 
@@ -209,10 +200,10 @@ NA_IDEF void* naMallocAligned(NAUInt size, NAUInt align){
 
 
 
-NA_IDEF void* naMallocPageAligned(NAUInt size){
+NA_IDEF void* naMallocPageAligned(NAUInt bytesize){
   // Note that due to some strange reason, aligned_alloc and valloc not work
   // with clang. Therefore, a simple call to naMallocAligned is used.
-  return naMallocAligned(size, naGetSystemMemoryPageSize());
+  return naMallocAligned(bytesize, naGetSystemMemoryPagesize());
 }
 
 
@@ -232,38 +223,38 @@ NA_IDEF void naFreeAligned(void* ptr){
 
 NA_IDEF void naStartMemoryObservation(){
   #ifndef NDEBUG
-    na_debug_mem_count_bytes = NA_TRUE;
-    na_debug_mem_bytecount = NA_ZERO;
-    na_debug_mem_invisiblebytecount = NA_ZERO;
+    na_debug_mem_observe_bytes = NA_TRUE;
+    na_debug_mem_bytesize = NA_ZERO;
+    na_debug_mem_invisiblebytesize = NA_ZERO;
   #endif
 }
 NA_IDEF void naStopMemoryObservation(){
   #ifndef NDEBUG
-    na_debug_mem_count_bytes = NA_FALSE;
+    na_debug_mem_observe_bytes = NA_FALSE;
   #endif
 }
 NA_IDEF void naContinueMemoryObservation(){
   #ifndef NDEBUG
-    na_debug_mem_count_bytes = NA_TRUE;
+    na_debug_mem_observe_bytes = NA_TRUE;
   #endif
 }
 NA_IDEF NAInt naGetMemoryObservation(){
   #ifndef NDEBUG
-    return na_debug_mem_bytecount + na_debug_mem_invisiblebytecount;
+    return na_debug_mem_bytesize + na_debug_mem_invisiblebytesize;
   #else
     return NA_ZERO;
   #endif
 }
 NA_IDEF NAInt naGetMemoryObservationVisible(){
   #ifndef NDEBUG
-    return na_debug_mem_bytecount;
+    return na_debug_mem_bytesize;
   #else
     return NA_ZERO;
   #endif
 }
 NA_IDEF NAInt naGetMemoryObservationInvisible(){
   #ifndef NDEBUG
-    return na_debug_mem_invisiblebytecount;
+    return na_debug_mem_invisiblebytesize;
   #else
     return NA_ZERO;
   #endif
@@ -301,8 +292,8 @@ struct NAPtr{
   } data;
   #ifndef NDEBUG
     NAUInt flags;               // This field stores some flags.
-    NAUInt visiblebytecount;    // nof bytes of the visible byte storage
-    NAUInt accessiblebytecount; // nof bytes of the accessible byte storage
+    NAUInt visiblebytesize;    // nof bytes of the visible byte storage
+    NAUInt accessiblebytesize; // nof bytes of the accessible byte storage
   #endif
 };
 // Note that this is one of the very, very rare situations, where a union type
@@ -359,38 +350,38 @@ struct NAPtr{
   
   
 
-  NA_HIDEF void naMarkPtrWithVisibleSize(NAPtr* ptr, NAInt visiblebytecount){
-    if(visiblebytecount < NA_ZERO)
-      naError("naMarkPtrWithVisibleSize", "visiblebytecount should not be negative.");
+  NA_HIDEF void naMarkPtrWithVisibleBytesize(NAPtr* ptr, NAInt visiblebytesize){
+    if(visiblebytesize < NA_ZERO)
+      naError("naMarkPtrWithVisibleBytesize", "visiblebytesize should not be negative.");
     if(!ptr)
-      {naCrash("naMarkPtrWithVisibleSize", "ptr is Null-Pointer"); return;}
+      {naCrash("naMarkPtrWithVisibleBytesize", "ptr is Null-Pointer"); return;}
     if(ptr->flags & NA_PTR_HAS_VISIBLE_BYTECOUNT)
-      naError("naMarkPtrWithVisibleSize", "visible size already marked");
+      naError("naMarkPtrWithVisibleBytesize", "visible size already marked");
     ptr->flags |= NA_PTR_HAS_VISIBLE_BYTECOUNT;
-    ptr->visiblebytecount = visiblebytecount;
+    ptr->visiblebytesize = visiblebytesize;
   }
   
   
 
-  NA_HIDEF void naMarkPtrWithAccessibleSize(NAPtr* ptr, NAInt accessiblesize, NABool nullterminated){
+  NA_HIDEF void naMarkPtrWithAccessibleBytesize(NAPtr* ptr, NAInt accessiblebytesize, NABool nullterminated){
     NAUInt nullindx;
     if(!ptr)
-      {naCrash("naMarkPtrWithAccessibleSize", "ptr is Null-Pointer"); return;}
+      {naCrash("naMarkPtrWithAccessibleBytesize", "ptr is Null-Pointer"); return;}
     if(!(ptr->flags & NA_PTR_HAS_VISIBLE_BYTECOUNT))
-      naError("naMarkPtrWithAccessibleSize", "visible size must be marked first");
+      naError("naMarkPtrWithAccessibleBytesize", "visible size must be marked first");
     if(ptr->flags & NA_PTR_HAS_ACCESSIBLE_BYTECOUNT)
-      naError("naMarkPtrWithAccessibleSize", "accessible size already marked");
-    if(accessiblesize < NA_ZERO)
-      naError("naMarkPtrWithAccessibleSize", "accessiblesize should not be negative.");
+      naError("naMarkPtrWithAccessibleBytesize", "accessible size already marked");
+    if(accessiblebytesize < NA_ZERO)
+      naError("naMarkPtrWithAccessibleBytesize", "accessiblesize should not be negative.");
     ptr->flags |= NA_PTR_HAS_ACCESSIBLE_BYTECOUNT;
-    ptr->accessiblebytecount = accessiblesize;
+    ptr->accessiblebytesize = accessiblebytesize;
     if(nullterminated){ptr->flags |= NA_PTR_NULL_TERMINATED;}
     
     // Now, we check if the last bytes are indeed zero
-    nullindx = ptr->visiblebytecount;
-    while(nullindx < ptr->accessiblebytecount){
+    nullindx = ptr->visiblebytesize;
+    while(nullindx < ptr->accessiblebytesize){
       if(((const NAByte*)(ptr->data.constd))[nullindx] != '\0')
-        naError("naMarkPtrWithAccessibleSize", "promised null-termination is not null");
+        naError("naMarkPtrWithAccessibleBytesize", "promised null-termination is not null");
       nullindx++;
     }
   }
@@ -417,33 +408,33 @@ NA_IDEF NAPtr naMakeNullPtr(){
     ptr.flags = NA_ZERO; // Do not mark a null pointer as const. Otherwise many
                          // more errors will spawn.
     naMarkPtrCleanup(&ptr, NA_MEMORY_CLEANUP_NONE);
-    naMarkPtrWithVisibleSize(&ptr, NA_ZERO);
-    naMarkPtrWithAccessibleSize(&ptr, NA_ZERO, NA_FALSE);
+    naMarkPtrWithVisibleBytesize(&ptr, NA_ZERO);
+    naMarkPtrWithAccessibleBytesize(&ptr, NA_ZERO, NA_FALSE);
   #endif
   return ptr;
 }
 
 
 
-// Note: Size 0 ist not allowed. Allowing it would introduce an if statement
+// Note: bytesize 0 ist not allowed. Allowing it would introduce an if statement
 // which should not exist at this low level function. A debug error will fire
 // and you have to deal with zero sizes in higher level functions.
-NA_IDEF NAPtr naMakePtrWithSize(NAInt size){
+NA_IDEF NAPtr naMakePtrWithBytesize(NAInt bytesize){
   NAPtr ptr;
   #ifndef NDEBUG
-    if(size == NA_ZERO)
-      naError("naMakePtrWithSize", "size is zero.");
+    if(bytesize == NA_ZERO)
+      naError("naMakePtrWithBytesize", "size is zero.");
   #endif
-  ptr.data.d = naMalloc(size);
+  ptr.data.d = naMalloc(bytesize);
   #ifndef NDEBUG
     ptr.flags = NA_ZERO;
     naMarkPtrCleanup(&ptr, NA_MEMORY_CLEANUP_FREE);
-    if(size < NA_ZERO){
-      naMarkPtrWithVisibleSize(&ptr, -size);
-      naMarkPtrWithAccessibleSize(&ptr, naGetNullTerminationSize(size), NA_TRUE);
+    if(bytesize < NA_ZERO){
+      naMarkPtrWithVisibleBytesize(&ptr, -bytesize);
+      naMarkPtrWithAccessibleBytesize(&ptr, naGetNullTerminationBytesize(bytesize), NA_TRUE);
     }else{
-      naMarkPtrWithVisibleSize(&ptr, size);
-      naMarkPtrWithAccessibleSize(&ptr, size, NA_FALSE);
+      naMarkPtrWithVisibleBytesize(&ptr, bytesize);
+      naMarkPtrWithAccessibleBytesize(&ptr, bytesize, NA_FALSE);
     }
   #endif
   return ptr;
@@ -526,16 +517,16 @@ NA_IDEF NAPtr naMakePtrWithConstBuffer(const void* data, NAInt bytesizehint, NAI
     ptr.flags = NA_PTR_CONST_DATA;
     naMarkPtrCleanup(&ptr, NA_MEMORY_CLEANUP_NONE);
     if(bytesizehint < NA_ZERO){
-      naMarkPtrWithVisibleSize(&ptr, -bytesizehint);
-      naMarkPtrWithAccessibleSize(&ptr, -bytesizehint + zerofillhint, NA_TRUE);
+      naMarkPtrWithVisibleBytesize(&ptr, -bytesizehint);
+      naMarkPtrWithAccessibleBytesize(&ptr, -bytesizehint + zerofillhint, NA_TRUE);
     }else{
       if(zerofillhint < NA_ZERO)
         naError("naMakePtrWithConstBuffer", "zerofillhint should be greater-equal zero.");
       // Note that when bytesizehint is zero, zerofillhint is obsolete.
       if((bytesizehint == NA_ZERO) && (zerofillhint != NA_ZERO))
         naError("naMakePtrWithConstBuffer", "zerofillhint should be zero if bytesizehint is zero.");
-      naMarkPtrWithVisibleSize(&ptr, bytesizehint);
-      naMarkPtrWithAccessibleSize(&ptr, bytesizehint, NA_FALSE);
+      naMarkPtrWithVisibleBytesize(&ptr, bytesizehint);
+      naMarkPtrWithAccessibleBytesize(&ptr, bytesizehint, NA_FALSE);
     }
   #else
     NA_UNUSED(bytesizehint);
@@ -555,16 +546,16 @@ NA_IDEF NAPtr naMakePtrWithMutableBuffer(void* data, NAInt bytesizehint, NAInt z
     // Note that the accessiblesize is the same as the visible size because
     // the true amount of null-terminating bytes is unknown.
     if(bytesizehint < NA_ZERO){
-      naMarkPtrWithVisibleSize(&ptr, -bytesizehint);
-      naMarkPtrWithAccessibleSize(&ptr, -bytesizehint + zerofillhint, NA_TRUE);
+      naMarkPtrWithVisibleBytesize(&ptr, -bytesizehint);
+      naMarkPtrWithAccessibleBytesize(&ptr, -bytesizehint + zerofillhint, NA_TRUE);
     }else{
       if(zerofillhint < NA_ZERO)
         naError("naMakePtrWithMutableBuffer", "zerofillhint should be greater-equal zero.");
       // Note that when bytesizehint is zero, zerofillhint is obsolete.
       if((bytesizehint == NA_ZERO) && (zerofillhint != NA_ZERO))
         naError("naMakePtrWithMutableBuffer", "zerofillhint should be zero if bytesizehint is zero.");
-      naMarkPtrWithVisibleSize(&ptr, bytesizehint);
-      naMarkPtrWithAccessibleSize(&ptr, bytesizehint, NA_FALSE);
+      naMarkPtrWithVisibleBytesize(&ptr, bytesizehint);
+      naMarkPtrWithAccessibleBytesize(&ptr, bytesizehint, NA_FALSE);
     }
   #else
     NA_UNUSED(bytesizehint);
@@ -576,33 +567,33 @@ NA_IDEF NAPtr naMakePtrWithMutableBuffer(void* data, NAInt bytesizehint, NAInt z
 
 
 
-NA_IDEF NAPtr naMakePtrWithExtraction(const NAPtr* srcptr, NAUInt offset, NAUInt bytesizehint){
+NA_IDEF NAPtr naMakePtrWithExtraction(const NAPtr* srcptr, NAUInt byteoffset, NAUInt bytesizehint){
   NAPtr dstptr;
   #ifndef NDEBUG
-    if((NAInt)offset < NA_ZERO)
+    if((NAInt)byteoffset < NA_ZERO)
       naError("naMakePtrWithExtraction", "offset seems to be negative but should be unsigned.");
     if((NAInt)bytesizehint < NA_ZERO)
       naError("naMakePtrWithExtraction", "bytesizehint seems to be negative but should be unsigned.");
   #endif
-  dstptr.data.d = &(((NAByte*)(srcptr->data.d))[offset]);
+  dstptr.data.d = &(((NAByte*)(srcptr->data.d))[byteoffset]);
   #ifndef NDEBUG
     // Now, we set the sizes and decide if certain flags still are valid.
     dstptr.flags = srcptr->flags;
-    dstptr.visiblebytecount = bytesizehint;
-    dstptr.accessiblebytecount = srcptr->accessiblebytecount - offset;
+    dstptr.visiblebytesize = bytesizehint;
+    dstptr.accessiblebytesize = srcptr->accessiblebytesize - byteoffset;
     if(!(srcptr->flags & NA_PTR_HAS_VISIBLE_BYTECOUNT)){
       // When no size information is available, the NAPtr struct has no
       // purpose.
       naError("naMakePtrWithExtraction", "No size information available. Cannot debug.");
     }else{
-      if((offset + bytesizehint) < srcptr->visiblebytecount){
+      if((byteoffset + bytesizehint) < srcptr->visiblebytesize){
         // The (offset,size) pair implies the dst array to be smaller than the
         // src array. Therefore, null-termination can no more be guaranteed.
         dstptr.flags &= ~NA_PTR_NULL_TERMINATED;
-      }else if((srcptr->flags & NA_PTR_HAS_ACCESSIBLE_BYTECOUNT) && ((offset + bytesizehint) > srcptr->accessiblebytecount)){
+      }else if((srcptr->flags & NA_PTR_HAS_ACCESSIBLE_BYTECOUNT) && ((byteoffset + bytesizehint) > srcptr->accessiblebytesize)){
         // the (offset,size) pair overflows the accessible size. Very bad!
         naError("naMakePtrWithExtraction", "new offset and size overflows storage");
-      }else if((offset + bytesizehint) > srcptr->visiblebytecount){
+      }else if((byteoffset + bytesizehint) > srcptr->visiblebytesize){
         // the (offset,size) pair overflows the visible size. Ok, but not clean.
         naError("naMakePtrWithExtraction", "new offset and size overflows visible storage");
       }else{
@@ -692,7 +683,7 @@ NA_IDEF NALValue naMakeLValueWithTypesize(NAUInt typesize){
     if((NAInt)typesize < NA_ZERO)
       naError("naMakeLValueWithTypesize", "typesize appears to be negative when interpreted as a signed integer. This is not allowed.");
   #endif
-  lvalue.ptr = naMakePtrWithSize((NAInt)typesize);
+  lvalue.ptr = naMakePtrWithBytesize((NAInt)typesize);
   lvalue.typesize = typesize;
   return lvalue;
 }
@@ -831,7 +822,7 @@ NA_IDEF NAMemoryBlock naMakeMemoryBlockWithBytesize(NAInt bytesize){
     if(bytesize == NA_ZERO)
       naError("naMakeMemoryBlockWithBytesize", "bytesize is zero.");
   #endif
-  memblock.ptr = naMakePtrWithSize(bytesize);
+  memblock.ptr = naMakePtrWithBytesize(bytesize);
   memblock.bytesize = naAbsi(bytesize);
   return memblock;
 }
@@ -856,19 +847,19 @@ NA_IDEF NAMemoryBlock naMakeMemoryBlockWithMutableBuffer(void* buffer, NAInt byt
 
 
 
-NA_IDEF NAMemoryBlock naMakeMemoryBlockWithExtraction(const NAMemoryBlock* srcmemblock, NAUInt offset, NAUInt bytesize){
+NA_IDEF NAMemoryBlock naMakeMemoryBlockWithExtraction(const NAMemoryBlock* srcmemblock, NAUInt byteoffset, NAUInt bytesize){
   NAMemoryBlock dstmemblock;
   #ifndef NDEBUG
     if(naIsMemoryBlockEmpty(srcmemblock))
       naError("naMakeMemoryBlockWithExtraction", "src memory block is empty");
-    if((NAInt)offset < NA_ZERO)
+    if((NAInt)byteoffset < NA_ZERO)
       naError("naMakeMemoryBlockWithExtraction", "offset seems to be negative but should be unsigned.");
     if((NAInt)bytesize < NA_ZERO)
       naError("naMakeMemoryBlockWithExtraction", "bytesize seems to be negative but should be unsigned.");
-    if((offset + bytesize) > srcmemblock->bytesize)
+    if((byteoffset + bytesize) > srcmemblock->bytesize)
       naError("naMakeMemoryBlockWithExtraction", "offset and bytesize range out of bounds");
   #endif
-  dstmemblock.ptr = naMakePtrWithExtraction(&(srcmemblock->ptr), offset, bytesize);
+  dstmemblock.ptr = naMakePtrWithExtraction(&(srcmemblock->ptr), byteoffset, bytesize);
   dstmemblock.bytesize = bytesize;
   return dstmemblock;
 }
@@ -902,7 +893,7 @@ NA_IDEF NAUInt naGetMemoryBlockMaxIndex(const NAMemoryBlock* memblock){
     if(naIsMemoryBlockEmpty(memblock))
       naError("naGetMemoryBlockConstPointer", "memblock is empty.");
   #endif
-  return naEndToMaxi(memblock->bytesize);
+  return naMakeMaxWithEndi(memblock->bytesize);
 }
 
 
@@ -1076,7 +1067,7 @@ NA_IDEF NACArray naMakeCArrayWithTypesizeAndCount(NAUInt typesize, NAInt count){
     if(naSigni(count) != naSigni(totalbytecount))
       naError("naMakeCArrayWithTypesizeAndCount", "count and typesize overflow the integer range.");
   #endif
-  carray.ptr = naMakePtrWithSize(totalbytecount);
+  carray.ptr = naMakePtrWithBytesize(totalbytecount);
   carray.bytesize = naAbsi(totalbytecount);
   carray.typesize = typesize;
   return carray;
@@ -1114,20 +1105,20 @@ NA_IDEF NACArray naMakeCArrayWithMutableBuffer(void* buffer, NAUInt typesize, NA
 
 
 
-NA_IDEF NACArray naMakeCArrayWithExtraction(const NACArray* srccarray, NAUInt offset, NAUInt count){
+NA_IDEF NACArray naMakeCArrayWithExtraction(const NACArray* srccarray, NAUInt elemoffset, NAUInt elemcount){
   NACArray dstcarray;
   #ifndef NDEBUG
     if(naIsCArrayEmpty(srccarray))
       naError("naMakeCArrayWithExtraction", "src memory block is empty");
-    if((NAInt)offset < NA_ZERO)
+    if((NAInt)elemoffset < NA_ZERO)
       naError("naMakeCArrayWithExtraction", "offset seems to be negative but should be unsigned.");
-    if((NAInt)count < NA_ZERO)
+    if((NAInt)elemcount < NA_ZERO)
       naError("naMakeCArrayWithExtraction", "bytesize seems to be negative but should be unsigned.");
-    if(((offset + count) * srccarray->typesize) > srccarray->bytesize)
+    if(((elemoffset + elemcount) * srccarray->typesize) > srccarray->bytesize)
       naError("naMakeCArrayWithExtraction", "offset and bytesize range out of bounds");
   #endif
-  dstcarray.ptr = naMakePtrWithExtraction(&(srccarray->ptr), offset * srccarray->typesize, count * srccarray->typesize);
-  dstcarray.bytesize = count * srccarray->typesize;
+  dstcarray.ptr = naMakePtrWithExtraction(&(srccarray->ptr), elemoffset * srccarray->typesize, elemcount * srccarray->typesize);
+  dstcarray.bytesize = elemcount * srccarray->typesize;
   return dstcarray;
 }
 
@@ -1292,7 +1283,7 @@ NA_IDEF NABool naIsCArrayConst(NACArray* carray){
 struct NABuf{
   NAPtr   ptr;          // pointer to the first byte
   uint64  bytesize;     // total size of the buf in bytes. Always positive.
-  uint64  usedsize;     // size of the used bytes. Always positive.
+  uint64  usedbytesize;     // size of the used bytes. Always positive.
 };
 
 
@@ -1305,7 +1296,7 @@ NA_IDEF NABuf naMakeBuf(){
   // compilers will add guards to non-initialized pointers and will fire
   // with an exception.
   buf.bytesize = NA_ZERO_64;
-  buf.usedsize = NA_ZERO_64;
+  buf.usedbytesize = NA_ZERO_64;
   return buf;
 }
 
@@ -1313,23 +1304,23 @@ NA_IDEF NABuf naMakeBuf(){
 
 // maxsize must never be zero. When debugging, an error will be emitted and
 // you have to deal with the problem in a higher level function.
-NA_IDEF NABuf naMakeBufWithSize(int64 maxsize, int64 usedsize){
+NA_IDEF NABuf naMakeBufWithBytesize(int64 maxbytesize, int64 usedbytesize){
   NABuf buf;
   #ifndef NDEBUG
-    if(maxsize == NA_ZERO_64)
-      naError("naMakeBufWithMaxSize", "maxsize is zero.");
-    if(maxsize < NA_ZERO_64)
-      naError("naMakeBufWithMaxSize", "maxsize must be positive. Zero fill check might fail with NABuf");
-    if(usedsize < NA_ZERO_64)
-      naError("naMakeBufWithMaxSize", "usedsize must be positive.");
-    if(usedsize > maxsize)
-      naError("naMakeBufWithMaxSize", "maxsize can not be smaller than usedsize.");
-  	if((NA_SYSTEM_INT_BITS < 64) && (maxsize > NA_INT_MAX))
-	    naError("naMakeBufWithMaxSize", "maxsize overflows int range, while int has less than 64 bits in this configuration.");
+    if(maxbytesize == NA_ZERO_64)
+      naError("naMakeBufWithBytesize", "maxsize is zero.");
+    if(maxbytesize < NA_ZERO_64)
+      naError("naMakeBufWithBytesize", "maxsize must be positive. Zero fill check might fail with NABuf");
+    if(usedbytesize < NA_ZERO_64)
+      naError("naMakeBufWithBytesize", "usedsize must be positive.");
+    if(usedbytesize > maxbytesize)
+      naError("naMakeBufWithBytesize", "maxsize can not be smaller than usedsize.");
+  	if((NA_SYSTEM_INT_BITS < 64) && (maxbytesize > NA_INT_MAX))
+	    naError("naMakeBufWithBytesize", "maxsize overflows int range, while int has less than 64 bits in this configuration.");
 #endif
-  buf.ptr = naMakePtrWithSize((NAInt)maxsize);
-  buf.bytesize = maxsize;
-  buf.usedsize = usedsize;
+  buf.ptr = naMakePtrWithBytesize((NAInt)maxbytesize);
+  buf.bytesize = maxbytesize;
+  buf.usedbytesize = usedbytesize;
   return buf;
 }
 
@@ -1341,10 +1332,10 @@ NA_IDEF void naFreeBuf(NABuf* buf){
 
 
 
-NA_IDEF uint64 naGetBufMaxSize(const NABuf* buf){
+NA_IDEF uint64 naGetBufMaxBytesize(const NABuf* buf){
   #ifndef NDEBUG
     if(!buf){
-      naCrash("naGetBufMaxSize", "buf is Null-Pointer.");
+      naCrash("naGetBufMaxBytesize", "buf is Null-Pointer.");
       return NA_TRUE;
     }
   #endif
@@ -1353,26 +1344,26 @@ NA_IDEF uint64 naGetBufMaxSize(const NABuf* buf){
 
 
 
-NA_IDEF uint64 naGetBufUsedSize(const NABuf* buf){
+NA_IDEF uint64 naGetBufUsedBytesize(const NABuf* buf){
   #ifndef NDEBUG
     if(!buf){
-      naCrash("naGetBufUsedSize", "buf is Null-Pointer.");
+      naCrash("naGetBufUsedBytesize", "buf is Null-Pointer.");
       return NA_TRUE;
     }
   #endif
-  return buf->usedsize;
+  return buf->usedbytesize;
 }
 
 
 
-NA_IDEF uint64 naGetBufRemainingSize(const NABuf* buf){
+NA_IDEF uint64 naGetBufRemainingBytesize(const NABuf* buf){
   #ifndef NDEBUG
     if(!buf){
-      naCrash("naGetBufRemainingSize", "buf is Null-Pointer.");
+      naCrash("naGetBufRemainingBytesize", "buf is Null-Pointer.");
       return NA_TRUE;
     }
   #endif
-  return buf->bytesize - buf->usedsize;
+  return buf->bytesize - buf->usedbytesize;
 }
 
 
@@ -1384,7 +1375,7 @@ NA_IDEF NABool naIsBufEmpty(const NABuf* buf){
       return NA_TRUE;
     }
   #endif
-  return (buf->usedsize == NA_ZERO_64);
+  return (buf->usedbytesize == NA_ZERO_64);
 }
 
 
@@ -1398,7 +1389,7 @@ NA_IDEF const void* naGetBufConstUsedPointer(const NABuf* buf){
       return NA_NULL;
     }
   #endif
-  return &(((const NAByte*)(naGetPtrConst(&(buf->ptr))))[buf->usedsize]);
+  return &(((const NAByte*)(naGetPtrConst(&(buf->ptr))))[buf->usedbytesize]);
 }
 
 
@@ -1410,7 +1401,7 @@ NA_IDEF void* naGetBufMutableUsedPointer(NABuf* buf){
       return NA_NULL;
     }
   #endif
-  return &(((NAByte*)(naGetPtrMutable(&(buf->ptr))))[buf->usedsize]);
+  return &(((NAByte*)(naGetPtrMutable(&(buf->ptr))))[buf->usedbytesize]);
 }
 
 
@@ -1421,10 +1412,10 @@ NA_IDEF void naAdvanceBuf(NABuf* buf, uint64 bytesize){
       naCrash("naAdvanceBuf", "buf is Null-Pointer.");
       return;
     }
-    if((buf->usedsize + bytesize) > buf->bytesize)
+    if((buf->usedbytesize + bytesize) > buf->bytesize)
       naError("naAdvanceBuf", "buf overflows.");
   #endif
-  buf->usedsize += bytesize;
+  buf->usedbytesize += bytesize;
 }
 
 

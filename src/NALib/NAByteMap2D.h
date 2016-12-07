@@ -15,7 +15,7 @@
 
 
 // An NAByteMap2D stores a rectangular, two-dimensional field of bytes with a
-// specific origin and size. Its components can be accessed using the integer
+// specific origin and bytesize. Its components can be accessed using the integer
 // variants of NAPos, NASize and NARect.
 //
 // Maps are designed to be enhanced and shrunk. New entries are automatically

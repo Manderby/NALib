@@ -35,7 +35,7 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
   PAINTSTRUCT ps; // Paint information. Needed for WM_PAINT messages
   NABool hasbeenhandeled = NA_FALSE;
   NAUIKeyCode keycode;
-  UINT scancode;
+  NAUIKeyCode scancode;   // used as UINT, converted to NAUIKeyCode
   NASize size;
   NAPos pos;
   const NACursorInfo* cursorinfo;
@@ -124,7 +124,7 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     // wParam: virtual key code
     // lParam: several values, attributes, flags, ...
     keycode = wParam;
-    scancode = MapVirtualKey((UINT)keycode, MAPVK_VK_TO_VSC);
+    scancode = (NAUIKeyCode)MapVirtualKey((UINT)keycode, MAPVK_VK_TO_VSC);
     //printf("%x\n", scancode);
     hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_KEYDOWN, &scancode);
     break;
@@ -331,7 +331,7 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAFunc function, void* arg, doubl
 #elif (NA_SYSTEM_ADDRESS_BITS == 32)
   typedef long NAWINAPIHANDLE;
 #else
-  #error "Undefined system address size"
+  #error "Undefined system address bytesize"
 #endif
 
 
@@ -799,9 +799,9 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 //  return rect;
 //}
 
-#ifdef __gl_h_
+//#ifdef __gl_h_
 
-NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, double width, double height){
+NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAFunc initfunc, void* initdata){
 	
   HWND hWnd;
   HDC hDC;
@@ -812,7 +812,7 @@ NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, double width, double heig
 	hWnd = CreateWindow( 
 		TEXT("NAView"), "OpenGL View", 
 		WS_CHILD | WS_VISIBLE | ES_READONLY,
-		0, 0, (int)width, (int)height,
+		0, 0, (int)size.width, (int)size.height,
 		(HWND)naGetUIElementNativeID(window), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
 
   openglview = naAlloc(NAWINAPIOpenGLView);
@@ -839,6 +839,12 @@ NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, double width, double heig
 	openglview->hRC = wglCreateContext(hDC);
 	wglMakeCurrent(hDC, openglview->hRC);
 
+  // Now the OpenGL context is created and current. We can initialize it
+  // if necessary.
+  if(initfunc){
+    initfunc(initdata);
+  }
+
 	//glewInit();
   return openglview;
 }
@@ -857,7 +863,7 @@ NA_API void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds){
 }
 
 
-#endif
+//#endif
 
 
 NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage){

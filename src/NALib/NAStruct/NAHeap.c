@@ -267,7 +267,7 @@ NA_HDEF void naGrowHeap(NAHeap* heap){
 NA_DEF void naShrinkHeapIfNecessary(NAHeap* heap){
   #ifndef NDEBUG
     if(heap->maxcount > 0)
-      naError("naShrinkHeapIfNecessary", "Heap defined with a fixed size.");
+      naError("naShrinkHeapIfNecessary", "Heap defined with a fixed count of elements.");
   #endif
   if((NAInt)heap->count < -heap->maxcount / 4){
     NAUInt entrysize = (NAByte*)(heap->root) - (NAByte*)(heap->data);

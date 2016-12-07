@@ -11,8 +11,8 @@
 #include "NACoord.h"
 
 // An NAOctTree is a container struct capable of storing a three-dimensional
-// object of any size. The content of the object is divided into equally sized
-// cubic chunks with a given minimal size. These chunks are the leafs of
+// object of any bytesize. The content of the object is divided into equally sized
+// cubic chunks with a given minimal length in one dimension. These chunks are the leafs of
 // the tree. Aside from leafes, an NAOctTree stores parent nodes. Every leaf
 // has a parent node and every node may have another parent node.
 //
@@ -53,21 +53,21 @@
 // when creating new chunks (whenever a NAOctTree gets expanded) or when
 // duplicating an NAOctTree.
 // The parameters given are the origin of the data as well as the (always
-// cubic) leafsize of the data box. When copydata is non-Null, it points
+// cubic) leaflength of the data box. When copydata is non-Null, it points
 // to already existing chunk data which shall be copied to the new chunk. This
 // will be the case when duplicating an NAOctTree.
 // The userdata parameter contains whatever you defined upon creation of the
 // tree within the NAOctTreeCallbacks struct. With this, it is for example
 // possible to allocate data from a user defined pool-structure.
-// Note that both origin and leafsize are just here for information. You may or
+// Note that both origin and leaflength are just here for information. You may or
 // may not use them. And you will probably not need to store them. But you may
 // if you really want to.
-// The leafsize given will always be the leafsize declared at creation of an
+// The leaflength given will always be the leaflength declared at creation of an
 // NAOctTree.
 // Also note that the coordinates of origin are guaranteed to be a multiple of
-// leafsize.
+// leaflength.
 typedef void* (*NAOctTreeLeafAllocator)(   NAVertexi origin,
-                                            NAUInt leafsize,
+                                            NAUInt leaflength,
                                              void* userdata,
                                        const void* copydata);
 
@@ -86,14 +86,14 @@ typedef void  (*NAOctTreeLeafDeallocator)(   void* leafdata,
 // always be greaterequal zero. Additionally, all coordinates of the two
 // boxes are guaranteed to be inside the corresopnding chunk. Note that
 // the volume does not necessarily denotes a cube. It can denote any cuboid.
-// The leafsize is given to you as an additional information. It corresponds
-// to the leafsize used when the NAOctTree was created.
+// The leaflength is given to you as an additional information. It corresponds
+// to the leaflength used when the NAOctTree was created.
 typedef void  (*NAOctTreeDataCopier)( const void* dstdata,
                                             NAVertexi dstorigin,
                                        const void* copydata,
                                             NAVertexi copyorigin,
                                            NAVolumei volume,
-                                            NAUInt leafsize);
+                                            NAUInt leaflength);
 
 // This callback is called when a oct tree creates a node other than a leaf.
 // Nodes can not be directly manipulated but you are allowed to store any data
@@ -145,30 +145,30 @@ typedef NABool(*NAOctTreeChildChanged)(     void* nodedata,
 
 // This callback is called when the data of a leaf chunk shall be serialized.
 // You must always return the number of bytes required to store the chunk data.
-// You may use the leafsize given for the calculation of that size. The
-// leafsize always is the leafsize declared upon creation of the NAOctTree.
+// You may use the leaflength given for the calculation of the number of bytes. The
+// leaflength always is the leaflength declared upon creation of the NAOctTree.
 //
-// When buffer is a Null pointer, just return the require size. When buffer is
-// NOT a Null-Pointer, this buffer is guaranteed to have the required size
+// When buffer is a Null pointer, just return the require number of bytes. When buffer is
+// NOT a Null-Pointer, this buffer is guaranteed to have the required number of bytes
 // and you can copy the data to the buffer.
 //
 // Therefore, when you call naSerializeOctTree, this callback will be called
-// for every chunk twice: First to akquire the required size and second to
+// for every chunk twice: First to akquire the required number of bytes and second to
 // actually store the data.
 typedef uint64(*NAOctTreeSerializer)        (void* buffer,
                                         const void* leafdata,
-                                             NAUInt leafsize);
+                                             NAUInt leaflength);
 
 // This callback is called when a buffer shall be deserialized which
 // previously had been serialized with NAOctTreeSerializer. Create a leaf
 // chunk and return a pointer to the chunk data. The origin and (always
-// cubic) leafsize are given to you as an additional information.
+// cubic) leaflength are given to you as an additional information.
 //
 // Note that this callback is very similar to NAOctTreeLeafAllocator but
 // here, buffer denotes not a chunk which shall be copied but rather more a
 // buffer which need to be deserialized. These can be two different things.
 typedef void* (*NAOctTreeDeserializer)(     NAVertexi origin,
-                                             NAUInt leafsize,
+                                             NAUInt leaflength,
                                         const void* buffer);
 
 
@@ -195,7 +195,7 @@ typedef struct NAOctTreeNode NAOctTreeNode;
 // The typedef of the NAOctTree.
 typedef struct NAOctTree NAOctTree;
 struct NAOctTree{
-  NAUInt leafsize;
+  NAUInt leaflength;
   NAOctTreeCallbacks callbacks;
   NAOctTreeNode* root;
   NAOctTreeNode* visitnode;    // visitnode stores tha last node visited. This
@@ -206,9 +206,9 @@ struct NAOctTree{
 
 
 
-// Initializes an empty NAOctTree with the given leafsize and callbacks.
+// Initializes an empty NAOctTree with the given leaflength and callbacks.
 NA_API NAOctTree* naInitOctTree(              NAOctTree* tree,
-                                                     NAUInt leafsize,
+                                                     NAUInt leaflength,
                                         NAOctTreeCallbacks callbacks);
 
 // Duplicates the given duptree.
@@ -248,8 +248,8 @@ NA_API void naClearOctTree(                    NAOctTree* tree);
 // Returns true if the tree is empty
 NA_API NABool naIsOctTreeEmpty(                NAOctTree* tree);
 
-// Returns the leaf size
-NA_API uint64 naGetOctTreeLeafSize(      const NAOctTree* tree);
+// Returns the length of one dimension of a leaf
+NA_API uint64 naGetOctTreeLeafLength(      const NAOctTree* tree);
 
 // Returns the callbacks (by copying the function pointers)
 NA_API NAOctTreeCallbacks naGetOctTreeCallbacks(const NAOctTree* tree);
@@ -321,14 +321,14 @@ NA_API void* naIterateOctTreeInBoxMutable(         NAOctTree* tree,
 // Function pointer used for the set iteration naSetOctTreeInBox. This
 // callback is called for multiple chunks of a tree.
 // When called, dstdata is the chunk data, box is the box within the data
-// shall be set and leafsize is the leaf size given upon creation of the tree.
+// shall be set and leaflength is the length of one dimension of a leaf given upon creation of the tree.
 // The userdata corresponds to whatever has been given in naSetOctTreeInBox.
 // The origin of the box is given relative to the origin of the chunk.
 // Therefore, all positions are greaterequal zero. All coordinates of box are
 // guaranteed to be inside the leaf.
 typedef void  (*NAOctTreeDataSetter)( const void* dstdata,
                                            NABoxi box,
-                                            NAUInt leafsize,
+                                            NAUInt leaflength,
                                        const void* userdata);
 
 // Calls the given NAOctTreeDataSetter function for every chunk in the tree

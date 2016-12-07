@@ -27,7 +27,7 @@ NA_IAPI void naCopy64   (void* NA_RESTRICT d, const void* NA_RESTRICT s);
 NA_IAPI void naCopy128  (void* NA_RESTRICT d, const void* NA_RESTRICT s);
 NA_IAPI void naCopyn    (void* NA_RESTRICT d,
                   const void* NA_RESTRICT s,
-                                   NAUInt count);
+                                   NAUInt bytesize);
 
 
 // Swaps the content of the two pointers with the given number of bits.
@@ -56,8 +56,8 @@ NA_IAPI NABool naEqual64( void* NA_RESTRICT a, void* NA_RESTRICT b);
 NA_IAPI NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b);
 
 
-// Fills the given buffer with the value 0 for count bytes
-NA_IAPI void naNulln   (void* d, NAUInt count);
+// Fills the given buffer with the value 0 for the given bytesize
+NA_IAPI void naNulln   (void* d, NAUInt bytesize);
 
 
 
@@ -235,7 +235,7 @@ typedef enum{
 NA_API NAChecksum* naInitChecksum(NAChecksum* checksum, NAChecksumType type);
 NA_API void naClearChecksum(NAChecksum* checksum);
 NA_API void naResetChecksum(NAChecksum* checksum);
-NA_API void naAccumulateChecksum(NAChecksum* checksum, const NAByte* buf, NAInt size);
+NA_API void naAccumulateChecksum(NAChecksum* checksum, const NAByte* buf, NAInt bytesize);
 NA_API uint32 naGetChecksumResult(NAChecksum* checksum);
 
 

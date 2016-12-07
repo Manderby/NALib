@@ -142,7 +142,7 @@ NA_IDEF NAUInt naGetArrayCount(const NAArray* array){
       return 0;
     }
   #endif
-  bytesize = naGetByteArraySize(&(array->bytearray));
+  bytesize = naGetByteArrayBytesize(&(array->bytearray));
   #ifndef NDEBUG
     if(bytesize < 0)
       naError("naGetArrayCount", "ByteArray count was negative. Do not create Arrays with negative sizes!");
@@ -156,21 +156,21 @@ NA_IDEF NAUInt naGetArrayCount(const NAArray* array){
 NA_IDEF NAUInt naGetArrayMaxIndex(const NAArray* array){
   #ifndef NDEBUG
     if(!array){
-      naCrash("naGetArraySize", "array is Null-Pointer.");
+      naCrash("naGetArrayMaxIndex", "array is Null-Pointer.");
       return 0;
     }
     if(naIsArrayEmpty(array))
-      naError("naGetArraySize", "array is empty.");
+      naError("naGetArrayMaxIndex", "array is empty.");
   #endif
-  return naEndToMaxi(naGetArrayCount(array));
+  return naMakeMaxWithEndi(naGetArrayCount(array));
 }
 
 
 
-NA_IDEF NAUInt naGetArrayTypeSize(const NAArray* array){
+NA_IDEF NAUInt naGetArrayTypesize(const NAArray* array){
   #ifndef NDEBUG
     if(!array){
-      naCrash("naGetArrayTypeSize", "array is Null-Pointer.");
+      naCrash("naGetArrayTypesize", "array is Null-Pointer.");
       return 0;
     }
   #endif
@@ -230,7 +230,7 @@ NA_IDEF const void* naIterateArrayConst(const NAArray* array, NAInt step){
     if(naIsArrayEmpty(array))
       naError("naIterateArrayConst", "array is empty.");
   #endif
-  return naIterateByteArrayConst(&(array->bytearray), step * naGetArrayTypeSize(array));
+  return naIterateByteArrayConst(&(array->bytearray), step * naGetArrayTypesize(array));
 }
 
 
@@ -244,7 +244,7 @@ NA_IDEF void* naIterateArrayMutable(NAArray* array, NAInt step){
     if(naIsArrayEmpty(array))
       naError("naIterateArrayMutable", "array is empty.");
   #endif
-  return naIterateByteArrayMutable(&(array->bytearray), step * naGetArrayTypeSize(array));
+  return naIterateByteArrayMutable(&(array->bytearray), step * naGetArrayTypesize(array));
 }
 
 
@@ -283,10 +283,10 @@ NA_IDEF NAUInt naGetArrayCurrentIndex(const NAArray* array){
   #endif
   byteindex = naGetByteArrayCurrentIndex(&(array->bytearray));
   #ifndef NDEBUG
-    if(byteindex % naGetArrayTypeSize(array))
+    if(byteindex % naGetArrayTypesize(array))
       naError("naGetArrayCurrentIndex", "Internal error: Internal index is misaligned.");
   #endif
-  return byteindex / naGetArrayTypeSize(array);
+  return byteindex / naGetArrayTypesize(array);
 }
 
 
@@ -294,7 +294,7 @@ NA_IDEF NAUInt naGetArrayCurrentIndex(const NAArray* array){
 NA_IDEF NAUInt naGetArrayRemainingCount(const NAArray* array){
   #ifndef NDEBUG
     if(!array){
-      naCrash("naGetArrayRemainingSize", "array is Null-Pointer.");
+      naCrash("naGetArrayRemainingCount", "array is Null-Pointer.");
       return 0;
     }
   #endif
@@ -309,7 +309,7 @@ NA_IDEF NABool naLocateArrayIndex(const NAArray* array, NAInt indx){
       return 0;
     }
   #endif
-  return naLocateByteArrayIndex(&(array->bytearray), indx * naGetArrayTypeSize(array));
+  return naLocateByteArrayIndex(&(array->bytearray), indx * naGetArrayTypesize(array));
 }
 
 
@@ -323,7 +323,7 @@ NA_IDEF void naIterateArray(const NAArray* array, NAInt step){
     if(naIsArrayEmpty(array))
       naError("naIterateArray", "array is empty.");
   #endif
-  naIterateByteArray(&(array->bytearray), step * naGetArrayTypeSize(array));
+  naIterateByteArray(&(array->bytearray), step * naGetArrayTypesize(array));
 }
 
 

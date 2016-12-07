@@ -18,7 +18,7 @@ NA_DEF NAArray* naInitArrayWithCount(NAArray* array, NAUInt typesize, NAUInt cou
   if(!count){
     naInitByteArray(&(array->bytearray));
   }else{
-    naInitByteArrayWithSize(&(array->bytearray), typesize * count);
+    naInitByteArrayWithBytesize(&(array->bytearray), typesize * count);
   }
   
   return array;
@@ -74,7 +74,7 @@ NA_DEF NAArray* naInitArrayExtraction(NAArray* dstarray, const NAArray* srcarray
   dstarray->typesize = srcarray->typesize;
   naInitByteArray(&(dstarray->bytearray));
 
-  naMakeIntegerRangePositiveInSize(&positiveoffset, &positivecount, offset, count, naGetArrayCount(srcarray));
+  naMakeIntegerRangePositiveInLength(&positiveoffset, &positivecount, offset, count, naGetArrayCount(srcarray));
 
   naInitByteArrayExtraction(&(dstarray->bytearray),
                             &(srcarray->bytearray),

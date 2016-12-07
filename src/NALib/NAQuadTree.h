@@ -11,8 +11,8 @@
 #include "NACoord.h"
 
 // An NAQuadTree is a container struct capable of storing a two-dimensional
-// object of any size. The content of the object is divided into equally sized
-// quadratic chunks with a given minimal size. These chunks are the leafs of
+// object of any bytesize. The content of the object is divided into equally sized
+// quadratic chunks with a given minimal length in one dimension. These chunks are the leafs of
 // the tree. Aside from leafes, an NAQuadTree stores parent nodes. Every leaf
 // has a parent node and every node may have another parent node.
 //
@@ -49,21 +49,21 @@
 // when creating new chunks (whenever a NAQuadTree gets expanded) or when
 // duplicating an NAQuadTree.
 // The parameters given are the origin of the data as well as the (always
-// square) leafsize of the data rectangle. When copydata is non-Null, it points
+// square) leaflength of the data rectangle. When copydata is non-Null, it points
 // to already existing chunk data which shall be copied to the new chunk. This
 // will be the case when duplicating an NAQuadTree.
 // The userdata parameter contains whatever you defined upon creation of the
 // tree within the NAQuadTreeCallbacks struct. With this, it is for example
 // possible to allocate data from a user defined pool-structure.
-// Note that both origin and leafsize are just here for information. You may or
+// Note that both origin and leaflength are just here for information. You may or
 // may not use them. And you will probably not need to store them. But you may
 // if you really want to.
-// The leafsize given will always be the leafsize declared at creation of an
+// The leaflength given will always be the leaflength declared at creation of an
 // NAQuadTree.
 // Also note that the coordinates of origin are guaranteed to be a multiple of
-// leafsize.
+// leaflength.
 typedef void* (*NAQuadTreeLeafAllocator)(   NAPosi origin,
-                                            NAUInt leafsize,
+                                            NAUInt leaflength,
                                              void* userdata,
                                        const void* copydata);
 
@@ -82,14 +82,14 @@ typedef void  (*NAQuadTreeLeafDeallocator)(   void* leafdata,
 // always be greaterequal zero. Additionally, all coordinates of the two
 // rectangles are guaranteed to be inside the corresopnding chunk. Note that
 // the size does not necessarily denotes a square. It can denote any rectangle.
-// The leafsize is given to you as an additional information. It corresponds
-// to the leafsize used when the NAQuadTree was created.
+// The leaflength is given to you as an additional information. It corresponds
+// to the leaflength used when the NAQuadTree was created.
 typedef void  (*NAQuadTreeDataCopier)( const void* dstdata,
                                             NAPosi dstorigin,
                                        const void* copydata,
                                             NAPosi copyorigin,
                                            NASizei size,
-                                            NAUInt leafsize);
+                                            NAUInt leaflength);
 
 // This callback is called when a quad tree creates a node other than a leaf.
 // Nodes can not be directly manipulated but you are allowed to store any data
@@ -141,30 +141,30 @@ typedef NABool(*NAQuadTreeChildChanged)(     void* nodedata,
 
 // This callback is called when the data of a leaf chunk shall be serialized.
 // You must always return the number of bytes required to store the chunk data.
-// You may use the leafsize given for the calculation of that size. The
-// leafsize always is the leafsize declared upon creation of the NAQuadTree.
+// You may use the leaflength given for the calculation of the number of bytes. The
+// leaflength always is the leaflength declared upon creation of the NAQuadTree.
 //
-// When buffer is a Null pointer, just return the require size. When buffer is
-// NOT a Null-Pointer, this buffer is guaranteed to have the required size
+// When buffer is a Null pointer, just return the required number of bytes. When buffer is
+// NOT a Null-Pointer, this buffer is guaranteed to have the required number of bytes
 // and you can copy the data to the buffer.
 //
 // Therefore, when you call naSerializeQuadTree, this callback will be called
-// for every chunk twice: First to akquire the required size and second to
+// for every chunk twice: First to akquire the required number of bytes and second to
 // actually store the data.
 typedef uint64(*NAQuadTreeSerializer)        (void* buffer,
                                         const void* leafdata,
-                                             NAUInt leafsize);
+                                             NAUInt leaflength);
 
 // This callback is called when a buffer shall be deserialized which
 // previously had been serialized with NAQuadTreeSerializer. Create a leaf
 // chunk and return a pointer to the chunk data. The origin and (always
-// quadratic) leafsize are given to you as an additional information.
+// quadratic) leaflength are given to you as an additional information.
 //
 // Note that this callback is very similar to NAQuadTreeLeafAllocator but
 // here, buffer denotes not a chunk which shall be copied but rather more a
 // buffer which need to be deserialized. These can be two different things.
 typedef void* (*NAQuadTreeDeserializer)(     NAPosi origin,
-                                             NAUInt leafsize,
+                                             NAUInt leaflength,
                                         const void* buffer);
 
 
@@ -192,7 +192,7 @@ typedef struct NAQuadTreeNode NAQuadTreeNode;
 // The typedef of the NAQuadTree.
 typedef struct NAQuadTree NAQuadTree;
 struct NAQuadTree{
-  NAUInt leafsize;
+  NAUInt leaflength;
   NAQuadTreeCallbacks callbacks;
   NAQuadTreeNode* root;
   NAQuadTreeNode* visitnode;    // visitnode stores tha last node visited. This
@@ -203,9 +203,9 @@ struct NAQuadTree{
 
 
 
-// Initializes an empty NAQuadTree with the given leafsize and callbacks.
+// Initializes an empty NAQuadTree with the given leaflength and callbacks.
 NA_API NAQuadTree* naInitQuadTree(              NAQuadTree* tree,
-                                                     NAUInt leafsize,
+                                                     NAUInt leaflength,
                                         NAQuadTreeCallbacks callbacks);
 
 // Duplicates the given duptree.
@@ -245,8 +245,8 @@ NA_API void naClearQuadTree(                    NAQuadTree* tree);
 // Returns true if the tree is empty
 NA_API NABool naIsQuadTreeEmpty(                NAQuadTree* tree);
 
-// Returns the leaf size
-NA_API uint64 naGetQuadTreeLeafSize(      const NAQuadTree* tree);
+// Returns the leaf length in one dimension
+NA_API uint64 naGetQuadTreeLeafLength(      const NAQuadTree* tree);
 
 // Returns the callbacks (by copying the function pointers)
 NA_API NAQuadTreeCallbacks naGetQuadTreeCallbacks(const NAQuadTree* tree);
@@ -318,14 +318,14 @@ NA_API void* naIterateQuadTreeInRectMutable(     NAQuadTree* tree,
 // Function pointer used for the set iteration naSetQuadTreeInRect. This
 // callback is called for multiple chunks of a tree.
 // When called, dstdata is the chunk data, rect is the rect within the data
-// shall be set and leafsize is the leaf size given upon creation of the tree.
+// shall be set and leaflength is the leaf length in one dimension given upon creation of the tree.
 // The userdata corresponds to whatever has been given in naSetQuadTreeInRect.
 // The origin of the rect is given relative to the origin of the chunk.
 // Therefore, all positions are greaterequal zero. All coordinates of rect are
 // guaranteed to be inside the leaf.
 typedef void  (*NAQuadTreeDataSetter)( const void* dstdata,
                                            NARecti rect,
-                                            NAUInt leafsize,
+                                            NAUInt leaflength,
                                        const void* userdata);
 
 // Calls the given NAQuadTreeDataSetter function for every chunk in the tree

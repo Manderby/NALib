@@ -9,7 +9,7 @@
 
 
 
-#include "NAMemory.h"
+#include "../NAMemory.h"
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   #include <windows.h>
@@ -30,6 +30,12 @@
 // ////////////////////////////
 // SLEEPING
 // ////////////////////////////
+
+NA_IDEF int naSleepN(NAUInt nsecs){
+  return naSleepU(nsecs / 1000);
+}
+
+
 
 NA_IDEF int naSleepU(NAUInt usecs){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
@@ -53,7 +59,7 @@ NA_IDEF int naSleepM(NAUInt msecs){
 
 
 
-NA_IDEF int naSleepS(NAUInt secs){
+NA_IDEF int naSleepS(double secs){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     Sleep((DWORD)(secs * 1000));
     return 0;
@@ -149,14 +155,6 @@ NA_IDEF void naRunThread(NAThread thread){
 
 
 
-NA_IDEF NABool isMainThread(){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    return NA_TRUE;  // todo: This is of course wrong.
-  #else
-    return (dispatch_get_main_queue() == dispatch_get_current_queue());
-  #endif
-}
-
 
 
 // ////////////////////////////
@@ -178,11 +176,14 @@ NA_IDEF NABool isMainThread(){
 
   struct NAWindowsMutex{
     #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
-      CRITICAL_SECTION criticalsection;
+      CRITICAL_SECTION mutex;
     #else
       HANDLE mutex;
     #endif
     NABool islockedbythisthread;
+    #ifndef NDEBUG
+      NABool seemslocked;
+    #endif
   };
   // Note that the islockedbythisthread will only be changed by the thread
   // which has locked the mutex and therefore will only evaluate to TRUE, when
@@ -192,6 +193,19 @@ NA_IDEF NABool isMainThread(){
   // the same thread. The author thinks that this is inconsistent and therefore
   // has implemented mutexes like this to be the same on all systems.
 
+#else
+
+  #ifndef NDEBUG
+    typedef struct NAMacintoshMutex NAMacintoshMutex;
+    struct NAMacintoshMutex{
+      dispatch_semaphore_t mutex;
+      NABool seemslocked;
+    };
+  #else
+    typedef dispatch_semaphore_t NAMacintoshMutex;
+  #endif
+
+
 #endif
 
 
@@ -200,15 +214,26 @@ NA_IDEF NAMutex naNewMutex(){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     NAWindowsMutex* windowsmutex = naAlloc(NAWindowsMutex);
     #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
-      InitializeCriticalSection(&(windowsmutex->criticalsection));
+      InitializeCriticalSection(&(windowsmutex->mutex));
     #else
       windowsmutex->mutex = CreateMutex(NULL, FALSE, NULL);
     #endif
     windowsmutex->islockedbythisthread = NA_FALSE;
+    #ifndef NDEBUG
+      windowsmutex->seemslocked = NA_FALSE;
+    #endif
     return windowsmutex;
   #else
-    NAMutex mutex = dispatch_semaphore_create(1);
-    return mutex;
+  
+    #ifndef NDEBUG
+      NAMacintoshMutex* macintoshmutex = naAlloc(NAMacintoshMutex);
+      macintoshmutex->mutex = dispatch_semaphore_create(1);
+      macintoshmutex->seemslocked = NA_FALSE;
+      return macintoshmutex;
+    #else
+      NAMutex mutex = dispatch_semaphore_create(1);
+      return mutex;
+    #endif
   #endif
 }
 
@@ -218,13 +243,19 @@ NA_IDEF void naClearMutex(NAMutex mutex){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;
     #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
-      DeleteCriticalSection(&(windowsmutex->criticalsection));
+      DeleteCriticalSection(&(windowsmutex->mutex));
     #else
       CloseHandle(windowsmutex->mutex);
     #endif
     naFree(windowsmutex);
   #else
-    dispatch_release(mutex);
+    #ifndef NDEBUG
+      NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
+      dispatch_release(macintoshmutex->mutex);
+      naFree(macintoshmutex);
+    #else
+      dispatch_release(mutex);
+    #endif
   #endif
 }
 
@@ -235,7 +266,7 @@ NA_IDEF void naLockMutex(NAMutex mutex){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;
     #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
-      EnterCriticalSection(&(windowsmutex->criticalsection));
+      EnterCriticalSection(&(windowsmutex->mutex));
     #else
       WaitForSingleObject(windowsmutex->mutex, INFINITE);
     #endif
@@ -244,8 +275,17 @@ NA_IDEF void naLockMutex(NAMutex mutex){
         naError("naLockMutex", "Mutex was already locked by this thread. This is not how Mutexes in NALib work.");
     #endif
     windowsmutex->islockedbythisthread = NA_TRUE;
+    #ifndef NDEBUG
+      windowsmutex->seemslocked = NA_TRUE;
+    #endif
    #else
-    dispatch_semaphore_wait(mutex, DISPATCH_TIME_FOREVER);
+    #ifndef NDEBUG
+      NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
+      dispatch_semaphore_wait(macintoshmutex->mutex, DISPATCH_TIME_FOREVER);
+      macintoshmutex->seemslocked = NA_TRUE;
+    #else
+      dispatch_semaphore_wait(mutex, DISPATCH_TIME_FOREVER);
+    #endif
   #endif
 }
 
@@ -256,30 +296,54 @@ NA_IDEF void naUnlockMutex(NAMutex mutex){
     NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;
     #ifndef NDEBUG
       if(!naIsMutexLocked(mutex))
-        naError("naUnlockMutex", "Mutex was not locked locked.");
+        naError("naUnlockMutex", "Mutex was not locked. Note: If this only happends once and very rarely, it might be because this check is unreliable!");
+    #endif
+    #ifndef NDEBUG
+      windowsmutex->seemslocked = NA_FALSE;
     #endif
     windowsmutex->islockedbythisthread = NA_FALSE;
     #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
-      LeaveCriticalSection(&(windowsmutex->criticalsection));
+      LeaveCriticalSection(&(windowsmutex->mutex));
     #else
       ReleaseMutex(windowsmutex->mutex);
     #endif
   #else
-    dispatch_semaphore_signal(mutex);
+    #ifndef NDEBUG
+      NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
+      macintoshmutex->seemslocked = NA_FALSE;
+      dispatch_semaphore_signal(macintoshmutex->mutex);
+    #else
+      dispatch_semaphore_signal(mutex);
+    #endif
   #endif
 }
 
 
 
-NA_IDEF NABool naIsMutexLocked(NAMutex mutex){
-  NABool hasjustbeenlocked = naTryMutex(mutex);
-  if(hasjustbeenlocked){
-    naUnlockMutex(mutex);
-    return NA_FALSE;
-  }else{
-    return NA_TRUE;
+#ifndef NDEBUG
+  NA_IDEF NABool naIsMutexLocked(NAMutex mutex){
+    #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+      NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;
+      return windowsmutex->seemslocked;
+    #else
+      NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
+      return macintoshmutex->seemslocked;
+    #endif
+  
+    // This was the old code which worked but it introduced long wait times
+    // when debugging. As this function is unreliable anyway, the whole test
+    // whether being locked or not has been put into a debug flag in a
+    // special type only available when debugging.
+    //
+    //  NABool hasjustbeenlocked = naTryMutex(mutex);
+    //  if(hasjustbeenlocked){
+    //    naUnlockMutex(mutex);
+    //    return NA_FALSE;
+    //  }else{
+    //    return NA_TRUE;
+    //  }
   }
-}
+#endif
 
 
 
@@ -287,12 +351,12 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;
     #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
-      BOOL retvalue = TryEnterCriticalSection(&(windowsmutex->criticalsection));
+      BOOL retvalue = TryEnterCriticalSection(&(windowsmutex->mutex));
       if(retvalue == 0){
         return NA_FALSE;
       }else{
         if(windowsmutex->islockedbythisthread){
-          LeaveCriticalSection(&(windowsmutex->criticalsection));
+          LeaveCriticalSection(&(windowsmutex->mutex));
           return NA_FALSE;
         }else{
           windowsmutex->islockedbythisthread = NA_TRUE;
@@ -315,8 +379,19 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
       }
     #endif
   #else
-    long retvalue = dispatch_semaphore_wait(mutex, DISPATCH_TIME_NOW);
-    return (retvalue ? NA_FALSE : NA_TRUE);
+    #ifndef NDEBUG
+      NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
+      long retvalue = dispatch_semaphore_wait(macintoshmutex->mutex, DISPATCH_TIME_NOW);
+      if(retvalue){
+        return NA_FALSE;
+      }else{
+        return NA_TRUE;
+        macintoshmutex->seemslocked = NA_TRUE;
+      }
+    #else
+      long retvalue = dispatch_semaphore_wait(mutex, DISPATCH_TIME_NOW);
+      return (retvalue ? NA_FALSE : NA_TRUE);
+    #endif
   #endif
 }
 

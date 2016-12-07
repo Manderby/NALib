@@ -21,13 +21,13 @@ struct NAGrowingSpace{
 
 
 // This is a helper function which has one purpose: Add another memory block
-// to the space which is double the size of the previous block. The first block
-// has the size given to naInitGrowingSpace
+// to the space which is double the element count of the previous block. The first block
+// has the element count given to naInitGrowingSpace
 NA_HIDEF void naAddGrowingSpaceNewSpace(NAGrowingSpace* space){
   NAUInt newelementcount;
   void* newarray;
   NAUInt arraycount = naGetListCount(&(space->arrays));
-  newelementcount = 1 << (arraycount + space->minimalexp);
+  newelementcount = NA_ONE << (arraycount + space->minimalexp);
   newarray = naMalloc(newelementcount * space->typesize);
   naAddListLastMutable(&(space->arrays), newarray);
 }
@@ -50,7 +50,7 @@ NA_IDEF NAGrowingSpace* naInitGrowingSpace(NAGrowingSpace* space, NAUInt typesiz
   space->usedcount = 0;
   space->minimalexp = naLog2i(minimalcount);
   #ifndef NDEBUG
-    if((NAUInt)naPow(2, space->minimalexp) != minimalcount)
+    if((NAUInt)naPow(2., (double)space->minimalexp) != minimalcount)  // todo make pow2i
       naError("naInitGrowingSpace", "minimalcount must be a power of 2.");
   #endif
   if(space->minimalexp == 0){space->minimalexp = 1;}
@@ -130,7 +130,7 @@ NA_IDEF const void* naGetGrowingSpaceArrayContent(const NAGrowingSpace* space, N
 
 
 
-NA_HIDEF void naCorrectGrowingSpaceCurArraySize(NAGrowingSpace* space){
+NA_HIDEF void naCorrectGrowingSpaceCurArrayBytesize(NAGrowingSpace* space){
   if(naIsListAtLast(&(space->arrays))){
     NAUInt arraycount = naGetListCount(&(space->arrays));
     NAUInt baseindex;
@@ -151,7 +151,7 @@ NA_HIDEF void naAdvanceGrowingSpaceToNextArray(NAGrowingSpace* space){
   naIterateList(&(space->arrays), 1);
   space->cur = 0;
   space->curarraycount <<= 1;
-  naCorrectGrowingSpaceCurArraySize(space);
+  naCorrectGrowingSpaceCurArrayBytesize(space);
 }
 
 
@@ -160,11 +160,11 @@ NA_IDEF void naFirstGrowingSpace(const NAGrowingSpace* space){
   NAGrowingSpace* mutablespace = (NAGrowingSpace*)space;
   naRewindList(&(mutablespace->arrays));
   mutablespace->cur = 0;
-  mutablespace->curarraycount = 1 << space->minimalexp;
+  mutablespace->curarraycount = NA_ONE << space->minimalexp;
   // Note that this is not correct if the growing space is empty. But this
   // will be captured in accessing functions by checking if there is anything
   // inside the list at all.
-  naCorrectGrowingSpaceCurArraySize(mutablespace);
+  naCorrectGrowingSpaceCurArrayBytesize(mutablespace);
 }
 
 

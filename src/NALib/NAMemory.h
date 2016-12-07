@@ -35,8 +35,8 @@
 // Returns the number of bytes used per memory page as well as a mask which
 // you can combine with & (AND) with a pointer to get the page-aligned address
 // of that pointer.
-NA_IAPI NAUInt naGetSystemMemoryPageSize();
-NA_IAPI NAUInt naGetSystemMemoryPageSizeMask();
+NA_IAPI NAUInt naGetSystemMemoryPagesize();
+NA_IAPI NAUInt naGetSystemMemoryPagesizeMask();
 
 
 
@@ -48,8 +48,8 @@ NA_IAPI NAUInt naGetSystemMemoryPageSizeMask();
 // also in other encodings, the most negative integer is probably never used
 // by any programmer. Any other number than this invalid number might have a
 // valid meaning in NALib.
-#define NA_INVALID_MEMORY_INDEX  NA_INT_MIN
-#define NA_INVALID_MEMORY_SIZE   NA_INT_MIN
+#define NA_INVALID_MEMORY_INDEX     NA_INT_MIN
+#define NA_INVALID_MEMORY_BYTESIZE  NA_INT_MIN
 
 
 
@@ -61,7 +61,7 @@ NA_IAPI NAUInt naGetSystemMemoryPageSizeMask();
 // in NALib use these functions when allocating memory on the heap.
 //
 // naMalloc             Allocates the given size of bytes on the heap using
-//                      malloc. If size is negative, zero-filled bytes are
+//                      malloc. If bytesize is negative, zero-filled bytes are
 //                      appended at the end. See explanation below.
 // naAlloc              This is a macro which expands to naMalloc but can be
 //                      used to allocate enough space for a struct type. For
@@ -70,10 +70,10 @@ NA_IAPI NAUInt naGetSystemMemoryPageSizeMask();
 //                      the above functions or the default C memory allocation
 //                      functions like malloc.
 //
-// naMallocAligned      The given size is allocated and the returned pointer
+// naMallocAligned      The given bytesize is allocated and the returned pointer
 //                      is guaranteed to be aligned on the given bound. Such
 //                      a pointer must be freed with naFreeAligned. Beware
-//                      that size here can not be negative!
+//                      that bytesize here can NOT be negative!
 // naMallocPageAligned  Same thing but the bound is the memory-page boundary.
 // naFreeAligned        Deallocates any aligned pointer previously allocated
 //                      with naMallocAligned or naMallocPageAligned. Note: This
@@ -89,12 +89,12 @@ NA_IAPI NAUInt naGetSystemMemoryPageSizeMask();
 // naDelete             Deletes a pointer created with naNew by properly
 //                      calling the correct desctructor.
 
-NA_IAPI void* naMalloc(           NAInt size);
+NA_IAPI void* naMalloc(           NAInt bytesize);
 #define       naAlloc(type)      (type*)naMalloc(sizeof(type))
 NA_IAPI void  naFree(             void* ptr);
 
-NA_IAPI void* naMallocAligned(    NAUInt size, NAUInt align);
-NA_IAPI void* naMallocPageAligned(NAUInt size);
+NA_IAPI void* naMallocAligned(    NAUInt bytesize, NAUInt align);
+NA_IAPI void* naMallocPageAligned(NAUInt bytesize);
 NA_IAPI void  naFreeAligned(      void* ptr);
 
 // If you experience an error with naNew: Have you marked your type with
@@ -181,7 +181,7 @@ NA_IAPI NAInt naGetMemoryObservationVisible();
 //                when the reference count reaches zero.
 //
 // At the core, an NAPtr stores a C-Pointer and the information whether it
-// is const or mutable. It also stores information about the size of the memory
+// is const or mutable. It also stores information about the bytesize of the memory
 // being pointed at and how it is null terminated. Even more, it stores, how
 // the pointer had originally been allocated. All this information is just for
 // debugging and can be omitted if necessary. When compiling with NDEBUG, no
@@ -190,7 +190,7 @@ NA_IAPI NAInt naGetMemoryObservationVisible();
 // An NALValue stores a pointer which denotes a variable placed in memory.
 // It has a typesize.
 //
-// An NAMemoryBlock stores a bunch of bytes. No typesize but a total size
+// An NAMemoryBlock stores a bunch of bytes. No typesize but a total bytesize
 // of bytes is available.
 //
 // An NACArray is the combination of the last two structs. It stores a pointer,
@@ -285,12 +285,12 @@ typedef struct NAPtr NAPtr;
 // Creates a NULL pointer
 NA_IAPI NAPtr naMakeNullPtr();
 
-// Makes an NAPtr with a newly allocated memory block of the given size. The
-// size parameter can be negative. See naMalloc function for more information.
+// Makes an NAPtr with a newly allocated memory block of the given bytesize. The
+// bytesize parameter can be negative. See naMalloc function for more information.
 // Note that you maybe will not call this function directly but instead will
 // use naMakeLValueWithTypesize or naMakeMemoryBlockWithBytesize.
 // The cleanuphint for this function is NA_MEMORY_CLEANUP_FREE.
-NA_IAPI NAPtr naMakePtrWithSize(NAInt size);
+NA_IAPI NAPtr naMakePtrWithBytesize(NAInt bytesize);
 
 // Fills the given NAPtr struct with either a const or a non-const pointer.
 // The bytesizehint is a hint when debugging. For an explanation of that
@@ -311,12 +311,12 @@ NA_IAPI NAPtr naMakePtrWithMutableBuffer(      void* data,
 
 // Assumes srcptr to be an array of bytes and creates an NAPtr referencing an
 // extraction thereof. DOES NOT COPY!
-// The offset and size must be given in bytes and are always positive! The size
+// The byteoffset and bytesize must be given in bytes and are always positive! The bytesize
 // is only a hint which helps detecting errors during debugging. When NDEBUG is
 // defined, this hint is optimized out. The cleanuphint for this function is
 // NA_MEMORY_CLEANUP_NONE.
 NA_IAPI NAPtr naMakePtrWithExtraction(  const NAPtr* srcptr,
-                                              NAUInt offset,
+                                              NAUInt byteoffset,
                                               NAUInt bytesizehint);
     
 // Note that the creation functions of NAPtr are naMakeXXX functions which
@@ -362,7 +362,7 @@ typedef struct NALValue NALValue;
 // Returns an lvalue which is empty.
 NA_IAPI NALValue naMakeLValue();
 
-// Create a new lvalue of the given size. The size parameter MUST be positive.
+// Create a new lvalue of the given size in bytes. The typesize parameter MUST be positive.
 NA_IAPI NALValue naMakeLValueWithTypesize(NAUInt typesize);
 
 // Uses the given bufptr WITHOUT copying as an lvalue with the given typesize.
@@ -398,12 +398,12 @@ typedef struct NAMemoryBlock NAMemoryBlock;
 // Returns a memory block which is empty.
 NA_IAPI NAMemoryBlock naMakeMemoryBlock();
 
-// Creates a new memory block of the given size. The size
+// Creates a new memory block of the given bytesize. The bytesize
 // parameter can be negative. See naMalloc function for more information.
 NA_IAPI NAMemoryBlock naMakeMemoryBlockWithBytesize(NAInt bytesize);
 
-// Uses the given bufptr WITHOUT copying as a memory block with the given size.
-// The programmer is responsible that the given size is not overflowing the
+// Uses the given bufptr WITHOUT copying as a memory block with the given bytesize.
+// The programmer is responsible that the given bytesize is not overflowing the
 // buffer.
 // The bytesize can be negative. If so, the absolute value of bytesize is
 // used but the given bufptr is expected to to have one or more bytes appended
@@ -417,24 +417,24 @@ NA_IAPI NAMemoryBlock naMakeMemoryBlockWithMutableBuffer(     void* bufptr,
                                                    NAPointerCleanup cleanuphint);
 
 // Makes a new NAMemoryBlock struct containing a sub-part of the given source
-// memory block. Does NOT copy! The offset and size are given in bytes and must
+// memory block. Does NOT copy! The byteoffset and bytesize are given in bytes and must
 // be positive.
 NA_IAPI NAMemoryBlock naMakeMemoryBlockWithExtraction(
                                             const NAMemoryBlock* srcmemblock,
-                                                          NAUInt offset,
+                                                          NAUInt byteoffset,
                                                           NAUInt bytesize);
 
 // Frees the memory for the memory block.
 NA_IAPI void naFreeMemoryBlock(NAMemoryBlock* memblock);
 
 // Returns size information about the memory block. The maxindex returns
-// size-1 but will emit an error when NDEBUG is undefined and the size is 0.
+// bytesize-1 but will emit an error when NDEBUG is undefined and the bytesize is 0.
 NA_IAPI NAUInt naGetMemoryBlockBytesize(const NAMemoryBlock* memblock);
 NA_IAPI NAUInt naGetMemoryBlockMaxIndex(const NAMemoryBlock* memblock);
 NA_IAPI NABool naIsMemoryBlockEmpty(const NAMemoryBlock* memblock);
 
 // Invalidates the memory block by setting its bytesize to 0. No access can
-// be performed anymore. But the size can be retrieved.
+// be performed anymore. But the bytesize can be retrieved.
 NA_IAPI void naVoidMemoryBlock(NAMemoryBlock* memblock);
 
 // Returns either a const or mutable pointer to the first byte of the given
@@ -498,11 +498,11 @@ NA_IAPI NACArray naMakeCArrayWithMutableBuffer(       void* bufptr,
                                            NAPointerCleanup cleanuphint);
 
 // Makes a new NACArray struct containing a sub-part of the given source
-// C-array. Does NOT copy! The offset and count are given in units with the
+// C-array. Does NOT copy! The elemoffset and count are given in units with the
 // typesize stored in srcarray and must be positive.
 NA_IAPI NACArray naMakeCArrayWithExtraction(const NACArray* srccarray,
-                                                     NAUInt offset,
-                                                     NAUInt count);
+                                                     NAUInt elemoffset,
+                                                     NAUInt elemcount);
 
 // Frees the memory for the array.
 NA_IAPI void naFreeCArray(NACArray* carray);
@@ -548,17 +548,17 @@ typedef struct NABuf NABuf;
 NA_IAPI NABuf naMakeBuf();
 
 // Creates a new buf with the given sizes. In contrast to the other
-// base memory structs, both size parameter must be positive.
+// base memory structs, both bytesize parameter must be positive.
 // usedsize can be 0 but maxsize must be greater than 0.
-NA_IAPI NABuf naMakeBufWithSize(int64 maxsize, int64 usedsize);
+NA_IAPI NABuf naMakeBufWithBytesize(int64 maxbytesize, int64 usedbytesize);
 
 // Frees the memory for the buffer.
 NA_IAPI void naFreeBuf(NABuf* buf);
 
 // Returns size information about the memory block.
-NA_IAPI uint64 naGetBufMaxSize(const NABuf* buf);
-NA_IAPI uint64 naGetBufUsedSize(const NABuf* buf);
-NA_IAPI uint64 naGetBufRemainingSize(const NABuf* buf);
+NA_IAPI uint64 naGetBufMaxBytesize(const NABuf* buf);
+NA_IAPI uint64 naGetBufUsedBytesize(const NABuf* buf);
+NA_IAPI uint64 naGetBufRemainingBytesize(const NABuf* buf);
 // Returns true if there is no used byte in the buf.
 NA_IAPI NABool naIsBufEmpty(const NABuf* buf);
 
@@ -566,7 +566,7 @@ NA_IAPI NABool naIsBufEmpty(const NABuf* buf);
 // buf. The current byte is the byte yet not being used.
 NA_IAPI const void* naGetBufConstUsedPointer(const NABuf* buf);
 NA_IAPI void*       naGetBufMutableUsedPointer(    NABuf* buf);
-// Increments the used size by the given number of bytes. Will emit an error
+// Increments the used bytesize by the given number of bytes. Will emit an error
 // when the buffer overflows when NDEBUG is not defined.
 NA_IAPI void        naAdvanceBuf(NABuf* buf, uint64 bytesize);
 

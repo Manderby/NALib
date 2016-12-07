@@ -121,10 +121,6 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
       }
 
       curindex = tree->indextree[curindex];
-      #ifndef NDEBUG
-        if(curindex < 0)
-          naError("naBuildHuffmanCodeTree", "curindex positioned at index where a leaf already exists.");
-      #endif
 
       if(code & curmask){curindex++;}
 
@@ -369,7 +365,7 @@ NA_HDEF void naCreateFixedHuffmanCodes(NAHuffmanCodeTree** literalhuffman, NAHuf
 
 
 
-NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* buffer, NABuffer* input){
+NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input){
   uint8 compressionmethodflags;
   uint8 compressionmethod;
   uint8 compressioninfo;
@@ -385,7 +381,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* buffer, NABuffer* input)
   uint32 adler;
 
   // First, read RFC 1950
-  NABufInt zbuffersize = naGetBufferSize(input) - 6;
+  NABufInt zbuffersize = naDetermineBufferBytesize(input) - 6;
   // The 6 Bytes are the CMF and FLG Bytes as well as the Adler number.
   // If there is a DICTID, zbuffersize will be reduced by 4 more bytes later.
   
@@ -463,7 +459,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* buffer, NABuffer* input)
 //      len -= 5;
       tmpbuf = naMalloc(len);
       naReadBufferBytes(&zbuffer, tmpbuf, len);
-      naWriteBufferBytes(buffer, tmpbuf, len);
+      naWriteBufferBytes(output, tmpbuf, len);
       naFree(tmpbuf);
     }else{
       NAHuffmanCodeTree* literalhuffman;
@@ -481,7 +477,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* buffer, NABuffer* input)
         uint16 dist;
         curcode = naDecodeHuffman(literalhuffman, &zbuffer);
         if(curcode < 256){
-          naWriteBufferUInt8(buffer, (uint8)curcode);
+          naWriteBufferUInt8(output, (uint8)curcode);
 //          printf("%u\n", (uint32)curcode);
         }else if(curcode == 256){
           break;
@@ -490,8 +486,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* buffer, NABuffer* input)
           length = naDecodeLiteralLength(&zbuffer, curcode);
           distcode = naDecodeHuffman(distancehuffman, &zbuffer);
           dist = naDecodeDistance(&zbuffer, distcode);
-          naSeekBufferReadAbsolute(buffer, naGetBufferWritePosAbsolute(buffer) - dist);
-          naRepeatBufferBytes(buffer, length);
+          naRepeatBufferBytes(output, dist, length);
 //          printf("(l %d d %d)\n", length, dist);
         }
       }
@@ -503,9 +498,9 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* buffer, NABuffer* input)
 //    printf("Another block\n");
   }
   
-  naFixBufferMaxPos(buffer);
+  naDetermineBufferBytesize(output);
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_ADLER_32);
-  naAccumulateBufferToChecksum(buffer, &checksum);
+  naAccumulateBufferToChecksum(output, &checksum);
   adler = naGetChecksumResult(&checksum);
   naClearChecksum(&checksum);
   
@@ -525,7 +520,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, N
 
   uint8 cmf;
   uint8 flg;
-  NABufInt count;
+  NABufInt bytesize;
   NAChecksum checksum;
   uint32 adler;
 
@@ -539,7 +534,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, N
   #endif
 
   cmf = (7<<4 | 8);
-  flg = (0 << 6 | 0 << 5);
+  flg = (0 << 6 | 0 << 5);  // todo: That seems to be wrong.
   flg |= 31 - ((cmf * 256 + flg) % 31);
   naWriteBufferUInt8(buffer, cmf);
   naWriteBufferUInt8(buffer, flg);
@@ -547,31 +542,31 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, N
   // Now, for the actual content, we change to little endian due to RFC 1951!
   naSetBufferEndianness(buffer, NA_ENDIANNESS_LITTLE);
   
-  count = naGetBufferSize(input);
-  naSeekBufferReadLocal(input, 0);
+  bytesize = naDetermineBufferBytesize(input);
+  naSeekBufferLocal(input, 0);
   
   
-  while(count > 0){
-    uint16 curcount;
+  while(bytesize > 0){
+    uint16 curbytesize;
     NAByte headbyte = (0 << 1);
-    if(count >= (1<<15)){
-      curcount = (1<<15) - 1;
+    if(bytesize >= (1<<15)){
+      curbytesize = (1<<15) - 1;
     }else{
-      curcount = (uint16)count;
+      curbytesize = (uint16)bytesize;
       headbyte |= 1;
     }
     naWriteBufferUInt8(buffer, headbyte);
-    naWriteBufferUInt16(buffer, curcount);
-    naWriteBufferUInt16(buffer, ~curcount);
-    naWriteBufferBuffer(buffer, input, curcount);
-    count -= curcount;
+    naWriteBufferUInt16(buffer, curbytesize);
+    naWriteBufferUInt16(buffer, ~curbytesize);
+    naWriteBufferBuffer(buffer, input, curbytesize);
+    bytesize -= curbytesize;
   }
   
   // We write the adler number. Note that this must be in network byte order
   // again as it belongs to RFC 1950!
   naSetBufferEndianness(buffer, NA_ENDIANNESS_NETWORK);
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_ADLER_32);
-  naSeekBufferReadLocal(input, 0);
+  naSeekBufferLocal(input, 0);
   naAccumulateBufferToChecksum(input, &checksum);
   adler = naGetChecksumResult(&checksum);
   naClearChecksum(&checksum);

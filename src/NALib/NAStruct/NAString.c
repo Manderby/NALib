@@ -24,11 +24,11 @@ NA_RUNTIME_TYPE(NAString, naDestructString);
 
 
 
-NA_IDEF NAUInt naVsnprintf(NAUTF8Char* buffer, NAUInt size, const NAUTF8Char* newstr, va_list argumentlist){
+NA_IDEF NAUInt naVsnprintf(NAUTF8Char* buffer, NAUInt length, const NAUTF8Char* newstr, va_list argumentlist){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    return (NAInt)_vsnprintf_s(buffer, (size_t)size, (size_t)size, newstr, argumentlist);
+    return (NAInt)_vsnprintf_s(buffer, (size_t)length, (size_t)length, newstr, argumentlist);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    return (NAInt)vsnprintf((char*)buffer, (size_t)size, (const char*)newstr, argumentlist);
+    return (NAInt)vsnprintf((char*)buffer, (size_t)length, (const char*)newstr, argumentlist);
   #endif
 }
 
@@ -36,7 +36,7 @@ NA_IDEF NAUInt naVsnprintf(NAUTF8Char* buffer, NAUInt size, const NAUTF8Char* ne
 
 // Returns the number of characters needed to transform the given string and
 // arguments using sprintf.
-NA_IDEF NAUInt naVarargStringSize(const NAUTF8Char* string, va_list args){
+NA_IDEF NAUInt naVarargStringLength(const NAUTF8Char* string, va_list args){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return (NAInt)_vscprintf(string, args);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
@@ -68,7 +68,7 @@ NA_DEF NA_INLINE NAString* naNewString(void){
 NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
   // Declaration before implementation. Needed for C90.
   NAString* string;
-  NAInt size;
+  NAInt length;
   
   #ifndef NDEBUG
     if(!ptr){
@@ -77,14 +77,14 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
     }
   #endif
   
-  size = (NAInt)naStrlen(ptr);
-  if(size){
+  length = (NAInt)naStrlen(ptr);
+  if(length){
     string = naNew(NAString);
     // C-Strings are always expected to be Null-terminated, meaning: The Byte
     // with index [size] must be binary zero. As we are not copying but just
     // referencing the pointer, we can safely use the array without this byte
     // and still be able to say: We are null-terminated!
-    naInitByteArrayWithConstBuffer(&(string->array), ptr, -size);
+    naInitByteArrayWithConstBuffer(&(string->array), ptr, -length);
   }else{
     string = naNewString();
   }
@@ -94,9 +94,9 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
 
 
 
-NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt size, NAPointerCleanup ownership){
+NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt length, NAPointerCleanup ownership){
   NAString* string = naNew(NAString);
-  naInitByteArrayWithMutableBuffer(&(string->array), buffer, size, ownership);
+  naInitByteArrayWithMutableBuffer(&(string->array), buffer, length, ownership);
   return string;
 }
 
@@ -121,7 +121,7 @@ NA_DEF NAString* naNewStringWithArguments(const NAUTF8Char* format, va_list argu
   va_list argumentlist3;
   va_copy(argumentlist2, argumentlist);
   va_copy(argumentlist3, argumentlist);
-  stringlen = naVarargStringSize(format, argumentlist2);
+  stringlen = naVarargStringLength(format, argumentlist2);
   if(stringlen){
     NAUTF8Char* stringbuf = naMalloc(-(NAInt)stringlen);
     naVsnprintf(stringbuf, stringlen + 1, format, argumentlist3);
@@ -136,7 +136,7 @@ NA_DEF NAString* naNewStringWithArguments(const NAUTF8Char* format, va_list argu
 
 
 
-NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt offset, NAInt size){
+NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt charoffset, NAInt length){
   // Declaration before implementation. Needed for C90.
   NAString* string;
 
@@ -153,12 +153,12 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt offset, 
     #ifndef NDEBUG
       // If src is empty, return an empty string. But check if this is
       // intentional or an error:
-      if(offset || size)
+      if(charoffset || length)
         naError("naNewStringExtraction", "Invalid string extraction of empty string.");
     #endif
   }else{
     // Extract the string
-    naInitByteArrayExtraction(&(string->array), &(srcstring->array), offset, size);
+    naInitByteArrayExtraction(&(string->array), &(srcstring->array), charoffset, length);
   }
   
   return string;
@@ -167,23 +167,23 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt offset, 
 
 
 NA_DEF NAString* naNewStringWithBasenameOfFilename(const NAString* filename){
-  NAInt dotpos = naGetStringCharacterPos(filename, NA_SUFFIX_DELIMITER, -1);
+  NAInt dotoffset = naGetStringCharacterPos(filename, NA_SUFFIX_DELIMITER, -1);
   // If dotpos is invalid, return the full string.
-  if(dotpos == NA_INVALID_MEMORY_INDEX){
+  if(dotoffset == NA_INVALID_MEMORY_INDEX){
     return naNewStringExtraction(filename, 0, -1);
   }else{
-    return naNewStringExtraction(filename, 0, dotpos - 1);
+    return naNewStringExtraction(filename, 0, dotoffset - 1);
   }
 }
 
 
 
 NA_DEF NAString* naNewStringWithSuffixOfFilename(const NAString* filename){
-  NAInt dotpos = naGetStringCharacterPos(filename, NA_SUFFIX_DELIMITER, -1);
-  if(dotpos == NA_INVALID_MEMORY_INDEX){
+  NAInt dotoffset = naGetStringCharacterPos(filename, NA_SUFFIX_DELIMITER, -1);
+  if(dotoffset == NA_INVALID_MEMORY_INDEX){
     return naNewString();
   }else{
-    return naNewStringExtraction(filename, dotpos + 1, -1);
+    return naNewStringExtraction(filename, dotoffset + 1, -1);
   }
 }
 
@@ -204,7 +204,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
       return NA_NULL;
     }
   #endif
-  inputsize = naGetStringSize(inputstring);
+  inputsize = naGetStringLength(inputstring);
   if(!inputsize){return naNewString();}
   
   // Count the required number of utf8 characters.
@@ -267,7 +267,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
 //    }
 //  #endif
 //
-//  inputsize = naGetStringSize(inputstring);
+//  inputsize = naGetStringLength(inputstring);
 //  if(!inputsize){return naNewString();}
 //
 //  // Create a string with sufficient characters. As XML entities are always
@@ -322,7 +322,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
 //      return NA_NULL;
 //    }
 //  #endif
-//  inputsize = naGetStringSize(inputstring);
+//  inputsize = naGetStringLength(inputstring);
 //  if(!inputsize){return naNewString();}
 //  
 //  // Count the required number of utf8 characters.
@@ -381,7 +381,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
 //    }
 //  #endif
 //
-//  inputsize = naGetStringSize(inputstring);
+//  inputsize = naGetStringLength(inputstring);
 //  if(!inputsize){return naNewString();}
 //
 //  // Create a string with sufficient characters. As EPS entities are always
@@ -417,7 +417,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
 
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-//  NA_DEF SystemChar* naAllocSystemStringFromString(const NAUTF8Char* utf8string, NAUInt size){
+//  NA_DEF SystemChar* naAllocSystemStringFromString(const NAUTF8Char* utf8string, NAUInt length){
 //    SystemChar* outstr;
 //    NAUInt newsize;
 //    if(!size){size = naStrlen(utf8string);}
@@ -456,8 +456,8 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
 
 
 NA_DEF void naAppendStringString(NAString* originalstring, const NAString* string2){
-  NAUInt stringsize1 = naGetStringSize(originalstring);
-  NAUInt stringsize2 = naGetStringSize(string2);
+  NAUInt stringsize1 = naGetStringLength(originalstring);
+  NAUInt stringsize2 = naGetStringLength(string2);
   NAInt totalstringsize = stringsize1 + stringsize2;
   if(totalstringsize){
     NAUTF8Char* stringbuf = naMalloc(-totalstringsize);
@@ -473,7 +473,7 @@ NA_DEF void naAppendStringString(NAString* originalstring, const NAString* strin
 
 
 NA_DEF void naAppendStringChar(NAString* originalstring, NAUTF8Char newchar){
-  NAUInt stringsize = naGetStringSize(originalstring);
+  NAUInt stringsize = naGetStringLength(originalstring);
   NAInt totalstringsize = stringsize + 1;
   NAUTF8Char* stringbuf = naMalloc(-totalstringsize);
   if(stringsize){naCopyn(stringbuf, naGetByteArrayConstPointer(&(originalstring->array)), stringsize);}
@@ -507,9 +507,9 @@ NA_DEF void naAppendStringArguments(NAString* originalstring, const NAUTF8Char* 
     }
   #endif
   
-  stringsize1 = naGetStringSize(originalstring);
+  stringsize1 = naGetStringLength(originalstring);
   va_copy(argumentlist2, argumentlist);
-  stringsize2 = naVarargStringSize(format, argumentlist2);
+  stringsize2 = naVarargStringLength(format, argumentlist2);
   va_end(argumentlist2);
   totalstringsize = stringsize1 + stringsize2;
   if(totalstringsize){
@@ -537,8 +537,8 @@ NA_DEF void naDecoupleString(NAString* string){
 
 
 
-NA_DEF NAUInt naGetStringSize(const NAString* string){
-  return naGetByteArraySize(&(string->array));
+NA_DEF NAUInt naGetStringLength(const NAString* string){
+  return naGetByteArrayBytesize(&(string->array));
 }
 
 
@@ -591,21 +591,21 @@ NA_DEF NABool naIsStringEmpty(const NAString* string){
 
 
 
-NA_DEF NAInt naGetStringCharacterPos(const NAString* string, NAUTF8Char ch, NAInt startpos){
+NA_DEF NAInt naGetStringCharacterPos(const NAString* string, NAUTF8Char ch, NAInt startoffset){
   const NAUTF8Char* curchar;
-  NAInt stringsize = (NAInt)naGetStringSize(string);
-  curchar = (const NAUTF8Char*)naGetByteArrayConstByte(&(string->array), startpos);
-  if(startpos < 0){
-    while(!(startpos < -stringsize)){
-      if(*curchar == ch){return startpos;}
+  NAInt stringsize = (NAInt)naGetStringLength(string);
+  curchar = (const NAUTF8Char*)naGetByteArrayConstByte(&(string->array), startoffset);
+  if(startoffset < 0){
+    while(!(startoffset < -stringsize)){
+      if(*curchar == ch){return startoffset;}
       curchar--;
-      startpos--;
+      startoffset--;
     }
   }else{
-    while(startpos < stringsize){
-      if(*curchar == ch){return startpos;}
+    while(startoffset < stringsize){
+      if(*curchar == ch){return startoffset;}
       curchar++;
-      startpos++;
+      startoffset++;
     }
   }
   // Not found
@@ -628,7 +628,7 @@ NA_DEF void naSkipStringWhitespaces(NAString* string){
   if(naIsStringEmpty(string)){return;}
   charptr = naGetStringChar(string, 0);
   if(*charptr > ' '){return;} // quick exit
-  stringsize = naGetStringSize(string);
+  stringsize = naGetStringLength(string);
   while(stringsize && (*charptr <= ' ')){
     stringsize--;
     charptr++;
@@ -666,7 +666,7 @@ NA_DEF void naSkipStringWhitespaces(NAString* string){
 //  if(skipempty){
 //    emptytest = naNewString();
 //  }
-//  stringsize = naGetStringSize(string);
+//  stringsize = naGetStringLength(string);
 //  
 //  // This while-loop is here for the skipempty-test.
 //  while(1){
@@ -677,7 +677,7 @@ NA_DEF void naSkipStringWhitespaces(NAString* string){
 //    charptr = (NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
 //
 //    while(linesize < stringsize){
-//      escapesize = naGetStringCharacterEscapeSizeTowardsTrailing(string, linesize);
+//      escapesize = naGetStringCharacterEscapeLengthTowardsTrailing(string, linesize);
 //      if(escapesize){
 //        #ifndef NDEBUG
 //          if(escapesize < 0)
@@ -783,7 +783,7 @@ NA_DEF NAString* naParseStringToken(NAString* string){
     }
   #endif
 
-  stringsize = naGetStringSize(string);
+  stringsize = naGetStringLength(string);
   tokensize = 0;
   charptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
 
@@ -827,7 +827,7 @@ NA_DEF NAString* naParseStringTokenWithDelimiter(NAString* string, NAUTF8Char de
   // Note that we do not check if the first character is equal to the delimiter
   // as quite frequently, this can occur. For example when parsing csv-files.
 
-  stringsize = naGetStringSize(string);
+  stringsize = naGetStringLength(string);
   tokensize = 0;
   charptr = (NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
 
@@ -869,7 +869,7 @@ NA_DEF NAString* naParseStringPathComponent(NAString* string){
   // Note that we do not check if the first character is equal to a path
   // delimiter as quite frequently, this can occur.
   
-  stringsize = naGetStringSize(string);
+  stringsize = naGetStringLength(string);
   tokensize = 0;
   charptr = (NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
 
@@ -896,19 +896,19 @@ NA_DEF NAString* naParseStringPathComponent(NAString* string){
 
 
 
-NA_DEF NAUInt naParseUTF8StringForDecimalUnsignedInteger(const NAUTF8Char* string, uint64* retint, NAUInt maxcharcount, uint64 max){
+NA_DEF NAUInt naParseUTF8StringForDecimalUnsignedInteger(const NAUTF8Char* string, uint64* retint, NAUInt maxdigitcount, uint64 max){
   NAUInt bytesused;
   uint64 prevval;
   #ifndef NDEBUG
     if(!retint)
       {naCrash("naParseUTF8StringForDecimalUnsignedInteger", "retint is Null-Pointer"); return 0;}
-    if(!maxcharcount)
+    if(!maxdigitcount)
       naError("naParseUTF8StringForDecimalUnsignedInteger", "maxcharcount is 0");
   #endif
   bytesused = 0;
   prevval = 0LL;
   *retint = 0LL;
-  while(bytesused < maxcharcount){
+  while(bytesused < maxdigitcount){
     if((*string < '0') || (*string > '9')){break;}
     *retint = *retint * 10LL + (*string - '0');
     #ifndef NDEBUG
@@ -927,7 +927,7 @@ NA_DEF NAUInt naParseUTF8StringForDecimalUnsignedInteger(const NAUTF8Char* strin
 
 
 
-NA_DEF NAUInt naParseUTF8StringForDecimalSignedInteger( const NAUTF8Char* string, int64* retint, NAUInt maxcharcount, int64 min, int64 max){
+NA_DEF NAUInt naParseUTF8StringForDecimalSignedInteger( const NAUTF8Char* string, int64* retint, NAUInt maxdigitcount, int64 min, int64 max){
   int64 sign = 1LL;
   NAUInt bytesused = 0;
   uint64 limit = max;
@@ -936,17 +936,17 @@ NA_DEF NAUInt naParseUTF8StringForDecimalSignedInteger( const NAUTF8Char* string
   // Check for a potential sign at the first character
   if(*string == '+'){
     bytesused = 1;
-    maxcharcount--;
+    maxdigitcount--;
     string++;
   }else if(*string == '-'){
     sign = -1LL;
     limit = -min;
     bytesused = 1;
-    maxcharcount--;
+    maxdigitcount--;
     string++;
   }
 
-  bytesused += naParseUTF8StringForDecimalUnsignedInteger(string, &intvalue, maxcharcount, limit);
+  bytesused += naParseUTF8StringForDecimalUnsignedInteger(string, &intvalue, maxdigitcount, limit);
   *retint = (sign * intvalue);
   return bytesused;
 }
@@ -956,10 +956,10 @@ NA_DEF NAUInt naParseUTF8StringForDecimalSignedInteger( const NAUTF8Char* string
 
 NA_DEF int8 naParseStringInt8(NAString* string, NABool skipdelimiter){
   const NAUTF8Char* curptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
-  NAUInt size = naGetStringSize(string);
+  NAUInt length = naGetStringLength(string);
   int64 intvalue;
-  NAUInt bytesused = naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, size, NA_INT8_MIN, NA_INT8_MAX);
-  if(skipdelimiter && (size > bytesused)){
+  NAUInt bytesused = naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, length, NA_INT8_MIN, NA_INT8_MAX);
+  if(skipdelimiter && (length > bytesused)){
     naInitByteArrayExtraction(&(string->array), &(string->array), bytesused + 1, -1);
   }else{
     naInitByteArrayExtraction(&(string->array), &(string->array), bytesused, -1);
@@ -970,10 +970,10 @@ NA_DEF int8 naParseStringInt8(NAString* string, NABool skipdelimiter){
 
 NA_DEF int16 naParseStringInt16(NAString* string, NABool skipdelimiter){
   const NAUTF8Char* curptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
-  NAUInt size = naGetStringSize(string);
+  NAUInt length = naGetStringLength(string);
   int64 intvalue;
-  NAUInt bytesused = naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, size, NA_INT16_MIN, NA_INT16_MAX);
-  if(skipdelimiter && (size > bytesused)){
+  NAUInt bytesused = naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, length, NA_INT16_MIN, NA_INT16_MAX);
+  if(skipdelimiter && (length > bytesused)){
     naInitByteArrayExtraction(&(string->array), &(string->array), bytesused + 1, -1);
   }else{
     naInitByteArrayExtraction(&(string->array), &(string->array), bytesused, -1);
@@ -984,10 +984,10 @@ NA_DEF int16 naParseStringInt16(NAString* string, NABool skipdelimiter){
 
 NA_DEF int32 naParseStringInt32(NAString* string, NABool skipdelimiter){
   const NAUTF8Char* curptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
-  NAUInt size = naGetStringSize(string);
+  NAUInt length = naGetStringLength(string);
   int64 intvalue;
-  NAUInt bytesused = naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, size, NA_INT32_MIN, NA_INT32_MAX);
-  if(skipdelimiter && (size > bytesused)){
+  NAUInt bytesused = naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, length, NA_INT32_MIN, NA_INT32_MAX);
+  if(skipdelimiter && (length > bytesused)){
     naInitByteArrayExtraction(&(string->array), &(string->array), bytesused + 1, -1);
   }else{
     naInitByteArrayExtraction(&(string->array), &(string->array), bytesused, -1);
@@ -998,10 +998,10 @@ NA_DEF int32 naParseStringInt32(NAString* string, NABool skipdelimiter){
 
 NA_DEF int64 naParseStringInt64(NAString* string, NABool skipdelimiter){
   const NAUTF8Char* curptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
-  NAUInt size = naGetStringSize(string);
+  NAUInt length = naGetStringLength(string);
   int64 intvalue;
-  NAUInt bytesused = naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, size, NA_INT64_MIN, NA_INT64_MAX);
-  if(skipdelimiter && (size > bytesused)){
+  NAUInt bytesused = naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, length, NA_INT64_MIN, NA_INT64_MAX);
+  if(skipdelimiter && (length > bytesused)){
     naInitByteArrayExtraction(&(string->array), &(string->array), bytesused + 1, -1);
   }else{
     naInitByteArrayExtraction(&(string->array), &(string->array), bytesused, -1);
@@ -1012,10 +1012,10 @@ NA_DEF int64 naParseStringInt64(NAString* string, NABool skipdelimiter){
 
 NA_DEF uint8 naParseStringUInt8(NAString* string, NABool skipdelimiter){
   const NAUTF8Char* curptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
-  NAUInt size = naGetStringSize(string);
+  NAUInt length = naGetStringLength(string);
   uint64 intvalue;
-  NAUInt bytesused = naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, size, NA_UINT8_MAX);
-  if(skipdelimiter && (size > bytesused)){
+  NAUInt bytesused = naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, length, NA_UINT8_MAX);
+  if(skipdelimiter && (length > bytesused)){
     naInitByteArrayExtraction(&(string->array), &(string->array), bytesused + 1, -1);
   }else{
     naInitByteArrayExtraction(&(string->array), &(string->array), bytesused, -1);
@@ -1026,10 +1026,10 @@ NA_DEF uint8 naParseStringUInt8(NAString* string, NABool skipdelimiter){
 
 NA_DEF uint16 naParseStringUInt16(NAString* string, NABool skipdelimiter){
   const NAUTF8Char* curptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
-  NAUInt size = naGetStringSize(string);
+  NAUInt length = naGetStringLength(string);
   uint64 intvalue;
-  NAUInt bytesused = naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, size, NA_UINT16_MAX);
-  if(skipdelimiter && (size > bytesused)){
+  NAUInt bytesused = naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, length, NA_UINT16_MAX);
+  if(skipdelimiter && (length > bytesused)){
     naInitByteArrayExtraction(&(string->array), &(string->array), bytesused + 1, -1);
   }else{
     naInitByteArrayExtraction(&(string->array), &(string->array), bytesused, -1);
@@ -1040,10 +1040,10 @@ NA_DEF uint16 naParseStringUInt16(NAString* string, NABool skipdelimiter){
 
 NA_DEF uint32 naParseStringUInt32(NAString* string, NABool skipdelimiter){
   const NAUTF8Char* curptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
-  NAUInt size = naGetStringSize(string);
+  NAUInt length = naGetStringLength(string);
   uint64 intvalue;
-  NAUInt bytesused = naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, size, NA_UINT32_MAX);
-  if(skipdelimiter && (size > bytesused)){
+  NAUInt bytesused = naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, length, NA_UINT32_MAX);
+  if(skipdelimiter && (length > bytesused)){
     naInitByteArrayExtraction(&(string->array), &(string->array), bytesused + 1, -1);
   }else{
     naInitByteArrayExtraction(&(string->array), &(string->array), bytesused, -1);
@@ -1054,10 +1054,10 @@ NA_DEF uint32 naParseStringUInt32(NAString* string, NABool skipdelimiter){
 
 NA_DEF uint64 naParseStringUInt64(NAString* string, NABool skipdelimiter){
   const NAUTF8Char* curptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
-  NAUInt size = naGetStringSize(string);
+  NAUInt length = naGetStringLength(string);
   uint64 intvalue;
-  NAUInt bytesused = naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, size, NA_UINT64_MAX);
-  if(skipdelimiter && (size > bytesused)){
+  NAUInt bytesused = naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, length, NA_UINT64_MAX);
+  if(skipdelimiter && (length > bytesused)){
     naInitByteArrayExtraction(&(string->array), &(string->array), bytesused + 1, -1);
   }else{
     naInitByteArrayExtraction(&(string->array), &(string->array), bytesused, -1);
@@ -1071,72 +1071,72 @@ NA_DEF uint64 naParseStringUInt64(NAString* string, NABool skipdelimiter){
 
 NA_DEF int8 naGetStringInt8(const NAString* string){
   const NAUTF8Char* curptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
-  NAUInt size = naGetStringSize(string);
+  NAUInt length = naGetStringLength(string);
   int64 intvalue;
-  naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, size, NA_INT8_MIN, NA_INT8_MAX);
+  naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, length, NA_INT8_MIN, NA_INT8_MAX);
   return (int8)intvalue;
 }
 
 
 NA_DEF int16 naGetStringInt16(const NAString* string){
   const NAUTF8Char* curptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
-  NAUInt size = naGetStringSize(string);
+  NAUInt length = naGetStringLength(string);
   int64 intvalue;
-  naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, size, NA_INT16_MIN, NA_INT16_MAX);
+  naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, length, NA_INT16_MIN, NA_INT16_MAX);
   return (int16)intvalue;
 }
 
 
 NA_DEF int32 naGetStringInt32(const NAString* string){
   const NAUTF8Char* curptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
-  NAUInt size = naGetStringSize(string);
+  NAUInt length = naGetStringLength(string);
   int64 intvalue;
-  naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, size, NA_INT32_MIN, NA_INT32_MAX);
+  naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, length, NA_INT32_MIN, NA_INT32_MAX);
   return (int32)intvalue;
 }
 
 
 NA_DEF int64 naGetStringInt64(const NAString* string){
   const NAUTF8Char* curptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
-  NAUInt size = naGetStringSize(string);
+  NAUInt length = naGetStringLength(string);
   int64 intvalue;
-  naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, size, NA_INT64_MIN, NA_INT64_MAX);
+  naParseUTF8StringForDecimalSignedInteger(curptr, &intvalue, length, NA_INT64_MIN, NA_INT64_MAX);
   return (int64)intvalue;
 }
 
 
 NA_DEF uint8 naGetStringUInt8(const NAString* string){
   const NAUTF8Char* curptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
-  NAUInt size = naGetStringSize(string);
+  NAUInt length = naGetStringLength(string);
   uint64 intvalue;
-  naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, size, NA_UINT8_MAX);
+  naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, length, NA_UINT8_MAX);
   return (uint8)intvalue;
 }
 
 
 NA_DEF uint16 naGetStringUInt16(const NAString* string){
   const NAUTF8Char* curptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
-  NAUInt size = naGetStringSize(string);
+  NAUInt length = naGetStringLength(string);
   uint64 intvalue;
-  naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, size, NA_UINT16_MAX);
+  naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, length, NA_UINT16_MAX);
   return (uint16)intvalue;
 }
 
 
 NA_DEF uint32 naGetStringUInt32(const NAString* string){
   const NAUTF8Char* curptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
-  NAUInt size = naGetStringSize(string);
+  NAUInt length = naGetStringLength(string);
   uint64 intvalue;
-  naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, size, NA_UINT32_MAX);
+  naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, length, NA_UINT32_MAX);
   return (uint32)intvalue;
 }
 
 
 NA_DEF uint64 naGetStringUInt64(const NAString* string){
   const NAUTF8Char* curptr = (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
-  NAUInt size = naGetStringSize(string);
+  NAUInt length = naGetStringLength(string);
   uint64 intvalue;
-  naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, size, NA_UINT64_MAX);
+  naParseUTF8StringForDecimalUnsignedInteger(curptr, &intvalue, length, NA_UINT64_MAX);
   return (uint64)intvalue;
 }
 
@@ -1149,7 +1149,7 @@ NA_DEF uint64 naGetStringUInt64(const NAString* string){
 
 
 NA_DEF NABool naEqualStringToUTF8CStringLiteral(const NAString* string, const NAUTF8Char* ptr){
-  NAUInt stringsize = naGetStringSize(string);
+  NAUInt stringsize = naGetStringLength(string);
   NAUInt ptrsize = naStrlen(ptr);
   if(stringsize != ptrsize){return NA_FALSE;}
   return !memcmp(naGetByteArrayConstPointer(&(string->array)), ptr, (size_t)stringsize);
@@ -1159,8 +1159,8 @@ NA_DEF NABool naEqualStringToUTF8CStringLiteral(const NAString* string, const NA
 
 NA_DEF NABool naEqualStringToString(     const NAString* string1,
                                   const NAString* string2){
-  NAUInt stringsize1 = naGetStringSize(string1);
-  NAUInt stringsize2 = naGetStringSize(string2);
+  NAUInt stringsize1 = naGetStringLength(string1);
+  NAUInt stringsize2 = naGetStringLength(string2);
   if(stringsize1 != stringsize2){return NA_FALSE;}
   if(stringsize1 == 0){return NA_TRUE;}
   return !memcmp(naGetByteArrayConstPointer(&(string1->array)), naGetByteArrayConstPointer(&(string2->array)), (size_t)stringsize1);

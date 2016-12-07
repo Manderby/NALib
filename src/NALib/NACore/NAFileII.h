@@ -9,18 +9,35 @@
 
 
 
-// Use this function with origin = SEEK_SET, SEEK_CUR or SEEK_END.
-// Note that all systems define NAFileSize to be a signed integer. Therefore
+// Use this function with origintype = SEEK_SET, SEEK_CUR or SEEK_END.
+// Note that all systems define NAFilesize to be a signed integer. Therefore
 // searching backwards with SEEK_CUR is possible.
-NA_IDEF NAFileSize naLseek(int fd, NAFileSize offset, int origin){
+NA_IDEF NAFilesize naLseek(int fd, NAFilesize byteoffset, int origintype){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     #if NA_SYSTEM_ADDRESS_BITS == 64
-      return _lseeki64(fd, offset, origin);
+      return _lseeki64(fd, byteoffset, origintype);
     #elif NA_SYSTEM_ADDRESS_BITS == 32
-      return _lseek(fd, offset, origin);
+      return _lseek(fd, byteoffset, origintype);
     #endif
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    return lseek(fd, offset, origin);
+    return lseek(fd, byteoffset, origintype);
+  #endif
+}
+
+
+
+// Use this function with origintype = SEEK_SET, SEEK_CUR or SEEK_END.
+// Note that all systems define NAFilesize to be a signed integer. Therefore
+// searching backwards with SEEK_CUR is possible.
+NA_IDEF NAFilesize naTell(int fd){
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    #if NA_SYSTEM_ADDRESS_BITS == 64
+      return _lseeki64(fd, 0, SEEK_CUR);
+    #elif NA_SYSTEM_ADDRESS_BITS == 32
+      return _lseek(fd, 0, SEEK_CUR);
+    #endif
+  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+    return lseek(fd, 0, SEEK_CUR);
   #endif
 }
 
@@ -53,20 +70,20 @@ NA_IDEF int naClose(int fd){
 }
 
 
-NA_IDEF NAFileSize naRead(int fd, void* buf, NAFileSize count){
+NA_IDEF NAFilesize naRead(int fd, void* buf, NAFilesize bytesize){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    return (NAFileSize)_read(fd, buf, (unsigned int)count);
+    return (NAFilesize)_read(fd, buf, (unsigned int)count);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    return (NAFileSize)read(fd, buf, (size_t)count);
+    return (NAFilesize)read(fd, buf, (size_t)bytesize);
   #endif
 }
 
 
-NA_IDEF NAFileSize naWrite(int fd, const void* buf, NAFileSize count){
+NA_IDEF NAFilesize naWrite(int fd, const void* buf, NAFilesize bytesize){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    return (NAFileSize)_write(fd, buf, (unsigned int)count);
+    return (NAFilesize)_write(fd, buf, (unsigned int)count);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    return (NAFileSize)write(fd, buf, (size_t)count);
+    return (NAFilesize)write(fd, buf, (size_t)bytesize);
   #endif
 }
 
@@ -264,17 +281,17 @@ NA_IDEF void naCloseFile(NAFile* file){
 
 
 
-NA_IDEF NAFileSize naComputeFileSize(const NAFile* file){
+NA_IDEF NAFilesize naComputeFileBytesize(const NAFile* file){
   // Declaration before implementation. Needed for C90.
-  NAFileSize curpos;
-  NAFileSize filesize;
-  curpos = naLseek(file->desc, 0, SEEK_CUR);
+  NAFilesize curoffset;
+  NAFilesize filesize;
+  curoffset = naLseek(file->desc, 0, SEEK_CUR);
   #ifndef NDEBUG
-    if(curpos == -1)
-      naError("naComputeFileSize", "An error occured while seeking the file. Maybe file not open or a stream? Undefined behaviour.");
+    if(curoffset == -1)
+      naError("naComputeFileBytesize", "An error occured while seeking the file. Maybe file not open or a stream? Undefined behaviour.");
   #endif
   filesize = naLseek(file->desc, 0, SEEK_END);
-  naLseek(file->desc, curpos, SEEK_SET);
+  naLseek(file->desc, curoffset, SEEK_SET);
   return filesize;
 }
 
@@ -286,77 +303,77 @@ NA_IDEF NABool naIsFileOpen(const NAFile* file){
 
 
 
-NA_IDEF void naSeekFileAbsolute(NAFile* file, NAFileSize offset){
-  NAFileSize result;
+NA_IDEF void naSeekFileAbsolute(NAFile* file, NAFilesize byteoffset){
+  NAFilesize newoffset;
   #ifndef NDEBUG
-    if(offset < 0)
+    if(byteoffset < 0)
       naError("naJumpFileOffsetAbsolute", "Negative offset in absolute jump.");
   #endif
-  result = naLseek(file->desc, offset, SEEK_SET);
+  newoffset = naLseek(file->desc, byteoffset, SEEK_SET);
   #ifndef NDEBUG
-    if(result == -1)
+    if(newoffset == -1)
       naError("naSeekFileAbsolute", "An error occured while seeking the file. Maybe file not open or a stream? Undefined behaviour.");
   #else
-    NA_UNUSED(result);
+    NA_UNUSED(newoffset);
   #endif
 }
 
 
 
-NA_IDEF void naSeekFileRelative(NAFile* file, NAFileSize offset){
-  NAFileSize result;
-  result = naLseek(file->desc, offset, SEEK_CUR);
+NA_IDEF void naSeekFileRelative(NAFile* file, NAFilesize byteoffset){
+  NAFilesize newoffset;
+  newoffset = naLseek(file->desc, byteoffset, SEEK_CUR);
   #ifndef NDEBUG
-    if(result == -1)
+    if(newoffset == -1)
       naError("naSeekFileRelative", "An error occured while seeking the file. Maybe file not open or a stream? Undefined behaviour.");
   #else
-    NA_UNUSED(result);
+    NA_UNUSED(newoffset);
   #endif
 }
 
 
 
-NA_IDEF NAFileSize naReadFileBytes(NAFile* file, void* buf, NAFileSize count){
+NA_IDEF NAFilesize naReadFileBytes(NAFile* file, void* buf, NAFilesize bytesize){
   #ifndef NDEBUG
     if(!naIsFileOpen(file))
       naError("naReadFileBytes", "File is not open.");
-    if(!count)
+    if(!bytesize)
       naError("naReadFileBytes", "Reading zero bytes.");
-    if(count < 0)
+    if(bytesize < 0)
       naError("naReadFileBytes", "Negative count.");
   #endif
-  if(!count){return 0;}
-  return naRead(file->desc, buf, count);
+  if(!bytesize){return 0;}
+  return naRead(file->desc, buf, bytesize);
 }
 
 
-NA_IDEF NAFileSize naWriteFileBytes(NAFile* file, const void* ptr, NAInt count){
+NA_IDEF NAFilesize naWriteFileBytes(NAFile* file, const void* ptr, NAFilesize bytesize){
   #ifndef NDEBUG
     if(!naIsFileOpen(file))
       naError("naReadFileBytes", "File is not open.");
-    if(!count)
+    if(!bytesize)
       naError("naReadFileBytes", "Writing zero bytes.");
-    if(count < 0)
+    if(bytesize < 0)
       naError("naReadFileBytes", "Negative count.");
   #endif
-  if(!count){return 0;}
-  return naWrite(file->desc, ptr, count);
+  if(!bytesize){return 0;}
+  return naWrite(file->desc, ptr, bytesize);
 }
 
 
 
-NA_IDEF NAByteArray* naInitByteArrayFromFile(NAByteArray* bytearray, NAFile* file, NAFileSize count){
-  bytearray = naInitByteArrayWithSize(bytearray, (NAInt)count);
-  naReadFileBytes(file, naGetByteArrayMutablePointer(bytearray), count);
+NA_IDEF NAByteArray* naInitByteArrayFromFile(NAByteArray* bytearray, NAFile* file, NAFilesize bytesize){
+  bytearray = naInitByteArrayWithBytesize(bytearray, (NAInt)bytesize);
+  naReadFileBytes(file, naGetByteArrayMutablePointer(bytearray), bytesize);
   return bytearray;
 }
 
 
-NA_IDEF NAString* naNewStringFromFile(NAFile* file, NAFileSize bytecount){
+NA_IDEF NAString* naNewStringFromFile(NAFile* file, NAFilesize bytesize){
   NAUTF8Char* stringbuf;
-  stringbuf = (NAUTF8Char*)naMalloc(-(NAInt)bytecount);
-  naReadFileBytes(file, stringbuf, bytecount);
-  return naNewStringWithMutableUTF8Buffer(stringbuf, -(NAInt)bytecount, NA_MEMORY_CLEANUP_FREE);
+  stringbuf = (NAUTF8Char*)naMalloc(-(NAInt)bytesize);
+  naReadFileBytes(file, stringbuf, bytesize);
+  return naNewStringWithMutableUTF8Buffer(stringbuf, -(NAInt)bytesize, NA_MEMORY_CLEANUP_FREE);
 }
 
 
@@ -369,9 +386,9 @@ NA_IDEF NAString* naNewStringFromFile(NAFile* file, NAFileSize bytecount){
 NA_IDEF NAString* naNewStringWithFileContents(const char* filename){
   NAString* string;
   NAFile file;
-  NAFileSize totalsize;
+  NAFilesize totalsize;
   file = naMakeFileReadingFilename(filename);
-  totalsize = naComputeFileSize(&file);
+  totalsize = naComputeFileBytesize(&file);
   #ifndef NDEBUG
     if((NA_SYSTEM_ADDRESS_BITS <= 32) && (totalsize > NA_INT32_MAX))
       naError("naInitByteArrayWithFileContents", "Trying to read more than 2 GiB of data from file on a system not using 64 bits.");
@@ -385,15 +402,15 @@ NA_IDEF NAString* naNewStringWithFileContents(const char* filename){
 
 NA_IDEF NAByteArray* naInitByteArrayWithFileContents(NAByteArray* bytearray, const char* filename){
   NAFile file;
-  NAFileSize totalsize;
+  NAFilesize filesize;
   file = naMakeFileReadingFilename(filename);
   if(!naIsFileOpen(&file)){return NA_NULL;}
-  totalsize = naComputeFileSize(&file);
+  filesize = naComputeFileBytesize(&file);
   #ifndef NDEBUG
-    if((NA_SYSTEM_ADDRESS_BITS <= 32) && (totalsize > NA_INT32_MAX))
+    if((NA_SYSTEM_ADDRESS_BITS <= 32) && (filesize > NA_INT32_MAX))
       naError("naInitByteArrayWithFileContents", "Trying to read more than 2 GiB of data from file on a system not using 64 bits.");
   #endif
-  bytearray = naInitByteArrayFromFile(bytearray, &file, totalsize);
+  bytearray = naInitByteArrayFromFile(bytearray, &file, filesize);
   naCloseFile(&file);
   return bytearray;
 }

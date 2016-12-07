@@ -4,3 +4,21 @@ NALib todos
 This file contains notes on what is still missing or needs to be done
 in NALib.
 
+
+Version 17:
+- Move flags into config
+- Add more variadic error messages
+- Fully Implement Buffer
+- First compression in NAPNG
+- Review Iterators
+- Threading.h uses New for allocators
+- Check NAPointerCleanup
+
+Version 18:
+- Redo String with Buffers
+- Make NAByteArray and NAArray simpler without subarrays.
+- Tree
+
+Version 19:
+- Re-Integrate NAMap2D
+- GUI

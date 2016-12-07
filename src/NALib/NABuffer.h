@@ -73,8 +73,8 @@ typedef enum{
 NA_API NABuffer* naInitBufferInputtingFromFile(NABuffer* buffer,
                                             const char* filename);
 // Creates a new buffer which will read the given ByteArray.
-NA_API NABuffer* naInitBufferInputtingFromByteArray(NABuffer* buffer,
-                                            const NAByteArray* array);
+//NA_API NABuffer* naInitBufferInputtingFromByteArray(NABuffer* buffer,
+//                                            const NAByteArray* array);
 
 // Creates a new buffer which has the same settings (endianness, line ending)
 // as srcbuffer but which only looks at the given number of bytes and can only
@@ -83,7 +83,7 @@ NA_API NABuffer* naInitBufferInputtingFromByteArray(NABuffer* buffer,
 NA_API NABuffer* naInitBufferInputtingFromBufferExtraction(
                                                      NABuffer* buffer,
                                                      NABuffer* srcbuffer,
-                                                         NABufInt size);
+                                                         NABufInt bytesize);
 
 
 
@@ -157,23 +157,21 @@ NA_API void naVoidBuffer(NABuffer* buffer);
 //
 // Returns the buffer kind or whether the buffer is finite. Buffers kinds are
 // either readable or writable. Only readable buffers can be finite. Finite
-// buffers are bound (for example by the size of a file), whereas in-finite
+// buffers are bound (for example by the size of a file in bytes), whereas in-finite
 // buffers have a (virtually) infinite amount of bytes available.
-NA_API NABool naCanBufferInput(const NABuffer* buffer);
-NA_API NABool naCanBufferOutput(const NABuffer* buffer);
 NA_API NABool naCanBufferSeek(const NABuffer* buffer);
 NA_API NABool naCanBufferExtend(const NABuffer* buffer);
-NA_API NABool naHasBufferKnownMaxPos(const NABuffer* buffer);
-NA_API NABool naIsBufferSecure(const NABuffer* buffer);
+NA_API NABool naHasBufferDeterminedBytesize(const NABuffer* buffer);
+//NA_API NABool naIsBufferSecure(const NABuffer* buffer);
 
-// Returns current reading or writing position in absolute buffer byte count.
+// Returns current reading or writing position in absolute buffer bytesize.
 // Will return 0 for both if the buffer has nothing in it yet.
-NA_API NABufInt     naGetBufferReadPosAbsolute(const NABuffer* buffer);
-NA_API NABufInt     naGetBufferWritePosAbsolute(const NABuffer* buffer);
+NA_API NABufInt     naGetBufferCurOffsetAbsolute(const NABuffer* buffer);
 
-NA_API NABufInt naGetBufferSize(NABuffer* buffer);
-NA_API NABufInt naComputeBufferMaxPos(NABuffer* buffer);
-NA_API NABufInt naFixBufferMaxPos(NABuffer* buffer);
+// Returns the size of the buffer in byte. Will compute the size if not known until
+// now. Beware: After a call to this function, the buffer size is fixed!
+// Determines the filesize if the source of the buffer is a file.
+NA_API NABufInt naDetermineBufferBytesize(NABuffer* buffer);
 
 // Returns true if the buffer has no more bytes to read. Only useful for
 // finite buffers. This is the function you should use to check if opening
@@ -219,29 +217,33 @@ NA_API void naSetBufferNewLineEncoding( NABuffer* buffer,
 // Default is NA_FALSE.
 NA_API void naSetBufferSecure(NABuffer* buffer, NABool secure);
 
-// Jumps to a specific position within the source or the destination. Warning:
-// not fully functional yet.
-NA_API void naSeekBufferReadAbsolute(NABuffer* buffer, NABufInt pos);
-NA_API void naSeekBufferReadLocal(NABuffer* buffer, NABufInt pos);
-NA_API void naSeekBufferReadRelative(NABuffer* buffer, NABufInt pos);
-NA_API void naSeekBufferWriteAbsolute(NABuffer* buffer, NABufInt pos);
-NA_API void naSeekBufferWriteLocal(NABuffer* buffer, NABufInt pos);
-NA_API void naSeekBufferWriteRelative(NABuffer* buffer, NABufInt pos);
+// Jumps to a specific position within the buffer.
+// Absolute: offset denotes the absolute address.
+// Local:    offset denotes the address relative to the origin of this buffer.
+// Relative: offset denotes the address relative to the current offset.
+NA_API void naSeekBufferAbsolute(NABuffer* buffer, NABufInt offset);
+NA_API void naSeekBufferLocal(NABuffer* buffer, NABufInt offset);
+NA_API void naSeekBufferRelative(NABuffer* buffer, NABufInt offset);
 
 
 NA_API void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum);
+
+
 
 
 // //////////
 // READING
 // //////////
 
+NA_API void naReadBuffer (NABuffer* buffer, NAFilesize bytecount);
+
+
 // Reads the given number of bytes and stores them without further manipulation
 // in buf. buf must be big enough, no overflow check is made.
 //
 // This function is NOT endianness- and NOT line-endings-aware!
-NA_API void naReadBufferBytes (NABuffer* buffer, void* buf, NABufInt count);
-NA_API NAByteArray* naInitByteArrayFromBufferInput(NAByteArray* array, NABuffer* buffer, NABufInt count);
+NA_API void naReadBufferBytes (NABuffer* buffer, void* buf, NABufInt bytesize);
+NA_API NAByteArray* naInitByteArrayFromBufferInput(NAByteArray* array, NABuffer* buffer, NABufInt bytesize);
 
 NA_API NABool naReadBufferBit (NABuffer* buffer);
 NA_API uint32 naReadBufferBits (NABuffer* buffer, NABufInt count);
@@ -285,7 +287,7 @@ NA_API void   naReadBufferArrayDouble(NABuffer* buffer, double* buf, NABufInt co
 // manipulation. buf must be big enough, no overflow check is made.
 //
 // This function is NOT endianness- and NOT line-endings-aware!
-NA_DEF void naWriteBufferBytes(NABuffer* buffer, const void* ptr, NABufInt count);
+NA_DEF void naWriteBufferBytes(NABuffer* buffer, const void* ptr, NABufInt bytesize);
 // Writes an NAByteArray to the file. This function is NOT endianness-aware.
 NA_API void naWriteBufferByteArray(NABuffer* buffer, const NAByteArray* bytearray);
 // Writes the given string to the file. If the string is null-terminated, that
@@ -307,13 +309,13 @@ NA_API void naWriteBufferStringWithArguments(NABuffer* buffer,
                                            va_list argumentlist);
 
 
-NA_API void naWriteBufferBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer, NABufInt count);
+NA_API void naWriteBufferBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer, NABufInt bytesize);
 
 
-// Reads one byte from the current read position and stores it at the current
-// write position. Does it for count successive bytes. Note: The sections may
-// overlap!
-NA_API void naRepeatBufferBytes(NABuffer* buffer, NABufInt count);
+// Reads bytes from distance bytes backwards of the current position and
+// stores it at the current position. Does it for bytesize successive bytes.
+// Note: The sections may overlap!
+NA_API void naRepeatBufferBytes(NABuffer* buffer, NABufInt distance, NABufInt bytesize);
 
 
 

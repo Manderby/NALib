@@ -13,7 +13,7 @@
 
 // Note that in NALib, a String is internally always encoded in UTF-8.
 // Further more, the contents of a string can not be altered after its
-// creation. But you can change the position and size of a string to
+// creation. But you can change the position and length of a string to
 // reflect a part of the original string.
 
 // Note that NAUTF8Char is defined as char to simplify debugging.
@@ -100,13 +100,13 @@ NA_API NAString* naNewString(void);
 // reliable if the source-code itself is encoded in UTF-8. DOES NOT COPY!
 NA_API NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr);
 
-// Returns an NAString with the given size using the given buffer. The buffer
+// Returns an NAString with the given length using the given buffer. The buffer
 // must be big enough! When ownership is set to true, this NAString will free
 // the buffer when getting deleted.
-// When size is negative, the absolute value will be used but the buffer is
-// expected to be null-terminated (the null character is not in size).
+// When length is negative, the absolute value will be used but the buffer is
+// expected to be null-terminated (the null character is not in length).
 NA_API NAString* naNewStringWithMutableUTF8Buffer(  NAUTF8Char* buffer,
-                                                          NAInt size,
+                                                          NAInt length,
                                                NAPointerCleanup ownership);
 
 // Creates an NAString just like sprintf.
@@ -119,10 +119,10 @@ NA_API NAString* naNewStringWithArguments(const NAUTF8Char* format,
 
 // Fills deststring with a desired part of srcstring. Does not copy!
 // See naInitByteArrayExtraction for an explanation of all arguments.
-// Use offset = 0 and size = -1 to reference the whole string.
+// Use charoffset = 0 and length = -1 to reference the whole string.
 NA_API NAString* naNewStringExtraction(const NAString* srcstring,
-                                               NAInt offset,
-                                               NAInt size);
+                                               NAInt charoffset,
+                                               NAInt length);
 
 // The following two functions allow you to get either the basename or the
 // suffix of a filename. For example, the file "folder/document.txt" returns
@@ -150,10 +150,10 @@ NA_API NAString* naNewStringEPSDecoded(const NAString* inputstring);
 // Currently, this is only necessary on windows.
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   // Returns a newly allocated memory block containing the system-encoded
-  // string. If you do not provide the size, it will be automatically
+  // string. If you do not provide the length, it will be automatically
   // computed. The resulting string must be freed manually. COPIES ALWAYS!
   NA_API SystemChar* naAllocSystemStringFromString(const NAUTF8Char* utf8str,
-                                                               NAUInt size);
+                                                               NAUInt length);
   // Creates a new NAString from a system-encoded string. COPIES ALWAYS!
   NA_API NAString* naNewStringFromSystemString(SystemChar* systemstring);
 #endif
@@ -193,10 +193,10 @@ NA_API void naDecoupleString(NAString* string);
 
 
 
-// Returns the size of the string in BYTES. If the string is Null-terminated,
-// the terminating Null-character is NOT counted. Therefore "Hello" always
+// Returns the length of the string in Characters. If the string is Null-terminated,
+// the terminating Null-character is NOT included. Therefore "Hello" always
 // returns 5, no matter if the string is null-terminated or not.
-NA_API NAUInt naGetStringSize(const NAString* string);
+NA_API NAUInt naGetStringLength(const NAString* string);  // todo: lengt or bytesize?
 
 // Returns a const pointer to the first character of this string. Use
 // this for example for printf %s arguments but make sure the string is
@@ -225,25 +225,25 @@ NA_API NABool naIsStringEmpty(const NAString* string);
 
 // Returns the index of the first occurence of the given character in string.
 // The startpos defines where to start and in what direction to search for.
-// If startpos is positive, the character is searched from leading to trailing.
-// If startpos is negative, the character is searched from trailing to leading.
-// A negative startpos denotes the character from the end of the string. For
+// If startoffset is positive, the character is searched from leading to trailing.
+// If startoffset is negative, the character is searched from trailing to leading.
+// A negative startoffset denotes the character from the end of the string. For
 // example, -1 denotes the character at [stringsize - 1].
 // When the character is not found, NA_INVALID_MEMORY_INDEX is returned.
 NA_API NAInt naGetStringCharacterPos(  const NAString* string,
                                             NAUTF8Char ch,
-                                                 NAInt startpos);
+                                                 NAInt startoffset);
 
-// naGetStringCharacterEscapeSize TowardsTrailing and TowardsLeading:
-// These two functions test if the character at offset is the beginning or the
+// naGetStringCharacterEscapeLength TowardsTrailing and TowardsLeading:
+// These two functions test if the character at charoffset is the beginning or the
 // end of an escape sequence. A length in bytes is returned which denotes the
-// size and orientation of the escape sequence.
+// length and orientation of the escape sequence.
 //
 // This method is the core implementation of NALib's string parsing and can be
 // configured using the escaping flags above.
 //
-// If the returned size is positive, the escape sequence spans to the trailing
-// end. If the returned size is negative, the escape sequence spans to the
+// If the returned length is positive, the escape sequence spans to the trailing
+// end. If the returned length is negative, the escape sequence spans to the
 // leading end. The absolute value of the returned number denotes the number of
 // bytes - 1 needed for the escape sequence. Examples:
 // When checking the  \  in  \"   1 might be returned.
@@ -260,18 +260,17 @@ NA_API NAInt naGetStringCharacterPos(  const NAString* string,
 // of the string "\\n": Is the backslash an escaped backslash or does it escape
 // the successing n?
 //
-// The offset argument can be positive or negative. A negative offset searches
-// the position size-offset. For example -1 denotes the last character.
+// The charoffset argument can be positive or negative. A negative charoffset searches
+// the position length - charoffset. For example -1 denotes the last character.
 //
-NA_API NAInt naGetStringCharacterEscapeSizeTowardsTrailing(NAString* string,
-                                                               NAInt offset);
-NA_API NAInt naGetStringCharacterEscapeSizeTowardsLeading( NAString* string,
-                                                               NAInt offset);
+NA_API NAInt naGetStringCharacterEscapeLengthTowardsTrailing(NAString* string,
+                                                               NAInt charoffset);
+NA_API NAInt naGetStringCharacterEscapeLengthTowardsLeading( NAString* string,
+                                                               NAInt charoffset);
 
 
 // naSkipStringWhitespaces searches from leading to trailing for the first char
-// which is > 32 (space) and adjusts offset and size accordingly. The string
-// might be empty after this function.
+// which is > 32 (space). The string might be empty after this function.
 NA_API void naSkipStringWhitespaces(NAString* string);
 
 // Returns the next line delimited by CR, LF or CR-LF. The returned line will
@@ -314,7 +313,7 @@ NA_API NAString* naParseStringPathComponent(NAString* string);
 // returned. The resulting integer value is returned in retint. If retint is
 // a Null-Pointer, the function just returns the number of bytes considered.
 //
-// The function will not parse more than maxbytecount characters. This value
+// The function will not parse more than maxdigitcount characters. This value
 // should not be null.
 //
 // If the parsed value exceeds max, retint will be max and a warning will be
@@ -322,13 +321,13 @@ NA_API NAString* naParseStringPathComponent(NAString* string);
 // all digits considered.
 NA_API NAUInt naParseUTF8StringForDecimalUnsignedInteger(const NAUTF8Char* string,
                                                                    uint64* retint,
-                                                                    NAUInt maxcharcount,
+                                                                    NAUInt maxdigitcount,
                                                                     uint64 max);
 // Same as above but parses a signed integer. Note that there is an addidional
 // min parameter.
 NA_API NAUInt naParseUTF8StringForDecimalSignedInteger( const NAUTF8Char* string,
                                                                    int64* retint,
-                                                                   NAUInt maxcharcount,
+                                                                   NAUInt maxdigitcount,
                                                                     int64 min,
                                                                     int64 max);
 

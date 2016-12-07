@@ -115,8 +115,8 @@ NA_IAPI const void* naGetArrayConstElement  (const NAArray* array, NAInt indx);
 NA_IAPI       void* naGetArrayMutableElement(      NAArray* array, NAInt indx);
 
 // Returns the number of elements in this array. Beware: This is different
-// from naGetByteArraySize. The size returned by naGetByteArraySize is a size
-// in bytes, not necessary the element count.
+// from naGetByteArrayBytesize. The size returned by naGetByteArrayBytesize
+// is a size in bytes, not necessary the element count.
 // Also note that this function requires a (costly) division operation. When
 // using it a lot, for example in a loop, it might be a good idea to store the
 // count in a variable.
@@ -124,7 +124,7 @@ NA_IAPI NAUInt naGetArrayCount(const NAArray* array);
 NA_IAPI NAUInt naGetArrayMaxIndex(const NAArray* array);
 
 // Returns the number of bytes needed to store one element.
-NA_IAPI NAUInt naGetArrayTypeSize(const NAArray* array);
+NA_IAPI NAUInt naGetArrayTypesize(const NAArray* array);
 
 // Returns true if the array is empty.
 NA_IAPI NABool naIsArrayEmpty(const NAArray* array);

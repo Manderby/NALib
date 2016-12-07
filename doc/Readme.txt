@@ -394,7 +394,7 @@ after the prefix is usually a verb, such as Convert, Locate or Get. After that
 comes usually a type upon which the function operates. For example Array or
 String but also something like i8 or 32, denoting an integer with 8 bits or a
 memory block with 32 bits. After that, a more concrete description of what the
-function does or expects as parameters is given. Like for example WithSize,
+function does or expects as parameters is given. Like for example WithLength,
 FromFilename.
 
 Variables and printf arguments are rarely used in NALib. They have an

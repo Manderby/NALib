@@ -28,7 +28,7 @@ NA_API NAPNG* naNewPNG(NASizei size, NAPNGColorType colortype, NAUInt bitdepth);
 NA_API NAPNG* naNewPNGWithFile(const char* filename);
 
 NA_API void* naGetPNGPixelData(NAPNG* png);
-NA_API NAUInt naGetPNGPixelDataSize(NAPNG* png);
+NA_API NAUInt naGetPNGPixelDataBytesize(NAPNG* png);
 NA_API NASizei naGetPNGSize(NAPNG* png);
 NA_API NAPNGColorType naGetPNGColorType(NAPNG* png);
 NA_API NAUInt naGetPNGBitDepth(NAPNG* png);

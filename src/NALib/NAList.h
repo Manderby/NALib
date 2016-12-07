@@ -98,6 +98,7 @@ NA_IAPI NAListPos naAddListFirstConst    (NAList* list, const void* content);
 NA_IAPI NAListPos naAddListFirstMutable  (NAList* list,       void* content);
 NA_IAPI NAListPos naAddListLastConst     (NAList* list, const void* content);
 NA_IAPI NAListPos naAddListLastMutable   (NAList* list,       void* content);
+
 NA_IAPI NAListPos naAddListBeforeConst   (NAList* list, const void* content);
 NA_IAPI NAListPos naAddListBeforeMutable (NAList* list,       void* content);
 NA_IAPI NAListPos naAddListAfterConst    (NAList* list, const void* content);
@@ -129,6 +130,7 @@ NA_IAPI void  naRemoveListFirstConst    (NAList* list, NABool advance);
 NA_IAPI void* naRemoveListFirstMutable  (NAList* list, NABool advance);
 NA_IAPI void  naRemoveListLastConst     (NAList* list, NABool advance);
 NA_IAPI void* naRemoveListLastMutable   (NAList* list, NABool advance);
+
 NA_IAPI void  naRemoveListPrevConst     (NAList* list);
 NA_IAPI void* naRemoveListPrevMutable   (NAList* list);
 NA_IAPI void  naRemoveListCurrentConst  (NAList* list, NABool advance);
@@ -153,14 +155,15 @@ NA_IAPI const void* naGetListFirstConst     (const NAList* list);
 NA_IAPI       void* naGetListFirstMutable   (const NAList* list);
 NA_IAPI const void* naGetListLastConst      (const NAList* list);
 NA_IAPI       void* naGetListLastMutable    (const NAList* list);
+
 NA_IAPI const void* naGetListPrevConst      (const NAList* list);
 NA_IAPI       void* naGetListPrevMutable    (const NAList* list);
 NA_IAPI const void* naGetListCurrentConst   (const NAList* list);
 NA_IAPI       void* naGetListCurrentMutable (const NAList* list);
 NA_IAPI const void* naGetListNextConst      (const NAList* list);
 NA_IAPI       void* naGetListNextMutable    (const NAList* list);
-NA_IAPI const void* naGetListPositionConst  (const NAList* list, NAListPos pos);
-NA_IAPI       void* naGetListPositionMutable(const NAList* list, NAListPos pos);
+NA_IAPI const void* naGetListPositionConst  (const NAList* list, NAListPos listpos);
+NA_IAPI       void* naGetListPositionMutable(const NAList* list, NAListPos listpos);
 
 
 // /////////////////////////////////////////////
@@ -174,10 +177,11 @@ NA_IAPI       void* naGetListPositionMutable(const NAList* list, NAListPos pos);
 // This would be misleading.
 NA_IAPI NABool    naIsListAtFirst           (const NAList* list);
 NA_IAPI NABool    naIsListAtLast            (const NAList* list);
-NA_IAPI NABool    naIsListAtPosition        (const NAList* list, NAListPos pos);
+NA_IAPI NABool    naIsListAtPosition        (const NAList* list, NAListPos listpos);
+
+NA_IAPI NAListPos naGetListNextPosition     (const NAList* list, NAListPos listpos);
 NA_IAPI NAListPos naGetListCurrentPosition  (const NAList* list);
-NA_IAPI NAListPos naGetListNextPosition     (const NAList* list, NAListPos pos);
-NA_IAPI NAListPos naGetListPrevPosition     (const NAList* list, NAListPos pos);
+NA_IAPI NAListPos naGetListPrevPosition     (const NAList* list, NAListPos listpos);
 
 
 // ////////////////////////////////////
@@ -232,6 +236,10 @@ NA_API  NABool naLocateListIndex     (const NAList* list, NAInt indx);
 // removing it and re-adding it. Additionally, there is no memory allocation
 // or deallocation used in the process.
 //
+// The Trailing function will move all elements starting with the current
+// element till the last to the new list. If the list is rewinded, the whole
+// list will be moved. The cur pointer of the src list will be unset.
+//
 // Use these functions in conjunction with naPositionList. It is the fastest
 // way to transfer specific elements from one list to another.
 //
@@ -245,6 +253,7 @@ NA_IAPI void naMoveListCurToLast  (NAList* src, NABool advance, NAList* dst);
 NA_IAPI void naMoveListCurToBefore(NAList* src, NABool advance, NAList* dst);
 NA_IAPI void naMoveListCurToAfter (NAList* src, NABool advance, NAList* dst);
 NA_IAPI void naMoveListFirstToLast(NAList* src, NABool advance, NAList* dst);
+NA_IAPI void naMoveListTrailingToLast(NAList* src, NAList* dst);
 
 // The exchange function splits the list into two parts BEFORE the current
 // element and re-attaches the whole list before that at the end of the list.

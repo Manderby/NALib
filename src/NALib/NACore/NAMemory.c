@@ -11,10 +11,10 @@
 //#define NA_RUNTIME_USES_NEW_DELETE
 
 // Turns out, the pagesize is far too small to result in good speed
-// improvements. The custom size can result in up to 2 times faster allocation
+// improvements. The custom bytesize can result in up to 2 times faster allocation
 // and deallocation on some systems.
-#define NA_POOL_SIZE_EQUALS_PAGESIZE
-#define NA_CUSTOM_POOL_SIZE (1 << 16)
+#define NA_COREPOOL_BYTESIZE_EQUALS_PAGESIZE
+#define NA_CUSTOM_POOL_BYTESIZE (1 << 16)
 
 
 typedef struct NACorePool NACorePool;
@@ -37,7 +37,7 @@ struct NACorePool{
   NACorePool* nextpool;
   // The following two fields are dummy entries not used in release versions.
   // They shall not be removed though as the total amount of bytes used for
-  // an NACorePool shall be 8 times an address size.
+  // an NACorePool shall be 8 times an addresssize.
   void* dummy1; // used in debugging. Points at first byte of the whole pool
   void* dummy2; // used in debugging. Points at last byte of the whole pool
 };
@@ -53,9 +53,9 @@ NARuntime* na_runtime = NA_NULL;
 
 
 #ifndef NDEBUG
-  NAInt na_debug_mem_bytecount = 0;
-  NAInt na_debug_mem_invisiblebytecount = 0;
-  NABool na_debug_mem_count_bytes = NA_FALSE;
+  NAInt na_debug_mem_bytesize = 0;
+  NAInt na_debug_mem_invisiblebytesize = 0;
+  NABool na_debug_mem_observe_bytes = NA_FALSE;
 #endif
 
 
@@ -224,12 +224,12 @@ NA_DEF void naStartRuntime(){
       naError("naStartRuntime", "NACorePool struct encoding misaligned");
   #endif
   na_runtime = naAlloc(NARuntime);
-  #if defined NA_POOL_SIZE_EQUALS_PAGESIZE
-    na_runtime->poolsize = naGetSystemMemoryPageSize();
-    na_runtime->poolsizemask = naGetSystemMemoryPageSizeMask();
+  #if defined NA_COREPOOL_BYTESIZE_EQUALS_PAGESIZE
+    na_runtime->poolsize = naGetSystemMemoryPagesize();
+    na_runtime->poolsizemask = naGetSystemMemoryPagesizeMask();
   #else
-    na_runtime->poolsize = NA_CUSTOM_POOL_SIZE;
-    na_runtime->poolsizemask = ~(NAUInt)(NA_CUSTOM_POOL_SIZE - NA_ONE);
+    na_runtime->poolsize = NA_CUSTOM_POOL_BYTESIZE;
+    na_runtime->poolsizemask = ~(NAUInt)(NA_CUSTOM_POOL_BYTESIZE - NA_ONE);
   #endif
 }
 

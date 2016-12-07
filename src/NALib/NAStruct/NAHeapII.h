@@ -31,7 +31,7 @@ struct NAHeap{
 // The root field is needed because the inline functions below have no idea
 // whether the heap stores backpointers or not. But as the root element is
 // stored at array index 1, a pointer to that location is needed as the two
-// structs differ in size whether they do or do not store backpointers.
+// structs differ in bytesize whether they do or do not store backpointers.
 
 #include "NAMemory.h"
 
