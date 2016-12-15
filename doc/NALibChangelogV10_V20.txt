@@ -11,11 +11,16 @@ This file contains information about changes in the package NALib. These are
 purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
+Highlights:
 - Overhaul of coord functions. Lots of renaming and trying to use naming
   consistently with size, length, pos, min, max, offset, ...
   Warning: Some functions changed their signature. Especially the Inside
   tests are now called naContainsXXX and have the parameter switched!
+- Rewrote the NABuffer struct. Much cleaner now. Future proof.
+- Rewrote NAList to not include an iterator. There is a new NAListIterator
+  struct which can be attached to a list.
 
+Other things:
 - Added naSleepN and mande naSleepS using a double.
 - Changed naIsMutexLocked function and the mutex typedefs. It is a fast
   but erroneous take on the problematic. But as there is no guarantee that
@@ -26,6 +31,7 @@ correct, complete or final.
 - Added scalar Box and Volume methods and naMakeRangeiWithRangeiAndPos
 - Added naTell to retrieve to position within a file.
 - Removed the empty warning from naGetListCurrentXXX.
+- Renamed naPointerCleanup to naMemoryCleanup
 
 Version 16 (first published 2016-October-11):
 ==============================================

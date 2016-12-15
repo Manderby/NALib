@@ -340,7 +340,7 @@ struct NAPtr{
 
 
 
-  NA_HIDEF void naMarkPtrCleanup(NAPtr* ptr, NAPointerCleanup cleanup){
+  NA_HIDEF void naMarkPtrCleanup(NAPtr* ptr, NAMemoryCleanup cleanup){
     if((cleanup < NA_MEMORY_CLEANUP_NONE) || (cleanup > NA_MEMORY_CLEANUP_DELETE))
       naError("naMarkPtrCleanup", "Invalid cleanup option");
     if(((ptr->flags >> NA_MEMORY_CLEANUP_BITSHIFT) >= NA_MEMORY_CLEANUP_NONE) && ((ptr->flags >> NA_MEMORY_CLEANUP_BITSHIFT) <= NA_MEMORY_CLEANUP_DELETE))
@@ -537,7 +537,7 @@ NA_IDEF NAPtr naMakePtrWithConstBuffer(const void* data, NAInt bytesizehint, NAI
 
 
 
-NA_IDEF NAPtr naMakePtrWithMutableBuffer(void* data, NAInt bytesizehint, NAInt zerofillhint, NAPointerCleanup cleanuphint){
+NA_IDEF NAPtr naMakePtrWithMutableBuffer(void* data, NAInt bytesizehint, NAInt zerofillhint, NAMemoryCleanup cleanuphint){
   NAPtr ptr;
   ptr.data.d = data;
   #ifndef NDEBUG
@@ -703,7 +703,7 @@ NA_IDEF NALValue naMakeLValueWithConstBuffer(const void* buffer, NAInt typesize)
 
 
 
-NA_IDEF NALValue naMakeLValueWithMutableBuffer(void* buffer, NAInt typesize, NAPointerCleanup cleanuphint){
+NA_IDEF NALValue naMakeLValueWithMutableBuffer(void* buffer, NAInt typesize, NAMemoryCleanup cleanuphint){
   NALValue lvalue;
   #ifndef NDEBUG
     if(typesize == NA_ZERO)
@@ -838,7 +838,7 @@ NA_IDEF NAMemoryBlock naMakeMemoryBlockWithConstBuffer(const void* buffer, NAInt
 
 
 
-NA_IDEF NAMemoryBlock naMakeMemoryBlockWithMutableBuffer(void* buffer, NAInt bytesize, NAPointerCleanup cleanup){
+NA_IDEF NAMemoryBlock naMakeMemoryBlockWithMutableBuffer(void* buffer, NAInt bytesize, NAMemoryCleanup cleanup){
   NAMemoryBlock memblock;
   memblock.ptr = naMakePtrWithMutableBuffer(buffer, bytesize, 1, cleanup);
   memblock.bytesize = naAbsi(bytesize);
@@ -1090,7 +1090,7 @@ NA_IDEF NACArray naMakeCArrayWithConstBuffer(const void* buffer, NAInt typesize,
 
 
 
-NA_IDEF NACArray naMakeCArrayWithMutableBuffer(void* buffer, NAUInt typesize, NAInt count, NAPointerCleanup cleanuphint){
+NA_IDEF NACArray naMakeCArrayWithMutableBuffer(void* buffer, NAUInt typesize, NAInt count, NAMemoryCleanup cleanuphint){
   NACArray carray;
   #ifndef NDEBUG
     if(typesize <= NA_ZERO)
@@ -1480,7 +1480,7 @@ NA_RUNTIME_TYPE(NAPointer, naDestructPointer);
 // can become a reference counted pointer.
 //
 // To distinguish, how the pointer shall be handeled upon deletion, a new
-// enumeration NAPointerCleanup had been introduced. See above.
+// enumeration NAMemoryCleanup had been introduced. See above.
 //
 // The refcoutn field also stores the cleanup hint in the 3 bits on the higher
 // endian side. This is necessary due to the automatic deletion of the pointer
@@ -1505,7 +1505,7 @@ NA_IDEF NAPointer* naNewNullPointer(){
 
 
 
-NA_IDEF NAPointer* naNewPointer(void* data, NAPointerCleanup cleanup, NAFunc deallocator){
+NA_IDEF NAPointer* naNewPointer(void* data, NAMemoryCleanup cleanup, NAFunc deallocator){
   NAPointer* pointer; // Declaration before definition. Needed for C90
   #ifndef NDEBUG
     if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup > NA_MEMORY_CLEANUP_DELETE)

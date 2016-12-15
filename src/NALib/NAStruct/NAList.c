@@ -5,56 +5,67 @@
 
 
 
+NA_DEF NAListElement* naNewListElement(NAListElement* prev, NAListElement* next){
+  NAListElement* elem = naNew(NAListElement);
+  elem->prev = prev;
+  elem->next = next;
+  #ifndef NDEBUG
+    elem->itercount = 0;
+  #endif
+  return elem;
+}
 
 
 
-NA_DEF NABool naLocateListPointer(const NAList* list, void* content){
-  NAList* mutablelist = (NAList*)list;
-  NAListElement* curelement = list->sentinel.next;
-  while(curelement != &(list->sentinel)){
-    if(naGetPtrConst(&(curelement->ptr)) == content){
-      mutablelist->cur = curelement;
+NA_DEF NABool naLocateListContent(NAListIterator* listiterator, const void* content){
+  // todo: search in left-right exponential search starting from the current
+  // position.
+  const NAList* list = naGetPtrConst(&(listiterator->listptr));
+  listiterator->cur = list->sentinel.next;
+  while(listiterator->cur != &(list->sentinel)){
+    if(naGetPtrConst(&(listiterator->cur->ptr)) == content){
       return NA_TRUE;
     }
-    curelement = curelement->next;
+    listiterator->cur = listiterator->cur->next;
   }
-  // Reaching here, content could not be found. Do not change the internal
-  // pointer but return NA_FALSE
+  // Reaching here, content could not be found.
   return NA_FALSE;
 }
 
 
-NA_DEF NABool naLocateListIndex(const NAList* list, NAInt indx){
-  NAList* mutablelist = (NAList*)list;
-  if(indx < 0){indx += list->count;}
+
+NA_DEF NABool naLocateListIndex(NAListIterator* listiterator, NAInt indx){
+  NAList* mutablelist = (NAList*)naGetPtrConst(&(listiterator->listptr));
+
+  if(indx < 0){indx += mutablelist->count;}
   if(indx < 0){
     #ifndef NDEBUG
       naError("naLocateListIndex", "Negative index underflows the range of the list");
     #endif
-    mutablelist->cur = &(mutablelist->sentinel);
+    listiterator->cur = &(mutablelist->sentinel);
     return NA_FALSE;
   }
-  if(indx >= (NAInt)list->count){
+  if(indx >= (NAInt)mutablelist->count){
     #ifndef NDEBUG
       naError("naLocateListIndex", "Index overflows the range of the list");
     #endif
-    mutablelist->cur = &(mutablelist->sentinel);
+    listiterator->cur = &(mutablelist->sentinel);
     return NA_FALSE;
   }
   
-  if(indx < ((NAInt)list->count / 2)){
+  if(indx < ((NAInt)mutablelist->count / 2)){
     // Go from leading to trailing
-    mutablelist->cur = list->sentinel.next;
+    listiterator->cur = mutablelist->sentinel.next;
     while(indx){
-      mutablelist->cur = mutablelist->cur->next;
+      listiterator->cur = listiterator->cur->next;
       indx--;
     }
   }else{
     // Go from trailing to leading
-    mutablelist->cur = list->sentinel.prev;
-    indx = indx - list->count + 1;
+    listiterator->cur = mutablelist->sentinel.prev;
+    indx = indx - mutablelist->count + 1;
     while(indx){
-      mutablelist->cur = mutablelist->cur->prev;
+      listiterator->cur = listiterator->cur->prev;
       indx++;
     }
   }

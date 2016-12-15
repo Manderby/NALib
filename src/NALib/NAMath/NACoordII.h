@@ -604,7 +604,7 @@ NA_IDEF NARangei naMakeRangeiWithRangeAndRange (NARangei range1, NARangei range2
       naError("naMakeRangeiWithRangeAndRange", "Invalid range 2 given.");
   #endif
   if(naIsRangeiEmpty(range1) && naIsRangeiEmpty(range2)){
-    newrange = naMakeRangei(0, 0);
+    newrange = naMakeRangeiE(0, 0);
   }else if(naIsRangeiEmpty(range1)){
     newrange = range2;
   }else if(naIsRangeiEmpty(range2)){

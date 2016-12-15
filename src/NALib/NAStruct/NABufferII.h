@@ -17,7 +17,6 @@ struct NABuffer{
   NAUInt flags;                     // various flags
   NAPointer* storage;               // The buffer storage. List of buffer parts.
   NARangei range;                   // The total range of this buffer
-  void* source;                     // The source of the buffer.
 
   NAListPos curlistpos;             // The listpos of the current part
   NABufInt curoffset;               // The current absolute offset

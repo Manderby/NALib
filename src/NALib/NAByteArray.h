@@ -96,7 +96,7 @@ NA_API NAByteArray* naInitByteArrayWithMutableBuffer(
                                                 NAByteArray* array,
                                                        void* buffer,
                                                        NAInt bytesize,
-                                            NAPointerCleanup cleanuphint);
+                                            NAMemoryCleanup cleanuphint);
 
 
 

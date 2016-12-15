@@ -259,7 +259,7 @@ NA_HDEF void naDestructPointer(NAPointer* pointer){
   if(pointer->deallocator){
     pointer->deallocator(naGetPtrMutable(&(pointer->ptr)));
   }
-  switch((NAPointerCleanup)(pointer->refcount >> NA_MEMORY_CLEANUP_BITSHIFT)){
+  switch((NAMemoryCleanup)(pointer->refcount >> NA_MEMORY_CLEANUP_BITSHIFT)){
   case NA_MEMORY_CLEANUP_UNDEFINED:
     #ifndef NDEBUG
       naError("naDestructPointer", "invalid cleanup option");

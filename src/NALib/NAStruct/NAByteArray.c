@@ -50,7 +50,7 @@ NA_DEF NAByteArray* naInitByteArrayWithConstBuffer(NAByteArray* array, const voi
 
 
 
-NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* buffer, NAInt bytesize, NAPointerCleanup cleanuphint){
+NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* buffer, NAInt bytesize, NAMemoryCleanup cleanuphint){
   NAMemoryBlock* newstorageblock;
   #ifndef NDEBUG
     if(!array)

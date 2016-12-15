@@ -74,7 +74,7 @@ NA_API  NAArray* naInitArrayWithMutableBuffer(
                                              void* buffer,
                                             NAUInt typesize,
                                             NAUInt count,
-                                  NAPointerCleanup ownership);
+                                  NAMemoryCleanup ownership);
 
 // Fills dstarray with a desired part of srcarray.
 // offset and count can be negative: See naInitByteArrayExtraction for the

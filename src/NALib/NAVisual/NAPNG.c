@@ -153,7 +153,7 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABuffer* buffer){
   #endif
 
   naReadBufferBytes(buffer, chunk->typename, 4);
-  naInitBufferInputtingFromBufferExtraction(&(chunk->data), buffer, chunk->length);
+  naInitBufferWithBufferExtraction(&(chunk->data), buffer, chunk->length);
 
   chunk->type = NA_PNG_CHUNK_TYPE_UNKNOWN;
   for(i=0; i<NA_PNG_CHUNK_TYPE_COUNT; i++){
@@ -314,6 +314,10 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
     upbufptr = curbyte - bytesperline;
   }
 
+  NAFile outfile = naMakeFileWritingFilename("test.raw", NA_FILEMODE_DEFAULT);
+  naWriteFileBytes(&outfile, png->pixeldata, png->size.width * png->size.height * bpp);
+  naCloseFile(&outfile);
+
   naFree(upbuffer);
 }
 
@@ -413,6 +417,11 @@ NA_HDEF void naReadPNGPLTEChunk(NAPNG* png, NAPNGChunk* plte){
 
 NA_HDEF void naReadPNGIDATChunk(NAPNG* png, NAPNGChunk* idat){
   naFillBufferWithZLIBDecompression(&(png->filtereddata), &(idat->data));
+
+
+//  NAFile outfile = naMakeFileWritingFilename("test.raw", NA_FILEMODE_DEFAULT);
+//  naWriteBufferToFile(&(png->filtereddata), &outfile);
+//  naCloseFile(&outfile);
 }
 
 
@@ -670,7 +679,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   png->pixeldimensions[1] = 1.f;
   png->pixelunit = NA_PIXEL_UNIT_RATIO;
   
-  buffer = naInitBufferInputtingFromFile(naAlloc(NABuffer), filename);
+  buffer = naInitBufferWithFile(naAlloc(NABuffer), filename);
   naDetermineBufferBytesize(buffer);
   // If the buffer is empty, there is no png to read.
   if(naIsBufferReadAtEnd(buffer)){
@@ -699,9 +708,9 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   // Create the buffer to hold the decompressed data
   naInitBuffer(&(png->filtereddata));
   
-  naRewindList(&(png->chunks));
-  while(naIterateList(&(png->chunks), 1)){
-    NAPNGChunk* curchunk = naGetListCurrentMutable(&(png->chunks));
+  NAListIterator iter = naMakeListIteratorMutable(&(png->chunks));
+  while(naIterateList(&iter, 1)){
+    NAPNGChunk* curchunk = naGetListCurrentMutable(&iter);
     switch(curchunk->type){
     case NA_PNG_CHUNK_TYPE_IHDR:  naReadPNGIHDRChunk(png, curchunk);  break;
     case NA_PNG_CHUNK_TYPE_PLTE:  naReadPNGPLTEChunk(png, curchunk);  break;
@@ -726,6 +735,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
       break;
     }
   }
+  naClearListIterator(&iter);
   
   naReconstructFilterData(png);
   
@@ -770,6 +780,7 @@ NA_DEF NAUInt naGetPNGBitDepth(NAPNG* png){
 
 
 NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
+
   NABuffer outbuffer;
   NAChecksum checksum;
   NAFile outfile;
@@ -783,18 +794,22 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
 
   naWriteBufferBytes(&outbuffer, na_png_magic, 8);
 
-  naRewindList(&(png->chunks));
-  while(naIterateList(&(png->chunks), 1)){
-    NAPNGChunk* curchunk = naGetListCurrentMutable(&(png->chunks));
+  NAListIterator iter = naMakeListIteratorMutable(&(png->chunks));
+  while(naIterateList(&iter, 1)){
+
+    NAPNGChunk* curchunk = naGetListCurrentMutable(&iter);
     naDetermineBufferBytesize(&(curchunk->data));
-    
+
     curchunk->length = naDetermineBufferBytesize(&(curchunk->data));
     naWriteBufferUInt32(&outbuffer, (uint32)curchunk->length);
     
     naCopy32(curchunk->typename, na_png_chunk_type_names[curchunk->type]);
     naWriteBufferBytes(&outbuffer, curchunk->typename, 4);
     
-    naWriteBufferBuffer(&outbuffer, &(curchunk->data), naDetermineBufferBytesize(&(curchunk->data)));
+    if(!naIsBufferEmpty(&(curchunk->data))){
+      naSeekBufferLocal(&(curchunk->data), 0);
+      naWriteBufferBuffer(&outbuffer, &(curchunk->data), naDetermineBufferBytesize(&(curchunk->data)));
+    }
     
     naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
     naAccumulateChecksum(&checksum, curchunk->typename, 4);
@@ -806,9 +821,10 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
     naClearChecksum(&checksum);
     naWriteBufferUInt32(&outbuffer, curchunk->crc);
   }
+  naClearListIterator(&iter);
 
   outfile = naMakeFileWritingFilename(filename, NA_FILEMODE_DEFAULT);
-  naWriteBufferToFile(&outbuffer, &outfile, NA_FALSE);
+  naWriteBufferToFile(&outbuffer, &outfile);
   naCloseFile(&outfile);
   naClearBuffer(&outbuffer);
 }

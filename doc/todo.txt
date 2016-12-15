@@ -6,19 +6,24 @@ in NALib.
 
 
 Version 17:
-- Move flags into config
-- Add more variadic error messages
 - Fully Implement Buffer
-- First compression in NAPNG
 - Review Iterators
 - Threading.h uses New for allocators
 - Check NAPointerCleanup
 
 Version 18:
+- First compression in NAPNG
+- Move flags into config
+- Add more variadic error messages
+- NATree and integration into NABuffer
 - Redo String with Buffers
-- Make NAByteArray and NAArray simpler without subarrays.
-- Tree
+- Make NAArray simpler without subarrays. Add Iterator
 
 Version 19:
 - Re-Integrate NAMap2D
 - GUI
+
+Version 20:
+- All todos.
+- Cleanup
+- Documentation

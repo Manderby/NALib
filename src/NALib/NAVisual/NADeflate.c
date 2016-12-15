@@ -424,7 +424,8 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   }
   NA_UNUSED(dictadler);
 
-  naInitBufferInputtingFromBufferExtraction(&zbuffer, input, zbuffersize);
+  naInitBufferWithBufferExtraction(&zbuffer, input, zbuffersize);
+  naReadBuffer(input, zbuffersize);
   zbufferadler = naReadBufferUInt32(input);
   
   // Now start RFC 1951
@@ -440,6 +441,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
       naError("naInitBufferFromDeflateDecompression", "Block compression invalid");
     #endif
     if(blocktype == 0x00){
+      // Blocktype 0x00 is an uncompressed block.
       uint16 len;
       uint16 nlen;
       NAByte* tmpbuf;
@@ -472,6 +474,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
       // Now, we have the literal and distance codes. Start reading until we
       // find the value 256.
       while(1){
+      
         uint16 curcode;
         uint16 length;
         uint16 dist;

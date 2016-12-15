@@ -225,7 +225,7 @@ typedef enum{
   NA_MEMORY_CLEANUP_FREE            = 0x02,  // 0b010 // naFreePtr
   NA_MEMORY_CLEANUP_FREE_ALIGNED    = 0x03,  // 0b011 // naFreeAlignedPtr
   NA_MEMORY_CLEANUP_DELETE          = 0x04   // 0b100 // naDeletePtr
-} NAPointerCleanup;
+} NAMemoryCleanup;
 
 
 
@@ -307,7 +307,7 @@ NA_IAPI NAPtr naMakePtrWithConstBuffer(  const void* data,
 NA_IAPI NAPtr naMakePtrWithMutableBuffer(      void* data,
                                                NAInt bytesizehint,
                                                NAInt zerofillhint,
-                                    NAPointerCleanup cleanuphint);
+                                    NAMemoryCleanup cleanuphint);
 
 // Assumes srcptr to be an array of bytes and creates an NAPtr referencing an
 // extraction thereof. DOES NOT COPY!
@@ -326,7 +326,7 @@ NA_IAPI NAPtr naMakePtrWithExtraction(  const NAPtr* srcptr,
 // Cleanup functions
 // Frees the memory stored in ptr. You should always choose the appropriate
 // function depending on what kind of pointer the NAPtr stores. See definition
-// of NAPointerCleanup to know which one.
+// of NAMemoryCleanup to know which one.
 NA_IAPI void naClearPtr(NAPtr* ptr);
 NA_IAPI void naFreePtr(NAPtr* ptr);
 NA_IAPI void naFreeAlignedPtr(NAPtr* ptr);
@@ -370,7 +370,7 @@ NA_IAPI NALValue naMakeLValueWithConstBuffer(   const void* bufptr,
                                                       NAInt typesize);
 NA_IAPI NALValue naMakeLValueWithMutableBuffer(       void* bufptr,
                                                       NAInt typesize,
-                                           NAPointerCleanup cleanuphint);
+                                           NAMemoryCleanup cleanuphint);
 
 // Frees the memory for the value buffer.
 NA_IAPI void naFreeLValue(NALValue* lvalue);
@@ -414,7 +414,7 @@ NA_IAPI NAMemoryBlock naMakeMemoryBlockWithConstBuffer( const void* bufptr,
                                                               NAInt bytesize);
 NA_IAPI NAMemoryBlock naMakeMemoryBlockWithMutableBuffer(     void* bufptr,
                                                               NAInt bytesize,
-                                                   NAPointerCleanup cleanuphint);
+                                                   NAMemoryCleanup cleanuphint);
 
 // Makes a new NAMemoryBlock struct containing a sub-part of the given source
 // memory block. Does NOT copy! The byteoffset and bytesize are given in bytes and must
@@ -495,7 +495,7 @@ NA_IAPI NACArray naMakeCArrayWithConstBuffer(   const void* bufptr,
 NA_IAPI NACArray naMakeCArrayWithMutableBuffer(       void* bufptr,
                                                      NAUInt typesize,
                                                       NAInt count,
-                                           NAPointerCleanup cleanuphint);
+                                           NAMemoryCleanup cleanuphint);
 
 // Makes a new NACArray struct containing a sub-part of the given source
 // C-array. Does NOT copy! The elemoffset and count are given in units with the
@@ -632,7 +632,7 @@ NA_IAPI NAPointer* naNewNullPointer();
 // the appropriate free or delete function.
 //
 NA_IAPI NAPointer* naNewPointer(       void* data,
-                            NAPointerCleanup cleanup,
+                            NAMemoryCleanup cleanup,
                                       NAFunc deallocator);
 
 // Retains the given pointer. Meaning: There is one more codeblock which is

@@ -42,6 +42,7 @@
 
 // The full type definitions are in the file "NAListII.h"
 typedef struct NAList NAList;
+typedef struct NAListIterator NAListIterator;
 typedef const void* NAListPos;
 
 
@@ -99,10 +100,9 @@ NA_IAPI NAListPos naAddListFirstMutable  (NAList* list,       void* content);
 NA_IAPI NAListPos naAddListLastConst     (NAList* list, const void* content);
 NA_IAPI NAListPos naAddListLastMutable   (NAList* list,       void* content);
 
-NA_IAPI NAListPos naAddListBeforeConst   (NAList* list, const void* content);
-NA_IAPI NAListPos naAddListBeforeMutable (NAList* list,       void* content);
-NA_IAPI NAListPos naAddListAfterConst    (NAList* list, const void* content);
-NA_IAPI NAListPos naAddListAfterMutable  (NAList* list,       void* content);
+NA_IAPI NAListPos naGetListInitialPosition(NAList* list);
+NA_IAPI NAListPos naGetListFirstPosition  (NAList* list);
+NA_IAPI NAListPos naGetListLastPosition   (NAList* list);
 
 
 // /////////////////////////////
@@ -126,17 +126,11 @@ NA_IAPI NAListPos naAddListAfterMutable  (NAList* list,       void* content);
 // structure but do not free the memory of the content! But the mutable
 // variants return a pointer to the previously stored content such that you
 // can erase it if you need to.
-NA_IAPI void  naRemoveListFirstConst    (NAList* list, NABool advance);
-NA_IAPI void* naRemoveListFirstMutable  (NAList* list, NABool advance);
-NA_IAPI void  naRemoveListLastConst     (NAList* list, NABool advance);
-NA_IAPI void* naRemoveListLastMutable   (NAList* list, NABool advance);
+NA_IAPI void  naRemoveListFirstConst    (NAList* list);
+NA_IAPI void* naRemoveListFirstMutable  (NAList* list);
+NA_IAPI void  naRemoveListLastConst     (NAList* list);
+NA_IAPI void* naRemoveListLastMutable   (NAList* list);
 
-NA_IAPI void  naRemoveListPrevConst     (NAList* list);
-NA_IAPI void* naRemoveListPrevMutable   (NAList* list);
-NA_IAPI void  naRemoveListCurrentConst  (NAList* list, NABool advance);
-NA_IAPI void* naRemoveListCurrentMutable(NAList* list, NABool advance);
-NA_IAPI void  naRemoveListNextConst     (NAList* list);
-NA_IAPI void* naRemoveListNextMutable   (NAList* list);
 
 
 // /////////////////////////////////////////////
@@ -156,14 +150,103 @@ NA_IAPI       void* naGetListFirstMutable   (const NAList* list);
 NA_IAPI const void* naGetListLastConst      (const NAList* list);
 NA_IAPI       void* naGetListLastMutable    (const NAList* list);
 
-NA_IAPI const void* naGetListPrevConst      (const NAList* list);
-NA_IAPI       void* naGetListPrevMutable    (const NAList* list);
-NA_IAPI const void* naGetListCurrentConst   (const NAList* list);
-NA_IAPI       void* naGetListCurrentMutable (const NAList* list);
-NA_IAPI const void* naGetListNextConst      (const NAList* list);
-NA_IAPI       void* naGetListNextMutable    (const NAList* list);
 NA_IAPI const void* naGetListPositionConst  (const NAList* list, NAListPos listpos);
 NA_IAPI       void* naGetListPositionMutable(const NAList* list, NAListPos listpos);
+
+
+// Traverses the whole list and calls the mutator on each element. A pointer
+// to each element will be given to the mutator. The list is traversed forward
+// from first to last and the internal pointer will be rewinded.
+NA_IAPI void    naForeachList       (NAList* list, NAFunc mutator); // done
+
+NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
+
+
+
+
+
+
+// ////////////////////////////////////
+// Iterating a list
+//
+
+
+// Creating and positioning an iterator:
+//
+// The naMakeListIteratorXXX functions will create a new iterator which is
+// positioned at the initial position of the list. From there on, a list
+// can be searched forward or backwards. You define, if the iterator can
+// mutate the contents and return mutable elements from the list. If an
+// iterator is created const, add or remove functions will emit a warning
+// when NDEBUG is undefined.
+//
+// After you are done using the iterator, you should clear it with a call to
+// naClearListIterator. NALib keeps track of where the iterators are when
+// NDEBUG is undefined. Therefore, you will get lots of warnings if the
+// iterators are not properly cleared. In the release code, no checks are
+// performed.
+
+NA_IAPI NAListIterator naMakeListIteratorConst(const NAList* list);
+NA_IAPI NAListIterator naMakeListIteratorMutable(NAList* list);
+
+NA_IAPI void naClearListIterator(NAListIterator* listiterator);
+
+// After having created an iterator, you may position it to a desired element.
+// By using one of the naLocateListXXX functions:
+//
+// Position:      The iterator moves to the desired location. Such a position
+//                is returned for example when adding a new element to the list.
+//                This function is extremely fast.
+// Content:       A specific content pointer is searched within the list. This
+//                function is very slow. If you often need to locate elements
+//                within a list, try to go for the Position solution. But you
+//                need to store the NAListPos when adding elements.
+// Index:         The element with the specified index is searched. If the given
+//                index is negative, it denotes the element from the end of the
+//                list, whereas -1 denotes the last element. Note that this
+//                function is slow, especially when searching for elements in
+//                the middle of the list.
+//
+// The Content and Index variants will return NA_FALSE, if the element has not
+// been found and NA_TRUE if it has been found. If not found, the iterator will
+// point to the initial list position. The Position variant will always return
+// NA_TRUE.
+
+NA_IAPI NABool naLocateListFirst    (NAListIterator* listiterator);
+NA_IAPI NABool naLocateListLast     (NAListIterator* listiterator);
+NA_IAPI NABool naLocateListPosition (NAListIterator* listiterator, NAListPos listpos);
+NA_API  NABool naLocateListContent  (NAListIterator* listiterator, const void* content);
+NA_API  NABool naLocateListIndex    (NAListIterator* listiterator, NAInt indx);
+
+// Moves the internal pointer forward or backwards the given number of positive
+// or negative steps respectively. If the step over- or underflows the stored
+// elements and NDEBUG is undefined, a warning is emitted.
+//
+// Returns NA_FALSE when one of the two ends of the list is reached.
+NA_IAPI NABool  naIterateList    (NAListIterator* listiterator, NAInt step);
+
+// Returns the content.
+NA_IAPI const void* naGetListPrevConst      (NAListIterator* listiterator);
+NA_IAPI       void* naGetListPrevMutable    (NAListIterator* listiterator);
+NA_IAPI const void* naGetListCurrentConst   (NAListIterator* listiterator);
+NA_IAPI       void* naGetListCurrentMutable (NAListIterator* listiterator);
+NA_IAPI const void* naGetListNextConst      (NAListIterator* listiterator);
+NA_IAPI       void* naGetListNextMutable    (NAListIterator* listiterator);
+
+// Adds elements relative to the current position within a list.
+NA_IAPI NAListPos naAddListBeforeConst   (NAListIterator* listiterator, const void* content);
+NA_IAPI NAListPos naAddListBeforeMutable (NAListIterator* listiterator,       void* content);
+NA_IAPI NAListPos naAddListAfterConst    (NAListIterator* listiterator, const void* content);
+NA_IAPI NAListPos naAddListAfterMutable  (NAListIterator* listiterator,       void* content);
+
+// Removes elements relative from the current position within the list.
+NA_IAPI void  naRemoveListPrevConst     (NAListIterator* listiterator);
+NA_IAPI void* naRemoveListPrevMutable   (NAListIterator* listiterator);
+NA_IAPI void  naRemoveListCurrentConst  (NAListIterator* listiterator, NABool advance);
+NA_IAPI void* naRemoveListCurrentMutable(NAListIterator* listiterator, NABool advance);
+NA_IAPI void  naRemoveListNextConst     (NAListIterator* listiterator);
+NA_IAPI void* naRemoveListNextMutable   (NAListIterator* listiterator);
+
 
 
 // /////////////////////////////////////////////
@@ -175,57 +258,14 @@ NA_IAPI       void* naGetListPositionMutable(const NAList* list, NAListPos listp
 // Note that threr are no First and Last getters as the returned NAListPos
 // would be bound to the specific element rather to the position in the list.
 // This would be misleading.
-NA_IAPI NABool    naIsListAtFirst           (const NAList* list);
-NA_IAPI NABool    naIsListAtLast            (const NAList* list);
-NA_IAPI NABool    naIsListAtPosition        (const NAList* list, NAListPos listpos);
+NA_IAPI NABool    naIsListIteratorEmpty     (NAListIterator* listiterator);
+NA_IAPI NABool    naIsListAtFirst           (NAListIterator* listiterator);
+NA_IAPI NABool    naIsListAtLast            (NAListIterator* listiterator);
+NA_IAPI NABool    naIsListAtPosition        (NAListIterator* listiterator, NAListPos listpos);
 
-NA_IAPI NAListPos naGetListNextPosition     (const NAList* list, NAListPos listpos);
-NA_IAPI NAListPos naGetListCurrentPosition  (const NAList* list);
-NA_IAPI NAListPos naGetListPrevPosition     (const NAList* list, NAListPos listpos);
-
-
-// ////////////////////////////////////
-// Iterating a list
-//
-// Traverses the whole list and calls the mutator on each element. A pointer
-// to each element will be given to the mutator. The list is traversed forward
-// from first to last and the internal pointer will be rewinded.
-NA_IAPI void    naForeachList       (NAList* list, NAFunc mutator); // done
-
-// Moves the internal pointer forward or backwards the given number of positive
-// or negative steps respectively. If the step over- or underflows the stored
-// elements, the iteration stops. If NDEBUG is undefined, a warning is emitted.
-//
-// Returns NA_FALSE when one of the two ends of the list is reached.
-NA_IAPI NABool  naIterateList       (const NAList* list, NAInt step);
-
-// Positioning the internal pointer
-//
-// The following functions move the internal pointer to a desired element.
-//
-// RewindList:    The List is at its initial position. Iterating forward will
-//                first access the first element, iterating backwards will
-//                first access the last element.
-// PositionList:  The internal pointer moves to the desired location. Such a
-//                position is returned for example when adding a new element
-//                to the list.
-// LocateList:    A specific content pointer or index is searched within the
-//                list. Note that these functions work very slow. If you really
-//                need to locate elements within a list, try to go for the
-//                position solution. But you need to store the NAListPos when
-//                adding elements.
-//
-// If the given index is negative, it denotes the element from the end of the
-// list, whereas -1 denotes the last element.
-//
-// The Pointer and Index variants will return NA_FALSE, if the element has not
-// been found and NA_TRUE if it has been found. If not found, the list will be
-// rewinded.
-NA_IAPI void   naRewindList          (const NAList* list);
-NA_IAPI void   naPositionList        (const NAList* list, NAListPos listpos);
-NA_API  NABool naLocateListPointer   (const NAList* list, void* content);
-NA_API  NABool naLocateListIndex     (const NAList* list, NAInt indx);
-
+NA_IAPI NAListPos naGetListPrevPosition     (NAListIterator* listiterator);
+NA_IAPI NAListPos naGetListCurrentPosition  (NAListIterator* listiterator);
+NA_IAPI NAListPos naGetListNextPosition     (NAListIterator* listiterator);
 
 // /////////////////////////////////////////////
 // Reordering functions
@@ -248,21 +288,15 @@ NA_API  NABool naLocateListIndex     (const NAList* list, NAInt indx);
 // The dstlist can be the same as srclist.
 //
 // See implementation for more details.
-NA_IAPI void naMoveListCurToFirst (NAList* src, NABool advance, NAList* dst);
-NA_IAPI void naMoveListCurToLast  (NAList* src, NABool advance, NAList* dst);
-NA_IAPI void naMoveListCurToBefore(NAList* src, NABool advance, NAList* dst);
-NA_IAPI void naMoveListCurToAfter (NAList* src, NABool advance, NAList* dst);
-NA_IAPI void naMoveListFirstToLast(NAList* src, NABool advance, NAList* dst);
-NA_IAPI void naMoveListTrailingToLast(NAList* src, NAList* dst);
+NA_IAPI void naMoveListCurToFirst (NAListIterator* src, NABool advance, NAList* dst);
+NA_IAPI void naMoveListCurToLast  (NAListIterator* src, NABool advance, NAList* dst);
+NA_IAPI void naMoveListTrailingToLast(NAListIterator* listiterator, NAList* dst);
 
 // The exchange function splits the list into two parts BEFORE the current
 // element and re-attaches the whole list before that at the end of the list.
 // For example when D is current, ABCDEFG becomes DEFGABC.
 // The current element will point to the first element after this function.
-NA_IAPI void naExchangeListParts(NAList* list);
-
-
-
+NA_IAPI void naExchangeListParts(NAListIterator* listiterator);
 
 
 

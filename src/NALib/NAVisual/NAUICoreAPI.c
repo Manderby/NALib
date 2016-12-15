@@ -56,12 +56,13 @@ NA_HDEF void naClearCoreApplication(){
     if(!na_app)
       naError("naClearUI", "No Application running");
   #endif
-  naRewindList(&(na_app->uielements));
-  while(naIterateList(&(na_app->uielements), 1)){
-//    NAUIElement* curelement = naGetListCurrentMutable(&(na_ui->uielements));
+  NAListIterator iter = naMakeListIteratorMutable(&(na_app->uielements));
+  while(naIterateList(&iter, 1)){
+//    NAUIElement* curelement = naGetListCurrentMutable(&iter);
 //    naCloseWindow(na_ui->windows[i]);
 //    naClearWindow(na_ui->windows[i]);
   }
+  naClearListIterator(&iter);
   naClearList(&(na_app->uielements));
   naFree(na_app);
 }
@@ -102,14 +103,16 @@ NA_HDEF void naRegisterCoreUIElement(NACoreUIElement* coreuielement, NACoreUIEle
 
 
 NA_HDEF void naUnregisterCoreUIElement(NACoreUIElement* coreuielement){
-  NABool found = naLocateListPointer(&(na_app->uielements), coreuielement);
+  NAListIterator iter = naMakeListIteratorMutable(&(na_app->uielements));
+  NABool found = naLocateListContent(&iter, coreuielement);
   if(found){
-    naRemoveListCurrentMutable(&(na_app->uielements), NA_FALSE);
+    naRemoveListCurrentMutable(&iter, NA_FALSE);
   }else{
     #ifndef NDEBUG
       naError("naUnregisterCoreUIElement", "Element not found");
     #endif
   }
+  naClearListIterator(&iter);
 }
 
 
@@ -158,11 +161,12 @@ NA_HDEF NACoreWindow* naGetCoreUIElementWindow(NACoreUIElement* coreuielement){
 
 // todo: find a faster way. Hash perhaps or something else.
 NA_HDEF void* naGetUINALibEquivalent(NANativeID nativeID){
-  naRewindList(&(na_app->uielements));
-  while(naIterateList(&(na_app->uielements), 1)){
-    NACoreUIElement* curelement = naGetListCurrentMutable(&(na_app->uielements));
+  NAListIterator iter = naMakeListIteratorMutable(&(na_app->uielements));
+  while(naIterateList(&iter, 1)){
+    NACoreUIElement* curelement = naGetListCurrentMutable(&iter);
     if(curelement->nativeID == nativeID){return curelement;}
   }
+  naClearListIterator(&iter);
   return NA_NULL;
 }
 
@@ -187,11 +191,12 @@ NA_HDEF void* naGetUINALibEquivalent(NANativeID nativeID){
 
 NA_DEF void naClearUIElement(NAUIElement* uielement){
   NACoreUIElement* element = (NACoreUIElement*)uielement;
-  naRewindList(&(element->reactions));
-  while(naIterateList(&(element->reactions), 1)){
-    NAReaction* curreaction = naGetListCurrentMutable(&(element->reactions));
+  NAListIterator iter = naMakeListIteratorMutable(&(element->reactions));
+  while(naIterateList(&iter, 1)){
+    NAReaction* curreaction = naGetListCurrentMutable(&iter);
     naFree(curreaction);
   }
+  naClearListIterator(&iter);
   naClearList(&(element->reactions));
 }
 
@@ -232,15 +237,16 @@ NA_DEF void naAddUIReaction(void* controller, NAUIElement* uielement, NAUIComman
 NA_DEF NABool naDispatchUIElementCommand(NACoreUIElement* element, NAUICommand command, void* arg){
   NABool finished = NA_FALSE;
 
-  naRewindList(&(element->reactions));
-  while(naIterateList(&(element->reactions), 1)){
-    NAReaction* curreaction = naGetListCurrentMutable(&(element->reactions));
+  NAListIterator iter = naMakeListIteratorMutable(&(element->reactions));
+  while(naIterateList(&iter, 1)){
+    NAReaction* curreaction = naGetListCurrentMutable(&iter);
     if(curreaction->command == command){
       finished = curreaction->handler(curreaction->controller, (NAUIElement*)element, command, arg);
       // If the handler tells us to stop handling the command, we do so.
       if(finished){break;}
     }
   }
+  naClearListIterator(&iter);
 
   // If the command has not been finished, search for other reactions in the parent elements.
   if(!finished){

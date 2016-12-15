@@ -107,7 +107,7 @@ NA_API NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr);
 // expected to be null-terminated (the null character is not in length).
 NA_API NAString* naNewStringWithMutableUTF8Buffer(  NAUTF8Char* buffer,
                                                           NAInt length,
-                                               NAPointerCleanup ownership);
+                                               NAMemoryCleanup ownership);
 
 // Creates an NAString just like sprintf.
 NA_API NAString* naNewStringWithFormat(const NAUTF8Char* format,

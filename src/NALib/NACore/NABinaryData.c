@@ -72,6 +72,9 @@ struct NAChecksumAdler{
 NA_HIDEF void naAccumulateAdler(NAChecksumAdler* checksumadler, const NAByte* buf, NAInt bytesize){
   NAInt n;
   for(n = 0; n < bytesize; n++){
+//    if(buf[n] == 'A'){
+//      printf("asdf");
+//    }
     checksumadler->s1 = (checksumadler->s1 + buf[n]) % NA_CHECKSUM_ADLER_BASE;
     checksumadler->s2 = (checksumadler->s2 + checksumadler->s1) % NA_CHECKSUM_ADLER_BASE;
   }

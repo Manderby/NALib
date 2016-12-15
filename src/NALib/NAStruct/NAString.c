@@ -94,7 +94,7 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
 
 
 
-NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt length, NAPointerCleanup ownership){
+NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt length, NAMemoryCleanup ownership){
   NAString* string = naNew(NAString);
   naInitByteArrayWithMutableBuffer(&(string->array), buffer, length, ownership);
   return string;

@@ -70,7 +70,7 @@ typedef enum{
 // INPUT BUFFERS
 //
 // Creates a new buffer which will automatically read from the given file.
-NA_API NABuffer* naInitBufferInputtingFromFile(NABuffer* buffer,
+NA_API NABuffer* naInitBufferWithFile(NABuffer* buffer,
                                             const char* filename);
 // Creates a new buffer which will read the given ByteArray.
 //NA_API NABuffer* naInitBufferInputtingFromByteArray(NABuffer* buffer,
@@ -80,7 +80,7 @@ NA_API NABuffer* naInitBufferInputtingFromFile(NABuffer* buffer,
 // as srcbuffer but which only looks at the given number of bytes and can only
 // input data, not write. srcbuffer will automatically advance the read pointer
 // by the number of bytes.
-NA_API NABuffer* naInitBufferInputtingFromBufferExtraction(
+NA_API NABuffer* naInitBufferWithBufferExtraction(
                                                      NABuffer* buffer,
                                                      NABuffer* srcbuffer,
                                                          NABufInt bytesize);
@@ -179,7 +179,7 @@ NA_API NABufInt naDetermineBufferBytesize(NABuffer* buffer);
 NA_API NABool naIsBufferReadAtEnd(const NABuffer* buffer);
 
 
-NA_API void naWriteBufferToFile(NABuffer* buffer, NAFile* file, NABool atabsoluteposition);
+NA_API void naWriteBufferToFile(NABuffer* buffer, NAFile* file);
 
 
 // Sets the endianness of the buffer and prepares all converters.
@@ -221,6 +221,8 @@ NA_API void naSetBufferSecure(NABuffer* buffer, NABool secure);
 // Absolute: offset denotes the absolute address.
 // Local:    offset denotes the address relative to the origin of this buffer.
 // Relative: offset denotes the address relative to the current offset.
+NA_API NABool naIsBufferEmpty(const NABuffer* buffer);
+
 NA_API void naSeekBufferAbsolute(NABuffer* buffer, NABufInt offset);
 NA_API void naSeekBufferLocal(NABuffer* buffer, NABufInt offset);
 NA_API void naSeekBufferRelative(NABuffer* buffer, NABufInt offset);

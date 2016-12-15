@@ -44,7 +44,7 @@ NA_DEF NAArray* naInitArrayWithConstBuffer(NAArray* array, const void* buffer, N
 
 
 
-NA_DEF NAArray* naInitArrayWithMutableBuffer(NAArray* array, void* buffer, NAUInt typesize, NAUInt count, NAPointerCleanup ownership){
+NA_DEF NAArray* naInitArrayWithMutableBuffer(NAArray* array, void* buffer, NAUInt typesize, NAUInt count, NAMemoryCleanup ownership){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naInitArrayWithMutableBuffer", "array is Null-Pointer"); return NA_NULL;}
