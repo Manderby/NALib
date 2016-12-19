@@ -222,17 +222,19 @@ NA_HDEF static VOID CALLBACK naTimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_
   //todo something is wrong here with the type.
   UINT timerkey = (UINT)idEvent;
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  naRewindList(&(app->timers));
-  while (naIterateList(&(app->timers), 1)) {
-    NATimerStruct* curstruct = (NATimerStruct*)naGetListCurrentMutable(&(app->timers));
+  NAListIterator iter = naMakeListIterator(&(app->timers));
+  while (naIterateList(&iter, 1)) {
+    NATimerStruct* curstruct = (NATimerStruct*)naGetListCurrentMutable(&iter);
     if (curstruct->key == timerkey) {
       naRemoveListCurrentMutable(&(app->timers), NA_FALSE);
       KillTimer(hwnd, idEvent);
       curstruct->func(curstruct->arg);
       naFree(curstruct);
+      naClearListIterator(&iter);
       return;
     }
   }
+  naClearListIterator(&iter);
 }
 
 

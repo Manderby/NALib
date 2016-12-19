@@ -32,6 +32,7 @@ Other things:
 - Added naTell to retrieve to position within a file.
 - Removed the empty warning from naGetListCurrentXXX.
 - Renamed naPointerCleanup to naMemoryCleanup
+- Removed the iterator functions of NAGrowingSpace
 
 Version 16 (first published 2016-October-11):
 ==============================================

@@ -18,9 +18,12 @@ Version 18:
 - NATree and integration into NABuffer
 - Redo String with Buffers
 - Make NAArray simpler without subarrays. Add Iterator
+- NAMoney
+- Timezones
 
 Version 19:
 - Re-Integrate NAMap2D
+- Re-Integrate NABitArray
 - GUI
 
 Version 20:

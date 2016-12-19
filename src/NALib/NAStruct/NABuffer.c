@@ -215,10 +215,12 @@ NA_HIDEF NABufInt naGetBufferPartEndDataIndex(NABufferPart* part){
 
 
 
-// Returns true, if the given absolute position is inside the buffer part.
-NA_HIDEF NABool naIsOffsetInBufferPart(NABufferPart* part, NABufInt offset){
-  return naContainsRangeiOffset(part->bufferrange, offset);
-}
+#ifndef NDEBUG
+  // Returns true, if the given absolute position is inside the buffer part.
+  NA_HIDEF NABool naIsOffsetInBufferPart(NABufferPart* part, NABufInt offset){
+    return naContainsRangeiOffset(part->bufferrange, offset);
+  }
+#endif
 
 
 

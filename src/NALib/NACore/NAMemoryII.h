@@ -99,7 +99,7 @@ NA_HIDEF NAInt naGetNullTerminationBytesize(NAInt bytesize){
   extern NAInt  na_debug_mem_bytesize;
   extern NAInt  na_debug_mem_invisiblebytesize;
   extern NABool na_debug_mem_observe_bytes;
-  #include "NAThreading.h"
+//  #include "NAThreading.h"
 #endif
 
 

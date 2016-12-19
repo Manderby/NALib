@@ -241,11 +241,11 @@ NA_IAPI NAVertexi naMakeVertexiWithAlignment (NAVertexi origin, NABoxi  alignbox
 // assume the two vertexes to be inside the desired rect or box.
 //
 // The Variants with E also allow the rects to be empty.
-NA_IAPI NARange  naMakeRangeWithStartAndEnd    (double   start,  double end);
-NA_IAPI NARangef naMakeRangefWithStartAndEnd   (float    start,  float  end);
-NA_IAPI NARangei naMakeRangeiWithStartAndEnd   (NAInt    start,  NAInt  end);
-NA_IAPI NARangei naMakeRangeiWithMinAndMax     (NAInt    min,    NAInt  max);
-NA_IAPI NARangei naMakeRangeiWithRangeAndOffset(NARangei range,  NAInt  offset);
+NA_IAPI NARange  naMakeRangeWithStartAndEnd    (double   start,  double   end);
+NA_IAPI NARangef naMakeRangefWithStartAndEnd   (float    start,  float    end);
+NA_IAPI NARangei naMakeRangeiWithStartAndEnd   (NAInt    start,  NAInt    end);
+NA_IAPI NARangei naMakeRangeiWithMinAndMax     (NAInt    min,    NAInt    max);
+NA_IAPI NARangei naMakeRangeiWithRangeAndOffset(NARangei range,  NAInt    offset);
 NA_IAPI NARangei naMakeRangeiWithRangeAndRange (NARangei range1, NARangei range2);
 
 NA_IAPI NARect  naMakeRectWithPosAndPos    (NAPos   pos1,  NAPos   pos2);

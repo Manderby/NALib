@@ -67,11 +67,12 @@ NA_IDEF void naClearGrowingSpace(NAGrowingSpace* space){
     }
   #endif
 
-  naRewindList(&(space->arrays));
-  while(naIterateList(&(space->arrays), 1)){
-    void* curarray = naGetListCurrentMutable(&(space->arrays));
+  NAListIterator iter = naMakeListIteratorMutable(&(space->arrays));
+  while(naIterateList(&iter, 1)){
+    void* curarray = naGetListCurrentMutable(&iter);
     naFree(curarray);
   }
+  naClearListIterator(&iter);
 
   naClearList(&(space->arrays));
 }
@@ -103,90 +104,90 @@ NA_IDEF void* naNewGrowingSpaceElement(NAGrowingSpace* space){
 
 
 
-NA_IDEF const void* naGetGrowingSpaceConstContent(const NAGrowingSpace* space){
-  void* curarray = naGetListCurrentMutable(&(space->arrays));
-  if(!curarray){return NA_NULL;}
-  return &(((const NAByte*)curarray)[space->cur * space->typesize]);
-}
-
-
-
-NA_IDEF void* naGetGrowingSpaceMutableContent(const NAGrowingSpace* space){
-  void* curarray;
-  if(naGetListCount(&(space->arrays)) == NA_ZERO){return NA_NULL;}
-  curarray = naGetListCurrentMutable(&(space->arrays));
-  if(!curarray){return NA_NULL;}
-  return &(((NAByte*)curarray)[space->cur * space->typesize]);
-}
-
-
-
-NA_IDEF const void* naGetGrowingSpaceArrayContent(const NAGrowingSpace* space, NAUInt* count){
-  const void* curarray = naGetListCurrentConst(&(space->arrays));
-  if(!curarray){return NA_NULL;}
-  *count = space->curarraycount;
-  return curarray;
-}
-
-
-
-NA_HIDEF void naCorrectGrowingSpaceCurArrayBytesize(NAGrowingSpace* space){
-  if(naIsListAtLast(&(space->arrays))){
-    NAUInt arraycount = naGetListCount(&(space->arrays));
-    NAUInt baseindex;
-    // This line is the reason why minimalcount shall not be 0 or 1. In that
-    // case, the following << operator would have a negative input value which
-    // is undefined.
-    baseindex = (1 << (arraycount + space->minimalexp - 1)) - (1 << space->minimalexp);
-    space->curarraycount = space->usedcount - baseindex;
-  }
-}
-
-
-NA_HIDEF void naAdvanceGrowingSpaceToNextArray(NAGrowingSpace* space){
-  #ifndef NDEBUG
-    if(naIsListEmpty(&(space->arrays)))
-      naError("naAdvanceGrowingSpaceToNextArray", "Growing space is empty");
-  #endif
-  naIterateList(&(space->arrays), 1);
-  space->cur = 0;
-  space->curarraycount <<= 1;
-  naCorrectGrowingSpaceCurArrayBytesize(space);
-}
-
-
-
-NA_IDEF void naFirstGrowingSpace(const NAGrowingSpace* space){
-  NAGrowingSpace* mutablespace = (NAGrowingSpace*)space;
-  naRewindList(&(mutablespace->arrays));
-  mutablespace->cur = 0;
-  mutablespace->curarraycount = NA_ONE << space->minimalexp;
-  // Note that this is not correct if the growing space is empty. But this
-  // will be captured in accessing functions by checking if there is anything
-  // inside the list at all.
-  naCorrectGrowingSpaceCurArrayBytesize(mutablespace);
-}
-
-
-
-NA_IDEF void naNextGrowingSpaceElement(const NAGrowingSpace* space){
-  NAGrowingSpace* mutablespace = (NAGrowingSpace*)space;
-  const void* curarray = naGetListCurrentConst(&(space->arrays));
-  if(!curarray){return;}
-  
-  mutablespace->cur++;
-  if(mutablespace->cur == mutablespace->curarraycount){
-    // We go outside the current array.
-    naAdvanceGrowingSpaceToNextArray(mutablespace);
-  }
-}
-
-
-
-NA_IDEF void naNextGrowingSpaceArray(const NAGrowingSpace* space){
-  NAGrowingSpace* mutablespace = (NAGrowingSpace*)space;
-  naAdvanceGrowingSpaceToNextArray(mutablespace);
-}
+//NA_IDEF const void* naGetGrowingSpaceConstContent(const NAGrowingSpace* space){
+//  void* curarray = naGetListCurrentMutable(&(space->arrays));
+//  if(!curarray){return NA_NULL;}
+//  return &(((const NAByte*)curarray)[space->cur * space->typesize]);
+//}
+//
+//
+//
+//NA_IDEF void* naGetGrowingSpaceMutableContent(const NAGrowingSpace* space){
+//  void* curarray;
+//  if(naGetListCount(&(space->arrays)) == NA_ZERO){return NA_NULL;}
+//  curarray = naGetListCurrentMutable(&(space->arrays));
+//  if(!curarray){return NA_NULL;}
+//  return &(((NAByte*)curarray)[space->cur * space->typesize]);
+//}
+//
+//
+//
+//NA_IDEF const void* naGetGrowingSpaceArrayContent(const NAGrowingSpace* space, NAUInt* count){
+//  const void* curarray = naGetListCurrentConst(&(space->arrays));
+//  if(!curarray){return NA_NULL;}
+//  *count = space->curarraycount;
+//  return curarray;
+//}
+//
+//
+//
+//NA_HIDEF void naCorrectGrowingSpaceCurArrayBytesize(NAGrowingSpace* space){
+//  if(naIsListAtLast(&(space->arrays))){
+//    NAUInt arraycount = naGetListCount(&(space->arrays));
+//    NAUInt baseindex;
+//    // This line is the reason why minimalcount shall not be 0 or 1. In that
+//    // case, the following << operator would have a negative input value which
+//    // is undefined.
+//    baseindex = (1 << (arraycount + space->minimalexp - 1)) - (1 << space->minimalexp);
+//    space->curarraycount = space->usedcount - baseindex;
+//  }
+//}
+//
+//
+//NA_HIDEF void naAdvanceGrowingSpaceToNextArray(NAGrowingSpace* space){
+//  #ifndef NDEBUG
+//    if(naIsListEmpty(&(space->arrays)))
+//      naError("naAdvanceGrowingSpaceToNextArray", "Growing space is empty");
+//  #endif
+//  naIterateList(&(space->arrays), 1);
+//  space->cur = 0;
+//  space->curarraycount <<= 1;
+//  naCorrectGrowingSpaceCurArrayBytesize(space);
+//}
+//
+//
+//
+//NA_IDEF void naFirstGrowingSpace(const NAGrowingSpace* space){
+//  NAGrowingSpace* mutablespace = (NAGrowingSpace*)space;
+//  naRewindList(&(mutablespace->arrays));
+//  mutablespace->cur = 0;
+//  mutablespace->curarraycount = NA_ONE << space->minimalexp;
+//  // Note that this is not correct if the growing space is empty. But this
+//  // will be captured in accessing functions by checking if there is anything
+//  // inside the list at all.
+//  naCorrectGrowingSpaceCurArrayBytesize(mutablespace);
+//}
+//
+//
+//
+//NA_IDEF void naNextGrowingSpaceElement(const NAGrowingSpace* space){
+//  NAGrowingSpace* mutablespace = (NAGrowingSpace*)space;
+//  const void* curarray = naGetListCurrentConst(&(space->arrays));
+//  if(!curarray){return;}
+//  
+//  mutablespace->cur++;
+//  if(mutablespace->cur == mutablespace->curarraycount){
+//    // We go outside the current array.
+//    naAdvanceGrowingSpaceToNextArray(mutablespace);
+//  }
+//}
+//
+//
+//
+//NA_IDEF void naNextGrowingSpaceArray(const NAGrowingSpace* space){
+//  NAGrowingSpace* mutablespace = (NAGrowingSpace*)space;
+//  naAdvanceGrowingSpaceToNextArray(mutablespace);
+//}
 
 
 

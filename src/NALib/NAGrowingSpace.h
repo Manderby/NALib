@@ -66,27 +66,29 @@ NA_IAPI void naClearGrowingSpace  (NAGrowingSpace* space);
 // The returned pointer points to an uninitialized space.
 NA_IAPI void* naNewGrowingSpaceElement(NAGrowingSpace* space);
 
-// Iteration functions
+
 //
-// Every growing space has an internal pointer denoting the current element.
-// You can directly access the content of that element. If no current element
-// is set, NA_NULL is returned.
-NA_IAPI const void* naGetGrowingSpaceConstContent  (const NAGrowingSpace* space);
-NA_IAPI       void* naGetGrowingSpaceMutableContent(const NAGrowingSpace* space);
-// Returns a pointer to the current array the iterator points to and returns
-// the number of elements in that array in count
-NA_IAPI const void* naGetGrowingSpaceArrayContent  (const NAGrowingSpace* space,
-                                                                 NAUInt* count);
-
-// The following functions move the internal pointer. At start, the internal
-// pointer is not set.
-NA_IAPI void naFirstGrowingSpace(const NAGrowingSpace* space);
-NA_IAPI void naNextGrowingSpaceElement(const NAGrowingSpace* space);
-// Moves the internal pointer to the start of the next internal array.
-NA_IAPI void naNextGrowingSpaceArray(const NAGrowingSpace* space);
-
-// Returns the number of elements actually stored in the space
-NA_IAPI NAUInt naGetGrowingSpaceCount(const NAGrowingSpace* space);
+//// Iteration functions
+////
+//// Every growing space has an internal pointer denoting the current element.
+//// You can directly access the content of that element. If no current element
+//// is set, NA_NULL is returned.
+//NA_IAPI const void* naGetGrowingSpaceConstContent  (const NAGrowingSpace* space);
+//NA_IAPI       void* naGetGrowingSpaceMutableContent(const NAGrowingSpace* space);
+//// Returns a pointer to the current array the iterator points to and returns
+//// the number of elements in that array in count
+//NA_IAPI const void* naGetGrowingSpaceArrayContent  (const NAGrowingSpace* space,
+//                                                                 NAUInt* count);
+//
+//// The following functions move the internal pointer. At start, the internal
+//// pointer is not set.
+//NA_IAPI void naFirstGrowingSpace(const NAGrowingSpace* space);
+//NA_IAPI void naNextGrowingSpaceElement(const NAGrowingSpace* space);
+//// Moves the internal pointer to the start of the next internal array.
+//NA_IAPI void naNextGrowingSpaceArray(const NAGrowingSpace* space);
+//
+//// Returns the number of elements actually stored in the space
+//NA_IAPI NAUInt naGetGrowingSpaceCount(const NAGrowingSpace* space);
 
 
 
