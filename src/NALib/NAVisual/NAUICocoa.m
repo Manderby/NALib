@@ -34,7 +34,7 @@
 // ///////////////////////////////////
 
 
-NA_DEF void naStartApplication(NAFunc prestartup, NAFunc poststartup, void* arg){
+NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void* arg){
   // The ((id (*)(id, SEL)) part is a cast of the objc_msgSend function which
   // is requires since a later version of Objective-C
 //  ( (id (*)(id, SEL)) objc_msgSend)(objc_getClass("NSApplication"), sel_registerName("sharedApplication"));
@@ -68,7 +68,7 @@ NA_DEF void naStartApplication(NAFunc prestartup, NAFunc poststartup, void* arg)
 
 
 
-NA_DEF void naCallApplicationFunctionInSeconds(NAFunc function, void* arg, double timediff){
+NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, double timediff){
   dispatch_time_t nexttime = dispatch_time(DISPATCH_TIME_NOW, 1000000000 * timediff);
   dispatch_queue_t queue = dispatch_get_main_queue();
   dispatch_after_f(nexttime, queue, arg, function);
@@ -407,7 +407,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 
 
 @implementation NANativeOpenGLView
-- (id)initWithNALibView:(NAOpenGLView*)naopenglview frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAFunc)newinitFunc initData:(void*)newinitData{
+- (id)initWithNALibView:(NAOpenGLView*)naopenglview frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
   self = [super initWithFrame:frameRect pixelFormat:pixelformat];
   nalibopenglview = naopenglview;
   initFunc = newinitFunc;
@@ -469,7 +469,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 
 
 
-NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAFunc initfunc, void* initdata){
+NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
   NACoreOpenGLView* coreopenglview = naAlloc(NACoreOpenGLView);
 
   // Configure the OpenGL Context and initialize this object.

@@ -56,7 +56,7 @@ NA_HDEF void naClearCoreApplication(){
     if(!na_app)
       naError("naClearUI", "No Application running");
   #endif
-  NAListIterator iter = naMakeListIteratorMutable(&(na_app->uielements));
+  NAListIterator iter = naMakeListIteratorMutator(&(na_app->uielements));
   while(naIterateList(&iter, 1)){
 //    NAUIElement* curelement = naGetListCurrentMutable(&iter);
 //    naCloseWindow(na_ui->windows[i]);
@@ -103,7 +103,7 @@ NA_HDEF void naRegisterCoreUIElement(NACoreUIElement* coreuielement, NACoreUIEle
 
 
 NA_HDEF void naUnregisterCoreUIElement(NACoreUIElement* coreuielement){
-  NAListIterator iter = naMakeListIteratorMutable(&(na_app->uielements));
+  NAListIterator iter = naMakeListIteratorMutator(&(na_app->uielements));
   NABool found = naLocateListContent(&iter, coreuielement);
   if(found){
     naRemoveListCurrentMutable(&iter, NA_FALSE);
@@ -161,7 +161,7 @@ NA_HDEF NACoreWindow* naGetCoreUIElementWindow(NACoreUIElement* coreuielement){
 
 // todo: find a faster way. Hash perhaps or something else.
 NA_HDEF void* naGetUINALibEquivalent(NANativeID nativeID){
-  NAListIterator iter = naMakeListIteratorMutable(&(na_app->uielements));
+  NAListIterator iter = naMakeListIteratorMutator(&(na_app->uielements));
   while(naIterateList(&iter, 1)){
     NACoreUIElement* curelement = naGetListCurrentMutable(&iter);
     if(curelement->nativeID == nativeID){return curelement;}
@@ -191,7 +191,7 @@ NA_HDEF void* naGetUINALibEquivalent(NANativeID nativeID){
 
 NA_DEF void naClearUIElement(NAUIElement* uielement){
   NACoreUIElement* element = (NACoreUIElement*)uielement;
-  NAListIterator iter = naMakeListIteratorMutable(&(element->reactions));
+  NAListIterator iter = naMakeListIteratorMutator(&(element->reactions));
   while(naIterateList(&iter, 1)){
     NAReaction* curreaction = naGetListCurrentMutable(&iter);
     naFree(curreaction);
@@ -237,7 +237,7 @@ NA_DEF void naAddUIReaction(void* controller, NAUIElement* uielement, NAUIComman
 NA_DEF NABool naDispatchUIElementCommand(NACoreUIElement* element, NAUICommand command, void* arg){
   NABool finished = NA_FALSE;
 
-  NAListIterator iter = naMakeListIteratorMutable(&(element->reactions));
+  NAListIterator iter = naMakeListIteratorMutator(&(element->reactions));
   while(naIterateList(&iter, 1)){
     NAReaction* curreaction = naGetListCurrentMutable(&iter);
     if(curreaction->command == command){

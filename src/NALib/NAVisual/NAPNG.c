@@ -708,7 +708,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   // Create the buffer to hold the decompressed data
   naInitBuffer(&(png->filtereddata));
   
-  NAListIterator iter = naMakeListIteratorMutable(&(png->chunks));
+  NAListIterator iter = naMakeListIteratorMutator(&(png->chunks));
   while(naIterateList(&iter, 1)){
     NAPNGChunk* curchunk = naGetListCurrentMutable(&iter);
     switch(curchunk->type){
@@ -794,7 +794,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
 
   naWriteBufferBytes(&outbuffer, na_png_magic, 8);
 
-  NAListIterator iter = naMakeListIteratorMutable(&(png->chunks));
+  NAListIterator iter = naMakeListIteratorMutator(&(png->chunks));
   while(naIterateList(&iter, 1)){
 
     NAPNGChunk* curchunk = naGetListCurrentMutable(&iter);
@@ -834,7 +834,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
 // This is the destructor for a PNG. It is marked as a helper as it should
 // only be called by the runtime system
 NA_HDEF void naDestructPNG(NAPNG* png){
-  naForeachList(&(png->chunks), (NAFunc)naDeallocPNGChunk);
+  naForeachListMutable(&(png->chunks), (NAMutator)naDeallocPNGChunk);
   naClearList(&(png->chunks));
 }
 

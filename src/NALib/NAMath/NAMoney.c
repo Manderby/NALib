@@ -3,63 +3,13 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 
-#include "NAUICoreAPI.h"
-
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+#include "NAMoney.h"
 
 
-//#include <windows.h>
-//#ifdef __gl_h_
-//  #include <GL/GL.h>
-//#endif
-
-#define CUB_WINDOW_IGNORE_MOUSE_WARP  0x01
-
-
-
-// The struct NAWINAPIApplication stores a list of timers which could otherwise
-// not be done.
-typedef struct NAWINAPIApplication NAWINAPIApplication;
-struct NAWINAPIApplication {
-  NACoreApplication coreapp;
-  NAList timers;
+int na_currency_decimals[NA_CURRENCY_COUNT] = {
+  2,    // NA_CURRENCY_CHF
 };
 
-
-
-// The following struct stores all relevant data which will then be stored in
-// a list of the running NAWINAPIApplication.
-typedef struct NATimerStruct NATimerStruct;
-struct NATimerStruct {
-  UINT key;
-  NAMutator func;
-  void* arg;
-};
-
-
-typedef struct NAWINAPIWindow NAWINAPIWindow;
-struct NAWINAPIWindow {
-  NACoreWindow corewindow;
-  uint32 flags;
-  NAUInt trackingcount;
-  NABool fullscreen;
-  NARect windowedframe;
-  NASize size;
-  NABounds4 bounds;
-};
-
-
-typedef struct NAWINAPIOpenGLView NAWINAPIOpenGLView;
-struct NAWINAPIOpenGLView {
-  NACoreOpenGLView coreopenglview;
-  HGLRC hRC;    // The rendering context for OpenGL
-};
-
-
-
-
-
-#endif // NA_SYSTEM == NA_SYSTEM_WINDOWS
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH
 //

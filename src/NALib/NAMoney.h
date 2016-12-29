@@ -2,64 +2,47 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-
-#include "NAUICoreAPI.h"
-
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
-
-
-//#include <windows.h>
-//#ifdef __gl_h_
-//  #include <GL/GL.h>
-//#endif
-
-#define CUB_WINDOW_IGNORE_MOUSE_WARP  0x01
+#ifndef NA_MONEY_INCLUDED
+#define NA_MONEY_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
 
 
+#include "NAString.h"
 
-// The struct NAWINAPIApplication stores a list of timers which could otherwise
-// not be done.
-typedef struct NAWINAPIApplication NAWINAPIApplication;
-struct NAWINAPIApplication {
-  NACoreApplication coreapp;
-  NAList timers;
-};
+typedef struct NAMoney NAMoney;
 
-
-
-// The following struct stores all relevant data which will then be stored in
-// a list of the running NAWINAPIApplication.
-typedef struct NATimerStruct NATimerStruct;
-struct NATimerStruct {
-  UINT key;
-  NAMutator func;
-  void* arg;
-};
+typedef enum{
+  NA_CURRENCY_CHF = 0,
+  NA_CURRENCY_COUNT
+} NACurrency;
 
 
-typedef struct NAWINAPIWindow NAWINAPIWindow;
-struct NAWINAPIWindow {
-  NACoreWindow corewindow;
-  uint32 flags;
-  NAUInt trackingcount;
-  NABool fullscreen;
-  NARect windowedframe;
-  NASize size;
-  NABounds4 bounds;
-};
+NA_IAPI NAMoney naMakeMoneyWithCurrency(double amount, NACurrency currency);
+
+NA_IDEF NAMoney naNegMoney(NAMoney money);
+NA_IAPI NAMoney naAddMoney(NAMoney moneyA, NAMoney moneyB);
+NA_IAPI NAMoney naSubMoney(NAMoney moneyA, NAMoney moneyB);
+
+NA_IDEF NAString* naNewStringWithMoney(NAMoney money);
 
 
-typedef struct NAWINAPIOpenGLView NAWINAPIOpenGLView;
-struct NAWINAPIOpenGLView {
-  NACoreOpenGLView coreopenglview;
-  HGLRC hRC;    // The rendering context for OpenGL
-};
+
+
+// Inline implementations are in a separate file:
+#include "NAMath/NAMoneyII.h"
 
 
 
 
 
-#endif // NA_SYSTEM == NA_SYSTEM_WINDOWS
+
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
+#endif // NA_MONEY_INCLUDED
+
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH
 //

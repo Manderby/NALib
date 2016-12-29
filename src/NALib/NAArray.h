@@ -95,7 +95,7 @@ NA_IAPI void naDecoupleArray(NAArray* array);
 
 // Traverses the whole array and calls the mutator on each element. A pointer
 // to each element will be given to the mutator.
-NA_IAPI void naForeachArray(NAArray* array, NAFunc mutator);
+NA_IAPI void naForeachArray(NAArray* array, NAMutator mutator);
 
 // Returns a pointer to the very first element of the raw data array. Warning:
 // result is garbage if the array is empty. Notice: This function is speedy.

@@ -577,19 +577,14 @@ typedef uint8 NAByte;
 
 
 // This is the type of a general callback which is used by:
-// - Mutator functions for naForeachXXX functions.
+// - Accessor or Mutator functions for naForeachXXX functions.
 // - Application start functions
 // - Threading start functions
 // - Timed functions
 // - General callback functions
 //
-// In some cases, you may not want to send a function, therefore sending Null.
-// But it is much more cleaner if you send NA_NULLFUNC which is typecasted as
-// an NAFunc. Note that the author tried to add an actual function which checks
-// if being called when NDEBUG is defined, but this turned out to be more
-// cumbersome than helpful. Therefore, it is just a casted NA_NULL.
-typedef void (*NAFunc) (void*);
-#define NA_NULLFUNC ((NAFunc)NA_NULL)
+typedef void (*NAAccessor) (const void*);
+typedef void (*NAMutator) (void*);
 
 
 

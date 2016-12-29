@@ -56,7 +56,7 @@ NA_IAPI int naSleepS(double secs);
 // be used on some systems when debugging later on. Note that both threadname
 // and arg will NOT be owned by the thread.
 NA_IAPI NAThread naNewThread( const char* threadname,
-                                   NAFunc function,
+                                   NAMutator function,
                                     void* arg);
 // Clears all memory structures concerning the given thread. Will not clear
 // the arg or threadname given to naNewThread. If the thread is still running,

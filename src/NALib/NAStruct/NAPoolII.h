@@ -127,7 +127,7 @@ NA_IDEF NABool naIsPoolFull(NAPool* pool){
 
 
 
-NA_IDEF void naForeachPool(const NAPool* pool, NAFunc mutator){
+NA_IDEF void naForeachPool(const NAPool* pool, NAMutator mutator){
   NAUInt i;
   NAByte** curptr = pool->drops;
   for(i=0; i<pool->cur; i++){

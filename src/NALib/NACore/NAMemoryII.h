@@ -277,7 +277,7 @@ NA_API void*              naNewStruct(NATypeInfo* typeidentifier);
 struct NATypeInfo{
   void*             curpool;
   NAUInt            typesize;
-  NAFunc            destructor;
+  NAMutator         destructor;
 };
 
 
@@ -1467,7 +1467,7 @@ NA_IDEF NABool naIsBufConst(NABuf* buf){
 
 struct NAPointer{
   NAPtr ptr;
-  NAFunc deallocator;
+  NAMutator deallocator;
   NAUInt refcount;      // Reference count. Including flags
 };
 
@@ -1500,12 +1500,12 @@ NA_RUNTIME_TYPE(NAPointer, naDestructPointer);
 
 
 NA_IDEF NAPointer* naNewNullPointer(){
-  return naNewPointer(NA_NULL, NA_MEMORY_CLEANUP_NONE, NA_NULLFUNC);
+  return naNewPointer(NA_NULL, NA_MEMORY_CLEANUP_NONE, NA_NULL);
 }
 
 
 
-NA_IDEF NAPointer* naNewPointer(void* data, NAMemoryCleanup cleanup, NAFunc deallocator){
+NA_IDEF NAPointer* naNewPointer(void* data, NAMemoryCleanup cleanup, NAMutator deallocator){
   NAPointer* pointer; // Declaration before definition. Needed for C90
   #ifndef NDEBUG
     if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup > NA_MEMORY_CLEANUP_DELETE)

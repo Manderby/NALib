@@ -98,13 +98,13 @@ typedef struct NAThreadStruct NAThreadStruct;
 struct NAThreadStruct{
   const char* name;
   NANativeThread nativeThread;  // If you experience an error here when working
-  NAFunc function;              // with plain C files on a Mac: Turn off the
+  NAMutator function;              // with plain C files on a Mac: Turn off the
   void* arg;                    // automatic reference counting in project
 };                              // settings.
 
 
 
-NA_IDEF NAThread naNewThread(const char* threadname, NAFunc function, void* arg){
+NA_IDEF NAThread naNewThread(const char* threadname, NAMutator function, void* arg){
   NAThreadStruct* threadstruct = naAlloc(NAThreadStruct);
   threadstruct->name = threadname;  // todo
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS

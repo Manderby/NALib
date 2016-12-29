@@ -49,6 +49,7 @@
 
 // The full type definition is in the file "NAGrowingSpaceII.h"
 typedef struct NAGrowingSpace NAGrowingSpace;
+typedef struct NAGrowingSpaceIterator NAGrowingSpaceIterator;
 
 
 // Creates a new NAGrowingSpace with the desired type size. The space will grow
@@ -66,29 +67,39 @@ NA_IAPI void naClearGrowingSpace  (NAGrowingSpace* space);
 // The returned pointer points to an uninitialized space.
 NA_IAPI void* naNewGrowingSpaceElement(NAGrowingSpace* space);
 
+// Returns the number of elements actually stored in the space
+NA_IAPI NAUInt naGetGrowingSpaceCount(const NAGrowingSpace* space);
 
+
+
+// Iteration functions
 //
-//// Iteration functions
-////
-//// Every growing space has an internal pointer denoting the current element.
-//// You can directly access the content of that element. If no current element
-//// is set, NA_NULL is returned.
-//NA_IAPI const void* naGetGrowingSpaceConstContent  (const NAGrowingSpace* space);
-//NA_IAPI       void* naGetGrowingSpaceMutableContent(const NAGrowingSpace* space);
-//// Returns a pointer to the current array the iterator points to and returns
-//// the number of elements in that array in count
-//NA_IAPI const void* naGetGrowingSpaceArrayContent  (const NAGrowingSpace* space,
-//                                                                 NAUInt* count);
-//
-//// The following functions move the internal pointer. At start, the internal
-//// pointer is not set.
-//NA_IAPI void naFirstGrowingSpace(const NAGrowingSpace* space);
-//NA_IAPI void naNextGrowingSpaceElement(const NAGrowingSpace* space);
-//// Moves the internal pointer to the start of the next internal array.
-//NA_IAPI void naNextGrowingSpaceArray(const NAGrowingSpace* space);
-//
-//// Returns the number of elements actually stored in the space
-//NA_IAPI NAUInt naGetGrowingSpaceCount(const NAGrowingSpace* space);
+// Creates and clears an interator working upon a given NAGrowingSpace. You
+// have to choose whether it is an accessor or mutator. An accessor can not
+// get a mutable pointers to the elements.
+NA_IAPI NAGrowingSpaceIterator naMakeGrowingSpaceIteratorAccessor(const NAGrowingSpace* space);
+NA_IAPI NAGrowingSpaceIterator naMakeGrowingSpaceIteratorMutator(const NAGrowingSpace* space);
+NA_IAPI void naClearGrowingSpaceIterator(NAGrowingSpaceIterator* iterator);
+
+// Iterates through the space one by one. Returns NA_FALSE, if there are no
+// more elements.
+NA_IAPI NABool      naIterateGrowingSpace(NAGrowingSpaceIterator* iterator);
+
+// Returns a pointer to the current element. Note that if you store pointers
+// you will get a pointer to a pointer.
+NA_IAPI const void* naGetGrowingSpaceCurrentConst   (NAGrowingSpaceIterator* iterator);
+NA_IAPI void*       naGetGrowingSpaceCurrentMutable (NAGrowingSpaceIterator* iterator);
+
+// Will call the accessor or mutator on every element stored in the space.
+// The Pointer variants expect this growing space to store pointers hence
+// the accessor or mutator will directly be called with the stored pointer
+// instead of a pointer to a pointer.
+NA_IAPI void naForeachGrowingSpaceConst         (const NAGrowingSpace* space, NAAccessor accessor);
+NA_IAPI void naForeachGrowingSpaceMutable       (const NAGrowingSpace* space, NAMutator  mutator);
+NA_IAPI void naForeachGrowingSpacePointerConst  (const NAGrowingSpace* space, NAAccessor accessor);
+NA_IAPI void naForeachGrowingSpacePointerMutable(const NAGrowingSpace* space, NAMutator  mutator);
+
+
 
 
 

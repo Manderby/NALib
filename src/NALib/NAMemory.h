@@ -132,7 +132,7 @@ NA_API void               naStopRuntime();
 
 #define NA_RUNTIME_TYPE(type, destructor)\
   static NA_LINKER_NO_EXPORT NATypeInfo na_ ## type ## _typeinfo =\
-  {NA_NULL, sizeof(type), (NAFunc)destructor};
+  {NA_NULL, sizeof(type), (NAMutator)destructor};
 
 // Every type using the runtime system will get a global typeinfo variable
 // which has the following type. The full type definition is in the file
@@ -633,7 +633,7 @@ NA_IAPI NAPointer* naNewNullPointer();
 //
 NA_IAPI NAPointer* naNewPointer(       void* data,
                             NAMemoryCleanup cleanup,
-                                      NAFunc deallocator);
+                                 NAMutator deallocator);
 
 // Retains the given pointer. Meaning: There is one more codeblock which is
 // using this NAPointer. This NAPointer will not be freed as long as that

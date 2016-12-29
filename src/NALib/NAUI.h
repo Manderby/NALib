@@ -153,8 +153,8 @@ NA_API NANativeID naGetUIElementNativeID(NAUIElement* element);
 // needs handling. To get to that message loop, you start the application with
 // the following function:
 
-NA_API void naStartApplication(  NAFunc prestartup,
-                                 NAFunc poststartup,
+NA_API void naStartApplication(  NAMutator prestartup,
+                                 NAMutator poststartup,
                                   void* arg);
 
 // All arguments can be NA_NULL but you can ask NALib to call the given two
@@ -215,7 +215,7 @@ NA_API NAApplication* naGetApplication(void);
 // Note that this function is not defined in the NAThreading.h file because
 // it only makes sense if there is a message loop which only exists when
 // running a UI.
-NA_API void naCallApplicationFunctionInSeconds(  NAFunc function,
+NA_API void naCallApplicationFunctionInSeconds(  NAMutator function,
                                                   void* arg,
                                                  double timediff);
 
@@ -365,7 +365,7 @@ NA_API NABool naIsWindowFullscreen(NAWindow* window);
   // Win: Right within the naNewOpenGLView
   // Mac: when prepareOpenGL is called (which may be as late as when the
   //      view comes onsceen)
-  NA_API NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAFunc initfunc, void* initdata);
+  NA_API NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAMutator initfunc, void* initdata);
   // Swaps the OpenGL buffer.
   NA_API void naSwapOpenGLBuffer(NAOpenGLView* openglview);
   NA_API void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds);

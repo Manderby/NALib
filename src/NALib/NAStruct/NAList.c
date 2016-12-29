@@ -17,16 +17,16 @@ NA_DEF NAListElement* naNewListElement(NAListElement* prev, NAListElement* next)
 
 
 
-NA_DEF NABool naLocateListContent(NAListIterator* listiterator, const void* content){
+NA_DEF NABool naLocateListContent(NAListIterator* iterator, const void* content){
   // todo: search in left-right exponential search starting from the current
   // position.
-  const NAList* list = naGetPtrConst(&(listiterator->listptr));
-  listiterator->cur = list->sentinel.next;
-  while(listiterator->cur != &(list->sentinel)){
-    if(naGetPtrConst(&(listiterator->cur->ptr)) == content){
+  const NAList* list = naGetPtrConst(&(iterator->listptr));
+  iterator->cur = list->sentinel.next;
+  while(iterator->cur != &(list->sentinel)){
+    if(naGetPtrConst(&(iterator->cur->ptr)) == content){
       return NA_TRUE;
     }
-    listiterator->cur = listiterator->cur->next;
+    iterator->cur = iterator->cur->next;
   }
   // Reaching here, content could not be found.
   return NA_FALSE;
@@ -34,38 +34,38 @@ NA_DEF NABool naLocateListContent(NAListIterator* listiterator, const void* cont
 
 
 
-NA_DEF NABool naLocateListIndex(NAListIterator* listiterator, NAInt indx){
-  NAList* mutablelist = (NAList*)naGetPtrConst(&(listiterator->listptr));
+NA_DEF NABool naLocateListIndex(NAListIterator* iterator, NAInt indx){
+  NAList* mutablelist = (NAList*)naGetPtrConst(&(iterator->listptr));
 
   if(indx < 0){indx += mutablelist->count;}
   if(indx < 0){
     #ifndef NDEBUG
       naError("naLocateListIndex", "Negative index underflows the range of the list");
     #endif
-    listiterator->cur = &(mutablelist->sentinel);
+    iterator->cur = &(mutablelist->sentinel);
     return NA_FALSE;
   }
   if(indx >= (NAInt)mutablelist->count){
     #ifndef NDEBUG
       naError("naLocateListIndex", "Index overflows the range of the list");
     #endif
-    listiterator->cur = &(mutablelist->sentinel);
+    iterator->cur = &(mutablelist->sentinel);
     return NA_FALSE;
   }
   
   if(indx < ((NAInt)mutablelist->count / 2)){
     // Go from leading to trailing
-    listiterator->cur = mutablelist->sentinel.next;
+    iterator->cur = mutablelist->sentinel.next;
     while(indx){
-      listiterator->cur = listiterator->cur->next;
+      iterator->cur = iterator->cur->next;
       indx--;
     }
   }else{
     // Go from trailing to leading
-    listiterator->cur = mutablelist->sentinel.prev;
+    iterator->cur = mutablelist->sentinel.prev;
     indx = indx - mutablelist->count + 1;
     while(indx){
-      listiterator->cur = listiterator->cur->prev;
+      iterator->cur = iterator->cur->prev;
       indx++;
     }
   }

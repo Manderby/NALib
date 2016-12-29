@@ -10,6 +10,7 @@ Version 17:
 - Review Iterators
 - Threading.h uses New for allocators
 - Check NAPointerCleanup
+- GrowingSpace iterator debug count
 
 Version 18:
 - First compression in NAPNG

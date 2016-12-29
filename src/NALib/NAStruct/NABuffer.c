@@ -450,7 +450,7 @@ NA_HIDEF void naLocateBufferPartList(NAListIterator* iter, NABufInt offset){
 // Goes from first to last part and retains them.
 NA_HDEF void naRetainBufferParts(NABufferStorage* storage, NAListPos firstpos, NAListPos lastpos){
   if((firstpos == naGetListInitialPosition(&(storage->partlist))) || (lastpos == naGetListInitialPosition(&(storage->partlist)))){return;}
-  NAListIterator iter = naMakeListIteratorMutable(&(storage->partlist));
+  NAListIterator iter = naMakeListIteratorMutator(&(storage->partlist));
   naLocateListPosition(&iter, firstpos);
   while(NA_TRUE){
     naRetainBufferPart(naGetListCurrentMutable(&iter));
@@ -553,7 +553,7 @@ NA_DEF NABuffer* naInitBufferWithFile(NABuffer* buffer, const char* filename){
   
   NABufferStorage* storage = naAllocBufferStorage();
   naSetBufferStorageSourceFile(storage, filename);
-  buffer->storage = naNewPointer(storage, NA_MEMORY_CLEANUP_NONE, (NAFunc)naDeallocBufferStorage);
+  buffer->storage = naNewPointer(storage, NA_MEMORY_CLEANUP_NONE, (NAMutator)naDeallocBufferStorage);
   buffer->flags = NA_BUFFER_FLAG_OWNS_SOURCE | NA_BUFFER_FLAG_CAN_EXTEND;
   
   buffer->range = naMakeRangeiWithStartAndEnd(0, 0);
@@ -581,7 +581,7 @@ NA_DEF NABuffer* naInitBufferWithBufferExtraction(NABuffer* buffer, NABuffer* sr
   buffer->curbit = 0;
   
   if(bytesize){
-    NAListIterator iter = naMakeListIteratorMutable(&(storage->partlist));
+    NAListIterator iter = naMakeListIteratorMutator(&(storage->partlist));
     naLocateListPosition(&iter, srcbuffer->curlistpos);
     naLocateBufferPartList(&iter, buffer->range.origin);
     buffer->curlistpos = naGetListCurrentPosition(&iter);
@@ -603,7 +603,7 @@ NA_DEF NABuffer* naInitBuffer(NABuffer* buffer){
   
   NABufferStorage* storage = naAllocBufferStorage();
   naSetBufferStorageSourceMemory(storage);
-  buffer->storage = naNewPointer(storage, NA_MEMORY_CLEANUP_NONE, (NAFunc)naDeallocBufferStorage);
+  buffer->storage = naNewPointer(storage, NA_MEMORY_CLEANUP_NONE, (NAMutator)naDeallocBufferStorage);
   buffer->flags = NA_BUFFER_FLAG_OWNS_SOURCE | NA_BUFFER_FLAG_CAN_EXTEND;
 
   buffer->range = naMakeRangeiWithStartAndEnd(0, 0);
@@ -688,7 +688,7 @@ NA_DEF void naClearBuffer(NABuffer* buffer){
   
   if(!naIsListEmpty(&(storage->partlist))){
     // Release all parts of the list which are covered by this buffer.
-    NAListIterator iter = naMakeListIteratorMutable(&(storage->partlist));
+    NAListIterator iter = naMakeListIteratorModifier(&(storage->partlist));
     naLocateBufferPartList(&iter, buffer->range.origin);
     curpart = naGetListCurrentMutable(&iter);
     while(curpart){
@@ -772,7 +772,7 @@ NA_DEF NABool naIsBufferReadAtEnd(const NABuffer* buffer){
 
 NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
   NAList* buflist = naGetBufferPartList(buffer);;
-  NAListIterator iter = naMakeListIteratorMutable(buflist);
+  NAListIterator iter = naMakeListIteratorMutator(buflist);
   naLocateBufferPartList(&iter, buffer->range.origin);
   NABufInt prevend = buffer->range.origin;
   
@@ -944,7 +944,7 @@ NA_DEF void naEnhanceBuffer(NABuffer* buffer, NABufInt bytesize){
   NARangei desiredrange = naMakeRangei(buffer->curoffset, bytesize);
   NABufferStorage* storage = naGetBufferStorage(buffer);
   NAList* partlist = naGetBufferPartList(buffer);
-  NAListIterator iter = naMakeListIteratorMutable(partlist);
+  NAListIterator iter = naMakeListIteratorModifier(partlist);
 
   #ifndef NDEBUG
     if(!bytesize)
@@ -1111,7 +1111,7 @@ NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum)
 
   partlist = naGetBufferPartList(buffer);
   curoffset = buffer->range.origin;
-  NAListIterator iter = naMakeListIteratorMutable(partlist);
+  NAListIterator iter = naMakeListIteratorMutator(partlist);
   naLocateBufferPartList(&iter, curoffset);
   
   while(bytesize){
@@ -1163,7 +1163,7 @@ NA_HDEF void naRetrieveBufferBytes(NABuffer* buffer, void* ptr, NABufInt bytesiz
   #endif
   if(!bytesize){return;}
 
-  NAListIterator iter = naMakeListIteratorMutable(partlist);
+  NAListIterator iter = naMakeListIteratorMutator(partlist);
   naLocateListPosition(&iter, buffer->curlistpos);
   curpart = naGetListCurrentMutable(&iter);
 
@@ -1604,7 +1604,7 @@ NA_DEF void naStoreBufferBytes(NABuffer* buffer, const void* ptr, NABufInt bytes
   if(!bytesize){return;}
 
   partlist = naGetBufferPartList(buffer);
-  NAListIterator iter = naMakeListIteratorMutable(partlist);
+  NAListIterator iter = naMakeListIteratorMutator(partlist);
   naLocateListPosition(&iter, buffer->curlistpos);
   curpart = naGetListCurrentMutable(&iter);
   
@@ -1708,7 +1708,7 @@ NA_DEF void naWriteBufferBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer, NABufI
   #endif
   if(bytesize == 0){return;}
   
-  NAListIterator iter = naMakeListIteratorMutable(srcbuflist);
+  NAListIterator iter = naMakeListIteratorMutator(srcbuflist);
   naLocateListPosition(&iter, srcbuffer->curlistpos);
   naLocateBufferPartList(&iter, srcbuffer->curoffset);
   while(bytesize != NA_ZERO){
@@ -1741,7 +1741,7 @@ NA_DEF void naRepeatBufferBytes(NABuffer* buffer, NABufInt distance, NABufInt by
   naEnhanceBuffer(buffer, bytesize);
 
   // Position the write iterator.
-  NAListIterator writeiter = naMakeListIteratorMutable(partlist);
+  NAListIterator writeiter = naMakeListIteratorMutator(partlist);
   naLocateListPosition(&writeiter, buffer->curlistpos);
   NABufInt writeoffset = buffer->curoffset;
   naLocateBufferPartList(&writeiter, writeoffset);
@@ -1755,7 +1755,7 @@ NA_DEF void naRepeatBufferBytes(NABuffer* buffer, NABufInt distance, NABufInt by
   naEnhanceBuffer(buffer, bytesize);
 
   // Position the read iterator.
-  NAListIterator readiter = naMakeListIteratorMutable(partlist);
+  NAListIterator readiter = naMakeListIteratorMutator(partlist);
   naLocateListPosition(&readiter, buffer->curlistpos);
   NABufInt readoffset = buffer->curoffset;
   naLocateBufferPartList(&readiter, readoffset);

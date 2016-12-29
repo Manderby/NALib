@@ -25,7 +25,7 @@ typedef struct NARuntime NARuntime;
 struct NACoreTypeInfo{
   NACorePool*       curpool;
   NAUInt            typesize;
-  NAFunc            destructor;
+  NAMutator            destructor;
 };
 
 struct NACorePool{

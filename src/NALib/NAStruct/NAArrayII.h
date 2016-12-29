@@ -54,7 +54,7 @@ NA_IDEF void naDecoupleArray(NAArray* array){
 
 
 
-NA_IDEF void naForeachArray(NAArray* array, NAFunc mutator){
+NA_IDEF void naForeachArray(NAArray* array, NAMutator mutator){
   // Declaration before implementation. Needed for C90
   NAUInt count;
   NAByte* ptr;

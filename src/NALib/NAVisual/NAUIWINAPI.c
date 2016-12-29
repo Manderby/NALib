@@ -245,7 +245,7 @@ NA_HDEF static VOID CALLBACK naTimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_
 // ///////////////////////////////////
 
 
-NA_API void naStartApplication(NAFunc prestartup, NAFunc poststartup, void* arg){
+NA_API void naStartApplication(NAMutator prestartup, NAMutator poststartup, void* arg){
   // Declaration before definition. Needed for C90:
   NAWINAPIApplication* app;
   WNDCLASS wndclass;
@@ -315,7 +315,7 @@ NA_API void naStartApplication(NAFunc prestartup, NAFunc poststartup, void* arg)
 
 
 
-NA_DEF void naCallApplicationFunctionInSeconds(NAFunc function, void* arg, double timediff){
+NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, double timediff){
   NAWINAPIApplication* app;
   NATimerStruct* timerstruct = naAlloc(NATimerStruct);
   timerstruct->func = function;
@@ -803,7 +803,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 
 //#ifdef __gl_h_
 
-NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAFunc initfunc, void* initdata){
+NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
 	
   HWND hWnd;
   HDC hDC;

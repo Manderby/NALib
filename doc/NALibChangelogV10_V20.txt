@@ -19,6 +19,8 @@ Highlights:
 - Rewrote the NABuffer struct. Much cleaner now. Future proof.
 - Rewrote NAList to not include an iterator. There is a new NAListIterator
   struct which can be attached to a list.
+- Rewrote NAGrowingSpace to have an external iterator as well.
+- Iterators can now be Accessors, Mutators and Modifiers.
 
 Other things:
 - Added naSleepN and mande naSleepS using a double.
@@ -33,6 +35,8 @@ Other things:
 - Removed the empty warning from naGetListCurrentXXX.
 - Renamed naPointerCleanup to naMemoryCleanup
 - Removed the iterator functions of NAGrowingSpace
+- Renamed NAFunc to NAAccessor and NAMutator. Removed NA_NULLFUNC.
+- Added naMakeListIteratorModifier aside the Accessor and Mutator.
 
 Version 16 (first published 2016-October-11):
 ==============================================

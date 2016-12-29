@@ -55,7 +55,7 @@ struct NACocoaWindow{
 
 @interface NANativeOpenGLView : NSOpenGLView{
   NAOpenGLView* nalibopenglview;
-  NAFunc initFunc;
+  NAMutator initFunc;
   void* initData;
 }
 @end

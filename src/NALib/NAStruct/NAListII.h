@@ -47,6 +47,9 @@ struct NAList{
 struct NAListIterator{
   NAPtr           listptr;
   NAListElement*  cur;
+  #ifndef NDEBUG
+    NABool mutator;
+  #endif
 };
 
 
@@ -377,7 +380,32 @@ NA_IDEF void* naGetListPositionMutable(const NAList* list, NAListPos listpos){
 // //////////////////////
 // ITERATION FUNCTIONS
 
-NA_IDEF void naForeachList(NAList* list, NAFunc mutator){
+NA_IDEF void naForeachListConst(const NAList* list, NAAccessor accessor){
+  // Declaration before implementation. Needed for C90.
+  #ifndef NDEBUG
+    if(!list){
+      naCrash("naForeachList", "list is Null-Pointer.");
+      return;
+    }
+    if(!accessor)
+      naError("naForeachList", "accessor is Null-Pointer.");
+  #endif
+  NAListElement* cur = list->sentinel.next;
+  while(cur != &(list->sentinel)){
+    #ifndef NDEBUG
+      NAListElement* next = cur->next;
+    #endif
+    accessor(naGetPtrConst(&(cur->ptr)));
+    #ifndef NDEBUG
+      if(cur->next != next)
+        naError("naForeachList", "List changed during iteration. Unexpected behaviour.");
+    #endif
+    cur = cur->next;
+  }
+}
+
+
+NA_IDEF void naForeachListMutable(const NAList* list, NAMutator mutator){
   // Declaration before implementation. Needed for C90.
   #ifndef NDEBUG
     if(!list){
@@ -457,11 +485,12 @@ NA_IDEF void naMoveListFirstToLast(NAList* src, NAList* dst){
 
 
 
-NA_IDEF NAListIterator naMakeListIteratorConst(const NAList* list){
+NA_IDEF NAListIterator naMakeListIteratorAccessor(const NAList* list){
   NAListIterator iter;
   iter.listptr = naMakePtrWithConstBuffer(list, 0, 0);
   iter.cur = (NAListElement*)(&(list->sentinel));
   #ifndef NDEBUG
+    iter.mutator = NA_FALSE;
     ((NAList*)list)->sentinel.itercount++;
   #endif
   return iter;
@@ -469,11 +498,25 @@ NA_IDEF NAListIterator naMakeListIteratorConst(const NAList* list){
 
 
 
-NA_IDEF NAListIterator naMakeListIteratorMutable(NAList* list){
+NA_IDEF NAListIterator naMakeListIteratorMutator(const NAList* list){
+  NAListIterator iter;
+  iter.listptr = naMakePtrWithConstBuffer(list, 0, 0);
+  iter.cur = (NAListElement*)(&(list->sentinel));
+  #ifndef NDEBUG
+    iter.mutator = NA_TRUE;
+    ((NAList*)list)->sentinel.itercount++;
+  #endif
+  return iter;
+}
+
+
+
+NA_IDEF NAListIterator naMakeListIteratorModifier(NAList* list){
   NAListIterator iter;
   iter.listptr = naMakePtrWithMutableBuffer(list, 0, 0, NA_MEMORY_CLEANUP_NONE);
-  iter.cur = &(list->sentinel);
+  iter.cur = (NAListElement*)(&(list->sentinel));
   #ifndef NDEBUG
+    iter.mutator = NA_TRUE;
     list->sentinel.itercount++;
   #endif
   return iter;
@@ -481,68 +524,68 @@ NA_IDEF NAListIterator naMakeListIteratorMutable(NAList* list){
 
 
 
-NA_IDEF void naClearListIterator(NAListIterator* listiterator){
+NA_IDEF void naClearListIterator(NAListIterator* iterator){
   #ifndef NDEBUG
-    if(listiterator->cur->itercount == 0)
+    if(iterator->cur->itercount == 0)
       naError("naClearListIterator", "No Iterator at this element. Did you do a double clear?");
-    listiterator->cur->itercount--;
+    iterator->cur->itercount--;
   #else
-    NA_UNUSED(listiterator);
+    NA_UNUSED(iterator);
   #endif
 }
 
 
 
-NA_IDEF NABool naLocateListFirst(NAListIterator* listiterator){
-  const NAList* list = (const NAList*)naGetPtrConst(&(listiterator->listptr));
+NA_IDEF NABool naLocateListFirst(NAListIterator* iterator){
+  const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
   #ifndef NDEBUG
     if(naIsListEmpty(list))
       naError("naLocateListFirst", "List is empty");
   #endif
   #ifndef NDEBUG
-    listiterator->cur->itercount--;
+    iterator->cur->itercount--;
   #endif
-  listiterator->cur = list->sentinel.next;
+  iterator->cur = list->sentinel.next;
   #ifndef NDEBUG
-    listiterator->cur->itercount++;
+    iterator->cur->itercount++;
   #endif
   return NA_TRUE;
 }
 
 
 
-NA_IDEF NABool naLocateListLast(NAListIterator* listiterator){
-  const NAList* list = (const NAList*)naGetPtrConst(&(listiterator->listptr));
+NA_IDEF NABool naLocateListLast(NAListIterator* iterator){
+  const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
   #ifndef NDEBUG
     if(naIsListEmpty(list))
       naError("naLocateListFirst", "List is empty");
   #endif
   #ifndef NDEBUG
-    listiterator->cur->itercount--;
+    iterator->cur->itercount--;
   #endif
-  listiterator->cur = list->sentinel.prev;
+  iterator->cur = list->sentinel.prev;
   #ifndef NDEBUG
-    listiterator->cur->itercount++;
+    iterator->cur->itercount++;
   #endif
   return NA_TRUE;
 }
 
 
 
-NA_IDEF NABool naLocateListPosition(NAListIterator* listiterator, NAListPos listpos){
+NA_IDEF NABool naLocateListPosition(NAListIterator* iterator, NAListPos listpos){
   NAListElement* elem = (NAListElement*)listpos;
   #ifndef NDEBUG
     if(!listpos)
       naError("naLocateListPosition", "listpos is NULL. Use naGetListInitialPosition for an undefined listpos.");
-    if(elem->list != naGetPtrConst(&(listiterator->listptr)))
+    if(elem->list != naGetPtrConst(&(iterator->listptr)))
       naError("naLocateListPosition", "The given position lies not within list.");
   #endif
   #ifndef NDEBUG
-    listiterator->cur->itercount--;
+    iterator->cur->itercount--;
   #endif
-  listiterator->cur = elem;
+  iterator->cur = elem;
   #ifndef NDEBUG
-    listiterator->cur->itercount++;
+    iterator->cur->itercount++;
   #endif
   return NA_TRUE;
 }
@@ -555,7 +598,7 @@ NA_IDEF NABool naLocateListPosition(NAListIterator* listiterator, NAListPos list
 // Note that this function looks extremely complicated but it is not. When
 // this code is built in release, it all boils down to two loops just moving
 // a pointer forward or backward.
-NA_IDEF NABool naIterateList(NAListIterator* listiterator, NAInt step){
+NA_IDEF NABool naIterateList(NAListIterator* iterator, NAInt step){
   #ifndef NDEBUG
     if(step == NA_ZERO){
       naError("naIterateList", "step is zero.");
@@ -563,260 +606,280 @@ NA_IDEF NABool naIterateList(NAListIterator* listiterator, NAInt step){
   #endif
   while(step > NA_ZERO){
     #ifndef NDEBUG
-      if(listiterator->cur->itercount == 0)
+      if(iterator->cur->itercount == 0)
         naError("naIterateList", "No Iterator at this element. Did you do a double clear?");
-      listiterator->cur->itercount--;
+      iterator->cur->itercount--;
     #endif
-    listiterator->cur = listiterator->cur->next;
+    iterator->cur = iterator->cur->next;
     step--;
     #ifndef NDEBUG
-      listiterator->cur->itercount++;
-      if((listiterator->cur == &(((NAList*)naGetPtrConst(&(listiterator->listptr)))->sentinel)) && (step != NA_ZERO)){
+      iterator->cur->itercount++;
+      if((iterator->cur == &(((NAList*)naGetPtrConst(&(iterator->listptr)))->sentinel)) && (step != NA_ZERO)){
         naError("naIterateList", "The iteration overflows the number of elements.");
       }
     #endif
   }
   while(step < NA_ZERO){
     #ifndef NDEBUG
-      if(listiterator->cur->itercount == 0)
+      if(iterator->cur->itercount == 0)
         naError("naIterateList", "No Iterator at this element. Did you do a double clear?");
-      listiterator->cur->itercount--;
+      iterator->cur->itercount--;
     #endif
-    listiterator->cur = listiterator->cur->prev;
+    iterator->cur = iterator->cur->prev;
     step++;
     #ifndef NDEBUG
-      listiterator->cur->itercount++;
-      if((listiterator->cur == &(((NAList*)naGetPtrConst(&(listiterator->listptr)))->sentinel)) && (step != NA_ZERO)){
+      iterator->cur->itercount++;
+      if((iterator->cur == &(((NAList*)naGetPtrConst(&(iterator->listptr)))->sentinel)) && (step != NA_ZERO)){
         naError("naIterateList", "The iteration underflows the number of elements.");
       }
     #endif
   }
-  return (listiterator->cur != &(((NAList*)naGetPtrConst(&(listiterator->listptr)))->sentinel));
+  return (iterator->cur != &(((NAList*)naGetPtrConst(&(iterator->listptr)))->sentinel));
 }
 
 
 
-NA_IDEF const void* naGetListPrevConst(NAListIterator* listiterator){
+NA_IDEF const void* naGetListPrevConst(NAListIterator* iterator){
   #ifndef NDEBUG
-    if(naIsListEmpty((const NAList*)naGetPtrConst(&(listiterator->listptr))))
+    if(naIsListEmpty((const NAList*)naGetPtrConst(&(iterator->listptr))))
       naError("naGetListPrevConst", "List is empty");
   #endif
-  return naGetPtrConst(&(listiterator->cur->prev->ptr));
+  return naGetPtrConst(&(iterator->cur->prev->ptr));
 }
 
 
-NA_IDEF void* naGetListPrevMutable(NAListIterator* listiterator){
+NA_IDEF void* naGetListPrevMutable(NAListIterator* iterator){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naGetListPrevMutable", "Trying to mutate elements of iterator which is const");
-    if(naIsListEmpty((const NAList*)naGetPtrConst(&(listiterator->listptr))))
+    if(!iterator->mutator)
+      naError("naGetListPrevMutable", "Trying to mutate elements with an accessor iterator");
+    if(naIsListEmpty((const NAList*)naGetPtrConst(&(iterator->listptr))))
       naError("naGetListPrevMutable", "List is empty");
   #endif
-  return naGetPtrMutable(&(listiterator->cur->prev->ptr));
+  return naGetPtrMutable(&(iterator->cur->prev->ptr));
 }
 
 
-NA_IDEF const void* naGetListCurrentConst(NAListIterator* listiterator){
+NA_IDEF const void* naGetListCurrentConst(NAListIterator* iterator){
   #ifndef NDEBUG
     // Note that the empty check has been removed. Getting the current elem
     // of an empty list automatically returns NULL. This is a feature!
-//    if(naIsListEmpty(naGetPtrConst(&(listiterator->listptr))))
+//    if(naIsListEmpty(naGetPtrConst(&(iterator->listptr))))
 //      naError("naGetListCurrentConst", "List is empty");
   #endif
-  return naGetPtrConst(&(listiterator->cur->ptr));
+  return naGetPtrConst(&(iterator->cur->ptr));
 }
 
 
-NA_IDEF void* naGetListCurrentMutable(NAListIterator* listiterator){
+NA_IDEF void* naGetListCurrentMutable(NAListIterator* iterator){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naGetListCurrentMutable", "Trying to mutate elements of iterator which is const");
+    if(!iterator->mutator)
+      naError("naGetListCurrentMutable", "Trying to mutate elements with an accessor iterator");
     // Note that the empty check has been removed. Getting the current elem
     // of an empty list automatically returns NULL. This is a feature!
-//    if(naIsListEmpty(naGetPtrConst(&(listiterator->listptr))))
+//    if(naIsListEmpty(naGetPtrConst(&(iterator->listptr))))
 //      naError("naGetListCurrentMutable", "List is empty");
   #endif
-  return naGetPtrMutable(&(listiterator->cur->ptr));
+  return naGetPtrMutable(&(iterator->cur->ptr));
 }
 
 
-NA_IDEF const void* naGetListNextConst(NAListIterator* listiterator){
+NA_IDEF const void* naGetListNextConst(NAListIterator* iterator){
   #ifndef NDEBUG
-    if(naIsListEmpty((const NAList*)naGetPtrConst(&(listiterator->listptr))))
+    if(naIsListEmpty((const NAList*)naGetPtrConst(&(iterator->listptr))))
       naError("naGetListNextConst", "List is empty");
   #endif
-  return naGetPtrConst(&(listiterator->cur->next->ptr));
+  return naGetPtrConst(&(iterator->cur->next->ptr));
 }
 
 
-NA_IDEF void* naGetListNextMutable(NAListIterator* listiterator){
+NA_IDEF void* naGetListNextMutable(NAListIterator* iterator){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naGetListNextMutable", "Trying to mutate elements of iterator which is const");
-    if(naIsListEmpty((const NAList*)naGetPtrConst(&(listiterator->listptr))))
+    if(!iterator->mutator)
+      naError("naGetListNextMutable", "Trying to mutate elements with an accessor iterator");
+    if(naIsListEmpty((const NAList*)naGetPtrConst(&(iterator->listptr))))
       naError("naGetListNextMutable", "List is empty");
   #endif
-  return naGetPtrMutable(&(listiterator->cur->next->ptr));
+  return naGetPtrMutable(&(iterator->cur->next->ptr));
 }
 
 
 
 
-NA_IDEF NAListPos naAddListBeforeConst(NAListIterator* listiterator, const void* content){
+NA_IDEF NAListPos naAddListBeforeConst(NAListIterator* iterator, const void* content){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naAddListBeforeConst", "Trying to mutate list of iterator which is const");
+    if(!iterator->mutator)
+      naError("naAddListBeforeConst", "Trying to mutate elements with an accessor iterator");
+    if(naIsPtrConst(&(iterator->listptr)))
+      naError("naAddListBeforeConst", "Trying to modify list while iterator is no modify iterator");
   #endif
-  NAListElement* newelement = naNewListElement(listiterator->cur->prev, listiterator->cur);
-  naInjectConstListElement((NAList*)naGetPtrConst(&(listiterator->listptr)), newelement, content);
+  NAListElement* newelement = naNewListElement(iterator->cur->prev, iterator->cur);
+  naInjectConstListElement((NAList*)naGetPtrConst(&(iterator->listptr)), newelement, content);
   return newelement;
 }
 
 
-NA_IDEF NAListPos naAddListBeforeMutable(NAListIterator* listiterator, void* content){
+NA_IDEF NAListPos naAddListBeforeMutable(NAListIterator* iterator, void* content){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naAddListBeforeMutable", "Trying to mutate list of iterator which is const");
+    if(!iterator->mutator)
+      naError("naAddListBeforeMutable", "Trying to mutate elements with an accessor iterator");
+    if(naIsPtrConst(&(iterator->listptr)))
+      naError("naAddListBeforeMutable", "Trying to modify list while iterator is no modify iterator");
   #endif
-  NAListElement* newelement = naNewListElement(listiterator->cur->prev, listiterator->cur);
-  naInjectMutableListElement((NAList*)naGetPtrMutable(&(listiterator->listptr)), newelement, content);
+  NAListElement* newelement = naNewListElement(iterator->cur->prev, iterator->cur);
+  naInjectMutableListElement((NAList*)naGetPtrMutable(&(iterator->listptr)), newelement, content);
   return newelement;
 }
 
 
-NA_IDEF NAListPos naAddListAfterConst(NAListIterator* listiterator, const void* content){
+NA_IDEF NAListPos naAddListAfterConst(NAListIterator* iterator, const void* content){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naAddListAfterConst", "Trying to mutate list of iterator which is const");
+    if(!iterator->mutator)
+      naError("naAddListAfterConst", "Trying to mutate elements with an accessor iterator");
+    if(naIsPtrConst(&(iterator->listptr)))
+      naError("naAddListAfterConst", "Trying to modify list while iterator is no modify iterator");
   #endif
-  NAListElement* newelement = naNewListElement(listiterator->cur, listiterator->cur->next);
-  naInjectConstListElement((NAList*)naGetPtrConst(&(listiterator->listptr)), newelement, content);
+  NAListElement* newelement = naNewListElement(iterator->cur, iterator->cur->next);
+  naInjectConstListElement((NAList*)naGetPtrConst(&(iterator->listptr)), newelement, content);
   return newelement;
 }
 
 
-NA_IDEF NAListPos naAddListAfterMutable(NAListIterator* listiterator, void* content){
+NA_IDEF NAListPos naAddListAfterMutable(NAListIterator* iterator, void* content){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naAddListAfterMutable", "Trying to mutate list of iterator which is const");
+    if(!iterator->mutator)
+      naError("naAddListAfterMutable", "Trying to mutate elements with an accessor iterator");
+    if(naIsPtrConst(&(iterator->listptr)))
+      naError("naAddListAfterMutable", "Trying to modify list while iterator is no modify iterator");
   #endif
-  NAListElement* newelement = naNewListElement(listiterator->cur, listiterator->cur->next);
-  naInjectMutableListElement((NAList*)naGetPtrMutable(&(listiterator->listptr)), newelement, content);
+  NAListElement* newelement = naNewListElement(iterator->cur, iterator->cur->next);
+  naInjectMutableListElement((NAList*)naGetPtrMutable(&(iterator->listptr)), newelement, content);
   return newelement;
 }
 
 
 
-NA_IDEF void naRemoveListPrevConst(NAListIterator* listiterator){
+NA_IDEF void naRemoveListPrevConst(NAListIterator* iterator){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naRemoveListPrevConst", "Trying to mutate list of iterator which is const");
+    if(!iterator->mutator)
+      naError("naRemoveListPrevConst", "Trying to mutate elements with an accessor iterator");
+    if(naIsPtrConst(&(iterator->listptr)))
+      naError("naRemoveListPrevConst", "Trying to modify list while iterator is no modify iterator");
   #endif
-  NAList* list = (NAList*)naGetPtrMutable(&(listiterator->listptr));
+  NAList* list = (NAList*)naGetPtrMutable(&(iterator->listptr));
   #ifndef NDEBUG
-    if(listiterator->cur == list->sentinel.next)
+    if(iterator->cur == list->sentinel.next)
       naError("naRemoveListPrevConst", "There is no previous element. Iterator is at first position. Major memory corruption expected...");
     if(list->count == 0)
       naError("naRemoveListPrevConst", "List is empty");
   #endif
-  naEjectListConst(list, listiterator->cur->prev, NA_TRUE);
+  naEjectListConst(list, iterator->cur->prev, NA_TRUE);
 }
 
 
-NA_IDEF void* naRemoveListPrevMutable(NAListIterator* listiterator){
+NA_IDEF void* naRemoveListPrevMutable(NAListIterator* iterator){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naRemoveListPrevMutable", "Trying to mutate list of iterator which is const");
+    if(!iterator->mutator)
+      naError("naRemoveListPrevMutable", "Trying to mutate elements with an accessor iterator");
+    if(naIsPtrConst(&(iterator->listptr)))
+      naError("naRemoveListPrevMutable", "Trying to modify list while iterator is no modify iterator");
   #endif
-  NAList* list = (NAList*)naGetPtrMutable(&(listiterator->listptr));
+  NAList* list = (NAList*)naGetPtrMutable(&(iterator->listptr));
   #ifndef NDEBUG
-    if(listiterator->cur == list->sentinel.next)
+    if(iterator->cur == list->sentinel.next)
       naError("naRemoveListPrevMutable", "There is no previous element. Internal pointer is at first position. Major memory corruption expected...");
     if(list->count == 0)
       naError("naRemoveListPrevMutable", "List is empty");
   #endif
-  return naEjectListMutable(list, listiterator->cur->prev, NA_TRUE);
+  return naEjectListMutable(list, iterator->cur->prev, NA_TRUE);
 }
 
 
-NA_IDEF void naRemoveListCurrentConst(NAListIterator* listiterator, NABool advance){
+NA_IDEF void naRemoveListCurrentConst(NAListIterator* iterator, NABool advance){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naRemoveListPrevMutable", "Trying to mutate list of iterator which is const");
+    if(!iterator->mutator)
+      naError("naRemoveListCurrentConst", "Trying to mutate elements with an accessor iterator");
+    if(naIsPtrConst(&(iterator->listptr)))
+      naError("naRemoveListPrevMutable", "Trying to modify list while iterator is no modify iterator");
   #endif
-  NAList* list = (NAList*)naGetPtrMutable(&(listiterator->listptr));
+  NAList* list = (NAList*)naGetPtrMutable(&(iterator->listptr));
   #ifndef NDEBUG
     if(list->count == 0)
       naError("naRemoveListCurrentConst", "List is empty");
-    if(listiterator->cur == &(list->sentinel))
+    if(iterator->cur == &(list->sentinel))
       naError("naRemoveListCurrentConst", "No current internal pointer is set. Major memory corruption expected...");
   #endif
-  NAListElement* newelem = advance ? listiterator->cur->next : listiterator->cur->prev;
+  NAListElement* newelem = advance ? iterator->cur->next : iterator->cur->prev;
   #ifndef NDEBUG
-    listiterator->cur->itercount--;
+    iterator->cur->itercount--;
   #endif
-  naEjectListConst(list, listiterator->cur, NA_TRUE);
-  listiterator->cur = newelem;
+  naEjectListConst(list, iterator->cur, NA_TRUE);
+  iterator->cur = newelem;
   #ifndef NDEBUG
-    listiterator->cur->itercount++;
+    iterator->cur->itercount++;
   #endif
 }
 
 
-NA_IDEF void* naRemoveListCurrentMutable(NAListIterator* listiterator, NABool advance){
+NA_IDEF void* naRemoveListCurrentMutable(NAListIterator* iterator, NABool advance){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naRemoveListPrevMutable", "Trying to mutate list of iterator which is const");
+    if(!iterator->mutator)
+      naError("naRemoveListCurrentMutable", "Trying to mutate elements with an accessor iterator");
+    if(naIsPtrConst(&(iterator->listptr)))
+      naError("naRemoveListPrevMutable", "Trying to modify list while iterator is no modify iterator");
   #endif
-  NAList* list = (NAList*)naGetPtrMutable(&(listiterator->listptr));
+  NAList* list = (NAList*)naGetPtrMutable(&(iterator->listptr));
   #ifndef NDEBUG
     if(list->count == 0)
       naError("naRemoveListCurrentMutable", "List is empty");
-    if(listiterator->cur == &(list->sentinel))
+    if(iterator->cur == &(list->sentinel))
       naError("naRemoveListCurrentMutable", "No current internal pointer is set. Major memory corruption expected...");
   #endif
-  NAListElement* newelem = advance ? listiterator->cur->next : listiterator->cur->prev;
+  NAListElement* newelem = advance ? iterator->cur->next : iterator->cur->prev;
   #ifndef NDEBUG
-    listiterator->cur->itercount--;
+    iterator->cur->itercount--;
   #endif
-  void* returncontent = naEjectListMutable(list, listiterator->cur, NA_TRUE);
-  listiterator->cur = newelem;
+  void* returncontent = naEjectListMutable(list, iterator->cur, NA_TRUE);
+  iterator->cur = newelem;
   #ifndef NDEBUG
-    listiterator->cur->itercount++;
+    iterator->cur->itercount++;
   #endif
   return returncontent;
 }
 
 
-NA_IDEF void naRemoveListNextConst(NAListIterator* listiterator){
+NA_IDEF void naRemoveListNextConst(NAListIterator* iterator){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naRemoveListNextConst", "Trying to mutate list of iterator which is const");
+    if(!iterator->mutator)
+      naError("naRemoveListNextConst", "Trying to mutate elements with an accessor iterator");
+    if(naIsPtrConst(&(iterator->listptr)))
+      naError("naRemoveListNextConst", "Trying to modify list while iterator is no modify iterator");
   #endif
-  NAList* list = (NAList*)naGetPtrMutable(&(listiterator->listptr));
+  NAList* list = (NAList*)naGetPtrMutable(&(iterator->listptr));
   #ifndef NDEBUG
-    if(listiterator->cur == list->sentinel.prev)
+    if(iterator->cur == list->sentinel.prev)
       naError("naRemoveListNextConst", "There is no next element. Internal pointer is at last position. Major memory corruption expected...");
     if(list->count == 0)
       naError("naRemoveListNextConst", "List is empty");
   #endif
-  naEjectListConst(list, listiterator->cur->next, NA_TRUE);
+  naEjectListConst(list, iterator->cur->next, NA_TRUE);
 }
 
 
-NA_IDEF void* naRemoveListNextMutable(NAListIterator* listiterator){
+NA_IDEF void* naRemoveListNextMutable(NAListIterator* iterator){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naRemoveListNextMutable", "Trying to mutate list of iterator which is const");
+    if(!iterator->mutator)
+      naError("naRemoveListNextMutable", "Trying to mutate elements with an accessor iterator");
+    if(naIsPtrConst(&(iterator->listptr)))
+      naError("naRemoveListNextMutable", "Trying to modify list while iterator is no modify iterator");
   #endif
-  NAList* list = (NAList*)naGetPtrMutable(&(listiterator->listptr));
+  NAList* list = (NAList*)naGetPtrMutable(&(iterator->listptr));
   #ifndef NDEBUG
-    if(listiterator->cur == list->sentinel.prev)
+    if(iterator->cur == list->sentinel.prev)
       naError("naRemoveListNextMutable", "There is no next element. Internal pointer is at last position. Major memory corruption expected...");
     if(list->count == 0)
       naError("naRemoveListNextMutable", "List is empty");
   #endif
-  return naEjectListMutable(list, listiterator->cur->next, NA_TRUE);
+  return naEjectListMutable(list, iterator->cur->next, NA_TRUE);
 }
 
 
@@ -825,137 +888,143 @@ NA_IDEF void* naRemoveListNextMutable(NAListIterator* listiterator){
 // GETTING POSITION INFORMATION
 
 
-NA_IDEF NABool naIsListAtFirst(NAListIterator* listiterator){
-  const NAList* list = (const NAList*)naGetPtrConst(&(listiterator->listptr));
+NA_IDEF NABool naIsListAtFirst(NAListIterator* iterator){
+  const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
   #ifndef NDEBUG
     if(naIsListEmpty(list))
       naError("naIsListAtFirst", "List is empty");
   #endif
-  return (list->sentinel.next == listiterator->cur);
+  return (list->sentinel.next == iterator->cur);
 }
 
 
 
-NA_IDEF NABool naIsListAtLast(NAListIterator* listiterator){
-  const NAList* list = (const NAList*)naGetPtrConst(&(listiterator->listptr));
+NA_IDEF NABool naIsListAtLast(NAListIterator* iterator){
+  const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
   #ifndef NDEBUG
     if(naIsListEmpty(list))
       naError("naIsListAtLast", "List is empty");
   #endif
-  return (list->sentinel.prev == listiterator->cur);
+  return (list->sentinel.prev == iterator->cur);
 }
 
 
 
-NA_IDEF NABool naIsListAtPosition(NAListIterator* listiterator, NAListPos listpos){
+NA_IDEF NABool naIsListAtPosition(NAListIterator* iterator, NAListPos listpos){
   NAListElement* element = (NAListElement*)listpos;
   #ifndef NDEBUG
-    const NAList* list = (const NAList*)naGetPtrConst(&(listiterator->listptr));
+    const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
     if(naIsListEmpty(list))
       naError("naIsListAtPosition", "List is empty");
     if(element->list != list)
       naError("naIsListAtPosition", "The given position is not part of the given list");
   #endif
-  return (listiterator->cur == element);
+  return (iterator->cur == element);
 }
 
 
 
-NA_IDEF NAListPos naGetListPrevPosition(NAListIterator* listiterator){
+NA_IDEF NAListPos naGetListPrevPosition(NAListIterator* iterator){
   #ifndef NDEBUG
-    const NAList* list = (const NAList*)naGetPtrConst(&(listiterator->listptr));
+    const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
     if(naIsListEmpty(list))
       naError("naGetListNextPosition", "List is empty");
   #endif
-  return listiterator->cur->prev;
+  return iterator->cur->prev;
 }
 
 
 
-NA_IDEF NAListPos naGetListCurrentPosition(NAListIterator* listiterator){
+NA_IDEF NAListPos naGetListCurrentPosition(NAListIterator* iterator){
   #ifndef NDEBUG
-    const NAList* list = (const NAList*)naGetPtrConst(&(listiterator->listptr));
+    const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
     if(naIsListEmpty(list))
       naError("naGetListNextPosition", "List is empty");
   #endif
-  return listiterator->cur;
+  return iterator->cur;
 }
 
 
 
-NA_IDEF NAListPos naGetListNextPosition(NAListIterator* listiterator){
+NA_IDEF NAListPos naGetListNextPosition(NAListIterator* iterator){
   #ifndef NDEBUG
-    const NAList* list = (const NAList*)naGetPtrConst(&(listiterator->listptr));
+    const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
     if(naIsListEmpty(list))
       naError("naGetListNextPosition", "List is empty");
   #endif
-  return listiterator->cur->next;
+  return iterator->cur->next;
 }
 
 
 
-NA_IDEF void naMoveListCurToFirst(NAListIterator* listiterator, NABool advance, NAList* dst){
+NA_IDEF void naMoveListCurToFirst(NAListIterator* iterator, NABool advance, NAList* dst){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naMoveListCurToFirst", "Trying to mutate list of iterator which is const");
+    if(!iterator->mutator)
+      naError("naMoveListCurToFirst", "Trying to mutate elements with an accessor iterator");
+    if(naIsPtrConst(&(iterator->listptr)))
+      naError("naMoveListCurToFirst", "Trying to modify list while iterator is no modify iterator");
   #endif
-  NAList* src = (NAList*)naGetPtrMutable(&(listiterator->listptr));
+  NAList* src = (NAList*)naGetPtrMutable(&(iterator->listptr));
   #ifndef NDEBUG
-    if(listiterator->cur == &(src->sentinel))
+    if(iterator->cur == &(src->sentinel))
       naError("naMoveListCurToFirst", "List has no current element set.");
   #endif
 
-  NAListElement* newelem = advance ? listiterator->cur->next : listiterator->cur->prev;
+  NAListElement* newelem = advance ? iterator->cur->next : iterator->cur->prev;
   #ifndef NDEBUG
-    listiterator->cur->itercount--;
+    iterator->cur->itercount--;
   #endif
-  naEjectListConst(src, listiterator->cur, NA_FALSE);
-  listiterator->cur->next = dst->sentinel.next;
-  listiterator->cur->prev = &(dst->sentinel);
-  naInjectExistingListElement(dst, listiterator->cur);
-  listiterator->cur = newelem;
+  naEjectListConst(src, iterator->cur, NA_FALSE);
+  iterator->cur->next = dst->sentinel.next;
+  iterator->cur->prev = &(dst->sentinel);
+  naInjectExistingListElement(dst, iterator->cur);
+  iterator->cur = newelem;
   #ifndef NDEBUG
-    listiterator->cur->itercount++;
+    iterator->cur->itercount++;
   #endif
 
 }
 
 
 
-NA_IDEF void naMoveListCurToLast(NAListIterator* listiterator, NABool advance, NAList* dst){
+NA_IDEF void naMoveListCurToLast(NAListIterator* iterator, NABool advance, NAList* dst){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naMoveListCurToLast", "Trying to mutate list of iterator which is const");
+    if(!iterator->mutator)
+      naError("naMoveListCurToLast", "Trying to mutate elements with an accessor iterator");
+    if(naIsPtrConst(&(iterator->listptr)))
+      naError("naMoveListCurToLast", "Trying to modify list while iterator is no modify iterator");
   #endif
-  NAList* src = (NAList*)naGetPtrMutable(&(listiterator->listptr));
+  NAList* src = (NAList*)naGetPtrMutable(&(iterator->listptr));
   #ifndef NDEBUG
-    if(listiterator->cur == &(src->sentinel))
+    if(iterator->cur == &(src->sentinel))
       naError("naMoveCurToListLast", "List has no current element set.");
   #endif
 
-  NAListElement* newelem = advance ? listiterator->cur->next : listiterator->cur->prev;
+  NAListElement* newelem = advance ? iterator->cur->next : iterator->cur->prev;
   #ifndef NDEBUG
-    listiterator->cur->itercount--;
+    iterator->cur->itercount--;
   #endif
-  naEjectListConst(src, listiterator->cur, NA_FALSE);
-  listiterator->cur->next = &(dst->sentinel);
-  listiterator->cur->prev = dst->sentinel.prev;
-  naInjectExistingListElement(dst, listiterator->cur);
-  listiterator->cur = newelem;
+  naEjectListConst(src, iterator->cur, NA_FALSE);
+  iterator->cur->next = &(dst->sentinel);
+  iterator->cur->prev = dst->sentinel.prev;
+  naInjectExistingListElement(dst, iterator->cur);
+  iterator->cur = newelem;
   #ifndef NDEBUG
-    listiterator->cur->itercount++;
+    iterator->cur->itercount++;
   #endif
 
 }
 
 
 
-NA_IDEF void naMoveListTrailingToLast(NAListIterator* listiterator, NAList* dst){
+NA_IDEF void naMoveListTrailingToLast(NAListIterator* iterator, NAList* dst){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naMoveListCurToLast", "Trying to mutate list of iterator which is const");
+    if(!iterator->mutator)
+      naError("naMoveListTrailingToLast", "Trying to mutate elements with an accessor iterator");
+    if(naIsPtrConst(&(iterator->listptr)))
+      naError("naMoveListCurToLast", "Trying to modify list while iterator is no modify iterator");
   #endif
-  NAList* src = (NAList*)naGetPtrMutable(&(listiterator->listptr));
+  NAList* src = (NAList*)naGetPtrMutable(&(iterator->listptr));
 
   NAListElement* element;
   NAUInt movecount = 1;
@@ -963,7 +1032,7 @@ NA_IDEF void naMoveListTrailingToLast(NAListIterator* listiterator, NAList* dst)
   if(naIsListEmpty(src)){return;}
   
   // Move to the first element if the list is rewinded.
-  element = listiterator->cur;
+  element = iterator->cur;
   if(element == &(src->sentinel)){
     element = src->sentinel.next;
   }
@@ -971,7 +1040,7 @@ NA_IDEF void naMoveListTrailingToLast(NAListIterator* listiterator, NAList* dst)
   // Reroute the cur element from src to dst
   element->prev->next = &(src->sentinel);
   src->sentinel.prev = element->prev;
-  listiterator->cur = &(src->sentinel);
+  iterator->cur = &(src->sentinel);
 
   // Reroute the cur element
   element->prev = dst->sentinel.prev;
@@ -999,27 +1068,29 @@ NA_IDEF void naMoveListTrailingToLast(NAListIterator* listiterator, NAList* dst)
 
 
 
-NA_IDEF void naExchangeListParts(NAListIterator* listiterator){
+NA_IDEF void naExchangeListParts(NAListIterator* iterator){
   #ifndef NDEBUG
-    if(naIsPtrConst(&(listiterator->listptr)))
-      naError("naMoveListCurToLast", "Trying to mutate list of iterator which is const");
+    if(!iterator->mutator)
+      naError("naExchangeListParts", "Trying to mutate elements with an accessor iterator");
+    if(naIsPtrConst(&(iterator->listptr)))
+      naError("naMoveListCurToLast", "Trying to modify list while iterator is no modify iterator");
   #endif
-  NAList* src = (NAList*)naGetPtrMutable(&(listiterator->listptr));
+  NAList* src = (NAList*)naGetPtrMutable(&(iterator->listptr));
 
   NAListElement* first;
   NAListElement* prev;
   #ifndef NDEBUG
-    if(listiterator->cur == &(src->sentinel))
+    if(iterator->cur == &(src->sentinel))
       naError("naExchangeListParts", "List has no current element set.");
   #endif
-  if(&(src->sentinel) == listiterator->cur){return;}
-  if(src->sentinel.next == listiterator->cur){return;}
+  if(&(src->sentinel) == iterator->cur){return;}
+  if(src->sentinel.next == iterator->cur){return;}
   first = src->sentinel.next;
-  prev = listiterator->cur->prev;
+  prev = iterator->cur->prev;
   first->prev = src->sentinel.prev;
   src->sentinel.prev->next = first;
-  src->sentinel.next = listiterator->cur;
-  listiterator->cur->prev = &(src->sentinel);
+  src->sentinel.next = iterator->cur;
+  iterator->cur->prev = &(src->sentinel);
   src->sentinel.prev = prev;
   prev->next = &(src->sentinel);
 }
