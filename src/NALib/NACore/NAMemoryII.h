@@ -134,7 +134,9 @@ NA_IDEF void* naMalloc(NAInt bytesize){
     #endif
     ptr = (NAByte*)malloc((size_t)fullsize);
     #ifndef NDEBUG
-      if(na_debug_mem_observe_bytes){
+    if (!ptr)
+      {naCrash("naMalloc", "Out of memory."); return NA_NULL;}
+    if(na_debug_mem_observe_bytes){
         na_debug_mem_bytesize += fullsize;
       }
     #endif
@@ -142,11 +144,6 @@ NA_IDEF void* naMalloc(NAInt bytesize){
     *(NAUInt*)(&(ptr[fullsize - 1 * NA_SYSTEM_ADDRESS_BYTES])) = NA_ZERO;
   }
 
-  #ifndef NDEBUG
-    if(!ptr)
-      {naCrash("naMalloc", "Out of memory."); return NA_NULL;}
-  #endif
-  
   return ptr;
 }
 
@@ -838,9 +835,9 @@ NA_IDEF NAMemoryBlock naMakeMemoryBlockWithConstBuffer(const void* buffer, NAInt
 
 
 
-NA_IDEF NAMemoryBlock naMakeMemoryBlockWithMutableBuffer(void* buffer, NAInt bytesize, NAMemoryCleanup cleanup){
+NA_IDEF NAMemoryBlock naMakeMemoryBlockWithMutableBuffer(void* buffer, NAInt bytesize, NAMemoryCleanup cleanuphint){
   NAMemoryBlock memblock;
-  memblock.ptr = naMakePtrWithMutableBuffer(buffer, bytesize, 1, cleanup);
+  memblock.ptr = naMakePtrWithMutableBuffer(buffer, bytesize, 1, cleanuphint);
   memblock.bytesize = naAbsi(bytesize);
   return memblock;
 }
@@ -1315,8 +1312,10 @@ NA_IDEF NABuf naMakeBufWithBytesize(int64 maxbytesize, int64 usedbytesize){
       naError("naMakeBufWithBytesize", "usedsize must be positive.");
     if(usedbytesize > maxbytesize)
       naError("naMakeBufWithBytesize", "maxsize can not be smaller than usedsize.");
-  	if((NA_SYSTEM_INT_BITS < 64) && (maxbytesize > NA_INT_MAX))
-	    naError("naMakeBufWithBytesize", "maxsize overflows int range, while int has less than 64 bits in this configuration.");
+  	#if (NA_SYSTEM_INT_BITS < 64)
+      if(maxbytesize > NA_INT_MAX)
+	      naError("naMakeBufWithBytesize", "maxsize overflows int range, while int has less than 64 bits in this configuration.");
+    #endif
 #endif
   buf.ptr = naMakePtrWithBytesize((NAInt)maxbytesize);
   buf.bytesize = maxbytesize;

@@ -17,6 +17,9 @@ struct NAGrowingSpace{
   NAUInt        typesize;       // The size in bytes of the stored type
   NAUInt        usedcount;      // The used number of elements in the storage.
   NAUInt        minimalexp;     // An exponent of 1 denotes the minimal count of 2.
+  #ifndef NDEBUG
+    NAInt      itercount;      // The number of iterators on this space.
+  #endif
 };
 
 
@@ -24,21 +27,30 @@ struct NAGrowingSpace{
 struct NAGrowingSpaceIterator{
   const NAGrowingSpace* space;    // The const space
   NAListIterator  listiterator;   // the iterator on the array list
-  NAUInt          curarraycount;  // The element count of the current array.
-  NAUInt          cur;            // The index in the current array if available.
+  NAInt           curarrayindex;  // The index of the current array.
+  NAInt           cur;            // The index in the current array if available.
 };
 
+
+NA_HIDEF NAUInt naGetGrowingSpaceArrayAvailableSize(const NAGrowingSpace* space, NAInt indx){
+  return NA_ONE << (indx + space->minimalexp);
+}
+
+NA_HIDEF NAUInt naGetGrowingSpaceArrayBaseIndex(const NAGrowingSpace* space, NAInt indx){
+  return (NA_ONE << (indx + space->minimalexp)) - (NA_ONE << space->minimalexp);
+}
+
+NA_HIDEF NAUInt naGetGrowingSpaceTotalSize(const NAGrowingSpace* space){
+  return (NA_ONE << (naGetListCount(&(space->arrays)) + space->minimalexp)) - (NA_ONE << space->minimalexp);
+}
 
 
 // This is a helper function which has one purpose: Add another memory block
 // to the space which is double the element count of the previous block. The first block
 // has the element count given to naInitGrowingSpace
 NA_HIDEF void naAddGrowingSpaceNewSpace(NAGrowingSpace* space){
-  NAUInt newelementcount;
   void* newarray;
-  NAUInt arraycount = naGetListCount(&(space->arrays));
-  newelementcount = NA_ONE << (arraycount + space->minimalexp);
-  newarray = naMalloc(newelementcount * space->typesize);
+  newarray = naMalloc(naGetGrowingSpaceArrayAvailableSize(space, naGetListCount(&(space->arrays))) * space->typesize);
   naAddListLastMutable(&(space->arrays), newarray);
 }
 
@@ -62,6 +74,7 @@ NA_IDEF NAGrowingSpace* naInitGrowingSpace(NAGrowingSpace* space, NAUInt typesiz
   #ifndef NDEBUG
     if((NAUInt)naPow(2., (double)space->minimalexp) != minimalcount)  // todo make pow2i
       naError("naInitGrowingSpace", "minimalcount must be a power of 2.");
+    space->itercount = 0;
   #endif
   if(space->minimalexp == 0){space->minimalexp = 1;}
   return space;
@@ -70,14 +83,17 @@ NA_IDEF NAGrowingSpace* naInitGrowingSpace(NAGrowingSpace* space, NAUInt typesiz
 
 
 NA_IDEF void naClearGrowingSpace(NAGrowingSpace* space){
+  NAListIterator iter;
   #ifndef NDEBUG
     if(!space){
       naCrash("naClearGrowingSpace", "space is Null-Pointer.");
       return;
     }
+    if(space->itercount != 0)
+      naCrash("naClearGrowingSpace", "There are still iterators on this space. Did you forget naClearGrowingSpaceIterator?");
   #endif
 
-  NAListIterator iter = naMakeListIteratorMutator(&(space->arrays));
+  iter = naMakeListIteratorMutator(&(space->arrays));
   while(naIterateList(&iter, 1)){
     void* curarray = naGetListCurrentMutable(&iter);
     naFree(curarray);
@@ -92,23 +108,17 @@ NA_IDEF void naClearGrowingSpace(NAGrowingSpace* space){
 NA_IDEF void* naNewGrowingSpaceElement(NAGrowingSpace* space){
   // Declaration before Implementation. Needed for C90
   NAUInt subindex;
-  NAUInt baseindex;
-  NAUInt arraycount;
   NAUInt availablespace;
 
   space->usedcount++;
-  arraycount = naGetListCount(&(space->arrays));
   
-  availablespace = (1 << (arraycount + space->minimalexp)) - (1 << space->minimalexp);
+  availablespace = naGetGrowingSpaceTotalSize(space);
 
   if(space->usedcount > availablespace){
     naAddGrowingSpaceNewSpace(space);
-    baseindex = (1 << (arraycount + space->minimalexp)) - (1 << space->minimalexp);
-  }else{
-    baseindex = (1 << (arraycount + space->minimalexp - 1)) - (1 << space->minimalexp);
   }
   
-  subindex = space->usedcount - 1 - baseindex;
+  subindex = space->usedcount - 1 - naGetGrowingSpaceArrayBaseIndex(space, naGetListCount(&(space->arrays)) - 1);
   return &(((NAByte*)naGetListLastMutable(&(space->arrays)))[subindex * space->typesize]);
 }
 
@@ -121,15 +131,21 @@ NA_IDEF NAUInt naGetGrowingSpaceCount(const NAGrowingSpace* space){
 
 
 
-// todo: comment and check if initialization is correct.
 
 
 NA_IDEF NAGrowingSpaceIterator naMakeGrowingSpaceIteratorAccessor(const NAGrowingSpace* space){
   NAGrowingSpaceIterator iter;
+  #ifndef NDEBUG
+    NAGrowingSpace* mutablespace;
+  #endif
   iter.space = space;
   iter.listiterator = naMakeListIteratorAccessor(&(space->arrays));
-  iter.curarraycount = (1 << (space->minimalexp - 1));
-  iter.cur = iter.curarraycount;
+  iter.curarrayindex = -1;
+  iter.cur = 0;
+  #ifndef NDEBUG
+    mutablespace = (NAGrowingSpace*)space;
+    mutablespace->itercount++;
+  #endif
   return iter;
 }
 
@@ -137,44 +153,62 @@ NA_IDEF NAGrowingSpaceIterator naMakeGrowingSpaceIteratorAccessor(const NAGrowin
 
 NA_IDEF NAGrowingSpaceIterator naMakeGrowingSpaceIteratorMutator(const NAGrowingSpace* space){
   NAGrowingSpaceIterator iter;
+  #ifndef NDEBUG
+    NAGrowingSpace* mutablespace;
+  #endif
   iter.space = space;
   iter.listiterator = naMakeListIteratorMutator(&(space->arrays));
-  iter.curarraycount = (1 << (space->minimalexp - 1));
-  iter.cur = iter.curarraycount;
+  iter.curarrayindex = -1;
+  iter.cur = 0;
+  #ifndef NDEBUG
+    mutablespace = (NAGrowingSpace*)space;
+    mutablespace->itercount ++;
+  #endif
   return iter;
 }
 
 
 
 NA_IDEF void naClearGrowingSpaceIterator(NAGrowingSpaceIterator* iterator){
+  #ifndef NDEBUG
+    NAGrowingSpace* mutablespace;
+  #endif
   naClearListIterator(&(iterator->listiterator));
+  #ifndef NDEBUG
+    mutablespace = (NAGrowingSpace*)iterator->space;
+    mutablespace->itercount --;
+    if(mutablespace->itercount < 0)
+      naError("naClearGrowingSpaceIterator", "Too many cleared iterators on that space.");
+  #endif
 }
 
 
 
 NA_IDEF NABool naIterateGrowingSpace(NAGrowingSpaceIterator* iterator){
   iterator->cur++;
-  if(iterator->cur >= iterator->curarraycount){
+  if(iterator->cur >= (NAInt)naGetGrowingSpaceArrayAvailableSize(iterator->space, iterator->curarrayindex)){
     naIterateList(&(iterator->listiterator), 1);
-    iterator->curarraycount <<= 1;
+    iterator->curarrayindex++;
     iterator->cur = 0;
   }
-  return (iterator->curarraycount + iterator->cur < iterator->space->usedcount);
+  return (naGetGrowingSpaceArrayBaseIndex(iterator->space, iterator->curarrayindex) + iterator->cur < iterator->space->usedcount);
 }
 
 
 
 NA_IDEF const void* naGetGrowingSpaceCurrentConst(NAGrowingSpaceIterator* iterator){
-  if(iterator->curarraycount + iterator->cur >= iterator->space->usedcount){return NA_NULL;}
-  const NAByte* curbase = (const NAByte*)naGetListCurrentConst(&(iterator->listiterator));
+  const NAByte* curbase;
+  if(naGetGrowingSpaceArrayBaseIndex(iterator->space, iterator->curarrayindex) + iterator->cur >= iterator->space->usedcount){return NA_NULL;}
+  curbase = (const NAByte*)naGetListCurrentConst(&(iterator->listiterator));
   return &(curbase[iterator->cur * iterator->space->typesize]);
 }
 
 
 
 NA_IDEF void* naGetGrowingSpaceCurrentMutable(NAGrowingSpaceIterator* iterator){
-  if(iterator->curarraycount + iterator->cur >= iterator->space->usedcount){return NA_NULL;}
-  NAByte* curbase = (NAByte*)naGetListCurrentMutable(&(iterator->listiterator));
+  NAByte* curbase;
+  if(naGetGrowingSpaceArrayBaseIndex(iterator->space, iterator->curarrayindex) + iterator->cur >= iterator->space->usedcount){return NA_NULL;}
+  curbase = (NAByte*)naGetListCurrentMutable(&(iterator->listiterator));
   return &(curbase[iterator->cur * iterator->space->typesize]);
 }
 

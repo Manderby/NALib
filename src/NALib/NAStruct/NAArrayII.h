@@ -60,7 +60,7 @@ NA_IDEF void naForeachArray(NAArray* array, NAMutator mutator){
   NAByte* ptr;
   #ifndef NDEBUG
     if(!mutator)
-      naError("naForeachArray", "Mutator is Null");
+      {naCrash("naForeachArray", "Mutator is Null"); return;}
   #endif
   count = naGetArrayCount(array);
   ptr = naGetByteArrayMutablePointer(&(array->bytearray));

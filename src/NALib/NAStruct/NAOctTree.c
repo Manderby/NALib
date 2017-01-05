@@ -655,10 +655,8 @@ NA_DEF void naSerializeOctTree(const NAOctTree* tree, void* buf, uint64* bytesiz
   #ifndef NDEBUG
     if(!(tree->callbacks.serialize))
       naError("naSerializeOctTree", "Callbacks required for serialization");
-    if(!bytesize){
-      naCrash("naSerializeOctTree", "bytesize required to read/store byte size");
-      return;
-    }
+    if(!bytesize)
+      {naCrash("naSerializeOctTree", "bytesize required to read/store byte size"); return;}
     if(buf && (*bytesize == 0))
       naError("naSerializeOctTree", "bytesize is zero");
   #endif

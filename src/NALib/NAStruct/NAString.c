@@ -94,9 +94,14 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
 
 
 
-NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt length, NAMemoryCleanup ownership){
-  NAString* string = naNew(NAString);
-  naInitByteArrayWithMutableBuffer(&(string->array), buffer, length, ownership);
+NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt length, NAMemoryCleanup cleanup){
+  NAString* string;
+  #ifndef NDEBUG
+    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup > NA_MEMORY_CLEANUP_DELETE)
+      naError("naNewStringWithMutableUTF8Buffer", "invalid cleanup option");
+  #endif
+  string = naNew(NAString);
+  naInitByteArrayWithMutableBuffer(&(string->array), buffer, length, cleanup);
   return string;
 }
 
@@ -1185,8 +1190,8 @@ NA_DEF NABool naEqualUTF8CStringLiteralsCaseInsensitive( const NAUTF8Char* strin
   for(i=0; i<stringsize1; i++){
     NAUTF8Char curchar1;
     NAUTF8Char curchar2;
-    if(isalpha(*curchar1ptr)){curchar1 = tolower(*curchar1ptr);}else{curchar1 = *curchar1ptr;}
-    if(isalpha(*curchar2ptr)){curchar2 = tolower(*curchar2ptr);}else{curchar2 = *curchar2ptr;}
+    if(isalpha((const char)*curchar1ptr)){curchar1 = tolower(*curchar1ptr);}else{curchar1 = *curchar1ptr;}
+    if(isalpha((const char)*curchar2ptr)){curchar2 = tolower(*curchar2ptr);}else{curchar2 = *curchar2ptr;}
     if(curchar1 != curchar2){return NA_FALSE;}
     curchar1ptr++;
     curchar2ptr++;

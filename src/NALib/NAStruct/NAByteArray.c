@@ -50,9 +50,11 @@ NA_DEF NAByteArray* naInitByteArrayWithConstBuffer(NAByteArray* array, const voi
 
 
 
-NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* buffer, NAInt bytesize, NAMemoryCleanup cleanuphint){
+NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* buffer, NAInt bytesize, NAMemoryCleanup cleanup){
   NAMemoryBlock* newstorageblock;
   #ifndef NDEBUG
+    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup > NA_MEMORY_CLEANUP_DELETE)
+      naError("naNewStringWithMutableUTF8Buffer", "invalid cleanup option");
     if(!array)
       {naCrash("naInitByteArrayWithMutableBuffer", "array is Null-Pointer."); return NA_NULL;}
     if(!buffer)
@@ -62,9 +64,9 @@ NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* b
   if(bytesize == NA_ZERO){
     *newstorageblock = naMakeMemoryBlock();
   }else{
-    *newstorageblock = naMakeMemoryBlockWithMutableBuffer(buffer, bytesize, cleanuphint);
+    *newstorageblock = naMakeMemoryBlockWithMutableBuffer(buffer, bytesize, cleanup);
   }
-  if(cleanuphint){
+  if(cleanup){
     array->storage = naNewPointer(newstorageblock, NA_MEMORY_CLEANUP_FREE, (NAMutator)naFreeMemoryBlock);
   }else{
     array->storage = naNewPointer(newstorageblock, NA_MEMORY_CLEANUP_FREE, NA_NULL);

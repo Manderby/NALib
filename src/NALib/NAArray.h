@@ -52,11 +52,12 @@ NA_API  NAArray* naInitArrayWithCount  (NAArray* array,
 // buffer WITHOUT copying. The count denotes the number of elements in the
 // array, not bytes! The programmer is responsible for that count does not
 // overflows the buffer.
-// When takeownership is set to NA_TRUE, the array will deallocate the given
-// buffer with free() when it is no longer used. Note that count can not be
-// negative. If count is null, an empty array is created and the buffer will be
-// deleted immediately, if takeownership is true. You can not take ownership of
-// const buffers.
+// When memorycleanup is set to NA_MEMORY_CLEANUP_NONE, the array will not
+// own the memory. In any other case, the array will deallocate the given
+// buffer with the appropriate cleanup method when it is no longer used.
+// Note that count can not be negative. If count is null, an empty array is
+// created and the buffer will be deleted immediately, if there is a valid
+// memory cleanup option. You can not define clean up const buffers.
 //
 // Use these functions to encapsulate your own raw buffers into an NAArray.
 // There are two creation functions, one for const data and one for non-const.
@@ -74,7 +75,7 @@ NA_API  NAArray* naInitArrayWithMutableBuffer(
                                              void* buffer,
                                             NAUInt typesize,
                                             NAUInt count,
-                                  NAMemoryCleanup ownership);
+                                   NAMemoryCleanup cleanup);
 
 // Fills dstarray with a desired part of srcarray.
 // offset and count can be negative: See naInitByteArrayExtraction for the

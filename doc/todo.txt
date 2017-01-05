@@ -5,26 +5,23 @@ This file contains notes on what is still missing or needs to be done
 in NALib.
 
 
-Version 17:
-- Fully Implement Buffer
-- Review Iterators
-- Threading.h uses New for allocators
-- Check NAPointerCleanup
-- GrowingSpace iterator debug count
-
 Version 18:
+- Threading.h uses New for allocators
+- Fully Implement Buffer, NABufInt must become NAInt
 - First compression in NAPNG
 - Move flags into config
 - Add more variadic error messages
 - NATree and integration into NABuffer
 - Redo String with Buffers
 - Make NAArray simpler without subarrays. Add Iterator
-- NAMoney
+- Review Remaining Iterators
 - Timezones
+- Rewrite GrowingSpace as Stack
 
 Version 19:
 - Re-Integrate NAMap2D
 - Re-Integrate NABitArray
+- NASocket
 - GUI
 
 Version 20:

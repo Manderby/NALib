@@ -425,7 +425,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   NA_UNUSED(dictadler);
 
   naInitBufferWithBufferExtraction(&zbuffer, input, zbuffersize);
-  naReadBuffer(input, zbuffersize);
+  naReadBuffer(input, (NAFilesize)zbuffersize);
   zbufferadler = naReadBufferUInt32(input);
   
   // Now start RFC 1951

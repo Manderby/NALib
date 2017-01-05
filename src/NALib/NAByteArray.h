@@ -76,12 +76,14 @@ NA_API NAByteArray* naInitByteArrayWithBytesize(NAByteArray* array, NAInt bytesi
 // Creates or fills a new NAByteArray which contains the data of the given
 // buffer WITHOUT copying. The bytesize denotes the size of the buffer in bytes.
 // The programmer is responsible for that bytesize does not overflows the buffer.
-// When takeownership is set to NA_TRUE, the array will deallocate the given
-// buffer with free() when it is no longer used. If bytesize is null, an empty
-// array is created. But note that if takeownership is true, the buffer will
-// still be referenced and deleted only upon clearing the NAByteArray.
+// When the cleanup option is set to NA_MEMORY_CLEANUP_NONE, the array will
+// not own the data. In any other case, the array will deallocate the given
+// buffer with the appropriate method when it is no longer used. If bytesize is
+// null, an empty array is created. But note that even with an empty array, if
+// there is a valid cleanup option, the buffer will still be referenced and
+// deleted only upon clearing the NAByteArray.
 //
-// You can not take ownership of const buffers.
+// You can not clean up const buffers.
 //
 // If bytesize is negative, the buffer is EXPECTED to be oversized by an unknown
 // amount of bytes and that these bytes are filled with binary zeros. The
@@ -96,7 +98,7 @@ NA_API NAByteArray* naInitByteArrayWithMutableBuffer(
                                                 NAByteArray* array,
                                                        void* buffer,
                                                        NAInt bytesize,
-                                            NAMemoryCleanup cleanuphint);
+                                             NAMemoryCleanup cleanup);
 
 
 

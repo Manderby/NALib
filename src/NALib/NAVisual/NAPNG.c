@@ -168,7 +168,7 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABuffer* buffer){
 //    }
   #endif
   
-  naReadBuffer(buffer, chunk->length);
+  naReadBuffer(buffer, (NAFilesize)chunk->length);
   
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
   naAccumulateChecksum(&checksum, chunk->typename, 4);
@@ -243,6 +243,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
   NAByte* upbuffer;
   NAByte* upbufptr;
   NAInt x, y;
+  NAFile outfile;
 
   NAInt bpp = naGetPNGBytesPerPixel(png->colortype);
   NAUInt bytesperline = png->size.width * bpp;
@@ -314,7 +315,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
     upbufptr = curbyte - bytesperline;
   }
 
-  NAFile outfile = naMakeFileWritingFilename("test.raw", NA_FILEMODE_DEFAULT);
+  outfile = naMakeFileWritingFilename("test.raw", NA_FILEMODE_DEFAULT);
   naWriteFileBytes(&outfile, png->pixeldata, png->size.width * png->size.height * bpp);
   naCloseFile(&outfile);
 
@@ -668,7 +669,8 @@ NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colortype, NAUInt bitdepth){
 NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   NABuffer* buffer;
   NAByte magic[8];
-  
+  NAListIterator iter;
+
   NAPNG* png = naNew(NAPNG);
   naInitList(&(png->chunks));
   
@@ -708,7 +710,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   // Create the buffer to hold the decompressed data
   naInitBuffer(&(png->filtereddata));
   
-  NAListIterator iter = naMakeListIteratorMutator(&(png->chunks));
+  iter = naMakeListIteratorMutator(&(png->chunks));
   while(naIterateList(&iter, 1)){
     NAPNGChunk* curchunk = naGetListCurrentMutable(&iter);
     switch(curchunk->type){
@@ -784,6 +786,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
   NABuffer outbuffer;
   NAChecksum checksum;
   NAFile outfile;
+  NAListIterator iter;
 
   naAddListLastMutable(&(png->chunks), naAllocPNGIHDRChunk(png));
   naAddListLastMutable(&(png->chunks), naAllocPNGIDATChunk(png));
@@ -794,7 +797,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
 
   naWriteBufferBytes(&outbuffer, na_png_magic, 8);
 
-  NAListIterator iter = naMakeListIteratorMutator(&(png->chunks));
+  iter = naMakeListIteratorMutator(&(png->chunks));
   while(naIterateList(&iter, 1)){
 
     NAPNGChunk* curchunk = naGetListCurrentMutable(&iter);

@@ -44,8 +44,10 @@ NA_DEF NAArray* naInitArrayWithConstBuffer(NAArray* array, const void* buffer, N
 
 
 
-NA_DEF NAArray* naInitArrayWithMutableBuffer(NAArray* array, void* buffer, NAUInt typesize, NAUInt count, NAMemoryCleanup ownership){
+NA_DEF NAArray* naInitArrayWithMutableBuffer(NAArray* array, void* buffer, NAUInt typesize, NAUInt count, NAMemoryCleanup cleanup){
   #ifndef NDEBUG
+    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup > NA_MEMORY_CLEANUP_DELETE)
+      naError("naNewStringWithMutableUTF8Buffer", "invalid cleanup option");
     if(!array)
       {naCrash("naInitArrayWithMutableBuffer", "array is Null-Pointer"); return NA_NULL;}
     if(typesize < 1)
@@ -57,7 +59,7 @@ NA_DEF NAArray* naInitArrayWithMutableBuffer(NAArray* array, void* buffer, NAUIn
   // correctly be handeled and the buffer can be automatically free'd if count
   // is zero.
   naInitByteArray(&(array->bytearray));
-  naInitByteArrayWithMutableBuffer(&(array->bytearray), buffer, typesize * count, ownership);
+  naInitByteArrayWithMutableBuffer(&(array->bytearray), buffer, typesize * count, cleanup);
   return array;
 }
 

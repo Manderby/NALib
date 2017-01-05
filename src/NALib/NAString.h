@@ -101,13 +101,13 @@ NA_API NAString* naNewString(void);
 NA_API NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr);
 
 // Returns an NAString with the given length using the given buffer. The buffer
-// must be big enough! When ownership is set to true, this NAString will free
-// the buffer when getting deleted.
+// must be big enough! When cleanup is anything but NA_MEMORY_CLEANUP_NONE,
+// this NAString will clean up the buffer when getting deleted.
 // When length is negative, the absolute value will be used but the buffer is
 // expected to be null-terminated (the null character is not in length).
 NA_API NAString* naNewStringWithMutableUTF8Buffer(  NAUTF8Char* buffer,
                                                           NAInt length,
-                                               NAMemoryCleanup ownership);
+                                                NAMemoryCleanup cleanup);
 
 // Creates an NAString just like sprintf.
 NA_API NAString* naNewStringWithFormat(const NAUTF8Char* format,

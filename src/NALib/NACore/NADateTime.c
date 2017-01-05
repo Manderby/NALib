@@ -301,7 +301,7 @@ NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
   for(i=0; i<NA_MONTHS_PER_YEAR; i++){
     if(naEqualUTF8CStringLiteralsCaseInsensitive(str, na_monthenglishabbreviationnames[i])){return i;}
   }
-  if(isdigit(str[0])){
+  if(isdigit((const char)str[0])){
     int32 returnint;
     NAString* numberstring = naNewStringWithUTF8CStringLiteral(str);
     returnint = naGetStringInt32(numberstring) - 1;

@@ -23,6 +23,7 @@
     <ClCompile Include="..\..\..\src\NALib\NACore\NADateTime.c" />
     <ClCompile Include="..\..\..\src\NALib\NACore\NAMemory.c" />
     <ClCompile Include="..\..\..\src\NALib\NACore\NASystem.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAMath\NAMoney.c" />
     <ClCompile Include="..\..\..\src\NALib\NAStruct\NAArray.c" />
     <ClCompile Include="..\..\..\src\NALib\NAStruct\NABuffer.c" />
     <ClCompile Include="..\..\..\src\NALib\NAStruct\NAByteArray.c" />
@@ -66,9 +67,11 @@
     <ClInclude Include="..\..\..\src\NALib\NAMath\NAComplexII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAMath\NACoordII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAMath\NAMathOperatorsII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAMath\NAMoneyII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAMath\NARandomII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAMath\NAVectorAlgebraII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAMemory.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAMoney.h" />
     <ClInclude Include="..\..\..\src\NALib\NAOctTree.h" />
     <ClInclude Include="..\..\..\src\NALib\NAPNG.h" />
     <ClInclude Include="..\..\..\src\NALib\NAPool.h" />

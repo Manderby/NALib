@@ -3,7 +3,7 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 
-#include "NAMoney.h"
+#include "../NAMoney.h"
 
 
 int na_currency_decimals[NA_CURRENCY_COUNT] = {

@@ -11,6 +11,8 @@
 
 
 #include "../NAList.h"
+#include "../NACoord.h"
+
 
 
 
@@ -220,13 +222,16 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 // Definitely not the fastest and best method. But as for now, it's ok. todo.
 NA_HDEF static VOID CALLBACK naTimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
   //todo something is wrong here with the type.
+  NAWINAPIApplication* app;
+  NAListIterator iter;
+
   UINT timerkey = (UINT)idEvent;
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  NAListIterator iter = naMakeListIterator(&(app->timers));
+  app = (NAWINAPIApplication*)naGetApplication();
+  iter = naMakeListIteratorModifier(&(app->timers));
   while (naIterateList(&iter, 1)) {
     NATimerStruct* curstruct = (NATimerStruct*)naGetListCurrentMutable(&iter);
     if (curstruct->key == timerkey) {
-      naRemoveListCurrentMutable(&(app->timers), NA_FALSE);
+      naRemoveListCurrentMutable(&iter, NA_FALSE);
       KillTimer(hwnd, idEvent);
       curstruct->func(curstruct->arg);
       naFree(curstruct);
@@ -549,6 +554,12 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeel
     }
     break;
   case NA_UI_OPENGLVIEW:  rect = naGetViewAbsoluteInnerRect(coreelement); break;
+  default:
+    #ifndef NDEBUG
+      naError("naGetUIElementRect", "Invalid UI type");
+    #endif
+    rect = naMakeRectSE(0., 0., 0., 0.);
+    break;
   }
   
   switch(corerelelement->elementtype){
@@ -556,6 +567,12 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeel
   case NA_UI_SCREEN:      relrect = naGetScreenAbsoluteRect(corerelelement); break;
   case NA_UI_WINDOW:      relrect = naGetWindowAbsoluteInnerRect(corerelelement); break;
   case NA_UI_OPENGLVIEW:  relrect = naGetViewAbsoluteInnerRect(corerelelement); break;
+  default:
+    #ifndef NDEBUG
+      naError("naGetUIElementRect", "Invalid UI type");
+    #endif
+    relrect = naMakeRectSE(0., 0., 0., 0.);
+    break;
   }
   
   rect.pos.x = rect.pos.x - relrect.pos.x;
@@ -756,7 +773,7 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullscreen){
     DEVMODE screenSettings;
     winapiwindow->windowedframe = naGetUIElementRect(window, naGetApplication(), NA_TRUE);
 
-    newrect = naGetMainScreenRect(NA_NULL);
+    newrect = naGetMainScreenRect();
     
     memset(&screenSettings, 0, sizeof(screenSettings)); // set everything to 0
     screenSettings.dmSize = sizeof(screenSettings);
@@ -803,66 +820,66 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 
 //#ifdef __gl_h_
 
-NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
+  NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
 	
-  HWND hWnd;
-  HDC hDC;
- 	PIXELFORMATDESCRIPTOR pfd;
-  int format;
-  NAWINAPIOpenGLView* openglview;
+    HWND hWnd;
+    HDC hDC;
+ 	  PIXELFORMATDESCRIPTOR pfd;
+    int format;
+    NAWINAPIOpenGLView* openglview;
 
-	hWnd = CreateWindow( 
-		TEXT("NAView"), "OpenGL View", 
-		WS_CHILD | WS_VISIBLE | ES_READONLY,
-		0, 0, (int)size.width, (int)size.height,
-		(HWND)naGetUIElementNativeID(window), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+	  hWnd = CreateWindow( 
+		  TEXT("NAView"), "OpenGL View", 
+		  WS_CHILD | WS_VISIBLE | ES_READONLY,
+		  0, 0, (int)size.width, (int)size.height,
+		  (HWND)naGetUIElementNativeID(window), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
 
-  openglview = naAlloc(NAWINAPIOpenGLView);
-  naRegisterCoreUIElement((NACoreUIElement*)openglview, (NACoreUIElement*)window, NA_UI_OPENGLVIEW, hWnd);
+    openglview = naAlloc(NAWINAPIOpenGLView);
+    naRegisterCoreUIElement((NACoreUIElement*)openglview, (NACoreUIElement*)window, NA_UI_OPENGLVIEW, hWnd);
 
-  hDC = GetDC(hWnd); 
+    hDC = GetDC(hWnd); 
 
-  // Expected to be called when initializing. Do not multithread!
-	// define pixel format for device context
-	ZeroMemory( &pfd, sizeof( pfd ) );
-	pfd.nSize = sizeof( pfd );
-	pfd.nVersion = 1;
-	pfd.dwFlags = PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-	pfd.iPixelType = PFD_TYPE_RGBA;
-	pfd.cAlphaBits = 8;
-	pfd.cColorBits = 24;
-	pfd.cDepthBits = 16;
-	pfd.iLayerType = PFD_MAIN_PLANE;
-	format = ChoosePixelFormat( GetDC(hWnd), &pfd );
+    // Expected to be called when initializing. Do not multithread!
+	  // define pixel format for device context
+	  ZeroMemory( &pfd, sizeof( pfd ) );
+	  pfd.nSize = sizeof( pfd );
+	  pfd.nVersion = 1;
+	  pfd.dwFlags = PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+	  pfd.iPixelType = PFD_TYPE_RGBA;
+	  pfd.cAlphaBits = 8;
+	  pfd.cColorBits = 24;
+	  pfd.cDepthBits = 16;
+	  pfd.iLayerType = PFD_MAIN_PLANE;
+	  format = ChoosePixelFormat( GetDC(hWnd), &pfd );
 
-	SetPixelFormat( hDC, format, &pfd );
+	  SetPixelFormat( hDC, format, &pfd );
 	
-	// make render context with this device context.
-	openglview->hRC = wglCreateContext(hDC);
-	wglMakeCurrent(hDC, openglview->hRC);
+	  // make render context with this device context.
+	  openglview->hRC = wglCreateContext(hDC);
+	  wglMakeCurrent(hDC, openglview->hRC);
 
-  // Now the OpenGL context is created and current. We can initialize it
-  // if necessary.
-  if(initfunc){
-    initfunc(initdata);
+    // Now the OpenGL context is created and current. We can initialize it
+    // if necessary.
+    if(initfunc){
+      initfunc(initdata);
+    }
+
+	  //glewInit();
+    return openglview;
   }
 
-	//glewInit();
-  return openglview;
-}
 
-
-NA_DEF void naSwapOpenGLBuffer(NAOpenGLView* openglview){
-  NAWINAPIOpenGLView* winapiopenglview = (NAWINAPIOpenGLView*)openglview;
-  SwapBuffers(GetDC((HWND)naGetUIElementNativeID(&(winapiopenglview->coreopenglview.uielement))));
-}
+  NA_DEF void naSwapOpenGLBuffer(NAOpenGLView* openglview){
+    NAWINAPIOpenGLView* winapiopenglview = (NAWINAPIOpenGLView*)openglview;
+    SwapBuffers(GetDC((HWND)naGetUIElementNativeID(&(winapiopenglview->coreopenglview.uielement))));
+  }
 
 
 
-NA_API void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds){
-  //NARect windowrect = naGetUIElementRect(naGetUIElementParent(openglview), naGetApplication(), NA_FALSE);
-  SetWindowPos((HWND)naGetUIElementNativeID(openglview), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
-}
+  NA_API void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds){
+    //NARect windowrect = naGetUIElementRect(naGetUIElementParent(openglview), naGetApplication(), NA_FALSE);
+    SetWindowPos((HWND)naGetUIElementNativeID(openglview), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
+  }
 
 
 //#endif

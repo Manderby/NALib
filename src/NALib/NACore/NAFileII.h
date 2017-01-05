@@ -72,7 +72,7 @@ NA_IDEF int naClose(int fd){
 
 NA_IDEF NAFilesize naRead(int fd, void* buf, NAFilesize bytesize){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    return (NAFilesize)_read(fd, buf, (unsigned int)count);
+    return (NAFilesize)_read(fd, buf, (unsigned int)bytesize);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
     return (NAFilesize)read(fd, buf, (size_t)bytesize);
   #endif
@@ -81,7 +81,7 @@ NA_IDEF NAFilesize naRead(int fd, void* buf, NAFilesize bytesize){
 
 NA_IDEF NAFilesize naWrite(int fd, const void* buf, NAFilesize bytesize){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    return (NAFilesize)_write(fd, buf, (unsigned int)count);
+    return (NAFilesize)_write(fd, buf, (unsigned int)bytesize);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
     return (NAFilesize)write(fd, buf, (size_t)bytesize);
   #endif
@@ -390,8 +390,10 @@ NA_IDEF NAString* naNewStringWithFileContents(const char* filename){
   file = naMakeFileReadingFilename(filename);
   totalsize = naComputeFileBytesize(&file);
   #ifndef NDEBUG
-    if((NA_SYSTEM_ADDRESS_BITS <= 32) && (totalsize > NA_INT32_MAX))
-      naError("naInitByteArrayWithFileContents", "Trying to read more than 2 GiB of data from file on a system not using 64 bits.");
+    #if (NA_SYSTEM_ADDRESS_BITS <= 32)
+      if(totalsize > NA_INT32_MAX)
+        naError("naInitByteArrayWithFileContents", "Trying to read more than 2 GiB of data from file on a system not using 64 bits.");
+    #endif
   #endif
  string = naNewStringFromFile(&file, totalsize);
  naCloseFile(&file);
@@ -407,8 +409,10 @@ NA_IDEF NAByteArray* naInitByteArrayWithFileContents(NAByteArray* bytearray, con
   if(!naIsFileOpen(&file)){return NA_NULL;}
   filesize = naComputeFileBytesize(&file);
   #ifndef NDEBUG
-    if((NA_SYSTEM_ADDRESS_BITS <= 32) && (filesize > NA_INT32_MAX))
-      naError("naInitByteArrayWithFileContents", "Trying to read more than 2 GiB of data from file on a system not using 64 bits.");
+    #if (NA_SYSTEM_ADDRESS_BITS <= 32)
+      if(filesize > NA_INT32_MAX)
+        naError("naInitByteArrayWithFileContents", "Trying to read more than 2 GiB of data from file on a system not using 64 bits.");
+    #endif
   #endif
   bytearray = naInitByteArrayFromFile(bytearray, &file, filesize);
   naCloseFile(&file);

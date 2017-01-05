@@ -356,7 +356,7 @@ NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullscreen);
 NA_API NABool naIsWindowFullscreen(NAWindow* window);
 //NA_API NARect naGetWindowRect(NAWindow* window);
 
-//#ifdef __gl_h_
+#ifdef __gl_h_
   // the initfunc will be called with initdata as the input parameter as
   // soon as there is an OpenGLContext available. You can put there all
   // initialization necessary like for example uploading of textures to the
@@ -369,7 +369,7 @@ NA_API NABool naIsWindowFullscreen(NAWindow* window);
   // Swaps the OpenGL buffer.
   NA_API void naSwapOpenGLBuffer(NAOpenGLView* openglview);
   NA_API void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds);
-//#endif
+#endif
 
 NA_API void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage);
 NA_API void naShowMouse();

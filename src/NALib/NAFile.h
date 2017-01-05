@@ -37,7 +37,7 @@
 //                      storing the bits needed for a file byteoffset.
 // NAFileMode:          The filesystem permission mode. On Windows corresponds
 //                      to the flag combination like _S_IREAD, and on Unix
-//                      corresponds to the octal premission flags like 0644.
+//                      corresponds to the octal permission flags like 0644.
 //
 // NA_FILEMODE_DEFAULT: The default permission mode to create a file.
 // NA_DIRMODE_DEFAULT:  The default permission mode to create a directory. Not

@@ -138,7 +138,7 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
   
   #ifndef NDEBUG
     if(!na_runtime)
-      naCrash("naNew", "Runtime not running. Use naStartRuntime()");
+      {naCrash("naNew", "Runtime not running. Use naStartRuntime()"); return NA_NULL;}
     if(!coretypeinfo)
       {naCrash("naNew", "Given type identifier is Null-Pointer"); return NA_NULL;}
   #endif
@@ -183,7 +183,7 @@ NA_DEF void naDelete(void* pointer){
 
   #ifndef NDEBUG
     if(!na_runtime)
-      naCrash("naNew", "Runtime not running. Use naStartRuntime()");
+      {naCrash("naNew", "Runtime not running. Use naStartRuntime()"); return;}
   #endif
 
   #if defined NA_RUNTIME_USES_NEW_DELETE

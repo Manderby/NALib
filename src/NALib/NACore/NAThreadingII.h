@@ -261,7 +261,9 @@ NA_IDEF void naClearMutex(NAMutex mutex){
 
 
 
-
+#if (NA_SYSTEM == NA_SYSTEM_WINDOWS) && defined(NA_THREAD_WINDOWS_USE_CRITICAL_SECTION)
+  _When_(NA_TRUE, _Acquires_lock_(windowsmutex->mutex))
+#endif
 NA_IDEF void naLockMutex(NAMutex mutex){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;
@@ -291,6 +293,9 @@ NA_IDEF void naLockMutex(NAMutex mutex){
 
 
 
+#if (NA_SYSTEM == NA_SYSTEM_WINDOWS) && defined(NA_THREAD_WINDOWS_USE_CRITICAL_SECTION)
+  _When_(NA_TRUE, _Releases_lock_(windowsmutex->mutex))
+#endif
 NA_IDEF void naUnlockMutex(NAMutex mutex){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;
@@ -347,6 +352,9 @@ NA_IDEF void naUnlockMutex(NAMutex mutex){
 
 
 
+#if (NA_SYSTEM == NA_SYSTEM_WINDOWS) && defined(NA_THREAD_WINDOWS_USE_CRITICAL_SECTION)
+  _When_(return == NA_TRUE, _Acquires_lock_(windowsmutex->mutex))
+#endif
 NA_IDEF NABool naTryMutex(NAMutex mutex){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;

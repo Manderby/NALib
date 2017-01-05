@@ -52,11 +52,12 @@ NA_HDEF void naStopCoreApplication(){
 
 
 NA_HDEF void naClearCoreApplication(){
+  NAListIterator iter;
   #ifndef NDEBUG
     if(!na_app)
-      naError("naClearUI", "No Application running");
+      {naCrash("naClearUI", "No Application running"); return;}
   #endif
-  NAListIterator iter = naMakeListIteratorMutator(&(na_app->uielements));
+  iter = naMakeListIteratorMutator(&(na_app->uielements));
   while(naIterateList(&iter, 1)){
 //    NAUIElement* curelement = naGetListCurrentMutable(&iter);
 //    naCloseWindow(na_ui->windows[i]);

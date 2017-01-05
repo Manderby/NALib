@@ -1321,7 +1321,7 @@ NA_IDEF NAVertex naGetBoxCeneteredVolumeOffset(NABox box, NAVolume volume){
 
 NA_IDEF NARangei naClampRangeiToRange(NARangei range, NARangei clamprange){
   // Declaration before implementation. Needed for C90.
-  double value;
+  NAInt value;
   NARangei newrange;
   #ifndef NDEBUG
     if(naIsRangeiEmpty(range))
@@ -1349,7 +1349,7 @@ NA_IDEF NARangei naClampRangeiToRange(NARangei range, NARangei clamprange){
 }
 NA_IDEF NARangei naClampRangeiToMin(NARangei range, NAInt min){
   // Declaration before implementation. Needed for C90.
-  double value;
+  NAInt value;
   NARangei newrange;
   #ifndef NDEBUG
     if(naIsRangeiEmpty(range))
@@ -1370,7 +1370,7 @@ NA_IDEF NARangei naClampRangeiToMin(NARangei range, NAInt min){
 }
 NA_IDEF NARangei naClampRangeiToEnd(NARangei range, NAInt end){
   // Declaration before implementation. Needed for C90.
-  double value;
+  NAInt value;
   NARangei newrange;
   #ifndef NDEBUG
     if(naIsRangeiEmpty(range))
