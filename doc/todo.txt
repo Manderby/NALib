@@ -6,10 +6,10 @@ in NALib.
 
 
 Version 18:
-- Threading.h uses New for allocators
-- Fully Implement Buffer, NABufInt must become NAInt
-- First compression in NAPNG
 - Move flags into config
+- Threading.h uses New for allocators
+- Fully Implement Buffer
+- First compression in NAPNG
 - Add more variadic error messages
 - NATree and integration into NABuffer
 - Redo String with Buffers
@@ -25,6 +25,8 @@ Version 19:
 - GUI
 
 Version 20:
+- NAComplexPolar
 - All todos.
-- Cleanup
+- Remove old commented code
+- Page guide 80
 - Documentation

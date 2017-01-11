@@ -8,8 +8,6 @@
 #include "../NAList.h"
 
 
-//#define NA_RUNTIME_USES_NEW_DELETE
-
 // Turns out, the pagesize is far too small to result in good speed
 // improvements. The custom bytesize can result in up to 2 times faster allocation
 // and deallocation on some systems.
@@ -48,7 +46,6 @@ struct NARuntime{
 };
 
 
-
 NARuntime* na_runtime = NA_NULL;
 
 
@@ -60,75 +57,78 @@ NARuntime* na_runtime = NA_NULL;
 
 
 
-NA_HIDEF void* naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
-  NACorePool* corepool;
-  void** curunused;
-  #ifndef NDEBUG
-    if(coretypeinfo->typesize < NA_SYSTEM_ADDRESS_BYTES)
-      naError("naEnhanceCorePool", "Element is too small");
-  #endif
-  #ifndef NDEBUG
-    if(coretypeinfo->typesize > (na_runtime->poolsize - sizeof(NACorePool)))
-      naError("naEnhanceCorePool", "Element is too big");
-  #endif
+#if (NA_RUNTIME_USES_MEMORY_POOLS == 1)
 
-  // We create a new pool.
-  corepool = (NACorePool*)naMallocAligned(na_runtime->poolsize, na_runtime->poolsize);
-  corepool->coretypeinfo = coretypeinfo;
 
-  #ifndef NDEBUG
-    if(((NAUInt)corepool & ~na_runtime->poolsizemask) != 0)
-      naError("naEnhanceCorePool", "pool badly aligned");
-  #endif
+  NA_HIDEF void* naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
+    NACorePool* corepool;
+    void** curunused;
+    #ifndef NDEBUG
+      if(coretypeinfo->typesize < NA_SYSTEM_ADDRESS_BYTES)
+        naError("naEnhanceCorePool", "Element is too small");
+    #endif
+    #ifndef NDEBUG
+      if(coretypeinfo->typesize > (na_runtime->poolsize - sizeof(NACorePool)))
+        naError("naEnhanceCorePool", "Element is too big");
+    #endif
 
-  // Reduce the elemcount by 1 to later set the last entry to NULL
-  corepool->usedcount = ((na_runtime->poolsize - sizeof(NACorePool)) / coretypeinfo->typesize) - 1;
-  curunused = (void**)(((NAByte*)corepool) + sizeof(NACorePool));
-  corepool->firstunused = curunused;
-  // Enumerate all positions with the succeeding free position
-  while(corepool->usedcount){
-    void** nextunused = (void**)((NAByte*)curunused + coretypeinfo->typesize);
-    *curunused = nextunused;
-    curunused = nextunused;
-    corepool->usedcount--;
-  }
-  // Set the last entry to NULL.
-  *curunused = NA_NULL; // note that elemcount has been reduced by 1
+    // We create a new pool.
+    corepool = (NACorePool*)naMallocAligned(na_runtime->poolsize, na_runtime->poolsize);
+    corepool->coretypeinfo = coretypeinfo;
 
-  // There is no element ready to be recycled.
-  corepool->firstrecycle = NA_NULL;
-  
-  #ifndef NDEBUG
-    corepool->dummy1 = corepool;
-    corepool->dummy2 = (NAByte*)((NAUInt)corepool + na_runtime->poolsize - 1);
-  #endif
+    #ifndef NDEBUG
+      if(((NAUInt)corepool & ~na_runtime->poolsizemask) != 0)
+        naError("naEnhanceCorePool", "pool badly aligned");
+    #endif
 
-  // Add the new pool after the current pool or se the pool as the first and
-  // only pool, if there is none available yet.
-  if(coretypeinfo->curpool){
-    corepool->prevpool = coretypeinfo->curpool;
-    corepool->nextpool = coretypeinfo->curpool->nextpool;
-    corepool->prevpool->nextpool = corepool;
-    corepool->nextpool->prevpool = corepool;
-  }else{
-    corepool->prevpool = corepool;
-    corepool->nextpool = corepool;
-  }
-  coretypeinfo->curpool = corepool;
+    // Reduce the elemcount by 1 to later set the last entry to NULL
+    corepool->usedcount = ((na_runtime->poolsize - sizeof(NACorePool)) / coretypeinfo->typesize) - 1;
+    curunused = (void**)(((NAByte*)corepool) + sizeof(NACorePool));
+    corepool->firstunused = curunused;
+    // Enumerate all positions with the succeeding free position
+    while(corepool->usedcount){
+      void** nextunused = (void**)((NAByte*)curunused + coretypeinfo->typesize);
+      *curunused = nextunused;
+      curunused = nextunused;
+      corepool->usedcount--;
+    }
+    // Set the last entry to NULL.
+    *curunused = NA_NULL; // note that elemcount has been reduced by 1
+
+    // There is no element ready to be recycled.
+    corepool->firstrecycle = NA_NULL;
     
-  return corepool->firstunused;
-}
+    #ifndef NDEBUG
+      corepool->dummy1 = corepool;
+      corepool->dummy2 = (NAByte*)((NAUInt)corepool + na_runtime->poolsize - 1);
+    #endif
+
+    // Add the new pool after the current pool or se the pool as the first and
+    // only pool, if there is none available yet.
+    if(coretypeinfo->curpool){
+      corepool->prevpool = coretypeinfo->curpool;
+      corepool->nextpool = coretypeinfo->curpool->nextpool;
+      corepool->prevpool->nextpool = corepool;
+      corepool->nextpool->prevpool = corepool;
+    }else{
+      corepool->prevpool = corepool;
+      corepool->nextpool = corepool;
+    }
+    coretypeinfo->curpool = corepool;
+      
+    return corepool->firstunused;
+  }
 
 
 
-NA_HIDEF void naShrinkCorePool(NACorePool* corepool){
-  if(corepool->coretypeinfo->curpool == corepool){corepool->coretypeinfo->curpool = corepool->nextpool;}
-  corepool->prevpool->nextpool = corepool->nextpool;
-  corepool->nextpool->prevpool = corepool->prevpool;
-  naFreeAligned(corepool);
-}
+  NA_HIDEF void naShrinkCorePool(NACorePool* corepool){
+    if(corepool->coretypeinfo->curpool == corepool){corepool->coretypeinfo->curpool = corepool->nextpool;}
+    corepool->prevpool->nextpool = corepool->nextpool;
+    corepool->nextpool->prevpool = corepool->prevpool;
+    naFreeAligned(corepool);
+  }
 
-
+#endif
 
 
 NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
@@ -143,7 +143,7 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
       {naCrash("naNew", "Given type identifier is Null-Pointer"); return NA_NULL;}
   #endif
 
-  #if defined NA_RUNTIME_USES_NEW_DELETE
+  #if (NA_RUNTIME_USES_MEMORY_POOLS == 0)
 
     NACoreTypeInfo** basepointer = naMalloc(sizeof(NACoreTypeInfo*) + coretypeinfo->typesize);
     pointer = basepointer + 1;
@@ -186,7 +186,7 @@ NA_DEF void naDelete(void* pointer){
       {naCrash("naNew", "Runtime not running. Use naStartRuntime()"); return;}
   #endif
 
-  #if defined NA_RUNTIME_USES_NEW_DELETE
+  #if (NA_RUNTIME_USES_MEMORY_POOLS == 0)
   
     NACoreTypeInfo** basepointer = (((NACoreTypeInfo**)pointer) - 1);
     if((*basepointer)->destructor){(*basepointer)->destructor(pointer);}

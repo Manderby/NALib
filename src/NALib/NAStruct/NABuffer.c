@@ -183,34 +183,34 @@ NA_HIDEF NABool naIsBufferPartSparse(NABufferPart* part){
 
 
 // Returns the buffer start index of the buffer part.
-NA_HIDEF NABufInt naGetBufferPartStartBufferIndex(NABufferPart* part){
+NA_HIDEF NAInt naGetBufferPartStartBufferIndex(NABufferPart* part){
   return part->bufferrange.origin;
 }
 
 
 
 // Returns the buffer end index of the buffer part.
-NA_HIDEF NABufInt naGetBufferPartEndBufferIndex(NABufferPart* part){
+NA_HIDEF NAInt naGetBufferPartEndBufferIndex(NABufferPart* part){
   return naGetRangeiEnd(part->bufferrange);
 }
 
 
 
 // Returns the buffer max index of the buffer part.
-NA_HIDEF NABufInt naGetBufferPartMaxBufferIndex(NABufferPart* part){
+NA_HIDEF NAInt naGetBufferPartMaxBufferIndex(NABufferPart* part){
   return naGetRangeiMax(part->bufferrange);
 }
 
 
 
 // Returns the data start index of the buffer part.
-NA_HIDEF NABufInt naGetBufferPartStartDataIndex(NABufferPart* part){
+NA_HIDEF NAInt naGetBufferPartStartDataIndex(NABufferPart* part){
   return part->datarange.origin;
 }
 
 
 // Returns the data end index of the buffer part.
-NA_HIDEF NABufInt naGetBufferPartEndDataIndex(NABufferPart* part){
+NA_HIDEF NAInt naGetBufferPartEndDataIndex(NABufferPart* part){
   return naGetRangeiEnd(part->datarange);
 }
 
@@ -218,8 +218,8 @@ NA_HIDEF NABufInt naGetBufferPartEndDataIndex(NABufferPart* part){
 
 #ifndef NDEBUG
   // Returns true, if the given absolute position is inside the buffer part.
-  NA_HIDEF NABool naIsOffsetInBufferPart(NABufferPart* part, NABufInt offset){
-    return naContainsRangeiOffset(part->bufferrange, (NAInt)offset);
+  NA_HIDEF NABool naIsOffsetInBufferPart(NABufferPart* part, NAInt offset){
+    return naContainsRangeiOffset(part->bufferrange, offset);
   }
 #endif
 
@@ -268,13 +268,13 @@ NA_HIDEF void naAdjustBufferPartToContainDataRange(NABufferPart* part, NARangei 
 
 // Returns a direct pointer to the raw data of this buffer part, given its
 // absolute address.
-NA_HIDEF NAByte* naGetBufferPartDataPointerAbsolute(NABufferPart* part, NABufInt offset){
+NA_HIDEF NAByte* naGetBufferPartDataPointerAbsolute(NABufferPart* part, NAInt offset){
   #ifndef NDEBUG
     if(naIsBufferPartSparse(part))
       naError("naGetBufferPartDataPointerAbsolute", "buffer part is sparse");
-    if(!naContainsRangeiOffset(part->bufferrange, (NAInt)offset))
+    if(!naContainsRangeiOffset(part->bufferrange, offset))
       naError("naGetBufferPartDataPointerAbsolute", "offset not inside buffer part");
-    if(!naContainsRangeiOffset(part->datarange, (NAInt)offset))
+    if(!naContainsRangeiOffset(part->datarange, offset))
       naError("naGetBufferPartDataPointerAbsolute", "offset not inside data part");
   #endif
   return &(part->data[offset - part->bufferrange.origin]);
@@ -420,7 +420,7 @@ NA_HIDEF void naEnlargeBufferStorage(NABuffer* buffer, NARangei range){
 
 
 // This function adjusts iter so that the part it points to contains offset.
-NA_HIDEF void naLocateBufferPartList(NAListIterator* iter, NABufInt offset){
+NA_HIDEF void naLocateBufferPartList(NAListIterator* iter, NAInt offset){
   NABufferPart* part = naGetListCurrentMutable(iter);
 
   // If the list is empty, we simply return.
@@ -438,7 +438,7 @@ NA_HIDEF void naLocateBufferPartList(NAListIterator* iter, NABufInt offset){
       naIterateList(iter, 1);
       part = naGetListCurrentMutable(iter);
     }
-    if(naContainsRangeiOffset(part->bufferrange, (NAInt)offset)){return;}
+    if(naContainsRangeiOffset(part->bufferrange, offset)){return;}
   }
   #ifndef NDEBUG
     naError("naLocateBufferPartList", "Buffer Part containing given offset not found.");
@@ -496,7 +496,7 @@ NA_HDEF void naFillBufferSparsePart(NABufferStorage* storage, NAListIterator* it
       // In this situation, the new buffer must be placed in the middle
       // of the existing sparse buffer part.
 
-      NABufferPart* sparsepart = naAllocBufferPartSparse(naMakeRangeiWithStartAndEnd((NAInt)naGetBufferPartStartBufferIndex(part), newbufferrange.origin));
+      NABufferPart* sparsepart = naAllocBufferPartSparse(naMakeRangeiWithStartAndEnd(naGetBufferPartStartBufferIndex(part), newbufferrange.origin));
       sparsepart->refcount = part->refcount;
       naAddListBeforeMutable(iter, sparsepart);
       // Then we add the new part.
@@ -573,13 +573,13 @@ NA_DEF NABuffer* naInitBufferWithFile(NABuffer* buffer, const char* filename){
 
 
 
-NA_DEF NABuffer* naInitBufferWithBufferExtraction(NABuffer* buffer, NABuffer* srcbuffer, NABufInt bytesize){
+NA_DEF NABuffer* naInitBufferWithBufferExtraction(NABuffer* buffer, NABuffer* srcbuffer, NAInt bytesize){
   NABufferStorage* storage = naGetBufferStorage(srcbuffer);
 
   buffer->storage = naRetainPointer(srcbuffer->storage);
   buffer->flags = NA_BUFFER_FLAG_MAXPOS_KNOWN;
   
-  buffer->range = naMakeRangeiE((NAInt)srcbuffer->curoffset, (NAInt)bytesize);
+  buffer->range = naMakeRangeiE(srcbuffer->curoffset, bytesize);
   buffer->curoffset = buffer->range.origin;
   buffer->curbit = 0;
   
@@ -728,7 +728,7 @@ NA_DEF NABool naCanBufferExtend(const NABuffer* buffer){
 //
 //
 //
-NA_DEF NABufInt naGetBufferCurOffsetAbsolute(const NABuffer* buffer){
+NA_DEF NAInt naGetBufferCurOffsetAbsolute(const NABuffer* buffer){
   return buffer->curoffset;
 }
 
@@ -738,7 +738,8 @@ NA_API NABool naHasBufferDeterminedBytesize(const NABuffer* buffer){
 }
 
 
-NA_API NABufInt naDetermineBufferBytesize(NABuffer* buffer){
+NA_API NAInt naDetermineBufferBytesize(NABuffer* buffer){
+  NAFilesize filesize;
   if(!naHasBufferDeterminedBytesize(buffer)){
     NABufferStorage* storage = naGetBufferStorage(buffer);
     #ifndef NDEBUG
@@ -749,7 +750,14 @@ NA_API NABufInt naDetermineBufferBytesize(NABuffer* buffer){
     case NA_BUFFER_STORAGE_SOURCE_NONE:
       break;
     case NA_BUFFER_STORAGE_SOURCE_FILE:
-      buffer->range.length = (NAInt)naComputeFileBytesize((NAFile*)(storage->source));
+      filesize = naComputeFileBytesize((NAFile*)(storage->source));
+      #ifndef NDEBUG
+        #if (NA_FILESIZE_BITS > NA_SYSTEM_ADDRESS_BITS)
+          if(filesize > NA_INT_MAX)
+            naError("naDetermineBufferBytesize", "Can not store full file with %d bits", NA_SYSTEM_ADDRESS_BITS);
+        #endif
+      #endif
+      buffer->range.length = (NAInt)filesize;
       buffer->range.origin = 0;
       naEnlargeBufferStorage(buffer, buffer->range);
       break;
@@ -777,8 +785,8 @@ NA_DEF NABool naIsBufferReadAtEnd(const NABuffer* buffer){
 NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
   NAList* buflist;
   NAListIterator iter;
-  NABufInt prevend;
-  NABufInt curend;
+  NAInt prevend;
+  NAInt curend;
 
   buflist = naGetBufferPartList(buffer);;
   iter = naMakeListIteratorMutator(buflist);
@@ -799,8 +807,8 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
       #endif
       naSeekFileAbsolute(file, (NAFilesize)naGetBufferPartStartDataIndex(curpart));
     }
-    curend = naMini((NAInt)naGetBufferPartEndDataIndex(curpart), naGetRangeiEnd(buffer->range));
-    naWriteFileBytes(file, naGetBufferPartDataPointerAbsolute(curpart, prevend), (NAInt)(curend - prevend));
+    curend = naMini(naGetBufferPartEndDataIndex(curpart), naGetRangeiEnd(buffer->range));
+    naWriteFileBytes(file, naGetBufferPartDataPointerAbsolute(curpart, prevend), (curend - prevend));
     naIterateList(&iter, 1);
     prevend = curend;
   }
@@ -898,13 +906,13 @@ NA_DEF NABool naIsBufferEmpty(const NABuffer* buffer){
 
 
 
-NA_DEF void naSeekBufferAbsolute(NABuffer* buffer, NABufInt offset){
-  NABufInt absoffset = offset;
+NA_DEF void naSeekBufferAbsolute(NABuffer* buffer, NAInt offset){
+  NAInt absoffset = offset;
   #ifndef NDEBUG
     NABufferStorage* storage = naGetBufferStorage(buffer);
     if((storage->sourcetype == NA_BUFFER_STORAGE_SOURCE_FILE) && (absoffset < 0))
       naError("naSeekBufferAbsolute", "absolute offset of file buffer is negative");
-    if(naHasBufferDeterminedBytesize(buffer) && !naContainsRangeiOffset(buffer->range, (NAInt)absoffset))
+    if(naHasBufferDeterminedBytesize(buffer) && !naContainsRangeiOffset(buffer->range, absoffset))
       naError("naSeekBufferAbsolute", "absolute offset lies outside of this buffer");
   #endif
   buffer->curoffset = absoffset;
@@ -912,28 +920,36 @@ NA_DEF void naSeekBufferAbsolute(NABuffer* buffer, NABufInt offset){
 
 
 
-NA_DEF void naSeekBufferLocal(NABuffer* buffer, NABufInt offset){
-  NABufInt absoffset = buffer->range.origin + offset;
+NA_DEF void naSeekBufferLocal(NABuffer* buffer, NAInt offset){
+  NAInt absoffset = buffer->range.origin + offset;
   #ifndef NDEBUG
     NABufferStorage* storage = naGetBufferStorage(buffer);
     if((storage->sourcetype == NA_BUFFER_STORAGE_SOURCE_FILE) && (absoffset < 0))
       naError("naSeekBufferLocal", "absolute offset of file buffer is negative");
-    if(naHasBufferDeterminedBytesize(buffer) && !naContainsRangeiOffset(buffer->range, (NAInt)absoffset))
+    if(naHasBufferDeterminedBytesize(buffer) && !naContainsRangeiOffset(buffer->range, absoffset))
       naError("naSeekBufferLocal", "absolute offset lies outside of this buffer");
+    if((offset < 0) && (absoffset > buffer->curoffset))
+      naError("naSeekBufferLocal", "position underflow");
+    if((offset > 0) && (absoffset < buffer->curoffset))
+      naError("naSeekBufferLocal", "position overflow");
   #endif
   naSeekBufferAbsolute(buffer, absoffset);
 }
 
 
 
-NA_DEF void naSeekBufferRelative(NABuffer* buffer, NABufInt offset){
-  NABufInt absoffset = buffer->curoffset + offset;
+NA_DEF void naSeekBufferRelative(NABuffer* buffer, NAInt offset){
+  NAInt absoffset = buffer->curoffset + offset;
   #ifndef NDEBUG
     NABufferStorage* storage = naGetBufferStorage(buffer);
     if((storage->sourcetype == NA_BUFFER_STORAGE_SOURCE_FILE) && (absoffset < 0))
       naError("naSeekBufferRelative", "absolute offset of file buffer is negative");
-    if(naHasBufferDeterminedBytesize(buffer) && !naContainsRangeiOffset(buffer->range, (NAInt)absoffset))
+    if(naHasBufferDeterminedBytesize(buffer) && !naContainsRangeiOffset(buffer->range, absoffset))
       naError("naSeekBufferRelative", "absolute offset lies outside of this buffer");
+    if((offset < 0) && (absoffset > buffer->curoffset))
+      naError("naSeekBufferRelative", "position underflow");
+    if((offset > 0) && (absoffset < buffer->curoffset))
+      naError("naSeekBufferRelative", "position overflow");
   #endif
   naSeekBufferAbsolute(buffer, absoffset);
 }
@@ -947,10 +963,10 @@ NA_DEF void naSeekBufferRelative(NABuffer* buffer, NABufInt offset){
 // Note that this is quite a heavy function. But in 99% of all cases, this
 // function only executes about 10-20 statements. Nonteless, it ensures safe
 // usage of any buffer.
-NA_DEF void naEnhanceBuffer(NABuffer* buffer, NABufInt bytesize){
+NA_DEF void naEnhanceBuffer(NABuffer* buffer, NAInt bytesize){
   NABufferPart* curpart;
-  NABufInt curoffset;
-  NARangei desiredrange = naMakeRangei((NAInt)buffer->curoffset, (NAInt)bytesize);
+  NAInt curoffset;
+  NARangei desiredrange = naMakeRangei(buffer->curoffset, bytesize);
   NABufferStorage* storage = naGetBufferStorage(buffer);
   NAList* partlist = naGetBufferPartList(buffer);
   NAListIterator iter = naMakeListIteratorModifier(partlist);
@@ -994,11 +1010,11 @@ NA_DEF void naEnhanceBuffer(NABuffer* buffer, NABufInt bytesize){
       // We are sure that curpart contains the start of our enhancement.
       
       // We compute the remaining bytesize in the buffer part.
-      NABufInt remainingbytesize = naGetBufferPartEndBufferIndex(curpart) - curoffset;
+      NAInt remainingbytesize = naGetBufferPartEndBufferIndex(curpart) - curoffset;
       if(bytesize <= remainingbytesize){
         // We have sufficient space in this buf.
         // Adjust the data range of the buffer part.
-        naAdjustBufferPartToContainDataRange(curpart, naMakeRangei((NAInt)curoffset, (NAInt)bytesize));
+        naAdjustBufferPartToContainDataRange(curpart, naMakeRangei(curoffset, bytesize));
         // We are done. No more bytes to enhance, all buffer parts updated.
         // We set bytesize to 0 to end the loop.
         bytesize = 0;
@@ -1007,7 +1023,7 @@ NA_DEF void naEnhanceBuffer(NABuffer* buffer, NABufInt bytesize){
         // The desired content does not fit completely. We use all of the
         // remaining bytes in the current buffer.
         // Adjust the data range of the buffer part.
-        naAdjustBufferPartToContainDataRange(curpart, naMakeRangei((NAInt)curoffset, (NAInt)remainingbytesize));
+        naAdjustBufferPartToContainDataRange(curpart, naMakeRangei(curoffset, remainingbytesize));
         curoffset += remainingbytesize;
         bytesize -= remainingbytesize;
         
@@ -1027,9 +1043,9 @@ NA_DEF void naEnhanceBuffer(NABuffer* buffer, NABufInt bytesize){
       NARangei newbufferrange;
       // We define the default buffer part boundaries.
       if(curoffset < 0){
-        newbufferrange = naMakeRangei((NAInt)((curoffset / NA_BUFFER_BYTESIZE) - 1) * NA_BUFFER_BYTESIZE, NA_BUFFER_BYTESIZE);
+        newbufferrange = naMakeRangei(((curoffset / NA_BUFFER_BYTESIZE) - 1) * NA_BUFFER_BYTESIZE, NA_BUFFER_BYTESIZE);
       }else{
-        newbufferrange = naMakeRangei((NAInt)((curoffset / NA_BUFFER_BYTESIZE) - 0) * NA_BUFFER_BYTESIZE, NA_BUFFER_BYTESIZE);
+        newbufferrange = naMakeRangei(((curoffset / NA_BUFFER_BYTESIZE) - 0) * NA_BUFFER_BYTESIZE, NA_BUFFER_BYTESIZE);
       }
       
       // We clamp the boundaries to the current buffer if applicable.
@@ -1110,8 +1126,8 @@ NA_DEF void naReadBuffer (NABuffer* buffer, NAFilesize bytecount){
 
 
 NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum){
-  NABufInt bytesize;
-  NABufInt curoffset;
+  NAInt bytesize;
+  NAInt curoffset;
   NAList* partlist;
   NAListIterator iter;
 
@@ -1130,7 +1146,7 @@ NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum)
   
   while(bytesize){
     NABufferPart* curpart;
-    NABufInt remainingbytes;
+    NAInt remainingbytes;
     NAByte* src;
 
     curpart = naGetListCurrentMutable(&iter);
@@ -1143,12 +1159,12 @@ NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum)
     #endif
     
     if(bytesize > remainingbytes){
-      naAccumulateChecksum(checksum, src, (NAInt)remainingbytes);
+      naAccumulateChecksum(checksum, src, remainingbytes);
       naIterateList(&iter, 1);
       curoffset += remainingbytes;
       bytesize -= remainingbytes;
     }else{
-      naAccumulateChecksum(checksum, src, (NAInt)bytesize);
+      naAccumulateChecksum(checksum, src, bytesize);
       bytesize = 0;
     }
   }
@@ -1165,7 +1181,7 @@ NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum)
 
 
 
-NA_HDEF void naRetrieveBufferBytes(NABuffer* buffer, void* ptr, NABufInt bytesize, NAUInt lastbytemodulobits){
+NA_HDEF void naRetrieveBufferBytes(NABuffer* buffer, void* ptr, NAInt bytesize, NAUInt lastbytemodulobits){
   NABufferPart* curpart;
   NAList* partlist = naGetBufferPartList(buffer);
   NAListIterator iter;
@@ -1183,7 +1199,7 @@ NA_HDEF void naRetrieveBufferBytes(NABuffer* buffer, void* ptr, NABufInt bytesiz
   curpart = naGetListCurrentMutable(&iter);
 
   while(bytesize){
-    NABufInt remainingbytes;
+    NAInt remainingbytes;
     NAByte* src;
 
     #ifndef NDEBUG
@@ -1220,7 +1236,7 @@ NA_HDEF void naRetrieveBufferBytes(NABuffer* buffer, void* ptr, NABufInt bytesiz
 
 
 
-NA_DEF void naReadBufferBytes(NABuffer* buffer, void* buf, NABufInt bytesize){
+NA_DEF void naReadBufferBytes(NABuffer* buffer, void* buf, NAInt bytesize){
   #ifndef NDEBUG
     if(!bytesize)
       naError("naReadBufferBytes", "Reading zero bytes.");
@@ -1229,7 +1245,6 @@ NA_DEF void naReadBufferBytes(NABuffer* buffer, void* buf, NABufInt bytesize){
     if(buffer->curbit != 0)
       naError("naReadBufferBytes", "Bit offset not 0.");
   #endif
-//  if(!count){return;}
   naEnhanceBuffer(buffer, bytesize);
   naRetrieveBufferBytes(buffer, buf, bytesize, 0);
 }
@@ -1276,10 +1291,14 @@ NA_DEF NABool naReadBufferBit (NABuffer* buffer){
 
 
 
-NA_DEF uint32 naReadBufferBits (NABuffer* buffer, NABufInt count){
-  uint32 retint = 0;
+NA_DEF NAUInt naReadBufferBits (NABuffer* buffer, uint8 count){
+  NAUInt retint = 0;
   NABool curbit;
   uint32 curmask = 1;
+  #ifndef NDEBUG
+    if(count > NA_SYSTEM_ADDRESS_BITS)
+      naError("naReadBufferBits", "Can read %d bits at max.", NA_SYSTEM_ADDRESS_BITS);
+  #endif
   while(count){
     curbit = naReadBufferBit(buffer);
     retint |= curmask * (uint32)curbit;
@@ -1330,7 +1349,7 @@ NA_DEF void naPadBufferReadBits(NABuffer* buffer){
   if(buffer->curbit != 0){
     #ifndef NDEBUG
       if(buffer->flags & NA_BUFFER_FLAG_SECURE){
-        NAByte testbyte = naReadBufferUInt8(buffer);
+        NAByte testbyte = naReadBufferu8(buffer);
         testbyte >>= buffer->curbit;
         if(testbyte != 0)
           naError("naPadBufferReadBits", "Padding Bits not Null in secure buffer.");
@@ -1347,48 +1366,48 @@ NA_DEF void naPadBufferReadBits(NABuffer* buffer){
 // not really useful as there are too many things which can go wrong. Instead,
 // the author decided to simply implement all functions plainly.
 
-NA_DEF int8 naReadBufferInt8(NABuffer* buffer){
+NA_DEF int8 naReadBufferi8(NABuffer* buffer){
   // Declaration before implementation. Needed for C90.
   int8 value;
   #ifndef NDEBUG
     if(buffer->curbit != 0)
-      naError("naReadBufferInt8", "Bit offset not 0.");
+      naError("naReadBufferi8", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, 1);
   naRetrieveBufferBytes(buffer, &value, 1, 0);
   buffer->converter.convert8(&value);
   return value;
 }
-NA_DEF int16 naReadBufferInt16(NABuffer* buffer){
+NA_DEF int16 naReadBufferi16(NABuffer* buffer){
   // Declaration before implementation. Needed for C90.
   int16 value;
   #ifndef NDEBUG
     if(buffer->curbit != 0)
-      naError("naReadBufferInt16", "Bit offset not 0.");
+      naError("naReadBufferi16", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, 2);
   naRetrieveBufferBytes(buffer, &value, 2, 0);
   buffer->converter.convert16(&value);
   return value;
 }
-NA_DEF int32 naReadBufferInt32(NABuffer* buffer){
+NA_DEF int32 naReadBufferi32(NABuffer* buffer){
   // Declaration before implementation. Needed for C90.
   int32 value;
   #ifndef NDEBUG
     if(buffer->curbit != 0)
-      naError("naReadBufferInt32", "Bit offset not 0.");
+      naError("naReadBufferi32", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, 4);
   naRetrieveBufferBytes(buffer, &value, 4, 0);
   buffer->converter.convert32(&value);
   return value;
 }
-NA_DEF int64 naReadBufferInt64(NABuffer* buffer){
+NA_DEF int64 naReadBufferi64(NABuffer* buffer){
   // Declaration before implementation. Needed for C90.
   int64 value;
   #ifndef NDEBUG
     if(buffer->curbit != 0)
-      naError("naReadBufferInt64", "Bit offset not 0.");
+      naError("naReadBufferi64", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, 8);
   naRetrieveBufferBytes(buffer, &value, 8, 0);
@@ -1398,48 +1417,48 @@ NA_DEF int64 naReadBufferInt64(NABuffer* buffer){
 
 
 
-NA_DEF uint8 naReadBufferUInt8(NABuffer* buffer){
+NA_DEF uint8 naReadBufferu8(NABuffer* buffer){
   // Declaration before implementation. Needed for C90.
   uint8 value;
   #ifndef NDEBUG
     if(buffer->curbit != 0)
-      naError("naReadBufferUInt8", "Bit offset not 0.");
+      naError("naReadBufferu8", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, 1);
   naRetrieveBufferBytes(buffer, &value, 1, 0);
   buffer->converter.convert8(&value);
   return value;
 }
-NA_DEF uint16 naReadBufferUInt16(NABuffer* buffer){
+NA_DEF uint16 naReadBufferu16(NABuffer* buffer){
   // Declaration before implementation. Needed for C90.
   uint16 value;
   #ifndef NDEBUG
     if(buffer->curbit != 0)
-      naError("naReadBufferUInt16", "Bit offset not 0.");
+      naError("naReadBufferu16", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, 2);
   naRetrieveBufferBytes(buffer, &value, 2, 0);
   buffer->converter.convert16(&value);
   return value;
 }
-NA_DEF uint32 naReadBufferUInt32(NABuffer* buffer){
+NA_DEF uint32 naReadBufferu32(NABuffer* buffer){
   // Declaration before implementation. Needed for C90.
   uint32 value;
   #ifndef NDEBUG
     if(buffer->curbit != 0)
-      naError("naReadBufferUInt32", "Bit offset not 0.");
+      naError("naReadBufferu32", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, 4);
   naRetrieveBufferBytes(buffer, &value, 4, 0);
   buffer->converter.convert32(&value);
   return value;
 }
-NA_DEF uint64 naReadBufferUInt64(NABuffer* buffer){
+NA_DEF uint64 naReadBufferu64(NABuffer* buffer){
   // Declaration before implementation. Needed for C90.
   uint64 value;
   #ifndef NDEBUG
     if(buffer->curbit != 0)
-      naError("naReadBufferUInt64", "Bit offset not 0.");
+      naError("naReadBufferu64", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, 8);
   naRetrieveBufferBytes(buffer, &value, 8, 0);
@@ -1449,24 +1468,24 @@ NA_DEF uint64 naReadBufferUInt64(NABuffer* buffer){
 
 
 
-NA_DEF float naReadBufferFloat(NABuffer* buffer){
+NA_DEF float naReadBufferf(NABuffer* buffer){
   // Declaration before implementation. Needed for C90.
   float value;
   #ifndef NDEBUG
     if(buffer->curbit != 0)
-      naError("naReadBufferFloat", "Bit offset not 0.");
+      naError("naReadBufferf", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, 4);
   naRetrieveBufferBytes(buffer, &value, 4, 0);
   buffer->converter.convert32(&value);
   return value;
 }
-NA_DEF double naReadBufferDouble(NABuffer* buffer){
+NA_DEF double naReadBufferd(NABuffer* buffer){
   // Declaration before implementation. Needed for C90.
   double value;
   #ifndef NDEBUG
     if(buffer->curbit != 0)
-      naError("naReadBufferDouble", "Bit offset not 0.");
+      naError("naReadBufferd", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, 8);
   naRetrieveBufferBytes(buffer, &value, 8, 0);
@@ -1476,121 +1495,121 @@ NA_DEF double naReadBufferDouble(NABuffer* buffer){
 
 
 
-NA_DEF void naReadBufferArrayInt8(NABuffer* buffer, int8* buf, NABufInt count){
+NA_DEF void naReadBufferi8v(NABuffer* buffer, int8* dst, NAInt count){
   #ifndef NDEBUG
-    if(!buf)
-      naError("naReadBufferArrayInt8", "buf is Null pointer.");
+    if(!dst)
+      naError("naReadBufferi8v", "dst is Null pointer.");
     if(buffer->curbit != 0)
-      naError("naReadBufferArrayInt8", "Bit offset not 0.");
+      naError("naReadBufferi8v", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, count * 1);
-  naRetrieveBufferBytes(buffer, buf, count * 1, 0);
-  buffer->converter.convertArray8(buf, (NAUInt)count);
+  naRetrieveBufferBytes(buffer, dst, count * 1, 0);
+  buffer->converter.convert8v(dst, (NAUInt)count);
 }
-NA_DEF void naReadBufferArrayInt16(NABuffer* buffer, int16* buf, NABufInt count){
+NA_DEF void naReadBufferi16v(NABuffer* buffer, int16* dst, NAInt count){
   #ifndef NDEBUG
-    if(!buf)
-      naError("naReadBufferArrayInt16", "buf is Null pointer.");
+    if(!dst)
+      naError("naReadBufferi16v", "dst is Null pointer.");
     if(buffer->curbit != 0)
-      naError("naReadBufferArrayInt16", "Bit offset not 0.");
+      naError("naReadBufferi16v", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, count * 2);
-  naRetrieveBufferBytes(buffer, buf, count * 2, 0);
-  buffer->converter.convertArray16(buf, (NAUInt)count);
+  naRetrieveBufferBytes(buffer, dst, count * 2, 0);
+  buffer->converter.convert16v(dst, (NAUInt)count);
 }
-NA_DEF void naReadBufferArrayInt32(NABuffer* buffer, int32* buf, NABufInt count){
+NA_DEF void naReadBufferi32v(NABuffer* buffer, int32* dst, NAInt count){
   #ifndef NDEBUG
-    if(!buf)
-      naError("naReadBufferArrayInt32", "buf is Null pointer.");
+    if(!dst)
+      naError("naReadBufferi32v", "dst is Null pointer.");
     if(buffer->curbit != 0)
-      naError("naReadBufferArrayInt32", "Bit offset not 0.");
+      naError("naReadBufferi32v", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, count * 4);
-  naRetrieveBufferBytes(buffer, buf, count * 4, 0);
-  buffer->converter.convertArray32(buf, (NAUInt)count);
+  naRetrieveBufferBytes(buffer, dst, count * 4, 0);
+  buffer->converter.convert32v(dst, (NAUInt)count);
 }
-NA_DEF void naReadBufferArrayInt64(NABuffer* buffer, int64* buf, NABufInt count){
+NA_DEF void naReadBufferi64v(NABuffer* buffer, int64* dst, NAInt count){
   #ifndef NDEBUG
-    if(!buf)
-      naError("naReadBufferArrayInt64", "buf is Null pointer.");
+    if(!dst)
+      naError("naReadBufferi64v", "dst is Null pointer.");
     if(buffer->curbit != 0)
-      naError("naReadBufferArrayInt64", "Bit offset not 0.");
+      naError("naReadBufferi64v", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, count * 8);
-  naRetrieveBufferBytes(buffer, buf, count * 8, 0);
-  buffer->converter.convertArray64(buf, (NAUInt)count);
+  naRetrieveBufferBytes(buffer, dst, count * 8, 0);
+  buffer->converter.convert64v(dst, (NAUInt)count);
 }
 
 
 
-NA_DEF void naReadBufferArrayUInt8(NABuffer* buffer, uint8* buf, NABufInt count){
+NA_DEF void naReadBufferu8v(NABuffer* buffer, uint8* dst, NAInt count){
   #ifndef NDEBUG
-    if(!buf)
-      naError("naReadBufferArrayUInt8", "buf is Null pointer.");
+    if(!dst)
+      naError("naReadBufferu8v", "dst is Null pointer.");
     if(buffer->curbit != 0)
-      naError("naReadBufferArrayUInt8", "Bit offset not 0.");
+      naError("naReadBufferu8v", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, count * 1);
-  naRetrieveBufferBytes(buffer, buf, count * 1, 0);
-  buffer->converter.convertArray8(buf, (NAUInt)count);
+  naRetrieveBufferBytes(buffer, dst, count * 1, 0);
+  buffer->converter.convert8v(dst, (NAUInt)count);
 }
-NA_DEF void naReadBufferArrayUInt16(NABuffer* buffer, uint16* buf, NABufInt count){
+NA_DEF void naReadBufferu16v(NABuffer* buffer, uint16* dst, NAInt count){
   #ifndef NDEBUG
-    if(!buf)
-      naError("naReadBufferArrayUInt16", "buf is Null pointer.");
+    if(!dst)
+      naError("naReadBufferu16v", "dst is Null pointer.");
     if(buffer->curbit != 0)
-      naError("naReadBufferArrayUInt16", "Bit offset not 0.");
+      naError("naReadBufferu16v", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, count * 2);
-  naRetrieveBufferBytes(buffer, buf, count * 2, 0);
-  buffer->converter.convertArray16(buf, (NAUInt)count);
+  naRetrieveBufferBytes(buffer, dst, count * 2, 0);
+  buffer->converter.convert16v(dst, (NAUInt)count);
 }
-NA_DEF void naReadBufferArrayUInt32(NABuffer* buffer, uint32* buf, NABufInt count){
+NA_DEF void naReadBufferu32v(NABuffer* buffer, uint32* dst, NAInt count){
   #ifndef NDEBUG
-    if(!buf)
-      naError("naReadBufferArrayUInt32", "buf is Null pointer.");
+    if(!dst)
+      naError("naReadBufferu32v", "dst is Null pointer.");
     if(buffer->curbit != 0)
-      naError("naReadBufferArrayUInt32", "Bit offset not 0.");
+      naError("naReadBufferu32v", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, count * 4);
-  naRetrieveBufferBytes(buffer, buf, count * 4, 0);
-  buffer->converter.convertArray32(buf, (NAUInt)count);
+  naRetrieveBufferBytes(buffer, dst, count * 4, 0);
+  buffer->converter.convert32v(dst, (NAUInt)count);
 }
-NA_DEF void naReadBufferArrayUInt64(NABuffer* buffer, uint64* buf, NABufInt count){
+NA_DEF void naReadBufferu64v(NABuffer* buffer, uint64* dst, NAInt count){
   #ifndef NDEBUG
-    if(!buf)
-      naError("naReadBufferArrayUInt64", "buf is Null pointer.");
+    if(!dst)
+      naError("naReadBufferu64v", "dst is Null pointer.");
     if(buffer->curbit != 0)
-      naError("naReadBufferArrayUInt64", "Bit offset not 0.");
+      naError("naReadBufferu64v", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, count * 8);
-  naRetrieveBufferBytes(buffer, buf, count * 8, 0);
-  buffer->converter.convertArray64(buf, (NAUInt)count);
+  naRetrieveBufferBytes(buffer, dst, count * 8, 0);
+  buffer->converter.convert64v(dst, (NAUInt)count);
 }
 
 
 
-NA_DEF void naReadBufferArrayFloat(NABuffer* buffer, float* buf, NABufInt count){
+NA_DEF void naReadBufferfv(NABuffer* buffer, float* dst, NAInt count){
   #ifndef NDEBUG
-    if(!buf)
-      naError("naReadBufferArrayFloat", "buf is Null pointer.");
+    if(!dst)
+      naError("naReadBufferfv", "dst is Null pointer.");
     if(buffer->curbit != 0)
-      naError("naReadBufferArrayFloat", "Bit offset not 0.");
+      naError("naReadBufferfv", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, count * 4);
-  naRetrieveBufferBytes(buffer, buf, count * 4, 0);
-  buffer->converter.convertArray32(buf, (NAUInt)count);
+  naRetrieveBufferBytes(buffer, dst, count * 4, 0);
+  buffer->converter.convert32v(dst, (NAUInt)count);
 }
-NA_DEF void naReadBufferArrayDouble(NABuffer* buffer, double* buf, NABufInt count){
+NA_DEF void naReadBufferdv(NABuffer* buffer, double* dst, NAInt count){
   #ifndef NDEBUG
-    if(!buf)
-      naError("naReadBufferArrayDouble", "buf is Null pointer.");
+    if(!dst)
+      naError("naReadBufferdv", "dst is Null pointer.");
     if(buffer->curbit != 0)
-      naError("naReadBufferArrayDouble", "Bit offset not 0.");
+      naError("naReadBufferdv", "Bit offset not 0.");
   #endif
   naEnhanceBuffer(buffer, count * 8);
-  naRetrieveBufferBytes(buffer, buf, count * 8, 0);
-  buffer->converter.convertArray64(buf, (NAUInt)count);
+  naRetrieveBufferBytes(buffer, dst, count * 8, 0);
+  buffer->converter.convert64v(dst, (NAUInt)count);
 }
 
 
@@ -1606,7 +1625,7 @@ NA_DEF void naReadBufferArrayDouble(NABuffer* buffer, double* buf, NABufInt coun
 
 
 
-NA_DEF void naStoreBufferBytes(NABuffer* buffer, const void* ptr, NABufInt bytesize){
+NA_DEF void naStoreBufferBytes(NABuffer* buffer, const void* ptr, NAInt bytesize){
   NABufferPart* curpart;
   NAList* partlist;
   NAListIterator iter;
@@ -1625,7 +1644,7 @@ NA_DEF void naStoreBufferBytes(NABuffer* buffer, const void* ptr, NABufInt bytes
   curpart = naGetListCurrentMutable(&iter);
   
   while(bytesize){
-    NABufInt remainingbytes;
+    NAInt remainingbytes;
     NAByte* dst;
     
     #ifndef NDEBUG
@@ -1662,7 +1681,7 @@ NA_DEF void naStoreBufferBytes(NABuffer* buffer, const void* ptr, NABufInt bytes
 
 
 
-NA_DEF void naWriteBufferBytes(NABuffer* buffer, const void* ptr, NABufInt bytesize){
+NA_DEF void naWriteBufferBytes(NABuffer* buffer, const void* ptr, NAInt bytesize){
   #ifndef NDEBUG
     if(!bytesize)
       naError("naReadBufferBytes", "Writing zero bytes.");
@@ -1715,7 +1734,7 @@ NA_DEF void naWriteBufferStringWithArguments(NABuffer* buffer,
 
 
 
-NA_DEF void naWriteBufferBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer, NABufInt bytesize){
+NA_DEF void naWriteBufferBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer, NAInt bytesize){
   NAList* srcbuflist = naGetBufferPartList(srcbuffer);
   NAListIterator iter;
   void* srcptr;
@@ -1731,8 +1750,8 @@ NA_DEF void naWriteBufferBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer, NABufI
   naLocateBufferPartList(&iter, srcbuffer->curoffset);
   while(bytesize != NA_ZERO){
     NABufferPart* curpart = naGetListCurrentMutable(&iter);
-    NABufInt remainingsize = naGetBufferPartEndDataIndex(curpart) - srcbuffer->curoffset;
-    remainingsize = naMini((NAInt)remainingsize, (NAInt)bytesize);
+    NAInt remainingsize = naGetBufferPartEndDataIndex(curpart) - srcbuffer->curoffset;
+    remainingsize = naMini(remainingsize, bytesize);
     srcptr = naGetBufferPartDataPointerAbsolute(curpart, srcbuffer->curoffset);
     naWriteBufferBytes(dstbuffer, srcptr, remainingsize);
     srcbuffer->curoffset += remainingsize;
@@ -1744,15 +1763,15 @@ NA_DEF void naWriteBufferBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer, NABufI
 
 
 
-NA_DEF void naRepeatBufferBytes(NABuffer* buffer, NABufInt distance, NABufInt bytesize){
+NA_DEF void naRepeatBufferBytes(NABuffer* buffer, NAInt distance, NAInt bytesize){
   NAList* partlist;
-  NABufInt finalpos;
-  NABufInt writeoffset;
-  NABufInt readoffset;
+  NAInt finalpos;
+  NAInt writeoffset;
+  NAInt readoffset;
   NABufferPart* writepart;
   NABufferPart* readpart;
-  NABufInt remainingwrite;
-  NABufInt remainingread;
+  NAInt remainingwrite;
+  NAInt remainingread;
   NAByte* writebyte;
   NAByte* readbyte;
   NAListIterator writeiter;
@@ -1792,15 +1811,15 @@ NA_DEF void naRepeatBufferBytes(NABuffer* buffer, NABufInt distance, NABufInt by
   naLocateBufferPartList(&readiter, readoffset);
   readpart = naGetListCurrentMutable(&readiter);
   remainingread = naGetBufferPartEndDataIndex(readpart) - readoffset;
-  remainingread = naMini((NAInt)remainingread, (NAInt)distance);
+  remainingread = naMini(remainingread, distance);
   readbyte = naGetBufferPartDataPointerAbsolute(readpart, readoffset);
   
   // Now start copying the buffers.
   while(1){
     if(remainingwrite < remainingread){
       // Limit the writing to the actual bytesize requested, copy all bytes.
-      remainingwrite = naMini((NAInt)remainingwrite, (NAInt)bytesize);
-      naCopyn(writebyte, readbyte, (NAInt)remainingwrite);
+      remainingwrite = naMini(remainingwrite, bytesize);
+      naCopyn(writebyte, readbyte, remainingwrite);
       bytesize -= remainingwrite;
       if(!bytesize){break;}
       // Adjust the byte oriented variables.
@@ -1810,8 +1829,8 @@ NA_DEF void naRepeatBufferBytes(NABuffer* buffer, NABufInt distance, NABufInt by
       readbyte += remainingwrite;
     }else{
       // Limit the reading to the actual bytesize requested, copy all bytes.
-      remainingread = naMini((NAInt)remainingread, (NAInt)bytesize);
-      naCopyn(writebyte, readbyte, (NAInt)remainingread);
+      remainingread = naMini(remainingread, bytesize);
+      naCopyn(writebyte, readbyte, remainingread);
       bytesize -= remainingread;
       if(!bytesize){break;}
       // Adjust the byte oriented variables.
@@ -1836,7 +1855,7 @@ NA_DEF void naRepeatBufferBytes(NABuffer* buffer, NABufInt distance, NABufInt by
       remainingread = naGetBufferPartEndDataIndex(readpart) - readoffset;
       readbyte = naGetBufferPartDataPointerAbsolute(readpart, readoffset);
     }
-    remainingread = naMini((NAInt)remainingread, (NAInt)distance);
+    remainingread = naMini(remainingread, distance);
 //    remainingwrite = naMini(remainingwrite, distance);
   }
 
@@ -1847,25 +1866,25 @@ NA_DEF void naRepeatBufferBytes(NABuffer* buffer, NABufInt distance, NABufInt by
 
 
 
-NA_DEF void naWriteBufferInt8(NABuffer* buffer, int8 value){
+NA_DEF void naWriteBufferi8(NABuffer* buffer, int8 value){
   buffer->converter.convert8(&value);
   naEnhanceBuffer(buffer, 1);
   naStoreBufferBytes(buffer, &value, 1);
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) == NA_BUFFER_FLAG_AUTOFLUSH_ALL){naFlushBuffer(buffer);}
 }
-NA_DEF void naWriteBufferInt16(NABuffer* buffer, int16 value){
+NA_DEF void naWriteBufferi16(NABuffer* buffer, int16 value){
   buffer->converter.convert16(&value);
   naEnhanceBuffer(buffer, 2);
   naStoreBufferBytes(buffer, &value, 2);
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) == NA_BUFFER_FLAG_AUTOFLUSH_ALL){naFlushBuffer(buffer);}
 }
-NA_DEF void naWriteBufferInt32(NABuffer* buffer, int32 value){
+NA_DEF void naWriteBufferi32(NABuffer* buffer, int32 value){
   buffer->converter.convert32(&value);
   naEnhanceBuffer(buffer, 4);
   naStoreBufferBytes(buffer, &value, 4);
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) == NA_BUFFER_FLAG_AUTOFLUSH_ALL){naFlushBuffer(buffer);}
 }
-NA_DEF void naWriteBufferInt64(NABuffer* buffer, int64 value){
+NA_DEF void naWriteBufferi64(NABuffer* buffer, int64 value){
   buffer->converter.convert64(&value);
   naEnhanceBuffer(buffer, 8);
   naStoreBufferBytes(buffer, &value, 8);
@@ -1873,25 +1892,25 @@ NA_DEF void naWriteBufferInt64(NABuffer* buffer, int64 value){
 }
 
 
-NA_DEF void naWriteBufferUInt8(NABuffer* buffer, uint8 value){
+NA_DEF void naWriteBufferu8(NABuffer* buffer, uint8 value){
   buffer->converter.convert8(&value);
   naEnhanceBuffer(buffer, 1);
   naStoreBufferBytes(buffer, &value, 1);
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) == NA_BUFFER_FLAG_AUTOFLUSH_ALL){naFlushBuffer(buffer);}
 }
-NA_DEF void naWriteBufferUInt16(NABuffer* buffer, uint16 value){
+NA_DEF void naWriteBufferu16(NABuffer* buffer, uint16 value){
   buffer->converter.convert16(&value);
   naEnhanceBuffer(buffer, 2);
   naStoreBufferBytes(buffer, &value, 2);
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) == NA_BUFFER_FLAG_AUTOFLUSH_ALL){naFlushBuffer(buffer);}
 }
-NA_DEF void naWriteBufferUInt32(NABuffer* buffer, uint32 value){
+NA_DEF void naWriteBufferu32(NABuffer* buffer, uint32 value){
   buffer->converter.convert32(&value);
   naEnhanceBuffer(buffer, 4);
   naStoreBufferBytes(buffer, &value, 4);
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) == NA_BUFFER_FLAG_AUTOFLUSH_ALL){naFlushBuffer(buffer);}
 }
-NA_DEF void naWriteBufferUInt64(NABuffer* buffer, uint64 value){
+NA_DEF void naWriteBufferu64(NABuffer* buffer, uint64 value){
   buffer->converter.convert64(&value);
   naEnhanceBuffer(buffer, 8);
   naStoreBufferBytes(buffer, &value, 8);
@@ -1899,13 +1918,13 @@ NA_DEF void naWriteBufferUInt64(NABuffer* buffer, uint64 value){
 }
 
 
-NA_DEF void naWriteBufferFloat(NABuffer* buffer, float value){
+NA_DEF void naWriteBufferf(NABuffer* buffer, float value){
   buffer->converter.convert32(&value);
   naEnhanceBuffer(buffer, 4);
   naStoreBufferBytes(buffer, &value, 4);
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) == NA_BUFFER_FLAG_AUTOFLUSH_ALL){naFlushBuffer(buffer);}
 }
-NA_DEF void naWriteBufferDouble(NABuffer* buffer, double value){
+NA_DEF void naWriteBufferd(NABuffer* buffer, double value){
   buffer->converter.convert64(&value);
   naEnhanceBuffer(buffer, 8);
   naStoreBufferBytes(buffer, &value, 8);
@@ -1920,122 +1939,122 @@ NA_DEF void naWriteBufferDouble(NABuffer* buffer, double value){
 
 
 
-NA_DEF void naWriteBufferArrayInt8(NABuffer* buffer, const int8* buf, NABufInt count){
+NA_DEF void naWriteBufferi8v(NABuffer* buffer, const int8* src, NAInt count){
   int8 value;
   naEnhanceBuffer(buffer, count * 1);
   while(count){
-    value = *((int8*)buf);
+    value = *src;
     buffer->converter.convert8(&value);
     naStoreBufferBytes(buffer, &value, 1);
-    buf += 1;
+    src++;
     count--;
   }
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) >= NA_BUFFER_FLAG_AUTOFLUSH_MULTIBYTE){naFlushBuffer(buffer);}
 }
-NA_DEF void naWriteBufferArrayInt16(NABuffer* buffer, const int16* buf, NABufInt count){
+NA_DEF void naWriteBufferi16v(NABuffer* buffer, const int16* src, NAInt count){
   int16 value;
   naEnhanceBuffer(buffer, count * 2);
   while(count){
-    value = *((int16*)buf);
+    value = *src;
     buffer->converter.convert16(&value);
     naStoreBufferBytes(buffer, &value, 2);
-    buf += 2;
+    src++;
     count--;
   }
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) >= NA_BUFFER_FLAG_AUTOFLUSH_MULTIBYTE){naFlushBuffer(buffer);}
 }
-NA_DEF void naWriteBufferArrayInt32(NABuffer* buffer, const int32* buf, NABufInt count){
+NA_DEF void naWriteBufferi32v(NABuffer* buffer, const int32* src, NAInt count){
   int32 value;
   naEnhanceBuffer(buffer, count * 4);
   while(count){
-    value = *((int32*)buf);
+    value = *src;
     buffer->converter.convert32(&value);
     naStoreBufferBytes(buffer, &value, 4);
-    buf += 4;
+    src++;
     count--;
   }
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) >= NA_BUFFER_FLAG_AUTOFLUSH_MULTIBYTE){naFlushBuffer(buffer);}
 }
-NA_DEF void naWriteBufferArrayInt64(NABuffer* buffer, const int64* buf, NABufInt count){
+NA_DEF void naWriteBufferi64v(NABuffer* buffer, const int64* src, NAInt count){
   int64 value;
   naEnhanceBuffer(buffer, count * 8);
   while(count){
-    value = *((int64*)buf);
+    value = *src;
     buffer->converter.convert64(&value);
     naStoreBufferBytes(buffer, &value, 8);
-    buf += 8;
+    src++;
     count--;
   }
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) >= NA_BUFFER_FLAG_AUTOFLUSH_MULTIBYTE){naFlushBuffer(buffer);}
 }
-NA_DEF void naWriteBufferArrayUInt8(NABuffer* buffer, const uint8* buf, NABufInt count){
+NA_DEF void naWriteBufferu8v(NABuffer* buffer, const uint8* src, NAInt count){
   uint8 value;
   naEnhanceBuffer(buffer, count * 1);
   while(count){
-    value = *((uint8*)buf);
+    value = *src;
     buffer->converter.convert8(&value);
     naStoreBufferBytes(buffer, &value, 1);
-    buf += 1;
+    src++;
     count--;
   }
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) >= NA_BUFFER_FLAG_AUTOFLUSH_MULTIBYTE){naFlushBuffer(buffer);}
 }
-NA_DEF void naWriteBufferArrayUInt16(NABuffer* buffer, const uint16* buf, NABufInt count){
+NA_DEF void naWriteBufferu16v(NABuffer* buffer, const uint16* src, NAInt count){
   uint16 value;
   naEnhanceBuffer(buffer, count * 2);
   while(count){
-    value = *((uint16*)buf);
+    value = *src;
     buffer->converter.convert16(&value);
     naStoreBufferBytes(buffer, &value, 2);
-    buf += 2;
+    src++;
     count--;
   }
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) >= NA_BUFFER_FLAG_AUTOFLUSH_MULTIBYTE){naFlushBuffer(buffer);}
 }
-NA_DEF void naWriteBufferArrayUInt32(NABuffer* buffer, const uint32* buf, NABufInt count){
+NA_DEF void naWriteBufferu32v(NABuffer* buffer, const uint32* src, NAInt count){
   uint32 value;
   naEnhanceBuffer(buffer, count * 4);
   while(count){
-    value = *((uint32*)buf);
+    value = *src;
     buffer->converter.convert32(&value);
     naStoreBufferBytes(buffer, &value, 4);
-    buf += 4;
+    src++;
     count--;
   }
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) >= NA_BUFFER_FLAG_AUTOFLUSH_MULTIBYTE){naFlushBuffer(buffer);}
 }
-NA_DEF void naWriteBufferArrayUInt64(NABuffer* buffer, const uint64* buf, NABufInt count){
+NA_DEF void naWriteBufferu64v(NABuffer* buffer, const uint64* src, NAInt count){
   uint64 value;
   naEnhanceBuffer(buffer, count * 8);
   while(count){
-    value = *((uint64*)buf);
+    value = *src;
     buffer->converter.convert64(&value);
     naStoreBufferBytes(buffer, &value, 8);
-    buf += 8;
+    src++;
     count--;
   }
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) >= NA_BUFFER_FLAG_AUTOFLUSH_MULTIBYTE){naFlushBuffer(buffer);}
 }
-NA_DEF void naWriteBufferArrayFloat(NABuffer* buffer, const float* buf, NABufInt count){
+NA_DEF void naWriteBufferfv(NABuffer* buffer, const float* src, NAInt count){
   float value;
   naEnhanceBuffer(buffer, count * 4);
   while(count){
-    value = *((float*)buf);
+    value = *src;
     buffer->converter.convert32(&value);
     naStoreBufferBytes(buffer, &value, 4);
-    buf += 4;
+    src++;
     count--;
   }
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) >= NA_BUFFER_FLAG_AUTOFLUSH_MULTIBYTE){naFlushBuffer(buffer);}
 }
-NA_DEF void naWriteBufferArrayDouble(NABuffer* buffer, const double* buf, NABufInt count){
+NA_DEF void naWriteBufferdv(NABuffer* buffer, const double* src, NAInt count){
   double value;
   naEnhanceBuffer(buffer, count * 8);
   while(count){
-    value = *((double*)buf);
+    value = *src;
     buffer->converter.convert64(&value);
     naStoreBufferBytes(buffer, &value, 8);
-    buf += 8;
+    src++;
     count--;
   }
   if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) >= NA_BUFFER_FLAG_AUTOFLUSH_MULTIBYTE){naFlushBuffer(buffer);}

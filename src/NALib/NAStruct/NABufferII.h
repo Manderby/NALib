@@ -19,7 +19,7 @@ struct NABuffer{
   NARangei range;                   // The total range of this buffer
 
   NAListPos curlistpos;             // The listpos of the current part
-  NABufInt curoffset;               // The current absolute offset
+  NAInt curoffset;               // The current absolute offset
   uint8 curbit;                     // The current bit number
 
   NAInt endianness;                 // The current endianness

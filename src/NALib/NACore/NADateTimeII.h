@@ -102,17 +102,17 @@ NA_IDEF void naCorrectDateTimeZone( NADateTime* datetime,
 
 
 
-NA_DEF double naGetDateTimeDiff(const NADateTime* end, const NADateTime* start){
+NA_DEF double naGetDateTimeDifference(const NADateTime* end, const NADateTime* begin){
   double sign = 1.;
   double diffsecs;
   double diffnsecs;
-  if(end->sisec < start->sisec){
+  if(end->sisec < begin->sisec){
     sign = -1;
-    diffsecs = (double)(start->sisec - end->sisec);
+    diffsecs = (double)(begin->sisec - end->sisec);
   }else{
-    diffsecs = (double)(end->sisec - start->sisec);
+    diffsecs = (double)(end->sisec - begin->sisec);
   }
-  diffnsecs = ((double)end->nsec - (double)start->nsec) / 1e9;
+  diffnsecs = ((double)end->nsec - (double)begin->nsec) / 1e9;
   return sign * (diffsecs + diffnsecs);
 }
 

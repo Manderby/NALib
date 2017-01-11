@@ -550,15 +550,15 @@ NA_IAPI NABuf naMakeBuf();
 // Creates a new buf with the given sizes. In contrast to the other
 // base memory structs, both bytesize parameter must be positive.
 // usedsize can be 0 but maxsize must be greater than 0.
-NA_IAPI NABuf naMakeBufWithBytesize(int64 maxbytesize, int64 usedbytesize);
+NA_IAPI NABuf naMakeBufWithBytesize(NAInt maxbytesize, NAInt usedbytesize);
 
 // Frees the memory for the buffer.
 NA_IAPI void naFreeBuf(NABuf* buf);
 
 // Returns size information about the memory block.
-NA_IAPI uint64 naGetBufMaxBytesize(const NABuf* buf);
-NA_IAPI uint64 naGetBufUsedBytesize(const NABuf* buf);
-NA_IAPI uint64 naGetBufRemainingBytesize(const NABuf* buf);
+NA_IAPI NAUInt naGetBufMaxBytesize(const NABuf* buf);
+NA_IAPI NAUInt naGetBufUsedBytesize(const NABuf* buf);
+NA_IAPI NAUInt naGetBufRemainingBytesize(const NABuf* buf);
 // Returns true if there is no used byte in the buf.
 NA_IAPI NABool naIsBufEmpty(const NABuf* buf);
 
@@ -568,7 +568,7 @@ NA_IAPI const void* naGetBufConstUsedPointer(const NABuf* buf);
 NA_IAPI void*       naGetBufMutableUsedPointer(    NABuf* buf);
 // Increments the used bytesize by the given number of bytes. Will emit an error
 // when the buffer overflows when NDEBUG is not defined.
-NA_IAPI void        naAdvanceBuf(NABuf* buf, uint64 bytesize);
+NA_IAPI void        naAdvanceBuf(NABuf* buf, NAUInt bytesize);
 
 // Returns either a const or mutable pointer to the first byte of the full
 // buf. Emits an error when the buf is empty when NDEBUG is undefined.

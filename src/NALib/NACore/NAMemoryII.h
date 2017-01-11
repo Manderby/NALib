@@ -1274,13 +1274,10 @@ NA_IDEF NABool naIsCArrayConst(NACArray* carray){
 // //////////////////////////
 
 
-// Note that in contrast to other basic memory structs, an NABuf is always
-// 64 bit. This is because it is used to store file contents which may be
-// greater than 32 bits.
 struct NABuf{
   NAPtr   ptr;          // pointer to the first byte
-  uint64  bytesize;     // total size of the buf in bytes. Always positive.
-  uint64  usedbytesize;     // size of the used bytes. Always positive.
+  NAUInt  bytesize;     // total size of the buf in bytes. Always positive.
+  NAUInt  usedbytesize;     // size of the used bytes. Always positive.
 };
 
 
@@ -1292,8 +1289,8 @@ NA_IDEF NABuf naMakeBuf(){
   // detecting whether you initialized your structs correctly as certain
   // compilers will add guards to non-initialized pointers and will fire
   // with an exception.
-  buf.bytesize = NA_ZERO_64;
-  buf.usedbytesize = NA_ZERO_64;
+  buf.bytesize = NA_ZERO;
+  buf.usedbytesize = NA_ZERO;
   return buf;
 }
 
@@ -1301,21 +1298,17 @@ NA_IDEF NABuf naMakeBuf(){
 
 // maxsize must never be zero. When debugging, an error will be emitted and
 // you have to deal with the problem in a higher level function.
-NA_IDEF NABuf naMakeBufWithBytesize(int64 maxbytesize, int64 usedbytesize){
+NA_IDEF NABuf naMakeBufWithBytesize(NAInt maxbytesize, NAInt usedbytesize){
   NABuf buf;
   #ifndef NDEBUG
-    if(maxbytesize == NA_ZERO_64)
+    if(maxbytesize == NA_ZERO)
       naError("naMakeBufWithBytesize", "maxsize is zero.");
-    if(maxbytesize < NA_ZERO_64)
+    if(maxbytesize < NA_ZERO)
       naError("naMakeBufWithBytesize", "maxsize must be positive. Zero fill check might fail with NABuf");
-    if(usedbytesize < NA_ZERO_64)
+    if(usedbytesize < NA_ZERO)
       naError("naMakeBufWithBytesize", "usedsize must be positive.");
     if(usedbytesize > maxbytesize)
       naError("naMakeBufWithBytesize", "maxsize can not be smaller than usedsize.");
-  	#if (NA_SYSTEM_INT_BITS < 64)
-      if(maxbytesize > NA_INT_MAX)
-	      naError("naMakeBufWithBytesize", "maxsize overflows int range, while int has less than 64 bits in this configuration.");
-    #endif
 #endif
   buf.ptr = naMakePtrWithBytesize((NAInt)maxbytesize);
   buf.bytesize = maxbytesize;
@@ -1331,7 +1324,7 @@ NA_IDEF void naFreeBuf(NABuf* buf){
 
 
 
-NA_IDEF uint64 naGetBufMaxBytesize(const NABuf* buf){
+NA_IDEF NAUInt naGetBufMaxBytesize(const NABuf* buf){
   #ifndef NDEBUG
     if(!buf){
       naCrash("naGetBufMaxBytesize", "buf is Null-Pointer.");
@@ -1343,7 +1336,7 @@ NA_IDEF uint64 naGetBufMaxBytesize(const NABuf* buf){
 
 
 
-NA_IDEF uint64 naGetBufUsedBytesize(const NABuf* buf){
+NA_IDEF NAUInt naGetBufUsedBytesize(const NABuf* buf){
   #ifndef NDEBUG
     if(!buf){
       naCrash("naGetBufUsedBytesize", "buf is Null-Pointer.");
@@ -1355,7 +1348,7 @@ NA_IDEF uint64 naGetBufUsedBytesize(const NABuf* buf){
 
 
 
-NA_IDEF uint64 naGetBufRemainingBytesize(const NABuf* buf){
+NA_IDEF NAUInt naGetBufRemainingBytesize(const NABuf* buf){
   #ifndef NDEBUG
     if(!buf){
       naCrash("naGetBufRemainingBytesize", "buf is Null-Pointer.");
@@ -1374,7 +1367,7 @@ NA_IDEF NABool naIsBufEmpty(const NABuf* buf){
       return NA_TRUE;
     }
   #endif
-  return (buf->usedbytesize == NA_ZERO_64);
+  return (buf->usedbytesize == NA_ZERO);
 }
 
 
@@ -1405,7 +1398,7 @@ NA_IDEF void* naGetBufMutableUsedPointer(NABuf* buf){
 
 
 
-NA_IDEF void naAdvanceBuf(NABuf* buf, uint64 bytesize){
+NA_IDEF void naAdvanceBuf(NABuf* buf, NAUInt bytesize){
   #ifndef NDEBUG
     if(!buf){
       naCrash("naAdvanceBuf", "buf is Null-Pointer.");

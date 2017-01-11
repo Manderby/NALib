@@ -113,56 +113,56 @@ NA_IAPI NABool naEqual128WithBytes( const void* s,
 // provided. All converters work in both ways, for example Little to Big
 // will also convert Big to Little.
 //
-// The Array-variants convert a whole array with count elements. The
-// non-Array-variants convert only one single value.
+// The v-variants convert a whole array with count elements. The
+// non-v-variants convert only one single value.
 
 // Conversion between two same Endiannesses.
-NA_IAPI  void naConvertNative8(              void* buffer);
-NA_IAPI  void naConvertNative16(             void* buffer);
-NA_IAPI  void naConvertNative32(             void* buffer);
-NA_IAPI  void naConvertNative64(             void* buffer);
-NA_IAPI  void naConvertNative128(            void* buffer);
-NA_IAPI  void naConvertArrayNative8(         void* buffer, NAUInt count);
-NA_IAPI  void naConvertArrayNative16(        void* buffer, NAUInt count);
-NA_IAPI  void naConvertArrayNative32(        void* buffer, NAUInt count);
-NA_IAPI  void naConvertArrayNative64(        void* buffer, NAUInt count);
-NA_IAPI  void naConvertArrayNative128(       void* buffer, NAUInt count);
+NA_IAPI  void naConvertNative8(          void* buffer);
+NA_IAPI  void naConvertNative16(         void* buffer);
+NA_IAPI  void naConvertNative32(         void* buffer);
+NA_IAPI  void naConvertNative64(         void* buffer);
+NA_IAPI  void naConvertNative128(        void* buffer);
+NA_IAPI  void naConvertNative8v(         void* buffer, NAUInt count);
+NA_IAPI  void naConvertNative16v(        void* buffer, NAUInt count);
+NA_IAPI  void naConvertNative32v(        void* buffer, NAUInt count);
+NA_IAPI  void naConvertNative64v(        void* buffer, NAUInt count);
+NA_IAPI  void naConvertNative128v(       void* buffer, NAUInt count);
 
 // Conversion between Little and Big Endianness
-NA_IAPI  void naConvertLittleBig8(           void* buffer);
-NA_IAPI  void naConvertLittleBig16(          void* buffer);
-NA_IAPI  void naConvertLittleBig32(          void* buffer);
-NA_IAPI  void naConvertLittleBig64(          void* buffer);
-NA_IAPI  void naConvertLittleBig128(         void* buffer);
-NA_IAPI  void naConvertArrayLittleBig8(      void* buffer, NAUInt count);
-NA_IAPI  void naConvertArrayLittleBig16(     void* buffer, NAUInt count);
-NA_IAPI  void naConvertArrayLittleBig32(     void* buffer, NAUInt count);
-NA_IAPI  void naConvertArrayLittleBig64(     void* buffer, NAUInt count);
-NA_IAPI  void naConvertArrayLittleBig128(    void* buffer, NAUInt count);
+NA_IAPI  void naConvertLittleBig8(       void* buffer);
+NA_IAPI  void naConvertLittleBig16(      void* buffer);
+NA_IAPI  void naConvertLittleBig32(      void* buffer);
+NA_IAPI  void naConvertLittleBig64(      void* buffer);
+NA_IAPI  void naConvertLittleBig128(     void* buffer);
+NA_IAPI  void naConvertLittleBig8v(      void* buffer, NAUInt count);
+NA_IAPI  void naConvertLittleBig16v(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertLittleBig32v(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertLittleBig64v(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertLittleBig128v(    void* buffer, NAUInt count);
 
 // Conversion between Native and Little Endianness
-NA_IAPI  void naConvertNativeLittle8(        void* buffer);
-NA_IAPI  void naConvertNativeLittle16(       void* buffer);
-NA_IAPI  void naConvertNativeLittle32(       void* buffer);
-NA_IAPI  void naConvertNativeLittle64(       void* buffer);
-NA_IAPI  void naConvertNativeLittle128(      void* buffer);
-NA_IAPI  void naConvertArrayNativeLittle8(   void* buffer, NAUInt count);
-NA_IAPI  void naConvertArrayNativeLittle16(  void* buffer, NAUInt count);
-NA_IAPI  void naConvertArrayNativeLittle32(  void* buffer, NAUInt count);
-NA_IAPI  void naConvertArrayNativeLittle64(  void* buffer, NAUInt count);
-NA_IAPI  void naConvertArrayNativeLittle128( void* buffer, NAUInt count);
+NA_IAPI  void naConvertNativeLittle8(    void* buffer);
+NA_IAPI  void naConvertNativeLittle16(   void* buffer);
+NA_IAPI  void naConvertNativeLittle32(   void* buffer);
+NA_IAPI  void naConvertNativeLittle64(   void* buffer);
+NA_IAPI  void naConvertNativeLittle128(  void* buffer);
+NA_IAPI  void naConvertNativeLittle8v(   void* buffer, NAUInt count);
+NA_IAPI  void naConvertNativeLittle16v(  void* buffer, NAUInt count);
+NA_IAPI  void naConvertNativeLittle32v(  void* buffer, NAUInt count);
+NA_IAPI  void naConvertNativeLittle64v(  void* buffer, NAUInt count);
+NA_IAPI  void naConvertNativeLittle128v( void* buffer, NAUInt count);
 
 // Conversion between Native and Big Endianness
-NA_IAPI  void naConvertNativeBig8(           void* buffer);
-NA_IAPI  void naConvertNativeBig16(          void* buffer);
-NA_IAPI  void naConvertNativeBig32(          void* buffer);
-NA_IAPI  void naConvertNativeBig64(          void* buffer);
-NA_IAPI  void naConvertNativeBig128(         void* buffer);
-NA_IAPI  void naConvertArrayNativeBig8(      void* buffer, NAUInt count);
-NA_IAPI  void naConvertArrayNativeBig16(     void* buffer, NAUInt count);
-NA_IAPI  void naConvertArrayNativeBig32(     void* buffer, NAUInt count);
-NA_IAPI  void naConvertArrayNativeBig64(     void* buffer, NAUInt count);
-NA_IAPI  void naConvertArrayNativeBig128(    void* buffer, NAUInt count);
+NA_IAPI  void naConvertNativeBig8(       void* buffer);
+NA_IAPI  void naConvertNativeBig16(      void* buffer);
+NA_IAPI  void naConvertNativeBig32(      void* buffer);
+NA_IAPI  void naConvertNativeBig64(      void* buffer);
+NA_IAPI  void naConvertNativeBig128(     void* buffer);
+NA_IAPI  void naConvertNativeBig8v(      void* buffer, NAUInt count);
+NA_IAPI  void naConvertNativeBig16v(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertNativeBig32v(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertNativeBig64v(     void* buffer, NAUInt count);
+NA_IAPI  void naConvertNativeBig128v(    void* buffer, NAUInt count);
 
 
 
@@ -176,16 +176,16 @@ NA_IAPI  void naConvertArrayNativeBig128(    void* buffer, NAUInt count);
 typedef struct NAEndiannessConverter NAEndiannessConverter;
 
 struct NAEndiannessConverter{
-  void (*convert8)        (void* buffer);
-  void (*convert16)       (void* buffer);
-  void (*convert32)       (void* buffer);
-  void (*convert64)       (void* buffer);
-  void (*convert128)      (void* buffer);
-  void (*convertArray8)   (void* buffer, NAUInt count);
-  void (*convertArray16)  (void* buffer, NAUInt count);
-  void (*convertArray32)  (void* buffer, NAUInt count);
-  void (*convertArray64)  (void* buffer, NAUInt count);
-  void (*convertArray128) (void* buffer, NAUInt count);
+  void (*convert8)    (void* buffer);
+  void (*convert16)   (void* buffer);
+  void (*convert32)   (void* buffer);
+  void (*convert64)   (void* buffer);
+  void (*convert128)  (void* buffer);
+  void (*convert8v)   (void* buffer, NAUInt count);
+  void (*convert16v)  (void* buffer, NAUInt count);
+  void (*convert32v)  (void* buffer, NAUInt count);
+  void (*convert64v)  (void* buffer, NAUInt count);
+  void (*convert128v) (void* buffer, NAUInt count);
 };
 
 
@@ -235,7 +235,9 @@ typedef enum{
 NA_API NAChecksum* naInitChecksum(NAChecksum* checksum, NAChecksumType type);
 NA_API void naClearChecksum(NAChecksum* checksum);
 NA_API void naResetChecksum(NAChecksum* checksum);
-NA_API void naAccumulateChecksum(NAChecksum* checksum, const NAByte* buf, NAInt bytesize);
+NA_API void naAccumulateChecksum(   NAChecksum* checksum,
+                                  const NAByte* buf,
+                                          NAInt bytesize);
 NA_API uint32 naGetChecksumResult(NAChecksum* checksum);
 
 

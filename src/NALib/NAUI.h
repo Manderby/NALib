@@ -16,6 +16,18 @@
 //
 // //////////////////
 
+
+// Have a look at NAConfiguration.h to use OpenGL
+#if NA_CONFIG_COMPILE_OPENGL == 1
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #include <windows.h>
+  #include <GL/GL.h>
+  #else
+  #include <OpenGL/gl.h>
+  #endif
+#endif
+
+
 #include "NASystem.h"
 #include "NACoord.h"
 
@@ -356,7 +368,7 @@ NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullscreen);
 NA_API NABool naIsWindowFullscreen(NAWindow* window);
 //NA_API NARect naGetWindowRect(NAWindow* window);
 
-#ifdef __gl_h_
+#if NA_CONFIG_COMPILE_OPENGL == 1
   // the initfunc will be called with initdata as the input parameter as
   // soon as there is an OpenGLContext available. You can put there all
   // initialization necessary like for example uploading of textures to the

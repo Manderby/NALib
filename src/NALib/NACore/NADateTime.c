@@ -76,7 +76,7 @@ typedef struct{
 } NATAIPeriod;
 
 // Leap second information:
-#define NA_NUMBER_OF_TAI_PERIODS 99
+#define NA_NUMBER_OF_TAI_PERIODS 100
 
 // This table stores all leap second entries since 1958. Every year has at
 // least 1 entry. Every entry defines, what the number of its first second is.
@@ -185,6 +185,7 @@ NATAIPeriod naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS] = {
   {1830297600, 1830297636, 2016, NA_START_JANUARY_FIRST},
   {1861920000, 1861920036, 2016, NA_POSITIVE_LEAP_SECONDS_DECEMBER},// + 1
   {1861920000, 1861920037, 2017, NA_START_JANUARY_FIRST},
+  {1877558400, 1877558437, 2017, NA_START_JULY_FIRST},
   // the last entry is the first date with unknown future leap seconds.
   // everything up and including that date is known.
 };
@@ -523,23 +524,23 @@ NA_DEF NADateTime naMakeDateTimeFromBuffer(NABuffer* buffer, NABinDateTimeFormat
   switch(format){
   case NA_DATETIME_FORMAT_ICC_PROFILE:
     // ICC section 5.1.1, page 4, dateTimeNumber
-    dts.year  = naReadBufferUInt16(buffer);
-    dts.mon   = naReadBufferUInt16(buffer);
-    dts.day   = naReadBufferUInt16(buffer);
-    dts.hour  = naReadBufferUInt16(buffer);
-    dts.min   = naReadBufferUInt16(buffer);
-    dts.sec   = naReadBufferUInt16(buffer);
+    dts.year  = naReadBufferu16(buffer);
+    dts.mon   = naReadBufferu16(buffer);
+    dts.day   = naReadBufferu16(buffer);
+    dts.hour  = naReadBufferu16(buffer);
+    dts.min   = naReadBufferu16(buffer);
+    dts.sec   = naReadBufferu16(buffer);
     dts.shift = 0;
     dts.flags = 0;
     break;
 
   case NA_DATETIME_FORMAT_PNG:
-    dts.year  = naReadBufferUInt16(buffer);
-    dts.mon   = naReadBufferUInt8(buffer);
-    dts.day   = naReadBufferUInt8(buffer);
-    dts.hour  = naReadBufferUInt8(buffer);
-    dts.min   = naReadBufferUInt8(buffer);
-    dts.sec   = naReadBufferUInt8(buffer);
+    dts.year  = naReadBufferu16(buffer);
+    dts.mon   = naReadBufferu8(buffer);
+    dts.day   = naReadBufferu8(buffer);
+    dts.hour  = naReadBufferu8(buffer);
+    dts.min   = naReadBufferu8(buffer);
+    dts.sec   = naReadBufferu8(buffer);
     dts.shift = 0;
     dts.flags = 0;
     break;
@@ -597,12 +598,12 @@ NA_DEF NAByteArray* naInitByteArrayFromDateTime( NAByteArray* bytearray, const N
     break;
 
   case NA_DATETIME_FORMAT_PNG:
-//    dts.year  = naReadBufferUInt16(buffer);
-//    dts.mon   = naReadBufferUInt8(buffer);
-//    dts.day   = naReadBufferUInt8(buffer);
-//    dts.hour  = naReadBufferUInt8(buffer);
-//    dts.min   = naReadBufferUInt8(buffer);
-//    dts.sec   = naReadBufferUInt8(buffer);
+//    dts.year  = naReadBufferu16(buffer);
+//    dts.mon   = naReadBufferu8(buffer);
+//    dts.day   = naReadBufferu8(buffer);
+//    dts.hour  = naReadBufferu8(buffer);
+//    dts.min   = naReadBufferu8(buffer);
+//    dts.sec   = naReadBufferu8(buffer);
 //    dts.shift = 0;
 //    dts.flags = 0;
     break;
@@ -984,7 +985,7 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
     }
 
     dta->dayofyear = dayofyear;
-    dta->isleapyear = isleapyear;
+    dta->isleapyear = (int32)isleapyear;
     dta->daysinmonth = na_cumulativemonthstartdays[2 * (r + 1) + dta->isleapyear] - na_cumulativemonthstartdays[2 * r + dta->isleapyear];
     dta->yearsign = (dts->year < 0)?-1:+1;
 

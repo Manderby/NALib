@@ -13,6 +13,15 @@ correct, complete or final.
 
 
 
+- Renamed several functions with base types to u, i, f and d and Arrays to v.
+- NABufInt has been replaced with NAInt.
+- Mand NABuf use NAInt again instead of int64
+- Changed the isleapyear of NADateTimeAttribute to an uint32.
+- Renamed naGetDateTimeDiff to naGetDateTimeDifference.
+- Made some .h Files 80 characters wide again.
+- Added newest leap second information according to bulletin C 53.
+
+
 Version 17 (first published 2017-January-05):
 ==============================================
 
@@ -44,6 +53,7 @@ Other things:
 - Renamed NAFunc to NAAccessor and NAMutator. Removed NA_NULLFUNC.
 - Added naMakeListIteratorModifier aside the Accessor and Mutator.
 - Added some more debugging checks
+- Added NAMoney.
 - Removed some security code sanity check warnings on windows but not all.
 
 
@@ -65,7 +75,7 @@ Other things:
 - Added naMakeRectS, naMakeRectSE, naMakeRectiS and naMakeRectiSE
 - Heap Shrinking is not performed automatically anymore. Added
   naShrinkHeapIfNecessary.
-- Added a flag NA_RUNTIME_USES_NEW_DELETE to test the runtime
+- Added a flag NA_RUNTIME_USES_MEMORY_POOLS to test the runtime
 - Added a non-fully functional check if memory gets allocated in the
   main thread.
 - Revisited the UI. Better but far from fully functional.

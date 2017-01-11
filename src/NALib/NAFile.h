@@ -27,12 +27,9 @@
 //
 // New types and macros introduced:
 // NAFilesize:          The file size integer. Guaranteed to be signed. May be
-//                      32 or 64 bits depending on system compiled for. This is
-//                      different to the NABufInt type which is 64 bits always.
-//                      It is (regarding the currently supported systems) the
-//                      same as NAInt but we make the distinction anyway, as
-//                      some systems may define disk access with a greater
-//                      number of bits than addresses in memory.
+//                      32 or 64 bits depending on system compiled for. Note
+//                      that it may differ from NAInt which can be 32 or 64
+//                      bits too depending on the system.
 // NA_FILESIZE_BITS and NA_FILESIZE_MAX     Two additional macros
 //                      storing the bits needed for a file byteoffset.
 // NAFileMode:          The filesystem permission mode. On Windows corresponds
@@ -173,7 +170,9 @@ NA_IAPI void naSeekFileRelative(NAFile* file, NAFilesize byteoffset);
 // files or with any kind of buffers.
 //
 // Returns the number of bytes read.
-NA_IAPI NAFilesize naReadFileBytes(NAFile* file, void* buf, NAFilesize bytesize);
+NA_IAPI NAFilesize naReadFileBytes( NAFile* file,
+                                      void* buf,
+                                 NAFilesize bytesize);
 
 // Writes the given number of bytes from ptr to the file without further
 // manipulation. The buffer must be big enough, no overflow check is made.
@@ -182,7 +181,9 @@ NA_IAPI NAFilesize naReadFileBytes(NAFile* file, void* buf, NAFilesize bytesize)
 // writing files with any kind of buffers.
 //
 // Returns the number of bytes written.
-NA_IAPI NAFilesize naWriteFileBytes(NAFile* file, const void* ptr, NAFilesize bytesize);
+NA_IAPI NAFilesize naWriteFileBytes(  NAFile* file,
+                                  const void* ptr,
+                                   NAFilesize bytesize);
 
 
 // Creates or fills an NAByteArray or an NAString by reading the given number

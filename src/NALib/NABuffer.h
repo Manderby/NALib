@@ -49,9 +49,6 @@
 // The full type definition is in the file "NABufferII.h"
 typedef struct NABuffer NABuffer;
 
-// NABufInt must be 64 bits at all times!
-typedef int64 NABufInt;
-
 
 // The different flushing-behaviours. Only useful when writing to files.
 typedef enum{
@@ -83,7 +80,7 @@ NA_API NABuffer* naInitBufferWithFile(NABuffer* buffer,
 NA_API NABuffer* naInitBufferWithBufferExtraction(
                                                      NABuffer* buffer,
                                                      NABuffer* srcbuffer,
-                                                         NABufInt bytesize);
+                                                      NAInt bytesize);
 
 
 
@@ -123,16 +120,16 @@ NA_API NABuffer* naInitBuffer(NABuffer* buffer);
 //                                            const char* filename,
 //                                              NAFileMode mode);
 //
-//// Creates buffers outputting to the stdout and stderr. Autoflush ist set
-//// to text.
-//// Note that in contrast to other appending files (see naOpenFileForAppending),
-//// the binary converter is initialized and set to native for all standard
-//// channels.
-//NA_API NABuffer* naInitBufferOutputtingToStdout(NABuffer* buffer);
-//NA_API NABuffer* naInitBufferOutputtingToStderr(NABuffer* buffer);
-//// Creates a buffer whose contents will get lost in the Void. But beware! They
-//// will be buffered according to the autoflush setting.
-//NA_API NABuffer* naInitBufferOutputtingToVoid(NABuffer* buffer);
+// Creates buffers outputting to the stdout and stderr. Autoflush ist set
+// to text.
+// Note that in contrast to other appending files (see naOpenFileForAppending),
+// the binary converter is initialized and set to native for all standard
+// channels.
+NA_API NABuffer* naInitBufferOutputtingToStdout(NABuffer* buffer);
+NA_API NABuffer* naInitBufferOutputtingToStderr(NABuffer* buffer);
+// Creates a buffer whose contents will get lost in the Void. But beware! They
+// will be buffered according to the autoflush setting.
+NA_API NABuffer* naInitBufferOutputtingToVoid(NABuffer* buffer);
 
 
 // Clears the buffer. Flushes the buffer if necessary and closes the file.
@@ -157,8 +154,8 @@ NA_API void naVoidBuffer(NABuffer* buffer);
 //
 // Returns the buffer kind or whether the buffer is finite. Buffers kinds are
 // either readable or writable. Only readable buffers can be finite. Finite
-// buffers are bound (for example by the size of a file in bytes), whereas in-finite
-// buffers have a (virtually) infinite amount of bytes available.
+// buffers are bound (for example by the size of a file in bytes), whereas
+// in-finite buffers have a (virtually) infinite amount of bytes available.
 NA_API NABool naCanBufferSeek(const NABuffer* buffer);
 NA_API NABool naCanBufferExtend(const NABuffer* buffer);
 NA_API NABool naHasBufferDeterminedBytesize(const NABuffer* buffer);
@@ -166,12 +163,12 @@ NA_API NABool naHasBufferDeterminedBytesize(const NABuffer* buffer);
 
 // Returns current reading or writing position in absolute buffer bytesize.
 // Will return 0 for both if the buffer has nothing in it yet.
-NA_API NABufInt     naGetBufferCurOffsetAbsolute(const NABuffer* buffer);
+NA_API NAInt     naGetBufferCurOffsetAbsolute(const NABuffer* buffer);
 
-// Returns the size of the buffer in byte. Will compute the size if not known until
-// now. Beware: After a call to this function, the buffer size is fixed!
+// Returns the size of the buffer in byte. Will compute the size if not known
+// until now. Beware: After a call to this function, the buffer size is fixed!
 // Determines the filesize if the source of the buffer is a file.
-NA_API NABufInt naDetermineBufferBytesize(NABuffer* buffer);
+NA_API NAInt naDetermineBufferBytesize(NABuffer* buffer);
 
 // Returns true if the buffer has no more bytes to read. Only useful for
 // finite buffers. This is the function you should use to check if opening
@@ -223,12 +220,13 @@ NA_API void naSetBufferSecure(NABuffer* buffer, NABool secure);
 // Relative: offset denotes the address relative to the current offset.
 NA_API NABool naIsBufferEmpty(const NABuffer* buffer);
 
-NA_API void naSeekBufferAbsolute(NABuffer* buffer, NABufInt offset);
-NA_API void naSeekBufferLocal(NABuffer* buffer, NABufInt offset);
-NA_API void naSeekBufferRelative(NABuffer* buffer, NABufInt offset);
+NA_API void naSeekBufferAbsolute(NABuffer* buffer, NAInt offset);
+NA_API void naSeekBufferLocal(NABuffer* buffer, NAInt offset);
+NA_API void naSeekBufferRelative(NABuffer* buffer, NAInt offset);
 
-
-NA_API void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum);
+// Accumulates all bytes of the given buffer to the given checksum.
+NA_API void naAccumulateBufferToChecksum( NABuffer* buffer,
+                                        NAChecksum* checksum);
 
 
 
@@ -244,40 +242,42 @@ NA_API void naReadBuffer (NABuffer* buffer, NAFilesize bytecount);
 // in buf. buf must be big enough, no overflow check is made.
 //
 // This function is NOT endianness- and NOT line-endings-aware!
-NA_API void naReadBufferBytes (NABuffer* buffer, void* buf, NABufInt bytesize);
-NA_API NAByteArray* naInitByteArrayFromBufferInput(NAByteArray* array, NABuffer* buffer, NABufInt bytesize);
+NA_API void naReadBufferBytes (NABuffer* buffer, void* buf, NAInt bytesize);
+//NA_API NAByteArray* naInitByteArrayFromBufferInput(NAByteArray* array,
+//                                                      NABuffer* buffer,
+//                                                       NAInt bytesize);
 
 NA_API NABool naReadBufferBit (NABuffer* buffer);
-NA_API uint32 naReadBufferBits (NABuffer* buffer, NABufInt count);
+NA_API NAUInt naReadBufferBits (NABuffer* buffer, uint8 count);
 
 NA_API void naPadBufferReadBits(NABuffer*buffer);
 
 // Read different basic datatypes as binary values.
 // These functions ARE endianness-aware!
-NA_API int8   naReadBufferInt8       (NABuffer* buffer);
-NA_API int16  naReadBufferInt16      (NABuffer* buffer);
-NA_API int32  naReadBufferInt32      (NABuffer* buffer);
-NA_API int64  naReadBufferInt64      (NABuffer* buffer);
-NA_API uint8  naReadBufferUInt8      (NABuffer* buffer);
-NA_API uint16 naReadBufferUInt16     (NABuffer* buffer);
-NA_API uint32 naReadBufferUInt32     (NABuffer* buffer);
-NA_API uint64 naReadBufferUInt64     (NABuffer* buffer);
-NA_API float  naReadBufferFloat      (NABuffer* buffer);
-NA_API double naReadBufferDouble     (NABuffer* buffer);
+NA_API int8   naReadBufferi8 (NABuffer* buffer);
+NA_API int16  naReadBufferi16(NABuffer* buffer);
+NA_API int32  naReadBufferi32(NABuffer* buffer);
+NA_API int64  naReadBufferi64(NABuffer* buffer);
+NA_API uint8  naReadBufferu8 (NABuffer* buffer);
+NA_API uint16 naReadBufferu16(NABuffer* buffer);
+NA_API uint32 naReadBufferu32(NABuffer* buffer);
+NA_API uint64 naReadBufferu64(NABuffer* buffer);
+NA_API float  naReadBufferf  (NABuffer* buffer);
+NA_API double naReadBufferd  (NABuffer* buffer);
 
-// Read whole arrays of basic datatypes. The given buf argument must be
+// Read whole arrays of basic datatypes. The given dst buf argument must be
 // big enough to hold count items. No overflow check will be performed.
 // These functions ARE endianness-aware!
-NA_API void   naReadBufferArrayInt8  (NABuffer* buffer, int8*   buf, NABufInt count);
-NA_API void   naReadBufferArrayInt16 (NABuffer* buffer, int16*  buf, NABufInt count);
-NA_API void   naReadBufferArrayInt32 (NABuffer* buffer, int32*  buf, NABufInt count);
-NA_API void   naReadBufferArrayInt64 (NABuffer* buffer, int64*  buf, NABufInt count);
-NA_API void   naReadBufferArrayUInt8 (NABuffer* buffer, uint8*  buf, NABufInt count);
-NA_API void   naReadBufferArrayUInt16(NABuffer* buffer, uint16* buf, NABufInt count);
-NA_API void   naReadBufferArrayUInt32(NABuffer* buffer, uint32* buf, NABufInt count);
-NA_API void   naReadBufferArrayUInt64(NABuffer* buffer, uint64* buf, NABufInt count);
-NA_API void   naReadBufferArrayFloat (NABuffer* buffer, float*  buf, NABufInt count);
-NA_API void   naReadBufferArrayDouble(NABuffer* buffer, double* buf, NABufInt count);
+NA_API void naReadBufferi8v (NABuffer* buffer, int8*   dst, NAInt count);
+NA_API void naReadBufferi16v(NABuffer* buffer, int16*  dst, NAInt count);
+NA_API void naReadBufferi32v(NABuffer* buffer, int32*  dst, NAInt count);
+NA_API void naReadBufferi64v(NABuffer* buffer, int64*  dst, NAInt count);
+NA_API void naReadBufferu8v (NABuffer* buffer, uint8*  dst, NAInt count);
+NA_API void naReadBufferu16v(NABuffer* buffer, uint16* dst, NAInt count);
+NA_API void naReadBufferu32v(NABuffer* buffer, uint32* dst, NAInt count);
+NA_API void naReadBufferu64v(NABuffer* buffer, uint64* dst, NAInt count);
+NA_API void naReadBufferfv  (NABuffer* buffer, float*  dst, NAInt count);
+NA_API void naReadBufferdv  (NABuffer* buffer, double* dst, NAInt count);
 
 
 
@@ -289,35 +289,40 @@ NA_API void   naReadBufferArrayDouble(NABuffer* buffer, double* buf, NABufInt co
 // manipulation. buf must be big enough, no overflow check is made.
 //
 // This function is NOT endianness- and NOT line-endings-aware!
-NA_DEF void naWriteBufferBytes(NABuffer* buffer, const void* ptr, NABufInt bytesize);
+NA_DEF void naWriteBufferBytes(               NABuffer* buffer,
+                                            const void* ptr,
+                                               NAInt bytesize);
 // Writes an NAByteArray to the file. This function is NOT endianness-aware.
-NA_API void naWriteBufferByteArray(NABuffer* buffer, const NAByteArray* bytearray);
+NA_API void naWriteBufferByteArray(           NABuffer* buffer,
+                                     const NAByteArray* bytearray);
 // Writes the given string to the file. If the string is null-terminated, that
 // NULL will NOT be written to the file. Newline characters are NOT converted!
 // The string will automatically be converted to the text encoding of the file.
-NA_API void naWriteBufferString(    NABuffer* buffer,
-                         const NAString* string);
+NA_API void naWriteBufferString(              NABuffer* buffer,
+                                        const NAString* string);
 // Writes a string to the file which can be written like a printf format. You
 // can also use this function just to write a simple const char* string. The
 // encoding is UTF-8.
-NA_API void naWriteBufferStringWithFormat(NABuffer* buffer,
-                              const NAUTF8Char* format,
-                                                ...);
+NA_API void naWriteBufferStringWithFormat(    NABuffer* buffer,
+                                      const NAUTF8Char* format,
+                                                        ...);
 // Same as naWriteFileStringWithFormat but with an existing va_list argument.
 // The argumentlist argument will not be altered by this function. The encoding
 // is UTF-8.
-NA_API void naWriteBufferStringWithArguments(NABuffer* buffer,
-                                 const NAUTF8Char* format,
-                                           va_list argumentlist);
-
-
-NA_API void naWriteBufferBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer, NABufInt bytesize);
-
-
+NA_API void naWriteBufferStringWithArguments( NABuffer* buffer,
+                                      const NAUTF8Char* format,
+                                                va_list argumentlist);
+// Writes the given size in bytes from the scr buffer to the dst buffer.
+// Reading and writing occurs at the current position of the buffers.
+NA_API void naWriteBufferBuffer(              NABuffer* dstbuffer,
+                                              NABuffer* srcbuffer,
+                                               NAInt bytesize);
 // Reads bytes from distance bytes backwards of the current position and
 // stores it at the current position. Does it for bytesize successive bytes.
 // Note: The sections may overlap!
-NA_API void naRepeatBufferBytes(NABuffer* buffer, NABufInt distance, NABufInt bytesize);
+NA_API void naRepeatBufferBytes(              NABuffer* buffer,
+                                               NAInt distance,
+                                               NAInt bytesize);
 
 
 
@@ -328,31 +333,31 @@ NA_API void naRepeatBufferBytes(NABuffer* buffer, NABufInt distance, NABufInt by
 
 
 // Writes some standard data type. These functions ARE endianness-aware!
-NA_API void naWriteBufferInt8  (NABuffer* buffer, int8   value);
-NA_API void naWriteBufferInt16 (NABuffer* buffer, int16  value);
-NA_API void naWriteBufferInt32 (NABuffer* buffer, int32  value);
-NA_API void naWriteBufferInt64 (NABuffer* buffer, int64  value);
-NA_API void naWriteBufferUInt8 (NABuffer* buffer, uint8  value);
-NA_API void naWriteBufferUInt16(NABuffer* buffer, uint16 value);
-NA_API void naWriteBufferUInt32(NABuffer* buffer, uint32 value);
-NA_API void naWriteBufferUInt64(NABuffer* buffer, uint64 value);
-NA_API void naWriteBufferFloat (NABuffer* buffer, float  value);
-NA_API void naWriteBufferDouble(NABuffer* buffer, double value);
+NA_API void naWriteBufferi8 (NABuffer* buffer, int8   value);
+NA_API void naWriteBufferi16(NABuffer* buffer, int16  value);
+NA_API void naWriteBufferi32(NABuffer* buffer, int32  value);
+NA_API void naWriteBufferi64(NABuffer* buffer, int64  value);
+NA_API void naWriteBufferu8 (NABuffer* buffer, uint8  value);
+NA_API void naWriteBufferu16(NABuffer* buffer, uint16 value);
+NA_API void naWriteBufferu32(NABuffer* buffer, uint32 value);
+NA_API void naWriteBufferu64(NABuffer* buffer, uint64 value);
+NA_API void naWriteBufferf  (NABuffer* buffer, float  value);
+NA_API void naWriteBufferd  (NABuffer* buffer, double value);
 
 
-// Writes whole arrays of basic datatypes. The buffer is expected to hold
+// Writes whole arrays of basic datatypes. The src buffer is expected to hold
 // count items. No overflow check will be performed.
 // These functions ARE endianness-aware!
-NA_API void naWriteBufferArrayInt8  (NABuffer* buffer, const int8*   buf, NABufInt count);
-NA_API void naWriteBufferArrayInt16 (NABuffer* buffer, const int16*  buf, NABufInt count);
-NA_API void naWriteBufferArrayInt32 (NABuffer* buffer, const int32*  buf, NABufInt count);
-NA_API void naWriteBufferArrayInt64 (NABuffer* buffer, const int64*  buf, NABufInt count);
-NA_API void naWriteBufferArrayUInt8 (NABuffer* buffer, const uint8*  buf, NABufInt count);
-NA_API void naWriteBufferArrayUInt16(NABuffer* buffer, const uint16* buf, NABufInt count);
-NA_API void naWriteBufferArrayUInt32(NABuffer* buffer, const uint32* buf, NABufInt count);
-NA_API void naWriteBufferArrayUInt64(NABuffer* buffer, const uint64* buf, NABufInt count);
-NA_API void naWriteBufferArrayFloat (NABuffer* buffer, const float*  buf, NABufInt count);
-NA_API void naWriteBufferArrayDouble(NABuffer* buffer, const double* buf, NABufInt count);
+NA_API void naWriteBufferi8v (NABuffer* buffer, const int8*   src, NAInt count);
+NA_API void naWriteBufferi16v(NABuffer* buffer, const int16*  src, NAInt count);
+NA_API void naWriteBufferi32v(NABuffer* buffer, const int32*  src, NAInt count);
+NA_API void naWriteBufferi64v(NABuffer* buffer, const int64*  src, NAInt count);
+NA_API void naWriteBufferu8v (NABuffer* buffer, const uint8*  src, NAInt count);
+NA_API void naWriteBufferu16v(NABuffer* buffer, const uint16* src, NAInt count);
+NA_API void naWriteBufferu32v(NABuffer* buffer, const uint32* src, NAInt count);
+NA_API void naWriteBufferu64v(NABuffer* buffer, const uint64* src, NAInt count);
+NA_API void naWriteBufferfv  (NABuffer* buffer, const float*  src, NAInt count);
+NA_API void naWriteBufferdv  (NABuffer* buffer, const double* src, NAInt count);
 
 
 
@@ -368,14 +373,14 @@ NA_API void naWriteBufferNewLine(NABuffer* buffer);
 // Same as the functions above but automatically appends a newline character
 // at the end. The newline character is dependent on the files setting. You can
 // change it using naSetFileNewLine.
-NA_API void naWriteBufferLine(             NABuffer* buffer,
-                                 const NAString* string);
-NA_API void naWriteBufferLineWithFormat(   NABuffer* buffer,
-                               const NAUTF8Char* format,
-                                                 ...);
-NA_API void naWriteBufferLineWithArguments(NABuffer* buffer,
-                               const NAUTF8Char* format,
-                                         va_list argumentlist);
+NA_API void naWriteBufferLine(              NABuffer* buffer,
+                                      const NAString* string);
+NA_API void naWriteBufferLineWithFormat(    NABuffer* buffer,
+                                    const NAUTF8Char* format,
+                                                      ...);
+NA_API void naWriteBufferLineWithArguments( NABuffer* buffer,
+                                    const NAUTF8Char* format,
+                                              va_list argumentlist);
 
 
 

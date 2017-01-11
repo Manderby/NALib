@@ -381,7 +381,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   uint32 adler;
 
   // First, read RFC 1950
-  NABufInt zbuffersize = naDetermineBufferBytesize(input) - 6;
+  NAInt zbuffersize = naDetermineBufferBytesize(input) - 6;
   // The 6 Bytes are the CMF and FLG Bytes as well as the Adler number.
   // If there is a DICTID, zbuffersize will be reduced by 4 more bytes later.
   
@@ -389,7 +389,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
     if(naGetBufferEndianness(input) != NA_ENDIANNESS_NETWORK)
       naError("naInitBufferFromDeflateDecompression", "Input buffer should be big endianed");
   #endif
-  compressionmethodflags = naReadBufferUInt8(input);
+  compressionmethodflags = naReadBufferu8(input);
   compressionmethod = compressionmethodflags & 0x0f;
   #ifndef NDEBUG
     if(compressionmethod != 8)
@@ -401,7 +401,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
       naError("naInitBufferFromDeflateDecompression", "Window size too big");
   #endif
   windowsize = 1 << (compressioninfo + 8);
-  compressionadditionalflags = naReadBufferUInt8(input);
+  compressionadditionalflags = naReadBufferu8(input);
   flagcheck = compressionmethodflags * 256 + compressionadditionalflags;
   #ifndef NDEBUG
     if(flagcheck % 31)
@@ -419,14 +419,14 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   #endif
 
   if(haspresetdict){
-    dictadler = naReadBufferUInt32(input);
+    dictadler = naReadBufferu32(input);
     zbuffersize -= 4;
   }
   NA_UNUSED(dictadler);
 
   naInitBufferWithBufferExtraction(&zbuffer, input, zbuffersize);
   naReadBuffer(input, (NAFilesize)zbuffersize);
-  zbufferadler = naReadBufferUInt32(input);
+  zbufferadler = naReadBufferu32(input);
   
   // Now start RFC 1951
 
@@ -447,8 +447,8 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
       NAByte* tmpbuf;
 
       naPadBufferReadBits(&zbuffer);
-      len = naReadBufferUInt16(&zbuffer);
-      nlen = naReadBufferUInt16(&zbuffer);
+      len = naReadBufferu16(&zbuffer);
+      nlen = naReadBufferu16(&zbuffer);
       #ifndef NDEBUG
         if((uint16)len != (uint16)(~nlen))
         naError("naInitBufferFromDeflateDecompression", "Len and NLen do not match in one's complement");
@@ -480,7 +480,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
         uint16 dist;
         curcode = naDecodeHuffman(literalhuffman, &zbuffer);
         if(curcode < 256){
-          naWriteBufferUInt8(output, (uint8)curcode);
+          naWriteBufferu8(output, (uint8)curcode);
 //          printf("%u\n", (uint32)curcode);
         }else if(curcode == 256){
           break;
@@ -523,7 +523,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, N
 
   uint8 cmf;
   uint8 flg;
-  NABufInt bytesize;
+  NAInt bytesize;
   NAChecksum checksum;
   uint32 adler;
 
@@ -539,8 +539,8 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, N
   cmf = (7<<4 | 8);
   flg = (0 << 6 | 0 << 5);  // todo: That seems to be wrong.
   flg |= 31 - ((cmf * 256 + flg) % 31);
-  naWriteBufferUInt8(buffer, cmf);
-  naWriteBufferUInt8(buffer, flg);
+  naWriteBufferu8(buffer, cmf);
+  naWriteBufferu8(buffer, flg);
 
   // Now, for the actual content, we change to little endian due to RFC 1951!
   naSetBufferEndianness(buffer, NA_ENDIANNESS_LITTLE);
@@ -558,9 +558,9 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, N
       curbytesize = (uint16)bytesize;
       headbyte |= 1;
     }
-    naWriteBufferUInt8(buffer, headbyte);
-    naWriteBufferUInt16(buffer, curbytesize);
-    naWriteBufferUInt16(buffer, ~curbytesize);
+    naWriteBufferu8(buffer, headbyte);
+    naWriteBufferu16(buffer, curbytesize);
+    naWriteBufferu16(buffer, ~curbytesize);
     naWriteBufferBuffer(buffer, input, curbytesize);
     bytesize -= curbytesize;
   }
@@ -573,7 +573,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, N
   naAccumulateBufferToChecksum(input, &checksum);
   adler = naGetChecksumResult(&checksum);
   naClearChecksum(&checksum);
-  naWriteBufferUInt32(buffer, adler);
+  naWriteBufferu32(buffer, adler);
 }
 
 

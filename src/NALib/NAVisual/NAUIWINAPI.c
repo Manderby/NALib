@@ -818,8 +818,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 //  return rect;
 //}
 
-//#ifdef __gl_h_
-
+#if NA_CONFIG_COMPILE_OPENGL == 1
   NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
 	
     HWND hWnd;
@@ -881,8 +880,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
     SetWindowPos((HWND)naGetUIElementNativeID(openglview), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
   }
 
-
-//#endif
+#endif
 
 
 NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage){

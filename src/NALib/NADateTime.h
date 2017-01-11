@@ -50,23 +50,7 @@ typedef enum{
 
 
 
-
-#define NA_SECONDS_PER_MINUTE                (60LL)
-#define NA_MINUTES_PER_HOUR                  (60LL)
-#define NA_SECONDS_PER_HOUR                  (NA_SECONDS_PER_MINUTE * NA_MINUTES_PER_HOUR)
-#define NA_HOURS_PER_DAY                     (24LL)
-#define NA_SECONDS_PER_DAY                   (NA_SECONDS_PER_HOUR * NA_HOURS_PER_DAY)
-#define NA_MONTHS_PER_YEAR                   (12LL)
-#define NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR (NA_SECONDS_PER_DAY * (31LL+28LL+31LL+30LL+31LL+30LL))
-#define NA_SECONDS_JAN_TO_JUN_IN_LEAP_YEAR   (NA_SECONDS_PER_DAY * (31LL+29LL+31LL+30LL+31LL+30LL))
-#define NA_SECONDS_JUL_TO_DEC                (NA_SECONDS_PER_DAY * (31LL+31LL+30LL+31LL+30LL+31LL))
-#define NA_SECONDS_IN_NORMAL_YEAR            (NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR + NA_SECONDS_JUL_TO_DEC)
-#define NA_SECONDS_IN_LEAP_YEAR              (NA_SECONDS_JAN_TO_JUN_IN_LEAP_YEAR   + NA_SECONDS_JUL_TO_DEC)
-#define NA_SECONDS_IN_4_YEAR_PERIOD          (NA_SECONDS_IN_LEAP_YEAR + 3LL * NA_SECONDS_IN_NORMAL_YEAR)
-#define NA_SECONDS_IN_100_YEAR_PERIOD        (76LL * NA_SECONDS_IN_NORMAL_YEAR + 24LL * NA_SECONDS_IN_LEAP_YEAR)
-#define NA_SECONDS_IN_400_YEAR_PERIOD        (4LL * NA_SECONDS_IN_100_YEAR_PERIOD + NA_SECONDS_PER_DAY)
-
-// The macros above evaluate to the following numbers:
+// The following macros evaluate to the following numbers:
 // NA_SECONDS_PER_HOUR:                        3600
 // NA_SECONDS_PER_DAY:                        86400
 // NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR:   15638400
@@ -77,6 +61,35 @@ typedef enum{
 // NA_SECONDS_IN_4_YEAR_PERIOD:           126230400
 // NA_SECONDS_IN_100_YEAR_PERIOD:        3155673600
 // NA_SECONDS_IN_400_YEAR_PERIOD:       12622780800
+
+#define NA_SECONDS_PER_MINUTE \
+  (60LL)
+#define NA_MINUTES_PER_HOUR \
+  (60LL)
+#define NA_SECONDS_PER_HOUR \
+  (NA_SECONDS_PER_MINUTE * NA_MINUTES_PER_HOUR)
+#define NA_HOURS_PER_DAY \
+  (24LL)
+#define NA_SECONDS_PER_DAY \
+  (NA_SECONDS_PER_HOUR * NA_HOURS_PER_DAY)
+#define NA_MONTHS_PER_YEAR \
+  (12LL)
+#define NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR \
+  (NA_SECONDS_PER_DAY * (31LL+28LL+31LL+30LL+31LL+30LL))
+#define NA_SECONDS_JAN_TO_JUN_IN_LEAP_YEAR \
+  (NA_SECONDS_PER_DAY * (31LL+29LL+31LL+30LL+31LL+30LL))
+#define NA_SECONDS_JUL_TO_DEC \
+  (NA_SECONDS_PER_DAY * (31LL+31LL+30LL+31LL+30LL+31LL))
+#define NA_SECONDS_IN_NORMAL_YEAR \
+  (NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR + NA_SECONDS_JUL_TO_DEC)
+#define NA_SECONDS_IN_LEAP_YEAR \
+  (NA_SECONDS_JAN_TO_JUN_IN_LEAP_YEAR   + NA_SECONDS_JUL_TO_DEC)
+#define NA_SECONDS_IN_4_YEAR_PERIOD \
+  (NA_SECONDS_IN_LEAP_YEAR + 3LL * NA_SECONDS_IN_NORMAL_YEAR)
+#define NA_SECONDS_IN_100_YEAR_PERIOD \
+  (76LL * NA_SECONDS_IN_NORMAL_YEAR + 24LL * NA_SECONDS_IN_LEAP_YEAR)
+#define NA_SECONDS_IN_400_YEAR_PERIOD \
+  (4LL * NA_SECONDS_IN_100_YEAR_PERIOD + NA_SECONDS_PER_DAY)
 
 
 // This is the core time struct of NALib. It uses precisely 128 Bits and stores
@@ -106,7 +119,7 @@ typedef struct NADateTimeAttribute NADateTimeAttribute;
 struct NADateTimeAttribute{
   int32  yearsign;     // either +1 or -1
   int32  dayofyear;    // days since start of year, 0-indexed (Beware 1582!)
-  NABool isleapyear;   // true if current year is a leap year
+  int32  isleapyear;   // 1 if current year is a leap year, 0 otherwise
   int32  daysinmonth;  // number of days in this month (beware October 1582!)
   int32  weekday;      // 0 = Monday, 1 = Tuesday, ... 6 = Sunday
   int32  shiftsign;    // either +1 or -1
@@ -231,8 +244,10 @@ NA_IAPI void naCorrectDateTimeZone(NADateTime* datetime,
                                         int16 newshift,
                                        NABool summertime);
 
-// Returns the difference in time. The returned value is in seconds.
-NA_IAPI double naGetDateTimeDiff(const NADateTime* end, const NADateTime* start);
+// Returns the difference in time. The returned value is in seconds. The
+// returned value can be negative if end is before begin.
+NA_IAPI double naGetDateTimeDifference( const NADateTime* end,
+                                        const NADateTime* begin);
 // Adds the given difference to the datetime.
 NA_IAPI void naAddDateTimeDifference(NADateTime* datetime, double difference);
 

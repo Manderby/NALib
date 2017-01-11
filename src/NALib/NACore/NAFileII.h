@@ -203,6 +203,7 @@ NA_IDEF NAUTF8Char* naGetCwd(NAUTF8Char* buf, NAInt bufsize){
 // //////////////////////////////
 
 
+
 struct NAFile{
   int desc;   // The descriptor
 };

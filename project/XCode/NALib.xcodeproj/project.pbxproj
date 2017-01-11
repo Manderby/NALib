@@ -42,6 +42,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9057DFC01E213C920005E9EE /* NAConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAConfiguration.h; sourceTree = "<group>"; };
 		908950DC1D3A8D5300D7917D /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		908F9C5C1DAED3F300B1FFF2 /* todo.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = todo.txt; path = ../../doc/todo.txt; sourceTree = "<group>"; };
 		90920E221D4FDC7400369052 /* NALibChangelogV10_V20.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = NALibChangelogV10_V20.txt; path = ../../doc/NALibChangelogV10_V20.txt; sourceTree = "<group>"; };
@@ -183,6 +184,7 @@
 				B90C73A81D80B11E004A8B2D /* NAString.h */,
 				B90C73A91D80B11E004A8B2D /* NAStruct */,
 				B90C73BC1D80B11E004A8B2D /* NASystem.h */,
+				9057DFC01E213C920005E9EE /* NAConfiguration.h */,
 				B90C73BD1D80B11E004A8B2D /* NAThreading.h */,
 				B90C73BE1D80B11E004A8B2D /* NAUI.h */,
 				B90C73BF1D80B11E004A8B2D /* NAURL.h */,
