@@ -12,6 +12,9 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+- Extended NAGrowingSpace with Pop-functionality, hence making it an
+  infinitely sized Stack. Renamed it to NAStack. The previous NAStack
+  has been deleted.
 
 - Renamed several functions with base types to u, i, f and d and Arrays to v.
 - NABufInt has been replaced with NAInt.

@@ -16,7 +16,8 @@ Version 18:
 - Make NAArray simpler without subarrays. Add Iterator
 - Review Remaining Iterators
 - Timezones
-- Rewrite GrowingSpace as Stack
+- Add ARM
+- Make test files
 
 Version 19:
 - Re-Integrate NAMap2D
