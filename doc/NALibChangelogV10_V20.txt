@@ -15,6 +15,7 @@ correct, complete or final.
 - Extended NAGrowingSpace with Pop-functionality, hence making it an
   infinitely sized Stack. Renamed it to NAStack. The previous NAStack
   has been deleted.
+- Re-added tests to the package. Shall be used as example implementations too.
 
 - Renamed several functions with base types to u, i, f and d and Arrays to v.
 - NABufInt has been replaced with NAInt.
@@ -22,6 +23,7 @@ correct, complete or final.
 - Changed the isleapyear of NADateTimeAttribute to an uint32.
 - Renamed naGetDateTimeDiff to naGetDateTimeDifference.
 - Made some .h Files 80 characters wide again.
+- Added signed integer macros to NASystem to ensure consistency.
 - Added newest leap second information according to bulletin C 53.
 
 

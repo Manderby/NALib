@@ -46,10 +46,11 @@ NA_HIDEF NAUInt naGetStackArrayBaseIndex(const NAStack* stack, NAInt indx){
   return (NA_ONE << (indx + stack->minimalexp)) - (NA_ONE << stack->minimalexp);
 }
 
+
 // Returns the total amount of elements which can be stored with all arrays
 // up including the one with the given index.
 NA_HIDEF NAUInt naGetStackTotalCount(const NAStack* stack, NAInt indx){
-  return (NA_ONE << (indx + 1 + stack->minimalexp)) - (NA_ONE << stack->minimalexp);
+  return naGetStackArrayBaseIndex(stack, indx + 1);
 }
 
 
@@ -185,6 +186,12 @@ NA_IDEF NAUInt naGetStackCount(const NAStack* stack){
 }
 
 
+
+// Returns the total amount of elements which can be stored with all arrays
+// up including the one with the given index.
+NA_IDEF NAUInt naGetStackReservedCount(const NAStack* stack){
+  return naGetStackTotalCount(stack, naGetListCount(&(stack->arrays)));
+}
 
 
 

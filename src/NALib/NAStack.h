@@ -82,6 +82,8 @@ NA_IAPI void naShrinkStackIfNecessary(NAStack* stack);
 
 // Returns the number of elements actually stored in the stack
 NA_IAPI NAUInt naGetStackCount(const NAStack* stack);
+// Returns the number of elements reserved in memory.
+NA_IAPI NAUInt naGetStackReservedCount(const NAStack* stack);
 
 
 // //////////////////////////

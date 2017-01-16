@@ -48,6 +48,11 @@
 // Note that when expecting the endianness as an argument, it will have the
 // type NAInt. Unfortunately, these macros can not be defined as enums.
 
+// The various signed integer encodings:
+#define NA_SIGNED_INTEGER_ENCODING_UNKNOWN          0
+#define NA_SIGNED_INTEGER_ENCODING_SIGN_MAGNITUDE   1
+#define NA_SIGNED_INTEGER_ENCODING_ONES_COMPLEMENT  2
+#define NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT  3
 
 // Figuring out what system this is. The following macros will be defined:
 //
@@ -287,12 +292,13 @@
 // We test what encoding is used for negative integers. With this knowledge,
 // certain tasks might be speeded up a bit.
 #if   (-1 & 3) == 3
-  #define NA_SIGNED_INTEGER_USES_TWOS_COMPLEMENT
+  #define NA_SIGNED_INTEGER_ENCODING NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
 #elif (-1 & 3) == 2
-  #define NA_SIGNED_INTEGER_USES_ONES_COMPLEMENT
+  #define NA_SIGNED_INTEGER_ENCODING NA_SIGNED_INTEGER_ENCODING_ONES_COMPLEMENT
 #elif (-1 & 3) == 1
-  #define NA_SIGNED_INTEGER_USES_SIGN_MAGNITUDE
+  #define NA_SIGNED_INTEGER_ENCODING NA_SIGNED_INTEGER_ENCODING_SIGN_MAGNITUDE
 #else
+  #define NA_SIGNED_INTEGER_ENCODING NA_SIGNED_INTEGER_ENCODING_UNKNOWN
   #warning "Invalid signed integer encoding. NALib might not work properly."
 #endif
 
@@ -390,8 +396,8 @@
   #error "NALib can not work properly with chars unequal 8 bits."
 #endif
 
-// Also, we want to know what the default bytesize of an int is. It will be stored
-// in the NA_SYSTEM_INT_BITS macro. This might be different to what the
+// Also, we want to know what the default bytesize of an "int" is. It will be
+// stored in the NA_SYSTEM_INT_BITS macro. This might be different to what the
 // NA_SYSTEM_ADDRESS_BITS is.
 #if UINT_MAX == NA_UINT32_MAX
   #define NA_SYSTEM_INT_BITS 32

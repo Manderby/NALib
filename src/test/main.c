@@ -9,26 +9,21 @@
 
 #include <stdio.h>
 #include "../NALib/NASystem.h"
+#include "../NALib/NAMemory.h"
 
 
 void testSystem(void);
+void testStack(void);
 
 
 
-
-
-//#include "../NALib/NAString.h"
-//#include "../NALib/NAPNG.h"
-//#include "../NALib/NAMemory.h"
-//#include "../NALib/NADateTime.h"
-//
-//#define TESTCOUNT 1000000
 
 int main(void){
   testSystem();
   
-//  naStartRuntime();
-//  naStopRuntime();
+  naStartRuntime();
+    testStack();
+  naStopRuntime();
   
   printf("\nPress enter to quit.\n");
   fgetc(stdin);

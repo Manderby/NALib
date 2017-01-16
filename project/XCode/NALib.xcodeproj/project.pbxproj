@@ -28,6 +28,7 @@
 		9087F7081E2C30AB00867CA7 /* NAUIWINAPI.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F6F41E2C30AB00867CA7 /* NAUIWINAPI.c */; };
 		9087F70A1E2C30D000867CA7 /* testSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F7091E2C30D000867CA7 /* testSystem.c */; };
 		9087F70C1E2C313C00867CA7 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F70B1E2C313C00867CA7 /* main.c */; };
+		9087F70E1E2C39A500867CA7 /* testStack.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F70D1E2C39A500867CA7 /* testStack.c */; };
 		90B456461BC80AD300A53BDC /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 90B456451BC80AD300A53BDC /* Cocoa.framework */; };
 /* End PBXBuildFile section */
 
@@ -122,6 +123,7 @@
 		9087F6F51E2C30AB00867CA7 /* NAUIWINAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAUIWINAPI.h; sourceTree = "<group>"; };
 		9087F7091E2C30D000867CA7 /* testSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testSystem.c; sourceTree = "<group>"; };
 		9087F70B1E2C313C00867CA7 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		9087F70D1E2C39A500867CA7 /* testStack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testStack.c; sourceTree = "<group>"; };
 		908F9C5C1DAED3F300B1FFF2 /* todo.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = todo.txt; path = ../../doc/todo.txt; sourceTree = "<group>"; };
 		90920E221D4FDC7400369052 /* NALibChangelogV10_V20.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = NALibChangelogV10_V20.txt; path = ../../doc/NALibChangelogV10_V20.txt; sourceTree = "<group>"; };
 		90920E231D4FDC7400369052 /* Readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = Readme.txt; path = ../../doc/Readme.txt; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 			isa = PBXGroup;
 			children = (
 				9087F70B1E2C313C00867CA7 /* main.c */,
+				9087F70D1E2C39A500867CA7 /* testStack.c */,
 				9087F7091E2C30D000867CA7 /* testSystem.c */,
 			);
 			name = test;
@@ -364,6 +367,7 @@
 				9087F7001E2C30AB00867CA7 /* NAOctTree.c in Sources */,
 				9087F7041E2C30AB00867CA7 /* NAPNG.c in Sources */,
 				9087F6F81E2C30AB00867CA7 /* NAMemory.c in Sources */,
+				9087F70E1E2C39A500867CA7 /* testStack.c in Sources */,
 				9087F6F91E2C30AB00867CA7 /* NASystem.c in Sources */,
 				9087F7021E2C30AB00867CA7 /* NAString.c in Sources */,
 				9087F70C1E2C313C00867CA7 /* main.c in Sources */,
