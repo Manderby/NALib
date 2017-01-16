@@ -53,8 +53,8 @@ typedef struct NAStackIterator NAStackIterator;
 
 // Creates a new NAStack with the desired type size. The memory will grow
 // exponentially over time. With the minimalcount parameter, you can define,
-// where the exponential growth shall start. The minimalcount parameter must
-// be a power of 2 and at least 2. The values 0 and 1 are not allowed.
+// where the exponential growth shall start. NAStack will always have at least
+// that amount of memory prepared. The values 0 and 1 are not allowed.
 NA_IAPI NAStack* naInitStack( NAStack* stack,
                                 NAUInt typesize,
                                 NAUInt minimalcount);
@@ -75,16 +75,18 @@ NA_IAPI void* naPushStack(NAStack* stack);
 NA_IAPI void* naTopStack(NAStack* stack);
 NA_IAPI void* naPopStack(NAStack* stack);
 
-// The stack will never shrink automatically. If you want the stack to shrink,
-// you need to call this function. It may choose to not shrink the stack based
-// on the rule that the stack must be at least three quarter empty.
-NA_IAPI void naShrinkStackIfNecessary(NAStack* stack);
-
 // Returns the number of elements actually stored in the stack
 NA_IAPI NAUInt naGetStackCount(const NAStack* stack);
 // Returns the number of elements reserved in memory.
 NA_IAPI NAUInt naGetStackReservedCount(const NAStack* stack);
 
+// The stack will never shrink automatically. If you want the stack to shrink,
+// you need to call this function. The stack will be shrinked so that not more
+// than three quarters of the stack are unused. If you choose aggressive to be
+// NA_TRUE, the stack will be shrinked even more so that not more than half
+// of the stack are unused. If you observe an unusual high amount of repetitive
+// memory allocations, you may want to set aggressive to NA_FALSE.
+NA_IAPI void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive);
 
 // //////////////////////////
 // Iteration functions
@@ -97,9 +99,9 @@ NA_IAPI NAStackIterator naMakeStackIteratorAccessor(const NAStack* stack);
 NA_IAPI NAStackIterator naMakeStackIteratorMutator(const NAStack* stack);
 NA_IAPI void naClearStackIterator(NAStackIterator* iterator);
 
-// Iterates through the stack by the given number of steps. Returns NA_FALSE,
-// if there are no more elements.
-NA_IAPI NABool      naIterateStack(NAStackIterator* iterator, NAInt step);
+// Iterates through the stack from base to top. Returns NA_FALSE if there are
+// no more elements.
+NA_IAPI NABool      naIterateStack(NAStackIterator* iterator);
 
 // Returns a pointer to the current element. Note that if you store pointers
 // you will get a pointer to a pointer. If you want a pointer directly, just

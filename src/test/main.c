@@ -26,7 +26,9 @@ int main(void){
   naStopRuntime();
   
   printf("\nPress enter to quit.\n");
-  fgetc(stdin);
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    fgetc(stdin);
+  #endif
   return 0;
 }
 
