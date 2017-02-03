@@ -64,27 +64,6 @@ typedef enum{
 
 
 // //////////////////////
-// INPUT BUFFERS
-//
-// Creates a new buffer which will automatically read from the given file.
-NA_API NABuffer* naInitBufferWithFile(NABuffer* buffer,
-                                            const char* filename);
-// Creates a new buffer which will read the given ByteArray.
-//NA_API NABuffer* naInitBufferInputtingFromByteArray(NABuffer* buffer,
-//                                            const NAByteArray* array);
-
-// Creates a new buffer which has the same settings (endianness, line ending)
-// as srcbuffer but which only looks at the given number of bytes and can only
-// input data, not write. srcbuffer will automatically advance the read pointer
-// by the number of bytes.
-NA_API NABuffer* naInitBufferWithBufferExtraction(
-                                                     NABuffer* buffer,
-                                                     NABuffer* srcbuffer,
-                                                      NAInt bytesize);
-
-
-
-// //////////////////////
 // OUTPUT BUFFERS
 //
 // Reading:   Opens an existing file and places the read pointer to the first
@@ -115,6 +94,27 @@ NA_API NABuffer* naInitBufferWithBufferExtraction(
 // Creates a new output buffer which will accumulate everything you write. You
 // can ask the buffer to flush its contents to a destination later.
 NA_API NABuffer* naInitBuffer(NABuffer* buffer);
+
+NA_API NABuffer* naInitBufferWithConstBytes(NABuffer* buffer, const NAByte* bytes, NAInt bytesize);
+
+// Creates a new buffer which will automatically read from the given file.
+NA_API NABuffer* naInitBufferWithFile(NABuffer* buffer,
+                                            const char* filename);
+// Creates a new buffer which will read the given ByteArray.
+//NA_API NABuffer* naInitBufferInputtingFromByteArray(NABuffer* buffer,
+//                                            const NAByteArray* array);
+
+// Creates a new buffer which has the same settings (endianness, line ending)
+// as srcbuffer but which only looks at the given number of bytes and can only
+// input data, not write. srcbuffer will automatically advance the read pointer
+// by the number of bytes.
+NA_API NABuffer* naInitBufferWithBufferExtraction(
+                                                     NABuffer* buffer,
+                                                     NABuffer* srcbuffer,
+                                                      NAInt bytesize);
+
+
+
 // Creates a new buffer which will automatically write to the given file.
 //NA_API NABuffer* naInitBufferOutputtingToFile(NABuffer* buffer,
 //                                            const char* filename,

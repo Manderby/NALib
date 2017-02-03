@@ -23,7 +23,7 @@
 //
 // This array implementaiton is more for complex datastructure building. If
 // you are looking for a simple array of integers for example, better use the
-// traditional [] arrays or have a look at NACArray.
+// traditional [] arrays.
 //
 // Important: You have to typecast the returned element-pointers!
 

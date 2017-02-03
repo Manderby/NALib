@@ -10,7 +10,7 @@
 //
 // - Accessing core informations about the memory system
 // - Basic Memory allocation and freeing.
-// - Base memory structs NAPtr, NALValue, NAMemoryBlock, NACArray, NABuf
+// - Base memory structs NAPtr, NAMemoryBlock
 // - NAPointer: Handling of reference counted values with automatic deletion.
 // - Handling of inifinte pools for new and delete functions.
 //
@@ -129,7 +129,6 @@ NA_API void               naStopRuntime();
 // Note that the destructor must be declared and the type must not be opaque
 // at the time of using NA_RUNTIME_TYPE!
 
-
 #define NA_RUNTIME_TYPE(type, destructor)\
   static NA_LINKER_NO_EXPORT NATypeInfo na_ ## type ## _typeinfo =\
   {NA_NULL, sizeof(type), (NAMutator)destructor};
@@ -138,23 +137,6 @@ NA_API void               naStopRuntime();
 // which has the following type. The full type definition is in the file
 // "NAMemoryII.h"
 typedef struct NATypeInfo NATypeInfo;
-
-// The following three functions are for debugging. You can start counting
-// the number of bytes allocated using the start function and stop counting
-// using the stop function. The start function will reset the byte counter
-// to zero. Using the continue function, the counter will not be reset.
-//
-// These functions will all be NOP (no operation) when NDEBUG is defined.
-NA_IAPI void naStartMemoryObservation();
-NA_IAPI void naStopMemoryObservation();
-NA_IAPI void naContinueMemoryObservation();
-// Use the following functions to retrieve the number of bytes allocated. You
-// can distinguish between aligned and unaligned allocations or just use the
-// total sum. The aligned bytecount counts the bytes not visible to the
-// programmer.
-NA_IAPI NAInt naGetMemoryObservation();
-NA_IAPI NAInt naGetMemoryObservationInvisible();
-NA_IAPI NAInt naGetMemoryObservationVisible();
 
 
 
@@ -173,34 +155,19 @@ NA_IAPI NAInt naGetMemoryObservationVisible();
 // information:
 //
 // NAPtr          A plain pointer. With lots of info when NDEBUG is undefined.
-// NALValue       A pointer with a typesize, denoting a localizable value.
 // NAMemoryBlock  A pointer to a bunch of bytes
-// NACArray       A pointer to a bunch of values
-// NABuf          A pointer to a bunch of bytes, only partially being used.
 // NAPointer      A reference counted pointer which deallocates automatically
 //                when the reference count reaches zero.
 //
 // At the core, an NAPtr stores a C-Pointer and the information whether it
-// is const or mutable. It also stores information about the bytesize of the memory
-// being pointed at and how it is null terminated. Even more, it stores, how
-// the pointer had originally been allocated. All this information is just for
-// debugging and can be omitted if necessary. When compiling with NDEBUG, no
-// information is stored at all.
-//
-// An NALValue stores a pointer which denotes a variable placed in memory.
-// It has a typesize.
+// is const or mutable. It also stores information about the bytesize of the
+// memory being pointed at and how it is null terminated. Even more, it stores,
+// how the pointer had originally been allocated. All this information is just
+// for debugging and can be omitted if necessary. When compiling with NDEBUG,
+// no information is stored at all.
 //
 // An NAMemoryBlock stores a bunch of bytes. No typesize but a total bytesize
 // of bytes is available.
-//
-// An NACArray is the combination of the last two structs. It stores a pointer,
-// a total number of bytes available and the typesize of the units stored
-// in that array. The number of elements in the array can be computed by
-// dividing the total bytesize by the typesize. See API for the corresponding
-// function call.
-//
-// An NABuf is a buffer with a fixed maximal bytesize and a counter how many
-// bytes actually are in use.
 //
 // An NAPointer stores a pointer with a reference count. You can increase and
 // decrease that reference count and the pointer will automatically be erased
@@ -217,14 +184,19 @@ NA_IAPI NAInt naGetMemoryObservationVisible();
 // struct which needs to store the information to deallocate the stored pointer
 // correctly once the reference count reaches zero.
 //
-// The comments denote what kind of cleanup-function of NAPtr you should call
-// when you use one of the macros.
+// The comments denote what kind of cleanup-function will be called when you
+// use one of the macros.
 typedef enum{
-  NA_MEMORY_CLEANUP_UNDEFINED       = 0x00,  // 0b000
-  NA_MEMORY_CLEANUP_NONE            = 0x01,  // 0b001 // naClearPtr
-  NA_MEMORY_CLEANUP_FREE            = 0x02,  // 0b010 // naFreePtr
-  NA_MEMORY_CLEANUP_FREE_ALIGNED    = 0x03,  // 0b011 // naFreeAlignedPtr
-  NA_MEMORY_CLEANUP_DELETE          = 0x04   // 0b100 // naDeletePtr
+  NA_MEMORY_CLEANUP_UNDEFINED       = 0x00,  // 0b000 //
+  NA_MEMORY_CLEANUP_NONE            = 0x01,  // 0b001 // 
+  NA_MEMORY_CLEANUP_FREE            = 0x02,  // 0b010 // naFree
+  NA_MEMORY_CLEANUP_FREE_ALIGNED    = 0x03,  // 0b011 // naFreeAligned
+#ifdef __cplusplus 
+  NA_MEMORY_CLEANUP_DELETE          = 0x04,  // 0b100 // delete
+  NA_MEMORY_CLEANUP_DELETE_BRACK    = 0x05,  // 0b101 // delete []
+#endif
+  NA_MEMORY_CLEANUP_NA_DELETE       = 0x06,  // 0b110 // naDelete
+  NA_MEMORY_CLEANUP_COUNT           = 0x07
 } NAMemoryCleanup;
 
 
@@ -272,49 +244,51 @@ typedef enum{
 // very cumbersome) and maybe even force him to convert between the two
 // variants which might be very costly and not beautiful at all.
 //
-// NAPtr is the base of all memory structs.
-// NALValue, NAMemoryBlock, NACArray and NABuf are all dependent on NAPtr and
-// declare it as the first entry in their struct declaration. Therefore, it is
-// safe to access any other memory struct typecastet as an NAPtr. See NAPointer
-// for an example.
+// NAPtr is the base of many memory structs.
+// NAMemoryBlock is dependent on NAPtr and declare it as the first
+// entry in their struct declaration. Therefore, it is safe to access these
+// memory structs typecasted as an NAPtr.
 
 
 // The full type definition is in the file "NAMemoryII.h"
 typedef struct NAPtr NAPtr;
 
 // Creates a NULL pointer
+// The cleanuphint for this function is NA_MEMORY_CLEANUP_NONE.
 NA_IAPI NAPtr naMakeNullPtr();
 
-// Makes an NAPtr with a newly allocated memory block of the given bytesize. The
-// bytesize parameter can be negative. See naMalloc function for more information.
-// Note that you maybe will not call this function directly but instead will
-// use naMakeLValueWithTypesize or naMakeMemoryBlockWithBytesize.
+// Makes an NAPtr with a newly allocated memory block of the given bytesize.
+// The bytesize parameter can be negative. See naMalloc function for more
+// information Note that you maybe will not call this function directly but
+// instead will use naMakeLValueWithTypesize or naMakeMemoryBlockWithBytesize.
 // The cleanuphint for this function is NA_MEMORY_CLEANUP_FREE.
 NA_IAPI NAPtr naMakePtrWithBytesize(NAInt bytesize);
 
 // Fills the given NAPtr struct with either a const or a non-const pointer.
-// The bytesizehint is a hint when debugging. For an explanation of that
-// parameter, see naMakeMemoryBlockWithConstBuffer. In the same way, the
-// zerofillhint are the number of zero bytes available but invisible to the
-// programmer.
 //
-// The mutable variant takes ownership of the given data and expects a call
-// to a cleanup function (see below) based on the cleanuphint. The cleanuphint
-// for the const variant is NA_MEMORY_CLEANUP_NONE.
-NA_IAPI NAPtr naMakePtrWithConstBuffer(  const void* data,
+// The bytesizehint is a hint when debugging. It denotes how many bytes are
+// visible to the programmer in the given data. In the same way, the
+// zerofillhint are the number of zero bytes available but invisible to the
+// programmer. Both parameters must be positive. The zerofillhint parameter
+// only is valid when bytesizehint is not zero.
+//
+// The mutable variant can take ownership of the given data based on the given
+// cleanuphint and expects a call to the corresponding cleanup function (see
+// below). The cleanuphint for the const variant is NA_MEMORY_CLEANUP_NONE.
+NA_IAPI NAPtr naMakePtrWithConstData(  const void* data,
                                                NAInt bytesizehint,
                                                NAInt zerofillhint);
-NA_IAPI NAPtr naMakePtrWithMutableBuffer(      void* data,
+NA_IAPI NAPtr naMakePtrWithMutableData(      void* data,
                                                NAInt bytesizehint,
                                                NAInt zerofillhint,
                                      NAMemoryCleanup cleanuphint);
 
 // Assumes srcptr to be an array of bytes and creates an NAPtr referencing an
 // extraction thereof. DOES NOT COPY!
-// The byteoffset and bytesize must be given in bytes and are always positive! The bytesize
-// is only a hint which helps detecting errors during debugging. When NDEBUG is
-// defined, this hint is optimized out. The cleanuphint for this function is
-// NA_MEMORY_CLEANUP_NONE.
+// The byteoffset and bytesize must be given in bytes and are always positive!
+// The bytesizehint is only a hint which helps detecting errors during
+// debugging. When NDEBUG is defined, this hint is optimized out.
+// The cleanuphint for this function is NA_MEMORY_CLEANUP_NONE.
 NA_IAPI NAPtr naMakePtrWithExtraction(  const NAPtr* srcptr,
                                               NAUInt byteoffset,
                                               NAUInt bytesizehint);
@@ -353,42 +327,6 @@ NA_IAPI NABool naIsPtrConst(const NAPtr* ptr);
 
 
 // ////////////////////////
-// NALValue
-// ////////////////////////
-
-// The full type definition is in the file "NAMemoryII.h"
-typedef struct NALValue NALValue;
-
-// Returns an lvalue which is empty.
-NA_IAPI NALValue naMakeLValue();
-
-// Create a new lvalue of the given size in bytes. The typesize parameter MUST be positive.
-NA_IAPI NALValue naMakeLValueWithTypesize(NAUInt typesize);
-
-// Uses the given bufptr WITHOUT copying as an lvalue with the given typesize.
-NA_IAPI NALValue naMakeLValueWithConstBuffer(   const void* bufptr,
-                                                      NAInt typesize);
-NA_IAPI NALValue naMakeLValueWithMutableBuffer(       void* bufptr,
-                                                      NAInt typesize,
-                                            NAMemoryCleanup cleanuphint);
-
-// Frees the memory for the value buffer.
-NA_IAPI void naFreeLValue(NALValue* lvalue);
-
-// Returns informations about the typesize of the given lvalue.
-NA_IAPI NAUInt naGetLValueTypesize(const NALValue* lvalue);
-NA_IAPI NABool naIsLValueEmpty(const NALValue* lvalue);
-
-// Returns either a const or a mutable pointer to the lvalue.
-NA_IAPI const void* naGetLValueConstPointer(const NALValue* lvalue);
-NA_IAPI void* naGetLValueMutablePointer(NALValue* lvalue);
-
-
-
-
-
-
-// ////////////////////////
 // NAMemoryBlock
 // ////////////////////////
 
@@ -402,23 +340,23 @@ NA_IAPI NAMemoryBlock naMakeMemoryBlock();
 // parameter can be negative. See naMalloc function for more information.
 NA_IAPI NAMemoryBlock naMakeMemoryBlockWithBytesize(NAInt bytesize);
 
-// Uses the given bufptr WITHOUT copying as a memory block with the given bytesize.
-// The programmer is responsible that the given bytesize is not overflowing the
-// buffer.
+// Uses the given bufptr WITHOUT copying as a memory block with the given
+// bytesize. The programmer is responsible that the given bytesize is not
+// overflowing the buffer.
 // The bytesize can be negative. If so, the absolute value of bytesize is
 // used but the given bufptr is expected to to have one or more bytes appended
 // which are filled with binary zero. Hence, the array can safely be assumed to
 // be null-terminated. This also serves as a hint for functions like
-// naMakePtrWithConstBuffer
-NA_IAPI NAMemoryBlock naMakeMemoryBlockWithConstBuffer( const void* bufptr,
-                                                              NAInt bytesize);
-NA_IAPI NAMemoryBlock naMakeMemoryBlockWithMutableBuffer(     void* bufptr,
-                                                              NAInt bytesize,
-                                                    NAMemoryCleanup cleanuphint);
+// naMakePtrWithConstData
+NA_IAPI NAMemoryBlock naMakeMemoryBlockWithConstData(const void* bufptr,
+                                                             NAInt bytesize);
+NA_IAPI NAMemoryBlock naMakeMemoryBlockWithMutableData(    void* bufptr,
+                                                             NAInt bytesize,
+                                                   NAMemoryCleanup cleanuphint);
 
 // Makes a new NAMemoryBlock struct containing a sub-part of the given source
-// memory block. Does NOT copy! The byteoffset and bytesize are given in bytes and must
-// be positive.
+// memory block. Does NOT copy! The byteoffset and bytesize are given in bytes
+// and must be positive.
 NA_IAPI NAMemoryBlock naMakeMemoryBlockWithExtraction(
                                             const NAMemoryBlock* srcmemblock,
                                                           NAUInt byteoffset,
@@ -428,7 +366,8 @@ NA_IAPI NAMemoryBlock naMakeMemoryBlockWithExtraction(
 NA_IAPI void naFreeMemoryBlock(NAMemoryBlock* memblock);
 
 // Returns size information about the memory block. The maxindex returns
-// bytesize-1 but will emit an error when NDEBUG is undefined and the bytesize is 0.
+// bytesize-1 but will emit an error when NDEBUG is undefined and the bytesize
+// is 0.
 NA_IAPI NAUInt naGetMemoryBlockBytesize(const NAMemoryBlock* memblock);
 NA_IAPI NAUInt naGetMemoryBlockMaxIndex(const NAMemoryBlock* memblock);
 NA_IAPI NABool naIsMemoryBlockEmpty(const NAMemoryBlock* memblock);
@@ -462,123 +401,32 @@ NA_IAPI NABool naIsMemoryBlockConst(NAMemoryBlock* memblock);
 
 
 
-
-
 // ////////////////////////
-// NACArray
+// NASmartPtr
 // ////////////////////////
+
 
 // The full type definition is in the file "NAMemoryII.h"
-typedef struct NACArray NACArray;
-
-// Returns a C-array which is empty.
-NA_IAPI NACArray naMakeCArray();
-
-// Creates a new memory block with the given typesize and element count. The
-// count parameter can be negative. See naMalloc function for more information.
-NA_IAPI NACArray naMakeCArrayWithTypesizeAndCount(NAUInt typesize, NAInt count);
-
-// Uses the given bufptr WITHOUT copying as a C array with the given typesize
-// and element count. The programmer is responsible that the given sizes are
-// not overflowing the buffer.
-// The count can be negative. If so, the absolute value of count is used but
-// the given bufptr is expected to to have at least typesize bytes appended
-// which are filled with binary zero. Hence, the array can be assumed to
-// be null-terminated. This also serves as a hint for functions like
-// naMakePtrWithConstBuffer.
-// Note that the additional typesize bytes is special. naMalloc only guarantees
-// zero filling up to a certain number of bytes. You have to be careful if you
-// want to use negative sizes with NACArray.
-NA_IAPI NACArray naMakeCArrayWithConstBuffer(   const void* bufptr,
-                                                      NAInt typesize,
-                                                      NAInt count);
-NA_IAPI NACArray naMakeCArrayWithMutableBuffer(       void* bufptr,
-                                                     NAUInt typesize,
-                                                      NAInt count,
-                                            NAMemoryCleanup cleanuphint);
-
-// Makes a new NACArray struct containing a sub-part of the given source
-// C-array. Does NOT copy! The elemoffset and count are given in units with the
-// typesize stored in srcarray and must be positive.
-NA_IAPI NACArray naMakeCArrayWithExtraction(const NACArray* srccarray,
-                                                     NAUInt elemoffset,
-                                                     NAUInt elemcount);
-
-// Frees the memory for the array.
-NA_IAPI void naFreeCArray(NACArray* carray);
-
-// Returns size information about the memory block.
-NA_IAPI NAUInt naGetCArrayBytesize( const NACArray* carray);
-NA_IAPI NAUInt naGetCArrayCount(    const NACArray* carray);
-NA_IAPI NABool naIsCArrayEmpty(     const NACArray* carray);
-
-// Returns either a const or mutable pointer to the first byte of the given
-// C-array
-NA_IAPI const void* naGetCArrayConstPointer(const NACArray* carray);
-NA_IAPI void* naGetCArrayMutablePointer(          NACArray* carray);
-
-// Returns either a const or mutable pointer to the element at the given index.
-NA_IAPI const void* naGetCArrayConstByte(const NACArray* carray, NAUInt indx);
-NA_IAPI void* naGetCArrayMutableByte(          NACArray* carray, NAUInt indx);
-
-// Returns true if this C-array stores const content. Only useful when
-// debugging. When NDEBUG is defined, this function always returns NA_FALSE.
-NA_IAPI NABool naIsCArrayConst(NACArray* carray);
-
-// A debugging function returning true, if the given memory block is declared
-// to be null terminated. If NDEBUG is defined, this function is undefined
-// and not available. The author does not want to propose any assumption.
-// Therefore it is also marked as a helper function.
-#ifndef NDEBUG
-  NA_HIAPI NABool naIsCArrayNullTerminated(const NACArray* carray);
-#endif
+typedef struct NASmartPtr NASmartPtr;
 
 
+NA_IAPI NASmartPtr* naInitSmartPtrNull(     NASmartPtr* sptr,
+                                        NAMemoryCleanup smartptrcleanup);
 
+NA_IAPI NASmartPtr* naInitSmartPtrConst(    NASmartPtr* sptr,
+                                        NAMemoryCleanup smartptrcleanup,
+                                            const void* data);
+NA_IAPI NASmartPtr* naInitSmartPtrMutable(  NASmartPtr* sptr,
+                                        NAMemoryCleanup smartptrcleanup,
+                                                  void* data,
+                                        NAMemoryCleanup datacleanup);
 
+NA_IAPI NASmartPtr* naRetainSmartPtr(NASmartPtr* sptr);
+NA_IAPI void naReleaseSmartPtr(NASmartPtr* sptr);
 
-// ////////////////////////
-// NABuf
-// ////////////////////////
-
-// The full type definition is in the file "NAMemoryII.h"
-typedef struct NABuf NABuf;
-
-// Returns a buf which is empty.
-NA_IAPI NABuf naMakeBuf();
-
-// Creates a new buf with the given sizes. In contrast to the other
-// base memory structs, both bytesize parameter must be positive.
-// usedsize can be 0 but maxsize must be greater than 0.
-NA_IAPI NABuf naMakeBufWithBytesize(NAInt maxbytesize, NAInt usedbytesize);
-
-// Frees the memory for the buffer.
-NA_IAPI void naFreeBuf(NABuf* buf);
-
-// Returns size information about the memory block.
-NA_IAPI NAUInt naGetBufMaxBytesize(const NABuf* buf);
-NA_IAPI NAUInt naGetBufUsedBytesize(const NABuf* buf);
-NA_IAPI NAUInt naGetBufRemainingBytesize(const NABuf* buf);
-// Returns true if there is no used byte in the buf.
-NA_IAPI NABool naIsBufEmpty(const NABuf* buf);
-
-// Returns either a const or mutable pointer to the current byte of the given
-// buf. The current byte is the byte yet not being used.
-NA_IAPI const void* naGetBufConstUsedPointer(const NABuf* buf);
-NA_IAPI void*       naGetBufMutableUsedPointer(    NABuf* buf);
-// Increments the used bytesize by the given number of bytes. Will emit an error
-// when the buffer overflows when NDEBUG is not defined.
-NA_IAPI void        naAdvanceBuf(NABuf* buf, NAUInt bytesize);
-
-// Returns either a const or mutable pointer to the first byte of the full
-// buf. Emits an error when the buf is empty when NDEBUG is undefined.
-NA_IAPI const void* naGetBufConstFirstPointer(   const NABuf* buf);
-NA_IAPI       void* naGetBufMutableFirstPointer(       NABuf* buf);
-
-// Returns true if this buf stores const content. Only useful when debugging.
-// When NDEBUG is defined, this function always returns NA_FALSE.
-NA_IAPI NABool naIsBufConst(NABuf* buf);
-
+NA_IAPI const void* naGetSmartPtrConst(const NASmartPtr* sptr);
+NA_IAPI void* naGetSmartPtrMutable(NASmartPtr* sptr);
+NA_IAPI NABool naIsSmartPtrConst(const NASmartPtr* sptr);
 
 
 
@@ -618,22 +466,22 @@ NA_IAPI NAPointer* naNewNullPointer();
 // Creates an NAPointer struct around the given data pointer.
 //
 // The NAPointer allows to use reference counting on any pointer and
-// will automatically deallocate both the data using the given deallocator
+// will automatically erase both the data using the given destructor
 // as well as the provided data pointer itself according to the cleanup
 // argument.
 //
-// If no deallocator is needed, you can send NA_NULL.
+// If no destructor is needed, you can send NA_NULL.
 //
-// Notice the distinction: The deallocator will be called with the data pointer
-// such that any struct which is behind that pointer can be properly cleaned
-// up. The cleanup enum on the other hand defines, what will happen with the
-// data pointer itself after the deallocator has been called. Depending on how
+// Notice the distinction: The destructor will be called with the data pointer
+// such that any struct which is behind that pointer can be properly erased.
+// The cleanup enum on the other hand defines, what will happen with the
+// data pointer itself AFTER the destructor had been called. Depending on how
 // that pointer had been created in the first place, it must be cleaned up with
 // the appropriate free or delete function.
 //
 NA_IAPI NAPointer* naNewPointer(       void* data,
                              NAMemoryCleanup cleanup,
-                                   NAMutator deallocator);
+                                   NAMutator destructor);
 
 // Retains the given pointer. Meaning: There is one more codeblock which is
 // using this NAPointer. This NAPointer will not be freed as long as that
@@ -650,6 +498,8 @@ NA_IAPI NAPointer* naRetainPointer(NAPointer* pointer);
 // is no longer needed. The data will be freed automatically according to the
 // destructor and cleanup enumeration given upon creation. The NAPointer struct
 // itself will be deleted by the runtime system.
+//
+// Returns NA_TRUE, if the reference counter reached 0, otherwise NA_FALSE.
 NA_IAPI void naReleasePointer(NAPointer* pointer);
 
 // The following two functions return a pointer to the data. This function is

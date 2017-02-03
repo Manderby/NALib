@@ -15,11 +15,11 @@
 
 struct NABuffer{
   NAUInt flags;                     // various flags
-  NAPointer* storage;               // The buffer storage. List of buffer parts.
+  NAPointer* storage;               // Buffer storage. List of buffer parts.
   NARangei range;                   // The total range of this buffer
 
   NAListPos curlistpos;             // The listpos of the current part
-  NAInt curoffset;               // The current absolute offset
+  NAInt curoffset;                  // The current absolute offset
   uint8 curbit;                     // The current bit number
 
   NAInt endianness;                 // The current endianness

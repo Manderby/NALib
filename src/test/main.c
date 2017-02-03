@@ -13,20 +13,23 @@
 
 
 void testSystem(void);
+void testMemory(void);
 void testStack(void);
 
 
 
 
 int main(void){
-  testSystem();
+//  testSystem();
   
-  naStartRuntime();
-    testStack();
-  naStopRuntime();
+  testMemory();
+
+//  naStartRuntime();
+//    testStack();
+//  naStopRuntime();
   
-  printf("\nPress enter to quit.\n");
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    printf("\nPress enter to quit.\n");
     fgetc(stdin);
   #endif
   return 0;

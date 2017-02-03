@@ -46,7 +46,7 @@ NA_DEF NAArray* naInitArrayWithConstBuffer(NAArray* array, const void* buffer, N
 
 NA_DEF NAArray* naInitArrayWithMutableBuffer(NAArray* array, void* buffer, NAUInt typesize, NAUInt count, NAMemoryCleanup cleanup){
   #ifndef NDEBUG
-    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup > NA_MEMORY_CLEANUP_DELETE)
+    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup >= NA_MEMORY_CLEANUP_COUNT)
       naError("naNewStringWithMutableUTF8Buffer", "invalid cleanup option");
     if(!array)
       {naCrash("naInitArrayWithMutableBuffer", "array is Null-Pointer"); return NA_NULL;}

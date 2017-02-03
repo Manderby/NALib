@@ -479,6 +479,7 @@ typedef uint8 NAByte;
   typedef uint32 NAUInt;
   #define NA_PRIi "d"
   #define NA_PRIu "u"
+  #define NA_PRIx "x"
   #define NA_SCNi "d"
   #define NA_SCNu "u"
   #define NA_INT_MAX NA_INT32_MAX
@@ -491,6 +492,7 @@ typedef uint8 NAByte;
   typedef uint64 NAUInt;
   #define NA_PRIi "lld"
   #define NA_PRIu "llu"
+  #define NA_PRIx "llx"
   #define NA_SCNi "lld"
   #define NA_SCNu "llu"
   #define NA_INT_MAX NA_INT64_MAX

@@ -16,6 +16,7 @@
   #include "malloc/malloc.h"
 #endif
 
+#include "NASystem.h"
 #include "NAMathOperators.h"
 #include "NAValueHelper.h"
 
@@ -45,27 +46,42 @@ NA_IDEF NAUInt naGetSystemMemoryPagesizeMask(){
 
 // Zero fill
 //
-// The following function returns for a given negative bytesize, how big a buffer
-// must be, to include the appended zero bytes.
+// The following function returns for a given negative bytesize, how big a
+// buffer must be, to include the appended zero bytes.
 //
-// The allocation functions of NALib expect a positive or negative bytesize. If the
-// bytesize is negative, the absolute value is used to allocate sufficient space
-// but a certain number of bytes is appended to the memory block which will
-// be initialized with binary zero but will not be visible to the programmer.
+// The allocation functions of NALib expect a positive or negative bytesize.
+// If the bytesize is negative, the absolute value is used to allocate
+// sufficient space but a certain number of bytes is appended to the memory
+// block which will be initialized with binary zero but will not be visible to
+// the programmer.
 // 
 // The following holds true:
 //
 // - The additional bytes are all guaranteed to be initialized with binary
 //   zero.
-// - There are AT LEAST as many bytes appended as an address requires.
+// - There are AT LEAST as many bytes appended as one address requires.
 //   Or more precise: 4 Bytes on 32 Bit systems, 8 Bytes on 64 Bit systems
 // - There are as many bytes allocated such that the total bytesize of the
 //   allocated block is a multiple of an address bytesize, meaning 4 or 8 Bytes
 //   depending on the system (32 Bit or 64 Bit).
-// - The total bytesize (including the desired space) is at minimum 2 times
+// - The total bytesize (desired space plus null bytes) is at minimum 2 times
 //   the number of bytes needed for an address.
-// - The part without the additional bytes might partially become
-//   initialized with binary zero.
+// - When using naMalloc, the part without the additional bytes might partially
+//   become initialized with binary zero.
+// Example for a 32bit system:
+// 0 is a zero-filled byte.
+// x is a desired byte,
+// z is a desired byte which initially gets overwritten with zero.
+// 0:  0000 0000
+// 1:  z000 0000
+// 2:  zz00 0000
+// 3:  zzz0 0000
+// 4:  zzzz 0000
+// 5:  xxxx z000 0000
+// 8:  xxxx zzzz 0000
+// 9:  xxxx xxxx z000 0000
+// 12: xxxx xxxx zzzz 0000
+// 13: xxxx xxxx xxxx z000 0000
 
 NA_HIDEF NAInt naGetNullTerminationBytesize(NAInt bytesize){
   NAInt returnbytesize;
@@ -75,7 +91,7 @@ NA_HIDEF NAInt naGetNullTerminationBytesize(NAInt bytesize){
     if(bytesize == NA_INVALID_MEMORY_BYTESIZE)
       naError("naGetNullTerminationBytesize", "invalid size given");
   #endif
-  returnbytesize = -bytesize + (NA_SYSTEM_ADDRESS_BYTES << 1) - (-bytesize % NA_SYSTEM_ADDRESS_BYTES);
+  returnbytesize = (-bytesize - NA_ONE) + (NA_SYSTEM_ADDRESS_BYTES << 1) - ((-bytesize - NA_ONE) % NA_SYSTEM_ADDRESS_BYTES);
   #ifndef NDEBUG
     if(returnbytesize < NA_ZERO)
       naError("naGetNullTerminationBytesize", "given negative size is too close to the minimal integer value");
@@ -95,13 +111,6 @@ NA_HIDEF NAInt naGetNullTerminationBytesize(NAInt bytesize){
 // ////////////////////////////////////////////
 
 
-#ifndef NDEBUG
-  extern NAInt  na_debug_mem_bytesize;
-  extern NAInt  na_debug_mem_invisiblebytesize;
-  extern NABool na_debug_mem_observe_bytes;
-//  #include "NAThreading.h"
-#endif
-
 
 
 NA_IDEF void* naMalloc(NAInt bytesize){
@@ -117,11 +126,6 @@ NA_IDEF void* naMalloc(NAInt bytesize){
 
   if(bytesize > NA_ZERO){
     ptr = (NAByte*)malloc((size_t)bytesize);
-    #ifndef NDEBUG
-      if(na_debug_mem_observe_bytes){
-        na_debug_mem_bytesize += bytesize;
-      }
-    #endif
   }else{
     #ifndef NDEBUG
       if(bytesize == NA_INT_MIN)
@@ -136,9 +140,6 @@ NA_IDEF void* naMalloc(NAInt bytesize){
     #ifndef NDEBUG
     if (!ptr)
       {naCrash("naMalloc", "Out of memory."); return NA_NULL;}
-    if(na_debug_mem_observe_bytes){
-        na_debug_mem_bytesize += fullsize;
-      }
     #endif
     *(NAUInt*)(&(ptr[fullsize - 2 * NA_SYSTEM_ADDRESS_BYTES])) = NA_ZERO;
     *(NAUInt*)(&(ptr[fullsize - 1 * NA_SYSTEM_ADDRESS_BYTES])) = NA_ZERO;
@@ -181,13 +182,6 @@ NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
   #endif
   
   #ifndef NDEBUG
-    if(na_debug_mem_observe_bytes){
-      na_debug_mem_bytesize += bytesize;
-      na_debug_mem_invisiblebytesize += align + sizeof(void*);
-    }
-  #endif
-
-  #ifndef NDEBUG
     if(((NAUInt)retptr & (NAUInt)(align - NA_ONE)) != NA_ZERO)
       naError("naMallocAligned", "pointer unaligned.");
   #endif
@@ -218,54 +212,10 @@ NA_IDEF void naFreeAligned(void* ptr){
 
 
 
-NA_IDEF void naStartMemoryObservation(){
-  #ifndef NDEBUG
-    na_debug_mem_observe_bytes = NA_TRUE;
-    na_debug_mem_bytesize = NA_ZERO;
-    na_debug_mem_invisiblebytesize = NA_ZERO;
-  #endif
-}
-NA_IDEF void naStopMemoryObservation(){
-  #ifndef NDEBUG
-    na_debug_mem_observe_bytes = NA_FALSE;
-  #endif
-}
-NA_IDEF void naContinueMemoryObservation(){
-  #ifndef NDEBUG
-    na_debug_mem_observe_bytes = NA_TRUE;
-  #endif
-}
-NA_IDEF NAInt naGetMemoryObservation(){
-  #ifndef NDEBUG
-    return na_debug_mem_bytesize + na_debug_mem_invisiblebytesize;
-  #else
-    return NA_ZERO;
-  #endif
-}
-NA_IDEF NAInt naGetMemoryObservationVisible(){
-  #ifndef NDEBUG
-    return na_debug_mem_bytesize;
-  #else
-    return NA_ZERO;
-  #endif
-}
-NA_IDEF NAInt naGetMemoryObservationInvisible(){
-  #ifndef NDEBUG
-    return na_debug_mem_invisiblebytesize;
-  #else
-    return NA_ZERO;
-  #endif
-}
 
-
-
-
-// For the NAPointer struct, we need to have the information available about
-// how the memory was originally alloced. We store it as the high-order part
-// of the refcount which is why we need to bit-shift it to the left.
-// To simplify matters, also the NAPtr struct stores this information as left-
-// shifted bits in the flags when NDEBUG ist undefined.
-#define NA_MEMORY_CLEANUP_BITSHIFT   (NA_SYSTEM_ADDRESS_BITS - 3)
+// //////////////////////////
+// NARuntime
+// //////////////////////////
 
 
 NA_API void*              naNewStruct(NATypeInfo* typeidentifier);
@@ -278,6 +228,10 @@ struct NATypeInfo{
 };
 
 
+
+
+
+
 // //////////////////////////
 // NAPtr
 // //////////////////////////
@@ -288,7 +242,7 @@ struct NAPtr{
     void*       d;              // ... non-const (mutable) data.
   } data;
   #ifndef NDEBUG
-    NAUInt flags;               // This field stores some flags.
+    NAUInt flags;              // This field stores some flags.
     NAUInt visiblebytesize;    // nof bytes of the visible byte storage
     NAUInt accessiblebytesize; // nof bytes of the accessible byte storage
   #endif
@@ -296,7 +250,7 @@ struct NAPtr{
 // Note that this is one of the very, very rare situations, where a union type
 // actually makes sense.
 //
-// Also note that NALValue will be fully optimized to a simple C-pointer
+// Also note that NAPtr will be fully optimized to a simple C-pointer
 // when NDEBUG is defined.
 //
 // Authors note:
@@ -305,7 +259,7 @@ struct NAPtr{
 // deeply into the core functionality of NALib. They should be here to help
 // with very fundamental datastructures like an NAByteArray but not to distract
 // on higher levels. Further more, questions like "Is String Null-Terminated"
-// should not be decided during (release) runtime. Therefore, the NALValue
+// should not be decided during (release) runtime. Therefore, the NAPtr
 // implementation both supports but also limits the use of debug information
 // depending whether you compile for debug or release.
 //
@@ -323,6 +277,29 @@ struct NAPtr{
 // mutable and without any debugging information, just use a normal C-pointer.
 
 
+// For the NAPointer struct, we need to have the information available about
+// how the memory was originally alloced. We store it as the high-order part
+// of the refcount which is why we need to bit-shift it to the left.
+// To simplify matters, also the NAPtr struct stores this information as left-
+// shifted bits in the flags when NDEBUG ist undefined.
+#define NA_MEMORY_CLEANUP_BITS            3
+#define NA_MEMORY_CLEANUP_MASK            ((1 << NA_MEMORY_CLEANUP_BITS) - 1)
+#define NA_MEMORY_CLEANUP_DATA_BITSHIFT   (NA_SYSTEM_ADDRESS_BITS - NA_MEMORY_CLEANUP_BITS)
+#define NA_MEMORY_CLEANUP_STRUCT_BITSHIFT (NA_SYSTEM_ADDRESS_BITS - 2 * NA_MEMORY_CLEANUP_BITS)
+
+NA_HIDEF NABool naIsCleanupValid(NAMemoryCleanup cleanup){
+  return ((cleanup > NA_MEMORY_CLEANUP_UNDEFINED) && (cleanup < NA_MEMORY_CLEANUP_COUNT));
+}
+NA_HIDEF NAMemoryCleanup naGetFlagCleanupData(NAUInt flag){
+  return (flag >> NA_MEMORY_CLEANUP_DATA_BITSHIFT);
+}
+NA_HIDEF NABool naHasFlagCleanupData(NAUInt flag){
+  return (naGetFlagCleanupData(flag) != NA_MEMORY_CLEANUP_UNDEFINED);
+}
+NA_HIDEF NAMemoryCleanup naGetFlagCleanupStruct(NAUInt flag){
+  return (flag >> NA_MEMORY_CLEANUP_STRUCT_BITSHIFT) & NA_MEMORY_CLEANUP_MASK;
+}
+
 
 
 // The following macros and functions are only available when debugging and
@@ -336,17 +313,22 @@ struct NAPtr{
   #define NA_PTR_CLEANED                    0x10
 
 
-
+  // Marks an NAPtr to know what the cleanup method shall be. This will later
+  // on be used when cleaning the NAPtr. It the used method will not correspond
+  // to the method marked, a debug warning will be emitted.
   NA_HIDEF void naMarkPtrCleanup(NAPtr* ptr, NAMemoryCleanup cleanup){
-    if((cleanup < NA_MEMORY_CLEANUP_NONE) || (cleanup > NA_MEMORY_CLEANUP_DELETE))
+    if(!naIsCleanupValid(cleanup))
       naError("naMarkPtrCleanup", "Invalid cleanup option");
-    if(((ptr->flags >> NA_MEMORY_CLEANUP_BITSHIFT) >= NA_MEMORY_CLEANUP_NONE) && ((ptr->flags >> NA_MEMORY_CLEANUP_BITSHIFT) <= NA_MEMORY_CLEANUP_DELETE))
+    if(naHasFlagCleanupData(ptr->flags))
       naError("naMarkPtrCleanup", "ptr already marked with a cleanup");
-    ptr->flags |= (NAUInt)(cleanup) << NA_MEMORY_CLEANUP_BITSHIFT;
+    ptr->flags |= (NAUInt)(cleanup) << NA_MEMORY_CLEANUP_DATA_BITSHIFT;
   }
   
   
 
+  // Marks an NAPtr to know what the bytesize visible to the programmer is.
+  // The visible size may be different than the accessible size which is what
+  // the implementation can access without overflowing the allocated memory.
   NA_HIDEF void naMarkPtrWithVisibleBytesize(NAPtr* ptr, NAInt visiblebytesize){
     if(visiblebytesize < NA_ZERO)
       naError("naMarkPtrWithVisibleBytesize", "visiblebytesize should not be negative.");
@@ -370,9 +352,13 @@ struct NAPtr{
       naError("naMarkPtrWithAccessibleBytesize", "accessible size already marked");
     if(accessiblebytesize < NA_ZERO)
       naError("naMarkPtrWithAccessibleBytesize", "accessiblesize should not be negative.");
+    if(accessiblebytesize < ptr->visiblebytesize)
+      naError("naMarkPtrWithAccessibleBytesize", "accessiblesize should not be smaller than the visible size.");
+    if(nullterminated && (accessiblebytesize == ptr->visiblebytesize))
+      naError("naMarkPtrWithAccessibleBytesize", "Null termination is bogus when visible and accessible size are equal.");
     ptr->flags |= NA_PTR_HAS_ACCESSIBLE_BYTECOUNT;
-    ptr->accessiblebytesize = accessiblebytesize;
     if(nullterminated){ptr->flags |= NA_PTR_NULL_TERMINATED;}
+    ptr->accessiblebytesize = accessiblebytesize;
     
     // Now, we check if the last bytes are indeed zero
     nullindx = ptr->visiblebytesize;
@@ -420,7 +406,7 @@ NA_IDEF NAPtr naMakePtrWithBytesize(NAInt bytesize){
   NAPtr ptr;
   #ifndef NDEBUG
     if(bytesize == NA_ZERO)
-      naError("naMakePtrWithBytesize", "size is zero.");
+      naError("naMakePtrWithBytesize", "bytesize is zero.");
   #endif
   ptr.data.d = naMalloc(bytesize);
   #ifndef NDEBUG
@@ -443,8 +429,8 @@ NA_IDEF void naClearPtr(NAPtr* ptr){
   #ifndef NDEBUG
     if(ptr->flags & NA_PTR_CLEANED)
       naError("naClearPtr", "NAPtr has already been cleaned once.");
-    if((ptr->flags >> NA_MEMORY_CLEANUP_BITSHIFT) != NA_MEMORY_CLEANUP_NONE)
-      naError("naClearPtr", "Ptr has not the NONE cleanup hint");
+    if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_NONE)
+      naError("naClearPtr", "Ptr has NOT the NONE cleanup hint. Use the appropriate clear function naFreePtr, naFreeAlignedPtr or naDeletePtr.");
   #endif
   // As this is the NONE cleanup, we do nothing when NDEBUG is defined.
   #ifndef NDEBUG
@@ -462,7 +448,7 @@ NA_IDEF void naFreePtr(NAPtr* ptr){
       naError("naFreePtr", "NAPtr has already been cleaned once.");
     if(naIsPtrConst(ptr))
       naError("naFreePtr", "Trying to free a const pointer");
-    if((ptr->flags >> NA_MEMORY_CLEANUP_BITSHIFT) != NA_MEMORY_CLEANUP_FREE)
+    if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_FREE)
       naError("naFreePtr", "Ptr has not the FREE cleanup hint");
   #endif
   naFree(ptr->data.d);
@@ -479,7 +465,7 @@ NA_IDEF void naFreeAlignedPtr(NAPtr* ptr){
       naError("naFreeAlignedPtr", "NAPtr has already been cleaned once.");
     if(naIsPtrConst(ptr))
       naError("naFreeAlignedPtr", "Trying to free-aligned a const pointer");
-    if((ptr->flags >> NA_MEMORY_CLEANUP_BITSHIFT) != NA_MEMORY_CLEANUP_FREE_ALIGNED)
+    if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_FREE_ALIGNED)
       naError("naFreeAlignedPtr", "Ptr has not the FREE_ALIGNED cleanup hint");
   #endif
   naFreeAligned(ptr->data.d);
@@ -490,14 +476,51 @@ NA_IDEF void naFreeAlignedPtr(NAPtr* ptr){
 
 
 
-NA_IDEF void naDeletePtr(NAPtr* ptr){
+#ifdef __cplusplus 
+
+  NA_IDEF void naDeletePtr(NAPtr* ptr){
+    #ifndef NDEBUG
+      if(ptr->flags & NA_PTR_CLEANED)
+        naError("naDeletePtr", "NAPtr has already been cleaned once.");
+      if(naIsPtrConst(ptr))
+        naError("naDeletePtr", "Trying to delete a const pointer");
+      if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_DELETE)
+        naError("naDeletePtr", "Ptr has not the DELETE cleanup hint");
+    #endif
+    delete ptr->data.d;
+    #ifndef NDEBUG
+      ptr->flags |= NA_PTR_CLEANED;
+    #endif
+  }
+
+
+
+  NA_IDEF void naDeleteBrackPtr(NAPtr* ptr){
+    #ifndef NDEBUG
+      if(ptr->flags & NA_PTR_CLEANED)
+        naError("naDeleteBrackPtr", "NAPtr has already been cleaned once.");
+      if(naIsPtrConst(ptr))
+        naError("naDeleteBrackPtr", "Trying to delete a const pointer");
+      if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_DELETE_BRACK)
+        naError("naDeleteBrackPtr", "Ptr has not the DELETE_BRACK cleanup hint");
+    #endif
+    delete [] ptr->data.d;
+    #ifndef NDEBUG
+      ptr->flags |= NA_PTR_CLEANED;
+    #endif
+  }
+
+#endif
+
+
+NA_IDEF void naNaDeletePtr(NAPtr* ptr){
   #ifndef NDEBUG
     if(ptr->flags & NA_PTR_CLEANED)
-      naError("naDeletePtr", "NAPtr has already been cleaned once.");
+      naError("naNaDeletePtr", "NAPtr has already been cleaned once.");
     if(naIsPtrConst(ptr))
-      naError("naDeletePtr", "Trying to delete a const pointer");
-    if((ptr->flags >> NA_MEMORY_CLEANUP_BITSHIFT) != NA_MEMORY_CLEANUP_DELETE)
-      naError("naDeletePtr", "Ptr has not the DELETE cleanup hint");
+      naError("naNaDeletePtr", "Trying to delete a const pointer");
+    if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_NA_DELETE)
+      naError("naNaDeletePtr", "Ptr has not the NA_DELETE cleanup hint");
   #endif
   naDelete(ptr->data.d);
   #ifndef NDEBUG
@@ -507,24 +530,21 @@ NA_IDEF void naDeletePtr(NAPtr* ptr){
 
 
 
-NA_IDEF NAPtr naMakePtrWithConstBuffer(const void* data, NAInt bytesizehint, NAInt zerofillhint){
+NA_IDEF NAPtr naMakePtrWithConstData(const void* data, NAInt bytesizehint, NAInt zerofillhint){
   NAPtr ptr;
   ptr.data.constd = data;
   #ifndef NDEBUG
     ptr.flags = NA_PTR_CONST_DATA;
     naMarkPtrCleanup(&ptr, NA_MEMORY_CLEANUP_NONE);
-    if(bytesizehint < NA_ZERO){
-      naMarkPtrWithVisibleBytesize(&ptr, -bytesizehint);
-      naMarkPtrWithAccessibleBytesize(&ptr, -bytesizehint + zerofillhint, NA_TRUE);
-    }else{
-      if(zerofillhint < NA_ZERO)
-        naError("naMakePtrWithConstBuffer", "zerofillhint should be greater-equal zero.");
-      // Note that when bytesizehint is zero, zerofillhint is obsolete.
-      if((bytesizehint == NA_ZERO) && (zerofillhint != NA_ZERO))
-        naError("naMakePtrWithConstBuffer", "zerofillhint should be zero if bytesizehint is zero.");
-      naMarkPtrWithVisibleBytesize(&ptr, bytesizehint);
-      naMarkPtrWithAccessibleBytesize(&ptr, bytesizehint, NA_FALSE);
-    }
+    if(bytesizehint < NA_ZERO)
+      naError("naMakePtrWithConstData", "bytesizehint should be greater-equal zero.");
+    if(zerofillhint < NA_ZERO)
+      naError("naMakePtrWithConstData", "zerofillhint should be greater-equal zero.");
+    // Note that when bytesizehint is zero, zerofillhint is obsolete.
+    if((bytesizehint == NA_ZERO) && (zerofillhint != NA_ZERO))
+      naError("naMakePtrWithConstData", "zerofillhint should be zero if bytesizehint is zero.");
+    naMarkPtrWithVisibleBytesize(&ptr, bytesizehint);
+    naMarkPtrWithAccessibleBytesize(&ptr, bytesizehint + zerofillhint, NA_FALSE);
   #else
     NA_UNUSED(bytesizehint);
     NA_UNUSED(zerofillhint);
@@ -534,26 +554,21 @@ NA_IDEF NAPtr naMakePtrWithConstBuffer(const void* data, NAInt bytesizehint, NAI
 
 
 
-NA_IDEF NAPtr naMakePtrWithMutableBuffer(void* data, NAInt bytesizehint, NAInt zerofillhint, NAMemoryCleanup cleanuphint){
+NA_IDEF NAPtr naMakePtrWithMutableData(void* data, NAInt bytesizehint, NAInt zerofillhint, NAMemoryCleanup cleanuphint){
   NAPtr ptr;
   ptr.data.d = data;
   #ifndef NDEBUG
     ptr.flags = NA_ZERO;
     naMarkPtrCleanup(&ptr, cleanuphint);
-    // Note that the accessiblesize is the same as the visible size because
-    // the true amount of null-terminating bytes is unknown.
-    if(bytesizehint < NA_ZERO){
-      naMarkPtrWithVisibleBytesize(&ptr, -bytesizehint);
-      naMarkPtrWithAccessibleBytesize(&ptr, -bytesizehint + zerofillhint, NA_TRUE);
-    }else{
-      if(zerofillhint < NA_ZERO)
-        naError("naMakePtrWithMutableBuffer", "zerofillhint should be greater-equal zero.");
-      // Note that when bytesizehint is zero, zerofillhint is obsolete.
-      if((bytesizehint == NA_ZERO) && (zerofillhint != NA_ZERO))
-        naError("naMakePtrWithMutableBuffer", "zerofillhint should be zero if bytesizehint is zero.");
-      naMarkPtrWithVisibleBytesize(&ptr, bytesizehint);
-      naMarkPtrWithAccessibleBytesize(&ptr, bytesizehint, NA_FALSE);
-    }
+    if(zerofillhint < NA_ZERO)
+      naError("naMakePtrWithMutableData", "zerofillhint should be greater-equal zero.");
+    if(bytesizehint < NA_ZERO)
+      naError("naMakePtrWithMutableData", "bytesizehint should be greater-equal zero.");
+    // Note that when bytesizehint is zero, zerofillhint is obsolete.
+    if((bytesizehint == NA_ZERO) && (zerofillhint != NA_ZERO))
+      naError("naMakePtrWithMutableData", "zerofillhint should be zero if bytesizehint is zero.");
+    naMarkPtrWithVisibleBytesize(&ptr, bytesizehint);
+    naMarkPtrWithAccessibleBytesize(&ptr, bytesizehint + zerofillhint, NA_FALSE);
   #else
     NA_UNUSED(bytesizehint);
     NA_UNUSED(zerofillhint);
@@ -575,7 +590,8 @@ NA_IDEF NAPtr naMakePtrWithExtraction(const NAPtr* srcptr, NAUInt byteoffset, NA
   dstptr.data.d = &(((NAByte*)(srcptr->data.d))[byteoffset]);
   #ifndef NDEBUG
     // Now, we set the sizes and decide if certain flags still are valid.
-    dstptr.flags = srcptr->flags;
+    dstptr.flags = srcptr->flags & NA_PTR_CONST_DATA;
+    naMarkPtrCleanup(&dstptr, NA_MEMORY_CLEANUP_NONE);
     dstptr.visiblebytesize = bytesizehint;
     dstptr.accessiblebytesize = srcptr->accessiblebytesize - byteoffset;
     if(!(srcptr->flags & NA_PTR_HAS_VISIBLE_BYTECOUNT)){
@@ -645,144 +661,6 @@ NA_IDEF NABool naIsPtrConst(const NAPtr* ptr){
 
 
 
-// //////////////////////////
-// NALValue
-// //////////////////////////
-
-struct NALValue{
-  NAPtr   ptr;          // pointer to the first byte
-  NAInt   typesize;     // size of the unit in bytes. Always positive.
-};
-
-
-
-
-NA_IDEF NALValue naMakeLValue(){
-  NALValue lvalue;
-  // Note that we do not initialize the ptr with naMakePtr. Relying solely on
-  // the size field is non-redundant, saves some time and sometimes even helps
-  // detecting whether you initialized your structs correctly as certain
-  // compilers will add guards to non-initialized pointers and will fire
-  // with an exception.
-  lvalue.typesize = NA_ZERO;
-  return lvalue;
-}
-
-
-
-// Typesize must never be zero. When debugging, an error will be emitted and
-// you have to deal with the problem in a higher level function.
-NA_IDEF NALValue naMakeLValueWithTypesize(NAUInt typesize){
-  NALValue lvalue;
-  #ifndef NDEBUG
-    if(typesize == NA_ZERO)
-      naError("naMakeLValueWithTypesize", "typesize is zero.");
-    if((NAInt)typesize < NA_ZERO)
-      naError("naMakeLValueWithTypesize", "typesize appears to be negative when interpreted as a signed integer. This is not allowed.");
-  #endif
-  lvalue.ptr = naMakePtrWithBytesize((NAInt)typesize);
-  lvalue.typesize = typesize;
-  return lvalue;
-}
-
-
-
-NA_IDEF NALValue naMakeLValueWithConstBuffer(const void* buffer, NAInt typesize){
-  NALValue lvalue;
-  #ifndef NDEBUG
-    if(typesize == NA_ZERO)
-      naError("naMakeLValueWithTypesize", "typesize should be greater than zero.");
-  #endif
-  lvalue.ptr = naMakePtrWithConstBuffer(buffer, typesize, NA_ZERO);
-  lvalue.typesize = typesize;
-  return lvalue;
-}
-
-
-
-NA_IDEF NALValue naMakeLValueWithMutableBuffer(void* buffer, NAInt typesize, NAMemoryCleanup cleanuphint){
-  NALValue lvalue;
-  #ifndef NDEBUG
-    if(typesize == NA_ZERO)
-      naError("naMakeLValueWithMutableBuffer", "typesize should be greater than zero.");
-  #endif
-  lvalue.ptr = naMakePtrWithMutableBuffer(buffer, typesize, NA_ZERO, cleanuphint);
-  lvalue.typesize = typesize;
-  return lvalue;
-}
-
-
-
-NA_IDEF void naFreeLValue(NALValue* lvalue){
-  naFreePtr(&(lvalue->ptr));
-}
-
-
-
-NA_IDEF NAUInt naGetLValueTypesize(const NALValue* lvalue){
-  #ifndef NDEBUG
-    if(!lvalue){
-      naCrash("naGetLValueTypesize", "lvalue is Null-Pointer.");
-      return NA_TRUE;
-    }
-  #endif
-  return lvalue->typesize;
-}
-
-
-
-NA_IDEF NABool naIsLValueEmpty(const NALValue* lvalue){
-  #ifndef NDEBUG
-    if(!lvalue){
-      naCrash("naIsLValueEmpty", "lvalue is Null-Pointer.");
-      return NA_TRUE;
-    }
-  #endif
-  return (lvalue->typesize == NA_ZERO);
-}
-
-
-
-NA_IDEF const void* naGetLValueConstPointer(const NALValue* lvalue){
-  #ifndef NDEBUG
-    if(!lvalue){
-      naCrash("naGetLValueConstPointer", "lvalue is Null-Pointer.");
-      return NA_NULL;
-    }
-    if(naIsLValueEmpty(lvalue))
-      naError("naGetLValueConstPointer", "lvalue is empty.");
-  #endif
-  return naGetPtrConst(&(lvalue->ptr));
-}
-
-
-
-NA_IDEF void* naGetLValueMutablePointer(NALValue* lvalue){
-  #ifndef NDEBUG
-    if(!lvalue){
-      naCrash("naGetLValueMutablePointer", "lvalue is Null-Pointer.");
-      return NA_NULL;
-    }
-    if(naIsLValueEmpty(lvalue))
-      naError("naGetLValueMutablePointer", "lvalue is empty.");
-  #endif
-  return naGetPtrMutable(&(lvalue->ptr));
-}
-
-
-
-NA_IDEF NABool naIsLValueConst(NALValue* lvalue){
-  #ifndef NDEBUG
-    return naIsPtrConst(&(lvalue->ptr));
-  #else
-    NA_UNUSED(lvalue);
-    return NA_FALSE;
-  #endif
-}
-
-
-
-
 
 
 
@@ -826,18 +704,18 @@ NA_IDEF NAMemoryBlock naMakeMemoryBlockWithBytesize(NAInt bytesize){
 
 
 
-NA_IDEF NAMemoryBlock naMakeMemoryBlockWithConstBuffer(const void* buffer, NAInt bytesize){
+NA_IDEF NAMemoryBlock naMakeMemoryBlockWithConstData(const void* data, NAInt bytesize){
   NAMemoryBlock memblock;
-  memblock.ptr = naMakePtrWithConstBuffer(buffer, bytesize, 1);
+  memblock.ptr = naMakePtrWithConstData(data, bytesize, 0);
   memblock.bytesize = naAbsi(bytesize);
   return memblock;
 }
 
 
 
-NA_IDEF NAMemoryBlock naMakeMemoryBlockWithMutableBuffer(void* buffer, NAInt bytesize, NAMemoryCleanup cleanuphint){
+NA_IDEF NAMemoryBlock naMakeMemoryBlockWithMutableData(void* data, NAInt bytesize, NAMemoryCleanup cleanuphint){
   NAMemoryBlock memblock;
-  memblock.ptr = naMakePtrWithMutableBuffer(buffer, bytesize, 1, cleanuphint);
+  memblock.ptr = naMakePtrWithMutableData(data, bytesize, 0, cleanuphint);
   memblock.bytesize = naAbsi(bytesize);
   return memblock;
 }
@@ -1026,243 +904,6 @@ NA_IDEF NABool naIsMemoryBlockConst(NAMemoryBlock* memblock){
 
 
 
-// //////////////////////////
-// CArray
-// //////////////////////////
-
-struct NACArray{
-  NAPtr   ptr;          // pointer to the first byte
-  NAUInt  typesize;     // size of one unit in bytes. Always positive.
-  NAUInt  bytesize;     // size of the array in bytes. Always positive.
-};
-
-
-
-NA_IDEF NACArray naMakeCArray(){
-  NACArray carray;
-  // Note that we do not initialize the ptr with naMakePtr. Relying solely on
-  // the size field is non-redundant, saves some time and sometimes even helps
-  // detecting whether you initialized your structs correctly as certain
-  // compilers will add guards to non-initialized pointers and will fire
-  // with an exception.
-  carray.typesize = NA_ZERO;
-  return carray;
-}
-
-
-
-// Typesize must never be zero. When debugging, an error will be emitted and
-// you have to deal with the problem in a higher level function.
-NA_IDEF NACArray naMakeCArrayWithTypesizeAndCount(NAUInt typesize, NAInt count){
-  NACArray carray;
-  NAInt totalbytecount = (NAInt)typesize * count;;
-  #ifndef NDEBUG
-    if((NAInt)typesize < NA_ZERO)
-      naError("naMakeCArrayWithTypesizeAndCount", "typesize appears to be negative when interpreted as a signed integer. This is not allowed.");
-    if(count == NA_ZERO)
-      naError("naMakeCArrayWithTypesizeAndCount", "count is zero.");
-    if(naSigni(count) != naSigni(totalbytecount))
-      naError("naMakeCArrayWithTypesizeAndCount", "count and typesize overflow the integer range.");
-  #endif
-  carray.ptr = naMakePtrWithBytesize(totalbytecount);
-  carray.bytesize = naAbsi(totalbytecount);
-  carray.typesize = typesize;
-  return carray;
-}
-
-
-
-NA_IDEF NACArray naMakeCArrayWithConstBuffer(const void* buffer, NAInt typesize, NAInt count){
-  NACArray carray;
-  #ifndef NDEBUG
-    if(typesize <= NA_ZERO)
-      naError("naMakeCArrayWithConstBuffer", "typesize should be greater than zero.");
-    if(count <= NA_ZERO)
-      naError("naMakeCArrayWithConstBuffer", "count should be greater than zero.");
-  #endif
-  carray.ptr = naMakePtrWithConstBuffer(buffer, typesize * count, typesize);
-  carray.bytesize = naAbsi(typesize * count);
-  return carray;
-}
-
-
-
-NA_IDEF NACArray naMakeCArrayWithMutableBuffer(void* buffer, NAUInt typesize, NAInt count, NAMemoryCleanup cleanuphint){
-  NACArray carray;
-  #ifndef NDEBUG
-    if(typesize <= NA_ZERO)
-      naError("naMakeCArrayWithMutableBuffer", "typesize should be greater than zero.");
-    if(count <= NA_ZERO)
-      naError("naMakeCArrayWithMutableBuffer", "count should be greater than zero.");
-  #endif
-  carray.ptr = naMakePtrWithMutableBuffer(buffer, typesize * count, typesize, cleanuphint);
-  carray.bytesize = naAbsi(typesize * count);
-  return carray;
-}
-
-
-
-NA_IDEF NACArray naMakeCArrayWithExtraction(const NACArray* srccarray, NAUInt elemoffset, NAUInt elemcount){
-  NACArray dstcarray;
-  #ifndef NDEBUG
-    if(naIsCArrayEmpty(srccarray))
-      naError("naMakeCArrayWithExtraction", "src memory block is empty");
-    if((NAInt)elemoffset < NA_ZERO)
-      naError("naMakeCArrayWithExtraction", "offset seems to be negative but should be unsigned.");
-    if((NAInt)elemcount < NA_ZERO)
-      naError("naMakeCArrayWithExtraction", "bytesize seems to be negative but should be unsigned.");
-    if(((elemoffset + elemcount) * srccarray->typesize) > srccarray->bytesize)
-      naError("naMakeCArrayWithExtraction", "offset and bytesize range out of bounds");
-  #endif
-  dstcarray.ptr = naMakePtrWithExtraction(&(srccarray->ptr), elemoffset * srccarray->typesize, elemcount * srccarray->typesize);
-  dstcarray.bytesize = elemcount * srccarray->typesize;
-  return dstcarray;
-}
-
-
-
-NA_IDEF void naFreeCArray(NACArray* carray){
-  naFreePtr(&(carray->ptr));
-}
-
-
-
-NA_IDEF NAUInt naGetCArrayBytesize(const NACArray* carray){
-  #ifndef NDEBUG
-    if(!carray){
-      naCrash("naGetCArrayBytesize", "carray is Null-Pointer.");
-      return NA_TRUE;
-    }
-  #endif
-  return carray->bytesize;
-}
-
-
-
-NA_IDEF NAUInt naGetCArrayCount(const NACArray* carray){
-  #ifndef NDEBUG
-    if(!carray){
-      naCrash("naGetCArrayBytesize", "carray is Null-Pointer.");
-      return NA_TRUE;
-    }
-    if(naIsCArrayEmpty(carray))
-      naError("naGetCArrayConstPointer", "carray is empty. Division by zero ahead...");
-  #endif
-  return carray->bytesize / carray->typesize;
-}
-
-
-
-NA_IDEF NABool naIsCArrayEmpty(const NACArray* carray){
-  #ifndef NDEBUG
-    if(!carray){
-      naCrash("naIsCArrayEmpty", "carray is Null-Pointer.");
-      return NA_TRUE;
-    }
-  #endif
-  return (carray->typesize == NA_ZERO);
-}
-
-
-
-NA_IDEF const void* naGetCArrayConstPointer(const NACArray* carray){
-  #ifndef NDEBUG
-    if(!carray){
-      naCrash("naGetCArrayConstPointer", "carray is Null-Pointer.");
-      return NA_NULL;
-    }
-    if(naIsCArrayEmpty(carray))
-      naError("naGetCArrayConstPointer", "carray is empty.");
-  #endif
-  return naGetPtrConst(&(carray->ptr));
-}
-
-
-
-NA_IDEF void* naGetCArrayMutablePointer(NACArray* carray){
-  #ifndef NDEBUG
-    if(!carray){
-      naCrash("naGetCArrayMutablePointer", "carray is Null-Pointer.");
-      return NA_NULL;
-    }
-    if(naIsCArrayEmpty(carray))
-      naError("naGetCArrayMutablePointer", "carray is empty.");
-  #endif
-  return naGetPtrMutable(&(carray->ptr));
-}
-
-
-
-NA_IDEF const void* naGetCArrayConstByte(const NACArray* carray, NAUInt indx){
-  #ifndef NDEBUG
-    if(!carray){
-      naCrash("naGetCArrayConstByte", "carray is Null-Pointer.");
-      return NA_NULL;
-    }
-    if((NAInt)indx < NA_ZERO)
-      naError("naGetCArrayConstByte", "indx seems to be negative but should be unsigned.");
-    if(naIsCArrayEmpty(carray))
-      naError("naGetCArrayConstByte", "carray is empty.");
-  #endif
-  #ifndef NDEBUG
-    if((indx * carray->typesize) >= carray->bytesize)
-      naError("naGetCArrayConstByte", "indx out of bounds");
-  #endif
-  return &(((const NAByte*)(naGetPtrConst(&(carray->ptr))))[indx * carray->typesize]);
-}
-
-
-
-NA_IDEF void* naGetCArrayMutableByte(NACArray* carray, NAUInt indx){
-  #ifndef NDEBUG
-    if(!carray){
-      naCrash("naGetCArrayMutableByte", "carray is Null-Pointer.");
-      return NA_NULL;
-    }
-    if((NAInt)indx < NA_ZERO)
-      naError("naGetCArrayMutableByte", "indx seems to be negative but should be unsigned.");
-    if(naIsCArrayEmpty(carray))
-      naError("naGetCArrayMutableByte", "carray is empty.");
-  #endif
-  #ifndef NDEBUG
-    if((indx * carray->typesize) >= carray->bytesize)
-      naError("naGetCArrayMutableByte", "indx out of bounds");
-  #endif
-  return &(((NAByte*)(naGetPtrMutable(&(carray->ptr))))[indx * carray->typesize]);
-}
-
-
-
-NA_IDEF NABool naIsCArrayConst(NACArray* carray){
-  #ifndef NDEBUG
-    return naIsPtrConst(&(carray->ptr));
-  #else
-    NA_UNUSED(carray);
-    return NA_FALSE;
-  #endif
-}
-
-
-
-#ifndef NDEBUG
-
-  NA_HIDEF NABool naIsCArrayNullTerminated(const NACArray* carray){
-    #ifndef NDEBUG
-      if(!carray){
-        naCrash("naIsCArrayNullTerminated", "carray is Null-Pointer.");
-        return NA_TRUE;
-      }
-    #endif
-    return naIsPtrNullTerminated(&(carray->ptr));
-  }
-
-#endif
-
-
-
-
-
-
 
 
 
@@ -1270,202 +911,13 @@ NA_IDEF NABool naIsCArrayConst(NACArray* carray){
 
 
 // //////////////////////////
-// NABuf
+// NASmartPtr
 // //////////////////////////
 
-
-struct NABuf{
-  NAPtr   ptr;          // pointer to the first byte
-  NAUInt  bytesize;     // total size of the buf in bytes. Always positive.
-  NAUInt  usedbytesize;     // size of the used bytes. Always positive.
-};
-
-
-
-NA_IDEF NABuf naMakeBuf(){
-  NABuf buf;
-  // Note that we do not initialize the ptr with naMakePtr. Relying solely on
-  // the size field is non-redundant, saves some time and sometimes even helps
-  // detecting whether you initialized your structs correctly as certain
-  // compilers will add guards to non-initialized pointers and will fire
-  // with an exception.
-  buf.bytesize = NA_ZERO;
-  buf.usedbytesize = NA_ZERO;
-  return buf;
-}
-
-
-
-// maxsize must never be zero. When debugging, an error will be emitted and
-// you have to deal with the problem in a higher level function.
-NA_IDEF NABuf naMakeBufWithBytesize(NAInt maxbytesize, NAInt usedbytesize){
-  NABuf buf;
-  #ifndef NDEBUG
-    if(maxbytesize == NA_ZERO)
-      naError("naMakeBufWithBytesize", "maxsize is zero.");
-    if(maxbytesize < NA_ZERO)
-      naError("naMakeBufWithBytesize", "maxsize must be positive. Zero fill check might fail with NABuf");
-    if(usedbytesize < NA_ZERO)
-      naError("naMakeBufWithBytesize", "usedsize must be positive.");
-    if(usedbytesize > maxbytesize)
-      naError("naMakeBufWithBytesize", "maxsize can not be smaller than usedsize.");
-#endif
-  buf.ptr = naMakePtrWithBytesize((NAInt)maxbytesize);
-  buf.bytesize = maxbytesize;
-  buf.usedbytesize = usedbytesize;
-  return buf;
-}
-
-
-
-NA_IDEF void naFreeBuf(NABuf* buf){
-  naFreePtr(&(buf->ptr));
-}
-
-
-
-NA_IDEF NAUInt naGetBufMaxBytesize(const NABuf* buf){
-  #ifndef NDEBUG
-    if(!buf){
-      naCrash("naGetBufMaxBytesize", "buf is Null-Pointer.");
-      return NA_TRUE;
-    }
-  #endif
-  return buf->bytesize;
-}
-
-
-
-NA_IDEF NAUInt naGetBufUsedBytesize(const NABuf* buf){
-  #ifndef NDEBUG
-    if(!buf){
-      naCrash("naGetBufUsedBytesize", "buf is Null-Pointer.");
-      return NA_TRUE;
-    }
-  #endif
-  return buf->usedbytesize;
-}
-
-
-
-NA_IDEF NAUInt naGetBufRemainingBytesize(const NABuf* buf){
-  #ifndef NDEBUG
-    if(!buf){
-      naCrash("naGetBufRemainingBytesize", "buf is Null-Pointer.");
-      return NA_TRUE;
-    }
-  #endif
-  return buf->bytesize - buf->usedbytesize;
-}
-
-
-
-NA_IDEF NABool naIsBufEmpty(const NABuf* buf){
-  #ifndef NDEBUG
-    if(!buf){
-      naCrash("naIsBufEmpty", "buf is Null-Pointer.");
-      return NA_TRUE;
-    }
-  #endif
-  return (buf->usedbytesize == NA_ZERO);
-}
-
-
-
-
-
-NA_IDEF const void* naGetBufConstUsedPointer(const NABuf* buf){
-  #ifndef NDEBUG
-    if(!buf){
-      naCrash("naGetBufConstUsedPointer", "buf is Null-Pointer.");
-      return NA_NULL;
-    }
-  #endif
-  return &(((const NAByte*)(naGetPtrConst(&(buf->ptr))))[buf->usedbytesize]);
-}
-
-
-
-NA_IDEF void* naGetBufMutableUsedPointer(NABuf* buf){
-  #ifndef NDEBUG
-    if(!buf){
-      naCrash("naGetBufMutableUsedPointer", "buf is Null-Pointer.");
-      return NA_NULL;
-    }
-  #endif
-  return &(((NAByte*)(naGetPtrMutable(&(buf->ptr))))[buf->usedbytesize]);
-}
-
-
-
-NA_IDEF void naAdvanceBuf(NABuf* buf, NAUInt bytesize){
-  #ifndef NDEBUG
-    if(!buf){
-      naCrash("naAdvanceBuf", "buf is Null-Pointer.");
-      return;
-    }
-    if((buf->usedbytesize + bytesize) > buf->bytesize)
-      naError("naAdvanceBuf", "buf overflows.");
-  #endif
-  buf->usedbytesize += bytesize;
-}
-
-
-
-NA_IDEF const void* naGetBufConstFirstPointer(const NABuf* buf){
-  #ifndef NDEBUG
-    if(!buf){
-      naCrash("naGetBufConstUsedPointer", "buf is Null-Pointer.");
-      return NA_NULL;
-    }
-    if(naIsBufEmpty(buf))
-      naError("naGetBufConstUsedPointer", "buf is empty.");
-  #endif
-  return naGetPtrConst(&(buf->ptr));
-}
-
-
-
-NA_IDEF void* naGetBufMutableFirstPointer(NABuf* buf){
-  #ifndef NDEBUG
-    if(!buf){
-      naCrash("naGetBufMutableUsedPointer", "buf is Null-Pointer.");
-      return NA_NULL;
-    }
-    if(naIsBufEmpty(buf))
-      naError("naGetBufMutableUsedPointer", "buf is empty.");
-  #endif
-  return naGetPtrMutable(&(buf->ptr));
-}
-
-
-
-NA_IDEF NABool naIsBufConst(NABuf* buf){
-  #ifndef NDEBUG
-    return naIsPtrConst(&(buf->ptr));
-  #else
-    NA_UNUSED(buf);
-    return NA_FALSE;
-  #endif
-}
-
-
-
-
-
-// //////////////////////////
-// NAPointer
-// //////////////////////////
-
-struct NAPointer{
+struct NASmartPtr{
   NAPtr ptr;
-  NAMutator deallocator;
   NAUInt refcount;      // Reference count. Including flags
 };
-
-// Prototype of the destruct function defined in the implementation file.
-NA_HAPI void naDestructPointer(NAPointer* pointer);
-NA_RUNTIME_TYPE(NAPointer, naDestructPointer);
 
 // Starting with NALib version 14, the actual data is stored as a pointer.
 // This means that it must be allocated elsewhere. But this means, any pointer
@@ -1483,11 +935,211 @@ NA_RUNTIME_TYPE(NAPointer, naDestructPointer);
 // both here in NAPointer as well as a debugging hint in NAPtr.
 
 #ifndef NDEBUG
-  #define NA_POINTER_DELETE_FROM_DECREF (NA_ONE << (NA_MEMORY_CLEANUP_BITSHIFT - 1))
-  #define NA_POINTER_REFCOUNT_MASK      (NA_POINTER_DELETE_FROM_DECREF - NA_ONE)
+  #define NA_SMARTPTR_DELETE_FROM_RELEASE (NA_ONE << (NA_MEMORY_CLEANUP_STRUCT_BITSHIFT - 1))
+  #define NA_SMARTPTR_FLAG_BITS   (2 * NA_MEMORY_CLEANUP_BITS + 1)
 #else
-  #define NA_POINTER_REFCOUNT_MASK      ((NA_ONE << NA_MEMORY_CLEANUP_BITSHIFT) - NA_ONE)
+  #define NA_SMARTPTR_FLAG_BITS   (2 * NA_MEMORY_CLEANUP_BITS)
 #endif
+#define NA_SMARTPTR_REFCOUNT_MASK      ((NA_ONE << NA_SMARTPTR_FLAG_BITS) - NA_ONE)
+
+
+
+NA_IDEF NASmartPtr* naInitSmartPtrNull(NASmartPtr* ptr, NAMemoryCleanup smartptrcleanup){
+  return naInitSmartPtrMutable(ptr, smartptrcleanup, NA_NULL, NA_MEMORY_CLEANUP_NONE);
+}
+
+
+
+NA_IDEF NASmartPtr* naInitSmartPtrConst(NASmartPtr* sptr, NAMemoryCleanup smartptrcleanup, const void* data){
+  #ifndef NDEBUG
+    if(!naIsCleanupValid(smartptrcleanup))
+      naError("naInitSmartPtrConst", "smartptrcleanup method invalid");
+    #ifdef __cplusplus 
+      if(smartptrcleanup == NA_MEMORY_CLEANUP_DELETE_BRACK)  
+        naError("naReleaseSmartPtr", "This smartptrcleanup method does not make sense");
+    #endif
+  #endif
+  sptr->ptr = naMakePtrWithConstData(data, NA_ZERO, NA_ZERO);
+  sptr->refcount  = 1
+                  | ((NAUInt)NA_MEMORY_CLEANUP_NONE << NA_MEMORY_CLEANUP_DATA_BITSHIFT)
+                  | ((NAUInt)smartptrcleanup << NA_MEMORY_CLEANUP_STRUCT_BITSHIFT);
+  return sptr;
+}
+
+
+
+NA_IDEF NASmartPtr* naInitSmartPtrMutable(NASmartPtr* sptr, NAMemoryCleanup smartptrcleanup, void* data, NAMemoryCleanup datacleanup){
+  #ifndef NDEBUG
+    if(!naIsCleanupValid(smartptrcleanup))
+      naError("naInitSmartPtr", "smartptrcleanup method invalid");
+    #ifdef __cplusplus 
+      if(smartptrcleanup == NA_MEMORY_CLEANUP_DELETE_BRACK)  
+        naError("naReleaseSmartPtr", "This smartptrcleanup method does not make sense");
+    #endif
+    if(!naIsCleanupValid(datacleanup))
+      naError("naInitSmartPtr", "datacleanup method invalid");
+  #endif
+  sptr->ptr = naMakePtrWithMutableData(data, NA_ZERO, NA_ZERO, datacleanup);
+  sptr->refcount  = 1
+                  | ((NAUInt)datacleanup << NA_MEMORY_CLEANUP_DATA_BITSHIFT)
+                  | ((NAUInt)smartptrcleanup << NA_MEMORY_CLEANUP_STRUCT_BITSHIFT);
+  return sptr;
+}
+
+
+
+NA_HIDEF NAUInt naGetSmartPtrRefCount(NASmartPtr* sptr){
+  return sptr->refcount & NA_SMARTPTR_REFCOUNT_MASK;
+}
+
+
+NA_IDEF NASmartPtr* naRetainSmartPtr(NASmartPtr* sptr){
+  #ifndef NDEBUG
+    if(!sptr){
+      naCrash("naRetainSmartPtr", "sptr is Null-Pointer.");
+      return NA_NULL;
+    }else{
+      // The next test can detect some erroneous behaviour in the code. Note
+      // however that most likely the true cause of the error did occur long
+      // before reaching here.
+      if(naGetSmartPtrRefCount(sptr) == NA_ZERO)
+        naError("naRetainSmartPtr", "Retaining NASmartPtr with a refcount of 0");
+    }
+  #endif
+  sptr->refcount++;
+  #ifndef NDEBUG
+    // If refcount now suddenly becomes zero, there was either an error earlier
+    // or the object has been retained too many times. Overflow.
+    if(naGetSmartPtrRefCount(sptr) == NA_ZERO)
+      naError("naRetainSmartPtr", "Reference count overflow");
+  #endif
+  return sptr;
+}
+
+
+
+NA_IDEF void naReleaseSmartPtr(NASmartPtr* sptr){
+  #ifndef NDEBUG
+    if(!sptr){
+      naCrash("naReleaseSmartPtr", "sptr is Null-Pointer.");
+      return;
+    }else{
+      // The next test can detect some erroneous behaviour in the code. Note
+      // however that most likely the true cause of the error did occur long
+      // before reaching here.
+      if(naGetSmartPtrRefCount(sptr) == NA_ZERO)
+        naError("naReleaseSmartPtr", "Releasing NASmartPtr with a refcount of 0");
+    }
+  #endif
+  // Note that the author decided to always count to zero, even if it is clear
+  // that the pointer will eventually be freed and the data will be lost in
+  // nirvana. But often times in debugging, when retaining and releasing is not
+  // done correctly, an NAPointer is released too often. When refcount is 0 and
+  // NDEBUG is not defined, this can be detected!
+  sptr->refcount--;
+  if(naGetSmartPtrRefCount(sptr) == NA_ZERO){
+    #ifndef NDEBUG
+      sptr->refcount |= NA_SMARTPTR_DELETE_FROM_RELEASE;
+    #endif
+    switch(naGetFlagCleanupData(sptr->refcount)){
+      case NA_MEMORY_CLEANUP_NONE:
+        break;
+      case NA_MEMORY_CLEANUP_FREE:
+        naFreePtr(&(sptr->ptr));
+        break;
+      case NA_MEMORY_CLEANUP_FREE_ALIGNED:
+        naFreeAlignedPtr(&(sptr->ptr));
+        break;
+#ifdef __cplusplus 
+      case NA_MEMORY_CLEANUP_DELETE:
+        naDeletePtr(&(sptr->ptr));
+        break;
+      case NA_MEMORY_CLEANUP_DELETE_BRACK:
+        naDeleteBrackPtr(&(sptr->ptr));
+        break;
+#endif
+      case NA_MEMORY_CLEANUP_NA_DELETE:
+        naNaDeletePtr(&(sptr->ptr));
+        break;
+    }
+    switch(naGetFlagCleanupStruct(sptr->refcount)){
+      case NA_MEMORY_CLEANUP_NONE:
+        break;
+      case NA_MEMORY_CLEANUP_FREE:
+        naFree(sptr);
+        break;
+      case NA_MEMORY_CLEANUP_FREE_ALIGNED:
+        naFreeAligned(sptr);
+        break;
+#ifdef __cplusplus 
+      case NA_MEMORY_CLEANUP_DELETE:
+        delete sptr;
+        break;
+      case NA_MEMORY_CLEANUP_DELETE_BRACK:
+        naError("naReleaseSmartPtr", "This cleanup option does not make sense");
+        delete [] sptr;
+        break;
+#endif
+      case NA_MEMORY_CLEANUP_NA_DELETE:
+        naDelete(sptr);
+        break;
+    }
+    // Note that this is the only position in the whole NALib code where an
+    // NAPointer is deleted. Therefore you could theoretically include the
+    // code written in naDestructPointer directly here to save one function
+    // call. But as NALib assumes that NAPointer is only used when really
+    // needed for reference counting, it is nontheless put into a separate
+    // function such that this function naReleasePointer can be inlined for
+    // sure and thus becomes very fast.
+  }
+  // Note that other programming languages have incorporated this very idea
+  // of self-organized reference-counting pointers deeply within its core.
+  // Their runtime-systems keep giant pools of free objects at hand and take
+  // care of detecting and collecting unused objects. In C and C++, no such
+  // mechanisms exist and must be implemented manually. NARuntime is a small
+  // example of such a system.
+}
+
+
+
+NA_IDEF const void* naGetSmartPtrConst(const NASmartPtr* sptr){
+  return naGetPtrConst(&(sptr->ptr));
+}
+
+
+
+NA_IDEF void* naGetSmartPtrMutable(NASmartPtr* sptr){
+  #ifndef NDEBUG
+    if(naIsPtrConst(&(sptr->ptr)))
+      naError("naGetSmartPtrMutable", "Mutating a const pointer.");
+  #endif
+  return naGetPtrMutable(&(sptr->ptr));
+}
+
+
+
+NA_IDEF NABool naIsSmartPtrConst(const NASmartPtr* sptr){
+  return naIsPtrConst(&(sptr->ptr));
+}
+
+
+
+
+
+// //////////////////////////
+// NAPointer
+// //////////////////////////
+
+struct NAPointer{
+  NAPtr ptr;
+  NAMutator destructor;
+  NAUInt refcount;      // Reference count. Including flags
+};
+
+// Prototype of the destruct function defined in the implementation file.
+NA_HAPI void naDestructPointer(NAPointer* pointer);
+NA_RUNTIME_TYPE(NAPointer, naDestructPointer);
+
 
 
 
@@ -1497,16 +1149,16 @@ NA_IDEF NAPointer* naNewNullPointer(){
 
 
 
-NA_IDEF NAPointer* naNewPointer(void* data, NAMemoryCleanup cleanup, NAMutator deallocator){
+NA_IDEF NAPointer* naNewPointer(void* data, NAMemoryCleanup cleanup, NAMutator destructor){
   NAPointer* pointer; // Declaration before definition. Needed for C90
   #ifndef NDEBUG
-    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup > NA_MEMORY_CLEANUP_DELETE)
+    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup >= NA_MEMORY_CLEANUP_COUNT)
       naError("naNewPointer", "cleanup method invalid");
   #endif
   pointer = naNew(NAPointer);
-  pointer->ptr = naMakePtrWithMutableBuffer(data, 0, 0, cleanup);
-  pointer->deallocator = deallocator;
-  pointer->refcount = 1 | ((NAUInt)cleanup << NA_MEMORY_CLEANUP_BITSHIFT);
+  pointer->ptr = naMakePtrWithMutableData(data, NA_ZERO, NA_ZERO, cleanup);
+  pointer->destructor = destructor;
+  pointer->refcount = 1 | ((NAUInt)cleanup << NA_MEMORY_CLEANUP_DATA_BITSHIFT);
   return pointer;
 }
 
@@ -1523,7 +1175,7 @@ NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
       // The next test can detect some erroneous behaviour in the code. Note
       // however that most likely the true cause of the error did occur long
       // before reaching here.
-      if((pointer->refcount & NA_POINTER_REFCOUNT_MASK) == NA_ZERO)
+      if((pointer->refcount & NA_SMARTPTR_REFCOUNT_MASK) == NA_ZERO)
         naError("naRetainPointer", "Retaining NAPointer with a refcount of 0");
     }
   #endif
@@ -1531,7 +1183,7 @@ NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
   #ifndef NDEBUG
     // If refcount now suddenly becomes zero, there was either an error earlier
     // or the object has been retained too many times. Overflow.
-    if((pointer->refcount & NA_POINTER_REFCOUNT_MASK) == NA_ZERO)
+    if((pointer->refcount & NA_SMARTPTR_REFCOUNT_MASK) == NA_ZERO)
       naError("naRetainPointer", "Reference count overflow");
   #endif
   return pointer;
@@ -1548,7 +1200,7 @@ NA_IDEF void naReleasePointer(NAPointer* pointer){
       // The next test can detect some erroneous behaviour in the code. Note
       // however that most likely the true cause of the error did occur long
       // before reaching here.
-      if((pointer->refcount & NA_POINTER_REFCOUNT_MASK) == NA_ZERO)
+      if((pointer->refcount & NA_SMARTPTR_REFCOUNT_MASK) == NA_ZERO)
         naError("naReleasePointer", "Releasing NAPointer with a refcount of 0");
     }
   #endif
@@ -1558,10 +1210,11 @@ NA_IDEF void naReleasePointer(NAPointer* pointer){
   // done correctly, an NAPointer is released too often. When refcount is 0 and
   // NDEBUG is not defined, this can be detected!
   pointer->refcount--;
-  if((pointer->refcount & NA_POINTER_REFCOUNT_MASK) == NA_ZERO){
+  if((pointer->refcount & NA_SMARTPTR_REFCOUNT_MASK) == NA_ZERO){
     #ifndef NDEBUG
-      pointer->refcount |= NA_POINTER_DELETE_FROM_DECREF;
+      pointer->refcount |= NA_SMARTPTR_DELETE_FROM_RELEASE;
     #endif
+    if(pointer->destructor){pointer->destructor(naGetPtrMutable(&(pointer->ptr)));}
     naDelete(pointer);
     // Note that this is the only position in the whole NALib code where an
     // NAPointer is deleted. Therefore you could theoretically include the

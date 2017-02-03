@@ -49,14 +49,6 @@ struct NARuntime{
 NARuntime* na_runtime = NA_NULL;
 
 
-#ifndef NDEBUG
-  NAInt na_debug_mem_bytesize = 0;
-  NAInt na_debug_mem_invisiblebytesize = 0;
-  NABool na_debug_mem_observe_bytes = NA_FALSE;
-#endif
-
-
-
 #if (NA_RUNTIME_USES_MEMORY_POOLS == 1)
 
 
@@ -242,6 +234,8 @@ NA_DEF void naStopRuntime(){
     if(!na_runtime)
       naCrash("naStopRuntime", "Runtime not running");
   #endif
+  // todo.
+  na_runtime = NA_NULL;
 }
 
 
@@ -253,13 +247,18 @@ NA_DEF void naStopRuntime(){
 // This function is not inlined as it must be called by naDelete.
 NA_HDEF void naDestructPointer(NAPointer* pointer){
   #ifndef NDEBUG
-    if(!(pointer->refcount & NA_POINTER_DELETE_FROM_DECREF))
+    if(!(pointer->refcount & NA_SMARTPTR_DELETE_FROM_RELEASE))
       naError("naDestructPointer", "You should never call naDelete on a Pointer! Use naPointerRelease.");
   #endif
-  if(pointer->deallocator){
-    pointer->deallocator(naGetPtrMutable(&(pointer->ptr)));
+  if(pointer->destructor){
+    pointer->destructor(naGetPtrMutable(&(pointer->ptr)));
   }
-  switch((NAMemoryCleanup)(pointer->refcount >> NA_MEMORY_CLEANUP_BITSHIFT)){
+  NAMemoryCleanup cleanup = (NAMemoryCleanup)(pointer->refcount >> NA_MEMORY_CLEANUP_DATA_BITSHIFT);
+  #ifndef NDEBUG
+    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup >= NA_MEMORY_CLEANUP_COUNT)
+      naError("naDestructPointer", "invalid cleanup option");
+  #endif
+  switch(cleanup){
   case NA_MEMORY_CLEANUP_UNDEFINED:
     #ifndef NDEBUG
       naError("naDestructPointer", "invalid cleanup option");
@@ -273,8 +272,22 @@ NA_HDEF void naDestructPointer(NAPointer* pointer){
   case NA_MEMORY_CLEANUP_FREE_ALIGNED:
     naFreeAlignedPtr(&(pointer->ptr));
     break;
+#ifdef __cplusplus 
   case NA_MEMORY_CLEANUP_DELETE:
-    naDeletePtr(&(pointer->ptr));
+    naDeletePtr(pointer->ptr);
+    break;
+  case NA_MEMORY_CLEANUP_DELETE_BRACK:
+    naDeleteBrackPtr(&(pointer->ptr));
+    break;
+#endif
+  case NA_MEMORY_CLEANUP_NA_DELETE:
+    naNaDeletePtr(&(pointer->ptr));
+    break;
+  default:
+    // The default case is a security if this file is not compiled for C++.
+    #ifndef NDEBUG
+      naError("naDestructPointer", "Cleanup option is unavailable in C, use C++");
+    #endif
     break;
   }
 }

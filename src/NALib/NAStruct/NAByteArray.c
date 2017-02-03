@@ -40,7 +40,7 @@ NA_DEF NAByteArray* naInitByteArrayWithConstBuffer(NAByteArray* array, const voi
   if(bytesize == NA_ZERO){
     *newstorageblock = naMakeMemoryBlock();
   }else{
-    *newstorageblock = naMakeMemoryBlockWithConstBuffer(buffer, bytesize);
+    *newstorageblock = naMakeMemoryBlockWithConstData(buffer, bytesize);
   }
   array->storage = naNewPointer(newstorageblock, NA_MEMORY_CLEANUP_FREE, NA_NULL);
   array->memblock = naMakeMemoryBlockWithExtraction(newstorageblock, 0, naGetMemoryBlockBytesize(newstorageblock));
@@ -53,7 +53,7 @@ NA_DEF NAByteArray* naInitByteArrayWithConstBuffer(NAByteArray* array, const voi
 NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* buffer, NAInt bytesize, NAMemoryCleanup cleanup){
   NAMemoryBlock* newstorageblock;
   #ifndef NDEBUG
-    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup > NA_MEMORY_CLEANUP_DELETE)
+    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup >= NA_MEMORY_CLEANUP_COUNT)
       naError("naNewStringWithMutableUTF8Buffer", "invalid cleanup option");
     if(!array)
       {naCrash("naInitByteArrayWithMutableBuffer", "array is Null-Pointer."); return NA_NULL;}
@@ -64,7 +64,7 @@ NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* b
   if(bytesize == NA_ZERO){
     *newstorageblock = naMakeMemoryBlock();
   }else{
-    *newstorageblock = naMakeMemoryBlockWithMutableBuffer(buffer, bytesize, cleanup);
+    *newstorageblock = naMakeMemoryBlockWithMutableData(buffer, bytesize, cleanup);
   }
   if(cleanup){
     array->storage = naNewPointer(newstorageblock, NA_MEMORY_CLEANUP_FREE, (NAMutator)naFreeMemoryBlock);
@@ -142,7 +142,7 @@ NA_DEF void naDecoupleByteArray(NAByteArray* array, NABool appendnulltermination
   // buffer and therefore, it is should be done explicitely.
 
   newstorageblock = naAlloc(NAMemoryBlock);
-  *newstorageblock = naMakeMemoryBlockWithMutableBuffer(buf, arraysize, NA_MEMORY_CLEANUP_FREE);
+  *newstorageblock = naMakeMemoryBlockWithMutableData(buf, arraysize, NA_MEMORY_CLEANUP_FREE);
   array->storage = naNewPointer(newstorageblock, NA_MEMORY_CLEANUP_FREE, (NAMutator)naFreeMemoryBlock);
   array->memblock = naMakeMemoryBlockWithExtraction(newstorageblock, 0, naGetMemoryBlockBytesize(newstorageblock));
   array->indx = NA_INVALID_MEMORY_INDEX;

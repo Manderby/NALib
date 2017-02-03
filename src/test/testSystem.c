@@ -34,7 +34,14 @@ void testSystem(void){
   printf("\n");
   printf("System Test\n");
   printf("===========\n");
-  printf("NALib Version:            %d\n", NA_VERSION);
+  
+  printf("NALib Version:            %d ", NA_VERSION);
+  #ifndef NDEBUG
+    printf("(Debug)\n");
+  #else
+    printf("(Release)\n");
+  #endif
+  
   printf("NA_SYSTEM:                %s\n", na_system_strings[NA_SYSTEM]);
   #if defined __cplusplus
     #if defined NA_CPP11
@@ -57,9 +64,12 @@ void testSystem(void){
       printf("Compiled for              C with no standard\n");
     #endif
   #endif
+  
   printf("Endianness:               %s\n", na_endianness_strings[NA_SYSTEM_ENDIANNESS]);
+  
   printf("Default \"void*\" size:     %d Bits (%d Bytes)\n", NA_SYSTEM_ADDRESS_BITS, NA_SYSTEM_ADDRESS_BYTES);
   printf("Default \"int\" size:       %d Bits\n", NA_SYSTEM_INT_BITS);
+  
   printf("Signed integer encoding:  %s\n", na_signed_integer_encoding_strings[NA_SIGNED_INTEGER_ENCODING]);
 }
 

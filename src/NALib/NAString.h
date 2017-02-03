@@ -64,7 +64,14 @@ typedef enum{
 
 
 
-NA_API NAUInt naStrlen(const NAUTF8Char* str);
+// Remapping of the starndard strlen function.
+NA_IAPI NAUInt naStrlen(              const NAUTF8Char* str);
+NA_IAPI NAUInt naVsnprintf(                 NAUTF8Char* buffer,
+                                                 NAUInt length,
+                                      const NAUTF8Char* newstr,
+                                                va_list argumentlist);
+NA_IAPI NAUInt naVarargStringLength(  const NAUTF8Char* string,
+                                                va_list args);
 
 
 
@@ -380,6 +387,10 @@ NA_API NABool naEqualUTF8CStringLiteralsCaseInsensitive( const NAUTF8Char* strin
                                                          const NAUTF8Char* string2);
 
 
+
+
+// Inline implementations are in a separate file:
+#include "NAStruct/NAStringII.h"
 
 
 

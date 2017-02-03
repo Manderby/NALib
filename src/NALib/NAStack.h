@@ -113,10 +113,10 @@ NA_IAPI void*       naGetStackCurrentMutable       (NAStackIterator* iterator);
 // The Pointer variants expect this stack to store pointers hence
 // the accessor or mutator will directly be called with the stored pointer
 // instead of a pointer to a pointer.
-NA_IAPI void naForeachStackConst         (const NAStack* stack, NAAccessor accessor);
-NA_IAPI void naForeachStackMutable       (const NAStack* stack, NAMutator  mutator);
-NA_IAPI void naForeachStackPointerConst  (const NAStack* stack, NAAccessor accessor);
-NA_IAPI void naForeachStackPointerMutable(const NAStack* stack, NAMutator  mutator);
+NA_IAPI void naForeachStackConst   (const NAStack* stack, NAAccessor accessor);
+NA_IAPI void naForeachStackMutable (const NAStack* stack, NAMutator  mutator);
+NA_IAPI void naForeachStackpConst  (const NAStack* stack, NAAccessor accessor);
+NA_IAPI void naForeachStackpMutable(const NAStack* stack, NAMutator  mutator);
 
 
 

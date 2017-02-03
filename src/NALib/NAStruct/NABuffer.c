@@ -29,7 +29,7 @@
 // Output buffers:
 //
 // Output buffers are basically a growing list of memory blocks partially or
-// completely filled with bytes. This is implemented using a list of NABuf
+// completely filled with bytes. This is implemented using a list of todo
 // structs. These structs get flushed to the destination when filled enough
 // or upon request by the programmer with a call to naFlushBuffer.
 //
@@ -101,19 +101,13 @@ typedef enum{
 
 typedef struct NABufferPart NABufferPart;
 struct NABufferPart{
-  NAUInt refcount;
   NARangei bufferrange;
   NARangei datarange;
+//  NAPointer* data;
+  NAUInt refcount;
   NAByte* data;
 };
 
-
-typedef struct NABufferStorage NABufferStorage;
-struct NABufferStorage{
-  NAList partlist;
-  void* source;
-  NABufferStorageSourceType sourcetype;
-};
 
 
 
@@ -132,9 +126,10 @@ NA_HIDEF NABufferPart* naAllocBufferPartSparse(NARangei bufferrange){
       naError("naAllocBufferPartSparse", "buffer range not useful");
   #endif
   part = naAlloc(NABufferPart);
-  part->refcount = 0;
   part->bufferrange = bufferrange;
   part->datarange = naMakeRangeiWithStartAndEnd(0, 0);
+//  part->data = naNewNullPointer();
+  part->refcount = 0;
   part->data = NA_NULL;
   return part;
 }
@@ -300,6 +295,16 @@ NA_HIDEF NAByte* naGetBufferPartDataPointer(NABufferPart* part){
 // //////////////////////////////////////
 // Buffer Storage
 // //////////////////////////////////////
+
+
+
+typedef struct NABufferStorage NABufferStorage;
+struct NABufferStorage{
+  NAList partlist;
+  void* source;
+  NABufferStorageSourceType sourcetype;
+};
+
 
 
 // Returns the storage of the given buffer
@@ -552,6 +557,50 @@ NA_HDEF void naFillBufferSparsePart(NABufferStorage* storage, NAListIterator* it
 // //////////////////////////////////////////////////
 
 
+NA_DEF NABuffer* naInitBuffer(NABuffer* buffer){
+  
+  NABufferStorage* storage = naAllocBufferStorage();
+  naSetBufferStorageSourceMemory(storage);
+  buffer->storage = naNewPointer(storage, NA_MEMORY_CLEANUP_NONE, (NAMutator)naDeallocBufferStorage);
+  buffer->flags = NA_BUFFER_FLAG_OWNS_SOURCE | NA_BUFFER_FLAG_CAN_EXTEND;
+
+  buffer->range = naMakeRangeiWithStartAndEnd(0, 0);
+  buffer->curoffset = 0;
+  buffer->curbit = 0;
+
+  buffer->curlistpos = naGetListInitialPosition(naGetBufferPartList(buffer));
+
+  buffer->endianness = NA_ENDIANNESS_UNKNOWN;
+  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
+
+  return buffer;
+}
+
+
+
+NA_DEF NABuffer* naInitBufferWithConstBytes(NABuffer* buffer, const NAByte* bytes, NAInt bytesize){
+  
+  NABufferStorage* storage = naAllocBufferStorage();
+  naSetBufferStorageSourceMemory(storage);
+  buffer->storage = naNewPointer(storage, NA_MEMORY_CLEANUP_NONE, (NAMutator)naDeallocBufferStorage);
+  buffer->flags = NA_BUFFER_FLAG_OWNS_SOURCE | NA_BUFFER_FLAG_CAN_EXTEND;
+
+  buffer->range = naMakeRangeiWithStartAndEnd(0, bytesize);
+  buffer->curoffset = 0;
+  buffer->curbit = 0;
+
+  naEnlargeBufferStorage(buffer, buffer->range);
+
+  buffer->curlistpos = naGetListInitialPosition(naGetBufferPartList(buffer));
+
+  buffer->endianness = NA_ENDIANNESS_UNKNOWN;
+  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
+
+  return buffer;
+}
+
+
+
 NA_DEF NABuffer* naInitBufferWithFile(NABuffer* buffer, const char* filename){
   
   NABufferStorage* storage = naAllocBufferStorage();
@@ -596,27 +645,6 @@ NA_DEF NABuffer* naInitBufferWithBufferExtraction(NABuffer* buffer, NABuffer* sr
   }
 
   buffer->endianness = srcbuffer->endianness;
-  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
-
-  return buffer;
-}
-
-
-
-NA_DEF NABuffer* naInitBuffer(NABuffer* buffer){
-  
-  NABufferStorage* storage = naAllocBufferStorage();
-  naSetBufferStorageSourceMemory(storage);
-  buffer->storage = naNewPointer(storage, NA_MEMORY_CLEANUP_NONE, (NAMutator)naDeallocBufferStorage);
-  buffer->flags = NA_BUFFER_FLAG_OWNS_SOURCE | NA_BUFFER_FLAG_CAN_EXTEND;
-
-  buffer->range = naMakeRangeiWithStartAndEnd(0, 0);
-  buffer->curoffset = 0;
-  buffer->curbit = 0;
-
-  buffer->curlistpos = naGetListInitialPosition(naGetBufferPartList(buffer));
-
-  buffer->endianness = NA_ENDIANNESS_UNKNOWN;
   buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
 
   return buffer;

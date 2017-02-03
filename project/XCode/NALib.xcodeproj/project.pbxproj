@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		900B5ADA1E2E26FE00628161 /* testMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = 900B5AD91E2E26FE00628161 /* testMemory.c */; };
 		9087F6F61E2C30AB00867CA7 /* NABinaryData.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F6B01E2C30AB00867CA7 /* NABinaryData.c */; };
 		9087F6F71E2C30AB00867CA7 /* NADateTime.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F6B21E2C30AB00867CA7 /* NADateTime.c */; };
 		9087F6F81E2C30AB00867CA7 /* NAMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F6B51E2C30AB00867CA7 /* NAMemory.c */; };
@@ -45,6 +46,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		900B5AD91E2E26FE00628161 /* testMemory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testMemory.c; sourceTree = "<group>"; };
+		900B5ADB1E34DD7300628161 /* NAStringII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAStringII.h; sourceTree = "<group>"; };
 		9087F6A61E2C30AB00867CA7 /* NAArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAArray.h; sourceTree = "<group>"; };
 		9087F6A71E2C30AB00867CA7 /* NABinaryData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NABinaryData.h; sourceTree = "<group>"; };
 		9087F6A81E2C30AB00867CA7 /* NABuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NABuffer.h; sourceTree = "<group>"; };
@@ -239,6 +242,7 @@
 				9087F6E41E2C30AB00867CA7 /* NAQuadTree.c */,
 				9087F6E51E2C30AB00867CA7 /* NAStackII.h */,
 				9087F6E61E2C30AB00867CA7 /* NAString.c */,
+				900B5ADB1E34DD7300628161 /* NAStringII.h */,
 			);
 			path = NAStruct;
 			sourceTree = "<group>";
@@ -263,6 +267,7 @@
 			isa = PBXGroup;
 			children = (
 				9087F70B1E2C313C00867CA7 /* main.c */,
+				900B5AD91E2E26FE00628161 /* testMemory.c */,
 				9087F70D1E2C39A500867CA7 /* testStack.c */,
 				9087F7091E2C30D000867CA7 /* testSystem.c */,
 			);
@@ -354,6 +359,7 @@
 				9087F7081E2C30AB00867CA7 /* NAUIWINAPI.c in Sources */,
 				9087F7011E2C30AB00867CA7 /* NAQuadTree.c in Sources */,
 				9087F7031E2C30AB00867CA7 /* NADeflate.c in Sources */,
+				900B5ADA1E2E26FE00628161 /* testMemory.c in Sources */,
 				9087F7051E2C30AB00867CA7 /* NAUI.c in Sources */,
 				9087F70A1E2C30D000867CA7 /* testSystem.c in Sources */,
 				9087F6FB1E2C30AB00867CA7 /* NAArray.c in Sources */,
@@ -407,6 +413,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -507,6 +514,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -560,6 +568,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;

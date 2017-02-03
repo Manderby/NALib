@@ -2,15 +2,16 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
+#include "../NABuffer.h"
 #include "../NABinaryData.h"
 #include "../NAString.h"
 #include "../NAURL.h"
 #include <ctype.h>
-#include <stdio.h>
 #include <string.h>
 
 
 struct NAString{
+//  NABuffer buffer;
   NAByteArray array;
 };
 // Note that an NAString is considered empty if the underlying array is empty.
@@ -24,31 +25,10 @@ NA_RUNTIME_TYPE(NAString, naDestructString);
 
 
 
-NA_IDEF NAUInt naVsnprintf(NAUTF8Char* buffer, NAUInt length, const NAUTF8Char* newstr, va_list argumentlist){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    return (NAInt)_vsnprintf_s(buffer, (size_t)length, (size_t)length, newstr, argumentlist);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    return (NAInt)vsnprintf((char*)buffer, (size_t)length, (const char*)newstr, argumentlist);
-  #endif
-}
-
-
-
-// Returns the number of characters needed to transform the given string and
-// arguments using sprintf.
-NA_IDEF NAUInt naVarargStringLength(const NAUTF8Char* string, va_list args){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    return (NAInt)_vscprintf(string, args);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    return (NAInt)naVsnprintf(NA_NULL, 0, string, args);
-  #endif
-}
-
-
-
 // This is the destructor for a string. It is marked as a helper as it should
 // only be called by the runtime system
 NA_HDEF void naDestructString(NAString* string){
+//  naClearBuffer(&(string->buffer));
   if(!naIsStringEmpty(string)){naClearByteArray(&(string->array));}
 }
 
@@ -57,11 +37,13 @@ NA_HDEF void naDestructString(NAString* string){
 
 
 // We especially inline this definition as it is used many times in this file.
-NA_DEF NA_INLINE NAString* naNewString(void){
+NA_DEF NAString* naNewString(void){
   NAString* string = naNew(NAString);
+//  naInitBuffer(&(string->buffer));
   naInitByteArray(&(string->array));
   return string;
 }
+
 
 
 
@@ -84,6 +66,8 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
     // with index [size] must be binary zero. As we are not copying but just
     // referencing the pointer, we can safely use the array without this byte
     // and still be able to say: We are null-terminated!
+//    naInitBuffer(&(string->buffer));
+    
     naInitByteArrayWithConstBuffer(&(string->array), ptr, -length);
   }else{
     string = naNewString();
@@ -97,7 +81,7 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
 NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt length, NAMemoryCleanup cleanup){
   NAString* string;
   #ifndef NDEBUG
-    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup > NA_MEMORY_CLEANUP_DELETE)
+    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup >= NA_MEMORY_CLEANUP_COUNT)
       naError("naNewStringWithMutableUTF8Buffer", "invalid cleanup option");
   #endif
   string = naNew(NAString);
@@ -1200,10 +1184,6 @@ NA_DEF NABool naEqualUTF8CStringLiteralsCaseInsensitive( const NAUTF8Char* strin
 }
 
 
-
-NA_DEF NAUInt naStrlen(const NAUTF8Char* str){
-  return (NAUInt)strlen((const char*)str);
-}
 
 
 
