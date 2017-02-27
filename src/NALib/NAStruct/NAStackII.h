@@ -312,7 +312,7 @@ NA_IDEF void naForeachStackMutable(const NAStack* stack, NAMutator mutator){
 NA_IDEF void naForeachStackpConst(const NAStack* stack, NAAccessor accessor){
   NAStackIterator iter = naMakeStackIteratorAccessor(stack);
   while(naIterateStack(&iter)){
-    const void* const * data = naGetStackCurrentConst(&iter);
+    const void* const* data = (const void* const*)naGetStackCurrentConst(&iter);
     accessor(*data);
   }
   naClearStackIterator(&iter);
@@ -323,7 +323,7 @@ NA_IDEF void naForeachStackpConst(const NAStack* stack, NAAccessor accessor){
 NA_IDEF void naForeachStackpMutable(const NAStack* stack, NAMutator mutator){
   NAStackIterator iter = naMakeStackIteratorMutator(stack);
   while(naIterateStack(&iter)){
-    void** data = naGetStackCurrentMutable(&iter);
+    void** data = (void**)naGetStackCurrentMutable(&iter);
     mutator(*data);
   }
   naClearStackIterator(&iter);

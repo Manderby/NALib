@@ -1,6 +1,7 @@
 
 
-#include "stdio.h"
+#include "tests.h"
+
 #include "NAMemory.h"
 #include "NADateTime.h"
 
@@ -15,10 +16,14 @@ struct AVeryUsefulStruct{
   int     a;
   float   b;
   double  c[10];
+  NABool  printdestructmessage;
 };
 
 void destructAVeryUsefulStruct(AVeryUsefulStruct* avus){
   // Do things to destruct the struct.
+  if(avus->printdestructmessage){
+    printf("Destructor of AVeryUsefulStruct called.\n");
+  }
 }
 
 NA_RUNTIME_TYPE(AVeryUsefulStruct, destructAVeryUsefulStruct);
@@ -37,6 +42,7 @@ void testMallocFree(void){
 
   printf("Allocating Bytes for a type... ");
   ptr2 = naAlloc(AVeryUsefulStruct);
+  ((AVeryUsefulStruct*)ptr2)->printdestructmessage = NA_TRUE;
   printf("at address 0x%" NA_PRIx "\n", ptr2);
 
   printf("Allocating 0x1234 Bytes aligned at 0x100000... ");
@@ -68,15 +74,17 @@ void testRuntime(void){
   
   printf("Allocating struct with new... ");
   ptr1 = naNew(AVeryUsefulStruct);
+  ((AVeryUsefulStruct*)ptr1)->printdestructmessage = NA_TRUE;
   printf("at address 0x%" NA_PRIx "\n", ptr1);
 
   printf("Deleting that pointer.\n");
   naDelete(ptr1);
 
   printf("\nPerformance analysis:\n");
-  structarray = naMalloc(sizeof(AVeryUsefulStruct*) * NA_TEST_MEMORY_COUNT);
-  #if NA_RUNTIME_USES_MEMORY_POOLS == 1
+  structarray = (AVeryUsefulStruct**)naMalloc(sizeof(AVeryUsefulStruct*) * NA_TEST_MEMORY_COUNT);
+  #if (NA_RUNTIME_USES_MEMORY_POOLS == 1)
     printf("Runtime uses memory pools (see NAConfiguration.h).\n");
+    printf("Pool size: %d\n", naGetRuntimePoolSize());
   #else
     printf("Runtime uses malloc and free (see NAConfiguration.h).\n");
   #endif
@@ -85,7 +93,11 @@ void testRuntime(void){
   time1 = naMakeDateTimeNow();
   structptr = structarray;
   for(i = 0; i < NA_TEST_MEMORY_COUNT; i++){
-    *structptr++ = naNew(AVeryUsefulStruct);
+    *structptr = naNew(AVeryUsefulStruct);
+    // Turning off the destruct message, otherwise it will be printed a million
+    // times.
+    (*((AVeryUsefulStruct**)structptr))->printdestructmessage = NA_FALSE;
+    structptr++;
   }
   time2 = naMakeDateTimeNow();
   printf("%f seconds\n", naGetDateTimeDifference(&time2, &time1));
@@ -106,6 +118,7 @@ void testRuntime(void){
 }
 
 
+
 void testNAPtr(void){
   NAPtr ptr;
   NAPtr ptrconst;
@@ -117,6 +130,12 @@ void testNAPtr(void){
   int* testptrmutable;
   const int* testptrconst;
   
+  printf("\nNAPtr Constants (not visible in API):\n");
+  printf("Cleanup bits: %" NA_PRIi "\n", NA_MEMORY_CLEANUP_BITS);
+  printf("Cleanup mask: 0x%" NA_PRIx "\n", NA_MEMORY_CLEANUP_MASK);
+  printf("Data cleanup bits: %" NA_PRIi " - %" NA_PRIi "\n", NA_REFCOUNT_DATA_CLEANUP_BITSHIFT, NA_REFCOUNT_DATA_CLEANUP_BITSHIFT + NA_MEMORY_CLEANUP_BITS - 1);
+  printf("Struct cleanup bits: %" NA_PRIi " - %" NA_PRIi "\n", NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT, NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT + NA_MEMORY_CLEANUP_BITS - 1);
+
   printf("\nCreating Null-NAPtr.\n");
   ptrNull = naMakeNullPtr();
   
@@ -127,7 +146,7 @@ void testNAPtr(void){
   ptrconst = naMakePtrWithConstData(string, strlen(string), 1);
   
   printf("Creating NAPtr with mutable buffer.\n");
-  array = naMalloc(sizeof(int) * 5);
+  array = (int*)naMalloc(sizeof(int) * 5);
   ptrmutable = naMakePtrWithMutableData(array, 5 * sizeof(int), 0, NA_MEMORY_CLEANUP_FREE);
 
   printf("Creating NAPtr with extraction.\n");
@@ -136,13 +155,17 @@ void testNAPtr(void){
   printf("Accessing and mutating NAPtr. Writing 1234, reading: ");
   testptrmutable = (int*)naGetPtrMutable(&ptrExtract);
   *testptrmutable = 1234;
-  testptrconst = (const*)naGetPtrConst(&ptrExtract);
+  testptrconst = (const int*)naGetPtrConst(&ptrExtract);
   printf("%d\n", *testptrconst);
   
   printf("Testing NAPtr: ");
   // Note that naIsPtrConst returns always NA_TRUE when compiling with NDEBUG.
-  printf("ptrconst is %s, ", (naIsPtrConst(&ptrconst) ? "Const" : "Mutable"));
-  printf("ptrmutable is %s\n", (naIsPtrConst(&ptrmutable) ? "Const" : "Mutable"));
+  printf("ptrmutable is %s, ", (naIsPtrConst(&ptrmutable) ? "Const" : "Mutable"));
+  printf("ptrconst is %s", (naIsPtrConst(&ptrconst) ? "Const" : "Mutable"));
+  #ifdef NDEBUG
+    printf(" (Compiled as Release!)");
+  #endif
+  printf("\n");
   
   printf("Clearing the NAPtr's.\n");
   naClearPtr(&ptrNull);
@@ -151,6 +174,127 @@ void testNAPtr(void){
   naFreePtr(&ptrmutable);
   naClearPtr(&ptrExtract);
 }
+
+
+void testNASmartPtr(void){
+  int mydata = 42;
+  int* mydataptr;
+  const int* mydataptrconst;
+  const char* mydatacharptrconst;
+  AVeryUsefulStruct* avusptr;
+  NASmartPtr sptr1;
+  NASmartPtr sptr2;
+  NASmartPtr* sptr3;
+  NASmartPtr* sptr4;
+  
+
+  printf("\nNASmartPtr Constants (not visible in API):\n");
+  printf("Flag bits count: %" NA_PRIi "\n", NA_REFCOUNT_FLAG_BITS);
+  printf("Flag bits: %" NA_PRIi " - %" NA_PRIi "\n", NA_REFCOUNT_FLAGS_BITSHIFT, NA_REFCOUNT_FLAGS_BITSHIFT + NA_REFCOUNT_FLAG_BITS - 1);
+  printf("Refcount mask: 0x%" NA_PRIx "\n", NA_REFCOUNT_MASK);
+  printf("\nCreating NASmartPtr.\n");
+  // Initializing some pointers
+  naInitSmartPtrMutable(&sptr1, NA_MEMORY_CLEANUP_NONE, &mydata, NA_MEMORY_CLEANUP_NONE);
+  naInitSmartPtrMutable(&sptr2, NA_MEMORY_CLEANUP_NONE, naAlloc(AVeryUsefulStruct), NA_MEMORY_CLEANUP_FREE);
+  sptr3 = naAlloc(NASmartPtr);
+  naInitSmartPtrMutable(sptr3, NA_MEMORY_CLEANUP_FREE, naAlloc(int), NA_MEMORY_CLEANUP_FREE);
+  sptr4 = naAlloc(NASmartPtr);
+  naInitSmartPtrConst(sptr4, NA_MEMORY_CLEANUP_FREE, "Constant String Literal");
+  
+  printf("Retaining the smart pointers...\n");
+  naRetainSmartPtr(&sptr1);
+  naRetainSmartPtr(&sptr1);
+  naRetainSmartPtr(&sptr2);
+  naRetainSmartPtr(&sptr2);
+  naRetainSmartPtr(sptr3);
+  naRetainSmartPtr(sptr3);
+  naRetainSmartPtr(sptr4);
+  naRetainSmartPtr(sptr4);
+  
+  printf("Accessing and mutating the smart pointers...\n");
+  mydataptrconst = (const int*)naGetSmartPtrConst(&sptr1);
+  printf("Data in sptr1: %d\n", *mydataptrconst);
+  printf("Turning destruct message of sptr2 on.\n");
+  avusptr = (AVeryUsefulStruct*)naGetSmartPtrMutable(&sptr2);
+  avusptr->printdestructmessage = NA_TRUE;
+  printf("Set data in sptr3 to 12345");
+  mydataptr = (int*)naGetSmartPtrMutable(sptr3);
+  *mydataptr = 12345;
+  mydataptrconst = (const int*)naGetSmartPtrConst(sptr3);
+  printf (", reading it again: %d\n", *mydataptrconst);
+  mydatacharptrconst = (const char*)naGetSmartPtrConst(sptr4);
+  printf("Data in sptr4: %s\n", mydatacharptrconst);
+  
+  
+  printf("Releasing the smart pointers...\n");
+  naReleaseSmartPtr(&sptr1, NA_NULL);
+  naReleaseSmartPtr(&sptr1, NA_NULL);
+  printf("%s, ", (naReleaseSmartPtr(&sptr1, NA_NULL)) ? "Success" : "Failed");
+  naReleaseSmartPtr(&sptr2, (NAMutator)destructAVeryUsefulStruct);
+  naReleaseSmartPtr(&sptr2, (NAMutator)destructAVeryUsefulStruct);
+  printf("%s, ", (naReleaseSmartPtr(&sptr2, (NAMutator)destructAVeryUsefulStruct)) ? "Success" : "Failed");
+  naReleaseSmartPtr(sptr3, NA_NULL);
+  naReleaseSmartPtr(sptr3, NA_NULL);
+  printf("%s, ", (naReleaseSmartPtr(sptr3, NA_NULL)) ? "Success" : "Failed");
+  naReleaseSmartPtr(sptr4, NA_NULL);
+  naReleaseSmartPtr(sptr4, NA_NULL);
+  printf("%s, ", (naReleaseSmartPtr(sptr4, NA_NULL)) ? "Success" : "Failed");
+
+  printf("\n");
+  
+}
+
+
+
+void testNAPointer(void){
+  int mydata = 42;
+  int* mydataptr;
+  const int* mydataptrconst;
+  const char* mychardataptrconst;
+  AVeryUsefulStruct* avusptr;
+  NAPointer* ptr1;
+  NAPointer* ptr2;
+  NAPointer* ptr3;
+  
+  naStartRuntime();
+  
+  printf("\nCreating NAPointer.\n");
+  ptr1 = naNewPointerMutable(&mydata, NA_MEMORY_CLEANUP_NONE, NA_NULL);
+  ptr2 = naNewPointerMutable(naAlloc(AVeryUsefulStruct), NA_MEMORY_CLEANUP_FREE, (NAMutator)destructAVeryUsefulStruct);
+  ptr3 = naNewPointerConst("Constant string literal");
+
+  printf("Retaining NAPointer.\n");
+  naRetainPointer(ptr1);
+  naRetainPointer(ptr1);
+  naRetainPointer(ptr2);
+  naRetainPointer(ptr2);
+  naRetainPointer(ptr3);
+  naRetainPointer(ptr3);
+
+  printf("Accessing and mutating the pointers...\n");
+  mydataptrconst = (const int*)naGetPointerConst(ptr1);
+  printf("Data in ptr1: %d\n", *mydataptrconst);
+  printf("Turning destruct message of ptr2 on.\n");
+  avusptr = (AVeryUsefulStruct*)naGetPointerMutable(ptr2);
+  avusptr->printdestructmessage = NA_TRUE;
+  mychardataptrconst = (const char*)naGetPointerConst(ptr3);
+  printf("Data in ptr3: %s\n", mychardataptrconst);
+
+  printf("Releasing the pointers...\n");
+  naReleasePointer(ptr1);
+  naReleasePointer(ptr1);
+  printf("%s, ", (naReleasePointer(ptr1)) ? "Success" : "Failed");
+  naReleasePointer(ptr2);
+  naReleasePointer(ptr2);
+  printf("%s, ", (naReleasePointer(ptr2)) ? "Success" : "Failed");
+  naReleasePointer(ptr3);
+  naReleasePointer(ptr3);
+  printf("%s, ", (naReleasePointer(ptr3)) ? "Success" : "Failed");
+  
+  printf("\n");
+  naStopRuntime();
+}
+
 
 
 void testMemory(void){
@@ -165,7 +309,9 @@ void testMemory(void){
   testMallocFree();
   testRuntime();
   testNAPtr();
+  testNASmartPtr();
+  testNAPointer();
 
-  
 }
+
 

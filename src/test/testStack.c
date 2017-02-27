@@ -1,9 +1,9 @@
 
 
-#include "stdio.h"
+#include "tests.h"
+
 #include "NAStack.h"
 #include "../NALib/NADateTime.h"
-
 
 
 #define NA_TEST_STACK_M_COUNT 1
@@ -46,7 +46,7 @@ void testStack(void){
   printf("Pop'ing nine thenth of the values... ");
   time1 = naMakeDateTimeNow();
   for(i=0; i<(int)(NA_TEST_STACK_COUNT * 0.9); i++){
-    v = naPopStack(&stack);
+    v = (int*)naPopStack(&stack);
     // you can still use *v after this function as long as the value will not
     // get overwritten or the storage will not be deleted either by clearing the
     // stack or by reducing its memory footprint with naShrinkStackIfNecessary.
@@ -108,7 +108,7 @@ void testStack(void){
   printf("Pop'ing 99/100 of the values... ");
   time1 = naMakeDateTimeNow();
   for(i=0; i<(int)(NA_TEST_STACK_COUNT * 9.9); i++){
-    v = naPopStack(&stack);
+    v = (int*)naPopStack(&stack);
     *v = 0;
   }
   time2 = naMakeDateTimeNow();
@@ -144,4 +144,5 @@ void testStack(void){
   printf("Clearing the stack.\n");
   naClearStack(&stack);
 }
+
 

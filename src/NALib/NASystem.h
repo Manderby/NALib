@@ -164,6 +164,9 @@
   #if __cplusplus >= 201103L
     #define NA_CPP11
   #endif
+  #if __cplusplus >= 201402L
+    #define NA_CPP14
+  #endif
 #endif
 
 
@@ -209,6 +212,8 @@
   #else
     #define NA_RESTRICT           restrict
   #endif
+#else
+  #define NA_INLINE
 #endif
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS

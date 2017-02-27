@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		900768E01E53C43B00F6C875 /* NALinearMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = 900768DF1E53C43B00F6C875 /* NALinearMemory.c */; };
+		900768E21E53C9F800F6C875 /* testBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 900768E11E53C9F800F6C875 /* testBuffer.c */; };
 		900B5ADA1E2E26FE00628161 /* testMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = 900B5AD91E2E26FE00628161 /* testMemory.c */; };
 		9087F6F61E2C30AB00867CA7 /* NABinaryData.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F6B01E2C30AB00867CA7 /* NABinaryData.c */; };
 		9087F6F71E2C30AB00867CA7 /* NADateTime.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F6B21E2C30AB00867CA7 /* NADateTime.c */; };
@@ -46,6 +48,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		900768DC1E50489200F6C875 /* NALinearMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NALinearMemory.h; sourceTree = "<group>"; };
+		900768DF1E53C43B00F6C875 /* NALinearMemory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NALinearMemory.c; sourceTree = "<group>"; };
+		900768E11E53C9F800F6C875 /* testBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testBuffer.c; sourceTree = "<group>"; };
 		900B5AD91E2E26FE00628161 /* testMemory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testMemory.c; sourceTree = "<group>"; };
 		900B5ADB1E34DD7300628161 /* NAStringII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAStringII.h; sourceTree = "<group>"; };
 		9087F6A61E2C30AB00867CA7 /* NAArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAArray.h; sourceTree = "<group>"; };
@@ -131,6 +136,7 @@
 		90920E221D4FDC7400369052 /* NALibChangelogV10_V20.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = NALibChangelogV10_V20.txt; path = ../../doc/NALibChangelogV10_V20.txt; sourceTree = "<group>"; };
 		90920E231D4FDC7400369052 /* Readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = Readme.txt; path = ../../doc/Readme.txt; sourceTree = "<group>"; };
 		90B456451BC80AD300A53BDC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		90CBB1941E593DA600C1BC54 /* tests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tests.h; sourceTree = "<group>"; };
 		B9B2EA121716922700943D91 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -184,6 +190,7 @@
 				9087F6EA1E2C30AB00867CA7 /* NAURL.h */,
 				9087F6EB1E2C30AB00867CA7 /* NAVectorAlgebra.h */,
 				9087F6EC1E2C30AB00867CA7 /* NAVisual */,
+				900768DC1E50489200F6C875 /* NALinearMemory.h */,
 			);
 			name = NALib;
 			path = ../../src/NALib;
@@ -234,6 +241,7 @@
 				9087F6DC1E2C30AB00867CA7 /* NACircularBufferII.h */,
 				9087F6DD1E2C30AB00867CA7 /* NAHeap.c */,
 				9087F6DE1E2C30AB00867CA7 /* NAHeapII.h */,
+				900768DF1E53C43B00F6C875 /* NALinearMemory.c */,
 				9087F6DF1E2C30AB00867CA7 /* NAList.c */,
 				9087F6E01E2C30AB00867CA7 /* NAListII.h */,
 				9087F6E11E2C30AB00867CA7 /* NAMap2DII.h */,
@@ -267,6 +275,8 @@
 			isa = PBXGroup;
 			children = (
 				9087F70B1E2C313C00867CA7 /* main.c */,
+				90CBB1941E593DA600C1BC54 /* tests.h */,
+				900768E11E53C9F800F6C875 /* testBuffer.c */,
 				900B5AD91E2E26FE00628161 /* testMemory.c */,
 				9087F70D1E2C39A500867CA7 /* testStack.c */,
 				9087F7091E2C30D000867CA7 /* testSystem.c */,
@@ -356,6 +366,7 @@
 			files = (
 				9087F7071E2C30AB00867CA7 /* NAUICoreAPI.c in Sources */,
 				9087F6F71E2C30AB00867CA7 /* NADateTime.c in Sources */,
+				900768E21E53C9F800F6C875 /* testBuffer.c in Sources */,
 				9087F7081E2C30AB00867CA7 /* NAUIWINAPI.c in Sources */,
 				9087F7011E2C30AB00867CA7 /* NAQuadTree.c in Sources */,
 				9087F7031E2C30AB00867CA7 /* NADeflate.c in Sources */,
@@ -369,6 +380,7 @@
 				9087F6F61E2C30AB00867CA7 /* NABinaryData.c in Sources */,
 				9087F6FC1E2C30AB00867CA7 /* NABuffer.c in Sources */,
 				9087F6FA1E2C30AB00867CA7 /* NAMoney.c in Sources */,
+				900768E01E53C43B00F6C875 /* NALinearMemory.c in Sources */,
 				9087F7061E2C30AB00867CA7 /* NAUICocoa.m in Sources */,
 				9087F7001E2C30AB00867CA7 /* NAOctTree.c in Sources */,
 				9087F7041E2C30AB00867CA7 /* NAPNG.c in Sources */,
@@ -414,20 +426,24 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_C_LANGUAGE_STANDARD = ansi;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
@@ -515,16 +531,19 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_C_LANGUAGE_STANDARD = ansi;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -534,6 +553,7 @@
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
@@ -569,23 +589,27 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
 				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = YES;
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
-				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_C_LANGUAGE_STANDARD = ansi;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;

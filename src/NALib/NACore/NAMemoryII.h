@@ -112,7 +112,6 @@ NA_HIDEF NAInt naGetNullTerminationBytesize(NAInt bytesize){
 
 
 
-
 NA_IDEF void* naMalloc(NAInt bytesize){
   NAByte* ptr; // Declaration before implementation. Needed for C90.
   NAInt fullsize;
@@ -221,13 +220,247 @@ NA_IDEF void naFreeAligned(void* ptr){
 NA_API void*              naNewStruct(NATypeInfo* typeidentifier);
 
 
+// This needs to be in this inline implementation file as it needs to be
+// accessible to the compiler at all times.
 struct NATypeInfo{
-  void*             curpool;
+  void*             curpool;  // The actual type of this entry is hidden.
   NAUInt            typesize;
   NAMutator         destructor;
 };
 
 
+
+
+
+
+
+
+
+
+// //////////////////////////
+// NAMemoryCleanup
+// //////////////////////////
+
+
+// For the NAPointer struct, we need to have the information available about
+// how the memory was originally alloced. We store it as the high-order part
+// of the refcount which is why we need to bit-shift it to the left.
+// To simplify matters, also the NAPtr struct stores this information as left-
+// shifted bits in the flags when NDEBUG ist undefined.
+#define NA_MEMORY_CLEANUP_BITS            3
+#define NA_MEMORY_CLEANUP_MASK            ((1 << NA_MEMORY_CLEANUP_BITS) - 1)
+#define NA_REFCOUNT_DATA_CLEANUP_BITSHIFT   (NA_SYSTEM_ADDRESS_BITS - NA_MEMORY_CLEANUP_BITS)
+#define NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT (NA_SYSTEM_ADDRESS_BITS - 2 * NA_MEMORY_CLEANUP_BITS)
+
+
+
+NA_HIDEF NABool naIsCleanupValid(NAMemoryCleanup cleanup){
+  return ((cleanup > NA_MEMORY_CLEANUP_UNDEFINED) && (cleanup < NA_MEMORY_CLEANUP_COUNT));
+}
+NA_HIDEF NAMemoryCleanup naGetFlagCleanupData(NAUInt flag){
+  return (NAMemoryCleanup)((flag >> NA_REFCOUNT_DATA_CLEANUP_BITSHIFT) & NA_MEMORY_CLEANUP_MASK);
+}
+NA_HIDEF NABool naHasFlagCleanupData(NAUInt flag){
+  return (naGetFlagCleanupData(flag) != NA_MEMORY_CLEANUP_UNDEFINED);
+}
+NA_HIDEF NAMemoryCleanup naGetFlagCleanupStruct(NAUInt flag){
+  return (NAMemoryCleanup)((flag >> NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT) & NA_MEMORY_CLEANUP_MASK);
+}
+
+
+
+
+
+
+// //////////////////////////
+// NARefCount
+// //////////////////////////
+
+struct NARefCount{
+  NAUInt count;      // Reference count. Including flags
+  #ifndef NDEBUG
+  NAMemoryCleanup structcleanup;
+  NAMemoryCleanup datacleanup;
+  #endif
+};
+
+// The refcount field also stores two cleanup hints in the 2*3 bits on the
+// higher endian side. This is necessary due to the automatic deletion of a
+// pointer and the struct the refcount is stored in when refcount reaches zero.
+// It could be stored in a separate flag but the author decided to do it with
+// a mask.
+//
+// Note that when NDEBUG is undefined, there is an additional flag just to
+// check whether a reference counted value had been released properly.
+
+
+#ifndef NDEBUG
+  #define NA_REFCOUNT_DELETE_FROM_RELEASE (NA_ONE << (NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT - 1))
+  #define NA_REFCOUNT_FLAG_BITS   (2 * NA_MEMORY_CLEANUP_BITS + 1)
+#else
+  #define NA_REFCOUNT_FLAG_BITS   (2 * NA_MEMORY_CLEANUP_BITS)
+#endif
+
+#define NA_REFCOUNT_FLAGS_BITSHIFT      (NA_SYSTEM_ADDRESS_BITS - NA_REFCOUNT_FLAG_BITS)
+#define NA_REFCOUNT_MASK      ((NA_ONE << NA_REFCOUNT_FLAGS_BITSHIFT) - NA_ONE)
+
+
+NA_IDEF NARefCount* naInitRefCount(NARefCount* refcount, NAMemoryCleanup structcleanup, NAMemoryCleanup datacleanup){
+  #ifndef NDEBUG
+    if(!naIsCleanupValid(structcleanup))
+      naError("naInitRefCount", "structcleanup method invalid");
+    if(!naIsCleanupValid(datacleanup))
+      naError("naInitRefCount", "datacleanup method invalid");
+    #ifdef __cplusplus 
+      if(structcleanup == NA_MEMORY_CLEANUP_DELETE_BRACK)  
+        naError("naInitRefCount", "This smartptrcleanup method does not make sense");
+    #endif
+  #endif
+  refcount->count  = 1
+               | ((NAUInt)datacleanup << NA_REFCOUNT_DATA_CLEANUP_BITSHIFT)
+               | ((NAUInt)structcleanup << NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT);
+  #ifndef NDEBUG
+    refcount->structcleanup = structcleanup;
+    refcount->datacleanup = datacleanup;
+  #endif
+  return refcount;
+}
+
+
+
+NA_HIDEF NAUInt naGetRefCountCount(const NARefCount* refcount){
+  return refcount->count & NA_REFCOUNT_MASK;
+}
+
+
+
+NA_IDEF NAMemoryCleanup naGetRefCountCleanupData(const NARefCount* refcount){
+  #ifndef NDEBUG
+    if(!refcount)
+      {naCrash("naGetRefCountCleanupData", "refcount is Null-Pointer."); return NA_MEMORY_CLEANUP_NONE;}
+    if(naGetFlagCleanupData(refcount->count) != refcount->datacleanup)
+      naError("naGetRefCountCleanupData", "Consistency problem: flags overwritten");
+  #endif
+  return naGetFlagCleanupData(refcount->count);
+}
+
+
+
+NA_IDEF NAMemoryCleanup naGetRefCountCleanupStruct(const NARefCount* refcount){
+  #ifndef NDEBUG
+    if(!refcount)
+      {naCrash("naGetRefCountCleanupStruct", "refcount is Null-Pointer."); return NA_MEMORY_CLEANUP_NONE;}
+    if(naGetFlagCleanupStruct(refcount->count) != refcount->structcleanup)
+      naError("naGetRefCountCleanupStruct", "Consistency problem: flags overwritten");
+  #endif
+  return naGetFlagCleanupStruct(refcount->count);
+}
+
+
+
+NA_IDEF NARefCount* naRetainRefCount(NARefCount* refcount){
+  #ifndef NDEBUG
+    if(!refcount){
+      naCrash("naRetainRefCount", "refcount is Null-Pointer.");
+      return NA_NULL;
+    }else{
+      // The next test can detect some erroneous behaviour in the code. Note
+      // however that most likely the true cause of the error did occur long
+      // before reaching here.
+      if(naGetRefCountCount(refcount) == NA_ZERO)
+        {naCrash("naRetainRefCount", "Retaining NARefCount with a count of 0"); return NA_NULL;}
+    }
+  #endif
+  refcount->count++;
+  #ifndef NDEBUG
+    // If refcount now suddenly becomes zero, there was either an error earlier
+    // or the object has been retained too many times. Overflow.
+    if(naGetRefCountCount(refcount) == NA_ZERO)
+      naError("naRetainRefCount", "Reference count overflow");
+  #endif
+  return refcount;
+}
+
+
+
+NA_IDEF NABool naReleaseRefCount(NARefCount* refcount, void* data, NAMutator destructor){
+  #ifndef NDEBUG
+    if(!refcount){
+      naCrash("naReleaseRefCount", "refcount is Null-Pointer.");
+      return NA_FALSE;
+    }
+    // The next test can detect some erroneous behaviour in the code. Note
+    // however that most likely the true cause of the error did occur long
+    // before reaching here.
+    if(naGetRefCountCount(refcount) == NA_ZERO)
+      {naCrash("naReleaseRefCount", "Releasing NARefCount with a count of 0"); return NA_FALSE;}
+  #endif
+  // Note that the author decided to always count to zero, even if it is clear
+  // that the pointer will eventually be freed and the data will be lost in
+  // nirvana. But often times in debugging, when retaining and releasing is not
+  // done correctly, an NAPointer is released too often. When refcount is 0 and
+  // NDEBUG is not defined, this can be detected!
+  refcount->count--;
+  if(naGetRefCountCount(refcount) == NA_ZERO){
+    #ifndef NDEBUG
+      refcount->count |= NA_REFCOUNT_DELETE_FROM_RELEASE;
+    #endif
+    
+    // Call the destructor on the data if available.
+    if(destructor){
+      if(data){
+        destructor(data);
+      }else{
+        destructor(refcount);
+      }
+    }
+        
+    // Clear the struct as marked.
+    switch(naGetRefCountCleanupStruct(refcount)){
+      case NA_MEMORY_CLEANUP_NONE:
+        break;
+      case NA_MEMORY_CLEANUP_FREE:
+        naFree(refcount);
+        break;
+      case NA_MEMORY_CLEANUP_FREE_ALIGNED:
+        naFreeAligned(refcount);
+        break;
+#ifdef __cplusplus 
+      case NA_MEMORY_CLEANUP_DELETE:
+        delete sptr;
+        break;
+      case NA_MEMORY_CLEANUP_DELETE_BRACK:
+        naError("naReleaseRefCount", "This cleanup option does not make sense");
+        delete [] sptr;
+        break;
+#endif
+      case NA_MEMORY_CLEANUP_NA_DELETE:
+        naDelete(refcount);
+        break;
+      default:
+        #ifndef NDEBUG
+          naError("naReleaseRefCount", "Invalid cleanup");
+        #endif
+        break;
+    }
+    
+    // Note that this is the only position in the whole NALib code where an
+    // NAPointer is deleted. Therefore you could theoretically include the
+    // code written in naDestructPointer directly here to save one function
+    // call. But as NALib assumes that NAPointer is only used when really
+    // needed for reference counting, it is nontheless put into a separate
+    // function such that this function can be inlined for sure and thus
+    // becomes very fast.
+    return NA_TRUE;
+  }
+  // Note that other programming languages have incorporated this very idea
+  // of self-organized reference-counting pointers deeply within its core.
+  // Their runtime-systems keep giant pools of free objects at hand and take
+  // care of detecting and collecting unused objects. In C and C++, no such
+  // mechanisms exist and must be implemented manually. NARuntime is a small
+  // example of such a system.
+  return NA_FALSE;
+}
 
 
 
@@ -277,28 +510,6 @@ struct NAPtr{
 // mutable and without any debugging information, just use a normal C-pointer.
 
 
-// For the NAPointer struct, we need to have the information available about
-// how the memory was originally alloced. We store it as the high-order part
-// of the refcount which is why we need to bit-shift it to the left.
-// To simplify matters, also the NAPtr struct stores this information as left-
-// shifted bits in the flags when NDEBUG ist undefined.
-#define NA_MEMORY_CLEANUP_BITS            3
-#define NA_MEMORY_CLEANUP_MASK            ((1 << NA_MEMORY_CLEANUP_BITS) - 1)
-#define NA_MEMORY_CLEANUP_DATA_BITSHIFT   (NA_SYSTEM_ADDRESS_BITS - NA_MEMORY_CLEANUP_BITS)
-#define NA_MEMORY_CLEANUP_STRUCT_BITSHIFT (NA_SYSTEM_ADDRESS_BITS - 2 * NA_MEMORY_CLEANUP_BITS)
-
-NA_HIDEF NABool naIsCleanupValid(NAMemoryCleanup cleanup){
-  return ((cleanup > NA_MEMORY_CLEANUP_UNDEFINED) && (cleanup < NA_MEMORY_CLEANUP_COUNT));
-}
-NA_HIDEF NAMemoryCleanup naGetFlagCleanupData(NAUInt flag){
-  return (flag >> NA_MEMORY_CLEANUP_DATA_BITSHIFT);
-}
-NA_HIDEF NABool naHasFlagCleanupData(NAUInt flag){
-  return (naGetFlagCleanupData(flag) != NA_MEMORY_CLEANUP_UNDEFINED);
-}
-NA_HIDEF NAMemoryCleanup naGetFlagCleanupStruct(NAUInt flag){
-  return (flag >> NA_MEMORY_CLEANUP_STRUCT_BITSHIFT) & NA_MEMORY_CLEANUP_MASK;
-}
 
 
 
@@ -321,7 +532,7 @@ NA_HIDEF NAMemoryCleanup naGetFlagCleanupStruct(NAUInt flag){
       naError("naMarkPtrCleanup", "Invalid cleanup option");
     if(naHasFlagCleanupData(ptr->flags))
       naError("naMarkPtrCleanup", "ptr already marked with a cleanup");
-    ptr->flags |= (NAUInt)(cleanup) << NA_MEMORY_CLEANUP_DATA_BITSHIFT;
+    ptr->flags |= (NAUInt)(cleanup) << NA_REFCOUNT_DATA_CLEANUP_BITSHIFT;
   }
   
   
@@ -907,62 +1118,30 @@ NA_IDEF NABool naIsMemoryBlockConst(NAMemoryBlock* memblock){
 
 
 
-
-
-
 // //////////////////////////
 // NASmartPtr
 // //////////////////////////
 
 struct NASmartPtr{
+  NARefCount refcount;      // Reference count. Including flags
   NAPtr ptr;
-  NAUInt refcount;      // Reference count. Including flags
 };
 
-// Starting with NALib version 14, the actual data is stored as a pointer.
-// This means that it must be allocated elsewhere. But this means, any pointer
-// can become a reference counted pointer.
-//
-// To distinguish, how the pointer shall be handeled upon deletion, a new
-// enumeration NAMemoryCleanup had been introduced. See above.
-//
-// The refcoutn field also stores the cleanup hint in the 3 bits on the higher
-// endian side. This is necessary due to the automatic deletion of the pointer
-// when refcount reaches zero. It could be stored in a separate flag but the
-// author decided to do it this way.
-//
-// Note that when NDEBUG is undefined, this cleanup hint is stored redundantly
-// both here in NAPointer as well as a debugging hint in NAPtr.
 
-#ifndef NDEBUG
-  #define NA_SMARTPTR_DELETE_FROM_RELEASE (NA_ONE << (NA_MEMORY_CLEANUP_STRUCT_BITSHIFT - 1))
-  #define NA_SMARTPTR_FLAG_BITS   (2 * NA_MEMORY_CLEANUP_BITS + 1)
-#else
-  #define NA_SMARTPTR_FLAG_BITS   (2 * NA_MEMORY_CLEANUP_BITS)
-#endif
-#define NA_SMARTPTR_REFCOUNT_MASK      ((NA_ONE << NA_SMARTPTR_FLAG_BITS) - NA_ONE)
-
-
-
-NA_IDEF NASmartPtr* naInitSmartPtrNull(NASmartPtr* ptr, NAMemoryCleanup smartptrcleanup){
-  return naInitSmartPtrMutable(ptr, smartptrcleanup, NA_NULL, NA_MEMORY_CLEANUP_NONE);
-}
 
 
 
 NA_IDEF NASmartPtr* naInitSmartPtrConst(NASmartPtr* sptr, NAMemoryCleanup smartptrcleanup, const void* data){
   #ifndef NDEBUG
     if(!naIsCleanupValid(smartptrcleanup))
-      naError("naInitSmartPtrConst", "smartptrcleanup method invalid");
+      naError("naInitSmartPtr", "smartptrcleanup method invalid");
     #ifdef __cplusplus 
       if(smartptrcleanup == NA_MEMORY_CLEANUP_DELETE_BRACK)  
-        naError("naReleaseSmartPtr", "This smartptrcleanup method does not make sense");
+        naError("naInitSmartPtr", "This smartptrcleanup method does not make sense");
     #endif
   #endif
   sptr->ptr = naMakePtrWithConstData(data, NA_ZERO, NA_ZERO);
-  sptr->refcount  = 1
-                  | ((NAUInt)NA_MEMORY_CLEANUP_NONE << NA_MEMORY_CLEANUP_DATA_BITSHIFT)
-                  | ((NAUInt)smartptrcleanup << NA_MEMORY_CLEANUP_STRUCT_BITSHIFT);
+  naInitRefCount(&(sptr->refcount), smartptrcleanup, NA_MEMORY_CLEANUP_NONE);
   return sptr;
 }
 
@@ -974,23 +1153,17 @@ NA_IDEF NASmartPtr* naInitSmartPtrMutable(NASmartPtr* sptr, NAMemoryCleanup smar
       naError("naInitSmartPtr", "smartptrcleanup method invalid");
     #ifdef __cplusplus 
       if(smartptrcleanup == NA_MEMORY_CLEANUP_DELETE_BRACK)  
-        naError("naReleaseSmartPtr", "This smartptrcleanup method does not make sense");
+        naError("naInitSmartPtr", "This smartptrcleanup method does not make sense");
     #endif
     if(!naIsCleanupValid(datacleanup))
       naError("naInitSmartPtr", "datacleanup method invalid");
   #endif
   sptr->ptr = naMakePtrWithMutableData(data, NA_ZERO, NA_ZERO, datacleanup);
-  sptr->refcount  = 1
-                  | ((NAUInt)datacleanup << NA_MEMORY_CLEANUP_DATA_BITSHIFT)
-                  | ((NAUInt)smartptrcleanup << NA_MEMORY_CLEANUP_STRUCT_BITSHIFT);
+  naInitRefCount(&(sptr->refcount), smartptrcleanup, datacleanup);
   return sptr;
 }
 
 
-
-NA_HIDEF NAUInt naGetSmartPtrRefCount(NASmartPtr* sptr){
-  return sptr->refcount & NA_SMARTPTR_REFCOUNT_MASK;
-}
 
 
 NA_IDEF NASmartPtr* naRetainSmartPtr(NASmartPtr* sptr){
@@ -998,106 +1171,36 @@ NA_IDEF NASmartPtr* naRetainSmartPtr(NASmartPtr* sptr){
     if(!sptr){
       naCrash("naRetainSmartPtr", "sptr is Null-Pointer.");
       return NA_NULL;
-    }else{
-      // The next test can detect some erroneous behaviour in the code. Note
-      // however that most likely the true cause of the error did occur long
-      // before reaching here.
-      if(naGetSmartPtrRefCount(sptr) == NA_ZERO)
-        naError("naRetainSmartPtr", "Retaining NASmartPtr with a refcount of 0");
     }
   #endif
-  sptr->refcount++;
-  #ifndef NDEBUG
-    // If refcount now suddenly becomes zero, there was either an error earlier
-    // or the object has been retained too many times. Overflow.
-    if(naGetSmartPtrRefCount(sptr) == NA_ZERO)
-      naError("naRetainSmartPtr", "Reference count overflow");
-  #endif
-  return sptr;
+  return (NASmartPtr*)naRetainRefCount(&(sptr->refcount));
 }
 
 
 
-NA_IDEF void naReleaseSmartPtr(NASmartPtr* sptr){
+typedef struct NASmartPtrDestructContainer NASmartPtrDestructContainer;
+struct NASmartPtrDestructContainer{
+  NASmartPtr* sptr;
+  NAMutator destructor;
+};
+
+// When releasing a smart pointer with a custom destructor, you need to call
+// the following function at the end of your destructor in order to properly
+// release the data pointer.
+NA_API NASmartPtr* naDestructSmartPtrData(NASmartPtrDestructContainer* container);
+
+
+NA_IDEF NABool naReleaseSmartPtr(NASmartPtr* sptr, NAMutator destructor){
   #ifndef NDEBUG
     if(!sptr){
       naCrash("naReleaseSmartPtr", "sptr is Null-Pointer.");
-      return;
-    }else{
-      // The next test can detect some erroneous behaviour in the code. Note
-      // however that most likely the true cause of the error did occur long
-      // before reaching here.
-      if(naGetSmartPtrRefCount(sptr) == NA_ZERO)
-        naError("naReleaseSmartPtr", "Releasing NASmartPtr with a refcount of 0");
+      return NA_FALSE;
     }
   #endif
-  // Note that the author decided to always count to zero, even if it is clear
-  // that the pointer will eventually be freed and the data will be lost in
-  // nirvana. But often times in debugging, when retaining and releasing is not
-  // done correctly, an NAPointer is released too often. When refcount is 0 and
-  // NDEBUG is not defined, this can be detected!
-  sptr->refcount--;
-  if(naGetSmartPtrRefCount(sptr) == NA_ZERO){
-    #ifndef NDEBUG
-      sptr->refcount |= NA_SMARTPTR_DELETE_FROM_RELEASE;
-    #endif
-    switch(naGetFlagCleanupData(sptr->refcount)){
-      case NA_MEMORY_CLEANUP_NONE:
-        break;
-      case NA_MEMORY_CLEANUP_FREE:
-        naFreePtr(&(sptr->ptr));
-        break;
-      case NA_MEMORY_CLEANUP_FREE_ALIGNED:
-        naFreeAlignedPtr(&(sptr->ptr));
-        break;
-#ifdef __cplusplus 
-      case NA_MEMORY_CLEANUP_DELETE:
-        naDeletePtr(&(sptr->ptr));
-        break;
-      case NA_MEMORY_CLEANUP_DELETE_BRACK:
-        naDeleteBrackPtr(&(sptr->ptr));
-        break;
-#endif
-      case NA_MEMORY_CLEANUP_NA_DELETE:
-        naNaDeletePtr(&(sptr->ptr));
-        break;
-    }
-    switch(naGetFlagCleanupStruct(sptr->refcount)){
-      case NA_MEMORY_CLEANUP_NONE:
-        break;
-      case NA_MEMORY_CLEANUP_FREE:
-        naFree(sptr);
-        break;
-      case NA_MEMORY_CLEANUP_FREE_ALIGNED:
-        naFreeAligned(sptr);
-        break;
-#ifdef __cplusplus 
-      case NA_MEMORY_CLEANUP_DELETE:
-        delete sptr;
-        break;
-      case NA_MEMORY_CLEANUP_DELETE_BRACK:
-        naError("naReleaseSmartPtr", "This cleanup option does not make sense");
-        delete [] sptr;
-        break;
-#endif
-      case NA_MEMORY_CLEANUP_NA_DELETE:
-        naDelete(sptr);
-        break;
-    }
-    // Note that this is the only position in the whole NALib code where an
-    // NAPointer is deleted. Therefore you could theoretically include the
-    // code written in naDestructPointer directly here to save one function
-    // call. But as NALib assumes that NAPointer is only used when really
-    // needed for reference counting, it is nontheless put into a separate
-    // function such that this function naReleasePointer can be inlined for
-    // sure and thus becomes very fast.
-  }
-  // Note that other programming languages have incorporated this very idea
-  // of self-organized reference-counting pointers deeply within its core.
-  // Their runtime-systems keep giant pools of free objects at hand and take
-  // care of detecting and collecting unused objects. In C and C++, no such
-  // mechanisms exist and must be implemented manually. NARuntime is a small
-  // example of such a system.
+
+  NASmartPtrDestructContainer container = {sptr, destructor};
+  
+  return naReleaseRefCount(&(sptr->refcount), &container, (NAMutator)naDestructSmartPtrData);
 }
 
 
@@ -1109,18 +1212,11 @@ NA_IDEF const void* naGetSmartPtrConst(const NASmartPtr* sptr){
 
 
 NA_IDEF void* naGetSmartPtrMutable(NASmartPtr* sptr){
-  #ifndef NDEBUG
-    if(naIsPtrConst(&(sptr->ptr)))
-      naError("naGetSmartPtrMutable", "Mutating a const pointer.");
-  #endif
   return naGetPtrMutable(&(sptr->ptr));
 }
 
 
 
-NA_IDEF NABool naIsSmartPtrConst(const NASmartPtr* sptr){
-  return naIsPtrConst(&(sptr->ptr));
-}
 
 
 
@@ -1131,129 +1227,85 @@ NA_IDEF NABool naIsSmartPtrConst(const NASmartPtr* sptr){
 // //////////////////////////
 
 struct NAPointer{
-  NAPtr ptr;
+  NASmartPtr sptr;
   NAMutator destructor;
-  NAUInt refcount;      // Reference count. Including flags
 };
 
 // Prototype of the destruct function defined in the implementation file.
-NA_HAPI void naDestructPointer(NAPointer* pointer);
-NA_RUNTIME_TYPE(NAPointer, naDestructPointer);
+NA_RUNTIME_TYPE(NAPointer, NA_NULL);
 
 
 
 
-NA_IDEF NAPointer* naNewNullPointer(){
-  return naNewPointer(NA_NULL, NA_MEMORY_CLEANUP_NONE, NA_NULL);
-}
-
-
-
-NA_IDEF NAPointer* naNewPointer(void* data, NAMemoryCleanup cleanup, NAMutator destructor){
+NA_IDEF NAPointer* naNewPointerConst(const void* data){
   NAPointer* pointer; // Declaration before definition. Needed for C90
-  #ifndef NDEBUG
-    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup >= NA_MEMORY_CLEANUP_COUNT)
-      naError("naNewPointer", "cleanup method invalid");
-  #endif
   pointer = naNew(NAPointer);
-  pointer->ptr = naMakePtrWithMutableData(data, NA_ZERO, NA_ZERO, cleanup);
-  pointer->destructor = destructor;
-  pointer->refcount = 1 | ((NAUInt)cleanup << NA_MEMORY_CLEANUP_DATA_BITSHIFT);
+  // As sptr is the first entry of pointer, we can trick sptr to delete the
+  // object when refcount becomes zero and delete the whole NAPointer object
+  // in the end.
+  naInitSmartPtrConst(&(pointer->sptr), NA_MEMORY_CLEANUP_NA_DELETE, data);
+  pointer->destructor = NA_NULL;
   return pointer;
 }
 
 
+
+NA_IDEF NAPointer* naNewPointerMutable(void* data, NAMemoryCleanup datacleanup, NAMutator destructor){
+  NAPointer* pointer; // Declaration before definition. Needed for C90
+  #ifndef NDEBUG
+    if(datacleanup < NA_MEMORY_CLEANUP_NONE || datacleanup >= NA_MEMORY_CLEANUP_COUNT)
+      naError("naNewPointer", "cleanup method invalid");
+  #endif
+  pointer = naNew(NAPointer);
+  // As sptr is the first entry of pointer, we can trick sptr to delete the
+  // object when refcount becomes zero and delete the whole NAPointer object
+  // in the end.
+  naInitSmartPtrMutable(&(pointer->sptr), NA_MEMORY_CLEANUP_NA_DELETE, data, datacleanup);
+  pointer->destructor = destructor;
+  return pointer;
+}
+
+
+
+NA_HAPI NASmartPtr* naDestructPointer(NAPointer* pointer);
 
 
 
 NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
   #ifndef NDEBUG
-    if(!pointer){
-      naCrash("naRetainPointer", "pointer is Null-Pointer.");
-      return NA_NULL;
-    }else{
-      // The next test can detect some erroneous behaviour in the code. Note
-      // however that most likely the true cause of the error did occur long
-      // before reaching here.
-      if((pointer->refcount & NA_SMARTPTR_REFCOUNT_MASK) == NA_ZERO)
-        naError("naRetainPointer", "Retaining NAPointer with a refcount of 0");
-    }
+    if(!pointer)
+      {naCrash("naRetainPointer", "pointer is Null-Pointer."); return NA_NULL;}
   #endif
-  pointer->refcount++;
-  #ifndef NDEBUG
-    // If refcount now suddenly becomes zero, there was either an error earlier
-    // or the object has been retained too many times. Overflow.
-    if((pointer->refcount & NA_SMARTPTR_REFCOUNT_MASK) == NA_ZERO)
-      naError("naRetainPointer", "Reference count overflow");
-  #endif
+  naRetainSmartPtr(&(pointer->sptr));
   return pointer;
 }
 
 
 
-NA_IDEF void naReleasePointer(NAPointer* pointer){
+NA_IDEF NABool naReleasePointer(NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer){
       naCrash("naReleasePointer", "pointer is Null-Pointer.");
-      return;
-    }else{
-      // The next test can detect some erroneous behaviour in the code. Note
-      // however that most likely the true cause of the error did occur long
-      // before reaching here.
-      if((pointer->refcount & NA_SMARTPTR_REFCOUNT_MASK) == NA_ZERO)
-        naError("naReleasePointer", "Releasing NAPointer with a refcount of 0");
+      return NA_FALSE;
     }
   #endif
-  // Note that the author decided to always count to zero, even if it is clear
-  // that the pointer will eventually be freed and the data will be lost in
-  // nirvana. But often times in debugging, when retaining and releasing is not
-  // done correctly, an NAPointer is released too often. When refcount is 0 and
-  // NDEBUG is not defined, this can be detected!
-  pointer->refcount--;
-  if((pointer->refcount & NA_SMARTPTR_REFCOUNT_MASK) == NA_ZERO){
-    #ifndef NDEBUG
-      pointer->refcount |= NA_SMARTPTR_DELETE_FROM_RELEASE;
-    #endif
-    if(pointer->destructor){pointer->destructor(naGetPtrMutable(&(pointer->ptr)));}
-    naDelete(pointer);
-    // Note that this is the only position in the whole NALib code where an
-    // NAPointer is deleted. Therefore you could theoretically include the
-    // code written in naDestructPointer directly here to save one function
-    // call. But as NALib assumes that NAPointer is only used when really
-    // needed for reference counting, it is nontheless put into a separate
-    // function such that this function naReleasePointer can be inlined for
-    // sure and thus becomes very fast.
-  }
-  // Note that other programming languages have incorporated this very idea
-  // of self-organized reference-counting pointers deeply within its core.
-  // Their runtime-systems keep giant pools of free objects at hand and take
-  // care of detecting and collecting unused objects. In C and C++, no such
-  // mechanisms exist and must be implemented manually. NARuntime is a small
-  // example of such a system.
+  return naReleaseSmartPtr(&(pointer->sptr), pointer->destructor);
 }
 
 
 
 
 NA_IDEF const void* naGetPointerConst(const NAPointer* pointer){
-  return naGetPtrConst(&(pointer->ptr));
+  return naGetSmartPtrConst(&(pointer->sptr));
 }
 
 
 
 NA_IDEF void* naGetPointerMutable(NAPointer* pointer){
-  #ifndef NDEBUG
-    if(naIsPtrConst(&(pointer->ptr)))
-      naError("naGetPointerMutable", "Mutating a const pointer.");
-  #endif
-  return naGetPtrMutable(&(pointer->ptr));
+  return naGetSmartPtrMutable(&(pointer->sptr));
 }
 
 
-
-NA_IDEF NABool naIsPointerConst(const NAPointer* pointer){
-  return naIsPtrConst(&(pointer->ptr));
-}
 
 
 

@@ -6,6 +6,7 @@
 
 #include "../NABuffer.h"
 #include "../NAList.h"
+#include "../NALinearMemory.h"
 
 
 #define NA_BUFFER_BYTESIZE 4096
@@ -42,7 +43,7 @@
 
 // If maxpos is known, extend MUST be unset!
 #define NA_BUFFER_FLAG_OWNS_SOURCE         0x01
-#define NA_BUFFER_FLAG_MAXPOS_KNOWN         0x10
+#define NA_BUFFER_FLAG_MAXPOS_KNOWN        0x10
 #define NA_BUFFER_FLAG_CAN_EXTEND          0x04
 
 
@@ -99,23 +100,33 @@ typedef enum{
 
 
 
-typedef struct NABufferPart NABufferPart;
-struct NABufferPart{
-  NARangei bufferrange;
-  NARangei datarange;
-//  NAPointer* data;
-  NAUInt refcount;
-  NAByte* data;
-};
-
-
-
 
 
 
 // //////////////////////////////////
 // BUFFER PART
 // //////////////////////////////////
+
+
+typedef struct NABufferPart NABufferPart;
+struct NABufferPart{
+  NASmartPtr asdfdata;
+  NARangei bufferrange;
+  NARangei datarange;
+  NAUInt refcount;
+  NAByte* data;
+};
+
+
+// Dallocates a buffer part
+//NA_HIDEF void naDestructBufferPartData(NABufferPart* part){
+//  #ifndef NDEBUG
+//    if(part->refcount != NA_ZERO)
+//      naError("naDeallocBufferPart", "Part is still in use");
+//  #endif
+//  naFree(part->data);
+//  naFree(part);
+//}
 
 
 // Allocates a buffer part which is sparse
@@ -128,43 +139,35 @@ NA_HIDEF NABufferPart* naAllocBufferPartSparse(NARangei bufferrange){
   part = naAlloc(NABufferPart);
   part->bufferrange = bufferrange;
   part->datarange = naMakeRangeiWithStartAndEnd(0, 0);
-//  part->data = naNewNullPointer();
-  part->refcount = 0;
-  part->data = NA_NULL;
+  naInitSmartPtrMutable(&(part->asdfdata), NA_MEMORY_CLEANUP_NONE, NA_NULL, NA_NULL);
   return part;
 }
 
 
 
-// Dallocates a buffer part
-NA_HIDEF void naDeallocBufferPart(NABufferPart* part){
-  #ifndef NDEBUG
-    if(part->refcount != NA_ZERO)
-      naError("naDeallocBufferPart", "Part is still in use");
-  #endif
-  naFree(part->data);
-  naFree(part);
-}
 
 
 
 // Retains a buffer part
 NA_HIDEF void naRetainBufferPart(NABufferPart* part){
-  part->refcount++;
+//  part->refcount++;
+  naRetainSmartPtr(&(part->asdfdata));
 }
 
 
 
 // Releases a buffer part.
 NA_HIDEF void naReleaseBufferPart(NABufferPart* part, NAListIterator* iter){
-  part->refcount--;
-  if(part->refcount == NA_ZERO){
+  if(naReleaseSmartPtr(&(part->asdfdata), NA_NULL)){
+//  part->refcount--;
+//  if(part->refcount == NA_ZERO){
     #ifndef NDEBUG
       if(naGetListCurrentMutable(iter) != part)
         naError("naReleaseBufferPart", "Iterator not placed at part to delete");
     #endif
     naRemoveListCurrentConst(iter, NA_FALSE);
-    naDeallocBufferPart(part);
+//    naDestructBufferPartData(part);
+//*    naFree(part);
   }
 }
 
@@ -172,7 +175,7 @@ NA_HIDEF void naReleaseBufferPart(NABufferPart* part, NAListIterator* iter){
 
 // Returns NA_TRUE if this buffer is a sparse buffer
 NA_HIDEF NABool naIsBufferPartSparse(NABufferPart* part){
-  return (part->data == NA_NULL);
+  return (naGetSmartPtrConst(&(part->asdfdata)) == NA_NULL);
 }
 
 
@@ -186,7 +189,8 @@ NA_HIDEF NAInt naGetBufferPartStartBufferIndex(NABufferPart* part){
 
 // Returns the buffer end index of the buffer part.
 NA_HIDEF NAInt naGetBufferPartEndBufferIndex(NABufferPart* part){
-  return naGetRangeiEnd(part->bufferrange);
+  return 0;
+//*  return naGetRangeiEnd(part->bufferrange);
 }
 
 
@@ -264,15 +268,16 @@ NA_HIDEF void naAdjustBufferPartToContainDataRange(NABufferPart* part, NARangei 
 // Returns a direct pointer to the raw data of this buffer part, given its
 // absolute address.
 NA_HIDEF NAByte* naGetBufferPartDataPointerAbsolute(NABufferPart* part, NAInt offset){
-  #ifndef NDEBUG
-    if(naIsBufferPartSparse(part))
-      naError("naGetBufferPartDataPointerAbsolute", "buffer part is sparse");
-    if(!naContainsRangeiOffset(part->bufferrange, offset))
-      naError("naGetBufferPartDataPointerAbsolute", "offset not inside buffer part");
-    if(!naContainsRangeiOffset(part->datarange, offset))
-      naError("naGetBufferPartDataPointerAbsolute", "offset not inside data part");
-  #endif
-  return &(part->data[offset - part->bufferrange.origin]);
+  return NA_NULL;
+//  #ifndef NDEBUG
+//    if(naIsBufferPartSparse(part))
+//      naError("naGetBufferPartDataPointerAbsolute", "buffer part is sparse");
+//    if(!naContainsRangeiOffset(part->bufferrange, offset))
+//      naError("naGetBufferPartDataPointerAbsolute", "offset not inside buffer part");
+//    if(!naContainsRangeiOffset(part->datarange, offset))
+//      naError("naGetBufferPartDataPointerAbsolute", "offset not inside data part");
+//  #endif
+//  return &(naGetSmartPtrMutable(&(part->asdfdata))[offset - part->bufferrange.origin]);
 }
 
 
@@ -284,7 +289,7 @@ NA_HIDEF NAByte* naGetBufferPartDataPointer(NABufferPart* part){
     if(naIsBufferPartSparse(part))
       naError("naGetBufferPartDataPointerAbsolute", "buffer part is sparse");
   #endif
-  return part->data;
+  return naGetSmartPtrMutable(&(part->asdfdata));
 }
 
 
@@ -561,7 +566,7 @@ NA_DEF NABuffer* naInitBuffer(NABuffer* buffer){
   
   NABufferStorage* storage = naAllocBufferStorage();
   naSetBufferStorageSourceMemory(storage);
-  buffer->storage = naNewPointer(storage, NA_MEMORY_CLEANUP_NONE, (NAMutator)naDeallocBufferStorage);
+  buffer->storage = naNewPointerMutable(storage, NA_MEMORY_CLEANUP_NONE, (NAMutator)naDeallocBufferStorage);
   buffer->flags = NA_BUFFER_FLAG_OWNS_SOURCE | NA_BUFFER_FLAG_CAN_EXTEND;
 
   buffer->range = naMakeRangeiWithStartAndEnd(0, 0);
@@ -582,10 +587,14 @@ NA_DEF NABuffer* naInitBufferWithConstBytes(NABuffer* buffer, const NAByte* byte
   
   NABufferStorage* storage = naAllocBufferStorage();
   naSetBufferStorageSourceMemory(storage);
-  buffer->storage = naNewPointer(storage, NA_MEMORY_CLEANUP_NONE, (NAMutator)naDeallocBufferStorage);
-  buffer->flags = NA_BUFFER_FLAG_OWNS_SOURCE | NA_BUFFER_FLAG_CAN_EXTEND;
+  buffer->storage = naNewPointerMutable(storage, NA_MEMORY_CLEANUP_NONE, (NAMutator)naDeallocBufferStorage);
+  buffer->flags = NA_BUFFER_FLAG_OWNS_SOURCE;
 
-  buffer->range = naMakeRangeiWithStartAndEnd(0, bytesize);
+  if(bytesize < 0){
+    buffer->range = naMakeRangeiWithStartAndEnd(0, -bytesize);
+  }else{
+    buffer->range = naMakeRangeiWithStartAndEnd(0, bytesize);
+  }
   buffer->curoffset = 0;
   buffer->curbit = 0;
 
@@ -605,7 +614,7 @@ NA_DEF NABuffer* naInitBufferWithFile(NABuffer* buffer, const char* filename){
   
   NABufferStorage* storage = naAllocBufferStorage();
   naSetBufferStorageSourceFile(storage, filename);
-  buffer->storage = naNewPointer(storage, NA_MEMORY_CLEANUP_NONE, (NAMutator)naDeallocBufferStorage);
+  buffer->storage = naNewPointerMutable(storage, NA_MEMORY_CLEANUP_NONE, (NAMutator)naDeallocBufferStorage);
   buffer->flags = NA_BUFFER_FLAG_OWNS_SOURCE | NA_BUFFER_FLAG_CAN_EXTEND;
   
   buffer->range = naMakeRangeiWithStartAndEnd(0, 0);
@@ -623,31 +632,34 @@ NA_DEF NABuffer* naInitBufferWithFile(NABuffer* buffer, const char* filename){
 
 
 NA_DEF NABuffer* naInitBufferWithBufferExtraction(NABuffer* buffer, NABuffer* srcbuffer, NAInt bytesize){
-  NABufferStorage* storage = naGetBufferStorage(srcbuffer);
-
-  buffer->storage = naRetainPointer(srcbuffer->storage);
-  buffer->flags = NA_BUFFER_FLAG_MAXPOS_KNOWN;
   
-  buffer->range = naMakeRangeiE(srcbuffer->curoffset, bytesize);
-  buffer->curoffset = buffer->range.origin;
-  buffer->curbit = 0;
+  return NA_NULL;
   
-  if(bytesize){
-    NAListPos lastlistpos;
-    NAListIterator iter = naMakeListIteratorMutator(&(storage->partlist));
-    naLocateListPosition(&iter, srcbuffer->curlistpos);
-    naLocateBufferPartList(&iter, buffer->range.origin);
-    buffer->curlistpos = naGetListCurrentPosition(&iter);
-    naLocateBufferPartList(&iter, naGetRangeiMax(buffer->range));
-    lastlistpos = naGetListCurrentPosition(&iter);
-    naRetainBufferParts(storage, buffer->curlistpos, lastlistpos);
-    naClearListIterator(&iter);
-  }
-
-  buffer->endianness = srcbuffer->endianness;
-  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
-
-  return buffer;
+//  NABufferStorage* storage = naGetBufferStorage(srcbuffer);
+//
+//  buffer->storage = naRetainPointer(srcbuffer->storage);
+//  buffer->flags = NA_BUFFER_FLAG_MAXPOS_KNOWN;
+//  
+//  buffer->range = naMakeRangeiE(srcbuffer->curoffset, bytesize);
+//  buffer->curoffset = buffer->range.origin;
+//  buffer->curbit = 0;
+//  
+//  if(bytesize){
+//    NAListPos lastlistpos;
+//    NAListIterator iter = naMakeListIteratorMutator(&(storage->partlist));
+//    naLocateListPosition(&iter, srcbuffer->curlistpos);
+//    naLocateBufferPartList(&iter, buffer->range.origin);
+//    buffer->curlistpos = naGetListCurrentPosition(&iter);
+//    naLocateBufferPartList(&iter, naGetRangeiMax(buffer->range));
+//    lastlistpos = naGetListCurrentPosition(&iter);
+//    naRetainBufferParts(storage, buffer->curlistpos, lastlistpos);
+//    naClearListIterator(&iter);
+//  }
+//
+//  buffer->endianness = srcbuffer->endianness;
+//  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
+//
+//  return buffer;
 }
 
 
@@ -1234,7 +1246,7 @@ NA_HDEF void naRetrieveBufferBytes(NABuffer* buffer, void* ptr, NAInt bytesize, 
       if(!buffer->curlistpos)
         naError("naRetrieveBufferBytes", "Internal error: No buffer part available.");
       if(!curpart || !naIsOffsetInBufferPart(curpart, buffer->curoffset))
-        naError("naRetrieveBufferBytes", "Internal error: Current buffer part inavailable or not containing current position.");
+        {naCrash("naRetrieveBufferBytes", "Internal error: Current buffer part unavailable or not containing current position."); return;}
     #endif
     
     remainingbytes = naGetBufferPartEndBufferIndex(curpart) - buffer->curoffset;
@@ -1631,7 +1643,7 @@ NA_DEF void naReadBufferfv(NABuffer* buffer, float* dst, NAInt count){
 NA_DEF void naReadBufferdv(NABuffer* buffer, double* dst, NAInt count){
   #ifndef NDEBUG
     if(!dst)
-      naError("naReadBufferdv", "dst is Null pointer.");
+      {naCrash("naReadBufferdv", "dst is Null pointer."); return;}
     if(buffer->curbit != 0)
       naError("naReadBufferdv", "Bit offset not 0.");
   #endif

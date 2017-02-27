@@ -75,6 +75,7 @@ NA_IAPI NAUInt naGetSystemMemoryPagesizeMask();
 //                      a pointer must be freed with naFreeAligned. Beware
 //                      that bytesize here can NOT be negative!
 // naMallocPageAligned  Same thing but the bound is the memory-page boundary.
+//                      Does not require NARuntimeSystem!
 // naFreeAligned        Deallocates any aligned pointer previously allocated
 //                      with naMallocAligned or naMallocPageAligned. Note: This
 //                      differs with known implementations on unix-like systems.
@@ -120,6 +121,9 @@ NA_API  void  naDelete(           void* pointer);
 
 NA_API void               naStartRuntime();
 NA_API void               naStopRuntime();
+
+NA_API NAUInt             naGetRuntimeMemoryPageSize();
+NA_API NAUInt             naGetRuntimePoolSize();
 
 // In order to work with specific types, each type trying to use the runtime
 // system needs to register itself to the runtime system upon compile time.
@@ -198,6 +202,56 @@ typedef enum{
   NA_MEMORY_CLEANUP_NA_DELETE       = 0x06,  // 0b110 // naDelete
   NA_MEMORY_CLEANUP_COUNT           = 0x07
 } NAMemoryCleanup;
+
+
+
+// ////////////////////////
+// NARefCount
+// ////////////////////////
+
+// An NARefCount stores a reference count. When an NARefCount first is created,
+// that count is 1 and it is increased everytime, naRetainRefCount is called.
+//
+// The reference counter is decreased everytime naReleaseSmartPtr is called.
+// When reaching 0, the data as well as the smart pointer struct itself is
+// erased automatically from memory.
+//
+// Note that this struct serves as a raw implementation which is used in NALib
+// at specific positions. If you are looking for a more comfortable way of
+// using smart pointers, have a look at NAPointer below.
+//
+// Important: If you want to use NARefCount in your own struct, make sure it
+// is the first field in your struct!
+
+// The full type definition is in the file "NAMemoryII.h"
+typedef struct NARefCount NARefCount;
+
+// Initialize a smart pointer. Define how the smart pointer itself shall be
+// cleaned up, define the data it shall store and define, how that data shall
+// be cleaned up.
+NA_IAPI NARefCount* naInitRefCount(     NARefCount* refcount,
+                                    NAMemoryCleanup structcleanup,
+                                    NAMemoryCleanup datacleanup);
+
+NA_IAPI NAUInt naGetRefCountCount(const NARefCount* refcount);
+NA_IAPI NAMemoryCleanup naGetRefCountCleanupData(const NARefCount* refcount);
+
+// Retain and Release.
+// You can send a destructor to Release which will be called with the data
+// pointer if the reference count reaches 0. Further more, the release function
+// will return NA_TRUE when the reference count reached zero.
+//
+// When refcount reaches zero, first, the destructor is called with a pointer
+// to data, then the data is cleaned up and finally, the struct is cleaned up.
+//
+// When you have a destructor but leave data to be NA_NULL, the destructor will
+// be called with the refcount pointer.
+NA_IAPI NARefCount* naRetainRefCount( NARefCount* refcount);
+NA_IAPI NABool      naReleaseRefCount(NARefCount* refcount,
+                                            void* data,
+                                        NAMutator destructor);
+
+
 
 
 
@@ -304,7 +358,11 @@ NA_IAPI NAPtr naMakePtrWithExtraction(  const NAPtr* srcptr,
 NA_IAPI void naClearPtr(NAPtr* ptr);
 NA_IAPI void naFreePtr(NAPtr* ptr);
 NA_IAPI void naFreeAlignedPtr(NAPtr* ptr);
-NA_IAPI void naDeletePtr(NAPtr* ptr);
+#ifndef NDEBUG
+  NA_IAPI void naDeletePtr(NAPtr* ptr);
+  NA_IAPI void naDeleteBrackPtr(NAPtr* ptr);
+#endif
+NA_IAPI void naNADeletePtr(NAPtr* ptr);
 
 // The following functions return either a const or a mutable pointer.
 //
@@ -401,18 +459,38 @@ NA_IAPI NABool naIsMemoryBlockConst(NAMemoryBlock* memblock);
 
 
 
+
+
 // ////////////////////////
 // NASmartPtr
 // ////////////////////////
+
+// A smart pointer stores an arbitrary mutable pointer with a reference count.
+// When the smart pointer first is created, that count is 1 and it is increased
+// everytime, naRetainSmartPtr is called.
+//
+// The reference counter is decreased everytime naReleaseSmartPtr is called.
+// When reaching 0, the data as well as the smart pointer struct itself is
+// erased automatically from memory.
+//
+// Note that this struct serves as a raw implementation which is used in NALib
+// at specific positions. If you are looking for a more comfortable way of
+// using smart pointers, have a look at NAPointer below.
+
+// Starting with NALib version 14, the actual data is stored as a pointer.
+// This means that it must be allocated elsewhere. But this means, any pointer
+// can become a reference counted pointer.
+//
+// To distinguish, how the pointer shall be handeled upon deletion, a new
+// enumeration NAMemoryCleanup had been introduced. See above.
 
 
 // The full type definition is in the file "NAMemoryII.h"
 typedef struct NASmartPtr NASmartPtr;
 
-
-NA_IAPI NASmartPtr* naInitSmartPtrNull(     NASmartPtr* sptr,
-                                        NAMemoryCleanup smartptrcleanup);
-
+// Initialize a smart pointer. Define how the smart pointer itself shall be
+// cleaned up, define the data it shall store and define, how that data shall
+// be cleaned up.
 NA_IAPI NASmartPtr* naInitSmartPtrConst(    NASmartPtr* sptr,
                                         NAMemoryCleanup smartptrcleanup,
                                             const void* data);
@@ -421,12 +499,26 @@ NA_IAPI NASmartPtr* naInitSmartPtrMutable(  NASmartPtr* sptr,
                                                   void* data,
                                         NAMemoryCleanup datacleanup);
 
-NA_IAPI NASmartPtr* naRetainSmartPtr(NASmartPtr* sptr);
-NA_IAPI void naReleaseSmartPtr(NASmartPtr* sptr);
+// Retain and Release.
+// You can send a destructor to Release which will be called with the data
+// pointer if the reference count reaches 0. Further more, the release function
+// will return NA_TRUE when the reference count reached zero.
+//
+// When refcount reaches zero, first, the destructor is called with a pointer
+// to data, then the data is cleaned up and finally, the struct is cleaned up.
+NA_IAPI NASmartPtr* naRetainSmartPtr( NASmartPtr* sptr);
+NA_IAPI NABool      naReleaseSmartPtr(NASmartPtr* sptr,
+                                        NAMutator desctructor);
 
-NA_IAPI const void* naGetSmartPtrConst(const NASmartPtr* sptr);
-NA_IAPI void* naGetSmartPtrMutable(NASmartPtr* sptr);
-NA_IAPI NABool naIsSmartPtrConst(const NASmartPtr* sptr);
+// Returns either a const or a mutable pointer to the data stored.
+NA_IAPI const void* naGetSmartPtrConst  (const  NASmartPtr* sptr);
+NA_IAPI void*       naGetSmartPtrMutable(       NASmartPtr* sptr);
+
+
+
+
+
+
 
 
 
@@ -445,22 +537,18 @@ NA_IAPI NABool naIsSmartPtrConst(const NASmartPtr* sptr);
 // itself automatically.
 //
 // Having a reference count is not always useful in C and C++. Only a few
-// structs of NALib like the NAByteArray actually use the NAPointer structure.
+// structs of NALib like NAList actually use the NAPointer structure.
 //
 // Note that starting with NALib version 10, NAPointers require the NARuntime
-// system.
+// system. Starting with verision 18, there also exists a more fundamental
+// struct called NASmartPtr which does not necessarily use the runtime system
+// but is a little more complicated to use.
 
 
 
 // The full type definition is in the file "NAMemoryII.h"
 typedef struct NAPointer NAPointer;
 
-
-
-// Creates an NAPointer referencing a NULL pointer. This is a pure convenience
-// function if you do not want to care upon deletion, what exactly an NAPointer
-// is storing.
-NA_IAPI NAPointer* naNewNullPointer();
 
 
 // Creates an NAPointer struct around the given data pointer.
@@ -473,15 +561,15 @@ NA_IAPI NAPointer* naNewNullPointer();
 // If no destructor is needed, you can send NA_NULL.
 //
 // Notice the distinction: The destructor will be called with the data pointer
-// such that any struct which is behind that pointer can be properly erased.
+// such that any struct which is behind that C-pointer can be properly erased.
 // The cleanup enum on the other hand defines, what will happen with the
 // data pointer itself AFTER the destructor had been called. Depending on how
 // that pointer had been created in the first place, it must be cleaned up with
-// the appropriate free or delete function.
-//
-NA_IAPI NAPointer* naNewPointer(       void* data,
-                             NAMemoryCleanup cleanup,
-                                   NAMutator destructor);
+// the appropriate deallocation function.
+NA_IAPI NAPointer* naNewPointerConst(   const void* data);
+NA_IAPI NAPointer* naNewPointerMutable(       void* data,
+                                    NAMemoryCleanup datacleanup,
+                                          NAMutator destructor);
 
 // Retains the given pointer. Meaning: There is one more codeblock which is
 // using this NAPointer. This NAPointer will not be freed as long as that
@@ -498,9 +586,7 @@ NA_IAPI NAPointer* naRetainPointer(NAPointer* pointer);
 // is no longer needed. The data will be freed automatically according to the
 // destructor and cleanup enumeration given upon creation. The NAPointer struct
 // itself will be deleted by the runtime system.
-//
-// Returns NA_TRUE, if the reference counter reached 0, otherwise NA_FALSE.
-NA_IAPI void naReleasePointer(NAPointer* pointer);
+NA_IAPI NABool naReleasePointer(NAPointer* pointer);
 
 // The following two functions return a pointer to the data. This function is
 // not particularily beautiful when it comes to readability or writeability but
@@ -517,10 +603,6 @@ NA_IAPI void naReleasePointer(NAPointer* pointer);
 // behave equivalent when NDEBUG is defined.
 NA_IAPI const void* naGetPointerConst  (const NAPointer* pointer);
 NA_IAPI       void* naGetPointerMutable(      NAPointer* pointer);
-
-// Returns NA_TRUE if the pointer stored is const. Note that this function
-// also works when NDEBUG is defined.
-NA_IAPI NABool      naIsPointerConst   (const NAPointer* pointer);
 
 
 

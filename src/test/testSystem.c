@@ -1,6 +1,7 @@
 
 
-#include "stdio.h"
+#include "tests.h"
+
 #include "NASystem.h"
 
 
@@ -42,22 +43,24 @@ void testSystem(void){
     printf("(Release)\n");
   #endif
   
-  printf("NA_SYSTEM:                %s\n", na_system_strings[NA_SYSTEM]);
+  printf("System:                   %s\n", na_system_strings[NA_SYSTEM]);
   #if defined __cplusplus
-    #if defined NA_CPP11
-      printf("Compiled for              C++11\n");
+    #if defined NA_CPP14
+      printf("Compiled for              C++14 (%d)\n", __cplusplus);
+    #elif defined NA_CPP11
+      printf("Compiled for              C++11 (%d)\n", __cplusplus);
     #elif defined NA_CPP98
-      printf("Compiled for              C++98\n");
+      printf("Compiled for              C++98 (%d)\n", __cplusplus);
     #else
       printf("Compiled for              C++ with no standard\n");
     #endif
   #else
     #if defined NA_C11
-      printf("Compiled for              C11\n");
+      printf("Compiled for              C11 (%d)\n", __STDC_VERSION__);
     #elif defined NA_C99
-      printf("Compiled for              C99\n");
+      printf("Compiled for              C99 (%d)\n", __STDC_VERSION__);
     #elif defined NA_C94
-      printf("Compiled for              C94\n");
+      printf("Compiled for              C94 (%d)\n", __STDC_VERSION__);
     #elif defined NA_C90
       printf("Compiled for              C89 / C90\n");
     #else
@@ -72,4 +75,6 @@ void testSystem(void){
   
   printf("Signed integer encoding:  %s\n", na_signed_integer_encoding_strings[NA_SIGNED_INTEGER_ENCODING]);
 }
+
+
 

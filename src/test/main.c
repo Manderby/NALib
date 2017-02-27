@@ -7,26 +7,22 @@
 //
 
 
-#include <stdio.h>
+#include "tests.h"
+
 #include "../NALib/NASystem.h"
 #include "../NALib/NAMemory.h"
-
-
-void testSystem(void);
-void testMemory(void);
-void testStack(void);
 
 
 
 
 int main(void){
-//  testSystem();
-  
+//  testSystem();  
   testMemory();
 
-//  naStartRuntime();
+  naStartRuntime();
 //    testStack();
-//  naStopRuntime();
+    testBuffer();
+  naStopRuntime();
   
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     printf("\nPress enter to quit.\n");

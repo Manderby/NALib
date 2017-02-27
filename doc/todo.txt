@@ -6,20 +6,19 @@ in NALib.
 
 
 Version 18:
-- Move flags into config
 - Threading.h uses New for allocators
 - Fully Implement Buffer
 - First compression in NAPNG
 - Add more variadic error messages
-- NATree and integration into NABuffer
 - Redo String with Buffers
 - Make NAArray simpler without subarrays. Add Iterator
 - Review Remaining Iterators
-- Timezones
-- Add ARM
 - Make test files
 
 Version 19:
+- Timezones
+- Add ARM
+- NATree and integration into NABuffer
 - Re-Integrate NAMap2D
 - Re-Integrate NABitArray
 - NASocket
