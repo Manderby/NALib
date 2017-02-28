@@ -9,7 +9,7 @@
 // including "NAStack.h"
 
 
-#include "NAMemory.h"
+#include "../NAMemory.h"
 
 
 struct NAStack{
@@ -117,7 +117,6 @@ NA_IDEF void naClearStack(NAStack* stack){
 
 NA_IDEF void* naPushStack(NAStack* stack){
   // Declaration before Implementation. Needed for C90
-  NAUInt subindex;
   NAUInt availablestack;
 
   stack->usedcount++;
@@ -125,7 +124,7 @@ NA_IDEF void* naPushStack(NAStack* stack){
   availablestack = naGetStackTotalCount(stack, stack->curindex);
 
   if(stack->usedcount > availablestack){
-    if(naGetListCount(&(stack->arrays)) <= (stack->curindex + 1)){
+    if(naGetListCount(&(stack->arrays)) <= (NAUInt)(stack->curindex + 1)){
       naAddStackNewSpace(stack);
     }
     NAListIterator iter = naMakeListIteratorAccessor(&(stack->arrays));
@@ -144,7 +143,6 @@ NA_IDEF void* naPushStack(NAStack* stack){
 NA_IDEF void* naTopStack(NAStack* stack){
   // Declaration before Implementation. Needed for C90
   NAUInt subindex;
-  void* retvalue;
   subindex = stack->usedcount - naGetStackArrayBaseIndex(stack, stack->curindex) - 1;
   
   NAListIterator iter = naMakeListIteratorMutator(&(stack->arrays));

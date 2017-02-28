@@ -16,8 +16,8 @@
   #include "malloc/malloc.h"
 #endif
 
-#include "NASystem.h"
-#include "NAMathOperators.h"
+#include "../NASystem.h"
+#include "../NAMathOperators.h"
 #include "NAValueHelper.h"
 
 
@@ -427,11 +427,11 @@ NA_IDEF NABool naReleaseRefCount(NARefCount* refcount, void* data, NAMutator des
         break;
 #ifdef __cplusplus 
       case NA_MEMORY_CLEANUP_DELETE:
-        delete sptr;
+        delete refcount;
         break;
       case NA_MEMORY_CLEANUP_DELETE_BRACK:
         naError("naReleaseRefCount", "This cleanup option does not make sense");
-        delete [] sptr;
+        delete [] refcount;
         break;
 #endif
       case NA_MEMORY_CLEANUP_NA_DELETE:
@@ -563,7 +563,7 @@ struct NAPtr{
       naError("naMarkPtrWithAccessibleBytesize", "accessible size already marked");
     if(accessiblebytesize < NA_ZERO)
       naError("naMarkPtrWithAccessibleBytesize", "accessiblesize should not be negative.");
-    if(accessiblebytesize < ptr->visiblebytesize)
+    if((NAUInt)accessiblebytesize < ptr->visiblebytesize)
       naError("naMarkPtrWithAccessibleBytesize", "accessiblesize should not be smaller than the visible size.");
     if(nullterminated && (accessiblebytesize == ptr->visiblebytesize))
       naError("naMarkPtrWithAccessibleBytesize", "Null termination is bogus when visible and accessible size are equal.");
@@ -1184,10 +1184,41 @@ struct NASmartPtrDestructContainer{
   NAMutator destructor;
 };
 
+
+
 // When releasing a smart pointer with a custom destructor, you need to call
 // the following function at the end of your destructor in order to properly
 // release the data pointer.
-NA_API NASmartPtr* naDestructSmartPtrData(NASmartPtrDestructContainer* container);
+NA_IDEF void naDestructSmartPtrData(NASmartPtrDestructContainer* container){
+
+  if(container->destructor){
+    container->destructor(naGetPtrMutable(&(container->sptr->ptr)));
+  }
+
+  // Clear the data based on the data cleanup
+  switch(naGetRefCountCleanupData(&(container->sptr->refcount))){
+    case NA_MEMORY_CLEANUP_NONE:
+      break;
+    case NA_MEMORY_CLEANUP_FREE:
+      naFreePtr(&(container->sptr->ptr));
+      break;
+    case NA_MEMORY_CLEANUP_FREE_ALIGNED:
+      naFreeAlignedPtr(&(container->sptr->ptr));
+      break;
+#ifdef __cplusplus 
+    case NA_MEMORY_CLEANUP_DELETE:
+      naDeletePtr(&(container->sptr->ptr));
+      break;
+    case NA_MEMORY_CLEANUP_DELETE_BRACK:
+      naDeleteBrackPtr(&(container->sptr->ptr));
+      break;
+#endif
+    case NA_MEMORY_CLEANUP_NA_DELETE:
+      naNaDeletePtr(&(container->sptr->ptr));
+      break;
+  }
+}
+
 
 
 NA_IDEF NABool naReleaseSmartPtr(NASmartPtr* sptr, NAMutator destructor){
@@ -1267,7 +1298,11 @@ NA_IDEF NAPointer* naNewPointerMutable(void* data, NAMemoryCleanup datacleanup, 
 
 
 
-NA_HAPI NASmartPtr* naDestructPointer(NAPointer* pointer);
+NA_HIDEF void naDestructPointer(NAPointer* pointer){
+  if(pointer->destructor){
+    pointer->destructor(naGetSmartPtrMutable(&(pointer->sptr)));
+  }
+}
 
 
 

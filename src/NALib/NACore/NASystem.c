@@ -11,11 +11,7 @@
 
   // The error printing method. Errors will be emitted to the stderr output.
   // When NDEBUG is defined, these functions are OBSOLETE!
-  #ifdef __cplusplus
-    #include <cstdio>
-  #else
-    #include <stdio.h>
-  #endif
+  #include <stdio.h>
 
 
   void naError(const char* functionsymbol, const char* text, ...){

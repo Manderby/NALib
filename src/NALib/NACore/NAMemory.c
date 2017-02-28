@@ -173,7 +173,9 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
 
 
 NA_DEF void naDelete(void* pointer){
-  NACorePool* corepool; // Declaration before definition. Needed for C90
+  #if (NA_RUNTIME_USES_MEMORY_POOLS != 0)
+    NACorePool* corepool; // Declaration before definition. Needed for C90
+  #endif
 
   #ifndef NDEBUG
     if(!na_runtime)
@@ -267,44 +269,9 @@ NA_DEF NAUInt naGetRuntimePoolSize(){
 
 
 
-NA_DEF NASmartPtr* naDestructSmartPtrData(NASmartPtrDestructContainer* container){
-
-  if(container->destructor){
-    container->destructor(naGetPtrMutable(&(container->sptr->ptr)));
-  }
-
-  // Clear the data based on the data cleanup
-  switch(naGetRefCountCleanupData(&(container->sptr->refcount))){
-    case NA_MEMORY_CLEANUP_NONE:
-      break;
-    case NA_MEMORY_CLEANUP_FREE:
-      naFreePtr(&(container->sptr->ptr));
-      break;
-    case NA_MEMORY_CLEANUP_FREE_ALIGNED:
-      naFreeAlignedPtr(&(container->sptr->ptr));
-      break;
-#ifdef __cplusplus 
-    case NA_MEMORY_CLEANUP_DELETE:
-      naDeletePtr(&(container->sptr->ptr));
-      break;
-    case NA_MEMORY_CLEANUP_DELETE_BRACK:
-      naDeleteBrackPtr(&(container->sptr->ptr));
-      break;
-#endif
-    case NA_MEMORY_CLEANUP_NA_DELETE:
-      naNaDeletePtr(&(container->sptr->ptr));
-      break;
-  }
-}
 
 
 
-NA_HAPI NASmartPtr* naDestructPointer(NAPointer* pointer){
-  if(pointer->destructor){
-    pointer->destructor(naGetSmartPtrMutable(&(pointer->sptr)));
-  }
-//  naDestructSmartPtrData(&(pointer->sptr));
-}
 
 
 

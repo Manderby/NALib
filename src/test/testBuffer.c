@@ -2,8 +2,8 @@
 
 #include "tests.h"
 
-#include "NASystem.h"
-#include "NALinearMemory.h"
+#include "../NALib/NASystem.h"
+#include "../NALib/NALinearMemory.h"
 
 NAByte testdataarray[10000];
 
@@ -20,7 +20,7 @@ void testBuffer(void){
   printf("Creating memory buffer.\n");
   source1 = naCreateASDFBuffer();
   source2 = naCreateASDFBuffer();
-  buffer = naCreateASDFBuffer(source1);
+  buffer = naCreateASDFBuffer();
 //  naSetASDFASDFBuffer(buffer, source1, 50);
   
 //  naPutASDFBufferBytes(buffer, &testdata, sizeof(int));
@@ -29,9 +29,9 @@ void testBuffer(void){
 
 
   printf("Writing bytes to the buffer.\n");
-  for(int i=0; i<100000; i++){
+  for(int i=0; i<10000; i++){
     naWriteASDFBufferBytes(buffer, testdataarray, 10000);
-//    naWriteASDFBufferBytes(buffer, &testdata, sizeof(int));
+    naWriteASDFBufferBytes(buffer, &testdata, sizeof(int));
   }
   
   naSeekASDFBufferAbsolute(buffer, 0);

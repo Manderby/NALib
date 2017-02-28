@@ -131,16 +131,17 @@ struct NABufferPart{
 
 // Allocates a buffer part which is sparse
 NA_HIDEF NABufferPart* naAllocBufferPartSparse(NARangei bufferrange){
-  NABufferPart* part;
-  #ifndef NDEBUG
-    if(!naIsRangeiUseful(bufferrange))
-      naError("naAllocBufferPartSparse", "buffer range not useful");
-  #endif
-  part = naAlloc(NABufferPart);
-  part->bufferrange = bufferrange;
-  part->datarange = naMakeRangeiWithStartAndEnd(0, 0);
-  naInitSmartPtrMutable(&(part->asdfdata), NA_MEMORY_CLEANUP_NONE, NA_NULL, NA_NULL);
-  return part;
+  return NA_NULL;
+  //NABufferPart* part;
+  //#ifndef NDEBUG
+  //  if(!naIsRangeiUseful(bufferrange))
+  //    naError("naAllocBufferPartSparse", "buffer range not useful");
+  //#endif
+  //part = naAlloc(NABufferPart);
+  //part->bufferrange = bufferrange;
+  //part->datarange = naMakeRangeiWithStartAndEnd(0, 0);
+  //naInitSmartPtrMutable(&(part->asdfdata), NA_MEMORY_CLEANUP_NONE, NA_NULL, NA_NULL);
+  //return part;
 }
 
 

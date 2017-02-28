@@ -75,31 +75,6 @@
 
 
 
-// /////////////////////////////////
-// NAASDFBuffer
-// /////////////////////////////////
-
-
-typedef struct NAASDFBuffer NAASDFBuffer;
-
-
-//// Allocates a buffer with a specific source.
-//NA_API NAASDFBuffer* naCreateASDFBuffer();
-//NA_API NAASDFBuffer* naCreateASDFBufferFile(     const char* filename);
-//NA_API NAASDFBuffer* naCreateASDFBufferConstData(const void* data,
-//                                                           NAInt bytesize);
-//NA_API NAASDFBuffer* naCreateASDFBufferMutableData(    void* data,
-//                                                           NAInt bytesize,
-//                                                 NAMemoryCleanup cleanup);
-//
-//// Retains and releases a buffer source
-//NA_API NAASDFBuffer*  naRetainASDFBuffer (NAASDFBuffer* source);
-//NA_API void             naReleaseASDFBuffer(NAASDFBuffer* source);
-
-
-
-
-
 
 
 // /////////////////////////////////

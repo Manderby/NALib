@@ -5,16 +5,16 @@
 
 
 
-#include "NALinearMemory.h"
-#include "NAList.h"
-#include "NACoord.h"
-#include "NAFile.h"
+#include "../NALinearMemory.h"
+#include "../NAList.h"
+#include "../NACoord.h"
+#include "../NAFile.h"
 
 
 #if NA_BUFFER_PART_BYTESIZE == 0
   #define NA_INTERNAL_BUFFER_PART_BYTESIZE (naGetRuntimeMemoryPageSize())
 #else
-  #define NA_INTERNAL_BUFFER_PART_BYTESIZE NA_BUFFER_PART_BYTESIZE
+  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAUInt)NA_BUFFER_PART_BYTESIZE)
 #endif
 
 
@@ -49,28 +49,31 @@ NA_HIDEF NAASDFBufferPart* naNewASDFBufferPartSparse(NARangei range){
 
 
 
-//// Creates a memory block with given const data buffer
-//NA_HIDEF NAASDFBufferPart* naNewASDFBufferPartConstData(const NAByte* data, NAInt bytesize){
-//  NAASDFBufferPart* part = naNew(NAASDFBufferPart);
-//  part->data = naNewPointerConst(data);
-//  part->origin = 0;
-//  part->range = naMakeRangei(0, bytesize);
-//  return part;
-//}
-//
-//
-//
-//// Creates a memory block with given mutable data buffer
-//NA_HIDEF NAASDFBufferPart* naNewASDFBufferPartMutableData(NAByte* data, NAInt bytesize, NAMemoryCleanup cleanup){
-//  NAASDFBufferPart* part = naNew(NAASDFBufferPart);
-//  part->data = naNewPointerMutable(data, cleanup, NA_NULL);
-//  part->origin = 0;
-//  part->range = naMakeRangei(0, bytesize);
-//  return part;
-//}
+// Creates a memory block with given const data buffer
+NA_HIDEF NAASDFBufferPart* naNewASDFBufferPartConstData(const NAByte* data, NAInt bytesize){
+  NAASDFBufferPart* part = naNew(NAASDFBufferPart);
+  part->data = naNewPointerConst(data);
+  part->origin = 0;
+  part->range = naMakeRangei(0, bytesize);
+  return part;
+}
 
 
 
+// Creates a memory block with given mutable data buffer
+NA_HIDEF NAASDFBufferPart* naNewASDFBufferPartMutableData(NAByte* data, NAInt bytesize, NAMemoryCleanup cleanup){
+  NAASDFBufferPart* part = naNew(NAASDFBufferPart);
+  part->data = naNewPointerMutable(data, cleanup, NA_NULL);
+  part->origin = 0;
+  part->range = naMakeRangei(0, bytesize);
+  return part;
+}
+
+
+
+// This function takes a sparse part and makes it referencing a second part
+// with a given offset. The range which is referenced is defined by the range
+// stored in the part.
 NA_HIDEF void naReferenceASDFBufferPart(NAASDFBufferPart* part, NAASDFBufferPart* srcpart, NAInt srcoffset){
   #ifndef NDEBUG
     if(part->data)
@@ -127,15 +130,6 @@ NA_HIDEF NAInt naGetBufferPartStart(const NAASDFBufferPart* part){
 }
 
 
-NA_HIDEF void naEnlargeBufferPart(NAASDFBufferPart* part, NAInt bytesize){
-  part->range = naMakeRangeiWithStartAndEnd(part->range.origin, naGetRangeiEnd(part->range) + bytesize);
-  #ifndef NDEBUG
-    if(part->range.length > 4096)
-      naError("naEnlargeBufferPart", "That's a bit much");
-  #endif
-}
-
-
 
 NA_HIDEF NABool naContainsBufferPartOffset(const NAASDFBufferPart* part, NAInt offset){
   return naContainsRangeiOffset(part->range, offset);
@@ -143,30 +137,42 @@ NA_HIDEF NABool naContainsBufferPartOffset(const NAASDFBufferPart* part, NAInt o
 
 
 
+// This function returns NA_TRUE, if both parts have the same data pointer
+// and the ranges are adjacent.
 NA_HIDEF NABool naAreASDFBufferPartsEqualAndAdjacent(NAASDFBufferPart* startpart, NAASDFBufferPart* endpart){
   #ifndef NDEBUG
     if(naIsASDFBufferPartSparse(startpart) && naIsASDFBufferPartSparse(endpart))
       naError("naAreASDFBufferPartsEqualAndAdjacent", "Both parts are sparse");
   #endif
-  return (startpart->data == endpart->data) && (naGetRangeiEnd(startpart->range) == endpart->range.origin);
+  if((startpart->data == endpart->data) && (naGetRangeiEnd(startpart->range) == endpart->range.origin)){
+    #ifndef NDEBUG
+      if(startpart->origin != endpart->origin)
+        naError("naAreASDFBufferPartsEqualAndAdjacent", "origin of the two parts do not match");
+    #endif
+  }else{
+    return NA_FALSE;
+  }
 }
 
 
 
+// This function combines the current part given by iter with its previous and
+// next neighbor if possible. 
 NA_HIDEF void naCombineBufferPartAdjacents(NAListIterator* iter){
   NAASDFBufferPart* part = naGetListCurrentMutable(iter);
   NAASDFBufferPart* prevpart = naGetListPrevMutable(iter);
   NAASDFBufferPart* nextpart = naGetListNextMutable(iter);
+  
   if(prevpart && naAreASDFBufferPartsEqualAndAdjacent(prevpart, part)){
     // we can combine the two parts.
-    part->range = naMakeRangeiWithRangeAndRange(naGetBufferPartRange(prevpart), naGetBufferPartRange(part));
-    // then, we remove the current part and delete it.
+    part->range = naMakeRangeiWithStartAndEnd(naGetBufferPartStart(prevpart), naGetBufferPartEnd(part));
+    // then, we remove the previous part and delete it.
     naRemoveListPrevMutable(iter);
     naDelete(prevpart);
   }
   if(nextpart && naAreASDFBufferPartsEqualAndAdjacent(part, nextpart)){
     // we can combine the two parts.
-    part->range = naMakeRangeiWithRangeAndRange(naGetBufferPartRange(part), naGetBufferPartRange(nextpart));
+    part->range = naMakeRangeiWithStartAndEnd(naGetBufferPartStart(part), naGetBufferPartEnd(nextpart));
     // then, we remove the next part and delete it.
     naRemoveListNextMutable(iter);
     naDelete(nextpart);
@@ -175,10 +181,16 @@ NA_HIDEF void naCombineBufferPartAdjacents(NAListIterator* iter){
 
 
 
-NA_HIDEF NABool naSplitASDFBufferSparsePart(NAListIterator* iter, NARangei range){
+// This function splits a sparse part such that there exists in the end a
+// sparse part having precisely the desired range, possibly surrounded by
+// other parts. At the end of this function, the iterator points to that
+// very part.
+NA_HIDEF void naSplitASDFBufferSparsePart(NAListIterator* iter, NARangei range){
   NAASDFBufferPart* part = naGetListCurrentMutable(iter);
 
   #ifndef NDEBUG
+    if(!part)
+      naError("naSplitASDFBufferSparsePart", "iterator must not be at initial position");
     if(!naIsASDFBufferPartSparse(part))
       naError("naSplitASDFBufferSparsePart", "current part is not sparse");
     if(!naContainsRangeiRange(naGetBufferPartRange(part), range))
@@ -186,28 +198,31 @@ NA_HIDEF NABool naSplitASDFBufferSparsePart(NAListIterator* iter, NARangei range
   #endif
 
   if(naEqualRangei(naGetBufferPartRange(part), range)){
-    // This sparse part fits the desired range completely.
+    // This sparse part fits the desired range already.
     // Nothing to do.
     
   }else if(naGetBufferPartStart(part) == range.origin){
-    // A new part will be put at the start of this sparse part.
+    // The desired part will be put at the start of this sparse part.
     part->range = naMakeRangeiWithStartAndEnd(naGetRangeiEnd(range), naGetBufferPartEnd(part));
+    part->origin = part->range.origin;
     part = naNewASDFBufferPartSparse(range);
     naAddListBeforeMutable(iter, part);
     naIterateList(iter, -1);
     
   }else if(naGetBufferPartEnd(part) == naGetRangeiEnd(range)){
-    // A new part will be put at the end of this sparse part.
+    // The desired part will be put at the end of this sparse part.
     part->range = naMakeRangeiWithStartAndEnd(naGetBufferPartStart(part), range.origin);
+    part->origin = part->range.origin;
     part = naNewASDFBufferPartSparse(range);
     naAddListAfterMutable(iter, part);
     naIterateList(iter, 1);
     
   }else{
-    // A filled part will be put in the middle of this sparse part.
+    // The desired part will be put in the middle of this sparse part.
     NAASDFBufferPart* lastpart = naNewASDFBufferPartSparse(naMakeRangeiWithStartAndEnd(naGetRangeiEnd(range), naGetBufferPartEnd(part)));
     naAddListAfterMutable(iter, lastpart);
     part->range = naMakeRangeiWithStartAndEnd(naGetBufferPartStart(part), range.origin);
+    part->origin = part->range.origin;
     part = naNewASDFBufferPartSparse(range);
     naAddListAfterMutable(iter, part);
     naIterateList(iter, 1);
@@ -247,7 +262,7 @@ NA_HIDEF NAByte* naGetASDFBufferPartBaseDataPointer(NAASDFBufferPart* part){
 
 
 // //////////////////////////////////////
-// Buffer Source
+// Buffer
 // //////////////////////////////////////
 
 
@@ -315,7 +330,7 @@ NA_DEF NAASDFBuffer* naCreateASDFBuffer(){
   naInitRefCount(&(source->refcount), NA_MEMORY_CLEANUP_FREE, NA_MEMORY_CLEANUP_NONE);
   source->src = naCreateASDFBufferMemorySource();
   source->srctype = NA_BUFFER_SOURCE_MEMORY_SOURCE;
-  source->srcoffset = 0;
+  source->srcoffset = 5000;
 
   naInitList(&(source->parts));
   source->iter = naMakeListIteratorModifier(&(source->parts));
@@ -441,7 +456,7 @@ NA_API void naReleaseASDFBuffer(NAASDFBuffer* source){
 
 
 NA_HIDEF NAInt naGetBufferPartNormedStart(NAInt start){
-  return ((start / (NAInt)NA_INTERNAL_BUFFER_PART_BYTESIZE) - (start < 0)) * NA_INTERNAL_BUFFER_PART_BYTESIZE;
+  return (((start + (start < 0)) / (NAInt)NA_INTERNAL_BUFFER_PART_BYTESIZE) - (start < 0)) * NA_INTERNAL_BUFFER_PART_BYTESIZE;
 // This is short for:
 //  if(start < 0){
 //    start = ((start / NA_INTERNAL_BUFFER_PART_BYTESIZE) - 1) * NA_INTERNAL_BUFFER_PART_BYTESIZE;
@@ -502,9 +517,12 @@ NA_HIDEF void naLocateBufferPartOffset(NAListIterator* iter, NAInt offset){
 
 
 
-
+// This function ensures that the full given range is available as parts in
+// this buffer. If not available, the buffer is extended with sparse parts
+// at the beginning and the end.
 NA_HIDEF void naEnsureASDFBufferRange(NAASDFBuffer* buffer, NARangei range){
   NAASDFBufferPart* part;
+  
   #ifndef NDEBUG
     if(range.length <= 0)
       naError("naEnsureASDFBufferRangeMemory", "Range length shall be >= 0");
@@ -513,37 +531,46 @@ NA_HIDEF void naEnsureASDFBufferRange(NAASDFBuffer* buffer, NARangei range){
     if((buffer->flags & NA_BUFFER_SOURCE_FLAG_MAXPOS_FIXED) && (naGetRangeiEnd(range) < naGetRangeiEnd(buffer->bufrange)))
       naError("naEnsureASDFBufferRangeMemory", "Range of buffer is fixed at maximum %d, trying to access range up to %d", naGetRangeiEnd(buffer->bufrange), naGetRangeiEnd(range));
   #endif
+  
   if(naIsRangeiEmpty(buffer->bufrange)){
+    // If the buffer is empty, we just create one sparse part containing the
+    // whole range.
     part = naNewASDFBufferPartSparse(range);
     naAddListLastMutable(&(buffer->parts), part);
     buffer->bufrange = range;
     // Make sure the iterator points to the part which containts the first
     // offset of range.
     naLocateListLast(&(buffer->iter));
-  }else{
-    NABool startoffsetfound = NA_FALSE;
     
+  }else{
+    // When the buffer is not empty, we need to make sure we add all desired
+    // ranges but still can find the part containing range origin, even if
+    // no sparse part needed to be added.
+    NABool originpartlocated = NA_FALSE;
+    
+    // First, we test if we need to add a sparse part at the beginning.
     if(range.origin < buffer->bufrange.origin){
-      // We create all necessary parts at the beginning.
+      // We create a sparse part at the beginning.
       part = naNewASDFBufferPartSparse(naMakeRangeiWithStartAndEnd(range.origin, buffer->bufrange.origin));
       naAddListFirstMutable(&(buffer->parts), part);
-      buffer->bufrange = naMakeRangeiWithRangeAndRange(buffer->bufrange, range);
+      buffer->bufrange = naMakeRangeiWithStartAndEnd(range.origin, naGetRangeiEnd(buffer->bufrange));
       // Make sure the iterator points to the part which containts the first
       // offset of range.
       naLocateListFirst(&(buffer->iter));
-      startoffsetfound = NA_TRUE;
+      originpartlocated = NA_TRUE;
     }
     
+    // Then, we test if we need to add a sparse part at the end.
     if(naGetRangeiEnd(range) > naGetRangeiEnd(buffer->bufrange)){
-      // We create all necessary parts at the end.
+      // We create a sparse part at the end.
       part = naNewASDFBufferPartSparse(naMakeRangeiWithStartAndEnd(naGetRangeiEnd(buffer->bufrange), naGetRangeiEnd(range)));
       naAddListLastMutable(&(buffer->parts), part);
-      buffer->bufrange = naMakeRangeiWithRangeAndRange(buffer->bufrange, range);
+      buffer->bufrange = naMakeRangeiWithStartAndEnd(buffer->bufrange.origin, naGetRangeiEnd(range));
     }
     
-    if(!startoffsetfound){
+    if(!originpartlocated){
       // We make sure, the buffer iterator points to a buffer part.
-      // We choose to start with the last part as usually, parts are getting
+      // We choose to start with the last part, as usually, parts are getting
       // added at the end.
       if(naIsListAtInitial(&(buffer->iter))){naLocateListLast(&(buffer->iter));}
       
@@ -590,7 +617,11 @@ NA_HIDEF NABool naHasASDFBufferParentBuffer(NAASDFBuffer* buffer){
 
 
 
-
+// This function operates on two iterators, one being the source, the other
+// the destination. The destination wants to reference a specified range within
+// the source parts.
+// At the end of this function, the iterators point to the parts at the end of
+// the desired range.
 NA_HIDEF void naFillASDFBufferIterator(NAASDFBuffer* sourcebuf, NAListIterator* dstiter, NARangei dstrange, NAInt srcoffset){
   NAInt srcrangeorigin = dstrange.origin - srcoffset;
 
@@ -603,35 +634,45 @@ NA_HIDEF void naFillASDFBufferIterator(NAASDFBuffer* sourcebuf, NAListIterator* 
   // We perform the preparation as long as there are still bytes left in range.
   while(dstrange.length){
 
-    // We get the current parts of src and buf.
+    // We get the current parts of src and dst.
     NAASDFBufferPart* srcpart = naGetListCurrentMutable(&(sourcebuf->iter));
     NAASDFBufferPart* dstpart = naGetListCurrentMutable(dstiter);
+    // We count, how many bytes are left on both parts.
     NAInt remainingsrcbytes = (naGetBufferPartEnd(srcpart) - srcrangeorigin);
     NAInt remainingdstbytes = (naGetBufferPartEnd(dstpart) - dstrange.origin);
-    
+    // we choose the number of bytes which is smaller.
     NAInt remainingbytes = naMini(remainingsrcbytes, remainingdstbytes);
 
+    // We decide what to do based on the dst buffer being sparse or not.
     if(naIsASDFBufferPartSparse(dstpart)){
-      // We split the sparse buffer ...
+      // If the dst buffer is sparse, we split the part fitting the desired
+      // number of bytes...
       naSplitASDFBufferSparsePart(dstiter, naMakeRangei(dstrange.origin, remainingbytes));
       
-      // ... And replace the current one with a reference to the source part.
+      // ... and replace the current part with a reference to the source part.
       dstpart = naGetListCurrentMutable(dstiter);
       naReferenceASDFBufferPart(dstpart, srcpart, srcoffset);
       
       // Then we try to combine this newly available part with its neighbors.
       naCombineBufferPartAdjacents(dstiter);
 
-      // Now, the current part is completely filled. Move to the next one.
+      // Now, the current dst part is completely filled. Move to the next one.
       naIterateList(dstiter, 1);
       
     }else{
-      // The current buffer part can just be extended to contain all remaining
-      // bytes of the source part.
-      naEnlargeBufferPart(dstpart, remainingbytes);
+      // The current buffer part already contains memory.
 
-      naIterateList(&(sourcebuf->iter), 1);
-      naIterateList(dstiter, 1);
+      // These bytes can simply be skipped, except if the source buffer is
+      // volatile
+      if(naIsASDFBufferVolatile(sourcebuf)){
+        // if the source buffer is volatile, we need to replace the existing
+        // bytes.
+        #ifndef NDEBUG
+          naError("naFillASDFBufferIterator", "volatile buffers not implemented yet");
+        #endif
+      }
+      
+      if(remainingbytes == remainingdstbytes){naIterateList(dstiter, 1);}
     }
 
     if(remainingbytes == remainingsrcbytes){naIterateList(&(sourcebuf->iter), 1);}
@@ -644,88 +685,101 @@ NA_HIDEF void naFillASDFBufferIterator(NAASDFBuffer* sourcebuf, NAListIterator* 
 
 
 
-NA_HIDEF void naPrepareASDFBuffer2(NAASDFBuffer* buffer, NARangei range){
+// This function prepares the given buffer such that in contains all parts
+// storing memory for the given range. It is guaranteed, that at the end of
+// this function, the iterator of the buffer points at that part containing
+// the origin of the given range.
+NA_HIDEF void naPrepareASDFBuffer(NAASDFBuffer* buffer, NARangei range){
   NAASDFBufferPart* part;
   
   // We store the desired start position for later.
-  NAInt originalbufoffset = range.origin;
+  NAInt originalrangeorigin = range.origin;
 
   if(naHasASDFBufferParentBuffer(buffer)){
 
-    // If there is a parent source buffer, we make sure that parent buffer is
-    // fully prepared.
-    NARangei srcrange = naMakeRangei(range.origin - buffer->srcoffset, range.length);
-    naPrepareASDFBuffer2(buffer->src, srcrange);
-
-    // We ensure, that there are source buffer parts in the source list
-    // spanning the desired src range by creating sparse buffers if necessary.
+    // First, we ensure, that there are buffer parts in the parts list of this
+    // buffer, spanning the desired range by creating sparse buffers wherever
+    // necessary.
     naEnsureASDFBufferRange(buffer, range);
     // After this function call, the iterator points to the part containing
-    // the first offset of range.
+    // the origin of range.
 
+    // Then, we make sure that parent buffer is fully prepared.
+    NARangei srcrange = naMakeRangei(range.origin - buffer->srcoffset, range.length);
+    naPrepareASDFBuffer(buffer->src, srcrange);
+
+    // Finally, we simply reference all parts of the source.
     naFillASDFBufferIterator(buffer->src, &(buffer->iter), range, buffer->srcoffset);
     
   }else{
-    // This buffer manages its own linear memory. We go through the list and
-    // change all sparse buffers into memory when within range.
+    // This buffer manages its own linear memory. Such memory is usually
+    // aligned by NA_INTERNAL_BUFFER_PART_BYTESIZE.
+    
+    range = naMakeRangeiWithStartAndEnd(naGetBufferPartNormedStart(range.origin), naGetBufferPartNormedEnd(naGetRangeiEnd(range)));
 
-    NAInt normedstart = naGetBufferPartNormedStart(range.origin);
-    NAInt normedend = naGetBufferPartNormedEnd(naGetRangeiEnd(range));
-    NARangei normedrange = naMakeRangeiWithStartAndEnd(normedstart, normedend);
-
-    // We ensure, that there are source buffer parts in the source list
-    // spanning the desired src range by creating sparse buffers if necessary.
-    naEnsureASDFBufferRange(buffer, normedrange);
+    // First, we ensure, that there are buffer parts in the parts list
+    // spanning the desired normed range by creating sparse buffers if
+    // necessary.
+    naEnsureASDFBufferRange(buffer, range);
     // After this function call, the iterator points to the part containing
-    // the first offset of range.
+    // the origin of range.
+
+    // The, we go through the list of parts and change all sparse buffers into
+    // memory when within range.
 
     // We perform the preparation as long as there are bytes left in range.
     while(range.length > 0){
       
       part = naGetListCurrentMutable(&(buffer->iter));
-      normedstart = naGetBufferPartNormedStart(range.origin);
-      normedend = naGetBufferPartNormedEnd(naGetRangeiEnd(range));
 
       #ifndef NDEBUG
-        // This should not happen, as range.lenght shall be smallerequal 0 when
+        // This should not happen, as range.length shall be smallerequal 0 when
         // the list comes to an end.
         if(!part)
-          naError("naPrepareASDFBuffer2", "list overflow. This should not happen.");
+          naError("naPrepareASDFBuffer", "list overflow. This should not happen.");
       #endif
 
+      // When the current part already contains bytes, we can simply overjump
+      // all bytes contained in this part. If this part is sparse though ...
       if(naIsASDFBufferPartSparse(part)){
-        // If the current part is sparse, we create buffer parts with actual
-        // memory.
+        // ... we create buffer parts with actual memory.
+        NARangei subrange;
 
-        if(normedstart < naGetBufferPartStart(part)){normedstart = naGetBufferPartStart(part);}
-        if(normedend > naGetBufferPartEnd(part)){normedend = naGetBufferPartEnd(part);}
-        if((normedend - normedstart) >= (2 * NA_INTERNAL_BUFFER_PART_BYTESIZE)){
-          normedend = naGetBufferPartNormedStart(normedstart + NA_INTERNAL_BUFFER_PART_BYTESIZE);
-        }
-        normedrange = naMakeRangeiWithStartAndEnd(normedstart, normedend);
+        // We create a suitable range within the parts range which tries to
+        // be aligned at NA_INTERNAL_BUFFER_PART_BYTESIZE but has a certain
+        // margin to be bigger and hence reduce the number of small parts.
+        NAInt normedstart = naGetBufferPartNormedStart(range.origin);
+        if((normedstart - naGetBufferPartStart(part)) < NA_INTERNAL_BUFFER_PART_BYTESIZE){normedstart = naGetBufferPartStart(part);}
+        NAInt normedend = naGetBufferPartNormedEnd(range.origin + NA_INTERNAL_BUFFER_PART_BYTESIZE);
+        if((naGetBufferPartEnd(part) - normedend) < NA_INTERNAL_BUFFER_PART_BYTESIZE){normedend = naGetBufferPartEnd(part);}
 
-        // Then we split the sparse buffer.
-        naSplitASDFBufferSparsePart(&(buffer->iter), normedrange);
+        // Note that the previous computation of normedstart and normedend also
+        // automatically handles parts being smaller than the desired range.
+        subrange = naMakeRangeiWithStartAndEnd(normedstart, normedend);
+        #ifndef NDEBUG
+          if(!naContainsRangeiRange(naGetBufferPartRange(part), subrange))
+            naError("naPrepareASDFBuffer", "part range does not contain subrange");
+        #endif
+
+        // Then we split the sparse buffer if necessary.
+        naSplitASDFBufferSparsePart(&(buffer->iter), subrange);
         
-        // Now, iter points at a sparse part exactly of range normedrange
+        // Now, iter points at a sparse part exactly of range subrange
         // which can be filled.
         part = naGetListCurrentMutable(&(buffer->iter));
         #ifndef NDEBUG
-          if(normedrange.length != naGetBufferPartRangeLength(part))
-            naError("naPrepareASDFBuffer2", "range lenghts do not match");
+          if(!naEqualRangei(subrange, naGetBufferPartRange(part)))
+            naError("naPrepareASDFBuffer", "range lenghts do not match");
         #endif
         naAllocateBufferPartMemory(part);
         buffer->fillPart(buffer, part);
 
-      }else{
-        // This part is already available as memory. We progress till the end
-        // of this part.
       }
 
       // Reaching here, the current part is filled with memory. We advance
       // to the next part. Note that the calculation of the new range will
       // most probably result in a negative length when reaching the end of
-      // the desired range.
+      // the desired range, hence breaking the loop condition.
 
       range = naMakeRangeiWithStartAndEnd(naGetBufferPartEnd(part), naGetRangeiEnd(range));
       naIterateList(&(buffer->iter), 1);
@@ -735,20 +789,20 @@ NA_HIDEF void naPrepareASDFBuffer2(NAASDFBuffer* buffer, NARangei range){
   }
   
   // Reaching here, iter points to the part one after the part containing the
-  // maximum offset of range.
-    
-  // Then we locate the buffer iterator at the first desired offset. Note that
-  // we can not use a cached NAListPos as this might have changed during this
-  // preparation.
+  // maximum offset of range. We locate the buffer iterator at the first
+  // desired offset. Note that we can not use a cached NAListPos as this might
+  // have changed during this preparation.
   if(naIsListAtInitial(&(buffer->iter))){naIterateList(&(buffer->iter), -1);}
-  naLocateBufferPartOffset(&(buffer->iter), originalbufoffset);
+  naLocateBufferPartOffset(&(buffer->iter), originalrangeorigin);
 
   #ifndef NDEBUG
     part = naGetListCurrentMutable(&(buffer->iter));
-    if(!naContainsBufferPartOffset(part, originalbufoffset))
-      naError("naPrepareASDFBuffer2", "start offset not in range of current part.");
+    if(!naContainsBufferPartOffset(part, originalrangeorigin))
+      naError("naPrepareASDFBuffer", "start offset not in range of current part.");
   #endif
   
+  // Reaching here, the buffer iterator points at the first part containing
+  // the range origin.
 }
 
 
@@ -800,24 +854,27 @@ NA_API void naWriteASDFBufferBytes(NAASDFBuffer* buffer, const void* data, NAInt
   NABool needcheck = NA_TRUE;
   
   // do as long as there is a bytesize remaining. Remember that the data may
-  // be split into different buffer parts which additionally do not need to
-  // be adjacent
+  // be split into different buffer parts.
   while(bytesize){
     // The part pointed to by the iterator should be the one containing offset.
     NAASDFBufferPart* part = naGetListCurrentMutable(&(buffer->iter));
     if(needcheck && (!part || !naContainsBufferPartOffset(part, buffer->curoffset))){
       // If that is not the case or if there is no part, there is no part in
-      // the buffer list containing offset. Hence, we prepare the buffer.
-      naPrepareASDFBuffer2(buffer, naMakeRangei(buffer->curoffset, bytesize));
-      // after this function, the iterator should point to the buffer part
+      // the buffer list containing offset. Hence, we prepare the buffer for
+      // the whole range yet to come.
+      naPrepareASDFBuffer(buffer, naMakeRangei(buffer->curoffset, bytesize));
+      // After this function, the iterator should point to the buffer part
       // containing offset. We reload it.
       part = naGetListCurrentMutable(&(buffer->iter));
       // After having prepared the buffer, we are sure, all successing buffer
       // parts will be in perfect order. We do not need to check anymore.
       needcheck = NA_FALSE;
+      // Also note that this check can not be done outside as a missing part
+      // may occur at any place in the parts list.
     }
     
-    // Reaching this point, we are sure, the current part contains offset.
+    // Reaching this point, we are sure, the current part contains offset and
+    // is filled with memory.
     #ifndef NDEBUG
       if(naIsASDFBufferPartSparse(part))
         naError("naPutASDFBufferBytes", "Current part is sparse");
@@ -838,24 +895,28 @@ NA_API void naWriteASDFBufferBytes(NAASDFBuffer* buffer, const void* data, NAInt
     #endif
     
     if(possiblelength > bytesize){
-      // We copy all remaining bytes
+      // If we can put in more bytes than needed, we copy all remaining bytes
+      // and stay on this part.
       naCopyn(dst, src, (NAUInt)bytesize);
       buffer->curoffset += bytesize;
       // src += bytesize; // this line is not needed as the loop will end.
       bytesize = 0;
     }else{
-      // We copy as many bytes as possible
+      // We can only put a portion of the source into the current part. We
+      // copy as many bytes as possible and advance to the next part.
       naCopyn(dst, src, (NAUInt)possiblelength);
       buffer->curoffset += possiblelength;
       src += possiblelength;
       bytesize -= possiblelength;
-      // When the possible length is smallerequal bytesize, we assume that the
-      // next buffer part will contain the next curoffset. Hence, we iterate
-      // forward.
+      // Note that when possiblelength matches bytesize, the part will also
+      // advance which is correct behaviour, as after this function, the
+      // iterator shall always point at the part containing the current offset.
       naIterateList(&(buffer->iter), 1);
     }
   }
   
+  // Reaching here, the whole range has been written to the parts and both
+  // curoffset and iter point to the current position again.
 }
 
 

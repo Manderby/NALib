@@ -2,8 +2,8 @@
 
 #include "tests.h"
 
-#include "NAMemory.h"
-#include "NADateTime.h"
+#include "../NALib/NAMemory.h"
+#include "../NALib/NADateTime.h"
 
 
 #define NA_TEST_MEMORY_M_COUNT 1
@@ -38,20 +38,20 @@ void testMallocFree(void){
 
   printf("Allocating 0x1234 Bytes... ");
   ptr1 = naMalloc(0x1234);
-  printf("at address 0x%" NA_PRIx "\n", ptr1);
+  printf("at address 0x%" NA_PRIx "\n", (NAUInt)ptr1);
 
   printf("Allocating Bytes for a type... ");
   ptr2 = naAlloc(AVeryUsefulStruct);
   ((AVeryUsefulStruct*)ptr2)->printdestructmessage = NA_TRUE;
-  printf("at address 0x%" NA_PRIx "\n", ptr2);
+  printf("at address 0x%" NA_PRIx "\n", (NAUInt)ptr2);
 
   printf("Allocating 0x1234 Bytes aligned at 0x100000... ");
   ptr3 = naMallocAligned(0x1234, 0x100000);
-  printf("at address 0x%" NA_PRIx "\n", ptr3);
+  printf("at address 0x%" NA_PRIx "\n", (NAUInt)ptr3);
 
   printf("Allocating 0x1234 Bytes aligned at page... ");
   ptr4 = naMallocPageAligned(0x1234);
-  printf("at address 0x%" NA_PRIx "\n", ptr4);
+  printf("at address 0x%" NA_PRIx "\n", (NAUInt)ptr4);
 
   printf("Freeing all that memory again.\n");
   naFree(ptr1);
@@ -75,7 +75,7 @@ void testRuntime(void){
   printf("Allocating struct with new... ");
   ptr1 = naNew(AVeryUsefulStruct);
   ((AVeryUsefulStruct*)ptr1)->printdestructmessage = NA_TRUE;
-  printf("at address 0x%" NA_PRIx "\n", ptr1);
+  printf("at address 0x%" NA_PRIx "\n", (NAUInt)ptr1);
 
   printf("Deleting that pointer.\n");
   naDelete(ptr1);
@@ -84,7 +84,7 @@ void testRuntime(void){
   structarray = (AVeryUsefulStruct**)naMalloc(sizeof(AVeryUsefulStruct*) * NA_TEST_MEMORY_COUNT);
   #if (NA_RUNTIME_USES_MEMORY_POOLS == 1)
     printf("Runtime uses memory pools (see NAConfiguration.h).\n");
-    printf("Pool size: %d\n", naGetRuntimePoolSize());
+    printf("Pool size: %" NA_PRIu "\n", naGetRuntimePoolSize());
   #else
     printf("Runtime uses malloc and free (see NAConfiguration.h).\n");
   #endif
@@ -131,10 +131,10 @@ void testNAPtr(void){
   const int* testptrconst;
   
   printf("\nNAPtr Constants (not visible in API):\n");
-  printf("Cleanup bits: %" NA_PRIi "\n", NA_MEMORY_CLEANUP_BITS);
-  printf("Cleanup mask: 0x%" NA_PRIx "\n", NA_MEMORY_CLEANUP_MASK);
-  printf("Data cleanup bits: %" NA_PRIi " - %" NA_PRIi "\n", NA_REFCOUNT_DATA_CLEANUP_BITSHIFT, NA_REFCOUNT_DATA_CLEANUP_BITSHIFT + NA_MEMORY_CLEANUP_BITS - 1);
-  printf("Struct cleanup bits: %" NA_PRIi " - %" NA_PRIi "\n", NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT, NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT + NA_MEMORY_CLEANUP_BITS - 1);
+  printf("Cleanup bits: %d\n", NA_MEMORY_CLEANUP_BITS);
+  printf("Cleanup mask: 0x%x\n", NA_MEMORY_CLEANUP_MASK);
+  printf("Data cleanup bits: %d - %d\n", NA_REFCOUNT_DATA_CLEANUP_BITSHIFT, NA_REFCOUNT_DATA_CLEANUP_BITSHIFT + NA_MEMORY_CLEANUP_BITS - 1);
+  printf("Struct cleanup bits: %d - %d\n", NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT, NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT + NA_MEMORY_CLEANUP_BITS - 1);
 
   printf("\nCreating Null-NAPtr.\n");
   ptrNull = naMakeNullPtr();
@@ -189,8 +189,8 @@ void testNASmartPtr(void){
   
 
   printf("\nNASmartPtr Constants (not visible in API):\n");
-  printf("Flag bits count: %" NA_PRIi "\n", NA_REFCOUNT_FLAG_BITS);
-  printf("Flag bits: %" NA_PRIi " - %" NA_PRIi "\n", NA_REFCOUNT_FLAGS_BITSHIFT, NA_REFCOUNT_FLAGS_BITSHIFT + NA_REFCOUNT_FLAG_BITS - 1);
+  printf("Flag bits count: %d\n", NA_REFCOUNT_FLAG_BITS);
+  printf("Flag bits: %d - %d\n", NA_REFCOUNT_FLAGS_BITSHIFT, NA_REFCOUNT_FLAGS_BITSHIFT + NA_REFCOUNT_FLAG_BITS - 1);
   printf("Refcount mask: 0x%" NA_PRIx "\n", NA_REFCOUNT_MASK);
   printf("\nCreating NASmartPtr.\n");
   // Initializing some pointers
@@ -248,7 +248,6 @@ void testNASmartPtr(void){
 
 void testNAPointer(void){
   int mydata = 42;
-  int* mydataptr;
   const int* mydataptrconst;
   const char* mychardataptrconst;
   AVeryUsefulStruct* avusptr;

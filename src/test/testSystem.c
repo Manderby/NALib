@@ -2,7 +2,7 @@
 
 #include "tests.h"
 
-#include "NASystem.h"
+#include "../NALib/NASystem.h"
 
 
 const char* na_system_strings[NA_SYSTEM_COUNT] = {
