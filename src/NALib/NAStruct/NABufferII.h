@@ -3,31 +3,48 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 
-// This file contains inline implementations of the file NABuffer.h
+// This file contains inline implementations of the file NAHeap.h
 // Do not include this file directly! It will automatically be included when
-// including "NABuffer.h"
+// including "NAHeap.h"
+
+
+#include "../NAList.h"
+#include "../NACoord.h"
+
+typedef struct NAASDFBufferPart NAASDFBufferPart;
+
+
+typedef enum{
+  NA_BUFFER_SOURCE_NONE,
+  NA_BUFFER_SOURCE_MEMORY,
+  NA_BUFFER_SOURCE_MEMORY_SOURCE,
+  NA_BUFFER_SOURCE_BUFFER,
+  NA_BUFFER_SOURCE_FILE,
+  NA_BUFFER_SOURCE_CONST_DATA,
+  NA_BUFFER_SOURCE_MUTABLE_DATA,
+} NAASDFBufferType;
 
 
 
-#include "NAMemory.h"
-#include "NAList.h"
-#include "NACoord.h"
-
-struct NABuffer{
-  NAUInt flags;                     // various flags
-  NAPointer* storage;               // Buffer storage. List of buffer parts.
-  NARangei range;                   // The total range of this buffer
-
-  NAListPos curlistpos;             // The listpos of the current part
-  NAInt curoffset;                  // The current absolute offset
-  uint8 curbit;                     // The current bit number
+struct NAASDFBuffer{
+  NARefCount refcount;
+  
+  void* src;                // A pointer to a source if available.
+  NAASDFBufferType srctype; // The type of the source
+  NAInt srcoffset;          // The offset of the source relative to this range.
+  
+  NAList parts;             // List of all parts in this buffer
+  NAListIterator iter;      // Iterator pointing at the current part.
+  NAInt curoffset;          // The current absolute offset
+  uint8 curbit;             // The current bit number
+  
+  NAUInt flags;
+  NARangei bufrange;
+  void (*fillPart)(NAASDFBuffer*, NAASDFBufferPart*);
 
   NAInt endianness;                 // The current endianness
   NAEndiannessConverter converter;  // The endianness converter.
 };
-
-
-
 
 
 

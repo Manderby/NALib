@@ -430,7 +430,9 @@ NA_IDEF NABool naReleaseRefCount(NARefCount* refcount, void* data, NAMutator des
         delete refcount;
         break;
       case NA_MEMORY_CLEANUP_DELETE_BRACK:
-        naError("naReleaseRefCount", "This cleanup option does not make sense");
+        #ifndef NDEBUG
+          naError("naReleaseRefCount", "This cleanup option does not make sense");
+        #endif
         delete [] refcount;
         break;
 #endif

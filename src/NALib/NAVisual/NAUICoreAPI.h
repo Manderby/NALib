@@ -14,8 +14,10 @@
 // is shared among the different implementations of the UI in Mac and Win.
 // ///////////////////////////
 
-
 #include "../NAUI.h"
+
+#if (NA_CONFIG_COMPILE_GUI == 1)
+
 #include "../NAList.h"
 
 
@@ -189,6 +191,8 @@ NA_HAPI void naSetMouseEnteredAtPos(NAPos newpos);
 NA_HAPI void naSetMouseExitedAtPos(NAPos newpos);
 
 
+
+#endif //(NA_CONFIG_COMPILE_GUI == 1)
 
 
 #ifdef __cplusplus 

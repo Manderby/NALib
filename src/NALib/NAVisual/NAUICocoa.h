@@ -9,6 +9,7 @@
 #include "NASystem.h"
 
 
+#if (NA_CONFIG_COMPILE_GUI == 1)
 #ifdef __OBJC__
 #if NA_SYSTEM == NA_SYSTEM_MAC_OS_X
 
@@ -65,6 +66,7 @@ struct NACocoaWindow{
 
 #endif // NA_SYSTEM == NA_SYSTEM_MAC_OS_X
 #endif // __OBJC__
+#endif //(NA_CONFIG_COMPILE_GUI == 1)
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH
 //

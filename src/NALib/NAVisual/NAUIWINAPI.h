@@ -5,6 +5,7 @@
 
 #include "NAUICoreAPI.h"
 
+#if (NA_CONFIG_COMPILE_GUI == 1)
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
 
 
@@ -60,6 +61,8 @@ struct NAWINAPIOpenGLView {
 
 
 #endif // NA_SYSTEM == NA_SYSTEM_WINDOWS
+#endif // (NA_CONFIG_COMPILE_GUI == 1)
+
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH
 //

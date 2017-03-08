@@ -38,6 +38,24 @@
 
 
 // ////////////////////////////////
+// GUI support
+// ////////////////////////////////
+
+// By default, the following macro is defined as 0 and therefore, NALib does
+// not compile with GUI support. But if you want to, simply set the this
+// macro to 1.
+//
+// If done so, you MUST link your program to the appropriate library.
+// Windows: WinAPI
+// Macintosh: Cocoa
+
+#ifndef NA_CONFIG_COMPILE_GUI
+  #define NA_CONFIG_COMPILE_GUI 0
+#endif
+
+
+
+// ////////////////////////////////
 // Runtime memory pools
 // ////////////////////////////////
 

@@ -6,6 +6,7 @@
 #include "../NAPNG.h"
 #include "../NABuffer.h"
 #include "../NADeflate.h"
+#include "../NAFile.h"
 
 // Reference: http://www.w3.org/TR/PNG
 
@@ -48,7 +49,7 @@ struct NAPNG{
   NAPNGInterlaceMethod interlacemethod;
 
   NAByte* pixeldata;
-  NABuffer filtereddata;
+  NAASDFBuffer* filtereddata;
 };
 
 
@@ -121,7 +122,7 @@ uint8 na_png_magic[8] = {137, 80, 78, 71, 13, 10, 26, 10};
 
 typedef struct NAPNGChunk NAPNGChunk;
 struct NAPNGChunk{
-  NABuffer data;      // All data without the preceding chunk type
+  NAASDFBuffer* data;      // All data without the preceding chunk type
   NAChunkType type;   // The type as an enum.
   NAInt length;
   uint8 typename[4];  // The type as 4 uint8
@@ -139,7 +140,7 @@ NA_HDEF void naSetPNGsRGBColorimetry(NAPNG* png){
 }
 
 
-NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABuffer* buffer){
+NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NAASDFBuffer* buffer){
   NAInt i;
   NAChecksum checksum;
   uint32 crc;
@@ -152,8 +153,8 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABuffer* buffer){
       naError("naAllocPNGChunkFromBuffer", "length should not exceed 2^31-1.");
   #endif
 
-  naReadBufferBytes(buffer, chunk->typename, 4);
-  naInitBufferWithBufferExtraction(&(chunk->data), buffer, chunk->length);
+  naReadASDFBufferBytes(buffer, chunk->typename, 4);
+  chunk->data = naCreateASDFBufferExtraction(buffer, naMakeRangei(naTellASDFBuffer(buffer), chunk->length));
 
   chunk->type = NA_PNG_CHUNK_TYPE_UNKNOWN;
   for(i=0; i<NA_PNG_CHUNK_TYPE_COUNT; i++){
@@ -168,11 +169,11 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABuffer* buffer){
 //    }
   #endif
   
-  naReadBuffer(buffer, (NAFilesize)chunk->length);
+//  naReadASDFBuffer(buffer, (NAFilesize)chunk->length);
   
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
   naAccumulateChecksum(&checksum, chunk->typename, 4);
-  naAccumulateBufferToChecksum(&(chunk->data), &checksum);
+  naAccumulateBufferToChecksum(chunk->data, &checksum);
   crc = naGetChecksumResult(&checksum);
   naClearChecksum(&checksum);
   
@@ -191,7 +192,7 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABuffer* buffer){
 
 
 NA_HDEF void naDeallocPNGChunk(NAPNGChunk* chunk){
-  naClearBuffer(&(chunk->data));
+  naReleaseASDFBuffer(chunk->data);
   naFree(chunk);
 }
 
@@ -249,7 +250,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
   NAUInt bytesperline = png->size.width * bpp;
   
   png->pixeldata = naMalloc(sizeof(NAByte) * png->size.width * png->size.height * bpp);
-  naSeekBufferAbsolute(&(png->filtereddata), 0);
+  naSeekASDFBufferAbsolute(png->filtereddata, 0);
   curbyte = png->pixeldata;
   
   upbuffer = naMalloc(bytesperline);
@@ -258,8 +259,8 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
 
   for(y=0; y<png->size.height; y++){
 
-    NAByte filtertype = naReadBufferu8(&(png->filtereddata));
-    naReadBufferu8v(&(png->filtereddata), curbyte, bytesperline);
+    NAByte filtertype = naReadBufferu8(png->filtereddata);
+    naReadBufferu8v(png->filtereddata, curbyte, bytesperline);
 
     switch(filtertype){
     case NA_PNG_FILTER_TYPE_NONE:
@@ -330,19 +331,19 @@ NA_DEF void naFilterData(NAPNG* png){
   NAByte* pixeldata;
   NAInt y;
 
-  naInitBuffer(&(png->filtereddata));
-  naSetBufferEndianness(&(png->filtereddata), NA_ENDIANNESS_NETWORK);
+  png->filtereddata = naCreateASDFBuffer();
+  naSetBufferEndianness(png->filtereddata, NA_ENDIANNESS_NETWORK);
   
   bpp = naGetPNGBytesPerPixel(png->colortype);
   pixeldata = naGetPNGPixelData(png);
   
   for(y=0; y<png->size.height; y++){
-    naWriteBufferu8(&(png->filtereddata), NA_PNG_FILTER_TYPE_NONE);
-    naWriteBufferBytes(&(png->filtereddata), pixeldata, png->size.width * bpp);
+    naWriteBufferu8(png->filtereddata, NA_PNG_FILTER_TYPE_NONE);
+    naWriteASDFBufferBytes(png->filtereddata, pixeldata, png->size.width * bpp);
     pixeldata += png->size.width * bpp;
   }
 
-  naDetermineBufferBytesize(&(png->filtereddata));
+  naDetermineBufferRange(png->filtereddata);
 }
 
 
@@ -356,21 +357,21 @@ NA_HDEF void naReadPNGIHDRChunk(NAPNG* png, NAPNGChunk* ihdr){
       naError("naReadPNGIHDRChunk", "IHDR chunk already read.");
   #endif
 
-  png->size.width = naReadBufferu32(&(ihdr->data));
-  png->size.height = naReadBufferu32(&(ihdr->data));
-  png->bitdepth = naReadBufferi8(&(ihdr->data));
-  png->colortype = (NAPNGColorType)naReadBufferi8(&(ihdr->data));
-  png->compressionmethod = naReadBufferi8(&(ihdr->data));
+  png->size.width = naReadBufferu32(ihdr->data);
+  png->size.height = naReadBufferu32(ihdr->data);
+  png->bitdepth = naReadBufferi8(ihdr->data);
+  png->colortype = (NAPNGColorType)naReadBufferi8(ihdr->data);
+  png->compressionmethod = naReadBufferi8(ihdr->data);
   #ifndef NDEBUG
     if(png->compressionmethod != 0)
       naError("naReadPNGIHDRChunk", "Invalid compression method in IHDR chunk");
   #endif
-  png->filtermethod = naReadBufferi8(&(ihdr->data));
+  png->filtermethod = naReadBufferi8(ihdr->data);
   #ifndef NDEBUG
     if(png->filtermethod != 0)
       naError("naReadPNGIHDRChunk", "Invalid filter method in IHDR chunk");
   #endif
-  png->interlacemethod = (NAPNGInterlaceMethod)naReadBufferi8(&(ihdr->data));
+  png->interlacemethod = (NAPNGInterlaceMethod)naReadBufferi8(ihdr->data);
   #ifndef NDEBUG
     if(png->interlacemethod == 1)
       naError("naReadPNGIHDRChunk", "This version of NALib can not read interlaced PNG files. Has not been implemented yet. Sorry.");
@@ -390,17 +391,17 @@ NA_HDEF void naReadPNGIHDRChunk(NAPNG* png, NAPNGChunk* ihdr){
 
 NA_HDEF NAPNGChunk* naAllocPNGIHDRChunk(NAPNG* png){
   NAPNGChunk* ihdr = naAlloc(NAPNGChunk);
-  naInitBuffer(&(ihdr->data));
-  naSetBufferEndianness(&(ihdr->data), NA_ENDIANNESS_NETWORK);
+  ihdr->data = naCreateASDFBuffer();
+  naSetBufferEndianness(ihdr->data, NA_ENDIANNESS_NETWORK);
   ihdr->type = NA_PNG_CHUNK_TYPE_IHDR;
   
-  naWriteBufferu32(&(ihdr->data), (uint32)png->size.width);
-  naWriteBufferu32(&(ihdr->data), (uint32)png->size.height);
-  naWriteBufferi8(&(ihdr->data), png->bitdepth);
-  naWriteBufferi8(&(ihdr->data), png->colortype);
-  naWriteBufferi8(&(ihdr->data), png->compressionmethod);
-  naWriteBufferi8(&(ihdr->data), png->filtermethod);
-  naWriteBufferi8(&(ihdr->data), png->interlacemethod);
+  naWriteBufferu32(ihdr->data, (uint32)png->size.width);
+  naWriteBufferu32(ihdr->data, (uint32)png->size.height);
+  naWriteBufferi8(ihdr->data, png->bitdepth);
+  naWriteBufferi8(ihdr->data, png->colortype);
+  naWriteBufferi8(ihdr->data, png->compressionmethod);
+  naWriteBufferi8(ihdr->data, png->filtermethod);
+  naWriteBufferi8(ihdr->data, png->interlacemethod);
   
   return ihdr;
 }
@@ -417,7 +418,7 @@ NA_HDEF void naReadPNGPLTEChunk(NAPNG* png, NAPNGChunk* plte){
 
 
 NA_HDEF void naReadPNGIDATChunk(NAPNG* png, NAPNGChunk* idat){
-  naFillBufferWithZLIBDecompression(&(png->filtereddata), &(idat->data));
+  naFillBufferWithZLIBDecompression(png->filtereddata, idat->data);
 
 
 //  NAFile outfile = naMakeFileWritingFilename("test.raw", NA_FILEMODE_DEFAULT);
@@ -429,11 +430,11 @@ NA_HDEF void naReadPNGIDATChunk(NAPNG* png, NAPNGChunk* idat){
 
 NA_HDEF NAPNGChunk* naAllocPNGIDATChunk(NAPNG* png){
   NAPNGChunk* idat = naAlloc(NAPNGChunk);
-  naInitBuffer(&(idat->data));
-  naSetBufferEndianness(&(idat->data), NA_ENDIANNESS_NETWORK);
+  idat->data = naCreateASDFBuffer();
+  naSetBufferEndianness(idat->data, NA_ENDIANNESS_NETWORK);
   
   naFilterData(png);
-  naFillBufferWithZLIBCompression(&(idat->data), &(png->filtereddata), NA_DEFLATE_COMPRESSION_FASTEST);
+  naFillBufferWithZLIBCompression(idat->data, png->filtereddata, NA_DEFLATE_COMPRESSION_FASTEST);
 
   idat->type = NA_PNG_CHUNK_TYPE_IDAT;
   return idat;
@@ -454,8 +455,8 @@ NA_HDEF NAPNGChunk* naAllocPNGIENDChunk(NAPNG* png){
   NA_UNUSED(png);
 
   iend = naAlloc(NAPNGChunk);
-  naInitBuffer(&(iend->data));
-  naSetBufferEndianness(&(iend->data), NA_ENDIANNESS_NETWORK);
+  iend->data = naCreateASDFBuffer();
+  naSetBufferEndianness(iend->data, NA_ENDIANNESS_NETWORK);
   iend->type = NA_PNG_CHUNK_TYPE_IEND;
   return iend;
 }
@@ -466,14 +467,14 @@ NA_HDEF void naReadPNGcHRMChunk(NAPNG* png, NAPNGChunk* chrm){
   if(png->flags & NA_PNG_FLAGS_sRGB_AVAILABLE){
     // Ignoring when sRGB is available
   }else{
-    png->whitepoint[0]    = (float)naReadBufferu32(&(chrm->data)) / 100000.f;
-    png->whitepoint[1]    = (float)naReadBufferu32(&(chrm->data)) / 100000.f;
-    png->redprimary[0]    = (float)naReadBufferu32(&(chrm->data)) / 100000.f;
-    png->redprimary[1]    = (float)naReadBufferu32(&(chrm->data)) / 100000.f;
-    png->greenprimary[0]  = (float)naReadBufferu32(&(chrm->data)) / 100000.f;
-    png->greenprimary[1]  = (float)naReadBufferu32(&(chrm->data)) / 100000.f;
-    png->blueprimary[0]   = (float)naReadBufferu32(&(chrm->data)) / 100000.f;
-    png->blueprimary[1]   = (float)naReadBufferu32(&(chrm->data)) / 100000.f;
+    png->whitepoint[0]    = (float)naReadBufferu32(chrm->data) / 100000.f;
+    png->whitepoint[1]    = (float)naReadBufferu32(chrm->data) / 100000.f;
+    png->redprimary[0]    = (float)naReadBufferu32(chrm->data) / 100000.f;
+    png->redprimary[1]    = (float)naReadBufferu32(chrm->data) / 100000.f;
+    png->greenprimary[0]  = (float)naReadBufferu32(chrm->data) / 100000.f;
+    png->greenprimary[1]  = (float)naReadBufferu32(chrm->data) / 100000.f;
+    png->blueprimary[0]   = (float)naReadBufferu32(chrm->data) / 100000.f;
+    png->blueprimary[1]   = (float)naReadBufferu32(chrm->data) / 100000.f;
   }
 }
 
@@ -483,7 +484,7 @@ NA_HDEF void naReadPNGgAMAChunk(NAPNG* png, NAPNGChunk* gama){
   if(png->flags & NA_PNG_FLAGS_sRGB_AVAILABLE){
     // Ignoring when sRGB is available
   }else{
-    png->gamma = (float)naReadBufferu32(&(gama->data)) / 100000.f;
+    png->gamma = (float)naReadBufferu32(gama->data) / 100000.f;
   }
 }
 
@@ -501,23 +502,23 @@ NA_HDEF void naReadPNGiCCPChunk(NAPNG* png, NAPNGChunk* iccp){
 NA_HDEF void naReadPNGsBITChunk(NAPNG* png, NAPNGChunk* sbit){
   switch(png->colortype){
   case NA_PNG_COLORTYPE_GREYSCALE:
-    png->significantbits[1] = naReadBufferu8(&(sbit->data));
+    png->significantbits[1] = naReadBufferu8(sbit->data);
     break;
   case NA_PNG_COLORTYPE_TRUECOLOR:
   case NA_PNG_COLORTYPE_INDEXEDCOLOR:
-    png->significantbits[0] = naReadBufferu8(&(sbit->data));
-    png->significantbits[1] = naReadBufferu8(&(sbit->data));
-    png->significantbits[2] = naReadBufferu8(&(sbit->data));
+    png->significantbits[0] = naReadBufferu8(sbit->data);
+    png->significantbits[1] = naReadBufferu8(sbit->data);
+    png->significantbits[2] = naReadBufferu8(sbit->data);
     break;
   case NA_PNG_COLORTYPE_GREYSCALE_ALPHA:
-    png->significantbits[1] = naReadBufferu8(&(sbit->data));
-    png->significantbits[3] = naReadBufferu8(&(sbit->data));
+    png->significantbits[1] = naReadBufferu8(sbit->data);
+    png->significantbits[3] = naReadBufferu8(sbit->data);
     break;
   case NA_PNG_COLORTYPE_TRUECOLOR_ALPHA:
-    png->significantbits[0] = naReadBufferu8(&(sbit->data));
-    png->significantbits[1] = naReadBufferu8(&(sbit->data));
-    png->significantbits[2] = naReadBufferu8(&(sbit->data));
-    png->significantbits[3] = naReadBufferu8(&(sbit->data));
+    png->significantbits[0] = naReadBufferu8(sbit->data);
+    png->significantbits[1] = naReadBufferu8(sbit->data);
+    png->significantbits[2] = naReadBufferu8(sbit->data);
+    png->significantbits[3] = naReadBufferu8(sbit->data);
     break;
   }
 }
@@ -525,7 +526,7 @@ NA_HDEF void naReadPNGsBITChunk(NAPNG* png, NAPNGChunk* sbit){
 
 
 NA_HDEF void naReadPNGsRGBChunk(NAPNG* png, NAPNGChunk* srgb){
-  uint8 intent = naReadBufferu8(&(srgb->data));
+  uint8 intent = naReadBufferu8(srgb->data);
   // As this implementation is not yet capable of color management, we ignore
   // the gAMA and cHRM values and set them to the following:
   NA_UNUSED(intent);
@@ -565,9 +566,9 @@ NA_HDEF void naReadPNGtRNSChunk(NAPNG* png, NAPNGChunk* trns){
 NA_HDEF void naReadPNGpHYsChunk(NAPNG* png, NAPNGChunk* phys){
   uint8 unit;
   
-  png->pixeldimensions[0] = (float)naReadBufferu32(&(phys->data));
-  png->pixeldimensions[1] = (float)naReadBufferu32(&(phys->data));
-  unit = naReadBufferu8(&(phys->data));
+  png->pixeldimensions[0] = (float)naReadBufferu32(phys->data);
+  png->pixeldimensions[1] = (float)naReadBufferu32(phys->data);
+  unit = naReadBufferu8(phys->data);
   switch(unit){
   case 0:
     png->pixelunit = NA_PIXEL_UNIT_RATIO;
@@ -595,7 +596,7 @@ NA_HDEF void naReadPNGsPLTChunk(NAPNG* png, NAPNGChunk* splt){
 
 
 NA_HDEF void naReadPNGtIMEChunk(NAPNG* png, NAPNGChunk* time){
-  png->modificationdate = naMakeDateTimeFromBuffer(&(time->data), NA_DATETIME_FORMAT_PNG);
+  png->modificationdate = naMakeDateTimeFromBuffer(time->data, NA_DATETIME_FORMAT_PNG);
 }
 
 
@@ -667,7 +668,7 @@ NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colortype, NAUInt bitdepth){
 
 
 NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
-  NABuffer* buffer;
+  NAASDFBuffer* buffer;
   NAByte magic[8];
   NAListIterator iter;
 
@@ -681,10 +682,10 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   png->pixeldimensions[1] = 1.f;
   png->pixelunit = NA_PIXEL_UNIT_RATIO;
   
-  buffer = naInitBufferWithFile(naAlloc(NABuffer), filename);
-  naDetermineBufferBytesize(buffer);
+  buffer = naCreateASDFBufferFile(filename);
+  naDetermineBufferRange(buffer);
   // If the buffer is empty, there is no png to read.
-  if(naIsBufferReadAtEnd(buffer)){
+  if(naIsBufferAtEnd(buffer)){
     goto NAEndReadingPNG;
   }
   
@@ -692,7 +693,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   naSetBufferEndianness(buffer, NA_ENDIANNESS_NETWORK);
 
   // Read the magic numbers. If they do not match, this is no png file.
-  naReadBufferBytes(buffer, magic, 8);
+  naReadASDFBufferBytes(buffer, magic, 8);
   if(!naEqual64(magic, na_png_magic)){
     #ifndef NDEBUG
       naError("naInitPNGWithFile", "File is not a PNG file.");
@@ -708,7 +709,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   }
   
   // Create the buffer to hold the decompressed data
-  naInitBuffer(&(png->filtereddata));
+  png->filtereddata = naCreateASDFBuffer();
   
   iter = naMakeListIteratorMutator(&(png->chunks));
   while(naIterateList(&iter, 1)){
@@ -742,7 +743,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   naReconstructFilterData(png);
   
   NAEndReadingPNG:
-  naClearBuffer(buffer);
+  naReleaseASDFBuffer(buffer);
   naFree(buffer);
   return png;
 }
@@ -783,7 +784,7 @@ NA_DEF NAUInt naGetPNGBitDepth(NAPNG* png){
 
 NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
 
-  NABuffer outbuffer;
+  NAASDFBuffer* outbuffer;
   NAChecksum checksum;
   NAFile outfile;
   NAListIterator iter;
@@ -792,44 +793,44 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
   naAddListLastMutable(&(png->chunks), naAllocPNGIDATChunk(png));
   naAddListLastMutable(&(png->chunks), naAllocPNGIENDChunk(png));
 
-  naInitBuffer(&outbuffer);
-  naSetBufferEndianness(&outbuffer, NA_ENDIANNESS_NETWORK);
+  outbuffer = naCreateASDFBuffer();
+  naSetBufferEndianness(outbuffer, NA_ENDIANNESS_NETWORK);
 
-  naWriteBufferBytes(&outbuffer, na_png_magic, 8);
+  naWriteASDFBufferBytes(outbuffer, na_png_magic, 8);
 
   iter = naMakeListIteratorMutator(&(png->chunks));
   while(naIterateList(&iter, 1)){
 
     NAPNGChunk* curchunk = naGetListCurrentMutable(&iter);
-    naDetermineBufferBytesize(&(curchunk->data));
+    naDetermineBufferRange(curchunk->data);
 
-    curchunk->length = naDetermineBufferBytesize(&(curchunk->data));
-    naWriteBufferu32(&outbuffer, (uint32)curchunk->length);
+    curchunk->length = naDetermineBufferRange(curchunk->data).length;
+    naWriteBufferu32(outbuffer, (uint32)curchunk->length);
     
     naCopy32(curchunk->typename, na_png_chunk_type_names[curchunk->type]);
-    naWriteBufferBytes(&outbuffer, curchunk->typename, 4);
+    naWriteASDFBufferBytes(outbuffer, curchunk->typename, 4);
     
-    if(!naIsBufferEmpty(&(curchunk->data))){
-      naSeekBufferLocal(&(curchunk->data), 0);
-      naWriteBufferBuffer(&outbuffer, &(curchunk->data), naDetermineBufferBytesize(&(curchunk->data)));
+    if(!naIsASDFBufferEmpty(curchunk->data)){
+      naSeekASDFBufferAbsolute(curchunk->data, 0);
+      naWriteBufferBuffer(outbuffer, curchunk->data, naDetermineBufferRange(curchunk->data).length);
     }
     
     naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
     naAccumulateChecksum(&checksum, curchunk->typename, 4);
     if(curchunk->length){
-      naSeekBufferLocal(&(curchunk->data), 0);
-      naAccumulateBufferToChecksum(&(curchunk->data), &checksum);
+      naSeekASDFBufferAbsolute(curchunk->data, 0);
+      naAccumulateBufferToChecksum(curchunk->data, &checksum);
     }
     curchunk->crc = naGetChecksumResult(&checksum);
     naClearChecksum(&checksum);
-    naWriteBufferu32(&outbuffer, curchunk->crc);
+    naWriteBufferu32(outbuffer, curchunk->crc);
   }
   naClearListIterator(&iter);
 
   outfile = naMakeFileWritingFilename(filename, NA_FILEMODE_DEFAULT);
-  naWriteBufferToFile(&outbuffer, &outfile);
+  naWriteBufferToFile(outbuffer, &outfile);
   naCloseFile(&outfile);
-  naClearBuffer(&outbuffer);
+  naReleaseASDFBuffer(outbuffer);
 }
 
 

@@ -11,7 +11,8 @@
 
 
 struct NAString{
-  NABuffer buffer;
+//  NAASDFBuffer buffer;
+//  NABuffer buffer;
   NAByteArray array;
 };
 // Note that an NAString is considered empty if the underlying array is empty.
@@ -28,8 +29,8 @@ NA_RUNTIME_TYPE(NAString, naDestructString);
 // This is the destructor for a string. It is marked as a helper as it should
 // only be called by the runtime system
 NA_HDEF void naDestructString(NAString* string){
-  naClearBuffer(&(string->buffer));
-//  if(!naIsStringEmpty(string)){naClearByteArray(&(string->array));}
+//  naClearBuffer(&(string->buffer));
+  if(!naIsStringEmpty(string)){naClearByteArray(&(string->array));}
 }
 
 
@@ -39,8 +40,8 @@ NA_HDEF void naDestructString(NAString* string){
 // We especially inline this definition as it is used many times in this file.
 NA_DEF NAString* naNewString(void){
   NAString* string = naNew(NAString);
-  naInitBuffer(&(string->buffer));
-//  naInitByteArray(&(string->array));
+//  naInitBuffer(&(string->buffer));
+  naInitByteArray(&(string->array));
   return string;
 }
 
@@ -66,9 +67,9 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
     // with index [size] must be binary zero. As we are not copying but just
     // referencing the pointer, we can safely use the array without this byte
     // and still be able to say: We are null-terminated!
-    naInitBufferWithConstBytes(&(string->buffer), ptr, -length);
+//    naInitBufferWithConstBytes(&(string->buffer), ptr, -length);
     
-//    naInitByteArrayWithConstBuffer(&(string->array), ptr, -length);
+    naInitByteArrayWithConstBuffer(&(string->array), ptr, -length);
   }else{
     string = naNewString();
   }
