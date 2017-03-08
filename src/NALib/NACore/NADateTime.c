@@ -516,7 +516,7 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
 
 
 
-NA_DEF NADateTime naMakeDateTimeFromBuffer(NABuffer* buffer, NABinDateTimeFormat format){
+NA_DEF NADateTime naMakeDateTimeFromBuffer(NAASDFBuffer* buffer, NABinDateTimeFormat format){
   NADateTimeStruct dts;
 
   dts.nsec = 0;

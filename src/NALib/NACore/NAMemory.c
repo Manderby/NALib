@@ -8,13 +8,6 @@
 #include "../NAList.h"
 
 
-// Turns out, the pagesize is far too small to result in good speed
-// improvements. The custom bytesize can result in up to 2 times faster allocation
-// and deallocation on some systems.
-#define NA_COREPOOL_BYTESIZE_EQUALS_PAGESIZE
-#define NA_CUSTOM_POOL_BYTESIZE (1 << 16)
-
-
 typedef struct NACorePool NACorePool;
 typedef struct NACoreTypeInfo NACoreTypeInfo;
 typedef struct NARuntime NARuntime;
@@ -23,8 +16,9 @@ typedef struct NARuntime NARuntime;
 struct NACoreTypeInfo{
   NACorePool*       curpool;
   NAUInt            typesize;
-  NAMutator            destructor;
+  NAMutator         destructor;
 };
+
 
 struct NACorePool{
   NACoreTypeInfo* coretypeinfo;
@@ -41,6 +35,7 @@ struct NACorePool{
 };
 
 struct NARuntime{
+  NAUInt mempagesize;
   NAUInt poolsize;
   NAUInt poolsizemask;
 };
@@ -50,6 +45,12 @@ NARuntime* na_runtime = NA_NULL;
 
 
 #if (NA_RUNTIME_USES_MEMORY_POOLS == 1)
+
+  // Security check: The pool bytesize must be big enough to store one struct
+  // of NACorePool.
+  #if (NA_COREPOOL_BYTESIZE != 0) && (NA_COREPOOL_BYTESIZE <= 8 * NA_SYSTEM_ADDRESS_BYTES)
+    #error "Core memory pool size is too small"
+  #endif
 
 
   NA_HIDEF void* naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
@@ -61,7 +62,7 @@ NARuntime* na_runtime = NA_NULL;
     #endif
     #ifndef NDEBUG
       if(coretypeinfo->typesize > (na_runtime->poolsize - sizeof(NACorePool)))
-        naError("naEnhanceCorePool", "Element is too big");
+        naError("naEnhanceCorePool", "Element is too big for core memory pool size");
     #endif
 
     // We create a new pool.
@@ -144,8 +145,9 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
   
   #else
 
+    // If there is no current pool, create a first one.
     if(!coretypeinfo->curpool){
-        naEnhanceCorePool(coretypeinfo);
+      naEnhanceCorePool(coretypeinfo);
     }
   
     // We get the next unused pointer.
@@ -171,7 +173,9 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
 
 
 NA_DEF void naDelete(void* pointer){
-  NACorePool* corepool; // Declaration before definition. Needed for C90
+  #if (NA_RUNTIME_USES_MEMORY_POOLS != 0)
+    NACorePool* corepool; // Declaration before definition. Needed for C90
+  #endif
 
   #ifndef NDEBUG
     if(!na_runtime)
@@ -207,7 +211,8 @@ NA_DEF void naDelete(void* pointer){
 
 
 
-
+// Note that the runtime system in NALib currently is rather small. But it may
+// serve a greater purpose in a later version.
 NA_DEF void naStartRuntime(){
   #ifndef NDEBUG
     if(na_runtime)
@@ -216,12 +221,13 @@ NA_DEF void naStartRuntime(){
       naError("naStartRuntime", "NACorePool struct encoding misaligned");
   #endif
   na_runtime = naAlloc(NARuntime);
-  #if defined NA_COREPOOL_BYTESIZE_EQUALS_PAGESIZE
+  na_runtime->mempagesize = naGetSystemMemoryPagesize();
+  #if (NA_COREPOOL_BYTESIZE == 0)
     na_runtime->poolsize = naGetSystemMemoryPagesize();
     na_runtime->poolsizemask = naGetSystemMemoryPagesizeMask();
   #else
-    na_runtime->poolsize = NA_CUSTOM_POOL_BYTESIZE;
-    na_runtime->poolsizemask = ~(NAUInt)(NA_CUSTOM_POOL_BYTESIZE - NA_ONE);
+    na_runtime->poolsize = NA_COREPOOL_BYTESIZE;
+    na_runtime->poolsizemask = ~(NAUInt)(NA_COREPOOL_BYTESIZE - NA_ONE);
   #endif
 }
 
@@ -234,63 +240,37 @@ NA_DEF void naStopRuntime(){
     if(!na_runtime)
       naCrash("naStopRuntime", "Runtime not running");
   #endif
-  // todo.
+  naFree(na_runtime);
   na_runtime = NA_NULL;
 }
 
 
 
-
-
-
-
-// This function is not inlined as it must be called by naDelete.
-NA_HDEF void naDestructPointer(NAPointer* pointer){
+NA_DEF NAUInt naGetRuntimeMemoryPageSize(){
   #ifndef NDEBUG
-    if(!(pointer->refcount & NA_SMARTPTR_DELETE_FROM_RELEASE))
-      naError("naDestructPointer", "You should never call naDelete on a Pointer! Use naPointerRelease.");
+    if(!na_runtime)
+      naCrash("naGetRuntimeMemoryPageSize", "Runtime not running");
   #endif
-  if(pointer->destructor){
-    pointer->destructor(naGetPtrMutable(&(pointer->ptr)));
-  }
-  NAMemoryCleanup cleanup = (NAMemoryCleanup)(pointer->refcount >> NA_MEMORY_CLEANUP_DATA_BITSHIFT);
-  #ifndef NDEBUG
-    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup >= NA_MEMORY_CLEANUP_COUNT)
-      naError("naDestructPointer", "invalid cleanup option");
-  #endif
-  switch(cleanup){
-  case NA_MEMORY_CLEANUP_UNDEFINED:
-    #ifndef NDEBUG
-      naError("naDestructPointer", "invalid cleanup option");
-    #endif
-    break;
-  case NA_MEMORY_CLEANUP_NONE:
-    break;
-  case NA_MEMORY_CLEANUP_FREE:
-    naFreePtr(&(pointer->ptr));
-    break;
-  case NA_MEMORY_CLEANUP_FREE_ALIGNED:
-    naFreeAlignedPtr(&(pointer->ptr));
-    break;
-#ifdef __cplusplus 
-  case NA_MEMORY_CLEANUP_DELETE:
-    naDeletePtr(pointer->ptr);
-    break;
-  case NA_MEMORY_CLEANUP_DELETE_BRACK:
-    naDeleteBrackPtr(&(pointer->ptr));
-    break;
-#endif
-  case NA_MEMORY_CLEANUP_NA_DELETE:
-    naNaDeletePtr(&(pointer->ptr));
-    break;
-  default:
-    // The default case is a security if this file is not compiled for C++.
-    #ifndef NDEBUG
-      naError("naDestructPointer", "Cleanup option is unavailable in C, use C++");
-    #endif
-    break;
-  }
+  return na_runtime->mempagesize;
 }
+
+
+
+NA_DEF NAUInt naGetRuntimePoolSize(){
+  #ifndef NDEBUG
+    if(!na_runtime)
+      naCrash("naGetRuntimePoolSize", "Runtime not running");
+  #endif
+  return na_runtime->poolsize;
+}
+
+
+
+
+
+
+
+
 
 
 

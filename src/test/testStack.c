@@ -1,9 +1,9 @@
 
 
-#include "stdio.h"
-#include "NAStack.h"
-#include "../NALib/NADateTime.h"
+#include "tests.h"
 
+#include "../NALib/NAStack.h"
+#include "../NALib/NADateTime.h"
 
 
 #define NA_TEST_STACK_M_COUNT 1
@@ -22,8 +22,8 @@ void testStack(void){
   int* v;
   NADateTime time1;
   NADateTime time2;
-  int stackcount;
-  int stackreservedcount;
+  NAUInt stackcount;
+  NAUInt stackreservedcount;
   int64 sum;
   
   printf("\n");
@@ -41,12 +41,12 @@ void testStack(void){
 
   stackcount = naGetStackCount(&stack);
   stackreservedcount = naGetStackReservedCount(&stack);
-  printf("Used / Reserved space in stack: %d / %d Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
+  printf("Used / Reserved space in stack: %" NA_PRIu " / %" NA_PRIu " Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
 
   printf("Pop'ing nine thenth of the values... ");
   time1 = naMakeDateTimeNow();
   for(i=0; i<(int)(NA_TEST_STACK_COUNT * 0.9); i++){
-    v = naPopStack(&stack);
+    v = (int*)naPopStack(&stack);
     // you can still use *v after this function as long as the value will not
     // get overwritten or the storage will not be deleted either by clearing the
     // stack or by reducing its memory footprint with naShrinkStackIfNecessary.
@@ -58,19 +58,19 @@ void testStack(void){
 
   stackcount = naGetStackCount(&stack);
   stackreservedcount = naGetStackReservedCount(&stack);
-  printf("Used / Reserved space in stack: %d / %d Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
+  printf("Used / Reserved space in stack: %" NA_PRIu " / %" NA_PRIu " Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
   
   printf("Shrinking stack normally...\n");
   naShrinkStackIfNecessary(&stack, NA_FALSE);
   stackcount = naGetStackCount(&stack);
   stackreservedcount = naGetStackReservedCount(&stack);
-  printf("Used / Reserved space in stack: %d / %d Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
+  printf("Used / Reserved space in stack: %" NA_PRIu " / %" NA_PRIu " Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
 
   printf("Shrinking stack aggressively...\n");
   naShrinkStackIfNecessary(&stack, NA_TRUE);
   stackcount = naGetStackCount(&stack);
   stackreservedcount = naGetStackReservedCount(&stack);
-  printf("Used / Reserved space in stack: %d / %d Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
+  printf("Used / Reserved space in stack: %" NA_PRIu " / %" NA_PRIu " Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
   
   printf("Clearing the stack.\n");
   naClearStack(&stack);
@@ -81,7 +81,7 @@ void testStack(void){
   naInitStack(&stack, sizeof(int), NA_TEST_STACK_COUNT);
   stackcount = naGetStackCount(&stack);
   stackreservedcount = naGetStackReservedCount(&stack);
-  printf("Used / Reserved space in stack: %d / %d Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
+  printf("Used / Reserved space in stack: %" NA_PRIu " / %" NA_PRIu " Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
 
   printf("Pushing %d M values... ", NA_TEST_STACK_M_COUNT);
   time1 = naMakeDateTimeNow();
@@ -92,7 +92,7 @@ void testStack(void){
   printf("%f seconds\n", naGetDateTimeDifference(&time2, &time1));
   stackcount = naGetStackCount(&stack);
   stackreservedcount = naGetStackReservedCount(&stack);
-  printf("Used / Reserved space in stack: %d / %d Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
+  printf("Used / Reserved space in stack: %" NA_PRIu " / %" NA_PRIu " Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
 
   printf("Pushing 9 times more values... ");
   time1 = naMakeDateTimeNow();
@@ -103,19 +103,19 @@ void testStack(void){
   printf("%f seconds\n", naGetDateTimeDifference(&time2, &time1));
   stackcount = naGetStackCount(&stack);
   stackreservedcount = naGetStackReservedCount(&stack);
-  printf("Used / Reserved space in stack: %d / %d Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
+  printf("Used / Reserved space in stack: %" NA_PRIu " / %" NA_PRIu " Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
 
   printf("Pop'ing 99/100 of the values... ");
   time1 = naMakeDateTimeNow();
   for(i=0; i<(int)(NA_TEST_STACK_COUNT * 9.9); i++){
-    v = naPopStack(&stack);
+    v = (int*)naPopStack(&stack);
     *v = 0;
   }
   time2 = naMakeDateTimeNow();
   printf("%f seconds\n", naGetDateTimeDifference(&time2, &time1));
   stackcount = naGetStackCount(&stack);
   stackreservedcount = naGetStackReservedCount(&stack);
-  printf("Used / Reserved space in stack: %d / %d Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
+  printf("Used / Reserved space in stack: %" NA_PRIu " / %" NA_PRIu " Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
 
   printf("Creating iterator and computing sum. Should be %lld...\n", ((int64)NA_TEST_STACK_COUNT / 10 + 1) * ((int64)NA_TEST_STACK_COUNT / 20));
   time1 = naMakeDateTimeNow();
@@ -139,9 +139,10 @@ void testStack(void){
   naShrinkStackIfNecessary(&stack, NA_TRUE);
   stackcount = naGetStackCount(&stack);
   stackreservedcount = naGetStackReservedCount(&stack);
-  printf("Used / Reserved space in stack: %d / %d Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
+  printf("Used / Reserved space in stack: %" NA_PRIu " / %" NA_PRIu " Elements (%.2f%%)\n", stackcount, stackreservedcount, ((float)stackcount / stackreservedcount) * 100.);
 
   printf("Clearing the stack.\n");
   naClearStack(&stack);
 }
+
 

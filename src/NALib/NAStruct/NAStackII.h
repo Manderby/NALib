@@ -9,7 +9,7 @@
 // including "NAStack.h"
 
 
-#include "NAMemory.h"
+#include "../NAMemory.h"
 
 
 struct NAStack{
@@ -117,7 +117,6 @@ NA_IDEF void naClearStack(NAStack* stack){
 
 NA_IDEF void* naPushStack(NAStack* stack){
   // Declaration before Implementation. Needed for C90
-  NAUInt subindex;
   NAUInt availablestack;
 
   stack->usedcount++;
@@ -125,7 +124,7 @@ NA_IDEF void* naPushStack(NAStack* stack){
   availablestack = naGetStackTotalCount(stack, stack->curindex);
 
   if(stack->usedcount > availablestack){
-    if(naGetListCount(&(stack->arrays)) <= (stack->curindex + 1)){
+    if(naGetListCount(&(stack->arrays)) <= (NAUInt)(stack->curindex + 1)){
       naAddStackNewSpace(stack);
     }
     NAListIterator iter = naMakeListIteratorAccessor(&(stack->arrays));
@@ -144,7 +143,6 @@ NA_IDEF void* naPushStack(NAStack* stack){
 NA_IDEF void* naTopStack(NAStack* stack){
   // Declaration before Implementation. Needed for C90
   NAUInt subindex;
-  void* retvalue;
   subindex = stack->usedcount - naGetStackArrayBaseIndex(stack, stack->curindex) - 1;
   
   NAListIterator iter = naMakeListIteratorMutator(&(stack->arrays));
@@ -312,7 +310,7 @@ NA_IDEF void naForeachStackMutable(const NAStack* stack, NAMutator mutator){
 NA_IDEF void naForeachStackpConst(const NAStack* stack, NAAccessor accessor){
   NAStackIterator iter = naMakeStackIteratorAccessor(stack);
   while(naIterateStack(&iter)){
-    const void* const * data = naGetStackCurrentConst(&iter);
+    const void* const* data = (const void* const*)naGetStackCurrentConst(&iter);
     accessor(*data);
   }
   naClearStackIterator(&iter);
@@ -323,7 +321,7 @@ NA_IDEF void naForeachStackpConst(const NAStack* stack, NAAccessor accessor){
 NA_IDEF void naForeachStackpMutable(const NAStack* stack, NAMutator mutator){
   NAStackIterator iter = naMakeStackIteratorMutator(stack);
   while(naIterateStack(&iter)){
-    void** data = naGetStackCurrentMutable(&iter);
+    void** data = (void**)naGetStackCurrentMutable(&iter);
     mutator(*data);
   }
   naClearStackIterator(&iter);

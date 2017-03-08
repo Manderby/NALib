@@ -13,6 +13,7 @@
 #include "NAUICocoa.h"
 
 
+#if (NA_CONFIG_COMPILE_GUI == 1)
 #ifdef __OBJC__
 #if NA_SYSTEM == NA_SYSTEM_MAC_OS_X
 // Now, we are sure, we compile with Objective-C and on MacOSX. The two
@@ -550,6 +551,7 @@ NA_DEF void naHideMouse(){
 
 #endif // NA_SYSTEM == NA_SYSTEM_MAC_OS_X
 #endif // __OBJC__
+#endif // (NA_CONFIG_COMPILE_GUI == 1)
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH
 //

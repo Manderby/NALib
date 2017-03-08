@@ -3,6 +3,9 @@
 // intended for didactical purposes. Full license notice at the bottom.
 
 #include "NAUICoreAPI.h"
+
+#if (NA_CONFIG_COMPILE_GUI == 1)
+
 #include "../NAMemory.h"
 #include "../NACoord.h"
 #include "../NAThreading.h"
@@ -313,6 +316,7 @@ NA_DEF void naSetMouseExitedAtPos(NAPos newpos){
 
 
 
+#endif (NA_CONFIG_COMPILE_GUI == 1)
 
 
 

@@ -12,23 +12,28 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Highlights:
 - Extended NAGrowingSpace with Pop-functionality, hence making it an
   infinitely sized Stack. Renamed it to NAStack. The previous NAStack
   has been deleted.
-- Re-added tests to the package. Shall be used as example implementations too.
+- Re-added first tests to the package. Shall be used as example implementations
+  too.
 - Several adjustments in NAMemory. Added C++ delete functions for NAPointer.
   Removed Memory observation functions. Removed NALValue, NABuf and NACArray.
-  Added NASmartPtr which is the same as NAPointer but without destructor.
+  Added NASmartPtr which is the same as NAPointer but without destructor. Base
+  for NASmartPtr is NARefCount, a central reference counting entity.
 
+Other things:
 - Renamed several functions with base types to u, i, f and d and Arrays to v.
 - NABufInt has been replaced with NAInt.
-- NABuf use NAInt again instead of int64
 - Changed the isleapyear of NADateTimeAttribute to an uint32.
 - Renamed naGetDateTimeDiff to naGetDateTimeDifference.
 - Made some .h Files 80 characters wide again.
 - Added signed integer macros to NASystem to ensure consistency.
 - Added newest leap second information according to bulletin C 53.
 - Added NA_PRIx
+- Added C++14 as a macro
+- Added naGetRuntimeMemoryPageSize.
 
 
 Version 17 (first published 2017-January-05):

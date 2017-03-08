@@ -181,7 +181,7 @@ NA_API NADateTime naMakeDateTimeFromString( const NAString* string,
                                           NAAscDateTimeFormat format);
 
 // Creates a new NADateTime struct from a given buffer with a given format.
-NA_API NADateTime naMakeDateTimeFromBuffer(  NABuffer* buffer,
+NA_API NADateTime naMakeDateTimeFromBuffer(  NAASDFBuffer* buffer,
                                         NABinDateTimeFormat format);
 
 // Returns a pointer to a C-string containing an error message corresponding

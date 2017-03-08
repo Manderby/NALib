@@ -2,66 +2,33 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#include "NAUICoreAPI.h"
 
-#if (NA_CONFIG_COMPILE_GUI == 1)
-
-// This file contains function implementations which are directly forwarding
-// to a function in the CoreUI implementations.
-
-
-// ///////////////////////////////////
-// APPLICATION
-// ///////////////////////////////////
-
-
-NA_DEF void naStopApplication(void){
-  naStopCoreApplication();
-}
+// This file contains inline implementations of the file NABuffer.h
+// Do not include this file directly! It will automatically be included when
+// including "NABuffer.h"
 
 
 
-NA_DEF NAApplication* naGetApplication(void){
-  return (NAApplication*)naGetCoreApplication();
-}
+#include "NAMemory.h"
+#include "NAList.h"
+#include "NACoord.h"
+
+struct NABuffer{
+  NAUInt flags;                     // various flags
+  NAPointer* storage;               // Buffer storage. List of buffer parts.
+  NARangei range;                   // The total range of this buffer
+
+  NAListPos curlistpos;             // The listpos of the current part
+  NAInt curoffset;                  // The current absolute offset
+  uint8 curbit;                     // The current bit number
+
+  NAInt endianness;                 // The current endianness
+  NAEndiannessConverter converter;  // The endianness converter.
+};
 
 
 
-// ///////////////////////////////////
-// UI ELEMENT
-// ///////////////////////////////////
 
-NA_DEF NAUIElementType naGetUIElementType(NAUIElement* element){
-  return naGetCoreUIElementType((NACoreUIElement*)element);
-}
-
-
-
-NA_DEF NAUIElement* naGetUIElementParent(NAUIElement* uielement){
-  return naGetCoreUIElementParent((NACoreUIElement*)uielement);
-}
-
-
-
-NA_DEF NAWindow* naGetUIElementWindow(NAUIElement* uielement){
-  return naGetCoreUIElementWindow(uielement);
-}
-
-
-
-NA_DEF NANativeID naGetUIElementNativeID(NAUIElement* element){
-  return naGetCoreUIElementNativeID((NACoreUIElement*)element);
-}
-
-
-
-NA_DEF void naRefreshUIElement(NAUIElement* uielement, double timediff){
-  naRefreshCoreUIElement(uielement, timediff);
-}
-
-
-
-#endif //(NA_CONFIG_COMPILE_GUI == 1)
 
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH

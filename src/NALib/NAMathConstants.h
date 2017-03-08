@@ -10,6 +10,7 @@
 
 #include <float.h>
 #include <math.h>
+#include "NASystem.h"
 
 // Fundamental mathematical constants. All macros are defined as float, double
 // and long double with the corresponding suffix.
@@ -178,13 +179,7 @@
 // These constants are directly from NIST:
 // http://physics.nist.gov/constants
 //
-// Define, what year of the CODATA you would like to use. Possible values are
-// 2006, 2010, 2014
-// By default, NALib uses the latest setting.
-
-#ifndef NA_NIST_CODATA_YEAR
-  #define NA_NIST_CODATA_YEAR 2014
-#endif
+// See Configuration.h for the definition of NA_NIST_CODATA_YEAR
 
 
 // Universal Constants

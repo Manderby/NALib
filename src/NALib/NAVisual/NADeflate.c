@@ -173,7 +173,7 @@ NABool naTraverseHuffmanCodeTree(NAHuffmanCodeTree* tree, NABool bit, uint16* al
 }
 
 
-uint16 naDecodeHuffman(NAHuffmanCodeTree* tree, NABuffer* buffer){
+uint16 naDecodeHuffman(NAHuffmanCodeTree* tree, NAASDFBuffer* buffer){
   uint16 symbol;
   naResetHuffmanCodeTree(tree);
   while(naTraverseHuffmanCodeTree(tree, naReadBufferBit(buffer), &symbol)){}
@@ -182,7 +182,7 @@ uint16 naDecodeHuffman(NAHuffmanCodeTree* tree, NABuffer* buffer){
 
 
 
-NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman, NABuffer* zbuffer, uint16 alphabetcount){
+NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman, NAASDFBuffer* zbuffer, uint16 alphabetcount){
   NAHuffmanCodeTree* alphabethuffman = naAllocHuffmanCodeTree(alphabetcount);
   uint16 curalphabetcount = 0;
   while(curalphabetcount < alphabetcount){
@@ -193,17 +193,17 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
 //    printf("%d,", codelength);
     switch(codelength){
     case 16:
-      repeatcount = naReadBufferBits(zbuffer, 2) + 3;
+      repeatcount = (uint16)naReadBufferBits(zbuffer, 2) + 3;
       for(i=0; i<repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = alphabethuffman->codelengths[curalphabetcount - 1];}
       curalphabetcount += repeatcount;
       break;
     case 17:
-      repeatcount = naReadBufferBits(zbuffer, 3) + 3;
+      repeatcount = (uint16)naReadBufferBits(zbuffer, 3) + 3;
       for(i=0; i<repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = 0;}
       curalphabetcount += repeatcount;
       break;
     case 18:
-      repeatcount = naReadBufferBits(zbuffer, 7) + 11;
+      repeatcount =(uint16) naReadBufferBits(zbuffer, 7) + 11;
       for(i=0; i<repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = 0;}
       curalphabetcount += repeatcount;
       break;
@@ -225,7 +225,7 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
 
 
 
-uint16 naDecodeLiteralLength(NABuffer* zbuffer, uint16 code){
+uint16 naDecodeLiteralLength(NAASDFBuffer* zbuffer, uint16 code){
   switch(code){
   case 257: return 3; break;
   case 258: return 4; break;
@@ -235,26 +235,26 @@ uint16 naDecodeLiteralLength(NABuffer* zbuffer, uint16 code){
   case 262: return 8; break;
   case 263: return 9; break;
   case 264: return 10; break;
-  case 265: return 11 + naReadBufferBits(zbuffer, 1); break;
-  case 266: return 13 + naReadBufferBits(zbuffer, 1); break;
-  case 267: return 15 + naReadBufferBits(zbuffer, 1); break;
-  case 268: return 17 + naReadBufferBits(zbuffer, 1); break;
-  case 269: return 19 + naReadBufferBits(zbuffer, 2); break;
-  case 270: return 23 + naReadBufferBits(zbuffer, 2); break;
-  case 271: return 27 + naReadBufferBits(zbuffer, 2); break;
-  case 272: return 31 + naReadBufferBits(zbuffer, 2); break;
-  case 273: return 35 + naReadBufferBits(zbuffer, 3); break;
-  case 274: return 43 + naReadBufferBits(zbuffer, 3); break;
-  case 275: return 51 + naReadBufferBits(zbuffer, 3); break;
-  case 276: return 59 + naReadBufferBits(zbuffer, 3); break;
-  case 277: return 67 + naReadBufferBits(zbuffer, 4); break;
-  case 278: return 83 + naReadBufferBits(zbuffer, 4); break;
-  case 279: return 99 + naReadBufferBits(zbuffer, 4); break;
-  case 280: return 115 + naReadBufferBits(zbuffer, 4); break;
-  case 281: return 131 + naReadBufferBits(zbuffer, 5); break;
-  case 282: return 163 + naReadBufferBits(zbuffer, 5); break;
-  case 283: return 195 + naReadBufferBits(zbuffer, 5); break;
-  case 284: return 227 + naReadBufferBits(zbuffer, 5); break;
+  case 265: return 11 + (uint16)naReadBufferBits(zbuffer, 1); break;
+  case 266: return 13 + (uint16)naReadBufferBits(zbuffer, 1); break;
+  case 267: return 15 + (uint16)naReadBufferBits(zbuffer, 1); break;
+  case 268: return 17 + (uint16)naReadBufferBits(zbuffer, 1); break;
+  case 269: return 19 + (uint16)naReadBufferBits(zbuffer, 2); break;
+  case 270: return 23 + (uint16)naReadBufferBits(zbuffer, 2); break;
+  case 271: return 27 + (uint16)naReadBufferBits(zbuffer, 2); break;
+  case 272: return 31 + (uint16)naReadBufferBits(zbuffer, 2); break;
+  case 273: return 35 + (uint16)naReadBufferBits(zbuffer, 3); break;
+  case 274: return 43 + (uint16)naReadBufferBits(zbuffer, 3); break;
+  case 275: return 51 + (uint16)naReadBufferBits(zbuffer, 3); break;
+  case 276: return 59 + (uint16)naReadBufferBits(zbuffer, 3); break;
+  case 277: return 67 + (uint16)naReadBufferBits(zbuffer, 4); break;
+  case 278: return 83 + (uint16)naReadBufferBits(zbuffer, 4); break;
+  case 279: return 99 + (uint16)naReadBufferBits(zbuffer, 4); break;
+  case 280: return 115 + (uint16)naReadBufferBits(zbuffer, 4); break;
+  case 281: return 131 + (uint16)naReadBufferBits(zbuffer, 5); break;
+  case 282: return 163 + (uint16)naReadBufferBits(zbuffer, 5); break;
+  case 283: return 195 + (uint16)naReadBufferBits(zbuffer, 5); break;
+  case 284: return 227 + (uint16)naReadBufferBits(zbuffer, 5); break;
   case 285: return 258; break;
   default:
     #ifndef NDEBUG
@@ -266,38 +266,38 @@ uint16 naDecodeLiteralLength(NABuffer* zbuffer, uint16 code){
 }
 
 
-uint16 naDecodeDistance(NABuffer* zbuffer, uint16 code){
+uint16 naDecodeDistance(NAASDFBuffer* zbuffer, uint16 code){
   switch(code){
   case 0: return 1; break;
   case 1: return 2; break;
   case 2: return 3; break;
   case 3: return 4; break;
-  case 4: return 5 + naReadBufferBits(zbuffer, 1); break;
-  case 5: return 7 + naReadBufferBits(zbuffer, 1); break;
-  case 6: return 9 + naReadBufferBits(zbuffer, 2); break;
-  case 7: return 13 + naReadBufferBits(zbuffer, 2); break;
-  case 8: return 17 + naReadBufferBits(zbuffer, 3); break;
-  case 9: return 25 + naReadBufferBits(zbuffer, 3); break;
-  case 10: return 33 + naReadBufferBits(zbuffer, 4); break;
-  case 11: return 49 + naReadBufferBits(zbuffer, 4); break;
-  case 12: return 65 + naReadBufferBits(zbuffer, 5); break;
-  case 13: return 97 + naReadBufferBits(zbuffer, 5); break;
-  case 14: return 129 + naReadBufferBits(zbuffer, 6); break;
-  case 15: return 193 + naReadBufferBits(zbuffer, 6); break;
-  case 16: return 257 + naReadBufferBits(zbuffer, 7); break;
-  case 17: return 385 + naReadBufferBits(zbuffer, 7); break;
-  case 18: return 513 + naReadBufferBits(zbuffer, 8); break;
-  case 19: return 769 + naReadBufferBits(zbuffer, 8); break;
-  case 20: return 1025 + naReadBufferBits(zbuffer, 9); break;
-  case 21: return 1537 + naReadBufferBits(zbuffer, 9); break;
-  case 22: return 2049 + naReadBufferBits(zbuffer, 10); break;
-  case 23: return 3073 + naReadBufferBits(zbuffer, 10); break;
-  case 24: return 4097 + naReadBufferBits(zbuffer, 11); break;
-  case 25: return 6145 + naReadBufferBits(zbuffer, 11); break;
-  case 26: return 8193 + naReadBufferBits(zbuffer, 12); break;
-  case 27: return 12289 + naReadBufferBits(zbuffer, 12); break;
-  case 28: return 16385 + naReadBufferBits(zbuffer, 13); break;
-  case 29: return 24577 + naReadBufferBits(zbuffer, 13); break;
+  case 4: return 5 + (uint16)naReadBufferBits(zbuffer, 1); break;
+  case 5: return 7 + (uint16)naReadBufferBits(zbuffer, 1); break;
+  case 6: return 9 + (uint16)naReadBufferBits(zbuffer, 2); break;
+  case 7: return 13 + (uint16)naReadBufferBits(zbuffer, 2); break;
+  case 8: return 17 + (uint16)naReadBufferBits(zbuffer, 3); break;
+  case 9: return 25 + (uint16)naReadBufferBits(zbuffer, 3); break;
+  case 10: return 33 + (uint16)naReadBufferBits(zbuffer, 4); break;
+  case 11: return 49 + (uint16)naReadBufferBits(zbuffer, 4); break;
+  case 12: return 65 + (uint16)naReadBufferBits(zbuffer, 5); break;
+  case 13: return 97 + (uint16)naReadBufferBits(zbuffer, 5); break;
+  case 14: return 129 + (uint16)naReadBufferBits(zbuffer, 6); break;
+  case 15: return 193 + (uint16)naReadBufferBits(zbuffer, 6); break;
+  case 16: return 257 + (uint16)naReadBufferBits(zbuffer, 7); break;
+  case 17: return 385 + (uint16)naReadBufferBits(zbuffer, 7); break;
+  case 18: return 513 + (uint16)naReadBufferBits(zbuffer, 8); break;
+  case 19: return 769 + (uint16)naReadBufferBits(zbuffer, 8); break;
+  case 20: return 1025 + (uint16)naReadBufferBits(zbuffer, 9); break;
+  case 21: return 1537 + (uint16)naReadBufferBits(zbuffer, 9); break;
+  case 22: return 2049 + (uint16)naReadBufferBits(zbuffer, 10); break;
+  case 23: return 3073 + (uint16)naReadBufferBits(zbuffer, 10); break;
+  case 24: return 4097 + (uint16)naReadBufferBits(zbuffer, 11); break;
+  case 25: return 6145 + (uint16)naReadBufferBits(zbuffer, 11); break;
+  case 26: return 8193 + (uint16)naReadBufferBits(zbuffer, 12); break;
+  case 27: return 12289 + (uint16)naReadBufferBits(zbuffer, 12); break;
+  case 28: return 16385 + (uint16)naReadBufferBits(zbuffer, 13); break;
+  case 29: return 24577 + (uint16)naReadBufferBits(zbuffer, 13); break;
   default:
     #ifndef NDEBUG
       naError("naDecodeDistance", "Invalid distance code receyved");
@@ -309,18 +309,18 @@ uint16 naDecodeDistance(NABuffer* zbuffer, uint16 code){
 
 
 
-NA_HDEF void naReadDymanicHuffmanCodes(NABuffer* zbuffer, NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman){
+NA_HDEF void naReadDymanicHuffmanCodes(NAASDFBuffer* zbuffer, NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman){
   uint8 codeorder[19] = {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
   int c;
 
-  uint16 hlit = naReadBufferBits(zbuffer, 5) + 257;
-  uint8 hdist = naReadBufferBits(zbuffer, 5) + 1;
-  uint8 hclen = naReadBufferBits(zbuffer, 4) + 4;
+  uint16 hlit = (uint16)naReadBufferBits(zbuffer, 5) + 257;
+  uint8 hdist = (uint8)naReadBufferBits(zbuffer, 5) + 1;
+  uint8 hclen = (uint8)naReadBufferBits(zbuffer, 4) + 4;
   
 //  naAlloc(NABuffer);
   NAHuffmanCodeTree* codelengthhuffman = naAllocHuffmanCodeTree(19);
   for(c=0; c<hclen; c++){
-    codelengthhuffman->codelengths[codeorder[c]] = naReadBufferBits(zbuffer, 3);
+    codelengthhuffman->codelengths[codeorder[c]] = (uint16)naReadBufferBits(zbuffer, 3);
 //    printf("(%d, %d),", codeorder[c], codelengthhuffman->codelengths[codeorder[c]]);
   }
 //  printf("\n");
@@ -365,7 +365,7 @@ NA_HDEF void naCreateFixedHuffmanCodes(NAHuffmanCodeTree** literalhuffman, NAHuf
 
 
 
-NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input){
+NA_DEF void naFillBufferWithZLIBDecompression(NAASDFBuffer* output, NAASDFBuffer* input){
   uint8 compressionmethodflags;
   uint8 compressionmethod;
   uint8 compressioninfo;
@@ -375,13 +375,13 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   NABool haspresetdict;
   NADeflateCompressionLevel compressionlevel;
   uint32 dictadler;
-  NABuffer zbuffer;
+  NAASDFBuffer* zbuffer;
   uint32 zbufferadler;
   NAChecksum checksum;
   uint32 adler;
 
   // First, read RFC 1950
-  NAInt zbuffersize = naDetermineBufferBytesize(input) - 6;
+  NAInt zbuffersize = naDetermineBufferRange(input).length - 6;
   // The 6 Bytes are the CMF and FLG Bytes as well as the Adler number.
   // If there is a DICTID, zbuffersize will be reduced by 4 more bytes later.
   
@@ -424,18 +424,17 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   }
   NA_UNUSED(dictadler);
 
-  naInitBufferWithBufferExtraction(&zbuffer, input, zbuffersize);
-  naReadBuffer(input, (NAFilesize)zbuffersize);
+  zbuffer = naCreateASDFBufferExtraction(input, naMakeRangei(naTellASDFBuffer(input), zbuffersize));
   zbufferadler = naReadBufferu32(input);
   
   // Now start RFC 1951
 
   // Important! RFC 1951 is Little-endianed, whereas RFC 1950 is big endianed!
-  naSetBufferEndianness(&zbuffer, NA_ENDIANNESS_LITTLE);
+  naSetBufferEndianness(zbuffer, NA_ENDIANNESS_LITTLE);
   
   while(1){
-    NAByte isblockfinal = naReadBufferBits(&zbuffer, 1);
-    NAByte blocktype = naReadBufferBits(&zbuffer, 2);
+    NAByte isblockfinal = (NAByte)naReadBufferBits(zbuffer, 1);
+    NAByte blocktype = (NAByte)naReadBufferBits(zbuffer, 2);
     #ifndef NDEBUG
       if(blocktype == 0x03)
       naError("naInitBufferFromDeflateDecompression", "Block compression invalid");
@@ -446,28 +445,27 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
       uint16 nlen;
       NAByte* tmpbuf;
 
-      naPadBufferReadBits(&zbuffer);
-      len = naReadBufferu16(&zbuffer);
-      nlen = naReadBufferu16(&zbuffer);
+      naPadBufferBits(zbuffer);
+      len = naReadBufferu16(zbuffer);
+      nlen = naReadBufferu16(zbuffer);
       #ifndef NDEBUG
         if((uint16)len != (uint16)(~nlen))
         naError("naInitBufferFromDeflateDecompression", "Len and NLen do not match in one's complement");
       #else
         NA_UNUSED(nlen);
       #endif
-//      // the len denotes the number of bytes in the whole block. Todo: Check
-//      // how this behaves if the first three bits are not at the first bit
-//      // position.
-//      len -= 5;
+      // the len denotes the number of bytes in the whole block. Todo: Check
+      // how this behaves if the first three bits are not at the first bit
+      // position.
       tmpbuf = naMalloc(len);
-      naReadBufferBytes(&zbuffer, tmpbuf, len);
-      naWriteBufferBytes(output, tmpbuf, len);
+      naReadASDFBufferBytes(zbuffer, tmpbuf, len);
+      naWriteASDFBufferBytes(output, tmpbuf, len);
       naFree(tmpbuf);
     }else{
       NAHuffmanCodeTree* literalhuffman;
       NAHuffmanCodeTree* distancehuffman;
       if(blocktype == 0x02){
-        naReadDymanicHuffmanCodes(&zbuffer, &literalhuffman, &distancehuffman);
+        naReadDymanicHuffmanCodes(zbuffer, &literalhuffman, &distancehuffman);
       }else{
         naCreateFixedHuffmanCodes(&literalhuffman, &distancehuffman);
       }
@@ -478,19 +476,19 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
         uint16 curcode;
         uint16 length;
         uint16 dist;
-        curcode = naDecodeHuffman(literalhuffman, &zbuffer);
+        curcode = naDecodeHuffman(literalhuffman, zbuffer);
         if(curcode < 256){
           naWriteBufferu8(output, (uint8)curcode);
-//          printf("%u\n", (uint32)curcode);
+          //printf("%u\n", (uint32)curcode);
         }else if(curcode == 256){
           break;
         }else{
           uint16 distcode;
-          length = naDecodeLiteralLength(&zbuffer, curcode);
-          distcode = naDecodeHuffman(distancehuffman, &zbuffer);
-          dist = naDecodeDistance(&zbuffer, distcode);
+          length = naDecodeLiteralLength(zbuffer, curcode);
+          distcode = naDecodeHuffman(distancehuffman, zbuffer);
+          dist = naDecodeDistance(zbuffer, distcode);
           naRepeatBufferBytes(output, dist, length);
-//          printf("(l %d d %d)\n", length, dist);
+          //printf("(d %d l %d)\n", dist, length);
         }
       }
       
@@ -501,7 +499,9 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
 //    printf("Another block\n");
   }
   
-  naDetermineBufferBytesize(output);
+  naReleaseASDFBuffer(zbuffer);
+  
+  naDetermineBufferRange(output);
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_ADLER_32);
   naAccumulateBufferToChecksum(output, &checksum);
   adler = naGetChecksumResult(&checksum);
@@ -519,7 +519,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
 
 
 
-NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, NADeflateCompressionLevel level){
+NA_DEF void naFillBufferWithZLIBCompression(NAASDFBuffer* buffer, NAASDFBuffer* input, NADeflateCompressionLevel level){
 
   uint8 cmf;
   uint8 flg;
@@ -545,8 +545,8 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, N
   // Now, for the actual content, we change to little endian due to RFC 1951!
   naSetBufferEndianness(buffer, NA_ENDIANNESS_LITTLE);
   
-  bytesize = naDetermineBufferBytesize(input);
-  naSeekBufferLocal(input, 0);
+  bytesize = naDetermineBufferRange(input).length;
+  naSeekASDFBufferAbsolute(input, 0);
   
   
   while(bytesize > 0){
@@ -569,7 +569,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, N
   // again as it belongs to RFC 1950!
   naSetBufferEndianness(buffer, NA_ENDIANNESS_NETWORK);
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_ADLER_32);
-  naSeekBufferLocal(input, 0);
+  naSeekASDFBufferAbsolute(input, 0);
   naAccumulateBufferToChecksum(input, &checksum);
   adler = naGetChecksumResult(&checksum);
   naClearChecksum(&checksum);

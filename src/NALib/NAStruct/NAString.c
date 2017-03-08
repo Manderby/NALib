@@ -11,6 +11,7 @@
 
 
 struct NAString{
+//  NAASDFBuffer buffer;
 //  NABuffer buffer;
   NAByteArray array;
 };
@@ -66,7 +67,7 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
     // with index [size] must be binary zero. As we are not copying but just
     // referencing the pointer, we can safely use the array without this byte
     // and still be able to say: We are null-terminated!
-//    naInitBuffer(&(string->buffer));
+//    naInitBufferWithConstBytes(&(string->buffer), ptr, -length);
     
     naInitByteArrayWithConstBuffer(&(string->array), ptr, -length);
   }else{

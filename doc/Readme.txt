@@ -105,6 +105,9 @@ The naming scheme guides you:
                 have been restricted to be managed by the runtime system. These
                 structs do not provide naInitXXX_functions but naNewXXX-
                 functions instead.
+- naCreateXXX:  Starting with NALib version 18, certain structs have reference
+                counting built in. After creation, you shall use naRetainXXX
+                and naReleaseXXX.
 
 
 Simple structs like NAPos are very basic structs and are generally called

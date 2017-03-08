@@ -30,7 +30,7 @@ NA_IDEF NAByteArray* naInitByteArray(NAByteArray* array){
     if(!array)
       {naCrash("naInitByteArray", "array is Null-Pointer."); return NA_NULL;}
   #endif
-  array->storage = naNewNullPointer();
+  array->storage = naNewPointerMutable(NA_NULL, NA_MEMORY_CLEANUP_NONE, NA_NULL);
   array->memblock = naMakeMemoryBlock();
   array->indx = NA_INVALID_MEMORY_INDEX;
   return array;
