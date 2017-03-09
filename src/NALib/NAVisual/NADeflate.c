@@ -425,6 +425,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NAASDFBuffer* output, NAASDFBuffer
   NA_UNUSED(dictadler);
 
   zbuffer = naCreateASDFBufferExtraction(input, naMakeRangei(naTellASDFBuffer(input), zbuffersize));
+  naSeekASDFBufferRelative(input, zbuffersize);
   zbufferadler = naReadBufferu32(input);
   
   // Now start RFC 1951
@@ -549,6 +550,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NAASDFBuffer* buffer, NAASDFBuffer* 
   naSeekASDFBufferAbsolute(input, 0);
   
   
+  NAInt curoffset = 0;
   while(bytesize > 0){
     uint16 curbytesize;
     NAByte headbyte = (0 << 1);
@@ -561,8 +563,9 @@ NA_DEF void naFillBufferWithZLIBCompression(NAASDFBuffer* buffer, NAASDFBuffer* 
     naWriteBufferu8(buffer, headbyte);
     naWriteBufferu16(buffer, curbytesize);
     naWriteBufferu16(buffer, ~curbytesize);
-    naWriteBufferBuffer(buffer, input, curbytesize);
+    naWriteBufferBuffer(buffer, input, naMakeRangei(curoffset, curbytesize));
     bytesize -= curbytesize;
+    curoffset += curbytesize;
   }
   
   // We write the adler number. Note that this must be in network byte order

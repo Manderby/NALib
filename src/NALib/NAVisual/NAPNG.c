@@ -154,7 +154,8 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NAASDFBuffer* buffer){
   #endif
 
   naReadASDFBufferBytes(buffer, chunk->typename, 4);
-  chunk->data = naCreateASDFBufferExtraction(buffer, naMakeRangei(naTellASDFBuffer(buffer), chunk->length));
+  chunk->data = naCreateASDFBufferExtraction(buffer, naMakeRangeiE(naTellASDFBuffer(buffer), chunk->length));
+  naSeekASDFBufferRelative(buffer, chunk->length);
 
   chunk->type = NA_PNG_CHUNK_TYPE_UNKNOWN;
   for(i=0; i<NA_PNG_CHUNK_TYPE_COUNT; i++){
@@ -169,7 +170,9 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NAASDFBuffer* buffer){
 //    }
   #endif
   
-//  naReadASDFBuffer(buffer, (NAFilesize)chunk->length);
+  if(chunk->length){
+    naCacheASDFBuffer(chunk->data, naMakeRangei(naTellASDFBuffer(chunk->data), chunk->length));
+  }
   
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
   naAccumulateChecksum(&checksum, chunk->typename, 4);
@@ -744,7 +747,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   
   NAEndReadingPNG:
   naReleaseASDFBuffer(buffer);
-  naFree(buffer);
+//  naFree(buffer);
   return png;
 }
 
@@ -812,7 +815,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
     
     if(!naIsASDFBufferEmpty(curchunk->data)){
       naSeekASDFBufferAbsolute(curchunk->data, 0);
-      naWriteBufferBuffer(outbuffer, curchunk->data, naDetermineBufferRange(curchunk->data).length);
+      naWriteBufferBuffer(outbuffer, curchunk->data, naDetermineBufferRange(curchunk->data));
     }
     
     naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
@@ -828,6 +831,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
   naClearListIterator(&iter);
 
   outfile = naMakeFileWritingFilename(filename, NA_FILEMODE_DEFAULT);
+  naDetermineBufferRange(outbuffer);
   naWriteBufferToFile(outbuffer, &outfile);
   naCloseFile(&outfile);
   naReleaseASDFBuffer(outbuffer);

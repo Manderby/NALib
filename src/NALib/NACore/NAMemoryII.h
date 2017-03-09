@@ -1218,6 +1218,11 @@ NA_IDEF void naDestructSmartPtrData(NASmartPtrDestructContainer* container){
     case NA_MEMORY_CLEANUP_NA_DELETE:
       naNaDeletePtr(&(container->sptr->ptr));
       break;
+    default:
+    #ifndef NDEBUG
+      naError("naDestructSmartPtrData", "invalid cleanup method.");
+    #endif
+    break;
   }
 }
 

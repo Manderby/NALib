@@ -316,7 +316,7 @@ NA_DEF void naSetMouseExitedAtPos(NAPos newpos){
 
 
 
-#endif (NA_CONFIG_COMPILE_GUI == 1)
+#endif // (NA_CONFIG_COMPILE_GUI == 1)
 
 
 

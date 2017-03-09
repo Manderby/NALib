@@ -202,16 +202,16 @@ NA_HIDEF NAInt naGetBufferPartMaxBufferIndex(NABufferPart* part){
 
 
 
-// Returns the data start index of the buffer part.
-NA_HIDEF NAInt naGetBufferPartStartDataIndex(NABufferPart* part){
-  return part->datarange.origin;
-}
-
-
-// Returns the data end index of the buffer part.
-NA_HIDEF NAInt naGetBufferPartEndDataIndex(NABufferPart* part){
-  return naGetRangeiEnd(part->datarange);
-}
+//// Returns the data start index of the buffer part.
+//NA_HIDEF NAInt naGetBufferPartStartDataIndex(NABufferPart* part){
+//  return part->datarange.origin;
+//}
+//
+//
+//// Returns the data end index of the buffer part.
+//NA_HIDEF NAInt naGetBufferPartEndDataIndex(NABufferPart* part){
+//  return naGetRangeiEnd(part->datarange);
+//}
 
 
 

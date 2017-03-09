@@ -111,6 +111,8 @@ NA_API NABool   naIsBufferAtEnd             (const NAASDFBuffer* buffer);
 NA_API void naSetBufferEndianness(NAASDFBuffer* buffer, NAInt endianness);
 NA_API NAInt naGetBufferEndianness(NAASDFBuffer* buffer);
 
+NA_API void naCacheASDFBuffer(NAASDFBuffer* buffer, NARangei range);
+
 
 // Seeks the given position within the buffer.
 // Absolute searches relative to the zero-point of this buffer.
@@ -158,7 +160,7 @@ NA_API void naWriteBufferu64v (NAASDFBuffer* buffer, const uint64* src, NAInt co
 NA_API void naWriteBufferfv   (NAASDFBuffer* buffer, const float*  src, NAInt count);
 NA_API void naWriteBufferdv   (NAASDFBuffer* buffer, const double* src, NAInt count);
 
-NA_API void naWriteBufferBuffer(NAASDFBuffer* dstbuffer, NAASDFBuffer* srcbuffer, NAInt bytesize);
+NA_API void naWriteBufferBuffer(NAASDFBuffer* dstbuffer, NAASDFBuffer* srcbuffer, NARangei srcrange);
 NA_API void naRepeatBufferBytes(NAASDFBuffer* buffer, NAInt distance, NAInt bytesize);
 NA_API void naWriteBufferToFile(NAASDFBuffer* buffer, NAFile* file);
 
