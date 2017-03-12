@@ -55,11 +55,11 @@ NA_IAPI int naSleepS(double secs);
 // You can give a thread a name, which is currently unused. todo. This will
 // be used on some systems when debugging later on. Note that both threadname
 // and arg will NOT be owned by the thread.
-NA_IAPI NAThread naNewThread( const char* threadname,
+NA_IAPI NAThread naMakeThread( const char* threadname,
                                    NAMutator function,
                                     void* arg);
 // Clears all memory structures concerning the given thread. Will not clear
-// the arg or threadname given to naNewThread. If the thread is still running,
+// the arg or threadname given to naMakeThread. If the thread is still running,
 // behaviour is undefined.
 NA_IAPI void naClearThread(NAThread thread);
 // Calling this function will execute the thread once.
@@ -75,7 +75,7 @@ NA_IAPI void naRunThread(NAThread thread);
 // to lock the mutex.
 
 // Create and clear a mutex.
-NA_IAPI NAMutex naNewMutex();
+NA_IAPI NAMutex naMakeMutex();
 NA_IAPI void naClearMutex(NAMutex mutex);
 // Locks and unlocks a mutex. Waiting threads wait forever.
 NA_IAPI void naLockMutex(NAMutex mutex);
@@ -117,7 +117,7 @@ NA_IAPI NABool naTryMutex(NAMutex mutex);
 // counter in combination with a mutex.
 //
 // Creates and clears an alarm structure.
-NA_IAPI NAAlarm naNewAlarm();
+NA_IAPI NAAlarm naMakeAlarm();
 NA_IAPI void naClearAlarm(NAAlarm alarm);
 // Locks the current thread until some other thread calls naTriggerAlarm or
 // until the timeout occurs. Returns NA_TRUE, if the alarm was triggered or

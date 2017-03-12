@@ -98,13 +98,13 @@ typedef struct NAThreadStruct NAThreadStruct;
 struct NAThreadStruct{
   const char* name;
   NANativeThread nativeThread;  // If you experience an error here when working
-  NAMutator function;              // with plain C files on a Mac: Turn off the
+  NAMutator function;           // with plain C files on a Mac: Turn off the
   void* arg;                    // automatic reference counting in project
 };                              // settings.
 
 
 
-NA_IDEF NAThread naNewThread(const char* threadname, NAMutator function, void* arg){
+NA_IDEF NAThread naMakeThread(const char* threadname, NAMutator function, void* arg){
   NAThreadStruct* threadstruct = naAlloc(NAThreadStruct);
   threadstruct->name = threadname;  // todo
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
@@ -210,7 +210,7 @@ NA_IDEF void naRunThread(NAThread thread){
 
 
 
-NA_IDEF NAMutex naNewMutex(){
+NA_IDEF NAMutex naMakeMutex(){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     NAWindowsMutex* windowsmutex = naAlloc(NAWindowsMutex);
     #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
@@ -422,7 +422,7 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
 
 
 
-NA_IDEF NAAlarm naNewAlarm(){
+NA_IDEF NAAlarm naMakeAlarm(){
   NANativeAlarm alarm;
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     alarm = CreateEvent(NULL, FALSE, FALSE, NULL);
