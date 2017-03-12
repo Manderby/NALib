@@ -16,11 +16,11 @@
 
 
 int main(void){
-//  testSystem();  
-//  testMemory();
+  testSystem();  
+  testMemory();
 
   naStartRuntime();
-//    testStack();
+    testStack();
     testBuffer();
   naStopRuntime();
   
