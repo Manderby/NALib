@@ -33,7 +33,7 @@
 // NA_FILESIZE_BITS and NA_FILESIZE_MAX     Two additional macros
 //                      storing the bits needed for a file byteoffset.
 // NAFileMode:          The filesystem permission mode. On Windows corresponds
-//                      to the flag combination like _S_IREAD, and on Unix
+//                      to a flag combination like _S_IREAD, and on Unix
 //                      corresponds to the octal permission flags like 0644.
 //
 // NA_FILEMODE_DEFAULT: The default permission mode to create a file.
@@ -186,35 +186,9 @@ NA_IAPI NAFilesize naWriteFileBytes(  NAFile* file,
                                    NAFilesize bytesize);
 
 
-// Creates or fills an NAByteArray or an NAString by reading the given number
-// of bytes from the file directly into a newly created array or string.
-//
-// Note: If you want the whole file as an NAByteArray or NAString, use the
-// naInitByteArrayWithFileContents or naNewStringWithFileContents function
-// instead.
-NA_IAPI NAByteArray* naInitByteArrayFromFile(NAByteArray* array,
-                                                   NAFile* file,
-                                                NAFilesize bytesize);
-NA_IAPI NAString*    naNewStringFromFile(           NAFile* file,
-                                                NAFilesize bytesize);
-
-
 // //////////////////////////
 // General input and output methods
 //
-
-// Reads a full file and returns it as a new String.
-// Note that this is the preferred way to handle text files in NALib: Just
-// read the whole file into a string and then use the parsing functions of
-// the NAString type.
-NA_IAPI NAString* naNewStringWithFileContents(const char* filename);
-
-// Reads a full file and returns it as a new NAByteArray.
-// Warning: This function is only useful if you read or store raw data! The 
-// NAByteArray struct is not endianness-aware. Use the reading and writing
-// functions of NABuffer when handling multi-byte values instead.
-NA_IAPI NAByteArray* naInitByteArrayWithFileContents( NAByteArray* array,
-                                                       const char* filename);
 
 // Scans a Decimal of the type NAInt from the console.
 NA_IAPI NAInt naScanDecimal();

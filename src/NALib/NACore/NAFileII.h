@@ -363,62 +363,10 @@ NA_IDEF NAFilesize naWriteFileBytes(NAFile* file, const void* ptr, NAFilesize by
 
 
 
-NA_IDEF NAByteArray* naInitByteArrayFromFile(NAByteArray* bytearray, NAFile* file, NAFilesize bytesize){
-  bytearray = naInitByteArrayWithBytesize(bytearray, (NAInt)bytesize);
-  naReadFileBytes(file, naGetByteArrayMutablePointer(bytearray), bytesize);
-  return bytearray;
-}
-
-
-NA_IDEF NAString* naNewStringFromFile(NAFile* file, NAFilesize bytesize){
-  NAUTF8Char* stringbuf;
-  stringbuf = (NAUTF8Char*)naMalloc(-(NAInt)bytesize);
-  naReadFileBytes(file, stringbuf, bytesize);
-  return naNewStringWithMutableUTF8Buffer(stringbuf, -(NAInt)bytesize, NA_MEMORY_CLEANUP_FREE);
-}
-
-
 
 // ////////////////////////////
 // General input output functions
 // ////////////////////////////
-
-
-NA_IDEF NAString* naNewStringWithFileContents(const char* filename){
-  NAString* string;
-  NAFile file;
-  NAFilesize totalsize;
-  file = naMakeFileReadingFilename(filename);
-  totalsize = naComputeFileBytesize(&file);
-  #ifndef NDEBUG
-    #if (NA_SYSTEM_ADDRESS_BITS <= 32)
-      if(totalsize > NA_INT32_MAX)
-        naError("naInitByteArrayWithFileContents", "Trying to read more than 2 GiB of data from file on a system not using 64 bits.");
-    #endif
-  #endif
- string = naNewStringFromFile(&file, totalsize);
- naCloseFile(&file);
- return string;
-}
-
-
-
-NA_IDEF NAByteArray* naInitByteArrayWithFileContents(NAByteArray* bytearray, const char* filename){
-  NAFile file;
-  NAFilesize filesize;
-  file = naMakeFileReadingFilename(filename);
-  if(!naIsFileOpen(&file)){return NA_NULL;}
-  filesize = naComputeFileBytesize(&file);
-  #ifndef NDEBUG
-    #if (NA_SYSTEM_ADDRESS_BITS <= 32)
-      if(filesize > NA_INT32_MAX)
-        naError("naInitByteArrayWithFileContents", "Trying to read more than 2 GiB of data from file on a system not using 64 bits.");
-    #endif
-  #endif
-  bytearray = naInitByteArrayFromFile(bytearray, &file, filesize);
-  naCloseFile(&file);
-  return bytearray;
-}
 
 
 

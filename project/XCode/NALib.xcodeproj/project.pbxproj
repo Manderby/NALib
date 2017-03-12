@@ -15,7 +15,6 @@
 		9087F6F81E2C30AB00867CA7 /* NAMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F6B51E2C30AB00867CA7 /* NAMemory.c */; };
 		9087F6F91E2C30AB00867CA7 /* NASystem.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F6B71E2C30AB00867CA7 /* NASystem.c */; };
 		9087F6FA1E2C30AB00867CA7 /* NAMoney.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F6C51E2C30AB00867CA7 /* NAMoney.c */; };
-		9087F6FB1E2C30AB00867CA7 /* NAArray.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F6D51E2C30AB00867CA7 /* NAArray.c */; };
 		9087F6FC1E2C30AB00867CA7 /* NAOldBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F6D71E2C30AB00867CA7 /* NAOldBuffer.c */; };
 		9087F6FD1E2C30AB00867CA7 /* NAByteArray.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F6D91E2C30AB00867CA7 /* NAByteArray.c */; };
 		9087F6FE1E2C30AB00867CA7 /* NAHeap.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F6DD1E2C30AB00867CA7 /* NAHeap.c */; };
@@ -98,7 +97,6 @@
 		9087F6D11E2C30AB00867CA7 /* NARandom.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NARandom.h; sourceTree = "<group>"; };
 		9087F6D21E2C30AB00867CA7 /* NAStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAStack.h; sourceTree = "<group>"; };
 		9087F6D31E2C30AB00867CA7 /* NAString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAString.h; sourceTree = "<group>"; };
-		9087F6D51E2C30AB00867CA7 /* NAArray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAArray.c; sourceTree = "<group>"; };
 		9087F6D61E2C30AB00867CA7 /* NAArrayII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAArrayII.h; sourceTree = "<group>"; };
 		9087F6D71E2C30AB00867CA7 /* NAOldBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAOldBuffer.c; sourceTree = "<group>"; };
 		9087F6D81E2C30AB00867CA7 /* NAOldBufferII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAOldBufferII.h; sourceTree = "<group>"; };
@@ -233,7 +231,6 @@
 		9087F6D41E2C30AB00867CA7 /* NAStruct */ = {
 			isa = PBXGroup;
 			children = (
-				9087F6D51E2C30AB00867CA7 /* NAArray.c */,
 				9087F6D61E2C30AB00867CA7 /* NAArrayII.h */,
 				9087F6D71E2C30AB00867CA7 /* NAOldBuffer.c */,
 				9087F6D81E2C30AB00867CA7 /* NAOldBufferII.h */,
@@ -386,7 +383,6 @@
 				900B5ADA1E2E26FE00628161 /* testMemory.c in Sources */,
 				9087F7051E2C30AB00867CA7 /* NAUI.c in Sources */,
 				9087F70A1E2C30D000867CA7 /* testSystem.c in Sources */,
-				9087F6FB1E2C30AB00867CA7 /* NAArray.c in Sources */,
 				9087F6FD1E2C30AB00867CA7 /* NAByteArray.c in Sources */,
 				9087F6FE1E2C30AB00867CA7 /* NAHeap.c in Sources */,
 				9087F6FF1E2C30AB00867CA7 /* NAList.c in Sources */,

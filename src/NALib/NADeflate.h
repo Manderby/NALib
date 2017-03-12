@@ -30,14 +30,14 @@ typedef enum{
 
 // Decompresses a bit stream which is encoded in the ZLIB format and stores it
 // at the current writing position in the given buffer.
-NA_API void naFillBufferWithZLIBDecompression(NAASDFBuffer* buffer,
-                                              NAASDFBuffer* input);
+NA_API void naFillBufferWithZLIBDecompression(NABuffer* buffer,
+                                              NABuffer* input);
 
 // Compresses a bit stream with ZLIB and stores it at the current writing
 // position in the given buffer. The compression level denotes, how strong
 // the compression shall be.
-NA_API void naFillBufferWithZLIBCompression(  NAASDFBuffer* buffer,
-                                              NAASDFBuffer* input,
+NA_API void naFillBufferWithZLIBCompression(  NABuffer* buffer,
+                                              NABuffer* input,
                                               NADeflateCompressionLevel level);
 
 

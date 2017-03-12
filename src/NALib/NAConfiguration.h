@@ -92,7 +92,7 @@
 // Buffers
 // ////////////////////////////////
 
-// Define the size of a buffer part used for NAASDFBuffer:
+// Define the size of a buffer part used for NABuffer:
 //
 // With the following macro, you can define, what the default byte size of one
 // buffer part shall be. The value 0 denotes that the memory page size will be

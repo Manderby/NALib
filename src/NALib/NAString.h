@@ -8,7 +8,6 @@
   extern "C"{
 #endif
 
-#include "NAByteArray.h"
 #include "NAMemory.h"
 
 // Note that in NALib, a String is internally always encoded in UTF-8.

@@ -159,11 +159,11 @@ NA_HIDEF void naInjectListElement(NAList* list, NAListElement* element){
   list->count++;
 }
 NA_HIDEF void naInjectConstListElement(NAList* list, NAListElement* element, const void* data){
-  element->ptr = naMakePtrWithConstData(data, NA_ZERO, NA_ZERO);
+  element->ptr = naMakePtrWithDataConst(data);
   naInjectListElement(list, element);
 }
 NA_HIDEF void naInjectMutableListElement(NAList* list, NAListElement* element, void* data){
-  element->ptr = naMakePtrWithMutableData(data, NA_ZERO, NA_ZERO, NA_MEMORY_CLEANUP_NONE);
+  element->ptr = naMakePtrWithDataMutable(data, NA_MEMORY_CLEANUP_NONE);
   naInjectListElement(list, element);
 }
 
@@ -490,7 +490,7 @@ NA_IDEF void naMoveListFirstToLast(NAList* src, NAList* dst){
 
 NA_IDEF NAListIterator naMakeListIteratorAccessor(const NAList* list){
   NAListIterator iter;
-  iter.listptr = naMakePtrWithConstData(list, NA_ZERO, NA_ZERO);
+  iter.listptr = naMakePtrWithDataConst(list);
   iter.cur = (NAListElement*)(&(list->sentinel));
   #ifndef NDEBUG
     iter.mutator = NA_FALSE;
@@ -503,7 +503,7 @@ NA_IDEF NAListIterator naMakeListIteratorAccessor(const NAList* list){
 
 NA_IDEF NAListIterator naMakeListIteratorMutator(const NAList* list){
   NAListIterator iter;
-  iter.listptr = naMakePtrWithConstData(list, NA_ZERO, NA_ZERO);
+  iter.listptr = naMakePtrWithDataConst(list);
   iter.cur = (NAListElement*)(&(list->sentinel));
   #ifndef NDEBUG
     iter.mutator = NA_TRUE;
@@ -516,7 +516,7 @@ NA_IDEF NAListIterator naMakeListIteratorMutator(const NAList* list){
 
 NA_IDEF NAListIterator naMakeListIteratorModifier(NAList* list){
   NAListIterator iter;
-  iter.listptr = naMakePtrWithMutableData(list, NA_ZERO, NA_ZERO, NA_MEMORY_CLEANUP_NONE);
+  iter.listptr = naMakePtrWithDataMutable(list, NA_MEMORY_CLEANUP_NONE);
   iter.cur = (NAListElement*)(&(list->sentinel));
   #ifndef NDEBUG
     iter.mutator = NA_TRUE;
@@ -544,8 +544,6 @@ NA_IDEF NABool naLocateListFirst(NAListIterator* iterator){
   #ifndef NDEBUG
     if(naIsListEmpty(list))
       naError("naLocateListFirst", "List is empty");
-  #endif
-  #ifndef NDEBUG
     iterator->cur->itercount--;
   #endif
   iterator->cur = list->sentinel.next;
@@ -562,8 +560,6 @@ NA_IDEF NABool naLocateListLast(NAListIterator* iterator){
   #ifndef NDEBUG
     if(naIsListEmpty(list))
       naError("naLocateListFirst", "List is empty");
-  #endif
-  #ifndef NDEBUG
     iterator->cur->itercount--;
   #endif
   iterator->cur = list->sentinel.prev;
@@ -582,8 +578,6 @@ NA_IDEF NABool naLocateListPosition(NAListIterator* iterator, NAListPos listpos)
       {naCrash("naLocateListPosition", "listpos is NULL. Use naGetListInitialPosition for an undefined listpos."); return NA_FALSE;}
     if(elem->list != naGetPtrConst(&(iterator->listptr)))
       naError("naLocateListPosition", "The given position lies not within list.");
-  #endif
-  #ifndef NDEBUG
     iterator->cur->itercount--;
   #endif
   iterator->cur = elem;
@@ -642,7 +636,7 @@ NA_IDEF NABool naIterateList(NAListIterator* iterator, NAInt step){
 
 
 
-NA_IDEF const void* naGetListPrevConst(NAListIterator* iterator){
+NA_IDEF const void* naGetListPrevConst(const NAListIterator* iterator){
   #ifndef NDEBUG
     if(naIsListEmpty((const NAList*)naGetPtrConst(&(iterator->listptr))))
       naError("naGetListPrevConst", "List is empty");
@@ -662,7 +656,7 @@ NA_IDEF void* naGetListPrevMutable(NAListIterator* iterator){
 }
 
 
-NA_IDEF const void* naGetListCurrentConst(NAListIterator* iterator){
+NA_IDEF const void* naGetListCurrentConst(const NAListIterator* iterator){
   #ifndef NDEBUG
     // Note that the empty check has been removed. Getting the current elem
     // of an empty list automatically returns NULL. This is a feature!
@@ -686,7 +680,7 @@ NA_IDEF void* naGetListCurrentMutable(NAListIterator* iterator){
 }
 
 
-NA_IDEF const void* naGetListNextConst(NAListIterator* iterator){
+NA_IDEF const void* naGetListNextConst(const NAListIterator* iterator){
   #ifndef NDEBUG
     if(naIsListEmpty((const NAList*)naGetPtrConst(&(iterator->listptr))))
       naError("naGetListNextConst", "List is empty");
@@ -944,13 +938,6 @@ NA_IDEF NABool naIsListAtPosition(NAListIterator* iterator, NAListPos listpos){
 NA_IDEF NABool naIsListAtInitial(NAListIterator* iterator){
   const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
   return (&(list->sentinel) == iterator->cur);
-}
-
-
-
-NA_IDEF NABool naIsListIteratorEmpty(NAListIterator* iterator){
-  const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
-  return naIsListEmpty(list);
 }
 
 

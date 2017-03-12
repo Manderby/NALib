@@ -154,7 +154,7 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 // from a list. It gives the programmer way more flexibility to move freely
 // within a list.
 //
-// To keep the API clean, most function names do not use "ListIterator" but
+// To keep the API clean, the function names do not use "ListIterator" but
 // instead simply use "List" as if the iterators would denote the list per se.
 //
 // Having a separate iterator has several advantages. It may need a little bit
@@ -184,9 +184,9 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 // The naMakeListIteratorXXX functions will create a new iterator which is
 // positioned at the initial position of the list. From there on, a list
 // can be searched forward or backward. You define, if the iterator can
-// mutate the contents and return mutable elements from the list. If an
-// iterator is created const, add or remove functions will emit a warning
-// when NDEBUG is undefined. Therefore, you can even savely transfer iterators
+// only access the contents, mutate them or even modify the whole list.
+// Add or remove functions for example will emit a warning if the iterator
+// is not a modifier. Therefore, you can even savely transfer iterators
 // to third-party programmers.
 //
 // After you are done using the iterator, you should clear it with a call to
@@ -197,13 +197,14 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 NA_IAPI NAListIterator naMakeListIteratorAccessor(const NAList* list);
 NA_IAPI NAListIterator naMakeListIteratorMutator(const NAList* list);
 NA_IAPI NAListIterator naMakeListIteratorModifier(NAList* list);
+
 NA_IAPI void naClearListIterator(NAListIterator* iterator);
 
 // After having created an iterator, it is at the initial position but you may
 // position it to a desired element by using one of the Locate functions:
 //
 // First:         Moves iterator to first element. This function is very fast.
-// Last:          Moves iterator to e last element. This function is very fast.
+// Last:          Moves iterator to last element. This function is very fast.
 // Position:      The iterator moves to the desired NAListPos. Such a position
 //                is returned for example when adding a new element to the list.
 //                This function is very fast.
@@ -219,9 +220,11 @@ NA_IAPI void naClearListIterator(NAListIterator* iterator);
 //
 // The Content and Index variants will return NA_FALSE, if the element has not
 // been found and NA_TRUE if it has been found. If not found, the iterator will
-// point to the initial list position. The other variants will always return
-// NA_TRUE.
-
+// point to the initial list position.
+// 
+// The other variants will always return NA_TRUE. That's because of speed.
+// Erroneous behaviour will only be checked when NDEBUG is undefined and hence
+// the programmer is already forced to do things right when debugging the code.
 NA_IAPI NABool naLocateListFirst    (NAListIterator* iterator);
 NA_IAPI NABool naLocateListLast     (NAListIterator* iterator);
 NA_IAPI NABool naLocateListPosition (NAListIterator* iterator, NAListPos listpos);
@@ -232,12 +235,12 @@ NA_API  NABool naLocateListIndex    (NAListIterator* iterator, NAInt indx);
 
 // /////////////////////////////////
 // Iterating
-// Moves the internal pointer forward or backward the given number of positive
-// or negative steps respectively. If the step over- or underflows the stored
+// Moves the iterator forward or backward the given number of positive or
+// negative steps respectively. If the step over- or underflows the stored
 // elements and NDEBUG is undefined, a warning is emitted.
 //
 // Returns NA_FALSE when one of the two ends of the list is reached.
-NA_IAPI NABool  naIterateList    (NAListIterator* iterator, NAInt step);
+NA_IAPI NABool naIterateList        (NAListIterator* iterator, NAInt step);
 
 
 // /////////////////////////////////
@@ -247,12 +250,12 @@ NA_IAPI NABool  naIterateList    (NAListIterator* iterator, NAInt step);
 // If the iterator is at a position where the desired element does not exist
 // (for example the next element when being at the last element), a Null-Pointer
 // will be returned without warning.
-NA_IAPI const void* naGetListPrevConst      (NAListIterator* iterator);
-NA_IAPI       void* naGetListPrevMutable    (NAListIterator* iterator);
-NA_IAPI const void* naGetListCurrentConst   (NAListIterator* iterator);
-NA_IAPI       void* naGetListCurrentMutable (NAListIterator* iterator);
-NA_IAPI const void* naGetListNextConst      (NAListIterator* iterator);
-NA_IAPI       void* naGetListNextMutable    (NAListIterator* iterator);
+NA_IAPI const void* naGetListPrevConst      (const NAListIterator* iterator);
+NA_IAPI       void* naGetListPrevMutable    (      NAListIterator* iterator);
+NA_IAPI const void* naGetListCurrentConst   (const NAListIterator* iterator);
+NA_IAPI       void* naGetListCurrentMutable (      NAListIterator* iterator);
+NA_IAPI const void* naGetListNextConst      (const NAListIterator* iterator);
+NA_IAPI       void* naGetListNextMutable    (      NAListIterator* iterator);
 
 
 // /////////////////////////////////
@@ -298,8 +301,6 @@ NA_IAPI void* naRemoveListNextMutable   (NAListIterator* iterator);
 NA_IAPI NABool    naIsListAtFirst           (NAListIterator* iterator);
 NA_IAPI NABool    naIsListAtLast            (NAListIterator* iterator);
 NA_IAPI NABool    naIsListAtPosition        (NAListIterator* iterator, NAListPos listpos);
-
-NA_IAPI NABool    naIsListIteratorEmpty     (NAListIterator* iterator);
 NA_IAPI NABool    naIsListAtInitial         (NAListIterator* iterator);
 
 NA_IAPI NAListPos naGetListPrevPosition     (NAListIterator* iterator);

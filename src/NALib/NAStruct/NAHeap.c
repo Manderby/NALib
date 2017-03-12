@@ -295,7 +295,7 @@ NA_HDEF void naInsertHeapElementConstNoBack(NAHeap* heap, const void* data, cons
   if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapNoBackEntry*)(heap->data);
-  thedata[newindex].ptr = naMakePtrWithConstData(data, NA_ZERO, NA_ZERO);
+  thedata[newindex].ptr = naMakePtrWithDataConst(data);
   thedata[newindex].key = key;
   heap->count++;
 }
@@ -312,7 +312,7 @@ NA_HDEF void naInsertHeapElementConstBack(NAHeap* heap, const void* data, const 
   if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapBackEntry*)(heap->data);
-  thedata[newindex].ptr = naMakePtrWithConstData(data, NA_ZERO, NA_ZERO);
+  thedata[newindex].ptr = naMakePtrWithDataConst(data);
   thedata[newindex].key = key;
   if(backpointer){
     thedata[newindex].backpointer = backpointer;
@@ -342,7 +342,7 @@ NA_HDEF void naInsertHeapElementMutableNoBack(NAHeap* heap, void* data, const vo
   if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapNoBackEntry*)(heap->data);
-  thedata[newindex].ptr = naMakePtrWithMutableData(data, NA_ZERO, NA_ZERO, NA_MEMORY_CLEANUP_NONE);
+  thedata[newindex].ptr = naMakePtrWithDataMutable(data, NA_MEMORY_CLEANUP_NONE);
   thedata[newindex].key = key;
   heap->count++;
 }
@@ -359,7 +359,7 @@ NA_HDEF void naInsertHeapElementMutableBack(NAHeap* heap, void* data, const void
   if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapBackEntry*)(heap->data);
-  thedata[newindex].ptr = naMakePtrWithMutableData(data, NA_ZERO, NA_ZERO, NA_MEMORY_CLEANUP_NONE);
+  thedata[newindex].ptr = naMakePtrWithDataMutable(data, NA_MEMORY_CLEANUP_NONE);
   thedata[newindex].key = key;
   if(backpointer){
     thedata[newindex].backpointer = backpointer;

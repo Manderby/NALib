@@ -143,11 +143,11 @@ void testNAPtr(void){
   ptr = naMakePtrWithBytesize(100);
   
   printf("Creating NAPtr with const buffer.\n");
-  ptrconst = naMakePtrWithConstData(string, strlen(string), 1);
+  ptrconst = naMakePtrWithDataConst(string);
   
   printf("Creating NAPtr with mutable buffer.\n");
   array = (int*)naMalloc(sizeof(int) * 5);
-  ptrmutable = naMakePtrWithMutableData(array, 5 * sizeof(int), 0, NA_MEMORY_CLEANUP_FREE);
+  ptrmutable = naMakePtrWithDataMutable(array, NA_MEMORY_CLEANUP_FREE);
 
   printf("Creating NAPtr with extraction.\n");
   ptrExtract = naMakePtrWithExtraction(&ptrmutable, 2 * sizeof(int), 3 * sizeof(int));

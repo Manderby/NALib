@@ -329,13 +329,8 @@ NA_IAPI NAPtr naMakePtrWithBytesize(NAInt bytesize);
 // The mutable variant can take ownership of the given data based on the given
 // cleanuphint and expects a call to the corresponding cleanup function (see
 // below). The cleanuphint for the const variant is NA_MEMORY_CLEANUP_NONE.
-NA_IAPI NAPtr naMakePtrWithConstData(  const void* data,
-                                               NAInt bytesizehint,
-                                               NAInt zerofillhint);
-NA_IAPI NAPtr naMakePtrWithMutableData(      void* data,
-                                               NAInt bytesizehint,
-                                               NAInt zerofillhint,
-                                     NAMemoryCleanup cleanuphint);
+NA_IAPI NAPtr naMakePtrWithDataConst(  const void* data);
+NA_IAPI NAPtr naMakePtrWithDataMutable(      void* data, NAMemoryCleanup cleanuphint);
 
 // Assumes srcptr to be an array of bytes and creates an NAPtr referencing an
 // extraction thereof. DOES NOT COPY!
@@ -379,82 +374,6 @@ NA_IAPI       void* naGetPtrMutable (      NAPtr* ptr);
 // useful when debugging. When NDEBUG is defined, this function always returns
 // NA_FALSE.
 NA_IAPI NABool naIsPtrConst(const NAPtr* ptr);
-
-
-
-
-
-// ////////////////////////
-// NAMemoryBlock
-// ////////////////////////
-
-// The full type definition is in the file "NAMemoryII.h"
-typedef struct NAMemoryBlock NAMemoryBlock;
-
-// Returns a memory block which is empty.
-NA_IAPI NAMemoryBlock naMakeMemoryBlock();
-
-// Creates a new memory block of the given bytesize. The bytesize
-// parameter can be negative. See naMalloc function for more information.
-NA_IAPI NAMemoryBlock naMakeMemoryBlockWithBytesize(NAInt bytesize);
-
-// Uses the given bufptr WITHOUT copying as a memory block with the given
-// bytesize. The programmer is responsible that the given bytesize is not
-// overflowing the buffer.
-// The bytesize can be negative. If so, the absolute value of bytesize is
-// used but the given bufptr is expected to to have one or more bytes appended
-// which are filled with binary zero. Hence, the array can safely be assumed to
-// be null-terminated. This also serves as a hint for functions like
-// naMakePtrWithConstData
-NA_IAPI NAMemoryBlock naMakeMemoryBlockWithConstData(const void* bufptr,
-                                                             NAInt bytesize);
-NA_IAPI NAMemoryBlock naMakeMemoryBlockWithMutableData(    void* bufptr,
-                                                             NAInt bytesize,
-                                                   NAMemoryCleanup cleanuphint);
-
-// Makes a new NAMemoryBlock struct containing a sub-part of the given source
-// memory block. Does NOT copy! The byteoffset and bytesize are given in bytes
-// and must be positive.
-NA_IAPI NAMemoryBlock naMakeMemoryBlockWithExtraction(
-                                            const NAMemoryBlock* srcmemblock,
-                                                          NAUInt byteoffset,
-                                                          NAUInt bytesize);
-
-// Frees the memory for the memory block.
-NA_IAPI void naFreeMemoryBlock(NAMemoryBlock* memblock);
-
-// Returns size information about the memory block. The maxindex returns
-// bytesize-1 but will emit an error when NDEBUG is undefined and the bytesize
-// is 0.
-NA_IAPI NAUInt naGetMemoryBlockBytesize(const NAMemoryBlock* memblock);
-NA_IAPI NAUInt naGetMemoryBlockMaxIndex(const NAMemoryBlock* memblock);
-NA_IAPI NABool naIsMemoryBlockEmpty(const NAMemoryBlock* memblock);
-
-// Invalidates the memory block by setting its bytesize to 0. No access can
-// be performed anymore. But the bytesize can be retrieved.
-NA_IAPI void naVoidMemoryBlock(NAMemoryBlock* memblock);
-
-// Returns either a const or mutable pointer to the first byte of the given
-// memory block
-NA_IAPI const void* naGetMemoryBlockConstPointer(const NAMemoryBlock* memblock);
-NA_IAPI void* naGetMemoryBlockMutablePointer(          NAMemoryBlock* memblock);
-
-// Returns either a const or mutable pointer to the byte at the given index.
-NA_IAPI const void* naGetMemoryBlockConstByte(   const NAMemoryBlock* memblock,
-                                                               NAUInt indx);
-NA_IAPI void* naGetMemoryBlockMutableByte(             NAMemoryBlock* memblock,
-                                                               NAUInt indx);
-// Returns true if this memory block stores const content. Only useful when
-// debugging. When NDEBUG is defined, this function always returns NA_FALSE.
-NA_IAPI NABool naIsMemoryBlockConst(NAMemoryBlock* memblock);
-
-// A debugging function returning true, if the given memory block is declared
-// to be null terminated. If NDEBUG is defined, this function is undefined
-// and not available. The author does not want to propose any assumption.
-// Therefore it is also marked as a helper function.
-#ifndef NDEBUG
-  NA_HIAPI NABool naIsMemoryBlockNullTerminated(const NAMemoryBlock* memblock);
-#endif
 
 
 

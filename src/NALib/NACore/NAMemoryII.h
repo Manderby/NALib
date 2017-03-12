@@ -478,8 +478,8 @@ struct NAPtr{
   } data;
   #ifndef NDEBUG
     NAUInt flags;              // This field stores some flags.
-    NAUInt visiblebytesize;    // nof bytes of the visible byte storage
-    NAUInt accessiblebytesize; // nof bytes of the accessible byte storage
+//    NAUInt visiblebytesize;    // nof bytes of the visible byte storage
+//    NAUInt accessiblebytesize; // nof bytes of the accessible byte storage
   #endif
 };
 // Note that this is one of the very, very rare situations, where a union type
@@ -520,11 +520,7 @@ struct NAPtr{
 // tag NAPtr values with various information.
 #ifndef NDEBUG
   #define NA_PTR_CONST_DATA                 0x01
-  #define NA_PTR_HAS_VISIBLE_BYTECOUNT      0x02
-  #define NA_PTR_HAS_ACCESSIBLE_BYTECOUNT   0x04
-  #define NA_PTR_NULL_TERMINATED            0x08
-  #define NA_PTR_CLEANED                    0x10
-
+  #define NA_PTR_CLEANED                    0x02
 
   // Marks an NAPtr to know what the cleanup method shall be. This will later
   // on be used when cleaning the NAPtr. It the used method will not correspond
@@ -538,60 +534,6 @@ struct NAPtr{
   }
   
   
-
-  // Marks an NAPtr to know what the bytesize visible to the programmer is.
-  // The visible size may be different than the accessible size which is what
-  // the implementation can access without overflowing the allocated memory.
-  NA_HIDEF void naMarkPtrWithVisibleBytesize(NAPtr* ptr, NAInt visiblebytesize){
-    if(visiblebytesize < NA_ZERO)
-      naError("naMarkPtrWithVisibleBytesize", "visiblebytesize should not be negative.");
-    if(!ptr)
-      {naCrash("naMarkPtrWithVisibleBytesize", "ptr is Null-Pointer"); return;}
-    if(ptr->flags & NA_PTR_HAS_VISIBLE_BYTECOUNT)
-      naError("naMarkPtrWithVisibleBytesize", "visible size already marked");
-    ptr->flags |= NA_PTR_HAS_VISIBLE_BYTECOUNT;
-    ptr->visiblebytesize = visiblebytesize;
-  }
-  
-  
-
-  NA_HIDEF void naMarkPtrWithAccessibleBytesize(NAPtr* ptr, NAInt accessiblebytesize, NABool nullterminated){
-    NAUInt nullindx;
-    if(!ptr)
-      {naCrash("naMarkPtrWithAccessibleBytesize", "ptr is Null-Pointer"); return;}
-    if(!(ptr->flags & NA_PTR_HAS_VISIBLE_BYTECOUNT))
-      naError("naMarkPtrWithAccessibleBytesize", "visible size must be marked first");
-    if(ptr->flags & NA_PTR_HAS_ACCESSIBLE_BYTECOUNT)
-      naError("naMarkPtrWithAccessibleBytesize", "accessible size already marked");
-    if(accessiblebytesize < NA_ZERO)
-      naError("naMarkPtrWithAccessibleBytesize", "accessiblesize should not be negative.");
-    if((NAUInt)accessiblebytesize < ptr->visiblebytesize)
-      naError("naMarkPtrWithAccessibleBytesize", "accessiblesize should not be smaller than the visible size.");
-    if(nullterminated && (accessiblebytesize == ptr->visiblebytesize))
-      naError("naMarkPtrWithAccessibleBytesize", "Null termination is bogus when visible and accessible size are equal.");
-    ptr->flags |= NA_PTR_HAS_ACCESSIBLE_BYTECOUNT;
-    if(nullterminated){ptr->flags |= NA_PTR_NULL_TERMINATED;}
-    ptr->accessiblebytesize = accessiblebytesize;
-    
-    // Now, we check if the last bytes are indeed zero
-    nullindx = ptr->visiblebytesize;
-    while(nullindx < ptr->accessiblebytesize){
-      if(((const NAByte*)(ptr->data.constd))[nullindx] != '\0')
-        naError("naMarkPtrWithAccessibleBytesize", "promised null-termination is not null");
-      nullindx++;
-    }
-  }
-
-
-
-  NA_HIDEF NABool naIsPtrNullTerminated(const NAPtr* ptr){
-    if(!ptr)
-      {naCrash("naIsPtrNullTerminated", "ptr is Null-Pointer"); return NA_FALSE;}
-    if(!(ptr->flags & NA_PTR_HAS_ACCESSIBLE_BYTECOUNT))
-      naError("naIsPtrNullTerminated", "No accessible size information present. Ptr may or may not be null-terminated. Return value is always false.");
-    return (ptr->flags & NA_PTR_NULL_TERMINATED);
-  }
-  
 #endif
 
 
@@ -604,8 +546,6 @@ NA_IDEF NAPtr naMakeNullPtr(){
     ptr.flags = NA_ZERO; // Do not mark a null pointer as const. Otherwise many
                          // more errors will spawn.
     naMarkPtrCleanup(&ptr, NA_MEMORY_CLEANUP_NONE);
-    naMarkPtrWithVisibleBytesize(&ptr, NA_ZERO);
-    naMarkPtrWithAccessibleBytesize(&ptr, NA_ZERO, NA_FALSE);
   #endif
   return ptr;
 }
@@ -625,13 +565,6 @@ NA_IDEF NAPtr naMakePtrWithBytesize(NAInt bytesize){
   #ifndef NDEBUG
     ptr.flags = NA_ZERO;
     naMarkPtrCleanup(&ptr, NA_MEMORY_CLEANUP_FREE);
-    if(bytesize < NA_ZERO){
-      naMarkPtrWithVisibleBytesize(&ptr, -bytesize);
-      naMarkPtrWithAccessibleBytesize(&ptr, naGetNullTerminationBytesize(bytesize), NA_TRUE);
-    }else{
-      naMarkPtrWithVisibleBytesize(&ptr, bytesize);
-      naMarkPtrWithAccessibleBytesize(&ptr, bytesize, NA_FALSE);
-    }
   #endif
   return ptr;
 }
@@ -743,49 +676,24 @@ NA_IDEF void naNaDeletePtr(NAPtr* ptr){
 
 
 
-NA_IDEF NAPtr naMakePtrWithConstData(const void* data, NAInt bytesizehint, NAInt zerofillhint){
+NA_IDEF NAPtr naMakePtrWithDataConst(const void* data){
   NAPtr ptr;
   ptr.data.constd = data;
   #ifndef NDEBUG
     ptr.flags = NA_PTR_CONST_DATA;
     naMarkPtrCleanup(&ptr, NA_MEMORY_CLEANUP_NONE);
-    if(bytesizehint < NA_ZERO)
-      naError("naMakePtrWithConstData", "bytesizehint should be greater-equal zero.");
-    if(zerofillhint < NA_ZERO)
-      naError("naMakePtrWithConstData", "zerofillhint should be greater-equal zero.");
-    // Note that when bytesizehint is zero, zerofillhint is obsolete.
-    if((bytesizehint == NA_ZERO) && (zerofillhint != NA_ZERO))
-      naError("naMakePtrWithConstData", "zerofillhint should be zero if bytesizehint is zero.");
-    naMarkPtrWithVisibleBytesize(&ptr, bytesizehint);
-    naMarkPtrWithAccessibleBytesize(&ptr, bytesizehint + zerofillhint, NA_FALSE);
-  #else
-    NA_UNUSED(bytesizehint);
-    NA_UNUSED(zerofillhint);
   #endif
   return ptr;
 }
 
 
 
-NA_IDEF NAPtr naMakePtrWithMutableData(void* data, NAInt bytesizehint, NAInt zerofillhint, NAMemoryCleanup cleanuphint){
+NA_IDEF NAPtr naMakePtrWithDataMutable(void* data, NAMemoryCleanup cleanuphint){
   NAPtr ptr;
   ptr.data.d = data;
   #ifndef NDEBUG
     ptr.flags = NA_ZERO;
     naMarkPtrCleanup(&ptr, cleanuphint);
-    if(zerofillhint < NA_ZERO)
-      naError("naMakePtrWithMutableData", "zerofillhint should be greater-equal zero.");
-    if(bytesizehint < NA_ZERO)
-      naError("naMakePtrWithMutableData", "bytesizehint should be greater-equal zero.");
-    // Note that when bytesizehint is zero, zerofillhint is obsolete.
-    if((bytesizehint == NA_ZERO) && (zerofillhint != NA_ZERO))
-      naError("naMakePtrWithMutableData", "zerofillhint should be zero if bytesizehint is zero.");
-    naMarkPtrWithVisibleBytesize(&ptr, bytesizehint);
-    naMarkPtrWithAccessibleBytesize(&ptr, bytesizehint + zerofillhint, NA_FALSE);
-  #else
-    NA_UNUSED(bytesizehint);
-    NA_UNUSED(zerofillhint);
-    NA_UNUSED(cleanuphint);
   #endif
   return ptr;
 }
@@ -805,28 +713,6 @@ NA_IDEF NAPtr naMakePtrWithExtraction(const NAPtr* srcptr, NAUInt byteoffset, NA
     // Now, we set the sizes and decide if certain flags still are valid.
     dstptr.flags = srcptr->flags & NA_PTR_CONST_DATA;
     naMarkPtrCleanup(&dstptr, NA_MEMORY_CLEANUP_NONE);
-    dstptr.visiblebytesize = bytesizehint;
-    dstptr.accessiblebytesize = srcptr->accessiblebytesize - byteoffset;
-    if(!(srcptr->flags & NA_PTR_HAS_VISIBLE_BYTECOUNT)){
-      // When no size information is available, the NAPtr struct has no
-      // purpose.
-      naError("naMakePtrWithExtraction", "No size information available. Cannot debug.");
-    }else{
-      if((byteoffset + bytesizehint) < srcptr->visiblebytesize){
-        // The (offset,size) pair implies the dst array to be smaller than the
-        // src array. Therefore, null-termination can no more be guaranteed.
-        dstptr.flags &= ~NA_PTR_NULL_TERMINATED;
-      }else if((srcptr->flags & NA_PTR_HAS_ACCESSIBLE_BYTECOUNT) && ((byteoffset + bytesizehint) > srcptr->accessiblebytesize)){
-        // the (offset,size) pair overflows the accessible size. Very bad!
-        naError("naMakePtrWithExtraction", "new offset and size overflows storage");
-      }else if((byteoffset + bytesizehint) > srcptr->visiblebytesize){
-        // the (offset,size) pair overflows the visible size. Ok, but not clean.
-        naError("naMakePtrWithExtraction", "new offset and size overflows visible storage");
-      }else{
-        // the (offset,size) pair ends precisely at where the src array ends.
-        // The flags therefore do not change. Nothing to do here.
-      }
-    }
   #else
     NA_UNUSED(bytesizehint);
   #endif
@@ -877,249 +763,6 @@ NA_IDEF NABool naIsPtrConst(const NAPtr* ptr){
 
 
 
-
-// //////////////////////////
-// NAMemoryBlock
-// //////////////////////////
-
-struct NAMemoryBlock{
-  NAPtr   ptr;          // pointer to the first byte
-  NAUInt  bytesize;     // size of the block in bytes. Always positive.
-};
-
-
-
-NA_IDEF NAMemoryBlock naMakeMemoryBlock(){
-  NAMemoryBlock memblock;
-  // Note that we do not initialize the ptr with naMakePtr. Relying solely on
-  // the size field is non-redundant, saves some time and sometimes even helps
-  // detecting whether you initialized your structs correctly as certain
-  // compilers will add guards to non-initialized pointers and will fire
-  // with an exception.
-  memblock.bytesize = NA_ZERO;
-  return memblock;
-}
-
-
-
-// bytesize must never be zero. When debugging, an error will be emitted and
-// you have to deal with the problem in a higher level function.
-NA_IDEF NAMemoryBlock naMakeMemoryBlockWithBytesize(NAInt bytesize){
-  NAMemoryBlock memblock;
-  #ifndef NDEBUG
-    if(bytesize == NA_ZERO)
-      naError("naMakeMemoryBlockWithBytesize", "bytesize is zero.");
-  #endif
-  memblock.ptr = naMakePtrWithBytesize(bytesize);
-  memblock.bytesize = naAbsi(bytesize);
-  return memblock;
-}
-
-
-
-NA_IDEF NAMemoryBlock naMakeMemoryBlockWithConstData(const void* data, NAInt bytesize){
-  NAMemoryBlock memblock;
-  memblock.ptr = naMakePtrWithConstData(data, bytesize, 0);
-  memblock.bytesize = naAbsi(bytesize);
-  return memblock;
-}
-
-
-
-NA_IDEF NAMemoryBlock naMakeMemoryBlockWithMutableData(void* data, NAInt bytesize, NAMemoryCleanup cleanuphint){
-  NAMemoryBlock memblock;
-  memblock.ptr = naMakePtrWithMutableData(data, bytesize, 0, cleanuphint);
-  memblock.bytesize = naAbsi(bytesize);
-  return memblock;
-}
-
-
-
-NA_IDEF NAMemoryBlock naMakeMemoryBlockWithExtraction(const NAMemoryBlock* srcmemblock, NAUInt byteoffset, NAUInt bytesize){
-  NAMemoryBlock dstmemblock;
-  #ifndef NDEBUG
-    if(naIsMemoryBlockEmpty(srcmemblock))
-      naError("naMakeMemoryBlockWithExtraction", "src memory block is empty");
-    if((NAInt)byteoffset < NA_ZERO)
-      naError("naMakeMemoryBlockWithExtraction", "offset seems to be negative but should be unsigned.");
-    if((NAInt)bytesize < NA_ZERO)
-      naError("naMakeMemoryBlockWithExtraction", "bytesize seems to be negative but should be unsigned.");
-    if((byteoffset + bytesize) > srcmemblock->bytesize)
-      naError("naMakeMemoryBlockWithExtraction", "offset and bytesize range out of bounds");
-  #endif
-  dstmemblock.ptr = naMakePtrWithExtraction(&(srcmemblock->ptr), byteoffset, bytesize);
-  dstmemblock.bytesize = bytesize;
-  return dstmemblock;
-}
-
-
-
-NA_IDEF void naFreeMemoryBlock(NAMemoryBlock* memblock){
-  naFreePtr(&(memblock->ptr));
-}
-
-
-
-NA_IDEF NAUInt naGetMemoryBlockBytesize(const NAMemoryBlock* memblock){
-  #ifndef NDEBUG
-    if(!memblock){
-      naCrash("naGetMemoryBlockBytesize", "memblock is Null-Pointer.");
-      return NA_TRUE;
-    }
-  #endif
-  return memblock->bytesize;
-}
-
-
-
-NA_IDEF NAUInt naGetMemoryBlockMaxIndex(const NAMemoryBlock* memblock){
-  #ifndef NDEBUG
-    if(!memblock){
-      naCrash("naGetMemoryBlockMaxIndex", "memblock is Null-Pointer.");
-      return NA_TRUE;
-    }
-    if(naIsMemoryBlockEmpty(memblock))
-      naError("naGetMemoryBlockConstPointer", "memblock is empty.");
-  #endif
-  return naMakeMaxWithEndi(memblock->bytesize);
-}
-
-
-
-NA_IDEF NABool naIsMemoryBlockEmpty(const NAMemoryBlock* memblock){
-  #ifndef NDEBUG
-    if(!memblock){
-      naCrash("naIsMemoryBlockEmpty", "memblock is Null-Pointer.");
-      return NA_TRUE;
-    }
-  #endif
-  return (memblock->bytesize == NA_ZERO);
-}
-
-
-
-NA_IDEF void naVoidMemoryBlock(NAMemoryBlock* memblock){
-  #ifndef NDEBUG
-    if(!memblock){
-      naCrash("naIsMemoryBlockEmpty", "memblock is Null-Pointer.");
-      return;
-    }
-  #endif
-  memblock->bytesize = NA_ZERO;
-}
-
-
-
-NA_IDEF const void* naGetMemoryBlockConstPointer(const NAMemoryBlock* memblock){
-  #ifndef NDEBUG
-    if(!memblock){
-      naCrash("naGetMemoryBlockConstPointer", "memblock is Null-Pointer.");
-      return NA_NULL;
-    }
-    if(naIsMemoryBlockEmpty(memblock))
-      naError("naGetMemoryBlockConstPointer", "memblock is empty.");
-  #endif
-  return naGetPtrConst(&(memblock->ptr));
-}
-
-
-
-NA_IDEF void* naGetMemoryBlockMutablePointer(NAMemoryBlock* memblock){
-  #ifndef NDEBUG
-    if(!memblock){
-      naCrash("naGetMemoryBlockMutablePointer", "memblock is Null-Pointer.");
-      return NA_NULL;
-    }
-    if(naIsMemoryBlockEmpty(memblock))
-      naError("naGetMemoryBlockMutablePointer", "memblock is empty.");
-  #endif
-  return naGetPtrMutable(&(memblock->ptr));
-}
-
-
-
-NA_IDEF const void* naGetMemoryBlockConstByte(const NAMemoryBlock* memblock, NAUInt indx){
-  #ifndef NDEBUG
-    if(!memblock){
-      naCrash("naGetMemoryBlockConstByte", "memblock is Null-Pointer.");
-      return NA_NULL;
-    }
-    if((NAInt)indx < NA_ZERO)
-      naError("naGetMemoryBlockConstByte", "indx seems to be negative but should be unsigned.");
-    if(naIsMemoryBlockEmpty(memblock))
-      naError("naGetMemoryBlockConstByte", "memblock is empty.");
-  #endif
-  #ifndef NDEBUG
-    if(indx >= memblock->bytesize)
-      naError("naGetMemoryBlockConstByte", "indx out of bounds");
-  #endif
-  return &(((const NAByte*)(naGetPtrConst(&(memblock->ptr))))[indx]);
-}
-
-
-
-NA_IDEF void* naGetMemoryBlockMutableByte(NAMemoryBlock* memblock, NAUInt indx){
-  #ifndef NDEBUG
-    if(!memblock){
-      naCrash("naGetMemoryBlockMutableByte", "memblock is Null-Pointer.");
-      return NA_NULL;
-    }
-    if((NAInt)indx < NA_ZERO)
-      naError("naGetMemoryBlockMutableByte", "indx seems to be negative but should be unsigned.");
-    if(naIsMemoryBlockEmpty(memblock))
-      naError("naGetMemoryBlockMutableByte", "memblock is empty.");
-  #endif
-  #ifndef NDEBUG
-    if(indx >= memblock->bytesize)
-      naError("naGetMemoryBlockMutableByte", "indx out of bounds");
-  #endif
-  return &(((NAByte*)(naGetPtrMutable(&(memblock->ptr))))[indx]);
-}
-
-
-
-NA_IDEF NABool naIsMemoryBlockConst(NAMemoryBlock* memblock){
-  #ifndef NDEBUG
-    if(!memblock){
-      naCrash("naIsMemoryBlockConst", "memblock is Null-Pointer.");
-      return NA_TRUE;
-    }
-    if(naIsMemoryBlockEmpty(memblock))
-      naError("naIsMemoryBlockConst", "memblock is empty.");
-    return naIsPtrConst(&(memblock->ptr));
-  #else
-    NA_UNUSED(memblock);
-    return NA_FALSE;
-  #endif
-}
-
-
-
-#ifndef NDEBUG
-
-  NA_HIDEF NABool naIsMemoryBlockNullTerminated(const NAMemoryBlock* memblock){
-    #ifndef NDEBUG
-      if(!memblock){
-        naCrash("naIsMemoryBlockNullTerminated", "memblock is Null-Pointer.");
-        return NA_TRUE;
-      }
-      if(naIsMemoryBlockEmpty(memblock))
-        naError("naIsMemoryBlockNullTerminated", "memblock is empty.");
-    #endif
-    return naIsPtrNullTerminated(&(memblock->ptr));
-  }
-
-#endif
-
-
-
-
-
-
-
-
-
-
 // //////////////////////////
 // NASmartPtr
 // //////////////////////////
@@ -1142,7 +785,7 @@ NA_IDEF NASmartPtr* naInitSmartPtrConst(NASmartPtr* sptr, NAMemoryCleanup smartp
         naError("naInitSmartPtr", "This smartptrcleanup method does not make sense");
     #endif
   #endif
-  sptr->ptr = naMakePtrWithConstData(data, NA_ZERO, NA_ZERO);
+  sptr->ptr = naMakePtrWithDataConst(data);
   naInitRefCount(&(sptr->refcount), smartptrcleanup, NA_MEMORY_CLEANUP_NONE);
   return sptr;
 }
@@ -1160,7 +803,7 @@ NA_IDEF NASmartPtr* naInitSmartPtrMutable(NASmartPtr* sptr, NAMemoryCleanup smar
     if(!naIsCleanupValid(datacleanup))
       naError("naInitSmartPtr", "datacleanup method invalid");
   #endif
-  sptr->ptr = naMakePtrWithMutableData(data, NA_ZERO, NA_ZERO, datacleanup);
+  sptr->ptr = naMakePtrWithDataMutable(data, datacleanup);
   naInitRefCount(&(sptr->refcount), smartptrcleanup, datacleanup);
   return sptr;
 }

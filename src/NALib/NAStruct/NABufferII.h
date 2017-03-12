@@ -11,7 +11,7 @@
 #include "../NAList.h"
 #include "../NACoord.h"
 
-typedef struct NAASDFBufferPart NAASDFBufferPart;
+typedef struct NABufferPart NABufferPart;
 
 
 typedef enum{
@@ -22,15 +22,15 @@ typedef enum{
   NA_BUFFER_SOURCE_FILE,
   NA_BUFFER_SOURCE_CONST_DATA,
   NA_BUFFER_SOURCE_MUTABLE_DATA,
-} NAASDFBufferType;
+} NABufferType;
 
 
 
-struct NAASDFBuffer{
+struct NABuffer{
   NARefCount refcount;
   
   void* src;                // A pointer to a source if available.
-  NAASDFBufferType srctype; // The type of the source
+  NABufferType srctype; // The type of the source
   NAInt srcoffset;          // The offset of the source relative to this range.
   
   NAList parts;             // List of all parts in this buffer
@@ -40,7 +40,7 @@ struct NAASDFBuffer{
   
   NAUInt flags;
   NARangei bufrange;
-  void (*fillPart)(NAASDFBuffer*, NAASDFBufferPart*);
+  void (*fillPart)(NABuffer*, NABufferPart*);
 
   NAInt endianness;                 // The current endianness
   NAEndiannessConverter converter;  // The endianness converter.

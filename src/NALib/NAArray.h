@@ -14,18 +14,18 @@
 // /////////////////////////////////////
 
 // Following is a very general implementation of an array, storing one type
-// of data. It uses allocation of memory for the required space and reference
-// counting. Note that this implementation may be marginally slower than the
-// default C-like array and uses quite a bit of space to store all metadata.
-// It has the big advantage though of knowing how many elements are stored
-// and hence being able to check for under- and overflows as well as being
-// able to have arbitrary sub-arrays without copying the contents.
+// of data. Note that this implementation may be marginally slower than the
+// default C-like array. It has the big advantage though of knowing how many
+// elements are stored and hence being able to check for under- and overflows
+// as well as locating elements counting from the end (using negative indexes).
 //
 // This array implementaiton is more for complex datastructure building. If
 // you are looking for a simple array of integers for example, better use the
 // traditional [] arrays.
 //
-// Important: You have to typecast the returned element-pointers!
+// Important: NAArray returns pointers to the elements. You have to typecast
+// the returned element-pointers! Also be aware that if the array stores
+// pointers, get functions will return a pointer to a pointer.
 
 
 #include "NAMemory.h"
@@ -33,102 +33,75 @@
 
 // The full type definition is in the file "NAArrayII.h"
 typedef struct NAArray NAArray;
+typedef struct NAArrayIterator NAArrayIterator;
 
 
 // ///////////////////////////
 // Constructors and Destructors. Read the readme.txt for explanation.
 // ///////////////////////////
 
-// Creates an NAArray struct denoting an EMPTY array.
+// Initializes an NAArray denoting an EMPTY array.
 NA_IAPI NAArray* naInitArray(NAArray* array);
 
-// Creates or fills a new NAArray struct with a given typesize in bytes and a
-// count.
-NA_API  NAArray* naInitArrayWithCount  (NAArray* array,
-                                            NAUInt typesize,
-                                            NAUInt count);
+// Initializes an NAArray with enough space for the given typesize and count.
+// Typesize denoes the number of bytes per element and count denotes the number
+// of elements.
+NA_API  NAArray* naInitArrayWithCount(        NAArray* array,
+                                                NAUInt typesize,
+                                                NAUInt count);
 
-// Creates or fills a new NAArray struct which contains the data of the given
-// buffer WITHOUT copying. The count denotes the number of elements in the
-// array, not bytes! The programmer is responsible for that count does not
-// overflows the buffer.
-// When memorycleanup is set to NA_MEMORY_CLEANUP_NONE, the array will not
-// own the memory. In any other case, the array will deallocate the given
-// buffer with the appropriate cleanup method when it is no longer used.
-// Note that count can not be negative. If count is null, an empty array is
-// created and the buffer will be deleted immediately, if there is a valid
-// memory cleanup option. You can not define clean up const buffers.
+// Creates an NAArray which stores the given data WITHOUT copying.
 //
 // Use these functions to encapsulate your own raw buffers into an NAArray.
 // There are two creation functions, one for const data and one for non-const.
 //
-// Note that NALib does NOT provide an API for calling constructors on
-// preallocated buffers. If you really need to do that, you have to do this
-// manually.
-NA_API  NAArray* naInitArrayWithConstBuffer(
-                                          NAArray* array,
-                                       const void* buffer,
-                                            NAUInt typesize,
-                                            NAUInt count);
-NA_API  NAArray* naInitArrayWithMutableBuffer(
-                                          NAArray* array,
-                                             void* buffer,
-                                            NAUInt typesize,
-                                            NAUInt count,
-                                   NAMemoryCleanup cleanup);
-
-// Fills dstarray with a desired part of srcarray.
-// offset and count can be negative: See naInitByteArrayExtraction for the
-// explanation of the arguments.
-NA_API  NAArray* naInitArrayExtraction( NAArray* dstarray,
-                                    const NAArray* srcarray,
-                                             NAInt offset,
-                                             NAInt count);
+// Typesize denoes the number of bytes per element and count denotes the number
+// of elements. The programmer is responsible for the total number of bytes
+// not overflowing the data range.
+//
+// When mutable data is stored, you can set the cleanup method which will clean
+// up the given memory pointer automatically upon clearing the NAArray.
+//
+// Note that if you need to call constructors or destructors upon all elements,
+// you can use naForeachArray.
+NA_API  NAArray* naInitArrayWithDataConst(    NAArray* array,
+                                           const void* data,
+                                                NAUInt typesize,
+                                                NAUInt count);
+NA_API  NAArray* naInitArrayWithDataMutable(  NAArray* array,
+                                                 void* data,
+                                                NAUInt typesize,
+                                                NAUInt count,
+                                       NAMemoryCleanup cleanup);
 
 // Clears the given array.
-NA_IAPI void naClearArray  (NAArray* array);
+NA_IAPI void naClearArray                    (NAArray* array);
 
+// Traverses the whole array and calls the accessor or mutator on each element.
+// A pointer to each element will be given to the accessor or mutator.
+NA_IAPI void naForeachArrayConst  (NAArray* array, NAAccessor accessor);
+NA_IAPI void naForeachArrayMutable(NAArray* array, NAMutator  mutator);
 
-// COPIES the contents of the array to a separate storage and decouples it
-// from the existing storage. See naDecoupleByteArray for more info. No
-// additional bytes are appended. COPIES ALWAYS!
-NA_IAPI void naDecoupleArray(NAArray* array);
+// Returns a pointer to the very first element of the raw data array.
+// Notice: This function is speedy.
+NA_IAPI const void* naGetArrayPointerConst  (const NAArray* array);
+NA_IAPI       void* naGetArrayPointerMutable(      NAArray* array);
 
-// Traverses the whole array and calls the mutator on each element. A pointer
-// to each element will be given to the mutator.
-NA_IAPI void naForeachArray(NAArray* array, NAMutator mutator);
-
-// Returns a pointer to the very first element of the raw data array. Warning:
-// result is garbage if the array is empty. Notice: This function is speedy.
-NA_IAPI const void* naGetArrayConstPointer  (const NAArray* array);
-NA_IAPI       void* naGetArrayMutablePointer(      NAArray* array);
-
-// Returns a POINTER to the element at the given index. If indx is negative, it
+// Returns a pointer to the element at the given index. If indx is negative, it
 // is searched from the end of the array. For example -1 denotes the last
 // element.
-// Warning: result is garbage if the array is empty.
+//
 // Note that calling this function too often might not be a good idea with
 // respect to speed. Try getting a pointer using naGetArrayPointer or this
 // function and use pointer arithmetic afterwards.
-// Returns the pointer to the desired element. Note that if the array stores
-// pointers, this function will return a pointer to a pointer.
-NA_IAPI const void* naGetArrayConstElement  (const NAArray* array, NAInt indx);
-NA_IAPI       void* naGetArrayMutableElement(      NAArray* array, NAInt indx);
+NA_IAPI const void* naGetArrayElementConst  (const NAArray* array, NAInt indx);
+NA_IAPI       void* naGetArrayElementMutable(      NAArray* array, NAInt indx);
 
-// Returns the number of elements in this array. Beware: This is different
-// from naGetByteArrayBytesize. The size returned by naGetByteArrayBytesize
-// is a size in bytes, not necessary the element count.
-// Also note that this function requires a (costly) division operation. When
-// using it a lot, for example in a loop, it might be a good idea to store the
-// count in a variable.
-NA_IAPI NAUInt naGetArrayCount(const NAArray* array);
-NA_IAPI NAUInt naGetArrayMaxIndex(const NAArray* array);
-
-// Returns the number of bytes needed to store one element.
-NA_IAPI NAUInt naGetArrayTypesize(const NAArray* array);
-
-// Returns true if the array is empty.
-NA_IAPI NABool naIsArrayEmpty(const NAArray* array);
+// Returns information about of nuber of elements in this array.
+NA_IAPI NAUInt naGetArrayCount    (const NAArray* array);
+NA_IAPI NAUInt naGetArrayMaxIndex (const NAArray* array);
+NA_IAPI NAUInt naGetArrayTypesize (const NAArray* array);
+NA_IAPI NABool naIsArrayEmpty     (const NAArray* array);
 
 
 
@@ -136,81 +109,110 @@ NA_IAPI NABool naIsArrayEmpty(const NAArray* array);
 // ////////////////////////////////////
 // Iteration functions
 //
-// Every NAArray has an internal index denoting the current element.
-// The programmer can control and access this element with iteration functions.
-// If no current element is set, NA_NULL is returned as a pointer. A typical
-// example of iteration is the following:
+// Before NALib verison 18, NAArray contained a built-in iterator. But starting
+// with Version 18, there exists NAArrayIterator, a structure separate from an
+// array. It gives the programmer way more flexibility to move freely within an
+// array.
+//
+// To keep the API clean, the function names do not use "ArrayIterator" but
+// instead simply use "Array" as if the iterators would denote the array per se.
+//
+// Having a separate iterator has several advantages. It may need a little bit
+// more coding but you are in much more control over the array. This is
+// especially useful in a multithreaded environment.
+//
+// The easiest way to implement an iteration is using a while loop:
 //
 // NAArray* myarray;
-// void* curelement;
-// naFirstArray(myarray);
-// while((curelement = naIterateArrayMutable(myarray, 1))){
+// NAArrayIterator iter = naMakeArrayIterator(myarray);
+// while(naIterateArray(&iter, 1)){
+//   void* curelement = naGetArrayCurrentMutable(iter);
 //   Do stuff with curelement.
 // }
+// naClearArrayIterator(&iter);
 //
-// You should enclose the while-condition in additional parantheses such that
-// a compiler knows that the returned pointer must be evaluated as a condition.
+// Be sure to not forget naClearArrayIterator. Otherwise when debugging, arrays
+// will keep references to iterators which are no longer in use and will hence
+// emit a warning when they are cleared. When NDEBUG is defined however, no
+// such checks will be performed.
+
+
+// ///////////////////////////////
+// Creating and positioning an iterator:
 //
-// Note that all iteration functions are inline. They are somewhat fast. But
-// walking through an array using pointer arithmetic is still faster as there
-// are quite a few if conditions to check when iterating. An iterator has some
-// advantages in certain situations though, as the position within the array
-// is stored persistently.
+// The naMakeArrayIteratorXXX functions will create a new iterator which is
+// positioned at the initial position of the array. From there on, an array
+// can be searched forward or backward. You define, if the iterator can
+// only access the contents or mutate them.
 //
-// When being inside the while scope, the array itself already points to the
-// element AFTER iteration.
+// After you are done using the iterator, you should clear it with a call to
+// naClearArrayIterator. NALib keeps track of where the iterators are when
+// NDEBUG is undefined. Therefore, you will get lots of warnings if the
+// iterators are not properly cleared. In the release code, no checks are
+// performed.
+NA_IAPI NAArrayIterator naMakeArrayIteratorAccessor(const NAArray* array);
+NA_IAPI NAArrayIterator naMakeArrayIteratorMutator (      NAArray* array);
+
+NA_IAPI void naClearArrayIterator(NAArrayIterator* iterator);
+
+// After having created an iterator, it is at the initial position but you may
+// position it to a desired element by using one of the Locate functions:
 //
-// Do NOT use a for-loop for iteration! Although it would not matter much with
-// the NAArray structure, it nontheless should be kept consistent with other
-// structures using iteration functions, see NAList for example.
-// Also, it is very hard to read.
-
-// With the following functions, you can initialize the internal pointer.
-NA_IAPI void naFirstArray                  (const NAArray* array);
-NA_IAPI void naLastArray                   (const NAArray* array);
-
-// Returns a pointer to the current element in retelement and iterates the
-// given steps forward or backwards by using positive or negative numbers. If
-// the returned byte is valid (inside the range of the array), the function
-// returns NA_TRUE. If it is not valid, the function returns NA_NULL, but the
-// returned pointer in retbyte will be computed just as if it was valid.
+// First:         Moves iterator to first element. This function is very fast.
+// Last:          Moves iterator to last element. This function is very fast.
+// Content:       A specific content pointer is searched within the array. This
+//                function is very slow.
+// Index:         The element with the specified index is searched. If the given
+//                index is negative, it denotes the element from the end of the
+//                list, whereas -1 denotes the last element.
 //
-// If step is 0, you simply access the current element. Note that for accessing
-// the current element, the use of naGetArrayCurrent would be preferable.
-NA_IAPI const void* naIterateArrayConst    (     const NAArray* array,
-                                                     NAInt step);
-NA_IAPI void* naIterateArrayMutable  (           NAArray* array,
-                                                     NAInt step);
+// The Content and Index variants will return NA_FALSE, if the element has not
+// been found and NA_TRUE if it has been found. If not found, the iterator will
+// point to the initial array position.
+// 
+// The other variants will always return NA_TRUE. That's because of speed.
+// Erroneous behaviour will only be checked when NDEBUG is undefined and hence
+// the programmer is already forced to do things right when debugging the code.
+NA_IAPI NABool naLocateArrayFirst    (NAArrayIterator* iterator);
+NA_IAPI NABool naLocateArrayLast     (NAArrayIterator* iterator);
+NA_API  NABool naLocateArrayContent  (NAArrayIterator* iterator, const void* content);
+NA_IAPI NABool naLocateArrayIndex    (NAArrayIterator* iterator, NAInt indx);
 
-// Returns a pointer to the current element without moving the internal index.
-NA_IAPI const void* naGetArrayCurrentConst     (const NAArray* array);
-NA_IAPI       void* naGetArrayCurrentMutable   (const NAArray* array);
 
-// Returns the current index
-NA_IAPI NAUInt       naGetArrayCurrentIndex      (const NAArray* array);
-// Returns the remaining number of elements starting at the current element.
-// Will emit a warning if the current index is not set.
-NA_IDEF NAUInt       naGetArrayRemainingCount    (const NAArray* array);
-
-// The locate-function set the internal pointer to the index given. If the
-// given index is negative, it denotes the element from the end of the array,
-// whereas -1 denotes the last element.
+// /////////////////////////////////
+// Iterating
+// Moves the iterator forward or backward the given number of positive or
+// negative steps respectively. If the step over- or underflows the array
+// and NDEBUG is undefined, a warning is emitted.
 //
-// If the index is not within the array range, the internal pointer will be
-// unset. Returns NA_TRUE if the index was inside range and NA_FALSE if not.
-NA_IAPI NABool naLocateArrayIndex          (const NAArray* array,
-                                                     NAInt indx);
+// Returns NA_FALSE when one of the two ends of the array is reached.
+NA_IAPI NABool  naIterateArray        (NAArrayIterator* iterator, NAInt step);
 
-// Moves the internal pointer forward or backwards without accessing the
-// content.
-NA_IAPI void naIterateArray                (const NAArray* array,
-                                                     NAInt step);
+// /////////////////////////////////
+// Returns the content of the previous, current or next element without moving
+// the iterator.
+//
+// If the iterator is at a position where the desired element does not exist
+// (for example the next element when being at the last element or the current
+// element when being located at the initial position), a Null-Pointer
+// will be returned without warning.
+NA_IAPI const void* naGetArrayPrevConst      (const NAArrayIterator* iterator);
+NA_IAPI       void* naGetArrayPrevMutable    (      NAArrayIterator* iterator);
+NA_IAPI const void* naGetArrayCurrentConst   (const NAArrayIterator* iterator);
+NA_IAPI       void* naGetArrayCurrentMutable (      NAArrayIterator* iterator);
+NA_IAPI const void* naGetArrayNextConst      (const NAArrayIterator* iterator);
+NA_IAPI       void* naGetArrayNextMutable    (      NAArrayIterator* iterator);
 
-// Returns whether the array is at a certain position.
-// This functions return garbage if the array is empty!
-// Returns NA_FALSE when the internal index is not set.
-NA_IAPI NABool naIsArrayAtFirst            (const NAArray* array);
-NA_IAPI NABool naIsArrayAtLast             (const NAArray* array);
+// /////////////////////////////////////////////
+// Getting position informations around the current position.
+// Note that indx can be negative, denoting the number of elements from the
+// end of the array, whereas -1 denotes the last element.
+NA_IAPI NABool    naIsArrayAtFirst           (const NAArrayIterator* iterator);
+NA_IAPI NABool    naIsArrayAtLast            (const NAArrayIterator* iterator);
+NA_IAPI NABool    naIsArrayAtIndex           (const NAArrayIterator* iterator, NAInt indx);
+NA_IAPI NABool    naIsArrayAtInitial         (const NAArrayIterator* iterator);
+
+NA_IAPI NAUInt    naGetArrayCurrentIndex     (const NAArrayIterator* iterator);
 
 
 

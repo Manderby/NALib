@@ -107,7 +107,7 @@ NA_IAPI NABool naEqual128WithBytes( const void* s,
 // Static Endianness conversions.
 // Use those if you know exactly from which source endianness to which
 // destination endianness you want to convert. If you don't know it at
-// compile-time, use the NAEndiannessConverter below or NAByteArray.
+// compile-time, use the NAEndiannessConverter below or NABuffer.
 //
 // Will convert the data directly within the buffer
 // provided. All converters work in both ways, for example Little to Big

@@ -173,7 +173,7 @@ NABool naTraverseHuffmanCodeTree(NAHuffmanCodeTree* tree, NABool bit, uint16* al
 }
 
 
-uint16 naDecodeHuffman(NAHuffmanCodeTree* tree, NAASDFBuffer* buffer){
+uint16 naDecodeHuffman(NAHuffmanCodeTree* tree, NABuffer* buffer){
   uint16 symbol;
   naResetHuffmanCodeTree(tree);
   while(naTraverseHuffmanCodeTree(tree, naReadBufferBit(buffer), &symbol)){}
@@ -182,7 +182,7 @@ uint16 naDecodeHuffman(NAHuffmanCodeTree* tree, NAASDFBuffer* buffer){
 
 
 
-NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman, NAASDFBuffer* zbuffer, uint16 alphabetcount){
+NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman, NABuffer* zbuffer, uint16 alphabetcount){
   NAHuffmanCodeTree* alphabethuffman = naAllocHuffmanCodeTree(alphabetcount);
   uint16 curalphabetcount = 0;
   while(curalphabetcount < alphabetcount){
@@ -225,7 +225,7 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
 
 
 
-uint16 naDecodeLiteralLength(NAASDFBuffer* zbuffer, uint16 code){
+uint16 naDecodeLiteralLength(NABuffer* zbuffer, uint16 code){
   switch(code){
   case 257: return 3; break;
   case 258: return 4; break;
@@ -266,7 +266,7 @@ uint16 naDecodeLiteralLength(NAASDFBuffer* zbuffer, uint16 code){
 }
 
 
-uint16 naDecodeDistance(NAASDFBuffer* zbuffer, uint16 code){
+uint16 naDecodeDistance(NABuffer* zbuffer, uint16 code){
   switch(code){
   case 0: return 1; break;
   case 1: return 2; break;
@@ -309,7 +309,7 @@ uint16 naDecodeDistance(NAASDFBuffer* zbuffer, uint16 code){
 
 
 
-NA_HDEF void naReadDymanicHuffmanCodes(NAASDFBuffer* zbuffer, NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman){
+NA_HDEF void naReadDymanicHuffmanCodes(NABuffer* zbuffer, NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman){
   uint8 codeorder[19] = {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
   int c;
 
@@ -365,7 +365,7 @@ NA_HDEF void naCreateFixedHuffmanCodes(NAHuffmanCodeTree** literalhuffman, NAHuf
 
 
 
-NA_DEF void naFillBufferWithZLIBDecompression(NAASDFBuffer* output, NAASDFBuffer* input){
+NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input){
   uint8 compressionmethodflags;
   uint8 compressionmethod;
   uint8 compressioninfo;
@@ -375,7 +375,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NAASDFBuffer* output, NAASDFBuffer
   NABool haspresetdict;
   NADeflateCompressionLevel compressionlevel;
   uint32 dictadler;
-  NAASDFBuffer* zbuffer;
+  NABuffer* zbuffer;
   uint32 zbufferadler;
   NAChecksum checksum;
   uint32 adler;
@@ -424,8 +424,8 @@ NA_DEF void naFillBufferWithZLIBDecompression(NAASDFBuffer* output, NAASDFBuffer
   }
   NA_UNUSED(dictadler);
 
-  zbuffer = naCreateASDFBufferExtraction(input, naMakeRangei(naTellASDFBuffer(input), zbuffersize));
-  naSeekASDFBufferRelative(input, zbuffersize);
+  zbuffer = naCreateBufferExtraction(input, naMakeRangei(naTellBuffer(input), zbuffersize));
+  naSeekBufferRelative(input, zbuffersize);
   zbufferadler = naReadBufferu32(input);
   
   // Now start RFC 1951
@@ -459,8 +459,8 @@ NA_DEF void naFillBufferWithZLIBDecompression(NAASDFBuffer* output, NAASDFBuffer
       // how this behaves if the first three bits are not at the first bit
       // position.
       tmpbuf = naMalloc(len);
-      naReadASDFBufferBytes(zbuffer, tmpbuf, len);
-      naWriteASDFBufferBytes(output, tmpbuf, len);
+      naReadBufferBytes(zbuffer, tmpbuf, len);
+      naWriteBufferBytes(output, tmpbuf, len);
       naFree(tmpbuf);
     }else{
       NAHuffmanCodeTree* literalhuffman;
@@ -500,7 +500,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NAASDFBuffer* output, NAASDFBuffer
 //    printf("Another block\n");
   }
   
-  naReleaseASDFBuffer(zbuffer);
+  naReleaseBuffer(zbuffer);
   
   naDetermineBufferRange(output);
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_ADLER_32);
@@ -520,7 +520,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NAASDFBuffer* output, NAASDFBuffer
 
 
 
-NA_DEF void naFillBufferWithZLIBCompression(NAASDFBuffer* buffer, NAASDFBuffer* input, NADeflateCompressionLevel level){
+NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, NADeflateCompressionLevel level){
 
   uint8 cmf;
   uint8 flg;
@@ -547,7 +547,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NAASDFBuffer* buffer, NAASDFBuffer* 
   naSetBufferEndianness(buffer, NA_ENDIANNESS_LITTLE);
   
   bytesize = naDetermineBufferRange(input).length;
-  naSeekASDFBufferAbsolute(input, 0);
+  naSeekBufferAbsolute(input, 0);
   
   
   NAInt curoffset = 0;
@@ -572,7 +572,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NAASDFBuffer* buffer, NAASDFBuffer* 
   // again as it belongs to RFC 1950!
   naSetBufferEndianness(buffer, NA_ENDIANNESS_NETWORK);
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_ADLER_32);
-  naSeekASDFBufferAbsolute(input, 0);
+  naSeekBufferAbsolute(input, 0);
   naAccumulateBufferToChecksum(input, &checksum);
   adler = naGetChecksumResult(&checksum);
   naClearChecksum(&checksum);

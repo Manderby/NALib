@@ -100,6 +100,9 @@ NA_HIAPI void naMakePositivei     (NAInt*  NA_RESTRICT origin,
                                    NAInt*  NA_RESTRICT length);
 
 
+NA_HIAPI NAInt naMakeIndexPositive(NAInt indx, NAUInt length);
+
+
 // This function returns a pair of positive integers (positiveorigin,positivesize)
 // out of a possibly negative pair (pos,length) such that the resulting range
 // will be fully contained in a range given by [0, containingsize-1].
@@ -328,6 +331,18 @@ NA_HIDEF void naMakePositivei(NAInt* NA_RESTRICT origin, NAInt* NA_RESTRICT leng
   }
 }
 
+
+
+NA_HIDEF NAInt naMakeIndexPositive(NAInt indx, NAUInt length){
+  if(indx < 0){indx += length;}
+  #ifndef NDEBUG
+    if(indx < 0)
+      naError("naMakeIndexPositive", "Invalid index leads to range underflow");
+    if(indx >= length)
+      naError("naMakeIndexPositive", "Invalid index leads to range overflow");
+  #endif
+  return indx;
+}
 
 
 

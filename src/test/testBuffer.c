@@ -12,20 +12,20 @@ NAByte testdataarray[NA_BUFFER_TESTARRAY_SIZE];
 
 
 void testBufferFile(void){
-  NAASDFBuffer* buffer;
-  NAASDFBuffer* token;
+  NABuffer* buffer;
+  NABuffer* token;
 
   printf("\nCreating file buffer with ASCII file.\n");
-  buffer = naCreateASDFBufferFile("asciitest.txt");  
+  buffer = naCreateBufferFile("asciitest.txt");  
   
   for(int i=0; i<2000; i++){
-    naReadASDFBufferBytes(buffer, &testdataarray, 100);
+    naReadBufferBytes(buffer, &testdataarray, 100);
     testdataarray[100] = '\0';
     printf("%s", testdataarray);
   }
   
-  token = naCreateASDFBufferExtraction(buffer, naMakeRangei(2, 10));
-  naReadASDFBufferBytes(token, &testdataarray, 10);
+  token = naCreateBufferExtraction(buffer, naMakeRangei(2, 10));
+  naReadBufferBytes(token, &testdataarray, 10);
   testdataarray[10] = '\0';
   printf("\n%s\n", testdataarray);
 }
@@ -33,7 +33,7 @@ void testBufferFile(void){
 
 
 void testBufferMemory(void){
-  NAASDFBuffer* buffer;
+  NABuffer* buffer;
   int testdata = 42;
   NADateTime time1;
   NADateTime time2;
@@ -50,36 +50,36 @@ void testBufferMemory(void){
   }
 
   printf("\nCreating memory buffer.\n");
-  buffer = naCreateASDFBuffer();  
+  buffer = naCreateBuffer();  
 
   // We can seek to an absolute poisition within the buffer
-  naSeekASDFBufferAbsolute(buffer, (NA_BUFFER_TEST_REPETITIONS * NA_BUFFER_TESTARRAY_SIZE) / 4);
+  naSeekBufferAbsolute(buffer, (NA_BUFFER_TEST_REPETITIONS * NA_BUFFER_TESTARRAY_SIZE) / 4);
   
   printf("Writing lots of bytes to the buffer %d times... ", NA_BUFFER_TEST_REPETITIONS);
   time1 = naMakeDateTimeNow();
   for(int i=0; i<NA_BUFFER_TEST_REPETITIONS; i++){
     // Writing single variables
-    naWriteASDFBufferBytes(buffer, &testdata, sizeof(int));
+    naWriteBufferBytes(buffer, &testdata, sizeof(int));
     // Writing whole arrays
-    naWriteASDFBufferBytes(buffer, testdataarray, NA_BUFFER_TESTARRAY_SIZE);
+    naWriteBufferBytes(buffer, testdataarray, NA_BUFFER_TESTARRAY_SIZE);
     // We can seek relative to the current position, even towards negative
     // absolute addresses.
-    naSeekASDFBufferRelative(buffer, -(3 * NA_BUFFER_TESTARRAY_SIZE / 2));
+    naSeekBufferRelative(buffer, -(3 * NA_BUFFER_TESTARRAY_SIZE / 2));
   }
   time2 = naMakeDateTimeNow();
   printf("%f seconds\n", naGetDateTimeDifference(&time2, &time1));
   
-  range = naGetASDFBufferRange(buffer);
+  range = naGetBufferRange(buffer);
   printf("Buffer now stores a byte range of [%" NA_PRIi ", %" NA_PRIi "] (%" NA_PRIi " MB)\n", range.origin, naGetRangeiEnd(range), range.length / 1000000);
   
 
   printf("Writing some data ... ", testdata);
-  naWriteASDFBufferBytes(buffer, &testdata, sizeof(int));
-  naSeekASDFBufferRelative(buffer, -sizeof(int));
-  naReadASDFBufferBytes(buffer, &testdata, sizeof(int));
+  naWriteBufferBytes(buffer, &testdata, sizeof(int));
+  naSeekBufferRelative(buffer, -sizeof(int));
+  naReadBufferBytes(buffer, &testdata, sizeof(int));
   printf("Reading that data again: %d\n", testdata);
   
-  naReleaseASDFBuffer(buffer);
+  naReleaseBuffer(buffer);
 }
 
 

@@ -95,6 +95,8 @@ typedef enum{
 // This is the core time struct of NALib. It uses precisely 128 Bits and stores
 // both date, time and a nanosecond timer.
 //
+// Note that NADateTime is a pure pod and does not require a call to naClearXXX.
+//
 // The full type definition is in the file "NADateTimeII.h"
 typedef struct NADateTime NADateTime;
 
@@ -147,7 +149,9 @@ NA_IAPI NABool naIsLeapYear            (int64 year);
 
 
 // Returns an NADateTime struct with the current system clock including the
-// systems timezone.
+// systems timezone. Note that an NADateTime does not require naClearXXX upon
+// deletion!
+//
 // Want to implement a nanosecond-timer? This is the function for you. Together
 // with naGetDateTimeDiff.
 NA_API NADateTime naMakeDateTimeNow();
@@ -181,7 +185,7 @@ NA_API NADateTime naMakeDateTimeFromString( const NAString* string,
                                           NAAscDateTimeFormat format);
 
 // Creates a new NADateTime struct from a given buffer with a given format.
-NA_API NADateTime naMakeDateTimeFromBuffer(  NAASDFBuffer* buffer,
+NA_API NADateTime naMakeDateTimeFromBuffer(  NABuffer* buffer,
                                         NABinDateTimeFormat format);
 
 // Returns a pointer to a C-string containing an error message corresponding
@@ -189,9 +193,9 @@ NA_API NADateTime naMakeDateTimeFromBuffer(  NAASDFBuffer* buffer,
 NA_API const char* naGetDateTimeErrorString(uint8 errornum);
 
 // Creates a byte array with the given format.
-NA_API NAByteArray* naInitByteArrayFromDateTime( NAByteArray* bytearray,
-                                              const NADateTime* datetime,
-                                            NABinDateTimeFormat format);
+//NA_API NAByteArray* naInitByteArrayFromDateTime( NAByteArray* bytearray,
+//                                              const NADateTime* datetime,
+//                                            NABinDateTimeFormat format);
 
 // Creates a string in the given format.
 NA_API NAString* naNewStringWithDateTime(const NADateTime* datetime,
