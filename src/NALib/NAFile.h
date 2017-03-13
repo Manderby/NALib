@@ -131,27 +131,36 @@ typedef struct NAFile NAFile;
 //
 // If you don't know, what the mode argument means, use NA_FILEMODE_DEFAULT.
 
-NA_IAPI NAFile  naMakeFileReadingFilename   (const char* filename);
-NA_IAPI NAFile  naMakeFileWritingFilename   (const char* filename,
+NA_IAPI NAFile*  naCreateFileReadingFilename   (const char* filename);
+NA_IAPI NAFile*  naCreateFileWritingFilename   (const char* filename,
                                               NAFileMode mode);
-NA_IAPI NAFile  naMakeFileAppendingFilename (const char* filename,
+NA_IAPI NAFile*  naCreateFileAppendingFilename (const char* filename,
                                               NAFileMode mode);
 
 // Makes an NAFile struct wrapped around the standard channels.
 // Stdin:     Standard input (file descriptor 0) as a reading file.
 // Stdout:    Standard output (file descriptor 1) as an appending file.
 // Stderr:    Standard error (file descriptor 2) as an appending file.
-NA_IAPI NAFile naMakeFileReadingStdin();
-NA_IAPI NAFile naMakeFileWritingStdout();
-NA_IAPI NAFile naMakeFileWritingStderr();
+//
+// Note that upon creation, all three standard files have been called with an
+// additional naRetainFile. Therefore, the file descriptors will not be closed
+// upon the first naReleaseFile call. See below.
+NA_IAPI NAFile* naCreateFileReadingStdin();
+NA_IAPI NAFile* naCreateFileWritingStdout();
+NA_IAPI NAFile* naCreateFileWritingStderr();
 
 // Note that NAFile is designed to be a POD (plain old data) struct and
 // therefore, creating an NAFile is done using the naMake... functions.
 // But for any other function call below, the NAFile struct must be provided
 // as a pointer.
 
-// Closes the file. Note: Can close stdin, stdout and stderr!
-NA_IAPI void naCloseFile(NAFile* file);
+// Retains and releases the file. When the reference count reaches zero, the
+// file will be closed.
+// Important: stdin, stdout and stderr can be closed as well! But these three
+// standard input and output channels have had an additional call tonaRetain
+// upon creation.
+NA_IAPI NAFile* naRetainFile(NAFile* file);
+NA_IAPI void naReleaseFile(NAFile* file);
 
 // Computes the filesize (from first to last byte).
 NA_IAPI NAFilesize naComputeFileBytesize(const NAFile* file);

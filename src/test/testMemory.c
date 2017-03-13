@@ -147,7 +147,7 @@ void testNAPtr(void){
   
   printf("Creating NAPtr with mutable buffer.\n");
   array = (int*)naMalloc(sizeof(int) * 5);
-  ptrmutable = naMakePtrWithDataMutable(array, NA_MEMORY_CLEANUP_FREE);
+  ptrmutable = naMakePtrWithDataMutable(array, NA_MEMORY_CLEANUP_NA_FREE);
 
   printf("Creating NAPtr with extraction.\n");
   ptrExtract = naMakePtrWithExtraction(&ptrmutable, 2 * sizeof(int), 3 * sizeof(int));
@@ -195,11 +195,11 @@ void testNASmartPtr(void){
   printf("\nCreating NASmartPtr.\n");
   // Initializing some pointers
   naInitSmartPtrMutable(&sptr1, NA_MEMORY_CLEANUP_NONE, &mydata, NA_MEMORY_CLEANUP_NONE);
-  naInitSmartPtrMutable(&sptr2, NA_MEMORY_CLEANUP_NONE, naAlloc(AVeryUsefulStruct), NA_MEMORY_CLEANUP_FREE);
+  naInitSmartPtrMutable(&sptr2, NA_MEMORY_CLEANUP_NONE, naAlloc(AVeryUsefulStruct), NA_MEMORY_CLEANUP_NA_FREE);
   sptr3 = naAlloc(NASmartPtr);
-  naInitSmartPtrMutable(sptr3, NA_MEMORY_CLEANUP_FREE, naAlloc(int), NA_MEMORY_CLEANUP_FREE);
+  naInitSmartPtrMutable(sptr3, NA_MEMORY_CLEANUP_NA_FREE, naAlloc(int), NA_MEMORY_CLEANUP_NA_FREE);
   sptr4 = naAlloc(NASmartPtr);
-  naInitSmartPtrConst(sptr4, NA_MEMORY_CLEANUP_FREE, "Constant String Literal");
+  naInitSmartPtrConst(sptr4, NA_MEMORY_CLEANUP_NA_FREE, "Constant String Literal");
   
   printf("Retaining the smart pointers...\n");
   naRetainSmartPtr(&sptr1);
@@ -259,7 +259,7 @@ void testNAPointer(void){
   
   printf("\nCreating NAPointer.\n");
   ptr1 = naNewPointerMutable(&mydata, NA_MEMORY_CLEANUP_NONE, NA_NULL);
-  ptr2 = naNewPointerMutable(naAlloc(AVeryUsefulStruct), NA_MEMORY_CLEANUP_FREE, (NAMutator)destructAVeryUsefulStruct);
+  ptr2 = naNewPointerMutable(naAlloc(AVeryUsefulStruct), NA_MEMORY_CLEANUP_NA_FREE, (NAMutator)destructAVeryUsefulStruct);
   ptr3 = naNewPointerConst("Constant string literal");
 
   printf("Retaining NAPointer.\n");

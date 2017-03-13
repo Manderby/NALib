@@ -19,7 +19,7 @@
 //  }else{
 //    NAMemoryBlock* newstorageblock = naAlloc(NAMemoryBlock);
 //    *newstorageblock = naMakeMemoryBlockWithBytesize(bytesize);
-//    array->storage = naNewPointerMutable(newstorageblock, NA_MEMORY_CLEANUP_FREE, (NAMutator)naFreeMemoryBlock);
+//    array->storage = naNewPointerMutable(newstorageblock, NA_MEMORY_CLEANUP_NA_FREE, (NAMutator)naFreeMemoryBlock);
 //    array->memblock = naMakeMemoryBlockWithExtraction(newstorageblock, 0, naGetMemoryBlockBytesize(newstorageblock));
 //    array->indx = NA_INVALID_MEMORY_INDEX;
 //  }
@@ -42,7 +42,7 @@
 //  }else{
 //    *newstorageblock = naMakeMemoryBlockWithConstData(buffer, bytesize);
 //  }
-//  array->storage = naNewPointerMutable(newstorageblock, NA_MEMORY_CLEANUP_FREE, NA_NULL);
+//  array->storage = naNewPointerMutable(newstorageblock, NA_MEMORY_CLEANUP_NA_FREE, NA_NULL);
 //  array->memblock = naMakeMemoryBlockWithExtraction(newstorageblock, 0, naGetMemoryBlockBytesize(newstorageblock));
 //  array->indx = NA_INVALID_MEMORY_INDEX;
 //  return array;
@@ -53,7 +53,7 @@
 //NA_DEF NAByteArray* naInitByteArrayWithMutableBuffer(NAByteArray* array, void* buffer, NAInt bytesize, NAMemoryCleanup cleanup){
 //  NAMemoryBlock* newstorageblock;
 //  #ifndef NDEBUG
-//    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup >= NA_MEMORY_CLEANUP_COUNT)
+//    if(!naIsCleanupValid(cleanup))
 //      naError("naNewStringWithMutableUTF8Buffer", "invalid cleanup option");
 //    if(!array)
 //      {naCrash("naInitByteArrayWithMutableBuffer", "array is Null-Pointer."); return NA_NULL;}
@@ -67,9 +67,9 @@
 //    *newstorageblock = naMakeMemoryBlockWithMutableData(buffer, bytesize, cleanup);
 //  }
 //  if(cleanup){
-//    array->storage = naNewPointerMutable(newstorageblock, NA_MEMORY_CLEANUP_FREE, (NAMutator)naFreeMemoryBlock);
+//    array->storage = naNewPointerMutable(newstorageblock, NA_MEMORY_CLEANUP_NA_FREE, (NAMutator)naFreeMemoryBlock);
 //  }else{
-//    array->storage = naNewPointerMutable(newstorageblock, NA_MEMORY_CLEANUP_FREE, NA_NULL);
+//    array->storage = naNewPointerMutable(newstorageblock, NA_MEMORY_CLEANUP_NA_FREE, NA_NULL);
 //  }
 //  array->memblock = naMakeMemoryBlockWithExtraction(newstorageblock, 0, naGetMemoryBlockBytesize(newstorageblock));
 //  array->indx = NA_INVALID_MEMORY_INDEX;
@@ -136,14 +136,14 @@
 //
 //  // Note that now, you could initialize the array with a call to
 //  //
-//  // naInitByteArrayWithMutableBuffer(array, buf, arraysize, NA_MEMORY_CLEANUP_FREE);
+//  // naInitByteArrayWithMutableBuffer(array, buf, arraysize, NA_MEMORY_CLEANUP_NA_FREE);
 //  //
 //  // But code-sanity checks do not recognize this function to be owning the
 //  // buffer and therefore, it is should be done explicitely.
 //
 //  newstorageblock = naAlloc(NAMemoryBlock);
-//  *newstorageblock = naMakeMemoryBlockWithMutableData(buf, arraysize, NA_MEMORY_CLEANUP_FREE);
-//  array->storage = naNewPointerMutable(newstorageblock, NA_MEMORY_CLEANUP_FREE, (NAMutator)naFreeMemoryBlock);
+//  *newstorageblock = naMakeMemoryBlockWithMutableData(buf, arraysize, NA_MEMORY_CLEANUP_NA_FREE);
+//  array->storage = naNewPointerMutable(newstorageblock, NA_MEMORY_CLEANUP_NA_FREE, (NAMutator)naFreeMemoryBlock);
 //  array->memblock = naMakeMemoryBlockWithExtraction(newstorageblock, 0, naGetMemoryBlockBytesize(newstorageblock));
 //  array->indx = NA_INVALID_MEMORY_INDEX;
 //}

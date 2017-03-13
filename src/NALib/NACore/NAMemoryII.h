@@ -254,17 +254,60 @@ struct NATypeInfo{
 
 
 
-NA_HIDEF NABool naIsCleanupValid(NAMemoryCleanup cleanup){
-  return ((cleanup > NA_MEMORY_CLEANUP_UNDEFINED) && (cleanup < NA_MEMORY_CLEANUP_COUNT));
-}
+#ifndef NDEBUG
+  NA_HIDEF NABool naIsCleanupValid(NAMemoryCleanup cleanup){
+    return ((cleanup & NA_MEMORY_CLEANUP_MASK) == cleanup);
+  }
+#endif
 NA_HIDEF NAMemoryCleanup naGetFlagCleanupData(NAUInt flag){
   return (NAMemoryCleanup)((flag >> NA_REFCOUNT_DATA_CLEANUP_BITSHIFT) & NA_MEMORY_CLEANUP_MASK);
 }
-NA_HIDEF NABool naHasFlagCleanupData(NAUInt flag){
-  return (naGetFlagCleanupData(flag) != NA_MEMORY_CLEANUP_UNDEFINED);
-}
 NA_HIDEF NAMemoryCleanup naGetFlagCleanupStruct(NAUInt flag){
   return (NAMemoryCleanup)((flag >> NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT) & NA_MEMORY_CLEANUP_MASK);
+}
+
+
+
+NA_IDEF void naCleanupMemory(void* data, NAMemoryCleanup cleanup){
+
+  // Clear the data based on the data cleanup
+  switch(cleanup){
+  case NA_MEMORY_CLEANUP_NONE:
+    break;
+  case NA_MEMORY_CLEANUP_FREE:
+    free(data);
+    break;
+  case NA_MEMORY_CLEANUP_FREE_ALIGNED:
+    #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+      _aligned_free(data);
+    #else
+      free(data);
+    #endif
+    break;
+  case NA_MEMORY_CLEANUP_NA_FREE:
+    naFree(data);
+    break;
+  case NA_MEMORY_CLEANUP_NA_FREE_ALIGNED:
+    naFreeAligned(data);
+    break;
+#ifdef __cplusplus 
+  case NA_MEMORY_CLEANUP_DELETE:
+    delete data;
+    break;
+  case NA_MEMORY_CLEANUP_DELETE_BRACK:
+    delete [] data;
+    break;
+#endif
+  case NA_MEMORY_CLEANUP_NA_DELETE:
+    naDelete(data);
+    break;
+  default:
+    #ifndef NDEBUG
+      naError("naCleanupMemory", "Invalid cleanup");
+    #endif
+    break;
+  }
+
 }
 
 
@@ -404,48 +447,19 @@ NA_IDEF NABool naReleaseRefCount(NARefCount* refcount, void* data, NAMutator des
   if(naGetRefCountCount(refcount) == NA_ZERO){
     #ifndef NDEBUG
       refcount->count |= NA_REFCOUNT_DELETE_FROM_RELEASE;
+      if(!data && destructor)
+        naError("naReleaseRefCount", "destructor available but no data.");
     #endif
     
     // Call the destructor on the data if available.
-    if(destructor){
-      if(data){
-        destructor(data);
-      }else{
-        destructor(refcount);
-      }
+    if(data){
+      if(destructor){destructor(data);}
+      naCleanupMemory(data, naGetRefCountCleanupData(refcount));
     }
+
+    // Cleanup the struct as marked.
+    naCleanupMemory(refcount, naGetRefCountCleanupStruct(refcount));
         
-    // Clear the struct as marked.
-    switch(naGetRefCountCleanupStruct(refcount)){
-      case NA_MEMORY_CLEANUP_NONE:
-        break;
-      case NA_MEMORY_CLEANUP_FREE:
-        naFree(refcount);
-        break;
-      case NA_MEMORY_CLEANUP_FREE_ALIGNED:
-        naFreeAligned(refcount);
-        break;
-#ifdef __cplusplus 
-      case NA_MEMORY_CLEANUP_DELETE:
-        delete refcount;
-        break;
-      case NA_MEMORY_CLEANUP_DELETE_BRACK:
-        #ifndef NDEBUG
-          naError("naReleaseRefCount", "This cleanup option does not make sense");
-        #endif
-        delete [] refcount;
-        break;
-#endif
-      case NA_MEMORY_CLEANUP_NA_DELETE:
-        naDelete(refcount);
-        break;
-      default:
-        #ifndef NDEBUG
-          naError("naReleaseRefCount", "Invalid cleanup");
-        #endif
-        break;
-    }
-    
     // Note that this is the only position in the whole NALib code where an
     // NAPointer is deleted. Therefore you could theoretically include the
     // code written in naDestructPointer directly here to save one function
@@ -528,8 +542,6 @@ struct NAPtr{
   NA_HIDEF void naMarkPtrCleanup(NAPtr* ptr, NAMemoryCleanup cleanup){
     if(!naIsCleanupValid(cleanup))
       naError("naMarkPtrCleanup", "Invalid cleanup option");
-    if(naHasFlagCleanupData(ptr->flags))
-      naError("naMarkPtrCleanup", "ptr already marked with a cleanup");
     ptr->flags |= (NAUInt)(cleanup) << NA_REFCOUNT_DATA_CLEANUP_BITSHIFT;
   }
   
@@ -564,7 +576,7 @@ NA_IDEF NAPtr naMakePtrWithBytesize(NAInt bytesize){
   ptr.data.d = naMalloc(bytesize);
   #ifndef NDEBUG
     ptr.flags = NA_ZERO;
-    naMarkPtrCleanup(&ptr, NA_MEMORY_CLEANUP_FREE);
+    naMarkPtrCleanup(&ptr, NA_MEMORY_CLEANUP_NA_FREE);
   #endif
   return ptr;
 }
@@ -594,10 +606,10 @@ NA_IDEF void naFreePtr(NAPtr* ptr){
       naError("naFreePtr", "NAPtr has already been cleaned once.");
     if(naIsPtrConst(ptr))
       naError("naFreePtr", "Trying to free a const pointer");
-    if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_FREE)
-      naError("naFreePtr", "Ptr has not the FREE cleanup hint");
+    if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_NA_FREE)
+      naError("naFreePtr", "Ptr has not the NA_FREE cleanup hint");
   #endif
-  naFree(ptr->data.d);
+  free(ptr->data.d);
   #ifndef NDEBUG
     ptr->flags |= NA_PTR_CLEANED;
   #endif
@@ -611,8 +623,46 @@ NA_IDEF void naFreeAlignedPtr(NAPtr* ptr){
       naError("naFreeAlignedPtr", "NAPtr has already been cleaned once.");
     if(naIsPtrConst(ptr))
       naError("naFreeAlignedPtr", "Trying to free-aligned a const pointer");
-    if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_FREE_ALIGNED)
-      naError("naFreeAlignedPtr", "Ptr has not the FREE_ALIGNED cleanup hint");
+    if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_NA_FREE_ALIGNED)
+      naError("naFreeAlignedPtr", "Ptr has not the NA_FREE_ALIGNED cleanup hint");
+  #endif
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    _aligned_free(ptr->data.d);
+  #else
+    free(ptr->data.d);
+  #endif
+  #ifndef NDEBUG
+    ptr->flags |= NA_PTR_CLEANED;
+  #endif
+}
+
+
+
+NA_IDEF void naNaFreePtr(NAPtr* ptr){
+  #ifndef NDEBUG
+    if(ptr->flags & NA_PTR_CLEANED)
+      naError("naFreePtr", "NAPtr has already been cleaned once.");
+    if(naIsPtrConst(ptr))
+      naError("naFreePtr", "Trying to free a const pointer");
+    if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_NA_FREE)
+      naError("naFreePtr", "Ptr has not the NA_FREE cleanup hint");
+  #endif
+  naFree(ptr->data.d);
+  #ifndef NDEBUG
+    ptr->flags |= NA_PTR_CLEANED;
+  #endif
+}
+
+
+
+NA_IDEF void naNaFreeAlignedPtr(NAPtr* ptr){
+  #ifndef NDEBUG
+    if(ptr->flags & NA_PTR_CLEANED)
+      naError("naFreeAlignedPtr", "NAPtr has already been cleaned once.");
+    if(naIsPtrConst(ptr))
+      naError("naFreeAlignedPtr", "Trying to free-aligned a const pointer");
+    if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_NA_FREE_ALIGNED)
+      naError("naFreeAlignedPtr", "Ptr has not the NA_FREE_ALIGNED cleanup hint");
   #endif
   naFreeAligned(ptr->data.d);
   #ifndef NDEBUG
@@ -825,54 +875,6 @@ NA_IDEF NASmartPtr* naRetainSmartPtr(NASmartPtr* sptr){
 
 
 
-typedef struct NASmartPtrDestructContainer NASmartPtrDestructContainer;
-struct NASmartPtrDestructContainer{
-  NASmartPtr* sptr;
-  NAMutator destructor;
-};
-
-
-
-// When releasing a smart pointer with a custom destructor, you need to call
-// the following function at the end of your destructor in order to properly
-// release the data pointer.
-NA_IDEF void naDestructSmartPtrData(NASmartPtrDestructContainer* container){
-
-  if(container->destructor){
-    container->destructor(naGetPtrMutable(&(container->sptr->ptr)));
-  }
-
-  // Clear the data based on the data cleanup
-  switch(naGetRefCountCleanupData(&(container->sptr->refcount))){
-    case NA_MEMORY_CLEANUP_NONE:
-      break;
-    case NA_MEMORY_CLEANUP_FREE:
-      naFreePtr(&(container->sptr->ptr));
-      break;
-    case NA_MEMORY_CLEANUP_FREE_ALIGNED:
-      naFreeAlignedPtr(&(container->sptr->ptr));
-      break;
-#ifdef __cplusplus 
-    case NA_MEMORY_CLEANUP_DELETE:
-      naDeletePtr(&(container->sptr->ptr));
-      break;
-    case NA_MEMORY_CLEANUP_DELETE_BRACK:
-      naDeleteBrackPtr(&(container->sptr->ptr));
-      break;
-#endif
-    case NA_MEMORY_CLEANUP_NA_DELETE:
-      naNaDeletePtr(&(container->sptr->ptr));
-      break;
-    default:
-    #ifndef NDEBUG
-      naError("naDestructSmartPtrData", "invalid cleanup method.");
-    #endif
-    break;
-  }
-}
-
-
-
 NA_IDEF NABool naReleaseSmartPtr(NASmartPtr* sptr, NAMutator destructor){
   #ifndef NDEBUG
     if(!sptr){
@@ -881,9 +883,11 @@ NA_IDEF NABool naReleaseSmartPtr(NASmartPtr* sptr, NAMutator destructor){
     }
   #endif
 
-  NASmartPtrDestructContainer container = {sptr, destructor};
-  
-  return naReleaseRefCount(&(sptr->refcount), &container, (NAMutator)naDestructSmartPtrData);
+  if(naGetRefCountCleanupData(&(sptr->refcount)) == NA_MEMORY_CLEANUP_NONE){
+    return naReleaseRefCount(&(sptr->refcount), NA_NULL, NA_NULL);
+  }else{
+    return naReleaseRefCount(&(sptr->refcount), naGetSmartPtrMutable(sptr), destructor);
+  }
 }
 
 
@@ -936,7 +940,7 @@ NA_IDEF NAPointer* naNewPointerConst(const void* data){
 NA_IDEF NAPointer* naNewPointerMutable(void* data, NAMemoryCleanup datacleanup, NAMutator destructor){
   NAPointer* pointer; // Declaration before definition. Needed for C90
   #ifndef NDEBUG
-    if(datacleanup < NA_MEMORY_CLEANUP_NONE || datacleanup >= NA_MEMORY_CLEANUP_COUNT)
+    if(!naIsCleanupValid(datacleanup))
       naError("naNewPointer", "cleanup method invalid");
   #endif
   pointer = naNew(NAPointer);

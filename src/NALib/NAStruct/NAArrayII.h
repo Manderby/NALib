@@ -51,7 +51,7 @@ NA_IDEF NAArray* naInitArrayWithCount(NAArray* array, NAUInt typesize, NAUInt co
   #endif
   array->typesize = typesize;
   array->count = count;
-  naInitSmartPtrMutable(&(array->sptr), NA_MEMORY_CLEANUP_NONE, naMalloc(count * typesize), NA_MEMORY_CLEANUP_FREE);
+  naInitSmartPtrMutable(&(array->sptr), NA_MEMORY_CLEANUP_NONE, naMalloc(count * typesize), NA_MEMORY_CLEANUP_NA_FREE);
   #ifndef NDEBUG
     array->itercount = 0;
   #endif
@@ -82,7 +82,7 @@ NA_IDEF NAArray* naInitArrayWithDataConst(NAArray* array, const void* data, NAUI
 
 NA_IDEF NAArray* naInitArrayWithDataMutable(NAArray* array, void* data, NAUInt typesize, NAUInt count, NAMemoryCleanup cleanup){
   #ifndef NDEBUG
-    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup >= NA_MEMORY_CLEANUP_COUNT)
+    if(!naIsCleanupValid(cleanup))
       naError("naNewStringWithMutableUTF8Buffer", "invalid cleanup option");
     if(!array)
       {naCrash("naInitArrayWithDataMutable", "array is Null-Pointer"); return NA_NULL;}

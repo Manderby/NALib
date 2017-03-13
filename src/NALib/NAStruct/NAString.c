@@ -81,7 +81,7 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
 NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt length, NAMemoryCleanup cleanup){
   NAString* string;
   #ifndef NDEBUG
-    if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup >= NA_MEMORY_CLEANUP_COUNT)
+    if(!naIsCleanupValid(cleanup))
       naError("naNewStringWithMutableUTF8Buffer", "invalid cleanup option");
   #endif
   string = naNew(NAString);
@@ -115,7 +115,7 @@ NA_DEF NAString* naNewStringWithArguments(const NAUTF8Char* format, va_list argu
   if(stringlen){
     NAUTF8Char* stringbuf = naMalloc(-(NAInt)stringlen);
     naVsnprintf(stringbuf, stringlen + 1, format, argumentlist3);
-    string = naNewStringWithMutableUTF8Buffer(stringbuf, -(NAInt)stringlen, NA_MEMORY_CLEANUP_FREE);
+    string = naNewStringWithMutableUTF8Buffer(stringbuf, -(NAInt)stringlen, NA_MEMORY_CLEANUP_NA_FREE);
   }else{
     string = naNewString();
   }
@@ -239,7 +239,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
     inptr++;
   }
 
-  return naNewStringWithMutableUTF8Buffer(stringbuf, -destsize, NA_MEMORY_CLEANUP_FREE);
+  return naNewStringWithMutableUTF8Buffer(stringbuf, -destsize, NA_MEMORY_CLEANUP_NA_FREE);
 }
 
 
@@ -268,7 +268,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
 //  // Create a string with sufficient characters. As XML entities are always
 //  // longer than their decoded character, we just use the same size.
 //  stringbuf = naMalloc(-inputsize);
-//  string = naNewStringWithMutableUTF8Buffer(stringbuf, -inputsize, NA_MEMORY_CLEANUP_FREE);
+//  string = naNewStringWithMutableUTF8Buffer(stringbuf, -inputsize, NA_MEMORY_CLEANUP_NA_FREE);
 //  inptr = naGetStringUTF8Pointer(inputstring);
 //  destptr = stringbuf;
 //
@@ -339,7 +339,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
 //  #endif
 //  // Create the string with the required length
 //  stringbuf = naMalloc(-destsize);
-//  string = naNewStringWithMutableUTF8Buffer(stringbuf, -destsize, NA_MEMORY_CLEANUP_FREE);
+//  string = naNewStringWithMutableUTF8Buffer(stringbuf, -destsize, NA_MEMORY_CLEANUP_NA_FREE);
 //  inptr = naGetStringUTF8Pointer(inputstring);
 //  destptr = stringbuf;
 //
@@ -382,7 +382,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
 //  // Create a string with sufficient characters. As EPS entities are always
 //  // longer than their decoded character, we just use the same size.
 //  stringbuf = naMalloc(-inputsize);
-//  string = naNewStringWithMutableUTF8Buffer(stringbuf, -inputsize, NA_MEMORY_CLEANUP_FREE);
+//  string = naNewStringWithMutableUTF8Buffer(stringbuf, -inputsize, NA_MEMORY_CLEANUP_NA_FREE);
 //  inptr = naGetStringUTF8Pointer(inputstring);
 //  destptr = stringbuf;
 //
@@ -436,12 +436,12 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
 //    #ifdef UNICODE
 //      newsize = WideCharToMultiByte(CP_UTF8, 0, systemstring, -1, NULL, 0, NULL, NULL);
 //      stringbuf = naMalloc(-newsize);
-//      string = naNewStringWithMutableUTF8Buffer(string, stringbuf, -newsize, NA_MEMORY_CLEANUP_FREE);
+//      string = naNewStringWithMutableUTF8Buffer(string, stringbuf, -newsize, NA_MEMORY_CLEANUP_NA_FREE);
 //      WideCharToMultiByte(CP_UTF8, 0, systemstring, -1, stringbuf, newsize, NULL, NULL);
 //    #else
 //      newsize = naStrlen(systemstring);
 //      stringbuf = naMalloc(-newsize);
-//      string = naNewStringWithMutableUTF8Buffer(string, stringbuf, -newsize, NA_MEMORY_CLEANUP_FREE);
+//      string = naNewStringWithMutableUTF8Buffer(string, stringbuf, -newsize, NA_MEMORY_CLEANUP_NA_FREE);
 //      naCopyn(stringbuf, systemstring, newsize);
 //    #endif
 //    return string;
@@ -459,7 +459,7 @@ NA_DEF void naAppendStringString(NAString* originalstring, const NAString* strin
 //    if(stringsize1){naCopyn(stringbuf, naGetByteArrayConstPointer(&(originalstring->array)), stringsize1);}
 //    if(stringsize2){naCopyn(&(stringbuf[stringsize1]), naGetByteArrayConstPointer(&(string2->array)), stringsize2);}
 //    naClearByteArray(&(originalstring->array));
-//    naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_MEMORY_CLEANUP_FREE);
+//    naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_MEMORY_CLEANUP_NA_FREE);
 //  }else{
 //    // The string was empty and remains empty. Nothing to be done here.
 //  }
@@ -474,7 +474,7 @@ NA_DEF void naAppendStringChar(NAString* originalstring, NAUTF8Char newchar){
 //  if(stringsize){naCopyn(stringbuf, naGetByteArrayConstPointer(&(originalstring->array)), stringsize);}
 //  stringbuf[stringsize] = newchar;
 //  naClearByteArray(&(originalstring->array));
-//  naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_MEMORY_CLEANUP_FREE);
+//  naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_MEMORY_CLEANUP_NA_FREE);
 }
 
 
@@ -514,7 +514,7 @@ NA_DEF void naAppendStringArguments(NAString* originalstring, const NAUTF8Char* 
 //    naVsnprintf(&(stringbuf[stringsize1]), stringsize2 + 1, format, argumentlist2);
 //    va_end(argumentlist2);
 //    naClearByteArray(&(originalstring->array));
-//    naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_MEMORY_CLEANUP_FREE);
+//    naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_MEMORY_CLEANUP_NA_FREE);
 //  }else{
 //    // The string was empty and remains empty. Nothing to be done here.
 //  }

@@ -57,6 +57,8 @@ NA_IAPI NAUInt naGetSystemMemoryPagesizeMask();
 // Basic Memory allocation and freeing
 // //////////////////////////////////////
 
+
+
 // The following functions are the allocation functions of NALib. All functions
 // in NALib use these functions when allocating memory on the heap.
 //
@@ -144,6 +146,32 @@ typedef struct NATypeInfo NATypeInfo;
 
 
 
+// ///////////////////////////////
+// Memory cleanup
+
+
+// The comments denote what kind of cleanup-function will be called when you
+// use one of the macros.
+typedef enum{
+  NA_MEMORY_CLEANUP_NONE            = 0x00,  // 0b000 // 
+  NA_MEMORY_CLEANUP_FREE            = 0x01,  // 0b001 // free
+  NA_MEMORY_CLEANUP_FREE_ALIGNED    = 0x02,  // 0b010 // _aligned_free or free
+  NA_MEMORY_CLEANUP_NA_FREE         = 0x03,  // 0b011 // naFree
+  NA_MEMORY_CLEANUP_NA_FREE_ALIGNED = 0x04,  // 0b100 // naFreeAligned
+#ifdef __cplusplus 
+  NA_MEMORY_CLEANUP_DELETE          = 0x05,  // 0b101 // delete
+  NA_MEMORY_CLEANUP_DELETE_BRACK    = 0x06,  // 0b110 // delete []
+#endif
+  NA_MEMORY_CLEANUP_NA_DELETE       = 0x07,  // 0b111 // naDelete
+} NAMemoryCleanup;
+
+
+// Deallocates the given data pointer with the given cleanup method.
+NA_IAPI void naCleanupMemory(void* data, NAMemoryCleanup cleanup);
+
+
+
+
 
 // ///////////////////////////////
 // Core memory structs
@@ -182,29 +210,6 @@ typedef struct NATypeInfo NATypeInfo;
 
 
 
-// NALib keeps track of how pointers are allocated when NDEBUG is undefined.
-// This affects all of the memory structures in this file. When NDEBUG is
-// defined, this information is not available anymore. Except for the NAPointer
-// struct which needs to store the information to deallocate the stored pointer
-// correctly once the reference count reaches zero.
-//
-// The comments denote what kind of cleanup-function will be called when you
-// use one of the macros.
-typedef enum{
-  NA_MEMORY_CLEANUP_UNDEFINED       = 0x00,  // 0b000 //
-  NA_MEMORY_CLEANUP_NONE            = 0x01,  // 0b001 // 
-  NA_MEMORY_CLEANUP_FREE            = 0x02,  // 0b010 // naFree
-  NA_MEMORY_CLEANUP_FREE_ALIGNED    = 0x03,  // 0b011 // naFreeAligned
-#ifdef __cplusplus 
-  NA_MEMORY_CLEANUP_DELETE          = 0x04,  // 0b100 // delete
-  NA_MEMORY_CLEANUP_DELETE_BRACK    = 0x05,  // 0b101 // delete []
-#endif
-  NA_MEMORY_CLEANUP_NA_DELETE       = 0x06,  // 0b110 // naDelete
-  NA_MEMORY_CLEANUP_COUNT           = 0x07
-} NAMemoryCleanup;
-
-
-
 // ////////////////////////
 // NARefCount
 // ////////////////////////
@@ -226,15 +231,19 @@ typedef enum{
 // The full type definition is in the file "NAMemoryII.h"
 typedef struct NARefCount NARefCount;
 
-// Initialize a smart pointer. Define how the smart pointer itself shall be
-// cleaned up, define the data it shall store and define, how that data shall
-// be cleaned up.
+// Initialize a smart pointer. structcleanup defines, how the smart pointer
+// itself shall be cleaned up.
+//
+// The datacleanup defines an additional flag which you can store in the struct
+// if you have a data pointer for which you need to know, how that data shall
+// be cleaned up. You can access that value later in the destructor which will
+// be called in naReleaseRefCount when the refcount reaches zero by calling
+// naGetRefCountCleanupData.
+//
+// In most of the time, datacleanup can be set to NA_MEMORY_CLEANUP_NONE.
 NA_IAPI NARefCount* naInitRefCount(     NARefCount* refcount,
                                     NAMemoryCleanup structcleanup,
                                     NAMemoryCleanup datacleanup);
-
-NA_IAPI NAUInt naGetRefCountCount(const NARefCount* refcount);
-NA_IAPI NAMemoryCleanup naGetRefCountCleanupData(const NARefCount* refcount);
 
 // Retain and Release.
 // You can send a destructor to Release which will be called with the data
@@ -250,6 +259,11 @@ NA_IAPI NARefCount* naRetainRefCount( NARefCount* refcount);
 NA_IAPI NABool      naReleaseRefCount(NARefCount* refcount,
                                             void* data,
                                         NAMutator destructor);
+
+// When your destructor will be called during a call to naReleaseRefCount, you
+// can use this function to query the datacleanup value you entered upon the
+// call to naInitRefCount.
+NA_IAPI NAMemoryCleanup naGetRefCountCleanupData(const NARefCount* refcount);
 
 
 
@@ -302,6 +316,12 @@ NA_IAPI NABool      naReleaseRefCount(NARefCount* refcount,
 // NAMemoryBlock is dependent on NAPtr and declare it as the first
 // entry in their struct declaration. Therefore, it is safe to access these
 // memory structs typecasted as an NAPtr.
+//
+// NALib keeps track of how pointers are allocated when NDEBUG is undefined.
+// This affects all of the memory structures in this file. When NDEBUG is
+// defined, this information is not available anymore. Except for the NAPointer
+// struct which needs to store the information to deallocate the stored pointer
+// correctly once the reference count reaches zero.
 
 
 // The full type definition is in the file "NAMemoryII.h"
@@ -315,7 +335,7 @@ NA_IAPI NAPtr naMakeNullPtr();
 // The bytesize parameter can be negative. See naMalloc function for more
 // information Note that you maybe will not call this function directly but
 // instead will use naMakeLValueWithTypesize or naMakeMemoryBlockWithBytesize.
-// The cleanuphint for this function is NA_MEMORY_CLEANUP_FREE.
+// The cleanuphint for this function is NA_MEMORY_CLEANUP_NA_FREE.
 NA_IAPI NAPtr naMakePtrWithBytesize(NAInt bytesize);
 
 // Fills the given NAPtr struct with either a const or a non-const pointer.
@@ -353,11 +373,13 @@ NA_IAPI NAPtr naMakePtrWithExtraction(  const NAPtr* srcptr,
 NA_IAPI void naClearPtr(NAPtr* ptr);
 NA_IAPI void naFreePtr(NAPtr* ptr);
 NA_IAPI void naFreeAlignedPtr(NAPtr* ptr);
+NA_IAPI void naNaFreePtr(NAPtr* ptr);
+NA_IAPI void naNaFreeAlignedPtr(NAPtr* ptr);
 #ifndef NDEBUG
   NA_IAPI void naDeletePtr(NAPtr* ptr);
   NA_IAPI void naDeleteBrackPtr(NAPtr* ptr);
 #endif
-NA_IAPI void naNADeletePtr(NAPtr* ptr);
+NA_IAPI void naNaDeletePtr(NAPtr* ptr);
 
 // The following functions return either a const or a mutable pointer.
 //

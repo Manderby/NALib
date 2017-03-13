@@ -205,16 +205,18 @@ NA_IDEF NAUTF8Char* naGetCwd(NAUTF8Char* buf, NAInt bufsize){
 
 
 struct NAFile{
+  NARefCount refcount;
   int desc;   // The descriptor
 };
 
 
 
 
-NA_IDEF NAFile naMakeFileReadingFilename(const char* filename){
-  NAFile file;
-  file.desc = naOpen(filename, NA_FILE_OPEN_FLAGS_READ, NA_FILEMODE_DEFAULT);
-  if(file.desc < 0){
+NA_IDEF NAFile* naCreateFileReadingFilename(const char* filename){
+  NAFile* file = naAlloc(NAFile);
+  naInitRefCount(&(file->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  file->desc = naOpen(filename, NA_FILE_OPEN_FLAGS_READ, NA_FILEMODE_DEFAULT);
+  if(file->desc < 0){
     #ifndef NDEBUG
       naError("naInitFileReadingFilename", "Could not open file.");
     #endif
@@ -224,10 +226,11 @@ NA_IDEF NAFile naMakeFileReadingFilename(const char* filename){
 
 
 
-NA_IDEF NAFile naMakeFileWritingFilename(const char* filename, NAFileMode mode){
-  NAFile file;
-  file.desc = naOpen(filename, NA_FILE_OPEN_FLAGS_WRITE, mode);
-  if(file.desc < 0){
+NA_IDEF NAFile* naCreateFileWritingFilename(const char* filename, NAFileMode mode){
+  NAFile* file = naAlloc(NAFile);
+  naInitRefCount(&(file->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  file->desc = naOpen(filename, NA_FILE_OPEN_FLAGS_WRITE, mode);
+  if(file->desc < 0){
     #ifndef NDEBUG
       naError("naInitFileWritingFilename", "Could not create file.");
     #endif
@@ -237,10 +240,11 @@ NA_IDEF NAFile naMakeFileWritingFilename(const char* filename, NAFileMode mode){
 
 
 
-NA_IDEF NAFile naMakeFileAppendingFilename(const char* filename, NAFileMode mode){
-  NAFile file;
-  file.desc = naOpen(filename, NA_FILE_OPEN_FLAGS_APPEND, mode);
-  if(file.desc < 0){
+NA_IDEF NAFile* naCreateFileAppendingFilename(const char* filename, NAFileMode mode){
+  NAFile* file = naAlloc(NAFile);
+  naInitRefCount(&(file->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  file->desc = naOpen(filename, NA_FILE_OPEN_FLAGS_APPEND, mode);
+  if(file->desc < 0){
     #ifndef NDEBUG
       naError("naInitFileAppendingFilename", "Could not create file.");
     #endif
@@ -250,34 +254,52 @@ NA_IDEF NAFile naMakeFileAppendingFilename(const char* filename, NAFileMode mode
 
 
 
-NA_IDEF NAFile naMakeFileReadingStdin(){
-  NAFile file;
-  file.desc = 0;
+NA_IDEF NAFile* naCreateFileReadingStdin(){
+  NAFile* file = naAlloc(NAFile);
+  naInitRefCount(&(file->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  file->desc = 0;
+  naRetainFile(file);
   return file;
 }
 
 
 
-NA_IDEF NAFile naMakeFileWritingStdout(){
-  NAFile file;
-  file.desc = 1;
+NA_IDEF NAFile* naCreateFileWritingStdout(){
+  NAFile* file = naAlloc(NAFile);
+  naInitRefCount(&(file->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  file->desc = 1;
+  naRetainFile(file);
   return file;
 }
 
 
 
-NA_IDEF NAFile naMakeFileWritingStderr(){
-  NAFile file;
-  file.desc = 2;
+NA_IDEF NAFile* naCreateFileWritingStderr(){
+  NAFile* file = naAlloc(NAFile);
+  naInitRefCount(&(file->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  file->desc = 2;
+  naRetainFile(file);
   return file;
 }
 
 
 
-NA_IDEF void naCloseFile(NAFile* file){
+NA_HIDEF void naClearFile(NAFile* file){
   // Note that stdin, stdout and stderr can be closed as well.
   naClose(file->desc);
   file->desc = -1;
+}
+
+
+
+NA_IDEF NAFile* naRetainFile(NAFile* file){
+  return (NAFile*)naRetainRefCount(&(file->refcount));
+}
+
+
+
+NA_IDEF void naReleaseFile(NAFile* file){
+  naReleaseRefCount(&(file->refcount), file, (NAMutator)naClearFile);
 }
 
 
@@ -385,7 +407,7 @@ NA_IDEF NAInt naScanDecimal(){
 NA_IDEF NAString* naNewStringWithCurrentWorkingDirectory(){
   NAString* string;
   NAUTF8Char* cwdbuf = naGetCwd(NA_NULL, 0);
-  string = naNewStringWithMutableUTF8Buffer(cwdbuf, -(NAInt)(naStrlen(cwdbuf)), NA_MEMORY_CLEANUP_FREE);
+  string = naNewStringWithMutableUTF8Buffer(cwdbuf, -(NAInt)(naStrlen(cwdbuf)), NA_MEMORY_CLEANUP_NA_FREE);
   return string;
 }
 

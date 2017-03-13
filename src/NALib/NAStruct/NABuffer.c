@@ -91,7 +91,7 @@ NA_HIDEF void naAllocateBufferPartMemory(NABufferPart* part){
     if(part->data)
       naError("naAllocateBufferPartMemory", "Part already has memory");
   #endif
-  part->data = naNewPointerMutable(naMalloc(part->range.length), NA_MEMORY_CLEANUP_FREE, NA_NULL);
+  part->data = naNewPointerMutable(naMalloc(part->range.length), NA_MEMORY_CLEANUP_NA_FREE, NA_NULL);
 }
 
 
@@ -336,8 +336,7 @@ NABufferSource* naInitBufferSourceBuffer(NABufferSource* source, NABuffer* srcbu
 
 
 NABufferSource* naInitBufferSourceFile(NABufferSource* source, const char* filename, NAInt srcoffset){
-  source->src = naAlloc(NAFile);
-  *((NAFile*)(source->src)) = naMakeFileReadingFilename(filename);
+  source->src = naCreateFileReadingFilename(filename);
   source->srctype = NA_BUFFER_SOURCE_FILE;
   source->srcoffset = srcoffset;
   source->flags = 0;
@@ -355,7 +354,7 @@ void naClearBufferSource(NABufferSource* source){
     naReleaseBuffer(source->src);
     break;
   case NA_BUFFER_SOURCE_FILE:
-    naCloseFile(source->src);
+    naReleaseFile(source->src);
     naFree(source->src);
     break;
   default:
@@ -397,6 +396,7 @@ NABuffer* naGetBufferSourceBuffer(NABufferSource* source){
 void naFillSourceBufferPart(NABufferSource* source, NABufferPart* part){
   source->fillPart(source, part);
 }
+
 
 
 NARangei naGetBufferSourceMaxRange(NABufferSource* source){
@@ -462,7 +462,7 @@ NA_HIDEF void naEnsureBufferRange(NABuffer* buffer, NARangei range);
 
 NA_DEF NABuffer* naCreateBufferMemorySource(){
   NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
   buffer->source = naInitBufferSourceInsecureMemory(naAlloc(NABufferSource), 0);
 
   naInitList(&(buffer->parts));
@@ -483,7 +483,7 @@ NA_DEF NABuffer* naCreateBufferMemorySource(){
 
 NA_DEF NABuffer* naCreateBuffer(){
   NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
   buffer->source = naInitBufferSourceBuffer(naAlloc(NABufferSource), naCreateBufferMemorySource(), 0);
 
   naInitList(&(buffer->parts));
@@ -504,7 +504,7 @@ NA_DEF NABuffer* naCreateBuffer(){
 
 NA_DEF NABuffer* naCreateBufferExtraction(NABuffer* srcbuffer, NARangei range){
   NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
   buffer->source = naInitBufferSourceBuffer(naAlloc(NABufferSource), srcbuffer, -range.origin);
 
   naInitList(&(buffer->parts));
@@ -530,7 +530,7 @@ NA_DEF NABuffer* naCreateBufferExtraction(NABuffer* srcbuffer, NARangei range){
 
 NA_DEF NABuffer* naCreateBufferFile(const char* filename){
   NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
   buffer->source = naInitBufferSourceFile(naAlloc(NABufferSource), filename, 0);
 
   naInitList(&(buffer->parts));
@@ -551,7 +551,7 @@ NA_DEF NABuffer* naCreateBufferFile(const char* filename){
 
 NA_DEF NABuffer* naCreateBufferConstData(const void* data, NAInt bytesize){
   NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
   buffer->source = NA_NULL;
 
   naInitList(&(buffer->parts));
@@ -577,7 +577,7 @@ NA_DEF NABuffer* naCreateBufferConstData(const void* data, NAInt bytesize){
 
 NA_DEF NABuffer* naCreateBufferMutableData(void* data, NAInt bytesize, NAMemoryCleanup cleanup){
   NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
   buffer->source = NA_NULL;
 
   naInitList(&(buffer->parts));

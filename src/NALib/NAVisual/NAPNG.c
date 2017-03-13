@@ -247,7 +247,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
   NAByte* upbuffer;
   NAByte* upbufptr;
   NAInt x, y;
-  NAFile outfile;
+  NAFile* outfile;
 
   NAInt bpp = naGetPNGBytesPerPixel(png->colortype);
   NAUInt bytesperline = png->size.width * bpp;
@@ -319,9 +319,9 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
     upbufptr = curbyte - bytesperline;
   }
 
-  outfile = naMakeFileWritingFilename("test.raw", NA_FILEMODE_DEFAULT);
-  naWriteFileBytes(&outfile, png->pixeldata, png->size.width * png->size.height * bpp);
-  naCloseFile(&outfile);
+  outfile = naCreateFileWritingFilename("test.raw", NA_FILEMODE_DEFAULT);
+  naWriteFileBytes(outfile, png->pixeldata, png->size.width * png->size.height * bpp);
+  naReleaseFile(outfile);
 
   naFree(upbuffer);
 }
@@ -424,9 +424,9 @@ NA_HDEF void naReadPNGIDATChunk(NAPNG* png, NAPNGChunk* idat){
   naFillBufferWithZLIBDecompression(png->filtereddata, idat->data);
 
 
-//  NAFile outfile = naMakeFileWritingFilename("test.raw", NA_FILEMODE_DEFAULT);
+//  NAFile outfile = naCreateFileWritingFilename("test.raw", NA_FILEMODE_DEFAULT);
 //  naWriteBufferToFile(&(png->filtereddata), &outfile);
-//  naCloseFile(&outfile);
+//  naReleaseFile(&outfile);
 }
 
 
@@ -789,7 +789,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
 
   NABuffer* outbuffer;
   NAChecksum checksum;
-  NAFile outfile;
+  NAFile* outfile;
   NAListIterator iter;
 
   naAddListLastMutable(&(png->chunks), naAllocPNGIHDRChunk(png));
@@ -830,10 +830,10 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
   }
   naClearListIterator(&iter);
 
-  outfile = naMakeFileWritingFilename(filename, NA_FILEMODE_DEFAULT);
+  outfile = naCreateFileWritingFilename(filename, NA_FILEMODE_DEFAULT);
   naExpandBufferRangeToSource(outbuffer);
-  naWriteBufferToFile(outbuffer, &outfile);
-  naCloseFile(&outfile);
+  naWriteBufferToFile(outbuffer, outfile);
+  naReleaseFile(outfile);
   naReleaseBuffer(outbuffer);
 }
 

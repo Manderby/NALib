@@ -6,13 +6,8 @@ in NALib.
 
 
 Version 18:
-- Threading.h uses New for allocators
 - Fully Implement Buffer
-- First compression in NAPNG
-- Add more variadic error messages
 - Redo String with Buffers
-- Make NAArray simpler without subarrays. Add Iterator
-- Review Remaining Iterators
 - Make test files
 
 Version 19:
@@ -25,8 +20,15 @@ Version 19:
 - GUI
 
 Version 20:
+- Review Remaining Iterators Octtree Quadtree
+- Add more variadic error messages
+- First compression in NAPNG
 - NAComplexPolar
 - All todos.
 - Remove old commented code
 - Page guide 80
 - Documentation
+
+
+Future
+- Make Memory addresses uint 

@@ -332,7 +332,7 @@
 //  case NA_BUFFER_STORAGE_SOURCE_NONE:
 //    break;
 //  case NA_BUFFER_STORAGE_SOURCE_FILE:
-//    naCloseFile(storage->source);
+//    naReleaseFile(storage->source);
 //    naFree(storage->source);
 //    break;
 //  case NA_BUFFER_STORAGE_SOURCE_MEMORY:
@@ -386,7 +386,7 @@
 //NA_HIDEF void naSetBufferStorageSourceFile(NABufferStorage* storage, const char* filename){
 //  naVoidBufferStorageSource(storage);
 //  storage->source = naAlloc(NAFile);
-//  *((NAFile*)(storage->source)) = naMakeFileReadingFilename(filename);
+//  *((NAFile*)(storage->source)) = naCreateFileReadingFilename(filename);
 //  storage->sourcetype = NA_BUFFER_STORAGE_SOURCE_FILE;
 //}
 //
