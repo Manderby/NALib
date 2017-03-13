@@ -229,16 +229,16 @@ void testNASmartPtr(void){
   printf("Releasing the smart pointers...\n");
   naReleaseSmartPtr(&sptr1, NA_NULL);
   naReleaseSmartPtr(&sptr1, NA_NULL);
-  printf("%s, ", (naReleaseSmartPtr(&sptr1, NA_NULL)) ? "Success" : "Failed");
+  naReleaseSmartPtr(&sptr1, NA_NULL);
   naReleaseSmartPtr(&sptr2, (NAMutator)destructAVeryUsefulStruct);
   naReleaseSmartPtr(&sptr2, (NAMutator)destructAVeryUsefulStruct);
-  printf("%s, ", (naReleaseSmartPtr(&sptr2, (NAMutator)destructAVeryUsefulStruct)) ? "Success" : "Failed");
+  naReleaseSmartPtr(&sptr2, (NAMutator)destructAVeryUsefulStruct);
   naReleaseSmartPtr(sptr3, NA_NULL);
   naReleaseSmartPtr(sptr3, NA_NULL);
-  printf("%s, ", (naReleaseSmartPtr(sptr3, NA_NULL)) ? "Success" : "Failed");
+  naReleaseSmartPtr(sptr3, NA_NULL);
   naReleaseSmartPtr(sptr4, NA_NULL);
   naReleaseSmartPtr(sptr4, NA_NULL);
-  printf("%s, ", (naReleaseSmartPtr(sptr4, NA_NULL)) ? "Success" : "Failed");
+  naReleaseSmartPtr(sptr4, NA_NULL);
 
   printf("\n");
   
@@ -282,13 +282,13 @@ void testNAPointer(void){
   printf("Releasing the pointers...\n");
   naReleasePointer(ptr1);
   naReleasePointer(ptr1);
-  printf("%s, ", (naReleasePointer(ptr1)) ? "Success" : "Failed");
+  naReleasePointer(ptr1);
   naReleasePointer(ptr2);
   naReleasePointer(ptr2);
-  printf("%s, ", (naReleasePointer(ptr2)) ? "Success" : "Failed");
+  naReleasePointer(ptr2);
   naReleasePointer(ptr3);
   naReleasePointer(ptr3);
-  printf("%s, ", (naReleasePointer(ptr3)) ? "Success" : "Failed");
+  naReleasePointer(ptr3);
   
   printf("\n");
   naStopRuntime();

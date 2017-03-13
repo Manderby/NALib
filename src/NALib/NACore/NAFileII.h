@@ -297,7 +297,7 @@ NA_IDEF NAFile* naRetainFile(NAFile* file){
 
 
 NA_IDEF void naReleaseFile(NAFile* file){
-  naReleaseRefCount(&(file->refcount), file, (NAMutator)naClearFile);
+  naReleaseRefCount(&(file->refcount), NA_NULL, (NAMutator)naClearFile);
 }
 
 

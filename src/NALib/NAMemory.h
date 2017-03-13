@@ -146,8 +146,11 @@ typedef struct NATypeInfo NATypeInfo;
 
 
 
+
+
 // ///////////////////////////////
 // Memory cleanup
+// ////////////////////////
 
 
 // The comments denote what kind of cleanup-function will be called when you
@@ -170,43 +173,6 @@ typedef enum{
 NA_IAPI void naCleanupMemory(void* data, NAMemoryCleanup cleanup);
 
 
-
-
-
-// ///////////////////////////////
-// Core memory structs
-//
-// Following are the declarations and definitions of the very fundamental
-// base memory structs used in NALib. They seem confusing at first but are
-// very simple to understand.
-//
-// Basically, they all store a C-Pointer. But a C-Pointer can denote anything
-// from a single byte up to an array of large structs, they can be const or
-// mutable, they can be allocated with malloc, new or auto. The base structs
-// are here to distinguish between them. Basically, they store the following
-// information:
-//
-// NAPtr          A plain pointer. With lots of info when NDEBUG is undefined.
-// NAMemoryBlock  A pointer to a bunch of bytes
-// NAPointer      A reference counted pointer which deallocates automatically
-//                when the reference count reaches zero.
-//
-// At the core, an NAPtr stores a C-Pointer and the information whether it
-// is const or mutable. It also stores information about the bytesize of the
-// memory being pointed at and how it is null terminated. Even more, it stores,
-// how the pointer had originally been allocated. All this information is just
-// for debugging and can be omitted if necessary. When compiling with NDEBUG,
-// no information is stored at all.
-//
-// An NAMemoryBlock stores a bunch of bytes. No typesize but a total bytesize
-// of bytes is available.
-//
-// An NAPointer stores a pointer with a reference count. You can increase and
-// decrease that reference count and the pointer will automatically be erased
-// when the reference count reaches zero. How it will be erased can be defined
-// upon creation of the NAPointer.
-//
-// ///////////////////////////////
 
 
 
@@ -246,17 +212,15 @@ NA_IAPI NARefCount* naInitRefCount(     NARefCount* refcount,
                                     NAMemoryCleanup datacleanup);
 
 // Retain and Release.
-// You can send a destructor to Release which will be called with the data
-// pointer if the reference count reaches 0. Further more, the release function
-// will return NA_TRUE when the reference count reached zero.
+// You can send a destructor to Release which will be called when the reference
+// count reaches 0.
 //
-// When refcount reaches zero, first, the destructor is called with a pointer
-// to data, then the data is cleaned up and finally, the struct is cleaned up.
-//
-// When you have a destructor but leave data to be NA_NULL, the destructor will
-// be called with the refcount pointer.
+// When refcount reaches zero, first, the destructor is called. It will either
+// be called with the given pointer to data or with refcount if data is NA_NULL.
+// Then the data is cleaned up if available and finally, the struct is cleaned
+// up.
 NA_IAPI NARefCount* naRetainRefCount( NARefCount* refcount);
-NA_IAPI NABool      naReleaseRefCount(NARefCount* refcount,
+NA_IAPI void        naReleaseRefCount(NARefCount* refcount,
                                             void* data,
                                         NAMutator destructor);
 
@@ -349,8 +313,9 @@ NA_IAPI NAPtr naMakePtrWithBytesize(NAInt bytesize);
 // The mutable variant can take ownership of the given data based on the given
 // cleanuphint and expects a call to the corresponding cleanup function (see
 // below). The cleanuphint for the const variant is NA_MEMORY_CLEANUP_NONE.
-NA_IAPI NAPtr naMakePtrWithDataConst(  const void* data);
-NA_IAPI NAPtr naMakePtrWithDataMutable(      void* data, NAMemoryCleanup cleanuphint);
+NA_IAPI NAPtr naMakePtrWithDataConst(       const void* data);
+NA_IAPI NAPtr naMakePtrWithDataMutable(           void* data,
+                                        NAMemoryCleanup cleanuphint);
 
 // Assumes srcptr to be an array of bytes and creates an NAPtr referencing an
 // extraction thereof. DOES NOT COPY!
@@ -358,9 +323,9 @@ NA_IAPI NAPtr naMakePtrWithDataMutable(      void* data, NAMemoryCleanup cleanup
 // The bytesizehint is only a hint which helps detecting errors during
 // debugging. When NDEBUG is defined, this hint is optimized out.
 // The cleanuphint for this function is NA_MEMORY_CLEANUP_NONE.
-NA_IAPI NAPtr naMakePtrWithExtraction(  const NAPtr* srcptr,
-                                              NAUInt byteoffset,
-                                              NAUInt bytesizehint);
+NA_IAPI NAPtr naMakePtrWithExtraction(     const NAPtr* srcptr,
+                                                 NAUInt byteoffset,
+                                                 NAUInt bytesizehint);
     
 // Note that the creation functions of NAPtr are naMakeXXX functions which
 // makes it easy to implement. But the remaining functions require to provide
@@ -375,9 +340,9 @@ NA_IAPI void naFreePtr(NAPtr* ptr);
 NA_IAPI void naFreeAlignedPtr(NAPtr* ptr);
 NA_IAPI void naNaFreePtr(NAPtr* ptr);
 NA_IAPI void naNaFreeAlignedPtr(NAPtr* ptr);
-#ifndef NDEBUG
-  NA_IAPI void naDeletePtr(NAPtr* ptr);
-  NA_IAPI void naDeleteBrackPtr(NAPtr* ptr);
+#ifdef __cplusplus
+NA_IAPI void naDeletePtr(NAPtr* ptr);
+NA_IAPI void naDeleteBrackPtr(NAPtr* ptr);
 #endif
 NA_IAPI void naNaDeletePtr(NAPtr* ptr);
 
@@ -448,7 +413,7 @@ NA_IAPI NASmartPtr* naInitSmartPtrMutable(  NASmartPtr* sptr,
 // When refcount reaches zero, first, the destructor is called with a pointer
 // to data, then the data is cleaned up and finally, the struct is cleaned up.
 NA_IAPI NASmartPtr* naRetainSmartPtr( NASmartPtr* sptr);
-NA_IAPI NABool      naReleaseSmartPtr(NASmartPtr* sptr,
+NA_IAPI void        naReleaseSmartPtr(NASmartPtr* sptr,
                                         NAMutator desctructor);
 
 // Returns either a const or a mutable pointer to the data stored.
@@ -527,7 +492,7 @@ NA_IAPI NAPointer* naRetainPointer(NAPointer* pointer);
 // is no longer needed. The data will be freed automatically according to the
 // destructor and cleanup enumeration given upon creation. The NAPointer struct
 // itself will be deleted by the runtime system.
-NA_IAPI NABool naReleasePointer(NAPointer* pointer);
+NA_IAPI void naReleasePointer(NAPointer* pointer);
 
 // The following two functions return a pointer to the data. This function is
 // not particularily beautiful when it comes to readability or writeability but

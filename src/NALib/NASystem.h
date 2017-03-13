@@ -671,7 +671,6 @@ typedef void (*NAMutator) (void*);
   // even be corrected automatically. Nontheless, any error should be
   // considered a potential risk for the application to eventually crash.
   void naError(const char* functionsymbol, const char* text, ...);
-  // todo: Add more error information using variadic arguments.
 
 
   // Prints a crash message.

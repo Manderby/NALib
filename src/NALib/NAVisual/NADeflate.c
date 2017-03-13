@@ -364,6 +364,9 @@ NA_HDEF void naCreateFixedHuffmanCodes(NAHuffmanCodeTree** literalhuffman, NAHuf
 }
 
 
+#define NA_ZLIB_CMF_COMPRESSION_DEFLATE 8
+#define NA_ZLIB_CMF_MAX_WINDOW_SIZE 7     // 2 ^ MAX_WINDOWSIZE + 8
+
 
 NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input){
   uint8 compressionmethodflags;
@@ -392,12 +395,12 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   compressionmethodflags = naReadBufferu8(input);
   compressionmethod = compressionmethodflags & 0x0f;
   #ifndef NDEBUG
-    if(compressionmethod != 8)
+    if(compressionmethod != NA_ZLIB_CMF_COMPRESSION_DEFLATE)
       naError("naInitBufferFromDeflateDecompression", "Compression method of Deflate buffer unknown");
   #endif
   compressioninfo = (compressionmethodflags & 0xf0) >> 4;
   #ifndef NDEBUG
-    if(compressioninfo > 7)
+    if(compressioninfo > NA_ZLIB_CMF_MAX_WINDOW_SIZE)
       naError("naInitBufferFromDeflateDecompression", "Window size too big");
   #endif
   windowsize = 1 << (compressioninfo + 8);
@@ -519,6 +522,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
 
 
 
+#define NA_ZLIB_PRESET_DICT_AVAILABLE 0
 
 NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, NADeflateCompressionLevel level){
 
@@ -527,8 +531,6 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, N
   NAInt bytesize;
   NAChecksum checksum;
   uint32 adler;
-
-  NA_UNUSED(level);
   
   #ifndef NDEBUG
     if(naGetBufferEndianness(buffer) != NA_ENDIANNESS_NETWORK)
@@ -537,9 +539,9 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, N
       naError("naInitBufferFromDeflateDecompression", "Input buffer should be big endianed");
   #endif
 
-  cmf = (7<<4 | 8);
-  flg = (0 << 6 | 0 << 5);  // todo: That seems to be wrong.
-  flg |= 31 - ((cmf * 256 + flg) % 31);
+  cmf = (NA_ZLIB_CMF_MAX_WINDOW_SIZE<<4 | NA_ZLIB_CMF_COMPRESSION_DEFLATE);
+  flg = (level << 6 | NA_ZLIB_PRESET_DICT_AVAILABLE << 5);
+  flg |= 31 - ((cmf * 256 + flg) % 31); // Check-bits
   naWriteBufferu8(buffer, cmf);
   naWriteBufferu8(buffer, flg);
 

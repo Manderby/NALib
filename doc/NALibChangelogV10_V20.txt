@@ -13,12 +13,13 @@ correct, complete or final.
 
 
 Highlights:
+- Added compilation macros into a separate NAConfiguration.h file.
 - Extended NAGrowingSpace with Pop-functionality, hence making it an
   infinitely sized Stack. Renamed it to NAStack. Has an iterator too.
   The previous NAStack has been deleted.
 - Re-added first tests to the package. Shall be used as example implementations
   too.
-- Several adjustments in NAMemory. Added C++ delete functions for NAPointer.
+- Several adjustments in NAMemory. Added pure C free and C++ delete functions.
   Removed Memory observation functions. Removed NALValue, NABuf, NAMemoryBlock
   and NACArray. Added NASmartPtr which is the same as NAPointer but without
   destructor. Base for NASmartPtr is NARefCount, a central reference counting
@@ -27,7 +28,7 @@ Highlights:
   the base struct for NAString now. Was able to remove huge portions of legacy
   code due to that reprogramming.
 - Reprogrammed NAArray without NAByteArray. It is now simpler but can not have
-  subarrays anymore. Separate NAArrayIterator implement. Lots of API-changes.
+  subarrays anymore. Separate NAArrayIterator implemented. Lots of API-changes.
 - Removed NAByteArray completely.
 - NAFile is now reference counting.
 

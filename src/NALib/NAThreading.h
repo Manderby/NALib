@@ -52,9 +52,9 @@ NA_IAPI int naSleepS(double secs);
 // you start the thread and it will run parallel to your current execution.
 
 // Creates a new thread with a start function and an argument.
-// You can give a thread a name, which is currently unused. todo. This will
-// be used on some systems when debugging later on. Note that both threadname
-// and arg will NOT be owned by the thread.
+// You can give a thread a name which will  be used on some systems when
+// debugging later on. Note that both threadname and arg will NOT be owned by
+// the thread.
 NA_IAPI NAThread naMakeThread( const char* threadname,
                                    NAMutator function,
                                     void* arg);

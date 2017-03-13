@@ -106,7 +106,7 @@ struct NAThreadStruct{
 
 NA_IDEF NAThread naMakeThread(const char* threadname, NAMutator function, void* arg){
   NAThreadStruct* threadstruct = naAlloc(NAThreadStruct);
-  threadstruct->name = threadname;  // todo
+  threadstruct->name = threadname;
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     threadstruct->nativeThread = NA_NULL; // Note that on windows, creating the thread would immediately start it.
   #else
@@ -164,18 +164,12 @@ NA_IDEF void naRunThread(NAThread thread){
 
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
 
-  // There are two ways to implement mutexes on windows: "Critical section" or
-  // "Mutex". But as up to now, the author had some problems with the "Mutex"
-  // implementation, we just use the "Critical section" which is faster anyway.
-  // todo.
-  #define NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
-
   // On windows, we need a more complex structure to really make a mutex being
   // lockable just once.
   typedef struct NAWindowsMutex NAWindowsMutex;
 
   struct NAWindowsMutex{
-    #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
+    #if (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
       CRITICAL_SECTION mutex;
     #else
       HANDLE mutex;
@@ -213,7 +207,7 @@ NA_IDEF void naRunThread(NAThread thread){
 NA_IDEF NAMutex naMakeMutex(){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     NAWindowsMutex* windowsmutex = naAlloc(NAWindowsMutex);
-    #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
+    #if (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
       InitializeCriticalSection(&(windowsmutex->mutex));
     #else
       windowsmutex->mutex = CreateMutex(NULL, FALSE, NULL);
@@ -242,7 +236,7 @@ NA_IDEF NAMutex naMakeMutex(){
 NA_IDEF void naClearMutex(NAMutex mutex){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;
-    #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
+    #if (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
       DeleteCriticalSection(&(windowsmutex->mutex));
     #else
       CloseHandle(windowsmutex->mutex);
@@ -261,13 +255,13 @@ NA_IDEF void naClearMutex(NAMutex mutex){
 
 
 
-#if (NA_SYSTEM == NA_SYSTEM_WINDOWS) && defined(NA_THREAD_WINDOWS_USE_CRITICAL_SECTION)
+#if (NA_SYSTEM == NA_SYSTEM_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
   _When_(NA_TRUE, _Acquires_lock_(windowsmutex->mutex))
 #endif
 NA_IDEF void naLockMutex(NAMutex mutex){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;
-    #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
+    #if (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
       EnterCriticalSection(&(windowsmutex->mutex));
     #else
       WaitForSingleObject(windowsmutex->mutex, INFINITE);
@@ -293,7 +287,7 @@ NA_IDEF void naLockMutex(NAMutex mutex){
 
 
 
-#if (NA_SYSTEM == NA_SYSTEM_WINDOWS) && defined(NA_THREAD_WINDOWS_USE_CRITICAL_SECTION)
+#if (NA_SYSTEM == NA_SYSTEM_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
   _When_(NA_TRUE, _Releases_lock_(windowsmutex->mutex))
 #endif
 NA_IDEF void naUnlockMutex(NAMutex mutex){
@@ -307,7 +301,7 @@ NA_IDEF void naUnlockMutex(NAMutex mutex){
       windowsmutex->seemslocked = NA_FALSE;
     #endif
     windowsmutex->islockedbythisthread = NA_FALSE;
-    #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
+    #if (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
       LeaveCriticalSection(&(windowsmutex->mutex));
     #else
       ReleaseMutex(windowsmutex->mutex);
@@ -352,13 +346,13 @@ NA_IDEF void naUnlockMutex(NAMutex mutex){
 
 
 
-#if (NA_SYSTEM == NA_SYSTEM_WINDOWS) && defined(NA_THREAD_WINDOWS_USE_CRITICAL_SECTION)
+#if (NA_SYSTEM == NA_SYSTEM_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
   _When_(return == NA_TRUE, _Acquires_lock_(windowsmutex->mutex))
 #endif
 NA_IDEF NABool naTryMutex(NAMutex mutex){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;
-    #ifdef NA_THREAD_WINDOWS_USE_CRITICAL_SECTION
+    #if (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
       BOOL retvalue = TryEnterCriticalSection(&(windowsmutex->mutex));
       if(retvalue == 0){
         return NA_FALSE;

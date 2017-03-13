@@ -45,7 +45,7 @@
 // not compile with GUI support. But if you want to, simply set the this
 // macro to 1.
 //
-// If done so, you MUST link your program to the appropriate library.
+// If done so, you MUST link your program to the appropriate library:
 // Windows: WinAPI
 // Macintosh: Cocoa
 
@@ -65,7 +65,7 @@
 //
 // The implementation with pools proved to be a lot faster with older compilers
 // but with some more modern compilers, especially in conjunction with C++, the
-// basic malloc and free can be faster.
+// basic malloc and free can (though rarely) be faster.
 
 #ifndef NA_RUNTIME_USES_MEMORY_POOLS
   #define NA_RUNTIME_USES_MEMORY_POOLS 1
@@ -78,8 +78,8 @@
 // this macro to 0, the memory page size will be used.
 //
 // Turns out, on most systems, the pagesize is far too small to result in good
-// speed improvements. A custom bytesize can result in up to 2 times faster
-// allocation and deallocation.
+// speed improvements. A large enough custom bytesize can result in up to
+// 2 times faster allocation and deallocation.
 
 #ifndef NA_COREPOOL_BYTESIZE
   #define NA_COREPOOL_BYTESIZE (1 << 16)
@@ -106,6 +106,22 @@
 
 
 
+// ////////////////////////////////
+// Mutexes on Windows
+// ////////////////////////////////
+
+// There are two ways to implement mutexes on windows: "Critical section" or
+// "Mutex". Both implementations work but some performence issues have been
+// observed with the "Mutex" implementation. 
+//
+// Set this macro to 1 if you want to use the "critical section" or set it to
+// 0 if you want to use "Mutex". Default is 1
+
+#ifndef NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION
+  #define NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION 1
+#endif
+
+
 
 // ////////////////////////////////
 // Mathematical, chemical and physical constants
@@ -116,7 +132,7 @@
 // http://physics.nist.gov/constants
 //
 // With the following macro, you define, what year of the CODATA you would like
-// to use. Possible values are 2006, 2010, 2014.
+// to use. Possible values are 2006, 2010 and 2014.
 //
 // By default, NALib uses the latest setting.
 

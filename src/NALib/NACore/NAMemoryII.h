@@ -426,17 +426,17 @@ NA_IDEF NARefCount* naRetainRefCount(NARefCount* refcount){
 
 
 
-NA_IDEF NABool naReleaseRefCount(NARefCount* refcount, void* data, NAMutator destructor){
+NA_IDEF void naReleaseRefCount(NARefCount* refcount, void* data, NAMutator destructor){
   #ifndef NDEBUG
     if(!refcount){
       naCrash("naReleaseRefCount", "refcount is Null-Pointer.");
-      return NA_FALSE;
+      return;
     }
     // The next test can detect some erroneous behaviour in the code. Note
     // however that most likely the true cause of the error did occur long
     // before reaching here.
     if(naGetRefCountCount(refcount) == NA_ZERO)
-      {naCrash("naReleaseRefCount", "Releasing NARefCount with a count of 0"); return NA_FALSE;}
+      {naCrash("naReleaseRefCount", "Releasing NARefCount with a count of 0"); return;}
   #endif
   // Note that the author decided to always count to zero, even if it is clear
   // that the pointer will eventually be freed and the data will be lost in
@@ -447,14 +447,16 @@ NA_IDEF NABool naReleaseRefCount(NARefCount* refcount, void* data, NAMutator des
   if(naGetRefCountCount(refcount) == NA_ZERO){
     #ifndef NDEBUG
       refcount->count |= NA_REFCOUNT_DELETE_FROM_RELEASE;
-      if(!data && destructor)
-        naError("naReleaseRefCount", "destructor available but no data.");
+      if(destructor && (data == refcount))
+        naError("naReleaseRefCount", "Do not use the same pointer for data as for refcount. Use NA_NULL for data if you want the destructor to be called with refcount");
     #endif
     
     // Call the destructor on the data if available.
     if(data){
       if(destructor){destructor(data);}
       naCleanupMemory(data, naGetRefCountCleanupData(refcount));
+    }else{
+      if(destructor){destructor(refcount);}
     }
 
     // Cleanup the struct as marked.
@@ -467,7 +469,7 @@ NA_IDEF NABool naReleaseRefCount(NARefCount* refcount, void* data, NAMutator des
     // needed for reference counting, it is nontheless put into a separate
     // function such that this function can be inlined for sure and thus
     // becomes very fast.
-    return NA_TRUE;
+    return;
   }
   // Note that other programming languages have incorporated this very idea
   // of self-organized reference-counting pointers deeply within its core.
@@ -475,7 +477,7 @@ NA_IDEF NABool naReleaseRefCount(NARefCount* refcount, void* data, NAMutator des
   // care of detecting and collecting unused objects. In C and C++, no such
   // mechanisms exist and must be implemented manually. NARuntime is a small
   // example of such a system.
-  return NA_FALSE;
+  return;
 }
 
 
@@ -484,6 +486,13 @@ NA_IDEF NABool naReleaseRefCount(NARefCount* refcount, void* data, NAMutator des
 // //////////////////////////
 // NAPtr
 // //////////////////////////
+
+// At the core, an NAPtr stores a C-Pointer and the information whether it
+// is const or mutable. It also stores information about the bytesize of the
+// memory being pointed at and how it is null terminated. Even more, it stores,
+// how the pointer had originally been allocated. All this information is just
+// for debugging and can be omitted if necessary. When compiling with NDEBUG,
+// no information is stored at all.
 
 struct NAPtr{
   union{                        // A union storing either ...
@@ -501,7 +510,7 @@ struct NAPtr{
 // when NDEBUG is defined.
 //
 // Authors note:
-// The decision to include so many debugging information arose over many
+// The decision to include debugging information arose over many
 // iterations. Mainly NAString was the cause of pushing debugging information
 // deeply into the core functionality of NALib. They should be here to help
 // with very fundamental datastructures like an NAByteArray but not to distract
@@ -873,18 +882,18 @@ NA_IDEF NASmartPtr* naRetainSmartPtr(NASmartPtr* sptr){
 
 
 
-NA_IDEF NABool naReleaseSmartPtr(NASmartPtr* sptr, NAMutator destructor){
+NA_IDEF void naReleaseSmartPtr(NASmartPtr* sptr, NAMutator destructor){
   #ifndef NDEBUG
     if(!sptr){
       naCrash("naReleaseSmartPtr", "sptr is Null-Pointer.");
-      return NA_FALSE;
+      return;
     }
   #endif
 
   if(naGetRefCountCleanupData(&(sptr->refcount)) == NA_MEMORY_CLEANUP_NONE){
-    return naReleaseRefCount(&(sptr->refcount), NA_NULL, NA_NULL);
+    naReleaseRefCount(&(sptr->refcount), NA_NULL, NA_NULL);
   }else{
-    return naReleaseRefCount(&(sptr->refcount), naGetSmartPtrMutable(sptr), destructor);
+    naReleaseRefCount(&(sptr->refcount), naGetSmartPtrMutable(sptr), destructor);
   }
 }
 
@@ -910,6 +919,11 @@ NA_IDEF void* naGetSmartPtrMutable(NASmartPtr* sptr){
 // //////////////////////////
 // NAPointer
 // //////////////////////////
+
+// An NAPointer stores a pointer with a reference count. You can increase and
+// decrease that reference count and the pointer will automatically be erased
+// when the reference count reaches zero. How it will be erased can be defined
+// upon creation of the NAPointer.
 
 struct NAPointer{
   NASmartPtr sptr;
@@ -971,14 +985,14 @@ NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
 
 
 
-NA_IDEF NABool naReleasePointer(NAPointer* pointer){
+NA_IDEF void naReleasePointer(NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer){
       naCrash("naReleasePointer", "pointer is Null-Pointer.");
-      return NA_FALSE;
+      return;
     }
   #endif
-  return naReleaseSmartPtr(&(pointer->sptr), pointer->destructor);
+  naReleaseSmartPtr(&(pointer->sptr), pointer->destructor);
 }
 
 

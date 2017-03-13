@@ -17,11 +17,11 @@
 
 int main(void){
 //  testSystem();  
-//  testMemory();
+  testMemory();
 
   naStartRuntime();
 //    testStack();
-    testBuffer();
+//    testBuffer();
   naStopRuntime();
   
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS

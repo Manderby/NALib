@@ -355,7 +355,6 @@ void naClearBufferSource(NABufferSource* source){
     break;
   case NA_BUFFER_SOURCE_FILE:
     naReleaseFile(source->src);
-    naFree(source->src);
     break;
   default:
     #ifndef NDEBUG
@@ -404,7 +403,7 @@ NARangei naGetBufferSourceMaxRange(NABufferSource* source){
   NAFilesize filesize;
   switch(source->srctype){
   case NA_BUFFER_SOURCE_MEMORY:
-    return naMakeRangei(0,0);     //todo make range vom -inf to inf
+    return naMakeRangei(0,0);     //todo make range vom -inf to inf maybe
     break;
   case NA_BUFFER_SOURCE_BUFFER:
     range = naGetBufferRange(source->src);

@@ -8,6 +8,7 @@ in NALib.
 Version 18:
 - Fully Implement Buffer
 - Redo String with Buffers
+- Remove NAMap2D
 - Make test files
 
 Version 19:
@@ -32,3 +33,6 @@ Version 20:
 
 Future
 - Make Memory addresses uint 
+- Garbage collection, release pools
+- MOB
+- Color
