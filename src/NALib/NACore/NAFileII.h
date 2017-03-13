@@ -94,7 +94,7 @@ NA_IDEF int naMkDir(const char* path, int mode){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return _mkdir(path);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    return mkdir(path, mode);
+    return mkdir(path, (mode_t)mode);
   #endif
 }
 

@@ -425,21 +425,21 @@ NA_IAPI NAInt     naGetBoxiMaxZ  (NABoxi box);
 
 // Raw Index functions. Assuming a 2-dimensional or 3-dimensional array with
 // row-first or column-first ordering. Row-first is the default C ordering.
-NA_IAPI NAUInt   naGetIndexWithOriginAndPosRowFirst(       NAPosi    origin, NAPosi    offset, NAUInt width);
-NA_IAPI NAUInt   naGetIndexWithOriginAndPosColumnFirst(    NAPosi    origin, NAPosi    offset, NAUInt height);
-NA_IAPI NAUInt   naGetIndexWithOriginAndVertexRowFirst(    NAVertexi origin, NAVertexi vertex, NAUInt width, NAUInt height);
-NA_IAPI NAUInt   naGetIndexWithOriginAndVertexColumnFirst( NAVertexi origin, NAVertexi vertex, NAUInt depth, NAUInt height);
+NA_IAPI NAInt    naGetIndexWithOriginAndPosRowFirst(       NAPosi    origin, NAPosi    offset, NAInt width);
+NA_IAPI NAInt    naGetIndexWithOriginAndPosColumnFirst(    NAPosi    origin, NAPosi    offset, NAInt height);
+NA_IAPI NAInt    naGetIndexWithOriginAndVertexRowFirst(    NAVertexi origin, NAVertexi vertex, NAInt width, NAInt height);
+NA_IAPI NAInt    naGetIndexWithOriginAndVertexColumnFirst( NAVertexi origin, NAVertexi vertex, NAInt depth, NAInt height);
 
 // Count returns the total number of indices (width*height) within a rect.
 // IndexOf returns the index of the corresponding 1-dimensional array.
 // Note that row-first is the default C ordering.
 NA_IAPI NAInt     naGetRectiIndexCount             (NARecti rect);
-NA_IAPI NAUInt    naGetRectiIndexOfPosRowFirst     (NARecti rect, NAPosi pos);
-NA_IAPI NAUInt    naGetRectiIndexOfPosColumnFirst  (NARecti rect, NAPosi pos);
+NA_IAPI NAInt     naGetRectiIndexOfPosRowFirst     (NARecti rect, NAPosi pos);
+NA_IAPI NAInt     naGetRectiIndexOfPosColumnFirst  (NARecti rect, NAPosi pos);
 
 NA_IAPI NAInt     naGetBoxiIndexCount              (NABoxi box);
-NA_IAPI NAUInt    naGetBoxiIndexOfVertexRowFirst   (NABoxi box, NAVertexi vertex);
-NA_IAPI NAUInt    naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex);
+NA_IAPI NAInt     naGetBoxiIndexOfVertexRowFirst   (NABoxi box, NAVertexi vertex);
+NA_IAPI NAInt     naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex);
 // Example:    Rect(Pos(2, 5), Size(4, 3)) describes a 2D-field. It stores
 //             a corresponding 1D-Array {a, b, c, d, e, f, g, h, i, j, k, l}.
 // (a b c d)   End is (6, 8), Max is (5, 7). Count is 3*4 = 12

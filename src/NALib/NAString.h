@@ -64,12 +64,12 @@ typedef enum{
 
 
 // Remapping of the starndard strlen function.
-NA_IAPI NAUInt naStrlen(              const NAUTF8Char* str);
-NA_IAPI NAUInt naVsnprintf(                 NAUTF8Char* buffer,
+NA_IAPI NAInt naStrlen(               const NAUTF8Char* str);
+NA_IAPI NAInt naVsnprintf(                  NAUTF8Char* buffer,
                                                  NAUInt length,
                                       const NAUTF8Char* newstr,
                                                 va_list argumentlist);
-NA_IAPI NAUInt naVarargStringLength(  const NAUTF8Char* string,
+NA_IAPI NAInt naVarargStringLength(   const NAUTF8Char* string,
                                                 va_list args);
 
 
@@ -202,7 +202,7 @@ NA_API void naDecoupleString(NAString* string);
 // Returns the length of the string in Characters. If the string is Null-terminated,
 // the terminating Null-character is NOT included. Therefore "Hello" always
 // returns 5, no matter if the string is null-terminated or not.
-NA_API NAUInt naGetStringLength(const NAString* string);  // todo: lengt or bytesize?
+NA_API NAInt naGetStringLength(const NAString* string);  // todo: lengt or bytesize?
 
 // Returns a const pointer to the first character of this string. Use
 // this for example for printf %s arguments but make sure the string is

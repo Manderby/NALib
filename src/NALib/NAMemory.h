@@ -52,6 +52,10 @@ NA_IAPI NAUInt naGetSystemMemoryPagesizeMask();
 #define NA_INVALID_MEMORY_BYTESIZE  NA_INT_MIN
 
 
+// As all memory functions expect an NAInt, we make it easier to write code
+// with a custom sizeof macro
+#define naSizeof(x) ((NAInt)sizeof(x))
+
 
 // //////////////////////////////////////
 // Basic Memory allocation and freeing
@@ -137,7 +141,7 @@ NA_API NAUInt             naGetRuntimePoolSize();
 
 #define NA_RUNTIME_TYPE(type, destructor)\
   static NA_LINKER_NO_EXPORT NATypeInfo na_ ## type ## _typeinfo =\
-  {NA_NULL, sizeof(type), (NAMutator)destructor};
+  {NA_NULL, sizeof(type), (NAMutator)destructor}
 
 // Every type using the runtime system will get a global typeinfo variable
 // which has the following type. The full type definition is in the file

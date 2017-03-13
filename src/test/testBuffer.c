@@ -46,7 +46,7 @@ void testBufferMemory(void){
   if(NA_BUFFER_PART_BYTESIZE){
     printf("Configuration.h: Custom buffer part size: %d\n", NA_BUFFER_PART_BYTESIZE);
   }else{
-    printf("Configuration.h: buffer part size same as pagesize: %d\n", naGetSystemMemoryPagesize());
+    printf("Configuration.h: buffer part size same as pagesize: %" NA_PRIu "\n", naGetSystemMemoryPagesize());
   }
 
   printf("\nCreating memory buffer.\n");
@@ -73,9 +73,9 @@ void testBufferMemory(void){
   printf("Buffer now stores a byte range of [%" NA_PRIi ", %" NA_PRIi "] (%" NA_PRIi " MB)\n", range.origin, naGetRangeiEnd(range), range.length / 1000000);
   
 
-  printf("Writing some data ... ", testdata);
+  printf("Writing some data ... ");
   naWriteBufferBytes(buffer, &testdata, sizeof(int));
-  naSeekBufferRelative(buffer, -sizeof(int));
+  naSeekBufferRelative(buffer, -naSizeof(int));
   naReadBufferBytes(buffer, &testdata, sizeof(int));
   printf("Reading that data again: %d\n", testdata);
   

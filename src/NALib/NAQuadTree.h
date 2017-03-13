@@ -63,7 +63,7 @@
 // Also note that the coordinates of origin are guaranteed to be a multiple of
 // leaflength.
 typedef void* (*NAQuadTreeLeafAllocator)(   NAPosi origin,
-                                            NAUInt leaflength,
+                                             NAInt leaflength,
                                              void* userdata,
                                        const void* copydata);
 
@@ -89,7 +89,7 @@ typedef void  (*NAQuadTreeDataCopier)( const void* dstdata,
                                        const void* copydata,
                                             NAPosi copyorigin,
                                            NASizei size,
-                                            NAUInt leaflength);
+                                             NAInt leaflength);
 
 // This callback is called when a quad tree creates a node other than a leaf.
 // Nodes can not be directly manipulated but you are allowed to store any data
@@ -103,7 +103,7 @@ typedef void  (*NAQuadTreeDataCopier)( const void* dstdata,
 // will be available to NAQuadTreeLeafChanged, NAQuadTreeChildChanged and
 // NAQuadTreeNodeDeallocator.
 typedef void* (*NAQuadTreeNodeAllocator)( NAPosi origin,
-                                            NAUInt nodesize);
+                                             NAInt nodesize);
 
 // The node destructor is called before a quad tree ultimately deletes a node.
 // The pointer created with NAQuadTreeNodeAllocator will be sent to this
@@ -153,7 +153,7 @@ typedef NABool(*NAQuadTreeChildChanged)(     void* nodedata,
 // actually store the data.
 typedef uint64(*NAQuadTreeSerializer)        (void* buffer,
                                         const void* leafdata,
-                                             NAUInt leaflength);
+                                              NAInt leaflength);
 
 // This callback is called when a buffer shall be deserialized which
 // previously had been serialized with NAQuadTreeSerializer. Create a leaf
@@ -164,7 +164,7 @@ typedef uint64(*NAQuadTreeSerializer)        (void* buffer,
 // here, buffer denotes not a chunk which shall be copied but rather more a
 // buffer which need to be deserialized. These can be two different things.
 typedef void* (*NAQuadTreeDeserializer)(     NAPosi origin,
-                                             NAUInt leaflength,
+                                              NAInt leaflength,
                                         const void* buffer);
 
 
@@ -192,12 +192,12 @@ typedef struct NAQuadTreeNode NAQuadTreeNode;
 // The typedef of the NAQuadTree.
 typedef struct NAQuadTree NAQuadTree;
 struct NAQuadTree{
-  NAUInt leaflength;
+  NAInt leaflength;
   NAQuadTreeCallbacks callbacks;
   NAQuadTreeNode* root;
   NAQuadTreeNode* visitnode;    // visitnode stores tha last node visited. This
   NAQuadTreeNode* curnode;      // Makes searching in the tree very fast.
-  NAUInt cursegment;            // curnode and cursegment are for the iteration
+  NAInt cursegment;            // curnode and cursegment are for the iteration
 };
 
 
@@ -205,7 +205,7 @@ struct NAQuadTree{
 
 // Initializes an empty NAQuadTree with the given leaflength and callbacks.
 NA_API NAQuadTree* naInitQuadTree(              NAQuadTree* tree,
-                                                     NAUInt leaflength,
+                                                      NAInt leaflength,
                                         NAQuadTreeCallbacks callbacks);
 
 // Duplicates the given duptree.
@@ -246,7 +246,7 @@ NA_API void naClearQuadTree(                    NAQuadTree* tree);
 NA_API NABool naIsQuadTreeEmpty(                NAQuadTree* tree);
 
 // Returns the leaf length in one dimension
-NA_API uint64 naGetQuadTreeLeafLength(      const NAQuadTree* tree);
+NA_API NAInt naGetQuadTreeLeafLength(      const NAQuadTree* tree);
 
 // Returns the callbacks (by copying the function pointers)
 NA_API NAQuadTreeCallbacks naGetQuadTreeCallbacks(const NAQuadTree* tree);
@@ -325,7 +325,7 @@ NA_API void* naIterateQuadTreeInRectMutable(     NAQuadTree* tree,
 // guaranteed to be inside the leaf.
 typedef void  (*NAQuadTreeDataSetter)( const void* dstdata,
                                            NARecti rect,
-                                            NAUInt leaflength,
+                                             NAInt leaflength,
                                        const void* userdata);
 
 // Calls the given NAQuadTreeDataSetter function for every chunk in the tree

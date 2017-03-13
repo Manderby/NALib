@@ -28,14 +28,14 @@ NA_IDEF NAInt naSigni(NAInt x){
 }
 NA_IDEF int8 naSigni8(int8 x){
   #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-    return ((x>>7)<<1)+1;
+    return (int8)(((x>>7)<<1)+1);
   #else
     return (x<0)?-1:1;
   #endif
 }
 NA_IDEF int16 naSigni16(int16 x){
   #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-    return ((x>>15)<<1)+1;
+    return (int16)(((x>>15)<<1)+1);
   #else
     return (x<0)?-1:1;
   #endif
@@ -118,7 +118,7 @@ NA_IAPI NABool naIsNaN(double x){
     #ifndef isnan
       return (x != x);
     #else
-      return isnan(x);
+      return (NABool)isnan(x);
     #endif
   #endif
 }
@@ -130,7 +130,7 @@ NA_IAPI NABool naIsNaNf(float x){
     #ifndef isnan
       return (x != x);
     #else
-      return isnan(x);
+      return (NABool)isnan(x);
     #endif
   #endif
 }
@@ -142,7 +142,7 @@ NA_IAPI NABool naIsInfinite(double x){
     #ifndef isnan
       return !naIsNaNf(x) && naIsNaNf(x - x);
     #else
-      return isinf(x);
+      return (NABool)isinf(x);
     #endif
   #endif
 }
@@ -153,7 +153,7 @@ NA_IAPI NABool naIsInfinitef(float x){
     #ifndef isnan
       return !naIsNaNf(x) && naIsNaNf(x - x);
     #else
-      return isinf(x);
+      return (NABool)isinf(x);
     #endif
   #endif
 }

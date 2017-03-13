@@ -8,7 +8,7 @@
 
 
 struct NAOctTreeNode{
-  NAUInt childsize;
+  NAInt childsize;
   NAInt segmentinparent;
   NAOctTreeNode* parentnode;
   void* child[8];
@@ -18,7 +18,7 @@ struct NAOctTreeNode{
 
 
 
-NA_HDEF NAOctTreeNode* naAllocOctTreeNode(NAUInt childsize, NAInt segmentinparent, NAOctTreeNode* parentnode, NAVertexi origin, NAOctTreeNodeAllocator allocator){
+NA_HDEF NAOctTreeNode* naAllocOctTreeNode(NAInt childsize, NAInt segmentinparent, NAOctTreeNode* parentnode, NAVertexi origin, NAOctTreeNodeAllocator allocator){
   NAOctTreeNode* node = naAlloc(NAOctTreeNode);
   node->childsize = childsize;
   node->segmentinparent = segmentinparent;
@@ -49,7 +49,7 @@ NA_HDEF NAOctTreeNode* naAllocOctTreeNode(NAUInt childsize, NAInt segmentinparen
 
 
 
-NA_HDEF void naComputeOctTreeAlignment(NAUInt childsize, NAVertexi childorigin, NAVertexi* parentorigin, NAInt* childsegment){
+NA_HDEF void naComputeOctTreeAlignment(NAInt childsize, NAVertexi childorigin, NAVertexi* parentorigin, NAInt* childsegment){
   // In order to achieve a full coverage of the whole space
   // (negative and positive in all dimensions), we align parent nodes
   // in a cyclic way.
@@ -221,8 +221,8 @@ NA_HDEF void naDeallocOctTreeNode(NAOctTree* tree, NAOctTreeNode* node){
 
 // Returns the segment index [0-7] in which the given vertex can be found.
 // Warning: The vertex is expected to be inside this node.
-NA_HDEF NAUInt naGetOctTreeNodeSegment(NAOctTreeNode* node, NAVertexi coord){
-  NAUInt segment = 0;
+NA_HDEF NAInt naGetOctTreeNodeSegment(NAOctTreeNode* node, NAVertexi coord){
+  NAInt segment = 0;
   if(coord.x >= node->childorigin[7].x){segment |= 1;}
   if(coord.y >= node->childorigin[7].y){segment |= 2;}
   if(coord.z >= node->childorigin[7].z){segment |= 4;}
@@ -312,7 +312,7 @@ NA_HDEF NABool naUpdateOctTreeNodeCapturing(NAOctTree* tree, NAOctTreeNode* node
 
 
 
-NA_DEF NAOctTree* naInitOctTree(NAOctTree* tree, NAUInt leaflength, NAOctTreeCallbacks callbacks){
+NA_DEF NAOctTree* naInitOctTree(NAOctTree* tree, NAInt leaflength, NAOctTreeCallbacks callbacks){
   #ifndef NDEBUG
     if(!tree)
       {naCrash("naInitOctTree", "tree is Null-Pointer"); return NA_NULL;}
@@ -368,12 +368,12 @@ NA_DEF NAOctTree* naCopyOctTreeWithMaskTree(NAOctTree* newtree, const NAOctTree*
 
 
 NA_DEF NAOctTree* naCopyOctTreeWithShift(NAOctTree* newtree, const NAOctTree* duptree, NAVolumei shift){
-  NAUInt x1bound;
-  NAUInt y1bound;
-  NAUInt z1bound;
-  NAUInt x2bound;
-  NAUInt y2bound;
-  NAUInt z2bound;
+  NAInt x1bound;
+  NAInt y1bound;
+  NAInt z1bound;
+  NAInt x2bound;
+  NAInt y2bound;
+  NAInt z2bound;
   NABoxi box0;
   NABoxi box1;
   NABoxi box2;
@@ -472,7 +472,7 @@ NA_HDEF NAOctTreeNode* naLocateOctTreeNode(NAOctTree* tree, NAOctTreeNode* node,
   if(naContainsBoxiVertex(nodebox, coord)){
   
     // The coord is stored somewhere inside the boxangle of this node
-    NAUInt segment = naGetOctTreeNodeSegment(node, coord);
+    NAInt segment = naGetOctTreeNodeSegment(node, coord);
     if(node->child[segment]){
       // There is a segment available which contains the coord.
       if(node->childsize == tree->leaflength){
@@ -672,7 +672,7 @@ NA_DEF void naSerializeOctTree(const NAOctTree* tree, void* buf, uint64* bytesiz
     NAByte* dataptr = buf;
     NAVertexi origin;
     *((uint64*)dataptr) = *bytesize; dataptr += sizeof(uint64);
-    *((uint64*)dataptr) = tree->leaflength; dataptr += sizeof(uint64);
+    *((uint64*)dataptr) = (uint64)tree->leaflength; dataptr += sizeof(uint64);
 
     while((curleaf = naIterateOctTreeConst(tree, &origin))){
       *((int64*)dataptr) = origin.x; dataptr += sizeof(int64);
@@ -692,7 +692,7 @@ NA_DEF NABool naIsOctTreeEmpty(NAOctTree* tree){
 
 
 
-NA_DEF uint64 naGetOctTreeLeafLength(const NAOctTree* tree){
+NA_DEF NAInt naGetOctTreeLeafLength(const NAOctTree* tree){
   return tree->leaflength;
 }
 

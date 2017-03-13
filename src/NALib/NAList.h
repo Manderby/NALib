@@ -60,7 +60,7 @@ NA_IAPI void    naClearList   (NAList* list);
 NA_IAPI void    naEmptyList   (NAList* list);
 
 // Returns informations about the number of elements in this list.
-NA_IAPI NAUInt  naGetListCount(const NAList* list);
+NA_IAPI NAInt   naGetListCount(const NAList* list);
 NA_IAPI NABool  naIsListEmpty (const NAList* list);
 
 

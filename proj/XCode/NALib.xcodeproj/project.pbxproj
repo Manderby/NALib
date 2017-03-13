@@ -15,7 +15,6 @@
 		90451D7B1E75F0D30071EB67 /* NASystem.c in Sources */ = {isa = PBXBuildFile; fileRef = 90451D361E75F0D30071EB67 /* NASystem.c */; };
 		90451D7C1E75F0D30071EB67 /* NAMoney.c in Sources */ = {isa = PBXBuildFile; fileRef = 90451D441E75F0D30071EB67 /* NAMoney.c */; };
 		90451D7D1E75F0D30071EB67 /* NABuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 90451D561E75F0D30071EB67 /* NABuffer.c */; };
-		90451D7E1E75F0D30071EB67 /* NAByteArray.c in Sources */ = {isa = PBXBuildFile; fileRef = 90451D581E75F0D30071EB67 /* NAByteArray.c */; };
 		90451D7F1E75F0D30071EB67 /* NAHeap.c in Sources */ = {isa = PBXBuildFile; fileRef = 90451D5C1E75F0D30071EB67 /* NAHeap.c */; };
 		90451D801E75F0D30071EB67 /* NAList.c in Sources */ = {isa = PBXBuildFile; fileRef = 90451D5E1E75F0D30071EB67 /* NAList.c */; };
 		90451D811E75F0D30071EB67 /* NAOctTree.c in Sources */ = {isa = PBXBuildFile; fileRef = 90451D611E75F0D30071EB67 /* NAOctTree.c */; };
@@ -53,8 +52,6 @@
 		90451D251E75F0D30071EB67 /* NAArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAArray.h; sourceTree = "<group>"; };
 		90451D261E75F0D30071EB67 /* NABinaryData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NABinaryData.h; sourceTree = "<group>"; };
 		90451D271E75F0D30071EB67 /* NABuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NABuffer.h; sourceTree = "<group>"; };
-		90451D281E75F0D30071EB67 /* NAByteArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAByteArray.h; sourceTree = "<group>"; };
-		90451D291E75F0D30071EB67 /* NAByteMap2D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAByteMap2D.h; sourceTree = "<group>"; };
 		90451D2A1E75F0D30071EB67 /* NACircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NACircularBuffer.h; sourceTree = "<group>"; };
 		90451D2B1E75F0D30071EB67 /* NAComplex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAComplex.h; sourceTree = "<group>"; };
 		90451D2C1E75F0D30071EB67 /* NAConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAConfiguration.h; sourceTree = "<group>"; };
@@ -98,9 +95,7 @@
 		90451D551E75F0D30071EB67 /* NAArrayII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAArrayII.h; sourceTree = "<group>"; };
 		90451D561E75F0D30071EB67 /* NABuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NABuffer.c; sourceTree = "<group>"; };
 		90451D571E75F0D30071EB67 /* NABufferII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NABufferII.h; sourceTree = "<group>"; };
-		90451D581E75F0D30071EB67 /* NAByteArray.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAByteArray.c; sourceTree = "<group>"; };
 		90451D591E75F0D30071EB67 /* NAByteArrayII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAByteArrayII.h; sourceTree = "<group>"; };
-		90451D5A1E75F0D30071EB67 /* NAByteMap2DII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAByteMap2DII.h; sourceTree = "<group>"; };
 		90451D5B1E75F0D30071EB67 /* NACircularBufferII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NACircularBufferII.h; sourceTree = "<group>"; };
 		90451D5C1E75F0D30071EB67 /* NAHeap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAHeap.c; sourceTree = "<group>"; };
 		90451D5D1E75F0D30071EB67 /* NAHeapII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAHeapII.h; sourceTree = "<group>"; };
@@ -158,8 +153,6 @@
 				90451D251E75F0D30071EB67 /* NAArray.h */,
 				90451D261E75F0D30071EB67 /* NABinaryData.h */,
 				90451D271E75F0D30071EB67 /* NABuffer.h */,
-				90451D281E75F0D30071EB67 /* NAByteArray.h */,
-				90451D291E75F0D30071EB67 /* NAByteMap2D.h */,
 				90451D2A1E75F0D30071EB67 /* NACircularBuffer.h */,
 				90451D2B1E75F0D30071EB67 /* NAComplex.h */,
 				90451D2C1E75F0D30071EB67 /* NAConfiguration.h */,
@@ -234,9 +227,7 @@
 				90451D551E75F0D30071EB67 /* NAArrayII.h */,
 				90451D561E75F0D30071EB67 /* NABuffer.c */,
 				90451D571E75F0D30071EB67 /* NABufferII.h */,
-				90451D581E75F0D30071EB67 /* NAByteArray.c */,
 				90451D591E75F0D30071EB67 /* NAByteArrayII.h */,
-				90451D5A1E75F0D30071EB67 /* NAByteMap2DII.h */,
 				90451D5B1E75F0D30071EB67 /* NACircularBufferII.h */,
 				90451D5C1E75F0D30071EB67 /* NAHeap.c */,
 				90451D5D1E75F0D30071EB67 /* NAHeapII.h */,
@@ -375,7 +366,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				90451D801E75F0D30071EB67 /* NAList.c in Sources */,
-				90451D7E1E75F0D30071EB67 /* NAByteArray.c in Sources */,
 				90451D8A1E75F0D30071EB67 /* NAUIWINAPI.c in Sources */,
 				90451D791E75F0D30071EB67 /* NADateTime.c in Sources */,
 				90451D811E75F0D30071EB67 /* NAOctTree.c in Sources */,
@@ -453,15 +443,12 @@
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
@@ -563,15 +550,12 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
@@ -619,15 +603,12 @@
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
-				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
 				GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
-				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_CHECK_SWITCH_STATEMENTS = YES;
 				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
-				GCC_WARN_INHIBIT_ALL_WARNINGS = YES;
 				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
 				GCC_WARN_MISSING_PARENTHESES = YES;
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;

@@ -16,7 +16,7 @@
 
 
 int main(void){
-//  testSystem();  
+  testSystem();  
   testMemory();
 
   naStartRuntime();

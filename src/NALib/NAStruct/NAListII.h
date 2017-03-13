@@ -36,7 +36,7 @@ NA_RUNTIME_TYPE(NAListElement, NA_NULL);
 
 
 struct NAList{
-  NAUInt count;           // The number of elements stored in this list.
+  NAInt count;            // The number of elements stored in this list.
   NAListElement sentinel; // The sentinel of the list.
                           // Stores the first and last element of the list
                           // as next and prev pointer. The content is NA_NULL.
@@ -132,7 +132,7 @@ NA_IDEF void naEmptyList(NAList* list){
 
 
 
-NA_IDEF NAUInt naGetListCount(const NAList* list){
+NA_IDEF NAInt naGetListCount(const NAList* list){
   return list->count;
 }
 
@@ -1042,7 +1042,7 @@ NA_IDEF void naMoveListCurToLast(NAListIterator* iterator, NABool advance, NALis
 NA_IDEF void naMoveListTrailingToLast(NAListIterator* iterator, NAList* dst){
   NAList* src;
   NAListElement* element;
-  NAUInt movecount = 1;
+  NAInt movecount = 1;
   #ifndef NDEBUG
     if(!iterator->mutator)
       naError("naMoveListTrailingToLast", "Trying to mutate elements with an accessor iterator");

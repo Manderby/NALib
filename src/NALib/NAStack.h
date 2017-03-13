@@ -56,8 +56,8 @@ typedef struct NAStackIterator NAStackIterator;
 // where the exponential growth shall start. NAStack will always have at least
 // that amount of memory prepared. The values 0 and 1 are not allowed.
 NA_IAPI NAStack* naInitStack( NAStack* stack,
-                                NAUInt typesize,
-                                NAUInt minimalcount);
+                                NAInt typesize,
+                                NAInt minimalcount);
 
 // Clears the given stack.
 NA_IAPI void naClearStack  (NAStack* stack);
@@ -76,9 +76,9 @@ NA_IAPI void* naTopStack(NAStack* stack);
 NA_IAPI void* naPopStack(NAStack* stack);
 
 // Returns the number of elements actually stored in the stack
-NA_IAPI NAUInt naGetStackCount(const NAStack* stack);
+NA_IAPI NAInt naGetStackCount(const NAStack* stack);
 // Returns the number of elements reserved in memory.
-NA_IAPI NAUInt naGetStackReservedCount(const NAStack* stack);
+NA_IAPI NAInt naGetStackReservedCount(const NAStack* stack);
 
 // The stack will never shrink automatically. If you want the stack to shrink,
 // you need to call this function. The stack will be shrinked so that not more

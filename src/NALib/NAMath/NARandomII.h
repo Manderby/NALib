@@ -36,7 +36,7 @@ NA_IDEF uint32 naSeedRand(uint32 seed){
     seed = (uint32)seed;
   }else{
     NADateTime dt = naMakeDateTimeNow();
-    seed = (int32)dt.sisec ^ dt.nsec;
+    seed = (uint32)dt.sisec ^ (uint32)dt.nsec;
   }
   naSRand((uint32)seed);
   return seed;

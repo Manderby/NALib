@@ -56,11 +56,11 @@ void testSystem(void){
     #endif
   #else
     #if defined NA_C11
-      printf("Compiled for              C11 (%d)\n", __STDC_VERSION__);
+      printf("Compiled for              C11 (%ld)\n", __STDC_VERSION__);
     #elif defined NA_C99
-      printf("Compiled for              C99 (%d)\n", __STDC_VERSION__);
+      printf("Compiled for              C99 (%ld)\n", __STDC_VERSION__);
     #elif defined NA_C94
-      printf("Compiled for              C94 (%d)\n", __STDC_VERSION__);
+      printf("Compiled for              C94 (%ld)\n", __STDC_VERSION__);
     #elif defined NA_C90
       printf("Compiled for              C89 / C90\n");
     #else

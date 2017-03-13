@@ -16,9 +16,9 @@ struct NAStack{
   NAList        arrays;         // List of void*
   NAListPos     curpos;         // The list position of the current array.
   NAInt         curindex;       // The index of the current array in the list.
-  NAUInt        typesize;       // The size in bytes of the stored type
-  NAUInt        usedcount;      // The used number of elements in the storage.
-  NAUInt        minimalexp;     // An exp of 1 denotes the minimal count of 2.
+  NAInt         typesize;       // The size in bytes of the stored type
+  NAInt         usedcount;      // The used number of elements in the storage.
+  NAInt         minimalexp;     // An exp of 1 denotes the minimal count of 2.
   #ifndef NDEBUG
     NAInt       itercount;      // The number of iterators on this stack.
   #endif
@@ -36,20 +36,20 @@ struct NAStackIterator{
 
 // Returns the number of elements which can be stored in the array with the
 // given index.
-NA_HIDEF NAUInt naGetStackArrayAvailableCount(const NAStack* stack, NAInt indx){
-  return NA_ONE << (indx + stack->minimalexp);
+NA_HIDEF NAInt naGetStackArrayAvailableCount(const NAStack* stack, NAInt indx){
+  return (NAInt)1 << (indx + stack->minimalexp);
 }
 
 // Returns the element index of the first element stored in the array with the
 // given index.
-NA_HIDEF NAUInt naGetStackArrayBaseIndex(const NAStack* stack, NAInt indx){
-  return (NA_ONE << (indx + stack->minimalexp)) - (NA_ONE << stack->minimalexp);
+NA_HIDEF NAInt naGetStackArrayBaseIndex(const NAStack* stack, NAInt indx){
+  return ((NAInt)1 << (indx + stack->minimalexp)) - ((NAInt)1 << stack->minimalexp);
 }
 
 
 // Returns the total amount of elements which can be stored with all arrays
 // up including the one with the given index.
-NA_HIDEF NAUInt naGetStackTotalCount(const NAStack* stack, NAInt indx){
+NA_HIDEF NAInt naGetStackTotalCount(const NAStack* stack, NAInt indx){
   return naGetStackArrayBaseIndex(stack, indx + 1);
 }
 
@@ -65,7 +65,7 @@ NA_HIDEF void naAddStackNewSpace(NAStack* stack){
 
 
 
-NA_IDEF NAStack* naInitStack(NAStack* stack, NAUInt typesize, NAUInt minimalcount){
+NA_IDEF NAStack* naInitStack(NAStack* stack, NAInt typesize, NAInt minimalcount){
   #ifndef NDEBUG
     if(!stack)
       {naCrash("naInitStack", "stack is Null-Pointer"); return NA_NULL;}
@@ -117,14 +117,14 @@ NA_IDEF void naClearStack(NAStack* stack){
 
 NA_IDEF void* naPushStack(NAStack* stack){
   // Declaration before Implementation. Needed for C90
-  NAUInt availablestack;
+  NAInt availablestack;
 
   stack->usedcount++;
   
   availablestack = naGetStackTotalCount(stack, stack->curindex);
 
   if(stack->usedcount > availablestack){
-    if(naGetListCount(&(stack->arrays)) <= (NAUInt)(stack->curindex + 1)){
+    if(naGetListCount(&(stack->arrays)) <= (stack->curindex + 1)){
       naAddStackNewSpace(stack);
     }
     NAListIterator iter = naMakeListIteratorAccessor(&(stack->arrays));
@@ -142,7 +142,7 @@ NA_IDEF void* naPushStack(NAStack* stack){
 
 NA_IDEF void* naTopStack(NAStack* stack){
   // Declaration before Implementation. Needed for C90
-  NAUInt subindex;
+  NAInt subindex;
   subindex = stack->usedcount - naGetStackArrayBaseIndex(stack, stack->curindex) - 1;
   
   NAListIterator iter = naMakeListIteratorMutator(&(stack->arrays));
@@ -155,7 +155,7 @@ NA_IDEF void* naTopStack(NAStack* stack){
 
 
 NA_IDEF void* naPopStack(NAStack* stack){
-  NAUInt baseindex;
+  NAInt baseindex;
   void* retvalue = naTopStack(stack);
 
   stack->usedcount--;
@@ -175,7 +175,7 @@ NA_IDEF void* naPopStack(NAStack* stack){
 
 
 
-NA_IDEF NAUInt naGetStackCount(const NAStack* stack){
+NA_IDEF NAInt naGetStackCount(const NAStack* stack){
   return stack->usedcount;
 }
 
@@ -183,7 +183,7 @@ NA_IDEF NAUInt naGetStackCount(const NAStack* stack){
 
 // Returns the total amount of elements which can be stored with all arrays
 // up including the one with the given index.
-NA_IDEF NAUInt naGetStackReservedCount(const NAStack* stack){
+NA_IDEF NAInt naGetStackReservedCount(const NAStack* stack){
   // Note that naGetStackTotalCount expects an index, not a count!
   return naGetStackTotalCount(stack, naGetListCount(&(stack->arrays)) - 1);
 }
@@ -191,8 +191,8 @@ NA_IDEF NAUInt naGetStackReservedCount(const NAStack* stack){
 
 
 NA_IDEF void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive){
-  NAUInt desiredcount;
-  NAUInt listcount;
+  NAInt desiredcount;
+  NAInt listcount;
   desiredcount = (aggressive) ? (stack->usedcount * 2) : (stack->usedcount * 4);
   listcount = naGetListCount(&(stack->arrays));
   while((listcount > 1) && (desiredcount < naGetStackTotalCount(stack, naGetListCount(&(stack->arrays)) - 1))){

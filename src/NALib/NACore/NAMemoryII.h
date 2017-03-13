@@ -345,7 +345,7 @@ struct NARefCount{
 #endif
 
 #define NA_REFCOUNT_FLAGS_BITSHIFT      (NA_SYSTEM_ADDRESS_BITS - NA_REFCOUNT_FLAG_BITS)
-#define NA_REFCOUNT_MASK      ((NA_ONE << NA_REFCOUNT_FLAGS_BITSHIFT) - NA_ONE)
+#define NA_REFCOUNT_MASK                ((NAUInt)((NA_ONE << NA_REFCOUNT_FLAGS_BITSHIFT) - NA_ONE))
 
 
 NA_IDEF NARefCount* naInitRefCount(NARefCount* refcount, NAMemoryCleanup structcleanup, NAMemoryCleanup datacleanup){

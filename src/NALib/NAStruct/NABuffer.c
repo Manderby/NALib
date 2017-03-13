@@ -9,9 +9,9 @@
 
 
 #if NA_BUFFER_PART_BYTESIZE == 0
-  #define NA_INTERNAL_BUFFER_PART_BYTESIZE (naGetRuntimeMemoryPageSize())
+  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAInt)naGetRuntimeMemoryPageSize())
 #else
-  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAUInt)NA_BUFFER_PART_BYTESIZE)
+  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAInt)NA_BUFFER_PART_BYTESIZE)
 #endif
 
 
@@ -626,7 +626,7 @@ NA_API void naReleaseBuffer(NABuffer* buffer){
 
 
 NA_HIDEF NAInt naGetBufferPartNormedStart(NAInt start){
-  return (((start + (start < 0)) / (NAInt)NA_INTERNAL_BUFFER_PART_BYTESIZE) - (start < 0)) * NA_INTERNAL_BUFFER_PART_BYTESIZE;
+  return (((start + (start < 0)) / NA_INTERNAL_BUFFER_PART_BYTESIZE) - (start < 0)) * NA_INTERNAL_BUFFER_PART_BYTESIZE;
 // Note that (start < 0) either results in 0 or 1.
 }
 
@@ -749,6 +749,7 @@ NA_HIDEF void naEnsureBufferRange(NABuffer* buffer, NARangei range){
 
 
 NA_HIDEF NABool naIsBufferVolatile(NABuffer* buffer){
+  NA_UNUSED(buffer);
   return NA_FALSE;
 }
 
@@ -870,13 +871,16 @@ NA_HDEF void naCacheBuffer(NABuffer* buffer, NARangei range){
     
   }else{
       
+    NAInt normedstart;
+    NAInt normedend;
+    
     // This buffer manages its own linear memory. Such memory is usually
     // aligned by NA_INTERNAL_BUFFER_PART_BYTESIZE.
     
-    NAInt normedstart = naGetBufferPartNormedStart(range.origin);
-    if(buffer->flags & NA_BUFFER_SOURCE_FLAG_MINPOS_FIXED){normedstart = naMax(normedstart, buffer->bufrange.origin);}
-    NAInt normedend = naGetBufferPartNormedEnd(naGetRangeiEnd(range));
-    if(buffer->flags & NA_BUFFER_SOURCE_FLAG_MAXPOS_FIXED){normedend = naMin(normedend, naGetRangeiEnd(buffer->bufrange));}
+    normedstart = naGetBufferPartNormedStart(range.origin);
+    if(buffer->flags & NA_BUFFER_SOURCE_FLAG_MINPOS_FIXED){normedstart = naMaxi(normedstart, buffer->bufrange.origin);}
+    normedend = naGetBufferPartNormedEnd(naGetRangeiEnd(range));
+    if(buffer->flags & NA_BUFFER_SOURCE_FLAG_MAXPOS_FIXED){normedend = naMini(normedend, naGetRangeiEnd(buffer->bufrange));}
     range = naMakeRangeiWithStartAndEnd(normedstart, normedend);
 
     // First, we ensure, that there are buffer parts in the parts list
@@ -910,9 +914,9 @@ NA_HDEF void naCacheBuffer(NABuffer* buffer, NARangei range){
         // We create a suitable range within the parts range which tries to
         // be aligned at NA_INTERNAL_BUFFER_PART_BYTESIZE but has a certain
         // margin to be bigger and hence reduce the number of small parts.
-        NAInt normedstart = naGetBufferPartNormedStart(range.origin);
+        normedstart = naGetBufferPartNormedStart(range.origin);
         if((normedstart - naGetBufferPartStart(part)) < NA_INTERNAL_BUFFER_PART_BYTESIZE){normedstart = naGetBufferPartStart(part);}
-        NAInt normedend = naGetBufferPartNormedEnd(range.origin + NA_INTERNAL_BUFFER_PART_BYTESIZE);
+        normedend = naGetBufferPartNormedEnd(range.origin + NA_INTERNAL_BUFFER_PART_BYTESIZE);
         if((naGetBufferPartEnd(part) - normedend) < NA_INTERNAL_BUFFER_PART_BYTESIZE){normedend = naGetBufferPartEnd(part);}
 
         // Note that the previous computation of normedstart and normedend also
@@ -1392,7 +1396,7 @@ NA_DEF void naRepeatBufferBytes(NABuffer* buffer, NAInt distance, NAInt bytesize
     NAInt remaining = (remainingwrite < remainingread) ? remainingwrite : remainingread;
     remaining = naMini(remaining, bytesize);
     
-    naCopyn(naGetBufferPartDataPointer(writepart, writeoffset), naGetBufferPartDataPointer(readpart, readoffset), remaining);
+    naCopyn(naGetBufferPartDataPointer(writepart, writeoffset), naGetBufferPartDataPointer(readpart, readoffset), (NAUInt)remaining);
     bytesize -= remaining;
     writeoffset += remaining;
     readoffset += remaining;
@@ -1905,13 +1909,13 @@ NA_DEF void naWriteBufferToData(NABuffer* buffer, void* data){
     #endif
     
     if(bytesize > remainingbytes){
-      naCopyn(dst, src, remainingbytes);
+      naCopyn(dst, src, (NAUInt)remainingbytes);
       naIterateList(&iter, 1);
       curoffset += remainingbytes;
       bytesize -= remainingbytes;
       dst += remainingbytes;
     }else{
-      naCopyn(dst, src, bytesize);
+      naCopyn(dst, src, (NAUInt)bytesize);
       bytesize = 0;
     }
   }

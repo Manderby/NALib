@@ -49,6 +49,7 @@ Other things:
   naNewStringFromFile and naNewStringWithFileContents.
 - naNewThread, naNewMutex and naNewAlarm now are called naMakeThread,
   naMakeMutex and naMakeAlarm.
+- Removed NAByteMap2D
 
 
 Version 17 (first published 2017-January-05):

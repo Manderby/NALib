@@ -28,11 +28,11 @@ NA_API NAPNG* naNewPNG(NASizei size, NAPNGColorType colortype, NAUInt bitdepth);
 NA_API NAPNG* naNewPNGWithFile(const char* filename);
 
 NA_API void* naGetPNGPixelData(NAPNG* png);
-NA_API NAUInt naGetPNGPixelDataBytesize(NAPNG* png);
+NA_API NAInt naGetPNGPixelDataBytesize(NAPNG* png);
 NA_API NASizei naGetPNGSize(NAPNG* png);
 NA_API NAPNGColorType naGetPNGColorType(NAPNG* png);
-NA_API NAUInt naGetPNGBitDepth(NAPNG* png);
-NA_API NAUInt naGetPNGBytesPerPixel(NAPNGColorType colortype);
+NA_API NAInt naGetPNGBitDepth(NAPNG* png);
+NA_API NAInt naGetPNGBytesPerPixel(NAPNGColorType colortype);
 
 
 NA_API void naWritePNGToFile(NAPNG* png, const char* filename);

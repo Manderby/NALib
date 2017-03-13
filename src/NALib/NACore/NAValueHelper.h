@@ -100,7 +100,7 @@ NA_HIAPI void naMakePositivei     (NAInt*  NA_RESTRICT origin,
                                    NAInt*  NA_RESTRICT length);
 
 
-NA_HIAPI NAInt naMakeIndexPositive(NAInt indx, NAUInt length);
+NA_HIAPI NAInt naMakeIndexPositive(NAInt indx, NAInt length);
 
 
 // This function returns a pair of positive integers (positiveorigin,positivesize)
@@ -118,11 +118,11 @@ NA_HIAPI NAInt naMakeIndexPositive(NAInt indx, NAUInt length);
 //   a warning will be emitted if NDEBUG is defined. The resulting range will
 //   be empty.
 NA_HIAPI void naMakeIntegerRangePositiveInLength(
-                                    NAUInt* NA_RESTRICT positiveorigin,
-                                    NAUInt* NA_RESTRICT positivesize,
+                                    NAInt* NA_RESTRICT  positiveorigin,
+                                    NAInt* NA_RESTRICT  positivesize,
                                     NAInt               origin,
                                     NAInt               length,
-                                    NAUInt              containinglength);
+                                    NAInt               containinglength);
 // This function is declared as a helper function. It is used by some core
 // implementations of NAByteArray. It seems much more useful in this file
 // though.
@@ -333,20 +333,26 @@ NA_HIDEF void naMakePositivei(NAInt* NA_RESTRICT origin, NAInt* NA_RESTRICT leng
 
 
 
-NA_HIDEF NAInt naMakeIndexPositive(NAInt indx, NAUInt length){
-  if(indx < 0){indx += length;}
+NA_HIDEF NAInt naMakeIndexPositive(NAInt indx, NAInt length){
   #ifndef NDEBUG
-    if(indx < 0)
-      naError("naMakeIndexPositive", "Invalid index leads to range underflow");
-    if(indx >= length)
-      naError("naMakeIndexPositive", "Invalid index leads to range overflow");
+    if(length < 0)
+      naError("naMakeIndexPositive", "length should not be negative");
   #endif
+  if(indx < 0){
+    indx += length;
+    #ifndef NDEBUG
+      if(indx < 0)
+        naError("naMakeIndexPositive", "positive index is not positive");
+      if(indx >= length)
+        naError("naMakeIndexPositive", "positive index overflows length");
+    #endif
+  }
   return indx;
 }
 
 
 
-NA_HIDEF void naMakeIntegerRangePositiveInLength(NAUInt* NA_RESTRICT positiveorigin, NAUInt* NA_RESTRICT positivesize, NAInt origin, NAInt length, NAUInt containinglength){
+NA_HIDEF void naMakeIntegerRangePositiveInLength(NAInt* NA_RESTRICT positiveorigin, NAInt* NA_RESTRICT positivesize, NAInt origin, NAInt length, NAInt containinglength){
   // First, we ensure that pos is withing the containing range. After that
   // we will look at the length parameter.
   NAInt remainingsize = containinglength - origin;
@@ -360,7 +366,7 @@ NA_HIDEF void naMakeIntegerRangePositiveInLength(NAUInt* NA_RESTRICT positiveori
     #endif
     *positiveorigin = 0;
     *positivesize = 0;
-  }else if((NAUInt)remainingsize > containinglength){
+  }else if(remainingsize > containinglength){
     #ifndef NDEBUG
       naError("naMakeIntegerRangePositiveInLength", "Invalid pos leads to range underflow. Correcting to empty range.");
     #endif

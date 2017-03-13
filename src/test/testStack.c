@@ -22,8 +22,8 @@ void testStack(void){
   int* v;
   NADateTime time1;
   NADateTime time2;
-  NAUInt stackcount;
-  NAUInt stackreservedcount;
+  NAInt stackcount;
+  NAInt stackreservedcount;
   int64 sum;
   
   printf("\n");

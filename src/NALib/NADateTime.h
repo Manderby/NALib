@@ -158,7 +158,7 @@ NA_API NADateTime naMakeDateTimeNow();
 
 // Returns an NADateTime struct with the given second number interpreted like
 // in NALib. Nanoseconds and Timeshift will be zero.
-NA_IAPI NADateTime naMakeDateTimeWithNALibSecondNumber(uint64 secondnumber);
+NA_IAPI NADateTime naMakeDateTimeWithNALibSecondNumber(int64 secondnumber);
 
 // Create a new NADateTime struct with the values provided.
 NA_API NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts);

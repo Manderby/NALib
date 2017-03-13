@@ -13,7 +13,7 @@
 // Note that this implementation uses a lot of function pointers. See
 // implementation file for more information.
 struct NAHeap{
-  NAUInt count;
+  NAInt count;
   void* data;
   void* root; // Pointer to the first byte of the root element
   NAInt maxcount; // heap holds max elements. If this value is < 0, the
@@ -22,11 +22,11 @@ struct NAHeap{
   void        (*insertMutable)    (NAHeap*,       void*, const void*, NAInt*);
   const void* (*removeConst)      (NAHeap*);
   void*       (*removeMutable)    (NAHeap*);
-  const void* (*removePosConst)   (NAHeap*, NAUInt);
-  void*       (*removePosMutable) (NAHeap*, NAUInt);
-  void        (*updateBack)       (NAHeap*, NAUInt);
-  NAInt       (*movedown)         (NAHeap*, const void*, NAUInt);
-  NAInt       (*moveup)           (NAHeap*, const void*, NAUInt);
+  const void* (*removePosConst)   (NAHeap*, NAInt);
+  void*       (*removePosMutable) (NAHeap*, NAInt);
+  void        (*updateBack)       (NAHeap*, NAInt);
+  NAInt       (*movedown)         (NAHeap*, const void*, NAInt);
+  NAInt       (*moveup)           (NAHeap*, const void*, NAInt);
 };
 // The root field is needed because the inline functions below have no idea
 // whether the heap stores backpointers or not. But as the root element is
@@ -77,7 +77,7 @@ NA_IDEF void naEmptyHeap(NAHeap* heap){
 }
 
 
-NA_IDEF NAUInt naGetHeapCount (const NAHeap* heap){
+NA_IDEF NAInt naGetHeapCount (const NAHeap* heap){
   #ifndef NDEBUG
     if(!heap){
       naCrash("naGetHeapCount", "heap is Null-Pointer.");
@@ -166,13 +166,13 @@ NA_IDEF void naUpdateHeapElement(NAHeap* heap, NAInt backpointer){
 
 
 
-NA_IDEF const void* naRemoveHeapPosConst(NAHeap* heap, NAUInt backpointer){
+NA_IDEF const void* naRemoveHeapPosConst(NAHeap* heap, NAInt backpointer){
   return heap->removePosConst(heap, backpointer);
 }
 
 
 
-NA_IDEF void* naRemoveHeapPosMutable(NAHeap* heap, NAUInt backpointer){
+NA_IDEF void* naRemoveHeapPosMutable(NAHeap* heap, NAInt backpointer){
   return heap->removePosMutable(heap, backpointer);
 }
 

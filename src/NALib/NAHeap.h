@@ -97,7 +97,7 @@ NA_IAPI void   naClearHeap    (NAHeap* heap);
 NA_IAPI void   naEmptyHeap    (NAHeap* heap);
 
 // Returns the number of elements stored
-NA_IAPI NAUInt naGetHeapCount (const NAHeap* heap);
+NA_IAPI NAInt naGetHeapCount (const NAHeap* heap);
 
 // Returns the maximum number of elements that can be stored. Result is
 // negative when a negative count was given to naInitHeap.
@@ -140,8 +140,8 @@ NA_IAPI const void* naGetHeapRootKey(const NAHeap* heap);
 NA_IAPI void naUpdateHeapElement(           NAHeap* heap, NAInt backpointer);
 
 // If you have such a backpointer, you can also remove an element.
-NA_IAPI const void* naRemoveHeapPosConst(   NAHeap* heap, NAUInt backpointer);
-NA_IAPI void*       naRemoveHeapPosMutable( NAHeap* heap, NAUInt backpointer);
+NA_IAPI const void* naRemoveHeapPosConst(   NAHeap* heap, NAInt backpointer);
+NA_IAPI void*       naRemoveHeapPosMutable( NAHeap* heap, NAInt backpointer);
 
 
 

@@ -147,9 +147,9 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABuffer* buffer){
 
   NAPNGChunk* chunk = naAlloc(NAPNGChunk);
 
-  chunk->length = naReadBufferu32(buffer);
+  chunk->length = (NAInt)naReadBufferu32(buffer);
   #ifndef NDEBUG
-    if(chunk->length > (1U<<31)-1U)
+    if((NAUInt)chunk->length > (1U<<31)-1U)
       naError("naAllocPNGChunkFromBuffer", "length should not exceed 2^31-1.");
   #endif
 
@@ -202,7 +202,7 @@ NA_HDEF void naDeallocPNGChunk(NAPNGChunk* chunk){
 
 
 
-NA_API NAUInt naGetPNGBytesPerPixel(NAPNGColorType colortype){
+NA_API NAInt naGetPNGBytesPerPixel(NAPNGColorType colortype){
   switch(colortype){
   case NA_PNG_COLORTYPE_GREYSCALE:
     return 1;
@@ -250,14 +250,14 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
 //  NAFile* outfile;
 
   NAInt bpp = naGetPNGBytesPerPixel(png->colortype);
-  NAUInt bytesperline = png->size.width * bpp;
+  NAInt bytesperline = png->size.width * bpp;
   
-  png->pixeldata = naMalloc(sizeof(NAByte) * png->size.width * png->size.height * bpp);
+  png->pixeldata = naMalloc(naSizeof(NAByte) * png->size.width * png->size.height * bpp);
   naSeekBufferAbsolute(png->filtereddata, 0);
   curbyte = png->pixeldata;
   
   upbuffer = naMalloc(bytesperline);
-  naNulln(upbuffer, bytesperline);
+  naNulln(upbuffer, (NAUInt)bytesperline);
   upbufptr = upbuffer;
 
   for(y=0; y<png->size.height; y++){
@@ -330,7 +330,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
 
 
 NA_DEF void naFilterData(NAPNG* png){
-  NAUInt bpp;
+  NAInt bpp;
   NAByte* pixeldata;
   NAInt y;
 
@@ -361,8 +361,8 @@ NA_HDEF void naReadPNGIHDRChunk(NAPNG* png, NAPNGChunk* ihdr){
       naError("naReadPNGIHDRChunk", "IHDR chunk already read.");
   #endif
 
-  png->size.width = naReadBufferu32(ihdr->data);
-  png->size.height = naReadBufferu32(ihdr->data);
+  png->size.width = (NAInt)naReadBufferu32(ihdr->data);
+  png->size.height = (NAInt)naReadBufferu32(ihdr->data);
   png->bitdepth = naReadBufferi8(ihdr->data);
   png->colortype = (NAPNGColorType)naReadBufferi8(ihdr->data);
   png->compressionmethod = naReadBufferi8(ihdr->data);
@@ -382,10 +382,10 @@ NA_HDEF void naReadPNGIHDRChunk(NAPNG* png, NAPNGChunk* ihdr){
   #endif
   
   
-  png->significantbits[0] = png->bitdepth;
-  png->significantbits[1] = png->bitdepth;
-  png->significantbits[2] = png->bitdepth;
-  png->significantbits[3] = png->bitdepth;
+  png->significantbits[0] = (uint8)png->bitdepth;
+  png->significantbits[1] = (uint8)png->bitdepth;
+  png->significantbits[2] = (uint8)png->bitdepth;
+  png->significantbits[3] = (uint8)png->bitdepth;
   
   png->flags &= NA_PNG_FLAGS_IHDR_AVAILABLE;
   
@@ -649,7 +649,7 @@ NA_HDEF void naReadPNGzTXtChunk(NAPNG* png, NAPNGChunk* ztxt){
 
 
 NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colortype, NAUInt bitdepth){
-  NAUInt bpp;
+  NAInt bpp;
   NAPNG* png = naNew(NAPNG);
   
   #ifndef NDEBUG
@@ -660,7 +660,7 @@ NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colortype, NAUInt bitdepth){
   #endif
   naInitList(&(png->chunks));
   png->flags = 0;
-  png->bitdepth = (uint8)bitdepth;
+  png->bitdepth = (int8)bitdepth;
   png->compressionmethod = 0;
   png->interlacemethod = NA_PNG_INTERLACE_NONE;
   png->filtermethod = 0;
@@ -771,8 +771,8 @@ NA_DEF void* naGetPNGPixelData(NAPNG* png){
 
 
 
-NA_DEF NAUInt naGetPNGPixelDataBytesize(NAPNG* png){
-  NAUInt bpp = naGetPNGBytesPerPixel(png->colortype);
+NA_DEF NAInt naGetPNGPixelDataBytesize(NAPNG* png){
+  NAInt bpp = naGetPNGBytesPerPixel(png->colortype);
   return png->size.width * png->size.height * bpp;
 }
 
@@ -790,8 +790,8 @@ NA_DEF NAPNGColorType naGetPNGColorType(NAPNG* png){
 
 
 
-NA_DEF NAUInt naGetPNGBitDepth(NAPNG* png){
-  return png->bitdepth;
+NA_DEF NAInt naGetPNGBitDepth(NAPNG* png){
+  return (NAInt)png->bitdepth;
 }
 
 

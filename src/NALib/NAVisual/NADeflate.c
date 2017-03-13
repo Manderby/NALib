@@ -13,7 +13,7 @@ struct NAHuffmanCodeTree{
   uint16* codes;
   uint16* codelengths;
   int32* indextree;
-  uint16 curindex;
+  int32 curindex;
 };
 
 
@@ -43,7 +43,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
   uint16 a;
   uint16 code;
   uint16 len;
-  uint16 curindex;
+  int32  curindex;
   uint16 newtreeindex;
   uint16 curmask;
   #ifndef NDEBUG
@@ -74,7 +74,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
         // occur. For example with the fixed huffman codes.
         naError("naBuildHuffmanCodeTree", "Too many codelenghts of the same lenght");
     #endif
-    code = (code + codelengthcount[a - 1]) << 1;
+    code = (uint16)((code + codelengthcount[a - 1]) << 1);
     if(codelengthcount[a]){ // this if is not necessary but is easier to debug
       nextcodes[a] = code;
     }
@@ -102,7 +102,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
     code = tree->codes[a];
     len = tree->codelengths[a];
     if(!len){continue;}
-    curmask = 1 << (len - 1);
+    curmask = (uint16)(1 << (len - 1));
     curindex = 0;
     while(curmask){
       // If there is no entry in the tree, create two branches.
@@ -161,16 +161,20 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
 }
 
 
+
 void naResetHuffmanCodeTree(NAHuffmanCodeTree* tree){
   tree->curindex = 0;
 }
 
+
+
 NABool naTraverseHuffmanCodeTree(NAHuffmanCodeTree* tree, NABool bit, uint16* alphabet){
   tree->curindex = tree->indextree[tree->curindex];
   if(bit){tree->curindex++;}
-  *alphabet = -(tree->indextree[tree->curindex] + 1);
+  *alphabet = (uint16)(-(tree->indextree[tree->curindex] + 1));
   return (tree->indextree[tree->curindex] >= 0);
 }
+
 
 
 uint16 naDecodeHuffman(NAHuffmanCodeTree* tree, NABuffer* buffer){
@@ -403,7 +407,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
     if(compressioninfo > NA_ZLIB_CMF_MAX_WINDOW_SIZE)
       naError("naInitBufferFromDeflateDecompression", "Window size too big");
   #endif
-  windowsize = 1 << (compressioninfo + 8);
+  windowsize = (uint16)(1 << (compressioninfo + 8));
   compressionadditionalflags = naReadBufferu8(input);
   flagcheck = compressionmethodflags * 256 + compressionadditionalflags;
   #ifndef NDEBUG
@@ -541,7 +545,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, N
   #endif
 
   cmf = (NA_ZLIB_CMF_MAX_WINDOW_SIZE<<4 | NA_ZLIB_CMF_COMPRESSION_DEFLATE);
-  flg = (level << 6 | NA_ZLIB_PRESET_DICT_AVAILABLE << 5);
+  flg = (uint8)((level << 6 | NA_ZLIB_PRESET_DICT_AVAILABLE << 5));
   flg |= 31 - ((cmf * 256 + flg) % 31); // Check-bits
   naWriteBufferu8(buffer, cmf);
   naWriteBufferu8(buffer, flg);

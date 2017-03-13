@@ -2436,16 +2436,16 @@ NA_IDEF NAInt naGetBoxiMaxZ(NABoxi box){
 
 
 
-NA_IDEF NAUInt naGetIndexWithOriginAndPosRowFirst(NAPosi origin, NAPosi offset, NAUInt width){
+NA_IDEF NAInt naGetIndexWithOriginAndPosRowFirst(NAPosi origin, NAPosi offset, NAInt width){
   return ((offset.y - origin.y)) * width + (offset.x - origin.x);
 }
-NA_IDEF NAUInt naGetIndexWithOriginAndPosColumnFirst(NAPosi origin, NAPosi offset, NAUInt height){
+NA_IDEF NAInt naGetIndexWithOriginAndPosColumnFirst(NAPosi origin, NAPosi offset, NAInt height){
   return ((offset.x - origin.x)) * height + (offset.y - origin.y);
 }
-NA_IDEF NAUInt naGetIndexWithOriginAndVertexRowFirst(NAVertexi origin, NAVertexi vertex, NAUInt width, NAUInt height){
+NA_IDEF NAInt naGetIndexWithOriginAndVertexRowFirst(NAVertexi origin, NAVertexi vertex, NAInt width, NAInt height){
   return (((vertex.z - origin.z)) * height + (vertex.y - origin.y)) * width + (vertex.x - origin.x);
 }
-NA_IDEF NAUInt naGetIndexWithOriginAndVertexColumnFirst(NAVertexi origin, NAVertexi vertex, NAUInt depth, NAUInt height){
+NA_IDEF NAInt naGetIndexWithOriginAndVertexColumnFirst(NAVertexi origin, NAVertexi vertex, NAInt depth, NAInt height){
   return ((vertex.x - origin.x) * height + (vertex.y - origin.y)) * depth + (vertex.z - origin.z);
 }
 
@@ -2461,7 +2461,7 @@ NA_IDEF NAInt naGetRectiIndexCount(NARecti rect){
   #endif
   return rect.size.width * rect.size.height;
 }
-NA_IDEF NAUInt naGetRectiIndexOfPosRowFirst(NARecti rect, NAPosi pos){
+NA_IDEF NAInt naGetRectiIndexOfPosRowFirst(NARecti rect, NAPosi pos){
   #ifndef NDEBUG
     if(naIsRectiEmptySlow(rect))
       naError("naGetRectiIndexOfPosRowFirst", "rect is empty.");
@@ -2474,7 +2474,7 @@ NA_IDEF NAUInt naGetRectiIndexOfPosRowFirst(NARecti rect, NAPosi pos){
   #endif
   return naGetIndexWithOriginAndPosRowFirst(rect.pos, pos, rect.size.width);
 }
-NA_IDEF NAUInt naGetRectiIndexOfPosColumnFirst(NARecti rect, NAPosi pos){
+NA_IDEF NAInt naGetRectiIndexOfPosColumnFirst(NARecti rect, NAPosi pos){
   #ifndef NDEBUG
     if(naIsRectiEmptySlow(rect))
       naError("naGetRectiIndexOfPosColumnFirst", "rect is empty.");
@@ -2499,7 +2499,7 @@ NA_IDEF NAInt naGetBoxiIndexCount(NABoxi box){
   #endif
   return box.volume.width * box.volume.height * box.volume.depth;
 }
-NA_IDEF NAUInt naGetBoxiIndexOfVertexRowFirst(NABoxi box, NAVertexi vertex){
+NA_IDEF NAInt naGetBoxiIndexOfVertexRowFirst(NABoxi box, NAVertexi vertex){
   #ifndef NDEBUG
     if(naIsBoxiEmptySlow(box))
       naError("naGetBoxiIndexOfVertexRowFirst", "box is empty.");
@@ -2512,7 +2512,7 @@ NA_IDEF NAUInt naGetBoxiIndexOfVertexRowFirst(NABoxi box, NAVertexi vertex){
   #endif
   return naGetIndexWithOriginAndVertexRowFirst(box.vertex, vertex, box.volume.width, box.volume.height);
 }
-NA_IDEF NAUInt naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex){
+NA_IDEF NAInt naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex){
   #ifndef NDEBUG
     if(naIsBoxiEmptySlow(box))
       naError("naGetBoxiIndexOfVertexColumnFirst", "box is empty.");

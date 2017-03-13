@@ -207,8 +207,8 @@ NATAIPeriod naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS] = {
 
 
 // Prototypes:
-NAUInt naGetTAIPeriodIndexForSISecond(int64 sisecond);
-NAUInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond);
+NAInt naGetTAIPeriodIndexForSISecond(int64 sisecond);
+NAInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond);
 NADateTime naMakeDateTimeNow();
 void naSetGlobalTimeShiftToSystemSettings();
 int64 naGetFirstUncertainSecondNumber();
@@ -216,8 +216,8 @@ int64 naGetFirstUncertainSecondNumber();
 
 
 
-NA_DEF NAUInt naGetTAIPeriodIndexForSISecond(int64 sisecond){
-  NAUInt l, r, m;
+NA_DEF NAInt naGetTAIPeriodIndexForSISecond(int64 sisecond){
+  NAInt l, r, m;
   // First, check the last 3 TAI periods. There is a high probability that a
   // given date is within the last 3 entries. Three entries because the entry
   // of one leap second always contains the leap second itself plus the two
@@ -248,8 +248,8 @@ NA_DEF NAUInt naGetTAIPeriodIndexForSISecond(int64 sisecond){
 
 
 
-NA_DEF NAUInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond){
-  NAUInt l, r, m;
+NA_DEF NAInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond){
+  NAInt l, r, m;
   // First, check the last 3 TAI periods. There is a high probability that a
   // given date is within the last 3 entries. Three entries because the entry
   // of one leap second always contains the leap second itself plus the two
@@ -294,7 +294,7 @@ NA_DEF int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str){
 
 NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
   int32 i;
-  NAUInt len = naStrlen(str);
+  NAInt len = naStrlen(str);
   if(!len){return -1;}
   for(i=0; i<NA_MONTHS_PER_YEAR; i++){
     if(naEqualUTF8CStringLiteralsCaseInsensitive(str, na_monthenglishnames[i])){return i;}
@@ -385,8 +385,8 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
     datetime.sisec += remainingyears * NA_SECONDS_IN_NORMAL_YEAR;
   }
   if((dts->mon < 0) || (dts->mon > 11)){datetime.errornum = NA_DATETIME_ERROR_INVALID_MONTH_NUMBER;}
-  datetime.sisec += na_cumulativemonthstartdays[2 * dts->mon + isleap] * NA_SECONDS_PER_DAY;
-  if((dts->day < 0) || ((na_cumulativemonthstartdays[2 * dts->mon + isleap] + dts->day) >= na_cumulativemonthstartdays[2 * (dts->mon + 1) + isleap])){datetime.errornum = NA_DATETIME_ERROR_INVALID_DAY_NUMBER;}
+  datetime.sisec += na_cumulativemonthstartdays[2 * dts->mon + (int32)isleap] * NA_SECONDS_PER_DAY;
+  if((dts->day < 0) || ((na_cumulativemonthstartdays[2 * dts->mon + (int32)isleap] + dts->day) >= na_cumulativemonthstartdays[2 * (dts->mon + 1) + (int32)isleap])){datetime.errornum = NA_DATETIME_ERROR_INVALID_DAY_NUMBER;}
   datetime.sisec += dts->day * NA_SECONDS_PER_DAY;
   if((dts->hour < 0) || (dts->hour > 23)){datetime.errornum = NA_DATETIME_ERROR_INVALID_HOUR_NUMBER;}
   datetime.sisec += dts->hour * NA_SECONDS_PER_HOUR;
@@ -397,7 +397,7 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
       if((dts->sec < 0) || (dts->sec > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
       datetime.sisec += naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec - naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startgregsec;
     }else{
-      NAUInt r = naGetLatestTAIPeriodIndexForGregorianSecond(datetime.sisec);
+      NAInt r = naGetLatestTAIPeriodIndexForGregorianSecond(datetime.sisec);
       // r now defines the index of the NATAIPeriod
       datetime.sisec += naTAIPeriods[r].startsisec - naTAIPeriods[r].startgregsec;
       datetime.sisec += dts->sec;
@@ -714,7 +714,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
       shift += NA_MINUTES_PER_HOUR;
     }
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    shift = -timezn->tz_minuteswest; // yes, its inverted.
+    shift = (int16)-timezn->tz_minuteswest; // yes, its inverted.
     if(timezn->tz_dsttime){
       // In contrast to tm_gmtoff, the timezone struct does not automatically
       // contain the summertime shift and must be added manually.
@@ -734,7 +734,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
 
   NA_DEF NADateTime naMakeDateTimeFromFileTime(const FILETIME* filetime, const NATimeZone* timezn){
     NADateTime datetime;
-    NAUInt taiperiod;
+    NAInt taiperiod;
     int64 nanosecs = ((int64)filetime->dwHighDateTime << 32) | filetime->dwLowDateTime;
 
     datetime.errornum = NA_DATETIME_ERROR_NONE;
@@ -759,7 +759,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
 
   NA_DEF struct timespec naMakeTimeSpecFromDateTime(const NADateTime* datetime){
     struct timespec timesp;
-    NAUInt taiperiod = naGetTAIPeriodIndexForSISecond(datetime->sisec);
+    NAInt taiperiod = naGetTAIPeriodIndexForSISecond(datetime->sisec);
     timesp.tv_sec = (__darwin_time_t)(datetime->sisec - (naTAIPeriods[taiperiod].startsisec - naTAIPeriods[taiperiod].startgregsec));
     timesp.tv_sec -= (__darwin_time_t)NA_GREG_SECONDS_TILL_BEGIN_1970;
     timesp.tv_nsec = datetime->nsec;
@@ -796,7 +796,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
     datetime.errornum = NA_DATETIME_ERROR_NONE;
     int64 datetimesec = timesp->tv_sec + NA_GREG_SECONDS_TILL_BEGIN_1970;
     if(datetimesec >= 0){
-      NAUInt taiperiod = naGetLatestTAIPeriodIndexForGregorianSecond(datetimesec);
+      NAInt taiperiod = naGetLatestTAIPeriodIndexForGregorianSecond(datetimesec);
       datetime.sisec = datetimesec + (naTAIPeriods[taiperiod].startsisec - naTAIPeriods[taiperiod].startgregsec);
     }
     datetime.nsec = (int32)timesp->tv_nsec;
@@ -833,7 +833,7 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
   int32 dayofyear = 0;
   NABool isleapyear;
   NABool exception100;
-  NAUInt l, m, r;
+  NAInt l, m, r;
   int32 d;
   int64 y;
   int32 mon;
@@ -966,11 +966,11 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
   r = 11;
   while(l != r){  // binary search
     m = (l+r)/2;
-    if(na_cumulativemonthstartdays[2 * (m+1) + isleapyear] <= dayofyear){l = m + 1;}else{r = m;}
+    if(na_cumulativemonthstartdays[2 * (m+1) + (NAInt)isleapyear] <= dayofyear){l = m + 1;}else{r = m;}
   }
   // r now defines the index of the month
   dts->mon = (int32)r;
-  dts->day = dayofyear - na_cumulativemonthstartdays[2 * r + isleapyear];
+  dts->day = dayofyear - na_cumulativemonthstartdays[2 * r + (NAInt)isleapyear];
 
   if(dta){
     // Fill the NADateTimeAttribute struct with every information we have.
@@ -1018,7 +1018,7 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
 
 NA_DEF NAString* naNewStringFromSecondDifference(double difference,
                                                  uint8 decimaldigits){
-  uint64 allseconds, powten, decimals;
+  int64 allseconds, powten, decimals;
   uint8 seconds, minutes, hours;
   NAString* decimalstring;
   NAString* timestring;
@@ -1029,7 +1029,7 @@ NA_DEF NAString* naNewStringFromSecondDifference(double difference,
   NABool needsign = NA_FALSE;
   if(difference<0){needsign = NA_TRUE; difference = -difference;}
   powten = naExp10i64(decimaldigits);
-  allseconds = (uint64)(difference * (double)powten);
+  allseconds = (int64)(difference * (double)powten);
   decimals = allseconds % powten;
   allseconds /= powten;
   seconds = allseconds % NA_SECONDS_PER_MINUTE;
@@ -1120,7 +1120,7 @@ NA_DEF int64 naGetFirstUncertainSecondNumber(){
 
 NA_DEF void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
                                            NAInt leapsecondcorrectionconstant){
-  NAUInt taiperiod;
+  NAInt taiperiod;
   datetime->errornum = NA_DATETIME_ERROR_NONE;
   if(leapsecondcorrectionconstant < 0){return;}
   if(datetime->sisec < naTAIPeriods[leapsecondcorrectionconstant].startsisec){return;}

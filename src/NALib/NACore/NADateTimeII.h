@@ -47,7 +47,7 @@ NA_IDEF NABool naIsLeapYear(int64 year){
 
 
 
-NA_IDEF NADateTime naMakeDateTimeWithNALibSecondNumber(uint64 secondnumber){
+NA_IDEF NADateTime naMakeDateTimeWithNALibSecondNumber(int64 secondnumber){
   NADateTime datetime;
   datetime.sisec = secondnumber;
   datetime.nsec = 0;

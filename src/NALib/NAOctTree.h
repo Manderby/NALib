@@ -67,7 +67,7 @@
 // Also note that the coordinates of origin are guaranteed to be a multiple of
 // leaflength.
 typedef void* (*NAOctTreeLeafAllocator)(   NAVertexi origin,
-                                            NAUInt leaflength,
+                                             NAInt leaflength,
                                              void* userdata,
                                        const void* copydata);
 
@@ -88,12 +88,12 @@ typedef void  (*NAOctTreeLeafDeallocator)(   void* leafdata,
 // the volume does not necessarily denotes a cube. It can denote any cuboid.
 // The leaflength is given to you as an additional information. It corresponds
 // to the leaflength used when the NAOctTree was created.
-typedef void  (*NAOctTreeDataCopier)( const void* dstdata,
+typedef void  (*NAOctTreeDataCopier)(     const void* dstdata,
                                             NAVertexi dstorigin,
-                                       const void* copydata,
+                                          const void* copydata,
                                             NAVertexi copyorigin,
-                                           NAVolumei volume,
-                                            NAUInt leaflength);
+                                            NAVolumei volume,
+                                                NAInt leaflength);
 
 // This callback is called when a oct tree creates a node other than a leaf.
 // Nodes can not be directly manipulated but you are allowed to store any data
@@ -107,7 +107,7 @@ typedef void  (*NAOctTreeDataCopier)( const void* dstdata,
 // will be available to NAOctTreeLeafChanged, NAOctTreeChildChanged and
 // NAOctTreeNodeDeallocator.
 typedef void* (*NAOctTreeNodeAllocator)(   NAVertexi origin,
-                                            NAUInt nodesize);
+                                             NAInt nodesize);
 
 // The node deallocator is called before a oct tree ultimately deletes a node.
 // The pointer created with NAOctTreeNodeAllocator will be sent to this
@@ -157,7 +157,7 @@ typedef NABool(*NAOctTreeChildChanged)(     void* nodedata,
 // actually store the data.
 typedef uint64(*NAOctTreeSerializer)        (void* buffer,
                                         const void* leafdata,
-                                             NAUInt leaflength);
+                                              NAInt leaflength);
 
 // This callback is called when a buffer shall be deserialized which
 // previously had been serialized with NAOctTreeSerializer. Create a leaf
@@ -168,7 +168,7 @@ typedef uint64(*NAOctTreeSerializer)        (void* buffer,
 // here, buffer denotes not a chunk which shall be copied but rather more a
 // buffer which need to be deserialized. These can be two different things.
 typedef void* (*NAOctTreeDeserializer)(     NAVertexi origin,
-                                             NAUInt leaflength,
+                                              NAInt leaflength,
                                         const void* buffer);
 
 
@@ -195,12 +195,12 @@ typedef struct NAOctTreeNode NAOctTreeNode;
 // The typedef of the NAOctTree.
 typedef struct NAOctTree NAOctTree;
 struct NAOctTree{
-  NAUInt leaflength;
+  NAInt leaflength;
   NAOctTreeCallbacks callbacks;
   NAOctTreeNode* root;
   NAOctTreeNode* visitnode;    // visitnode stores tha last node visited. This
   NAOctTreeNode* curnode;      // Makes searching in the tree very fast.
-  NAUInt cursegment;           // curnode and cursegment are for the iteration
+  NAInt cursegment;           // curnode and cursegment are for the iteration
 };
 
 
@@ -208,7 +208,7 @@ struct NAOctTree{
 
 // Initializes an empty NAOctTree with the given leaflength and callbacks.
 NA_API NAOctTree* naInitOctTree(              NAOctTree* tree,
-                                                     NAUInt leaflength,
+                                                     NAInt leaflength,
                                         NAOctTreeCallbacks callbacks);
 
 // Duplicates the given duptree.
@@ -249,7 +249,7 @@ NA_API void naClearOctTree(                    NAOctTree* tree);
 NA_API NABool naIsOctTreeEmpty(                NAOctTree* tree);
 
 // Returns the length of one dimension of a leaf
-NA_API uint64 naGetOctTreeLeafLength(      const NAOctTree* tree);
+NA_API NAInt naGetOctTreeLeafLength(      const NAOctTree* tree);
 
 // Returns the callbacks (by copying the function pointers)
 NA_API NAOctTreeCallbacks naGetOctTreeCallbacks(const NAOctTree* tree);
@@ -328,7 +328,7 @@ NA_API void* naIterateOctTreeInBoxMutable(         NAOctTree* tree,
 // guaranteed to be inside the leaf.
 typedef void  (*NAOctTreeDataSetter)( const void* dstdata,
                                            NABoxi box,
-                                            NAUInt leaflength,
+                                            NAInt leaflength,
                                        const void* userdata);
 
 // Calls the given NAOctTreeDataSetter function for every chunk in the tree

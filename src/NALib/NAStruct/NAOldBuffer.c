@@ -4,6 +4,7 @@
 //
 //
 //
+int isoctest69834759;
 //#include "../NAList.h"
 //#include "../NAOldBuffer.h"
 //

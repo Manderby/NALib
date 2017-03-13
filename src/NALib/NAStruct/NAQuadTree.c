@@ -8,7 +8,7 @@
 
 
 struct NAQuadTreeNode{
-  NAUInt childsize;
+  NAInt childsize;
   NAInt segmentinparent;
   NAQuadTreeNode* parentnode;
   void* child[4];
@@ -18,7 +18,7 @@ struct NAQuadTreeNode{
 
 
 
-NA_HDEF NAQuadTreeNode* naAllocQuadTreeNode(NAUInt childsize, NAInt segmentinparent, NAQuadTreeNode* parentnode, NAPosi origin, NAQuadTreeNodeAllocator allocator){
+NA_HDEF NAQuadTreeNode* naAllocQuadTreeNode(NAInt childsize, NAInt segmentinparent, NAQuadTreeNode* parentnode, NAPosi origin, NAQuadTreeNodeAllocator allocator){
   NAQuadTreeNode* node = naAlloc(NAQuadTreeNode);
   node->childsize = childsize;
   node->segmentinparent = segmentinparent;
@@ -41,7 +41,7 @@ NA_HDEF NAQuadTreeNode* naAllocQuadTreeNode(NAUInt childsize, NAInt segmentinpar
 
 
 
-NA_HDEF void naComputeQuadTreeAlignment(NAUInt childsize, NAPosi childorigin, NAPosi* parentorigin, NAInt* childsegment){
+NA_HDEF void naComputeQuadTreeAlignment(NAInt childsize, NAPosi childorigin, NAPosi* parentorigin, NAInt* childsegment){
   // In order to achieve a full coverage of the whole space
   // (negative and positive in all dimensions), we align parent nodes
   // in a cyclic way.
@@ -187,8 +187,8 @@ NA_HDEF void naDeallocQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* node){
 
 // Returns the segment index [0-3] in which the given pos can be found.
 // Warning: The position is expected to be inside this node.
-NA_HDEF NAUInt naGetQuadTreeNodeSegment(NAQuadTreeNode* node, NAPosi pos){
-  NAUInt segment = 0;
+NA_HDEF NAInt naGetQuadTreeNodeSegment(NAQuadTreeNode* node, NAPosi pos){
+  NAInt segment = 0;
   if(pos.x >= node->childorigin[3].x){segment |= 1;}
   if(pos.y >= node->childorigin[3].y){segment |= 2;}
   #ifndef NDEBUG
@@ -273,7 +273,7 @@ NA_HDEF NABool naUpdateQuadTreeNodeCapturing(NAQuadTree* tree, NAQuadTreeNode* n
 
 
 
-NA_DEF NAQuadTree* naInitQuadTree(NAQuadTree* tree, NAUInt leaflength, NAQuadTreeCallbacks callbacks){
+NA_DEF NAQuadTree* naInitQuadTree(NAQuadTree* tree, NAInt leaflength, NAQuadTreeCallbacks callbacks){
   #ifndef NDEBUG
     if(!tree)
       {naCrash("naInitQuadTree", "tree is Null-Pointer"); return NA_NULL;}
@@ -329,10 +329,10 @@ NA_DEF NAQuadTree* naCopyQuadTreeWithMaskTree(NAQuadTree* newtree, const NAQuadT
 
 
 NA_DEF NAQuadTree* naCopyQuadTreeWithShift(NAQuadTree* newtree, const NAQuadTree* duptree, NASizei shift){
-  NAUInt x1bound;
-  NAUInt y1bound;
-  NAUInt x2bound;
-  NAUInt y2bound;
+  NAInt x1bound;
+  NAInt y1bound;
+  NAInt x2bound;
+  NAInt y2bound;
   NARecti rect0;
   NARecti rect1;
   NARecti rect2;
@@ -401,7 +401,7 @@ NA_HDEF NAQuadTreeNode* naLocateQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* n
   if(naContainsRectiPos(noderect, coord)){
   
     // The coord is stored somewhere inside the rectangle of this node
-    NAUInt segment = naGetQuadTreeNodeSegment(node, coord);
+    NAInt segment = naGetQuadTreeNodeSegment(node, coord);
     if(node->child[segment]){
       // There is a segment available which contains the coord.
       if(node->childsize == tree->leaflength){
@@ -602,7 +602,7 @@ NA_DEF void naSerializeQuadTree(const NAQuadTree* tree, void* buf, uint64* bytes
     NAPosi origin;
     NAByte* dataptr = buf;
     *((uint64*)dataptr) = *bytesize; dataptr += sizeof(uint64);
-    *((uint64*)dataptr) = tree->leaflength; dataptr += sizeof(uint64);
+    *((uint64*)dataptr) = (uint64)tree->leaflength; dataptr += sizeof(uint64);
 
     while((curleaf = naIterateQuadTreeConst(tree, &origin))){
       *((int64*)dataptr) = origin.x; dataptr += sizeof(int64);
@@ -621,7 +621,7 @@ NA_DEF NABool naIsQuadTreeEmpty(NAQuadTree* tree){
 
 
 
-NA_DEF uint64 naGetQuadTreeLeafLength(const NAQuadTree* tree){
+NA_DEF NAInt naGetQuadTreeLeafLength(const NAQuadTree* tree){
   return tree->leaflength;
 }
 
