@@ -46,7 +46,7 @@ NA_IAPI NAArray* naInitArray(NAArray* array);
 // Initializes an NAArray with enough space for the given typesize and count.
 // Typesize denoes the number of bytes per element and count denotes the number
 // of elements.
-NA_API  NAArray* naInitArrayWithCount(        NAArray* array,
+NA_IAPI NAArray* naInitArrayWithCount(        NAArray* array,
                                                 NAUInt typesize,
                                                 NAUInt count);
 
@@ -64,11 +64,11 @@ NA_API  NAArray* naInitArrayWithCount(        NAArray* array,
 //
 // Note that if you need to call constructors or destructors upon all elements,
 // you can use naForeachArray.
-NA_API  NAArray* naInitArrayWithDataConst(    NAArray* array,
+NA_IAPI  NAArray* naInitArrayWithDataConst(   NAArray* array,
                                            const void* data,
                                                 NAUInt typesize,
                                                 NAUInt count);
-NA_API  NAArray* naInitArrayWithDataMutable(  NAArray* array,
+NA_IAPI  NAArray* naInitArrayWithDataMutable( NAArray* array,
                                                  void* data,
                                                 NAUInt typesize,
                                                 NAUInt count,
@@ -175,7 +175,7 @@ NA_IAPI void naClearArrayIterator(NAArrayIterator* iterator);
 // the programmer is already forced to do things right when debugging the code.
 NA_IAPI NABool naLocateArrayFirst    (NAArrayIterator* iterator);
 NA_IAPI NABool naLocateArrayLast     (NAArrayIterator* iterator);
-NA_API  NABool naLocateArrayContent  (NAArrayIterator* iterator, const void* content);
+NA_IAPI NABool naLocateArrayContent  (NAArrayIterator* iterator, const void* content);
 NA_IAPI NABool naLocateArrayIndex    (NAArrayIterator* iterator, NAInt indx);
 
 

@@ -346,7 +346,7 @@ NA_DEF void naFilterData(NAPNG* png){
     pixeldata += png->size.width * bpp;
   }
 
-  naDetermineBufferRange(png->filtereddata);
+  naExpandBufferRangeToSource(png->filtereddata);
 }
 
 
@@ -686,7 +686,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   png->pixelunit = NA_PIXEL_UNIT_RATIO;
   
   buffer = naCreateBufferFile(filename);
-  naDetermineBufferRange(buffer);
+  naExpandBufferRangeToSource(buffer);
   // If the buffer is empty, there is no png to read.
   if(naIsBufferAtEnd(buffer)){
     goto NAEndReadingPNG;
@@ -805,9 +805,9 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
   while(naIterateList(&iter, 1)){
 
     NAPNGChunk* curchunk = naGetListCurrentMutable(&iter);
-    naDetermineBufferRange(curchunk->data);
+    naExpandBufferRangeToSource(curchunk->data);
 
-    curchunk->length = naDetermineBufferRange(curchunk->data).length;
+    curchunk->length = naExpandBufferRangeToSource(curchunk->data).length;
     naWriteBufferu32(outbuffer, (uint32)curchunk->length);
     
     naCopy32(curchunk->typename, na_png_chunk_type_names[curchunk->type]);
@@ -815,7 +815,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
     
     if(!naIsBufferEmpty(curchunk->data)){
       naSeekBufferAbsolute(curchunk->data, 0);
-      naWriteBufferBuffer(outbuffer, curchunk->data, naDetermineBufferRange(curchunk->data));
+      naWriteBufferBuffer(outbuffer, curchunk->data, naExpandBufferRangeToSource(curchunk->data));
     }
     
     naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
@@ -831,7 +831,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
   naClearListIterator(&iter);
 
   outfile = naMakeFileWritingFilename(filename, NA_FILEMODE_DEFAULT);
-  naDetermineBufferRange(outbuffer);
+  naExpandBufferRangeToSource(outbuffer);
   naWriteBufferToFile(outbuffer, &outfile);
   naCloseFile(&outfile);
   naReleaseBuffer(outbuffer);

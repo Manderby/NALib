@@ -40,14 +40,14 @@ NA_IDEF NAArray* naInitArray(NAArray* array){
 
 
 
-NA_DEF NAArray* naInitArrayWithCount(NAArray* array, NAUInt typesize, NAUInt count){
+NA_IDEF NAArray* naInitArrayWithCount(NAArray* array, NAUInt typesize, NAUInt count){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naInitArrayWithCount", "array is Null-Pointer"); return NA_NULL;}
     if(typesize < 1)
       naError("naInitArrayWithCount", "typesize is < 1.");
-    if(count < 0)
-      naError("naInitArrayWithCount", "count is < 0.");
+    if((NAInt)count < 0)
+      naError("naInitArrayWithCount", "count looks like it was signed and < 0.");
   #endif
   array->typesize = typesize;
   array->count = count;
@@ -61,7 +61,7 @@ NA_DEF NAArray* naInitArrayWithCount(NAArray* array, NAUInt typesize, NAUInt cou
 
 
 
-NA_DEF NAArray* naInitArrayWithDataConst(NAArray* array, const void* data, NAUInt typesize, NAUInt count){
+NA_IDEF NAArray* naInitArrayWithDataConst(NAArray* array, const void* data, NAUInt typesize, NAUInt count){
   #ifndef NDEBUG
     if(!array)
       {naCrash("naInitArrayWithDataConst", "array is Null-Pointer"); return NA_NULL;}
@@ -80,7 +80,7 @@ NA_DEF NAArray* naInitArrayWithDataConst(NAArray* array, const void* data, NAUIn
 
 
 
-NA_DEF NAArray* naInitArrayWithDataMutable(NAArray* array, void* data, NAUInt typesize, NAUInt count, NAMemoryCleanup cleanup){
+NA_IDEF NAArray* naInitArrayWithDataMutable(NAArray* array, void* data, NAUInt typesize, NAUInt count, NAMemoryCleanup cleanup){
   #ifndef NDEBUG
     if(cleanup < NA_MEMORY_CLEANUP_NONE || cleanup >= NA_MEMORY_CLEANUP_COUNT)
       naError("naNewStringWithMutableUTF8Buffer", "invalid cleanup option");
@@ -221,8 +221,8 @@ NA_IDEF NAUInt naGetArrayCount(const NAArray* array){
       naCrash("naGetArrayCount", "array is Null-Pointer.");
       return 0;
     }
-    if(array->count < 0)
-      naError("naGetArrayCount", "Array count was negative. Do not create Arrays with negative sizes!");
+    if((NAInt)(array->count) < 0)
+      naError("naGetArrayCount", "Array count looks like it was negative when interpreted as signed integer. Do not create Arrays with negative sizes!");
   #endif
   // Note that an empty array has a typesize of 1.
   return array->count;
@@ -351,7 +351,7 @@ NA_IDEF NABool naLocateArrayLast(NAArrayIterator* iterator){
 
 
 
-NA_DEF NABool naLocateArrayContent(NAArrayIterator* iterator, const void* content){
+NA_IDEF NABool naLocateArrayContent(NAArrayIterator* iterator, const void* content){
   const void* ptr = naGetArrayPointerConst(naGetPtrConst(&(iterator->array)));
   NAInt count = naGetArrayCount(naGetPtrConst(&(iterator->array)));
   NAInt indx = 0;

@@ -11,27 +11,16 @@
 #include "../NAList.h"
 #include "../NACoord.h"
 
-typedef struct NABufferPart NABufferPart;
 
 
-typedef enum{
-  NA_BUFFER_SOURCE_NONE,
-  NA_BUFFER_SOURCE_MEMORY,
-  NA_BUFFER_SOURCE_MEMORY_SOURCE,
-  NA_BUFFER_SOURCE_BUFFER,
-  NA_BUFFER_SOURCE_FILE,
-  NA_BUFFER_SOURCE_CONST_DATA,
-  NA_BUFFER_SOURCE_MUTABLE_DATA,
-} NABufferType;
 
+typedef struct NABufferSource NABufferSource;
 
 
 struct NABuffer{
   NARefCount refcount;
   
-  void* src;                // A pointer to a source if available.
-  NABufferType srctype; // The type of the source
-  NAInt srcoffset;          // The offset of the source relative to this range.
+  NABufferSource* source;
   
   NAList parts;             // List of all parts in this buffer
   NAListIterator iter;      // Iterator pointing at the current part.
@@ -40,7 +29,6 @@ struct NABuffer{
   
   NAUInt flags;
   NARangei bufrange;
-  void (*fillPart)(NABuffer*, NABufferPart*);
 
   NAInt endianness;                 // The current endianness
   NAEndiannessConverter converter;  // The endianness converter.

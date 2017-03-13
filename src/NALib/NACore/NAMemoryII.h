@@ -694,6 +694,8 @@ NA_IDEF NAPtr naMakePtrWithDataMutable(void* data, NAMemoryCleanup cleanuphint){
   #ifndef NDEBUG
     ptr.flags = NA_ZERO;
     naMarkPtrCleanup(&ptr, cleanuphint);
+  #else
+    NA_UNUSED(cleanuphint);
   #endif
   return ptr;
 }

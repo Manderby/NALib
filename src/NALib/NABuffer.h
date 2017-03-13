@@ -101,8 +101,9 @@ NA_API NABuffer*  naRetainBuffer (NABuffer* source);
 NA_API void           naReleaseBuffer(NABuffer* source);
 
 
-NA_API NARangei naDetermineBufferRange      (NABuffer* buffer);
-NA_API NABool   naHasBufferDeterminedRange  (const NABuffer* buffer);
+NA_API NARangei naExpandBufferRangeToSource      (NABuffer* buffer);
+NA_API void     naFixBufferRange          (NABuffer* buffer);
+NA_API NABool   naHasBufferFixedRange  (const NABuffer* buffer);
 NA_API NARangei naGetBufferRange        (const NABuffer* buffer);
 NA_API NABool   naIsBufferEmpty         (const NABuffer* buffer);
 NA_API NAInt    naTellBuffer            (const NABuffer* buffer);
