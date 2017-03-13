@@ -322,8 +322,8 @@ NA_IDEF void naCleanupMemory(void* data, NAMemoryCleanup cleanup){
 struct NARefCount{
   NAUInt count;      // Reference count. Including flags
   #ifndef NDEBUG
-  NAMemoryCleanup structcleanup;
-  NAMemoryCleanup datacleanup;
+    NAMemoryCleanup structcleanup;
+    NAMemoryCleanup datacleanup;
   #endif
 };
 
@@ -492,8 +492,6 @@ struct NAPtr{
   } data;
   #ifndef NDEBUG
     NAUInt flags;              // This field stores some flags.
-//    NAUInt visiblebytesize;    // nof bytes of the visible byte storage
-//    NAUInt accessiblebytesize; // nof bytes of the accessible byte storage
   #endif
 };
 // Note that this is one of the very, very rare situations, where a union type

@@ -258,7 +258,6 @@ NA_IDEF NAFile* naCreateFileReadingStdin(){
   NAFile* file = naAlloc(NAFile);
   naInitRefCount(&(file->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
   file->desc = 0;
-  naRetainFile(file);
   return file;
 }
 
@@ -268,7 +267,6 @@ NA_IDEF NAFile* naCreateFileWritingStdout(){
   NAFile* file = naAlloc(NAFile);
   naInitRefCount(&(file->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
   file->desc = 1;
-  naRetainFile(file);
   return file;
 }
 
@@ -278,15 +276,15 @@ NA_IDEF NAFile* naCreateFileWritingStderr(){
   NAFile* file = naAlloc(NAFile);
   naInitRefCount(&(file->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
   file->desc = 2;
-  naRetainFile(file);
   return file;
 }
 
 
 
 NA_HIDEF void naClearFile(NAFile* file){
-  // Note that stdin, stdout and stderr can be closed as well.
-  naClose(file->desc);
+  if(file->desc > 2){
+    naClose(file->desc);
+  }
   file->desc = -1;
 }
 

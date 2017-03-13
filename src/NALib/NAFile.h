@@ -9,11 +9,16 @@
 #endif
 
 
-// This file contains the definitions for very basic file and directory
+// This file contains the declaration of the NAFile structure, which is a
+// structure managing a simple file descriptor but with a reference count.
+// See further below.
+//
+// This file first contains the definitions for very basic file and directory
 // handling.
 //
-// If you are looking for more powerful reading and writing functions, have
-// a look at NABuffer.
+// The structs and functions in ths file only provide very raw file handling
+// functionality. If you are looking for powerful reading and writing
+// functions, have a look at NABuffer.
 
 #include "NAString.h"
 #include <sys/stat.h>
@@ -110,15 +115,18 @@ NA_IAPI NAUTF8Char* naGetCwd  (NAUTF8Char* buf, NAInt bufsize);
 
 
 
-
-// The full type definition is in the file "NAFileII.h"
+// ///////////////////////////////////////////
+// NAFile
 //
-// This is the definition of NAFile. It is designed to be a POD (plain old data)
-// struct and in fact currently is nothing else but a struct container for a
-// unix file descriptor. Again, if you look for more elaborate functions, see
-// NABuffer.
-//
+// These are the declarations of NAFile. It is designed to be a very simple
+// struct with only a file descriptor but with a reference count. Therefore
+// you can retain and release files.
+// 
 // An NAFile can either be a Read-File or a Write-File. Never both.
+//
+// Again, this struct only provides the most basic functionality of file input
+// and output. If you look for more elaborate functions, see NABuffer.
+
 typedef struct NAFile NAFile;
 
 // Opens the file.
@@ -131,36 +139,31 @@ typedef struct NAFile NAFile;
 //
 // If you don't know, what the mode argument means, use NA_FILEMODE_DEFAULT.
 
-NA_IAPI NAFile*  naCreateFileReadingFilename   (const char* filename);
-NA_IAPI NAFile*  naCreateFileWritingFilename   (const char* filename,
-                                              NAFileMode mode);
-NA_IAPI NAFile*  naCreateFileAppendingFilename (const char* filename,
-                                              NAFileMode mode);
+NA_IAPI NAFile* naCreateFileReadingFilename(   const char* filename);
+NA_IAPI NAFile* naCreateFileWritingFilename(   const char* filename,
+                                                NAFileMode mode);
+NA_IAPI NAFile* naCreateFileAppendingFilename( const char* filename,
+                                                NAFileMode mode);
 
 // Makes an NAFile struct wrapped around the standard channels.
-// Stdin:     Standard input (file descriptor 0) as a reading file.
+// Stdin:     Standard input  (file descriptor 0) as a  reading   file.
 // Stdout:    Standard output (file descriptor 1) as an appending file.
-// Stderr:    Standard error (file descriptor 2) as an appending file.
+// Stderr:    Standard error  (file descriptor 2) as an appending file.
 //
-// Note that upon creation, all three standard files have been called with an
-// additional naRetainFile. Therefore, the file descriptors will not be closed
-// upon the first naReleaseFile call. See below.
+// Note that the standard input and output channels will not be closed upon
+// a call to naReleaseFile. If you want to close them, you need to call
+// naClose(0), naClose(1) or naClose(2) manually.
 NA_IAPI NAFile* naCreateFileReadingStdin();
 NA_IAPI NAFile* naCreateFileWritingStdout();
 NA_IAPI NAFile* naCreateFileWritingStderr();
 
-// Note that NAFile is designed to be a POD (plain old data) struct and
-// therefore, creating an NAFile is done using the naMake... functions.
-// But for any other function call below, the NAFile struct must be provided
-// as a pointer.
-
 // Retains and releases the file. When the reference count reaches zero, the
 // file will be closed.
-// Important: stdin, stdout and stderr can be closed as well! But these three
-// standard input and output channels have had an additional call tonaRetain
-// upon creation.
-NA_IAPI NAFile* naRetainFile(NAFile* file);
-NA_IAPI void naReleaseFile(NAFile* file);
+//
+// Again: stdin, stdout and stderr will never be closed by these calls. Use
+// naClose(0), naClose(1) or naClose(2) for that.
+NA_IAPI NAFile* naRetainFile (NAFile* file);
+NA_IAPI void    naReleaseFile(NAFile* file);
 
 // Computes the filesize (from first to last byte).
 NA_IAPI NAFilesize naComputeFileBytesize(const NAFile* file);
