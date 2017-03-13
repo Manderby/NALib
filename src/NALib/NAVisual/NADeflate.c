@@ -384,7 +384,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   uint32 adler;
 
   // First, read RFC 1950
-  NAInt zbuffersize = naExpandBufferRangeToSource(input).length - 6;
+  NAInt zbuffersize = naGetBufferRange(input).length - 6;
   // The 6 Bytes are the CMF and FLG Bytes as well as the Adler number.
   // If there is a DICTID, zbuffersize will be reduced by 4 more bytes later.
   
@@ -505,7 +505,8 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   
   naReleaseBuffer(zbuffer);
   
-  naExpandBufferRangeToSource(output);
+  naFixBufferRange(output);
+//  naExpandBufferRangeToSource(output);
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_ADLER_32);
   naAccumulateBufferToChecksum(output, &checksum);
   adler = naGetChecksumResult(&checksum);
@@ -548,7 +549,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, N
   // Now, for the actual content, we change to little endian due to RFC 1951!
   naSetBufferEndianness(buffer, NA_ENDIANNESS_LITTLE);
   
-  bytesize = naExpandBufferRangeToSource(input).length;
+  bytesize = naGetBufferRange(input).length;
   naSeekBufferAbsolute(input, 0);
   
   

@@ -845,8 +845,8 @@ NA_HDEF void naCacheBuffer(NABuffer* buffer, NARangei range){
   NABufferPart* part;
   
   #ifndef NDEBUG
-    if(!buffer->source)
-      naError("naCacheBuffer", "No buffer source present. Unintended memory allocations expected.");
+    if(!buffer->source && !naContainsRangeiRange(buffer->bufrange, range))
+      naError("naCacheBuffer", "Range expansion with with no buffer source present. Unintended memory allocations expected.");
   #endif
 
   if(naHasBufferParentBuffer(buffer)){
