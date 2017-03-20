@@ -13,25 +13,47 @@
 
 
 
+#define NA_BUFFER_SOURCE_RANGE_LIMITED   0x01
 
-typedef struct NABufferSource NABufferSource;
+typedef void (*NABufferSourceFiller)(void* data, void* dst, NARangei range);
+
+
+
+typedef struct NABufferSourceDescriptor NABufferSourceDescriptor;
+struct NABufferSourceDescriptor{
+  void*                 data;
+  NAMutator             destructor;
+  NABufferSourceFiller  filler;
+  NAUInt                flags;
+  NARangei              limit;
+};
+
+
+
+struct NABufferSource{
+  NARefCount refcount;
+  NABufferSourceDescriptor desc;  
+};
+
 
 
 struct NABuffer{
   NARefCount refcount;
   
   NABufferSource* source;
+  NAInt srcoffset;            // Offset the source relative to owners range.
   
+  NAUInt flags;
+  
+  NAInt endianness;                 // The current endianness
+  NAEndiannessConverter converter;  // The endianness converter.
+
   NAList parts;             // List of all parts in this buffer
   NAListIterator iter;      // Iterator pointing at the current part.
   NAInt curoffset;          // The current absolute offset
   uint8 curbit;             // The current bit number
   
-  NAUInt flags;
-  NARangei bufrange;
-
-  NAInt endianness;                 // The current endianness
-  NAEndiannessConverter converter;  // The endianness converter.
+  NARangei range;
 };
 
 

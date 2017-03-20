@@ -194,21 +194,36 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
     uint16 repeatcount;
     uint16 i;
     codelength = naDecodeHuffman(codelengthhuffman, zbuffer);
-//    printf("%d,", codelength);
+//    printf(", %d", codelength);
     switch(codelength){
     case 16:
       repeatcount = (uint16)naReadBufferBits(zbuffer, 2) + 3;
+      #ifndef NDEBUG
+        if((curalphabetcount + repeatcount) > alphabetcount)
+          naError("naReadCodeLengthHuffman", "Internal Error: Reading too many literals at codelength 16");
+      #endif
       for(i=0; i<repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = alphabethuffman->codelengths[curalphabetcount - 1];}
+//      printf("(%d)", repeatcount);
       curalphabetcount += repeatcount;
       break;
     case 17:
       repeatcount = (uint16)naReadBufferBits(zbuffer, 3) + 3;
+      #ifndef NDEBUG
+        if((curalphabetcount + repeatcount) > alphabetcount)
+          naError("naReadCodeLengthHuffman", "Internal Error: Reading too many literals at codelength 17");
+      #endif
       for(i=0; i<repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = 0;}
+//      printf("(%d)", repeatcount);
       curalphabetcount += repeatcount;
       break;
     case 18:
       repeatcount =(uint16) naReadBufferBits(zbuffer, 7) + 11;
+      #ifndef NDEBUG
+        if((curalphabetcount + repeatcount) > alphabetcount)
+          naError("naReadCodeLengthHuffman", "Internal Error: Reading too many literals at codelength 18");
+      #endif
       for(i=0; i<repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = 0;}
+//      printf("(%d)", repeatcount);
       curalphabetcount += repeatcount;
       break;
     default:
@@ -219,10 +234,6 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
   }
 //  printf("\n");
   
-  #ifndef NDEBUG
-    if(curalphabetcount > alphabetcount)
-      naError("naReadCodeLengthHuffman", "Internal Error: Reading too many literals");
-  #endif
   naBuildHuffmanCodeTree(alphabethuffman);
   return alphabethuffman;
 }

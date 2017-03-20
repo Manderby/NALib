@@ -84,6 +84,7 @@
 
 
 typedef struct NABuffer NABuffer;
+typedef struct NABufferSource NABufferSource;
 
 
 // Allocates a buffer with a specific source.
@@ -113,7 +114,6 @@ NA_API void naSetBufferEndianness(NABuffer* buffer, NAInt endianness);
 NA_API NAInt naGetBufferEndianness(NABuffer* buffer);
 
 NA_API void naCacheBuffer(NABuffer* buffer, NARangei range);
-
 
 // Seeks the given position within the buffer.
 // Absolute searches relative to the zero-point of this buffer.

@@ -174,6 +174,7 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABuffer* buffer){
     naCacheBuffer(chunk->data, naMakeRangei(naTellBuffer(chunk->data), chunk->length));
   }
   
+//  naFixBufferRange(chunk->data);
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
   naAccumulateChecksum(&checksum, chunk->typename, 4);
   naAccumulateBufferToChecksum(chunk->data, &checksum);

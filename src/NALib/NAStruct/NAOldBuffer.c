@@ -529,7 +529,7 @@ int isoctest69834759;
 //      NAFile* file;
 //      #ifndef NDEBUG
 //        if(part->bufferrange.origin < 0)
-//          naError("naFillBufferPart", "Trying to read from a file with negative offset");
+//          naError("naFillBufferSourcePart", "Trying to read from a file with negative offset");
 //      #endif
 //      file = (NAFile*)(storage->source);
 //      if(naTell(file->desc) != part->bufferrange.origin){
@@ -543,7 +543,7 @@ int isoctest69834759;
 //    break;
 //  default:
 //    #ifndef NDEBUG
-//      naError("naFillBufferPart", "Invalid source flag.");
+//      naError("naFillBufferSourcePart", "Invalid source flag.");
 //    #endif
 //    break;
 //  }
