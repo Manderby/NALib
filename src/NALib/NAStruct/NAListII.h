@@ -942,7 +942,7 @@ NA_IDEF NABool naIsListAtInitial(NAListIterator* iterator){
 
 
 
-NA_IDEF NAListPos naGetListPrevPosition(NAListIterator* iterator){
+NA_IDEF NAListPos naGetListPrevPosition(const NAListIterator* iterator){
   #ifndef NDEBUG
     const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
     if(naIsListEmpty(list))
@@ -953,7 +953,7 @@ NA_IDEF NAListPos naGetListPrevPosition(NAListIterator* iterator){
 
 
 
-NA_IDEF NAListPos naGetListCurrentPosition(NAListIterator* iterator){
+NA_IDEF NAListPos naGetListCurrentPosition(const NAListIterator* iterator){
   #ifndef NDEBUG
     const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
     if(naIsListEmpty(list))
@@ -964,7 +964,7 @@ NA_IDEF NAListPos naGetListCurrentPosition(NAListIterator* iterator){
 
 
 
-NA_IDEF NAListPos naGetListNextPosition(NAListIterator* iterator){
+NA_IDEF NAListPos naGetListNextPosition(const NAListIterator* iterator){
   #ifndef NDEBUG
     const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
     if(naIsListEmpty(list))

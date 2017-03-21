@@ -303,9 +303,9 @@ NA_IAPI NABool    naIsListAtLast            (NAListIterator* iterator);
 NA_IAPI NABool    naIsListAtPosition        (NAListIterator* iterator, NAListPos listpos);
 NA_IAPI NABool    naIsListAtInitial         (NAListIterator* iterator);
 
-NA_IAPI NAListPos naGetListPrevPosition     (NAListIterator* iterator);
-NA_IAPI NAListPos naGetListCurrentPosition  (NAListIterator* iterator);
-NA_IAPI NAListPos naGetListNextPosition     (NAListIterator* iterator);
+NA_IAPI NAListPos naGetListPrevPosition     (const NAListIterator* iterator);
+NA_IAPI NAListPos naGetListCurrentPosition  (const NAListIterator* iterator);
+NA_IAPI NAListPos naGetListNextPosition     (const NAListIterator* iterator);
 
 
 // /////////////////////////////////////////////

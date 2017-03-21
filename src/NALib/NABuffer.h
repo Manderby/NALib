@@ -125,6 +125,9 @@ NA_API void naSeekBufferRelative(NABuffer* buffer, NAInt offset);
 NA_API void naSeekBuffer(NABuffer* buffer, NAInt offset);
 
 
+NA_API const NAByte* naGetBufferByte(const NABuffer* buffer, NAInt indx);
+NA_API NAInt naSearchBufferByteOffset(const NABuffer* buffer, NAByte byte, NAInt startoffset, NABool forward);
+
 
 // ////////////////////////////////
 // BUFFER WRITING

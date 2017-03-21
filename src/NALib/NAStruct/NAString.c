@@ -162,19 +162,19 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt charoffs
 
 
 NA_DEF NAString* naNewStringWithBasenameOfFilename(const NAString* filename){
-  NAInt dotoffset = naGetStringCharacterPos(filename, NA_SUFFIX_DELIMITER, -1);
+  NAInt dotoffset = naSearchStringCharacterPos(filename, NA_SUFFIX_DELIMITER, -1, NA_FALSE);
   // If dotpos is invalid, return the full string.
   if(dotoffset == NA_INVALID_MEMORY_INDEX){
     return naNewStringExtraction(filename, 0, -1);
   }else{
-    return naNewStringExtraction(filename, 0, dotoffset - 1);
+    return naNewStringExtraction(filename, 0, dotoffset);
   }
 }
 
 
 
 NA_DEF NAString* naNewStringWithSuffixOfFilename(const NAString* filename){
-  NAInt dotoffset = naGetStringCharacterPos(filename, NA_SUFFIX_DELIMITER, -1);
+  NAInt dotoffset = naSearchStringCharacterPos(filename, NA_SUFFIX_DELIMITER, -1, NA_FALSE);
   if(dotoffset == NA_INVALID_MEMORY_INDEX){
     return naNewString();
   }else{
@@ -185,61 +185,63 @@ NA_DEF NAString* naNewStringWithSuffixOfFilename(const NAString* filename){
 
 
 NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
-  // Declaration before implementation. Needed for C90.
-  NAInt i;
-  NAInt inputsize;
-  NAInt destsize;
-  const NAUTF8Char* inptr;
-  NAUTF8Char* destptr;
-  NAUTF8Char* stringbuf;
-
-  #ifndef NDEBUG
-    if(!inputstring){
-      naCrash("naNewStringXMLEncoded", "input string is Null-Pointer.");
-      return NA_NULL;
-    }
-  #endif
-  inputsize = naGetStringLength(inputstring);
-  if(!inputsize){return naNewString();}
-  
-  // Count the required number of utf8 characters.
-  destsize = 0;
-  inptr = naGetStringUTF8Pointer(inputstring);
-  for(i=0; i<inputsize; i++){
-    switch(*inptr){
-    case '&': destsize += 5; break;
-    case '<': destsize += 4; break;
-    case '>': destsize += 4; break;
-    case '\"': destsize += 6; break;
-    case '\'': destsize += 6; break;
-    default: destsize += 1; break;
-    }
-    inptr++;
-  }
-
-  #ifndef NDEBUG
-    if(destsize <= 0)
-      naError("naNewStringXMLEncoded", "encoded size invalid. String too long?");
-  #endif
-  // Create the string with the required length
-  stringbuf = naMalloc(-destsize);
-  inptr = naGetStringUTF8Pointer(inputstring);
-  destptr = stringbuf;
-
-  // Copy all characters and encode them if necessary.
-  for(i=0; i<inputsize; i++){
-    switch(*inptr){
-    case '&':  *destptr++ = '&'; *destptr++ = 'a'; *destptr++ = 'm'; *destptr++ = 'p'; *destptr++ = ';'; break;
-    case '<':  *destptr++ = '&'; *destptr++ = 'l'; *destptr++ = 't'; *destptr++ = ';'; break;
-    case '>':  *destptr++ = '&'; *destptr++ = 'g'; *destptr++ = 't'; *destptr++ = ';'; break;
-    case '\"': *destptr++ = '&'; *destptr++ = 'q'; *destptr++ = 'u'; *destptr++ = 'o'; *destptr++ = 't'; *destptr++ = ';'; break;
-    case '\'': *destptr++ = '&'; *destptr++ = 'a'; *destptr++ = 'p'; *destptr++ = 'o'; *destptr++ = 's'; *destptr++ = ';'; break;
-    default: *destptr++ = *inptr; break;
-    }
-    inptr++;
-  }
-
-  return naNewStringWithMutableUTF8Buffer(stringbuf, -destsize, NA_MEMORY_CLEANUP_NA_FREE);
+  NA_UNUSED(inputstring);
+//  // Declaration before implementation. Needed for C90.
+//  NAInt i;
+//  NAInt inputsize;
+//  NAInt destsize;
+//  const NAUTF8Char* inptr;
+//  NAUTF8Char* destptr;
+//  NAUTF8Char* stringbuf;
+//
+//  #ifndef NDEBUG
+//    if(!inputstring){
+//      naCrash("naNewStringXMLEncoded", "input string is Null-Pointer.");
+//      return NA_NULL;
+//    }
+//  #endif
+//  inputsize = naGetStringLength(inputstring);
+//  if(!inputsize){return naNewString();}
+//  
+//  // Count the required number of utf8 characters.
+//  destsize = 0;
+//  inptr = naGetStringUTF8Pointer(inputstring);
+//  for(i=0; i<inputsize; i++){
+//    switch(*inptr){
+//    case '&': destsize += 5; break;
+//    case '<': destsize += 4; break;
+//    case '>': destsize += 4; break;
+//    case '\"': destsize += 6; break;
+//    case '\'': destsize += 6; break;
+//    default: destsize += 1; break;
+//    }
+//    inptr++;
+//  }
+//
+//  #ifndef NDEBUG
+//    if(destsize <= 0)
+//      naError("naNewStringXMLEncoded", "encoded size invalid. String too long?");
+//  #endif
+//  // Create the string with the required length
+//  stringbuf = naMalloc(-destsize);
+//  inptr = naGetStringUTF8Pointer(inputstring);
+//  destptr = stringbuf;
+//
+//  // Copy all characters and encode them if necessary.
+//  for(i=0; i<inputsize; i++){
+//    switch(*inptr){
+//    case '&':  *destptr++ = '&'; *destptr++ = 'a'; *destptr++ = 'm'; *destptr++ = 'p'; *destptr++ = ';'; break;
+//    case '<':  *destptr++ = '&'; *destptr++ = 'l'; *destptr++ = 't'; *destptr++ = ';'; break;
+//    case '>':  *destptr++ = '&'; *destptr++ = 'g'; *destptr++ = 't'; *destptr++ = ';'; break;
+//    case '\"': *destptr++ = '&'; *destptr++ = 'q'; *destptr++ = 'u'; *destptr++ = 'o'; *destptr++ = 't'; *destptr++ = ';'; break;
+//    case '\'': *destptr++ = '&'; *destptr++ = 'a'; *destptr++ = 'p'; *destptr++ = 'o'; *destptr++ = 's'; *destptr++ = ';'; break;
+//    default: *destptr++ = *inptr; break;
+//    }
+//    inptr++;
+//  }
+//
+//  return naNewStringWithMutableUTF8Buffer(stringbuf, -destsize, NA_MEMORY_CLEANUP_NA_FREE);
+  return NA_NULL;
 }
 
 
@@ -530,14 +532,6 @@ NA_DEF void naAppendStringArguments(NAString* originalstring, const NAUTF8Char* 
 
 
 
-NA_DEF void naDecoupleString(NAString* string){
-  NA_UNUSED(string);
-//  if(naIsStringEmpty(string)){return;}
-//  // When decoupling, make sure, the new string is always null termiated.
-//  naDecoupleByteArray(&(string->array), NA_TRUE);
-}
-
-
 
 
 NA_DEF NAInt naGetStringLength(const NAString* string){
@@ -565,32 +559,18 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
     naCacheBuffer(string->buffer, naGetBufferRange(string->buffer));
     naWriteBufferToData(string->buffer, mutablestring->cachedstr);
     mutablestring->cachedstr[strlen] = '\0';
-    return string->cachedstr;
-    
-//    #ifndef NDEBUG
-//      if(!naIsByteArrayNullTerminated(&(string->array))){
-//        naError("naGetStringUTF8Pointer", "string is not Null-Terminated.");
-//      }
-//    #endif
-//    return (const NAUTF8Char*)naGetByteArrayConstPointer(&(string->array));
+    return string->cachedstr;    
   }
 }
 
 
 
 NA_DEF const NAUTF8Char* naGetStringChar(const NAString* string, NAInt indx){
-  NA_UNUSED(string);
-  NA_UNUSED(indx);
-//  #ifndef NDEBUG
-//    if(!string){
-//      naCrash("naGetStringChar", "string is Null-Pointer.");
-//      return NA_NULL;
-//    }
-//    if(indx == NA_INVALID_MEMORY_INDEX)
-//      naError("naGetStringChar", "Invalid index");
-//  #endif
-//  return (const NAUTF8Char*)naGetByteArrayConstByte(&(string->array), indx);
-  return NA_NULL;
+  #ifndef NDEBUG
+    if(naGetBufferRange(string->buffer).origin != 0)
+      naError("naGetStringChar", "String has buffer with origin unequal 0");
+  #endif
+  return (NAUTF8Char*)naGetBufferByte(string->buffer, indx);
 }
 
 
@@ -608,29 +588,13 @@ NA_DEF NABool naIsStringEmpty(const NAString* string){
 
 
 
-NA_DEF NAInt naGetStringCharacterPos(const NAString* string, NAUTF8Char ch, NAInt startoffset){
-  NA_UNUSED(string);
-  NA_UNUSED(ch);
-  NA_UNUSED(startoffset);
-//  const NAUTF8Char* curchar;
-//  NAInt stringsize = (NAInt)naGetStringLength(string);
-//  curchar = (const NAUTF8Char*)naGetByteArrayConstByte(&(string->array), startoffset);
-//  if(startoffset < 0){
-//    while(!(startoffset < -stringsize)){
-//      if(*curchar == ch){return startoffset;}
-//      curchar--;
-//      startoffset--;
-//    }
-//  }else{
-//    while(startoffset < stringsize){
-//      if(*curchar == ch){return startoffset;}
-//      curchar++;
-//      startoffset++;
-//    }
-//  }
-//  // Not found
-//  return NA_INVALID_MEMORY_INDEX;
-  return NA_INVALID_MEMORY_INDEX;
+NA_DEF NAInt naSearchStringCharacterPos(const NAString* string, NAUTF8Char ch, NAInt startoffset, NABool forward){
+  #ifndef NDEBUG
+    if(naGetBufferRange(string->buffer).origin != 0)
+      naError("naSearchStringCharacterPos", "String has buffer with origin unequal 0");
+  #endif
+  NAInt positiveoffset = naMakeIndexPositive(startoffset, naGetBufferRange(string->buffer).length);
+  return naSearchBufferByteOffset(string->buffer, ch, positiveoffset, forward);
 }
 
 

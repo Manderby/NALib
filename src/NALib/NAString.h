@@ -192,12 +192,6 @@ NA_API void naAppendStringArguments(
 
 
 
-// COPIES the contents of the string to a separate storage and decouples it
-// from the existing storage. After this function, the decoupled string is
-// ensured to be null-terminated. Copies always!
-NA_API void naDecoupleString(NAString* string);
-
-
 
 // Returns the length of the string in Characters. If the string is Null-terminated,
 // the terminating Null-character is NOT included. Therefore "Hello" always
@@ -206,7 +200,7 @@ NA_API NAInt naGetStringLength(const NAString* string);  // todo: lengt or bytes
 
 // Returns a const pointer to the first character of this string. Use
 // this for example for printf %s arguments but make sure the string is
-// null-terminated. Use naDecoupleString if necessary. No debug warning will
+// null-terminated. No debug warning will
 // be emitted if the string is not null-terminated!
 // When the string is empty, a pointer to a const char '\0' is returned.
 NA_API const NAUTF8Char* naGetStringUTF8Pointer  (const NAString* string);
@@ -236,9 +230,10 @@ NA_API NABool naIsStringEmpty(const NAString* string);
 // A negative startoffset denotes the character from the end of the string. For
 // example, -1 denotes the character at [stringsize - 1].
 // When the character is not found, NA_INVALID_MEMORY_INDEX is returned.
-NA_API NAInt naGetStringCharacterPos(  const NAString* string,
+NA_API NAInt naSearchStringCharacterPos(  const NAString* string,
                                             NAUTF8Char ch,
-                                                 NAInt startoffset);
+                                                 NAInt startoffset,
+                                                 NABool forward);
 
 // naGetStringCharacterEscapeLength TowardsTrailing and TowardsLeading:
 // These two functions test if the character at charoffset is the beginning or the

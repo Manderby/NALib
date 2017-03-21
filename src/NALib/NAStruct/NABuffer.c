@@ -1113,6 +1113,70 @@ NA_DEF void naSeekBufferSource(NABuffer* buffer, NAInt offset){
 
 
 
+NA_DEF const NAByte* naGetBufferByte(const NABuffer* buffer, NAInt indx){
+  const NAByte* retbyte = NA_NULL;
+  if(naIsBufferEmpty(buffer)){return NA_NULL;}
+  
+  NAListIterator iter = naMakeListIteratorAccessor(&(buffer->parts));
+  naLocateListPosition(&iter, naGetListCurrentPosition(&(buffer->iter)));
+  if(naIsListAtInitial(&iter)){naIterateList(&iter, 1);}
+  naLocateBufferPartOffset(&iter, indx);
+
+  if(!naIsListAtInitial(&iter)){
+    retbyte = naGetBufferPartDataPointer(naGetListCurrentConst(&iter), indx);
+  }
+  naClearListIterator(&iter);
+  return retbyte;
+}
+
+
+
+NA_DEF NAInt naSearchBufferByteOffset(const NABuffer* buffer, NAByte byte, NAInt startoffset, NABool forward){
+  NAInt retindex = NA_INVALID_MEMORY_INDEX;
+  if(naIsBufferEmpty(buffer)){return NA_INVALID_MEMORY_INDEX;}
+
+  NAListIterator iter = naMakeListIteratorAccessor(&(buffer->parts));
+  naLocateListPosition(&iter, naGetListCurrentPosition(&(buffer->iter)));
+  if(naIsListAtInitial(&iter)){naIterateList(&iter, 1);}
+  naLocateBufferPartOffset(&iter, startoffset);
+
+  while(!naIsListAtInitial(&iter)){
+    const NABufferPart* part = naGetListCurrentConst(&iter);
+    #ifndef NDEBUG
+      if(naIsBufferPartSparse(part))
+        naError("naSearchBufferByteOffset", "sparse part detected.");
+    #endif
+    const NAByte* curbyte = naGetBufferPartDataPointer(part, startoffset); 
+    if(forward){
+      NAInt endoffset = naGetBufferPartEnd(part);
+      while(startoffset < endoffset){
+        if(*curbyte == byte){
+          retindex = startoffset;
+          break;
+        }
+        curbyte++;
+        startoffset++;
+      }
+    }else{
+      NAInt beginoffset = naGetBufferPartStart(part) - 1;
+      while(startoffset > beginoffset){
+        if(*curbyte == byte){
+          retindex = startoffset;
+          break;
+        }
+        curbyte--;
+        startoffset--;
+      }
+    }
+    if(retindex != NA_INVALID_MEMORY_INDEX){break;}
+  }
+
+  naClearListIterator(&iter);
+  return retindex;
+}
+
+
+
 NA_DEF void naWriteBufferBytes(NABuffer* buffer, const void* data, NAInt bytesize){
   const NAByte* src = data;
   NAByte* dst;
