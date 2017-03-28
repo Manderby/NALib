@@ -283,7 +283,7 @@ NA_DEF NAInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond){
 NA_DEF int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str){
   int32 i;
   for(i=0; i<NA_MONTHS_PER_YEAR; i++){
-    if(naEqualStringToUTF8CStringLiteral(str, na_monthenglishabbreviationnames[i])){return i;}
+    if(naEqualBufferToData(naGetStringBufferConst(str), na_monthenglishabbreviationnames[i], NA_TRUE)){return i;}
   }
   #ifndef NDEBUG
     naError("naGetMonthNumberWithEnglishAbbreviation", "Month abbreviation unknown. Returning -1.");
@@ -297,15 +297,15 @@ NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
   NAInt len = naStrlen(str);
   if(!len){return -1;}
   for(i=0; i<NA_MONTHS_PER_YEAR; i++){
-    if(naEqualUTF8CStringLiteralsCaseInsensitive(str, na_monthenglishnames[i])){return i;}
+    if(naEqualUTF8CStringLiterals(str, na_monthenglishnames[i], 0, NA_FALSE)){return i;}
   }
   for(i=0; i<NA_MONTHS_PER_YEAR; i++){
-    if(naEqualUTF8CStringLiteralsCaseInsensitive(str, na_monthenglishabbreviationnames[i])){return i;}
+    if(naEqualUTF8CStringLiterals(str, na_monthenglishabbreviationnames[i], 0, NA_FALSE)){return i;}
   }
   if(isdigit((const char)str[0])){
     int32 returnint;
     NAString* numberstring = naNewStringWithUTF8CStringLiteral(str);
-    returnint = naGetStringInt32(numberstring) - 1;
+    returnint = naParseBufferInt32(naGetStringBufferMutable(numberstring), NA_FALSE) - 1;
     naDelete(numberstring);
     return returnint;
   }
@@ -446,48 +446,48 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
 
   switch(format){
   case NA_DATETIME_FORMAT_APACHE:
-    dts.day = naParseStringInt32(str, NA_TRUE);
-    token = naParseStringTokenWithDelimiter(str, '/');
+    dts.day = naParseBufferInt32(naGetStringBufferMutable(str), NA_TRUE);
+    token = naParseBufferTokenWithDelimiter(naGetStringBufferMutable(str), '/');
     dts.mon = naGetMonthNumberWithEnglishAbbreviation(token);
     naDelete(token);
-    dts.year = naParseStringInt64(str, NA_TRUE);
+    dts.year = naParseBufferInt64(naGetStringBufferMutable(str), NA_TRUE);
     
-    dts.hour = naParseStringInt32(str, NA_TRUE);
-    dts.min = naParseStringInt32(str, NA_TRUE);
-    dts.sec = naParseStringInt32(str, NA_TRUE);
+    dts.hour = naParseBufferInt32(naGetStringBufferMutable(str), NA_TRUE);
+    dts.min = naParseBufferInt32(naGetStringBufferMutable(str), NA_TRUE);
+    dts.sec = naParseBufferInt32(naGetStringBufferMutable(str), NA_TRUE);
 
     // The remaining string contains the time shift
-    int16value = naGetStringInt16(str);
+    int16value = naParseBufferInt16(naGetStringBufferMutable(str), NA_FALSE);
     dts.shift = (int16value / 100) * NA_MINUTES_PER_HOUR;
     dts.shift += int16value % 100;
     dts.flags = 0;
     break;
   case NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT:
-    dts.year = naParseStringInt64(str, NA_TRUE);
-    dts.mon = naParseStringInt32(str, NA_TRUE) - 1;
-    dts.day = naParseStringInt32(str, NA_TRUE) - 1;
+    dts.year = naParseBufferInt64(naGetStringBufferMutable(str), NA_TRUE);
+    dts.mon = naParseBufferInt32(naGetStringBufferMutable(str), NA_TRUE) - 1;
+    dts.day = naParseBufferInt32(naGetStringBufferMutable(str), NA_TRUE) - 1;
 
-    dts.hour = naParseStringInt32(str, NA_TRUE);
-    dts.min = naParseStringInt32(str, NA_TRUE);
-    dts.sec = naParseStringInt32(str, NA_FALSE   );
+    dts.hour = naParseBufferInt32(naGetStringBufferMutable(str), NA_TRUE);
+    dts.min = naParseBufferInt32(naGetStringBufferMutable(str), NA_TRUE);
+    dts.sec = naParseBufferInt32(naGetStringBufferMutable(str), NA_FALSE);
 
-    dts.shift = naParseStringInt16(str, NA_TRUE) * NA_MINUTES_PER_HOUR;
+    dts.shift = naParseBufferInt16(naGetStringBufferMutable(str), NA_TRUE) * NA_MINUTES_PER_HOUR;
     if(dts.shift < 0){
-      dts.shift -= naGetStringInt16(str);
+      dts.shift -= naParseBufferInt16(naGetStringBufferMutable(str), NA_FALSE);
     }else{
-      dts.shift += naGetStringInt16(str);
+      dts.shift += naParseBufferInt16(naGetStringBufferMutable(str), NA_FALSE);
     }
     dts.flags = 0;
     break;
   case NA_DATETIME_FORMAT_CONDENSEDDATE:
     token = naNewStringExtraction(str, 0, -5);
-    dts.year = naGetStringInt64(token);
+    dts.year = naParseBufferInt64(naGetStringBufferMutable(token), NA_FALSE);
     naDelete(token);
     token = naNewStringExtraction(str, -4, -3);
-    dts.mon = naGetStringInt32(token);
+    dts.mon = naParseBufferInt32(naGetStringBufferMutable(token), NA_FALSE);
     naDelete(token);
     token = naNewStringExtraction(str, -2, -1);
-    dts.day = naGetStringInt32(token);
+    dts.day = naParseBufferInt32(naGetStringBufferMutable(token), NA_FALSE);
     naDelete(token);
     dts.hour = 0;
     dts.min = 0;
@@ -496,13 +496,13 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
     dts.flags = 0;
     break;
   case NA_DATETIME_FORMAT_NATURAL:
-    dts.year = naParseStringInt64(str, NA_TRUE);
-    dts.mon = naParseStringInt32(str, NA_TRUE);
-    dts.day = naParseStringInt32(str, NA_TRUE);
+    dts.year = naParseBufferInt64(naGetStringBufferMutable(str), NA_TRUE);
+    dts.mon = naParseBufferInt32(naGetStringBufferMutable(str), NA_TRUE);
+    dts.day = naParseBufferInt32(naGetStringBufferMutable(str), NA_TRUE);
 
-    dts.hour = naParseStringInt32(str, NA_TRUE);
-    dts.min = naParseStringInt32(str, NA_TRUE);
-    dts.sec = naGetStringInt32(str);
+    dts.hour = naParseBufferInt32(naGetStringBufferMutable(str), NA_TRUE);
+    dts.min = naParseBufferInt32(naGetStringBufferMutable(str), NA_TRUE);
+    dts.sec = naParseBufferInt32(naGetStringBufferMutable(str), NA_FALSE);
 
     dts.shift = 0;
     dts.flags = 0;
@@ -564,7 +564,6 @@ NA_DEF const char* naGetDateTimeErrorString(uint8 errornum){
 
 
 //NA_DEF NAByteArray* naInitByteArrayFromDateTime( NAByteArray* bytearray, const NADateTime* datetime, NABinDateTimeFormat format){
-//  // Declaration before Implementation. Needed for C90
 //  uint16 valueu16;
 //  NAByte* ptr;
 //  NADateTimeStruct dts;

@@ -469,7 +469,7 @@ NA_IDEF double naLog2(double x){
 }
 
 NA_IDEF int32 naLog2i32(int32 x){
-  int32 retvalue; // Note: declaration before any other code.
+  int32 retvalue;
   #ifndef NDEBUG
     if(x < 0)
       naError("naLog2i32", "Logarithm of negative number.");
@@ -481,7 +481,7 @@ NA_IDEF int32 naLog2i32(int32 x){
   return retvalue;
 }
 NA_IDEF int64 naLog2i64(int64 x){
-  int64 retvalue; // Note: declaration before any other code.
+  int64 retvalue;
   #ifndef NDEBUG
     if(x < 0)
       naError("naLog2i64", "Logarithm of negative number.");
@@ -557,7 +557,7 @@ NA_IDEF NAInt naExp10i(NAInt x){
 #endif
 }
 NA_IDEF int32 naExp10i32(int32 x){
-  int32 i;   // Declaration before implementation. Needed for C90.
+  int32 i;
   #ifndef NDEBUG
     if(x > 9)
       naError("naExp10i32", "Exponent of 10 exceeds integer range.");
@@ -567,7 +567,7 @@ NA_IDEF int32 naExp10i32(int32 x){
   return i;
 }
 NA_IDEF int64 naExp10i64(int64 x){
-  int64 i;   // Declaration before implementation. Needed for C90.
+  int64 i;
   #ifndef NDEBUG
     if(x > 18)
       naError("naExp10i64", "Exponent of 10 exceeds integer range.");
@@ -606,7 +606,6 @@ NA_IDEF NAInt naFactorize(NAInt x){
 }
 
 NA_IDEF NAInt naBinom(NAInt n, NAInt k){
-  // Declaration before implementation. Needed for C90.
   NAInt nminusk = n - k;
   NAInt kfactor;
   NAInt x;

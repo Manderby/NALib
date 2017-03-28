@@ -521,7 +521,6 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   naReleaseBuffer(zbuffer);
   
   naFixBufferRange(output);
-//  naExpandBufferRangeToSource(output);
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_ADLER_32);
   naAccumulateBufferToChecksum(output, &checksum);
   adler = naGetChecksumResult(&checksum);

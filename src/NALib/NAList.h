@@ -130,7 +130,7 @@ NA_IAPI       void* naGetListPositionMutable(const NAList* list, NAListPos listp
 
 // Traverses the whole list calling the accessor or mutator on each element.
 // A pointer to each element will be given to the mutator. The list is
-// traversed forward from leading to trailing.
+// traversed from leading to trailing (in layman's terms "forward").
 NA_IAPI void naForeachListConst(const NAList* list, NAAccessor accessor);
 NA_IAPI void naForeachListMutable(const NAList* list, NAMutator mutator);
 

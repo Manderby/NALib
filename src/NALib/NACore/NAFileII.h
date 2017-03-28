@@ -303,7 +303,6 @@ NA_IDEF void naReleaseFile(NAFile* file){
 
 
 NA_IDEF NAFilesize naComputeFileBytesize(const NAFile* file){
-  // Declaration before implementation. Needed for C90.
   NAFilesize curoffset;
   NAFilesize filesize;
   curoffset = naLseek(file->desc, 0, SEEK_CUR);
@@ -402,12 +401,6 @@ NA_IDEF NAInt naScanDecimal(){
 
 
 
-NA_IDEF NAString* naNewStringWithCurrentWorkingDirectory(){
-  NAString* string;
-  NAUTF8Char* cwdbuf = naGetCwd(NA_NULL, 0);
-  string = naNewStringWithMutableUTF8Buffer(cwdbuf, -(NAInt)(naStrlen(cwdbuf)), NA_MEMORY_CLEANUP_NA_FREE);
-  return string;
-}
 
 
 

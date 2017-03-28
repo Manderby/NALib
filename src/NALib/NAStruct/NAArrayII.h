@@ -116,9 +116,9 @@ NA_IDEF void naClearArray(NAArray* array){
 
 
 NA_IDEF void naForeachArrayConst(NAArray* array, NAAccessor accessor){
-  // Declaration before implementation. Needed for C90
   NAInt count;
   const NAByte* ptr;
+  
   #ifndef NDEBUG
     if(!accessor)
       {naCrash("naForeachArray", "Accessor is Null"); return;}
@@ -135,9 +135,9 @@ NA_IDEF void naForeachArrayConst(NAArray* array, NAAccessor accessor){
 
 
 NA_IDEF void naForeachArrayMutable(NAArray* array, NAMutator mutator){
-  // Declaration before implementation. Needed for C90
   NAInt count;
   NAByte* ptr;
+
   #ifndef NDEBUG
     if(!mutator)
       {naCrash("naForeachArray", "Mutator is Null"); return;}

@@ -31,6 +31,7 @@ Highlights:
   subarrays anymore. Separate NAArrayIterator implemented. Lots of API-changes.
 - Removed NAByteArray completely.
 - NAFile is now reference counting.
+- NAString appending, encoding and decoding is not available for the moment.
 
 Other things:
 - Renamed several functions with base types to u, i, f and d and Arrays to v.
@@ -50,6 +51,7 @@ Other things:
 - naNewThread, naNewMutex and naNewAlarm now are called naMakeThread,
   naMakeMutex and naMakeAlarm.
 - Removed NAByteMap2D
+- Removed all "Declaration before implementation" comments
 
 
 Version 17 (first published 2017-January-05):

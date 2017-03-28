@@ -171,7 +171,7 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABuffer* buffer){
   #endif
   
   if(chunk->length){
-    naCacheBuffer(chunk->data, naMakeRangei(naTellBuffer(chunk->data), chunk->length));
+    naCacheBufferRange(chunk->data, naMakeRangei(naTellBuffer(chunk->data), chunk->length), NA_FALSE);
   }
   
 //  naFixBufferRange(chunk->data);
@@ -335,7 +335,7 @@ NA_DEF void naFilterData(NAPNG* png){
   NAByte* pixeldata;
   NAInt y;
 
-  png->filtereddata = naCreateBuffer();
+  png->filtereddata = naCreateBuffer(NA_FALSE);
   naSetBufferEndianness(png->filtereddata, NA_ENDIANNESS_NETWORK);
   
   bpp = naGetPNGBytesPerPixel(png->colortype);
@@ -347,7 +347,6 @@ NA_DEF void naFilterData(NAPNG* png){
     pixeldata += png->size.width * bpp;
   }
 
-//  naExpandBufferRangeToSource(png->filtereddata);
   naFixBufferRange(png->filtereddata);
 }
 
@@ -396,7 +395,7 @@ NA_HDEF void naReadPNGIHDRChunk(NAPNG* png, NAPNGChunk* ihdr){
 
 NA_HDEF NAPNGChunk* naAllocPNGIHDRChunk(NAPNG* png){
   NAPNGChunk* ihdr = naAlloc(NAPNGChunk);
-  ihdr->data = naCreateBuffer();
+  ihdr->data = naCreateBuffer(NA_FALSE);
   naSetBufferEndianness(ihdr->data, NA_ENDIANNESS_NETWORK);
   ihdr->type = NA_PNG_CHUNK_TYPE_IHDR;
   
@@ -437,7 +436,7 @@ NA_HDEF void naReadPNGIDATChunk(NAPNG* png, NAPNGChunk* idat){
 
 NA_HDEF NAPNGChunk* naAllocPNGIDATChunk(NAPNG* png){
   NAPNGChunk* idat = naAlloc(NAPNGChunk);
-  idat->data = naCreateBuffer();
+  idat->data = naCreateBuffer(NA_FALSE);
   naSetBufferEndianness(idat->data, NA_ENDIANNESS_NETWORK);
   
   naFilterData(png);
@@ -465,7 +464,7 @@ NA_HDEF NAPNGChunk* naAllocPNGIENDChunk(NAPNG* png){
   NA_UNUSED(png);
 
   iend = naAlloc(NAPNGChunk);
-  iend->data = naCreateBuffer();
+  iend->data = naCreateBuffer(NA_FALSE);
   naSetBufferEndianness(iend->data, NA_ENDIANNESS_NETWORK);
   iend->type = NA_PNG_CHUNK_TYPE_IEND;
 
@@ -696,8 +695,6 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   png->pixelunit = NA_PIXEL_UNIT_RATIO;
   
   buffer = naCreateBufferFile(filename);
-  naExpandBufferRangeToSource(buffer);
-  naFixBufferRange(buffer);
   
   // If the buffer is empty, there is no png to read.
   if(naIsBufferAtEnd(buffer)){
@@ -724,7 +721,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   }
   
   // Create the buffer to hold the decompressed data
-  png->filtereddata = naCreateBuffer();
+  png->filtereddata = naCreateBuffer(NA_FALSE);
   
   iter = naMakeListIteratorMutator(&(png->chunks));
   while(naIterateList(&iter, 1)){
@@ -808,7 +805,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
   naAddListLastMutable(&(png->chunks), naAllocPNGIDATChunk(png));
   naAddListLastMutable(&(png->chunks), naAllocPNGIENDChunk(png));
 
-  outbuffer = naCreateBuffer();
+  outbuffer = naCreateBuffer(NA_FALSE);
   naSetBufferEndianness(outbuffer, NA_ENDIANNESS_NETWORK);
 
   naWriteBufferBytes(outbuffer, na_png_magic, 8);

@@ -113,7 +113,7 @@ NA_HIDEF NAInt naGetNullTerminationBytesize(NAInt bytesize){
 
 
 NA_IDEF void* naMalloc(NAInt bytesize){
-  NAByte* ptr; // Declaration before implementation. Needed for C90.
+  NAByte* ptr;
   NAInt fullsize;
   // ptr is declared as NAByte to simplify accessing individual bytes later
   // in this functions.
@@ -937,7 +937,7 @@ NA_RUNTIME_TYPE(NAPointer, NA_NULL);
 
 
 NA_IDEF NAPointer* naNewPointerConst(const void* data){
-  NAPointer* pointer; // Declaration before definition. Needed for C90
+  NAPointer* pointer;
   pointer = naNew(NAPointer);
   // As sptr is the first entry of pointer, we can trick sptr to delete the
   // object when refcount becomes zero and delete the whole NAPointer object
@@ -950,7 +950,7 @@ NA_IDEF NAPointer* naNewPointerConst(const void* data){
 
 
 NA_IDEF NAPointer* naNewPointerMutable(void* data, NAMemoryCleanup datacleanup, NAMutator destructor){
-  NAPointer* pointer; // Declaration before definition. Needed for C90
+  NAPointer* pointer;
   #ifndef NDEBUG
     if(!naIsCleanupValid(datacleanup))
       naError("naNewPointer", "cleanup method invalid");

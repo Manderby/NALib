@@ -224,7 +224,9 @@ NA_IAPI NARect    naMakeRectWithCGRect(CGRect  cgrect);
 // Note: In order to make this compile, you need to include "NACoord.h" AFTER
 // including <Cocoa/Cocoa.h>
 NA_IAPI NAPos     naMakePosWithNSPoint(NSPoint nspoint);
+NA_IAPI NSPoint   naMakeNSPoitWithPos (NAPos   napos);
 NA_IAPI NASize    naMakeSizeWithNSSize(NSSize  nssize);
+NA_IAPI NSSize    naMakeNSSizeWithSize(NASize  nasize);
 NA_IAPI NARect    naMakeRectWithNSRect(NSRect  nsrect);
 NA_IAPI NSRect    naMakeNSRectWithRect(NARect  narect);
 #endif

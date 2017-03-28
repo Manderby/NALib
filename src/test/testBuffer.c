@@ -14,20 +14,37 @@ NAByte testdataarray[NA_BUFFER_TESTARRAY_SIZE];
 void testBufferFile(void){
   NABuffer* buffer;
   NABuffer* token;
+  NAString* string;
+  NAInt linesread;
 
-  printf("\nCreating file buffer with ASCII file.\n");
+  printf("\nCreating file input buffer with ASCII file.\n");
   buffer = naCreateBufferFile("asciitest.txt");  
   
-  for(int i=0; i<2000; i++){
-    naReadBufferBytes(buffer, &testdataarray, 100);
-    testdataarray[100] = '\0';
-    printf("%s", testdataarray);
-  }
+  // Creating a buffer extraction and then reading that whole buffer
+  token = naCreateBufferExtraction(buffer, naMakeRangei(6, 8));
+  naReadBufferBytes(token, &testdataarray, 8);
+  testdataarray[8] = '\0';
+  printf("Using buffer extraction [bytes 6-14]: %s\n", testdataarray);
+
+  // We read some bytes from the file.
+  naReadBufferBytes(buffer, &testdataarray, 14);
+  printf("Reading 14 characters: %s\n", testdataarray);
   
-  token = naCreateBufferExtraction(buffer, naMakeRangei(2, 10));
-  naReadBufferBytes(token, &testdataarray, 10);
-  testdataarray[10] = '\0';
-  printf("\n%s\n", testdataarray);
+  printf("Skipping buffer whitespaces.\n");
+  naSkipBufferWhitespaces(buffer);
+  
+  string = naParseBufferLine(buffer, NA_TRUE, &linesread);
+  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(string));
+  string = naParseBufferLine(buffer, NA_TRUE, &linesread);
+  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(string));
+  string = naParseBufferLine(buffer, NA_TRUE, &linesread);
+  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(string));
+  string = naParseBufferLine(buffer, NA_TRUE, &linesread);
+  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(string));
+  string = naParseBufferLine(buffer, NA_TRUE, &linesread);
+  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(string));
+  string = naParseBufferLine(buffer, NA_FALSE, &linesread);
+  printf("Reading the next line without skipping (%" NA_PRIi " lines read) : %s\n", linesread, naGetStringUTF8Pointer(string));
 }
 
 
@@ -50,7 +67,7 @@ void testBufferMemory(void){
   }
 
   printf("\nCreating memory buffer.\n");
-  buffer = naCreateBuffer();  
+  buffer = naCreateBuffer(NA_FALSE);  
 
   // We can seek to an absolute poisition within the buffer
   naSeekBufferAbsolute(buffer, (NA_BUFFER_TEST_REPETITIONS * NA_BUFFER_TESTARRAY_SIZE) / 4);
@@ -71,6 +88,8 @@ void testBufferMemory(void){
   
   range = naGetBufferRange(buffer);
   printf("Buffer now stores a byte range of [%" NA_PRIi ", %" NA_PRIi "] (%" NA_PRIi " MB)\n", range.origin, naGetRangeiEnd(range), range.length / 1000000);
+  
+  naDismissBufferRange(buffer, naMakeRangeiWithStartAndEnd(1000, 2000));
   
 
   printf("Writing some data ... ");

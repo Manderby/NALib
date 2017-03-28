@@ -331,7 +331,7 @@ NA_IDEF void naNulln(void* d, NAUInt bytesize){
 
 NA_IDEF void naFill8WithBytes( void* d,
                     NAByte b0){
-  NAByte* p; // Declaration before implementation. Needed for C90.
+  NAByte* p;
   #ifndef NDEBUG
     if(!d){
       naCrash("naFill8WithBytes", "Pointer is Null-Pointer.");
@@ -344,7 +344,7 @@ NA_IDEF void naFill8WithBytes( void* d,
 
 NA_IDEF void naFill16WithBytes( void* d,
                      NAByte b0, NAByte b1){
-  NAByte* p; // Declaration before implementation. Needed for C90.
+  NAByte* p;
   #ifndef NDEBUG
     if(!d){
       naCrash("naFill16WithBytes", "Pointer is Null-Pointer.");
@@ -357,7 +357,7 @@ NA_IDEF void naFill16WithBytes( void* d,
 
 NA_IDEF void naFill32WithBytes( void* d,
                      NAByte b0, NAByte b1, NAByte b2, NAByte b3){
-  NAByte* p; // Declaration before implementation. Needed for C90.
+  NAByte* p;
   #ifndef NDEBUG
     if(!d){
       naCrash("naFill32WithBytes", "Pointer is Null-Pointer.");
@@ -371,7 +371,7 @@ NA_IDEF void naFill32WithBytes( void* d,
 NA_IDEF void naFill64WithBytes( void* d,
                      NAByte b0, NAByte b1, NAByte b2, NAByte b3,
                      NAByte b4, NAByte b5, NAByte b6, NAByte b7){
-  NAByte* p; // Declaration before implementation. Needed for C90.
+  NAByte* p;
   #ifndef NDEBUG
     if(!d){
       naCrash("naFill64WithBytes", "Pointer is Null-Pointer.");
@@ -388,7 +388,7 @@ NA_IDEF void naFill128WithBytes( void* d,
                       NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
                       NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
                       NAByte b12, NAByte b13, NAByte b14, NAByte b15){
-  NAByte* p; // Declaration before implementation. Needed for C90.
+  NAByte* p;
   #ifndef NDEBUG
     if(!d){
       naCrash("naFill128WithBytes", "Pointer is Null-Pointer.");
@@ -409,7 +409,7 @@ NA_IDEF void naFill128WithBytes( void* d,
 // ///////////////////////////////////////////////////////////
 
 NA_IDEF NABool naEqual8WithBytes(const void* s, NAByte b0){
-  NAByte* p; // Declaration before implementation. Needed for C90
+  NAByte* p;
   #ifndef NDEBUG
     if(!s){
       naCrash("naEqual8WithBytes", "Pointer is Null-Pointer.");
@@ -422,7 +422,7 @@ NA_IDEF NABool naEqual8WithBytes(const void* s, NAByte b0){
 }
 
 NA_IDEF NABool naEqual16WithBytes(const void* s, NAByte b0, NAByte b1){
-  NAByte* p; // Declaration before implementation. Needed for C90
+  NAByte* p;
   #ifndef NDEBUG
     if(!s){
       naCrash("naEqual16WithBytes", "Pointer is Null-Pointer.");
@@ -437,7 +437,7 @@ NA_IDEF NABool naEqual16WithBytes(const void* s, NAByte b0, NAByte b1){
 
 NA_IDEF NABool naEqual32WithBytes(const void* s,
                               NAByte b0, NAByte b1, NAByte b2, NAByte b3){
-  NAByte* p; // Declaration before implementation. Needed for C90
+  NAByte* p;
   #ifndef NDEBUG
     if(!s){
       naCrash("naEqual32WithBytes", "Pointer is Null-Pointer.");
@@ -455,7 +455,7 @@ NA_IDEF NABool naEqual32WithBytes(const void* s,
 NA_IDEF NABool naEqual64WithBytes(const void* s,
                               NAByte b0, NAByte b1, NAByte b2, NAByte b3,
                               NAByte b4, NAByte b5, NAByte b6, NAByte b7){
-  NAByte* p; // Declaration before implementation. Needed for C90
+  NAByte* p;
   #ifndef NDEBUG
     if(!s){
       naCrash("naEqual64WithBytes", "Pointer is Null-Pointer.");
@@ -479,7 +479,7 @@ NA_IDEF NABool naEqual128WithBytes(const void* s,
                                NAByte b4,  NAByte b5,  NAByte b6,  NAByte b7,
                                NAByte b8,  NAByte b9,  NAByte b10, NAByte b11,
                                NAByte b12, NAByte b13, NAByte b14, NAByte b15){
-  NAByte* p; // Declaration before implementation. Needed for C90
+  NAByte* p;
   #ifndef NDEBUG
     if(!s){
       naCrash("naEqual128WithBytes", "Pointer is Null-Pointer.");
@@ -704,7 +704,7 @@ NA_IDEF void naConvertLittleBig8v(void* buffer, NAUInt count){
 }
 
 NA_IDEF void naConvertLittleBig16v(void* buffer, NAUInt count){
-  NAUInt i; // Declaration before implementation. Needed for C90
+  NAUInt i;
   #ifndef NDEBUG
     if(!buffer)
       naError("naConvertLittleBig16v", "buffer is Null-Pointer");
@@ -716,7 +716,7 @@ NA_IDEF void naConvertLittleBig16v(void* buffer, NAUInt count){
 }
 
 NA_IDEF void naConvertLittleBig32v(void* buffer, NAUInt count){
-  NAUInt i; // Declaration before implementation. Needed for C90
+  NAUInt i;
   #ifndef NDEBUG
     if(!buffer)
       naError("naConvertLittleBig32v", "buffer is Null-Pointer");
@@ -728,7 +728,7 @@ NA_IDEF void naConvertLittleBig32v(void* buffer, NAUInt count){
 }
 
 NA_IDEF void naConvertLittleBig64v(void* buffer, NAUInt count){
-  NAUInt i; // Declaration before implementation. Needed for C90
+  NAUInt i;
   #ifndef NDEBUG
     if(!buffer)
       naError("naConvertLittleBig64v", "buffer is Null-Pointer");
@@ -740,7 +740,7 @@ NA_IDEF void naConvertLittleBig64v(void* buffer, NAUInt count){
 }
 
 NA_IDEF void naConvertLittleBig128v(void* buffer, NAUInt count){
-  NAUInt i; // Declaration before implementation. Needed for C90
+  NAUInt i;
   #ifndef NDEBUG
     if(!buffer)
       naError("naConvertLittleBig128v", "buffer is Null-Pointer");

@@ -25,7 +25,7 @@
 
 
 NA_IDEF NARange naMakeRange(double origin, double length){
-  NARange newrange; // Declaration before implementation. Needed for C90.
+  NARange newrange;
   #ifndef NDEBUG
     if(!(naIsOffsetValueValid(origin) && naIsLengthValueValid(length)))
       naError("naMakeRange", "Invalid values given.");
@@ -37,7 +37,7 @@ NA_IDEF NARange naMakeRange(double origin, double length){
   return newrange;
 }
 NA_IDEF NARangef naMakeRangef(float origin, float length){
-  NARangef newrange; // Declaration before implementation. Needed for C90.
+  NARangef newrange;
   #ifndef NDEBUG
     if(!(naIsOffsetValueValidf(origin) && naIsLengthValueValidf(length)))
       naError("naMakeRangef", "Invalid values given.");
@@ -49,7 +49,7 @@ NA_IDEF NARangef naMakeRangef(float origin, float length){
   return newrange;
 }
 NA_IDEF NARangei naMakeRangei(NAInt origin, NAInt length){
-  NARangei newrange; // Declaration before implementation. Needed for C90.
+  NARangei newrange;
   #ifndef NDEBUG
     if(!(naIsOffsetValueValidi(origin) && naIsLengthValueValidi(length)))
       naError("naMakeRangei", "Invalid values given.");
@@ -61,7 +61,7 @@ NA_IDEF NARangei naMakeRangei(NAInt origin, NAInt length){
   return newrange;
 }
 NA_IDEF NARangei naMakeRangeiE(NAInt origin, NAInt length){
-  NARangei newrange; // Declaration before implementation. Needed for C90.
+  NARangei newrange;
   #ifndef NDEBUG
     if(!(naIsOffsetValueValidi(origin) && naIsLengthValueValidi(length)))
       naError("naMakeRangeiE", "Invalid values given.");
@@ -76,7 +76,7 @@ NA_IDEF NARangei naMakeRangeiE(NAInt origin, NAInt length){
 
 
 NA_IDEF NAPos naMakePos(double x, double y){
-  NAPos newpos;  // Declaration before implementation. Needed for C90.
+  NAPos newpos;
   #ifndef NDEBUG
     if(!(naIsOffsetValueValid(x) && naIsOffsetValueValid(y)))
       naError("naMakePos", "Invalid values given.");
@@ -88,7 +88,7 @@ NA_IDEF NAPos naMakePos(double x, double y){
   return newpos;
 }
 NA_IDEF NAPosi naMakePosi(NAInt x, NAInt y){
-  NAPosi newpos;  // Declaration before implementation. Needed for C90.
+  NAPosi newpos;
   #ifndef NDEBUG
     if(!(naIsOffsetValueValidi(x) && naIsOffsetValueValidi(y)))
       naError("naMakePosi", "Invalid values given.");
@@ -103,7 +103,7 @@ NA_IDEF NAPosi naMakePosi(NAInt x, NAInt y){
 
 
 NA_IDEF NASize naMakeSize(double width, double height){
-  NASize newsize;  // Declaration before implementation. Needed for C90.
+  NASize newsize;
   #ifndef NDEBUG
     if(!(naIsLengthValueValid(width) && naIsLengthValueValid(height)))
       naError("naMakeSize", "Invalid values given.");
@@ -115,7 +115,7 @@ NA_IDEF NASize naMakeSize(double width, double height){
   return newsize;
 }
 NA_IDEF NASizei naMakeSizei(NAInt width, NAInt height){
-  NASizei newsize;  // Declaration before implementation. Needed for C90.
+  NASizei newsize;
   #ifndef NDEBUG
     if(!(naIsLengthValueValidi(width) && naIsLengthValueValidi(height)))
       naError("naMakeSizei", "Invalid values given.");
@@ -127,7 +127,7 @@ NA_IDEF NASizei naMakeSizei(NAInt width, NAInt height){
   return newsize;
 }
 NA_IDEF NASize naMakeSizeE(double width, double height){
-  NASize newsize;  // Declaration before implementation. Needed for C90.
+  NASize newsize;
   #ifndef NDEBUG
     if(!(naIsLengthValueValid(width) && naIsLengthValueValid(height)))
       naError("naMakeSize", "Invalid values given.");
@@ -137,7 +137,7 @@ NA_IDEF NASize naMakeSizeE(double width, double height){
   return newsize;
 }
 NA_IDEF NASizei naMakeSizeiE(NAInt width, NAInt height){
-  NASizei newsize;  // Declaration before implementation. Needed for C90.
+  NASizei newsize;
   #ifndef NDEBUG
     if(!(naIsLengthValueValidi(width) && naIsLengthValueValidi(height)))
       naError("naMakeSizei", "Invalid values given.");
@@ -150,7 +150,7 @@ NA_IDEF NASizei naMakeSizeiE(NAInt width, NAInt height){
 
 
 NA_IDEF NARect naMakeRect(NAPos pos, NASize size){
-  NARect newrect;  // Declaration before implementation. Needed for C90.
+  NARect newrect;
   #ifndef NDEBUG
     if(!naIsPosValid(pos) || !naIsSizeValid(size))
       naError("naMakeRect", "Invalid values given.");
@@ -162,7 +162,7 @@ NA_IDEF NARect naMakeRect(NAPos pos, NASize size){
   return newrect;
 }
 NA_IDEF NARecti naMakeRecti(NAPosi pos, NASizei size){
-  NARecti newrect;  // Declaration before implementation. Needed for C90.
+  NARecti newrect;
   #ifndef NDEBUG
     if(!naIsPosiValid(pos) || !naIsSizeiValid(size))
       naError("naMakeRecti", "Invalid values given.");
@@ -174,7 +174,7 @@ NA_IDEF NARecti naMakeRecti(NAPosi pos, NASizei size){
   return newrect;
 }
 NA_IDEF NARect naMakeRectE(NAPos pos, NASize size){
-  NARect newrect;  // Declaration before implementation. Needed for C90.
+  NARect newrect;
   #ifndef NDEBUG
     if(!naIsPosValid(pos) || !naIsSizeValid(size))
       naError("naMakeRect", "Invalid values given.");
@@ -184,7 +184,7 @@ NA_IDEF NARect naMakeRectE(NAPos pos, NASize size){
   return newrect;
 }
 NA_IDEF NARecti naMakeRectiE(NAPosi pos, NASizei size){
-  NARecti newrect;  // Declaration before implementation. Needed for C90.
+  NARecti newrect;
   #ifndef NDEBUG
     if(!naIsPosiValid(pos) || !naIsSizeiValid(size))
       naError("naMakeRecti", "Invalid values given.");
@@ -194,7 +194,7 @@ NA_IDEF NARecti naMakeRectiE(NAPosi pos, NASizei size){
   return newrect;
 }
 NA_IDEF NARect naMakeRectS(double x, double y, double width, double height){
-  NARect newrect;  // Declaration before implementation. Needed for C90.
+  NARect newrect;
   #ifndef NDEBUG
     if(!naIsOffsetValueValid(x) || !naIsOffsetValueValid(y) || !naIsLengthValueValid(width) || !naIsLengthValueValid(height))
       naError("naMakeRectS", "Invalid values given.");
@@ -206,7 +206,7 @@ NA_IDEF NARect naMakeRectS(double x, double y, double width, double height){
   return newrect;
 }
 NA_IDEF NARecti naMakeRectiS(NAInt x, NAInt y, NAInt width, NAInt height){
-  NARecti newrect;  // Declaration before implementation. Needed for C90.
+  NARecti newrect;
   #ifndef NDEBUG
     if(!naIsOffsetValueValidi(x) || !naIsOffsetValueValidi(y) || !naIsLengthValueValidi(width) || !naIsLengthValueValidi(height))
       naError("naMakeRectiS", "Invalid values given.");
@@ -218,7 +218,7 @@ NA_IDEF NARecti naMakeRectiS(NAInt x, NAInt y, NAInt width, NAInt height){
   return newrect;
 }
 NA_IDEF NARect naMakeRectSE(double x, double y, double width, double height){
-  NARect newrect;  // Declaration before implementation. Needed for C90.
+  NARect newrect;
   #ifndef NDEBUG
     if(!naIsOffsetValueValid(x) || !naIsOffsetValueValid(y) || !naIsLengthValueValid(width) || !naIsLengthValueValid(height))
       naError("naMakeRectSE", "Invalid values given.");
@@ -228,7 +228,7 @@ NA_IDEF NARect naMakeRectSE(double x, double y, double width, double height){
   return newrect;
 }
 NA_IDEF NARecti naMakeRectiSE(NAInt x, NAInt y, NAInt width, NAInt height){
-  NARecti newrect;  // Declaration before implementation. Needed for C90.
+  NARecti newrect;
   #ifndef NDEBUG
     if(!naIsOffsetValueValidi(x) || !naIsOffsetValueValidi(y) || !naIsLengthValueValidi(width) || !naIsLengthValueValidi(height))
       naError("naMakeRectiSE", "Invalid values given.");
@@ -241,7 +241,7 @@ NA_IDEF NARecti naMakeRectiSE(NAInt x, NAInt y, NAInt width, NAInt height){
 
 
 NA_IDEF NABounds4 naMakeBounds4(double top, double right, double bottom, double left){
-  NABounds4 newbounds;  // Declaration before implementation. Needed for C90.
+  NABounds4 newbounds;
   #ifndef NDEBUG
     if(!naIsLengthValueValid(top) || !naIsLengthValueValid(right) || !naIsLengthValueValid(bottom) || !naIsLengthValueValid(left))
       naError("naMakeBounds4", "Invalid values given.");
@@ -255,7 +255,7 @@ NA_IDEF NABounds4 naMakeBounds4(double top, double right, double bottom, double 
   return newbounds;
 }
 NA_IDEF NABounds4i naMakeBounds4i(NAInt top, NAInt right, NAInt bottom, NAInt left){
-  NABounds4i newbounds;  // Declaration before implementation. Needed for C90.
+  NABounds4i newbounds;
   #ifndef NDEBUG
     if(!naIsLengthValueValidi(top) || !naIsLengthValueValidi(right) || !naIsLengthValueValidi(bottom) || !naIsLengthValueValidi(left))
       naError("naMakeBounds4i", "Invalid values given.");
@@ -272,7 +272,7 @@ NA_IDEF NABounds4i naMakeBounds4i(NAInt top, NAInt right, NAInt bottom, NAInt le
 
 
 NA_IDEF NAVertex naMakeVertex(double x, double y, double z){
-  NAVertex newvertex;  // Declaration before implementation. Needed for C90.
+  NAVertex newvertex;
   #ifndef NDEBUG
     if(!(naIsOffsetValueValid(x) && naIsOffsetValueValid(y) && naIsOffsetValueValid(z)))
       naError("naMakeVertex", "Invalid values given.");
@@ -285,7 +285,7 @@ NA_IDEF NAVertex naMakeVertex(double x, double y, double z){
   return newvertex;
 }
 NA_IDEF NAVertexi naMakeVertexi(NAInt x, NAInt y, NAInt z){
-  NAVertexi newvertex;  // Declaration before implementation. Needed for C90.
+  NAVertexi newvertex;
   #ifndef NDEBUG
     if(!(naIsOffsetValueValidi(x) && naIsOffsetValueValidi(y) && naIsOffsetValueValidi(z)))
       naError("naMakeVertexi", "Invalid values given.");
@@ -301,7 +301,7 @@ NA_IDEF NAVertexi naMakeVertexi(NAInt x, NAInt y, NAInt z){
 
 
 NA_IDEF NAVolume naMakeVolume(double width, double height, double depth){
-  NAVolume newvolume;  // Declaration before implementation. Needed for C90.
+  NAVolume newvolume;
   #ifndef NDEBUG
     if(!(naIsLengthValueValid(width) && naIsLengthValueValid(height) && naIsLengthValueValid(depth)))
       naError("naMakeVolume", "Invalid values given.");
@@ -314,7 +314,7 @@ NA_IDEF NAVolume naMakeVolume(double width, double height, double depth){
   return newvolume;
 }
 NA_IDEF NAVolumei naMakeVolumei(NAInt width, NAInt height, NAInt depth){
-  NAVolumei newvolume;  // Declaration before implementation. Needed for C90.
+  NAVolumei newvolume;
   #ifndef NDEBUG
     if(!(naIsLengthValueValidi(width) && naIsLengthValueValidi(height) && naIsLengthValueValidi(depth)))
       naError("naMakeVolumei", "Invalid values given.");
@@ -327,7 +327,7 @@ NA_IDEF NAVolumei naMakeVolumei(NAInt width, NAInt height, NAInt depth){
   return newvolume;
 }
 NA_IDEF NAVolume naMakeVolumeE(double width, double height, double depth){
-  NAVolume newvolume;  // Declaration before implementation. Needed for C90.
+  NAVolume newvolume;
   #ifndef NDEBUG
     if(!(naIsLengthValueValid(width) && naIsLengthValueValid(height) && naIsLengthValueValid(depth)))
       naError("naMakeVolume", "Invalid values given.");
@@ -338,7 +338,7 @@ NA_IDEF NAVolume naMakeVolumeE(double width, double height, double depth){
   return newvolume;
 }
 NA_IDEF NAVolumei naMakeVolumeiE(NAInt width, NAInt height, NAInt depth){
-  NAVolumei newvolume;  // Declaration before implementation. Needed for C90.
+  NAVolumei newvolume;
   #ifndef NDEBUG
     if(!(naIsLengthValueValidi(width) && naIsLengthValueValidi(height) && naIsLengthValueValidi(depth)))
       naError("naMakeVolumei", "Invalid values given.");
@@ -352,7 +352,7 @@ NA_IDEF NAVolumei naMakeVolumeiE(NAInt width, NAInt height, NAInt depth){
 
 
 NA_IDEF NABox naMakeBox(NAVertex vertex, NAVolume volume){
-  NABox newbox;  // Declaration before implementation. Needed for C90.
+  NABox newbox;
   #ifndef NDEBUG
     if(!naIsVertexValid(vertex) || !naIsVolumeValid(volume))
       naError("naMakeBox", "Invalid values given.");
@@ -364,7 +364,7 @@ NA_IDEF NABox naMakeBox(NAVertex vertex, NAVolume volume){
   return newbox;
 }
 NA_IDEF NABoxi naMakeBoxi(NAVertexi vertex, NAVolumei volume){
-  NABoxi newbox;  // Declaration before implementation. Needed for C90.
+  NABoxi newbox;
   #ifndef NDEBUG
     if(!naIsVertexiValid(vertex) || !naIsVolumeiValid(volume))
       naError("naMakeBoxi", "Invalid values given.");
@@ -376,7 +376,7 @@ NA_IDEF NABoxi naMakeBoxi(NAVertexi vertex, NAVolumei volume){
   return newbox;
 }
 NA_IDEF NABox naMakeBoxS(double x, double y, double z, double width, double height, double depth){
-  NABox newbox;  // Declaration before implementation. Needed for C90.
+  NABox newbox;
   // We do not test for bad values at this point as it is already done in
   // the following Make functions.
   newbox.vertex = naMakeVertex(x, y, z);
@@ -384,7 +384,7 @@ NA_IDEF NABox naMakeBoxS(double x, double y, double z, double width, double heig
   return newbox;
 }
 NA_IDEF NABoxi naMakeBoxiS(NAInt x, NAInt y, NAInt z, NAInt width, NAInt height, NAInt depth){
-  NABoxi newbox;  // Declaration before implementation. Needed for C90.
+  NABoxi newbox;
   // We do not test for bad values at this point as it is already done in
   // the following Make functions.
   newbox.vertex = naMakeVertexi(x, y, z);
@@ -392,7 +392,7 @@ NA_IDEF NABoxi naMakeBoxiS(NAInt x, NAInt y, NAInt z, NAInt width, NAInt height,
   return newbox;
 }
 NA_IDEF NABox naMakeBoxE(NAVertex vertex, NAVolume volume){
-  NABox newbox;  // Declaration before implementation. Needed for C90.
+  NABox newbox;
   #ifndef NDEBUG
     if(!naIsVertexValid(vertex) || !naIsVolumeValid(volume))
       naError("naMakeBox", "Invalid values given.");
@@ -402,7 +402,7 @@ NA_IDEF NABox naMakeBoxE(NAVertex vertex, NAVolume volume){
   return newbox;
 }
 NA_IDEF NABoxi naMakeBoxiE(NAVertexi vertex, NAVolumei volume){
-  NABoxi newbox;  // Declaration before implementation. Needed for C90.
+  NABoxi newbox;
   #ifndef NDEBUG
     if(!naIsVertexiValid(vertex) || !naIsVolumeiValid(volume))
       naError("naMakeBoxi", "Invalid values given.");
@@ -412,7 +412,7 @@ NA_IDEF NABoxi naMakeBoxiE(NAVertexi vertex, NAVolumei volume){
   return newbox;
 }
 NA_IDEF NABox naMakeBoxSE(double x, double y, double z, double width, double height, double depth){
-  NABox newbox;  // Declaration before implementation. Needed for C90.
+  NABox newbox;
   // We do not test for bad values at this point as it is already done in
   // the following Make functions.
   newbox.vertex = naMakeVertex(x, y, z);
@@ -420,7 +420,7 @@ NA_IDEF NABox naMakeBoxSE(double x, double y, double z, double width, double hei
   return newbox;
 }
 NA_IDEF NABoxi naMakeBoxiSE(NAInt x, NAInt y, NAInt z, NAInt width, NAInt height, NAInt depth){
-  NABoxi newbox;  // Declaration before implementation. Needed for C90.
+  NABoxi newbox;
   // We do not test for bad values at this point as it is already done in
   // the following Make functions.
   newbox.vertex = naMakeVertexi(x, y, z);
@@ -432,7 +432,7 @@ NA_IDEF NABoxi naMakeBoxiSE(NAInt x, NAInt y, NAInt z, NAInt width, NAInt height
 
 #ifdef CGGEOMETRY_H_
 NA_IDEF NAPos naMakePosWithCGPoint(CGPoint cgpoint){
-  NAPos newpos;  // Declaration before implementation. Needed for C90.
+  NAPos newpos;
   #ifndef NDEBUG
     if(!(naIsOffsetValueValid(cgpoint.x) && naIsOffsetValueValid(cgpoint.y)))
       naError("naMakePosWithCGPoint", "Invalid values given.");
@@ -444,7 +444,7 @@ NA_IDEF NAPos naMakePosWithCGPoint(CGPoint cgpoint){
   return newpos;
 }
 NA_IDEF NASize naMakeSizeWithCGSize(CGSize cgsize){
-  NASize newsize;  // Declaration before implementation. Needed for C90.
+  NASize newsize;
   #ifndef NDEBUG
     if(!(naIsLengthValueValid(cgsize.width) && naIsLengthValueValid(cgsize.height)))
       naError("naMakeSizeWithCGSize", "Invalid values given.");
@@ -456,7 +456,7 @@ NA_IDEF NASize naMakeSizeWithCGSize(CGSize cgsize){
   return newsize;
 }
 NA_IDEF NARect naMakeRectWithCGRect(CGRect cgrect){
-  NARect newrect;  // Declaration before implementation. Needed for C90.
+  NARect newrect;
   newrect.pos = naMakePosWithCGPoint(cgrect.origin);
   newrect.size = naMakeSizeWithCGSize(cgrect.size);
   return newrect;
@@ -467,7 +467,7 @@ NA_IDEF NARect naMakeRectWithCGRect(CGRect cgrect){
 
 #if defined __OBJC__ && defined __AVAILABILITYMACROS__
 NA_IDEF NAPos naMakePosWithNSPoint(NSPoint nspoint){
-  NAPos newpos;  // Declaration before implementation. Needed for C90.
+  NAPos newpos;
   #ifndef NDEBUG
     if(!(naIsOffsetValueValid(nspoint.x) && naIsOffsetValueValid(nspoint.y)))
       naError("naMakePosWithNSPoint", "Invalid values given.");
@@ -478,8 +478,20 @@ NA_IDEF NAPos naMakePosWithNSPoint(NSPoint nspoint){
   newpos.y = nspoint.y;
   return newpos;
 }
+NA_IDEF NSPoint naMakeNSPoitWithPos(NAPos napos){
+  NSPoint newpoint;
+  #ifndef NDEBUG
+    if(!(naIsOffsetValueValid(napos.x) && naIsOffsetValueValid(napos.y)))
+      naError("naMakeNSPoitWithPos", "Invalid values given.");
+    if(!(naIsOffsetValueUseful(napos.x) && naIsOffsetValueUseful(napos.y)))
+      naError("naMakeNSPoitWithPos", "Values given are not useful.");
+  #endif
+  newpoint.x = napos.x;
+  newpoint.y = napos.y;
+  return newpoint;
+}
 NA_IDEF NASize naMakeSizeWithNSSize(NSSize nssize){
-  NASize newsize;  // Declaration before implementation. Needed for C90.
+  NASize newsize;
   #ifndef NDEBUG
     if(!(naIsLengthValueValid(nssize.width) && naIsLengthValueValid(nssize.height)))
       naError("naMakeSizeWithNSSize", "Invalid values given.");
@@ -490,14 +502,26 @@ NA_IDEF NASize naMakeSizeWithNSSize(NSSize nssize){
   newsize.height = nssize.height;
   return newsize;
 }
+NA_IDEF NSSize naMakeNSSizeWithSize(NASize nasize){
+  NSSize newsize;
+  #ifndef NDEBUG
+    if(!(naIsLengthValueValid(nasize.width) && naIsLengthValueValid(nasize.height)))
+      naError("naMakeNSSizeWithSize", "Invalid values given.");
+    if(!(naIsLengthValueUseful(nasize.width) && naIsLengthValueUseful(nasize.height)))
+      naError("naMakeNSSizeWithSize", "Values given are not useful.");
+  #endif
+  newsize.width = nasize.width;
+  newsize.height = nasize.height;
+  return newsize;
+}
 NA_IDEF NARect naMakeRectWithNSRect(NSRect nsrect){
-  NARect newrect;  // Declaration before implementation. Needed for C90.
+  NARect newrect;
   newrect.pos = naMakePosWithNSPoint(nsrect.origin);
   newrect.size = naMakeSizeWithNSSize(nsrect.size);
   return newrect;
 }
 NA_IDEF NSRect naMakeNSRectWithRect(NARect narect){
-  NSRect newrect;  // Declaration before implementation. Needed for C90.
+  NSRect newrect;
   newrect = NSMakeRect((CGFloat)narect.pos.x, (CGFloat)narect.pos.y, (CGFloat)narect.size.width, (CGFloat)narect.size.height);
   return newrect;
 }
@@ -534,7 +558,7 @@ NA_IDEF NAVertexi naMakeVertexiWithAlignment(NAVertexi origin, NABoxi alignbox){
 
 
 NA_IDEF NARange naMakeRangeWithStartAndEnd(double start, double end){
-  NARange newrange; // Declaration before implementation. Needed for C90.
+  NARange newrange;
   #ifndef NDEBUG
     if(!(naIsOffsetValueValid(start) && naIsOffsetValueValid(end)))
       naError("naMakeRangeWithStartAndEnd", "Invalid values given.");
@@ -544,7 +568,7 @@ NA_IDEF NARange naMakeRangeWithStartAndEnd(double start, double end){
   return newrange;
 }
 NA_IDEF NARangef naMakeRangefWithStartAndEnd(float start, float end){
-  NARangef newrange; // Declaration before implementation. Needed for C90.
+  NARangef newrange;
   #ifndef NDEBUG
     if(!(naIsOffsetValueValidf(start) && naIsOffsetValueValidf(end)))
       naError("naMakeRangefWithStartAndEnd", "Invalid values given.");
@@ -554,7 +578,7 @@ NA_IDEF NARangef naMakeRangefWithStartAndEnd(float start, float end){
   return newrange;
 }
 NA_IDEF NARangei naMakeRangeiWithStartAndEnd(NAInt start, NAInt end){
-  NARangei newrange; // Declaration before implementation. Needed for C90.
+  NARangei newrange;
   #ifndef NDEBUG
     if(!(naIsOffsetValueValidi(start) && naIsOffsetValueValidi(end)))
       naError("naMakeRangeiWithStartAndEnd", "Invalid values given.");
@@ -564,7 +588,7 @@ NA_IDEF NARangei naMakeRangeiWithStartAndEnd(NAInt start, NAInt end){
   return newrange;
 }
 NA_IDEF NARangei naMakeRangeiWithMinAndMax(NAInt min, NAInt max){
-  NARangei newrange; // Declaration before implementation. Needed for C90.
+  NARangei newrange;
   #ifndef NDEBUG
     if(!(naIsOffsetValueValidi(min) && naIsOffsetValueValidi(max)))
       naError("naMakeRangeiWithMinAndMax", "Invalid values given.");
@@ -576,7 +600,7 @@ NA_IDEF NARangei naMakeRangeiWithMinAndMax(NAInt min, NAInt max){
   return newrange;
 }
 NA_IDEF NARangei naMakeRangeiWithRangeAndOffset(NARangei range, NAInt offset){
-  NARangei newrange; // Declaration before implementation. Needed for C90.
+  NARangei newrange;
   #ifndef NDEBUG
     if(!naIsOffsetValueValidi(offset))
       naError("naMakeRangeiWithRangeAndOffset", "Invalid offset given.");
@@ -596,7 +620,7 @@ NA_IDEF NARangei naMakeRangeiWithRangeAndOffset(NARangei range, NAInt offset){
   return newrange;
 }
 NA_IDEF NARangei naMakeRangeiWithRangeAndRange (NARangei range1, NARangei range2){
-  NARangei newrange; // Declaration before implementation. Needed for C90.
+  NARangei newrange;
   #ifndef NDEBUG
     if(!naIsRangeiValid(range1))
       naError("naMakeRangeiWithRangeAndRange", "Invalid range 1 given.");
@@ -618,7 +642,7 @@ NA_IDEF NARangei naMakeRangeiWithRangeAndRange (NARangei range1, NARangei range2
 
 
 NA_IDEF NARect naMakeRectWithPosAndPos(NAPos pos1, NAPos pos2){
-  NARect newrect;  // Declaration before implementation. Needed for C90.
+  NARect newrect;
   #ifndef NDEBUG
     if(!naIsPosValid(pos1))
       naError("naMakeRectWithPosAndPos", "pos1 is invalid.");
@@ -642,7 +666,6 @@ NA_IDEF NARect naMakeRectWithPosAndPos(NAPos pos1, NAPos pos2){
   return newrect;
 }
 NA_IDEF NARect naMakeRectWithRectAndPos(NARect rect, NAPos pos){
-  // Declaration before implementation. Needed for C90.
   NARect newrect;
   double end;
   #ifndef NDEBUG
@@ -662,7 +685,6 @@ NA_IDEF NARect naMakeRectWithRectAndPos(NARect rect, NAPos pos){
   return newrect;
 }
 NA_IDEF NARect naMakeRectWithRectAndRect(NARect rect1, NARect rect2){
-  // Declaration before implementation. Needed for C90.
   NARect newrect;
   double end1;
   double end2;
@@ -687,7 +709,6 @@ NA_IDEF NARect naMakeRectWithRectAndRect(NARect rect1, NARect rect2){
   return newrect;
 }
 NA_IDEF NARect naMakeRectWithRectAndRectE(NARect rect1, NARect rect2){
-  // Declaration before implementation. Needed for C90.
   NARect newrect;
   double end1;
   double end2;
@@ -710,7 +731,7 @@ NA_IDEF NARect naMakeRectWithRectAndRectE(NARect rect1, NARect rect2){
   return newrect;
 }
 NA_IDEF NARecti naMakeRectiWithPosAndPos(NAPosi pos1, NAPosi pos2){
-  NARecti newrect;  // Declaration before implementation. Needed for C90.
+  NARecti newrect;
   #ifndef NDEBUG
     if(!naIsPosiValid(pos1))
       naError("naMakeRectiWithPosAndPos", "pos1 is invalid.");
@@ -734,7 +755,6 @@ NA_IDEF NARecti naMakeRectiWithPosAndPos(NAPosi pos1, NAPosi pos2){
   return newrect;
 }
 NA_IDEF NARecti naMakeRectiWithRectAndPos(NARecti rect, NAPosi pos){
-  // Declaration before implementation. Needed for C90.
   NARecti newrect;
   NAInt max;
   #ifndef NDEBUG
@@ -756,7 +776,6 @@ NA_IDEF NARecti naMakeRectiWithRectAndPos(NARecti rect, NAPosi pos){
   return newrect;
 }
 NA_IDEF NARecti naMakeRectiWithRectAndPosE(NARecti rect, NAPosi pos){
-  // Declaration before implementation. Needed for C90.
   NARecti newrect;
   NAInt max;
   #ifndef NDEBUG
@@ -781,7 +800,6 @@ NA_IDEF NARecti naMakeRectiWithRectAndPosE(NARecti rect, NAPosi pos){
   return newrect;
 }
 NA_IDEF NARecti naMakeRectiWithRectAndRect(NARecti rect1, NARecti rect2){
-  // Declaration before implementation. Needed for C90.
   NARecti newrect;
   NAInt end1;
   NAInt end2;
@@ -806,7 +824,6 @@ NA_IDEF NARecti naMakeRectiWithRectAndRect(NARecti rect1, NARecti rect2){
   return newrect;
 }
 NA_IDEF NARecti naMakeRectiWithRectAndRectE(NARecti rect1, NARecti rect2){
-  // Declaration before implementation. Needed for C90.
   NARecti newrect;
   NAInt end1;
   NAInt end2;
@@ -832,7 +849,7 @@ NA_IDEF NARecti naMakeRectiWithRectAndRectE(NARecti rect1, NARecti rect2){
 
 
 NA_IDEF NABox naMakeBoxWithVertexAndVertex(NAVertex vertex1, NAVertex vertex2){
-  NABox newbox;  // Declaration before implementation. Needed for C90.
+  NABox newbox;
   #ifndef NDEBUG
     if(!naIsVertexValid(vertex1))
       naError("naMakeBoxWithVertexAndVertex", "vertex1 is invalid.");
@@ -863,7 +880,6 @@ NA_IDEF NABox naMakeBoxWithVertexAndVertex(NAVertex vertex1, NAVertex vertex2){
   return newbox;
 }
 NA_IDEF NABox naMakeBoxWithBoxAndVertex(NABox box, NAVertex vertex){
-  // Declaration before implementation. Needed for C90.
   NABox newbox;
   double end;
   #ifndef NDEBUG
@@ -886,7 +902,6 @@ NA_IDEF NABox naMakeBoxWithBoxAndVertex(NABox box, NAVertex vertex){
   return newbox;
 }
 NA_IDEF NABox naMakeBoxWithBoxAndBox(NABox box1, NABox box2){
-  // Declaration before implementation. Needed for C90.
   NABox newbox;
   double end1;
   double end2;
@@ -915,7 +930,6 @@ NA_IDEF NABox naMakeBoxWithBoxAndBox(NABox box1, NABox box2){
   return newbox;
 }
 NA_IDEF NABox naMakeBoxWithBoxAndBoxE(NABox box1, NABox box2){
-  // Declaration before implementation. Needed for C90.
   NABox newbox;
   double end1;
   double end2;
@@ -942,7 +956,7 @@ NA_IDEF NABox naMakeBoxWithBoxAndBoxE(NABox box1, NABox box2){
   return newbox;
 }
 NA_IDEF NABoxi naMakeBoxiWithVertexAndVertex(NAVertexi vertex1, NAVertexi vertex2){
-  NABoxi newbox;  // Declaration before implementation. Needed for C90.
+  NABoxi newbox;
   #ifndef NDEBUG
     if(!naIsVertexiValid(vertex1))
       naError("naMakeBoxiWithVertexAndVertex", "vertex1 is invalid.");
@@ -973,7 +987,6 @@ NA_IDEF NABoxi naMakeBoxiWithVertexAndVertex(NAVertexi vertex1, NAVertexi vertex
   return newbox;
 }
 NA_IDEF NABoxi naMakeBoxiWithBoxAndVertex(NABoxi box, NAVertexi vertex){
-  // Declaration before implementation. Needed for C90.
   NABoxi newbox;
   NAInt max;
   #ifndef NDEBUG
@@ -998,7 +1011,6 @@ NA_IDEF NABoxi naMakeBoxiWithBoxAndVertex(NABoxi box, NAVertexi vertex){
   return newbox;
 }
 NA_IDEF NABoxi naMakeBoxiWithBoxAndVertexE(NABoxi box, NAVertexi vertex){
-  // Declaration before implementation. Needed for C90.
   NABoxi newbox;
   NAInt max;
   #ifndef NDEBUG
@@ -1026,7 +1038,6 @@ NA_IDEF NABoxi naMakeBoxiWithBoxAndVertexE(NABoxi box, NAVertexi vertex){
   return newbox;
 }
 NA_IDEF NABoxi naMakeBoxiWithBoxAndBox(NABoxi box1, NABoxi box2){
-  // Declaration before implementation. Needed for C90.
   NABoxi newbox;
   NAInt end1;
   NAInt end2;
@@ -1055,7 +1066,6 @@ NA_IDEF NABoxi naMakeBoxiWithBoxAndBox(NABoxi box1, NABoxi box2){
   return newbox;
 }
 NA_IDEF NABoxi naMakeBoxiWithBoxAndBoxE(NABoxi box1, NABoxi box2){
-  // Declaration before implementation. Needed for C90.
   NABoxi newbox;
   NAInt end1;
   NAInt end2;
@@ -1320,7 +1330,6 @@ NA_IDEF NAVertex naGetBoxCeneteredVolumeOffset(NABox box, NAVolume volume){
 // /////////////////////////////////
 
 NA_IDEF NARangei naClampRangeiToRange(NARangei range, NARangei clamprange){
-  // Declaration before implementation. Needed for C90.
   NAInt value;
   NARangei newrange;
   #ifndef NDEBUG
@@ -1348,7 +1357,6 @@ NA_IDEF NARangei naClampRangeiToRange(NARangei range, NARangei clamprange){
   return newrange;
 }
 NA_IDEF NARangei naClampRangeiToMin(NARangei range, NAInt min){
-  // Declaration before implementation. Needed for C90.
   NAInt value;
   NARangei newrange;
   #ifndef NDEBUG
@@ -1369,7 +1377,6 @@ NA_IDEF NARangei naClampRangeiToMin(NARangei range, NAInt min){
   return newrange;
 }
 NA_IDEF NARangei naClampRangeiToEnd(NARangei range, NAInt end){
-  // Declaration before implementation. Needed for C90.
   NAInt value;
   NARangei newrange;
   #ifndef NDEBUG
@@ -1393,7 +1400,6 @@ NA_IDEF NARangei naClampRangeiToEnd(NARangei range, NAInt end){
 
 
 NA_IDEF NAPos naClampPosToRect(NAPos pos, NARect clamprect){
-  // Declaration before implementation. Needed for C90.
   double end;
   NAPos newpos;
   #ifndef NDEBUG
@@ -1414,7 +1420,6 @@ NA_IDEF NAPos naClampPosToRect(NAPos pos, NARect clamprect){
   return newpos;
 }
 NA_IDEF NAPosi naClampPosiToRect(NAPosi pos, NARecti clamprect){
-  // Declaration before implementation. Needed for C90.
   NAInt max;
   NAPosi newpos;
   #ifndef NDEBUG
@@ -1436,7 +1441,6 @@ NA_IDEF NAPosi naClampPosiToRect(NAPosi pos, NARecti clamprect){
 }
 NA_IDEF NARect naClampRectToRect(NARect rect, NARect clamprect){
   // Todo: use helper functions in this function.
-  // Declaration before implementation. Needed for C90.
   double value;
   NARect newrect;
   #ifndef NDEBUG
@@ -1475,7 +1479,6 @@ NA_IDEF NARect naClampRectToRect(NARect rect, NARect clamprect){
 }
 NA_IDEF NARecti naClampRectiToRect(NARecti rect, NARecti clamprect){
   // Todo: use helper functions in this function.
-  // Declaration before implementation. Needed for C90.
   NAInt value;
   NARecti newrect;
   #ifndef NDEBUG
@@ -1522,7 +1525,6 @@ NA_IDEF NARecti naClampRectiToRect(NARecti rect, NARecti clamprect){
 
 
 NA_IDEF NAVertex naClampVertexToBox(NAVertex vertex, NABox clampbox){
-  // Declaration before implementation. Needed for C90.
   double end;
   NAVertex newvertex;
   #ifndef NDEBUG
@@ -1546,7 +1548,6 @@ NA_IDEF NAVertex naClampVertexToBox(NAVertex vertex, NABox clampbox){
   return newvertex;
 }
 NA_IDEF NAVertexi naClampVertexiToBox(NAVertexi vertex, NABoxi clampbox){
-  // Declaration before implementation. Needed for C90.
   NAInt max;
   NAVertexi newvertex;
   #ifndef NDEBUG
@@ -1571,7 +1572,6 @@ NA_IDEF NAVertexi naClampVertexiToBox(NAVertexi vertex, NABoxi clampbox){
 }
 NA_IDEF NABox naClampBoxToBox(NABox box, NABox clampbox){
   // Todo: use helper functions in this function.
-  // Declaration before implementation. Needed for C90.
   double value;
   NABox newbox;
   #ifndef NDEBUG
@@ -1621,7 +1621,6 @@ NA_IDEF NABox naClampBoxToBox(NABox box, NABox clampbox){
 }
 NA_IDEF NABoxi naClampBoxiToBox(NABoxi box, NABoxi clampbox){
   // Todo: use helper functions in this function.
-  // Declaration before implementation. Needed for C90.
   NAInt value;
   NABoxi newbox;
   #ifndef NDEBUG

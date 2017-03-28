@@ -76,7 +76,6 @@ NA_IDEF NAList* naInitList(NAList* list){
 
 
 NA_IDEF NAList* naCopyList(NAList* list, NAList* originallist){
-  // Declaration before implementation. Needed for C90.
   NAListElement* cur;
   #ifndef NDEBUG
     if(list == originallist)
@@ -111,7 +110,6 @@ NA_IDEF void naClearList(NAList* list){
 
 
 NA_IDEF void naEmptyList(NAList* list){
-  // Declaration before implementation. Needed for C90.
   NAListElement* cur;
   NAListElement* next;
   #ifndef NDEBUG
@@ -237,7 +235,7 @@ NA_HIDEF void naEjectListConst(NAList* list, NAListElement* element, NABool dele
 }
 #include <stdio.h>
 NA_HIDEF void* naEjectListMutable(NAList* list, NAListElement* element, NABool deleteelement){
-  void* contentpointer; // Declaration before Implementation. Needed for C90
+  void* contentpointer;
   #ifndef NDEBUG
     if(element == &(list->sentinel))
       naError("naEjectListMutable", "Trying to eject sentinel element. This should not happen.");
@@ -382,7 +380,6 @@ NA_IDEF void* naGetListPositionMutable(const NAList* list, NAListPos listpos){
 // ITERATION FUNCTIONS
 
 NA_IDEF void naForeachListConst(const NAList* list, NAAccessor accessor){
-  // Declaration before implementation. Needed for C90.
   NAListElement* cur;
   #ifndef NDEBUG
     NAListElement* next;
@@ -407,7 +404,6 @@ NA_IDEF void naForeachListConst(const NAList* list, NAAccessor accessor){
 
 
 NA_IDEF void naForeachListMutable(const NAList* list, NAMutator mutator){
-  // Declaration before implementation. Needed for C90.
   NAListElement* cur;
   #ifndef NDEBUG
     NAListElement* next;

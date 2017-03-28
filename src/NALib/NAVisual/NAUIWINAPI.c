@@ -252,7 +252,6 @@ NA_HDEF static VOID CALLBACK naTimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_
 
 
 NA_API void naStartApplication(NAMutator prestartup, NAMutator poststartup, void* arg){
-  // Declaration before definition. Needed for C90:
   NAWINAPIApplication* app;
   WNDCLASS wndclass;
   MSG message;

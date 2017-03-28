@@ -174,7 +174,7 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
 
 NA_DEF void naDelete(void* pointer){
   #if (NA_RUNTIME_USES_MEMORY_POOLS != 0)
-    NACorePool* corepool; // Declaration before definition. Needed for C90
+    NACorePool* corepool;
   #endif
 
   #ifndef NDEBUG

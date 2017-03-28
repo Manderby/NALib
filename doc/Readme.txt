@@ -13,7 +13,7 @@ Table of Content:
 2.2    Initializating and Clearing of structs
 2.3    Foreach Callbacks and iteration functions
 3.   Runtime System
-4.   C90 variable declarations
+4.   C90 variable definitions
 5.   Inline Implementations
 6.   Opaque types
 7.   Symbol naming
@@ -101,7 +101,7 @@ The naming scheme guides you:
                 pointer again.
 - naClearXXX:   Expects a pointer to a struct which shall be cleared. Is used
                 both by pod and non-pod structs.
-- naNewXXX:     Starting with NALib version 10, certain structs like NAString
+- naNewXXX:     Starting with NALib version 10, certain structs like NAPointer
                 have been restricted to be managed by the runtime system. These
                 structs do not provide naInitXXX_functions but naNewXXX-
                 functions instead.
@@ -251,19 +251,17 @@ just-in-time compilation.
 
 
 
-4. C90 variable declarations
+4. C90 variable definitions
 ----------------------------
-Sometimes in the code, you will find some declarations commented with the
-following sentence:
+Note that this code has been written to be compatible with C90. This means in
+particular that all variables have to be defined prior to any implementation in
+the same code block.
 
-Declaration before implementation. Needed for C90
-
-This has been introduced due to the standard C90 which paritally still is
-used by some compilers. This standard states that each variable MUST be
-declared before it is used. Later standards and most modern compilers do not
-really need this anymore but when you try to compile a static or dynamic
-library on certain compilers, you will most probably run into the problem
-that the declarations must be present.
+The standard C90 is partially still in use by some compilers. This standard
+states that each variable MUST be declared before it is used. Later standards
+and most modern compilers do not really need this anymore but when you try to
+compile a static or dynamic library on certain compilers, you will most
+probably run into the problem that the declarations must be present.
 
 NALib is prepared for that. So every variable is always declared before
 any use in any implementation.

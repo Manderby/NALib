@@ -9,6 +9,12 @@
 #endif
 
 
+
+// The typedef needs to be here to resolve cyclic include problems.
+typedef struct NAFile NAFile;
+
+
+
 // This file contains the declaration of the NAFile structure, which is a
 // structure managing a simple file descriptor but with a reference count.
 // See further below.
@@ -20,10 +26,10 @@
 // functionality. If you are looking for powerful reading and writing
 // functions, have a look at NABuffer.
 
-#include "NAString.h"
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include "NAString.h"
 
 // File Input and output is handeled slightly differently on different
 // operating systems. In the header files of each system, there are different
@@ -127,7 +133,8 @@ NA_IAPI NAUTF8Char* naGetCwd  (NAUTF8Char* buf, NAInt bufsize);
 // Again, this struct only provides the most basic functionality of file input
 // and output. If you look for more elaborate functions, see NABuffer.
 
-typedef struct NAFile NAFile;
+
+
 
 // Opens the file.
 // Reading:   Opens an existing file and places the read pointer to the first
@@ -206,7 +213,7 @@ NA_IAPI NAFilesize naWriteFileBytes(  NAFile* file,
 NA_IAPI NAInt naScanDecimal();
 
 // Returns a string containing the current working directory
-NA_IAPI NAString* naNewStringWithCurrentWorkingDirectory();
+NA_API NAString* naNewStringWithCurrentWorkingDirectory();
 
 
 

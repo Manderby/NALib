@@ -116,7 +116,6 @@ NA_IDEF void naClearStack(NAStack* stack){
 
 
 NA_IDEF void* naPushStack(NAStack* stack){
-  // Declaration before Implementation. Needed for C90
   NAInt availablestack;
 
   stack->usedcount++;
@@ -141,7 +140,6 @@ NA_IDEF void* naPushStack(NAStack* stack){
 
 
 NA_IDEF void* naTopStack(NAStack* stack){
-  // Declaration before Implementation. Needed for C90
   NAInt subindex;
   subindex = stack->usedcount - naGetStackArrayBaseIndex(stack, stack->curindex) - 1;
   

@@ -1744,8 +1744,8 @@ int isoctest69834759;
 //
 //
 //NA_DEF void naWriteBufferString(NABuffer* buffer, const NAString* string){
-//  naEnhanceBuffer(buffer, naGetStringLength(string));
-//  naStoreBufferBytes(buffer, naGetStringUTF8Pointer(string), naGetStringLength(string));
+//  naEnhanceBuffer(buffer, naGetStringBytesize(string));
+//  naStoreBufferBytes(buffer, naGetStringUTF8Pointer(string), naGetStringBytesize(string));
 //  if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) >= NA_BUFFER_FLAG_AUTOFLUSH_TEXT){naFlushBuffer(buffer);}
 //}
 //

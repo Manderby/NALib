@@ -2,59 +2,20 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-
-// This file contains inline implementations of the file NAHeap.h
-// Do not include this file directly! It will automatically be included when
-// including "NAHeap.h"
-
-
-#include "../NAList.h"
-#include "../NACoord.h"
+#include "../NAFile.h"
 
 
 
-#define NA_BUFFER_SOURCE_RANGE_LIMITED   0x01
-
-typedef void (*NABufferSourceFiller)(void* data, void* dst, NARangei range);
-
-
-
-typedef struct NABufferSourceDescriptor NABufferSourceDescriptor;
-struct NABufferSourceDescriptor{
-  void*                 data;
-  NAMutator             destructor;
-  NABufferSourceFiller  filler;
-  NAUInt                flags;
-  NARangei              limit;
-};
+// This function had to be moved here as it introcudes cyclic redundancies
+// when compiling.
+NA_DEF NAString* naNewStringWithCurrentWorkingDirectory(){
+  NAString* string;
+  NAUTF8Char* cwdbuf = naGetCwd(NA_NULL, 0);
+  string = naNewStringWithMutableUTF8Buffer(cwdbuf, -(NAInt)(naStrlen(cwdbuf)), NA_MEMORY_CLEANUP_NA_FREE);
+  return string;
+}
 
 
-
-struct NABufferSource{
-  NARefCount refcount;
-  NABufferSourceDescriptor desc;  
-};
-
-
-
-struct NABuffer{
-  NARefCount refcount;
-  
-  NABufferSource* source;
-  NAInt srcoffset;            // Offset the source relative to owners range.
-  
-  NAUInt flags;
-  
-  NAInt endianness;                 // The current endianness
-  NAEndiannessConverter converter;  // The endianness converter.
-
-  NAList parts;             // List of all parts in this buffer
-  NAListIterator iter;      // Iterator pointing at the current part.
-  NAInt curoffset;          // The current absolute offset
-  uint8 curbit;             // The current bit number
-  
-  NARangei range;
-};
 
 
 
