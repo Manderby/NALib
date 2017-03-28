@@ -93,8 +93,8 @@ NA_API NABool naEqualUTF8CStringLiterals( const NAUTF8Char* string1,
 // NAString
 // /////////////////////////////////////////
 
-// Returns a new, EMPTY NAString.
-NA_API NAString* naNewString(void);
+// Makes a new, EMPTY NAString.
+NA_API NAString naMakeString(void);
 
 // Returns an NAString representing a given C-String written directly in the
 // programming code and encoded in UTF8. This function is useful for the
@@ -102,35 +102,37 @@ NA_API NAString* naNewString(void);
 // This function takes such strings and wraps it into a string struct. The
 // string is marked explicitely as read-only. Note that this works only
 // reliable if the source-code itself is encoded in UTF-8. DOES NOT COPY!
-NA_API NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr);
+NA_API NAString naMakeStringWithUTF8CStringLiteral(const NAUTF8Char* ptr);
 
 // Returns an NAString with the given length using the given buffer. The buffer
 // must be big enough! When cleanup is anything but NA_MEMORY_CLEANUP_NONE,
 // this NAString will clean up the buffer when getting deleted.
 // When length is negative, the absolute value will be used but the buffer is
 // expected to be null-terminated (the null character is not in length).
-NA_API NAString* naNewStringWithMutableUTF8Buffer(  NAUTF8Char* buffer,
-                                                          NAInt length,
-                                                NAMemoryCleanup cleanup);
+NA_API NAString naMakeStringWithMutableUTF8Buffer(  NAUTF8Char* buffer,
+                                                           NAInt length,
+                                                 NAMemoryCleanup cleanup);
 
 // Creates an NAString just like sprintf.
-NA_API NAString* naNewStringWithFormat(const NAUTF8Char* format,
-                                                     ...);
+NA_API NAString naMakeStringWithFormat(const NAUTF8Char* format,
+                                                          ...);
 // Does the same thing but with an existing va_list argument. The argumentlist
 // argument will not be altered by this function.
-NA_API NAString* naNewStringWithArguments(const NAUTF8Char* format,
-                                               va_list argumentlist);
+NA_API NAString naMakeStringWithArguments(const NAUTF8Char* format,
+                                                     va_list argumentlist);
 
 // Fills deststring with a desired part of srcstring. Does not copy!
 // See naInitByteArrayExtraction for an explanation of all arguments.
 // Use charoffset = 0 and length = -1 to reference the whole string.
-NA_API NAString* naNewStringExtraction(const NAString* srcstring,
-                                               NAInt charoffset,
-                                               NAInt length);
+NA_API NAString naMakeStringExtraction(const NAString* srcstring,
+                                                  NAInt charoffset,
+                                                  NAInt length);
 
-NA_API NAString* naNewStringWithBufferExtraction( NABuffer* buffer,
-                                                   NARangei range);
+NA_API NAString naMakeStringWithBufferExtraction( NABuffer* buffer,
+                                                    NARangei range);
 
+// Clears the given string.
+NA_API void naClearString(NAString* string);
 
 
 
@@ -158,8 +160,8 @@ NA_API NABuffer* naGetStringBufferMutable(NAString* string);
 // the basename "folder/document" and the suffix "txt".
 // The suffix is detected by the first dot '.' from the right. If no such
 // dot is found, suffix is empty.
-NA_API NAString* naNewStringWithBasenameOfFilename(const NAString* filename);
-NA_API NAString* naNewStringWithSuffixOfFilename(const NAString* filename);
+NA_API NAString naMakeStringWithBasenameOfFilename(const NAString* filename);
+NA_API NAString naMakeStringWithSuffixOfFilename(const NAString* filename);
 
 
 
@@ -174,10 +176,10 @@ NA_API NAString* naNewStringWithSuffixOfFilename(const NAString* filename);
 // Warning: XML-Decoding does not support numeric entities yet.
 //
 // Currently commented out as not fully functional.
-//NA_API NAString* naNewStringXMLEncoded(const NAString* inputstring);
-//NA_API NAString* naNewStringXMLDecoded(const NAString* inputstring);
-//NA_API NAString* naNewStringEPSEncoded(const NAString* inputstring);
-//NA_API NAString* naNewStringEPSDecoded(const NAString* inputstring);
+//NA_API NAString* naMakeStringXMLEncoded(const NAString* inputstring);
+//NA_API NAString* naMakeStringXMLDecoded(const NAString* inputstring);
+//NA_API NAString* naMakeStringEPSEncoded(const NAString* inputstring);
+//NA_API NAString* naMakeStringEPSDecoded(const NAString* inputstring);
 
 // The following functions are system dependent.
 // Currently, this is only necessary on windows.
@@ -190,7 +192,7 @@ NA_API NAString* naNewStringWithSuffixOfFilename(const NAString* filename);
 //  NA_API SystemChar* naAllocSystemStringFromString(const NAUTF8Char* utf8str,
 //                                                               NAUInt length);
 //  // Creates a new NAString from a system-encoded string. COPIES ALWAYS!
-//  NA_API NAString* naNewStringFromSystemString(SystemChar* systemstring);
+//  NA_API NAString* naMakeStringFromSystemString(SystemChar* systemstring);
 //#endif
 
 

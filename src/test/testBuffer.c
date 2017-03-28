@@ -14,7 +14,7 @@ NAByte testdataarray[NA_BUFFER_TESTARRAY_SIZE];
 void testBufferFile(void){
   NABuffer* buffer;
   NABuffer* token;
-  NAString* string;
+  NAString string;
   NAInt linesread;
 
   printf("\nCreating file input buffer with ASCII file.\n");
@@ -34,17 +34,17 @@ void testBufferFile(void){
   naSkipBufferWhitespaces(buffer);
   
   string = naParseBufferLine(buffer, NA_TRUE, &linesread);
-  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(string));
+  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(&string));
   string = naParseBufferLine(buffer, NA_TRUE, &linesread);
-  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(string));
+  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(&string));
   string = naParseBufferLine(buffer, NA_TRUE, &linesread);
-  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(string));
+  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(&string));
   string = naParseBufferLine(buffer, NA_TRUE, &linesread);
-  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(string));
+  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(&string));
   string = naParseBufferLine(buffer, NA_TRUE, &linesread);
-  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(string));
+  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(&string));
   string = naParseBufferLine(buffer, NA_FALSE, &linesread);
-  printf("Reading the next line without skipping (%" NA_PRIi " lines read) : %s\n", linesread, naGetStringUTF8Pointer(string));
+  printf("Reading the next line without skipping (%" NA_PRIi " lines read) : %s\n", linesread, naGetStringUTF8Pointer(&string));
 }
 
 

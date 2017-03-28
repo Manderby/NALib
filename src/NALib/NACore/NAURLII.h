@@ -25,29 +25,29 @@ NA_IDEF NAURL* naInitURL(NAURL* url){
 
 NA_IDEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string){
   NAUTF8Char curchar;
-  NAString* inputstring;
-  NAString* pathcomponent;
+  NAString inputstring;
+  NAString pathcomponent;
 
   url = naInitURL(url); 
   if(!string){return url;} 
-  inputstring = naNewStringWithUTF8CStringLiteral(string);
+  inputstring = naMakeStringWithUTF8CStringLiteral(string);
 
-  curchar = *naGetStringUTF8Pointer(inputstring);
+  curchar = *naGetStringUTF8Pointer(&inputstring);
   if((curchar == NA_PATH_DELIMITER_UNIX) || (curchar == NA_PATH_DELIMITER_WIN)){
     url->status |= NA_URL_PATH_ABSOLUTE;
-    inputstring = naNewStringExtraction(inputstring, 1, -1);
+    inputstring = naMakeStringExtraction(&inputstring, 1, -1);
   }
   
-  while(naGetStringBytesize(inputstring)){
+  while(naGetStringBytesize(&inputstring)){
     // Test for erroneous duplicate or ending delimiters
-    curchar = *naGetStringUTF8Pointer(inputstring);
+    curchar = *naGetStringUTF8Pointer(&inputstring);
     if((curchar == NA_PATH_DELIMITER_UNIX) || (curchar == NA_PATH_DELIMITER_WIN)){
-      inputstring = naNewStringExtraction(inputstring, 1, -1);
+      inputstring = naMakeStringExtraction(&inputstring, 1, -1);
       continue;
     }
     
-    pathcomponent = naParseBufferPathComponent(naGetStringBufferMutable(inputstring));
-    naAddListLastMutable(&(url->path), pathcomponent);
+    pathcomponent = naParseBufferPathComponent(naGetStringBufferMutable(&inputstring));
+    naAddListLastMutable(&(url->path), &pathcomponent);
   }
   return url;
 }
@@ -60,12 +60,12 @@ NA_IDEF void naClearURL(NAURL* url){
 
 
 
-NA_IDEF NAString* naNewStringWithURLFilename(NAURL* url){
+NA_IDEF NAString naMakeStringWithURLFilename(NAURL* url){
   if(naGetListCount(&(url->path))){
     const NAString* lastcomponent = naGetListLastConst(&(url->path));
-    return naNewStringExtraction(lastcomponent, 0, -1);
+    return naMakeStringExtraction(lastcomponent, 0, -1);
   }else{
-    return naNewString();
+    return naMakeString();
   }
 }
 

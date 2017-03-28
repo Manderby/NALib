@@ -31,7 +31,9 @@ Highlights:
   subarrays anymore. Separate NAArrayIterator implemented. Lots of API-changes.
 - Removed NAByteArray completely.
 - NAFile is now reference counting.
-- NAString appending, encoding and decoding is not available for the moment.
+- NAString has been greatly simplified. Is now a POD again. Some functionality
+  is still missing: appending, encoding and decoding are not available for the
+  moment.
 
 Other things:
 - Renamed several functions with base types to u, i, f and d and Arrays to v.
@@ -47,7 +49,7 @@ Other things:
 - Removed NAArray.c
 - Removed the zero byte termination hints of NAPtr
 - Removed naInitByteArrayFromFile, naInitByteArrayWithFileContents,
-  naNewStringFromFile and naNewStringWithFileContents.
+  naMakeStringFromFile and naMakeStringWithFileContents.
 - naNewThread, naNewMutex and naNewAlarm now are called naMakeThread,
   naMakeMutex and naMakeAlarm.
 - Removed NAByteMap2D
@@ -148,7 +150,7 @@ Version 15 (first published 2016-July-17):
 - Greatly enhanced the comments.
 - Made small adjustments in NAFile.h like renamed naJumpFileRelative to
   naSeekFileRelative.
-- Added naGetCwd and naNewStringWithCurrentWorkingDirectory
+- Added naGetCwd and naMakeStringWithCurrentWorkingDirectory
 - Added NA_SCNi, NA_SCNu and naScanDecimal;
 - Made NABuf 64Bit always
 - Changed NAQuadTreeNodeDestructor to NAQuadTreeNodeDeallocator. Same with Oct.
@@ -175,7 +177,7 @@ Highlights:
 
 Other things:
 - Added naMakeMaxWithEndi32, naMakeMaxWithEndi64, naMakeEndWithMaxi32 and naMakeEndWithMaxi64
-- Corrected naNewStringWithBasenameOfFilename.
+- Corrected naMakeStringWithBasenameOfFilename.
 - Added naIsValueInRange functions
 - Added NA_UINT_MAX
 - Removed some warnings.

@@ -43,7 +43,7 @@ NA_IAPI void naClearURL(NAURL* url);
 // Note that there is no distinction if the last component is the name of a
 // folder or of a file. If the file has a suffix, it is contained in the
 // returned string.
-NA_IAPI NAString* naNewStringWithURLFilename(NAURL* url);
+NA_IAPI NAString naMakeStringWithURLFilename(NAURL* url);
 
 
 

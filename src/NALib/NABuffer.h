@@ -369,9 +369,9 @@ NA_API void naSkipBufferDelimiter(NABuffer* buffer);
 // Returns the number of lines read if linesread is not NA_NULL. Will usually
 // be 1 but will be greater than 1 when skipping empty lines. Will be 0 when
 // the buffer had no lines to read.
-NA_API NAString* naParseBufferLine( NABuffer* buffer,
-                                       NABool skipempty,
-                                       NAInt* linesread);
+NA_API NAString naParseBufferLine( NABuffer* buffer,
+                                      NABool skipempty,
+                                      NAInt* linesread);
 
 // Gathers the first token which is delimited by whitespaces. The buffer is
 // expected to start at a non-whitespace! If it starts with a whitespace, an
@@ -379,20 +379,20 @@ NA_API NAString* naParseBufferLine( NABuffer* buffer,
 // any leading or trailing whitespaces.
 // After this function, buffer will point to the next character after the
 // token not being a whitespace.
-NA_API NAString* naParseBufferToken(NABuffer* buffer);
+NA_API NAString naParseBufferToken(NABuffer* buffer);
 
 // Gathers the first token within buffer which ends in the given delimiter.
 // The delimiter will not be included in the returned string. After this
 // function, buffer will point to the first character after the delimiter.
 // Leading or trailing whitespaces will NOT be stripped at all.
-NA_API NAString* naParseBufferTokenWithDelimiter( NABuffer* buffer,
+NA_API NAString naParseBufferTokenWithDelimiter( NABuffer* buffer,
                                                     NAByte delimiter);
 
 // Gathers the first token within buffer which ends in a path delimiter. Both
 // path delimiters / and \ are detected. The delimiter will not be included.
 // After this function, string will point to the first character after the
 // delimiter. Leading or trailing whitespaces will NOT be stripped at all.
-NA_API NAString* naParseBufferPathComponent(NABuffer* buffer);
+NA_API NAString naParseBufferPathComponent(NABuffer* buffer);
 
 // Parses the given buffer for decimal digits and accumulates them into an
 // unsigned integer. The function will start at the current byte and parse
@@ -407,17 +407,17 @@ NA_API NAString* naParseBufferPathComponent(NABuffer* buffer);
 // emitted when debugging. But note that the returned number of bytes contains
 // all digits considered.
 NA_DEF NAInt naParseBufferDecimalUnsignedInteger(  NABuffer* buffer,
-                                                      uint64* retint,
-                                                        NAInt maxdigitcount,
-                                                       uint64 max);
+                                                     uint64* retint,
+                                                       NAInt maxdigitcount,
+                                                      uint64 max);
 
 // Same as above but parses a signed integer. Note that there is an addidional
 // min parameter.
 NA_DEF NAInt naParseBufferDecimalSignedInteger(  NABuffer* buffer,
-                                                     int64* retint,
-                                                      NAInt maxdigitcount,
-                                                      int64 min,
-                                                      int64 max);
+                                                    int64* retint,
+                                                     NAInt maxdigitcount,
+                                                     int64 min,
+                                                     int64 max);
 
 // Parses the given buffer for an integer value and returns the value in the
 // desired type.

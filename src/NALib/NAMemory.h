@@ -11,7 +11,8 @@
 // - Accessing core informations about the memory system
 // - Basic Memory allocation and freeing.
 // - Base memory structs NAPtr, NAMemoryBlock
-// - NAPointer: Handling of reference counted values with automatic deletion.
+// - NARefCount, NAPtr, NASmartPtr, NAPointer: Handling of pointers with or
+//   without reference counting with automatic deletion.
 // - Handling of inifinte pools for new and delete functions.
 //
 // ////////////////////////////////////////////////////////

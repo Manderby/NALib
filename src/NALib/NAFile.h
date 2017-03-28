@@ -213,7 +213,7 @@ NA_IAPI NAFilesize naWriteFileBytes(  NAFile* file,
 NA_IAPI NAInt naScanDecimal();
 
 // Returns a string containing the current working directory
-NA_API NAString* naNewStringWithCurrentWorkingDirectory();
+NA_API NAString naMakeStringWithCurrentWorkingDirectory();
 
 
 

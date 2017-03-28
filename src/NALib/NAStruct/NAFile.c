@@ -8,10 +8,10 @@
 
 // This function had to be moved here as it introcudes cyclic redundancies
 // when compiling.
-NA_DEF NAString* naNewStringWithCurrentWorkingDirectory(){
-  NAString* string;
+NA_DEF NAString naMakeStringWithCurrentWorkingDirectory(){
+  NAString string;
   NAUTF8Char* cwdbuf = naGetCwd(NA_NULL, 0);
-  string = naNewStringWithMutableUTF8Buffer(cwdbuf, -(NAInt)(naStrlen(cwdbuf)), NA_MEMORY_CLEANUP_NA_FREE);
+  string = naMakeStringWithMutableUTF8Buffer(cwdbuf, -(NAInt)(naStrlen(cwdbuf)), NA_MEMORY_CLEANUP_NA_FREE);
   return string;
 }
 

@@ -18,7 +18,6 @@
 		90451D7F1E75F0D30071EB67 /* NAHeap.c in Sources */ = {isa = PBXBuildFile; fileRef = 90451D5C1E75F0D30071EB67 /* NAHeap.c */; };
 		90451D801E75F0D30071EB67 /* NAList.c in Sources */ = {isa = PBXBuildFile; fileRef = 90451D5E1E75F0D30071EB67 /* NAList.c */; };
 		90451D811E75F0D30071EB67 /* NAOctTree.c in Sources */ = {isa = PBXBuildFile; fileRef = 90451D611E75F0D30071EB67 /* NAOctTree.c */; };
-		90451D821E75F0D30071EB67 /* NAOldBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 90451D621E75F0D30071EB67 /* NAOldBuffer.c */; };
 		90451D831E75F0D30071EB67 /* NAQuadTree.c in Sources */ = {isa = PBXBuildFile; fileRef = 90451D651E75F0D30071EB67 /* NAQuadTree.c */; };
 		90451D841E75F0D30071EB67 /* NAString.c in Sources */ = {isa = PBXBuildFile; fileRef = 90451D671E75F0D30071EB67 /* NAString.c */; };
 		90451D851E75F0D30071EB67 /* NADeflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 90451D6F1E75F0D30071EB67 /* NADeflate.c */; };
@@ -86,7 +85,6 @@
 		90451D4A1E75F0D30071EB67 /* NAMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAMemory.h; sourceTree = "<group>"; };
 		90451D4B1E75F0D30071EB67 /* NAMoney.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAMoney.h; sourceTree = "<group>"; };
 		90451D4C1E75F0D30071EB67 /* NAOctTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAOctTree.h; sourceTree = "<group>"; };
-		90451D4D1E75F0D30071EB67 /* NAOldBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAOldBuffer.h; sourceTree = "<group>"; };
 		90451D4E1E75F0D30071EB67 /* NAPNG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAPNG.h; sourceTree = "<group>"; };
 		90451D4F1E75F0D30071EB67 /* NAPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAPool.h; sourceTree = "<group>"; };
 		90451D501E75F0D30071EB67 /* NAQuadTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAQuadTree.h; sourceTree = "<group>"; };
@@ -95,7 +93,6 @@
 		90451D531E75F0D30071EB67 /* NAString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAString.h; sourceTree = "<group>"; };
 		90451D551E75F0D30071EB67 /* NAArrayII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAArrayII.h; sourceTree = "<group>"; };
 		90451D561E75F0D30071EB67 /* NABuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NABuffer.c; sourceTree = "<group>"; };
-		90451D591E75F0D30071EB67 /* NAByteArrayII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAByteArrayII.h; sourceTree = "<group>"; };
 		90451D5B1E75F0D30071EB67 /* NACircularBufferII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NACircularBufferII.h; sourceTree = "<group>"; };
 		90451D5C1E75F0D30071EB67 /* NAHeap.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAHeap.c; sourceTree = "<group>"; };
 		90451D5D1E75F0D30071EB67 /* NAHeapII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAHeapII.h; sourceTree = "<group>"; };
@@ -103,8 +100,6 @@
 		90451D5F1E75F0D30071EB67 /* NAListII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAListII.h; sourceTree = "<group>"; };
 		90451D601E75F0D30071EB67 /* NAMap2DII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAMap2DII.h; sourceTree = "<group>"; };
 		90451D611E75F0D30071EB67 /* NAOctTree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAOctTree.c; sourceTree = "<group>"; };
-		90451D621E75F0D30071EB67 /* NAOldBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAOldBuffer.c; sourceTree = "<group>"; };
-		90451D631E75F0D30071EB67 /* NAOldBufferII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAOldBufferII.h; sourceTree = "<group>"; };
 		90451D641E75F0D30071EB67 /* NAPoolII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAPoolII.h; sourceTree = "<group>"; };
 		90451D651E75F0D30071EB67 /* NAQuadTree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAQuadTree.c; sourceTree = "<group>"; };
 		90451D661E75F0D30071EB67 /* NAStackII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAStackII.h; sourceTree = "<group>"; };
@@ -171,7 +166,6 @@
 				90451D4A1E75F0D30071EB67 /* NAMemory.h */,
 				90451D4B1E75F0D30071EB67 /* NAMoney.h */,
 				90451D4C1E75F0D30071EB67 /* NAOctTree.h */,
-				90451D4D1E75F0D30071EB67 /* NAOldBuffer.h */,
 				90451D4E1E75F0D30071EB67 /* NAPNG.h */,
 				90451D4F1E75F0D30071EB67 /* NAPool.h */,
 				90451D501E75F0D30071EB67 /* NAQuadTree.h */,
@@ -227,7 +221,6 @@
 			children = (
 				90451D551E75F0D30071EB67 /* NAArrayII.h */,
 				90451D561E75F0D30071EB67 /* NABuffer.c */,
-				90451D591E75F0D30071EB67 /* NAByteArrayII.h */,
 				90451D5B1E75F0D30071EB67 /* NACircularBufferII.h */,
 				90451D5C1E75F0D30071EB67 /* NAHeap.c */,
 				90451D5D1E75F0D30071EB67 /* NAHeapII.h */,
@@ -235,8 +228,6 @@
 				90451D5F1E75F0D30071EB67 /* NAListII.h */,
 				90451D601E75F0D30071EB67 /* NAMap2DII.h */,
 				90451D611E75F0D30071EB67 /* NAOctTree.c */,
-				90451D621E75F0D30071EB67 /* NAOldBuffer.c */,
-				90451D631E75F0D30071EB67 /* NAOldBufferII.h */,
 				90451D641E75F0D30071EB67 /* NAPoolII.h */,
 				90451D651E75F0D30071EB67 /* NAQuadTree.c */,
 				90451D661E75F0D30071EB67 /* NAStackII.h */,
@@ -373,7 +364,6 @@
 				90451D861E75F0D30071EB67 /* NAPNG.c in Sources */,
 				90451D7C1E75F0D30071EB67 /* NAMoney.c in Sources */,
 				90451D7D1E75F0D30071EB67 /* NABuffer.c in Sources */,
-				90451D821E75F0D30071EB67 /* NAOldBuffer.c in Sources */,
 				90451D7B1E75F0D30071EB67 /* NASystem.c in Sources */,
 				90451D891E75F0D30071EB67 /* NAUICoreAPI.c in Sources */,
 				900768E21E53C9F800F6C875 /* testBuffer.c in Sources */,

@@ -11,7 +11,6 @@ Table of Content:
 2    Memory and Structs
 2.1    Creation and deletion of memory blocks
 2.2    Initializating and Clearing of structs
-2.3    Foreach Callbacks and iteration functions
 3.   Runtime System
 4.   C90 variable definitions
 5.   Inline Implementations
@@ -92,53 +91,66 @@ deletion functions for many structs.
 
 The naming scheme guides you:
 
-
+--- MAKE, FILL, INIT and CLEAR ---
 - naMakeXXX:    Returns the struct as a value. Only very basic structs (pod)
                 will provide such functions.
 - naFillXXX:    Expects the first argument to be a pointer to the struct.
                 Again, only basic structs (pod) will offer such functions.
-- naInitXXX:    Expects a pointer to an existing struct in memory. Returns the
-                pointer again.
+- naInitXXX:    Expects a pointer to an existing struct in memory. That pointer
+                is expected to point at a non-initialized struct and will now
+                be initialized. Returns the pointer again.
 - naClearXXX:   Expects a pointer to a struct which shall be cleared. Is used
                 both by pod and non-pod structs.
+
+--- NEW and DELETE ---
 - naNewXXX:     Starting with NALib version 10, certain structs like NAPointer
                 have been restricted to be managed by the runtime system. These
                 structs do not provide naInitXXX_functions but naNewXXX-
                 functions instead.
+- naNew:        The plain naNew function allocates enough space for the given
+                type. Must use NA_RUNTIME_TYPE in order to work.
+- naDelete:     Deletes the given pointer which previously has been created
+                using an naNewXXX function.
+
+--- CREATE, RETAIN and RELEASE ---
 - naCreateXXX:  Starting with NALib version 18, certain structs have reference
                 counting built in. After creation, you shall use naRetainXXX
                 and naReleaseXXX.
+- naRetainXXX:  Adds 1 to the reference count of the struct.
+- naReleaseXXX: Subtracts 1 from the reference count of the struct. If zero is
+                reached, the struct will automatically be destroyed.
 
 
-Simple structs like NAPos are very basic structs and are generally called
-pod (plain old data). Such structs do not need special care when creating
-or deleting them. But more complex structs do.
-
-Complex structs must be initialized before being able to use them and must
+Structs usually must be initialized before being able to use them and must
 be destroyed when not needed anymore. As NALib is a C library, there are no
 constructors or destructors like in typical OOP languages and consequently,
 such initialization must be done manually by the programmer.
 
-In NALib, construction-functions always start with naInitXXX and desctruction-
-functions always start with naClearXXX.
+Simple structs like NAPos are very basic structs and are generally called
+pod (plain old data). Such often provide an naMakeXXX or naFillXXX functions
+and sometimes need a corresponding naClearXXX function. See the specific API
+for more information.
 
-naInitXXX-functions usually assume the given struct to be uninitialized and
-will overwrite all values.
+For more complex structs, the construction-functions usually are called
+naInitXXX, naNewXXX or naCreateXXX. The corresponding destruction function
+again is called naClearXXX. The naInitXXX-functions usually assume the given
+struct to be uninitialized and will overwrite all values. The naNewXXX
+functions use the runtime of NALib to allocate enough space and the naCreateXXX
+functions do the allocation in their own way.
 
-naClearXXX-functions expect a pointer to an initialized struct and will perform
-all necessary destructions. Beware that naClearXXX will only erase the contents
-but not the pointer itself.
+The naClearXXX-functions expect a pointer to an initialized struct and will
+perform all necessary destructions. Beware that naClearXXX will only erase
+the contents but not the pointer itself.
 
-The struct itself must always be allocated outside of the naInitXXX
-function. According to the functions listed in section 2.1, you have the
-following scenarios:
+When using naInitXXX functions, the struct itself must always be allocated
+outside of the naInitXXX function.
 
+Considering creation and deletion, you can think of the following scenarios:
 
 A) Use the pointer to an existing struct:
 NAArray myarray;
 naInitArray(&myarray);
 naClearArray(&myarray);
-
 
 B) Allocate with malloc, naMalloc or naAlloc and delete with free or naFree:
 NAArray* myarray1;
@@ -154,67 +166,24 @@ free(myarray1);
 naFree(myarray2);
 naFree(myarray3);
 
+C) Use an existing naNewXXX function with naDelete:
+NAPNG* myPNG = naNewPNG();
+naDelete(myPNG);
 
-C) Allocate with naNew and delete with naDelete:
+D) Allocate with naNew and delete with naDelete:
 NAArray* myarray = naInitArray(naNew(NAArray));
 naDelete(myarray);
 
+E) Use an existing naCreateXXX function with naRelease:
+NABuffer* mybuffer = naCreateBuffer();
+naRelease(mybuffer);
 
 The cases listed here are usual scenarios. But in certain cases, a programmer
 might want to choose differently, for example to save time. If you choose so,
 just make sure you know what you are doing.
 
-Do not use the free-functions on stack variables!
 
 
-
-
-
-
-2.3 Foreach Callbacks and iteration functions for container structs
--------------------------------------------------------------------
-
-Some container structs like NAArray or NAList provide naForeachXXX functions
-with an additional parameter: A mutator callback with the following signature:
-
-typedef void (*NAFunc)(void *);
-
-This parameter allows you to provide a function pointer to a mutation function
-which will be called for every element in the container.
-
-You can use mutators to simply mutate all elements in a container struct. But
-you can also use them to initialize all elements after a call to naInitXXX and
-to desctruct all elements before a call to naClearXXX.
-
-IMPORTANT:
-Beware that your mutator will always be called with a POINTER to the content.
-If for example, you have an array of integers, your callback will get "int *".
-If your array stores a pointer to int, your callback will get "int* *".
-
-Note that you can also use any of the functions of NALib as callback functions
-as long as they accept only one pointer parameter and return void.
-
-You may have to cast mutation functions to NAFunc.
-
-Apart from NAFunc functions, many container structs have built-in
-iteration functions. In NALib, you usually initialize a struct with a call
-to one of the following functions:
-
-- naFirstXXX
-- naLastXXX
-- naLocateXXX
-
-After having initialized the iteration, you iterate using a function like this:
-
-- naIterateXXX
-
-Such a function iterates through a struct and provides the pointer it pointed
-to BEFORE calling this function. The comments at the different naIterateXXX
-functions will tell you more.
-
-Note that the iteration only works on a per-instance basis. This means that
-you can not have two iterations running on the same structure. This also means
-that multithreaded environments must be careful when iterating!
 
 
 
@@ -226,11 +195,8 @@ running for certain structs. It mainly provided inifinitely large pools for
 specific NALib structures for quick allocation. Starting with NALib version 16,
 that runtime system can easily be enhanced for custom types.
 
-The author decided to add such a system because of the NAString struct which
-becomes way easier to manage when strings are always provided as pointers.
-Therefore, the naInitString-functions have been replaced by naNewString-
-functions which do not accept an input pointer anymore but instead always
-return a pointer allocated with naNew.
+The author decided to add such a system because certain structs which becomes
+way easier to manage when they are always provided as pointers.
 
 In order to manage the pointers, an instance of NARuntime must be created
 before any naNew function can be called. When NDEBUG is undefined, a friendly
@@ -311,8 +277,8 @@ typedef struct NAArray NAArray;
 This line tells the compiler that NAArray shall be used as a type. After this
 line, the compiler expects a declaration somewhere and allows the programmer to
 use the type by just using its name. The actual declaration of this type can
-be written anywhere but in NALib is always given somewhen after that line
-by the following lines starting with something like
+be written anywhere but in NALib is often given in the inline implementation
+files by the following lines starting with something like
 
 struct NAArray{
   ...
@@ -380,7 +346,7 @@ NA_HIAPI    | NA_HIDEF   | Inline helper function. Same thing but inlined.
 
 Types are always typedef'd, meaning you won't have to write the struct keyword
 all the time when declaring variables. Also enums are typedef'd with a clear
-name. Examples: NAAscDateTimeFormat, NATextEncoding
+name. Example: NAAscDateTimeFormat
 
 Some macros have just one identifier after the prefix. These macros denote
 key values often used in all of the source code. Examples: NA_NULL, NA_RESTRICT

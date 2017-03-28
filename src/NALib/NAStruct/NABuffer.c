@@ -2277,11 +2277,11 @@ NA_DEF void naSkipBufferDelimiter(NABuffer* buffer){
 
 
 
-NA_DEF NAString* naParseBufferLine(NABuffer* buffer, NABool skipempty, NAInt* linesread){
+NA_DEF NAString naParseBufferLine(NABuffer* buffer, NABool skipempty, NAInt* linesread){
   NABool lineendingfound = NA_FALSE;
   NABool checkwindowsend = NA_FALSE;
   NAInt linestart = buffer->curoffset;
-  NAString* string = NA_NULL;
+  NAString string;
   if(linesread){*linesread = 0;}
 
   while(!naIsListAtInitial(&(buffer->iter))){
@@ -2305,7 +2305,7 @@ NA_DEF NAString* naParseBufferLine(NABuffer* buffer, NABool skipempty, NAInt* li
           linestart++;
         }else{
           lineendingfound = NA_TRUE;
-          string = naNewStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(linestart, buffer->curoffset));
+          string = naMakeStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(linestart, buffer->curoffset));
         }
         checkwindowsend = (*curbyte == '\r');
       }
@@ -2315,15 +2315,15 @@ NA_DEF NAString* naParseBufferLine(NABuffer* buffer, NABool skipempty, NAInt* li
     if(!naContainsBufferPartOffset(part, buffer->curoffset)){naIterateList(&(buffer->iter), 1);}
   }
 
-  if(!string){string = naNewStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(linestart, buffer->curoffset));}
+  if(!lineendingfound){string = naMakeStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(linestart, buffer->curoffset));}
 
   return string;
 }
 
 
 
-NA_DEF NAString* naParseBufferToken(NABuffer* buffer){
-  NAString* string = NA_NULL;
+NA_DEF NAString naParseBufferToken(NABuffer* buffer){
+  NAString string;
   NAInt tokenstart = buffer->curoffset;
 
   while(!naIsListAtInitial(&(buffer->iter))){
@@ -2340,18 +2340,17 @@ NA_DEF NAString* naParseBufferToken(NABuffer* buffer){
       buffer->curoffset++;
     }
     if(!naContainsBufferPartOffset(part, buffer->curoffset)){naIterateList(&(buffer->iter), 1);}
-    if(string){break;}
   }
 
-  string = naNewStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(tokenstart, buffer->curoffset));
+  string = naMakeStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(tokenstart, buffer->curoffset));
   naSkipBufferWhitespaces(buffer);
   return string;
 }
 
 
 
-NA_DEF NAString* naParseBufferTokenWithDelimiter(NABuffer* buffer, NAByte delimiter){
-  NAString* string = NA_NULL;
+NA_DEF NAString naParseBufferTokenWithDelimiter(NABuffer* buffer, NAByte delimiter){
+  NAString string;
   NAInt tokenstart = buffer->curoffset;
   const NABufferPart* part;
   
@@ -2369,18 +2368,17 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABuffer* buffer, NAByte delimi
       buffer->curoffset++;
     }
     if(!naContainsBufferPartOffset(part, buffer->curoffset)){naIterateList(&(buffer->iter), 1);}
-    if(string){break;}
   }
 
-  string = naNewStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(tokenstart, buffer->curoffset));
+  string = naMakeStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(tokenstart, buffer->curoffset));
   naSeekBufferRelative(buffer, 1);
   return string;
 }
 
 
 
-NA_DEF NAString* naParseBufferPathComponent(NABuffer* buffer){
-  NAString* string = NA_NULL;
+NA_DEF NAString naParseBufferPathComponent(NABuffer* buffer){
+  NAString string;
   NAInt tokenstart = buffer->curoffset;
   const NABufferPart* part;
   
@@ -2398,10 +2396,9 @@ NA_DEF NAString* naParseBufferPathComponent(NABuffer* buffer){
       buffer->curoffset++;
     }
     if(!naContainsBufferPartOffset(part, buffer->curoffset)){naIterateList(&(buffer->iter), 1);}
-    if(string){break;}
   }
 
-  string = naNewStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(tokenstart, buffer->curoffset));
+  string = naMakeStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(tokenstart, buffer->curoffset));
   naSeekBufferRelative(buffer, 1);
   return string;
 }

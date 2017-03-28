@@ -25,7 +25,7 @@ NA_IDEF NAMoney naNegMoney(NAMoney money);
 NA_IAPI NAMoney naAddMoney(NAMoney moneyA, NAMoney moneyB);
 NA_IAPI NAMoney naSubMoney(NAMoney moneyA, NAMoney moneyB);
 
-NA_IDEF NAString* naNewStringWithMoney(NAMoney money);
+NA_IDEF NAString naMakeStringWithMoney(NAMoney money);
 
 
 

@@ -67,17 +67,17 @@ NA_IDEF NAMoney naSubMoney(NAMoney moneyA, NAMoney moneyB){
 
 
 
-NA_IDEF NAString* naNewStringWithMoney(NAMoney money){
+NA_IDEF NAString naMakeStringWithMoney(NAMoney money){
   int digits = na_currency_decimals[money.currency];
   int64 divisor = (int64)(pow(10., (double)digits));
   int64 units = money.cents / divisor;
   int64 decimals = money.cents % divisor;
   if(digits == 0){
-    return naNewStringWithFormat("%lld", units);
+    return naMakeStringWithFormat("%lld", units);
   }else{
-    NAString* formatstring = naNewStringWithFormat("%%lld.%%0%dlld", (int)digits);
-    NAString* retstring = naNewStringWithFormat(naGetStringUTF8Pointer(formatstring), units, decimals);
-    naDelete(formatstring);
+    NAString formatstring = naMakeStringWithFormat("%%lld.%%0%dlld", (int)digits);
+    NAString retstring = naMakeStringWithFormat(naGetStringUTF8Pointer(&formatstring), units, decimals);
+    naClearString(&formatstring);
     return retstring;
   }
 }

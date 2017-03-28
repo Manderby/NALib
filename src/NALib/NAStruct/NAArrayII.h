@@ -83,7 +83,7 @@ NA_IDEF NAArray* naInitArrayWithDataConst(NAArray* array, const void* data, NAIn
 NA_IDEF NAArray* naInitArrayWithDataMutable(NAArray* array, void* data, NAInt typesize, NAInt count, NAMemoryCleanup cleanup){
   #ifndef NDEBUG
     if(!naIsCleanupValid(cleanup))
-      naError("naNewStringWithMutableUTF8Buffer", "invalid cleanup option");
+      naError("naMakeStringWithMutableUTF8Buffer", "invalid cleanup option");
     if(!array)
       {naCrash("naInitArrayWithDataMutable", "array is Null-Pointer"); return NA_NULL;}
     if(typesize < 1)
