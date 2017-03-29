@@ -511,8 +511,6 @@ typedef uint8 NAByte;
 
 
 
-
-
 // NABool
 // Note that in NALib, the definition of NABool is set to an unsigned integer
 // and not char or unsigned char. This is unusual but most probably the easiest
@@ -542,6 +540,49 @@ typedef uint8 NAByte;
 
 
 
+// ////////////////////////
+// Characters and system dependent strings
+// The tabs and newlines used on different systems. The native newline argument
+// NA_NL will be defined below.
+#define NA_NL_UNIX  "\n"
+#define NA_NL_MAC9  "\r"
+#define NA_NL_WIN   "\r\n"
+#define NA_TAB      "\t"
+#define NA_PATH_DELIMITER_UNIX '/'
+#define NA_PATH_DELIMITER_WIN  '\\'
+#define NA_SUFFIX_DELIMITER    '.'
+
+// Note that in NALib, a String is internally always encoded in UTF-8.
+// The encoding of strings given by system calls though may be of
+// different kind. Therefore, there exist two typedefs: NAUTF8Char
+// and SystemChar.
+//
+// Note that NAUTF8Char is defined as char to simplify debugging.
+// Types like NAByte, int8 or uint8 can not be used as it these are
+// defined to be incompatible with char. But at least we can be sure that
+// a char consists of 8 Bits. See definition of NAByte for that.
+typedef char NAUTF8Char;
+
+#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #include <windows.h>
+  // The SystemChar is a character type which denotes the one used in the
+  // project preferences. It is CHAR for "Multi Byte Character Set" and
+  // WCHAR for "Unicode character set".
+  #ifdef UNICODE
+    typedef WCHAR SystemChar;
+  #else
+    typedef CHAR SystemChar;
+  #endif
+  #define NA_NL NL_WIN
+#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  // typedef short SystemChar;  // unused at the moment
+  #define NA_NL NL_UNIX
+#else
+#endif
+
+
+
+// ////////////////////////
 // Note that in NALib, there is no base typedef for a void* or a const void*
 // pointer. Some libraries or frameworks define them with a name like NAVoid.
 // The author believes that void* pointers should only be typedef'd if they

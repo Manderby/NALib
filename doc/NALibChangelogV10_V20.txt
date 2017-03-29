@@ -12,6 +12,9 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Version 18 (first published 2017-March-29):
+==============================================
+
 Highlights:
 - Added compilation macros into a separate NAConfiguration.h file.
 - Extended NAGrowingSpace with Pop-functionality, hence making it an
@@ -52,8 +55,9 @@ Other things:
   naMakeStringFromFile and naMakeStringWithFileContents.
 - naNewThread, naNewMutex and naNewAlarm now are called naMakeThread,
   naMakeMutex and naMakeAlarm.
-- Removed NAByteMap2D
+- Removed NAByteMap2D and NAMap2D
 - Removed all "Declaration before implementation" comments
+- Moved basic character typedefs to NASystem.h
 
 
 Version 17 (first published 2017-January-05):

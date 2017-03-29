@@ -21,11 +21,11 @@ typedef enum{
 
 NA_IAPI NAMoney naMakeMoneyWithCurrency(double amount, NACurrency currency);
 
-NA_IDEF NAMoney naNegMoney(NAMoney money);
+NA_IAPI NAMoney naNegMoney(NAMoney money);
 NA_IAPI NAMoney naAddMoney(NAMoney moneyA, NAMoney moneyB);
 NA_IAPI NAMoney naSubMoney(NAMoney moneyA, NAMoney moneyB);
 
-NA_IDEF NAString naMakeStringWithMoney(NAMoney money);
+NA_IAPI NAString naMakeStringWithMoney(NAMoney money);
 
 
 

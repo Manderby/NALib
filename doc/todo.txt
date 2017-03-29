@@ -4,17 +4,12 @@ NALib todos
 This file contains notes on what is still missing or needs to be done
 in NALib.
 
-
-Version 18:
-- Make test files
-
 Version 19:
 - Fully implement NAString
 - Timezones
-- Add ARM
-- Make parsing with NABuffer
+- Make more test files
 - NATree and integration into NABuffer
-- Re-Integrate NAMap2D
+- Re-Integrate NAMap2D and NAByteMap2D
 - Re-Integrate NABitArray
 - NASocket
 - GUI
@@ -31,6 +26,7 @@ Version 20:
 
 
 Future
+- Add ARM, Linux
 - Make Memory addresses uint 
 - Garbage collection, release pools
 - MOB

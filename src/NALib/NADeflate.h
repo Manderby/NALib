@@ -21,10 +21,10 @@
 // NA_DEFLATE_COMPRESSION_FASTEST:  No compression at all. Storing bytes as is.
 // The other compression levels have not been implemented yet.
 typedef enum{
-  NA_DEFLATE_COMPRESSION_FASTEST = 0,
-  NA_DEFLATE_COMPRESSION_FAST = 1,
-  NA_DEFLATE_COMPRESSION_DEFAULT = 2,
-  NA_DEFLATE_COMPRESSION_MAX = 3,
+  NA_DEFLATE_COMPRESSION_FASTEST  = 0,
+  NA_DEFLATE_COMPRESSION_FAST     = 1,
+  NA_DEFLATE_COMPRESSION_DEFAULT  = 2,
+  NA_DEFLATE_COMPRESSION_MAX      = 3,
 } NADeflateCompressionLevel;
 
 

@@ -15,29 +15,11 @@ typedef struct NAString NAString;
 
 
 
-// Note that in NALib, a String is internally always encoded in UTF-8.
-
-// Note that NAUTF8Char is defined as char to simplify debugging.
-// Types like NAByte, int8 or uint8 can not be used as it these are
-// defined to be incompatible with char. But at least we can be sure that
-// a char consists of 8 Bits. See definition of NAByte for that.
-typedef char NAUTF8Char;
-
 
 #include "NAMemory.h"
 #include "NACoord.h"
 #include "NABuffer.h"
 
-
-// The tabs and newlines used on different systems. The native newline argument
-// NA_NL will be defined below.
-#define NA_NL_UNIX  "\n"
-#define NA_NL_MAC9  "\r"
-#define NA_NL_WIN   "\r\n"
-#define NA_TAB      "\t"
-#define NA_PATH_DELIMITER_UNIX '/'
-#define NA_PATH_DELIMITER_WIN  '\\'
-#define NA_SUFFIX_DELIMITER    '.'
 
 
 // The different newline-encodings as an enum type
@@ -48,25 +30,6 @@ typedef enum{
   NA_NEWLINE_NATIVE             //       Dependant on the local machines system
 } NANewlineEncoding;
 
-
-
-// System dependant mapping of string functions and macros
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
-  #include <windows.h>
-  // The SystemChar is a character type which denotes the one used in the
-  // project preferences. It is CHAR for "Multi Byte Character Set" and
-  // WCHAR for "Unicode character set".
-  #ifdef UNICODE
-    typedef WCHAR SystemChar;
-  #else
-    typedef CHAR SystemChar;
-  #endif
-  #define NA_NL NL_WIN
-#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-  // typedef short SystemChar;  // unused at the moment
-  #define NA_NL NL_UNIX
-#else
-#endif
 
 
 
@@ -183,17 +146,15 @@ NA_API NAString naMakeStringWithSuffixOfFilename(const NAString* filename);
 
 // The following functions are system dependent.
 // Currently, this is only necessary on windows.
-//
-// Currently commented out as not fully functional.
-//#if NA_SYSTEM == NA_SYSTEM_WINDOWS
-//  // Returns a newly allocated memory block containing the system-encoded
-//  // string. If you do not provide the length, it will be automatically
-//  // computed. The resulting string must be freed manually. COPIES ALWAYS!
-//  NA_API SystemChar* naAllocSystemStringFromString(const NAUTF8Char* utf8str,
-//                                                               NAUInt length);
-//  // Creates a new NAString from a system-encoded string. COPIES ALWAYS!
-//  NA_API NAString* naMakeStringFromSystemString(SystemChar* systemstring);
-//#endif
+#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  // Returns a newly allocated memory block containing the system-encoded
+  // string. If you do not provide the length, it will be automatically
+  // computed. The resulting string must be freed manually. COPIES ALWAYS!
+  NA_API SystemChar* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8str,
+                                                               NAUInt length);
+  //// Creates a new NAString from a system-encoded string. COPIES ALWAYS!
+  //NA_API NAString* naMakeStringFromSystemString(SystemChar* systemstring);
+#endif
 
 
 // Appending functions: Appends something at the end of originalstring.

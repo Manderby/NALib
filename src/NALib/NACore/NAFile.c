@@ -2,7 +2,10 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
+
 #include "../NAFile.h"
+#include "../NAString.h"
+
 
 
 
@@ -14,6 +17,40 @@ NA_DEF NAString naMakeStringWithCurrentWorkingDirectory(){
   string = naMakeStringWithMutableUTF8Buffer(cwdbuf, -(NAInt)(naStrlen(cwdbuf)), NA_MEMORY_CLEANUP_NA_FREE);
   return string;
 }
+
+
+
+
+NA_DEF NABool naIsDir(const char* path){
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    SystemChar* sysstring;
+    NABool retvalue;
+    sysstring = naAllocSystemStringWithUTF8String(path, 0);
+    retvalue = (GetFileAttributes(sysstring)  & FILE_ATTRIBUTE_DIRECTORY) ? NA_TRUE : NA_FALSE;
+    free(sysstring);
+    return retvalue;
+  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+    struct stat stat_struct;
+    stat(path, &stat_struct);
+    return (stat_struct.st_mode & S_IFDIR) ? NA_TRUE : NA_FALSE;
+  #endif
+}
+
+
+NA_DEF NABool naIsHidden(const char* path){
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+    SystemChar* sysstring;
+    NABool retvalue;
+    sysstring = naAllocSystemStringWithUTF8String(path, 0);
+    retvalue = (GetFileAttributes(sysstring) & FILE_ATTRIBUTE_HIDDEN) ? NA_TRUE : NA_FALSE;
+    free(sysstring);
+    return retvalue;
+  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+    return (path[0] == '.');
+  #endif
+}
+
+
 
 
 

@@ -25,6 +25,7 @@ void testStack(void){
   NAInt stackcount;
   NAInt stackreservedcount;
   int64 sum;
+  NAStackIterator iter;
   
   printf("\n");
   printf("Stack Test\n");
@@ -120,7 +121,7 @@ void testStack(void){
   printf("Creating iterator and computing sum. Should be %lld...\n", ((int64)NA_TEST_STACK_COUNT / 10 + 1) * ((int64)NA_TEST_STACK_COUNT / 20));
   time1 = naMakeDateTimeNow();
   sum = 0;
-  NAStackIterator iter = naMakeStackIteratorAccessor(&stack);
+  iter = naMakeStackIteratorAccessor(&stack);
   while(naIterateStack(&iter)){
     sum += (int64)*(int*)naGetStackCurrentConst(&iter);
   }

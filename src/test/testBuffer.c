@@ -17,8 +17,11 @@ void testBufferFile(void){
   NAString string;
   NAInt linesread;
 
+  NAString cwd = naMakeStringWithCurrentWorkingDirectory();
+
   printf("\nCreating file input buffer with ASCII file.\n");
-  buffer = naCreateBufferFile("asciitest.txt");  
+  printf("Working Directory: %s\n", naGetStringUTF8Pointer(&cwd));
+  buffer = naCreateBufferFile("res/asciitest.txt");  
   
   // Creating a buffer extraction and then reading that whole buffer
   token = naCreateBufferExtraction(buffer, naMakeRangei(6, 8));
@@ -45,6 +48,8 @@ void testBufferFile(void){
   printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(&string));
   string = naParseBufferLine(buffer, NA_FALSE, &linesread);
   printf("Reading the next line without skipping (%" NA_PRIi " lines read) : %s\n", linesread, naGetStringUTF8Pointer(&string));
+  
+  // todo: more to come
 }
 
 
@@ -55,6 +60,7 @@ void testBufferMemory(void){
   NADateTime time1;
   NADateTime time2;
   NARangei range;
+  int i;
   
   printf("\n");
   printf("Buffer Test\n");
@@ -74,7 +80,7 @@ void testBufferMemory(void){
   
   printf("Writing lots of bytes to the buffer %d times... ", NA_BUFFER_TEST_REPETITIONS);
   time1 = naMakeDateTimeNow();
-  for(int i=0; i<NA_BUFFER_TEST_REPETITIONS; i++){
+  for(i=0; i<NA_BUFFER_TEST_REPETITIONS; i++){
     // Writing single variables
     naWriteBufferBytes(buffer, &testdata, sizeof(int));
     // Writing whole arrays
@@ -98,14 +104,18 @@ void testBufferMemory(void){
   naReadBufferBytes(buffer, &testdata, sizeof(int));
   printf("Reading that data again: %d\n", testdata);
   
+  printf("Releasing the buffer ... ");
+  time1 = naMakeDateTimeNow();
   naReleaseBuffer(buffer);
+  time2 = naMakeDateTimeNow();
+  printf("%f seconds\n", naGetDateTimeDifference(&time2, &time1));
 }
 
 
 
 void testBuffer(void){
 
-//  testBufferMemory();
+  testBufferMemory();
   testBufferFile();
   
 }

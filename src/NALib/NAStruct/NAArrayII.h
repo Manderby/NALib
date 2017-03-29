@@ -289,9 +289,10 @@ struct NAArrayIterator{
 NA_IDEF NAArrayIterator naMakeArrayIteratorAccessor(const NAArray* array){
   NAArrayIterator iter;
   #ifndef NDEBUG
+    NAArray* mutablearray;
     if(!array)
       naError("naMakeArrayIteratorAccessor", "array is Null pointer");
-    NAArray* mutablearray = (NAArray*)array;
+    mutablearray = (NAArray*)array;
     mutablearray->itercount++;
     iter.mutator = NA_FALSE;
   #endif
@@ -306,9 +307,10 @@ NA_IDEF NAArrayIterator naMakeArrayIteratorAccessor(const NAArray* array){
 NA_IDEF NAArrayIterator naMakeArrayIteratorMutator(NAArray* array){
   NAArrayIterator iter;
   #ifndef NDEBUG
+    NAArray* mutablearray;
     if(!array)
       naError("naMakeArrayIteratorAccessor", "array is Null pointer");
-    NAArray* mutablearray = (NAArray*)array;
+    mutablearray = (NAArray*)array;
     mutablearray->itercount++;
     iter.mutator = NA_TRUE;
   #endif

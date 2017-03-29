@@ -88,6 +88,8 @@ NA_IAPI NAInt naGetStackReservedCount(const NAStack* stack);
 // memory allocations, you may want to set aggressive to NA_FALSE.
 NA_IAPI void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive);
 
+
+
 // //////////////////////////
 // Iteration functions
 // //////////////////////////
@@ -96,7 +98,7 @@ NA_IAPI void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive);
 // choose whether it is an accessor or mutator. An accessor can not get a
 // mutable pointers to the elements.
 NA_IAPI NAStackIterator naMakeStackIteratorAccessor(const NAStack* stack);
-NA_IAPI NAStackIterator naMakeStackIteratorMutator(const NAStack* stack);
+NA_IAPI NAStackIterator naMakeStackIteratorMutator (const NAStack* stack);
 NA_IAPI void naClearStackIterator(NAStackIterator* iterator);
 
 // Iterates through the stack from base to top. Returns NA_FALSE if there are

@@ -16,13 +16,15 @@
 
 
 int main(void){
-//  testSystem();  
-//  testMemory();
+  testSystem();  
+  testMemory();
 
   naStartRuntime();
-//    testStack();
+    testStack();
     testBuffer();
   naStopRuntime();
+  
+  printf("\nTest completed.\n");
   
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     printf("\nPress enter to quit.\n");

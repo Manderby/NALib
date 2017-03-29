@@ -117,34 +117,6 @@ NA_IDEF NABool naExists(const char* path){
 }
 
 
-NA_IDEF NABool naIsDir(const char* path){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    SystemChar* sysstring = naAllocSystemStringFromString(path, 0);
-    NABool retvalue = (GetFileAttributes(sysstring)
-            & FILE_ATTRIBUTE_DIRECTORY) ? NA_TRUE : NA_FALSE;
-    free(sysstring);
-    return retvalue;
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    struct stat stat_struct;
-    stat(path, &stat_struct);
-    return (stat_struct.st_mode & S_IFDIR) ? NA_TRUE : NA_FALSE;
-  #endif
-}
-
-
-NA_IDEF NABool naIsHidden(const char* path){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    SystemChar* sysstring = naAllocSystemStringFromString(path, 0);
-    NABool retvalue = (GetFileAttributes(sysstring)
-            & FILE_ATTRIBUTE_HIDDEN) ? NA_TRUE : NA_FALSE;
-    free(sysstring);
-    return retvalue;
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
-    return (path[0] == '.');
-  #endif
-}
-
-
 NA_IDEF int naRemove(const char* path){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return remove(path);

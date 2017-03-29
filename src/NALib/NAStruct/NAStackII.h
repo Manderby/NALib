@@ -117,6 +117,7 @@ NA_IDEF void naClearStack(NAStack* stack){
 
 NA_IDEF void* naPushStack(NAStack* stack){
   NAInt availablestack;
+  NAListIterator iter;
 
   stack->usedcount++;
   
@@ -126,7 +127,7 @@ NA_IDEF void* naPushStack(NAStack* stack){
     if(naGetListCount(&(stack->arrays)) <= (stack->curindex + 1)){
       naAddStackNewSpace(stack);
     }
-    NAListIterator iter = naMakeListIteratorAccessor(&(stack->arrays));
+    iter = naMakeListIteratorAccessor(&(stack->arrays));
     naLocateListPosition(&iter, stack->curpos);
       naIterateList(&iter, 1);
       stack->curpos = naGetListCurrentPosition(&iter);
@@ -141,11 +142,13 @@ NA_IDEF void* naPushStack(NAStack* stack){
 
 NA_IDEF void* naTopStack(NAStack* stack){
   NAInt subindex;
+  NAListIterator iter;
+  NAByte* array;
   subindex = stack->usedcount - naGetStackArrayBaseIndex(stack, stack->curindex) - 1;
   
-  NAListIterator iter = naMakeListIteratorMutator(&(stack->arrays));
-    naLocateListPosition(&iter, stack->curpos);
-    NAByte* array = (NAByte*)naGetListCurrentMutable(&iter);
+  iter = naMakeListIteratorMutator(&(stack->arrays));
+  naLocateListPosition(&iter, stack->curpos);
+  array = (NAByte*)naGetListCurrentMutable(&iter);
   naClearListIterator(&iter);
   return &(array[subindex * stack->typesize]);
 }

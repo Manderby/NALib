@@ -546,7 +546,8 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, N
   NAInt bytesize;
   NAChecksum checksum;
   uint32 adler;
-  
+  NAInt curoffset;
+
   #ifndef NDEBUG
     if(naGetBufferEndianness(buffer) != NA_ENDIANNESS_NETWORK)
       naError("naInitBufferFromDeflateDecompression", "Output buffer should be big endianed");
@@ -566,8 +567,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* buffer, NABuffer* input, N
   bytesize = naGetBufferRange(input).length;
   naSeekBufferAbsolute(input, 0);
   
-  
-  NAInt curoffset = 0;
+  curoffset = 0;
   while(bytesize > 0){
     uint16 curbytesize;
     NAByte headbyte = (0 << 1);

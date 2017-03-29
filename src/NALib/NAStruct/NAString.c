@@ -186,20 +186,21 @@ NA_DEF NAInt naGetStringBytesize(const NAString* string){
 
 
 NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
+  NAString* mutablestring = (NAString*)string;
+
   #ifndef NDEBUG
     if(!string){
       naCrash("naGetStringUTF8Pointer", "string is Null-Pointer.");
       return NA_NULL;
     }
   #endif
-  
-  NAString* mutablestring = (NAString*)string;
-  
+    
   if(naIsStringEmpty(string)){
     return (const NAUTF8Char*)"";
   }else{
+    NAInt strlen;
     naFree(mutablestring->cachedstr);
-    NAInt strlen = naGetBufferRange(string->buffer).length;
+    strlen = naGetBufferRange(string->buffer).length;
     mutablestring->cachedstr = naMalloc(strlen + 1);
     naCacheBufferRange(string->buffer, naGetBufferRange(string->buffer), NA_FALSE);
     naWriteBufferToData(string->buffer, mutablestring->cachedstr);
@@ -478,42 +479,42 @@ NA_DEF NAString naMakeStringWithSuffixOfFilename(const NAString* filename){
 
 
 
-//#if NA_SYSTEM == NA_SYSTEM_WINDOWS
-////  NA_DEF SystemChar* naAllocSystemStringFromString(const NAUTF8Char* utf8string, NAUInt length){
-////    SystemChar* outstr;
-////    NAUInt newsize;
-////    if(!size){size = naStrlen(utf8string);}
-////    #ifdef UNICODE
-////      newsize = MultiByteToWideChar(CP_UTF8, 0, utf8string, size, NULL, 0);
-////      outstr = (SystemChar*)naMalloc((newsize + 1 * sizeof(SystemChar)));
-////      MultiByteToWideChar(CP_UTF8, 0, utf8string, size, outstr, newsize);
-////    #else
-////      newsize = size;
-////      outstr = (SystemChar*)naMalloc((newsize + 1) * sizeof(SystemChar));
-////      naCopyn(outstr, utf8string, newsize);
-////    #endif
-////    outstr[newsize] = 0;
-////    return outstr;
-////  }
-//
-//
-////  NA_DEF NAString* naMakeStringFromSystemString( SystemChar* systemstring){
-////    NAInt newsize;
-////    NAUTF8Char* stringbuf;
-////    #ifdef UNICODE
-////      newsize = WideCharToMultiByte(CP_UTF8, 0, systemstring, -1, NULL, 0, NULL, NULL);
-////      stringbuf = naMalloc(-newsize);
-////      string = naMakeStringWithMutableUTF8Buffer(string, stringbuf, -newsize, NA_MEMORY_CLEANUP_NA_FREE);
-////      WideCharToMultiByte(CP_UTF8, 0, systemstring, -1, stringbuf, newsize, NULL, NULL);
-////    #else
-////      newsize = naStrlen(systemstring);
-////      stringbuf = naMalloc(-newsize);
-////      string = naMakeStringWithMutableUTF8Buffer(string, stringbuf, -newsize, NA_MEMORY_CLEANUP_NA_FREE);
-////      naCopyn(stringbuf, systemstring, newsize);
-////    #endif
-////    return string;
-////  }
-//#endif
+#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  NA_DEF SystemChar* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8string, NAUInt length){
+    SystemChar* outstr;
+    NAUInt newlength;
+    if(!length){length = naStrlen(utf8string);}
+    #ifdef UNICODE
+      newsize = MultiByteToWideChar(CP_UTF8, 0, utf8string, size, NULL, 0);
+      outstr = (SystemChar*)naMalloc((newsize + 1 * sizeof(SystemChar)));
+      MultiByteToWideChar(CP_UTF8, 0, utf8string, size, outstr, newsize);
+    #else
+      newlength = length;
+      outstr = (SystemChar*)naMalloc((newlength + 1) * sizeof(SystemChar));
+      naCopyn(outstr, utf8string, newlength);
+    #endif
+    outstr[newlength] = 0;
+    return outstr;
+  }
+
+
+  //NA_DEF NAString* naMakeStringFromSystemString( SystemChar* systemstring){
+  //  NAInt newsize;
+  //  NAUTF8Char* stringbuf;
+  //  #ifdef UNICODE
+  //    newsize = WideCharToMultiByte(CP_UTF8, 0, systemstring, -1, NULL, 0, NULL, NULL);
+  //    stringbuf = naMalloc(-newsize);
+  //    string = naMakeStringWithMutableUTF8Buffer(string, stringbuf, -newsize, NA_MEMORY_CLEANUP_NA_FREE);
+  //    WideCharToMultiByte(CP_UTF8, 0, systemstring, -1, stringbuf, newsize, NULL, NULL);
+  //  #else
+  //    newsize = naStrlen(systemstring);
+  //    stringbuf = naMalloc(-newsize);
+  //    string = naMakeStringWithMutableUTF8Buffer(string, stringbuf, -newsize, NA_MEMORY_CLEANUP_NA_FREE);
+  //    naCopyn(stringbuf, systemstring, newsize);
+  //  #endif
+  //  return string;
+  //}
+#endif
 
 
 //
