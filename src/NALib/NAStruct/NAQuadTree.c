@@ -344,7 +344,7 @@ NA_DEF NAQuadTree* naCopyQuadTreeWithShift(NAQuadTree* newtree, const NAQuadTree
     if(!newtree)
       {naCrash("naCopyQuadTreeWithShift", "newtree is Null-Pointer"); return NA_NULL;}
     if(!duptree->callbacks.datacopier)
-      naError("naCopyQuadTreeWithShift", "Data copier callback required.");
+      {naCrash("naCopyQuadTreeWithShift", "Data copier callback required."); return NA_NULL;}
   #endif
   newtree = naInitQuadTree(newtree, duptree->leaflength, duptree->callbacks);
   if(!duptree->root){return newtree;}
@@ -582,7 +582,7 @@ NA_DEF void naSerializeQuadTree(const NAQuadTree* tree, void* buf, uint64* bytes
   const void* curleaf;
   #ifndef NDEBUG
     if(!(tree->callbacks.serialize))
-      naError("naSerializeQuadTree", "Callbacks required for serialization");
+      {naCrash("naSerializeQuadTree", "Callbacks required for serialization"); return;}
     if(!bytesize){
       naCrash("naSerializeQuadTree", "bytesize required to read/store byte size");
       return;
@@ -838,7 +838,7 @@ NA_HDEF void naRemoveQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* node){
     // Remove the segment from the tree
     #ifndef NDEBUG
       if(node->segmentinparent == -1)
-        naError("naRemoveQuadTreeNode", "Inernal inconsistency detected");
+        {naCrash("naRemoveQuadTreeNode", "Inernal inconsistency detected"); return;}
     #endif
     node->parentnode->child[node->segmentinparent] = NA_NULL;
     

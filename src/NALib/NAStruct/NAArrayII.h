@@ -8,7 +8,7 @@
 // including "NAArray.h"
 
 
-#include "NACoord.h"
+#include "../NACoord.h"
 
 
 struct NAArray{
@@ -291,7 +291,7 @@ NA_IDEF NAArrayIterator naMakeArrayIteratorAccessor(const NAArray* array){
   #ifndef NDEBUG
     NAArray* mutablearray;
     if(!array)
-      naError("naMakeArrayIteratorAccessor", "array is Null pointer");
+      {naCrash("naMakeArrayIteratorAccessor", "array is Null pointer"); iter.array = naMakePtrWithDataConst(NA_NULL); iter.indx = 0; iter.mutator = NA_FALSE; return iter;}
     mutablearray = (NAArray*)array;
     mutablearray->itercount++;
     iter.mutator = NA_FALSE;
@@ -309,7 +309,7 @@ NA_IDEF NAArrayIterator naMakeArrayIteratorMutator(NAArray* array){
   #ifndef NDEBUG
     NAArray* mutablearray;
     if(!array)
-      naError("naMakeArrayIteratorAccessor", "array is Null pointer");
+      {naCrash("naMakeArrayIteratorMutator", "array is Null pointer"); iter.array = naMakePtrWithDataMutable(NA_NULL, NA_MEMORY_CLEANUP_NONE); iter.indx = 0; iter.mutator = NA_TRUE; return iter;}
     mutablearray = (NAArray*)array;
     mutablearray->itercount++;
     iter.mutator = NA_TRUE;

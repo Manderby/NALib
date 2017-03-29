@@ -37,7 +37,7 @@
 		B9B2EA101716922700943D91 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
-			dstPath = "";
+			dstPath = res;
 			dstSubfolderSpec = 16;
 			files = (
 				90C3D2E41E6D9DC30019AF0D /* asciitest.txt in CopyFiles */,

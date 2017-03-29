@@ -654,7 +654,7 @@ NA_DEF void naSerializeOctTree(const NAOctTree* tree, void* buf, uint64* bytesiz
   const void* curleaf;
   #ifndef NDEBUG
     if(!(tree->callbacks.serialize))
-      naError("naSerializeOctTree", "Callbacks required for serialization");
+      {naCrash("naSerializeOctTree", "Callbacks required for serialization"); return;}
     if(!bytesize)
       {naCrash("naSerializeOctTree", "bytesize required to read/store byte size"); return;}
     if(buf && (*bytesize == 0))
@@ -912,7 +912,7 @@ NA_HDEF void naRemoveOctTreeNode(NAOctTree* tree, NAOctTreeNode* node){
     // Remove the segment from the tree
     #ifndef NDEBUG
       if(node->segmentinparent == -1)
-        naError("naRemoveOctTreeNode", "Inernal inconsistency detected");
+        {naCrash("naRemoveOctTreeNode", "Inernal inconsistency detected"); return;}
     #endif
     node->parentnode->child[node->segmentinparent] = NA_NULL;
     

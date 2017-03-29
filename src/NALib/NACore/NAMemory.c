@@ -127,14 +127,16 @@ NARuntime* na_runtime = NA_NULL;
 NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
 
   void* pointer;
-  NACoreTypeInfo* coretypeinfo = (NACoreTypeInfo*)typeinfo;
+  NACoreTypeInfo* coretypeinfo;
   
   #ifndef NDEBUG
     if(!na_runtime)
       {naCrash("naNew", "Runtime not running. Use naStartRuntime()"); return NA_NULL;}
-    if(!coretypeinfo)
+    if(!typeinfo)
       {naCrash("naNew", "Given type identifier is Null-Pointer"); return NA_NULL;}
   #endif
+
+  coretypeinfo = (NACoreTypeInfo*)typeinfo;
 
   #if (NA_RUNTIME_USES_MEMORY_POOLS == 0)
 
@@ -249,7 +251,7 @@ NA_DEF void naStopRuntime(){
 NA_DEF NAUInt naGetRuntimeMemoryPageSize(){
   #ifndef NDEBUG
     if(!na_runtime)
-      naCrash("naGetRuntimeMemoryPageSize", "Runtime not running");
+      {naCrash("naGetRuntimeMemoryPageSize", "Runtime not running"); return 0;}
   #endif
   return na_runtime->mempagesize;
 }
@@ -259,7 +261,7 @@ NA_DEF NAUInt naGetRuntimeMemoryPageSize(){
 NA_DEF NAUInt naGetRuntimePoolSize(){
   #ifndef NDEBUG
     if(!na_runtime)
-      naCrash("naGetRuntimePoolSize", "Runtime not running");
+      {naCrash("naGetRuntimePoolSize", "Runtime not running"); return 0;}
   #endif
   return na_runtime->poolsize;
 }

@@ -609,6 +609,8 @@ NA_IDEF void naClearPtr(NAPtr* ptr){
 
 NA_IDEF void naFreePtr(NAPtr* ptr){
   #ifndef NDEBUG
+    if(!ptr)
+      {naCrash("naFreePtr", "ptr is Null"); return;}
     if(ptr->flags & NA_PTR_CLEANED)
       naError("naFreePtr", "NAPtr has already been cleaned once.");
     if(naIsPtrConst(ptr))
