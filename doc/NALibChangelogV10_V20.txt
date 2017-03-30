@@ -12,6 +12,9 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+- Speedup of naNew.
+
+
 Version 18 (first published 2017-March-30):
 ==============================================
 

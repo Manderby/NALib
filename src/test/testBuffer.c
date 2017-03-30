@@ -6,7 +6,7 @@
 #include "../NALib/NABuffer.h"
 #include "../NALib/NADateTime.h"
 
-#define NA_BUFFER_TEST_REPETITIONS 100000
+#define NA_BUFFER_TEST_REPETITIONS 10000
 #define NA_BUFFER_TESTARRAY_SIZE   10000
 NAByte testdataarray[NA_BUFFER_TESTARRAY_SIZE];
 

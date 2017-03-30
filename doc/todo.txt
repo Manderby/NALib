@@ -9,8 +9,6 @@ Version 19:
 - Timezones
 - Make more test files
 - NATree and integration into NABuffer
-- Re-Integrate NAMap2D and NAByteMap2D
-- Re-Integrate NABitArray
 - NASocket
 - GUI
 
@@ -19,6 +17,8 @@ Version 20:
 - Add more variadic error messages
 - First compression in NAPNG
 - NAComplexPolar
+- Re-Integrate NAMap2D and NAByteMap2D
+- Re-Integrate NABitArray
 - All todos.
 - Remove old commented code
 - Page guide 80

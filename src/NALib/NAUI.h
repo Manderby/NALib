@@ -206,19 +206,20 @@ NA_API void naStartApplication(  NAMutator prestartup,
 //
 // Note that both in the prestartup as well as the poststartup function, the
 // global NAApplication struct of NALib is ready to be used. You can get this
-// struct using the following call. See naGetUIElementNativeID to get the
-// native app pointer HINSTANCE (on Windows) or NSApp (on a Macintosh).
+// struct using the following call:
+
+NA_API NAApplication* naGetApplication(void);
+
+// If you need to get the native app pointer HINSTANCE (on Windows) or NSApp
+// (on a Macintosh), use naGetUIElementNativeID.
 
 // The message loop will run indefinitely until the application is terminated
 // by a signal or it recieves a stop message using the following function: This
-// Will send a stop message to the application which will then in the next
-// schedule will stop the run message loop and eventually return from the call
+// Will send a stop message to the application which then in the next schedule
+// will stop the run message loop and eventually return from the call
 // to naStartApplication. All attached memory of the application will be freed
 // and the application will not be able to run again!
 NA_API void naStopApplication(void);
-
-// If you need to get the application itself, use this function:
-NA_API NAApplication* naGetApplication(void);
 
 // Executes the given function in the given number of seconds with the given
 // arg by posting a message on the main execute loop. This function returns
