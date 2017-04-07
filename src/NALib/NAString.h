@@ -84,9 +84,32 @@ NA_API NAString naMakeStringWithFormat(const NAUTF8Char* format,
 NA_API NAString naMakeStringWithArguments(const NAUTF8Char* format,
                                                      va_list argumentlist);
 
-// Fills deststring with a desired part of srcstring. Does not copy!
-// See naInitByteArrayExtraction for an explanation of all arguments.
-// Use charoffset = 0 and length = -1 to reference the whole string.
+// Fills deststring with a desired part of srcstring.
+// Note that the returned string will automatically be cached.
+//
+// - if charoffset is negative, it denotes the number of chars from the end.
+//   Note that the end has index [bytesize], meaning -1 denotes the index
+//   [bytesize-1] which is the last char.
+// - If the length is 0, the resulting string is empty.
+// - if length is negative, it denotes the size up and including to the given
+//   number of chars from the end, meaning -1 denotes the last char.
+// - if the charoffset and length combination somehow leads to a length of
+//   exactly 0, the resulting string will be empty without a warning emitted.
+// - If the charoffset and length combination somehow leads to an over- or
+//   underflow, a warning will be emitted if NDEBUG is defined. The resulting
+//   string will be empty.
+//
+// Example: String ABCDEF with the pair (charoffset, length):
+// - ( 2,  2)   ->   CD   (extraction)
+// - ( 2, -1)   ->   CDEF (truncate start from left)
+// - (-2, -1)   ->     EF (truncate start from right)
+// - ( 0,  2)   -> AB     (truncate end from left)
+// - ( 0, -3)   -> ABCD   (truncate end from right)
+// - (-3, -2)   ->    DE  (mix it as you desire)
+// - ( 0, -1)   -> ABCDEF (exact duplicate)
+// - ( 1,  0)   ->        (empty string because of desired bytesize == 0)
+// - ( 2, -5)   ->        (empty string because of resulting bytesize == 0)
+// - (-9,  9)   ->        (empty string with warning when debugging)
 NA_API NAString naMakeStringExtraction(const NAString* srcstring,
                                                   NAInt charoffset,
                                                   NAInt length);
@@ -187,8 +210,28 @@ NA_API NAString naMakeStringWithSuffixOfFilename(const NAString* filename);
 
 
 
+// Compares two strings and returns NA_TRUE if they are equal.
+NA_API NABool naEqualStringToString(            const NAString* string1,
+                                                const NAString* string2,
+                                                         NABool casesensitive);
+// Compares a string with a C string literal and returns NA_TRUE if they are
+// equal.
+NA_API NABool naEqualStringToUTF8CStringLiteral(const NAString* string1,
+                                              const NAUTF8Char* string2,
+                                                         NABool casesensitive);
 
 
+// These functions provide basic functionality for parsing numbers from a given
+// string. If you need more advanced parsing, use one of the naGetStringBuffer
+// functions and parse the buffer.
+NA_API int8   naParseStringInt8  (const NAString* string);
+NA_API int16  naParseStringInt16 (const NAString* string);
+NA_API int32  naParseStringInt32 (const NAString* string);
+NA_API int64  naParseStringInt64 (const NAString* string);
+NA_API uint8  naParseStringUInt8 (const NAString* string);
+NA_API uint16 naParseStringUInt16(const NAString* string);
+NA_API uint32 naParseStringUInt32(const NAString* string);
+NA_API uint64 naParseStringUInt64(const NAString* string);
 
 
 // Inline implementations are in a separate file:

@@ -283,7 +283,7 @@ NA_DEF NAInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond){
 NA_DEF int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str){
   int32 i;
   for(i=0; i<NA_MONTHS_PER_YEAR; i++){
-    if(naEqualBufferToData(naGetStringBufferConst(str), na_monthenglishabbreviationnames[i], NA_TRUE)){return i;}
+    if(naEqualStringToUTF8CStringLiteral(str, na_monthenglishabbreviationnames[i], NA_TRUE)){return i;}
   }
   #ifndef NDEBUG
     naError("naGetMonthNumberWithEnglishAbbreviation", "Month abbreviation unknown. Returning -1.");
@@ -305,14 +305,14 @@ NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
   if(isdigit((const char)str[0])){
     int32 returnint;
     NAString numberstring = naMakeStringWithUTF8CStringLiteral(str);
-    returnint = naParseBufferInt32(naGetStringBufferMutable(&numberstring), NA_FALSE) - 1;
+    returnint = naParseStringInt32(&numberstring) - 1;
     naClearString(&numberstring);
     return returnint;
   }
-  #ifndef NDEBUG
-    naError("naGetMonthNumberWithEnglishAbbreviation", "Month abbreviation unknown. Returning -1.");
-  #endif
-  return -1;
+//  #ifndef NDEBUG
+//    naError("naGetMonthNumberWithEnglishAbbreviation", "Month abbreviation unknown. Returning 0.");
+//  #endif
+  return 0;
 }
 
 
@@ -438,56 +438,59 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
   NADateTimeStruct dts;
   NAString token;
   int16 int16value;
+  NABufferIterator iter;
   
   dts.nsec = 0;
   
   str = naMakeStringExtraction(string, 0, -1);
+  iter = naMakeBufferIteratorAccessor(naGetStringBufferConst(&str));
+  
   token = naMakeString();
 
   switch(format){
   case NA_DATETIME_FORMAT_APACHE:
-    dts.day = naParseBufferInt32(naGetStringBufferMutable(&str), NA_TRUE);
-    token = naParseBufferTokenWithDelimiter(naGetStringBufferMutable(&str), '/');
+    dts.day = naParseBufferInt32(&iter, NA_TRUE);
+    token = naParseBufferTokenWithDelimiter(&iter, '/');
     dts.mon = naGetMonthNumberWithEnglishAbbreviation(&token);
     naClearString(&token);
-    dts.year = naParseBufferInt64(naGetStringBufferMutable(&str), NA_TRUE);
+    dts.year = naParseBufferInt64(&iter, NA_TRUE);
     
-    dts.hour = naParseBufferInt32(naGetStringBufferMutable(&str), NA_TRUE);
-    dts.min = naParseBufferInt32(naGetStringBufferMutable(&str), NA_TRUE);
-    dts.sec = naParseBufferInt32(naGetStringBufferMutable(&str), NA_TRUE);
+    dts.hour = naParseBufferInt32(&iter, NA_TRUE);
+    dts.min = naParseBufferInt32(&iter, NA_TRUE);
+    dts.sec = naParseBufferInt32(&iter, NA_TRUE);
 
     // The remaining string contains the time shift
-    int16value = naParseBufferInt16(naGetStringBufferMutable(&str), NA_FALSE);
+    int16value = naParseBufferInt16(&iter, NA_FALSE);
     dts.shift = (int16value / 100) * NA_MINUTES_PER_HOUR;
     dts.shift += int16value % 100;
     dts.flags = 0;
     break;
   case NA_DATETIME_FORMAT_UTC_EXTENDED_WITH_SHIFT:
-    dts.year = naParseBufferInt64(naGetStringBufferMutable(&str), NA_TRUE);
-    dts.mon = naParseBufferInt32(naGetStringBufferMutable(&str), NA_TRUE) - 1;
-    dts.day = naParseBufferInt32(naGetStringBufferMutable(&str), NA_TRUE) - 1;
+    dts.year = naParseBufferInt64(&iter, NA_TRUE);
+    dts.mon = naParseBufferInt32(&iter, NA_TRUE) - 1;
+    dts.day = naParseBufferInt32(&iter, NA_TRUE) - 1;
 
-    dts.hour = naParseBufferInt32(naGetStringBufferMutable(&str), NA_TRUE);
-    dts.min = naParseBufferInt32(naGetStringBufferMutable(&str), NA_TRUE);
-    dts.sec = naParseBufferInt32(naGetStringBufferMutable(&str), NA_FALSE);
+    dts.hour = naParseBufferInt32(&iter, NA_TRUE);
+    dts.min = naParseBufferInt32(&iter, NA_TRUE);
+    dts.sec = naParseBufferInt32(&iter, NA_FALSE);
 
-    dts.shift = naParseBufferInt16(naGetStringBufferMutable(&str), NA_TRUE) * NA_MINUTES_PER_HOUR;
+    dts.shift = naParseBufferInt16(&iter, NA_TRUE) * NA_MINUTES_PER_HOUR;
     if(dts.shift < 0){
-      dts.shift -= naParseBufferInt16(naGetStringBufferMutable(&str), NA_FALSE);
+      dts.shift -= naParseBufferInt16(&iter, NA_FALSE);
     }else{
-      dts.shift += naParseBufferInt16(naGetStringBufferMutable(&str), NA_FALSE);
+      dts.shift += naParseBufferInt16(&iter, NA_FALSE);
     }
     dts.flags = 0;
     break;
   case NA_DATETIME_FORMAT_CONDENSEDDATE:
     token = naMakeStringExtraction(&str, 0, -5);
-    dts.year = naParseBufferInt64(naGetStringBufferMutable(&token), NA_FALSE);
+    dts.year = naParseStringInt64(&token);
     naClearString(&token);
     token = naMakeStringExtraction(&str, -4, -3);
-    dts.mon = naParseBufferInt32(naGetStringBufferMutable(&token), NA_FALSE);
+    dts.mon = naParseStringInt32(&token);
     naClearString(&token);
     token = naMakeStringExtraction(&str, -2, -1);
-    dts.day = naParseBufferInt32(naGetStringBufferMutable(&token), NA_FALSE);
+    dts.day = naParseStringInt32(&token);
     naClearString(&token);
     dts.hour = 0;
     dts.min = 0;
@@ -496,19 +499,20 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
     dts.flags = 0;
     break;
   case NA_DATETIME_FORMAT_NATURAL:
-    dts.year = naParseBufferInt64(naGetStringBufferMutable(&str), NA_TRUE);
-    dts.mon = naParseBufferInt32(naGetStringBufferMutable(&str), NA_TRUE);
-    dts.day = naParseBufferInt32(naGetStringBufferMutable(&str), NA_TRUE);
+    dts.year = naParseBufferInt64(&iter, NA_TRUE);
+    dts.mon = naParseBufferInt32(&iter, NA_TRUE);
+    dts.day = naParseBufferInt32(&iter, NA_TRUE);
 
-    dts.hour = naParseBufferInt32(naGetStringBufferMutable(&str), NA_TRUE);
-    dts.min = naParseBufferInt32(naGetStringBufferMutable(&str), NA_TRUE);
-    dts.sec = naParseBufferInt32(naGetStringBufferMutable(&str), NA_FALSE);
+    dts.hour = naParseBufferInt32(&iter, NA_TRUE);
+    dts.min = naParseBufferInt32(&iter, NA_TRUE);
+    dts.sec = naParseBufferInt32(&iter, NA_FALSE);
 
     dts.shift = 0;
     dts.flags = 0;
     break;
   }
   
+  naClearBufferIterator(&iter);
   return naMakeDateTimeWithDateTimeStruct(&dts);
 }
 
@@ -517,34 +521,36 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
 
 NA_DEF NADateTime naMakeDateTimeFromBuffer(NABuffer* buffer, NABinDateTimeFormat format){
   NADateTimeStruct dts;
+  NABufferIterator iter = naMakeBufferIteratorAccessor(buffer);
 
   dts.nsec = 0;
 
   switch(format){
   case NA_DATETIME_FORMAT_ICC_PROFILE:
     // ICC section 5.1.1, page 4, dateTimeNumber
-    dts.year  = naReadBufferu16(buffer);
-    dts.mon   = naReadBufferu16(buffer);
-    dts.day   = naReadBufferu16(buffer);
-    dts.hour  = naReadBufferu16(buffer);
-    dts.min   = naReadBufferu16(buffer);
-    dts.sec   = naReadBufferu16(buffer);
+    dts.year  = naReadBufferu16(&iter);
+    dts.mon   = naReadBufferu16(&iter);
+    dts.day   = naReadBufferu16(&iter);
+    dts.hour  = naReadBufferu16(&iter);
+    dts.min   = naReadBufferu16(&iter);
+    dts.sec   = naReadBufferu16(&iter);
     dts.shift = 0;
     dts.flags = 0;
     break;
 
   case NA_DATETIME_FORMAT_PNG:
-    dts.year  = naReadBufferu16(buffer);
-    dts.mon   = naReadBufferu8(buffer);
-    dts.day   = naReadBufferu8(buffer);
-    dts.hour  = naReadBufferu8(buffer);
-    dts.min   = naReadBufferu8(buffer);
-    dts.sec   = naReadBufferu8(buffer);
+    dts.year  = naReadBufferu16(&iter);
+    dts.mon   = naReadBufferu8(&iter);
+    dts.day   = naReadBufferu8(&iter);
+    dts.hour  = naReadBufferu8(&iter);
+    dts.min   = naReadBufferu8(&iter);
+    dts.sec   = naReadBufferu8(&iter);
     dts.shift = 0;
     dts.flags = 0;
     break;
   }
   
+  naClearBufferIterator(&iter);
   return naMakeDateTimeWithDateTimeStruct(&dts);
 }
 

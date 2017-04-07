@@ -226,6 +226,9 @@ struct NATypeInfo{
   void*             curpool;  // The actual type of this entry is hidden.
   NAUInt            typesize;
   NAMutator         destructor;
+  #ifndef NDEBUG
+    const char*     typename;
+  #endif
 };
 
 

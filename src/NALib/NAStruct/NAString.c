@@ -154,10 +154,11 @@ NA_DEF NAString naMakeStringExtraction(const NAString* srcstring, NAInt charoffs
     NAInt positivecount;
     naMakeIntegerRangePositiveInLength(&positiveoffset, &positivecount, charoffset, length, naGetStringBytesize(srcstring));
 
-    string.buffer = naCreateBufferExtraction(srcstring->buffer, naMakeRangei(positiveoffset, positivecount));
+    string.buffer = naCreateBufferExtraction(srcstring->buffer, naMakeRangei(positiveoffset, positivecount), NA_FALSE, NA_FALSE);
     string.cachedstr = NA_NULL;
   }
   
+  naCacheBufferRange(string.buffer, naGetBufferRange(string.buffer), NA_FALSE);
   return string;
 }
 
@@ -165,7 +166,7 @@ NA_DEF NAString naMakeStringExtraction(const NAString* srcstring, NAInt charoffs
 
 NA_DEF NAString naMakeStringWithBufferExtraction(NABuffer* buffer, NARangei range){
   NAString string;
-  string.buffer = naCreateBufferExtraction(buffer, range);
+  string.buffer = naCreateBufferExtraction(buffer, range, NA_FALSE, NA_FALSE);
   string.cachedstr = NA_NULL;
   return string;
 }
@@ -201,6 +202,10 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
     NAInt strlen;
     naFree(mutablestring->cachedstr);
     strlen = naGetBufferRange(string->buffer).length;
+    #ifndef NDEBUG
+      if(!strlen)
+        naError("naGetStringUTF8Pointer", "String is empty");
+    #endif
     mutablestring->cachedstr = naMalloc(strlen + 1);
     naCacheBufferRange(string->buffer, naGetBufferRange(string->buffer), NA_FALSE);
     naWriteBufferToData(string->buffer, mutablestring->cachedstr);
@@ -597,6 +602,78 @@ NA_DEF NAString naMakeStringWithSuffixOfFilename(const NAString* filename){
 
 
 
+
+NA_DEF NABool naEqualStringToString(const NAString* string1, const NAString* string2, NABool casesensitive){
+  return naEqualBufferToBuffer(string1->buffer, string2->buffer, casesensitive);
+}
+
+
+
+NA_DEF NABool naEqualStringToUTF8CStringLiteral(const NAString* string1, const NAUTF8Char* string2, NABool casesensitive){
+  return naEqualBufferToData(string1->buffer, string2, naStrlen(string2), casesensitive);
+}
+
+
+
+NA_DEF int8 naParseStringInt8(const NAString* string){
+  int8 retvalue;
+  NABufferIterator iter = naMakeBufferIteratorAccessor(string->buffer);
+  retvalue = naParseBufferInt8(&iter, NA_FALSE);
+  naClearBufferIterator(&iter);
+  return retvalue;
+}
+NA_DEF int16 naParseStringInt16(const NAString* string){
+  int16 retvalue;
+  NABufferIterator iter = naMakeBufferIteratorAccessor(string->buffer);
+  retvalue = naParseBufferInt16(&iter, NA_FALSE);
+  naClearBufferIterator(&iter);
+  return retvalue;
+}
+NA_DEF int32 naParseStringInt32(const NAString* string){
+  int32 retvalue;
+  NABufferIterator iter = naMakeBufferIteratorAccessor(string->buffer);
+  retvalue = naParseBufferInt32(&iter, NA_FALSE);
+  naClearBufferIterator(&iter);
+  return retvalue;
+}
+NA_DEF int64 naParseStringInt64(const NAString* string){
+  int64 retvalue;
+  NABufferIterator iter = naMakeBufferIteratorAccessor(string->buffer);
+  retvalue = naParseBufferInt64(&iter, NA_FALSE);
+  naClearBufferIterator(&iter);
+  return retvalue;
+}
+
+
+
+NA_DEF uint8 naParseStringUInt8(const NAString* string){
+  uint8 retvalue;
+  NABufferIterator iter = naMakeBufferIteratorAccessor(string->buffer);
+  retvalue = naParseBufferUInt8(&iter, NA_FALSE);
+  naClearBufferIterator(&iter);
+  return retvalue;
+}
+NA_DEF uint16 naParseStringUInt16(const NAString* string){
+  uint16 retvalue;
+  NABufferIterator iter = naMakeBufferIteratorAccessor(string->buffer);
+  retvalue = naParseBufferUInt16(&iter, NA_FALSE);
+  naClearBufferIterator(&iter);
+  return retvalue;
+}
+NA_DEF uint32 naParseStringUInt32(const NAString* string){
+  uint32 retvalue;
+  NABufferIterator iter = naMakeBufferIteratorAccessor(string->buffer);
+  retvalue = naParseBufferUInt32(&iter, NA_FALSE);
+  naClearBufferIterator(&iter);
+  return retvalue;
+}
+NA_DEF uint64 naParseStringUInt64(const NAString* string){
+  uint64 retvalue;
+  NABufferIterator iter = naMakeBufferIteratorAccessor(string->buffer);
+  retvalue = naParseBufferUInt64(&iter, NA_FALSE);
+  naClearBufferIterator(&iter);
+  return retvalue;
+}
 
 
 

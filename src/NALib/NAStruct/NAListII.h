@@ -895,7 +895,7 @@ NA_IDEF void* naRemoveListNextMutable(NAListIterator* iterator){
 
 
 
-NA_IDEF NABool naIsListAtFirst(NAListIterator* iterator){
+NA_IDEF NABool naIsListAtFirst(const NAListIterator* iterator){
   const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
   #ifndef NDEBUG
     if(naIsListEmpty(list))
@@ -906,7 +906,7 @@ NA_IDEF NABool naIsListAtFirst(NAListIterator* iterator){
 
 
 
-NA_IDEF NABool naIsListAtLast(NAListIterator* iterator){
+NA_IDEF NABool naIsListAtLast(const NAListIterator* iterator){
   const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
   #ifndef NDEBUG
     if(naIsListEmpty(list))
@@ -917,7 +917,7 @@ NA_IDEF NABool naIsListAtLast(NAListIterator* iterator){
 
 
 
-NA_IDEF NABool naIsListAtPosition(NAListIterator* iterator, NAListPos listpos){
+NA_IDEF NABool naIsListAtPosition(const NAListIterator* iterator, NAListPos listpos){
   NAListElement* element = (NAListElement*)listpos;
   #ifndef NDEBUG
     const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
@@ -931,7 +931,7 @@ NA_IDEF NABool naIsListAtPosition(NAListIterator* iterator, NAListPos listpos){
 
 
 
-NA_IDEF NABool naIsListAtInitial(NAListIterator* iterator){
+NA_IDEF NABool naIsListAtInitial(const NAListIterator* iterator){
   const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
   return (&(list->sentinel) == iterator->cur);
 }
@@ -1035,15 +1035,15 @@ NA_IDEF void naMoveListCurToLast(NAListIterator* iterator, NABool advance, NALis
 
 
 
-NA_IDEF void naMoveListTrailingToLast(NAListIterator* iterator, NAList* dst){
+NA_IDEF void naMoveListRemainingToLast(NAListIterator* iterator, NAList* dst){
   NAList* src;
   NAListElement* element;
   NAInt movecount = 1;
   #ifndef NDEBUG
     if(!iterator->mutator)
-      naError("naMoveListTrailingToLast", "Trying to mutate elements with an accessor iterator");
+      naError("naMoveListRemainingToLast", "Trying to mutate elements with an accessor iterator");
     if(naIsPtrConst(&(iterator->listptr)))
-      naError("naMoveListCurToLast", "Trying to modify list while iterator is no modify iterator");
+      naError("naMoveListRemainingToLast", "Trying to modify list while iterator is no modify iterator");
   #endif
   src = (NAList*)naGetPtrMutable(&(iterator->listptr));
 
@@ -1077,7 +1077,7 @@ NA_IDEF void naMoveListTrailingToLast(NAListIterator* iterator, NAList* dst){
   
   #ifndef NDEBUG
     if(src->count < movecount)
-      naError("naMoveListTrailingToLast", "Internal error: List count negative.");
+      naError("naMoveListRemainingToLast", "Internal error: List count negative.");
   #endif
   
 //  printf("%d, %d\n", (int)src->count, (int)movecount);

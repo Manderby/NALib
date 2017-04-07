@@ -11,8 +11,8 @@
 
 // A circular buffer is a buffer with a maximal number of elements but which
 // can be read like a list: First in First out (FIFO). You push elements which
-// get appended at the tail of the list and you pull elements which are at the
-// head of the list.
+// get appended at the end of the list and you pull elements which are at the
+// beginning of the list.
 //
 // It is called a circular buffer as the buffer is allocated as an array of
 // elements but which are wrapped around at the end such that the one element
@@ -35,7 +35,7 @@ NACircularBuffer* naInitCircularBuffer(NACircularBuffer* buffer, NAInt count);
 // Clears the circular buffer. Does not deletes the content-pointers!
 void naClearCircularBuffer(NACircularBuffer* buffer);
 
-// Returns the head of the filled buffer and moves the buffer forward.
+// Returns the beginning of the filled buffer and moves the buffer forward.
 void* naPullCircularBuffer(NACircularBuffer* buffer);
 
 // Puts one element at the tail of the buffer. Does not copy any content, only

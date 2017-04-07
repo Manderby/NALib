@@ -2,50 +2,26 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
-#ifndef NA_DEFLATE_INCLUDED
-#define NA_DEFLATE_INCLUDED
-#ifdef __cplusplus 
-  extern "C"{
-#endif
+
+// This file contains inline implementations of the file NABuffer.h
+// Do not include this file directly! It will automatically be included when
+// including "NABuffer.h"
 
 
-// ZLIB Format specification:
-// http://www.ietf.org/rfc/rfc1950.txt
-// Deflate algorithm specification:
-// http://www.ietf.org/rfc/rfc1951.txt
-
-#include "NASystem.h"
-#include "NABuffer.h"
-
-
-// NA_DEFLATE_COMPRESSION_FASTEST:  No compression at all. Storing bytes as is.
-// The other compression levels have not been implemented yet.
-typedef enum{
-  NA_DEFLATE_COMPRESSION_FASTEST  = 0,
-  NA_DEFLATE_COMPRESSION_FAST     = 1,
-  NA_DEFLATE_COMPRESSION_DEFAULT  = 2,
-  NA_DEFLATE_COMPRESSION_MAX      = 3,
-} NADeflateCompressionLevel;
-
-
-// Decompresses a bit stream which is encoded in the ZLIB format and stores it
-// at the current writing position in the given buffer.
-NA_API void naFillBufferWithZLIBDecompression(NABuffer* output,
-                                              NABuffer* input);
-
-// Compresses a bit stream with ZLIB and stores it at the current writing
-// position in the given buffer. The compression level denotes, how strong
-// the compression shall be.
-NA_API void naFillBufferWithZLIBCompression(  NABuffer* output,
-                                              NABuffer* input,
-                                              NADeflateCompressionLevel level);
+#include "../NAList.h"
 
 
 
-#ifdef __cplusplus
-  } // extern "C"
-#endif
-#endif // NA_DEFLATE_INCLUDED
+struct NABufferIterator{
+  NAPtr bufferptr;
+  NAInt curoffset;
+  uint8 curbit;             // The current bit number
+  NAListIterator listiter;
+  #ifndef NDEBUG
+    NABool mutator;
+  #endif
+};
+
 
 
 

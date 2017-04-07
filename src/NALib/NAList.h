@@ -130,7 +130,7 @@ NA_IAPI       void* naGetListPositionMutable(const NAList* list, NAListPos listp
 
 // Traverses the whole list calling the accessor or mutator on each element.
 // A pointer to each element will be given to the mutator. The list is
-// traversed from leading to trailing (in layman's terms "forward").
+// traversed forward from start to end.
 NA_IAPI void naForeachListConst(const NAList* list, NAAccessor accessor);
 NA_IAPI void naForeachListMutable(const NAList* list, NAMutator mutator);
 
@@ -298,10 +298,11 @@ NA_IAPI void* naRemoveListNextMutable   (NAListIterator* iterator);
 //
 // The Prev and Next getter will return a Null-Pointer if the list is at the
 // first or last element respectively.
-NA_IAPI NABool    naIsListAtFirst           (NAListIterator* iterator);
-NA_IAPI NABool    naIsListAtLast            (NAListIterator* iterator);
-NA_IAPI NABool    naIsListAtPosition        (NAListIterator* iterator, NAListPos listpos);
-NA_IAPI NABool    naIsListAtInitial         (NAListIterator* iterator);
+NA_IAPI NABool    naIsListAtFirst           (const NAListIterator* iterator);
+NA_IAPI NABool    naIsListAtLast            (const NAListIterator* iterator);
+NA_IAPI NABool    naIsListAtPosition        (const NAListIterator* iterator,
+                                                         NAListPos listpos);
+NA_IAPI NABool    naIsListAtInitial         (const NAListIterator* iterator);
 
 NA_IAPI NAListPos naGetListPrevPosition     (const NAListIterator* iterator);
 NA_IAPI NAListPos naGetListCurrentPosition  (const NAListIterator* iterator);
@@ -317,7 +318,7 @@ NA_IAPI NAListPos naGetListNextPosition     (const NAListIterator* iterator);
 // removing it and re-adding it. Additionally, there is no memory allocation
 // or deallocation used in the process.
 //
-// The Trailing function will move all elements starting with the current
+// The Remaining function will move all elements starting with the current
 // element till the last to the new list. If the iterator is at initial
 // position, the whole list will be moved. The iterator of the src list will
 // then be unset.
@@ -330,7 +331,7 @@ NA_IAPI NAListPos naGetListNextPosition     (const NAListIterator* iterator);
 // The dstlist can be the same as srclist.
 NA_IAPI void naMoveListCurToFirst (NAListIterator* src, NABool advance, NAList* dst);
 NA_IAPI void naMoveListCurToLast  (NAListIterator* src, NABool advance, NAList* dst);
-NA_IAPI void naMoveListTrailingToLast(NAListIterator* iterator, NAList* dst);
+NA_IAPI void naMoveListRemainingToLast(NAListIterator* src, NAList* dst);
 
 // The exchange function splits the list into two parts right BEFORE the
 // current element and re-attaches the whole list before that at the end of

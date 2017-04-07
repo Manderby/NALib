@@ -55,6 +55,8 @@ NA_IDEF NAInt naVarargStringLength(const NAUTF8Char* string, va_list args){
 
 
 
+
+
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH
 //
 // Permission is hereby granted, free of charge, to any person obtaining

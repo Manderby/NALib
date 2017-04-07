@@ -5,7 +5,6 @@
 
 
 #include "../NABuffer.h"
-#include "../NAList.h"
 
 
 
@@ -395,9 +394,13 @@ NA_HIDEF NABufferSource* naCreateBufferSourceBuffer(NABuffer* buffer){
   NABufferSourceDescriptor desc;
   NABufferSource* source;
   
+  NABufferIterator* iter = naAlloc(NABufferIterator);
+  *iter = naMakeBufferIteratorModifier(buffer);
+  NAPointer* pointer = naNewPointerMutable(iter, NA_MEMORY_CLEANUP_FREE, (NAMutator)naClearBufferIterator);
+  
   naNulln(&desc, sizeof(desc));
-  desc.data = buffer;
-  desc.destructor = (NAMutator)naReleaseBuffer;
+  desc.data = pointer;
+  desc.destructor = (NAMutator)naReleasePointer;
   source = naCreateBufferSource(desc);
   source->desc.flags |= NA_BUFFER_SOURCE_BUFFER;
   return source;
@@ -440,9 +443,9 @@ NA_HIDEF NARangei naGetBufferSourceLimit(NABufferSource* source){
 
 // Returns the source data if there is a source and the it is defined to be
 // a buffer source. returns NA_NULL otherwise.
-NA_HIDEF NABuffer* naGetBufferSourceBuffer(NABufferSource* source){
+NA_HIDEF NABufferIterator* naGetBufferSourceBuffer(NABufferSource* source){
   if(source && (source->desc.flags & NA_BUFFER_SOURCE_BUFFER)){
-    return source->desc.data;
+    return naGetPointerMutable(source->desc.data);
   }else{
     return NA_NULL;
   }
@@ -509,25 +512,41 @@ struct NABuffer{
   NAEndiannessConverter converter;  // The endianness converter.
 
   NAList parts;             // List of all parts in this buffer
-  NAListIterator iter;      // Iterator pointing at the current part.
-  NAInt curoffset;          // The current absolute offset
-  uint8 curbit;             // The current bit number
+//  NAListIterator iter;      // Iterator pointing at the current part.
+//  NAInt curoffset;          // The current absolute offset
+//  uint8 curbit;             // The current bit number
   
   NARangei range;
+  
+  #ifndef NDEBUG
+    NAInt itercount;
+  #endif
 };
 
 
 
-NA_HAPI void naLocateBufferPartOffset(NAListIterator* iter, NAInt offset);
+NA_HDEF const NABuffer* naGetBufferIteratorBufferConst(const NABufferIterator* iter);
+NA_HDEF       NABuffer* naGetBufferIteratorBufferMutable(NABufferIterator* iter);
+
+NA_HAPI NABool naIsBufferAtInitial(NABufferIterator* iter);
+NA_HIAPI void naLocateBufferPartOffset(NAListIterator* iter, NAInt offset);
 NA_HAPI void naEnsureBufferRange(NABuffer* buffer, NARangei range);
-NA_HAPI void naPrepareBuffer(NABuffer* buffer, NARangei range, NABool forcevolatile, NABool locatestart);
+NA_HAPI void naPrepareBuffer(NABufferIterator* iter, NARangei range, NABool forcevolatile, NABool locatestart);
 NA_HAPI void naUnlinkBufferRange(NABuffer* buffer, NARangei range);
+
+
+
+
+NA_HAPI NABool naIsBufferAtInitial(NABufferIterator* iter){
+  return naIsListAtInitial(&(iter->listiter));
+}
+
 
 
 
 // Moves the given iterator to that position which contains offset. Will
 // point to the initial position if offset is not found.
-NA_HDEF void naLocateBufferPartOffset(NAListIterator* iter, NAInt offset){
+NA_HIDEF void naLocateBufferPartOffset(NAListIterator* iter, NAInt offset){
   const NABufferPart* part;
   const NABufferPart* newpart;
 
@@ -568,6 +587,8 @@ NA_HDEF void naLocateBufferPartOffset(NAListIterator* iter, NAInt offset){
 
 
 
+
+
 // This function ensures that the full given range is available as parts in
 // this buffer. If not available, the buffer is extended with sparse parts
 // at the beginning and the end.
@@ -592,15 +613,8 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NARangei range){
     part = naNewBufferPartSparse(range);
     naAddListLastMutable(&(buffer->parts), part);
     buffer->range = range;
-    // Make sure the iterator points to the part which containts the first
-    // offset of range.
-    naLocateListLast(&(buffer->iter));
     
   }else{
-    // When the buffer is not empty, we need to make sure we add all desired
-    // ranges but still can find the part containing range origin, even if
-    // no sparse part needed to be added.
-    NABool originpartlocated = NA_FALSE;
     
     // First, we test if we need to add a sparse part at the beginning.
     if(range.origin < buffer->range.origin){
@@ -615,10 +629,6 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NARangei range){
         naAddListFirstMutable(&(buffer->parts), part);
       }
       buffer->range = naMakeRangeiWithStartAndEnd(range.origin, naGetRangeiEnd(buffer->range));
-      // Make sure the iterator points to the part which containts the first
-      // offset of range.
-      naLocateListFirst(&(buffer->iter));
-      originpartlocated = NA_TRUE;
     }
     
     // Then, we test if we need to add a sparse part at the end.
@@ -636,10 +646,6 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NARangei range){
       buffer->range = naMakeRangeiWithStartAndEnd(buffer->range.origin, naGetRangeiEnd(range));
     }
     
-    if(!originpartlocated){      
-      // We locate the buffer iterator for the beginning position.
-      naLocateBufferPartOffset(&(buffer->iter), range.origin);
-    }
   }
 
 }
@@ -655,25 +661,33 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NARangei range){
 // part containing the start offset of range. Otherwise, it will point at the
 // part containing the end of the range, possibly resulting in the initial
 // position of the list.
-NA_HDEF void naPrepareBuffer(NABuffer* buffer, NARangei range, NABool forcevolatile, NABool locatestart){
+NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NARangei range, NABool forcevolatile, NABool locatestart){
   NABufferPart* part;
-  NABuffer* srcbuffer;
-  NAInt originalrangeorigin = range.origin;
-  NABool volatil = forcevolatile | naHasBufferVolatileSource(buffer);
+  NABuffer* buffer;
+  NABufferIterator* itersrc;
+//  NABuffer* srcbuffer;
+  NAInt originalrangeorigin;
+  NABool volatil;
   NARangei subrange;
+
+  originalrangeorigin = range.origin;
+  buffer = naGetBufferIteratorBufferMutable(iter);
+  volatil = forcevolatile | naHasBufferVolatileSource(buffer);
 
   // We try to get a source buffer. The following function returns NA_NULL if
   // this buffer has not a buffer as a source.
-  srcbuffer = naGetBufferSourceBuffer(buffer->source);
+  itersrc = naGetBufferSourceBuffer(buffer->source);
+//  srcbuffer = naGetBufferSourceBuffer(buffer->source);
   
-  if(srcbuffer){
+  if(itersrc){
+//    NABufferIterator itersrc = naMakeBufferIteratorModifier(srcbuffer);
     // In case there is a parent buffer as a source, we prepare that source
     // buffer furst and then just take references out of it.
     NAInt srcrangeorigin;
 
     // First, we make sure that parent buffer is fully prepared.
     NARangei srcrange = naMakeRangei(range.origin - buffer->srcoffset, range.length);
-    naPrepareBuffer(srcbuffer, srcrange, volatil, NA_TRUE);
+    naPrepareBuffer(itersrc, srcrange, volatil, NA_TRUE);
     // After this function call, the iterator points to the part containing
     // the start of srcrange.
 
@@ -681,6 +695,8 @@ NA_HDEF void naPrepareBuffer(NABuffer* buffer, NARangei range, NABool forcevolat
     // buffer, spanning the desired range by creating sparse buffers wherever
     // necessary.
     naEnsureBufferRange(buffer, range);
+    naLocateBufferPartOffset(&(iter->listiter), range.origin);
+
     // After this function call, the iterator points to the part containing
     // the start of range.
 
@@ -697,12 +713,12 @@ NA_HDEF void naPrepareBuffer(NABuffer* buffer, NARangei range, NABool forcevolat
 
       #ifndef NDEBUG
         if(range.length < 0)
-          naError("naFillBufferIterator", "length is negative");
+          naError("naPrepareBuffer", "length is negative");
       #endif
 
       // We get the current parts of src and dst.
-      srcpart = naGetListCurrentMutable(&(srcbuffer->iter));
-      dstpart = naGetListCurrentMutable(&(buffer->iter));
+      srcpart = naGetListCurrentMutable(&(itersrc->listiter));
+      dstpart = naGetListCurrentMutable(&(iter->listiter));
       // We count, how many bytes are left on both parts.
       remainingsrcbytes = (naGetBufferPartEnd(srcpart) - srcrangeorigin);
       remainingdstbytes = (naGetBufferPartEnd(dstpart) - range.origin);
@@ -714,20 +730,20 @@ NA_HDEF void naPrepareBuffer(NABuffer* buffer, NARangei range, NABool forcevolat
       if(naIsBufferPartSparse(dstpart)){
         // If the dst buffer is sparse, we split the part fitting the desired
         // number of bytes.
-        naSplitBufferSparsePart(&(buffer->iter), naMakeRangei(range.origin, remainingbytes));
+        naSplitBufferSparsePart(&(iter->listiter), naMakeRangei(range.origin, remainingbytes));
         // We need to reload the current dstpart, as it might have changed by
         // the call to naSplitBufferSparsePart.
-        dstpart = naGetListCurrentMutable(&(buffer->iter));
+        dstpart = naGetListCurrentMutable(&(iter->listiter));
         
         // We replace the current sparse part with a reference to the
         // source part.
         naReferenceBufferPart(dstpart, srcpart, buffer->srcoffset);
         
         // Then we try to combine this newly available part with its neighbors.
-        naCombineBufferPartAdjacents(&(buffer->iter));
+        naCombineBufferPartAdjacents(&(iter->listiter));
 
         // Now, the current dst part is completely filled. Move to the next one.
-        naIterateList(&(buffer->iter), 1);
+        naIterateList(&(iter->listiter), 1);
         
       }else{
         // The current buffer part already contains memory.
@@ -740,37 +756,39 @@ NA_HDEF void naPrepareBuffer(NABuffer* buffer, NARangei range, NABool forcevolat
           subrange = naMakeRangeiWithStartAndEnd(range.origin, range.origin + remainingbytes);
           
           // First, we dismiss the remaining bytes from the dst buffer.
-          naDismissBufferRange(buffer, subrange);
+          naDismissBufferRange(naGetBufferIteratorBufferMutable(iter), subrange);
           // After this call, the iterator is at the new sparse part
-          dstpart = naGetListCurrentMutable(&(buffer->iter));
+          dstpart = naGetListCurrentMutable(&(iter->listiter));
           // This new sparse part might be bigger than anticipated. We split it
           // again into the size we need
-          naSplitBufferSparsePart(&(buffer->iter), subrange);
+          naSplitBufferSparsePart(&(iter->listiter), subrange);
 
           // We replace the current sparse part with a reference to the
           // source part.
           naReferenceBufferPart(dstpart, srcpart, buffer->srcoffset);
           
           // Then we try to combine this newly available part with its neighbors.
-          naCombineBufferPartAdjacents(&(buffer->iter));
+          naCombineBufferPartAdjacents(&(iter->listiter));
 
           // Now, the current dst part is completely filled. Move to the next one.
-          naIterateList(&(buffer->iter), 1);
+          naIterateList(&(iter->listiter), 1);
         }
         
         // We can skip ahead the dst buffer if the remaining bytes match.
-        if(remainingbytes == remainingdstbytes){naIterateList(&(buffer->iter), 1);}
+        if(remainingbytes == remainingdstbytes){naIterateList(&(iter->listiter), 1);}
       }
 
       // If the remainingbytes matches the src bytes, the source part can be
       // iterated forward.
-      if(remainingbytes == remainingsrcbytes){naIterateList(&(srcbuffer->iter), 1);}
+      if(remainingbytes == remainingsrcbytes){naIterateList(&(itersrc->listiter), 1);}
 
       // We adapt the range and source origin.
       range = naMakeRangeiE(range.origin + remainingbytes, range.length - remainingbytes);
       srcrangeorigin += remainingbytes;
 
     }
+
+//    naClearBufferIterator(&itersrc);
     
   }else{
   
@@ -790,6 +808,8 @@ NA_HDEF void naPrepareBuffer(NABuffer* buffer, NARangei range, NABool forcevolat
     // spanning the desired normed range by creating sparse buffers if
     // necessary.
     naEnsureBufferRange(buffer, range);
+    naLocateBufferPartOffset(&(iter->listiter), range.origin);
+
     // After this function call, the iterator points to the part containing
     // the origin of range.
 
@@ -799,7 +819,7 @@ NA_HDEF void naPrepareBuffer(NABuffer* buffer, NARangei range, NABool forcevolat
     // We perform the preparation as long as there are bytes left in range.
     while(range.length > 0){
       
-      part = naGetListCurrentMutable(&(buffer->iter));
+      part = naGetListCurrentMutable(&(iter->listiter));
 
       #ifndef NDEBUG
         // This should not happen, as range.length shall be smallerequal 0 when
@@ -831,11 +851,11 @@ NA_HDEF void naPrepareBuffer(NABuffer* buffer, NARangei range, NABool forcevolat
         #endif
 
         // Then we split the sparse buffer if necessary.
-        naSplitBufferSparsePart(&(buffer->iter), subrange);
+        naSplitBufferSparsePart(&(iter->listiter), subrange);
         
         // Now, iter points at a sparse part containing subrange
         // which can be filled.
-        part = naGetListCurrentMutable(&(buffer->iter));
+        part = naGetListCurrentMutable(&(iter->listiter));
         #ifndef NDEBUG
           if(!naEqualRangei(subrange, naGetBufferPartRange(part)))
             naError("naPrepareBuffer", "range lenghts do not match");
@@ -856,20 +876,21 @@ NA_HDEF void naPrepareBuffer(NABuffer* buffer, NARangei range, NABool forcevolat
       // the desired range, hence breaking the loop condition.
 
       range = naMakeRangeiWithStartAndEnd(naGetBufferPartEnd(part), naGetRangeiEnd(range));
-      naIterateList(&(buffer->iter), 1);
+      naIterateList(&(iter->listiter), 1);
     }
- 
   }
-  
+    
   if(locatestart){
     // Reaching here, iter points to the part one after the part containing the
     // maximum offset of range. We locate the buffer iterator at the first
     // desired offset. Note that we can not use a cached NAListPos as this might
     // have changed during this preparation.
-    naLocateBufferPartOffset(&(buffer->iter), originalrangeorigin);
+//    naClearListIterator(&(iter->listiter));
+//    iter->listiter = naMakeListIteratorModifier(&(buffer->parts));
+    naLocateBufferPartOffset(&(iter->listiter), originalrangeorigin);
 
     #ifndef NDEBUG
-      if(!naContainsBufferPartOffset(naGetListCurrentMutable(&(buffer->iter)), originalrangeorigin))
+      if(!naContainsBufferPartOffset(naGetListCurrentMutable(&(iter->listiter)), originalrangeorigin))
         naError("naPrepareBuffer", "start offset not in range of current part.");
     #endif
   }
@@ -966,10 +987,10 @@ NA_HDEF void naUnlinkBufferRange(NABuffer* buffer, NARangei range){
 NA_HDEF void naInitBufferStruct(NABuffer* buffer){
   buffer->flags = 0;
   naInitList(&(buffer->parts));
-  buffer->iter = naMakeListIteratorModifier(&(buffer->parts));
-  buffer->curoffset = 0;
-  buffer->curbit = 0;
   buffer->range = naMakeRangeiWithStartAndEnd(0, 0);
+  #ifndef NDEBUG
+    buffer->itercount = 0;
+  #endif
 }
 
 
@@ -997,12 +1018,15 @@ NA_HDEF NABuffer* naCreateBufferMemorySource(NABool secure){
 
 
 NA_DEF NABuffer* naCreateBuffer(NABool securememory){
+  NABuffer* srcbuffer;
   NABuffer* buffer = naAlloc(NABuffer);
   naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
   naInitBufferStruct(buffer);
   
   // The source is a memory buffer.
-  buffer->source = naCreateBufferSourceBuffer(naCreateBufferMemorySource(securememory));
+  srcbuffer = naCreateBufferMemorySource(securememory);
+  buffer->source = naCreateBufferSourceBuffer(srcbuffer);
+  naReleaseBuffer(srcbuffer); // The src buffer is now retained in the iterator.
   buffer->srcoffset = 0;
 
   buffer->endianness = NA_ENDIANNESS_UNKNOWN;
@@ -1013,24 +1037,33 @@ NA_DEF NABuffer* naCreateBuffer(NABool securememory){
 
 
 
-NA_DEF NABuffer* naCreateBufferExtraction(NABuffer* srcbuffer, NARangei range){
-  NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
-  naInitBufferStruct(buffer);
-  
-  buffer->source = naCreateBufferSourceBuffer(naRetainBuffer(srcbuffer));
-  buffer->srcoffset = -range.origin;
+NA_DEF NABuffer* naCreateBufferExtraction(NABuffer* srcbuffer, NARangei range, NABool copy, NABool securememory){
+  NABuffer* buffer;
+  if(copy){
+    buffer = naCreateBuffer(securememory);
+    if(range.length){
+      NABufferIterator iter = naMakeBufferIteratorModifier(buffer);
+      naWriteBufferBuffer(&iter, srcbuffer, range);
+      naClearBufferIterator(&iter);
+    }
+  }else{
+    buffer = naAlloc(NABuffer);
+    naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+    naInitBufferStruct(buffer);
+    
+    buffer->source = naCreateBufferSourceBuffer(srcbuffer);
+    buffer->srcoffset = -range.origin;
 
-  // We initialize with length 0 and ensure the buffer range to the full range
-  // after.
-  if(range.length){
-    naEnsureBufferRange(buffer, naMakeRangei(0, range.length));
+    // We initialize with length 0 and ensure the buffer range to the full range
+    // after.
+    if(range.length){
+      naEnsureBufferRange(buffer, naMakeRangei(0, range.length));
+    }
+    buffer->flags = srcbuffer->flags | NA_BUFFER_RANGE_FIXED;
+    
+    buffer->endianness = srcbuffer->endianness;
+    buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
   }
-  buffer->flags = srcbuffer->flags | NA_BUFFER_RANGE_FIXED;
-  
-  buffer->endianness = srcbuffer->endianness;
-  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
-
   return buffer;
 }
 
@@ -1094,7 +1127,7 @@ NA_DEF NABuffer* naCreateBufferConstData(const void* data, NAInt bytesize){
   // Add the const data to the list.
   part = naNewBufferPartConstData(data, bytesize);
   naAddListLastMutable(&(buffer->parts), part);
-  naIterateList(&(buffer->iter), 1);
+//  naIterateList(&(buffer->iter), 1);
   
   buffer->range = naMakeRangeiWithStartAndEnd(0, bytesize);
   buffer->flags |= NA_BUFFER_RANGE_FIXED;
@@ -1119,7 +1152,7 @@ NA_DEF NABuffer* naCreateBufferMutableData(void* data, NAInt bytesize, NAMemoryC
   // Add the const data to the list.
   part = naNewBufferPartMutableData(data, bytesize, cleanup);
   naAddListLastMutable(&(buffer->parts), part);
-  naIterateList(&(buffer->iter), 1);
+//  naIterateList(&(buffer->iter), 1);
   
   buffer->range = naMakeRangeiWithStartAndEnd(0, bytesize);
   buffer->flags |= NA_BUFFER_RANGE_FIXED;
@@ -1148,9 +1181,12 @@ NA_DEF NABuffer* naCreateBufferWithCustomSource(NABufferSourceDescriptor desc){
 
 
 NA_HDEF void naDestructBuffer(NABuffer* buffer){
+  #ifndef NDEBUG
+    if(buffer->itercount)
+      naError("naDestructBuffer", "There are still iterators running. Did you forgot naClearBufferIterator?");
+  #endif
   if(buffer->source){naReleaseBufferSource(buffer->source);}
   naForeachListMutable(&(buffer->parts), naDelete);
-  naClearListIterator(&(buffer->iter));
   naClearList(&(buffer->parts));
 }
 
@@ -1168,46 +1204,6 @@ NA_API void naReleaseBuffer(NABuffer* buffer){
 
 
 
-NA_DEF void naDeallocBuffer(NABuffer* buffer){
-  naClearListIterator(&(buffer->iter));
-  naClearList(&(buffer->parts));
-  naFree(buffer);
-}
-
-
-
-NA_DEF NAInt naTellBuffer(const NABuffer* buffer){
-  #ifndef NDEBUG
-    if(buffer->curbit != 0)
-      naError("naTellBuffer", "Buffer bitcount is not null.");
-  #endif
-  return buffer->curoffset;
-}
-
-
-
-NA_DEF void naSeekBufferAbsolute(NABuffer* buffer, NAInt offset){
-  buffer->curoffset = offset;
-  if(!naIsBufferEmpty(buffer)){
-    naLocateBufferPartOffset(&(buffer->iter), offset);
-  }
-}
-
-
-
-NA_DEF void naSeekBufferRelative(NABuffer* buffer, NAInt offset){
-  NAInt absoffset = buffer->curoffset + offset;
-  naSeekBufferAbsolute(buffer, absoffset);
-}
-
-
-
-NA_DEF void naSeekBufferSource(NABuffer* buffer, NAInt offset){
-  NAInt absoffset = buffer->srcoffset + offset;
-  naSeekBufferAbsolute(buffer, absoffset);
-}
-
-
 
 NA_DEF NARangei naGetBufferRange(const NABuffer* buffer){
   return buffer->range;
@@ -1217,16 +1213,6 @@ NA_DEF NARangei naGetBufferRange(const NABuffer* buffer){
 
 NA_DEF NABool naIsBufferEmpty(const NABuffer* buffer){
   return naIsRangeiEmpty(buffer->range);
-}
-
-
-
-NA_DEF NABool naIsBufferAtEnd(const NABuffer* buffer){
-  #ifndef NDEBUG
-    if(!naHasBufferFixedRange(buffer))
-      naError("naIsBufferAtEnd", "Buffer has no fixed max position. Use naFixBufferRange.");
-  #endif
-  return (buffer->curoffset > naGetRangeiMax(buffer->range));
 }
 
 
@@ -1243,9 +1229,13 @@ NA_DEF NABool naHasBufferFixedRange(const NABuffer* buffer){
 
 
 
+NA_API void naExtendBufferRange(NABuffer* buffer, NAInt bytesatstart, NAInt bytesatend){
+  naEnsureBufferRange(buffer, naMakeRangei(buffer->range.origin - bytesatstart, buffer->range.length + bytesatstart + bytesatend));
+}
+
 
 NA_DEF NABool naHasBufferVolatileSource(const NABuffer* buffer){
-  return (buffer->flags & NA_BUFFER_VOLATILE_SOURCE);
+  return ((buffer->flags & NA_BUFFER_VOLATILE_SOURCE) == NA_BUFFER_VOLATILE_SOURCE);
 }
 
 
@@ -1273,14 +1263,15 @@ NA_DEF NAInt naGetBufferEndianness(NABuffer* buffer){
 
 
 
-NA_DEF NAByte naGetBufferByte(const NABuffer* buffer, NAInt indx){
+NA_DEF NAByte naGetBufferByteAtIndex(const NABuffer* buffer, NAInt indx){
   NAListIterator iter;
   
   const NAByte* retbyte = NA_NULL;
   if(naIsBufferEmpty(buffer)){return '\0';}
   
   iter = naMakeListIteratorAccessor(&(buffer->parts));
-  naLocateListPosition(&iter, naGetListCurrentPosition(&(buffer->iter)));
+  naLocateListLast(&iter);
+//  naLocateListPosition(&iter, naGetListCurrentPosition(&(buffer->iter)));
   naLocateBufferPartOffset(&iter, indx);
 
   if(!naIsListAtInitial(&iter)){
@@ -1292,19 +1283,20 @@ NA_DEF NAByte naGetBufferByte(const NABuffer* buffer, NAInt indx){
 
 
 
-NA_DEF NAByte naGetBufferCurrentByte(const NABuffer* buffer){
-  return naGetBufferByte(buffer, buffer->curoffset);
-}
+//NA_DEF NAByte naGetBufferCurrentByte(const NABuffer* buffer){
+//  return naGetBufferByteAtIndex(buffer, buffer->curoffset);
+//}
 
 
-NA_DEF NAInt naSearchBufferByteOffset(const NABuffer* buffer, NAByte byte, NAInt startoffset, NABool leadtotrail){
+NA_DEF NAInt naSearchBufferByteOffset(const NABuffer* buffer, NAByte byte, NAInt startoffset, NABool forward){
   NAListIterator iter;
   
   NAInt retindex = NA_INVALID_MEMORY_INDEX;
   if(naIsBufferEmpty(buffer)){return NA_INVALID_MEMORY_INDEX;}
 
   iter = naMakeListIteratorAccessor(&(buffer->parts));
-  naLocateListPosition(&iter, naGetListCurrentPosition(&(buffer->iter)));
+  naLocateListLast(&iter);
+//  naLocateListPosition(&iter, naGetListCurrentPosition(&(buffer->iter)));
   naLocateBufferPartOffset(&iter, startoffset);
 
   while(!naIsListAtInitial(&iter)){
@@ -1317,7 +1309,7 @@ NA_DEF NAInt naSearchBufferByteOffset(const NABuffer* buffer, NAByte byte, NAInt
         naError("naSearchBufferByteOffset", "sparse part detected.");
     #endif
     curbyte = naGetBufferPartDataPointerConst(part, startoffset); 
-    if(leadtotrail){
+    if(forward){
       NAInt endoffset = naGetBufferPartEnd(part);
       while(startoffset < endoffset){
         if(*curbyte == byte){
@@ -1339,7 +1331,7 @@ NA_DEF NAInt naSearchBufferByteOffset(const NABuffer* buffer, NAByte byte, NAInt
       }
     }
     if(retindex != NA_INVALID_MEMORY_INDEX){break;}
-    if(leadtotrail){naIterateList(&iter, 1);}else{naIterateList(&iter, -1);}
+    if(forward){naIterateList(&iter, 1);}else{naIterateList(&iter, -1);}
   }
 
   naClearListIterator(&iter);
@@ -1416,15 +1408,19 @@ NA_DEF NABool naEqualBufferToBuffer(const NABuffer* buffer1, const NABuffer* buf
 
 
 
-NA_DEF NABool naEqualBufferToData(const NABuffer* buffer, const void* data, NABool casesensitive){
+NA_DEF NABool naEqualBufferToData(const NABuffer* buffer, const void* data, NAInt databytesize, NABool casesensitive){
   NABool resultequal = NA_TRUE;
   const NABufferPart* part;
   NAInt offset;
   NAInt remaininglength;
+  const NAByte* bytes;
+  NAListIterator iter;
 
-  const NAByte* bytes = (const NAByte*)data;
+  if(databytesize != buffer->range.length){return NA_FALSE;}
   
-  NAListIterator iter = naMakeListIteratorAccessor(&(buffer->parts));
+  bytes = (const NAByte*)data;
+  
+  iter = naMakeListIteratorAccessor(&(buffer->parts));
   naLocateListFirst(&iter);
   part = naGetListCurrentConst(&iter);
   
@@ -1449,6 +1445,7 @@ NA_DEF NABool naEqualBufferToData(const NABuffer* buffer, const void* data, NABo
     }
     offset += remainingbytes;
     bytes += remainingbytes;
+    remaininglength -= remainingbytes;
     naIterateList(&iter, 1);
     part = naGetListCurrentConst(&iter);;
   }
@@ -1461,7 +1458,11 @@ NA_DEF NABool naEqualBufferToData(const NABuffer* buffer, const void* data, NABo
 
 
 NA_DEF void naCacheBufferRange(NABuffer* buffer, NARangei range, NABool forcevolatile){
-  naPrepareBuffer(buffer, range, forcevolatile, NA_FALSE);
+  if(range.length){
+    NABufferIterator iter = naMakeBufferIteratorModifier(buffer);
+    naPrepareBuffer(&iter, range, forcevolatile, NA_FALSE);
+    naClearBufferIterator(&iter);
+  }
 }
 
 
@@ -1473,6 +1474,9 @@ NA_DEF void naDismissBufferRange(NABuffer* buffer, NARangei range){
 
 
 
+// /////////////////////////////////////
+// Whole Buffer Functions
+// /////////////////////////////////////
 
 NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum){
   NAInt bytesize;
@@ -1611,22 +1615,301 @@ NA_DEF void naWriteBufferToData(NABuffer* buffer, void* data){
 
 
 
+// /////////////////////////////////////
+// Buffer Iteration
+// /////////////////////////////////////
+
+
+
+NA_HDEF const NABuffer* naGetBufferIteratorBufferConst(const NABufferIterator* iter){
+  return naGetPtrConst(&(iter->bufferptr));
+}
+
+
+
+NA_HDEF NABuffer* naGetBufferIteratorBufferMutable(NABufferIterator* iter){
+  return naGetPtrMutable(&(iter->bufferptr));
+}
+
+
+
+
+NA_DEF NABufferIterator naMakeBufferIteratorAccessor(const NABuffer* buffer){
+  NABufferIterator iter;
+  #ifndef NDEBUG
+    NABuffer* mutablebuffer;
+    if(!buffer)
+      {naCrash("naMakeBufferIteratorAccessor", "buffer is Null pointer"); naNulln(&iter, sizeof(NABufferIterator)); return iter;}
+  #endif
+  iter.bufferptr = naMakePtrWithDataMutable(naRetainBuffer((NABuffer*)buffer), NA_MEMORY_CLEANUP_NONE);  //todo const
+  iter.curoffset = 0;
+  iter.curbit = 0;
+  iter.listiter = naMakeListIteratorModifier((NAList*)&(buffer->parts));
+  #ifndef NDEBUG
+    mutablebuffer = (NABuffer*)buffer;
+    iter.mutator = NA_FALSE;
+    mutablebuffer->itercount++;
+  #endif
+  return iter;
+}
+
+
+
+NA_DEF NABufferIterator naMakeBufferIteratorMutator(const NABuffer* buffer){
+  NABufferIterator iter;
+  #ifndef NDEBUG
+    NABuffer* mutablebuffer;
+    if(!buffer)
+      {naCrash("naMakeBufferIteratorAccessor", "buffer is Null pointer"); naNulln(&iter, sizeof(NABufferIterator)); return iter;}
+  #endif
+  iter.bufferptr = naMakePtrWithDataMutable(naRetainBuffer((NABuffer*)buffer), NA_MEMORY_CLEANUP_NONE);  //todo const
+  iter.curoffset = 0;
+  iter.curbit = 0;
+  iter.listiter = naMakeListIteratorModifier((NAList*)&(buffer->parts)); // todo const
+  #ifndef NDEBUG
+    mutablebuffer = (NABuffer*)buffer;
+    iter.mutator = NA_TRUE;
+    mutablebuffer->itercount++;
+  #endif
+  return iter;
+}
+
+
+
+NA_DEF NABufferIterator naMakeBufferIteratorModifier(NABuffer* buffer){
+  NABufferIterator iter;
+  #ifndef NDEBUG
+    NABuffer* mutablebuffer;
+    if(!buffer)
+      {naCrash("naMakeBufferIteratorAccessor", "buffer is Null pointer"); naNulln(&iter, sizeof(NABufferIterator)); return iter;}
+  #endif
+  iter.bufferptr = naMakePtrWithDataMutable(naRetainBuffer(buffer), NA_MEMORY_CLEANUP_NONE);
+  iter.curoffset = 0;
+  iter.curbit = 0;
+  iter.listiter = naMakeListIteratorModifier(&(buffer->parts));
+  #ifndef NDEBUG
+    mutablebuffer = (NABuffer*)buffer;
+    iter.mutator = NA_TRUE;
+    mutablebuffer->itercount++;
+  #endif
+  return iter;
+}
+
+
+
+NA_DEF void naClearBufferIterator(NABufferIterator* iter){
+  NABuffer* mutablebuffer;
+  mutablebuffer = (NABuffer*)naGetPtrConst(&(iter->bufferptr));
+  naClearListIterator(&(iter->listiter));
+  #ifndef NDEBUG
+    if(mutablebuffer->itercount == 0)
+      naError("naClearBufferIterator", "Too many clears: Buffer has no iterators to clear.");
+    mutablebuffer->itercount--;
+  #endif
+  naReleaseBuffer(mutablebuffer);
+}
+
+
+
+NA_DEF NAInt naTellBuffer(const NABufferIterator* iter){
+  #ifndef NDEBUG
+    if(iter->curbit != 0)
+      naError("naTellBuffer", "Buffer bitcount is not null.");
+  #endif
+  return iter->curoffset;
+}
+
+
+
+NA_DEF void naSeekBufferAbsolute(NABufferIterator* iter, NAInt offset){
+  iter->curoffset = offset;
+  if(!naIsBufferEmpty(naGetBufferIteratorBufferConst(iter))){
+    naLocateBufferPartOffset(&(iter->listiter), offset);
+  }
+}
+
+
+
+NA_DEF void naSeekBufferRelative(NABufferIterator* iter, NAInt offset){
+  NAInt absoffset = iter->curoffset + offset;
+  naSeekBufferAbsolute(iter, absoffset);
+}
+
+
+
+NA_DEF void naSeekBufferSource(NABufferIterator* iter, NAInt offset){
+  NAInt absoffset = naGetBufferIteratorBufferConst(iter)->srcoffset + offset;
+  naSeekBufferAbsolute(iter, absoffset);
+}
+
+
+
+NA_DEF void naSeekBufferFromStart(NABufferIterator* iter, NAInt offset){
+  NAInt absoffset = naGetBufferIteratorBufferConst(iter)->range.origin + offset;
+  naSeekBufferAbsolute(iter, absoffset);
+}
+
+
+
+NA_DEF void naSeekBufferFromEnd(NABufferIterator* iter, NAInt offset){
+  NAInt absoffset = naGetRangeiEnd(naGetBufferIteratorBufferConst(iter)->range) + offset;
+  naSeekBufferAbsolute(iter, absoffset);
+}
+
+
+
+NA_DEF NABool naIterateBuffer(NABufferIterator* iter, NAInt step){
+  const NABufferPart* part;
+  if(naIsBufferEmpty(naGetPtrConst(&(iter->bufferptr)))){
+    return NA_FALSE;
+  }
+  part = naGetListCurrentConst(&(iter->listiter));
+  if(!part){
+    if(step > 0){
+      naLocateListFirst(&(iter->listiter));
+      part = naGetListCurrentConst(&(iter->listiter));
+      iter->curoffset = naGetBufferPartStart(part) - 1;
+    }else{
+      naLocateListLast(&(iter->listiter));
+      part = naGetListCurrentConst(&(iter->listiter));
+      iter->curoffset = naGetBufferPartEnd(part);
+    }
+  }
+  iter->curoffset += step;
+  if(step > 0){
+    while(part && !naContainsBufferPartOffset(part, iter->curoffset)){
+      naIterateList(&(iter->listiter), 1);
+      part = naGetListCurrentConst(&(iter->listiter));
+    }
+  }else{
+    while(part && !naContainsBufferPartOffset(part, iter->curoffset)){
+      naIterateList(&(iter->listiter), -1);
+      part = naGetListCurrentConst(&(iter->listiter));
+    }
+  }
+  return (part != NA_NULL);
+}
+
+
+
+NA_DEF NABool naIsBufferAtEnd(const NABufferIterator* iter){
+  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+  #ifndef NDEBUG
+    if(!naHasBufferFixedRange(buffer))
+      naError("naIsBufferAtEnd", "Buffer has no fixed max position. Use naFixBufferRange.");
+  #endif
+  return (iter->curoffset > naGetRangeiMax(buffer->range));
+}
+
+
+
+
+
+
 // ////////////////////////////////////
-// WRITING
+// Reading and Writing helper
 // ////////////////////////////////////
+
+
+NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance){
+  NAByte* dst = data;
+  NAByte* src;
+
+  #ifndef NDEBUG
+    if(!data)
+      naError("naRetrieveBufferBytes", "data is Null pointer.");
+    if(iter->curbit != 0)
+      naError("naRetrieveBufferBytes", "Bit offset not 0.");
+  #endif
+  
+  // We prepare the buffer for the whole range. There might be no parts or
+  // sparse parts.
+  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, bytesize), NA_FALSE, NA_TRUE);
+  // After this function, all parts should be present and filled with memory.
+  // The iterator should point to the buffer part containing offset.
+  
+  // do as long as there is a bytesize remaining. Remember that the data may
+  // be split into different buffer parts.
+  while(bytesize){
+    NABufferPart* part;
+    NAInt possiblelength;
+    
+    // The part pointed to by the iterator should be the one containing offset.
+    part = naGetListCurrentMutable(&(iter->listiter));
+    
+    // Reaching this point, we are sure, the current part contains offset and
+    // is filled with memory.
+    #ifndef NDEBUG
+      if(!part)
+        naError("naPutBufferBytes", "No more parts containing memory");
+      if(naIsBufferPartSparse(part))
+        naError("naPutBufferBytes", "Current part is sparse");
+      if(!naContainsBufferPartOffset(part, iter->curoffset))
+        naError("naPutBufferBytes", "Current part does not contain current offset");
+    #endif
+    
+    // We get the data pointer where we can read bytes.
+    src = naGetBufferPartDataPointerConst(part, iter->curoffset);
+    // We detect, how many bytes actually can be read from the current part.
+    possiblelength = naGetBufferPartEnd(part) - iter->curoffset;
+
+    #ifndef NDEBUG
+      if(possiblelength <= 0)
+        naError("naPutBufferBytes", "possible length invalid");
+      if(possiblelength > naGetBufferPartRange(part).length)
+        naError("naPutBufferBytes", "buffer overflow expected");
+    #endif
+    
+    if(possiblelength > bytesize){
+      // If we can get out more bytes than needed, we copy all remaining bytes
+      // and stay on this part.
+      naCopyn(dst, src, (NAUInt)bytesize);
+      
+      if(advance){
+        iter->curoffset += bytesize;
+      }
+      
+      // dst += bytesize; // this line is not needed as the loop will end.
+      bytesize = 0;
+    }else{
+      // We can only get a portion of the current part into the destination. We
+      // copy as many bytes as possible and advance to the next part.
+      naCopyn(dst, src, (NAUInt)possiblelength);
+
+      if(advance){
+        // Note that when possiblelength matches bytesize, the part will also
+        // advance which is correct behaviour, as after this function, the
+        // iterator shall always point at the part containing the current offset.
+        naIterateList(&(iter->listiter), 1);
+        iter->curoffset += possiblelength;
+      }
+
+      dst += possiblelength;
+      bytesize -= possiblelength;
+    }
+  }
+  
+  // Reaching here, the whole range has been written to the parts and both
+  // curoffset and iter point to the current position again.
+}
 
 
 
 // This is the internal function actually preparing and storing the bytes
 // delivered in the parameters.
-NA_HDEF void naStoreBufferBytes(NABuffer* buffer, const void* data, NAInt bytesize, NABool prepare){
+NA_HDEF void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt bytesize, NABool prepare, NABool advance){
   const NAByte* src = data;
   NAByte* dst;
 
   // We prepare the buffer for the whole range. There might be no parts or
   // sparse parts.
   if(prepare){
-    naPrepareBuffer(buffer, naMakeRangei(buffer->curoffset, bytesize), NA_FALSE, NA_TRUE);
+    if(naIsBufferEmpty(naGetBufferIteratorBufferConst(iter))){
+      iter->curoffset = 0;
+    }else if(naIsBufferAtInitial(iter)){
+      iter->curoffset = naGetRangeiEnd(naGetBufferIteratorBufferConst(iter)->range);
+    }
+    naPrepareBuffer(iter, naMakeRangei(iter->curoffset, bytesize), NA_FALSE, NA_TRUE);
   }
   // After this function, all parts should be present and filled with memory.
   // The iterator should point to the buffer part containing offset.
@@ -1638,21 +1921,21 @@ NA_HDEF void naStoreBufferBytes(NABuffer* buffer, const void* data, NAInt bytesi
     NAInt possiblelength;
     
     // The part pointed to by the iterator should be the one containing offset.
-    part = naGetListCurrentMutable(&(buffer->iter));
+    part = naGetListCurrentMutable(&(iter->listiter));
     
     // Reaching this point, we are sure, the current part contains offset and
     // is filled with memory.
     #ifndef NDEBUG
       if(naIsBufferPartSparse(part))
         naError("naPutBufferBytes", "Current part is sparse");
-      if(!naContainsBufferPartOffset(part, buffer->curoffset))
+      if(!naContainsBufferPartOffset(part, iter->curoffset))
         naError("naPutBufferBytes", "Current part does not contain current offset");
     #endif
     
     // We get the data pointer where we can write bytes.
-    dst = naGetBufferPartDataPointerMutable(part, buffer->curoffset);
+    dst = naGetBufferPartDataPointerMutable(part, iter->curoffset);
     // We detect, how many bytes actually can be put into the current part.
-    possiblelength = naGetBufferPartEnd(part) - buffer->curoffset;
+    possiblelength = naGetBufferPartEnd(part) - iter->curoffset;
 
     #ifndef NDEBUG
       if(possiblelength <= 0)
@@ -1665,20 +1948,28 @@ NA_HDEF void naStoreBufferBytes(NABuffer* buffer, const void* data, NAInt bytesi
       // If we can put in more bytes than needed, we copy all remaining bytes
       // and stay on this part.
       naCopyn(dst, src, (NAUInt)bytesize);
-      buffer->curoffset += bytesize;
+      
+      if(advance){
+        iter->curoffset += bytesize;
+      }
+      
       // src += bytesize; // this line is not needed as the loop will end.
       bytesize = 0;
     }else{
       // We can only put a portion of the source into the current part. We
       // copy as many bytes as possible and advance to the next part.
       naCopyn(dst, src, (NAUInt)possiblelength);
-      buffer->curoffset += possiblelength;
+
+      if(advance){
+        iter->curoffset += possiblelength;
+        // Note that when possiblelength matches bytesize, the part will also
+        // advance which is correct behaviour, as after this function, the
+        // iterator shall always point at the part containing the current offset.
+        naIterateList(&(iter->listiter), 1);
+      }
+
       src += possiblelength;
       bytesize -= possiblelength;
-      // Note that when possiblelength matches bytesize, the part will also
-      // advance which is correct behaviour, as after this function, the
-      // iterator shall always point at the part containing the current offset.
-      naIterateList(&(buffer->iter), 1);
     }
   }
   
@@ -1687,167 +1978,438 @@ NA_HDEF void naStoreBufferBytes(NABuffer* buffer, const void* data, NAInt bytesi
 }
 
 
-NA_DEF void naWriteBufferBytes(NABuffer* buffer, const void* data, NAInt bytesize){
-  naStoreBufferBytes(buffer, data, bytesize, NA_TRUE);
-}
 
 
-
-NA_DEF void naWriteBufferi8(NABuffer* buffer, int8 value){
-  buffer->converter.convert8(&value);
-  naStoreBufferBytes(buffer, &value, 1, NA_TRUE);
-}
-NA_DEF void naWriteBufferi16(NABuffer* buffer, int16 value){
-  buffer->converter.convert16(&value);
-  naStoreBufferBytes(buffer, &value, 2, NA_TRUE);
-}
-NA_DEF void naWriteBufferi32(NABuffer* buffer, int32 value){
-  buffer->converter.convert32(&value);
-  naStoreBufferBytes(buffer, &value, 4, NA_TRUE);
-}
-NA_DEF void naWriteBufferi64(NABuffer* buffer, int64 value){
-  buffer->converter.convert64(&value);
-  naStoreBufferBytes(buffer, &value, 8, NA_TRUE);
-}
+// ////////////////////////////////////
+// GET and SET
+// ////////////////////////////////////
 
 
-
-NA_DEF void naWriteBufferu8(NABuffer* buffer, uint8 value){
-  buffer->converter.convert8(&value);
-  naStoreBufferBytes(buffer, &value, 1, NA_TRUE);
-}
-NA_DEF void naWriteBufferu16(NABuffer* buffer, uint16 value){
-  buffer->converter.convert16(&value);
-  naStoreBufferBytes(buffer, &value, 2, NA_TRUE);
-}
-NA_DEF void naWriteBufferu32(NABuffer* buffer, uint32 value){
-  buffer->converter.convert32(&value);
-  naStoreBufferBytes(buffer, &value, 4, NA_TRUE);
-}
-NA_DEF void naWriteBufferu64(NABuffer* buffer, uint64 value){
-  buffer->converter.convert64(&value);
-  naStoreBufferBytes(buffer, &value, 8, NA_TRUE);
-}
-
-
-
-NA_DEF void naWriteBufferf(NABuffer* buffer, float value){
-  buffer->converter.convert32(&value);
-  naStoreBufferBytes(buffer, &value, 4, NA_TRUE);
-}
-NA_DEF void naWriteBufferd(NABuffer* buffer, double value){
-  buffer->converter.convert64(&value);
-  naStoreBufferBytes(buffer, &value, 8, NA_TRUE);
-}
-
-
-
-NA_DEF void naWriteBufferi8v(NABuffer* buffer, const int8* src, NAInt count){
+NA_DEF int8 naGetBufferi8(NABufferIterator* iter){
   int8 value;
-  naPrepareBuffer(buffer, naMakeRangei(buffer->curoffset, count * 1), NA_FALSE, NA_TRUE);
-  while(count){
-    value = *src;
-    buffer->converter.convert8(&value);
-    naStoreBufferBytes(buffer, &value, 1, NA_FALSE);
-    src++;
-    count--;
-  }
+  naRetrieveBufferBytes(iter, &value, 1, NA_FALSE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert8(&value);
+  return value;
 }
-NA_DEF void naWriteBufferi16v(NABuffer* buffer, const int16* src, NAInt count){
+NA_DEF int16 naGetBufferi16(NABufferIterator* iter){
   int16 value;
-  naPrepareBuffer(buffer, naMakeRangei(buffer->curoffset, count * 2), NA_FALSE, NA_TRUE);
-  while(count){
-    value = *src;
-    buffer->converter.convert16(&value);
-    naStoreBufferBytes(buffer, &value, 2, NA_FALSE);
-    src++;
-    count--;
-  }
+  naRetrieveBufferBytes(iter, &value, 2, NA_FALSE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
+  return value;
 }
-NA_DEF void naWriteBufferi32v(NABuffer* buffer, const int32* src, NAInt count){
+NA_DEF int32 naGetBufferi32(NABufferIterator* iter){
   int32 value;
-  naPrepareBuffer(buffer, naMakeRangei(buffer->curoffset, count * 4), NA_FALSE, NA_TRUE);
-  while(count){
-    value = *src;
-    buffer->converter.convert32(&value);
-    naStoreBufferBytes(buffer, &value, 4, NA_FALSE);
-    src++;
-    count--;
-  }
+  naRetrieveBufferBytes(iter, &value, 4, NA_FALSE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+  return value;
 }
-NA_DEF void naWriteBufferi64v(NABuffer* buffer, const int64* src, NAInt count){
+NA_DEF int64 naGetBufferi64(NABufferIterator* iter){
   int64 value;
-  naPrepareBuffer(buffer, naMakeRangei(buffer->curoffset, count * 8), NA_FALSE, NA_TRUE);
-  while(count){
-    value = *src;
-    buffer->converter.convert64(&value);
-    naStoreBufferBytes(buffer, &value, 8, NA_FALSE);
-    src++;
-    count--;
-  }
+  naRetrieveBufferBytes(iter, &value, 8, NA_FALSE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+  return value;
 }
-NA_DEF void naWriteBufferu8v(NABuffer* buffer, const uint8* src, NAInt count){
+
+
+
+NA_DEF uint8 naGetBufferu8(NABufferIterator* iter){
   uint8 value;
-  naPrepareBuffer(buffer, naMakeRangei(buffer->curoffset, count * 1), NA_FALSE, NA_TRUE);
-  while(count){
-    value = *src;
-    buffer->converter.convert8(&value);
-    naStoreBufferBytes(buffer, &value, 1, NA_FALSE);
-    src++;
-    count--;
-  }
+  naRetrieveBufferBytes(iter, &value, 1, NA_FALSE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert8(&value);
+  return value;
 }
-NA_DEF void naWriteBufferu16v(NABuffer* buffer, const uint16* src, NAInt count){
+NA_DEF uint16 naGetBufferu16(NABufferIterator* iter){
   uint16 value;
-  naPrepareBuffer(buffer, naMakeRangei(buffer->curoffset, count * 2), NA_FALSE, NA_TRUE);
-  while(count){
-    value = *src;
-    buffer->converter.convert16(&value);
-    naStoreBufferBytes(buffer, &value, 2, NA_FALSE);
-    src++;
-    count--;
-  }
+  naRetrieveBufferBytes(iter, &value, 2, NA_FALSE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
+  return value;
 }
-NA_DEF void naWriteBufferu32v(NABuffer* buffer, const uint32* src, NAInt count){
+NA_DEF uint32 naGetBufferu32(NABufferIterator* iter){
   uint32 value;
-  naPrepareBuffer(buffer, naMakeRangei(buffer->curoffset, count * 4), NA_FALSE, NA_TRUE);
-  while(count){
-    value = *src;
-    buffer->converter.convert32(&value);
-    naStoreBufferBytes(buffer, &value, 4, NA_FALSE);
-    src++;
-    count--;
-  }
+  naRetrieveBufferBytes(iter, &value, 4, NA_FALSE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+  return value;
 }
-NA_DEF void naWriteBufferu64v(NABuffer* buffer, const uint64* src, NAInt count){
+NA_DEF uint64 naGetBufferu64(NABufferIterator* iter){
   uint64 value;
-  naPrepareBuffer(buffer, naMakeRangei(buffer->curoffset, count * 8), NA_FALSE, NA_TRUE);
-  while(count){
-    value = *src;
-    buffer->converter.convert64(&value);
-    naStoreBufferBytes(buffer, &value, 8, NA_FALSE);
-    src++;
-    count--;
-  }
+  naRetrieveBufferBytes(iter, &value, 8, NA_FALSE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+  return value;
 }
-NA_DEF void naWriteBufferfv(NABuffer* buffer, const float* src, NAInt count){
+
+
+
+NA_DEF float naGetBufferf(NABufferIterator* iter){
   float value;
-  naPrepareBuffer(buffer, naMakeRangei(buffer->curoffset, count * 4), NA_FALSE, NA_TRUE);
-  while(count){
-    value = *src;
-    buffer->converter.convert32(&value);
-    naStoreBufferBytes(buffer, &value, 4, NA_FALSE);
-    src++;
-    count--;
-  }
+  naRetrieveBufferBytes(iter, &value, 4, NA_FALSE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+  return value;
 }
-NA_DEF void naWriteBufferdv(NABuffer* buffer, const double* src, NAInt count){
+NA_DEF double naGetBufferd(NABufferIterator* iter){
   double value;
-  naPrepareBuffer(buffer, naMakeRangei(buffer->curoffset, count * 8), NA_FALSE, NA_TRUE);
+  naRetrieveBufferBytes(iter, &value, 8, NA_FALSE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+  return value;
+}
+
+
+
+NA_DEF void naSetBufferi8(NABufferIterator* iter, int8 value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert8(&value);
+  naStoreBufferBytes(iter, &value, 1, NA_TRUE, NA_FALSE);
+}
+NA_DEF void naSetBufferi16(NABufferIterator* iter, int16 value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
+  naStoreBufferBytes(iter, &value, 2, NA_TRUE, NA_FALSE);
+}
+NA_DEF void naSetBufferi32(NABufferIterator* iter, int32 value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+  naStoreBufferBytes(iter, &value, 4, NA_TRUE, NA_FALSE);
+}
+NA_DEF void naSetBufferi64(NABufferIterator* iter, int64 value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+  naStoreBufferBytes(iter, &value, 8, NA_TRUE, NA_FALSE);
+}
+
+
+
+NA_DEF void naSetBufferu8(NABufferIterator* iter, uint8 value){
+  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+  buffer->converter.convert8(&value);
+  naStoreBufferBytes(iter, &value, 1, NA_TRUE, NA_FALSE);
+}
+NA_DEF void naSetBufferu16(NABufferIterator* iter, uint16 value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
+  naStoreBufferBytes(iter, &value, 2, NA_TRUE, NA_FALSE);
+}
+NA_DEF void naSetBufferu32(NABufferIterator* iter, uint32 value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+  naStoreBufferBytes(iter, &value, 4, NA_TRUE, NA_FALSE);
+}
+NA_DEF void naSetBufferu64(NABufferIterator* iter, uint64 value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+  naStoreBufferBytes(iter, &value, 8, NA_TRUE, NA_FALSE);
+}
+
+
+
+NA_DEF void naSetBufferf(NABufferIterator* iter, float value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+  naStoreBufferBytes(iter, &value, 4, NA_TRUE, NA_FALSE);
+}
+NA_DEF void naSetBufferd(NABufferIterator* iter, double value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+  naStoreBufferBytes(iter, &value, 8, NA_TRUE, NA_FALSE);
+}
+
+
+
+
+
+
+// ///////////////////////////////////////
+// READING
+// ///////////////////////////////////////
+
+
+
+
+
+NA_DEF void naReadBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize){
+  naRetrieveBufferBytes(iter, data, bytesize, NA_TRUE);
+}
+
+
+
+NA_DEF int8 naReadBufferi8(NABufferIterator* iter){
+  int8 value;
+  naRetrieveBufferBytes(iter, &value, 1, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert8(&value);
+  return value;
+}
+NA_DEF int16 naReadBufferi16(NABufferIterator* iter){
+  int16 value;
+  naRetrieveBufferBytes(iter, &value, 2, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
+  return value;
+}
+NA_DEF int32 naReadBufferi32(NABufferIterator* iter){
+  int32 value;
+  naRetrieveBufferBytes(iter, &value, 4, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+  return value;
+}
+NA_DEF int64 naReadBufferi64(NABufferIterator* iter){
+  int64 value;
+  naRetrieveBufferBytes(iter, &value, 8, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+  return value;
+}
+
+
+
+NA_DEF uint8 naReadBufferu8(NABufferIterator* iter){
+  uint8 value;
+  naRetrieveBufferBytes(iter, &value, 1, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert8(&value);
+  return value;
+}
+NA_DEF uint16 naReadBufferu16(NABufferIterator* iter){
+  uint16 value;
+  naRetrieveBufferBytes(iter, &value, 2, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
+  return value;
+}
+NA_DEF uint32 naReadBufferu32(NABufferIterator* iter){
+  uint32 value;
+  naRetrieveBufferBytes(iter, &value, 4, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+  return value;
+}
+NA_DEF uint64 naReadBufferu64(NABufferIterator* iter){
+  uint64 value;
+  naRetrieveBufferBytes(iter, &value, 8, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+  return value;
+}
+
+
+
+NA_DEF float naReadBufferf(NABufferIterator* iter){
+  float value;
+  naRetrieveBufferBytes(iter, &value, 4, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+  return value;
+}
+NA_DEF double naReadBufferd(NABufferIterator* iter){
+  double value;
+  naRetrieveBufferBytes(iter, &value, 8, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+  return value;
+}
+
+
+
+NA_DEF void naReadBufferi8v(NABufferIterator* iter, int8* dst, NAInt count){
+  naRetrieveBufferBytes(iter, dst, count * 1, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert8v(dst, (NAUInt)count);
+}
+NA_DEF void naReadBufferi16v(NABufferIterator* iter, int16* dst, NAInt count){
+  naRetrieveBufferBytes(iter, dst, count * 2, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert16v(dst, (NAUInt)count);
+}
+NA_DEF void naReadBufferi32v(NABufferIterator* iter, int32* dst, NAInt count){
+  naRetrieveBufferBytes(iter, dst, count * 4, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert32v(dst, (NAUInt)count);
+}
+NA_DEF void naReadBufferi64v(NABufferIterator* iter, int64* dst, NAInt count){
+  naRetrieveBufferBytes(iter, dst, count * 8, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert64v(dst, (NAUInt)count);
+}
+
+
+
+NA_DEF void naReadBufferu8v(NABufferIterator* iter, uint8* dst, NAInt count){
+  naRetrieveBufferBytes(iter, dst, count * 1, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert8v(dst, (NAUInt)count);
+}
+NA_DEF void naReadBufferu16v(NABufferIterator* iter, uint16* dst, NAInt count){
+  naRetrieveBufferBytes(iter, dst, count * 2, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert16v(dst, (NAUInt)count);
+}
+NA_DEF void naReadBufferu32v(NABufferIterator* iter, uint32* dst, NAInt count){
+  naRetrieveBufferBytes(iter, dst, count * 4, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert32v(dst, (NAUInt)count);
+}
+NA_DEF void naReadBufferu64v(NABufferIterator* iter, uint64* dst, NAInt count){
+  naRetrieveBufferBytes(iter, dst, count * 8, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert64v(dst, (NAUInt)count);
+}
+
+
+
+NA_DEF void naReadBufferfv(NABufferIterator* iter, float* dst, NAInt count){
+  naRetrieveBufferBytes(iter, dst, count * 4, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert32v(dst, (NAUInt)count);
+}
+NA_DEF void naReadBufferdv(NABufferIterator* iter, double* dst, NAInt count){
+  naRetrieveBufferBytes(iter, dst, count * 8, NA_TRUE);
+  naGetBufferIteratorBufferConst(iter)->converter.convert64v(dst, (NAUInt)count);
+}
+
+
+
+
+// ////////////////////////////////////
+// WRITING
+// ////////////////////////////////////
+
+
+
+
+
+NA_DEF void naWriteBufferBytes(NABufferIterator* iter, const void* data, NAInt bytesize){
+  naStoreBufferBytes(iter, data, bytesize, NA_TRUE, NA_TRUE);
+}
+
+
+
+NA_DEF void naWriteBufferi8(NABufferIterator* iter, int8 value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert8(&value);
+  naStoreBufferBytes(iter, &value, 1, NA_TRUE, NA_TRUE);
+}
+NA_DEF void naWriteBufferi16(NABufferIterator* iter, int16 value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
+  naStoreBufferBytes(iter, &value, 2, NA_TRUE, NA_TRUE);
+}
+NA_DEF void naWriteBufferi32(NABufferIterator* iter, int32 value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+  naStoreBufferBytes(iter, &value, 4, NA_TRUE, NA_TRUE);
+}
+NA_DEF void naWriteBufferi64(NABufferIterator* iter, int64 value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+  naStoreBufferBytes(iter, &value, 8, NA_TRUE, NA_TRUE);
+}
+
+
+
+NA_DEF void naWriteBufferu8(NABufferIterator* iter, uint8 value){
+  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+  buffer->converter.convert8(&value);
+  naStoreBufferBytes(iter, &value, 1, NA_TRUE, NA_TRUE);
+}
+NA_DEF void naWriteBufferu16(NABufferIterator* iter, uint16 value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
+  naStoreBufferBytes(iter, &value, 2, NA_TRUE, NA_TRUE);
+}
+NA_DEF void naWriteBufferu32(NABufferIterator* iter, uint32 value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+  naStoreBufferBytes(iter, &value, 4, NA_TRUE, NA_TRUE);
+}
+NA_DEF void naWriteBufferu64(NABufferIterator* iter, uint64 value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+  naStoreBufferBytes(iter, &value, 8, NA_TRUE, NA_TRUE);
+}
+
+
+
+NA_DEF void naWriteBufferf(NABufferIterator* iter, float value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+  naStoreBufferBytes(iter, &value, 4, NA_TRUE, NA_TRUE);
+}
+NA_DEF void naWriteBufferd(NABufferIterator* iter, double value){
+  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+  naStoreBufferBytes(iter, &value, 8, NA_TRUE, NA_TRUE);
+}
+
+
+
+NA_DEF void naWriteBufferi8v(NABufferIterator* iter, const int8* src, NAInt count){
+  int8 value;
+  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 1), NA_FALSE, NA_TRUE);
   while(count){
     value = *src;
-    buffer->converter.convert64(&value);
-    naStoreBufferBytes(buffer, &value, 8, NA_FALSE);
+    naGetBufferIteratorBufferConst(iter)->converter.convert8(&value);
+    naStoreBufferBytes(iter, &value, 1, NA_FALSE, NA_TRUE);
+    src++;
+    count--;
+  }
+}
+NA_DEF void naWriteBufferi16v(NABufferIterator* iter, const int16* src, NAInt count){
+  int16 value;
+  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 2), NA_FALSE, NA_TRUE);
+  while(count){
+    value = *src;
+    naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
+    naStoreBufferBytes(iter, &value, 2, NA_FALSE, NA_TRUE);
+    src++;
+    count--;
+  }
+}
+NA_DEF void naWriteBufferi32v(NABufferIterator* iter, const int32* src, NAInt count){
+  int32 value;
+  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 4), NA_FALSE, NA_TRUE);
+  while(count){
+    value = *src;
+    naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+    naStoreBufferBytes(iter, &value, 4, NA_FALSE, NA_TRUE);
+    src++;
+    count--;
+  }
+}
+NA_DEF void naWriteBufferi64v(NABufferIterator* iter, const int64* src, NAInt count){
+  int64 value;
+  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 8), NA_FALSE, NA_TRUE);
+  while(count){
+    value = *src;
+    naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+    naStoreBufferBytes(iter, &value, 8, NA_FALSE, NA_TRUE);
+    src++;
+    count--;
+  }
+}
+NA_DEF void naWriteBufferu8v(NABufferIterator* iter, const uint8* src, NAInt count){
+  uint8 value;
+  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 1), NA_FALSE, NA_TRUE);
+  while(count){
+    value = *src;
+    naGetBufferIteratorBufferConst(iter)->converter.convert8(&value);
+    naStoreBufferBytes(iter, &value, 1, NA_FALSE, NA_TRUE);
+    src++;
+    count--;
+  }
+}
+NA_DEF void naWriteBufferu16v(NABufferIterator* iter, const uint16* src, NAInt count){
+  uint16 value;
+  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 2), NA_FALSE, NA_TRUE);
+  while(count){
+    value = *src;
+    naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
+    naStoreBufferBytes(iter, &value, 2, NA_FALSE, NA_TRUE);
+    src++;
+    count--;
+  }
+}
+NA_DEF void naWriteBufferu32v(NABufferIterator* iter, const uint32* src, NAInt count){
+  uint32 value;
+  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 4), NA_FALSE, NA_TRUE);
+  while(count){
+    value = *src;
+    naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+    naStoreBufferBytes(iter, &value, 4, NA_FALSE, NA_TRUE);
+    src++;
+    count--;
+  }
+}
+NA_DEF void naWriteBufferu64v(NABufferIterator* iter, const uint64* src, NAInt count){
+  uint64 value;
+  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 8), NA_FALSE, NA_TRUE);
+  while(count){
+    value = *src;
+    naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+    naStoreBufferBytes(iter, &value, 8, NA_FALSE, NA_TRUE);
+    src++;
+    count--;
+  }
+}
+NA_DEF void naWriteBufferfv(NABufferIterator* iter, const float* src, NAInt count){
+  float value;
+  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 4), NA_FALSE, NA_TRUE);
+  while(count){
+    value = *src;
+    naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+    naStoreBufferBytes(iter, &value, 4, NA_FALSE, NA_TRUE);
+    src++;
+    count--;
+  }
+}
+NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, NAInt count){
+  double value;
+  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 8), NA_FALSE, NA_TRUE);
+  while(count){
+    value = *src;
+    naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+    naStoreBufferBytes(iter, &value, 8, NA_FALSE, NA_TRUE);
     src++;
     count--;
   }
@@ -1855,16 +2417,17 @@ NA_DEF void naWriteBufferdv(NABuffer* buffer, const double* src, NAInt count){
 
 
 
-NA_DEF void naWriteBufferBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer, NARangei srcrange){
+NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, NABuffer* srcbuffer, NARangei srcrange){
+  NABuffer* dstbuffer = naGetBufferIteratorBufferMutable(iter);
   NABufferSource* tmpsource = dstbuffer->source;
   NAInt tmpsrcoffset = dstbuffer->srcoffset;
   
-  dstbuffer->source = naCreateBufferSourceBuffer(naRetainBuffer(srcbuffer));
+  dstbuffer->source = naCreateBufferSourceBuffer(srcbuffer);
   
-  dstbuffer->srcoffset = dstbuffer->curoffset - srcrange.origin;
+  dstbuffer->srcoffset = iter->curoffset - srcrange.origin;
   
-  naCacheBufferRange(dstbuffer, naMakeRangei(dstbuffer->curoffset, srcrange.length), NA_FALSE);
-  dstbuffer->curoffset += srcrange.length;
+  naCacheBufferRange(dstbuffer, naMakeRangei(iter->curoffset, srcrange.length), NA_FALSE);
+  iter->curoffset += srcrange.length;
   
   naReleaseBufferSource(dstbuffer->source);
   
@@ -1875,7 +2438,7 @@ NA_DEF void naWriteBufferBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer, NARang
 
 
 
-NA_DEF void naRepeatBufferBytes(NABuffer* buffer, NAInt distance, NAInt bytesize){
+NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt bytesize){
   NAInt writeoffset;
   NAInt readoffset;
   NABufferPart* writepart;
@@ -1885,24 +2448,24 @@ NA_DEF void naRepeatBufferBytes(NABuffer* buffer, NAInt distance, NAInt bytesize
   NAListIterator readiter;
 
   // Prepare the write part
-  writeoffset = buffer->curoffset;
-  naPrepareBuffer(buffer, naMakeRangei(writeoffset, bytesize), NA_FALSE, NA_TRUE);
+  writeoffset = iter->curoffset;
+  naPrepareBuffer(iter, naMakeRangei(writeoffset, bytesize), NA_FALSE, NA_TRUE);
 
   // Prepare the read part.
-  readoffset = buffer->curoffset - distance;
-  naPrepareBuffer(buffer, naMakeRangei(readoffset, bytesize), NA_FALSE, NA_TRUE);
+  readoffset = iter->curoffset - distance;
+  naPrepareBuffer(iter, naMakeRangei(readoffset, bytesize), NA_FALSE, NA_TRUE);
 
   // Create the read iterator
   // Important: Do this after the prepare calls as otherwise there might be
   // an iterator on a part which needs to be removed from a list.
-  readiter = naMakeListIteratorAccessor(&(buffer->parts));
-  naLocateListPosition(&readiter, naGetListCurrentPosition(&(buffer->iter)));
+  readiter = naMakeListIteratorAccessor(&(naGetBufferIteratorBufferConst(iter)->parts));
+  naLocateListPosition(&readiter, naGetListCurrentPosition(&(iter->listiter)));
 
   // Reposition the buffer iterator to the write part
-  naLocateBufferPartOffset(&(buffer->iter), buffer->curoffset);
+  naLocateBufferPartOffset(&(iter->listiter), iter->curoffset);
 
   readpart = naGetListCurrentConst(&readiter);
-  writepart = naGetListCurrentMutable(&(buffer->iter));
+  writepart = naGetListCurrentMutable(&(iter->listiter));
   
   // Now start copying the buffers.
   while(1){
@@ -1919,7 +2482,7 @@ NA_DEF void naRepeatBufferBytes(NABuffer* buffer, NAInt distance, NAInt bytesize
     bytesize -= remaining;
     writeoffset += remaining;
     readoffset += remaining;
-    buffer->curoffset += remaining;
+    iter->curoffset += remaining;
 
     remainingread = naGetBufferPartEnd(readpart) - readoffset;
     remainingwrite = naGetBufferPartEnd(writepart) - writeoffset;
@@ -1929,8 +2492,8 @@ NA_DEF void naRepeatBufferBytes(NABuffer* buffer, NAInt distance, NAInt bytesize
       readpart = naGetListCurrentConst(&readiter);
     }
     if(remainingwrite == NA_ZERO){
-      naIterateList(&buffer->iter, 1);
-      writepart = naGetListCurrentMutable(&buffer->iter);
+      naIterateList(&(iter->listiter), 1);
+      writepart = naGetListCurrentMutable(&(iter->listiter));
     }
     if(!bytesize){break;}
   }
@@ -1942,320 +2505,36 @@ NA_DEF void naRepeatBufferBytes(NABuffer* buffer, NAInt distance, NAInt bytesize
 
 
 
-// ///////////////////////////////////////
-// READING
-// ///////////////////////////////////////
+// /////////////////////////////////
+// Bit manipulation
+// /////////////////////////////////
 
 
-NA_API void naReadBufferBytes(NABuffer* buffer, void* data, NAInt bytesize){
-  NAByte* dst = data;
-  NAByte* src;
-  
-  // We prepare the buffer for the whole range. There might be no parts or
-  // sparse parts.
-  naPrepareBuffer(buffer, naMakeRangei(buffer->curoffset, bytesize), NA_FALSE, NA_TRUE);
-  // After this function, all parts should be present and filled with memory.
-  // The iterator should point to the buffer part containing offset.
-  
-  // do as long as there is a bytesize remaining. Remember that the data may
-  // be split into different buffer parts.
-  while(bytesize){
-    NABufferPart* part;
-    NAInt possiblelength;
-    
-    // The part pointed to by the iterator should be the one containing offset.
-    part = naGetListCurrentMutable(&(buffer->iter));
-    
-    // Reaching this point, we are sure, the current part contains offset and
-    // is filled with memory.
-    #ifndef NDEBUG
-      if(!part)
-        naError("naPutBufferBytes", "No more parts containing memory");
-      if(naIsBufferPartSparse(part))
-        naError("naPutBufferBytes", "Current part is sparse");
-      if(!naContainsBufferPartOffset(part, buffer->curoffset))
-        naError("naPutBufferBytes", "Current part does not contain current offset");
-    #endif
-    
-    // We get the data pointer where we can read bytes.
-    src = naGetBufferPartDataPointerConst(part, buffer->curoffset);
-    // We detect, how many bytes actually can be read from the current part.
-    possiblelength = naGetBufferPartEnd(part) - buffer->curoffset;
-
-    #ifndef NDEBUG
-      if(possiblelength <= 0)
-        naError("naPutBufferBytes", "possible length invalid");
-      if(possiblelength > naGetBufferPartRange(part).length)
-        naError("naPutBufferBytes", "buffer overflow expected");
-    #endif
-    
-    if(possiblelength > bytesize){
-      // If we can get out more bytes than needed, we copy all remaining bytes
-      // and stay on this part.
-      naCopyn(dst, src, (NAUInt)bytesize);
-      buffer->curoffset += bytesize;
-      // dst += bytesize; // this line is not needed as the loop will end.
-      bytesize = 0;
-    }else{
-      // We can only get a portion of the current part into the destination. We
-      // copy as many bytes as possible and advance to the next part.
-      naCopyn(dst, src, (NAUInt)possiblelength);
-      buffer->curoffset += possiblelength;
-      dst += possiblelength;
-      bytesize -= possiblelength;
-      // Note that when possiblelength matches bytesize, the part will also
-      // advance which is correct behaviour, as after this function, the
-      // iterator shall always point at the part containing the current offset.
-      naIterateList(&(buffer->iter), 1);
-    }
-  }
-  
-  // Reaching here, the whole range has been written to the parts and both
-  // curoffset and iter point to the current position again.
-}
-
-
-
-NA_DEF int8 naReadBufferi8(NABuffer* buffer){
-  int8 value;
-  #ifndef NDEBUG
-    if(buffer->curbit != 0)
-      naError("naReadBufferi8", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, &value, 1);
-  buffer->converter.convert8(&value);
-  return value;
-}
-NA_DEF int16 naReadBufferi16(NABuffer* buffer){
-  int16 value;
-  #ifndef NDEBUG
-    if(buffer->curbit != 0)
-      naError("naReadBufferi16", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, &value, 2);
-  buffer->converter.convert16(&value);
-  return value;
-}
-NA_DEF int32 naReadBufferi32(NABuffer* buffer){
-  int32 value;
-  #ifndef NDEBUG
-    if(buffer->curbit != 0)
-      naError("naReadBufferi32", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, &value, 4);
-  buffer->converter.convert32(&value);
-  return value;
-}
-NA_DEF int64 naReadBufferi64(NABuffer* buffer){
-  int64 value;
-  #ifndef NDEBUG
-    if(buffer->curbit != 0)
-      naError("naReadBufferi64", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, &value, 8);
-  buffer->converter.convert64(&value);
-  return value;
-}
-
-
-
-NA_DEF uint8 naReadBufferu8(NABuffer* buffer){
-  uint8 value;
-  #ifndef NDEBUG
-    if(buffer->curbit != 0)
-      naError("naReadBufferu8", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, &value, 1);
-  buffer->converter.convert8(&value);
-  return value;
-}
-NA_DEF uint16 naReadBufferu16(NABuffer* buffer){
-  uint16 value;
-  #ifndef NDEBUG
-    if(buffer->curbit != 0)
-      naError("naReadBufferu16", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, &value, 2);
-  buffer->converter.convert16(&value);
-  return value;
-}
-NA_DEF uint32 naReadBufferu32(NABuffer* buffer){
-  uint32 value;
-  #ifndef NDEBUG
-    if(buffer->curbit != 0)
-      naError("naReadBufferu32", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, &value, 4);
-  buffer->converter.convert32(&value);
-  return value;
-}
-NA_DEF uint64 naReadBufferu64(NABuffer* buffer){
-  uint64 value;
-  #ifndef NDEBUG
-    if(buffer->curbit != 0)
-      naError("naReadBufferu64", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, &value, 8);
-  buffer->converter.convert64(&value);
-  return value;
-}
-
-
-
-NA_DEF float naReadBufferf(NABuffer* buffer){
-  float value;
-  #ifndef NDEBUG
-    if(buffer->curbit != 0)
-      naError("naReadBufferf", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, &value, 4);
-  buffer->converter.convert32(&value);
-  return value;
-}
-NA_DEF double naReadBufferd(NABuffer* buffer){
-  double value;
-  #ifndef NDEBUG
-    if(buffer->curbit != 0)
-      naError("naReadBufferd", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, &value, 8);
-  buffer->converter.convert64(&value);
-  return value;
-}
-
-
-
-NA_DEF void naReadBufferi8v(NABuffer* buffer, int8* dst, NAInt count){
-  #ifndef NDEBUG
-    if(!dst)
-      naError("naReadBufferi8v", "dst is Null pointer.");
-    if(buffer->curbit != 0)
-      naError("naReadBufferi8v", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, dst, count * 1);
-  buffer->converter.convert8v(dst, (NAUInt)count);
-}
-NA_DEF void naReadBufferi16v(NABuffer* buffer, int16* dst, NAInt count){
-  #ifndef NDEBUG
-    if(!dst)
-      naError("naReadBufferi16v", "dst is Null pointer.");
-    if(buffer->curbit != 0)
-      naError("naReadBufferi16v", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, dst, count * 2);
-  buffer->converter.convert16v(dst, (NAUInt)count);
-}
-NA_DEF void naReadBufferi32v(NABuffer* buffer, int32* dst, NAInt count){
-  #ifndef NDEBUG
-    if(!dst)
-      naError("naReadBufferi32v", "dst is Null pointer.");
-    if(buffer->curbit != 0)
-      naError("naReadBufferi32v", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, dst, count * 4);
-  buffer->converter.convert32v(dst, (NAUInt)count);
-}
-NA_DEF void naReadBufferi64v(NABuffer* buffer, int64* dst, NAInt count){
-  #ifndef NDEBUG
-    if(!dst)
-      naError("naReadBufferi64v", "dst is Null pointer.");
-    if(buffer->curbit != 0)
-      naError("naReadBufferi64v", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, dst, count * 8);
-  buffer->converter.convert64v(dst, (NAUInt)count);
-}
-
-
-
-NA_DEF void naReadBufferu8v(NABuffer* buffer, uint8* dst, NAInt count){
-  #ifndef NDEBUG
-    if(!dst)
-      naError("naReadBufferu8v", "dst is Null pointer.");
-    if(buffer->curbit != 0)
-      naError("naReadBufferu8v", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, dst, count * 1);
-  buffer->converter.convert8v(dst, (NAUInt)count);
-}
-NA_DEF void naReadBufferu16v(NABuffer* buffer, uint16* dst, NAInt count){
-  #ifndef NDEBUG
-    if(!dst)
-      naError("naReadBufferu16v", "dst is Null pointer.");
-    if(buffer->curbit != 0)
-      naError("naReadBufferu16v", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, dst, count * 2);
-  buffer->converter.convert16v(dst, (NAUInt)count);
-}
-NA_DEF void naReadBufferu32v(NABuffer* buffer, uint32* dst, NAInt count){
-  #ifndef NDEBUG
-    if(!dst)
-      naError("naReadBufferu32v", "dst is Null pointer.");
-    if(buffer->curbit != 0)
-      naError("naReadBufferu32v", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, dst, count * 4);
-  buffer->converter.convert32v(dst, (NAUInt)count);
-}
-NA_DEF void naReadBufferu64v(NABuffer* buffer, uint64* dst, NAInt count){
-  #ifndef NDEBUG
-    if(!dst)
-      naError("naReadBufferu64v", "dst is Null pointer.");
-    if(buffer->curbit != 0)
-      naError("naReadBufferu64v", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, dst, count * 8);
-  buffer->converter.convert64v(dst, (NAUInt)count);
-}
-
-
-
-NA_DEF void naReadBufferfv(NABuffer* buffer, float* dst, NAInt count){
-  #ifndef NDEBUG
-    if(!dst)
-      naError("naReadBufferfv", "dst is Null pointer.");
-    if(buffer->curbit != 0)
-      naError("naReadBufferfv", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, dst, count * 4);
-  buffer->converter.convert32v(dst, (NAUInt)count);
-}
-NA_DEF void naReadBufferdv(NABuffer* buffer, double* dst, NAInt count){
-  #ifndef NDEBUG
-    if(!dst)
-      {naCrash("naReadBufferdv", "dst is Null pointer."); return;}
-    if(buffer->curbit != 0)
-      naError("naReadBufferdv", "Bit offset not 0.");
-  #endif
-  naReadBufferBytes(buffer, dst, count * 8);
-  buffer->converter.convert64v(dst, (NAUInt)count);
-}
-
-
-
-NA_DEF NABool naReadBufferBit(NABuffer* buffer){
+NA_DEF NABool naReadBufferBit(NABufferIterator* iter){
   NAByte* src;
   NABool bit;
   NABufferPart* part;
 
-  naPrepareBuffer(buffer, naMakeRangei(buffer->curoffset, 1), NA_FALSE, NA_TRUE);
+  if(iter->curbit == 0){
+    naPrepareBuffer(iter, naMakeRangei(iter->curoffset, 1), NA_FALSE, NA_TRUE);
+  }
+  
   // After this function, all parts should be present and filled with memory.
   // The iterator should point to the buffer part containing offset.
-  part = naGetListCurrentMutable(&(buffer->iter));
-  src = naGetBufferPartDataPointerConst(part, buffer->curoffset);
-  bit = (*src >> buffer->curbit) & 0x01;
+  part = naGetListCurrentMutable(&(iter->listiter));
+  src = naGetBufferPartDataPointerConst(part, iter->curoffset);
+  bit = (*src >> iter->curbit) & 0x01;
   
-  buffer->curbit++;
-  if(buffer->curbit == 8){
+  iter->curbit++;
+  if(iter->curbit == 8){
     NAInt possiblelength;
     
     // We advance to the next byte.
-    buffer->curbit = 0;
-    buffer->curoffset++;
-    possiblelength = naGetBufferPartEnd(part) - buffer->curoffset;
+    iter->curbit = 0;
+    iter->curoffset++;
+    possiblelength = naGetBufferPartEnd(part) - iter->curoffset;
     if(!possiblelength){
-      naIterateList(&(buffer->iter), 1);
+      naIterateList(&(iter->listiter), 1);
     }
   }
   
@@ -2264,7 +2543,7 @@ NA_DEF NABool naReadBufferBit(NABuffer* buffer){
 
 
 
-NA_DEF NAUInt naReadBufferBits(NABuffer* buffer, uint8 count){
+NA_DEF NAUInt naReadBufferBits(NABufferIterator* iter, uint8 count){
   NAUInt retint = 0;
   NABool curbit;
   NAUInt curmask = 1;
@@ -2273,7 +2552,7 @@ NA_DEF NAUInt naReadBufferBits(NABuffer* buffer, uint8 count){
       naError("naReadBufferBits", "Can read %d bits at max.", NA_SYSTEM_ADDRESS_BITS);
   #endif
   while(count){
-    curbit = naReadBufferBit(buffer);
+    curbit = naReadBufferBit(iter);
     retint |= curmask * (NAUInt)curbit;
     curmask <<= 1;
     count--;
@@ -2283,17 +2562,17 @@ NA_DEF NAUInt naReadBufferBits(NABuffer* buffer, uint8 count){
 
 
 
-NA_DEF void naPadBufferBits(NABuffer* buffer){
+NA_DEF void naPadBufferBits(NABufferIterator* iter){
   NABufferPart* part;
   NAInt possiblelength;
 
-  if(buffer->curbit != 0){
-    buffer->curbit = 0;
-    buffer->curoffset++;
-    part = naGetListCurrentMutable(&(buffer->iter));
-    possiblelength = naGetBufferPartEnd(part) - buffer->curoffset;
+  if(iter->curbit != 0){
+    iter->curbit = 0;
+    iter->curoffset++;
+    part = naGetListCurrentMutable(&(iter->listiter));
+    possiblelength = naGetBufferPartEnd(part) - iter->curoffset;
     if(!possiblelength){
-      naIterateList(&(buffer->iter), 1);
+      naIterateList(&(iter->listiter), 1);
     }
   }
 }
@@ -2301,212 +2580,230 @@ NA_DEF void naPadBufferBits(NABuffer* buffer){
 
 
 
-NA_DEF void naSkipBufferWhitespaces(NABuffer* buffer){
+NA_DEF NABuffer* naReadBufferBuffer(NABufferIterator* iter, NAInt bytesize, NABool copy, NABool securememory){
+  return naCreateBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangei(iter->curoffset, bytesize), copy, securememory);
+}
+
+
+
+// //////////////////////////////////
+// Parsing
+// //////////////////////////////////
+
+
+
+NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
   NABool nonwhitespacefound = NA_FALSE;
 
-  while(!naIsListAtInitial(&(buffer->iter))){
+  while(!naIsBufferAtInitial(iter)){
     NAInt endoffset;
     const NAByte* curbyte;
     
-    const NABufferPart* part = naGetListCurrentConst(&(buffer->iter));
+    const NABufferPart* part = naGetListCurrentConst(&(iter->listiter));
     #ifndef NDEBUG
       if(naIsBufferPartSparse(part))
         naError("naSkipBufferWhitespaces", "sparse part detected.");
     #endif
-    curbyte = naGetBufferPartDataPointerConst(part, buffer->curoffset); 
+    curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
     endoffset = naGetBufferPartEnd(part);
-    while(buffer->curoffset < endoffset){
+    while(iter->curoffset < endoffset){
       if(*curbyte > ' '){
         nonwhitespacefound = NA_TRUE;
         break;
       }
       curbyte++;
-      buffer->curoffset++;
+      iter->curoffset++;
     }
-    if(!naContainsBufferPartOffset(part, buffer->curoffset)){naIterateList(&(buffer->iter), 1);}
+    if(!naContainsBufferPartOffset(part, iter->curoffset)){naIterateList(&(iter->listiter), 1);}
     if(nonwhitespacefound){break;}
   }
 }
 
 
 
-NA_DEF void naSkipBufferDelimiter(NABuffer* buffer){
-  NAByte curbyte = naGetBufferCurrentByte(buffer);
+NA_DEF void naSkipBufferDelimiter(NABufferIterator* iter){
+  NAByte curbyte = naGetBufferu8(iter);
   if(curbyte <= ' '){
-    naSkipBufferWhitespaces(buffer);
+    naSkipBufferWhitespaces(iter);
   }else{
-    naSeekBufferRelative(buffer, 1);
+    naSeekBufferRelative(iter, 1);
   }
 }
 
 
 
-NA_DEF NAString naParseBufferLine(NABuffer* buffer, NABool skipempty, NAInt* linesread){
+NA_DEF NAString naParseBufferLine(NABufferIterator* iter, NABool skipempty, NAInt* linesread){
   NABool lineendingfound = NA_FALSE;
   NABool checkwindowsend = NA_FALSE;
-  NAInt linestart = buffer->curoffset;
+  NAInt linestart = iter->curoffset;
   NAString string = {0, 0};  // This is to supress some warnings.
   if(linesread){*linesread = 0;}
 
-  while(!naIsListAtInitial(&(buffer->iter))){
+  while(!naIsBufferAtInitial(iter)){
     const NAByte* curbyte;
     NAInt endoffset;
     const NABufferPart* part;
 
     if(lineendingfound && !checkwindowsend){break;}
-    part = naGetListCurrentConst(&(buffer->iter));
+    part = naGetListCurrentConst(&(iter->listiter));
     #ifndef NDEBUG
       if(naIsBufferPartSparse(part))
         naError("naParseBufferLine", "sparse part detected.");
     #endif
-    curbyte = naGetBufferPartDataPointerConst(part, buffer->curoffset); 
+    curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
     endoffset = naGetBufferPartEnd(part);
-    while(buffer->curoffset < endoffset){
+    while(iter->curoffset < endoffset){
       if(checkwindowsend){
         checkwindowsend = NA_FALSE;
-        if(*curbyte == '\n'){buffer->curoffset++; break;}
+        if(*curbyte == '\n'){iter->curoffset++; break;}
       }
       if(lineendingfound){break;}
       if((*curbyte == '\r') || (*curbyte == '\n')){
         if(linesread){(*linesread)++;}
-        if(skipempty && ((buffer->curoffset - linestart) == 0)){
+        if(skipempty && ((iter->curoffset - linestart) == 0)){
           linestart++;
         }else{
           lineendingfound = NA_TRUE;
-          string = naMakeStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(linestart, buffer->curoffset));
+          string = naMakeStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(linestart, iter->curoffset));
         }
         checkwindowsend = (*curbyte == '\r');
       }
       curbyte++;
-      buffer->curoffset++;
+      iter->curoffset++;
     }
-    if(!naContainsBufferPartOffset(part, buffer->curoffset)){naIterateList(&(buffer->iter), 1);}
+    if(!naContainsBufferPartOffset(part, iter->curoffset)){naIterateList(&(iter->listiter), 1);}
   }
 
-  if(!lineendingfound){string = naMakeStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(linestart, buffer->curoffset));}
+  if(!lineendingfound){string = naMakeStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(linestart, iter->curoffset));}
 
   return string;
 }
 
 
 
-NA_DEF NAString naParseBufferToken(NABuffer* buffer){
+NA_DEF NAString naParseBufferToken(NABufferIterator* iter){
   NAString string;
-  NAInt tokenstart = buffer->curoffset;
+  NAInt tokenstart = iter->curoffset;
 
-  while(!naIsListAtInitial(&(buffer->iter))){
+  while(!naIsBufferAtInitial(iter)){
     const NAByte* curbyte;
     NAInt endoffset;
 
-    const NABufferPart* part = naGetListCurrentConst(&(buffer->iter));
+    const NABufferPart* part = naGetListCurrentConst(&(iter->listiter));
     #ifndef NDEBUG
       if(naIsBufferPartSparse(part))
         naError("naParseBufferToken", "sparse part detected.");
     #endif
-    curbyte = naGetBufferPartDataPointerConst(part, buffer->curoffset); 
+    curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
     endoffset = naGetBufferPartEnd(part);
-    while(buffer->curoffset < endoffset){
+    while(iter->curoffset < endoffset){
       if(*curbyte <= ' '){break;}
       curbyte++;
-      buffer->curoffset++;
+      iter->curoffset++;
     }
-    if(!naContainsBufferPartOffset(part, buffer->curoffset)){naIterateList(&(buffer->iter), 1);}
+    if(!naContainsBufferPartOffset(part, iter->curoffset)){naIterateList(&(iter->listiter), 1);}
   }
 
-  string = naMakeStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(tokenstart, buffer->curoffset));
-  naSkipBufferWhitespaces(buffer);
+  string = naMakeStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
+  naSkipBufferWhitespaces(iter);
   return string;
 }
 
 
 
-NA_DEF NAString naParseBufferTokenWithDelimiter(NABuffer* buffer, NAByte delimiter){
+NA_DEF NAString naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAByte delimiter){
   NAString string;
-  NAInt tokenstart = buffer->curoffset;
+  NAInt tokenstart = iter->curoffset;
   const NABufferPart* part;
   
-  while(!naIsListAtInitial(&(buffer->iter))){
+  while(!naIsBufferAtInitial(iter)){
     const NAByte* curbyte;
     NAInt endoffset;
 
-    part = naGetListCurrentConst(&(buffer->iter));
+    part = naGetListCurrentConst(&(iter->listiter));
     #ifndef NDEBUG
       if(naIsBufferPartSparse(part))
         naError("naParseBufferTokenWithDelimiter", "sparse part detected.");
     #endif
-    curbyte = naGetBufferPartDataPointerConst(part, buffer->curoffset); 
+    curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
     endoffset = naGetBufferPartEnd(part);
-    while(buffer->curoffset < endoffset){
+    while(iter->curoffset < endoffset){
       if(*curbyte == delimiter){break;}
       curbyte++;
-      buffer->curoffset++;
+      iter->curoffset++;
     }
-    if(!naContainsBufferPartOffset(part, buffer->curoffset)){naIterateList(&(buffer->iter), 1);}
+    if(!naContainsBufferPartOffset(part, iter->curoffset)){naIterateList(&(iter->listiter), 1);}
   }
 
-  string = naMakeStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(tokenstart, buffer->curoffset));
-  naSeekBufferRelative(buffer, 1);
+  string = naMakeStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
+  naSeekBufferRelative(iter, 1);
   return string;
 }
 
 
 
-NA_DEF NAString naParseBufferPathComponent(NABuffer* buffer){
+NA_DEF NAString naParseBufferPathComponent(NABufferIterator* iter){
   NAString string;
-  NAInt tokenstart = buffer->curoffset;
+  NAInt tokenstart = iter->curoffset;
   const NABufferPart* part;
   
-  while(!naIsListAtInitial(&(buffer->iter))){
+  while(!naIsBufferAtInitial(iter)){
     const NAByte* curbyte;
     NAInt endoffset;
 
-    part = naGetListCurrentConst(&(buffer->iter));
+    part = naGetListCurrentConst(&(iter->listiter));
     #ifndef NDEBUG
       if(naIsBufferPartSparse(part))
         naError("naParseBufferTokenWithDelimiter", "sparse part detected.");
     #endif
-    curbyte = naGetBufferPartDataPointerConst(part, buffer->curoffset); 
+    curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
     endoffset = naGetBufferPartEnd(part);
-    while(buffer->curoffset < endoffset){
+    while(iter->curoffset < endoffset){
       if((*curbyte == '/') || *curbyte == '\\'){break;}
       curbyte++;
-      buffer->curoffset++;
+      iter->curoffset++;
     }
-    if(!naContainsBufferPartOffset(part, buffer->curoffset)){naIterateList(&(buffer->iter), 1);}
+    if(!naContainsBufferPartOffset(part, iter->curoffset)){naIterateList(&(iter->listiter), 1);}
   }
 
-  string = naMakeStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(tokenstart, buffer->curoffset));
-  naSeekBufferRelative(buffer, 1);
+  string = naMakeStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
+  naSeekBufferRelative(iter, 1);
   return string;
 }
 
 
 
-NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABuffer* buffer, uint64* retint, NAInt maxdigitcount, uint64 max){
+NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64* retint, NAInt maxdigitcount, uint64 max){
   NAInt bytesused;
   uint64 prevval;
   NABool endfound = NA_FALSE;
+
+  *retint = 0LL;
+
   #ifndef NDEBUG
     if(!retint)
       {naCrash("naParseBufferDecimalUnsignedInteger", "retint is Null-Pointer"); return 0;}
   #endif
-  if(maxdigitcount == 0){maxdigitcount = naGetRangeiEnd(buffer->range) - buffer->curoffset;}
+
+  if(naIsBufferEmpty(naGetBufferIteratorBufferConst(iter))){return 0;}
+  if(naIsBufferAtInitial(iter)){naSeekBufferFromStart(iter, 0);}
+
+  if(maxdigitcount == 0){maxdigitcount = naGetRangeiEnd(naGetBufferIteratorBufferConst(iter)->range) - iter->curoffset;}
   bytesused = 0;
   prevval = 0LL;
-  *retint = 0LL;
   
-  while(!naIsListAtInitial(&(buffer->iter))){
+  while(!naIsBufferAtInitial(iter)){
     const NAByte* curbyte;
     NAInt endoffset;
 
-    const NABufferPart* part = naGetListCurrentConst(&(buffer->iter));
+    const NABufferPart* part = naGetListCurrentConst(&(iter->listiter));
     #ifndef NDEBUG
       if(naIsBufferPartSparse(part))
         naError("naParseBufferTokenWithDelimiter", "sparse part detected.");
     #endif
-    curbyte = naGetBufferPartDataPointerConst(part, buffer->curoffset); 
+    curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
     endoffset = naGetBufferPartEnd(part);
-    while(buffer->curoffset < endoffset){
+    while(iter->curoffset < endoffset){
       if(bytesused >= maxdigitcount){break;}
 
       if((*curbyte < '0') || (*curbyte > '9')){endfound = NA_TRUE; break;}
@@ -2525,7 +2822,7 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABuffer* buffer, uint64* retin
       curbyte++;
     }
     if(bytesused >= maxdigitcount){break;}
-    if(!naContainsBufferPartOffset(part, buffer->curoffset)){naIterateList(&(buffer->iter), 1);}
+    if(!naContainsBufferPartOffset(part, iter->curoffset)){naIterateList(&(iter->listiter), 1);}
     if(endfound){break;}
   }
   
@@ -2534,84 +2831,88 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABuffer* buffer, uint64* retin
 
 
 
-NA_DEF NAInt naParseBufferDecimalSignedInteger(NABuffer* buffer, int64* retint, NAInt maxdigitcount, int64 min, int64 max){
+NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* retint, NAInt maxdigitcount, int64 min, int64 max){
   int64 sign = 1LL;
   NAInt bytesused = 0;
   int64 limit = max;
   uint64 intvalue;
 
-  const NABufferPart* part = naGetListCurrentConst(&(buffer->iter));
-  const NAByte* curbyte = naGetBufferPartDataPointerConst(part, buffer->curoffset); 
+  *retint = 0LL;
+
+  if(naIsBufferEmpty(naGetBufferIteratorBufferConst(iter))){return 0;}
+  if(naIsBufferAtInitial(iter)){naSeekBufferFromStart(iter, 0);}
+  const NABufferPart* part = naGetListCurrentConst(&(iter->listiter));
+  const NAByte* curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
 
   // Check for a potential sign at the first character
   if(*curbyte == '+'){
     bytesused = 1;
     maxdigitcount--;
-    naSeekBufferRelative(buffer, 1);
+    naSeekBufferRelative(iter, 1);
   }else if(*curbyte == '-'){
     sign = -1LL;
     limit = -min;
     bytesused = 1;
     maxdigitcount--;
-    naSeekBufferRelative(buffer, 1);
+    naSeekBufferRelative(iter, 1);
   }
 
-  bytesused += naParseBufferDecimalUnsignedInteger(buffer, &intvalue, maxdigitcount, (uint64)limit);
+  bytesused += naParseBufferDecimalUnsignedInteger(iter, &intvalue, maxdigitcount, (uint64)limit);
   *retint = sign * (int64)intvalue;
   return bytesused;
 }
 
 
 
-NA_DEF int8 naParseBufferInt8(NABuffer* buffer, NABool skipdelimiter){
+NA_DEF int8 naParseBufferInt8(NABufferIterator* iter, NABool skipdelimiter){
   int64 intvalue;  
-  naParseBufferDecimalSignedInteger(buffer, &intvalue, 0, NA_INT8_MIN, NA_INT8_MAX);
-  if(skipdelimiter){naSkipBufferDelimiter(buffer);}
+  naParseBufferDecimalSignedInteger(iter, &intvalue, 0, NA_INT8_MIN, NA_INT8_MAX);
+  if(skipdelimiter){naSkipBufferDelimiter(iter);}
   return (int8)intvalue;
 }
-NA_DEF int16 naParseBufferInt16(NABuffer* buffer, NABool skipdelimiter){
+NA_DEF int16 naParseBufferInt16(NABufferIterator* iter, NABool skipdelimiter){
   int64 intvalue;  
-  naParseBufferDecimalSignedInteger(buffer, &intvalue, 0, NA_INT16_MIN, NA_INT16_MAX);
-  if(skipdelimiter){naSkipBufferDelimiter(buffer);}
+  naParseBufferDecimalSignedInteger(iter, &intvalue, 0, NA_INT16_MIN, NA_INT16_MAX);
+  if(skipdelimiter){naSkipBufferDelimiter(iter);}
   return (int16)intvalue;
 }
-NA_DEF int32 naParseBufferInt32(NABuffer* buffer, NABool skipdelimiter){
+NA_DEF int32 naParseBufferInt32(NABufferIterator* iter, NABool skipdelimiter){
   int64 intvalue;  
-  naParseBufferDecimalSignedInteger(buffer, &intvalue, 0, NA_INT32_MIN, NA_INT32_MAX);
-  if(skipdelimiter){naSkipBufferDelimiter(buffer);}
+  naParseBufferDecimalSignedInteger(iter, &intvalue, 0, NA_INT32_MIN, NA_INT32_MAX);
+  if(skipdelimiter){naSkipBufferDelimiter(iter);}
   return (int32)intvalue;
 }
-NA_DEF int64 naParseBufferInt64(NABuffer* buffer, NABool skipdelimiter){
+NA_DEF int64 naParseBufferInt64(NABufferIterator* iter, NABool skipdelimiter){
   int64 intvalue;  
-  naParseBufferDecimalSignedInteger(buffer, &intvalue, 0, NA_INT64_MIN, NA_INT64_MAX);
-  if(skipdelimiter){naSkipBufferDelimiter(buffer);}
+  naParseBufferDecimalSignedInteger(iter, &intvalue, 0, NA_INT64_MIN, NA_INT64_MAX);
+  if(skipdelimiter){naSkipBufferDelimiter(iter);}
   return (int64)intvalue;
 }
 
 
 
-NA_DEF uint8 naParseBufferUInt8(NABuffer* buffer, NABool skipdelimiter){
+NA_DEF uint8 naParseBufferUInt8(NABufferIterator* iter, NABool skipdelimiter){
   uint64 uintvalue;  
-  naParseBufferDecimalUnsignedInteger(buffer, &uintvalue, 0, NA_UINT8_MAX);
-  if(skipdelimiter){naSkipBufferDelimiter(buffer);}
+  naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, NA_UINT8_MAX);
+  if(skipdelimiter){naSkipBufferDelimiter(iter);}
   return (uint8)uintvalue;
 }
-NA_DEF uint16 naParseBufferUInt16(NABuffer* buffer, NABool skipdelimiter){
+NA_DEF uint16 naParseBufferUInt16(NABufferIterator* iter, NABool skipdelimiter){
   uint64 uintvalue;  
-  naParseBufferDecimalUnsignedInteger(buffer, &uintvalue, 0, NA_UINT16_MAX);
-  if(skipdelimiter){naSkipBufferDelimiter(buffer);}
+  naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, NA_UINT16_MAX);
+  if(skipdelimiter){naSkipBufferDelimiter(iter);}
   return (uint16)uintvalue;
 }
-NA_DEF uint32 naParseBufferUInt32(NABuffer* buffer, NABool skipdelimiter){
+NA_DEF uint32 naParseBufferUInt32(NABufferIterator* iter, NABool skipdelimiter){
   uint64 uintvalue;  
-  naParseBufferDecimalUnsignedInteger(buffer, &uintvalue, 0, NA_UINT32_MAX);
-  if(skipdelimiter){naSkipBufferDelimiter(buffer);}
+  naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, NA_UINT32_MAX);
+  if(skipdelimiter){naSkipBufferDelimiter(iter);}
   return (uint32)uintvalue;
 }
-NA_DEF uint64 naParseBufferUInt64(NABuffer* buffer, NABool skipdelimiter){
+NA_DEF uint64 naParseBufferUInt64(NABufferIterator* iter, NABool skipdelimiter){
   uint64 uintvalue;  
-  naParseBufferDecimalUnsignedInteger(buffer, &uintvalue, 0, NA_UINT64_MAX);
-  if(skipdelimiter){naSkipBufferDelimiter(buffer);}
+  naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, NA_UINT64_MAX);
+  if(skipdelimiter){naSkipBufferDelimiter(iter);}
   return (uint64)uintvalue;
 }
 

@@ -140,9 +140,15 @@ NA_API NAUInt             naGetRuntimePoolSize();
 // Note that the destructor must be declared and the type must not be opaque
 // at the time of using NA_RUNTIME_TYPE!
 
+#ifndef NDEBUG
 #define NA_RUNTIME_TYPE(type, destructor)\
-  static NA_LINKER_NO_EXPORT NATypeInfo na_ ## type ## _typeinfo =\
-  {NA_NULL, sizeof(type), (NAMutator)destructor}
+    static NA_LINKER_NO_EXPORT NATypeInfo na_ ## type ## _typeinfo =\
+    {NA_NULL, sizeof(type), (NAMutator)destructor, #type}
+#else
+  #define NA_RUNTIME_TYPE(type, destructor)\
+    static NA_LINKER_NO_EXPORT NATypeInfo na_ ## type ## _typeinfo =\
+    {NA_NULL, sizeof(type), (NAMutator)destructor}
+#endif
 
 // Every type using the runtime system will get a global typeinfo variable
 // which has the following type. The full type definition is in the file

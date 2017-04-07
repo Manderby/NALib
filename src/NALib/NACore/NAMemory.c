@@ -84,6 +84,9 @@ struct NACoreTypeInfo{
   NACorePool*       curpool;
   NAUInt            typesize;
   NAMutator         destructor;
+  #ifndef NDEBUG
+    const char*     typename;
+  #endif
 };
 
 
@@ -105,10 +108,16 @@ struct NARuntime{
   NAUInt mempagesize;
   NAUInt poolsize;
   NAUInt poolsizemask;
+  #ifndef NDEBUG
+    NAInt typeinfocount;
+    NACoreTypeInfo** typeinfos;
+  #endif
 };
 
 
 NARuntime* na_runtime = NA_NULL;
+
+
 
 
 #if (NA_RUNTIME_USES_MEMORY_POOLS == 1)
@@ -118,6 +127,54 @@ NARuntime* na_runtime = NA_NULL;
   #if (NA_COREPOOL_BYTESIZE != 0) && (NA_COREPOOL_BYTESIZE <= 8 * NA_SYSTEM_ADDRESS_BYTES)
     #error "Core memory pool size is too small"
   #endif
+
+
+  NA_HIDEF void naRegisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
+    #ifndef NDEBUG
+      NACoreTypeInfo** newinfos = naMalloc((NAInt)sizeof(NACoreTypeInfo*) * (na_runtime->typeinfocount + NA_ONE));
+      if(na_runtime->typeinfos){
+        naCopyn(newinfos, na_runtime->typeinfos, (NAUInt)sizeof(NACoreTypeInfo*) * (NAUInt)na_runtime->typeinfocount);
+      }
+      newinfos[na_runtime->typeinfocount] = coretypeinfo;
+      na_runtime->typeinfocount++;
+      naFree(na_runtime->typeinfos);
+      na_runtime->typeinfos = newinfos;
+    #endif
+  }
+  
+  
+  NA_HIDEF void naUnregisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
+    #ifndef NDEBUG
+      NACoreTypeInfo** newinfos = NA_NULL;
+      if(na_runtime->typeinfocount != 1){
+        newinfos = naMalloc((NAInt)sizeof(NACoreTypeInfo*) * (NAInt)(na_runtime->typeinfocount - NA_ONE));
+      }
+      NAInt newindex = 0;
+      for(NAInt i=0; i<na_runtime->typeinfocount; i++){
+        if(na_runtime->typeinfos[i] != coretypeinfo){
+          if(newindex == (na_runtime->typeinfocount - 1))
+            naError("naUnregisterCoreTypeInfo", "coretypeinfo was not registered");
+          newinfos[newindex] = na_runtime->typeinfos[i];
+          newindex++;
+        }
+      }
+      na_runtime->typeinfocount--;
+      naFree(na_runtime->typeinfos);
+      na_runtime->typeinfos = newinfos;
+    #endif
+  }
+
+
+  NA_HDEF NAUInt naGetCoreTypeInfoAllocatedCount(NACoreTypeInfo* coretypeinfo){
+    NACorePool* firstpool = coretypeinfo->curpool;
+    NACorePool* curpool = firstpool->nextpool;
+    NAUInt totalcount = firstpool->usedcount;
+    while(curpool != firstpool){
+      totalcount += curpool->usedcount;
+      curpool = curpool->nextpool;
+    }
+    return totalcount;
+  }
 
 
 
@@ -207,7 +264,7 @@ NARuntime* na_runtime = NA_NULL;
 
 
 NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
-
+  
   void* pointer;
   NACoreTypeInfo* coretypeinfo;
   
@@ -234,7 +291,10 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
   #else
 
     // If there is no current pool, create a first one.
-    if(!coretypeinfo->curpool){naEnhanceCorePool(coretypeinfo);}
+    if(!coretypeinfo->curpool){
+      naRegisterCoreTypeInfo(coretypeinfo);
+      naEnhanceCorePool(coretypeinfo);
+    }
   
     // If the current pool is full, we try the next in the pool list.
     if(naIsPoolFull(coretypeinfo->curpool)){
@@ -328,7 +388,13 @@ NA_DEF void naDelete(void* pointer){
         
     // If no more structs are in use, we can shrink that core pool away. We do
     // not shrink away the last pool though.
-    if((!corepool->usedcount) && (corepool->nextpool != corepool)){naShrinkCorePool(corepool);}
+    if(!corepool->usedcount){
+      if(corepool->nextpool == corepool){
+        corepool->coretypeinfo->curpool = NA_NULL;
+        naUnregisterCoreTypeInfo(corepool->coretypeinfo);
+      }
+      naShrinkCorePool(corepool);
+    }
 
   #endif
 
@@ -354,6 +420,10 @@ NA_DEF void naStartRuntime(){
     na_runtime->poolsize = NA_COREPOOL_BYTESIZE;
     na_runtime->poolsizemask = ~(NAUInt)(NA_COREPOOL_BYTESIZE - NA_ONE);
   #endif
+  #ifndef NDEBUG
+    na_runtime->typeinfocount = 0;
+    na_runtime->typeinfos = NA_NULL;
+  #endif
 }
 
 
@@ -362,6 +432,16 @@ NA_DEF void naStopRuntime(){
   #ifndef NDEBUG
     if(!na_runtime)
       naCrash("naStopRuntime", "Runtime not running");
+    
+    #if (NA_RUNTIME_USES_MEMORY_POOLS == 1)
+      if(na_runtime->typeinfocount){
+        printf("\nMemory leaks detected in NARuntime:\n");
+        for(NAInt i=0; i< na_runtime->typeinfocount; i++){
+          NAUInt structcount = naGetCoreTypeInfoAllocatedCount(na_runtime->typeinfos[i]);
+          printf("%s: %" NA_PRIi " * %" NA_PRIu " = %" NA_PRIi " Bytes\n", na_runtime->typeinfos[i]->typename, structcount, na_runtime->typeinfos[i]->typesize, structcount * na_runtime->typeinfos[i]->typesize);
+        }
+      }
+    #endif
   #endif
   naFree(na_runtime);
   na_runtime = NA_NULL;

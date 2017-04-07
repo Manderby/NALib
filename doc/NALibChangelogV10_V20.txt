@@ -12,7 +12,18 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
-- Speedup of naNew.
+- NABuffer now works with Iterators.
+- Speedup of NARuntime. Manages memory pools more intelligently. Detects memory
+  leaks.
+
+
+- Added several API functions to NAString.
+- Added a bytesize to naEqualBufferToData.
+- Replaced all occurences of head/tail, lead/trail, front/back with
+  start/end. Easier to understand.
+- Added simple string parsing functions.
+- Added more comments and descriptions.
+- Corrected a memory leak in NADeflate
 
 
 Version 18 (first published 2017-March-30):

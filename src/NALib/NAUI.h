@@ -326,7 +326,7 @@ NA_API void naAddUIReaction(          void* controllerdata,
 //
 // You can have as many reactions as you like for any number of elements. They
 // will be stored separately for every ui element in a list which will always
-// be traversed sequentially from head to tail.
+// be traversed sequentially forward from start to end.
 //
 // When a reaction handler returns NA_TRUE, the command is considered handeled
 // and will not be processed any further. If it is NA_FALSE however, the

@@ -23,7 +23,7 @@
 
 
 // The version number of this NALib distribution.
-#define NA_VERSION 18
+#define NA_VERSION 19
 
 // Include the configuration of NALib.
 // Have a look at this file to find out how you can configure NALib by adding
@@ -66,7 +66,7 @@
 //
 // Note that the author is completely aware that the system is not bound to
 // a specific compiler. But these combinations are the ones having been used
-// during the last 10 years by the author both for hobby and job.
+// during years by the author both for hobby and job.
 //
 // Interesting read: http://sourceforge.net/p/predef/wiki/OperatingSystems/
 //
@@ -638,10 +638,10 @@ typedef char NAUTF8Char;
 // ////////////////////////
 // Some container structs like NAArray or NAList provide naForeachXXX functions
 // with an additional parameter: An accessor or mutator callback with the
-// following signature:
+// following signatures:
 
 typedef void (*NAAccessor) (const void*);
-typedef void (*NAMutator)  (void*);
+typedef void (*NAMutator)  (      void*);
 
 // This parameter allows you to provide a function pointer to an accessing or
 // mutation function which will be called for every element in the container.
@@ -664,7 +664,7 @@ typedef void (*NAMutator)  (void*);
 // Apart from callback functions, many container structs have separate iterators.
 // Have a look at the API.
 //
-// Callback fucntions are used for:
+// Callback functions are used for:
 // - Accessor or Mutator functions for naForeachXXX functions.
 // - Application start functions
 // - Threading start functions

@@ -54,14 +54,14 @@ NA_DEF NABool naLocateListIndex(NAListIterator* iterator, NAInt indx){
   }
   
   if(indx < ((NAInt)mutablelist->count / 2)){
-    // Go from leading to trailing
+    // Go forward from start to end
     iterator->cur = mutablelist->sentinel.next;
     while(indx){
       iterator->cur = iterator->cur->next;
       indx--;
     }
   }else{
-    // Go from trailing to leading
+    // Go backward from end to start
     iterator->cur = mutablelist->sentinel.prev;
     indx = indx - mutablelist->count + 1;
     while(indx){
