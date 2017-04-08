@@ -72,7 +72,7 @@ NA_DEF NAString naMakeStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
     // with index [size] must be binary zero. As we are not copying but just
     // referencing the pointer, we can safely use the array without this byte
     // and still be able to say: We are null-terminated!
-    string.buffer = naCreateBufferConstData(ptr, length);
+    string.buffer = naCreateBufferWithConstData(ptr, length);
     string.cachedstr = NA_NULL;
     
   }else{
@@ -90,7 +90,7 @@ NA_DEF NAString naMakeStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt leng
     if(!naIsCleanupValid(cleanup))
       naError("naMakeStringWithMutableUTF8Buffer", "invalid cleanup option");
   #endif
-  string.buffer = naCreateBufferMutableData(buffer, naAbsi(length), cleanup); // todo: absi
+  string.buffer = naCreateBufferWithMutableData(buffer, naAbsi(length), cleanup); // todo: absi
   string.cachedstr = NA_NULL;
   return string;
 }

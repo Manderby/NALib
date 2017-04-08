@@ -125,26 +125,31 @@ NA_API NABuffer* naCreateBuffer(NABool securememory);
 
 // Creates a buffer referencing a subrange of another buffer. The origin of
 // the new buffer will be at zero and its range is fixed.
-NA_DEF NABuffer* naCreateBufferExtraction( NABuffer* srcbuffer,
+NA_API NABuffer* naCreateBufferExtraction( NABuffer* srcbuffer,
                                             NARangei range,
                                               NABool copy,
                                               NABool securememory);
 
+// Creates a buffer with no source and no content. It can be used as a
+// placeholder or to collect other buffers with naAppendBuffer or
+// naWriteBufferBuffer.
+NA_API NABuffer* naCreateBufferCollector();
+
 // Creates a buffer sharing the same source as the given buffer.
-NA_API NABuffer* naCreateBufferSameSource(  NABuffer* srcbuffer);
+NA_API NABuffer* naCreateBufferWithSameSource(  NABuffer* srcbuffer);
                     
 // Creates a buffer inputting contents from a file. Its origin is always at
 // zero and its range is fixed.
-NA_API NABuffer* naCreateBufferFile(      const char* filename);
+NA_API NABuffer* naCreateBufferWithInpuFile(const char* filename);
 
 // Creates a buffer accessing already existing const or mutable data. If the
 // data is mutable, you can give a cleanup method if you want to delete the
 // memory of the data pointer when no longer needed.
-NA_API NABuffer* naCreateBufferConstData( const void* data,
-                                                NAInt bytesize);
-NA_API NABuffer* naCreateBufferMutableData(     void* data,
-                                                NAInt bytesize,
-                                      NAMemoryCleanup cleanup);
+NA_API NABuffer* naCreateBufferWithConstData( const void* data,
+                                                    NAInt bytesize);
+NA_API NABuffer* naCreateBufferWithMutableData(     void* data,
+                                                    NAInt bytesize,
+                                          NAMemoryCleanup cleanup);
 
 // Creates a buffer with a custom source. Create a descriptor like this:
 //   NABufferSourceDescriptor desc;
@@ -225,10 +230,13 @@ NA_API NABool naEqualBufferToBuffer(  const NABuffer* buffer1,
 
 // Assumes data to contain an equal amount of bytes as buffer and compares all
 // bytes for equality. If casesensitive is NA_TRUE, an exact match is tested.
-NA_DEF NABool naEqualBufferToData(    const NABuffer* buffer,
+NA_API NABool naEqualBufferToData(    const NABuffer* buffer,
                                           const void* data,
                                                 NAInt databytesize,
                                                NABool casesensitive);
+
+// Appends the whole content of srcbuffer to the end of dstbuffer.
+NA_API void naAppendBufferToBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer);
 
 // Uses all bytes of the buffer to write to output or use it in other structs.
 // File:     Creates a new file and fills it with the content of the buffer.

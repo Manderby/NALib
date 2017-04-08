@@ -20,10 +20,11 @@ correct, complete or final.
 - Added several API functions to NAString.
 - Added a bytesize to naEqualBufferToData.
 - Replaced all occurences of head/tail, lead/trail, front/back with
-  start/end. Easier to understand.
+  start/end and forward/backward. Easier to understand.
 - Added simple string parsing functions.
 - Added more comments and descriptions.
 - Corrected a memory leak in NADeflate
+- NAPNG can now open PNG files with multiple IDAT chunks.
 
 
 Version 18 (first published 2017-March-30):

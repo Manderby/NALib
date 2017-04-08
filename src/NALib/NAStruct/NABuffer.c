@@ -214,11 +214,10 @@ NA_HIDEF NABool naContainsBufferPartOffset(const NABufferPart* part, NAInt offse
 // This function returns NA_TRUE if both parts have the same data pointer
 // and the ranges are adjacent.
 NA_HIDEF NABool naAreBufferPartsEqualAndAdjacent(NABufferPart* startpart, NABufferPart* endpart){
-  if((startpart->data == endpart->data) && (naGetRangeiEnd(startpart->range) == endpart->range.origin)){
-    #ifndef NDEBUG
-      if(startpart->origin != endpart->origin)
-        naError("naAreBufferPartsEqualAndAdjacent", "Internal consistency error: Origin of the two parts do not match");
-    #endif
+  // Note that parts may have the same data but do not have the same origin
+  // as parts always denote their origin relative to the source of the buffer.
+  // They only are adjacent if the range origin plus the src origin matches.
+  if((startpart->data == endpart->data) && ((naGetRangeiEnd(startpart->range) + startpart->origin) == (endpart->range.origin + endpart->origin))){
     return NA_TRUE;
   }else{
     return NA_FALSE;
@@ -1069,7 +1068,24 @@ NA_DEF NABuffer* naCreateBufferExtraction(NABuffer* srcbuffer, NARangei range, N
 
 
 
-NA_DEF NABuffer* naCreateBufferSameSource(NABuffer* srcbuffer){
+NA_DEF NABuffer* naCreateBufferCollector(){
+  NABuffer* buffer = naAlloc(NABuffer);
+  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitBufferStruct(buffer);
+  
+  // The source is a Null pointer.
+  buffer->source = NA_NULL;
+  buffer->srcoffset = 0;
+
+  buffer->endianness = NA_ENDIANNESS_UNKNOWN;
+  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
+
+  return buffer;
+}
+
+
+
+NA_DEF NABuffer* naCreateBufferWithSameSource(NABuffer* srcbuffer){
   NABuffer* buffer = naAlloc(NABuffer);
   naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
   naInitBufferStruct(buffer);
@@ -1087,7 +1103,7 @@ NA_DEF NABuffer* naCreateBufferSameSource(NABuffer* srcbuffer){
 
 
 
-NA_DEF NABuffer* naCreateBufferFile(const char* filename){
+NA_DEF NABuffer* naCreateBufferWithInpuFile(const char* filename){
   NABufferSourceDescriptor desc;
 
   NABuffer* buffer = naAlloc(NABuffer);
@@ -1114,7 +1130,7 @@ NA_DEF NABuffer* naCreateBufferFile(const char* filename){
 
 
 
-NA_DEF NABuffer* naCreateBufferConstData(const void* data, NAInt bytesize){
+NA_DEF NABuffer* naCreateBufferWithConstData(const void* data, NAInt bytesize){
   NABufferPart* part;
   
   NABuffer* buffer = naAlloc(NABuffer);
@@ -1139,7 +1155,7 @@ NA_DEF NABuffer* naCreateBufferConstData(const void* data, NAInt bytesize){
 
 
 
-NA_DEF NABuffer* naCreateBufferMutableData(void* data, NAInt bytesize, NAMemoryCleanup cleanup){
+NA_DEF NABuffer* naCreateBufferWithMutableData(void* data, NAInt bytesize, NAMemoryCleanup cleanup){
   NABufferPart* part;
   
   NABuffer* buffer = naAlloc(NABuffer);
@@ -1454,6 +1470,13 @@ NA_DEF NABool naEqualBufferToData(const NABuffer* buffer, const void* data, NAIn
   return resultequal;
 }
 
+
+
+NA_DEF void naAppendBufferToBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer){
+  NABufferIterator iter = naMakeBufferIteratorModifier(dstbuffer);
+  naWriteBufferBuffer(&iter, srcbuffer, naGetBufferRange(srcbuffer));
+  naClearBufferIterator(&iter);
+}
 
 
 
@@ -2424,6 +2447,9 @@ NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, NABuffer* srcbuffer, NAR
   
   dstbuffer->source = naCreateBufferSourceBuffer(srcbuffer);
   
+  if(!naIsBufferEmpty(naGetBufferIteratorBufferConst(iter)) && naIsBufferAtInitial(iter)){
+    iter->curoffset = naGetRangeiEnd(naGetBufferIteratorBufferConst(iter)->range);
+  }
   dstbuffer->srcoffset = iter->curoffset - srcrange.origin;
   
   naCacheBufferRange(dstbuffer, naMakeRangei(iter->curoffset, srcrange.length), NA_FALSE);

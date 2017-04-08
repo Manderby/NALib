@@ -49,6 +49,7 @@ struct NAPNG{
   NAPNGInterlaceMethod interlacemethod;
 
   NAByte* pixeldata;
+  NABuffer* compresseddata;
   NABuffer* filtereddata;
 };
 
@@ -251,14 +252,12 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
   NAByte* upbuffer;
   NAByte* upbufptr;
   NAInt x, y;
-//  NAFile* outfile;
   NABufferIterator iterfilter;
 
   NAInt bpp = naGetPNGBytesPerPixel(png->colortype);
   NAInt bytesperline = png->size.width * bpp;
   
   png->pixeldata = naMalloc(naSizeof(NAByte) * png->size.width * png->size.height * bpp);
-//  naSeekBufferAbsolute(png->filtereddata, 0);
   curbyte = png->pixeldata;
   
   upbuffer = naMalloc(bytesperline);
@@ -442,7 +441,7 @@ NA_HDEF void naReadPNGPLTEChunk(NAPNG* png, NAPNGChunk* plte){
 
 
 NA_HDEF void naReadPNGIDATChunk(NAPNG* png, NAPNGChunk* idat){
-  naFillBufferWithZLIBDecompression(png->filtereddata, idat->data);
+  naAppendBufferToBuffer(png->compresseddata, idat->data);
 
 
 //  NAFile outfile = naCreateFileWritingFilename("test.raw", NA_FILEMODE_DEFAULT);
@@ -563,6 +562,7 @@ NA_HDEF void naReadPNGsRGBChunk(NAPNG* png, NAPNGChunk* srgb){
   NABufferIterator iter = naMakeBufferIteratorAccessor(srgb->data);
   uint8 intent = naReadBufferu8(&iter);
   naClearBufferIterator(&iter);
+  
   // As this implementation is not yet capable of color management, we ignore
   // the gAMA and cHRM values and set them to the following:
   NA_UNUSED(intent);
@@ -701,6 +701,7 @@ NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colortype, NAUInt bitdepth){
   
   bpp = naGetPNGBytesPerPixel(colortype);
   png->pixeldata = naMalloc(size.width * size.height * bpp);
+  png->filtereddata = NA_NULL;
   
   return png;
 }
@@ -722,8 +723,9 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   png->pixeldimensions[0] = 1.f;
   png->pixeldimensions[1] = 1.f;
   png->pixelunit = NA_PIXEL_UNIT_RATIO;
+  png->filtereddata = NA_NULL;
   
-  buffer = naCreateBufferFile(filename);
+  buffer = naCreateBufferWithInpuFile(filename);
   bufiter = naMakeBufferIteratorModifier(buffer);
   
   // If the buffer is empty, there is no png to read.
@@ -746,11 +748,13 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   // Read the chunks until the IEND chunk is read.
   while(1){
     NAPNGChunk* curchunk = naAllocPNGChunkFromBuffer(&bufiter);
-    if(curchunk->type == NA_PNG_CHUNK_TYPE_IEND){break;}
     naAddListLastMutable(&(png->chunks), curchunk);
+    if(curchunk->type == NA_PNG_CHUNK_TYPE_IEND){break;}
   }
   
-  // Create the buffer to hold the decompressed data
+  // Create the buffer to hold the compressed and decompressed data
+  png->compresseddata = naCreateBufferCollector();
+  naSetBufferEndianness(png->compresseddata, NA_ENDIANNESS_NETWORK);
   png->filtereddata = naCreateBuffer(NA_FALSE);
   
   iter = naMakeListIteratorMutator(&(png->chunks));
@@ -782,6 +786,8 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   }
   naClearListIterator(&iter);
   
+  naFixBufferRange(png->compresseddata);
+  naFillBufferWithZLIBDecompression(png->filtereddata, png->compresseddata);
   naReconstructFilterData(png);
   
   NAEndReadingPNG:
@@ -887,6 +893,8 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
 NA_HDEF void naDestructPNG(NAPNG* png){
   naForeachListMutable(&(png->chunks), (NAMutator)naDeallocPNGChunk);
   naClearList(&(png->chunks));
+  if(png->pixeldata){naFree(png->pixeldata);}
+  if(png->filtereddata){naReleaseBuffer(png->filtereddata);}
 }
 
 
