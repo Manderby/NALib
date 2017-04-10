@@ -1036,39 +1036,66 @@ NA_DEF NABuffer* naCreateBuffer(NABool securememory){
 
 
 
-NA_DEF NABuffer* naCreateBufferExtraction(NABuffer* srcbuffer, NARangei range, NABool copy, NABool securememory){
+NA_DEF NABuffer* naCreateBufferExtraction(NABuffer* srcbuffer, NARangei range){
   NABuffer* buffer;
-  if(copy){
-    buffer = naCreateBuffer(securememory);
-    if(range.length){
-      NABufferIterator iter = naMakeBufferIteratorModifier(buffer);
-      naWriteBufferBuffer(&iter, srcbuffer, range);
-      naClearBufferIterator(&iter);
-    }
-  }else{
-    buffer = naAlloc(NABuffer);
-    naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
-    naInitBufferStruct(buffer);
-    
-    buffer->source = naCreateBufferSourceBuffer(srcbuffer);
-    buffer->srcoffset = -range.origin;
+  buffer = naAlloc(NABuffer);
+  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitBufferStruct(buffer);
+  
+  buffer->source = naCreateBufferSourceBuffer(srcbuffer);
+  buffer->srcoffset = -range.origin;
 
-    // We initialize with length 0 and ensure the buffer range to the full range
-    // after.
-    if(range.length){
-      naEnsureBufferRange(buffer, naMakeRangei(0, range.length));
-    }
-    buffer->flags = srcbuffer->flags | NA_BUFFER_RANGE_FIXED;
-    
-    buffer->endianness = srcbuffer->endianness;
-    buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
+  // We initialize with length 0 and ensure the buffer range to the full range
+  // after.
+  if(range.length){
+    naEnsureBufferRange(buffer, naMakeRangei(0, range.length));
   }
+  buffer->flags = srcbuffer->flags | NA_BUFFER_RANGE_FIXED;
+  
+  buffer->endianness = srcbuffer->endianness;
+  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
+
   return buffer;
 }
 
 
 
-NA_DEF NABuffer* naCreateBufferCollector(){
+NA_DEF NABuffer* naCreateBufferCopy(const NABuffer* srcbuffer, NARangei range, NABool securememory){
+  NABufferIterator srciter;
+  NABufferIterator dstiter;
+  NABuffer* buffer = naCreateBuffer(securememory);
+
+  if(range.length == 0){return buffer;}
+
+  srciter = naMakeBufferIteratorAccessor(srcbuffer);
+  dstiter = naMakeBufferIteratorModifier(buffer);
+  
+  naPrepareBuffer(&dstiter, naMakeRangei(0, range.length), NA_FALSE, NA_TRUE);
+  naIterateBuffer(&srciter, 1);
+
+  while(range.length){
+    NABufferPart* dstpart = naGetListCurrentMutable(&(dstiter.listiter));
+    const NABufferPart* srcpart = naGetListCurrentConst(&(srciter.listiter));
+    NAInt remainingsrc = naGetBufferPartEnd(srcpart) - range.origin;
+    NAInt remainingdst = naGetBufferPartEnd(dstpart) - naTellBuffer(&dstiter);
+    NAInt remaining = naMini(remainingsrc, remainingdst);
+//    remaining = naMini(remaining, range.length);
+    naCopyn(naGetBufferPartDataPointerMutable(dstpart, naTellBuffer(&dstiter)), naGetBufferPartDataPointerConst(srcpart, range.origin), remaining);
+    naIterateBuffer(&srciter, remaining);
+    naIterateBuffer(&dstiter, remaining);
+    range.origin += remaining;
+    range.length -= remaining;
+  }
+
+  naClearBufferIterator(&srciter);
+  naClearBufferIterator(&dstiter);
+
+  return buffer;
+}
+
+
+
+NA_DEF NABuffer* naCreateBufferPlain(){
   NABuffer* buffer = naAlloc(NABuffer);
   naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
   naInitBufferStruct(buffer);
@@ -2606,8 +2633,8 @@ NA_DEF void naPadBufferBits(NABufferIterator* iter){
 
 
 
-NA_DEF NABuffer* naReadBufferBuffer(NABufferIterator* iter, NAInt bytesize, NABool copy, NABool securememory){
-  return naCreateBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangei(iter->curoffset, bytesize), copy, securememory);
+NA_DEF NABuffer* naReadBufferBuffer(NABufferIterator* iter, NAInt bytesize){
+  return naCreateBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangei(iter->curoffset, bytesize));
 }
 
 

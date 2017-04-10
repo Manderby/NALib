@@ -156,7 +156,7 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABufferIterator* iter){
 
   naReadBufferBytes(iter, chunk->typename, 4);
   if(chunk->length){
-    chunk->data = naReadBufferBuffer(iter, chunk->length, NA_FALSE, NA_FALSE);
+    chunk->data = naReadBufferBuffer(iter, chunk->length);
   }else{
     chunk->data = naCreateBuffer(NA_FALSE);
   }
@@ -753,7 +753,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   }
   
   // Create the buffer to hold the compressed and decompressed data
-  png->compresseddata = naCreateBufferCollector();
+  png->compresseddata = naCreateBufferPlain();
   naSetBufferEndianness(png->compresseddata, NA_ENDIANNESS_NETWORK);
   png->filtereddata = naCreateBuffer(NA_FALSE);
   

@@ -124,16 +124,25 @@ struct NABufferSourceDescriptor{
 NA_API NABuffer* naCreateBuffer(NABool securememory);
 
 // Creates a buffer referencing a subrange of another buffer. The origin of
-// the new buffer will be at zero and its range is fixed.
+// the new buffer will be at zero and its range is fixed. Does NOT copy any
+// content, only references it.
 NA_API NABuffer* naCreateBufferExtraction( NABuffer* srcbuffer,
+                                            NARangei range);
+
+// Creates a buffer having an exact copy of the bytes in srcbuffer within the
+// given range. The new content will be COPIED to a new memory buffer which can
+// be chosen to be either secure or not. The origin of the new buffer will be
+// at zero.
+// All content will be loaded in the new buffer. If there are sparse parts
+// in the src buffer, they will be filled with the current source.
+NA_API NABuffer* naCreateBufferCopy(const NABuffer* srcbuffer,
                                             NARangei range,
-                                              NABool copy,
                                               NABool securememory);
 
 // Creates a buffer with no source and no content. It can be used as a
 // placeholder or to collect other buffers with naAppendBuffer or
 // naWriteBufferBuffer.
-NA_API NABuffer* naCreateBufferCollector();
+NA_API NABuffer* naCreateBufferPlain();
 
 // Creates a buffer sharing the same source as the given buffer.
 NA_API NABuffer* naCreateBufferWithSameSource(  NABuffer* srcbuffer);
@@ -343,9 +352,7 @@ NA_API void naReadBufferfv  (NABufferIterator* iter, float*  dst, NAInt count);
 NA_API void naReadBufferdv  (NABufferIterator* iter, double* dst, NAInt count);
 
 NA_API NABuffer* naReadBufferBuffer(  NABufferIterator* iter,
-                                                  NAInt bytesize,
-                                                 NABool copy,
-                                                 NABool securememory);
+                                                  NAInt bytesize);
 
 
 // ////////////////////////////////

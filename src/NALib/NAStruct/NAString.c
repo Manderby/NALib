@@ -154,7 +154,7 @@ NA_DEF NAString naMakeStringExtraction(const NAString* srcstring, NAInt charoffs
     NAInt positivecount;
     naMakeIntegerRangePositiveInLength(&positiveoffset, &positivecount, charoffset, length, naGetStringBytesize(srcstring));
 
-    string.buffer = naCreateBufferExtraction(srcstring->buffer, naMakeRangei(positiveoffset, positivecount), NA_FALSE, NA_FALSE);
+    string.buffer = naCreateBufferExtraction(srcstring->buffer, naMakeRangei(positiveoffset, positivecount));
     string.cachedstr = NA_NULL;
   }
   
@@ -166,7 +166,7 @@ NA_DEF NAString naMakeStringExtraction(const NAString* srcstring, NAInt charoffs
 
 NA_DEF NAString naMakeStringWithBufferExtraction(NABuffer* buffer, NARangei range){
   NAString string;
-  string.buffer = naCreateBufferExtraction(buffer, range, NA_FALSE, NA_FALSE);
+  string.buffer = naCreateBufferExtraction(buffer, range);
   string.cachedstr = NA_NULL;
   return string;
 }
