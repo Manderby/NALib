@@ -138,7 +138,8 @@ NA_API NABool naIsStringEmpty(const NAString* string);
 NA_API const NABuffer* naGetStringBufferConst(const NAString* string);
 NA_API NABuffer* naGetStringBufferMutable(NAString* string);
 
-
+// Returns the char at the given index.
+NA_API NAUTF8Char naGetStringChar(NAString* string, NAInt indx);
 
 
 // The following two functions allow you to get either the basename or the
@@ -161,11 +162,10 @@ NA_API NAString naMakeStringWithSuffixOfFilename(const NAString* filename);
 // Therefore, the two parameters MUST not be the same!
 // Warning: XML-Decoding does not support numeric entities yet.
 //
-// Currently commented out as not fully functional.
-//NA_API NAString* naMakeStringXMLEncoded(const NAString* inputstring);
-//NA_API NAString* naMakeStringXMLDecoded(const NAString* inputstring);
-//NA_API NAString* naMakeStringEPSEncoded(const NAString* inputstring);
-//NA_API NAString* naMakeStringEPSDecoded(const NAString* inputstring);
+NA_API NAString naMakeStringXMLEncoded(const NAString* inputstring);
+NA_API NAString naMakeStringXMLDecoded(const NAString* inputstring);
+NA_API NAString naMakeStringEPSEncoded(const NAString* inputstring);
+NA_API NAString naMakeStringEPSDecoded(const NAString* inputstring);
 
 // The following functions are system dependent.
 // Currently, this is only necessary on windows.
@@ -184,28 +184,26 @@ NA_API NAString naMakeStringWithSuffixOfFilename(const NAString* filename);
 // The storage of originalstring will be detached and deleted if necessary.
 // Before that, all content will be COPIED. The resulting string will be
 // NULL-terminated.
-//
-// Currently commented out as not fully functional
-//
-//// Appends another NAString
-//NA_API void naAppendStringString(       NAString* originalstring,
-//                                  const NAString* string2);
-//// Appends an UTF-8 character
-//NA_API void naAppendStringChar(
-//                                        NAString* originalstring,
-//                                       NAUTF8Char newchar);
-//// Appends an UTF-8 C-String formatted just like sprintf. You can use this
-//// function to append C-Strings without arguments as well.
-//NA_API void naAppendStringFormat(
-//                                         NAString* originalstring,
-//                                 const NAUTF8Char* format,
-//                                                   ...);
-//// Does the same thing but with an existing va_list argument. The argumentlist
-//// argument will not be altered by this function.
-//NA_API void naAppendStringArguments(
-//                                         NAString* originalstring,
-//                                 const NAUTF8Char* format,
-//                                           va_list argumentlist);
+
+// Appends another NAString
+NA_API void naAppendStringString(       NAString* originalstring,
+                                  const NAString* string2);
+// Appends an UTF-8 character
+NA_API void naAppendStringChar(
+                                        NAString* originalstring,
+                                       NAUTF8Char newchar);
+// Appends an UTF-8 C-String formatted just like sprintf. You can use this
+// function to append C-Strings without arguments as well.
+NA_API void naAppendStringFormat(
+                                         NAString* originalstring,
+                                 const NAUTF8Char* format,
+                                                   ...);
+// Does the same thing but with an existing va_list argument. The argumentlist
+// argument will not be altered by this function.
+NA_API void naAppendStringArguments(
+                                         NAString* originalstring,
+                                 const NAUTF8Char* format,
+                                           va_list argumentlist);
 
 
 

@@ -356,7 +356,7 @@ NA_API NABuffer* naReadBufferBuffer(  NABufferIterator* iter,
 
 
 // ////////////////////////////////
-// BUFFER WRITING
+// BINARY BUFFER WRITING
 // ////////////////////////////////
 
 // The writing functions each write data to the buffer. The data is written at
@@ -394,11 +394,54 @@ NA_API void naWriteBufferfv  (NABufferIterator* iter, const float*  src, NAInt c
 NA_API void naWriteBufferdv  (NABufferIterator* iter, const double* src, NAInt count);
 
 NA_API void naWriteBufferBuffer(  NABufferIterator* iter,
-                                  NABuffer* srcbuffer,
+                                    const NABuffer* srcbuffer,
                                    NARangei srcrange);
 NA_API void naRepeatBufferBytes(  NABufferIterator* iter,
                                       NAInt distance,
                                       NAInt bytesize);
+
+
+
+// ////////////////////////////////
+// ASCII BUFFER WRITING
+// ////////////////////////////////
+
+
+// Writes a tab or a newline to the file. The newline character is dependent on
+// the buffer setting. You can change it using naSetBufferNewLine.
+NA_API void naWriteBufferTab(NABufferIterator* iter);
+NA_API void naWriteBufferNewLine(NABufferIterator* iter);
+
+// Writes the given string to the buffer, whereas the Line variant appends an
+// additional newline according to the settings of the buffer.
+// No terminating null-character is written. Existing newline characters within
+// the given string are NOT converted!
+NA_API void naWriteBufferString(  NABufferIterator* iter,
+                                    const NAString* string);
+NA_API void naWriteBufferLine(    NABufferIterator* iter,
+                                    const NAString* string);
+
+// Writes a string to the buffer which can be written like a printf format. You
+// can also use this function just to write a simple const char* string. The
+// encoding is UTF-8. The Line variant appends an additional newline according
+// to the settings of the buffer.
+NA_API void naWriteBufferStringWithFormat( NABufferIterator* iter,
+                                           const NAUTF8Char* format,
+                                                             ...);
+NA_API void naWriteBufferLineWithFormat(   NABufferIterator* iter,
+                                           const NAUTF8Char* format,
+                                                             ...);
+
+// Same as WithFormat but with an existing va_list argument.
+// The argumentlist argument will not be altered by this function.
+NA_API void naWriteBufferStringWithArguments( NABufferIterator* iter,
+                                              const NAUTF8Char* format,
+                                                        va_list argumentlist);
+NA_API void naWriteBufferLineWithArguments(   NABufferIterator* iter,
+                                              const NAUTF8Char* format,
+                                                        va_list argumentlist);
+
+
 
 
 
@@ -422,7 +465,7 @@ NA_API void   naPadBufferBits (NABufferIterator* iter);
 
 
 // ////////////////////////////////
-// BUFFER PARSING
+// ASCII BUFFER READING (PARSING)
 // ////////////////////////////////
 
 // Terminology:

@@ -2467,12 +2467,14 @@ NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, NAInt cou
 
 
 
-NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, NABuffer* srcbuffer, NARangei srcrange){
+NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffer, NARangei srcrange){
   NABuffer* dstbuffer = naGetBufferIteratorBufferMutable(iter);
   NABufferSource* tmpsource = dstbuffer->source;
   NAInt tmpsrcoffset = dstbuffer->srcoffset;
   
-  dstbuffer->source = naCreateBufferSourceBuffer(srcbuffer);
+  NABuffer* mutablesrcbuffer = (NABuffer*)srcbuffer;
+  
+  dstbuffer->source = naCreateBufferSourceBuffer(mutablesrcbuffer);
   
   if(!naIsBufferEmpty(naGetBufferIteratorBufferConst(iter)) && naIsBufferAtInitial(iter)){
     iter->curoffset = naGetRangeiEnd(naGetBufferIteratorBufferConst(iter)->range);
@@ -2553,6 +2555,78 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt by
 
   naClearListIterator(&readiter);
 
+}
+
+
+
+
+NA_DEF void naWriteBufferString(NABufferIterator* iter, const NAString* string){
+  naWriteBufferBuffer(iter, naGetStringBufferConst(string), naGetBufferRange(string->buffer));
+}
+
+
+
+NA_DEF void naWriteBufferStringWithFormat(NABufferIterator* iter, const NAUTF8Char* format, ...){
+  va_list argumentlist;
+  va_start(argumentlist, format);
+  naWriteBufferStringWithArguments(iter, format, argumentlist);
+  va_end(argumentlist);
+}
+
+
+
+NA_DEF void naWriteBufferStringWithArguments(NABufferIterator* iter, const NAUTF8Char* format, va_list argumentlist){
+  NAString string;
+  string = naMakeStringWithArguments(format, argumentlist);
+  naWriteBufferString(iter, &string);
+  naClearString(&string);
+}
+
+
+
+
+NA_DEF void naWriteBufferTab(NABufferIterator* iter){
+  naStoreBufferBytes(iter, NA_TAB, 1, NA_TRUE, NA_TRUE);
+}
+
+
+
+NA_DEF void naWriteBufferNewLine(NABufferIterator* iter){
+//  switch(buffer->flags & NA_BUFFER_FLAG_NEWLINE_MASK){
+//  case NA_BUFFER_FLAG_NEWLINE_MAC9:
+//    naEnhanceBuffer(buffer, 1);
+//    naStoreBufferBytes(buffer, NA_NL_MAC9, 1);
+//    break;
+//  case NA_BUFFER_FLAG_NEWLINE_UNIX:
+//    naEnhanceBuffer(buffer, 1);
+    naStoreBufferBytes(iter, NA_NL_UNIX, 1, NA_TRUE, NA_TRUE);
+//    break;
+//  case NA_BUFFER_FLAG_NEWLINE_WIN:
+//    naEnhanceBuffer(buffer, 2);
+//    naStoreBufferBytes(buffer, NA_NL_WIN, 2);
+//    break;
+//  }
+//  if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) >= NA_BUFFER_FLAG_AUTOFLUSH_TEXT){naFlushBuffer(buffer);}
+}
+
+
+
+
+
+NA_DEF void naWriteBufferLine(NABufferIterator* iter, const NAString* string){
+  naWriteBufferString(iter, string);
+  naWriteBufferNewLine(iter);
+}
+NA_DEF void naWriteBufferLineWithFormat(NABufferIterator* iter, const NAUTF8Char* format, ...){
+  // Declaration before implementation. Needed for C90.
+  va_list argumentlist;
+  va_start(argumentlist, format);
+  naWriteBufferLineWithArguments(iter, format, argumentlist);
+  va_end(argumentlist);
+}
+NA_DEF void naWriteBufferLineWithArguments(NABufferIterator* iter, const NAUTF8Char* format, va_list argumentlist){
+  naWriteBufferStringWithArguments(iter, format, argumentlist);
+  naWriteBufferNewLine(iter);
 }
 
 

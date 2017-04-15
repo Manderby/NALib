@@ -238,6 +238,12 @@ NA_API NABuffer* naGetStringBufferMutable(NAString* string){
 
 
 
+NA_DEF NAUTF8Char naGetStringChar(NAString* string, NAInt indx){
+  return naGetBufferByteAtIndex(string->buffer, indx);
+}
+
+
+
 NA_DEF NAString naMakeStringWithBasenameOfFilename(const NAString* filename){
   NAInt dotoffset = naSearchBufferByteOffset(filename->buffer, NA_SUFFIX_DELIMITER, naGetRangeiMax(naGetBufferRange(filename->buffer)), NA_FALSE);
   // If dotpos is invalid, return the full string.
@@ -261,7 +267,8 @@ NA_DEF NAString naMakeStringWithSuffixOfFilename(const NAString* filename){
 
 
 
-//NA_DEF NAString* naMakeStringXMLEncoded(const NAString* inputstring){
+NA_DEF NAString naMakeStringXMLEncoded(const NAString* inputstring){
+  NA_UNUSED(inputstring);
 //  NAInt i;
 //  NAInt inputsize;
 //  NAInt destsize;
@@ -316,12 +323,14 @@ NA_DEF NAString naMakeStringWithSuffixOfFilename(const NAString* filename){
 //  }
 //
 //  return naMakeStringWithMutableUTF8Buffer(stringbuf, -destsize, NA_MEMORY_CLEANUP_NA_FREE);
-//}
+  return naMakeString();
+}
 
 
 
 
-//NA_DEF NAString* naMakeStringXMLDecoded(const NAString* inputstring){
+NA_DEF NAString naMakeStringXMLDecoded(const NAString* inputstring){
+  NA_UNUSED(inputstring);
 //  NAInt inputsize;
 //  const NAUTF8Char* inptr;
 //  NAUTF8Char* destptr;
@@ -372,11 +381,13 @@ NA_DEF NAString naMakeStringWithSuffixOfFilename(const NAString* filename){
 //  string = naMakeStringExtraction(string, 0, finalsize);
 //
 //  return string;
-//}
+  return naMakeString();
+}
 
 
 
-//NA_DEF NAString* naMakeStringEPSEncoded(const NAString* inputstring){
+NA_DEF NAString naMakeStringEPSEncoded(const NAString* inputstring){
+  NA_UNUSED(inputstring);
 //  NAUInt i;
 //  NAUInt inputsize;
 //  NAInt destsize;
@@ -429,10 +440,12 @@ NA_DEF NAString naMakeStringWithSuffixOfFilename(const NAString* filename){
 //  }
 //
 //  return string;
-//}
+  return naMakeString();
+}
 
 
-//NA_DEF NAString* naMakeStringEPSDecoded(const NAString* inputstring){
+NA_DEF NAString naMakeStringEPSDecoded(const NAString* inputstring){
+  NA_UNUSED(inputstring);
 //
 //  NAInt i;
 //  NAInt inputsize;
@@ -480,7 +493,8 @@ NA_DEF NAString naMakeStringWithSuffixOfFilename(const NAString* filename){
 //  string = naMakeStringExtraction(string, 0, finalsize);
 //
 //  return string;
-//}
+  return naMakeString();
+}
 
 
 
@@ -522,8 +536,10 @@ NA_DEF NAString naMakeStringWithSuffixOfFilename(const NAString* filename){
 #endif
 
 
-//
-//NA_DEF void naAppendStringString(NAString* originalstring, const NAString* string2){
+
+NA_DEF void naAppendStringString(NAString* originalstring, const NAString* string2){
+  NA_UNUSED(originalstring);
+  NA_UNUSED(string2);
 //  NA_UNUSED(originalstring);
 //  NA_UNUSED(string2);
 ////  NAUInt stringsize1 = naGetStringBytesize(originalstring);
@@ -538,11 +554,13 @@ NA_DEF NAString naMakeStringWithSuffixOfFilename(const NAString* filename){
 ////  }else{
 ////    // The string was empty and remains empty. Nothing to be done here.
 ////  }
-//}
-//
-//
-//
-//NA_DEF void naAppendStringChar(NAString* originalstring, NAUTF8Char newchar){
+}
+
+
+
+NA_DEF void naAppendStringChar(NAString* originalstring, NAUTF8Char newchar){
+  NA_UNUSED(originalstring);
+  NA_UNUSED(newchar);
 //  NA_UNUSED(originalstring);
 //  NA_UNUSED(newchar);
 ////  NAUInt stringsize = naGetStringBytesize(originalstring);
@@ -552,19 +570,24 @@ NA_DEF NAString naMakeStringWithSuffixOfFilename(const NAString* filename){
 ////  stringbuf[stringsize] = newchar;
 ////  naClearByteArray(&(originalstring->array));
 ////  naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_MEMORY_CLEANUP_NA_FREE);
-//}
-//
-//
-//
-//NA_DEF void naAppendStringFormat(NAString* originalstring, const NAUTF8Char* format, ...){
+}
+
+
+
+NA_DEF void naAppendStringFormat(NAString* originalstring, const NAUTF8Char* format, ...){
+  NA_UNUSED(originalstring);
+  NA_UNUSED(format);
 //  va_list argumentlist;
 //  va_start(argumentlist, format);
 //  naAppendStringArguments(originalstring, format, argumentlist);
 //  va_end(argumentlist);
-//}
-//
-//
-//NA_DEF void naAppendStringArguments(NAString* originalstring, const NAUTF8Char* format, va_list argumentlist){
+}
+
+
+NA_DEF void naAppendStringArguments(NAString* originalstring, const NAUTF8Char* format, va_list argumentlist){
+  NA_UNUSED(originalstring);
+  NA_UNUSED(format);
+  NA_UNUSED(argumentlist);
 //  NA_UNUSED(originalstring);
 //  NA_UNUSED(format);
 //  NA_UNUSED(argumentlist);
@@ -597,8 +620,8 @@ NA_DEF NAString naMakeStringWithSuffixOfFilename(const NAString* filename){
 ////  }else{
 ////    // The string was empty and remains empty. Nothing to be done here.
 ////  }
-//}
-//
+}
+
 
 
 
