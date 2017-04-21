@@ -2227,6 +2227,20 @@ NA_IDEF float naGetRangefEnd(NARangef range){
   #endif
   return naMakeEndWithStartAndLengthf(range.origin, range.length);
 }
+NA_IDEF double naGetRangeEndE(NARange range){
+  #ifndef NDEBUG
+    if(!naIsRangeValid(range))
+      naError("naGetRangeEnd", "range is invalid.");
+  #endif
+  return naMakeEndWithStartAndLength(range.origin, range.length);
+}
+NA_IDEF float naGetRangefEndE(NARangef range){
+  #ifndef NDEBUG
+    if(!naIsRangefValid(range))
+      naError("naGetRangeEnd", "range is invalid.");
+  #endif
+  return naMakeEndWithStartAndLengthf(range.origin, range.length);
+}
 
 
 
@@ -2243,6 +2257,20 @@ NA_IDEF double naGetRectEndY (NARect  rect){
   #ifndef NDEBUG
     if(naIsRectEmpty(rect))
       naError("naGetRectEndY", "rect is empty.");
+    if(!naIsRectValid(rect))
+      naError("naGetRectEndY", "rect is invalid.");
+  #endif
+  return naMakeEndWithStartAndLength(rect.pos.y, rect.size.height);
+}
+NA_IDEF double naGetRectEndXE (NARect  rect){
+  #ifndef NDEBUG
+    if(!naIsRectValid(rect))
+      naError("naGetRectEndX", "rect is invalid.");
+  #endif
+  return naMakeEndWithStartAndLength(rect.pos.x, rect.size.width);
+}
+NA_IDEF double naGetRectEndYE (NARect  rect){
+  #ifndef NDEBUG
     if(!naIsRectValid(rect))
       naError("naGetRectEndY", "rect is invalid.");
   #endif
@@ -2273,6 +2301,27 @@ NA_IDEF double naGetBoxEndZ (NABox  box){
   #ifndef NDEBUG
     if(naIsBoxEmpty(box))
       naError("naGetBoxEndZ", "box is empty.");
+    if(!naIsBoxValid(box))
+      naError("naGetBoxEndZ", "box is invalid.");
+  #endif
+  return naMakeEndWithStartAndLength(box.vertex.z, box.volume.depth);
+}
+NA_IDEF double naGetBoxEndXE (NABox  box){
+  #ifndef NDEBUG
+    if(!naIsBoxValid(box))
+      naError("naGetBoxEndX", "box is invalid.");
+  #endif
+  return naMakeEndWithStartAndLength(box.vertex.x, box.volume.width);
+}
+NA_IDEF double naGetBoxEndYE (NABox  box){
+  #ifndef NDEBUG
+    if(!naIsBoxValid(box))
+      naError("naGetBoxEndY", "box is invalid.");
+  #endif
+  return naMakeEndWithStartAndLength(box.vertex.y, box.volume.height);
+}
+NA_IDEF double naGetBoxEndZE (NABox  box){
+  #ifndef NDEBUG
     if(!naIsBoxValid(box))
       naError("naGetBoxEndZ", "box is invalid.");
   #endif

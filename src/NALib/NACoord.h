@@ -393,15 +393,23 @@ NA_IAPI NABool    naContainsBoxBox       (NABox     outerbox,    NABox     box);
 NA_IAPI NABool    naContainsBoxiBox      (NABoxi    outerbox,    NABoxi    box);
 
 // Get the End-Point of a rect. Is the same as origin + size.
-NA_IAPI double    naGetRangeEnd (NARange  range);
-NA_IAPI float     naGetRangefEnd(NARangef range);
+// The E variants allow the given struct to be empty.
+NA_IAPI double    naGetRangeEnd   (NARange  range);
+NA_IAPI float     naGetRangefEnd  (NARangef range);
+NA_IAPI double    naGetRangeEndE  (NARange  range);
+NA_IAPI float     naGetRangefEndE (NARangef range);
 
-NA_IAPI double    naGetRectEndX (NARect  rect);
-NA_IAPI double    naGetRectEndY (NARect  rect);
+NA_IAPI double    naGetRectEndX   (NARect  rect);
+NA_IAPI double    naGetRectEndY   (NARect  rect);
+NA_IAPI double    naGetRectEndXE  (NARect  rect);
+NA_IAPI double    naGetRectEndYE  (NARect  rect);
 
-NA_IAPI double    naGetBoxEndX  (NABox  box);
-NA_IAPI double    naGetBoxEndY  (NABox  box);
-NA_IAPI double    naGetBoxEndZ  (NABox  box);
+NA_IAPI double    naGetBoxEndX    (NABox  box);
+NA_IAPI double    naGetBoxEndY    (NABox  box);
+NA_IAPI double    naGetBoxEndZ    (NABox  box);
+NA_IAPI double    naGetBoxEndXE   (NABox  box);
+NA_IAPI double    naGetBoxEndYE   (NABox  box);
+NA_IAPI double    naGetBoxEndZE   (NABox  box);
 
 // Computes the positions opposite to the origin of the rect.
 // End returns origin + size
