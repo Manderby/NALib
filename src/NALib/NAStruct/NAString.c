@@ -239,7 +239,7 @@ NA_API NABuffer* naGetStringBufferMutable(NAString* string){
 
 
 NA_DEF NAUTF8Char naGetStringChar(NAString* string, NAInt indx){
-  return naGetBufferByteAtIndex(string->buffer, indx);
+  return (NAUTF8Char)naGetBufferByteAtIndex(string->buffer, indx);
 }
 
 

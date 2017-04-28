@@ -28,6 +28,9 @@ correct, complete or final.
 - Added some coordinate make functions allowing empty sizes.
 - Added bit mask functions in NAValueHelper.h for testing, setting and
   toggling flags.
+- Added naResetListIterator and naLocateListIterator. Removed all functions
+  using NAListPos. Use NAListIterator instead.
+- Corrected a rare error with NACoreTypeInfo when debugging.
 
 
 Version 18 (first published 2017-March-30):

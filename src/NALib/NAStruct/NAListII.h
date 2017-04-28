@@ -16,11 +16,6 @@
 typedef struct NAListElement NAListElement;
 
 
-// Note about NAListPos
-// The NAListPos is an opaque type for the NAListElement struct.
-// With this trick, the real type remains hidden to the user and the API is
-// clean and easy to understand.
-
 struct NAListElement{
   NAPtr ptr;            // A pointer to the stored content
   NAListElement* next;  // A pointer to the next element
@@ -167,48 +162,31 @@ NA_HIDEF void naInjectMutableListElement(NAList* list, NAListElement* element, v
 
 
 
-NA_IDEF NAListPos naAddListFirstConst(NAList* list, const void* content){
+NA_IDEF void naAddListFirstConst(NAList* list, const void* content){
   NAListElement* newelement = naNewListElement(&(list->sentinel), list->sentinel.next);
   naInjectConstListElement(list, newelement, content);
-  return newelement;
 }
 
 
-NA_IDEF NAListPos naAddListFirstMutable(NAList* list, void* content){
+NA_IDEF void naAddListFirstMutable(NAList* list, void* content){
   NAListElement* newelement = naNewListElement(&(list->sentinel), list->sentinel.next);
   naInjectMutableListElement(list, newelement, content);
-  return newelement;
 }
 
 
-NA_IDEF NAListPos naAddListLastConst(NAList* list, const void* content){
+NA_IDEF void naAddListLastConst(NAList* list, const void* content){
   NAListElement* newelement = naNewListElement(list->sentinel.prev, &(list->sentinel));
   naInjectConstListElement(list, newelement, content);
-  return newelement;
 }
 
 
-NA_IDEF NAListPos naAddListLastMutable(NAList* list, void* content){
+NA_IDEF void naAddListLastMutable(NAList* list, void* content){
   NAListElement* newelement = naNewListElement(list->sentinel.prev, &(list->sentinel));
   naInjectMutableListElement(list, newelement, content);
-  return newelement;
 }
 
 
 
-NA_IDEF NAListPos naGetListInitialPosition(NAList* list){
-  return &(list->sentinel);
-}
-
-
-NA_IDEF NAListPos naGetListFirstPosition(NAList* list){
-  return list->sentinel.next;
-}
-
-
-NA_IDEF NAListPos naGetListLastPosition(NAList* list){
-  return list->sentinel.prev;
-}
 
 
 ////////////////////////////
@@ -326,51 +304,6 @@ NA_IDEF void* naGetListLastMutable(const NAList* list){
 
 
 
-// Note that the list would not be necessary when NDEBUG is undefined. But we
-// force the programmer to be specific what list he wants to access so we can
-// so some consistency checks if this truely what he wants.
-NA_IDEF const void* naGetListPositionConst(const NAList* list, NAListPos listpos){
-  NAListElement* element = (NAListElement*)listpos;
-  #ifndef NDEBUG
-    if(!listpos){
-      naCrash("naGetListPositionConst", "pos is a Null-Pointer");
-      return NA_NULL;
-    }
-    if(list->count == 0)
-      naError("naGetListPositionConst", "List is empty");
-    if(element->list != list)
-      naError("naGetListPositionConst", "The given position is not part of the given list");
-  #else
-    NA_UNUSED(list);
-  #endif
-  return naGetPtrConst(&(element->ptr));
-}
-
-
-
-NA_IDEF void* naGetListPositionMutable(const NAList* list, NAListPos listpos){
-  NAListElement* element = (NAListElement*)listpos;
-  #ifndef NDEBUG
-    if(!listpos){
-      naCrash("naGetListPositionMutable", "pos is a Null-Pointer");
-      return NA_NULL;
-    }
-    if(list->count == 0)
-      naError("naGetListPositionMutable", "List is empty");
-    if(element->list != list)
-      naError("naGetListPositionMutable", "The given position is not part of the given list");
-  #else
-    NA_UNUSED(list);
-  #endif
-  return naGetPtrMutable(&(element->ptr));
-}
-
-
-
-
-
-
-
 
 
 
@@ -460,12 +393,7 @@ NA_HIDEF void naInjectExistingListElement(NAList* list, NAListElement* element){
 //
 // To simplify the whole transfer process, these move functions keep the
 // existing NAListElement and simply adjust the pointers. To not overcomplicate
-// the API, only the current element can be transferred. To locate it, you can
-// use the NAListPos you get when adding elements to a list or any of the
-// iteration functions.
-//
-// Note a detail: The NAListPos is defined const, but we take the liberty to
-// use it as mutable. Bad coding style, but who cares when the type is opaque.
+// the API, only specific elements can be transferred.
 NA_IDEF void naMoveListFirstToLast(NAList* src, NAList* dst){
   NAListElement* element;
   #ifndef NDEBUG
@@ -523,6 +451,19 @@ NA_IDEF NAListIterator naMakeListIteratorModifier(NAList* list){
 
 
 
+NA_IDEF void naResetListIterator(NAListIterator* iterator){
+  NAList* list = (NAList*)naGetPtrMutable(&(iterator->listptr));
+  #ifndef NDEBUG
+    iterator->cur->itercount--;
+  #endif
+  iterator->cur = (NAListElement*)(&(list->sentinel));
+  #ifndef NDEBUG
+    iterator->cur->itercount++;
+  #endif
+}
+
+
+
 NA_IDEF void naClearListIterator(NAListIterator* iterator){
   #ifndef NDEBUG
     if(iterator->cur->itercount == 0)
@@ -567,20 +508,16 @@ NA_IDEF NABool naLocateListLast(NAListIterator* iterator){
 
 
 
-NA_IDEF NABool naLocateListPosition(NAListIterator* iterator, NAListPos listpos){
-  NAListElement* elem = (NAListElement*)listpos;
+NA_IAPI void naLocateListIterator(NAListIterator* dstiter, NAListIterator* srciter){
   #ifndef NDEBUG
-    if(!elem)
-      {naCrash("naLocateListPosition", "listpos is NULL. Use naGetListInitialPosition for an undefined listpos."); return NA_FALSE;}
-    if(elem->list != naGetPtrConst(&(iterator->listptr)))
-      naError("naLocateListPosition", "The given position lies not within list.");
-    iterator->cur->itercount--;
+    if(naGetPtrConst(&(dstiter->listptr)) != naGetPtrConst(&(srciter->listptr)))
+      naError("naLocateListIterator", "Iterators do not share the same list");
+    dstiter->cur->itercount--;
   #endif
-  iterator->cur = elem;
+  dstiter->cur = srciter->cur;
   #ifndef NDEBUG
-    iterator->cur->itercount++;
+    dstiter->cur->itercount++;
   #endif
-  return NA_TRUE;
 }
 
 
@@ -698,7 +635,7 @@ NA_IDEF void* naGetListNextMutable(NAListIterator* iterator){
 
 
 
-NA_IDEF NAListPos naAddListBeforeConst(NAListIterator* iterator, const void* content){
+NA_IDEF void naAddListBeforeConst(NAListIterator* iterator, const void* content){
   NAListElement* newelement;
   #ifndef NDEBUG
     if(!iterator->mutator)
@@ -708,11 +645,10 @@ NA_IDEF NAListPos naAddListBeforeConst(NAListIterator* iterator, const void* con
   #endif
   newelement = naNewListElement(iterator->cur->prev, iterator->cur);
   naInjectConstListElement((NAList*)naGetPtrConst(&(iterator->listptr)), newelement, content);
-  return newelement;
 }
 
 
-NA_IDEF NAListPos naAddListBeforeMutable(NAListIterator* iterator, void* content){
+NA_IDEF void naAddListBeforeMutable(NAListIterator* iterator, void* content){
   NAListElement* newelement;
   #ifndef NDEBUG
     if(!iterator->mutator)
@@ -722,11 +658,10 @@ NA_IDEF NAListPos naAddListBeforeMutable(NAListIterator* iterator, void* content
   #endif
   newelement = naNewListElement(iterator->cur->prev, iterator->cur);
   naInjectMutableListElement((NAList*)naGetPtrMutable(&(iterator->listptr)), newelement, content);
-  return newelement;
 }
 
 
-NA_IDEF NAListPos naAddListAfterConst(NAListIterator* iterator, const void* content){
+NA_IDEF void naAddListAfterConst(NAListIterator* iterator, const void* content){
   NAListElement* newelement;
   #ifndef NDEBUG
     if(!iterator->mutator)
@@ -736,11 +671,10 @@ NA_IDEF NAListPos naAddListAfterConst(NAListIterator* iterator, const void* cont
   #endif
   newelement = naNewListElement(iterator->cur, iterator->cur->next);
   naInjectConstListElement((NAList*)naGetPtrConst(&(iterator->listptr)), newelement, content);
-  return newelement;
 }
 
 
-NA_IDEF NAListPos naAddListAfterMutable(NAListIterator* iterator, void* content){
+NA_IDEF void naAddListAfterMutable(NAListIterator* iterator, void* content){
   NAListElement* newelement;
   #ifndef NDEBUG
     if(!iterator->mutator)
@@ -750,7 +684,6 @@ NA_IDEF NAListPos naAddListAfterMutable(NAListIterator* iterator, void* content)
   #endif
   newelement = naNewListElement(iterator->cur, iterator->cur->next);
   naInjectMutableListElement((NAList*)naGetPtrMutable(&(iterator->listptr)), newelement, content);
-  return newelement;
 }
 
 
@@ -917,57 +850,11 @@ NA_IDEF NABool naIsListAtLast(const NAListIterator* iterator){
 
 
 
-NA_IDEF NABool naIsListAtPosition(const NAListIterator* iterator, NAListPos listpos){
-  NAListElement* element = (NAListElement*)listpos;
-  #ifndef NDEBUG
-    const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
-    if(naIsListEmpty(list))
-      naError("naIsListAtPosition", "List is empty");
-    if(element->list != list)
-      naError("naIsListAtPosition", "The given position is not part of the given list");
-  #endif
-  return (iterator->cur == element);
-}
-
-
-
 NA_IDEF NABool naIsListAtInitial(const NAListIterator* iterator){
   const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
   return (&(list->sentinel) == iterator->cur);
 }
 
-
-
-NA_IDEF NAListPos naGetListPrevPosition(const NAListIterator* iterator){
-  #ifndef NDEBUG
-    const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
-    if(naIsListEmpty(list))
-      naError("naGetListNextPosition", "List is empty");
-  #endif
-  return iterator->cur->prev;
-}
-
-
-
-NA_IDEF NAListPos naGetListCurrentPosition(const NAListIterator* iterator){
-  #ifndef NDEBUG
-    const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
-    if(naIsListEmpty(list))
-      naError("naGetListNextPosition", "List is empty");
-  #endif
-  return iterator->cur;
-}
-
-
-
-NA_IDEF NAListPos naGetListNextPosition(const NAListIterator* iterator){
-  #ifndef NDEBUG
-    const NAList* list = (const NAList*)naGetPtrConst(&(iterator->listptr));
-    if(naIsListEmpty(list))
-      naError("naGetListNextPosition", "List is empty");
-  #endif
-  return iterator->cur->next;
-}
 
 
 

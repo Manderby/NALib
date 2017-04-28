@@ -130,6 +130,7 @@ NARuntime* na_runtime = NA_NULL;
 
 
   NA_HIDEF void naRegisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
+    NA_UNUSED(coretypeinfo);
     #ifndef NDEBUG
       NACoreTypeInfo** newinfos = naMalloc((NAInt)sizeof(NACoreTypeInfo*) * (na_runtime->typeinfocount + NA_ONE));
       if(na_runtime->typeinfos){
@@ -144,18 +145,19 @@ NARuntime* na_runtime = NA_NULL;
   
   
   NA_HIDEF void naUnregisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
+    NA_UNUSED(coretypeinfo);
     #ifndef NDEBUG
       NACoreTypeInfo** newinfos = NA_NULL;
-      if(na_runtime->typeinfocount != 1){
+      if(na_runtime->typeinfocount > 1){
         newinfos = naMalloc((NAInt)sizeof(NACoreTypeInfo*) * (NAInt)(na_runtime->typeinfocount - NA_ONE));
-      }
-      NAInt newindex = 0;
-      for(NAInt i=0; i<na_runtime->typeinfocount; i++){
-        if(na_runtime->typeinfos[i] != coretypeinfo){
-          if(newindex == (na_runtime->typeinfocount - 1))
-            naError("naUnregisterCoreTypeInfo", "coretypeinfo was not registered");
-          newinfos[newindex] = na_runtime->typeinfos[i];
-          newindex++;
+        NAInt newindex = 0;
+        for(NAInt i=0; i<(na_runtime->typeinfocount); i++){
+          if(na_runtime->typeinfos[i] != coretypeinfo){
+            if(newindex == (na_runtime->typeinfocount - 1))
+              naError("naUnregisterCoreTypeInfo", "coretypeinfo was not registered");
+            newinfos[newindex] = na_runtime->typeinfos[i];
+            newindex++;
+          }
         }
       }
       na_runtime->typeinfocount--;

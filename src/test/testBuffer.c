@@ -25,11 +25,11 @@ void testBufferFile(void){
   
   naClearString(&cwd);
   
-  buffer = naCreateBufferFile("res/asciitest.txt");  
+  buffer = naCreateBufferWithInpuFile("res/asciitest.txt");  
   iter = naMakeBufferIteratorAccessor(buffer);
   
   // Creating a buffer extraction and then reading that whole buffer
-  token = naCreateBufferExtraction(buffer, naMakeRangei(6, 8), NA_FALSE, NA_FALSE);
+  token = naCreateBufferExtraction(buffer, naMakeRangei(6, 8));
   naReadBufferBytes(&iter, &testdataarray, 8);
   testdataarray[8] = '\0';
   printf("Using buffer extraction [bytes 6-14]: %s\n", testdataarray);

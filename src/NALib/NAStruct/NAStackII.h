@@ -13,24 +13,24 @@
 
 
 struct NAStack{
-  NAList        arrays;         // List of void*
-  NAListPos     curpos;         // The list position of the current array.
-  NAInt         curindex;       // The index of the current array in the list.
-  NAInt         typesize;       // The size in bytes of the stored type
-  NAInt         usedcount;      // The used number of elements in the storage.
-  NAInt         minimalexp;     // An exp of 1 denotes the minimal count of 2.
+  NAList          arrays;        // List of void*
+  NAListIterator  curpos;        // The list position of the current array.
+  NAInt           curindex;      // The index of the current array in the list.
+  NAInt           typesize;      // The size in bytes of the stored type
+  NAInt           usedcount;     // The used number of elements in the storage.
+  NAInt           minimalexp;    // An exp of 1 denotes the minimal count of 2.
   #ifndef NDEBUG
-    NAInt       itercount;      // The number of iterators on this stack.
+    NAInt         itercount;     // The number of iterators on this stack.
   #endif
 };
 
 
 
 struct NAStackIterator{
-  const NAStack* stack;           // The const stack
-  NAListIterator  listiterator;   // the iterator on the array list
-  NAInt           curarrayindex;  // The index of the current array.
-  NAInt           cur;            // The index in the current array if available.
+  const NAStack*  stack;         // The const stack
+  NAListIterator  listiterator;  // the iterator on the array list
+  NAInt           curarrayindex; // The index of the current array.
+  NAInt           cur;           // The index in the current array if available.
 };
 
 
@@ -77,7 +77,7 @@ NA_IDEF NAStack* naInitStack(NAStack* stack, NAInt typesize, NAInt minimalcount)
       naError("naInitStack", "minimalcount must be at least 2");
   #endif
   naInitList(&(stack->arrays));
-  stack->curpos = naGetListInitialPosition(&(stack->arrays));
+  stack->curpos = naMakeListIteratorModifier(&(stack->arrays));
   stack->curindex = -1;
   stack->typesize = typesize;
   stack->usedcount = 0;
@@ -93,7 +93,7 @@ NA_IDEF NAStack* naInitStack(NAStack* stack, NAInt typesize, NAInt minimalcount)
 
 
 NA_IDEF void naClearStack(NAStack* stack){
-  NAListIterator iter;
+
   #ifndef NDEBUG
     if(!stack){
       naCrash("naClearStack", "stack is Null-Pointer.");
@@ -103,12 +103,14 @@ NA_IDEF void naClearStack(NAStack* stack){
       naCrash("naClearStack", "There are still iterators on this stack. Did you forget naClearStackIterator?");
   #endif
 
-  iter = naMakeListIteratorMutator(&(stack->arrays));
-  while(naIterateList(&iter, 1)){
-    void* curarray = naGetListCurrentMutable(&iter);
+  
+  naClearListIterator(&(stack->curpos));
+  stack->curpos = naMakeListIteratorMutator(&(stack->arrays));
+  while(naIterateList(&(stack->curpos), 1)){
+    void* curarray = naGetListCurrentMutable(&(stack->curpos));
     naFree(curarray);
   }
-  naClearListIterator(&iter);
+  naClearListIterator(&(stack->curpos));
 
   naClearList(&(stack->arrays));
 }
@@ -117,7 +119,6 @@ NA_IDEF void naClearStack(NAStack* stack){
 
 NA_IDEF void* naPushStack(NAStack* stack){
   NAInt availablestack;
-  NAListIterator iter;
 
   stack->usedcount++;
   
@@ -127,11 +128,7 @@ NA_IDEF void* naPushStack(NAStack* stack){
     if(naGetListCount(&(stack->arrays)) <= (stack->curindex + 1)){
       naAddStackNewSpace(stack);
     }
-    iter = naMakeListIteratorAccessor(&(stack->arrays));
-    naLocateListPosition(&iter, stack->curpos);
-      naIterateList(&iter, 1);
-      stack->curpos = naGetListCurrentPosition(&iter);
-    naClearListIterator(&iter);
+    naIterateList(&(stack->curpos), 1);
     stack->curindex++;
   }
   
@@ -142,14 +139,10 @@ NA_IDEF void* naPushStack(NAStack* stack){
 
 NA_IDEF void* naTopStack(NAStack* stack){
   NAInt subindex;
-  NAListIterator iter;
   NAByte* array;
   subindex = stack->usedcount - naGetStackArrayBaseIndex(stack, stack->curindex) - 1;
   
-  iter = naMakeListIteratorMutator(&(stack->arrays));
-  naLocateListPosition(&iter, stack->curpos);
-  array = (NAByte*)naGetListCurrentMutable(&iter);
-  naClearListIterator(&iter);
+  array = (NAByte*)naGetListCurrentMutable(&(stack->curpos));
   return &(array[subindex * stack->typesize]);
 }
 
@@ -163,11 +156,7 @@ NA_IDEF void* naPopStack(NAStack* stack){
   
   baseindex = naGetStackArrayBaseIndex(stack, stack->curindex);
   if((stack->usedcount - 1) < baseindex){
-    NAListIterator iter = naMakeListIteratorAccessor(&(stack->arrays));
-      naLocateListPosition(&iter, stack->curpos);
-      naIterateList(&iter, -1);
-      stack->curpos = naGetListCurrentPosition(&iter);
-    naClearListIterator(&iter);
+    naIterateList(&(stack->curpos), -1);
     stack->curindex--;
   }
 

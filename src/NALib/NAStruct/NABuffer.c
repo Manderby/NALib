@@ -882,10 +882,8 @@ NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NARangei range, NABool forc
   if(locatestart){
     // Reaching here, iter points to the part one after the part containing the
     // maximum offset of range. We locate the buffer iterator at the first
-    // desired offset. Note that we can not use a cached NAListPos as this might
-    // have changed during this preparation.
-//    naClearListIterator(&(iter->listiter));
-//    iter->listiter = naMakeListIteratorModifier(&(buffer->parts));
+    // desired offset. Note that we can not use a cached list iterator as this
+    // might have changed during this preparation.
     naLocateBufferPartOffset(&(iter->listiter), originalrangeorigin);
 
     #ifndef NDEBUG
@@ -1080,7 +1078,7 @@ NA_DEF NABuffer* naCreateBufferCopy(const NABuffer* srcbuffer, NARangei range, N
     NAInt remainingdst = naGetBufferPartEnd(dstpart) - naTellBuffer(&dstiter);
     NAInt remaining = naMini(remainingsrc, remainingdst);
 //    remaining = naMini(remaining, range.length);
-    naCopyn(naGetBufferPartDataPointerMutable(dstpart, naTellBuffer(&dstiter)), naGetBufferPartDataPointerConst(srcpart, range.origin), remaining);
+    naCopyn(naGetBufferPartDataPointerMutable(dstpart, naTellBuffer(&dstiter)), naGetBufferPartDataPointerConst(srcpart, range.origin), (NAUInt)remaining);
     naIterateBuffer(&srciter, remaining);
     naIterateBuffer(&dstiter, remaining);
     range.origin += remaining;
@@ -2514,7 +2512,7 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt by
   // Important: Do this after the prepare calls as otherwise there might be
   // an iterator on a part which needs to be removed from a list.
   readiter = naMakeListIteratorAccessor(&(naGetBufferIteratorBufferConst(iter)->parts));
-  naLocateListPosition(&readiter, naGetListCurrentPosition(&(iter->listiter)));
+  naLocateListIterator(&readiter, &(iter->listiter));
 
   // Reposition the buffer iterator to the write part
   naLocateBufferPartOffset(&(iter->listiter), iter->curoffset);
