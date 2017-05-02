@@ -31,6 +31,7 @@ correct, complete or final.
 - Added naResetListIterator and naLocateListIterator. Removed all functions
   using NAListPos. Use NAListIterator instead.
 - Corrected a rare error with NACoreTypeInfo when debugging.
+- Fixed an iteration bug of NAList when using naLocateListContent
 
 
 Version 18 (first published 2017-March-30):

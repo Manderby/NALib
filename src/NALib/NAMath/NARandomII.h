@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include "NADateTime.h"
 
+
 NA_IDEF NAInt naRand(){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return rand();

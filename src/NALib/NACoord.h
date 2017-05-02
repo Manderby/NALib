@@ -363,6 +363,8 @@ NA_IAPI NAPosi    naAddPosiSize(NAPosi  pos,   NASizei size);
 NA_IAPI NASize    naSubPosPos  (NAPos   pos1,  NAPos   pos2);
 NA_IAPI NASizei   naSubPosiPos (NAPosi  pos1,  NAPosi  pos2);
 
+NA_IAPI double    naDistancePosPos  (NAPos   pos1,  NAPos   pos2);
+
 NA_IAPI NAVertex  naAddVertexVolume (NAVertex   vertex,   NAVolume  volume);
 NA_IAPI NAVertexi naAddVertexiVolume(NAVertexi  vertex,   NAVolumei volume);
 NA_IAPI NAVolume  naSubVertexPos    (NAVertex   vertex1,  NAVertex  vertex2);

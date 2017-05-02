@@ -20,14 +20,13 @@ NA_DEF NAListElement* naNewListElement(NAListElement* prev, NAListElement* next)
 NA_DEF NABool naLocateListContent(NAListIterator* iterator, const void* content){
   // todo: search in left-right exponential search starting from the current
   // position.
-  const NAList* list = naGetPtrConst(&(iterator->listptr));
-  iterator->cur = list->sentinel.next;
-  while(iterator->cur != &(list->sentinel)){
+
+  while(naIterateList(iterator, 1)){
     if(naGetPtrConst(&(iterator->cur->ptr)) == content){
       return NA_TRUE;
     }
-    iterator->cur = iterator->cur->next;
   }
+  
   // Reaching here, content could not be found.
   return NA_FALSE;
 }

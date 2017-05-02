@@ -770,6 +770,8 @@ NA_IDEF void* naRemoveListCurrentMutable(NAListIterator* iterator, NABool advanc
       naError("naRemoveListCurrentMutable", "List is empty");
     if(iterator->cur == &(list->sentinel))
       naError("naRemoveListCurrentMutable", "No current internal pointer is set. Major memory corruption expected...");
+    if(iterator->cur->itercount == 0)
+      naError("naRemoveListCurrentMutable", "Internal error. No iterators registered at element which iterator is located at now");
   #endif
   newelem = advance ? iterator->cur->next : iterator->cur->prev;
   #ifndef NDEBUG
