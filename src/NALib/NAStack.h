@@ -97,8 +97,8 @@ NA_IAPI void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive);
 // Creates and clears an interator working upon a given NAStack. You have to
 // choose whether it is an accessor or mutator. An accessor can not get a
 // mutable pointers to the elements.
-NA_IAPI NAStackIterator naMakeStackIteratorAccessor(const NAStack* stack);
-NA_IAPI NAStackIterator naMakeStackIteratorMutator (const NAStack* stack);
+NA_IAPI NAStackIterator naMakeStackAccessor(const NAStack* stack);
+NA_IAPI NAStackIterator naMakeStackMutator (const NAStack* stack);
 NA_IAPI void naClearStackIterator(NAStackIterator* iterator);
 
 // Iterates through the stack from base to top. Returns NA_FALSE if there are

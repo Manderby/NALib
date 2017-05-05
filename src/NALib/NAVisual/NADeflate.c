@@ -405,7 +405,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   // The 6 Bytes are the CMF and FLG Bytes as well as the Adler number.
   // If there is a DICTID, zbuffersize will be reduced by 4 more bytes later.
   
-  iterin = naMakeBufferIteratorAccessor(input);
+  iterin = naMakeBufferAccessor(input);
   
   #ifndef NDEBUG
     if(naGetBufferEndianness(input) != NA_ENDIANNESS_NETWORK)
@@ -457,8 +457,8 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   // Important! RFC 1951 is Little-endianed, whereas RFC 1950 is big endianed!
   naSetBufferEndianness(zbuffer, NA_ENDIANNESS_LITTLE);
   
-  NABufferIterator iterout = naMakeBufferIteratorModifier(output);
-  NABufferIterator iterz = naMakeBufferIteratorModifier(zbuffer);
+  NABufferIterator iterout = naMakeBufferModifier(output);
+  NABufferIterator iterz = naMakeBufferModifier(zbuffer);
   
   while(1){
     NAByte isblockfinal = (NAByte)naReadBufferBits(&iterz, 1);
@@ -566,7 +566,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, N
       naError("naInitBufferFromDeflateDecompression", "Input buffer should be big endianed");
   #endif
 
-  NABufferIterator iterout = naMakeBufferIteratorModifier(output);
+  NABufferIterator iterout = naMakeBufferModifier(output);
 
   cmf = (NA_ZLIB_CMF_MAX_WINDOW_SIZE<<4 | NA_ZLIB_CMF_COMPRESSION_DEFLATE);
   flg = (uint8)((level << 6 | NA_ZLIB_PRESET_DICT_AVAILABLE << 5));

@@ -261,9 +261,9 @@ NA_API void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum)
 // BUFFER ITERATION
 // ////////////////////////////////
 
-NA_API NABufferIterator naMakeBufferIteratorAccessor(const NABuffer* buffer);
-NA_API NABufferIterator naMakeBufferIteratorMutator(const NABuffer* buffer);
-NA_API NABufferIterator naMakeBufferIteratorModifier(NABuffer* buffer);
+NA_API NABufferIterator naMakeBufferAccessor(const NABuffer* buffer);
+NA_API NABufferIterator naMakeBufferMutator (const NABuffer* buffer);
+NA_API NABufferIterator naMakeBufferModifier(      NABuffer* buffer);
 
 NA_API void naClearBufferIterator(NABufferIterator* iter);
 

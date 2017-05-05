@@ -150,8 +150,8 @@ NA_IAPI NABool naIsArrayEmpty     (const NAArray* array);
 // NDEBUG is undefined. Therefore, you will get lots of warnings if the
 // iterators are not properly cleared. In the release code, no checks are
 // performed.
-NA_IAPI NAArrayIterator naMakeArrayIteratorAccessor(const NAArray* array);
-NA_IAPI NAArrayIterator naMakeArrayIteratorMutator (      NAArray* array);
+NA_IAPI NAArrayIterator naMakeArrayAccessor(const NAArray* array);
+NA_IAPI NAArrayIterator naMakeArrayMutator (      NAArray* array);
 
 NA_IAPI void naClearArrayIterator(NAArrayIterator* iterator);
 

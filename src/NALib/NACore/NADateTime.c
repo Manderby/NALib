@@ -443,7 +443,7 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
   dts.nsec = 0;
   
   str = naMakeStringExtraction(string, 0, -1);
-  iter = naMakeBufferIteratorAccessor(naGetStringBufferConst(&str));
+  iter = naMakeBufferAccessor(naGetStringBufferConst(&str));
   
   token = naMakeString();
 
@@ -521,7 +521,7 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
 
 NA_DEF NADateTime naMakeDateTimeFromBuffer(NABuffer* buffer, NABinDateTimeFormat format){
   NADateTimeStruct dts;
-  NABufferIterator iter = naMakeBufferIteratorAccessor(buffer);
+  NABufferIterator iter = naMakeBufferAccessor(buffer);
 
   dts.nsec = 0;
 

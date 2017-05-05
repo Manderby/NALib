@@ -77,7 +77,7 @@ NA_IDEF NAStack* naInitStack(NAStack* stack, NAInt typesize, NAInt minimalcount)
       naError("naInitStack", "minimalcount must be at least 2");
   #endif
   naInitList(&(stack->arrays));
-  stack->curpos = naMakeListIteratorModifier(&(stack->arrays));
+  stack->curpos = naMakeListModifier(&(stack->arrays));
   stack->curindex = -1;
   stack->typesize = typesize;
   stack->usedcount = 0;
@@ -105,7 +105,7 @@ NA_IDEF void naClearStack(NAStack* stack){
 
   
   naClearListIterator(&(stack->curpos));
-  stack->curpos = naMakeListIteratorMutator(&(stack->arrays));
+  stack->curpos = naMakeListMutator(&(stack->arrays));
   while(naIterateList(&(stack->curpos), 1)){
     void* curarray = naGetListCurrentMutable(&(stack->curpos));
     naFree(curarray);
@@ -194,13 +194,13 @@ NA_IDEF void naShrinkStackIfNecessary(NAStack* stack, NABool aggressive){
 
 
 
-NA_IDEF NAStackIterator naMakeStackIteratorAccessor(const NAStack* stack){
+NA_IDEF NAStackIterator naMakeStackAccessor(const NAStack* stack){
   NAStackIterator iter;
   #ifndef NDEBUG
     NAStack* mutablestack;
   #endif
   iter.stack = stack;
-  iter.listiterator = naMakeListIteratorAccessor(&(stack->arrays));
+  iter.listiterator = naMakeListAccessor(&(stack->arrays));
   iter.curarrayindex = -1;
   iter.cur = 0;
   #ifndef NDEBUG
@@ -212,13 +212,13 @@ NA_IDEF NAStackIterator naMakeStackIteratorAccessor(const NAStack* stack){
 
 
 
-NA_IDEF NAStackIterator naMakeStackIteratorMutator(const NAStack* stack){
+NA_IDEF NAStackIterator naMakeStackMutator(const NAStack* stack){
   NAStackIterator iter;
   #ifndef NDEBUG
     NAStack* mutablestack;
   #endif
   iter.stack = stack;
-  iter.listiterator = naMakeListIteratorMutator(&(stack->arrays));
+  iter.listiterator = naMakeListMutator(&(stack->arrays));
   iter.curarrayindex = -1;
   iter.cur = 0;
   #ifndef NDEBUG
@@ -276,7 +276,7 @@ NA_IDEF void* naGetStackCurrentMutable(NAStackIterator* iterator){
 
 
 NA_IDEF void naForeachStackConst(const NAStack* stack, NAAccessor accessor){
-  NAStackIterator iter = naMakeStackIteratorAccessor(stack);
+  NAStackIterator iter = naMakeStackAccessor(stack);
   while(naIterateStack(&iter)){
     const void* data = naGetStackCurrentConst(&iter);
     accessor(data);
@@ -287,7 +287,7 @@ NA_IDEF void naForeachStackConst(const NAStack* stack, NAAccessor accessor){
 
 
 NA_IDEF void naForeachStackMutable(const NAStack* stack, NAMutator mutator){
-  NAStackIterator iter = naMakeStackIteratorMutator(stack);
+  NAStackIterator iter = naMakeStackMutator(stack);
   while(naIterateStack(&iter)){
     void* data = naGetStackCurrentMutable(&iter);
     mutator(data);
@@ -298,7 +298,7 @@ NA_IDEF void naForeachStackMutable(const NAStack* stack, NAMutator mutator){
 
 
 NA_IDEF void naForeachStackpConst(const NAStack* stack, NAAccessor accessor){
-  NAStackIterator iter = naMakeStackIteratorAccessor(stack);
+  NAStackIterator iter = naMakeStackAccessor(stack);
   while(naIterateStack(&iter)){
     const void* const* data = (const void* const*)naGetStackCurrentConst(&iter);
     accessor(*data);
@@ -309,7 +309,7 @@ NA_IDEF void naForeachStackpConst(const NAStack* stack, NAAccessor accessor){
 
 
 NA_IDEF void naForeachStackpMutable(const NAStack* stack, NAMutator mutator){
-  NAStackIterator iter = naMakeStackIteratorMutator(stack);
+  NAStackIterator iter = naMakeStackMutator(stack);
   while(naIterateStack(&iter)){
     void** data = (void**)naGetStackCurrentMutable(&iter);
     mutator(*data);

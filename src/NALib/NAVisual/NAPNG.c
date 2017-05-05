@@ -264,7 +264,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
   naNulln(upbuffer, (NAUInt)bytesperline);
   upbufptr = upbuffer;
   
-  iterfilter = naMakeBufferIteratorMutator(png->filtereddata);
+  iterfilter = naMakeBufferMutator(png->filtereddata);
 
   for(y=0; y<png->size.height; y++){
 
@@ -347,7 +347,7 @@ NA_DEF void naFilterData(NAPNG* png){
   bpp = naGetPNGBytesPerPixel(png->colortype);
   pixeldata = naGetPNGPixelData(png);
   
-  NABufferIterator iter = naMakeBufferIteratorModifier(png->filtereddata);
+  NABufferIterator iter = naMakeBufferModifier(png->filtereddata);
   for(y=0; y<png->size.height; y++){
     naWriteBufferu8(&iter, NA_PNG_FILTER_TYPE_NONE);
     naWriteBufferBytes(&iter, pixeldata, png->size.width * bpp);
@@ -371,7 +371,7 @@ NA_HDEF void naReadPNGIHDRChunk(NAPNG* png, NAPNGChunk* ihdr){
       naError("naReadPNGIHDRChunk", "IHDR chunk already read.");
   #endif
 
-  iter = naMakeBufferIteratorAccessor(ihdr->data);
+  iter = naMakeBufferAccessor(ihdr->data);
 
   png->size.width = (NAInt)naReadBufferu32(&iter);
   png->size.height = (NAInt)naReadBufferu32(&iter);
@@ -414,7 +414,7 @@ NA_HDEF NAPNGChunk* naAllocPNGIHDRChunk(NAPNG* png){
   naSetBufferEndianness(ihdr->data, NA_ENDIANNESS_NETWORK);
   ihdr->type = NA_PNG_CHUNK_TYPE_IHDR;
   
-  iter = naMakeBufferIteratorModifier(ihdr->data);
+  iter = naMakeBufferModifier(ihdr->data);
 
   naWriteBufferu32(&iter, (uint32)png->size.width);
   naWriteBufferu32(&iter, (uint32)png->size.height);
@@ -492,7 +492,7 @@ NA_HDEF void naReadPNGcHRMChunk(NAPNG* png, NAPNGChunk* chrm){
   if(png->flags & NA_PNG_FLAGS_sRGB_AVAILABLE){
     // Ignoring when sRGB is available
   }else{
-    NABufferIterator iter = naMakeBufferIteratorAccessor(chrm->data);
+    NABufferIterator iter = naMakeBufferAccessor(chrm->data);
 
     png->whitepoint[0]    = (float)naReadBufferu32(&iter) / 100000.f;
     png->whitepoint[1]    = (float)naReadBufferu32(&iter) / 100000.f;
@@ -513,7 +513,7 @@ NA_HDEF void naReadPNGgAMAChunk(NAPNG* png, NAPNGChunk* gama){
   if(png->flags & NA_PNG_FLAGS_sRGB_AVAILABLE){
     // Ignoring when sRGB is available
   }else{
-    NABufferIterator iter = naMakeBufferIteratorAccessor(gama->data);
+    NABufferIterator iter = naMakeBufferAccessor(gama->data);
     png->gamma = (float)naReadBufferu32(&iter) / 100000.f;
     naClearBufferIterator(&iter);
   }
@@ -531,7 +531,7 @@ NA_HDEF void naReadPNGiCCPChunk(NAPNG* png, NAPNGChunk* iccp){
 
 
 NA_HDEF void naReadPNGsBITChunk(NAPNG* png, NAPNGChunk* sbit){
-  NABufferIterator iter = naMakeBufferIteratorAccessor(sbit->data);
+  NABufferIterator iter = naMakeBufferAccessor(sbit->data);
   switch(png->colortype){
   case NA_PNG_COLORTYPE_GREYSCALE:
     png->significantbits[1] = naReadBufferu8(&iter);
@@ -559,7 +559,7 @@ NA_HDEF void naReadPNGsBITChunk(NAPNG* png, NAPNGChunk* sbit){
 
 
 NA_HDEF void naReadPNGsRGBChunk(NAPNG* png, NAPNGChunk* srgb){
-  NABufferIterator iter = naMakeBufferIteratorAccessor(srgb->data);
+  NABufferIterator iter = naMakeBufferAccessor(srgb->data);
   uint8 intent = naReadBufferu8(&iter);
   naClearBufferIterator(&iter);
   
@@ -601,7 +601,7 @@ NA_HDEF void naReadPNGtRNSChunk(NAPNG* png, NAPNGChunk* trns){
 
 NA_HDEF void naReadPNGpHYsChunk(NAPNG* png, NAPNGChunk* phys){
   uint8 unit;
-  NABufferIterator iter = naMakeBufferIteratorAccessor(phys->data);
+  NABufferIterator iter = naMakeBufferAccessor(phys->data);
   
   png->pixeldimensions[0] = (float)naReadBufferu32(&iter);
   png->pixeldimensions[1] = (float)naReadBufferu32(&iter);
@@ -726,7 +726,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   png->filtereddata = NA_NULL;
   
   buffer = naCreateBufferWithInpuFile(filename);
-  bufiter = naMakeBufferIteratorModifier(buffer);
+  bufiter = naMakeBufferModifier(buffer);
   
   // If the buffer is empty, there is no png to read.
   if(naIsBufferAtEnd(&bufiter)){
@@ -757,7 +757,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   naSetBufferEndianness(png->compresseddata, NA_ENDIANNESS_NETWORK);
   png->filtereddata = naCreateBuffer(NA_FALSE);
   
-  iter = naMakeListIteratorMutator(&(png->chunks));
+  iter = naMakeListMutator(&(png->chunks));
   while(naIterateList(&iter, 1)){
     NAPNGChunk* curchunk = naGetListCurrentMutable(&iter);
     switch(curchunk->type){
@@ -844,12 +844,12 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
   naAddListLastMutable(&(png->chunks), naAllocPNGIENDChunk(png));
 
   outbuffer = naCreateBuffer(NA_FALSE);
-  iterout = naMakeBufferIteratorMutator(outbuffer);
+  iterout = naMakeBufferMutator(outbuffer);
   naSetBufferEndianness(outbuffer, NA_ENDIANNESS_NETWORK);
 
   naWriteBufferBytes(&iterout, na_png_magic, 8);
 
-  iter = naMakeListIteratorMutator(&(png->chunks));
+  iter = naMakeListMutator(&(png->chunks));
   while(naIterateList(&iter, 1)){
 
     NAPNGChunk* curchunk = naGetListCurrentMutable(&iter);

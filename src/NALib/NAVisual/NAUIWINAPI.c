@@ -228,7 +228,7 @@ NA_HDEF static VOID CALLBACK naTimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_
 
   UINT timerkey = (UINT)idEvent;
   app = (NAWINAPIApplication*)naGetApplication();
-  iter = naMakeListIteratorModifier(&(app->timers));
+  iter = naMakeListModifier(&(app->timers));
   while (naIterateList(&iter, 1)) {
     NATimerStruct* curstruct = (NATimerStruct*)naGetListCurrentMutable(&iter);
     if (curstruct->key == timerkey) {

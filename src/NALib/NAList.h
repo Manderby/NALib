@@ -171,9 +171,9 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 // NDEBUG is undefined. Therefore, you will get lots of warnings if the
 // iterators are not properly cleared. In the release code, no checks are
 // performed.
-NA_IAPI NAListIterator naMakeListIteratorAccessor(const NAList* list);
-NA_IAPI NAListIterator naMakeListIteratorMutator(const NAList* list);
-NA_IAPI NAListIterator naMakeListIteratorModifier(NAList* list);
+NA_IAPI NAListIterator naMakeListAccessor(const NAList* list);
+NA_IAPI NAListIterator naMakeListMutator (const NAList* list);
+NA_IAPI NAListIterator naMakeListModifier(      NAList* list);
 
 NA_IAPI void naResetListIterator(NAListIterator* iterator);
 

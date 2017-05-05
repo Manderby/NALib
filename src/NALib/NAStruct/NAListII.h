@@ -412,7 +412,7 @@ NA_IDEF void naMoveListFirstToLast(NAList* src, NAList* dst){
 
 
 
-NA_IDEF NAListIterator naMakeListIteratorAccessor(const NAList* list){
+NA_IDEF NAListIterator naMakeListAccessor(const NAList* list){
   NAListIterator iter;
   iter.listptr = naMakePtrWithDataConst(list);
   iter.cur = (NAListElement*)(&(list->sentinel));
@@ -425,7 +425,7 @@ NA_IDEF NAListIterator naMakeListIteratorAccessor(const NAList* list){
 
 
 
-NA_IDEF NAListIterator naMakeListIteratorMutator(const NAList* list){
+NA_IDEF NAListIterator naMakeListMutator(const NAList* list){
   NAListIterator iter;
   iter.listptr = naMakePtrWithDataConst(list);
   iter.cur = (NAListElement*)(&(list->sentinel));
@@ -438,7 +438,7 @@ NA_IDEF NAListIterator naMakeListIteratorMutator(const NAList* list){
 
 
 
-NA_IDEF NAListIterator naMakeListIteratorModifier(NAList* list){
+NA_IDEF NAListIterator naMakeListModifier(NAList* list){
   NAListIterator iter;
   iter.listptr = naMakePtrWithDataMutable(list, NA_MEMORY_CLEANUP_NONE);
   iter.cur = (NAListElement*)(&(list->sentinel));

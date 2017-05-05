@@ -11,6 +11,7 @@ Table of Content:
 2    Memory and Structs
 2.1    Creation and deletion of memory blocks
 2.2    Initializating and Clearing of structs
+2.3    Iteration of container structs
 3.   Runtime System
 4.   C90 variable definitions
 5.   Inline Implementations
@@ -184,7 +185,53 @@ just make sure you know what you are doing.
 
 
 
+2.3 Iteration of container structs
+----------------------------------
 
+Container structs like NAArray, NAList, NABuffer, ... implement iterators
+which allow the programmer to visit all elements in a specific order without
+having to manage the container data or pointers. With NALib version 19, all
+iterators have been implemented in the same way:
+
+Create an iterator using one of these functions (Where XXX is the name of the
+type and the container is a pointer to the struct):
+
+NAXXXIterator iter = naMakeXXXAccessor(container);
+NAXXXIterator iter = naMakeXXXMutator (container);
+NAXXXIterator iter = naMakeXXXModifier(container);
+
+You have to choose between one of these three functions.
+Accessors let you access existing elements as const.
+Mutators let you access existing elements as non-const or const.
+Modifiers are the same as Mutators but also allow you to alter the whole
+container struct by for example removing or adding elements.
+
+As soon as the iterator is created, you can use the iterate functions in a
+while loop to visit all elements:
+
+while(naIterateXXX(&iter)){
+  const MyElementData* constdata = naGetXXXCurrentConst();
+  MyElementData* mutabledata = naGetXXXCurrentMutable();
+  // do something with the data.
+}
+
+Depending on the type, there might me more functions to iterate, access, mutate
+and modify. Note that depending on how the iterator was created, certain
+conditions will be checked. An Accessor for example has no rights to return
+mutable data. Or a remove function will only work on Modifiers. In such cases,
+NALib will emit warnings when NDEBUG is undefined.
+
+After using the iterator, you always must clear an iterator with a final call
+to the following function:
+
+naClearXXXIterator(&iter);
+
+If you forget that call, many warnings will be emitted. The container struct
+as well as the single elements will keep track of whether there are still
+iterators operation upon. If at any time, some element will be removed or a
+complete struct will be erased where there is still an iterator visiting, NALib
+will emit a warning. These warnings will be completely omitted when NDEBUG
+ist defined.
 
 
 

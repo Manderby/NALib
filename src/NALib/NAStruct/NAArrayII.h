@@ -286,12 +286,12 @@ struct NAArrayIterator{
 
 
 
-NA_IDEF NAArrayIterator naMakeArrayIteratorAccessor(const NAArray* array){
+NA_IDEF NAArrayIterator naMakeArrayAccessor(const NAArray* array){
   NAArrayIterator iter;
   #ifndef NDEBUG
     NAArray* mutablearray;
     if(!array)
-      {naCrash("naMakeArrayIteratorAccessor", "array is Null pointer"); iter.array = naMakePtrWithDataConst(NA_NULL); iter.indx = 0; iter.mutator = NA_FALSE; return iter;}
+      {naCrash("naMakeArrayAccessor", "array is Null pointer"); iter.array = naMakePtrWithDataConst(NA_NULL); iter.indx = 0; iter.mutator = NA_FALSE; return iter;}
     mutablearray = (NAArray*)array;
     mutablearray->itercount++;
     iter.mutator = NA_FALSE;
@@ -304,12 +304,12 @@ NA_IDEF NAArrayIterator naMakeArrayIteratorAccessor(const NAArray* array){
 
 
 
-NA_IDEF NAArrayIterator naMakeArrayIteratorMutator(NAArray* array){
+NA_IDEF NAArrayIterator naMakeArrayMutator(NAArray* array){
   NAArrayIterator iter;
   #ifndef NDEBUG
     NAArray* mutablearray;
     if(!array)
-      {naCrash("naMakeArrayIteratorMutator", "array is Null pointer"); iter.array = naMakePtrWithDataMutable(NA_NULL, NA_MEMORY_CLEANUP_NONE); iter.indx = 0; iter.mutator = NA_TRUE; return iter;}
+      {naCrash("naMakeArrayMutator", "array is Null pointer"); iter.array = naMakePtrWithDataMutable(NA_NULL, NA_MEMORY_CLEANUP_NONE); iter.indx = 0; iter.mutator = NA_TRUE; return iter;}
     mutablearray = (NAArray*)array;
     mutablearray->itercount++;
     iter.mutator = NA_TRUE;

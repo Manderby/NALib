@@ -640,28 +640,28 @@ NA_DEF NABool naEqualStringToUTF8CStringLiteral(const NAString* string1, const N
 
 NA_DEF int8 naParseStringInt8(const NAString* string){
   int8 retvalue;
-  NABufferIterator iter = naMakeBufferIteratorAccessor(string->buffer);
+  NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   retvalue = naParseBufferInt8(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retvalue;
 }
 NA_DEF int16 naParseStringInt16(const NAString* string){
   int16 retvalue;
-  NABufferIterator iter = naMakeBufferIteratorAccessor(string->buffer);
+  NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   retvalue = naParseBufferInt16(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retvalue;
 }
 NA_DEF int32 naParseStringInt32(const NAString* string){
   int32 retvalue;
-  NABufferIterator iter = naMakeBufferIteratorAccessor(string->buffer);
+  NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   retvalue = naParseBufferInt32(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retvalue;
 }
 NA_DEF int64 naParseStringInt64(const NAString* string){
   int64 retvalue;
-  NABufferIterator iter = naMakeBufferIteratorAccessor(string->buffer);
+  NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   retvalue = naParseBufferInt64(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retvalue;
@@ -671,28 +671,28 @@ NA_DEF int64 naParseStringInt64(const NAString* string){
 
 NA_DEF uint8 naParseStringUInt8(const NAString* string){
   uint8 retvalue;
-  NABufferIterator iter = naMakeBufferIteratorAccessor(string->buffer);
+  NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   retvalue = naParseBufferUInt8(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retvalue;
 }
 NA_DEF uint16 naParseStringUInt16(const NAString* string){
   uint16 retvalue;
-  NABufferIterator iter = naMakeBufferIteratorAccessor(string->buffer);
+  NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   retvalue = naParseBufferUInt16(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retvalue;
 }
 NA_DEF uint32 naParseStringUInt32(const NAString* string){
   uint32 retvalue;
-  NABufferIterator iter = naMakeBufferIteratorAccessor(string->buffer);
+  NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   retvalue = naParseBufferUInt32(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retvalue;
 }
 NA_DEF uint64 naParseStringUInt64(const NAString* string){
   uint64 retvalue;
-  NABufferIterator iter = naMakeBufferIteratorAccessor(string->buffer);
+  NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   retvalue = naParseBufferUInt64(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retvalue;
