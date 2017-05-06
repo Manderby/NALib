@@ -65,6 +65,10 @@ NA_API NAString naMakeString(void);
 // This function takes such strings and wraps it into a string struct. The
 // string is marked explicitely as read-only. Note that this works only
 // reliable if the source-code itself is encoded in UTF-8. DOES NOT COPY!
+//
+// Beware! Only use it for literals! Trying to use it with other char* may
+// lead to serious trouble! Use naMakeStringWithFormat for that. Also be
+// advised to not convert from NAString to char* and back again!
 NA_API NAString naMakeStringWithUTF8CStringLiteral(const NAUTF8Char* ptr);
 
 // Returns an NAString with the given length using the given buffer. The buffer

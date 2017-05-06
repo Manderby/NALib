@@ -208,29 +208,31 @@ NA_HDEF void naDeallocPNGChunk(NAPNGChunk* chunk){
 
 
 NA_API NAInt naGetPNGBytesPerPixel(NAPNGColorType colortype){
+  NAInt retvalue;
   switch(colortype){
   case NA_PNG_COLORTYPE_GREYSCALE:
-    return 1;
+    retvalue = 1;
     break;
   case NA_PNG_COLORTYPE_TRUECOLOR:
-    return 3;
+    retvalue = 3;
     break;
   case NA_PNG_COLORTYPE_INDEXEDCOLOR:
-    return 1;
+    retvalue = 1;
     break;
   case NA_PNG_COLORTYPE_GREYSCALE_ALPHA:
-    return 2;
+    retvalue = 2;
     break;
   case NA_PNG_COLORTYPE_TRUECOLOR_ALPHA:
-    return 4;
+    retvalue = 4;
     break;
   default:
     #ifndef NDEBUG
       naError("naGetPNGBytesPerPixel", "Invalid colortype given");
     #endif
-    return 0;
+    retvalue = 0;
     break;
   }
+  return retvalue;
 }
 
 

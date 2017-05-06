@@ -258,6 +258,9 @@ NA_IDEF NABool naIterateStack(NAStackIterator* iterator){
 
 
 NA_IDEF const void* naGetStackCurrentConst(NAStackIterator* iterator){
+  // If you experience an error somewhere after this function call and believe
+  // that garbage values are returned, maybe you need to use the pointer-variant
+  // of this function? naGetStackCurrentConst
   const NAByte* curbase;
   if(naGetStackArrayBaseIndex(iterator->stack, iterator->curarrayindex) + iterator->cur >= iterator->stack->usedcount){return NA_NULL;}
   curbase = (const NAByte*)naGetListCurrentConst(&(iterator->listiterator));
@@ -267,6 +270,9 @@ NA_IDEF const void* naGetStackCurrentConst(NAStackIterator* iterator){
 
 
 NA_IDEF void* naGetStackCurrentMutable(NAStackIterator* iterator){
+  // If you experience an error somewhere after this function call and believe
+  // that garbage values are returned, maybe you need to use the pointer-variant
+  // of this function? naGetStackCurrentpMutable
   NAByte* curbase;
   if(naGetStackArrayBaseIndex(iterator->stack, iterator->curarrayindex) + iterator->cur >= iterator->stack->usedcount){return NA_NULL;}
   curbase = (NAByte*)naGetListCurrentMutable(&(iterator->listiterator));
@@ -275,7 +281,33 @@ NA_IDEF void* naGetStackCurrentMutable(NAStackIterator* iterator){
 
 
 
+NA_IDEF const void* naGetStackCurrentpConst(NAStackIterator* iterator){
+  const void** dataptr = (const void**)naGetStackCurrentConst(iterator);
+  return *dataptr;
+//  
+//  const NAByte* curbase;
+//  if(naGetStackArrayBaseIndex(iterator->stack, iterator->curarrayindex) + iterator->cur >= iterator->stack->usedcount){return NA_NULL;}
+//  curbase = (const NAByte*)naGetListCurrentConst(&(iterator->listiterator));
+//  return *((const void**)&(curbase[iterator->cur * iterator->stack->typesize]));
+}
+
+
+
+NA_IDEF void* naGetStackCurrentpMutable(NAStackIterator* iterator){
+  void** dataptr = (void**)naGetStackCurrentConst(iterator);
+  return *dataptr;
+//  const NAByte* curbase;
+//  if(naGetStackArrayBaseIndex(iterator->stack, iterator->curarrayindex) + iterator->cur >= iterator->stack->usedcount){return NA_NULL;}
+//  curbase = (const NAByte*)naGetListCurrentMutable(&(iterator->listiterator));
+//  return *((void**)&(curbase[iterator->cur * iterator->stack->typesize]));
+}
+
+
+
 NA_IDEF void naForeachStackConst(const NAStack* stack, NAAccessor accessor){
+  // If you experience an error somewhere within the mutator called by this
+  // function, maybe you need to use the pointer-variant of this function?
+  // naForeachStackpConst
   NAStackIterator iter = naMakeStackAccessor(stack);
   while(naIterateStack(&iter)){
     const void* data = naGetStackCurrentConst(&iter);
@@ -287,6 +319,9 @@ NA_IDEF void naForeachStackConst(const NAStack* stack, NAAccessor accessor){
 
 
 NA_IDEF void naForeachStackMutable(const NAStack* stack, NAMutator mutator){
+  // If you experience an error somewhere within the mutator called by this
+  // function, maybe you need to use the pointer-variant of this function?
+  // naForeachStackpMutable
   NAStackIterator iter = naMakeStackMutator(stack);
   while(naIterateStack(&iter)){
     void* data = naGetStackCurrentMutable(&iter);

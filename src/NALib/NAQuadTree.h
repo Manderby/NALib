@@ -12,10 +12,11 @@
 #include "NAMemory.h"
 
 // An NAQuadTree is a container struct capable of storing a two-dimensional
-// object of any bytesize. The content of the object is divided into equally sized
-// quadratic chunks with a given minimal length in one dimension. These chunks are the leafs of
-// the tree. Aside from leafes, an NAQuadTree stores parent nodes. Every leaf
-// has a parent node and every node may have another parent node.
+// object of any bytesize. The content of the object is divided into equally
+// sized quadratic chunks with a given minimal length in one dimension. These
+// chunks are the leafs of the tree. Aside from leafes, an NAQuadTree stores
+// parent nodes. Every leaf has a parent node and every node may have another
+// parent node.
 //
 // The child nodes are sometimes referred to as segments which are stored
 // internally in the following order:
@@ -355,11 +356,28 @@ NA_IAPI NAQuadTreeIterator naMakeQuadTreeAccessor(const NAQuadTree* tree);
 NA_IAPI NAQuadTreeIterator naMakeQuadTreeMutator (      NAQuadTree* tree);
 NA_IAPI void naClearQuadTreeIterator(NAQuadTreeIterator* iter);
 
-// Jumps to the next leaf and returns NA_TRUE if there is one, NA_FALSE if the
-// iteration is over.
+// Iterates to the next leaf and returns NA_TRUE if there is one, NA_FALSE if
+// the iteration is over. The leafes will be visited like they are stored
+// within the tree. If you need axis ordered traversal, maybe have a look at
+// the naIterateQuadTreeSteps function.
+//
 // The limit denotes the rectangle the iteration takes place in. Only leafes
 // which partially or completely overlap with the limit rect will be visited.
+// If limit is NA_NULL, all leafes will be visited.
 NA_API NABool naIterateQuadTree(NAQuadTreeIterator* iter, const NARecti* limit);
+
+// Moves the iterator to the leaf containing the given coord. If coord is not
+// found in the tree, NA_FALSE ist returned and a leaf is currently selected
+// which is somewhat close to the coordinates.
+NA_API NABool naLocateQuadTreeCoord(NAQuadTreeIterator* iter, NAPosi coord);
+
+// Moves the iterator relative to the current position. Each step can be
+// positive or negative. If the iterator was not in any specific position
+// before, it will be rather arbitrarily after. Use naLocateQuadTreeCoord
+// before using this function.
+NA_API NABool naIterateQuadTreeSteps( NAQuadTreeIterator* iter,
+                                                    NAInt stepx,
+                                                    NAInt stepy);
 
 // You can retrieve the current leaf or the origin of the current leaf with
 // these functions:

@@ -802,6 +802,8 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
     if(datetimesec >= 0){
       NAInt taiperiod = naGetLatestTAIPeriodIndexForGregorianSecond(datetimesec);
       datetime.sisec = datetimesec + (naTAIPeriods[taiperiod].startsisec - naTAIPeriods[taiperiod].startgregsec);
+    }else{
+      datetime.sisec = 0; // todo
     }
     datetime.nsec = (int32)timesp->tv_nsec;
     if(timezn){

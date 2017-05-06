@@ -26,7 +26,7 @@ void testBufferFile(void){
   naClearString(&cwd);
   
   buffer = naCreateBufferWithInpuFile("res/asciitest.txt");  
-  iter = naMakeBufferIteratorAccessor(buffer);
+  iter = naMakeBufferAccessor(buffer);
   
   // Creating a buffer extraction and then reading that whole buffer
   token = naCreateBufferExtraction(buffer, naMakeRangei(6, 8));
@@ -90,7 +90,7 @@ void testBufferMemory(void){
 
   printf("\nCreating memory buffer.\n");
   buffer = naCreateBuffer(NA_FALSE);  
-  iter = naMakeBufferIteratorModifier(buffer);
+  iter = naMakeBufferModifier(buffer);
 
   // We can seek to an absolute poisition within the buffer
   naSeekBufferAbsolute(&iter, (NA_BUFFER_TEST_REPETITIONS * NA_BUFFER_TESTARRAY_SIZE) / 4);
@@ -135,7 +135,7 @@ void testBufferMemory(void){
 
 void testBuffer(void){
 
-//  testBufferMemory();
+  testBufferMemory();
   testBufferFile();
   
 }

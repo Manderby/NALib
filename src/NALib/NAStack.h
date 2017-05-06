@@ -54,7 +54,8 @@ typedef struct NAStackIterator NAStackIterator;
 // Creates a new NAStack with the desired type size. The memory will grow
 // exponentially over time. With the minimalcount parameter, you can define,
 // where the exponential growth shall start. NAStack will always have at least
-// that amount of memory prepared. The values 0 and 1 are not allowed.
+// that amount of memory prepared. The values 0 and 1 are reserved for future
+// use, you have to use at least a minimalcount of 2.
 NA_IAPI NAStack* naInitStack( NAStack* stack,
                                 NAInt typesize,
                                 NAInt minimalcount);
@@ -110,6 +111,8 @@ NA_IAPI NABool      naIterateStack(NAStackIterator* iterator);
 // use the Pointer variant
 NA_IAPI const void* naGetStackCurrentConst         (NAStackIterator* iterator);
 NA_IAPI void*       naGetStackCurrentMutable       (NAStackIterator* iterator);
+NA_IAPI const void* naGetStackCurrentpConst        (NAStackIterator* iterator);
+NA_IAPI void*       naGetStackCurrentpMutable      (NAStackIterator* iterator);
 
 // Will call the accessor or mutator on every element stored in the stack.
 // The Pointer variants expect this stack to store pointers hence

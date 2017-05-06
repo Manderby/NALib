@@ -5,6 +5,7 @@ This file contains notes on what is still missing or needs to be done
 in NALib.
 
 Version 19:
+- Review Remaining Iterators Octtree Quadtree
 - Fully implement NAString
 - Timezones
 - Make more test files
@@ -13,7 +14,6 @@ Version 19:
 - GUI
 
 Version 20:
-- Review Remaining Iterators Octtree Quadtree
 - Add more variadic error messages
 - First compression in NAPNG
 - NAComplexPolar

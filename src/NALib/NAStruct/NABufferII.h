@@ -23,6 +23,12 @@ struct NABufferIterator{
 };
 
 
+#ifndef NDEBUG
+  // Returns true if the given ptr is the same as the first pointer of the
+  // buffer. This function is primarily for consistency check reasons and
+  // should not be misused.
+  NA_HAPI NABool naTestBufferFirstPointer(const NABuffer* buffer, const void* ptr);
+#endif
 
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH

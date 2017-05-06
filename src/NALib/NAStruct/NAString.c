@@ -49,6 +49,9 @@ NA_DEF NAString naMakeString(void){
   NAString string;
   string.buffer = naCreateBuffer(NA_FALSE);
   string.cachedstr = NA_NULL;
+  #if NA_STRING_ALWAYS_CACHE == 1
+    naGetStringUTF8Pointer(&string);
+  #endif
   return string;
 }
 
@@ -79,6 +82,9 @@ NA_DEF NAString naMakeStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
     string = naMakeString();
   }
   
+  #if NA_STRING_ALWAYS_CACHE == 1
+    naGetStringUTF8Pointer(&string);
+  #endif
   return string;
 }
 
@@ -92,6 +98,9 @@ NA_DEF NAString naMakeStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt leng
   #endif
   string.buffer = naCreateBufferWithMutableData(buffer, naAbsi(length), cleanup); // todo: absi
   string.cachedstr = NA_NULL;
+  #if NA_STRING_ALWAYS_CACHE == 1
+    naGetStringUTF8Pointer(&string);
+  #endif
   return string;
 }
 
@@ -103,6 +112,9 @@ NA_DEF NAString naMakeStringWithFormat(const NAUTF8Char* format, ...){
   va_start(argumentlist, format);
   string = naMakeStringWithArguments(format, argumentlist);
   va_end(argumentlist);
+  #if NA_STRING_ALWAYS_CACHE == 1
+    naGetStringUTF8Pointer(&string);
+  #endif
   return string;
 }
 
@@ -125,6 +137,9 @@ NA_DEF NAString naMakeStringWithArguments(const NAUTF8Char* format, va_list argu
   }
   va_end(argumentlist2);
   va_end(argumentlist3);
+  #if NA_STRING_ALWAYS_CACHE == 1
+    naGetStringUTF8Pointer(&string);
+  #endif
   return string;
 }
 
@@ -159,6 +174,9 @@ NA_DEF NAString naMakeStringExtraction(const NAString* srcstring, NAInt charoffs
   }
   
   naCacheBufferRange(string.buffer, naGetBufferRange(string.buffer), NA_FALSE);
+  #if NA_STRING_ALWAYS_CACHE == 1
+    naGetStringUTF8Pointer(&string);
+  #endif
   return string;
 }
 
@@ -168,6 +186,9 @@ NA_DEF NAString naMakeStringWithBufferExtraction(NABuffer* buffer, NARangei rang
   NAString string;
   string.buffer = naCreateBufferExtraction(buffer, range);
   string.cachedstr = NA_NULL;
+  #if NA_STRING_ALWAYS_CACHE == 1
+    naGetStringUTF8Pointer(&string);
+  #endif
   return string;
 }
 
@@ -200,6 +221,10 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
     return (const NAUTF8Char*)"";
   }else{
     NAInt strlen;
+    #ifndef NDEBUG
+      if(naTestBufferFirstPointer(string->buffer, mutablestring->cachedstr))
+        naError("naGetStringUTF8Pointer", "Warning: String buffer based on temporary string. Do not use naMakeStringWithUTF8CStringLiteral for non-literals!"); // todo this check is not useful here. Find the correct place.
+    #endif
     naFree(mutablestring->cachedstr);
     strlen = naGetBufferRange(string->buffer).length;
     #ifndef NDEBUG
@@ -245,24 +270,34 @@ NA_DEF NAUTF8Char naGetStringChar(NAString* string, NAInt indx){
 
 
 NA_DEF NAString naMakeStringWithBasenameOfFilename(const NAString* filename){
+  NAString string;
   NAInt dotoffset = naSearchBufferByteOffset(filename->buffer, NA_SUFFIX_DELIMITER, naGetRangeiMax(naGetBufferRange(filename->buffer)), NA_FALSE);
   // If dotpos is invalid, return the full string.
   if(dotoffset == NA_INVALID_MEMORY_INDEX){
-    return naMakeStringExtraction(filename, 0, -1);
+    string = naMakeStringExtraction(filename, 0, -1);
   }else{
-    return naMakeStringExtraction(filename, 0, dotoffset);
+    string = naMakeStringExtraction(filename, 0, dotoffset);
   }
+  #if NA_STRING_ALWAYS_CACHE == 1
+    naGetStringUTF8Pointer(&string);
+  #endif
+  return string;
 }
 
 
 
 NA_DEF NAString naMakeStringWithSuffixOfFilename(const NAString* filename){
+  NAString string;
   NAInt dotoffset = naSearchBufferByteOffset(filename->buffer, NA_SUFFIX_DELIMITER, naGetRangeiMax(naGetBufferRange(filename->buffer)), NA_FALSE);
   if(dotoffset == NA_INVALID_MEMORY_INDEX){
-    return naMakeString();
+    string = naMakeString();
   }else{
-    return naMakeStringExtraction(filename, dotoffset + 1, -1);
+    string = naMakeStringExtraction(filename, dotoffset + 1, -1);
   }
+  #if NA_STRING_ALWAYS_CACHE == 1
+    naGetStringUTF8Pointer(&string);
+  #endif
+  return string;
 }
 
 

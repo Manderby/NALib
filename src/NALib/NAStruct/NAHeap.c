@@ -618,8 +618,9 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
       #ifndef NDEBUG
         naCrash("naInitHeap", "flag combination %x" NA_PRIi " not implemented.", flags);
         return NA_NULL;
+      #else
+        break;
       #endif
-      break;
     }
 
   }else{
@@ -670,8 +671,9 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
       #ifndef NDEBUG
         naCrash("naInitHeap", "flag combination %x" NA_PRIi " not implemented.", flags);
         return NA_NULL;
+      #else
+        break;
       #endif
-      break;
     }
   }
   return heap;

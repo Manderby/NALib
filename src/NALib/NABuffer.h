@@ -226,8 +226,6 @@ NA_API void naCacheBufferRange(   NABuffer* buffer,
 NA_API void naDismissBufferRange( NABuffer* buffer,
                                    NARangei range);
 
-
-
 // ////////////////////////////////
 // WHOLE BUFFER FUNCTIONS
 // ////////////////////////////////

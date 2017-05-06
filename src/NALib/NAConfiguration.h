@@ -105,6 +105,19 @@
 #endif
 
 
+// When set to 1, the NAString structure always creates a cached version of
+// its content. This will take considerably more time if you use lots of string
+// manipulations but will help when debugging as the debugger can display the
+// content as char* immediately.
+//
+// Default is 0: The NAString struct will only create a cached version when
+// necessary.
+
+#ifndef NA_STRING_ALWAYS_CACHE
+  #define NA_STRING_ALWAYS_CACHE 1
+#endif
+
+
 
 // ////////////////////////////////
 // Mutexes on Windows

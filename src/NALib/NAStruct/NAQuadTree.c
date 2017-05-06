@@ -336,7 +336,6 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
   NARecti rect1;
   NARecti rect2;
   NARecti rect3;
-  NAPosi origin;
 
   #ifndef NDEBUG
     if(!newtree)
@@ -359,6 +358,8 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
   NAQuadTreeIterator iter = naMakeQuadTreeAccessor(duptree);
   while(naIterateQuadTree(&iter, NA_NULL)){
     const void* dupchunk = naGetQuadTreeCurrentConst(&iter);
+    NAPosi origin = naGetQuadTreeCurrentOrigin(&iter);
+
     NAPosi neworigin;
     void* newdata;
     // We have a leaf with data. Now, we create all leafes in the new tree
@@ -592,7 +593,6 @@ NA_DEF void naSerializeQuadTree(const NAQuadTree* tree, void* buf, uint64* bytes
     }
     naClearQuadTreeIterator(&iter);
   }else{
-    NAPosi origin;
     NAByte* dataptr = buf;
     *((uint64*)dataptr) = *bytesize; dataptr += sizeof(uint64);
     *((uint64*)dataptr) = (uint64)tree->leaflength; dataptr += sizeof(uint64);
@@ -600,6 +600,7 @@ NA_DEF void naSerializeQuadTree(const NAQuadTree* tree, void* buf, uint64* bytes
     NAQuadTreeIterator iter = naMakeQuadTreeAccessor(tree);
     while(naIterateQuadTree(&iter, NA_NULL)){
       const void* curleaf = naGetQuadTreeCurrentConst(&iter);
+      NAPosi origin = naGetQuadTreeCurrentOrigin(&iter);
       *((int64*)dataptr) = origin.x; dataptr += sizeof(int64);
       *((int64*)dataptr) = origin.y; dataptr += sizeof(int64);
       dataptr += tree->callbacks.serialize(dataptr, curleaf, tree->leaflength);

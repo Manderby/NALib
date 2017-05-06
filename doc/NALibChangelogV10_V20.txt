@@ -13,6 +13,7 @@ correct, complete or final.
 
 
 - NABuffer now works with Iterators.
+- NAQuadTree and NAOctTree have updated iterators too.
 - Speedup of NARuntime. Manages memory pools more intelligently. Detects memory
   leaks.
 
@@ -34,6 +35,9 @@ correct, complete or final.
 - Fixed an iteration bug of NAList when using naLocateListContent
 - Iterator creation functions have been renamed to MakeXXXAccessor,
   MakeXXXMutator and MakeXXXModifier. Readme has been written.
+- Added Pointer Iterator functions for NAStack
+- Added NA_STRING_ALWAYS_CACHE in NAConfiguration.h
+- Removed an annoying visibility attribute error under GCC.
 
 
 Version 18 (first published 2017-March-30):

@@ -341,12 +341,26 @@ NA_HIDEF NAByte* naGetBufferPartDataPointerMutable(const NABufferPart* part, NAI
 
 // Returns a direct pointer to the raw data of this buffer part, given its
 // absolute address.
-NA_HIDEF NAByte* naGetBufferPartBaseDataPointer(const NABufferPart* part){
+NA_HIDEF const NAByte* naGetBufferPartBaseDataPointerConst(const NABufferPart* part){
   #ifndef NDEBUG
     if(!part)
-      {naCrash("naGetBufferPartBaseDataPointer", "buffer part is Null pointer"); return NA_NULL;}
+      {naCrash("naGetBufferPartBaseDataPointerConst", "buffer part is Null pointer"); return NA_NULL;}
     if(naIsBufferPartSparse(part))
-      naError("naGetBufferPartBaseDataPointer", "buffer part is sparse");
+      naError("naGetBufferPartBaseDataPointerConst", "buffer part is sparse");
+  #endif
+  return (const NAByte*)naGetPointerConst(part->data);
+}
+
+
+
+// Returns a direct pointer to the raw data of this buffer part, given its
+// absolute address.
+NA_HIDEF NAByte* naGetBufferPartBaseDataPointerMutable(NABufferPart* part){
+  #ifndef NDEBUG
+    if(!part)
+      {naCrash("naGetBufferPartBaseDataPointerMutable", "buffer part is Null pointer"); return NA_NULL;}
+    if(naIsBufferPartSparse(part))
+      naError("naGetBufferPartBaseDataPointerMutable", "buffer part is sparse");
   #endif
   return (NAByte*)naGetPointerMutable(part->data);
 }
@@ -462,7 +476,7 @@ void naFillBufferSourcePart(NABufferSource* source, NABufferPart* part){
     }
   #endif
   if(source && source->desc.filler){
-    source->desc.filler(source->desc.data, naGetBufferPartBaseDataPointer(part), naGetBufferPartRange(part));
+    source->desc.filler(source->desc.data, naGetBufferPartBaseDataPointerMutable(part), naGetBufferPartRange(part));
   }
 }
 
@@ -1304,6 +1318,14 @@ NA_DEF NAInt naGetBufferEndianness(NABuffer* buffer){
 
 
 
+#ifndef NDEBUG
+  NA_HDEF NABool naTestBufferFirstPointer(const NABuffer* buffer, const void* ptr){
+    return (ptr == naGetBufferPartBaseDataPointerConst(naGetListFirstConst(&(buffer->parts))));
+  }
+#endif
+
+
+
 NA_DEF NAByte naGetBufferByteAtIndex(const NABuffer* buffer, NAInt indx){
   NAListIterator iter;
   
@@ -1687,7 +1709,7 @@ NA_DEF NABufferIterator naMakeBufferAccessor(const NABuffer* buffer){
   #ifndef NDEBUG
     NABuffer* mutablebuffer;
     if(!buffer)
-      {naCrash("naMakeBufferAccessor", "buffer is Null pointer"); naNulln(&iter, sizeof(NABufferIterator)); return iter;}
+      {naNulln(&iter, sizeof(NABufferIterator)); naCrash("naMakeBufferAccessor", "buffer is Null pointer"); return iter;}
   #endif
   iter.bufferptr = naMakePtrWithDataMutable(naRetainBuffer((NABuffer*)buffer), NA_MEMORY_CLEANUP_NONE);  //todo const
   iter.curoffset = 0;
@@ -1708,7 +1730,7 @@ NA_DEF NABufferIterator naMakeBufferMutator(const NABuffer* buffer){
   #ifndef NDEBUG
     NABuffer* mutablebuffer;
     if(!buffer)
-      {naCrash("naMakeBufferAccessor", "buffer is Null pointer"); naNulln(&iter, sizeof(NABufferIterator)); return iter;}
+      {naNulln(&iter, sizeof(NABufferIterator)); naCrash("naMakeBufferAccessor", "buffer is Null pointer"); return iter;}
   #endif
   iter.bufferptr = naMakePtrWithDataMutable(naRetainBuffer((NABuffer*)buffer), NA_MEMORY_CLEANUP_NONE);  //todo const
   iter.curoffset = 0;
@@ -1729,7 +1751,7 @@ NA_DEF NABufferIterator naMakeBufferModifier(NABuffer* buffer){
   #ifndef NDEBUG
     NABuffer* mutablebuffer;
     if(!buffer)
-      {naCrash("naMakeBufferAccessor", "buffer is Null pointer"); naNulln(&iter, sizeof(NABufferIterator)); return iter;}
+      {naNulln(&iter, sizeof(NABufferIterator)); naCrash("naMakeBufferAccessor", "buffer is Null pointer"); return iter;}
   #endif
   iter.bufferptr = naMakePtrWithDataMutable(naRetainBuffer(buffer), NA_MEMORY_CLEANUP_NONE);
   iter.curoffset = 0;

@@ -142,11 +142,11 @@ NA_API NAUInt             naGetRuntimePoolSize();
 
 #ifndef NDEBUG
 #define NA_RUNTIME_TYPE(type, destructor)\
-    static NA_LINKER_NO_EXPORT NATypeInfo na_ ## type ## _typeinfo =\
+    static NATypeInfo na_ ## type ## _typeinfo =\
     {NA_NULL, sizeof(type), (NAMutator)destructor, #type}
 #else
   #define NA_RUNTIME_TYPE(type, destructor)\
-    static NA_LINKER_NO_EXPORT NATypeInfo na_ ## type ## _typeinfo =\
+    static NATypeInfo na_ ## type ## _typeinfo =\
     {NA_NULL, sizeof(type), (NAMutator)destructor}
 #endif
 

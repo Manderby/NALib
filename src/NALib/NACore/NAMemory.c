@@ -285,7 +285,7 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
     // plus an additional address size before the actual struct to store a
     // pointer to the coretypeinfo which is needed when deleting the struct.
     
-    NACoreTypeInfo** basepointer = naMalloc(sizeof(NACoreTypeInfo*) + coretypeinfo->typesize);
+    NACoreTypeInfo** basepointer = naMalloc(naSizeof(NACoreTypeInfo*) + coretypeinfo->typesize);
     pointer = basepointer + 1;
     *basepointer = coretypeinfo;
     return pointer;

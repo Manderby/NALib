@@ -77,10 +77,10 @@ NA_IDEF void* naGetQuadTreeRootNodeData(NAQuadTree* tree){
 
 
 NA_IDEF NAQuadTreeIterator naMakeQuadTreeAccessor(const NAQuadTree* tree){
-  NAQuadTree* mutabletree = (NAQuadTree*)tree;
   NAQuadTreeIterator iter;
   iter.tree = naMakePtrWithDataConst(tree);
   #ifndef NDEBUG
+    NAQuadTree* mutabletree = (NAQuadTree*)tree;
     mutabletree->itercount++;
   #endif
   iter.curnode = NA_NULL;
