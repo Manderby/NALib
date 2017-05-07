@@ -145,12 +145,19 @@ typedef void  (*NAQuadTreeNodeDeallocator)(void* nodedata);
 //
 // Segment is a number in [0 - 3] denoting the child which caused the call.
 // The value -1 is given if there was no particular child causing the call.
-// This happens for example, when a tree gets copied as a whole.
+// This happens for example, when a tree gets copied as a whole or if the tree
+// gets updated as a whole with naUpdateQuadTree. In that case, probably, all
+// leaves or childs should be considered important for whatever you do in the
+// callback.
 //
 // This function can return NA_TRUE if the message shall be propagated towards
-// the next parent (bubbling). If NA_FALSE is returned, the tree update stops
-// immediately. This return value though is ignored when copying a whole tree,
-// where these callbacks are called whenever a node has been fully constructed.
+// the next parent (bubbling). If NA_FALSE is returned, the tree update stops.
+// This return value though is ignored when copying a whole tree, where these
+// callbacks are called whenever a node has been fully constructed.
+//
+// Note that these callbacks will only be called in the bubbling phase. Also
+// note that if one of these functions is not implemented, bubbling is set to
+// NA_TRUE by default.
 typedef NABool(*NAQuadTreeLeafChanged)(      void* nodedata,
                                              NAInt segment,
                                  const void* const leafdata[4]);
@@ -243,64 +250,45 @@ NA_API NAQuadTree* naInitQuadTreeCopyShifted(   NAQuadTree* newtree,
 // including all structural data is returned in bytesize.
 // When buf is not Null, the tree serializes into the given buffer. You must
 // send the bytesize you received from the first call again!
-NA_API void naSerializeQuadTree(            const NAQuadTree* tree,
-                                                        void* buf,
-                                                      uint64* bytesize);
+NA_API void naSerializeQuadTree(          const NAQuadTree* tree,
+                                                      void* buf,
+                                                    uint64* bytesize);
 // Deserializes a full NAQuadTree
-NA_API NAQuadTree* naInitQuadTreeWithDeserialization(NAQuadTree* tree,
-                                                      const void* buf,
-                                        NAQuadTreeCallbacks callbacks);
-
-// Empties the tree
-NA_IAPI void naEmptyQuadTree(                   NAQuadTree* tree);
+NA_API NAQuadTree* naInitQuadTreeWithDeserialization
+                                              (NAQuadTree* tree,
+                                               const void* buf,
+                                       NAQuadTreeCallbacks callbacks);
 
 // Clears the tree
-NA_API void naClearQuadTree(                    NAQuadTree* tree);
-
-// Returns true if the tree is empty
-NA_IAPI NABool naIsQuadTreeEmpty(         const NAQuadTree* tree);
-
-// Returns the leaf length in one dimension
-NA_IAPI NAInt naGetQuadTreeLeafLength(    const NAQuadTree* tree);
-
-// Returns the callbacks (by copying the function pointers)
-NA_IAPI NAQuadTreeCallbacks naGetQuadTreeCallbacks(const NAQuadTree* tree);
+NA_API void naClearQuadTree(                   NAQuadTree* tree);
 
 
 
 // //////////////////////////
-// Accessors and Mutators:
+// Various functions:
+
+// Empties the tree
+NA_IAPI void naEmptyQuadTree(                  NAQuadTree* tree);
+
+// Returns true if the tree is empty
+NA_IAPI NABool naIsQuadTreeEmpty(        const NAQuadTree* tree);
+
+// Returns the leaf length in one dimension
+NA_IAPI NAInt naGetQuadTreeLeafLength(   const NAQuadTree* tree);
+
+// Returns the callbacks (by copying the function pointers)
+NA_IAPI NAQuadTreeCallbacks naGetQuadTreeCallbacks(
+                                         const NAQuadTree* tree);
 
 // Returns the root node data, if available. If no root or no root data are
 // available, NA_NULL is returned.
-NA_IAPI void* naGetQuadTreeRootNodeData(NAQuadTree* tree);
+NA_API void* naGetQuadTreeRootNodeData(       NAQuadTree* tree);
 
-// Returns the chunk containing the given coord. If no chunk with the desired
-// coord exists, NA_NULL is returned. When create is true, the chunk will be
-// created and returned. If the origin pointer is not Null it will be filled
-// with the origin information of the chunk returned. When didcreate is a
-// non-Null-pointer and create is true, didcreate returns whether the leaf has
-// indeed been created or not.
-NA_API const void* naGetQuadTreeLeafConst(  const NAQuadTree* tree,
-                                                      NAPosi  coord,
-                                                      NAPosi* origin);
-NA_API       void* naGetQuadTreeLeafMutable(      NAQuadTree* tree,
-                                                      NAPosi  coord,
-                                                      NABool  create,
-                                                     NABool*  didcreate,
-                                                      NAPosi* origin);
-
-// Removes the leaf containing the specified coordinate.
-NA_API void naRemoveQuadTreeLeaf(NAQuadTree* tree, NAPosi coord);
-
-// Starts at the leaf containing the given coord and traverses upwards
-// (bubbling) the tree by calling the appropriate callback functions of all
-// nodes. When the callback functions return NA_FALSE, bubbling stops.
-NA_API void naUpdateQuadTreeAtCoord(  NAQuadTree* tree, NAPosi coord);
-
-// Same thing but updates every leaf in the whole tree. All messages will
-// bubble as long as there is at least one child per node requesting a bubble.
-NA_API void naUpdateQuadTree(         NAQuadTree* tree);
+// Same thing as naUpdateQuadTreeCurrent but is called for every leaf in the
+// whole tree. All messages will bubble as long as there is at least one child
+// per node requesting a bubble. Use naUpdateQuadTreeCurrent if you want to
+// update only one element.
+NA_API void naUpdateQuadTree(                  NAQuadTree* tree);
 
 
 
@@ -323,7 +311,7 @@ typedef void  (*NAQuadTreeDataSetter)( const void* dstdata,
 
 // Calls the given NAQuadTreeDataSetter function for every chunk in the tree
 // which is partially or fully overlapped with the given rect. Will create
-// the chunks if necessary.
+// the leafes if necessary.
 NA_API void naSetQuadTreeInRect(          NAQuadTree* tree,
                                               NARecti rect,
                                  NAQuadTreeDataSetter datasetter,
@@ -345,47 +333,68 @@ NA_API void naSetQuadTreeInRect(          NAQuadTree* tree,
 // naClearQuadTreeIterator(&iter);
 //
 // You can choose to have an Accessor, a Mutator or a Modifier as Iterator.
-// Only with the Modifier can leafes be removed with the naRemoveQuadTreeLeaf
-// function.
 //
 // Beware to always use naClearQuadTreeIterator. Otherwise NALib will emit
 // warnings that there are still iterators running on the struct if NDEBUG is
 // undefined.
 
-NA_IAPI NAQuadTreeIterator naMakeQuadTreeAccessor(const NAQuadTree* tree);
-NA_IAPI NAQuadTreeIterator naMakeQuadTreeMutator (      NAQuadTree* tree);
-NA_IAPI void naClearQuadTreeIterator(NAQuadTreeIterator* iter);
+// Makes the iterators but does not locates any specific leaf.
+NA_API NAQuadTreeIterator naMakeQuadTreeAccessor(const NAQuadTree* tree);
+NA_API NAQuadTreeIterator naMakeQuadTreeMutator (      NAQuadTree* tree);
+NA_API NAQuadTreeIterator naMakeQuadTreeModifier(      NAQuadTree* tree);
+
+// Clears the iterator struct. Always use this after done iterating!
+NA_API void naClearQuadTreeIterator(NAQuadTreeIterator* iter);
+
+// Resets an iterator to point to no specific leaf.
+NA_API void naResetQuadTreeIterator(NAQuadTreeIterator* iter);
 
 // Iterates to the next leaf and returns NA_TRUE if there is one, NA_FALSE if
 // the iteration is over. The leafes will be visited like they are stored
 // within the tree. If you need axis ordered traversal, maybe have a look at
-// the naIterateQuadTreeSteps function.
+// the naIterateQuadTreeSteps or the naSetQuadTreeInRect function.
 //
 // The limit denotes the rectangle the iteration takes place in. Only leafes
 // which partially or completely overlap with the limit rect will be visited.
 // If limit is NA_NULL, all leafes will be visited.
-NA_API NABool naIterateQuadTree(NAQuadTreeIterator* iter, const NARecti* limit);
+//
+// If create is NA_TRUE, all leafes will be created which are not yet existing
+// within the limit rect. Limit must be non-null. You must have a modifier
+// iterator when using create.
+NA_API NABool naIterateQuadTree(  NAQuadTreeIterator* iter,
+                                       const NARecti* limit,
+                                               NABool create);
 
-// Moves the iterator to the leaf containing the given coord. If coord is not
-// found in the tree, NA_FALSE ist returned and a leaf is currently selected
-// which is somewhat close to the coordinates.
+// Moves the iterator to the leaf containing the given coord. If such a leaf is
+// not found in the tree, NA_FALSE ist returned. The iterator though stores the
+// coord it is supposed to point at. This allows you to locate a position an
+// then use naGetQuadTreeCurrentMutable to create a leaf at that position.
 NA_API NABool naLocateQuadTreeCoord(NAQuadTreeIterator* iter, NAPosi coord);
 
 // Moves the iterator relative to the current position. Each step can be
-// positive or negative. If the iterator was not in any specific position
-// before, it will be rather arbitrarily after. Use naLocateQuadTreeCoord
-// before using this function.
-NA_API NABool naIterateQuadTreeSteps( NAQuadTreeIterator* iter,
+// positive or negative. The iterator must be at a specific position before
+// using this function. Probably you want to use naLocateQuadTreeCoord before.
+NA_API NABool naLocateQuadTreeSteps(  NAQuadTreeIterator* iter,
                                                     NAInt stepx,
                                                     NAInt stepy);
 
-// You can retrieve the current leaf or the origin of the current leaf with
-// these functions:
-NA_IAPI const void* naGetQuadTreeCurrentConst(NAQuadTreeIterator* iter);
-NA_IAPI void* naGetQuadTreeCurrentMutable(NAQuadTreeIterator* iter);
-NA_IAPI NAPosi naGetQuadTreeCurrentOrigin(NAQuadTreeIterator* iter);
+// You can retrieve the current leaf with these functions. When create is set
+// to NA_TRUE, a new leaf will be created if it does not exist. You need a
+// modifier iterator for this.
+NA_API const void* naGetQuadTreeCurrentConst(  NAQuadTreeIterator* iter);
+NA_API void*       naGetQuadTreeCurrentMutable(NAQuadTreeIterator* iter,
+                                                            NABool create);
 
+// Returns the origin of the leaf the iterator is pointing at.
+NA_API NAPosi naGetQuadTreeCurrentOrigin(NAQuadTreeIterator* iter);
 
+// Starts at the leaf containing the given coord and traverses upwards
+// (bubbling) the tree by calling the appropriate callback functions of all
+// nodes. When the callback functions return NA_FALSE, bubbling stops.
+NA_API void naUpdateQuadTreeCurrent(  NAQuadTreeIterator* iter);
+
+// Removes the leaf the iterator currently points at.
+NA_API void naRemoveQuadTreeCurrent(NAQuadTreeIterator* iter);
 
 
 

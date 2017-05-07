@@ -8,37 +8,24 @@
 // including "NAQuadTree.h"
 
 typedef struct NAQuadTreeNode NAQuadTreeNode;
-struct NAQuadTreeNode{
-  NAInt childsize;
-  NAInt segmentinparent;
-  NAQuadTreeNode* parentnode;
-  void* child[4];
-  NAPosi childorigin[4];
-  void* nodedata;
-  #ifndef NDEBUG
-    NAInt itercount;
-  #endif
-};
-
-
 
 struct NAQuadTree{
   NAInt leaflength;
   NAQuadTreeCallbacks callbacks;
   NAQuadTreeNode* root;
-  NAQuadTreeNode* visitnode;    // visitnode stores tha last node visited.
   #ifndef NDEBUG
     NAInt itercount;
   #endif
 };
 
-
-
 struct NAQuadTreeIterator{
   NAPtr tree;
   NAQuadTreeNode* curnode;
   NAInt cursegment;
+  NAPosi leaforigin;
+  NAUInt flags;
 };
+
 
 
 
@@ -46,7 +33,6 @@ struct NAQuadTreeIterator{
 NA_IDEF void naEmptyQuadTree(NAQuadTree* tree){
   naClearQuadTree(tree);
   tree->root = NA_NULL;
-  tree->visitnode = NA_NULL;
 }
 
 
@@ -69,83 +55,19 @@ NA_IDEF NAQuadTreeCallbacks naGetQuadTreeCallbacks(const NAQuadTree* tree){
 
 
 
-NA_IDEF void* naGetQuadTreeRootNodeData(NAQuadTree* tree){
-  if(tree->root){return tree->root->nodedata;}
-  return NA_NULL;
-}
-
-
-
-NA_IDEF NAQuadTreeIterator naMakeQuadTreeAccessor(const NAQuadTree* tree){
-  NAQuadTreeIterator iter;
-  iter.tree = naMakePtrWithDataConst(tree);
-  #ifndef NDEBUG
-    NAQuadTree* mutabletree = (NAQuadTree*)tree;
-    mutabletree->itercount++;
-  #endif
-  iter.curnode = NA_NULL;
-  // The segment number -1 means that the iteration goes downwards.
-  iter.cursegment= -1;
-  return iter;
-}
-
-
-
-NA_IDEF NAQuadTreeIterator naMakeQuadTreeMutator(NAQuadTree* tree){
-  NAQuadTreeIterator iter;
-  iter.tree = naMakePtrWithDataMutable(tree, NA_MEMORY_CLEANUP_NONE);
-  #ifndef NDEBUG
-    tree->itercount++;
-  #endif
-  iter.curnode = NA_NULL;
-  // The segment number -1 means that the iteration goes downwards.
-  iter.cursegment= -1;
-  return iter;
-}
-
-
-
-NA_IDEF void naClearQuadTreeIterator(NAQuadTreeIterator* iter){
+NA_HIDEF void naInitQuadTreeIterator(NAQuadTreeIterator* iter){
   #ifndef NDEBUG
     NAQuadTree* mutabletree = (NAQuadTree*)naGetPtrConst(&(iter->tree));
-    mutabletree->itercount--;
+    mutabletree->itercount++;
   #endif
-  naClearPtr(&(iter->tree));
+  iter->curnode = NA_NULL;
+  iter->cursegment= -1;
+  iter->flags = 0;
 }
 
 
 
-NA_IDEF const void* naGetQuadTreeCurrentConst(NAQuadTreeIterator* iter){
-  if(iter->curnode){
-    return iter->curnode->child[iter->cursegment];
-  }else{
-    return NA_NULL;
-  }
-}
 
-
-
-NA_IDEF void* naGetQuadTreeCurrentMutable(NAQuadTreeIterator* iter){
-  #ifndef NDEBUG
-    if(naIsPtrConst(&(iter->tree)))
-      naError("naGetQuadTreeCurrentMutable", "Mutating iterator which is not mutable");
-  #endif
-  if(iter->curnode){
-    return iter->curnode->child[iter->cursegment];
-  }else{
-    return NA_NULL;
-  }
-}
-
-
-
-NA_IDEF NAPosi naGetQuadTreeCurrentOrigin(NAQuadTreeIterator* iter){
-  if(iter->curnode){
-    return iter->curnode->childorigin[iter->cursegment];
-  }else{
-    return naMakePosi(0, 0);
-  }
-}
 
 
 // Copyright (c) NALib, Tobias Stamm, Manderim GmbH

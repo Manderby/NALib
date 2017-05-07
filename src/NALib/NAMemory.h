@@ -352,8 +352,8 @@ NA_IAPI void naFreeAlignedPtr(NAPtr* ptr);
 NA_IAPI void naNaFreePtr(NAPtr* ptr);
 NA_IAPI void naNaFreeAlignedPtr(NAPtr* ptr);
 #ifdef __cplusplus
-NA_IAPI void naDeletePtr(NAPtr* ptr);
-NA_IAPI void naDeleteBrackPtr(NAPtr* ptr);
+  NA_IAPI void naDeletePtr(NAPtr* ptr);
+  NA_IAPI void naDeleteBrackPtr(NAPtr* ptr);
 #endif
 NA_IAPI void naNaDeletePtr(NAPtr* ptr);
 
