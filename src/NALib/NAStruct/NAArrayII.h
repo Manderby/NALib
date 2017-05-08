@@ -12,9 +12,10 @@
 
 
 struct NAArray{
-  NASmartPtr sptr;        // The pointer storing the data
-  NAInt      count;       // The number of elements
-  NAInt      typesize;    // The size in bytes of the stored type
+  NAPtr   ptr;         // The pointer storing the data
+  NAInt   count;       // The number of elements
+  NAInt   typesize;    // The size in bytes of the stored type
+  NAMemoryCleanup cleanup;
   #ifndef NDEBUG
     NAInt    itercount;   // The number of iterators attached to this array.
   #endif
@@ -27,11 +28,12 @@ NA_IDEF NAArray* naInitArray(NAArray* array){
     if(!array)
       {naCrash("naInitArray", "array is Null-Pointer"); return NA_NULL;}
   #endif
-  naInitSmartPtrConst(&(array->sptr), NA_MEMORY_CLEANUP_NONE, NA_NULL);
+  array->ptr = naMakePtrWithDataConst(NA_NULL);
   // The typesize is set to 1 such that calls to naGetArrayCount will not
   // result in bad values.
   array->count = 0;
   array->typesize = 1;
+  array->cleanup = NA_MEMORY_CLEANUP_NONE;
   #ifndef NDEBUG
     array->itercount = 0;
   #endif
@@ -51,7 +53,8 @@ NA_IDEF NAArray* naInitArrayWithCount(NAArray* array, NAInt typesize, NAInt coun
   #endif
   array->typesize = typesize;
   array->count = count;
-  naInitSmartPtrMutable(&(array->sptr), NA_MEMORY_CLEANUP_NONE, naMalloc(count * typesize), NA_MEMORY_CLEANUP_NA_FREE);
+  array->cleanup = NA_MEMORY_CLEANUP_NA_FREE;
+  array->ptr = naMakePtrWithDataMutable(naMalloc(count * typesize), NA_MEMORY_CLEANUP_NA_FREE);
   #ifndef NDEBUG
     array->itercount = 0;
   #endif
@@ -70,7 +73,8 @@ NA_IDEF NAArray* naInitArrayWithDataConst(NAArray* array, const void* data, NAIn
   #endif
   array->typesize = typesize;
   array->count = count;
-  naInitSmartPtrConst(&(array->sptr), NA_MEMORY_CLEANUP_NONE, data);
+  array->cleanup = NA_MEMORY_CLEANUP_NONE;
+  array->ptr = naMakePtrWithDataConst(data);
   #ifndef NDEBUG
     array->itercount = 0;
   #endif
@@ -91,7 +95,8 @@ NA_IDEF NAArray* naInitArrayWithDataMutable(NAArray* array, void* data, NAInt ty
   #endif
   array->typesize = typesize;
   array->count = count;
-  naInitSmartPtrMutable(&(array->sptr), NA_MEMORY_CLEANUP_NONE, data, cleanup);
+  array->cleanup = cleanup;
+  array->ptr = naMakePtrWithDataMutable(data, cleanup);
   #ifndef NDEBUG
     array->itercount = 0;
   #endif
@@ -110,7 +115,7 @@ NA_IDEF void naClearArray(NAArray* array){
     if(array->itercount)
       naError("naClearArray", "There are still some iterators operating upon this array. Did you use naClearArrayIterator?");
   #endif
-  naReleaseSmartPtr(&(array->sptr), NA_NULL);
+  naCleanupPtr(&(array->ptr), array->cleanup);
 }
 
 
@@ -124,7 +129,7 @@ NA_IDEF void naForeachArrayConst(NAArray* array, NAAccessor accessor){
       {naCrash("naForeachArray", "Accessor is Null"); return;}
   #endif
   count = naGetArrayCount(array);
-  ptr = naGetSmartPtrConst(&(array->sptr));
+  ptr = naGetPtrConst(&(array->ptr));
   while(count){
     accessor(ptr);
     ptr += array->typesize;
@@ -143,7 +148,7 @@ NA_IDEF void naForeachArrayMutable(NAArray* array, NAMutator mutator){
       {naCrash("naForeachArray", "Mutator is Null"); return;}
   #endif
   count = naGetArrayCount(array);
-  ptr = naGetSmartPtrMutable(&(array->sptr));
+  ptr = naGetPtrMutable(&(array->ptr));
   while(count){
     mutator(ptr);
     ptr += array->typesize;
@@ -163,7 +168,7 @@ NA_IDEF const void* naGetArrayPointerConst(const NAArray* array){
         naError("naGetArrayPointerConst", "array is empty, returned pointer is NULL");
     }
   #endif
-  return naGetSmartPtrConst(&(array->sptr));
+  return naGetPtrConst(&(array->ptr));
 }
 
 
@@ -178,7 +183,7 @@ NA_IDEF void* naGetArrayPointerMutable(NAArray* array){
         naError("naGetArrayPointerMutable", "array is empty, returned pointer is NULL");
     }
   #endif
-  return naGetSmartPtrMutable(&(array->sptr));
+  return naGetPtrMutable(&(array->ptr));
 }
 
 
@@ -194,7 +199,7 @@ NA_IDEF const void* naGetArrayElementConst(const NAArray* array, NAInt indx){
     }
   #endif
   indx = naMakeIndexPositive(indx, naGetArrayCount(array));
-  return &(((NAByte*)naGetSmartPtrConst(&(array->sptr)))[indx * array->typesize]);
+  return &(((NAByte*)naGetPtrConst(&(array->ptr)))[indx * array->typesize]);
 }
 
 
@@ -210,7 +215,7 @@ NA_IDEF void* naGetArrayElementMutable(NAArray* array, NAInt indx){
     }
   #endif
   indx = naMakeIndexPositive(indx, naGetArrayCount(array));
-  return &(((NAByte*)naGetSmartPtrMutable(&(array->sptr)))[indx * array->typesize]);
+  return &(((NAByte*)naGetPtrMutable(&(array->ptr)))[indx * array->typesize]);
 }
 
 

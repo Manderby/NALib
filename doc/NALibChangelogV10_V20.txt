@@ -39,6 +39,8 @@ correct, complete or final.
 - Added NA_STRING_ALWAYS_CACHE in NAConfiguration.h
 - Removed an annoying visibility attribute error under GCC.
 - Replaced naIsPtrConst with naIsPtrMutable and added naIsPtrModifiable
+- Made NAArray with NAPtr instead of NASmartPtr
+- Added naCleanupPtr. Removed all other NAPtr cleanup functions.
 
 
 Version 18 (first published 2017-March-30):

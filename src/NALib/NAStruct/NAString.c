@@ -221,10 +221,6 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
     return (const NAUTF8Char*)"";
   }else{
     NAInt strlen;
-    #ifndef NDEBUG
-      if(naTestBufferFirstPointer(string->buffer, mutablestring->cachedstr))
-        naError("naGetStringUTF8Pointer", "Warning: String buffer based on temporary string. Do not use naMakeStringWithUTF8CStringLiteral for non-literals!"); // todo this check is not useful here. Find the correct place.
-    #endif
     naFree(mutablestring->cachedstr);
     strlen = naGetBufferRange(string->buffer).length;
     #ifndef NDEBUG

@@ -271,6 +271,10 @@ NA_HIDEF NAMemoryCleanup naGetFlagCleanupStruct(NAUInt flag){
 
 
 
+// Implementation node: If you get warnings from code sanity checks that there
+// might be an in valid free of an address pointing to a local stack variable,
+// you probably should not use NASmartPtr or NARefCount with that struct. It
+// is semantical nonsense.
 NA_IDEF void naCleanupMemory(void* data, NAMemoryCleanup cleanup){
 
   // Clear the data based on the data cleanup
@@ -552,7 +556,7 @@ struct NAPtr{
   NA_HIDEF void naMarkPtrCleanup(NAPtr* ptr, NAMemoryCleanup cleanup){
     if(!naIsCleanupValid(cleanup))
       naError("naMarkPtrCleanup", "Invalid cleanup option");
-    ptr->flags |= (NAUInt)(cleanup) << NA_REFCOUNT_DATA_CLEANUP_BITSHIFT;
+    ptr->flags |= ((NAUInt)(cleanup) << NA_REFCOUNT_DATA_CLEANUP_BITSHIFT);
   }
   
   
@@ -593,144 +597,14 @@ NA_IDEF NAPtr naMakePtrWithBytesize(NAInt bytesize){
 
 
 
-NA_IDEF void naClearPtr(NAPtr* ptr){
+NA_IDEF void naCleanupPtr(NAPtr* ptr, NAMemoryCleanup cleanup){
   #ifndef NDEBUG
     if(ptr->flags & NA_PTR_CLEANED)
-      naError("naClearPtr", "NAPtr has already been cleaned once.");
-    if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_NONE)
-      naError("naClearPtr", "Ptr has NOT the NONE cleanup hint. Use the appropriate clear function naFreePtr, naFreeAlignedPtr or naDeletePtr.");
+      naError("naCleanupPtr", "NAPtr has already been cleaned once.");
+    if(naGetFlagCleanupData(ptr->flags) != cleanup)
+      naError("naCleanupPtr", "Ptr has NOT the same cleanup hint as the given cleanup method.");
   #endif
-  // As this is the NONE cleanup, we do nothing when NDEBUG is defined.
-  #ifndef NDEBUG
-    ptr->flags |= NA_PTR_CLEANED;
-  #else
-    NA_UNUSED(ptr);
-  #endif
-}
-
-
-
-NA_IDEF void naFreePtr(NAPtr* ptr){
-  #ifndef NDEBUG
-    if(!ptr)
-      {naCrash("naFreePtr", "ptr is Null"); return;}
-    if(ptr->flags & NA_PTR_CLEANED)
-      naError("naFreePtr", "NAPtr has already been cleaned once.");
-    if(naIsPtrConst(ptr))
-      naError("naFreePtr", "Trying to free a const pointer");
-    if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_NA_FREE)
-      naError("naFreePtr", "Ptr has not the NA_FREE cleanup hint");
-  #endif
-  free(ptr->data.d);
-  #ifndef NDEBUG
-    ptr->flags |= NA_PTR_CLEANED;
-  #endif
-}
-
-
-
-NA_IDEF void naFreeAlignedPtr(NAPtr* ptr){
-  #ifndef NDEBUG
-    if(ptr->flags & NA_PTR_CLEANED)
-      naError("naFreeAlignedPtr", "NAPtr has already been cleaned once.");
-    if(naIsPtrConst(ptr))
-      naError("naFreeAlignedPtr", "Trying to free-aligned a const pointer");
-    if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_NA_FREE_ALIGNED)
-      naError("naFreeAlignedPtr", "Ptr has not the NA_FREE_ALIGNED cleanup hint");
-  #endif
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-    _aligned_free(ptr->data.d);
-  #else
-    free(ptr->data.d);
-  #endif
-  #ifndef NDEBUG
-    ptr->flags |= NA_PTR_CLEANED;
-  #endif
-}
-
-
-
-NA_IDEF void naNaFreePtr(NAPtr* ptr){
-  #ifndef NDEBUG
-    if(ptr->flags & NA_PTR_CLEANED)
-      naError("naFreePtr", "NAPtr has already been cleaned once.");
-    if(naIsPtrConst(ptr))
-      naError("naFreePtr", "Trying to free a const pointer");
-    if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_NA_FREE)
-      naError("naFreePtr", "Ptr has not the NA_FREE cleanup hint");
-  #endif
-  naFree(ptr->data.d);
-  #ifndef NDEBUG
-    ptr->flags |= NA_PTR_CLEANED;
-  #endif
-}
-
-
-
-NA_IDEF void naNaFreeAlignedPtr(NAPtr* ptr){
-  #ifndef NDEBUG
-    if(ptr->flags & NA_PTR_CLEANED)
-      naError("naFreeAlignedPtr", "NAPtr has already been cleaned once.");
-    if(naIsPtrConst(ptr))
-      naError("naFreeAlignedPtr", "Trying to free-aligned a const pointer");
-    if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_NA_FREE_ALIGNED)
-      naError("naFreeAlignedPtr", "Ptr has not the NA_FREE_ALIGNED cleanup hint");
-  #endif
-  naFreeAligned(ptr->data.d);
-  #ifndef NDEBUG
-    ptr->flags |= NA_PTR_CLEANED;
-  #endif
-}
-
-
-
-#ifdef __cplusplus 
-
-  NA_IDEF void naDeletePtr(NAPtr* ptr){
-    #ifndef NDEBUG
-      if(ptr->flags & NA_PTR_CLEANED)
-        naError("naDeletePtr", "NAPtr has already been cleaned once.");
-      if(naIsPtrConst(ptr))
-        naError("naDeletePtr", "Trying to delete a const pointer");
-      if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_DELETE)
-        naError("naDeletePtr", "Ptr has not the DELETE cleanup hint");
-    #endif
-    delete ptr->data.d;
-    #ifndef NDEBUG
-      ptr->flags |= NA_PTR_CLEANED;
-    #endif
-  }
-
-
-
-  NA_IDEF void naDeleteBrackPtr(NAPtr* ptr){
-    #ifndef NDEBUG
-      if(ptr->flags & NA_PTR_CLEANED)
-        naError("naDeleteBrackPtr", "NAPtr has already been cleaned once.");
-      if(naIsPtrConst(ptr))
-        naError("naDeleteBrackPtr", "Trying to delete a const pointer");
-      if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_DELETE_BRACK)
-        naError("naDeleteBrackPtr", "Ptr has not the DELETE_BRACK cleanup hint");
-    #endif
-    delete [] ptr->data.d;
-    #ifndef NDEBUG
-      ptr->flags |= NA_PTR_CLEANED;
-    #endif
-  }
-
-#endif
-
-
-NA_IDEF void naNaDeletePtr(NAPtr* ptr){
-  #ifndef NDEBUG
-    if(ptr->flags & NA_PTR_CLEANED)
-      naError("naNaDeletePtr", "NAPtr has already been cleaned once.");
-    if(naIsPtrConst(ptr))
-      naError("naNaDeletePtr", "Trying to delete a const pointer");
-    if(naGetFlagCleanupData(ptr->flags) != NA_MEMORY_CLEANUP_NA_DELETE)
-      naError("naNaDeletePtr", "Ptr has not the NA_DELETE cleanup hint");
-  #endif
-  naDelete(ptr->data.d);
+  naCleanupMemory(ptr->data.d, cleanup);
   #ifndef NDEBUG
     ptr->flags |= NA_PTR_CLEANED;
   #endif

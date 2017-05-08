@@ -346,16 +346,7 @@ NA_IAPI NAPtr naMakePtrWithExtraction(     const NAPtr* srcptr,
 // Frees the memory stored in ptr. You should always choose the appropriate
 // function depending on what kind of pointer the NAPtr stores. See definition
 // of NAMemoryCleanup to know which one.
-NA_IAPI void naClearPtr(NAPtr* ptr);
-NA_IAPI void naFreePtr(NAPtr* ptr);
-NA_IAPI void naFreeAlignedPtr(NAPtr* ptr);
-NA_IAPI void naNaFreePtr(NAPtr* ptr);
-NA_IAPI void naNaFreeAlignedPtr(NAPtr* ptr);
-#ifdef __cplusplus
-  NA_IAPI void naDeletePtr(NAPtr* ptr);
-  NA_IAPI void naDeleteBrackPtr(NAPtr* ptr);
-#endif
-NA_IAPI void naNaDeletePtr(NAPtr* ptr);
+NA_IAPI void naCleanupPtr(NAPtr* ptr, NAMemoryCleanup cleanup);
 
 // The following functions return either a const or a mutable pointer.
 //
@@ -408,6 +399,10 @@ typedef struct NASmartPtr NASmartPtr;
 // Initialize a smart pointer. Define how the smart pointer itself shall be
 // cleaned up, define the data it shall store and define, how that data shall
 // be cleaned up.
+//
+// Note: Even if it is possible to send a NONE cleanup, it is not a good idea
+// to use a pointer to a stack variable for sptr. Code sanity checks might
+// mark this as a possible error.
 NA_IAPI NASmartPtr* naInitSmartPtrConst(    NASmartPtr* sptr,
                                         NAMemoryCleanup smartptrcleanup,
                                             const void* data);
