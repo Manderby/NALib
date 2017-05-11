@@ -8,6 +8,13 @@
 #include "../NAList.h"
 
 
+// Debugging variable described in NAMemory.h
+#ifndef NDEBUG
+  void* na_is_currently_destructing_ptr = NA_NULL;
+#endif
+
+
+
 // //////////////////////////////////////
 // Implementation notes from the author about the Memory Pools.
 //

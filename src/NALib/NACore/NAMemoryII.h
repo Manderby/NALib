@@ -111,6 +111,15 @@ NA_HIDEF NAInt naGetNullTerminationBytesize(NAInt bytesize){
 // ////////////////////////////////////////////
 
 
+// This is a debugging flag which checks, whether a destructor function used in
+// naReleaseRefCount frees the pointer it operates on which may lead to memory
+// corruption.
+#ifndef NDEBUG
+  extern void* na_is_currently_destructing_ptr;
+#endif
+
+
+
 
 NA_IDEF void* naMalloc(NAInt bytesize){
   NAByte* ptr;
@@ -149,6 +158,10 @@ NA_IDEF void* naMalloc(NAInt bytesize){
 
 
 NA_IDEF void naFree(void* ptr){
+  #ifndef NDEBUG
+    if(ptr && (na_is_currently_destructing_ptr == ptr))
+      naError("naFree", "Trying to free the struct pointer during execution of its destructor function. Memory corruption ahead. Use NA_MEMORY_CLEANUP_NA_FREE when creating the NARefCount!");
+  #endif
   free(ptr);
 }
 
@@ -199,6 +212,10 @@ NA_IDEF void* naMallocPageAligned(NAUInt bytesize){
 
 
 NA_IDEF void naFreeAligned(void* ptr){
+  #ifndef NDEBUG
+    if(ptr && (na_is_currently_destructing_ptr == ptr))
+      naError("naFreeAligned", "Trying to free the struct pointer during execution of its destructor function. Memory corruption ahead. Use NA_MEMORY_CLEANUP_NA_FREE_ALIGNED when creating the NARefCount!");
+  #endif
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     _aligned_free(ptr);
   #else
@@ -281,10 +298,10 @@ NA_IDEF void naCleanupMemory(void* data, NAMemoryCleanup cleanup){
   switch(cleanup){
   case NA_MEMORY_CLEANUP_NONE:
     break;
-  case NA_MEMORY_CLEANUP_FREE:
+  case NA_MEMORY_CLEANUP_STD_FREE:
     free(data);
     break;
-  case NA_MEMORY_CLEANUP_FREE_ALIGNED:
+  case NA_MEMORY_CLEANUP_STD_FREE_ALIGNED:
     #if NA_SYSTEM == NA_SYSTEM_WINDOWS
       _aligned_free(data);
     #else
@@ -298,10 +315,10 @@ NA_IDEF void naCleanupMemory(void* data, NAMemoryCleanup cleanup){
     naFreeAligned(data);
     break;
 #ifdef __cplusplus 
-  case NA_MEMORY_CLEANUP_DELETE:
+  case NA_MEMORY_CLEANUP_STD_DELETE:
     delete data;
     break;
-  case NA_MEMORY_CLEANUP_DELETE_BRACK:
+  case NA_MEMORY_CLEANUP_STD_DELETE_BRACK:
     delete [] data;
     break;
 #endif
@@ -362,7 +379,7 @@ NA_IDEF NARefCount* naInitRefCount(NARefCount* refcount, NAMemoryCleanup structc
     if(!naIsCleanupValid(datacleanup))
       naError("naInitRefCount", "datacleanup method invalid");
     #ifdef __cplusplus 
-      if(structcleanup == NA_MEMORY_CLEANUP_DELETE_BRACK)  
+      if(structcleanup == NA_MEMORY_CLEANUP_STD_DELETE_BRACK)  
         naError("naInitRefCount", "This smartptrcleanup method does not make sense");
     #endif
   #endif
@@ -458,6 +475,10 @@ NA_IDEF void naReleaseRefCount(NARefCount* refcount, void* data, NAMutator destr
         naError("naReleaseRefCount", "Do not use the same pointer for data as for refcount. Use NA_NULL for data if you want the destructor to be called with refcount");
     #endif
     
+    #ifndef NDEBUG
+      na_is_currently_destructing_ptr = refcount;
+    #endif
+    
     // Call the destructor on the data if available.
     if(data){
       if(destructor){destructor(data);}
@@ -465,6 +486,10 @@ NA_IDEF void naReleaseRefCount(NARefCount* refcount, void* data, NAMutator destr
     }else{
       if(destructor){destructor(refcount);}
     }
+
+    #ifndef NDEBUG
+      na_is_currently_destructing_ptr = NA_NULL;
+    #endif
 
     // Cleanup the struct as marked.
     naCleanupMemory(refcount, naGetRefCountCleanupStruct(refcount));
@@ -719,7 +744,7 @@ NA_IDEF NASmartPtr* naInitSmartPtrConst(NASmartPtr* sptr, NAMemoryCleanup smartp
     if(!naIsCleanupValid(smartptrcleanup))
       naError("naInitSmartPtr", "smartptrcleanup method invalid");
     #ifdef __cplusplus 
-      if(smartptrcleanup == NA_MEMORY_CLEANUP_DELETE_BRACK)  
+      if(smartptrcleanup == NA_MEMORY_CLEANUP_STD_DELETE_BRACK)  
         naError("naInitSmartPtr", "This smartptrcleanup method does not make sense");
     #endif
   #endif
@@ -735,7 +760,7 @@ NA_IDEF NASmartPtr* naInitSmartPtrMutable(NASmartPtr* sptr, NAMemoryCleanup smar
     if(!naIsCleanupValid(smartptrcleanup))
       naError("naInitSmartPtr", "smartptrcleanup method invalid");
     #ifdef __cplusplus 
-      if(smartptrcleanup == NA_MEMORY_CLEANUP_DELETE_BRACK)  
+      if(smartptrcleanup == NA_MEMORY_CLEANUP_STD_DELETE_BRACK)  
         naError("naInitSmartPtr", "This smartptrcleanup method does not make sense");
     #endif
     if(!naIsCleanupValid(datacleanup))
@@ -746,18 +771,6 @@ NA_IDEF NASmartPtr* naInitSmartPtrMutable(NASmartPtr* sptr, NAMemoryCleanup smar
   return sptr;
 }
 
-
-
-
-NA_IDEF NASmartPtr* naRetainSmartPtr(NASmartPtr* sptr){
-  #ifndef NDEBUG
-    if(!sptr){
-      naCrash("naRetainSmartPtr", "sptr is Null-Pointer.");
-      return NA_NULL;
-    }
-  #endif
-  return (NASmartPtr*)naRetainRefCount(&(sptr->refcount));
-}
 
 
 
@@ -849,17 +862,6 @@ NA_HIDEF void naDestructPointer(NAPointer* pointer){
   if(pointer->destructor){
     pointer->destructor(naGetSmartPtrMutable(&(pointer->sptr)));
   }
-}
-
-
-
-NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
-  #ifndef NDEBUG
-    if(!pointer)
-      {naCrash("naRetainPointer", "pointer is Null-Pointer."); return NA_NULL;}
-  #endif
-  naRetainSmartPtr(&(pointer->sptr));
-  return pointer;
 }
 
 

@@ -262,12 +262,6 @@ NA_HIDEF void naClearFile(NAFile* file){
 
 
 
-NA_IDEF NAFile* naRetainFile(NAFile* file){
-  return (NAFile*)naRetainRefCount(&(file->refcount));
-}
-
-
-
 NA_IDEF void naReleaseFile(NAFile* file){
   naReleaseRefCount(&(file->refcount), NA_NULL, (NAMutator)naClearFile);
 }

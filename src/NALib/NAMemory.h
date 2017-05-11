@@ -167,16 +167,16 @@ typedef struct NATypeInfo NATypeInfo;
 // The comments denote what kind of cleanup-function will be called when you
 // use one of the macros.
 typedef enum{
-  NA_MEMORY_CLEANUP_NONE            = 0x00,  // 0b000 // 
-  NA_MEMORY_CLEANUP_FREE            = 0x01,  // 0b001 // free
-  NA_MEMORY_CLEANUP_FREE_ALIGNED    = 0x02,  // 0b010 // _aligned_free or free
-  NA_MEMORY_CLEANUP_NA_FREE         = 0x03,  // 0b011 // naFree
-  NA_MEMORY_CLEANUP_NA_FREE_ALIGNED = 0x04,  // 0b100 // naFreeAligned
+  NA_MEMORY_CLEANUP_NONE              = 0x00,  // 0b000 // 
+  NA_MEMORY_CLEANUP_STD_FREE          = 0x01,  // 0b001 // free
+  NA_MEMORY_CLEANUP_STD_FREE_ALIGNED  = 0x02,  // 0b010 // _aligned_free or free
+  NA_MEMORY_CLEANUP_NA_FREE           = 0x03,  // 0b011 // naFree
+  NA_MEMORY_CLEANUP_NA_FREE_ALIGNED   = 0x04,  // 0b100 // naFreeAligned
 #ifdef __cplusplus 
-  NA_MEMORY_CLEANUP_DELETE          = 0x05,  // 0b101 // delete
-  NA_MEMORY_CLEANUP_DELETE_BRACK    = 0x06,  // 0b110 // delete []
+  NA_MEMORY_CLEANUP_STD_DELETE        = 0x05,  // 0b101 // delete
+  NA_MEMORY_CLEANUP_STD_DELETE_BRACK  = 0x06,  // 0b110 // delete []
 #endif
-  NA_MEMORY_CLEANUP_NA_DELETE       = 0x07,  // 0b111 // naDelete
+  NA_MEMORY_CLEANUP_NA_DELETE         = 0x07,  // 0b111 // naDelete
 } NAMemoryCleanup;
 
 
@@ -230,10 +230,15 @@ NA_IAPI NARefCount* naInitRefCount(     NARefCount* refcount,
 // be called with the given pointer to data or with refcount if data is NA_NULL.
 // Then the data is cleaned up if available and finally, the struct is cleaned
 // up.
+//
+// The naRetain macro has been added for convenience. You can send any pointer
+// without casting it to an NARefCount. This makes writing code much easier.
+// But you have to know what you are doing!
 NA_IAPI NARefCount* naRetainRefCount( NARefCount* refcount);
 NA_IAPI void        naReleaseRefCount(NARefCount* refcount,
                                             void* data,
                                         NAMutator destructor);
+#define naRetain(obj) (void*)naRetainRefCount((NARefCount*)obj)
 
 // When your destructor will be called during a call to naReleaseRefCount, you
 // can use this function to query the datacleanup value you entered upon the
@@ -375,7 +380,7 @@ NA_IAPI NABool naIsPtrConst(const NAPtr* ptr);
 
 // A smart pointer stores an arbitrary mutable pointer with a reference count.
 // When the smart pointer first is created, that count is 1 and it is increased
-// everytime, naRetainSmartPtr is called.
+// everytime, naRetain is called.
 //
 // The reference counter is decreased everytime naReleaseSmartPtr is called.
 // When reaching 0, the data as well as the smart pointer struct itself is
@@ -411,14 +416,12 @@ NA_IAPI NASmartPtr* naInitSmartPtrMutable(  NASmartPtr* sptr,
                                                   void* data,
                                         NAMemoryCleanup datacleanup);
 
-// Retain and Release.
 // You can send a destructor to Release which will be called with the data
 // pointer if the reference count reaches 0. Further more, the release function
 // will return NA_TRUE when the reference count reached zero.
 //
 // When refcount reaches zero, first, the destructor is called with a pointer
 // to data, then the data is cleaned up and finally, the struct is cleaned up.
-NA_IAPI NASmartPtr* naRetainSmartPtr( NASmartPtr* sptr);
 NA_IAPI void        naReleaseSmartPtr(NASmartPtr* sptr,
                                         NAMutator desctructor);
 
@@ -482,17 +485,6 @@ NA_IAPI NAPointer* naNewPointerConst(   const void* data);
 NA_IAPI NAPointer* naNewPointerMutable(       void* data,
                                     NAMemoryCleanup datacleanup,
                                           NAMutator destructor);
-
-// Retains the given pointer. Meaning: There is one more codeblock which is
-// using this NAPointer. This NAPointer will not be freed as long as that
-// codeblock does not releases this NAPointer.
-//
-// Of course, someone else might erroneously release this NAPointer, but that's
-// the risk you take with reference-counted pointers.
-//
-// Returns the pointer again. Makes it easier to write code like follows:
-// referenceofmyvalue = naRetainPointer(myvalue);
-NA_IAPI NAPointer* naRetainPointer(NAPointer* pointer);
 
 // Releases the given NAPointer. If the refcount reaches 0, this NAPointer
 // is no longer needed. The data will be freed automatically according to the

@@ -354,7 +354,7 @@ NA_HIDEF void naSetQuadTreeIteratorCurrentNode(NAQuadTreeIterator* iter, NAQuadT
 
 
 
-NA_HIDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data, NABool dataisserial){
+NA_HIDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data){
   NAQuadTree* tree;
   #ifndef NDEBUG
     if(!(iter->flags & NA_QUADTREE_ITERATOR_MODIFIER))
@@ -384,7 +384,7 @@ NA_HIDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data, N
       naSetQuadTreeIteratorCurrentNode(iter, tree->root);
     }
     // We call this function recursively.
-    naCreateQuadTreeLeaf(iter, data, dataisserial);
+    naCreateQuadTreeLeaf(iter, data);
     
   }else{
     // We have a current node which is expected to contain the coord.
@@ -403,25 +403,21 @@ NA_HIDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data, N
 
     if(iter->curnode->childlength == tree->leaflength){
       // The node can not be divided anymore. Create a leaf.
-      if(dataisserial){
-        iter->curnode->child[segment] = tree->callbacks.deserialize(iter->curnode->childorigin[segment], tree->leaflength, data);
-      }else{
-        iter->curnode->child[segment] = tree->callbacks.leafallocator(iter->curnode->childorigin[segment], tree->leaflength, tree->callbacks.userdata, data);
-      }
+      iter->curnode->child[segment] = tree->callbacks.leafallocator(iter->curnode->childorigin[segment], tree->leaflength, tree->callbacks.userdata, data);
       iter->cursegment = segment;
       // Good ending. We created the leaf.
     }else{
       // We create an internal subnode and call this function recursively.
       NAQuadTreeNode* newnode = naAddQuadTreeNodeChild(tree, iter->curnode, segment);
       naSetQuadTreeIteratorCurrentNode(iter, newnode);
-      naCreateQuadTreeLeaf(iter, data, dataisserial);
+      naCreateQuadTreeLeaf(iter, data);
     }    
   }
 }
 
 
 
-NA_HDEF void* naGetQuadTreeCurrentMutableWithData(NAQuadTreeIterator* iter, NABool create, const void* data, NABool dataisserial){
+NA_HDEF void* naGetQuadTreeCurrentMutableWithData(NAQuadTreeIterator* iter, NABool create, const void* data){
   #ifndef NDEBUG
     if(naIsPtrConst(&(iter->tree)))
       naError("naGetQuadTreeCurrentMutable", "Mutating iterator which is not mutable");
@@ -430,7 +426,7 @@ NA_HDEF void* naGetQuadTreeCurrentMutableWithData(NAQuadTreeIterator* iter, NABo
     return iter->curnode->child[iter->cursegment];
   }else{
     if(create){
-      naCreateQuadTreeLeaf(iter, data, dataisserial);
+      naCreateQuadTreeLeaf(iter, data);
       return iter->curnode->child[iter->cursegment];
     }else{
       return NA_NULL;
@@ -498,7 +494,7 @@ NA_DEF const void* naGetQuadTreeCurrentConst(NAQuadTreeIterator* iter){
 
 
 NA_DEF void* naGetQuadTreeCurrentMutable(NAQuadTreeIterator* iter, NABool create){
-  return naGetQuadTreeCurrentMutableWithData(iter, create, NA_NULL, NA_FALSE);
+  return naGetQuadTreeCurrentMutableWithData(iter, create, NA_NULL);
 }
 
 
@@ -572,7 +568,7 @@ NA_DEF NABool naIterateQuadTree(NAQuadTreeIterator* iter, const NARecti* limit, 
         // We trick the iterator to create a leaf.
         iter->leaforigin = iter->curnode->childorigin[iter->cursegment];
         iter->cursegment = -1;
-        naCreateQuadTreeLeaf(iter, NA_NULL, NA_FALSE);
+        naCreateQuadTreeLeaf(iter, NA_NULL);
         break;
       }
     }
@@ -673,8 +669,8 @@ NA_DEF NABool naLocateQuadTreeCoord(NAQuadTreeIterator* iter, NAPosi coord){
 
   NARecti leafalign = naMakeRecti(naMakePosi(0, 0), naMakeSizei(tree->leaflength, tree->leaflength));
   NAPosi neworigin = naMakePosiWithAlignment(coord, leafalign);
-  naSetQuadTreeIteratorLeafOrigin(iter, neworigin);
-  
+
+  naSetQuadTreeIteratorLeafOrigin(iter, neworigin);  
   return naLocateQuadTreeNode(iter, neworigin);
 }
 
@@ -691,6 +687,7 @@ NA_DEF NABool naLocateQuadTreeSteps(NAQuadTreeIterator* iter, NAInt stepx, NAInt
   neworigin.x += stepx * tree->leaflength;
   neworigin.y += stepy * tree->leaflength;
 
+  naSetQuadTreeIteratorLeafOrigin(iter, neworigin);
   return naLocateQuadTreeNode(iter, neworigin);
 }
 
@@ -754,7 +751,7 @@ NA_DEF NAQuadTree* naInitQuadTreeCopy(NAQuadTree* newtree, const NAQuadTree* dup
     const void* dupdata = naGetQuadTreeCurrentConst(&dupiter);
     NAPosi duporigin = naGetQuadTreeCurrentOrigin(&dupiter);
     naLocateQuadTreeCoord(&newiter, duporigin);
-    naCreateQuadTreeLeaf(&newiter, dupdata, NA_FALSE);
+    naCreateQuadTreeLeaf(&newiter, dupdata);
   }
   
   naClearQuadTreeIterator(&dupiter);
@@ -776,7 +773,7 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyMasked(NAQuadTree* newtree, const NAQuadTre
     naLocateQuadTreeCoord(&dupiter, duporigin);
     const void* dupdata = naGetQuadTreeCurrentConst(&dupiter);
     naLocateQuadTreeCoord(&newiter, duporigin);
-    naCreateQuadTreeLeaf(&newiter, dupdata, NA_FALSE);
+    naCreateQuadTreeLeaf(&newiter, dupdata);
   }
   
   naClearQuadTreeIterator(&dupiter);
@@ -867,11 +864,19 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
 
 
 NA_DEF void naClearQuadTree(NAQuadTree* tree){
+  naEmptyQuadTree(tree);
+}
+
+
+
+
+NA_DEF void naEmptyQuadTree(NAQuadTree* tree){
   #ifndef NDEBUG
     if(tree->itercount != 0)
-      naError("naClearQuadTree", "There are still iterators running on this tree. Did you miss a naClearQuadTreeIterator call?");
+      naError("naEmptyQuadTree", "There are still iterators running on this tree. Did you miss a naClearQuadTreeIterator call?");
   #endif
   if(tree->root){naDeallocQuadTreeNode(tree, tree->root);}
+  tree->root = NA_NULL;
 }
 
 
@@ -902,113 +907,6 @@ NA_DEF void naSetQuadTreeInRect(NAQuadTree* tree, NARecti rect, NAQuadTreeDataSe
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-NA_DEF NAQuadTree* naInitQuadTreeWithDeserialization(NAQuadTree* tree, const void* buf, NAQuadTreeCallbacks callbacks){
-  const NAByte* dataptr;
-  uint64 datasize;
-  uint64 leaflength;
-  NAQuadTreeNode* node;
-  NAQuadTreeIterator iter;
-  #ifndef NDEBUG
-    if(!tree)
-      {naCrash("naCopyQuadTreeWithShift", "tree is Null-Pointer"); return NA_NULL;}
-    if(!(callbacks.deserialize)){
-      naCrash("naInitQuadTreeWithDeserialization", "Callbacks required for deserialization");
-      return NA_NULL;
-    }
-  #endif
-  iter = naMakeQuadTreeModifier(tree);
-  dataptr = buf;
-  datasize = *((const uint64*)dataptr); dataptr += sizeof(uint64);
-  leaflength = *((const uint64*)dataptr); dataptr += sizeof(uint64);
-  tree = naInitQuadTree(tree, (NAInt)leaflength, callbacks);
-  datasize -= 2 * sizeof(uint64);
-  while(datasize){
-    int64 posx, posy;
-    uint64 bytesread;
-    posx = *((const int64*)dataptr); dataptr += sizeof(int64);
-    posy = *((const int64*)dataptr); dataptr += sizeof(int64);
-    datasize -= 2 * sizeof(int64);
-    // Create the leaf temporarily but delete it immediately and recreate it
-    // as a deserialization.
-    
-    // todo.
-    
-    naLocateQuadTreeCoord(&iter, naMakePosi((NAInt)posx, (NAInt)posy));
-    node = naGetQuadTreeCurrentMutableWithData(&iter, NA_TRUE, dataptr, NA_TRUE);
-//    node = naLocateQuadTreeLeafParent(tree, naMakePosi((NAInt)posx, (NAInt)posy), NA_TRUE, dataptr, NA_NULL, &leafsegment);
-    bytesread = callbacks.serialize(NA_NULL, node->child[iter.cursegment], tree->leaflength);
-    dataptr += bytesread;
-    datasize -= bytesread;
-  }
-  naUpdateQuadTree(tree);
-  naClearQuadTreeIterator(&iter);
-  return tree;
-}
-
-
-
-
-NA_DEF void naSerializeQuadTree(const NAQuadTree* tree, void* buf, uint64* bytesize){
-  #ifndef NDEBUG
-    if(!(tree->callbacks.serialize))
-      {naCrash("naSerializeQuadTree", "Callbacks required for serialization"); return;}
-    if(!bytesize){
-      naCrash("naSerializeQuadTree", "bytesize required to read/store byte size");
-      return;
-    }
-    if(buf && (*bytesize == 0))
-      naError("naSerializeQuadTree", "bytesize is zero");
-  #endif
-
-  if(!buf){
-    *bytesize = sizeof(uint64) * 2; // datasize and leaflength
-    NAQuadTreeIterator iter = naMakeQuadTreeAccessor(tree);
-    while(naIterateQuadTree(&iter, NA_NULL, NA_FALSE)){
-      const void* curleaf = naGetQuadTreeCurrentConst(&iter);
-      *bytesize += sizeof(int64) * 2; // the origin.x and origin.y
-      *bytesize += tree->callbacks.serialize(NA_NULL, curleaf, tree->leaflength);
-    }
-    naClearQuadTreeIterator(&iter);
-  }else{
-    NAByte* dataptr = buf;
-    *((uint64*)dataptr) = *bytesize; dataptr += sizeof(uint64);
-    *((uint64*)dataptr) = (uint64)tree->leaflength; dataptr += sizeof(uint64);
-
-    NAQuadTreeIterator iter = naMakeQuadTreeAccessor(tree);
-    while(naIterateQuadTree(&iter, NA_NULL, NA_FALSE)){
-      const void* curleaf = naGetQuadTreeCurrentConst(&iter);
-      NAPosi origin = naGetQuadTreeCurrentOrigin(&iter);
-      *((int64*)dataptr) = origin.x; dataptr += sizeof(int64);
-      *((int64*)dataptr) = origin.y; dataptr += sizeof(int64);
-      dataptr += tree->callbacks.serialize(dataptr, curleaf, tree->leaflength);
-    }
-    naClearQuadTreeIterator(&iter);
-  }
-
-}
 
 
 

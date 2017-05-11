@@ -13,7 +13,8 @@ correct, complete or final.
 
 
 - NABuffer now works with Iterators.
-- NAQuadTree and NAOctTree have updated iterators too.
+- NAQuadTree and NAOctTree have updated iterators too. Lots of changes for a
+  simpler API. The Deserialize and Serialize functions have been discarded.
 - Speedup of NARuntime. Manages memory pools more intelligently. Detects memory
   leaks.
 
@@ -41,6 +42,7 @@ correct, complete or final.
 - Replaced naIsPtrConst with naIsPtrMutable and added naIsPtrModifiable
 - Made NAArray with NAPtr instead of NASmartPtr
 - Added naCleanupPtr. Removed all other NAPtr cleanup functions.
+- Added naRetain macro. Enhanced NA_MEMORY_CLEANUP functions with STD prefix.
 
 
 Version 18 (first published 2017-March-30):

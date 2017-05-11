@@ -29,14 +29,6 @@ struct NAQuadTreeIterator{
 
 
 
-
-NA_IDEF void naEmptyQuadTree(NAQuadTree* tree){
-  naClearQuadTree(tree);
-  tree->root = NA_NULL;
-}
-
-
-
 NA_IDEF NABool naIsQuadTreeEmpty(const NAQuadTree* tree){
   return (tree->root == NA_NULL);
 }

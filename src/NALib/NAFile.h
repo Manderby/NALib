@@ -164,12 +164,11 @@ NA_IAPI NAFile* naCreateFileReadingStdin();
 NA_IAPI NAFile* naCreateFileWritingStdout();
 NA_IAPI NAFile* naCreateFileWritingStderr();
 
-// Retains and releases the file. When the reference count reaches zero, the
-// file will be closed.
+// Releases the file. When the reference count reaches zero, the file will be
+// closed.
 //
 // Again: stdin, stdout and stderr will never be closed by these calls. Use
 // naClose(0), naClose(1) or naClose(2) for that.
-NA_IAPI NAFile* naRetainFile (NAFile* file);
 NA_IAPI void    naReleaseFile(NAFile* file);
 
 // Computes the filesize (from first to last byte).

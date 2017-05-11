@@ -165,34 +165,6 @@ typedef NABool(*NAQuadTreeChildChanged)(     void* nodedata,
                                              NAInt segment,
                                  const void* const childdata[4]);
 
-// This callback is called when the data of a leaf chunk shall be serialized.
-// You must always return the number of bytes required to store the chunk data.
-// You may use the leaflength given for the calculation of the number of bytes.
-// The leaflength always is the leaflength declared upon creation of the
-// NAQuadTree.
-//
-// When buffer is a Null pointer, just return the required number of bytes.
-// When buffer is NOT a Null-Pointer, this buffer is guaranteed to have the
-// required number of bytes and you can copy data to this buffer.
-//
-// Therefore, when you call naSerializeQuadTree, this callback will be called
-// for every chunk twice: First to akquire the required number of bytes and
-// second to actually store the data.
-typedef uint64(*NAQuadTreeSerializer)        (void* buffer,
-                                        const void* leafdata,
-                                              NAInt leaflength);
-
-// This callback is called when a buffer shall be deserialized which
-// previously had been serialized with NAQuadTreeSerializer. Create a leaf
-// chunk and return a pointer to the chunk data. The origin and (always
-// quadratic) leaflength are given to you as an additional information.
-//
-// Note that this callback is very similar to NAQuadTreeLeafAllocator but
-// here, buffer denotes not a chunk which shall be copied but rather more a
-// buffer which need to be deserialized. These can be two different things.
-typedef void* (*NAQuadTreeDeserializer)(     NAPosi origin,
-                                              NAInt leaflength,
-                                        const void* buffer);
 
 
 
@@ -207,8 +179,6 @@ typedef struct NAQuadTreeCallbacks_struct{
   NAQuadTreeNodeDeallocator nodedeallocator;
   NAQuadTreeLeafChanged     leafchanged;
   NAQuadTreeChildChanged    childchanged;
-  NAQuadTreeSerializer      serialize;
-  NAQuadTreeDeserializer    deserialize;
   void*                     userdata;
 } NAQuadTreeCallbacks;
 
@@ -245,20 +215,6 @@ NA_API NAQuadTree* naInitQuadTreeCopyShifted(   NAQuadTree* newtree,
                                           const NAQuadTree* copytree,
                                                     NASizei shift);
 
-// Serializes a full NAQuadTree.
-// When buf is Null, the total amount of bytes required for the whole tree
-// including all structural data is returned in bytesize.
-// When buf is not Null, the tree serializes into the given buffer. You must
-// send the bytesize you received from the first call again!
-NA_API void naSerializeQuadTree(          const NAQuadTree* tree,
-                                                      void* buf,
-                                                    uint64* bytesize);
-// Deserializes a full NAQuadTree
-NA_API NAQuadTree* naInitQuadTreeWithDeserialization
-                                              (NAQuadTree* tree,
-                                               const void* buf,
-                                       NAQuadTreeCallbacks callbacks);
-
 // Clears the tree
 NA_API void naClearQuadTree(                   NAQuadTree* tree);
 
@@ -268,7 +224,7 @@ NA_API void naClearQuadTree(                   NAQuadTree* tree);
 // Various functions:
 
 // Empties the tree
-NA_IAPI void naEmptyQuadTree(                  NAQuadTree* tree);
+NA_API void naEmptyQuadTree(                   NAQuadTree* tree);
 
 // Returns true if the tree is empty
 NA_IAPI NABool naIsQuadTreeEmpty(        const NAQuadTree* tree);
