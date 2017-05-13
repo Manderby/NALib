@@ -121,6 +121,9 @@ NA_IDEF void naEmptyList(NAList* list){
     naDelete(cur);
     cur = next;
   }
+  list->count = 0;
+  list->sentinel.next = &(list->sentinel);
+  list->sentinel.prev = &(list->sentinel);
 }
 
 

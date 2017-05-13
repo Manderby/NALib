@@ -43,6 +43,7 @@ correct, complete or final.
 - Made NAArray with NAPtr instead of NASmartPtr
 - Added naCleanupPtr. Removed all other NAPtr cleanup functions.
 - Added naRetain macro. Enhanced NA_MEMORY_CLEANUP functions with STD prefix.
+- Fixed a bug in naEmptyList
 
 
 Version 18 (first published 2017-March-30):
