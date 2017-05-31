@@ -31,7 +31,7 @@ correct, complete or final.
 - Added bit mask functions in NAValueHelper.h for testing, setting and
   toggling flags.
 - Added naResetListIterator and naLocateListIterator. Removed all functions
-  using NAListPos. Use NAListIterator instead.
+  using NAListPos. Use NAListIterator instead. Added naRemoveListContent.
 - Corrected a rare error with NACoreTypeInfo when debugging.
 - Fixed an iteration bug of NAList when using naLocateListContent
 - Iterator creation functions have been renamed to MakeXXXAccessor,
@@ -44,6 +44,8 @@ correct, complete or final.
 - Added naCleanupPtr. Removed all other NAPtr cleanup functions.
 - Added naRetain macro. Enhanced NA_MEMORY_CLEANUP functions with STD prefix.
 - Fixed a bug in naEmptyList
+- Coordinate functions now have more simple constructors like naMakeRectiEmpty
+  or naMakeRectWithRecti.
 
 
 Version 18 (first published 2017-March-30):

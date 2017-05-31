@@ -264,6 +264,19 @@ NA_IDEF void* naRemoveListLastMutable(NAList* list){
 }
 
 
+NA_IAPI void naRemoveListContent(NAList* list, void* content){
+  NAListIterator iter = naMakeListModifier(list);
+  NABool found = naLocateListContent(&iter, content);
+  #ifndef NDEBUG
+    if(!found)
+      naError("naRemoveListContent", "content not found in this list");
+  #else
+    NA_UNUSED(found);
+  #endif
+  naRemoveListCurrentMutable(&iter, NA_FALSE);
+  naClearListIterator(&iter);
+}
+
 
 
 
@@ -455,7 +468,7 @@ NA_IDEF NAListIterator naMakeListModifier(NAList* list){
 
 
 NA_IDEF void naResetListIterator(NAListIterator* iterator){
-  NAList* list = (NAList*)naGetPtrMutable(&(iterator->listptr));
+  const NAList* list = (NAList*)naGetPtrConst(&(iterator->listptr));
   #ifndef NDEBUG
     iterator->cur->itercount--;
   #endif

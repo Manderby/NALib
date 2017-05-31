@@ -175,14 +175,25 @@ NA_IAPI NARange  naMakeRange  (double origin, double length);
 NA_IAPI NARangef naMakeRangef (float  origin, float  length);
 NA_IAPI NARangei naMakeRangei (NAInt  origin, NAInt  length);
 NA_IAPI NARangei naMakeRangeiE(NAInt  origin, NAInt  length);
+NA_IAPI NARange  naMakeRangeWithRangei(NARangei range);
+NA_IAPI NARangei naMakeRangeiWithRange(NARange  range);
+NA_IAPI NARange  naMakeRangeEmpty();
+NA_IAPI NARangef naMakeRangefEmpty();
+NA_IAPI NARangei naMakeRangeiEmpty();
 
 NA_IAPI NAPos    naMakePos    (double x,      double  y);
 NA_IAPI NAPosi   naMakePosi   (NAInt  x,      NAInt   y);
+NA_IAPI NAPos    naMakePosWithPosi(NAPosi pos);
+NA_IAPI NAPosi   naMakePosiWithPos(NAPos  pos);
 
 NA_IAPI NASize   naMakeSize   (double width,  double  height);
 NA_IAPI NASizei  naMakeSizei  (NAInt  width,  NAInt   height);
 NA_IAPI NASize   naMakeSizeE  (double width,  double  height);
 NA_IAPI NASizei  naMakeSizeiE (NAInt  width,  NAInt   height);
+NA_IAPI NASize   naMakeSizeWithSizei(NASizei size);
+NA_IAPI NASizei  naMakeSizeiWithSize(NASize  size);
+NA_IAPI NASize   naMakeSizeEmpty();
+NA_IAPI NASizei  naMakeSizeiEmpty();
 
 NA_IAPI NARect   naMakeRect   (NAPos  pos,    NASize  size);
 NA_IAPI NARecti  naMakeRecti  (NAPosi pos,    NASizei size);
@@ -192,17 +203,29 @@ NA_IAPI NARect   naMakeRectS  (double x, double y, double width, double height);
 NA_IAPI NARecti  naMakeRectiS (NAInt  x, NAInt  y, NAInt  width, NAInt  height);
 NA_IAPI NARect   naMakeRectSE (double x, double y, double width, double height);
 NA_IAPI NARecti  naMakeRectiSE(NAInt  x, NAInt  y, NAInt  width, NAInt  height);
+NA_IAPI NARect   naMakeRectWithRecti(NARecti rect);
+NA_IAPI NARecti  naMakeRectiWithRect(NARect  rect);
+NA_IAPI NARect   naMakeRectEmpty();
+NA_IAPI NARecti  naMakeRectiEmpty();
 
 NA_IAPI NABounds4  naMakeBounds4 (double top, double right, double bottom, double left);
 NA_IAPI NABounds4i naMakeBounds4i(NAInt  top, NAInt  right, NAInt  bottom, NAInt  left);
+NA_IAPI NABounds4  naMakeBounds4WithBounds4i(NABounds4i bounds);
+NA_IAPI NABounds4i naMakeBounds4iWithBounds4(NABounds4  bounds);
 
 NA_IAPI NAVertex    naMakeVertex  (double x, double y, double z);
 NA_IAPI NAVertexi   naMakeVertexi (NAInt  x, NAInt  y, NAInt  z);
+NA_IAPI NAVertex    naMakeVertexWithVertexi(NAVertexi vertex);
+NA_IAPI NAVertexi   naMakeVertexiWithVertex(NAVertex  vertex);
 
 NA_IAPI NAVolume    naMakeVolume  (double  width, double height, double depth);
 NA_IAPI NAVolumei   naMakeVolumei (NAInt   width, NAInt  height, NAInt  depth);
 NA_IAPI NAVolume    naMakeVolumeE (double  width, double height, double depth);
 NA_IAPI NAVolumei   naMakeVolumeiE(NAInt   width, NAInt  height, NAInt  depth);
+NA_IAPI NAVolume    naMakeVolumeWithVolumei(NAVolumei volume);
+NA_IAPI NAVolumei   naMakeVolumeiWithVolume(NAVolume  volume);
+NA_IAPI NAVolume    naMakeVolumeEmpty();
+NA_IAPI NAVolumei   naMakeVolumeiEmpty();
 
 NA_IAPI NABox       naMakeBox     (NAVertex  vertex,  NAVolume  volume);
 NA_IAPI NABoxi      naMakeBoxi    (NAVertexi vertex,  NAVolumei volume);
@@ -212,6 +235,10 @@ NA_IAPI NABox       naMakeBoxE    (NAVertex  vertex,  NAVolume  volume);
 NA_IAPI NABoxi      naMakeBoxiE   (NAVertexi vertex,  NAVolumei volume);
 NA_IAPI NABox       naMakeBoxSE   (double x, double y, double z, double width, double height, double depth);
 NA_IAPI NABoxi      naMakeBoxiSE  (NAInt  x, NAInt  y, NAInt  z, NAInt  width, NAInt  height, NAInt  depth);
+NA_IAPI NABox       naMakeBoxWithBoxi(NABoxi box);
+NA_IAPI NABoxi      naMakeBoxiWithBox(NABox  box);
+NA_IAPI NABox       naMakeBoxEmpty();
+NA_IAPI NABoxi      naMakeBoxiEmpty();
 
 
 // Mac OS X specific stuff

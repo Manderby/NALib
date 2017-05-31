@@ -72,6 +72,29 @@ NA_IDEF NARangei naMakeRangeiE(NAInt origin, NAInt length){
   newrange.length = length;
   return newrange;
 }
+NA_IDEF NARange naMakeRangeWithRangei(NARangei range){
+  NARange newrange = naMakeRange(range.origin, range.length);
+  return newrange;
+}
+NA_IDEF NARangei naMakeRangeiWithRange(NARange range){
+  NARangei newrange = naMakeRangei(range.origin, range.length);
+  return newrange;
+}
+NA_IDEF NARange naMakeRangeEmpty(){
+  NARange newrange;
+  newrange.length = 0.;
+  return newrange;
+}
+NA_IDEF NARangef naMakeRangefEmpty(){
+  NARangef newrange;
+  newrange.length = 0.f;
+  return newrange;
+}
+NA_IDEF NARangei naMakeRangeiEmpty(){
+  NARangei newrange;
+  newrange.length = 0;
+  return newrange;
+}
 
 
 
@@ -97,6 +120,14 @@ NA_IDEF NAPosi naMakePosi(NAInt x, NAInt y){
   #endif
   newpos.x = x;
   newpos.y = y;
+  return newpos;
+}
+NA_IDEF NAPos naMakePosWithPosi(NAPosi pos){
+  NAPos newpos = naMakePos(pos.x, pos.y);
+  return newpos;
+}
+NA_IDEF NAPosi naMakePosiWithPos(NAPos pos){
+  NAPosi newpos = naMakePosi(pos.x, pos.y);
   return newpos;
 }
 
@@ -144,6 +175,24 @@ NA_IDEF NASizei naMakeSizeiE(NAInt width, NAInt height){
   #endif
   newsize.width = width;
   newsize.height = height;
+  return newsize;
+}
+NA_IDEF NASize naMakeSizeWithSizei(NASizei size){
+  NASize newsize = naMakeSize(size.width, size.height);
+  return newsize;
+}
+NA_IDEF NASizei naMakeSizeiWithSize(NASize size){
+  NASizei newsize = naMakeSizei(size.width, size.height);
+  return newsize;
+}
+NA_IDEF NASize naMakeSizeEmpty(){
+  NASize newsize;
+  newsize.width = 0.;
+  return newsize;
+}
+NA_IDEF NASizei naMakeSizeiEmpty(){
+  NASizei newsize;
+  newsize.width = 0;
   return newsize;
 }
 
@@ -237,6 +286,24 @@ NA_IDEF NARecti naMakeRectiSE(NAInt x, NAInt y, NAInt width, NAInt height){
   newrect.size = naMakeSizeiE(width, height);
   return newrect;
 }
+NA_IDEF NARect naMakeRectWithRecti(NARecti rect){
+  NARect newrect = naMakeRectS(rect.pos.x, rect.pos.y, rect.size.width, rect.size.height);
+  return newrect;
+}
+NA_IDEF NARecti naMakeRectiWithRect(NARect rect){
+  NARecti newrect = naMakeRectiS(rect.pos.x, rect.pos.y, rect.size.width, rect.size.height);
+  return newrect;
+}
+NA_IDEF NARect naMakeRectEmpty(){
+  NARect newrect;
+  newrect.size.width = 0.;
+  return newrect;
+}
+NA_IDEF NARecti naMakeRectiEmpty(){
+  NARecti newrect;
+  newrect.size.width = 0;
+  return newrect;
+}
 
 
 
@@ -268,6 +335,14 @@ NA_IDEF NABounds4i naMakeBounds4i(NAInt top, NAInt right, NAInt bottom, NAInt le
   newbounds.left = left;
   return newbounds;
 }
+NA_IDEF NABounds4 naMakeBounds4WithBounds4i(NABounds4i bounds){
+  NABounds4 newbounds = naMakeBounds4(bounds.top, bounds.right, bounds.bottom, bounds.left);
+  return newbounds;
+}
+NA_IDEF NABounds4i naMakeBounds4iWithBounds4(NABounds4 bounds){
+  NABounds4i newbounds = naMakeBounds4i(bounds.top, bounds.right, bounds.bottom, bounds.left);
+  return newbounds;
+}
 
 
 
@@ -295,6 +370,14 @@ NA_IDEF NAVertexi naMakeVertexi(NAInt x, NAInt y, NAInt z){
   newvertex.x = x;
   newvertex.y = y;
   newvertex.z = z;
+  return newvertex;
+}
+NA_IDEF NAVertex naMakeVertexWithVertexi(NAVertexi vertex){
+  NAVertex newvertex = naMakeVertex(vertex.x, vertex.y, vertex.z);
+  return newvertex;
+}
+NA_IDEF NAVertexi naMakeVertexiWithVertex(NAVertex vertex){
+  NAVertexi newvertex = naMakeVertexi(vertex.x, vertex.y, vertex.z);
   return newvertex;
 }
 
@@ -346,6 +429,24 @@ NA_IDEF NAVolumei naMakeVolumeiE(NAInt width, NAInt height, NAInt depth){
   newvolume.width = width;
   newvolume.height = height;
   newvolume.depth = depth;
+  return newvolume;
+}
+NA_IDEF NAVolume naMakeVolumeWithVolumei(NAVolumei volume){
+  NAVolume newvolume = naMakeVolume(volume.width, volume.height, volume.depth);
+  return newvolume;
+}
+NA_IDEF NAVolumei naMakeVolumeiWithVolume(NAVolume volume){
+  NAVolumei newvolume = naMakeVolumei(volume.width, volume.height, volume.depth);
+  return newvolume;
+}
+NA_IDEF NAVolume naMakeVolumeEmpty(){
+  NAVolume newvolume;
+  newvolume.width = 0.;
+  return newvolume;
+}
+NA_IDEF NAVolumei naMakeVolumeiEmpty(){
+  NAVolumei newvolume;
+  newvolume.width = 0;
   return newvolume;
 }
 
@@ -425,6 +526,24 @@ NA_IDEF NABoxi naMakeBoxiSE(NAInt x, NAInt y, NAInt z, NAInt width, NAInt height
   // the following Make functions.
   newbox.vertex = naMakeVertexi(x, y, z);
   newbox.volume = naMakeVolumeiE(width, height, depth);
+  return newbox;
+}
+NA_IDEF NABox naMakeBoxWithBoxi(NABoxi box){
+  NABox newbox = naMakeBoxS(box.vertex.x, box.vertex.y, box.vertex.z, box.volume.width, box.volume.height, box.volume.depth);
+  return newbox;
+}
+NA_IDEF NABoxi naMakeBoxiWithBox(NABox box){
+  NABoxi newbox = naMakeBoxiS(box.vertex.x, box.vertex.y, box.vertex.z, box.volume.width, box.volume.height, box.volume.depth);
+  return newbox;
+}
+NA_IDEF NABox naMakeBoxEmpty(){
+  NABox newbox;
+  newbox.volume.width = 0.;
+  return newbox;
+}
+NA_IDEF NABoxi naMakeBoxiEmpty(){
+  NABoxi newbox;
+  newbox.volume.width = 0;
   return newbox;
 }
 

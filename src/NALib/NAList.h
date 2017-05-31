@@ -87,10 +87,16 @@ NA_IAPI void naAddListLastMutable   (NAList* list,       void* content);
 // structure but do not free the memory of the content! But the mutable
 // variants return a pointer to the previously stored content such that you
 // can erase it if you need to.
+//
+// The naRemoveListContent function is a convenience function which creates
+// an iterator, searches for the given content and removes it. This would
+// take several lines to code but is much simpler when written as one function.
+// Warning: This function is potentially very slow.
 NA_IAPI void  naRemoveListFirstConst    (NAList* list);
 NA_IAPI void* naRemoveListFirstMutable  (NAList* list);
 NA_IAPI void  naRemoveListLastConst     (NAList* list);
 NA_IAPI void* naRemoveListLastMutable   (NAList* list);
+NA_IAPI void  naRemoveListContent       (NAList* list, void* content);
 
 
 // /////////////////////////////////////////////
