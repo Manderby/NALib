@@ -174,6 +174,7 @@ struct NABounds4i{  NAInt  top;   NAInt   right; NAInt  bottom; NAInt  left;};
 NA_IAPI NARange  naMakeRange  (double origin, double length);
 NA_IAPI NARangef naMakeRangef (float  origin, float  length);
 NA_IAPI NARangei naMakeRangei (NAInt  origin, NAInt  length);
+NA_IAPI NARange  naMakeRangeE (double origin, double length);
 NA_IAPI NARangei naMakeRangeiE(NAInt  origin, NAInt  length);
 NA_IAPI NARange  naMakeRangeWithRangei(NARangei range);
 NA_IAPI NARangei naMakeRangeiWithRange(NARange  range);
