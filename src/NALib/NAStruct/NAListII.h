@@ -433,6 +433,8 @@ NA_IDEF NAListIterator naMakeListAccessor(const NAList* list){
   iter.listptr = naMakePtrWithDataConst(list);
   iter.cur = (NAListElement*)(&(list->sentinel));
   #ifndef NDEBUG
+    if(!list)
+      {naCrash("naMakeListAccessor", "list is null pointer"); return iter;}
     iter.mutator = NA_FALSE;
     ((NAList*)list)->sentinel.itercount++;
   #endif
