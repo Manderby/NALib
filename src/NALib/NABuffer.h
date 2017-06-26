@@ -242,7 +242,7 @@ NA_API NABool naEqualBufferToData(    const NABuffer* buffer,
                                                NABool casesensitive);
 
 // Appends the whole content of srcbuffer to the end of dstbuffer.
-NA_API void naAppendBufferToBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer);
+NA_API void naAppendBufferToBuffer(NABuffer* dstbuffer, const NABuffer* srcbuffer);
 
 // Uses all bytes of the buffer to write to output or use it in other structs.
 // File:     Creates a new file and fills it with the content of the buffer.

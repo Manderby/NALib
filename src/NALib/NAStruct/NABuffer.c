@@ -482,7 +482,7 @@ void naFillBufferSourcePart(NABufferSource* source, NABufferPart* part){
 // This is the filler method of the secure memory input source descriptor
 NA_HIDEF void naFillBufferPartSecureMemory(void* data, void* dst, NARangei range){
   NA_UNUSED(data);
-  naNulln(dst, (NAUInt)range.length);
+  naNulln(dst, range.length);
 }
 
 
@@ -1085,7 +1085,7 @@ NA_DEF NABuffer* naCreateBufferCopy(const NABuffer* srcbuffer, NARangei range, N
     NAInt remainingdst = naGetBufferPartEnd(dstpart) - naTellBuffer(&dstiter);
     NAInt remaining = naMini(remainingsrc, remainingdst);
 //    remaining = naMini(remaining, range.length);
-    naCopyn(naGetBufferPartDataPointerMutable(dstpart, naTellBuffer(&dstiter)), naGetBufferPartDataPointerConst(srcpart, range.origin), (NAUInt)remaining);
+    naCopyn(naGetBufferPartDataPointerMutable(dstpart, naTellBuffer(&dstiter)), naGetBufferPartDataPointerConst(srcpart, range.origin), remaining);
     naIterateBuffer(&srciter, remaining);
     naIterateBuffer(&dstiter, remaining);
     range.origin += remaining;
@@ -1506,7 +1506,7 @@ NA_DEF NABool naEqualBufferToData(const NABuffer* buffer, const void* data, NAIn
 
 
 
-NA_DEF void naAppendBufferToBuffer(NABuffer* dstbuffer, NABuffer* srcbuffer){
+NA_DEF void naAppendBufferToBuffer(NABuffer* dstbuffer, const NABuffer* srcbuffer){
   NABufferIterator iter = naMakeBufferModifier(dstbuffer);
   naWriteBufferBuffer(&iter, srcbuffer, naGetBufferRange(srcbuffer));
   naClearBufferIterator(&iter);
@@ -1653,13 +1653,13 @@ NA_DEF void naWriteBufferToData(NABuffer* buffer, void* data){
     #endif
     
     if(bytesize > remainingbytes){
-      naCopyn(dst, src, (NAUInt)remainingbytes);
+      naCopyn(dst, src, remainingbytes);
       naIterateList(&iter, 1);
       curoffset += remainingbytes;
       bytesize -= remainingbytes;
       dst += remainingbytes;
     }else{
-      naCopyn(dst, src, (NAUInt)bytesize);
+      naCopyn(dst, src, bytesize);
       bytesize = 0;
     }
   }
@@ -1920,7 +1920,7 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
     if(possiblelength > bytesize){
       // If we can get out more bytes than needed, we copy all remaining bytes
       // and stay on this part.
-      naCopyn(dst, src, (NAUInt)bytesize);
+      naCopyn(dst, src, bytesize);
       
       if(advance){
         iter->curoffset += bytesize;
@@ -1931,7 +1931,7 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
     }else{
       // We can only get a portion of the current part into the destination. We
       // copy as many bytes as possible and advance to the next part.
-      naCopyn(dst, src, (NAUInt)possiblelength);
+      naCopyn(dst, src, possiblelength);
 
       if(advance){
         // Note that when possiblelength matches bytesize, the part will also
@@ -2004,7 +2004,7 @@ NA_HDEF void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt 
     if(possiblelength > bytesize){
       // If we can put in more bytes than needed, we copy all remaining bytes
       // and stay on this part.
-      naCopyn(dst, src, (NAUInt)bytesize);
+      naCopyn(dst, src, bytesize);
       
       if(advance){
         iter->curoffset += bytesize;
@@ -2015,7 +2015,7 @@ NA_HDEF void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt 
     }else{
       // We can only put a portion of the source into the current part. We
       // copy as many bytes as possible and advance to the next part.
-      naCopyn(dst, src, (NAUInt)possiblelength);
+      naCopyn(dst, src, possiblelength);
 
       if(advance){
         iter->curoffset += possiblelength;
@@ -2475,6 +2475,7 @@ NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, NAInt cou
 
 
 NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffer, NARangei srcrange){
+  if(naIsRangeiEmpty(srcrange)){return;}
   NABuffer* dstbuffer = naGetBufferIteratorBufferMutable(iter);
   NABufferSource* tmpsource = dstbuffer->source;
   NAInt tmpsrcoffset = dstbuffer->srcoffset;
@@ -2540,7 +2541,7 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt by
     remaining = (remainingwrite < remainingread) ? remainingwrite : remainingread;
     remaining = naMini(remaining, bytesize);
     
-    naCopyn(naGetBufferPartDataPointerMutable(writepart, writeoffset), naGetBufferPartDataPointerConst(readpart, readoffset), (NAUInt)remaining);
+    naCopyn(naGetBufferPartDataPointerMutable(writepart, writeoffset), naGetBufferPartDataPointerConst(readpart, readoffset), remaining);
     bytesize -= remaining;
     writeoffset += remaining;
     readoffset += remaining;
@@ -2756,6 +2757,7 @@ NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
 
 
 NA_DEF void naSkipBufferDelimiter(NABufferIterator* iter){
+  if(naIsBufferAtInitial(iter)){return;}
   NAByte curbyte = naGetBufferu8(iter);
   if(curbyte <= ' '){
     naSkipBufferWhitespaces(iter);
@@ -2822,6 +2824,7 @@ NA_DEF NAString naParseBufferToken(NABufferIterator* iter){
   while(!naIsBufferAtInitial(iter)){
     const NAByte* curbyte;
     NAInt endoffset;
+    NABool found = NA_FALSE;
 
     const NABufferPart* part = naGetListCurrentConst(&(iter->listiter));
     #ifndef NDEBUG
@@ -2831,11 +2834,12 @@ NA_DEF NAString naParseBufferToken(NABufferIterator* iter){
     curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
     endoffset = naGetBufferPartEnd(part);
     while(iter->curoffset < endoffset){
-      if(*curbyte <= ' '){break;}
+      if(*curbyte <= ' '){found = NA_TRUE; break;}
       curbyte++;
       iter->curoffset++;
     }
     if(!naContainsBufferPartOffset(part, iter->curoffset)){naIterateList(&(iter->listiter), 1);}
+    if(found){break;}
   }
 
   string = naMakeStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
@@ -2849,10 +2853,11 @@ NA_DEF NAString naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAByte d
   NAString string;
   NAInt tokenstart = iter->curoffset;
   const NABufferPart* part;
-  
+
   while(!naIsBufferAtInitial(iter)){
     const NAByte* curbyte;
     NAInt endoffset;
+    NABool found = NA_FALSE;
 
     part = naGetListCurrentConst(&(iter->listiter));
     #ifndef NDEBUG
@@ -2862,11 +2867,12 @@ NA_DEF NAString naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAByte d
     curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
     endoffset = naGetBufferPartEnd(part);
     while(iter->curoffset < endoffset){
-      if(*curbyte == delimiter){break;}
+      if(*curbyte == delimiter){found = NA_TRUE; break;}
       curbyte++;
       iter->curoffset++;
     }
     if(!naContainsBufferPartOffset(part, iter->curoffset)){naIterateList(&(iter->listiter), 1);}
+    if(found){break;}
   }
 
   string = naMakeStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
@@ -2884,6 +2890,7 @@ NA_DEF NAString naParseBufferPathComponent(NABufferIterator* iter){
   while(!naIsBufferAtInitial(iter)){
     const NAByte* curbyte;
     NAInt endoffset;
+    NABool found = NA_FALSE;
 
     part = naGetListCurrentConst(&(iter->listiter));
     #ifndef NDEBUG
@@ -2893,11 +2900,12 @@ NA_DEF NAString naParseBufferPathComponent(NABufferIterator* iter){
     curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
     endoffset = naGetBufferPartEnd(part);
     while(iter->curoffset < endoffset){
-      if((*curbyte == '/') || *curbyte == '\\'){break;}
+      if((*curbyte == '/') || *curbyte == '\\'){found = NA_TRUE; break;}
       curbyte++;
       iter->curoffset++;
     }
     if(!naContainsBufferPartOffset(part, iter->curoffset)){naIterateList(&(iter->listiter), 1);}
+    if(found){break;}
   }
 
   string = naMakeStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
@@ -2920,7 +2928,8 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64*
   #endif
 
   if(naIsBufferEmpty(naGetBufferIteratorBufferConst(iter))){return 0;}
-  if(naIsBufferAtInitial(iter)){naSeekBufferFromStart(iter, 0);}
+//  if(naIsBufferAtInitial(iter)){naSeekBufferFromStart(iter, 0);}
+  if(naIsBufferAtInitial(iter)){return 0;}
 
   if(maxdigitcount == 0){maxdigitcount = naGetRangeiEnd(naGetBufferIteratorBufferConst(iter)->range) - iter->curoffset;}
   bytesused = 0;
@@ -2956,6 +2965,7 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64*
       curbyte++;
     }
     if(bytesused >= maxdigitcount){break;}
+    iter->curoffset += bytesused;
     if(!naContainsBufferPartOffset(part, iter->curoffset)){naIterateList(&(iter->listiter), 1);}
     if(endfound){break;}
   }
@@ -2974,7 +2984,8 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* re
   *retint = 0LL;
 
   if(naIsBufferEmpty(naGetBufferIteratorBufferConst(iter))){return 0;}
-  if(naIsBufferAtInitial(iter)){naSeekBufferFromStart(iter, 0);}
+  if(naIsBufferAtInitial(iter)){return 0;}
+//  if(naIsBufferAtInitial(iter)){naSeekBufferFromStart(iter, 0);}
   const NABufferPart* part = naGetListCurrentConst(&(iter->listiter));
   const NAByte* curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
 

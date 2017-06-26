@@ -569,88 +569,31 @@ NA_DEF NAString naMakeStringEPSDecoded(const NAString* inputstring){
 
 
 NA_DEF void naAppendStringString(NAString* originalstring, const NAString* string2){
-  NA_UNUSED(originalstring);
-  NA_UNUSED(string2);
-//  NA_UNUSED(originalstring);
-//  NA_UNUSED(string2);
-////  NAUInt stringsize1 = naGetStringBytesize(originalstring);
-////  NAUInt stringsize2 = naGetStringBytesize(string2);
-////  NAInt totalstringsize = stringsize1 + stringsize2;
-////  if(totalstringsize){
-////    NAUTF8Char* stringbuf = naMalloc(-totalstringsize);
-////    if(stringsize1){naCopyn(stringbuf, naGetByteArrayConstPointer(&(originalstring->array)), stringsize1);}
-////    if(stringsize2){naCopyn(&(stringbuf[stringsize1]), naGetByteArrayConstPointer(&(string2->array)), stringsize2);}
-////    naClearByteArray(&(originalstring->array));
-////    naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_MEMORY_CLEANUP_NA_FREE);
-////  }else{
-////    // The string was empty and remains empty. Nothing to be done here.
-////  }
+  naAppendBufferToBuffer(originalstring->buffer, string2->buffer);
 }
 
 
 
 NA_DEF void naAppendStringChar(NAString* originalstring, NAUTF8Char newchar){
-  NA_UNUSED(originalstring);
-  NA_UNUSED(newchar);
-//  NA_UNUSED(originalstring);
-//  NA_UNUSED(newchar);
-////  NAUInt stringsize = naGetStringBytesize(originalstring);
-////  NAInt totalstringsize = stringsize + 1;
-////  NAUTF8Char* stringbuf = naMalloc(-totalstringsize);
-////  if(stringsize){naCopyn(stringbuf, naGetByteArrayConstPointer(&(originalstring->array)), stringsize);}
-////  stringbuf[stringsize] = newchar;
-////  naClearByteArray(&(originalstring->array));
-////  naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_MEMORY_CLEANUP_NA_FREE);
+  NAString charstring = naMakeStringWithFormat("%c", newchar);
+  naAppendBufferToBuffer(originalstring->buffer, charstring.buffer);
+  naClearString(&charstring);
 }
 
 
 
 NA_DEF void naAppendStringFormat(NAString* originalstring, const NAUTF8Char* format, ...){
-  NA_UNUSED(originalstring);
-  NA_UNUSED(format);
-//  va_list argumentlist;
-//  va_start(argumentlist, format);
-//  naAppendStringArguments(originalstring, format, argumentlist);
-//  va_end(argumentlist);
+  va_list argumentlist;
+  va_start(argumentlist, format);
+  naAppendStringArguments(originalstring, format, argumentlist);
+  va_end(argumentlist);
 }
 
 
 NA_DEF void naAppendStringArguments(NAString* originalstring, const NAUTF8Char* format, va_list argumentlist){
-  NA_UNUSED(originalstring);
-  NA_UNUSED(format);
-  NA_UNUSED(argumentlist);
-//  NA_UNUSED(originalstring);
-//  NA_UNUSED(format);
-//  NA_UNUSED(argumentlist);
-////  NAUInt stringsize1;
-////  NAUInt stringsize2;
-////  NAInt totalstringsize;
-////  va_list argumentlist2;
-////  NAUTF8Char* stringbuf;
-////
-////  #ifndef NDEBUG
-////    if(!originalstring){
-////      naCrash("naAppendStringArguments", "string is Null-Pointer.");
-////      return;
-////    }
-////  #endif
-////  
-////  stringsize1 = naGetStringBytesize(originalstring);
-////  va_copy(argumentlist2, argumentlist);
-////  stringsize2 = naVarargStringLength(format, argumentlist2);
-////  va_end(argumentlist2);
-////  totalstringsize = stringsize1 + stringsize2;
-////  if(totalstringsize){
-////    stringbuf = naMalloc(-totalstringsize);
-////    if(stringsize1){naCopyn(stringbuf, naGetByteArrayConstPointer(&(originalstring->array)), stringsize1);}
-////    va_copy(argumentlist2, argumentlist);
-////    naVsnprintf(&(stringbuf[stringsize1]), stringsize2 + 1, format, argumentlist2);
-////    va_end(argumentlist2);
-////    naClearByteArray(&(originalstring->array));
-////    naInitByteArrayWithMutableBuffer(&(originalstring->array), stringbuf, -totalstringsize, NA_MEMORY_CLEANUP_NA_FREE);
-////  }else{
-////    // The string was empty and remains empty. Nothing to be done here.
-////  }
+  NAString formatstring = naMakeStringWithArguments(format, argumentlist);
+  naAppendBufferToBuffer(originalstring->buffer, formatstring.buffer);
+  naClearString(&formatstring);
 }
 
 
@@ -672,6 +615,7 @@ NA_DEF NABool naEqualStringToUTF8CStringLiteral(const NAString* string1, const N
 NA_DEF int8 naParseStringInt8(const NAString* string){
   int8 retvalue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
+  naSeekBufferFromStart(&iter, 0);
   retvalue = naParseBufferInt8(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retvalue;
@@ -679,6 +623,7 @@ NA_DEF int8 naParseStringInt8(const NAString* string){
 NA_DEF int16 naParseStringInt16(const NAString* string){
   int16 retvalue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
+  naSeekBufferFromStart(&iter, 0);
   retvalue = naParseBufferInt16(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retvalue;
@@ -686,6 +631,7 @@ NA_DEF int16 naParseStringInt16(const NAString* string){
 NA_DEF int32 naParseStringInt32(const NAString* string){
   int32 retvalue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
+  naSeekBufferFromStart(&iter, 0);
   retvalue = naParseBufferInt32(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retvalue;
@@ -693,6 +639,7 @@ NA_DEF int32 naParseStringInt32(const NAString* string){
 NA_DEF int64 naParseStringInt64(const NAString* string){
   int64 retvalue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
+  naSeekBufferFromStart(&iter, 0);
   retvalue = naParseBufferInt64(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retvalue;
@@ -703,6 +650,7 @@ NA_DEF int64 naParseStringInt64(const NAString* string){
 NA_DEF uint8 naParseStringUInt8(const NAString* string){
   uint8 retvalue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
+  naSeekBufferFromStart(&iter, 0);
   retvalue = naParseBufferUInt8(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retvalue;
@@ -710,6 +658,7 @@ NA_DEF uint8 naParseStringUInt8(const NAString* string){
 NA_DEF uint16 naParseStringUInt16(const NAString* string){
   uint16 retvalue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
+  naSeekBufferFromStart(&iter, 0);
   retvalue = naParseBufferUInt16(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retvalue;
@@ -717,6 +666,7 @@ NA_DEF uint16 naParseStringUInt16(const NAString* string){
 NA_DEF uint32 naParseStringUInt32(const NAString* string){
   uint32 retvalue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
+  naSeekBufferFromStart(&iter, 0);
   retvalue = naParseBufferUInt32(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retvalue;
@@ -724,6 +674,7 @@ NA_DEF uint32 naParseStringUInt32(const NAString* string){
 NA_DEF uint64 naParseStringUInt64(const NAString* string){
   uint64 retvalue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
+  naSeekBufferFromStart(&iter, 0);
   retvalue = naParseBufferUInt64(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
   return retvalue;

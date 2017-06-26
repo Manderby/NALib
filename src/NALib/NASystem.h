@@ -573,10 +573,10 @@ typedef char NAUTF8Char;
   #else
     typedef CHAR SystemChar;
   #endif
-  #define NA_NL NL_WIN
+  #define NA_NL NA_NL_WIN
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
   // typedef short SystemChar;  // unused at the moment
-  #define NA_NL NL_UNIX
+  #define NA_NL NA_NL_UNIX
 #else
 #endif
 

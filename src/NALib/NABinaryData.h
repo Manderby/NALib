@@ -27,7 +27,7 @@ NA_IAPI void naCopy64   (void* NA_RESTRICT d, const void* NA_RESTRICT s);
 NA_IAPI void naCopy128  (void* NA_RESTRICT d, const void* NA_RESTRICT s);
 NA_IAPI void naCopyn    (void* NA_RESTRICT d,
                   const void* NA_RESTRICT s,
-                                   NAUInt bytesize);
+                                   NAInt bytesize);
 
 
 // Swaps the content of the two pointers with the given number of bits.
@@ -57,7 +57,9 @@ NA_IAPI NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b);
 
 
 // Fills the given buffer with the value 0 for the given bytesize
-NA_IAPI void naNulln   (void* d, NAUInt bytesize);
+NA_IAPI void naNulln32  (void* d, int32 bytesize);
+NA_IAPI void naNulln64  (void* d, int64 bytesize);
+NA_IAPI void naNulln    (void* d, NAInt bytesize);
 
 
 

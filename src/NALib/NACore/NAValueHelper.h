@@ -190,7 +190,6 @@ NA_IDEF NABool naToggleFlagu(NAUInt* flags, NAUInt flag){
 
 
 
-
 NA_HIDEF int32 naMakeMaxWithEndi32(int32 end){
   #ifndef NDEBUG
     if(end == NA_INT32_MIN)

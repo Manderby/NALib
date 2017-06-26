@@ -103,7 +103,7 @@ NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
 }
 NA_IDEF void naCopyn(void* NA_RESTRICT d,
               const void* NA_RESTRICT s,
-                               NAUInt bytesize){
+                               NAInt bytesize){
   #ifndef NDEBUG
     if(!d){
       naCrash("naCopy8", "Pointer d is Null-Pointer.");
@@ -114,7 +114,7 @@ NA_IDEF void naCopyn(void* NA_RESTRICT d,
       return;
     }
     if(bytesize < 1){
-      naCrash("naCopyn", "count is %" NA_PRIu " which is smaller than 1.", bytesize);
+      naCrash("naCopyn", "count is %" NA_PRIi " which is smaller than 1.", bytesize);
       return;
     }
   #endif
@@ -293,7 +293,7 @@ NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b){
 // Fills all bytes with null values
 // ///////////////////////////////////////////////////////////
 
-NA_IDEF void naNulln32(void* d, uint32 bytesize){
+NA_IDEF void naNulln32(void* d, int32 bytesize){
   #ifndef NDEBUG
     if(bytesize < NA_ONE_32)
       naError("naNulln32", "count is < 1");
@@ -302,7 +302,7 @@ NA_IDEF void naNulln32(void* d, uint32 bytesize){
   memset(d, 0, bytesize);
 }
 
-NA_IDEF void naNulln64(void* d, uint64 bytesize){
+NA_IDEF void naNulln64(void* d, int64 bytesize){
   #ifndef NDEBUG
     if(bytesize < NA_ONE_64)
       naError("naNulln64", "count is < 1");
@@ -311,7 +311,7 @@ NA_IDEF void naNulln64(void* d, uint64 bytesize){
   memset(d, 0, (size_t)bytesize);
 }
 
-NA_IDEF void naNulln(void* d, NAUInt bytesize){
+NA_IDEF void naNulln(void* d, NAInt bytesize){
   #if NA_SYSTEM_ADDRESS_BITS == 32
     naNulln32(d, bytesize);
   #elif NA_SYSTEM_ADDRESS_BITS == 64

@@ -141,7 +141,7 @@ NARuntime* na_runtime = NA_NULL;
     #ifndef NDEBUG
       NACoreTypeInfo** newinfos = naMalloc((NAInt)sizeof(NACoreTypeInfo*) * (na_runtime->typeinfocount + NA_ONE));
       if(na_runtime->typeinfos){
-        naCopyn(newinfos, na_runtime->typeinfos, (NAUInt)sizeof(NACoreTypeInfo*) * (NAUInt)na_runtime->typeinfocount);
+        naCopyn(newinfos, na_runtime->typeinfos, naSizeof(NACoreTypeInfo*) * na_runtime->typeinfocount);
       }
       newinfos[na_runtime->typeinfocount] = coretypeinfo;
       na_runtime->typeinfocount++;
