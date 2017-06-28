@@ -13,6 +13,13 @@
 // The typedef needs to be here to resolve cyclic include problems.
 typedef struct NAString NAString;
 
+// The different newline-encodings as an enum type
+typedef enum{
+  NA_NEWLINE_UNIX,              // \n    Used in Unix, Linux, MacOSX
+  NA_NEWLINE_MAC9,              // \r    Used in old Mac OS
+  NA_NEWLINE_WIN,               // \r\n  Used in Windows
+  NA_NEWLINE_NATIVE             //       Dependant on the local machines system
+} NANewlineEncoding;
 
 
 
@@ -22,13 +29,6 @@ typedef struct NAString NAString;
 
 
 
-// The different newline-encodings as an enum type
-typedef enum{
-  NA_NEWLINE_UNIX,              // \n    Used in Unix, Linux, MacOSX
-  NA_NEWLINE_MAC9,              // \r    Used in old Mac OS
-  NA_NEWLINE_WIN,               // \r\n  Used in Windows
-  NA_NEWLINE_NATIVE             //       Dependant on the local machines system
-} NANewlineEncoding;
 
 
 
@@ -157,15 +157,18 @@ NA_API NAString naMakeStringWithSuffixOfFilename(const NAString* filename);
 
 
 // Creates a new string by encoding or decoding the characters of inputstring.
-//      |  Encoding example    |   Decoding example |  Notes
-// -----+----------------------+--------------------+----------------------
-// XML  |  " becomes &quot;    |   &quot; becomes " |  Do not use for HTML < 5
-// EPS  |  ( becomes \(        |   \(     becomes ( |
+//         | Encoding example  | Decoding example |  Notes
+// --------+-------------------+------------------+----------------------
+// CEscape | " becomes \"      | \" becomes "     |
+// XML     | " becomes &quot;  | &quot; becomes " |  Do not use for HTML < 5
+// EPS     | ( becomes \(      | \(     becomes ( |
 //
 // Note: Always creates a new string by copying the characters from the input.
 // Therefore, the two parameters MUST not be the same!
 // Warning: XML-Decoding does not support numeric entities yet.
 //
+NA_API NAString naMakeStringCEscaped  (const NAString* inputstring);
+NA_API NAString naMakeStringCUnescaped(const NAString* inputstring);
 NA_API NAString naMakeStringXMLEncoded(const NAString* inputstring);
 NA_API NAString naMakeStringXMLDecoded(const NAString* inputstring);
 NA_API NAString naMakeStringEPSEncoded(const NAString* inputstring);

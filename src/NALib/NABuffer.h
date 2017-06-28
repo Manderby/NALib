@@ -19,6 +19,7 @@ typedef struct NABufferIterator NABufferIterator;
 #include "NAMemory.h"
 #include "NACoord.h"
 #include "NAFile.h"
+#include "NAString.h"
 
 
 // This file contains the API for NABuffer and its underlying storage structure
@@ -196,6 +197,12 @@ NA_API void     naExtendBufferRange         (NABuffer* buffer,
 // Sets or gets the volatile flag of the buffer.
 NA_API NABool   naHasBufferVolatileSource(const NABuffer* buffer);
 NA_API void     naSetBufferVolatileSource(NABuffer* buffer, NABool volatil);
+
+// Get or set the newline encoding of this buffer. The newline encoding of a
+// new buffer is either NA_NEWLINE_NATIVE or the same encoding as the buffer
+// it is created from, if any.
+NA_API void naSetBufferNewline(NABuffer* buffer, NANewlineEncoding newline);
+NA_API NANewlineEncoding naGetBufferNewline(NABuffer* buffer);
 
 // Get or set the endianness setting of this buffer. If not stated otherwise,
 // the endianness of a new buffer is NA_ENDIANNESS_NATIVE.

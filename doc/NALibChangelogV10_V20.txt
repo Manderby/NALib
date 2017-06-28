@@ -19,6 +19,8 @@ correct, complete or final.
   leaks.
 
 
+- Added naMakeStringCEscaped and naMakeStringCUnescaped.
+- Implemented Newline setting to NABuffer. Added NA_NL_NATIVE to NASystem
 - Added several API functions to NAString.
 - Made Append functions of NAString work.
 - Added a bytesize to naEqualBufferToData.

@@ -514,6 +514,7 @@ struct NABuffer{
   
   NAUInt flags;
   
+  NANewlineEncoding newline;        // The current newline encoding
   NAInt endianness;                 // The current endianness
   NAEndiannessConverter converter;  // The endianness converter.
 
@@ -1013,6 +1014,7 @@ NA_HDEF NABuffer* naCreateBufferMemorySource(NABool secure){
   buffer->source = naCreateBufferSource(desc);
   buffer->srcoffset = 0;
 
+  buffer->newline = NA_NEWLINE_NATIVE;
   buffer->endianness = NA_ENDIANNESS_UNKNOWN;
   buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
 
@@ -1033,6 +1035,7 @@ NA_DEF NABuffer* naCreateBuffer(NABool securememory){
   naReleaseBuffer(srcbuffer); // The src buffer is now retained in the iterator.
   buffer->srcoffset = 0;
 
+  buffer->newline = NA_NEWLINE_NATIVE;
   buffer->endianness = NA_ENDIANNESS_UNKNOWN;
   buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
 
@@ -1057,6 +1060,7 @@ NA_DEF NABuffer* naCreateBufferExtraction(NABuffer* srcbuffer, NARangei range){
   }
   buffer->flags = srcbuffer->flags | NA_BUFFER_RANGE_FIXED;
   
+  buffer->newline = srcbuffer->newline;
   buffer->endianness = srcbuffer->endianness;
   buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
 
@@ -1109,6 +1113,7 @@ NA_DEF NABuffer* naCreateBufferPlain(){
   buffer->source = NA_NULL;
   buffer->srcoffset = 0;
 
+  buffer->newline = NA_NEWLINE_NATIVE;
   buffer->endianness = NA_ENDIANNESS_UNKNOWN;
   buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
 
@@ -1127,6 +1132,7 @@ NA_DEF NABuffer* naCreateBufferWithSameSource(NABuffer* srcbuffer){
 
   buffer->flags = srcbuffer->flags;
   
+  buffer->newline = srcbuffer->newline;
   buffer->endianness = srcbuffer->endianness;
   buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
 
@@ -1154,6 +1160,7 @@ NA_DEF NABuffer* naCreateBufferWithInpuFile(const char* filename){
   naEnsureBufferRange(buffer, naGetBufferSourceLimit(buffer->source));
   buffer->flags |= NA_BUFFER_RANGE_FIXED;
 
+  buffer->newline = NA_NEWLINE_NATIVE;
   buffer->endianness = NA_ENDIANNESS_UNKNOWN;
   buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
 
@@ -1179,6 +1186,8 @@ NA_DEF NABuffer* naCreateBufferWithConstData(const void* data, NAInt bytesize){
   
   buffer->range = naMakeRangeiWithStartAndEnd(0, bytesize);
   buffer->flags |= NA_BUFFER_RANGE_FIXED;
+
+  buffer->newline = NA_NEWLINE_NATIVE;
   buffer->endianness = NA_ENDIANNESS_UNKNOWN;
   buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
 
@@ -1204,6 +1213,8 @@ NA_DEF NABuffer* naCreateBufferWithMutableData(void* data, NAInt bytesize, NAMem
   
   buffer->range = naMakeRangeiWithStartAndEnd(0, bytesize);
   buffer->flags |= NA_BUFFER_RANGE_FIXED;
+
+  buffer->newline = NA_NEWLINE_NATIVE;
   buffer->endianness = NA_ENDIANNESS_UNKNOWN;
   buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
 
@@ -1219,6 +1230,7 @@ NA_DEF NABuffer* naCreateBufferWithCustomSource(NABufferSourceDescriptor desc){
   buffer->source = naCreateBufferSource(desc);
   buffer->srcoffset = 0;
 
+  buffer->newline = NA_NEWLINE_NATIVE;
   buffer->endianness = NA_ENDIANNESS_UNKNOWN;
   buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
 
@@ -1288,6 +1300,18 @@ NA_DEF void naSetBufferVolatileSource(NABuffer* buffer, NABool volatil){
   }else{
     buffer->flags &= (NAUInt)~NA_BUFFER_VOLATILE_SOURCE;
   }
+}
+
+
+
+NA_DEF void naSetBufferNewline(NABuffer* buffer, NANewlineEncoding newline){
+  buffer->newline = newline;
+}
+
+
+
+NA_DEF NANewlineEncoding naGetBufferNewline(NABuffer* buffer){
+  return buffer->newline;
 }
 
 
@@ -2600,21 +2624,21 @@ NA_DEF void naWriteBufferTab(NABufferIterator* iter){
 
 
 NA_DEF void naWriteBufferNewLine(NABufferIterator* iter){
-//  switch(buffer->flags & NA_BUFFER_FLAG_NEWLINE_MASK){
-//  case NA_BUFFER_FLAG_NEWLINE_MAC9:
-//    naEnhanceBuffer(buffer, 1);
-//    naStoreBufferBytes(buffer, NA_NL_MAC9, 1);
-//    break;
-//  case NA_BUFFER_FLAG_NEWLINE_UNIX:
-//    naEnhanceBuffer(buffer, 1);
+  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+  switch(buffer->newline){
+  case NA_NEWLINE_UNIX:
     naStoreBufferBytes(iter, NA_NL_UNIX, 1, NA_TRUE, NA_TRUE);
-//    break;
-//  case NA_BUFFER_FLAG_NEWLINE_WIN:
-//    naEnhanceBuffer(buffer, 2);
-//    naStoreBufferBytes(buffer, NA_NL_WIN, 2);
-//    break;
-//  }
-//  if((buffer->flags & NA_BUFFER_FLAG_AUTOFLUSH_MASK) >= NA_BUFFER_FLAG_AUTOFLUSH_TEXT){naFlushBuffer(buffer);}
+    break;
+  case NA_NEWLINE_MAC9:
+    naStoreBufferBytes(iter, NA_NL_MAC9, 1, NA_TRUE, NA_TRUE);
+    break;
+  case NA_NEWLINE_WIN:
+    naStoreBufferBytes(iter, NA_NL_WIN, 2, NA_TRUE, NA_TRUE);
+    break;
+  case NA_NEWLINE_NATIVE:
+    naStoreBufferBytes(iter, NA_NL_NATIVE, naStrlen(NA_NL_NATIVE), NA_TRUE, NA_TRUE);
+    break;
+  }
 }
 
 
@@ -2821,6 +2845,7 @@ NA_DEF NAString naParseBufferToken(NABufferIterator* iter){
   NAString string;
   NAInt tokenstart = iter->curoffset;
 
+  // todo: this always requires a naSeekBufferFromStart call. Make this better.
   while(!naIsBufferAtInitial(iter)){
     const NAByte* curbyte;
     NAInt endoffset;

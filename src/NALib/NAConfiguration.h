@@ -110,11 +110,15 @@
 // manipulations but will help when debugging as the debugger can display the
 // content as char* immediately.
 //
-// Default is 0: The NAString struct will only create a cached version when
-// necessary.
+// The default is that strings will always be cached when running in debug mode
+// but will not be cached if NDEBUG is defined.
 
 #ifndef NA_STRING_ALWAYS_CACHE
-  #define NA_STRING_ALWAYS_CACHE 1
+  #ifndef NDEBUG
+    #define NA_STRING_ALWAYS_CACHE 1
+  #else
+    #define NA_STRING_ALWAYS_CACHE 0
+  #endif
 #endif
 
 

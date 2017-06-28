@@ -298,6 +298,80 @@ NA_DEF NAString naMakeStringWithSuffixOfFilename(const NAString* filename){
 
 
 
+NA_DEF NAString naMakeStringCEscaped  (const NAString* inputstring){
+  NAUTF8Char outbuffer[10]; // this is the maximal number of chars added.
+  NABuffer* buffer = naCreateBuffer(NA_FALSE);
+  NABufferIterator iter = naMakeBufferAccessor(inputstring->buffer);
+  NABufferIterator outiter = naMakeBufferModifier(buffer);
+  while(!naIsBufferAtEnd(&iter)){
+    NAUTF8Char curchar = naReadBufferi8(&iter);
+    switch(curchar){
+    case '\a': outbuffer[0] = '\\'; outbuffer[1] = 'a',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\b': outbuffer[0] = '\\'; outbuffer[1] = 'b',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\f': outbuffer[0] = '\\'; outbuffer[1] = 'f',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\n': outbuffer[0] = '\\'; outbuffer[1] = 'n',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\r': outbuffer[0] = '\\'; outbuffer[1] = 'r',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\t': outbuffer[0] = '\\'; outbuffer[1] = 't',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\v': outbuffer[0] = '\\'; outbuffer[1] = 'v',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\\': outbuffer[0] = '\\'; outbuffer[1] = '\\', naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\'': outbuffer[0] = '\\'; outbuffer[1] = '\'', naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\"': outbuffer[0] = '\\'; outbuffer[1] = '\"', naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\?': outbuffer[0] = '\\'; outbuffer[1] = '?',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\e': outbuffer[0] = '\\'; outbuffer[1] = 'e',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    default: naWriteBufferi8(&outiter, curchar); break;
+    }
+  }
+  naClearBufferIterator(&outiter);
+  naClearBufferIterator(&iter);
+  NAString string = naMakeStringWithBufferExtraction(buffer, naGetBufferRange(buffer));
+  naReleaseBuffer(buffer);
+  return string;
+}
+
+
+
+NA_DEF NAString naMakeStringCUnescaped(const NAString* inputstring){
+  NABuffer* buffer = naCreateBuffer(NA_FALSE);
+  NABufferIterator iter = naMakeBufferAccessor(inputstring->buffer);
+  NABufferIterator outiter = naMakeBufferModifier(buffer);
+  while(!naIsBufferAtEnd(&iter)){
+    NAUTF8Char curchar = naReadBufferi8(&iter);
+    if(curchar == '\\'){
+      curchar = naReadBufferi8(&iter);
+      switch(curchar){
+      case 'a':  naWriteBufferi8(&outiter, 'a');  break;
+      case 'b':  naWriteBufferi8(&outiter, 'b');  break;
+      case 'f':  naWriteBufferi8(&outiter, 'f');  break;
+      case 'n':  naWriteBufferi8(&outiter, 'n');  break;
+      case 'r':  naWriteBufferi8(&outiter, 'r');  break;
+      case 't':  naWriteBufferi8(&outiter, 't');  break;
+      case 'v':  naWriteBufferi8(&outiter, 'v');  break;
+      case '\\': naWriteBufferi8(&outiter, '\\'); break;
+      case '\'': naWriteBufferi8(&outiter, '\''); break;
+      case '\"': naWriteBufferi8(&outiter, '\"'); break;
+      case '?':  naWriteBufferi8(&outiter, '?');  break;
+      case 'e':  naWriteBufferi8(&outiter, 'e');  break;
+    // todo: Add more decodings
+      default:
+        #ifndef NDEBUG
+          naError("naMakeStringCUnescaped", "Unrecognized escape character");
+        #endif
+        naWriteBufferi8(&outiter, curchar);
+        break;
+      }
+    }else{
+      naWriteBufferi8(&outiter, curchar);
+    }
+  }
+  naClearBufferIterator(&outiter);
+  naClearBufferIterator(&iter);
+  NAString string = naMakeStringWithBufferExtraction(buffer, naGetBufferRange(buffer));
+  naReleaseBuffer(buffer);
+  return string;
+}
+
+
+
 NA_DEF NAString naMakeStringXMLEncoded(const NAString* inputstring){
   NA_UNUSED(inputstring);
 //  NAInt i;

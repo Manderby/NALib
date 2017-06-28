@@ -547,6 +547,12 @@ typedef uint8 NAByte;
 #define NA_NL_UNIX  "\n"
 #define NA_NL_MAC9  "\r"
 #define NA_NL_WIN   "\r\n"
+#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #define NA_NL_NATIVE NA_NL_WIN
+#else
+  #define NA_NL_NATIVE NA_NL_UNIX
+#endif
+
 #define NA_TAB      "\t"
 #define NA_PATH_DELIMITER_UNIX '/'
 #define NA_PATH_DELIMITER_WIN  '\\'
