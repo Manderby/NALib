@@ -12,13 +12,19 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Highlights:
 - NABuffer now works with Iterators.
 - NAQuadTree and NAOctTree have updated iterators too. Lots of changes for a
   simpler API. The Deserialize and Serialize functions have been discarded.
 - Speedup of NARuntime. Manages memory pools more intelligently. Detects memory
   leaks.
+- Removed all functions using NAListPos. Use NAListIterator instead. Added
+  naMoveListThisToFirst, naMoveListThisToLast, naResetListIterator,
+  naLocateListIterator and naRemoveListContent.
+- Iterator creation functions have been renamed to MakeXXXAccessor,
+  MakeXXXMutator and MakeXXXModifier. Readme has been written.
 
-
+Other things:
 - Added naMakeStringCEscaped and naMakeStringCUnescaped.
 - Implemented Newline setting to NABuffer. Added NA_NL_NATIVE to NASystem
 - Added several API functions to NAString.
@@ -26,7 +32,7 @@ correct, complete or final.
 - Added a bytesize to naEqualBufferToData.
 - Replaced all occurences of head/tail, lead/trail, front/back with
   start/end and forward/backward. Easier to understand.
-- Added simple string parsing functions. Corrected Buffer parsing an some
+- Added simple string parsing functions. Corrected Buffer parsing at some
   points.
 - Added more comments and descriptions.
 - Corrected a memory leak in NADeflate
@@ -34,12 +40,8 @@ correct, complete or final.
 - Added some coordinate make functions allowing empty sizes.
 - Added bit mask functions in NAValueHelper.h for testing, setting and
   toggling flags.
-- Added naResetListIterator and naLocateListIterator. Removed all functions
-  using NAListPos. Use NAListIterator instead. Added naRemoveListContent.
 - Corrected a rare error with NACoreTypeInfo when debugging.
 - Fixed an iteration bug of NAList when using naLocateListContent
-- Iterator creation functions have been renamed to MakeXXXAccessor,
-  MakeXXXMutator and MakeXXXModifier. Readme has been written.
 - Added Pointer Iterator functions for NAStack
 - Added NA_STRING_ALWAYS_CACHE in NAConfiguration.h
 - Removed an annoying visibility attribute error under GCC.

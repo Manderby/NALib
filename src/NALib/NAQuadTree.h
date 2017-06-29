@@ -25,21 +25,20 @@
 // segment 2: (lower x, upper y)
 // segment 3: (upper x, upper y)
 //
-// There are two ways of accessing and manipulating the tree: Direct access of
-// the leafes upon coordinate location or iterating over all leaves. The tree
-// uses some internal variables to make the search and iteration fast.
+// Access and manipulation of the tree is performed using iterators.
+// Creating chunks and modifying the tree happends using callback functions.
+//
+// This datastructure can not be manipulated like other datastructures from
+// NALib. The programmer does not add single elements but instead, the tree
+// calls a callback function to provide chunks when necessary. Therefore, the
+// data stored is always mutable. You can nontheless access the tree const or
+// mutable. This is important when for example, if you just have a const tree
+// but require a chunk of it for reading.
 //
 // Manipulating an NAQuadTree is done in the leafes. When a leaf has been
 // altered, a message is sent to the parent nodes. This is called bubbling.
 // You can intercept these bubbling messages implementing the appropriate
 // callback functions.
-//
-// Regarding Const and Mutable: This datastructure can not be manipulated like
-// other datastructures from NALib. You do not add single elements but instead,
-// the tree asks you to provide chunks when necessary. Therefore, the data
-// stored is always mutable. You can nontheless access the tree const or
-// mutable. This is important when for example, if you just have a const tree
-// but require a chunk of it for reading.
 
 
 
@@ -74,7 +73,7 @@ typedef void* (*NAQuadTreeLeafAllocator)(   NAPosi origin,
                                              void* userdata,
                                        const void* copydata);
 
-// The destruction function of your leaf-chunks. This callback always must be
+// The deallocation function of your leaf-chunks. This callback always must be
 // present. The pointer given is a pointer created when NAQuadTreeLeafAllocator
 // was called. The userdata is the same as desribed in the allocator function.
 typedef void  (*NAQuadTreeLeafDeallocator)(  void* leafdata,
@@ -131,7 +130,7 @@ typedef void  (*NAQuadTreeNodeDeallocator)(void* nodedata);
 
 // Whenever you altered a leaf and want to propagate the change over the whole
 // tree, you call naUpdateQuadTreeCurrent which in turn will call the following
-// two callback functions. Both will be called with the parental (internal) node
+// two callback functions. Both will be called with the PARENTAL (internal) node
 // data you may have stored with NAQuadTreeNodeAllocator. Additionally, you are
 // given all four child data pointers as an array as well as a segment index
 // denoting which of the four childs has caused the calling. See segment index
@@ -254,8 +253,8 @@ NA_API void naUpdateQuadTree(                  NAQuadTree* tree);
 // Function pointer used for the set iteration naSetQuadTreeInRect. This
 // callback is called for multiple chunks of a tree.
 // When called, dstdata is the chunk data, rect is the rect within the data
-// shall be set and leaflength is the leaf length in one dimension given upon
-// creation of the tree.
+// shall be handeled and leaflength is the leaf length in one dimension given
+// upon creation of the tree.
 // The userdata corresponds to whatever has been given in naSetQuadTreeInRect.
 // The origin of the rect is given relative to the origin of the chunk.
 // Therefore, all positions are greaterequal zero. All coordinates of rect are

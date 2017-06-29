@@ -168,11 +168,11 @@ void testNAPtr(void){
   printf("\n");
   
   printf("Clearing the NAPtr's.\n");
-  naClearPtr(&ptrNull);
-  naFreePtr(&ptr);
-  naClearPtr(&ptrconst);
-  naFreePtr(&ptrmutable);
-  naClearPtr(&ptrExtract);
+  naCleanupPtr(&ptrNull,    NA_MEMORY_CLEANUP_NONE);
+  naCleanupPtr(&ptr,        NA_MEMORY_CLEANUP_NA_FREE);
+  naCleanupPtr(&ptrconst,   NA_MEMORY_CLEANUP_NONE);
+  naCleanupPtr(&ptrmutable, NA_MEMORY_CLEANUP_NA_FREE);
+  naCleanupPtr(&ptrExtract, NA_MEMORY_CLEANUP_NONE);
 }
 
 
@@ -202,14 +202,14 @@ void testNASmartPtr(void){
   naInitSmartPtrConst(sptr4, NA_MEMORY_CLEANUP_NA_FREE, "Constant String Literal");
   
   printf("Retaining the smart pointers...\n");
-  naRetainSmartPtr(&sptr1);
-  naRetainSmartPtr(&sptr1);
-  naRetainSmartPtr(&sptr2);
-  naRetainSmartPtr(&sptr2);
-  naRetainSmartPtr(sptr3);
-  naRetainSmartPtr(sptr3);
-  naRetainSmartPtr(sptr4);
-  naRetainSmartPtr(sptr4);
+  naRetain(&sptr1);
+  naRetain(&sptr1);
+  naRetain(&sptr2);
+  naRetain(&sptr2);
+  naRetain(sptr3);
+  naRetain(sptr3);
+  naRetain(sptr4);
+  naRetain(sptr4);
   
   printf("Accessing and mutating the smart pointers...\n");
   mydataptrconst = (const int*)naGetSmartPtrConst(&sptr1);
@@ -263,12 +263,12 @@ void testNAPointer(void){
   ptr3 = naNewPointerConst("Constant string literal");
 
   printf("Retaining NAPointer.\n");
-  naRetainPointer(ptr1);
-  naRetainPointer(ptr1);
-  naRetainPointer(ptr2);
-  naRetainPointer(ptr2);
-  naRetainPointer(ptr3);
-  naRetainPointer(ptr3);
+  naRetain(ptr1);
+  naRetain(ptr1);
+  naRetain(ptr2);
+  naRetain(ptr2);
+  naRetain(ptr3);
+  naRetain(ptr3);
 
   printf("Accessing and mutating the pointers...\n");
   mydataptrconst = (const int*)naGetPointerConst(ptr1);

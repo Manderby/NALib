@@ -339,17 +339,19 @@ NA_HIDEF NAByte* naGetBufferPartDataPointerMutable(const NABufferPart* part, NAI
 
 
 
-// Returns a direct pointer to the raw data of this buffer part, given its
-// absolute address.
-NA_HIDEF const NAByte* naGetBufferPartBaseDataPointerConst(const NABufferPart* part){
-  #ifndef NDEBUG
-    if(!part)
-      {naCrash("naGetBufferPartBaseDataPointerConst", "buffer part is Null pointer"); return NA_NULL;}
-    if(naIsBufferPartSparse(part))
-      naError("naGetBufferPartBaseDataPointerConst", "buffer part is sparse");
-  #endif
-  return (const NAByte*)naGetPointerConst(part->data);
-}
+#ifndef NDEBUG
+  // Returns a direct pointer to the raw data of this buffer part, given its
+  // absolute address.
+  NA_HIDEF const NAByte* naGetBufferPartBaseDataPointerConst(const NABufferPart* part){
+    #ifndef NDEBUG
+      if(!part)
+        {naCrash("naGetBufferPartBaseDataPointerConst", "buffer part is Null pointer"); return NA_NULL;}
+      if(naIsBufferPartSparse(part))
+        naError("naGetBufferPartBaseDataPointerConst", "buffer part is sparse");
+    #endif
+    return (const NAByte*)naGetPointerConst(part->data);
+  }
+#endif
 
 
 

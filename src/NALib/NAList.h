@@ -289,16 +289,22 @@ NA_IAPI NABool    naIsListAtInitial         (const NAListIterator* iter);
 // /////////////////////////////////////////////
 // Reordering functions
 //
-// The move functions remove the specified element from the src list and move
-// them to the dst list at the position indicated by the function name. These
-// functions are VERY FAST! Way faster than locating a specific element,
-// removing it and re-adding it. Additionally, there is no memory allocation
-// or deallocation used in the process.
+// The move functions remove the specified element from the list pointed to by
+// srciter and move them to the dst list at the position indicated by the
+// function name. These functions are VERY FAST! Way faster than locating a
+// specific element, removing it and re-adding it. Additionally, there is no
+// memory allocation or deallocation used in the process.
 //
 // The Remaining function will move all elements starting with the current
 // element till the last to the new list. If the iterator is at initial
 // position, the whole list will be moved. The iterator of the src list will
 // then be unset.
+//
+// The "This" functions will move the current element but also will alter the
+// iterator itself to point to the new list. These functions are very useful
+// in combination with an iterator stored within a struct which denotes the
+// current position of that struct within a list. So you can arbitrarily move
+// such elements from one list to another without the need to search for it.
 //
 // Use these functions in conjunction with naLocateList. It is the fastest
 // way to transfer specific elements from one list to another.
@@ -313,6 +319,10 @@ NA_IAPI void naMoveListCurToLast  (     NAListIterator* srciter,
                                                  NABool advance,
                                                 NAList* dst);
 NA_IAPI void naMoveListRemainingToLast( NAListIterator* srciter,
+                                                NAList* dst);
+NA_IAPI void naMoveListThisToFirst (    NAListIterator* srciter,
+                                                NAList* dst);
+NA_IAPI void naMoveListThisToLast (     NAListIterator* srciter,
                                                 NAList* dst);
 
 // The exchange function splits the list into two parts right BEFORE the

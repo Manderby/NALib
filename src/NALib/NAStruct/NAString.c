@@ -317,7 +317,6 @@ NA_DEF NAString naMakeStringCEscaped  (const NAString* inputstring){
     case '\'': outbuffer[0] = '\\'; outbuffer[1] = '\'', naWriteBufferBytes(&outiter, outbuffer, 2); break;
     case '\"': outbuffer[0] = '\\'; outbuffer[1] = '\"', naWriteBufferBytes(&outiter, outbuffer, 2); break;
     case '\?': outbuffer[0] = '\\'; outbuffer[1] = '?',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\e': outbuffer[0] = '\\'; outbuffer[1] = 'e',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
     default: naWriteBufferi8(&outiter, curchar); break;
     }
   }
@@ -350,7 +349,6 @@ NA_DEF NAString naMakeStringCUnescaped(const NAString* inputstring){
       case '\'': naWriteBufferi8(&outiter, '\''); break;
       case '\"': naWriteBufferi8(&outiter, '\"'); break;
       case '?':  naWriteBufferi8(&outiter, '?');  break;
-      case 'e':  naWriteBufferi8(&outiter, 'e');  break;
     // todo: Add more decodings
       default:
         #ifndef NDEBUG

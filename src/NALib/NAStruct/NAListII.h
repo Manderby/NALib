@@ -994,6 +994,66 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* iterator, NAList* dst){
 
 
 
+NA_IDEF void naMoveListThisToFirst(NAListIterator* iterator, NAList* dst){
+  NAList* src;
+  #ifndef NDEBUG
+    if(!iterator->mutator)
+      naError("naMoveListThisToFirst", "Trying to mutate elements with an accessor iterator");
+    if(naIsPtrConst(&(iterator->listptr)))
+      naError("naMoveListThisToFirst", "Trying to modify with no modify iterator");
+  #endif
+  src = (NAList*)naGetPtrMutable(&(iterator->listptr));
+  #ifndef NDEBUG
+    if(iterator->cur == &(src->sentinel))
+      naError("naMoveListThisToFirst", "List iterator does not point to any element. No ''This'' available.");
+  #endif
+
+  #ifndef NDEBUG
+    iterator->cur->itercount--;
+  #endif
+  naEjectListConst(src, iterator->cur, NA_FALSE);
+  iterator->cur->next = dst->sentinel.next;
+  iterator->cur->prev = &(dst->sentinel);
+  naInjectExistingListElement(dst, iterator->cur);
+  naCleanupPtr(&(iterator->listptr), NA_MEMORY_CLEANUP_NONE);
+  iterator->listptr = naMakePtrWithDataMutable(dst, NA_MEMORY_CLEANUP_NONE);
+  #ifndef NDEBUG
+    iterator->cur->itercount++;
+  #endif
+}
+
+
+
+NA_IDEF void naMoveListThisToLast(NAListIterator* iterator, NAList* dst){
+  NAList* src;
+  #ifndef NDEBUG
+    if(!iterator->mutator)
+      naError("naMoveListThisToLast", "Trying to mutate elements with an accessor iterator");
+    if(naIsPtrConst(&(iterator->listptr)))
+      naError("naMoveListThisToLast", "Trying to modify with no modify iterator");
+  #endif
+  src = (NAList*)naGetPtrMutable(&(iterator->listptr));
+  #ifndef NDEBUG
+    if(iterator->cur == &(src->sentinel))
+      naError("naMoveListThisToLast", "List iterator does not point to any element. No ''This'' available.");
+  #endif
+
+  #ifndef NDEBUG
+    iterator->cur->itercount--;
+  #endif
+  naEjectListConst(src, iterator->cur, NA_FALSE);
+  iterator->cur->next = &(dst->sentinel);
+  iterator->cur->prev = dst->sentinel.prev;
+  naInjectExistingListElement(dst, iterator->cur);
+  naCleanupPtr(&(iterator->listptr), NA_MEMORY_CLEANUP_NONE);
+  iterator->listptr = naMakePtrWithDataMutable(dst, NA_MEMORY_CLEANUP_NONE);
+  #ifndef NDEBUG
+    iterator->cur->itercount++;
+  #endif
+}
+
+
+
 NA_IDEF void naExchangeListParts(NAListIterator* iterator){
   NAList* src;
   NAListElement* first;

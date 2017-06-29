@@ -16,19 +16,19 @@
 //
 // //////////////////
 
+#include "NASystem.h"
 
 // Have a look at NAConfiguration.h to use OpenGL
 #if NA_CONFIG_COMPILE_OPENGL == 1
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-  #include <windows.h>
-  #include <GL/GL.h>
+    #include <windows.h>
+    #include <GL/GL.h>
   #else
-  #include <OpenGL/gl.h>
+    #include <OpenGL/gl.h>
   #endif
 #endif
 
 
-#include "NASystem.h"
 #include "NACoord.h"
 
 // NALib provides a simple implementation for Graphical User Interfaces (GUI).

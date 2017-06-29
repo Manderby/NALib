@@ -4,30 +4,25 @@ NALib todos
 This file contains notes on what is still missing or needs to be done
 in NALib.
 
-Version 19:
-- Review Remaining Iterators Octtree Quadtree
-- Fully implement NAString
-- Make more test files
-- NATree and integration into NABuffer
-- GUI
-
 Version 20:
 - Add more variadic error messages
 - First compression in NAPNG
 - NAComplexPolar
-- Re-Integrate NAMap2D and NAByteMap2D
-- Re-Integrate NABitArray
-- NASocket
-- Timezones
 - All todos.
+- Fully implement NAString
 - Remove old commented code
 - Page guide 80
 - Documentation
+- Make more test files
 
 
 Future
+- NATree and integration into NABuffer
+- GUI
 - Add ARM, Linux
 - Make Memory addresses uint 
 - Garbage collection, release pools
 - MOB
 - Color
+- Timezones
+- NASocket
