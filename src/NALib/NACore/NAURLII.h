@@ -27,6 +27,7 @@ NA_IDEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* str
   NAUTF8Char curchar;
   NAString inputstring;
   NAString pathcomponent;
+  NABufferIterator iter;
 
   url = naInitURL(url); 
   if(!string){return url;} 
@@ -38,7 +39,7 @@ NA_IDEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* str
     inputstring = naMakeStringExtraction(&inputstring, 1, -1);
   }
   
-  NABufferIterator iter = naMakeBufferAccessor(naGetStringBufferConst(&inputstring));
+  iter = naMakeBufferAccessor(naGetStringBufferConst(&inputstring));
   
   while(naGetStringBytesize(&inputstring)){
     // Test for erroneous duplicate or ending delimiters

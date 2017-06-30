@@ -342,6 +342,7 @@ NA_DEF void naFilterData(NAPNG* png){
   NAInt bpp;
   NAByte* pixeldata;
   NAInt y;
+  NABufferIterator iter;
 
   png->filtereddata = naCreateBuffer(NA_FALSE);
   naSetBufferEndianness(png->filtereddata, NA_ENDIANNESS_NETWORK);
@@ -349,7 +350,7 @@ NA_DEF void naFilterData(NAPNG* png){
   bpp = naGetPNGBytesPerPixel(png->colortype);
   pixeldata = naGetPNGPixelData(png);
   
-  NABufferIterator iter = naMakeBufferModifier(png->filtereddata);
+  iter = naMakeBufferModifier(png->filtereddata);
   for(y=0; y<png->size.height; y++){
     naWriteBufferu8(&iter, NA_PNG_FILTER_TYPE_NONE);
     naWriteBufferBytes(&iter, pixeldata, png->size.width * bpp);

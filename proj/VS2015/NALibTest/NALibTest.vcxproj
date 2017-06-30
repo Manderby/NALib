@@ -80,10 +80,13 @@
     <ClInclude Include="..\..\..\src\NALib\NAStack.h" />
     <ClInclude Include="..\..\..\src\NALib\NAString.h" />
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NAArrayII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NABufferII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NACircularBufferII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NAHeapII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NAListII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAOctTreeII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NAPoolII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAQuadTreeII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NAStackII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NAStringII.h" />
     <ClInclude Include="..\..\..\src\NALib\NASystem.h" />

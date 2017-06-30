@@ -149,6 +149,8 @@ NA_IDEF void* naMalloc(NAInt bytesize){
     if (!ptr)
       {naCrash("naMalloc", "Out of memory."); return NA_NULL;}
     #endif
+    // When you get a warning here when analyzing the code: This is intentional.
+    // Memory allocation fail is such a huge error, nobody should try to correct.
     *(NAUInt*)(&(ptr[fullsize - 2 * NA_SYSTEM_ADDRESS_BYTES])) = NA_ZERO;
     *(NAUInt*)(&(ptr[fullsize - 1 * NA_SYSTEM_ADDRESS_BYTES])) = NA_ZERO;
   }

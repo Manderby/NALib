@@ -137,7 +137,6 @@ NARuntime* na_runtime = NA_NULL;
 
 
   NA_HIDEF void naRegisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
-    NA_UNUSED(coretypeinfo);
     #ifndef NDEBUG
       NACoreTypeInfo** newinfos = naMalloc((NAInt)sizeof(NACoreTypeInfo*) * (na_runtime->typeinfocount + NA_ONE));
       if(na_runtime->typeinfos){
@@ -147,18 +146,20 @@ NARuntime* na_runtime = NA_NULL;
       na_runtime->typeinfocount++;
       naFree(na_runtime->typeinfos);
       na_runtime->typeinfos = newinfos;
+    #else
+      NA_UNUSED(coretypeinfo);
     #endif
   }
   
   
   NA_HIDEF void naUnregisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
-    NA_UNUSED(coretypeinfo);
     #ifndef NDEBUG
       NACoreTypeInfo** newinfos = NA_NULL;
       if(na_runtime->typeinfocount > 1){
-        newinfos = naMalloc((NAInt)sizeof(NACoreTypeInfo*) * (NAInt)(na_runtime->typeinfocount - NA_ONE));
         NAInt newindex = 0;
-        for(NAInt i=0; i<(na_runtime->typeinfocount); i++){
+        NAInt i;
+        newinfos = naMalloc((NAInt)sizeof(NACoreTypeInfo*) * (NAInt)(na_runtime->typeinfocount - NA_ONE));
+        for(i=0; i<(na_runtime->typeinfocount); i++){
           if(na_runtime->typeinfos[i] != coretypeinfo){
             if(newindex == (na_runtime->typeinfocount - 1))
               naError("naUnregisterCoreTypeInfo", "coretypeinfo was not registered");
@@ -170,6 +171,8 @@ NARuntime* na_runtime = NA_NULL;
       na_runtime->typeinfocount--;
       naFree(na_runtime->typeinfos);
       na_runtime->typeinfos = newinfos;
+    #else
+      NA_UNUSED(coretypeinfo);
     #endif
   }
 
@@ -303,6 +306,10 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
     if(!coretypeinfo->curpool){
       naRegisterCoreTypeInfo(coretypeinfo);
       naEnhanceCorePool(coretypeinfo);
+      #ifndef NDEBUG
+        if(!coretypeinfo->curpool)
+          {naCrash("naNewStruct", "No pool available even after enhancing."); return NA_NULL;}
+      #endif
     }
   
     // If the current pool is full, we try the next in the pool list.
@@ -315,7 +322,7 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
     // Now, we can be sure that the current pool has space.
   
     // We get the next unused pointer.
-    pointer = coretypeinfo->curpool->firstunused;
+    pointer = coretypeinfo->curpool->firstunused; // todo: code sanity warning
     
     if(coretypeinfo->curpool->usedcount == coretypeinfo->curpool->everusedcount){
       // The current struct has not been used ever. Use the next address one
@@ -440,14 +447,15 @@ NA_DEF void naStartRuntime(){
 NA_DEF void naStopRuntime(){
   #ifndef NDEBUG
     if(!na_runtime)
-      naCrash("naStopRuntime", "Runtime not running");
+      {naCrash("naStopRuntime", "Runtime not running"); return;}
     
     #if (NA_RUNTIME_USES_MEMORY_POOLS == 1)
       if(na_runtime->typeinfocount){
+        NAInt i;
         printf("\nMemory leaks detected in NARuntime:\n");
-        for(NAInt i=0; i< na_runtime->typeinfocount; i++){
+        for(i=0; i< na_runtime->typeinfocount; i++){
           NAUInt structcount = naGetCoreTypeInfoAllocatedCount(na_runtime->typeinfos[i]);
-          printf("%s: %" NA_PRIi " * %" NA_PRIu " = %" NA_PRIi " Bytes\n", na_runtime->typeinfos[i]->typename, structcount, na_runtime->typeinfos[i]->typesize, structcount * na_runtime->typeinfos[i]->typesize);
+          printf("%s: %" NA_PRIu " * %" NA_PRIu " = %" NA_PRIu " Bytes\n", na_runtime->typeinfos[i]->typename, structcount, na_runtime->typeinfos[i]->typesize, structcount * na_runtime->typeinfos[i]->typesize);
         }
       }
     #endif

@@ -1,0 +1,199 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="test">
+      <UniqueIdentifier>{665f5b28-1121-41d5-8cd2-e5efd51e6a14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NACore">
+      <UniqueIdentifier>{72ccb611-3a19-4d1f-b6be-c4047f555597}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NAMath">
+      <UniqueIdentifier>{44da4431-4a6b-43d4-b916-23660d3be80c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NAStruct">
+      <UniqueIdentifier>{f974d4c6-0fc3-4525-8943-826bc7964b91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NAVisual">
+      <UniqueIdentifier>{67a27c89-21f7-418e-865d-0e941ad269af}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\test\main.c">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\test\testBuffer.c">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\test\testMemory.c">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\test\testStack.c">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\test\testSystem.c">
+      <Filter>test</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NACore\NABinaryData.c">
+      <Filter>NACore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NACore\NADateTime.c">
+      <Filter>NACore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NACore\NAFile.c">
+      <Filter>NACore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NACore\NAMemory.c">
+      <Filter>NACore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NACore\NASystem.c">
+      <Filter>NACore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NAMath\NAMoney.c">
+      <Filter>NAMath</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NABuffer.c">
+      <Filter>NAStruct</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAHeap.c">
+      <Filter>NAStruct</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAList.c">
+      <Filter>NAStruct</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAOctTree.c">
+      <Filter>NAStruct</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAQuadTree.c">
+      <Filter>NAStruct</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NAString.c">
+      <Filter>NAStruct</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NAVisual\NADeflate.c">
+      <Filter>NAVisual</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NAVisual\NAPNG.c">
+      <Filter>NAVisual</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUI.c">
+      <Filter>NAVisual</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUICoreAPI.c">
+      <Filter>NAVisual</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUIWINAPI.c">
+      <Filter>NAVisual</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\src\test\tests.h">
+      <Filter>test</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NACore\NABinaryDataII.h">
+      <Filter>NACore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NACore\NADateTimeII.h">
+      <Filter>NACore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAFileII.h">
+      <Filter>NACore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAMemoryII.h">
+      <Filter>NACore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAThreadingII.h">
+      <Filter>NACore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAURLII.h">
+      <Filter>NACore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAValueHelper.h">
+      <Filter>NACore</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAMath\NAComplexII.h">
+      <Filter>NAMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAMath\NACoordII.h">
+      <Filter>NAMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAMath\NAMathOperatorsII.h">
+      <Filter>NAMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAMath\NAMoneyII.h">
+      <Filter>NAMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAMath\NARandomII.h">
+      <Filter>NAMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAMath\NAVectorAlgebraII.h">
+      <Filter>NAMath</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAArrayII.h">
+      <Filter>NAStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NABufferII.h">
+      <Filter>NAStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NACircularBufferII.h">
+      <Filter>NAStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAHeapII.h">
+      <Filter>NAStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAListII.h">
+      <Filter>NAStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAOctTreeII.h">
+      <Filter>NAStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAPoolII.h">
+      <Filter>NAStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAQuadTreeII.h">
+      <Filter>NAStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAStackII.h">
+      <Filter>NAStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NAStringII.h">
+      <Filter>NAStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAVisual\NAUICocoa.h">
+      <Filter>NAVisual</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAVisual\NAUICoreAPI.h">
+      <Filter>NAVisual</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAVisual\NAUIWINAPI.h">
+      <Filter>NAVisual</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\NALib\NAArray.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABinaryData.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABuffer.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACircularBuffer.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAComplex.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAConfiguration.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACoord.h" />
+    <ClInclude Include="..\..\..\src\NALib\NADateTime.h" />
+    <ClInclude Include="..\..\..\src\NALib\NADeflate.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAFile.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAHeap.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAList.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAMathConstants.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAMathOperators.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAMemory.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAMoney.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAOctTree.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAPNG.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAPool.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAQuadTree.h" />
+    <ClInclude Include="..\..\..\src\NALib\NARandom.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStack.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAString.h" />
+    <ClInclude Include="..\..\..\src\NALib\NASystem.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAThreading.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAUI.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAURL.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAVectorAlgebra.h" />
+  </ItemGroup>
+</Project>

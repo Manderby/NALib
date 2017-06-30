@@ -408,10 +408,11 @@ NA_HIDEF NABufferSource* naCreateBufferSource(NABufferSourceDescriptor descripto
 NA_HIDEF NABufferSource* naCreateBufferSourceBuffer(NABuffer* buffer){
   NABufferSourceDescriptor desc;
   NABufferSource* source;
-  
+  NAPointer* pointer;
+
   NABufferIterator* iter = naAlloc(NABufferIterator);
   *iter = naMakeBufferModifier(buffer);
-  NAPointer* pointer = naNewPointerMutable(iter, NA_MEMORY_CLEANUP_NA_FREE, (NAMutator)naClearBufferIterator);
+  pointer = naNewPointerMutable(iter, NA_MEMORY_CLEANUP_NA_FREE, (NAMutator)naClearBufferIterator);
   
   naNulln(&desc, sizeof(desc));
   desc.data = pointer;
@@ -2501,12 +2502,17 @@ NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, NAInt cou
 
 
 NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffer, NARangei srcrange){
+  NABuffer* dstbuffer;
+  NABufferSource* tmpsource;
+  NAInt tmpsrcoffset;
+  NABuffer* mutablesrcbuffer;
+
   if(naIsRangeiEmpty(srcrange)){return;}
-  NABuffer* dstbuffer = naGetBufferIteratorBufferMutable(iter);
-  NABufferSource* tmpsource = dstbuffer->source;
-  NAInt tmpsrcoffset = dstbuffer->srcoffset;
+  dstbuffer = naGetBufferIteratorBufferMutable(iter);
+  tmpsource = dstbuffer->source;
+  tmpsrcoffset = dstbuffer->srcoffset;
   
-  NABuffer* mutablesrcbuffer = (NABuffer*)srcbuffer;
+  mutablesrcbuffer = (NABuffer*)srcbuffer;
   
   dstbuffer->source = naCreateBufferSourceBuffer(mutablesrcbuffer);
   
@@ -2783,8 +2789,9 @@ NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
 
 
 NA_DEF void naSkipBufferDelimiter(NABufferIterator* iter){
+  NAByte curbyte;
   if(naIsBufferAtInitial(iter)){return;}
-  NAByte curbyte = naGetBufferu8(iter);
+  curbyte = naGetBufferu8(iter);
   if(curbyte <= ' '){
     naSkipBufferWhitespaces(iter);
   }else{
@@ -3007,14 +3014,16 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* re
   NAInt bytesused = 0;
   int64 limit = max;
   uint64 intvalue;
+  const NABufferPart* part;
+  const NAByte* curbyte;
 
   *retint = 0LL;
 
   if(naIsBufferEmpty(naGetBufferIteratorBufferConst(iter))){return 0;}
   if(naIsBufferAtInitial(iter)){return 0;}
 //  if(naIsBufferAtInitial(iter)){naSeekBufferFromStart(iter, 0);}
-  const NABufferPart* part = naGetListCurrentConst(&(iter->listiter));
-  const NAByte* curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
+  part = naGetListCurrentConst(&(iter->listiter));
+  curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
 
   // Check for a potential sign at the first character
   if(*curbyte == '+'){

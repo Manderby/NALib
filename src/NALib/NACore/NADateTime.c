@@ -403,7 +403,7 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
       datetime.sisec += dts->sec;
       if((r < NA_NUMBER_OF_TAI_PERIODS-1) && (datetime.sisec >= naTAIPeriods[r+1].startsisec)){
         if((naTAIPeriods[r+1].indicator == NA_POSITIVE_LEAP_SECONDS_JUNE) || (naTAIPeriods[r+1].indicator == NA_POSITIVE_LEAP_SECONDS_DECEMBER)){
-          if(datetime.sisec >= naTAIPeriods[r+2].startsisec){
+          if((r+2 < NA_NUMBER_OF_TAI_PERIODS) && (datetime.sisec >= naTAIPeriods[r+2].startsisec)){ // todo. What is wrong here?
             // The leap seconds are overflown
             datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;
           }

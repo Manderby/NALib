@@ -12,7 +12,11 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Version 19 (first published 2017-Jun-30):
+==============================================
+
 Highlights:
+- All iterators finally implemented with a more pro API.
 - NABuffer now works with Iterators.
 - NAQuadTree and NAOctTree have updated iterators too. Lots of changes for a
   simpler API. The Deserialize and Serialize functions have been discarded.
@@ -53,6 +57,7 @@ Other things:
 - Coordinate functions now have more simple constructors like naMakeRectiEmpty
   or naMakeRectWithRecti.
 - naCopyn and naNulln now expect NAInt instead of NAUInt
+- Eliminated most code analysis warnings in debug mode.
 
 
 Version 18 (first published 2017-March-30):

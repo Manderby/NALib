@@ -300,6 +300,7 @@ NA_DEF NAString naMakeStringWithSuffixOfFilename(const NAString* filename){
 
 NA_DEF NAString naMakeStringCEscaped  (const NAString* inputstring){
   NAUTF8Char outbuffer[10]; // this is the maximal number of chars added.
+  NAString string;
   NABuffer* buffer = naCreateBuffer(NA_FALSE);
   NABufferIterator iter = naMakeBufferAccessor(inputstring->buffer);
   NABufferIterator outiter = naMakeBufferModifier(buffer);
@@ -322,7 +323,7 @@ NA_DEF NAString naMakeStringCEscaped  (const NAString* inputstring){
   }
   naClearBufferIterator(&outiter);
   naClearBufferIterator(&iter);
-  NAString string = naMakeStringWithBufferExtraction(buffer, naGetBufferRange(buffer));
+  string = naMakeStringWithBufferExtraction(buffer, naGetBufferRange(buffer));
   naReleaseBuffer(buffer);
   return string;
 }
@@ -330,6 +331,7 @@ NA_DEF NAString naMakeStringCEscaped  (const NAString* inputstring){
 
 
 NA_DEF NAString naMakeStringCUnescaped(const NAString* inputstring){
+  NAString string;
   NABuffer* buffer = naCreateBuffer(NA_FALSE);
   NABufferIterator iter = naMakeBufferAccessor(inputstring->buffer);
   NABufferIterator outiter = naMakeBufferModifier(buffer);
@@ -363,7 +365,7 @@ NA_DEF NAString naMakeStringCUnescaped(const NAString* inputstring){
   }
   naClearBufferIterator(&outiter);
   naClearBufferIterator(&iter);
-  NAString string = naMakeStringWithBufferExtraction(buffer, naGetBufferRange(buffer));
+  string = naMakeStringWithBufferExtraction(buffer, naGetBufferRange(buffer));
   naReleaseBuffer(buffer);
   return string;
 }
