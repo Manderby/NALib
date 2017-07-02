@@ -13,7 +13,7 @@
 
 struct NAArray{
   NAPtr   ptr;         // The pointer storing the data
-  NAInt   count;       // The number of elements
+  NAInt   count;       // The number of elements.
   NAInt   typesize;    // The size in bytes of the stored type
   NAMemoryCleanup cleanup;
   #ifndef NDEBUG
@@ -47,9 +47,9 @@ NA_IDEF NAArray* naInitArrayWithCount(NAArray* array, NAInt typesize, NAInt coun
     if(!array)
       {naCrash("naInitArrayWithCount", "array is Null-Pointer"); return NA_NULL;}
     if(typesize < 1)
-      naError("naInitArrayWithCount", "typesize is < 1.");
+      naError("naInitArrayWithCount", "typesize should not be < 1.");
     if(count < 0)
-      naError("naInitArrayWithCount", "count is < 0.");
+      naError("naInitArrayWithCount", "count should not be < 0.");
   #endif
   array->typesize = typesize;
   array->count = count;
@@ -69,7 +69,7 @@ NA_IDEF NAArray* naInitArrayWithDataConst(NAArray* array, const void* data, NAIn
     if(!array)
       {naCrash("naInitArrayWithDataConst", "array is Null-Pointer"); return NA_NULL;}
     if(typesize < 1)
-      naError("naInitArrayWithDataConst", "typesize is < 1");
+      naError("naInitArrayWithDataConst", "typesize should not be < 1");
   #endif
   array->typesize = typesize;
   array->count = count;
@@ -91,7 +91,7 @@ NA_IDEF NAArray* naInitArrayWithDataMutable(NAArray* array, void* data, NAInt ty
     if(!array)
       {naCrash("naInitArrayWithDataMutable", "array is Null-Pointer"); return NA_NULL;}
     if(typesize < 1)
-      naError("naInitArrayWithDataMutable", "typesize is < 1");
+      naError("naInitArrayWithDataMutable", "typesize should not be < 1");
   #endif
   array->typesize = typesize;
   array->count = count;
@@ -331,7 +331,7 @@ NA_IDEF void naClearArrayIterator(NAArrayIterator* iterator){
   #ifndef NDEBUG
     NAArray* mutablearray = (NAArray*)naGetPtrConst(&(iterator->array));
     if(mutablearray->itercount == 0)
-      naError("naClearArrayIterator", "Too many clears. Iteratorcout is already zero.");
+      naError("naClearArrayIterator", "Too many clears. Iterator count is already zero.");
     mutablearray->itercount--;
   #else
     NA_UNUSED(iterator);
@@ -362,12 +362,12 @@ NA_IDEF NABool naLocateArrayLast(NAArrayIterator* iterator){
 
 
 
-NA_IDEF NABool naLocateArrayContent(NAArrayIterator* iterator, const void* content){
+NA_IDEF NABool naLocateArrayData(NAArrayIterator* iterator, const void* data){
   const NAByte* ptr = naGetArrayPointerConst(naGetPtrConst(&(iterator->array)));
   NAInt count = naGetArrayCount(naGetPtrConst(&(iterator->array)));
   NAInt indx = 0;
   while(count){
-    if(ptr == content){
+    if(ptr == data){
       iterator->indx = indx;
       return NA_TRUE;
     }
@@ -405,9 +405,9 @@ NA_IDEF NABool naIterateArray(NAArrayIterator* iterator, NAInt step){
   if(iterator->indx == naGetArrayCount(naGetPtrConst(&(iterator->array)))){iterator->indx = -1;}
   #ifndef NDEBUG
     if(iterator->indx < -1)
-      naError("naIterateArray", "Iterator step underflows");
+      naError("naIterateArray", "Iterator underflows");
     if(iterator->indx >= naGetArrayCount(naGetPtrConst(&(iterator->array))))
-      naError("naIterateArray", "Iterator step overflows");
+      naError("naIterateArray", "Iterator overflows");
   #endif
   return (iterator->indx != -1);
 }
@@ -450,10 +450,10 @@ NA_IDEF void* naGetArrayPrevMutable(NAArrayIterator* iterator){
 
 
 
-NA_IDEF const void* naGetArrayCurrentConst(const NAArrayIterator* iterator){
+NA_IDEF const void* naGetArrayCurConst(const NAArrayIterator* iterator){
   #ifndef NDEBUG
     if(!iterator){
-      naCrash("naGetArrayCurrentConst", "iterator is Null-Pointer.");
+      naCrash("naGetArrayCurConst", "iterator is Null-Pointer.");
       return NA_NULL;
     }
   #endif
@@ -466,10 +466,10 @@ NA_IDEF const void* naGetArrayCurrentConst(const NAArrayIterator* iterator){
 
 
 
-NA_IDEF void* naGetArrayCurrentMutable(NAArrayIterator* iterator){
+NA_IDEF void* naGetArrayCurMutable(NAArrayIterator* iterator){
   #ifndef NDEBUG
     if(!iterator){
-      naCrash("naGetArrayCurrentMutable", "iterator is Null-Pointer.");
+      naCrash("naGetArrayCurMutable", "iterator is Null-Pointer.");
       return NA_NULL;
     }
   #endif
@@ -567,14 +567,14 @@ NA_IDEF NABool naIsArrayAtInitial(const NAArrayIterator* iterator){
 
 
 
-NA_IDEF NAInt naGetArrayCurrentIndex(const NAArrayIterator* iterator){
+NA_IDEF NAInt naGetArrayCurIndex(const NAArrayIterator* iterator){
   #ifndef NDEBUG
     if(!iterator){
-      naCrash("naGetArrayCurrentIndex", "iterator is Null-Pointer.");
+      naCrash("naGetArrayCurIndex", "iterator is Null-Pointer.");
       return NA_INVALID_MEMORY_INDEX;
     }
     if(naIsArrayAtInitial(iterator))
-      naError("naGetArrayCurrentIndex", "iterator is at initial position.");
+      naError("naGetArrayCurIndex", "iterator is at initial position.");
   #endif
   return iterator->indx;
 }

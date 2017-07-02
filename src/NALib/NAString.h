@@ -175,7 +175,7 @@ NA_API NAString naMakeStringEPSEncoded(const NAString* inputstring);
 NA_API NAString naMakeStringEPSDecoded(const NAString* inputstring);
 
 // The following functions are system dependent.
-// Currently, this is only necessary on windows.
+// Curly, this is only necessary on windows.
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
   // Returns a newly allocated memory block containing the system-encoded
   // string. If you do not provide the length, it will be automatically

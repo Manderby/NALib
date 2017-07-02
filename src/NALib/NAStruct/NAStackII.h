@@ -100,14 +100,14 @@ NA_IDEF void naClearStack(NAStack* stack){
       return;
     }
     if(stack->itercount != 0)
-      naCrash("naClearStack", "There are still iterators on this stack. Did you forget naClearStackIterator?");
+      naError("naClearStack", "There are still iterators on this stack. Did you forget naClearStackIterator?");
   #endif
 
   
   naClearListIterator(&(stack->curpos));
   stack->curpos = naMakeListMutator(&(stack->arrays));
   while(naIterateList(&(stack->curpos), 1)){
-    void* curarray = naGetListCurrentMutable(&(stack->curpos));
+    void* curarray = naGetListCurMutable(&(stack->curpos));
     naFree(curarray);
   }
   naClearListIterator(&(stack->curpos));
@@ -142,7 +142,7 @@ NA_IDEF void* naTopStack(NAStack* stack){
   NAByte* array;
   subindex = stack->usedcount - naGetStackArrayBaseIndex(stack, stack->curindex) - 1;
   
-  array = (NAByte*)naGetListCurrentMutable(&(stack->curpos));
+  array = (NAByte*)naGetListCurMutable(&(stack->curpos));
   return &(array[subindex * stack->typesize]);
 }
 
@@ -257,48 +257,48 @@ NA_IDEF NABool naIterateStack(NAStackIterator* iterator){
 
 
 
-NA_IDEF const void* naGetStackCurrentConst(NAStackIterator* iterator){
+NA_IDEF const void* naGetStackCurConst(NAStackIterator* iterator){
   // If you experience an error somewhere after this function call and believe
   // that garbage values are returned, maybe you need to use the pointer-variant
-  // of this function? naGetStackCurrentConst
+  // of this function? naGetStackCurConst
   const NAByte* curbase;
   if(naGetStackArrayBaseIndex(iterator->stack, iterator->curarrayindex) + iterator->cur >= iterator->stack->usedcount){return NA_NULL;}
-  curbase = (const NAByte*)naGetListCurrentConst(&(iterator->listiterator));
+  curbase = (const NAByte*)naGetListCurConst(&(iterator->listiterator));
   return &(curbase[iterator->cur * iterator->stack->typesize]);
 }
 
 
 
-NA_IDEF void* naGetStackCurrentMutable(NAStackIterator* iterator){
+NA_IDEF void* naGetStackCurMutable(NAStackIterator* iterator){
   // If you experience an error somewhere after this function call and believe
   // that garbage values are returned, maybe you need to use the pointer-variant
-  // of this function? naGetStackCurrentpMutable
+  // of this function? naGetStackCurpMutable
   NAByte* curbase;
   if(naGetStackArrayBaseIndex(iterator->stack, iterator->curarrayindex) + iterator->cur >= iterator->stack->usedcount){return NA_NULL;}
-  curbase = (NAByte*)naGetListCurrentMutable(&(iterator->listiterator));
+  curbase = (NAByte*)naGetListCurMutable(&(iterator->listiterator));
   return &(curbase[iterator->cur * iterator->stack->typesize]);
 }
 
 
 
-NA_IDEF const void* naGetStackCurrentpConst(NAStackIterator* iterator){
-  const void** dataptr = (const void**)naGetStackCurrentConst(iterator);
+NA_IDEF const void* naGetStackCurpConst(NAStackIterator* iterator){
+  const void** dataptr = (const void**)naGetStackCurConst(iterator);
   return *dataptr;
 //  
 //  const NAByte* curbase;
 //  if(naGetStackArrayBaseIndex(iterator->stack, iterator->curarrayindex) + iterator->cur >= iterator->stack->usedcount){return NA_NULL;}
-//  curbase = (const NAByte*)naGetListCurrentConst(&(iterator->listiterator));
+//  curbase = (const NAByte*)naGetListCurConst(&(iterator->listiterator));
 //  return *((const void**)&(curbase[iterator->cur * iterator->stack->typesize]));
 }
 
 
 
-NA_IDEF void* naGetStackCurrentpMutable(NAStackIterator* iterator){
-  void** dataptr = (void**)naGetStackCurrentConst(iterator);
+NA_IDEF void* naGetStackCurpMutable(NAStackIterator* iterator){
+  void** dataptr = (void**)naGetStackCurConst(iterator);
   return *dataptr;
 //  const NAByte* curbase;
 //  if(naGetStackArrayBaseIndex(iterator->stack, iterator->curarrayindex) + iterator->cur >= iterator->stack->usedcount){return NA_NULL;}
-//  curbase = (const NAByte*)naGetListCurrentMutable(&(iterator->listiterator));
+//  curbase = (const NAByte*)naGetListCurMutable(&(iterator->listiterator));
 //  return *((void**)&(curbase[iterator->cur * iterator->stack->typesize]));
 }
 
@@ -310,7 +310,7 @@ NA_IDEF void naForeachStackConst(const NAStack* stack, NAAccessor accessor){
   // naForeachStackpConst
   NAStackIterator iter = naMakeStackAccessor(stack);
   while(naIterateStack(&iter)){
-    const void* data = naGetStackCurrentConst(&iter);
+    const void* data = naGetStackCurConst(&iter);
     accessor(data);
   }
   naClearStackIterator(&iter);
@@ -324,7 +324,7 @@ NA_IDEF void naForeachStackMutable(const NAStack* stack, NAMutator mutator){
   // naForeachStackpMutable
   NAStackIterator iter = naMakeStackMutator(stack);
   while(naIterateStack(&iter)){
-    void* data = naGetStackCurrentMutable(&iter);
+    void* data = naGetStackCurMutable(&iter);
     mutator(data);
   }
   naClearStackIterator(&iter);
@@ -335,7 +335,7 @@ NA_IDEF void naForeachStackMutable(const NAStack* stack, NAMutator mutator){
 NA_IDEF void naForeachStackpConst(const NAStack* stack, NAAccessor accessor){
   NAStackIterator iter = naMakeStackAccessor(stack);
   while(naIterateStack(&iter)){
-    const void* const* data = (const void* const*)naGetStackCurrentConst(&iter);
+    const void* const* data = (const void* const*)naGetStackCurConst(&iter);
     accessor(*data);
   }
   naClearStackIterator(&iter);
@@ -346,7 +346,7 @@ NA_IDEF void naForeachStackpConst(const NAStack* stack, NAAccessor accessor){
 NA_IDEF void naForeachStackpMutable(const NAStack* stack, NAMutator mutator){
   NAStackIterator iter = naMakeStackMutator(stack);
   while(naIterateStack(&iter)){
-    void** data = (void**)naGetStackCurrentMutable(&iter);
+    void** data = (void**)naGetStackCurMutable(&iter);
     mutator(*data);
   }
   naClearStackIterator(&iter);

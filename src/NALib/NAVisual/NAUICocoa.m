@@ -433,7 +433,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
   }
 }
 - (void)drawRect:(NSRect)dirtyRect{
-  [[self openGLContext] makeCurrentContext];
+  [[self openGLContext] makeCurContext];
   naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_REDRAW, &dirtyRect);
 }
 - (void)reshape{

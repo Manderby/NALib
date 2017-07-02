@@ -660,7 +660,7 @@ NA_IDEF NAPosi naMakePosiWithAlignment(NAPosi origin, NARecti alignrect){
   NAPosi neworigin;
   #ifndef NDEBUG
     if(naIsRectiEmptySlow(alignrect)){
-      naCrash("naMakePosiWithAlignment", "alignment rect is empty");
+      naCrash("naMakePosiWithAlignment", "alignment rect is empty.");
       return naMakePosi(0, 0);
     }
   #endif
@@ -672,7 +672,7 @@ NA_IDEF NAVertexi naMakeVertexiWithAlignment(NAVertexi origin, NABoxi alignbox){
   NAVertexi neworigin;
   #ifndef NDEBUG
     if(naIsBoxiEmptySlow(alignbox)){
-      naCrash("naMakePosiWithAlignment", "alignment box is empty");
+      naCrash("naMakeVertexiWithAlignment", "alignment box is empty.");
       return naMakeVertexi(0, 0, 0);
     }
   #endif

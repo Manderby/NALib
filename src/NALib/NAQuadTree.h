@@ -129,7 +129,7 @@ typedef void* (*NAQuadTreeNodeAllocator)( NAPosi origin,
 typedef void  (*NAQuadTreeNodeDeallocator)(void* nodedata);
 
 // Whenever you altered a leaf and want to propagate the change over the whole
-// tree, you call naUpdateQuadTreeCurrent which in turn will call the following
+// tree, you call naUpdateQuadTreeCur which in turn will call the following
 // two callback functions. Both will be called with the PARENTAL (internal) node
 // data you may have stored with NAQuadTreeNodeAllocator. Additionally, you are
 // given all four child data pointers as an array as well as a segment index
@@ -239,9 +239,9 @@ NA_IAPI NAQuadTreeCallbacks naGetQuadTreeCallbacks(
 // available, NA_NULL is returned.
 NA_API void* naGetQuadTreeRootNodeData(       NAQuadTree* tree);
 
-// Same thing as naUpdateQuadTreeCurrent but is called for every leaf in the
+// Same thing as naUpdateQuadTreeCur but is called for every leaf in the
 // whole tree. All messages will bubble as long as there is at least one child
-// per node requesting a bubble. Use naUpdateQuadTreeCurrent if you want to
+// per node requesting a bubble. Use naUpdateQuadTreeCur if you want to
 // update only one element.
 NA_API void naUpdateQuadTree(                  NAQuadTree* tree);
 
@@ -281,8 +281,8 @@ NA_API void naSetQuadTreeInRect(          NAQuadTree* tree,
 //
 // NAQuadTreeIterator iter = naMakeQuadTreeIteratorMutable(tree);
 // while(naIterateQuadTree(&iter)){
-//   MyLeafData* data = naGetQuadTreeCurrentMutable(&iter);
-//   NAPosi origin = naGetQuadTreeCurrentOrigin(&iter);
+//   MyLeafData* data = naGetQuadTreeCurMutable(&iter);
+//   NAPosi origin = naGetQuadTreeCurOrigin(&iter);
 //   // do stuff with the leaf data.
 // }
 // naClearQuadTreeIterator(&iter);
@@ -323,7 +323,7 @@ NA_API NABool naIterateQuadTree(  NAQuadTreeIterator* iter,
 // Moves the iterator to the leaf containing the given coord. If such a leaf is
 // not found in the tree, NA_FALSE ist returned. The iterator though stores the
 // coord it is supposed to point at. This allows you to locate a position an
-// then use naGetQuadTreeCurrentMutable to create a leaf at that position.
+// then use naGetQuadTreeCurMutable to create a leaf at that position.
 NA_API NABool naLocateQuadTreeCoord(NAQuadTreeIterator* iter, NAPosi coord);
 
 // Moves the iterator relative to the current position. Each step can be
@@ -336,20 +336,20 @@ NA_API NABool naLocateQuadTreeSteps(  NAQuadTreeIterator* iter,
 // You can retrieve the current leaf with these functions. When create is set
 // to NA_TRUE, a new leaf will be created if it does not exist. You need a
 // modifier iterator for this.
-NA_API const void* naGetQuadTreeCurrentConst(  NAQuadTreeIterator* iter);
-NA_API void*       naGetQuadTreeCurrentMutable(NAQuadTreeIterator* iter,
+NA_API const void* naGetQuadTreeCurConst(  NAQuadTreeIterator* iter);
+NA_API void*       naGetQuadTreeCurMutable(NAQuadTreeIterator* iter,
                                                             NABool create);
 
 // Returns the origin of the leaf the iterator is pointing at.
-NA_API NAPosi naGetQuadTreeCurrentOrigin(NAQuadTreeIterator* iter);
+NA_API NAPosi naGetQuadTreeCurOrigin(NAQuadTreeIterator* iter);
 
 // Starts at the leaf containing the given coord and traverses upwards
 // (bubbling) the tree by calling the appropriate callback functions of all
 // nodes. When the callback functions return NA_FALSE, bubbling stops.
-NA_API void naUpdateQuadTreeCurrent(  NAQuadTreeIterator* iter);
+NA_API void naUpdateQuadTreeCur(  NAQuadTreeIterator* iter);
 
 // Removes the leaf the iterator currently points at.
-NA_API void naRemoveQuadTreeCurrent(NAQuadTreeIterator* iter);
+NA_API void naRemoveQuadTreeCur(NAQuadTreeIterator* iter);
 
 
 

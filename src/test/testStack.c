@@ -123,7 +123,7 @@ void testStack(void){
   sum = 0;
   iter = naMakeStackAccessor(&stack);
   while(naIterateStack(&iter)){
-    sum += (int64)*(int*)naGetStackCurrentConst(&iter);
+    sum += (int64)*(int*)naGetStackCurConst(&iter);
   }
   naClearStackIterator(&iter);
   time2 = naMakeDateTimeNow();

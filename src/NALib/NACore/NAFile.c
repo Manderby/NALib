@@ -11,7 +11,7 @@
 
 // This function had to be moved here as it introcudes cyclic redundancies
 // when compiling.
-NA_DEF NAString naMakeStringWithCurrentWorkingDirectory(){
+NA_DEF NAString naMakeStringWithCurWorkingDirectory(){
   NAString string;
   NAUTF8Char* cwdbuf = naGetCwd(NA_NULL, 0);
   string = naMakeStringWithMutableUTF8Buffer(cwdbuf, -(NAInt)(naStrlen(cwdbuf)), NA_MEMORY_CLEANUP_NA_FREE);

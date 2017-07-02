@@ -154,9 +154,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
     for(a = 0; a < newtreeindex; a++) {
       if(tree->indextree[a] == 0)
         naError("naBuildHuffmanCodeTree", "undefined index in tree");
-//      printf("%d,", tree->indextree[a]);
     }
-//    printf("\n");
   #endif
 
 }
@@ -195,7 +193,6 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
     uint16 repeatcount;
     uint16 i;
     codelength = naDecodeHuffman(codelengthhuffman, iter);
-//    printf(", %d", codelength);
     switch(codelength){
     case 16:
       repeatcount = (uint16)naReadBufferBits(iter, 2) + 3;
@@ -204,7 +201,6 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
           naError("naReadCodeLengthHuffman", "Internal Error: Reading too many literals at codelength 16");
       #endif
       for(i=0; i<repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = alphabethuffman->codelengths[curalphabetcount - 1];}
-//      printf("(%d)", repeatcount);
       curalphabetcount += repeatcount;
       break;
     case 17:
@@ -214,7 +210,6 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
           naError("naReadCodeLengthHuffman", "Internal Error: Reading too many literals at codelength 17");
       #endif
       for(i=0; i<repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = 0;}
-//      printf("(%d)", repeatcount);
       curalphabetcount += repeatcount;
       break;
     case 18:
@@ -224,7 +219,6 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
           naError("naReadCodeLengthHuffman", "Internal Error: Reading too many literals at codelength 18");
       #endif
       for(i=0; i<repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = 0;}
-//      printf("(%d)", repeatcount);
       curalphabetcount += repeatcount;
       break;
     default:
@@ -233,7 +227,6 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
       break;
     }
   }
-//  printf("\n");
   
   naBuildHuffmanCodeTree(alphabethuffman);
   return alphabethuffman;
@@ -341,9 +334,7 @@ NA_HDEF void naReadDymanicHuffmanCodes(NABufferIterator* iter, NAHuffmanCodeTree
   NAHuffmanCodeTree* codelengthhuffman = naAllocHuffmanCodeTree(19);
   for(c=0; c<hclen; c++){
     codelengthhuffman->codelengths[codeorder[c]] = (uint16)naReadBufferBits(iter, 3);
-//    printf("(%d, %d),", codeorder[c], codelengthhuffman->codelengths[codeorder[c]]);
   }
-//  printf("\n");
   naBuildHuffmanCodeTree(codelengthhuffman);
   
   *literalhuffman = naReadCodeLengthHuffman(codelengthhuffman, iter, hlit);
@@ -513,7 +504,6 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
         curcode = naDecodeHuffman(literalhuffman, &iterz);
         if(curcode < 256){
           naWriteBufferu8(&iterout, (uint8)curcode);
-          //printf("%u\n", (uint32)curcode);
         }else if(curcode == 256){
           break;
         }else{
@@ -522,7 +512,6 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
           distcode = naDecodeHuffman(distancehuffman, &iterz);
           dist = naDecodeDistance(&iterz, distcode);
           naRepeatBufferBytes(&iterout, dist, length);
-          //printf("(d %d l %d)\n", dist, length);
         }
       }
       
@@ -530,7 +519,6 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
       naDeallocHuffmanCodeTree(distancehuffman);
     }
     if(isblockfinal){break;}
-//    printf("Another block\n");
   }
   
   naClearBufferIterator(&iterout);

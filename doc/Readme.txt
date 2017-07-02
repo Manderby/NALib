@@ -210,8 +210,8 @@ As soon as the iterator is created, you can use the iterate functions in a
 while loop to visit all elements:
 
 while(naIterateXXX(&iter)){
-  const MyElementData* constdata = naGetXXXCurrentConst();
-  MyElementData* mutabledata = naGetXXXCurrentMutable();
+  const MyElementData* constdata = naGetXXXCurConst();
+  MyElementData* mutabledata = naGetXXXCurMutable();
   // do something with the data.
 }
 

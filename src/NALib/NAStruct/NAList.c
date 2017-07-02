@@ -17,12 +17,12 @@ NA_DEF NAListElement* naNewListElement(NAListElement* prev, NAListElement* next)
 
 
 
-NA_DEF NABool naLocateListContent(NAListIterator* iterator, const void* content){
+NA_DEF NABool naLocateListData(NAListIterator* iterator, const void* data){
   // todo: search in left-right exponential search starting from the current
   // position.
 
   while(naIterateList(iterator, 1)){
-    if(naGetPtrConst(&(iterator->cur->ptr)) == content){
+    if(naGetPtrConst(&(iterator->cur->ptr)) == data){
       return NA_TRUE;
     }
   }

@@ -171,7 +171,7 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABufferIterator* iter){
   }
   #ifndef NDEBUG
 //    if(chunk->type == NA_PNG_CHUNK_TYPE_UNKNOWN){
-//      printf("Undefined Chunkname %c%c%c%c\n", chunkname[0], chunkname[1], chunkname[2], chunkname[3]);
+//      printf("Undefined Chunkname %c%c%c%c" NA_NL, chunkname[0], chunkname[1], chunkname[2], chunkname[3]);
 //    }
   #endif
   
@@ -319,7 +319,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
       }
       break;
     default:
-      printf("invalid filter\n");
+//      printf("invalid filter" NA_NL);
       curbyte += bytesperline;
       break;
     }
@@ -762,7 +762,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   
   iter = naMakeListMutator(&(png->chunks));
   while(naIterateList(&iter, 1)){
-    NAPNGChunk* curchunk = naGetListCurrentMutable(&iter);
+    NAPNGChunk* curchunk = naGetListCurMutable(&iter);
     switch(curchunk->type){
     case NA_PNG_CHUNK_TYPE_IHDR:  naReadPNGIHDRChunk(png, curchunk);  break;
     case NA_PNG_CHUNK_TYPE_PLTE:  naReadPNGPLTEChunk(png, curchunk);  break;
@@ -855,7 +855,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
   iter = naMakeListMutator(&(png->chunks));
   while(naIterateList(&iter, 1)){
 
-    NAPNGChunk* curchunk = naGetListCurrentMutable(&iter);
+    NAPNGChunk* curchunk = naGetListCurMutable(&iter);
     naFixBufferRange(curchunk->data);
 
     curchunk->length = naGetBufferRange(curchunk->data).length;

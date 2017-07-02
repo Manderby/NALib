@@ -94,7 +94,7 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
       BeginPaint(hWnd, &ps);
 
       //if(uielement is opengl)
-      //        wglMakeCurrent(GetDC(naGetUIElementNativeID(&(openglview->uielement))), openglview->hRC);
+      //        wglMakeCur(GetDC(naGetUIElementNativeID(&(openglview->uielement))), openglview->hRC);
 
       hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW, NA_NULL);
       //uielement->refreshrequested = NA_FALSE;
@@ -128,7 +128,6 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     // lParam: several values, attributes, flags, ...
     keycode = wParam;
     scancode = (NAUIKeyCode)MapVirtualKey((UINT)keycode, MAPVK_VK_TO_VSC);
-    //printf("%x\n", scancode);
     hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_KEYDOWN, &scancode);
     break;
 
@@ -230,9 +229,9 @@ NA_HDEF static VOID CALLBACK naTimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_
   app = (NAWINAPIApplication*)naGetApplication();
   iter = naMakeListModifier(&(app->timers));
   while (naIterateList(&iter, 1)) {
-    NATimerStruct* curstruct = (NATimerStruct*)naGetListCurrentMutable(&iter);
+    NATimerStruct* curstruct = (NATimerStruct*)naGetListCurMutable(&iter);
     if (curstruct->key == timerkey) {
-      naRemoveListCurrentMutable(&iter, NA_FALSE);
+      naRemoveListCurMutable(&iter, NA_FALSE);
       KillTimer(hwnd, idEvent);
       curstruct->func(curstruct->arg);
       naFree(curstruct);
@@ -855,7 +854,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 	
 	  // make render context with this device context.
 	  openglview->hRC = wglCreateContext(hDC);
-	  wglMakeCurrent(hDC, openglview->hRC);
+	  wglMakeCur(hDC, openglview->hRC);
 
     // Now the OpenGL context is created and current. We can initialize it
     // if necessary.

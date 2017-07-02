@@ -1082,11 +1082,11 @@ NA_DEF NAString naMakeStringFromSecondDifference(double difference,
 
 NA_DEF NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber){
   NAInt taiperiod;
-  if(olduncertainsecondnumber < 0){return INVALID_UNCERTAIN_SECOND_NUMBER;}
+  if(olduncertainsecondnumber < 0){return NA_DATETIME_INVALID_UNCERTAIN_SECOND_NUMBER;}
   // Note that the last entry of the structure storing all TAI periods always
   // is a non-leap-second-entry.
-  if(olduncertainsecondnumber == naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec){return NO_CORRECTION_NEEDED;}
-  if(olduncertainsecondnumber > naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec){return NEW_LIBRARY_IS_OLDER_THAN_BEFORE;}
+  if(olduncertainsecondnumber == naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec){return NA_DATETIME_NO_CORRECTION_NEEDED;}
+  if(olduncertainsecondnumber > naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec){return NA_DATETIME_NEW_LIBRARY_IS_OLDER_THAN_BEFORE;}
   taiperiod = naGetTAIPeriodIndexForSISecond(olduncertainsecondnumber);
   // Find the earliest second which needs correction.
   while(taiperiod < NA_NUMBER_OF_TAI_PERIODS){
@@ -1095,7 +1095,7 @@ NA_DEF NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber){
     taiperiod++;
   }
   // No leap second has been introduced in the meantime.
-  return NO_CORRECTION_NEEDED;
+  return NA_DATETIME_NO_CORRECTION_NEEDED;
 }
 
 

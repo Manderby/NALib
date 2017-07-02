@@ -196,7 +196,7 @@ NARuntime* na_runtime = NA_NULL;
 
 
 
-  NA_HIDEF void naAttachPoolAfterCurrentPool(NACoreTypeInfo* coretypeinfo, NACorePool* corepool){
+  NA_HIDEF void naAttachPoolAfterCurPool(NACoreTypeInfo* coretypeinfo, NACorePool* corepool){
     corepool->prevpool = coretypeinfo->curpool;
     corepool->nextpool = coretypeinfo->curpool->nextpool;
     corepool->prevpool->nextpool = corepool;
@@ -248,7 +248,7 @@ NARuntime* na_runtime = NA_NULL;
     // Add the new pool after the current pool or set the pool as the first and
     // only pool, if there is none available yet.
     if(coretypeinfo->curpool){
-      naAttachPoolAfterCurrentPool(coretypeinfo, corepool);
+      naAttachPoolAfterCurPool(coretypeinfo, corepool);
     }else{
       corepool->prevpool = corepool;
       corepool->nextpool = corepool;
@@ -309,6 +309,7 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
       #ifndef NDEBUG
         if(!coretypeinfo->curpool)
           {naCrash("naNewStruct", "No pool available even after enhancing."); return NA_NULL;}
+          // todo: sanity check fails. why?
       #endif
     }
   
@@ -396,7 +397,7 @@ NA_DEF void naDelete(void* pointer){
     if((corepool->usedcount == corepool->maxcount) && (corepool->nextpool != corepool) && (corepool->coretypeinfo->curpool != corepool)){
       corepool->nextpool->prevpool = corepool->prevpool;
       corepool->prevpool->nextpool = corepool->nextpool;
-      naAttachPoolAfterCurrentPool(corepool->coretypeinfo, corepool);
+      naAttachPoolAfterCurPool(corepool->coretypeinfo, corepool);
     }
 
     // We reduce the number of used structs in this pool. 
@@ -447,15 +448,15 @@ NA_DEF void naStartRuntime(){
 NA_DEF void naStopRuntime(){
   #ifndef NDEBUG
     if(!na_runtime)
-      {naCrash("naStopRuntime", "Runtime not running"); return;}
+      {naCrash("naStopRuntime", "Runtime not running. Use naStartRuntime()"); return;}
     
     #if (NA_RUNTIME_USES_MEMORY_POOLS == 1)
       if(na_runtime->typeinfocount){
         NAInt i;
-        printf("\nMemory leaks detected in NARuntime:\n");
+        printf(NA_NL "Memory leaks detected in NARuntime:" NA_NL);
         for(i=0; i< na_runtime->typeinfocount; i++){
           NAUInt structcount = naGetCoreTypeInfoAllocatedCount(na_runtime->typeinfos[i]);
-          printf("%s: %" NA_PRIu " * %" NA_PRIu " = %" NA_PRIu " Bytes\n", na_runtime->typeinfos[i]->typename, structcount, na_runtime->typeinfos[i]->typesize, structcount * na_runtime->typeinfos[i]->typesize);
+          printf("%s: %" NA_PRIu " * %" NA_PRIu " = %" NA_PRIu " Bytes" NA_NL, na_runtime->typeinfos[i]->typename, structcount, na_runtime->typeinfos[i]->typesize, structcount * na_runtime->typeinfos[i]->typesize);
         }
       }
     #endif
@@ -469,7 +470,7 @@ NA_DEF void naStopRuntime(){
 NA_DEF NAUInt naGetRuntimeMemoryPageSize(){
   #ifndef NDEBUG
     if(!na_runtime)
-      {naCrash("naGetRuntimeMemoryPageSize", "Runtime not running"); return 0;}
+      {naCrash("naGetRuntimeMemoryPageSize", "Runtime not running. Use naStartRuntime()"); return 0;}
   #endif
   return na_runtime->mempagesize;
 }
@@ -479,7 +480,7 @@ NA_DEF NAUInt naGetRuntimeMemoryPageSize(){
 NA_DEF NAUInt naGetRuntimePoolSize(){
   #ifndef NDEBUG
     if(!na_runtime)
-      {naCrash("naGetRuntimePoolSize", "Runtime not running"); return 0;}
+      {naCrash("naGetRuntimePoolSize", "Runtime not running. Use naStartRuntime()"); return 0;}
   #endif
   return na_runtime->poolsize;
 }

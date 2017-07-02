@@ -14,26 +14,17 @@
   #include <stdio.h>
 
 
-  void naError(const char* functionsymbol, const char* text, ...){
-    va_list argumentlist;
-    va_start(argumentlist, text);
-    // Set a breakpoint here, if everything fails.
-    fprintf(stderr, "Error in %s: ", functionsymbol);
-    vfprintf(stderr, text, argumentlist);
-    fprintf(stderr, "\n");
-    va_end(argumentlist);
+  void naError(const char* functionsymbol, const char* text){
+    fprintf(stderr, "Error in %s: %s", functionsymbol, text);
+    fprintf(stderr, NA_NL); // Set a breakpoint in this line.
   }
 
 
 
-  NA_NORETURN void naCrash(const char* functionsymbol, const char* text, ...){
-    va_list argumentlist;
-    va_start(argumentlist, text);
-    // Set a breakpoint here, if everything fails.
-    fprintf(stderr, "Critical Error in %s: ", functionsymbol);
-    vfprintf(stderr, text, argumentlist);
-    fprintf(stderr, "\nCrashing the application deliberately...\n");
-    va_end(argumentlist);
+  NA_NORETURN void naCrash(const char* functionsymbol, const char* text){
+    fprintf(stderr, "Critical error in %s: %s" NA_NL, functionsymbol, text);
+    fprintf(stderr, NA_NL "Crashing the application deliberately...");
+    fprintf(stderr, NA_NL); // Set a breakpoint in this line.
     exit(EXIT_FAILURE);
   }
 

@@ -18,7 +18,7 @@ void testBufferFile(void){
   NAInt linesread;
   NABufferIterator iter;
 
-  NAString cwd = naMakeStringWithCurrentWorkingDirectory();
+  NAString cwd = naMakeStringWithCurWorkingDirectory();
 
   printf("\nCreating file input buffer with ASCII file.\n");
   printf("Working Directory: %s\n", naGetStringUTF8Pointer(&cwd));

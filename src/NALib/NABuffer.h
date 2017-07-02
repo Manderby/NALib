@@ -212,7 +212,7 @@ NA_API NAInt  naGetBufferEndianness(NABuffer* buffer);
 // Returns the byte at the given index. Warning: This function is costly. You
 // might want to use one of the Reading or Parsing functions instead.
 NA_API NAByte naGetBufferByteAtIndex(const NABuffer* buffer, NAInt indx);
-//NA_API NAByte naGetBufferCurrentByte(const NABuffer* buffer);
+//NA_API NAByte naGetBufferCurByte(const NABuffer* buffer);
 
 // Searches for the given byte starting at (and including) startoffset, either
 // forward or backwards.
@@ -249,7 +249,8 @@ NA_API NABool naEqualBufferToData(    const NABuffer* buffer,
                                                NABool casesensitive);
 
 // Appends the whole content of srcbuffer to the end of dstbuffer.
-NA_API void naAppendBufferToBuffer(NABuffer* dstbuffer, const NABuffer* srcbuffer);
+NA_API void naAppendBufferToBuffer(         NABuffer* dstbuffer,
+                                      const NABuffer* srcbuffer);
 
 // Uses all bytes of the buffer to write to output or use it in other structs.
 // File:     Creates a new file and fills it with the content of the buffer.
@@ -257,7 +258,8 @@ NA_API void naAppendBufferToBuffer(NABuffer* dstbuffer, const NABuffer* srcbuffe
 // Checksum: Adds all bytes to the checksum.
 NA_API void naWriteBufferToFile(NABuffer* buffer, NAFile* file);
 NA_API void naWriteBufferToData(NABuffer* buffer, void* data);
-NA_API void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum);
+NA_API void naAccumulateBufferToChecksum(     NABuffer* buffer,
+                                            NAChecksum* checksum);
 
 
 
@@ -372,8 +374,8 @@ NA_API NABuffer* naReadBufferBuffer(  NABufferIterator* iter,
 
 // Writes the given number of bytes in data to the current position of buffer.
 NA_API void naWriteBufferBytes( NABufferIterator* iter,
-                              const void* data,
-                                    NAInt bytesize);
+                                      const void* data,
+                                            NAInt bytesize);
 
 NA_API void naWriteBufferi8  (NABufferIterator* iter, int8   value);
 NA_API void naWriteBufferi16 (NABufferIterator* iter, int16  value);
@@ -399,10 +401,10 @@ NA_API void naWriteBufferdv  (NABufferIterator* iter, const double* src, NAInt c
 
 NA_API void naWriteBufferBuffer(  NABufferIterator* iter,
                                     const NABuffer* srcbuffer,
-                                   NARangei srcrange);
+                                           NARangei srcrange);
 NA_API void naRepeatBufferBytes(  NABufferIterator* iter,
-                                      NAInt distance,
-                                      NAInt bytesize);
+                                              NAInt distance,
+                                              NAInt bytesize);
 
 
 

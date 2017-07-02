@@ -62,7 +62,7 @@ NA_HDEF void naClearCoreApplication(){
   #endif
   iter = naMakeListMutator(&(na_app->uielements));
   while(naIterateList(&iter, 1)){
-//    NAUIElement* curelement = naGetListCurrentMutable(&iter);
+//    NAUIElement* curelement = naGetListCurMutable(&iter);
 //    naCloseWindow(na_ui->windows[i]);
 //    naClearWindow(na_ui->windows[i]);
   }
@@ -108,9 +108,9 @@ NA_HDEF void naRegisterCoreUIElement(NACoreUIElement* coreuielement, NACoreUIEle
 
 NA_HDEF void naUnregisterCoreUIElement(NACoreUIElement* coreuielement){
   NAListIterator iter = naMakeListMutator(&(na_app->uielements));
-  NABool found = naLocateListContent(&iter, coreuielement);
+  NABool found = naLocateListData(&iter, coreuielement);
   if(found){
-    naRemoveListCurrentMutable(&iter, NA_FALSE);
+    naRemoveListCurMutable(&iter, NA_FALSE);
   }else{
     #ifndef NDEBUG
       naError("naUnregisterCoreUIElement", "Element not found");
@@ -167,7 +167,7 @@ NA_HDEF NACoreWindow* naGetCoreUIElementWindow(NACoreUIElement* coreuielement){
 NA_HDEF void* naGetUINALibEquivalent(NANativeID nativeID){
   NAListIterator iter = naMakeListMutator(&(na_app->uielements));
   while(naIterateList(&iter, 1)){
-    NACoreUIElement* curelement = naGetListCurrentMutable(&iter);
+    NACoreUIElement* curelement = naGetListCurMutable(&iter);
     if(curelement->nativeID == nativeID){return curelement;}
   }
   naClearListIterator(&iter);
@@ -197,7 +197,7 @@ NA_DEF void naClearUIElement(NAUIElement* uielement){
   NACoreUIElement* element = (NACoreUIElement*)uielement;
   NAListIterator iter = naMakeListMutator(&(element->reactions));
   while(naIterateList(&iter, 1)){
-    NAReaction* curreaction = naGetListCurrentMutable(&iter);
+    NAReaction* curreaction = naGetListCurMutable(&iter);
     naFree(curreaction);
   }
   naClearListIterator(&iter);
@@ -243,7 +243,7 @@ NA_DEF NABool naDispatchUIElementCommand(NACoreUIElement* element, NAUICommand c
 
   NAListIterator iter = naMakeListMutator(&(element->reactions));
   while(naIterateList(&iter, 1)){
-    NAReaction* curreaction = naGetListCurrentMutable(&iter);
+    NAReaction* curreaction = naGetListCurMutable(&iter);
     if(curreaction->command == command){
       finished = curreaction->handler(curreaction->controller, (NAUIElement*)element, command, arg);
       // If the handler tells us to stop handling the command, we do so.

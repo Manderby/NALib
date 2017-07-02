@@ -133,7 +133,7 @@ typedef void* (*NAOctTreeNodeAllocator)( NAVertexi origin,
 typedef void  (*NAOctTreeNodeDeallocator)(void* nodedata);
 
 // Whenever you altered a leaf and want to propagate the change over the whole
-// tree, you call naUpdateOctTreeCurrent which in turn will call the following
+// tree, you call naUpdateOctTreeCur which in turn will call the following
 // two callback functions. Both will be called with the PARENTAL (internal) node
 // data you may have stored with NAOctTreeNodeAllocator. Additionally, you are
 // given all eight child data pointers as an array as well as a segment index
@@ -243,9 +243,9 @@ NA_IAPI NAOctTreeCallbacks naGetOctTreeCallbacks(
 // available, NA_NULL is returned.
 NA_API void* naGetOctTreeRootNodeData(       NAOctTree* tree);
 
-// Same thing as naUpdateOctTreeCurrent but is called for every leaf in the
+// Same thing as naUpdateOctTreeCur but is called for every leaf in the
 // whole tree. All messages will bubble as long as there is at least one child
-// per node requesting a bubble. Use naUpdateOctTreeCurrent if you want to
+// per node requesting a bubble. Use naUpdateOctTreeCur if you want to
 // update only one element.
 NA_API void naUpdateOctTree(                  NAOctTree* tree);
 
@@ -285,8 +285,8 @@ NA_API void naSetOctTreeInRect(           NAOctTree* tree,
 //
 // NAOctTreeIterator iter = naMakeOctTreeIteratorMutable(tree);
 // while(naIterateOctTree(&iter)){
-//   MyLeafData* data = naGetOctTreeCurrentMutable(&iter);
-//   NAVertexi origin = naGetOctTreeCurrentOrigin(&iter);
+//   MyLeafData* data = naGetOctTreeCurMutable(&iter);
+//   NAVertexi origin = naGetOctTreeCurOrigin(&iter);
 //   // do stuff with the leaf data.
 // }
 // naClearOctTreeIterator(&iter);
@@ -327,7 +327,7 @@ NA_API NABool naIterateOctTree(   NAOctTreeIterator* iter,
 // Moves the iterator to the leaf containing the given coord. If such a leaf is
 // not found in the tree, NA_FALSE ist returned. The iterator though stores the
 // coord it is supposed to point at. This allows you to locate a position an
-// then use naGetOctTreeCurrentMutable to create a leaf at that position.
+// then use naGetOctTreeCurMutable to create a leaf at that position.
 NA_API NABool naLocateOctTreeCoord(NAOctTreeIterator* iter, NAVertexi coord);
 
 // Moves the iterator relative to the current position. Each step can be
@@ -341,20 +341,20 @@ NA_API NABool naLocateOctTreeSteps(    NAOctTreeIterator* iter,
 // You can retrieve the current leaf with these functions. When create is set
 // to NA_TRUE, a new leaf will be created if it does not exist. You need a
 // modifier iterator for this.
-NA_API const void* naGetOctTreeCurrentConst(  NAOctTreeIterator* iter);
-NA_API void*       naGetOctTreeCurrentMutable(NAOctTreeIterator* iter,
+NA_API const void* naGetOctTreeCurConst(  NAOctTreeIterator* iter);
+NA_API void*       naGetOctTreeCurMutable(NAOctTreeIterator* iter,
                                                           NABool create);
 
 // Returns the origin of the leaf the iterator is pointing at.
-NA_API NAVertexi naGetOctTreeCurrentOrigin(NAOctTreeIterator* iter);
+NA_API NAVertexi naGetOctTreeCurOrigin(NAOctTreeIterator* iter);
 
 // Starts at the leaf containing the given coord and traverses upwards
 // (bubbling) the tree by calling the appropriate callback functions of all
 // nodes. When the callback functions return NA_FALSE, bubbling stops.
-NA_API void naUpdateOctTreeCurrent(  NAOctTreeIterator* iter);
+NA_API void naUpdateOctTreeCur(  NAOctTreeIterator* iter);
 
 // Removes the leaf the iterator currently points at.
-NA_API void naRemoveOctTreeCurrent(NAOctTreeIterator* iter);
+NA_API void naRemoveOctTreeCur(NAOctTreeIterator* iter);
 
 
 

@@ -88,7 +88,7 @@ NA_IAPI void naAddListLastMutable   (NAList* list,       void* content);
 // variants return a pointer to the previously stored content such that you
 // can erase it if you need to.
 //
-// The naRemoveListContent function is a convenience function which creates
+// The naRemoveListData function is a convenience function which creates
 // an iterator, searches for the given content and removes it. This would
 // take several lines to code but is much simpler when written as one function.
 // Warning: This function is potentially very slow.
@@ -96,7 +96,7 @@ NA_IAPI void  naRemoveListFirstConst    (NAList* list);
 NA_IAPI void* naRemoveListFirstMutable  (NAList* list);
 NA_IAPI void  naRemoveListLastConst     (NAList* list);
 NA_IAPI void* naRemoveListLastMutable   (NAList* list);
-NA_IAPI void  naRemoveListContent       (NAList* list, void* content);
+NA_IAPI void  naRemoveListData          (NAList* list, void* data);
 
 
 // /////////////////////////////////////////////
@@ -148,7 +148,7 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 // NAList* mylist;
 // NALIstIterator iter = naMakeListIterator(mylist);
 // while(naIterateList(&iter, 1)){
-//   void* curelement = naGetListCurrentMutable(iter);
+//   void* curelement = naGetListCurMutable(iter);
 //   Do stuff with curelement.
 // }
 // naClearListIterator(&iter);
@@ -190,7 +190,7 @@ NA_IAPI void naClearListIterator(NAListIterator* iterator);
 //
 // First:         Moves iterator to first element. This function is very fast.
 // Last:          Moves iterator to last element. This function is very fast.
-// Content:       A specific content pointer is searched within the list. This
+// Data:          A specific content pointer is searched within the list. This
 //                function is very slow. If you often need to locate elements
 //                within a list, try to store iterators.
 // Index:         The element with the specified index is searched. If the given
@@ -199,7 +199,7 @@ NA_IAPI void naClearListIterator(NAListIterator* iterator);
 //                function is slow, especially when searching for elements in
 //                the middle of the list.
 //
-// The Content and Index variants will return NA_FALSE, if the element has not
+// The Data and Index variants will return NA_FALSE, if the element has not
 // been found and NA_TRUE if it has been found. If not found, the iterator will
 // point to the initial list position.
 // 
@@ -208,7 +208,7 @@ NA_IAPI void naClearListIterator(NAListIterator* iterator);
 // the programmer is already forced to do things right when debugging the code.
 NA_IAPI NABool naLocateListFirst    (NAListIterator* iter);
 NA_IAPI NABool naLocateListLast     (NAListIterator* iter);
-NA_API  NABool naLocateListContent  (NAListIterator* iter, const void* content);
+NA_API  NABool naLocateListData     (NAListIterator* iter, const void* data);
 NA_API  NABool naLocateListIndex    (NAListIterator* iter, NAInt indx);
 
 // Positions dstiter at the same element as srciter.
@@ -235,8 +235,8 @@ NA_IAPI NABool naIterateList        (NAListIterator* iter, NAInt step);
 // will be returned without warning.
 NA_IAPI const void* naGetListPrevConst      (const NAListIterator* iter);
 NA_IAPI       void* naGetListPrevMutable    (      NAListIterator* iter);
-NA_IAPI const void* naGetListCurrentConst   (const NAListIterator* iter);
-NA_IAPI       void* naGetListCurrentMutable (      NAListIterator* iter);
+NA_IAPI const void* naGetListCurConst   (const NAListIterator* iter);
+NA_IAPI       void* naGetListCurMutable (      NAListIterator* iter);
 NA_IAPI const void* naGetListNextConst      (const NAListIterator* iter);
 NA_IAPI       void* naGetListNextMutable    (      NAListIterator* iter);
 
@@ -270,8 +270,8 @@ NA_IAPI void naAddListAfterMutable  (NAListIterator* iter,       void* content);
 // Prev works the same as Last and Next works the same as First.
 NA_IAPI void  naRemoveListPrevConst     (NAListIterator* iter);
 NA_IAPI void* naRemoveListPrevMutable   (NAListIterator* iter);
-NA_IAPI void  naRemoveListCurrentConst  (NAListIterator* iter, NABool advance);
-NA_IAPI void* naRemoveListCurrentMutable(NAListIterator* iter, NABool advance);
+NA_IAPI void  naRemoveListCurConst  (NAListIterator* iter, NABool advance);
+NA_IAPI void* naRemoveListCurMutable(NAListIterator* iter, NABool advance);
 NA_IAPI void  naRemoveListNextConst     (NAListIterator* iter);
 NA_IAPI void* naRemoveListNextMutable   (NAListIterator* iter);
 

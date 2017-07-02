@@ -60,7 +60,7 @@
 // NA_SYSTEM_ENDIANNESS     One of the endianness macros above
 // NA_SYSTEM_ADDRESS_BITS   32 or 64. Denoting the number of bits per address.
 //
-// Currently, there are two system configurations assumed:
+// Curly, there are two system configurations assumed:
 // - Mac OS X with GCC or Clang
 // - Windows with Microsoft Visual Studio compiler
 //
@@ -393,7 +393,7 @@
 
 #include <limits.h>
 
-// Currently, NALib assumes a Byte to consist of precisely 8 bits. This is
+// Curly, NALib assumes a Byte to consist of precisely 8 bits. This is
 // reflected in various enumerations and fundamental types like NAByte and
 // NAUTF8Char. With this macro, we make sure, our code compiles just on the
 // systems which have 8-Bit Bytes.
@@ -420,9 +420,9 @@
 // Defining an NAByte as an uint8 can be very handy. In NALib, the NAByte type
 // is often used when a memory block needs to be accessed byte by byte. You
 // could also use a void-pointer for that but void-pointers are sometimes just
-// a little too cumbersome to work with and do not always have a bytesize defined
-// depending on the standard used. Furthermore, a pointer to an uint8 can be
-// displayed by a debugger while a pointer to void can not.
+// a little too cumbersome to work with and do not always have a bytesize 
+// defined depending on the standard used. Furthermore, a pointer to an uint8
+// can be displayed by a debugger while a pointer to void can not.
 // Why not using the signed variant? Because there are many implementations
 // using enumerations which go beyound 127 and do not want to use negative
 // numbers.
@@ -479,14 +479,25 @@ typedef uint8 NAByte;
 #define NA_ONE_32   1L
 #define NA_ONE_64   1LL
 
+#define NA_PRIi32 "d"
+#define NA_PRIu32 "u"
+#define NA_PRIx32 "x"
+#define NA_SCNi32 "d"
+#define NA_SCNu32 "u"
+#define NA_PRIi64 "lld"
+#define NA_PRIu64 "llu"
+#define NA_PRIx64 "llx"
+#define NA_SCNi64 "lld"
+#define NA_SCNu64 "llu"
+
 #if NA_SYSTEM_ADDRESS_BITS == 32
   typedef int32 NAInt;
   typedef uint32 NAUInt;
-  #define NA_PRIi "d"
-  #define NA_PRIu "u"
-  #define NA_PRIx "x"
-  #define NA_SCNi "d"
-  #define NA_SCNu "u"
+  #define NA_PRIi NA_PRIi32
+  #define NA_PRIu NA_PRIu32
+  #define NA_PRIx NA_PRIx32
+  #define NA_SCNi NA_SCNi32
+  #define NA_SCNu NA_SCNu32
   #define NA_INT_MAX NA_INT32_MAX
   #define NA_INT_MIN NA_INT32_MIN
   #define NA_UINT_MAX NA_UINT32_MAX
@@ -495,11 +506,11 @@ typedef uint8 NAByte;
 #elif NA_SYSTEM_ADDRESS_BITS == 64
   typedef int64 NAInt;
   typedef uint64 NAUInt;
-  #define NA_PRIi "lld"
-  #define NA_PRIu "llu"
-  #define NA_PRIx "llx"
-  #define NA_SCNi "lld"
-  #define NA_SCNu "llu"
+  #define NA_PRIi NA_PRIi64
+  #define NA_PRIu NA_PRIu64
+  #define NA_PRIx NA_PRIx64
+  #define NA_SCNi NA_SCNi64
+  #define NA_SCNu NA_SCNu64
   #define NA_INT_MAX NA_INT64_MAX
   #define NA_INT_MIN NA_INT64_MIN
   #define NA_UINT_MAX NA_UINT64_MAX
@@ -508,8 +519,6 @@ typedef uint8 NAByte;
 #else
   #warning "NAInt undefined"
 #endif
-
-
 
 // NABool
 // Note that in NALib, the definition of NABool is set to an unsigned integer
@@ -543,14 +552,14 @@ typedef uint8 NAByte;
 // ////////////////////////
 // Characters and system dependent strings
 // The tabs and newlines used on different systems. The native newline argument
-// NA_NL will be defined below.
+// NA_NL denotes the native newline of the current system.
 #define NA_NL_UNIX  "\n"
 #define NA_NL_MAC9  "\r"
 #define NA_NL_WIN   "\r\n"
 #if NA_SYSTEM == NA_SYSTEM_WINDOWS
-  #define NA_NL_NATIVE NA_NL_WIN
+  #define NA_NL NA_NL_WIN
 #else
-  #define NA_NL_NATIVE NA_NL_UNIX
+  #define NA_NL NA_NL_UNIX
 #endif
 
 #define NA_TAB      "\t"
@@ -579,10 +588,8 @@ typedef char NAUTF8Char;
   #else
     typedef CHAR SystemChar;
   #endif
-  #define NA_NL NA_NL_WIN
 #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
   // typedef short SystemChar;  // unused at the moment
-  #define NA_NL NA_NL_UNIX
 #else
 #endif
 
@@ -652,22 +659,24 @@ typedef void (*NAMutator)  (      void*);
 // This parameter allows you to provide a function pointer to an accessing or
 // mutation function which will be called for every element in the container.
 //
-// You can use accessors or mutators to simply address all elements in a container
-// struct. But you can also use them to initialize all elements with a call to
-// naInitXXX and to desctruct all elements with a call to naClearXXX.
+// You can use accessors or mutators to simply address all elements in a
+// container struct. But you can also use them to initialize all elements with
+// a call to naInitXXX and to desctruct all elements with a call to naClearXXX.
 //
 // IMPORTANT:
 // Beware that your accessor or mutator will always be called with a POINTER to
-// the content. If for example, you have an array of integers, your callback will
-// get values of type "int *". But if your array stores pointers to int, your
-// callback will get values of type "int **".
+// the content. If for example, you have an array of integers, your callback
+// will get values of type "int *". But if your array stores pointers to int,
+// your callback will get values of type "int **".
 //
-// Note that you can also use any of the functions of NALib as callback functions
-// as long as they accept only one data pointer parameter and return void.
+// Note that you can also use any of the functions of NALib as callback
+// functions as long as they accept only one data pointer parameter and return
+// void.
 //
 // You may have to cast callback functions to "NAAccessor" or NAMutator".
 //
-// Apart from callback functions, many container structs have separate iterators.
+// Apart from callback functions, many container structs have separate
+// iterators.
 // Have a look at the API.
 //
 // Callback functions are used for:
@@ -719,7 +728,7 @@ typedef void (*NAMutator)  (      void*);
 //
 // Note that in NALib, all tests performed by code encapsulated by
 // #ifndef NDEBUG will emit errors on sterr in the following format:
-// Function_name: Errormessage\n
+// Function_name: Errormessage NEWLINE
 // Therefore, a programmer can simply set a breakpoint in the denoted function
 // and start debugging.
 //
@@ -745,14 +754,14 @@ typedef void (*NAMutator)  (      void*);
   // which comes after it, sometimes, the error will just result in a NaN or
   // even be corrected automatically. Nontheless, any error should be
   // considered a potential risk for the application to eventually crash.
-  void naError(const char* functionsymbol, const char* text, ...);
+  void naError(const char* functionsymbol, const char* text);
 
 
   // Prints a crash message.
   // This function is used when the application experiences a critical error
   // like dereferencing an invalid pointer. The application will almost
   // certainly crash few steps after this function call.
-  NA_NORETURN void naCrash(const char* functionsymbol, const char* text, ...);
+  NA_NORETURN void naCrash(const char* functionsymbol, const char* text);
 
 #endif
 

@@ -36,7 +36,8 @@ NA_IAPI NAURL* naInitURL(NAURL* url);
 //   Example: /usr/local is an absolute path, src/NALib is not.
 // - Erroneous duplicate path delimiters or ending delimiters will be ignored.
 //   Example: /usr//local/ results in /usr/local
-NA_IAPI NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string);
+NA_IAPI NAURL* naInitURLWithUTF8CStringLiteral( NAURL* url,
+                                     const NAUTF8Char* string);
 NA_IAPI void naClearURL(NAURL* url);
 
 // Creates a new string containing just the last path component.

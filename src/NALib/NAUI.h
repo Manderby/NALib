@@ -36,7 +36,7 @@
 // GUIs are implemented in various ways across all systems and there is no
 // general solution to how one should design a GUI. Therefore, NALib combines
 // several ideas into a new implementation but allowing the programmer to use
-// that implementation consistently on all systems. Currently Mac and Windows.
+// that implementation consistently on all systems. Curly Mac and Windows.
 //
 // In NALib, you create a GUI by starting an NAApplication and then adding
 // user interface elements to that application one by one. The topmost ui
@@ -378,13 +378,18 @@ NA_API NABool naIsWindowFullscreen(NAWindow* window);
   // Win: Right within the naNewOpenGLView
   // Mac: when prepareOpenGL is called (which may be as late as when the
   //      view comes onsceen)
-  NA_API NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAMutator initfunc, void* initdata);
+  NA_API NAOpenGLView* naNewOpenGLView( NAWindow* window,
+                                           NASize size,
+                                        NAMutator initfunc,
+                                            void* initdata);
   // Swaps the OpenGL buffer.
   NA_API void naSwapOpenGLBuffer(NAOpenGLView* openglview);
   NA_API void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds);
 #endif
 
-NA_API void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage);
+NA_API void naCenterMouse(   void* uielement,
+                            NABool includebounds,
+                            NABool sendmovemessage);
 NA_API void naShowMouse();
 NA_API void naHideMouse();
 

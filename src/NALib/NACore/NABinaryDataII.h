@@ -101,9 +101,7 @@ NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
   s = ((NAByte*)s) + 8;
   *(uint64*)d = *(uint64*)s;
 }
-NA_IDEF void naCopyn(void* NA_RESTRICT d,
-              const void* NA_RESTRICT s,
-                               NAInt bytesize){
+NA_IDEF void naCopyn(void* NA_RESTRICT d, const void* NA_RESTRICT s, NAInt bytesize){
   #ifndef NDEBUG
     if(!d){
       naCrash("naCopy8", "Pointer d is Null-Pointer.");
@@ -114,7 +112,7 @@ NA_IDEF void naCopyn(void* NA_RESTRICT d,
       return;
     }
     if(bytesize < 1){
-      naCrash("naCopyn", "count is %" NA_PRIi " which is smaller than 1.", bytesize);
+      naCrash("naCopyn", "count is smaller than 1.");
       return;
     }
   #endif
@@ -296,7 +294,7 @@ NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b){
 NA_IDEF void naNulln32(void* d, int32 bytesize){
   #ifndef NDEBUG
     if(bytesize < NA_ONE_32)
-      naError("naNulln32", "count is < 1");
+      naError("naNulln32", "count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
   memset(d, 0, bytesize);
@@ -305,7 +303,7 @@ NA_IDEF void naNulln32(void* d, int32 bytesize){
 NA_IDEF void naNulln64(void* d, int64 bytesize){
   #ifndef NDEBUG
     if(bytesize < NA_ONE_64)
-      naError("naNulln64", "count is < 1");
+      naError("naNulln64", "count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
   memset(d, 0, (size_t)bytesize);

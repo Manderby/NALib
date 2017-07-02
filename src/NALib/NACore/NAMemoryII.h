@@ -147,7 +147,7 @@ NA_IDEF void* naMalloc(NAInt bytesize){
     ptr = (NAByte*)malloc((size_t)fullsize);
     #ifndef NDEBUG
     if (!ptr)
-      {naCrash("naMalloc", "Out of memory."); return NA_NULL;}
+      {naCrash("naMalloc", "Out of memory"); return NA_NULL;}
     #endif
     // When you get a warning here when analyzing the code: This is intentional.
     // Memory allocation fail is such a huge error, nobody should try to correct.
@@ -705,7 +705,7 @@ NA_IDEF void* naGetPtrMutable(NAPtr* ptr){
       return NA_NULL;
     }
     if(ptr->flags & NA_PTR_CONST_DATA)
-      naCrash("naGetPtrMutable", "Mutable access to const ptr.");
+      naError("naGetPtrMutable", "Mutable access to const ptr.");
   #endif
   return ptr->data.d;
 }

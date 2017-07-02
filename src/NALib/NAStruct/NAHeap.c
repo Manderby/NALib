@@ -553,7 +553,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
       {naCrash("naInitHeap", "heap is Null-Pointer"); return NA_NULL;}
     // there is always count + 1 elements stored in the array.
     if(count >= NA_INT_MAX){
-      naCrash("naInitHeap", "Heap count %" NA_PRIi " is too big.", count);
+      naCrash("naInitHeap", "Heap count is too big.");
       return NA_NULL;
     }
     // Note that the following case count==0 could be automatically converted
@@ -616,7 +616,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
       break;
     default:
       #ifndef NDEBUG
-        naCrash("naInitHeap", "flag combination %x" NA_PRIi " not implemented.", flags);
+        naCrash("naInitHeap", "flag combination not implemented.");
         return NA_NULL;
       #else
         break;
@@ -669,7 +669,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
       break;
     default:
       #ifndef NDEBUG
-        naCrash("naInitHeap", "flag combination %x" NA_PRIi " not implemented.", flags);
+        naCrash("naInitHeap", "flag combination not implemented.");
         return NA_NULL;
       #else
         break;

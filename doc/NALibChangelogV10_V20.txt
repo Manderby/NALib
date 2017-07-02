@@ -12,6 +12,13 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+- Ensured naming scheme on some NADateTime macros.
+- Removed variadic output from naError and naCrash.
+- Added more NA_PRI and NA_SCN macros for 32 and 64 bits.
+- Renamed many functions with "Current" to "Cur", "Content" to "Data".
+- Tons of small corrections or adjustments everywhere.
+
+
 Version 19 (first published 2017-Jun-30):
 ==============================================
 
@@ -132,7 +139,7 @@ Other things:
 - Removed isMainThread as it is unreliable and deprecated.
 - Added scalar Box and Volume methods and naMakeRangeiWithRangeiAndPos
 - Added naTell to retrieve to position within a file.
-- Removed the empty warning from naGetListCurrentXXX.
+- Removed the empty warning from naGetListCurXXX.
 - Renamed naPointerCleanup to naMemoryCleanup. Corrected description and
   naming of many function using this as a parameter.
 - Removed the iterator functions of NAGrowingSpace
@@ -202,7 +209,7 @@ Version 15 (first published 2016-July-17):
 - Greatly enhanced the comments.
 - Made small adjustments in NAFile.h like renamed naJumpFileRelative to
   naSeekFileRelative.
-- Added naGetCwd and naMakeStringWithCurrentWorkingDirectory
+- Added naGetCwd and naMakeStringWithCurWorkingDirectory
 - Added NA_SCNi, NA_SCNu and naScanDecimal;
 - Made NABuf 64Bit always
 - Changed NAQuadTreeNodeDestructor to NAQuadTreeNodeDeallocator. Same with Oct.

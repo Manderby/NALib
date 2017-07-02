@@ -39,6 +39,7 @@ struct NAList{
 
 
 
+
 struct NAListIterator{
   NAPtr           listptr;
   NAListElement*  cur;
@@ -264,16 +265,16 @@ NA_IDEF void* naRemoveListLastMutable(NAList* list){
 }
 
 
-NA_IAPI void naRemoveListContent(NAList* list, void* content){
+NA_IAPI void naRemoveListData(NAList* list, void* data){
   NAListIterator iter = naMakeListModifier(list);
-  NABool found = naLocateListContent(&iter, content);
+  NABool found = naLocateListData(&iter, data);
   #ifndef NDEBUG
     if(!found)
-      naError("naRemoveListContent", "content not found in this list");
+      naError("naRemoveListData", "data not found in this list");
   #else
     NA_UNUSED(found);
   #endif
-  naRemoveListCurrentMutable(&iter, NA_FALSE);
+  naRemoveListCurMutable(&iter, NA_FALSE);
   naClearListIterator(&iter);
 }
 
@@ -356,10 +357,8 @@ NA_IDEF void naForeachListMutable(const NAList* list, NAMutator mutator){
   NAListElement* cur;
   #ifndef NDEBUG
     NAListElement* next;
-    if(!list){
-      naCrash("naForeachList", "list is Null-Pointer.");
-      return;
-    }
+    if(!list)
+      {naCrash("naForeachList", "list is Null-Pointer."); return;}
     if(!mutator)
       {naCrash("naForeachList", "mutator is Null-Pointer."); return;}
   #endif
@@ -607,25 +606,25 @@ NA_IDEF void* naGetListPrevMutable(NAListIterator* iterator){
 }
 
 
-NA_IDEF const void* naGetListCurrentConst(const NAListIterator* iterator){
+NA_IDEF const void* naGetListCurConst(const NAListIterator* iterator){
   #ifndef NDEBUG
     // Note that the empty check has been removed. Getting the current elem
     // of an empty list automatically returns NULL. This is a feature!
 //    if(naIsListEmpty(naGetPtrConst(&(iterator->listptr))))
-//      naError("naGetListCurrentConst", "List is empty");
+//      naError("naGetListCurConst", "List is empty");
   #endif
   return naGetPtrConst(&(iterator->cur->ptr));
 }
 
 
-NA_IDEF void* naGetListCurrentMutable(NAListIterator* iterator){
+NA_IDEF void* naGetListCurMutable(NAListIterator* iterator){
   #ifndef NDEBUG
     if(!iterator->mutator)
-      naError("naGetListCurrentMutable", "Trying to mutate elements with an accessor iterator");
+      naError("naGetListCurMutable", "Trying to mutate elements with an accessor iterator");
     // Note that the empty check has been removed. Getting the current elem
     // of an empty list automatically returns NULL. This is a feature!
 //    if(naIsListEmpty(naGetPtrConst(&(iterator->listptr))))
-//      naError("naGetListCurrentMutable", "List is empty");
+//      naError("naGetListCurMutable", "List is empty");
   #endif
   return naGetPtrMutable(&(iterator->cur->ptr));
 }
@@ -744,21 +743,21 @@ NA_IDEF void* naRemoveListPrevMutable(NAListIterator* iterator){
 }
 
 
-NA_IDEF void naRemoveListCurrentConst(NAListIterator* iterator, NABool advance){
+NA_IDEF void naRemoveListCurConst(NAListIterator* iterator, NABool advance){
   NAList* list;
   NAListElement* newelem;
   #ifndef NDEBUG
     if(!iterator->mutator)
-      naError("naRemoveListCurrentConst", "Trying to mutate elements with an accessor iterator");
+      naError("naRemoveListCurConst", "Trying to mutate elements with an accessor iterator");
     if(naIsPtrConst(&(iterator->listptr)))
       naError("naRemoveListPrevMutable", "Trying to modify list while iterator is no modify iterator");
   #endif
   list = (NAList*)naGetPtrMutable(&(iterator->listptr));
   #ifndef NDEBUG
     if(list->count == 0)
-      naError("naRemoveListCurrentConst", "List is empty");
+      naError("naRemoveListCurConst", "List is empty");
     if(iterator->cur == &(list->sentinel))
-      naError("naRemoveListCurrentConst", "No current internal pointer is set. Major memory corruption expected...");
+      naError("naRemoveListCurConst", "No current internal pointer is set. Major memory corruption expected...");
   #endif
   newelem = advance ? iterator->cur->next : iterator->cur->prev;
   #ifndef NDEBUG
@@ -772,24 +771,24 @@ NA_IDEF void naRemoveListCurrentConst(NAListIterator* iterator, NABool advance){
 }
 
 
-NA_IDEF void* naRemoveListCurrentMutable(NAListIterator* iterator, NABool advance){
+NA_IDEF void* naRemoveListCurMutable(NAListIterator* iterator, NABool advance){
   NAList* list;
   NAListElement* newelem;
   void* returncontent;
   #ifndef NDEBUG
     if(!iterator->mutator)
-      naError("naRemoveListCurrentMutable", "Trying to mutate elements with an accessor iterator");
+      naError("naRemoveListCurMutable", "Trying to mutate elements with an accessor iterator");
     if(naIsPtrConst(&(iterator->listptr)))
       naError("naRemoveListPrevMutable", "Trying to modify list while iterator is no modify iterator");
   #endif
   list = (NAList*)naGetPtrMutable(&(iterator->listptr));
   #ifndef NDEBUG
     if(list->count == 0)
-      naError("naRemoveListCurrentMutable", "List is empty");
+      naError("naRemoveListCurMutable", "List is empty");
     if(iterator->cur == &(list->sentinel))
-      naError("naRemoveListCurrentMutable", "No current internal pointer is set. Major memory corruption expected...");
+      naError("naRemoveListCurMutable", "No current internal pointer is set. Major memory corruption expected...");
     if(iterator->cur->itercount == 0)
-      naError("naRemoveListCurrentMutable", "Internal error. No iterators registered at element which iterator is located at now");
+      naError("naRemoveListCurMutable", "Internal error. No iterators registered at element which iterator is located at now");
   #endif
   newelem = advance ? iterator->cur->next : iterator->cur->prev;
   #ifndef NDEBUG
@@ -987,7 +986,6 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* iterator, NAList* dst){
       naError("naMoveListRemainingToLast", "Internal error: List count negative.");
   #endif
   
-//  printf("%d, %d\n", (int)src->count, (int)movecount);
   src->count -= movecount;
   dst->count += movecount;
 }

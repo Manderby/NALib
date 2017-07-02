@@ -5,7 +5,6 @@ This file contains notes on what is still missing or needs to be done
 in NALib.
 
 Version 20:
-- Add more variadic error messages
 - First compression in NAPNG
 - NAComplexPolar
 - All todos.

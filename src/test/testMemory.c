@@ -303,7 +303,7 @@ void testMemory(void){
   printf("==========\n");
 
   printf("Memory page size: %" NA_PRIu "\n", naGetSystemMemoryPagesize());
-  printf("Memory page mask: %" NA_PRIx "\n", naGetSystemMemoryPagesizeMask());
+  printf("Memory page mask: 0x%" NA_PRIx "\n", naGetSystemMemoryPagesizeMask());
   
   testMallocFree();
   testRuntime();

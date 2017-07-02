@@ -308,9 +308,9 @@ NA_API NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber);
 // correction of your data might be required. If the value is < 0, no
 // correction is necessary or can/will be made. The following macros depict
 // further information about the negative constant:
-#define NO_CORRECTION_NEEDED              -1
-#define INVALID_UNCERTAIN_SECOND_NUMBER   -2
-#define NEW_LIBRARY_IS_OLDER_THAN_BEFORE  -3
+#define NA_DATETIME_NO_CORRECTION_NEEDED             -1
+#define NA_DATETIME_INVALID_UNCERTAIN_SECOND_NUMBER  -2
+#define NA_DATETIME_NEW_LIBRARY_IS_OLDER_THAN_BEFORE -3
 
 // To correct you data, go through all dates and send them to the following
 // function together with the akquired constant from above. This function will
