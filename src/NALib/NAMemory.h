@@ -10,10 +10,26 @@
 //
 // - Accessing core informations about the memory system
 // - Basic Memory allocation and freeing.
-// - Base memory structs NAPtr, NAMemoryBlock
 // - NARefCount, NAPtr, NASmartPtr, NAPointer: Handling of pointers with or
-//   without reference counting with automatic deletion.
-// - Handling of inifinte pools for new and delete functions.
+//   without reference counting with const and mutable distinction and
+//   automatic deletion.
+// - Handling of inifinte pools for naNew and naDelete functions.
+//
+//  +---------------------+------------------+ 
+//  |        POD          |  runtime system  | 
+//  |---------------------+------------------+ 
+//  |                NAPointer               | 
+//  |---------------------+------------------+ 
+//  |     NASmartPtr      |                  | 
+//  |-------+-------------+                  | 
+//  | NAPtr | NARefCount  |                  | 
+//  |-------+-------------+------------------+ 
+//  | malloc free         |                  | 
+//  | naMalloc naFree     |      naNew       | 
+//  | naMallocAligned     |      naDelete    | 
+//  | naMallocPageAligned |                  | 
+//  | naFreeAligned       |                  | 
+//  +---------------------+------------------+ 
 //
 // ////////////////////////////////////////////////////////
 
@@ -180,7 +196,9 @@ typedef enum{
 } NAMemoryCleanup;
 
 
-// Deallocates the given data pointer with the given cleanup method.
+// Deallocates the given data pointer with the given cleanup method. Note that
+// this method performs a switch statement to distinguish between the cleanup
+// types. If you are sure what to use as a cleanup method, use it directly.
 NA_IAPI void naCleanupMemory(void* data, NAMemoryCleanup cleanup);
 
 
@@ -192,15 +210,16 @@ NA_IAPI void naCleanupMemory(void* data, NAMemoryCleanup cleanup);
 // ////////////////////////
 
 // An NARefCount stores a reference count. When an NARefCount first is created,
-// that count is 1 and it is increased everytime, naRetainRefCount is called.
+// that count is 1 and it is increased everytime naRetainRefCount is called.
 //
-// The reference counter is decreased everytime naReleaseSmartPtr is called.
+// The reference counter is decreased everytime naReleaseRefCount is called.
 // When reaching 0, the data as well as the smart pointer struct itself is
 // erased automatically from memory.
 //
 // Note that this struct serves as a raw implementation which is used in NALib
-// at specific positions. If you are looking for a more comfortable way of
-// using smart pointers, have a look at NAPointer below.
+// as a base of specific structs which implement reference counting manually.
+// If you are looking for a more comfortable way of using smart pointers, have
+// a look at NASmartPtr and especially NAPointer below.
 //
 // Important: If you want to use NARefCount in your own struct, make sure it
 // is the first field in your struct!
@@ -208,7 +227,7 @@ NA_IAPI void naCleanupMemory(void* data, NAMemoryCleanup cleanup);
 // The full type definition is in the file "NAMemoryII.h"
 typedef struct NARefCount NARefCount;
 
-// Initialize a smart pointer. structcleanup defines, how the smart pointer
+// Initializes an NARefCount. structcleanup defines, how the smart pointer
 // itself shall be cleaned up.
 //
 // The datacleanup defines an additional flag which you can store in the struct
@@ -231,19 +250,17 @@ NA_IAPI NARefCount* naInitRefCount(     NARefCount* refcount,
 // Then the data is cleaned up if available and finally, the struct is cleaned
 // up.
 //
-// The naRetain macro has been added for convenience. You can send any pointer
-// without casting it to an NARefCount. This makes writing code much easier.
-// But you have to know what you are doing!
+// You should not call release with a refcount and data being the same pointer.
+// Set data to NA_NULL if you want the destructor to operate on the refcount.
 NA_IAPI NARefCount* naRetainRefCount( NARefCount* refcount);
 NA_IAPI void        naReleaseRefCount(NARefCount* refcount,
                                             void* data,
                                         NAMutator destructor);
-#define naRetain(obj) (void*)naRetainRefCount((NARefCount*)obj)
 
 // When your destructor will be called during a call to naReleaseRefCount, you
 // can use this function to query the datacleanup value you entered upon the
 // call to naInitRefCount.
-NA_IAPI NAMemoryCleanup naGetRefCountCleanupData(const NARefCount* refcount);
+//NA_IAPI NAMemoryCleanup naGetRefCountCleanupData(const NARefCount* refcount);
 
 
 
@@ -291,11 +308,6 @@ NA_IAPI NAMemoryCleanup naGetRefCountCleanupData(const NARefCount* refcount);
 // programmer to make the distinction at declaration level (which can become
 // very cumbersome) and maybe even force him to convert between the two
 // variants which might be very costly and not beautiful at all.
-//
-// NAPtr is the base of many memory structs.
-// NAMemoryBlock is dependent on NAPtr and declare it as the first
-// entry in their struct declaration. Therefore, it is safe to access these
-// memory structs typecasted as an NAPtr.
 //
 // NALib keeps track of how pointers are allocated when NDEBUG is undefined.
 // This affects all of the memory structures in this file. When NDEBUG is
@@ -380,22 +392,19 @@ NA_IAPI NABool naIsPtrConst(const NAPtr* ptr);
 
 // A smart pointer stores an arbitrary mutable pointer with a reference count.
 // When the smart pointer first is created, that count is 1 and it is increased
-// everytime, naRetain is called.
+// everytime, naRetainSmartPtr is called.
 //
 // The reference counter is decreased everytime naReleaseSmartPtr is called.
 // When reaching 0, the data as well as the smart pointer struct itself is
 // erased automatically from memory.
 //
-// Note that this struct serves as a raw implementation which is used in NALib
-// at specific positions. If you are looking for a more comfortable way of
-// using smart pointers, have a look at NAPointer below.
-
-// Starting with NALib version 14, the actual data is stored as a pointer.
-// This means that it must be allocated elsewhere. But this means, any pointer
-// can become a reference counted pointer.
+// Note that this struct is a very raw implementation which currently is only
+// used as a base for the more comfortable NAPointer struct. You are free to
+// use the implementation for your own evil scheme though. If you are lazy and
+// want to use NAPointer, have a look below.
 //
-// To distinguish, how the pointer shall be handeled upon deletion, a new
-// enumeration NAMemoryCleanup had been introduced. See above.
+// To distinguish, how the pointer shall be handeled upon deletion, a
+// NAMemoryCleanup can be used. See above.
 
 
 // The full type definition is in the file "NAMemoryII.h"
@@ -403,10 +412,10 @@ typedef struct NASmartPtr NASmartPtr;
 
 // Initialize a smart pointer. Define how the smart pointer itself shall be
 // cleaned up, define the data it shall store and define, how that data shall
-// be cleaned up.
+// be cleaned up when the Ptr is mutable.
 //
 // Note: Even if it is possible to send a NONE cleanup, it is not a good idea
-// to use a pointer to a stack variable for sptr. Code sanity checks might
+// to use a pointer with a stack variable for sptr. Code sanity checks might
 // mark this as a possible error.
 NA_IAPI NASmartPtr* naInitSmartPtrConst(    NASmartPtr* sptr,
                                         NAMemoryCleanup smartptrcleanup,
@@ -416,12 +425,14 @@ NA_IAPI NASmartPtr* naInitSmartPtrMutable(  NASmartPtr* sptr,
                                                   void* data,
                                         NAMemoryCleanup datacleanup);
 
+// Retaining and releasing an NASmartPtr.
 // You can send a destructor to Release which will be called with the data
 // pointer if the reference count reaches 0. Further more, the release function
 // will return NA_TRUE when the reference count reached zero.
 //
 // When refcount reaches zero, first, the destructor is called with a pointer
 // to data, then the data is cleaned up and finally, the struct is cleaned up.
+NA_IAPI void        naRetainSmartPtr(NASmartPtr* sptr);
 NA_IAPI void        naReleaseSmartPtr(NASmartPtr* sptr,
                                         NAMutator desctructor);
 
@@ -486,11 +497,13 @@ NA_IAPI NAPointer* naNewPointerMutable(       void* data,
                                     NAMemoryCleanup datacleanup,
                                           NAMutator destructor);
 
-// Releases the given NAPointer. If the refcount reaches 0, this NAPointer
-// is no longer needed. The data will be freed automatically according to the
-// destructor and cleanup enumeration given upon creation. The NAPointer struct
-// itself will be deleted by the runtime system.
-NA_IAPI void naReleasePointer(NAPointer* pointer);
+// Retains and releases the given NAPointer. If the refcount reaches 0 when
+// releasing, this NAPointer is no longer needed. The data will be freed
+// automatically according to the destructor and cleanup enumeration given
+// upon creation. The NAPointer struct itself will be deleted by the runtime
+// system.
+NA_IAPI NAPointer*  naRetainPointer (NAPointer* pointer);
+NA_IAPI void        naReleasePointer(NAPointer* pointer);
 
 // The following two functions return a pointer to the data. This function is
 // not particularily beautiful when it comes to readability or writeability but
@@ -507,6 +520,18 @@ NA_IAPI void naReleasePointer(NAPointer* pointer);
 // behave equivalent when NDEBUG is defined.
 NA_IAPI const void* naGetPointerConst  (const NAPointer* pointer);
 NA_IAPI       void* naGetPointerMutable(      NAPointer* pointer);
+
+
+
+
+// The following two functions have been added for convenience. As reference
+// counting operates on an NARefCount struct and that struct should always
+// be the first field of a struct, you can send any pointer to naRetain which
+// uses this convention.
+//
+// The naRelease macro however is only applicable for NAPointer structs.
+NA_IAPI void* naRetain  (void* obj);
+NA_IAPI void  naRelease (NAPointer* obj);
 
 
 

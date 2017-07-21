@@ -105,9 +105,9 @@ struct NACorePool{
   void* firstunused;
   NACorePool* prevpool;
   NACorePool* nextpool;
-  // The following two field is a dummy entriy not used in release versions.
+  // The following field is a dummy entry not in use.
   // It shall not be removed though as the total amount of bytes used for
-  // an NACorePool shall be 8 times an addresssize.
+  // an NACorePool shall be 8 times an addresssize. todo make a test.
   void* dummy; // used in debugging. Points at first byte of the whole pool
 };
 

@@ -115,7 +115,7 @@ NA_HIDEF void naReferenceBufferPart(NABufferPart* part, NABufferPart* srcpart, N
     if(part->data)
       naError("naReferenceBufferPart", "Part already references a part");
   #endif
-  part->data = naRetain(srcpart->data);
+  part->data = naRetainPointer(srcpart->data);
   part->origin = srcpart->origin + srcoffset;
   #ifndef NDEBUG
     if(part->origin > part->range.origin)
@@ -138,7 +138,7 @@ NA_HIDEF void naAllocateBufferPartMemory(NABufferPart* part){
 
 // The destructor method which will automatically be called by naDelete.
 NA_HIDEF void naDestructBufferPart(NABufferPart* part){
-  if(part->data){naReleasePointer(part->data);}
+  if(part->data){naRelease(part->data);}
 }
 
 

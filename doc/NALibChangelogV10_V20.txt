@@ -16,6 +16,9 @@ correct, complete or final.
 - Removed variadic output from naError and naCrash.
 - Added more NA_PRI and NA_SCN macros for 32 and 64 bits.
 - Renamed many functions with "Current" to "Cur", "Content" to "Data".
+- Added naRetainRefCount, naRetainSmartPtr and naRetainPointer for completeness
+  and when needed as a callback function. Added naRelease as a macro parallel
+  to naRetain.
 - Tons of small corrections or adjustments everywhere.
 
 

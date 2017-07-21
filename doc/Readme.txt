@@ -12,6 +12,7 @@ Table of Content:
 2.1    Creation and deletion of memory blocks
 2.2    Initializating and Clearing of structs
 2.3    Iteration of container structs
+2.4    Built-in reference counting
 3.   Runtime System
 4.   C90 variable definitions
 5.   Inline Implementations
@@ -177,7 +178,7 @@ naDelete(myarray);
 
 E) Use an existing naCreateXXX function with naRelease:
 NABuffer* mybuffer = naCreateBuffer();
-naRelease(mybuffer);
+naReleaseBuffer(mybuffer);
 
 The cases listed here are usual scenarios. But in certain cases, a programmer
 might want to choose differently, for example to save time. If you choose so,
@@ -232,6 +233,54 @@ iterators operation upon. If at any time, some element will be removed or a
 complete struct will be erased where there is still an iterator visiting, NALib
 will emit a warning. These warnings will be completely omitted when NDEBUG
 ist defined.
+
+
+
+2.4 Built-in reference counting
+-------------------------------
+
+In the NAMemory.h file, many structures do not only allow to allocate and
+deallocate memory but also to add automatic reference counting. Here are listed
+the different structs together with the intended way of using them:
+
+- NARefCount
+  Use this type in your own custom structs as the first member / field and
+  initialize it upon creation with naInitRefCount. Use the naRetain macro
+  to retain your struct. Create your own function like releaseMyStruct which
+  calls naReleaseRefCount. If your struct needs a destructor, implement it and
+  set it as the destructor parameter of naReleaseRefCount. If you store a data
+  ptr which also potentially needs cleaning up, you can set the datacleanup
+  parameter of naInitRefCount and query it in the destructor with a call to
+  naGetRefCountCleanupData.
+  Note that structs of NALib which use this scenario always use naCreateXXX
+  as the creator function.
+- NASmartPtr
+  An NASmartPtr stores two things: An NARefCount and an NAPtr. The datacleanup
+  parameter of the NARefCount operates on the NAPtr. Use this struct when you
+  want to store a pointer with a reference count. Use either naRetainSmartPtr
+  or the naRetain macro to retain the struct and a call to naReleaseNASmartPtr
+  with a potential destructor callback to release the struct.
+  This is the raw implementation of a reference count which does not require
+  the NALib runtime system.
+- NAPointer
+  An NAPointer stores an NASmartPtr together with a destructor. You will not
+  need to remember the destructor upon releasing like with NARefCount or with
+  NASmartPtr. This struct is very comfortable to use. The two macros naRetain
+  and naRelease are made specifically for this struct. Note also that the
+  NAPointer struct itself is instanciated using a fast memory pool. This struct
+  is optimal for quick programming, but requires the runtime system. Structs
+  in NALib which use this scenaria use naNewXXX as the creator function.
+- NA_RUNTIME_TYPE, naNew and naDelete
+  When you implement a struct which uses NA_RUNTIME_TYPE, you can allocate and
+  deallocate the structs with naNew and naDelete. The destructor is defined
+  once per NA_RUNTIME_TYPE and does not requires memory for the callback like
+  with NAPointer.
+  The optimal scenario is to have a struct storing an NARefCount or NASmartPtr
+  as their first element and the NA_MEMORY_CLEANUP_NA_DELETE cleanup for the
+  struct. This is precisely how NAPointer is implemented. But you can use
+  NA_RUNTIME_TYPE with your own types.
+  
+
 
 
 

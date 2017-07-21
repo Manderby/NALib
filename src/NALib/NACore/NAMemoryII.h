@@ -348,30 +348,44 @@ NA_IDEF void naCleanupMemory(void* data, NAMemoryCleanup cleanup){
 struct NARefCount{
   NAUInt count;      // Reference count. Including flags
   #ifndef NDEBUG
+    NAUInt purecount;
     NAMemoryCleanup structcleanup;
     NAMemoryCleanup datacleanup;
+    NAUInt dummy;
   #endif
 };
 
-// The refcount field also stores two cleanup hints in the 2*3 bits on the
+// The count field also stores two cleanup hints in the 2*3 bits on the
 // higher endian side. This is necessary due to the automatic deletion of a
 // pointer and the struct the refcount is stored in when refcount reaches zero.
 // It could be stored in a separate flag but the author decided to do it with
 // a mask.
 //
-// Note that when NDEBUG is undefined, there is an additional flag just to
-// check whether a reference counted value had been released properly.
+// This means that not the full range of the count integer can be used for
+// reference counting. More precisely, the integer falls 6 Bits short. So in a
+// 32 bit system, you can have a max of 2^26 = 67 million references and on a
+// 64 bit system, you can have a max of 2^58 = [insert huge number here] refs. 
+//
+// Note that when NDEBUG is undefined, there are additional flags which make
+// debugging easier and also serve to detect hard to find memory bugs. The
+// dummy field stores a very specific number which should never be overwritten.
+// If it is overwritten or otherwise not correct, the NARefCount has been used
+// wrongly.
 
 
-#ifndef NDEBUG
-  #define NA_REFCOUNT_DELETE_FROM_RELEASE (NA_ONE << (NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT - 1))
-  #define NA_REFCOUNT_FLAG_BITS   (2 * NA_MEMORY_CLEANUP_BITS + 1)
-#else
-  #define NA_REFCOUNT_FLAG_BITS   (2 * NA_MEMORY_CLEANUP_BITS)
-#endif
+#define NA_REFCOUNT_FLAG_BITS   (2 * NA_MEMORY_CLEANUP_BITS)
 
 #define NA_REFCOUNT_FLAGS_BITSHIFT      (NA_SYSTEM_ADDRESS_BITS - NA_REFCOUNT_FLAG_BITS)
 #define NA_REFCOUNT_MASK                ((NAUInt)((NA_ONE << NA_REFCOUNT_FLAGS_BITSHIFT) - NA_ONE))
+
+#define NA_REFCOUNT_DUMMY_VALUE (NAUInt)0xaaaaaaaaaaaaaaaaLL
+
+
+
+NA_HIDEF NAUInt naGetRefCountCount(const NARefCount* refcount){
+  return refcount->count & NA_REFCOUNT_MASK;
+}
+
 
 
 NA_IDEF NARefCount* naInitRefCount(NARefCount* refcount, NAMemoryCleanup structcleanup, NAMemoryCleanup datacleanup){
@@ -389,16 +403,12 @@ NA_IDEF NARefCount* naInitRefCount(NARefCount* refcount, NAMemoryCleanup structc
                | ((NAUInt)datacleanup << NA_REFCOUNT_DATA_CLEANUP_BITSHIFT)
                | ((NAUInt)structcleanup << NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT);
   #ifndef NDEBUG
+    refcount->purecount = naGetRefCountCount(refcount);
     refcount->structcleanup = structcleanup;
     refcount->datacleanup = datacleanup;
+    refcount->dummy = NA_REFCOUNT_DUMMY_VALUE;
   #endif
   return refcount;
-}
-
-
-
-NA_HIDEF NAUInt naGetRefCountCount(const NARefCount* refcount){
-  return refcount->count & NA_REFCOUNT_MASK;
 }
 
 
@@ -407,6 +417,8 @@ NA_IDEF NAMemoryCleanup naGetRefCountCleanupData(const NARefCount* refcount){
   #ifndef NDEBUG
     if(!refcount)
       {naCrash("naGetRefCountCleanupData", "refcount is Null-Pointer."); return NA_MEMORY_CLEANUP_NONE;}
+    if(refcount->dummy != NA_REFCOUNT_DUMMY_VALUE)
+      naError("naGetRefCountCleanupData", "Consistency problem: dummy value wrong. Is NARefCount really defined as the first field of this struct?");
     if(naGetFlagCleanupData(refcount->count) != refcount->datacleanup)
       naError("naGetRefCountCleanupData", "Consistency problem: flags overwritten");
   #endif
@@ -419,6 +431,8 @@ NA_IDEF NAMemoryCleanup naGetRefCountCleanupStruct(const NARefCount* refcount){
   #ifndef NDEBUG
     if(!refcount)
       {naCrash("naGetRefCountCleanupStruct", "refcount is Null-Pointer."); return NA_MEMORY_CLEANUP_NONE;}
+    if(refcount->dummy != NA_REFCOUNT_DUMMY_VALUE)
+      naError("naGetRefCountCleanupStruct", "Consistency problem: dummy value wrong. Is NARefCount really defined as the first field of this struct?");
     if(naGetFlagCleanupStruct(refcount->count) != refcount->structcleanup)
       naError("naGetRefCountCleanupStruct", "Consistency problem: flags overwritten");
   #endif
@@ -433,18 +447,21 @@ NA_IDEF NARefCount* naRetainRefCount(NARefCount* refcount){
       naCrash("naRetainRefCount", "refcount is Null-Pointer.");
       return NA_NULL;
     }else{
+      if(refcount->dummy != NA_REFCOUNT_DUMMY_VALUE)
+        naError("naRetainRefCount", "Consistency problem: dummy value wrong. Is NARefCount really defined as the first field of this struct?");
       // The next test can detect some erroneous behaviour in the code. Note
       // however that most likely the true cause of the error did occur long
       // before reaching here.
-      if(naGetRefCountCount(refcount) == NA_ZERO)
+      if(refcount->purecount == NA_ZERO)
         {naCrash("naRetainRefCount", "Retaining NARefCount with a count of 0"); return NA_NULL;}
     }
   #endif
   refcount->count++;
   #ifndef NDEBUG
+    refcount->purecount = naGetRefCountCount(refcount);
     // If refcount now suddenly becomes zero, there was either an error earlier
     // or the object has been retained too many times. Overflow.
-    if(naGetRefCountCount(refcount) == NA_ZERO)
+    if(refcount->purecount == NA_ZERO)
       naError("naRetainRefCount", "Reference count overflow");
   #endif
   return refcount;
@@ -458,10 +475,12 @@ NA_IDEF void naReleaseRefCount(NARefCount* refcount, void* data, NAMutator destr
       naCrash("naReleaseRefCount", "refcount is Null-Pointer.");
       return;
     }
+      if(refcount->dummy != NA_REFCOUNT_DUMMY_VALUE)
+        naError("naReleaseRefCount", "Consistency problem: dummy value wrong. Is NARefCount really defined as the first field of this struct?");
     // The next test can detect some erroneous behaviour in the code. Note
     // however that most likely the true cause of the error did occur long
     // before reaching here.
-    if(naGetRefCountCount(refcount) == NA_ZERO)
+    if(refcount->purecount == NA_ZERO)
       {naCrash("naReleaseRefCount", "Releasing NARefCount with a count of 0"); return;}
   #endif
   // Note that the author decided to always count to zero, even if it is clear
@@ -470,9 +489,11 @@ NA_IDEF void naReleaseRefCount(NARefCount* refcount, void* data, NAMutator destr
   // done correctly, an NAPointer is released too often. When refcount is 0 and
   // NDEBUG is not defined, this can be detected!
   refcount->count--;
+  #ifndef NDEBUG
+    refcount->purecount = naGetRefCountCount(refcount);
+  #endif
   if(naGetRefCountCount(refcount) == NA_ZERO){
     #ifndef NDEBUG
-      refcount->count |= NA_REFCOUNT_DELETE_FROM_RELEASE;
       if(destructor && (data == refcount))
         naError("naReleaseRefCount", "Do not use the same pointer for data as for refcount. Use NA_NULL for data if you want the destructor to be called with refcount");
     #endif
@@ -776,6 +797,12 @@ NA_IDEF NASmartPtr* naInitSmartPtrMutable(NASmartPtr* sptr, NAMemoryCleanup smar
 
 
 
+NA_IDEF void naRetainSmartPtr(NASmartPtr* sptr){
+  naRetain(sptr);
+}
+
+
+
 NA_IDEF void naReleaseSmartPtr(NASmartPtr* sptr, NAMutator destructor){
   #ifndef NDEBUG
     if(!sptr){
@@ -868,6 +895,12 @@ NA_HIDEF void naDestructPointer(NAPointer* pointer){
 
 
 
+NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
+  return naRetain(pointer);
+}
+
+
+
 NA_IDEF void naReleasePointer(NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer){
@@ -894,6 +927,15 @@ NA_IDEF void* naGetPointerMutable(NAPointer* pointer){
 
 
 
+NA_IDEF void* naRetain(void* obj){
+  return (void*)naRetainRefCount((NARefCount*)obj);
+}
+
+
+
+NA_IDEF void naRelease(NAPointer* obj){
+  naReleasePointer(obj);
+}
 
 
 

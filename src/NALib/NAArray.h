@@ -46,7 +46,7 @@ NA_IAPI NAArray* naInitArray(NAArray* array);
 // Initializes an NAArray with enough space for the given typesize and count.
 // Typesize denoes the number of bytes per element and count denotes the number
 // of elements.
-NA_IAPI NAArray* naInitArrayWithCount(        NAArray* array,
+NA_IAPI NAArray* naInitArrayWithCount(       NAArray* array,
                                                 NAInt typesize,
                                                 NAInt count);
 

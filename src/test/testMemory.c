@@ -202,14 +202,14 @@ void testNASmartPtr(void){
   naInitSmartPtrConst(sptr4, NA_MEMORY_CLEANUP_NA_FREE, "Constant String Literal");
   
   printf("Retaining the smart pointers...\n");
-  naRetain(&sptr1);
-  naRetain(&sptr1);
-  naRetain(&sptr2);
-  naRetain(&sptr2);
-  naRetain(sptr3);
-  naRetain(sptr3);
-  naRetain(sptr4);
-  naRetain(sptr4);
+  naRetainSmartPtr(&sptr1);
+  naRetainSmartPtr(&sptr1);
+  naRetainSmartPtr(&sptr2);
+  naRetainSmartPtr(&sptr2);
+  naRetainSmartPtr(sptr3);
+  naRetainSmartPtr(sptr3);
+  naRetainSmartPtr(sptr4);
+  naRetainSmartPtr(sptr4);
   
   printf("Accessing and mutating the smart pointers...\n");
   mydataptrconst = (const int*)naGetSmartPtrConst(&sptr1);
@@ -280,15 +280,15 @@ void testNAPointer(void){
   printf("Data in ptr3: %s\n", mychardataptrconst);
 
   printf("Releasing the pointers...\n");
-  naReleasePointer(ptr1);
-  naReleasePointer(ptr1);
-  naReleasePointer(ptr1);
-  naReleasePointer(ptr2);
-  naReleasePointer(ptr2);
-  naReleasePointer(ptr2);
-  naReleasePointer(ptr3);
-  naReleasePointer(ptr3);
-  naReleasePointer(ptr3);
+  naRelease(ptr1);
+  naRelease(ptr1);
+  naRelease(ptr1);
+  naRelease(ptr2);
+  naRelease(ptr2);
+  naRelease(ptr2);
+  naRelease(ptr3);
+  naRelease(ptr3);
+  naRelease(ptr3);
   
   printf("\n");
   naStopRuntime();

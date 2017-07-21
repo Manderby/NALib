@@ -12,7 +12,10 @@ Version 20:
 - Remove old commented code
 - Page guide 80
 - Documentation
+- int uint
 - Make more test files
+- add __cplusplus to all h files
+- unify iterators. Iterators store start and end.
 
 
 Future
@@ -25,3 +28,4 @@ Future
 - Color
 - Timezones
 - NASocket
+- CODATA 2018

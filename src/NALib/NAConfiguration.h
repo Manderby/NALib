@@ -8,6 +8,10 @@
 // as preprocessor macros such that you can define them with prefix headers
 // when you need them in your special project.
 //
+// Note that preprocessor flags with values usually follow this scheme:
+// PREPROCESSOR_MACRO=value
+// Without spaces at the equal sign.
+//
 // NAConfiguration.h is included at the beginning of the NASystem.h file.
 // Do not include it anywhere else.
 //
