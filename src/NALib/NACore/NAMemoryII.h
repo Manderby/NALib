@@ -227,7 +227,7 @@ NA_API void*        naNewStruct(NATypeInfo* typeidentifier);
 // accessible to the compiler at all times.
 struct NATypeInfo{
   void*             curpool;  // The actual type of this entry is hidden.
-  NAUInt            typesize;
+  NAInt             typesize;
   NAMutator         destructor;
   #ifndef NDEBUG
     const char*     typename;
@@ -336,18 +336,9 @@ NA_IDEF void naReleaseRefCount(NARefCount* refcount, void* data, NAMutator destr
   // NDEBUG is not defined, this can be detected!
   refcount->count--;
 
-  if(naGetRefCountCount(refcount) == NA_ZERO){    
+  if(refcount->count == NA_ZERO){    
     // Call the destructor on the data if available.
     if(destructor){destructor(data);}
-        
-    // Note that this is the only position in the whole NALib code where an
-    // NAPointer is deleted. Therefore you could theoretically include the
-    // code written in naDestructPointer directly here to save one function
-    // call. But as NALib assumes that NAPointer is only used when really
-    // needed for reference counting, it is nontheless put into a separate
-    // function such that this function can be inlined for sure and thus
-    // becomes very fast.
-    return;
   }
   // Note that other programming languages have incorporated this very idea
   // of self-organized reference-counting pointers deeply within its core.
@@ -492,26 +483,6 @@ NA_IDEF NAPtr naMakePtrWithDataMutable(void* data){
 
 
 
-NA_IDEF NAPtr naMakePtrWithExtraction(const NAPtr* srcptr, NAUInt byteoffset, NAUInt bytesizehint){
-  NAPtr dstptr;
-  #ifndef NDEBUG
-    if((NAInt)byteoffset < NA_ZERO)
-      naError("naMakePtrWithExtraction", "offset seems to be negative but should be unsigned.");
-    if((NAInt)bytesizehint < NA_ZERO)
-      naError("naMakePtrWithExtraction", "bytesizehint seems to be negative but should be unsigned.");
-  #endif
-  dstptr.data.d = &(((NAByte*)(srcptr->data.d))[byteoffset]);
-  #ifndef NDEBUG
-    // Now, we set the sizes and decide if certain flags still are valid.
-    dstptr.flags = srcptr->flags & NA_PTR_CONST_DATA;
-  #else
-    NA_UNUSED(bytesizehint);
-  #endif
-  return dstptr;
-}
-
-
-
 NA_IDEF const void* naGetPtrConst(const NAPtr* ptr){
   #ifndef NDEBUG
     if(!ptr){
@@ -583,8 +554,8 @@ NA_IDEF NASmartPtr* naInitSmartPtrMutable(NASmartPtr* sptr, void* data){
 
 
 
-NA_IDEF void naRetainSmartPtr(NASmartPtr* sptr){
-  naRetain(sptr);
+NA_IDEF NASmartPtr* naRetainSmartPtr(NASmartPtr* sptr){
+  return (NASmartPtr*)naRetainRefCount(&(sptr->refcount));
 }
 
 
@@ -635,10 +606,7 @@ struct NAPointer{
   NASmartPtr sptr;
   NAMutator destructor;
 };
-
-// Prototype of the destruct function defined in the implementation file.
-NA_RUNTIME_TYPE(NAPointer, NA_NULL);
-
+NA_EXTERN_RUNTIME_TYPE(NAPointer);
 
 
 
@@ -668,18 +636,13 @@ NA_IDEF NAPointer* naNewPointerMutable(void* data, NAMutator destructor){
 
 
 
-NA_HIDEF void naDestructPointer(NAPointer* pointer){
-  if(pointer->destructor){
-    pointer->destructor(naGetSmartPtrMutable(&(pointer->sptr)));
-  }
-  naDelete(pointer);
-}
-
-
-
 NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
-  return naRetain(pointer);
+  return (NAPointer*)naRetainSmartPtr(&(pointer->sptr));
 }
+
+
+
+NA_HAPI void naDestructPointer(NAPointer* pointer);
 
 
 
@@ -704,19 +667,6 @@ NA_IDEF const void* naGetPointerConst(const NAPointer* pointer){
 
 NA_IDEF void* naGetPointerMutable(NAPointer* pointer){
   return naGetSmartPtrMutable(&(pointer->sptr));
-}
-
-
-
-
-NA_IDEF void* naRetain(void* obj){
-  return (void*)naRetainRefCount((NARefCount*)obj);
-}
-
-
-
-NA_IDEF void naRelease(NAPointer* obj){
-  naReleasePointer(obj);
 }
 
 

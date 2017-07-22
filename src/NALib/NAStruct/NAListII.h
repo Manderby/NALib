@@ -25,10 +25,7 @@ struct NAListElement{
     NAUInt itercount;   // debugging iterator count.
   #endif
 };
-
-
-NA_RUNTIME_TYPE(NAListElement, NA_NULL);
-
+NA_EXTERN_RUNTIME_TYPE(NAListElement);
 
 struct NAList{
   NAInt count;            // The number of elements stored in this list.
@@ -49,8 +46,15 @@ struct NAListIterator{
 };
 
 
-
-NA_API NAListElement* naNewListElement(NAListElement* prev, NAListElement* next);
+NA_IDEF NAListElement* naNewListElement(NAListElement* prev, NAListElement* next){
+  NAListElement* elem = naNew(NAListElement);
+  elem->prev = prev;
+  elem->next = next;
+  #ifndef NDEBUG
+    elem->itercount = 0;
+  #endif
+  return elem;
+}
 
 
 NA_IDEF NAList* naInitList(NAList* list){

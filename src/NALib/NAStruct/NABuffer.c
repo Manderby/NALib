@@ -138,7 +138,7 @@ NA_HIDEF void naAllocateBufferPartMemory(NABufferPart* part){
 
 // The destructor method which will automatically be called by naDelete.
 NA_HIDEF void naDestructBufferPart(NABufferPart* part){
-  if(part->data){naRelease(part->data);}
+  if(part->data){naReleasePointer(part->data);}
 }
 
 
@@ -407,6 +407,13 @@ NA_HDEF void naDeallocBufferSource(NABufferSource* source){
   naFree(source);
 }
 
+
+
+
+// Releases this buffer source.
+NA_HIDEF NABufferSource* naRetainBufferSource(NABufferSource* source){
+  return (NABufferSource*)naRetainRefCount(&(source->refcount));
+}
 
 
 
@@ -1143,7 +1150,7 @@ NA_DEF NABuffer* naCreateBufferWithSameSource(NABuffer* srcbuffer){
   naInitRefCount(&(buffer->refcount));
   naInitBufferStruct(buffer);
   
-  buffer->source = naRetain(srcbuffer->source);
+  buffer->source = naRetainBufferSource(srcbuffer->source);
   buffer->srcoffset = srcbuffer->srcoffset;
 
   buffer->flags = srcbuffer->flags;
@@ -1259,12 +1266,18 @@ NA_DEF NABuffer* naCreateBufferWithCustomSource(NABufferSourceDescriptor desc){
 NA_HDEF void naDeallocBuffer(NABuffer* buffer){
   #ifndef NDEBUG
     if(buffer->itercount)
-      naError("naDestructBuffer", "There are still iterators running. Did you forgot naClearBufferIterator?");
+      naError("naDeallocBuffer", "There are still iterators running. Did you forgot naClearBufferIterator?");
   #endif
   if(buffer->source){naReleaseBufferSource(buffer->source);}
   naForeachListMutable(&(buffer->parts), naDelete);
   naClearList(&(buffer->parts));
   naFree(buffer);
+}
+
+
+
+NA_API NABuffer* naRetainBuffer(NABuffer* buffer){
+  return (NABuffer*)naRetainRefCount(&(buffer->refcount));
 }
 
 
@@ -1739,7 +1752,7 @@ NA_DEF NABufferIterator naMakeBufferAccessor(const NABuffer* buffer){
     if(!buffer)
       {naNulln(&iter, sizeof(NABufferIterator)); naCrash("naMakeBufferAccessor", "buffer is Null pointer"); return iter;}
   #endif
-  iter.bufferptr = naMakePtrWithDataMutable(naRetain((NABuffer*)buffer));  //todo const
+  iter.bufferptr = naMakePtrWithDataMutable(naRetainBuffer((NABuffer*)buffer));  //todo const
   iter.curoffset = 0;
   iter.curbit = 0;
   iter.listiter = naMakeListModifier((NAList*)&(buffer->parts));
@@ -1760,7 +1773,7 @@ NA_DEF NABufferIterator naMakeBufferMutator(const NABuffer* buffer){
     if(!buffer)
       {naNulln(&iter, sizeof(NABufferIterator)); naCrash("naMakeBufferAccessor", "buffer is Null pointer"); return iter;}
   #endif
-  iter.bufferptr = naMakePtrWithDataMutable(naRetain((NABuffer*)buffer));  //todo const
+  iter.bufferptr = naMakePtrWithDataMutable(naRetainBuffer((NABuffer*)buffer));  //todo const
   iter.curoffset = 0;
   iter.curbit = 0;
   iter.listiter = naMakeListModifier((NAList*)&(buffer->parts)); // todo const
@@ -1781,7 +1794,7 @@ NA_DEF NABufferIterator naMakeBufferModifier(NABuffer* buffer){
     if(!buffer)
       {naNulln(&iter, sizeof(NABufferIterator)); naCrash("naMakeBufferAccessor", "buffer is Null pointer"); return iter;}
   #endif
-  iter.bufferptr = naMakePtrWithDataMutable(naRetain(buffer));
+  iter.bufferptr = naMakePtrWithDataMutable(naRetainBuffer(buffer));
   iter.curoffset = 0;
   iter.curbit = 0;
   iter.listiter = naMakeListModifier(&(buffer->parts));

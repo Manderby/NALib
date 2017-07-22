@@ -5,15 +5,8 @@
 
 
 
-NA_DEF NAListElement* naNewListElement(NAListElement* prev, NAListElement* next){
-  NAListElement* elem = naNew(NAListElement);
-  elem->prev = prev;
-  elem->next = next;
-  #ifndef NDEBUG
-    elem->itercount = 0;
-  #endif
-  return elem;
-}
+
+NA_RUNTIME_TYPE(NAListElement, NA_NULL);
 
 
 

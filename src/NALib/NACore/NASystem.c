@@ -16,7 +16,7 @@
 
   void naError(const char* functionsymbol, const char* text){
     fprintf(stderr, "Error in %s: %s", functionsymbol, text);
-    fprintf(stderr, NA_NL); // Set a breakpoint in this line.
+    fprintf(stderr, NA_NL); // Set a breakpoint in this line to debug.
   }
 
 
@@ -24,7 +24,7 @@
   NA_NORETURN void naCrash(const char* functionsymbol, const char* text){
     fprintf(stderr, "Critical error in %s: %s" NA_NL, functionsymbol, text);
     fprintf(stderr, NA_NL "Crashing the application deliberately...");
-    fprintf(stderr, NA_NL); // Set a breakpoint in this line.
+    fprintf(stderr, NA_NL); // Set a breakpoint in this line to debug.
     exit(EXIT_FAILURE);
   }
 

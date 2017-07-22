@@ -22,6 +22,10 @@ correct, complete or final.
   to naRetain.
 - NAMemoryCleanup has been removed. Replaced it with NAMutator destructors at
   some positions.
+- Redefined NA_NULL with ((void*)0) to make sure it has the correct size.
+- NA_RUNTIME_TYPE now requires to be defined in implementation file. No more
+  static. Added NA_EXTERN_RUNTIME_TYPE.
+- naMakePtrWithExtraction has been removed.
 - Tons of small corrections or adjustments everywhere.
 
 

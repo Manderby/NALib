@@ -8,6 +8,19 @@
 #include "../NAList.h"
 
 
+
+
+NA_RUNTIME_TYPE(NAPointer, NA_NULL);
+
+
+NA_HDEF void naDestructPointer(NAPointer* pointer){
+  if(pointer->destructor){
+    pointer->destructor(naGetSmartPtrMutable(&(pointer->sptr)));
+  }
+  naDelete(pointer);
+}
+
+
 // //////////////////////////////////////
 // Implementation notes from the author about the Memory Pools.
 //
@@ -278,6 +291,10 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
       {naCrash("naNew", "Runtime not running. Use naStartRuntime()"); return NA_NULL;}
     if(!typeinfo)
       {naCrash("naNew", "Given type identifier is Null-Pointer"); return NA_NULL;}
+    if(typeinfo->typesize == 0)
+      naError("naNew", "Type size is zero");
+    if(typeinfo->typesize < 0)
+      naError("naNew", "Reference counted New is not implemented yet");
   #endif
 
   coretypeinfo = (NACoreTypeInfo*)typeinfo;

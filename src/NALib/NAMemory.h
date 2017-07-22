@@ -122,8 +122,8 @@ NA_IAPI void* naMallocPageAligned(NAUInt bytesize);
 NA_IAPI void  naFreeAligned(      void* ptr);
 
 // If you experience an error with naNew: Have you marked your type with
-// NA_RUNTIME_TYPE? See below.
-#define       naNew(type)        (type*)naNewStruct(&na_ ## type ## _typeinfo)
+// NA_RUNTIME_TYPE? See NA_RUNTIME_TYPE below.
+#define       naNew(type)         (type*)naNewStruct(&na_ ## type ## _typeinfo)
 NA_API  void  naDelete(           void* pointer);
 
 // Authors note:
@@ -139,8 +139,8 @@ NA_API  void  naDelete(           void* pointer);
 // //////////////////////
 
 // In order to make naNew and NADelete work, you need to run the NALib runtime
-// system. It is very raw at the moment but has a very low footprint. You can
-// simply start the runtime at application start and stop it at the end.
+// system. You can simply start the runtime at application start and stop it at
+// the end.
 
 NA_API void               naStartRuntime();
 NA_API void               naStopRuntime();
@@ -150,20 +150,41 @@ NA_API NAUInt             naGetRuntimePoolSize();
 
 // In order to work with specific types, each type trying to use the runtime
 // system needs to register itself to the runtime system upon compile time.
+// This is achieved by defining a very specific variable of type NATypeInfo.
 // You can do so using the macro NA_RUNTIME_TYPE. Just write the typename
-// (For example NAString) and the function to use for destructing the type.
+// (For example MyStruct) and the function to use for destructing the type.
 //
-// Note that the destructor must be declared and the type must not be opaque
-// at the time of using NA_RUNTIME_TYPE!
+// NA_RUNTIME_TYPE(MyStruct, destructMyStruct)
+//
+// But note that this macro results in a variable definition and hence must be
+// written in an implementation file (.c). Also, the type must not be opaque
+// and the destructor must be declared before this macro.
+// 
+// As though you may want to write inlineable code in your header files which
+// use naNew, you can use the NA_EXTERN_RUNTIME_TYPE macro to declare the
+// variable beforehand:
+//
+// NA_EXTERN_RUNTIME_TYPE(MyStruct)
+//
+// For a deeper understanding on how that macro does what it does, please refer
+// to the implementation of the runtime system in NAMemory.c
+
+#define NA_EXTERN_RUNTIME_TYPE(type)\
+  extern NATypeInfo na_ ## type ## _typeinfo
 
 #ifndef NDEBUG
-#define NA_RUNTIME_TYPE(type, destructor)\
-    static NATypeInfo na_ ## type ## _typeinfo =\
-    {NA_NULL, sizeof(type), (NAMutator)destructor, #type}
+  #define NA_RUNTIME_TYPE(type, destructor)\
+    NATypeInfo na_ ## type ## _typeinfo =\
+    {NA_NULL,\
+    naSizeof(type),\
+    (NAMutator)destructor,\
+    #type}
 #else
   #define NA_RUNTIME_TYPE(type, destructor)\
-    static NATypeInfo na_ ## type ## _typeinfo =\
-    {NA_NULL, sizeof(type), (NAMutator)destructor}
+    NATypeInfo na_ ## type ## _typeinfo =\
+    {NA_NULL,\
+    naSizeof(type),\
+    (NAMutator)destructor}
 #endif
 
 // Every type using the runtime system will get a global typeinfo variable
@@ -226,12 +247,9 @@ NA_IAPI void        naReleaseRefCount(NARefCount* refcount,
 // providing both an Accessor and/or a Mutator to a C-pointer.
 //
 // This struct also serves as the core of memory consistency checking when
-// debugging. An NAPtr stores many additional information which are not
-// accessible to the programmer but would not be available when just using
-// plain C pointers. NALib tags NAPtr values with various flags like if the
-// pointer denotes an array and whether that array is null-terminated or not.
-// During runtime, NALib checks if all accesses are fine and no buffer
-// overflows occur.
+// debugging. An NAPtr stores additional information which are not accessible
+// to the programmer but would not be available when just using ordinary plain
+// C pointers. During runtime, NALib checks if all accesses are fine.
 //
 // For example: If the programmer uses a mutator on const data when debugging,
 // an error will be emitted. You can of course ignore these errors and hope
@@ -260,12 +278,6 @@ NA_IAPI void        naReleaseRefCount(NARefCount* refcount,
 // programmer to make the distinction at declaration level (which can become
 // very cumbersome) and maybe even force him to convert between the two
 // variants which might be very costly and not beautiful at all.
-//
-// NALib keeps track of how pointers are allocated when NDEBUG is undefined.
-// This affects all of the memory structures in this file. When NDEBUG is
-// defined, this information is not available anymore. Except for the NAPointer
-// struct which needs to store the information to deallocate the stored pointer
-// correctly once the reference count reaches zero.
 
 
 // The full type definition is in the file "NAMemoryII.h"
@@ -276,37 +288,18 @@ NA_IAPI NAPtr naMakeNullPtr();
 
 // Makes an NAPtr with a newly allocated memory block of the given bytesize.
 // The bytesize parameter can be negative. See naMalloc function for more
-// information Note that you maybe will not call this function directly but
-// instead will use naMakeLValueWithTypesize or naMakeMemoryBlockWithBytesize.
+// information.
 NA_IAPI NAPtr naMakePtrWithBytesize(NAInt bytesize);
 
-// Fills the given NAPtr struct with either a const or a non-const pointer.
-//
-// The bytesizehint is a hint when debugging. It denotes how many bytes are
-// visible to the programmer in the given data. In the same way, the
-// zerofillhint are the number of zero bytes available but invisible to the
-// programmer. Both parameters must be positive. The zerofillhint parameter
-// only is valid when bytesizehint is not zero.
+// Fills the given NAPtr struct with either a const or a non-const pointer
+// without copying any bytes.
 NA_IAPI NAPtr naMakePtrWithDataConst(       const void* data);
-NA_IAPI NAPtr naMakePtrWithDataMutable(           void* data);
-
-// Assumes srcptr to be an array of bytes and creates an NAPtr referencing an
-// extraction thereof. DOES NOT COPY!
-// The byteoffset and bytesize must be given in bytes and are always positive!
-// The bytesizehint is only a hint which helps detecting errors during
-// debugging. When NDEBUG is defined, this hint is optimized out.
-NA_IAPI NAPtr naMakePtrWithExtraction(     const NAPtr* srcptr,
-                                                 NAUInt byteoffset,
-                                                 NAUInt bytesizehint);
-    
+NA_IAPI NAPtr naMakePtrWithDataMutable(           void* data);    
 // Note that the creation functions of NAPtr are naMakeXXX functions which
 // makes it easy to implement. But the remaining functions require to provide
 // a pointer.
 
-// Cleanup functions
-// Frees the memory stored in ptr. You should always choose the appropriate
-// function depending on what kind of pointer the NAPtr stores. See definition
-// of NAMemoryCleanup to know which one.
+// Calls the given destructor with the data pointer stored in ptr.
 NA_IAPI void naCleanupPtr(NAPtr* ptr, NAMutator destructor);
 
 // The following functions return either a const or a mutable pointer.
@@ -373,7 +366,7 @@ NA_IAPI NASmartPtr* naInitSmartPtrMutable(  NASmartPtr* sptr,
 //
 // When refcount reaches zero, first, the destructor is called with a pointer
 // to data, then the data is cleaned up and finally, the struct is cleaned up.
-NA_IAPI void        naRetainSmartPtr(NASmartPtr* sptr);
+NA_IAPI NASmartPtr* naRetainSmartPtr (NASmartPtr* sptr);
 NA_IAPI void        naReleaseSmartPtr(NASmartPtr* sptr,
                                         NAMutator desctructor,
                                            NABool onlydata);
@@ -462,17 +455,6 @@ NA_IAPI void        naReleasePointer(NAPointer* pointer);
 NA_IAPI const void* naGetPointerConst  (const NAPointer* pointer);
 NA_IAPI       void* naGetPointerMutable(      NAPointer* pointer);
 
-
-
-
-// The following two functions have been added for convenience. As reference
-// counting operates on an NARefCount struct and that struct should always
-// be the first field of a struct, you can send any pointer to naRetain which
-// uses this convention.
-//
-// The naRelease macro however is only applicable for NAPointer structs.
-NA_IAPI void* naRetain  (void* obj);
-NA_IAPI void  naRelease (NAPointer* obj);
 
 
 
