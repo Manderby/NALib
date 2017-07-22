@@ -186,7 +186,7 @@ struct NAFile{
 
 NA_IDEF NAFile* naCreateFileReadingFilename(const char* filename){
   NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(file->refcount));
   file->desc = naOpen(filename, NA_FILE_OPEN_FLAGS_READ, NA_FILEMODE_DEFAULT);
   if(file->desc < 0){
     #ifndef NDEBUG
@@ -200,7 +200,7 @@ NA_IDEF NAFile* naCreateFileReadingFilename(const char* filename){
 
 NA_IDEF NAFile* naCreateFileWritingFilename(const char* filename, NAFileMode mode){
   NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(file->refcount));
   file->desc = naOpen(filename, NA_FILE_OPEN_FLAGS_WRITE, mode);
   if(file->desc < 0){
     #ifndef NDEBUG
@@ -214,7 +214,7 @@ NA_IDEF NAFile* naCreateFileWritingFilename(const char* filename, NAFileMode mod
 
 NA_IDEF NAFile* naCreateFileAppendingFilename(const char* filename, NAFileMode mode){
   NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(file->refcount));
   file->desc = naOpen(filename, NA_FILE_OPEN_FLAGS_APPEND, mode);
   if(file->desc < 0){
     #ifndef NDEBUG
@@ -228,7 +228,7 @@ NA_IDEF NAFile* naCreateFileAppendingFilename(const char* filename, NAFileMode m
 
 NA_IDEF NAFile* naCreateFileReadingStdin(){
   NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(file->refcount));
   file->desc = 0;
   return file;
 }
@@ -237,7 +237,7 @@ NA_IDEF NAFile* naCreateFileReadingStdin(){
 
 NA_IDEF NAFile* naCreateFileWritingStdout(){
   NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(file->refcount));
   file->desc = 1;
   return file;
 }
@@ -246,24 +246,19 @@ NA_IDEF NAFile* naCreateFileWritingStdout(){
 
 NA_IDEF NAFile* naCreateFileWritingStderr(){
   NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(file->refcount));
   file->desc = 2;
   return file;
 }
 
 
 
-NA_HIDEF void naClearFile(NAFile* file){
-  if(file->desc > 2){
-    naClose(file->desc);
-  }
-  file->desc = -1;
-}
+NA_HAPI void naDeallocFile(NAFile* file);
 
 
 
 NA_IDEF void naReleaseFile(NAFile* file){
-  naReleaseRefCount(&(file->refcount), NA_NULL, (NAMutator)naClearFile);
+  naReleaseRefCount(&(file->refcount), &(file->refcount), (NAMutator)naDeallocFile);
 }
 
 

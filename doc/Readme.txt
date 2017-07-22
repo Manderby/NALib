@@ -248,18 +248,14 @@ the different structs together with the intended way of using them:
   initialize it upon creation with naInitRefCount. Use the naRetain macro
   to retain your struct. Create your own function like releaseMyStruct which
   calls naReleaseRefCount. If your struct needs a destructor, implement it and
-  set it as the destructor parameter of naReleaseRefCount. If you store a data
-  ptr which also potentially needs cleaning up, you can set the datacleanup
-  parameter of naInitRefCount and query it in the destructor with a call to
-  naGetRefCountCleanupData.
+  set it as the destructor parameter of naReleaseRefCount.
   Note that structs of NALib which use this scenario always use naCreateXXX
   as the creator function.
 - NASmartPtr
-  An NASmartPtr stores two things: An NARefCount and an NAPtr. The datacleanup
-  parameter of the NARefCount operates on the NAPtr. Use this struct when you
-  want to store a pointer with a reference count. Use either naRetainSmartPtr
-  or the naRetain macro to retain the struct and a call to naReleaseNASmartPtr
-  with a potential destructor callback to release the struct.
+  An NASmartPtr stores two things: An NARefCount and an NAPtr. Use this struct
+  when you want to store a pointer with a reference count. You can use either
+  naRetainSmartPtr or the naRetain macro to retain the struct and a call to
+  naReleaseSmartPtr with a potential destructor callback to release the struct.
   This is the raw implementation of a reference count which does not require
   the NALib runtime system.
 - NAPointer
@@ -269,16 +265,18 @@ the different structs together with the intended way of using them:
   and naRelease are made specifically for this struct. Note also that the
   NAPointer struct itself is instanciated using a fast memory pool. This struct
   is optimal for quick programming, but requires the runtime system. Structs
-  in NALib which use this scenaria use naNewXXX as the creator function.
+  in NALib which use this scenario use naNewXXX as the creator function.
 - NA_RUNTIME_TYPE, naNew and naDelete
   When you implement a struct which uses NA_RUNTIME_TYPE, you can allocate and
   deallocate the structs with naNew and naDelete. The destructor is defined
   once per NA_RUNTIME_TYPE and does not requires memory for the callback like
   with NAPointer.
-  The optimal scenario is to have a struct storing an NARefCount or NASmartPtr
-  as their first element and the NA_MEMORY_CLEANUP_NA_DELETE cleanup for the
-  struct. This is precisely how NAPointer is implemented. But you can use
-  NA_RUNTIME_TYPE with your own types.
+- Combination NA_RUNTIME_TYPE with NARefCount as first field
+  When you define a struct containing an NARefCount as their first field and
+  define it to implement NA_RUNTIME_TYPE, you can simply define a ReleaseMyType
+  function where you use the naDelete mutator as destructor function in the
+  call to naReleaseRefCount. With that, you get reference counted pointers
+  allocated and deallocated automatically using the NARuntime memory pools.
   
 
 

@@ -90,13 +90,9 @@ NA_DEF NAString naMakeStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
 
 
 
-NA_DEF NAString naMakeStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt length, NAMemoryCleanup cleanup){
+NA_DEF NAString naMakeStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt length, NAMutator destructor){
   NAString string;
-  #ifndef NDEBUG
-    if(!naIsCleanupValid(cleanup))
-      naError("naMakeStringWithMutableUTF8Buffer", "invalid cleanup option");
-  #endif
-  string.buffer = naCreateBufferWithMutableData(buffer, naAbsi(length), cleanup); // todo: absi
+  string.buffer = naCreateBufferWithMutableData(buffer, naAbsi(length), destructor); // todo: absi
   string.cachedstr = NA_NULL;
   #if NA_STRING_ALWAYS_CACHE == 1
     naGetStringUTF8Pointer(&string);
@@ -131,7 +127,7 @@ NA_DEF NAString naMakeStringWithArguments(const NAUTF8Char* format, va_list argu
   if(stringlen){
     NAUTF8Char* stringbuf = naMalloc(-(NAInt)stringlen);
     naVsnprintf(stringbuf, (NAUInt)(stringlen + 1), format, argumentlist3);
-    string = naMakeStringWithMutableUTF8Buffer(stringbuf, -(NAInt)stringlen, NA_MEMORY_CLEANUP_NA_FREE);
+    string = naMakeStringWithMutableUTF8Buffer(stringbuf, -(NAInt)stringlen, (NAMutator)naFree);
   }else{
     string = naMakeString();
   }
@@ -204,7 +200,6 @@ NA_DEF void naClearString(NAString* string){
 NA_DEF NAInt naGetStringBytesize(const NAString* string){
   return naGetBufferRange(string->buffer).length;
 }
-
 
 
 NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
@@ -427,7 +422,7 @@ NA_DEF NAString naMakeStringXMLEncoded(const NAString* inputstring){
 //    inptr++;
 //  }
 //
-//  return naMakeStringWithMutableUTF8Buffer(stringbuf, -destsize, NA_MEMORY_CLEANUP_NA_FREE);
+//  return naMakeStringWithMutableUTF8Buffer(stringbuf, -destsize, naFree);
   return naMakeString();
 }
 
@@ -457,7 +452,7 @@ NA_DEF NAString naMakeStringXMLDecoded(const NAString* inputstring){
 //  // Create a string with sufficient characters. As XML entities are always
 //  // longer than their decoded character, we just use the same size.
 //  stringbuf = naMalloc(-inputsize);
-//  string = naMakeStringWithMutableUTF8Buffer(stringbuf, -inputsize, NA_MEMORY_CLEANUP_NA_FREE);
+//  string = naMakeStringWithMutableUTF8Buffer(stringbuf, -inputsize, naFree);
 //  inptr = naGetStringUTF8Pointer(inputstring);
 //  destptr = stringbuf;
 //
@@ -529,7 +524,7 @@ NA_DEF NAString naMakeStringEPSEncoded(const NAString* inputstring){
 //  #endif
 //  // Create the string with the required length
 //  stringbuf = naMalloc(-destsize);
-//  string = naMakeStringWithMutableUTF8Buffer(stringbuf, -destsize, NA_MEMORY_CLEANUP_NA_FREE);
+//  string = naMakeStringWithMutableUTF8Buffer(stringbuf, -destsize, naFree);
 //  inptr = naGetStringUTF8Pointer(inputstring);
 //  destptr = stringbuf;
 //
@@ -573,7 +568,7 @@ NA_DEF NAString naMakeStringEPSDecoded(const NAString* inputstring){
 //  // Create a string with sufficient characters. As EPS entities are always
 //  // longer than their decoded character, we just use the same size.
 //  stringbuf = naMalloc(-inputsize);
-//  string = naMakeStringWithMutableUTF8Buffer(stringbuf, -inputsize, NA_MEMORY_CLEANUP_NA_FREE);
+//  string = naMakeStringWithMutableUTF8Buffer(stringbuf, -inputsize, naFree);
 //  inptr = naGetStringUTF8Pointer(inputstring);
 //  destptr = stringbuf;
 //
@@ -628,12 +623,12 @@ NA_DEF NAString naMakeStringEPSDecoded(const NAString* inputstring){
   //  #ifdef UNICODE
   //    newsize = WideCharToMultiByte(CP_UTF8, 0, systemstring, -1, NULL, 0, NULL, NULL);
   //    stringbuf = naMalloc(-newsize);
-  //    string = naMakeStringWithMutableUTF8Buffer(string, stringbuf, -newsize, NA_MEMORY_CLEANUP_NA_FREE);
+  //    string = naMakeStringWithMutableUTF8Buffer(string, stringbuf, -newsize, naFree);
   //    WideCharToMultiByte(CP_UTF8, 0, systemstring, -1, stringbuf, newsize, NULL, NULL);
   //  #else
   //    newsize = naStrlen(systemstring);
   //    stringbuf = naMalloc(-newsize);
-  //    string = naMakeStringWithMutableUTF8Buffer(string, stringbuf, -newsize, NA_MEMORY_CLEANUP_NA_FREE);
+  //    string = naMakeStringWithMutableUTF8Buffer(string, stringbuf, -newsize, naFree);
   //    naCopyn(stringbuf, systemstring, newsize);
   //  #endif
   //  return string;

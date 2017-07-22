@@ -72,13 +72,13 @@ NA_API NAString naMakeString(void);
 NA_API NAString naMakeStringWithUTF8CStringLiteral(const NAUTF8Char* ptr);
 
 // Returns an NAString with the given length using the given buffer. The buffer
-// must be big enough! When cleanup is anything but NA_MEMORY_CLEANUP_NONE,
-// this NAString will clean up the buffer when getting deleted.
+// must be big enough! When destructor is anything but NA_NULL, the given
+// buffer will be cleaned up when eventually it is no longer in use.
 // When length is negative, the absolute value will be used but the buffer is
 // expected to be null-terminated (the null character is not in length).
 NA_API NAString naMakeStringWithMutableUTF8Buffer(  NAUTF8Char* buffer,
-                                                           NAInt length,
-                                                 NAMemoryCleanup cleanup);
+                                                          NAInt length,
+                                                      NAMutator destructor);
 
 // Creates an NAString just like sprintf.
 NA_API NAString naMakeStringWithFormat(const NAUTF8Char* format,

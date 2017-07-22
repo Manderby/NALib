@@ -134,7 +134,7 @@ void testNAPtr(void){
   printf("Cleanup bits: %d\n", NA_MEMORY_CLEANUP_BITS);
   printf("Cleanup mask: 0x%x\n", NA_MEMORY_CLEANUP_MASK);
   printf("Data cleanup bits: %d - %d\n", NA_REFCOUNT_DATA_CLEANUP_BITSHIFT, NA_REFCOUNT_DATA_CLEANUP_BITSHIFT + NA_MEMORY_CLEANUP_BITS - 1);
-  printf("Struct cleanup bits: %d - %d\n", NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT, NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT + NA_MEMORY_CLEANUP_BITS - 1);
+//  printf("Struct cleanup bits: %d - %d\n", NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT, NA_REFCOUNT_STRUCT_CLEANUP_BITSHIFT + NA_MEMORY_CLEANUP_BITS - 1);
 
   printf("\nCreating Null-NAPtr.\n");
   ptrNull = naMakeNullPtr();
@@ -147,7 +147,7 @@ void testNAPtr(void){
   
   printf("Creating NAPtr with mutable buffer.\n");
   array = (int*)naMalloc(sizeof(int) * 5);
-  ptrmutable = naMakePtrWithDataMutable(array, NA_MEMORY_CLEANUP_NA_FREE);
+  ptrmutable = naMakePtrWithDataMutable(array/*, NA_MEMORY_CLEANUP_NA_FREE*/);
 
   printf("Creating NAPtr with extraction.\n");
   ptrExtract = naMakePtrWithExtraction(&ptrmutable, 2 * sizeof(int), 3 * sizeof(int));
@@ -168,11 +168,11 @@ void testNAPtr(void){
   printf("\n");
   
   printf("Clearing the NAPtr's.\n");
-  naCleanupPtr(&ptrNull,    NA_MEMORY_CLEANUP_NONE);
-  naCleanupPtr(&ptr,        NA_MEMORY_CLEANUP_NA_FREE);
-  naCleanupPtr(&ptrconst,   NA_MEMORY_CLEANUP_NONE);
-  naCleanupPtr(&ptrmutable, NA_MEMORY_CLEANUP_NA_FREE);
-  naCleanupPtr(&ptrExtract, NA_MEMORY_CLEANUP_NONE);
+  naCleanupPtr(&ptrNull,    NA_NULL);
+  naCleanupPtr(&ptr,        (NAMutator)naFree);
+  naCleanupPtr(&ptrconst,   NA_NULL);
+  naCleanupPtr(&ptrmutable, (NAMutator)naFree);
+  naCleanupPtr(&ptrExtract, NA_NULL);
 }
 
 
@@ -189,17 +189,17 @@ void testNASmartPtr(void){
   
 
   printf("\nNASmartPtr Constants (not visible in API):\n");
-  printf("Flag bits count: %d\n", NA_REFCOUNT_FLAG_BITS);
-  printf("Flag bits: %d - %d\n", NA_REFCOUNT_FLAGS_BITSHIFT, NA_REFCOUNT_FLAGS_BITSHIFT + NA_REFCOUNT_FLAG_BITS - 1);
-  printf("Refcount mask: 0x%" NA_PRIx "\n", NA_REFCOUNT_MASK);
+//  printf("Flag bits count: %d\n", NA_REFCOUNT_FLAG_BITS);
+//  printf("Flag bits: %d - %d\n", NA_REFCOUNT_FLAGS_BITSHIFT, NA_REFCOUNT_FLAGS_BITSHIFT + NA_REFCOUNT_FLAG_BITS - 1);
+//  printf("Refcount mask: 0x%" NA_PRIx "\n", NA_REFCOUNT_MASK);
   printf("\nCreating NASmartPtr.\n");
   // Initializing some pointers
-  naInitSmartPtrMutable(&sptr1, NA_MEMORY_CLEANUP_NONE, &mydata, NA_MEMORY_CLEANUP_NONE);
-  naInitSmartPtrMutable(&sptr2, NA_MEMORY_CLEANUP_NONE, naAlloc(AVeryUsefulStruct), NA_MEMORY_CLEANUP_NA_FREE);
+  naInitSmartPtrMutable(&sptr1, /*NA_MEMORY_CLEANUP_NONE, */&mydata/*, NA_MEMORY_CLEANUP_NONE*/);
+  naInitSmartPtrMutable(&sptr2, /*NA_MEMORY_CLEANUP_NONE, */naAlloc(AVeryUsefulStruct)/*, NA_MEMORY_CLEANUP_NA_FREE*/);
   sptr3 = naAlloc(NASmartPtr);
-  naInitSmartPtrMutable(sptr3, NA_MEMORY_CLEANUP_NA_FREE, naAlloc(int), NA_MEMORY_CLEANUP_NA_FREE);
+  naInitSmartPtrMutable(sptr3, /*NA_MEMORY_CLEANUP_NA_FREE, */naAlloc(int)/*, NA_MEMORY_CLEANUP_NA_FREE*/);
   sptr4 = naAlloc(NASmartPtr);
-  naInitSmartPtrConst(sptr4, NA_MEMORY_CLEANUP_NA_FREE, "Constant String Literal");
+  naInitSmartPtrConst(sptr4, /*NA_MEMORY_CLEANUP_NA_FREE, */"Constant String Literal");
   
   printf("Retaining the smart pointers...\n");
   naRetainSmartPtr(&sptr1);
@@ -258,8 +258,8 @@ void testNAPointer(void){
   naStartRuntime();
   
   printf("\nCreating NAPointer.\n");
-  ptr1 = naNewPointerMutable(&mydata, NA_MEMORY_CLEANUP_NONE, NA_NULL);
-  ptr2 = naNewPointerMutable(naAlloc(AVeryUsefulStruct), NA_MEMORY_CLEANUP_NA_FREE, (NAMutator)destructAVeryUsefulStruct);
+  ptr1 = naNewPointerMutable(&mydata, /*NA_MEMORY_CLEANUP_NONE, */NA_NULL);
+  ptr2 = naNewPointerMutable(naAlloc(AVeryUsefulStruct), /*NA_MEMORY_CLEANUP_NA_FREE, */(NAMutator)destructAVeryUsefulStruct);
   ptr3 = naNewPointerConst("Constant string literal");
 
   printf("Retaining NAPointer.\n");

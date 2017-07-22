@@ -160,7 +160,7 @@ NA_HIDEF void naInjectConstListElement(NAList* list, NAListElement* element, con
   naInjectListElement(list, element);
 }
 NA_HIDEF void naInjectMutableListElement(NAList* list, NAListElement* element, void* data){
-  element->ptr = naMakePtrWithDataMutable(data, NA_MEMORY_CLEANUP_NONE);
+  element->ptr = naMakePtrWithDataMutable(data);
   naInjectListElement(list, element);
 }
 
@@ -457,7 +457,7 @@ NA_IDEF NAListIterator naMakeListMutator(const NAList* list){
 
 NA_IDEF NAListIterator naMakeListModifier(NAList* list){
   NAListIterator iter;
-  iter.listptr = naMakePtrWithDataMutable(list, NA_MEMORY_CLEANUP_NONE);
+  iter.listptr = naMakePtrWithDataMutable(list);
   iter.cur = (NAListElement*)(&(list->sentinel));
   #ifndef NDEBUG
     iter.mutator = NA_TRUE;
@@ -1013,8 +1013,8 @@ NA_IDEF void naMoveListThisToFirst(NAListIterator* iterator, NAList* dst){
   iterator->cur->next = dst->sentinel.next;
   iterator->cur->prev = &(dst->sentinel);
   naInjectExistingListElement(dst, iterator->cur);
-  naCleanupPtr(&(iterator->listptr), NA_MEMORY_CLEANUP_NONE);
-  iterator->listptr = naMakePtrWithDataMutable(dst, NA_MEMORY_CLEANUP_NONE);
+  naCleanupPtr(&(iterator->listptr), NA_NULL);
+  iterator->listptr = naMakePtrWithDataMutable(dst);
   #ifndef NDEBUG
     iterator->cur->itercount++;
   #endif
@@ -1043,8 +1043,8 @@ NA_IDEF void naMoveListThisToLast(NAListIterator* iterator, NAList* dst){
   iterator->cur->next = &(dst->sentinel);
   iterator->cur->prev = dst->sentinel.prev;
   naInjectExistingListElement(dst, iterator->cur);
-  naCleanupPtr(&(iterator->listptr), NA_MEMORY_CLEANUP_NONE);
-  iterator->listptr = naMakePtrWithDataMutable(dst, NA_MEMORY_CLEANUP_NONE);
+  naCleanupPtr(&(iterator->listptr), NA_NULL);
+  iterator->listptr = naMakePtrWithDataMutable(dst);
   #ifndef NDEBUG
     iterator->cur->itercount++;
   #endif

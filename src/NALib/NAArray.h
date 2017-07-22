@@ -72,7 +72,7 @@ NA_IAPI  NAArray* naInitArrayWithDataMutable( NAArray* array,
                                                  void* data,
                                                  NAInt typesize,
                                                  NAInt count,
-                                       NAMemoryCleanup cleanup);
+                                             NAMutator destructor);
 
 // Clears the given array.
 NA_IAPI void naClearArray                    (NAArray* array);

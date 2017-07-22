@@ -97,9 +97,9 @@ NA_HIDEF NABufferPart* naNewBufferPartConstData(const NAByte* data, NAInt bytesi
 
 
 // Creates a memory block with given mutable data buffer
-NA_HIDEF NABufferPart* naNewBufferPartMutableData(NAByte* data, NAInt bytesize, NAMemoryCleanup cleanup){
+NA_HIDEF NABufferPart* naNewBufferPartMutableData(NAByte* data, NAInt bytesize, NAMutator destructor){
   NABufferPart* part = naNew(NABufferPart);
-  part->data = naNewPointerMutable(data, cleanup, NA_NULL);
+  part->data = naNewPointerMutable(data, /*cleanup, */destructor);
   part->origin = 0;
   part->range = naMakeRangei(0, bytesize);
   return part;
@@ -131,7 +131,7 @@ NA_HIDEF void naAllocateBufferPartMemory(NABufferPart* part){
     if(part->data)
       naError("naAllocateBufferPartMemory", "Part already has memory");
   #endif
-  part->data = naNewPointerMutable(naMalloc(part->range.length), NA_MEMORY_CLEANUP_NA_FREE, NA_NULL);
+  part->data = naNewPointerMutable(naMalloc(part->range.length), (NAMutator)naFree);
 }
 
 
@@ -393,7 +393,7 @@ struct NABufferSource{
 // Creates a buffer source with the given descriptor.
 NA_HIDEF NABufferSource* naCreateBufferSource(NABufferSourceDescriptor descriptor){
   NABufferSource* source = naAlloc(NABufferSource);
-  naInitRefCount(&(source->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(source->refcount));
 
   source->desc = descriptor;  
   
@@ -401,6 +401,26 @@ NA_HIDEF NABufferSource* naCreateBufferSource(NABufferSourceDescriptor descripto
 }
 
 
+
+NA_HDEF void naDeallocBufferSource(NABufferSource* source){
+  if(source->desc.destructor){source->desc.destructor(source->desc.data);}
+  naFree(source);
+}
+
+
+
+
+// Releases this buffer source.
+NA_HIDEF void naReleaseBufferSource(NABufferSource* source){
+  naReleaseRefCount(&(source->refcount), &(source->refcount), (NAMutator)naDeallocBufferSource);
+}
+
+
+
+NA_HDEF void naDeallocBufferIterator(NABufferIterator* iter){
+  naClearBufferIterator(iter);
+  naFree(iter);
+}
 
 
 // Creates a buffer source with the given buffer. Note that the buffer must
@@ -412,7 +432,7 @@ NA_HIDEF NABufferSource* naCreateBufferSourceBuffer(NABuffer* buffer){
 
   NABufferIterator* iter = naAlloc(NABufferIterator);
   *iter = naMakeBufferModifier(buffer);
-  pointer = naNewPointerMutable(iter, NA_MEMORY_CLEANUP_NA_FREE, (NAMutator)naClearBufferIterator);
+  pointer = naNewPointerMutable(iter, (NAMutator)naDeallocBufferIterator);
   
   naNulln(&desc, sizeof(desc));
   desc.data = pointer;
@@ -420,13 +440,6 @@ NA_HIDEF NABufferSource* naCreateBufferSourceBuffer(NABuffer* buffer){
   source = naCreateBufferSource(desc);
   source->desc.flags |= NA_BUFFER_SOURCE_BUFFER;
   return source;
-}
-
-
-
-// Releases this buffer source.
-NA_HIDEF void naReleaseBufferSource(NABufferSource* source){
-  naReleaseRefCount(&(source->refcount), source->desc.data, source->desc.destructor);
 }
 
 
@@ -1009,7 +1022,7 @@ NA_HDEF NABuffer* naCreateBufferMemorySource(NABool secure){
   NABufferSourceDescriptor desc;
 
   NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(buffer->refcount));
   naInitBufferStruct(buffer);
   
   naNulln(&desc, sizeof(desc));
@@ -1029,7 +1042,7 @@ NA_HDEF NABuffer* naCreateBufferMemorySource(NABool secure){
 NA_DEF NABuffer* naCreateBuffer(NABool securememory){
   NABuffer* srcbuffer;
   NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(buffer->refcount));
   naInitBufferStruct(buffer);
   
   // The source is a memory buffer.
@@ -1050,7 +1063,7 @@ NA_DEF NABuffer* naCreateBuffer(NABool securememory){
 NA_DEF NABuffer* naCreateBufferExtraction(NABuffer* srcbuffer, NARangei range){
   NABuffer* buffer;
   buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(buffer->refcount));
   naInitBufferStruct(buffer);
   
   buffer->source = naCreateBufferSourceBuffer(srcbuffer);
@@ -1109,7 +1122,7 @@ NA_DEF NABuffer* naCreateBufferCopy(const NABuffer* srcbuffer, NARangei range, N
 
 NA_DEF NABuffer* naCreateBufferPlain(){
   NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(buffer->refcount));
   naInitBufferStruct(buffer);
   
   // The source is a Null pointer.
@@ -1127,7 +1140,7 @@ NA_DEF NABuffer* naCreateBufferPlain(){
 
 NA_DEF NABuffer* naCreateBufferWithSameSource(NABuffer* srcbuffer){
   NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(buffer->refcount));
   naInitBufferStruct(buffer);
   
   buffer->source = naRetain(srcbuffer->source);
@@ -1148,7 +1161,7 @@ NA_DEF NABuffer* naCreateBufferWithInpuFile(const char* filename){
   NABufferSourceDescriptor desc;
 
   NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(buffer->refcount));
   naInitBufferStruct(buffer);
   
   naNulln(&desc, sizeof(desc));
@@ -1176,7 +1189,7 @@ NA_DEF NABuffer* naCreateBufferWithConstData(const void* data, NAInt bytesize){
   NABufferPart* part;
   
   NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(buffer->refcount));
   naInitBufferStruct(buffer);
   
   buffer->source = NA_NULL;
@@ -1199,18 +1212,18 @@ NA_DEF NABuffer* naCreateBufferWithConstData(const void* data, NAInt bytesize){
 
 
 
-NA_DEF NABuffer* naCreateBufferWithMutableData(void* data, NAInt bytesize, NAMemoryCleanup cleanup){
+NA_DEF NABuffer* naCreateBufferWithMutableData(void* data, NAInt bytesize, NAMutator destructor){
   NABufferPart* part;
   
   NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(buffer->refcount));
   naInitBufferStruct(buffer);
   
   buffer->source = NA_NULL;
   buffer->srcoffset = 0;
 
   // Add the const data to the list.
-  part = naNewBufferPartMutableData(data, bytesize, cleanup);
+  part = naNewBufferPartMutableData(data, bytesize, destructor);
   naAddListLastMutable(&(buffer->parts), part);
 //  naIterateList(&(buffer->iter), 1);
   
@@ -1227,7 +1240,7 @@ NA_DEF NABuffer* naCreateBufferWithMutableData(void* data, NAInt bytesize, NAMem
 
 NA_DEF NABuffer* naCreateBufferWithCustomSource(NABufferSourceDescriptor desc){
   NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount), NA_MEMORY_CLEANUP_NA_FREE, NA_MEMORY_CLEANUP_NONE);
+  naInitRefCount(&(buffer->refcount));
   naInitBufferStruct(buffer);
   
   buffer->source = naCreateBufferSource(desc);
@@ -1243,7 +1256,7 @@ NA_DEF NABuffer* naCreateBufferWithCustomSource(NABufferSourceDescriptor desc){
 
 
 
-NA_HDEF void naDestructBuffer(NABuffer* buffer){
+NA_HDEF void naDeallocBuffer(NABuffer* buffer){
   #ifndef NDEBUG
     if(buffer->itercount)
       naError("naDestructBuffer", "There are still iterators running. Did you forgot naClearBufferIterator?");
@@ -1251,12 +1264,13 @@ NA_HDEF void naDestructBuffer(NABuffer* buffer){
   if(buffer->source){naReleaseBufferSource(buffer->source);}
   naForeachListMutable(&(buffer->parts), naDelete);
   naClearList(&(buffer->parts));
+  naFree(buffer);
 }
 
 
 
 NA_API void naReleaseBuffer(NABuffer* buffer){
-  naReleaseRefCount(&(buffer->refcount), NA_NULL, (NAMutator)naDestructBuffer);
+  naReleaseRefCount(&(buffer->refcount), &(buffer->refcount), (NAMutator)naDeallocBuffer);
 }
 
 
@@ -1725,7 +1739,7 @@ NA_DEF NABufferIterator naMakeBufferAccessor(const NABuffer* buffer){
     if(!buffer)
       {naNulln(&iter, sizeof(NABufferIterator)); naCrash("naMakeBufferAccessor", "buffer is Null pointer"); return iter;}
   #endif
-  iter.bufferptr = naMakePtrWithDataMutable(naRetain((NABuffer*)buffer), NA_MEMORY_CLEANUP_NONE);  //todo const
+  iter.bufferptr = naMakePtrWithDataMutable(naRetain((NABuffer*)buffer));  //todo const
   iter.curoffset = 0;
   iter.curbit = 0;
   iter.listiter = naMakeListModifier((NAList*)&(buffer->parts));
@@ -1746,7 +1760,7 @@ NA_DEF NABufferIterator naMakeBufferMutator(const NABuffer* buffer){
     if(!buffer)
       {naNulln(&iter, sizeof(NABufferIterator)); naCrash("naMakeBufferAccessor", "buffer is Null pointer"); return iter;}
   #endif
-  iter.bufferptr = naMakePtrWithDataMutable(naRetain((NABuffer*)buffer), NA_MEMORY_CLEANUP_NONE);  //todo const
+  iter.bufferptr = naMakePtrWithDataMutable(naRetain((NABuffer*)buffer));  //todo const
   iter.curoffset = 0;
   iter.curbit = 0;
   iter.listiter = naMakeListModifier((NAList*)&(buffer->parts)); // todo const
@@ -1767,7 +1781,7 @@ NA_DEF NABufferIterator naMakeBufferModifier(NABuffer* buffer){
     if(!buffer)
       {naNulln(&iter, sizeof(NABufferIterator)); naCrash("naMakeBufferAccessor", "buffer is Null pointer"); return iter;}
   #endif
-  iter.bufferptr = naMakePtrWithDataMutable(naRetain(buffer), NA_MEMORY_CLEANUP_NONE);
+  iter.bufferptr = naMakePtrWithDataMutable(naRetain(buffer));
   iter.curoffset = 0;
   iter.curbit = 0;
   iter.listiter = naMakeListModifier(&(buffer->parts));

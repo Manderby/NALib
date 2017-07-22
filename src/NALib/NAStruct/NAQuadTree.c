@@ -452,7 +452,7 @@ NA_DEF NAQuadTreeIterator naMakeQuadTreeAccessor(const NAQuadTree* tree){
 
 NA_DEF NAQuadTreeIterator naMakeQuadTreeMutator(NAQuadTree* tree){
   NAQuadTreeIterator iter;
-  iter.tree = naMakePtrWithDataMutable(tree, NA_MEMORY_CLEANUP_NONE);
+  iter.tree = naMakePtrWithDataMutable(tree);
   naInitQuadTreeIterator(&iter);
   return iter;
 }
@@ -461,7 +461,7 @@ NA_DEF NAQuadTreeIterator naMakeQuadTreeMutator(NAQuadTree* tree){
 
 NA_DEF NAQuadTreeIterator naMakeQuadTreeModifier(NAQuadTree* tree){
   NAQuadTreeIterator iter;
-  iter.tree = naMakePtrWithDataMutable(tree, NA_MEMORY_CLEANUP_NONE);
+  iter.tree = naMakePtrWithDataMutable(tree);
   naInitQuadTreeIterator(&iter);
   iter.flags |= NA_QUADTREE_ITERATOR_MODIFIER;
   return iter;
@@ -475,7 +475,7 @@ NA_DEF void naClearQuadTreeIterator(NAQuadTreeIterator* iter){
     mutabletree->itercount--;
     if(iter->curnode){iter->curnode->itercount--;}
   #endif
-  naCleanupPtr(&(iter->tree), NA_MEMORY_CLEANUP_NONE);
+  naCleanupPtr(&(iter->tree), NA_NULL);
 }
 
 

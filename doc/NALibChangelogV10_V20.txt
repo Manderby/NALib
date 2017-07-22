@@ -11,6 +11,7 @@ This file contains information about changes in the package NALib. These are
 purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
+- Strong simplification of NAMemory.h
 
 - Ensured naming scheme on some NADateTime macros.
 - Removed variadic output from naError and naCrash.
@@ -19,6 +20,8 @@ correct, complete or final.
 - Added naRetainRefCount, naRetainSmartPtr and naRetainPointer for completeness
   and when needed as a callback function. Added naRelease as a macro parallel
   to naRetain.
+- NAMemoryCleanup has been removed. Replaced it with NAMutator destructors at
+  some positions.
 - Tons of small corrections or adjustments everywhere.
 
 

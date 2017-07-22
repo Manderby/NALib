@@ -14,7 +14,7 @@
 NA_DEF NAString naMakeStringWithCurWorkingDirectory(){
   NAString string;
   NAUTF8Char* cwdbuf = naGetCwd(NA_NULL, 0);
-  string = naMakeStringWithMutableUTF8Buffer(cwdbuf, -(NAInt)(naStrlen(cwdbuf)), NA_MEMORY_CLEANUP_NA_FREE);
+  string = naMakeStringWithMutableUTF8Buffer(cwdbuf, -(NAInt)(naStrlen(cwdbuf)), (NAMutator)naFree);
   return string;
 }
 
@@ -52,6 +52,13 @@ NA_DEF NABool naIsHidden(const char* path){
 
 
 
+NA_HDEF void naDeallocFile(NAFile* file){
+  if(file->desc > 2){
+    naClose(file->desc);
+  }
+  file->desc = -1;
+  naFree(file);
+}
 
 
 

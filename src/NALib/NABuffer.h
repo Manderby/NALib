@@ -159,7 +159,7 @@ NA_API NABuffer* naCreateBufferWithConstData( const void* data,
                                                     NAInt bytesize);
 NA_API NABuffer* naCreateBufferWithMutableData(     void* data,
                                                     NAInt bytesize,
-                                          NAMemoryCleanup cleanup);
+                                                NAMutator destructor);
 
 // Creates a buffer with a custom source. Create a descriptor like this:
 //   NABufferSourceDescriptor desc;

@@ -15,7 +15,7 @@ struct NAArray{
   NAPtr   ptr;         // The pointer storing the data
   NAInt   count;       // The number of elements.
   NAInt   typesize;    // The size in bytes of the stored type
-  NAMemoryCleanup cleanup;
+  NAMutator destructor;
   #ifndef NDEBUG
     NAInt    itercount;   // The number of iterators attached to this array.
   #endif
@@ -33,7 +33,7 @@ NA_IDEF NAArray* naInitArray(NAArray* array){
   // result in bad values.
   array->count = 0;
   array->typesize = 1;
-  array->cleanup = NA_MEMORY_CLEANUP_NONE;
+  array->destructor = NA_NULL;
   #ifndef NDEBUG
     array->itercount = 0;
   #endif
@@ -53,8 +53,8 @@ NA_IDEF NAArray* naInitArrayWithCount(NAArray* array, NAInt typesize, NAInt coun
   #endif
   array->typesize = typesize;
   array->count = count;
-  array->cleanup = NA_MEMORY_CLEANUP_NA_FREE;
-  array->ptr = naMakePtrWithDataMutable(naMalloc(count * typesize), NA_MEMORY_CLEANUP_NA_FREE);
+  array->destructor = (NAMutator)naFree;
+  array->ptr = naMakePtrWithDataMutable(naMalloc(count * typesize));
   #ifndef NDEBUG
     array->itercount = 0;
   #endif
@@ -73,7 +73,7 @@ NA_IDEF NAArray* naInitArrayWithDataConst(NAArray* array, const void* data, NAIn
   #endif
   array->typesize = typesize;
   array->count = count;
-  array->cleanup = NA_MEMORY_CLEANUP_NONE;
+  array->destructor = NA_NULL;
   array->ptr = naMakePtrWithDataConst(data);
   #ifndef NDEBUG
     array->itercount = 0;
@@ -84,10 +84,8 @@ NA_IDEF NAArray* naInitArrayWithDataConst(NAArray* array, const void* data, NAIn
 
 
 
-NA_IDEF NAArray* naInitArrayWithDataMutable(NAArray* array, void* data, NAInt typesize, NAInt count, NAMemoryCleanup cleanup){
+NA_IDEF NAArray* naInitArrayWithDataMutable(NAArray* array, void* data, NAInt typesize, NAInt count, NAMutator destructor){
   #ifndef NDEBUG
-    if(!naIsCleanupValid(cleanup))
-      naError("naMakeStringWithMutableUTF8Buffer", "invalid cleanup option");
     if(!array)
       {naCrash("naInitArrayWithDataMutable", "array is Null-Pointer"); return NA_NULL;}
     if(typesize < 1)
@@ -95,8 +93,8 @@ NA_IDEF NAArray* naInitArrayWithDataMutable(NAArray* array, void* data, NAInt ty
   #endif
   array->typesize = typesize;
   array->count = count;
-  array->cleanup = cleanup;
-  array->ptr = naMakePtrWithDataMutable(data, cleanup);
+  array->destructor = destructor;
+  array->ptr = naMakePtrWithDataMutable(data/*, cleanup*/);
   #ifndef NDEBUG
     array->itercount = 0;
   #endif
@@ -115,7 +113,7 @@ NA_IDEF void naClearArray(NAArray* array){
     if(array->itercount)
       naError("naClearArray", "There are still some iterators operating upon this array. Did you use naClearArrayIterator?");
   #endif
-  naCleanupPtr(&(array->ptr), array->cleanup);
+  naCleanupPtr(&(array->ptr), array->destructor);
 }
 
 
@@ -314,12 +312,12 @@ NA_IDEF NAArrayIterator naMakeArrayMutator(NAArray* array){
   #ifndef NDEBUG
     NAArray* mutablearray;
     if(!array)
-      {naCrash("naMakeArrayMutator", "array is Null pointer"); iter.array = naMakePtrWithDataMutable(NA_NULL, NA_MEMORY_CLEANUP_NONE); iter.indx = 0; iter.mutator = NA_TRUE; return iter;}
+      {naCrash("naMakeArrayMutator", "array is Null pointer"); iter.array = naMakePtrWithDataMutable(NA_NULL); iter.indx = 0; iter.mutator = NA_TRUE; return iter;}
     mutablearray = (NAArray*)array;
     mutablearray->itercount++;
     iter.mutator = NA_TRUE;
   #endif
-  iter.array = naMakePtrWithDataMutable(array, NA_MEMORY_CLEANUP_NONE);
+  iter.array = naMakePtrWithDataMutable(array);
   iter.indx = -1;
   
   return iter;

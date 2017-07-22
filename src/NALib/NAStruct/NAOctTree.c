@@ -480,7 +480,7 @@ NA_DEF NAOctTreeIterator naMakeOctTreeAccessor(const NAOctTree* tree){
 
 NA_DEF NAOctTreeIterator naMakeOctTreeMutator(NAOctTree* tree){
   NAOctTreeIterator iter;
-  iter.tree = naMakePtrWithDataMutable(tree, NA_MEMORY_CLEANUP_NONE);
+  iter.tree = naMakePtrWithDataMutable(tree);
   naInitOctTreeIterator(&iter);
   return iter;
 }
@@ -489,7 +489,7 @@ NA_DEF NAOctTreeIterator naMakeOctTreeMutator(NAOctTree* tree){
 
 NA_DEF NAOctTreeIterator naMakeOctTreeModifier(NAOctTree* tree){
   NAOctTreeIterator iter;
-  iter.tree = naMakePtrWithDataMutable(tree, NA_MEMORY_CLEANUP_NONE);
+  iter.tree = naMakePtrWithDataMutable(tree);
   naInitOctTreeIterator(&iter);
   iter.flags |= NA_OCTTREE_ITERATOR_MODIFIER;
   return iter;
@@ -503,7 +503,7 @@ NA_DEF void naClearOctTreeIterator(NAOctTreeIterator* iter){
     mutabletree->itercount--;
     if(iter->curnode){iter->curnode->itercount--;}
   #endif
-  naCleanupPtr(&(iter->tree), NA_MEMORY_CLEANUP_NONE);
+  naCleanupPtr(&(iter->tree), NA_NULL);
 }
 
 
