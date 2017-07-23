@@ -83,6 +83,22 @@ void testRuntime(void){
   printf("Deleting that pointer.\n");
   naDelete(ptr1);
 
+  #if (NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT == 0)
+    printf("Automatic tmp garbage collection is turned off.\n");
+    printf("Allocating 10M tmp bytes...\n");
+    ptr1 = naMallocTmp(10000000);
+    printf("Calling the Garbage Collector manually...\n");
+    naCollectGarbage();
+  #else
+    printf("Automatic tmp garbage collection is turned on with a limit of %d bytes.\n", NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT);
+    printf("Allocating several times some tmp bytes...\n");
+    for(i=0; i<10; i++){
+      ptr1 = naMallocTmp(NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT / 7);
+    }
+    printf("Now using %d tmp bytes in the runtime.\n", naGetRuntimeGarbageBytesize());
+  #endif
+  
+
   printf("\nPerformance analysis:\n");
   structarray = (AVeryUsefulStruct**)naMalloc(sizeof(AVeryUsefulStruct*) * NA_TEST_MEMORY_COUNT);
   #if (NA_RUNTIME_USES_MEMORY_POOLS == 1)

@@ -59,6 +59,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   while(naIsCoreApplicationRunning()){
     pool = [[NSAutoreleasePool alloc] init];
       NSEvent* curevent = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:distantfuture inMode:NSDefaultRunLoopMode dequeue:YES];
+      naCollectGarbage();
       if(curevent){[NSApp sendEvent:curevent];}
     [pool drain];
   }

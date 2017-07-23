@@ -88,10 +88,10 @@ NA_HDEF void naDestructPointer(NAPointer* pointer){
 // memory.
 
 
+typedef struct NAMallocGarbage NAMallocGarbage;
 typedef struct NACorePool NACorePool;
 typedef struct NACoreTypeInfo NACoreTypeInfo;
 typedef struct NARuntime NARuntime;
-
 
 struct NACoreTypeInfo{
   NACorePool*       curpool;
@@ -102,6 +102,12 @@ struct NACoreTypeInfo{
   #endif
 };
 
+#define NA_MALLOC_GARBAGE_POINTER_COUNT (NA_COREPOOL_BYTESIZE / NA_SYSTEM_ADDRESS_BYTES - 2)
+struct NAMallocGarbage{
+  NAMallocGarbage* next;
+  NAUInt cur;
+  void* pointers[NA_MALLOC_GARBAGE_POINTER_COUNT];
+};
 
 struct NACorePool{
   NACoreTypeInfo* coretypeinfo;
@@ -121,11 +127,14 @@ struct NARuntime{
   NAUInt mempagesize;
   NAUInt poolsize;
   NAUInt poolsizemask;
+  NAMallocGarbage* mallocGarbage;
+  NAUInt totalmallocgarbagebytecount;
   #ifndef NDEBUG
     NAInt typeinfocount;
     NACoreTypeInfo** typeinfos;
   #endif
 };
+
 
 
 NARuntime* na_runtime = NA_NULL;
@@ -447,6 +456,8 @@ NA_DEF void naStartRuntime(){
     na_runtime->poolsize = NA_COREPOOL_BYTESIZE;
     na_runtime->poolsizemask = ~(NAUInt)(NA_COREPOOL_BYTESIZE - NA_ONE);
   #endif
+  na_runtime->mallocGarbage = NA_NULL;
+  na_runtime->totalmallocgarbagebytecount = 0;
   #ifndef NDEBUG
     na_runtime->typeinfocount = 0;
     na_runtime->typeinfos = NA_NULL;
@@ -459,7 +470,6 @@ NA_DEF void naStopRuntime(){
   #ifndef NDEBUG
     if(!na_runtime)
       {naCrash("naStopRuntime", "Runtime not running. Use naStartRuntime()"); return;}
-    
     #if (NA_RUNTIME_USES_MEMORY_POOLS == 1)
       if(na_runtime->typeinfocount){
         NAInt i;
@@ -471,8 +481,71 @@ NA_DEF void naStopRuntime(){
       }
     #endif
   #endif
+  naCollectGarbage();
   naFree(na_runtime);
   na_runtime = NA_NULL;
+}
+
+
+
+NA_HDEF void naEnhanceMallocGarbage(){
+  NAMallocGarbage* newgarbage = naAlloc(NAMallocGarbage);
+  newgarbage->next = na_runtime->mallocGarbage;
+  newgarbage->cur = 0;
+  na_runtime->mallocGarbage = newgarbage;
+}
+
+
+
+NA_DEF void* naMallocTmp(NAUInt bytesize){
+  #ifndef NDEBUG
+    if(!na_runtime)
+      {naCrash("naMallocTmp", "Runtime not running. Use naStartRuntime()");}
+  #endif
+  #if NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT != 0
+    if(na_runtime->totalmallocgarbagebytecount > NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT){naCollectGarbage();}
+  #endif
+  na_runtime->totalmallocgarbagebytecount += bytesize;
+  void* newPtr = naMalloc((NAInt)bytesize);
+  if(!na_runtime->mallocGarbage || (na_runtime->mallocGarbage->cur == NA_MALLOC_GARBAGE_POINTER_COUNT)){
+    naEnhanceMallocGarbage();
+  }
+  NAMallocGarbage* garbage = na_runtime->mallocGarbage;
+  garbage->pointers[garbage->cur] = newPtr;
+  garbage->cur++;
+  return newPtr;
+}
+
+
+
+NA_DEF void naCollectGarbage(){
+  #ifndef NDEBUG
+    if(!na_runtime)
+      {naCrash("naCollectRuntimeGarbage", "Runtime not running. Use naStartRuntime()");}
+  #endif
+  NAMallocGarbage* garbage = na_runtime->mallocGarbage;
+  while(garbage){
+    void** ptr = garbage->pointers;
+    for(NAUInt i=0; i<garbage->cur; i++){
+      naFree(*ptr);
+      ptr++;
+    }
+    NAMallocGarbage* nextgarbage = garbage->next;
+    naFree(garbage);
+    garbage = nextgarbage;
+  }
+  na_runtime->mallocGarbage = NA_NULL;
+  na_runtime->totalmallocgarbagebytecount = 0;
+}
+
+
+
+NA_DEF NAUInt naGetRuntimeGarbageBytesize(){
+  #ifndef NDEBUG
+    if(!na_runtime)
+      {naCrash("naGetRuntimeGarbageBytesize", "Runtime not running. Use naStartRuntime()"); return 0;}
+  #endif
+  return na_runtime->totalmallocgarbagebytecount;
 }
 
 
@@ -494,10 +567,6 @@ NA_DEF NAUInt naGetRuntimePoolSize(){
   #endif
   return na_runtime->poolsize;
 }
-
-
-
-
 
 
 

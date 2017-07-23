@@ -107,30 +107,39 @@ NA_IAPI NAUInt naGetSystemMemoryPagesizeMask();
 //                      You always free aligned what you alloced aligned. See
 //                      implementation for more details.
 //
+// naMallocTmp          Allocates the given number of bytes with malloc and
+//                      returns it as a mutable void pointer but is owned by
+//                      the runtime system and will be freed automatically
+//                      during a call to naCollectGarbage. Do not expect the
+//                      content of such pointers to be valid for a long time
+//                      and never call naFree or free on them manually!
+//                      Beware: Only positive byte counts are allowed.
 // naNew                This is a macro replicating something like the new
 //                      operator known from C++. But it is dependent on a
 //                      custom runtime system described further below.
 // naDelete             Deletes a pointer created with naNew by properly
 //                      calling the correct desctructor.
+//
+// Authors note:
+// Having only a handful allocation function helps detecting basic memory
+// errors. Note however that there does not exist any exception handling
+// in NALib, meaning an error might be detected though not resolved. And in
+// favor of simplicity, NALib will not get exception handling soon.
 
 NA_IAPI void* naMalloc(           NAInt bytesize);
-#define       naAlloc(type)      (type*)naMalloc(sizeof(type))
+#define       naAlloc(type)       (type*)naMalloc(sizeof(type))
 NA_IAPI void  naFree(             void* ptr);
 
 NA_IAPI void* naMallocAligned(    NAUInt bytesize, NAUInt align);
 NA_IAPI void* naMallocPageAligned(NAUInt bytesize);
 NA_IAPI void  naFreeAligned(      void* ptr);
 
-// If you experience an error with naNew: Have you marked your type with
-// NA_RUNTIME_TYPE? See NA_RUNTIME_TYPE below.
+NA_API  void* naMallocTmp(        NAUInt bytesize);
 #define       naNew(type)         (type*)naNewStruct(&na_ ## type ## _typeinfo)
 NA_API  void  naDelete(           void* pointer);
+// If you experience an error with naNew: Have you marked your type with
+// NA_RUNTIME_TYPE? See NA_RUNTIME_TYPE below.
 
-// Authors note:
-// Having only a handful allocation function helps detecting basic memory
-// errors. Note however that there does not exist any exception handling
-// in NALib, meaning an error might be detected though not resolved. And in
-// favor of simplicity, NALib will not get exception handling soon.
 
 
 
@@ -141,9 +150,15 @@ NA_API  void  naDelete(           void* pointer);
 // In order to make naNew and NADelete work, you need to run the NALib runtime
 // system. You can simply start the runtime at application start and stop it at
 // the end.
+//
+// Additionally, you can call naCollectGarbage to collect all temporary memory
+// which had been allocated with naMallocTmp.
 
 NA_API void               naStartRuntime();
 NA_API void               naStopRuntime();
+
+NA_API void               naCollectGarbage();
+NA_API NAUInt             naGetRuntimeGarbageBytesize();
 
 NA_API NAUInt             naGetRuntimeMemoryPageSize();
 NA_API NAUInt             naGetRuntimePoolSize();

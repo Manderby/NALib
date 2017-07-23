@@ -301,6 +301,7 @@ NA_API void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   // Start the event loop.
   while(naIsCoreApplicationRunning()){
     BOOL response = GetMessage(&message, 0, 0, 0);
+    naCollectGarbage();
     if(response == 0){break;}
     if (response == -1){
       // handle the error and possibly exit

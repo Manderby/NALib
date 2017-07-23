@@ -122,6 +122,8 @@ NA_IDEF void* naMalloc(NAInt bytesize){
   #ifndef NDEBUG
     if(bytesize == NA_ZERO)
       naError("naMalloc", "size is zero.");
+    if(bytesize < NA_ZERO)
+      naError("naMalloc", "size is negative.");
   #endif
 
   if(bytesize > NA_ZERO){

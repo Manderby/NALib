@@ -18,7 +18,9 @@
 
 struct NAString{
   NABuffer* buffer;
-  NAUTF8Char* cachedstr;
+  #ifndef NDEBUG
+    const NAUTF8Char* cachedstr;
+  #endif
 };
 
 

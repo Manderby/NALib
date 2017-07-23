@@ -78,17 +78,45 @@
 // Define the size of a core memory pool:
 //
 // With the following macro, you can define, what the byte size of the memory
-// pools shall be. The default value for the pool size is (1<<16). If you set
-// this macro to 0, the memory page size will be used.
+// pools shall be. This size is used for allocation with naNew, as well as for
+// garbage collection. The default value for the pool size is (1<<16). If you
+// set this macro to 0, the memory page size will be used.
 //
 // Turns out, on most systems, the pagesize is far too small to result in good
-// speed improvements. A large enough custom bytesize can result in up to
-// 2 times faster allocation and deallocation.
+// speed improvements for naNew. A large enough custom bytesize can result in
+// up to 2 times faster allocation and deallocation.
 
 #ifndef NA_COREPOOL_BYTESIZE
   #define NA_COREPOOL_BYTESIZE (1 << 16)
 #endif
 
+// Defines when the temp garbage collection starts collecting automatically.
+//
+// The default value is 1000000 (1 Million) when no GUI is in use and 0 when
+// a GUI is in use.
+//
+// With this macro, you can define, if and when the garbage collection should
+// perform an automatic collection of temporarily allocated memory. If you set
+// this value to 0, no automatic collection will be performed ever. You need to
+// call naCollectGarbage manually.
+//
+// If it is set to a non-zero value, it will fire during a call to naMallocTmp
+// but only when the sum of all previously temporary allocated bytes had become
+// higher than this number in the previous call to naMallocTmp. If so, the
+// garbage will first be collected and then the new bytes will be allocated
+// and returned.
+//
+// This macro is set to 0 by default when a GUI is in use, as the event loop
+// of the NAGUI implementation calls naCollectGarbage automatically before
+// executing each and every event.
+
+#ifndef NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT
+  #if NA_CONFIG_COMPILE_GUI == 0
+    #define NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT (1000000)
+  #else
+    #define NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT (0)
+  #endif
+#endif
 
 
 
@@ -109,10 +137,13 @@
 #endif
 
 
-// When set to 1, the NAString structure always creates a cached version of
-// its content. This will take considerably more time if you use lots of string
-// manipulations but will help when debugging as the debugger can display the
-// content as char* immediately.
+// When set to 1, the NAString structure always tries to create a cached
+// version of its content. This is really only useful when debugging as the
+// cached version will be stored withing the NAString structure. With NDEBUG
+// defined though, nothing will be stored and it is just a waste of time.
+// Nontheless as caching will take a considerable amount of time even in
+// debugging, you may choose to set NA_STRING_ALWAYS_CACHE to 0 even for
+// debugging right here.
 //
 // The default is that strings will always be cached when running in debug mode
 // but will not be cached if NDEBUG is defined.

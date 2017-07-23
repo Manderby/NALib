@@ -48,7 +48,9 @@ NA_API NABool naEqualUTF8CStringLiterals(const NAUTF8Char* string1, const NAUTF8
 NA_DEF NAString naMakeString(void){
   NAString string;
   string.buffer = naCreateBuffer(NA_FALSE);
-  string.cachedstr = NA_NULL;
+  #ifndef NDEBUG
+    string.cachedstr = NA_NULL;
+  #endif
   #if NA_STRING_ALWAYS_CACHE == 1
     naGetStringUTF8Pointer(&string);
   #endif
@@ -76,7 +78,9 @@ NA_DEF NAString naMakeStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
     // referencing the pointer, we can safely use the array without this byte
     // and still be able to say: We are null-terminated!
     string.buffer = naCreateBufferWithConstData(ptr, length);
-    string.cachedstr = NA_NULL;
+    #ifndef NDEBUG
+      string.cachedstr = NA_NULL;
+    #endif
     
   }else{
     string = naMakeString();
@@ -93,7 +97,9 @@ NA_DEF NAString naMakeStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
 NA_DEF NAString naMakeStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt length, NAMutator destructor){
   NAString string;
   string.buffer = naCreateBufferWithMutableData(buffer, naAbsi(length), destructor); // todo: absi
-  string.cachedstr = NA_NULL;
+  #ifndef NDEBUG
+    string.cachedstr = NA_NULL;
+  #endif
   #if NA_STRING_ALWAYS_CACHE == 1
     naGetStringUTF8Pointer(&string);
   #endif
@@ -125,9 +131,10 @@ NA_DEF NAString naMakeStringWithArguments(const NAUTF8Char* format, va_list argu
   va_copy(argumentlist3, argumentlist);
   stringlen = naVarargStringLength(format, argumentlist2);
   if(stringlen){
-    NAUTF8Char* stringbuf = naMalloc(-(NAInt)stringlen);
+    NAUTF8Char* stringbuf = naMalloc((NAInt)stringlen + 1);
     naVsnprintf(stringbuf, (NAUInt)(stringlen + 1), format, argumentlist3);
-    string = naMakeStringWithMutableUTF8Buffer(stringbuf, -(NAInt)stringlen, (NAMutator)naFree);
+    stringbuf[stringlen] = '\0';
+    string = naMakeStringWithMutableUTF8Buffer(stringbuf, (NAInt)stringlen, (NAMutator)naFree);
   }else{
     string = naMakeString();
   }
@@ -166,7 +173,9 @@ NA_DEF NAString naMakeStringExtraction(const NAString* srcstring, NAInt charoffs
     naMakeIntegerRangePositiveInLength(&positiveoffset, &positivecount, charoffset, length, naGetStringBytesize(srcstring));
 
     string.buffer = naCreateBufferExtraction(srcstring->buffer, naMakeRangei(positiveoffset, positivecount));
-    string.cachedstr = NA_NULL;
+    #ifndef NDEBUG
+      string.cachedstr = NA_NULL;
+    #endif
   }
   
   naCacheBufferRange(string.buffer, naGetBufferRange(string.buffer), NA_FALSE);
@@ -181,7 +190,9 @@ NA_DEF NAString naMakeStringExtraction(const NAString* srcstring, NAInt charoffs
 NA_DEF NAString naMakeStringWithBufferExtraction(NABuffer* buffer, NARangei range){
   NAString string;
   string.buffer = naCreateBufferExtraction(buffer, range);
-  string.cachedstr = NA_NULL;
+  #ifndef NDEBUG
+    string.cachedstr = NA_NULL;
+  #endif
   #if NA_STRING_ALWAYS_CACHE == 1
     naGetStringUTF8Pointer(&string);
   #endif
@@ -192,7 +203,6 @@ NA_DEF NAString naMakeStringWithBufferExtraction(NABuffer* buffer, NARangei rang
 
 NA_DEF void naClearString(NAString* string){
   naReleaseBuffer(string->buffer);
-  naFree(string->cachedstr);
 }
 
 
@@ -216,17 +226,20 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
     return (const NAUTF8Char*)"";
   }else{
     NAInt strlen;
-    naFree(mutablestring->cachedstr);
+    NAUTF8Char* newstr;
     strlen = naGetBufferRange(string->buffer).length;
     #ifndef NDEBUG
       if(!strlen)
         naError("naGetStringUTF8Pointer", "String is empty");
     #endif
-    mutablestring->cachedstr = naMalloc(strlen + 1);
+    newstr = naMallocTmp((NAUInt)(strlen + 1));
     naCacheBufferRange(string->buffer, naGetBufferRange(string->buffer), NA_FALSE);
-    naWriteBufferToData(string->buffer, mutablestring->cachedstr);
-    mutablestring->cachedstr[strlen] = '\0';
-    return string->cachedstr;    
+    naWriteBufferToData(string->buffer, newstr);
+    newstr[strlen] = '\0';
+    #ifndef NDEBUG
+      mutablestring->cachedstr = newstr;
+    #endif
+    return newstr;    
   }
 }
 

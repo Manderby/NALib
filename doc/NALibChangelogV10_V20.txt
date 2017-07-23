@@ -12,6 +12,8 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 - Strong simplification of NAMemory.h
+- NARuntime has now a small garbage collector for temporary malloc pointers.
+  Added NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT in NAConfiguration.h
 
 - Ensured naming scheme on some NADateTime macros.
 - Removed variadic output from naError and naCrash.
