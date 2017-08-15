@@ -25,27 +25,27 @@ NA_IDEF NAURL* naInitURL(NAURL* url){
 
 NA_IDEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string){
   NAUTF8Char curchar;
-  NAString inputstring;
-  NAString pathcomponent;
+  NAString* inputstring;
+  NAString* pathcomponent;
   NABufferIterator iter;
 
   url = naInitURL(url); 
   if(!string){return url;} 
-  inputstring = naMakeStringWithUTF8CStringLiteral(string);
+  inputstring = naNewStringWithUTF8CStringLiteral(string);
 
-  curchar = *naGetStringUTF8Pointer(&inputstring);
+  curchar = *naGetStringUTF8Pointer(inputstring);
   if((curchar == NA_PATH_DELIMITER_UNIX) || (curchar == NA_PATH_DELIMITER_WIN)){
     url->status |= NA_URL_PATH_ABSOLUTE;
-    inputstring = naMakeStringExtraction(&inputstring, 1, -1);
+    inputstring = naNewStringExtraction(inputstring, 1, -1);
   }
   
-  iter = naMakeBufferAccessor(naGetStringBufferConst(&inputstring));
+  iter = naMakeBufferAccessor(naGetStringBufferConst(inputstring));
   
-  while(naGetStringBytesize(&inputstring)){
+  while(naGetStringBytesize(inputstring)){
     // Test for erroneous duplicate or ending delimiters
-    curchar = *naGetStringUTF8Pointer(&inputstring);
+    curchar = *naGetStringUTF8Pointer(inputstring);
     if((curchar == NA_PATH_DELIMITER_UNIX) || (curchar == NA_PATH_DELIMITER_WIN)){
-      inputstring = naMakeStringExtraction(&inputstring, 1, -1);
+      inputstring = naNewStringExtraction(inputstring, 1, -1);
       continue;
     }
     
@@ -66,12 +66,12 @@ NA_IDEF void naClearURL(NAURL* url){
 
 
 
-NA_IDEF NAString naMakeStringWithURLFilename(NAURL* url){
+NA_IDEF NAString* naNewStringWithURLFilename(NAURL* url){
   if(naGetListCount(&(url->path))){
     const NAString* lastcomponent = naGetListLastConst(&(url->path));
-    return naMakeStringExtraction(lastcomponent, 0, -1);
+    return naNewStringExtraction(lastcomponent, 0, -1);
   }else{
-    return naMakeString();
+    return naNewString();
   }
 }
 

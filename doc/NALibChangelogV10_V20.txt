@@ -11,10 +11,14 @@ This file contains information about changes in the package NALib. These are
 purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
+- NAString are pointers again. Use naNewStringXXX and naDelete
 - Strong simplification of NAMemory.h
 - NARuntime has now a small garbage collector for temporary malloc pointers.
   Added NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT in NAConfiguration.h
+- Added Base64 encoding to NABuffer.
 
+- Corrected an error in naNewStringCUnescaped
+- Added naParseBufferRemainder and naGetBufferLineNumber
 - Ensured naming scheme on some NADateTime macros.
 - Removed variadic output from naError and naCrash.
 - Added more NA_PRI and NA_SCN macros for 32 and 64 bits.
@@ -27,7 +31,9 @@ correct, complete or final.
 - Redefined NA_NULL with ((void*)0) to make sure it has the correct size.
 - NA_RUNTIME_TYPE now requires to be defined in implementation file. No more
   static. Added NA_EXTERN_RUNTIME_TYPE.
+- naMalloc now does not allow negative numbers anymore.
 - naMakePtrWithExtraction has been removed.
+- Added leap second information according to Bulletin C 54
 - Tons of small corrections or adjustments everywhere.
 
 

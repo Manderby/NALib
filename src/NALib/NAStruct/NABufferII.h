@@ -16,6 +16,7 @@ struct NABufferIterator{
   NAPtr bufferptr;
   NAInt curoffset;
   uint8 curbit;             // The current bit number
+  NAUInt linenum;           // The line number, starting with 1.
   NAListIterator listiter;
   #ifndef NDEBUG
     NABool mutator;

@@ -252,6 +252,17 @@ NA_API NABool naEqualBufferToData(    const NABuffer* buffer,
 NA_API void naAppendBufferToBuffer(         NABuffer* dstbuffer,
                                       const NABuffer* srcbuffer);
 
+// Converts the bytes of the given buffer to a string encoded in Base64.
+// When appendendsign is NA_TRUE, equal signs = will be appended if needed.
+NA_API NAString* naNewStringWithBufferBase64Encoded(
+                                      const NABuffer* buffer,
+                                               NABool appendendsign);
+
+// Converts the bytes of the given buffer to a string encoded in Base64.
+// When appendendsign is NA_TRUE, equal signs = will be appended if needed.
+NA_API NABuffer* naCreateBufferWithStringBase64Decoded(
+                                      const NAString* string);
+
 // Uses all bytes of the buffer to write to output or use it in other structs.
 // File:     Creates a new file and fills it with the content of the buffer.
 // Data:     Assumes data to have enough space and fills all bytes inside.
@@ -500,12 +511,20 @@ NA_API void naSkipBufferDelimiter(NABufferIterator* iter);
 // not contain any line-ending characters but all other whitespaces (ord <= 32)
 // are still there. When skipempty is NA_TRUE, lines containing nothing but
 // whitespaces will be skipped.
-// Returns the number of lines read if linesread is not NA_NULL. Will usually
-// be 1 but will be greater than 1 when skipping empty lines. Will be 0 when
-// the buffer had no lines to read.
-NA_API NAString naParseBufferLine( NABufferIterator* iter,
-                                      NABool skipempty,
-                                      NAInt* linesread);
+// The line number of iter will increase according to the number of lines read.
+// Use naGetBufferLineNumber to get that number. Warning: Experimental feature,
+// not fully implemented!
+NA_API NAString* naParseBufferLine( NABufferIterator* iter,
+                                      NABool skipempty);
+
+// Returns the current line number (starting with 1). This is an experimental
+// feature which currently only works reliably if naParseBufferLine is used.
+// If this function returns 0, naParseBufferLine has never been called.
+NA_API NAUInt naGetBufferLineNumber(NABufferIterator* iter);
+
+// Returns everything from the current position till the end of the buffer as
+// a string.
+NA_API NAString* naParseBufferRemainder(NABufferIterator* iter);
 
 // Gathers the first token which is delimited by whitespaces. The buffer is
 // expected to start at a non-whitespace! If it starts with a whitespace, an
@@ -513,20 +532,20 @@ NA_API NAString naParseBufferLine( NABufferIterator* iter,
 // any whitespaces at the start or end.
 // After this function, buffer will point to the next character after the
 // token not being a whitespace.
-NA_API NAString naParseBufferToken(NABufferIterator* iter);
+NA_API NAString* naParseBufferToken(NABufferIterator* iter);
 
 // Gathers the first token within buffer which ends in the given delimiter.
 // The delimiter will not be included in the returned string. After this
 // function, buffer will point to the first character after the delimiter.
 // Whitespaces at the start or end will NOT be stripped at all.
-NA_API NAString naParseBufferTokenWithDelimiter( NABufferIterator* iter,
+NA_API NAString* naParseBufferTokenWithDelimiter( NABufferIterator* iter,
                                                     NAByte delimiter);
 
 // Gathers the first token within buffer which ends in a path delimiter. Both
 // path delimiters / and \ are detected. The delimiter will not be included.
 // After this function, string will point to the first character after the
 // delimiter. Whitespaces at the start or end will NOT be stripped at all.
-NA_API NAString naParseBufferPathComponent(NABufferIterator* iter);
+NA_API NAString* naParseBufferPathComponent(NABufferIterator* iter);
 
 // Parses the given buffer for decimal digits and accumulates them into an
 // unsigned integer. The function will start at the current byte and parse

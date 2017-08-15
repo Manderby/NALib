@@ -14,16 +14,15 @@ NAByte testdataarray[NA_BUFFER_TESTARRAY_SIZE];
 void testBufferFile(void){
   NABuffer* buffer;
   NABuffer* token;
-  NAString string;
-  NAInt linesread;
+  NAString* string;
   NABufferIterator iter;
 
-  NAString cwd = naMakeStringWithCurWorkingDirectory();
+  NAString* cwd = naNewStringWithCurWorkingDirectory();
 
   printf("\nCreating file input buffer with ASCII file.\n");
-  printf("Working Directory: %s\n", naGetStringUTF8Pointer(&cwd));
+  printf("Working Directory: %s\n", naGetStringUTF8Pointer(cwd));
   
-  naClearString(&cwd);
+  naDelete(cwd);
   
   buffer = naCreateBufferWithInpuFile("res/asciitest.txt");  
   iter = naMakeBufferAccessor(buffer);
@@ -42,24 +41,24 @@ void testBufferFile(void){
   printf("Skipping buffer whitespaces.\n");
   naSkipBufferWhitespaces(&iter);
   
-  string = naParseBufferLine(&iter, NA_TRUE, &linesread);
-  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(&string));
-  naClearString(&string);
-  string = naParseBufferLine(&iter, NA_TRUE, &linesread);
-  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(&string));
-  naClearString(&string);
-  string = naParseBufferLine(&iter, NA_TRUE, &linesread);
-  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(&string));
-  naClearString(&string);
-  string = naParseBufferLine(&iter, NA_TRUE, &linesread);
-  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(&string));
-  naClearString(&string);
-  string = naParseBufferLine(&iter, NA_TRUE, &linesread);
-  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", linesread-1, naGetStringUTF8Pointer(&string));
-  naClearString(&string);
-  string = naParseBufferLine(&iter, NA_FALSE, &linesread);
-  printf("Reading the next line without skipping (%" NA_PRIi " lines read) : %s\n", linesread, naGetStringUTF8Pointer(&string));
-  naClearString(&string);
+  string = naParseBufferLine(&iter, NA_TRUE);
+  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", naGetBufferLineNumber(&iter)-1, naGetStringUTF8Pointer(string));
+  naDelete(string);
+  string = naParseBufferLine(&iter, NA_TRUE);
+  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", naGetBufferLineNumber(&iter)-1, naGetStringUTF8Pointer(string));
+  naDelete(&string);
+  string = naParseBufferLine(&iter, NA_TRUE);
+  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", naGetBufferLineNumber(&iter)-1, naGetStringUTF8Pointer(string));
+  naDelete(&string);
+  string = naParseBufferLine(&iter, NA_TRUE);
+  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", naGetBufferLineNumber(&iter)-1, naGetStringUTF8Pointer(string));
+  naDelete(&string);
+  string = naParseBufferLine(&iter, NA_TRUE);
+  printf("Reading the next filled line (%" NA_PRIi " lines skipped) : %s\n", naGetBufferLineNumber(&iter)-1, naGetStringUTF8Pointer(string));
+  naDelete(&string);
+  string = naParseBufferLine(&iter, NA_FALSE);
+  printf("Reading the next line without skipping (%" NA_PRIi " lines read) : %s\n", naGetBufferLineNumber(&iter), naGetStringUTF8Pointer(string));
+  naDelete(&string);
   
   // todo: more to come
   

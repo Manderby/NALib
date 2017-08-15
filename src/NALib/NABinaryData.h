@@ -221,6 +221,7 @@ NA_IAPI NAInt naParseEndiannessMarker(const NAByte marker[4]);
 
 
 
+
 // ////////////////////
 // Checksums
 // ////////////////////

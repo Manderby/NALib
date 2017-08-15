@@ -16,16 +16,6 @@
 
 
 
-struct NAString{
-  NABuffer* buffer;
-  #ifndef NDEBUG
-    const NAUTF8Char* cachedstr;
-  #endif
-};
-
-
-
-
 NA_IDEF NAInt naStrlen(const NAUTF8Char* str){
   return (NAInt)strlen((const char*)str);
 }

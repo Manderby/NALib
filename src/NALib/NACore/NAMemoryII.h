@@ -114,40 +114,23 @@ NA_HIDEF NAInt naGetNullTerminationBytesize(NAInt bytesize){
 
 
 NA_IDEF void* naMalloc(NAInt bytesize){
-  NAByte* ptr;
-  NAInt fullsize;
+  void* ptr;
   // ptr is declared as NAByte to simplify accessing individual bytes later
   // in this functions.
 
   #ifndef NDEBUG
     if(bytesize == NA_ZERO)
-      naError("naMalloc", "size is zero.");
+      {naCrash("naMalloc", "size is zero."); return NA_NULL;}
     if(bytesize < NA_ZERO)
       naError("naMalloc", "size is negative.");
   #endif
 
-  if(bytesize > NA_ZERO){
-    ptr = (NAByte*)malloc((size_t)bytesize);
-  }else{
-    #ifndef NDEBUG
-      if(bytesize == NA_INT_MIN)
-        naError("naMalloc", "given negative size owerflows NAInt type.");
-    #endif
-    fullsize = naGetNullTerminationBytesize(bytesize);
-    #ifndef NDEBUG
-      if(fullsize < -bytesize)
-        naError("naMalloc", "given size including zero filled endbytes overflows NAInt type.");
-    #endif
-    ptr = (NAByte*)malloc((size_t)fullsize);
-    #ifndef NDEBUG
-    if (!ptr)
-      {naCrash("naMalloc", "Out of memory"); return NA_NULL;}
-    #endif
-    // When you get a warning here when analyzing the code: This is intentional.
-    // Memory allocation fail is such a huge error, nobody should try to correct.
-    *(NAUInt*)(&(ptr[fullsize - 2 * NA_SYSTEM_ADDRESS_BYTES])) = NA_ZERO;
-    *(NAUInt*)(&(ptr[fullsize - 1 * NA_SYSTEM_ADDRESS_BYTES])) = NA_ZERO;
-  }
+  ptr = malloc((size_t)bytesize);
+
+  #ifndef NDEBUG
+  if (!ptr)
+    {naCrash("naMalloc", "Out of memory"); return NA_NULL;}
+  #endif
 
   return ptr;
 }

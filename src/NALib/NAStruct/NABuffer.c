@@ -99,7 +99,7 @@ NA_HIDEF NABufferPart* naNewBufferPartConstData(const NAByte* data, NAInt bytesi
 // Creates a memory block with given mutable data buffer
 NA_HIDEF NABufferPart* naNewBufferPartMutableData(NAByte* data, NAInt bytesize, NAMutator destructor){
   NABufferPart* part = naNew(NABufferPart);
-  part->data = naNewPointerMutable(data, /*cleanup, */destructor);
+  part->data = naNewPointerMutable(data, destructor);
   part->origin = 0;
   part->range = naMakeRangei(0, bytesize);
   return part;
@@ -1589,6 +1589,153 @@ NA_DEF void naDismissBufferRange(NABuffer* buffer, NARangei range){
 // Whole Buffer Functions
 // /////////////////////////////////////
 
+
+NA_DEF NAString* naNewStringWithBufferBase64Encoded(const NABuffer* buffer, NABool appendendsign){
+  #ifndef NDEBUG
+    if(!naHasBufferFixedRange(buffer))
+      naError("naNewStringWithBufferBase64Encoded", "Buffer has no determined range. Use naFixBufferRange");
+  #endif
+  NAInt totalbytesize = buffer->range.length;
+  NAInt triples = totalbytesize / 3;
+  NAInt remainder = totalbytesize % 3;
+
+  NABuffer* dstbuffer = naCreateBuffer(NA_FALSE);
+  NABufferIterator dstiter = naMakeBufferModifier(dstbuffer);
+
+  NAByte      srctriple[3];
+  NAUTF8Char  dsttriple[4];
+  NABufferIterator srciter = naMakeBufferAccessor(buffer);
+  
+  while(triples){
+    naReadBufferBytes(&srciter, srctriple, 3);
+    dsttriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
+    dsttriple[1] = (NAUTF8Char)((srctriple[0] & 0x03) << 4) | (NAUTF8Char)(srctriple[1] >> 4);
+    dsttriple[2] = (NAUTF8Char)((srctriple[1] & 0x0f) << 2) | (NAUTF8Char)(srctriple[2] >> 6);
+    dsttriple[3] = (NAUTF8Char) (srctriple[2] & 0x3f);
+    naWriteBufferBytes(&dstiter, dsttriple, 4);
+    triples--;
+  }
+  if(remainder == 1){
+    naReadBufferBytes(&srciter, srctriple, 1);
+    dsttriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
+    dsttriple[1] = (NAUTF8Char)((srctriple[0] & 0x03) << 4);
+    naWriteBufferBytes(&dstiter, dsttriple, 2);
+  }
+  if(remainder == 2){
+    naReadBufferBytes(&srciter, srctriple, 2);
+    dsttriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
+    dsttriple[1] = (NAUTF8Char)((srctriple[0] & 0x03) << 4) | (NAUTF8Char)(srctriple[1] >> 4);
+    dsttriple[2] = (NAUTF8Char)((srctriple[1] & 0x0f) << 2);
+    naWriteBufferBytes(&dstiter, dsttriple, 3);
+  }
+  
+  naClearBufferIterator(&srciter);
+  naClearBufferIterator(&dstiter);  
+
+  dstiter = naMakeBufferModifier(dstbuffer);
+  while(naIterateBuffer(&dstiter, 1)){
+    NAUTF8Char curchar = (NAUTF8Char)naGetBufferu8(&dstiter);
+    NAUTF8Char newchar;
+    if      (curchar < 26) {newchar = curchar + 'A';}
+    else if (curchar < 52) {newchar = curchar + ('a' - 26);}
+    else if (curchar < 62) {newchar = curchar + ('0' - 52);}
+    else if (curchar == 62){newchar = '+';}
+    else                   {newchar = '/';}
+    naSetBufferu8(&dstiter, (uint8)newchar);
+  }
+  if(appendendsign && remainder == 1){
+    naWriteBufferu8(&dstiter, '=');
+    naWriteBufferu8(&dstiter, '=');
+  }
+  if(appendendsign && remainder == 2){
+    naWriteBufferu8(&dstiter, '=');
+  }
+
+  naClearBufferIterator(&dstiter);  
+  NAString* retstring = naNewStringWithBufferExtraction(dstbuffer, dstbuffer->range);
+  naReleaseBuffer(dstbuffer);
+  return retstring;
+}
+
+
+
+NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(const NAString* string){
+  NABufferIterator srciter = naMakeBufferAccessor(naGetStringBufferConst(string));
+  NABuffer* ascbuffer = naCreateBuffer(NA_FALSE);
+  NABufferIterator asciter = naMakeBufferModifier(ascbuffer);
+  
+  while(naIterateBuffer(&srciter, 1)){
+    NAUTF8Char curchar = (NAUTF8Char)naGetBufferu8(&srciter);
+    NAUTF8Char newchar;
+    if      (curchar == '+'){newchar = 62;}
+    else if (curchar == '/'){newchar = 63;}
+    else if (curchar <= '9'){newchar = curchar - ('0' - 52);}
+    else if (curchar == '='){break;}
+    else if (curchar <= 'Z'){newchar = curchar - 'A';}
+    else if (curchar <= 'z'){newchar = curchar - ('a' - 26);}
+    else{
+      #ifndef NDEBUG
+        naError("naCreateBufferWithStringBase64Decoded", "Invalid character. This does not seem to be a Base64 encoding");
+      #endif
+      newchar = '\0';
+    }
+    naWriteBufferu8(&asciter, (uint8)newchar);
+  }
+
+  naClearBufferIterator(&srciter);
+  naClearBufferIterator(&asciter);
+
+  NAInt totalcharsize = ascbuffer->range.length;
+  NAInt triples = totalcharsize / 4;
+  NAInt remainder = totalcharsize % 4;
+  
+  NABuffer* dstbuffer = naCreateBuffer(NA_FALSE);
+  NABufferIterator dstiter = naMakeBufferModifier(dstbuffer);
+  
+  NAUTF8Char  asctriple[4];
+  NAByte      dsttriple[3];
+  asciter = naMakeBufferAccessor(ascbuffer);
+
+  while(triples){
+    naReadBufferBytes(&asciter, asctriple, 4);
+    dsttriple[0] = (NAByte) (asctriple[0] << 2)         | (NAByte)(asctriple[1] >> 4);
+    dsttriple[1] = (NAByte)((asctriple[1] & 0x0f) << 4) | (NAByte)(asctriple[2] >> 2);
+    dsttriple[2] = (NAByte)((asctriple[2] & 0x03) << 6) | (NAByte)(asctriple[3]);
+    triples--;
+    naWriteBufferBytes(&dstiter, dsttriple, 3);
+  }
+  #ifndef NDEBUG
+  if(remainder == 1)
+    naError("naCreateBufferWithStringBase64Decoded", "This remainder should not happen");
+  #endif
+  if(remainder == 2){
+    naReadBufferBytes(&asciter, asctriple, 2);
+    dsttriple[0] = (NAByte) (asctriple[0] << 2)         | (NAByte)(asctriple[1] >> 4);
+    #ifndef NDEBUG
+    if((asctriple[1] & 0x0f) << 4)
+      naError("naCreateBufferWithStringBase64Decoded", "Security breach: Data in unobserved bits of second character");
+    #endif
+    naWriteBufferBytes(&dstiter, dsttriple, 1);
+  }
+  if(remainder == 3){
+    naReadBufferBytes(&asciter, asctriple, 3);
+    dsttriple[0] = (NAByte) (asctriple[0] << 2)         | (NAByte)(asctriple[1] >> 4);
+    dsttriple[1] = (NAByte)((asctriple[1] & 0x0f) << 4) | (NAByte)(asctriple[2] >> 2);
+    #ifndef NDEBUG
+    if((asctriple[2] & 0x03) << 6)
+      naError("naCreateBufferWithStringBase64Decoded", "Security breach: Data in unobserved bits of third character");
+    #endif
+    naWriteBufferBytes(&dstiter, dsttriple, 2);
+  }
+
+  naClearBufferIterator(&asciter);
+  naClearBufferIterator(&dstiter);
+  naReleaseBuffer(ascbuffer);
+  return dstbuffer;
+}
+
+
+
 NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum){
   NAInt bytesize;
   NAInt curoffset;
@@ -1755,6 +1902,7 @@ NA_DEF NABufferIterator naMakeBufferAccessor(const NABuffer* buffer){
   iter.bufferptr = naMakePtrWithDataMutable(naRetainBuffer((NABuffer*)buffer));  //todo const
   iter.curoffset = 0;
   iter.curbit = 0;
+  iter.linenum = 0;
   iter.listiter = naMakeListModifier((NAList*)&(buffer->parts));
   #ifndef NDEBUG
     mutablebuffer = (NABuffer*)buffer;
@@ -1776,6 +1924,7 @@ NA_DEF NABufferIterator naMakeBufferMutator(const NABuffer* buffer){
   iter.bufferptr = naMakePtrWithDataMutable(naRetainBuffer((NABuffer*)buffer));  //todo const
   iter.curoffset = 0;
   iter.curbit = 0;
+  iter.linenum = 0;
   iter.listiter = naMakeListModifier((NAList*)&(buffer->parts)); // todo const
   #ifndef NDEBUG
     mutablebuffer = (NABuffer*)buffer;
@@ -1797,6 +1946,7 @@ NA_DEF NABufferIterator naMakeBufferModifier(NABuffer* buffer){
   iter.bufferptr = naMakePtrWithDataMutable(naRetainBuffer(buffer));
   iter.curoffset = 0;
   iter.curbit = 0;
+  iter.linenum = 0;
   iter.listiter = naMakeListModifier(&(buffer->parts));
   #ifndef NDEBUG
     mutablebuffer = (NABuffer*)buffer;
@@ -2626,9 +2776,8 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt by
 
 
 
-
 NA_DEF void naWriteBufferString(NABufferIterator* iter, const NAString* string){
-  naWriteBufferBuffer(iter, naGetStringBufferConst(string), naGetBufferRange(string->buffer));
+  naWriteBufferBuffer(iter, naGetStringBufferConst(string), naGetBufferRange(naGetStringBufferConst(string)));
 }
 
 
@@ -2643,10 +2792,10 @@ NA_DEF void naWriteBufferStringWithFormat(NABufferIterator* iter, const NAUTF8Ch
 
 
 NA_DEF void naWriteBufferStringWithArguments(NABufferIterator* iter, const NAUTF8Char* format, va_list argumentlist){
-  NAString string;
-  string = naMakeStringWithArguments(format, argumentlist);
-  naWriteBufferString(iter, &string);
-  naClearString(&string);
+  NAString* string;
+  string = naNewStringWithArguments(format, argumentlist);
+  naWriteBufferString(iter, string);
+  naDelete(string);
 }
 
 
@@ -2828,13 +2977,12 @@ NA_DEF void naSkipBufferDelimiter(NABufferIterator* iter){
 
 
 
-NA_DEF NAString naParseBufferLine(NABufferIterator* iter, NABool skipempty, NAInt* linesread){
+NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
   NABool lineendingfound = NA_FALSE;
   NABool checkwindowsend = NA_FALSE;
   NAInt linestart = iter->curoffset;
-  NAString string = {0, 0};  // This is to supress some warnings.
-  if(linesread){*linesread = 0;}
-
+  NAString* string = naNewString();
+  
   while(!naIsBufferAtInitial(iter)){
     const NAByte* curbyte;
     NAInt endoffset;
@@ -2855,12 +3003,13 @@ NA_DEF NAString naParseBufferLine(NABufferIterator* iter, NABool skipempty, NAIn
       }
       if(lineendingfound){break;}
       if((*curbyte == '\r') || (*curbyte == '\n')){
-        if(linesread){(*linesread)++;}
+        iter->linenum++;
         if(skipempty && ((iter->curoffset - linestart) == 0)){
           linestart++;
         }else{
           lineendingfound = NA_TRUE;
-          string = naMakeStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(linestart, iter->curoffset));
+          naDelete(string);
+          string = naNewStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(linestart, iter->curoffset));
         }
         checkwindowsend = (*curbyte == '\r');
       }
@@ -2870,15 +3019,31 @@ NA_DEF NAString naParseBufferLine(NABufferIterator* iter, NABool skipempty, NAIn
     if(!naContainsBufferPartOffset(part, iter->curoffset)){naIterateList(&(iter->listiter), 1);}
   }
 
-  if(!lineendingfound){string = naMakeStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(linestart, iter->curoffset));}
+  if(!lineendingfound){
+    naDelete(string);
+    string = naNewStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(linestart, iter->curoffset));
+  }
 
   return string;
 }
 
 
 
-NA_DEF NAString naParseBufferToken(NABufferIterator* iter){
-  NAString string;
+NA_DEF NAUInt naGetBufferLineNumber(NABufferIterator* iter){
+  return iter->linenum;
+}
+
+
+
+NA_DEF NAString* naParseBufferRemainder(NABufferIterator* iter){
+  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+  return naNewStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(iter->curoffset, naGetRangeiEnd(buffer->range)));
+}
+
+
+
+NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
+  NAString* string;
   NAInt tokenstart = iter->curoffset;
 
   // todo: this always requires a naSeekBufferFromStart call. Make this better.
@@ -2903,15 +3068,15 @@ NA_DEF NAString naParseBufferToken(NABufferIterator* iter){
     if(found){break;}
   }
 
-  string = naMakeStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
+  string = naNewStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
   naSkipBufferWhitespaces(iter);
   return string;
 }
 
 
 
-NA_DEF NAString naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAByte delimiter){
-  NAString string;
+NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAByte delimiter){
+  NAString* string;
   NAInt tokenstart = iter->curoffset;
   const NABufferPart* part;
 
@@ -2936,15 +3101,15 @@ NA_DEF NAString naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAByte d
     if(found){break;}
   }
 
-  string = naMakeStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
+  string = naNewStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
   naSeekBufferRelative(iter, 1);
   return string;
 }
 
 
 
-NA_DEF NAString naParseBufferPathComponent(NABufferIterator* iter){
-  NAString string;
+NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter){
+  NAString* string;
   NAInt tokenstart = iter->curoffset;
   const NABufferPart* part;
   
@@ -2969,7 +3134,7 @@ NA_DEF NAString naParseBufferPathComponent(NABufferIterator* iter){
     if(found){break;}
   }
 
-  string = naMakeStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
+  string = naNewStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
   naSeekBufferRelative(iter, 1);
   return string;
 }

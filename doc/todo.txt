@@ -5,12 +5,12 @@ This file contains notes on what is still missing or needs to be done
 in NALib.
 
 Version 20:
-- First compression in NAPNG
+- malloc uint
+- refcounted new
 - NAComplexPolar
 - All todos.
 - Fully implement NAString
 - Remove old commented code
-- Page guide 80
 - Documentation
 - int uint
 - Make more test files
@@ -20,7 +20,10 @@ Version 20:
 
 Future
 - NATree and integration into NABuffer
+- SpanTree
+- Threadsavety for structs
 - GUI
+- Compression in NAPNG
 - Add ARM, Linux
 - Make Memory addresses uint 
 - Garbage collection, release pools
@@ -28,4 +31,5 @@ Future
 - Color
 - Timezones
 - NASocket
+- URL
 - CODATA 2018

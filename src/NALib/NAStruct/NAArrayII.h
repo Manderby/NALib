@@ -94,7 +94,7 @@ NA_IDEF NAArray* naInitArrayWithDataMutable(NAArray* array, void* data, NAInt ty
   array->typesize = typesize;
   array->count = count;
   array->destructor = destructor;
-  array->ptr = naMakePtrWithDataMutable(data/*, cleanup*/);
+  array->ptr = naMakePtrWithDataMutable(data);
   #ifndef NDEBUG
     array->itercount = 0;
   #endif
