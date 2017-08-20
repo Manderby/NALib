@@ -2990,10 +2990,10 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
 
     if(lineendingfound && !checkwindowsend){break;}
     part = naGetListCurConst(&(iter->listiter));
-    #ifndef NDEBUG
-      if(naIsBufferPartSparse(part))
-        naError("naParseBufferLine", "sparse part detected.");
-    #endif
+    if(naIsBufferPartSparse(part)){
+      naGetBufferu8(iter);
+      part = naGetListCurConst(&(iter->listiter));
+    }
     curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
     endoffset = naGetBufferPartEnd(part);
     while(iter->curoffset < endoffset){
@@ -3053,10 +3053,10 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
     NABool found = NA_FALSE;
 
     const NABufferPart* part = naGetListCurConst(&(iter->listiter));
-    #ifndef NDEBUG
-      if(naIsBufferPartSparse(part))
-        naError("naParseBufferToken", "sparse part detected.");
-    #endif
+    if(naIsBufferPartSparse(part)){
+      naGetBufferu8(iter);
+      part = naGetListCurConst(&(iter->listiter));
+    }
     curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
     endoffset = naGetBufferPartEnd(part);
     while(iter->curoffset < endoffset){
@@ -3086,10 +3086,10 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAByte 
     NABool found = NA_FALSE;
 
     part = naGetListCurConst(&(iter->listiter));
-    #ifndef NDEBUG
-      if(naIsBufferPartSparse(part))
-        naError("naParseBufferTokenWithDelimiter", "sparse part detected.");
-    #endif
+    if(naIsBufferPartSparse(part)){
+      naGetBufferu8(iter);
+      part = naGetListCurConst(&(iter->listiter));
+    }
     curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
     endoffset = naGetBufferPartEnd(part);
     while(iter->curoffset < endoffset){
@@ -3119,10 +3119,10 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter){
     NABool found = NA_FALSE;
 
     part = naGetListCurConst(&(iter->listiter));
-    #ifndef NDEBUG
-      if(naIsBufferPartSparse(part))
-        naError("naParseBufferTokenWithDelimiter", "sparse part detected.");
-    #endif
+    if(naIsBufferPartSparse(part)){
+      naGetBufferu8(iter);
+      part = naGetListCurConst(&(iter->listiter));
+    }
     curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
     endoffset = naGetBufferPartEnd(part);
     while(iter->curoffset < endoffset){
@@ -3229,6 +3229,7 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* re
     maxdigitcount--;
     naSeekBufferRelative(iter, 1);
   }
+  if(maxdigitcount == -1){maxdigitcount = 0;}
 
   bytesused += naParseBufferDecimalUnsignedInteger(iter, &intvalue, maxdigitcount, (uint64)limit);
   *retint = sign * (int64)intvalue;

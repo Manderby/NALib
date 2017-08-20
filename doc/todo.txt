@@ -16,6 +16,7 @@ Version 20:
 - Make more test files
 - add __cplusplus to all h files
 - unify iterators. Iterators store start and end.
+- All Container structs can store pointers.
 
 
 Future

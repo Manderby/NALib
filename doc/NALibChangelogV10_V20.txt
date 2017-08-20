@@ -34,6 +34,9 @@ correct, complete or final.
 - naMalloc now does not allow negative numbers anymore.
 - naMakePtrWithExtraction has been removed.
 - Added leap second information according to Bulletin C 54
+- Fixed somoe sparse buffer part errors in NABuffer.
+- Fixed a small error when parsing negative decimals in NAString
+- Added pointer variants for Get and Foreach in NAArray
 - Tons of small corrections or adjustments everywhere.
 
 

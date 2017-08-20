@@ -108,16 +108,16 @@ NA_IAPI NABool      naIterateStack(NAStackIterator* iterator);
 
 // Returns a pointer to the current element. Note that if you store pointers
 // you will get a pointer to a pointer. If you want a pointer directly, just
-// use the Pointer variant
+// use the p variant
 NA_IAPI const void* naGetStackCurConst         (NAStackIterator* iterator);
 NA_IAPI void*       naGetStackCurMutable       (NAStackIterator* iterator);
 NA_IAPI const void* naGetStackCurpConst        (NAStackIterator* iterator);
 NA_IAPI void*       naGetStackCurpMutable      (NAStackIterator* iterator);
 
 // Will call the accessor or mutator on every element stored in the stack.
-// The Pointer variants expect this stack to store pointers hence
-// the accessor or mutator will directly be called with the stored pointer
-// instead of a pointer to a pointer.
+// The p variants expect this stack to store pointers hence the accessor or
+// mutator will directly be called with the stored pointer instead of a pointer
+// to a pointer.
 NA_IAPI void naForeachStackConst   (const NAStack* stack, NAAccessor accessor);
 NA_IAPI void naForeachStackMutable (const NAStack* stack, NAMutator  mutator);
 NA_IAPI void naForeachStackpConst  (const NAStack* stack, NAAccessor accessor);

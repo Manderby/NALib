@@ -156,6 +156,44 @@ NA_IDEF void naForeachArrayMutable(NAArray* array, NAMutator mutator){
 
 
 
+NA_IDEF void naForeachArraypConst(NAArray* array, NAAccessor accessor){
+  NAInt count;
+  const NAByte* ptr;
+  
+  #ifndef NDEBUG
+    if(!accessor)
+      {naCrash("naForeachArray", "Accessor is Null"); return;}
+  #endif
+  count = naGetArrayCount(array);
+  ptr = naGetPtrConst(&(array->ptr));
+  while(count){
+    accessor(*((const void**)ptr));
+    ptr += array->typesize;
+    count--;
+  }
+}
+
+
+
+NA_IDEF void naForeachArraypMutable(NAArray* array, NAMutator mutator){
+  NAInt count;
+  NAByte* ptr;
+
+  #ifndef NDEBUG
+    if(!mutator)
+      {naCrash("naForeachArray", "Mutator is Null"); return;}
+  #endif
+  count = naGetArrayCount(array);
+  ptr = naGetPtrMutable(&(array->ptr));
+  while(count){
+    mutator(*((void**)ptr));
+    ptr += array->typesize;
+    count--;
+  }
+}
+
+
+
 NA_IDEF const void* naGetArrayPointerConst(const NAArray* array){
   #ifndef NDEBUG
     if(!array){
@@ -214,6 +252,38 @@ NA_IDEF void* naGetArrayElementMutable(NAArray* array, NAInt indx){
   #endif
   indx = naMakeIndexPositive(indx, naGetArrayCount(array));
   return &(((NAByte*)naGetPtrMutable(&(array->ptr)))[indx * array->typesize]);
+}
+
+
+
+NA_IDEF const void* naGetArrayElementpConst(const NAArray* array, NAInt indx){
+  #ifndef NDEBUG
+    if(!array){
+      naCrash("naGetArrayElementConst", "array is Null-Pointer.");
+      return NA_NULL;
+    }else{
+      if(naIsArrayEmpty(array))
+        naError("naGetArrayElementConst", "array is empty");
+    }
+  #endif
+  indx = naMakeIndexPositive(indx, naGetArrayCount(array));
+  return *((const void**)&(((NAByte*)naGetPtrConst(&(array->ptr)))[indx * array->typesize]));
+}
+
+
+
+NA_IDEF void* naGetArrayElementpMutable(NAArray* array, NAInt indx){
+  #ifndef NDEBUG
+    if(!array){
+      naCrash("naGetArrayElementMutable", "array is Null-Pointer.");
+      return NA_NULL;
+    }else{
+      if(naIsArrayEmpty(array))
+        naError("naGetArrayElementMutable", "array is empty");
+    }
+  #endif
+  indx = naMakeIndexPositive(indx, naGetArrayCount(array));
+  return *((void**)&(((NAByte*)naGetPtrMutable(&(array->ptr)))[indx * array->typesize]));
 }
 
 

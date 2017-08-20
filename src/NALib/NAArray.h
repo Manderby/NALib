@@ -78,9 +78,13 @@ NA_IAPI  NAArray* naInitArrayWithDataMutable( NAArray* array,
 NA_IAPI void naClearArray                    (NAArray* array);
 
 // Traverses the whole array and calls the accessor or mutator on each element.
-// A pointer to each element will be given to the accessor or mutator.
-NA_IAPI void naForeachArrayConst  (NAArray* array, NAAccessor accessor);
-NA_IAPI void naForeachArrayMutable(NAArray* array, NAMutator  mutator);
+// The p variants expect this array to store pointers hence the accessor or
+// mutator will directly be called with the stored pointer instead of a pointer
+// to a pointer.
+NA_IAPI void naForeachArrayConst   (NAArray* array, NAAccessor accessor);
+NA_IAPI void naForeachArrayMutable (NAArray* array, NAMutator  mutator);
+NA_IAPI void naForeachArraypConst  (NAArray* array, NAAccessor accessor);
+NA_IAPI void naForeachArraypMutable(NAArray* array, NAMutator  mutator);
 
 // Returns a pointer to the very first element of the raw data array.
 // Notice: This function is speedy.
@@ -91,11 +95,16 @@ NA_IAPI       void* naGetArrayPointerMutable(      NAArray* array);
 // is searched from the end of the array. For example -1 denotes the last
 // element.
 //
+// Note that if you store pointers you will get a pointer to a pointer. If you
+// want a pointer directly, just use the p variant.
+//
 // Note that calling this function too often might not be a good idea with
 // respect to speed. Try getting a pointer using naGetArrayPointer or this
 // function and use pointer arithmetic afterwards.
-NA_IAPI const void* naGetArrayElementConst  (const NAArray* array, NAInt indx);
-NA_IAPI       void* naGetArrayElementMutable(      NAArray* array, NAInt indx);
+NA_IAPI const void* naGetArrayElementConst   (const NAArray* array, NAInt indx);
+NA_IAPI       void* naGetArrayElementMutable (      NAArray* array, NAInt indx);
+NA_IAPI const void* naGetArrayElementpConst  (const NAArray* array, NAInt indx);
+NA_IAPI       void* naGetArrayElementpMutable(      NAArray* array, NAInt indx);
 
 // Returns information about of nuber of elements in this array.
 NA_IAPI NAInt  naGetArrayCount    (const NAArray* array);
