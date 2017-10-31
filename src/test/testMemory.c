@@ -95,7 +95,7 @@ void testRuntime(void){
     for(i=0; i<10; i++){
       ptr1 = naMallocTmp(NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT / 7);
     }
-    printf("Now using %d tmp bytes in the runtime.\n", naGetRuntimeGarbageBytesize());
+    printf("Now using %" NA_PRIu " tmp bytes in the runtime.\n", naGetRuntimeGarbageBytesize());
   #endif
   
 

@@ -169,6 +169,7 @@ NA_API NABuffer* naCreateBufferWithMutableData(     void* data,
 NA_API NABuffer* naCreateBufferWithCustomSource(NABufferSourceDescriptor desc);
 
 // Releases a buffer source
+NA_API NABuffer* naRetainBuffer(NABuffer* buffer);
 NA_API void      naReleaseBuffer(NABuffer* source);
 
 

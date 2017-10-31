@@ -92,22 +92,25 @@ typedef void  (*NAOctTreeLeafDeallocator)(  void* leafdata,
 // always be greaterequal zero. Additionally, all coordinates of the two
 // boxes are guaranteed to be inside the corresopnding chunk. Note that
 // the volume does not necessarily denotes a cube. It can denote any cuboid.
-// The leaflength is given to you as an additional information. It corresponds
-// to the leaflength used when the NAOctTree was created.
+// The totalshift and the leaflength is given to you as an additional
+// information. The totalsize corresponds to the shift given as a parameter to
+// naInitOctTreeCopyShifted and the leaflength corresponds to the leaflength
+// used when the NAOctTree was created.
 // Example in 2D (numbers are approximate):
 //          dstdata           srcdata
 //        O---------+       O---------+       
-//        |         |       |s----+   |       srcorigin s: (1,1)
-//        |    d----+       ||    |   |       dstorigin d: (3,2)
+//        |         |       |s----+   |       srcorigin s: (1,1,2)
+//        |    d----+       ||    |   |       dstorigin d: (3,2,5)
 //        |    |    | <---- |+----+   |       size: (4,2)
-//        |    +----+       |         |       leaflength: 8
-//        +---------+       +---------+       
+//        |    +----+       |         |       totalshift: (10,9,19)
+//        +---------+       +---------+       leaflength: 8
 
 typedef void  (*NAOctTreeDataCopier)(  const void* dstdata,
                                          NAVertexi dstorigin,
                                        const void* srcdata,
                                          NAVertexi srcorigin,
                                          NAVolumei volume,
+                                         NAVolumei totalshift,
                                              NAInt leaflength);
 
 // This callback is called when a oct tree creates an internal tree node other

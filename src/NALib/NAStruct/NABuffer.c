@@ -1276,13 +1276,13 @@ NA_HDEF void naDeallocBuffer(NABuffer* buffer){
 
 
 
-NA_API NABuffer* naRetainBuffer(NABuffer* buffer){
+NA_DEF NABuffer* naRetainBuffer(NABuffer* buffer){
   return (NABuffer*)naRetainRefCount(&(buffer->refcount));
 }
 
 
 
-NA_API void naReleaseBuffer(NABuffer* buffer){
+NA_DEF void naReleaseBuffer(NABuffer* buffer){
   naReleaseRefCount(&(buffer->refcount), &(buffer->refcount), (NAMutator)naDeallocBuffer);
 }
 

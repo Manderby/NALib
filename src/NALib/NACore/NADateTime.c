@@ -444,8 +444,6 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
   
   str = naNewStringExtraction(string, 0, -1);
   iter = naMakeBufferAccessor(naGetStringBufferConst(str));
-  
-  token = naNewString();
 
   switch(format){
   case NA_DATETIME_FORMAT_APACHE:

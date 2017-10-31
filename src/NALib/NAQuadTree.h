@@ -88,22 +88,25 @@ typedef void  (*NAQuadTreeLeafDeallocator)(  void* leafdata,
 // always be greaterequal zero. Additionally, all coordinates of the two
 // rectangles are guaranteed to be inside the corresopnding chunk. Note that
 // the size does not necessarily denotes a square. It can denote any rectangle.
-// The leaflength is given to you as an additional information. It corresponds
-// to the leaflength used when the NAQuadTree was created.
+// The totalshift and the leaflength is given to you as an additional
+// information. The totalsize corresponds to the shift given as a parameter to
+// naInitQuadTreeCopyShifted and the leaflength corresponds to the leaflength
+// used when the NAQuadTree was created.
 // Example (numbers are approximate):
 //          dstdata           srcdata
 //        O---------+       O---------+       
 //        |         |       |s----+   |       srcorigin s: (1,1)
 //        |    d----+       ||    |   |       dstorigin d: (3,2)
 //        |    |    | <---- |+----+   |       size: (4,2)
-//        |    +----+       |         |       leaflength: 8
-//        +---------+       +---------+       
+//        |    +----+       |         |       totalshift: (10, 9)
+//        +---------+       +---------+       leaflength: 8
 
 typedef void  (*NAQuadTreeDataCopier)( const void* dstdata,
                                             NAPosi dstorigin,
                                        const void* srcdata,
                                             NAPosi srcorigin,
                                            NASizei size,
+                                           NASizei totalshift,
                                              NAInt leaflength);
 
 // This callback is called when a quad tree creates an internal tree node other

@@ -864,25 +864,25 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
       neworigin = naMakePosi(origin.x + rect0.pos.x, origin.y + rect0.pos.y);
       naLocateQuadTreeCoord(&newiter, neworigin);
       newdata = naGetQuadTreeCurMutable(&newiter, NA_TRUE);
-      duptree->callbacks.datacopier(newdata, naMakePosi(x1bound, y1bound), dupchunk, naMakePosi(0, 0), rect0.size, duptree->leaflength);
+      duptree->callbacks.datacopier(newdata, naMakePosi(x1bound, y1bound), dupchunk, naMakePosi(0, 0), rect0.size, shift, duptree->leaflength);
     }
     if(!naIsRectiEmpty(rect1)){
       neworigin = naMakePosi(origin.x + rect1.pos.x, origin.y + rect1.pos.y);
       naLocateQuadTreeCoord(&newiter, neworigin);
       newdata = naGetQuadTreeCurMutable(&newiter, NA_TRUE);
-      duptree->callbacks.datacopier(newdata, naMakePosi(0, y1bound), dupchunk, naMakePosi(x2bound, 0), rect1.size, duptree->leaflength);
+      duptree->callbacks.datacopier(newdata, naMakePosi(0, y1bound), dupchunk, naMakePosi(x2bound, 0), rect1.size, shift, duptree->leaflength);
     }
     if(!naIsRectiEmpty(rect2)){
       neworigin = naMakePosi(origin.x + rect2.pos.x, origin.y + rect2.pos.y);
       naLocateQuadTreeCoord(&newiter, neworigin);
       newdata = naGetQuadTreeCurMutable(&newiter, NA_TRUE);
-      duptree->callbacks.datacopier(newdata, naMakePosi(x1bound, 0), dupchunk, naMakePosi(0, y2bound), rect2.size, duptree->leaflength);
+      duptree->callbacks.datacopier(newdata, naMakePosi(x1bound, 0), dupchunk, naMakePosi(0, y2bound), rect2.size, shift, duptree->leaflength);
     }
     if(!naIsRectiEmpty(rect3)){
       neworigin = naMakePosi(origin.x + rect3.pos.x, origin.y + rect3.pos.y);
       naLocateQuadTreeCoord(&newiter, neworigin);
       newdata = naGetQuadTreeCurMutable(&newiter, NA_TRUE);
-      duptree->callbacks.datacopier(newdata, naMakePosi(0, 0), dupchunk, naMakePosi(x2bound, y2bound), rect3.size, duptree->leaflength);
+      duptree->callbacks.datacopier(newdata, naMakePosi(0, 0), dupchunk, naMakePosi(x2bound, y2bound), rect3.size, shift, duptree->leaflength);
     }
   }
   naClearQuadTreeIterator(&iter);

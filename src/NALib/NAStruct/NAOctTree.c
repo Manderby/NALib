@@ -904,49 +904,49 @@ NA_DEF NAOctTree* naInitOctTreeCopyShifted(NAOctTree* newtree, const NAOctTree* 
       neworigin = naMakeVertexi(origin.x + box0.vertex.x, origin.y + box0.vertex.y, origin.z + box0.vertex.z);
       naLocateOctTreeCoord(&newiter, neworigin);
       newdata = naGetOctTreeCurMutable(&newiter, NA_TRUE);
-      duptree->callbacks.datacopier(newdata, naMakeVertexi(x1bound, y1bound, z1bound), dupchunk, naMakeVertexi(0, 0, 0), box0.volume, duptree->leaflength);
+      duptree->callbacks.datacopier(newdata, naMakeVertexi(x1bound, y1bound, z1bound), dupchunk, naMakeVertexi(0, 0, 0), box0.volume, shift,  duptree->leaflength);
     }
     if(!naIsBoxiEmpty(box1)){
       neworigin = naMakeVertexi(origin.x + box1.vertex.x, origin.y + box1.vertex.y, origin.z + box1.vertex.z);
       naLocateOctTreeCoord(&newiter, neworigin);
       newdata = naGetOctTreeCurMutable(&newiter, NA_TRUE);
-      duptree->callbacks.datacopier(newdata, naMakeVertexi(0, y1bound, z1bound), dupchunk, naMakeVertexi(x2bound, 0, 0), box1.volume, duptree->leaflength);
+      duptree->callbacks.datacopier(newdata, naMakeVertexi(0, y1bound, z1bound), dupchunk, naMakeVertexi(x2bound, 0, 0), box1.volume, shift, duptree->leaflength);
     }
     if(!naIsBoxiEmpty(box2)){
       neworigin = naMakeVertexi(origin.x + box2.vertex.x, origin.y + box2.vertex.y, origin.z + box2.vertex.z);
       naLocateOctTreeCoord(&newiter, neworigin);
       newdata = naGetOctTreeCurMutable(&newiter, NA_TRUE);
-      duptree->callbacks.datacopier(newdata, naMakeVertexi(x1bound, 0, z1bound), dupchunk, naMakeVertexi(0, y2bound, 0), box2.volume, duptree->leaflength);
+      duptree->callbacks.datacopier(newdata, naMakeVertexi(x1bound, 0, z1bound), dupchunk, naMakeVertexi(0, y2bound, 0), box2.volume, shift, duptree->leaflength);
     }
     if(!naIsBoxiEmpty(box3)){
       neworigin = naMakeVertexi(origin.x + box3.vertex.x, origin.y + box3.vertex.y, origin.z + box3.vertex.z);
       naLocateOctTreeCoord(&newiter, neworigin);
       newdata = naGetOctTreeCurMutable(&newiter, NA_TRUE);
-      duptree->callbacks.datacopier(newdata, naMakeVertexi(0, 0, z1bound), dupchunk, naMakeVertexi(x2bound, y2bound, 0), box3.volume, duptree->leaflength);
+      duptree->callbacks.datacopier(newdata, naMakeVertexi(0, 0, z1bound), dupchunk, naMakeVertexi(x2bound, y2bound, 0), box3.volume, shift, duptree->leaflength);
     }
     if(!naIsBoxiEmpty(box4)){
       neworigin = naMakeVertexi(origin.x + box4.vertex.x, origin.y + box4.vertex.y, origin.z + box4.vertex.z);
       naLocateOctTreeCoord(&newiter, neworigin);
       newdata = naGetOctTreeCurMutable(&newiter, NA_TRUE);
-      duptree->callbacks.datacopier(newdata, naMakeVertexi(x1bound, y1bound, 0), dupchunk, naMakeVertexi(0, 0, z2bound), box4.volume, duptree->leaflength);
+      duptree->callbacks.datacopier(newdata, naMakeVertexi(x1bound, y1bound, 0), dupchunk, naMakeVertexi(0, 0, z2bound), box4.volume, shift, duptree->leaflength);
     }
     if(!naIsBoxiEmpty(box5)){
       neworigin = naMakeVertexi(origin.x + box5.vertex.x, origin.y + box5.vertex.y, origin.z + box5.vertex.z);
       naLocateOctTreeCoord(&newiter, neworigin);
       newdata = naGetOctTreeCurMutable(&newiter, NA_TRUE);
-      duptree->callbacks.datacopier(newdata, naMakeVertexi(0, y1bound, 0), dupchunk, naMakeVertexi(x2bound, 0, z2bound), box5.volume, duptree->leaflength);
+      duptree->callbacks.datacopier(newdata, naMakeVertexi(0, y1bound, 0), dupchunk, naMakeVertexi(x2bound, 0, z2bound), box5.volume, shift, duptree->leaflength);
     }
     if(!naIsBoxiEmpty(box6)){
       neworigin = naMakeVertexi(origin.x + box6.vertex.x, origin.y + box6.vertex.y, origin.z + box6.vertex.z);
       naLocateOctTreeCoord(&newiter, neworigin);
       newdata = naGetOctTreeCurMutable(&newiter, NA_TRUE);
-      duptree->callbacks.datacopier(newdata, naMakeVertexi(x1bound, 0, 0), dupchunk, naMakeVertexi(0, y2bound, z2bound), box6.volume, duptree->leaflength);
+      duptree->callbacks.datacopier(newdata, naMakeVertexi(x1bound, 0, 0), dupchunk, naMakeVertexi(0, y2bound, z2bound), box6.volume, shift, duptree->leaflength);
     }
     if(!naIsBoxiEmpty(box7)){
       neworigin = naMakeVertexi(origin.x + box7.vertex.x, origin.y + box7.vertex.y, origin.z + box7.vertex.z);
       naLocateOctTreeCoord(&newiter, neworigin);
       newdata = naGetOctTreeCurMutable(&newiter, NA_TRUE);
-      duptree->callbacks.datacopier(newdata, naMakeVertexi(0, 0, 0), dupchunk, naMakeVertexi(x2bound, y2bound, z2bound), box7.volume, duptree->leaflength);
+      duptree->callbacks.datacopier(newdata, naMakeVertexi(0, 0, 0), dupchunk, naMakeVertexi(x2bound, y2bound, z2bound), box7.volume, shift, duptree->leaflength);
     }
   }
   naClearOctTreeIterator(&iter);

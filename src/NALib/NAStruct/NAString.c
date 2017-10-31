@@ -182,6 +182,7 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt charoffs
     NAInt positivecount;
     naMakeIntegerRangePositiveInLength(&positiveoffset, &positivecount, charoffset, length, naGetStringBytesize(srcstring));
 
+    naReleaseBuffer(string->buffer);
     string->buffer = naCreateBufferExtraction(srcstring->buffer, naMakeRangei(positiveoffset, positivecount));
     #ifndef NDEBUG
       string->cachedstr = NA_NULL;
@@ -316,6 +317,9 @@ NA_DEF NAString* naNewStringWithSuffixOfFilename(const NAString* filename){
 
 
 NA_DEF NAString* naNewStringCEscaped (const NAString* inputstring){
+  if(naIsStringEmpty(inputstring)){
+    return naNewString();
+  }
   NAUTF8Char outbuffer[10]; // this is the maximal number of chars added.
   outbuffer[0] = '\\';
   NAString* string;
@@ -350,6 +354,9 @@ NA_DEF NAString* naNewStringCEscaped (const NAString* inputstring){
 
 
 NA_DEF NAString* naNewStringCUnescaped(const NAString* inputstring){
+  if(naIsStringEmpty(inputstring)){
+    return naNewString();
+  }
   NAString* string;
   NABuffer* buffer = naCreateBuffer(NA_FALSE);
   NABufferIterator iter = naMakeBufferAccessor(inputstring->buffer);

@@ -23,11 +23,11 @@ int main(void){
   naStartRuntime();
   NAString* instring = naNewStringWithFormat(testdata);
   NAString* base64 = naNewStringWithBufferBase64Encoded(naGetStringBufferConst(instring), NA_TRUE);
-  printf("%.*s\n", naGetStringBytesize(base64), naGetStringUTF8Pointer(base64));
+  printf("%.*s\n", (int)naGetStringBytesize(base64), naGetStringUTF8Pointer(base64));
   NABuffer* outbuf = naCreateBufferWithStringBase64Decoded(base64);
   NAString* outstring = naNewStringWithBufferExtraction(outbuf, naGetBufferRange(outbuf));
 
-  printf("%.*s", naGetStringBytesize(outstring), naGetStringUTF8Pointer(outstring));
+  printf("%.*s", (int)naGetStringBytesize(outstring), naGetStringUTF8Pointer(outstring));
   naReleaseBuffer(outbuf);
   naDelete(base64);
   naDelete(instring);
@@ -40,7 +40,7 @@ int main(void){
 //  time1 = naMakeDateTimeNow();
 //
 //  testSystem();  
-//  testMemory();
+  testMemory();
 //
 //  naStartRuntime();
 //    testStack();

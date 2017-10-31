@@ -14,6 +14,7 @@ NA_DEF NABool naLocateListData(NAListIterator* iterator, const void* data){
   // todo: search in left-right exponential search starting from the current
   // position.
 
+  naResetListIterator(iterator);
   while(naIterateList(iterator, 1)){
     if(naGetPtrConst(&(iterator->cur->ptr)) == data){
       return NA_TRUE;
