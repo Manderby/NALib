@@ -342,8 +342,10 @@ NA_IAPI void      naCopyBox       (NABox*  boxd,  NABox*  boxs);
 NA_IAPI void      naCopyBoxi      (NABoxi* boxd,  NABoxi* boxs);
 
 // Returns the center position / vertex
-NA_IAPI NAPos     naGetRectCenter(NARect rect);
-NA_IAPI NAVertex  naGetBoxCenter (NABox box);
+NA_IAPI NAPos     naGetRectCenter (NARect rect);
+NA_IAPI NAPosi    naGetRectiCenter(NARecti rect);
+NA_IAPI NAVertex  naGetBoxCenter  (NABox box);
+NA_IAPI NAVertexi naGetBoxiCenter (NABoxi box);
 // Returns the offset of a size or volume being centered within a given rect
 // or box relative to the origin of that rect or box.
 NA_IAPI NAPos     naGetRectCenteredSizeOffset  (NARect rect, NASize   size);

@@ -1426,11 +1426,24 @@ NA_IDEF NAPos naGetRectCenter(NARect rect){
   newpos.y = rect.pos.y + 0.5 * rect.size.height;
   return newpos;
 }
+NA_IDEF NAPosi naGetRectiCenter(NARecti rect){
+  NAPosi newpos;
+  newpos.x = rect.pos.x + rect.size.width / 2;
+  newpos.y = rect.pos.y + rect.size.height / 2;
+  return newpos;
+}
 NA_IDEF NAVertex naGetBoxCenter(NABox box){
   NAVertex newvertex;
   newvertex.x = box.vertex.x + 0.5 * box.volume.width;
   newvertex.y = box.vertex.y + 0.5 * box.volume.height;
   newvertex.z = box.vertex.z + 0.5 * box.volume.depth;
+  return newvertex;
+}
+NA_IDEF NAVertexi naGetBoxiCenter(NABoxi box){
+  NAVertexi newvertex;
+  newvertex.x = box.vertex.x + box.volume.width / 2;
+  newvertex.y = box.vertex.y + box.volume.height / 2;
+  newvertex.z = box.vertex.z + box.volume.depth / 2;
   return newvertex;
 }
 

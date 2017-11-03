@@ -233,6 +233,8 @@ NA_API uint8  naParseStringUInt8 (const NAString* string);
 NA_API uint16 naParseStringUInt16(const NAString* string);
 NA_API uint32 naParseStringUInt32(const NAString* string);
 NA_API uint64 naParseStringUInt64(const NAString* string);
+NA_API float  naParseStringFloat (const NAString* string);
+NA_API double naParseStringDouble(const NAString* string);
 
 
 // Inline implementations are in a separate file:

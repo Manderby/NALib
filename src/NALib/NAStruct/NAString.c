@@ -780,6 +780,40 @@ NA_DEF uint64 naParseStringUInt64(const NAString* string){
   return retvalue;
 }
 
+NA_DEF float naParseStringFloat(const NAString* string){
+  NAInt len = naGetStringBytesize(string);
+  if(len > 20){
+    len = 20;
+    #ifndef NDEBUG
+      naError("naParseStringFloat", "String truncated to 20 characters");
+    #endif
+  }
+  NAUTF8Char* buf = naMalloc((len + 1) * naSizeof(NAUTF8Char));
+  NABufferIterator bufiter = naMakeBufferAccessor(string->buffer);
+  naSeekBufferFromStart(&bufiter, 0);
+  naReadBufferBytes(&bufiter, buf, len);
+  naClearBufferIterator(&bufiter);
+  float retvalue = (float)atof(buf);
+  naFree(buf);
+  return retvalue;
+}
+NA_DEF double naParseStringDouble(const NAString* string){
+  NAInt len = naGetStringBytesize(string);
+  if(len > 20){
+    len = 20;
+    #ifndef NDEBUG
+      naError("naParseStringFloat", "String truncated to 20 characters");
+    #endif
+  }
+  NAUTF8Char* buf = naMalloc((len + 1) * naSizeof(NAUTF8Char));
+  NABufferIterator bufiter = naMakeBufferAccessor(string->buffer);
+  naSeekBufferFromStart(&bufiter, 0);
+  naReadBufferBytes(&bufiter, buf, len);
+  naClearBufferIterator(&bufiter);
+  double retvalue = atof(buf);
+  naFree(buf);
+  return retvalue;
+}
 
 
 
