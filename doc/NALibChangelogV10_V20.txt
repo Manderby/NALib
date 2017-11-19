@@ -40,6 +40,8 @@ correct, complete or final.
 - Fixed a nasty memory leak in naNewString()
 - Added a parameter to the shift callback of QuadTree and OctTree
 - Fixed a small error in list searching
+- Added String to Float and Double conversion. Roughly.
+- Added naSetn to set values for a huge array almost like naNulln
 - Tons of small corrections or adjustments everywhere.
 
 

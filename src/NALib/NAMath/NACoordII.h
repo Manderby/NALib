@@ -2391,6 +2391,15 @@ NA_IDEF float naGetRangefEndE(NARangef range){
 
 
 
+NA_IDEF NAPos naGetRectEnd (NARect rect){
+  #ifndef NDEBUG
+    if(naIsRectEmpty(rect))
+      naError("naGetRectEnd", "rect is empty.");
+    if(!naIsRectValid(rect))
+      naError("naGetRectEnd", "rect is invalid.");
+  #endif
+  return naMakePos(naGetRectEndX(rect), naGetRectEndY(rect));
+}
 NA_IDEF double naGetRectEndX (NARect  rect){
   #ifndef NDEBUG
     if(naIsRectEmpty(rect))
@@ -2426,6 +2435,15 @@ NA_IDEF double naGetRectEndYE (NARect  rect){
 
 
 
+NA_IDEF NAVertex naGetBoxEnd (NABox box){
+  #ifndef NDEBUG
+    if(naIsBoxEmpty(box))
+      naError("naGetBoxEnd", "box is empty.");
+    if(!naIsBoxValid(box))
+      naError("naGetBoxEnd", "box is invalid.");
+  #endif
+  return naMakeVertex(naGetBoxEndX(box), naGetBoxEndY(box), naGetBoxEndZ(box));
+}
 NA_IDEF double naGetBoxEndX (NABox  box){
   #ifndef NDEBUG
     if(naIsBoxEmpty(box))

@@ -1097,6 +1097,12 @@ NA_IAPI void naInvM22f(float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
 NA_IAPI void naInvM33f(float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
 NA_IAPI void naInvM44f(float*  NA_RESTRICT D, const float*  NA_RESTRICT A);
 
+// Homogeneous coordinates
+NA_IAPI void naScaleM33dS(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2);
+NA_IAPI void naTranslateM33dS(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2);
+NA_IAPI void naFillV2WithM33Origin(double* NA_RESTRICT d, const double* restrict A);
+NA_IAPI void naFillV2WithM33Coord2(double* NA_RESTRICT d, const double* restrict A, const double* restrict v);
+
 // Creates a 3D rotation matrix using Quaternions.
 //
 // Quaternions are a very complex mathematical thing but they are quite handy

@@ -61,6 +61,11 @@ NA_IAPI void naNulln32  (void* d, int32 bytesize);
 NA_IAPI void naNulln64  (void* d, int64 bytesize);
 NA_IAPI void naNulln    (void* d, NAInt bytesize);
 
+// Fills the given buffer with the value 0 for the given bytesize
+NA_IAPI void naSetn32  (void* d, int32 bytesize, NAByte value);
+NA_IAPI void naSetn64  (void* d, int64 bytesize, NAByte value);
+NA_IAPI void naSetn    (void* d, NAInt bytesize, NAByte value);
+
 
 
 // Fills the array of the d argument with the given bytes in increasing

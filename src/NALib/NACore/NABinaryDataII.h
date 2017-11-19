@@ -321,6 +321,36 @@ NA_IDEF void naNulln(void* d, NAInt bytesize){
 
 
 
+NA_IDEF void naSetn32(void* d, int32 bytesize, NAByte value){
+  #ifndef NDEBUG
+    if(bytesize < NA_ONE_32)
+      naError("naSetn32", "count should not be < 1");
+  #endif
+  // Note that the bzero function does the same but is deprecated.
+  memset(d, value, bytesize);
+}
+
+NA_IDEF void naSetn64(void* d, int64 bytesize, NAByte value){
+  #ifndef NDEBUG
+    if(bytesize < NA_ONE_64)
+      naError("naNulln64", "count should not be < 1");
+  #endif
+  // Note that the bzero function does the same but is deprecated.
+  memset(d, value, (size_t)bytesize);
+}
+
+NA_IDEF void naSetn(void* d, NAInt bytesize, NAByte value){
+  #if NA_SYSTEM_ADDRESS_BITS == 32
+    naSetn32(d, bytesize, value);
+  #elif NA_SYSTEM_ADDRESS_BITS == 64
+    naSetn64(d, bytesize, value);
+  #else
+    #error "Integer bytesize unknown"
+  #endif
+}
+
+
+
 
 
 // ///////////////////////////////////////////////////////////

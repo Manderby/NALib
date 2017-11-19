@@ -17,7 +17,8 @@ Version 20:
 - add __cplusplus to all h files
 - unify iterators. Iterators store start and end.
 - All Container structs can store pointers.
-
+- make naAtof and parseStringFloat
+- Homogeneous coordinates
 
 Future
 - NATree and integration into NABuffer

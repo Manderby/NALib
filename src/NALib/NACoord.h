@@ -431,11 +431,13 @@ NA_IAPI float     naGetRangefEnd  (NARangef range);
 NA_IAPI double    naGetRangeEndE  (NARange  range);
 NA_IAPI float     naGetRangefEndE (NARangef range);
 
+NA_IAPI NAPos     naGetRectEnd    (NARect rect);
 NA_IAPI double    naGetRectEndX   (NARect  rect);
 NA_IAPI double    naGetRectEndY   (NARect  rect);
 NA_IAPI double    naGetRectEndXE  (NARect  rect);
 NA_IAPI double    naGetRectEndYE  (NARect  rect);
 
+NA_IAPI NAVertex  naGetBoxEnd     (NABox  box);
 NA_IAPI double    naGetBoxEndX    (NABox  box);
 NA_IAPI double    naGetBoxEndY    (NABox  box);
 NA_IAPI double    naGetBoxEndZ    (NABox  box);
