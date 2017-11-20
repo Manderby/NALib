@@ -41,11 +41,11 @@ int main(void){
 //
 //  testSystem();  
   testMemory();
-//
-//  naStartRuntime();
-//    testStack();
-//    testBuffer();
-//  naStopRuntime();
+
+  naStartRuntime();
+    testStack();
+    testBuffer();
+  naStopRuntime();
 //  
 //  printf("\nTest completed. ");
 //  

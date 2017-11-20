@@ -302,6 +302,7 @@ NA_HIDEF void naSplitBufferSparsePart(NAListIterator* iter, NARangei range){
 }
 
 
+//#include "stdio.h"
 
 // Returns a direct pointer to the raw data of this buffer part, given its
 // absolute address.
@@ -316,6 +317,7 @@ NA_HIDEF NAByte* naGetBufferPartDataPointerConst(const NABufferPart* part, NAInt
     if(offset - part->origin < 0)
       naError("naGetBufferPartDataPointerConst", "offset calculation wrong");
   #endif
+//  printf("getPointer %d %d %c\n", (int)offset, (int)part->origin, ((char*)part->data->sptr.ptr.data.d)[offset - part->origin]);
   return &(((NAByte*)naGetPointerConst(part->data))[offset - part->origin]);
 }
 
@@ -2934,6 +2936,7 @@ NA_DEF NABuffer* naReadBufferBuffer(NABufferIterator* iter, NAInt bytesize){
 // //////////////////////////////////
 
 
+//#include "stdio.h"
 
 NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
   NABool nonwhitespacefound = NA_FALSE;
@@ -2941,15 +2944,22 @@ NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
   while(!naIsBufferAtInitial(iter)){
     NAInt endoffset;
     const NAByte* curbyte;
-    
+        
+//    naPrepareBuffer(iter, naMakeRangei(iter->curoffset, 1), NA_FALSE, NA_TRUE);
+
     const NABufferPart* part = naGetListCurConst(&(iter->listiter));
+
+//    printf("%p ", part);
+
     #ifndef NDEBUG
       if(naIsBufferPartSparse(part))
         naError("naSkipBufferWhitespaces", "sparse part detected.");
     #endif
     curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
     endoffset = naGetBufferPartEnd(part);
+//    printf("%d %d %d\n", (int)part->origin, (int)part->range.origin, (int)part->range.length);
     while(iter->curoffset < endoffset){
+//      printf("%d %c\n", (int)*curbyte, (char)*curbyte);
       if(*curbyte > ' '){
         nonwhitespacefound = NA_TRUE;
         break;
@@ -2957,7 +2967,9 @@ NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
       curbyte++;
       iter->curoffset++;
     }
-    if(!naContainsBufferPartOffset(part, iter->curoffset)){naIterateList(&(iter->listiter), 1);}
+    if(!naContainsBufferPartOffset(part, iter->curoffset)){
+      naIterateList(&(iter->listiter), 1);
+    }
     if(nonwhitespacefound){break;}
   }
 }
@@ -3002,6 +3014,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
         if(*curbyte == '\n'){iter->curoffset++; break;}
       }
       if(lineendingfound){break;}
+//      printf("%c\n", *curbyte);
       if((*curbyte == '\r') || (*curbyte == '\n')){
         iter->linenum++;
         if(skipempty && ((iter->curoffset - linestart) == 0)){

@@ -204,9 +204,10 @@ NA_DEF NAString* naNewStringWithBufferExtraction(NABuffer* buffer, NARangei rang
   #ifndef NDEBUG
     string->cachedstr = NA_NULL;
   #endif
-  #if NA_STRING_ALWAYS_CACHE == 1
-    naGetStringUTF8Pointer(string);
-  #endif
+//  #if NA_STRING_ALWAYS_CACHE == 1
+//    naGetStringUTF8Pointer(string);
+//  #endif
+  naGetStringUTF8Pointer(string); // todo caerful: behaves differently release and debug!
   return string;
 }
 
