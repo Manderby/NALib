@@ -266,20 +266,20 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
   return self;
 }
 - (NACocoaWindow*) cocoawindow{return cocoawindow;}
-- (void)mouseMoved:(NSEvent *)theEvent{
-//  double deltaX = [theEvent deltaX];
-//  double deltaY = [theEvent deltaY];
-  naSetMouseMovedByDiff([theEvent deltaX], [theEvent deltaY]);
+- (void)mouseMoved:(NSEvent*)event{
+//  double deltaX = [event deltaX];
+//  double deltaY = [event deltaY];
+  naSetMouseMovedByDiff([event deltaX], [event deltaY]);
   naDispatchUIElementCommand((NACoreUIElement*)cocoawindow, NA_UI_COMMAND_MOUSE_MOVED, NA_NULL);
 //  [NSEvent setMouseCoalescingEnabled:NO];
 }
-- (void)mouseEntered:(NSEvent *)theEvent{
-  NA_UNUSED(theEvent);
+- (void)mouseEntered:(NSEvent*)event{
+  NA_UNUSED(event);
   naSetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
   naDispatchUIElementCommand((NACoreUIElement*)cocoawindow, NA_UI_COMMAND_MOUSE_ENTERED, NA_NULL);
 }
-- (void)mouseExited:(NSEvent *)theEvent{
-  NA_UNUSED(theEvent);
+- (void)mouseExited:(NSEvent*)event{
+  NA_UNUSED(event);
   naSetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
   naDispatchUIElementCommand((NACoreUIElement*)cocoawindow, NA_UI_COMMAND_MOUSE_EXITED, NA_NULL);
 }
@@ -442,20 +442,20 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
   NARect bounds = naMakeRectWithNSRect([self bounds]);
   naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_RESHAPE, &bounds);
 }
-- (void)keyDown:(NSEvent *)theEvent{
-  NAUIKeyCode keyCode = [theEvent keyCode];
+- (void)keyDown:(NSEvent*)event{
+  NAUIKeyCode keyCode = [event keyCode];
   naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_KEYDOWN, &keyCode);
 }
-- (void)keyUp:(NSEvent *)theEvent{
-  NAUIKeyCode keyCode = [theEvent keyCode];
+- (void)keyUp:(NSEvent*)event{
+  NAUIKeyCode keyCode = [event keyCode];
   naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_KEYUP, &keyCode);
 }
-- (void)flagsChanged:(NSEvent *)theEvent{
+- (void)flagsChanged:(NSEvent*)event{
   NAUIKeyCode keyCode;
-  NABool shift   = ([theEvent modifierFlags] & NSShiftKeyMask)    ?NA_TRUE:NA_FALSE;
-  NABool alt     = ([theEvent modifierFlags] & NSAlternateKeyMask)?NA_TRUE:NA_FALSE;
-  NABool control = ([theEvent modifierFlags] & NSControlKeyMask)  ?NA_TRUE:NA_FALSE;
-  NABool command = ([theEvent modifierFlags] & NSCommandKeyMask)  ?NA_TRUE:NA_FALSE;
+  NABool shift   = ([event modifierFlags] & NSShiftKeyMask)    ?NA_TRUE:NA_FALSE;
+  NABool alt     = ([event modifierFlags] & NSAlternateKeyMask)?NA_TRUE:NA_FALSE;
+  NABool control = ([event modifierFlags] & NSControlKeyMask)  ?NA_TRUE:NA_FALSE;
+  NABool command = ([event modifierFlags] & NSCommandKeyMask)  ?NA_TRUE:NA_FALSE;
   
   keyCode = NA_KEYCODE_SHIFT;
   naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
