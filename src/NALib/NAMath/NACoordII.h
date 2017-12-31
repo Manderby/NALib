@@ -2808,7 +2808,10 @@ NA_IDEF NABool naIsRangeiEmpty(NARangei range){
 
 
 NA_IDEF NABool naIsSizeEmpty (NASize size){
-  return naIsLengthValueEmpty(size.width * size.height);
+  // Note that opposed to the integer variant, we always check the single
+  // values rather than multiplying them. This is because a floating point
+  // multiplication might lead to non-zero if one of the components is NaN. 
+  return naIsLengthValueEmpty(size.width) || naIsLengthValueEmpty(size.height);
 }
 NA_IDEF NABool naIsSizeiEmpty(NASizei size){
   NAInt totalsize = size.width * size.height;
@@ -2824,6 +2827,9 @@ NA_IDEF NABool naIsSizeiEmptySlow(NASizei size){
 NA_IDEF NABool naIsRectEmpty (NARect rect){
   return naIsSizeEmpty(rect.size);
 }
+NA_IDEF NABool naIsRectEmptySlow (NARect rect){
+  return naIsSizeEmpty(rect.size);
+}
 NA_IDEF NABool naIsRectiEmpty(NARecti rect){
   return naIsSizeiEmpty(rect.size);
 }
@@ -2834,7 +2840,10 @@ NA_IDEF NABool naIsRectiEmptySlow(NARecti rect){
 
 
 NA_IDEF NABool naIsVolumeEmpty (NAVolume volume){
-  return naIsLengthValueEmpty(volume.width * volume.height * volume.depth);
+  // Note that opposed to the integer variant, we always check the single
+  // values rather than multiplying them. This is because a floating point
+  // multiplication might lead to non-zero if one of the components is NaN. 
+  return naIsLengthValueEmpty(volume.width) || naIsLengthValueEmpty(volume.height) || naIsLengthValueEmpty(volume.depth);
 }
 NA_IDEF NABool naIsVolumeiEmpty(NAVolumei volume){
   NAInt totalvolume = volume.width * volume.height * volume.depth;

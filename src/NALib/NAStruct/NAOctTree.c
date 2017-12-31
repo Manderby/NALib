@@ -845,7 +845,7 @@ NA_DEF NAOctTree* naInitOctTreeCopyMasked(NAOctTree* newtree, const NAOctTree* d
 
 
 
-NA_DEF NAOctTree* naInitOctTreeCopyShifted(NAOctTree* newtree, const NAOctTree* duptree, NAVolumei shift){
+NA_DEF NAOctTree* naInitOctTreeCopyShifted(NAOctTree* newtree, const NAOctTree* duptree, NAVertexi shift){
   NAInt x1bound;
   NAInt y1bound;
   NAInt z1bound;
@@ -874,20 +874,20 @@ NA_DEF NAOctTree* naInitOctTreeCopyShifted(NAOctTree* newtree, const NAOctTree* 
 
   // Create four boxs which denote the boxs in the new shifted tree which
   // are aligned to a leaflength.
-  x1bound = ((shift.width % duptree->leaflength) + duptree->leaflength ) % duptree->leaflength;
-  y1bound = ((shift.height % duptree->leaflength) + duptree->leaflength ) % duptree->leaflength;
-  z1bound = ((shift.depth % duptree->leaflength) + duptree->leaflength ) % duptree->leaflength;
+  x1bound = ((shift.x % duptree->leaflength) + duptree->leaflength ) % duptree->leaflength;
+  y1bound = ((shift.y % duptree->leaflength) + duptree->leaflength ) % duptree->leaflength;
+  z1bound = ((shift.z % duptree->leaflength) + duptree->leaflength ) % duptree->leaflength;
   x2bound = duptree->leaflength - x1bound;
   y2bound = duptree->leaflength - y1bound;
   z2bound = duptree->leaflength - z1bound;
-  box0 = naMakeBoxiE(naMakeVertexi(shift.width, shift.height, shift.depth), naMakeVolumeiE(x2bound, y2bound, z2bound));
-  box1 = naMakeBoxiE(naMakeVertexi(shift.width + x2bound, shift.height, shift.depth), naMakeVolumeiE(x1bound, y2bound, z2bound));
-  box2 = naMakeBoxiE(naMakeVertexi(shift.width, shift.height + y2bound, shift.depth), naMakeVolumeiE(x2bound, y1bound, z2bound));
-  box3 = naMakeBoxiE(naMakeVertexi(shift.width + x2bound, shift.height + y2bound, shift.depth), naMakeVolumeiE(x1bound, y1bound, z2bound));
-  box4 = naMakeBoxiE(naMakeVertexi(shift.width, shift.height, shift.depth + z2bound), naMakeVolumeiE(x2bound, y2bound, z1bound));
-  box5 = naMakeBoxiE(naMakeVertexi(shift.width + x2bound, shift.height, shift.depth + z2bound), naMakeVolumeiE(x1bound, y2bound, z1bound));
-  box6 = naMakeBoxiE(naMakeVertexi(shift.width, shift.height + y2bound, shift.depth + z2bound), naMakeVolumeiE(x2bound, y1bound, z1bound));
-  box7 = naMakeBoxiE(naMakeVertexi(shift.width + x2bound, shift.height + y2bound, shift.depth + z2bound), naMakeVolumeiE(x1bound, y1bound, z1bound));
+  box0 = naMakeBoxiE(naMakeVertexi(shift.x, shift.y, shift.z), naMakeVolumeiE(x2bound, y2bound, z2bound));
+  box1 = naMakeBoxiE(naMakeVertexi(shift.x + x2bound, shift.y, shift.z), naMakeVolumeiE(x1bound, y2bound, z2bound));
+  box2 = naMakeBoxiE(naMakeVertexi(shift.x, shift.y + y2bound, shift.z), naMakeVolumeiE(x2bound, y1bound, z2bound));
+  box3 = naMakeBoxiE(naMakeVertexi(shift.x + x2bound, shift.y + y2bound, shift.z), naMakeVolumeiE(x1bound, y1bound, z2bound));
+  box4 = naMakeBoxiE(naMakeVertexi(shift.x, shift.y, shift.z + z2bound), naMakeVolumeiE(x2bound, y2bound, z1bound));
+  box5 = naMakeBoxiE(naMakeVertexi(shift.x + x2bound, shift.y, shift.z + z2bound), naMakeVolumeiE(x1bound, y2bound, z1bound));
+  box6 = naMakeBoxiE(naMakeVertexi(shift.x, shift.y + y2bound, shift.z + z2bound), naMakeVolumeiE(x2bound, y1bound, z1bound));
+  box7 = naMakeBoxiE(naMakeVertexi(shift.x + x2bound, shift.y + y2bound, shift.z + z2bound), naMakeVolumeiE(x1bound, y1bound, z1bound));
   
   newiter = naMakeOctTreeModifier(newtree);
   iter = naMakeOctTreeAccessor(duptree);

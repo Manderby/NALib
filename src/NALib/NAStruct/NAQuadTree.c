@@ -816,7 +816,7 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyMasked(NAQuadTree* newtree, const NAQuadTre
 
 
 
-NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTree* duptree, NASizei shift){
+NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTree* duptree, NAPosi shift){
   NAInt x1bound;
   NAInt y1bound;
   NAInt x2bound;
@@ -839,14 +839,14 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
 
   // Create four rects which denote the rects in the new shifted tree which
   // are aligned to a leaflength.
-  x1bound = ((shift.width % duptree->leaflength) + duptree->leaflength ) % duptree->leaflength;
-  y1bound = ((shift.height % duptree->leaflength) + duptree->leaflength ) % duptree->leaflength;
+  x1bound = ((shift.x % duptree->leaflength) + duptree->leaflength ) % duptree->leaflength;
+  y1bound = ((shift.y % duptree->leaflength) + duptree->leaflength ) % duptree->leaflength;
   x2bound = duptree->leaflength - x1bound;
   y2bound = duptree->leaflength - y1bound;
-  rect0 = naMakeRectiE(naMakePosi(shift.width, shift.height), naMakeSizeiE(x2bound, y2bound));
-  rect1 = naMakeRectiE(naMakePosi(shift.width + x2bound, shift.height), naMakeSizeiE(x1bound, y2bound));
-  rect2 = naMakeRectiE(naMakePosi(shift.width, shift.height + y2bound), naMakeSizeiE(x2bound, y1bound));
-  rect3 = naMakeRectiE(naMakePosi(shift.width + x2bound, shift.height + y2bound), naMakeSizeiE(x1bound, y1bound));
+  rect0 = naMakeRectiE(naMakePosi(shift.x, shift.y), naMakeSizeiE(x2bound, y2bound));
+  rect1 = naMakeRectiE(naMakePosi(shift.x + x2bound, shift.y), naMakeSizeiE(x1bound, y2bound));
+  rect2 = naMakeRectiE(naMakePosi(shift.x, shift.y + y2bound), naMakeSizeiE(x2bound, y1bound));
+  rect3 = naMakeRectiE(naMakePosi(shift.x + x2bound, shift.y + y2bound), naMakeSizeiE(x1bound, y1bound));
   
   newiter = naMakeQuadTreeModifier(newtree);
   iter = naMakeQuadTreeAccessor(duptree);

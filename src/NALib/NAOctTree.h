@@ -110,7 +110,7 @@ typedef void  (*NAOctTreeDataCopier)(  const void* dstdata,
                                        const void* srcdata,
                                          NAVertexi srcorigin,
                                          NAVolumei volume,
-                                         NAVolumei totalshift,
+                                         NAVertexi totalshift,
                                              NAInt leaflength);
 
 // This callback is called when a oct tree creates an internal tree node other
@@ -219,7 +219,7 @@ NA_DEF NAOctTree* naInitOctTreeCopyMasked(      NAOctTree* newtree,
 // Duplicates the given copytree but shifts all contents by the given shift.
 NA_API NAOctTree* naInitOctTreeCopyShifted(     NAOctTree* newtree,
                                           const NAOctTree* copytree,
-                                                 NAVolumei shift);
+                                                 NAVertexi shift);
 
 // Clears the tree
 NA_API void naClearOctTree(                     NAOctTree* tree);

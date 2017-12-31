@@ -551,6 +551,7 @@ NA_IAPI NABool    naIsSizeEmpty     (NASize  size);
 NA_IAPI NABool    naIsSizeiEmpty    (NASizei size);
 NA_IAPI NABool    naIsSizeiEmptySlow(NASizei size);
 NA_IAPI NABool    naIsRectEmpty     (NARect  rect);
+NA_IAPI NABool    naIsRectEmpty     (NARect  rect);
 NA_IAPI NABool    naIsRectiEmpty    (NARecti rect);
 NA_IAPI NABool    naIsRectiEmptySlow(NARecti rect);
 

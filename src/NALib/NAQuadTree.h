@@ -106,7 +106,7 @@ typedef void  (*NAQuadTreeDataCopier)( const void* dstdata,
                                        const void* srcdata,
                                             NAPosi srcorigin,
                                            NASizei size,
-                                           NASizei totalshift,
+                                            NAPosi totalshift,
                                              NAInt leaflength);
 
 // This callback is called when a quad tree creates an internal tree node other
@@ -215,7 +215,7 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyMasked(    NAQuadTree* newtree,
 // Duplicates the given copytree but shifts all contents by the given shift.
 NA_API NAQuadTree* naInitQuadTreeCopyShifted(   NAQuadTree* newtree,
                                           const NAQuadTree* copytree,
-                                                    NASizei shift);
+                                                     NAPosi shift);
 
 // Clears the tree
 NA_API void naClearQuadTree(                   NAQuadTree* tree);
