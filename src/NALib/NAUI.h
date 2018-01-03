@@ -361,7 +361,7 @@ NA_API NAWindow* naNewWindow(const char* title, NARect rect, NABool resizeable);
 
 
 
-NA_API NARect naGetMainScreenRect();
+NA_API NARect naGetMainScreenRect(void);
 
 NA_API void naShowWindow(NAWindow* window);
 NA_API void naSetWindowContentView(NAWindow* window, NAUIElement* uielement);
@@ -390,10 +390,10 @@ NA_API NABool naIsWindowFullscreen(NAWindow* window);
 NA_API void naCenterMouse(   void* uielement,
                             NABool includebounds,
                             NABool sendmovemessage);
-NA_API void naShowMouse();
-NA_API void naHideMouse();
+NA_API void naShowMouse(void);
+NA_API void naHideMouse(void);
 
-NA_API const NACursorInfo* naGetMouseInfo();
+NA_API const NACursorInfo* naGetMouseInfo(void);
 NA_API NAPos naGetCursorPos(const NACursorInfo* cursorinfo);
 NA_API NASize naGetCursorDelta(const NACursorInfo* cursorinfo);
 

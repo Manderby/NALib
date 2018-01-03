@@ -143,7 +143,7 @@ NA_API NABuffer* naCreateBufferCopy(const NABuffer* srcbuffer,
 // Creates a buffer with no source and no content. It can be used as a
 // placeholder or to collect other buffers with naAppendBuffer or
 // naWriteBufferBuffer.
-NA_API NABuffer* naCreateBufferPlain();
+NA_API NABuffer* naCreateBufferPlain(void);
 
 // Creates a buffer sharing the same source as the given buffer.
 NA_API NABuffer* naCreateBufferWithSameSource(  NABuffer* srcbuffer);

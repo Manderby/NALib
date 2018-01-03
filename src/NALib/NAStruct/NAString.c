@@ -330,17 +330,17 @@ NA_DEF NAString* naNewStringCEscaped (const NAString* inputstring){
   while(!naIsBufferAtEnd(&iter)){
     NAUTF8Char curchar = naReadBufferi8(&iter);
     switch(curchar){
-    case '\a': outbuffer[1] = 'a',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\b': outbuffer[1] = 'b',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\f': outbuffer[1] = 'f',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\n': outbuffer[1] = 'n',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\r': outbuffer[1] = 'r',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\t': outbuffer[1] = 't',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\v': outbuffer[1] = 'v',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\\': outbuffer[1] = '\\', naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\'': outbuffer[1] = '\'', naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\"': outbuffer[1] = '\"', naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\?': outbuffer[1] = '?',  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\a': outbuffer[1] = 'a';  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\b': outbuffer[1] = 'b';  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\f': outbuffer[1] = 'f';  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\n': outbuffer[1] = 'n';  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\r': outbuffer[1] = 'r';  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\t': outbuffer[1] = 't';  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\v': outbuffer[1] = 'v';  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\\': outbuffer[1] = '\\'; naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\'': outbuffer[1] = '\''; naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\"': outbuffer[1] = '\"'; naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\?': outbuffer[1] = '?';  naWriteBufferBytes(&outiter, outbuffer, 2); break;
     // todo: Add more escapes
     default: naWriteBufferi8(&outiter, curchar); break;
     }

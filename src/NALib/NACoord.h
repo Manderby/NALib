@@ -178,9 +178,9 @@ NA_IAPI NARange  naMakeRangeE (double origin, double length);
 NA_IAPI NARangei naMakeRangeiE(NAInt  origin, NAInt  length);
 NA_IAPI NARange  naMakeRangeWithRangei(NARangei range);
 NA_IAPI NARangei naMakeRangeiWithRange(NARange  range);
-NA_IAPI NARange  naMakeRangeEmpty();
-NA_IAPI NARangef naMakeRangefEmpty();
-NA_IAPI NARangei naMakeRangeiEmpty();
+NA_IAPI NARange  naMakeRangeEmpty(void);
+NA_IAPI NARangef naMakeRangefEmpty(void);
+NA_IAPI NARangei naMakeRangeiEmpty(void);
 
 NA_IAPI NAPos    naMakePos    (double x,      double  y);
 NA_IAPI NAPosi   naMakePosi   (NAInt  x,      NAInt   y);
@@ -193,8 +193,8 @@ NA_IAPI NASize   naMakeSizeE  (double width,  double  height);
 NA_IAPI NASizei  naMakeSizeiE (NAInt  width,  NAInt   height);
 NA_IAPI NASize   naMakeSizeWithSizei(NASizei size);
 NA_IAPI NASizei  naMakeSizeiWithSize(NASize  size);
-NA_IAPI NASize   naMakeSizeEmpty();
-NA_IAPI NASizei  naMakeSizeiEmpty();
+NA_IAPI NASize   naMakeSizeEmpty(void);
+NA_IAPI NASizei  naMakeSizeiEmpty(void);
 
 NA_IAPI NARect   naMakeRect   (NAPos  pos,    NASize  size);
 NA_IAPI NARecti  naMakeRecti  (NAPosi pos,    NASizei size);
@@ -206,8 +206,8 @@ NA_IAPI NARect   naMakeRectSE (double x, double y, double width, double height);
 NA_IAPI NARecti  naMakeRectiSE(NAInt  x, NAInt  y, NAInt  width, NAInt  height);
 NA_IAPI NARect   naMakeRectWithRecti(NARecti rect);
 NA_IAPI NARecti  naMakeRectiWithRect(NARect  rect);
-NA_IAPI NARect   naMakeRectEmpty();
-NA_IAPI NARecti  naMakeRectiEmpty();
+NA_IAPI NARect   naMakeRectEmpty(void);
+NA_IAPI NARecti  naMakeRectiEmpty(void);
 
 NA_IAPI NABounds4  naMakeBounds4 (double top, double right, double bottom, double left);
 NA_IAPI NABounds4i naMakeBounds4i(NAInt  top, NAInt  right, NAInt  bottom, NAInt  left);
@@ -225,8 +225,8 @@ NA_IAPI NAVolume    naMakeVolumeE (double  width, double height, double depth);
 NA_IAPI NAVolumei   naMakeVolumeiE(NAInt   width, NAInt  height, NAInt  depth);
 NA_IAPI NAVolume    naMakeVolumeWithVolumei(NAVolumei volume);
 NA_IAPI NAVolumei   naMakeVolumeiWithVolume(NAVolume  volume);
-NA_IAPI NAVolume    naMakeVolumeEmpty();
-NA_IAPI NAVolumei   naMakeVolumeiEmpty();
+NA_IAPI NAVolume    naMakeVolumeEmpty(void);
+NA_IAPI NAVolumei   naMakeVolumeiEmpty(void);
 
 NA_IAPI NABox       naMakeBox     (NAVertex  vertex,  NAVolume  volume);
 NA_IAPI NABoxi      naMakeBoxi    (NAVertexi vertex,  NAVolumei volume);
@@ -238,8 +238,8 @@ NA_IAPI NABox       naMakeBoxSE   (double x, double y, double z, double width, d
 NA_IAPI NABoxi      naMakeBoxiSE  (NAInt  x, NAInt  y, NAInt  z, NAInt  width, NAInt  height, NAInt  depth);
 NA_IAPI NABox       naMakeBoxWithBoxi(NABoxi box);
 NA_IAPI NABoxi      naMakeBoxiWithBox(NABox  box);
-NA_IAPI NABox       naMakeBoxEmpty();
-NA_IAPI NABoxi      naMakeBoxiEmpty();
+NA_IAPI NABox       naMakeBoxEmpty(void);
+NA_IAPI NABoxi      naMakeBoxiEmpty(void);
 
 
 // Mac OS X specific stuff

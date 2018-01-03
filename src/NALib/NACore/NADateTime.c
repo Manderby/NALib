@@ -209,9 +209,9 @@ NATAIPeriod naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS] = {
 // Prototypes:
 NAInt naGetTAIPeriodIndexForSISecond(int64 sisecond);
 NAInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond);
-NADateTime naMakeDateTimeNow();
-void naSetGlobalTimeShiftToSystemSettings();
-int64 naGetFirstUncertainSecondNumber();
+NADateTime naMakeDateTimeNow(void);
+void naSetGlobalTimeShiftToSystemSettings(void);
+int64 naGetFirstUncertainSecondNumber(void);
 
 
 

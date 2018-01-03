@@ -160,9 +160,9 @@ NA_IAPI NAFile* naCreateFileAppendingFilename( const char* filename,
 // Note that the standard input and output channels will not be closed upon
 // a call to naReleaseFile. If you want to close them, you need to call
 // naClose(0), naClose(1) or naClose(2) manually.
-NA_IAPI NAFile* naCreateFileReadingStdin();
-NA_IAPI NAFile* naCreateFileWritingStdout();
-NA_IAPI NAFile* naCreateFileWritingStderr();
+NA_IAPI NAFile* naCreateFileReadingStdin(void);
+NA_IAPI NAFile* naCreateFileWritingStdout(void);
+NA_IAPI NAFile* naCreateFileWritingStderr(void);
 
 // Releases the file. When the reference count reaches zero, the file will be
 // closed.
@@ -209,10 +209,10 @@ NA_IAPI NAFilesize naWriteFileBytes(  NAFile* file,
 //
 
 // Scans a Decimal of the type NAInt from the console.
-NA_IAPI NAInt naScanDecimal();
+NA_IAPI NAInt naScanDecimal(void);
 
 // Returns a string containing the current working directory
-NA_API NAString* naNewStringWithCurWorkingDirectory();
+NA_API NAString* naNewStringWithCurWorkingDirectory(void);
 
 
 

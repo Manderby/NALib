@@ -154,7 +154,7 @@ NA_IAPI NABool naIsLeapYear            (int64 year);
 //
 // Want to implement a nanosecond-timer? This is the function for you. Together
 // with naGetDateTimeDiff.
-NA_API NADateTime naMakeDateTimeNow();
+NA_API NADateTime naMakeDateTimeNow(void);
 
 // Returns an NADateTime struct with the given second number interpreted like
 // in NALib. Nanoseconds and Timeshift will be zero.
@@ -281,7 +281,7 @@ NA_IAPI void naSetDateTimeSummertime(NADateTime* datetime, NABool summertime);
 NA_IAPI void naSetGlobalTimeShift(int16 shiftminutes, NABool summertime);
 // Sets the time shift and daylight saving flag to the system settings of the
 // local machine. 
-NA_API void naSetGlobalTimeShiftToSystemSettings();
+NA_API void naSetGlobalTimeShiftToSystemSettings(void);
 
 
 
@@ -297,7 +297,7 @@ NA_API void naSetGlobalTimeShiftToSystemSettings();
 //
 // To do so, you just store a specific identifier together with your data: The
 // number of the first uncertain second of this library.
-NA_API int64 naGetFirstUncertainSecondNumber();
+NA_API int64 naGetFirstUncertainSecondNumber(void);
 
 // When the library updates, you can check if the new library has a new
 // uncertain second number. You do this by giving the uncertain second number

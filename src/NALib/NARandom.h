@@ -32,7 +32,7 @@
 // Mapping of the standard rand() and srand() functions. The rand function
 // returns a pseudo random number in [0, RAND_MAX]. The srand function sets
 // a new seed for the pseudo random generator.
-NA_IAPI NAInt naRand();
+NA_IAPI NAInt naRand(void);
 NA_IAPI void  naSRand(uint32 seed);
 
 // Seeds the random generator with the provided seed. If seed is 0, a seed will
@@ -41,12 +41,12 @@ NA_IAPI void  naSRand(uint32 seed);
 NA_IAPI uint32 naSeedRand(uint32 seed);
 
 // Returns a uniformly disributed random value within interval [0,1)
-NA_IAPI double naUniformRandZE();
-NA_IAPI float  naUniformRandZEf();
+NA_IAPI double naUniformRandZE(void);
+NA_IAPI float  naUniformRandZEf(void);
 
 // Returns a uniformly disributed random value within interval [0,1]
-NA_IAPI double naUniformRandZI();
-NA_IAPI float  naUniformRandZIf();
+NA_IAPI double naUniformRandZI(void);
+NA_IAPI float  naUniformRandZIf(void);
 
 
 

@@ -52,8 +52,8 @@
 // Returns the number of bytes used per memory page as well as a mask which
 // you can combine with & (AND) with a pointer to get the page-aligned address
 // of that pointer.
-NA_IAPI NAUInt naGetSystemMemoryPagesize();
-NA_IAPI NAUInt naGetSystemMemoryPagesizeMask();
+NA_IAPI NAUInt naGetSystemMemoryPagesize(void);
+NA_IAPI NAUInt naGetSystemMemoryPagesizeMask(void);
 
 
 
@@ -154,14 +154,14 @@ NA_API  void  naDelete(           void* pointer);
 // Additionally, you can call naCollectGarbage to collect all temporary memory
 // which had been allocated with naMallocTmp.
 
-NA_API void               naStartRuntime();
-NA_API void               naStopRuntime();
+NA_API void               naStartRuntime(void);
+NA_API void               naStopRuntime(void);
 
-NA_API void               naCollectGarbage();
-NA_API NAUInt             naGetRuntimeGarbageBytesize();
+NA_API void               naCollectGarbage(void);
+NA_API NAUInt             naGetRuntimeGarbageBytesize(void);
 
-NA_API NAUInt             naGetRuntimeMemoryPageSize();
-NA_API NAUInt             naGetRuntimePoolSize();
+NA_API NAUInt             naGetRuntimeMemoryPageSize(void);
+NA_API NAUInt             naGetRuntimePoolSize(void);
 
 // In order to work with specific types, each type trying to use the runtime
 // system needs to register itself to the runtime system upon compile time.
@@ -299,7 +299,7 @@ NA_IAPI void        naReleaseRefCount(NARefCount* refcount,
 typedef struct NAPtr NAPtr;
 
 // Creates a NULL pointer
-NA_IAPI NAPtr naMakeNullPtr();
+NA_IAPI NAPtr naMakeNullPtr(void);
 
 // Makes an NAPtr with a newly allocated memory block of the given bytesize.
 // The bytesize parameter can be negative. See naMalloc function for more
