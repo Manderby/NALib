@@ -2,6 +2,12 @@
 // This file is part of NALib, a collection of C and C++ source code
 // intended for didactical purposes. Full license notice at the bottom.
 
+#ifndef NA_MEMORY_INCLUDED
+#define NA_MEMORY_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
+
 // ////////////////////////////////////////////////////////
 //
 // In this file, basic functionality of memory handling is implemented. There
@@ -34,11 +40,6 @@
 // ////////////////////////////////////////////////////////
 
 
-#ifndef NA_MEMORY_INCLUDED
-#define NA_MEMORY_INCLUDED
-#ifdef __cplusplus 
-  extern "C"{
-#endif
 
 
 #include "NASystem.h"

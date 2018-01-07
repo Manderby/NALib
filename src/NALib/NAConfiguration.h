@@ -67,9 +67,9 @@
 // use its own implementation of memory pools instead of malloc and free for
 // anything related to naNew and naDelete.
 //
-// The implementation with pools proved to be a lot faster with older compilers
-// but with some more modern compilers, especially in conjunction with C++, the
-// basic malloc and free can (though rarely) be faster.
+// The implementation with pools proved to be a lot faster with most compilers.
+// In some more modern compilers, especially in conjunction with C++, the
+// basic malloc and free can (though rarely and slightly) be faster.
 
 #ifndef NA_RUNTIME_USES_MEMORY_POOLS
   #define NA_RUNTIME_USES_MEMORY_POOLS 1
@@ -92,9 +92,6 @@
 
 // Defines when the temp garbage collection starts collecting automatically.
 //
-// The default value is 1000000 (1 Million) when no GUI is in use and 0 when
-// a GUI is in use.
-//
 // With this macro, you can define, if and when the garbage collection should
 // perform an automatic collection of temporarily allocated memory. If you set
 // this value to 0, no automatic collection will be performed ever. You need to
@@ -105,6 +102,9 @@
 // higher than this number in the previous call to naMallocTmp. If so, the
 // garbage will first be collected and then the new bytes will be allocated
 // and returned.
+//
+// The default value is 1000000 (1 Million) when no GUI is in use and 0 when
+// a GUI is in use.
 //
 // This macro is set to 0 by default when a GUI is in use, as the event loop
 // of the NAGUI implementation calls naCollectGarbage automatically before
@@ -137,9 +137,11 @@
 #endif
 
 
+// String caching
+//
 // When set to 1, the NAString structure always tries to create a cached
 // version of its content. This is really only useful when debugging as the
-// cached version will be stored withing the NAString structure. With NDEBUG
+// cached version will be stored within the NAString structure. With NDEBUG
 // defined though, nothing will be stored and it is just a waste of time.
 // Nontheless as caching will take a considerable amount of time even in
 // debugging, you may choose to set NA_STRING_ALWAYS_CACHE to 0 even for

@@ -10,6 +10,16 @@
 
 
 
+// /////////////////////////////////////
+// Warning: This is one huge file!
+//
+// Vector algebra functions are not especially difficult to understand or
+// implement but take a lot of code writing. You are free to explore all the
+// inline code underneath the API but there really isn't much to see.
+// /////////////////////////////////////
+
+
+
 #include "NARandom.h"
 #include "NAMathOperators.h"
 

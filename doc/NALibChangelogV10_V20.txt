@@ -16,6 +16,7 @@ correct, complete or final.
 - NARuntime has now a small garbage collector for temporary malloc pointers.
   Added NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT in NAConfiguration.h
 - Added Base64 encoding to NABuffer.
+- Removed tests. Seroiusly, fuck them.
 
 - Corrected an error in naNewStringCUnescaped
 - Added naParseBufferRemainder and naGetBufferLineNumber
@@ -42,6 +43,7 @@ correct, complete or final.
 - Fixed a small error in list searching
 - Added String to Float and Double conversion. Roughly.
 - Added naSetn to set values for a huge array almost like naNulln
+- Removed more code sanity warnings.
 - Tons of small corrections or adjustments everywhere.
 
 

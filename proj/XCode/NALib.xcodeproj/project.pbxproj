@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		900768E21E53C9F800F6C875 /* testBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 900768E11E53C9F800F6C875 /* testBuffer.c */; };
-		900B5ADA1E2E26FE00628161 /* testMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = 900B5AD91E2E26FE00628161 /* testMemory.c */; };
 		9011A8C71F054877003766D8 /* NABinaryData.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8841F054877003766D8 /* NABinaryData.c */; };
 		9011A8C81F054877003766D8 /* NADateTime.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8861F054877003766D8 /* NADateTime.c */; };
 		9011A8C91F054877003766D8 /* NAFile.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8881F054877003766D8 /* NAFile.c */; };
@@ -27,10 +25,7 @@
 		9011A8D61F054877003766D8 /* NAUICocoa.m in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8C21F054877003766D8 /* NAUICocoa.m */; };
 		9011A8D71F054877003766D8 /* NAUICoreAPI.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8C31F054877003766D8 /* NAUICoreAPI.c */; };
 		9011A8D81F054877003766D8 /* NAUIWINAPI.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8C51F054877003766D8 /* NAUIWINAPI.c */; };
-		9087F70A1E2C30D000867CA7 /* testSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F7091E2C30D000867CA7 /* testSystem.c */; };
 		9087F70C1E2C313C00867CA7 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F70B1E2C313C00867CA7 /* main.c */; };
-		9087F70E1E2C39A500867CA7 /* testStack.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F70D1E2C39A500867CA7 /* testStack.c */; };
-		90C3D2E41E6D9DC30019AF0D /* asciitest.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 90C3D2E31E6D9DBF0019AF0D /* asciitest.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,15 +35,12 @@
 			dstPath = res;
 			dstSubfolderSpec = 16;
 			files = (
-				90C3D2E41E6D9DC30019AF0D /* asciitest.txt in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		900768E11E53C9F800F6C875 /* testBuffer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testBuffer.c; sourceTree = "<group>"; };
-		900B5AD91E2E26FE00628161 /* testMemory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testMemory.c; sourceTree = "<group>"; };
 		9011A87C1F054877003766D8 /* NAArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAArray.h; sourceTree = "<group>"; };
 		9011A87D1F054877003766D8 /* NABinaryData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NABinaryData.h; sourceTree = "<group>"; };
 		9011A87E1F054877003766D8 /* NABuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NABuffer.h; sourceTree = "<group>"; };
@@ -121,15 +113,11 @@
 		9011A8C51F054877003766D8 /* NAUIWINAPI.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAUIWINAPI.c; sourceTree = "<group>"; };
 		9011A8C61F054877003766D8 /* NAUIWINAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAUIWINAPI.h; sourceTree = "<group>"; };
 		9011A8D91F054891003766D8 /* NAOctTreeII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAOctTreeII.h; sourceTree = "<group>"; };
-		9087F7091E2C30D000867CA7 /* testSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testSystem.c; sourceTree = "<group>"; };
 		9087F70B1E2C313C00867CA7 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		9087F70D1E2C39A500867CA7 /* testStack.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testStack.c; sourceTree = "<group>"; };
 		908F9C5C1DAED3F300B1FFF2 /* todo.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = todo.txt; path = ../../doc/todo.txt; sourceTree = "<group>"; };
 		90920E221D4FDC7400369052 /* NALibChangelogV10_V20.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = NALibChangelogV10_V20.txt; path = ../../doc/NALibChangelogV10_V20.txt; sourceTree = "<group>"; };
 		90920E231D4FDC7400369052 /* Readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = Readme.txt; path = ../../doc/Readme.txt; sourceTree = "<group>"; };
 		90B456451BC80AD300A53BDC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		90C3D2E31E6D9DBF0019AF0D /* asciitest.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = asciitest.txt; sourceTree = "<group>"; };
-		90CBB1941E593DA600C1BC54 /* tests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tests.h; sourceTree = "<group>"; };
 		B9B2EA121716922700943D91 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -260,11 +248,6 @@
 			isa = PBXGroup;
 			children = (
 				9087F70B1E2C313C00867CA7 /* main.c */,
-				90CBB1941E593DA600C1BC54 /* tests.h */,
-				900768E11E53C9F800F6C875 /* testBuffer.c */,
-				900B5AD91E2E26FE00628161 /* testMemory.c */,
-				9087F70D1E2C39A500867CA7 /* testStack.c */,
-				9087F7091E2C30D000867CA7 /* testSystem.c */,
 			);
 			name = test;
 			path = ../../src/test;
@@ -278,19 +261,9 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		90C3D2E21E6D9DBF0019AF0D /* res */ = {
-			isa = PBXGroup;
-			children = (
-				90C3D2E31E6D9DBF0019AF0D /* asciitest.txt */,
-			);
-			name = res;
-			path = ../../res;
-			sourceTree = "<group>";
-		};
 		B9B2EA06171683C200943D91 = {
 			isa = PBXGroup;
 			children = (
-				90C3D2E21E6D9DBF0019AF0D /* res */,
 				908950DB1D3A8D5300D7917D /* test */,
 				9011A87B1F054877003766D8 /* NALib */,
 				90920E221D4FDC7400369052 /* NALibChangelogV10_V20.txt */,
@@ -367,16 +340,12 @@
 				9011A8D01F054877003766D8 /* NAOctTree.c in Sources */,
 				9011A8D71F054877003766D8 /* NAUICoreAPI.c in Sources */,
 				9011A8D81F054877003766D8 /* NAUIWINAPI.c in Sources */,
-				900768E21E53C9F800F6C875 /* testBuffer.c in Sources */,
-				900B5ADA1E2E26FE00628161 /* testMemory.c in Sources */,
 				9011A8CD1F054877003766D8 /* NABuffer.c in Sources */,
 				9011A8D11F054877003766D8 /* NAQuadTree.c in Sources */,
-				9087F70A1E2C30D000867CA7 /* testSystem.c in Sources */,
 				9011A8CA1F054877003766D8 /* NAMemory.c in Sources */,
 				9011A8C71F054877003766D8 /* NABinaryData.c in Sources */,
 				9011A8D31F054877003766D8 /* NADeflate.c in Sources */,
 				9011A8CC1F054877003766D8 /* NAMoney.c in Sources */,
-				9087F70E1E2C39A500867CA7 /* testStack.c in Sources */,
 				9011A8D41F054877003766D8 /* NAPNG.c in Sources */,
 				9087F70C1E2C313C00867CA7 /* main.c in Sources */,
 				9011A8D61F054877003766D8 /* NAUICocoa.m in Sources */,

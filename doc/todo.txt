@@ -4,7 +4,7 @@ NALib todos
 This file contains notes on what is still missing or needs to be done
 in NALib.
 
-Version 20:
+Future
 - malloc uint
 - refcounted new
 - NAComplexPolar
@@ -13,16 +13,13 @@ Version 20:
 - Remove old commented code
 - Documentation
 - int uint
-- Make more test files
-- add __cplusplus to all h files
 - unify iterators. Iterators store start and end.
 - All Container structs can store pointers.
 - make naAtof and parseStringFloat
 - Homogeneous coordinates
 
-Future
 - NATree and integration into NABuffer
-- SpanTree
+- Range tree
 - Threadsavety for structs
 - GUI
 - Compression in NAPNG
