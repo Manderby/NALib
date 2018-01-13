@@ -211,8 +211,8 @@ As soon as the iterator is created, you can use the iterate functions in a
 while loop to visit all elements:
 
 while(naIterateXXX(&iter)){
-  const MyElementData* constdata = naGetXXXCurConst();
-  MyElementData* mutabledata = naGetXXXCurMutable();
+  const MyElementData* constdata   = naGetXXXCurConst();
+        MyElementData* mutabledata = naGetXXXCurMutable();
   // do something with the data.
 }
 
@@ -222,6 +222,7 @@ conditions will be checked. An Accessor for example has no rights to return
 mutable data. Or a remove function will only work on Modifiers. In such cases,
 NALib will emit warnings when NDEBUG is undefined.
 
+IMPORTANT:
 After using the iterator, you always must clear an iterator with a final call
 to the following function:
 
