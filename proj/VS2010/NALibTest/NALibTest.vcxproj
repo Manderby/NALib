@@ -37,10 +37,6 @@
     <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUICoreAPI.c" />
     <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUIWINAPI.c" />
     <ClCompile Include="..\..\..\src\test\main.c" />
-    <ClCompile Include="..\..\..\src\test\testBuffer.c" />
-    <ClCompile Include="..\..\..\src\test\testMemory.c" />
-    <ClCompile Include="..\..\..\src\test\testStack.c" />
-    <ClCompile Include="..\..\..\src\test\testSystem.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\NALib\NAArray.h" />
@@ -97,7 +93,6 @@
     <ClInclude Include="..\..\..\src\NALib\NAVisual\NAUICocoa.h" />
     <ClInclude Include="..\..\..\src\NALib\NAVisual\NAUICoreAPI.h" />
     <ClInclude Include="..\..\..\src\NALib\NAVisual\NAUIWINAPI.h" />
-    <ClInclude Include="..\..\..\src\test\tests.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BE63F596-929D-4507-88B3-04758771747F}</ProjectGuid>

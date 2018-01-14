@@ -443,7 +443,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   }
   NA_UNUSED(dictadler);
 
-  zbuffer = naCreateBufferExtraction(input, naMakeRangei(naTellBuffer(&iterin), zbuffersize));
+  zbuffer = naNewBufferExtraction(input, naMakeRangei(naTellBuffer(&iterin), zbuffersize));
   naSeekBufferRelative(&iterin, zbuffersize);
   zbufferadler = naReadBufferu32(&iterin);
   
@@ -523,7 +523,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   
   naClearBufferIterator(&iterout);
   naClearBufferIterator(&iterz);
-  naReleaseBuffer(zbuffer);
+  naRelease(zbuffer);
   
   naFixBufferRange(output);
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_ADLER_32);

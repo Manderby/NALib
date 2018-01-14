@@ -11,6 +11,10 @@ This file contains information about changes in the package NALib. These are
 purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
+
+Version 20 (first published 2018-Jan-13):
+==============================================
+
 - NAString are pointers again. Use naNewStringXXX and naDelete
 - Strong simplification of NAMemory.h
 - NARuntime has now a small garbage collector for temporary malloc pointers.

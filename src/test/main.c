@@ -19,6 +19,9 @@ int main(void){
   #endif
   printf("%d Bits)\n", NA_SYSTEM_ADDRESS_BITS);
 
+  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+   NA_UNUSED(getchar());
+  #endif
   return 0;
 }
 

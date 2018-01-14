@@ -96,7 +96,7 @@ typedef void (*NABufferSourceFiller)(void* data, void* dst, NARangei range);
 // Descriptor for a custom source.
 //
 // You can create a buffer from any linear source you want by filling out a
-// descriptor and use it for naCreateBufferCustomSource.
+// descriptor and use it for naNewBufferCustomSource.
 typedef struct NABufferSourceDescriptor NABufferSourceDescriptor;
 struct NABufferSourceDescriptor{
   void*                data;        // ptr being sent to filler and destructor.
@@ -122,12 +122,12 @@ struct NABufferSourceDescriptor{
 // Allocates an empty buffer.
 // When securememory is set to NA_TRUE, each byte will be set to binary zero
 // before it can be used.
-NA_API NABuffer* naCreateBuffer(NABool securememory);
+NA_API NABuffer* naNewBuffer(NABool securememory);
 
 // Creates a buffer referencing a subrange of another buffer. The origin of
 // the new buffer will be at zero and its range is fixed. Does NOT copy any
 // content, only references it.
-NA_API NABuffer* naCreateBufferExtraction( NABuffer* srcbuffer,
+NA_API NABuffer* naNewBufferExtraction( NABuffer* srcbuffer,
                                             NARangei range);
 
 // Creates a buffer having an exact copy of the bytes in srcbuffer within the
@@ -136,28 +136,28 @@ NA_API NABuffer* naCreateBufferExtraction( NABuffer* srcbuffer,
 // at zero.
 // All content will be loaded in the new buffer. If there are sparse parts
 // in the src buffer, they will be filled with the current source.
-NA_API NABuffer* naCreateBufferCopy(const NABuffer* srcbuffer,
+NA_API NABuffer* naNewBufferCopy(const NABuffer* srcbuffer,
                                             NARangei range,
                                               NABool securememory);
 
 // Creates a buffer with no source and no content. It can be used as a
 // placeholder or to collect other buffers with naAppendBuffer or
 // naWriteBufferBuffer.
-NA_API NABuffer* naCreateBufferPlain(void);
+NA_API NABuffer* naNewBufferPlain(void);
 
 // Creates a buffer sharing the same source as the given buffer.
-NA_API NABuffer* naCreateBufferWithSameSource(  NABuffer* srcbuffer);
+NA_API NABuffer* naNewBufferWithSameSource(  NABuffer* srcbuffer);
                     
 // Creates a buffer inputting contents from a file. Its origin is always at
 // zero and its range is fixed.
-NA_API NABuffer* naCreateBufferWithInpuFile(const char* filename);
+NA_API NABuffer* naNewBufferWithInpuFile(const char* filename);
 
 // Creates a buffer accessing already existing const or mutable data. If the
 // data is mutable, you can give a cleanup method if you want to delete the
 // memory of the data pointer when no longer needed.
-NA_API NABuffer* naCreateBufferWithConstData( const void* data,
+NA_API NABuffer* naNewBufferWithConstData( const void* data,
                                                     NAInt bytesize);
-NA_API NABuffer* naCreateBufferWithMutableData(     void* data,
+NA_API NABuffer* naNewBufferWithMutableData(     void* data,
                                                     NAInt bytesize,
                                                 NAMutator destructor);
 
@@ -166,13 +166,7 @@ NA_API NABuffer* naCreateBufferWithMutableData(     void* data,
 //   naNulln(&desc, sizeof(desc));
 // And fill in the desired values. See NABufferSourceDescriptor for more
 // details.
-NA_API NABuffer* naCreateBufferWithCustomSource(NABufferSourceDescriptor desc);
-
-// Releases a buffer source
-NA_API NABuffer* naRetainBuffer(NABuffer* buffer);
-NA_API void      naReleaseBuffer(NABuffer* source);
-
-
+NA_API NABuffer* naNewBufferWithCustomSource(NABufferSourceDescriptor desc);
 
 // ////////////////////////////////////////
 // Various buffer functions
@@ -261,7 +255,7 @@ NA_API NAString* naNewStringWithBufferBase64Encoded(
 
 // Converts the bytes of the given buffer to a string encoded in Base64.
 // When appendendsign is NA_TRUE, equal signs = will be appended if needed.
-NA_API NABuffer* naCreateBufferWithStringBase64Decoded(
+NA_API NABuffer* naNewBufferWithStringBase64Decoded(
                                       const NAString* string);
 
 // Uses all bytes of the buffer to write to output or use it in other structs.

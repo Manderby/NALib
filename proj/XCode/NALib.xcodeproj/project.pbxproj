@@ -113,9 +113,9 @@
 		9011A8C51F054877003766D8 /* NAUIWINAPI.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAUIWINAPI.c; sourceTree = "<group>"; };
 		9011A8C61F054877003766D8 /* NAUIWINAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAUIWINAPI.h; sourceTree = "<group>"; };
 		9011A8D91F054891003766D8 /* NAOctTreeII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAOctTreeII.h; sourceTree = "<group>"; };
+		902B12B3200ABF55001F814F /* NALibChangelogV20_V30.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = NALibChangelogV20_V30.txt; path = ../../doc/NALibChangelogV20_V30.txt; sourceTree = "<group>"; };
 		9087F70B1E2C313C00867CA7 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		908F9C5C1DAED3F300B1FFF2 /* todo.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = todo.txt; path = ../../doc/todo.txt; sourceTree = "<group>"; };
-		90920E221D4FDC7400369052 /* NALibChangelogV10_V20.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = NALibChangelogV10_V20.txt; path = ../../doc/NALibChangelogV10_V20.txt; sourceTree = "<group>"; };
 		90920E231D4FDC7400369052 /* Readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = Readme.txt; path = ../../doc/Readme.txt; sourceTree = "<group>"; };
 		90B456451BC80AD300A53BDC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		B9B2EA121716922700943D91 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -266,7 +266,7 @@
 			children = (
 				908950DB1D3A8D5300D7917D /* test */,
 				9011A87B1F054877003766D8 /* NALib */,
-				90920E221D4FDC7400369052 /* NALibChangelogV10_V20.txt */,
+				902B12B3200ABF55001F814F /* NALibChangelogV20_V30.txt */,
 				90920E231D4FDC7400369052 /* Readme.txt */,
 				908F9C5C1DAED3F300B1FFF2 /* todo.txt */,
 				90B456441BC80AAE00A53BDC /* Frameworks */,

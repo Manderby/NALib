@@ -6,7 +6,7 @@
 
 
 
-NA_RUNTIME_TYPE(NAListElement, NA_NULL);
+NA_RUNTIME_TYPE(NAListElement, NA_NULL, NA_FALSE);
 
 
 

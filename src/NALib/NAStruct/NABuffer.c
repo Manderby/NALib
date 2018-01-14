@@ -65,7 +65,7 @@ struct NABufferPart{
 };
 
 NA_HIAPI void naDestructBufferPart(NABufferPart* part);
-NA_RUNTIME_TYPE(NABufferPart, naDestructBufferPart);
+NA_RUNTIME_TYPE(NABufferPart, naDestructBufferPart, NA_FALSE);
 
 
 
@@ -386,17 +386,16 @@ NA_HIDEF NAByte* naGetBufferPartBaseDataPointerMutable(NABufferPart* part){
 
 typedef struct NABufferSource NABufferSource;
 struct NABufferSource{
-  NARefCount refcount;
   NABufferSourceDescriptor desc;  
 };
-
+NA_HAPI void naDeallocBufferSource(NABufferSource* source);
+NA_RUNTIME_TYPE(NABufferSource, naDeallocBufferSource, NA_TRUE);
 
 
 // Creates a buffer source with the given descriptor.
-NA_HIDEF NABufferSource* naCreateBufferSource(NABufferSourceDescriptor descriptor){
-  NABufferSource* source = naAlloc(NABufferSource);
-  naInitRefCount(&(source->refcount));
-
+NA_HIDEF NABufferSource* naNewBufferSource(NABufferSourceDescriptor descriptor){
+  NABufferSource* source = naNew(NABufferSource);
+  
   source->desc = descriptor;  
   
   return source;
@@ -406,22 +405,6 @@ NA_HIDEF NABufferSource* naCreateBufferSource(NABufferSourceDescriptor descripto
 
 NA_HDEF void naDeallocBufferSource(NABufferSource* source){
   if(source->desc.destructor){source->desc.destructor(source->desc.data);}
-  naFree(source);
-}
-
-
-
-
-// Releases this buffer source.
-NA_HIDEF NABufferSource* naRetainBufferSource(NABufferSource* source){
-  return (NABufferSource*)naRetainRefCount(&(source->refcount));
-}
-
-
-
-// Releases this buffer source.
-NA_HIDEF void naReleaseBufferSource(NABufferSource* source){
-  naReleaseRefCount(&(source->refcount), &(source->refcount), (NAMutator)naDeallocBufferSource);
 }
 
 
@@ -446,7 +429,7 @@ NA_HIDEF NABufferSource* naCreateBufferSourceBuffer(NABuffer* buffer){
   naNulln(&desc, sizeof(desc));
   desc.data = pointer;
   desc.destructor = (NAMutator)naReleasePointer;
-  source = naCreateBufferSource(desc);
+  source = naNewBufferSource(desc);
   source->desc.flags |= NA_BUFFER_SOURCE_BUFFER;
   return source;
 }
@@ -531,9 +514,8 @@ NA_HIDEF void naFillBufferPartFile(void* data, void* dst, NARangei range){
 #define NA_BUFFER_VOLATILE_SOURCE   0x02
 
 
+
 struct NABuffer{
-  NARefCount refcount;
-  
   NABufferSource* source;
   NAInt srcoffset;            // Offset the source relative to owners range.
   
@@ -555,6 +537,8 @@ struct NABuffer{
   #endif
 };
 
+NA_HAPI void naDeallocBuffer(NABuffer* buffer);
+NA_RUNTIME_TYPE(NABuffer, naDeallocBuffer, NA_TRUE);
 
 
 NA_HDEF const NABuffer* naGetBufferIteratorBufferConst(const NABufferIterator* iter);
@@ -1030,13 +1014,12 @@ NA_HDEF void naInitBufferStruct(NABuffer* buffer){
 NA_HDEF NABuffer* naCreateBufferMemorySource(NABool secure){
   NABufferSourceDescriptor desc;
 
-  NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount));
+  NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
   
   naNulln(&desc, sizeof(desc));
   if(secure){desc.filler = naFillBufferPartSecureMemory;}
-  buffer->source = naCreateBufferSource(desc);
+  buffer->source = naNewBufferSource(desc);
   buffer->srcoffset = 0;
 
   buffer->newline = NA_NEWLINE_NATIVE;
@@ -1048,16 +1031,15 @@ NA_HDEF NABuffer* naCreateBufferMemorySource(NABool secure){
 
 
 
-NA_DEF NABuffer* naCreateBuffer(NABool securememory){
+NA_DEF NABuffer* naNewBuffer(NABool securememory){
   NABuffer* srcbuffer;
-  NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount));
+  NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
   
   // The source is a memory buffer.
   srcbuffer = naCreateBufferMemorySource(securememory);
   buffer->source = naCreateBufferSourceBuffer(srcbuffer);
-  naReleaseBuffer(srcbuffer); // The src buffer is now retained in the iterator.
+  naRelease(srcbuffer); // The src buffer is now retained in the iterator.
   buffer->srcoffset = 0;
 
   buffer->newline = NA_NEWLINE_NATIVE;
@@ -1069,10 +1051,8 @@ NA_DEF NABuffer* naCreateBuffer(NABool securememory){
 
 
 
-NA_DEF NABuffer* naCreateBufferExtraction(NABuffer* srcbuffer, NARangei range){
-  NABuffer* buffer;
-  buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount));
+NA_DEF NABuffer* naNewBufferExtraction(NABuffer* srcbuffer, NARangei range){
+  NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
   
   buffer->source = naCreateBufferSourceBuffer(srcbuffer);
@@ -1094,10 +1074,10 @@ NA_DEF NABuffer* naCreateBufferExtraction(NABuffer* srcbuffer, NARangei range){
 
 
 
-NA_DEF NABuffer* naCreateBufferCopy(const NABuffer* srcbuffer, NARangei range, NABool securememory){
+NA_DEF NABuffer* naNewBufferCopy(const NABuffer* srcbuffer, NARangei range, NABool securememory){
   NABufferIterator srciter;
   NABufferIterator dstiter;
-  NABuffer* buffer = naCreateBuffer(securememory);
+  NABuffer* buffer = naNewBuffer(securememory);
 
   if(range.length == 0){return buffer;}
 
@@ -1129,9 +1109,8 @@ NA_DEF NABuffer* naCreateBufferCopy(const NABuffer* srcbuffer, NARangei range, N
 
 
 
-NA_DEF NABuffer* naCreateBufferPlain(){
-  NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount));
+NA_DEF NABuffer* naNewBufferPlain(){
+  NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
   
   // The source is a Null pointer.
@@ -1147,12 +1126,11 @@ NA_DEF NABuffer* naCreateBufferPlain(){
 
 
 
-NA_DEF NABuffer* naCreateBufferWithSameSource(NABuffer* srcbuffer){
-  NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount));
+NA_DEF NABuffer* naNewBufferWithSameSource(NABuffer* srcbuffer){
+  NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
   
-  buffer->source = naRetainBufferSource(srcbuffer->source);
+  buffer->source = naRetain(srcbuffer->source);
   buffer->srcoffset = srcbuffer->srcoffset;
 
   buffer->flags = srcbuffer->flags;
@@ -1166,11 +1144,10 @@ NA_DEF NABuffer* naCreateBufferWithSameSource(NABuffer* srcbuffer){
 
 
 
-NA_DEF NABuffer* naCreateBufferWithInpuFile(const char* filename){
+NA_DEF NABuffer* naNewBufferWithInpuFile(const char* filename){
   NABufferSourceDescriptor desc;
 
-  NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount));
+  NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
   
   naNulln(&desc, sizeof(desc));
@@ -1179,7 +1156,7 @@ NA_DEF NABuffer* naCreateBufferWithInpuFile(const char* filename){
   desc.filler = naFillBufferPartFile;
   desc.limit = naMakeRangei(0, (NAInt)naComputeFileBytesize(desc.data));
   desc.flags = NA_BUFFER_SOURCE_RANGE_LIMITED;  
-  buffer->source = naCreateBufferSource(desc);
+  buffer->source = naNewBufferSource(desc);
   buffer->srcoffset = 0;
 
   naEnsureBufferRange(buffer, naGetBufferSourceLimit(buffer->source));
@@ -1194,11 +1171,10 @@ NA_DEF NABuffer* naCreateBufferWithInpuFile(const char* filename){
 
 
 
-NA_DEF NABuffer* naCreateBufferWithConstData(const void* data, NAInt bytesize){
+NA_DEF NABuffer* naNewBufferWithConstData(const void* data, NAInt bytesize){
   NABufferPart* part;
   
-  NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount));
+  NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
   
   buffer->source = NA_NULL;
@@ -1221,11 +1197,10 @@ NA_DEF NABuffer* naCreateBufferWithConstData(const void* data, NAInt bytesize){
 
 
 
-NA_DEF NABuffer* naCreateBufferWithMutableData(void* data, NAInt bytesize, NAMutator destructor){
+NA_DEF NABuffer* naNewBufferWithMutableData(void* data, NAInt bytesize, NAMutator destructor){
   NABufferPart* part;
   
-  NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount));
+  NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
   
   buffer->source = NA_NULL;
@@ -1247,12 +1222,11 @@ NA_DEF NABuffer* naCreateBufferWithMutableData(void* data, NAInt bytesize, NAMut
 }
 
 
-NA_DEF NABuffer* naCreateBufferWithCustomSource(NABufferSourceDescriptor desc){
-  NABuffer* buffer = naAlloc(NABuffer);
-  naInitRefCount(&(buffer->refcount));
+NA_DEF NABuffer* naNewBufferWithCustomSource(NABufferSourceDescriptor desc){
+  NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
   
-  buffer->source = naCreateBufferSource(desc);
+  buffer->source = naNewBufferSource(desc);
   buffer->srcoffset = 0;
 
   buffer->newline = NA_NEWLINE_NATIVE;
@@ -1270,24 +1244,10 @@ NA_HDEF void naDeallocBuffer(NABuffer* buffer){
     if(buffer->itercount)
       naError("naDeallocBuffer", "There are still iterators running. Did you forgot naClearBufferIterator?");
   #endif
-  if(buffer->source){naReleaseBufferSource(buffer->source);}
+  if(buffer->source){naRelease(buffer->source);}
   naForeachListMutable(&(buffer->parts), naDelete);
   naClearList(&(buffer->parts));
-  naFree(buffer);
 }
-
-
-
-NA_DEF NABuffer* naRetainBuffer(NABuffer* buffer){
-  return (NABuffer*)naRetainRefCount(&(buffer->refcount));
-}
-
-
-
-NA_DEF void naReleaseBuffer(NABuffer* buffer){
-  naReleaseRefCount(&(buffer->refcount), &(buffer->refcount), (NAMutator)naDeallocBuffer);
-}
-
 
 
 
@@ -1593,20 +1553,27 @@ NA_DEF void naDismissBufferRange(NABuffer* buffer, NARangei range){
 
 
 NA_DEF NAString* naNewStringWithBufferBase64Encoded(const NABuffer* buffer, NABool appendendsign){
+  NAInt totalbytesize;
+  NAInt triples;
+  NAInt remainder;
+  NABuffer* dstbuffer;
+  NABufferIterator dstiter;
+  NAByte      srctriple[3];
+  NAUTF8Char  dsttriple[4];
+  NABufferIterator srciter;
+  NAString* retstring;
   #ifndef NDEBUG
     if(!naHasBufferFixedRange(buffer))
       naError("naNewStringWithBufferBase64Encoded", "Buffer has no determined range. Use naFixBufferRange");
   #endif
-  NAInt totalbytesize = buffer->range.length;
-  NAInt triples = totalbytesize / 3;
-  NAInt remainder = totalbytesize % 3;
+  totalbytesize = buffer->range.length;
+  triples = totalbytesize / 3;
+  remainder = totalbytesize % 3;
 
-  NABuffer* dstbuffer = naCreateBuffer(NA_FALSE);
-  NABufferIterator dstiter = naMakeBufferModifier(dstbuffer);
+  dstbuffer = naNewBuffer(NA_FALSE);
+  dstiter = naMakeBufferModifier(dstbuffer);
 
-  NAByte      srctriple[3];
-  NAUTF8Char  dsttriple[4];
-  NABufferIterator srciter = naMakeBufferAccessor(buffer);
+  srciter = naMakeBufferAccessor(buffer);
   
   while(triples){
     naReadBufferBytes(&srciter, srctriple, 3);
@@ -1654,16 +1621,23 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(const NABuffer* buffer, NABo
   }
 
   naClearBufferIterator(&dstiter);  
-  NAString* retstring = naNewStringWithBufferExtraction(dstbuffer, dstbuffer->range);
-  naReleaseBuffer(dstbuffer);
+  retstring = naNewStringWithBufferExtraction(dstbuffer, dstbuffer->range);
+  naRelease(dstbuffer);
   return retstring;
 }
 
 
 
-NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(const NAString* string){
+NA_DEF NABuffer* naNewBufferWithStringBase64Decoded(const NAString* string){
+  NAInt totalcharsize;
+  NAInt triples;
+  NAInt remainder;
+  NABuffer* dstbuffer;
+  NABufferIterator dstiter;
+  NAUTF8Char  asctriple[4];
+  NAByte      dsttriple[3];
   NABufferIterator srciter = naMakeBufferAccessor(naGetStringBufferConst(string));
-  NABuffer* ascbuffer = naCreateBuffer(NA_FALSE);
+  NABuffer* ascbuffer = naNewBuffer(NA_FALSE);
   NABufferIterator asciter = naMakeBufferModifier(ascbuffer);
   
   while(naIterateBuffer(&srciter, 1)){
@@ -1677,7 +1651,7 @@ NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(const NAString* string){
     else if (curchar <= 'z'){newchar = curchar - ('a' - 26);}
     else{
       #ifndef NDEBUG
-        naError("naCreateBufferWithStringBase64Decoded", "Invalid character. This does not seem to be a Base64 encoding");
+        naError("naNewBufferWithStringBase64Decoded", "Invalid character. This does not seem to be a Base64 encoding");
       #endif
       newchar = '\0';
     }
@@ -1687,15 +1661,13 @@ NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(const NAString* string){
   naClearBufferIterator(&srciter);
   naClearBufferIterator(&asciter);
 
-  NAInt totalcharsize = ascbuffer->range.length;
-  NAInt triples = totalcharsize / 4;
-  NAInt remainder = totalcharsize % 4;
+  totalcharsize = ascbuffer->range.length;
+  triples = totalcharsize / 4;
+  remainder = totalcharsize % 4;
   
-  NABuffer* dstbuffer = naCreateBuffer(NA_FALSE);
-  NABufferIterator dstiter = naMakeBufferModifier(dstbuffer);
+  dstbuffer = naNewBuffer(NA_FALSE);
+  dstiter = naMakeBufferModifier(dstbuffer);
   
-  NAUTF8Char  asctriple[4];
-  NAByte      dsttriple[3];
   asciter = naMakeBufferAccessor(ascbuffer);
 
   while(triples){
@@ -1708,14 +1680,14 @@ NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(const NAString* string){
   }
   #ifndef NDEBUG
   if(remainder == 1)
-    naError("naCreateBufferWithStringBase64Decoded", "This remainder should not happen");
+    naError("naNewBufferWithStringBase64Decoded", "This remainder should not happen");
   #endif
   if(remainder == 2){
     naReadBufferBytes(&asciter, asctriple, 2);
     dsttriple[0] = (NAByte) (asctriple[0] << 2)         | (NAByte)(asctriple[1] >> 4);
     #ifndef NDEBUG
     if((asctriple[1] & 0x0f) << 4)
-      naError("naCreateBufferWithStringBase64Decoded", "Security breach: Data in unobserved bits of second character");
+      naError("naNewBufferWithStringBase64Decoded", "Security breach: Data in unobserved bits of second character");
     #endif
     naWriteBufferBytes(&dstiter, dsttriple, 1);
   }
@@ -1725,14 +1697,14 @@ NA_DEF NABuffer* naCreateBufferWithStringBase64Decoded(const NAString* string){
     dsttriple[1] = (NAByte)((asctriple[1] & 0x0f) << 4) | (NAByte)(asctriple[2] >> 2);
     #ifndef NDEBUG
     if((asctriple[2] & 0x03) << 6)
-      naError("naCreateBufferWithStringBase64Decoded", "Security breach: Data in unobserved bits of third character");
+      naError("naNewBufferWithStringBase64Decoded", "Security breach: Data in unobserved bits of third character");
     #endif
     naWriteBufferBytes(&dstiter, dsttriple, 2);
   }
 
   naClearBufferIterator(&asciter);
   naClearBufferIterator(&dstiter);
-  naReleaseBuffer(ascbuffer);
+  naRelease(ascbuffer);
   return dstbuffer;
 }
 
@@ -1901,7 +1873,7 @@ NA_DEF NABufferIterator naMakeBufferAccessor(const NABuffer* buffer){
     if(!buffer)
       {naNulln(&iter, sizeof(NABufferIterator)); naCrash("naMakeBufferAccessor", "buffer is Null pointer"); return iter;}
   #endif
-  iter.bufferptr = naMakePtrWithDataMutable(naRetainBuffer((NABuffer*)buffer));  //todo const
+  iter.bufferptr = naMakePtrWithDataMutable(naRetain((NABuffer*)buffer));  //todo const
   iter.curoffset = 0;
   iter.curbit = 0;
   iter.linenum = 0;
@@ -1923,7 +1895,7 @@ NA_DEF NABufferIterator naMakeBufferMutator(const NABuffer* buffer){
     if(!buffer)
       {naNulln(&iter, sizeof(NABufferIterator)); naCrash("naMakeBufferAccessor", "buffer is Null pointer"); return iter;}
   #endif
-  iter.bufferptr = naMakePtrWithDataMutable(naRetainBuffer((NABuffer*)buffer));  //todo const
+  iter.bufferptr = naMakePtrWithDataMutable(naRetain((NABuffer*)buffer));  //todo const
   iter.curoffset = 0;
   iter.curbit = 0;
   iter.linenum = 0;
@@ -1945,7 +1917,7 @@ NA_DEF NABufferIterator naMakeBufferModifier(NABuffer* buffer){
     if(!buffer)
       {naNulln(&iter, sizeof(NABufferIterator)); naCrash("naMakeBufferAccessor", "buffer is Null pointer"); return iter;}
   #endif
-  iter.bufferptr = naMakePtrWithDataMutable(naRetainBuffer(buffer));
+  iter.bufferptr = naMakePtrWithDataMutable(naRetain(buffer));
   iter.curoffset = 0;
   iter.curbit = 0;
   iter.linenum = 0;
@@ -1969,7 +1941,7 @@ NA_DEF void naClearBufferIterator(NABufferIterator* iter){
       naError("naClearBufferIterator", "Too many clears: Buffer has no iterators to clear.");
     mutablebuffer->itercount--;
   #endif
-  naReleaseBuffer(mutablebuffer);
+  naRelease(mutablebuffer);
 }
 
 
@@ -2703,7 +2675,7 @@ NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffe
   naCacheBufferRange(dstbuffer, naMakeRangei(iter->curoffset, srcrange.length), NA_FALSE);
   iter->curoffset += srcrange.length;
   
-  naReleaseBufferSource(dstbuffer->source);
+  naRelease(dstbuffer->source);
   
   dstbuffer->source = tmpsource;
   dstbuffer->srcoffset = tmpsrcoffset;
@@ -2926,7 +2898,7 @@ NA_DEF void naPadBufferBits(NABufferIterator* iter){
 
 
 NA_DEF NABuffer* naReadBufferBuffer(NABufferIterator* iter, NAInt bytesize){
-  return naCreateBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangei(iter->curoffset, bytesize));
+  return naNewBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangei(iter->curoffset, bytesize));
 }
 
 

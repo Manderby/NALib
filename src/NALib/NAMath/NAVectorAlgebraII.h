@@ -7074,12 +7074,12 @@ NA_IDEF void naTranslateM33dS(double* NA_RESTRICT D, const double* NA_RESTRICT A
 
 
 
-NA_IDEF void naFillV2WithM33Origin(double* NA_RESTRICT d, const double* restrict A){
+NA_IDEF void naFillV2WithM33Origin(double* NA_RESTRICT d, const double* NA_RESTRICT A){
   d[0] = A[6] / A[8];
   d[1] = A[7] / A[8];
 }
 
-NA_IDEF void naFillV2WithM33Coord2(double* NA_RESTRICT d, const double* restrict A, const double* restrict v){
+NA_IDEF void naFillV2WithM33Coord2(double* NA_RESTRICT d, const double* NA_RESTRICT A, const double* NA_RESTRICT v){
   NAVec3d coord = {v[0], v[1], 1.};
   NAVec3d result;
   naMulM33dV3d(result, A, coord);

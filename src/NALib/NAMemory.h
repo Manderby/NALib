@@ -33,8 +33,8 @@
 //  | malloc free         |                  | 
 //  | naMalloc naFree     |      naNew       | 
 //  | naMallocAligned     |      naDelete    | 
-//  | naMallocPageAligned |                  | 
-//  | naFreeAligned       |                  | 
+//  | naMallocPageAligned |      naRetain    | 
+//  | naFreeAligned       |      naRelease   | 
 //  +---------------------+------------------+ 
 //
 // ////////////////////////////////////////////////////////
@@ -126,20 +126,23 @@ NA_IAPI NAUInt naGetSystemMemoryPagesizeMask(void);
 // errors. Note however that there does not exist any exception handling
 // in NALib, meaning an error might be detected though not resolved. And in
 // favor of simplicity, NALib will not get exception handling soon.
+//
+// Note that the actual definitions of the macros are in NAMemoryII.h
 
-NA_IAPI void* naMalloc(           NAInt bytesize);
-#define       naAlloc(type)       (type*)naMalloc(sizeof(type))
-NA_IAPI void  naFree(             void* ptr);
+NA_IAPI void* naMalloc(    NAInt bytesize);
+#define       naAlloc(     type)
+NA_IAPI void  naFree(      void* ptr);
 
 NA_IAPI void* naMallocAligned(    NAUInt bytesize, NAUInt align);
 NA_IAPI void* naMallocPageAligned(NAUInt bytesize);
 NA_IAPI void  naFreeAligned(      void* ptr);
 
-NA_API  void* naMallocTmp(        NAUInt bytesize);
-#define       naNew(type)         (type*)naNewStruct(&na_ ## type ## _typeinfo)
-NA_API  void  naDelete(           void* pointer);
-// If you experience an error with naNew: Have you marked your type with
-// NA_RUNTIME_TYPE? See NA_RUNTIME_TYPE below.
+NA_API  void* naMallocTmp( NAUInt bytesize);
+#define       naNew(       type)
+NA_API  void  naDelete(    void* pointer);
+
+NA_API  void* naRetain(     void* pointer);
+NA_API  void  naRelease(    void* pointer);
 
 
 
@@ -155,23 +158,23 @@ NA_API  void  naDelete(           void* pointer);
 // Additionally, you can call naCollectGarbage to collect all temporary memory
 // which had been allocated with naMallocTmp.
 
-NA_API void               naStartRuntime(void);
-NA_API void               naStopRuntime(void);
+NA_API void   naStartRuntime(void);
+NA_API void   naStopRuntime(void);
 
-NA_API void               naCollectGarbage(void);
-NA_API NAUInt             naGetRuntimeGarbageBytesize(void);
+NA_API void   naCollectGarbage(void);
+NA_API NAUInt naGetRuntimeGarbageBytesize(void);
 
-NA_API NAUInt             naGetRuntimeMemoryPageSize(void);
-NA_API NAUInt             naGetRuntimePoolSize(void);
+NA_API NAUInt naGetRuntimeMemoryPageSize(void);
+NA_API NAUInt naGetRuntimePoolSize(void);
 
 // In order to work with specific types, each type trying to use the runtime
 // system needs to register itself to the runtime system upon compile time.
 // This is achieved by defining a very specific variable of type NATypeInfo.
 // You can do so using the macro NA_RUNTIME_TYPE. Just write the typename
-// (For example MyStruct) and the function to use for destructing the type.
-//
-// NA_RUNTIME_TYPE(MyStruct, destructMyStruct)
-//
+// and the function to use for destructing the type.
+
+#define NA_RUNTIME_TYPE(type, destructor, refcounting)
+
 // But note that this macro results in a variable definition and hence must be
 // written in an implementation file (.c). Also, the type must not be opaque
 // and the destructor must be declared before this macro.
@@ -179,29 +182,12 @@ NA_API NAUInt             naGetRuntimePoolSize(void);
 // As though you may want to write inlineable code in your header files which
 // use naNew, you can use the NA_EXTERN_RUNTIME_TYPE macro to declare the
 // variable beforehand:
-//
-// NA_EXTERN_RUNTIME_TYPE(MyStruct)
-//
+
+#define NA_EXTERN_RUNTIME_TYPE(type)
+
 // For a deeper understanding on how that macro does what it does, please refer
-// to the implementation of the runtime system in NAMemory.c
-
-#define NA_EXTERN_RUNTIME_TYPE(type)\
-  extern NATypeInfo na_ ## type ## _typeinfo
-
-#ifndef NDEBUG
-  #define NA_RUNTIME_TYPE(type, destructor)\
-    NATypeInfo na_ ## type ## _typeinfo =\
-    {NA_NULL,\
-    naSizeof(type),\
-    (NAMutator)destructor,\
-    #type}
-#else
-  #define NA_RUNTIME_TYPE(type, destructor)\
-    NATypeInfo na_ ## type ## _typeinfo =\
-    {NA_NULL,\
-    naSizeof(type),\
-    (NAMutator)destructor}
-#endif
+// to the definition of these macros in NAMemoryII.h and the implementation of
+// the runtime system in NAMemory.c
 
 // Every type using the runtime system will get a global typeinfo variable
 // which has the following type. The full type definition is in the file

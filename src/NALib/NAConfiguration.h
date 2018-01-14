@@ -90,6 +90,31 @@
   #define NA_COREPOOL_BYTESIZE (1 << 16)
 #endif
 
+// Define if memory pools shall be cleaned up aggressively.
+//
+// Memory pools do organize themselves by allocating and deallocating large
+// chunks of memory. Upon startup, there is no memory allocated whatsoever.
+// This should of course be the same in the end when the runtime system stops.
+// Nontheless, it might be very helpful to always keep one chunk per type in
+// memory to prevent allocating and deallocating the same (first) chunk over
+// and over again.
+//
+// With this flag, the programmer defines, if that last chunk shall be freed
+// aggressively, meaning as soon as no more memory is needed for that type. If
+// not, the last chunk stays in memory up until the runtime system stops.
+//
+// Default is 0: The last chunk stays in memory.
+//
+// This flag is important for systems with very small memory as well as for
+// performance testing: When clenaing up aggressively, the runtime can be
+// considerably slower. Otherwise, one big chunk of memory always stays ready
+// resulting in very high performance, especially for small testing cases. But
+// it might not be what should have been measured by the performance test.
+
+#ifndef NA_MEMORY_POOL_AGGRESSIVE_CLEANUP
+  #define NA_MEMORY_POOL_AGGRESSIVE_CLEANUP 0
+#endif
+
 // Defines when the temp garbage collection starts collecting automatically.
 //
 // With this macro, you can define, if and when the garbage collection should

@@ -49,7 +49,7 @@ struct NAString{
 };
 
 NA_HAPI void naDestructString(NAString* string);
-NA_RUNTIME_TYPE(NAString, naDestructString);
+NA_RUNTIME_TYPE(NAString, naDestructString, NA_FALSE);
 
 
 
@@ -57,7 +57,7 @@ NA_RUNTIME_TYPE(NAString, naDestructString);
 // We especially inline this definition as it is used many times in this file.
 NA_DEF NAString* naNewString(void){
   NAString* string = naNew(NAString);
-  string->buffer = naCreateBuffer(NA_FALSE);
+  string->buffer = naNewBuffer(NA_FALSE);
   #ifndef NDEBUG
     string->cachedstr = NA_NULL;
   #endif
@@ -88,7 +88,7 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
     // referencing the pointer, we can safely use the array without this byte
     // and still be able to say: We are null-terminated!
     string = naNew(NAString);
-    string->buffer = naCreateBufferWithConstData(ptr, length);
+    string->buffer = naNewBufferWithConstData(ptr, length);
     #ifndef NDEBUG
       string->cachedstr = NA_NULL;
     #endif
@@ -107,7 +107,7 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
 
 NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt length, NAMutator destructor){
   NAString* string = naNew(NAString);
-  string->buffer = naCreateBufferWithMutableData(buffer, naAbsi(length), destructor); // todo: absi
+  string->buffer = naNewBufferWithMutableData(buffer, naAbsi(length), destructor); // todo: absi
   #ifndef NDEBUG
     string->cachedstr = NA_NULL;
   #endif
@@ -182,8 +182,8 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt charoffs
     NAInt positivecount;
     naMakeIntegerRangePositiveInLength(&positiveoffset, &positivecount, charoffset, length, naGetStringBytesize(srcstring));
 
-    naReleaseBuffer(string->buffer);
-    string->buffer = naCreateBufferExtraction(srcstring->buffer, naMakeRangei(positiveoffset, positivecount));
+    naRelease(string->buffer);
+    string->buffer = naNewBufferExtraction(srcstring->buffer, naMakeRangei(positiveoffset, positivecount));
     #ifndef NDEBUG
       string->cachedstr = NA_NULL;
     #endif
@@ -200,7 +200,7 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt charoffs
 
 NA_DEF NAString* naNewStringWithBufferExtraction(NABuffer* buffer, NARangei range){
   NAString* string = naNew(NAString);
-  string->buffer = naCreateBufferExtraction(buffer, range);
+  string->buffer = naNewBufferExtraction(buffer, range);
   #ifndef NDEBUG
     string->cachedstr = NA_NULL;
   #endif
@@ -214,7 +214,7 @@ NA_DEF NAString* naNewStringWithBufferExtraction(NABuffer* buffer, NARangei rang
 
 
 NA_HDEF void naDestructString(NAString* string){
-  naReleaseBuffer(string->buffer);
+  naRelease(string->buffer);
 }
 
 
@@ -318,15 +318,18 @@ NA_DEF NAString* naNewStringWithSuffixOfFilename(const NAString* filename){
 
 
 NA_DEF NAString* naNewStringCEscaped (const NAString* inputstring){
+  NAUTF8Char outbuffer[10]; // this is the maximal number of chars added.
+  NAString* string;
+  NABuffer* buffer;
+  NABufferIterator iter;
+  NABufferIterator outiter;
   if(naIsStringEmpty(inputstring)){
     return naNewString();
   }
-  NAUTF8Char outbuffer[10]; // this is the maximal number of chars added.
   outbuffer[0] = '\\';
-  NAString* string;
-  NABuffer* buffer = naCreateBuffer(NA_FALSE);
-  NABufferIterator iter = naMakeBufferAccessor(inputstring->buffer);
-  NABufferIterator outiter = naMakeBufferModifier(buffer);
+  buffer = naNewBuffer(NA_FALSE);
+  iter = naMakeBufferAccessor(inputstring->buffer);
+  outiter = naMakeBufferModifier(buffer);
   while(!naIsBufferAtEnd(&iter)){
     NAUTF8Char curchar = naReadBufferi8(&iter);
     switch(curchar){
@@ -348,20 +351,23 @@ NA_DEF NAString* naNewStringCEscaped (const NAString* inputstring){
   naClearBufferIterator(&outiter);
   naClearBufferIterator(&iter);
   string = naNewStringWithBufferExtraction(buffer, naGetBufferRange(buffer));
-  naReleaseBuffer(buffer);
+  naRelease(buffer);
   return string;
 }
 
 
 
 NA_DEF NAString* naNewStringCUnescaped(const NAString* inputstring){
+  NAString* string;
+  NABuffer* buffer;
+  NABufferIterator iter;
+  NABufferIterator outiter;
   if(naIsStringEmpty(inputstring)){
     return naNewString();
   }
-  NAString* string;
-  NABuffer* buffer = naCreateBuffer(NA_FALSE);
-  NABufferIterator iter = naMakeBufferAccessor(inputstring->buffer);
-  NABufferIterator outiter = naMakeBufferModifier(buffer);
+  buffer = naNewBuffer(NA_FALSE);
+  iter = naMakeBufferAccessor(inputstring->buffer);
+  outiter = naMakeBufferModifier(buffer);
   while(!naIsBufferAtEnd(&iter)){
     NAUTF8Char curchar = naReadBufferi8(&iter);
     if(curchar == '\\'){
@@ -393,7 +399,7 @@ NA_DEF NAString* naNewStringCUnescaped(const NAString* inputstring){
   naClearBufferIterator(&outiter);
   naClearBufferIterator(&iter);
   string = naNewStringWithBufferExtraction(buffer, naGetBufferRange(buffer));
-  naReleaseBuffer(buffer);
+  naRelease(buffer);
   return string;
 }
 
@@ -782,6 +788,9 @@ NA_DEF uint64 naParseStringUInt64(const NAString* string){
 }
 
 NA_DEF float naParseStringFloat(const NAString* string){
+  NAUTF8Char* buf;
+  NABufferIterator bufiter;
+  float retvalue;
   NAInt len = naGetStringBytesize(string);
   if(len > 20){
     len = 20;
@@ -789,16 +798,19 @@ NA_DEF float naParseStringFloat(const NAString* string){
       naError("naParseStringFloat", "String truncated to 20 characters");
     #endif
   }
-  NAUTF8Char* buf = naMalloc((len + 1) * naSizeof(NAUTF8Char));
-  NABufferIterator bufiter = naMakeBufferAccessor(string->buffer);
+  buf = naMalloc((len + 1) * naSizeof(NAUTF8Char));
+  bufiter = naMakeBufferAccessor(string->buffer);
   naSeekBufferFromStart(&bufiter, 0);
   naReadBufferBytes(&bufiter, buf, len);
   naClearBufferIterator(&bufiter);
-  float retvalue = (float)atof(buf);
+  retvalue = (float)atof(buf);
   naFree(buf);
   return retvalue;
 }
 NA_DEF double naParseStringDouble(const NAString* string){
+  NAUTF8Char* buf;
+  NABufferIterator bufiter;
+  double retvalue;
   NAInt len = naGetStringBytesize(string);
   if(len > 20){
     len = 20;
@@ -806,12 +818,12 @@ NA_DEF double naParseStringDouble(const NAString* string){
       naError("naParseStringFloat", "String truncated to 20 characters");
     #endif
   }
-  NAUTF8Char* buf = naMalloc((len + 1) * naSizeof(NAUTF8Char));
-  NABufferIterator bufiter = naMakeBufferAccessor(string->buffer);
+  buf = naMalloc((len + 1) * naSizeof(NAUTF8Char));
+  bufiter = naMakeBufferAccessor(string->buffer);
   naSeekBufferFromStart(&bufiter, 0);
   naReadBufferBytes(&bufiter, buf, len);
   naClearBufferIterator(&bufiter);
-  double retvalue = atof(buf);
+  retvalue = atof(buf);
   naFree(buf);
   return retvalue;
 }
