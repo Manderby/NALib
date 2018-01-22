@@ -17,6 +17,7 @@ correct, complete or final.
 
 - The Runtime system now always registers runtime types, not only in debug.
 - Added NA_MEMORY_POOL_AGGRESSIVE_CLEANUP macro in NAConfiguration.h
+- Removed NA_RUNTIME_USES_MEMORY_POOLS in NAConfiguration.h. Pools rule!
 - Moved implementation macros to II files.
 
 

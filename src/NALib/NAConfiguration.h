@@ -63,18 +63,6 @@
 // Runtime memory pools
 // ////////////////////////////////
 
-// By default, the following macro is defined as 1 and therefore, NALib will
-// use its own implementation of memory pools instead of malloc and free for
-// anything related to naNew and naDelete.
-//
-// The implementation with pools proved to be a lot faster with most compilers.
-// In some more modern compilers, especially in conjunction with C++, the
-// basic malloc and free can (though rarely and slightly) be faster.
-
-#ifndef NA_RUNTIME_USES_MEMORY_POOLS
-  #define NA_RUNTIME_USES_MEMORY_POOLS 1
-#endif
-
 // Define the size of a core memory pool:
 //
 // With the following macro, you can define, what the byte size of the memory
