@@ -235,6 +235,10 @@ NA_IDEF const void* naGetArrayElementConst(const NAArray* array, NAInt indx){
     }
   #endif
   indx = naMakeIndexPositive(indx, naGetArrayCount(array));
+  #ifndef NDEBUG
+    if(indx >= naGetArrayCount(array))
+      naError("naGetArrayElementConst", "array overflow.");
+  #endif
   return &(((NAByte*)naGetPtrConst(&(array->ptr)))[indx * array->typesize]);
 }
 
@@ -251,6 +255,10 @@ NA_IDEF void* naGetArrayElementMutable(NAArray* array, NAInt indx){
     }
   #endif
   indx = naMakeIndexPositive(indx, naGetArrayCount(array));
+  #ifndef NDEBUG
+    if(indx >= naGetArrayCount(array))
+      naError("naGetArrayElementMutable", "array overflow.");
+  #endif
   return &(((NAByte*)naGetPtrMutable(&(array->ptr)))[indx * array->typesize]);
 }
 
@@ -267,6 +275,10 @@ NA_IDEF const void* naGetArrayElementpConst(const NAArray* array, NAInt indx){
     }
   #endif
   indx = naMakeIndexPositive(indx, naGetArrayCount(array));
+  #ifndef NDEBUG
+    if(indx >= naGetArrayCount(array))
+      naError("naGetArrayElementpConst", "array overflow.");
+  #endif
   return *((const void**)&(((NAByte*)naGetPtrConst(&(array->ptr)))[indx * array->typesize]));
 }
 
@@ -283,6 +295,10 @@ NA_IDEF void* naGetArrayElementpMutable(NAArray* array, NAInt indx){
     }
   #endif
   indx = naMakeIndexPositive(indx, naGetArrayCount(array));
+  #ifndef NDEBUG
+    if(indx >= naGetArrayCount(array))
+      naError("naGetArrayElementpMutable", "array overflow.");
+  #endif
   return *((void**)&(((NAByte*)naGetPtrMutable(&(array->ptr)))[indx * array->typesize]));
 }
 

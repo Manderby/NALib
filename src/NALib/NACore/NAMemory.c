@@ -437,17 +437,16 @@ NA_DEF void naDelete(void* pointer){
 
 
 NA_DEF void* naRetain(void* pointer){
-  NACorePool* corepool;
-
   #ifndef NDEBUG
+    NACorePool* corepool;
     if(!na_runtime)
       {naCrash("naRetain", "Runtime not running. Use naStartRuntime()"); return NA_NULL;}
   #endif
 
-  // Find the corepool entry at the beginning of the pool by AND'ing the
-  // address with the poolsizemask
-  corepool = (NACorePool*)((NAUInt)pointer & na_runtime->poolsizemask);
   #ifndef NDEBUG
+    // Find the corepool entry at the beginning of the pool by AND'ing the
+    // address with the poolsizemask
+    corepool = (NACorePool*)((NAUInt)pointer & na_runtime->poolsizemask);
     if(corepool->dummy != corepool)
       naError("naRetain", "Pointer seems not to be from a pool.");
     if(!corepool->coretypeinfo->refcounting)

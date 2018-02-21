@@ -23,7 +23,7 @@
 
 
 // The version number of this NALib distribution.
-#define NA_VERSION 19
+#define NA_VERSION 21
 
 // Include the configuration of NALib.
 // Have a look at this file to find out how you can configure NALib by adding

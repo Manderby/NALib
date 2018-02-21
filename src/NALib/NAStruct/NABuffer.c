@@ -3200,6 +3200,7 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* re
   if(naIsBufferAtInitial(iter)){return 0;}
 //  if(naIsBufferAtInitial(iter)){naSeekBufferFromStart(iter, 0);}
   part = naGetListCurConst(&(iter->listiter));
+  if(naIsBufferPartSparse(part)){naPrepareBuffer(iter, part->range, NA_FALSE, NA_TRUE);}
   curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
 
   // Check for a potential sign at the first character

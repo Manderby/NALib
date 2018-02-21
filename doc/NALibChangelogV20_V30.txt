@@ -12,6 +12,9 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Version 21 (first published 2018-xxx-xx)
+==========
+
 - Enhanced runtime system with Reference counting for naNew, naRetain and
   naRelease.
 
@@ -19,6 +22,7 @@ correct, complete or final.
 - Added NA_MEMORY_POOL_AGGRESSIVE_CLEANUP macro in NAConfiguration.h
 - Removed NA_RUNTIME_USES_MEMORY_POOLS in NAConfiguration.h. Pools rule!
 - Moved implementation macros to II files.
+- Some more debugging tests
 
 
 Version 20 (first published 2018-Jan-13):
