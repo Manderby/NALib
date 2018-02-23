@@ -183,13 +183,13 @@ NA_HDEF void naUpdateOctTreeNodeBubbling(NAOctTree* tree, NAOctTreeNode* parentn
   // an inner node.
   if(parentnode->childlength == tree->leaflength){
     if(tree->callbacks.leafchanged){
-      bubble = tree->callbacks.leafchanged(parentnode->nodedata, segment, (const void* const) parentnode->child);
+      bubble = tree->callbacks.leafchanged(parentnode->nodedata, segment, (const void* const) parentnode->child, parentnode->childlength);
     }
   }else{
     if(tree->callbacks.childchanged){
       const void* childdata[8];
       naFillOctTreeNodeChildData(childdata, parentnode);
-      bubble = tree->callbacks.childchanged(parentnode->nodedata, segment, childdata);
+      bubble = tree->callbacks.childchanged(parentnode->nodedata, segment, childdata, parentnode->childlength);
     }
   }
   
@@ -218,7 +218,7 @@ NA_HDEF NABool naUpdateOctTreeNodeCapturing(NAOctTree* tree, NAOctTreeNode* node
   if(node->childlength == tree->leaflength){
     // This node stores leafs
     if(tree->callbacks.leafchanged){
-      bubble = tree->callbacks.leafchanged(node->nodedata, -1, (const void* const) node->child);
+      bubble = tree->callbacks.leafchanged(node->nodedata, -1, (const void* const) node->child, node->childlength);
     }
   }else{
     // this node stores subnodes
@@ -233,7 +233,7 @@ NA_HDEF NABool naUpdateOctTreeNodeCapturing(NAOctTree* tree, NAOctTreeNode* node
     if(bubble && tree->callbacks.childchanged){
       const void* childdata[8];
       naFillOctTreeNodeChildData(childdata, node);
-      bubble = tree->callbacks.childchanged(node->nodedata, -1, childdata);
+      bubble = tree->callbacks.childchanged(node->nodedata, -1, childdata, node->childlength);
     }
   }
   
@@ -293,7 +293,7 @@ NA_HDEF void naGrowOctTreeNodeRoot(NAOctTree* tree){
   if(tree->callbacks.childchanged){
     const void* childdata[8];
     naFillOctTreeNodeChildData(childdata, parentnode);
-    tree->callbacks.childchanged(parentnode->nodedata, childsegment, childdata);
+    tree->callbacks.childchanged(parentnode->nodedata, childsegment, childdata, parentnode->childlength);
   }
   tree->root = parentnode;
 }
@@ -538,6 +538,17 @@ NA_DEF NAVertexi naGetOctTreeCurOrigin(NAOctTreeIterator* iter){
       naError("naGetOctTreeCurOrigin", "Iterator has no origin");
   #endif
   return iter->leaforigin;
+}
+
+
+
+NA_DEF NABoxi naGetOctTreeCurBox(NAOctTreeIterator* iter){
+  const NAOctTree* tree = naGetPtrConst(&(iter->tree));
+  #ifndef NDEBUG
+    if(!(iter->flags & NA_OCTTREE_ITERATOR_HAS_ORIGIN))
+      naError("naGetOctTreeCurOrigin", "Iterator has no origin");
+  #endif
+  return naMakeBoxi(iter->leaforigin, naMakeVolumei(tree->leaflength, tree->leaflength, tree->leaflength));
 }
 
 

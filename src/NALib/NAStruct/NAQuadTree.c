@@ -161,13 +161,13 @@ NA_HDEF void naUpdateQuadTreeNodeBubbling(NAQuadTree* tree, NAQuadTreeNode* pare
   // an inner node.
   if(parentnode->childlength == tree->leaflength){
     if(tree->callbacks.leafchanged){
-      bubble = tree->callbacks.leafchanged(parentnode->nodedata, segment, (const void* const) parentnode->child);
+      bubble = tree->callbacks.leafchanged(parentnode->nodedata, segment, (const void* const) parentnode->child, parentnode->childlength);
     }
   }else{
     if(tree->callbacks.childchanged){
       const void* childdata[4];
       naFillQuadTreeNodeChildData(childdata, parentnode);
-      bubble = tree->callbacks.childchanged(parentnode->nodedata, segment, childdata);
+      bubble = tree->callbacks.childchanged(parentnode->nodedata, segment, childdata, parentnode->childlength);
     }
   }
   
@@ -196,7 +196,7 @@ NA_HDEF NABool naUpdateQuadTreeNodeCapturing(NAQuadTree* tree, NAQuadTreeNode* n
   if(node->childlength == tree->leaflength){
     // This node stores leafs
     if(tree->callbacks.leafchanged){
-      bubble = tree->callbacks.leafchanged(node->nodedata, -1, (const void* const) node->child);
+      bubble = tree->callbacks.leafchanged(node->nodedata, -1, (const void* const) node->child, node->childlength);
     }
   }else{
     // this node stores subnodes
@@ -207,7 +207,7 @@ NA_HDEF NABool naUpdateQuadTreeNodeCapturing(NAQuadTree* tree, NAQuadTreeNode* n
     if(bubble && tree->callbacks.childchanged){
       const void* childdata[4];
       naFillQuadTreeNodeChildData(childdata, node);
-      bubble = tree->callbacks.childchanged(node->nodedata, -1, childdata);
+      bubble = tree->callbacks.childchanged(node->nodedata, -1, childdata, node->childlength);
     }
   }
   
@@ -267,7 +267,7 @@ NA_HDEF void naGrowQuadTreeNodeRoot(NAQuadTree* tree){
   if(tree->callbacks.childchanged){
     const void* childdata[4];
     naFillQuadTreeNodeChildData(childdata, parentnode);
-    tree->callbacks.childchanged(parentnode->nodedata, childsegment, childdata);
+    tree->callbacks.childchanged(parentnode->nodedata, childsegment, childdata, parentnode->childlength);
   }
   tree->root = parentnode;
 }
@@ -510,6 +510,17 @@ NA_DEF NAPosi naGetQuadTreeCurOrigin(NAQuadTreeIterator* iter){
       naError("naGetQuadTreeCurOrigin", "Iterator has no origin");
   #endif
   return iter->leaforigin;
+}
+
+
+
+NA_DEF NARecti naGetQuadTreeCurRect(NAQuadTreeIterator* iter){
+  const NAQuadTree* tree = naGetPtrConst(&(iter->tree));
+  #ifndef NDEBUG
+    if(!(iter->flags & NA_QUADTREE_ITERATOR_HAS_ORIGIN))
+      naError("naGetQuadTreeCurRect", "Iterator has no origin");
+  #endif
+  return naMakeRecti(iter->leaforigin, naMakeSizei(tree->leaflength, tree->leaflength));
 }
 
 

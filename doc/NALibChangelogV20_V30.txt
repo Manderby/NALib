@@ -23,6 +23,8 @@ Version 21 (first published 2018-xxx-xx)
 - Removed NA_RUNTIME_USES_MEMORY_POOLS in NAConfiguration.h. Pools rule!
 - Moved implementation macros to II files.
 - Some more debugging tests
+- QuadTree and Octtree added childlenght to update function callbacks. Also
+  have new function to return rect or box of current iterator element.
 
 
 Version 20 (first published 2018-Jan-13):

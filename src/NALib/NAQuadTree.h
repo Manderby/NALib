@@ -137,7 +137,7 @@ typedef void  (*NAQuadTreeNodeDeallocator)(void* nodedata);
 // data you may have stored with NAQuadTreeNodeAllocator. Additionally, you are
 // given all four child data pointers as an array as well as a segment index
 // denoting which of the four childs has caused the calling. See segment index
-// description above.
+// description above. Plus the leaflength of a child.
 //
 // The two functions differ on whether the childs are leafs or nodes. The data
 // given are either pointers to leaf chunk data or pointers to node data you
@@ -162,10 +162,12 @@ typedef void  (*NAQuadTreeNodeDeallocator)(void* nodedata);
 // NA_TRUE by default.
 typedef NABool(*NAQuadTreeLeafChanged)(      void* nodedata,
                                              NAInt segment,
-                                 const void* const leafdata[4]);
+                                 const void* const leafdata[4],
+                                             NAInt leaflength);
 typedef NABool(*NAQuadTreeChildChanged)(     void* nodedata,
                                              NAInt segment,
-                                 const void* const childdata[4]);
+                                 const void* const childdata[4],
+                                             NAInt leaflength);
 
 
 
@@ -345,6 +347,9 @@ NA_API void*       naGetQuadTreeCurMutable(NAQuadTreeIterator* iter,
 
 // Returns the origin of the leaf the iterator is pointing at.
 NA_API NAPosi naGetQuadTreeCurOrigin(NAQuadTreeIterator* iter);
+
+// Returns the rect of the leaf the iterator is pointing at.
+NA_API NARecti naGetQuadTreeCurRect(NAQuadTreeIterator* iter);
 
 // Starts at the leaf containing the given coord and traverses upwards
 // (bubbling) the tree by calling the appropriate callback functions of all

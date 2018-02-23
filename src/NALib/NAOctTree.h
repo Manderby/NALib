@@ -141,7 +141,7 @@ typedef void  (*NAOctTreeNodeDeallocator)(void* nodedata);
 // data you may have stored with NAOctTreeNodeAllocator. Additionally, you are
 // given all eight child data pointers as an array as well as a segment index
 // denoting which of the eight childs has caused the calling. See segment index
-// description above.
+// description above. Plus the leaflength of a child. 
 //
 // The two functions differ on whether the childs are leafs or nodes. The data
 // given are either pointers to leaf chunk data or pointers to node data you
@@ -166,10 +166,12 @@ typedef void  (*NAOctTreeNodeDeallocator)(void* nodedata);
 // NA_TRUE by default.
 typedef NABool(*NAOctTreeLeafChanged)(      void* nodedata,
                                              NAInt segment,
-                                 const void* const leafdata[8]);
+                                 const void* const leafdata[8],
+                                             NAInt leaflength);
 typedef NABool(*NAOctTreeChildChanged)(     void* nodedata,
                                              NAInt segment,
-                                 const void* const childdata[8]);
+                                 const void* const childdata[8],
+                                             NAInt leaflength);
 
 
 
@@ -350,6 +352,9 @@ NA_API void*       naGetOctTreeCurMutable(NAOctTreeIterator* iter,
 
 // Returns the origin of the leaf the iterator is pointing at.
 NA_API NAVertexi naGetOctTreeCurOrigin(NAOctTreeIterator* iter);
+
+// Returns the box of the leaf the iterator is pointing at.
+NA_API NABoxi naGetOctTreeCurBox(NAOctTreeIterator* iter);
 
 // Starts at the leaf containing the given coord and traverses upwards
 // (bubbling) the tree by calling the appropriate callback functions of all
