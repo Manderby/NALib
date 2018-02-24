@@ -728,8 +728,7 @@ NA_HDEF NABool naLocateOctTreeNode(NAOctTreeIterator* iter, NAVertexi origin){
 NA_DEF NABool naLocateOctTreeCoord(NAOctTreeIterator* iter, NAVertexi coord){
   const NAOctTree* tree = naGetPtrConst(&(iter->tree));
 
-  NABoxi leafalign = naMakeBoxi(naMakeVertexi(0, 0, 0), naMakeVolumei(tree->leaflength, tree->leaflength, tree->leaflength));
-  NAVertexi neworigin = naMakeVertexiWithAlignment(coord, leafalign);
+  NAVertexi neworigin = naGetOctTreeAlignedCoord(tree->leaflength, coord);
 
   naSetOctTreeIteratorLeafOrigin(iter, neworigin);  
   return naLocateOctTreeNode(iter, neworigin);

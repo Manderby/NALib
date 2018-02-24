@@ -41,6 +41,13 @@ NA_IDEF NAInt naGetOctTreeLeafLength(const NAOctTree* tree){
 
 
 
+NA_IDEF NAVertexi naGetOctTreeAlignedCoord(NAInt leaflength, NAVertexi coord){
+  NABoxi leafalign = naMakeBoxi(naMakeVertexi(0, 0, 0), naMakeVolumei(leaflength, leaflength, leaflength));
+  return naMakeVertexiWithAlignment(coord, leafalign);
+}
+
+
+
 NA_IDEF NAOctTreeCallbacks naGetOctTreeCallbacks(const NAOctTree* tree){
   return tree->callbacks;
 }

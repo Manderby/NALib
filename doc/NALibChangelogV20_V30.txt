@@ -24,7 +24,8 @@ Version 21 (first published 2018-xxx-xx)
 - Moved implementation macros to II files.
 - Some more debugging tests
 - QuadTree and Octtree added childlenght to update function callbacks. Also
-  have new function to return rect or box of current iterator element.
+  have new function to return rect or box of current iterator element and
+  aligned coords
 
 
 Version 20 (first published 2018-Jan-13):

@@ -699,8 +699,7 @@ NA_HDEF NABool naLocateQuadTreeNode(NAQuadTreeIterator* iter, NAPosi origin){
 NA_DEF NABool naLocateQuadTreeCoord(NAQuadTreeIterator* iter, NAPosi coord){
   const NAQuadTree* tree = naGetPtrConst(&(iter->tree));
 
-  NARecti leafalign = naMakeRecti(naMakePosi(0, 0), naMakeSizei(tree->leaflength, tree->leaflength));
-  NAPosi neworigin = naMakePosiWithAlignment(coord, leafalign);
+  NAPosi neworigin = naGetQuadTreeAlignedCoord(tree->leaflength, coord);
 
   naSetQuadTreeIteratorLeafOrigin(iter, neworigin);  
   return naLocateQuadTreeNode(iter, neworigin);

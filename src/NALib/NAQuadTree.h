@@ -236,6 +236,9 @@ NA_IAPI NABool naIsQuadTreeEmpty(        const NAQuadTree* tree);
 // Returns the leaf length in one dimension
 NA_IAPI NAInt naGetQuadTreeLeafLength(   const NAQuadTree* tree);
 
+// Returns the adjusted coord which is aligned on a chunk coordinate.
+NA_IAPI NAPosi naGetQuadTreeAlignedCoord(NAInt leaflength, NAPosi coord);
+
 // Returns the callbacks (by copying the function pointers)
 NA_IAPI NAQuadTreeCallbacks naGetQuadTreeCallbacks(
                                          const NAQuadTree* tree);

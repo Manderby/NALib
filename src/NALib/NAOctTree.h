@@ -240,6 +240,9 @@ NA_IAPI NABool naIsOctTreeEmpty(        const NAOctTree* tree);
 // Returns the leaf length in one dimension
 NA_IAPI NAInt naGetOctTreeLeafLength(   const NAOctTree* tree);
 
+// Returns the adjusted coord which is aligned on a chunk coordinate.
+NA_IAPI NAVertexi naGetOctTreeAlignedCoord(NAInt leaflength, NAVertexi coord);
+
 // Returns the callbacks (by copying the function pointers)
 NA_IAPI NAOctTreeCallbacks naGetOctTreeCallbacks(
                                          const NAOctTree* tree);

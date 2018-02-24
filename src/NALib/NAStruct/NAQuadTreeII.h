@@ -41,6 +41,13 @@ NA_IDEF NAInt naGetQuadTreeLeafLength(const NAQuadTree* tree){
 
 
 
+NA_IDEF NAPosi naGetQuadTreeAlignedCoord(NAInt leaflength, NAPosi coord){
+  NARecti leafalign = naMakeRecti(naMakePosi(0, 0), naMakeSizei(leaflength, leaflength));
+  return naMakePosiWithAlignment(coord, leafalign);
+}
+
+
+
 NA_IDEF NAQuadTreeCallbacks naGetQuadTreeCallbacks(const NAQuadTree* tree){
   return tree->callbacks;
 }
