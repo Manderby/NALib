@@ -50,6 +50,7 @@
 // stored in a NAQuadTreeCallbacks structure. Here are the signatures for 
 // these callbacks:
 
+// NAQuadTreeLeafAllocator
 // Allocation function which allocate your leaf-chunks. This callback always
 // must be present and shall always return something. Returning Null is a bad
 // thing. This callback will be called when creating new chunks (whenever a
@@ -73,12 +74,14 @@ typedef void* (*NAQuadTreeLeafAllocator)(   NAPosi origin,
                                              void* userdata,
                                        const void* copydata);
 
+// NAQuadTreeLeafDeallocator
 // The deallocation function of your leaf-chunks. This callback always must be
 // present. The pointer given is a pointer created when NAQuadTreeLeafAllocator
 // was called. The userdata is the same as desribed in the allocator function.
 typedef void  (*NAQuadTreeLeafDeallocator)(  void* leafdata,
                                              void* userdata);
 
+// NAQuadTreeDataCopier
 // This callback is required when shifting an NAQuadTree. You are given two
 // chunk data pointers, two origins and a size.
 // Your task is to copy the data in srcdata starting at srcorigin to dstdata
@@ -109,6 +112,7 @@ typedef void  (*NAQuadTreeDataCopier)( const void* dstdata,
                                             NAPosi totalshift,
                                              NAInt leaflength);
 
+// NAQuadTreeNodeAllocator
 // This callback is called when a quad tree creates an internal tree node other
 // than a leaf.
 // Internal nodes can NOT be manipulated directly but you are allowed to store
@@ -124,6 +128,7 @@ typedef void  (*NAQuadTreeDataCopier)( const void* dstdata,
 typedef void* (*NAQuadTreeNodeAllocator)( NAPosi origin,
                                            NAInt childnodesize);
 
+// NAQuadTreeNodeDeallocator
 // The node destructor is called before a quad tree ultimately deletes an
 // internal node node.
 // The pointer created with NAQuadTreeNodeAllocator will be sent to this
@@ -131,6 +136,7 @@ typedef void* (*NAQuadTreeNodeAllocator)( NAPosi origin,
 // this function is NOT called if a node stores a NULL pointer.
 typedef void  (*NAQuadTreeNodeDeallocator)(void* nodedata);
 
+// NAQuadTreeLeafChanged and NAQuadTreeChildChanged
 // Whenever you altered a leaf and want to propagate the change over the whole
 // tree, you call naUpdateQuadTreeCur which in turn will call the following
 // two callback functions. Both will be called with the PARENTAL (internal) node
@@ -346,7 +352,7 @@ NA_API NABool naLocateQuadTreeSteps(  NAQuadTreeIterator* iter,
 // modifier iterator for this.
 NA_API const void* naGetQuadTreeCurConst(  NAQuadTreeIterator* iter);
 NA_API void*       naGetQuadTreeCurMutable(NAQuadTreeIterator* iter,
-                                                            NABool create);
+                                                        NABool create);
 
 // Returns the origin of the leaf the iterator is pointing at.
 NA_API NAPosi naGetQuadTreeCurOrigin(NAQuadTreeIterator* iter);

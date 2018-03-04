@@ -54,6 +54,7 @@
 // stored in an NAOctTreeCallbacks structure. Here are the signatures for 
 // these callbacks:
 
+// NAOctTreeLeafAllocator
 // Allocation function which allocate your leaf-chunks. This callback always
 // must be present and shall always return something. Returning Null is a bad
 // thing. This callback will be called when creating new chunks (whenever a
@@ -77,12 +78,14 @@ typedef void* (*NAOctTreeLeafAllocator)( NAVertexi origin,
                                              void* userdata,
                                        const void* copydata);
 
+// NAOctTreeLeafDeallocator
 // The deallocation function of your leaf-chunks. This callback always must be
 // present. The pointer given is a pointer created when NAOctTreeLeafAllocator
 // was called. The userdata is the same as desribed in the allocator function.
 typedef void  (*NAOctTreeLeafDeallocator)(  void* leafdata,
                                              void* userdata);
 
+// NAOctTreeDataCopier
 // This callback is required when shifting an NAOctTree. You are given two
 // chunk data pointers, two origins and a volume.
 // Your task is to copy the data in srcdata starting at srcorigin to dstdata
@@ -113,6 +116,7 @@ typedef void  (*NAOctTreeDataCopier)(  const void* dstdata,
                                          NAVertexi totalshift,
                                              NAInt leaflength);
 
+// NAOctTreeNodeAllocator
 // This callback is called when a oct tree creates an internal tree node other
 // than a leaf.
 // Internal nodes can NOT be manipulated directly but you are allowed to store
@@ -128,6 +132,7 @@ typedef void  (*NAOctTreeDataCopier)(  const void* dstdata,
 typedef void* (*NAOctTreeNodeAllocator)( NAVertexi origin,
                                              NAInt childnodesize);
 
+// NAOctTreeNodeDeallocator
 // The node destructor is called before a oct tree ultimately deletes an
 // internal node node.
 // The pointer created with NAOctTreeNodeAllocator will be sent to this
@@ -135,6 +140,7 @@ typedef void* (*NAOctTreeNodeAllocator)( NAVertexi origin,
 // this function is NOT called if a node stores a NULL pointer.
 typedef void  (*NAOctTreeNodeDeallocator)(void* nodedata);
 
+// NAOctTreeLeafChanged and NAOctTreeChildChanged
 // Whenever you altered a leaf and want to propagate the change over the whole
 // tree, you call naUpdateOctTreeCur which in turn will call the following
 // two callback functions. Both will be called with the PARENTAL (internal) node
