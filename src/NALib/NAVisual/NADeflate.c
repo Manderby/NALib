@@ -1,6 +1,6 @@
 
-// This file is part of NALib, a collection of C and C++ source code
-// intended for didactical purposes. Full license notice at the bottom.
+// This file is part of NALib, a collection of C source code.
+// Full license notice at the bottom.
 
 
 #include "../NADeflate.h"
@@ -610,7 +610,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, N
 }
 
 
-// Copyright (c) NALib, Tobias Stamm, Manderim GmbH
+// Copyright (c) NALib, Tobias Stamm
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the

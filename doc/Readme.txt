@@ -502,7 +502,7 @@ errors.
 
 
 ====================
-Copyright (c) NALib, Tobias Stamm, Manderim GmbH
+Copyright (c) NALib, Tobias Stamm
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

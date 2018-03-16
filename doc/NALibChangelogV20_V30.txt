@@ -26,6 +26,7 @@ Version 21 (first published 2018-xxx-xx)
 - QuadTree and Octtree added childlenght to update function callbacks. Also
   have new function to return rect or box of current iterator element and
   aligned coords
+- Removed all occurrencies of the old company in the code.
 
 
 Version 20 (first published 2018-Jan-13):
@@ -46,7 +47,7 @@ introduced, and a first UI implementation has been programmed.
 
 -----------------------
 
-Copyright (c) NALib, Tobias Stamm, Manderim GmbH
+Copyright (c) NALib, Tobias Stamm
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the

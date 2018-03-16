@@ -14,7 +14,7 @@ void writeNALibTopCopyright(NAFile* file){
 
 void writeNALibBottomCopyright(NAFile* file){
   NAUTF8Char str[] = "\n\
-// Copyright (c) NALib, Tobias Stamm, Manderim GmbH \n\
+// Copyright (c) NALib, Tobias Stamm \n\
 // \n\
 // Permission is hereby granted, free of charge, to any person obtaining \n\
 // a copy of this software and associated documentation files (the \n\

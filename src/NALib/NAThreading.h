@@ -1,6 +1,6 @@
 
-// This file is part of NALib, a collection of C and C++ source code
-// intended for didactical purposes. Full license notice at the bottom.
+// This file is part of NALib, a collection of C source code.
+// Full license notice at the bottom.
 
 #ifndef NA_THREADING_INCLUDED
 #define NA_THREADING_INCLUDED
@@ -145,7 +145,7 @@ NA_IAPI void naTriggerAlarm(NAAlarm alarm);
 #endif // NA_THREADING_INCLUDED
 
 
-// Copyright (c) NALib, Tobias Stamm, Manderim GmbH
+// Copyright (c) NALib, Tobias Stamm
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
