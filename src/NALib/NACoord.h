@@ -11,7 +11,7 @@
 
 
 // Following are definitions for integer and floating-point elements storing
-// positions and lenghts on 1-D, 2-D and 3-D coordinate systems. Namely:
+// positions and lengths on 1-D, 2-D and 3-D coordinate systems. Namely:
 //
 // 1-D: NARange
 // 2-D: NAPos, NASize, NARect

@@ -22,38 +22,37 @@ typedef struct NABufferIterator NABufferIterator;
 #include "NAString.h"
 
 
-// This file contains the API for NABuffer and its underlying storage structure
-// NABuffer.
+// This file contains the API for NABuffer.
 //
-// You need both structures as the NABuffer defines, where a buffer reads
-// and writes bytes.
-//
-// A buffer source defines linear memory which is filled with the contents of
-// a specified source. This source can be nothing, a file, an existing C-array,
-// and more. The buffer source guarantees, that each byte of that source has
-// its clearly defined position in memory.
-//
-// An NABuffer structure is capable of storing sparse memory meaning as
-// long as a part of the memory is not explicitely needed, no memory at that
-// position is allocated. This means for example that you can open a file which
-// has a total filesize of 1GB but you only access a few bytes resulting in
-// only needing a few bytes in memory. Even if these bytes are scattered around
-// multiple positions in the file, only those parts of the file are read which
+// An NABuffer is capable of storing any kind of linear data, potentially
+// broken into multiple parts. It uses sparse memory, meaning as long as a
+// part is not explicitely needed, no memory at that position is allocated.
+// This means for example that you can open a file which has a total filesize
+// of 1GB but you only access a few bytes resulting in only needing a few
+// bytes in memory. Even if these bytes are scattered around multiple
+// positions in the file, only those parts of the file are read which
 // are actually needed.
 //
-// Those parts which are allocated have a default size. That size can be
-// defined in NAConfiguration.h with the NA_BUFFER_PART_BYTESIZE macro.
+// The parts of NABuffer have a default size. That size can be defined in
+// NAConfiguration.h with the NA_BUFFER_PART_BYTESIZE macro.
 //
-// An NABuffer structure uses an NABuffer structure as its source and
-// "borrows" the contents of the linear memory, arbitrarily positioned. For
-// example: The source of a file looks like this:
+// An NABuffer structure always requires a source to fill itself with content.
+// A source defines a linear storage containing content. This source can be
+// allocated memory, a file, an existing C-array, another NABuffer and more.
+// The source guarantees, that each byte of that source has its clearly defined
+// position in memory.
+//
+// The NABuffer uses that source and "borrows" the contents of the linear
+// memory, arbitrarily positioned.
+//
+// For example: The source of a file looks like this:
 //
 // +-0---------------------------+
-// | This is the text of a file. |
+// | This is the text of a file. |   Stored on disk.
 // +-------------^---------------+
 //               |
-// A buffer may choose to use the bytes 12 - 15 of that source but placing it
-// at its own absolute position 0.
+// An NABuffer may choose to use the bytes 12 - 15 of that source but placing
+// it at its own absolute position 0.
 //               |
 //   +-----------+
 // +-0----+   
@@ -67,7 +66,7 @@ typedef struct NABufferIterator NABufferIterator;
 // which is not needed anymore and only leaving the memory active which is
 // actually in use. 
 //
-// In version 19, buffers will be able to use multiple sources and stitch
+// In version 19, buffers became able to use multiple sources and stitch
 // together pieces arbitrarily. Like for example:
 //
 // +-0---------------------------+  +-0------------------------------------+
@@ -80,38 +79,6 @@ typedef struct NABufferIterator NABufferIterator;
 // +------+          +--------+
 //
 
-
-
-
-
-// Prototype for the fill function.
-// The function has to perform the tast to fill range.length bytes at dst with
-// content. The data will be the pointer given in the descriptor and the origin
-// of the desired data is given by range.origin.
-typedef void (*NABufferSourceFiller)(void* data, void* dst, NARangei range);
-
-// Flags for the buffer source:
-#define NA_BUFFER_SOURCE_RANGE_LIMITED    0x01
-
-// Descriptor for a custom source.
-//
-// You can create a buffer from any linear source you want by filling out a
-// descriptor and use it for naNewBufferCustomSource.
-typedef struct NABufferSourceDescriptor NABufferSourceDescriptor;
-struct NABufferSourceDescriptor{
-  void*                data;        // ptr being sent to filler and destructor.
-  NAMutator            destructor;  // Destructor when source no longer needed.
-  NABufferSourceFiller filler;      // Fill function filling memory.
-  NAUInt               flags;       // Flags for the source
-  NARangei             limit;       // Source limit (only used if flags set)
-};
-
-
-
-
-// /////////////////////////////////
-// NABuffer
-// /////////////////////////////////
 
 
 
@@ -128,7 +95,7 @@ NA_API NABuffer* naNewBuffer(NABool securememory);
 // the new buffer will be at zero and its range is fixed. Does NOT copy any
 // content, only references it.
 NA_API NABuffer* naNewBufferExtraction( NABuffer* srcbuffer,
-                                            NARangei range);
+                                         NARangei range);
 
 // Creates a buffer having an exact copy of the bytes in srcbuffer within the
 // given range. The new content will be COPIED to a new memory buffer which can
@@ -149,11 +116,11 @@ NA_API NABuffer* naNewBufferPlain(void);
 NA_API NABuffer* naNewBufferWithSameSource(  NABuffer* srcbuffer);
                     
 // Creates a buffer inputting contents from a file. Its origin is always at
-// zero and its range is fixed.
+// zero and its range is fixed to the filesize.
 NA_API NABuffer* naNewBufferWithInpuFile(const char* filename);
 
 // Creates a buffer accessing already existing const or mutable data. If the
-// data is mutable, you can give a cleanup method if you want to delete the
+// data is mutable, you can give a destructor if you want to delete the
 // memory of the data pointer when no longer needed.
 NA_API NABuffer* naNewBufferWithConstData( const void* data,
                                                     NAInt bytesize);
@@ -161,11 +128,36 @@ NA_API NABuffer* naNewBufferWithMutableData(     void* data,
                                                     NAInt bytesize,
                                                 NAMutator destructor);
 
+// ////////////////////////////////////////
+// Buffer with custom source
+// ////////////////////////////////////////
+
+// You can create an NABuffer from any linear source you want by filling out a
+// descriptor and use it for naNewBufferCustomSource.
+
+// Prototype for the fill function.
+// The function has to perform the task to fill dst with content. The data
+// will be the pointer given in the descriptor and the origin and length
+// of the desired data is given by range.
+typedef void (*NABufferSourceFiller)(void* data, void* dst, NARangei range);
+
+// Flags for the buffer source:
+#define NA_BUFFER_SOURCE_RANGE_LIMITED    0x01
+
+// Descriptor for a custom source.
+typedef struct NABufferSourceDescriptor NABufferSourceDescriptor;
+struct NABufferSourceDescriptor{
+  void*                data;        // ptr being sent to filler and destructor.
+  NAMutator            destructor;  // Destructor when source no longer needed.
+  NABufferSourceFiller filler;      // Fill function filling memory.
+  NAUInt               flags;       // Flags for the source
+  NARangei             limit;       // Source limit (only used if flags set)
+};
+
 // Creates a buffer with a custom source. Create a descriptor like this:
 //   NABufferSourceDescriptor desc;
 //   naNulln(&desc, sizeof(desc));
-// And fill in the desired values. See NABufferSourceDescriptor for more
-// details.
+// And fill in the desired values above.
 NA_API NABuffer* naNewBufferWithCustomSource(NABufferSourceDescriptor desc);
 
 // ////////////////////////////////////////
@@ -173,31 +165,38 @@ NA_API NABuffer* naNewBufferWithCustomSource(NABufferSourceDescriptor desc);
 // ////////////////////////////////////////
 
 
-// Gets information about the range of the buffer. The IsAtEnd function should
-// only be used on buffers with a fixed range.
-NA_API NARangei naGetBufferRange            (const NABuffer* buffer);
-NA_API NABool   naIsBufferEmpty             (const NABuffer* buffer);
-
-// Determines the status whether the buffer range is fixed. If you call the fix
+// Working with the range of the buffer.
+// A buffer has a current range denoting what the first and last index of
+// the content is. That range can either be fixed (for example for read-files)
+// or non-fixed (for example for growing memory buffers). If you call the fix
 // function, the current range of the buffer will be used as the fixed range.
-// A buffer with a fixed range can no longer grow.
-NA_API void     naFixBufferRange            (NABuffer* buffer);
+// A buffer with a fixed range can no longer change.
+// The extend function extends the buffers range by the desired bytesize on
+// both ends.
+// Note that extending does not automatically allocates memory. It just
+// changes the range the buffer is allowed to address.
+NA_API NABool   naIsBufferEmpty             (const NABuffer* buffer);
+NA_API NARangei naGetBufferRange            (const NABuffer* buffer);
 NA_API NABool   naHasBufferFixedRange       (const NABuffer* buffer);
-
-// Extends the buffers range by the desired bytesize on both ends
-NA_API void     naExtendBufferRange         (NABuffer* buffer,
-                                                 NAInt bytesatstart,
-                                                 NAInt bytesatend);
+NA_API void     naFixBufferRange            (NABuffer*       buffer);
+NA_API void     naExtendBufferRange         (NABuffer*       buffer,
+                                                       NAInt bytesatstart,
+                                                       NAInt bytesatend);
 
 // Sets or gets the volatile flag of the buffer.
-NA_API NABool   naHasBufferVolatileSource(const NABuffer* buffer);
-NA_API void     naSetBufferVolatileSource(NABuffer* buffer, NABool volatil);
+// A volatile Buffer always reads its content from the source anew upon every
+// call. Most of the time, you wont need that.
+NA_API NABool   naHasBufferVolatileSource(  const NABuffer* buffer);
+NA_API void     naSetBufferVolatileSource(        NABuffer* buffer,
+                                                     NABool volatil);
 
 // Get or set the newline encoding of this buffer. The newline encoding of a
 // new buffer is either NA_NEWLINE_NATIVE or the same encoding as the buffer
-// it is created from, if any.
-NA_API void naSetBufferNewline(NABuffer* buffer, NANewlineEncoding newline);
-NA_API NANewlineEncoding naGetBufferNewline(NABuffer* buffer);
+// it is created from, if any. It will be used when ASCII strings are written
+// to the buffer.
+NA_API NANewlineEncoding naGetBufferNewlineEncoding(NABuffer* buffer);
+NA_API void naSetBufferNewlineEncoding(             NABuffer* buffer,
+                                            NANewlineEncoding newlineencoding);
 
 // Get or set the endianness setting of this buffer. If not stated otherwise,
 // the endianness of a new buffer is NA_ENDIANNESS_NATIVE.
@@ -207,7 +206,6 @@ NA_API NAInt  naGetBufferEndianness(NABuffer* buffer);
 // Returns the byte at the given index. Warning: This function is costly. You
 // might want to use one of the Reading or Parsing functions instead.
 NA_API NAByte naGetBufferByteAtIndex(const NABuffer* buffer, NAInt indx);
-//NA_API NAByte naGetBufferCurByte(const NABuffer* buffer);
 
 // Searches for the given byte starting at (and including) startoffset, either
 // forward or backwards.
@@ -216,11 +214,11 @@ NA_API NAInt naSearchBufferByteOffset(  const NABuffer* buffer,
                                                   NAInt startoffset,
                                                  NABool forward);
 
-// Cache:   Allocates all memory of the desired range and fills it
-//          according to the current source.
-// Dismiss: Dismisses the bytes of the given range. Use this if you are
-//          sure the denoted bytes are no longer in use. This gives
-//          NALib the possibility to deallocate memory.
+// Cache:   Allocates all memory of the desired range and fills it according
+//          to the current source.
+// Dismiss: Dismisses the bytes of the given range. Use this if you want to
+//          declare the denoted bytes to be no longer in use by this buffer.
+//          This gives NALib the possibility to deallocate memory.
 NA_API void naCacheBufferRange(   NABuffer* buffer,
                                    NARangei range,
                                      NABool forcevolatile);
@@ -253,8 +251,7 @@ NA_API NAString* naNewStringWithBufferBase64Encoded(
                                       const NABuffer* buffer,
                                                NABool appendendsign);
 
-// Converts the bytes of the given buffer to a string encoded in Base64.
-// When appendendsign is NA_TRUE, equal signs = will be appended if needed.
+// Extracts the bytes from string encoded in Base64.
 NA_API NABuffer* naNewBufferWithStringBase64Decoded(
                                       const NAString* string);
 
@@ -420,7 +417,7 @@ NA_API void naRepeatBufferBytes(  NABufferIterator* iter,
 
 
 // Writes a tab or a newline to the file. The newline character is dependent on
-// the buffer setting. You can change it using naSetBufferNewLine.
+// the buffer setting. You can change it using naSetBufferNewlineEncoding.
 NA_API void naWriteBufferTab(NABufferIterator* iter);
 NA_API void naWriteBufferNewLine(NABufferIterator* iter);
 

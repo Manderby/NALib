@@ -51,7 +51,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
     int32 openends;
   #endif
 
-  // Count the number of code lenghts
+  // Count the number of code lengths
   for(a=0; a<tree->alphabetcount; a++){
     #ifndef NDEBUG
       // Literals of the alphabet which are not in use have a codelength
@@ -71,9 +71,9 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
   for(a = 1; a < 17; a++) {
     #ifndef NDEBUG
       if(codelengthcount[a] > (1<<a))
-        // Note that the case of having exaclty 1<<a codelenghts can actually
+        // Note that the case of having exaclty 1<<a codelengths can actually
         // occur. For example with the fixed huffman codes.
-        naError("naBuildHuffmanCodeTree", "Too many codelenghts of the same lenght");
+        naError("naBuildHuffmanCodeTree", "Too many codelengths of the same length");
     #endif
     code = (uint16)((code + codelengthcount[a - 1]) << 1);
     if(codelengthcount[a]){ // this if is not necessary but is easier to debug
