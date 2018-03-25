@@ -22,8 +22,8 @@ NA_IDEF NAComplex naMakeComplexFromPolar(double r, double phi){
     if(r<0.)
       naError("naMakeComplexFromPolar", "Radius is negative");
   #endif
-  newcomplex.re = r * naCos(phi);
-  newcomplex.im = r * naSin(phi);
+  newcomplex.re = r * naCosd(phi);
+  newcomplex.im = r * naSind(phi);
   return newcomplex;
 }
 
@@ -56,7 +56,7 @@ NA_IDEF NAComplex naMulComplexReal(NAComplex a, double b){
 
 
 NA_IDEF NAComplex naDivComplexReal(NAComplex a, double b){
-  double divisor = naInv(b);
+  double divisor = naInvd(b);
   NAComplex newcomplex = {
     a.re * divisor,
     a.im * divisor
@@ -93,7 +93,7 @@ NA_IDEF NAComplex naMulComplexComplex(NAComplex a, NAComplex b){
 
 
 NA_IDEF NAComplex naDivComplexComplex(NAComplex a, NAComplex b){
-  double divisor = naInv(naNormComplex(b));
+  double divisor = naInvd(naNormComplex(b));
   NAComplex newcomplex = {
     divisor * (a.re * b.re + a.im * b.im),
     divisor * (a.im * b.re - a.re * b.im)
@@ -112,7 +112,7 @@ NA_IDEF NAComplex naNegComplex(NAComplex a){
 
 
 NA_IDEF NAComplex naInvComplex(NAComplex a){
-  double divisor = naInv(naNormComplex(a));
+  double divisor = naInvd(naNormComplex(a));
   NAComplex newcomplex = {
     divisor * a.re,
     divisor * -a.im
@@ -136,42 +136,42 @@ NA_IDEF double naNormComplex(NAComplex a){
 
 
 NA_IDEF double naAbsComplex(NAComplex a){
-  return naSqrt(naNormComplex(a));
+  return naSqrtd(naNormComplex(a));
 }
 
 
 NA_IDEF double naArgComplex(NAComplex a){
-  return naAtan2(a.im, a.re);
+  return naAtan2d(a.im, a.re);
 }
 
 
 NA_IDEF NAComplex naExpComplex(NAComplex a){
-  double exponent = naExp(a.re);
+  double exponent = naExpd(a.re);
   NAComplex newcomplex = {
-    exponent * naCos(a.im),
-    exponent * naSin(a.im)
+    exponent * naCosd(a.im),
+    exponent * naSind(a.im)
   };
   return newcomplex;
 }
 
 
 NA_IDEF NAComplex naSinComplex(NAComplex a){
-  double exponent1 = naExp(-a.im);
-  double exponent2 = naExp(a.im);
+  double exponent1 = naExpd(-a.im);
+  double exponent2 = naExpd(a.im);
   NAComplex newcomplex = {
-    (naSin(a.re) * (exponent1 + exponent2)) * .5,
-    (naCos(a.re) * (exponent2 - exponent1)) * .5
+    (naSind(a.re) * (exponent1 + exponent2)) * .5,
+    (naCosd(a.re) * (exponent2 - exponent1)) * .5
   };
   return newcomplex;
 }
 
 
 NA_IDEF NAComplex naCosComplex(NAComplex a){
-  double exponent1 = naExp(-a.im);
-  double exponent2 = naExp(a.im);
+  double exponent1 = naExpd(-a.im);
+  double exponent2 = naExpd(a.im);
   NAComplex newcomplex = {
-    (naCos(a.re) * (exponent1 + exponent2)) * .5,
-    (naSin(a.re) * (exponent1 - exponent2)) * .5
+    (naCosd(a.re) * (exponent1 + exponent2)) * .5,
+    (naSind(a.re) * (exponent1 - exponent2)) * .5
   };
   return newcomplex;
 }

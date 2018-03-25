@@ -17,6 +17,8 @@ Version 21 (first published 2018-xxx-xx)
 
 - Enhanced runtime system with Reference counting for naNew, naRetain and
   naRelease.
+- Added Binary operators for more control over integer and floating point
+  values.
 
 - The Runtime system now always registers runtime types, not only in debug.
 - Added NA_MEMORY_POOL_AGGRESSIVE_CLEANUP macro in NAConfiguration.h
@@ -26,6 +28,8 @@ Version 21 (first published 2018-xxx-xx)
 - QuadTree and Octtree added childlength to update function callbacks. Also
   have new function to return rect or box of current iterator element and
   aligned coords
+- MathOperators for double now use the d suffix. Some float function names
+  have changed too.
 - Removed all occurrencies of the old company in the code.
 
 

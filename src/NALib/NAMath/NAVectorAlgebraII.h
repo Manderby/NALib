@@ -156,7 +156,7 @@ NA_IDEF void naFillV2dRandomSpherical(double* d, NABool filled){
     norm = naDotV2dE(d, d);
   }while((norm > 1.) || (norm == 0.));
   // note that test case (norm == 0) is very rare.
-  if(!filled){naDivV2dS(d, naSqrt(norm));}
+  if(!filled){naDivV2dS(d, naSqrtd(norm));}
 }
 NA_IDEF void naFillV3dRandomSpherical(double* d, NABool filled){
   double norm;
@@ -167,7 +167,7 @@ NA_IDEF void naFillV3dRandomSpherical(double* d, NABool filled){
     norm = naDotV3dE(d, d);
   }while((norm > 1.) || (norm == 0.));
   // note that test case (norm == 0) is extremely! rare.
-  if(!filled){naDivV3dS(d, naSqrt(norm));}
+  if(!filled){naDivV3dS(d, naSqrtd(norm));}
 }
 NA_IDEF void naFillV4dRandomSpherical(double* d, NABool filled){
   double norm;
@@ -184,7 +184,7 @@ NA_IDEF void naFillV4dRandomSpherical(double* d, NABool filled){
     // lazy.
   }while((norm > 1.) || (norm == 0.));
   // note that test case (norm == 0) is EXORBITANTLY rare.
-  if(!filled){naDivV4dS(d, naSqrt(norm));}
+  if(!filled){naDivV4dS(d, naSqrtd(norm));}
 }
 NA_IDEF void naFillV1fRandomSpherical(float* d, NABool filled){
   if(filled){
@@ -1342,7 +1342,7 @@ NA_IDEF void naDivV1d(double* NA_RESTRICT d, const double* NA_RESTRICT a, double
     else if(naAbsi(d-a) < 1)
       naError("naDivV1d", "a overlaps misaligned with d.");
   #endif
-  div = naInv(s);
+  div = naInvd(s);
   d[0] = a[0] * div;
 }
 NA_IDEF void naDivV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a, double s){
@@ -1353,7 +1353,7 @@ NA_IDEF void naDivV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a, double
     else if(naAbsi(d-a) < 2)
       naError("naDivV2d", "a overlaps misaligned with d.");
   #endif
-  div = naInv(s);
+  div = naInvd(s);
   d[0] = a[0] * div;
   d[1] = a[1] * div;
 }
@@ -1365,7 +1365,7 @@ NA_IDEF void naDivV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a, double
     else if(naAbsi(d-a) < 3)
       naError("naDivV3d", "a overlaps misaligned with d.");
   #endif
-  div = naInv(s);
+  div = naInvd(s);
   d[0] = a[0] * div;
   d[1] = a[1] * div;
   d[2] = a[2] * div;
@@ -1378,7 +1378,7 @@ NA_IDEF void naDivV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a, double
     else if(naAbsi(d-a) < 4)
       naError("naDivV4d", "a overlaps misaligned with d.");
   #endif
-  div = naInv(s);
+  div = naInvd(s);
   d[0] = a[0] * div;
   d[1] = a[1] * div;
   d[2] = a[2] * div;
@@ -1435,7 +1435,7 @@ NA_IDEF void naDivV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a, float s)
   d[3] = a[3] * div;
 }
 NA_IDEF void naDivV1dE(double* d, const double* a, double s){
-  double div = naInv(s);
+  double div = naInvd(s);
   d[0] = a[0] * div;
 }
 NA_IDEF void naDivV2dE(double* d, const double* a, double s){
@@ -1444,7 +1444,7 @@ NA_IDEF void naDivV2dE(double* d, const double* a, double s){
     if((a!=d) && (naAbsi(d-a) < 2))
       naError("naDivV2dE", "a overlaps misaligned with d. Result undefined.");
   #endif
-  div = naInv(s);
+  div = naInvd(s);
   d[0] = a[0] * div;
   d[1] = a[1] * div;
 }
@@ -1454,7 +1454,7 @@ NA_IDEF void naDivV3dE(double* d, const double* a, double s){
     if((a!=d) && (naAbsi(d-a) < 3))
       naError("naDivV3dE", "a overlaps misaligned with d. Result undefined.");
   #endif
-  div = naInv(s);
+  div = naInvd(s);
   d[0] = a[0] * div;
   d[1] = a[1] * div;
   d[2] = a[2] * div;
@@ -1465,7 +1465,7 @@ NA_IDEF void naDivV4dE(double* d, const double* a, double s){
     if((a!=d) && (naAbsi(d-a) < 4))
       naError("naDivV4dE", "a overlaps misaligned with d. Result undefined.");
   #endif
-  div = naInv(s);
+  div = naInvd(s);
   d[0] = a[0] * div;
   d[1] = a[1] * div;
   d[2] = a[2] * div;
@@ -1509,22 +1509,22 @@ NA_IDEF void naDivV4fE(float*  d, const float*  a, float s){
   d[3] = a[3] * div;
 }
 NA_IDEF void naDivV1dS(double* d, double s){
-  double div = naInv(s);
+  double div = naInvd(s);
   d[0] *= div;
 }
 NA_IDEF void naDivV2dS(double* d, double s){
-  double div = naInv(s);
+  double div = naInvd(s);
   d[0] *= div;
   d[1] *= div;
 }
 NA_IDEF void naDivV3dS(double* d, double s){
-  double div = naInv(s);
+  double div = naInvd(s);
   d[0] *= div;
   d[1] *= div;
   d[2] *= div;
 }
 NA_IDEF void naDivV4dS(double* d, double s){
-  double div = naInv(s);
+  double div = naInvd(s);
   d[0] *= div;
   d[1] *= div;
   d[2] *= div;
@@ -1565,7 +1565,7 @@ NA_IDEF void naInvCompV1d (double* NA_RESTRICT d, const double*  NA_RESTRICT s){
     else if(naAbsi(d-s) < 1)
       naError("naInvCompV1d", "s overlaps misaligned with d.");
   #endif
-  d[0] = naInv(s[0]);
+  d[0] = naInvd(s[0]);
 }
 NA_IDEF void naInvCompV2d (double* NA_RESTRICT d, const double*  NA_RESTRICT s){
   #ifndef NDEBUG
@@ -1574,8 +1574,8 @@ NA_IDEF void naInvCompV2d (double* NA_RESTRICT d, const double*  NA_RESTRICT s){
     else if(naAbsi(d-s) < 2)
       naError("naInvCompV2d", "s overlaps misaligned with d.");
   #endif
-  d[0] = naInv(s[0]);
-  d[1] = naInv(s[1]);
+  d[0] = naInvd(s[0]);
+  d[1] = naInvd(s[1]);
 }
 NA_IDEF void naInvCompV3d (double* NA_RESTRICT d, const double*  NA_RESTRICT s){
   #ifndef NDEBUG
@@ -1584,9 +1584,9 @@ NA_IDEF void naInvCompV3d (double* NA_RESTRICT d, const double*  NA_RESTRICT s){
     else if(naAbsi(d-s) < 3)
       naError("naInvCompV3d", "s overlaps misaligned with d.");
   #endif
-  d[0] = naInv(s[0]);
-  d[1] = naInv(s[1]);
-  d[2] = naInv(s[2]);
+  d[0] = naInvd(s[0]);
+  d[1] = naInvd(s[1]);
+  d[2] = naInvd(s[2]);
 }
 NA_IDEF void naInvCompV4d (double* NA_RESTRICT d, const double*  NA_RESTRICT s){
   #ifndef NDEBUG
@@ -1595,10 +1595,10 @@ NA_IDEF void naInvCompV4d (double* NA_RESTRICT d, const double*  NA_RESTRICT s){
     else if(naAbsi(d-s) < 4)
       naError("naInvCompV4d", "s overlaps misaligned with d.");
   #endif
-  d[0] = naInv(s[0]);
-  d[1] = naInv(s[1]);
-  d[2] = naInv(s[2]);
-  d[3] = naInv(s[3]);
+  d[0] = naInvd(s[0]);
+  d[1] = naInvd(s[1]);
+  d[2] = naInvd(s[2]);
+  d[3] = naInvd(s[3]);
 }
 NA_IDEF void naInvCompV1f(float*  NA_RESTRICT d, const float*   NA_RESTRICT s){
   #ifndef NDEBUG
@@ -1647,34 +1647,34 @@ NA_IDEF void naInvCompV1dE(double* d, double* s){
     if((s != d) && (naAbsi(d-s) < 1))
       naError("naInvCompV1dE", "s overlaps misaligned with d.");
   #endif
-  d[0] = naInv(s[0]);
+  d[0] = naInvd(s[0]);
 }
 NA_IDEF void naInvCompV2dE(double* d, double* s){
   #ifndef NDEBUG
     if((s != d) && (naAbsi(d-s) < 2))
       naError("naInvCompV2dE", "s overlaps misaligned with d.");
   #endif
-  d[0] = naInv(s[0]);
-  d[1] = naInv(s[1]);
+  d[0] = naInvd(s[0]);
+  d[1] = naInvd(s[1]);
 }
 NA_IDEF void naInvCompV3dE(double* d, double* s){
   #ifndef NDEBUG
     if((s != d) && (naAbsi(d-s) < 3))
       naError("naInvCompV3dE", "s overlaps misaligned with d.");
   #endif
-  d[0] = naInv(s[0]);
-  d[1] = naInv(s[1]);
-  d[2] = naInv(s[2]);
+  d[0] = naInvd(s[0]);
+  d[1] = naInvd(s[1]);
+  d[2] = naInvd(s[2]);
 }
 NA_IDEF void naInvCompV4dE(double* d, double* s){
   #ifndef NDEBUG
     if((s != d) && (naAbsi(d-s) < 4))
       naError("naInvCompV4dE", "s overlaps misaligned with d.");
   #endif
-  d[0] = naInv(s[0]);
-  d[1] = naInv(s[1]);
-  d[2] = naInv(s[2]);
-  d[3] = naInv(s[3]);
+  d[0] = naInvd(s[0]);
+  d[1] = naInvd(s[1]);
+  d[2] = naInvd(s[2]);
+  d[3] = naInvd(s[3]);
 }
 NA_IDEF void naInvCompV1fE(float*  d, float*  s){
   #ifndef NDEBUG
@@ -1711,22 +1711,22 @@ NA_IDEF void naInvCompV4fE(float*  d, float*  s){
   d[3] = naInvf(s[3]);
 }
 NA_IDEF void naInvCompV1dS(double* d){
-  d[0] = naInv(d[0]);
+  d[0] = naInvd(d[0]);
 }
 NA_IDEF void naInvCompV2dS(double* d){
-  d[0] = naInv(d[0]);
-  d[1] = naInv(d[1]);
+  d[0] = naInvd(d[0]);
+  d[1] = naInvd(d[1]);
 }
 NA_IDEF void naInvCompV3dS(double* d){
-  d[0] = naInv(d[0]);
-  d[1] = naInv(d[1]);
-  d[2] = naInv(d[2]);
+  d[0] = naInvd(d[0]);
+  d[1] = naInvd(d[1]);
+  d[2] = naInvd(d[2]);
 }
 NA_IDEF void naInvCompV4dS(double* d){
-  d[0] = naInv(d[0]);
-  d[1] = naInv(d[1]);
-  d[2] = naInv(d[2]);
-  d[3] = naInv(d[3]);
+  d[0] = naInvd(d[0]);
+  d[1] = naInvd(d[1]);
+  d[2] = naInvd(d[2]);
+  d[3] = naInvd(d[3]);
 }
 NA_IDEF void naInvCompV1fS(float*  d){
   d[0] = naInvf(d[0]);
@@ -2082,7 +2082,7 @@ NA_IDEF void naDivCompV1dV1d(double* NA_RESTRICT d, const double* NA_RESTRICT a,
     if(naAbsi(d-b) < 1)
       naError("naDivCompV1dV1d", "b overlaps with d. Use restrict pointers or the E variant");
   #endif
-  d[0] = a[0] * naInv(b[0]);
+  d[0] = a[0] * naInvd(b[0]);
 }
 NA_IDEF void naDivCompV2dV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b){
   #ifndef NDEBUG
@@ -2093,8 +2093,8 @@ NA_IDEF void naDivCompV2dV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a,
     if(naAbsi(d-b) < 2)
       naError("naDivCompV2dV2d", "b overlaps with d. Use restrict pointers or the E variant");
   #endif
-  d[0] = a[0] * naInv(b[0]);
-  d[1] = a[1] * naInv(b[1]);
+  d[0] = a[0] * naInvd(b[0]);
+  d[1] = a[1] * naInvd(b[1]);
 }
 NA_IDEF void naDivCompV3dV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b){
   #ifndef NDEBUG
@@ -2105,9 +2105,9 @@ NA_IDEF void naDivCompV3dV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a,
     if(naAbsi(d-b) < 3)
       naError("naDivCompV3dV3d", "b overlaps with d. Use restrict pointers or the E variant");
   #endif
-  d[0] = a[0] * naInv(b[0]);
-  d[1] = a[1] * naInv(b[1]);
-  d[2] = a[2] * naInv(b[2]);
+  d[0] = a[0] * naInvd(b[0]);
+  d[1] = a[1] * naInvd(b[1]);
+  d[2] = a[2] * naInvd(b[2]);
 }
 NA_IDEF void naDivCompV4dV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b){
   #ifndef NDEBUG
@@ -2118,10 +2118,10 @@ NA_IDEF void naDivCompV4dV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a,
     if(naAbsi(d-b) < 4)
       naError("naDivCompV4dV4d", "b overlaps with d. Use restrict pointers or the E variant");
   #endif
-  d[0] = a[0] * naInv(b[0]);
-  d[1] = a[1] * naInv(b[1]);
-  d[2] = a[2] * naInv(b[2]);
-  d[3] = a[3] * naInv(b[3]);
+  d[0] = a[0] * naInvd(b[0]);
+  d[1] = a[1] * naInvd(b[1]);
+  d[2] = a[2] * naInvd(b[2]);
+  d[3] = a[3] * naInvd(b[3]);
 }
 NA_IDEF void naDivCompV1fV1f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT b){
   #ifndef NDEBUG
@@ -2174,7 +2174,7 @@ NA_IDEF void naDivCompV4fV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a, c
   d[3] = a[3] * naInvf(b[3]);
 }
 NA_IDEF void naDivCompV1dV1dE(double* d, const double* a, const double* b){
-  d[0] = a[0] * naInv(b[0]);
+  d[0] = a[0] * naInvd(b[0]);
 }
 NA_IDEF void naDivCompV2dV2dE(double* d, const double* a, const double* b){
   #ifndef NDEBUG
@@ -2183,8 +2183,8 @@ NA_IDEF void naDivCompV2dV2dE(double* d, const double* a, const double* b){
     if((b!=d) && (naAbsi(d-b) < 2))
       naError("naDivCompV2dV2dE", "b overlaps misaligned with d. Result undefined.");
   #endif
-  d[0] = a[0] * naInv(b[0]);
-  d[1] = a[1] * naInv(b[1]);
+  d[0] = a[0] * naInvd(b[0]);
+  d[1] = a[1] * naInvd(b[1]);
 }
 NA_IDEF void naDivCompV3dV3dE(double* d, const double* a, const double* b){
   #ifndef NDEBUG
@@ -2193,9 +2193,9 @@ NA_IDEF void naDivCompV3dV3dE(double* d, const double* a, const double* b){
     if((b!=d) && (naAbsi(d-b) < 3))
       naError("naDivCompV3dV3dE", "b overlaps misaligned with d. Result undefined.");
   #endif
-  d[0] = a[0] * naInv(b[0]);
-  d[1] = a[1] * naInv(b[1]);
-  d[2] = a[2] * naInv(b[2]);
+  d[0] = a[0] * naInvd(b[0]);
+  d[1] = a[1] * naInvd(b[1]);
+  d[2] = a[2] * naInvd(b[2]);
 }
 NA_IDEF void naDivCompV4dV4dE(double* d, const double* a, const double* b){
   #ifndef NDEBUG
@@ -2204,10 +2204,10 @@ NA_IDEF void naDivCompV4dV4dE(double* d, const double* a, const double* b){
     if((b!=d) && (naAbsi(d-b) < 4))
       naError("naDivCompV4dV4dE", "b overlaps misaligned with d. Result undefined.");
   #endif
-  d[0] = a[0] * naInv(b[0]);
-  d[1] = a[1] * naInv(b[1]);
-  d[2] = a[2] * naInv(b[2]);
-  d[3] = a[3] * naInv(b[3]);
+  d[0] = a[0] * naInvd(b[0]);
+  d[1] = a[1] * naInvd(b[1]);
+  d[2] = a[2] * naInvd(b[2]);
+  d[3] = a[3] * naInvd(b[3]);
 }
 NA_IDEF void naDivCompV1fV1fE(float*  d, const float*  a, const float*  b){
   d[0] = a[0] * naInvf(b[0]);
@@ -2250,7 +2250,7 @@ NA_IDEF void naDivCompV1dV1dS(double* NA_RESTRICT d, const double* NA_RESTRICT b
     if(d == b)
       naError("naDivCompV1dV1dS", "Pointers d and b are equal. Use SE variant");
   #endif
-  d[0] *= naInv(b[0]);
+  d[0] *= naInvd(b[0]);
 }
 NA_IDEF void naDivCompV2dV2dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
   #ifndef NDEBUG
@@ -2259,8 +2259,8 @@ NA_IDEF void naDivCompV2dV2dS(double* NA_RESTRICT d, const double* NA_RESTRICT b
     else if(naAbsi(d-b) < 2)
       naError("naDivCompV2dV2dS", "b and d are overlapping misaligned. Result undefined.");
   #endif
-  d[0] *= naInv(b[0]);
-  d[1] *= naInv(b[1]);
+  d[0] *= naInvd(b[0]);
+  d[1] *= naInvd(b[1]);
 }
 NA_IDEF void naDivCompV3dV3dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
   #ifndef NDEBUG
@@ -2269,9 +2269,9 @@ NA_IDEF void naDivCompV3dV3dS(double* NA_RESTRICT d, const double* NA_RESTRICT b
     else if((d != b) && (naAbsi(d-b) < 3))
       naError("naDivCompV3dV3dS", "b and d are overlapping misaligned. Result undefined.");
   #endif
-  d[0] *= naInv(b[0]);
-  d[1] *= naInv(b[1]);
-  d[2] *= naInv(b[2]);
+  d[0] *= naInvd(b[0]);
+  d[1] *= naInvd(b[1]);
+  d[2] *= naInvd(b[2]);
 }
 NA_IDEF void naDivCompV4dV4dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
   #ifndef NDEBUG
@@ -2280,10 +2280,10 @@ NA_IDEF void naDivCompV4dV4dS(double* NA_RESTRICT d, const double* NA_RESTRICT b
     else if((d != b) && (naAbsi(d-b) < 4))
       naError("naDivCompV4dV4dS", "b and d are overlapping misaligned. Result undefined.");
   #endif
-  d[0] *= naInv(b[0]);
-  d[1] *= naInv(b[1]);
-  d[2] *= naInv(b[2]);
-  d[3] *= naInv(b[3]);
+  d[0] *= naInvd(b[0]);
+  d[1] *= naInvd(b[1]);
+  d[2] *= naInvd(b[2]);
+  d[3] *= naInvd(b[3]);
 }
 NA_IDEF void naDivCompV1fV1fS(float*  NA_RESTRICT d, const float*  NA_RESTRICT b){
   #ifndef NDEBUG
@@ -2326,34 +2326,34 @@ NA_IDEF void naDivCompV4fV4fS(float*  NA_RESTRICT d, const float*  NA_RESTRICT b
   d[3] *= naInvf(b[3]);
 }
 NA_IDEF void naDivCompV1dV1dSE(double* d, const double* b){
-  d[0] *= naInv(b[0]);
+  d[0] *= naInvd(b[0]);
 }
 NA_IDEF void naDivCompV2dV2dSE(double* d, const double* b){
   #ifndef NDEBUG
     if(naAbsi(d-b) < 2)
       naError("naDivCompV2dV2dS", "b and d are overlapping misaligned. Result undefined.");
   #endif
-  d[0] *= naInv(b[0]);
-  d[1] *= naInv(b[1]);
+  d[0] *= naInvd(b[0]);
+  d[1] *= naInvd(b[1]);
 }
 NA_IDEF void naDivCompV3dV3dSE(double* d, const double* b){
   #ifndef NDEBUG
     if((d != b) && (naAbsi(d-b) < 3))
       naError("naDivCompV3dV3dS", "b and d are overlapping misaligned. Result undefined.");
   #endif
-  d[0] *= naInv(b[0]);
-  d[1] *= naInv(b[1]);
-  d[2] *= naInv(b[2]);
+  d[0] *= naInvd(b[0]);
+  d[1] *= naInvd(b[1]);
+  d[2] *= naInvd(b[2]);
 }
 NA_IDEF void naDivCompV4dV4dSE(double* d, const double* b){
   #ifndef NDEBUG
     if((d != b) && (naAbsi(d-b) < 4))
       naError("naDivCompV4dV4dS", "b and d are overlapping misaligned. Result undefined.");
   #endif
-  d[0] *= naInv(b[0]);
-  d[1] *= naInv(b[1]);
-  d[2] *= naInv(b[2]);
-  d[3] *= naInv(b[3]);
+  d[0] *= naInvd(b[0]);
+  d[1] *= naInvd(b[1]);
+  d[2] *= naInvd(b[2]);
+  d[3] *= naInvd(b[3]);
 }
 NA_IDEF void naDivCompV1fV1fSE(float*  d, const float*  b){
   d[0] *= naInvf(b[0]);
@@ -3031,16 +3031,16 @@ NA_IDEF void naCrossV3f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const 
 // /////////////////////////////////////////
 
 NA_IDEF double naLengthV1d(const double* a){
-  return naAbs(a[0]);
+  return naAbsd(a[0]);
 }
 NA_IDEF double naLengthV2d(const double* a){
-  return naSqrt(naDotV2dS(a));
+  return naSqrtd(naDotV2dS(a));
 }
 NA_IDEF double naLengthV3d(const double* a){
-  return naSqrt(naDotV3dS(a));
+  return naSqrtd(naDotV3dS(a));
 }
 NA_IDEF double naLengthV4d(const double* a){
-  return naSqrt(naDotV4dS(a));
+  return naSqrtd(naDotV4dS(a));
 }
 NA_IDEF float naLengthV1f(const float* a){
   return naAbsf(a[0]);
@@ -3065,7 +3065,7 @@ NA_IDEF double naDistanceV1d(const double* NA_RESTRICT a, const double* NA_RESTR
     if(a == b)
       naError("naDistanceV1d", "a and b are the same pointer");
   #endif
-  return naAbs(a[0] - b[0]);
+  return naAbsd(a[0] - b[0]);
 }
 NA_IDEF double naDistanceV2d(const double* NA_RESTRICT a, const double* NA_RESTRICT b){
   NAVec2d vec;
@@ -3129,7 +3129,7 @@ NA_IDEF float naDistanceV4f(const float* NA_RESTRICT a, const float* NA_RESTRICT
   return naLengthV4f(vec);
 }
 NA_IDEF double naDistanceV1dE(const double* a, const double* b){
-  return naAbs(a[0] - b[0]);
+  return naAbsd(a[0] - b[0]);
 }
 NA_IDEF double naDistanceV2dE(const double* a, const double* b){
   NAVec2d vec;
@@ -3175,7 +3175,7 @@ NA_IDEF void naMirrorV1d(double* NA_RESTRICT d, const double* NA_RESTRICT a, con
   #ifndef NDEBUG
     if(naAbsi(n-d) < 1)
       naError("naMirrorV1d", "n overlaps with d");
-    if(!naAlmostOne(naLengthV1d(n)))
+    if(!naAlmostOned(naLengthV1d(n)))
       naError("naMirrorV1d", "Normal is not normalized");
     if(a == d)
       naError("naMirrorV1d", "a equals d. Use E or S variant or restrict pointers.");
@@ -3188,7 +3188,7 @@ NA_IDEF void naMirrorV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a, con
   #ifndef NDEBUG
     if(naAbsi(n-d) < 2)
       naError("naMirrorV2d", "n overlaps with d");
-    if(!naAlmostOne(naLengthV2d(n)))
+    if(!naAlmostOned(naLengthV2d(n)))
       naError("naMirrorV2d", "Normal is not normalized");
     if(a == d)
       naError("naMirrorV2d", "a equals d. Use E or S variant or restrict pointers.");
@@ -3201,7 +3201,7 @@ NA_IDEF void naMirrorV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a, con
   #ifndef NDEBUG
     if(naAbsi(n-d) < 3)
       naError("naMirrorV3d", "n overlaps with d");
-    if(!naAlmostOne(naLengthV3d(n)))
+    if(!naAlmostOned(naLengthV3d(n)))
       naError("naMirrorV3d", "Normal is not normalized");
     if(a == d)
       naError("naMirrorV3d", "a equals d. Use E or S variant or restrict pointers.");
@@ -3214,7 +3214,7 @@ NA_IDEF void naMirrorV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a, con
   #ifndef NDEBUG
     if(naAbsi(n-d) < 4)
       naError("naMirrorV4d", "n overlaps with d");
-    if(!naAlmostOne(naLengthV4d(n)))
+    if(!naAlmostOned(naLengthV4d(n)))
       naError("naMirrorV4d", "Normal is not normalized");
     if(a == d)
       naError("naMirrorV4d", "a equals d. Use E or S variant or restrict pointers.");
@@ -3279,7 +3279,7 @@ NA_IDEF void naMirrorV1dE(double* d, const double* a, const double* n){
   #ifndef NDEBUG
     if(naAbsi(n-d) < 1)
       naError("naMirrorV1dE", "n overlaps with d");
-    if(!naAlmostOne(naLengthV1d(n)))
+    if(!naAlmostOned(naLengthV1d(n)))
       naError("naMirrorV1dE", "Normal is not normalized");
     if((a != d) && naAbsi(a-d) < 1)
       naError("naMirrorV1dE", "a overlaps misaligned with d");
@@ -3290,7 +3290,7 @@ NA_IDEF void naMirrorV2dE(double* d, const double* a, const double* n){
   #ifndef NDEBUG
     if(naAbsi(n-d) < 2)
       naError("naMirrorV2dE", "n overlaps with d");
-    if(!naAlmostOne(naLengthV2d(n)))
+    if(!naAlmostOned(naLengthV2d(n)))
       naError("naMirrorV2dE", "Normal is not normalized");
     if((a != d) && naAbsi(a-d) < 2)
       naError("naMirrorV2dE", "a overlaps misaligned with d");
@@ -3301,7 +3301,7 @@ NA_IDEF void naMirrorV3dE(double* d, const double* a, const double* n){
   #ifndef NDEBUG
     if(naAbsi(n-d) < 3)
       naError("naMirrorV3dE", "n overlaps with d");
-    if(!naAlmostOne(naLengthV3d(n)))
+    if(!naAlmostOned(naLengthV3d(n)))
       naError("naMirrorV3dE", "Normal is not normalized");
     if((a != d) && naAbsi(a-d) < 3)
       naError("naMirrorV3dE", "a overlaps misaligned with d");
@@ -3312,7 +3312,7 @@ NA_IDEF void naMirrorV4dE(double* d, const double* a, const double* n){
   #ifndef NDEBUG
     if(naAbsi(n-d) < 4)
       naError("naMirrorV4dE", "n overlaps with d");
-    if(!naAlmostOne(naLengthV4d(n)))
+    if(!naAlmostOned(naLengthV4d(n)))
       naError("naMirrorV4dE", "Normal is not normalized");
     if((a != d) && naAbsi(a-d) < 4)
       naError("naMirrorV4dE", "a overlaps misaligned with d");
@@ -3367,7 +3367,7 @@ NA_IDEF void naMirrorV1dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
   #ifndef NDEBUG
     if(naAbsi(n-d) < 1)
       naError("naMirrorV1dS", "n overlaps with d");
-    if(!naAlmostOne(naLengthV1d(n)))
+    if(!naAlmostOned(naLengthV1d(n)))
       naError("naMirrorV1dS", "Normal is not normalized");
   #endif
   naMadV1dS(d, n, -2. * naDotV1d(d, n));
@@ -3376,7 +3376,7 @@ NA_IDEF void naMirrorV2dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
   #ifndef NDEBUG
     if(naAbsi(n-d) < 2)
       naError("naMirrorV2dS", "n overlaps with d");
-    if(!naAlmostOne(naLengthV2d(n)))
+    if(!naAlmostOned(naLengthV2d(n)))
       naError("naMirrorV2dS", "Normal is not normalized");
   #endif
   naMadV2dS(d, n, -2. * naDotV2d(d, n));
@@ -3385,7 +3385,7 @@ NA_IDEF void naMirrorV3dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
   #ifndef NDEBUG
     if(naAbsi(n-d) < 3)
       naError("naMirrorV3dS", "n overlaps with d");
-    if(!naAlmostOne(naLengthV3d(n)))
+    if(!naAlmostOned(naLengthV3d(n)))
       naError("naMirrorV3dS", "Normal is not normalized");
   #endif
   naMadV3dS(d, n, -2. * naDotV3d(d, n));
@@ -3394,7 +3394,7 @@ NA_IDEF void naMirrorV4dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
   #ifndef NDEBUG
     if(naAbsi(n-d) < 4)
       naError("naMirrorV4dS", "n overlaps with d");
-    if(!naAlmostOne(naLengthV4d(n)))
+    if(!naAlmostOned(naLengthV4d(n)))
       naError("naMirrorV4dS", "Normal is not normalized");
   #endif
   naMadV4dS(d, n, -2. * naDotV4d(d, n));
@@ -3674,10 +3674,10 @@ NA_IDEF void naOrthogonalizeV2d(double* NA_RESTRICT d, const double* NA_RESTRICT
       naError("naOrthogonalizeV2d", "a overlaps misaligned with d");
     if(naAbsi(b-d) < 2)
       naError("naOrthogonalizeV2d", "b overlaps with d");
-    if(naAlmostZero(bnorm))
+    if(naAlmostZerod(bnorm))
       naError("naOrthogonalizeV2d", "b looks like a zero vector.");
   #endif
-  naMadV2d(d, a, b, - naDotV2d(b, a) * naInv(bnorm));
+  naMadV2d(d, a, b, - naDotV2d(b, a) * naInvd(bnorm));
 }
 NA_IDEF void naOrthogonalizeV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b){
   double bnorm = naDotV3dS(b);
@@ -3688,10 +3688,10 @@ NA_IDEF void naOrthogonalizeV3d(double* NA_RESTRICT d, const double* NA_RESTRICT
       naError("naOrthogonalizeV3d", "a overlaps misaligned with d");
     if(naAbsi(b-d) < 3)
       naError("naOrthogonalizeV3d", "b overlaps with d");
-    if(naAlmostZero(bnorm))
+    if(naAlmostZerod(bnorm))
       naError("naOrthogonalizeV3d", "b looks like a zero vector.");
   #endif
-  naMadV3d(d, a, b, - naDotV3d(b, a) * naInv(bnorm));
+  naMadV3d(d, a, b, - naDotV3d(b, a) * naInvd(bnorm));
 }
 NA_IDEF void naOrthogonalizeV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b){
   double bnorm = naDotV4dS(b);
@@ -3702,10 +3702,10 @@ NA_IDEF void naOrthogonalizeV4d(double* NA_RESTRICT d, const double* NA_RESTRICT
       naError("naOrthogonalizeV4d", "a overlaps misaligned with d");
     if(naAbsi(b-d) < 4)
       naError("naOrthogonalizeV4d", "b overlaps with d");
-    if(naAlmostZero(bnorm))
+    if(naAlmostZerod(bnorm))
       naError("naOrthogonalizeV4d", "b looks like a zero vector.");
   #endif
-  naMadV4d(d, a, b, - naDotV4d(b, a) * naInv(bnorm));
+  naMadV4d(d, a, b, - naDotV4d(b, a) * naInvd(bnorm));
 }
 NA_IDEF void naOrthogonalizeV2f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT b){
   float bnorm = naDotV2fS(b);
@@ -3756,10 +3756,10 @@ NA_IDEF void naOrthogonalizeV2dE(double* d, const double* a, const double* b){
       naError("naOrthogonalizeV2d", "a overlaps misaligned with d");
     if(naAbsi(b-d) < 2)
       naError("naOrthogonalizeV2d", "b overlaps with d");
-    if(naAlmostZero(bnorm))
+    if(naAlmostZerod(bnorm))
       naError("naOrthogonalizeV2d", "b looks like a zero vector.");
   #endif
-  naMadV2d(d, a, b, - naDotV2d(b, a) * naInv(bnorm));
+  naMadV2d(d, a, b, - naDotV2d(b, a) * naInvd(bnorm));
 }
 NA_IDEF void naOrthogonalizeV3dE(double* d, const double* a, const double* b){
   double bnorm = naDotV3dS(b);
@@ -3768,10 +3768,10 @@ NA_IDEF void naOrthogonalizeV3dE(double* d, const double* a, const double* b){
       naError("naOrthogonalizeV3d", "a overlaps misaligned with d");
     if(naAbsi(b-d) < 3)
       naError("naOrthogonalizeV3d", "b overlaps with d");
-    if(naAlmostZero(bnorm))
+    if(naAlmostZerod(bnorm))
       naError("naOrthogonalizeV3d", "b looks like a zero vector.");
   #endif
-  naMadV3d(d, a, b, - naDotV3d(b, a) * naInv(bnorm));
+  naMadV3d(d, a, b, - naDotV3d(b, a) * naInvd(bnorm));
 }
 NA_IDEF void naOrthogonalizeV4dE(double* d, const double* a, const double* b){
   double bnorm = naDotV4dS(b);
@@ -3780,10 +3780,10 @@ NA_IDEF void naOrthogonalizeV4dE(double* d, const double* a, const double* b){
       naError("naOrthogonalizeV4d", "a overlaps misaligned with d");
     if(naAbsi(b-d) < 4)
       naError("naOrthogonalizeV4d", "b overlaps with d");
-    if(naAlmostZero(bnorm))
+    if(naAlmostZerod(bnorm))
       naError("naOrthogonalizeV4d", "b looks like a zero vector.");
   #endif
-  naMadV4d(d, a, b, - naDotV4d(b, a) * naInv(bnorm));
+  naMadV4d(d, a, b, - naDotV4d(b, a) * naInvd(bnorm));
 }
 NA_IDEF void naOrthogonalizeV2fE(float* d, const float* a, const float* b){
   float bnorm = naDotV2fS(b);
@@ -3826,30 +3826,30 @@ NA_IDEF void naOrthogonalizeV2dS(double* NA_RESTRICT d, const double* NA_RESTRIC
   #ifndef NDEBUG
     if(naAbsi(b-d) < 2)
       naError("naOrthogonalizeV2d", "b overlaps with d");
-    if(naAlmostZero(bnorm))
+    if(naAlmostZerod(bnorm))
       naError("naOrthogonalizeV2d", "b looks like a zero vector.");
   #endif
-  naMadV2dS(d, b, - naDotV2d(b, d) * naInv(bnorm));
+  naMadV2dS(d, b, - naDotV2d(b, d) * naInvd(bnorm));
 }
 NA_IDEF void naOrthogonalizeV3dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
   double bnorm = naDotV3dS(b);
   #ifndef NDEBUG
     if(naAbsi(b-d) < 3)
       naError("naOrthogonalizeV3d", "b overlaps with d");
-    if(naAlmostZero(bnorm))
+    if(naAlmostZerod(bnorm))
       naError("naOrthogonalizeV3d", "b looks like a zero vector.");
   #endif
-  naMadV3dS(d, b, - naDotV3d(b, d) * naInv(bnorm));
+  naMadV3dS(d, b, - naDotV3d(b, d) * naInvd(bnorm));
 }
 NA_IDEF void naOrthogonalizeV4dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
   double bnorm = naDotV4dS(b);
   #ifndef NDEBUG
     if(naAbsi(b-d) < 4)
       naError("naOrthogonalizeV4d", "b overlaps with d");
-    if(naAlmostZero(bnorm))
+    if(naAlmostZerod(bnorm))
       naError("naOrthogonalizeV4d", "b looks like a zero vector.");
   #endif
-  naMadV4dS(d, b, - naDotV4d(b, d) * naInv(bnorm));
+  naMadV4dS(d, b, - naDotV4d(b, d) * naInvd(bnorm));
 }
 NA_IDEF void naOrthogonalizeV2fS(float* NA_RESTRICT d, const float* NA_RESTRICT b){
   float bnorm = naDotV2fS(b);
@@ -3894,7 +3894,7 @@ NA_IDEF void naOrthonormalizeV2d(double* NA_RESTRICT d, const double* NA_RESTRIC
       naError("naOrthonormalizeV2d", "a equals d. Use E or S variant.");
     else if(naAbsi(a-d) < 2)
       naError("naOrthonormalizeV2d", "a overlaps misaligned with d");
-    if(!naAlmostOne(naLengthV4d(b)))
+    if(!naAlmostOned(naLengthV4d(b)))
       naError("naOrthonormalizeV2d", "b is not normalized");
     if(naAbsi(b-d) < 2)
       naError("naOrthonormalizeV2d", "b overlaps with d");
@@ -3908,7 +3908,7 @@ NA_IDEF void naOrthonormalizeV3d(double* NA_RESTRICT d, const double* NA_RESTRIC
       naError("naOrthonormalizeV3d", "a equals d. Use E or S variant.");
     else if(naAbsi(a-d) < 3)
       naError("naOrthonormalizeV3d", "a overlaps misaligned with d");
-    if(!naAlmostOne(naLengthV3d(b)))
+    if(!naAlmostOned(naLengthV3d(b)))
       naError("naOrthonormalizeV3d", "b is not normalized");
     if(naAbsi(b-d) < 3)
       naError("naOrthonormalizeV3d", "b overlaps with d");
@@ -3922,7 +3922,7 @@ NA_IDEF void naOrthonormalizeV4d(double* NA_RESTRICT d, const double* NA_RESTRIC
       naError("naOrthonormalizeV4d", "a equals d. Use E or S variant.");
     else if(naAbsi(a-d) < 4)
       naError("naOrthonormalizeV4d", "a overlaps misaligned with d");
-    if(!naAlmostOne(naLengthV4d(b)))
+    if(!naAlmostOned(naLengthV4d(b)))
       naError("naOrthonormalizeV4d", "b is not normalized");
     if(naAbsi(b-d) < 4)
       naError("naOrthonormalizeV4d", "b overlaps with d");
@@ -3976,7 +3976,7 @@ NA_IDEF void naOrthonormalizeV2dE(double* d, const double* a, const double* b){
   #ifndef NDEBUG
     if((a != d) && naAbsi(a-d) < 2)
       naError("naOrthonormalizeV2d", "a overlaps misaligned with d");
-    if(!naAlmostOne(naLengthV4d(b)))
+    if(!naAlmostOned(naLengthV4d(b)))
       naError("naOrthonormalizeV2d", "b is not normalized");
     if(naAbsi(b-d) < 2)
       naError("naOrthonormalizeV2d", "b overlaps with d");
@@ -3988,7 +3988,7 @@ NA_IDEF void naOrthonormalizeV3dE(double* d, const double* a, const double* b){
   #ifndef NDEBUG
     if((a != d) && naAbsi(a-d) < 3)
       naError("naOrthonormalizeV3d", "a overlaps misaligned with d");
-    if(!naAlmostOne(naLengthV3d(b)))
+    if(!naAlmostOned(naLengthV3d(b)))
       naError("naOrthonormalizeV3d", "b is not normalized");
     if(naAbsi(b-d) < 3)
       naError("naOrthonormalizeV3d", "b overlaps with d");
@@ -4000,7 +4000,7 @@ NA_IDEF void naOrthonormalizeV4dE(double* d, const double* a, const double* b){
   #ifndef NDEBUG
     if((a != d) && naAbsi(a-d) < 4)
       naError("naOrthonormalizeV4d", "a overlaps misaligned with d");
-    if(!naAlmostOne(naLengthV4d(b)))
+    if(!naAlmostOned(naLengthV4d(b)))
       naError("naOrthonormalizeV4d", "b is not normalized");
     if(naAbsi(b-d) < 4)
       naError("naOrthonormalizeV4d", "b overlaps with d");
@@ -4046,7 +4046,7 @@ NA_IDEF void naOrthonormalizeV4fE(float* d, const float* a, const float* b){
 }
 NA_IDEF void naOrthonormalizeV2dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
   #ifndef NDEBUG
-    if(!naAlmostOne(naLengthV4d(b)))
+    if(!naAlmostOned(naLengthV4d(b)))
       naError("naOrthonormalizeV2d", "b is not normalized");
     if(naAbsi(b-d) < 2)
       naError("naOrthonormalizeV2d", "b overlaps with d");
@@ -4056,7 +4056,7 @@ NA_IDEF void naOrthonormalizeV2dS(double* NA_RESTRICT d, const double* NA_RESTRI
 }
 NA_IDEF void naOrthonormalizeV3dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
   #ifndef NDEBUG
-    if(!naAlmostOne(naLengthV3d(b)))
+    if(!naAlmostOned(naLengthV3d(b)))
       naError("naOrthonormalizeV3d", "b is not normalized");
     if(naAbsi(b-d) < 3)
       naError("naOrthonormalizeV3d", "b overlaps with d");
@@ -4066,7 +4066,7 @@ NA_IDEF void naOrthonormalizeV3dS(double* NA_RESTRICT d, const double* NA_RESTRI
 }
 NA_IDEF void naOrthonormalizeV4dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
   #ifndef NDEBUG
-    if(!naAlmostOne(naLengthV4d(b)))
+    if(!naAlmostOned(naLengthV4d(b)))
       naError("naOrthonormalizeV4d", "b is not normalized");
     if(naAbsi(b-d) < 4)
       naError("naOrthonormalizeV4d", "b overlaps with d");
@@ -5410,8 +5410,8 @@ NA_IDEF void naInvCompM22d (double* NA_RESTRICT D, const double* NA_RESTRICT S){
     if(naAbsi(S-D) < 4)
       naError("naInvCompM22d", "S overlaps with D.");
   #endif
-  D[0] = naInv(S[0]); D[2] = naInv(S[2]);
-  D[1] = naInv(S[1]); D[3] = naInv(S[3]);
+  D[0] = naInvd(S[0]); D[2] = naInvd(S[2]);
+  D[1] = naInvd(S[1]); D[3] = naInvd(S[3]);
 }
 NA_IDEF void naInvCompM33d (double* NA_RESTRICT D, const double* NA_RESTRICT S){
   #ifndef NDEBUG
@@ -5420,9 +5420,9 @@ NA_IDEF void naInvCompM33d (double* NA_RESTRICT D, const double* NA_RESTRICT S){
     if(naAbsi(S-D) < 9)
       naError("naInvCompM33d", "S overlaps with D.");
   #endif
-  D[0] = naInv(S[0]); D[3] = naInv(S[3]); D[6] = naInv(S[6]);
-  D[1] = naInv(S[1]); D[4] = naInv(S[4]); D[7] = naInv(S[7]);
-  D[2] = naInv(S[2]); D[5] = naInv(S[5]); D[8] = naInv(S[8]);
+  D[0] = naInvd(S[0]); D[3] = naInvd(S[3]); D[6] = naInvd(S[6]);
+  D[1] = naInvd(S[1]); D[4] = naInvd(S[4]); D[7] = naInvd(S[7]);
+  D[2] = naInvd(S[2]); D[5] = naInvd(S[5]); D[8] = naInvd(S[8]);
 }
 NA_IDEF void naInvCompM44d (double* NA_RESTRICT D, const double* NA_RESTRICT S){
   #ifndef NDEBUG
@@ -5431,10 +5431,10 @@ NA_IDEF void naInvCompM44d (double* NA_RESTRICT D, const double* NA_RESTRICT S){
     if(naAbsi(S-D) < 16)
       naError("naInvCompM44d", "S overlaps with D.");
   #endif
-  D[0] = naInv(S[0]); D[4] = naInv(S[4]); D[ 8] = naInv(S[ 8]); D[12] = naInv(S[12]);
-  D[1] = naInv(S[1]); D[5] = naInv(S[5]); D[ 9] = naInv(S[ 9]); D[13] = naInv(S[13]);
-  D[2] = naInv(S[2]); D[6] = naInv(S[6]); D[10] = naInv(S[10]); D[14] = naInv(S[14]);
-  D[3] = naInv(S[3]); D[7] = naInv(S[7]); D[11] = naInv(S[11]); D[15] = naInv(S[15]);
+  D[0] = naInvd(S[0]); D[4] = naInvd(S[4]); D[ 8] = naInvd(S[ 8]); D[12] = naInvd(S[12]);
+  D[1] = naInvd(S[1]); D[5] = naInvd(S[5]); D[ 9] = naInvd(S[ 9]); D[13] = naInvd(S[13]);
+  D[2] = naInvd(S[2]); D[6] = naInvd(S[6]); D[10] = naInvd(S[10]); D[14] = naInvd(S[14]);
+  D[3] = naInvd(S[3]); D[7] = naInvd(S[7]); D[11] = naInvd(S[11]); D[15] = naInvd(S[15]);
 }
 NA_IDEF void naInvCompM22f (float*  NA_RESTRICT D, const float*  NA_RESTRICT S){
   #ifndef NDEBUG
@@ -5474,27 +5474,27 @@ NA_IDEF void naInvCompM22dE(double* D, const double* S){
     if((S != D) && naAbsi(S-D) < 4)
       naError("naInvCompM22dE", "S overlaps misaligned with D.");
   #endif
-  D[0] = naInv(S[0]); D[2] = naInv(S[2]);
-  D[1] = naInv(S[1]); D[3] = naInv(S[3]);
+  D[0] = naInvd(S[0]); D[2] = naInvd(S[2]);
+  D[1] = naInvd(S[1]); D[3] = naInvd(S[3]);
 }
 NA_IDEF void naInvCompM33dE(double* D, const double* S){
   #ifndef NDEBUG
     if((S != D) && naAbsi(S-D) < 9)
       naError("naInvCompM33dE", "S overlaps misaligned with D.");
   #endif
-  D[0] = naInv(S[0]); D[3] = naInv(S[3]); D[6] = naInv(S[6]);
-  D[1] = naInv(S[1]); D[4] = naInv(S[4]); D[7] = naInv(S[7]);
-  D[2] = naInv(S[2]); D[5] = naInv(S[5]); D[8] = naInv(S[8]);
+  D[0] = naInvd(S[0]); D[3] = naInvd(S[3]); D[6] = naInvd(S[6]);
+  D[1] = naInvd(S[1]); D[4] = naInvd(S[4]); D[7] = naInvd(S[7]);
+  D[2] = naInvd(S[2]); D[5] = naInvd(S[5]); D[8] = naInvd(S[8]);
 }
 NA_IDEF void naInvCompM44dE(double* D, const double* S){
   #ifndef NDEBUG
     if((S != D) && naAbsi(S-D) < 16)
       naError("naInvCompM44dE", "S overlaps misaligned with D.");
   #endif
-  D[0] = naInv(S[0]); D[4] = naInv(S[4]); D[ 8] = naInv(S[ 8]); D[12] = naInv(S[12]);
-  D[1] = naInv(S[1]); D[5] = naInv(S[5]); D[ 9] = naInv(S[ 9]); D[13] = naInv(S[13]);
-  D[2] = naInv(S[2]); D[6] = naInv(S[6]); D[10] = naInv(S[10]); D[14] = naInv(S[14]);
-  D[3] = naInv(S[3]); D[7] = naInv(S[7]); D[11] = naInv(S[11]); D[15] = naInv(S[15]);
+  D[0] = naInvd(S[0]); D[4] = naInvd(S[4]); D[ 8] = naInvd(S[ 8]); D[12] = naInvd(S[12]);
+  D[1] = naInvd(S[1]); D[5] = naInvd(S[5]); D[ 9] = naInvd(S[ 9]); D[13] = naInvd(S[13]);
+  D[2] = naInvd(S[2]); D[6] = naInvd(S[6]); D[10] = naInvd(S[10]); D[14] = naInvd(S[14]);
+  D[3] = naInvd(S[3]); D[7] = naInvd(S[7]); D[11] = naInvd(S[11]); D[15] = naInvd(S[15]);
 }
 NA_IDEF void naInvCompM22fE(float*  D, const float*  S){
   #ifndef NDEBUG
@@ -5524,19 +5524,19 @@ NA_IDEF void naInvCompM44fE(float*  D, const float*  S){
   D[3] = naInvf(S[3]); D[7] = naInvf(S[7]); D[11] = naInvf(S[11]); D[15] = naInvf(S[15]);
 }
 NA_IDEF void naInvCompM22dS(double* D){
-  D[0] = naInv(D[0]); D[2] = naInv(D[2]);
-  D[1] = naInv(D[1]); D[3] = naInv(D[3]);
+  D[0] = naInvd(D[0]); D[2] = naInvd(D[2]);
+  D[1] = naInvd(D[1]); D[3] = naInvd(D[3]);
 }
 NA_IDEF void naInvCompM33dS(double* D){
-  D[0] = naInv(D[0]); D[3] = naInv(D[3]); D[6] = naInv(D[6]);
-  D[1] = naInv(D[1]); D[4] = naInv(D[4]); D[7] = naInv(D[7]);
-  D[2] = naInv(D[2]); D[5] = naInv(D[5]); D[8] = naInv(D[8]);
+  D[0] = naInvd(D[0]); D[3] = naInvd(D[3]); D[6] = naInvd(D[6]);
+  D[1] = naInvd(D[1]); D[4] = naInvd(D[4]); D[7] = naInvd(D[7]);
+  D[2] = naInvd(D[2]); D[5] = naInvd(D[5]); D[8] = naInvd(D[8]);
 }
 NA_IDEF void naInvCompM44dS(double* D){
-  D[0] = naInv(D[0]); D[4] = naInv(D[4]); D[ 8] = naInv(D[ 8]); D[12] = naInv(D[12]);
-  D[1] = naInv(D[1]); D[5] = naInv(D[5]); D[ 9] = naInv(D[ 9]); D[13] = naInv(D[13]);
-  D[2] = naInv(D[2]); D[6] = naInv(D[6]); D[10] = naInv(D[10]); D[14] = naInv(D[14]);
-  D[3] = naInv(D[3]); D[7] = naInv(D[7]); D[11] = naInv(D[11]); D[15] = naInv(D[15]);
+  D[0] = naInvd(D[0]); D[4] = naInvd(D[4]); D[ 8] = naInvd(D[ 8]); D[12] = naInvd(D[12]);
+  D[1] = naInvd(D[1]); D[5] = naInvd(D[5]); D[ 9] = naInvd(D[ 9]); D[13] = naInvd(D[13]);
+  D[2] = naInvd(D[2]); D[6] = naInvd(D[6]); D[10] = naInvd(D[10]); D[14] = naInvd(D[14]);
+  D[3] = naInvd(D[3]); D[7] = naInvd(D[7]); D[11] = naInvd(D[11]); D[15] = naInvd(D[15]);
 }
 NA_IDEF void naInvCompM22fS(float*  D){
   D[0] = naInvf(D[0]); D[2] = naInvf(D[2]);
@@ -5934,8 +5934,8 @@ NA_IDEF void naDivCompM22dV2d( double* NA_RESTRICT D, const double*  NA_RESTRICT
     if(naInsidei(-3, 1, D-v))
       naError("naDivCompM22dV2d", "v overlaps with D.");
   #endif
-  D[0] = A[0]*naInv(v[0]); D[2] = A[2]*naInv(v[1]);
-  D[1] = A[1]*naInv(v[0]); D[3] = A[3]*naInv(v[1]);
+  D[0] = A[0]*naInvd(v[0]); D[2] = A[2]*naInvd(v[1]);
+  D[1] = A[1]*naInvd(v[0]); D[3] = A[3]*naInvd(v[1]);
 }
 NA_IDEF void naDivCompM33dV3d( double* NA_RESTRICT D, const double*  NA_RESTRICT A, const double* NA_RESTRICT v){
   #ifndef NDEBUG
@@ -5946,9 +5946,9 @@ NA_IDEF void naDivCompM33dV3d( double* NA_RESTRICT D, const double*  NA_RESTRICT
     if(naInsidei(-8, 2, D-v))
       naError("naDivCompM33dV3d", "v overlaps with D.");
   #endif
-  D[0] = A[0]*naInv(v[0]); D[3] = A[3]*naInv(v[1]); D[6] = A[6]*naInv(v[2]);
-  D[1] = A[1]*naInv(v[0]); D[4] = A[4]*naInv(v[1]); D[7] = A[7]*naInv(v[2]);
-  D[2] = A[2]*naInv(v[0]); D[5] = A[5]*naInv(v[1]); D[8] = A[8]*naInv(v[2]);
+  D[0] = A[0]*naInvd(v[0]); D[3] = A[3]*naInvd(v[1]); D[6] = A[6]*naInvd(v[2]);
+  D[1] = A[1]*naInvd(v[0]); D[4] = A[4]*naInvd(v[1]); D[7] = A[7]*naInvd(v[2]);
+  D[2] = A[2]*naInvd(v[0]); D[5] = A[5]*naInvd(v[1]); D[8] = A[8]*naInvd(v[2]);
 }
 NA_IDEF void naDivCompM44dV4d( double* NA_RESTRICT D, const double* NA_RESTRICT A, const double* NA_RESTRICT v){
   #ifndef NDEBUG
@@ -5959,10 +5959,10 @@ NA_IDEF void naDivCompM44dV4d( double* NA_RESTRICT D, const double* NA_RESTRICT 
     if(naInsidei(-15, 3, D-v))
       naError("naDivCompM44dV4d", "v overlaps with D.");
   #endif
-  D[0] = A[0]*naInv(v[0]); D[4] = A[4]*naInv(v[1]); D[ 8] = A[ 8]*naInv(v[2]); D[12] = A[12]*naInv(v[3]);
-  D[1] = A[1]*naInv(v[0]); D[5] = A[5]*naInv(v[1]); D[ 9] = A[ 9]*naInv(v[2]); D[13] = A[13]*naInv(v[3]);
-  D[2] = A[2]*naInv(v[0]); D[6] = A[6]*naInv(v[1]); D[10] = A[10]*naInv(v[2]); D[14] = A[14]*naInv(v[3]);
-  D[3] = A[3]*naInv(v[0]); D[7] = A[7]*naInv(v[1]); D[11] = A[11]*naInv(v[2]); D[15] = A[15]*naInv(v[3]);
+  D[0] = A[0]*naInvd(v[0]); D[4] = A[4]*naInvd(v[1]); D[ 8] = A[ 8]*naInvd(v[2]); D[12] = A[12]*naInvd(v[3]);
+  D[1] = A[1]*naInvd(v[0]); D[5] = A[5]*naInvd(v[1]); D[ 9] = A[ 9]*naInvd(v[2]); D[13] = A[13]*naInvd(v[3]);
+  D[2] = A[2]*naInvd(v[0]); D[6] = A[6]*naInvd(v[1]); D[10] = A[10]*naInvd(v[2]); D[14] = A[14]*naInvd(v[3]);
+  D[3] = A[3]*naInvd(v[0]); D[7] = A[7]*naInvd(v[1]); D[11] = A[11]*naInvd(v[2]); D[15] = A[15]*naInvd(v[3]);
 }
 NA_IDEF void naDivCompM22fV2f( float* NA_RESTRICT D, const float* NA_RESTRICT A, const float* NA_RESTRICT v){
   #ifndef NDEBUG
@@ -6010,8 +6010,8 @@ NA_IDEF void naDivCompM22dV2dE( double* D, const double*  A, const double* v){
     if(naInsidei(-3, 1, D-v))
       naError("naDivCompM22dV2dE", "v overlaps with D.");
   #endif
-  D[0] = A[0]*naInv(v[0]); D[2] = A[2]*naInv(v[1]);
-  D[1] = A[1]*naInv(v[0]); D[3] = A[3]*naInv(v[1]);
+  D[0] = A[0]*naInvd(v[0]); D[2] = A[2]*naInvd(v[1]);
+  D[1] = A[1]*naInvd(v[0]); D[3] = A[3]*naInvd(v[1]);
 }
 NA_IDEF void naDivCompM33dV3dE( double* D, const double*  A, const double* v){
   #ifndef NDEBUG
@@ -6020,9 +6020,9 @@ NA_IDEF void naDivCompM33dV3dE( double* D, const double*  A, const double* v){
     if(naInsidei(-8, 2, D-v))
       naError("naDivCompM33dV3dE", "v overlaps with D.");
   #endif
-  D[0] = A[0]*naInv(v[0]); D[3] = A[3]*naInv(v[1]); D[6] = A[6]*naInv(v[2]);
-  D[1] = A[1]*naInv(v[0]); D[4] = A[4]*naInv(v[1]); D[7] = A[7]*naInv(v[2]);
-  D[2] = A[2]*naInv(v[0]); D[5] = A[5]*naInv(v[1]); D[8] = A[8]*naInv(v[2]);
+  D[0] = A[0]*naInvd(v[0]); D[3] = A[3]*naInvd(v[1]); D[6] = A[6]*naInvd(v[2]);
+  D[1] = A[1]*naInvd(v[0]); D[4] = A[4]*naInvd(v[1]); D[7] = A[7]*naInvd(v[2]);
+  D[2] = A[2]*naInvd(v[0]); D[5] = A[5]*naInvd(v[1]); D[8] = A[8]*naInvd(v[2]);
 }
 NA_IDEF void naDivCompM44dV4dE( double* D, const double* A, const double* v){
   #ifndef NDEBUG
@@ -6031,10 +6031,10 @@ NA_IDEF void naDivCompM44dV4dE( double* D, const double* A, const double* v){
     if(naInsidei(-15, 3, D-v))
       naError("naDivCompM44dV4dE", "v overlaps with D.");
   #endif
-  D[0] = A[0]*naInv(v[0]); D[4] = A[4]*naInv(v[1]); D[ 8] = A[ 8]*naInv(v[2]); D[12] = A[12]*naInv(v[3]);
-  D[1] = A[1]*naInv(v[0]); D[5] = A[5]*naInv(v[1]); D[ 9] = A[ 9]*naInv(v[2]); D[13] = A[13]*naInv(v[3]);
-  D[2] = A[2]*naInv(v[0]); D[6] = A[6]*naInv(v[1]); D[10] = A[10]*naInv(v[2]); D[14] = A[14]*naInv(v[3]);
-  D[3] = A[3]*naInv(v[0]); D[7] = A[7]*naInv(v[1]); D[11] = A[11]*naInv(v[2]); D[15] = A[15]*naInv(v[3]);
+  D[0] = A[0]*naInvd(v[0]); D[4] = A[4]*naInvd(v[1]); D[ 8] = A[ 8]*naInvd(v[2]); D[12] = A[12]*naInvd(v[3]);
+  D[1] = A[1]*naInvd(v[0]); D[5] = A[5]*naInvd(v[1]); D[ 9] = A[ 9]*naInvd(v[2]); D[13] = A[13]*naInvd(v[3]);
+  D[2] = A[2]*naInvd(v[0]); D[6] = A[6]*naInvd(v[1]); D[10] = A[10]*naInvd(v[2]); D[14] = A[14]*naInvd(v[3]);
+  D[3] = A[3]*naInvd(v[0]); D[7] = A[7]*naInvd(v[1]); D[11] = A[11]*naInvd(v[2]); D[15] = A[15]*naInvd(v[3]);
 }
 NA_IDEF void naDivCompM22fV2fE( float* D, const float* A, const float* v){
   #ifndef NDEBUG
@@ -6074,27 +6074,27 @@ NA_IDEF void naDivCompM22dV2dS( double* NA_RESTRICT D, const double* NA_RESTRICT
     if(naInsidei(-3, 1, D-v))
       naError("naDivCompM22dV2dS", "v overlaps with D.");
   #endif
-  D[0] *= naInv(v[0]); D[2] *= naInv(v[1]);
-  D[1] *= naInv(v[0]); D[3] *= naInv(v[1]);
+  D[0] *= naInvd(v[0]); D[2] *= naInvd(v[1]);
+  D[1] *= naInvd(v[0]); D[3] *= naInvd(v[1]);
 }
 NA_IDEF void naDivCompM33dV3dS( double* NA_RESTRICT D, const double* NA_RESTRICT v){
   #ifndef NDEBUG
     if(naInsidei(-8, 2, D-v))
       naError("naDivCompM33dV3dS", "v overlaps with D.");
   #endif
-  D[0] *= naInv(v[0]); D[3] *= naInv(v[1]); D[6] *= naInv(v[2]);
-  D[1] *= naInv(v[0]); D[4] *= naInv(v[1]); D[7] *= naInv(v[2]);
-  D[2] *= naInv(v[0]); D[5] *= naInv(v[1]); D[8] *= naInv(v[2]);
+  D[0] *= naInvd(v[0]); D[3] *= naInvd(v[1]); D[6] *= naInvd(v[2]);
+  D[1] *= naInvd(v[0]); D[4] *= naInvd(v[1]); D[7] *= naInvd(v[2]);
+  D[2] *= naInvd(v[0]); D[5] *= naInvd(v[1]); D[8] *= naInvd(v[2]);
 }
 NA_IDEF void naDivCompM44dV4dS( double* NA_RESTRICT D, const double* NA_RESTRICT v){
   #ifndef NDEBUG
     if(naInsidei(-15, 3, D-v))
       naError("naDivCompM44dV4dS", "v overlaps with D.");
   #endif
-  D[0] *= naInv(v[0]); D[4] *= naInv(v[1]); D[ 8] *= naInv(v[2]); D[12] *= naInv(v[3]);
-  D[1] *= naInv(v[0]); D[5] *= naInv(v[1]); D[ 9] *= naInv(v[2]); D[13] *= naInv(v[3]);
-  D[2] *= naInv(v[0]); D[6] *= naInv(v[1]); D[10] *= naInv(v[2]); D[14] *= naInv(v[3]);
-  D[3] *= naInv(v[0]); D[7] *= naInv(v[1]); D[11] *= naInv(v[2]); D[15] *= naInv(v[3]);
+  D[0] *= naInvd(v[0]); D[4] *= naInvd(v[1]); D[ 8] *= naInvd(v[2]); D[12] *= naInvd(v[3]);
+  D[1] *= naInvd(v[0]); D[5] *= naInvd(v[1]); D[ 9] *= naInvd(v[2]); D[13] *= naInvd(v[3]);
+  D[2] *= naInvd(v[0]); D[6] *= naInvd(v[1]); D[10] *= naInvd(v[2]); D[14] *= naInvd(v[3]);
+  D[3] *= naInvd(v[0]); D[7] *= naInvd(v[1]); D[11] *= naInvd(v[2]); D[15] *= naInvd(v[3]);
 }
 NA_IDEF void naDivCompM22fV2fS( float* NA_RESTRICT D, const float* NA_RESTRICT v){
   #ifndef NDEBUG
@@ -6347,8 +6347,8 @@ NA_IDEF void naDivCompM22dM22d( double* NA_RESTRICT D, const double*  NA_RESTRIC
     if(naAbsi(D-B) < 4)
       naError("naDivCompM22dM22d", "B overlaps with D.");
   #endif
-  D[0] = A[0]*naInv(B[0]); D[2] = A[2]*naInv(B[2]);
-  D[1] = A[1]*naInv(B[1]); D[3] = A[3]*naInv(B[3]);
+  D[0] = A[0]*naInvd(B[0]); D[2] = A[2]*naInvd(B[2]);
+  D[1] = A[1]*naInvd(B[1]); D[3] = A[3]*naInvd(B[3]);
 }
 NA_IDEF void naDivCompM33dM33d( double* NA_RESTRICT D, const double*  NA_RESTRICT A, const double* NA_RESTRICT B){
   #ifndef NDEBUG
@@ -6359,9 +6359,9 @@ NA_IDEF void naDivCompM33dM33d( double* NA_RESTRICT D, const double*  NA_RESTRIC
     if(naAbsi(D-B) < 9)
       naError("naDivCompM33dM33d", "B overlaps with D.");
   #endif
-  D[0] = A[0]*naInv(B[0]); D[3] = A[3]*naInv(B[3]); D[6] = A[6]*naInv(B[6]);
-  D[1] = A[1]*naInv(B[1]); D[4] = A[4]*naInv(B[4]); D[7] = A[7]*naInv(B[7]);
-  D[2] = A[2]*naInv(B[2]); D[5] = A[5]*naInv(B[5]); D[8] = A[8]*naInv(B[8]);
+  D[0] = A[0]*naInvd(B[0]); D[3] = A[3]*naInvd(B[3]); D[6] = A[6]*naInvd(B[6]);
+  D[1] = A[1]*naInvd(B[1]); D[4] = A[4]*naInvd(B[4]); D[7] = A[7]*naInvd(B[7]);
+  D[2] = A[2]*naInvd(B[2]); D[5] = A[5]*naInvd(B[5]); D[8] = A[8]*naInvd(B[8]);
 }
 NA_IDEF void naDivCompM44dM44d( double* NA_RESTRICT D, const double* NA_RESTRICT A, const double* NA_RESTRICT B){
   #ifndef NDEBUG
@@ -6372,10 +6372,10 @@ NA_IDEF void naDivCompM44dM44d( double* NA_RESTRICT D, const double* NA_RESTRICT
     if(naAbsi(D-B) < 16)
       naError("naDivCompM44dM44d", "B overlaps with D.");
   #endif
-  D[0] = A[0]*naInv(B[0]); D[4] = A[4]*naInv(B[4]); D[ 8] = A[ 8]*naInv(B[ 8]); D[12] = A[12]*naInv(B[12]);
-  D[1] = A[1]*naInv(B[1]); D[5] = A[5]*naInv(B[5]); D[ 9] = A[ 9]*naInv(B[ 9]); D[13] = A[13]*naInv(B[13]);
-  D[2] = A[2]*naInv(B[2]); D[6] = A[6]*naInv(B[6]); D[10] = A[10]*naInv(B[10]); D[14] = A[14]*naInv(B[14]);
-  D[3] = A[3]*naInv(B[3]); D[7] = A[7]*naInv(B[7]); D[11] = A[11]*naInv(B[11]); D[15] = A[15]*naInv(B[15]);
+  D[0] = A[0]*naInvd(B[0]); D[4] = A[4]*naInvd(B[4]); D[ 8] = A[ 8]*naInvd(B[ 8]); D[12] = A[12]*naInvd(B[12]);
+  D[1] = A[1]*naInvd(B[1]); D[5] = A[5]*naInvd(B[5]); D[ 9] = A[ 9]*naInvd(B[ 9]); D[13] = A[13]*naInvd(B[13]);
+  D[2] = A[2]*naInvd(B[2]); D[6] = A[6]*naInvd(B[6]); D[10] = A[10]*naInvd(B[10]); D[14] = A[14]*naInvd(B[14]);
+  D[3] = A[3]*naInvd(B[3]); D[7] = A[7]*naInvd(B[7]); D[11] = A[11]*naInvd(B[11]); D[15] = A[15]*naInvd(B[15]);
 }
 NA_IDEF void naDivCompM22fM22f( float* NA_RESTRICT D, const float* NA_RESTRICT A, const float* NA_RESTRICT B){
   #ifndef NDEBUG
@@ -6423,8 +6423,8 @@ NA_IDEF void naDivCompM22dM22dE( double* D, const double*  A, const double* B){
     if(naAbsi(D-B) < 4)
       naError("naDivCompM22dM22dE", "B overlaps with D.");
   #endif
-  D[0] = A[0]*naInv(B[0]); D[2] = A[2]*naInv(B[2]);
-  D[1] = A[1]*naInv(B[1]); D[3] = A[3]*naInv(B[3]);
+  D[0] = A[0]*naInvd(B[0]); D[2] = A[2]*naInvd(B[2]);
+  D[1] = A[1]*naInvd(B[1]); D[3] = A[3]*naInvd(B[3]);
 }
 NA_IDEF void naDivCompM33dM33dE( double* D, const double*  A, const double* B){
   #ifndef NDEBUG
@@ -6433,9 +6433,9 @@ NA_IDEF void naDivCompM33dM33dE( double* D, const double*  A, const double* B){
     if(naAbsi(D-B) < 9)
       naError("naDivCompM33dM33dE", "B overlaps with D.");
   #endif
-  D[0] = A[0]*naInv(B[0]); D[3] = A[3]*naInv(B[3]); D[6] = A[6]*naInv(B[6]);
-  D[1] = A[1]*naInv(B[1]); D[4] = A[4]*naInv(B[4]); D[7] = A[7]*naInv(B[7]);
-  D[2] = A[2]*naInv(B[2]); D[5] = A[5]*naInv(B[5]); D[8] = A[8]*naInv(B[8]);
+  D[0] = A[0]*naInvd(B[0]); D[3] = A[3]*naInvd(B[3]); D[6] = A[6]*naInvd(B[6]);
+  D[1] = A[1]*naInvd(B[1]); D[4] = A[4]*naInvd(B[4]); D[7] = A[7]*naInvd(B[7]);
+  D[2] = A[2]*naInvd(B[2]); D[5] = A[5]*naInvd(B[5]); D[8] = A[8]*naInvd(B[8]);
 }
 NA_IDEF void naDivCompM44dM44dE( double* D, const double* A, const double* B){
   #ifndef NDEBUG
@@ -6444,10 +6444,10 @@ NA_IDEF void naDivCompM44dM44dE( double* D, const double* A, const double* B){
     if(naAbsi(D-B) < 16)
       naError("naDivCompM44dM44dE", "B overlaps with D.");
   #endif
-  D[0] = A[0]*naInv(B[0]); D[4] = A[4]*naInv(B[4]); D[ 8] = A[ 8]*naInv(B[ 8]); D[12] = A[12]*naInv(B[12]);
-  D[1] = A[1]*naInv(B[1]); D[5] = A[5]*naInv(B[5]); D[ 9] = A[ 9]*naInv(B[ 9]); D[13] = A[13]*naInv(B[13]);
-  D[2] = A[2]*naInv(B[2]); D[6] = A[6]*naInv(B[6]); D[10] = A[10]*naInv(B[10]); D[14] = A[14]*naInv(B[14]);
-  D[3] = A[3]*naInv(B[3]); D[7] = A[7]*naInv(B[7]); D[11] = A[11]*naInv(B[11]); D[15] = A[15]*naInv(B[15]);
+  D[0] = A[0]*naInvd(B[0]); D[4] = A[4]*naInvd(B[4]); D[ 8] = A[ 8]*naInvd(B[ 8]); D[12] = A[12]*naInvd(B[12]);
+  D[1] = A[1]*naInvd(B[1]); D[5] = A[5]*naInvd(B[5]); D[ 9] = A[ 9]*naInvd(B[ 9]); D[13] = A[13]*naInvd(B[13]);
+  D[2] = A[2]*naInvd(B[2]); D[6] = A[6]*naInvd(B[6]); D[10] = A[10]*naInvd(B[10]); D[14] = A[14]*naInvd(B[14]);
+  D[3] = A[3]*naInvd(B[3]); D[7] = A[7]*naInvd(B[7]); D[11] = A[11]*naInvd(B[11]); D[15] = A[15]*naInvd(B[15]);
 }
 NA_IDEF void naDivCompM22fM22fE( float* D, const float* A, const float* B){
   #ifndef NDEBUG
@@ -6487,27 +6487,27 @@ NA_IDEF void naDivCompM22dM22dS( double* NA_RESTRICT D, const double* NA_RESTRIC
     if(naAbsi(D-B) < 4)
       naError("naDivCompM22dM22dS", "B overlaps with D.");
   #endif
-  D[0] *= naInv(B[0]); D[2] *= naInv(B[2]);
-  D[1] *= naInv(B[1]); D[3] *= naInv(B[3]);
+  D[0] *= naInvd(B[0]); D[2] *= naInvd(B[2]);
+  D[1] *= naInvd(B[1]); D[3] *= naInvd(B[3]);
 }
 NA_IDEF void naDivCompM33dM33dS( double* NA_RESTRICT D, const double* NA_RESTRICT B){
   #ifndef NDEBUG
     if(naAbsi(D-B) < 9)
       naError("naDivCompM33dM33dS", "B overlaps with D.");
   #endif
-  D[0] *= naInv(B[0]); D[3] *= naInv(B[3]); D[6] *= naInv(B[6]);
-  D[1] *= naInv(B[1]); D[4] *= naInv(B[4]); D[7] *= naInv(B[7]);
-  D[2] *= naInv(B[2]); D[5] *= naInv(B[5]); D[8] *= naInv(B[8]);
+  D[0] *= naInvd(B[0]); D[3] *= naInvd(B[3]); D[6] *= naInvd(B[6]);
+  D[1] *= naInvd(B[1]); D[4] *= naInvd(B[4]); D[7] *= naInvd(B[7]);
+  D[2] *= naInvd(B[2]); D[5] *= naInvd(B[5]); D[8] *= naInvd(B[8]);
 }
 NA_IDEF void naDivCompM44dM44dS( double* NA_RESTRICT D, const double* NA_RESTRICT B){
   #ifndef NDEBUG
     if(naAbsi(D-B) < 16)
       naError("naDivCompM44dM44dS", "B overlaps with D.");
   #endif
-  D[0] *= naInv(B[0]); D[4] *= naInv(B[4]); D[ 8] *= naInv(B[ 8]); D[12] *= naInv(B[12]);
-  D[1] *= naInv(B[1]); D[5] *= naInv(B[5]); D[ 9] *= naInv(B[ 9]); D[13] *= naInv(B[13]);
-  D[2] *= naInv(B[2]); D[6] *= naInv(B[6]); D[10] *= naInv(B[10]); D[14] *= naInv(B[14]);
-  D[3] *= naInv(B[3]); D[7] *= naInv(B[7]); D[11] *= naInv(B[11]); D[15] *= naInv(B[15]);
+  D[0] *= naInvd(B[0]); D[4] *= naInvd(B[4]); D[ 8] *= naInvd(B[ 8]); D[12] *= naInvd(B[12]);
+  D[1] *= naInvd(B[1]); D[5] *= naInvd(B[5]); D[ 9] *= naInvd(B[ 9]); D[13] *= naInvd(B[13]);
+  D[2] *= naInvd(B[2]); D[6] *= naInvd(B[6]); D[10] *= naInvd(B[10]); D[14] *= naInvd(B[14]);
+  D[3] *= naInvd(B[3]); D[7] *= naInvd(B[7]); D[11] *= naInvd(B[11]); D[15] *= naInvd(B[15]);
 }
 NA_IDEF void naDivCompM22fM22fS( float* NA_RESTRICT D, const float* NA_RESTRICT B){
   #ifndef NDEBUG
@@ -6900,7 +6900,7 @@ NA_IDEF double naDetM44d(double* A){
 
 NA_IDEF void naInvM22d(double* NA_RESTRICT D, const double* NA_RESTRICT A){
   double determinant = A[0]*A[3] - A[2]*A[1];
-  double divisor = naInv(determinant);
+  double divisor = naInvd(determinant);
   D[0] =    A[3] * divisor;
   D[1] =  - A[1] * divisor;
   D[2] =  - A[2] * divisor;
@@ -6911,7 +6911,7 @@ NA_IDEF void naInvM33d(double* NA_RESTRICT D, const double* NA_RESTRICT A){
   double d1 = A[2] * A[7] - A[1] * A[8];
   double d2 = A[1] * A[5] - A[2] * A[4];
   double determinant = A[0]*d0 + A[3]*d1 + A[6]*d2;
-  double divisor = naInv(determinant);
+  double divisor = naInvd(determinant);
   D[0] = d0 * divisor;
   D[1] = d1 * divisor;
   D[2] = d2 * divisor;
@@ -6934,7 +6934,7 @@ NA_IDEF void naInvM44d(double* NA_RESTRICT D, const double* NA_RESTRICT A){
   double d2 = + A[ 1]*a02 - A[ 5]*a04 + A[13]*a06;
   double d3 = - A[ 1]*a03 + A[ 5]*a05 - A[ 9]*a06;
   double determinant = A[ 0]*d0 + A[ 4]*d1 + A[ 8]*d2 + A[12]*d3;
-  double divisor = naInv(determinant);
+  double divisor = naInvd(determinant);
   double a07 = A[ 9]*A[15] - A[11]*A[13];
   double a08 = A[ 5]*A[15] - A[ 7]*A[13];
   double a09 = A[ 5]*A[11] - A[ 7]*A[ 9];
@@ -7094,10 +7094,10 @@ NA_IDEF void naFillV2WithM33Coord2(double* NA_RESTRICT d, const double* NA_RESTR
 // ////////////////////////////////
 
 NA_IDEF void naFillM33dWithRotationAlongAxis(double* NA_RESTRICT d, const double* NA_RESTRICT axis, double angle){
-  double sinang    = naSin(.5 * angle);
+  double sinang    = naSind(.5 * angle);
   double sinang2   = sinang * sinang;
   double sinangT2  = 2. * sinang;
-  double cosang    = naCos(.5 * angle);
+  double cosang    = naCosd(.5 * angle);
   double ax0       = axis[0] * cosang;
   double ax00      = axis[0] * axis[0];
   double ax01      = axis[0] * axis[1] * sinang;
@@ -7151,10 +7151,10 @@ NA_IDEF void naFillM33fWithRotationAlongAxis(float* NA_RESTRICT d, const float* 
 
 
 NA_IDEF void naFillM33dWithRotationAngles(double* d, double roll, double pitch, double yaw){
-  double q1 = - naCos(.5 * (roll - yaw)) * naSin(.5 * pitch);
-  double q2 = naSin(.5 * (roll - yaw)) * naSin(.5 * pitch);
-  double q3 = - naSin(.5 * (roll + yaw)) * naCos(.5 * pitch);
-  double q4 = naCos(.5 * (roll + yaw)) * naCos(.5 * pitch);
+  double q1 = - naCosd(.5 * (roll - yaw)) * naSind(.5 * pitch);
+  double q2 = naSind(.5 * (roll - yaw)) * naSind(.5 * pitch);
+  double q3 = - naSind(.5 * (roll + yaw)) * naCosd(.5 * pitch);
+  double q4 = naCosd(.5 * (roll + yaw)) * naCosd(.5 * pitch);
 
   naFillM33dColumnFirst(d,
           1. - 2. * ( q2*q2 - q3*q3),

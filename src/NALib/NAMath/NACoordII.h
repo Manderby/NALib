@@ -803,12 +803,12 @@ NA_IDEF NARect naMakeRectWithRectAndPos(NARect rect, NAPos pos){
     if(!naIsPosValid(pos))
       naError("naMakeRectWithRectAndPos", "pos is invalid.");
   #endif
-  newrect.pos.x = naMin(rect.pos.x, pos.x);
-  newrect.pos.y = naMin(rect.pos.y, pos.y);
+  newrect.pos.x = naMind(rect.pos.x, pos.x);
+  newrect.pos.y = naMind(rect.pos.y, pos.y);
   end = naGetRectEndX(rect);
-  newrect.size.width  = naMakeLengthWithStartAndEnd(newrect.pos.x, naMax(end, pos.x));
+  newrect.size.width  = naMakeLengthWithStartAndEnd(newrect.pos.x, naMaxd(end, pos.x));
   end = naGetRectEndY(rect);
-  newrect.size.height = naMakeLengthWithStartAndEnd(newrect.pos.y, naMax(end, pos.y));
+  newrect.size.height = naMakeLengthWithStartAndEnd(newrect.pos.y, naMaxd(end, pos.y));
   return newrect;
 }
 NA_IDEF NARect naMakeRectWithRectAndRect(NARect rect1, NARect rect2){
@@ -825,14 +825,14 @@ NA_IDEF NARect naMakeRectWithRectAndRect(NARect rect1, NARect rect2){
     if(!naIsRectValid(rect2))
       naError("naMakeRectWithRectAndRect", "rect2 is invalid.");
   #endif
-  newrect.pos.x = naMin(rect1.pos.x, rect2.pos.x);
-  newrect.pos.y = naMin(rect1.pos.y, rect2.pos.y);
+  newrect.pos.x = naMind(rect1.pos.x, rect2.pos.x);
+  newrect.pos.y = naMind(rect1.pos.y, rect2.pos.y);
   end1 = naGetRectEndX(rect1);
   end2 = naGetRectEndX(rect2);
-  newrect.size.width  = naMakeLengthWithStartAndEnd(newrect.pos.x, naMax(end1, end2));
+  newrect.size.width  = naMakeLengthWithStartAndEnd(newrect.pos.x, naMaxd(end1, end2));
   end1 = naGetRectEndY(rect1);
   end2 = naGetRectEndY(rect2);
-  newrect.size.height  = naMakeLengthWithStartAndEnd(newrect.pos.y, naMax(end1, end2));
+  newrect.size.height  = naMakeLengthWithStartAndEnd(newrect.pos.y, naMaxd(end1, end2));
   return newrect;
 }
 NA_IDEF NARect naMakeRectWithRectAndRectE(NARect rect1, NARect rect2){
@@ -847,14 +847,14 @@ NA_IDEF NARect naMakeRectWithRectAndRectE(NARect rect1, NARect rect2){
   #endif
   if(naIsRectEmpty(rect1)){return rect2;}
   if(naIsRectEmpty(rect2)){return rect1;}
-  newrect.pos.x = naMin(rect1.pos.x, rect2.pos.x);
-  newrect.pos.y = naMin(rect1.pos.y, rect2.pos.y);
+  newrect.pos.x = naMind(rect1.pos.x, rect2.pos.x);
+  newrect.pos.y = naMind(rect1.pos.y, rect2.pos.y);
   end1 = naGetRectEndX(rect1);
   end2 = naGetRectEndX(rect2);
-  newrect.size.width  = naMakeLengthWithStartAndEnd(newrect.pos.x, naMax(end1, end2));
+  newrect.size.width  = naMakeLengthWithStartAndEnd(newrect.pos.x, naMaxd(end1, end2));
   end1 = naGetRectEndY(rect1);
   end2 = naGetRectEndY(rect2);
-  newrect.size.height  = naMakeLengthWithStartAndEnd(newrect.pos.y, naMax(end1, end2));
+  newrect.size.height  = naMakeLengthWithStartAndEnd(newrect.pos.y, naMaxd(end1, end2));
   return newrect;
 }
 NA_IDEF NARecti naMakeRectiWithPosAndPos(NAPosi pos1, NAPosi pos2){
@@ -1017,15 +1017,15 @@ NA_IDEF NABox naMakeBoxWithBoxAndVertex(NABox box, NAVertex vertex){
     if(!naIsVertexValid(vertex))
       naError("naMakeBoxWithBoxAndVertex", "vertex is invalid.");
   #endif
-  newbox.vertex.x = naMin(box.vertex.x, vertex.x);
-  newbox.vertex.y = naMin(box.vertex.y, vertex.y);
-  newbox.vertex.z = naMin(box.vertex.z, vertex.z);
+  newbox.vertex.x = naMind(box.vertex.x, vertex.x);
+  newbox.vertex.y = naMind(box.vertex.y, vertex.y);
+  newbox.vertex.z = naMind(box.vertex.z, vertex.z);
   end = naGetBoxEndX(box);
-  newbox.volume.width  = naMakeLengthWithStartAndEnd(newbox.vertex.x, naMax(end, vertex.x));
+  newbox.volume.width  = naMakeLengthWithStartAndEnd(newbox.vertex.x, naMaxd(end, vertex.x));
   end = naGetBoxEndY(box);
-  newbox.volume.height = naMakeLengthWithStartAndEnd(newbox.vertex.y, naMax(end, vertex.y));
+  newbox.volume.height = naMakeLengthWithStartAndEnd(newbox.vertex.y, naMaxd(end, vertex.y));
   end = naGetBoxEndZ(box);
-  newbox.volume.depth = naMakeLengthWithStartAndEnd(newbox.vertex.z, naMax(end, vertex.z));
+  newbox.volume.depth = naMakeLengthWithStartAndEnd(newbox.vertex.z, naMaxd(end, vertex.z));
   return newbox;
 }
 NA_IDEF NABox naMakeBoxWithBoxAndBox(NABox box1, NABox box2){
@@ -1042,18 +1042,18 @@ NA_IDEF NABox naMakeBoxWithBoxAndBox(NABox box1, NABox box2){
     if(!naIsBoxValid(box2))
       naError("naMakeBoxWithBoxAndBox", "box2 is invalid.");
   #endif
-  newbox.vertex.x = naMin(box1.vertex.x, box2.vertex.x);
-  newbox.vertex.y = naMin(box1.vertex.y, box2.vertex.y);
-  newbox.vertex.z = naMin(box1.vertex.z, box2.vertex.z);
+  newbox.vertex.x = naMind(box1.vertex.x, box2.vertex.x);
+  newbox.vertex.y = naMind(box1.vertex.y, box2.vertex.y);
+  newbox.vertex.z = naMind(box1.vertex.z, box2.vertex.z);
   end1 = naGetBoxEndX(box1);
   end2 = naGetBoxEndX(box2);
-  newbox.volume.width  = naMakeLengthWithStartAndEnd(newbox.vertex.x, naMax(end1, end2));
+  newbox.volume.width  = naMakeLengthWithStartAndEnd(newbox.vertex.x, naMaxd(end1, end2));
   end1 = naGetBoxEndY(box1);
   end2 = naGetBoxEndY(box2);
-  newbox.volume.height  = naMakeLengthWithStartAndEnd(newbox.vertex.y, naMax(end1, end2));
+  newbox.volume.height  = naMakeLengthWithStartAndEnd(newbox.vertex.y, naMaxd(end1, end2));
   end1 = naGetBoxEndZ(box1);
   end2 = naGetBoxEndZ(box2);
-  newbox.volume.depth  = naMakeLengthWithStartAndEnd(newbox.vertex.z, naMax(end1, end2));
+  newbox.volume.depth  = naMakeLengthWithStartAndEnd(newbox.vertex.z, naMaxd(end1, end2));
   return newbox;
 }
 NA_IDEF NABox naMakeBoxWithBoxAndBoxE(NABox box1, NABox box2){
@@ -1068,18 +1068,18 @@ NA_IDEF NABox naMakeBoxWithBoxAndBoxE(NABox box1, NABox box2){
   #endif
   if(naIsBoxEmpty(box1)){return box2;}
   if(naIsBoxEmpty(box2)){return box1;}
-  newbox.vertex.x = naMin(box1.vertex.x, box2.vertex.x);
-  newbox.vertex.y = naMin(box1.vertex.y, box2.vertex.y);
-  newbox.vertex.z = naMin(box1.vertex.z, box2.vertex.z);
+  newbox.vertex.x = naMind(box1.vertex.x, box2.vertex.x);
+  newbox.vertex.y = naMind(box1.vertex.y, box2.vertex.y);
+  newbox.vertex.z = naMind(box1.vertex.z, box2.vertex.z);
   end1 = naGetBoxEndX(box1);
   end2 = naGetBoxEndX(box2);
-  newbox.volume.width  = naMakeLengthWithStartAndEnd(newbox.vertex.x, naMax(end1, end2));
+  newbox.volume.width  = naMakeLengthWithStartAndEnd(newbox.vertex.x, naMaxd(end1, end2));
   end1 = naGetBoxEndY(box1);
   end2 = naGetBoxEndY(box2);
-  newbox.volume.height  = naMakeLengthWithStartAndEnd(newbox.vertex.y, naMax(end1, end2));
+  newbox.volume.height  = naMakeLengthWithStartAndEnd(newbox.vertex.y, naMaxd(end1, end2));
   end1 = naGetBoxEndZ(box1);
   end2 = naGetBoxEndZ(box2);
-  newbox.volume.depth  = naMakeLengthWithStartAndEnd(newbox.vertex.z, naMax(end1, end2));
+  newbox.volume.depth  = naMakeLengthWithStartAndEnd(newbox.vertex.z, naMaxd(end1, end2));
   return newbox;
 }
 NA_IDEF NABoxi naMakeBoxiWithVertexAndVertex(NAVertexi vertex1, NAVertexi vertex2){
@@ -2026,7 +2026,7 @@ NA_IDEF NASizei naSubPosiPos(NAPosi pos1, NAPosi pos2){
 
 NA_IDEF double naDistancePosPos(NAPos pos1, NAPos pos2){
   double dist[2] = {pos2.x - pos1.x, pos2.y - pos1.y};
-  return naSqrt(dist[0]*dist[0] + dist[1]*dist[1]);
+  return naSqrtd(dist[0]*dist[0] + dist[1]*dist[1]);
 }
 
 
