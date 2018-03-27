@@ -58,19 +58,19 @@ NA_IDEF int64 naSigni64(int64 x){
 
 
 
-NA_IDEF NABool naAlmostZerof (float x){
+NA_IDEF NABool naAlmostZerof(float x){
   return ((x < NA_SINGULARITYf) && (x > -NA_SINGULARITYf));
 }
-NA_IDEF NABool naAlmostZerod  (double x){
+NA_IDEF NABool naAlmostZero(double x){
   return ((x < NA_SINGULARITY) && (x > -NA_SINGULARITY));
 }
 
 
 
-NA_IDEF NABool naAlmostOnef (float x){
+NA_IDEF NABool naAlmostOnef(float x){
   return ((x < NA_SUP_NORMf) && (x > NA_SUB_NORMf));
 }
-NA_IDEF NABool naAlmostOned  (double x){
+NA_IDEF NABool naAlmostOne(double x){
   return ((x < NA_SUP_NORM) && (x > NA_SUB_NORM));
 }
 
@@ -92,19 +92,19 @@ NA_IDEF NABool naAlmostf(float x, float y){
     }
   }
 }
-NA_IDEF NABool naAlmostd(double x, double y){
-  if(naAlmostZerod(y)){
-    if(naAlmostZerod(x)){
+NA_IDEF NABool naAlmost(double x, double y){
+  if(naAlmostZero(y)){
+    if(naAlmostZero(x)){
       return NA_TRUE;
     }else{
-      return naAlmostZerod(x-y);
+      return naAlmostZero(x-y);
     }
   }else{
     double relativeerror = x/y;
     if(relativeerror < 0.){
-      return naAlmostOned(-relativeerror);
+      return naAlmostOne(-relativeerror);
     }else{
-      return naAlmostOned(relativeerror);
+      return naAlmostOne(relativeerror);
     }
   }
 }
@@ -126,7 +126,7 @@ NA_IAPI NABool naIsNaNf(float x){
     #endif
   #endif
 }
-NA_IAPI NABool naIsNaNd(double x){
+NA_IAPI NABool naIsNaN(double x){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return _isnan(x);
   #else
@@ -151,7 +151,7 @@ NA_IAPI NABool naIsInfinitef(float x){
     #endif
   #endif
 }
-NA_IAPI NABool naIsInfinited(double x){
+NA_IAPI NABool naIsInfinite(double x){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return !_finite(x);
   #else
@@ -220,12 +220,12 @@ NA_IDEF float naInvf(float x){
   #endif
   return 1.f / x;
 }
-NA_IDEF double naInvd(double x){
+NA_IDEF double naInv(double x){
   #ifndef NDEBUG
     if(x == 0.)
-      naError("naInvd", "Division by zero.");
-    if(naAlmostZerod(x))
-      naError("naInvd", "Division by almost zero.");
+      naError("naInv", "Division by zero.");
+    if(naAlmostZero(x))
+      naError("naInv", "Division by almost zero.");
   #endif
   return 1. / x;
 }
@@ -233,13 +233,13 @@ NA_IDEF double naInvd(double x){
 
 NA_IDEF float naSqrtf(float x){
   #ifndef NDEBUG
-    if(x < 0.f){naError("naSqrtf", "naSqrtd of negative number.");}
+    if(x < 0.f){naError("naSqrtf", "naSqrt of negative number.");}
   #endif
   return sqrtf(x);
 }
-NA_IDEF double naSqrtd(double x){
+NA_IDEF double naSqrt(double x){
   #ifndef NDEBUG
-    if(x < 0.){naError("naSqrtd", "naSqrtd of negative number.");}
+    if(x < 0.){naError("naSqrt", "naSqrt of negative number.");}
   #endif
   return sqrt(x);
 }
@@ -257,7 +257,7 @@ NA_IDEF float naCbrtf(float x){
   #endif
 }
 
-NA_IDEF double naCbrtd(double x){
+NA_IDEF double naCbrt(double x){
   #ifndef NDEBUG
     if(x < 0.){naError("naCbrtd", "naCbrtd of negative number.");}
   #endif
@@ -272,7 +272,7 @@ NA_IDEF double naCbrtd(double x){
 NA_IDEF float naAbsf(float x){
   return naUnsetSignBit32((value32)x);
 }
-NA_IDEF double naAbsd(double x){
+NA_IDEF double naAbs(double x){
   return naUnsetSignBit64((value64)x);
 }
 NA_IDEF NAInt naAbsi(NAInt x){
@@ -303,7 +303,7 @@ NA_IDEF int64 naAbsi64(int64 x){
 NA_IDEF float naFloorf(float x){
   return floorf(x);
 }
-NA_IDEF double naFloord(double x){
+NA_IDEF double naFloor(double x){
   return floor(x);
 }
 
@@ -311,7 +311,7 @@ NA_IDEF double naFloord(double x){
 NA_IDEF float naCeilf(float x){
   return ceilf(x);
 }
-NA_IDEF double naCeild(double x){
+NA_IDEF double naCeil(double x){
   return ceil(x);
 }
 
@@ -323,7 +323,7 @@ NA_IDEF float naRoundf(float x){
     return roundf(x);
   #endif
 }
-NA_IDEF double naRoundd(double x){
+NA_IDEF double naRound(double x){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return floor(x + .5);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
@@ -338,8 +338,8 @@ NA_IAPI float naModf(float x, float mod){
   if(x<0){count += 1.f;}
   return x - count * mod;
 }
-NA_IAPI double naModd(double x, double mod){
-  double count = naFloord(x / mod);
+NA_IAPI double naMod(double x, double mod){
+  double count = naFloor(x / mod);
   if(x<0){count += 1.;}
   return x - count * mod;
 }
@@ -349,21 +349,21 @@ NA_IAPI double naModd(double x, double mod){
 NA_IDEF float naSinf(float x){
   return sinf(x);
 }
-NA_IDEF double naSind(double x){
+NA_IDEF double naSin(double x){
   return sin(x);
 }
 
 NA_IDEF float naCosf(float x){
   return cosf(x);
 }
-NA_IDEF double naCosd(double x){
+NA_IDEF double naCos(double x){
   return cos(x);
 }
 
 NA_IDEF float naTanf(float x){
   return tanf(x);
 }
-NA_IDEF double naTand(double x){
+NA_IDEF double naTan(double x){
   return tan(x);
 }
 
@@ -375,9 +375,9 @@ NA_IDEF float naAsinf(float x){
   #endif
   return asinf(x);
 }
-NA_IDEF double naAsind(double x){
+NA_IDEF double naAsin(double x){
   #ifndef NDEBUG
-    if(!naInsideNormIId(x)){naError("naAsind", "naAsind of invalid value.");}
+    if(!naInsideNormII(x)){naError("naAsind", "naAsind of invalid value.");}
   #endif
   return asin(x);
 }
@@ -389,9 +389,9 @@ NA_IDEF float naAcosf(float x){
   #endif
   return acosf(x);
 }
-NA_IDEF double naAcosd(double x){
+NA_IDEF double naAcos(double x){
   #ifndef NDEBUG
-    if(!naInsideNormIId(x)){naError("naAcosd", "naAcosd of invalid value.");}
+    if(!naInsideNormII(x)){naError("naAcosd", "naAcosd of invalid value.");}
   #endif
   return acos(x);
 }
@@ -400,7 +400,7 @@ NA_IDEF double naAcosd(double x){
 NA_IDEF float naAtanf(float x){
   return atanf(x);
 }
-NA_IDEF double naAtand(double x){
+NA_IDEF double naAtan(double x){
   return atan(x);
 }
 
@@ -408,21 +408,21 @@ NA_IDEF double naAtand(double x){
 NA_IDEF float naAtan2f(float y, float x){
   return atan2f(y, x);
 }
-NA_IDEF double naAtan2d(double y, double x){
+NA_IDEF double naAtan2(double y, double x){
   return atan2(y, x);
 }
 NA_IDEF float naAnglef(const float* xy){
   return naAtan2f(xy[1], xy[0]);
 }
-NA_IDEF double naAngled(const double* xy){
-  return naAtan2d(xy[1], xy[0]);
+NA_IDEF double naAngle(const double* xy){
+  return naAtan2(xy[1], xy[0]);
 }
 
 
 NA_IDEF float naExpf(float x){
   return expf(x);
 }
-NA_IDEF double naExpd(double x){
+NA_IDEF double naExp(double x){
   return exp(x);
 }
 
@@ -433,7 +433,7 @@ NA_IDEF float naLogf(float x){
   #endif
   return logf(x);
 }
-NA_IDEF double naLogd(double x){
+NA_IDEF double naLog(double x){
   #ifndef NDEBUG
     if(x < 0.){naError("naLogd", "Logarithm of negative number.");}
   #endif
@@ -449,7 +449,7 @@ NA_IDEF float naLog10f(float x){
   #endif
   return log10f(x);
 }
-NA_IDEF double naLog10d(double x){
+NA_IDEF double naLog10(double x){
   #ifndef NDEBUG
     if(x < 0)
       naError("naLog10d", "Logarithm of negative number.");
@@ -470,7 +470,7 @@ NA_IDEF float naLog2f(float x){
     return log2f(x);
   #endif
 }
-NA_IDEF double naLog2d(double x){
+NA_IDEF double naLog2(double x){
   #ifndef NDEBUG
     if(x < 0.){naError("naLog2d", "Logarithm of negative number.");}
   #endif
@@ -522,7 +522,7 @@ NA_IDEF float naExp2f(float x){
     return exp2f(x);
   #endif
 }
-NA_IDEF double naExp2d(double x){
+NA_IDEF double naExp2(double x){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     return pow(2., x);
   #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
@@ -559,7 +559,7 @@ NA_IDEF int64 naExp2i64(int64 x){
 NA_IDEF float naExp10f(float x){
   return powf(10.f, x);
 }
-NA_IDEF double naExp10d(double x){
+NA_IDEF double naExp10(double x){
   return pow(10., x);
 }
 NA_IDEF NAInt naExp10i(NAInt x){
@@ -599,10 +599,10 @@ NA_IDEF float naPowf(float b, float x){
   #endif
   return powf(b, x);
 }
-NA_IDEF double naPowd(double b, double x){
+NA_IDEF double naPow(double b, double x){
   #ifndef NDEBUG
     if(b < 0.)
-      naError("naPowd", "Base of power function smaller 0.");
+      naError("naPow", "Base of power function smaller 0.");
   #endif
   return pow(b, x);
 }
@@ -612,7 +612,7 @@ NA_IDEF double naPowd(double b, double x){
 NA_IDEF float naPowerOf2f(NAInt n){
   return naCreateFloatWithExponent((value32)n);
 }
-NA_IDEF double naPowerOf2d(NAInt n){
+NA_IDEF double naPowerOf2(NAInt n){
   return naCreateDoubleWithExponent((value64)n);
 }
 
@@ -646,14 +646,14 @@ NA_IDEF NAInt naBinom(NAInt n, NAInt k){
 NA_IDEF float naDegToRadf(float deg){
   return deg * NA_DEGREESf;
 }
-NA_IDEF double naDegToRadd(double deg){
+NA_IDEF double naDegToRad(double deg){
   return deg * NA_DEGREES;
 }
 
 NA_IDEF float naRadToDegf(float rad){
   return rad * NA_DEG_PER_RADf;
 }
-NA_IDEF double naRadToDegd(double rad){
+NA_IDEF double naRadToDeg(double rad){
   return rad * NA_DEG_PER_RAD;
 }
 
@@ -664,10 +664,10 @@ NA_IDEF void naPolarToCartesianf(float* xy, const float* rtheta){
   xy[0] = r * naCosf(rtheta[1]);
   xy[1] = r * naSinf(rtheta[1]);
 }
-NA_IDEF void naPolarToCartesiand(double* xy, const double* rtheta){
+NA_IDEF void naPolarToCartesian(double* xy, const double* rtheta){
   double r = rtheta[0];
-  xy[0] = r * naCosd(rtheta[1]);
-  xy[1] = r * naSind(rtheta[1]);
+  xy[0] = r * naCos(rtheta[1]);
+  xy[1] = r * naSin(rtheta[1]);
 }
 
 
@@ -677,15 +677,15 @@ NA_IDEF void naCartesianToPolarf(float* rtheta, const float* xy){
   rtheta[0] = naSqrtf(xy[0] * xy[0] + xy[1] * xy[1]);
   rtheta[1] = (rtheta[0] == 0.f) ? 0.f : naAnglef(xy);
 }
-NA_IDEF void naCartesianToPolard(double* rtheta, const double* xy){
-  rtheta[0] = naSqrtd(xy[0] * xy[0] + xy[1] * xy[1]);
-  rtheta[1] = (rtheta[0] == 0.) ? 0. : naAngled(xy);
+NA_IDEF void naCartesianToPolar(double* rtheta, const double* xy){
+  rtheta[0] = naSqrt(xy[0] * xy[0] + xy[1] * xy[1]);
+  rtheta[1] = (rtheta[0] == 0.) ? 0. : naAngle(xy);
 }
 
 
 
 // inclusive, inclusive
-NA_IDEF NABool naInsideIId(double a, double b, double x){
+NA_IDEF NABool naInsideII(double a, double b, double x){
   #ifndef NDEBUG
     if(a > b)
       naError("naInsideIId", "a is greater b. Will always return FALSE");
@@ -702,7 +702,7 @@ NA_IDEF NABool naInsideIIf(float a, float b, float x){
 
 
 // inclusive, exclusive
-NA_IDEF NABool naInsideIEd(double a, double b, double x){
+NA_IDEF NABool naInsideIE(double a, double b, double x){
   #ifndef NDEBUG
     if(!(a < b))
       naError("naInsideIEd", "a is greaterequal b. Will always return FALSE");
@@ -719,7 +719,7 @@ NA_IDEF NABool naInsideIEf(float a, float b, float x){
 
 
 // exclusive, inclusive
-NA_IDEF NABool naInsideEId(double a, double b, double x){
+NA_IDEF NABool naInsideEI(double a, double b, double x){
   #ifndef NDEBUG
     if(!(a < b))
       naError("naInsideEId", "a is greaterequal b. Will always return FALSE");
@@ -736,7 +736,7 @@ NA_IDEF NABool naInsideEIf(float a, float b, float x){
 
 
 // exclusive, exclusive
-NA_IDEF NABool naInsideEEd(double a, double b, double x){
+NA_IDEF NABool naInsideEE(double a, double b, double x){
   #ifndef NDEBUG
     if(!(a < b))
       naError("naInsideEEd", "a is greaterequal b. Will always return FALSE");
@@ -780,14 +780,14 @@ NA_IDEF NABool naInsidei64(int64 a, int64 b, int64 x){
 // adjusting the range. This cound be anything else but as this is a function
 // which only needs to be almost accurate, the one function is chosen which is
 // simplest.
-NA_IDEF NABool naAlmostInsided(double a, double b, double x){
+NA_IDEF NABool naAlmostInside(double a, double b, double x){
   #ifndef NDEBUG
     if(a>b)
       naError("naAlmostInsided", "a is greater b.");
   #endif
   a *= (a < 0.) ? NA_SUP_NORM : NA_SUB_NORM;
   b *= (b < 0.) ? NA_SUB_NORM : NA_SUP_NORM;
-  return naInsideEEd(a, b, x);
+  return naInsideEE(a, b, x);
 }
 NA_IDEF NABool naAlmostInsidef(float a, float b, float x){
   #ifndef NDEBUG
@@ -801,7 +801,7 @@ NA_IDEF NABool naAlmostInsidef(float a, float b, float x){
 
 
 // naInsideNormZId: [ 0, 1]
-NA_IDEF NABool naInsideNormZId (double x){
+NA_IDEF NABool naInsideNormZI(double x){
   return !((x < 0.) || (x > 1.));
 }
 NA_IDEF NABool naInsideNormZIf(float x){
@@ -810,7 +810,7 @@ NA_IDEF NABool naInsideNormZIf(float x){
 
 
 // naInsideNormZEd: [ 0, 1)
-NA_IDEF NABool naInsideNormZEd (double x){
+NA_IDEF NABool naInsideNormZE(double x){
   return (!(x < 0.) && (x < 1.));
 }
 NA_IDEF NABool naInsideNormZEf(float x){
@@ -819,7 +819,7 @@ NA_IDEF NABool naInsideNormZEf(float x){
 
 
 // naInsideNormIId: [-1, 1]
-NA_IDEF NABool naInsideNormIId (double x){
+NA_IDEF NABool naInsideNormII(double x){
   return !((x < -1.) || (x > 1.));
 }
 NA_IDEF NABool naInsideNormIIf(float x){
@@ -828,7 +828,7 @@ NA_IDEF NABool naInsideNormIIf(float x){
 
 
 // naInsideNormIEd: [-1, 1)
-NA_IDEF NABool naInsideNormIEd (double x){
+NA_IDEF NABool naInsideNormIE(double x){
   return (!(x < -1.) && (x < 1.));
 }
 NA_IDEF NABool naInsideNormIEf(float x){
@@ -837,7 +837,7 @@ NA_IDEF NABool naInsideNormIEf(float x){
 
 
 // naInsideNormEEd: (-1, 1)
-NA_IDEF NABool naInsideNormEEd (double x){
+NA_IDEF NABool naInsideNormEE(double x){
   return ((x > -1.) && (x < 1.));
 }
 NA_IDEF NABool naInsideNormEEf(float x){

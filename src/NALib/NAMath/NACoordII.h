@@ -2026,7 +2026,7 @@ NA_IDEF NASizei naSubPosiPos(NAPosi pos1, NAPosi pos2){
 
 NA_IDEF double naDistancePosPos(NAPos pos1, NAPos pos2){
   double dist[2] = {pos2.x - pos1.x, pos2.y - pos1.y};
-  return naSqrtd(dist[0]*dist[0] + dist[1]*dist[1]);
+  return naSqrt(dist[0]*dist[0] + dist[1]*dist[1]);
 }
 
 

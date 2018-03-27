@@ -564,7 +564,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
     // Make sure, the negative count is a power of 2.
     if(count < 0){
       NAInt countpower = naLog2i(-count);
-      if((NAInt)naPowd(2., (double)countpower) != -count)
+      if((NAInt)naPow(2., (double)countpower) != -count)
         naError("naInitHeap", "negative count must be a power of 2.");
     }
   #endif

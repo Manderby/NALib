@@ -297,7 +297,7 @@ NA_HIDEF NAInt naMakeLengthWithMinAndMaxi(NAInt min, NAInt max){
 
 
 NA_HIDEF NABool naIsOffsetValueValid(double a){
-  return !naIsNaNd(a);
+  return !naIsNaN(a);
 }
 NA_HIDEF NABool naIsOffsetValueValidf(float a){
   return !naIsNaNf(a);
@@ -308,7 +308,7 @@ NA_HIDEF NABool naIsOffsetValueValidi(NAInt a){
 }
 
 NA_HIDEF NABool naIsLengthValueValid(double a){
-  return !naIsNaNd(a);
+  return !naIsNaN(a);
 }
 NA_HIDEF NABool naIsLengthValueValidf(float a){
   return !naIsNaNf(a);
@@ -341,7 +341,7 @@ NA_HIDEF NABool naIsLengthValueNegativei(NAInt a){
 
 
 NA_HIDEF NABool naIsOffsetValueUseful(double a){
-  return !naIsNaNd(a);
+  return !naIsNaN(a);
 }
 NA_HIDEF NABool naIsOffsetValueUsefulf(float a){
   return !naIsNaNf(a);

@@ -63,19 +63,19 @@ NA_IAPI int64         naSigni64(int64 x);
 // naAlmost       Returns NA_TRUE, if the RELATIVE distance between x and y is
 //                smaller than NA_SINGULARITY. If y is close to 0, the absolute
 //                distance is checked.
-// Warning: These functions are slow. Especially naAlmostd and naAlmostf.
+// Warning: These functions are slow. Especially naAlmost and naAlmostf.
 NA_IAPI NABool        naAlmostZerof (float  x);
-NA_IAPI NABool        naAlmostZerod (double x);
+NA_IAPI NABool        naAlmostZero  (double x);
+NA_IAPI NABool        naAlmostOne   (double x);
 NA_IAPI NABool        naAlmostOnef  (float  x);
-NA_IAPI NABool        naAlmostOned  (double x);
 NA_IAPI NABool        naAlmostf     (float  x, float  y);
-NA_IAPI NABool        naAlmostd     (double x, double y);
+NA_IAPI NABool        naAlmost      (double x, double y);
 
 // Returns true if the given number is NaN, infinite.
 NA_IAPI NABool        naIsNaNf(float  x);
-NA_IAPI NABool        naIsNaNd(double x);
+NA_IAPI NABool        naIsNaN (double x);
 NA_IAPI NABool        naIsInfinitef(float  x);
-NA_IAPI NABool        naIsInfinited(double x);
+NA_IAPI NABool        naIsInfinite (double x);
 
 // naMind and naMaxd return the minimum or maximum of two values.
 //
@@ -88,16 +88,16 @@ NA_IAPI NABool        naIsInfinited(double x);
 // available as an expression and hence are not shown in the compiler. When
 // using the functions, the two resulting values can be debugged when jumping
 // inside the min or max function.
-NA_IAPI double       naMind  (double a, double b);
 NA_IAPI float        naMinf  (float  a, float  b);
+NA_IAPI double       naMin   (double a, double b);
 NA_IAPI NAInt        naMini  (NAInt  a, NAInt  b);
 NA_IAPI int8         naMini8 (int8   a, int8   b);
 NA_IAPI int16        naMini16(int16  a, int16  b);
 NA_IAPI int32        naMini32(int32  a, int32  b);
 NA_IAPI int64        naMini64(int64  a, int64  b);
 
-NA_IAPI double       naMaxd  (double a, double b);
 NA_IAPI float        naMaxf  (float  a, float  b);
+NA_IAPI double       naMax   (double a, double b);
 NA_IAPI NAInt        naMaxi  (NAInt  a, NAInt  b);
 NA_IAPI int8         naMaxi8 (int8   a, int8   b);
 NA_IAPI int16        naMaxi16(int16  a, int16  b);
@@ -113,19 +113,19 @@ NA_IAPI int64        naMaxi64(int64  a, int64  b);
 
 // Inverse: Returns 1/x
 NA_IAPI float         naInvf(float  x);
-NA_IAPI double        naInvd(double x);
+NA_IAPI double        naInv (double x);
 
 // Returns the square root
 NA_IAPI float         naSqrtf(float  x);
-NA_IAPI double        naSqrtd(double x);
+NA_IAPI double        naSqrt (double x);
 
 // Returns the cubic root
 NA_IAPI float         naCbrtf(float  x);
-NA_IAPI double        naCbrtd(double x);
+NA_IAPI double        naCbrt (double x);
 
 // Returns the absolute value
 NA_IAPI float         naAbsf  (float  x);
-NA_IAPI double        naAbsd  (double x);
+NA_IAPI double        naAbs   (double x);
 NA_IAPI NAInt         naAbsi  (NAInt  x);
 NA_IAPI int8          naAbsi8 (int8   x);
 NA_IAPI int16         naAbsi16(int16  x);
@@ -134,59 +134,59 @@ NA_IAPI int64         naAbsi64(int64  x);
 
 // Returns the rounded down value
 NA_IAPI float         naFloorf(float  x);
-NA_IAPI double        naFloord(double x);
+NA_IAPI double        naFloor (double x);
 
 // Returns the rounded up value
 NA_IAPI float         naCeilf(float  x);
-NA_IAPI double        naCeild(double x);
+NA_IAPI double        naCeil (double x);
 
 // Returns the rounded value
 NA_IAPI float         naRoundf(float  x);
-NA_IAPI double        naRoundd(double x);
+NA_IAPI double        naRound (double x);
 
 // Returns the modular value. Return value is always positive.
 NA_IAPI float         naModf(float  x, float  mod);
-NA_IAPI double        naModd(double x, double mod);
+NA_IAPI double        naMod (double x, double mod);
 
 // Returns the sinus
 NA_IAPI float         naSinf(float  x);
-NA_IAPI double        naSind(double x);
+NA_IAPI double        naSin (double x);
 
 // Returns the cosinus
 NA_IAPI float         naCosf(float  x);
-NA_IAPI double        naCosd(double x);
+NA_IAPI double        naCos (double x);
 
 // Returns the tangens
 NA_IAPI float         naTanf(float  x);
-NA_IAPI double        naTand(double x);
+NA_IAPI double        naTan (double x);
 
 // Returns the arcus sinus
 NA_IAPI float         naAsinf(float  x);
-NA_IAPI double        naAsind(double x);
+NA_IAPI double        naAsin (double x);
 
 // Returns the arcus cosinus
 NA_IAPI float         naAcosf(float  x);
-NA_IAPI double        naAcosd(double x);
+NA_IAPI double        naAcos (double x);
 
 // Returns the arcus tangens in the range [-pi/2, +pi/2]
 NA_IAPI float         naAtanf(float  x);
-NA_IAPI double        naAtand(double x);
+NA_IAPI double        naAtan (double x);
 
 // Returns the arcus tangens of y/x in the range [-pi, +pi]
 // The angle function does the same, but assumes x and y stored as
 // xy[0] and xy[1] respectively.
 NA_IAPI float         naAtan2f(float  y, float  x);
-NA_IAPI double        naAtan2d(double y, double x);
+NA_IAPI double        naAtan2 (double y, double x);
 NA_IAPI float         naAnglef(const float*  xy);
-NA_IAPI double        naAngled(const double* xy);
+NA_IAPI double        naAngle (const double* xy);
 
 // Returns the natural logarithm
 NA_IAPI float         naLogf(float  x);
-NA_IAPI double        naLogd(double x);
+NA_IAPI double        naLog (double x);
 
 // Returns the 10-logarithm
 NA_IAPI float         naLog10f(float  x);
-NA_IAPI double        naLog10d(double x);
+NA_IAPI double        naLog10 (double x);
 
 // Returns the 2-logarithm
 // The integer variants of log2, return the rounded down log2. In other words
@@ -199,14 +199,14 @@ NA_IAPI double        naLog10d(double x);
 // - 5 returns 3  -> 2^3 = 8
 // - ...
 NA_IAPI float         naLog2f(float   x);
-NA_IAPI double        naLog2d(double  x);
+NA_IAPI double        naLog2 (double  x);
 NA_IAPI NAInt         naLog2i(NAInt   x);
 NA_IAPI int32         naLog2i32(int32 x);
 NA_IAPI int64         naLog2i64(int64 x);
 
 // Returns the exponential function e^x
 NA_IAPI float         naExpf(float  x);
-NA_IAPI double        naExpd(double x);
+NA_IAPI double        naExp (double x);
 
 // Returns the exponent of 2 function 2^x
 NA_IAPI float         naExp2f  (float  x);
@@ -224,11 +224,11 @@ NA_IAPI int64         naExp10i64(int64  x);
 
 // Returns the power function b^x
 NA_IAPI float         naPowf(float  b, float  x);
-NA_IAPI double        naPowd(double b, double x);
+NA_IAPI double        naPow (double b, double x);
 
 // Returns the power of 2 function 2^n with n being an integer
 NA_IAPI float         naPowerOf2f(NAInt n);
-NA_IAPI double        naPowerOf2d(NAInt n);
+NA_IAPI double        naPowerOf2 (NAInt n);
 
 // Factorizes the given value. !-Operator
 NA_IAPI NAInt         naFactorize(NAInt x);
@@ -238,18 +238,18 @@ NA_IAPI NAInt         naBinom(NAInt n, NAInt k);
 
 // Returns the the angle converted to radiants
 NA_IAPI float         naDegToRadf(float  deg);
-NA_IAPI double        naDegToRadd(double deg);
+NA_IAPI double        naDegToRad (double deg);
 
 // Returns the the angle converted to degrees
 NA_IAPI float         naRadToDegf(float  rad);
-NA_IAPI double        naRadToDegd(double rad);
+NA_IAPI double        naRadToDeg (double rad);
 
 // Angle functions. Assumes either x and y or r and theta to be stored in a
 // two dimensional vector and converts it into the other.
 NA_IAPI void          naPolarToCartesianf(float*  xy, const float*  rtheta);
-NA_IAPI void          naPolarToCartesiand(double* xy, const double* rtheta);
+NA_IAPI void          naPolarToCartesian (double* xy, const double* rtheta);
 NA_IAPI void          naCartesianToPolarf(float*  rtheta, const float*  xy);
-NA_IAPI void          naCartesianToPolard(double* rtheta, const double* xy);
+NA_IAPI void          naCartesianToPolar (double* rtheta, const double* xy);
 
 
 
@@ -263,16 +263,16 @@ NA_IAPI void          naCartesianToPolard(double* rtheta, const double* xy);
 // naInsideIE(3, 7, x) corresponds to a range of [3,7).
 
 // inclusive, inclusive
-NA_IAPI NABool naInsideIId(double a, double b, double x);
+NA_IAPI NABool naInsideII (double a, double b, double x);
 NA_IAPI NABool naInsideIIf(float  a, float  b, float  x);
 // inclusive, exclusive
-NA_IAPI NABool naInsideIEd(double a, double b, double x); // use these if you
+NA_IAPI NABool naInsideIE (double a, double b, double x); // use these if you
 NA_IAPI NABool naInsideIEf(float  a, float  b, float  x); // are uncertain.
 // exclusive, inclusive
-NA_IAPI NABool naInsideEId(double a, double b, double x);
+NA_IAPI NABool naInsideEI (double a, double b, double x);
 NA_IAPI NABool naInsideEIf(float  a, float  b, float  x);
 // exclusive, exclusive
-NA_IAPI NABool naInsideEEd(double a, double b, double x);
+NA_IAPI NABool naInsideEE (double a, double b, double x);
 NA_IAPI NABool naInsideEEf(float  a, float  b, float  x);
 
 // Integer variants. a denotes Min, b denotes Max. Comparison is always
@@ -285,7 +285,7 @@ NA_IAPI NABool naInsidei64(int64  a, int64  b, int64  x);
 // the given values. Meaning, a small relative margin of NA_SINGULARITY on
 // both sides is considered. Takes into consideration that a or b might be
 // negative.
-NA_IAPI NABool naAlmostInsided(double a, double b, double x);
+NA_IAPI NABool naAlmostInside (double a, double b, double x);
 NA_IAPI NABool naAlmostInsidef(float  a, float  b, float  x);
 
 // naInsideNorm returns true, if x is inside a normed range. The following norms
@@ -296,15 +296,15 @@ NA_IAPI NABool naAlmostInsidef(float  a, float  b, float  x);
 // naInsideNormIE: [-1, 1 )
 // naInsideNormEE: (-1, 1 )
 // I means inclusive, E means exclusive, Z means Zero.
-NA_IAPI NABool naInsideNormZId(double x);
+NA_IAPI NABool naInsideNormZI (double x);
 NA_IAPI NABool naInsideNormZIf(float  x);
-NA_IAPI NABool naInsideNormZEd(double x);
+NA_IAPI NABool naInsideNormZE (double x);
 NA_IAPI NABool naInsideNormZEf(float  x);
-NA_IAPI NABool naInsideNormIId(double x);
+NA_IAPI NABool naInsideNormII (double x);
 NA_IAPI NABool naInsideNormIIf(float  x);
-NA_IAPI NABool naInsideNormIEd(double x);
+NA_IAPI NABool naInsideNormIE (double x);
 NA_IAPI NABool naInsideNormIEf(float  x);
-NA_IAPI NABool naInsideNormEEd(double x);
+NA_IAPI NABool naInsideNormEE (double x);
 NA_IAPI NABool naInsideNormEEf(float  x);
 
 
