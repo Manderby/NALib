@@ -56,6 +56,9 @@ NA_HIAPI double naMakeLengthWithStartAndEnd  (double start, double end);
 NA_HIAPI float  naMakeLengthWithStartAndEndf (float  start, float  end);
 NA_HIAPI NAInt  naMakeLengthWithStartAndEndi (NAInt  start, NAInt  end);
 NA_HIAPI NAInt  naMakeLengthWithMinAndMaxi   (NAInt  min,   NAInt  max);
+
+NA_HIAPI NAInt  naMakeIntWithIntegerFloat    (float x);
+NA_HIAPI NAInt  naMakeIntWithIntegerDouble   (double x);
     
 
 // The following functions are mostly used in other datastructures such as
@@ -292,6 +295,23 @@ NA_HIDEF NAInt naMakeLengthWithStartAndEndi(NAInt min, NAInt end){
 }
 NA_HIDEF NAInt naMakeLengthWithMinAndMaxi(NAInt min, NAInt max){
   return naMakeEndWithMaxi(max) - min;
+}
+
+
+
+NA_HIDEF NAInt naMakeIntWithIntegerFloat(float x){
+  #ifndef NDEBUG
+    if(naRoundf(x) != x)
+      naError("naMakeIntWithIntegerFloat", "Given float is not an integer number");
+  #endif
+  return (NAInt)x;
+}
+NA_HIDEF NAInt naMakeIntWithIntegerDouble(double x){
+  #ifndef NDEBUG
+    if(naRound(x) != x)
+      naError("naMakeIntWithIntegerDouble", "Given double is not an integer number");
+  #endif
+  return (NAInt)x;
 }
 
 

@@ -47,7 +47,7 @@
 // ///////////////////////////////////////////
 
 // When creating an NAQuadTree, you can create various callbacks which are
-// stored in a NAQuadTreeCallbacks structure. Here are the signatures for 
+// stored in a NAQuadTreeConfiguration structure. Here are the signatures for 
 // these callbacks:
 
 // NAQuadTreeLeafAllocator
@@ -60,7 +60,7 @@
 // points to already existing chunk data which shall be copied to the new
 // chunk. This will be the case when duplicating an NAQuadTree.
 // The userdata parameter contains whatever you defined upon creation of the
-// tree within the NAQuadTreeCallbacks struct. With this, it is for example
+// tree within the NAQuadTreeConfiguration struct. With this, it is for example
 // possible to allocate data from a user defined pool-structure.
 // Note that both origin and leaflength are just here for information. You may
 // or may not use them. And you will probably not need to store them. But you
@@ -69,8 +69,8 @@
 // an NAQuadTree.
 // Also note that the coordinates of origin are guaranteed to be a multiple of
 // leaflength.
-typedef void* (*NAQuadTreeLeafAllocator)(   NAPosi origin,
-                                             NAInt leaflength,
+typedef void* (*NAQuadTreeLeafAllocator)(    NAPos origin,
+                                             NAInt leafexponent,
                                              void* userdata,
                                        const void* copydata);
 
@@ -92,9 +92,9 @@ typedef void  (*NAQuadTreeLeafDeallocator)(  void* leafdata,
 // rectangles are guaranteed to be inside the corresopnding chunk. Note that
 // the size does not necessarily denotes a square. It can denote any rectangle.
 // The totalshift and the leaflength is given to you as an additional
-// information. The totalsize corresponds to the shift given as a parameter to
-// naInitQuadTreeCopyShifted and the leaflength corresponds to the leaflength
-// used when the NAQuadTree was created.
+// information. The totalshift corresponds to the shift given as a parameter
+// to naInitQuadTreeCopyShifted and the leafexponent corresponds to the length
+// of a leaf used when the NAQuadTree was created.
 // Example (numbers are approximate):
 //          dstdata           srcdata
 //        O---------+       O---------+       
@@ -105,12 +105,12 @@ typedef void  (*NAQuadTreeLeafDeallocator)(  void* leafdata,
 //        +---------+       +---------+       leaflength: 8
 
 typedef void  (*NAQuadTreeDataCopier)( const void* dstdata,
-                                            NAPosi dstorigin,
+                                             NAPos dstorigin,
                                        const void* srcdata,
-                                            NAPosi srcorigin,
-                                           NASizei size,
-                                            NAPosi totalshift,
-                                             NAInt leaflength);
+                                             NAPos srcorigin,
+                                            NASize size,
+                                             NAPos totalshift,
+                                             NAInt leafexponent);
 
 // NAQuadTreeNodeAllocator
 // This callback is called when a quad tree creates an internal tree node other
@@ -125,8 +125,8 @@ typedef void  (*NAQuadTreeDataCopier)( const void* dstdata,
 // Note that both origin and nodesize are just here for information. You may or
 // may not use them. And you will probably not need to store them. But you may
 // if you really want to.
-typedef void* (*NAQuadTreeNodeAllocator)( NAPosi origin,
-                                           NAInt childnodesize);
+typedef void* (*NAQuadTreeNodeAllocator)( NAPos origin,
+                                          NAInt childexponent);
 
 // NAQuadTreeNodeDeallocator
 // The node destructor is called before a quad tree ultimately deletes an
@@ -169,11 +169,11 @@ typedef void  (*NAQuadTreeNodeDeallocator)(void* nodedata);
 typedef NABool(*NAQuadTreeLeafChanged)(      void* nodedata,
                                              NAInt segment,
                                  const void* const leafdata[4],
-                                             NAInt leaflength);
+                                             NAInt leafexponent);
 typedef NABool(*NAQuadTreeChildChanged)(     void* nodedata,
                                              NAInt segment,
                                  const void* const childdata[4],
-                                             NAInt leaflength);
+                                             NAInt leafexponent);
 
 
 
@@ -181,7 +181,7 @@ typedef NABool(*NAQuadTreeChildChanged)(     void* nodedata,
 
 // This is the callback struct you can use to create an NAQuadTree. After
 // creation, these functions can no longer be changed.
-typedef struct NAQuadTreeCallbacks_struct{
+typedef struct NAQuadTreeConfiguration_struct{
   NAQuadTreeLeafAllocator   leafallocator;    // must be present.
   NAQuadTreeLeafDeallocator leafdeallocator;  // must be present.
   NAQuadTreeDataCopier      datacopier;
@@ -190,7 +190,8 @@ typedef struct NAQuadTreeCallbacks_struct{
   NAQuadTreeLeafChanged     leafchanged;
   NAQuadTreeChildChanged    childchanged;
   void*                     userdata;
-} NAQuadTreeCallbacks;
+  NAInt                     minleafexponent;
+} NAQuadTreeConfiguration;
 
 
 
@@ -207,8 +208,7 @@ typedef struct NAQuadTreeIterator NAQuadTreeIterator;
 
 // Initializes an empty NAQuadTree with the given leaflength and callbacks.
 NA_API NAQuadTree* naInitQuadTree(              NAQuadTree* tree,
-                                                      NAInt leaflength,
-                                        NAQuadTreeCallbacks callbacks);
+                                    NAQuadTreeConfiguration configuration);
 
 // Initializes newtree by duplicating the given copytree.
 NA_API NAQuadTree* naInitQuadTreeCopy(          NAQuadTree* newtree,
@@ -223,7 +223,7 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyMasked(    NAQuadTree* newtree,
 // Duplicates the given copytree but shifts all contents by the given shift.
 NA_API NAQuadTree* naInitQuadTreeCopyShifted(   NAQuadTree* newtree,
                                           const NAQuadTree* copytree,
-                                                     NAPosi shift);
+                                                      NAPos shift);
 
 // Clears the tree
 NA_API void naClearQuadTree(                   NAQuadTree* tree);
@@ -240,13 +240,13 @@ NA_API void naEmptyQuadTree(                   NAQuadTree* tree);
 NA_IAPI NABool naIsQuadTreeEmpty(        const NAQuadTree* tree);
 
 // Returns the leaf length in one dimension
-NA_IAPI NAInt naGetQuadTreeLeafLength(   const NAQuadTree* tree);
+NA_IAPI NAInt naGetQuadTreeMinLeafExponent(   const NAQuadTree* tree);
 
 // Returns the adjusted coord which is aligned on a chunk coordinate.
-NA_IAPI NAPosi naGetQuadTreeAlignedCoord(NAInt leaflength, NAPosi coord);
+NA_IAPI NAPos naGetQuadTreeAlignedCoord(NAInt leafexponent, NAPos coord);
 
 // Returns the callbacks (by copying the function pointers)
-NA_IAPI NAQuadTreeCallbacks naGetQuadTreeCallbacks(
+NA_IAPI NAQuadTreeConfiguration naGetQuadTreeConfiguration(
                                          const NAQuadTree* tree);
 
 // Returns the root node data, if available. If no root or no root data are
@@ -274,15 +274,15 @@ NA_API void naUpdateQuadTree(                  NAQuadTree* tree);
 // Therefore, all positions are greaterequal zero. All coordinates of rect are
 // guaranteed to be inside the leaf.
 typedef void  (*NAQuadTreeDataSetter)( const void* dstdata,
-                                           NARecti rect,
-                                             NAInt leaflength,
+                                            NARect rect,
+                                             NAInt leafexponent,
                                        const void* userdata);
 
 // Calls the given NAQuadTreeDataSetter function for every chunk in the tree
 // which is partially or fully overlapped with the given rect. Will create
 // the leafes if necessary.
 NA_API void naSetQuadTreeInRect(          NAQuadTree* tree,
-                                              NARecti rect,
+                                               NARect rect,
                                  NAQuadTreeDataSetter datasetter,
                                           const void* userdata);
 
@@ -296,7 +296,7 @@ NA_API void naSetQuadTreeInRect(          NAQuadTree* tree,
 // NAQuadTreeIterator iter = naMakeQuadTreeIteratorMutable(tree);
 // while(naIterateQuadTree(&iter)){
 //   MyLeafData* data = naGetQuadTreeCurMutable(&iter);
-//   NAPosi origin = naGetQuadTreeCurOrigin(&iter);
+//   NAPos origin = naGetQuadTreeCurOrigin(&iter);
 //   // do stuff with the leaf data.
 // }
 // naClearQuadTreeIterator(&iter);
@@ -331,14 +331,14 @@ NA_API void naResetQuadTreeIterator(NAQuadTreeIterator* iter);
 // within the limit rect. Limit must be non-null. You must have a modifier
 // iterator when using create.
 NA_API NABool naIterateQuadTree(  NAQuadTreeIterator* iter,
-                                       const NARecti* limit,
+                                        const NARect* limit,
                                                NABool create);
 
 // Moves the iterator to the leaf containing the given coord. If such a leaf is
 // not found in the tree, NA_FALSE ist returned. The iterator though stores the
 // coord it is supposed to point at. This allows you to locate a position an
 // then use naGetQuadTreeCurMutable to create a leaf at that position.
-NA_API NABool naLocateQuadTreeCoord(NAQuadTreeIterator* iter, NAPosi coord);
+NA_API NABool naLocateQuadTreeCoord(NAQuadTreeIterator* iter, NAPos coord);
 
 // Moves the iterator relative to the current position. Each step can be
 // positive or negative. The iterator must be at a specific position before
@@ -355,10 +355,10 @@ NA_API void*       naGetQuadTreeCurMutable(NAQuadTreeIterator* iter,
                                                         NABool create);
 
 // Returns the origin of the leaf the iterator is pointing at.
-NA_API NAPosi naGetQuadTreeCurOrigin(NAQuadTreeIterator* iter);
+NA_API NAPos naGetQuadTreeCurOrigin(NAQuadTreeIterator* iter);
 
 // Returns the rect of the leaf the iterator is pointing at.
-NA_API NARecti naGetQuadTreeCurRect(NAQuadTreeIterator* iter);
+NA_API NARect naGetQuadTreeCurRect(NAQuadTreeIterator* iter);
 
 // Starts at the leaf containing the given coord and traverses upwards
 // (bubbling) the tree by calling the appropriate callback functions of all

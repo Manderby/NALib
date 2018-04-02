@@ -167,7 +167,7 @@ NA_IAPI NABool naIsInfinite(double x){
 NA_IDEF float naMinf(float a, float b){
   return (a<b)?a:b;
 }
-NA_IDEF double naMind (double a, double b){
+NA_IDEF double naMin(double a, double b){
   return (a<b)?a:b;
 }
 NA_IDEF NAInt naMini(NAInt a, NAInt b){
@@ -190,10 +190,10 @@ NA_IDEF int64 naMini64(int64 a, int64 b){
 NA_IDEF float naMaxf(float a, float b){
   return (a>b)?a:b;
 }
-NA_IDEF double naMaxd (double a, double b){
+NA_IDEF double naMax(double a, double b){
   return (a>b)?a:b;
 }
-NA_IDEF NAInt naMaxi  (NAInt a, NAInt b){
+NA_IDEF NAInt naMaxi(NAInt a, NAInt b){
   return (a>b)?a:b;
 }
 NA_IDEF int8 naMaxi8(int8 a, int8 b){

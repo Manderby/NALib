@@ -186,6 +186,9 @@ NA_IAPI NAPos    naMakePos    (double x,      double  y);
 NA_IAPI NAPosi   naMakePosi   (NAInt  x,      NAInt   y);
 NA_IAPI NAPos    naMakePosWithPosi(NAPosi pos);
 NA_IAPI NAPosi   naMakePosiWithPos(NAPos  pos);
+// The Integer variant assumes pos to only contain integers, hence using a
+// more advanced and quicker conversion. But pos must be integral to work.
+NA_IAPI NAPosi   naMakePosiWithIntegerPos(NAPos  pos);
 
 NA_IAPI NASize   naMakeSize   (double width,  double  height);
 NA_IAPI NASizei  naMakeSizei  (NAInt  width,  NAInt   height);
@@ -193,6 +196,9 @@ NA_IAPI NASize   naMakeSizeE  (double width,  double  height);
 NA_IAPI NASizei  naMakeSizeiE (NAInt  width,  NAInt   height);
 NA_IAPI NASize   naMakeSizeWithSizei(NASizei size);
 NA_IAPI NASizei  naMakeSizeiWithSize(NASize  size);
+// The Integer variant assumes pos to only contain integers, hence using a
+// more advanced and quicker conversion. But pos must be integral to work.
+NA_IAPI NASizei  naMakeSizeiWithIntegerSize(NASize  size);
 NA_IAPI NASize   naMakeSizeEmpty(void);
 NA_IAPI NASizei  naMakeSizeiEmpty(void);
 
@@ -280,6 +286,7 @@ NA_IAPI NARangei naMakeRangeiWithRangeAndRange (NARangei range1, NARangei range2
 
 NA_IAPI NARect  naMakeRectWithPosAndPos    (NAPos   pos1,  NAPos   pos2);
 NA_IAPI NARect  naMakeRectWithRectAndPos   (NARect  rect,  NAPos   pos);
+NA_IAPI NARect  naMakeRectWithRectAndPosE  (NARect  rect,  NAPos   pos);
 NA_IAPI NARect  naMakeRectWithRectAndRect  (NARect  rect1, NARect  rect2);
 NA_IAPI NARect  naMakeRectWithRectAndRectE (NARect  rect1, NARect  rect2);
 NA_IAPI NARecti naMakeRectiWithPosAndPos   (NAPosi  pos1,  NAPosi  pos2);
@@ -301,8 +308,11 @@ NA_IAPI NABoxi naMakeBoxiWithBoxAndBoxE     (NABoxi    box1,    NABoxi    box2);
 // Note: This is basically the inverse of naMakeBoxiWithBoxAndBox. Use
 // the naIsXXXUseful tests to test if the resulting element actually is a
 // valid intersection.
+NA_IAPI NARange  naMakeRangeWithRangeIntersection (NARange  range1, NARange  range2);
 NA_IAPI NARangei naMakeRangeiWithRangeIntersection(NARangei range1, NARangei range2);
+NA_IAPI NARect   naMakeRectWithRectIntersection   (NARect   rect1,  NARect   rect2);
 NA_IAPI NARecti  naMakeRectiWithRectIntersection  (NARecti  rect1,  NARecti  rect2);
+NA_IAPI NABox    naMakeBoxWithBoxIntersection     (NABox    box1,   NABox    box2);
 NA_IAPI NABoxi   naMakeBoxiWithBoxIntersection    (NABoxi   box1,   NABoxi   box2);
 
 // Creates a new rect by adding the given border around the given rect.

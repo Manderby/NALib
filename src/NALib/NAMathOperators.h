@@ -77,7 +77,7 @@ NA_IAPI NABool        naIsNaN (double x);
 NA_IAPI NABool        naIsInfinitef(float  x);
 NA_IAPI NABool        naIsInfinite (double x);
 
-// naMind and naMaxd return the minimum or maximum of two values.
+// naMin and naMax return the minimum or maximum of two values.
 //
 // Note that in many implementations, Min and Max are implemented as the
 // following macros:

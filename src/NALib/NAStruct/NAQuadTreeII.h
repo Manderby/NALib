@@ -7,11 +7,21 @@
 // Do not include this file directly! It will automatically be included when
 // including "NAQuadTree.h"
 
+
+
+#define KEEPPosToRasterPos(p) naMakePos(naRound(p.x), naRound(p.y))
+#define REMOVEPosiToPos(p) naMakePos(p.x, p.y)
+#define REMOVEPosToPosi(p) naMakePosi((NAInt)naRound(p.x), (NAInt)naRound(p.y))
+#define REMOVESizeiToSize(s) naMakeSize(s.width, s.height)
+#define REMOVERectiToRect(r) naMakeRectS(r.pos.x, r.pos.y, r.size.width, r.size.height)
+#define REMOVERectToRecti(r) naMakeRectiS((NAInt)naRound(r.pos.x), (NAInt)naRound(r.pos.y), (NAInt)naRound(r.size.width), (NAInt)naRound(r.size.height))
+
+
+
 typedef struct NAQuadTreeNode NAQuadTreeNode;
 
 struct NAQuadTree{
-  NAInt leaflength;
-  NAQuadTreeCallbacks callbacks;
+  NAQuadTreeConfiguration configuration;
   NAQuadTreeNode* root;
   #ifndef NDEBUG
     NAInt itercount;
@@ -22,7 +32,7 @@ struct NAQuadTreeIterator{
   NAPtr tree;
   NAQuadTreeNode* curnode;
   NAInt cursegment;
-  NAPosi leaforigin;
+  NAPos leaforigin;
   NAInt flags;
 };
 
@@ -35,21 +45,22 @@ NA_IDEF NABool naIsQuadTreeEmpty(const NAQuadTree* tree){
 
 
 
-NA_IDEF NAInt naGetQuadTreeLeafLength(const NAQuadTree* tree){
-  return tree->leaflength;
+NA_IDEF NAInt naGetQuadTreeMinLeafExponent(const NAQuadTree* tree){
+  return tree->configuration.minleafexponent;
 }
 
 
 
-NA_IDEF NAPosi naGetQuadTreeAlignedCoord(NAInt leaflength, NAPosi coord){
-  NARecti leafalign = naMakeRecti(naMakePosi(0, 0), naMakeSizei(leaflength, leaflength));
-  return naMakePosiWithAlignment(coord, leafalign);
+NA_IDEF NAPos naGetQuadTreeAlignedCoord(NAInt leafexponent, NAPos coord){
+  NARecti leafalign = naMakeRecti(naMakePosi(0, 0), naMakeSizei(leafexponent, leafexponent));
+  NAPosi alignposint = naMakePosiWithAlignment(naMakePosiWithIntegerPos(coord), leafalign);
+  return REMOVEPosiToPos(alignposint);
 }
 
 
 
-NA_IDEF NAQuadTreeCallbacks naGetQuadTreeCallbacks(const NAQuadTree* tree){
-  return tree->callbacks;
+NA_IDEF NAQuadTreeConfiguration naGetQuadTreeConfiguration(const NAQuadTree* tree){
+  return tree->configuration;
 }
 
 
