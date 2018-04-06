@@ -539,7 +539,7 @@ NA_DEF void naStopRuntime(){
       NACorePool* corepool = na_runtime->typeinfos[i]->curpool;
       #ifndef NDEBUG
         if(!corepool)
-          naError("naStopRuntime", "Core memory pool should not be NULL");
+          {naCrash("naStopRuntime", "Core memory pool should not be NULL"); return;}
       #endif
       if(corepool->nextpool == corepool){
         corepool->coretypeinfo->curpool = NA_NULL;
@@ -586,7 +586,7 @@ NA_DEF void* naMallocTmp(NAUInt bytesize){
     if(na_runtime->mallocGarbage->cur >= NA_MALLOC_GARBAGE_POINTER_COUNT)
       naError("naMallocTmp", "Buffer overrun.");
     if(!na_runtime->mallocGarbage)
-      {naCrash("naMallocTmp", "Garbage struct is null"); return NA_NULL;}
+      {naCrash("naMallocTmp", "Garbage struct is null"); naFree(newPtr); return NA_NULL;}
   #endif
   garbage = na_runtime->mallocGarbage;
   garbage->pointers[garbage->cur] = newPtr;

@@ -116,7 +116,7 @@ NA_IDEF void naCopyn(void* NA_RESTRICT d, const void* NA_RESTRICT s, NAInt bytes
       return;
     }
   #endif
-  memcpy(d, s, bytesize);
+  memcpy(d, s, (size_t)bytesize);
 }
 
 
@@ -297,7 +297,7 @@ NA_IDEF void naNulln32(void* d, int32 bytesize){
       naError("naNulln32", "count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
-  memset(d, 0, bytesize);
+  memset(d, 0, (size_t)bytesize);
 }
 
 NA_IDEF void naNulln64(void* d, int64 bytesize){
@@ -327,7 +327,7 @@ NA_IDEF void naSetn32(void* d, int32 bytesize, NAByte value){
       naError("naSetn32", "count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
-  memset(d, value, bytesize);
+  memset(d, value, (size_t)bytesize);
 }
 
 NA_IDEF void naSetn64(void* d, int64 bytesize, NAByte value){

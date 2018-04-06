@@ -3014,11 +3014,31 @@ NA_IDEF float naDotV4fS(const float* v){
 // /////////////////////////////////////////
 
 NA_IDEF void naCrossV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b){
+  #ifndef NDEBUG
+    if(a == d)
+      naError("naCrossV3d", "a and d are equal.");
+    if(b == d)
+      naError("naCrossV3d", "b and d are equal.");
+    else if(naAbsi(d-a) < 3)
+      naError("naCrossV3d", "a overlaps misaligned with d");
+    else if(naAbsi(d-b) < 3)
+      naError("naCrossV3d", "b overlaps misaligned with d");
+  #endif
   d[0] = a[1] * b[2] - a[2] * b[1];
   d[1] = a[2] * b[0] - a[0] * b[2];
   d[2] = a[0] * b[1] - a[1] * b[0];
 }
 NA_IDEF void naCrossV3f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT b){
+  #ifndef NDEBUG
+    if(a == d)
+      naError("naCrossV3f", "a and d are equal.");
+    if(b == d)
+      naError("naCrossV3f", "b and d are equal.");
+    else if(naAbsi(d-a) < 3)
+      naError("naCrossV3f", "a overlaps misaligned with d");
+    else if(naAbsi(d-b) < 3)
+      naError("naCrossV3f", "b overlaps misaligned with d");
+  #endif
   d[0] = a[1] * b[2] - a[2] * b[1];
   d[1] = a[2] * b[0] - a[0] * b[2];
   d[2] = a[0] * b[1] - a[1] * b[0];

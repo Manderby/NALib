@@ -28,28 +28,28 @@ NA_IDEF NAInt naSigni(NAInt x){
 }
 NA_IDEF int8 naSigni8(int8 x){
   #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-    return ((int8)(naGetSignum8(x) << 1) + 1);
+    return ((int8)((uint8)naGetSignum8(x) << 1) + 1);
   #else
     return (x<0)?-1:1;
   #endif
 }
 NA_IDEF int16 naSigni16(int16 x){
   #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-    return ((int16)(naGetSignum16(x) << 1) + 1);
+    return ((int16)((uint16)naGetSignum16(x) << 1) + 1);
   #else
     return (x<0)?-1:1;
   #endif
 }
 NA_IDEF int32 naSigni32(int32 x){
   #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-    return ((int32)(naGetSignum32(x) << 1) + 1);
+    return ((int32)((uint32)naGetSignum32(x) << 1) + 1);
   #else
     return (x<0)?-1:1;
   #endif
 }
 NA_IDEF int64 naSigni64(int64 x){
   #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-    return ((int64)(naGetSignum64(x) << 1) + 1LL);
+    return ((int64)((uint64)naGetSignum64(x) << 1) + 1LL);
   #else
     return (x<0)?-1LL:1LL;
   #endif

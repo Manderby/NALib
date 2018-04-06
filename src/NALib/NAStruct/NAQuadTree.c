@@ -859,8 +859,7 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
   // Create four rects which denote the rects in the new shifted tree which
   // are aligned to a leaflength.
   NAInt minleafexponent = naGetQuadTreeMinLeafExponent(duptree);
-//  NAPosi shiftint = naMakePosiWithIntegerPos(shift);
-  NAPosi shiftint = naMakePosiWithPos(shift);
+  NAPosi shiftint = REMOVEPosToPosi(shift);
   x1bound = ((shiftint.x % minleafexponent) + minleafexponent ) % minleafexponent;
   y1bound = ((shiftint.y % minleafexponent) + minleafexponent ) % minleafexponent;
   x2bound = naGetQuadTreeMinLeafExponent(duptree) - x1bound;

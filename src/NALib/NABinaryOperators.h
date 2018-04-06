@@ -81,10 +81,10 @@ typedef int64 value64;
 #define NA_VALUE16_BIT_COUNT  16
 #define NA_VALUE32_BIT_COUNT  32
 #define NA_VALUE64_BIT_COUNT  64
-#define NA_VALUE8_SIGN_MASK   (1 << (NA_VALUE8_BIT_COUNT   - 1))
-#define NA_VALUE16_SIGN_MASK  (1 << (NA_VALUE16_BIT_COUNT  - 1))
-#define NA_VALUE32_SIGN_MASK  (1 << (NA_VALUE32_BIT_COUNT  - 1))
-#define NA_VALUE64_SIGN_MASK  (1LL << (NA_VALUE64_BIT_COUNT - 1LL))
+#define NA_VALUE8_SIGN_MASK   ((int8)(1U << (NA_VALUE8_BIT_COUNT   - 1U)))
+#define NA_VALUE16_SIGN_MASK  ((int16)(1U << (NA_VALUE16_BIT_COUNT  - 1U)))
+#define NA_VALUE32_SIGN_MASK  ((int32)(1U << (NA_VALUE32_BIT_COUNT  - 1U)))
+#define NA_VALUE64_SIGN_MASK  ((int64)(1ULL << (NA_VALUE64_BIT_COUNT - 1ULL)))
 
 #if FLT_RADIX != 2
   #warning "NALib requires floating points to have a radix of 2"
