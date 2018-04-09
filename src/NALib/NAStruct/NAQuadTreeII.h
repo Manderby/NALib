@@ -9,7 +9,7 @@
 
 
 
-#define KEEPPosToRasterPos(p) naMakePos(naRound(p.x), naRound(p.y))
+
 #define REMOVEPosiToPos(p) naMakePos(p.x, p.y)
 #define REMOVEPosToPosi(p) naMakePosi((NAInt)naRound(p.x), (NAInt)naRound(p.y))
 #define REMOVESizeiToSize(s) naMakeSize(s.width, s.height)
