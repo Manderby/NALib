@@ -54,7 +54,12 @@ NA_IDEF NAInt naGetQuadTreeMinLeafExponent(const NAQuadTree* tree){
 NA_IDEF NAPos naGetQuadTreeAlignedCoord(NAInt leafexponent, NAPos coord){
   NARecti leafalign = naMakeRecti(naMakePosi(0, 0), naMakeSizei(leafexponent, leafexponent));
   NAPosi alignposint = naMakePosiWithAlignment(naMakePosiWithIntegerPos(coord), leafalign);
-  return REMOVEPosiToPos(alignposint);
+  NAPos retpos = REMOVEPosiToPos(alignposint);
+  #ifndef NDEBUG
+    if(retpos.y > 10000)
+      naError("naGetQuadTreeAlignedCoord", "Coordinate is rather large");
+  #endif
+  return retpos;
 }
 
 

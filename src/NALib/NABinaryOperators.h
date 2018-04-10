@@ -72,19 +72,14 @@
 // they were somewhat sufficiently being represented by these subnormal numbers
 // and hence the positive exponents gained a whole power of 2 more. The end.
 
-typedef int8  value8;
-typedef int16 value16;
-typedef int32 value32;
-typedef int64 value64;
-
 #define NA_VALUE8_BIT_COUNT   8
 #define NA_VALUE16_BIT_COUNT  16
 #define NA_VALUE32_BIT_COUNT  32
 #define NA_VALUE64_BIT_COUNT  64
-#define NA_VALUE8_SIGN_MASK   ((int8)(1U << (NA_VALUE8_BIT_COUNT   - 1U)))
-#define NA_VALUE16_SIGN_MASK  ((int16)(1U << (NA_VALUE16_BIT_COUNT  - 1U)))
-#define NA_VALUE32_SIGN_MASK  ((int32)(1U << (NA_VALUE32_BIT_COUNT  - 1U)))
-#define NA_VALUE64_SIGN_MASK  ((int64)(1ULL << (NA_VALUE64_BIT_COUNT - 1ULL)))
+#define NA_VALUE8_SIGN_MASK   ((uint8)(1U << (NA_VALUE8_BIT_COUNT   - 1U)))
+#define NA_VALUE16_SIGN_MASK  ((uint16)(1U << (NA_VALUE16_BIT_COUNT  - 1U)))
+#define NA_VALUE32_SIGN_MASK  ((uint32)(1U << (NA_VALUE32_BIT_COUNT  - 1U)))
+#define NA_VALUE64_SIGN_MASK  ((uint64)(1ULL << (NA_VALUE64_BIT_COUNT - 1ULL)))
 
 #if FLT_RADIX != 2
   #warning "NALib requires floating points to have a radix of 2"
@@ -128,30 +123,31 @@ typedef int64 value64;
 #define NA_IEEE754_DOUBLE_EXPONENT_MASK          (((1LL << (NA_IEEE754_DOUBLE_BIT_COUNT - 1LL)) - 1LL) & ~NA_IEEE754_DOUBLE_SIGNIFICAND_MASK)
 #define NA_IEEE754_DOUBLE_SIGN_MASK              (1LL << (NA_IEEE754_DOUBLE_BIT_COUNT - 1LL))
 
-// Returns either 0 or -1 in two complement form depending on the sign bit.
-NA_IAPI value8  naGetSignum8 (value8  i);
-NA_IAPI value16 naGetSignum16(value16 i);
-NA_IAPI value32 naGetSignum32(value32 i);
-NA_IAPI value64 naGetSignum64(value64 i);
+// Returns either 0 or -1 in two complement form but stored as an uint
+// depending on the sign bit.
+NA_IAPI uint8  naGetSignum8 (int8  i);
+NA_IAPI uint16 naGetSignum16(int16 i);
+NA_IAPI uint32 naGetSignum32(int32 i);
+NA_IAPI uint64 naGetSignum64(int64 i);
 
 // Sets or unsets the sign bit. This is pure bit logic, not performing
 // any complement.
-NA_IAPI value8  naSetSignBit8   (value8   i);
-NA_IAPI value16 naSetSignBit16  (value16  i);
-NA_IAPI value32 naSetSignBit32  (value32  i);
-NA_IAPI value64 naSetSignBit64  (value64  i);
-NA_IAPI value8  naUnsetSignBit8 (value8   i);
-NA_IAPI value16 naUnsetSignBit16(value16  i);
-NA_IAPI value32 naUnsetSignBit32(value32  i);
-NA_IAPI value64 naUnsetSignBit64(value64  i);
+NA_IAPI void naSetSignBit8   (void* i);
+NA_IAPI void naSetSignBit16  (void* i);
+NA_IAPI void naSetSignBit32  (void* i);
+NA_IAPI void naSetSignBit64  (void* i);
+NA_IAPI void naUnsetSignBit8 (void* i);
+NA_IAPI void naUnsetSignBit16(void* i);
+NA_IAPI void naUnsetSignBit32(void* i);
+NA_IAPI void naUnsetSignBit64(void* i);
 
 // Creates floats and doubles out of signed significands and exponents
-NA_IAPI float  naCreateFloat (value32 signedsignificand, value32 signedexponent);
-NA_IAPI double naCreateDouble(value64 signedsignificand, value64 signedexponent);
-NA_IAPI float  naCreateFloatWithExponent (value32 signedexponent);
-NA_IAPI double naCreateDoubleWithExponent(value64 signedexponent);
-NA_IAPI float  naCreateFloatSubnormal (value32 signedsignificand);
-NA_IAPI double naCreateDoubleSubnormal(value64 signedsignificand);
+NA_IAPI float  naCreateFloat (int32 signedsignificand, int32 signedexponent);
+NA_IAPI double naCreateDouble(int64 signedsignificand, int64 signedexponent);
+NA_IAPI float  naCreateFloatWithExponent (int32 signedexponent);
+NA_IAPI double naCreateDoubleWithExponent(int64 signedexponent);
+NA_IAPI float  naCreateFloatSubnormal (int32 signedsignificand);
+NA_IAPI double naCreateDoubleSubnormal(int64 signedsignificand);
 
 
 

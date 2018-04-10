@@ -28,28 +28,28 @@ NA_IDEF NAInt naSigni(NAInt x){
 }
 NA_IDEF int8 naSigni8(int8 x){
   #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-    return ((int8)((uint8)naGetSignum8(x) << 1) + 1);
+    return (int8)((naGetSignum8(x) << 1) + 1);
   #else
     return (x<0)?-1:1;
   #endif
 }
 NA_IDEF int16 naSigni16(int16 x){
   #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-    return ((int16)((uint16)naGetSignum16(x) << 1) + 1);
+    return (int16)((naGetSignum16(x) << 1) + 1);
   #else
     return (x<0)?-1:1;
   #endif
 }
 NA_IDEF int32 naSigni32(int32 x){
   #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-    return ((int32)((uint32)naGetSignum32(x) << 1) + 1);
+    return (int32)((naGetSignum32(x) << 1) + 1);
   #else
     return (x<0)?-1:1;
   #endif
 }
 NA_IDEF int64 naSigni64(int64 x){
   #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-    return ((int64)((uint64)naGetSignum64(x) << 1) + 1LL);
+    return (int64)((naGetSignum64(x) << 1) + 1LL);
   #else
     return (x<0)?-1LL:1LL;
   #endif
@@ -269,10 +269,12 @@ NA_IDEF double naCbrt(double x){
 
 
 NA_IDEF float naAbsf(float x){
-  return naUnsetSignBit32((value32)x);
+  naUnsetSignBit32(&x);
+  return x;
 }
 NA_IDEF double naAbs(double x){
-  return naUnsetSignBit64((value64)x);
+  naUnsetSignBit64(&x);
+  return x;
 }
 NA_IDEF NAInt naAbsi(NAInt x){
 #if NA_SYSTEM_ADDRESS_BITS == 32
@@ -609,10 +611,10 @@ NA_IDEF double naPow(double b, double x){
 
 
 NA_IDEF float naPowerOf2f(NAInt n){
-  return naCreateFloatWithExponent((value32)n);
+  return naCreateFloatWithExponent((int32)n);
 }
 NA_IDEF double naPowerOf2(NAInt n){
-  return naCreateDoubleWithExponent((value64)n);
+  return naCreateDoubleWithExponent((int64)n);
 }
 
 
