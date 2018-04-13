@@ -258,11 +258,6 @@ NA_HDEF void naGrowQuadTreeNodeRoot(NAQuadTree* tree){
   NAQuadTreeNode* parentnode;
   NAPos parentorigin = naGetQuadTreeNodeParentOrigin(tree->root->childexponent * 2, tree->root->childorigin[0]);
   
-  #ifndef NDEBUG
-    if(tree->root->childexponent > 10000)
-      naError("naGrowQuadTreeNodeRoot", "exponent is rather large");
-  #endif
-  
   parentnode = naAllocQuadTreeNode(
           tree->root->childexponent * 2,
           -1,

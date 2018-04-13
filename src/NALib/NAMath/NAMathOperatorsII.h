@@ -49,7 +49,8 @@ NA_IDEF int32 naSigni32(int32 x){
 }
 NA_IDEF int64 naSigni64(int64 x){
   #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-    return (int64)((naGetSignum64(x) << 1) + 1LL);
+    uint64 signum = naGetSignum64(x);
+    return (int64)((signum << 1) + 1LL);
   #else
     return (x<0)?-1LL:1LL;
   #endif
