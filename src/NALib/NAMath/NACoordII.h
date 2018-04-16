@@ -1513,18 +1513,30 @@ NA_IDEF void naCopyBoxi(NABoxi* boxd,  NABoxi* boxs){
 // /////////////////////////////////
 
 NA_IDEF NAPos naGetRectCenter(NARect rect){
+  #ifndef NDEBUG
+    if(!naIsRectUseful(rect))
+      naError("naGetRectCenter", "rect is not useful");
+  #endif
   NAPos newpos;
   newpos.x = rect.pos.x + 0.5 * rect.size.width;
   newpos.y = rect.pos.y + 0.5 * rect.size.height;
   return newpos;
 }
 NA_IDEF NAPosi naGetRectiCenter(NARecti rect){
+  #ifndef NDEBUG
+    if(!naIsRectiUseful(rect))
+      naError("naGetRectiCenter", "rect is not useful");
+  #endif
   NAPosi newpos;
   newpos.x = rect.pos.x + rect.size.width / 2;
   newpos.y = rect.pos.y + rect.size.height / 2;
   return newpos;
 }
 NA_IDEF NAVertex naGetBoxCenter(NABox box){
+  #ifndef NDEBUG
+    if(!naIsBoxUseful(box))
+      naError("naGetBoxCenter", "box is not useful");
+  #endif
   NAVertex newvertex;
   newvertex.x = box.vertex.x + 0.5 * box.volume.width;
   newvertex.y = box.vertex.y + 0.5 * box.volume.height;
@@ -1532,6 +1544,10 @@ NA_IDEF NAVertex naGetBoxCenter(NABox box){
   return newvertex;
 }
 NA_IDEF NAVertexi naGetBoxiCenter(NABoxi box){
+  #ifndef NDEBUG
+    if(!naIsBoxiUseful(box))
+      naError("naGetBoxiCenter", "box is not useful");
+  #endif
   NAVertexi newvertex;
   newvertex.x = box.vertex.x + box.volume.width / 2;
   newvertex.y = box.vertex.y + box.volume.height / 2;
