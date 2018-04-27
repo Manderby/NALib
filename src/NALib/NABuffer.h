@@ -104,8 +104,8 @@ NA_API NABuffer* naNewBufferExtraction( NABuffer* srcbuffer,
 // All content will be loaded in the new buffer. If there are sparse parts
 // in the src buffer, they will be filled with the current source.
 NA_API NABuffer* naNewBufferCopy(const NABuffer* srcbuffer,
-                                            NARangei range,
-                                              NABool securememory);
+                                        NARangei range,
+                                          NABool securememory);
 
 // Creates a buffer with no source and no content. It can be used as a
 // placeholder or to collect other buffers with naAppendBuffer or
@@ -123,10 +123,10 @@ NA_API NABuffer* naNewBufferWithInpuFile(const char* filename);
 // data is mutable, you can give a destructor if you want to delete the
 // memory of the data pointer when no longer needed.
 NA_API NABuffer* naNewBufferWithConstData( const void* data,
-                                                    NAInt bytesize);
+                                                 NAInt bytesize);
 NA_API NABuffer* naNewBufferWithMutableData(     void* data,
-                                                    NAInt bytesize,
-                                                NAMutator destructor);
+                                                 NAInt bytesize,
+                                             NAMutator destructor);
 
 // ////////////////////////////////////////
 // Buffer with custom source

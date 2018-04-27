@@ -50,10 +50,10 @@ NA_HDEF void naDestructPointer(NAPointer* pointer){
 //
 // Within one pool, the first bytes (8 times an addresssize to be precise) are
 // reserved for a complete description of what that pool stores using the
-// NACorePool struct.
+// NACorePoolPart struct.
 //
 // All remaining bytes are used for storing structs, as many as the remaining
-// space can store. The NACorePool struct stores the first unused struct as a
+// space can store. The NACorePoolPart struct stores the first unused struct as a
 // pointer. When naNew is called, that first unused pointer is used as the
 // pointer being returned to the user. Before returning the pointer though,
 // the next pointer to an unused struct must be identified.
@@ -69,9 +69,9 @@ NA_HDEF void naDestructPointer(NAPointer* pointer){
 // struct: When calling naDelete, a struct destroys all of its contents and
 // eventually only contains garbage values. When this is done, NALib puts the
 // address of the next free pointer at the first bytes of the deleted struct
-// and sets the next unused pointer of the NACorePool to this just deleted
+// and sets the next unused pointer of the NACorePoolPart to this just deleted
 // struct, hence ultimately creating a linear list. With this mechanism, the
-// NACorePool can always keep track of which structs are still available.
+// NACorePoolPart can always keep track of which structs are still available.
 //
 // When finally the number of structs used in a pool equals the maximum number
 // of structs, the pool has no more space. Then, the next pool in the list is
@@ -89,12 +89,12 @@ NA_HDEF void naDestructPointer(NAPointer* pointer){
 
 
 typedef struct NAMallocGarbage NAMallocGarbage;
-typedef struct NACorePool NACorePool;
+typedef struct NACorePoolPart NACorePoolPart;
 typedef struct NACoreTypeInfo NACoreTypeInfo;
 typedef struct NARuntime NARuntime;
 
 struct NACoreTypeInfo{
-  NACorePool*       curpool;
+  NACorePoolPart*       curpool;
   NAUInt            typesize;
   NAMutator         destructor;
   NABool            refcounting;
@@ -111,20 +111,24 @@ struct NAMallocGarbage{
   void* pointers[NA_MALLOC_GARBAGE_POINTER_COUNT];
 };
 
-struct NACorePool{
+// This structure is stored in the first bytes of every corepoolpart block.
+// Its size is ALWAYS 8 times an addresssize, the rest of the block is
+// available for the memory.
+struct NACorePoolPart{
   NACoreTypeInfo* coretypeinfo;
   NAUInt maxcount;
   NAUInt usedcount;
   NAUInt everusedcount;
   void* firstunused;
-  NACorePool* prevpool;
-  NACorePool* nextpool;
+  NACorePoolPart* prevpoolpart;
+  NACorePoolPart* nextpoolpart;
   // The following field is a dummy entry not in use.
   // It shall not be removed though as the total amount of bytes used for
-  // an NACorePool shall be 8 times an addresssize. todo make a test.
+  // an NACorePoolPart shall be 8 times an addresssize.
   void* dummy; // used in debugging. Points at first byte of the whole pool
 };
 
+// The runtime struct stores base informations about the runtime.
 struct NARuntime{
   NAUInt mempagesize;
   NAUInt poolsize;
@@ -137,6 +141,7 @@ struct NARuntime{
 
 
 
+// The global runtime variable.
 NARuntime* na_runtime = NA_NULL;
 
 
@@ -144,7 +149,8 @@ NARuntime* na_runtime = NA_NULL;
 
 
 // Security check: The pool bytesize must be big enough to store one struct
-// of NACorePool.
+// of NACorePoolPart. Note that bytesize 0 has the meaning of using the
+// memory page size.
 #if (NA_COREPOOL_BYTESIZE != 0) && (NA_COREPOOL_BYTESIZE <= 8 * NA_SYSTEM_ADDRESS_BYTES)
   #error "Core memory pool size is too small"
 #endif
@@ -207,29 +213,29 @@ NA_HIDEF void naUnregisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
 
 
 NA_HDEF NAUInt naGetCoreTypeInfoAllocatedCount(NACoreTypeInfo* coretypeinfo){
-  NACorePool* firstpool = coretypeinfo->curpool;
-  NACorePool* curpool = firstpool->nextpool;
+  NACorePoolPart* firstpool = coretypeinfo->curpool;
+  NACorePoolPart* curpool = firstpool->nextpoolpart;
   NAUInt totalcount = firstpool->usedcount;
   while(curpool != firstpool){
     totalcount += curpool->usedcount;
-    curpool = curpool->nextpool;
+    curpool = curpool->nextpoolpart;
   }
   return totalcount;
 }
 
 
 
-NA_HIDEF NABool naIsPoolFull(NACorePool* corepool){
+NA_HIDEF NABool naIsPoolFull(NACorePoolPart* corepool){
   return (corepool->usedcount == corepool->maxcount);
 }
 
 
 
-NA_HIDEF void naAttachPoolAfterCurPool(NACoreTypeInfo* coretypeinfo, NACorePool* corepool){
-  corepool->prevpool = coretypeinfo->curpool;
-  corepool->nextpool = coretypeinfo->curpool->nextpool;
-  corepool->prevpool->nextpool = corepool;
-  corepool->nextpool->prevpool = corepool;
+NA_HIDEF void naAttachPoolAfterCurPool(NACoreTypeInfo* coretypeinfo, NACorePoolPart* corepool){
+  corepool->prevpoolpart = coretypeinfo->curpool;
+  corepool->nextpoolpart = coretypeinfo->curpool->nextpoolpart;
+  corepool->prevpoolpart->nextpoolpart = corepool;
+  corepool->nextpoolpart->prevpoolpart = corepool;
 }
 
 
@@ -237,20 +243,20 @@ NA_HIDEF void naAttachPoolAfterCurPool(NACoreTypeInfo* coretypeinfo, NACorePool*
 // This function gets called when no pool has any more space.
 // A new pool is created and added to the pool list at the current position.
 NA_HIDEF void naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
-  NACorePool* corepool;
+  NACorePoolPart* corepool;
       
   #ifndef NDEBUG
     if(coretypeinfo->typesize < NA_SYSTEM_ADDRESS_BYTES)
       naError("naEnhanceCorePool", "Element is too small");
   #endif
   #ifndef NDEBUG
-    if(coretypeinfo->typesize > (na_runtime->poolsize - sizeof(NACorePool)))
+    if(coretypeinfo->typesize > (na_runtime->poolsize - sizeof(NACorePoolPart)))
       naError("naEnhanceCorePool", "Element is too big for core memory pool size");
   #endif
 
   // We create a new pool which the size of a full pool but we type it as
-  // NACorePool to access the first bytes.
-  corepool = (NACorePool*)naMallocAligned(na_runtime->poolsize, na_runtime->poolsize);
+  // NACorePoolPart to access the first bytes.
+  corepool = (NACorePoolPart*)naMallocAligned(na_runtime->poolsize, na_runtime->poolsize);
   #ifndef NDEBUG
     if(((NAUInt)corepool & ~na_runtime->poolsizemask) != 0)
       naError("naEnhanceCorePool", "pool badly aligned");
@@ -260,10 +266,10 @@ NA_HIDEF void naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
   corepool->coretypeinfo = coretypeinfo;
 
   // We initialize the basic fields of corepool.
-  corepool->maxcount = ((na_runtime->poolsize - sizeof(NACorePool)) / coretypeinfo->typesize);
+  corepool->maxcount = ((na_runtime->poolsize - sizeof(NACorePoolPart)) / coretypeinfo->typesize);
   corepool->usedcount = 0;
   corepool->everusedcount = 0;
-  corepool->firstunused = (void**)(((NAByte*)corepool) + sizeof(NACorePool));
+  corepool->firstunused = (void**)(((NAByte*)corepool) + sizeof(NACorePoolPart));
   #ifndef NDEBUG
     corepool->dummy = corepool;
   #endif
@@ -279,8 +285,8 @@ NA_HIDEF void naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
   if(coretypeinfo->curpool){
     naAttachPoolAfterCurPool(coretypeinfo, corepool);
   }else{
-    corepool->prevpool = corepool;
-    corepool->nextpool = corepool;
+    corepool->prevpoolpart = corepool;
+    corepool->nextpoolpart = corepool;
   }
   coretypeinfo->curpool = corepool;
 }
@@ -290,12 +296,12 @@ NA_HIDEF void naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
 // This function gets called when all structs of a pool have been deleted.
 // Note that if the whole pool list only contains one pool, this function is
 // not called.
-NA_HIDEF void naShrinkCorePool(NACorePool* corepool){
+NA_HIDEF void naShrinkCorePool(NACorePoolPart* corepool){
   // We move to the next pool if the pool is set as the current pool.
-  if(corepool->coretypeinfo->curpool == corepool){corepool->coretypeinfo->curpool = corepool->nextpool;}
+  if(corepool->coretypeinfo->curpool == corepool){corepool->coretypeinfo->curpool = corepool->nextpoolpart;}
   // We unlink the pool from the list.
-  corepool->prevpool->nextpool = corepool->nextpool;
-  corepool->nextpool->prevpool = corepool->prevpool;
+  corepool->prevpoolpart->nextpoolpart = corepool->nextpoolpart;
+  corepool->nextpoolpart->prevpoolpart = corepool->prevpoolpart;
   // And delete its memory.
   naFreeAligned(corepool);
 }
@@ -332,7 +338,7 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
 
   // If the current pool is full, we try the next in the pool list.
   if(naIsPoolFull(coretypeinfo->curpool)){
-    coretypeinfo->curpool = coretypeinfo->curpool->nextpool;
+    coretypeinfo->curpool = coretypeinfo->curpool->nextpoolpart;
     // If the next in the pool list is full too, no pool in the list has any
     // space left and hence we must create a new pool.
     if(naIsPoolFull(coretypeinfo->curpool)){naEnhanceCorePool(coretypeinfo);}
@@ -356,7 +362,7 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
   coretypeinfo->curpool->usedcount++;
   
   #ifndef NDEBUG
-    if(coretypeinfo->curpool != (NACorePool*)((NAUInt)pointer & na_runtime->poolsizemask))
+    if(coretypeinfo->curpool != (NACorePoolPart*)((NAUInt)pointer & na_runtime->poolsizemask))
     naError("naNewStruct", "Pointer seems to be outside of pool");
   #endif
     
@@ -371,7 +377,7 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
 
 
 
-NA_HIDEF void naEjectCorePoolObject(NACorePool* corepool, void* pointer){
+NA_HIDEF void naEjectCorePoolObject(NACorePoolPart* corepool, void* pointer){
   // The memory at pointer is expected to be garbage.
   
   // We explicitely store a pointer to the next unused struct at that
@@ -383,9 +389,9 @@ NA_HIDEF void naEjectCorePoolObject(NACorePool* corepool, void* pointer){
   // it comes one after the current pool. But only if there are more than one
   // pool around and the current pool of the coretypeinfo is not already that
   // pool.
-  if((corepool->usedcount == corepool->maxcount) && (corepool->nextpool != corepool) && (corepool->coretypeinfo->curpool != corepool)){
-    corepool->nextpool->prevpool = corepool->prevpool;
-    corepool->prevpool->nextpool = corepool->nextpool;
+  if((corepool->usedcount == corepool->maxcount) && (corepool->nextpoolpart != corepool) && (corepool->coretypeinfo->curpool != corepool)){
+    corepool->nextpoolpart->prevpoolpart = corepool->prevpoolpart;
+    corepool->prevpoolpart->nextpoolpart = corepool->nextpoolpart;
     naAttachPoolAfterCurPool(corepool->coretypeinfo, corepool);
   }
 
@@ -395,13 +401,13 @@ NA_HIDEF void naEjectCorePoolObject(NACorePool* corepool, void* pointer){
   // If no more structs are in use, we can shrink that core pool away.
   if(!corepool->usedcount){
     #if NA_MEMORY_POOL_AGGRESSIVE_CLEANUP == 1
-      if(corepool->nextpool == corepool){
+      if(corepool->nextpoolpart == corepool){
         corepool->coretypeinfo->curpool = NA_NULL;
         naUnregisterCoreTypeInfo(corepool->coretypeinfo);
       }
       naShrinkCorePool(corepool);
     #else
-      if(corepool->nextpool != corepool){
+      if(corepool->nextpoolpart != corepool){
         naShrinkCorePool(corepool);
       }
     #endif
@@ -411,7 +417,7 @@ NA_HIDEF void naEjectCorePoolObject(NACorePool* corepool, void* pointer){
 
 
 NA_DEF void naDelete(void* pointer){
-  NACorePool* corepool;
+  NACorePoolPart* corepool;
 
   #ifndef NDEBUG
     if(!na_runtime)
@@ -420,7 +426,7 @@ NA_DEF void naDelete(void* pointer){
 
   // Find the corepool entry at the beginning of the pool by AND'ing the
   // address with the poolsizemask
-  corepool = (NACorePool*)((NAUInt)pointer & na_runtime->poolsizemask);
+  corepool = (NACorePoolPart*)((NAUInt)pointer & na_runtime->poolsizemask);
   #ifndef NDEBUG
     if(corepool->dummy != corepool)
       naError("naDelete", "Pointer seems not to be from a pool.");
@@ -438,7 +444,7 @@ NA_DEF void naDelete(void* pointer){
 
 NA_DEF void* naRetain(void* pointer){
   #ifndef NDEBUG
-    NACorePool* corepool;
+    NACorePoolPart* corepool;
     if(!na_runtime)
       {naCrash("naRetain", "Runtime not running. Use naStartRuntime()"); return NA_NULL;}
   #endif
@@ -446,7 +452,7 @@ NA_DEF void* naRetain(void* pointer){
   #ifndef NDEBUG
     // Find the corepool entry at the beginning of the pool by AND'ing the
     // address with the poolsizemask
-    corepool = (NACorePool*)((NAUInt)pointer & na_runtime->poolsizemask);
+    corepool = (NACorePoolPart*)((NAUInt)pointer & na_runtime->poolsizemask);
     if(corepool->dummy != corepool)
       naError("naRetain", "Pointer seems not to be from a pool.");
     if(!corepool->coretypeinfo->refcounting)
@@ -462,7 +468,7 @@ NA_DEF void* naRetain(void* pointer){
 
 
 NA_DEF void naRelease(void* pointer){
-  NACorePool* corepool;
+  NACorePoolPart* corepool;
 
   #ifndef NDEBUG
     if(!na_runtime)
@@ -471,7 +477,7 @@ NA_DEF void naRelease(void* pointer){
 
   // Find the corepool entry at the beginning of the pool by AND'ing the
   // address with the poolsizemask
-  corepool = (NACorePool*)((NAUInt)pointer & na_runtime->poolsizemask);
+  corepool = (NACorePoolPart*)((NAUInt)pointer & na_runtime->poolsizemask);
   #ifndef NDEBUG
     if(corepool->dummy != corepool)
       naError("naRelease", "Pointer seems not to be from a pool.");
@@ -495,8 +501,8 @@ NA_DEF void naStartRuntime(){
   #ifndef NDEBUG
     if(na_runtime)
       naCrash("naStartRuntime", "Runtime already running");
-    if(sizeof(NACorePool) != (8 * NA_SYSTEM_ADDRESS_BYTES))
-      naError("naStartRuntime", "NACorePool struct encoding misaligned");
+    if(sizeof(NACorePoolPart) != (8 * NA_SYSTEM_ADDRESS_BYTES))
+      naError("naStartRuntime", "NACorePoolPart struct encoding misaligned");
   #endif
   na_runtime = naAlloc(NARuntime);
   na_runtime->mempagesize = naGetSystemMemoryPagesize();
@@ -536,12 +542,12 @@ NA_DEF void naStopRuntime(){
 
   #if NA_MEMORY_POOL_AGGRESSIVE_CLEANUP == 0
     for(i=0; i< na_runtime->typeinfocount; i++){
-      NACorePool* corepool = na_runtime->typeinfos[i]->curpool;
+      NACorePoolPart* corepool = na_runtime->typeinfos[i]->curpool;
       #ifndef NDEBUG
         if(!corepool)
           {naCrash("naStopRuntime", "Core memory pool should not be NULL"); return;}
       #endif
-      if(corepool->nextpool == corepool){
+      if(corepool->nextpoolpart == corepool){
         corepool->coretypeinfo->curpool = NA_NULL;
         naUnregisterCoreTypeInfo(corepool->coretypeinfo);
       }

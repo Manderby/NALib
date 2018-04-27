@@ -83,7 +83,7 @@ typedef void* (*NAOctTreeLeafAllocator)( NAVertexi origin,
 // present. The pointer given is a pointer created when NAOctTreeLeafAllocator
 // was called. The userdata is the same as desribed in the allocator function.
 typedef void  (*NAOctTreeLeafDeallocator)(  void* leafdata,
-                                             void* userdata);
+                                            void* userdata);
 
 // NAOctTreeDataCopier
 // This callback is required when shifting an NAOctTree. You are given two
@@ -171,13 +171,13 @@ typedef void  (*NAOctTreeNodeDeallocator)(void* nodedata);
 // note that if one of these functions is not implemented, bubbling is set to
 // NA_TRUE by default.
 typedef NABool(*NAOctTreeLeafChanged)(      void* nodedata,
-                                             NAInt segment,
-                                 const void* const leafdata[8],
-                                             NAInt leaflength);
+                                            NAInt segment,
+                                const void* const leafdata[8],
+                                            NAInt leaflength);
 typedef NABool(*NAOctTreeChildChanged)(     void* nodedata,
-                                             NAInt segment,
-                                 const void* const childdata[8],
-                                             NAInt leaflength);
+                                            NAInt segment,
+                                const void* const childdata[8],
+                                            NAInt leaflength);
 
 
 

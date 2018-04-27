@@ -60,6 +60,25 @@
 
 
 // ////////////////////////////////
+// Aligned memory allocation
+// ////////////////////////////////
+
+// Usually, aligned memory can be created in unix like systems using several
+// methods. Unfortunately, none of them work reliably on Mac OS X. See the
+// NASystem.h file for more information. Default is USE_CUSTOM which is safe
+// on all systems.
+// - NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_CUSTOM 
+// - NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_ALIGNED_ALLOC
+// - NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_POSIX_MEMALIGN
+
+
+#ifndef NA_MEMORY_ALIGNED_MEM_MAC_OS_X
+  #define NA_MEMORY_ALIGNED_MEM_MAC_OS_X NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_POSIX_MEMALIGN
+#endif
+
+
+
+// ////////////////////////////////
 // Runtime memory pools
 // ////////////////////////////////
 

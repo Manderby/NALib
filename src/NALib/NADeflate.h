@@ -38,7 +38,7 @@ NA_API void naFillBufferWithZLIBDecompression(NABuffer* output,
 // the compression shall be.
 NA_API void naFillBufferWithZLIBCompression(  NABuffer* output,
                                               NABuffer* input,
-                                              NADeflateCompressionLevel level);
+                              NADeflateCompressionLevel level);
 
 
 

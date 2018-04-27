@@ -86,7 +86,7 @@ NA_API NAString* naNewStringWithFormat(const NAUTF8Char* format,
 // Does the same thing but with an existing va_list argument. The argumentlist
 // argument will not be altered by this function.
 NA_API NAString* naNewStringWithArguments(const NAUTF8Char* format,
-                                                     va_list argumentlist);
+                                                    va_list argumentlist);
 
 // Fills deststring with a desired part of srcstring.
 // Note that the returned string will automatically be cached.
@@ -115,11 +115,11 @@ NA_API NAString* naNewStringWithArguments(const NAUTF8Char* format,
 // - ( 2, -5)   ->        (empty string because of resulting bytesize == 0)
 // - (-9,  9)   ->        (empty string with warning when debugging)
 NA_API NAString* naNewStringExtraction(const NAString* srcstring,
-                                                  NAInt charoffset,
-                                                  NAInt length);
+                                                 NAInt charoffset,
+                                                 NAInt length);
 
 NA_API NAString* naNewStringWithBufferExtraction( NABuffer* buffer,
-                                                    NARangei range);
+                                                   NARangei range);
 
 
 
@@ -148,7 +148,7 @@ NA_API NAUTF8Char naGetStringChar(NAString* string, NAInt indx);
 // The suffix is detected by the first dot '.' from the right. If no such
 // dot is found, suffix is empty.
 NA_API NAString* naNewStringWithBasenameOfFilename(const NAString* filename);
-NA_API NAString* naNewStringWithSuffixOfFilename(const NAString* filename);
+NA_API NAString* naNewStringWithSuffixOfFilename  (const NAString* filename);
 
 
 
@@ -176,8 +176,9 @@ NA_API NAString* naNewStringEPSDecoded(const NAString* inputstring);
   // Returns a newly allocated memory block containing the system-encoded
   // string. If you do not provide the length, it will be automatically
   // computed. The resulting string must be freed manually. COPIES ALWAYS!
-  NA_API SystemChar* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8str,
-                                                               NAUInt length);
+  NA_API SystemChar* naAllocSystemStringWithUTF8String(
+                                            const NAUTF8Char* utf8str,
+                                                       NAUInt length);
   //// Creates a new NAString from a system-encoded string. COPIES ALWAYS!
   //NA_API NAString* naNewStringFromSystemString(SystemChar* systemstring);
 #endif

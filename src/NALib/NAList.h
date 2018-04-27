@@ -113,8 +113,8 @@ NA_IAPI       void* naGetListLastMutable    (const NAList* list);
 // Traverses the whole list calling the accessor or mutator on each element.
 // A pointer to each element will be given to the mutator. The list is
 // traversed forward from start to end.
-NA_IAPI void naForeachListConst(const NAList* list, NAAccessor accessor);
-NA_IAPI void naForeachListMutable(const NAList* list, NAMutator mutator);
+NA_IAPI void naForeachListConst  (const NAList* list, NAAccessor accessor);
+NA_IAPI void naForeachListMutable(const NAList* list, NAMutator  mutator);
 
 
 // Removes the first element of the src list and reattaches it as the last
@@ -236,8 +236,8 @@ NA_IAPI NABool naIterateList        (NAListIterator* iter, NAInt step);
 // will be returned without warning.
 NA_IAPI const void* naGetListPrevConst      (const NAListIterator* iter);
 NA_IAPI       void* naGetListPrevMutable    (      NAListIterator* iter);
-NA_IAPI const void* naGetListCurConst   (const NAListIterator* iter);
-NA_IAPI       void* naGetListCurMutable (      NAListIterator* iter);
+NA_IAPI const void* naGetListCurConst       (const NAListIterator* iter);
+NA_IAPI       void* naGetListCurMutable     (      NAListIterator* iter);
 NA_IAPI const void* naGetListNextConst      (const NAListIterator* iter);
 NA_IAPI       void* naGetListNextMutable    (      NAListIterator* iter);
 
@@ -271,8 +271,8 @@ NA_IAPI void naAddListAfterMutable  (NAListIterator* iter,       void* content);
 // Prev works the same as Last and Next works the same as First.
 NA_IAPI void  naRemoveListPrevConst     (NAListIterator* iter);
 NA_IAPI void* naRemoveListPrevMutable   (NAListIterator* iter);
-NA_IAPI void  naRemoveListCurConst  (NAListIterator* iter, NABool advance);
-NA_IAPI void* naRemoveListCurMutable(NAListIterator* iter, NABool advance);
+NA_IAPI void  naRemoveListCurConst      (NAListIterator* iter, NABool advance);
+NA_IAPI void* naRemoveListCurMutable    (NAListIterator* iter, NABool advance);
 NA_IAPI void  naRemoveListNextConst     (NAListIterator* iter);
 NA_IAPI void* naRemoveListNextMutable   (NAListIterator* iter);
 

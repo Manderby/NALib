@@ -182,8 +182,8 @@ NA_IAPI NARange  naMakeRangeEmpty(void);
 NA_IAPI NARangef naMakeRangefEmpty(void);
 NA_IAPI NARangei naMakeRangeiEmpty(void);
 
-NA_IAPI NAPos    naMakePos    (double x,      double  y);
-NA_IAPI NAPosi   naMakePosi   (NAInt  x,      NAInt   y);
+NA_IAPI NAPos    naMakePos (double x, double y);
+NA_IAPI NAPosi   naMakePosi(NAInt  x, NAInt  y);
 NA_IAPI NAPos    naMakePosWithPosi(NAPosi pos);
 NA_IAPI NAPosi   naMakePosiWithPos(NAPos  pos);
 // The Integer variant assumes pos to only contain integers, hence using a
@@ -202,10 +202,10 @@ NA_IAPI NASizei  naMakeSizeiWithIntegerSize(NASize  size);
 NA_IAPI NASize   naMakeSizeEmpty(void);
 NA_IAPI NASizei  naMakeSizeiEmpty(void);
 
-NA_IAPI NARect   naMakeRect   (NAPos  pos,    NASize  size);
-NA_IAPI NARecti  naMakeRecti  (NAPosi pos,    NASizei size);
-NA_IAPI NARect   naMakeRectE  (NAPos  pos,    NASize  size);
-NA_IAPI NARecti  naMakeRectiE (NAPosi pos,    NASizei size);
+NA_IAPI NARect   naMakeRect   (NAPos  pos, NASize  size);
+NA_IAPI NARecti  naMakeRecti  (NAPosi pos, NASizei size);
+NA_IAPI NARect   naMakeRectE  (NAPos  pos, NASize  size);
+NA_IAPI NARecti  naMakeRectiE (NAPosi pos, NASizei size);
 NA_IAPI NARect   naMakeRectS  (double x, double y, double width, double height);
 NA_IAPI NARecti  naMakeRectiS (NAInt  x, NAInt  y, NAInt  width, NAInt  height);
 NA_IAPI NARect   naMakeRectSE (double x, double y, double width, double height);

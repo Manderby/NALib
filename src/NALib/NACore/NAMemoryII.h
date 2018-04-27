@@ -44,67 +44,6 @@ NA_IDEF NAUInt naGetSystemMemoryPagesizeMask(){
 
 
 
-// Zero fill
-//
-// The following function returns for a given negative bytesize, how big a
-// buffer must be, to include the appended zero bytes.
-//
-// The allocation functions of NALib expect a positive or negative bytesize.
-// If the bytesize is negative, the absolute value is used to allocate
-// sufficient space but a certain number of bytes is appended to the memory
-// block which will be initialized with binary zero but will not be visible to
-// the programmer.
-// 
-// The following holds true:
-//
-// - The additional bytes are all guaranteed to be initialized with binary
-//   zero.
-// - There are AT LEAST as many bytes appended as one address requires.
-//   Or more precise: 4 Bytes on 32 Bit systems, 8 Bytes on 64 Bit systems
-// - There are as many bytes allocated such that the total bytesize of the
-//   allocated block is a multiple of an address bytesize, meaning 4 or 8 Bytes
-//   depending on the system (32 Bit or 64 Bit).
-// - The total bytesize (desired space plus null bytes) is at minimum 2 times
-//   the number of bytes needed for an address.
-// - When using naMalloc, the part without the additional bytes might partially
-//   become initialized with binary zero.
-// Example for a 32bit system:
-// 0 is a zero-filled byte.
-// x is a desired byte,
-// z is a desired byte which initially gets overwritten with zero.
-// 0:  0000 0000
-// 1:  z000 0000
-// 2:  zz00 0000
-// 3:  zzz0 0000
-// 4:  zzzz 0000
-// 5:  xxxx z000 0000
-// 8:  xxxx zzzz 0000
-// 9:  xxxx xxxx z000 0000
-// 12: xxxx xxxx zzzz 0000
-// 13: xxxx xxxx xxxx z000 0000
-
-NA_HIDEF NAInt naGetNullTerminationBytesize(NAInt bytesize){
-  NAInt returnbytesize;
-  #ifndef NDEBUG
-    if((bytesize >= NA_ZERO))
-      naError("naGetNullTerminationBytesize", "size is not negative");
-    if(bytesize == NA_INVALID_MEMORY_BYTESIZE)
-      naError("naGetNullTerminationBytesize", "invalid size given");
-  #endif
-  returnbytesize = (-bytesize - NA_ONE) + (NA_SYSTEM_ADDRESS_BYTES << 1) - ((-bytesize - NA_ONE) % NA_SYSTEM_ADDRESS_BYTES);
-  #ifndef NDEBUG
-    if(returnbytesize < NA_ZERO)
-      naError("naGetNullTerminationBytesize", "given negative size is too close to the minimal integer value");
-  #endif
-  return returnbytesize;
-}
-
-
-
-
-
-
-
 
 // ////////////////////////////////////////////
 // Basic Memory allocation and freeing
@@ -115,8 +54,6 @@ NA_HIDEF NAInt naGetNullTerminationBytesize(NAInt bytesize){
 
 NA_IDEF void* naMalloc(NAInt bytesize){
   void* ptr;
-  // ptr is declared as NAByte to simplify accessing individual bytes later
-  // in this functions.
 
   #ifndef NDEBUG
     if(bytesize == NA_ZERO)
@@ -128,7 +65,7 @@ NA_IDEF void* naMalloc(NAInt bytesize){
   ptr = malloc((size_t)bytesize);
 
   #ifndef NDEBUG
-  if (!ptr)
+  if(!ptr)
     {naCrash("naMalloc", "Out of memory"); return NA_NULL;}
   #endif
 
@@ -136,8 +73,14 @@ NA_IDEF void* naMalloc(NAInt bytesize){
 }
 
 
+// We "prototyped" the naSizeof macro in the .h file, therefore the undef.
+#undef naSizeof
+#define naSizeof(type) ((NAInt)sizeof(type))
+
+
+// We "prototyped" the naAlloc macro in the .h file, therefore the undef.
 #undef naAlloc
-#define naAlloc(type) (type*)naMalloc(sizeof(type))
+#define naAlloc(type) (type*)naMalloc(naSizeof(type))
 
 
 
@@ -148,29 +91,28 @@ NA_IDEF void naFree(void* ptr){
 
 
 NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
-  void* retptr;
-  // Usually, aligned memory can be created in unix like systems using the
-  // following three methods. Unfortunately, none of them work reliably on
-  // Mac OS X.
-  // - aligned_alloc under C11 is unreliable when using clang
-  // - posix_memalign returns misaligned pointers in Snow Leopard
-  // - malloc_zone_memalign same thing as posix_memalign
-  // Therefore, a custom implementation is used which is costly but what
-  // the hell!
-    
+  void* retptr;    
 
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     retptr = _aligned_malloc(bytesize, align);
   #else
-    // Allocate a full align and a pointer more than required.
-    void* mem = malloc(bytesize + align + sizeof(void*));
-    // make a pointer point to the first byte being aligned within the memory
-    // allocated in mem which comes after align bytes and a pointer size.
-    void** ptr = (void**)((size_t)((NAByte*)mem + align + sizeof(void*)) & ~(align - NA_ONE));
-    // Store the pointer to the original allocation pointer in the element
-    // right before the first returned byte.
-    ptr[-1] = mem;
-    retptr = ptr;
+    #if NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_CUSTOM
+      // Allocate a full align and a pointer more than required.
+      void* mem = malloc(bytesize + align + sizeof(void*));
+      // make a pointer point to the first byte being aligned within the memory
+      // allocated in mem which comes after align bytes and a pointer size.
+      void** ptr = (void**)((size_t)((NAByte*)mem + align + sizeof(void*)) & ~(align - NA_ONE));
+      // Store the pointer to the original allocation pointer in the element
+      // right before the first returned byte.
+      ptr[-1] = mem;
+      retptr = ptr;
+    #elif NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_ALIGNED_ALLOC
+      retptr = aligned_alloc(align, bytesize);
+    #elif NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_POSIX_MEMALIGN
+      posix_memalign(&retptr, align, bytesize);
+    #else
+      #error "Invalid aligned alloc method chosen"
+    #endif
   #endif
   
   #ifndef NDEBUG

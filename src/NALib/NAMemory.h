@@ -67,13 +67,28 @@ NA_IAPI NAUInt naGetSystemMemoryPagesizeMask(void);
 // by any programmer. Any other number than this invalid number might have a
 // valid meaning in NALib.
 #define NA_INVALID_MEMORY_INDEX     NA_INT_MIN
-#define NA_INVALID_MEMORY_BYTESIZE  NA_INT_MIN
 
 
 // As all memory functions expect an NAInt, we make it easier to write code
 // with a custom sizeof macro
-#define naSizeof(x) ((NAInt)sizeof(x))
+#define naSizeof(type)
 
+// Usually, aligned memory can be created in unix like systems using several
+// methods. Unfortunately, none of them work reliably on Mac OS X.
+// - aligned_alloc under C11 is unreliable. See
+//   https://stackoverflow.com/questions/44841574/aligned-alloc-not-found-for-clang
+// - posix_memalign as well as malloc_zone_memalign are non-C-standard and
+//   return misaligned pointers in Snow Leopard.
+// - __attribute ((aligned(#))) is unsuitable (because it is not usable at
+//   runtine) and is non-standard
+// - _Alignas is again unsuitable (because not available at runtime) and
+//    only available since C11.
+// Therefore, a custom implementation is provided which is costly but always
+// works.
+// Use the following macros in the NAConfiguration.h file.
+#define NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_CUSTOM         0
+#define NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_ALIGNED_ALLOC  1
+#define NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_POSIX_MEMALIGN 2
 
 // //////////////////////////////////////
 // Basic Memory allocation and freeing
@@ -129,20 +144,20 @@ NA_IAPI NAUInt naGetSystemMemoryPagesizeMask(void);
 //
 // Note that the actual definitions of the macros are in NAMemoryII.h
 
-NA_IAPI void* naMalloc(    NAInt bytesize);
-#define       naAlloc(     type)
-NA_IAPI void  naFree(      void* ptr);
+NA_IAPI void* naMalloc            (NAInt bytesize);
+#define       naAlloc             (type)
+NA_IAPI void  naFree              (void* ptr);
 
-NA_IAPI void* naMallocAligned(    NAUInt bytesize, NAUInt align);
-NA_IAPI void* naMallocPageAligned(NAUInt bytesize);
-NA_IAPI void  naFreeAligned(      void* ptr);
+NA_IAPI void* naMallocAligned     (NAUInt bytesize, NAUInt align);
+NA_IAPI void* naMallocPageAligned (NAUInt bytesize);
+NA_IAPI void  naFreeAligned       (void* ptr);
 
-NA_API  void* naMallocTmp( NAUInt bytesize);
-#define       naNew(       type)
-NA_API  void  naDelete(    void* pointer);
+NA_API  void* naMallocTmp         (NAUInt bytesize);
+#define       naNew               (type)
+NA_API  void  naDelete            (void* pointer);
 
-NA_API  void* naRetain(     void* pointer);
-NA_API  void  naRelease(    void* pointer);
+NA_API  void* naRetain            (void* pointer);
+NA_API  void  naRelease           (void* pointer);
 
 
 

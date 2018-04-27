@@ -229,15 +229,15 @@ NA_API void naExtractDateTimeInformation(const NADateTime* datetime,
                                       NADateTimeAttribute* dta);
 // Same thing but expressed in timezone 00:00 wintertime
 NA_IAPI void naExtractDateTimeUTCInformation(const NADateTime* datetime,
-                                            NADateTimeStruct* dts,
-                                         NADateTimeAttribute* dta);
+                                             NADateTimeStruct* dts,
+                                          NADateTimeAttribute* dta);
 
 // Alters timezone shift and summertime flag WITHOUT changing the real clock.
 // For example: 2011-04-01T22:37:51+06:00
 // becomes      2011-04-02T06:07:51-01:30
 NA_IAPI void naSetDateTimeZone(NADateTime* datetime,
-                                    int16 newshift,
-                                   NABool summertime);
+                                     int16 newshift,
+                                    NABool summertime);
 // Alters timezone shift and summertime flag WITH changing the real clock.
 // For example: 2011-04-01T22:37:51+06:00
 // becomes      2011-04-01T22:37:51-01:30
@@ -245,8 +245,8 @@ NA_IAPI void naSetDateTimeZone(NADateTime* datetime,
 // method is probably the wrong one. This method is only available for
 // DateTimes which accidentally were stored with an incorrect time shift.
 NA_IAPI void naCorrectDateTimeZone(NADateTime* datetime,
-                                        int16 newshift,
-                                       NABool summertime);
+                                         int16 newshift,
+                                        NABool summertime);
 
 // Returns the difference in time. The returned value is in seconds. The
 // returned value can be negative if end is before begin.
