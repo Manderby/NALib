@@ -158,7 +158,7 @@ NA_HIDEF NABool naIsBufferPartSparse(const NABufferPart* part){
 NA_HIDEF NARangei naGetBufferPartRange(const NABufferPart* part){
   #ifndef NDEBUG
     if(!part)
-      {naCrash("naGetBufferPartRange", "part is Null pointer"); return naMakeRangei(0, 0);}
+      {naCrash("naGetBufferPartRange", "part is Null pointer");}
   #endif
   return part->range;
 }
@@ -169,7 +169,7 @@ NA_HIDEF NARangei naGetBufferPartRange(const NABufferPart* part){
 NA_HIDEF NAInt naGetBufferPartStart(const NABufferPart* part){
   #ifndef NDEBUG
     if(!part)
-      {naCrash("naGetBufferPartStart", "part is Null pointer"); return 0;}
+      naCrash("naGetBufferPartStart", "part is Null pointer");
   #endif
   return part->range.origin;
 }
@@ -180,7 +180,7 @@ NA_HIDEF NAInt naGetBufferPartStart(const NABufferPart* part){
 NA_HIDEF NAInt naGetBufferPartEnd(const NABufferPart* part){
   #ifndef NDEBUG
     if(!part)
-      {naCrash("naGetBufferPartEnd", "part is Null pointer"); return 0;}
+      naCrash("naGetBufferPartEnd", "part is Null pointer");
   #endif
   return naGetRangeiEnd(part->range);
 }
@@ -259,10 +259,8 @@ NA_HIDEF void naSplitBufferSparsePart(NAListIterator* iter, NARangei range){
   NABufferPart* part = naGetListCurMutable(iter);
 
   #ifndef NDEBUG
-    if(!part){
+    if(!part)
       naCrash("naSplitBufferSparsePart", "iterator must not be at initial position");
-      return;
-    }
     if(!naIsBufferPartSparse(part))
       naError("naSplitBufferSparsePart", "current part is not sparse");
     if(!naContainsRangeiRange(naGetBufferPartRange(part), range))
@@ -1866,7 +1864,7 @@ NA_DEF NABufferIterator naMakeBufferAccessor(const NABuffer* buffer){
   #ifndef NDEBUG
     NABuffer* mutablebuffer;
     if(!buffer)
-      {naNulln(&iter, sizeof(NABufferIterator)); naCrash("naMakeBufferAccessor", "buffer is Null pointer"); return iter;}
+      naCrash("naMakeBufferAccessor", "buffer is Null pointer");
   #endif
   iter.bufferptr = naMakePtrWithDataMutable(naRetain((NABuffer*)buffer));  //todo const
   iter.curoffset = 0;
@@ -1888,7 +1886,7 @@ NA_DEF NABufferIterator naMakeBufferMutator(const NABuffer* buffer){
   #ifndef NDEBUG
     NABuffer* mutablebuffer;
     if(!buffer)
-      {naNulln(&iter, sizeof(NABufferIterator)); naCrash("naMakeBufferAccessor", "buffer is Null pointer"); return iter;}
+      naCrash("naMakeBufferAccessor", "buffer is Null pointer");
   #endif
   iter.bufferptr = naMakePtrWithDataMutable(naRetain((NABuffer*)buffer));  //todo const
   iter.curoffset = 0;
@@ -1910,7 +1908,7 @@ NA_DEF NABufferIterator naMakeBufferModifier(NABuffer* buffer){
   #ifndef NDEBUG
     NABuffer* mutablebuffer;
     if(!buffer)
-      {naNulln(&iter, sizeof(NABufferIterator)); naCrash("naMakeBufferAccessor", "buffer is Null pointer"); return iter;}
+      naCrash("naMakeBufferAccessor", "buffer is Null pointer");
   #endif
   iter.bufferptr = naMakePtrWithDataMutable(naRetain(buffer));
   iter.curoffset = 0;
@@ -2322,7 +2320,6 @@ NA_DEF void naSetBufferu64(NABufferIterator* iter, uint64 value){
 }
 
 
-
 NA_DEF void naSetBufferf(NABufferIterator* iter, float value){
   naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
   naStoreBufferBytes(iter, &value, 4, NA_TRUE, NA_FALSE);
@@ -2377,7 +2374,6 @@ NA_DEF int64 naReadBufferi64(NABufferIterator* iter){
 }
 
 
-
 NA_DEF uint8 naReadBufferu8(NABufferIterator* iter){
   uint8 value;
   naRetrieveBufferBytes(iter, &value, 1, NA_TRUE);
@@ -2402,7 +2398,6 @@ NA_DEF uint64 naReadBufferu64(NABufferIterator* iter){
   naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
   return value;
 }
-
 
 
 NA_DEF float naReadBufferf(NABufferIterator* iter){
@@ -2438,7 +2433,6 @@ NA_DEF void naReadBufferi64v(NABufferIterator* iter, int64* dst, NAInt count){
 }
 
 
-
 NA_DEF void naReadBufferu8v(NABufferIterator* iter, uint8* dst, NAInt count){
   naRetrieveBufferBytes(iter, dst, count * 1, NA_TRUE);
   naGetBufferIteratorBufferConst(iter)->converter.convert8v(dst, (NAUInt)count);
@@ -2455,7 +2449,6 @@ NA_DEF void naReadBufferu64v(NABufferIterator* iter, uint64* dst, NAInt count){
   naRetrieveBufferBytes(iter, dst, count * 8, NA_TRUE);
   naGetBufferIteratorBufferConst(iter)->converter.convert64v(dst, (NAUInt)count);
 }
-
 
 
 NA_DEF void naReadBufferfv(NABufferIterator* iter, float* dst, NAInt count){
@@ -2860,7 +2853,7 @@ NA_DEF NAUInt naReadBufferBits(NABufferIterator* iter, uint8 count){
   NABool curbit;
   NAUInt curmask = 1;
   #ifndef NDEBUG
-    if(count > NA_SYSTEM_ADDRESS_BITS)
+    if(count > NA_TYPE_NAINT_BITS)
       naError("naReadBufferBits", "Max bit readable per function call exceeded.");
   #endif
   while(count){
@@ -3126,11 +3119,11 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64*
   uint64 prevval;
   NABool endfound = NA_FALSE;
 
-  *retint = 0LL;
+  *retint = NA_ZERO_64u;
 
   #ifndef NDEBUG
     if(!retint)
-      {naCrash("naParseBufferDecimalUnsignedInteger", "retint is Null-Pointer"); return 0;}
+      naCrash("naParseBufferDecimalUnsignedInteger", "retint is Null-Pointer");
   #endif
 
   if(naIsBufferEmpty(naGetBufferIteratorBufferConst(iter))){return 0;}
@@ -3139,7 +3132,7 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64*
 
   if(maxdigitcount == 0){maxdigitcount = naGetRangeiEnd(naGetBufferIteratorBufferConst(iter)->range) - iter->curoffset;}
   bytesused = 0;
-  prevval = 0LL;
+  prevval = NA_ZERO_64u;
   
   while(!naIsBufferAtInitial(iter)){
     const NAByte* curbyte;
@@ -3156,14 +3149,14 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64*
       if(bytesused >= maxdigitcount){break;}
 
       if((*curbyte < '0') || (*curbyte > '9')){endfound = NA_TRUE; break;}
-      *retint = *retint * 10LL + (uint64)(*curbyte - '0');
+      *retint = naAddUInt64(naMulUInt64(*retint, naMakeUInt64WithLo(10)), naMakeUInt64WithLo(*curbyte - '0'));
       #ifndef NDEBUG
-        if(*retint > max)
+        if(naGreaterUInt64(*retint, max))
           naError("naParseBufferDecimalUnsignedInteger", "The value overflowed max.");
-        if(*retint < prevval)
+        if(naSmallerUInt64(*retint, prevval))
           naError("naParseBufferDecimalUnsignedInteger", "The value overflowed 64 bit integer space.");
       #endif
-      if((*retint < prevval) || (*retint > max)){
+      if(naSmallerUInt64(*retint, prevval) || naGreaterUInt64(*retint, max)){
         *retint = max;
       }
       prevval = *retint;
@@ -3182,14 +3175,14 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64*
 
 
 NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* retint, NAInt maxdigitcount, int64 min, int64 max){
-  int64 sign = 1LL;
+  int64 sign = NA_ONE_64;
   NAInt bytesused = 0;
   int64 limit = max;
   uint64 intvalue;
   const NABufferPart* part;
   const NAByte* curbyte;
 
-  *retint = 0LL;
+  *retint = NA_ZERO_64;
 
   if(naIsBufferEmpty(naGetBufferIteratorBufferConst(iter))){return 0;}
   if(naIsBufferAtInitial(iter)){return 0;}
@@ -3204,16 +3197,16 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* re
     maxdigitcount--;
     naSeekBufferRelative(iter, 1);
   }else if(*curbyte == '-'){
-    sign = -1LL;
-    limit = -min;
+    sign = naNegInt64(NA_ONE_64);
+    limit = naNegInt64(min);
     bytesused = 1;
     maxdigitcount--;
     naSeekBufferRelative(iter, 1);
   }
   if(maxdigitcount == -1){maxdigitcount = 0;}
 
-  bytesused += naParseBufferDecimalUnsignedInteger(iter, &intvalue, maxdigitcount, (uint64)limit);
-  *retint = sign * (int64)intvalue;
+  bytesused += naParseBufferDecimalUnsignedInteger(iter, &intvalue, maxdigitcount, naCastInt64ToUInt64(limit));
+  *retint = naMulInt64(sign, naCastUInt64ToInt64(intvalue));
   return bytesused;
 }
 
@@ -3221,54 +3214,54 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* re
 
 NA_DEF int8 naParseBufferInt8(NABufferIterator* iter, NABool skipdelimiter){
   int64 intvalue;  
-  naParseBufferDecimalSignedInteger(iter, &intvalue, 0, NA_INT8_MIN, NA_INT8_MAX);
+  naParseBufferDecimalSignedInteger(iter, &intvalue, 0, naMakeInt64WithLo(NA_INT8_MIN), naMakeInt64WithLo(NA_INT8_MAX));
   if(skipdelimiter){naSkipBufferDelimiter(iter);}
-  return (int8)intvalue;
+  return naCastInt64ToInt8(intvalue);
 }
 NA_DEF int16 naParseBufferInt16(NABufferIterator* iter, NABool skipdelimiter){
   int64 intvalue;  
-  naParseBufferDecimalSignedInteger(iter, &intvalue, 0, NA_INT16_MIN, NA_INT16_MAX);
+  naParseBufferDecimalSignedInteger(iter, &intvalue, 0, naMakeInt64WithLo(NA_INT16_MIN), naMakeInt64WithLo(NA_INT16_MAX));
   if(skipdelimiter){naSkipBufferDelimiter(iter);}
-  return (int16)intvalue;
+  return naCastInt64ToInt16(intvalue);
 }
 NA_DEF int32 naParseBufferInt32(NABufferIterator* iter, NABool skipdelimiter){
   int64 intvalue;  
-  naParseBufferDecimalSignedInteger(iter, &intvalue, 0, NA_INT32_MIN, NA_INT32_MAX);
+  naParseBufferDecimalSignedInteger(iter, &intvalue, 0, naMakeInt64WithLo(NA_INT32_MIN), naMakeInt64WithLo(NA_INT32_MAX));
   if(skipdelimiter){naSkipBufferDelimiter(iter);}
-  return (int32)intvalue;
+  return naCastInt64ToInt32(intvalue);
 }
 NA_DEF int64 naParseBufferInt64(NABufferIterator* iter, NABool skipdelimiter){
   int64 intvalue;  
   naParseBufferDecimalSignedInteger(iter, &intvalue, 0, NA_INT64_MIN, NA_INT64_MAX);
   if(skipdelimiter){naSkipBufferDelimiter(iter);}
-  return (int64)intvalue;
+  return intvalue;
 }
 
 
 
 NA_DEF uint8 naParseBufferUInt8(NABufferIterator* iter, NABool skipdelimiter){
   uint64 uintvalue;  
-  naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, NA_UINT8_MAX);
+  naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, naMakeUInt64WithLo(NA_UINT8_MAX));
   if(skipdelimiter){naSkipBufferDelimiter(iter);}
-  return (uint8)uintvalue;
+  return naCastUInt64ToUInt8(uintvalue);
 }
 NA_DEF uint16 naParseBufferUInt16(NABufferIterator* iter, NABool skipdelimiter){
   uint64 uintvalue;  
-  naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, NA_UINT16_MAX);
+  naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, naMakeUInt64WithLo(NA_UINT16_MAX));
   if(skipdelimiter){naSkipBufferDelimiter(iter);}
-  return (uint16)uintvalue;
+  return naCastUInt64ToUInt16(uintvalue);
 }
 NA_DEF uint32 naParseBufferUInt32(NABufferIterator* iter, NABool skipdelimiter){
   uint64 uintvalue;  
-  naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, NA_UINT32_MAX);
+  naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, naMakeUInt64WithLo(NA_UINT32_MAX));
   if(skipdelimiter){naSkipBufferDelimiter(iter);}
-  return (uint32)uintvalue;
+  return naCastUInt64ToUInt32(uintvalue);
 }
 NA_DEF uint64 naParseBufferUInt64(NABufferIterator* iter, NABool skipdelimiter){
   uint64 uintvalue;  
   naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, NA_UINT64_MAX);
   if(skipdelimiter){naSkipBufferDelimiter(iter);}
-  return (uint64)uintvalue;
+  return uintvalue;
 }
 
 

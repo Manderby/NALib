@@ -5,7 +5,7 @@
 #ifndef NA_BINARY_OPERATORS_INCLUDED
 #define NA_BINARY_OPERATORS_INCLUDED
 
-#include "NASystem.h"
+#include "NABase.h"
 #include "float.h"
 
 // In this file, you find floating point constants defined by IEEE-754. Some
@@ -76,10 +76,12 @@
 #define NA_VALUE16_BIT_COUNT  16
 #define NA_VALUE32_BIT_COUNT  32
 #define NA_VALUE64_BIT_COUNT  64
-#define NA_VALUE8_SIGN_MASK   ((uint8)(1U << (NA_VALUE8_BIT_COUNT   - 1U)))
+#define NA_VALUE8_SIGN_MASK   ((uint8) (1U << (NA_VALUE8_BIT_COUNT   - 1U)))
 #define NA_VALUE16_SIGN_MASK  ((uint16)(1U << (NA_VALUE16_BIT_COUNT  - 1U)))
 #define NA_VALUE32_SIGN_MASK  ((uint32)(1U << (NA_VALUE32_BIT_COUNT  - 1U)))
-#define NA_VALUE64_SIGN_MASK  ((uint64)(1ULL << (NA_VALUE64_BIT_COUNT - 1ULL)))
+#define NA_VALUE64_SIGN_MASK_HI NA_VALUE32_SIGN_MASK
+#define NA_VALUE64_SIGN_MASK_LO 0x0
+#define NA_VALUE64_SIGN_MASK    naMakeUInt64(NA_VALUE64_SIGN_MASK_HI, NA_VALUE64_SIGN_MASK_LO)
 
 #if FLT_RADIX != 2
   #warning "NALib requires floating points to have a radix of 2"
@@ -113,15 +115,23 @@
 #define NA_IEEE754_SINGLE_SIGN_MASK              (1 << (NA_IEEE754_SINGLE_BIT_COUNT  - 1))
 
 #define NA_IEEE754_DOUBLE_BIT_COUNT              (64)                                                                                               
-#define NA_IEEE754_DOUBLE_SIGNIFICAND_BIT_COUNT  (DBL_MANT_DIG - 1LL)
-#define NA_IEEE754_DOUBLE_SIGNIFICAND_NORM       (1LL << NA_IEEE754_DOUBLE_SIGNIFICAND_BIT_COUNT)
-#define NA_IEEE754_DOUBLE_SIGNIFICAND_MASK       (NA_IEEE754_DOUBLE_SIGNIFICAND_NORM - 1LL)
-#define NA_IEEE754_DOUBLE_EXPONENT_BIT_COUNT     (NA_IEEE754_DOUBLE_BIT_COUNT - 1LL - NA_IEEE754_DOUBLE_SIGNIFICAND_BIT_COUNT)
-#define NA_IEEE754_DOUBLE_EXPONENT_BIAS          ((1LL << (NA_IEEE754_DOUBLE_EXPONENT_BIT_COUNT - 1LL)) - 1LL)
+#define NA_IEEE754_DOUBLE_SIGNIFICAND_BIT_COUNT  (DBL_MANT_DIG - 1)
+#define NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_HI    (1 << (NA_IEEE754_DOUBLE_SIGNIFICAND_BIT_COUNT - 32))
+#define NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_LO    0x0u
+#define NA_IEEE754_DOUBLE_SIGNIFICAND_NORM       naCastUInt64ToInt64(naMakeUInt64(NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_HI, NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_LO))
+#define NA_IEEE754_DOUBLE_SIGNIFICAND_MASK_HI    (NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_HI - 1)
+#define NA_IEEE754_DOUBLE_SIGNIFICAND_MASK_LO    NA_UINT32_MAX
+#define NA_IEEE754_DOUBLE_SIGNIFICAND_MASK       naCastUInt64ToInt64(naMakeUInt64(NA_IEEE754_DOUBLE_SIGNIFICAND_MASK_HI, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK_LO))
+#define NA_IEEE754_DOUBLE_EXPONENT_BIT_COUNT     (NA_IEEE754_DOUBLE_BIT_COUNT - 1 - NA_IEEE754_DOUBLE_SIGNIFICAND_BIT_COUNT)
+#define NA_IEEE754_DOUBLE_EXPONENT_BIAS          ((1 << (NA_IEEE754_DOUBLE_EXPONENT_BIT_COUNT - 1)) - 1)
 #define NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL     (-NA_IEEE754_DOUBLE_EXPONENT_BIAS)
-#define NA_IEEE754_DOUBLE_EXPONENT_SPECIAL       ((1LL << NA_IEEE754_DOUBLE_EXPONENT_BIT_COUNT) - NA_IEEE754_DOUBLE_EXPONENT_BIAS - 1LL)
-#define NA_IEEE754_DOUBLE_EXPONENT_MASK          (((1LL << (NA_IEEE754_DOUBLE_BIT_COUNT - 1LL)) - 1LL) & ~NA_IEEE754_DOUBLE_SIGNIFICAND_MASK)
-#define NA_IEEE754_DOUBLE_SIGN_MASK              (1LL << (NA_IEEE754_DOUBLE_BIT_COUNT - 1LL))
+#define NA_IEEE754_DOUBLE_EXPONENT_SPECIAL       ((1 << NA_IEEE754_DOUBLE_EXPONENT_BIT_COUNT) - NA_IEEE754_DOUBLE_EXPONENT_BIAS - 1)
+#define NA_IEEE754_DOUBLE_EXPONENT_MASK_HI       (((1 << (NA_IEEE754_DOUBLE_BIT_COUNT - 32 - 1)) - 1) & ~NA_IEEE754_DOUBLE_SIGNIFICAND_MASK_HI)
+#define NA_IEEE754_DOUBLE_EXPONENT_MASK_LO       0x0u
+#define NA_IEEE754_DOUBLE_EXPONENT_MASK          naCastUInt64ToInt64(naMakeUInt64(NA_IEEE754_DOUBLE_EXPONENT_MASK_HI, NA_IEEE754_DOUBLE_EXPONENT_MASK_LO))
+#define NA_IEEE754_DOUBLE_SIGN_MASK_HI           (1u << (NA_IEEE754_DOUBLE_BIT_COUNT - 32 - 1))
+#define NA_IEEE754_DOUBLE_SIGN_MASK_LO           0x0u
+#define NA_IEEE754_DOUBLE_SIGN_MASK              naCastUInt64ToInt64(naMakeUInt64(NA_IEEE754_DOUBLE_SIGN_MASK_HI, NA_IEEE754_DOUBLE_SIGN_MASK_LO))
 
 // Returns either 0 or -1 in two complement form but stored as an uint
 // depending on the sign bit.
@@ -143,10 +153,11 @@ NA_IAPI void naUnsetSignBit64(void* i);
 
 // Creates floats and doubles out of signed significands and exponents
 NA_IAPI float  naCreateFloat (int32 signedsignificand, int32 signedexponent);
-NA_IAPI double naCreateDouble(int64 signedsignificand, int64 signedexponent);
 NA_IAPI float  naCreateFloatWithExponent (int32 signedexponent);
-NA_IAPI double naCreateDoubleWithExponent(int64 signedexponent);
 NA_IAPI float  naCreateFloatSubnormal (int32 signedsignificand);
+
+NA_IAPI double naCreateDouble(int64 signedsignificand, int32 signedexponent);
+NA_IAPI double naCreateDoubleWithExponent(int32 signedexponent);
 NA_IAPI double naCreateDoubleSubnormal(int64 signedsignificand);
 
 

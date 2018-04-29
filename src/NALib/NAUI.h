@@ -16,7 +16,7 @@
 //
 // //////////////////
 
-#include "NASystem.h"
+#include "NABase.h"
 
 // Have a look at NAConfiguration.h to use OpenGL
 #if NA_CONFIG_COMPILE_OPENGL == 1
@@ -36,7 +36,7 @@
 // GUIs are implemented in various ways across all systems and there is no
 // general solution to how one should design a GUI. Therefore, NALib combines
 // several ideas into a new implementation but allowing the programmer to use
-// that implementation consistently on all systems. Curly Mac and Windows.
+// that implementation consistently on all systems. Currently Mac and Windows.
 //
 // In NALib, you create a GUI by starting an NAApplication and then adding
 // user interface elements to that application one by one. The topmost ui
@@ -87,7 +87,7 @@ typedef enum{
   NA_UI_APPLICATION,
   NA_UI_SCREEN,
   NA_UI_WINDOW,
-  NA_UI_OPENGLVIEW,
+  NA_UI_OPENGLVIEW
 } NAUIElementType;
 
 NA_API NAUIElementType naGetUIElementType(NAUIElement* uielement);
@@ -280,7 +280,7 @@ typedef enum{
   NA_UI_COMMAND_KEYUP,
   NA_UI_COMMAND_MOUSE_MOVED,
   NA_UI_COMMAND_MOUSE_ENTERED,
-  NA_UI_COMMAND_MOUSE_EXITED,
+  NA_UI_COMMAND_MOUSE_EXITED
 } NAUICommand;
 
 // A programmer reacts to commands by calling naAddUIReaction. When a specific

@@ -68,7 +68,7 @@ NA_HIDEF void naAddStackNewSpace(NAStack* stack){
 NA_IDEF NAStack* naInitStack(NAStack* stack, NAInt typesize, NAInt minimalcount){
   #ifndef NDEBUG
     if(!stack)
-      {naCrash("naInitStack", "stack is Null-Pointer"); return NA_NULL;}
+      naCrash("naInitStack", "stack is Null-Pointer");
     if(typesize <= 0)
       naError("naInitStack", "typesize is invalid.");
     // The following test states that 0 and 1 are invalid values. They could be

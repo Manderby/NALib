@@ -107,7 +107,7 @@
 // condition of a for-loop. Use the Max to access the last element.
 
 
-#include "NASystem.h"
+#include "NABase.h"
 
 
 // /////////////////////////////////

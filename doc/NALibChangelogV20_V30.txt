@@ -20,6 +20,11 @@ Version 21 (first published 2018-xxx-xx)
 - Added Binary operators for more control over integer and floating point
   values.
 - NAQuadTree is now storing coordinates in doubles.
+- Renaming of NASystem to NABase. Split-up of the file into a folder of files.
+  Oldest file in the code collection grew constantly and desperately needed
+  some structure.
+- Huge refactoring concerning integer values. Created int 64 emulation. It is
+  possible now to compile the code without long long.
 
 - The Runtime system now always registers runtime types, not only in debug.
 - Added NA_MEMORY_POOL_AGGRESSIVE_CLEANUP macro in NAConfiguration.h
@@ -33,6 +38,8 @@ Version 21 (first published 2018-xxx-xx)
 - Enhanced Coord.h with some more double, float and int conversions.
 - Enhanced and corrected many more NACoord functions
 - Enhanced value helpers with some more conversions.
+- Added NA_MEMORY_ALIGNED_MEM_MAC_OS_X macro to Configuration.h
+- naCrash is now a macro. No more code analysis warnings.
 - Removed all occurrencies of the old company in the code.
 - Cleaned up some h files.
 

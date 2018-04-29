@@ -158,6 +158,7 @@ NARuntime* na_runtime = NA_NULL;
 
 
 NA_HIDEF void naRegisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
+  NACoreTypeInfo** newinfos;
   // As this is the first pool, we correct the typesize to incorporate
   // reference counting, if any.
   if(coretypeinfo->refcounting){coretypeinfo->typesize += sizeof(NARefCount);}
@@ -166,7 +167,7 @@ NA_HIDEF void naRegisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
   // this code is usually called rather seldomly. If you experience here a lot
   // of memory allocations and have NA_MEMORY_POOL_AGGRESSIVE_CLEANUP set to 1,
   // consider setting it back to 0.
-  NACoreTypeInfo** newinfos = naMalloc(naSizeof(NACoreTypeInfo*) * (na_runtime->typeinfocount + NA_ONE));
+  newinfos = naMalloc(naSizeof(NACoreTypeInfo*) * (na_runtime->typeinfocount + NA_ONE));
   if(na_runtime->typeinfos){
     naCopyn(newinfos, na_runtime->typeinfos, naSizeof(NACoreTypeInfo*) * na_runtime->typeinfocount);
   }
@@ -362,8 +363,12 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
   coretypeinfo->curpool->usedcount++;
   
   #ifndef NDEBUG
-    if(coretypeinfo->curpool != (NACorePoolPart*)((NAUInt)pointer & na_runtime->poolsizemask))
-    naError("naNewStruct", "Pointer seems to be outside of pool");
+    #if defined NA_SYSTEM_SIZEINT_TOO_SMALL
+      naError("naNewStruct", "No native integer type to successfully run the runtime system.");
+    #else
+      if(coretypeinfo->curpool != (NACorePoolPart*)((NAUInt)pointer & na_runtime->poolsizemask))
+        naError("naNewStruct", "Pointer seems to be outside of pool");
+    #endif
   #endif
     
   // Now, the pointer points to a space which can be constructed.
@@ -421,28 +426,37 @@ NA_DEF void naDelete(void* pointer){
 
   #ifndef NDEBUG
     if(!na_runtime)
-      {naCrash("naDelete", "Runtime not running. Use naStartRuntime()"); return;}
+      naCrash("naDelete", "Runtime not running. Use naStartRuntime()");
   #endif
 
   // Find the corepool entry at the beginning of the pool by AND'ing the
   // address with the poolsizemask
-  corepool = (NACorePoolPart*)((NAUInt)pointer & na_runtime->poolsizemask);
-  #ifndef NDEBUG
-    if(corepool->dummy != corepool)
-      naError("naDelete", "Pointer seems not to be from a pool.");
-    if(corepool->coretypeinfo->refcounting)
-      naError("naDelete", "Pointer belongs to a reference counting entity. Use naRelease instead of naDelete!");
+  #if defined NA_SYSTEM_SIZEINT_TOO_SMALL
+    NA_UNUSED(corepool);
+    NA_UNUSED(pointer);
+    return;
+  #else
+    corepool = (NACorePoolPart*)((NAUInt)pointer & na_runtime->poolsizemask);
+
+    #ifndef NDEBUG
+      if(corepool->dummy != corepool)
+        naError("naDelete", "Pointer seems not to be from a pool.");
+      if(corepool->coretypeinfo->refcounting)
+        naError("naDelete", "Pointer belongs to a reference counting entity. Use naRelease instead of naDelete!");
+    #endif
+    
+    // Delete the struct with the destructor
+    if(corepool->coretypeinfo->destructor){corepool->coretypeinfo->destructor(pointer);}
+    
+    naEjectCorePoolObject(corepool, pointer);
+
   #endif
-  
-  // Delete the struct with the destructor
-  if(corepool->coretypeinfo->destructor){corepool->coretypeinfo->destructor(pointer);}
-  
-  naEjectCorePoolObject(corepool, pointer);
 }
 
 
 
 NA_DEF void* naRetain(void* pointer){
+  NARefCount* refcount;
   #ifndef NDEBUG
     NACorePoolPart* corepool;
     if(!na_runtime)
@@ -452,15 +466,20 @@ NA_DEF void* naRetain(void* pointer){
   #ifndef NDEBUG
     // Find the corepool entry at the beginning of the pool by AND'ing the
     // address with the poolsizemask
-    corepool = (NACorePoolPart*)((NAUInt)pointer & na_runtime->poolsizemask);
-    if(corepool->dummy != corepool)
-      naError("naRetain", "Pointer seems not to be from a pool.");
-    if(!corepool->coretypeinfo->refcounting)
-      naError("naRetain", "Pointer belongs to a non-reference counting entity. You can't use naRetain!");
+    #if defined NA_SYSTEM_SIZEINT_TOO_SMALL
+      naError("naRetain", "No native integer type to successfully run the runtime system.");
+      NA_UNUSED(corepool);
+    #else
+      corepool = (NACorePoolPart*)((NAUInt)pointer & na_runtime->poolsizemask);
+      if(corepool->dummy != corepool)
+        naError("naRetain", "Pointer seems not to be from a pool.");
+      if(!corepool->coretypeinfo->refcounting)
+        naError("naRetain", "Pointer belongs to a non-reference counting entity. You can't use naRetain!");
+    #endif
   #endif
   
   // Release the struct and delete it with the destructor if refcount is zero.
-  NARefCount* refcount = (NARefCount*)((NAByte*)pointer - sizeof(NARefCount));
+  refcount = (NARefCount*)((NAByte*)pointer - sizeof(NARefCount));
   naRetainRefCount(refcount);
   return pointer;
 }
@@ -469,28 +488,38 @@ NA_DEF void* naRetain(void* pointer){
 
 NA_DEF void naRelease(void* pointer){
   NACorePoolPart* corepool;
-
+  NARefCount* refcount;
+  
   #ifndef NDEBUG
     if(!na_runtime)
-      {naCrash("naRelease", "Runtime not running. Use naStartRuntime()"); return;}
+      naCrash("naRelease", "Runtime not running. Use naStartRuntime()");
   #endif
 
   // Find the corepool entry at the beginning of the pool by AND'ing the
   // address with the poolsizemask
-  corepool = (NACorePoolPart*)((NAUInt)pointer & na_runtime->poolsizemask);
-  #ifndef NDEBUG
-    if(corepool->dummy != corepool)
-      naError("naRelease", "Pointer seems not to be from a pool.");
-    if(!corepool->coretypeinfo->refcounting)
-      naError("naRelease", "Pointer belongs to a non-reference counting entity. Use naDelete instead of naRelease!");
+  #if defined NA_SYSTEM_SIZEINT_TOO_SMALL
+    NA_UNUSED(corepool);
+    NA_UNUSED(pointer);
+    NA_UNUSED(refcount);
+    return;
+  #else
+    corepool = (NACorePoolPart*)((NAUInt)pointer & na_runtime->poolsizemask);
+
+    #ifndef NDEBUG
+      if(corepool->dummy != corepool)
+        naError("naRelease", "Pointer seems not to be from a pool.");
+      if(!corepool->coretypeinfo->refcounting)
+        naError("naRelease", "Pointer belongs to a non-reference counting entity. Use naDelete instead of naRelease!");
+    #endif
+    
+    // Release the struct and delete it with the destructor if refcount is zero.
+    refcount = (NARefCount*)((NAByte*)pointer - sizeof(NARefCount));
+    naReleaseRefCount(refcount, pointer, corepool->coretypeinfo->destructor);
+    if(!naGetRefCountCount(refcount)){
+      naEjectCorePoolObject(corepool, refcount);
+    }
+
   #endif
-  
-  // Release the struct and delete it with the destructor if refcount is zero.
-  NARefCount* refcount = (NARefCount*)((NAByte*)pointer - sizeof(NARefCount));
-  naReleaseRefCount(refcount, pointer, corepool->coretypeinfo->destructor);
-  if(!naGetRefCountCount(refcount)){
-    naEjectCorePoolObject(corepool, refcount);
-  }
 }
 
 
@@ -498,25 +527,34 @@ NA_DEF void naRelease(void* pointer){
 // Note that the runtime system in NALib currently is rather small. But it may
 // serve a greater purpose in a later version.
 NA_DEF void naStartRuntime(){
-  #ifndef NDEBUG
-    if(na_runtime)
-      naCrash("naStartRuntime", "Runtime already running");
-    if(sizeof(NACorePoolPart) != (8 * NA_SYSTEM_ADDRESS_BYTES))
-      naError("naStartRuntime", "NACorePoolPart struct encoding misaligned");
-  #endif
-  na_runtime = naAlloc(NARuntime);
-  na_runtime->mempagesize = naGetSystemMemoryPagesize();
-  #if (NA_COREPOOL_BYTESIZE == 0)
-    na_runtime->poolsize = naGetSystemMemoryPagesize();
-    na_runtime->poolsizemask = naGetSystemMemoryPagesizeMask();
+  #if defined NA_SYSTEM_SIZEINT_TOO_SMALL
+    #ifndef NDEBUG
+      naError("naStartRuntime", "Unable to start runtime on system where no native int is able to store an address.");
+    #endif
+    return;
   #else
-    na_runtime->poolsize = NA_COREPOOL_BYTESIZE;
-    na_runtime->poolsizemask = ~(NAUInt)(NA_COREPOOL_BYTESIZE - NA_ONE);
+    #ifndef NDEBUG
+      if(na_runtime)
+        naCrash("naStartRuntime", "Runtime already running");
+      if(sizeof(NACorePoolPart) != (8 * NA_SYSTEM_ADDRESS_BYTES))
+        naError("naStartRuntime", "NACorePoolPart struct encoding misaligned");
+    #endif
+    na_runtime = naAlloc(NARuntime);
+    na_runtime->mempagesize = naGetSystemMemoryPagesize();
+    #if (NA_COREPOOL_BYTESIZE == 0)
+      na_runtime->poolsize = naGetSystemMemoryPagesize();
+      na_runtime->poolsizemask = naGetSystemMemoryPagesizeMask();
+    #elif (NA_COREPOOL_BYTESIZE < NA_INT32_MAX)
+      na_runtime->poolsize = NA_COREPOOL_BYTESIZE;
+      na_runtime->poolsizemask = ~(NAUInt)(NA_COREPOOL_BYTESIZE - NA_ONE);
+    #else
+      #error "Corepool bytesize is too large"
+    #endif
+    na_runtime->mallocGarbage = NA_NULL;
+    na_runtime->totalmallocgarbagebytecount = 0;
+    na_runtime->typeinfocount = 0;
+    na_runtime->typeinfos = NA_NULL;
   #endif
-  na_runtime->mallocGarbage = NA_NULL;
-  na_runtime->totalmallocgarbagebytecount = 0;
-  na_runtime->typeinfocount = 0;
-  na_runtime->typeinfos = NA_NULL;
 }
 
 
@@ -527,7 +565,7 @@ NA_DEF void naStopRuntime(){
   #ifndef NDEBUG
     NABool leakmessageprinted = NA_FALSE;
     if(!na_runtime)
-      {naCrash("naStopRuntime", "Runtime not running. Use naStartRuntime()"); return;}
+      naCrash("naStopRuntime", "Runtime not running. Use naStartRuntime()");
     for(i=0; i< na_runtime->typeinfocount; i++){
       NAUInt structcount = naGetCoreTypeInfoAllocatedCount(na_runtime->typeinfos[i]);
       if(structcount){
@@ -545,7 +583,7 @@ NA_DEF void naStopRuntime(){
       NACorePoolPart* corepool = na_runtime->typeinfos[i]->curpool;
       #ifndef NDEBUG
         if(!corepool)
-          {naCrash("naStopRuntime", "Core memory pool should not be NULL"); return;}
+          naCrash("naStopRuntime", "Core memory pool should not be NULL");
       #endif
       if(corepool->nextpoolpart == corepool){
         corepool->coretypeinfo->curpool = NA_NULL;
@@ -592,7 +630,7 @@ NA_DEF void* naMallocTmp(NAUInt bytesize){
     if(na_runtime->mallocGarbage->cur >= NA_MALLOC_GARBAGE_POINTER_COUNT)
       naError("naMallocTmp", "Buffer overrun.");
     if(!na_runtime->mallocGarbage)
-      {naCrash("naMallocTmp", "Garbage struct is null"); naFree(newPtr); return NA_NULL;}
+      naCrash("naMallocTmp", "Garbage struct is null");
   #endif
   garbage = na_runtime->mallocGarbage;
   garbage->pointers[garbage->cur] = newPtr;
@@ -606,7 +644,7 @@ NA_DEF void naCollectGarbage(){
   NAMallocGarbage* garbage;
   #ifndef NDEBUG
     if(!na_runtime)
-      {naCrash("naCollectRuntimeGarbage", "Runtime not running. Use naStartRuntime()"); return;}
+      naCrash("naCollectRuntimeGarbage", "Runtime not running. Use naStartRuntime()");
   #endif
   garbage = na_runtime->mallocGarbage;
   while(garbage){
@@ -630,7 +668,7 @@ NA_DEF void naCollectGarbage(){
 NA_DEF NAUInt naGetRuntimeGarbageBytesize(){
   #ifndef NDEBUG
     if(!na_runtime)
-      {naCrash("naGetRuntimeGarbageBytesize", "Runtime not running. Use naStartRuntime()"); return 0;}
+      naCrash("naGetRuntimeGarbageBytesize", "Runtime not running. Use naStartRuntime()");
   #endif
   return na_runtime->totalmallocgarbagebytecount;
 }
@@ -640,7 +678,7 @@ NA_DEF NAUInt naGetRuntimeGarbageBytesize(){
 NA_DEF NAUInt naGetRuntimeMemoryPageSize(){
   #ifndef NDEBUG
     if(!na_runtime)
-      {naCrash("naGetRuntimeMemoryPageSize", "Runtime not running. Use naStartRuntime()"); return 0;}
+      naCrash("naGetRuntimeMemoryPageSize", "Runtime not running. Use naStartRuntime()");
   #endif
   return na_runtime->mempagesize;
 }
@@ -650,7 +688,7 @@ NA_DEF NAUInt naGetRuntimeMemoryPageSize(){
 NA_DEF NAUInt naGetRuntimePoolSize(){
   #ifndef NDEBUG
     if(!na_runtime)
-      {naCrash("naGetRuntimePoolSize", "Runtime not running. Use naStartRuntime()"); return 0;}
+      naCrash("naGetRuntimePoolSize", "Runtime not running. Use naStartRuntime()");
   #endif
   return na_runtime->poolsize;
 }

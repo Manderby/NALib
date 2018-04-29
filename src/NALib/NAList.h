@@ -24,7 +24,7 @@
 // list. See below for a detailed explanation of the iteration functions.
 
 
-#include "NASystem.h"
+#include "NABase.h"
 
 
 // This file defines the following types:

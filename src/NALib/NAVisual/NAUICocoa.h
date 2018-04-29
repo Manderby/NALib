@@ -4,9 +4,9 @@
 
 
 // This file gets only included by the NAUICocoa.m file. We need to include
-// NASystem first to check if NA_SYSTEM ist MAC_OS_X.
+// NABase.h first to check if NA_SYSTEM ist MAC_OS_X.
 
-#include "NASystem.h"
+#include "NABase.h"
 
 
 #if (NA_CONFIG_COMPILE_GUI == 1)

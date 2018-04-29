@@ -10,7 +10,7 @@
 
 #include <float.h>
 #include <math.h>
-#include "NASystem.h"
+#include "NABase.h"
 
 // Fundamental mathematical constants. All macros are defined as float, double
 // and long double with the corresponding suffix.

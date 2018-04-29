@@ -253,8 +253,10 @@ NA_HDEF NAInt naHeapMoveUpMaxIntBack(NAHeap* heap, const void* key, NAInt curind
 
 
 NA_HDEF void naGrowHeap(NAHeap* heap){
-  NAInt entrysize = (NAByte*)(heap->root) - (NAByte*)(heap->data);
-  void* newdata = naMalloc((-heap->maxcount * 2 + 1) * entrysize);
+  NAInt entrysize;
+  void* newdata;
+  entrysize = (NASizeInt)((NAByte*)(heap->root) - (NAByte*)(heap->data));
+  newdata = naMalloc((-heap->maxcount * 2 + 1) * entrysize);
   naCopyn(newdata, heap->data, ((heap->count + 1) * entrysize));
   naFree(heap->data);
   heap->data = newdata;
@@ -270,7 +272,7 @@ NA_DEF void naShrinkHeapIfNecessary(NAHeap* heap){
       naError("naShrinkHeapIfNecessary", "Heap defined with a fixed count of elements.");
   #endif
   if((NAInt)heap->count < -heap->maxcount / 4){
-    NAInt entrysize = (NAByte*)(heap->root) - (NAByte*)(heap->data);
+    NAInt entrysize = (NASizeInt)((NAByte*)(heap->root) - (NAByte*)(heap->data));
     void* newdata = naMalloc((-heap->maxcount / 2 + 1) * entrysize);
     naCopyn(newdata, heap->data, ((heap->count + 1) * entrysize));
     naFree(heap->data);

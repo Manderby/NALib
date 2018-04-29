@@ -24,7 +24,7 @@
 
 
 
-#include "NASystem.h"
+#include "NABase.h"
 
 
 typedef struct NAPool NAPool;

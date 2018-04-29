@@ -228,7 +228,7 @@ NA_HDEF void naRemoveQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* node){
     // Remove the segment from the tree
     #ifndef NDEBUG
       if(node->segmentinparent == -1)
-        {naCrash("naRemoveQuadTreeNode", "Inernal inconsistency detected: Segment number is -1"); return;}
+        naCrash("naRemoveQuadTreeNode", "Inernal inconsistency detected: Segment number is -1");
     #endif
     node->parentnode->child[node->segmentinparent] = NA_NULL;
     
@@ -399,6 +399,7 @@ NA_HIDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data){
     
   }else{
     NAInt segment;
+    NAInt minleafexponent;
 
     // We have a current node which is expected to contain the coord.
     #ifndef NDEBUG
@@ -414,7 +415,7 @@ NA_HIDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data){
         naError("naCreateQuadTreeLeaf", "Tree has been modified between positioning this iterator and creating a leaf. Don't do that. Memory leaks and major pointer confusion expected.");
     #endif
 
-    NAInt minleafexponent = naGetQuadTreeMinLeafExponent(tree);
+    minleafexponent = naGetQuadTreeMinLeafExponent(tree);
     if(iter->curnode->childexponent == minleafexponent){
       // The node can not be divided anymore. Create a leaf.
       iter->curnode->child[segment] = tree->configuration.leafallocator(iter->curnode->childorigin[segment], minleafexponent, tree->configuration.userdata, data);
@@ -717,6 +718,7 @@ NA_DEF NABool naLocateQuadTreeCoord(NAQuadTreeIterator* iter, NAPos coord){
 
 
 NA_DEF NABool naLocateQuadTreeSteps(NAQuadTreeIterator* iter, NAInt stepx, NAInt stepy){
+  NAInt minleafexponent;
   NAPos neworigin;
   const NAQuadTree* tree = naGetPtrConst(&(iter->tree));
   #ifndef NDEBUG
@@ -724,7 +726,7 @@ NA_DEF NABool naLocateQuadTreeSteps(NAQuadTreeIterator* iter, NAInt stepx, NAInt
       naError("naLocateQuadTreeSteps", "Iterator must be positioned first before moving relative.");
   #endif
 
-  NAInt minleafexponent = naGetQuadTreeMinLeafExponent(tree);
+  minleafexponent = naGetQuadTreeMinLeafExponent(tree);
   neworigin = iter->leaforigin;
   neworigin.x += stepx * minleafexponent;
   neworigin.y += stepy * minleafexponent;
@@ -846,7 +848,9 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
   NARecti rect3;
   NAQuadTreeIterator newiter;
   NAQuadTreeIterator iter;
-
+  NAInt minleafexponent;
+  NAPosi shiftint;
+  
   #ifndef NDEBUG
     if(!newtree)
       {naCrash("naCopyQuadTreeWithShift", "newtree is Null-Pointer"); return NA_NULL;}
@@ -858,8 +862,8 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
 
   // Create four rects which denote the rects in the new shifted tree which
   // are aligned to a leaflength.
-  NAInt minleafexponent = naGetQuadTreeMinLeafExponent(duptree);
-  NAPosi shiftint = REMOVEPosToPosi(shift);
+  minleafexponent = naGetQuadTreeMinLeafExponent(duptree);
+  shiftint = REMOVEPosToPosi(shift);
   x1bound = ((shiftint.x % minleafexponent) + minleafexponent ) % minleafexponent;
   y1bound = ((shiftint.y % minleafexponent) + minleafexponent ) % minleafexponent;
   x2bound = naGetQuadTreeMinLeafExponent(duptree) - x1bound;

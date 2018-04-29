@@ -75,10 +75,8 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
   NAInt length;
   
   #ifndef NDEBUG
-    if(!ptr){
+    if(!ptr)
       naCrash("naNewStringWithUTF8CStringLiteral", "ptr is Null-Pointer");
-      return naNewString();
-    }
   #endif
   
   length = (NAInt)naStrlen(ptr);
@@ -163,10 +161,8 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt charoffs
   NAString* string = naNewString();
 
   #ifndef NDEBUG
-    if(!srcstring){
+    if(!srcstring)
       naCrash("naNewStringExtraction", "srcstring is Null-Pointer.");
-      return string;
-    }
   #endif
 
   if(naIsStringEmpty(srcstring)){
@@ -751,7 +747,6 @@ NA_DEF int64 naParseStringInt64(const NAString* string){
   naClearBufferIterator(&iter);
   return retvalue;
 }
-
 
 
 NA_DEF uint8 naParseStringUInt8(const NAString* string){

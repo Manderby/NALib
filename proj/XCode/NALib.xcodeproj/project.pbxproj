@@ -8,10 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		9011A8C71F054877003766D8 /* NABinaryData.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8841F054877003766D8 /* NABinaryData.c */; };
-		9011A8C81F054877003766D8 /* NADateTime.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8861F054877003766D8 /* NADateTime.c */; };
 		9011A8C91F054877003766D8 /* NAFile.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8881F054877003766D8 /* NAFile.c */; };
 		9011A8CA1F054877003766D8 /* NAMemory.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A88A1F054877003766D8 /* NAMemory.c */; };
-		9011A8CB1F054877003766D8 /* NASystem.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A88C1F054877003766D8 /* NASystem.c */; };
 		9011A8CC1F054877003766D8 /* NAMoney.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8991F054877003766D8 /* NAMoney.c */; };
 		9011A8CD1F054877003766D8 /* NABuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8AA1F054877003766D8 /* NABuffer.c */; };
 		9011A8CE1F054877003766D8 /* NAHeap.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8AD1F054877003766D8 /* NAHeap.c */; };
@@ -25,6 +23,8 @@
 		9011A8D61F054877003766D8 /* NAUICocoa.m in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8C21F054877003766D8 /* NAUICocoa.m */; };
 		9011A8D71F054877003766D8 /* NAUICoreAPI.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8C31F054877003766D8 /* NAUICoreAPI.c */; };
 		9011A8D81F054877003766D8 /* NAUIWINAPI.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8C51F054877003766D8 /* NAUIWINAPI.c */; };
+		90734CA0209337B20098F9FE /* NADebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 90734C9F209337B20098F9FE /* NADebug.c */; };
+		90734CA62093DB170098F9FE /* NADateTime.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8861F054877003766D8 /* NADateTime.c */; };
 		9087F70C1E2C313C00867CA7 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F70B1E2C313C00867CA7 /* main.c */; };
 /* End PBXBuildFile section */
 
@@ -56,7 +56,6 @@
 		9011A8891F054877003766D8 /* NAFileII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAFileII.h; sourceTree = "<group>"; };
 		9011A88A1F054877003766D8 /* NAMemory.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAMemory.c; sourceTree = "<group>"; };
 		9011A88B1F054877003766D8 /* NAMemoryII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAMemoryII.h; sourceTree = "<group>"; };
-		9011A88C1F054877003766D8 /* NASystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NASystem.c; sourceTree = "<group>"; };
 		9011A88D1F054877003766D8 /* NAThreadingII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAThreadingII.h; sourceTree = "<group>"; };
 		9011A88E1F054877003766D8 /* NAURLII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAURLII.h; sourceTree = "<group>"; };
 		9011A88F1F054877003766D8 /* NAValueHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAValueHelper.h; sourceTree = "<group>"; };
@@ -98,7 +97,7 @@
 		9011A8B51F054877003766D8 /* NAStackII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAStackII.h; sourceTree = "<group>"; };
 		9011A8B61F054877003766D8 /* NAString.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAString.c; sourceTree = "<group>"; };
 		9011A8B71F054877003766D8 /* NAStringII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAStringII.h; sourceTree = "<group>"; };
-		9011A8B81F054877003766D8 /* NASystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NASystem.h; sourceTree = "<group>"; };
+		9011A8B81F054877003766D8 /* NABase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NABase.h; sourceTree = "<group>"; };
 		9011A8B91F054877003766D8 /* NAThreading.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAThreading.h; sourceTree = "<group>"; };
 		9011A8BA1F054877003766D8 /* NAUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAUI.h; sourceTree = "<group>"; };
 		9011A8BB1F054877003766D8 /* NAURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAURL.h; sourceTree = "<group>"; };
@@ -114,6 +113,12 @@
 		9011A8C61F054877003766D8 /* NAUIWINAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAUIWINAPI.h; sourceTree = "<group>"; };
 		9011A8D91F054891003766D8 /* NAOctTreeII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAOctTreeII.h; sourceTree = "<group>"; };
 		902B12B3200ABF55001F814F /* NALibChangelogV20_V30.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = NALibChangelogV20_V30.txt; path = ../../doc/NALibChangelogV20_V30.txt; sourceTree = "<group>"; };
+		90734C9F209337B20098F9FE /* NADebug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NADebug.c; sourceTree = "<group>"; };
+		90734CA22093854D0098F9FE /* NAInteger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAInteger.h; sourceTree = "<group>"; };
+		90734CA3209385ED0098F9FE /* NACompiler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NACompiler.h; sourceTree = "<group>"; };
+		90734CA4209386F30098F9FE /* NAEnvironment.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAEnvironment.h; sourceTree = "<group>"; };
+		90734CA520938EC30098F9FE /* NALanguage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NALanguage.h; sourceTree = "<group>"; };
+		90734CA7209471600098F9FE /* NAInt64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAInt64.h; sourceTree = "<group>"; };
 		9087F70B1E2C313C00867CA7 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		908F9C5C1DAED3F300B1FFF2 /* todo.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = todo.txt; path = ../../doc/todo.txt; sourceTree = "<group>"; };
 		90920E231D4FDC7400369052 /* Readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = Readme.txt; path = ../../doc/Readme.txt; sourceTree = "<group>"; };
@@ -164,7 +169,8 @@
 				9011A8A61F054877003766D8 /* NAStack.h */,
 				9011A8A71F054877003766D8 /* NAString.h */,
 				9011A8A81F054877003766D8 /* NAStruct */,
-				9011A8B81F054877003766D8 /* NASystem.h */,
+				90734CA1209385110098F9FE /* NABase */,
+				9011A8B81F054877003766D8 /* NABase.h */,
 				9011A8B91F054877003766D8 /* NAThreading.h */,
 				9011A8BA1F054877003766D8 /* NAUI.h */,
 				9011A8BB1F054877003766D8 /* NAURL.h */,
@@ -186,7 +192,6 @@
 				9011A8891F054877003766D8 /* NAFileII.h */,
 				9011A88A1F054877003766D8 /* NAMemory.c */,
 				9011A88B1F054877003766D8 /* NAMemoryII.h */,
-				9011A88C1F054877003766D8 /* NASystem.c */,
 				9011A88D1F054877003766D8 /* NAThreadingII.h */,
 				9011A88E1F054877003766D8 /* NAURLII.h */,
 				9011A88F1F054877003766D8 /* NAValueHelper.h */,
@@ -246,6 +251,19 @@
 				9011A8C61F054877003766D8 /* NAUIWINAPI.h */,
 			);
 			path = NAVisual;
+			sourceTree = "<group>";
+		};
+		90734CA1209385110098F9FE /* NABase */ = {
+			isa = PBXGroup;
+			children = (
+				90734C9F209337B20098F9FE /* NADebug.c */,
+				90734CA22093854D0098F9FE /* NAInteger.h */,
+				90734CA3209385ED0098F9FE /* NACompiler.h */,
+				90734CA4209386F30098F9FE /* NAEnvironment.h */,
+				90734CA520938EC30098F9FE /* NALanguage.h */,
+				90734CA7209471600098F9FE /* NAInt64.h */,
+			);
+			path = NABase;
 			sourceTree = "<group>";
 		};
 		908950DB1D3A8D5300D7917D /* test */ = {
@@ -340,7 +358,7 @@
 				9011A8D21F054877003766D8 /* NAString.c in Sources */,
 				9011A8CF1F054877003766D8 /* NAList.c in Sources */,
 				9011A8C91F054877003766D8 /* NAFile.c in Sources */,
-				9011A8C81F054877003766D8 /* NADateTime.c in Sources */,
+				90734CA0209337B20098F9FE /* NADebug.c in Sources */,
 				9011A8D01F054877003766D8 /* NAOctTree.c in Sources */,
 				9011A8D71F054877003766D8 /* NAUICoreAPI.c in Sources */,
 				9011A8D81F054877003766D8 /* NAUIWINAPI.c in Sources */,
@@ -350,11 +368,11 @@
 				9011A8C71F054877003766D8 /* NABinaryData.c in Sources */,
 				9011A8D31F054877003766D8 /* NADeflate.c in Sources */,
 				9011A8CC1F054877003766D8 /* NAMoney.c in Sources */,
+				90734CA62093DB170098F9FE /* NADateTime.c in Sources */,
 				9011A8D41F054877003766D8 /* NAPNG.c in Sources */,
 				9087F70C1E2C313C00867CA7 /* main.c in Sources */,
 				9011A8D61F054877003766D8 /* NAUICocoa.m in Sources */,
 				9011A8CE1F054877003766D8 /* NAHeap.c in Sources */,
-				9011A8CB1F054877003766D8 /* NASystem.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -415,7 +433,7 @@
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_C_LANGUAGE_STANDARD = gnu89;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
@@ -439,11 +457,11 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Optimize;
@@ -539,7 +557,7 @@
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_C_LANGUAGE_STANDARD = gnu89;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -568,11 +586,11 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -597,7 +615,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
-				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_C_LANGUAGE_STANDARD = gnu89;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
@@ -621,11 +639,11 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_LABEL = YES;
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRIP_INSTALLED_PRODUCT = YES;
 			};

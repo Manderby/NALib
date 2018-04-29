@@ -21,7 +21,7 @@
 // to NALib and may not be of great use elsewhere.
 //
 // This file is located at the very bottom and does not require any other
-// file to be included other than the NASystem file containing the base type
+// file to be included other than the NABase.h file containing the base type
 // definitions.
 
 
@@ -198,19 +198,19 @@ NA_HIDEF int32 naMakeMaxWithEndi32(int32 end){
     if(end == NA_INT32_MIN)
       naError("naMakeMaxWithEndi32", "Integer underflow");
   #endif
-  return end - 1;
+  return end - NA_ONE_32;
 }
 NA_HIDEF int64 naMakeMaxWithEndi64(int64 end){
   #ifndef NDEBUG
-    if(end == NA_INT64_MIN)
+    if(naEqualInt64(end, NA_INT64_MIN))
       naError("naMakeMaxWithEndi64", "Integer underflow");
   #endif
-  return end - 1LL;
+  return naSubInt64(end, NA_ONE_64);
 }
 NA_HIDEF NAInt naMakeMaxWithEndi(NAInt end){
-  #if NA_SYSTEM_ADDRESS_BITS == 32
+  #if NA_TYPE_NAINT_BITS == 32
     return naMakeMaxWithEndi32(end);
-  #else
+  #elif NA_TYPE_NAINT_BITS == 64
     return naMakeMaxWithEndi64(end);
   #endif
 }
@@ -219,19 +219,19 @@ NA_HIDEF int32 naMakeEndWithMaxi32(int32 max){
     if(max == NA_INT32_MAX)
       naError("naMakeEndWithMaxi32", "Integer overflow");
   #endif
-  return max + 1;
+  return max + NA_ONE_32;
 }
 NA_HIDEF int64 naMakeEndWithMaxi64(int64 max){
   #ifndef NDEBUG
-    if(max == NA_INT64_MAX)
+    if(naEqualInt64(max, NA_INT64_MAX))
       naError("naMakeEndWithMaxi64", "Integer overflow");
   #endif
-  return max + 1LL;
+  return naAddInt64(max, NA_ONE_64);
 }
 NA_HIDEF NAInt naMakeEndWithMaxi(NAInt max){
-  #if NA_SYSTEM_ADDRESS_BITS == 32
+  #if NA_TYPE_NAINT_BITS == 32
     return naMakeEndWithMaxi32(max);
-  #else
+  #elif NA_TYPE_NAINT_BITS == 64
     return naMakeEndWithMaxi64(max);
   #endif
 }

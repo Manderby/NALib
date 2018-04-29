@@ -16,7 +16,7 @@
   #include "malloc/malloc.h"
 #endif
 
-#include "../NASystem.h"
+#include "../NABase.h"
 #include "../NAMathOperators.h"
 #include "NAValueHelper.h"
 
@@ -137,7 +137,15 @@ NA_IDEF void naFreeAligned(void* ptr){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     _aligned_free(ptr);
   #else
-    free(((void**)ptr)[-1]);
+    #if NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_CUSTOM
+      free(((void**)ptr)[-1]);
+    #elif NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_ALIGNED_ALLOC
+      free(ptr);
+    #elif NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_POSIX_MEMALIGN
+      free(ptr);
+    #else
+      #error "Invalid aligned alloc method chosen"
+    #endif
   #endif
 }
 
@@ -237,7 +245,11 @@ struct NARefCount{
 // wrongly.
 
 
-#define NA_REFCOUNT_DUMMY_VALUE (NAUInt)0xaaaaaaaaaaaaaaaaLL
+#if NA_TYPE_NAINT_BITS == 64
+  #define NA_REFCOUNT_DUMMY_VALUE (NAUInt)0xaaaaaaaaaaaaaaaaLL
+#else
+  #define NA_REFCOUNT_DUMMY_VALUE (NAUInt)0xaaaaaaaa
+#endif
 
 
 

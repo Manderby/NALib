@@ -9,7 +9,7 @@
 #endif
 
 
-#include "NASystem.h"
+#include "NABase.h"
 
 
 // A heap is a datastructure, storing arbirtrary elements with a key value.

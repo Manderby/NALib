@@ -1,36 +1,70 @@
- 
+
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#include "../NASystem.h"
+
+// Do not include this file directly! It will automatically be included when
+// including "NABase.h"
+
+
+
+// NALib does not provide macros for the kind of compiler is used (like for
+// example C, C++ or Objective-C). Please check for definition of the default
+// macros:
+//
+// __cplusplus    Compiler is a C++ compiler
+// __OBJC__       Compiler is an Objective-C Compiler
 
 
 
 
-#ifndef NDEBUG
+// On the other hand, NALib detects, what c or c++ standard is used. It might
+// be one or multiple of the following:
+//
+// NA_C89
+// NA_C90
+// NA_C94
+// NA_C99
+// NA_C11
+//
+// NA_CPP98
+// NA_CPP11
+// NA_CPP14
+//
+// If a later version is defined, all earlier versions are defined as well.
+#ifndef __cplusplus
+  // This is a C compilation
+  #if defined __STDC__
 
-  // The error printing method. Errors will be emitted to the stderr output.
-  // When NDEBUG is defined, these functions are OBSOLETE!
-  #include <stdio.h>
+    #define NA_C89  // C89 and C90 are virtually the same thing.
+    #define NA_C90
 
+    #if defined __STDC_VERSION__
+      #if __STDC_VERSION__ >= 199409L
+        #define NA_C94
+      #endif
+      #if __STDC_VERSION__ >= 199901L
+        #define NA_C99
+      #endif
+      #if __STDC_VERSION__ >= 201112L
+        #define NA_C11
+      #endif
+    #endif
 
-  void naError(const char* functionsymbol, const char* text){
-    fprintf(stderr, "Error in %s: %s", functionsymbol, text);
-    fprintf(stderr, NA_NL); // Set a breakpoint in this line to debug.
-  }
+  #endif
 
-
-
-  NA_NORETURN void naCrash(const char* functionsymbol, const char* text){
-    fprintf(stderr, "Critical error in %s: %s" NA_NL, functionsymbol, text);
-    fprintf(stderr, NA_NL "Crashing the application deliberately...");
-    fprintf(stderr, NA_NL); // Set a breakpoint in this line to debug.
-    exit(EXIT_FAILURE);
-  }
-
-
+#else
+  // This is a C++ compilation
+  #if __cplusplus >= 199711L
+    #define NA_CPP98  // The ISO ratified the November '97 version in '98
+  #endif
+  #if __cplusplus >= 201103L
+    #define NA_CPP11
+  #endif
+  #if __cplusplus >= 201402L
+    #define NA_CPP14
+  #endif
 #endif
-
 
 
 

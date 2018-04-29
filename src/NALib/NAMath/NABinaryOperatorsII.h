@@ -9,7 +9,6 @@
 
 
 
-
 NA_IDEF uint8 naGetSignum8(int8 i){
   return (uint8)(i >> (NA_VALUE8_BIT_COUNT  - 1));
 }
@@ -20,7 +19,7 @@ NA_IDEF uint32 naGetSignum32(int32 i){
   return (uint32)(i >> (NA_VALUE32_BIT_COUNT - 1));
 }
 NA_IDEF uint64 naGetSignum64(int64 i){
-  return (uint64)(i >> (NA_VALUE64_BIT_COUNT - 1));
+  return naCastInt64ToUInt64(naShrInt64(i, (NA_VALUE64_BIT_COUNT - 1)));
 }
 
 
@@ -35,7 +34,7 @@ NA_IDEF void naSetSignBit32(void* i){
   *((uint32*)i) |= NA_VALUE32_SIGN_MASK;
 }
 NA_IDEF void naSetSignBit64(void* i){
-  *((uint64*)i) |= NA_VALUE64_SIGN_MASK;
+  *((uint64*)i) = naOrUInt64(*((uint64*)i), NA_VALUE64_SIGN_MASK);
 }
 NA_IDEF void naUnsetSignBit8(void* i){
   *((uint8*)i) &= ~NA_VALUE8_SIGN_MASK;
@@ -47,9 +46,7 @@ NA_IDEF void naUnsetSignBit32(void* i){
   *((uint32*)i) &= ~NA_VALUE32_SIGN_MASK;
 }
 NA_IDEF void naUnsetSignBit64(void* i){
-//  value64 testvalue = ~NA_VALUE64_SIGN_MASK;
-//  value64 testret = i & ~NA_VALUE64_SIGN_MASK;
-  *((uint64*)i) &= ~NA_VALUE64_SIGN_MASK;
+  *((uint64*)i) = naAndUInt64(*((uint64*)i), naNotUInt64(NA_VALUE64_SIGN_MASK));
 }
 
 
@@ -59,6 +56,7 @@ NA_IDEF int32 naAbsi32(int32 x);
 NA_IDEF int64 naAbsi64(int64 x);
 
 NA_IDEF float naCreateFloat(int32 signedsignificand, int32 signedexponent){
+  int32 dbits;
   #ifndef NDEBUG
     if(signedexponent < NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL)
       naError("naCreateFloat", "exponent too low for single precision");
@@ -71,34 +69,37 @@ NA_IDEF float naCreateFloat(int32 signedsignificand, int32 signedexponent){
     if((naAbsi32(signedsignificand) > NA_IEEE754_SINGLE_SIGNIFICAND_MASK))
       naError("naCreateFloat", "significand out of range");
   #endif
-  int32 dbits =
+  dbits =
       (signedsignificand & NA_IEEE754_SINGLE_SIGN_MASK)
     | ((signedexponent + NA_IEEE754_SINGLE_EXPONENT_BIAS) << NA_IEEE754_SINGLE_SIGNIFICAND_BIT_COUNT)
     | (naAbsi32(signedsignificand) & NA_IEEE754_SINGLE_SIGNIFICAND_MASK);
   return *((float*)&dbits);
 }
 
-NA_IDEF double naCreateDouble(int64 signedsignificand, int64 signedexponent){
+NA_IDEF double naCreateDouble(int64 signedsignificand, int32 signedexponent){
+  int64 dbits;
   #ifndef NDEBUG
     if(signedexponent < NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL)
       naError("naCreateDouble", "exponent too low for double precision");
-    if((signedsignificand != 0) && (signedexponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL))
+    if(!naEqualInt64(signedsignificand, NA_ZERO_64) && (signedexponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL))
       naError("naCreateDouble", "exponent creates subnormal number");
     if(signedexponent > NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
       naError("naCreateDouble", "exponent too high for double precision");
     if(signedexponent == NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
       naError("naCreateDouble", "exponent equals max exponent which is reserved for special values");
-    if((naAbsi64(signedsignificand) > NA_IEEE754_DOUBLE_SIGNIFICAND_MASK))
+    if(naGreaterInt64(naAbsi64(signedsignificand), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK))
       naError("naCreateDouble", "significand out of range");
   #endif
-  int64 dbits =
-      (signedsignificand & NA_IEEE754_DOUBLE_SIGN_MASK)
-    | ((signedexponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS) << NA_IEEE754_DOUBLE_SIGNIFICAND_BIT_COUNT)
-    | (naAbsi64(signedsignificand) & NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
+  dbits =
+      naOrInt64(naOrInt64(
+      naAndInt64(signedsignificand, NA_IEEE754_DOUBLE_SIGN_MASK),
+      naShlInt64(naMakeInt64WithLo(signedexponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BIT_COUNT)),
+      naAndInt64(naAbsi64(signedsignificand), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK));
   return *((double*)&dbits);
 }
 
 NA_IDEF float naCreateFloatWithExponent(int32 signedexponent){
+  int32 dbits;
   #ifndef NDEBUG
     if(signedexponent < NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL)
       naError("naCreateFloat", "exponent too low for single precision");
@@ -109,11 +110,12 @@ NA_IDEF float naCreateFloatWithExponent(int32 signedexponent){
     if(signedexponent == NA_IEEE754_SINGLE_EXPONENT_SPECIAL)
       naError("naCreateFloat", "exponent equals max exponent which is reserved for special values");
   #endif
-  int32 dbits = ((signedexponent + NA_IEEE754_SINGLE_EXPONENT_BIAS) << NA_IEEE754_SINGLE_SIGNIFICAND_BIT_COUNT);
+  dbits = ((signedexponent + NA_IEEE754_SINGLE_EXPONENT_BIAS) << NA_IEEE754_SINGLE_SIGNIFICAND_BIT_COUNT);
   return *((float*)&dbits);
 }
 
-NA_IDEF double naCreateDoubleWithExponent(int64 signedexponent){
+NA_IDEF double naCreateDoubleWithExponent(int32 signedexponent){
+  int64 dbits;
   #ifndef NDEBUG
     if(signedexponent < NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL)
       naError("naCreateDouble", "exponent too low for double precision");
@@ -124,28 +126,31 @@ NA_IDEF double naCreateDoubleWithExponent(int64 signedexponent){
     if(signedexponent == NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
       naError("naCreateDouble", "exponent equals max exponent which is reserved for special values");
   #endif
-  int64 dbits = ((signedexponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS) << NA_IEEE754_DOUBLE_SIGNIFICAND_BIT_COUNT);
+  dbits = naShlInt64(naMakeInt64WithLo(signedexponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BIT_COUNT);
   return *((double*)&dbits);
 }
 
 NA_IDEF float  naCreateFloatSubnormal (int32 signedsignificand){
+  int32 dbits;
   #ifndef NDEBUG
     if((naAbsi32(signedsignificand) > NA_IEEE754_SINGLE_SIGNIFICAND_MASK))
       naError("naCreateFloat", "significand out of range");
   #endif
-  int32 dbits =
+  dbits =
       (signedsignificand & NA_IEEE754_SINGLE_SIGN_MASK)
     | (naAbsi32(signedsignificand) & NA_IEEE754_SINGLE_SIGNIFICAND_MASK);
   return *((float*)&dbits);
 }
 NA_IDEF double naCreateDoubleSubnormal(int64 signedsignificand){
+  int64 dbits;
   #ifndef NDEBUG
-    if((naAbsi64(signedsignificand) > NA_IEEE754_DOUBLE_SIGNIFICAND_MASK))
+    if(naGreaterInt64(naAbsi64(signedsignificand), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK))
       naError("naCreateDouble", "significand out of range");
   #endif
-  int64 dbits =
-      (signedsignificand & NA_IEEE754_DOUBLE_SIGN_MASK)
-    | (naAbsi64(signedsignificand) & NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
+  dbits =
+      naOrInt64(
+      naAndInt64(signedsignificand, NA_IEEE754_DOUBLE_SIGN_MASK),
+      naAndInt64(naAbsi64(signedsignificand), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK));
   return *((double*)&dbits);
 }
 

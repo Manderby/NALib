@@ -15,7 +15,7 @@
 
 NA_IDEF void naCopy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)d - (NAByte*)s;
+    NAInt dist = (NAInt)((NAByte*)d - (NAByte*)s);
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 1)
       naError("naCopy8", "Restrict pointers overlap.");
@@ -32,7 +32,7 @@ NA_IDEF void naCopy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s){
 }
 NA_IDEF void naCopy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)d - (NAByte*)s;
+    NAInt dist = (NAInt)((NAByte*)d - (NAByte*)s);
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 2)
       naError("naCopy16", "Restrict pointers overlap.");
@@ -49,7 +49,7 @@ NA_IDEF void naCopy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
 }
 NA_IDEF void naCopy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)d - (NAByte*)s;
+    NAInt dist = (NAInt)((NAByte*)d - (NAByte*)s);
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 4)
       naError("naCopy32", "Restrict pointers overlap.");
@@ -66,7 +66,7 @@ NA_IDEF void naCopy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
 }
 NA_IDEF void naCopy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)d - (NAByte*)s;
+    NAInt dist = (NAInt)((NAByte*)d - (NAByte*)s);
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 8)
       naError("naCopy64", "Restrict pointers overlap.");
@@ -79,11 +79,18 @@ NA_IDEF void naCopy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
       return;
     }
   #endif
-  *(uint64*)d = *(uint64*)s;
+  #if defined NA_TYPE_INT64
+    *(uint64*)d = *(uint64*)s;
+  #else
+    *(uint32*)d = *(uint32*)s;
+    d = ((NAByte*)d) + 4;
+    s = ((NAByte*)s) + 4;
+    *(uint32*)d = *(uint32*)s;
+  #endif
 }
 NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)d - (NAByte*)s;
+    NAInt dist = (NAInt)((NAByte*)d - (NAByte*)s);
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 16)
       naError("naCopy128", "Restrict pointers overlap.");
@@ -96,11 +103,25 @@ NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
       return;
     }
   #endif
-  *(uint64*)d = *(uint64*)s;
-  d = ((NAByte*)d) + 8;
-  s = ((NAByte*)s) + 8;
-  *(uint64*)d = *(uint64*)s;
+  #if defined NA_TYPE_INT64
+    *(uint64*)d = *(uint64*)s;
+    d = ((NAByte*)d) + 8;
+    s = ((NAByte*)s) + 8;
+    *(uint64*)d = *(uint64*)s;
+  #else
+    *(uint32*)d = *(uint32*)s;
+    d = ((NAByte*)d) + 4;
+    s = ((NAByte*)s) + 4;
+    *(uint32*)d = *(uint32*)s;
+    d = ((NAByte*)d) + 4;
+    s = ((NAByte*)s) + 4;
+    *(uint32*)d = *(uint32*)s;
+    d = ((NAByte*)d) + 4;
+    s = ((NAByte*)s) + 4;
+    *(uint32*)d = *(uint32*)s;
+  #endif
 }
+
 NA_IDEF void naCopyn(void* NA_RESTRICT d, const void* NA_RESTRICT s, NAInt bytesize){
   #ifndef NDEBUG
     if(!d){
@@ -128,7 +149,7 @@ NA_IDEF void naCopyn(void* NA_RESTRICT d, const void* NA_RESTRICT s, NAInt bytes
 
 NA_IDEF void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)a - (NAByte*)b;
+    NAInt dist = (NAInt)((NAByte*)a - (NAByte*)b);
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
     if(dist < 1)
       naError("naSwap8", "Restrict pointers overlap.");
@@ -150,7 +171,7 @@ NA_IDEF void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b){
 
 NA_IDEF void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)a - (NAByte*)b;
+    NAInt dist = (NAInt)((NAByte*)a - (NAByte*)b);
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
     if(dist < 2)
       naError("naSwap16", "Restrict pointers overlap.");
@@ -172,7 +193,7 @@ NA_IDEF void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
 
 NA_IDEF void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)a - (NAByte*)b;
+    NAInt dist = (NAInt)((NAByte*)a - (NAByte*)b);
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
     if(dist < 4)
       naError("naSwap32", "Restrict pointers overlap.");
@@ -194,7 +215,7 @@ NA_IDEF void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
 
 NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)a - (NAByte*)b;
+    NAInt dist = (NAInt)((NAByte*)a - (NAByte*)b);
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
     if(dist < 8)
       naError("naSwap64", "Restrict pointers overlap.");
@@ -209,14 +230,21 @@ NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #endif
   // Note: Do not write the following 3 lines as 1 line. The compiler might
   // cache the result of the dereference operators!
-  *(uint64*)a^=*(uint64*)b;
-  *(uint64*)b^=*(uint64*)a;
-  *(uint64*)a^=*(uint64*)b;
+  #if defined NA_TYPE_INT64
+    *(uint64*)a^=*(uint64*)b;
+    *(uint64*)b^=*(uint64*)a;
+    *(uint64*)a^=*(uint64*)b;
+  #else
+    naSwap32(a, b);
+    a = ((NAByte*)a) + 4;
+    b = ((NAByte*)b) + 4;
+    naSwap32(a, b);
+  #endif
 }
 
 NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
-    NAInt dist = (NAByte*)a - (NAByte*)b;
+    NAInt dist = (NAInt)((NAByte*)a - (NAByte*)b);
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
     if(dist < 16)
       naError("naSwap128", "Restrict pointers overlap.");
@@ -237,7 +265,6 @@ NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
 
 
 
-
 NA_IDEF void naSwap(double* NA_RESTRICT a, double* NA_RESTRICT b){
   naSwap64(a, b);
 }
@@ -247,17 +274,17 @@ NA_IDEF void naSwapf(float* NA_RESTRICT a, float* NA_RESTRICT b){
 }
 
 NA_IDEF void naSwapi(NAInt* NA_RESTRICT a, NAInt* NA_RESTRICT b){
-  #if NA_SYSTEM_ADDRESS_BITS == 32
+  #if NA_TYPE_NAINT_BITS == 32
     naSwap32(a, b);
-  #elif NA_SYSTEM_ADDRESS_BITS == 64
+  #elif NA_TYPE_NAINT_BITS == 64
     naSwap64(a, b);
   #endif
 }
 
 NA_IDEF void naSwapu(NAUInt* NA_RESTRICT a, NAUInt* NA_RESTRICT b){
-  #if NA_SYSTEM_ADDRESS_BITS == 32
+  #if NA_TYPE_NAINT_BITS == 32
     naSwap32(a, b);
-  #elif NA_SYSTEM_ADDRESS_BITS == 64
+  #elif NA_TYPE_NAINT_BITS == 64
     naSwap64(a, b);
   #endif
 }
@@ -276,12 +303,26 @@ NA_IDEF NABool naEqual32( void* NA_RESTRICT a, void* NA_RESTRICT b){
   return (*((uint32*)a) == *((uint32*)b));
 }
 NA_IDEF NABool naEqual64( void* NA_RESTRICT a, void* NA_RESTRICT b){
-  return (*((uint64*)a) == *((uint64*)b));
+  #if defined NA_TYPE_INT64
+    return (*((uint64*)a) == *((uint64*)b));
+  #else
+    if(*((uint32*)&((((NAByte*)a)[0]))) != *((uint32*)&((((NAByte*)b)[0])))){return NA_FALSE;}
+    if(*((uint32*)&((((NAByte*)a)[4]))) != *((uint32*)&((((NAByte*)b)[4])))){return NA_FALSE;}
+    return NA_TRUE;
+  #endif
 }
 NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b){
-  if(*((uint64*)&((((NAByte*)a)[0]))) != *((uint64*)&((((NAByte*)b)[0])))){return NA_FALSE;}
-  if(*((uint64*)&((((NAByte*)a)[8]))) != *((uint64*)&((((NAByte*)b)[8])))){return NA_FALSE;}
-  return NA_TRUE;
+  #if defined NA_TYPE_INT64
+    if(*((uint64*)&((((NAByte*)a)[0]))) != *((uint64*)&((((NAByte*)b)[0])))){return NA_FALSE;}
+    if(*((uint64*)&((((NAByte*)a)[8]))) != *((uint64*)&((((NAByte*)b)[8])))){return NA_FALSE;}
+    return NA_TRUE;
+  #else
+    if(*((uint32*)&((((NAByte*)a)[ 0]))) != *((uint32*)&((((NAByte*)b)[ 0])))){return NA_FALSE;}
+    if(*((uint32*)&((((NAByte*)a)[ 4]))) != *((uint32*)&((((NAByte*)b)[ 4])))){return NA_FALSE;}
+    if(*((uint32*)&((((NAByte*)a)[ 8]))) != *((uint32*)&((((NAByte*)b)[ 8])))){return NA_FALSE;}
+    if(*((uint32*)&((((NAByte*)a)[12]))) != *((uint32*)&((((NAByte*)b)[12])))){return NA_FALSE;}
+    return NA_TRUE;
+  #endif
 }
 
 
@@ -302,17 +343,24 @@ NA_IDEF void naNulln32(void* d, int32 bytesize){
 
 NA_IDEF void naNulln64(void* d, int64 bytesize){
   #ifndef NDEBUG
-    if(bytesize < NA_ONE_64)
+    if(naSmallerInt64(bytesize, NA_ONE_64))
       naError("naNulln64", "count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
-  memset(d, 0, (size_t)bytesize);
+  #if defined NA_TYPE_INT64
+    memset(d, 0, (size_t)bytesize);
+  #else
+    #ifndef NDEBUG
+      naError("naNulln64", "Impossible to convert to a 64 bit size_t type, as no accessible 64 bit integer type exists in this configuration. Falling back to 32 bits.");
+    #endif
+    memset(d, 0, (size_t)naCastInt64ToInt32(bytesize));
+  #endif
 }
 
 NA_IDEF void naNulln(void* d, NAInt bytesize){
-  #if NA_SYSTEM_ADDRESS_BITS == 32
+  #if NA_TYPE_NAINT_BITS == 32
     naNulln32(d, bytesize);
-  #elif NA_SYSTEM_ADDRESS_BITS == 64
+  #elif NA_TYPE_NAINT_BITS == 64
     naNulln64(d, bytesize);
   #else
     #error "Integer bytesize unknown"
@@ -332,23 +380,29 @@ NA_IDEF void naSetn32(void* d, int32 bytesize, NAByte value){
 
 NA_IDEF void naSetn64(void* d, int64 bytesize, NAByte value){
   #ifndef NDEBUG
-    if(bytesize < NA_ONE_64)
+    if(naSmallerInt64(bytesize, NA_ONE_64))
       naError("naNulln64", "count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
-  memset(d, value, (size_t)bytesize);
+  #if defined NA_TYPE_INT64
+    memset(d, value, (size_t)bytesize);
+  #else
+    #ifndef NDEBUG
+      naError("naSetn64", "Impossible to convert to a 64 bit size_t type, as no accessible 64 bit integer type exists in this configuration. Falling back to 32 bits.");
+    #endif
+    memset(d, value, (size_t)naCastInt64ToInt32(bytesize));
+  #endif
 }
 
 NA_IDEF void naSetn(void* d, NAInt bytesize, NAByte value){
-  #if NA_SYSTEM_ADDRESS_BITS == 32
+  #if NA_TYPE_NAINT_BITS == 32
     naSetn32(d, bytesize, value);
-  #elif NA_SYSTEM_ADDRESS_BITS == 64
+  #elif NA_TYPE_NAINT_BITS == 64
     naSetn64(d, bytesize, value);
   #else
     #error "Integer bytesize unknown"
   #endif
 }
-
 
 
 

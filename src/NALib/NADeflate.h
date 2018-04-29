@@ -14,7 +14,7 @@
 // Deflate algorithm specification:
 // http://www.ietf.org/rfc/rfc1951.txt
 
-#include "NASystem.h"
+#include "NABase.h"
 #include "NABuffer.h"
 
 
@@ -24,7 +24,7 @@ typedef enum{
   NA_DEFLATE_COMPRESSION_FASTEST  = 0,
   NA_DEFLATE_COMPRESSION_FAST     = 1,
   NA_DEFLATE_COMPRESSION_DEFAULT  = 2,
-  NA_DEFLATE_COMPRESSION_MAX      = 3,
+  NA_DEFLATE_COMPRESSION_MAX      = 3
 } NADeflateCompressionLevel;
 
 

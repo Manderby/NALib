@@ -9,7 +9,7 @@
 #endif
 
 
-#include "NASystem.h"
+#include "NABase.h"
 
 // In this file, you find basic vector algebra functions for both
 // Vector and Matrix.

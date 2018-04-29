@@ -8,7 +8,7 @@
   extern "C"{
 #endif
 
-#include "NASystem.h"
+#include "NABase.h"
 
 // Threading, Sleeping
 //

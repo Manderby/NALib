@@ -9,7 +9,7 @@
 #endif
 
 
-#include "NASystem.h"
+#include "NABase.h"
 #include "NABinaryOperators.h"
 
 

@@ -16,7 +16,7 @@
 // Checksums.
 
 
-#include "NASystem.h"
+#include "NABase.h"
 
 
 // Copies the array s to array d byte-by-byte
@@ -26,8 +26,8 @@ NA_IAPI void naCopy32   (void* NA_RESTRICT d, const void* NA_RESTRICT s);
 NA_IAPI void naCopy64   (void* NA_RESTRICT d, const void* NA_RESTRICT s);
 NA_IAPI void naCopy128  (void* NA_RESTRICT d, const void* NA_RESTRICT s);
 NA_IAPI void naCopyn    (void* NA_RESTRICT d,
-                  const void* NA_RESTRICT s,
-                                   NAInt bytesize);
+                   const void* NA_RESTRICT s,
+                                     NAInt bytesize);
 
 
 // Swaps the content of the two pointers with the given number of bits.
@@ -236,7 +236,7 @@ typedef struct NAChecksum NAChecksum;
 
 typedef enum{
   NA_CHECKSUM_TYPE_CRC_PNG,
-  NA_CHECKSUM_TYPE_ADLER_32, // Used in ZLIB
+  NA_CHECKSUM_TYPE_ADLER_32   // Used in ZLIB
 } NAChecksumType;
 
 

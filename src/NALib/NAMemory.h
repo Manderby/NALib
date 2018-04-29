@@ -42,7 +42,7 @@
 
 
 
-#include "NASystem.h"
+#include "NABase.h"
 
 
 

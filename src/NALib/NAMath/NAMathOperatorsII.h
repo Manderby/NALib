@@ -20,9 +20,9 @@
 
 
 NA_IDEF NAInt naSigni(NAInt x){
-#if NA_SYSTEM_ADDRESS_BITS == 32
+#if NA_TYPE_NAINT_BITS == 32
   return naSigni32(x);
-#elif NA_SYSTEM_ADDRESS_BITS == 64
+#elif NA_TYPE_NAINT_BITS == 64
   return naSigni64(x);
 #endif
 }
@@ -42,17 +42,17 @@ NA_IDEF int16 naSigni16(int16 x){
 }
 NA_IDEF int32 naSigni32(int32 x){
   #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-    return (int32)((naGetSignum32(x) << 1) + 1);
+    return (int32)((naGetSignum32(x) << 1) + NA_ONE_32);
   #else
-    return (x<0)?-1:1;
+    return (x<0)?-NA_ONE_32:NA_ONE_32;
   #endif
 }
 NA_IDEF int64 naSigni64(int64 x){
   #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
     uint64 signum = naGetSignum64(x);
-    return (int64)((signum << 1) + 1LL);
+    return naCastUInt64ToInt64(naAddUInt64(naShlUInt64(signum, 1), NA_ONE_64u));
   #else
-    return (x<0)?-1LL:1LL;
+    return (x<0)?-NA_ONE_64:NA_ONE_64;
   #endif
 }
 
@@ -184,7 +184,7 @@ NA_IDEF int32 naMini32(int32 a, int32 b){
   return (a<b)?a:b;
 }
 NA_IDEF int64 naMini64(int64 a, int64 b){
-  return (a<b)?a:b;
+  return naSmallerInt64(a,b)?a:b;
 }
 
 
@@ -207,7 +207,7 @@ NA_IDEF int32 naMaxi32(int32 a, int32 b){
   return (a>b)?a:b;
 }
 NA_IDEF int64 naMaxi64(int64 a, int64 b){
-  return (a>b)?a:b;
+  return naGreaterInt64(a,b)?a:b;
 }
 
 
@@ -278,29 +278,24 @@ NA_IDEF double naAbs(double x){
   return x;
 }
 NA_IDEF NAInt naAbsi(NAInt x){
-#if NA_SYSTEM_ADDRESS_BITS == 32
+#if NA_TYPE_NAINT_BITS == 32
   return naAbsi32(x);
-#elif NA_SYSTEM_ADDRESS_BITS == 64
+#elif NA_TYPE_NAINT_BITS == 64
   return naAbsi64(x);
 #endif
 }
 NA_IDEF int8 naAbsi8(int8 x){
   return naSigni8(x) * x;
-//  return (int8)abs(x);  // The stdlib implementation is not inlineable.
 }
 NA_IDEF int16 naAbsi16(int16 x){
   return naSigni16(x) * x;
-//  return (int16)abs(x);  // The stdlib implementation is not inlineable.
 }
 NA_IDEF int32 naAbsi32(int32 x){
   return naSigni32(x) * x;
-//  return (int32)abs(x);  // The stdlib implementation is not inlineable.
 }
 NA_IDEF int64 naAbsi64(int64 x){
-  return naSigni64(x) * x;
-//  return (int64)llabs(x);  // The stdlib implementation is not inlineable.
+  return naMulInt64(naSigni64(x), x);
 }
-
 
 NA_IDEF float naFloorf(float x){
   return floorf(x);
@@ -498,19 +493,19 @@ NA_IDEF int32 naLog2i32(int32 x){
 NA_IDEF int64 naLog2i64(int64 x){
   int64 retvalue;
   #ifndef NDEBUG
-    if(x < 0)
+    if(naSmallerInt64(x, NA_ZERO_64))
       naError("naLog2i64", "Logarithm of negative number.");
   #endif
-  if(x<=0){return 0;}
-  x--;
-  retvalue = 0;
-  while(x){retvalue++; x>>=1;}
+  if(naSmallerEqualInt64(x, NA_ZERO_64)){return NA_ZERO_64;}
+  naDecInt64(x);
+  retvalue = NA_ZERO_64;
+  while(!naEqualInt64(x, NA_ZERO_64)){naIncInt64(retvalue); x = naShrInt64(x, 1);}
   return retvalue;
 }
 NA_IDEF NAInt naLog2i(NAInt x){
-  #if NA_SYSTEM_ADDRESS_BITS == 32
+  #if NA_TYPE_NAINT_BITS == 32
     return naLog2i32(x);
-  #elif NA_SYSTEM_ADDRESS_BITS == 64
+  #elif NA_TYPE_NAINT_BITS == 64
     return naLog2i64(x);
   #endif
 }
@@ -532,9 +527,9 @@ NA_IDEF double naExp2(double x){
   #endif
 }
 NA_IDEF NAInt naExp2i(NAInt x){
-#if NA_SYSTEM_ADDRESS_BITS == 32
+#if NA_TYPE_NAINT_BITS == 32
   return naExp2i32(x);
-#elif NA_SYSTEM_ADDRESS_BITS == 64
+#elif NA_TYPE_NAINT_BITS == 64
   return naExp2i64(x);
 #endif
 }
@@ -545,17 +540,18 @@ NA_IDEF int32 naExp2i32(int32 x){
     if(x >= 32)
       naError("naExp2i32", "Exponent too big. Will result in 0.");
   #endif
-  return 1<<x;
+  return NA_ONE_32 << x;
 }
 NA_IDEF int64 naExp2i64(int64 x){
   #ifndef NDEBUG
-    if(x < 0)
+    if(naSmallerInt64(x, NA_ZERO_64))
       naError("naExp2i64", "Exponent negative. Will result in 0.");
-    if(x >= 64)
+    if(naGreaterEqualInt64(x, naMakeInt64WithLo(64)))
       naError("naExp2i64", "Exponent too big. Will result in 0.");
   #endif
-  return 1LL<<x;
+  return naShlInt64(NA_ONE_64, naCastInt64ToInt32(x));
 }
+
 
 
 NA_IDEF float naExp10f(float x){
@@ -565,9 +561,9 @@ NA_IDEF double naExp10(double x){
   return pow(10., x);
 }
 NA_IDEF NAInt naExp10i(NAInt x){
-#if NA_SYSTEM_ADDRESS_BITS == 32
+#if NA_TYPE_NAINT_BITS == 32
   return naExp10i32(x);
-#elif NA_SYSTEM_ADDRESS_BITS == 64
+#elif NA_TYPE_NAINT_BITS == 64
   return naExp10i64(x);
 #endif
 }
@@ -584,14 +580,13 @@ NA_IDEF int32 naExp10i32(int32 x){
 NA_IDEF int64 naExp10i64(int64 x){
   int64 i;
   #ifndef NDEBUG
-    if(x > 18)
+    if(naGreaterInt64(x, naMakeInt64WithLo(18)))
       naError("naExp10i64", "Exponent of 10 exceeds integer range.");
   #endif
-  i = 1;
-  while(x){i *= 10; x--;}
+  i = NA_ONE_64;
+  while(!naEqualInt64(x, NA_ZERO_64)){i = naMulInt64(i, naMakeInt64WithLo(10)); naDecInt64(x);}
   return i;
 }
-
 
 
 NA_IDEF float naPowf(float b, float x){
@@ -615,7 +610,7 @@ NA_IDEF float naPowerOf2f(NAInt n){
   return naCreateFloatWithExponent((int32)n);
 }
 NA_IDEF double naPowerOf2(NAInt n){
-  return naCreateDoubleWithExponent((int64)n);
+  return naCreateDoubleWithExponent((int32)n);
 }
 
 
@@ -756,9 +751,9 @@ NA_IDEF NABool naInsideEEf(float a, float b, float x){
 
 
 NA_IDEF NABool naInsidei(NAInt a, NAInt b, NAInt x){
-#if NA_SYSTEM_ADDRESS_BITS == 32
+#if NA_TYPE_NAINT_BITS == 32
   return naInsidei32(a, b, x);
-#elif NA_SYSTEM_ADDRESS_BITS == 64
+#elif NA_TYPE_NAINT_BITS == 64
   return naInsidei64(a, b, x);
 #endif
 }
@@ -771,10 +766,10 @@ NA_IDEF NABool naInsidei32(int32 a, int32 b, int32 x){
 }
 NA_IDEF NABool naInsidei64(int64 a, int64 b, int64 x){
   #ifndef NDEBUG
-    if(a > b)
+    if(naGreaterInt64(a, b))
       naError("naInsidei64", "a is greater b. Will always return FALSE");
   #endif
-  return (!((x < a) || (x > b)));
+  return (!(naSmallerInt64(x, a) || naGreaterInt64(x, b)));
 }
 
 

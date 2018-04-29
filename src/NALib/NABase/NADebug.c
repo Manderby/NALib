@@ -1,50 +1,32 @@
-
+ 
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#ifndef NA_PNG_INCLUDED
-#define NA_PNG_INCLUDED
-#ifdef __cplusplus 
-  extern "C"{
+#include "../NABase.h"
+
+
+
+#ifndef NDEBUG
+
+
+  // The error printing method. Errors will be emitted to the stderr output.
+  // When NDEBUG is defined, this function is OBSOLETE!
+
+  void naError(const char* functionsymbol, const char* text){
+    fprintf(stderr, "Error in %s: %s", functionsymbol, text);
+    
+    // //////////////////////////
+    // Set a breakpoint in the following line to debug.
+    // //////////////////////////
+    
+    fprintf(stderr, NA_NL);
+    
+    // //////////////////////////
+  }
+
+
 #endif
 
-
-#include "NACoord.h"
-
-
-typedef struct NAPNG NAPNG;
-
-typedef enum{
-  NA_PNG_COLORTYPE_GREYSCALE        = 0,
-  NA_PNG_COLORTYPE_TRUECOLOR        = 2,
-  NA_PNG_COLORTYPE_INDEXEDCOLOR     = 3,
-  NA_PNG_COLORTYPE_GREYSCALE_ALPHA  = 4,
-  NA_PNG_COLORTYPE_TRUECOLOR_ALPHA  = 6
-} NAPNGColorType;
-
-
-
-NA_API NAPNG* naNewPNG(NASizei size, NAPNGColorType colortype, NAUInt bitdepth);
-NA_API NAPNG* naNewPNGWithFile(const char* filename);
-
-NA_API void* naGetPNGPixelData(NAPNG* png);
-NA_API NAInt naGetPNGPixelDataBytesize(NAPNG* png);
-NA_API NASizei naGetPNGSize(NAPNG* png);
-NA_API NAPNGColorType naGetPNGColorType(NAPNG* png);
-NA_API NAInt naGetPNGBitDepth(NAPNG* png);
-NA_API NAInt naGetPNGBytesPerPixel(NAPNGColorType colortype);
-
-
-NA_API void naWritePNGToFile(NAPNG* png, const char* filename);
-
-
-
-
-
-#ifdef __cplusplus
-  } // extern "C"
-#endif
-#endif // NA_PNG_INCLUDED
 
 
 

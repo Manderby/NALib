@@ -25,7 +25,7 @@ NA_IDEF NAMoney naMakeMoneyWithCurrency(double amount, NACurrency currency){
     if(currency >= NA_CURRENCY_COUNT)
       naError("naMakeMoneyWithCurrency", "invalid currency");
   #endif
-  money.cents = (int64)centamount;
+  money.cents = naMakeInt64WithDouble(centamount);
   money.currency = currency;
   return money;
 }
@@ -34,7 +34,7 @@ NA_IDEF NAMoney naMakeMoneyWithCurrency(double amount, NACurrency currency){
 
 NA_IDEF NAMoney naNegMoney(NAMoney money){
   NAMoney retmoney;
-  retmoney.cents = -money.cents;
+  retmoney.cents = naNegInt64(money.cents);
   retmoney.currency = money.currency;
   return retmoney;
 }
@@ -47,7 +47,7 @@ NA_IDEF NAMoney naAddMoney(NAMoney moneyA, NAMoney moneyB){
     if(moneyA.currency != moneyB.currency)
       naError("naAddMoney", "currencies do not match");
   #endif
-  money.cents = moneyA.cents + moneyB.cents;
+  money.cents = naAddInt64(moneyA.cents, moneyB.cents);
   money.currency = moneyA.currency;
   return money;
 }
@@ -60,7 +60,7 @@ NA_IDEF NAMoney naSubMoney(NAMoney moneyA, NAMoney moneyB){
     if(moneyA.currency != moneyB.currency)
       naError("naSubMoney", "currencies do not match");
   #endif
-  money.cents = moneyA.cents - moneyB.cents;
+  money.cents = naSubInt64(moneyA.cents, moneyB.cents);
   money.currency = moneyA.currency;
   return money;
 }
@@ -69,9 +69,9 @@ NA_IDEF NAMoney naSubMoney(NAMoney moneyA, NAMoney moneyB){
 
 NA_IDEF NAString* naNewStringWithMoney(NAMoney money){
   int digits = na_currency_decimals[money.currency];
-  int64 divisor = (int64)(pow(10., (double)digits));
-  int64 units = money.cents / divisor;
-  int64 decimals = money.cents % divisor;
+  int64 divisor = naMakeInt64WithDouble(pow(10., (double)digits));
+  int64 units = naDivInt64(money.cents, divisor);
+  int64 decimals = naModInt64(money.cents, divisor);
   if(digits == 0){
     return naNewStringWithFormat("%lld", units);
   }else{

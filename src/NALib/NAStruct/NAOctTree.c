@@ -249,7 +249,7 @@ NA_HDEF void naRemoveOctTreeNode(NAOctTree* tree, NAOctTreeNode* node){
     // Remove the segment from the tree
     #ifndef NDEBUG
       if(node->segmentinparent == -1)
-        {naCrash("naRemoveOctTreeNode", "Inernal inconsistency detected: Segment number is -1"); return;}
+        naCrash("naRemoveOctTreeNode", "Inernal inconsistency detected: Segment number is -1");
     #endif
     node->parentnode->child[node->segmentinparent] = NA_NULL;
     
