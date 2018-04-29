@@ -16,7 +16,7 @@ Version 21 (first published 2018-xxx-xx)
 ==========
 
 - Enhanced runtime system with Reference counting for naNew, naRetain and
-  naRelease.
+  naRelease. Revisited whole NARuntime. Now no code sanity warnings.
 - Added Binary operators for more control over integer and floating point
   values.
 - NAQuadTree is now storing coordinates in doubles.
@@ -41,6 +41,8 @@ Version 21 (first published 2018-xxx-xx)
 - Added NA_MEMORY_ALIGNED_MEM_MAC_OS_X macro to Configuration.h
 - naCrash is now a macro. No more code analysis warnings.
 - Removed all occurrencies of the old company in the code.
+- Introcuding NASizeInt and NASizeUInt. Since NAInt does not necessarily has
+  the same size as an address, we needed that.
 - Cleaned up some h files.
 
 

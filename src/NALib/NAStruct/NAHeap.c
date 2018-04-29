@@ -552,7 +552,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
   NAInt entrysize;
   #ifndef NDEBUG
     if(!heap)
-      {naCrash("naInitHeap", "heap is Null-Pointer"); return NA_NULL;}
+      naCrash("naInitHeap", "heap is Null-Pointer");
     // there is always count + 1 elements stored in the array.
     if(count >= NA_INT_MAX){
       naCrash("naInitHeap", "Heap count is too big.");

@@ -58,7 +58,7 @@ NA_HDEF void naClearCoreApplication(){
   NAListIterator iter;
   #ifndef NDEBUG
     if(!na_app)
-      {naCrash("naClearUI", "No Application running"); return;}
+      naCrash("naClearUI", "No Application running");
   #endif
   iter = naMakeListMutator(&(na_app->uielements));
   while(naIterateList(&iter, 1)){

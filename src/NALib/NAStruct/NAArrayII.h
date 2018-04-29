@@ -26,7 +26,7 @@ struct NAArray{
 NA_IDEF NAArray* naInitArray(NAArray* array){
   #ifndef NDEBUG
     if(!array)
-      {naCrash("naInitArray", "array is Null-Pointer"); return NA_NULL;}
+      naCrash("naInitArray", "array is Null-Pointer");
   #endif
   array->ptr = naMakePtrWithDataConst(NA_NULL);
   // The typesize is set to 1 such that calls to naGetArrayCount will not
@@ -45,7 +45,7 @@ NA_IDEF NAArray* naInitArray(NAArray* array){
 NA_IDEF NAArray* naInitArrayWithCount(NAArray* array, NAInt typesize, NAInt count){
   #ifndef NDEBUG
     if(!array)
-      {naCrash("naInitArrayWithCount", "array is Null-Pointer"); return NA_NULL;}
+      naCrash("naInitArrayWithCount", "array is Null-Pointer");
     if(typesize < 1)
       naError("naInitArrayWithCount", "typesize should not be < 1.");
     if(count < 0)
@@ -67,7 +67,7 @@ NA_IDEF NAArray* naInitArrayWithCount(NAArray* array, NAInt typesize, NAInt coun
 NA_IDEF NAArray* naInitArrayWithDataConst(NAArray* array, const void* data, NAInt typesize, NAInt count){
   #ifndef NDEBUG
     if(!array)
-      {naCrash("naInitArrayWithDataConst", "array is Null-Pointer"); return NA_NULL;}
+      naCrash("naInitArrayWithDataConst", "array is Null-Pointer");
     if(typesize < 1)
       naError("naInitArrayWithDataConst", "typesize should not be < 1");
   #endif
@@ -87,7 +87,7 @@ NA_IDEF NAArray* naInitArrayWithDataConst(NAArray* array, const void* data, NAIn
 NA_IDEF NAArray* naInitArrayWithDataMutable(NAArray* array, void* data, NAInt typesize, NAInt count, NAMutator destructor){
   #ifndef NDEBUG
     if(!array)
-      {naCrash("naInitArrayWithDataMutable", "array is Null-Pointer"); return NA_NULL;}
+      naCrash("naInitArrayWithDataMutable", "array is Null-Pointer");
     if(typesize < 1)
       naError("naInitArrayWithDataMutable", "typesize should not be < 1");
   #endif
@@ -124,7 +124,7 @@ NA_IDEF void naForeachArrayConst(NAArray* array, NAAccessor accessor){
   
   #ifndef NDEBUG
     if(!accessor)
-      {naCrash("naForeachArray", "Accessor is Null"); return;}
+      naCrash("naForeachArray", "Accessor is Null");
   #endif
   count = naGetArrayCount(array);
   ptr = naGetPtrConst(&(array->ptr));
@@ -143,7 +143,7 @@ NA_IDEF void naForeachArrayMutable(NAArray* array, NAMutator mutator){
 
   #ifndef NDEBUG
     if(!mutator)
-      {naCrash("naForeachArray", "Mutator is Null"); return;}
+      naCrash("naForeachArray", "Mutator is Null");
   #endif
   count = naGetArrayCount(array);
   ptr = naGetPtrMutable(&(array->ptr));
@@ -162,7 +162,7 @@ NA_IDEF void naForeachArraypConst(NAArray* array, NAAccessor accessor){
   
   #ifndef NDEBUG
     if(!accessor)
-      {naCrash("naForeachArray", "Accessor is Null"); return;}
+      naCrash("naForeachArray", "Accessor is Null");
   #endif
   count = naGetArrayCount(array);
   ptr = naGetPtrConst(&(array->ptr));
@@ -181,7 +181,7 @@ NA_IDEF void naForeachArraypMutable(NAArray* array, NAMutator mutator){
 
   #ifndef NDEBUG
     if(!mutator)
-      {naCrash("naForeachArray", "Mutator is Null"); return;}
+      naCrash("naForeachArray", "Mutator is Null");
   #endif
   count = naGetArrayCount(array);
   ptr = naGetPtrMutable(&(array->ptr));
@@ -380,7 +380,7 @@ NA_IDEF NAArrayIterator naMakeArrayAccessor(const NAArray* array){
   #ifndef NDEBUG
     NAArray* mutablearray;
     if(!array)
-      {naCrash("naMakeArrayAccessor", "array is Null pointer"); iter.array = naMakePtrWithDataConst(NA_NULL); iter.indx = 0; iter.mutator = NA_FALSE; return iter;}
+      naCrash("naMakeArrayAccessor", "array is Null pointer");
     mutablearray = (NAArray*)array;
     mutablearray->itercount++;
     iter.mutator = NA_FALSE;
@@ -398,7 +398,7 @@ NA_IDEF NAArrayIterator naMakeArrayMutator(NAArray* array){
   #ifndef NDEBUG
     NAArray* mutablearray;
     if(!array)
-      {naCrash("naMakeArrayMutator", "array is Null pointer"); iter.array = naMakePtrWithDataMutable(NA_NULL); iter.indx = 0; iter.mutator = NA_TRUE; return iter;}
+      naCrash("naMakeArrayMutator", "array is Null pointer");
     mutablearray = (NAArray*)array;
     mutablearray->itercount++;
     iter.mutator = NA_TRUE;

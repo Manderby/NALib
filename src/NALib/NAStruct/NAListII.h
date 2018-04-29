@@ -60,7 +60,7 @@ NA_IDEF NAListElement* naNewListElement(NAListElement* prev, NAListElement* next
 NA_IDEF NAList* naInitList(NAList* list){
   #ifndef NDEBUG
     if(!list)
-      {naCrash("naInitList", "list is NULL"); return NA_NULL;}
+      naCrash("naInitList", "list is NULL");
   #endif
   list->count = 0;
   list->sentinel.ptr  = naMakeNullPtr();
@@ -100,7 +100,7 @@ NA_IDEF NAList* naCopyList(NAList* list, NAList* originallist){
 NA_IDEF void naClearList(NAList* list){
   #ifndef NDEBUG
     if(!list)
-      {naCrash("naClearList", "list is Null-Pointer."); return;}
+      naCrash("naClearList", "list is Null-Pointer.");
     if(list->sentinel.itercount)
       naError("naClearList", "Iterators still running on the list. Did you use naClearListIterator?");
   #endif
@@ -114,7 +114,7 @@ NA_IDEF void naEmptyList(NAList* list){
   NAListElement* next;
   #ifndef NDEBUG
     if(!list)
-      {naCrash("naEmptyList", "list is Null-Pointer."); return;}
+      naCrash("naEmptyList", "list is Null-Pointer.");
   #endif
   cur = list->sentinel.next;
   while(cur != &(list->sentinel)){
@@ -338,9 +338,9 @@ NA_IDEF void naForeachListConst(const NAList* list, NAAccessor accessor){
   #ifndef NDEBUG
     NAListElement* next;
     if (!list)
-      {naCrash("naForeachList", "list is Null-Pointer."); return;}
+      naCrash("naForeachList", "list is Null-Pointer.");
     if (!accessor)
-      {naCrash("naForeachList", "accessor is Null-Pointer."); return;}
+      naCrash("naForeachList", "accessor is Null-Pointer.");
   #endif
   cur = list->sentinel.next;
   while(cur != &(list->sentinel)){
@@ -362,9 +362,9 @@ NA_IDEF void naForeachListMutable(const NAList* list, NAMutator mutator){
   #ifndef NDEBUG
     NAListElement* next;
     if(!list)
-      {naCrash("naForeachList", "list is Null-Pointer."); return;}
+      naCrash("naForeachList", "list is Null-Pointer.");
     if(!mutator)
-      {naCrash("naForeachList", "mutator is Null-Pointer."); return;}
+      naCrash("naForeachList", "mutator is Null-Pointer.");
   #endif
   cur = list->sentinel.next;
   while(cur != &(list->sentinel)){
@@ -437,7 +437,7 @@ NA_IDEF NAListIterator naMakeListAccessor(const NAList* list){
   iter.cur = (NAListElement*)(&(list->sentinel));
   #ifndef NDEBUG
     if(!list)
-      {naCrash("naMakeListAccessor", "list is null pointer"); return iter;}
+      naCrash("naMakeListAccessor", "list is null pointer");
     iter.mutator = NA_FALSE;
     ((NAList*)list)->sentinel.itercount++;
   #endif

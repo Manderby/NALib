@@ -560,11 +560,14 @@ typedef uint8 NAByte;
 // want to silence the warning, see NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE.
 
 #if NA_SYSTEM_ADDRESS_BITS == 64 && defined NA_TYPE_INT64
-  typedef int64 NASizeInt;
+  typedef int64  NASizeInt;
+  typedef uint64 NASizeUInt;
 #elif NA_SYSTEM_ADDRESS_BITS == 32 && defined NA_TYPE_INT32
-  typedef int32 NASizeInt;
+  typedef int32  NASizeInt;
+  typedef uint32 NASizeUInt;
 #elif NA_SYSTEM_ADDRESS_BITS == 16 && defined NA_TYPE_INT16
-  typedef int16 NASizeInt;
+  typedef int16  NASizeInt;
+  typedef uint16 NASizeUInt;
 #else
   typedef NAInt NASizeInt;
   #if NA_TYPE_NAINT_BITS < NA_SYSTEM_ADDRESS_BITS

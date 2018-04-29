@@ -23,7 +23,7 @@ struct NAPool{
 NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, NAUInt count){
   #ifndef NDEBUG
     if(!pool)
-      {naCrash("naInitPoolEmpty", "pool is Null-Pointer"); return NA_NULL;}
+      naCrash("naInitPoolEmpty", "pool is Null-Pointer");
     if(count == 0)
       naError("naInitPoolEmpty", "count is 0");
   #endif
@@ -43,7 +43,7 @@ NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, NAUInt typesize){
 
   #ifndef NDEBUG
     if(!pool)
-      {naCrash("naInitPoolFilled", "pool is Null-Pointer"); return NA_NULL;}
+      naCrash("naInitPoolFilled", "pool is Null-Pointer");
     if(count == 0)
       naError("naInitPoolFilled", "count is 0");
     if(typesize == 0)
@@ -121,7 +121,7 @@ NA_IDEF NAUInt naGetPoolRemainingCount(NAPool* pool){
 NA_IDEF NABool naIsPoolEmpty(NAPool* pool){
   return (pool->cur == 0);
 }
-NA_IDEF NABool naIsPoolFull(NAPool* pool){
+NA_IDEF NABool naIsPoolPartFull(NAPool* pool){
   return (pool->cur == pool->cur);
 }
 

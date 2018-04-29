@@ -186,7 +186,7 @@
 // aggressively, meaning as soon as no more memory is needed for that type. If
 // not, the last chunk stays in memory up until the runtime system stops.
 //
-// Default is 0: The last chunk stays in memory.
+// Default is 0: The last pool chunk stays in memory.
 //
 // This flag is important for systems with very small memory as well as for
 // performance testing: When clenaing up aggressively, the runtime can be

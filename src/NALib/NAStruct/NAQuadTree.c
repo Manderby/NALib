@@ -576,7 +576,7 @@ NA_DEF NABool naIterateQuadTree(NAQuadTreeIterator* iter, const NARect* limit, N
     naSetQuadTreeIteratorCurNode(iter, tree->root);
     #ifndef NDEBUG
       if(!iter->curnode)
-      {naCrash("naIterateQuadTree", "No current node after setting the current node to the root"); return NA_FALSE;}
+      naCrash("naIterateQuadTree", "No current node after setting the current node to the root");
     #endif
     // todo: code sanity warning
   }
@@ -604,7 +604,7 @@ NA_DEF NABool naIterateQuadTree(NAQuadTreeIterator* iter, const NARect* limit, N
         naCreateQuadTreeLeaf(iter, NA_NULL);
         #ifndef NDEBUG
           if(iter->cursegment == -1)
-          {naCrash("naIterateQuadTree", "Segment of newly created Leaf is -1"); return NA_FALSE;}
+          naCrash("naIterateQuadTree", "Segment of newly created Leaf is -1");
         #endif  
         break;
       }
@@ -658,7 +658,7 @@ NA_HDEF NABool naLocateQuadTreeNode(NAQuadTreeIterator* iter, NAPos origin){
     naSetQuadTreeIteratorCurNode(iter, tree->root);
     #ifndef NDEBUG
       if(!iter->curnode)
-      {naCrash("naLocateQuadTreeNode", "No current node after setting the current node to the root"); return NA_FALSE;}
+      naCrash("naLocateQuadTreeNode", "No current node after setting the current node to the root");
     #endif
   }
 
@@ -767,7 +767,7 @@ NA_DEF void naUpdateQuadTree(NAQuadTree* tree){
 NA_DEF NAQuadTree* naInitQuadTree(NAQuadTree* tree, NAQuadTreeConfiguration configuration){
   #ifndef NDEBUG
     if(!tree)
-      {naCrash("naInitQuadTree", "tree is Null-Pointer"); return NA_NULL;}
+      naCrash("naInitQuadTree", "tree is Null-Pointer");
     if(!configuration.leafallocator)
       naError("naInitQuadTree", "Must have a data allocator");
     if(!configuration.leafdeallocator)
@@ -853,9 +853,9 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
   
   #ifndef NDEBUG
     if(!newtree)
-      {naCrash("naCopyQuadTreeWithShift", "newtree is Null-Pointer"); return NA_NULL;}
+      naCrash("naCopyQuadTreeWithShift", "newtree is Null-Pointer");
     if(!duptree->configuration.datacopier)
-      {naCrash("naCopyQuadTreeWithShift", "Data copier callback required for this function to work."); return NA_NULL;}
+      naCrash("naCopyQuadTreeWithShift", "Data copier callback required for this function to work.");
   #endif
   newtree = naInitQuadTree(newtree, duptree->configuration);
   if(!duptree->root){return newtree;}

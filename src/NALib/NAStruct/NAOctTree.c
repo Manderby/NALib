@@ -594,7 +594,7 @@ NA_DEF NABool naIterateOctTree(NAOctTreeIterator* iter, const NABoxi* limit, NAB
     naSetOctTreeIteratorCurNode(iter, tree->root);
     #ifndef NDEBUG
       if(!iter->curnode)
-      {naCrash("naIterateOctTree", "No current node after setting the node to the root"); return NA_FALSE;}
+      naCrash("naIterateOctTree", "No current node after setting the node to the root");
     #endif
     // todo: code sanity warning
   }
@@ -622,7 +622,7 @@ NA_DEF NABool naIterateOctTree(NAOctTreeIterator* iter, const NABoxi* limit, NAB
         naCreateOctTreeLeaf(iter, NA_NULL);
         #ifndef NDEBUG
           if(iter->cursegment == -1)
-          {naCrash("naIterateOctTree", "Segment of newly created Leaf is -1"); return NA_FALSE;}
+          naCrash("naIterateOctTree", "Segment of newly created Leaf is -1");
         #endif  
         break;
       }
@@ -676,7 +676,7 @@ NA_HDEF NABool naLocateOctTreeNode(NAOctTreeIterator* iter, NAVertexi origin){
     naSetOctTreeIteratorCurNode(iter, tree->root);
     #ifndef NDEBUG
       if(!iter->curnode)
-      {naCrash("naLocateOctTreeNode", "No current node after setting the current node to the root"); return NA_FALSE;}
+      naCrash("naLocateOctTreeNode", "No current node after setting the current node to the root");
     #endif
     // todo: code sanity warning
   }
@@ -785,7 +785,7 @@ NA_DEF void naUpdateOctTree(NAOctTree* tree){
 NA_DEF NAOctTree* naInitOctTree(NAOctTree* tree, NAInt leaflength, NAOctTreeCallbacks callbacks){
   #ifndef NDEBUG
     if(!tree)
-      {naCrash("naInitOctTree", "tree is Null-Pointer"); return NA_NULL;}
+      naCrash("naInitOctTree", "tree is Null-Pointer");
     if(!callbacks.leafallocator)
       naError("naInitOctTree", "Must have a data allocator");
     if(!callbacks.leafdeallocator)
@@ -875,9 +875,9 @@ NA_DEF NAOctTree* naInitOctTreeCopyShifted(NAOctTree* newtree, const NAOctTree* 
 
   #ifndef NDEBUG
     if(!newtree)
-      {naCrash("naCopyOctTreeWithShift", "newtree is Null-Pointer"); return NA_NULL;}
+      naCrash("naCopyOctTreeWithShift", "newtree is Null-Pointer");
     if(!duptree->callbacks.datacopier)
-      {naCrash("naCopyOctTreeWithShift", "Data copier callback required for this function to work."); return NA_NULL;}
+      naCrash("naCopyOctTreeWithShift", "Data copier callback required for this function to work.");
   #endif
   newtree = naInitOctTree(newtree, duptree->leaflength, duptree->callbacks);
   if(!duptree->root){return newtree;}

@@ -147,7 +147,7 @@ NA_HIDEF void naDestructBufferPart(NABufferPart* part){
 NA_HIDEF NABool naIsBufferPartSparse(const NABufferPart* part){
   #ifndef NDEBUG
     if(!part)
-      {naCrash("naIsBufferPartSparse", "part is Null pointer"); return NA_FALSE;}
+      naCrash("naIsBufferPartSparse", "part is Null pointer");
   #endif
   return (part->data == NA_NULL);
 }
@@ -158,7 +158,7 @@ NA_HIDEF NABool naIsBufferPartSparse(const NABufferPart* part){
 NA_HIDEF NARangei naGetBufferPartRange(const NABufferPart* part){
   #ifndef NDEBUG
     if(!part)
-      {naCrash("naGetBufferPartRange", "part is Null pointer");}
+      naCrash("naGetBufferPartRange", "part is Null pointer");
   #endif
   return part->range;
 }
@@ -204,7 +204,7 @@ NA_HIDEF NAInt naGetBufferPartNormedEnd(NAInt end){
 NA_HIDEF NABool naContainsBufferPartOffset(const NABufferPart* part, NAInt offset){
   #ifndef NDEBUG
     if(!part)
-      {naCrash("naContainsBufferPartOffset", "part is Null pointer"); return NA_FALSE;}
+      naCrash("naContainsBufferPartOffset", "part is Null pointer");
   #endif
   return naContainsRangeiOffset(part->range, offset);
 }
@@ -307,7 +307,7 @@ NA_HIDEF void naSplitBufferSparsePart(NAListIterator* iter, NARangei range){
 NA_HIDEF NAByte* naGetBufferPartDataPointerConst(const NABufferPart* part, NAInt offset){
   #ifndef NDEBUG
     if(!part)
-      {naCrash("naGetBufferPartDataPointerConst", "buffer part is Null pointer"); return NA_NULL;}
+      naCrash("naGetBufferPartDataPointerConst", "buffer part is Null pointer");
     if(naIsBufferPartSparse(part))
       naError("naGetBufferPartDataPointerConst", "buffer part is sparse");
     if(!naContainsRangeiOffset(part->range, offset))
@@ -326,7 +326,7 @@ NA_HIDEF NAByte* naGetBufferPartDataPointerConst(const NABufferPart* part, NAInt
 NA_HIDEF NAByte* naGetBufferPartDataPointerMutable(const NABufferPart* part, NAInt offset){
   #ifndef NDEBUG
     if(!part)
-      {naCrash("naGetBufferPartDataPointerMutable", "buffer part is Null pointer"); return NA_NULL;}
+      naCrash("naGetBufferPartDataPointerMutable", "buffer part is Null pointer");
     if(naIsBufferPartSparse(part))
       naError("naGetBufferPartDataPointerMutable", "buffer part is sparse");
     if(!naContainsRangeiOffset(part->range, offset))
@@ -345,7 +345,7 @@ NA_HIDEF NAByte* naGetBufferPartDataPointerMutable(const NABufferPart* part, NAI
   NA_HIDEF const NAByte* naGetBufferPartBaseDataPointerConst(const NABufferPart* part){
     #ifndef NDEBUG
       if(!part)
-        {naCrash("naGetBufferPartBaseDataPointerConst", "buffer part is Null pointer"); return NA_NULL;}
+        naCrash("naGetBufferPartBaseDataPointerConst", "buffer part is Null pointer");
       if(naIsBufferPartSparse(part))
         naError("naGetBufferPartBaseDataPointerConst", "buffer part is sparse");
     #endif
@@ -360,7 +360,7 @@ NA_HIDEF NAByte* naGetBufferPartDataPointerMutable(const NABufferPart* part, NAI
 NA_HIDEF NAByte* naGetBufferPartBaseDataPointerMutable(NABufferPart* part){
   #ifndef NDEBUG
     if(!part)
-      {naCrash("naGetBufferPartBaseDataPointerMutable", "buffer part is Null pointer"); return NA_NULL;}
+      naCrash("naGetBufferPartBaseDataPointerMutable", "buffer part is Null pointer");
     if(naIsBufferPartSparse(part))
       naError("naGetBufferPartBaseDataPointerMutable", "buffer part is sparse");
   #endif
@@ -415,7 +415,7 @@ NA_HDEF void naDeallocBufferIterator(NABufferIterator* iter){
 
 // Creates a buffer source with the given buffer. Note that the buffer must
 // already be retained if it shall reference an already existing buffer!
-NA_HIDEF NABufferSource* naCreateBufferSourceBuffer(NABuffer* buffer){
+NA_HIDEF NABufferSource* naNewBufferSourceBuffer(NABuffer* buffer){
   NABufferSourceDescriptor desc;
   NABufferSource* source;
   NAPointer* pointer;
@@ -1009,7 +1009,7 @@ NA_HDEF void naInitBufferStruct(NABuffer* buffer){
 
 // This is a special buffer creation method which is not visible to the
 // programmer.
-NA_HDEF NABuffer* naCreateBufferMemorySource(NABool secure){
+NA_HDEF NABuffer* naNewBufferMemorySource(NABool secure){
   NABufferSourceDescriptor desc;
 
   NABuffer* buffer = naNew(NABuffer);
@@ -1035,8 +1035,8 @@ NA_DEF NABuffer* naNewBuffer(NABool securememory){
   naInitBufferStruct(buffer);
   
   // The source is a memory buffer.
-  srcbuffer = naCreateBufferMemorySource(securememory);
-  buffer->source = naCreateBufferSourceBuffer(srcbuffer);
+  srcbuffer = naNewBufferMemorySource(securememory);
+  buffer->source = naNewBufferSourceBuffer(srcbuffer);
   naRelease(srcbuffer); // The src buffer is now retained in the iterator.
   buffer->srcoffset = 0;
 
@@ -1053,7 +1053,7 @@ NA_DEF NABuffer* naNewBufferExtraction(NABuffer* srcbuffer, NARangei range){
   NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
   
-  buffer->source = naCreateBufferSourceBuffer(srcbuffer);
+  buffer->source = naNewBufferSourceBuffer(srcbuffer);
   buffer->srcoffset = -range.origin;
 
   // We initialize with length 0 and ensure the buffer range to the full range
@@ -2653,7 +2653,7 @@ NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffe
   
   mutablesrcbuffer = (NABuffer*)srcbuffer;
   
-  dstbuffer->source = naCreateBufferSourceBuffer(mutablesrcbuffer);
+  dstbuffer->source = naNewBufferSourceBuffer(mutablesrcbuffer);
   
   if(!naIsBufferEmpty(naGetBufferIteratorBufferConst(iter)) && naIsBufferAtInitial(iter)){
     iter->curoffset = naGetRangeiEnd(naGetBufferIteratorBufferConst(iter)->range);

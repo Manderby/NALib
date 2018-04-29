@@ -26,20 +26,20 @@
 // //////////////////////////////////////
 
 
-NA_IDEF NAUInt naGetSystemMemoryPagesize(){
+NA_IDEF NASizeUInt naGetSystemMemoryPagesize(){
   #if NA_SYSTEM == NA_SYSTEM_WINDOWS
     SYSTEM_INFO info;
     GetSystemInfo(&info);
-    return (NAUInt)info.dwPageSize;
+    return (NASizeUInt)info.dwPageSize;
   #else
-    return (NAUInt)sysconf(_SC_PAGESIZE);
+    return (NASizeUInt)sysconf(_SC_PAGESIZE);
   #endif
 }
 
 
 
-NA_IDEF NAUInt naGetSystemMemoryPagesizeMask(){
-  return ~(NAUInt)(naGetSystemMemoryPagesize() - NA_ONE);
+NA_IDEF NASizeUInt naGetSystemMemoryPagesizeMask(){
+  return ~(NASizeUInt)(naGetSystemMemoryPagesize() - NA_ONE);
 }
 
 
@@ -57,7 +57,7 @@ NA_IDEF void* naMalloc(NAInt bytesize){
 
   #ifndef NDEBUG
     if(bytesize == NA_ZERO)
-      {naCrash("naMalloc", "size is zero."); return NA_NULL;}
+      naCrash("naMalloc", "size is zero.");
     if(bytesize < NA_ZERO)
       naError("naMalloc", "size is negative.");
   #endif
@@ -66,7 +66,7 @@ NA_IDEF void* naMalloc(NAInt bytesize){
 
   #ifndef NDEBUG
   if(!ptr)
-    {naCrash("naMalloc", "Out of memory"); return NA_NULL;}
+    naCrash("naMalloc", "Out of memory");
   #endif
 
   return ptr;
@@ -165,7 +165,7 @@ NA_IDEF void naFreeAligned(void* ptr){
 // This needs to be in this inline implementation file as it needs to be
 // accessible to the compiler at all times.
 struct NATypeInfo{
-  void*             curpool;    // The actual type of this entry is hidden.
+  void*             curpoolpart;    // The actual use of this entry is hidden.
   NAUInt            typesize;
   NAMutator         destructor;
   NABool            refcounting;
@@ -281,7 +281,7 @@ NA_IDEF NARefCount* naRetainRefCount(NARefCount* refcount){
       // however that most likely the true cause of the error did occur long
       // before reaching here.
       if(refcount->count == NA_ZERO)
-        {naCrash("naRetainRefCount", "Retaining NARefCount with a count of 0"); return NA_NULL;}
+        naCrash("naRetainRefCount", "Retaining NARefCount with a count of 0");
     }
   #endif
   refcount->count++;
@@ -308,7 +308,7 @@ NA_IDEF void naReleaseRefCount(NARefCount* refcount, void* data, NAMutator destr
     // however that most likely the true cause of the error did occur long
     // before reaching here.
     if(refcount->count == NA_ZERO)
-      {naCrash("naReleaseRefCount", "Releasing NARefCount with a count of 0"); return;}
+      naCrash("naReleaseRefCount", "Releasing NARefCount with a count of 0");
   #endif
   // Note that the author decided to always count to zero, even if it is clear
   // that the pointer will eventually be freed and the data will be lost in

@@ -53,8 +53,8 @@
 // Returns the number of bytes used per memory page as well as a mask which
 // you can combine with & (AND) with a pointer to get the page-aligned address
 // of that pointer.
-NA_IAPI NAUInt naGetSystemMemoryPagesize(void);
-NA_IAPI NAUInt naGetSystemMemoryPagesizeMask(void);
+NA_IAPI NASizeUInt naGetSystemMemoryPagesize(void);
+NA_IAPI NASizeUInt naGetSystemMemoryPagesizeMask(void);
 
 
 
