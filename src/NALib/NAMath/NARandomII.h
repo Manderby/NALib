@@ -15,18 +15,18 @@
 
 
 NA_IDEF NAInt naRand(){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return rand();
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return rand();
   #endif
 }
 
 
 NA_IDEF void naSRand(uint32 seed){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     srand(seed);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     srand(seed);
   #endif
 }

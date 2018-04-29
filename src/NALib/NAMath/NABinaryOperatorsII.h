@@ -10,16 +10,16 @@
 
 
 NA_IDEF uint8 naGetSignum8(int8 i){
-  return (uint8)(i >> (NA_VALUE8_BIT_COUNT  - 1));
+  return (uint8)(i >> (NA_VALUE8_BITS  - 1));
 }
 NA_IDEF uint16 naGetSignum16(int16 i){
-  return (uint16)(i >> (NA_VALUE16_BIT_COUNT - 1));
+  return (uint16)(i >> (NA_VALUE16_BITS - 1));
 }
 NA_IDEF uint32 naGetSignum32(int32 i){
-  return (uint32)(i >> (NA_VALUE32_BIT_COUNT - 1));
+  return (uint32)(i >> (NA_VALUE32_BITS - 1));
 }
 NA_IDEF uint64 naGetSignum64(int64 i){
-  return naCastInt64ToUInt64(naShrInt64(i, (NA_VALUE64_BIT_COUNT - 1)));
+  return naCastInt64ToUInt64(naShrInt64(i, (NA_VALUE64_BITS - 1)));
 }
 
 
@@ -71,7 +71,7 @@ NA_IDEF float naCreateFloat(int32 signedsignificand, int32 signedexponent){
   #endif
   dbits =
       (signedsignificand & NA_IEEE754_SINGLE_SIGN_MASK)
-    | ((signedexponent + NA_IEEE754_SINGLE_EXPONENT_BIAS) << NA_IEEE754_SINGLE_SIGNIFICAND_BIT_COUNT)
+    | ((signedexponent + NA_IEEE754_SINGLE_EXPONENT_BIAS) << NA_IEEE754_SINGLE_SIGNIFICAND_BITS)
     | (naAbsi32(signedsignificand) & NA_IEEE754_SINGLE_SIGNIFICAND_MASK);
   return *((float*)&dbits);
 }
@@ -93,7 +93,7 @@ NA_IDEF double naCreateDouble(int64 signedsignificand, int32 signedexponent){
   dbits =
       naOrInt64(naOrInt64(
       naAndInt64(signedsignificand, NA_IEEE754_DOUBLE_SIGN_MASK),
-      naShlInt64(naMakeInt64WithLo(signedexponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BIT_COUNT)),
+      naShlInt64(naMakeInt64WithLo(signedexponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BITS)),
       naAndInt64(naAbsi64(signedsignificand), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK));
   return *((double*)&dbits);
 }
@@ -110,7 +110,7 @@ NA_IDEF float naCreateFloatWithExponent(int32 signedexponent){
     if(signedexponent == NA_IEEE754_SINGLE_EXPONENT_SPECIAL)
       naError("naCreateFloat", "exponent equals max exponent which is reserved for special values");
   #endif
-  dbits = ((signedexponent + NA_IEEE754_SINGLE_EXPONENT_BIAS) << NA_IEEE754_SINGLE_SIGNIFICAND_BIT_COUNT);
+  dbits = ((signedexponent + NA_IEEE754_SINGLE_EXPONENT_BIAS) << NA_IEEE754_SINGLE_SIGNIFICAND_BITS);
   return *((float*)&dbits);
 }
 
@@ -126,7 +126,7 @@ NA_IDEF double naCreateDoubleWithExponent(int32 signedexponent){
     if(signedexponent == NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
       naError("naCreateDouble", "exponent equals max exponent which is reserved for special values");
   #endif
-  dbits = naShlInt64(naMakeInt64WithLo(signedexponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BIT_COUNT);
+  dbits = naShlInt64(naMakeInt64WithLo(signedexponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BITS);
   return *((double*)&dbits);
 }
 

@@ -449,7 +449,7 @@ key values often used in all of the source code. Examples: NA_NULL, NA_RESTRICT
 Some other macros have multiple identifiers after the prefix. The first
 identifier denotes the topic which the macros are used for. The remaining
 identifiers are a more and more refined description of what the macro describes.
-Examples: NA_SYSTEM_WINDOWS, NA_ENDIANNESS_BIG
+Examples: NA_OS_WINDOWS, NA_ENDIANNESS_BIG
 
 Functions have a description of what they do after the prefix. The first word
 after the prefix is usually a verb, such as Convert, Locate or Get. After that

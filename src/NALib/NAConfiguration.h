@@ -169,8 +169,8 @@
 //
 // The corepool size must be smaller than NA_INT32_MAX
 
-#ifndef NA_COREPOOL_BYTESIZE
-  #define NA_COREPOOL_BYTESIZE (1 << 16)
+#ifndef NA_POOLPART_BYTESIZE
+  #define NA_POOLPART_BYTESIZE (1 << 16)
 #endif
 
 // Define if memory pools shall be cleaned up aggressively.

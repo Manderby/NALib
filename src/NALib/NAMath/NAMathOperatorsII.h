@@ -116,7 +116,7 @@ NA_IDEF NABool naAlmost(double x, double y){
 // Due to a mis-definition in OS X, Linking between C and C++ does not work
 // with the isnan macro. The author is not aware of a portable solution.
 NA_IAPI NABool naIsNaNf(float x){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return _isnan((double)x);
   #else
     #ifndef isnan
@@ -127,7 +127,7 @@ NA_IAPI NABool naIsNaNf(float x){
   #endif
 }
 NA_IAPI NABool naIsNaN(double x){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return _isnan(x);
   #else
     #ifndef isnan
@@ -141,7 +141,7 @@ NA_IAPI NABool naIsNaN(double x){
 
 
 NA_IAPI NABool naIsInfinitef(float x){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return _finite((double)x);
   #else
     #ifndef isnan
@@ -152,7 +152,7 @@ NA_IAPI NABool naIsInfinitef(float x){
   #endif
 }
 NA_IAPI NABool naIsInfinite(double x){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return !_finite(x);
   #else
     #ifndef isnan
@@ -250,9 +250,9 @@ NA_IDEF float naCbrtf(float x){
   #ifndef NDEBUG
     if(x < 0.f){naError("naCbrtf", "naCbrtd of negative number.");}
   #endif
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return powf(x, NA_THIRDf);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return cbrtf(x);
   #endif
 }
@@ -261,9 +261,9 @@ NA_IDEF double naCbrt(double x){
   #ifndef NDEBUG
     if(x < 0.){naError("naCbrtd", "naCbrtd of negative number.");}
   #endif
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return pow(x, NA_THIRD);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return cbrt(x);
   #endif
 }
@@ -314,16 +314,16 @@ NA_IDEF double naCeil(double x){
 
 
 NA_IDEF float naRoundf(float x){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return floorf(x + .5f);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return roundf(x);
   #endif
 }
 NA_IDEF double naRound(double x){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return floor(x + .5);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return round(x);
   #endif
 }
@@ -461,9 +461,9 @@ NA_IDEF float naLog2f(float x){
   #ifndef NDEBUG
     if(x < 0.f){naError("naLog2f", "Logarithm of negative number.");}
   #endif
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return logf(x) * NA_INV_LOGOF2f;
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return log2f(x);
   #endif
 }
@@ -471,9 +471,9 @@ NA_IDEF double naLog2(double x){
   #ifndef NDEBUG
     if(x < 0.){naError("naLog2d", "Logarithm of negative number.");}
   #endif
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return log(x) * NA_INV_LOGOF2;
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return log2(x);
   #endif
 }
@@ -513,16 +513,16 @@ NA_IDEF NAInt naLog2i(NAInt x){
 
 
 NA_IDEF float naExp2f(float x){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return powf(2.f, x);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return exp2f(x);
   #endif
 }
 NA_IDEF double naExp2(double x){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return pow(2., x);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return exp2(x);
   #endif
 }

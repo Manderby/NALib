@@ -4,14 +4,14 @@
 
 
 // This file gets only included by the NAUICocoa.m file. We need to include
-// NABase.h first to check if NA_SYSTEM ist MAC_OS_X.
+// NABase.h first to check if NA_OS ist MAC_OS_X.
 
 #include "NABase.h"
 
 
 #if (NA_CONFIG_COMPILE_GUI == 1)
 #ifdef __OBJC__
-#if NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+#if NA_OS == NA_OS_MAC_OS_X
 
 
 // Reaching here, the first thing we must do is include Cocoa. If this is
@@ -64,7 +64,7 @@ struct NACocoaWindow{
 
 
 
-#endif // NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+#endif // NA_OS == NA_OS_MAC_OS_X
 #endif // __OBJC__
 #endif //(NA_CONFIG_COMPILE_GUI == 1)
 

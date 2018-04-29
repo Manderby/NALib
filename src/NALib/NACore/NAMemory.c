@@ -32,12 +32,12 @@ NA_HDEF void naDestructPointer(NAPointer* pointer){
 // that struct, basic information about the type are stored like the size in
 // bytes or the destructor to be called upon deletion.
 //
-// Most importantly, NACoreTypeInfo stores a pointer "curpoolpart". This
+// Most importantly, NACoreTypeInfo stores a pointer "curpart". This
 // pointer points to an allocated memory block with a bytesize defined in
-// NAConfiguration.h with NA_COREPOOL_BYTESIZE. That size and a corresponding
+// NAConfiguration.h with NA_POOLPART_BYTESIZE. That size and a corresponding
 // address mask is stored in the global NARuntime struct na_runtime.
 //
-// Each of these memory blocks is allocated aligned to NA_COREPOOL_BYTESIZE and
+// Each of these memory blocks is allocated aligned to NA_POOLPART_BYTESIZE and
 // hence AND'ing an arbitrary address within that block with the address mask
 // returns the address of the first byte of the memory block.
 //
@@ -48,10 +48,10 @@ NA_HDEF void naDestructPointer(NAPointer* pointer){
 // with a prev and next pointer. (Note: This does not uses NAList but is a
 // custom implementation)
 //
-// The curpoolpart field of the NACoreTypeInfo points to the part which is
+// The curpart field of the NACoreTypeInfo points to the part which is
 // expected to have a free space for the desired runtime type. From there on,
-// parts going forward (next to curpoolpart) are expected to have free space
-// and partss going backward (prev from curpoolpart) are expected to be full.
+// parts going forward (next to curpart) are expected to have free space
+// and partss going backward (prev from curpart) are expected to be full.
 //
 // While the first bytes of a memory block are filled with the contents of
 // NACorePoolPart, the remaining bytes are used for storing the actual values,
@@ -84,11 +84,11 @@ NA_HDEF void naDestructPointer(NAPointer* pointer){
 // space, a new part needs to be created. The new part gets added to the
 // circular part list and is used as the current part.
 //
-// When deleting a struct from a completely full part, that part will get moved
+// When deleting a space from a completely full part, that part will get moved
 // in the list right after the current part hence making the part available for
 // new allocations as soon as the current part is filled.
 //
-// Upon deleting structs, a part may become completely empty. If that is the
+// Upon deleting spaces, a part may become completely empty. If that is the
 // case, the part gets automatically deallocated, hence freeing all of the
 // memory.
 
@@ -99,7 +99,7 @@ typedef struct NACoreTypeInfo NACoreTypeInfo;
 typedef struct NARuntime NARuntime;
 
 struct NACoreTypeInfo{
-  NACorePoolPart*   curpoolpart;
+  NACorePoolPart*   curpart;
   NAUInt            typesize;
   NAMutator         destructor;
   NABool            refcounting;
@@ -108,7 +108,7 @@ struct NACoreTypeInfo{
   #endif
 };
 
-#define NA_MALLOC_GARBAGE_POINTER_COUNT (NA_COREPOOL_BYTESIZE / NA_SYSTEM_ADDRESS_BYTES - 2)
+#define NA_MALLOC_GARBAGE_POINTER_COUNT (NA_POOLPART_BYTESIZE / NA_SYSTEM_ADDRESS_BYTES - 2)
 // The 2 denotes the first two entries in this struct.
 struct NAMallocGarbage{
   NAMallocGarbage* next;
@@ -116,7 +116,7 @@ struct NAMallocGarbage{
   void* pointers[NA_MALLOC_GARBAGE_POINTER_COUNT];
 };
 
-// This structure is stored in the first bytes of every corepoolpart block.
+// This structure is stored in the first bytes of every part block.
 // Its size is ALWAYS 8 times an addresssize, the rest of the block is
 // available for the memory.
 struct NACorePoolPart{
@@ -125,8 +125,8 @@ struct NACorePoolPart{
   NASizeUInt usedcount;
   NASizeUInt everusedcount;
   void* firstunused;
-  NACorePoolPart* prevpoolpart;
-  NACorePoolPart* nextpoolpart;
+  NACorePoolPart* prevpart;
+  NACorePoolPart* nextpart;
   // The following field is a dummy entry not in use.
   // It shall not be removed though as the total amount of bytes used for
   // an NACorePoolPart shall be 8 times an addresssize.
@@ -137,8 +137,8 @@ struct NACorePoolPart{
 // The runtime struct stores base informations about the runtime.
 struct NARuntime{
   NASizeUInt mempagesize;
-  NASizeUInt poolsize;
-  NASizeUInt poolsizemask;
+  NASizeUInt partsize;
+  NASizeUInt partsizemask;
   NAMallocGarbage* mallocGarbage;
   NASizeUInt totalmallocgarbagebytecount;
   NAInt typeinfocount;
@@ -157,7 +157,7 @@ NARuntime* na_runtime = NA_NULL;
 // Security check: The pool bytesize must be big enough to store one struct
 // of NACorePoolPart. Note that bytesize 0 has the meaning of using the
 // memory page size.
-#if (NA_COREPOOL_BYTESIZE != 0) && (NA_COREPOOL_BYTESIZE <= 8 * NA_SYSTEM_ADDRESS_BYTES)
+#if (NA_POOLPART_BYTESIZE != 0) && (NA_POOLPART_BYTESIZE <= 8 * NA_SYSTEM_ADDRESS_BYTES)
   #error "Core memory pool size is too small"
 #endif
 
@@ -169,11 +169,11 @@ NA_HIDEF void naRegisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
   NACoreTypeInfo** newinfos;
 
   #ifndef NDEBUG
-    if(coretypeinfo->curpoolpart)
+    if(coretypeinfo->curpart)
       naError("naRegisterCoreTypeInfo", "Newly registered type should have NULL as current part.");
     if(coretypeinfo->typesize < NA_SYSTEM_ADDRESS_BYTES)
       naError("naRegisterCoreTypeInfo", "Size of type is too small");
-    if(coretypeinfo->typesize > (na_runtime->poolsize - sizeof(NACorePoolPart)))
+    if(coretypeinfo->typesize > (na_runtime->partsize - sizeof(NACorePoolPart)))
       naError("naRegisterCoreTypeInfo", "Size of type is too big");
   #endif
   
@@ -232,51 +232,51 @@ NA_HIDEF void naUnregisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
 
 
 NA_HDEF NAUInt naGetCoreTypeInfoAllocatedCount(NACoreTypeInfo* coretypeinfo){
-  NACorePoolPart* firstpoolpart = coretypeinfo->curpoolpart;
-  NACorePoolPart* curpoolpart = firstpoolpart->nextpoolpart;
-  NAUInt totalcount = firstpoolpart->usedcount;
-  while(curpoolpart != firstpoolpart){
-    totalcount += curpoolpart->usedcount;
-    curpoolpart = curpoolpart->nextpoolpart;
+  NACorePoolPart* firstpart = coretypeinfo->curpart;
+  NACorePoolPart* curpart = firstpart->nextpart;
+  NAUInt totalcount = firstpart->usedcount;
+  while(curpart != firstpart){
+    totalcount += curpart->usedcount;
+    curpart = curpart->nextpart;
   }
   return totalcount;
 }
 
 
 
-NA_HIDEF NABool naIsPoolPartFull(NACorePoolPart* corepoolpart){
-  return (corepoolpart->usedcount == corepoolpart->maxcount);
+NA_HIDEF NABool naIsPoolPartFull(NACorePoolPart* part){
+  return (part->usedcount == part->maxcount);
 }
 
 
-NA_HIDEF void naAttachPoolPartAfterCurPoolPart(NACoreTypeInfo* coretypeinfo, NACorePoolPart* corepoolpart){
-  corepoolpart->prevpoolpart = coretypeinfo->curpoolpart;
-  corepoolpart->nextpoolpart = coretypeinfo->curpoolpart->nextpoolpart;
-  corepoolpart->prevpoolpart->nextpoolpart = corepoolpart;
-  corepoolpart->nextpoolpart->prevpoolpart = corepoolpart;
+NA_HIDEF void naAttachPoolPartAfterCurPoolPart(NACoreTypeInfo* coretypeinfo, NACorePoolPart* part){
+  part->prevpart = coretypeinfo->curpart;
+  part->nextpart = coretypeinfo->curpart->nextpart;
+  part->prevpart->nextpart = part;
+  part->nextpart->prevpart = part;
 }
 
 
 // This function gets called when no pool has any more space.
 // A new pool is created and added to the pool list at the current position.
 NA_HIDEF void naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
-  NACorePoolPart* corepoolpart;
+  NACorePoolPart* part;
       
   // We create a new part with the size of a full part but we type it as
   // NACorePoolPart to access the first bytes.
-  corepoolpart = (NACorePoolPart*)naMallocAligned(na_runtime->poolsize, na_runtime->poolsize);
+  part = (NACorePoolPart*)naMallocAligned(na_runtime->partsize, na_runtime->partsize);
   #ifndef NDEBUG
     // Do you think the following check is not necessary? You'd be surprised
     // how many systems do not align memory correctly!
-    if(((NASizeUInt)corepoolpart & ~na_runtime->poolsizemask) != 0)
+    if(((NASizeUInt)part & ~na_runtime->partsizemask) != 0)
       naError("naEnhanceCorePool", "pool part badly aligned");
   #endif
   
   // We initialize the basic fields of corepool.
-  corepoolpart->coretypeinfo = coretypeinfo;
-  corepoolpart->maxcount = ((na_runtime->poolsize - sizeof(NACorePoolPart)) / coretypeinfo->typesize);
-  corepoolpart->usedcount = 0;
-  corepoolpart->everusedcount = 0;
+  part->coretypeinfo = coretypeinfo;
+  part->maxcount = ((na_runtime->partsize - sizeof(NACorePoolPart)) / coretypeinfo->typesize);
+  part->usedcount = 0;
+  part->everusedcount = 0;
   
   // Implementation note from the author: In earlier versions, everusedcount
   // did not exists and the whole memory block needed to be intialized either
@@ -286,25 +286,25 @@ NA_HIDEF void naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
 
   // We set the pointer to the first available space to the first byte right
   // after the NACorePoolPart.
-  corepoolpart->firstunused = (void*)(((NAByte*)corepoolpart) + sizeof(NACorePoolPart));
+  part->firstunused = (void*)(((NAByte*)part) + sizeof(NACorePoolPart));
   
   // If we are in debug mode, we also set the dummy variable for a consistency
   // check.
   #ifndef NDEBUG
-    corepoolpart->dummy = corepoolpart;
+    part->dummy = part;
   #endif
 
   // Add the new part after the current part or set the part as the first and
   // only part, if there is none available yet.
-  if(coretypeinfo->curpoolpart){
-    naAttachPoolPartAfterCurPoolPart(coretypeinfo, corepoolpart);
+  if(coretypeinfo->curpart){
+    naAttachPoolPartAfterCurPoolPart(coretypeinfo, part);
   }else{
-    corepoolpart->prevpoolpart = corepoolpart;
-    corepoolpart->nextpoolpart = corepoolpart;
+    part->prevpart = part;
+    part->nextpart = part;
   }
   
   // Set the newly created part to be the current part.
-  coretypeinfo->curpoolpart = corepoolpart;
+  coretypeinfo->curpart = part;
 }
 
 
@@ -327,54 +327,54 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
   // If there is no current part, create a first one.
   // This happends either upon first naNew of this type ever or when aggressive
   // memory cleanup is activated. See Configuration.h
-  if(!coretypeinfo->curpoolpart){
+  if(!coretypeinfo->curpart){
     // As this is the first one, we register the type to the runtime system.
     naRegisterCoreTypeInfo(coretypeinfo);
     naEnhanceCorePool(coretypeinfo);
     #ifndef NDEBUG
-      if(!coretypeinfo->curpoolpart)
+      if(!coretypeinfo->curpart)
         naCrash("naNewStruct", "No part available even after enhancing.");
     #endif
   }
 
   // If the current part is full, we try the next in the part list.
-  if(naIsPoolPartFull(coretypeinfo->curpoolpart)){
-    coretypeinfo->curpoolpart = coretypeinfo->curpoolpart->nextpoolpart;
+  if(naIsPoolPartFull(coretypeinfo->curpart)){
+    coretypeinfo->curpart = coretypeinfo->curpart->nextpart;
     // If the next in the part list is full too, no part in the list has any
     // space left and hence we must create a new part.
-    if(naIsPoolPartFull(coretypeinfo->curpoolpart)){naEnhanceCorePool(coretypeinfo);}
+    if(naIsPoolPartFull(coretypeinfo->curpart)){naEnhanceCorePool(coretypeinfo);}
   }
   
   // Now, we can be sure that the current part has space.
   #ifndef NDEBUG
-    if(naIsPoolPartFull(coretypeinfo->curpoolpart))
+    if(naIsPoolPartFull(coretypeinfo->curpart))
       naCrash("naNewStruct", "Still no space after creating new space.");
   #endif
 
   // We get the pointer to the first currently unused space.
-  pointer = coretypeinfo->curpoolpart->firstunused;
+  pointer = coretypeinfo->curpart->firstunused;
   
   // We find out which will be the next pointer to return.
-  if(coretypeinfo->curpoolpart->usedcount == coretypeinfo->curpoolpart->everusedcount){
+  if(coretypeinfo->curpart->usedcount == coretypeinfo->curpart->everusedcount){
     // The current space has not been used ever. Use the next address one
     // typesize ahead.
-    coretypeinfo->curpoolpart->firstunused = (NAByte*)(coretypeinfo->curpoolpart->firstunused) + coretypeinfo->typesize;
+    coretypeinfo->curpart->firstunused = (NAByte*)(coretypeinfo->curpart->firstunused) + coretypeinfo->typesize;
     // Increase the number of ever used spaces in this part.
-    coretypeinfo->curpoolpart->everusedcount++;
+    coretypeinfo->curpart->everusedcount++;
   }else{
-    // The struct has already been used and deleted before which means, it
+    // The space has already been used and deleted before which means, it
     // stores now a pointer to the next unused space.
-    coretypeinfo->curpoolpart->firstunused = *((void**)coretypeinfo->curpoolpart->firstunused);
+    coretypeinfo->curpart->firstunused = *((void**)coretypeinfo->curpart->firstunused);
   }
   
   // Increase the number of spaces used in this part.
-  coretypeinfo->curpoolpart->usedcount++;
+  coretypeinfo->curpart->usedcount++;
   
   #ifndef NDEBUG
     #if defined NA_SYSTEM_SIZEINT_TOO_SMALL
       naError("naNewStruct", "No native integer type to successfully run the runtime system.");
     #else
-      if(coretypeinfo->curpoolpart != (NACorePoolPart*)((NASizeUInt)pointer & na_runtime->poolsizemask))
+      if(coretypeinfo->curpart != (NACorePoolPart*)((NASizeUInt)pointer & na_runtime->partsizemask))
         naError("naNewStruct", "Pointer seems to be outside of pool");
     #endif
   #endif
@@ -390,56 +390,56 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
 }
 
 
-NA_HIDEF void naEjectCorePoolPartObject(NACorePoolPart* corepoolpart, void* pointer){
+NA_HIDEF void naEjectCorePoolPartObject(NACorePoolPart* part, void* pointer){
   // The memory at pointer is expected to be erased and hence garbage.
   
   // We explicitely store a pointer to the next unused space at that
   // position, ultimately creating a list.
-  *((void**)pointer) = corepoolpart->firstunused;
-  corepoolpart->firstunused = pointer;
+  *((void**)pointer) = part->firstunused;
+  part->firstunused = pointer;
   
   // If the part was full up until now, we reattach it in the list such that
   // it comes one after the current part. But only if there are more than one
   // parts around and the current part of the coretypeinfo is not already the
   // current part.
-  if((corepoolpart->usedcount == corepoolpart->maxcount) && (corepoolpart->nextpoolpart != corepoolpart) && (corepoolpart->coretypeinfo->curpoolpart != corepoolpart)){
-    corepoolpart->nextpoolpart->prevpoolpart = corepoolpart->prevpoolpart;
-    corepoolpart->prevpoolpart->nextpoolpart = corepoolpart->nextpoolpart;
-    naAttachPoolPartAfterCurPoolPart(corepoolpart->coretypeinfo, corepoolpart);
+  if((part->usedcount == part->maxcount) && (part->nextpart != part) && (part->coretypeinfo->curpart != part)){
+    part->nextpart->prevpart = part->prevpart;
+    part->prevpart->nextpart = part->nextpart;
+    naAttachPoolPartAfterCurPoolPart(part->coretypeinfo, part);
   }
 
   // We reduce the number of used spaces in this pool. 
-  corepoolpart->usedcount--;
+  part->usedcount--;
       
   // If no more spaces are in use, we can shrink that core pool away.
-  if(!corepoolpart->usedcount){
-    if(corepoolpart->nextpoolpart == corepoolpart){
+  if(!part->usedcount){
+    if(part->nextpart == part){
       #if NA_MEMORY_POOL_AGGRESSIVE_CLEANUP == 1
         // If this part is the last part of the pool and the cleanup is set to
         // aggressive, we shrink it away and unregister the type.
-        NACoreTypeInfo* coretypeinfo = corepoolpart->coretypeinfo;
-        naFreeAligned(corepoolpart);
-        coretypeinfo->curpoolpart = NA_NULL;
+        NACoreTypeInfo* coretypeinfo = part->coretypeinfo;
+        naFreeAligned(part);
+        coretypeinfo->curpart = NA_NULL;
         naUnregisterCoreTypeInfo(coretypeinfo);
       #endif
     }else{
       // There are other parts in the pool. If the empty part is the one which
       // is the current part of the pool, we move to the next part.
-      if(corepoolpart->coretypeinfo->curpoolpart == corepoolpart){
-        corepoolpart->coretypeinfo->curpoolpart = corepoolpart->nextpoolpart;
+      if(part->coretypeinfo->curpart == part){
+        part->coretypeinfo->curpart = part->nextpart;
       }
       // We unlink the pool from the list.
-      corepoolpart->prevpoolpart->nextpoolpart = corepoolpart->nextpoolpart;
-      corepoolpart->nextpoolpart->prevpoolpart = corepoolpart->prevpoolpart;
+      part->prevpart->nextpart = part->nextpart;
+      part->nextpart->prevpart = part->prevpart;
       // And delete its memory.
-      naFreeAligned(corepoolpart);
+      naFreeAligned(part);
     }
   }
 }
 
 
 NA_DEF void naDelete(void* pointer){
-  NACorePoolPart* corepoolpart;
+  NACorePoolPart* part;
 
   #ifndef NDEBUG
     if(!na_runtime)
@@ -451,21 +451,21 @@ NA_DEF void naDelete(void* pointer){
     NA_UNUSED(pointer);
     return;
   #else
-    // Find the corepoolpart entry at the beginning of the part by AND'ing the
-    // address with the poolsizemask
-    corepoolpart = (NACorePoolPart*)((NASizeUInt)pointer & na_runtime->poolsizemask);
+    // Find the part entry at the beginning of the part by AND'ing the
+    // address with the partsizemask
+    part = (NACorePoolPart*)((NASizeUInt)pointer & na_runtime->partsizemask);
 
     #ifndef NDEBUG
-      if(corepoolpart->dummy != corepoolpart)
+      if(part->dummy != part)
         naError("naDelete", "Pointer seems not to be from a pool.");
-      if(corepoolpart->coretypeinfo->refcounting)
+      if(part->coretypeinfo->refcounting)
         naError("naDelete", "Pointer belongs to a reference-counting entity. Use naRelease instead of naDelete!");
     #endif
     
     // Erase the content of the space with the destructor if applicable
-    if(corepoolpart->coretypeinfo->destructor){corepoolpart->coretypeinfo->destructor(pointer);}
+    if(part->coretypeinfo->destructor){part->coretypeinfo->destructor(pointer);}
     
-    naEjectCorePoolPartObject(corepoolpart, pointer);
+    naEjectCorePoolPartObject(part, pointer);
 
   #endif
 }
@@ -475,20 +475,20 @@ NA_DEF void* naRetain(void* pointer){
   NARefCount* refcount;
   
   #ifndef NDEBUG
-    NACorePoolPart* corepoolpart;
+    NACorePoolPart* part;
     if(!na_runtime)
       naCrash("naRetain", "Runtime not running. Use naStartRuntime()");
 
-    // Find the corepoolpart entry at the beginning of the part by AND'ing the
-    // address with the poolsizemask
+    // Find the part entry at the beginning of the part by AND'ing the
+    // address with the partsizemask
     #if defined NA_SYSTEM_SIZEINT_TOO_SMALL
       naError("naRetain", "No native integer type to successfully run the runtime system.");
-      NA_UNUSED(corepoolpart);
+      NA_UNUSED(part);
     #else
-      corepoolpart = (NACorePoolPart*)((NASizeUInt)pointer & na_runtime->poolsizemask);
-      if(corepoolpart->dummy != corepoolpart)
+      part = (NACorePoolPart*)((NASizeUInt)pointer & na_runtime->partsizemask);
+      if(part->dummy != part)
         naError("naRetain", "Pointer seems not to be from a pool.");
-      if(!corepoolpart->coretypeinfo->refcounting)
+      if(!part->coretypeinfo->refcounting)
         naError("naRetain", "Pointer belongs to a NON-reference-counting entity. You can't use naRetain!");
     #endif
   #endif
@@ -501,7 +501,7 @@ NA_DEF void* naRetain(void* pointer){
 
 
 NA_DEF void naRelease(void* pointer){
-  NACorePoolPart* corepoolpart;
+  NACorePoolPart* part;
   NARefCount* refcount;
   
   #ifndef NDEBUG
@@ -510,7 +510,7 @@ NA_DEF void naRelease(void* pointer){
   #endif
 
   // Find the corepool entry at the beginning of the pool by AND'ing the
-  // address with the poolsizemask
+  // address with the partsizemask
   #if defined NA_SYSTEM_SIZEINT_TOO_SMALL
     NA_UNUSED(corepool);
     NA_UNUSED(pointer);
@@ -520,24 +520,24 @@ NA_DEF void naRelease(void* pointer){
     #endif
     return;
   #else
-    corepoolpart = (NACorePoolPart*)((NASizeUInt)pointer & na_runtime->poolsizemask);
+    part = (NACorePoolPart*)((NASizeUInt)pointer & na_runtime->partsizemask);
 
     #ifndef NDEBUG
-      if(corepoolpart->dummy != corepoolpart)
+      if(part->dummy != part)
         naError("naRelease", "Pointer seems not to be from a pool.");
-      if(!corepoolpart->coretypeinfo->refcounting)
+      if(!part->coretypeinfo->refcounting)
         naError("naRelease", "Pointer belongs to a NON-reference-counting entity. Use naDelete instead of naRelease!");
     #endif
     
-    // Release the struct and delete it with the destructor if refcount is zero.
+    // Release the space and delete it with the destructor if refcount is zero.
     refcount = (NARefCount*)((NAByte*)pointer - sizeof(NARefCount));
-    naReleaseRefCount(refcount, pointer, corepoolpart->coretypeinfo->destructor);
+    naReleaseRefCount(refcount, pointer, part->coretypeinfo->destructor);
     // Note: The following test could also be achieved by using a special
     // mutator function in the previous naReleaseRefCount call. But this would
     // always cause a function call, even for types without a destructor.
     // Therefore, we do this here:
     if(!naGetRefCountCount(refcount)){
-      naEjectCorePoolPartObject(corepoolpart, refcount);
+      naEjectCorePoolPartObject(part, refcount);
     }
 
   #endif
@@ -561,14 +561,14 @@ NA_DEF void naStartRuntime(){
     #endif
     na_runtime = naAlloc(NARuntime);
     na_runtime->mempagesize = naGetSystemMemoryPagesize();
-    #if (NA_COREPOOL_BYTESIZE == 0)
-      na_runtime->poolsize = naGetSystemMemoryPagesize();
-      na_runtime->poolsizemask = naGetSystemMemoryPagesizeMask();
-    #elif (NA_COREPOOL_BYTESIZE < NA_INT32_MAX)
-      na_runtime->poolsize = (NASizeUInt)NA_COREPOOL_BYTESIZE;
-      na_runtime->poolsizemask = ~(NASizeUInt)(NA_COREPOOL_BYTESIZE - NA_ONE);
+    #if (NA_POOLPART_BYTESIZE == 0)
+      na_runtime->partsize = naGetSystemMemoryPagesize();
+      na_runtime->partsizemask = naGetSystemMemoryPagesizeMask();
+    #elif (NA_POOLPART_BYTESIZE < NA_INT32_MAX)
+      na_runtime->partsize = (NASizeUInt)NA_POOLPART_BYTESIZE;
+      na_runtime->partsizemask = ~(NASizeUInt)(NA_POOLPART_BYTESIZE - NA_ONE);
     #else
-      #error "Corepool bytesize is too large"
+      #error "Corepoolpart bytesize is too large"
     #endif
     na_runtime->mallocGarbage = NA_NULL;
     na_runtime->totalmallocgarbagebytecount = 0;
@@ -587,13 +587,13 @@ NA_DEF void naStopRuntime(){
     
     // Go through all registered types and output a leak message if necessary.
     for(i=0; i< na_runtime->typeinfocount; i++){
-      NAUInt structcount = naGetCoreTypeInfoAllocatedCount(na_runtime->typeinfos[i]);
-      if(structcount){
+      NAUInt spacecount = naGetCoreTypeInfoAllocatedCount(na_runtime->typeinfos[i]);
+      if(spacecount){
         if(!leakmessageprinted){
           printf(NA_NL "Memory leaks detected in NARuntime:" NA_NL);
           leakmessageprinted = NA_TRUE;
         }
-        printf("%s: %" NA_PRIu " * %" NA_PRIu " = %" NA_PRIu " Bytes" NA_NL, na_runtime->typeinfos[i]->typename, structcount, na_runtime->typeinfos[i]->typesize, structcount * na_runtime->typeinfos[i]->typesize);
+        printf("%s: %" NA_PRIu " * %" NA_PRIu " = %" NA_PRIu " Bytes" NA_NL, na_runtime->typeinfos[i]->typename, spacecount, na_runtime->typeinfos[i]->typesize, spacecount * na_runtime->typeinfos[i]->typesize);
       }
     }
   #endif
@@ -601,22 +601,22 @@ NA_DEF void naStopRuntime(){
   // Go through all remaining registered types and completely erase them
   // from memory. 
   while(na_runtime->typeinfos){
-    NACorePoolPart* firstcorepoolpart;
-    NACorePoolPart* curcorepoolpart;
-    NACorePoolPart* nextcorepoolpart;
+    NACorePoolPart* firstpart;
+    NACorePoolPart* curpart;
+    NACorePoolPart* nextpart;
     
     // Free all parts.
-    firstcorepoolpart = na_runtime->typeinfos[0]->curpoolpart;
-    curcorepoolpart = firstcorepoolpart;
+    firstpart = na_runtime->typeinfos[0]->curpart;
+    curpart = firstpart;
     while(1){
-      nextcorepoolpart = curcorepoolpart->nextpoolpart;
-      naFreeAligned(curcorepoolpart);
-      if(nextcorepoolpart == firstcorepoolpart){break;}
-      curcorepoolpart = nextcorepoolpart;
+      nextpart = curpart->nextpart;
+      naFreeAligned(curpart);
+      if(nextpart == firstpart){break;}
+      curpart = nextpart;
     }
     
     // Finally, unregister the type.
-    na_runtime->typeinfos[0]->curpoolpart = NA_NULL;
+    na_runtime->typeinfos[0]->curpart = NA_NULL;
     naUnregisterCoreTypeInfo(na_runtime->typeinfos[0]);
   }
 
@@ -710,12 +710,12 @@ NA_DEF NAUInt naGetRuntimeMemoryPageSize(){
 
 
 
-NA_DEF NAUInt naGetRuntimePoolSize(){
+NA_DEF NAUInt naGetRuntimePoolPartSize(){
   #ifndef NDEBUG
     if(!na_runtime)
-      naCrash("naGetRuntimePoolSize", "Runtime not running. Use naStartRuntime()");
+      naCrash("naGetRuntimePoolPartSize", "Runtime not running. Use naStartRuntime()");
   #endif
-  return na_runtime->poolsize;
+  return na_runtime->partsize;
 }
 
 

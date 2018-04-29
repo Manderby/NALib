@@ -8,11 +8,11 @@
 
 
 
-// The various Systems:
-#define NA_SYSTEM_UNKNOWN   0
-#define NA_SYSTEM_MAC_OS_X  1
-#define NA_SYSTEM_WINDOWS   2
-#define NA_SYSTEM_COUNT     3
+// The various Operating Systems:
+#define NA_OS_UNKNOWN   0
+#define NA_OS_MAC_OS_X  1
+#define NA_OS_WINDOWS   2
+#define NA_OS_COUNT     3
 
 
 // The various Endianness-Settings:
@@ -35,7 +35,7 @@
 
 // Figuring out what system this is. The following macros will be defined:
 //
-// NA_SYSTEM                One of the system macros above
+// NA_OS                One of the system macros above
 // NA_SYSTEM_ENDIANNESS     One of the endianness macros above
 // NA_SYSTEM_ADDRESS_BITS   32 or 64. Denoting the number of bits per address.
 //
@@ -51,7 +51,7 @@
 //
 // In the future, there might be more or different macros
 #if defined _WIN32
-  #define NA_SYSTEM NA_SYSTEM_WINDOWS
+  #define NA_OS NA_OS_WINDOWS
   #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_LITTLE
   #if defined _WIN64
     #define NA_SYSTEM_ADDRESS_BITS 64
@@ -60,7 +60,7 @@
   #endif
 
 #elif defined __APPLE__ && __MACH__
-  #define NA_SYSTEM NA_SYSTEM_MAC_OS_X
+  #define NA_OS NA_OS_MAC_OS_X
   #if defined __LITTLE_ENDIAN__
     #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_LITTLE
   #elif defined __BIG_ENDIAN__
@@ -74,7 +74,7 @@
   
 #else
   #warning "System not detected"
-  #define NA_SYSTEM NA_SYSTEM_UNKNOWN
+  #define NA_OS NA_OS_UNKNOWN
 #endif
 
 #ifndef NA_SYSTEM_ADDRESS_BITS

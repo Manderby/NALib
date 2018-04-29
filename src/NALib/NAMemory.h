@@ -180,7 +180,7 @@ NA_API void   naCollectGarbage(void);
 NA_API NAUInt naGetRuntimeGarbageBytesize(void);
 
 NA_API NAUInt naGetRuntimeMemoryPageSize(void);
-NA_API NAUInt naGetRuntimePoolSize(void);
+NA_API NAUInt naGetRuntimePoolPartSize(void);
 
 // In order to work with specific types, each type trying to use the runtime
 // system needs to register itself to the runtime system upon compile time.

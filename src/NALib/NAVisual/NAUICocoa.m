@@ -15,7 +15,7 @@
 
 #if (NA_CONFIG_COMPILE_GUI == 1)
 #ifdef __OBJC__
-#if NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+#if NA_OS == NA_OS_MAC_OS_X
 // Now, we are sure, we compile with Objective-C and on MacOSX. The two
 // #if directives will be closed at the very bottom of this file.
 
@@ -550,7 +550,7 @@ NA_DEF void naHideMouse(){
 
 
 
-#endif // NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+#endif // NA_OS == NA_OS_MAC_OS_X
 #endif // __OBJC__
 #endif // (NA_CONFIG_COMPILE_GUI == 1)
 

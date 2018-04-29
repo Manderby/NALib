@@ -172,7 +172,7 @@ NA_API NAString* naNewStringEPSDecoded(const NAString* inputstring);
 
 // The following functions are system dependent.
 // Currently, this is only necessary on windows.
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+#if NA_OS == NA_OS_WINDOWS
   // Returns a newly allocated memory block containing the system-encoded
   // string. If you do not provide the length, it will be automatically
   // computed. The resulting string must be freed manually. COPIES ALWAYS!

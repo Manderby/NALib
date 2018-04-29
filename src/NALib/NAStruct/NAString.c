@@ -632,7 +632,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputstring){
 
 
 
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+#if NA_OS == NA_OS_WINDOWS
   NA_DEF SystemChar* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8string, NAUInt length){
     SystemChar* outstr;
     NAUInt newlength;

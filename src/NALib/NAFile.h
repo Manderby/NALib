@@ -60,7 +60,7 @@ typedef struct NAFile NAFile;
 // NA_FILE_OPEN_FLAGS_WRITE  Write-Only, File truncated. Cursor placed at byte 0
 // NA_FILE_OPEN_FLAGS_APPEND Write-Only, Cursor placed at end of file
 
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+#if NA_OS == NA_OS_WINDOWS
   #include <windows.h>
   #include <direct.h>
   #include <io.h>
@@ -81,7 +81,7 @@ typedef struct NAFile NAFile;
   #define NA_FILE_OPEN_FLAGS_READ (O_RDONLY | O_BINARY)
   #define NA_FILE_OPEN_FLAGS_WRITE (O_WRONLY | O_CREAT | O_TRUNC | O_BINARY)
   #define NA_FILE_OPEN_FLAGS_APPEND (O_WRONLY | O_CREAT | O_APPEND | O_BINARY)
-#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+#elif NA_OS == NA_OS_MAC_OS_X
   #include <unistd.h>
   #include <dirent.h>
   #include <copyfile.h>

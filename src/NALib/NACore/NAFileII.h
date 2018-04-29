@@ -13,13 +13,13 @@
 // Note that all systems define NAFilesize to be a signed integer. Therefore
 // searching backwards with SEEK_CUR is possible.
 NA_IDEF NAFilesize naLseek(int fd, NAFilesize byteoffset, int origintype){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     #if NA_SYSTEM_ADDRESS_BITS == 64
       return _lseeki64(fd, byteoffset, origintype);
     #elif NA_SYSTEM_ADDRESS_BITS == 32
       return _lseek(fd, byteoffset, origintype);
     #endif
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return lseek(fd, byteoffset, origintype);
   #endif
 }
@@ -30,13 +30,13 @@ NA_IDEF NAFilesize naLseek(int fd, NAFilesize byteoffset, int origintype){
 // Note that all systems define NAFilesize to be a signed integer. Therefore
 // searching backwards with SEEK_CUR is possible.
 NA_IDEF NAFilesize naTell(int fd){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     #if NA_SYSTEM_ADDRESS_BITS == 64
       return _lseeki64(fd, 0, SEEK_CUR);
     #elif NA_SYSTEM_ADDRESS_BITS == 32
       return _lseek(fd, 0, SEEK_CUR);
     #endif
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return lseek(fd, 0, SEEK_CUR);
   #endif
 }
@@ -51,38 +51,38 @@ NA_IDEF NAFilesize naTell(int fd){
 // For writing files, use NA_FILEMODE_DEFAULT if you don't know what to use
 // for the mode argument.
 NA_IDEF int naOpen(const char* path, int flags, int mode){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     int handle;
     _sopen_s(&handle, path, flags, _SH_DENYNO, mode);
     return handle;
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return open(path, flags, mode);
   #endif
 }
 
 
 NA_IDEF int naClose(int fd){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return _close(fd);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return close(fd);
   #endif
 }
 
 
 NA_IDEF NAFilesize naRead(int fd, void* buf, NAFilesize bytesize){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return (NAFilesize)_read(fd, buf, (unsigned int)bytesize);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return (NAFilesize)read(fd, buf, (size_t)bytesize);
   #endif
 }
 
 
 NA_IDEF NAFilesize naWrite(int fd, const void* buf, NAFilesize bytesize){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return (NAFilesize)_write(fd, buf, (unsigned int)bytesize);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return (NAFilesize)write(fd, buf, (size_t)bytesize);
   #endif
 }
@@ -91,47 +91,47 @@ NA_IDEF NAFilesize naWrite(int fd, const void* buf, NAFilesize bytesize){
 // Use NA_DIRMODE_DEFAULT if you don't know what to use for the mode
 // argument.
 NA_IDEF int naMkDir(const char* path, int mode){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return _mkdir(path);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return mkdir(path, (mode_t)mode);
   #endif
 }
 
 
 NA_IDEF int naChDir(const char* path){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return _chdir(path);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return chdir(path);
   #endif
 }
 
 
 NA_IDEF NABool naExists(const char* path){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return !(_access(path, 0));
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return !(access(path, 0));
   #endif
 }
 
 
 NA_IDEF int naRemove(const char* path){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return remove(path);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return remove(path);
   #endif
 }
 
 
 NA_IDEF NABool naCopyFile(const char* dstpath, const char* srcpath){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return (CopyFile( (LPCTSTR)(const char*)srcpath,
                       (LPCTSTR)(const char*)dstpath,
                       NA_FALSE) != 0);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return (copyfile(srcpath, dstpath, NULL, COPYFILE_ALL) == 0);
   #endif
 }
@@ -139,14 +139,14 @@ NA_IDEF NABool naCopyFile(const char* dstpath, const char* srcpath){
 
 
 NA_IDEF NABool naAccess(const char* path, NABool exists, NABool read, NABool write, NABool execute){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     int testmode = 0;
     testmode |= (exists?00:0);
     testmode |= (read?04:0);
     testmode |= (write?02:0);
     NA_UNUSED(execute); // Under windows, the executable flag does not exist.
     return (_access(path, testmode) == 0);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     int testmode = 0;
     testmode |= (exists?F_OK:0);
     testmode |= (read?R_OK:0);
@@ -158,9 +158,9 @@ NA_IDEF NABool naAccess(const char* path, NABool exists, NABool read, NABool wri
 
 
 NA_IDEF NAUTF8Char* naGetCwd(NAUTF8Char* buf, NAInt bufsize){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return _getcwd(buf, (int)bufsize);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return getcwd(buf, (size_t)bufsize);
   #endif
 }
@@ -352,9 +352,9 @@ NA_IDEF NAFilesize naWriteFileBytes(NAFile* file, const void* ptr, NAFilesize by
 
 NA_IDEF NAInt naScanDecimal(){
   NAInt retvalue;
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     scanf_s("%" NA_SCNi, &retvalue);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     scanf("%" NA_SCNi, &retvalue);
   #endif
   return retvalue;

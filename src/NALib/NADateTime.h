@@ -13,10 +13,10 @@
 #include "NABuffer.h"
 
 
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+#if NA_OS == NA_OS_WINDOWS
   #include "Windows.h"
   typedef TIME_ZONE_INFORMATION NATimeZone;
-#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+#elif NA_OS == NA_OS_MAC_OS_X
   typedef struct timezone NATimeZone;
 #endif
 
@@ -164,10 +164,10 @@ NA_API struct tm naMakeTMfromDateTime   (const NADateTime* datetime);
 NA_API int16     naMakeShiftFromTimeZone(const NATimeZone* timezn);
 // if timezn is a Null-Pointer, the global timezone settings are used.
 
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+#if NA_OS == NA_OS_WINDOWS
   NA_API NADateTime      naMakeDateTimeFromFileTime(const FILETIME* filetime,
                                                   const NATimeZone* timezn);
-#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+#elif NA_OS == NA_OS_MAC_OS_X
   NA_API struct timespec naMakeTimeSpecFromDateTime(const NADateTime* datetime);
   NA_API struct timeval  naMakeTimeValFromDateTime (const NADateTime* datetime);
   NA_API NATimeZone naMakeTimeZoneFromDateTime(     const NADateTime* datetime);

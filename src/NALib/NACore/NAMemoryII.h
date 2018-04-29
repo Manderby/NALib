@@ -9,9 +9,9 @@
 
 
 
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+#if NA_OS == NA_OS_WINDOWS
   #include <Windows.h>
-#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+#elif NA_OS == NA_OS_MAC_OS_X
   #include <unistd.h>
   #include "malloc/malloc.h"
 #endif
@@ -27,7 +27,7 @@
 
 
 NA_IDEF NASizeUInt naGetSystemMemoryPagesize(){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     SYSTEM_INFO info;
     GetSystemInfo(&info);
     return (NASizeUInt)info.dwPageSize;
@@ -93,7 +93,7 @@ NA_IDEF void naFree(void* ptr){
 NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
   void* retptr;    
 
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     retptr = _aligned_malloc(bytesize, align);
   #else
     #if NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_CUSTOM
@@ -134,7 +134,7 @@ NA_IDEF void* naMallocPageAligned(NAUInt bytesize){
 
 
 NA_IDEF void naFreeAligned(void* ptr){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     _aligned_free(ptr);
   #else
     #if NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_CUSTOM

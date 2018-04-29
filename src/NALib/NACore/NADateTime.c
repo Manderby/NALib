@@ -9,10 +9,10 @@
 #include "ctype.h"
 
 
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+#if NA_OS == NA_OS_WINDOWS
   #include <time.h>
 //  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){localtime_s(storage, tme);}
-#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+#elif NA_OS == NA_OS_MAC_OS_X
   #include <sys/time.h>
 //  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){localtime_r(tme, storage);}
 #else
@@ -56,9 +56,9 @@ int32 na_cumulativemonthstartdays[2 * 13] = { 0,  0,
                                               365, 366};
 
 typedef enum{
-  NA_CALENDAR_SYSTEM_JULIAN,
-  NA_CALENDAR_SYSTEM_GREGORIAN,
-  NA_CALENDAR_SYSTEM_GREGORIAN_WITH_LEAP_SECONDS
+  NA_CALENDAR_JULIAN,
+  NA_CALENDAR_GREGORIAN,
+  NA_CALENDAR_GREGORIAN_WITH_LEAP_SECONDS
 } NACalendarSystem;
 
 typedef enum{
@@ -359,13 +359,13 @@ NA_DEF NADateTime naMakeDateTimeNow(){
 //  printf("%llx %lld\n", NA_DATETIME_SISEC_GREGORIAN_YEAR_ZERO, NA_DATETIME_SISEC_GREGORIAN_YEAR_ZERO);
 //  printf("%016llx %+lld\n", NA_DATETIME_SISEC_UNIX_YEAR_ZERO, NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
 //  printf("%llx %lld\n", NA_DATETIME_SISEC_FILETIME_YEAR_ZERO, NA_DATETIME_SISEC_FILETIME_YEAR_ZERO);
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     FILETIME filetime;
     NATimeZone timezone;
     GetSystemTimeAsFileTime(&filetime);
     GetTimeZoneInformation(&timezone);
     return naMakeDateTimeFromFileTime(&filetime, &timezone);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     struct timeval curtime;
     NATimeZone curtimezone;
     gettimeofday(&curtime, &curtimezone);
@@ -396,7 +396,7 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
     // julian system
     datetime.sisec = NA_DATETIME_SISEC_JULIAN_YEAR_ZERO;
     isleap = naIsLeapYearJulian(dts->year);
-    calendarsystem = NA_CALENDAR_SYSTEM_JULIAN;
+    calendarsystem = NA_CALENDAR_JULIAN;
   }else{
     // gregorian system
     datetime.sisec = NA_DATETIME_SISEC_GREGORIAN_YEAR_ZERO;
@@ -408,9 +408,9 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
     remainingyears = naSubInt64(remainingyears, naMulInt64(years100, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD));
     isleap = naIsLeapYearGregorian(dts->year);
     if(naSmallerInt64(dts->year, NA_DATETIME_YEAR_1958)){
-      calendarsystem = NA_CALENDAR_SYSTEM_GREGORIAN;
+      calendarsystem = NA_CALENDAR_GREGORIAN;
     }else{
-      calendarsystem = NA_CALENDAR_SYSTEM_GREGORIAN_WITH_LEAP_SECONDS;
+      calendarsystem = NA_CALENDAR_GREGORIAN_WITH_LEAP_SECONDS;
     }
   }
   years4 = naDivInt64(remainingyears, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD);
@@ -429,7 +429,7 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
   datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->hour * NA_SECONDS_PER_HOUR));
   if((dts->min < 0) || (dts->min > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_MINUTE_NUMBER;}
   datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->min * NA_SECONDS_PER_MINUTE));
-  if(calendarsystem == NA_CALENDAR_SYSTEM_GREGORIAN_WITH_LEAP_SECONDS){
+  if(calendarsystem == NA_CALENDAR_GREGORIAN_WITH_LEAP_SECONDS){
     if(naGreaterEqualInt64(datetime.sisec, naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec)){
       if((dts->sec < 0) || (dts->sec > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
       datetime.sisec = naAddInt64(datetime.sisec, naSubInt64(naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec, naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startgregsec));
@@ -732,7 +732,7 @@ NA_DEF struct tm naMakeTMfromDateTime(const NADateTime* datetime){
   systemtimestruct.tm_wday = (dta.weekday + 1) % 7;
   systemtimestruct.tm_yday = dta.dayofyear;
   systemtimestruct.tm_isdst = naHasDateTimeSummerTime(datetime)?1:0;
-  #if NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #if NA_OS == NA_OS_MAC_OS_X
     systemtimestruct.tm_gmtoff = (long)(dts.shift * NA_SECONDS_PER_MINUTE);
     if(naHasDateTimeSummerTime(datetime)){
       systemtimestruct.tm_zone = tzname[1];
@@ -747,12 +747,12 @@ NA_DEF struct tm naMakeTMfromDateTime(const NADateTime* datetime){
 
 NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
   int16 shift;
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     shift = - (int16)timezn->Bias;
     if(timezn->DaylightBias){
       shift += NA_MINUTES_PER_HOUR;
     }
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     shift = (int16)-timezn->tz_minuteswest; // yes, its inverted.
     if(timezn->tz_dsttime){
       // In contrast to tm_gmtoff, the timezone struct does not automatically
@@ -769,7 +769,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
 
 
 
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+#if NA_OS == NA_OS_WINDOWS
 
   NA_DEF NADateTime naMakeDateTimeFromFileTime(const FILETIME* filetime, const NATimeZone* timezn){
     NADateTime datetime;
@@ -794,7 +794,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
     return datetime;
   }
 
-#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+#elif NA_OS == NA_OS_MAC_OS_X
 
   NA_DEF struct timespec naMakeTimeSpecFromDateTime(const NADateTime* datetime){
     struct timespec timesp;
@@ -1164,12 +1164,12 @@ NA_DEF NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber){
 
 
 NA_DEF void naSetGlobalTimeShiftToSystemSettings(){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     NATimeZone curtimezone;
     GetTimeZoneInformation(&curtimezone);
     na_globaltimeshift = naMakeShiftFromTimeZone(&curtimezone);
     na_globalsummertime = ((curtimezone.DaylightBias) ? NA_TRUE : NA_FALSE);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     NATimeZone curtimezone;
     gettimeofday(NULL, &curtimezone);
     na_globaltimeshift = naMakeShiftFromTimeZone(&curtimezone);

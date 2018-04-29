@@ -43,6 +43,8 @@ Version 21 (first published 2018-xxx-xx)
 - Removed all occurrencies of the old company in the code.
 - Introcuding NASizeInt and NASizeUInt. Since NAInt does not necessarily has
   the same size as an address, we needed that.
+- SYSTEM is only used for macros concerning the actual system compiled for.
+  NA_OS defined the operating system, NA_CALENDAR defines the calendar system.
 - Cleaned up some h files.
 
 

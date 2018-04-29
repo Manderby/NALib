@@ -20,7 +20,7 @@
 
 // Have a look at NAConfiguration.h to use OpenGL
 #if NA_CONFIG_COMPILE_OPENGL == 1
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     #include <windows.h>
     #include <GL/GL.h>
   #else
@@ -415,7 +415,7 @@ typedef NAUInt NAUIKeyCode;
 // A NAUIKeyCode can have the following values. These values correspond to the
 // "US extended" keyboard layout. They represent the physical keys and not the
 // characters they might result in.
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+#if NA_OS == NA_OS_WINDOWS
   #define NA_KEYCODE_A              0x1e
   #define NA_KEYCODE_B              0x30
   #define NA_KEYCODE_C              0x2e
@@ -453,7 +453,7 @@ typedef NAUInt NAUIKeyCode;
   #define NA_KEYCODE_EQUAL          0x0d
   #define NA_KEYCODE_NUMPAD_MINUS   0x4a
   #define NA_KEYCODE_NUMPAD_PLUS    0x4e
-#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+#elif NA_OS == NA_OS_MAC_OS_X
   #define NA_KEYCODE_A              0x00
   #define NA_KEYCODE_B              0x0b
   #define NA_KEYCODE_C              0x08

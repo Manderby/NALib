@@ -23,7 +23,7 @@ int main(void){
   #endif
   printf("%d Bits Addresses, %d Bits Integers)\n", NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
    NA_UNUSED(getchar());
   #endif
   
@@ -52,11 +52,11 @@ int main(void){
     printf("No int64 available\n");
   #endif
 
-//  printf("%d\n", NA_IEEE754_SINGLE_BIT_COUNT);
-//  printf("%d\n", NA_IEEE754_SINGLE_SIGNIFICAND_BIT_COUNT);
+//  printf("%d\n", NA_IEEE754_SINGLE_BITS);
+//  printf("%d\n", NA_IEEE754_SINGLE_SIGNIFICAND_BITS);
 //  printf("%08" NA_PRIx32 "\n", NA_IEEE754_SINGLE_SIGNIFICAND_NORM);
 //  printf("%08" NA_PRIx32 "\n", NA_IEEE754_SINGLE_SIGNIFICAND_MASK);
-//  printf("%d\n", NA_IEEE754_SINGLE_EXPONENT_BIT_COUNT);
+//  printf("%d\n", NA_IEEE754_SINGLE_EXPONENT_BITS);
 //  printf("%d\n", NA_IEEE754_SINGLE_EXPONENT_BIAS);
 //  printf("%d\n", NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL);
 //  printf("%d\n", NA_IEEE754_SINGLE_EXPONENT_SPECIAL);
@@ -65,11 +65,11 @@ int main(void){
 //
 //printf("\n");
 //
-//  printf("%d\n", NA_IEEE754_DOUBLE_BIT_COUNT);
-//  printf("%d\n", NA_IEEE754_DOUBLE_SIGNIFICAND_BIT_COUNT);
+//  printf("%d\n", NA_IEEE754_DOUBLE_BITS);
+//  printf("%d\n", NA_IEEE754_DOUBLE_SIGNIFICAND_BITS);
 //  printf("%016" NA_PRIx64 "\n", NA_IEEE754_DOUBLE_SIGNIFICAND_NORM);
 //  printf("%016" NA_PRIx64 "\n", NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
-//  printf("%d\n", NA_IEEE754_DOUBLE_EXPONENT_BIT_COUNT);
+//  printf("%d\n", NA_IEEE754_DOUBLE_EXPONENT_BITS);
 //  printf("%d\n", NA_IEEE754_DOUBLE_EXPONENT_BIAS);
 //  printf("%d\n", NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL);
 //  printf("%d\n", NA_IEEE754_DOUBLE_EXPONENT_SPECIAL);

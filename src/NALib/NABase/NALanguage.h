@@ -54,7 +54,7 @@
   #define NA_INLINE
 #endif
 
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+#if NA_OS == NA_OS_WINDOWS
   #if !defined NA_RESTRICT
     #define NA_RESTRICT         __restrict
   #endif
@@ -63,7 +63,7 @@
   #endif
   #define NA_LINKER_NO_EXPORT
   #define NA_LINKER_EXPORT      __declspec(dllexport)
-#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+#elif NA_OS == NA_OS_MAC_OS_X
   #if !defined NA_RESTRICT
     #define NA_RESTRICT         __restrict__
   #endif

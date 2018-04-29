@@ -6,7 +6,7 @@
 #include "NAUIWINAPI.h"
 
 #if (NA_CONFIG_COMPILE_GUI == 1)
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+#if NA_OS == NA_OS_WINDOWS
 // Now, we are sure, we compile for windows. The #if directive will be
 // closed at the bottom of this file.
 
@@ -918,7 +918,7 @@ NA_DEF void naHideMouse(){
 }
 
 
-#endif // NA_SYSTEM == NA_SYSTEM_WINDOWS
+#endif // NA_OS == NA_OS_WINDOWS
 #endif // (NA_CONFIG_COMPILE_GUI == 1)
 
 

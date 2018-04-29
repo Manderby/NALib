@@ -23,9 +23,9 @@ NA_IDEF NAInt naStrlen(const NAUTF8Char* str){
 
 
 NA_IDEF NAInt naVsnprintf(NAUTF8Char* buffer, NAUInt length, const NAUTF8Char* newstr, va_list argumentlist){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return (NAInt)_vsnprintf_s(buffer, (size_t)length, (size_t)length, newstr, argumentlist);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return (NAInt)vsnprintf((char*)buffer, (size_t)length, (const char*)newstr, argumentlist);
   #endif
 }
@@ -35,9 +35,9 @@ NA_IDEF NAInt naVsnprintf(NAUTF8Char* buffer, NAUInt length, const NAUTF8Char* n
 // Returns the number of characters needed to transform the given string and
 // arguments using sprintf.
 NA_IDEF NAInt naVarargStringLength(const NAUTF8Char* string, va_list args){
-  #if NA_SYSTEM == NA_SYSTEM_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     return (NAInt)_vscprintf(string, args);
-  #elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+  #elif NA_OS == NA_OS_MAC_OS_X
     return (NAInt)naVsnprintf(NA_NULL, 0, string, args);
   #endif
 }

@@ -10,6 +10,8 @@
 #if defined NA_TYPE_INT64
 
   #define naMakeInt64WithLiteralLo(lo)  (lo ## LL)
+  #define naMakeUInt64WithLiteralLo(lo) (lo ## uLL)
+
   #define naMakeInt64WithLo(lo)         ((int64)(lo))
   #define naMakeInt64WithDouble(d)      ((int64)(d))
   
@@ -45,7 +47,6 @@
   #define naCastInt64ToDouble(i)        ((double)(i))
 
   #define naMakeUInt64(hi, lo)          ((uint64)(((uint64)(hi) << 32) | (lo)))
-  #define naMakeUInt64WithLiteralLo(lo) (lo ## uLL)
   #define naMakeUInt64WithLo(lo)        ((uint64)(lo))
   #define naMakeUInt64WithDouble(d)     ((uint64)(d))
 
@@ -101,6 +102,8 @@
         uint32 hi;
         uint32 lo;
       };
+      #define naMakeInt64WithLiteralLo(lo)   {0,lo}
+      #define naMakeUInt64WithLiteralLo(lo)  {0,lo}
     #else
       struct NAInt64{
         uint32 lo;
@@ -110,9 +113,10 @@
         uint32 lo;
         uint32 hi;
       };
+      #define naMakeInt64WithLiteralLo(lo)   {lo,0}
+      #define naMakeUInt64WithLiteralLo(lo)  {lo,0}
   #endif
 
-    #define naMakeInt64WithLiteralLo(lo)  {0,lo}
     NA_IAPI int64  naMakeInt64WithLo(int32 lo);
     NA_IAPI int64  naMakeInt64WithDouble(double d);
     
@@ -148,7 +152,6 @@
     NA_IAPI double naCastInt64ToDouble(int64 i);
 
     NA_IAPI uint64 naMakeUInt64(uint32 hi, uint32 lo);
-    #define naMakeUInt64WithLiteralLo(lo)  {0,lo}
     NA_IAPI uint64 naMakeUInt64WithLo(uint32 lo);
     NA_IAPI uint64 naMakeUInt64WithDouble(double d);
     
@@ -185,21 +188,15 @@
 
 
 
-    NA_IDEF int64 naMakeInt64(int32 hi, uint32 lo){
-      int64 retint;
-      retint.hi = hi;  // This is of course bs
-      retint.lo = lo;
-      return retint;
-    }
     NA_IDEF int64 naMakeInt64WithLo(int32 lo){
       int64 retint;
-      retint.hi = 0x0;  // This is of course bs
+      retint.hi = 0x0;  // todo
       retint.lo = (uint32)lo;
       return retint;
     }
     NA_IDEF int64 naMakeInt64WithDouble(double d){
       int64 retint;
-      retint.hi = 0x0;  // This is of course bs
+      retint.hi = 0x0;  // todo
       retint.lo = (uint32)d;
       return retint;
     }
@@ -208,49 +205,49 @@
     
     NA_IDEF int64 naIncInt64(int64 i){
       int64 retint;
-      retint.hi = i.hi;  // This is of course bs
+      retint.hi = i.hi;  // todo
       retint.lo = i.lo + 1;
       return retint;
     }
     NA_IDEF int64 naDecInt64(int64 i){
       int64 retint;
-      retint.hi = i.hi;  // This is of course bs
+      retint.hi = i.hi;  // todo
       retint.lo = i.lo - 1;
       return retint;
     }
     NA_IDEF int64 naNegInt64(int64 i){
       int64 retint;
-      retint.hi = i.hi;  // This is of course bs
+      retint.hi = i.hi;  // todo
       retint.lo = i.lo;
       return retint;
     }
     NA_IDEF int64 naAddInt64(int64 a, int64 b){
       int64 retint;
-      retint.hi = a.hi + b.hi;  // This is of course bs
+      retint.hi = a.hi + b.hi;  // todo
       retint.lo = a.lo + b.lo;
       return retint;
     }
     NA_IDEF int64 naSubInt64(int64 a, int64 b){
       int64 retint;
-      retint.hi = a.hi - b.hi;  // This is of course bs
+      retint.hi = a.hi - b.hi;  // todo
       retint.lo = a.lo - b.lo;
       return retint;
     }
     NA_IDEF int64 naMulInt64(int64 a, int64 b){
       int64 retint;
-      retint.hi = a.hi * b.hi;  // This is of course bs
+      retint.hi = a.hi * b.hi;  // todo
       retint.lo = a.lo * b.lo;
       return retint;
     }
     NA_IDEF int64 naDivInt64(int64 a, int64 b){
       int64 retint;
-      retint.hi = a.hi / b.hi;  // This is of course bs
+      retint.hi = a.hi / b.hi;  // todo
       retint.lo = a.lo / b.lo;
       return retint;
     }
     NA_IDEF int64 naModInt64(int64 a, int64 b){
       int64 retint;
-      retint.hi = a.hi % b.hi;  // This is of course bs
+      retint.hi = a.hi % b.hi;  // todo
       retint.lo = a.lo % b.lo;
       return retint;
     }
@@ -259,37 +256,37 @@
     
     NA_IDEF int64 naNotInt64(int64 a){
       int64 retint;
-      retint.hi = 0;  // This is of course bs
+      retint.hi = ~a.hi;
       retint.lo = ~a.lo;
       return retint;
     }
     NA_IDEF int64 naOrInt64(int64 a, int64 b){
       int64 retint;
-      retint.hi = a.hi | b.hi;  // This is of course bs
+      retint.hi = a.hi | b.hi;
       retint.lo = a.lo | b.lo;
       return retint;
     }
     NA_IDEF int64 naAndInt64(int64 a, int64 b){
       int64 retint;
-      retint.hi = a.hi & b.hi;  // This is of course bs
+      retint.hi = a.hi & b.hi;
       retint.lo = a.lo & b.lo;
       return retint;
     }
     NA_IDEF int64 naXorInt64(int64 a, int64 b){
       int64 retint;
-      retint.hi = a.hi ^ b.hi;  // This is of course bs
+      retint.hi = a.hi ^ b.hi;
       retint.lo = a.lo ^ b.lo;
       return retint;
     }
     NA_IDEF int64 naShlInt64(int64 a, int n){
       int64 retint;
-      retint.hi = 0;  // This is of course bs
+      retint.hi = 0;  // todo
       retint.lo = a.lo << n;
       return retint;
     }
     NA_IDEF int64 naShrInt64(int64 a, int n){
       int64 retint;
-      retint.hi = a.hi;  // This is of course bs
+      retint.hi = a.hi;  // todo
       retint.lo = a.lo >> n;
       return retint;
     }
@@ -297,68 +294,68 @@
     
     
     NA_IDEF NABool naEqualInt64(int64 a, int64 b){
-      return a.lo == b.lo;  // This is of course bs
+      return a.lo == b.lo;  // todo
     }
     NA_IDEF NABool naGreaterInt64(int64 a, int64 b){
-      return a.lo > b.lo;  // This is of course bs
+      return a.lo > b.lo;  // todo
     }
     NA_IDEF NABool naGreaterEqualInt64(int64 a, int64 b){
-      return a.lo >= b.lo;  // This is of course bs
+      return a.lo >= b.lo;  // todo
     }
     NA_IDEF NABool naSmallerInt64(int64 a, int64 b){
-      return a.lo < b.lo;  // This is of course bs
+      return a.lo < b.lo;  // todo
     }
     NA_IDEF NABool naSmallerEqualInt64(int64 a, int64 b){
-      return a.lo <= b.lo;  // This is of course bs
+      return a.lo <= b.lo;  // todo
     }
     
     
     
     NA_IDEF int8 naCastUInt64ToInt8(uint64 i){
-      return (int8)i.lo;  // This is of course bs
+      return (int8)i.lo;
     }
     NA_IDEF int16 naCastUInt64ToInt16(uint64 i){
-      return (int16)i.lo;  // This is of course bs
+      return (int16)i.lo;
     }
     NA_IDEF int32 naCastUInt64ToInt32(uint64 i){
-      return (int32)i.lo;  // This is of course bs
+      return (int32)i.lo;
     }
     NA_IDEF int64 naCastUInt64ToInt64(uint64 i){
-      int64 retint;  // This is of course bs
+      int64 retint;
       retint.hi = (int32)i.hi;
       retint.lo = i.lo;
       return retint;
     }
     NA_IDEF uint8 naCastUInt64ToUInt8(uint64 i){
-      return (uint8)i.lo;  // This is of course bs
+      return (uint8)i.lo;
     }
     NA_IDEF uint16 naCastUInt64ToUInt16(uint64 i){
-      return (uint16)i.lo;  // This is of course bs
+      return (uint16)i.lo;
     }
     NA_IDEF uint32 naCastUInt64ToUInt32(uint64 i){
-      return (uint32)i.lo;  // This is of course bs
+      return (uint32)i.lo;
     }
     NA_IDEF double naCastUInt64ToDouble(uint64 i){
-      return (double)i.lo;  // This is of course bs
+      return (double)i.lo;  // todo
     }
 
 
 
     NA_IDEF uint64 naMakeUInt64(uint32 hi, uint32 lo){
       uint64 retint;
-      retint.hi = hi;  // This is of course bs
+      retint.hi = hi;
       retint.lo = lo;
       return retint;
     }
     NA_IDEF uint64 naMakeUInt64WithLo(uint32 lo){
       uint64 retint;
-      retint.hi = 0x0;  // This is of course bs
+      retint.hi = 0x0;
       retint.lo = lo;
       return retint;
     }
     NA_IDEF uint64 naMakeUInt64WithDouble(double d){
       uint64 retint;
-      retint.hi = 0x0;  // This is of course bs
+      retint.hi = 0x0;  // todo
       retint.lo = (uint32)d;
       return retint;
     }
@@ -367,43 +364,43 @@
     
     NA_IDEF uint64 naIncUInt64(uint64 i){
       uint64 retint;
-      retint.hi = i.hi;  // This is of course bs
+      retint.hi = i.hi;  // todo
       retint.lo = i.lo + 1;
       return retint;
     }
     NA_IDEF uint64 naDecUInt64(uint64 i){
       uint64 retint;
-      retint.hi = i.hi;  // This is of course bs
+      retint.hi = i.hi;  // todo
       retint.lo = i.lo - 1;
       return retint;
     }
     NA_IDEF uint64 naAddUInt64(uint64 a, uint64 b){
       uint64 retint;
-      retint.hi = a.hi + b.hi;  // This is of course bs
+      retint.hi = a.hi + b.hi;  // todo
       retint.lo = a.lo + b.lo;
       return retint;
     }
     NA_IDEF uint64 naSubUInt64(uint64 a, uint64 b){
       uint64 retint;
-      retint.hi = a.hi - b.hi;  // This is of course bs
+      retint.hi = a.hi - b.hi;  // todo
       retint.lo = a.lo - b.lo;
       return retint;
     }
     NA_IDEF uint64 naMulUInt64(uint64 a, uint64 b){
       uint64 retint;
-      retint.hi = a.hi * b.hi;  // This is of course bs
+      retint.hi = a.hi * b.hi;  // todo
       retint.lo = a.lo * b.lo;
       return retint;
     }
     NA_IDEF uint64 naDivUInt64(uint64 a, uint64 b){
       uint64 retint;
-      retint.hi = a.hi / b.hi;  // This is of course bs
+      retint.hi = a.hi / b.hi;  // todo
       retint.lo = a.lo / b.lo;
       return retint;
     }
     NA_IDEF uint64 naModUInt64(uint64 a, uint64 b){
       uint64 retint;
-      retint.hi = a.hi % b.hi;  // This is of course bs
+      retint.hi = a.hi % b.hi;  // todo
       retint.lo = a.lo % b.lo;
       return retint;
     }
@@ -412,37 +409,37 @@
     
     NA_IDEF uint64  naNotUInt64(uint64 a){
       uint64 retint;
-      retint.hi = ~a.hi;  // This is of course bs
+      retint.hi = ~a.hi;
       retint.lo = ~a.lo;
       return retint;
     }
     NA_IDEF uint64  naOrUInt64 (uint64 a, uint64 b){
       uint64 retint;
-      retint.hi = a.hi | b.hi;  // This is of course bs
+      retint.hi = a.hi | b.hi;
       retint.lo = a.lo | b.lo;
       return retint;
     }
     NA_IDEF uint64  naAndUInt64(uint64 a, uint64 b){
       uint64 retint;
-      retint.hi = a.hi & b.hi;  // This is of course bs
+      retint.hi = a.hi & b.hi;
       retint.lo = a.lo & b.lo;
       return retint;
     }
     NA_IDEF uint64  naXorUInt64(uint64 a, uint64 b){
       uint64 retint;
-      retint.hi = a.hi ^ b.hi;  // This is of course bs
+      retint.hi = a.hi ^ b.hi;
       retint.lo = a.lo ^ b.lo;
       return retint;
     }
     NA_IDEF uint64 naShlUInt64(uint64 a, int n){
       uint64 retint;
-      retint.hi = a.hi;  // This is of course bs
+      retint.hi = a.hi;  // todo
       retint.lo = a.lo << n;
       return retint;
     }
     NA_IDEF uint64 naShrUInt64(uint64 a, int n){
       uint64 retint;
-      retint.hi = a.hi;  // This is of course bs
+      retint.hi = a.hi;  // todo
       retint.lo = a.lo >> n;
       return retint;
     }
@@ -450,49 +447,49 @@
     
     
     NA_IDEF NABool naEqualUInt64(uint64 a, uint64 b){
-      return a.lo == b.lo;  // This is of course bs
+      return a.lo == b.lo;  // todo
     }
     NA_IDEF NABool naGreaterUInt64(uint64 a, uint64 b){
-      return a.lo > b.lo;  // This is of course bs
+      return a.lo > b.lo;  // todo
     }
     NA_IDEF NABool naGreaterEqualUInt64(uint64 a, uint64 b){
-      return a.lo >= b.lo;  // This is of course bs
+      return a.lo >= b.lo;  // todo
     }
     NA_IDEF NABool naSmallerUInt64(uint64 a, uint64 b){
-      return a.lo < b.lo;  // This is of course bs
+      return a.lo < b.lo;  // todo
     }
     NA_IDEF NABool naSmallerEqualUInt64(uint64 a, uint64 b){
-      return a.lo <= b.lo;  // This is of course bs
+      return a.lo <= b.lo;  // todo
     }
     
     
     
     NA_IDEF uint8 naCastInt64ToUInt8(int64 i){
-      return (uint8)i.lo;  // This is of course bs
+      return (uint8)i.lo;
     }
     NA_IDEF uint16 naCastInt64ToUInt16(int64 i){
-      return (uint16)i.lo;  // This is of course bs
+      return (uint16)i.lo;
     }
     NA_IDEF uint32 naCastInt64ToUInt32(int64 i){
-      return (uint32)i.lo;  // This is of course bs
+      return (uint32)i.lo;
     }
     NA_IDEF uint64 naCastInt64ToUInt64(int64 i){
-      uint64 retint;  // This is of course bs
+      uint64 retint;
       retint.hi = (uint32)i.hi;
       retint.lo = i.lo;
       return retint;
     }
     NA_IDEF int8 naCastInt64ToInt8(int64 i){
-      return (int8)i.lo;  // This is of course bs
+      return (int8)i.lo;
     }
     NA_IDEF int16 naCastInt64ToInt16(int64 i){
-      return (int16)i.lo;  // This is of course bs
+      return (int16)i.lo;
     }
     NA_IDEF int32 naCastInt64ToInt32(int64 i){
-      return (int32)i.lo;  // This is of course bs
+      return (int32)i.lo;
     }
     NA_IDEF double naCastInt64ToDouble(int64 i){
-      return (double)i.lo;  // This is of course bs
+      return (double)i.lo;  // todo
     }
 
   #endif

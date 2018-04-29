@@ -2,8 +2,8 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#ifndef NA_SYSTEM_INCLUDED
-#define NA_SYSTEM_INCLUDED
+#ifndef NA_BASE_INCLUDED
+#define NA_BASE_INCLUDED
 #ifdef __cplusplus 
   extern "C"{
 #endif
@@ -45,7 +45,7 @@
 #define NA_NL_UNIX  "\n"
 #define NA_NL_MAC9  "\r"
 #define NA_NL_WIN   "\r\n"
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+#if NA_OS == NA_OS_WINDOWS
   #define NA_NL NA_NL_WIN
 #else
   #define NA_NL NA_NL_UNIX
@@ -67,7 +67,7 @@
 // a char consists of 8 Bits. See definition of NAByte for that.
 typedef char NAUTF8Char;
 
-#if NA_SYSTEM == NA_SYSTEM_WINDOWS
+#if NA_OS == NA_OS_WINDOWS
   #include <windows.h>
   // The SystemChar is a character type which denotes the one used in the
   // project preferences. It is CHAR for "Multi Byte Character Set" and
@@ -77,7 +77,7 @@ typedef char NAUTF8Char;
   #else
     typedef CHAR SystemChar;
   #endif
-#elif NA_SYSTEM == NA_SYSTEM_MAC_OS_X
+#elif NA_OS == NA_OS_MAC_OS_X
   // typedef short SystemChar;  // unused at the moment
 #else
 #endif
@@ -283,7 +283,7 @@ typedef void (*NAMutator)  (      void*);
 #ifdef __cplusplus 
   } // extern "C"
 #endif
-#endif // NA_SYSTEM_INCLUDED
+#endif // NA_BASE_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm
 //
