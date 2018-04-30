@@ -44,13 +44,13 @@
   #define NA_TYPE_ASSUME_NATIVE_LONG_LONG 0
 #endif
 
-// It may be that you try to compile with a standard before C99 and do not
-// want to have long long types. If you still run on a 64 bit system, there
-// will hence be no native int type which is big enough to hold an address.
-// NALib will do its best to fulfill its word nontheless, but there are some
+// In case you try to compile on a 64 bit system with a standard before C99
+// and do not want to have long long types, there will hence be no native int
+// type which is big enough to hold an address. NALib will do its best to
+// fulfill its (quad, haha, pun intended!) word nontheless, but there are some
 // core elements which will not work properly. Therefore, a warning is emitted.
-// If you know what you are doing, you can silence that warning by defining
-// the following macro to be 0.
+// If you know what you are doing, you can silence that warning by defining the
+// following macro to be 0.
 
 #ifndef NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE
   #define NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE 1
@@ -86,7 +86,7 @@
 // setting for example, when using standards before C99 which are considered
 // to be not aware of the long long integer type. If you use GNU extensions,
 // that type is perfectly available. Hence you can simply set this setting
-// to 64 or even better to NS_SYSTEM_ADDRESS_BITS (setting 2)
+// to 64 or even better to NS_SYSTEM_ADDRESS_BITS (setting 3)
 //
 // Note that whenever the final bit width turns out to be 64, long long support
 // is expected from NALib. Therefore, when using 64 bit types on older
@@ -156,18 +156,16 @@
 // Runtime memory pools
 // ////////////////////////////////
 
-// Define the size of a core memory pool:
+// Define the size of a core memory pool part:
 //
 // With the following macro, you can define, what the byte size of the memory
-// pools shall be. This size is used for allocation with naNew, as well as for
-// garbage collection. The default value for the pool size is (1<<16). If you
-// set this macro to 0, the memory page size will be used.
+// pool parts shall be. This size is used for allocation with naNew, as well
+// as for garbage collection. The default value for the part size is (1<<16).
+// If you set this macro to 0, the memory page size will be used.
 //
 // Turns out, on most systems, the pagesize is far too small to result in good
 // speed improvements for naNew. A large enough custom bytesize can result in
 // up to 2 times faster allocation and deallocation.
-//
-// The corepool size must be smaller than NA_INT32_MAX
 
 #ifndef NA_POOLPART_BYTESIZE
   #define NA_POOLPART_BYTESIZE (1 << 16)

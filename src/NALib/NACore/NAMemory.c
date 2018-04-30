@@ -92,6 +92,18 @@ NA_HDEF void naDestructPointer(NAPointer* pointer){
 // case, the part gets automatically deallocated, hence freeing all of the
 // memory.
 
+// /////////////
+// Garbage collection:
+//
+// NALib also has a small garbage collection mechanism: If you just need a
+// temporary pointer which shall automatically be freed, use naMallocTmp.
+// This will return a pointer which is also stored in a garbage pool. That
+// pool is a simple, single-linked list of memory blocks the same size as
+// the memory blocks above, but simply storing arrays of temporarily allocated
+// pointers.
+//
+// When you call naCollectGarbage or if you stop the Runtime, that memory
+// will be completely erased.
 
 typedef struct NAMallocGarbage NAMallocGarbage;
 typedef struct NACorePoolPart NACorePoolPart;
@@ -112,7 +124,7 @@ struct NACoreTypeInfo{
 // The 2 denotes the first two entries in this struct.
 struct NAMallocGarbage{
   NAMallocGarbage* next;
-  NAUInt cur;
+  NASizeUInt cur;
   void* pointers[NA_MALLOC_GARBAGE_POINTER_COUNT];
 };
 
@@ -579,6 +591,16 @@ NA_DEF void naStartRuntime(){
 
 
 NA_DEF void naStopRuntime(){
+  // First, we collect the garbage
+  naCollectGarbage();
+  #if NA_MEMORY_POOL_AGGRESSIVE_CLEANUP == 0
+    if(na_runtime->mallocGarbage){
+      naFree(na_runtime->mallocGarbage);
+      na_runtime->mallocGarbage = NA_NULL;
+    }
+  #endif
+
+  // Then, we detect, if there are any memory leaks.
   #ifndef NDEBUG
     NAInt i;
     NABool leakmessageprinted = NA_FALSE;
@@ -620,7 +642,6 @@ NA_DEF void naStopRuntime(){
     naUnregisterCoreTypeInfo(na_runtime->typeinfos[0]);
   }
 
-  naCollectGarbage();
   naFree(na_runtime);
   na_runtime = NA_NULL;
 }
@@ -666,25 +687,35 @@ NA_DEF void* naMallocTmp(NAUInt bytesize){
 
 
 NA_DEF void naCollectGarbage(){
-  NAMallocGarbage* garbage;
   #ifndef NDEBUG
     if(!na_runtime)
       naCrash("naCollectRuntimeGarbage", "Runtime not running. Use naStartRuntime()");
   #endif
-  garbage = na_runtime->mallocGarbage;
-  while(garbage){
+  while(na_runtime->mallocGarbage){
     NAUInt i;
     NAMallocGarbage* nextgarbage;
-    void** ptr = garbage->pointers;
-    for(i=0; i<garbage->cur; i++){
+    void** ptr = na_runtime->mallocGarbage->pointers;
+    for(i=0; i<na_runtime->mallocGarbage->cur; i++){
       naFree(*ptr);
       ptr++;
     }
-    nextgarbage = garbage->next;
-    naFree(garbage);
-    garbage = nextgarbage;
+    nextgarbage = na_runtime->mallocGarbage->next;
+    
+    // If this was the last part, we decide if we want to delete it depending
+    // on the aggressive setting.
+    #if NA_MEMORY_POOL_AGGRESSIVE_CLEANUP == 1
+      naFree(na_runtime->mallocGarbage);
+      na_runtime->mallocGarbage = nextgarbage;
+    #else
+      if(nextgarbage){
+        naFree(na_runtime->mallocGarbage);
+        na_runtime->mallocGarbage = nextgarbage;
+      }else{
+        na_runtime->mallocGarbage->cur = 0;
+      }
+    #endif
+    
   }
-  na_runtime->mallocGarbage = NA_NULL;
   na_runtime->totalmallocgarbagebytecount = 0;
 }
 

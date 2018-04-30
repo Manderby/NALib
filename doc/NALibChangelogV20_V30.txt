@@ -17,19 +17,21 @@ Version 21 (first published 2018-xxx-xx)
 
 - Enhanced runtime system with Reference counting for naNew, naRetain and
   naRelease. Revisited whole NARuntime. Now no code sanity warnings.
-- Added Binary operators for more control over integer and floating point
-  values.
 - NAQuadTree is now storing coordinates in doubles.
 - Renaming of NASystem to NABase. Split-up of the file into a folder of files.
   Oldest file in the code collection grew constantly and desperately needed
   some structure.
-- Huge refactoring concerning integer values. Created int 64 emulation. It is
-  possible now to compile the code without long long.
+- Huge refactoring concerning integer values. NAInt is not necessarily the same
+  size as an address anymore.
+- Created int 64 emulation. It is possible now to compile the code without
+  the long long datatype.
+- Added Binary operators for more control over integer and floating point
+  values.
 
 - The Runtime system now always registers runtime types, not only in debug.
 - Added NA_MEMORY_POOL_AGGRESSIVE_CLEANUP macro in NAConfiguration.h
 - Removed NA_RUNTIME_USES_MEMORY_POOLS in NAConfiguration.h. Pools rule!
-- Moved implementation macros to II files.
+- Moved lots of implementation macros to II files.
 - Some more debugging tests
 - QuadTree and Octtree added childlength to update function callbacks. Also
   have new function to return rect or box of current iterator element and
