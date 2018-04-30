@@ -712,6 +712,7 @@ NA_DEF void naCollectGarbage(){
         na_runtime->mallocGarbage = nextgarbage;
       }else{
         na_runtime->mallocGarbage->cur = 0;
+        break;
       }
     #endif
     

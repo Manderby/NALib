@@ -47,6 +47,7 @@ Version 21 (first published 2018-xxx-xx)
   the same size as an address, we needed that.
 - SYSTEM is only used for macros concerning the actual system compiled for.
   NA_OS defined the operating system, NA_CALENDAR defines the calendar system.
+- Garbage collection now also can be aggressive or non-aggressive.
 - Cleaned up some h files.
 
 

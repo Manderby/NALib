@@ -39,6 +39,12 @@ struct NAQuadTreeIterator{
 
 
 
+NA_HIDEF NASize naGetQuadTreeSizeWithExponent(NAInt exponent){
+  return naMakeSize(1 << exponent, 1 << exponent);
+}
+
+
+
 NA_IDEF NABool naIsQuadTreeEmpty(const NAQuadTree* tree){
   return (tree->root == NA_NULL);
 }
@@ -52,7 +58,7 @@ NA_IDEF NAInt naGetQuadTreeMinLeafExponent(const NAQuadTree* tree){
 
 
 NA_IDEF NAPos naGetQuadTreeAlignedCoord(NAInt leafexponent, NAPos coord){
-  NARecti leafalign = naMakeRecti(naMakePosi(0, 0), naMakeSizei(leafexponent, leafexponent));
+  NARecti leafalign = naMakeRecti(naMakePosi(0, 0), naMakeSizeiWithSize(naGetQuadTreeSizeWithExponent(leafexponent)));
   NAPosi alignposint = naMakePosiWithAlignment(naMakePosiWithIntegerPos(coord), leafalign);
   NAPos retpos = REMOVEPosiToPos(alignposint);
   return retpos;
