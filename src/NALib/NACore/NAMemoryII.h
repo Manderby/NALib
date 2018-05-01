@@ -16,6 +16,8 @@
   #include "malloc/malloc.h"
 #endif
 
+#include <stdlib.h>
+
 #include "../NABase.h"
 #include "../NAMathOperators.h"
 #include "NAValueHelper.h"

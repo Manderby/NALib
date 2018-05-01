@@ -9,7 +9,6 @@
 
 #if defined NA_TYPE_INT64
 
-  #define naMakeInt64WithLiteralLo(lo)  (lo ## LL)
   #define naMakeUInt64WithLiteralLo(lo) (lo ## uLL)
 
   #define naMakeInt64WithLo(lo)         ((int64)(lo))
@@ -99,8 +98,7 @@
         uint32 hi;
         uint32 lo;
       };
-      #define naMakeInt64WithLiteralLo(lo)   {0,lo}
-      #define naMakeUInt64WithLiteralLo(lo)  {0,lo}
+      #define naMakeUInt64WithLiteralLo(lo)  {0,(lo)}
     #else
       struct NAInt64{
         uint32 lo;
@@ -110,16 +108,15 @@
         uint32 lo;
         uint32 hi;
       };
-      #define naMakeInt64WithLiteralLo(lo)   {lo,0}
-      #define naMakeUInt64WithLiteralLo(lo)  {lo,0}
+      #define naMakeUInt64WithLiteralLo(lo)  {(lo),0}
   #endif
 
     NA_IAPI NAInt64  naMakeInt64WithLo(int32 lo);
     NA_IAPI NAInt64  naMakeInt64WithDouble(double d);
     
     NA_IAPI NAInt64  naNegInt64(NAInt64 i);
-    NA_IAPI NAInt64  naIncInt64(NAInt64 i);
-    NA_IAPI NAInt64  naDecInt64(NAInt64 i);
+    #define          naIncInt64(i)
+    #define          naDecInt64(i)
     NA_IAPI NAInt64  naAddInt64(NAInt64 a, NAInt64 b);
     NA_IAPI NAInt64  naSubInt64(NAInt64 a, NAInt64 b);
     NA_IAPI NAInt64  naMulInt64(NAInt64 a, NAInt64 b);
@@ -152,8 +149,8 @@
     NA_IAPI NAUInt64 naMakeUInt64WithLo(uint32 lo);
     NA_IAPI NAUInt64 naMakeUInt64WithDouble(double d);
     
-    NA_IAPI NAUInt64 naIncUInt64(NAUInt64 i);
-    NA_IAPI NAUInt64 naDecUInt64(NAUInt64 i);
+    #define          naIncUInt64(i)
+    #define          naDecUInt64(i)
     NA_IAPI NAUInt64 naAddUInt64(NAUInt64 a, NAUInt64 b);
     NA_IAPI NAUInt64 naAddUInt64(NAUInt64 a, NAUInt64 b);
     NA_IAPI NAUInt64 naSubUInt64(NAUInt64 a, NAUInt64 b);

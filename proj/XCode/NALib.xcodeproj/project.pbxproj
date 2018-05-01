@@ -26,6 +26,7 @@
 		90734CA0209337B20098F9FE /* NADebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 90734C9F209337B20098F9FE /* NADebug.c */; };
 		90734CA62093DB170098F9FE /* NADateTime.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8861F054877003766D8 /* NADateTime.c */; };
 		9087F70C1E2C313C00867CA7 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F70B1E2C313C00867CA7 /* main.c */; };
+		90BC6ECB2098A38D00CBD0FD /* int64test.c in Sources */ = {isa = PBXBuildFile; fileRef = 90BC6ECA2098A38D00CBD0FD /* int64test.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -129,6 +130,7 @@
 		90BC6EC7209856D500CBD0FD /* NANumericsII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NANumericsII.h; sourceTree = "<group>"; };
 		90BC6EC8209857DE00CBD0FD /* NAChar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAChar.h; sourceTree = "<group>"; };
 		90BC6EC92098585000CBD0FD /* NAHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAHelpers.h; sourceTree = "<group>"; };
+		90BC6ECA2098A38D00CBD0FD /* int64test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = int64test.c; sourceTree = "<group>"; };
 		90FEB972205F1F830002BF27 /* NAFloatingPointII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAFloatingPointII.h; sourceTree = "<group>"; };
 		90FEB973205F1F8B0002BF27 /* NAFloatingPoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAFloatingPoint.h; sourceTree = "<group>"; };
 		B9B2EA121716922700943D91 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -282,6 +284,7 @@
 			isa = PBXGroup;
 			children = (
 				9087F70B1E2C313C00867CA7 /* main.c */,
+				90BC6ECA2098A38D00CBD0FD /* int64test.c */,
 			);
 			name = test;
 			path = ../../src/test;
@@ -367,6 +370,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9011A8D51F054877003766D8 /* NAUI.c in Sources */,
+				90BC6ECB2098A38D00CBD0FD /* int64test.c in Sources */,
 				9011A8D21F054877003766D8 /* NAString.c in Sources */,
 				9011A8CF1F054877003766D8 /* NAList.c in Sources */,
 				9011A8C91F054877003766D8 /* NAFile.c in Sources */,
@@ -394,6 +398,10 @@
 		9087F70F1E2CBE2400867CA7 /* Optimize */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					i386,
+				);
 				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -444,7 +452,7 @@
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_C_LANGUAGE_STANDARD = gnu89;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
@@ -479,6 +487,10 @@
 		B9B2EA0B171683C200943D91 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					i386,
+				);
 				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -517,6 +529,10 @@
 		B9B2EA0C171683C200943D91 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					"$(ARCHS_STANDARD)",
+					i386,
+				);
 				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -566,7 +582,7 @@
 				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_C_LANGUAGE_STANDARD = gnu89;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -622,7 +638,7 @@
 				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEPLOYMENT_POSTPROCESSING = YES;
-				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_C_LANGUAGE_STANDARD = gnu89;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
