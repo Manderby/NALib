@@ -566,10 +566,10 @@ NA_IDEF double naPow(double b, double x){
 
 
 NA_IDEF float naPowerOf2f(NAInt n){
-  return naCreateFloatWithExponent((int32)n);
+  return naMakeFloatWithExponent((int32)n);
 }
 NA_IDEF double naPowerOf2(NAInt n){
-  return naCreateDoubleWithExponent((int32)n);
+  return naMakeDoubleWithExponent((int32)n);
 }
 
 

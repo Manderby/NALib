@@ -11,19 +11,19 @@
 
 
 
-NA_IDEF float naCreateFloat(int32 signedsignificand, int32 signedexponent){
+NA_IDEF float naMakeFloat(int32 signedsignificand, int32 signedexponent){
   int32 dbits;
   #ifndef NDEBUG
     if(signedexponent < NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL)
-      naError("naCreateFloat", "exponent too low for single precision");
+      naError("naMakeFloat", "exponent too low for single precision");
     if((signedsignificand != 0) && (signedexponent == NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL))
-      naError("naCreateFloat", "exponent creates subnormal number");
+      naError("naMakeFloat", "exponent creates subnormal number");
     if(signedexponent > NA_IEEE754_SINGLE_EXPONENT_SPECIAL)
-      naError("naCreateFloat", "exponent too high for single precision");
+      naError("naMakeFloat", "exponent too high for single precision");
     if(signedexponent == NA_IEEE754_SINGLE_EXPONENT_SPECIAL)
-      naError("naCreateFloat", "exponent equals max exponent which is reserved for special values");
+      naError("naMakeFloat", "exponent equals max exponent which is reserved for special values");
     if((naAbsi32(signedsignificand) > NA_IEEE754_SINGLE_SIGNIFICAND_MASK))
-      naError("naCreateFloat", "significand out of range");
+      naError("naMakeFloat", "significand out of range");
   #endif
   dbits =
       (signedsignificand & NA_IEEE754_SINGLE_SIGN_MASK)
@@ -32,19 +32,19 @@ NA_IDEF float naCreateFloat(int32 signedsignificand, int32 signedexponent){
   return *((float*)&dbits);
 }
 
-NA_IDEF double naCreateDouble(int64 signedsignificand, int32 signedexponent){
+NA_IDEF double naMakeDouble(int64 signedsignificand, int32 signedexponent){
   int64 dbits;
   #ifndef NDEBUG
     if(signedexponent < NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL)
-      naError("naCreateDouble", "exponent too low for double precision");
+      naError("naMakeDouble", "exponent too low for double precision");
     if(!naEqualInt64(signedsignificand, NA_ZERO_64) && (signedexponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL))
-      naError("naCreateDouble", "exponent creates subnormal number");
+      naError("naMakeDouble", "exponent creates subnormal number");
     if(signedexponent > NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
-      naError("naCreateDouble", "exponent too high for double precision");
+      naError("naMakeDouble", "exponent too high for double precision");
     if(signedexponent == NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
-      naError("naCreateDouble", "exponent equals max exponent which is reserved for special values");
+      naError("naMakeDouble", "exponent equals max exponent which is reserved for special values");
     if(naGreaterInt64(naAbsi64(signedsignificand), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK))
-      naError("naCreateDouble", "significand out of range");
+      naError("naMakeDouble", "significand out of range");
   #endif
   dbits =
       naOrInt64(naOrInt64(
@@ -54,54 +54,54 @@ NA_IDEF double naCreateDouble(int64 signedsignificand, int32 signedexponent){
   return *((double*)&dbits);
 }
 
-NA_IDEF float naCreateFloatWithExponent(int32 signedexponent){
+NA_IDEF float naMakeFloatWithExponent(int32 signedexponent){
   int32 dbits;
   #ifndef NDEBUG
     if(signedexponent < NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL)
-      naError("naCreateFloat", "exponent too low for single precision");
+      naError("naMakeFloat", "exponent too low for single precision");
     if(signedexponent == NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL)
-      naError("naCreateDouble", "exponent creates subnormal number");
+      naError("naMakeDouble", "exponent creates subnormal number");
     if(signedexponent > NA_IEEE754_SINGLE_EXPONENT_SPECIAL)
-      naError("naCreateFloat", "exponent too high for single precision");
+      naError("naMakeFloat", "exponent too high for single precision");
     if(signedexponent == NA_IEEE754_SINGLE_EXPONENT_SPECIAL)
-      naError("naCreateFloat", "exponent equals max exponent which is reserved for special values");
+      naError("naMakeFloat", "exponent equals max exponent which is reserved for special values");
   #endif
   dbits = ((signedexponent + NA_IEEE754_SINGLE_EXPONENT_BIAS) << NA_IEEE754_SINGLE_SIGNIFICAND_BITS);
   return *((float*)&dbits);
 }
 
-NA_IDEF double naCreateDoubleWithExponent(int32 signedexponent){
+NA_IDEF double naMakeDoubleWithExponent(int32 signedexponent){
   int64 dbits;
   #ifndef NDEBUG
     if(signedexponent < NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL)
-      naError("naCreateDouble", "exponent too low for double precision");
+      naError("naMakeDouble", "exponent too low for double precision");
     if(signedexponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL)
-      naError("naCreateDouble", "exponent creates subnormal number");
+      naError("naMakeDouble", "exponent creates subnormal number");
     if(signedexponent > NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
-      naError("naCreateDouble", "exponent too high for double precision");
+      naError("naMakeDouble", "exponent too high for double precision");
     if(signedexponent == NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
-      naError("naCreateDouble", "exponent equals max exponent which is reserved for special values");
+      naError("naMakeDouble", "exponent equals max exponent which is reserved for special values");
   #endif
   dbits = naShlInt64(naMakeInt64WithLo(signedexponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BITS);
   return *((double*)&dbits);
 }
 
-NA_IDEF float  naCreateFloatSubnormal (int32 signedsignificand){
+NA_IDEF float  naMakeFloatSubnormal (int32 signedsignificand){
   int32 dbits;
   #ifndef NDEBUG
     if((naAbsi32(signedsignificand) > NA_IEEE754_SINGLE_SIGNIFICAND_MASK))
-      naError("naCreateFloat", "significand out of range");
+      naError("naMakeFloat", "significand out of range");
   #endif
   dbits =
       (signedsignificand & NA_IEEE754_SINGLE_SIGN_MASK)
     | (naAbsi32(signedsignificand) & NA_IEEE754_SINGLE_SIGNIFICAND_MASK);
   return *((float*)&dbits);
 }
-NA_IDEF double naCreateDoubleSubnormal(int64 signedsignificand){
+NA_IDEF double naMakeDoubleSubnormal(int64 signedsignificand){
   int64 dbits;
   #ifndef NDEBUG
     if(naGreaterInt64(naAbsi64(signedsignificand), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK))
-      naError("naCreateDouble", "significand out of range");
+      naError("naMakeDouble", "significand out of range");
   #endif
   dbits =
       naOrInt64(

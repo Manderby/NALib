@@ -28,6 +28,11 @@ int main(void){
   
   naStartRuntime();
 
+//  int32 a = 2000000000;
+//  int32 b = 4;
+//  int64 res = a * b;
+//  printf("%lld", res);
+
 //  NAString* test = naNewString();
 //  naDelete(test);
 
@@ -75,11 +80,11 @@ int main(void){
 //  printf("%016" NA_PRIx64 "\n", NA_IEEE754_DOUBLE_EXPONENT_MASK);
 //  printf("%016" NA_PRIx64 "\n", NA_IEEE754_DOUBLE_SIGN_MASK);
 //  
-//  float testfloat = naCreateFloat(1, NA_IEEE754_SINGLE_EXPONENT_SPECIAL);
+//  float testfloat = naMakeFloat(1, NA_IEEE754_SINGLE_EXPONENT_SPECIAL);
 //  printf("%e\n", testfloat);
-//  double testdouble = naCreateDoubleWithExponent(NA_IEEE754_DOUBLE_EXPONENT_SPECIAL-1);
+//  double testdouble = naMakeDoubleWithExponent(NA_IEEE754_DOUBLE_EXPONENT_SPECIAL-1);
 //  printf("%e\n", testdouble);
-//  double testdouble = naCreateDoubleSubnormal(NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
+//  double testdouble = naMakeDoubleSubnormal(NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
 //  printf("%e\n", testdouble);
 //  double testdouble = naPowerOf2d(4);
 //  printf("%f\n", testdouble);
