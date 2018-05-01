@@ -26,35 +26,6 @@ NA_IDEF NAInt naSigni(NAInt x){
   return naSigni64(x);
 #endif
 }
-NA_IDEF int8 naSigni8(int8 x){
-  #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-    return (int8)((naGetSignum8(x) << 1) + 1);
-  #else
-    return (x<0)?-1:1;
-  #endif
-}
-NA_IDEF int16 naSigni16(int16 x){
-  #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-    return (int16)((naGetSignum16(x) << 1) + 1);
-  #else
-    return (x<0)?-1:1;
-  #endif
-}
-NA_IDEF int32 naSigni32(int32 x){
-  #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-    return (int32)((naGetSignum32(x) << 1) + NA_ONE_32);
-  #else
-    return (x<0)?-NA_ONE_32:NA_ONE_32;
-  #endif
-}
-NA_IDEF int64 naSigni64(int64 x){
-  #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-    uint64 signum = naGetSignum64(x);
-    return naCastUInt64ToInt64(naAddUInt64(naShlUInt64(signum, 1), NA_ONE_64u));
-  #else
-    return (x<0)?-NA_ONE_64:NA_ONE_64;
-  #endif
-}
 
 
 
@@ -283,18 +254,6 @@ NA_IDEF NAInt naAbsi(NAInt x){
 #elif NA_TYPE_NAINT_BITS == 64
   return naAbsi64(x);
 #endif
-}
-NA_IDEF int8 naAbsi8(int8 x){
-  return naSigni8(x) * x;
-}
-NA_IDEF int16 naAbsi16(int16 x){
-  return naSigni16(x) * x;
-}
-NA_IDEF int32 naAbsi32(int32 x){
-  return naSigni32(x) * x;
-}
-NA_IDEF int64 naAbsi64(int64 x){
-  return naMulInt64(naSigni64(x), x);
 }
 
 NA_IDEF float naFloorf(float x){

@@ -9,51 +9,7 @@
 
 
 
-NA_IDEF uint8 naGetSignum8(int8 i){
-  return (uint8)(i >> (NA_VALUE8_BITS  - 1));
-}
-NA_IDEF uint16 naGetSignum16(int16 i){
-  return (uint16)(i >> (NA_VALUE16_BITS - 1));
-}
-NA_IDEF uint32 naGetSignum32(int32 i){
-  return (uint32)(i >> (NA_VALUE32_BITS - 1));
-}
-NA_IDEF uint64 naGetSignum64(int64 i){
-  return naCastInt64ToUInt64(naShrInt64(i, (NA_VALUE64_BITS - 1)));
-}
 
-
-
-NA_IDEF void naSetSignBit8(void* i){
-  *((uint8*)i) |= NA_VALUE8_SIGN_MASK;
-}
-NA_IDEF void naSetSignBit16(void* i){
-  *((uint16*)i) |= NA_VALUE16_SIGN_MASK;
-}
-NA_IDEF void naSetSignBit32(void* i){
-  *((uint32*)i) |= NA_VALUE32_SIGN_MASK;
-}
-NA_IDEF void naSetSignBit64(void* i){
-  *((uint64*)i) = naOrUInt64(*((uint64*)i), NA_VALUE64_SIGN_MASK);
-}
-NA_IDEF void naUnsetSignBit8(void* i){
-  *((uint8*)i) &= ~NA_VALUE8_SIGN_MASK;
-}
-NA_IDEF void naUnsetSignBit16(void* i){
-  *((uint16*)i) &= ~NA_VALUE16_SIGN_MASK;
-}
-NA_IDEF void naUnsetSignBit32(void* i){
-  *((uint32*)i) &= ~NA_VALUE32_SIGN_MASK;
-}
-NA_IDEF void naUnsetSignBit64(void* i){
-  *((uint64*)i) = naAndUInt64(*((uint64*)i), naNotUInt64(NA_VALUE64_SIGN_MASK));
-}
-
-
-
-// Prototypes
-NA_IDEF int32 naAbsi32(int32 x);
-NA_IDEF int64 naAbsi64(int64 x);
 
 NA_IDEF float naCreateFloat(int32 signedsignificand, int32 signedexponent){
   int32 dbits;

@@ -123,8 +123,14 @@
 		908F9C5C1DAED3F300B1FFF2 /* todo.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = todo.txt; path = ../../doc/todo.txt; sourceTree = "<group>"; };
 		90920E231D4FDC7400369052 /* Readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = Readme.txt; path = ../../doc/Readme.txt; sourceTree = "<group>"; };
 		90B456451BC80AD300A53BDC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		90FEB972205F1F830002BF27 /* NABinaryOperatorsII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NABinaryOperatorsII.h; sourceTree = "<group>"; };
-		90FEB973205F1F8B0002BF27 /* NABinaryOperators.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NABinaryOperators.h; sourceTree = "<group>"; };
+		90BC6EC320984FD500CBD0FD /* NANumerics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NANumerics.h; sourceTree = "<group>"; };
+		90BC6EC4209850E700CBD0FD /* NAInt64II.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAInt64II.h; sourceTree = "<group>"; };
+		90BC6EC6209855DE00CBD0FD /* NADebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NADebug.h; sourceTree = "<group>"; };
+		90BC6EC7209856D500CBD0FD /* NANumericsII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NANumericsII.h; sourceTree = "<group>"; };
+		90BC6EC8209857DE00CBD0FD /* NAChar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAChar.h; sourceTree = "<group>"; };
+		90BC6EC92098585000CBD0FD /* NAHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAHelpers.h; sourceTree = "<group>"; };
+		90FEB972205F1F830002BF27 /* NAFloatingPointII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAFloatingPointII.h; sourceTree = "<group>"; };
+		90FEB973205F1F8B0002BF27 /* NAFloatingPoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAFloatingPoint.h; sourceTree = "<group>"; };
 		B9B2EA121716922700943D91 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -144,7 +150,6 @@
 			children = (
 				9011A87C1F054877003766D8 /* NAArray.h */,
 				9011A87D1F054877003766D8 /* NABinaryData.h */,
-				90FEB973205F1F8B0002BF27 /* NABinaryOperators.h */,
 				9011A87E1F054877003766D8 /* NABuffer.h */,
 				9011A87F1F054877003766D8 /* NACircularBuffer.h */,
 				9011A8801F054877003766D8 /* NAComplex.h */,
@@ -202,7 +207,6 @@
 		9011A8951F054877003766D8 /* NAMath */ = {
 			isa = PBXGroup;
 			children = (
-				90FEB972205F1F830002BF27 /* NABinaryOperatorsII.h */,
 				9011A8961F054877003766D8 /* NAComplexII.h */,
 				9011A8971F054877003766D8 /* NACoordII.h */,
 				9011A8981F054877003766D8 /* NAMathOperatorsII.h */,
@@ -262,6 +266,14 @@
 				90734CA4209386F30098F9FE /* NAEnvironment.h */,
 				90734CA520938EC30098F9FE /* NALanguage.h */,
 				90734CA7209471600098F9FE /* NAInt64.h */,
+				90BC6EC4209850E700CBD0FD /* NAInt64II.h */,
+				90FEB973205F1F8B0002BF27 /* NAFloatingPoint.h */,
+				90FEB972205F1F830002BF27 /* NAFloatingPointII.h */,
+				90BC6EC320984FD500CBD0FD /* NANumerics.h */,
+				90BC6EC7209856D500CBD0FD /* NANumericsII.h */,
+				90BC6EC6209855DE00CBD0FD /* NADebug.h */,
+				90BC6EC8209857DE00CBD0FD /* NAChar.h */,
+				90BC6EC92098585000CBD0FD /* NAHelpers.h */,
 			);
 			path = NABase;
 			sourceTree = "<group>";

@@ -345,8 +345,10 @@ typedef int NABool;
   #define NA_SCNu32      "lu"
 #endif
 
-// 64 bits
+// At this point, it is finally time to import the NAInt64 fallback.
 #include "NAInt64.h"
+
+// 64 bits
 #if NA_TYPE_INT64 == NA_TYPE_NATIVE_INT
   #define NA_UINT64_MAX  UINT_MAX
   #define NA_INT64_MAX   INT_MAX
@@ -388,6 +390,11 @@ typedef int NABool;
   #define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
 #else
   // The 64 bit integer type must be emulated. See NAInt64.h
+  #define NA_UINT64_MAX  naMakeUInt64(NA_UINT32_MAX, NA_UINT32_MAX)
+  #define NA_INT64_MAX   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_INT32_MAX, NA_UINT32_MAX))
+  #define NA_INT64_MIN   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_INT32_MIN, 0x0))
+  typedef struct NAInt64  int64;
+  typedef struct NAUInt64 uint64;
   #define NA_ZERO_64     (naMakeInt64WithLo(0))
   #define NA_ONE_64      (naMakeInt64WithLo(1))
   #define NA_ZERO_64u    (naMakeUInt64WithLo(0))

@@ -72,16 +72,6 @@
 // they were somewhat sufficiently being represented by these subnormal numbers
 // and hence the positive exponents gained a whole power of 2 more. The end.
 
-#define NA_VALUE8_BITS   8
-#define NA_VALUE16_BITS  16
-#define NA_VALUE32_BITS  32
-#define NA_VALUE64_BITS  64
-#define NA_VALUE8_SIGN_MASK       ((uint8) (1U << (NA_VALUE8_BITS   - 1U)))
-#define NA_VALUE16_SIGN_MASK      ((uint16)(1U << (NA_VALUE16_BITS  - 1U)))
-#define NA_VALUE32_SIGN_MASK      ((uint32)(1U << (NA_VALUE32_BITS  - 1U)))
-#define NA_VALUE64_SIGN_MASK_HI   NA_VALUE32_SIGN_MASK
-#define NA_VALUE64_SIGN_MASK_LO   0x0
-#define NA_VALUE64_SIGN_MASK      naMakeUInt64(NA_VALUE64_SIGN_MASK_HI, NA_VALUE64_SIGN_MASK_LO)
 
 #if FLT_RADIX != 2
   #warning "NALib requires floating points to have a radix of 2"
@@ -133,24 +123,6 @@
 #define NA_IEEE754_DOUBLE_SIGN_MASK_LO           0x0u
 #define NA_IEEE754_DOUBLE_SIGN_MASK              naCastUInt64ToInt64(naMakeUInt64(NA_IEEE754_DOUBLE_SIGN_MASK_HI, NA_IEEE754_DOUBLE_SIGN_MASK_LO))
 
-// Returns either 0 or -1 in two complement form but stored as an uint
-// depending on the sign bit.
-NA_IAPI uint8  naGetSignum8 (int8  i);
-NA_IAPI uint16 naGetSignum16(int16 i);
-NA_IAPI uint32 naGetSignum32(int32 i);
-NA_IAPI uint64 naGetSignum64(int64 i);
-
-// Sets or unsets the sign bit. This is pure bit logic, not performing
-// any complement.
-NA_IAPI void naSetSignBit8   (void* i);
-NA_IAPI void naSetSignBit16  (void* i);
-NA_IAPI void naSetSignBit32  (void* i);
-NA_IAPI void naSetSignBit64  (void* i);
-NA_IAPI void naUnsetSignBit8 (void* i);
-NA_IAPI void naUnsetSignBit16(void* i);
-NA_IAPI void naUnsetSignBit32(void* i);
-NA_IAPI void naUnsetSignBit64(void* i);
-
 // Creates floats and doubles out of signed significands and exponents
 NA_IAPI float  naCreateFloat (int32 signedsignificand, int32 signedexponent);
 NA_IAPI float  naCreateFloatWithExponent (int32 signedexponent);
@@ -160,10 +132,6 @@ NA_IAPI double naCreateDouble(int64 signedsignificand, int32 signedexponent);
 NA_IAPI double naCreateDoubleWithExponent(int32 signedexponent);
 NA_IAPI double naCreateDoubleSubnormal(int64 signedsignificand);
 
-
-
-// Inline implementations are in a separate file:
-#include "NAMath/NABinaryOperatorsII.h"
 
 
 

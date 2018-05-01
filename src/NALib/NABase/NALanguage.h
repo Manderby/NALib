@@ -121,6 +121,46 @@
 
 
 
+// ////////////////////////
+// The definition of NA_NULL is usually set to the NULL found in stdlib. The
+// new C++11 standard however has a new keyword. Let's use it if it is
+// available! Note that stdlib is needed anyway for malloc, free and exit
+// which is most probably needed anyway.
+//
+// Also note that in the comments of NALib as well as in the error messages,
+// it will oftem times be called "Null-Pointer". In the implementation
+// however, NA_NULL is used.
+//
+// The NA_NORETURN macro expands to _Noreturn only in C11 or CPP11
+
+#if (defined NA_C11) || (defined NA_CPP11)
+  #ifdef __cplusplus
+    #define NA_NULL nullptr
+  #else
+    #define NA_NULL ((void*)0)
+  #endif
+  #define NA_NORETURN _Noreturn
+#else
+  #define NA_NULL ((void*)0)
+  #define NA_NORETURN
+#endif
+
+
+
+// ////////////////////////
+// We always include stdarg as otherwise there might be a problem with va_copy.
+// Additionally, variadic arguments are used in naError since NALib version 15.
+#include <stdarg.h>
+// va_copy is defined since C99. But before, you had to use something like
+// the following if not available.
+#if (!defined NA_C99) && (!defined NA_CPP98)
+  #ifndef va_copy
+    #define va_copy(d,s) (memcpy (&d, &s, sizeof (va_list)))
+    // This definition is proposed to be the most secure fallback solution. But
+    // on many systems, the following definition works as well:
+    // #define va_copy(d,s) ((d) = (s))
+  #endif
+#endif
 
 
 

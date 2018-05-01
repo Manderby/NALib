@@ -10,7 +10,6 @@
 
 
 #include "NABase.h"
-#include "NABinaryOperators.h"
 
 
 // /////////////////////////////////
@@ -51,10 +50,6 @@
 // from the comma ASCII character and get a string representation of the sign:
 // NAUTF8Char signASCII = ',' - naSigni(-42);
 NA_IAPI NAInt         naSigni  (NAInt x);
-NA_IAPI int8          naSigni8 (int8  x);
-NA_IAPI int16         naSigni16(int16 x);
-NA_IAPI int32         naSigni32(int32 x);
-NA_IAPI int64         naSigni64(int64 x);
 
 // naAlmostZero   Returns NA_TRUE, if the ABSOLUTE discance between x and 0 is
 //                smaller than NA_SINGULARITY.
@@ -127,10 +122,6 @@ NA_IAPI double        naCbrt (double x);
 NA_IAPI float         naAbsf  (float  x);
 NA_IAPI double        naAbs   (double x);
 NA_IAPI NAInt         naAbsi  (NAInt  x);
-NA_IAPI int8          naAbsi8 (int8   x);
-NA_IAPI int16         naAbsi16(int16  x);
-NA_IAPI int32         naAbsi32(int32  x);
-NA_IAPI int64         naAbsi64(int64  x);
 
 // Returns the rounded down value
 NA_IAPI float         naFloorf(float  x);
