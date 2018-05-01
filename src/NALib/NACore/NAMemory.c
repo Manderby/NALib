@@ -217,13 +217,13 @@ NA_HIDEF void naRegisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
 NA_HIDEF void naUnregisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
   NACoreTypeInfo** newinfos = NA_NULL;
   if(na_runtime->typeinfocount > 1){
+    NAInt i;
+    NAInt oldindex = 0;
     newinfos = naMalloc(naSizeof(NACoreTypeInfo*) * (na_runtime->typeinfocount - NA_ONE));
 
     // We shrink the info array by one by omitting the one entry which equals
     // the given parameter. Again, just like naRegisterCoreTypeInfo, this is not
     // very fast, but does the job. See comment there.
-    NAInt i;
-    NAInt oldindex = 0;
     for(i = 0; i < (na_runtime->typeinfocount - NA_ONE); i++){
       if(na_runtime->typeinfos[i] == coretypeinfo){oldindex++;}
       newinfos[i] = na_runtime->typeinfos[oldindex];
@@ -459,7 +459,7 @@ NA_DEF void naDelete(void* pointer){
   #endif
 
   #if defined NA_SYSTEM_SIZEINT_TOO_SMALL
-    NA_UNUSED(corepool);
+    NA_UNUSED(part);
     NA_UNUSED(pointer);
     return;
   #else
@@ -524,7 +524,7 @@ NA_DEF void naRelease(void* pointer){
   // Find the corepool entry at the beginning of the pool by AND'ing the
   // address with the partsizemask
   #if defined NA_SYSTEM_SIZEINT_TOO_SMALL
-    NA_UNUSED(corepool);
+    NA_UNUSED(part);
     NA_UNUSED(pointer);
     NA_UNUSED(refcount);
     #ifndef NDEBUG
@@ -591,6 +591,11 @@ NA_DEF void naStartRuntime(){
 
 
 NA_DEF void naStopRuntime(){
+  #ifndef NDEBUG
+    NAInt i;
+    NABool leakmessageprinted;
+  #endif
+
   // First, we collect the garbage
   naCollectGarbage();
   #if NA_MEMORY_POOL_AGGRESSIVE_CLEANUP == 0
@@ -602,8 +607,7 @@ NA_DEF void naStopRuntime(){
 
   // Then, we detect, if there are any memory leaks.
   #ifndef NDEBUG
-    NAInt i;
-    NABool leakmessageprinted = NA_FALSE;
+    leakmessageprinted = NA_FALSE;
     if(!na_runtime)
       naCrash("naStopRuntime", "Runtime not running. Use naStartRuntime()");
     
@@ -768,12 +772,8 @@ NA_DEF NAUInt naGetRuntimePoolPartSize(){
 // the following conditions:
 //
 // The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the source-code.
-//
-// In case the source-code of this software is inaccessible to the end-user,
-// the above copyright notice and this permission notice shall be included
-// in any source-code which is dependent on this software and is accessible
-// to the end-user.
+// in all copies or substantial portions of the source-code inherently
+// dependent on this software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

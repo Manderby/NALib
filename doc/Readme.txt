@@ -513,12 +513,8 @@ permit persons to whom the Software is furnished to do so, subject to
 the following conditions:
 
 The above copyright notice and this permission notice shall be included
-in all copies or substantial portions of the source-code.
-
-In case the source-code of this software is inaccessible to the end-user,
-the above copyright notice and this permission notice shall be included
-in any source-code which is dependent on this software and is accessible
-to the end-user.
+in all copies or substantial portions of the source-code inherently
+dependent on this software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

@@ -43,6 +43,7 @@ NA_HDEF void naFillQuadTreeNodeChildData(const void* childdata[4], NAQuadTreeNod
 
 // Creates an inner node.
 NA_HDEF NAQuadTreeNode* naAllocQuadTreeNode(NAInt childexponent, NAInt segmentinparent, NAQuadTreeNode* parentnode, NAPos origin, NAQuadTreeNode* dummynode, NAQuadTreeNodeAllocator allocator){
+  NAInt childsize;
   NAQuadTreeNode* node = naAlloc(NAQuadTreeNode);
   node->childexponent = childexponent;
   node->segmentinparent = segmentinparent;
@@ -51,7 +52,7 @@ NA_HDEF NAQuadTreeNode* naAllocQuadTreeNode(NAInt childexponent, NAInt segmentin
   node->child[1] = dummynode;
   node->child[2] = dummynode;
   node->child[3] = dummynode;
-  NAInt childsize = 1 << node->childexponent;
+  childsize = 1 << node->childexponent;
   node->childorigin[0] = naMakePos(origin.x            , origin.y);
   node->childorigin[1] = naMakePos(origin.x + childsize, origin.y);
   node->childorigin[2] = naMakePos(origin.x            , origin.y + childsize);
@@ -720,6 +721,7 @@ NA_DEF NABool naLocateQuadTreeCoord(NAQuadTreeIterator* iter, NAPos coord){
 
 NA_DEF NABool naLocateQuadTreeSteps(NAQuadTreeIterator* iter, NAInt stepx, NAInt stepy){
   NAInt minleafexponent;
+  NAInt minleafsize;
   NAPos neworigin;
   const NAQuadTree* tree = naGetPtrConst(&(iter->tree));
   #ifndef NDEBUG
@@ -728,7 +730,7 @@ NA_DEF NABool naLocateQuadTreeSteps(NAQuadTreeIterator* iter, NAInt stepx, NAInt
   #endif
 
   minleafexponent = naGetQuadTreeMinLeafExponent(tree);
-  NAInt minleafsize = 1 << minleafexponent;
+  minleafsize = 1 << minleafexponent;
   neworigin = iter->leaforigin;
   neworigin.x += stepx * minleafsize;
   neworigin.y += stepy * minleafsize;
@@ -851,6 +853,7 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
   NAQuadTreeIterator newiter;
   NAQuadTreeIterator iter;
   NAInt minleafexponent;
+  NAInt minleafsize;
   NAPosi shiftint;
   
   #ifndef NDEBUG
@@ -865,7 +868,7 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
   // Create four rects which denote the rects in the new shifted tree which
   // are aligned to a leaflength.
   minleafexponent = naGetQuadTreeMinLeafExponent(duptree);
-  NAInt minleafsize = 1 << minleafexponent;
+  minleafsize = 1 << minleafexponent;
   shiftint = REMOVEPosToPosi(shift);
   x1bound = ((shiftint.x % minleafsize) + minleafsize ) % minleafsize;
   y1bound = ((shiftint.y % minleafsize) + minleafsize ) % minleafsize;
@@ -986,12 +989,8 @@ NA_DEF void naSetQuadTreeInRect(NAQuadTree* tree, NARect rect, NAQuadTreeDataSet
 // the following conditions:
 //
 // The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the source-code.
-//
-// In case the source-code of this software is inaccessible to the end-user,
-// the above copyright notice and this permission notice shall be included
-// in any source-code which is dependent on this software and is accessible
-// to the end-user.
+// in all copies or substantial portions of the source-code inherently
+// dependent on this software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

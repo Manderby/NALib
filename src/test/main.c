@@ -29,8 +29,8 @@ int main(void){
   
   naStartRuntime();
 
-  NAString* test = naNewString();
-  naDelete(test);
+//  NAString* test = naNewString();
+//  naDelete(test);
 
   naMakeDateTimeNow();
   printf("%d\n", NA_TYPE_NATIVE_CHAR_BITS);
