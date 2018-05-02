@@ -129,7 +129,6 @@
 		90BC6EC6209855DE00CBD0FD /* NADebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NADebug.h; sourceTree = "<group>"; };
 		90BC6EC7209856D500CBD0FD /* NANumericsII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NANumericsII.h; sourceTree = "<group>"; };
 		90BC6EC8209857DE00CBD0FD /* NAChar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAChar.h; sourceTree = "<group>"; };
-		90BC6EC92098585000CBD0FD /* NAHelpers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAHelpers.h; sourceTree = "<group>"; };
 		90BC6ECA2098A38D00CBD0FD /* int64test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = int64test.c; sourceTree = "<group>"; };
 		90FEB972205F1F830002BF27 /* NAFloatingPointII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAFloatingPointII.h; sourceTree = "<group>"; };
 		90FEB973205F1F8B0002BF27 /* NAFloatingPoint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAFloatingPoint.h; sourceTree = "<group>"; };
@@ -275,7 +274,6 @@
 				90BC6EC7209856D500CBD0FD /* NANumericsII.h */,
 				90BC6EC6209855DE00CBD0FD /* NADebug.h */,
 				90BC6EC8209857DE00CBD0FD /* NAChar.h */,
-				90BC6EC92098585000CBD0FD /* NAHelpers.h */,
 			);
 			path = NABase;
 			sourceTree = "<group>";
@@ -398,10 +396,6 @@
 		9087F70F1E2CBE2400867CA7 /* Optimize */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					i386,
-				);
 				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -487,10 +481,6 @@
 		B9B2EA0B171683C200943D91 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					i386,
-				);
 				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -529,10 +519,6 @@
 		B9B2EA0C171683C200943D91 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					i386,
-				);
 				CLANG_WARN_ASSIGN_ENUM = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;

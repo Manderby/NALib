@@ -4,7 +4,7 @@
 
 
 // Do not include this file directly! It will automatically be included when
-// including "NASystem.h"
+// including "NABase.h"
 
 
 #if !defined NA_TYPE_INT64
@@ -13,6 +13,7 @@
     #error "The NAInt64 emulation is not provided for the current signed integer encoding"
 
   #else
+
 
 
     NA_IDEF NAInt64 naMakeInt64WithLo(int32 lo){
@@ -167,6 +168,13 @@
     }
 
 
+
+    #undef naMakeUInt64WithLiteralLo
+    #if NA_SYSTEM_ENDIANNESS == NA_ENDIANNESS_BIG
+      #define naMakeUInt64WithLiteralLo(lo)  {0,(lo)}
+    #else
+      #define naMakeUInt64WithLiteralLo(lo)  {(lo),0}
+    #endif
 
     NA_IDEF NAUInt64 naMakeUInt64(uint32 hi, uint32 lo){
       NAUInt64 retint;

@@ -8,7 +8,8 @@
 
 
 #if defined NA_TYPE_INT64
-
+  // If there is a native int64 type available, use it.
+  
   #define naMakeUInt64WithLiteralLo(lo) (lo ## uLL)
 
   #define naMakeInt64WithLo(lo)         ((int64)(lo))
@@ -80,7 +81,8 @@
   #define naCastUInt64ToDouble(i)       ((double)(i))
 
 #else
-
+  // if no native int64 type is available, we have to emulate it.
+  
   #if NA_SIGNED_INTEGER_ENCODING != NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
   
     #error "The NAInt64 emulation is not provided for the current signed integer encoding"
@@ -90,26 +92,12 @@
     typedef struct NAInt64  NAInt64;
     typedef struct NAUInt64 NAUInt64;
     #if NA_SYSTEM_ENDIANNESS == NA_ENDIANNESS_BIG
-      struct NAInt64{
-        int32  hi;
-        uint32 lo;
-      };
-      struct NAUInt64{
-        uint32 hi;
-        uint32 lo;
-      };
-      #define naMakeUInt64WithLiteralLo(lo)  {0,(lo)}
+      struct NAInt64 { int32 hi;  uint32 lo; };
+      struct NAUInt64{ uint32 hi; uint32 lo; };
     #else
-      struct NAInt64{
-        uint32 lo;
-        int32  hi;
-      };
-      struct NAUInt64{
-        uint32 lo;
-        uint32 hi;
-      };
-      #define naMakeUInt64WithLiteralLo(lo)  {(lo),0}
-  #endif
+      struct NAInt64 { uint32 lo; int32  hi; };
+      struct NAUInt64{ uint32 lo; uint32 hi; };
+    #endif
 
     NA_IAPI NAInt64  naMakeInt64WithLo(int32 lo);
     NA_IAPI NAInt64  naMakeInt64WithDouble(double d);
@@ -145,6 +133,7 @@
     NA_IAPI int32    naCastInt64ToInt32 (NAInt64 i);
     NA_IAPI double   naCastInt64ToDouble(NAInt64 i);
 
+    #define naMakeUInt64WithLiteralLo(lo)
     NA_IAPI NAUInt64 naMakeUInt64(uint32 hi, uint32 lo);
     NA_IAPI NAUInt64 naMakeUInt64WithLo(uint32 lo);
     NA_IAPI NAUInt64 naMakeUInt64WithDouble(double d);

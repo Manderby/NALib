@@ -8,13 +8,9 @@
 
 
 
-#define NA_VALUE8_BITS   (8)
-#define NA_VALUE16_BITS  (16)
-#define NA_VALUE32_BITS  (32)
-#define NA_VALUE64_BITS  (64)
-#define NA_VALUE8_SIGN_MASK       ((uint8) (1u << (NA_VALUE8_BITS   - 1u)))
-#define NA_VALUE16_SIGN_MASK      ((uint16)(1u << (NA_VALUE16_BITS  - 1u)))
-#define NA_VALUE32_SIGN_MASK      ((uint32)(1u << (NA_VALUE32_BITS  - 1u)))
+#define NA_VALUE8_SIGN_MASK       ((uint8) (1u << (NA_TYPE8_BITS   - 1u)))
+#define NA_VALUE16_SIGN_MASK      ((uint16)(1u << (NA_TYPE16_BITS  - 1u)))
+#define NA_VALUE32_SIGN_MASK      ((uint32)(1u << (NA_TYPE32_BITS  - 1u)))
 #define NA_VALUE64_SIGN_MASK_HI   NA_VALUE32_SIGN_MASK
 #define NA_VALUE64_SIGN_MASK_LO   0x0
 #define NA_VALUE64_SIGN_MASK      naMakeUInt64(NA_VALUE64_SIGN_MASK_HI, NA_VALUE64_SIGN_MASK_LO)
@@ -22,12 +18,13 @@
 
 
 // Returns either 0 or -1 in two complement form but stored as an uint
-// depending on the sign bit.
+// depending on whether the parameter is positive or negative.
 NA_IAPI uint8  naGetSignum8 (int8  i);
 NA_IAPI uint16 naGetSignum16(int16 i);
 NA_IAPI uint32 naGetSignum32(int32 i);
 NA_IAPI uint64 naGetSignum64(int64 i);
 
+// Returns either 1 or -1. The value 0 returns 1. Never returns 0.
 NA_IAPI int8   naSigni8 (int8  x);
 NA_IAPI int16  naSigni16(int16 x);
 NA_IAPI int32  naSigni32(int32 x);
@@ -44,11 +41,11 @@ NA_IAPI void naUnsetSignBit16(void* i);
 NA_IAPI void naUnsetSignBit32(void* i);
 NA_IAPI void naUnsetSignBit64(void* i);
 
-
-NA_IAPI int8          naAbsi8 (int8   x);
-NA_IAPI int16         naAbsi16(int16  x);
-NA_IAPI int32         naAbsi32(int32  x);
-NA_IAPI int64         naAbsi64(int64  x);
+// Makes the value positive.
+NA_IAPI int8  naAbsi8 (int8   x);
+NA_IAPI int16 naAbsi16(int16  x);
+NA_IAPI int32 naAbsi32(int32  x);
+NA_IAPI int64 naAbsi64(int64  x);
 
 
 

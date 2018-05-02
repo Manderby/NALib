@@ -112,7 +112,7 @@ NA_IDEF double naMakeDoubleSubnormal(int64 signedsignificand){
 
 
 
-NA_IAPI int32 getDoubleExponent(double d){
+NA_IAPI int32 naGetDoubleExponent(double d){
   int64 dbits = *((int64*)&d);
   dbits = naAndInt64(dbits, NA_IEEE754_DOUBLE_EXPONENT_MASK);
   dbits = naShrInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_BITS);
@@ -124,8 +124,8 @@ NA_IAPI int64 naGetDoubleInteger(double d){
   int64 dbits = *((int64*)&d);
   dbits = naAndInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
   dbits = naOrInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_NORM);
-  exponent = getDoubleExponent(d);
-  dbits = naShrInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_BITS - getDoubleExponent(d));
+  exponent = naGetDoubleExponent(d);
+  dbits = naShrInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_BITS - naGetDoubleExponent(d));
   if(d<0){dbits = naNegInt64(dbits);}
   return dbits;
 }

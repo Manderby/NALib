@@ -15,16 +15,26 @@
 #define NA_OS_COUNT     3
 
 
+
+// The various native type sizes
+#define NA_TYPE8_BITS   (8)
+#define NA_TYPE16_BITS  (16)
+#define NA_TYPE32_BITS  (32)
+#define NA_TYPE64_BITS  (64)
+
+
+
 // The various Endianness-Settings:
 #define NA_ENDIANNESS_UNKNOWN 0 // Behaves the same as native.
 #define NA_ENDIANNESS_LITTLE  1
 #define NA_ENDIANNESS_BIG     2
 #define NA_ENDIANNESS_NETWORK 2 // Same as BIG
-#define NA_ENDIANNESS_NATIVE  3 //
+#define NA_ENDIANNESS_NATIVE  3
 #define NA_ENDIANNESS_HOST    3 // Same as NATIVE
 #define NA_ENDIANNESS_COUNT   4
 // Note that when expecting the endianness as an argument, it will have the
 // type NAInt. Unfortunately, these macros can not be defined as enums.
+
 
 
 // The various signed integer encodings:
@@ -35,7 +45,7 @@
 
 // Figuring out what system this is. The following macros will be defined:
 //
-// NA_OS                One of the system macros above
+// NA_OS                    One of the system macros above
 // NA_SYSTEM_ENDIANNESS     One of the endianness macros above
 // NA_SYSTEM_ADDRESS_BITS   32 or 64. Denoting the number of bits per address.
 //
@@ -54,9 +64,9 @@
   #define NA_OS NA_OS_WINDOWS
   #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_LITTLE
   #if defined _WIN64
-    #define NA_SYSTEM_ADDRESS_BITS 64
+    #define NA_SYSTEM_ADDRESS_BITS NA_TYPE64_BITS
   #else
-    #define NA_SYSTEM_ADDRESS_BITS 32
+    #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
   #endif
 
 #elif defined __APPLE__ && __MACH__
@@ -67,9 +77,9 @@
     #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_BIG
   #endif
   #if defined __LP64__
-    #define NA_SYSTEM_ADDRESS_BITS 64
+    #define NA_SYSTEM_ADDRESS_BITS NA_TYPE64_BITS
   #else
-    #define NA_SYSTEM_ADDRESS_BITS 32
+    #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
   #endif
   
 #else
@@ -79,7 +89,7 @@
 
 #ifndef NA_SYSTEM_ADDRESS_BITS
   #warning "Address bits not detected, trying 32."
-  #define NA_SYSTEM_ADDRESS_BITS 32
+  #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
 #endif
 
 #ifndef NA_SYSTEM_ENDIANNESS

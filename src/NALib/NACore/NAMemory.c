@@ -269,8 +269,8 @@ NA_HIDEF void naAttachPoolPartAfterCurPoolPart(NACoreTypeInfo* coretypeinfo, NAC
 }
 
 
-// This function gets called when no pool has any more space.
-// A new pool is created and added to the pool list at the current position.
+// This function gets called when no part has any more space.
+// A new part is created and added to the list at the current position.
 NA_HIDEF void naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
   NACorePoolPart* part;
       
@@ -284,7 +284,7 @@ NA_HIDEF void naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
       naError("naEnhanceCorePool", "pool part badly aligned");
   #endif
   
-  // We initialize the basic fields of corepool.
+  // We initialize the basic fields of part.
   part->coretypeinfo = coretypeinfo;
   part->maxcount = ((na_runtime->partsize - sizeof(NACorePoolPart)) / coretypeinfo->typesize);
   part->usedcount = 0;
@@ -383,11 +383,11 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
   coretypeinfo->curpart->usedcount++;
   
   #ifndef NDEBUG
-    #if defined NA_SYSTEM_SIZEINT_TOO_SMALL
+    #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
       naError("naNewStruct", "No native integer type to successfully run the runtime system.");
     #else
       if(coretypeinfo->curpart != (NACorePoolPart*)((NASizeUInt)pointer & na_runtime->partsizemask))
-        naError("naNewStruct", "Pointer seems to be outside of pool");
+        naError("naNewStruct", "Pointer seems to be outside of part");
     #endif
   #endif
     
@@ -420,10 +420,10 @@ NA_HIDEF void naEjectCorePoolPartObject(NACorePoolPart* part, void* pointer){
     naAttachPoolPartAfterCurPoolPart(part->coretypeinfo, part);
   }
 
-  // We reduce the number of used spaces in this pool. 
+  // We reduce the number of used spaces in this part. 
   part->usedcount--;
       
-  // If no more spaces are in use, we can shrink that core pool away.
+  // If no more spaces are in use, we can shrink that part away.
   if(!part->usedcount){
     if(part->nextpart == part){
       #if NA_MEMORY_POOL_AGGRESSIVE_CLEANUP == 1
@@ -440,7 +440,7 @@ NA_HIDEF void naEjectCorePoolPartObject(NACorePoolPart* part, void* pointer){
       if(part->coretypeinfo->curpart == part){
         part->coretypeinfo->curpart = part->nextpart;
       }
-      // We unlink the pool from the list.
+      // We unlink the part from the list.
       part->prevpart->nextpart = part->nextpart;
       part->nextpart->prevpart = part->prevpart;
       // And delete its memory.
@@ -458,7 +458,7 @@ NA_DEF void naDelete(void* pointer){
       naCrash("naDelete", "Runtime not running. Use naStartRuntime()");
   #endif
 
-  #if defined NA_SYSTEM_SIZEINT_TOO_SMALL
+  #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
     NA_UNUSED(part);
     NA_UNUSED(pointer);
     return;
@@ -493,7 +493,7 @@ NA_DEF void* naRetain(void* pointer){
 
     // Find the part entry at the beginning of the part by AND'ing the
     // address with the partsizemask
-    #if defined NA_SYSTEM_SIZEINT_TOO_SMALL
+    #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
       naError("naRetain", "No native integer type to successfully run the runtime system.");
       NA_UNUSED(part);
     #else
@@ -521,9 +521,9 @@ NA_DEF void naRelease(void* pointer){
       naCrash("naRelease", "Runtime not running. Use naStartRuntime()");
   #endif
 
-  // Find the corepool entry at the beginning of the pool by AND'ing the
+  // Find the corepool entry at the beginning of the part by AND'ing the
   // address with the partsizemask
-  #if defined NA_SYSTEM_SIZEINT_TOO_SMALL
+  #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
     NA_UNUSED(part);
     NA_UNUSED(pointer);
     NA_UNUSED(refcount);
@@ -559,7 +559,7 @@ NA_DEF void naRelease(void* pointer){
 // Note that the runtime system in NALib currently is rather small. But it may
 // serve a greater purpose in a later version.
 NA_DEF void naStartRuntime(){
-  #if defined NA_SYSTEM_SIZEINT_TOO_SMALL
+  #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
     #ifndef NDEBUG
       naError("naStartRuntime", "Unable to start runtime on system where no native int is able to store an address.");
     #endif

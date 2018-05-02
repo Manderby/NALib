@@ -174,6 +174,36 @@ void testComparison(){
 
 
 
+void timeComparison(){
+  double t;
+  int i;
+  
+  t = getTime();
+  for(i=0; i<TESTSIZE; i++){naEqualInt64(randInt64(), randInt64());}
+  t = printAndSwapTime("naEqualInt64", t);
+  for(i=0; i<TESTSIZE; i++){naGreaterInt64(randInt64(), randInt64());}
+  t = printAndSwapTime("naGreaterInt64", t);
+  for(i=0; i<TESTSIZE; i++){naGreaterEqualInt64(randInt64(), randInt64());}
+  t = printAndSwapTime("naGreaterEqualInt64", t);
+  for(i=0; i<TESTSIZE; i++){naSmallerInt64(randInt64(), randInt64());}
+  t = printAndSwapTime("naSmallerInt64", t);
+  for(i=0; i<TESTSIZE; i++){naSmallerEqualInt64(randInt64(), randInt64());}
+  t = printAndSwapTime("naSmallerEqualInt64", t);
+
+  for(i=0; i<TESTSIZE; i++){naEqualUInt64(randUInt64(), randUInt64());}
+  t = printAndSwapTime("naEqualUInt64", t);
+  for(i=0; i<TESTSIZE; i++){naGreaterUInt64(randUInt64(), randUInt64());}
+  t = printAndSwapTime("naGreaterUInt64", t);
+  for(i=0; i<TESTSIZE; i++){naGreaterEqualUInt64(randUInt64(), randUInt64());}
+  t = printAndSwapTime("naGreaterEqualUInt64", t);
+  for(i=0; i<TESTSIZE; i++){naSmallerUInt64(randUInt64(), randUInt64());}
+  t = printAndSwapTime("naSmallerUInt64", t);
+  for(i=0; i<TESTSIZE; i++){naSmallerEqualUInt64(randUInt64(), randUInt64());}
+  t = printAndSwapTime("naSmallerEqualUInt64", t);
+}
+
+
+
 void testArithmetic(){
   int64 i01 = naMakeInt64WithDouble(-123456789012345.);
   int64 i02 = naMakeInt64WithDouble(987654321987.);
@@ -269,6 +299,7 @@ void timeArithmetic(){
   for(i=0; i<TESTSIZE; i++){naModInt64(randInt64(), randInt64());}
   t = printAndSwapTime("naModInt64", t);
 
+  ui64 = NA_ZERO_64u;
   for(i=0; i<TESTSIZE; i++){naIncUInt64(ui64);}
   t = printAndSwapTime("naIncUInt64", t);
   for(i=0; i<TESTSIZE; i++){naDecUInt64(ui64);}
@@ -302,7 +333,8 @@ double getTime(){
 }
 double printAndSwapTime(const char* title, double starttime){
   double t2 = getTime();
-  printf("%s took %f s\n", title, t2 - starttime);
+//  printf("%s took %f s\n", title, t2 - starttime);
+  printf("%s\t\t%f s\n", title, t2 - starttime);
   return t2;
 }
 void printInt64(int64 i){
@@ -346,13 +378,20 @@ void testEqualBool(NABool b, NABool goalb){
 
 
 int main(void){
+  #if !defined NA_TYPE_INT64
+    printf("Emulation\n");
+  #else
+    printf("Native\n");
+  #endif
+
 //  testMaking();
 //  testBinary();
 //  testComparison();
 //  testArithmetic();
   
-//  timeMaking();
-//  timeBinary();
+  timeMaking();
+  timeBinary();
+  timeComparison();
   timeArithmetic();
   
   return 0;

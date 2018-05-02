@@ -29,23 +29,23 @@
 // max exponents do not match the ones of the standard. Here are the findings
 // for those which are interested:
 //
-// - The reason for FLT_MIN_EXP being -125 instead of -126, FLT_MAX_EXP being
-//   128 instead of 127, DBL_MIN_EXP being -1021 instead of -1022, and
-//   DBL_MAX_EXP being 1024 instead of 1023 is because these macros are used
-//   for the computation of the highest and lowest possible normalized numbers
-//   using this formula:
-//   max = 2^(exp_max+1) - 2^(exp_max+1 - sig_bitcount)
-//   In other words, for example for a floating point representation with
-//   maximum exponent 12 and 4 bits of significand this formula looks like
-//   this when written in binary integer form:
-//   max = 1000000000000 - 0000100000000
-//   By subtracting 1 from each term, we get
-//   max = 0111111111111 - 0000011111111
-//   hence, max = 0111100000000 which is exactly what the maximum number with
-//   4 digits of significand would look like when expressed as an integer. As
-//   in that formula, the expression (exp_max+1) is used twice, the guys from
-//   the C standard thought: Why not store it directly with 1 more? And thats
-//   basically the whole story.
+// The reason for FLT_MIN_EXP being -125 instead of -126, FLT_MAX_EXP being
+// 128 instead of 127, DBL_MIN_EXP being -1021 instead of -1022, and
+// DBL_MAX_EXP being 1024 instead of 1023 is because these macros are used
+// for the computation of the highest and lowest possible normalized numbers
+// using this formula:
+// max = 2^(exp_max+1) - 2^(exp_max+1 - sig_bitcount)
+// In other words, for example for a floating point representation with
+// maximum exponent 12 and 4 bits of significand this formula looks like
+// this when written in binary integer form:
+// max = 1000000000000 - 0000100000000
+// By subtracting 1 from each term, we get
+// max = 0111111111111 - 0000011111111
+// hence, max = 0111100000000 which is exactly what the maximum number with
+// 4 digits of significand would look like when expressed as an integer. As
+// in that formula, the expression (exp_max+1) is used twice, the guys from
+// the C standard thought: Why not store it directly with 1 more? And thats
+// basically the whole story.
 //
 // Now, with that out of the way, the IEEE-754 standard ranges of the exponents
 // are indeed [-126, 127] and [-1022, 1023]. The standard defines a bias, to
@@ -93,7 +93,7 @@
 // EXPONENT_MASK         | 0x7f800000  | 0x7ff0000000000000
 // SIGN_MASK             | 0x80000000  | 0x8000000000000000
 
-#define NA_IEEE754_SINGLE_BITS                   NA_VALUE32_BITS
+#define NA_IEEE754_SINGLE_BITS                   NA_TYPE32_BITS
 #define NA_IEEE754_SINGLE_SIGNIFICAND_BITS       (FLT_MANT_DIG - 1)
 #define NA_IEEE754_SINGLE_SIGNIFICAND_NORM       (1 << NA_IEEE754_SINGLE_SIGNIFICAND_BITS)
 #define NA_IEEE754_SINGLE_SIGNIFICAND_MASK       (NA_IEEE754_SINGLE_SIGNIFICAND_NORM - 1)
@@ -104,9 +104,9 @@
 #define NA_IEEE754_SINGLE_EXPONENT_MASK          (((1 << (NA_IEEE754_SINGLE_BITS - 1)) - 1) & ~NA_IEEE754_SINGLE_SIGNIFICAND_MASK)
 #define NA_IEEE754_SINGLE_SIGN_MASK              (1 << (NA_IEEE754_SINGLE_BITS  - 1))
 
-#define NA_IEEE754_DOUBLE_BITS                   NA_VALUE64_BITS                                                                                              
+#define NA_IEEE754_DOUBLE_BITS                   NA_TYPE64_BITS                                                                                              
 #define NA_IEEE754_DOUBLE_SIGNIFICAND_BITS       (DBL_MANT_DIG - 1)
-#define NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_HI    (1u << (NA_IEEE754_DOUBLE_SIGNIFICAND_BITS - NA_VALUE32_BITS))
+#define NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_HI    (1u << (NA_IEEE754_DOUBLE_SIGNIFICAND_BITS - NA_TYPE32_BITS))
 #define NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_LO    0x0u
 #define NA_IEEE754_DOUBLE_SIGNIFICAND_NORM       naCastUInt64ToInt64(naMakeUInt64(NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_HI, NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_LO))
 #define NA_IEEE754_DOUBLE_SIGNIFICAND_MASK_HI    (NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_HI - 1)
@@ -116,10 +116,10 @@
 #define NA_IEEE754_DOUBLE_EXPONENT_BIAS          ((1 << (NA_IEEE754_DOUBLE_EXPONENT_BITS - 1)) - 1)
 #define NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL     (-NA_IEEE754_DOUBLE_EXPONENT_BIAS)
 #define NA_IEEE754_DOUBLE_EXPONENT_SPECIAL       ((1 << NA_IEEE754_DOUBLE_EXPONENT_BITS) - NA_IEEE754_DOUBLE_EXPONENT_BIAS - 1)
-#define NA_IEEE754_DOUBLE_EXPONENT_MASK_HI       (((1u << (NA_IEEE754_DOUBLE_BITS - NA_VALUE32_BITS - 1)) - 1) & ~NA_IEEE754_DOUBLE_SIGNIFICAND_MASK_HI)
+#define NA_IEEE754_DOUBLE_EXPONENT_MASK_HI       (((1u << (NA_IEEE754_DOUBLE_BITS - NA_TYPE32_BITS - 1)) - 1) & ~NA_IEEE754_DOUBLE_SIGNIFICAND_MASK_HI)
 #define NA_IEEE754_DOUBLE_EXPONENT_MASK_LO       0x0u
 #define NA_IEEE754_DOUBLE_EXPONENT_MASK          naCastUInt64ToInt64(naMakeUInt64(NA_IEEE754_DOUBLE_EXPONENT_MASK_HI, NA_IEEE754_DOUBLE_EXPONENT_MASK_LO))
-#define NA_IEEE754_DOUBLE_SIGN_MASK_HI           (1u << (NA_IEEE754_DOUBLE_BITS - NA_VALUE32_BITS - 1))
+#define NA_IEEE754_DOUBLE_SIGN_MASK_HI           (1u << (NA_IEEE754_DOUBLE_BITS - NA_TYPE32_BITS - 1))
 #define NA_IEEE754_DOUBLE_SIGN_MASK_LO           0x0u
 #define NA_IEEE754_DOUBLE_SIGN_MASK              naCastUInt64ToInt64(naMakeUInt64(NA_IEEE754_DOUBLE_SIGN_MASK_HI, NA_IEEE754_DOUBLE_SIGN_MASK_LO))
 
@@ -132,7 +132,7 @@ NA_IAPI double naMakeDouble(int64 signedsignificand, int32 signedexponent);
 NA_IAPI double naMakeDoubleWithExponent(int32 signedexponent);
 NA_IAPI double naMakeDoubleSubnormal(int64 signedsignificand);
 
-NA_IAPI int32 getDoubleExponent(double d);
+NA_IAPI int32 naGetDoubleExponent(double d);
 NA_IAPI int64 naGetDoubleInteger(double d);
 
 

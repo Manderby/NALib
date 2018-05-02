@@ -14,10 +14,7 @@
 //
 // __cplusplus    Compiler is a C++ compiler
 // __OBJC__       Compiler is an Objective-C Compiler
-
-
-
-
+//
 // On the other hand, NALib detects, what c or c++ standard is used. It might
 // be one or multiple of the following:
 //

@@ -15,19 +15,21 @@ correct, complete or final.
 Version 21 (first published 2018-xxx-xx)
 ==========
 
+Highlights:
 - Enhanced runtime system with Reference counting for naNew, naRetain and
   naRelease. Revisited whole NARuntime. Now no code sanity warnings.
-- NAQuadTree is now storing coordinates in doubles.
+- NAQuadTree is now storing coordinates in doubles and leaf sizes as exponents.
 - Renaming of NASystem to NABase. Split-up of the file into a folder of files.
   Oldest file in the code collection grew constantly and desperately needed
   some structure.
 - Huge refactoring concerning integer values. NAInt is not necessarily the same
   size as an address anymore.
-- Created int 64 emulation. It is possible now to compile the code without
-  the long long datatype.
-- Added Binary operators for more control over integer and floating point
-  values.
+- Created int64 emulation. It is possible now to compile and run the code
+  without the long long datatype.
+- Added Binary macros and functions for more control over floating point and
+  integer values.
 
+Other things:
 - The Runtime system now always registers runtime types, not only in debug.
 - Added NA_MEMORY_POOL_AGGRESSIVE_CLEANUP macro in NAConfiguration.h
 - Removed NA_RUNTIME_USES_MEMORY_POOLS in NAConfiguration.h. Pools rule!
@@ -58,7 +60,7 @@ Version 20 (first published 2018-Jan-13):
 This changelog file starts with NALib version 20.
 
 A full changelog of version 20 and earlier versions are described in other
-files. Here, only a recapitulation of the most important things of verisoins
+files. Here, only a recapitulation of the most important things of versions
 10 to 20 is described:
 
 In between versions 10 and 20, lots of refinements have been made, some APIs
