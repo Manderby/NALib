@@ -246,18 +246,32 @@
     NA_HIDEF void naComputeUInt64Division(NAUInt64 a, NAUInt64 b, NAUInt64* div, NAUInt64* rem){
       NAUInt64 tmpb;
       int shiftcount;
+      NAUInt64 highestbita;
+      NAUInt64 highestbitb;
       *div = NA_ZERO_64u;
       *rem = a;
+      if(naEqualUInt64(b, NA_ZERO_64u)){return;}
+      
+      // search for the highest bit of b.
+      highestbita = naMakeUInt64(NA_VALUE32_SIGN_MASK, 0x0);
+      while(!naEqualUInt64(naAndUInt64(a, highestbita), highestbita)){
+        highestbita = naShrUInt64(highestbita, 1);
+      }
+      highestbitb = naMakeUInt64(NA_VALUE32_SIGN_MASK, 0x0);
+      while(!naEqualUInt64(naAndUInt64(b, highestbitb), highestbitb)){
+        highestbitb = naShrUInt64(highestbitb, 1);
+      }
+      
       tmpb = b;
       shiftcount = 0;
       // Make the dividend big enough
-      while(naGreaterEqualUInt64(*rem, tmpb)){
+      while(!naEqualUInt64(highestbita, highestbitb)){
+        if(naEqualUInt64(tmpb, NA_ZERO_64u)){return;}
         tmpb = naShlUInt64(tmpb, 1);
+        highestbitb = naShlUInt64(highestbitb, 1);
         shiftcount++;
       }
-      // shift right once.
-      tmpb = naShrUInt64(tmpb, 1);
-      shiftcount--;
+      
       while(shiftcount >= 0){
         *div = naShlUInt64(*div, 1);
         if(naGreaterEqualUInt64(*rem, tmpb)){
