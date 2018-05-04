@@ -667,26 +667,43 @@ NA_IDEF NSRect naMakeNSRectWithRect(NARect narect){
 NA_IDEF NAPosi naMakePosiWithAlignment(NAPosi origin, NARecti alignrect){
   NAPosi neworigin;
   #ifndef NDEBUG
-    if(naIsRectiEmptySlow(alignrect)){
+    if(naIsRectiEmptySlow(alignrect))
       naCrash("naMakePosiWithAlignment", "alignment rect is empty.");
-      return naMakePosi(0, 0);
-    }
   #endif
-  neworigin.x = naAlignValue(origin.x, alignrect.pos.x, alignrect.size.width);
-  neworigin.y = naAlignValue(origin.y, alignrect.pos.y, alignrect.size.height);
+  neworigin.x = naAlignValuei(origin.x, alignrect.pos.x, alignrect.size.width);
+  neworigin.y = naAlignValuei(origin.y, alignrect.pos.y, alignrect.size.height);
+  return neworigin;
+}
+NA_IDEF NAPos naMakePosWithAlignment(NAPos origin, NARect alignrect){
+  NAPos neworigin;
+  #ifndef NDEBUG
+    if(naIsRectEmpty(alignrect))
+      naCrash("naMakePosWithAlignment", "alignment rect is empty.");
+  #endif
+  neworigin.x = naAlignValued(origin.x, alignrect.pos.x, alignrect.size.width);
+  neworigin.y = naAlignValued(origin.y, alignrect.pos.y, alignrect.size.height);
   return neworigin;
 }
 NA_IDEF NAVertexi naMakeVertexiWithAlignment(NAVertexi origin, NABoxi alignbox){
   NAVertexi neworigin;
   #ifndef NDEBUG
-    if(naIsBoxiEmptySlow(alignbox)){
+    if(naIsBoxiEmptySlow(alignbox))
       naCrash("naMakeVertexiWithAlignment", "alignment box is empty.");
-      return naMakeVertexi(0, 0, 0);
-    }
   #endif
-  neworigin.x = naAlignValue(origin.x, alignbox.vertex.x, alignbox.volume.width);
-  neworigin.y = naAlignValue(origin.y, alignbox.vertex.y, alignbox.volume.height);
-  neworigin.z = naAlignValue(origin.z, alignbox.vertex.z, alignbox.volume.depth);
+  neworigin.x = naAlignValuei(origin.x, alignbox.vertex.x, alignbox.volume.width);
+  neworigin.y = naAlignValuei(origin.y, alignbox.vertex.y, alignbox.volume.height);
+  neworigin.z = naAlignValuei(origin.z, alignbox.vertex.z, alignbox.volume.depth);
+  return neworigin;
+}
+NA_IDEF NAVertex naMakeVertexdWithAlignment(NAVertex origin, NABox alignbox){
+  NAVertex neworigin;
+  #ifndef NDEBUG
+    if(naIsBoxEmpty(alignbox))
+      naCrash("naMakeVertexdWithAlignment", "alignment box is empty.");
+  #endif
+  neworigin.x = naAlignValued(origin.x, alignbox.vertex.x, alignbox.volume.width);
+  neworigin.y = naAlignValued(origin.y, alignbox.vertex.y, alignbox.volume.height);
+  neworigin.z = naAlignValued(origin.z, alignbox.vertex.z, alignbox.volume.depth);
   return neworigin;
 }
 
@@ -2282,6 +2299,20 @@ NA_IDEF NABool naContainsRectPos(NARect outerrect, NAPos pos){
         || (pos.x > naGetRectEndX(outerrect))
         || (pos.y < outerrect.pos.y)
         || (pos.y > naGetRectEndY(outerrect)));
+}
+NA_IDEF NABool naContainsRectPosE(NARect outerrect, NAPos pos){
+  #ifndef NDEBUG
+    if(!naIsPosValid(pos))
+      naError("naContainsRectPos", "pos is invalid.");
+    if(naIsRectEmpty(outerrect))
+      naError("naContainsRectPos", "Inside test not valid for empty rects.");
+    if(!naIsRectValid(outerrect))
+      naError("naContainsRectPos", "outerrect is invalid.");
+  #endif
+  return !((pos.x < outerrect.pos.x)
+        || (pos.x >= naGetRectEndX(outerrect))
+        || (pos.y < outerrect.pos.y)
+        || (pos.y >= naGetRectEndY(outerrect)));
 }
 NA_IDEF NABool naContainsRectiPos(NARecti outerrect, NAPosi pos){
   #ifndef NDEBUG

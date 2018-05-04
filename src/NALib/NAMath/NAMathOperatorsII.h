@@ -291,12 +291,10 @@ NA_IDEF double naRound(double x){
 
 NA_IAPI float naModf(float x, float mod){
   float count = naFloorf(x / mod);
-  if(x<0){count += 1.f;}
   return x - count * mod;
 }
 NA_IAPI double naMod(double x, double mod){
   double count = naFloor(x / mod);
-  if(x<0){count += 1.;}
   return x - count * mod;
 }
 

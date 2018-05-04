@@ -22,7 +22,9 @@ void testEqualBool(NABool b, NABool goalb);
 
 
 
-#define TESTSIZE 100000
+#define TESTSIZE 10000000
+
+
 
 
 
@@ -42,6 +44,45 @@ void testMaking(){
 }
 
 
+//typedef int64(*naInt64_Int64_Int64Func)(int64 a, int64 b);
+//typedef int64(*naInt64_Double)(double b);
+//typedef int32(*naInt32_Double)(double b);
+//
+//void timeInt64_Int64_Int64Func(naInt64_Int64_Int64Func func, double* t){
+//  int64 i64_1 = NA_ZERO_64;
+//  int64 i64_2 = NA_ZERO_64;
+//  int i;
+//  for(i=0; i<TESTSIZE; i++){func(i64_1, i64_2);}
+//  *t = printAndSwapTime("naMakeInt64WithDouble", *t);
+//}
+//void timeInt64_DoubleFunc(naInt64_Double func){
+//  double t;
+//  double d = 1234567.1234;
+//  int64 r;
+//  int i;
+//  t = getTime();
+//  for(i=0; i<TESTSIZE; i++){r = naXorInt64(func(d), r);}
+//  printAndSwapTime("naMakeInt64WithDouble", t);
+//
+//  #if ! defined NA_TYPE_INT64
+//    printf("Final Result: %d %d", r.lo, r.hi);
+//  #else
+//    printf("Final Result: %lld", r);
+//  #endif
+//}
+//void timeInt32_DoubleFunc(naInt32_Double func){
+//  double t;
+//  double d = 1234567.1234;
+//  int32 r = 0;
+//  int i;
+//  t = getTime();
+//  for(i=0; i<TESTSIZE; i++){r ^= func(d);}
+//  printAndSwapTime("naMakeInt64WithDouble", t);
+//
+//  printf("Final Result: %d", r);
+//}
+
+
 
 void timeMaking(){
   double t;
@@ -55,6 +96,7 @@ void timeMaking(){
   t = printAndSwapTime("naMakeInt64WithLo", t);
   for(i=0; i<TESTSIZE; i++){i64 = naAddInt64(naMakeInt64WithDouble(-(double)rand() * (double)rand()), i64);}
   t = printAndSwapTime("naMakeInt64WithDouble", t);
+
   for(i=0; i<TESTSIZE; i++){ui64 = naAddUInt64(naMakeUInt64WithLo((uint32)rand()), ui64);}
   t = printAndSwapTime("naMakeUInt64WithLo", t);
   for(i=0; i<TESTSIZE; i++){ui64 = naAddUInt64(naMakeUInt64WithDouble((double)rand() * (double)rand()), ui64);}
@@ -427,6 +469,10 @@ int main(void){
   timeComparison();
   timeArithmetic();
   
+
+
+//  timeInt32_DoubleFunc(naGetDoubleExponent);
+
   return 0;
 }
 

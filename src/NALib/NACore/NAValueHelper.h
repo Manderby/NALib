@@ -146,9 +146,10 @@ NA_HIAPI void naMakeIntegerRangePositiveInLength(
 // though.
 
 
-// Returns an integer which is the given x floored to a multiple of
+// Returns a value which is the given x floored to a multiple of
 // alignlength with an offset. Also works for negative values.
-NA_HIAPI NAInt naAlignValue(NAInt x, NAInt offset, NAInt alignlength);
+NA_HIAPI NAInt naAlignValuei(NAInt x, NAInt offset, NAInt alignlength);
+NA_HIAPI double naAlignValued(double x, double offset, double alignlength);
 
 
 
@@ -475,13 +476,25 @@ NA_HIDEF void naMakeIntegerRangePositiveInLength(NAInt* NA_RESTRICT positiveorig
 
 
 
-NA_HIDEF NAInt naAlignValue(NAInt x, NAInt offset, NAInt alignlength){
+NA_HIDEF NAInt naAlignValuei(NAInt x, NAInt offset, NAInt alignlength){
+  #ifndef NDEBUG
+    if(!naIsLengthValueUsefuli(alignlength))
+      naError("naAlignValuei", "Invalid size leads to range overflow. Correcting to empty range.");
+  #endif
   NAInt shiftx = x - offset;
   if(shiftx < 0){
-    return ((((shiftx + 1) / alignlength) - 1) * alignlength) + offset;
+    return (((NAInt)((shiftx + 1) / alignlength) - 1) * alignlength) + offset;
   }else{
-    return (((shiftx) / alignlength) * alignlength) + offset;
+    return (((NAInt)((shiftx + 0) / alignlength) - 0) * alignlength) + offset;
   }
+}
+NA_HIDEF double naAlignValued(double x, double offset, double alignlength){
+  #ifndef NDEBUG
+    if(!naIsLengthValueUseful(alignlength))
+      naError("naAlignValued", "Invalid size leads to range overflow. Correcting to empty range.");
+  #endif
+  double shiftx = x - offset;
+  return ((naFloor((shiftx) / alignlength)) * alignlength) + offset;
 }
 
 

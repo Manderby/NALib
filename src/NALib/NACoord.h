@@ -268,7 +268,9 @@ NA_IAPI NSRect    naMakeNSRectWithRect  (NARect  narect);
 // Creates a new origin which is the given origin floored to a multiple of
 // the given alignment. Also works for negative input offsets.
 NA_IAPI NAPosi    naMakePosiWithAlignment    (NAPosi    origin, NARecti alignrect);
+NA_IAPI NAPos     naMakePosdWithAlignment    (NAPos     origin, NARect  alignrect);
 NA_IAPI NAVertexi naMakeVertexiWithAlignment (NAVertexi origin, NABoxi  alignbox);
+NA_IAPI NAVertex  naMakeVertexdWithAlignment (NAVertex  origin, NABox   alignbox);
 
 // Create the bounding box of two elements. The range, size or volume of the
 // resulting struct will never be negative. Note that the integer variant of
@@ -411,6 +413,8 @@ NA_IAPI NAVolume  naSubVertexPos    (NAVertex   vertex1,  NAVertex  vertex2);
 NA_IAPI NAVolumei naSubVertexiVertex(NAVertexi  vertex1,  NAVertexi vertex2);
 
 // Containing functions. Test if an element is within another.
+// The E variant for the double types denotes an exclusive rangecheck [...)
+// instead of an includsive [...]
 NA_IAPI NABool    naContainsRangeOffset (NARange  outerrange, double   offset);
 NA_IAPI NABool    naContainsRangefOffset(NARangef outerrange, float    offset);
 NA_IAPI NABool    naContainsRangeiOffset(NARangei outerrange, NAInt    offset);
@@ -419,6 +423,7 @@ NA_IAPI NABool    naContainsRangeiRange (NARangei outerrange, NARangei range);
 NA_IAPI NABool    naContainsSizePos  (NASize  outersize, NAPos   pos);
 NA_IAPI NABool    naContainsSizeiPos (NASizei outersize, NAPosi  pos);
 NA_IAPI NABool    naContainsRectPos  (NARect  outerrect, NAPos   pos);
+NA_IAPI NABool    naContainsRectPosE (NARect  outerrect, NAPos   pos);
 NA_IAPI NABool    naContainsRectiPos (NARecti outerrect, NAPosi  pos);
 NA_IAPI NABool    naContainsSizeSize (NASize  outersize, NASize  size);
 NA_IAPI NABool    naContainsSizeiSize(NASizei outersize, NASizei size);

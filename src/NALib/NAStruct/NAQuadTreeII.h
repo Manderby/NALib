@@ -10,14 +10,6 @@
 
 
 
-#define REMOVEPosiToPos(p) naMakePos(p.x, p.y)
-#define REMOVEPosToPosi(p) naMakePosi((NAInt)naRound(p.x), (NAInt)naRound(p.y))
-#define REMOVESizeiToSize(s) naMakeSize(s.width, s.height)
-#define REMOVERectiToRect(r) naMakeRectS(r.pos.x, r.pos.y, r.size.width, r.size.height)
-#define REMOVERectToRecti(r) naMakeRectiSE((NAInt)naRound(r.pos.x), (NAInt)naRound(r.pos.y), (NAInt)naRound(r.size.width), (NAInt)naRound(r.size.height))
-
-
-
 typedef struct NAQuadTreeNode NAQuadTreeNode;
 
 struct NAQuadTree{
@@ -40,6 +32,7 @@ struct NAQuadTreeIterator{
 
 
 NA_HIDEF NASize naGetQuadTreeSizeWithExponent(NAInt exponent){
+  // todo
   return naMakeSize(1 << exponent, 1 << exponent);
 }
 
@@ -58,9 +51,8 @@ NA_IDEF NAInt naGetQuadTreeMinLeafExponent(const NAQuadTree* tree){
 
 
 NA_IDEF NAPos naGetQuadTreeAlignedCoord(NAInt leafexponent, NAPos coord){
-  NARecti leafalign = naMakeRecti(naMakePosi(0, 0), naMakeSizeiWithSize(naGetQuadTreeSizeWithExponent(leafexponent)));
-  NAPosi alignposint = naMakePosiWithAlignment(naMakePosiWithIntegerPos(coord), leafalign);
-  NAPos retpos = REMOVEPosiToPos(alignposint);
+  NARect leafalign = naMakeRect(naMakePos(0, 0), naGetQuadTreeSizeWithExponent(leafexponent));
+  NAPos retpos = naMakePosWithAlignment(coord, leafalign);
   return retpos;
 }
 
