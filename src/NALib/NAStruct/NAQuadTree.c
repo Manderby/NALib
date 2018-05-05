@@ -516,7 +516,7 @@ NA_DEF void* naGetQuadTreeCurMutable(NAQuadTreeIterator* iter, NABool create){
 
 
 
-NA_DEF NAPos naGetQuadTreeCurOrigin(NAQuadTreeIterator* iter){
+NA_DEF NAPos naGetQuadTreeCurOrigin(const NAQuadTreeIterator* iter){
   #ifndef NDEBUG
     if(!(iter->flags & NA_QUADTREE_ITERATOR_HAS_ORIGIN))
       naError("naGetQuadTreeCurOrigin", "Iterator has no origin");
@@ -526,13 +526,28 @@ NA_DEF NAPos naGetQuadTreeCurOrigin(NAQuadTreeIterator* iter){
 
 
 
-NA_DEF NARect naGetQuadTreeCurRect(NAQuadTreeIterator* iter){
+NA_DEF NARect naGetQuadTreeCurRect(const NAQuadTreeIterator* iter){
   const NAQuadTree* tree = naGetPtrConst(&(iter->tree));
   #ifndef NDEBUG
     if(!(iter->flags & NA_QUADTREE_ITERATOR_HAS_ORIGIN))
       naError("naGetQuadTreeCurRect", "Iterator has no origin");
   #endif
   return naMakeRect(iter->leaforigin, naGetQuadTreeSizeWithExponent(naGetQuadTreeMinLeafExponent(tree)));
+}
+
+
+
+NA_DEF NARecti naGetQuadTreeCurRecti(const NAQuadTreeIterator* iter){
+  const NAQuadTree* tree = naGetPtrConst(&(iter->tree));
+  #ifndef NDEBUG
+    if(!(iter->flags & NA_QUADTREE_ITERATOR_HAS_ORIGIN))
+      naError("naGetQuadTreeCurRecti", "Iterator has no origin");
+    if(naGetQuadTreeMinLeafExponent(tree) < 0)
+      naError("naGetQuadTreeCurRecti", "Can not return valid integer rect for trees with exponents < 0");
+  #endif
+  // todo
+  NASize size = naGetQuadTreeSizeWithExponent(naGetQuadTreeMinLeafExponent(tree));
+  return naMakeRectiSE((NAInt)naRound(iter->leaforigin.x), (NAInt)naRound(iter->leaforigin.y), (NAInt)naRound(size.width), (NAInt)naRound(size.height));
 }
 
 
@@ -715,6 +730,13 @@ NA_DEF NABool naLocateQuadTreeCoord(NAQuadTreeIterator* iter, NAPos coord){
 
   naSetQuadTreeIteratorLeafOrigin(iter, neworigin);  
   return naLocateQuadTreeNode(iter, neworigin);
+}
+
+
+
+NA_DEF NABool naLocateQuadTreeIterator(NAQuadTreeIterator* dstiter, const NAQuadTreeIterator* srciter){
+  NAPos srcpos = naGetQuadTreeCurOrigin(srciter);
+  return naLocateQuadTreeCoord(dstiter, srcpos);
 }
 
 

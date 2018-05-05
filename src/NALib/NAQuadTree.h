@@ -336,9 +336,17 @@ NA_API NABool naIterateQuadTree(  NAQuadTreeIterator* iter,
 
 // Moves the iterator to the leaf containing the given coord. If such a leaf is
 // not found in the tree, NA_FALSE ist returned. The iterator though stores the
-// coord it is supposed to point at. This allows you to locate a position an
+// coord it is supposed to point at. This allows you to locate a position and
 // then use naGetQuadTreeCurMutable to create a leaf at that position.
 NA_API NABool naLocateQuadTreeCoord(NAQuadTreeIterator* iter, NAPos coord);
+
+// Moves the stditer to the leaf having the same coord as srciter. If such a
+// leaf is not found in the tree, NA_FALSE ist returned. The iterator though
+// stores the coord it is supposed to point at. This allows you to locate a
+// position and then use naGetQuadTreeCurMutable to create a leaf at that
+// position.
+NA_API NABool naLocateQuadTreeIterator(NAQuadTreeIterator* dstiter,
+                                 const NAQuadTreeIterator* srciter);
 
 // Moves the iterator relative to the current position. Each step can be
 // positive or negative. The iterator must be at a specific position before
@@ -355,10 +363,11 @@ NA_API void*       naGetQuadTreeCurMutable(NAQuadTreeIterator* iter,
                                                         NABool create);
 
 // Returns the origin of the leaf the iterator is pointing at.
-NA_API NAPos naGetQuadTreeCurOrigin(NAQuadTreeIterator* iter);
+NA_API NAPos naGetQuadTreeCurOrigin(const NAQuadTreeIterator* iter);
 
 // Returns the rect of the leaf the iterator is pointing at.
-NA_API NARect naGetQuadTreeCurRect(NAQuadTreeIterator* iter);
+NA_API NARect  naGetQuadTreeCurRect(const NAQuadTreeIterator* iter);
+NA_API NARecti naGetQuadTreeCurRecti(const NAQuadTreeIterator* iter);
 
 // Starts at the leaf containing the given coord and traverses upwards
 // (bubbling) the tree by calling the appropriate callback functions of all
