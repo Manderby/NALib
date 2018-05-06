@@ -297,6 +297,9 @@ NA_IAPI double naMod(double x, double mod){
   double count = naFloor(x / mod);
   return x - count * mod;
 }
+NA_IAPI NAInt naModi(NAInt x, NAInt mod){
+  return ((x % mod) + mod) % mod;
+}
 
 
 

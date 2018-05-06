@@ -138,6 +138,7 @@ NA_IAPI double        naRound (double x);
 // Returns the modular value. Return value is always positive.
 NA_IAPI float         naModf(float  x, float  mod);
 NA_IAPI double        naMod (double x, double mod);
+NA_IAPI NAInt         naModi(NAInt  x, NAInt  mod);
 
 // Returns the sinus
 NA_IAPI float         naSinf(float  x);
