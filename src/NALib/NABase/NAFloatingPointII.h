@@ -125,7 +125,7 @@ NA_IAPI int64 naGetDoubleInteger(double d){
   dbits = naAndInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
   dbits = naOrInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_NORM);
   exponent = naGetDoubleExponent(d);
-  dbits = naShrInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_BITS - naGetDoubleExponent(d));
+  dbits = naShrInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_BITS - exponent);
   if(d<0){dbits = naNegInt64(dbits);}
   return dbits;
 }
