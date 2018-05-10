@@ -102,6 +102,10 @@ NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
     #if NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_CUSTOM
       // Allocate a full align and a pointer more than required.
       void* mem = malloc(bytesize + align + sizeof(void*));
+      #ifndef NDEBUG
+      if(!mem)
+        naCrash("naMallocAligned", "Out of memory");
+      #endif
       // make a pointer point to the first byte being aligned within the memory
       // allocated in mem which comes after align bytes and a pointer size.
       void** ptr = (void**)((size_t)((NAByte*)mem + align + sizeof(void*)) & ~(align - NA_ONE));
@@ -111,8 +115,18 @@ NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
       retptr = ptr;
     #elif NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_ALIGNED_ALLOC
       retptr = aligned_alloc(align, bytesize);
+      #ifndef NDEBUG
+      if(!retptr)
+        naCrash("naMallocAligned", "Out of aligned memory");
+      #endif
     #elif NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_POSIX_MEMALIGN
-      posix_memalign(&retptr, align, bytesize);
+      int error = posix_memalign(&retptr, align, bytesize);
+      #ifndef NDEBUG
+      if(error)
+        naCrash("naMallocAligned", "Memory alignment failed");
+      #else
+        NA_UNUSED(error);
+      #endif
     #else
       #error "Invalid aligned alloc method chosen"
     #endif
@@ -120,7 +134,7 @@ NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
   
   #ifndef NDEBUG
     if(((NAUInt)retptr & (NAUInt)(align - NA_ONE)) != NA_ZERO)
-      naError("naMallocAligned", "pointer unaligned.");
+      naError("naMallocAligned", "pointer misaligned.");
   #endif
   
   return retptr;

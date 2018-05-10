@@ -204,7 +204,7 @@ NA_IDEF void naRunThread(NAThread thread){
 
 
 
-NA_IDEF NAMutex naMakeMutex(){
+NA_IDEF NAMutex naMakeMutex(void){
   #if NA_OS == NA_OS_WINDOWS
     NAWindowsMutex* windowsmutex = naAlloc(NAWindowsMutex);
     #if (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
@@ -416,7 +416,7 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
 
 
 
-NA_IDEF NAAlarm naMakeAlarm(){
+NA_IDEF NAAlarm naMakeAlarm(void){
   NANativeAlarm alarm;
   #if NA_OS == NA_OS_WINDOWS
     alarm = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -461,7 +461,7 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarm, double maxwaittime){
     if(maxwaittime == 0){
       result = dispatch_semaphore_wait(alarm, DISPATCH_TIME_FOREVER);
     }else{
-      dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, 1000000000. * maxwaittime);
+      dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1000000000 * maxwaittime));
       result = dispatch_semaphore_wait(alarm, timeout);
     }
     return (result ? NA_FALSE : NA_TRUE);

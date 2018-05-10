@@ -51,6 +51,7 @@ Other things:
   NA_OS defined the operating system, NA_CALENDAR defines the calendar system.
 - Garbage collection now also can be aggressive or non-aggressive.
 - Cleaned up some h files.
+- Changed configuration to use posix_memalign by default.
 - Changed the license to a more compact MIT version.
 
 

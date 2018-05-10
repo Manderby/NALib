@@ -74,11 +74,18 @@ NA_IAPI NASizeUInt naGetSystemMemoryPagesizeMask(void);
 #define naSizeof(type)
 
 // Usually, aligned memory can be created in unix like systems using several
-// methods. Unfortunately, none of them work reliably on Mac OS X.
-// - aligned_alloc under C11 is unreliable. See
+// methods. Unfortunately, none of them did work reliably on the Mac OS X
+// version Snow Leopard back around the year 2015. It looks though as since
+// then, the error got corrected and now, the default method is Posix.
+//
+// These are some notes about the different methods:
+// - Custom uses a rather large chunk of memory to ensure there is enough
+//   space for aligned memory. It works but may lead to false positives
+//   with memory-leak detection tools.
+// - aligned_alloc under C11 is possibly unavailable in macOS. See
 //   https://stackoverflow.com/questions/44841574/aligned-alloc-not-found-for-clang
 // - posix_memalign as well as malloc_zone_memalign are non-C-standard and
-//   return misaligned pointers in Snow Leopard.
+//   did return misaligned pointers in Snow Leopard some years back.
 // - __attribute ((aligned(#))) is unsuitable (because it is not usable at
 //   runtine) and is non-standard
 // - _Alignas is again unsuitable (because not available at runtime) and

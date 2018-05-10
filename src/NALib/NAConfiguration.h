@@ -138,16 +138,16 @@
 // ////////////////////////////////
 
 // Usually, aligned memory can be created in unix like systems using several
-// methods. Unfortunately, none of them work reliably on Mac OS X. See the
-// NAMemory.h file for more information. Default is USE_CUSTOM which is safe
-// on all systems.
+// methods. See the definitions of the following macros in NAMemory.h file
+// for more information.
 // - NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_CUSTOM 
 // - NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_ALIGNED_ALLOC (needs full C11 support)
 // - NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_POSIX_MEMALIGN
+// Default is POSIX.
 
 
 #ifndef NA_MEMORY_ALIGNED_MEM_MAC_OS_X
-  #define NA_MEMORY_ALIGNED_MEM_MAC_OS_X NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_CUSTOM
+  #define NA_MEMORY_ALIGNED_MEM_MAC_OS_X NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_POSIX_MEMALIGN
 #endif
 
 

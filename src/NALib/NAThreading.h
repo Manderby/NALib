@@ -75,7 +75,7 @@ NA_IAPI void naRunThread(NAThread thread);
 // to lock the mutex.
 
 // Create and clear a mutex.
-NA_IAPI NAMutex naMakeMutex();
+NA_IAPI NAMutex naMakeMutex(void);
 NA_IAPI void naClearMutex(NAMutex mutex);
 // Locks and unlocks a mutex. Waiting threads wait forever.
 NA_IAPI void naLockMutex(NAMutex mutex);
@@ -117,7 +117,7 @@ NA_IAPI NABool naTryMutex(NAMutex mutex);
 // counter in combination with a mutex.
 //
 // Creates and clears an alarm structure.
-NA_IAPI NAAlarm naMakeAlarm();
+NA_IAPI NAAlarm naMakeAlarm(void);
 NA_IAPI void naClearAlarm(NAAlarm alarm);
 // Locks the current thread until some other thread calls naTriggerAlarm or
 // until the timeout occurs. Returns NA_TRUE, if the alarm was triggered or
