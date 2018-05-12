@@ -750,9 +750,9 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   
   // Read the chunks until the IEND chunk is read.
   while(1){
-    NAPNGChunk* curchunk = naAllocPNGChunkFromBuffer(&bufiter);
-    naAddListLastMutable(&(png->chunks), curchunk);
-    if(curchunk->type == NA_PNG_CHUNK_TYPE_IEND){break;}
+    NAPNGChunk* chunk = naAllocPNGChunkFromBuffer(&bufiter);
+    naAddListLastMutable(&(png->chunks), chunk);
+    if(chunk->type == NA_PNG_CHUNK_TYPE_IEND){break;}
   }
   
   // Create the buffer to hold the compressed and decompressed data
@@ -760,34 +760,31 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   naSetBufferEndianness(png->compresseddata, NA_ENDIANNESS_NETWORK);
   png->filtereddata = naNewBuffer(NA_FALSE);
   
-  iter = naMakeListMutator(&(png->chunks));
-  while(naIterateList(&iter, 1)){
-    NAPNGChunk* curchunk = naGetListCurMutable(&iter);
-    switch(curchunk->type){
-    case NA_PNG_CHUNK_TYPE_IHDR:  naReadPNGIHDRChunk(png, curchunk);  break;
-    case NA_PNG_CHUNK_TYPE_PLTE:  naReadPNGPLTEChunk(png, curchunk);  break;
-    case NA_PNG_CHUNK_TYPE_IDAT:  naReadPNGIDATChunk(png, curchunk);  break;
-    case NA_PNG_CHUNK_TYPE_IEND:  naReadPNGIENDChunk(png, curchunk);  break;
+  naBeginListMutatorIteration(NAPNGChunk* chunk, &(png->chunks), iter);
+    switch(chunk->type){
+    case NA_PNG_CHUNK_TYPE_IHDR:  naReadPNGIHDRChunk(png, chunk);  break;
+    case NA_PNG_CHUNK_TYPE_PLTE:  naReadPNGPLTEChunk(png, chunk);  break;
+    case NA_PNG_CHUNK_TYPE_IDAT:  naReadPNGIDATChunk(png, chunk);  break;
+    case NA_PNG_CHUNK_TYPE_IEND:  naReadPNGIENDChunk(png, chunk);  break;
 
-    case NA_PNG_CHUNK_TYPE_cHRM:  naReadPNGcHRMChunk(png, curchunk);  break;
-    case NA_PNG_CHUNK_TYPE_gAMA:  naReadPNGgAMAChunk(png, curchunk);  break;
-    case NA_PNG_CHUNK_TYPE_iCCP:  naReadPNGiCCPChunk(png, curchunk);  break;
-    case NA_PNG_CHUNK_TYPE_sBIT:  naReadPNGsBITChunk(png, curchunk);  break;
-    case NA_PNG_CHUNK_TYPE_sRGB:  naReadPNGsRGBChunk(png, curchunk);  break;
-    case NA_PNG_CHUNK_TYPE_bKGD:  naReadPNGbKGDChunk(png, curchunk);  break;
-    case NA_PNG_CHUNK_TYPE_hIST:  naReadPNGhISTChunk(png, curchunk);  break;
-    case NA_PNG_CHUNK_TYPE_tRNS:  naReadPNGtRNSChunk(png, curchunk);  break;
-    case NA_PNG_CHUNK_TYPE_pHYs:  naReadPNGpHYsChunk(png, curchunk);  break;
-    case NA_PNG_CHUNK_TYPE_sPLT:  naReadPNGsPLTChunk(png, curchunk);  break;
-    case NA_PNG_CHUNK_TYPE_tIME:  naReadPNGtIMEChunk(png, curchunk);  break;
-    case NA_PNG_CHUNK_TYPE_iTXt:  naReadPNGiTXtChunk(png, curchunk);  break;
-    case NA_PNG_CHUNK_TYPE_tEXt:  naReadPNGtEXtChunk(png, curchunk);  break;
-    case NA_PNG_CHUNK_TYPE_zTXt:  naReadPNGzTXtChunk(png, curchunk);  break;
+    case NA_PNG_CHUNK_TYPE_cHRM:  naReadPNGcHRMChunk(png, chunk);  break;
+    case NA_PNG_CHUNK_TYPE_gAMA:  naReadPNGgAMAChunk(png, chunk);  break;
+    case NA_PNG_CHUNK_TYPE_iCCP:  naReadPNGiCCPChunk(png, chunk);  break;
+    case NA_PNG_CHUNK_TYPE_sBIT:  naReadPNGsBITChunk(png, chunk);  break;
+    case NA_PNG_CHUNK_TYPE_sRGB:  naReadPNGsRGBChunk(png, chunk);  break;
+    case NA_PNG_CHUNK_TYPE_bKGD:  naReadPNGbKGDChunk(png, chunk);  break;
+    case NA_PNG_CHUNK_TYPE_hIST:  naReadPNGhISTChunk(png, chunk);  break;
+    case NA_PNG_CHUNK_TYPE_tRNS:  naReadPNGtRNSChunk(png, chunk);  break;
+    case NA_PNG_CHUNK_TYPE_pHYs:  naReadPNGpHYsChunk(png, chunk);  break;
+    case NA_PNG_CHUNK_TYPE_sPLT:  naReadPNGsPLTChunk(png, chunk);  break;
+    case NA_PNG_CHUNK_TYPE_tIME:  naReadPNGtIMEChunk(png, chunk);  break;
+    case NA_PNG_CHUNK_TYPE_iTXt:  naReadPNGiTXtChunk(png, chunk);  break;
+    case NA_PNG_CHUNK_TYPE_tEXt:  naReadPNGtEXtChunk(png, chunk);  break;
+    case NA_PNG_CHUNK_TYPE_zTXt:  naReadPNGzTXtChunk(png, chunk);  break;
     default:
       break;
     }
-  }
-  naClearListIterator(&iter);
+  naEndListIteration(iter);
   
   naFixBufferRange(png->compresseddata);
   naFillBufferWithZLIBDecompression(png->filtereddata, png->compresseddata);
@@ -852,34 +849,31 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
 
   naWriteBufferBytes(&iterout, na_png_magic, 8);
 
-  iter = naMakeListMutator(&(png->chunks));
-  while(naIterateList(&iter, 1)){
+  naBeginListMutatorIteration(NAPNGChunk* chunk, &(png->chunks), iter);
+    naFixBufferRange(chunk->data);
 
-    NAPNGChunk* curchunk = naGetListCurMutable(&iter);
-    naFixBufferRange(curchunk->data);
-
-    curchunk->length = naGetBufferRange(curchunk->data).length;
-    naWriteBufferu32(&iterout, (uint32)curchunk->length);
+    chunk->length = naGetBufferRange(chunk->data).length;
+    naWriteBufferu32(&iterout, (uint32)chunk->length);
     
-    naCopy32(curchunk->typename, na_png_chunk_type_names[curchunk->type]);
-    naWriteBufferBytes(&iterout, curchunk->typename, 4);
+    naCopy32(chunk->typename, na_png_chunk_type_names[chunk->type]);
+    naWriteBufferBytes(&iterout, chunk->typename, 4);
     
-    if(!naIsBufferEmpty(curchunk->data)){
-//      naSeekBufferAbsolute(curchunk->data, 0);
-      naWriteBufferBuffer(&iterout, curchunk->data, naGetBufferRange(curchunk->data));
+    if(!naIsBufferEmpty(chunk->data)){
+//      naSeekBufferAbsolute(chunk->data, 0);
+      naWriteBufferBuffer(&iterout, chunk->data, naGetBufferRange(chunk->data));
     }
     
     naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
-    naAccumulateChecksum(&checksum, curchunk->typename, 4);
-    if(curchunk->length){
-//      naSeekBufferAbsolute(curchunk->data, 0);
-      naAccumulateBufferToChecksum(curchunk->data, &checksum);
+    naAccumulateChecksum(&checksum, chunk->typename, 4);
+    if(chunk->length){
+//      naSeekBufferAbsolute(chunk->data, 0);
+      naAccumulateBufferToChecksum(chunk->data, &checksum);
     }
-    curchunk->crc = naGetChecksumResult(&checksum);
+    chunk->crc = naGetChecksumResult(&checksum);
     naClearChecksum(&checksum);
-    naWriteBufferu32(&iterout, curchunk->crc);
-  }
-  naClearListIterator(&iter);
+    naWriteBufferu32(&iterout, chunk->crc);
+  naEndListIteration(iter);
+
   naClearBufferIterator(&iterout);
 
   outfile = naCreateFileWritingFilename(filename, NA_FILEMODE_DEFAULT);

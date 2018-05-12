@@ -15,7 +15,7 @@ NA_DEF NABool naLocateListData(NAListIterator* iterator, const void* data){
   // position.
 
   naResetListIterator(iterator);
-  while(naIterateList(iterator, 1)){
+  while(naIterateList(iterator)){
     if(naGetPtrConst(&(iterator->cur->ptr)) == data){
       return NA_TRUE;
     }

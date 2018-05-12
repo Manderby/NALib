@@ -113,9 +113,16 @@ NA_IAPI       void* naGetListLastMutable    (const NAList* list);
 // Traverses the whole list calling the accessor or mutator on each element.
 // A pointer to each element will be given to the mutator. The list is
 // traversed forward from start to end.
+//
+// Beware: The mutator and accessor function MUST have a valid signature.
+// Therefore, these functions are only good for simple list traversals.
+// Often times, it is more appropriate, to use iterators, see below.
+//
+// Also note that these functions will cause function calls within a loop.
+// If you want to inline the accessor of mutator function, this is not the
+// way to go. Use Iterators.
 NA_IAPI void naForeachListConst  (const NAList* list, NAAccessor accessor);
 NA_IAPI void naForeachListMutable(const NAList* list, NAMutator  mutator);
-
 
 // Removes the first element of the src list and reattaches it as the last
 // element of dst list.
@@ -158,6 +165,20 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 // will keep references to iterators which are no longer in use and will hence
 // emit a warning when they are cleared. When NDEBUG is defined however, no
 // such checks will be performed.
+//
+// You can also use the predefined Begin and End Iterator macros. Beware,
+// these are macros. They perform a simple one-by-one traversal of the list
+// from first to last. Use them as follows:
+//
+// NAListIterator iteratorname;
+// naBeginListMutatorIteration(MyElem* elem, mylist, iteratorname);
+//   doStuffWithElem(elem);
+// naEndListIteration(iteratorname);
+
+#define naBeginListAccessorIteration(typedelem, list, iter)
+#define naBeginListMutatorIteration (typedelem, list, iter)
+#define naBeginListModifierIteration(typedelem, list, iter)
+#define naEndListIteration(iter)
 
 
 // ///////////////////////////////
@@ -219,12 +240,17 @@ NA_IAPI void   naLocateListIterator (NAListIterator* dstiter,
 
 // /////////////////////////////////
 // Iterating
-// Moves the iterator forward or backward the given number of positive or
-// negative steps respectively. If the step over- or underflows the stored
-// elements and NDEBUG is undefined, a warning is emitted.
+// Moves the iterator one step forward. The Back-variant moves the iterator
+// one step backwards. The Step-variant moves the iterator forward or backward
+// the given number of positive or negative steps. 
+//
+// If the step over- or underflows the stored elements and NDEBUG is undefined,
+// a warning is emitted.
 //
 // Returns NA_FALSE when one of the two ends of the list is reached.
-NA_IAPI NABool naIterateList        (NAListIterator* iter, NAInt step);
+NA_IAPI NABool naIterateList        (NAListIterator* iter);
+NA_IAPI NABool naIterateListBack    (NAListIterator* iter);
+NA_IAPI NABool naIterateListStep    (NAListIterator* iter, NAInt step);
 
 
 // /////////////////////////////////

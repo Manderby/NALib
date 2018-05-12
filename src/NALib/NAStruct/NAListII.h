@@ -429,6 +429,29 @@ NA_IDEF void naMoveListFirstToLast(NAList* src, NAList* dst){
 
 
 
+#undef naBeginListAccessorIteration
+#define naBeginListAccessorIteration(typedelem, list, iter)\
+  iter = naMakeListAccessor(list);\
+  while(naIterateList(&iter)){\
+    typedelem = naGetListCurConst(&iter)
+
+#undef naBeginListMutatorIteration
+#define naBeginListMutatorIteration(typedelem, list, iter)\
+  iter = naMakeListMutator(list);\
+  while(naIterateList(&iter)){\
+    typedelem = naGetListCurMutable(&iter)
+
+#undef naBeginListModifierIteration
+#define naBeginListModifierIteration(typedelem, list, iter)\
+  iter = naMakeListModifier(list);\
+  while(naIterateList(&iter)){\
+    typedelem = naGetListCurMutable(&iter)
+
+#undef naEndListIteration
+#define naEndListIteration(iter)\
+  }\
+  naClearListIterator(&iter)
+
 
 
 NA_IDEF NAListIterator naMakeListAccessor(const NAList* list){
@@ -546,19 +569,51 @@ NA_IAPI void naLocateListIterator(NAListIterator* dstiter, NAListIterator* srcit
 
 
 
+NA_IDEF NABool naIterateList(NAListIterator* iterator){
+  #ifndef NDEBUG
+    if(iterator->cur->itercount == 0)
+      naError("naIterateList", "No Iterator at this element. Did you do a double clear?");
+    iterator->cur->itercount--;
+  #endif
+  iterator->cur = iterator->cur->next;
+  #ifndef NDEBUG
+    iterator->cur->itercount++;
+  #endif
+
+  return (iterator->cur != &(((NAList*)naGetPtrConst(&(iterator->listptr)))->sentinel));
+}
+
+
+
+NA_IDEF NABool naIterateListBack(NAListIterator* iterator){
+  #ifndef NDEBUG
+    if(iterator->cur->itercount == 0)
+      naError("naIterateListBack", "No Iterator at this element. Did you do a double clear?");
+    iterator->cur->itercount--;
+  #endif
+  iterator->cur = iterator->cur->prev;
+  #ifndef NDEBUG
+    iterator->cur->itercount++;
+  #endif
+
+  return (iterator->cur != &(((NAList*)naGetPtrConst(&(iterator->listptr)))->sentinel));
+}
+
+
+
 // Note that this function looks extremely complicated but it is not. When
 // this code is built in release, it all boils down to two loops just moving
 // a pointer forward or backward.
-NA_IDEF NABool naIterateList(NAListIterator* iterator, NAInt step){
+NA_IDEF NABool naIterateListStep(NAListIterator* iterator, NAInt step){
   #ifndef NDEBUG
     if(step == NA_ZERO){
-      naError("naIterateList", "step is zero.");
+      naError("naIterateListStep", "step is zero.");
     }
   #endif
   while(step > NA_ZERO){
     #ifndef NDEBUG
       if(iterator->cur->itercount == 0)
-        naError("naIterateList", "No Iterator at this element. Did you do a double clear?");
+        naError("naIterateListStep", "No Iterator at this element. Did you do a double clear?");
       iterator->cur->itercount--;
     #endif
     iterator->cur = iterator->cur->next;
@@ -566,14 +621,14 @@ NA_IDEF NABool naIterateList(NAListIterator* iterator, NAInt step){
     #ifndef NDEBUG
       iterator->cur->itercount++;
       if((iterator->cur == &(((NAList*)naGetPtrConst(&(iterator->listptr)))->sentinel)) && (step != NA_ZERO)){
-        naError("naIterateList", "The iteration overflows the number of elements.");
+        naError("naIterateListStep", "The iteration overflows the number of elements.");
       }
     #endif
   }
   while(step < NA_ZERO){
     #ifndef NDEBUG
       if(iterator->cur->itercount == 0)
-        naError("naIterateList", "No Iterator at this element. Did you do a double clear?");
+        naError("naIterateListStep", "No Iterator at this element. Did you do a double clear?");
       iterator->cur->itercount--;
     #endif
     iterator->cur = iterator->cur->prev;
@@ -581,7 +636,7 @@ NA_IDEF NABool naIterateList(NAListIterator* iterator, NAInt step){
     #ifndef NDEBUG
       iterator->cur->itercount++;
       if((iterator->cur == &(((NAList*)naGetPtrConst(&(iterator->listptr)))->sentinel)) && (step != NA_ZERO)){
-        naError("naIterateList", "The iteration underflows the number of elements.");
+        naError("naIterateListStep", "The iteration underflows the number of elements.");
       }
     #endif
   }

@@ -93,7 +93,6 @@ NA_IDEF NAStack* naInitStack(NAStack* stack, NAInt typesize, NAInt minimalcount)
 
 
 NA_IDEF void naClearStack(NAStack* stack){
-
   #ifndef NDEBUG
     if(!stack){
       naCrash("naClearStack", "stack is Null-Pointer.");
@@ -103,14 +102,13 @@ NA_IDEF void naClearStack(NAStack* stack){
       naError("naClearStack", "There are still iterators on this stack. Did you forget naClearStackIterator?");
   #endif
 
+  naClearListIterator(&(stack->curpos));
   
-  naClearListIterator(&(stack->curpos));
-  stack->curpos = naMakeListMutator(&(stack->arrays));
-  while(naIterateList(&(stack->curpos), 1)){
-    void* curarray = naGetListCurMutable(&(stack->curpos));
-    naFree(curarray);
-  }
-  naClearListIterator(&(stack->curpos));
+  // Note: We reuse the stack->curpos iterator here because otherwise, we
+  // have to declare a new one on top of this function. That would be ugly.
+  naBeginListMutatorIteration(void* array, &(stack->arrays), stack->curpos);
+    naFree(array);
+  naEndListIteration(stack->curpos);
 
   naClearList(&(stack->arrays));
 }
@@ -128,7 +126,7 @@ NA_IDEF void* naPushStack(NAStack* stack){
     if(naGetListCount(&(stack->arrays)) <= (stack->curindex + 1)){
       naAddStackNewSpace(stack);
     }
-    naIterateList(&(stack->curpos), 1);
+    naIterateList(&(stack->curpos));
     stack->curindex++;
   }
   
@@ -156,7 +154,7 @@ NA_IDEF void* naPopStack(NAStack* stack){
   
   baseindex = naGetStackArrayBaseIndex(stack, stack->curindex);
   if((stack->usedcount - 1) < baseindex){
-    naIterateList(&(stack->curpos), -1);
+    naIterateListBack(&(stack->curpos));
     stack->curindex--;
   }
 
@@ -248,7 +246,7 @@ NA_IDEF void naClearStackIterator(NAStackIterator* iterator){
 NA_IDEF NABool naIterateStack(NAStackIterator* iterator){
   iterator->cur++;
   if((iterator->curarrayindex == -1) || (iterator->cur >= (NAInt)naGetStackArrayAvailableCount(iterator->stack, iterator->curarrayindex))){
-    naIterateList(&(iterator->listiterator), 1);
+    naIterateList(&(iterator->listiterator));
     iterator->curarrayindex++;
     iterator->cur = 0;
   }

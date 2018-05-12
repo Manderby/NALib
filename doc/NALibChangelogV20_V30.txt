@@ -50,6 +50,9 @@ Other things:
 - SYSTEM is only used for macros concerning the actual system compiled for.
   NA_OS defined the operating system, NA_CALENDAR defines the calendar system.
 - Garbage collection now also can be aggressive or non-aggressive.
+- Added naIterateListBack and naIterateListStep to List iteration.
+- Added simplified List iteration using macros naBeginListIterationConst,
+  naBeginListIterationMutable and naEndListIteration.
 - Cleaned up some h files.
 - Changed configuration to use posix_memalign by default.
 - Changed the license to a more compact MIT version.

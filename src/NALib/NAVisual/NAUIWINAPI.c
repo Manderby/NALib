@@ -227,19 +227,16 @@ NA_HDEF static VOID CALLBACK naTimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_
 
   UINT timerkey = (UINT)idEvent;
   app = (NAWINAPIApplication*)naGetApplication();
-  iter = naMakeListModifier(&(app->timers));
-  while (naIterateList(&iter, 1)) {
-    NATimerStruct* curstruct = (NATimerStruct*)naGetListCurMutable(&iter);
-    if (curstruct->key == timerkey) {
+  
+  naBeginListModifierIteration(NATimerStruct* timerstruct, &(app->timers), iter);
+    if(timerstruct->key == timerkey) {
       naRemoveListCurMutable(&iter, NA_FALSE);
       KillTimer(hwnd, idEvent);
-      curstruct->func(curstruct->arg);
-      naFree(curstruct);
-      naClearListIterator(&iter);
-      return;
+      timerstruct->func(timerstruct->arg);
+      naFree(timerstruct);
+      break;
     }
-  }
-  naClearListIterator(&iter);
+  naEndListIteration(iter);
 }
 
 

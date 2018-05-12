@@ -60,13 +60,12 @@ NA_HDEF void naClearCoreApplication(){
     if(!na_app)
       naCrash("naClearUI", "No Application running");
   #endif
-  iter = naMakeListMutator(&(na_app->uielements));
-  while(naIterateList(&iter, 1)){
-//    NAUIElement* curelement = naGetListCurMutable(&iter);
+  
+  naBeginListMutatorIteration(NAUIElement* elem, &(na_app->uielements), iter);
 //    naCloseWindow(na_ui->windows[i]);
 //    naClearWindow(na_ui->windows[i]);
-  }
-  naClearListIterator(&iter);
+  naEndListIteration(iter);
+  
   naClearList(&(na_app->uielements));
   naFree(na_app);
 }
@@ -165,13 +164,12 @@ NA_HDEF NACoreWindow* naGetCoreUIElementWindow(NACoreUIElement* coreuielement){
 
 // todo: find a faster way. Hash perhaps or something else.
 NA_HDEF void* naGetUINALibEquivalent(NANativeID nativeID){
-  NAListIterator iter = naMakeListMutator(&(na_app->uielements));
-  while(naIterateList(&iter, 1)){
-    NACoreUIElement* curelement = naGetListCurMutable(&iter);
-    if(curelement->nativeID == nativeID){return curelement;}
-  }
-  naClearListIterator(&iter);
-  return NA_NULL;
+  NAListIterator iter;
+  NACoreUIElement* retelem = NA_NULL;
+  naBeginListMutatorIteration(NACoreUIElement* elem, &(na_app->uielements), iter);
+    if(elem->nativeID == nativeID){retelem = elem; break;}
+  naEndListIteration(iter);
+  return retelem;
 }
 
 
@@ -194,13 +192,11 @@ NA_HDEF void* naGetUINALibEquivalent(NANativeID nativeID){
 
 
 NA_DEF void naClearUIElement(NAUIElement* uielement){
+  NAListIterator iter;
   NACoreUIElement* element = (NACoreUIElement*)uielement;
-  NAListIterator iter = naMakeListMutator(&(element->reactions));
-  while(naIterateList(&iter, 1)){
-    NAReaction* curreaction = naGetListCurMutable(&iter);
+  naBeginListMutatorIteration(NAReaction* curreaction, &(element->reactions), iter);
     naFree(curreaction);
-  }
-  naClearListIterator(&iter);
+  naEndListIteration(iter);
   naClearList(&(element->reactions));
 }
 
@@ -240,17 +236,15 @@ NA_DEF void naAddUIReaction(void* controller, NAUIElement* uielement, NAUIComman
 
 NA_DEF NABool naDispatchUIElementCommand(NACoreUIElement* element, NAUICommand command, void* arg){
   NABool finished = NA_FALSE;
+  NAListIterator iter;
 
-  NAListIterator iter = naMakeListMutator(&(element->reactions));
-  while(naIterateList(&iter, 1)){
-    NAReaction* curreaction = naGetListCurMutable(&iter);
+  naBeginListMutatorIteration(NAReaction* curreaction, &(element->reactions), iter);
     if(curreaction->command == command){
       finished = curreaction->handler(curreaction->controller, (NAUIElement*)element, command, arg);
       // If the handler tells us to stop handling the command, we do so.
       if(finished){break;}
     }
-  }
-  naClearListIterator(&iter);
+  naEndListIteration(iter);
 
   // If the command has not been finished, search for other reactions in the parent elements.
   if(!finished){
