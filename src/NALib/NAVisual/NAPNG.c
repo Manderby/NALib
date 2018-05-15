@@ -238,13 +238,15 @@ NA_API NAInt naGetPNGBytesPerPixel(NAPNGColorType colortype){
 
 
 NA_DEF NAByte naGetPaethPredictor(NAByte a, NAByte b, NAByte c){
+  NAByte retvalue;
   NAInt p = (NAInt)a + (NAInt)b - (NAInt)c;
   NAInt pa = naAbsi(p - a);
   NAInt pb = naAbsi(p - b);
   NAInt pc = naAbsi(p - c);
-  if((pa <= pb) && (pa <= pc)){return a;}
-  else if(pb <= pc){return b;}
-  else{return c;}
+  if((pa <= pb) && (pa <= pc)){retvalue = a;}
+  else if(pb <= pc){retvalue = b;}
+  else{retvalue = c;}
+  return retvalue;
 }
 
 

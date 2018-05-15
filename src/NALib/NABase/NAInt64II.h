@@ -103,16 +103,19 @@
     }
     NA_IDEF NAInt64 naShrInt64(NAInt64 a, int n){
       NAInt64 retint;
-      if(n < 0){return naShlInt64(a, -n);}
-      if(n <= 32){
-        retint.lo = a.lo >> n;
-        retint.lo |= (uint32)(a.hi << (32 - n));
-        retint.hi = a.hi >> n;
+      if(n < 0){
+        retint = naShlInt64(a, -n);
       }else{
-        retint.lo = (uint32)(a.hi >> (n - 32));
-        retint.hi = (int32)(a.hi >> 31 >> 1); // Sign preservation!
-        // The splitting in >> 31 and >> 1 actually is required to silence
-        // some compiler warnings.
+        if(n <= 32){
+          retint.lo = a.lo >> n;
+          retint.lo |= (uint32)(a.hi << (32 - n));
+          retint.hi = a.hi >> n;
+        }else{
+          retint.lo = (uint32)(a.hi >> (n - 32));
+          retint.hi = (int32)(a.hi >> 31 >> 1); // Sign preservation!
+          // The splitting in >> 31 and >> 1 actually is required to silence
+          // some compiler warnings.
+        }
       }
       return retint;
     }
@@ -336,14 +339,17 @@
     }
     NA_IDEF NAUInt64 naShrUInt64(NAUInt64 a, int n){
       NAUInt64 retint;
-      if(n < 0){return naShlUInt64(a, -n);}
-      if(n <= 32){
-        retint.lo = a.lo >> n;
-        retint.lo |= a.hi << (32 - n);
-        retint.hi = a.hi >> n;
+      if(n < 0){
+        retint = naShlUInt64(a, -n);
       }else{
-        retint.lo = a.hi >> (n - 32);
-        retint.hi = 0;
+        if(n <= 32){
+          retint.lo = a.lo >> n;
+          retint.lo |= a.hi << (32 - n);
+          retint.hi = a.hi >> n;
+        }else{
+          retint.lo = a.hi >> (n - 32);
+          retint.hi = 0;
+        }
       }
       return retint;
     }

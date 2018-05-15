@@ -266,15 +266,18 @@ NA_DEF NAInt naGetTAIPeriodIndexForSISecond(int64 sisecond){
     return NA_NUMBER_OF_TAI_PERIODS - 3;
   }
   // Just in case the given date is not in leap second age at all...
-  if(naSmallerInt64(sisecond, NA_ZERO_64)){return -1;}
-  // In all other cases, perform a binary search in all TAI periods.
-  l = 0;
-  r = NA_NUMBER_OF_TAI_PERIODS - 4;
-  while(l != r){  // binary search
-    m = (l+r)/2;
-    if(naSmallerEqualInt64(naTAIPeriods[m + 1].startsisec, sisecond)){l = m + 1;}else{r = m;}
+  if(naSmallerInt64(sisecond, NA_ZERO_64)){
+    r = -1;
+  }else{
+    // In all other cases, perform a binary search in all TAI periods.
+    l = 0;
+    r = NA_NUMBER_OF_TAI_PERIODS - 4;
+    while(l != r){  // binary search
+      m = (l+r)/2;
+      if(naSmallerEqualInt64(naTAIPeriods[m + 1].startsisec, sisecond)){l = m + 1;}else{r = m;}
+    }
+    // l or r now define the index of the latest NATAIPeriod.
   }
-  // l or r now define the index of the latest NATAIPeriod.
   return r;
 }
 
@@ -298,15 +301,18 @@ NA_DEF NAInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond){
     return NA_NUMBER_OF_TAI_PERIODS - 3;
   }
   // Just in case the given date is not in leap second age at all...
-  if(naSmallerInt64(gregsecond, NA_ZERO_64)){return -1;}
-  // In all other cases, perform a binary search in all TAI periods.
-  l = 0;
-  r = NA_NUMBER_OF_TAI_PERIODS - 4;
-  while(l != r){  // binary search
-    m = (l+r)/2;
-    if(naSmallerEqualInt64(naTAIPeriods[m + 1].startgregsec, gregsecond)){l = m + 1;}else{r = m;}
+  if(naSmallerInt64(gregsecond, NA_ZERO_64)){
+    r = -1;
+  }else{
+    // In all other cases, perform a binary search in all TAI periods.
+    l = 0;
+    r = NA_NUMBER_OF_TAI_PERIODS - 4;
+    while(l != r){  // binary search
+      m = (l+r)/2;
+      if(naSmallerEqualInt64(naTAIPeriods[m + 1].startgregsec, gregsecond)){l = m + 1;}else{r = m;}
+    }
+    // l or r now define the index of the latest NATAIPeriod.
   }
-  // l or r now define the index of the latest NATAIPeriod.
   return r;
 }
 
@@ -314,37 +320,54 @@ NA_DEF NAInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond){
 
 NA_DEF int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str){
   int32 i;
+  int32 monthindex = -1;
   for(i=0; i<NA_MONTHS_PER_YEAR; i++){
-    if(naEqualStringToUTF8CStringLiteral(str, na_monthenglishabbreviationnames[i], NA_TRUE)){return i;}
+    if(naEqualStringToUTF8CStringLiteral(str, na_monthenglishabbreviationnames[i], NA_TRUE)){
+      monthindex = i;
+      break;
+    }
   }
   #ifndef NDEBUG
-    naError("naGetMonthNumberWithEnglishAbbreviation", "Month abbreviation unknown. Returning -1.");
+    if(monthindex == -1)
+      naError("naGetMonthNumberWithEnglishAbbreviation", "Month abbreviation unknown. Returning -1.");
   #endif
-  return -1;
+  return monthindex;
 }
 
 
 NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
   int32 i;
-  NAInt len = naStrlen(str);
-  if(!len){return -1;}
-  for(i=0; i<NA_MONTHS_PER_YEAR; i++){
-    if(naEqualUTF8CStringLiterals(str, na_monthenglishnames[i], 0, NA_FALSE)){return i;}
+  int32 monthindex = -1;
+  if(naStrlen(str)){
+    for(i=0; i<NA_MONTHS_PER_YEAR; i++){
+      if(naEqualUTF8CStringLiterals(str, na_monthenglishnames[i], 0, NA_FALSE)){
+        monthindex = i;
+        break;
+      }
+    }
+    if(monthindex == -1){
+      for(i=0; i<NA_MONTHS_PER_YEAR; i++){
+        if(naEqualUTF8CStringLiterals(str, na_monthenglishabbreviationnames[i], 0, NA_FALSE)){
+          monthindex = i;
+          break;
+        }
+      }
+    }
+    if(monthindex == -1){
+      if(isdigit((const char)str[0])){
+        int32 returnint;
+        NAString* numberstring = naNewStringWithUTF8CStringLiteral(str);
+        returnint = naParseStringInt32(numberstring) - 1;
+        naDelete(numberstring);
+        if(returnint >= 0 && returnint < 12){monthindex = returnint;}
+      }
+    }
   }
-  for(i=0; i<NA_MONTHS_PER_YEAR; i++){
-    if(naEqualUTF8CStringLiterals(str, na_monthenglishabbreviationnames[i], 0, NA_FALSE)){return i;}
-  }
-  if(isdigit((const char)str[0])){
-    int32 returnint;
-    NAString* numberstring = naNewStringWithUTF8CStringLiteral(str);
-    returnint = naParseStringInt32(numberstring) - 1;
-    naDelete(numberstring);
-    return returnint;
-  }
-//  #ifndef NDEBUG
-//    naError("naGetMonthNumberWithEnglishAbbreviation", "Month abbreviation unknown. Returning 0.");
-//  #endif
-  return 0;
+  #ifndef NDEBUG
+    if(monthindex == -1)
+      naError("naGetMonthNumberFromUTF8CStringLiteral", "Month unknown. Returning -1.");
+  #endif
+  return monthindex;
 }
 
 

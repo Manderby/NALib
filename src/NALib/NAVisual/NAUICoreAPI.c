@@ -149,10 +149,17 @@ NA_HDEF NACoreUIElement* naGetCoreUIElementParent(NACoreUIElement* coreuielement
 
 
 NA_HDEF NACoreWindow* naGetCoreUIElementWindow(NACoreUIElement* coreuielement){
-  if(coreuielement->elementtype == NA_UI_APPLICATION){return NA_NULL;}
-  if(coreuielement->elementtype == NA_UI_SCREEN){return NA_NULL;}
-  if(coreuielement->elementtype == NA_UI_WINDOW){return (NACoreWindow*)coreuielement;}
-  return naGetCoreUIElementWindow(naGetUIElementParent(coreuielement));
+  NACoreWindow* elementwindow;
+  if(coreuielement->elementtype == NA_UI_APPLICATION){
+    elementwindow = NA_NULL;
+  }else if(coreuielement->elementtype == NA_UI_SCREEN){
+    elementwindow = NA_NULL;
+  }else if(coreuielement->elementtype == NA_UI_WINDOW){
+    elementwindow = (NACoreWindow*)coreuielement;
+  }else{
+    elementwindow = naGetCoreUIElementWindow(naGetUIElementParent(coreuielement));
+  }
+  return elementwindow;
 }
 
 

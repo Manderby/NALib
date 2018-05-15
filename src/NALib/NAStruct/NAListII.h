@@ -1127,8 +1127,7 @@ NA_IDEF void naExchangeListParts(NAListIterator* iterator){
     if(iterator->cur == &(src->sentinel))
       naError("naExchangeListParts", "List has no current element set.");
   #endif
-  if(&(src->sentinel) == iterator->cur){return;}
-  if(src->sentinel.next == iterator->cur){return;}
+  if((&(src->sentinel) == iterator->cur) || (src->sentinel.next == iterator->cur)){return;}
   first = src->sentinel.next;
   prev = iterator->cur->prev;
   first->prev = src->sentinel.prev;

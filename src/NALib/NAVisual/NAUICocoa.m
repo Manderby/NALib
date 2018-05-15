@@ -265,7 +265,9 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
   cocoawindow = nawindow;
   return self;
 }
-- (NACocoaWindow*) cocoawindow{return cocoawindow;}
+- (NACocoaWindow*) cocoawindow{
+  return cocoawindow;
+}
 - (void)mouseMoved:(NSEvent*)event{
 //  double deltaX = [event deltaX];
 //  double deltaY = [event deltaY];
@@ -378,22 +380,23 @@ NA_DEF void naSetWindowContentView(NAWindow* window, NAUIElement* uielement){
 
 NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullscreen){
   NACoreWindow* corewindow = (NACoreWindow*)window;
-  if(fullscreen == corewindow->fullscreen){return;}
-  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
-  if(fullscreen){
-    corewindow->windowedframe = naMakeRectWithNSRect([(NSWindow*)(corewindow->uielement.nativeID) frame]);
-    [nativewindow setStyleMask:NSBorderlessWindowMask];
-    [nativewindow setFrame:[[NSScreen mainScreen] frame] display:YES];
-    [nativewindow setLevel:kCGScreenSaverWindowLevel];
-  }else{
-    [nativewindow setStyleMask:NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask];
-    [nativewindow setFrame:naMakeNSRectWithRect(corewindow->windowedframe) display:YES];
-    [nativewindow setLevel:NSNormalWindowLevel];
+  if(fullscreen != corewindow->fullscreen){
+    NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+    if(fullscreen){
+      corewindow->windowedframe = naMakeRectWithNSRect([(NSWindow*)(corewindow->uielement.nativeID) frame]);
+      [nativewindow setStyleMask:NSBorderlessWindowMask];
+      [nativewindow setFrame:[[NSScreen mainScreen] frame] display:YES];
+      [nativewindow setLevel:kCGScreenSaverWindowLevel];
+    }else{
+      [nativewindow setStyleMask:NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask];
+      [nativewindow setFrame:naMakeNSRectWithRect(corewindow->windowedframe) display:YES];
+      [nativewindow setLevel:NSNormalWindowLevel];
+    }
+    corewindow->fullscreen = fullscreen;
+    // Setting the first responder again is necessary as otherwise the first
+    // responder is lost.
+    [nativewindow makeFirstResponder:[nativewindow contentView]];
   }
-  corewindow->fullscreen = fullscreen;
-  // Setting the first responder again is necessary as otherwise the first
-  // responder is lost.
-  [nativewindow makeFirstResponder:[nativewindow contentView]];
 }
 
 

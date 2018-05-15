@@ -37,6 +37,7 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
   NARect rect;
   PAINTSTRUCT ps; // Paint information. Needed for WM_PAINT messages
   NABool hasbeenhandeled = NA_FALSE;
+  LRESULT retvalue;
   NAUIKeyCode keycode;
   NAUIKeyCode scancode;   // used as UINT, converted to NAUIKeyCode
   NASize size;
@@ -119,8 +120,7 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
   case WM_HSCROLL:
     //  uielement = window->getUIElement((HWND)lParam);
-    //  if(!uielement){return 0;}
-    //  uielement->dispatchCommand(LOWORD(wParam), 0); // note that this is the loword
+    //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(LOWORD(wParam), 0);} // note that this is the loword
     break;
 
   case WM_KEYDOWN:
@@ -172,20 +172,17 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
   case WM_COMMAND:
     //  uielement = window->getUIElement((HWND)lParam);
-    //  if(!uielement){return 0;}
-    //  uielement->dispatchCommand(HIWORD(wParam), 0);
+    //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(HIWORD(wParam), 0);}
     break;
 
   case WM_NOTIFY:
     //  uielement = window->getUIElement(((LPNMHDR)lParam)->hwndFrom);
-    //  if(!uielement){return 0;}
-    //  uielement->dispatchCommand(((LPNMHDR)lParam)->code, lParam);
+    //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(((LPNMHDR)lParam)->code, lParam);}
     break;
 
   case WM_USER:
     //  uielement = window->getUIElement((HWND)lParam);
-    //  if(!uielement){return 0;}
-    //  uielement->dispatchCommand(HIWORD(wParam), 0);
+    //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(HIWORD(wParam), 0);}
     break;
 
   case WM_CLOSE:
@@ -198,12 +195,12 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
   }
 
-  if (hasbeenhandeled) {
-    return 0;
+  if(hasbeenhandeled) {
+    retvalue = 0;
+  }else{
+    retvalue = DefWindowProc(hWnd, message, wParam, lParam);
   }
-  else {
-    return DefWindowProc(hWnd, message, wParam, lParam);
-  }
+  return retvalue;
 }
 
 
@@ -758,42 +755,43 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullscreen){
   NARect screenrect;
   NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)window;
 
-  if(fullscreen == winapiwindow->fullscreen){return;}
-  winapiwindow->fullscreen = fullscreen;
+  if(fullscreen != winapiwindow->fullscreen){
+    winapiwindow->fullscreen = fullscreen;
 
-  //HWND taskbar = FindWindow(TEXT("Shell_TrayWnd"), NULL);
-  //HWND startbutton = FindWindow(TEXT("Button"), NULL);
+    //HWND taskbar = FindWindow(TEXT("Shell_TrayWnd"), NULL);
+    //HWND startbutton = FindWindow(TEXT("Button"), NULL);
 
-  screenrect = naGetMainScreenRect();
+    screenrect = naGetMainScreenRect();
 
-  if(fullscreen){
-    DEVMODE screenSettings;
-    winapiwindow->windowedframe = naGetUIElementRect(window, naGetApplication(), NA_TRUE);
+    if(fullscreen){
+      DEVMODE screenSettings;
+      winapiwindow->windowedframe = naGetUIElementRect(window, naGetApplication(), NA_TRUE);
 
-    newrect = naGetMainScreenRect();
-    
-    memset(&screenSettings, 0, sizeof(screenSettings)); // set everything to 0
-    screenSettings.dmSize = sizeof(screenSettings);
-    //memcpy(screenSettings.dmDeviceName, fullscreendevicename, CCHDEVICENAME * sizeof(WCHAR));
-    screenSettings.dmPelsWidth = (DWORD)newrect.size.width;
-    screenSettings.dmPelsHeight = (DWORD)newrect.size.height;
-    screenSettings.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
+      newrect = naGetMainScreenRect();
+      
+      memset(&screenSettings, 0, sizeof(screenSettings)); // set everything to 0
+      screenSettings.dmSize = sizeof(screenSettings);
+      //memcpy(screenSettings.dmDeviceName, fullscreendevicename, CCHDEVICENAME * sizeof(WCHAR));
+      screenSettings.dmPelsWidth = (DWORD)newrect.size.width;
+      screenSettings.dmPelsHeight = (DWORD)newrect.size.height;
+      screenSettings.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
 
-    style = WS_POPUP;
-    SetWindowLongPtr(naGetUIElementNativeID(window), GWL_STYLE, style);
-    SetWindowPos(naGetUIElementNativeID(window), HWND_TOPMOST, (int)screenrect.pos.x, (int)(screenrect.pos.y - screenrect.pos.y), (int)screenrect.size.width, (int)screenrect.size.height, SWP_SHOWWINDOW);
-    //ChangeDisplaySettings(NULL, 0);
-    ChangeDisplaySettings(&screenSettings, CDS_FULLSCREEN);
-  }else{
-    newrect = winapiwindow->windowedframe;
-    style = WS_OVERLAPPEDWINDOW;
-    SetWindowLongPtr(naGetUIElementNativeID(window), GWL_STYLE, style);
-    SetWindowPos(naGetUIElementNativeID(window), HWND_NOTOPMOST, (int)winapiwindow->windowedframe.pos.x, (int)(screenrect.size.height - winapiwindow->windowedframe.pos.y), (int)winapiwindow->windowedframe.size.width, (int)winapiwindow->windowedframe.size.height, SWP_SHOWWINDOW);
-    ChangeDisplaySettings(NULL, 0);
+      style = WS_POPUP;
+      SetWindowLongPtr(naGetUIElementNativeID(window), GWL_STYLE, style);
+      SetWindowPos(naGetUIElementNativeID(window), HWND_TOPMOST, (int)screenrect.pos.x, (int)(screenrect.pos.y - screenrect.pos.y), (int)screenrect.size.width, (int)screenrect.size.height, SWP_SHOWWINDOW);
+      //ChangeDisplaySettings(NULL, 0);
+      ChangeDisplaySettings(&screenSettings, CDS_FULLSCREEN);
+    }else{
+      newrect = winapiwindow->windowedframe;
+      style = WS_OVERLAPPEDWINDOW;
+      SetWindowLongPtr(naGetUIElementNativeID(window), GWL_STYLE, style);
+      SetWindowPos(naGetUIElementNativeID(window), HWND_NOTOPMOST, (int)winapiwindow->windowedframe.pos.x, (int)(screenrect.size.height - winapiwindow->windowedframe.pos.y), (int)winapiwindow->windowedframe.size.width, (int)winapiwindow->windowedframe.size.height, SWP_SHOWWINDOW);
+      ChangeDisplaySettings(NULL, 0);
+    }
+
+    //hasbeenhandeled = naDispatchUIElementCommand(window, NA_UI_COMMAND_RESHAPE, &newrect);
+    //if(hasbeenhandeled){naDispatchUIElementCommand(window, NA_UI_COMMAND_REDRAW, NA_NULL);}
   }
-
-  //hasbeenhandeled = naDispatchUIElementCommand(window, NA_UI_COMMAND_RESHAPE, &newrect);
-  //if(hasbeenhandeled){naDispatchUIElementCommand(window, NA_UI_COMMAND_REDRAW, NA_NULL);}
 }
 
 
