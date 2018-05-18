@@ -613,13 +613,13 @@ NA_IDEF NAPos naMakePosWithNSPoint(NSPoint nspoint){
   newpos.y = nspoint.y;
   return newpos;
 }
-NA_IDEF NSPoint naMakeNSPoitWithPos(NAPos napos){
+NA_IDEF NSPoint naMakeNSPointWithPos(NAPos napos){
   NSPoint newpoint;
   #ifndef NDEBUG
     if(!(naIsOffsetValueValid(napos.x) && naIsOffsetValueValid(napos.y)))
-      naError("naMakeNSPoitWithPos", "Invalid values given.");
+      naError("naMakeNSPointWithPos", "Invalid values given.");
     if(!(naIsOffsetValueUseful(napos.x) && naIsOffsetValueUseful(napos.y)))
-      naError("naMakeNSPoitWithPos", "Values given are not useful.");
+      naError("naMakeNSPointWithPos", "Values given are not useful.");
   #endif
   newpoint.x = napos.x;
   newpoint.y = napos.y;
