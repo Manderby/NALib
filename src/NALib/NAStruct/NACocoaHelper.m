@@ -23,7 +23,7 @@
 
 
 NA_DEF NSString* naAllocNSStringWithNAString(const NAString* string){
-  return [NSString stringWithFormat:@"%s", naGetStringUTF8Pointer(string)];
+  return [NSString stringWithUTF8String:naGetStringUTF8Pointer(string)];
 }
 
 
