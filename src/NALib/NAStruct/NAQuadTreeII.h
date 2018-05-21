@@ -64,6 +64,31 @@ NA_IDEF NAQuadTreeConfiguration naGetQuadTreeConfiguration(const NAQuadTree* tre
 
 
 
+#undef naBeginQuadTreeAccessorIteration
+#define naBeginQuadTreeAccessorIteration(typedelem, quadtree, limit, create, iter)\
+  iter = naMakeQuadTreeAccessor(quadtree);\
+  while(naIterateQuadTree(&iter, limit, create)){\
+    typedelem = naGetQuadTreeCurConst(&iter)
+
+#undef naBeginQuadTreeMutatorIteration
+#define naBeginQuadTreeMutatorIteration(typedelem, quadtree, limit, create, iter)\
+  iter = naMakeQuadTreeMutator(quadtree);\
+  while(naIterateQuadTree(&iter, limit, create)){\
+    typedelem = naGetQuadTreeCurMutable(&iter, create)
+
+#undef naBeginQuadTreeModifierIteration
+#define naBeginQuadTreeModifierIteration(typedelem, quadtree, limit, create, iter)\
+  iter = naMakeQuadTreeModifier(quadtree);\
+  while(naIterateQuadTree(&iter, limit, create)){\
+    typedelem = naGetQuadTreeCurMutable(&iter, create)
+
+#undef naEndQuadTreeIteration
+#define naEndQuadTreeIteration(iter)\
+  }\
+  naClearQuadTreeIterator(&iter)
+
+
+
 NA_HIDEF void naInitQuadTreeIterator(NAQuadTreeIterator* iter){
   #ifndef NDEBUG
     NAQuadTree* mutabletree = (NAQuadTree*)naGetPtrConst(&(iter->tree));

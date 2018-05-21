@@ -108,7 +108,6 @@ NA_IDEF void naClearArray(NAArray* array){
   #ifndef NDEBUG
     if(!array){
       naCrash("naClearArray", "array is Null-Pointer.");
-      return;
     }
     if(array->itercount)
       naError("naClearArray", "There are still some iterators operating upon this array. Did you use naClearArrayIterator?");

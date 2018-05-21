@@ -306,6 +306,21 @@ NA_API void naSetQuadTreeInRect(          NAQuadTree* tree,
 // Beware to always use naClearQuadTreeIterator. Otherwise NALib will emit
 // warnings that there are still iterators running on the struct if NDEBUG is
 // undefined.
+//
+// You can also use the predefined Begin and End Iterator macros. Beware,
+// these are macros. They perform a simple one-by-one traversal of the tree.
+// Use them as follows:
+//
+// NAQuadTreeIterator iteratorname;
+// naBeginQuadTreeMutatorIteration(MyLeaf* leaf, mylist, limit, create, iteratorname);
+//   doStuffWithLeaf(leaf);
+// naEndListIteration(iteratorname);
+
+#define naBeginQuadTreeAccessorIteration(typedelem, quadtree, limit, create, iter)
+#define naBeginQuadTreeMutatorIteration(typedelem, quadtree, limit, create, iter)
+#define naBeginQuadTreeModifierIteration(typedelem, quadtree, limit, create, iter)
+#define naEndQuadTreeIteration(iter)
+
 
 // Makes the iterators but does not locates any specific leaf.
 NA_API NAQuadTreeIterator naMakeQuadTreeAccessor(const NAQuadTree* tree);

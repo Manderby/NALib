@@ -307,7 +307,7 @@ NA_HDEF void naShrinkOctTreeNodeRoot(NAOctTree* tree){
   while(1){
     if(tree->root->childlength == tree->leaflength){
       // The root node has only leafes as childs.
-      return;
+      break;
     }else{
       // We count how many children there are.
       NAUInt childcount = 0;
