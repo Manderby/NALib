@@ -3046,13 +3046,13 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
 
 
 
-NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAByte delimiter){
+NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8Char delimiter){
   NAString* string;
   NAInt tokenstart = iter->curoffset;
   const NABufferPart* part;
 
   while(!naIsBufferAtInitial(iter)){
-    const NAByte* curbyte;
+    const NAUTF8Char* curbyte;
     NAInt endoffset;
     NABool found = NA_FALSE;
 
@@ -3061,7 +3061,7 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAByte 
       naGetBufferu8(iter);
       part = naGetListCurConst(&(iter->listiter));
     }
-    curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset); 
+    curbyte = (NAUTF8Char*)naGetBufferPartDataPointerConst(part, iter->curoffset); 
     endoffset = naGetBufferPartEnd(part);
     while(iter->curoffset < endoffset){
       if(*curbyte == delimiter){found = NA_TRUE; break;}

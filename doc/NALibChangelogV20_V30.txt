@@ -53,6 +53,7 @@ Other things:
 - Added naIterateListBack and naIterateListStep to List iteration.
 - Added simplified List iteration using macros naBeginListIterationConst,
   naBeginListIterationMutable and naEndListIteration.
+- Reenabled encoding and decoding strings for EPS and XML.
 - Cleaned up some h files.
 - Changed configuration to use posix_memalign by default.
 - Changed the license to a more compact MIT version.

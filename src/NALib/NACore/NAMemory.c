@@ -491,7 +491,7 @@ NA_DEF void* naRetain(void* pointer){
     if(!na_runtime)
       naCrash("naRetain", "Runtime not running. Use naStartRuntime()");
     if(!pointer)
-      naError("naRetain", "pointer is null");
+      naCrash("naRetain", "pointer is null");
 
     // Find the part entry at the beginning of the part by AND'ing the
     // address with the partsizemask
@@ -522,7 +522,7 @@ NA_DEF void naRelease(void* pointer){
     if(!na_runtime)
       naCrash("naRelease", "Runtime not running. Use naStartRuntime()");
     if(!pointer)
-      naError("naRelease", "pointer is null");
+      naCrash("naRelease", "pointer is null");
   #endif
 
   // Find the corepool entry at the beginning of the part by AND'ing the

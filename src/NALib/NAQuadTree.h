@@ -363,9 +363,11 @@ NA_API NABool naLocateQuadTreeCoord(NAQuadTreeIterator* iter, NAPos coord);
 NA_API NABool naLocateQuadTreeIterator(NAQuadTreeIterator* dstiter,
                                  const NAQuadTreeIterator* srciter);
 
-// Moves the iterator relative to the current position. Each step can be
-// positive or negative. The iterator must be at a specific position before
-// using this function. Probably you want to use naLocateQuadTreeCoord before.
+// Moves the iterator relative to the current position by multiples of the
+// minimal size of a leaf defined by minleafexponent upon tree creation.
+// Each step can be positive or negative. The iterator must be at a specific
+// position before using this function.
+// Probably you want to use naLocateQuadTreeCoord before.
 NA_API NABool naLocateQuadTreeSteps(  NAQuadTreeIterator* iter,
                                                     NAInt stepx,
                                                     NAInt stepy);

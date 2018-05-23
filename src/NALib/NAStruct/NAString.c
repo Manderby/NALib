@@ -313,8 +313,7 @@ NA_DEF NAString* naNewStringWithSuffixOfFilename(const NAString* filename){
 
 
 
-NA_DEF NAString* naNewStringCEscaped (const NAString* inputstring){
-  NAUTF8Char outbuffer[10]; // this is the maximal number of chars added.
+NA_DEF NAString* naNewStringCEscaped(const NAString* inputstring){
   NAString* string;
   NABuffer* buffer;
   NABufferIterator iter;
@@ -322,24 +321,23 @@ NA_DEF NAString* naNewStringCEscaped (const NAString* inputstring){
   if(naIsStringEmpty(inputstring)){
     return naNewString();
   }
-  outbuffer[0] = '\\';
   buffer = naNewBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputstring->buffer);
   outiter = naMakeBufferModifier(buffer);
   while(!naIsBufferAtEnd(&iter)){
     NAUTF8Char curchar = naReadBufferi8(&iter);
     switch(curchar){
-    case '\a': outbuffer[1] = 'a';  naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\b': outbuffer[1] = 'b';  naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\f': outbuffer[1] = 'f';  naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\n': outbuffer[1] = 'n';  naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\r': outbuffer[1] = 'r';  naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\t': outbuffer[1] = 't';  naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\v': outbuffer[1] = 'v';  naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\\': outbuffer[1] = '\\'; naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\'': outbuffer[1] = '\''; naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\"': outbuffer[1] = '\"'; naWriteBufferBytes(&outiter, outbuffer, 2); break;
-    case '\?': outbuffer[1] = '?';  naWriteBufferBytes(&outiter, outbuffer, 2); break;
+    case '\a': naWriteBufferBytes(&outiter, "\\a", 2); break;
+    case '\b': naWriteBufferBytes(&outiter, "\\b", 2); break;
+    case '\f': naWriteBufferBytes(&outiter, "\\f", 2); break;
+    case '\n': naWriteBufferBytes(&outiter, "\\n", 2); break;
+    case '\r': naWriteBufferBytes(&outiter, "\\r", 2); break;
+    case '\t': naWriteBufferBytes(&outiter, "\\t", 2); break;
+    case '\v': naWriteBufferBytes(&outiter, "\\v", 2); break;
+    case '\\': naWriteBufferBytes(&outiter, "\\\\", 2); break;
+    case '\'': naWriteBufferBytes(&outiter, "\\\'", 2); break;
+    case '\"': naWriteBufferBytes(&outiter, "\\\"", 2); break;
+    case '\?': naWriteBufferBytes(&outiter, "\\?", 2); break;
     // todo: Add more escapes
     default: naWriteBufferi8(&outiter, curchar); break;
     }
@@ -402,232 +400,142 @@ NA_DEF NAString* naNewStringCUnescaped(const NAString* inputstring){
 
 
 NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
-  NA_UNUSED(inputstring);
-//  NAInt i;
-//  NAInt inputsize;
-//  NAInt destsize;
-//  const NAUTF8Char* inptr;
-//  NAUTF8Char* destptr;
-//  NAUTF8Char* stringbuf;
-//
-//  #ifndef NDEBUG
-//    if(!inputstring){
-//      naCrash("naNewStringXMLEncoded", "input string is Null-Pointer.");
-//      return NA_NULL;
-//    }
-//  #endif
-//  inputsize = naGetStringBytesize(inputstring);
-//  if(!inputsize){return naNewString();}
-//  
-//  // Count the required number of utf8 characters.
-//  destsize = 0;
-//  inptr = naGetStringUTF8Pointer(inputstring);
-//  for(i=0; i<inputsize; i++){
-//    switch(*inptr){
-//    case '&': destsize += 5; break;
-//    case '<': destsize += 4; break;
-//    case '>': destsize += 4; break;
-//    case '\"': destsize += 6; break;
-//    case '\'': destsize += 6; break;
-//    default: destsize += 1; break;
-//    }
-//    inptr++;
-//  }
-//
-//  #ifndef NDEBUG
-//    if(destsize <= 0)
-//      naError("naNewStringXMLEncoded", "encoded size invalid. String too long?");
-//  #endif
-//  // Create the string with the required length
-//  stringbuf = naMalloc(-destsize);
-//  inptr = naGetStringUTF8Pointer(inputstring);
-//  destptr = stringbuf;
-//
-//  // Copy all characters and encode them if necessary.
-//  for(i=0; i<inputsize; i++){
-//    switch(*inptr){
-//    case '&':  *destptr++ = '&'; *destptr++ = 'a'; *destptr++ = 'm'; *destptr++ = 'p'; *destptr++ = ';'; break;
-//    case '<':  *destptr++ = '&'; *destptr++ = 'l'; *destptr++ = 't'; *destptr++ = ';'; break;
-//    case '>':  *destptr++ = '&'; *destptr++ = 'g'; *destptr++ = 't'; *destptr++ = ';'; break;
-//    case '\"': *destptr++ = '&'; *destptr++ = 'q'; *destptr++ = 'u'; *destptr++ = 'o'; *destptr++ = 't'; *destptr++ = ';'; break;
-//    case '\'': *destptr++ = '&'; *destptr++ = 'a'; *destptr++ = 'p'; *destptr++ = 'o'; *destptr++ = 's'; *destptr++ = ';'; break;
-//    default: *destptr++ = *inptr; break;
-//    }
-//    inptr++;
-//  }
-//
-//  return naNewStringWithMutableUTF8Buffer(stringbuf, -destsize, naFree);
-  return naNewString();
+  NAString* string;
+  NABuffer* buffer;
+  NABufferIterator iter;
+  NABufferIterator outiter;
+  if(naIsStringEmpty(inputstring)){
+    return naNewString();
+  }
+  buffer = naNewBuffer(NA_FALSE);
+  iter = naMakeBufferAccessor(inputstring->buffer);
+  outiter = naMakeBufferModifier(buffer);
+  while(!naIsBufferAtEnd(&iter)){
+    NAUTF8Char curchar = naReadBufferi8(&iter);
+    switch(curchar){
+    case '&': naWriteBufferBytes(&outiter, "&amp;", 5); break;
+    case '<': naWriteBufferBytes(&outiter, "&lt;", 4); break;
+    case '>': naWriteBufferBytes(&outiter, "&gt;", 4); break;
+    case '\"': naWriteBufferBytes(&outiter, "&quot;", 6); break;
+    case '\'': naWriteBufferBytes(&outiter, "&apos;", 6); break;
+    default: naWriteBufferi8(&outiter, curchar); break;
+    }
+  }
+  naClearBufferIterator(&outiter);
+  naClearBufferIterator(&iter);
+  string = naNewStringWithBufferExtraction(buffer, naGetBufferRange(buffer));
+  naRelease(buffer);
+  return string;
 }
 
 
 
 
 NA_DEF NAString* naNewStringXMLDecoded(const NAString* inputstring){
-  NA_UNUSED(inputstring);
-//  NAInt inputsize;
-//  const NAUTF8Char* inptr;
-//  NAUTF8Char* destptr;
-//  NAInt i;
-//  NAInt finalsize;
-//  NAUTF8Char* stringbuf;
-//  NAString* string;
-//
-//  #ifndef NDEBUG
-//    if(!inputstring){
-//      naCrash("naNewStringXMLDecoded", "input string is Null-Pointer.");
-//      return NA_NULL;
-//    }
-//  #endif
-//
-//  inputsize = naGetStringBytesize(inputstring);
-//  if(!inputsize){return naNewString();}
-//
-//  // Create a string with sufficient characters. As XML entities are always
-//  // longer than their decoded character, we just use the same size.
-//  stringbuf = naMalloc(-inputsize);
-//  string = naNewStringWithMutableUTF8Buffer(stringbuf, -inputsize, naFree);
-//  inptr = naGetStringUTF8Pointer(inputstring);
-//  destptr = stringbuf;
-//
-//  // Copy all characters and decode them if necessary.
-//  for(i=0; i<inputsize; i++){
-//    if(inptr[i] == '&'){
-//      if(((inputsize - i) >= 5) && (inptr[i+1] == 'a') && (inptr[i+2] == 'm') && (inptr[i+3] == 'p') && (inptr[i+4] == ';')){ *destptr++ = '&'; i += 4; }
-//      else if(((inputsize - i) >= 4) && (inptr[i+1] == 'l') && (inptr[i+2] == 't') && (inptr[i+3] == ';')){ *destptr++ = '<'; i += 3; }
-//      else if(((inputsize - i) >= 4) && (inptr[i+1] == 'g') && (inptr[i+2] == 't') && (inptr[i+3] == ';')){ *destptr++ = '>'; i += 3; }
-//      else if(((inputsize - i) >= 6) && (inptr[i+1] == 'q') && (inptr[i+2] == 'u') && (inptr[i+3] == 'o') && (inptr[i+4] == 't') && (inptr[i+5] == ';')){ *destptr++ = '\"'; i += 5; }
-//      else if(((inputsize - i) >= 6) && (inptr[i+1] == 'a') && (inptr[i+2] == 'p') && (inptr[i+3] == 'o') && (inptr[i+4] == 's') && (inptr[i+5] == ';')){ *destptr++ = '\''; i += 5; }
-//      else{
-//        *destptr++ = inptr[i];
-//      }
-//    }else{
-//      *destptr++ = inptr[i];
-//    }
-//  }
-//
-//  // todo: numeric entities.
-//
-//  // The string is marked as NULL-Terminated. So we make sure this is the case.
-//  *destptr = '\0';
-//  // Finally, we shrink the string to its actual size
-//  finalsize = destptr - stringbuf;
-//  string = naNewStringExtraction(string, 0, finalsize);
-//
-//  return string;
-  return naNewString();
+  NAString* string;
+  NABuffer* buffer;
+  NABufferIterator iter;
+  NABufferIterator outiter;
+  if(naIsStringEmpty(inputstring)){
+    return naNewString();
+  }
+  buffer = naNewBuffer(NA_FALSE);
+  iter = naMakeBufferAccessor(inputstring->buffer);
+  outiter = naMakeBufferModifier(buffer);
+  while(!naIsBufferAtEnd(&iter)){
+    NAUTF8Char curchar = naReadBufferi8(&iter);
+    if(curchar == '&'){
+      NAString* token = naParseBufferTokenWithDelimiter(&iter, ';');
+      if     (naEqualStringToUTF8CStringLiteral(token, "amp",   NA_TRUE)){naWriteBufferi8(&outiter, '&');}
+      else if(naEqualStringToUTF8CStringLiteral(token, "lt",    NA_TRUE)){naWriteBufferi8(&outiter, '<');}
+      else if(naEqualStringToUTF8CStringLiteral(token, "gt",    NA_TRUE)){naWriteBufferi8(&outiter, '>');}
+      else if(naEqualStringToUTF8CStringLiteral(token, "quot",  NA_TRUE)){naWriteBufferi8(&outiter, '\"');}
+      else if(naEqualStringToUTF8CStringLiteral(token, "apos",  NA_TRUE)){naWriteBufferi8(&outiter, '\'');}
+      else{
+        #ifndef NDEBUG
+          naError("naNewStringXMLDecoded", "Could not decode entity");
+        #endif
+        naWriteBufferi8(&outiter, curchar);
+        naWriteBufferString(&outiter, token);
+        naWriteBufferi8(&outiter, ';');
+      }
+      naDelete(token);
+    }else{
+      naWriteBufferi8(&outiter, curchar);
+    }
+  }
+  naClearBufferIterator(&outiter);
+  naClearBufferIterator(&iter);
+  string = naNewStringWithBufferExtraction(buffer, naGetBufferRange(buffer));
+  naRelease(buffer);
+  return string;
 }
 
 
 
 NA_DEF NAString* naNewStringEPSEncoded(const NAString* inputstring){
-  NA_UNUSED(inputstring);
-//  NAUInt i;
-//  NAUInt inputsize;
-//  NAInt destsize;
-//  const NAUTF8Char* inptr;
-//  NAUTF8Char* destptr;
-//  NAUTF8Char* stringbuf;
-//  NAString* string;
-//
-//  #ifndef NDEBUG
-//    if(!inputstring){
-//      naCrash("naNewStringEPSEncoded", "input string is Null-Pointer.");
-//      return NA_NULL;
-//    }
-//  #endif
-//  inputsize = naGetStringBytesize(inputstring);
-//  if(!inputsize){return naNewString();}
-//  
-//  // Count the required number of utf8 characters.
-//  destsize = 0;
-//  inptr = naGetStringUTF8Pointer(inputstring);
-//  for(i=0; i<inputsize; i++){
-//    switch(*inptr){
-//    case '\\': destsize += 2; break;
-//    case '(': destsize += 2; break;
-//    case ')': destsize += 2; break;
-//    default: destsize += 1; break;
-//    }
-//    inptr++;
-//  }
-//
-//  #ifndef NDEBUG
-//    if(destsize <= 0)
-//      naError("naNewStringEPSEncoded", "encoded size invalid. String too long?");
-//  #endif
-//  // Create the string with the required length
-//  stringbuf = naMalloc(-destsize);
-//  string = naNewStringWithMutableUTF8Buffer(stringbuf, -destsize, naFree);
-//  inptr = naGetStringUTF8Pointer(inputstring);
-//  destptr = stringbuf;
-//
-//  // Copy all characters and encode them if necessary.
-//  for(i=0; i<inputsize; i++){
-//    switch(*inptr){
-//    case '\\': *destptr++ = '\\'; *destptr++ = '\\'; break;
-//    case '(':  *destptr++ = '\\'; *destptr++ = '(';  break;
-//    case ')':  *destptr++ = '\\'; *destptr++ = ')';  break;
-//    default: *destptr++ = *inptr; break;
-//    }
-//    inptr++;
-//  }
-//
-//  return string;
-  return naNewString();
+  NAString* string;
+  NABuffer* buffer;
+  NABufferIterator iter;
+  NABufferIterator outiter;
+  if(naIsStringEmpty(inputstring)){
+    return naNewString();
+  }
+  buffer = naNewBuffer(NA_FALSE);
+  iter = naMakeBufferAccessor(inputstring->buffer);
+  outiter = naMakeBufferModifier(buffer);
+  while(!naIsBufferAtEnd(&iter)){
+    NAUTF8Char curchar = naReadBufferi8(&iter);
+    switch(curchar){
+    case '\\': naWriteBufferBytes(&outiter, "\\\\", 2); break;
+    case '(':  naWriteBufferBytes(&outiter, "\\(", 2); break;
+    case ')':  naWriteBufferBytes(&outiter, "\\)", 2); break;
+    default: naWriteBufferi8(&outiter, curchar); break;
+    }
+  }
+  naClearBufferIterator(&outiter);
+  naClearBufferIterator(&iter);
+  string = naNewStringWithBufferExtraction(buffer, naGetBufferRange(buffer));
+  naRelease(buffer);
+  return string;
 }
 
 
 NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputstring){
-  NA_UNUSED(inputstring);
-//
-//  NAInt i;
-//  NAInt inputsize;
-//  const NAUTF8Char* inptr;
-//  NAUTF8Char* destptr;
-//  NAInt finalsize;
-//  NAUTF8Char* stringbuf;
-//  NAString* string;
-//
-//  #ifndef NDEBUG
-//    if(!inputstring){
-//      naCrash("naNewStringEPSDecoded", "input string is Null-Pointer.");
-//      return NA_NULL;
-//    }
-//  #endif
-//
-//  inputsize = naGetStringBytesize(inputstring);
-//  if(!inputsize){return naNewString();}
-//
-//  // Create a string with sufficient characters. As EPS entities are always
-//  // longer than their decoded character, we just use the same size.
-//  stringbuf = naMalloc(-inputsize);
-//  string = naNewStringWithMutableUTF8Buffer(stringbuf, -inputsize, naFree);
-//  inptr = naGetStringUTF8Pointer(inputstring);
-//  destptr = stringbuf;
-//
-//  // Copy all characters and decode them if necessary.
-//  for(i=0; i<inputsize; i++){
-//    if(inptr[i] == '\\'){
-//      if(((inputsize - i) >= 2) && (inptr[i+1] == '\\')){     *destptr++ = '\\'; i += 1; }
-//      else if(((inputsize - i) >= 2) && (inptr[i+1] == '(')){ *destptr++ = '(';  i += 1; }
-//      else if(((inputsize - i) >= 2) && (inptr[i+1] == ')')){ *destptr++ = ')';  i += 1; }
-//      else{
-//        *destptr++ = inptr[i];
-//      }
-//    }else{
-//      *destptr++ = inptr[i];
-//    }
-//  }
-//
-//  // The string is marked as NULL-Terminated. So we make sure this is the case.
-//  *destptr = '\0';
-//  // Finally, we shrink the string to its actual size
-//  finalsize = destptr - stringbuf;
-//  string = naNewStringExtraction(string, 0, finalsize);
-//
-//  return string;
-  return naNewString();
+  NAString* string;
+  NABuffer* buffer;
+  NABufferIterator iter;
+  NABufferIterator outiter;
+  if(naIsStringEmpty(inputstring)){
+    return naNewString();
+  }
+  buffer = naNewBuffer(NA_FALSE);
+  iter = naMakeBufferAccessor(inputstring->buffer);
+  outiter = naMakeBufferModifier(buffer);
+  while(!naIsBufferAtEnd(&iter)){
+    NAUTF8Char curchar = naReadBufferi8(&iter);
+    if(curchar == '\\'){
+      curchar = naReadBufferi8(&iter);
+      switch(curchar){
+      case '\\':  naWriteBufferi8(&outiter, '\\');  break;
+      case '(':  naWriteBufferi8(&outiter, '(');  break;
+      case ')':  naWriteBufferi8(&outiter, ')');  break;
+      default:
+        #ifndef NDEBUG
+          naError("naNewStringEPSDecoded", "Unrecognized escape character");
+        #endif
+        naWriteBufferi8(&outiter, curchar);
+        break;
+      }
+    }else{
+      naWriteBufferi8(&outiter, curchar);
+    }
+  }
+  naClearBufferIterator(&outiter);
+  naClearBufferIterator(&iter);
+  string = naNewStringWithBufferExtraction(buffer, naGetBufferRange(buffer));
+  naRelease(buffer);
+  return string;
 }
 
 
