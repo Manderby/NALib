@@ -21,22 +21,6 @@
 //   automatic deletion.
 // - Handling of inifinte pools for naNew and naDelete functions.
 //
-//  +---------------------+------------------+ 
-//  |        POD          |  runtime system  | 
-//  |---------------------+------------------+ 
-//  |                NAPointer               | 
-//  |---------------------+------------------+ 
-//  |     NASmartPtr      |                  | 
-//  |-------+-------------+                  | 
-//  | NAPtr | NARefCount  |                  | 
-//  |-------+-------------+------------------+ 
-//  | malloc free         |                  | 
-//  | naMalloc naFree     |      naNew       | 
-//  | naMallocAligned     |      naDelete    | 
-//  | naMallocPageAligned |      naRetain    | 
-//  | naFreeAligned       |      naRelease   | 
-//  +---------------------+------------------+ 
-//
 // ////////////////////////////////////////////////////////
 
 
