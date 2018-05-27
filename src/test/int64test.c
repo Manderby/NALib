@@ -8,7 +8,9 @@
 #include "../NALib/NADateTime.h"
 #include <stdio.h>
 #include <time.h>
-#include <sys/time.h>
+#if NA_OS != NA_OS_WINDOWS
+  #include <sys/time.h>
+#endif
 
 int64 randInt64();
 uint64 randUInt64();
@@ -401,10 +403,20 @@ uint64 randUInt64(){
 //  return naMakeUInt64((uint32)rand(), (uint32)rand());
 }
 double getTime(){
-  struct timeval curtime;
-  NATimeZone curtimezone;
-  gettimeofday(&curtime, &curtimezone);
-  return curtime.tv_sec + curtime.tv_usec / 1000000.;
+  #if NA_OS == NA_OS_WINDOWS
+    NADateTime dt;
+    FILETIME filetime;
+    NATimeZone timezone;
+    GetSystemTimeAsFileTime(&filetime);
+    GetTimeZoneInformation(&timezone);
+    dt = naMakeDateTimeFromFileTime(&filetime, &timezone);
+    return naCastInt64ToInt32(dt.sisec) + dt.nsec / 1000000.;
+  #else
+    struct timeval curtime;
+    NATimeZone curtimezone;
+    gettimeofday(&curtime, &curtimezone);
+    return curtime.tv_sec + curtime.tv_usec / 1000000.;
+  #endif
 }
 double printAndSwapTime(const char* title, double starttime){
   double t2 = getTime();
@@ -459,10 +471,10 @@ int main(void){
     printf("Native\n");
   #endif
 
-//  testMaking();
-//  testBinary();
-//  testComparison();
-//  testArithmetic();
+  testMaking();
+  testBinary();
+  testComparison();
+  testArithmetic();
   
   timeMaking();
   timeBinary();
@@ -472,6 +484,10 @@ int main(void){
 
 
 //  timeInt32_DoubleFunc(naGetDoubleExponent);
+
+  #if NA_OS == NA_OS_WINDOWS
+   NA_UNUSED(getchar());
+  #endif
 
   return 0;
 }
@@ -489,8 +505,7 @@ int main(void){
 // the following conditions:
 //
 // The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the source-code inherently
-// dependent on this software.
+// in all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

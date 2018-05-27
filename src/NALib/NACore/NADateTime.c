@@ -797,14 +797,14 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
   NA_DEF NADateTime naMakeDateTimeFromFileTime(const FILETIME* filetime, const NATimeZone* timezn){
     NADateTime datetime;
     NAInt taiperiod;
-    int64 nanosecs = ((int64)filetime->dwHighDateTime << 32) | filetime->dwLowDateTime;
+    int64 nanosecs = naCastUInt64ToInt64(naMakeUInt64(filetime->dwHighDateTime, filetime->dwLowDateTime));
 
     datetime.errornum = NA_DATETIME_ERROR_NONE;
-    datetime.nsec = (nanosecs % 10000000) * 100;  // 100-nanosecond intervals.
-    datetime.sisec = nanosecs / 10000000 + NA_DATETIME_SISEC_FILETIME_YEAR_ZERO;
-    if(datetime.sisec >= 0){
+    datetime.nsec = naCastInt64ToInt32(naMulInt64(naModInt64(nanosecs, naMakeInt64WithLo(10000000)), naMakeInt64WithLo(100)));  // 100-nanosecond intervals.
+    datetime.sisec = naAddInt64(naDivInt64(nanosecs, naMakeInt64WithLo(10000000)), NA_DATETIME_SISEC_FILETIME_YEAR_ZERO);
+    if(naGreaterEqualInt64(datetime.sisec, NA_ZERO_64)){
       taiperiod = naGetLatestTAIPeriodIndexForGregorianSecond(datetime.sisec);
-      datetime.sisec += (naTAIPeriods[taiperiod].startsisec - naTAIPeriods[taiperiod].startgregsec);
+      datetime.sisec = naAddInt64(datetime.sisec, naSubInt64(naTAIPeriods[taiperiod].startsisec, naTAIPeriods[taiperiod].startgregsec));
     }
 
     if(timezn){
@@ -1245,8 +1245,7 @@ NA_DEF void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
 // the following conditions:
 //
 // The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the source-code inherently
-// dependent on this software.
+// in all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

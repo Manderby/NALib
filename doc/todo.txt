@@ -6,18 +6,16 @@ in NALib.
 
 Future
 - malloc uint
-- refcounted new
 - NAComplexPolar
 - All todos.
-- Fully implement NAString
+- Fully implement NAString without always-cache
 - Remove old commented code
 - Documentation
 - int uint
-- unify iterators. Iterators store start and end.
+- Iterators store start and end.
 - All Container structs can store pointers.
 - make naAtof and parseStringFloat
 - Homogeneous coordinates
-
 - NATree and integration into NABuffer
 - Range tree
 - Threadsavety for structs
@@ -25,7 +23,7 @@ Future
 - Compression in NAPNG
 - Add ARM, Linux
 - Make Memory addresses uint 
-- Garbage collection, release pools
+- release pools
 - MOB
 - Color
 - Timezones

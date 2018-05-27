@@ -7223,8 +7223,7 @@ NA_IDEF void naFillM33fWithRotationAngles(float* d, float roll, float pitch, flo
 // the following conditions:
 //
 // The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the source-code inherently
-// dependent on this software.
+// in all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

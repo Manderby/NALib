@@ -38,7 +38,7 @@ typedef int NABool;
 
 
 
-#if defined __STDC__
+#if defined __STDC__ || defined _MSC_VER
   // We gather basic information about integer types from the standardized
   // limits.h library (note that stdint.h is only available since C99)
   #include <limits.h>
@@ -591,8 +591,7 @@ typedef uint8 NAByte;
 // the following conditions:
 //
 // The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the source-code inherently
-// dependent on this software.
+// in all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF

@@ -19,11 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\src\NALib\NABase\NADebug.c" />
     <ClCompile Include="..\..\..\src\NALib\NACore\NABinaryData.c" />
     <ClCompile Include="..\..\..\src\NALib\NACore\NADateTime.c" />
     <ClCompile Include="..\..\..\src\NALib\NACore\NAFile.c" />
     <ClCompile Include="..\..\..\src\NALib\NACore\NAMemory.c" />
-    <ClCompile Include="..\..\..\src\NALib\NACore\NASystem.c" />
     <ClCompile Include="..\..\..\src\NALib\NAMath\NAMoney.c" />
     <ClCompile Include="..\..\..\src\NALib\NAStruct\NABuffer.c" />
     <ClCompile Include="..\..\..\src\NALib\NAStruct\NAHeap.c" />
@@ -36,10 +36,24 @@
     <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUI.c" />
     <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUICoreAPI.c" />
     <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUIWINAPI.c" />
+    <ClCompile Include="..\..\..\src\test\int64test.c" />
     <ClCompile Include="..\..\..\src\test\main.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\NALib\NAArray.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABase.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABase\NAChar.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABase\NACompiler.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABase\NADebug.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABase\NAEnvironment.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABase\NAFloatingPoint.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABase\NAFloatingPointII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABase\NAInt64.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABase\NAInt64II.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABase\NAInteger.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABase\NALanguage.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABase\NANumerics.h" />
+    <ClInclude Include="..\..\..\src\NALib\NABase\NANumericsII.h" />
     <ClInclude Include="..\..\..\src\NALib\NABinaryData.h" />
     <ClInclude Include="..\..\..\src\NALib\NABuffer.h" />
     <ClInclude Include="..\..\..\src\NALib\NACircularBuffer.h" />
@@ -85,7 +99,6 @@
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NAQuadTreeII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NAStackII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NAStringII.h" />
-    <ClInclude Include="..\..\..\src\NALib\NASystem.h" />
     <ClInclude Include="..\..\..\src\NALib\NAThreading.h" />
     <ClInclude Include="..\..\..\src\NALib\NAUI.h" />
     <ClInclude Include="..\..\..\src\NALib\NAURL.h" />

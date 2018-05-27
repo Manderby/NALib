@@ -12,7 +12,7 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
-Version 21 (first published 2018-xxx-xx)
+Version 21 (first published 2018-Mai-27)
 ==========
 
 Highlights:
@@ -27,7 +27,8 @@ Highlights:
 - Created int64 emulation. It is possible now to compile and run the code
   without the long long datatype.
 - Added Binary macros and functions for more control over floating point and
-  integer values.
+  integer values. Full potential not yet in use but prepared for the future.
+- Moving to GitHub.
 
 Other things:
 - The Runtime system now always registers runtime types, not only in debug.
@@ -35,7 +36,7 @@ Other things:
 - Removed NA_RUNTIME_USES_MEMORY_POOLS in NAConfiguration.h. Pools rule!
 - Moved lots of implementation macros to II files.
 - Some more debugging tests
-- QuadTree and Octtree added childlength to update function callbacks. Also
+- QuadTree and Octtree added childlength to "update" function callbacks. Also
   have new function to return rect or box of current iterator element and
   aligned coords
 - Some float function names have changed the position of their f suffix.
@@ -51,12 +52,12 @@ Other things:
   NA_OS defined the operating system, NA_CALENDAR defines the calendar system.
 - Garbage collection now also can be aggressive or non-aggressive.
 - Added naIterateListBack and naIterateListStep to List iteration.
-- Added simplified List iteration using macros naBeginListIterationConst,
-  naBeginListIterationMutable and naEndListIteration.
+- Added simplified List and QuadTree iteration with macros naBeginXXXIteration,
+  and naEndXXXIteration.
 - Reenabled encoding and decoding strings for EPS and XML.
 - Cleaned up some h files.
 - Changed configuration to use posix_memalign by default.
-- Changed the license to a more compact MIT version.
+- Changed the license to the default MIT version.
 
 
 Version 20 (first published 2018-Jan-13):
@@ -88,8 +89,7 @@ permit persons to whom the Software is furnished to do so, subject to
 the following conditions:
 
 The above copyright notice and this permission notice shall be included
-in all copies or substantial portions of the source-code inherently
-dependent on this software.
+in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
