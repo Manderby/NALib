@@ -261,32 +261,6 @@ NA_API void naUpdateQuadTree(                  NAQuadTree* tree);
 
 
 
-// ////////////////////////
-// Calling one and the same function on a large portion of the tree.
-
-// Function pointer used for the set iteration naSetQuadTreeInRect. This
-// callback is called for multiple chunks of a tree.
-// When called, dstdata is the chunk data, rect is the rect within the data
-// shall be handeled and leaflength is the leaf length in one dimension given
-// upon creation of the tree.
-// The userdata corresponds to whatever has been given in naSetQuadTreeInRect.
-// The origin of the rect is given relative to the origin of the chunk.
-// Therefore, all positions are greaterequal zero. All coordinates of rect are
-// guaranteed to be inside the leaf.
-typedef void  (*NAQuadTreeDataSetter)( const void* dstdata,
-                                            NARect rect,
-                                             NAInt leafexponent,
-                                       const void* userdata);
-
-// Calls the given NAQuadTreeDataSetter function for every chunk in the tree
-// which is partially or fully overlapped with the given rect. Will create
-// the leafes if necessary.
-NA_API void naSetQuadTreeInRect(          NAQuadTree* tree,
-                                               NARect rect,
-                                 NAQuadTreeDataSetter datasetter,
-                                          const void* userdata);
-
-
 
 // ////////////////////////////////////
 // Iterators
@@ -312,19 +286,23 @@ NA_API void naSetQuadTreeInRect(          NAQuadTree* tree,
 // Use them as follows:
 //
 // NAQuadTreeIterator iteratorname;
-// naBeginQuadTreeMutatorIteration(MyLeaf* leaf, mylist, limit, create, iteratorname);
+// naBeginQuadTreeMutatorIteration(MyLeaf* leaf, mylist, limit, visitall, iteratorname);
 //   doStuffWithLeaf(leaf);
 // naEndListIteration(iteratorname);
+//
+// Note that if visitall is true, the leaf variable inside the loop may be
+// NA_NULL. The autocreate parameter allows you to automatically create
+// leafes if they do not exist.
 
-#define naBeginQuadTreeAccessorIteration(typedelem, quadtree, limit, create, iter)
-#define naBeginQuadTreeMutatorIteration(typedelem, quadtree, limit, create, iter)
-#define naBeginQuadTreeModifierIteration(typedelem, quadtree, limit, create, iter)
+#define naBeginQuadTreeAccessorIteration(typedelem, quadtree, limit, visitall, iter)
+#define naBeginQuadTreeMutatorIteration (typedelem, quadtree, limit, visitall, iter)
+#define naBeginQuadTreeModifierIteration(typedelem, quadtree, limit, visitall, autocreate, iter)
 #define naEndQuadTreeIteration(iter)
 
 
 // Makes the iterators but does not locates any specific leaf.
 NA_API NAQuadTreeIterator naMakeQuadTreeAccessor(const NAQuadTree* tree);
-NA_API NAQuadTreeIterator naMakeQuadTreeMutator (      NAQuadTree* tree);
+NA_API NAQuadTreeIterator naMakeQuadTreeMutator (const NAQuadTree* tree);
 NA_API NAQuadTreeIterator naMakeQuadTreeModifier(      NAQuadTree* tree);
 
 // Clears the iterator struct. Always use this after done iterating!
@@ -334,20 +312,21 @@ NA_API void naClearQuadTreeIterator(NAQuadTreeIterator* iter);
 NA_API void naResetQuadTreeIterator(NAQuadTreeIterator* iter);
 
 // Iterates to the next leaf and returns NA_TRUE if there is one, NA_FALSE if
-// the iteration is over. The leafes will be visited like they are stored
-// within the tree. If you need axis ordered traversal, maybe have a look at
-// the naIterateQuadTreeSteps or the naSetQuadTreeInRect function.
+// the iteration is over.
 //
 // The limit denotes the rectangle the iteration takes place in. Only leafes
 // which partially or completely overlap with the limit rect will be visited.
 // If limit is NA_NULL, all leafes will be visited.
 //
-// If create is NA_TRUE, all leafes will be created which are not yet existing
-// within the limit rect. Limit must be non-null. You must have a modifier
-// iterator when using create.
+// If visitall is NA_TRUE, all leafes in the given limit rect will be visited,
+// even if they don't exist yet. The parameter limit must be non-null. If not,
+// visitall is ignored by setting it to NA_FALSE.
+//
+// The leafes will always be visited axis-ordered:
+// First from lowest to highest x, then from lowest to highest y.
 NA_API NABool naIterateQuadTree(  NAQuadTreeIterator* iter,
                                         const NARect* limit,
-                                               NABool create);
+                                               NABool visitall);
 
 // Moves the iterator to the leaf containing the given coord. If such a leaf is
 // not found in the tree, NA_FALSE ist returned. The iterator though stores the

@@ -25,7 +25,9 @@ struct NAQuadTreeIterator{
   NAQuadTreeNode* curnode;
   NAInt cursegment;
   NAPos leaforigin;
-  NAInt flags;
+  #ifndef NDEBUG
+    NAInt flags;
+  #endif
 };
 
 
@@ -65,22 +67,22 @@ NA_IDEF NAQuadTreeConfiguration naGetQuadTreeConfiguration(const NAQuadTree* tre
 
 
 #undef naBeginQuadTreeAccessorIteration
-#define naBeginQuadTreeAccessorIteration(typedelem, quadtree, limit, create, iter)\
+#define naBeginQuadTreeAccessorIteration(typedelem, quadtree, limit, visitall, iter)\
   iter = naMakeQuadTreeAccessor(quadtree);\
-  while(naIterateQuadTree(&iter, limit, create)){\
+  while(naIterateQuadTree(&iter, limit, visitall)){\
     typedelem = naGetQuadTreeCurConst(&iter)
 
 #undef naBeginQuadTreeMutatorIteration
-#define naBeginQuadTreeMutatorIteration(typedelem, quadtree, limit, create, iter)\
+#define naBeginQuadTreeMutatorIteration(typedelem, quadtree, limit, visitall, iter)\
   iter = naMakeQuadTreeMutator(quadtree);\
-  while(naIterateQuadTree(&iter, limit, create)){\
-    typedelem = naGetQuadTreeCurMutable(&iter, create)
+  while(naIterateQuadTree(&iter, limit, visitall)){\
+    typedelem = naGetQuadTreeCurMutable(&iter, NA_FALSE)
 
 #undef naBeginQuadTreeModifierIteration
-#define naBeginQuadTreeModifierIteration(typedelem, quadtree, limit, create, iter)\
+#define naBeginQuadTreeModifierIteration(typedelem, quadtree, limit, visitall, autocreate, iter)\
   iter = naMakeQuadTreeModifier(quadtree);\
-  while(naIterateQuadTree(&iter, limit, create)){\
-    typedelem = naGetQuadTreeCurMutable(&iter, create)
+  while(naIterateQuadTree(&iter, limit, visitall)){\
+    typedelem = naGetQuadTreeCurMutable(&iter, autocreate)
 
 #undef naEndQuadTreeIteration
 #define naEndQuadTreeIteration(iter)\
@@ -96,7 +98,9 @@ NA_HIDEF void naInitQuadTreeIterator(NAQuadTreeIterator* iter){
   #endif
   iter->curnode = NA_NULL;
   iter->cursegment= -1;
-  iter->flags = 0;
+  #ifndef NDEBUG
+    iter->flags = 0;
+  #endif
 }
 
 

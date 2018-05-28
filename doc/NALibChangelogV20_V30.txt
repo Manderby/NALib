@@ -12,6 +12,13 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Version 22 (first published 20XX-XXX-XX)
+==========
+
+- Tweaked QuadTree implementation. Removed naSetQuadTreeInRect. Use iterators
+  for that.
+
+
 Version 21 (first published 2018-Mai-27)
 ==========
 
