@@ -12,7 +12,7 @@
 #include "NAMemory.h"
 
 // An NAQuadTree is a container struct capable of storing a two-dimensional
-// object of any bytesize. The content of the object is divided into equally
+// object of any size. The content of the object is divided into equally
 // sized quadratic chunks with a given minimal length in one dimension. These
 // chunks are the leafs of the tree. Aside from leafes, an NAQuadTree stores
 // parent nodes. Every leaf has a parent node and every node may have another
@@ -55,22 +55,23 @@
 // must be present and shall always return something. Returning Null is a bad
 // thing. This callback will be called when creating new chunks (whenever a
 // NAQuadTree gets expanded) or when duplicating an NAQuadTree.
-// The parameters given are the origin of the data as well as the (always
-// square) leaflength of the data rectangle. When copydata is non-Null, it
-// points to already existing chunk data which shall be copied to the new
-// chunk. This will be the case when duplicating an NAQuadTree.
-// The userdata parameter contains whatever you defined upon creation of the
+// The parameters given are the (always square) rect of the chunk as well as
+// an userdata pointer which contains whatever you defined upon creation of the
 // tree within the NAQuadTreeConfiguration struct. With this, it is for example
-// possible to allocate data from a user defined pool-structure.
-// Note that both origin and leaflength are just here for information. You may
-// or may not use them. And you will probably not need to store them. But you
-// may if you really want to.
-// The leaflength given will always be the leaflength declared at creation of
+// possible to allocate data from a user defined pool-structure. That parameter
+// can be NA_NULL.
+// When copydata is non-Null, it points to already existing chunk data which
+// shall be copied to the new chunk. This will be the case when duplicating
 // an NAQuadTree.
-// Also note that the coordinates of origin are guaranteed to be a multiple of
-// leaflength.
-typedef void* (*NAQuadTreeLeafAllocator)(    NAPos origin,
-                                             NAInt leafexponent,
+// Note that the rect is just here for information. You may or may not use
+// it. And you will probably not need to store it as all the important
+// callback functions will provide the chunkrect again. But you may if you
+// really want to.
+// The size of the leaf rect will always correspond to the leaflength declared
+// at creation of an NAQuadTree.
+// Also note that the coordinates of origin are guaranteed to be a aligned to
+// the chosen leaflength.
+typedef void* (*NAQuadTreeLeafAllocator)(   NARect rect,
                                              void* userdata,
                                        const void* copydata);
 
@@ -93,8 +94,8 @@ typedef void  (*NAQuadTreeLeafDeallocator)(  void* leafdata,
 // the size does not necessarily denotes a square. It can denote any rectangle.
 // The totalshift and the leaflength is given to you as an additional
 // information. The totalshift corresponds to the shift given as a parameter
-// to naInitQuadTreeCopyShifted and the leafexponent corresponds to the length
-// of a leaf used when the NAQuadTree was created.
+// to naInitQuadTreeCopyShifted and the leafsize corresponds to the size
+// of a leaf defined when the NAQuadTree was created.
 // Example (numbers are approximate):
 //          dstdata           srcdata
 //        O---------+       O---------+       
@@ -110,7 +111,7 @@ typedef void  (*NAQuadTreeDataCopier)( const void* dstdata,
                                              NAPos srcorigin,
                                             NASize size,
                                              NAPos totalshift,
-                                             NAInt leafexponent);
+                                            NASize leafsize);
 
 // NAQuadTreeNodeAllocator
 // This callback is called when a quad tree creates an internal tree node other
@@ -119,31 +120,32 @@ typedef void  (*NAQuadTreeDataCopier)( const void* dstdata,
 // any data with every node if desired. You can return a pointer to any data,
 // even a Null pointer. This data pointer will be available to
 // NAQuadTreeLeafChanged, NAQuadTreeChildChanged and NAQuadTreeNodeDeallocator.
-// An internal node internally stores  pointers to childnodes or leafes. The
+// An internal node internally stores pointers to childnodes or leafes. The
 // origin parameter denotes the origin of the (lowerx, lowery)-node and the
-// childnodesize denotes the (always square) rectangle the childnodes have.
-// Note that both origin and nodesize are just here for information. You may or
-// may not use them. And you will probably not need to store them. But you may
-// if you really want to.
+// childsize denotes the (always square) size the childnodes have.
+// Note that both origin and childsize are just here for information. You may
+// or may not use them. And you will probably not need to store them. But you
+// may if you really want to.
 typedef void* (*NAQuadTreeNodeAllocator)( NAPos origin,
-                                          NAInt childexponent);
+                                         NASize childsize);
 
 // NAQuadTreeNodeDeallocator
 // The node destructor is called before a quad tree ultimately deletes an
-// internal node node.
+// internal node.
 // The pointer created with NAQuadTreeNodeAllocator will be sent to this
 // function such that you can deallocate the memory if necessary. Note that
-// this function is NOT called if a node stores a NULL pointer.
+// this function is NOT called if a node stores a NULL pointer. Therefore
+// you should never return NA_NULL in the allocation callback!
 typedef void  (*NAQuadTreeNodeDeallocator)(void* nodedata);
 
 // NAQuadTreeLeafChanged and NAQuadTreeChildChanged
 // Whenever you altered a leaf and want to propagate the change over the whole
 // tree, you call naUpdateQuadTreeCur which in turn will call the following
-// two callback functions. Both will be called with the PARENTAL (internal) node
-// data you may have stored with NAQuadTreeNodeAllocator. Additionally, you are
-// given all four child data pointers as an array as well as a segment index
-// denoting which of the four childs has caused the calling. See segment index
-// description above. Plus the leaflength of a child.
+// two callback functions. Both will be called with the PARENTAL (internal)
+// node data you may have stored with NAQuadTreeNodeAllocator. Additionally,
+// you are given all four child data pointers as an array as well as a segment
+// index denoting which of the four childs has caused the calling. See segment
+// index description above. You also get the size of the childs.
 //
 // The two functions differ on whether the childs are leafs or nodes. The data
 // given are either pointers to leaf chunk data or pointers to node data you
@@ -169,11 +171,11 @@ typedef void  (*NAQuadTreeNodeDeallocator)(void* nodedata);
 typedef NABool(*NAQuadTreeLeafChanged)(      void* nodedata,
                                              NAInt segment,
                                  const void* const leafdata[4],
-                                             NAInt leafexponent);
+                                            NASize leafsize);
 typedef NABool(*NAQuadTreeChildChanged)(     void* nodedata,
                                              NAInt segment,
                                  const void* const childdata[4],
-                                             NAInt leafexponent);
+                                            NASize childsize);
 
 
 
@@ -214,19 +216,13 @@ NA_API NAQuadTree* naInitQuadTree(              NAQuadTree* tree,
 NA_API NAQuadTree* naInitQuadTreeCopy(          NAQuadTree* newtree,
                                           const NAQuadTree* copytree);
 
-// Duplicates the given copytree, but only containing the chunks which are
-// present in masktree.
-NA_DEF NAQuadTree* naInitQuadTreeCopyMasked(    NAQuadTree* newtree,
-                                          const NAQuadTree* copytree,
-                                          const NAQuadTree* masktree);
-
 // Duplicates the given copytree but shifts all contents by the given shift.
 NA_API NAQuadTree* naInitQuadTreeCopyShifted(   NAQuadTree* newtree,
                                           const NAQuadTree* copytree,
                                                       NAPos shift);
 
 // Clears the tree
-NA_API void naClearQuadTree(                   NAQuadTree* tree);
+NA_API void naClearQuadTree(                    NAQuadTree* tree);
 
 
 
@@ -244,10 +240,6 @@ NA_IAPI NAInt naGetQuadTreeMinLeafExponent(   const NAQuadTree* tree);
 
 // Returns the adjusted coord which is aligned on a chunk coordinate.
 NA_IAPI NAPos naGetQuadTreeAlignedCoord(NAInt leafexponent, NAPos coord);
-
-// Returns the callbacks (by copying the function pointers)
-NA_IAPI NAQuadTreeConfiguration naGetQuadTreeConfiguration(
-                                         const NAQuadTree* tree);
 
 // Returns the root node data, if available. If no root or no root data are
 // available, NA_NULL is returned.
@@ -286,7 +278,7 @@ NA_API void naUpdateQuadTree(                  NAQuadTree* tree);
 // Use them as follows:
 //
 // NAQuadTreeIterator iteratorname;
-// naBeginQuadTreeMutatorIteration(MyLeaf* leaf, mylist, limit, visitall, iteratorname);
+// naBeginQuadTreeMutatorIteration(MyLeaf* leaf, mytree, limit, visitall, iteratorname);
 //   doStuffWithLeaf(leaf);
 // naEndListIteration(iteratorname);
 //

@@ -34,8 +34,8 @@ struct NAQuadTreeIterator{
 
 
 NA_HIDEF NASize naGetQuadTreeSizeWithExponent(NAInt exponent){
-  // todo
-  return naMakeSize(1 << exponent, 1 << exponent);
+  double length = naMakeDoubleWithExponent((int32)exponent);
+  return naMakeSize(length, length);
 }
 
 
@@ -56,12 +56,6 @@ NA_IDEF NAPos naGetQuadTreeAlignedCoord(NAInt leafexponent, NAPos coord){
   NARect leafalign = naMakeRect(naMakePos(0, 0), naGetQuadTreeSizeWithExponent(leafexponent));
   NAPos retpos = naMakePosWithAlignment(coord, leafalign);
   return retpos;
-}
-
-
-
-NA_IDEF NAQuadTreeConfiguration naGetQuadTreeConfiguration(const NAQuadTree* tree){
-  return tree->configuration;
 }
 
 
@@ -88,20 +82,6 @@ NA_IDEF NAQuadTreeConfiguration naGetQuadTreeConfiguration(const NAQuadTree* tre
 #define naEndQuadTreeIteration(iter)\
   }\
   naClearQuadTreeIterator(&iter)
-
-
-
-NA_HIDEF void naInitQuadTreeIterator(NAQuadTreeIterator* iter){
-  #ifndef NDEBUG
-    NAQuadTree* mutabletree = (NAQuadTree*)naGetPtrConst(&(iter->tree));
-    mutabletree->itercount++;
-  #endif
-  iter->curnode = NA_NULL;
-  iter->cursegment= -1;
-  #ifndef NDEBUG
-    iter->flags = 0;
-  #endif
-}
 
 
 

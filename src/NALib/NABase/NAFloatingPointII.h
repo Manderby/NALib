@@ -3,9 +3,9 @@
 // Full license notice at the bottom.
 
 
-// This file contains inline implementations of the file NABinaryOperators.h
+// This file contains inline implementations of floating point calculations.
 // Do not include this file directly! It will automatically be included when
-// including "NABinaryOperators.h"
+// including "NABase.h"
 
 
 
@@ -32,6 +32,8 @@ NA_IDEF float naMakeFloat(int32 signedsignificand, int32 signedexponent){
   return *((float*)&dbits);
 }
 
+
+
 NA_IDEF double naMakeDouble(int64 signedsignificand, int32 signedexponent){
   int64 dbits;
   #ifndef NDEBUG
@@ -54,6 +56,8 @@ NA_IDEF double naMakeDouble(int64 signedsignificand, int32 signedexponent){
   return *((double*)&dbits);
 }
 
+
+
 NA_IDEF float naMakeFloatWithExponent(int32 signedexponent){
   int32 dbits;
   #ifndef NDEBUG
@@ -69,6 +73,8 @@ NA_IDEF float naMakeFloatWithExponent(int32 signedexponent){
   dbits = ((signedexponent + NA_IEEE754_SINGLE_EXPONENT_BIAS) << NA_IEEE754_SINGLE_SIGNIFICAND_BITS);
   return *((float*)&dbits);
 }
+
+
 
 NA_IDEF double naMakeDoubleWithExponent(int32 signedexponent){
   int64 dbits;
@@ -86,7 +92,9 @@ NA_IDEF double naMakeDoubleWithExponent(int32 signedexponent){
   return *((double*)&dbits);
 }
 
-NA_IDEF float  naMakeFloatSubnormal (int32 signedsignificand){
+
+
+NA_IDEF float naMakeFloatSubnormal(int32 signedsignificand){
   int32 dbits;
   #ifndef NDEBUG
     if((naAbsi32(signedsignificand) > NA_IEEE754_SINGLE_SIGNIFICAND_MASK))
@@ -97,6 +105,9 @@ NA_IDEF float  naMakeFloatSubnormal (int32 signedsignificand){
     | (naAbsi32(signedsignificand) & NA_IEEE754_SINGLE_SIGNIFICAND_MASK);
   return *((float*)&dbits);
 }
+
+
+
 NA_IDEF double naMakeDoubleSubnormal(int64 signedsignificand){
   int64 dbits;
   #ifndef NDEBUG
@@ -118,6 +129,8 @@ NA_IAPI int32 naGetDoubleExponent(double d){
   dbits = naShrInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_BITS);
   return naCastInt64ToInt32(dbits) - NA_IEEE754_DOUBLE_EXPONENT_BIAS;
 }
+
+
 
 NA_IAPI int64 naGetDoubleInteger(double d){
   int32 exponent;

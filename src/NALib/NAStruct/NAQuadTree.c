@@ -43,7 +43,6 @@ NA_HDEF void naFillQuadTreeNodeChildData(const void* childdata[4], NAQuadTreeNod
 
 // Creates an inner node.
 NA_HDEF NAQuadTreeNode* naAllocQuadTreeNode(NAInt childexponent, NAInt segmentinparent, NAQuadTreeNode* parentnode, NAPos origin, NAQuadTreeNode* dummynode, NAQuadTreeNodeAllocator allocator){
-  NAInt childsize;
   NAQuadTreeNode* node = naAlloc(NAQuadTreeNode);
   node->childexponent = childexponent;
   node->segmentinparent = segmentinparent;
@@ -52,13 +51,13 @@ NA_HDEF NAQuadTreeNode* naAllocQuadTreeNode(NAInt childexponent, NAInt segmentin
   node->child[1] = dummynode;
   node->child[2] = dummynode;
   node->child[3] = dummynode;
-  childsize = 1 << node->childexponent;
-  node->childorigin[0] = naMakePos(origin.x            , origin.y);
-  node->childorigin[1] = naMakePos(origin.x + childsize, origin.y);
-  node->childorigin[2] = naMakePos(origin.x            , origin.y + childsize);
-  node->childorigin[3] = naMakePos(origin.x + childsize, origin.y + childsize);
+  NASize childsize = naGetQuadTreeSizeWithExponent(node->childexponent);
+  node->childorigin[0] = naMakePos(origin.x                  , origin.y);
+  node->childorigin[1] = naMakePos(origin.x + childsize.width, origin.y);
+  node->childorigin[2] = naMakePos(origin.x                  , origin.y + childsize.height);
+  node->childorigin[3] = naMakePos(origin.x + childsize.width, origin.y + childsize.height);
   if(allocator){
-    node->nodedata = allocator(origin, childexponent + 1);
+    node->nodedata = allocator(origin, childsize);
   }else{
     node->nodedata = NA_NULL;
   }
@@ -77,7 +76,7 @@ NA_HDEF void naDeallocQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* node){
       naError("naDeallocQuadTreeNode", "Iterators still running on this node. Did you forget a call to NAClearQuadTreeIterator?");
   #endif
 
-  if(node->childexponent == tree->configuration.minleafexponent){
+  if(node->childexponent == naGetQuadTreeMinLeafExponent(tree)){
     if(node->child[0]){tree->configuration.leafdeallocator(node->child[0], tree->configuration.userdata);}
     if(node->child[1]){tree->configuration.leafdeallocator(node->child[1], tree->configuration.userdata);}
     if(node->child[2]){tree->configuration.leafdeallocator(node->child[2], tree->configuration.userdata);}
@@ -144,10 +143,10 @@ NA_HDEF NAPos naGetQuadTreeNodeParentOrigin(NAInt childexponent, NAPos childorig
   // simply take that origin als the alignment origin and work from there.
 
   NARect alignrect = naMakeRect(childorigin, naGetQuadTreeSizeWithExponent(childexponent + 1));
-  NAInt childsize = 1 << childexponent;
-  NAInt cycle = naLog2i(childsize) % 4;
-  if(cycle & 1){alignrect.pos.x -= childsize;}
-  if(cycle & 2){alignrect.pos.y -= childsize;}
+  NASize childsize = naGetQuadTreeSizeWithExponent(childexponent);
+  NAInt cycle = childexponent % 4;
+  if(cycle & 1){alignrect.pos.x -= childsize.width;}
+  if(cycle & 2){alignrect.pos.y -= childsize.height;}
 
   return naMakePosWithAlignment(childorigin, alignrect);
 }
@@ -164,17 +163,19 @@ NA_HDEF void naUpdateQuadTreeNodeBubbling(NAQuadTree* tree, NAQuadTreeNode* pare
       naError("naUpdateQuadTreeNodeBubbling", "Parent is null.");
   #endif
   
+  NASize childsize = naGetQuadTreeSizeWithExponent(parentnode->childexponent);
+  
   // We call the update callbacks depending whether this is a leaf node or
   // an inner node.
   if(parentnode->childexponent == naGetQuadTreeMinLeafExponent(tree)){
     if(tree->configuration.leafchanged){
-      bubble = tree->configuration.leafchanged(parentnode->nodedata, segment, (const void* const) parentnode->child, parentnode->childexponent);
+      bubble = tree->configuration.leafchanged(parentnode->nodedata, segment, (const void* const) parentnode->child, childsize);
     }
   }else{
     if(tree->configuration.childchanged){
       const void* childdata[4];
       naFillQuadTreeNodeChildData(childdata, parentnode);
-      bubble = tree->configuration.childchanged(parentnode->nodedata, segment, childdata, parentnode->childexponent);
+      bubble = tree->configuration.childchanged(parentnode->nodedata, segment, childdata, childsize);
     }
   }
   
@@ -200,10 +201,12 @@ NA_HDEF void naUpdateQuadTreeNodeBubbling(NAQuadTree* tree, NAQuadTreeNode* pare
 NA_HDEF NABool naUpdateQuadTreeNodeCapturing(NAQuadTree* tree, NAQuadTreeNode* node){
   NABool bubble = NA_FALSE;
   
+  NASize childsize = naGetQuadTreeSizeWithExponent(node->childexponent);
+
   if(node->childexponent == naGetQuadTreeMinLeafExponent(tree)){
     // This node stores leafs
     if(tree->configuration.leafchanged){
-      bubble = tree->configuration.leafchanged(node->nodedata, -1, (const void* const) node->child, node->childexponent);
+      bubble = tree->configuration.leafchanged(node->nodedata, -1, (const void* const) node->child, childsize);
     }
   }else{
     // this node stores subnodes
@@ -214,7 +217,7 @@ NA_HDEF NABool naUpdateQuadTreeNodeCapturing(NAQuadTree* tree, NAQuadTreeNode* n
     if(bubble && tree->configuration.childchanged){
       const void* childdata[4];
       naFillQuadTreeNodeChildData(childdata, node);
-      bubble = tree->configuration.childchanged(node->nodedata, -1, childdata, node->childexponent);
+      bubble = tree->configuration.childchanged(node->nodedata, -1, childdata, childsize);
     }
   }
   
@@ -268,6 +271,8 @@ NA_HDEF void naGrowQuadTreeNodeRoot(NAQuadTree* tree){
           NA_NULL,
           tree->configuration.nodeallocator);
   
+  NASize childsize = naGetQuadTreeSizeWithExponent(parentnode->childexponent);
+
   childsegment = naGetQuadTreeNodeSegment(parentnode, tree->root->childorigin[0]);
   parentnode->child[childsegment] = tree->root;
   tree->root->parentnode = parentnode;
@@ -275,7 +280,7 @@ NA_HDEF void naGrowQuadTreeNodeRoot(NAQuadTree* tree){
   if(tree->configuration.childchanged){
     const void* childdata[4];
     naFillQuadTreeNodeChildData(childdata, parentnode);
-    tree->configuration.childchanged(parentnode->nodedata, childsegment, childdata, parentnode->childexponent);
+    tree->configuration.childchanged(parentnode->nodedata, childsegment, childdata, childsize);
   }
   tree->root = parentnode;
 }
@@ -424,7 +429,8 @@ NA_HIDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data){
     minleafexponent = naGetQuadTreeMinLeafExponent(tree);
     if(iter->curnode->childexponent == minleafexponent){
       // The node can not be divided anymore. Create a leaf.
-      iter->curnode->child[segment] = tree->configuration.leafallocator(iter->curnode->childorigin[segment], minleafexponent, tree->configuration.userdata, data);
+      NARect leafrect = naMakeRect(iter->curnode->childorigin[segment], naGetQuadTreeSizeWithExponent(minleafexponent));
+      iter->curnode->child[segment] = tree->configuration.leafallocator(leafrect, tree->configuration.userdata, data);
       iter->cursegment = segment;
       // Good ending. We created the leaf.
     }else{
@@ -453,6 +459,20 @@ NA_HDEF void* naGetQuadTreeCurMutableWithData(NAQuadTreeIterator* iter, NABool c
       return NA_NULL;
     }
   }
+}
+
+
+
+NA_HIDEF void naInitQuadTreeIterator(NAQuadTreeIterator* iter){
+  #ifndef NDEBUG
+    NAQuadTree* mutabletree = (NAQuadTree*)naGetPtrConst(&(iter->tree));
+    mutabletree->itercount++;
+  #endif
+  iter->curnode = NA_NULL;
+  iter->cursegment= -1;
+  #ifndef NDEBUG
+    iter->flags = 0;
+  #endif
 }
 
 
@@ -674,23 +694,22 @@ NA_DEF NABool naIterateQuadTree(NAQuadTreeIterator* iter, const NARect* limit, N
     #endif
 
     if(!iter->curnode){
-      NAPos firstorigin = naGetQuadTreeAlignedCoord(tree->configuration.minleafexponent, limit->pos);
+      NAPos firstorigin = naGetQuadTreeAlignedCoord(naGetQuadTreeMinLeafExponent(tree), limit->pos);
       naSetQuadTreeIteratorLeafOrigin(iter, firstorigin);
       naLocateQuadTreeNode(iter, firstorigin);
       return NA_TRUE;
     }else{
-      NAInt minleafexponent = naGetQuadTreeMinLeafExponent(tree);
-      NAInt minleafsize = 1 << minleafexponent;
+      NASize minleafsize = naGetQuadTreeSizeWithExponent(naGetQuadTreeMinLeafExponent(tree));
       NAPos neworigin = iter->leaforigin;
-      neworigin.x += minleafsize;
+      neworigin.x += minleafsize.width;
       if(naContainsRectPos(*limit, neworigin)){
         naSetQuadTreeIteratorLeafOrigin(iter, neworigin);
         naLocateQuadTreeNode(iter, neworigin);
         return NA_TRUE;
       }else{
-        NAPos firstorigin = naGetQuadTreeAlignedCoord(tree->configuration.minleafexponent, limit->pos);
+        NAPos firstorigin = naGetQuadTreeAlignedCoord(naGetQuadTreeMinLeafExponent(tree), limit->pos);
         neworigin.x = firstorigin.x;
-        neworigin.y += minleafsize;
+        neworigin.y += minleafsize.height;
         if(naContainsRectPos(*limit, neworigin)){
           naSetQuadTreeIteratorLeafOrigin(iter, neworigin);
           naLocateQuadTreeNode(iter, neworigin);
@@ -785,8 +804,6 @@ NA_DEF NABool naLocateQuadTreeIterator(NAQuadTreeIterator* dstiter, const NAQuad
 
 
 NA_DEF NABool naLocateQuadTreeSteps(NAQuadTreeIterator* iter, NAInt stepx, NAInt stepy){
-  NAInt minleafexponent;
-  NAInt minleafsize;
   NAPos neworigin;
   const NAQuadTree* tree = naGetPtrConst(&(iter->tree));
   #ifndef NDEBUG
@@ -794,11 +811,10 @@ NA_DEF NABool naLocateQuadTreeSteps(NAQuadTreeIterator* iter, NAInt stepx, NAInt
       naError("naLocateQuadTreeSteps", "Iterator must be positioned first before moving relative.");
   #endif
 
-  minleafexponent = naGetQuadTreeMinLeafExponent(tree);
-  minleafsize = 1 << minleafexponent;
+  NASize minleafsize = naGetQuadTreeSizeWithExponent(naGetQuadTreeMinLeafExponent(tree));
   neworigin = iter->leaforigin;
-  neworigin.x += stepx * minleafsize;
-  neworigin.y += stepy * minleafsize;
+  neworigin.x += stepx * minleafsize.width;
+  neworigin.y += stepy * minleafsize.height;
 
   naSetQuadTreeIteratorLeafOrigin(iter, neworigin);
   return naLocateQuadTreeNode(iter, neworigin);
@@ -841,8 +857,6 @@ NA_DEF NAQuadTree* naInitQuadTree(NAQuadTree* tree, NAQuadTreeConfiguration conf
       naError("naInitQuadTree", "Must have a data allocator");
     if(!configuration.leafdeallocator)
       naError("naInitQuadTree", "Must have a data destructor");
-    if(configuration.minleafexponent < 2)
-      naError("naInitQuadTree", "leafexponent can not be smaller than 2");
   #endif
   tree->configuration = configuration;
   tree->root = NA_NULL;
@@ -877,35 +891,6 @@ NA_DEF NAQuadTree* naInitQuadTreeCopy(NAQuadTree* newtree, const NAQuadTree* dup
 
 
 
-NA_DEF NAQuadTree* naInitQuadTreeCopyMasked(NAQuadTree* newtree, const NAQuadTree* duptree, const NAQuadTree* masktree){
-  NAQuadTreeIterator newiter;
-  NAQuadTreeIterator dupiter;
-  NAQuadTreeIterator maskiter;
-  newtree = naInitQuadTree(newtree, duptree->configuration);
-
-  newiter = naMakeQuadTreeModifier(newtree);
-  dupiter = naMakeQuadTreeAccessor(duptree);
-  maskiter = naMakeQuadTreeAccessor(masktree);
-  while(naIterateQuadTree(&maskiter, NA_NULL, NA_FALSE)){
-    const void* dupdata;
-    NAPos duporigin = naGetQuadTreeCurOrigin(&maskiter);
-    naLocateQuadTreeCoord(&dupiter, duporigin);
-    dupdata = naGetQuadTreeCurConst(&dupiter);
-    naLocateQuadTreeCoord(&newiter, duporigin);
-    naCreateQuadTreeLeaf(&newiter, dupdata);
-  }
-  
-  naClearQuadTreeIterator(&dupiter);
-  naClearQuadTreeIterator(&newiter);
-  naClearQuadTreeIterator(&maskiter);
-
-  return newtree;
-}
-
-
-
-
-
 NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTree* duptree, NAPos shift){
   double x1bound;
   double y1bound;
@@ -917,7 +902,7 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
   NARect rect3;
   NAQuadTreeIterator newiter;
   NAQuadTreeIterator iter;
-  double minleafsize;
+  NASize minleafsize;
   
   #ifndef NDEBUG
     if(!newtree)
@@ -930,12 +915,12 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
 
   // Create four rects which denote the rects in the new shifted tree which
   // are aligned to a leaflength.
-  minleafsize = naMakeDoubleWithExponent((int32)naGetQuadTreeMinLeafExponent(duptree));
+  minleafsize = naGetQuadTreeSizeWithExponent(naGetQuadTreeMinLeafExponent(duptree));
 
-  x1bound = naMod(shift.x, minleafsize);
-  y1bound = naMod(shift.y, minleafsize);
-  x2bound = minleafsize - x1bound;
-  y2bound = minleafsize - y1bound;
+  x1bound = naMod(shift.x, minleafsize.width);
+  y1bound = naMod(shift.y, minleafsize.height);
+  x2bound = minleafsize.width - x1bound;
+  y2bound = minleafsize.height - y1bound;
   rect0 = naMakeRectE(naMakePos(shift.x, shift.y), naMakeSizeE(x2bound, y2bound));
   rect1 = naMakeRectE(naMakePos(shift.x + x2bound, shift.y), naMakeSizeE(x1bound, y2bound));
   rect2 = naMakeRectE(naMakePos(shift.x, shift.y + y2bound), naMakeSizeE(x2bound, y1bound));
@@ -957,25 +942,25 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
       neworigin = naMakePos(origin.x + rect0.pos.x, origin.y + rect0.pos.y);
       naLocateQuadTreeCoord(&newiter, neworigin);
       newdata = naGetQuadTreeCurMutable(&newiter, NA_TRUE);
-      duptree->configuration.datacopier(newdata, naMakePos(x1bound, y1bound), dupchunk, naMakePos(0, 0), rect0.size, shift, naGetQuadTreeMinLeafExponent(duptree));
+      duptree->configuration.datacopier(newdata, naMakePos(x1bound, y1bound), dupchunk, naMakePos(0, 0), rect0.size, shift, minleafsize);
     }
     if(!naIsRectEmpty(rect1)){
       neworigin = naMakePos(origin.x + rect1.pos.x, origin.y + rect1.pos.y);
       naLocateQuadTreeCoord(&newiter, neworigin);
       newdata = naGetQuadTreeCurMutable(&newiter, NA_TRUE);
-      duptree->configuration.datacopier(newdata, naMakePos(0, y1bound), dupchunk, naMakePos(x2bound, 0), rect1.size, shift, naGetQuadTreeMinLeafExponent(duptree));
+      duptree->configuration.datacopier(newdata, naMakePos(0, y1bound), dupchunk, naMakePos(x2bound, 0), rect1.size, shift, minleafsize);
     }
     if(!naIsRectEmpty(rect2)){
       neworigin = naMakePos(origin.x + rect2.pos.x, origin.y + rect2.pos.y);
       naLocateQuadTreeCoord(&newiter, neworigin);
       newdata = naGetQuadTreeCurMutable(&newiter, NA_TRUE);
-      duptree->configuration.datacopier(newdata, naMakePos(x1bound, 0), dupchunk, naMakePos(0, y2bound), rect2.size, shift, naGetQuadTreeMinLeafExponent(duptree));
+      duptree->configuration.datacopier(newdata, naMakePos(x1bound, 0), dupchunk, naMakePos(0, y2bound), rect2.size, shift, minleafsize);
     }
     if(!naIsRectEmpty(rect3)){
       neworigin = naMakePos(origin.x + rect3.pos.x, origin.y + rect3.pos.y);
       naLocateQuadTreeCoord(&newiter, neworigin);
       newdata = naGetQuadTreeCurMutable(&newiter, NA_TRUE);
-      duptree->configuration.datacopier(newdata, naMakePos(0, 0), dupchunk, naMakePos(x2bound, y2bound), rect3.size, shift, naGetQuadTreeMinLeafExponent(duptree));
+      duptree->configuration.datacopier(newdata, naMakePos(0, 0), dupchunk, naMakePos(x2bound, y2bound), rect3.size, shift, minleafsize);
     }
   }
   naClearQuadTreeIterator(&iter);
