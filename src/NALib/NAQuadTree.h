@@ -278,17 +278,13 @@ NA_API void naUpdateQuadTree(                  NAQuadTree* tree);
 // Use them as follows:
 //
 // NAQuadTreeIterator iteratorname;
-// naBeginQuadTreeMutatorIteration(MyLeaf* leaf, mytree, limit, visitall, iteratorname);
+// naBeginQuadTreeMutatorIteration(MyLeaf* leaf, mytree, limit, iteratorname);
 //   doStuffWithLeaf(leaf);
 // naEndListIteration(iteratorname);
-//
-// Note that if visitall is true, the leaf variable inside the loop may be
-// NA_NULL. The autocreate parameter allows you to automatically create
-// leafes if they do not exist.
 
-#define naBeginQuadTreeAccessorIteration(typedelem, quadtree, limit, visitall, iter)
-#define naBeginQuadTreeMutatorIteration (typedelem, quadtree, limit, visitall, iter)
-#define naBeginQuadTreeModifierIteration(typedelem, quadtree, limit, visitall, autocreate, iter)
+#define naBeginQuadTreeAccessorIteration(typedelem, quadtree, limit, iter)
+#define naBeginQuadTreeMutatorIteration (typedelem, quadtree, limit, iter)
+#define naBeginQuadTreeModifierIteration(typedelem, quadtree, limit, iter)
 #define naEndQuadTreeIteration(iter)
 
 
@@ -310,15 +306,10 @@ NA_API void naResetQuadTreeIterator(NAQuadTreeIterator* iter);
 // which partially or completely overlap with the limit rect will be visited.
 // If limit is NA_NULL, all leafes will be visited.
 //
-// If visitall is NA_TRUE, all leafes in the given limit rect will be visited,
-// even if they don't exist yet. The parameter limit must be non-null. If not,
-// visitall is ignored by setting it to NA_FALSE.
-//
 // The leafes will always be visited axis-ordered:
 // First from lowest to highest x, then from lowest to highest y.
 NA_API NABool naIterateQuadTree(  NAQuadTreeIterator* iter,
-                                        const NARect* limit,
-                                               NABool visitall);
+                                        const NARect* limit);
 
 // Moves the iterator to the leaf containing the given coord. If such a leaf is
 // not found in the tree, NA_FALSE ist returned. The iterator though stores the

@@ -61,22 +61,22 @@ NA_IDEF NAPos naGetQuadTreeAlignedCoord(NAInt leafexponent, NAPos coord){
 
 
 #undef naBeginQuadTreeAccessorIteration
-#define naBeginQuadTreeAccessorIteration(typedelem, quadtree, limit, visitall, iter)\
+#define naBeginQuadTreeAccessorIteration(typedelem, quadtree, limit, iter)\
   iter = naMakeQuadTreeAccessor(quadtree);\
-  while(naIterateQuadTree(&iter, limit, visitall)){\
+  while(naIterateQuadTree(&iter, limit)){\
     typedelem = naGetQuadTreeCurConst(&iter)
 
 #undef naBeginQuadTreeMutatorIteration
-#define naBeginQuadTreeMutatorIteration(typedelem, quadtree, limit, visitall, iter)\
+#define naBeginQuadTreeMutatorIteration(typedelem, quadtree, limit, iter)\
   iter = naMakeQuadTreeMutator(quadtree);\
-  while(naIterateQuadTree(&iter, limit, visitall)){\
+  while(naIterateQuadTree(&iter, limit)){\
     typedelem = naGetQuadTreeCurMutable(&iter, NA_FALSE)
 
 #undef naBeginQuadTreeModifierIteration
-#define naBeginQuadTreeModifierIteration(typedelem, quadtree, limit, visitall, autocreate, iter)\
+#define naBeginQuadTreeModifierIteration(typedelem, quadtree, limit, iter)\
   iter = naMakeQuadTreeModifier(quadtree);\
-  while(naIterateQuadTree(&iter, limit, visitall)){\
-    typedelem = naGetQuadTreeCurMutable(&iter, autocreate)
+  while(naIterateQuadTree(&iter, limit)){\
+    typedelem = naGetQuadTreeCurMutable(&iter, NA_FALSE)
 
 #undef naEndQuadTreeIteration
 #define naEndQuadTreeIteration(iter)\

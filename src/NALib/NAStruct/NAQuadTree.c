@@ -669,116 +669,61 @@ NA_HDEF NABool naLocateQuadTreeNode(NAQuadTreeIterator* iter, NAPos origin){
 
 
 
-NA_DEF NABool naIterateQuadTree(NAQuadTreeIterator* iter, const NARect* limit, NABool visitall){
+NA_DEF NABool naIterateQuadTree(NAQuadTreeIterator* iter, const NARect* limit){
   const NAQuadTree* tree = (const NAQuadTree*)naGetPtrConst(&(iter->tree));
   
-  if(visitall && !limit){
+  if(!tree->root){return NA_FALSE;}
+  if(!iter->curnode){
+    naSetQuadTreeIteratorCurNode(iter, tree->root);
     #ifndef NDEBUG
-      naError("naIterateQuadTree", "visitall should not be true if there is no limit. visitall is ignored by setting it to NA_FALSE.");
+      if(!iter->curnode)
+      naCrash("naIterateQuadTree", "No current node after setting the current node to the root");
     #endif
-    visitall = NA_FALSE;
   }
 
-  // Authors note:
-  // This iteration function seems harmless but in fact combines two rather
-  // different algorithms into one function: Iterating throught an existing
-  // tree and iterating throught a rectangle.
+  // We go to the next segment. When we came to this function with segment -1,
+  // we therefore start with the first segment.
+  iter->cursegment++;
   
-  if(visitall){
-    // When visiting all leafes in a rect, we simply go through all possible
-    // origin coordinates of that rect.
-
-    #ifndef NDEBUG
-      if(!naIsRectUseful(*limit))
-        naError("naIterateQuadTree", "limit rect is not useful.");
-    #endif
-
-    if(!iter->curnode){
-      NAPos firstorigin = naGetQuadTreeAlignedCoord(naGetQuadTreeMinLeafExponent(tree), limit->pos);
-      naSetQuadTreeIteratorLeafOrigin(iter, firstorigin);
-      naLocateQuadTreeNode(iter, firstorigin);
+  // Search for a segment which is available.
+  while(iter->cursegment < 4){
+    if(iter->curnode->child[iter->cursegment]){
+      // We have a child which is present and overlaps with the limit if
+      // available.
+      break;
+    }
+    iter->cursegment++;
+  }
+  
+  if(iter->cursegment < 4){
+    // There is a segment available, either use the given leaf or go
+    // downwards if it is an inner node.
+    if(iter->curnode->childexponent == naGetQuadTreeMinLeafExponent(tree)){
+      naSetQuadTreeIteratorLeafOrigin(iter, iter->curnode->childorigin[iter->cursegment]);
       return NA_TRUE;
     }else{
-      NASize minleafsize = naGetQuadTreeSizeWithExponent(naGetQuadTreeMinLeafExponent(tree));
-      NAPos neworigin = iter->leaforigin;
-      neworigin.x += minleafsize.width;
-      if(naContainsRectPos(*limit, neworigin)){
-        naSetQuadTreeIteratorLeafOrigin(iter, neworigin);
-        naLocateQuadTreeNode(iter, neworigin);
-        return NA_TRUE;
-      }else{
-        NAPos firstorigin = naGetQuadTreeAlignedCoord(naGetQuadTreeMinLeafExponent(tree), limit->pos);
-        neworigin.x = firstorigin.x;
-        neworigin.y += minleafsize.height;
-        if(naContainsRectPos(*limit, neworigin)){
-          naSetQuadTreeIteratorLeafOrigin(iter, neworigin);
-          naLocateQuadTreeNode(iter, neworigin);
-          return NA_TRUE;
-        }else{
-          // There is no further leaf in the given rect.
-          naResetQuadTreeIterator(iter);
-          return NA_FALSE;
-        }
-      }
+      // This is an inner node. We move downwards.
+      naSetQuadTreeIteratorCurNode(iter, iter->curnode->child[iter->cursegment]);
+      // We start looking in the subnode from the start.
+      iter->cursegment = -1;
+      return naIterateQuadTree(iter, limit);
     }
-
+    
   }else{
-    // If visitall is NA_FALSE, we go through the existing tree and only
-    // visit the leafes which exist.
-    
-    if(!tree->root){return NA_FALSE;}
-    if(!iter->curnode){
-      naSetQuadTreeIteratorCurNode(iter, tree->root);
+    // There is no more segment available in this node. Go upwards.
+    if(iter->curnode->parentnode){
       #ifndef NDEBUG
-        if(!iter->curnode)
-        naCrash("naIterateQuadTree", "No current node after setting the current node to the root");
+        if(iter->curnode->segmentinparent == -1)
+          naError("naIterateQuadTreeNode", "Inernal inconsistency detected: Segment in parent should not be -1");
       #endif
-    }
-
-    // We go to the next segment. When we came to this function with segment -1,
-    // we therefore start with the first segment.
-    iter->cursegment++;
-    
-    // Search for a segment which is available.
-    while(iter->cursegment < 4){
-      if(iter->curnode->child[iter->cursegment]){
-        // We have a child which is present and overlaps with the limit if
-        // available.
-        break;
-      }
-      iter->cursegment++;
-    }
-    
-    if(iter->cursegment < 4){
-      // There is a segment available, either use the given leaf or go
-      // downwards if it is an inner node.
-      if(iter->curnode->childexponent == naGetQuadTreeMinLeafExponent(tree)){
-        naSetQuadTreeIteratorLeafOrigin(iter, iter->curnode->childorigin[iter->cursegment]);
-        return NA_TRUE;
-      }else{
-        // This is an inner node. We move downwards.
-        naSetQuadTreeIteratorCurNode(iter, iter->curnode->child[iter->cursegment]);
-        // We start looking in the subnode from the start.
-        iter->cursegment = -1;
-        return naIterateQuadTree(iter, limit, visitall);
-      }
-      
+      iter->cursegment = iter->curnode->segmentinparent;
+      naSetQuadTreeIteratorCurNode(iter, iter->curnode->parentnode);
+      return naIterateQuadTree(iter, limit);
     }else{
-      // There is no more segment available in this node. Go upwards.
-      if(iter->curnode->parentnode){
-        #ifndef NDEBUG
-          if(iter->curnode->segmentinparent == -1)
-            naError("naIterateQuadTreeNode", "Inernal inconsistency detected: Segment in parent should not be -1");
-        #endif
-        iter->cursegment = iter->curnode->segmentinparent;
-        naSetQuadTreeIteratorCurNode(iter, iter->curnode->parentnode);
-        return naIterateQuadTree(iter, limit, visitall);
-      }else{
-        // There is no parent node. This is the root and there are no more
-        // elements to be iterated.
-        naResetQuadTreeIterator(iter);
-        return NA_FALSE;
-      }
+      // There is no parent node. This is the root and there are no more
+      // elements to be iterated.
+      naResetQuadTreeIterator(iter);
+      return NA_FALSE;
     }
   }
 }
@@ -875,7 +820,7 @@ NA_DEF NAQuadTree* naInitQuadTreeCopy(NAQuadTree* newtree, const NAQuadTree* dup
 
   newiter = naMakeQuadTreeModifier(newtree);
   dupiter = naMakeQuadTreeAccessor(duptree);
-  while(naIterateQuadTree(&dupiter, NA_NULL, NA_FALSE)){
+  while(naIterateQuadTree(&dupiter, NA_NULL)){
     NAPos duporigin;
     const void* dupdata = naGetQuadTreeCurConst(&dupiter);
     duporigin = naGetQuadTreeCurOrigin(&dupiter);
@@ -929,7 +874,7 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
   newiter = naMakeQuadTreeModifier(newtree);
   iter = naMakeQuadTreeAccessor(duptree);
   
-  while(naIterateQuadTree(&iter, NA_NULL, NA_FALSE)){
+  while(naIterateQuadTree(&iter, NA_NULL)){
     NAPos origin;
     NAPos neworigin;
     void* newdata;
