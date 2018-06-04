@@ -23,7 +23,7 @@ struct NAQuadTree{
 struct NAQuadTreeIterator{
   NAPtr tree;
   NAQuadTreeNode* curnode;
-  NAInt cursegment;
+  int16 cursegment;
   NAPos leaforigin;
   #ifndef NDEBUG
     NAInt flags;
@@ -33,29 +33,8 @@ struct NAQuadTreeIterator{
 
 
 
-NA_HIDEF NASize naGetQuadTreeSizeWithExponent(NAInt exponent){
-  double length = naMakeDoubleWithExponent((int32)exponent);
-  return naMakeSize(length, length);
-}
-
-
-
 NA_IDEF NABool naIsQuadTreeEmpty(const NAQuadTree* tree){
   return (tree->root == NA_NULL);
-}
-
-
-
-NA_IDEF NAInt naGetQuadTreeMinLeafExponent(const NAQuadTree* tree){
-  return tree->configuration.minleafexponent;
-}
-
-
-
-NA_IDEF NAPos naGetQuadTreeAlignedCoord(NAInt leafexponent, NAPos coord){
-  NARect leafalign = naMakeRect(naMakePos(0, 0), naGetQuadTreeSizeWithExponent(leafexponent));
-  NAPos retpos = naMakePosWithAlignment(coord, leafalign);
-  return retpos;
 }
 
 

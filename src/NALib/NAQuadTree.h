@@ -119,7 +119,7 @@ typedef void  (*NAQuadTreeDataCopier)( const void* dstdata,
 // Internal nodes can NOT be manipulated directly but you are allowed to store
 // any data with every node if desired. You can return a pointer to any data,
 // even a Null pointer. This data pointer will be available to
-// NAQuadTreeLeafChanged, NAQuadTreeChildChanged and NAQuadTreeNodeDeallocator.
+// NAQuadTreeChildChanged and NAQuadTreeNodeDeallocator.
 // An internal node internally stores pointers to childnodes or leafes. The
 // origin parameter denotes the origin of the (lowerx, lowery)-node and the
 // childsize denotes the (always square) size the childnodes have.
@@ -138,7 +138,7 @@ typedef void* (*NAQuadTreeNodeAllocator)( NAPos origin,
 // you should never return NA_NULL in the allocation callback!
 typedef void  (*NAQuadTreeNodeDeallocator)(void* nodedata);
 
-// NAQuadTreeLeafChanged and NAQuadTreeChildChanged
+// NAQuadTreeChildChanged
 // Whenever you altered a leaf and want to propagate the change over the whole
 // tree, you call naUpdateQuadTreeCur which in turn will call the following
 // two callback functions. Both will be called with the PARENTAL (internal)
@@ -168,16 +168,11 @@ typedef void  (*NAQuadTreeNodeDeallocator)(void* nodedata);
 // Note that these callbacks will only be called in the bubbling phase. Also
 // note that if one of these functions is not implemented, bubbling is set to
 // NA_TRUE by default.
-typedef NABool(*NAQuadTreeLeafChanged)(      void* nodedata,
-                                             NAInt segment,
-                                 const void* const leafdata[4],
-                                            NASize leafsize);
 typedef NABool(*NAQuadTreeChildChanged)(     void* nodedata,
-                                             NAInt segment,
+                                             int16 segment,
                                  const void* const childdata[4],
+                                            uint16 leafmask,
                                             NASize childsize);
-
-
 
 
 
@@ -189,10 +184,9 @@ typedef struct NAQuadTreeConfiguration_struct{
   NAQuadTreeDataCopier      datacopier;
   NAQuadTreeNodeAllocator   nodeallocator;
   NAQuadTreeNodeDeallocator nodedeallocator;
-  NAQuadTreeLeafChanged     leafchanged;
   NAQuadTreeChildChanged    childchanged;
   void*                     userdata;
-  NAInt                     minleafexponent;
+  int16                     minleafexponent;
 } NAQuadTreeConfiguration;
 
 
@@ -235,11 +229,8 @@ NA_API void naEmptyQuadTree(                   NAQuadTree* tree);
 // Returns true if the tree is empty
 NA_IAPI NABool naIsQuadTreeEmpty(        const NAQuadTree* tree);
 
-// Returns the leaf length in one dimension
-NA_IAPI NAInt naGetQuadTreeMinLeafExponent(   const NAQuadTree* tree);
-
 // Returns the adjusted coord which is aligned on a chunk coordinate.
-NA_IAPI NAPos naGetQuadTreeAlignedCoord(NAInt leafexponent, NAPos coord);
+NA_API NARect naGetQuadTreeAlignedRect(int16 leafexponent, NAPos coord);
 
 // Returns the root node data, if available. If no root or no root data are
 // available, NA_NULL is returned.
