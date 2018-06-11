@@ -349,6 +349,25 @@ NA_HIDEF void naSetQuadTreeIteratorLeafOrigin(NAQuadTreeIterator* iter, NAPos or
 
 
 #
+NA_HIDEF NAQuadTreeNode* naCreateQuadTreeParentNode(NAQuadTreeNode* existingchild, NAPos neworigin, NAQuadTree* tree){
+  int16 parentchildexponent = existingchild->childexponent;
+  NAPos parentorigin = existingchild->origin;
+  while(1){
+    parentchildexponent++;
+    parentorigin = naGetQuadTreeNodeParentOrigin(parentchildexponent, parentorigin);
+    NASize parentsize = naGetQuadTreeSizeWithExponent(parentchildexponent + 1);
+    if(naContainsRectPosE(naMakeRect(parentorigin, parentsize), neworigin)){break;}
+  }
+  NAQuadTreeNode* newparent = naAllocQuadTreeNode(parentchildexponent, existingchild->segmentinparent, existingchild->parentnode, parentorigin, tree);
+  existingchild->segmentinparent = naGetQuadTreeNodeSegment(newparent, existingchild->origin);
+  existingchild->parentnode = newparent;
+  newparent->child[existingchild->segmentinparent] = existingchild;
+  newparent->leafmask &= ~(1 << existingchild->segmentinparent);
+  return newparent;
+}
+
+
+#
 // If the iterator is at no node, there either is no root or the root does not
 // contain the desired coordinate.
 NA_HIDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data){
@@ -367,21 +386,8 @@ NA_HIDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data){
   if(!iter->curnode){
     // The tree root does not contain the coord or does not exist at all.
     if(tree->root){
-      // We expand the tree at the root and call this function recursively.
-      int16 rootchildexponent = tree->root->childexponent;
-      NAPos rootorigin = tree->root->origin;
-      while(1){
-        rootchildexponent++;
-        rootorigin = naGetQuadTreeNodeParentOrigin(rootchildexponent, rootorigin);
-        NASize rootsize = naGetQuadTreeSizeWithExponent(rootchildexponent + 1);
-        if(naContainsRectPosE(naMakeRect(rootorigin, rootsize), iter->leaforigin)){break;}
-      }
-      NAQuadTreeNode* newroot = naAllocQuadTreeNode(rootchildexponent, -1, NA_NULL, rootorigin, tree);
-      tree->root->segmentinparent = naGetQuadTreeNodeSegment(newroot, tree->root->origin);
-      tree->root->parentnode = newroot;
-      newroot->child[tree->root->segmentinparent] = tree->root;
-      newroot->leafmask &= ~(1 << tree->root->segmentinparent);
-      tree->root = newroot;
+      // We expand the tree at the root.
+      tree->root = naCreateQuadTreeParentNode(tree->root, iter->leaforigin, tree);
     }else{
       // We create the very first node of this tree.
       NAPos rootorigin = naGetQuadTreeNodeParentOrigin(minleafexponent, iter->leaforigin);
@@ -410,22 +416,8 @@ NA_HIDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data){
       // There already is a segment, but it holds a node which is too small to
       // contain the desired origin. Create a common parent of the two and
       // reattach them.
-      NAQuadTreeNode* childnode = iter->curnode->child[segment];
-      int16 childnodechildexponent = childnode->childexponent;
-      NAPos parentorigin = childnode->origin;
-      while(1){
-        childnodechildexponent++;
-        parentorigin = naGetQuadTreeNodeParentOrigin(childnodechildexponent, parentorigin);
-        NASize parentsize = naGetQuadTreeSizeWithExponent(childnodechildexponent + 1);
-        if(naContainsRectPosE(naMakeRect(parentorigin, parentsize), iter->leaforigin)){break;}
-      }
-      NAQuadTreeNode* newparent = naAllocQuadTreeNode(childnodechildexponent, segment, iter->curnode, parentorigin, tree);
-      newparent->segmentinparent = childnode->segmentinparent;
+      NAQuadTreeNode* newparent = naCreateQuadTreeParentNode(iter->curnode->child[segment], iter->leaforigin, tree);
       iter->curnode->child[segment] = newparent;
-      childnode->segmentinparent = naGetQuadTreeNodeSegment(newparent, childnode->origin);
-      childnode->parentnode = newparent;
-      newparent->child[childnode->segmentinparent] = childnode;
-      newparent->leafmask &= ~(1 << childnode->segmentinparent);
       // We call this function recursively.
       naSetQuadTreeIteratorCurNode(iter, newparent);
       naCreateQuadTreeLeaf(iter, data);
