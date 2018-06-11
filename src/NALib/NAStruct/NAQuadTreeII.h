@@ -23,7 +23,7 @@ struct NAQuadTree{
 struct NAQuadTreeIterator{
   NAPtr tree;
   NAQuadTreeNode* curnode;
-  int16 cursegment;
+  int16 childsegment;
   NAPos leaforigin;
   #ifndef NDEBUG
     NAInt flags;
