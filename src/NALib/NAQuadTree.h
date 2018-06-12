@@ -186,7 +186,7 @@ typedef struct NAQuadTreeConfiguration_struct{
   NAQuadTreeNodeDeallocator nodedeallocator;
   NAQuadTreeChildChanged    childchanged;
   void*                     userdata;
-  int16                     minleafexponent;
+  int16                     baseleafexponent;
 } NAQuadTreeConfiguration;
 
 
@@ -317,9 +317,9 @@ NA_API NABool naLocateQuadTreeIterator(NAQuadTreeIterator* dstiter,
                                  const NAQuadTreeIterator* srciter);
 
 // Moves the iterator relative to the current position by multiples of the
-// minimal size of a leaf defined by minleafexponent upon tree creation.
-// Each step can be positive or negative. The iterator must be at a specific
-// position before using this function.
+// size of a leaf defined by baseleafexponent upon tree creation. Each step
+// can be positive or negative. The iterator must be at a specific position
+// before using this function.
 // Probably you want to use naLocateQuadTreeCoord before.
 NA_API NABool naLocateQuadTreeSteps(  NAQuadTreeIterator* iter,
                                                     NAInt stepx,

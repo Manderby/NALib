@@ -16,7 +16,7 @@ Version 22 (first published 20XX-XXX-XX)
 ==========
 
 - Tweaked QuadTree implementation. Removed naSetQuadTreeInRect. Use iterators
-  for that.
+  for that. MinLeafExponent is now a BaseLeafExponent
 
 
 Version 21 (first published 2018-Mai-27)

@@ -22,9 +22,9 @@ struct NAQuadTree{
 
 struct NAQuadTreeIterator{
   NAPtr tree;
-  NAQuadTreeNode* curnode;
-  int16 childsegment;
-  NAPos leaforigin;
+  NAQuadTreeNode* node; // Denotes the node currently visiting
+  int16 childsegment;   // Denotes the child segment currently visiting.
+  NAPos pos;            // Denotes the exact position which was requested.
   #ifndef NDEBUG
     NAInt flags;
   #endif
