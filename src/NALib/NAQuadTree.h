@@ -253,7 +253,7 @@ NA_API void naUpdateQuadTree(                  NAQuadTree* tree);
 // NAQuadTreeIterator iter = naMakeQuadTreeIteratorMutable(tree);
 // while(naIterateQuadTree(&iter)){
 //   MyLeafData* data = naGetQuadTreeCurMutable(&iter);
-//   NAPos origin = naGetQuadTreeCurOrigin(&iter);
+//   NARect rect = naGetQuadTreeCurRect(&iter);
 //   // do stuff with the leaf data.
 // }
 // naClearQuadTreeIterator(&iter);
@@ -331,9 +331,6 @@ NA_API NABool naLocateQuadTreeSteps(  NAQuadTreeIterator* iter,
 NA_API const void* naGetQuadTreeCurConst(  NAQuadTreeIterator* iter);
 NA_API void*       naGetQuadTreeCurMutable(NAQuadTreeIterator* iter,
                                                         NABool create);
-
-// Returns the origin of the leaf the iterator is pointing at.
-NA_API NAPos naGetQuadTreeCurOrigin(const NAQuadTreeIterator* iter);
 
 // Returns the rect of the leaf the iterator is pointing at.
 NA_API NARect  naGetQuadTreeCurRect(const NAQuadTreeIterator* iter);

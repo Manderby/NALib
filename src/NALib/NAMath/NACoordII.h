@@ -1726,7 +1726,7 @@ NA_IDEF NARect naClampRectToRect(NARect rect, NARect clamprect){
     newrect.pos.x = clamprect.pos.x;
   }
   value = naGetRectEndX(clamprect);
-  if(naGetRectEndX(newrect) > value){
+  if(naGetRectEndXE(newrect) > value){
     newrect.size.width = value - newrect.pos.x;
   }
   
@@ -1737,7 +1737,7 @@ NA_IDEF NARect naClampRectToRect(NARect rect, NARect clamprect){
     newrect.pos.y = clamprect.pos.y;
   }
   value = naGetRectEndY(clamprect);
-  if(naGetRectEndY(newrect) > value){
+  if(naGetRectEndYE(newrect) > value){
     newrect.size.height = value - newrect.pos.y;
   }
   return newrect;

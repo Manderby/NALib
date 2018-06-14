@@ -80,7 +80,7 @@ NA_IDEF double naMakeDoubleWithExponent(int32 signedexponent){
   int64 dbits;
   #ifndef NDEBUG
     if(signedexponent < NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL)
-      naError("naMakeDouble", "exponent too low for double precision");
+      naCrash("naMakeDouble", "exponent too low for double precision");
     if(signedexponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL)
       naError("naMakeDouble", "exponent creates subnormal number");
     if(signedexponent > NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)

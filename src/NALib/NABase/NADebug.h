@@ -82,7 +82,7 @@
   #define naCrash(functionsymbol, text)\
     {\
     naError(functionsymbol, text);\
-    fprintf(stderr, NA_NL "Crashing the application deliberately..." NA_NL);\
+    fprintf(stderr, "\nCrashing the application deliberately...\n");\
     exit(EXIT_FAILURE);\
     }
 
