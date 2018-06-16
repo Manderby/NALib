@@ -27,7 +27,6 @@ struct NAQuadTreeIterator{
   NAPos pos;            // Denotes the exact position which was requested.
   #ifndef NDEBUG
     NAInt flags;
-    NAInt childsvisited;
   #endif
 };
 

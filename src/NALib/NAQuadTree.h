@@ -287,7 +287,7 @@ NA_API NAQuadTreeIterator naMakeQuadTreeModifier(      NAQuadTree* tree);
 // Clears the iterator struct. Always use this after done iterating!
 NA_API void naClearQuadTreeIterator(NAQuadTreeIterator* iter);
 
-// Resets an iterator to point to no specific leaf.
+// Resets an iterator to point completely outside of the tree.
 NA_API void naResetQuadTreeIterator(NAQuadTreeIterator* iter);
 
 // Iterates to the next leaf and returns NA_TRUE if there is one, NA_FALSE if
