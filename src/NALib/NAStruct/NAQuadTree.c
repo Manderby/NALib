@@ -269,11 +269,11 @@ NA_HDEF NABool naUpdateQuadTreeNodeCapturing(NAQuadTree* tree, NAQuadTreeNode* n
     if(!(node->leafmask & 0x01) && !node->child[0])
       naError("naUpdateQuadTreeNodeCapturing", "Node 0 is null");
     if(!(node->leafmask & 0x02) && !node->child[1])
-      naError("naUpdateQuadTreeNodeCapturing", "Node 0 is null");
+      naError("naUpdateQuadTreeNodeCapturing", "Node 1 is null");
     if(!(node->leafmask & 0x04) && !node->child[2])
-      naError("naUpdateQuadTreeNodeCapturing", "Node 0 is null");
+      naError("naUpdateQuadTreeNodeCapturing", "Node 2 is null");
     if(!(node->leafmask & 0x08) && !node->child[3])
-      naError("naUpdateQuadTreeNodeCapturing", "Node 0 is null");
+      naError("naUpdateQuadTreeNodeCapturing", "Node 3 is null");
   #endif
 
   // this node stores subnodes
@@ -930,34 +930,38 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
   iter = naMakeQuadTreeAccessor(duptree);
   
   while(naIterateQuadTree(&iter, NA_NULL)){
-    NAPos origin;
+    NARect rect;
     NAPos neworigin;
     void* newdata;
     const void* dupchunk = naGetQuadTreeCurConst(&iter);
-    origin = naGetQuadTreeCurRect(&iter).pos;
+    rect = naGetQuadTreeCurRect(&iter);
+    #ifndef NDEBUG
+      if(!naEqualSize(rect.size, naGetQuadTreeSizeWithExponent(naGetQuadTreeBaseLeafExponent(duptree))))
+        naError("naInitQuadTreeCopyShifted", "The implementation is not ready for shifting trees with different leaf sizes. sorry.");
+    #endif
 
     // We have a leaf with data. Now, we create all leafes in the new tree
     // containing the shifted leaf. There are max 4 new leaves.
     if(!naIsRectEmpty(rect0)){
-      neworigin = naMakePos(origin.x + rect0.pos.x, origin.y + rect0.pos.y);
+      neworigin = naMakePos(rect.pos.x + rect0.pos.x, rect.pos.y + rect0.pos.y);
       naLocateQuadTreeCoord(&newiter, neworigin);
       newdata = naGetQuadTreeCurMutable(&newiter, NA_TRUE);
       duptree->configuration.datacopier(newdata, naMakePos(x1bound, y1bound), dupchunk, naMakePos(0, 0), rect0.size, shift, baseleafsize);
     }
     if(!naIsRectEmpty(rect1)){
-      neworigin = naMakePos(origin.x + rect1.pos.x, origin.y + rect1.pos.y);
+      neworigin = naMakePos(rect.pos.x + rect1.pos.x, rect.pos.y + rect1.pos.y);
       naLocateQuadTreeCoord(&newiter, neworigin);
       newdata = naGetQuadTreeCurMutable(&newiter, NA_TRUE);
       duptree->configuration.datacopier(newdata, naMakePos(0, y1bound), dupchunk, naMakePos(x2bound, 0), rect1.size, shift, baseleafsize);
     }
     if(!naIsRectEmpty(rect2)){
-      neworigin = naMakePos(origin.x + rect2.pos.x, origin.y + rect2.pos.y);
+      neworigin = naMakePos(rect.pos.x + rect2.pos.x, rect.pos.y + rect2.pos.y);
       naLocateQuadTreeCoord(&newiter, neworigin);
       newdata = naGetQuadTreeCurMutable(&newiter, NA_TRUE);
       duptree->configuration.datacopier(newdata, naMakePos(x1bound, 0), dupchunk, naMakePos(0, y2bound), rect2.size, shift, baseleafsize);
     }
     if(!naIsRectEmpty(rect3)){
-      neworigin = naMakePos(origin.x + rect3.pos.x, origin.y + rect3.pos.y);
+      neworigin = naMakePos(rect.pos.x + rect3.pos.x, rect.pos.y + rect3.pos.y);
       naLocateQuadTreeCoord(&newiter, neworigin);
       newdata = naGetQuadTreeCurMutable(&newiter, NA_TRUE);
       duptree->configuration.datacopier(newdata, naMakePos(0, 0), dupchunk, naMakePos(x2bound, y2bound), rect3.size, shift, baseleafsize);
