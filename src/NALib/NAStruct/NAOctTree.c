@@ -160,7 +160,7 @@ NA_HDEF NAVertexi naGetOctTreeNodeParentOrigin(NAInt childsize, NAVertexi childo
   // in a cyclic way.
   //
   // Implementation note: To be sure that the childorigin stays aligned, we
-  // simply take that origin als the alignment origin and work from there.
+  // simply take that origin as the alignment origin and work from there.
 
   NABoxi alignbox = naMakeBoxi(childorigin, naMakeVolumei(childsize * 2, childsize * 2, childsize * 2));
   NAInt cycle = naLog2i(childsize) % 8;
