@@ -11,6 +11,7 @@ as a static or dynamic library, but only as source files.
 
 - Simply include the whole NALib folder into your project.
 - NALib just needs the standard libraries.
+- Use NDEBUG for testing.
 
 Documentation:
 --------------
@@ -22,5 +23,4 @@ Contribute:
 This project has so far not been designed with a community in mind, as it has
 been used as a private engineering code collection. Therefore, be gentle and
 patient. You may send suggestions, I don't get mad if you ask. But don't
-expect me to rejoye if you bombard me with fundamental quirks. This has always
-been and shall remain a professional engineering code collection.
+expect me to rejoye if you bombard me.
