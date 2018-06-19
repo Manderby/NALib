@@ -62,10 +62,10 @@ NA_HDEF NARect naGetQuadTreeNodeSegmentRect(NAQuadTreeNode* parentnode, int16 ch
 
 
 
-NA_DEF NARect naGetQuadTreeAlignedRect(int16 leafexponent, NAPos coord){
+NA_DEF NARect naGetQuadTreeAlignedRect(int16 leafexponent, NAPos pos){
   NASize leafsize = naGetQuadTreeSizeWithExponent(leafexponent);
   NARect leafalign = naMakeRect(naMakePos(0, 0), leafsize);
-  NARect retrect = naMakeRect(naMakePosWithAlignment(coord, leafalign), leafsize);
+  NARect retrect = naMakeRect(naMakePosWithAlignment(pos, leafalign), leafsize);
   return retrect;
 }
 
@@ -221,6 +221,12 @@ NA_HIDEF int16 naGetQuadTreeSegment(NAPos parentorigin, int16 childexponent, NAP
 
 
 
+// Note that this function is not entirely deterministic. Depending on the
+// order the leafes are created, the resulting root of the whole tree might
+// be placed at a different origin. To make this completely deterministic,
+// one would force the origin to align to a predefined pattern which is
+// - due to the cyclic manner of the parent - a little complicated and
+// frankly should be not important in any case. Therefore... maybe later.
 NA_HDEF NAPos naGetQuadTreeRootOrigin(int16 childexponent, NAPos childorigin){
   // In order to achieve a full coverage of the whole space
   // (negative and positive in all dimensions), we align parent nodes
@@ -382,22 +388,31 @@ NA_HIDEF NABool naIsQuadTreeIteratorAtLeaf(NAQuadTreeIterator* iter){
 
 
 
-// If the iterator is at no node, there either is no root or the root does not
-// contain the desired coordinate.
+// This is a rather large function. It handles creation of a leaf no matter
+// where the iterator is. The desired leaf shall contain the position stored
+// in the iterator. If the iterator is positioned at a node, that node should
+// contain the desired position. If a segment is selected (!= -1), then that
+// would be the position where the new leaf will be created.
+//
+// In certain cases, this function is called recursively when helping nodes
+// needed to be created.
 NA_HDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data){
   NAQuadTree* tree;
 
   #ifndef NDEBUG
     if(!(iter->flags & NA_QUADTREE_ITERATOR_MODIFIER))
       naError("naCreateQuadTreeLeaf", "iterator must be modifier");
+    if((iter->childsegment != -1))
+      naError("naCreateQuadTreeLeaf", "iterator is already at a leaf");
   #endif
 
   tree = (NAQuadTree*)naGetPtrMutable(&(iter->tree));
   int16 baseleafexponent = naGetQuadTreeBaseLeafExponent(tree);
 
   if(!iter->node){
-    // The tree root does not contain the coord or does not exist at all.
+    // The tree root does not contain the pos or does not exist at all.
     if(tree->root){
+      // We have a root but the desired pos is not contained within.
       // We expand the tree at the root.
       int16 parentchildexponent = tree->root->childexponent;
       NAPos parentorigin = tree->root->origin;
@@ -423,9 +438,9 @@ NA_HDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data){
     naCreateQuadTreeLeaf(iter, data);
     
   }else{
+    // ...else we have a current node which is expected to contain the pos.
     int16 segment;
 
-    // We have a current node which is expected to contain the coord.
     #ifndef NDEBUG
       NARect noderect = naGetQuadTreeNodeRect(iter->node);
       if(!naContainsRectPosE(noderect, iter->pos))
@@ -664,7 +679,7 @@ NA_DEF void naRemoveQuadTreeCur(NAQuadTreeIterator* iter){
 
 
 
-// Moves the iterator to the closest parent node containing coord.
+// Moves the iterator to the closest parent node containing pos.
 // Phase 2: Capture.
 NA_HDEF NABool naLocateQuadTreeNodeCapture(NAQuadTreeIterator* iter){
   NABool found = NA_FALSE;
@@ -674,7 +689,7 @@ NA_HDEF NABool naLocateQuadTreeNodeCapture(NAQuadTreeIterator* iter){
         naError("naLocateQuadTreeNodeCapture", "Inconsistent behaviour. Node should contain pos");
     #endif
   
-    // The coord is stored somewhere inside the rectangle of this node
+    // The pos is stored somewhere inside the rectangle of this node
     int16 segment = naGetQuadTreeSegment(iter->node->origin, iter->node->childexponent, iter->pos);
     if((iter->node->childs[segment])){
       // The segment which contains the pos has a child stored.
@@ -691,14 +706,14 @@ NA_HDEF NABool naLocateQuadTreeNodeCapture(NAQuadTreeIterator* iter){
           // Go on searching in the sub-node
           naSetQuadTreeIteratorCurNode(iter, iter->node->childs[segment]);
         }else{
-          // The child node does not contain the desired coordinate.
+          // The child node does not contain the desired pos.
           // Bad ending. There is a node missing in between.
           break;
         }
       }
       
     }else{
-      // There is no segment where the coord should be. No leaf found.
+      // There is no segment where the pos should be. No leaf found.
       // Bad ending. We are stuck with the closest parent node.
       break;
     }
@@ -708,7 +723,7 @@ NA_HDEF NABool naLocateQuadTreeNodeCapture(NAQuadTreeIterator* iter){
 
 
 
-// Moves the iterator to the closest parent node containing coord.
+// Moves the iterator to the closest parent node containing pos.
 // Phase 1: Bubbling.
 NA_HDEF NABool naLocateQuadTreeNodeBubble(NAQuadTreeIterator* iter){
   const NAQuadTree* tree = naGetPtrConst(&(iter->tree));
@@ -803,8 +818,8 @@ NA_DEF NABool naIterateQuadTree(NAQuadTreeIterator* iter, const NARect* limit){
 
 
 
-NA_DEF NABool naLocateQuadTreeCoord(NAQuadTreeIterator* iter, NAPos coord){
-  iter->pos = coord;
+NA_DEF NABool naLocateQuadTreeCoord(NAQuadTreeIterator* iter, NAPos pos){
+  iter->pos = pos;
   return naLocateQuadTreeNodeBubble(iter);
 }
 

@@ -229,8 +229,8 @@ NA_API void naEmptyQuadTree(                   NAQuadTree* tree);
 // Returns true if the tree is empty
 NA_IAPI NABool naIsQuadTreeEmpty(        const NAQuadTree* tree);
 
-// Returns the adjusted coord which is aligned on a chunk coordinate.
-NA_API NARect naGetQuadTreeAlignedRect(int16 leafexponent, NAPos coord);
+// Returns the adjusted pos which is aligned on a chunk coordinate.
+NA_API NARect naGetQuadTreeAlignedRect(int16 leafexponent, NAPos pos);
 
 // Returns the root node data, if available. If no root or no root data are
 // available, NA_NULL is returned.
@@ -302,11 +302,11 @@ NA_API void naResetQuadTreeIterator(NAQuadTreeIterator* iter);
 NA_API NABool naIterateQuadTree(  NAQuadTreeIterator* iter,
                                         const NARect* limit);
 
-// Moves the iterator to the leaf containing the given coord. If such a leaf is
+// Moves the iterator to the leaf containing the given pos. If such a leaf is
 // not found in the tree, NA_FALSE ist returned. The iterator though stores the
 // coord it is supposed to point at. This allows you to locate a position and
 // then use naGetQuadTreeCurMutable to create a leaf at that position.
-NA_API NABool naLocateQuadTreeCoord(NAQuadTreeIterator* iter, NAPos coord);
+NA_API NABool naLocateQuadTreeCoord(NAQuadTreeIterator* iter, NAPos pos);
 
 // Moves the stditer to the leaf having the same coord as srciter. If such a
 // leaf is not found in the tree, NA_FALSE ist returned. The iterator though
