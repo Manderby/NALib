@@ -7,11 +7,13 @@
 // Do not include this file directly! It will automatically be included when
 // including "NAOctTree.h"
 
+
+
+
 typedef struct NAOctTreeNode NAOctTreeNode;
 
 struct NAOctTree{
-  NAInt leaflength;
-  NAOctTreeCallbacks callbacks;
+  NAOctTreeConfiguration configuration;
   NAOctTreeNode* root;
   #ifndef NDEBUG
     NAInt itercount;
@@ -20,10 +22,12 @@ struct NAOctTree{
 
 struct NAOctTreeIterator{
   NAPtr tree;
-  NAOctTreeNode* curnode;
-  NAInt cursegment;
-  NAVertexi leaforigin;
-  NAInt flags;
+  NAOctTreeNode* node; // Denotes the node currently visiting
+  int16 childsegment;   // Denotes the child segment currently visiting.
+  NAVertex vertex;            // Denotes the exact position which was requested.
+  #ifndef NDEBUG
+    NAInt flags;
+  #endif
 };
 
 
@@ -35,34 +39,28 @@ NA_IDEF NABool naIsOctTreeEmpty(const NAOctTree* tree){
 
 
 
-NA_IDEF NAInt naGetOctTreeLeafLength(const NAOctTree* tree){
-  return tree->leaflength;
-}
+#undef naBeginOctTreeAccessorIteration
+#define naBeginOctTreeAccessorIteration(typedelem, octtree, limit, iter)\
+  iter = naMakeOctTreeAccessor(octtree);\
+  while(naIterateOctTree(&iter, limit)){\
+    typedelem = naGetOctTreeCurConst(&iter)
 
+#undef naBeginOctTreeMutatorIteration
+#define naBeginOctTreeMutatorIteration(typedelem, octtree, limit, iter)\
+  iter = naMakeOctTreeMutator(octtree);\
+  while(naIterateOctTree(&iter, limit)){\
+    typedelem = naGetOctTreeCurMutable(&iter, NA_FALSE)
 
+#undef naBeginOctTreeModifierIteration
+#define naBeginOctTreeModifierIteration(typedelem, octtree, limit, iter)\
+  iter = naMakeOctTreeModifier(octtree);\
+  while(naIterateOctTree(&iter, limit)){\
+    typedelem = naGetOctTreeCurMutable(&iter, NA_FALSE)
 
-NA_IDEF NAVertexi naGetOctTreeAlignedCoord(NAInt leaflength, NAVertexi coord){
-  NABoxi leafalign = naMakeBoxi(naMakeVertexi(0, 0, 0), naMakeVolumei(leaflength, leaflength, leaflength));
-  return naMakeVertexiWithAlignment(coord, leafalign);
-}
-
-
-
-NA_IDEF NAOctTreeCallbacks naGetOctTreeCallbacks(const NAOctTree* tree){
-  return tree->callbacks;
-}
-
-
-
-NA_HIDEF void naInitOctTreeIterator(NAOctTreeIterator* iter){
-  #ifndef NDEBUG
-    NAOctTree* mutabletree = (NAOctTree*)naGetPtrConst(&(iter->tree));
-    mutabletree->itercount++;
-  #endif
-  iter->curnode = NA_NULL;
-  iter->cursegment= -1;
-  iter->flags = 0;
-}
+#undef naEndOctTreeIteration
+#define naEndOctTreeIteration(iter)\
+  }\
+  naClearOctTreeIterator(&iter)
 
 
 

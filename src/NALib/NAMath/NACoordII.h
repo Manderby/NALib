@@ -695,11 +695,11 @@ NA_IDEF NAVertexi naMakeVertexiWithAlignment(NAVertexi origin, NABoxi alignbox){
   neworigin.z = naAlignValuei(origin.z, alignbox.vertex.z, alignbox.volume.depth);
   return neworigin;
 }
-NA_IDEF NAVertex naMakeVertexdWithAlignment(NAVertex origin, NABox alignbox){
+NA_IDEF NAVertex naMakeVertexWithAlignment(NAVertex origin, NABox alignbox){
   NAVertex neworigin;
   #ifndef NDEBUG
     if(naIsBoxEmpty(alignbox))
-      naCrash("naMakeVertexdWithAlignment", "alignment box is empty.");
+      naCrash("naMakeVertexWithAlignment", "alignment box is empty.");
   #endif
   neworigin.x = naAlignValued(origin.x, alignbox.vertex.x, alignbox.volume.width);
   neworigin.y = naAlignValued(origin.y, alignbox.vertex.y, alignbox.volume.height);
@@ -2422,6 +2422,22 @@ NA_IDEF NABool naContainsBoxVertex(NABox outerbox, NAVertex vertex){
         || (vertex.y > naGetBoxEndY(outerbox))
         || (vertex.z < outerbox.vertex.z)
         || (vertex.z > naGetBoxEndZ(outerbox)));
+}
+NA_IDEF NABool naContainsBoxVertexE(NABox outerbox, NAVertex vertex){
+  #ifndef NDEBUG
+    if(!naIsVertexValid(vertex))
+      naError("naContainsBoxVertexE", "vertex is invalid.");
+    if(naIsBoxEmpty(outerbox))
+      naError("naContainsBoxVertexE", "Inside test not valid for empty rects.");
+    if(!naIsBoxValid(outerbox))
+      naError("naContainsBoxVertexE", "outerbox is invalid.");
+  #endif
+  return !((vertex.x < outerbox.vertex.x)
+        || (vertex.x >= naGetBoxEndX(outerbox))
+        || (vertex.y < outerbox.vertex.y)
+        || (vertex.y >= naGetBoxEndY(outerbox))
+        || (vertex.z < outerbox.vertex.z)
+        || (vertex.z >= naGetBoxEndZ(outerbox)));
 }
 NA_IDEF NABool naContainsBoxiVertex(NABoxi outerbox, NAVertexi vertex){
   #ifndef NDEBUG
