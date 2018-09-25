@@ -858,6 +858,10 @@ NA_DEF NABool naIterateOctTree(NAOctTreeIterator* iter, const NABox* limit){
 
 
 NA_DEF NABool naLocateOctTreeCoord(NAOctTreeIterator* iter, NAVertex vertex){
+  #ifndef NDEBUG
+    if((naFloor(vertex.x) != vertex.x) || (naFloor(vertex.y) != vertex.y) || (naFloor(vertex.z) != vertex.z))
+      naError("naLocateOctTreeCoord", "These are no integers");
+  #endif
   iter->vertex = vertex;
   return naLocateOctTreeNodeBubble(iter);
 }

@@ -2559,33 +2559,33 @@ NA_IDEF NAPos naGetRectEnd(NARect rect){
 }
 NA_IDEF double naGetRectEndX(NARect rect){
   #ifndef NDEBUG
-    if(naIsRectEmpty(rect))
-      naError("naGetRectEndX", "rect is empty.");
-    if(!naIsRectValid(rect))
-      naError("naGetRectEndX", "rect is invalid.");
+    if(naIsRangeEmpty(naMakeRange(rect.pos.x, rect.size.width)))
+      naError("naGetRectEndX", "rect is empty in X dimension.");
+    if(!naIsOffsetValueValid(rect.pos.x) || !naIsLengthValueValid(rect.size.width))
+      naError("naGetRectEndX", "rect is has invalid values in X dimension.");
   #endif
   return naMakeEndWithStartAndLength(rect.pos.x, rect.size.width);
 }
 NA_IDEF double naGetRectEndY(NARect rect){
   #ifndef NDEBUG
-    if(naIsRectEmpty(rect))
-      naError("naGetRectEndY", "rect is empty.");
-    if(!naIsRectValid(rect))
-      naError("naGetRectEndY", "rect is invalid.");
+    if(naIsRangeEmpty(naMakeRange(rect.pos.y, rect.size.height)))
+      naError("naGetRectEndY", "rect is empty in Y dimension.");
+    if(!naIsOffsetValueValid(rect.pos.y) || !naIsLengthValueValid(rect.size.height))
+      naError("naGetRectEndY", "rect is has invalid values in Y dimension.");
   #endif
   return naMakeEndWithStartAndLength(rect.pos.y, rect.size.height);
 }
 NA_IDEF double naGetRectEndXE(NARect rect){
   #ifndef NDEBUG
-    if(!naIsRectEmpty(rect) && !naIsRectValid(rect))
-      naError("naGetRectEndX", "rect is invalid.");
+    if(!naIsOffsetValueValid(rect.pos.x) || !naIsLengthValueValid(rect.size.width))
+      naError("naGetRectEndXE", "rect is has invalid values in X dimension.");
   #endif
   return naMakeEndWithStartAndLength(rect.pos.x, rect.size.width);
 }
 NA_IDEF double naGetRectEndYE(NARect rect){
   #ifndef NDEBUG
-    if(!naIsRectEmpty(rect) && !naIsRectValid(rect))
-      naError("naGetRectEndY", "rect is invalid.");
+    if(!naIsOffsetValueValid(rect.pos.y) || !naIsLengthValueValid(rect.size.height))
+      naError("naGetRectEndYE", "rect is has invalid values in Y dimension.");
   #endif
   return naMakeEndWithStartAndLength(rect.pos.y, rect.size.height);
 }
@@ -2603,49 +2603,49 @@ NA_IDEF NAVertex naGetBoxEnd(NABox box){
 }
 NA_IDEF double naGetBoxEndX(NABox box){
   #ifndef NDEBUG
-    if(naIsBoxEmpty(box))
-      naError("naGetBoxEndX", "box is empty.");
-    if(!naIsBoxValid(box))
-      naError("naGetBoxEndX", "box is invalid.");
+    if(naIsRangeEmpty(naMakeRange(box.vertex.x, box.volume.width)))
+      naError("naGetBoxEndX", "box is empty in X dimension.");
+    if(!naIsOffsetValueValid(box.vertex.x) || !naIsLengthValueValid(box.volume.width))
+      naError("naGetBoxEndX", "box is has invalid values in X dimension.");
   #endif
   return naMakeEndWithStartAndLength(box.vertex.x, box.volume.width);
 }
 NA_IDEF double naGetBoxEndY(NABox box){
   #ifndef NDEBUG
-    if(naIsBoxEmpty(box))
-      naError("naGetBoxEndY", "box is empty.");
-    if(!naIsBoxValid(box))
-      naError("naGetBoxEndY", "box is invalid.");
+    if(naIsRangeEmpty(naMakeRange(box.vertex.y, box.volume.height)))
+      naError("naGetBoxEndY", "box is empty in Y dimension.");
+    if(!naIsOffsetValueValid(box.vertex.y) || !naIsLengthValueValid(box.volume.height))
+      naError("naGetBoxEndY", "box is has invalid values in Y dimension.");
   #endif
   return naMakeEndWithStartAndLength(box.vertex.y, box.volume.height);
 }
 NA_IDEF double naGetBoxEndZ(NABox box){
   #ifndef NDEBUG
-    if(naIsBoxEmpty(box))
-      naError("naGetBoxEndZ", "box is empty.");
-    if(!naIsBoxValid(box))
-      naError("naGetBoxEndZ", "box is invalid.");
+    if(naIsRangeEmpty(naMakeRange(box.vertex.z, box.volume.depth)))
+      naError("naGetBoxEndZ", "box is empty in Z dimension.");
+    if(!naIsOffsetValueValid(box.vertex.z) || !naIsLengthValueValid(box.volume.depth))
+      naError("naGetBoxEndZ", "box is has invalid values in Z dimension.");
   #endif
   return naMakeEndWithStartAndLength(box.vertex.z, box.volume.depth);
 }
 NA_IDEF double naGetBoxEndXE(NABox box){
   #ifndef NDEBUG
-    if(!naIsBoxValid(box))
-      naError("naGetBoxEndX", "box is invalid.");
+    if(!naIsOffsetValueValid(box.vertex.x) || !naIsLengthValueValid(box.volume.width))
+      naError("naGetBoxEndXE", "box is has invalid values in X dimension.");
   #endif
   return naMakeEndWithStartAndLength(box.vertex.x, box.volume.width);
 }
 NA_IDEF double naGetBoxEndYE(NABox box){
   #ifndef NDEBUG
-    if(!naIsBoxValid(box))
-      naError("naGetBoxEndY", "box is invalid.");
+    if(!naIsOffsetValueValid(box.vertex.y) || !naIsLengthValueValid(box.volume.height))
+      naError("naGetBoxEndYE", "box is has invalid values in Y dimension.");
   #endif
   return naMakeEndWithStartAndLength(box.vertex.y, box.volume.height);
 }
 NA_IDEF double naGetBoxEndZE(NABox box){
   #ifndef NDEBUG
-    if(!naIsBoxValid(box))
-      naError("naGetBoxEndZ", "box is invalid.");
+    if(!naIsOffsetValueValid(box.vertex.z) || !naIsLengthValueValid(box.volume.depth))
+      naError("naGetBoxEndZE", "box is has invalid values in Z dimension.");
   #endif
   return naMakeEndWithStartAndLength(box.vertex.z, box.volume.depth);
 }
