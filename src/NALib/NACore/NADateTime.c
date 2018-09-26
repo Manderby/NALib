@@ -1210,24 +1210,22 @@ NA_DEF int64 naGetFirstUncertainSecondNumber(){
 
 
 
-NA_DEF void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
-                                           NAInt leapsecondcorrectionconstant){
+NA_DEF void naCorrectDateTimeForLeapSeconds(NADateTime* datetime, NAInt leapsecondcorrectionconstant){
   NAInt taiperiod;
   datetime->errornum = NA_DATETIME_ERROR_NONE;
-  if(leapsecondcorrectionconstant < 0){return;}
-  if(naSmallerInt64(datetime->sisec, naTAIPeriods[leapsecondcorrectionconstant].startsisec)){return;}
-  
-  // Correcting a date for leap seconds means that the siseconds stored are
-  // greaterequal to an entry in the TAI periods structure which introduces
-  // a leap second. When storing such a date with an earlier version of NALib,
-  // no leap second introduction is assumed. Therefore, now as the leap second
-  // is known, it must be added to the date.
-  //
-  // To do so, we subtract all previously known leap seconds...
-  datetime->sisec = naSubInt64(datetime->sisec, naSubInt64(naTAIPeriods[leapsecondcorrectionconstant-1].startsisec, naTAIPeriods[leapsecondcorrectionconstant-1].startgregsec));
-  // And add the correct number of leap seconds anew:
-  taiperiod = naGetLatestTAIPeriodIndexForGregorianSecond(datetime->sisec);
-  datetime->sisec = naAddInt64(datetime->sisec, naSubInt64(naTAIPeriods[taiperiod].startsisec, naTAIPeriods[taiperiod].startgregsec));
+  if((leapsecondcorrectionconstant >= 0) && naGreaterEqualInt64(datetime->sisec, naTAIPeriods[leapsecondcorrectionconstant].startsisec)){
+    // Correcting a date for leap seconds means that the siseconds stored are
+    // greaterequal to an entry in the TAI periods structure which introduces
+    // a leap second. When storing such a date with an earlier version of NALib,
+    // no leap second introduction is assumed. Therefore, now as the leap second
+    // is known, it must be added to the date.
+    //
+    // To do so, we subtract all previously known leap seconds...
+    datetime->sisec = naSubInt64(datetime->sisec, naSubInt64(naTAIPeriods[leapsecondcorrectionconstant-1].startsisec, naTAIPeriods[leapsecondcorrectionconstant-1].startgregsec));
+    // And add the correct number of leap seconds anew:
+    taiperiod = naGetLatestTAIPeriodIndexForGregorianSecond(datetime->sisec);
+    datetime->sisec = naAddInt64(datetime->sisec, naSubInt64(naTAIPeriods[taiperiod].startsisec, naTAIPeriods[taiperiod].startgregsec));
+  }
 }
 
 

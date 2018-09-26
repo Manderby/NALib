@@ -94,10 +94,8 @@ NA_IDEF NAStack* naInitStack(NAStack* stack, NAInt typesize, NAInt minimalcount)
 
 NA_IDEF void naClearStack(NAStack* stack){
   #ifndef NDEBUG
-    if(!stack){
+    if(!stack)
       naCrash("naClearStack", "stack is Null-Pointer.");
-      return;
-    }
     if(stack->itercount != 0)
       naError("naClearStack", "There are still iterators on this stack. Did you forget naClearStackIterator?");
   #endif
