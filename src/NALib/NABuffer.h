@@ -487,7 +487,7 @@ NA_API void   naPadBufferBits (NABufferIterator* iter);
 // (for example Chinese). Words like "leading / trailing" or "head / tail"  or
 // "front / back" are too specific or confusing.
 //
-// We keep it simple here Start and End. Forward and Backward.
+// We keep it simple here: Start and End. Forward and Backward.
 
 // Moves the internal pointer of the buffer forward till the first byte not
 // denoting a white space (ord > 32) is found.

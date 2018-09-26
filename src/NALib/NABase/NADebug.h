@@ -34,9 +34,7 @@
 // function, you can simply set a breakpoint in the naError function.
 // This function is explicitely NOT inlined and is defined in a separate
 // implementation file (and therefore a separate translation unit) due to that
-// reason:
-//
-// NADebug.c
+// reason. See NADebug.c
 //
 // Also note that in NALib, code executed within NDEBUG will not alter the
 // runtime execution. In other words: Except from speed differences and outputs
