@@ -595,6 +595,7 @@ NA_HIDEF void naLocateBufferPartOffset(NAListIterator* iter, NAInt offset){
         if(!naContainsBufferPartOffset(part, offset))
           naError("naLocateBufferPartOffset", "final buffer part does not contain desired offset");
       #endif
+      break;
     }
   }
 }

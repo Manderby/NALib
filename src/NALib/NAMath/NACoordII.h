@@ -1857,7 +1857,7 @@ NA_IDEF NABox naClampBoxToBox(NABox box, NABox clampbox){
     newbox.vertex.x = clampbox.vertex.x;
   }
   value = naGetBoxEndX(clampbox);
-  if(naGetBoxEndX(newbox) > value){
+  if(naGetBoxEndXE(newbox) > value){
     newbox.volume.width = value - newbox.vertex.x;
   }
   
@@ -1868,7 +1868,7 @@ NA_IDEF NABox naClampBoxToBox(NABox box, NABox clampbox){
     newbox.vertex.y = clampbox.vertex.y;
   }
   value = naGetBoxEndY(clampbox);
-  if(naGetBoxEndY(newbox) > value){
+  if(naGetBoxEndYE(newbox) > value){
     newbox.volume.height = value - newbox.vertex.y;
   }
 
@@ -1879,7 +1879,7 @@ NA_IDEF NABox naClampBoxToBox(NABox box, NABox clampbox){
     newbox.vertex.z = clampbox.vertex.z;
   }
   value = naGetBoxEndZ(clampbox);
-  if(naGetBoxEndZ(newbox) > value){
+  if(naGetBoxEndZE(newbox) > value){
     newbox.volume.depth = value - newbox.vertex.z;
   }
   return newbox;
