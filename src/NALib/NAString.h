@@ -89,19 +89,17 @@ NA_API NAString* naNewStringWithArguments(const NAUTF8Char* format,
                                                     va_list argumentlist);
 
 // Fills deststring with a desired part of srcstring.
-// Note that the returned string will automatically be cached.
 //
 // - if charoffset is negative, it denotes the number of chars from the end.
 //   Note that the end has index [bytesize], meaning -1 denotes the index
 //   [bytesize-1] which is the last char.
-// - If the length is 0, the resulting string is empty.
 // - if length is negative, it denotes the size up and including to the given
 //   number of chars from the end, meaning -1 denotes the last char.
 // - if the charoffset and length combination somehow leads to a length of
 //   exactly 0, the resulting string will be empty without a warning emitted.
 // - If the charoffset and length combination somehow leads to an over- or
-//   underflow, a warning will be emitted if NDEBUG is defined. The resulting
-//   string will be empty.
+//   underflow, a warning will be emitted if NDEBUG is defined. The behaviour
+//   when using such a string is undefined.
 //
 // Example: String ABCDEF with the pair (charoffset, length):
 // - ( 2,  2)   ->   CD   (extraction)
@@ -115,7 +113,7 @@ NA_API NAString* naNewStringWithArguments(const NAUTF8Char* format,
 // - ( 2, -5)   ->        (empty string because of resulting bytesize == 0)
 // - (-9,  9)   ->        (empty string with warning when debugging)
 NA_API NAString* naNewStringExtraction(const NAString* srcstring,
-                                                 NAInt charoffset,
+                                                 NAInt offset,
                                                  NAInt length);
 
 NA_API NAString* naNewStringWithBufferExtraction( NABuffer* buffer,

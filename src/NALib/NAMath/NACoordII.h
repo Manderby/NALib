@@ -1435,30 +1435,45 @@ NA_IDEF NABoxi naMakeBoxiWithBoxAndBorder(NABoxi box, NAInt border){
 
 
 
+NA_IDEF NARange naMakeRangePositive(NARange range){
+  NABool rangenegative = (range.length < 0.);
+  range.origin += rangenegative * range.length;
+  range.length += rangenegative * 2. * range.length;
+  return range;
+}
+NA_IDEF NARangei naMakeRangeiPositive(NARangei range){
+  NABool rangenegative = (range.length < 0);
+  range.origin += rangenegative * range.length;
+  range.length += rangenegative * 2 * range.length;
+  return range;
+}
+
+
+
 NA_IDEF NARect naMakeRectPositive(NARect rect){
-  naMakePositive(&(rect.pos.x), &(rect.size.width));
-  naMakePositive(&(rect.pos.y), &(rect.size.height));
-  return rect;
+  NARange range1 = naMakeRangePositive(naMakeRange(rect.pos.x, rect.size.width));
+  NARange range2 = naMakeRangePositive(naMakeRange(rect.pos.y, rect.size.height));
+  return naMakeRectS(range1.origin, range2.origin, range1.length, range2.length);
 }
 NA_IDEF NARecti naMakeRectiPositive(NARecti rect){
-  naMakePositivei(&(rect.pos.x), &(rect.size.width));
-  naMakePositivei(&(rect.pos.y), &(rect.size.height));
-  return rect;
+  NARangei range1 = naMakeRangeiPositive(naMakeRangei(rect.pos.x, rect.size.width));
+  NARangei range2 = naMakeRangeiPositive(naMakeRangei(rect.pos.y, rect.size.height));
+  return naMakeRectiS(range1.origin, range2.origin, range1.length, range2.length);
 }
 
 
 
 NA_IDEF NABox naMakeBoxPositive(NABox box){
-  naMakePositive(&(box.vertex.x), &(box.volume.width));
-  naMakePositive(&(box.vertex.y), &(box.volume.height));
-  naMakePositive(&(box.vertex.z), &(box.volume.depth));
-  return box;
+  NARange range1 = naMakeRangePositive(naMakeRange(box.vertex.x, box.volume.width));
+  NARange range2 = naMakeRangePositive(naMakeRange(box.vertex.y, box.volume.height));
+  NARange range3 = naMakeRangePositive(naMakeRange(box.vertex.y, box.volume.height));
+  return naMakeBoxS(range1.origin, range2.origin, range3.origin, range1.length, range2.length, range3.length);
 }
 NA_IDEF NABoxi naMakeBoxiPositive(NABoxi box){
-  naMakePositivei(&(box.vertex.x), &(box.volume.width));
-  naMakePositivei(&(box.vertex.y), &(box.volume.height));
-  naMakePositivei(&(box.vertex.z), &(box.volume.depth));
-  return box;
+  NARangei range1 = naMakeRangeiPositive(naMakeRangei(box.vertex.x, box.volume.width));
+  NARangei range2 = naMakeRangeiPositive(naMakeRangei(box.vertex.y, box.volume.height));
+  NARangei range3 = naMakeRangeiPositive(naMakeRangei(box.vertex.y, box.volume.height));
+  return naMakeBoxiS(range1.origin, range2.origin, range3.origin, range1.length, range2.length, range3.length);
 }
 
 

@@ -157,7 +157,7 @@ NA_DEF NAString* naNewStringWithArguments(const NAUTF8Char* format, va_list argu
 
 
 
-NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt charoffset, NAInt length){
+NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt offset, NAInt length){
   NAString* string = naNewString();
 
   #ifndef NDEBUG
@@ -165,27 +165,15 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt charoffs
       naCrash("naNewStringExtraction", "srcstring is Null-Pointer.");
   #endif
 
-  if(naIsStringEmpty(srcstring)){
-    #ifndef NDEBUG
-      // If src is empty, return an empty string. But check if this is
-      // intentional or an error:
-      if(charoffset || length)
-        naError("naNewStringExtraction", "Invalid string extraction of empty string.");
-    #endif
-  }else{
-    // Extract the string
-    NAInt positiveoffset;
-    NAInt positivecount;
-    naMakeIntegerRangePositiveInLength(&positiveoffset, &positivecount, charoffset, length, naGetStringBytesize(srcstring));
-
-    naRelease(string->buffer);
-    string->buffer = naNewBufferExtraction(srcstring->buffer, naMakeRangei(positiveoffset, positivecount));
-    #ifndef NDEBUG
-      string->cachedstr = NA_NULL;
-    #endif
-  }
+  // Extract the string
+  naRelease(string->buffer);
+  string->buffer = naNewBufferExtraction(srcstring->buffer, naMakeRangei(offset, length));
+  #ifndef NDEBUG
+    string->cachedstr = NA_NULL;
+  #endif
   
-  naCacheBufferRange(string->buffer, naGetBufferRange(string->buffer), NA_FALSE);
+  // todo: is there a readon why the string must be cached?
+//  naCacheBufferRange(string->buffer, naGetBufferRange(string->buffer), NA_FALSE);
   #if NA_STRING_ALWAYS_CACHE == 1
     naGetStringUTF8Pointer(string);
   #endif

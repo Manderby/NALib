@@ -10,6 +10,7 @@
 
 
 // The typedef needs to be here to resolve cyclic include problems.
+// Note that NABuffer is a runtime type with reference counting.
 typedef struct NABuffer NABuffer;
 typedef struct NABufferIterator NABufferIterator;
 
@@ -86,7 +87,7 @@ typedef struct NABufferIterator NABufferIterator;
 // Buffer creation, Retaining and Releasing
 // ////////////////////////////////////////
 
-// Allocates an empty buffer.
+// Allocates an empty buffer. Can be extended using naWriteBuffer calls.
 // When securememory is set to NA_TRUE, each byte will be set to binary zero
 // before it can be used.
 NA_API NABuffer* naNewBuffer(NABool securememory);
@@ -148,7 +149,7 @@ typedef void (*NABufferSourceFiller)(void* data, void* dst, NARangei range);
 typedef struct NABufferSourceDescriptor NABufferSourceDescriptor;
 struct NABufferSourceDescriptor{
   void*                data;        // ptr being sent to filler and destructor.
-  NAMutator            destructor;  // Destructor when source no longer needed.
+  NAMutator            destructor;  // Data destructor.
   NABufferSourceFiller filler;      // Fill function filling memory.
   NAUInt               flags;       // Flags for the source
   NARangei             limit;       // Source limit (only used if flags set)
@@ -177,7 +178,7 @@ NA_API NABuffer* naNewBufferWithCustomSource(NABufferSourceDescriptor desc);
 // changes the range the buffer is allowed to address.
 NA_API NABool   naIsBufferEmpty             (const NABuffer* buffer);
 NA_API NARangei naGetBufferRange            (const NABuffer* buffer);
-NA_API NABool   naHasBufferFixedRange       (const NABuffer* buffer);
+//NA_API NABool   naHasBufferFixedRange       (const NABuffer* buffer);
 NA_API void     naFixBufferRange            (NABuffer*       buffer);
 NA_API void     naExtendBufferRange         (NABuffer*       buffer,
                                                        NAInt bytesatstart,
