@@ -104,16 +104,17 @@ NA_API NABuffer* naNewBufferExtraction( NABuffer* srcbuffer,
 // at zero.
 // All content will be loaded in the new buffer. If there are sparse parts
 // in the src buffer, they will be filled with the current source.
-NA_API NABuffer* naNewBufferCopy(const NABuffer* srcbuffer,
-                                        NARangei range,
-                                          NABool securememory);
+//NA_API NABuffer* naNewBufferCopy(const NABuffer* srcbuffer,
+//                                        NARangei range,
+//                                          NABool securememory);
 
 // Creates a buffer with no source and no content. It can be used as a
 // placeholder or to collect other buffers with naAppendBuffer or
 // naWriteBufferBuffer.
 NA_API NABuffer* naNewBufferPlain(void);
 
-// Creates a buffer sharing the same source as the given buffer.
+// Creates a buffer sharing the same source as the given buffer. Also uses
+// the same settings like endianness or newlines.
 NA_API NABuffer* naNewBufferWithSameSource(  NABuffer* srcbuffer);
                     
 // Creates a buffer inputting contents from a file. Its origin is always at
@@ -124,9 +125,9 @@ NA_API NABuffer* naNewBufferWithInpuFile(const char* filename);
 // data is mutable, you can give a destructor if you want to delete the
 // memory of the data pointer when no longer needed.
 NA_API NABuffer* naNewBufferWithConstData( const void* data,
-                                                 NAInt bytesize);
+                                                NAUInt bytesize);
 NA_API NABuffer* naNewBufferWithMutableData(     void* data,
-                                                 NAInt bytesize,
+                                                NAUInt bytesize,
                                              NAMutator destructor);
 
 // ////////////////////////////////////////
@@ -178,7 +179,7 @@ NA_API NABuffer* naNewBufferWithCustomSource(NABufferSourceDescriptor desc);
 // changes the range the buffer is allowed to address.
 NA_API NABool   naIsBufferEmpty             (const NABuffer* buffer);
 NA_API NARangei naGetBufferRange            (const NABuffer* buffer);
-//NA_API NABool   naHasBufferFixedRange       (const NABuffer* buffer);
+NA_API NABool   naHasBufferFixedRange      (const NABuffer* buffer);
 NA_API void     naFixBufferRange            (NABuffer*       buffer);
 NA_API void     naExtendBufferRange         (NABuffer*       buffer,
                                                        NAInt bytesatstart,
