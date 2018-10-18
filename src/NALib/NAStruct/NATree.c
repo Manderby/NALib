@@ -134,6 +134,7 @@ NATreeIterator naMakeTreeModifier(NATree* tree){
 
 
 void naClearTreeIterator(NATreeIterator* iter){
+  NA_UNUSED(iter);
   #ifndef NDEBUG
     NATree* mutabletree = (NATree*)naGetPtrConst(&(iter->treeptr));
     mutabletree->itercount--;
