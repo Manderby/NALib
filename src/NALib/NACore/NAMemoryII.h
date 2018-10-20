@@ -315,12 +315,10 @@ NA_IDEF NARefCount* naRetainRefCount(NARefCount* refcount){
 
 NA_IDEF void naReleaseRefCount(NARefCount* refcount, void* data, NAMutator destructor){
   #ifndef NDEBUG
-    if(!refcount){
+    if(!refcount)
       naCrash("naReleaseRefCount", "refcount is Null-Pointer.");
-      return;
-    }
-      if(refcount->dummy != NA_REFCOUNT_DUMMY_VALUE)
-        naError("naReleaseRefCount", "Consistency problem: dummy value wrong. Is NARefCount really defined as the first field of this struct?");
+    if(refcount->dummy != NA_REFCOUNT_DUMMY_VALUE)
+      naError("naReleaseRefCount", "Consistency problem: dummy value wrong. Is NARefCount really defined as the first field of this struct?");
     // The next test can detect some erroneous behaviour in the code. Note
     // however that most likely the true cause of the error did occur long
     // before reaching here.
@@ -344,7 +342,6 @@ NA_IDEF void naReleaseRefCount(NARefCount* refcount, void* data, NAMutator destr
   // care of detecting and collecting unused objects. In C and C++, no such
   // mechanisms exist and must be implemented manually. NARuntime is a small
   // example of such a system.
-  return;
 }
 
 
@@ -560,10 +557,8 @@ NA_IDEF NASmartPtr* naRetainSmartPtr(NASmartPtr* sptr){
 
 NA_IDEF void naReleaseSmartPtr(NASmartPtr* sptr, NAMutator destructor, NABool onlydata){
   #ifndef NDEBUG
-    if(!sptr){
+    if(!sptr)
       naCrash("naReleaseSmartPtr", "sptr is Null-Pointer.");
-      return;
-    }
   #endif
   if(onlydata){
     naReleaseRefCount(&(sptr->refcount), naGetPtrMutable(&(sptr->ptr)), destructor);
@@ -646,10 +641,8 @@ NA_HAPI void naDestructPointer(NAPointer* pointer);
 
 NA_IDEF void naReleasePointer(NAPointer* pointer){
   #ifndef NDEBUG
-    if(!pointer){
+    if(!pointer)
       naCrash("naReleasePointer", "pointer is Null-Pointer.");
-      return;
-    }
   #endif
   naReleaseSmartPtr(&(pointer->sptr), (NAMutator)naDestructPointer, NA_FALSE);
 }

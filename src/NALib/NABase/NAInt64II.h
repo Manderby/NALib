@@ -33,6 +33,8 @@
     #undef naDecInt64
     #define naDecInt64(i) (i.hi -= (i.lo == 0x00000000), i.lo -= 1, i)
 
+
+
     NA_IDEF NAInt64 naNegInt64(NAInt64 i){
       NAInt64 retint = naNotInt64(i);
       naIncInt64(retint);
@@ -179,6 +181,8 @@
       #define naMakeUInt64WithLiteralLo(lo)  {(lo),0}
     #endif
 
+
+
     NA_IDEF NAUInt64 naMakeUInt64(uint32 hi, uint32 lo){
       NAUInt64 retint;
       retint.hi = hi;
@@ -205,6 +209,8 @@
     #define naIncUInt64(i) (i.hi += (i.lo == 0xffffffff), i.lo += 1, i)
     #undef naDecUInt64
     #define naDecUInt64(i) (i.hi -= (i.lo == 0x00000000), i.lo -= 1, i)
+
+
 
     NA_IDEF NAUInt64 naAddUInt64(NAUInt64 a, NAUInt64 b){
       NAUInt64 retint;
@@ -253,36 +259,44 @@
       NAUInt64 highestbitb;
       *div = NA_ZERO_64u;
       *rem = a;
-      if(naEqualUInt64(b, NA_ZERO_64u)){return;}
-      
-      // search for the highest bit of b.
-      highestbita = naMakeUInt64(NA_VALUE32_SIGN_MASK, 0x0);
-      while(!naEqualUInt64(naAndUInt64(a, highestbita), highestbita)){
-        highestbita = naShrUInt64(highestbita, 1);
-      }
-      highestbitb = naMakeUInt64(NA_VALUE32_SIGN_MASK, 0x0);
-      while(!naEqualUInt64(naAndUInt64(b, highestbitb), highestbitb)){
-        highestbitb = naShrUInt64(highestbitb, 1);
-      }
-      
-      tmpb = b;
-      shiftcount = 0;
-      // Make the dividend big enough
-      while(!naEqualUInt64(highestbita, highestbitb)){
-        if(naEqualUInt64(tmpb, NA_ZERO_64u)){return;}
-        tmpb = naShlUInt64(tmpb, 1);
-        highestbitb = naShlUInt64(highestbitb, 1);
-        shiftcount++;
-      }
-      
-      while(shiftcount >= 0){
-        *div = naShlUInt64(*div, 1);
-        if(naGreaterEqualUInt64(*rem, tmpb)){
-          *div = naOrUInt64(*div, NA_ONE_64u);
-          *rem = naSubUInt64(*rem, tmpb);
+      if(naEqualUInt64(b, NA_ZERO_64u)){
+        #ifndef NDEBUG
+          naCrash("naComputeUInt64Division", "Integer Division by 0");
+        #endif
+      }else{
+        // search for the highest bit of b.
+        highestbita = naMakeUInt64(NA_VALUE32_SIGN_MASK, 0x0);
+        while(!naEqualUInt64(naAndUInt64(a, highestbita), highestbita)){
+          highestbita = naShrUInt64(highestbita, 1);
         }
-        tmpb = naShrUInt64(tmpb, 1);
-        shiftcount--;
+        highestbitb = naMakeUInt64(NA_VALUE32_SIGN_MASK, 0x0);
+        while(!naEqualUInt64(naAndUInt64(b, highestbitb), highestbitb)){
+          highestbitb = naShrUInt64(highestbitb, 1);
+        }
+        
+        tmpb = b;
+        shiftcount = 0;
+        // Make the dividend big enough
+        while(!naEqualUInt64(highestbita, highestbitb)){
+          if(naEqualUInt64(tmpb, NA_ZERO_64u)){
+            // b is larger than a and hence the result is zero.
+            shiftcount = 0;
+            break;
+          }
+          tmpb = naShlUInt64(tmpb, 1);
+          highestbitb = naShlUInt64(highestbitb, 1);
+          shiftcount++;
+        }
+        
+        while(shiftcount >= 0){
+          *div = naShlUInt64(*div, 1);
+          if(naGreaterEqualUInt64(*rem, tmpb)){
+            *div = naOrUInt64(*div, NA_ONE_64u);
+            *rem = naSubUInt64(*rem, tmpb);
+          }
+          tmpb = naShrUInt64(tmpb, 1);
+          shiftcount--;
+        }
       }
     }
     NA_IDEF NAUInt64 naDivUInt64(NAUInt64 a, NAUInt64 b){
@@ -403,8 +417,8 @@
     }
 
 
-  #endif
-#endif
+  #endif // NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+#endif // !defined NA_TYPE_INT64
 
 
 // Copyright (c) NALib, Tobias Stamm

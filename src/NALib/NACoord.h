@@ -268,9 +268,9 @@ NA_IAPI NSRect    naMakeNSRectWithRect  (NARect  narect);
 // Creates a new origin which is the given origin floored to a multiple of
 // the given alignment. Also works for negative input offsets.
 NA_IAPI NAPosi    naMakePosiWithAlignment    (NAPosi    origin, NARecti alignrect);
-NA_IAPI NAPos     naMakePosdWithAlignment    (NAPos     origin, NARect  alignrect);
+NA_IAPI NAPos     naMakePosWithAlignment    (NAPos     origin, NARect  alignrect);
 NA_IAPI NAVertexi naMakeVertexiWithAlignment (NAVertexi origin, NABoxi  alignbox);
-NA_IAPI NAVertex  naMakeVertexdWithAlignment (NAVertex  origin, NABox   alignbox);
+NA_IAPI NAVertex  naMakeVertexWithAlignment (NAVertex  origin, NABox   alignbox);
 
 // Create the bounding box of two elements. The range, size or volume of the
 // resulting struct will never be negative. Note that the integer variant of
@@ -433,6 +433,7 @@ NA_IAPI NABool    naContainsRectiRect(NARecti outerrect, NARecti rect);
 NA_IAPI NABool    naContainsVolumeVertex (NAVolume  outervolume, NAVertex  vertex);
 NA_IAPI NABool    naContainsVolumeiVertex(NAVolumei outervolume, NAVertexi vertex);
 NA_IAPI NABool    naContainsBoxVertex    (NABox     outerbox,    NAVertex  vertex);
+NA_IAPI NABool    naContainsBoxVertexE   (NABox     outerbox,    NAVertex  vertex);
 NA_IAPI NABool    naContainsBoxiVertex   (NABoxi    outerbox,    NAVertexi vertex);
 NA_IAPI NABool    naContainsVolumeVolume (NAVolume  outervolume, NAVolume  volume);
 NA_IAPI NABool    naContainsVolumeiVolume(NAVolumei outervolume, NAVolumei volume);

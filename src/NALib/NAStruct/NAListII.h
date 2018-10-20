@@ -1013,40 +1013,40 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* iterator, NAList* dst){
   src = (NAList*)naGetPtrMutable(&(iterator->listptr));
 
   
-  if(naIsListEmpty(src)){return;}
-  
-  // Move to the first element if the list is rewinded.
-  element = iterator->cur;
-  if(element == &(src->sentinel)){
-    element = src->sentinel.next;
-  }
+  if(!naIsListEmpty(src)){
+    // Move to the first element if the list is rewinded.
+    element = iterator->cur;
+    if(element == &(src->sentinel)){
+      element = src->sentinel.next;
+    }
 
-  // Reroute the cur element from src to dst
-  element->prev->next = &(src->sentinel);
-  src->sentinel.prev = element->prev;
-  iterator->cur = &(src->sentinel);
+    // Reroute the cur element from src to dst
+    element->prev->next = &(src->sentinel);
+    src->sentinel.prev = element->prev;
+    iterator->cur = &(src->sentinel);
 
-  // Reroute the cur element
-  element->prev = dst->sentinel.prev;
-  dst->sentinel.prev->next = element;
-  
-  // count the number of moved elements
-  while(element->next != &(src->sentinel)){
-    movecount++;
-    element = element->next;
+    // Reroute the cur element
+    element->prev = dst->sentinel.prev;
+    dst->sentinel.prev->next = element;
+    
+    // count the number of moved elements
+    while(element->next != &(src->sentinel)){
+      movecount++;
+      element = element->next;
+    }
+    
+    // Reroute the last element from src to dst
+    element->next = &(dst->sentinel);
+    dst->sentinel.prev = element;
+    
+    #ifndef NDEBUG
+      if(src->count < movecount)
+        naError("naMoveListRemainingToLast", "Internal error: List count negative.");
+    #endif
+    
+    src->count -= movecount;
+    dst->count += movecount;
   }
-  
-  // Reroute the last element from src to dst
-  element->next = &(dst->sentinel);
-  dst->sentinel.prev = element;
-  
-  #ifndef NDEBUG
-    if(src->count < movecount)
-      naError("naMoveListRemainingToLast", "Internal error: List count negative.");
-  #endif
-  
-  src->count -= movecount;
-  dst->count += movecount;
 }
 
 
@@ -1127,15 +1127,16 @@ NA_IDEF void naExchangeListParts(NAListIterator* iterator){
     if(iterator->cur == &(src->sentinel))
       naError("naExchangeListParts", "List has no current element set.");
   #endif
-  if((&(src->sentinel) == iterator->cur) || (src->sentinel.next == iterator->cur)){return;}
-  first = src->sentinel.next;
-  prev = iterator->cur->prev;
-  first->prev = src->sentinel.prev;
-  src->sentinel.prev->next = first;
-  src->sentinel.next = iterator->cur;
-  iterator->cur->prev = &(src->sentinel);
-  src->sentinel.prev = prev;
-  prev->next = &(src->sentinel);
+  if((&(src->sentinel) != iterator->cur) && (src->sentinel.next != iterator->cur)){
+    first = src->sentinel.next;
+    prev = iterator->cur->prev;
+    first->prev = src->sentinel.prev;
+    src->sentinel.prev->next = first;
+    src->sentinel.next = iterator->cur;
+    iterator->cur->prev = &(src->sentinel);
+    src->sentinel.prev = prev;
+    prev->next = &(src->sentinel);
+  }
 }
 
 

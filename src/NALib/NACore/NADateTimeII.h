@@ -199,13 +199,15 @@ NA_IDEF NABool naHasDateTimeSummerTime(const NADateTime* datetime){
 NA_IDEF void naSetDateTimeSummertime(NADateTime* datetime, NABool summertime){
   datetime->errornum = NA_DATETIME_ERROR_NONE;
   if(summertime){
-    if(datetime->flags & NA_DATETIME_FLAG_SUMMERTIME){return;}
-    datetime->flags |= NA_DATETIME_FLAG_SUMMERTIME;
-    datetime->shift += NA_MINUTES_PER_HOUR;
+    if((datetime->flags & NA_DATETIME_FLAG_SUMMERTIME) == 0){
+      datetime->flags |= NA_DATETIME_FLAG_SUMMERTIME;
+      datetime->shift += NA_MINUTES_PER_HOUR;
+    }
   }else{
-    if(!(datetime->flags & NA_DATETIME_FLAG_SUMMERTIME)){return;}
-    datetime->flags &= ~NA_DATETIME_FLAG_SUMMERTIME;
-    datetime->shift -= NA_MINUTES_PER_HOUR;
+    if((datetime->flags & NA_DATETIME_FLAG_SUMMERTIME) != 0){
+      datetime->flags &= ~NA_DATETIME_FLAG_SUMMERTIME;
+      datetime->shift -= NA_MINUTES_PER_HOUR;
+    }
   }
 }
 

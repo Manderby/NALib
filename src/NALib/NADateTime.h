@@ -136,7 +136,6 @@ NA_IAPI NADateTime naMakeDateTimeWithValues(  int64 year,
                                               int32 min,
                                               int32 sec);
 
-
 // Creates a new NADateTime struct from a given string with a given format.
 NA_API NADateTime naMakeDateTimeFromString( const NAString* string,
                                           NAAscDateTimeFormat format);
