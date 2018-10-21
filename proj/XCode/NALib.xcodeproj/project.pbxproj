@@ -27,6 +27,9 @@
 		90734CA62093DB170098F9FE /* NADateTime.c in Sources */ = {isa = PBXBuildFile; fileRef = 9011A8861F054877003766D8 /* NADateTime.c */; };
 		9087F70C1E2C313C00867CA7 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 9087F70B1E2C313C00867CA7 /* main.c */; };
 		90B538E8216AFF3500481382 /* NATree.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B538E7216AFF3500481382 /* NATree.c */; };
+		90BAF9A3217C0918001665BF /* NATreeConfiguration.c in Sources */ = {isa = PBXBuildFile; fileRef = 90BAF9A2217C0918001665BF /* NATreeConfiguration.c */; };
+		90BAF9A5217C0AB3001665BF /* NATreeNode.c in Sources */ = {isa = PBXBuildFile; fileRef = 90BAF9A4217C0AB3001665BF /* NATreeNode.c */; };
+		90BAF9A8217C0BC1001665BF /* NATreeIterator.c in Sources */ = {isa = PBXBuildFile; fileRef = 90BAF9A7217C0BC1001665BF /* NATreeIterator.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -123,6 +126,10 @@
 		90B456451BC80AD300A53BDC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		90B538E6216AFF3500481382 /* NATree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NATree.h; sourceTree = "<group>"; };
 		90B538E7216AFF3500481382 /* NATree.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NATree.c; sourceTree = "<group>"; };
+		90BAF9A1217C0806001665BF /* NATreeII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NATreeII.h; sourceTree = "<group>"; };
+		90BAF9A2217C0918001665BF /* NATreeConfiguration.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NATreeConfiguration.c; sourceTree = "<group>"; };
+		90BAF9A4217C0AB3001665BF /* NATreeNode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NATreeNode.c; sourceTree = "<group>"; };
+		90BAF9A7217C0BC1001665BF /* NATreeIterator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NATreeIterator.c; sourceTree = "<group>"; };
 		90BC6EC320984FD500CBD0FD /* NANumerics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NANumerics.h; sourceTree = "<group>"; };
 		90BC6EC4209850E700CBD0FD /* NAInt64II.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAInt64II.h; sourceTree = "<group>"; };
 		90BC6EC6209855DE00CBD0FD /* NADebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NADebug.h; sourceTree = "<group>"; };
@@ -229,6 +236,7 @@
 		9011A8A81F054877003766D8 /* NAStruct */ = {
 			isa = PBXGroup;
 			children = (
+				90BAF9A0217C07C8001665BF /* NATree */,
 				9011A8A91F054877003766D8 /* NAArrayII.h */,
 				9011A8AA1F054877003766D8 /* NABuffer.c */,
 				9011A8AB1F054877003766D8 /* NABufferII.h */,
@@ -245,7 +253,6 @@
 				9011A8B51F054877003766D8 /* NAStackII.h */,
 				9011A8B61F054877003766D8 /* NAString.c */,
 				9011A8B71F054877003766D8 /* NAStringII.h */,
-				90B538E7216AFF3500481382 /* NATree.c */,
 			);
 			path = NAStruct;
 			sourceTree = "<group>";
@@ -302,6 +309,18 @@
 				90B456451BC80AD300A53BDC /* Cocoa.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		90BAF9A0217C07C8001665BF /* NATree */ = {
+			isa = PBXGroup;
+			children = (
+				90B538E7216AFF3500481382 /* NATree.c */,
+				90BAF9A1217C0806001665BF /* NATreeII.h */,
+				90BAF9A2217C0918001665BF /* NATreeConfiguration.c */,
+				90BAF9A4217C0AB3001665BF /* NATreeNode.c */,
+				90BAF9A7217C0BC1001665BF /* NATreeIterator.c */,
+			);
+			path = NATree;
 			sourceTree = "<group>";
 		};
 		90D4A22520BB3E3500171E61 /* doc */ = {
@@ -394,13 +413,16 @@
 				9011A8CF1F054877003766D8 /* NAList.c in Sources */,
 				9011A8C91F054877003766D8 /* NAFile.c in Sources */,
 				90734CA0209337B20098F9FE /* NADebug.c in Sources */,
+				90BAF9A5217C0AB3001665BF /* NATreeNode.c in Sources */,
 				9011A8D01F054877003766D8 /* NAOctTree.c in Sources */,
+				90BAF9A3217C0918001665BF /* NATreeConfiguration.c in Sources */,
 				9011A8D71F054877003766D8 /* NAUICoreAPI.c in Sources */,
 				9011A8D81F054877003766D8 /* NAUIWINAPI.c in Sources */,
 				9011A8CD1F054877003766D8 /* NABuffer.c in Sources */,
 				9011A8D11F054877003766D8 /* NAQuadTree.c in Sources */,
 				9011A8CA1F054877003766D8 /* NAMemory.c in Sources */,
 				9011A8C71F054877003766D8 /* NABinaryData.c in Sources */,
+				90BAF9A8217C0BC1001665BF /* NATreeIterator.c in Sources */,
 				9011A8D31F054877003766D8 /* NADeflate.c in Sources */,
 				9011A8CC1F054877003766D8 /* NAMoney.c in Sources */,
 				90734CA62093DB170098F9FE /* NADateTime.c in Sources */,
