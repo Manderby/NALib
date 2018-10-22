@@ -63,7 +63,7 @@ NA_IDEF NAList* naInitList(NAList* list){
       naCrash("naInitList", "list is NULL");
   #endif
   list->count = 0;
-  list->sentinel.ptr  = naMakeNullPtr();
+  list->sentinel.ptr  = naMakePtrNull();
   list->sentinel.next = &(list->sentinel);
   list->sentinel.prev = &(list->sentinel);
   #ifndef NDEBUG

@@ -2,6 +2,17 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
+// Returns true if the iterator is located at a position which overlaps the
+// range/rect/box given in limit.
+typedef NABool (*NATreeNodeLimitTester)(NATreeIterator* iter, const void* limit);
+
+#define NA_TREE_NODE_CHILD_NULL 0x00
+#define NA_TREE_NODE_CHILD_NODE 0x02
+#define NA_TREE_NODE_CHILD_LEAF 0x03
+
+#define NA_TREE_NODE_CHILD_AVAILABLE_MASK 0x02
+#define NA_TREE_NODE_CHILD_MASK 0x03
+
 struct NATreeConfiguration{
   NARefCount                  refcount;
   NAMutator                   destructor;
@@ -10,12 +21,15 @@ struct NATreeConfiguration{
   NATreeLeafConstructor       leafconstructor;
   NATreeLeafDestructor        leafdestructor;
 //  NAQuadTreeDataCopier      datacopier;
-//  NAQuadTreeNodeAllocator   nodeallocator;
-//  NAQuadTreeNodeDeallocator nodedeallocator;
+  NATreeNodeConstructor       nodeconstructor;
+  NATreeNodeDestructor        nodedestructor;
 //  NAQuadTreeChildChanged    childchanged;
-  NAPtr                   userdata;
+  NAPtr                       userdata;
 //  int16                     baseleafexponent;
-  NAInt                   flags;
+  NAInt                       flags;
+  
+  NAInt                   childpernode;
+  NATreeNodeLimitTester   limittester;
   #ifndef NDEBUG
     NAInt                 debugflags;
   #endif
@@ -25,7 +39,20 @@ typedef struct NATreeNode NATreeNode;
 struct NATreeNode{
   double key;
   NATreeNode* parent;
-  NATreeNode* child[2];
+  NAInt indxinparent;
+  NATreeNode* childs[2];
+  NAPtr userdata;
+  NAInt flags;
+  #ifndef NDEBUG
+    NAInt itercount;
+  #endif
+};
+NA_EXTERN_RUNTIME_TYPE(NATreeNode);
+
+struct NATreeIterator{
+  NAPtr tree;
+  NATreeNode* node;
+  NAInt childindx;
   NAInt flags;
 };
 
@@ -37,22 +64,34 @@ struct NATree{
   #endif
 };
 
-struct NATreeIterator{
-  NAPtr treeptr;
-  NATreeNode* node;
-  NAInt childindx;
-  NAInt flags;
-};
 
 
 // NATreeNode
-NA_HAPI NATreeNode* naAllocTreeNode(NATreeNode* parent, double key, void* leaf);
-NA_HAPI void naDeallocTreeNode(NATreeNode* node);
+NA_HAPI NATreeNode* naAllocTreeNode(NATree* tree, NATreeNode* parent, NAInt indxinparent, double key, void* leaf);
+NA_HAPI void naDeallocTreeNode(NATree* tree, NATreeNode* node);
+NA_HIAPI NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx);
+NA_HIAPI NABool naHasNodeChild(NATreeNode* node, NAInt childindx);
 NA_HAPI NABool naLocateTreeNode(NATreeIterator* iter, double key);
 
 // NATreeConfiguration
 NA_HAPI NATreeConfiguration* naRetainTreeConfiguration(NATreeConfiguration* config);
 
+
+
+NA_HIDEF NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx){
+  return naTestFlagi(node->flags, NA_TREE_NODE_CHILD_LEAF << (childindx * 2));
+}
+NA_HIDEF NABool naHasNodeChild(NATreeNode* node, NAInt childindx){
+  return naTestFlagi(node->flags, NA_TREE_NODE_CHILD_AVAILABLE_MASK << (childindx * 2));
+}
+NA_HIDEF void naSetNodeChildType(NATreeNode* node, NAInt childindx, NAInt childtype){
+  naSetFlagi(&(node->flags), NA_TREE_NODE_CHILD_MASK << (childindx * 2), NA_FALSE);
+  naSetFlagi(&(node->flags), childtype << (childindx * 2), NA_TRUE);
+}
+
+
+
+NABool naTestTreeLimitBinary(NATreeIterator* iter, const void* limit);
 
 // Copyright (c) NALib, Tobias Stamm
 //

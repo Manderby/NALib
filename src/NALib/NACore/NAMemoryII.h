@@ -411,7 +411,7 @@ struct NAPtr{
 
 
 
-NA_IDEF NAPtr naMakeNullPtr(){
+NA_IDEF NAPtr naMakePtrNull(){
   NAPtr ptr;
   ptr.data.d = NA_NULL;
   #ifndef NDEBUG

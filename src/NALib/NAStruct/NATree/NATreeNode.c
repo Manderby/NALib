@@ -4,27 +4,45 @@
 
 #include "NATree.h"
 
-#define NA_TREE_FLAG_CHILD_0_IS_LEAF  0x01
-#define NA_TREE_FLAG_CHILD_1_IS_LEAF  0x02
+
+NA_RUNTIME_TYPE(NATreeNode, NA_NULL, NA_FALSE);
 
 
 
-NA_HDEF NATreeNode* naAllocTreeNode(NATreeNode* parent, double key, void* leaf){
-  NATreeNode* node = naAlloc(NATreeNode);
+
+NA_HDEF NATreeNode* naAllocTreeNode(NATree* tree, NATreeNode* parent, NAInt indxinparent, double key, void* leaf){
+  NATreeNode* node = naNew(NATreeNode);
   node->parent = parent;
-  node->child[0] = NA_NULL;
-  node->child[1] = leaf;
+  node->indxinparent = indxinparent;
+  node->childs[0] = NA_NULL;
+  node->childs[1] = leaf;
   node->key = key;
-  node->flags = NA_TREE_FLAG_CHILD_0_IS_LEAF | NA_TREE_FLAG_CHILD_1_IS_LEAF;
+  node->flags = 0;
+  naSetNodeChildType(node, 1, NA_TREE_NODE_CHILD_LEAF);
+  #ifndef NDEBUG
+    node->itercount = 0;
+  #endif
+  if(tree->config->nodeconstructor){
+    node->userdata = tree->config->nodeconstructor(&key);
+  }else{
+    node->userdata = naMakePtrNull(); 
+  }
   return node;
 }
 
 
 
-NA_HDEF void naDeallocTreeNode(NATreeNode* node){
-  if(node->child[0]){naDeallocTreeNode(node->child[0]);}
-  if(node->child[1]){naDeallocTreeNode(node->child[1]);}
-  naFree(node);
+NA_HDEF void naDeallocTreeNode(NATree* tree, NATreeNode* node){
+  #ifndef NDEBUG
+    if(node->itercount)
+      naError("naDeallocTreeNode", "There are still iterators running on this node. Did you forget a call to naClearTreeIterator?");
+  #endif
+  if(node->childs[0]){naDeallocTreeNode(tree, node->childs[0]);}
+  if(node->childs[1]){naDeallocTreeNode(tree, node->childs[1]);}
+  
+  if(tree->config->nodedestructor){tree->config->nodedestructor(node->userdata);}
+  
+  naDelete(node);
 }
 
 
@@ -32,19 +50,19 @@ NA_HDEF void naDeallocTreeNode(NATreeNode* node){
 NA_HDEF NABool naLocateTreeNode(NATreeIterator* iter, double key){
   NABool retvalue;
   if(key < iter->node->key){
-    if(iter->node->flags & NA_TREE_FLAG_CHILD_0_IS_LEAF){
+    if(naIsNodeChildLeaf(iter->node, 0)){
       iter->childindx = 0;
-      retvalue = (iter->node->child[0] != NA_NULL);
+      retvalue = (iter->node->childs[0] != NA_NULL);
     }else{
-      iter->node = iter->node->child[0];
+      iter->node = iter->node->childs[0];
       retvalue = naLocateTreeNode(iter, key);
     }
   }else{
-    if(iter->node->flags & NA_TREE_FLAG_CHILD_1_IS_LEAF){
+    if(naIsNodeChildLeaf(iter->node, 1)){
       iter->childindx = 1;
-      retvalue = (iter->node->child[1] != NA_NULL);
+      retvalue = (iter->node->childs[1] != NA_NULL);
     }else{
-      iter->node = iter->node->child[1];
+      iter->node = iter->node->childs[1];
       retvalue = naLocateTreeNode(iter, key);
     }
   }

@@ -292,7 +292,7 @@ NA_IAPI void        naReleaseRefCount(NARefCount* refcount,
 typedef struct NAPtr NAPtr;
 
 // Creates a NULL pointer
-NA_IAPI NAPtr naMakeNullPtr(void);
+NA_IAPI NAPtr naMakePtrNull(void);
 
 // Makes an NAPtr with a newly allocated memory block of the given bytesize.
 // The bytesize parameter can be negative. See naMalloc function for more

@@ -8,10 +8,14 @@
 #define NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE 0x01
 
 
-NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAMutator destructor){
+NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags, NAMutator destructor){
   NATreeConfiguration* config = naAlloc(NATreeConfiguration);
   naNulln(config, sizeof(NATreeConfiguration));
   naInitRefCount(&(config->refcount));
+  if(flags == 0){
+    config->childpernode = 2;
+    config->limittester = naTestTreeLimitBinary;
+  }
   config->destructor = destructor;
   return config;
 }
@@ -57,6 +61,17 @@ NA_API void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NAT
   #endif
   config->leafconstructor = leafconstructor;
   config->leafdestructor = leafdestructor;
+}
+
+
+
+NA_API void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NATreeNodeConstructor nodeconstructor, NATreeNodeDestructor nodedestructor){
+  #ifndef NDEBUG
+    if(config->debugflags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
+      naError("naSetTreeConfigurationNodeCallbacks", "Configuration already used in a tree. Mayor problems may occur in the future");
+  #endif
+  config->nodeconstructor = nodeconstructor;
+  config->nodedestructor = nodedestructor;
 }
 
 

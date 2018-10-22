@@ -19,8 +19,40 @@ NA_DEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
 
 
 
+//NA_DEF NATree* naInitTreeCopy(NATree* dsttree, NATree* srctree){
+//  naInitTree(dsttree, srctree->config);
+//  
+////  dstiter = naMakeTreeModifier(dsttree);
+////  srciter = naMakeTreeAccessor(srctree);
+////  while(naIterateTree(&srciter, NA_NULL)){
+////    const void* srckey;
+////    const void* dupdata = naGetQuadTreeCurConst(&dupiter);
+////    duporigin = naGetQuadTreeCurRect(&dupiter).pos;
+////    naLocateQuadTreeCoord(&newiter, duporigin);
+////    naCreateQuadTreeLeaf(&newiter, dupdata);
+////  }
+////  
+////  naClearTreeIterator(&srciter);
+////  naClearTreeIterator(&dstiter);
+//
+//  return dsttree;
+//}
+
+
+
+NA_DEF void naEmptyTree(NATree* tree){
+  #ifndef NDEBUG
+    if(tree->itercount != 0)
+      naError("naEmptyTree", "There are still iterators running on this tree. Did you miss a naClearTreeIterator call?");
+  #endif
+  if(tree->root){naDeallocTreeNode(tree, tree->root);}
+  tree->root = NA_NULL;
+}
+
+
+
 NA_DEF void naClearTree(NATree* tree){
-  if(tree->root){naDeallocTreeNode(tree->root);}
+  naEmptyTree(tree);
   naReleaseTreeConfiguration(tree->config);
   if(tree->config->treedestructor){tree->config->treedestructor(tree->config->userdata);}
 }
@@ -28,23 +60,26 @@ NA_DEF void naClearTree(NATree* tree){
 
 
 NA_DEF void naAddTreeLeaf(NATree* tree, double key, void* leaf){
-  if(tree->root){
-    NATreeIterator iter = naMakeTreeModifier(tree);
-    NABool found = naLocateTree(&iter, key);
-    NATreeNode* node = naAllocTreeNode(iter.node, key, leaf);
-    #ifndef NDEBUG
-      if(found)
-        naError("naAddTreeLeaf", "An element with the given key already exists.");
-      if(iter.node->child[iter.childindx])
-        naError("naAddTreeLeaf", "child should be null");
-    #else
-      NA_UNUSED(found);
-    #endif
-    iter.node->child[iter.childindx] = node;
-    naClearTreeIterator(&iter);
-  }else{
-    tree->root = naAllocTreeNode(NA_NULL, key, leaf);
-  }
+  NA_UNUSED(tree);
+  NA_UNUSED(key);
+  NA_UNUSED(leaf);
+//  if(tree->root){
+//    NATreeIterator iter = naMakeTreeModifier(tree);
+//    NABool found = naLocateTree(&iter, key);
+//    NATreeNode* node = naAllocTreeNode(tree, iter.node, key, leaf);
+//    #ifndef NDEBUG
+//      if(found)
+//        naError("naAddTreeLeaf", "An element with the given key already exists.");
+//      if(iter.node->child[iter.childindx])
+//        naError("naAddTreeLeaf", "child should be null");
+//    #else
+//      NA_UNUSED(found);
+//    #endif
+//    iter.node->child[iter.childindx] = node;
+//    naClearTreeIterator(&iter);
+//  }else{
+//    tree->root = naAllocTreeNode(tree, NA_NULL, key, leaf);
+//  }
 }
 
 

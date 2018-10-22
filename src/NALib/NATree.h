@@ -65,8 +65,29 @@ typedef NAPtr (*NATreeLeafConstructor)( const void* key,
 // The deallocation function of your leafs. The leafdata pointer is the pointer
 // returned when creating the leaf with NATreeLeafConstructor. The userdata is
 // the same as provided in NATreeConfiguration.
-typedef void  (*NATreeLeafDestructor)(  NAPtr leafdata,
+typedef void (*NATreeLeafDestructor)(   NAPtr leafdata,
                                         NAPtr userdata);
+
+// NATreeNodeConstructor
+// This callback is called when a tree creates an internal tree node other than
+// a leaf.
+// Internal nodes can NOT be manipulated directly but you are allowed to store
+// any data with every node if desired. You can return an NAPtr to any data,
+// even a Null pointer. This data pointer will be available to
+// NATreeNodeDestructor and NATreeChildChanged.
+// An internal node internally stores pointers to childnodes or leafes. The
+// key parameter denotes the key the childnodes and leafes are sorted by.
+// Note that the key is just here for information. You may or may not use it.
+// All the important callback functions will provide the key again.
+typedef NAPtr (*NATreeNodeConstructor)( const void* key);
+
+// NATreeNodeDestructor
+// The node destructor is called before a tree ultimately deletes an internal
+// node.
+// The NAPtr created with NATreeNodeConstructor will be sent to this function
+// such that you can deallocate the memory if necessary.
+typedef void (*NATreeNodeDestructor)(NAPtr nodedata);
+
 
 
 // Flags for NATreeConfiguration
@@ -89,7 +110,9 @@ typedef struct NATreeIterator NATreeIterator;
 // If you try to change a configuration after it has been used for at least
 // one tree, you will get a warning if NDEBUG is undefined.
 
-NA_API NATreeConfiguration* naCreateTreeConfiguration(NAMutator destructor);
+NA_API NATreeConfiguration* naCreateTreeConfiguration(
+  NAInt flags,
+  NAMutator destructor);
 NA_API void naReleaseTreeConfiguration(NATreeConfiguration* config);
 
 NA_API void naSetTreeConfigurationTreeCallbacks(
@@ -102,12 +125,19 @@ NA_API void naSetTreeConfigurationLeafCallbacks(
   NATreeLeafConstructor      leafconstructor,
   NATreeLeafDestructor       leafdestructor);
 
+NA_API void naSetTreeConfigurationNodeCallbacks(
+  NATreeConfiguration*       config,
+  NATreeNodeConstructor      nodeconstructor,
+  NATreeNodeDestructor       nodedestructor);
+
 
 
 // ////////////////////
 // NATree
 
 NA_API NATree* naInitTree(NATree* tree, NATreeConfiguration* config);
+//NA_API NATree* naInitTreeCopy(NATree* dsttree, NATree* srctree);
+NA_API void naEmptyTree(NATree* tree);
 NA_API void naClearTree();
 
 NA_API void naAddTreeLeaf(NATree* tree, double key, void* leaf);
@@ -121,6 +151,9 @@ NA_API NATreeIterator naMakeTreeAccessor(const NATree* tree);
 NA_API NATreeIterator naMakeTreeMutator(NATree* tree);
 NA_API NATreeIterator naMakeTreeModifier(NATree* tree);
 NA_API void naClearTreeIterator(NATreeIterator* iter);
+
+NA_API void naResetTreeIterator(NATreeIterator* iter);
+
 NA_API NABool naLocateTree(NATreeIterator* iter, double key);
 
 

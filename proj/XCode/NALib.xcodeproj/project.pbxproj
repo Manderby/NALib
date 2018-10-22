@@ -30,6 +30,7 @@
 		90BAF9A3217C0918001665BF /* NATreeConfiguration.c in Sources */ = {isa = PBXBuildFile; fileRef = 90BAF9A2217C0918001665BF /* NATreeConfiguration.c */; };
 		90BAF9A5217C0AB3001665BF /* NATreeNode.c in Sources */ = {isa = PBXBuildFile; fileRef = 90BAF9A4217C0AB3001665BF /* NATreeNode.c */; };
 		90BAF9A8217C0BC1001665BF /* NATreeIterator.c in Sources */ = {isa = PBXBuildFile; fileRef = 90BAF9A7217C0BC1001665BF /* NATreeIterator.c */; };
+		90BAF9AA217DAD98001665BF /* NATreeBinary.c in Sources */ = {isa = PBXBuildFile; fileRef = 90BAF9A9217DAD98001665BF /* NATreeBinary.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -130,6 +131,7 @@
 		90BAF9A2217C0918001665BF /* NATreeConfiguration.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NATreeConfiguration.c; sourceTree = "<group>"; };
 		90BAF9A4217C0AB3001665BF /* NATreeNode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NATreeNode.c; sourceTree = "<group>"; };
 		90BAF9A7217C0BC1001665BF /* NATreeIterator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NATreeIterator.c; sourceTree = "<group>"; };
+		90BAF9A9217DAD98001665BF /* NATreeBinary.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NATreeBinary.c; sourceTree = "<group>"; };
 		90BC6EC320984FD500CBD0FD /* NANumerics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NANumerics.h; sourceTree = "<group>"; };
 		90BC6EC4209850E700CBD0FD /* NAInt64II.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAInt64II.h; sourceTree = "<group>"; };
 		90BC6EC6209855DE00CBD0FD /* NADebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NADebug.h; sourceTree = "<group>"; };
@@ -319,6 +321,7 @@
 				90BAF9A2217C0918001665BF /* NATreeConfiguration.c */,
 				90BAF9A4217C0AB3001665BF /* NATreeNode.c */,
 				90BAF9A7217C0BC1001665BF /* NATreeIterator.c */,
+				90BAF9A9217DAD98001665BF /* NATreeBinary.c */,
 			);
 			path = NATree;
 			sourceTree = "<group>";
@@ -411,6 +414,7 @@
 				9011A8D51F054877003766D8 /* NAUI.c in Sources */,
 				9011A8D21F054877003766D8 /* NAString.c in Sources */,
 				9011A8CF1F054877003766D8 /* NAList.c in Sources */,
+				90BAF9AA217DAD98001665BF /* NATreeBinary.c in Sources */,
 				9011A8C91F054877003766D8 /* NAFile.c in Sources */,
 				90734CA0209337B20098F9FE /* NADebug.c in Sources */,
 				90BAF9A5217C0AB3001665BF /* NATreeNode.c in Sources */,
