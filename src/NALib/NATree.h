@@ -140,7 +140,6 @@ NA_API NATree* naInitTree(NATree* tree, NATreeConfiguration* config);
 NA_API void naEmptyTree(NATree* tree);
 NA_API void naClearTree();
 
-NA_API void naAddTreeLeaf(NATree* tree, double key, void* leaf);
 
 
 
@@ -154,7 +153,35 @@ NA_API void naClearTreeIterator(NATreeIterator* iter);
 
 NA_API void naResetTreeIterator(NATreeIterator* iter);
 
-NA_API NABool naLocateTree(NATreeIterator* iter, double key);
+// Locates or inserts a leaf with a specific key in the tree. You can access
+// the leaf with a successing call to naGetTreeCur.
+//
+// Locate:  Just move the iterator to the leaf.
+// Insert:  Move the iterator to the leaf. If non-existent, create it with the
+//          storedata given. If existent, does not change the contents but
+//          emits a warning in debug mode.
+// Replace: Move the iterator to the leaf. If non-existent, create it with the
+//          storedata given. If existent, replace it with a new leaf containing
+//          the storedata given.
+//
+// Note that when a new leaf is created and the configuration defines a leaf
+// constructor, the storedata given will be available in the constructor.
+// If so, accessing the leaf afterwards with naGetTreeCur will get you the leaf
+// you created in the construtor, not the storedata.
+//
+// When replacing an existing leaf and having both a constructor and destructor
+// for leafes defined, the new leaf is first constructed, then the old one is
+// destructed.
+//
+// All functions return true, if the leaf did exist, otherwise false.
+NA_API NABool naLocateTree        (NATreeIterator* iter,
+                                       const void* key);
+NA_API NABool naInsertTreeConst   (NATreeIterator* iter,
+                                       const void* key,
+                                       const void* storedata);
+NA_API NABool naInsertTreeMutable (NATreeIterator* iter,
+                                       const void* key,
+                                             void* storedata);
 
 
 

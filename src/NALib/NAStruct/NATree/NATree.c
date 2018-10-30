@@ -9,7 +9,11 @@
 
 NA_DEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
   tree->config = naRetainTreeConfiguration(config);
-  if(tree->config->treeconstructor){tree->config->treeconstructor(tree->config->userdata);}
+  // If the config defines a callback for constructing a tree, call it.
+  if(tree->config->treeconstructor){
+    tree->config->treeconstructor(tree->config->userdata);
+  }
+  // Init the tree root.
   tree->root = NA_NULL;
   #ifndef NDEBUG
     tree->itercount = 0;
@@ -54,33 +58,36 @@ NA_DEF void naEmptyTree(NATree* tree){
 NA_DEF void naClearTree(NATree* tree){
   naEmptyTree(tree);
   naReleaseTreeConfiguration(tree->config);
-  if(tree->config->treedestructor){tree->config->treedestructor(tree->config->userdata);}
+  // If the config sets a callback function for deleting a tree, call it.
+  if(tree->config->treedestructor){
+    tree->config->treedestructor(tree->config->userdata);
+  }
 }
 
 
 
-NA_DEF void naAddTreeLeaf(NATree* tree, double key, void* leaf){
-  NA_UNUSED(tree);
-  NA_UNUSED(key);
-  NA_UNUSED(leaf);
-//  if(tree->root){
-//    NATreeIterator iter = naMakeTreeModifier(tree);
-//    NABool found = naLocateTree(&iter, key);
-//    NATreeNode* node = naAllocTreeNode(tree, iter.node, key, leaf);
-//    #ifndef NDEBUG
-//      if(found)
-//        naError("naAddTreeLeaf", "An element with the given key already exists.");
-//      if(iter.node->child[iter.childindx])
-//        naError("naAddTreeLeaf", "child should be null");
-//    #else
-//      NA_UNUSED(found);
-//    #endif
-//    iter.node->child[iter.childindx] = node;
-//    naClearTreeIterator(&iter);
-//  }else{
-//    tree->root = naAllocTreeNode(tree, NA_NULL, key, leaf);
-//  }
-}
+//NA_API NABool naInsertTree(NATreeIterator* iter, double key, NAPtr leafdata){
+//  NA_UNUSED(tree);
+//  NA_UNUSED(key);
+//  NA_UNUSED(leaf);
+////  if(tree->root){
+////    NATreeIterator iter = naMakeTreeModifier(tree);
+////    NABool found = naLocateTree(&iter, key);
+////    NATreeNode* node = naAllocTreeNode(tree, iter.node, key, leaf);
+////    #ifndef NDEBUG
+////      if(found)
+////        naError("naAddTreeLeaf", "An element with the given key already exists.");
+////      if(iter.node->child[iter.childindx])
+////        naError("naAddTreeLeaf", "child should be null");
+////    #else
+////      NA_UNUSED(found);
+////    #endif
+////    iter.node->child[iter.childindx] = node;
+////    naClearTreeIterator(&iter);
+////  }else{
+////    tree->root = naAllocTreeNode(tree, NA_NULL, key, leaf);
+////  }
+//}
 
 
 

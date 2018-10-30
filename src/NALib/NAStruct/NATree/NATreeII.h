@@ -7,11 +7,18 @@
 typedef NABool (*NATreeNodeLimitTester)(NATreeIterator* iter, const void* limit);
 
 #define NA_TREE_NODE_CHILD_NULL 0x00
+#define NA_TREE_NODE_CHILD_LINK 0x01
 #define NA_TREE_NODE_CHILD_NODE 0x02
 #define NA_TREE_NODE_CHILD_LEAF 0x03
 
 #define NA_TREE_NODE_CHILD_AVAILABLE_MASK 0x02
 #define NA_TREE_NODE_CHILD_MASK 0x03
+
+#define NA_TREE_NODE_MAX_CHILD_COUNT 8
+
+#define NA_TREE_NODE_INDEX_IN_PARENT_BITSHIFT (NA_TREE_NODE_MAX_CHILD_COUNT * 2)
+#define NA_TREE_NODE_INDEX_IN_PARENT_MASK 0x0f
+#define NA_TREE_NODE_LEAF 0x100000
 
 struct NATreeConfiguration{
   NARefCount                  refcount;
@@ -37,23 +44,25 @@ struct NATreeConfiguration{
 
 typedef struct NATreeNode NATreeNode;
 struct NATreeNode{
-  double key;
-  NATreeNode* parent;
-  NAInt indxinparent;
-  NATreeNode* childs[2];
-  NAPtr userdata;
   NAInt flags;
+  NATreeNode* parent;
   #ifndef NDEBUG
     NAInt itercount;
   #endif
+  double key;
+  NATreeNode* childs[2];
+//  NAPtr userdata;
 };
-NA_EXTERN_RUNTIME_TYPE(NATreeNode);
+//NA_EXTERN_RUNTIME_TYPE(NATreeNode);
 
 struct NATreeIterator{
   NAPtr tree;
   NATreeNode* node;
   NAInt childindx;
   NAInt flags;
+  union{
+    double d;
+  } key;
 };
 
 struct NATree{
@@ -67,31 +76,54 @@ struct NATree{
 
 
 // NATreeNode
-NA_HAPI NATreeNode* naAllocTreeNode(NATree* tree, NATreeNode* parent, NAInt indxinparent, double key, void* leaf);
+NA_HAPI NATreeNode* naAllocTreeNode(NATree* tree, NATreeNode* parent, NAInt indxinparent, double key, NAPtr storedata);
 NA_HAPI void naDeallocTreeNode(NATree* tree, NATreeNode* node);
 NA_HIAPI NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx);
 NA_HIAPI NABool naHasNodeChild(NATreeNode* node, NAInt childindx);
-NA_HAPI NABool naLocateTreeNode(NATreeIterator* iter, double key);
+NA_HAPI NABool naLocateTreeNode(NATreeIterator* iter);
 
 // NATreeConfiguration
 NA_HAPI NATreeConfiguration* naRetainTreeConfiguration(NATreeConfiguration* config);
 
+// NATreeIterator
+NA_HIAPI void naSetTreeIteratorCurNode(NATreeIterator* iter, NATreeNode* newnode);
 
 
-NA_HIDEF NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx){
-  return naTestFlagi(node->flags, NA_TREE_NODE_CHILD_LEAF << (childindx * 2));
-}
-NA_HIDEF NABool naHasNodeChild(NATreeNode* node, NAInt childindx){
-  return naTestFlagi(node->flags, NA_TREE_NODE_CHILD_AVAILABLE_MASK << (childindx * 2));
-}
+
+
+
+
+//NA_HIDEF NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx){
+//  return naTestFlagi(node->flags, NA_TREE_NODE_CHILD_LEAF << (childindx * 2));
+//}
+//NA_HIDEF NABool naHasNodeChild(NATreeNode* node, NAInt childindx){
+//  return naTestFlagi(node->flags, NA_TREE_NODE_CHILD_AVAILABLE_MASK << (childindx * 2));
+//}
 NA_HIDEF void naSetNodeChildType(NATreeNode* node, NAInt childindx, NAInt childtype){
   naSetFlagi(&(node->flags), NA_TREE_NODE_CHILD_MASK << (childindx * 2), NA_FALSE);
   naSetFlagi(&(node->flags), childtype << (childindx * 2), NA_TRUE);
+}
+//NA_HIDEF NAInt naGetNodeIndexInParent(NATreeNode* node){
+//  return (NAInt)((node->flags & (NA_TREE_NODE_INDEX_IN_PARENT_MASK << NA_TREE_NODE_INDEX_IN_PARENT_BITSHIFT)) >> NA_TREE_NODE_INDEX_IN_PARENT_BITSHIFT);
+//}
+
+
+
+NA_HIDEF void naSetTreeIteratorCurNode(NATreeIterator* iter, NATreeNode* newnode){
+  #ifndef NDEBUG
+    if(iter->node){iter->node->itercount--;}
+  #endif
+  iter->node = newnode;
+  #ifndef NDEBUG
+    if(iter->node){iter->node->itercount++;}
+  #endif
 }
 
 
 
 NABool naTestTreeLimitBinary(NATreeIterator* iter, const void* limit);
+
+
 
 // Copyright (c) NALib, Tobias Stamm
 //
