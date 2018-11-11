@@ -9,15 +9,18 @@
 
 NA_DEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
   tree->config = naRetainTreeConfiguration(config);
+  
   // If the config defines a callback for constructing a tree, call it.
-  if(tree->config->treeconstructor){
-    tree->config->treeconstructor(tree->config->userdata);
+  if(tree->config->treeConstructor){
+    tree->config->treeConstructor(tree->config->data);
   }
+  
   // Init the tree root.
   tree->root = NA_NULL;
   #ifndef NDEBUG
     tree->itercount = 0;
   #endif
+  
   return tree;
 }
 
@@ -49,7 +52,7 @@ NA_DEF void naEmptyTree(NATree* tree){
     if(tree->itercount != 0)
       naError("naEmptyTree", "There are still iterators running on this tree. Did you miss a naClearTreeIterator call?");
   #endif
-  if(tree->root){naDeallocTreeNode(tree, tree->root);}
+  if(tree->root){tree->config->nodeCoreDestructor(tree, tree->root);}
   tree->root = NA_NULL;
 }
 
@@ -57,13 +60,12 @@ NA_DEF void naEmptyTree(NATree* tree){
 
 NA_DEF void naClearTree(NATree* tree){
   naEmptyTree(tree);
-  naReleaseTreeConfiguration(tree->config);
   // If the config sets a callback function for deleting a tree, call it.
-  if(tree->config->treedestructor){
-    tree->config->treedestructor(tree->config->userdata);
+  if(tree->config->treeDestructor){
+    tree->config->treeDestructor(tree->config->data);
   }
+  naReleaseTreeConfiguration(tree->config);
 }
-
 
 
 //NA_API NABool naInsertTree(NATreeIterator* iter, double key, NAPtr leafdata){

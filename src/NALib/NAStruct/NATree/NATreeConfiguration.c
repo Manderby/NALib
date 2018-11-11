@@ -8,15 +8,25 @@
 #define NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE 0x01
 
 
-NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags, NAMutator destructor){
+NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   NATreeConfiguration* config = naAlloc(NATreeConfiguration);
   naNulln(config, sizeof(NATreeConfiguration));
   naInitRefCount(&(config->refcount));
   if(flags == 0){
     config->childpernode = 2;
-    config->limittester = naTestTreeLimitBinary;
+    config->nodeCoreConstructor     = naConstructTreeNodeBinary;
+    config->nodeCoreDestructor      = naDestructTreeNodeBinary;
+    config->leafCoreConstructor     = naConstructTreeLeafBinary;
+    config->leafCoreDestructor      = naDestructTreeLeafBinary;
+
+    config->treeBubbleLocator       = naLocateTreeBubbleBinary;
+    config->treeCaptureLocator      = naLocateTreeCaptureBinary;
+    config->iteratorKeySetter       = naSetTreeIteratorKeyBinary;
+    config->nodeIndexInParentGetter = naGetTreeNodeIndexInParentBinary;
+    config->nodeChildIndexGetter    = naGetTreeNodeChildIndxBinary;
+    config->nodelimittester         = naTestNodeLimitBinary;
+    config->leafDataGetter          = naGetTreeLeafDataBinary;
   }
-  config->destructor = destructor;
   return config;
 }
 
@@ -43,24 +53,24 @@ NA_HDEF NATreeConfiguration* naRetainTreeConfiguration(NATreeConfiguration* conf
 
 
 
-NA_API void naSetTreeConfigurationTreeCallbacks(NATreeConfiguration* config, NATreeContructorCallback treeconstructor, NATreeDestructorCallback  treedestructor){
+NA_API void naSetTreeConfigurationTreeCallbacks(NATreeConfiguration* config, NATreeContructorCallback treeConstructor, NATreeDestructorCallback  treeDestructor){
   #ifndef NDEBUG
     if(config->debugflags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
       naError("naSetTreeConfigurationTreeCallbacks", "Configuration already used in a tree. Mayor problems may occur in the future");
   #endif
-  config->treeconstructor = treeconstructor;
-  config->treedestructor = treedestructor;
+  config->treeConstructor = treeConstructor;
+  config->treeDestructor = treeDestructor;
 }
 
 
 
-NA_API void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NATreeLeafConstructor leafconstructor, NATreeLeafDestructor leafdestructor){
+NA_API void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NATreeLeafConstructor leafConstructor, NATreeLeafDestructor leafDestructor){
   #ifndef NDEBUG
     if(config->debugflags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
       naError("naSetTreeConfigurationLeafCallbacks", "Configuration already used in a tree. Mayor problems may occur in the future");
   #endif
-  config->leafconstructor = leafconstructor;
-  config->leafdestructor = leafdestructor;
+  config->leafConstructor = leafConstructor;
+  config->leafDestructor = leafDestructor;
 }
 
 
@@ -70,8 +80,8 @@ NA_API void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NAT
     if(config->debugflags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
       naError("naSetTreeConfigurationNodeCallbacks", "Configuration already used in a tree. Mayor problems may occur in the future");
   #endif
-  config->nodeconstructor = nodeconstructor;
-  config->nodedestructor = nodedestructor;
+  config->nodeConstructor = nodeconstructor;
+  config->nodeDestructor = nodedestructor;
 }
 
 

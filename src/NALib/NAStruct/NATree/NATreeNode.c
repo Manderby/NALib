@@ -4,55 +4,47 @@
 
 #include "NATree.h"
 
-
 //NA_RUNTIME_TYPE(NATreeNode, NA_NULL, NA_FALSE);
 
 
 
-
-NA_HDEF NATreeNode* naAllocTreeNode(NATree* tree, NATreeNode* parent, NAInt indxinparent, double key, NAPtr userdata){
-  #ifndef NDEBUG
-    if(indxinparent < 0 || indxinparent > NA_TREE_NODE_MAX_CHILD_COUNT)
-      naError("naAllocTreeNode", "Invalid indxinparent");
-  #endif
-  NATreeNode* node = naAlloc(NATreeNode);
+NA_HDEF void naInitTreeNode(NATreeNode* node, NATreeNode* parent){
   node->flags = 0;
-  node->flags |= indxinparent << NA_TREE_NODE_INDEX_IN_PARENT_BITSHIFT;
-  node->parent = parent;
-  
-  // Node-specific initialization
-  node->key = key;
-  node->childs[0] = NA_NULL;
-  node->childs[1] = NA_NULL;
-  naSetNodeChildType(node, 0, NA_TREE_NODE_CHILD_NULL);
-  naSetNodeChildType(node, 1, NA_TREE_NODE_CHILD_NULL);
-
-//  if(tree->config->nodeconstructor){
-//    node->userdata = tree->config->nodeconstructor(&key);
-//  }else{
-//    node->userdata = naMakePtrNull(); 
-//  }
-  
+  node->basenode.parent = parent;
+    
   #ifndef NDEBUG
-    node->itercount = 0;
+    node->basenode.itercount = 0;
   #endif
-  return node;
 }
 
 
 
-NA_HDEF void naDeallocTreeNode(NATree* tree, NATreeNode* node){
+NA_HDEF void naClearTreeNode(NATreeNode* node){
   #ifndef NDEBUG
-    if(node->itercount)
-      naError("naDeallocTreeNode", "There are still iterators running on this node. Did you forget a call to naClearTreeIterator?");
-  #endif
-//  if(naHasNodeChild(node, 0)){naDeallocTreeNode(tree, node->childs[0]);}
-//  if(naHasNodeChild(node, 1)){naDeallocTreeNode(tree, node->childs[1]);}
-  
-//  if(tree->config->nodedestructor){tree->config->nodedestructor(node->userdata);}
-  
-  naDelete(node);
+    if(node->basenode.itercount)
+      naError("naClearTreeNode", "There are still iterators running on this node. Did you forget a call to naClearTreeIterator?");
+  #endif  
 }
+
+
+
+NA_HDEF void naInitTreeLeaf(NATreeLeaf* leaf, NATreeNode* parent){
+  leaf->basenode.parent = parent;
+    
+  #ifndef NDEBUG
+    leaf->basenode.itercount = 0;
+  #endif
+}
+
+
+
+NA_HDEF void naClearTreeLeaf(NATreeLeaf* leaf){
+  #ifndef NDEBUG
+    if(leaf->basenode.itercount)
+      naError("naClearTreeLeaf", "There are still iterators running on this leaf. Did you forget a call to naClearTreeIterator?");
+  #endif  
+}
+
 
 
 
@@ -72,7 +64,7 @@ NA_HDEF void naDeallocTreeNode(NATree* tree, NATreeNode* node){
 ////  if(key < iter->node->key){
 ////    // We look in the left subtree
 ////    if(naHasNodeChild(iter->node, 0)){
-////      if(naIsNodeChildLeaf(iter->node, 0)){
+////      if(naGetNodeChildType(iter->node, 0)){
 ////        iter->childindx = 0;
 ////        retvalue = NA_TRUE;
 ////      }else{
@@ -83,7 +75,7 @@ NA_HDEF void naDeallocTreeNode(NATree* tree, NATreeNode* node){
 ////  }else{
 ////    // we look in the right subtree
 ////    if(naHasNodeChild(iter->node, 1)){
-////      if(naIsNodeChildLeaf(iter->node, 1)){
+////      if(naGetNodeChildType(iter->node, 1)){
 ////        iter->childindx = 1;
 ////        retvalue = NA_TRUE;
 ////      }else{

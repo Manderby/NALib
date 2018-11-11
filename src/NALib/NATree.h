@@ -15,62 +15,22 @@
 
 // NATreeContructorCallback and NATreeDestructorCallback
 // Will be called whenever a tree is created or destroyed. The given parameter
-// is the same as provided in NATreeConfiguration.
+// is the same as the data provided in NATreeConfiguration.
 //
-// Use this callback to handle potential registration of userdata, for example
-// reference counting.
+// Use this callback to handle potential registration of configdata,
+// for example reference counting.
 //
 // Note that a new tree can be for example be implicitely created when another
 // tree gets duplicated.
 //
 // The constructor will be called before the tree is initialized and the
 // destructor is called after the tree has been cleared.
-typedef void (*NATreeContructorCallback) (NAPtr userdata);
-typedef void (*NATreeDestructorCallback) (NAPtr userdata);
-
-// NATreeLeafConstructor
-// Function which constructs the data stored in a leaf.
-//
-// This callback will be called when creating a new leaf. It allows you to
-// process the given storedata before storing. The return value will be stored
-// in the tree. If this callback is Null, a leaf will simply store the
-// storedata pointer without any processing.
-//
-// The parameters are:
-// - key        The key under which this leaf will be stored. Its type depends
-//              on the setting in NATreeConfiguration. For example, can be
-//              casted to a const double* when the key is a double key.
-// - userdata   The userdata you provided in NATreeConfiguration
-// - storedata  The data you expect to be stored.
-//
-// Use this callback function for example, if you want to store a reference
-// counted pointer which shall be incremented before storing it in the tree.
-// Or you can use the userdata to allocate a memory block from a user defined
-// pool-structure and store the storedata within, ultimately returning the
-// memory block. Or maybe userdata is just an integer which counts the number
-// of elements in the tree. Many more examples exist.
-//
-// Note that key and userdata are just here for information, you may or may not
-// use them. Note that all the important callback functions will provide the
-// key again.
-//
-// Use naGetPtrConst and naGetPtrMutable to read userdata and storedata.
-// Use naMakePtrWithDataConst and naMakePtrWithDataMutable to create the
-// return value.
-typedef NAPtr (*NATreeLeafConstructor)( const void* key,
-                                              NAPtr userdata,
-                                              NAPtr storedata);
-
-// NATreeLeafDestructor
-// The deallocation function of your leafs. The leafdata pointer is the pointer
-// returned when creating the leaf with NATreeLeafConstructor. The userdata is
-// the same as provided in NATreeConfiguration.
-typedef void (*NATreeLeafDestructor)(   NAPtr leafdata,
-                                        NAPtr userdata);
+typedef void (*NATreeContructorCallback) (NAPtr configdata);
+typedef void (*NATreeDestructorCallback) (NAPtr configdata);
 
 // NATreeNodeConstructor
-// This callback is called when a tree creates an internal tree node other than
-// a leaf.
+// Very much the same way as NATreeLeafConstructor, this callback is called
+// when a tree creates an internal tree node other than a leaf.
 // Internal nodes can NOT be manipulated directly but you are allowed to store
 // any data with every node if desired. You can return an NAPtr to any data,
 // even a Null pointer. This data pointer will be available to
@@ -79,14 +39,57 @@ typedef void (*NATreeLeafDestructor)(   NAPtr leafdata,
 // key parameter denotes the key the childnodes and leafes are sorted by.
 // Note that the key is just here for information. You may or may not use it.
 // All the important callback functions will provide the key again.
-typedef NAPtr (*NATreeNodeConstructor)( const void* key);
+typedef NAPtr (*NATreeNodeConstructor)( const void* key,
+                                              NAPtr configdata,
+                                              NAPtr nodedata);
 
 // NATreeNodeDestructor
 // The node destructor is called before a tree ultimately deletes an internal
 // node.
 // The NAPtr created with NATreeNodeConstructor will be sent to this function
 // such that you can deallocate the memory if necessary.
-typedef void (*NATreeNodeDestructor)(NAPtr nodedata);
+typedef void (*NATreeNodeDestructor)(NAPtr nodedata,
+                                     NAPtr configdata);
+
+// NATreeLeafConstructor
+// Function which constructs the data stored in a leaf.
+//
+// This callback will be called when creating a new leaf. It allows you to
+// process the given leafdata before storing. The return value will be stored
+// in the tree. If this callback is Null, a leaf will simply store the
+// leafdata pointer without any processing.
+//
+// The parameters are:
+// - key        The key under which this leaf will be stored. Its type depends
+//              on the setting in NATreeConfiguration. For example, can be
+//              casted to a const double* when the key is a double key.
+// - configdata The data you provided in NATreeConfiguration
+// - leafdata   The data you expect to be stored.
+//
+// Use this callback function for example, if you want to store a reference
+// counted pointer which shall be incremented before storing it in the tree.
+// Or you can use the configdata to allocate a memory block from a user defined
+// pool-structure and store the leafdata within, ultimately returning the
+// memory block. Or maybe configdata is just an integer which counts the number
+// of elements in the tree. Many more examples exist.
+//
+// Note that key and configdata are just here for information, you may or may not
+// use them. Note that all the important callback functions will provide the
+// key again.
+//
+// Use naGetPtrConst and naGetPtrMutable to read configdata and leafdata.
+// Use naMakePtrWithDataConst and naMakePtrWithDataMutable to create the
+// return value.
+typedef NAPtr (*NATreeLeafConstructor)( const void* key,
+                                              NAPtr configdata,
+                                              NAPtr leafdata);
+
+// NATreeLeafDestructor
+// The deallocation function of your leafs. The leafdata pointer is the pointer
+// returned when creating the leaf with NATreeLeafConstructor. The configdata
+// is the same as the data provided in NATreeConfiguration.
+typedef void (*NATreeLeafDestructor)(   NAPtr leafdata,
+                                        NAPtr configdata);
 
 
 
@@ -110,9 +113,7 @@ typedef struct NATreeIterator NATreeIterator;
 // If you try to change a configuration after it has been used for at least
 // one tree, you will get a warning if NDEBUG is undefined.
 
-NA_API NATreeConfiguration* naCreateTreeConfiguration(
-  NAInt flags,
-  NAMutator destructor);
+NA_API NATreeConfiguration* naCreateTreeConfiguration(NAInt flags);
 NA_API void naReleaseTreeConfiguration(NATreeConfiguration* config);
 
 NA_API void naSetTreeConfigurationTreeCallbacks(
@@ -153,35 +154,42 @@ NA_API void naClearTreeIterator(NATreeIterator* iter);
 
 NA_API void naResetTreeIterator(NATreeIterator* iter);
 
+// Moves the iterator to the leaf containing the given key. If such a leaf is
+// not found in the tree, NA_FALSE ist returned. The iterator though stores the
+// coord it is supposed to point at. This allows you to locate a key and then
+// use naGetTreeMutable to create a leaf with that key.
+NA_API NABool naLocateTree(NATreeIterator* iter, const void* key);
+
+NA_API const void* naGetTreeConst(NATreeIterator* iter);
+
 // Locates or inserts a leaf with a specific key in the tree. You can access
 // the leaf with a successing call to naGetTreeCur.
 //
 // Locate:  Just move the iterator to the leaf.
 // Insert:  Move the iterator to the leaf. If non-existent, create it with the
-//          storedata given. If existent, does not change the contents but
+//          leafdata given. If existent, does not change the contents but
 //          emits a warning in debug mode.
 // Replace: Move the iterator to the leaf. If non-existent, create it with the
-//          storedata given. If existent, replace it with a new leaf containing
-//          the storedata given.
+//          leafdata given. If existent, replace it with a new leaf containing
+//          the leafdata given.
 //
 // Note that when a new leaf is created and the configuration defines a leaf
-// constructor, the storedata given will be available in the constructor.
+// constructor, the leafdata given will be available in the constructor.
 // If so, accessing the leaf afterwards with naGetTreeCur will get you the leaf
-// you created in the construtor, not the storedata.
+// you created in the construtor, not the leafdata.
 //
 // When replacing an existing leaf and having both a constructor and destructor
 // for leafes defined, the new leaf is first constructed, then the old one is
 // destructed.
 //
 // All functions return true, if the leaf did exist, otherwise false.
-NA_API NABool naLocateTree        (NATreeIterator* iter,
-                                       const void* key);
-NA_API NABool naInsertTreeConst   (NATreeIterator* iter,
-                                       const void* key,
-                                       const void* storedata);
-NA_API NABool naInsertTreeMutable (NATreeIterator* iter,
-                                       const void* key,
-                                             void* storedata);
+
+//NA_API NABool naInsertTreeConst   (NATreeIterator* iter,
+//                                       const void* key,
+//                                       const void* leafdata);
+//NA_API NABool naInsertTreeMutable (NATreeIterator* iter,
+//                                       const void* key,
+//                                             void* leafdata);
 
 
 

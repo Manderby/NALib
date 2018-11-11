@@ -10,10 +10,11 @@
 
 NA_DEF NATreeIterator naMakeTreeAccessor(const NATree* tree){
   NATreeIterator iter;
-  iter.tree = naMakePtrWithDataConst(tree);
-  iter.node = NA_NULL;
-  iter.childindx = -1;
   iter.flags = 0;
+  iter.tree = naMakePtrWithDataConst(tree);
+  iter.basenode = NA_NULL;
+  iter.childindx = -1;
+  naNulln(&(iter.key), sizeof(iter.key));
   #ifndef NDEBUG
     NATree* mutabletree = (NATree*)tree;
     mutabletree->itercount++;
@@ -25,10 +26,11 @@ NA_DEF NATreeIterator naMakeTreeAccessor(const NATree* tree){
 
 NA_DEF NATreeIterator naMakeTreeMutator(NATree* tree){
   NATreeIterator iter;
-  iter.tree = naMakePtrWithDataMutable(tree);
-  iter.node = NA_NULL;
-  iter.childindx = -1;
   iter.flags = 0;
+  iter.tree = naMakePtrWithDataMutable(tree);
+  iter.basenode = NA_NULL;
+  iter.childindx = -1;
+  naNulln(&(iter.key), sizeof(iter.key));
   #ifndef NDEBUG
     NATree* mutabletree = (NATree*)tree;
     mutabletree->itercount++;
@@ -40,10 +42,11 @@ NA_DEF NATreeIterator naMakeTreeMutator(NATree* tree){
 
 NA_DEF NATreeIterator naMakeTreeModifier(NATree* tree){
   NATreeIterator iter;
-  iter.tree = naMakePtrWithDataMutable(tree);
-  iter.node = NA_NULL;
-  iter.childindx = -1;
   iter.flags = NA_TREE_ITERATOR_MODIFIER;
+  iter.tree = naMakePtrWithDataMutable(tree);
+  iter.basenode = NA_NULL;
+  iter.childindx = -1;
+  naNulln(&(iter.key), sizeof(iter.key));
   #ifndef NDEBUG
     NATree* mutabletree = (NATree*)tree;
     mutabletree->itercount++;
@@ -66,24 +69,34 @@ NA_DEF void naClearTreeIterator(NATreeIterator* iter){
 NA_DEF void naResetTreeIterator(NATreeIterator* iter){
   naSetTreeIteratorCurNode(iter, NA_NULL);
   iter->childindx = -1;
+  naNulln(&(iter->key), sizeof(iter->key));
 }
 
 
 
-//NA_DEF NABool naLocateTree(NATreeIterator* iter, double key){
-//  if(!iter->node){
-//    const NATree* tree = naGetPtrConst(&(iter->tree));
-//    naSetTreeIteratorCurNode(iter, tree->root);
-//  }
-//  if(iter->node){
-//    return naLocateTreeNode(iter);
-//  }else{
-//    return NA_FALSE;
-//  }
-//}
-//
-//
-//
+NA_DEF NABool naLocateTree(NATreeIterator* iter, const void* key){
+  const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
+  tree->config->iteratorKeySetter(iter, key);
+  tree->config->treeBubbleLocator(iter);
+  return tree->config->treeCaptureLocator(iter);
+}
+
+
+
+NA_DEF const void* naGetTreeConst(NATreeIterator* iter){
+  const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
+  #ifndef NDEBUG
+    if(!iter->basenode)
+      naError("naGetTreeConst", "Iterator is at initial state. Dangerous garbage memory read incoming...");
+    if(!iter->basenode->parent)
+      naError("naGetTreeConst", "Iterator is at the root element, which can not be a leaf. Dangerous garbage memory read incoming...");
+    if(naGetNodeChildType((NATreeNode*)(iter->basenode->parent), tree->config->nodeIndexInParentGetter(iter->basenode)) != NA_TREE_NODE_CHILD_LEAF)
+      naError("naGetTreeConst", "Iterator is not at a leaf. Dangerous garbage memory read incoming...");
+  #endif
+  return naGetPtrConst(tree->config->leafDataGetter((NATreeLeaf*)iter->basenode));
+}
+
+
 //NA_DEF NABool naIterateTree(NATreeIterator* iter, const void* limit){
 //  const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
 //  
@@ -128,7 +141,7 @@ NA_DEF void naResetTreeIterator(NATreeIterator* iter){
 //  if(iter->childindx < tree->config->childpernode){
 //    // There is a child available, either use the given leaf or go
 //    // downwards if it is an inner node.
-//    if(naIsNodeChildLeaf(iter->node, iter->childindx)){
+//    if(naGetNodeChildType(iter->node, iter->childindx)){
 //      // Good ending. We found the next leaf.
 //      return NA_TRUE;
 //    }else{
