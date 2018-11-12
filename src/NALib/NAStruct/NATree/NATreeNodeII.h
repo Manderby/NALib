@@ -13,8 +13,8 @@
 
 
 
-NA_HIDEF NABool naHasNodeChild(NATreeNode* node, NAInt childindx){
-  return naTestFlagi(((node->flags >> (childindx * 2)) & NA_TREE_NODE_CHILD_MASK), NA_TREE_NODE_CHILD_AVAILABLE_MASK);
+NA_HIDEF NABool naIsNodeChildTypeValid(NANodeChildType childtype){
+  return naTestFlagi(childtype, NA_TREE_NODE_CHILD_AVAILABLE_MASK);
 }
 
 

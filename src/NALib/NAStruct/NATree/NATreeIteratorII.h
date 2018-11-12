@@ -56,7 +56,6 @@ NA_IDEF NATreeIterator naMakeTreeModifier(NATree* tree){
 
 
 NA_IDEF void naClearTreeIterator(NATreeIterator* iter){
-  NA_UNUSED(iter);
   #ifndef NDEBUG
     NATree* mutabletree = (NATree*)naGetPtrConst(&(iter->tree));
     mutabletree->itercount--;
@@ -70,8 +69,6 @@ NA_HIDEF void naSetTreeIteratorCurNode(NATreeIterator* iter, NATreeBaseNode* new
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("naSetTreeIteratorCurNode", "This iterator has been cleared. You need to make it anew.");
-  #endif
-  #ifndef NDEBUG
     if(iter->basenode){iter->basenode->itercount--;}
   #endif
   iter->basenode = newnode;
@@ -83,11 +80,12 @@ NA_HIDEF void naSetTreeIteratorCurNode(NATreeIterator* iter, NATreeBaseNode* new
 
 
 NA_IDEF NABool naLocateTree(NATreeIterator* iter, const void* key){
+  const NATree* tree;
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("naLocateTree", "This iterator has been cleared. You need to make it anew.");
   #endif
-  const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
+  tree = (const NATree*)naGetPtrConst(&(iter->tree));
   // Move the iterator to the topmost node which contains the given key.
   tree->config->treeBubbleLocator(iter, key);
   // Search for the leaf containing key.
@@ -101,6 +99,8 @@ NA_IDEF const void* naGetTreeCurConst(NATreeIterator* iter){
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("naGetTreeConst", "This iterator has been cleared. You need to make it anew.");
+    if(!iter->basenode)
+      naError("naGetTreeConst", "This iterator is not at a leaf.");
   #endif
   tree = (const NATree*)naGetPtrConst(&(iter->tree));
   return naGetPtrConst(tree->config->leafDataGetter((NATreeLeaf*)iter->basenode));
@@ -110,85 +110,15 @@ NA_IDEF const void* naGetTreeCurConst(NATreeIterator* iter){
 
 NA_IAPI void* naGetTreeCurMutable(NATreeIterator* iter){
   const NATree* tree;
-    #ifndef NDEBUG
-    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
-      naError("naGetTreeMutable", "This iterator has been cleared. You need to make it anew.");
-    #endif
+  #ifndef NDEBUG
+  if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+    naError("naGetTreeMutable", "This iterator has been cleared. You need to make it anew.");
+  if(!iter->basenode)
+    naError("naGetTreeMutable", "This iterator is not at a leaf.");
+  #endif
   tree = (const NATree*)naGetPtrConst(&(iter->tree));
   return naGetPtrMutable(tree->config->leafDataGetter((NATreeLeaf*)iter->basenode));
 }
-
-
-//NA_DEF NABool naIterateTree(NATreeIterator* iter, const void* limit){
-//  const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
-//  
-//  // If the tree has no root, we can not iterate.
-//  if(!tree->root){
-//    #ifndef NDEBUG
-//      if(iter->node)
-//      naCrash("naIterateTree", "Current iterator node is set although no root available");
-//    #endif
-//    return NA_FALSE;
-//  }
-//  
-//  // If the iterator has no current node being visited, we use the root. 
-//  if(!iter->node){
-//    naSetTreeIteratorCurNode(iter, tree->root);
-//    #ifndef NDEBUG
-//      if(!iter->node)
-//      naCrash("naIterateTree", "No current node after setting the current node to the root");
-//    #endif
-//  }
-//
-//  // We go to the next child index. If we came to this function with index -1,
-//  // we therefore end up with index 0.
-//  iter->childindx++;
-//    
-//  // Search for a child index which is available and within limit.
-//  while(iter->childindx < tree->config->childpernode){
-//    if(naHasNodeChild(iter->node, iter->childindx)){
-//      if(!limit){
-//        // If there is no limit, we found a valid child.
-//        break;
-//      }else if(tree->config->limittester(iter, limit)){
-//        // We have a child which is present and overlaps with the limit if
-//        // available.
-//        break;
-//      }
-//    }
-//    // No valid child here. Go to the next one.
-//    iter->childindx++;
-//  }
-//  
-//  if(iter->childindx < tree->config->childpernode){
-//    // There is a child available, either use the given leaf or go
-//    // downwards if it is an inner node.
-//    if(naGetNodeChildType(iter->node, iter->childindx)){
-//      // Good ending. We found the next leaf.
-//      return NA_TRUE;
-//    }else{
-//      // This is an inner node. We move downwards.
-//      naSetTreeIteratorCurNode(iter, iter->node->childs[iter->childindx]);
-//      // We start looking in the subnode from the start.
-//      iter->childindx = -1;
-//      return naIterateTree(iter, limit);
-//    }
-//    
-//  }else{
-//    // There is no more child available in this node. Go upwards.
-//    if(iter->node->parent){
-//      // There is a parent, set the iterator to that node and iterate anew.
-//      iter->childindx = naGetNodeIndexInParent(iter->node);
-//      naSetTreeIteratorCurNode(iter, iter->node->parent);
-//      return naIterateTree(iter, limit);
-//    }else{
-//      // Bad ending. There is no parent node. This is the root and there are
-//      // no more elements to be iterated.
-//      naSetTreeIteratorCurNode(iter, NA_NULL);
-//      return NA_FALSE;
-//    }
-//  }
-//}
 
 
 
