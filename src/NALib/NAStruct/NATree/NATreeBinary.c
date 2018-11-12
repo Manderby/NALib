@@ -89,37 +89,40 @@ NA_HDEF void naDestructTreeLeafBinary(NATree* tree, NATreeLeaf* leaf){
 
 
 
-NA_HDEF void naLocateTreeNodeBubbleBinary(NATreeIterator* iter, double* leftlimit, double* rightlimit, NAInt previndxinparent){
-  NATreeBinaryNode* node = (NATreeBinaryNode*)(iter->basenode);
-  // If we reached the root, return.
-  if(node == NA_NULL){return;}
+NA_HDEF void naLocateTreeNodeBubbleBinary(NATreeIterator* iter, const double* key, double* leftlimit, double* rightlimit, NATreeBaseNode* prevnode){
+  NATreeBinaryNode* binnode = (NATreeBinaryNode*)(iter->basenode);
+  // If we are at the root, return.
+  if(binnode == NA_NULL){return;}
   // If we are at a node which stores the key itself, return.
-  if(iter->key.d == node->key){return;}
-  // Otherwise, we set the limits dependent on the previous index in parent.
-  if(previndxinparent == 0){
-    rightlimit = &(node->key);
+  if(*key == binnode->key){return;}
+  // Otherwise, we set the limits dependent on the previous node.
+  if(prevnode && prevnode == binnode->childs[0]){
+    rightlimit = &(binnode->key);
   }else{
-    leftlimit = &(node->key);
+    // Note that this else case will also happen if NA_NULL was sent as prevnode.
+    leftlimit = &(binnode->key);
   }
-  // If we knowh both limits and the key is contained within, return.
-  if(leftlimit && rightlimit && naContainsRangeOffset(naMakeRangeWithStartAndEnd(*leftlimit, *rightlimit), iter->key.d)){
+  // If we know both limits and the key is contained within, return.
+  if(leftlimit && rightlimit && naContainsRangeOffset(naMakeRangeWithStartAndEnd(*leftlimit, *rightlimit), *key)){
     return;
   }
   // Otherwise, go up.
-  NAInt indxinparent = naGetTreeNodeIndexInParentBinary(iter->basenode);
-  naSetTreeIteratorCurNode(iter, (NATreeBaseNode*)iter->basenode->parent);
-  naLocateTreeNodeBubbleBinary(iter, leftlimit, rightlimit, indxinparent);
+  naSetTreeIteratorCurNode(iter, &(iter->basenode->parent->basenode));
+  naLocateTreeNodeBubbleBinary(iter, key, leftlimit, rightlimit, &(binnode->node.basenode));
 }
 
 
 
-NA_HDEF void naLocateTreeBubbleBinary(NATreeIterator* iter){
-  naLocateTreeNodeBubbleBinary(iter, NA_NULL, NA_NULL, 1);
+NA_HDEF void naLocateTreeBubbleBinary(NATreeIterator* iter, const void* key){
+  const double* dkey = (const double*)key;
+  naLocateTreeNodeBubbleBinary(iter, dkey, NA_NULL, NA_NULL, NA_NULL);
 }
 
 
 
-NA_HDEF NABool naLocateTreeCaptureBinary(NATreeIterator* iter){
+NA_HDEF NABool naLocateTreeCaptureBinary(NATreeIterator* iter, const void* key){
+  const double* dkey = (const double*)key;
+  
   if(!iter->basenode){
     // If the iterator is at the initial state, try to find the root node.
     const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
@@ -128,47 +131,26 @@ NA_HDEF NABool naLocateTreeCaptureBinary(NATreeIterator* iter){
     naSetTreeIteratorCurNode(iter, &(tree->root->basenode));
   }
   
-  NATreeBinaryNode* node = (NATreeBinaryNode*)(iter->basenode);
-
-  NAInt childindx = naGetTreeNodeChildIndxBinary((NATreeNode*)iter->basenode, &(iter->key));
-  NANodeChildType childtype = naGetNodeChildType((NATreeNode*)iter->basenode, childindx);
-  NATreeBaseNode* childnode = node->childs[childindx];
+  NATreeBinaryNode* binnode = (NATreeBinaryNode*)(iter->basenode);
+  NAInt childindx = !(*(const double*)key < binnode->key);  // results in 0 or 1
+  NANodeChildType childtype = naGetNodeChildType(&(binnode->node), childindx);
+  NATreeBaseNode* childnode = binnode->childs[childindx];
   
   if(childtype == NA_TREE_NODE_CHILD_NODE){
     // When the left subtree denotes a node, we follow it.
     naSetTreeIteratorCurNode(iter, childnode);
-    return naLocateTreeCaptureBinary(iter);
+    return naLocateTreeCaptureBinary(iter, dkey);
   }else if(childtype == NA_TREE_NODE_CHILD_LEAF){
-    // When the left subtree denotes a leaf, we place the iter and return.
-    naSetTreeIteratorCurNode(iter, childnode);
-    return (iter->key.d == ((NATreeBinaryLeaf*)childnode)->key);
+    if(*dkey == ((NATreeBinaryLeaf*)childnode)->key){
+      naSetTreeIteratorCurNode(iter, childnode);
+      return NA_TRUE;
+    }
   }
 
-  // In any other case (subtree not available or denoting a link), we give up.
+  // In any other case (key not found, subtree not available or subtree
+  // denoting a link), we give up.
+  naSetTreeIteratorCurNode(iter, NA_NULL);
   return NA_FALSE;
-}
-
-
-
-NA_HDEF void naSetTreeIteratorKeyBinary(NATreeIterator* iter, const void* key){
-  iter->key.d = *((const double*)key);
-}
-
-
-
-NA_HDEF NAInt naGetTreeNodeIndexInParentBinary(NATreeBaseNode* basenode){
-  #ifndef NDEBUG
-    if(!basenode->parent)
-      naError("naGetTreeNodeIndexInParentBinary", "node has no parent");
-  #endif
-  return (basenode->parent && (((NATreeBinaryNode*)(basenode->parent))->childs[1] == basenode));
-}
-
-
-
-NA_HDEF NAInt naGetTreeNodeChildIndxBinary(NATreeNode* node, const void* key){
-  NATreeBinaryNode* binnode = (NATreeBinaryNode*)(node);
-  return !(*(const double*)key < binnode->key);
 }
 
 

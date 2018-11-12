@@ -2,19 +2,22 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#include "NATree.h"
+// This file contains inline implementations for the tree iterator.
+// Do not include this file directly! It will automatically be included when
+// including "NATreeII.h"
+
 
 
 #define NA_TREE_ITERATOR_MODIFIER 0x01
+#define NA_TREE_ITERATOR_CLEARED  0x80
 
 
-NA_DEF NATreeIterator naMakeTreeAccessor(const NATree* tree){
+
+NA_IDEF NATreeIterator naMakeTreeAccessor(const NATree* tree){
   NATreeIterator iter;
   iter.flags = 0;
   iter.tree = naMakePtrWithDataConst(tree);
   iter.basenode = NA_NULL;
-  iter.childindx = -1;
-  naNulln(&(iter.key), sizeof(iter.key));
   #ifndef NDEBUG
     NATree* mutabletree = (NATree*)tree;
     mutabletree->itercount++;
@@ -24,13 +27,11 @@ NA_DEF NATreeIterator naMakeTreeAccessor(const NATree* tree){
 
 
 
-NA_DEF NATreeIterator naMakeTreeMutator(NATree* tree){
+NA_IDEF NATreeIterator naMakeTreeMutator(NATree* tree){
   NATreeIterator iter;
   iter.flags = 0;
   iter.tree = naMakePtrWithDataMutable(tree);
   iter.basenode = NA_NULL;
-  iter.childindx = -1;
-  naNulln(&(iter.key), sizeof(iter.key));
   #ifndef NDEBUG
     NATree* mutabletree = (NATree*)tree;
     mutabletree->itercount++;
@@ -40,13 +41,11 @@ NA_DEF NATreeIterator naMakeTreeMutator(NATree* tree){
 
 
 
-NA_DEF NATreeIterator naMakeTreeModifier(NATree* tree){
+NA_IDEF NATreeIterator naMakeTreeModifier(NATree* tree){
   NATreeIterator iter;
   iter.flags = NA_TREE_ITERATOR_MODIFIER;
   iter.tree = naMakePtrWithDataMutable(tree);
   iter.basenode = NA_NULL;
-  iter.childindx = -1;
-  naNulln(&(iter.key), sizeof(iter.key));
   #ifndef NDEBUG
     NATree* mutabletree = (NATree*)tree;
     mutabletree->itercount++;
@@ -56,44 +55,67 @@ NA_DEF NATreeIterator naMakeTreeModifier(NATree* tree){
 
 
 
-NA_DEF void naClearTreeIterator(NATreeIterator* iter){
+NA_IDEF void naClearTreeIterator(NATreeIterator* iter){
   NA_UNUSED(iter);
   #ifndef NDEBUG
     NATree* mutabletree = (NATree*)naGetPtrConst(&(iter->tree));
     mutabletree->itercount--;
+    naSetFlagi(&(iter->flags), NA_TREE_ITERATOR_CLEARED, NA_TRUE);
   #endif
 }
 
 
 
-NA_DEF void naResetTreeIterator(NATreeIterator* iter){
-  naSetTreeIteratorCurNode(iter, NA_NULL);
-  iter->childindx = -1;
-  naNulln(&(iter->key), sizeof(iter->key));
-}
-
-
-
-NA_DEF NABool naLocateTree(NATreeIterator* iter, const void* key){
-  const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
-  tree->config->iteratorKeySetter(iter, key);
-  tree->config->treeBubbleLocator(iter);
-  return tree->config->treeCaptureLocator(iter);
-}
-
-
-
-NA_DEF const void* naGetTreeConst(NATreeIterator* iter){
-  const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
+NA_HIDEF void naSetTreeIteratorCurNode(NATreeIterator* iter, NATreeBaseNode* newnode){
   #ifndef NDEBUG
-    if(!iter->basenode)
-      naError("naGetTreeConst", "Iterator is at initial state. Dangerous garbage memory read incoming...");
-    if(!iter->basenode->parent)
-      naError("naGetTreeConst", "Iterator is at the root element, which can not be a leaf. Dangerous garbage memory read incoming...");
-    if(naGetNodeChildType((NATreeNode*)(iter->basenode->parent), tree->config->nodeIndexInParentGetter(iter->basenode)) != NA_TREE_NODE_CHILD_LEAF)
-      naError("naGetTreeConst", "Iterator is not at a leaf. Dangerous garbage memory read incoming...");
+    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+      naError("naSetTreeIteratorCurNode", "This iterator has been cleared. You need to make it anew.");
   #endif
+  #ifndef NDEBUG
+    if(iter->basenode){iter->basenode->itercount--;}
+  #endif
+  iter->basenode = newnode;
+  #ifndef NDEBUG
+    if(iter->basenode){iter->basenode->itercount++;}
+  #endif
+}
+
+
+
+NA_IDEF NABool naLocateTree(NATreeIterator* iter, const void* key){
+  #ifndef NDEBUG
+    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+      naError("naLocateTree", "This iterator has been cleared. You need to make it anew.");
+  #endif
+  const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
+  // Move the iterator to the topmost node which contains the given key.
+  tree->config->treeBubbleLocator(iter, key);
+  // Search for the leaf containing key.
+  return tree->config->treeCaptureLocator(iter, key);
+}
+
+
+
+NA_IDEF const void* naGetTreeCurConst(NATreeIterator* iter){
+  const NATree* tree;
+  #ifndef NDEBUG
+    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+      naError("naGetTreeConst", "This iterator has been cleared. You need to make it anew.");
+  #endif
+  tree = (const NATree*)naGetPtrConst(&(iter->tree));
   return naGetPtrConst(tree->config->leafDataGetter((NATreeLeaf*)iter->basenode));
+}
+
+
+
+NA_IAPI void* naGetTreeCurMutable(NATreeIterator* iter){
+  const NATree* tree;
+    #ifndef NDEBUG
+    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+      naError("naGetTreeMutable", "This iterator has been cleared. You need to make it anew.");
+    #endif
+  tree = (const NATree*)naGetPtrConst(&(iter->tree));
+  return naGetPtrMutable(tree->config->leafDataGetter((NATreeLeaf*)iter->basenode));
 }
 
 
@@ -155,10 +177,6 @@ NA_DEF const void* naGetTreeConst(NATreeIterator* iter){
 //  }else{
 //    // There is no more child available in this node. Go upwards.
 //    if(iter->node->parent){
-//      #ifndef NDEBUG
-//        if(naGetNodeIndexInParent(iter->node) == NA_TREE_NODE_INDEX_IN_PARENT_MASK)
-//          naError("naIterateTreeNode", "Inernal inconsistency detected: indx in parent should not be -1");
-//      #endif
 //      // There is a parent, set the iterator to that node and iterate anew.
 //      iter->childindx = naGetNodeIndexInParent(iter->node);
 //      naSetTreeIteratorCurNode(iter, iter->node->parent);
@@ -166,7 +184,7 @@ NA_DEF const void* naGetTreeConst(NATreeIterator* iter){
 //    }else{
 //      // Bad ending. There is no parent node. This is the root and there are
 //      // no more elements to be iterated.
-//      naResetTreeIterator(iter);
+//      naSetTreeIteratorCurNode(iter, NA_NULL);
 //      return NA_FALSE;
 //    }
 //  }

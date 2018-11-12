@@ -21,9 +21,6 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
 
     config->treeBubbleLocator       = naLocateTreeBubbleBinary;
     config->treeCaptureLocator      = naLocateTreeCaptureBinary;
-    config->iteratorKeySetter       = naSetTreeIteratorKeyBinary;
-    config->nodeIndexInParentGetter = naGetTreeNodeIndexInParentBinary;
-    config->nodeChildIndexGetter    = naGetTreeNodeChildIndxBinary;
     config->nodelimittester         = naTestNodeLimitBinary;
     config->leafDataGetter          = naGetTreeLeafDataBinary;
   }

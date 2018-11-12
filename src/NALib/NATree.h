@@ -147,20 +147,19 @@ NA_API void naClearTree();
 // ////////////////////
 // NATreeIterator
 
-NA_API NATreeIterator naMakeTreeAccessor(const NATree* tree);
-NA_API NATreeIterator naMakeTreeMutator(NATree* tree);
-NA_API NATreeIterator naMakeTreeModifier(NATree* tree);
-NA_API void naClearTreeIterator(NATreeIterator* iter);
-
-NA_API void naResetTreeIterator(NATreeIterator* iter);
+NA_IAPI NATreeIterator naMakeTreeAccessor(const NATree* tree);
+NA_IAPI NATreeIterator naMakeTreeMutator(NATree* tree);
+NA_IAPI NATreeIterator naMakeTreeModifier(NATree* tree);
+NA_IAPI void naClearTreeIterator(NATreeIterator* iter);
 
 // Moves the iterator to the leaf containing the given key. If such a leaf is
 // not found in the tree, NA_FALSE ist returned. The iterator though stores the
 // coord it is supposed to point at. This allows you to locate a key and then
 // use naGetTreeMutable to create a leaf with that key.
-NA_API NABool naLocateTree(NATreeIterator* iter, const void* key);
+NA_IAPI NABool naLocateTree(NATreeIterator* iter, const void* key);
 
-NA_API const void* naGetTreeConst(NATreeIterator* iter);
+NA_IAPI const void* naGetTreeCurConst  (NATreeIterator* iter);
+NA_IAPI void*       naGetTreeCurMutable(NATreeIterator* iter);
 
 // Locates or inserts a leaf with a specific key in the tree. You can access
 // the leaf with a successing call to naGetTreeCur.
