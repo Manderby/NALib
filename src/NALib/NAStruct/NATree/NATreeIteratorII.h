@@ -55,6 +55,16 @@ NA_IDEF NATreeIterator naMakeTreeModifier(NATree* tree){
 
 
 
+NA_IDEF void naResetTreeIterator(NATreeIterator* iter){
+  #ifndef NDEBUG
+    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+      naError("naResetTreeIterator", "This iterator has been cleared. You need to make it anew.");
+  #endif
+  naSetTreeIteratorCurNode(iter, NA_NULL);
+}
+
+
+
 NA_IDEF void naClearTreeIterator(NATreeIterator* iter){
   #ifndef NDEBUG
     NATree* mutabletree = (NATree*)naGetPtrConst(&(iter->tree));

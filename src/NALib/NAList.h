@@ -184,7 +184,7 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 // ///////////////////////////////
 // Creating and positioning an iterator:
 //
-// The naMakeListIteratorXXX functions will create a new iterator which is
+// The naMakeListXXX functions will create a new iterator which is
 // positioned at the initial position of the list. From there on, a list
 // can be searched forward or backward. You define, if the iterator can
 // only access the contents, mutate them or even modify the whole list.
@@ -192,7 +192,7 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 // is not a modifier. Therefore, you can even savely transfer iterators
 // to third-party programmers.
 //
-// You can reset any iterator to the initial state with the Reset function.
+// You can reset any iterator to the initial state with the reset function.
 //
 // After you are done using the iterator, you should clear it with a call to
 // naClearListIterator. NALib keeps track of where the iterators are when
@@ -202,9 +202,7 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 NA_IAPI NAListIterator naMakeListAccessor(const NAList* list);
 NA_IAPI NAListIterator naMakeListMutator (const NAList* list);
 NA_IAPI NAListIterator naMakeListModifier(      NAList* list);
-
 NA_IAPI void naResetListIterator(NAListIterator* iterator);
-
 NA_IAPI void naClearListIterator(NAListIterator* iterator);
 
 // After having created an iterator, it is at the initial position but you may

@@ -147,22 +147,46 @@ NA_API void naClearTree();
 // ////////////////////
 // NATreeIterator
 
+// ///////////////////////////////
+// Creating and positioning an iterator:
+//
+// The naMakeTreeXXX functions will create a new iterator which is
+// positioned at the initial position of the tree. From there on, a tree
+// can be searched forward or backward. You define, if the iterator can
+// only access the contents, mutate them or even modify the whole tree.
+// Add or remove functions for example will emit a warning if the iterator
+// is not a modifier. Therefore, you can even savely transfer iterators
+// to third-party programmers.
+//
+// You can reset any iterator to the initial state with the reset function.
+//
+// After you are done using the iterator, you should clear it with a call to
+// naClearTreeIterator. NALib keeps track of where the iterators are when
+// NDEBUG is undefined. Therefore, you will get lots of warnings if the
+// iterators are not properly cleared. In the release code, no checks are
+// performed.
 NA_IAPI NATreeIterator naMakeTreeAccessor(const NATree* tree);
 NA_IAPI NATreeIterator naMakeTreeMutator(NATree* tree);
 NA_IAPI NATreeIterator naMakeTreeModifier(NATree* tree);
+NA_IAPI void naResetTreeIterator(NATreeIterator* iter);
 NA_IAPI void naClearTreeIterator(NATreeIterator* iter);
 
 // Moves the iterator to the leaf containing the given key. If such a leaf is
-// not found in the tree, NA_FALSE ist returned. The iterator though stores the
-// coord it is supposed to point at. This allows you to locate a key and then
-// use naGetTreeMutable to create a leaf with that key.
+// not found in the tree, NA_FALSE ist returned and iter returns to the initial
+// state again.
 NA_IAPI NABool naLocateTree(NATreeIterator* iter, const void* key);
 
+// /////////////////////////////////
+// Iterating
+// Moves the iterator in order through the tree. The Back-variant moves the
+// iterator backwards. Returns NA_FALSE when iteration is over.
+NA_API  NABool naIterateTree        (NATreeIterator* iter);
+NA_API  NABool naIterateTreeBack    (NATreeIterator* iter);
+
+// /////////////////////////////////
+// Returns the content of the current element without moving the iterator.
 NA_IAPI const void* naGetTreeCurConst  (NATreeIterator* iter);
 NA_IAPI void*       naGetTreeCurMutable(NATreeIterator* iter);
-
-NA_API NABool naIterateTree        (NATreeIterator* iter);
-NA_API NABool naIterateTreeBack    (NATreeIterator* iter);
 
 
 
