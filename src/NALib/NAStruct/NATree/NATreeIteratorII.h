@@ -95,11 +95,43 @@ NA_IDEF NABool naLocateTree(NATreeIterator* iter, const void* key){
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("naLocateTree", "This iterator has been cleared. You need to make it anew.");
   #endif
+
   tree = (const NATree*)naGetPtrConst(&(iter->tree));
-  // Move the iterator to the topmost node which contains the given key.
-  tree->config->treeBubbleLocator(iter, key);
+
+  if(!tree->root){
+    #ifndef NDEBUG
+      if(iter->basenode)
+      naCrash("naIterateTree", "Current iterator node is set although no root available");
+    #endif
+    return NA_FALSE;
+  }
+  
+  NATreeBaseNode* curnode = iter->basenode;
+  NATreeNode* topnode;
+  
+  // Move the iterator to the topmost inner node which contains the given key.
+  if(curnode){
+    #ifndef NDEBUG
+      NAInt childindx = tree->config->nodechildindexgetter(curnode->parent, curnode);
+      if(naGetNodeChildType(curnode->parent, childindx) != NA_TREE_NODE_CHILD_LEAF)
+        naError("naIterateTree", "current node is not a leaf");
+    #endif
+    topnode = tree->config->nodeBubbleLocator(curnode->parent, key);
+  }else{
+    topnode = tree->root;
+  }
+  
   // Search for the leaf containing key.
-  return tree->config->treeCaptureLocator(iter, key);
+  NABool keyleaffound;
+  NATreeBaseNode* node = tree->config->nodeCaptureLocator(topnode, key, &keyleaffound);
+  
+  if(keyleaffound){
+    naSetTreeIteratorCurNode(iter, node);
+    return NA_TRUE;
+  }else{
+    naSetTreeIteratorCurNode(iter, NA_NULL);
+    return NA_FALSE;
+  }
 }
 
 

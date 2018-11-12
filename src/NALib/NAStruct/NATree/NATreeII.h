@@ -23,8 +23,8 @@ typedef NATreeLeaf*     (*NATreeLeafCoreConstructor)(NATree* tree, NATreeNode* p
 typedef void            (*NATreeLeafCoreDestructor)(NATree* tree, NATreeLeaf* leaf);
 
 typedef NABool          (*NATreeNodeLimitTester)(NATreeIterator* iter, const void* limit);
-typedef void            (*NATreeBubbleLocator)(NATreeIterator* iter, const void* key);
-typedef NABool          (*NATreeCaptureLocator)(NATreeIterator* iter, const void* key);
+typedef NATreeNode*     (*NATreeNodeBubbleLocator)(NATreeNode* node, const void* key);
+typedef NATreeBaseNode* (*NATreeNodeCaptureLocator)(NATreeNode* node, const void* key, NABool* keyleaffound);
 typedef NAInt           (*NATreeNodeChildIndexGetter)(NATreeNode* parent, NATreeBaseNode* child);
 typedef NATreeBaseNode* (*NATreeNodeChildGetter)(NATreeNode* parent, NAInt childindx);
 typedef NAPtr*          (*NATreeLeafDataGetter)(NATreeLeaf* leaf);
@@ -48,8 +48,8 @@ struct NATreeConfiguration{
   NATreeLeafCoreConstructor     leafCoreConstructor;
   NATreeLeafCoreDestructor      leafCoreDestructor;
   
-  NATreeBubbleLocator           treeBubbleLocator;
-  NATreeCaptureLocator          treeCaptureLocator;
+  NATreeNodeBubbleLocator       nodeBubbleLocator;
+  NATreeNodeCaptureLocator      nodeCaptureLocator;
   NATreeNodeLimitTester         nodelimittester;
   NATreeNodeChildIndexGetter    nodechildindexgetter;
   NATreeNodeChildGetter         nodechildgetter;
@@ -93,12 +93,12 @@ struct NATree{
 
 
 // NATreeNode APIs and inline implementation thereof
-NA_HAPI  void naInitTreeNode(NATreeNode* node, NATreeNode* parent);
-NA_HAPI  void naClearTreeNode(NATreeNode* node);
-NA_HAPI  void naInitTreeLeaf(NATreeLeaf* leaf, NATreeNode* parent);
-NA_HAPI  void naClearTreeLeaf(NATreeLeaf* leaf);
 NA_HAPI  NABool naLocateTreeNode(NATreeIterator* iter);
-NA_HIDEF NABool naIsNodeChildTypeValid(NANodeChildType childtype);
+NA_HIAPI  void naInitTreeNode(NATreeNode* node, NATreeNode* parent);
+NA_HIAPI  void naClearTreeNode(NATreeNode* node);
+NA_HIAPI  void naInitTreeLeaf(NATreeLeaf* leaf, NATreeNode* parent);
+NA_HIAPI  void naClearTreeLeaf(NATreeLeaf* leaf);
+NA_HIAPI NABool naIsNodeChildTypeValid(NANodeChildType childtype);
 NA_HIAPI NANodeChildType naGetNodeChildType(NATreeNode* node, NAInt childindx);
 NA_HIAPI void naSetNodeChildType(NATreeNode* node, NAInt childindx, NANodeChildType childtype);
 #include "NATreeNodeII.h"
@@ -121,8 +121,8 @@ NA_HAPI void naDestructTreeNodeBinary(NATree* tree, NATreeNode* node);
 NA_HAPI NATreeLeaf* naConstructTreeLeafBinary(NATree* tree, NATreeNode* parent, double key, NAPtr data);
 NA_HAPI void naDestructTreeLeafBinary(NATree* tree, NATreeLeaf* leaf);
 
-NA_HAPI void naLocateTreeBubbleBinary(NATreeIterator* iter, const void* key);
-NA_HAPI NABool naLocateTreeCaptureBinary(NATreeIterator* iter, const void* key);
+NA_HAPI NATreeNode* naLocateNodeBubbleBinary(NATreeNode* node, const void* key);
+NA_HAPI NATreeBaseNode* naLocateNodeCaptureBinary(NATreeNode* node, const void* key, NABool* keyleaffound);
 NA_HAPI NABool naTestNodeLimitBinary(NATreeIterator* iter, const void* limit);
 NA_HAPI NAInt naGetChildIndexBinary(NATreeNode* parent, NATreeBaseNode* child);
 NA_HAPI NATreeBaseNode* naGetChildBinary(NATreeNode* parent, NAInt childindx);

@@ -130,6 +130,9 @@ NA_DEF NABool naIterateTreeBack(NATreeIterator* iter){
 
 
 
+NA_DEF NABool naAddTreeConst(NATreeIterator* iter, const void* key, const void* content, NABool replace){
+}
+
 
 
 // Copyright (c) NALib, Tobias Stamm

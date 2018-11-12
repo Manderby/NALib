@@ -19,8 +19,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafCoreConstructor     = naConstructTreeLeafBinary;
     config->leafCoreDestructor      = naDestructTreeLeafBinary;
 
-    config->treeBubbleLocator       = naLocateTreeBubbleBinary;
-    config->treeCaptureLocator      = naLocateTreeCaptureBinary;
+    config->nodeBubbleLocator       = naLocateNodeBubbleBinary;
+    config->nodeCaptureLocator      = naLocateNodeCaptureBinary;
     config->nodelimittester         = naTestNodeLimitBinary;
     config->nodechildindexgetter    = naGetChildIndexBinary;
     config->nodechildgetter         = naGetChildBinary;
