@@ -180,8 +180,8 @@ NA_IAPI NABool naLocateTree(NATreeIterator* iter, const void* key);
 // Iterating
 // Moves the iterator in order through the tree. The Back-variant moves the
 // iterator backwards. Returns NA_FALSE when iteration is over.
-NA_API  NABool naIterateTree        (NATreeIterator* iter);
-NA_API  NABool naIterateTreeBack    (NATreeIterator* iter);
+NA_IAPI NABool naIterateTree        (NATreeIterator* iter);
+NA_IAPI NABool naIterateTreeBack    (NATreeIterator* iter);
 
 // /////////////////////////////////
 // Returns the content of the current element without moving the iterator.

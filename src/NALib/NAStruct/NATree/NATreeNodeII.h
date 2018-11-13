@@ -16,18 +16,12 @@
 NA_HIDEF void naInitTreeNode(NATreeNode* node, NATreeNode* parent){
   node->flags = 0;
   node->basenode.parent = parent;
-  #ifndef NDEBUG
-    node->basenode.itercount = 0;
-  #endif
 }
 
 
 
 NA_HIDEF void naClearTreeNode(NATreeNode* node){
-  #ifndef NDEBUG
-    if(node->basenode.itercount)
-      naError("naClearTreeNode", "There are still iterators running on this node. Did you forget a call to naClearTreeIterator?");
-  #endif  
+  NA_UNUSED(node);
 }
 
 
@@ -35,7 +29,7 @@ NA_HIDEF void naClearTreeNode(NATreeNode* node){
 NA_HIDEF void naInitTreeLeaf(NATreeLeaf* leaf, NATreeNode* parent){
   leaf->basenode.parent = parent;
   #ifndef NDEBUG
-    leaf->basenode.itercount = 0;
+    leaf->itercount = 0;
   #endif
 }
 
@@ -43,7 +37,7 @@ NA_HIDEF void naInitTreeLeaf(NATreeLeaf* leaf, NATreeNode* parent){
 
 NA_HIDEF void naClearTreeLeaf(NATreeLeaf* leaf){
   #ifndef NDEBUG
-    if(leaf->basenode.itercount)
+    if(leaf->itercount)
       naError("naClearTreeLeaf", "There are still iterators running on this leaf. Did you forget a call to naClearTreeIterator?");
   #endif  
 }

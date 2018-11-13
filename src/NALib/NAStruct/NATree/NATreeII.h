@@ -62,9 +62,6 @@ struct NATreeConfiguration{
 
 struct NATreeBaseNode{
   NATreeNode* parent;
-  #ifndef NDEBUG
-    NAInt itercount;
-  #endif
 };
 
 struct NATreeNode{
@@ -74,12 +71,15 @@ struct NATreeNode{
 
 struct NATreeLeaf{
   NATreeBaseNode basenode;
+  #ifndef NDEBUG
+    NAInt itercount;
+  #endif
 };
 
 struct NATreeIterator{
   NAInt flags;
   NAPtr tree;
-  NATreeBaseNode* basenode;
+  NATreeLeaf* leaf;
 };
 
 struct NATree{
@@ -107,7 +107,7 @@ NA_HIAPI void naSetNodeChildType(NATreeNode* node, NAInt childindx, NANodeChildT
 NA_HAPI NATreeConfiguration* naRetainTreeConfiguration(NATreeConfiguration* config);
 
 // Iterator APIs and inline implementation thereof
-NA_HIAPI void naSetTreeIteratorCurNode(NATreeIterator* iter, NATreeBaseNode* newnode);
+NA_HIAPI void naSetTreeIteratorCurLeaf(NATreeIterator* iter, NATreeLeaf* newleaf);
 #include "NATreeIteratorII.h"
 
 // Binary Tree

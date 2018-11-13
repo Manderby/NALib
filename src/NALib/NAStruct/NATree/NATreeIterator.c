@@ -5,21 +5,16 @@
 #include "NATree.h"
 
 
-typedef struct NATreeIterationInfo NATreeIterationInfo;
-struct NATreeIterationInfo{
-  NAInt step;
-  NAInt startindx;
-  NAInt breakindx;
-};
-
 // Prototypes
-NA_HIAPI NABool naIterateTreeChilds(NATreeIterator* iter, NATreeNode* curnode, NAInt previndx, NABool* finished, const NATreeIterationInfo* info);
-NA_HAPI  NABool naIterateTreeCapture(NATreeIterator* iter, NATreeNode* curnode, const NATreeIterationInfo* info);
-NA_HAPI  NABool naIterateTreeBubble(NATreeIterator* iter, NATreeBaseNode* curnode, const NATreeIterationInfo* info);
+NA_HIAPI NATreeLeaf* naIterateTreeCapture(const NATree* tree, NATreeNode* curnode, NAInt previndx, NATreeIterationInfo* info);
+NA_HAPI  NATreeLeaf* naIterateTreeBubble(const NATree* tree, NATreeBaseNode* curnode, NATreeIterationInfo* info);
 
-NA_HIDEF NABool naIterateTreeChilds(NATreeIterator* iter, NATreeNode* parent, NAInt previndx, NABool* finished, const NATreeIterationInfo* info){
-  *finished = NA_TRUE;
-  const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
+
+
+// This function expects a parent node and searches for the next available
+// child node after the given previndx. Works recursively until either no
+// valid child is found or a leaf is returned
+NA_HIDEF NATreeLeaf* naIterateTreeCapture(const NATree* tree, NATreeNode* parent, NAInt previndx, NATreeIterationInfo* info){
   NAInt indx = previndx + info->step;
   while(indx != info->breakindx){
     NANodeChildType childtype = naGetNodeChildType(parent, indx);
@@ -28,104 +23,62 @@ NA_HIDEF NABool naIterateTreeChilds(NATreeIterator* iter, NATreeNode* parent, NA
       NATreeBaseNode* child = tree->config->nodechildgetter(parent, indx);
       if(childtype == NA_TREE_NODE_CHILD_LEAF){
         // We found the next leaf. Good ending
-        naSetTreeIteratorCurNode(iter, child);
-        return NA_TRUE;
+        return (NATreeLeaf*)child;
       }else{
         // We have to go deeper.
-        return naIterateTreeCapture(iter, (NATreeNode*)child, info);
+        return naIterateTreeCapture(tree, (NATreeNode*)child, info->startindx, info);
       }
     }
     indx += info->step;
   }
-  *finished = NA_FALSE;
-  return NA_FALSE;  // This return value is obsolete and must be ignored in the caller.
+  return NA_NULL;
 }
 
 
 
-NA_HDEF NABool naIterateTreeCapture(NATreeIterator* iter, NATreeNode* curnode, const NATreeIterationInfo* info){
-  // When capturing during in-order-iteration, we simply go down the tree and
-  // search for the "first"-most leaf.
-  NABool finished;
-  NABool result = naIterateTreeChilds(iter, curnode, info->startindx, &finished, info);
-  if(finished){
-    return result;
-  }else{
-    // No more childs available. Iteration is over.
-    naSetTreeIteratorCurNode(iter, NA_NULL);
-    return NA_FALSE;
-  }
-}
-
-
-
-NA_HDEF NABool naIterateTreeBubble(NATreeIterator* iter, NATreeBaseNode* curnode, const NATreeIterationInfo* info){
+// This function takes a given basenode and bubbles up to its parent. This
+// function works recursively until either a parent offers a next leaf or
+// there are no more parents.
+NA_HDEF NATreeLeaf* naIterateTreeBubble(const NATree* tree, NATreeBaseNode* curnode, NATreeIterationInfo* info){
   if(!curnode->parent){
     // We reached the root with no further options. Iteration is over.
-    naSetTreeIteratorCurNode(iter, NA_NULL);
-    return NA_FALSE;
+    return NA_NULL;
   }
-  const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
   NAInt indx = tree->config->nodechildindexgetter(curnode->parent, curnode);
 
-  NABool finished;
-  NABool result = naIterateTreeChilds(iter, curnode->parent, indx, &finished, info);
-  if(finished){
-    return result;
+  NATreeLeaf* leaf = naIterateTreeCapture(tree, curnode->parent, indx, info);
+  if(leaf){
+    return leaf;
   }else{
     // If non more childs are available, bubble further.
-    return naIterateTreeBubble(iter, &(curnode->parent->basenode), info);
+    return naIterateTreeBubble(tree, &(curnode->parent->basenode), info);
   }
 }
 
 
 
-NA_DEF NABool naIterateTree(NATreeIterator* iter){
+NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info){
   const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
   
   // If the tree has no root, we do not iterate.
   if(!tree->root){
     #ifndef NDEBUG
-      if(iter->basenode)
+      if(iter->leaf)
       naCrash("naIterateTree", "Current iterator node is set although no root available");
     #endif
     return NA_FALSE;
   }
   
-  NATreeIterationInfo info = {1, -1, tree->config->childpernode};
-  
-  if(!iter->basenode){
+  NATreeLeaf* leaf;
+  if(!iter->leaf){
     // If the iterator is at initial position, we use the root and capture. 
-    return naIterateTreeCapture(iter, tree->root, &info);
+    leaf = naIterateTreeCapture(tree, tree->root, info->startindx, info);
   }else{
     // Otherwise, we use the current leaf and bubble
-    return naIterateTreeBubble(iter, iter->basenode, &info);
+    leaf = naIterateTreeBubble(tree, &(iter->leaf->basenode), info);
   }
-}
-
-
-
-NA_DEF NABool naIterateTreeBack(NATreeIterator* iter){
-  const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
-  
-  NATreeIterationInfo info = {-1, tree->config->childpernode, -1};
-
-  // If the tree has no root, we do not iterate.
-  if(!tree->root){
-    #ifndef NDEBUG
-      if(iter->basenode)
-      naCrash("naIterateTreeBack", "Current iterator node is set although no root available");
-    #endif
-    return NA_FALSE;
-  }
-  
-  if(!iter->basenode){
-    // If the iterator is at initial position, we use the root and capture. 
-    return naIterateTreeCapture(iter, tree->root, &info);
-  }else{
-    // Otherwise, we use the current leaf and bubble
-    return naIterateTreeBubble(iter, iter->basenode, &info);
-  }
+  naSetTreeIteratorCurLeaf(iter, leaf);
+  return (leaf != NA_NULL);
 }
 
 
