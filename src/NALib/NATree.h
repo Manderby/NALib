@@ -40,8 +40,7 @@ typedef void (*NATreeDestructorCallback) (NAPtr configdata);
 // Note that the key is just here for information. You may or may not use it.
 // All the important callback functions will provide the key again.
 typedef NAPtr (*NATreeNodeConstructor)( const void* key,
-                                              NAPtr configdata,
-                                              NAPtr nodedata);
+                                              NAPtr configdata);
 
 // NATreeNodeDestructor
 // The node destructor is called before a tree ultimately deletes an internal
@@ -193,9 +192,9 @@ NA_IAPI void*       naGetTreeCurMutable(NATreeIterator* iter);
 // either replace the existing content or the given content will be discarded.
 // When replacing, the existing node will be destructed completely and a new
 // node will beconstructed with the new content.
-// The functions return NA_TRUE, if a new item has been created and NA_FALSE if
-// the existing element was kept. The iterator will afterwards always point at
-// the tree leaf with the given key, no matter if it is the replaced content or
+// The functions return NA_FALSE if the existing element was kept. In any other
+// case, NA_TRUE is returned. The iterator will afterwards always point at the
+// tree leaf with the given key, no matter if it is the replaced content or
 // the existing content.
 NA_API NABool naAddTreeConst(    NATreeIterator* iter,
                                      const void* key,

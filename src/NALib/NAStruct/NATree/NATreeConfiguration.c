@@ -21,10 +21,12 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
 
     config->nodeBubbleLocator       = naLocateNodeBubbleBinary;
     config->nodeCaptureLocator      = naLocateNodeCaptureBinary;
-    config->nodelimittester         = naTestNodeLimitBinary;
-    config->nodechildindexgetter    = naGetChildIndexBinary;
-    config->nodechildgetter         = naGetChildBinary;
-    config->leafDataGetter          = naGetTreeLeafDataBinary;
+    config->nodeLimitTester         = naTestNodeLimitBinary;
+    config->nodeChildIndexGetter    = naGetNodeChildIndexBinary;
+    config->nodeChildGetter         = naGetNodeChildBinary;
+    config->nodeChildAdder          = naAddNodeChildBinary;
+    config->leafSplitter            = naSplitLeafBinary;
+    config->leafDataGetter          = naGetLeafDataBinary;
   }
   return config;
 }

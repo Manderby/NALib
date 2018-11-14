@@ -13,9 +13,11 @@
 
 
 
-NA_HIDEF void naInitTreeNode(NATreeNode* node, NATreeNode* parent){
+NA_HIDEF void naInitTreeNode(NATreeNode* node){
+  // We don not initialize the parent. That may seem dangerous but there is
+  // ony one function naAddTreeLeaf where leafes are created and there, the
+  // parent is always set afterwards with a call to nodeChildAdder.
   node->flags = 0;
-  node->basenode.parent = parent;
 }
 
 
@@ -26,8 +28,10 @@ NA_HIDEF void naClearTreeNode(NATreeNode* node){
 
 
 
-NA_HIDEF void naInitTreeLeaf(NATreeLeaf* leaf, NATreeNode* parent){
-  leaf->basenode.parent = parent;
+NA_HIDEF void naInitTreeLeaf(NATreeLeaf* leaf){
+  // We don not initialize the parent. That may seem dangerous but there is
+  // ony one function naAddTreeLeaf where leafes are created and there, the
+  // parent is always set afterwards with a call to nodeChildAdder.
   #ifndef NDEBUG
     leaf->itercount = 0;
   #endif
