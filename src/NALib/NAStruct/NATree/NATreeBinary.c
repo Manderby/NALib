@@ -187,7 +187,13 @@ NA_HDEF NAInt naGetNodeChildIndexBinary(NATreeNode* parent, NATreeBaseNode* chil
 
 NA_HDEF NAInt naGetNodeChildKeyIndexBinary(NATreeNode* parent, const void* key){
   NATreeBinaryNode* binparent = (NATreeBinaryNode*)(parent);
-  return !(*(const double*)key < binparent->key); // results in 0 or 1
+  return naGetKeyIndexBinary(&(binparent->key), key);
+}
+
+
+
+NA_HDEF NAInt naGetKeyIndexBinary(const void* basekey, const void* key){
+  return !(*(const double*)key < *(const double*)basekey); // results in 0 or 1
 }
 
 
@@ -221,7 +227,7 @@ NA_HDEF void naAddNodeChildBinary(NATreeNode* parent, NATreeBaseNode* basenode, 
 NA_HDEF void naSplitLeafBinary(NATree* tree, NATreeLeaf* leaf, NATreeLeaf* sibling, NAInt leafindx){
   NATreeBaseNode* left;
   NATreeBaseNode* right;
-  NAInt siblingindx = naGetNodeChildKeyIndexBinary((NATreeNode*)leaf, &(((NATreeBinaryLeaf*)sibling)->key));
+  NAInt siblingindx = naGetKeyIndexBinary(naGetLeafKeyBinary(leaf), &(((NATreeBinaryLeaf*)sibling)->key));
   if(siblingindx == 0){
     left = (NATreeBaseNode*)sibling;
     right = (NATreeBaseNode*)leaf;
@@ -234,6 +240,13 @@ NA_HDEF void naSplitLeafBinary(NATree* tree, NATreeLeaf* leaf, NATreeLeaf* sibli
   naAddNodeChildBinary((NATreeNode*)parent, left, 0, NA_TREE_NODE_CHILD_LEAF);
   naAddNodeChildBinary((NATreeNode*)parent, right, 1, NA_TREE_NODE_CHILD_LEAF);
   naAddNodeChildBinary(grandparent, (NATreeBaseNode*)parent, leafindx, NA_TREE_NODE_CHILD_NODE);
+}
+
+
+
+NA_HDEF const void* naGetLeafKeyBinary(NATreeLeaf* leaf){
+  NATreeBinaryLeaf* binleaf = (NATreeBinaryLeaf*)(leaf);
+  return &(binleaf->key);
 }
 
 

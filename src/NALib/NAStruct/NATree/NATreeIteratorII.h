@@ -80,6 +80,8 @@ NA_IDEF void naClearTreeIterator(NATreeIterator* iter){
     naSetTreeIteratorCurLeaf(iter, NA_NULL);
     mutabletree->itercount--;
     naSetFlagi(&(iter->flags), NA_TREE_ITERATOR_CLEARED, NA_TRUE);
+  #else
+    NA_UNUSED(iter);
   #endif
 }
 
@@ -110,6 +112,20 @@ NA_IDEF NABool naLocateTree(NATreeIterator* iter, const void* key){
     naSetTreeIteratorCurLeaf(iter, NA_NULL);
   }
   return keyleaffound;
+}
+
+
+
+NA_IDEF const void* naGetTreeCurKey(NATreeIterator* iter){
+  const NATree* tree;
+  #ifndef NDEBUG
+    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+      naError("naGetTreeConst", "This iterator has been cleared. You need to make it anew.");
+    if(!iter->leaf)
+      naError("naGetTreeConst", "This iterator is not at a leaf.");
+  #endif
+  tree = (const NATree*)naGetPtrConst(&(iter->tree));
+  return tree->config->leafKeyGetter(iter->leaf);
 }
 
 

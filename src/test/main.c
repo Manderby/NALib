@@ -16,14 +16,42 @@ void testTree(){
   NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_DOUBLE);
   NATree tree;
   naInitTree(&tree, config); 
+  NADateTime t1, t2;
+  NATreeIterator iter;
 
-  NATreeIterator iter = naMakeTreeModifier(&tree);
-  for(int i=0; i<100; i++){
+//  double dummy1 = naUniformRandZE();
+//  double dummy2 = naUniformRandZE();
+
+  t1 = naMakeDateTimeNow();
+  iter = naMakeTreeModifier(&tree);
+  for(int i=0; i<1000000; i++){
     double key = naUniformRandZE();
-    printf("%f\n", key);
+//    double key = (double)i / 1000000.;
+//    printf("%f\n", key);
     naAddTreeConst(&iter, &key, NA_NULL, NA_FALSE);
   }
   naClearTreeIterator(&iter);
+  t2 = naMakeDateTimeNow();
+  printf("Insert: %f\n", naGetDateTimeDifference(&t2, &t1));
+
+  // ////////////////
+
+//  double prevkey = -1.;
+  t1 = naMakeDateTimeNow();
+  iter = naMakeTreeModifier(&tree);
+//  int i = 0;
+  while(naIterateTree(&iter)){
+//    const double* key = naGetTreeCurKey(&iter);
+//    if(*key < prevkey){
+//      printf("Wrong sorting: %d: %f, %f\n", i, *key, prevkey);
+//    }
+//    prevkey = *key;
+//    i++;
+//    if(i < 5){printf("%f\n", *key);}
+  }
+  naClearTreeIterator(&iter);
+  t2 = naMakeDateTimeNow();
+  printf("Iterate: %f\n", naGetDateTimeDifference(&t2, &t1));
   
   naClearTree(&tree);
   naReleaseTreeConfiguration(config);

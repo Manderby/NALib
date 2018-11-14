@@ -27,7 +27,9 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->nodeChildGetter         = naGetNodeChildBinary;
     config->nodeChildAdder          = naAddNodeChildBinary;
     config->leafSplitter            = naSplitLeafBinary;
+    config->leafKeyGetter           = naGetLeafKeyBinary;
     config->leafDataGetter          = naGetLeafDataBinary;
+    config->keyIndexGetter          = naGetKeyIndexBinary;
   }
   return config;
 }

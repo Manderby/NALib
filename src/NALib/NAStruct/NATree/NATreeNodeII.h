@@ -34,6 +34,8 @@ NA_HIDEF void naInitTreeLeaf(NATreeLeaf* leaf){
   // parent is always set afterwards with a call to nodeChildAdder.
   #ifndef NDEBUG
     leaf->itercount = 0;
+  #else
+    NA_UNUSED(leaf);
   #endif
 }
 
@@ -43,6 +45,8 @@ NA_HIDEF void naClearTreeLeaf(NATreeLeaf* leaf){
   #ifndef NDEBUG
     if(leaf->itercount)
       naError("naClearTreeLeaf", "There are still iterators running on this leaf. Did you forget a call to naClearTreeIterator?");
+  #else
+    NA_UNUSED(leaf);
   #endif  
 }
 

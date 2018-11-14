@@ -184,6 +184,7 @@ NA_IAPI NABool naIterateTreeBack    (NATreeIterator* iter);
 
 // /////////////////////////////////
 // Returns the content of the current element without moving the iterator.
+NA_IAPI const void* naGetTreeCurKey    (NATreeIterator* iter);
 NA_IAPI const void* naGetTreeCurConst  (NATreeIterator* iter);
 NA_IAPI void*       naGetTreeCurMutable(NATreeIterator* iter);
 

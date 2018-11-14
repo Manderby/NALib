@@ -30,7 +30,9 @@ typedef NAInt           (*NATreeNodeChildKeyIndexGetter)(NATreeNode* parent, con
 typedef NATreeBaseNode* (*NATreeNodeChildGetter)(NATreeNode* parent, NAInt childindx);
 typedef void            (*NATreeNodeChildAdder)(NATreeNode* parent, NATreeBaseNode* basenode, NAInt childindx, NANodeChildType childtype);
 typedef void            (*NATreeLeafSplitter)(NATree* tree, NATreeLeaf* leaf, NATreeLeaf* sibling, NAInt leafindx);
+typedef const void*     (*NATreeLeafKeyGetter)(NATreeLeaf* leaf);
 typedef NAPtr*          (*NATreeLeafDataGetter)(NATreeLeaf* leaf);
+typedef NAInt           (*NATreeKeyIndexGetter)(const void* basekey, const void* key);
 
 struct NATreeConfiguration{
   // User settings
@@ -59,7 +61,9 @@ struct NATreeConfiguration{
   NATreeNodeChildGetter         nodeChildGetter;
   NATreeNodeChildAdder          nodeChildAdder;
   NATreeLeafSplitter            leafSplitter;
+  NATreeLeafKeyGetter           leafKeyGetter;
   NATreeLeafDataGetter          leafDataGetter;
+  NATreeKeyIndexGetter          keyIndexGetter;
 
   #ifndef NDEBUG
     NAInt                 debugflags;
@@ -135,7 +139,9 @@ NA_HAPI NAInt naGetNodeChildKeyIndexBinary(NATreeNode* parent, const void* key);
 NA_HAPI NATreeBaseNode* naGetNodeChildBinary(NATreeNode* parent, NAInt childindx);
 NA_HAPI void naAddNodeChildBinary(NATreeNode* parent, NATreeBaseNode* basenode, NAInt leafindx, NANodeChildType childtype);
 NA_HAPI void naSplitLeafBinary(NATree* tree, NATreeLeaf* leaf, NATreeLeaf* sibling, NAInt leafindx);
+NA_HAPI const void* naGetLeafKeyBinary(NATreeLeaf* leaf);
 NA_HAPI NAPtr* naGetLeafDataBinary(NATreeLeaf* leaf);
+NA_HAPI NAInt naGetKeyIndexBinary(const void* basekey, const void* key);
 
 
 
