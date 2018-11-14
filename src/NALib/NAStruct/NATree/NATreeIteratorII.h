@@ -77,6 +77,7 @@ NA_IDEF void naResetTreeIterator(NATreeIterator* iter){
 NA_IDEF void naClearTreeIterator(NATreeIterator* iter){
   #ifndef NDEBUG
     NATree* mutabletree = (NATree*)naGetPtrConst(&(iter->tree));
+    naSetTreeIteratorCurLeaf(iter, NA_NULL);
     mutabletree->itercount--;
     naSetFlagi(&(iter->flags), NA_TREE_ITERATOR_CLEARED, NA_TRUE);
   #endif

@@ -9,6 +9,29 @@
 // This file should compile and run and print some version notes on the screen.
 //
 
+#include "NATree.h"
+#include "NARandom.h"
+
+void testTree(){
+  NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_DOUBLE);
+  NATree tree;
+  naInitTree(&tree, config); 
+
+  NATreeIterator iter = naMakeTreeModifier(&tree);
+  for(int i=0; i<100; i++){
+    double key = naUniformRandZE();
+    printf("%f\n", key);
+    naAddTreeConst(&iter, &key, NA_NULL, NA_FALSE);
+  }
+  naClearTreeIterator(&iter);
+  
+  naClearTree(&tree);
+  naReleaseTreeConfiguration(config);
+}
+
+
+
+
 #include "../NALib/NABase.h"
 #include <stdio.h>
 
@@ -20,6 +43,10 @@ int main(void){
     printf("(Release ");
   #endif
   printf("%d Bits Addresses, %d Bits Integers)\n", NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
+
+  naStartRuntime();
+    testTree();
+  naStopRuntime();
 
   #if NA_OS == NA_OS_WINDOWS
    NA_UNUSED(getchar());

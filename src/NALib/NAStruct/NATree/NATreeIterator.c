@@ -100,6 +100,7 @@ NA_HDEF NATreeBaseNode* naLocateTreeNode(NATreeIterator* iter, const void* key, 
       if(iter->leaf)
       naCrash("naIterateTree", "Current iterator node is set although no root available");
     #endif
+    *keyleaffound = NA_FALSE;
     return NA_FALSE;
   }
   
@@ -139,17 +140,17 @@ NA_DEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content
 
   if(keyleaffound){
     // We need to replace this node
-      tree->config->nodeChildAdder(((NATreeBaseNode*)node)->parent, (NATreeBaseNode*)leaf, leafindx, NA_TREE_NODE_CHILD_LEAF);
-      tree->config->leafCoreDestructor(tree, (NATreeLeaf*)node);
+    tree->config->nodeChildAdder(((NATreeBaseNode*)node)->parent, (NATreeBaseNode*)leaf, leafindx, NA_TREE_NODE_CHILD_LEAF);
+    tree->config->leafCoreDestructor(tree, (NATreeLeaf*)node);
   }else{
     if(!node){
       // We need to create a root and attach the new leaf to it.
       NATreeNode* root = tree->config->nodeCoreConstructor(tree, key);
       ((NATreeBaseNode*)root)->parent = NA_NULL;
       tree->root = root;
-      tree->config->nodeChildAdder(root, (NATreeBaseNode*)leaf, leafindx, NA_TREE_NODE_CHILD_LEAF);
+      tree->config->nodeChildAdder(root, (NATreeBaseNode*)leaf, tree->config->nodeChildKeyIndexGetter(root, key), NA_TREE_NODE_CHILD_LEAF);
     }else{
-      NANodeChildType nodetype = naGetNodeChildType(node->parent, leafindx);
+      NANodeChildType nodetype = (node->parent) ? naGetNodeChildType(node->parent, leafindx) : NA_TREE_NODE_CHILD_NODE;
       if(nodetype == NA_TREE_NODE_CHILD_LEAF){
         // We need to create a node holding both the old leaf and the new one.
         tree->config->leafSplitter(tree, (NATreeLeaf*)node, leaf, leafindx);

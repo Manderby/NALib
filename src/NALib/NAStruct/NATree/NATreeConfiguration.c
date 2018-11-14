@@ -23,6 +23,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->nodeCaptureLocator      = naLocateNodeCaptureBinary;
     config->nodeLimitTester         = naTestNodeLimitBinary;
     config->nodeChildIndexGetter    = naGetNodeChildIndexBinary;
+    config->nodeChildKeyIndexGetter = naGetNodeChildKeyIndexBinary;
     config->nodeChildGetter         = naGetNodeChildBinary;
     config->nodeChildAdder          = naAddNodeChildBinary;
     config->leafSplitter            = naSplitLeafBinary;
