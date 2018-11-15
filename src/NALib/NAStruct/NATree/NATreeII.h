@@ -24,12 +24,14 @@ typedef void            (*NATreeLeafCoreDestructor)(NATree* tree, NATreeLeaf* le
 
 typedef NABool          (*NATreeNodeLimitTester)(NATreeIterator* iter, const void* limit);
 typedef NATreeNode*     (*NATreeNodeBubbleLocator)(NATreeNode* node, const void* key);
-typedef NATreeBaseNode* (*NATreeNodeCaptureLocator)(NATreeNode* node, const void* key, NABool* keyleaffound, NAInt* leafindx);
+typedef NATreeNode*     (*NATreeNodeCaptureLocator)(NATreeNode* node, const void* key, NABool* keyleaffound, NAInt* leafindx);
 typedef NAInt           (*NATreeNodeChildIndexGetter)(NATreeNode* parent, NATreeBaseNode* child);
 typedef NAInt           (*NATreeNodeChildKeyIndexGetter)(NATreeNode* parent, const void* key);
 typedef NATreeBaseNode* (*NATreeNodeChildGetter)(NATreeNode* parent, NAInt childindx);
+typedef NABool          (*NATreeNodeChildsTester)(NATreeNode* node);
 typedef void            (*NATreeNodeChildAdder)(NATreeNode* parent, NATreeBaseNode* basenode, NAInt childindx, NANodeChildType childtype);
-typedef void            (*NATreeLeafSplitter)(NATree* tree, NATreeLeaf* leaf, NATreeLeaf* sibling, NAInt leafindx);
+typedef void            (*NATreeNodeChildRemover)(NATree* tree, NATreeBaseNode* child);
+typedef void            (*NATreeLeafSplitter)(NATree* tree, NATreeNode* grandparent, NAInt childindx, NATreeLeaf* sibling);
 typedef const void*     (*NATreeLeafKeyGetter)(NATreeLeaf* leaf);
 typedef NAPtr*          (*NATreeLeafDataGetter)(NATreeLeaf* leaf);
 typedef NAInt           (*NATreeKeyIndexGetter)(const void* basekey, const void* key);
@@ -59,7 +61,9 @@ struct NATreeConfiguration{
   NATreeNodeChildIndexGetter    nodeChildIndexGetter;
   NATreeNodeChildKeyIndexGetter nodeChildKeyIndexGetter;
   NATreeNodeChildGetter         nodeChildGetter;
+  NATreeNodeChildsTester        nodeChildsTester;
   NATreeNodeChildAdder          nodeChildAdder;
+  NATreeNodeChildRemover        nodeChildRemover;
   NATreeLeafSplitter            leafSplitter;
   NATreeLeafKeyGetter           leafKeyGetter;
   NATreeLeafDataGetter          leafDataGetter;
@@ -116,7 +120,7 @@ NA_HIAPI void naSetNodeChildType(NATreeNode* node, NAInt childindx, NANodeChildT
 NA_HAPI NATreeConfiguration* naRetainTreeConfiguration(NATreeConfiguration* config);
 
 // Iterator APIs and inline implementation thereof
-NA_HDEF NATreeBaseNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABool* keyleaffound, NAInt* leafindx);
+NA_HDEF NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABool* keyleaffound, NAInt* leafindx);
 NA_HIAPI void naSetTreeIteratorCurLeaf(NATreeIterator* iter, NATreeLeaf* newleaf);
 #include "NATreeIteratorII.h"
 
@@ -132,13 +136,15 @@ NA_HAPI NATreeLeaf* naConstructTreeLeafBinary(NATree* tree, const void* key, NAP
 NA_HAPI void naDestructTreeLeafBinary(NATree* tree, NATreeLeaf* leaf);
 
 NA_HAPI NATreeNode* naLocateNodeBubbleBinary(NATreeNode* node, const void* key);
-NA_HAPI NATreeBaseNode* naLocateNodeCaptureBinary(NATreeNode* node, const void* key, NABool* keyleaffound, NAInt* childindx);
+NA_HAPI NATreeNode* naLocateNodeCaptureBinary(NATreeNode* node, const void* key, NABool* keyleaffound, NAInt* childindx);
 NA_HAPI NABool naTestNodeLimitBinary(NATreeIterator* iter, const void* limit);
 NA_HAPI NAInt naGetNodeChildIndexBinary(NATreeNode* parent, NATreeBaseNode* child);
 NA_HAPI NAInt naGetNodeChildKeyIndexBinary(NATreeNode* parent, const void* key);
 NA_HAPI NATreeBaseNode* naGetNodeChildBinary(NATreeNode* parent, NAInt childindx);
+NA_HAPI NABool naTestNodeChildsBinary(NATreeNode* node);
 NA_HAPI void naAddNodeChildBinary(NATreeNode* parent, NATreeBaseNode* basenode, NAInt leafindx, NANodeChildType childtype);
-NA_HAPI void naSplitLeafBinary(NATree* tree, NATreeLeaf* leaf, NATreeLeaf* sibling, NAInt leafindx);
+NA_HAPI void naRemoveNodeChildBinary(NATree* tree, NATreeBaseNode* child);
+NA_HAPI void naSplitLeafBinary(NATree* tree, NATreeNode* grandparent, NAInt childindx, NATreeLeaf* sibling);
 NA_HAPI const void* naGetLeafKeyBinary(NATreeLeaf* leaf);
 NA_HAPI NAPtr* naGetLeafDataBinary(NATreeLeaf* leaf);
 NA_HAPI NAInt naGetKeyIndexBinary(const void* basekey, const void* key);

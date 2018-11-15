@@ -200,7 +200,6 @@ NA_IDEF void naAddListLastMutable(NAList* list, void* content){
 ////////////////////////////
 // REMOVING ELEMENTS
 
-// These are helper functions. They should be hidden.
 NA_HIDEF void naEjectList(NAList* list, NAListElement* element, NABool deleteelement){
   element->prev->next = element->next;
   element->next->prev = element->prev;
@@ -212,6 +211,9 @@ NA_HIDEF void naEjectList(NAList* list, NAListElement* element, NABool deleteele
   list->count--;
   if(deleteelement){naDelete(element);}
 }
+
+
+
 NA_HIDEF void naEjectListConst(NAList* list, NAListElement* element, NABool deleteelement){
   #ifndef NDEBUG
     if(element == &(list->sentinel))
@@ -219,7 +221,9 @@ NA_HIDEF void naEjectListConst(NAList* list, NAListElement* element, NABool dele
   #endif
   naEjectList(list, element, deleteelement);
 }
-#include <stdio.h>
+
+
+
 NA_HIDEF void* naEjectListMutable(NAList* list, NAListElement* element, NABool deleteelement){
   void* contentpointer;
   #ifndef NDEBUG

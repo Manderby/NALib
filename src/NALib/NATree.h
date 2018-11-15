@@ -207,6 +207,18 @@ NA_API NABool naAddTreeMutable(  NATreeIterator* iter,
                                           NABool replace);
 
 
+// /////////////////////////////////
+// Removes elements.
+//
+// The advance parameter denotes how the iterator shall move after the
+// element has been removed. If advance is NA_FALSE, the iterator will be
+// moved to the previous element. If advance is NA_TRUE, the iterator will
+// be moved to the next element.
+NA_API void naRemoveTreeCur(NATreeIterator* iter, NABool advance);
+
+
+
+
 // Inline implementations are in a separate file:
 #include "NAStruct/NATree/NATreeII.h"
 
