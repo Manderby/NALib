@@ -128,6 +128,7 @@ NA_HIAPI  void naClearTreeLeaf(NATreeLeaf* leaf);
 NA_HIAPI NABool naIsNodeChildTypeValid(NANodeChildType childtype);
 NA_HIAPI NANodeChildType naGetNodeChildType(NATreeNode* node, NAInt childindx);
 NA_HIAPI void naSetNodeChildType(NATreeNode* node, NAInt childindx, NANodeChildType childtype);
+NA_HIAPI NANodeChildType naGetNodeType(const NATree* tree, NATreeBaseNode* node);
 #include "NATreeNodeII.h"
 
 // NATreeConfiguration

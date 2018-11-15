@@ -117,11 +117,11 @@ NA_HDEF NATreeNode* naLocateBubbleBinaryWithLimits(NATreeNode* node, const doubl
   // If we are at a node which stores the key itself, return this node.
   if(*key == binnode->key){return node;}
   // Otherwise, we set the limits dependent on the previous node.
-  if(naGetChildIndexBinary((NATreeNode*)binnode, prevnode) == 0){
-    rightlimit = &(binnode->key);
-  }else{
-    // Note that this else case will also happen if NA_NULL was sent as prevnode.
+  if(!prevnode || naGetChildIndexBinary((NATreeNode*)binnode, prevnode) == 1){
+    // Note that this case will also happen if NA_NULL was sent as prevnode.
     leftlimit = &(binnode->key);
+  }else{
+    rightlimit = &(binnode->key);
   }
   // If we know both limits and the key is contained within, return.
   if(leftlimit && rightlimit && naContainsRangeOffset(naMakeRangeWithStartAndEnd(*leftlimit, *rightlimit), *key)){
@@ -176,14 +176,17 @@ NA_HDEF NATreeNode* naLocateCaptureBinary(NATreeNode* node, const void* key, NAB
 
 
 NA_HDEF NAInt naGetChildIndexBinary(NATreeNode* parent, NATreeBaseNode* child){
-  NATreeBinaryNode* binparent = (NATreeBinaryNode*)(parent);
-  if(!child){return -1;}
-  if(child == binparent->childs[0]){return 0;}
   #ifndef NDEBUG
-    if(child != binparent->childs[1])
+    if(!child)
+      naError("naGetChildIndexBinary", "Child should not be Null");
+  #endif
+  NATreeBinaryNode* binparent = (NATreeBinaryNode*)(parent);
+  NAInt retvalue = (child != binparent->childs[0]); // return 0 or 1
+  #ifndef NDEBUG
+    if(child != binparent->childs[retvalue])
       naError("naGetChildIndexBinary", "Child is no child of parent");
   #endif
-  return 1;
+  return retvalue;
 }
 
 
@@ -228,6 +231,10 @@ NA_HDEF void naSetChildBinary(NATreeNode* parent, NATreeBaseNode* child, NAInt c
 
 
 NA_HDEF void naRemoveChildBinary(NATree* tree, NATreeBaseNode* child){
+  #ifndef NDEBUG
+    if(!child)
+      naError("naRemoveChildBinary", "Child should not be Null");
+  #endif
   NATreeNode* parent = child->parent;
   if(!parent){
     tree->root = NA_NULL;

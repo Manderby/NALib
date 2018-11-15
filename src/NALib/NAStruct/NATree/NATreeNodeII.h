@@ -73,6 +73,14 @@ NA_HIDEF void naSetNodeChildType(NATreeNode* node, NAInt childindx, NANodeChildT
 
 
 
+NA_HIDEF NANodeChildType naGetNodeType(const NATree* tree, NATreeBaseNode* node){
+  if(!node->parent){return NA_TREE_NODE_CHILD_NODE;}
+  NAInt childindx = tree->config->childIndexGetter(node->parent, node);
+  return naGetNodeChildType(node->parent, childindx);
+}
+
+
+
 // Copyright (c) NALib, Tobias Stamm
 //
 // Permission is hereby granted, free of charge, to any person obtaining

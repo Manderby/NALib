@@ -78,7 +78,7 @@ NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* 
     leaf = naIterateTreeBubble(tree, (NATreeBaseNode*)(iter->leaf), info);
   }
   #ifndef NDEBUG
-    if(leaf && naGetNodeChildType(((NATreeBaseNode*)leaf)->parent, naGetChildIndexBinary(((NATreeBaseNode*)leaf)->parent, ((NATreeBaseNode*)leaf))) != NA_TREE_NODE_CHILD_LEAF)
+    if(leaf && naGetNodeType((NATreeBaseNode*)leaf) != NA_TREE_NODE_CHILD_LEAF)
       naError("naIterateTreeWithInfo", "Result should be a leaf");
   #endif
   naSetTreeIteratorCurLeaf(iter, leaf);
@@ -111,8 +111,7 @@ NA_HDEF NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABo
   // Move the iterator to the topmost inner node which contains the given key.
   if(curnode){
     #ifndef NDEBUG
-      NAInt testchildindx = tree->config->childIndexGetter(curnode->parent, curnode);
-      if(naGetNodeChildType(curnode->parent, testchildindx) != NA_TREE_NODE_CHILD_LEAF)
+      if(naGetNodeType(curnode) != NA_TREE_NODE_CHILD_LEAF)
         naError("naIterateTree", "current node is not a leaf");
     #endif
     topnode = tree->config->bubbleLocator(curnode->parent, key);
@@ -123,7 +122,7 @@ NA_HDEF NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABo
   // Search for the leaf containing key.
   NATreeNode* retnode = tree->config->captureLocator(topnode, key, keyleaffound, leafindx);
   #ifndef NDEBUG
-    if(((NATreeBaseNode*)retnode)->parent && naGetNodeChildType(((NATreeBaseNode*)retnode)->parent, naGetChildIndexBinary(((NATreeBaseNode*)retnode)->parent, (NATreeBaseNode*)retnode)) != NA_TREE_NODE_CHILD_NODE)
+    if(naGetNodeType((NATreeBaseNode*)retnode) != NA_TREE_NODE_CHILD_NODE)
       naError("naLocateTreeNode", "Result should be a node");
   #endif
   return retnode;
