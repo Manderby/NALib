@@ -63,6 +63,24 @@ NA_HDEF void naRemoveNodeBinary(NATree* tree, NATreeNode* node){
 
 
 
+NA_HIDEF NAPtr naConstructLeafDataBinary(NATree* tree, NATreeBinaryLeaf* binleaf, NAPtr data){
+  if(tree->config->leafConstructor){
+    return tree->config->leafConstructor(&(binleaf->key), tree->config->data, data);
+  }else{
+    return data; 
+  }
+}
+
+
+
+NA_HIDEF void naDestructLeafDataBinary(NATree* tree, NATreeBinaryLeaf* binleaf){
+  if(tree->config->leafDestructor){tree->config->leafDestructor(binleaf->data, tree->config->data);}
+}
+
+
+
+// ////////////////////////////
+// Callback functions
 // ////////////////////////////
 
 
@@ -107,21 +125,17 @@ NA_HDEF NATreeLeaf* naConstructTreeLeafBinary(NATree* tree, const void* key, NAP
   
   // Node-specific initialization
   binleaf->key = *(const double*)key;
-  if(tree->config->leafConstructor){
-    binleaf->data = tree->config->leafConstructor(&key, tree->config->data, data);
-  }else{
-    binleaf->data = data; 
-  }
+  binleaf->data = naConstructLeafDataBinary(tree, binleaf, data);
 
-  return &(binleaf->leaf);
+  return (NATreeLeaf*)binleaf;
 }
 
 
 
 NA_HDEF void naDestructTreeLeafBinary(NATree* tree, NATreeLeaf* leaf){
   NATreeBinaryLeaf* binleaf = (NATreeBinaryLeaf*)leaf;
-  
-  if(tree->config->leafDestructor){tree->config->leafDestructor(binleaf->data, tree->config->data);}
+
+  naDestructLeafDataBinary(tree, binleaf);
   naClearTreeLeaf(&(binleaf->leaf));
   naDelete(leaf);
 }
@@ -233,7 +247,7 @@ NA_HDEF NATreeBaseNode* naGetChildBinary(NATreeNode* parent, NAInt childindx){
 
 
 
-NA_HDEF void naAddChildBinary(NATreeNode* parent, NATreeBaseNode* child, NAInt childindx, NANodeChildType childtype){
+NA_HDEF void naAddLeafBinary(NATreeNode* parent, NATreeLeaf* leaf, NAInt leafindx){
   NATreeBinaryNode* binparent = (NATreeBinaryNode*)parent; 
   #ifndef NDEBUG
     if(!naIsNodeChildTypeValid(childtype))
@@ -243,9 +257,9 @@ NA_HDEF void naAddChildBinary(NATreeNode* parent, NATreeBaseNode* child, NAInt c
     if(testleafindx != childindx)
       naError("naSetLeafBinary", "Given index is different to what it should be");
   #endif
-  naSetNodeChildType(parent, childindx, childtype);
-  binparent->childs[childindx] = child;
-  child->parent = parent;
+  naSetNodeChildType(parent, leafindx, NA_TREE_NODE_CHILD_LEAF);
+  binparent->childs[leafindx] = (NATreeBaseNode*)leaf;
+  ((NATreeBaseNode*)leaf)->parent = parent;
 }
 
 
@@ -263,26 +277,37 @@ NA_HDEF void naRemoveLeafBinary(NATree* tree, NATreeLeaf* leaf){
 
 
 
-NA_HDEF void naSplitLeafBinary(NATree* tree, NATreeNode* grandparent, NAInt childindx, NATreeLeaf* sibling){
-  NATreeBaseNode* left;
-  NATreeBaseNode* right;
+NA_HDEF void naReplaceLeafBinary(NATree* tree, NATreeLeaf* leaf, NAPtr data){
+  NATreeBinaryLeaf* binleaf = (NATreeBinaryLeaf*)leaf;
+  naDestructLeafDataBinary(tree, binleaf);
+  naConstructLeafDataBinary(tree, binleaf, data);
+}
+
+
+
+NA_HDEF void naSplitLeafBinary(NATree* tree, NATreeNode* grandparent, NAInt leafindx, NATreeLeaf* sibling){
+  NATreeLeaf* left;
+  NATreeLeaf* right;
   #ifndef NDEBUG
     if(naGetNodeChildType(grandparent, childindx) != NA_TREE_NODE_CHILD_LEAF)
       naError("naSplitLeafBinary", "Given child should be a leaf");
   #endif
-  NATreeBinaryLeaf* leaf = (NATreeBinaryLeaf*)naGetChildBinary(grandparent, childindx);
+  NATreeBinaryLeaf* leaf = (NATreeBinaryLeaf*)naGetChildBinary(grandparent, leafindx);
   NAInt siblingindx = naGetKeyIndexBinary(&(leaf->key), &(((NATreeBinaryLeaf*)sibling)->key));
   if(siblingindx == 0){
-    left = (NATreeBaseNode*)sibling;
-    right = (NATreeBaseNode*)leaf;
+    left = sibling;
+    right = (NATreeLeaf*)leaf;
   }else{
-    left = (NATreeBaseNode*)leaf;
-    right = (NATreeBaseNode*)sibling;
+    left = (NATreeLeaf*)leaf;
+    right = sibling;
   }
   NATreeBinaryNode* parent = (NATreeBinaryNode*)naConstructTreeNodeBinary(tree, &(((NATreeBinaryLeaf*)right)->key));
-  naAddChildBinary((NATreeNode*)parent, left, 0, NA_TREE_NODE_CHILD_LEAF);
-  naAddChildBinary((NATreeNode*)parent, right, 1, NA_TREE_NODE_CHILD_LEAF);
-  naAddChildBinary(grandparent, (NATreeBaseNode*)parent, childindx, NA_TREE_NODE_CHILD_NODE);
+  naAddLeafBinary((NATreeNode*)parent, left, 0);
+  naAddLeafBinary((NATreeNode*)parent, right, 1);
+
+  naSetNodeChildType(grandparent, leafindx, NA_TREE_NODE_CHILD_NODE);
+  ((NATreeBinaryNode*)grandparent)->childs[leafindx] = (NATreeBaseNode*)parent;
+  ((NATreeBaseNode*)parent)->parent = (NATreeNode*)grandparent;
 }
 
 

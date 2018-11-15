@@ -22,9 +22,10 @@ NA_HAPI NATreeNode* naLocateCaptureBinary(NATreeNode* node, const void* key, NAB
 NA_HAPI NAInt naGetChildIndexBinary(NATreeNode* parent, NATreeBaseNode* child);
 NA_HAPI NAInt naGetChildKeyIndexBinary(NATreeNode* parent, const void* key);
 NA_HAPI NATreeBaseNode* naGetChildBinary(NATreeNode* parent, NAInt childindx);
-NA_HAPI void naAddChildBinary(NATreeNode* parent, NATreeBaseNode* child, NAInt leafindx, NANodeChildType childtype);
+NA_HAPI void naAddLeafBinary(NATreeNode* parent, NATreeLeaf* leaf, NAInt leafindx);
 NA_HAPI void naRemoveLeafBinary(NATree* tree, NATreeLeaf* leaf);
-NA_HAPI void naSplitLeafBinary(NATree* tree, NATreeNode* grandparent, NAInt childindx, NATreeLeaf* sibling);
+NA_HAPI void naReplaceLeafBinary(NATree* tree, NATreeLeaf* leaf, NAPtr data);
+NA_HAPI void naSplitLeafBinary(NATree* tree, NATreeNode* grandparent, NAInt leafindx, NATreeLeaf* sibling);
 NA_HAPI const void* naGetLeafKeyBinary(NATreeLeaf* leaf);
 NA_HAPI NAPtr* naGetLeafDataBinary(NATreeLeaf* leaf);
 

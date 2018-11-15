@@ -21,11 +21,14 @@ typedef enum {
 #define NA_TREE_NODE_CHILD_MASK 0x03
 #define NA_TREE_NODE_CHILD_AVAILABLE_MASK 0x02
 
-typedef NATreeNode*     (*NATreeNodeCoreConstructor)(NATree* tree, const void* key);
-typedef void            (*NATreeNodeCoreDestructor)(NATree* tree, NATreeNode* node);
-typedef NATreeLeaf*     (*NATreeLeafCoreConstructor)(NATree* tree, const void* key, NAPtr data);
-typedef void            (*NATreeLeafCoreDestructor)(NATree* tree, NATreeLeaf* leaf);
-
+// Callback function types for the different kind of trees. If you want to
+// implement your own tree kind, you need to provide the following functions
+// and set them in naCreateTreeConfiguration.
+//
+// NATreeNodeCoreConstructor Creates a new node with the given key.
+// NATreeNodeCoreDestructor  Destroys the given node
+// NATreeLeafCoreConstructor Creates a new leaf with the given key and data
+// NATreeLeafCoreDestructor  Destroys the given leaf.
 // NATreeBubbleLocator       Searches from the given node upwards the tree and
 //                           returns the node which is guaranteed to contain
 //                           the given key or Null if there is no root.
@@ -38,7 +41,7 @@ typedef void            (*NATreeLeafCoreDestructor)(NATree* tree, NATreeLeaf* le
 //                           be stored in the given parent.
 // NATreeChildGetter         Returns the Child of the given parent with the
 //                           given index.
-// NATreeChildAdder          Sets the given child with the given type to the
+// NATreeLeafAdder          Sets the given child with the given type to the
 //                           parent at the given index.
 // NATreeLeafRemover         Removes the given leaf from the tree.
 // NATreeLeafSplitter        Expects the child ad childindx of grandparent to
@@ -46,14 +49,19 @@ typedef void            (*NATreeLeafCoreDestructor)(NATree* tree, NATreeLeaf* le
 //                           both that leaf and the new sibling.
 // NATreeLeafKeyGetter       Returns the key of the given leaf.
 // NATreeLeafDataGetter      Returns the data of the given leaf.
+typedef NATreeNode*     (*NATreeNodeCoreConstructor)(NATree* tree, const void* key);
+typedef void            (*NATreeNodeCoreDestructor)(NATree* tree, NATreeNode* node);
+typedef NATreeLeaf*     (*NATreeLeafCoreConstructor)(NATree* tree, const void* key, NAPtr data);
+typedef void            (*NATreeLeafCoreDestructor)(NATree* tree, NATreeLeaf* leaf);
 typedef NATreeNode*     (*NATreeBubbleLocator)(NATreeNode* node, const void* key);
 typedef NATreeNode*     (*NATreeCaptureLocator)(NATreeNode* node, const void* key, NABool* keyleaffound, NAInt* childindx);
 typedef NAInt           (*NATreeChildIndexGetter)(NATreeNode* parent, NATreeBaseNode* child);
 typedef NAInt           (*NATreeChildKeyIndexGetter)(NATreeNode* parent, const void* key);
 typedef NATreeBaseNode* (*NATreeChildGetter)(NATreeNode* parent, NAInt childindx);
-typedef void            (*NATreeChildAdder)(NATreeNode* parent, NATreeBaseNode* child, NAInt childindx, NANodeChildType childtype);
+typedef void            (*NATreeLeafAdder)(NATreeNode* parent, NATreeLeaf* leaf, NAInt leafindx);
 typedef void            (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
-typedef void            (*NATreeLeafSplitter)(NATree* tree, NATreeNode* grandparent, NAInt childindx, NATreeLeaf* sibling);
+typedef void            (*NATreeLeafReplacer)(NATree* tree, NATreeLeaf* leaf, NAPtr data);
+typedef void            (*NATreeLeafSplitter)(NATree* tree, NATreeNode* grandparent, NAInt leafindx, NATreeLeaf* sibling);
 typedef const void*     (*NATreeLeafKeyGetter)(NATreeLeaf* leaf);
 typedef NAPtr*          (*NATreeLeafDataGetter)(NATreeLeaf* leaf);
 
@@ -76,14 +84,14 @@ struct NATreeConfiguration{
   NATreeNodeCoreDestructor      nodeCoreDestructor;
   NATreeLeafCoreConstructor     leafCoreConstructor;
   NATreeLeafCoreDestructor      leafCoreDestructor;
-  
   NATreeBubbleLocator           bubbleLocator;
   NATreeCaptureLocator          captureLocator;
   NATreeChildIndexGetter        childIndexGetter;
   NATreeChildKeyIndexGetter     childKeyIndexGetter;
   NATreeChildGetter             childGetter;
-  NATreeChildAdder              childAdder;
+  NATreeLeafAdder               leafAdder;
   NATreeLeafRemover             leafRemover;
+  NATreeLeafReplacer            leafReplacer;
   NATreeLeafSplitter            leafSplitter;
   NATreeLeafKeyGetter           leafKeyGetter;
   NATreeLeafDataGetter          leafDataGetter;

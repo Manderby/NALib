@@ -138,37 +138,32 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
     return NA_FALSE;
   }
 
-  NATreeLeaf* leaf = tree->config->leafCoreConstructor(tree, key, content);
-  naSetTreeIteratorCurLeaf(iter, leaf);
-
   if(keyleaffound){
     // We need to replace this node
     NATreeLeaf* oldleaf = (NATreeLeaf*)(tree->config->childGetter(node, childindx));
-    tree->config->childAdder((NATreeNode*)node, (NATreeBaseNode*)leaf, childindx, NA_TREE_NODE_CHILD_LEAF);
-    tree->config->leafCoreDestructor(tree, oldleaf);
-    // Nothing happened to the tree balance.
+    tree->config->leafReplacer(tree, oldleaf, content);
+    naSetTreeIteratorCurLeaf(iter, oldleaf);
   }else{
+    NATreeLeaf* leaf = tree->config->leafCoreConstructor(tree, key, content);
+    naSetTreeIteratorCurLeaf(iter, leaf);
     if(!node){
       // We need to create a root and attach the new leaf to it.
       NATreeNode* root = tree->config->nodeCoreConstructor(tree, key);
       ((NATreeBaseNode*)root)->parent = NA_NULL;
       tree->root = root;
-      tree->config->childAdder(root, (NATreeBaseNode*)leaf, tree->config->childKeyIndexGetter(root, key), NA_TREE_NODE_CHILD_LEAF);
-      // The tree root now has a new balance.
+      tree->config->leafAdder(root, leaf, tree->config->childKeyIndexGetter(root, key));
     }else{
       NANodeChildType childtype = naGetNodeChildType(node, childindx);
       if(childtype == NA_TREE_NODE_CHILD_LEAF){
         // We need to create a node holding both the old leaf and the new one.
         tree->config->leafSplitter(tree, node, childindx, leaf);
-        // The node now has a new balance
       }else{
         #ifndef NDEBUG
           if(childtype == NA_TREE_NODE_CHILD_NODE)
             naError("naAddTreeConst", "Child should not be a node");
         #endif
         // We need to add the new leaf to this node
-        tree->config->childAdder((NATreeNode*)node, (NATreeBaseNode*)leaf, childindx, NA_TREE_NODE_CHILD_LEAF);
-        // The node now has a new balance
+        tree->config->leafAdder((NATreeNode*)node, leaf, childindx);
       }
     }
   }
