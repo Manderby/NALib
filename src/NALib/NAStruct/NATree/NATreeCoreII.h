@@ -2,7 +2,7 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-// This file contains inline implementations for the tree iterator.
+// This file contains inline implementations.
 // Do not include this file directly! It will automatically be included when
 // including "NATreeII.h"
 
@@ -372,6 +372,24 @@ NA_HIDEF void naInitTreeLeaf(NATreeLeaf* leaf){
   #else
     NA_UNUSED(leaf);
   #endif
+}
+
+
+
+NA_HIDEF NAPtr naConstructLeafData(NATree* tree, const void* key, NAPtr data){
+  if(tree->config->leafConstructor){
+    return tree->config->leafConstructor(key, tree->config->data, data);
+  }else{
+    return data; 
+  }
+}
+
+
+
+NA_HIDEF void naDestructLeafData(NATree* tree, NAPtr data){
+  if(tree->config->leafDestructor){
+    tree->config->leafDestructor(data, tree->config->data);
+  }
 }
 
 
