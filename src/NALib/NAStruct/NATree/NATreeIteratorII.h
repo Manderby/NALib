@@ -110,7 +110,7 @@ NA_IDEF NABool naLocateTree(NATreeIterator* iter, const void* key){
   const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
 
   if(keyleaffound){
-    naSetTreeIteratorCurLeaf(iter, (NATreeLeaf*)tree->config->nodeChildGetter(node, childindx));
+    naSetTreeIteratorCurLeaf(iter, (NATreeLeaf*)tree->config->childGetter(node, childindx));
   }else{
     naSetTreeIteratorCurLeaf(iter, NA_NULL);
   }

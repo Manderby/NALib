@@ -19,19 +19,16 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafCoreConstructor     = naConstructTreeLeafBinary;
     config->leafCoreDestructor      = naDestructTreeLeafBinary;
 
-    config->nodeBubbleLocator       = naLocateNodeBubbleBinary;
-    config->nodeCaptureLocator      = naLocateNodeCaptureBinary;
-    config->nodeLimitTester         = naTestNodeLimitBinary;
-    config->nodeChildIndexGetter    = naGetNodeChildIndexBinary;
-    config->nodeChildKeyIndexGetter = naGetNodeChildKeyIndexBinary;
-    config->nodeChildGetter         = naGetNodeChildBinary;
-    config->nodeChildsTester        = naTestNodeChildsBinary;
-    config->nodeChildAdder          = naAddNodeChildBinary;
-    config->nodeChildRemover        = naRemoveNodeChildBinary;
+    config->bubbleLocator           = naLocateBubbleBinary;
+    config->captureLocator          = naLocateCaptureBinary;
+    config->childIndexGetter        = naGetChildIndexBinary;
+    config->childKeyIndexGetter     = naGetChildKeyIndexBinary;
+    config->childGetter             = naGetChildBinary;
+    config->childSetter             = naSetChildBinary;
+    config->childRemover            = naRemoveChildBinary;
     config->leafSplitter            = naSplitLeafBinary;
     config->leafKeyGetter           = naGetLeafKeyBinary;
     config->leafDataGetter          = naGetLeafDataBinary;
-    config->keyIndexGetter          = naGetKeyIndexBinary;
   }
   return config;
 }

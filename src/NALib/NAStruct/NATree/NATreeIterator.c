@@ -20,7 +20,7 @@ NA_HIDEF NATreeLeaf* naIterateTreeCapture(const NATree* tree, NATreeNode* parent
     NANodeChildType childtype = naGetNodeChildType(parent, indx);
     if(naIsNodeChildTypeValid(childtype)){
       // There is another child available
-      NATreeBaseNode* child = tree->config->nodeChildGetter(parent, indx);
+      NATreeBaseNode* child = tree->config->childGetter(parent, indx);
       if(childtype == NA_TREE_NODE_CHILD_LEAF){
         // We found the next leaf. Good ending
         return (NATreeLeaf*)child;
@@ -44,7 +44,7 @@ NA_HDEF NATreeLeaf* naIterateTreeBubble(const NATree* tree, NATreeBaseNode* curn
     // We reached the root with no further options. Iteration is over.
     return NA_NULL;
   }
-  NAInt indx = tree->config->nodeChildIndexGetter(curnode->parent, curnode);
+  NAInt indx = tree->config->childIndexGetter(curnode->parent, curnode);
 
   NATreeLeaf* leaf = naIterateTreeCapture(tree, curnode->parent, indx, info);
   if(leaf){
@@ -78,7 +78,7 @@ NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* 
     leaf = naIterateTreeBubble(tree, (NATreeBaseNode*)(iter->leaf), info);
   }
   #ifndef NDEBUG
-    if(leaf && naGetNodeChildType(((NATreeBaseNode*)leaf)->parent, naGetNodeChildIndexBinary(((NATreeBaseNode*)leaf)->parent, ((NATreeBaseNode*)leaf))) != NA_TREE_NODE_CHILD_LEAF)
+    if(leaf && naGetNodeChildType(((NATreeBaseNode*)leaf)->parent, naGetChildIndexBinary(((NATreeBaseNode*)leaf)->parent, ((NATreeBaseNode*)leaf))) != NA_TREE_NODE_CHILD_LEAF)
       naError("naIterateTreeWithInfo", "Result should be a leaf");
   #endif
   naSetTreeIteratorCurLeaf(iter, leaf);
@@ -87,9 +87,6 @@ NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* 
 
 
 
-// This function searches for the given key and returns the node which is
-// closes to it. The result can be a node or a leaf. And only if the leaf
-// truely stores the given key, the keyleaffound parameter is set to NA_TRUE.
 NA_HDEF NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABool* keyleaffound, NAInt* leafindx){
   const NATree* tree;
   #ifndef NDEBUG
@@ -114,19 +111,19 @@ NA_HDEF NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABo
   // Move the iterator to the topmost inner node which contains the given key.
   if(curnode){
     #ifndef NDEBUG
-      NAInt testchildindx = tree->config->nodeChildIndexGetter(curnode->parent, curnode);
+      NAInt testchildindx = tree->config->childIndexGetter(curnode->parent, curnode);
       if(naGetNodeChildType(curnode->parent, testchildindx) != NA_TREE_NODE_CHILD_LEAF)
         naError("naIterateTree", "current node is not a leaf");
     #endif
-    topnode = tree->config->nodeBubbleLocator(curnode->parent, key);
+    topnode = tree->config->bubbleLocator(curnode->parent, key);
   }else{
     topnode = tree->root;
   }
   
   // Search for the leaf containing key.
-  NATreeNode* retnode = tree->config->nodeCaptureLocator(topnode, key, keyleaffound, leafindx);
+  NATreeNode* retnode = tree->config->captureLocator(topnode, key, keyleaffound, leafindx);
   #ifndef NDEBUG
-    if(((NATreeBaseNode*)retnode)->parent && naGetNodeChildType(((NATreeBaseNode*)retnode)->parent, naGetNodeChildIndexBinary(((NATreeBaseNode*)retnode)->parent, (NATreeBaseNode*)retnode)) != NA_TREE_NODE_CHILD_NODE)
+    if(((NATreeBaseNode*)retnode)->parent && naGetNodeChildType(((NATreeBaseNode*)retnode)->parent, naGetChildIndexBinary(((NATreeBaseNode*)retnode)->parent, (NATreeBaseNode*)retnode)) != NA_TREE_NODE_CHILD_NODE)
       naError("naLocateTreeNode", "Result should be a node");
   #endif
   return retnode;
@@ -141,7 +138,7 @@ NA_DEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content
   NATree* tree = (NATree*)naGetPtrMutable(&(iter->tree));
 
   if(keyleaffound && !replace){
-    naSetTreeIteratorCurLeaf(iter, (NATreeLeaf*)(tree->config->nodeChildGetter(node, childindx)));
+    naSetTreeIteratorCurLeaf(iter, (NATreeLeaf*)(tree->config->childGetter(node, childindx)));
     return NA_FALSE;
   }
 
@@ -150,8 +147,8 @@ NA_DEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content
 
   if(keyleaffound){
     // We need to replace this node
-    NATreeLeaf* oldleaf = (NATreeLeaf*)(tree->config->nodeChildGetter(node, childindx));
-    tree->config->nodeChildAdder(((NATreeBaseNode*)node)->parent, (NATreeBaseNode*)leaf, childindx, NA_TREE_NODE_CHILD_LEAF);
+    NATreeLeaf* oldleaf = (NATreeLeaf*)(tree->config->childGetter(node, childindx));
+    tree->config->childSetter(((NATreeBaseNode*)node)->parent, (NATreeBaseNode*)leaf, childindx, NA_TREE_NODE_CHILD_LEAF);
     tree->config->leafCoreDestructor(tree, oldleaf);
   }else{
     if(!node){
@@ -159,7 +156,7 @@ NA_DEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content
       NATreeNode* root = tree->config->nodeCoreConstructor(tree, key);
       ((NATreeBaseNode*)root)->parent = NA_NULL;
       tree->root = root;
-      tree->config->nodeChildAdder(root, (NATreeBaseNode*)leaf, tree->config->nodeChildKeyIndexGetter(root, key), NA_TREE_NODE_CHILD_LEAF);
+      tree->config->childSetter(root, (NATreeBaseNode*)leaf, tree->config->childKeyIndexGetter(root, key), NA_TREE_NODE_CHILD_LEAF);
     }else{
       NANodeChildType childtype = naGetNodeChildType(node, childindx);
       if(childtype == NA_TREE_NODE_CHILD_LEAF){
@@ -171,7 +168,7 @@ NA_DEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content
             naError("naAddTreeConst", "Child should not be a node");
         #endif
         // We need to add the new leaf to this node
-        tree->config->nodeChildAdder((NATreeNode*)node, (NATreeBaseNode*)leaf, childindx, NA_TREE_NODE_CHILD_LEAF);
+        tree->config->childSetter((NATreeNode*)node, (NATreeBaseNode*)leaf, childindx, NA_TREE_NODE_CHILD_LEAF);
       }
     }
   }
@@ -202,7 +199,7 @@ NA_DEF void naRemoveTreeCur(NATreeIterator* iter, NABool advance){
   NATree* tree = (NATree*)naGetPtrMutable(&(iter->tree));
   NATreeLeaf* curleaf = iter->leaf;
   if(advance){naIterateTree(iter);}else{naIterateTreeBack(iter);}
-  tree->config->nodeChildRemover(tree, (NATreeBaseNode*)curleaf);
+  tree->config->childRemover(tree, (NATreeBaseNode*)curleaf);
   tree->config->leafCoreDestructor(tree, curleaf);
 }
 
