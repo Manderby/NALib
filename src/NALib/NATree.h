@@ -112,20 +112,20 @@ typedef struct NATreeIterator NATreeIterator;
 // If you try to change a configuration after it has been used for at least
 // one tree, you will get a warning if NDEBUG is undefined.
 
-NA_API NATreeConfiguration* naCreateTreeConfiguration(NAInt flags);
-NA_API void naReleaseTreeConfiguration(NATreeConfiguration* config);
+NA_API  NATreeConfiguration* naCreateTreeConfiguration(NAInt flags);
+NA_IAPI void naReleaseTreeConfiguration(NATreeConfiguration* config);
 
-NA_API void naSetTreeConfigurationTreeCallbacks(
+NA_IAPI void naSetTreeConfigurationTreeCallbacks(
   NATreeConfiguration*       config,
   NATreeContructorCallback   treeconstructor,
   NATreeDestructorCallback   treedestructor);
 
-NA_API void naSetTreeConfigurationLeafCallbacks(
+NA_IAPI void naSetTreeConfigurationLeafCallbacks(
   NATreeConfiguration*       config,
   NATreeLeafConstructor      leafconstructor,
   NATreeLeafDestructor       leafdestructor);
 
-NA_API void naSetTreeConfigurationNodeCallbacks(
+NA_IAPI void naSetTreeConfigurationNodeCallbacks(
   NATreeConfiguration*       config,
   NATreeNodeConstructor      nodeconstructor,
   NATreeNodeDestructor       nodedestructor);
@@ -135,10 +135,10 @@ NA_API void naSetTreeConfigurationNodeCallbacks(
 // ////////////////////
 // NATree
 
-NA_API NATree* naInitTree(NATree* tree, NATreeConfiguration* config);
+NA_IAPI NATree* naInitTree(NATree* tree, NATreeConfiguration* config);
 //NA_API NATree* naInitTreeCopy(NATree* dsttree, NATree* srctree);
-NA_API void naEmptyTree(NATree* tree);
-NA_API void naClearTree();
+NA_IAPI void naEmptyTree(NATree* tree);
+NA_IAPI void naClearTree();
 
 
 
@@ -205,7 +205,6 @@ NA_IAPI NABool naAddTreeMutable( NATreeIterator* iter,
                                      const void* key,
                                            void* content,
                                           NABool replace);
-
 
 // /////////////////////////////////
 // Removes elements.

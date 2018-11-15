@@ -3,9 +3,8 @@
 // Full license notice at the bottom.
 
 #include "NATree.h"
+#include "NATreeBinary.h"
 
-
-#define NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE 0x01
 
 
 NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
@@ -24,8 +23,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->childIndexGetter        = naGetChildIndexBinary;
     config->childKeyIndexGetter     = naGetChildKeyIndexBinary;
     config->childGetter             = naGetChildBinary;
-    config->childSetter             = naSetChildBinary;
-    config->childRemover            = naRemoveChildBinary;
+    config->childAdder              = naAddChildBinary;
+    config->leafRemover             = naRemoveLeafBinary;
     config->leafSplitter            = naSplitLeafBinary;
     config->leafKeyGetter           = naGetLeafKeyBinary;
     config->leafDataGetter          = naGetLeafDataBinary;
@@ -33,59 +32,6 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   return config;
 }
 
-
-
-NA_HDEF void naDeallocConfiguration(NATreeConfiguration* config){
-  naFree(config);
-}
-
-
-
-NA_DEF void naReleaseTreeConfiguration(NATreeConfiguration* config){
-  naReleaseRefCount(&(config->refcount), &(config->refcount), (NAMutator)naDeallocConfiguration);
-}
-
-
-
-NA_HDEF NATreeConfiguration* naRetainTreeConfiguration(NATreeConfiguration* config){
-  #ifndef NDEBUG
-    config->debugflags |= NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE;
-  #endif
-  return (NATreeConfiguration*)naRetainRefCount(&(config->refcount));
-}
-
-
-
-NA_API void naSetTreeConfigurationTreeCallbacks(NATreeConfiguration* config, NATreeContructorCallback treeConstructor, NATreeDestructorCallback  treeDestructor){
-  #ifndef NDEBUG
-    if(config->debugflags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
-      naError("naSetTreeConfigurationTreeCallbacks", "Configuration already used in a tree. Mayor problems may occur in the future");
-  #endif
-  config->treeConstructor = treeConstructor;
-  config->treeDestructor = treeDestructor;
-}
-
-
-
-NA_API void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NATreeLeafConstructor leafConstructor, NATreeLeafDestructor leafDestructor){
-  #ifndef NDEBUG
-    if(config->debugflags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
-      naError("naSetTreeConfigurationLeafCallbacks", "Configuration already used in a tree. Mayor problems may occur in the future");
-  #endif
-  config->leafConstructor = leafConstructor;
-  config->leafDestructor = leafDestructor;
-}
-
-
-
-NA_API void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NATreeNodeConstructor nodeconstructor, NATreeNodeDestructor nodedestructor){
-  #ifndef NDEBUG
-    if(config->debugflags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
-      naError("naSetTreeConfigurationNodeCallbacks", "Configuration already used in a tree. Mayor problems may occur in the future");
-  #endif
-  config->nodeConstructor = nodeconstructor;
-  config->nodeDestructor = nodedestructor;
-}
 
 
 // Copyright (c) NALib, Tobias Stamm

@@ -3,7 +3,10 @@
 // Full license notice at the bottom.
 
 #include "NATree.h"
+#include "NATreeBinary.h"
 #include "NACoord.h"
+
+
 
 struct NATreeBinaryNode{
   NATreeNode node;
@@ -39,6 +42,23 @@ NA_HIDEF NAInt naGetKeyIndexBinary(const void* basekey, const void* key){
 
 NA_HIDEF NABool naTestNodeChildsBinary(NATreeNode* node){
   return naIsNodeChildTypeValid(naGetNodeChildType(node, 0)) || naIsNodeChildTypeValid(naGetNodeChildType(node, 1));
+}
+
+
+
+NA_HDEF void naRemoveNodeBinary(NATree* tree, NATreeNode* node){
+  NATreeNode* parent = ((NATreeBaseNode*)node)->parent;
+  if(!parent){
+    tree->root = NA_NULL;
+  }else{
+    NAInt childindx = naGetChildIndexBinary(parent, (NATreeBaseNode*)node);
+    naSetNodeChildType(parent, childindx, NA_TREE_NODE_CHILD_NULL);
+    ((NATreeBinaryNode*)parent)->childs[childindx] = NA_NULL;
+    if(!naTestNodeChildsBinary(parent)){
+    naRemoveNodeBinary(tree, parent);
+    }
+  }
+  naDestructTreeNodeBinary(tree, node);
 }
 
 
@@ -213,7 +233,7 @@ NA_HDEF NATreeBaseNode* naGetChildBinary(NATreeNode* parent, NAInt childindx){
 
 
 
-NA_HDEF void naSetChildBinary(NATreeNode* parent, NATreeBaseNode* child, NAInt childindx, NANodeChildType childtype){
+NA_HDEF void naAddChildBinary(NATreeNode* parent, NATreeBaseNode* child, NAInt childindx, NANodeChildType childtype){
   NATreeBinaryNode* binparent = (NATreeBinaryNode*)parent; 
   #ifndef NDEBUG
     if(!naIsNodeChildTypeValid(childtype))
@@ -230,23 +250,15 @@ NA_HDEF void naSetChildBinary(NATreeNode* parent, NATreeBaseNode* child, NAInt c
 
 
 
-NA_HDEF void naRemoveChildBinary(NATree* tree, NATreeBaseNode* child){
-  #ifndef NDEBUG
-    if(!child)
-      naError("naRemoveChildBinary", "Child should not be Null");
-  #endif
-  NATreeNode* parent = child->parent;
-  if(!parent){
-    tree->root = NA_NULL;
-  }else{
-    NAInt childindx = naGetChildIndexBinary(parent, child);
-    naSetNodeChildType(parent, childindx, NA_TREE_NODE_CHILD_NULL);
-    ((NATreeBinaryNode*)parent)->childs[childindx] = NA_NULL;
-    if(!naTestNodeChildsBinary(parent)){
-      naRemoveChildBinary(tree, (NATreeBaseNode*)parent);
-      naDestructTreeNodeBinary(tree, parent);
-    }
+NA_HDEF void naRemoveLeafBinary(NATree* tree, NATreeLeaf* leaf){
+  NATreeNode* parent = ((NATreeBaseNode*)leaf)->parent;
+  NAInt childindx = naGetChildIndexBinary(parent, (NATreeBaseNode*)leaf);
+  naSetNodeChildType(parent, childindx, NA_TREE_NODE_CHILD_NULL);
+  ((NATreeBinaryNode*)parent)->childs[childindx] = NA_NULL;
+  if(!naTestNodeChildsBinary(parent)){
+    naRemoveNodeBinary(tree, parent);
   }
+  naDestructTreeLeafBinary(tree, leaf);
 }
 
 
@@ -268,9 +280,9 @@ NA_HDEF void naSplitLeafBinary(NATree* tree, NATreeNode* grandparent, NAInt chil
     right = (NATreeBaseNode*)sibling;
   }
   NATreeBinaryNode* parent = (NATreeBinaryNode*)naConstructTreeNodeBinary(tree, &(((NATreeBinaryLeaf*)right)->key));
-  naSetChildBinary((NATreeNode*)parent, left, 0, NA_TREE_NODE_CHILD_LEAF);
-  naSetChildBinary((NATreeNode*)parent, right, 1, NA_TREE_NODE_CHILD_LEAF);
-  naSetChildBinary(grandparent, (NATreeBaseNode*)parent, childindx, NA_TREE_NODE_CHILD_NODE);
+  naAddChildBinary((NATreeNode*)parent, left, 0, NA_TREE_NODE_CHILD_LEAF);
+  naAddChildBinary((NATreeNode*)parent, right, 1, NA_TREE_NODE_CHILD_LEAF);
+  naAddChildBinary(grandparent, (NATreeBaseNode*)parent, childindx, NA_TREE_NODE_CHILD_NODE);
 }
 
 

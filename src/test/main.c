@@ -92,7 +92,7 @@ void testTree(){
 //    double key = (int)(naUniformRandZE() * 10000.) / 10000.;
 //    double key = (double)i / TESTSIZE;
 //    printf("%f\n", key);
-    naAddTreeConst(&iter, &key, NA_NULL, NA_FALSE);
+    naAddTreeConst(&iter, &key, NA_NULL, NA_TRUE);
   }
   naClearTreeIterator(&iter);
   t2 = naMakeDateTimeNow();
@@ -123,7 +123,7 @@ void testTree(){
   for(i=0; i<TESTSIZE; i++){
     double key = (int)(naUniformRandZE() * 10000.) / 10000.;
     if(i%5 != 0){
-      naAddTreeConst(&iter, &key, NA_NULL, NA_FALSE);
+      naAddTreeConst(&iter, &key, NA_NULL, NA_TRUE);
     }else{
       NABool found = naLocateTree(&iter, &key);
       if(found){naRemoveTreeCur(&iter, NA_FALSE);}
