@@ -197,11 +197,11 @@ NA_IAPI void*       naGetTreeCurMutable(NATreeIterator* iter);
 // case, NA_TRUE is returned. The iterator will afterwards always point at the
 // tree leaf with the given key, no matter if it is the replaced content or
 // the existing content.
-NA_API NABool naAddTreeConst(    NATreeIterator* iter,
+NA_IAPI NABool naAddTreeConst(   NATreeIterator* iter,
                                      const void* key,
                                      const void* content,
                                           NABool replace);
-NA_API NABool naAddTreeMutable(  NATreeIterator* iter,
+NA_IAPI NABool naAddTreeMutable( NATreeIterator* iter,
                                      const void* key,
                                            void* content,
                                           NABool replace);
@@ -214,7 +214,7 @@ NA_API NABool naAddTreeMutable(  NATreeIterator* iter,
 // element has been removed. If advance is NA_FALSE, the iterator will be
 // moved to the previous element. If advance is NA_TRUE, the iterator will
 // be moved to the next element.
-NA_API void naRemoveTreeCur(NATreeIterator* iter, NABool advance);
+NA_IAPI void naRemoveTreeCur(NATreeIterator* iter, NABool advance);
 
 
 

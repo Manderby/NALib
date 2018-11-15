@@ -135,7 +135,8 @@ NA_HIAPI NANodeChildType naGetNodeType(const NATree* tree, NATreeBaseNode* node)
 NA_HAPI NATreeConfiguration* naRetainTreeConfiguration(NATreeConfiguration* config);
 
 // Iterator APIs and inline implementation thereof
-NA_HDEF NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABool* keyleaffound, NAInt* leafindx);
+NA_HAPI NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABool* keyleaffound, NAInt* leafindx);
+NA_HAPI NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace);
 NA_HIAPI void naSetTreeIteratorCurLeaf(NATreeIterator* iter, NATreeLeaf* newleaf);
 #include "NATreeIteratorII.h"
 

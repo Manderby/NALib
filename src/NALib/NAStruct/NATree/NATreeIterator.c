@@ -5,16 +5,10 @@
 #include "NATree.h"
 
 
-// Prototypes
-NA_HIAPI NATreeLeaf* naIterateTreeCapture(const NATree* tree, NATreeNode* curnode, NAInt previndx, NATreeIterationInfo* info);
-NA_HAPI  NATreeLeaf* naIterateTreeBubble(const NATree* tree, NATreeBaseNode* curnode, NATreeIterationInfo* info);
-
-
-
 // This function expects a parent node and searches for the next available
 // child node after the given previndx. Works recursively until either no
 // valid child is found or a leaf is returned
-NA_HIDEF NATreeLeaf* naIterateTreeCapture(const NATree* tree, NATreeNode* parent, NAInt previndx, NATreeIterationInfo* info){
+NA_HDEF NATreeLeaf* naIterateTreeCapture(const NATree* tree, NATreeNode* parent, NAInt previndx, NATreeIterationInfo* info){
   NAInt indx = previndx + info->step;
   while(indx != info->breakindx){
     NANodeChildType childtype = naGetNodeChildType(parent, indx);
@@ -130,7 +124,7 @@ NA_HDEF NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABo
 
 
 
-NA_DEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace){
+NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace){
   NABool keyleaffound;
   NAInt childindx;
   NATreeNode* node = naLocateTreeNode(iter, key, &keyleaffound, &childindx);
@@ -174,33 +168,6 @@ NA_DEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content
   return NA_TRUE;
 }
 
-
-
-NA_DEF NABool naAddTreeConst(NATreeIterator* iter, const void* key, const void* content, NABool replace){
-  return naAddTreeLeaf(iter, key, naMakePtrWithDataConst(content), replace);
-}
-
-
-
-NA_DEF NABool naAddTreeMutable(NATreeIterator* iter, const void* key, void* content, NABool replace){
-  return naAddTreeLeaf(iter, key, naMakePtrWithDataMutable(content), replace);
-}
-
-
-
-NA_DEF void naRemoveTreeCur(NATreeIterator* iter, NABool advance){
-  #ifndef NDEBUG
-    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
-      naError("naLocateTree", "This iterator has been cleared. You need to make it anew.");
-    if(!iter->leaf)
-      naError("naLocateTree", "Iterator is not at a leaf.");
-  #endif
-  NATree* tree = (NATree*)naGetPtrMutable(&(iter->tree));
-  NATreeLeaf* curleaf = iter->leaf;
-  if(advance){naIterateTree(iter);}else{naIterateTreeBack(iter);}
-  tree->config->childRemover(tree, (NATreeBaseNode*)curleaf);
-  tree->config->leafCoreDestructor(tree, curleaf);
-}
 
 
 // Copyright (c) NALib, Tobias Stamm
