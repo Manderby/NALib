@@ -79,7 +79,7 @@ void testHeap(){
 
 
 void testTree(){
-  NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_DOUBLE | NA_TREE_ASSUME_WELL_BEHAVED_ACCESS);
+  NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_DOUBLE);
   NATree tree;
   naInitTree(&tree, config); 
   NADateTime t1, t2;
@@ -88,8 +88,8 @@ void testTree(){
   t1 = naMakeDateTimeNow();
   iter = naMakeTreeModifier(&tree);
   for(int i=0; i<TESTSIZE; i++){
-    double key = naUniformRandZE();
-//    double key = (int)(naUniformRandZE() * 10000.) / 10000.;
+//    double key = naUniformRandZE();
+    double key = (int)(naUniformRandZE() * 10000.) / 10000.;
 //    double key = (double)i / TESTSIZE;
 //    printf("%f\n", key);
     naAddTreeConst(&iter, &key, NA_NULL, NA_TRUE);
@@ -102,12 +102,12 @@ void testTree(){
   iter = naMakeTreeAccessor(&tree);
   for(int i=0; i<TESTSIZE; i++){
 //    double key = naUniformRandZE();
-//    double key = (int)(naUniformRandZE() * 10000.) / 10000.;
+    double key = (int)(naUniformRandZE() * 10000.) / 10000.;
 //    double key = (double)i / TESTSIZE;
-    double key = (i % 10000) / 10000.;
+//    double key = (i % 10000) / 10000.;
 //    printf("%f\n", key);
 //    naAddTreeConst(&iter, &key, NA_NULL, NA_TRUE);
-    naLocateTree(&iter, &key);
+    naLocateTree(&iter, &key, NA_FALSE);
   }
   naClearTreeIterator(&iter);
   t2 = naMakeDateTimeNow();
@@ -140,7 +140,7 @@ void testTree(){
     if(i%5 != 0){
       naAddTreeConst(&iter, &key, NA_NULL, NA_TRUE);
     }else{
-      NABool found = naLocateTree(&iter, &key);
+      NABool found = naLocateTree(&iter, &key, NA_FALSE);
       if(found){naRemoveTreeCur(&iter, NA_FALSE);}
     }
   }

@@ -82,12 +82,6 @@ NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NA
 
 
 
-NA_IDEF NABool naAssumeTreeWellBehavedAccess(const NATree* tree){
-  return naTestFlagi(tree->config->flags, NA_TREE_ASSUME_WELL_BEHAVED_ACCESS);
-}
-
-
-
 // /////////////////////////////////////
 // Tree
 // /////////////////////////////////////
@@ -220,11 +214,11 @@ NA_IDEF void naClearTreeIterator(NATreeIterator* iter){
 
 
 
-NA_IDEF NABool naLocateTree(NATreeIterator* iter, const void* key){
+NA_IDEF NABool naLocateTree(NATreeIterator* iter, const void* key, NABool assumeclose){
   NABool keyleaffound;
   NAInt childindx;  // unused.
   const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
-  NATreeNode* node = naLocateTreeNode(iter, key, &keyleaffound, &childindx, naAssumeTreeWellBehavedAccess(tree));
+  NATreeNode* node = naLocateTreeNode(iter, key, &keyleaffound, &childindx, assumeclose);
 
   if(keyleaffound){
     naSetTreeIteratorCurLeaf(iter, (NATreeLeaf*)tree->config->childGetter(node, childindx));

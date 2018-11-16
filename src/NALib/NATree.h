@@ -93,8 +93,9 @@ typedef void (*NATreeLeafDestructor)(   NAPtr leafdata,
 
 
 // Flags for NATreeConfiguration
+//
+// KEY_DOUBLE           Set this flag for your keys to have the double type.
 #define NA_TREE_KEY_DOUBLE 0x00
-#define NA_TREE_ASSUME_WELL_BEHAVED_ACCESS 0x10
 
 
 typedef struct NATreeConfiguration NATreeConfiguration;
@@ -174,7 +175,13 @@ NA_IAPI void naClearTreeIterator(NATreeIterator* iter);
 // Moves the iterator to the leaf containing the given key. If such a leaf is
 // not found in the tree, NA_FALSE ist returned and iter returns to the initial
 // state again.
-NA_IAPI NABool naLocateTree(NATreeIterator* iter, const void* key);
+// The assumeclose parameter indicates that the desired key is expected to be 
+// in the neighborhood of the current location. Do not set this flag if you
+// access elements more randomly. The wrong value can make quite a difference
+// in performance. Test it out!
+NA_IAPI NABool naLocateTree(  NATreeIterator* iter,
+                                  const void* key,
+                                       NABool assumeclose);
 
 // /////////////////////////////////
 // Iterating
