@@ -10,8 +10,9 @@
 NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   NATreeConfiguration* config = naAlloc(NATreeConfiguration);
   naNulln(config, sizeof(NATreeConfiguration));
+  config->flags = flags;
   naInitRefCount(&(config->refcount));
-  if(flags == 0){
+//  if(flags == 0){
     config->childpernode = 2;
     config->keyIndexGetter          = naGetKeyIndexBinary;
     config->keyEqualer              = naEqualKeyBinary;
@@ -34,7 +35,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafSplitter            = naSplitLeafBinary;
     config->leafKeyGetter           = naGetLeafKeyBinary;
     config->leafDataGetter          = naGetLeafDataBinary;
-  }
+//  }
   return config;
 }
 

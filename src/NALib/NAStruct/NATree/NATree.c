@@ -4,6 +4,9 @@
 
 #include "NATree.h"
 
+NAInt capturecount = 0; 
+NAInt bubblecount = 0; 
+
 
 // Prototypes
 NA_HIAPI NANodeChildType naGetNodeType(const NATree* tree, NATreeBaseNode* node);
@@ -83,7 +86,7 @@ NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* 
 
 
 
-NA_HDEF NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABool* keyleaffound, NAInt* leafindx){
+NA_HDEF NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABool* keyleaffound, NAInt* leafindx, NABool usebubble){
   const NATree* tree;
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
@@ -105,7 +108,7 @@ NA_HDEF NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABo
   NATreeNode* topnode;
   
   // Move the iterator to the topmost inner node which contains the given key.
-  if(curnode){
+  if(usebubble && curnode){
     #ifndef NDEBUG
       if(naGetNodeType(tree, curnode) != NA_TREE_NODE_CHILD_LEAF)
         naError("naIterateTree", "current node is not a leaf");
@@ -129,7 +132,13 @@ NA_HDEF NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABo
 NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace){
   NABool keyleaffound;
   NAInt childindx;
-  NATreeNode* node = naLocateTreeNode(iter, key, &keyleaffound, &childindx);
+  #ifndef NDEBUG
+    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+      naError("naAddTreeLeaf", "This iterator has been cleared. You need to make it anew.");
+  #endif
+  // We do not use bubbling when inserting as there is almost never a benefit
+  // from it. Even worse, it performs mostly worse.
+  NATreeNode* node = naLocateTreeNode(iter, key, &keyleaffound, &childindx, NA_FALSE);
   NATree* tree = (NATree*)naGetPtrMutable(&(iter->tree));
 
   if(keyleaffound && !replace){

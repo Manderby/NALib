@@ -79,7 +79,7 @@ void testHeap(){
 
 
 void testTree(){
-  NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_DOUBLE);
+  NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_DOUBLE | NA_TREE_ASSUME_WELL_BEHAVED_ACCESS);
   NATree tree;
   naInitTree(&tree, config); 
   NADateTime t1, t2;
@@ -97,6 +97,21 @@ void testTree(){
   naClearTreeIterator(&iter);
   t2 = naMakeDateTimeNow();
   printf("Tree Insert: %f\n", naGetDateTimeDifference(&t2, &t1));
+
+  t1 = naMakeDateTimeNow();
+  iter = naMakeTreeAccessor(&tree);
+  for(int i=0; i<TESTSIZE; i++){
+//    double key = naUniformRandZE();
+//    double key = (int)(naUniformRandZE() * 10000.) / 10000.;
+//    double key = (double)i / TESTSIZE;
+    double key = (i % 10000) / 10000.;
+//    printf("%f\n", key);
+//    naAddTreeConst(&iter, &key, NA_NULL, NA_TRUE);
+    naLocateTree(&iter, &key);
+  }
+  naClearTreeIterator(&iter);
+  t2 = naMakeDateTimeNow();
+  printf("Tree Locate: %f\n", naGetDateTimeDifference(&t2, &t1));
 
 //  double prevkey = -1.;
   t1 = naMakeDateTimeNow();
@@ -132,6 +147,8 @@ void testTree(){
   naClearTreeIterator(&iter);
   t2 = naMakeDateTimeNow();
   printf("Tree Insert/Remove: %f\n", naGetDateTimeDifference(&t2, &t1));
+
+  printf("Bubble/Capture: %d, %d\n", (int)bubblecount, (int)capturecount);
 
   naClearTree(&tree);
   naReleaseTreeConfiguration(config);

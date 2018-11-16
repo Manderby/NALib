@@ -93,7 +93,8 @@ typedef void (*NATreeLeafDestructor)(   NAPtr leafdata,
 
 
 // Flags for NATreeConfiguration
-#define NA_TREE_KEY_DOUBLE 0
+#define NA_TREE_KEY_DOUBLE 0x00
+#define NA_TREE_ASSUME_WELL_BEHAVED_ACCESS 0x10
 
 
 typedef struct NATreeConfiguration NATreeConfiguration;
