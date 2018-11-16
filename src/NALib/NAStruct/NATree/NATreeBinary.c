@@ -116,6 +116,10 @@ NA_HDEF NATreeNode* naConstructTreeNodeBinary(NATree* tree, const void* key){
 
 
 NA_HDEF void naDestructTreeNodeBinary(NATree* tree, NATreeNode* node){
+  #ifndef NDEBUG
+    if(!node)
+      naCrash("naDestructTreeNodeBinary", "node shall not be Null");
+  #endif
   NATreeBinaryNode* binnode = (NATreeBinaryNode*)node;
   naDestructTreeChildBinary(tree, binnode, 0);
   naDestructTreeChildBinary(tree, binnode, 1);
@@ -141,6 +145,10 @@ NA_HDEF NATreeLeaf* naConstructTreeLeafBinary(NATree* tree, const void* key, NAP
 
 
 NA_HDEF void naDestructTreeLeafBinary(NATree* tree, NATreeLeaf* leaf){
+  #ifndef NDEBUG
+    if(!leaf)
+      naCrash("naDestructTreeLeafBinary", "leaf shall not be Null");
+  #endif
   NATreeBinaryLeaf* binleaf = (NATreeBinaryLeaf*)leaf;
 
   naDestructLeafData(tree, binleaf->data);
@@ -151,7 +159,6 @@ NA_HDEF void naDestructTreeLeafBinary(NATree* tree, NATreeLeaf* leaf){
 
 
 NA_HDEF NATreeNode* naLocateBubbleBinaryWithLimits(const NATree* tree, NATreeNode* node, const void* key, const void* leftlimit, const void* rightlimit, NATreeBaseNode* prevnode){
-  bubblecount++;
   #ifndef NDEBUG
     if(node == NA_NULL)
       naError("naLocateBubbleBinaryWithLimits", "node should not be null");
@@ -192,8 +199,6 @@ NA_HDEF NATreeNode* naLocateCaptureBinary(const NATree* tree, NATreeNode* node, 
     if(!node)
       naError("naLocateCaptureBinary", "node must not be Null");
   #endif
-  
-  capturecount++;
   
   *keyleaffound = NA_FALSE;
   NATreeBinaryNode* binnode = (NATreeBinaryNode*)(node);

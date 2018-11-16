@@ -88,7 +88,7 @@ void testTree(){
   t1 = naMakeDateTimeNow();
   iter = naMakeTreeModifier(&tree);
   for(int i=0; i<TESTSIZE; i++){
-    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE) % 10000;
+    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
 //    double key = naUniformRandZE();
 //    double key = (int)(naUniformRandZE() * 10000.) / 10000.;
 //    double key = (double)i / TESTSIZE;
@@ -102,7 +102,7 @@ void testTree(){
   t1 = naMakeDateTimeNow();
   iter = naMakeTreeAccessor(&tree);
   for(int i=0; i<TESTSIZE; i++){
-    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE) % 10000;
+    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
 //    double key = naUniformRandZE();
 //    double key = (int)(naUniformRandZE() * 10000.) / 10000.;
 //    double key = (double)i / TESTSIZE;
@@ -159,8 +159,6 @@ void testTree(){
   naClearTreeIterator(&iter);
   t2 = naMakeDateTimeNow();
   printf("Tree Insert/Remove: %f\n", naGetDateTimeDifference(&t2, &t1));
-
-  printf("Bubble/Capture: %d, %d\n", (int)bubblecount, (int)capturecount);
 
   naClearTree(&tree);
   naReleaseTreeConfiguration(config);

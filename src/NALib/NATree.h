@@ -94,11 +94,12 @@ typedef void (*NATreeLeafDestructor)(   NAPtr leafdata,
 
 // Flags for NATreeConfiguration
 //
-// KEY_DOUBLE           Set this flag for your keys to have the double type.
-// KEY_NAINT            Set this flag for your keys to have the NAInt type.
-#define NA_TREE_KEY_DOUBLE 0x00
-#define NA_TREE_KEY_NAINT  0x01
-
+// KEY_DOUBLE    Set this flag for your keys to have the double type.
+// KEY_NAINT     Set this flag for your keys to have the NAInt type.
+// BALANCE_AVL   Makes the tree a self-balancing tree using the AVL method
+#define NA_TREE_KEY_DOUBLE  0x00
+#define NA_TREE_KEY_NAINT   0x01
+#define NA_TREE_BALANCE_AVL 0x10
 
 typedef struct NATreeConfiguration NATreeConfiguration;
 typedef struct NATree NATree;

@@ -4,10 +4,6 @@
 
 #include "NATree.h"
 
-NAInt capturecount = 0; 
-NAInt bubblecount = 0; 
-
-
 // Prototypes
 NA_HIAPI NANodeChildType naGetNodeType(const NATree* tree, NATreeBaseNode* node);
 

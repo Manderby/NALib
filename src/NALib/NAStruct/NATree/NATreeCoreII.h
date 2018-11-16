@@ -8,7 +8,7 @@
 
 
 
-#define NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE 0x01
+#define NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE 0x8000
 
 #define NA_TREE_ITERATOR_MODIFIER 0x01
 #define NA_TREE_ITERATOR_CLEARED  0x80
@@ -42,7 +42,7 @@ NA_IDEF void naReleaseTreeConfiguration(NATreeConfiguration* config){
 
 NA_HIDEF NATreeConfiguration* naRetainTreeConfiguration(NATreeConfiguration* config){
   #ifndef NDEBUG
-    config->debugflags |= NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE;
+    config->flags |= NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE;
   #endif
   return (NATreeConfiguration*)naRetainRefCount(&(config->refcount));
 }
@@ -51,7 +51,7 @@ NA_HIDEF NATreeConfiguration* naRetainTreeConfiguration(NATreeConfiguration* con
 
 NA_IDEF void naSetTreeConfigurationTreeCallbacks(NATreeConfiguration* config, NATreeContructorCallback treeConstructor, NATreeDestructorCallback  treeDestructor){
   #ifndef NDEBUG
-    if(config->debugflags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
+    if(config->flags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
       naError("naSetTreeConfigurationTreeCallbacks", "Configuration already used in a tree. Mayor problems may occur in the future");
   #endif
   config->treeConstructor = treeConstructor;
@@ -62,7 +62,7 @@ NA_IDEF void naSetTreeConfigurationTreeCallbacks(NATreeConfiguration* config, NA
 
 NA_IDEF void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NATreeLeafConstructor leafConstructor, NATreeLeafDestructor leafDestructor){
   #ifndef NDEBUG
-    if(config->debugflags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
+    if(config->flags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
       naError("naSetTreeConfigurationLeafCallbacks", "Configuration already used in a tree. Mayor problems may occur in the future");
   #endif
   config->leafConstructor = leafConstructor;
@@ -73,7 +73,7 @@ NA_IDEF void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NA
 
 NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NATreeNodeConstructor nodeconstructor, NATreeNodeDestructor nodedestructor){
   #ifndef NDEBUG
-    if(config->debugflags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
+    if(config->flags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
       naError("naSetTreeConfigurationNodeCallbacks", "Configuration already used in a tree. Mayor problems may occur in the future");
   #endif
   config->nodeConstructor = nodeconstructor;

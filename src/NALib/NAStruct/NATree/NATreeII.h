@@ -6,9 +6,6 @@
 // Do not include this file directly! It will automatically be included when
 // including "NATree.h"
 
-extern NAInt capturecount; 
-extern NAInt bubblecount; 
-
 typedef struct NATreeBaseNode NATreeBaseNode;
 typedef struct NATreeNode NATreeNode;
 typedef struct NATreeLeaf NATreeLeaf;
@@ -114,10 +111,6 @@ struct NATreeConfiguration{
   NATreeLeafSplitter            leafSplitter;
   NATreeLeafKeyGetter           leafKeyGetter;
   NATreeLeafDataGetter          leafDataGetter;
-
-  #ifndef NDEBUG
-    NAInt                       debugflags;
-  #endif
 };
 
 struct NATreeBaseNode{
