@@ -25,10 +25,14 @@ typedef enum {
 // implement your own tree kind, you need to provide the following functions
 // and set them in naCreateTreeConfiguration.
 //
+// NAKeyIndexGetter          Returns the childindex where key would be stored
+//                           on a node with the given basekey.
+//
 // NATreeNodeCoreConstructor Creates a new node with the given key.
 // NATreeNodeCoreDestructor  Destroys the given node
 // NATreeLeafCoreConstructor Creates a new leaf with the given key and data
 // NATreeLeafCoreDestructor  Destroys the given leaf.
+//
 // NATreeBubbleLocator       Searches from the given node upwards the tree and
 //                           returns the node which is guaranteed to contain
 //                           the given key or Null if there is no root.
@@ -41,7 +45,7 @@ typedef enum {
 //                           be stored in the given parent.
 // NATreeChildGetter         Returns the Child of the given parent with the
 //                           given index.
-// NATreeLeafAdder          Sets the given child with the given type to the
+// NATreeLeafAdder           Sets the given child with the given type to the
 //                           parent at the given index.
 // NATreeLeafRemover         Removes the given leaf from the tree.
 // NATreeLeafSplitter        Expects the child ad childindx of grandparent to
@@ -49,14 +53,20 @@ typedef enum {
 //                           both that leaf and the new sibling.
 // NATreeLeafKeyGetter       Returns the key of the given leaf.
 // NATreeLeafDataGetter      Returns the data of the given leaf.
+typedef NAInt           (*NAKeyIndexGetter)(const void* basekey, const void* key);
+typedef NABool          (*NAKeyEqualer)(const void* key1, const void* key2);
+typedef void            (*NAKeyAssigner)(void* dst, const void* src);
+typedef NABool          (*NAKeyTester)(const void* leftlimit, const void* rightlimit, const void* key);
+
 typedef NATreeNode*     (*NATreeNodeCoreConstructor)(NATree* tree, const void* key);
 typedef void            (*NATreeNodeCoreDestructor)(NATree* tree, NATreeNode* node);
 typedef NATreeLeaf*     (*NATreeLeafCoreConstructor)(NATree* tree, const void* key, NAPtr data);
 typedef void            (*NATreeLeafCoreDestructor)(NATree* tree, NATreeLeaf* leaf);
-typedef NATreeNode*     (*NATreeBubbleLocator)(NATreeNode* node, const void* key);
-typedef NATreeNode*     (*NATreeCaptureLocator)(NATreeNode* node, const void* key, NABool* keyleaffound, NAInt* childindx);
+
+typedef NATreeNode*     (*NATreeBubbleLocator)(const NATree* tree, NATreeNode* node, const void* key);
+typedef NATreeNode*     (*NATreeCaptureLocator)(const NATree* tree, NATreeNode* node, const void* key, NABool* keyleaffound, NAInt* childindx);
 typedef NAInt           (*NATreeChildIndexGetter)(NATreeNode* parent, NATreeBaseNode* child);
-typedef NAInt           (*NATreeChildKeyIndexGetter)(NATreeNode* parent, const void* key);
+typedef NAInt           (*NATreeChildKeyIndexGetter)(const NATree* tree, NATreeNode* parent, const void* key);
 typedef NATreeBaseNode* (*NATreeChildGetter)(NATreeNode* parent, NAInt childindx);
 typedef void            (*NATreeLeafAdder)(NATreeNode* parent, NATreeLeaf* leaf, NAInt leafindx);
 typedef void            (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
@@ -80,10 +90,16 @@ struct NATreeConfiguration{
   
   // Core settings:
   NAInt                         childpernode;
+  NAKeyIndexGetter              keyIndexGetter;
+  NAKeyEqualer                  keyEqualer;
+  NAKeyAssigner                 keyAssigner;
+  NAKeyTester                   keyTester;
+  
   NATreeNodeCoreConstructor     nodeCoreConstructor;
   NATreeNodeCoreDestructor      nodeCoreDestructor;
   NATreeLeafCoreConstructor     leafCoreConstructor;
   NATreeLeafCoreDestructor      leafCoreDestructor;
+  
   NATreeBubbleLocator           bubbleLocator;
   NATreeCaptureLocator          captureLocator;
   NATreeChildIndexGetter        childIndexGetter;

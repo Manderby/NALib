@@ -13,6 +13,11 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   naInitRefCount(&(config->refcount));
   if(flags == 0){
     config->childpernode = 2;
+    config->keyIndexGetter          = naGetKeyIndexBinary;
+    config->keyEqualer              = naEqualKeyBinary;
+    config->keyAssigner             = naAssignKeyBinary;
+    config->keyTester               = naTestKeyBinary;
+
     config->nodeCoreConstructor     = naConstructTreeNodeBinary;
     config->nodeCoreDestructor      = naDestructTreeNodeBinary;
     config->leafCoreConstructor     = naConstructTreeLeafBinary;

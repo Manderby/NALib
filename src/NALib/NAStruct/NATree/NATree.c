@@ -110,13 +110,13 @@ NA_HDEF NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABo
       if(naGetNodeType(tree, curnode) != NA_TREE_NODE_CHILD_LEAF)
         naError("naIterateTree", "current node is not a leaf");
     #endif
-    topnode = tree->config->bubbleLocator(curnode->parent, key);
+    topnode = tree->config->bubbleLocator(tree, curnode->parent, key);
   }else{
     topnode = tree->root;
   }
   
   // Search for the leaf containing key.
-  NATreeNode* retnode = tree->config->captureLocator(topnode, key, keyleaffound, leafindx);
+  NATreeNode* retnode = tree->config->captureLocator(tree, topnode, key, keyleaffound, leafindx);
   #ifndef NDEBUG
     if(naGetNodeType(tree, (NATreeBaseNode*)retnode) != NA_TREE_NODE_CHILD_NODE)
       naError("naLocateTreeNode", "Result should be a node");
@@ -151,7 +151,7 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
       NATreeNode* root = tree->config->nodeCoreConstructor(tree, key);
       ((NATreeBaseNode*)root)->parent = NA_NULL;
       tree->root = root;
-      tree->config->leafAdder(root, leaf, tree->config->childKeyIndexGetter(root, key));
+      tree->config->leafAdder(root, leaf, tree->config->childKeyIndexGetter(tree, root, key));
     }else{
       NANodeChildType childtype = naGetNodeChildType(node, childindx);
       if(childtype == NA_TREE_NODE_CHILD_LEAF){
