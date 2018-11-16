@@ -79,7 +79,7 @@ void testHeap(){
 
 
 void testTree(){
-  NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_DOUBLE);
+  NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_NAINT);
   NATree tree;
   naInitTree(&tree, config); 
   NADateTime t1, t2;
@@ -88,8 +88,9 @@ void testTree(){
   t1 = naMakeDateTimeNow();
   iter = naMakeTreeModifier(&tree);
   for(int i=0; i<TESTSIZE; i++){
+    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE) % 10000;
 //    double key = naUniformRandZE();
-    double key = (int)(naUniformRandZE() * 10000.) / 10000.;
+//    double key = (int)(naUniformRandZE() * 10000.) / 10000.;
 //    double key = (double)i / TESTSIZE;
 //    printf("%f\n", key);
     naAddTreeConst(&iter, &key, NA_NULL, NA_TRUE);
@@ -101,8 +102,9 @@ void testTree(){
   t1 = naMakeDateTimeNow();
   iter = naMakeTreeAccessor(&tree);
   for(int i=0; i<TESTSIZE; i++){
+    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE) % 10000;
 //    double key = naUniformRandZE();
-    double key = (int)(naUniformRandZE() * 10000.) / 10000.;
+//    double key = (int)(naUniformRandZE() * 10000.) / 10000.;
 //    double key = (double)i / TESTSIZE;
 //    double key = (i % 10000) / 10000.;
 //    printf("%f\n", key);
@@ -113,11 +115,20 @@ void testTree(){
   t2 = naMakeDateTimeNow();
   printf("Tree Locate: %f\n", naGetDateTimeDifference(&t2, &t1));
 
+//  NAInt prevkey = -1.;
 //  double prevkey = -1.;
   t1 = naMakeDateTimeNow();
   iter = naMakeTreeModifier(&tree);
   int i = 0;
   while(naIterateTree(&iter)){
+//    const NAInt* key = naGetTreeCurKey(&iter);
+//    if(*key < prevkey){
+//      printf("Wrong sorting: %d: %"NA_PRIi", %"NA_PRIi"\n", i, *key, prevkey);
+//    }
+//    prevkey = *key;
+//    i++;
+//    if(i < 5){printf("%"NA_PRIi"\n", *key);}
+
 //    const double* key = naGetTreeCurKey(&iter);
 //    if(*key < prevkey){
 //      printf("Wrong sorting: %d: %f, %f\n", i, *key, prevkey);
@@ -136,7 +147,8 @@ void testTree(){
   t1 = naMakeDateTimeNow();
   iter = naMakeTreeModifier(&tree);
   for(i=0; i<TESTSIZE; i++){
-    double key = (int)(naUniformRandZE() * 10000.) / 10000.;
+    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
+//    double key = (int)(naUniformRandZE() * 10000.) / 10000.;
     if(i%5 != 0){
       naAddTreeConst(&iter, &key, NA_NULL, NA_TRUE);
     }else{

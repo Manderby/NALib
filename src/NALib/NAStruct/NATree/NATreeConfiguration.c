@@ -12,30 +12,41 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   naNulln(config, sizeof(NATreeConfiguration));
   config->flags = flags;
   naInitRefCount(&(config->refcount));
-//  if(flags == 0){
-    config->childpernode = 2;
-    config->keyIndexGetter          = naGetKeyIndexBinary;
-    config->keyEqualer              = naEqualKeyBinary;
-    config->keyAssigner             = naAssignKeyBinary;
-    config->keyTester               = naTestKeyBinary;
 
-    config->nodeCoreConstructor     = naConstructTreeNodeBinary;
-    config->nodeCoreDestructor      = naDestructTreeNodeBinary;
-    config->leafCoreConstructor     = naConstructTreeLeafBinary;
-    config->leafCoreDestructor      = naDestructTreeLeafBinary;
+  config->childpernode            = 2;
+  if(flags | NA_TREE_KEY_DOUBLE){
+    config->keyIndexGetter        = naGetKeyIndexBinaryDouble;
+    config->keyEqualer            = naEqualKeyBinaryDouble;
+    config->keyAssigner           = naAssignKeyBinaryDouble;
+    config->keyTester             = naTestKeyBinaryDouble;
+  }else if(flags | NA_TREE_KEY_NAINT){
+    config->keyIndexGetter        = naGetKeyIndexBinaryNAInt;
+    config->keyEqualer            = naEqualKeyBinaryNAInt;
+    config->keyAssigner           = naAssignKeyBinaryNAInt;
+    config->keyTester             = naTestKeyBinaryNAInt;
+  }else{
+    #ifndef NDEBUG
+      naError("naCreateTreeConfiguration", "Invalid key type in flags");
+    #endif
+  }
 
-    config->bubbleLocator           = naLocateBubbleBinary;
-    config->captureLocator          = naLocateCaptureBinary;
-    config->childIndexGetter        = naGetChildIndexBinary;
-    config->childKeyIndexGetter     = naGetChildKeyIndexBinary;
-    config->childGetter             = naGetChildBinary;
-    config->leafAdder               = naAddLeafBinary;
-    config->leafRemover             = naRemoveLeafBinary;
-    config->leafReplacer            = naReplaceLeafBinary;
-    config->leafSplitter            = naSplitLeafBinary;
-    config->leafKeyGetter           = naGetLeafKeyBinary;
-    config->leafDataGetter          = naGetLeafDataBinary;
-//  }
+  config->nodeCoreConstructor     = naConstructTreeNodeBinary;
+  config->nodeCoreDestructor      = naDestructTreeNodeBinary;
+  config->leafCoreConstructor     = naConstructTreeLeafBinary;
+  config->leafCoreDestructor      = naDestructTreeLeafBinary;
+
+  config->bubbleLocator           = naLocateBubbleBinary;
+  config->captureLocator          = naLocateCaptureBinary;
+  config->childIndexGetter        = naGetChildIndexBinary;
+  config->childKeyIndexGetter     = naGetChildKeyIndexBinary;
+  config->childGetter             = naGetChildBinary;
+  config->leafAdder               = naAddLeafBinary;
+  config->leafRemover             = naRemoveLeafBinary;
+  config->leafReplacer            = naReplaceLeafBinary;
+  config->leafSplitter            = naSplitLeafBinary;
+  config->leafKeyGetter           = naGetLeafKeyBinary;
+  config->leafDataGetter          = naGetLeafDataBinary;
+
   return config;
 }
 

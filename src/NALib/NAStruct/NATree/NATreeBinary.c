@@ -63,26 +63,32 @@ NA_HDEF void naRemoveNodeBinary(NATree* tree, NATreeNode* node){
 
 
 
-NA_HDEF NAInt naGetKeyIndexBinary(const void* basekey, const void* key){
+NA_HDEF NAInt naGetKeyIndexBinaryDouble(const void* basekey, const void* key){
   return !(*(const double*)key < *(const double*)basekey); // results in 0 or 1
 }
-
-
-
-NA_HDEF NABool naEqualKeyBinary(const void* key1, const void* key2){
+NA_HDEF NABool naEqualKeyBinaryDouble(const void* key1, const void* key2){
   return (*(const double*)key1 == *(const double*)key2);
 }
-
-
-
-NA_HDEF void naAssignKeyBinary(void* dst, const void* src){
+NA_HDEF void naAssignKeyBinaryDouble(void* dst, const void* src){
   *(double*)dst = *(const double*)src;
+}
+NA_HDEF NABool naTestKeyBinaryDouble(const void* leftlimit, const void* rightlimit, const void* key){
+  return ((*(const double*)leftlimit <= *(const double*)key) && (*(const double*)rightlimit >= *(const double*)key));
 }
 
 
 
-NA_HDEF NABool naTestKeyBinary(const void* leftlimit, const void* rightlimit, const void* key){
-  return ((*(const double*)leftlimit <= *(const double*)key) && (*(const double*)rightlimit >= *(const double*)key));
+NA_HDEF NAInt naGetKeyIndexBinaryNAInt(const void* basekey, const void* key){
+  return !(*(const NAInt*)key < *(const NAInt*)basekey); // results in 0 or 1
+}
+NA_HDEF NABool naEqualKeyBinaryNAInt(const void* key1, const void* key2){
+  return (*(const NAInt*)key1 == *(const NAInt*)key2);
+}
+NA_HDEF void naAssignKeyBinaryNAInt(void* dst, const void* src){
+  *(NAInt*)dst = *(const NAInt*)src;
+}
+NA_HDEF NABool naTestKeyBinaryNAInt(const void* leftlimit, const void* rightlimit, const void* key){
+  return ((*(const NAInt*)leftlimit <= *(const NAInt*)key) && (*(const NAInt*)rightlimit >= *(const NAInt*)key));
 }
 
 
