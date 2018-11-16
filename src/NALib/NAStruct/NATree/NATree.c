@@ -156,7 +156,7 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
       NATreeNode* root = tree->config->nodeCoreConstructor(tree, key);
       ((NATreeBaseNode*)root)->parent = NA_NULL;
       tree->root = root;
-      tree->config->leafAdder(root, leaf, tree->config->childKeyIndexGetter(tree, root, key));
+      tree->config->leafAdder(tree, root, leaf, tree->config->childKeyIndexGetter(tree, root, key));
     }else{
       NANodeChildType childtype = naGetNodeChildType(node, childindx);
       if(childtype == NA_TREE_NODE_CHILD_LEAF){
@@ -168,7 +168,7 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
             naError("naAddTreeConst", "Child should not be a node");
         #endif
         // We need to add the new leaf to this node
-        tree->config->leafAdder((NATreeNode*)node, leaf, childindx);
+        tree->config->leafAdder(tree, (NATreeNode*)node, leaf, childindx);
       }
     }
   }

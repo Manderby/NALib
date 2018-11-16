@@ -20,6 +20,14 @@ typedef enum {
 
 #define NA_TREE_NODE_CHILD_MASK 0x03
 #define NA_TREE_NODE_CHILD_AVAILABLE_MASK 0x02
+// Currently, a max of 8 childs can be stored, meaning any other flag must be
+// non-overlapping with 0x0000ffff or having a bitshift of 16 respectively.
+
+#define NA_TREE_NODE_AVL_BITSHIFT 16
+#define NA_TREE_NODE_AVL_LEFT  (0x00 << NA_TREE_NODE_AVL_BITSHIFT)
+#define NA_TREE_NODE_AVL_EQUAL (0x01 << NA_TREE_NODE_AVL_BITSHIFT)
+#define NA_TREE_NODE_AVL_RIGHT (0x02 << NA_TREE_NODE_AVL_BITSHIFT)
+#define NA_TREE_NODE_AVL_MASK  (0x03 << NA_TREE_NODE_AVL_BITSHIFT)
 
 // Callback function types for the different kind of trees. If you want to
 // implement your own tree kind, you need to provide the following functions
@@ -68,7 +76,7 @@ typedef NATreeNode*     (*NATreeCaptureLocator)(const NATree* tree, NATreeNode* 
 typedef NAInt           (*NATreeChildIndexGetter)(NATreeNode* parent, NATreeBaseNode* child);
 typedef NAInt           (*NATreeChildKeyIndexGetter)(const NATree* tree, NATreeNode* parent, const void* key);
 typedef NATreeBaseNode* (*NATreeChildGetter)(NATreeNode* parent, NAInt childindx);
-typedef void            (*NATreeLeafAdder)(NATreeNode* parent, NATreeLeaf* leaf, NAInt leafindx);
+typedef void            (*NATreeLeafAdder)(const NATree* tree, NATreeNode* parent, NATreeLeaf* leaf, NAInt leafindx);
 typedef void            (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
 typedef void            (*NATreeLeafReplacer)(NATree* tree, NATreeLeaf* leaf, NAPtr data);
 typedef void            (*NATreeLeafSplitter)(NATree* tree, NATreeNode* grandparent, NAInt leafindx, NATreeLeaf* sibling);
