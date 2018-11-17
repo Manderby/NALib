@@ -76,7 +76,7 @@ typedef NATreeNode*     (*NATreeCaptureLocator)(const NATree* tree, NATreeNode* 
 typedef NAInt           (*NATreeChildIndexGetter)(NATreeNode* parent, NATreeBaseNode* child);
 typedef NAInt           (*NATreeChildKeyIndexGetter)(const NATree* tree, NATreeNode* parent, const void* key);
 typedef NATreeBaseNode* (*NATreeChildGetter)(NATreeNode* parent, NAInt childindx);
-typedef void            (*NATreeLeafAdder)(const NATree* tree, NATreeNode* parent, NATreeLeaf* leaf, NAInt leafindx);
+typedef void            (*NATreeLeafAdder)(NATree* tree, NATreeNode* parent, NATreeLeaf* leaf, NAInt leafindx);
 typedef void            (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
 typedef void            (*NATreeLeafReplacer)(NATree* tree, NATreeLeaf* leaf, NAPtr data);
 typedef void            (*NATreeLeafSplitter)(NATree* tree, NATreeNode* grandparent, NAInt leafindx, NATreeLeaf* sibling);

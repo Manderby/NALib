@@ -32,7 +32,7 @@ NA_HAPI NATreeNode* naLocateCaptureBinary(const NATree* tree, NATreeNode* node, 
 NA_HAPI NAInt naGetChildIndexBinary(NATreeNode* parent, NATreeBaseNode* child);
 NA_HAPI NAInt naGetChildKeyIndexBinary(const NATree* tree, NATreeNode* parent, const void* key);
 NA_HAPI NATreeBaseNode* naGetChildBinary(NATreeNode* parent, NAInt childindx);
-NA_HAPI void naAddLeafBinary(const NATree* tree, NATreeNode* parent, NATreeLeaf* leaf, NAInt leafindx);
+NA_HAPI void naAddLeafBinary(NATree* tree, NATreeNode* parent, NATreeLeaf* leaf, NAInt leafindx);
 NA_HAPI void naRemoveLeafBinary(NATree* tree, NATreeLeaf* leaf);
 NA_HAPI void naReplaceLeafBinary(NATree* tree, NATreeLeaf* leaf, NAPtr data);
 NA_HAPI void naSplitLeafBinary(NATree* tree, NATreeNode* grandparent, NAInt leafindx, NATreeLeaf* sibling);
@@ -42,9 +42,8 @@ NA_HAPI NAPtr* naGetLeafDataBinary(NATreeLeaf* leaf);
 void naInitNodeAVL(NATreeBinaryNode* node);
 NAInt naGetNodeAVL(NATreeBinaryNode* node);
 void naSetNodeAVL(NATreeBinaryNode* node, NAInt balance);
-void naBalanceNodeAVL(NATreeBinaryNode* node, NAInt shift);
 void naGrowAVL(NATree* tree, NATreeBinaryNode* node, NAInt childindx);
-void naShrinkAVL(NATreeBinaryNode* node, NAInt childindx);
+void naShrinkAVL(NATree* tree, NATreeBinaryNode* node, NAInt childindx);
 
 // Copyright (c) NALib, Tobias Stamm
 //
