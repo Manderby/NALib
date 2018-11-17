@@ -161,7 +161,7 @@ void testTree(){
   t2 = naMakeDateTimeNow();
   printf("Tree Insert/Remove: %f\n", naGetDateTimeDifference(&t2, &t1));
 
-//  naClearTree(&tree);
+  naClearTree(&tree);
   naReleaseTreeConfiguration(config);
 }
 

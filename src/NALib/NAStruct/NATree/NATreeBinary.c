@@ -271,7 +271,7 @@ NA_HDEF void naAddLeafBinary(NATree* tree, NATreeNode* parent, NATreeLeaf* leaf,
   binparent->childs[leafindx] = (NATreeBaseNode*)leaf;
   ((NATreeBaseNode*)leaf)->parent = parent;
 
-  if(tree->config->flags & NA_TREE_BALANCE_AVL){naGrowAVL(tree, (NATreeBinaryNode*)parent, leafindx);}
+//  if(tree->config->flags & NA_TREE_BALANCE_AVL){naGrowAVL(tree, (NATreeBinaryNode*)parent, leafindx);}
 }
 
 
@@ -280,28 +280,28 @@ NA_HDEF void naRemoveLeafBinary(NATree* tree, NATreeLeaf* leaf){
   NATreeNode* parent = ((NATreeBaseNode*)leaf)->parent;
   NAInt leafindx = naGetChildIndexBinary(parent, (NATreeBaseNode*)leaf);
 
-//  NATreeNode* grandparent = ((NATreeBaseNode*)parent)->parent;
-//  if(grandparent){
-//    NAInt parentindx = naGetChildIndexBinary(grandparent, (NATreeBaseNode*)parent);
-//    NATreeBaseNode* sibling = ((NATreeBinaryNode*)parent)->childs[1 - leafindx];
-//    sibling->parent = grandparent;
-//    ((NATreeBinaryNode*)grandparent)->childs[parentindx] = sibling;
-//    naSetNodeChildType(grandparent, parentindx, naGetNodeChildType(parent, 1 - leafindx));
-//
-//    if(tree->config->flags & NA_TREE_BALANCE_AVL){naShrinkAVL(tree, (NATreeBinaryNode*)grandparent, parentindx);}
-//    
-//    ((NATreeBinaryNode*)parent)->childs[1 - leafindx] = NA_NULL;
-//    naSetNodeChildType(parent, 1 - leafindx, NA_TREE_NODE_CHILD_NULL);
-//    naDestructTreeNodeBinary(tree, parent);
-//  }
+  NATreeNode* grandparent = ((NATreeBaseNode*)parent)->parent;
+  if(grandparent){
+    NAInt parentindx = naGetChildIndexBinary(grandparent, (NATreeBaseNode*)parent);
+    NATreeBaseNode* sibling = ((NATreeBinaryNode*)parent)->childs[1 - leafindx];
+    if(sibling){sibling->parent = grandparent;}
+    ((NATreeBinaryNode*)grandparent)->childs[parentindx] = sibling;
+    naSetNodeChildType(grandparent, parentindx, naGetNodeChildType(parent, 1 - leafindx));
+    
+    ((NATreeBinaryNode*)parent)->childs[1 - leafindx] = NA_NULL;
+    naSetNodeChildType(parent, 1 - leafindx, NA_TREE_NODE_CHILD_NULL);
+    naDestructTreeNodeBinary(tree, parent);
+
+    if(tree->config->flags & NA_TREE_BALANCE_AVL){naShrinkAVL(tree, (NATreeBinaryNode*)grandparent, parentindx);}
+  }
 
 //  NATreeNode* newparent = ((NATreeBaseNode*)leaf)->parent;
 
-  naSetNodeChildType(parent, leafindx, NA_TREE_NODE_CHILD_NULL);
-  ((NATreeBinaryNode*)parent)->childs[leafindx] = NA_NULL;
-  naDestructTreeLeafBinary(tree, leaf);
-
-  if(tree->config->flags & NA_TREE_BALANCE_AVL){naShrinkAVL(tree, (NATreeBinaryNode*)parent, leafindx);}
+//  naSetNodeChildType(parent, leafindx, NA_TREE_NODE_CHILD_NULL);
+//  ((NATreeBinaryNode*)parent)->childs[leafindx] = NA_NULL;
+//  naDestructTreeLeafBinary(tree, leaf);
+//
+//  if(tree->config->flags & NA_TREE_BALANCE_AVL){naShrinkAVL(tree, (NATreeBinaryNode*)parent, leafindx);}
 
 //  if(!naTestNodeChildsBinary(parent)){
 //    naRemoveNodeBinary(tree, parent);
