@@ -293,20 +293,22 @@ NA_HDEF void naRemoveLeafBinary(NATree* tree, NATreeLeaf* leaf){
     naDestructTreeNodeBinary(tree, parent);
 
     if(tree->config->flags & NA_TREE_BALANCE_AVL){naShrinkAVL(tree, (NATreeBinaryNode*)grandparent, parentindx);}
+  }else{
+    if(naGetNodeChildType(parent, 1 - leafindx) == NA_TREE_NODE_CHILD_NODE){
+      tree->root = (NATreeNode*)((NATreeBinaryNode*)parent)->childs[1 - leafindx];
+      ((NATreeBinaryNode*)parent)->childs[1 - leafindx]->parent = NA_NULL;
+      ((NATreeBinaryNode*)parent)->childs[1 - leafindx] = NA_NULL;
+      naSetNodeChildType(parent, 1 - leafindx, NA_TREE_NODE_CHILD_NULL);
+      naDestructTreeNodeBinary(tree, parent);
+    }else if(naGetNodeChildType(parent, 1 - leafindx) == NA_TREE_NODE_CHILD_LEAF){
+      ((NATreeBinaryNode*)parent)->childs[leafindx] = NA_NULL;
+      naSetNodeChildType(parent, leafindx, NA_TREE_NODE_CHILD_NULL);
+      naDestructTreeLeafBinary(tree, leaf);
+    }else{
+      tree->root = NA_NULL;
+      naDestructTreeNodeBinary(tree, parent);
+    }
   }
-
-//  NATreeNode* newparent = ((NATreeBaseNode*)leaf)->parent;
-
-//  naSetNodeChildType(parent, leafindx, NA_TREE_NODE_CHILD_NULL);
-//  ((NATreeBinaryNode*)parent)->childs[leafindx] = NA_NULL;
-//  naDestructTreeLeafBinary(tree, leaf);
-//
-//  if(tree->config->flags & NA_TREE_BALANCE_AVL){naShrinkAVL(tree, (NATreeBinaryNode*)parent, leafindx);}
-
-//  if(!naTestNodeChildsBinary(parent)){
-//    naRemoveNodeBinary(tree, parent);
-//  }
-
 }
 
 
