@@ -22,5 +22,4 @@ Contribute:
 -----------
 This project has so far not been designed with a community in mind, as it has
 been used as a private engineering code collection. Therefore, be gentle and
-patient. You may send suggestions, I don't get mad if you ask. But don't
-expect me to rejoye if you bombard me.
+patient.
