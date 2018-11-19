@@ -16,6 +16,7 @@ Version 22 (first published 20XX-XXX-XX)
 ==========
 
 - Implemented NAOctTree the same way as NAQuadTree
+- Added NATree, a binary search tree.
 
 - Tweaked QuadTree implementation. Removed naSetQuadTreeInRect. Use iterators
   for that. MinLeafExponent is now a BaseLeafExponent
