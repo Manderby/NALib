@@ -13,7 +13,7 @@
 #include "NAHeap.h"
 #include "NARandom.h"
 
-#define TESTSIZE    10000
+#define TESTSIZE    1000000
 #define SUBTESTSIZE  100000.
 
 int compare(const void* a, const void* b)
@@ -90,9 +90,9 @@ void testTree(){
   iter = naMakeTreeModifier(&tree);
   for(int i=0; i<TESTSIZE; i++){
 //    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
-//    double key = naUniformRandZE();
+    double key = naUniformRandZE();
 //    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
-    double key = (double)i / TESTSIZE;
+//    double key = (double)i / TESTSIZE;
 //    printf("%f\n", key);
     naAddTreeConst(&iter, &key, NA_NULL, NA_TRUE);
   }
@@ -150,12 +150,12 @@ void testTree(){
 //    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
     double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
 //    double key = (double)i / TESTSIZE;
-//    if(i%5 != 0){
-//      naAddTreeConst(&iter, &key, NA_NULL, NA_TRUE);
-//    }else{
+    if(i%5 != 0){
+      naAddTreeConst(&iter, &key, NA_NULL, NA_TRUE);
+    }else{
       NABool found = naLocateTree(&iter, &key, NA_FALSE);
       if(found){naRemoveTreeCur(&iter, NA_FALSE);}
-//    }
+    }
   }
   naClearTreeIterator(&iter);
   t2 = naMakeDateTimeNow();
@@ -182,8 +182,8 @@ int main(void){
 
   naStartRuntime();
     testTree();
-//    testHeap();
-//    testQSort();
+    testHeap();
+    testQSort();
   naStopRuntime();
 
   #if NA_OS == NA_OS_WINDOWS
