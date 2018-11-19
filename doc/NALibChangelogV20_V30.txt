@@ -24,6 +24,7 @@ Version 22 (first published 20XX-XXX-XX)
 - Extended ValueHelpers for unsighed integers a little
 - Moved naMakeXXXPositive to NACoord and NAArray. Added naMakeRangeiAbsolute
   to NABuffer
+- Renamed naMakeNullPtr to naMakePtrNull
 
 
 Version 21 (first published 2018-Mai-27)

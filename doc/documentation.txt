@@ -176,9 +176,9 @@ D) Allocate with naNew and delete with naDelete:
 NAArray* myarray = naInitArray(naNew(NAArray));
 naDelete(myarray);
 
-E) Use an existing naCreateXXX function with naRelease:
-NABuffer* mybuffer = naCreateBuffer();
-naReleaseBuffer(mybuffer);
+E) Use an existing naCreateXXX function with naReleaseXXX:
+NAFile* myfile = naCreateFile();
+naReleaseFile(myfile);
 
 The cases listed here are usual scenarios. But in certain cases, a programmer
 might want to choose differently, for example to save time. If you choose so,

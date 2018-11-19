@@ -16,7 +16,7 @@ Future
 - All Container structs can store pointers.
 - make naAtof and parseStringFloat
 - Homogeneous coordinates
-- NATree and integration into NABuffer
+- NATree integration into NABuffer
 - Range tree
 - Threadsavety for structs
 - GUI
