@@ -2,8 +2,36 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
+#ifndef NA_TREE_INCLUDED
+#define NA_TREE_INCLUDED
+#ifdef __cplusplus 
+  extern "C"{
+#endif
+
+// ///////////////////////////////////////////
+// Trees
+// 
+// This is the implementation of a general tree structure for various kinds.
+// You use a NATreeConfiguration to define how the tree shall behave. Please
+// read carefully about the callback methods below.
+//
+// Note that there is a basic distinction between trees with and without keys.
+// Some APIs are only allowed for one of the kind. You will get an error when
+// using NDEBUG.
+//
+// With this structure, it is possible to...
+// - Store keys with inner nodes and leafes to automatically sort the tree.
+// - Automatically balance a binary tree using AVL.
+// - Store data for each inner node and/or leaf.
+// - Search according to keys or, if no keys are available, any other kind.
+// - Use iterators on the leafes.
+//
+// Later on, it is planned to also combine this implementation with NAQuadTree
+// and NAOctTree.
 
 #include "NAMemory.h"
+
+
 
 // ///////////////////////////////////////////
 // CALLBACKS
@@ -12,6 +40,7 @@
 // in an NATreeConfiguration structure. Here are the signatures for these
 // callbacks:
 // ///////////////////////////////////////////
+
 
 // NATreeContructorCallback and NATreeDestructorCallback
 // Will be called whenever a tree is created or destroyed. The given parameter
@@ -94,11 +123,13 @@ typedef void (*NATreeLeafDestructor)(   NAPtr leafdata,
 
 // Flags for NATreeConfiguration
 //
-// KEY_DOUBLE    Set this flag for your keys to have the double type.
-// KEY_NAINT     Set this flag for your keys to have the NAInt type.
-// BALANCE_AVL   Makes the tree a self-balancing tree using the AVL method
-#define NA_TREE_KEY_DOUBLE  0x00
-#define NA_TREE_KEY_NAINT   0x01
+// KEY_NOKEY        Set this flag for your nodes and leafes to have no key.
+// KEY_DOUBLE       Set this flag for your keys to have the double type.
+// KEY_NAINT        Set this flag for your keys to have the NAInt type.
+// BALANCE_AVL      Makes the tree a self-balancing tree using the AVL method
+#define NA_TREE_KEY_NOKEY   0x00
+#define NA_TREE_KEY_DOUBLE  0x01
+#define NA_TREE_KEY_NAINT   0x02
 #define NA_TREE_BALANCE_AVL 0x10
 
 typedef struct NATreeConfiguration NATreeConfiguration;
@@ -140,8 +171,8 @@ NA_IAPI void naSetTreeConfigurationNodeCallbacks(
 // ////////////////////
 // NATree
 
+// Creates, Empties and Clears a tree.
 NA_IAPI NATree* naInitTree(NATree* tree, NATreeConfiguration* config);
-//NA_API NATree* naInitTreeCopy(NATree* dsttree, NATree* srctree);
 NA_IAPI void naEmptyTree(NATree* tree);
 NA_IAPI void naClearTree();
 
@@ -233,6 +264,11 @@ NA_IAPI void naRemoveTreeCur(NATreeIterator* iter, NABool advance);
 #include "NAStruct/NATree/NATreeII.h"
 
 
+
+#ifdef __cplusplus 
+  } // extern "C"
+#endif
+#endif // NA_TREE_INCLUDED
 
 
 // Copyright (c) NALib, Tobias Stamm

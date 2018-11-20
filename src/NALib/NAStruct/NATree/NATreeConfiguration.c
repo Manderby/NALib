@@ -14,20 +14,30 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   naInitRefCount(&(config->refcount));
 
   config->childpernode            = 2;
-  if(flags | NA_TREE_KEY_DOUBLE){
+  switch(flags & NA_TREE_KEY_TYPE_MASK){
+  case NA_TREE_KEY_NOKEY:
+    config->keyIndexGetter        = NA_NULL;
+    config->keyEqualer            = NA_NULL;
+    config->keyAssigner           = NA_NULL;
+    config->keyTester             = NA_NULL;
+    break;
+  case NA_TREE_KEY_DOUBLE:
     config->keyIndexGetter        = naGetKeyIndexBinaryDouble;
     config->keyEqualer            = naEqualKeyBinaryDouble;
     config->keyAssigner           = naAssignKeyBinaryDouble;
     config->keyTester             = naTestKeyBinaryDouble;
-  }else if(flags | NA_TREE_KEY_NAINT){
+    break;
+  case NA_TREE_KEY_NAINT:
     config->keyIndexGetter        = naGetKeyIndexBinaryNAInt;
     config->keyEqualer            = naEqualKeyBinaryNAInt;
     config->keyAssigner           = naAssignKeyBinaryNAInt;
     config->keyTester             = naTestKeyBinaryNAInt;
-  }else{
+    break;
+  default:
     #ifndef NDEBUG
       naError("naCreateTreeConfiguration", "Invalid key type in flags");
     #endif
+    break;
   }
 
   config->nodeCoreConstructor     = naConstructTreeNodeBinary;

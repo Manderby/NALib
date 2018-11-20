@@ -86,7 +86,7 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
     // referencing the pointer, we can safely use the array without this byte
     // and still be able to say: We are null-terminated!
     string = naNew(NAString);
-    string->buffer = naNewBufferWithConstData(ptr, length);
+    string->buffer = naNewBufferWithConstData(ptr, (NAUInt)length);
     #ifndef NDEBUG
       string->cachedstr = NA_NULL;
     #endif
@@ -105,7 +105,7 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
 
 NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt length, NAMutator destructor){
   NAString* string = naNew(NAString);
-  string->buffer = naNewBufferWithMutableData(buffer, naAbsi(length), destructor); // todo: absi
+  string->buffer = naNewBufferWithMutableData(buffer, (NAUInt)naAbsi(length), destructor); // todo: absi
   #ifndef NDEBUG
     string->cachedstr = NA_NULL;
   #endif

@@ -7,26 +7,43 @@
 // Do not include this file directly! It will automatically be included when
 // including "NABuffer.h"
 
+typedef struct NABufferSource NABufferSource;
+typedef struct NABufferPart NABufferPart;
 
-#include "../NAList.h"
 
 
+#include "NATree.h"
+
+
+
+struct NABufferPart{
+  NAUInt     byteoffset;  // Start-index in the referenced data
+  NAUInt     bytesize;    // Number of bytes being referenced
+  NAPointer* pointer;     // A reference counting pointer referencing the data.
+};
+
+struct NABufferSource{
+  NABufferSourceDescriptor desc;  
+};
 
 struct NABufferIterator{
   NAPtr bufferptr;
   NAInt curoffset;
   uint8 curbit;             // The current bit number
 //  NAUInt linenum;    // The line number, starting with 1 after first line read.
-  NAListIterator partiter;
+  NATreeIterator partiter;
 };
 
 
-#ifndef NDEBUG
-  // Returns true if the given ptr is the same as the first pointer of the
-  // buffer. This function is primarily for consistency check reasons and
-  // should not be misused.
-  NA_HAPI NABool naTestBufferFirstPointer(const NABuffer* buffer, const void* ptr);
-#endif
+
+
+
+// NABufferPart
+NA_HAPI NABufferPart* naNewBufferPartConstData(const NAByte* data, NAUInt bytesize);
+NA_HAPI NABufferPart* naNewBufferPartMutableData(NAByte* data, NAUInt bytesize, NAMutator destructor);
+
+// NABufferHelper
+NA_HAPI void naEnsureBufferRange(NABuffer* buffer, NARangei range);
 
 
 // Copyright (c) NALib, Tobias Stamm

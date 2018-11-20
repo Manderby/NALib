@@ -594,7 +594,7 @@ NA_API uint64 naParseBufferUInt64(NABufferIterator* iter, NABool skipdelimiter);
 
 
 // Inline implementations are in a separate file:
-#include "NAStruct/NABufferII.h"
+#include "NAStruct/NABuffer/NABufferII.h"
 
 
 

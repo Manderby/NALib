@@ -23,6 +23,8 @@ typedef enum {
 // Currently, a max of 8 childs can be stored, meaning any other flag must be
 // non-overlapping with 0x0000ffff or having a bitshift of 16 respectively.
 
+#define NA_TREE_KEY_TYPE_MASK  0x07
+
 #define NA_TREE_NODE_AVL_BITSHIFT 16
 #define NA_TREE_NODE_AVL_LEFT  (0x00 << NA_TREE_NODE_AVL_BITSHIFT)
 #define NA_TREE_NODE_AVL_EQUAL (0x01 << NA_TREE_NODE_AVL_BITSHIFT)
@@ -35,6 +37,9 @@ typedef enum {
 //
 // NAKeyIndexGetter          Returns the childindex where key would be stored
 //                           on a node with the given basekey.
+// NAKeyEqualer              Returns true if the two keys are equal.
+// NAKeyAssigner             Assigns the src key to dst.
+// NAKeyTester               Tests whether the key is within the given limits.
 //
 // NATreeNodeCoreConstructor Creates a new node with the given key.
 // NATreeNodeCoreDestructor  Destroys the given node
@@ -72,7 +77,7 @@ typedef NATreeLeaf*     (*NATreeLeafCoreConstructor)(NATree* tree, const void* k
 typedef void            (*NATreeLeafCoreDestructor)(NATree* tree, NATreeLeaf* leaf);
 
 typedef NATreeNode*     (*NATreeBubbleLocator)(const NATree* tree, NATreeNode* node, const void* key);
-typedef NATreeNode*     (*NATreeCaptureLocator)(const NATree* tree, NATreeNode* node, const void* key, NABool* keyleaffound, NAInt* childindx);
+typedef NATreeNode*     (*NATreeCaptureLocator)(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound, NAInt* childindx);
 typedef NAInt           (*NATreeChildIndexGetter)(NATreeNode* parent, NATreeBaseNode* child);
 typedef NAInt           (*NATreeChildKeyIndexGetter)(const NATree* tree, NATreeNode* parent, const void* key);
 typedef NATreeBaseNode* (*NATreeChildGetter)(NATreeNode* parent, NAInt childindx);

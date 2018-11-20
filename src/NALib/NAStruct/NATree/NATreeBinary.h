@@ -10,7 +10,10 @@
 typedef struct NATreeBinaryNode NATreeBinaryNode;
 struct NATreeBinaryNode{
   NATreeNode node;
-  double key;
+  union{
+    double d;
+    NAInt i;
+  } key;
   NATreeBaseNode* childs[2];
   NAPtr data;
 };
@@ -19,7 +22,10 @@ NA_EXTERN_RUNTIME_TYPE(NATreeBinaryNode);
 typedef struct NATreeBinaryLeaf NATreeBinaryLeaf;
 struct NATreeBinaryLeaf{
   NATreeLeaf leaf;
-  double key;
+  union{
+    double d;
+    NAInt i;
+  } key;
   NAPtr data;
 };
 NA_EXTERN_RUNTIME_TYPE(NATreeBinaryLeaf);
@@ -40,7 +46,7 @@ NA_HAPI NATreeLeaf* naConstructTreeLeafBinary(NATree* tree, const void* key, NAP
 NA_HAPI void naDestructTreeLeafBinary(NATree* tree, NATreeLeaf* leaf);
 
 NA_HAPI NATreeNode* naLocateBubbleBinary(const NATree* tree, NATreeNode* node, const void* key);
-NA_HAPI NATreeNode* naLocateCaptureBinary(const NATree* tree, NATreeNode* node, const void* key, NABool* keyleaffound, NAInt* childindx);
+NA_HAPI NATreeNode* naLocateCaptureBinary(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound, NAInt* childindx);
 NA_HAPI NAInt naGetChildIndexBinary(NATreeNode* parent, NATreeBaseNode* child);
 NA_HAPI NAInt naGetChildKeyIndexBinary(const NATree* tree, NATreeNode* parent, const void* key);
 NA_HAPI NATreeBaseNode* naGetChildBinary(NATreeNode* parent, NAInt childindx);

@@ -16,7 +16,7 @@
 // Prototypes
 NA_HIAPI NABool naIsNodeChildTypeValid(NANodeChildType childtype);
 NA_HIAPI NANodeChildType naGetNodeChildType(NATreeNode* node, NAInt childindx);
-NA_HAPI  NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABool* keyleaffound, NAInt* leafindx, NABool usebubble);
+NA_HAPI  NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABool* matchfound, NAInt* leafindx, NABool usebubble);
 NA_HAPI  NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info);
 NA_HAPI  NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace);
 
@@ -215,17 +215,17 @@ NA_IDEF void naClearTreeIterator(NATreeIterator* iter){
 
 
 NA_IDEF NABool naLocateTree(NATreeIterator* iter, const void* key, NABool assumeclose){
-  NABool keyleaffound;
+  NABool matchfound;
   NAInt childindx;  // unused.
   const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
-  NATreeNode* node = naLocateTreeNode(iter, key, &keyleaffound, &childindx, assumeclose);
+  NATreeNode* node = naLocateTreeNode(iter, key, &matchfound, &childindx, assumeclose);
 
-  if(keyleaffound){
+  if(matchfound){
     naSetTreeIteratorCurLeaf(iter, (NATreeLeaf*)tree->config->childGetter(node, childindx));
   }else{
     naSetTreeIteratorCurLeaf(iter, NA_NULL);
   }
-  return keyleaffound;
+  return matchfound;
 }
 
 

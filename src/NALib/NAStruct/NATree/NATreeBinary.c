@@ -63,6 +63,10 @@ NA_HDEF NABool naTestKeyBinaryNAInt(const void* leftlimit, const void* rightlimi
 
 
 NA_HDEF NATreeNode* naConstructTreeNodeBinary(NATree* tree, const void* key){
+  #ifndef NDEBUG
+    if(tree->config->flags & NA_TREE_KEY_TYPE_MASK == NA_TREE_KEY_NOKEY)
+      naError("naConstructTreeNodeBinary", "tree is configured with no key");
+  #endif
   NATreeBinaryNode* binnode = naNew(NATreeBinaryNode);
   naInitTreeNode((NATreeNode*)binnode);
 
@@ -102,6 +106,10 @@ NA_HDEF void naDestructTreeNodeBinary(NATree* tree, NATreeNode* node){
 
 
 NA_HDEF NATreeLeaf* naConstructTreeLeafBinary(NATree* tree, const void* key, NAPtr data){
+  #ifndef NDEBUG
+    if(tree->config->flags & NA_TREE_KEY_TYPE_MASK == NA_TREE_KEY_NOKEY)
+      naError("naConstructTreeLeafBinary", "tree is configured with no key");
+  #endif
   NATreeBinaryLeaf* binleaf = naNew(NATreeBinaryLeaf);
   naInitTreeLeaf(&(binleaf->leaf));
   
@@ -132,6 +140,8 @@ NA_HDEF NATreeNode* naLocateBubbleBinaryWithLimits(const NATree* tree, NATreeNod
   #ifndef NDEBUG
     if(node == NA_NULL)
       naError("naLocateBubbleBinaryWithLimits", "node should not be null");
+    if(tree->config->flags & NA_TREE_KEY_TYPE_MASK == NA_TREE_KEY_NOKEY)
+      naError("naLocateBubbleBinaryWithLimits", "tree is configured with no key");
   #endif
   NATreeBinaryNode* binnode = (NATreeBinaryNode*)(node);
   // If we are at a node which stores the key itself, return this node.
@@ -164,13 +174,15 @@ NA_HDEF NATreeNode* naLocateBubbleBinary(const NATree* tree, NATreeNode* node, c
 
 
 
-NA_HDEF NATreeNode* naLocateCaptureBinary(const NATree* tree, NATreeNode* node, const void* key, NABool* keyleaffound, NAInt* childindx){
+NA_HDEF NATreeNode* naLocateCaptureBinary(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound, NAInt* childindx){
   #ifndef NDEBUG
     if(!node)
       naError("naLocateCaptureBinary", "node must not be Null");
+    if(tree->config->flags & NA_TREE_KEY_TYPE_MASK == NA_TREE_KEY_NOKEY)
+      naError("naLocateCaptureBinary", "tree is configured with no key");
   #endif
   
-  *keyleaffound = NA_FALSE;
+  *matchfound = NA_FALSE;
   NATreeBinaryNode* binnode = (NATreeBinaryNode*)(node);
   *childindx = naGetChildKeyIndexBinary(tree, node, key);
   NANodeChildType childtype = naGetNodeChildType(node, *childindx);
@@ -178,12 +190,10 @@ NA_HDEF NATreeNode* naLocateCaptureBinary(const NATree* tree, NATreeNode* node, 
   
   if(childtype == NA_TREE_NODE_CHILD_NODE){
     // When the subtree denotes a node, we follow it.
-    return naLocateCaptureBinary(tree, (NATreeNode*)childnode, key, keyleaffound, childindx);
+    return naLocateCaptureBinary(tree, (NATreeNode*)childnode, key, matchfound, childindx);
   }else if(childtype == NA_TREE_NODE_CHILD_LEAF){
-    if(tree->config->keyEqualer(key, &(((NATreeBinaryLeaf*)childnode)->key))){
-      // When the subtree denotes a leaf and it has the desire key, success!
-      *keyleaffound = NA_TRUE;
-    }
+    // When the subtree denotes a leaf and it has the desired key, success!
+    *matchfound = tree->config->keyEqualer(key, &(((NATreeBinaryLeaf*)childnode)->key));
   }
   
   // In any other case (wrong leaf, subtree not available or subtree denoting
@@ -213,6 +223,8 @@ NA_HDEF NAInt naGetChildKeyIndexBinary(const NATree* tree, NATreeNode* parent, c
   #ifndef NDEBUG
     if(!parent)
       naError("naGetChildKeyIndexBinary", "parent is Null");
+    if(tree->config->flags & NA_TREE_KEY_TYPE_MASK == NA_TREE_KEY_NOKEY)
+      naError("naGetChildKeyIndexBinary", "tree is configured with no key");
   #endif
   NATreeBinaryNode* binparent = (NATreeBinaryNode*)(parent);
   return tree->config->keyIndexGetter(&(binparent->key), key);
@@ -291,6 +303,8 @@ NA_HDEF void naSplitLeafBinary(NATree* tree, NATreeNode* grandparent, NAInt leaf
   #ifndef NDEBUG
     if(naGetNodeChildType(grandparent, leafindx) != NA_TREE_NODE_CHILD_LEAF)
       naError("naSplitLeafBinary", "Given child should be a leaf");
+    if(tree->config->flags & NA_TREE_KEY_TYPE_MASK == NA_TREE_KEY_NOKEY)
+      naError("naSplitLeafBinary", "tree is configured with no key");
   #endif
   NATreeBinaryLeaf* leaf = (NATreeBinaryLeaf*)naGetChildBinary(grandparent, leafindx);
   NAInt siblingindx = tree->config->keyIndexGetter(&(leaf->key), &(((NATreeBinaryLeaf*)sibling)->key));
