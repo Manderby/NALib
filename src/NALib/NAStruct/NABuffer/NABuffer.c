@@ -263,7 +263,7 @@ NA_DEF NABuffer* naNewBufferWithConstData(const void* data, NAUInt bytesize){
   part = naNewBufferPartConstData(data, bytesize);
   NAInt origin = 0;
   NATreeIterator iter = naMakeTreeModifier(&(buffer->parts));
-  naAddTreeMutable(&iter, &origin, part, NA_FALSE);
+  naAddTreeKeyMutable(&iter, &origin, part, NA_FALSE);
   naClearTreeIterator(&iter);
   
   buffer->range = naMakeRangeiWithStartAndEnd(0, (NAInt)bytesize);
@@ -291,7 +291,7 @@ NA_DEF NABuffer* naNewBufferWithMutableData(void* data, NAUInt bytesize, NAMutat
   part = naNewBufferPartMutableData(data, bytesize, destructor);
   NAInt origin = 0;
   NATreeIterator iter = naMakeTreeModifier(&(buffer->parts));
-  naAddTreeMutable(&iter, &origin, part, NA_FALSE);
+  naAddTreeKeyMutable(&iter, &origin, part, NA_FALSE);
   naClearTreeIterator(&iter);
   
   buffer->range = naMakeRangeiWithStartAndEnd(0, (NAInt)bytesize);

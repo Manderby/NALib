@@ -125,6 +125,18 @@ NA_HDEF NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABo
 
 
 
+NA_HDEF void naAddTreeRootLeaf(NATreeIterator* iter, NATreeLeaf* leaf){
+  NATree* tree = (NATree*)naGetPtrMutable(&(iter->tree));
+  // We need to create a root and attach the new leaf to it.
+  const void* key = tree->config->leafKeyGetter(leaf);
+  NATreeNode* root = tree->config->nodeCoreConstructor(tree, key);
+  ((NATreeBaseNode*)root)->parent = NA_NULL;
+  tree->root = root;
+  tree->config->leafAdder(root, leaf, tree->config->childKeyIndexGetter(tree, root, key));
+}
+
+
+
 NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace){
   NABool matchfound;
   NAInt childindx;
@@ -152,11 +164,7 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
     NATreeLeaf* leaf = tree->config->leafCoreConstructor(tree, key, content);
     naSetTreeIteratorCurLeaf(iter, leaf);
     if(!node){
-      // We need to create a root and attach the new leaf to it.
-      NATreeNode* root = tree->config->nodeCoreConstructor(tree, key);
-      ((NATreeBaseNode*)root)->parent = NA_NULL;
-      tree->root = root;
-      tree->config->leafAdder(root, leaf, tree->config->childKeyIndexGetter(tree, root, key));
+      naAddTreeRootLeaf(iter, leaf);
     }else{
       NANodeChildType childtype = naGetNodeChildType(node, childindx);
       if(childtype == NA_TREE_NODE_CHILD_LEAF){
@@ -165,7 +173,7 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
       }else{
         #ifndef NDEBUG
           if(childtype == NA_TREE_NODE_CHILD_NODE)
-            naError("naAddTreeConst", "Child should not be a node");
+            naError("naAddTreeLeaf", "Child should not be a node");
         #endif
         // We need to add the new leaf to this node
         tree->config->leafAdder((NATreeNode*)node, leaf, childindx);

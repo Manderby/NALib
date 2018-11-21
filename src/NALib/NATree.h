@@ -176,6 +176,7 @@ NA_IAPI NATree* naInitTree(NATree* tree, NATreeConfiguration* config);
 NA_IAPI void naEmptyTree(NATree* tree);
 NA_IAPI void naClearTree();
 
+NA_IAPI NABool naAddTreeFirstConst(NATree* tree, const void* content);
 
 
 
@@ -213,9 +214,11 @@ NA_IAPI void naClearTreeIterator(NATreeIterator* iter);
 // in the neighborhood of the current location. Do not set this flag if you
 // access elements more randomly. The wrong value can make quite a difference
 // in performance. Test it out!
-NA_IAPI NABool naLocateTree(  NATreeIterator* iter,
-                                  const void* key,
-                                       NABool assumeclose);
+NA_IAPI NABool naLocateTree(     NATreeIterator* iter,
+                                     const void* key,
+                                          NABool assumeclose);
+NA_IAPI NABool naLocateTreeFirst(NATreeIterator* iter);
+NA_IAPI NABool naLocateTreeLast( NATreeIterator* iter);
 
 // /////////////////////////////////
 // Iterating
@@ -239,14 +242,14 @@ NA_IAPI void*       naGetTreeCurMutable(NATreeIterator* iter);
 // case, NA_TRUE is returned. The iterator will afterwards always point at the
 // tree leaf with the given key, no matter if it is the replaced content or
 // the existing content.
-NA_IAPI NABool naAddTreeConst(   NATreeIterator* iter,
-                                     const void* key,
-                                     const void* content,
-                                          NABool replace);
-NA_IAPI NABool naAddTreeMutable( NATreeIterator* iter,
-                                     const void* key,
-                                           void* content,
-                                          NABool replace);
+NA_IAPI NABool naAddTreeKeyConst(   NATreeIterator* iter,
+                                        const void* key,
+                                        const void* content,
+                                             NABool replace);
+NA_IAPI NABool naAddTreeKeyMutable( NATreeIterator* iter,
+                                        const void* key,
+                                              void* content,
+                                             NABool replace);
 
 // /////////////////////////////////
 // Removes elements.

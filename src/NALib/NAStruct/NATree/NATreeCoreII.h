@@ -127,6 +127,35 @@ NA_IDEF void naClearTree(NATree* tree){
 
 
 
+NA_IDEF NABool naAddTreeFirstConst(NATree* tree, const void* content){
+  #ifndef NDEBUG
+    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
+      naError("naAddTreeFirstConst", "This function should not be called on trees with keys");
+  #endif
+  NATreeIterator iter = naMakeTreeModifier(tree);
+  naLocateTreeFirst(&iter);
+  naAddTreePrevConst(&iter, content);
+  naClearTreeIterator(&iter);
+  return NA_TRUE;
+}
+
+
+
+NA_IDEF NABool naAddTreeFirstMutable(NATree* tree, const void* content){
+  #ifndef NDEBUG
+    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
+      naError("naAddTreeFirstMutable", "This function should not be called on trees with keys");
+  #endif
+  NATreeIterator iter = naMakeTreeModifier(tree);
+  naLocateTreeLast(&iter);
+  naAddTreeNextConst(&iter, content);
+  naClearTreeIterator(&iter);
+  return NA_TRUE;
+}
+
+
+
+
 // /////////////////////////////////////
 // Iterator
 // /////////////////////////////////////
@@ -230,6 +259,20 @@ NA_IDEF NABool naLocateTree(NATreeIterator* iter, const void* key, NABool assume
 
 
 
+NA_IDEF NABool naLocateTreeFirst(NATreeIterator* iter){
+  naResetTreeIterator(iter);
+  return naIterateTree(iter);
+}
+
+
+
+NA_IDEF NABool naLocateTreeLast(NATreeIterator* iter){
+  naResetTreeIterator(iter);
+  return naIterateTreeBack(iter);
+}
+
+
+
 NA_IDEF const void* naGetTreeCurKey(NATreeIterator* iter){
   const NATree* tree;
   #ifndef NDEBUG
@@ -288,13 +331,23 @@ NA_IDEF NABool naIterateTreeBack(NATreeIterator* iter){
 
 
 
-NA_IDEF NABool naAddTreeConst(NATreeIterator* iter, const void* key, const void* content, NABool replace){
+NA_IDEF NABool naAddTreeKeyConst(NATreeIterator* iter, const void* key, const void* content, NABool replace){
+  #ifndef NDEBUG
+    const NATree* tree = (NATree*)naGetPtrConst(&(iter->tree));
+    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
+      naError("naAddTreeKeyConst", "This function should not be called on trees without keys");
+  #endif
   return naAddTreeLeaf(iter, key, naMakePtrWithDataConst(content), replace);
 }
 
 
 
-NA_IDEF NABool naAddTreeMutable(NATreeIterator* iter, const void* key, void* content, NABool replace){
+NA_IDEF NABool naAddTreeKeyMutable(NATreeIterator* iter, const void* key, void* content, NABool replace){
+  #ifndef NDEBUG
+    const NATree* tree = (NATree*)naGetPtrConst(&(iter->tree));
+    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
+      naError("naAddTreeKeyMutable", "This function should not be called on trees without keys");
+  #endif
   return naAddTreeLeaf(iter, key, naMakePtrWithDataMutable(content), replace);
 }
 
