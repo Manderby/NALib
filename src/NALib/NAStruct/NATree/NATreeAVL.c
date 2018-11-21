@@ -28,11 +28,9 @@ NA_HIDEF void naSetNodeAVL(NATreeBinaryNode* node, NAInt balance){
 
 NA_HIDEF void naRotateLeftBinary(NATree* tree, NATreeBinaryNode* parent, NATreeBinaryNode* rightchild){
   #ifndef NDEBUG
-    NANodeChildType parentchildtype = naGetNodeType(tree, (NATreeBaseNode*)parent);
-    if(parentchildtype != NA_TREE_NODE_CHILD_NODE)
+    if(naIsBaseNodeLeaf(tree, (NATreeBaseNode*)parent))
       naError("naRotateLeftBinary", "given parent is not a node");
-    NANodeChildType rightchildtype = naGetNodeType(tree, (NATreeBaseNode*)rightchild);
-    if(rightchildtype != NA_TREE_NODE_CHILD_NODE)
+    if(naIsBaseNodeLeaf(tree, (NATreeBaseNode*)rightchild))
       naError("naRotateLeftBinary", "given right child is not a node");
   #endif
   NATreeNode* grandparent = ((NATreeBaseNode*)parent)->parent;
@@ -40,16 +38,16 @@ NA_HIDEF void naRotateLeftBinary(NATree* tree, NATreeBinaryNode* parent, NATreeB
     NAInt parentindx = naGetChildIndexBinary(grandparent, (NATreeBaseNode*)parent); 
     ((NATreeBinaryNode*)grandparent)->childs[parentindx] = (NATreeBaseNode*)rightchild;
   }else{
-    tree->root = (NATreeNode*)rightchild;
+    tree->root = (NATreeBaseNode*)rightchild;
   }
 
   parent->childs[1] = rightchild->childs[0];
   parent->childs[1]->parent = (NATreeNode*)parent;
-  naSetNodeChildType((NATreeNode*)parent, 1, naGetNodeChildType((NATreeNode*)rightchild, 0));
+  naMarkNodeChildLeaf((NATreeNode*)parent, 1, naIsNodeChildLeaf((NATreeNode*)rightchild, 0));
   ((NATreeBaseNode*)parent)->parent = (NATreeNode*)rightchild;
   
   rightchild->childs[0] = (NATreeBaseNode*)parent;
-  naSetNodeChildType((NATreeNode*)rightchild, 0, NA_TREE_NODE_CHILD_NODE);
+  naMarkNodeChildLeaf((NATreeNode*)rightchild, 0, NA_FALSE);
   ((NATreeBaseNode*)rightchild)->parent = grandparent;
 }
 
@@ -57,11 +55,9 @@ NA_HIDEF void naRotateLeftBinary(NATree* tree, NATreeBinaryNode* parent, NATreeB
 
 NA_HIDEF void naRotateRightBinary(NATree* tree, NATreeBinaryNode* leftchild, NATreeBinaryNode* parent){
   #ifndef NDEBUG
-    NANodeChildType leftchildtype = naGetNodeType(tree, (NATreeBaseNode*)leftchild);
-    if(leftchildtype != NA_TREE_NODE_CHILD_NODE)
+    if(naIsBaseNodeLeaf(tree, (NATreeBaseNode*)leftchild))
       naError("naRotateRightBinary", "given left child is not a node");
-    NANodeChildType parentchildtype = naGetNodeType(tree, (NATreeBaseNode*)parent);
-    if(parentchildtype != NA_TREE_NODE_CHILD_NODE)
+    if(naIsBaseNodeLeaf(tree, (NATreeBaseNode*)parent))
       naError("naRotateRightBinary", "given parent is not a node");
   #endif
   NATreeNode* grandparent = ((NATreeBaseNode*)parent)->parent;
@@ -69,16 +65,16 @@ NA_HIDEF void naRotateRightBinary(NATree* tree, NATreeBinaryNode* leftchild, NAT
     NAInt parentindx = naGetChildIndexBinary(grandparent, (NATreeBaseNode*)parent); 
     ((NATreeBinaryNode*)grandparent)->childs[parentindx] = (NATreeBaseNode*)leftchild;
   }else{
-    tree->root = (NATreeNode*)leftchild;
+    tree->root = (NATreeBaseNode*)leftchild;
   }
 
   parent->childs[0] = leftchild->childs[1];
   parent->childs[0]->parent = (NATreeNode*)parent;
-  naSetNodeChildType((NATreeNode*)parent, 0, naGetNodeChildType((NATreeNode*)leftchild, 1));
+  naMarkNodeChildLeaf((NATreeNode*)parent, 0, naIsNodeChildLeaf((NATreeNode*)leftchild, 1));
   ((NATreeBaseNode*)parent)->parent = (NATreeNode*)leftchild;
   
   leftchild->childs[1] = (NATreeBaseNode*)parent;
-  naSetNodeChildType((NATreeNode*)leftchild, 1, NA_TREE_NODE_CHILD_NODE);
+  naMarkNodeChildLeaf((NATreeNode*)leftchild, 1, NA_FALSE);
   ((NATreeBaseNode*)leftchild)->parent = grandparent;
 }
 

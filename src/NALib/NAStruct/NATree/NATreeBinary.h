@@ -30,7 +30,7 @@ struct NATreeBinaryLeaf{
 };
 NA_EXTERN_RUNTIME_TYPE(NATreeBinaryLeaf);
 
-NA_HAPI NAInt naGetKeyIndexBinaryDouble(const void* basekey, const void* key);
+NA_HAPI NAInt naGetKeyIndexBinaryDouble(const void* basekey, const void* testkey);
 NA_HAPI NABool naEqualKeyBinaryDouble(const void* key1, const void* key2);
 NA_HAPI void naAssignKeyBinaryDouble(void* dst, const void* src);
 NA_HAPI NABool naTestKeyBinaryDouble(const void* leftlimit, const void* rightlimit, const void* key);
@@ -40,20 +40,19 @@ NA_HAPI NABool naEqualKeyBinaryNAInt(const void* key1, const void* key2);
 NA_HAPI void naAssignKeyBinaryNAInt(void* dst, const void* src);
 NA_HAPI NABool naTestKeyBinaryNAInt(const void* leftlimit, const void* rightlimit, const void* key);
 
-NA_HAPI NATreeNode* naConstructTreeNodeBinary(NATree* tree, const void* key);
-NA_HAPI void naDestructTreeNodeBinary(NATree* tree, NATreeNode* node);
+NA_HAPI NATreeNode* naConstructTreeNodeBinary(NATree* tree, const void* key, NATreeLeaf* leftleaf, NATreeLeaf* rightleaf);
+NA_HAPI void naDestructTreeNodeBinary(NATree* tree, NATreeNode* node, NABool recursive);
 NA_HAPI NATreeLeaf* naConstructTreeLeafBinary(NATree* tree, const void* key, NAPtr data);
 NA_HAPI void naDestructTreeLeafBinary(NATree* tree, NATreeLeaf* leaf);
 
-NA_HAPI NATreeNode* naLocateBubbleBinary(const NATree* tree, NATreeNode* node, const void* key);
-NA_HAPI NATreeNode* naLocateCaptureBinary(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound, NAInt* childindx);
+NA_HAPI NATreeNode* naLocateBubbleBinary(const NATree* tree, NATreeLeaf* leaf, const void* key);
+NA_HAPI NATreeLeaf* naLocateCaptureBinary(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound);
 NA_HAPI NAInt naGetChildIndexBinary(NATreeNode* parent, NATreeBaseNode* child);
 NA_HAPI NAInt naGetChildKeyIndexBinary(const NATree* tree, NATreeNode* parent, const void* key);
 NA_HAPI NATreeBaseNode* naGetChildBinary(NATreeNode* parent, NAInt childindx);
-NA_HAPI void naAddLeafBinary(NATreeNode* parent, NATreeLeaf* leaf, NAInt leafindx);
 NA_HAPI void naRemoveLeafBinary(NATree* tree, NATreeLeaf* leaf);
 NA_HAPI void naReplaceLeafBinary(NATree* tree, NATreeLeaf* leaf, NAPtr data);
-NA_HAPI void naSplitLeafBinary(NATree* tree, NATreeNode* grandparent, NAInt leafindx, NATreeLeaf* sibling);
+NA_HAPI void naSplitLeafBinary(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf);
 NA_HAPI const void* naGetLeafKeyBinary(NATreeLeaf* leaf);
 NA_HAPI NAPtr* naGetLeafDataBinary(NATreeLeaf* leaf);
 

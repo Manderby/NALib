@@ -90,8 +90,8 @@ void testTree(){
   iter = naMakeTreeModifier(&tree);
   for(int i=0; i<TESTSIZE; i++){
 //    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
-    double key = naUniformRandZE();
-//    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
+//    double key = naUniformRandZE();
+    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
 //    double key = (double)i / TESTSIZE;
 //    printf("%f\n", key);
     naAddTreeKeyConst(&iter, &key, NA_NULL, NA_TRUE);
@@ -182,8 +182,8 @@ int main(void){
 
   naStartRuntime();
     testTree();
-    testHeap();
-    testQSort();
+//    testHeap();
+//    testQSort();
   naStopRuntime();
 
   #if NA_OS == NA_OS_WINDOWS

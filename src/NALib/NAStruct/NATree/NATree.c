@@ -4,27 +4,19 @@
 
 #include "NATree.h"
 
-// Prototypes
-NA_HIAPI NANodeChildType naGetNodeType(const NATree* tree, NATreeBaseNode* node);
-
 
 
 NA_HDEF NATreeLeaf* naIterateTreeCapture(const NATree* tree, NATreeNode* parent, NAInt previndx, NATreeIterationInfo* info){
   NAInt indx = previndx + info->step;
-  while(indx != info->breakindx){
-    NANodeChildType childtype = naGetNodeChildType(parent, indx);
-    if(naIsNodeChildTypeValid(childtype)){
-      // There is another child available
-      NATreeBaseNode* child = tree->config->childGetter(parent, indx);
-      if(childtype == NA_TREE_NODE_CHILD_LEAF){
-        // We found the next leaf. Good ending
-        return (NATreeLeaf*)child;
-      }else{
-        // We have to go deeper.
-        return naIterateTreeCapture(tree, (NATreeNode*)child, info->startindx, info);
-      }
+  if(indx != info->breakindx){
+    NATreeBaseNode* child = tree->config->childGetter(parent, indx);
+    if(naIsNodeChildLeaf(parent, indx)){
+      // We found the next leaf. Good ending
+      return (NATreeLeaf*)child;
+    }else{
+      // We have to go deeper.
+      return naIterateTreeCapture(tree, (NATreeNode*)child, info->startindx, info);
     }
-    indx += info->step;
   }
   return NA_NULL;
 }
@@ -66,14 +58,18 @@ NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* 
   
   NATreeLeaf* leaf;
   if(!iter->leaf){
-    // If the iterator is at initial position, we use the root and capture. 
-    leaf = naIterateTreeCapture(tree, tree->root, info->startindx, info);
+    // If the iterator is at initial position, we use the root and capture.
+    if(naIsTreeRootLeaf(tree)){
+      leaf = (NATreeLeaf*)tree->root;
+    }else{
+      leaf = naIterateTreeCapture(tree, (NATreeNode*)tree->root, info->startindx, info);
+    }
   }else{
     // Otherwise, we use the current leaf and bubble
     leaf = naIterateTreeBubble(tree, (NATreeBaseNode*)(iter->leaf), info);
   }
   #ifndef NDEBUG
-    if(leaf && naGetNodeType(tree, (NATreeBaseNode*)leaf) != NA_TREE_NODE_CHILD_LEAF)
+    if(leaf && !naIsBaseNodeLeaf(tree, (NATreeBaseNode*)leaf))
       naError("naIterateTreeWithInfo", "Result should be a leaf");
   #endif
   naSetTreeIteratorCurLeaf(iter, leaf);
@@ -82,7 +78,7 @@ NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* 
 
 
 
-NA_HDEF NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABool* matchfound, NAInt* leafindx, NABool usebubble){
+NA_HDEF NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABool* matchfound, NABool usebubble){
   const NATree* tree;
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
@@ -100,25 +96,20 @@ NA_HDEF NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABo
     return NA_FALSE;
   }
   
-  NATreeBaseNode* curnode = (NATreeBaseNode*)(iter->leaf);
-  NATreeNode* topnode;
+  NATreeNode* topnode = NA_NULL;
   
-  // Move the iterator to the topmost inner node which contains the given key.
-  if(usebubble && curnode){
-    #ifndef NDEBUG
-      if(naGetNodeType(tree, curnode) != NA_TREE_NODE_CHILD_LEAF)
-        naError("naIterateTree", "current node is not a leaf");
-    #endif
-    topnode = tree->config->bubbleLocator(tree, curnode->parent, key);
-  }else{
-    topnode = tree->root;
+  // Move the iterator to the topmost node which contains the given key.
+  if(usebubble && iter->leaf){
+    topnode = tree->config->bubbleLocator(tree, iter->leaf, key);
   }
   
   // Search for the leaf containing key.
-  NATreeNode* retnode = tree->config->captureLocator(tree, topnode, key, matchfound, leafindx);
+  NATreeLeaf* retnode = tree->config->captureLocator(tree, topnode, key, matchfound);
   #ifndef NDEBUG
-    if(naGetNodeType(tree, (NATreeBaseNode*)retnode) != NA_TREE_NODE_CHILD_NODE)
-      naError("naLocateTreeNode", "Result should be a node");
+    if(!naIsBaseNodeLeaf(tree, (NATreeBaseNode*)retnode))
+    {
+      naError("naLocateTreeLeaf", "Result should be a leaf");
+      }
   #endif
   return retnode;
 }
@@ -127,60 +118,47 @@ NA_HDEF NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABo
 
 NA_HDEF void naAddTreeRootLeaf(NATreeIterator* iter, NATreeLeaf* leaf){
   NATree* tree = (NATree*)naGetPtrMutable(&(iter->tree));
-  // We need to create a root and attach the new leaf to it.
-  const void* key = tree->config->leafKeyGetter(leaf);
-  NATreeNode* root = tree->config->nodeCoreConstructor(tree, key);
-  ((NATreeBaseNode*)root)->parent = NA_NULL;
-  tree->root = root;
-  tree->config->leafAdder(root, leaf, tree->config->childKeyIndexGetter(tree, root, key));
+  tree->root = (NATreeBaseNode*)leaf;
+  ((NATreeBaseNode*)leaf)->parent = NA_NULL;
+  naMarkTreeRootLeaf(tree, NA_TRUE);
 }
 
 
 
 NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace){
   NABool matchfound;
-  NAInt childindx;
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("naAddTreeLeaf", "This iterator has been cleared. You need to make it anew.");
   #endif
   // We do not use bubbling when inserting as there is almost never a benefit
   // from it. Even worse, it performs mostly worse.
-  NATreeNode* node = naLocateTreeNode(iter, key, &matchfound, &childindx, NA_FALSE);
+  NATreeLeaf* leaf = naLocateTreeLeaf(iter, key, &matchfound, NA_FALSE);
   NATree* tree = (NATree*)naGetPtrMutable(&(iter->tree));
-
-  if(matchfound && !replace){
-    naSetTreeIteratorCurLeaf(iter, (NATreeLeaf*)(tree->config->childGetter(node, childindx)));
-    // Nothing else to do.
-    return NA_FALSE;
-  }
+  NABool newcontentcreated = NA_TRUE;
 
   if(matchfound){
-    // We need to replace this node
-    NATreeLeaf* oldleaf = (NATreeLeaf*)(tree->config->childGetter(node, childindx));
-    tree->config->leafReplacer(tree, oldleaf, content);
-    naSetTreeIteratorCurLeaf(iter, oldleaf);
-  }else{
-    NATreeLeaf* leaf = tree->config->leafCoreConstructor(tree, key, content);
-    naSetTreeIteratorCurLeaf(iter, leaf);
-    if(!node){
-      naAddTreeRootLeaf(iter, leaf);
+    if(replace){
+      // We need to replace this node
+      tree->config->leafReplacer(tree, leaf, content);
     }else{
-      NANodeChildType childtype = naGetNodeChildType(node, childindx);
-      if(childtype == NA_TREE_NODE_CHILD_LEAF){
-        // We need to create a node holding both the old leaf and the new one.
-        tree->config->leafSplitter(tree, node, childindx, leaf);
-      }else{
-        #ifndef NDEBUG
-          if(childtype == NA_TREE_NODE_CHILD_NODE)
-            naError("naAddTreeLeaf", "Child should not be a node");
-        #endif
-        // We need to add the new leaf to this node
-        tree->config->leafAdder((NATreeNode*)node, leaf, childindx);
-      }
+      // We do not create anything new.
+      newcontentcreated = NA_FALSE;
     }
+    naSetTreeIteratorCurLeaf(iter, leaf);
+  }else{
+    NATreeLeaf* newleaf = tree->config->leafCoreConstructor(tree, key, content);
+    if(leaf){
+      // We need to create a node holding both the old leaf and the new one.
+      tree->config->leafSplitter(tree, leaf, newleaf);
+    }else{
+      // Locating the key did not result in any leaf, which can only mean one
+      // thing: There was not root. Therefore, we create a first leaf.
+      naAddTreeRootLeaf(iter, newleaf);
+    }
+    naSetTreeIteratorCurLeaf(iter, newleaf);
   }
-  return NA_TRUE;
+  return newcontentcreated;
 }
 
 

@@ -40,7 +40,6 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     break;
   }
 
-  config->nodeCoreConstructor     = naConstructTreeNodeBinary;
   config->nodeCoreDestructor      = naDestructTreeNodeBinary;
   config->leafCoreConstructor     = naConstructTreeLeafBinary;
   config->leafCoreDestructor      = naDestructTreeLeafBinary;
@@ -50,7 +49,6 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   config->childIndexGetter        = naGetChildIndexBinary;
   config->childKeyIndexGetter     = naGetChildKeyIndexBinary;
   config->childGetter             = naGetChildBinary;
-  config->leafAdder               = naAddLeafBinary;
   config->leafRemover             = naRemoveLeafBinary;
   config->leafReplacer            = naReplaceLeafBinary;
   config->leafSplitter            = naSplitLeafBinary;

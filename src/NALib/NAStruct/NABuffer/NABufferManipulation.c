@@ -2,15 +2,15 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-
+#include "NABuffer.h"
 
 // /////////////////////////////////////
 // Whole Buffer Functions
 // /////////////////////////////////////
 
-int dummy;
-
-//NA_DEF NAString* naNewStringWithBufferBase64Encoded(const NABuffer* buffer, NABool appendendsign){
+NA_DEF NAString* naNewStringWithBufferBase64Encoded(const NABuffer* buffer, NABool appendendsign){
+  NA_UNUSED(buffer);
+  NA_UNUSED(appendendsign);
 //  NAInt totalbytesize;
 //  NAInt triples;
 //  NAInt remainder;
@@ -82,11 +82,13 @@ int dummy;
 //  retstring = naNewStringWithBufferExtraction(dstbuffer, dstbuffer->range);
 //  naRelease(dstbuffer);
 //  return retstring;
-//}
+  return NA_NULL;
+}
 
 
 
-//NA_DEF NABuffer* naNewBufferWithStringBase64Decoded(const NAString* string){
+NA_DEF NABuffer* naNewBufferWithStringBase64Decoded(const NAString* string){
+  NA_UNUSED(string);
 //  NAInt totalcharsize;
 //  NAInt triples;
 //  NAInt remainder;
@@ -164,11 +166,14 @@ int dummy;
 //  naClearBufferIterator(&dstiter);
 //  naRelease(ascbuffer);
 //  return dstbuffer;
-//}
+  return NA_NULL;
+}
 
 
 
-//NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum){
+NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum){
+  NA_UNUSED(buffer);
+  NA_UNUSED(checksum);
 //  NAInt bytesize;
 //  NAInt curoffset;
 //  NAListIterator iter;
@@ -206,11 +211,14 @@ int dummy;
 //    
 //    naClearListIterator(&iter);
 //  }
-//}
+  return;
+}
 
 
 
-//NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
+NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
+  NA_UNUSED(buffer);
+  NA_UNUSED(file);
 //  NAInt bytesize;
 //  NAInt curoffset;
 //  NAListIterator iter;
@@ -253,11 +261,14 @@ int dummy;
 //    
 //    naClearListIterator(&iter);
 //  }
-//}
+  return;
+}
 
 
 
-//NA_DEF void naWriteBufferToData(NABuffer* buffer, void* data){
+NA_DEF void naWriteBufferToData(NABuffer* buffer, void* data){
+  NA_UNUSED(buffer);
+  NA_UNUSED(data);
 //  NAInt bytesize;
 //  NAInt curoffset;
 //  NAListIterator iter;
@@ -297,7 +308,8 @@ int dummy;
 //    
 //    naClearListIterator(&iter);
 //  }
-//}
+  return;
+}
 
 
 

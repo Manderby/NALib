@@ -64,14 +64,14 @@
 NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NARangei range){
   NABufferPart* part;
   
-  #ifndef NDEBUG
-    if(range.length <= 0)
-      naError("naEnsureBufferRange", "Range length shall be >= 0");
-    if(naHasBufferFixedRange(buffer) && (range.origin < buffer->range.origin))
-      naError("naEnsureBufferRange", "Range of buffer is fixed but trying to access range below");
-    if(naHasBufferFixedRange(buffer) && (naGetRangeiEnd(range) > naGetRangeiEnd(buffer->range)))
-      naError("naEnsureBufferRange", "Range of buffer is fixed but trying to access range above");
-  #endif
+//  #ifndef NDEBUG
+//    if(range.length <= 0)
+//      naError("naEnsureBufferRange", "Range length shall be >= 0");
+//    if(naHasBufferFixedRange(buffer) && (range.origin < buffer->range.origin))
+//      naError("naEnsureBufferRange", "Range of buffer is fixed but trying to access range below");
+//    if(naHasBufferFixedRange(buffer) && (naGetRangeiEnd(range) > naGetRangeiEnd(buffer->range)))
+//      naError("naEnsureBufferRange", "Range of buffer is fixed but trying to access range above");
+//  #endif
   
   if(naIsBufferEmpty(buffer)){
 //    // If the buffer is empty, we just create one sparse part containing the

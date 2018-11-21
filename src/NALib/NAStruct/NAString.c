@@ -172,7 +172,7 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt offset, 
     string->cachedstr = NA_NULL;
   #endif
   
-  // todo: is there a readon why the string must be cached?
+  // todo: is there a reason why the string must be cached?
 //  naCacheBufferRange(string->buffer, naGetBufferRange(string->buffer), NA_FALSE);
   #if NA_STRING_ALWAYS_CACHE == 1
     naGetStringUTF8Pointer(string);

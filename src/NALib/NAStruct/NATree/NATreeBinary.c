@@ -14,15 +14,11 @@ NA_RUNTIME_TYPE(NATreeBinaryLeaf, NA_NULL, NA_FALSE);
 
 NA_HIDEF void naDestructTreeChildBinary(NATree* tree, NATreeBinaryNode* binnode, NAInt childindx){
   NATreeBaseNode* child = binnode->childs[childindx];
-  NANodeChildType childtype = naGetNodeChildType((NATreeNode*)binnode, childindx);
-  if(childtype == NA_TREE_NODE_CHILD_LEAF){naDestructTreeLeafBinary(tree, (NATreeLeaf*)child);}
-  else if(childtype == NA_TREE_NODE_CHILD_NODE){naDestructTreeNodeBinary(tree, (NATreeNode*)child);}
-}
-
-
-
-NA_HIDEF NABool naTestNodeChildsBinary(NATreeNode* node){
-  return naIsNodeChildTypeValid(naGetNodeChildType(node, 0)) || naIsNodeChildTypeValid(naGetNodeChildType(node, 1));
+  if(naIsNodeChildLeaf((NATreeNode*)binnode, childindx)){
+    naDestructTreeLeafBinary(tree, (NATreeLeaf*)child);
+  }else{
+    naDestructTreeNodeBinary(tree, (NATreeNode*)child, NA_TRUE);
+  }
 }
 
 
@@ -32,8 +28,8 @@ NA_HIDEF NABool naTestNodeChildsBinary(NATreeNode* node){
 // ////////////////////////////
 
 
-NA_HDEF NAInt naGetKeyIndexBinaryDouble(const void* basekey, const void* key){
-  return !(*(const double*)key < *(const double*)basekey); // results in 0 or 1
+NA_HDEF NAInt naGetKeyIndexBinaryDouble(const void* basekey, const void* testkey){
+  return !(*(const double*)testkey < *(const double*)basekey); // results in 0 or 1
 }
 NA_HDEF NABool naEqualKeyBinaryDouble(const void* key1, const void* key2){
   return (*(const double*)key1 == *(const double*)key2);
@@ -62,9 +58,9 @@ NA_HDEF NABool naTestKeyBinaryNAInt(const void* leftlimit, const void* rightlimi
 
 
 
-NA_HDEF NATreeNode* naConstructTreeNodeBinary(NATree* tree, const void* key){
+NA_HDEF NATreeNode* naConstructTreeNodeBinary(NATree* tree, const void* key, NATreeLeaf* leftleaf, NATreeLeaf* rightleaf){
   #ifndef NDEBUG
-    if(tree->config->flags & NA_TREE_KEY_TYPE_MASK == NA_TREE_KEY_NOKEY)
+    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("naConstructTreeNodeBinary", "tree is configured with no key");
   #endif
   NATreeBinaryNode* binnode = naNew(NATreeBinaryNode);
@@ -72,10 +68,12 @@ NA_HDEF NATreeNode* naConstructTreeNodeBinary(NATree* tree, const void* key){
 
   // Node-specific initialization
   tree->config->keyAssigner(&(binnode->key), key);
-  binnode->childs[0] = NA_NULL;
-  binnode->childs[1] = NA_NULL;
-  naSetNodeChildType((NATreeNode*)binnode, 0, NA_TREE_NODE_CHILD_NULL);
-  naSetNodeChildType((NATreeNode*)binnode, 1, NA_TREE_NODE_CHILD_NULL);
+  binnode->childs[0] = (NATreeBaseNode*)leftleaf;
+  binnode->childs[1] = (NATreeBaseNode*)rightleaf;
+  naMarkNodeChildLeaf((NATreeNode*)binnode, 0, NA_TRUE);
+  naMarkNodeChildLeaf((NATreeNode*)binnode, 1, NA_TRUE);
+  ((NATreeBaseNode*)leftleaf)->parent = (NATreeNode*)binnode;
+  ((NATreeBaseNode*)rightleaf)->parent = (NATreeNode*)binnode;
   if(tree->config->flags & NA_TREE_BALANCE_AVL){naInitNodeAVL((NATreeBinaryNode*)binnode);}
 
   if(tree->config->nodeConstructor){
@@ -89,14 +87,16 @@ NA_HDEF NATreeNode* naConstructTreeNodeBinary(NATree* tree, const void* key){
 
 
 
-NA_HDEF void naDestructTreeNodeBinary(NATree* tree, NATreeNode* node){
+NA_HDEF void naDestructTreeNodeBinary(NATree* tree, NATreeNode* node, NABool recursive){
   #ifndef NDEBUG
     if(!node)
       naCrash("naDestructTreeNodeBinary", "node shall not be Null");
   #endif
   NATreeBinaryNode* binnode = (NATreeBinaryNode*)node;
-  naDestructTreeChildBinary(tree, binnode, 0);
-  naDestructTreeChildBinary(tree, binnode, 1);
+  if(recursive){
+    naDestructTreeChildBinary(tree, binnode, 0);
+    naDestructTreeChildBinary(tree, binnode, 1);
+  }
   
   if(tree->config->nodeDestructor){tree->config->nodeDestructor(binnode->data, tree->config->data);}
   naClearTreeNode((NATreeNode*)binnode);
@@ -107,7 +107,7 @@ NA_HDEF void naDestructTreeNodeBinary(NATree* tree, NATreeNode* node){
 
 NA_HDEF NATreeLeaf* naConstructTreeLeafBinary(NATree* tree, const void* key, NAPtr data){
   #ifndef NDEBUG
-    if(tree->config->flags & NA_TREE_KEY_TYPE_MASK == NA_TREE_KEY_NOKEY)
+    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("naConstructTreeLeafBinary", "tree is configured with no key");
   #endif
   NATreeBinaryLeaf* binleaf = naNew(NATreeBinaryLeaf);
@@ -140,15 +140,16 @@ NA_HDEF NATreeNode* naLocateBubbleBinaryWithLimits(const NATree* tree, NATreeNod
   #ifndef NDEBUG
     if(node == NA_NULL)
       naError("naLocateBubbleBinaryWithLimits", "node should not be null");
-    if(tree->config->flags & NA_TREE_KEY_TYPE_MASK == NA_TREE_KEY_NOKEY)
+    if(prevnode == NA_NULL)
+      naError("naLocateBubbleBinaryWithLimits", "prevnode should not be null");
+    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("naLocateBubbleBinaryWithLimits", "tree is configured with no key");
   #endif
   NATreeBinaryNode* binnode = (NATreeBinaryNode*)(node);
   // If we are at a node which stores the key itself, return this node.
   if(tree->config->keyEqualer(key, &(binnode->key))){return node;}
   // Otherwise, we set the limits dependent on the previous node.
-  if(!prevnode || naGetChildIndexBinary((NATreeNode*)binnode, prevnode) == 1){
-    // Note that this case will also happen if NA_NULL was sent as prevnode.
+  if(naGetChildIndexBinary(node, prevnode) == 1){
     leftlimit = &(binnode->key);
   }else{
     rightlimit = &(binnode->key);
@@ -161,44 +162,61 @@ NA_HDEF NATreeNode* naLocateBubbleBinaryWithLimits(const NATree* tree, NATreeNod
   if(((NATreeBaseNode*)node)->parent){
     return naLocateBubbleBinaryWithLimits(tree, ((NATreeBaseNode*)node)->parent, key, leftlimit, rightlimit, (NATreeBaseNode*)binnode);
   }else{
-    // If this node is the root node, we return this node.
-    return node;
+    // We reached the root. No need to break a sweat. Simply return null.
+    return NA_NULL;
   }
 }
 
 
 
-NA_HDEF NATreeNode* naLocateBubbleBinary(const NATree* tree, NATreeNode* node, const void* key){
-  return naLocateBubbleBinaryWithLimits(tree, node, key, NA_NULL, NA_NULL, NA_NULL);
+NA_HDEF NATreeNode* naLocateBubbleBinary(const NATree* tree, NATreeLeaf* leaf, const void* key){
+  #ifndef NDEBUG
+    if(leaf == NA_NULL)
+      naCrash("naLocateBubbleBinary", "leaf should not be null");
+  #endif
+  if(((NATreeBaseNode*)leaf)->parent){
+    return naLocateBubbleBinaryWithLimits(tree, ((NATreeBaseNode*)leaf)->parent, key, NA_NULL, NA_NULL, (NATreeBaseNode*)leaf);
+  }else{
+    return NA_NULL;
+  }
 }
 
 
 
-NA_HDEF NATreeNode* naLocateCaptureBinary(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound, NAInt* childindx){
+NA_HDEF NATreeLeaf* naLocateCaptureBinary(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound){
   #ifndef NDEBUG
-    if(!node)
-      naError("naLocateCaptureBinary", "node must not be Null");
-    if(tree->config->flags & NA_TREE_KEY_TYPE_MASK == NA_TREE_KEY_NOKEY)
+    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("naLocateCaptureBinary", "tree is configured with no key");
   #endif
   
   *matchfound = NA_FALSE;
-  NATreeBinaryNode* binnode = (NATreeBinaryNode*)(node);
-  *childindx = naGetChildKeyIndexBinary(tree, node, key);
-  NANodeChildType childtype = naGetNodeChildType(node, *childindx);
-  NATreeBaseNode* childnode = binnode->childs[*childindx];
   
-  if(childtype == NA_TREE_NODE_CHILD_NODE){
-    // When the subtree denotes a node, we follow it.
-    return naLocateCaptureBinary(tree, (NATreeNode*)childnode, key, matchfound, childindx);
-  }else if(childtype == NA_TREE_NODE_CHILD_LEAF){
-    // When the subtree denotes a leaf and it has the desired key, success!
-    *matchfound = tree->config->keyEqualer(key, &(((NATreeBinaryLeaf*)childnode)->key));
+  if(!node){
+    if(tree->root){
+      if(naIsTreeRootLeaf(tree)){
+        *matchfound = tree->config->keyEqualer(key, &(((NATreeBinaryLeaf*)tree->root)->key));
+        return (NATreeLeaf*)tree->root;
+      }else{
+        node = (NATreeNode*)tree->root;
+      }
+    }else{
+      return NA_NULL;
+    }
   }
   
-  // In any other case (wrong leaf, subtree not available or subtree denoting
-  // a link, we give up and return the current node.
-  return node;
+  NATreeBinaryNode* binnode = (NATreeBinaryNode*)(node);
+  NAInt childindx = naGetChildKeyIndexBinary(tree, node, key);
+  NATreeBaseNode* child = binnode->childs[childindx];
+  
+  if(naIsNodeChildLeaf(node, childindx)){
+    // When the subtree denotes a leaf, we test, if the key is equal and return
+    // the result.
+    *matchfound = tree->config->keyEqualer(key, &(((NATreeBinaryLeaf*)child)->key));
+    return (NATreeLeaf*)child;
+  }else{
+    // When the subtree denotes a node, we follow it.
+    return naLocateCaptureBinary(tree, (NATreeNode*)child, key, matchfound);
+  }
 }
 
 
@@ -223,7 +241,7 @@ NA_HDEF NAInt naGetChildKeyIndexBinary(const NATree* tree, NATreeNode* parent, c
   #ifndef NDEBUG
     if(!parent)
       naError("naGetChildKeyIndexBinary", "parent is Null");
-    if(tree->config->flags & NA_TREE_KEY_TYPE_MASK == NA_TREE_KEY_NOKEY)
+    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("naGetChildKeyIndexBinary", "tree is configured with no key");
   #endif
   NATreeBinaryNode* binparent = (NATreeBinaryNode*)(parent);
@@ -243,48 +261,31 @@ NA_HDEF NATreeBaseNode* naGetChildBinary(NATreeNode* parent, NAInt childindx){
 
 
 
-NA_HDEF void naAddLeafBinary(NATreeNode* parent, NATreeLeaf* leaf, NAInt leafindx){
-  NATreeBinaryNode* binparent = (NATreeBinaryNode*)parent; 
-  naSetNodeChildType(parent, leafindx, NA_TREE_NODE_CHILD_LEAF);
-  binparent->childs[leafindx] = (NATreeBaseNode*)leaf;
-  ((NATreeBaseNode*)leaf)->parent = parent;
-}
-
-
-
 NA_HDEF void naRemoveLeafBinary(NATree* tree, NATreeLeaf* leaf){
   NATreeNode* parent = ((NATreeBaseNode*)leaf)->parent;
-  NAInt leafindx = naGetChildIndexBinary(parent, (NATreeBaseNode*)leaf);
-
-  NATreeNode* grandparent = ((NATreeBaseNode*)parent)->parent;
-  if(grandparent){
-    NAInt parentindx = naGetChildIndexBinary(grandparent, (NATreeBaseNode*)parent);
+  if(parent){
+    NAInt leafindx = naGetChildIndexBinary(parent, (NATreeBaseNode*)leaf);
     NATreeBaseNode* sibling = ((NATreeBinaryNode*)parent)->childs[1 - leafindx];
-    if(sibling){sibling->parent = grandparent;}
-    ((NATreeBinaryNode*)grandparent)->childs[parentindx] = sibling;
-    naSetNodeChildType(grandparent, parentindx, naGetNodeChildType(parent, 1 - leafindx));
-    
-    ((NATreeBinaryNode*)parent)->childs[1 - leafindx] = NA_NULL;
-    naSetNodeChildType(parent, 1 - leafindx, NA_TREE_NODE_CHILD_NULL);
-    naDestructTreeNodeBinary(tree, parent);
+    NABool issiblingleaf = naIsNodeChildLeaf(parent, 1 - leafindx);
 
-    if(tree->config->flags & NA_TREE_BALANCE_AVL){naShrinkAVL(tree, (NATreeBinaryNode*)grandparent, parentindx);}
-  }else{
-    if(naGetNodeChildType(parent, 1 - leafindx) == NA_TREE_NODE_CHILD_NODE){
-      tree->root = (NATreeNode*)((NATreeBinaryNode*)parent)->childs[1 - leafindx];
-      ((NATreeBinaryNode*)parent)->childs[1 - leafindx]->parent = NA_NULL;
-      ((NATreeBinaryNode*)parent)->childs[1 - leafindx] = NA_NULL;
-      naSetNodeChildType(parent, 1 - leafindx, NA_TREE_NODE_CHILD_NULL);
-      naDestructTreeNodeBinary(tree, parent);
-    }else if(naGetNodeChildType(parent, 1 - leafindx) == NA_TREE_NODE_CHILD_LEAF){
-      ((NATreeBinaryNode*)parent)->childs[leafindx] = NA_NULL;
-      naSetNodeChildType(parent, leafindx, NA_TREE_NODE_CHILD_NULL);
-      naDestructTreeLeafBinary(tree, leaf);
+    NATreeNode* grandparent = ((NATreeBaseNode*)parent)->parent;
+    if(grandparent){
+      NAInt parentindx = naGetChildIndexBinary(grandparent, (NATreeBaseNode*)parent);
+      ((NATreeBinaryNode*)grandparent)->childs[parentindx] = sibling;
+      naMarkNodeChildLeaf(grandparent, parentindx, issiblingleaf);
+      
+      if(tree->config->flags & NA_TREE_BALANCE_AVL){naShrinkAVL(tree, (NATreeBinaryNode*)grandparent, parentindx);}
     }else{
-      tree->root = NA_NULL;
-      naDestructTreeNodeBinary(tree, parent);
+      tree->root = sibling;
+      naMarkTreeRootLeaf(tree, issiblingleaf);
     }
+    sibling->parent = grandparent;
+
+    naDestructTreeNodeBinary(tree, parent, NA_FALSE);
+  }else{
+    tree->root = NA_NULL;
   }
+  naDestructTreeLeafBinary(tree, leaf);
 }
 
 
@@ -297,34 +298,35 @@ NA_HDEF void naReplaceLeafBinary(NATree* tree, NATreeLeaf* leaf, NAPtr data){
 
 
 
-NA_HDEF void naSplitLeafBinary(NATree* tree, NATreeNode* grandparent, NAInt leafindx, NATreeLeaf* sibling){
+NA_HDEF void naSplitLeafBinary(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf){
   NATreeLeaf* left;
   NATreeLeaf* right;
   #ifndef NDEBUG
-    if(naGetNodeChildType(grandparent, leafindx) != NA_TREE_NODE_CHILD_LEAF)
-      naError("naSplitLeafBinary", "Given child should be a leaf");
-    if(tree->config->flags & NA_TREE_KEY_TYPE_MASK == NA_TREE_KEY_NOKEY)
+    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("naSplitLeafBinary", "tree is configured with no key");
   #endif
-  NATreeBinaryLeaf* leaf = (NATreeBinaryLeaf*)naGetChildBinary(grandparent, leafindx);
-  NAInt siblingindx = tree->config->keyIndexGetter(&(leaf->key), &(((NATreeBinaryLeaf*)sibling)->key));
-  if(siblingindx == 0){
-    left = sibling;
-    right = (NATreeLeaf*)leaf;
+  NAInt newindx = tree->config->keyIndexGetter(&(((NATreeBinaryLeaf*)existingleaf)->key), &(((NATreeBinaryLeaf*)newleaf)->key));
+  if(newindx == 1){
+    left = existingleaf;
+    right = newleaf;
   }else{
-    left = (NATreeLeaf*)leaf;
-    right = sibling;
+    left = newleaf;
+    right = existingleaf;
   }
   
-  NATreeBinaryNode* parent = (NATreeBinaryNode*)naConstructTreeNodeBinary(tree, &(((NATreeBinaryLeaf*)right)->key));
-  naAddLeafBinary((NATreeNode*)parent, left, 0);
-  naAddLeafBinary((NATreeNode*)parent, right, 1);
-
-  naSetNodeChildType(grandparent, leafindx, NA_TREE_NODE_CHILD_NODE);
-  ((NATreeBinaryNode*)grandparent)->childs[leafindx] = (NATreeBaseNode*)parent;
-  ((NATreeBaseNode*)parent)->parent = (NATreeNode*)grandparent;
-
-  if(tree->config->flags & NA_TREE_BALANCE_AVL){naGrowAVL(tree, (NATreeBinaryNode*)grandparent, leafindx);}
+  NATreeNode* existingparent = ((NATreeBaseNode*)existingleaf)->parent;
+  NATreeBinaryNode* newparent = (NATreeBinaryNode*)naConstructTreeNodeBinary(tree, &(((NATreeBinaryLeaf*)right)->key), left, right);
+  ((NATreeBaseNode*)newparent)->parent = existingparent;
+  if(existingparent){
+    NAInt existingindx = naGetChildIndexBinary(existingparent, (NATreeBaseNode*)existingleaf);
+    naMarkNodeChildLeaf(existingparent, existingindx, NA_FALSE);
+    ((NATreeBinaryNode*)existingparent)->childs[existingindx] = (NATreeBaseNode*)newparent;
+    if(tree->config->flags & NA_TREE_BALANCE_AVL){naGrowAVL(tree, (NATreeBinaryNode*)existingparent, existingindx);}
+  }else{
+    // The leaf was the root of the tree.
+    tree->root = (NATreeBaseNode*)newparent;
+    naMarkTreeRootLeaf(tree, NA_FALSE);
+  }
 }
 
 

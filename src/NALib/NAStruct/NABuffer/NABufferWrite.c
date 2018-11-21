@@ -1,15 +1,18 @@
-int dummy;
 
-//
-//// This file is part of NALib, a collection of C source code.
-//// Full license notice at the bottom.
-//
-//#include "NABuffer.h"
-//
-//
-//// This is the internal function actually preparing and storing the bytes
-//// delivered in the parameters.
-//NA_HDEF void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt bytesize, NABool prepare, NABool advance){
+// This file is part of NALib, a collection of C source code.
+// Full license notice at the bottom.
+
+#include "NABuffer.h"
+
+
+// This is the internal function actually preparing and storing the bytes
+// delivered in the parameters.
+NA_HDEF void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt bytesize, NABool prepare, NABool advance){
+  NA_UNUSED(iter);
+  NA_UNUSED(data);
+  NA_UNUSED(bytesize);
+  NA_UNUSED(prepare);
+  NA_UNUSED(advance);
 //  const NAByte* src = data;
 //  NAByte* dst;
 //
@@ -87,132 +90,179 @@ int dummy;
 //  
 //  // Reaching here, the whole range has been written to the parts and both
 //  // curoffset and iter point to the current position again.
-//}
-//
-//
-//
-//
-//// ////////////////////////////////////
-//// SETTER
-//// ////////////////////////////////////
-//
-//
-//
-//NA_DEF void naSetBufferi8(NABufferIterator* iter, int8 value){
+  return;
+}
+
+
+
+
+// ////////////////////////////////////
+// SETTER
+// ////////////////////////////////////
+
+
+
+NA_DEF void naSetBufferi8(NABufferIterator* iter, int8 value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert8(&value);
 //  naStoreBufferBytes(iter, &value, 1, NA_TRUE, NA_FALSE);
-//}
-//NA_DEF void naSetBufferi16(NABufferIterator* iter, int16 value){
+}
+NA_DEF void naSetBufferi16(NABufferIterator* iter, int16 value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
 //  naStoreBufferBytes(iter, &value, 2, NA_TRUE, NA_FALSE);
-//}
-//NA_DEF void naSetBufferi32(NABufferIterator* iter, int32 value){
+}
+NA_DEF void naSetBufferi32(NABufferIterator* iter, int32 value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
 //  naStoreBufferBytes(iter, &value, 4, NA_TRUE, NA_FALSE);
-//}
-//NA_DEF void naSetBufferi64(NABufferIterator* iter, int64 value){
+}
+NA_DEF void naSetBufferi64(NABufferIterator* iter, int64 value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
 //  naStoreBufferBytes(iter, &value, 8, NA_TRUE, NA_FALSE);
-//}
-//
-//
-//
-//NA_DEF void naSetBufferu8(NABufferIterator* iter, uint8 value){
+}
+
+
+
+NA_DEF void naSetBufferu8(NABufferIterator* iter, uint8 value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  buffer->converter.convert8(&value);
 //  naStoreBufferBytes(iter, &value, 1, NA_TRUE, NA_FALSE);
-//}
-//NA_DEF void naSetBufferu16(NABufferIterator* iter, uint16 value){
+}
+NA_DEF void naSetBufferu16(NABufferIterator* iter, uint16 value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
 //  naStoreBufferBytes(iter, &value, 2, NA_TRUE, NA_FALSE);
-//}
-//NA_DEF void naSetBufferu32(NABufferIterator* iter, uint32 value){
+}
+NA_DEF void naSetBufferu32(NABufferIterator* iter, uint32 value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
 //  naStoreBufferBytes(iter, &value, 4, NA_TRUE, NA_FALSE);
-//}
-//NA_DEF void naSetBufferu64(NABufferIterator* iter, uint64 value){
+}
+NA_DEF void naSetBufferu64(NABufferIterator* iter, uint64 value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
 //  naStoreBufferBytes(iter, &value, 8, NA_TRUE, NA_FALSE);
-//}
-//
-//
-//NA_DEF void naSetBufferf(NABufferIterator* iter, float value){
+}
+
+
+NA_DEF void naSetBufferf(NABufferIterator* iter, float value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
 //  naStoreBufferBytes(iter, &value, 4, NA_TRUE, NA_FALSE);
-//}
-//NA_DEF void naSetBufferd(NABufferIterator* iter, double value){
+}
+NA_DEF void naSetBufferd(NABufferIterator* iter, double value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
 //  naStoreBufferBytes(iter, &value, 8, NA_TRUE, NA_FALSE);
-//}
-//
-//
-//
-//
-//// ////////////////////////////////////
-//// WRITING
-//// ////////////////////////////////////
-//
-//
-//
-//
-//
-//NA_DEF void naWriteBufferBytes(NABufferIterator* iter, const void* data, NAInt bytesize){
+}
+
+
+
+
+// ////////////////////////////////////
+// WRITING
+// ////////////////////////////////////
+
+
+
+
+
+NA_DEF void naWriteBufferBytes(NABufferIterator* iter, const void* data, NAInt bytesize){
+  NA_UNUSED(iter);
+  NA_UNUSED(data);
+  NA_UNUSED(bytesize);
 //  naStoreBufferBytes(iter, data, bytesize, NA_TRUE, NA_TRUE);
-//}
-//
-//
-//
-//NA_DEF void naWriteBufferi8(NABufferIterator* iter, int8 value){
+}
+
+
+
+NA_DEF void naWriteBufferi8(NABufferIterator* iter, int8 value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert8(&value);
 //  naStoreBufferBytes(iter, &value, 1, NA_TRUE, NA_TRUE);
-//}
-//NA_DEF void naWriteBufferi16(NABufferIterator* iter, int16 value){
+}
+NA_DEF void naWriteBufferi16(NABufferIterator* iter, int16 value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
 //  naStoreBufferBytes(iter, &value, 2, NA_TRUE, NA_TRUE);
-//}
-//NA_DEF void naWriteBufferi32(NABufferIterator* iter, int32 value){
+}
+NA_DEF void naWriteBufferi32(NABufferIterator* iter, int32 value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
 //  naStoreBufferBytes(iter, &value, 4, NA_TRUE, NA_TRUE);
-//}
-//NA_DEF void naWriteBufferi64(NABufferIterator* iter, int64 value){
+}
+NA_DEF void naWriteBufferi64(NABufferIterator* iter, int64 value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
 //  naStoreBufferBytes(iter, &value, 8, NA_TRUE, NA_TRUE);
-//}
-//
-//
-//
-//NA_DEF void naWriteBufferu8(NABufferIterator* iter, uint8 value){
+}
+
+
+
+NA_DEF void naWriteBufferu8(NABufferIterator* iter, uint8 value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  buffer->converter.convert8(&value);
 //  naStoreBufferBytes(iter, &value, 1, NA_TRUE, NA_TRUE);
-//}
-//NA_DEF void naWriteBufferu16(NABufferIterator* iter, uint16 value){
+}
+NA_DEF void naWriteBufferu16(NABufferIterator* iter, uint16 value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
 //  naStoreBufferBytes(iter, &value, 2, NA_TRUE, NA_TRUE);
-//}
-//NA_DEF void naWriteBufferu32(NABufferIterator* iter, uint32 value){
+}
+NA_DEF void naWriteBufferu32(NABufferIterator* iter, uint32 value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
 //  naStoreBufferBytes(iter, &value, 4, NA_TRUE, NA_TRUE);
-//}
-//NA_DEF void naWriteBufferu64(NABufferIterator* iter, uint64 value){
+}
+NA_DEF void naWriteBufferu64(NABufferIterator* iter, uint64 value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
 //  naStoreBufferBytes(iter, &value, 8, NA_TRUE, NA_TRUE);
-//}
-//
-//
-//
-//NA_DEF void naWriteBufferf(NABufferIterator* iter, float value){
+}
+
+
+
+NA_DEF void naWriteBufferf(NABufferIterator* iter, float value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
 //  naStoreBufferBytes(iter, &value, 4, NA_TRUE, NA_TRUE);
-//}
-//NA_DEF void naWriteBufferd(NABufferIterator* iter, double value){
+}
+NA_DEF void naWriteBufferd(NABufferIterator* iter, double value){
+  NA_UNUSED(iter);
+  NA_UNUSED(value);
 //  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
 //  naStoreBufferBytes(iter, &value, 8, NA_TRUE, NA_TRUE);
-//}
-//
-//
-//
-//NA_DEF void naWriteBufferi8v(NABufferIterator* iter, const int8* src, NAInt count){
+}
+
+
+
+NA_DEF void naWriteBufferi8v(NABufferIterator* iter, const int8* src, NAInt count){
+  NA_UNUSED(iter);
+  NA_UNUSED(src);
+  NA_UNUSED(count);
 //  int8 value;
 //  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 1), NA_FALSE, NA_TRUE);
 //  while(count){
@@ -222,8 +272,11 @@ int dummy;
 //    src++;
 //    count--;
 //  }
-//}
-//NA_DEF void naWriteBufferi16v(NABufferIterator* iter, const int16* src, NAInt count){
+}
+NA_DEF void naWriteBufferi16v(NABufferIterator* iter, const int16* src, NAInt count){
+  NA_UNUSED(iter);
+  NA_UNUSED(src);
+  NA_UNUSED(count);
 //  int16 value;
 //  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 2), NA_FALSE, NA_TRUE);
 //  while(count){
@@ -233,8 +286,11 @@ int dummy;
 //    src++;
 //    count--;
 //  }
-//}
-//NA_DEF void naWriteBufferi32v(NABufferIterator* iter, const int32* src, NAInt count){
+}
+NA_DEF void naWriteBufferi32v(NABufferIterator* iter, const int32* src, NAInt count){
+  NA_UNUSED(iter);
+  NA_UNUSED(src);
+  NA_UNUSED(count);
 //  int32 value;
 //  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 4), NA_FALSE, NA_TRUE);
 //  while(count){
@@ -244,8 +300,11 @@ int dummy;
 //    src++;
 //    count--;
 //  }
-//}
-//NA_DEF void naWriteBufferi64v(NABufferIterator* iter, const int64* src, NAInt count){
+}
+NA_DEF void naWriteBufferi64v(NABufferIterator* iter, const int64* src, NAInt count){
+  NA_UNUSED(iter);
+  NA_UNUSED(src);
+  NA_UNUSED(count);
 //  int64 value;
 //  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 8), NA_FALSE, NA_TRUE);
 //  while(count){
@@ -255,8 +314,11 @@ int dummy;
 //    src++;
 //    count--;
 //  }
-//}
-//NA_DEF void naWriteBufferu8v(NABufferIterator* iter, const uint8* src, NAInt count){
+}
+NA_DEF void naWriteBufferu8v(NABufferIterator* iter, const uint8* src, NAInt count){
+  NA_UNUSED(iter);
+  NA_UNUSED(src);
+  NA_UNUSED(count);
 //  uint8 value;
 //  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 1), NA_FALSE, NA_TRUE);
 //  while(count){
@@ -266,8 +328,11 @@ int dummy;
 //    src++;
 //    count--;
 //  }
-//}
-//NA_DEF void naWriteBufferu16v(NABufferIterator* iter, const uint16* src, NAInt count){
+}
+NA_DEF void naWriteBufferu16v(NABufferIterator* iter, const uint16* src, NAInt count){
+  NA_UNUSED(iter);
+  NA_UNUSED(src);
+  NA_UNUSED(count);
 //  uint16 value;
 //  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 2), NA_FALSE, NA_TRUE);
 //  while(count){
@@ -277,8 +342,11 @@ int dummy;
 //    src++;
 //    count--;
 //  }
-//}
-//NA_DEF void naWriteBufferu32v(NABufferIterator* iter, const uint32* src, NAInt count){
+}
+NA_DEF void naWriteBufferu32v(NABufferIterator* iter, const uint32* src, NAInt count){
+  NA_UNUSED(iter);
+  NA_UNUSED(src);
+  NA_UNUSED(count);
 //  uint32 value;
 //  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 4), NA_FALSE, NA_TRUE);
 //  while(count){
@@ -288,8 +356,11 @@ int dummy;
 //    src++;
 //    count--;
 //  }
-//}
-//NA_DEF void naWriteBufferu64v(NABufferIterator* iter, const uint64* src, NAInt count){
+}
+NA_DEF void naWriteBufferu64v(NABufferIterator* iter, const uint64* src, NAInt count){
+  NA_UNUSED(iter);
+  NA_UNUSED(src);
+  NA_UNUSED(count);
 //  uint64 value;
 //  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 8), NA_FALSE, NA_TRUE);
 //  while(count){
@@ -299,8 +370,11 @@ int dummy;
 //    src++;
 //    count--;
 //  }
-//}
-//NA_DEF void naWriteBufferfv(NABufferIterator* iter, const float* src, NAInt count){
+}
+NA_DEF void naWriteBufferfv(NABufferIterator* iter, const float* src, NAInt count){
+  NA_UNUSED(iter);
+  NA_UNUSED(src);
+  NA_UNUSED(count);
 //  float value;
 //  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 4), NA_FALSE, NA_TRUE);
 //  while(count){
@@ -310,8 +384,11 @@ int dummy;
 //    src++;
 //    count--;
 //  }
-//}
-//NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, NAInt count){
+}
+NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, NAInt count){
+  NA_UNUSED(iter);
+  NA_UNUSED(src);
+  NA_UNUSED(count);
 //  double value;
 //  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 8), NA_FALSE, NA_TRUE);
 //  while(count){
@@ -321,11 +398,14 @@ int dummy;
 //    src++;
 //    count--;
 //  }
-//}
-//
-//
-//
-//NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffer, NARangei srcrange){
+}
+
+
+
+NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffer, NARangei srcrange){
+  NA_UNUSED(iter);
+  NA_UNUSED(srcbuffer);
+  NA_UNUSED(srcrange);
 //  NABuffer* dstbuffer;
 //  NABufferSource* tmpsource;
 //  NAInt tmpsrcoffset;
@@ -353,11 +433,14 @@ int dummy;
 //    dstbuffer->source = tmpsource;
 //    dstbuffer->srcoffset = tmpsrcoffset;
 //  }
-//}
-//
-//
-//
-//NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt bytesize){
+}
+
+
+
+NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt bytesize){
+  NA_UNUSED(iter);
+  NA_UNUSED(distance);
+  NA_UNUSED(bytesize);
 //  NAInt writeoffset;
 //  NAInt readoffset;
 //  NABufferPart* writepart;
@@ -418,43 +501,51 @@ int dummy;
 //  }
 //
 //  naClearListIterator(&readiter);
-//
-//}
-//
-//
-//
-//NA_DEF void naWriteBufferString(NABufferIterator* iter, const NAString* string){
+}
+
+
+
+NA_DEF void naWriteBufferString(NABufferIterator* iter, const NAString* string){
+  NA_UNUSED(iter);
+  NA_UNUSED(string);
 //  naWriteBufferBuffer(iter, naGetStringBufferConst(string), naGetBufferRange(naGetStringBufferConst(string)));
-//}
-//
-//
-//
-//NA_DEF void naWriteBufferStringWithFormat(NABufferIterator* iter, const NAUTF8Char* format, ...){
+}
+
+
+
+NA_DEF void naWriteBufferStringWithFormat(NABufferIterator* iter, const NAUTF8Char* format, ...){
+  NA_UNUSED(iter);
+  NA_UNUSED(format);
 //  va_list argumentlist;
 //  va_start(argumentlist, format);
 //  naWriteBufferStringWithArguments(iter, format, argumentlist);
 //  va_end(argumentlist);
-//}
-//
-//
-//
-//NA_DEF void naWriteBufferStringWithArguments(NABufferIterator* iter, const NAUTF8Char* format, va_list argumentlist){
+}
+
+
+
+NA_DEF void naWriteBufferStringWithArguments(NABufferIterator* iter, const NAUTF8Char* format, va_list argumentlist){
+  NA_UNUSED(iter);
+  NA_UNUSED(format);
+  NA_UNUSED(argumentlist);
 //  NAString* string;
 //  string = naNewStringWithArguments(format, argumentlist);
 //  naWriteBufferString(iter, string);
 //  naDelete(string);
-//}
-//
-//
-//
-//
-//NA_DEF void naWriteBufferTab(NABufferIterator* iter){
+}
+
+
+
+
+NA_DEF void naWriteBufferTab(NABufferIterator* iter){
+  NA_UNUSED(iter);
 //  naStoreBufferBytes(iter, NA_TAB, 1, NA_TRUE, NA_TRUE);
-//}
-//
-//
-//
-//NA_DEF void naWriteBufferNewLine(NABufferIterator* iter){
+}
+
+
+
+NA_DEF void naWriteBufferNewLine(NABufferIterator* iter){
+  NA_UNUSED(iter);
 //  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  switch(buffer->newlineencoding){
 //  case NA_NEWLINE_UNIX:
@@ -470,48 +561,54 @@ int dummy;
 //    naStoreBufferBytes(iter, NA_NL, naStrlen(NA_NL), NA_TRUE, NA_TRUE);
 //    break;
 //  }
-//}
-//
-//
-//
-//
-//
-//NA_DEF void naWriteBufferLine(NABufferIterator* iter, const NAString* string){
+}
+
+
+
+
+
+NA_DEF void naWriteBufferLine(NABufferIterator* iter, const NAString* string){
+  NA_UNUSED(iter);
+  NA_UNUSED(string);
 //  naWriteBufferString(iter, string);
 //  naWriteBufferNewLine(iter);
-//}
-//NA_DEF void naWriteBufferLineWithFormat(NABufferIterator* iter, const NAUTF8Char* format, ...){
+}
+NA_DEF void naWriteBufferLineWithFormat(NABufferIterator* iter, const NAUTF8Char* format, ...){
+  NA_UNUSED(iter);
+  NA_UNUSED(format);
 //  // Declaration before implementation. Needed for C90.
 //  va_list argumentlist;
 //  va_start(argumentlist, format);
 //  naWriteBufferLineWithArguments(iter, format, argumentlist);
 //  va_end(argumentlist);
-//}
-//NA_DEF void naWriteBufferLineWithArguments(NABufferIterator* iter, const NAUTF8Char* format, va_list argumentlist){
+}
+NA_DEF void naWriteBufferLineWithArguments(NABufferIterator* iter, const NAUTF8Char* format, va_list argumentlist){
+  NA_UNUSED(iter);
+  NA_UNUSED(format);
+  NA_UNUSED(argumentlist);
 //  naWriteBufferStringWithArguments(iter, format, argumentlist);
 //  naWriteBufferNewLine(iter);
-//}
+}
+
+
+
+// Copyright (c) NALib, Tobias Stamm
 //
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
 //
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
 //
-//
-//// Copyright (c) NALib, Tobias Stamm
-////
-//// Permission is hereby granted, free of charge, to any person obtaining
-//// a copy of this software and associated documentation files (the
-//// "Software"), to deal in the Software without restriction, including
-//// without limitation the rights to use, copy, modify, merge, publish,
-//// distribute, sublicense, and/or sell copies of the Software, and to
-//// permit persons to whom the Software is furnished to do so, subject to
-//// the following conditions:
-////
-//// The above copyright notice and this permission notice shall be included
-//// in all copies or substantial portions of the Software.
-////
-//// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-//// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-//// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-//// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-//// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-//// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-//// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

@@ -14,11 +14,10 @@
 #define NA_TREE_ITERATOR_CLEARED  0x80
 
 // Prototypes
-NA_HIAPI NABool naIsNodeChildTypeValid(NANodeChildType childtype);
-NA_HIAPI NANodeChildType naGetNodeChildType(NATreeNode* node, NAInt childindx);
-NA_HAPI  NATreeNode* naLocateTreeNode(NATreeIterator* iter, const void* key, NABool* matchfound, NAInt* leafindx, NABool usebubble);
+NA_HAPI  NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABool* matchfound, NABool usebubble);
 NA_HAPI  NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info);
 NA_HAPI  NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace);
+NA_HIAPI NABool naIsTreeRootLeaf(const NATree* tree);
 
 
 
@@ -96,6 +95,7 @@ NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
   
   // Init the tree root.
   tree->root = NA_NULL;
+  tree->flags = 0;
   #ifndef NDEBUG
     tree->itercount = 0;
   #endif
@@ -110,7 +110,13 @@ NA_IDEF void naEmptyTree(NATree* tree){
     if(tree->itercount != 0)
       naError("naEmptyTree", "There are still iterators running on this tree. Did you miss a naClearTreeIterator call?");
   #endif
-  if(tree->root){tree->config->nodeCoreDestructor(tree, tree->root);}
+  if(tree->root){
+    if(naIsTreeRootLeaf(tree)){
+      tree->config->leafCoreDestructor(tree, (NATreeLeaf*)tree->root);  
+    }else{
+      tree->config->nodeCoreDestructor(tree, (NATreeNode*)tree->root, NA_TRUE);
+    }
+  }
   tree->root = NA_NULL;
 }
 
@@ -127,31 +133,31 @@ NA_IDEF void naClearTree(NATree* tree){
 
 
 
-NA_IDEF NABool naAddTreeFirstConst(NATree* tree, const void* content){
-  #ifndef NDEBUG
-    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
-      naError("naAddTreeFirstConst", "This function should not be called on trees with keys");
-  #endif
-  NATreeIterator iter = naMakeTreeModifier(tree);
-  naLocateTreeFirst(&iter);
-  naAddTreePrevConst(&iter, content);
-  naClearTreeIterator(&iter);
-  return NA_TRUE;
-}
+//NA_IDEF NABool naAddTreeFirstConst(NATree* tree, const void* content){
+//  #ifndef NDEBUG
+//    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
+//      naError("naAddTreeFirstConst", "This function should not be called on trees with keys");
+//  #endif
+//  NATreeIterator iter = naMakeTreeModifier(tree);
+//  naLocateTreeFirst(&iter);
+//  naAddTreePrevConst(&iter, content);
+//  naClearTreeIterator(&iter);
+//  return NA_TRUE;
+//}
 
 
 
-NA_IDEF NABool naAddTreeFirstMutable(NATree* tree, const void* content){
-  #ifndef NDEBUG
-    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
-      naError("naAddTreeFirstMutable", "This function should not be called on trees with keys");
-  #endif
-  NATreeIterator iter = naMakeTreeModifier(tree);
-  naLocateTreeLast(&iter);
-  naAddTreeNextConst(&iter, content);
-  naClearTreeIterator(&iter);
-  return NA_TRUE;
-}
+//NA_IDEF NABool naAddTreeFirstMutable(NATree* tree, const void* content){
+//  #ifndef NDEBUG
+//    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
+//      naError("naAddTreeFirstMutable", "This function should not be called on trees with keys");
+//  #endif
+//  NATreeIterator iter = naMakeTreeModifier(tree);
+//  naLocateTreeLast(&iter);
+//  naAddTreeNextConst(&iter, content);
+//  naClearTreeIterator(&iter);
+//  return NA_TRUE;
+//}
 
 
 
@@ -245,12 +251,10 @@ NA_IDEF void naClearTreeIterator(NATreeIterator* iter){
 
 NA_IDEF NABool naLocateTree(NATreeIterator* iter, const void* key, NABool assumeclose){
   NABool matchfound;
-  NAInt childindx;  // unused.
-  const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
-  NATreeNode* node = naLocateTreeNode(iter, key, &matchfound, &childindx, assumeclose);
+  NATreeLeaf* leaf = naLocateTreeLeaf(iter, key, &matchfound, assumeclose);
 
-  if(matchfound){
-    naSetTreeIteratorCurLeaf(iter, (NATreeLeaf*)tree->config->childGetter(node, childindx));
+  if(leaf && matchfound){
+    naSetTreeIteratorCurLeaf(iter, leaf);
   }else{
     naSetTreeIteratorCurLeaf(iter, NA_NULL);
   }
@@ -387,25 +391,36 @@ NA_HIDEF void naClearTreeNode(NATreeNode* node){
 
 
 
-NA_HIDEF NANodeChildType naGetNodeChildType(NATreeNode* node, NAInt childindx){
-  return (NANodeChildType)((node->flags >> (childindx * 2)) & NA_TREE_NODE_CHILD_MASK);
+NA_HIDEF NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx){
+  return (NABool)((node->flags >> childindx) & 0x01);
 }
 
 
 
-NA_HIDEF void naSetNodeChildType(NATreeNode* node, NAInt childindx, NANodeChildType childtype){
-  // Clear the old type
-  naSetFlagi(&(node->flags), NA_TREE_NODE_CHILD_MASK << (childindx * 2), NA_FALSE);
-  // Set the new type
-  naSetFlagi(&(node->flags), childtype << (childindx * 2), NA_TRUE);
+NA_HIDEF NABool naIsBaseNodeLeaf(const NATree* tree, NATreeBaseNode* basenode){
+  if(!basenode->parent){return naIsTreeRootLeaf(tree);}
+  NAInt childindx = tree->config->childIndexGetter(basenode->parent, basenode);
+  return naIsNodeChildLeaf(basenode->parent, childindx);
 }
 
 
 
-NA_HIDEF NANodeChildType naGetNodeType(const NATree* tree, NATreeBaseNode* node){
-  if(!node->parent){return NA_TREE_NODE_CHILD_NODE;}
-  NAInt childindx = tree->config->childIndexGetter(node->parent, node);
-  return naGetNodeChildType(node->parent, childindx);
+NA_HIDEF void naMarkNodeChildLeaf(NATreeNode* node, NAInt childindx, NABool isleaf){
+  node->flags &= ~(1 << childindx);
+  node->flags |= isleaf << childindx;
+}
+
+
+
+NA_HIDEF NABool naIsTreeRootLeaf(const NATree* tree){
+  return (NABool)((tree->flags & NA_TREE_FLAG_ROOT_IS_LEAF) == NA_TREE_FLAG_ROOT_IS_LEAF);
+}
+
+
+
+NA_HIDEF void naMarkTreeRootLeaf(NATree* tree, NABool isleaf){
+  tree->flags &= ~NA_TREE_FLAG_ROOT_IS_LEAF;
+  tree->flags |= (isleaf * NA_TREE_FLAG_ROOT_IS_LEAF);
 }
 
 
@@ -455,17 +470,6 @@ NA_HIDEF void naClearTreeLeaf(NATreeLeaf* leaf){
     NA_UNUSED(leaf);
   #endif  
 }
-
-
-
-// /////////////////////////////////////
-// Varia
-// /////////////////////////////////////
-
-NA_HIDEF NABool naIsNodeChildTypeValid(NANodeChildType childtype){
-  return naTestFlagi(childtype, NA_TREE_NODE_CHILD_AVAILABLE_MASK);
-}
-
 
 
 

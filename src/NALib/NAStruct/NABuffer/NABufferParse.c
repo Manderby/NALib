@@ -1,17 +1,13 @@
-int dummy;
 
-//
-//// This file is part of NALib, a collection of C source code.
-//// Full license notice at the bottom.
-//
-//#include "NABuffer.h"
-//
-//
-//
-//
-////#include "stdio.h"
-//
-//NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
+// This file is part of NALib, a collection of C source code.
+// Full license notice at the bottom.
+
+#include "NABuffer.h"
+
+
+
+NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
+  NA_UNUSED(iter);
 //  NABool nonwhitespacefound = NA_FALSE;
 //
 //  while(!naIsBufferAtInitial(iter)){
@@ -45,11 +41,12 @@ int dummy;
 //    }
 //    if(nonwhitespacefound){break;}
 //  }
-//}
-//
-//
-//
-//NA_DEF void naSkipBufferDelimiter(NABufferIterator* iter){
+}
+
+
+
+NA_DEF void naSkipBufferDelimiter(NABufferIterator* iter){
+  NA_UNUSED(iter);
 //  NAByte curbyte;
 //  if(!naIsBufferAtInitial(iter)){
 //    curbyte = naGetBufferu8(iter);
@@ -59,11 +56,13 @@ int dummy;
 //      naSeekBufferRelative(iter, 1);
 //    }
 //  }
-//}
-//
-//
-//
-//NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
+}
+
+
+
+NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
+  NA_UNUSED(iter);
+  NA_UNUSED(skipempty);
 //  NABool lineendingfound = NA_FALSE;
 //  NABool checkwindowsend = NA_FALSE;
 //  NAInt linestart = iter->curoffset;
@@ -112,24 +111,30 @@ int dummy;
 //  }
 //
 //  return string;
-//}
-//
-//
-//
-////NA_DEF NAUInt naGetBufferLineNumber(NABufferIterator* iter){
-////  return iter->linenum;
-////}
-//
-//
-//
-//NA_DEF NAString* naParseBufferRemainder(NABufferIterator* iter){
+  return NA_NULL;
+}
+
+
+
+NA_DEF NAUInt naGetBufferLineNumber(NABufferIterator* iter){
+  NA_UNUSED(iter);
+//  return iter->linenum;
+  return 0;
+}
+
+
+
+NA_DEF NAString* naParseBufferRemainder(NABufferIterator* iter){
+  NA_UNUSED(iter);
 //  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  return naNewStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(iter->curoffset, naGetRangeiEnd(buffer->range)));
-//}
-//
-//
-//
-//NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
+  return NA_NULL;
+}
+
+
+
+NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
+  NA_UNUSED(iter);
 //  NAString* string;
 //  NAInt tokenstart = iter->curoffset;
 //
@@ -158,11 +163,14 @@ int dummy;
 //  string = naNewStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
 //  naSkipBufferWhitespaces(iter);
 //  return string;
-//}
-//
-//
-//
-//NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8Char delimiter){
+  return NA_NULL;
+}
+
+
+
+NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8Char delimiter){
+  NA_UNUSED(iter);
+  NA_UNUSED(delimiter);
 //  NAString* string;
 //  NAInt tokenstart = iter->curoffset;
 //  const NABufferPart* part;
@@ -191,11 +199,13 @@ int dummy;
 //  string = naNewStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
 //  naSeekBufferRelative(iter, 1);
 //  return string;
-//}
-//
-//
-//
-//NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter){
+  return NA_NULL;
+}
+
+
+
+NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter){
+  NA_UNUSED(iter);
 //  NAString* string;
 //  NAInt tokenstart = iter->curoffset;
 //  const NABufferPart* part;
@@ -224,11 +234,16 @@ int dummy;
 //  string = naNewStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
 //  naSeekBufferRelative(iter, 1);
 //  return string;
-//}
-//
-//
-//
-//NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64* retint, NAInt maxdigitcount, uint64 max){
+  return NA_NULL;
+}
+
+
+
+NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64* retint, NAInt maxdigitcount, uint64 max){
+  NA_UNUSED(iter);
+  NA_UNUSED(retint);
+  NA_UNUSED(maxdigitcount);
+  NA_UNUSED(max);
 //  NAInt bytesused;
 //  uint64 prevval;
 //  NABool endfound = NA_FALSE;
@@ -284,11 +299,17 @@ int dummy;
 //  }
 //  
 //  return bytesused;
-//}
-//
-//
-//
-//NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* retint, NAInt maxdigitcount, int64 min, int64 max){
+  return 0;
+}
+
+
+
+NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* retint, NAInt maxdigitcount, int64 min, int64 max){
+  NA_UNUSED(iter);
+  NA_UNUSED(retint);
+  NA_UNUSED(maxdigitcount);
+  NA_UNUSED(min);
+  NA_UNUSED(max);
 //  int64 sign = NA_ONE_64;
 //  NAInt bytesused = 0;
 //  int64 limit = max;
@@ -322,84 +343,109 @@ int dummy;
 //  bytesused += naParseBufferDecimalUnsignedInteger(iter, &intvalue, maxdigitcount, naCastInt64ToUInt64(limit));
 //  *retint = naMulInt64(sign, naCastUInt64ToInt64(intvalue));
 //  return bytesused;
-//}
-//
-//
-//
-//NA_DEF int8 naParseBufferInt8(NABufferIterator* iter, NABool skipdelimiter){
+  return 0;
+}
+
+
+
+NA_DEF int8 naParseBufferInt8(NABufferIterator* iter, NABool skipdelimiter){
+  NA_UNUSED(iter);
+  NA_UNUSED(skipdelimiter);
 //  int64 intvalue;  
 //  naParseBufferDecimalSignedInteger(iter, &intvalue, 0, naMakeInt64WithLo(NA_INT8_MIN), naMakeInt64WithLo(NA_INT8_MAX));
 //  if(skipdelimiter){naSkipBufferDelimiter(iter);}
 //  return naCastInt64ToInt8(intvalue);
-//}
-//NA_DEF int16 naParseBufferInt16(NABufferIterator* iter, NABool skipdelimiter){
+  return 0;
+}
+NA_DEF int16 naParseBufferInt16(NABufferIterator* iter, NABool skipdelimiter){
+  NA_UNUSED(iter);
+  NA_UNUSED(skipdelimiter);
 //  int64 intvalue;  
 //  naParseBufferDecimalSignedInteger(iter, &intvalue, 0, naMakeInt64WithLo(NA_INT16_MIN), naMakeInt64WithLo(NA_INT16_MAX));
 //  if(skipdelimiter){naSkipBufferDelimiter(iter);}
 //  return naCastInt64ToInt16(intvalue);
-//}
-//NA_DEF int32 naParseBufferInt32(NABufferIterator* iter, NABool skipdelimiter){
+  return 0;
+}
+NA_DEF int32 naParseBufferInt32(NABufferIterator* iter, NABool skipdelimiter){
+  NA_UNUSED(iter);
+  NA_UNUSED(skipdelimiter);
 //  int64 intvalue;  
 //  naParseBufferDecimalSignedInteger(iter, &intvalue, 0, naMakeInt64WithLo(NA_INT32_MIN), naMakeInt64WithLo(NA_INT32_MAX));
 //  if(skipdelimiter){naSkipBufferDelimiter(iter);}
 //  return naCastInt64ToInt32(intvalue);
-//}
-//NA_DEF int64 naParseBufferInt64(NABufferIterator* iter, NABool skipdelimiter){
+  return 0;
+}
+NA_DEF int64 naParseBufferInt64(NABufferIterator* iter, NABool skipdelimiter){
+  NA_UNUSED(iter);
+  NA_UNUSED(skipdelimiter);
 //  int64 intvalue;  
 //  naParseBufferDecimalSignedInteger(iter, &intvalue, 0, NA_INT64_MIN, NA_INT64_MAX);
 //  if(skipdelimiter){naSkipBufferDelimiter(iter);}
 //  return intvalue;
-//}
-//
-//
-//
-//NA_DEF uint8 naParseBufferUInt8(NABufferIterator* iter, NABool skipdelimiter){
+  return 0;
+}
+
+
+
+NA_DEF uint8 naParseBufferUInt8(NABufferIterator* iter, NABool skipdelimiter){
+  NA_UNUSED(iter);
+  NA_UNUSED(skipdelimiter);
 //  uint64 uintvalue;  
 //  naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, naMakeUInt64WithLo(NA_UINT8_MAX));
 //  if(skipdelimiter){naSkipBufferDelimiter(iter);}
 //  return naCastUInt64ToUInt8(uintvalue);
-//}
-//NA_DEF uint16 naParseBufferUInt16(NABufferIterator* iter, NABool skipdelimiter){
+  return 0;
+}
+NA_DEF uint16 naParseBufferUInt16(NABufferIterator* iter, NABool skipdelimiter){
+  NA_UNUSED(iter);
+  NA_UNUSED(skipdelimiter);
 //  uint64 uintvalue;  
 //  naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, naMakeUInt64WithLo(NA_UINT16_MAX));
 //  if(skipdelimiter){naSkipBufferDelimiter(iter);}
 //  return naCastUInt64ToUInt16(uintvalue);
-//}
-//NA_DEF uint32 naParseBufferUInt32(NABufferIterator* iter, NABool skipdelimiter){
+  return 0;
+}
+NA_DEF uint32 naParseBufferUInt32(NABufferIterator* iter, NABool skipdelimiter){
+  NA_UNUSED(iter);
+  NA_UNUSED(skipdelimiter);
 //  uint64 uintvalue;  
 //  naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, naMakeUInt64WithLo(NA_UINT32_MAX));
 //  if(skipdelimiter){naSkipBufferDelimiter(iter);}
 //  return naCastUInt64ToUInt32(uintvalue);
-//}
-//NA_DEF uint64 naParseBufferUInt64(NABufferIterator* iter, NABool skipdelimiter){
+  return 0;
+}
+NA_DEF uint64 naParseBufferUInt64(NABufferIterator* iter, NABool skipdelimiter){
+  NA_UNUSED(iter);
+  NA_UNUSED(skipdelimiter);
 //  uint64 uintvalue;  
 //  naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, NA_UINT64_MAX);
 //  if(skipdelimiter){naSkipBufferDelimiter(iter);}
 //  return uintvalue;
-//}
+  return 0;
+}
+
+
+
+
+
+
+// Copyright (c) NALib, Tobias Stamm
 //
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
 //
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
 //
-//
-//
-//
-//// Copyright (c) NALib, Tobias Stamm
-////
-//// Permission is hereby granted, free of charge, to any person obtaining
-//// a copy of this software and associated documentation files (the
-//// "Software"), to deal in the Software without restriction, including
-//// without limitation the rights to use, copy, modify, merge, publish,
-//// distribute, sublicense, and/or sell copies of the Software, and to
-//// permit persons to whom the Software is furnished to do so, subject to
-//// the following conditions:
-////
-//// The above copyright notice and this permission notice shall be included
-//// in all copies or substantial portions of the Software.
-////
-//// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-//// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-//// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-//// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-//// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-//// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-//// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+// IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+// CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+// TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+// SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
