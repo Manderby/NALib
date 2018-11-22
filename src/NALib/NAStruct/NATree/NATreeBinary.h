@@ -52,7 +52,7 @@ NA_HAPI NAInt naGetChildKeyIndexBinary(const NATree* tree, NATreeNode* parent, c
 NA_HAPI NATreeBaseNode* naGetChildBinary(NATreeNode* parent, NAInt childindx);
 NA_HAPI void naRemoveLeafBinary(NATree* tree, NATreeLeaf* leaf);
 NA_HAPI void naReplaceLeafBinary(NATree* tree, NATreeLeaf* leaf, NAPtr data);
-NA_HAPI void naSplitLeafBinary(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf);
+NA_HAPI void naSplitLeafBinary(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf, NATreeLeafSplitOrder splitOrder);
 NA_HAPI const void* naGetLeafKeyBinary(NATreeLeaf* leaf);
 NA_HAPI NAPtr* naGetLeafDataBinary(NATreeLeaf* leaf);
 

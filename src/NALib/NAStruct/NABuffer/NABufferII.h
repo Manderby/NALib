@@ -34,13 +34,34 @@ struct NABufferIterator{
   NATreeIterator partiter;
 };
 
+struct NABuffer{
+  NABufferSource* source;
+  NAInt srcoffset;       // Offset of source relative to this buffers origin.
+                         // Add this offset to the desired pos to get the
+                         // position within the source.
+  
+  NAUInt flags;
+  NARangei range;
+  
+  NANewlineEncoding newlineencoding;  // The current newline encoding
+  NAInt endianness;                   // The current endianness
+  NAEndiannessConverter converter;    // The endianness converter.
+
+  NATree parts;             // Tree with all parts in this buffer
+  
+  #ifndef NDEBUG
+    NAInt itercount;
+  #endif
+};
 
 
 
 
 // NABufferPart
+NA_HAPI NABufferPart* naNewBufferPartSparse(NAUInt bytesize);
 NA_HAPI NABufferPart* naNewBufferPartConstData(const NAByte* data, NAUInt bytesize);
 NA_HAPI NABufferPart* naNewBufferPartMutableData(NAByte* data, NAUInt bytesize, NAMutator destructor);
+NA_HAPI NABool naIsBufferPartSparse(const NABufferPart* part);
 
 // NABufferHelper
 NA_HAPI void naEnsureBufferRange(NABuffer* buffer, NARangei range);

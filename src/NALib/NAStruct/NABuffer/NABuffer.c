@@ -7,26 +7,6 @@
 #include "NABuffer.h"
 
 
-struct NABuffer{
-  NABufferSource* source;
-//  NAInt srcoffset;       // Offset of source relative to buffer absolute 0.
-//                         // negative means: absolute 0 points to subpart
-//                         // of source.
-  
-  NAUInt flags;
-  NARangei range;
-  
-  NANewlineEncoding newlineencoding;  // The current newline encoding
-  NAInt endianness;                   // The current endianness
-  NAEndiannessConverter converter;    // The endianness converter.
-
-  NATree parts;             // Tree with all parts in this buffer
-  
-  #ifndef NDEBUG
-    NAInt itercount;
-  #endif
-};
-
 NA_HAPI void naDeallocBuffer(NABuffer* buffer);
 NA_RUNTIME_TYPE(NABuffer, naDeallocBuffer, NA_TRUE);
 
@@ -40,7 +20,7 @@ NA_RUNTIME_TYPE(NABuffer, naDeallocBuffer, NA_TRUE);
 NA_HDEF void naInitBufferStruct(NABuffer* buffer){
   buffer->flags = 0;
   buffer->range = naMakeRangeiWithStartAndEnd(0, 0);
-  NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_NAINT | NA_TREE_BALANCE_AVL);
+  NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_NOKEY | NA_TREE_BALANCE_AVL);
   naInitTree(&(buffer->parts), config);
   #ifndef NDEBUG
     buffer->itercount = 0;
@@ -283,14 +263,11 @@ NA_DEF NABuffer* naNewBufferWithConstData(const void* data, NAUInt bytesize){
   naInitBufferStruct(buffer);
   
   buffer->source = NA_NULL;
-//  buffer->srcoffset = 0;
+  buffer->srcoffset = 0;
 
   // Add the const data to the list.
   part = naNewBufferPartConstData(data, bytesize);
-  NAInt origin = 0;
-  NATreeIterator iter = naMakeTreeModifier(&(buffer->parts));
-  naAddTreeKeyMutable(&iter, &origin, part, NA_FALSE);
-  naClearTreeIterator(&iter);
+  naAddTreeFirstMutable(&(buffer->parts), part);
   
   buffer->range = naMakeRangeiWithStartAndEnd(0, (NAInt)bytesize);
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;
@@ -311,14 +288,11 @@ NA_DEF NABuffer* naNewBufferWithMutableData(void* data, NAUInt bytesize, NAMutat
   naInitBufferStruct(buffer);
   
   buffer->source = NA_NULL;
-//  buffer->srcoffset = 0;
+  buffer->srcoffset = 0;
 
   // Add the const data to the list.
   part = naNewBufferPartMutableData(data, bytesize, destructor);
-  NAInt origin = 0;
-  NATreeIterator iter = naMakeTreeModifier(&(buffer->parts));
-  naAddTreeKeyMutable(&iter, &origin, part, NA_FALSE);
-  naClearTreeIterator(&iter);
+  naAddTreeFirstMutable(&(buffer->parts), part);
   
   buffer->range = naMakeRangeiWithStartAndEnd(0, (NAInt)bytesize);
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;

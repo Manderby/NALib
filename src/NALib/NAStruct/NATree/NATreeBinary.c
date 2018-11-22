@@ -298,20 +298,38 @@ NA_HDEF void naReplaceLeafBinary(NATree* tree, NATreeLeaf* leaf, NAPtr data){
 
 
 
-NA_HDEF void naSplitLeafBinary(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf){
+NA_HDEF void naSplitLeafBinary(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf, NATreeLeafSplitOrder splitOrder){
   NATreeLeaf* left;
   NATreeLeaf* right;
-  #ifndef NDEBUG
-    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
-      naError("naSplitLeafBinary", "tree is configured with no key");
-  #endif
-  NAInt newindx = tree->config->keyIndexGetter(&(((NATreeBinaryLeaf*)existingleaf)->key), &(((NATreeBinaryLeaf*)newleaf)->key));
-  if(newindx == 1){
-    left = existingleaf;
-    right = newleaf;
-  }else{
+  
+  switch(splitOrder){
+  case NA_TREE_LEAF_SPLIT_KEY:
+    #ifndef NDEBUG
+      if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
+        naError("naSplitLeafBinary", "tree is configured with no key");
+    #endif
+    if(tree->config->keyIndexGetter(&(((NATreeBinaryLeaf*)existingleaf)->key), &(((NATreeBinaryLeaf*)newleaf)->key)) == 1){
+      left = existingleaf;
+      right = newleaf;
+    }else{
+      left = newleaf;
+      right = existingleaf;
+    }
+    break;
+  case NA_TREE_LEAF_SPLIT_PREV:
+    #ifndef NDEBUG
+      if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
+        naError("naSplitLeafBinary", "tree is configured with key");
+    #endif
     left = newleaf;
     right = existingleaf;
+  case NA_TREE_LEAF_SPLIT_NEXT:
+    #ifndef NDEBUG
+      if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
+        naError("naSplitLeafBinary", "tree is configured with key");
+    #endif
+    left = existingleaf;
+    right = newleaf;
   }
   
   NATreeNode* existingparent = ((NATreeBaseNode*)existingleaf)->parent;

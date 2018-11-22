@@ -84,7 +84,7 @@ NA_RUNTIME_TYPE(NABufferPart, naDestructBufferPart, NA_FALSE);
 //
 // A sparse buffer is initialized with a byteoffset of 0. This will possibly
 // change when calling naReferenceBufferPart or naFillBufferSourcePart.
-NA_HIDEF NABufferPart* naNewBufferPartSparse(NAUInt bytesize){
+NA_HDEF NABufferPart* naNewBufferPartSparse(NAUInt bytesize){
   #ifndef NDEBUG
     if(!naIsLengthValueUsefulu(bytesize))
       naError("naNewBufferPartSparse", "bytesize is not useful");
@@ -169,7 +169,7 @@ NA_HDEF void naDestructBufferPart(NABufferPart* part){
 
 
 // Returns NA_TRUE if the given part does not store memory.
-NA_HIDEF NABool naIsBufferPartSparse(const NABufferPart* part){
+NA_HDEF NABool naIsBufferPartSparse(const NABufferPart* part){
   #ifndef NDEBUG
     if(!part)
       naCrash("naIsBufferPartSparse", "part is Null pointer");

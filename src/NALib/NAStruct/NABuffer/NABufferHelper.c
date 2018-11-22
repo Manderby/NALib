@@ -64,55 +64,55 @@
 NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NARangei range){
   NABufferPart* part;
   
-//  #ifndef NDEBUG
-//    if(range.length <= 0)
-//      naError("naEnsureBufferRange", "Range length shall be >= 0");
-//    if(naHasBufferFixedRange(buffer) && (range.origin < buffer->range.origin))
-//      naError("naEnsureBufferRange", "Range of buffer is fixed but trying to access range below");
-//    if(naHasBufferFixedRange(buffer) && (naGetRangeiEnd(range) > naGetRangeiEnd(buffer->range)))
-//      naError("naEnsureBufferRange", "Range of buffer is fixed but trying to access range above");
-//  #endif
+  #ifndef NDEBUG
+    if(range.length <= 0)
+      naError("naEnsureBufferRange", "Range length shall be >= 0");
+    if(naHasBufferFixedRange(buffer) && (range.origin < buffer->range.origin))
+      naError("naEnsureBufferRange", "Range of buffer is fixed but trying to access range below");
+    if(naHasBufferFixedRange(buffer) && (naGetRangeiEnd(range) > naGetRangeiEnd(buffer->range)))
+      naError("naEnsureBufferRange", "Range of buffer is fixed but trying to access range above");
+  #endif
   
   if(naIsBufferEmpty(buffer)){
-//    // If the buffer is empty, we just create one sparse part containing the
-//    // whole range.
-//    part = naNewBufferPartSparse((NAUInt)range.length);
-//    naAddListLastMutable(&(buffer->parts), part);
-//    buffer->range = range;
+    // If the buffer is empty, we just create one sparse part containing the
+    // whole range.
+    part = naNewBufferPartSparse((NAUInt)range.length);
+    naAddTreeFirstMutable(&(buffer->parts), part);
+    buffer->range = range;
     
   }else{
     
-//    // First, we test if we need to add a sparse part at the beginning.
-//    if(range.origin < buffer->range.origin){
-//      part = naGetListFirstMutable(&(buffer->parts));
-//      NAUInt additionalbytes = (NAUInt)(buffer->range.origin - range.origin);
-//      if(naIsBufferPartSparse(part)){
-//        // If the first part of this list is already sparse, we simply extend
-//        // its range.
-//        part->bytesize += additionalbytes;
-//      }else{
-//        // We create a sparse part at the beginning.
-//        part = naNewBufferPartSparse(additionalbytes);
-//        naAddListFirstMutable(&(buffer->parts), part);
-//      }
-//      buffer->range = naMakeRangeiWithStartAndEnd(range.origin, naGetRangeiEnd(buffer->range));
-//    }
-//    
-//    // Then, we test if we need to add a sparse part at the end.
-//    if(naGetRangeiEnd(range) > naGetRangeiEnd(buffer->range)){
-//      part = naGetListLastMutable(&(buffer->parts));
-//      NAUInt additionalbytes = (NAUInt)(naGetRangeiEnd(range) - naGetRangeiEnd(buffer->range));
-//      if(naIsBufferPartSparse(part)){
-//        // If the last part of this list is already sparse, we simply extend
-//        // its range.
-//        part->bytesize += additionalbytes;
-//      }else{
-//        // We create a sparse part at the end.
-//        part = naNewBufferPartSparse(additionalbytes);
-//        naAddListLastMutable(&(buffer->parts), part);
-//      }
-//      buffer->range = naMakeRangeiWithStartAndEnd(buffer->range.origin, naGetRangeiEnd(range));
-//    }    
+    // First, we test if we need to add a sparse part at the beginning.
+    if(range.origin < buffer->range.origin){
+      NAUInt additionalbytes = (NAUInt)(buffer->range.origin - range.origin);
+      part = naGetTreeFirstMutable(&(buffer->parts));
+      if(naIsBufferPartSparse(part)){
+        // If the first part of this list is already sparse, we simply extend
+        // its range.
+        part->bytesize += additionalbytes;
+      }else{
+        // We create a sparse part at the beginning.
+        part = naNewBufferPartSparse(additionalbytes);
+        naAddTreeFirstMutable(&(buffer->parts), part);
+      }
+      buffer->range = naMakeRangeiWithStartAndEnd(range.origin, naGetRangeiEnd(buffer->range));
+    }
+    
+    // Then, we test if we need to add a sparse part at the end.
+    if(naGetRangeiEnd(range) > naGetRangeiEnd(buffer->range)){
+      NAUInt additionalbytes = (NAUInt)(naGetRangeiEnd(range) - naGetRangeiEnd(buffer->range));
+      part = naGetTreeLastMutable(&(buffer->parts));
+      if(naIsBufferPartSparse(part)){
+        // If the last part of this list is already sparse, we simply extend
+        // its range.
+        part->bytesize += additionalbytes;
+      }else{
+        // We create a sparse part at the end.
+        part = naNewBufferPartSparse(additionalbytes);
+        naAddTreeLastMutable(&(buffer->parts), part);
+      }
+      buffer->range = naMakeRangeiWithStartAndEnd(buffer->range.origin, naGetRangeiEnd(range));
+    }    
   }
 }
 

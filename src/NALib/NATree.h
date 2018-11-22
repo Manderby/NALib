@@ -176,7 +176,15 @@ NA_IAPI NATree* naInitTree(NATree* tree, NATreeConfiguration* config);
 NA_IAPI void naEmptyTree(NATree* tree);
 NA_IAPI void naClearTree();
 
-NA_IAPI NABool naAddTreeFirstConst(NATree* tree, const void* content);
+NA_IAPI NABool naAddTreeFirstConst  (NATree* tree, const void* content);
+NA_IAPI NABool naAddTreeFirstMutable(NATree* tree,       void* content);
+NA_IAPI NABool naAddTreeLastConst   (NATree* tree, const void* content);
+NA_IAPI NABool naAddTreeLastMutable (NATree* tree,       void* content);
+
+NA_IAPI const void* naGetTreeFirstConst  (const NATree* tree);
+NA_IAPI void*       naGetTreeFirstMutable(const NATree* tree);
+NA_IAPI const void* naGetTreeLastConst   (const NATree* tree);
+NA_IAPI void*       naGetTreeLastMutable (const NATree* tree);
 
 
 
@@ -250,6 +258,18 @@ NA_IAPI NABool naAddTreeKeyMutable( NATreeIterator* iter,
                                         const void* key,
                                               void* content,
                                              NABool replace);
+
+// Adds the given content at the specified position. Note that if the iterator
+// is at initial position, "Next" behaves like "First" and "Prev" behaves like
+// "Last".
+NA_IAPI NABool naAddTreePrevConst(  NATreeIterator* iter,
+                                        const void* content);
+NA_IAPI NABool naAddTreePrevMutable(NATreeIterator* iter,
+                                              void* content);
+NA_IAPI NABool naAddTreeNextConst(  NATreeIterator* iter,
+                                        const void* content);
+NA_IAPI NABool naAddTreeNextMutable(NATreeIterator* iter,
+                                              void* content);
 
 // /////////////////////////////////
 // Removes elements.

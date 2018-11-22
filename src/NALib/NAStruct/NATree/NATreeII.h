@@ -25,6 +25,12 @@ typedef struct NATreeIterationInfo NATreeIterationInfo;
 
 #define NA_TREE_FLAG_ROOT_IS_LEAF 0x01
 
+typedef enum{
+  NA_TREE_LEAF_SPLIT_KEY,
+  NA_TREE_LEAF_SPLIT_PREV,
+  NA_TREE_LEAF_SPLIT_NEXT,
+} NATreeLeafSplitOrder;
+
 // Callback function types for the different kind of trees. If you want to
 // implement your own tree kind, you need to provide the following functions
 // and set them in naCreateTreeConfiguration.
@@ -76,7 +82,7 @@ typedef NAInt           (*NATreeChildKeyIndexGetter)(const NATree* tree, NATreeN
 typedef NATreeBaseNode* (*NATreeChildGetter)(NATreeNode* parent, NAInt childindx);
 typedef void            (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
 typedef void            (*NATreeLeafReplacer)(NATree* tree, NATreeLeaf* leaf, NAPtr data);
-typedef void            (*NATreeLeafSplitter)(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf);
+typedef void            (*NATreeLeafSplitter)(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf, NATreeLeafSplitOrder splitOrder);
 typedef const void*     (*NATreeLeafKeyGetter)(NATreeLeaf* leaf);
 typedef NAPtr*          (*NATreeLeafDataGetter)(NATreeLeaf* leaf);
 
@@ -152,8 +158,6 @@ struct NATreeIterationInfo{
   NAInt startindx;
   NAInt breakindx;
 };
-
-
 
 #include "NATreeCoreII.h"
 

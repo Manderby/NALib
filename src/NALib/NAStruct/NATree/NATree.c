@@ -116,11 +116,21 @@ NA_HDEF NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABo
 
 
 
-NA_HDEF void naAddTreeRootLeaf(NATreeIterator* iter, NATreeLeaf* leaf){
-  NATree* tree = (NATree*)naGetPtrMutable(&(iter->tree));
-  tree->root = (NATreeBaseNode*)leaf;
-  ((NATreeBaseNode*)leaf)->parent = NA_NULL;
-  naMarkTreeRootLeaf(tree, NA_TRUE);
+NA_HDEF void naAddTreeLeafAtLeaf(NATree* tree, NATreeLeaf* leaf, NATreeLeaf* newleaf, NATreeLeafSplitOrder splitOrder){
+  if(leaf){
+    // We need to create a node holding both the old leaf and the new one.
+    tree->config->leafSplitter(tree, leaf, newleaf, splitOrder);
+  }else{
+    #ifndef NDEBUG
+      if(tree->root)
+        naError("naAddTreeLeafAtLeaf", "leaf is null but there is a root");
+    #endif
+    // There is no leaf to add to, meaning there was no root. Therefore, we
+    // create a first leaf.
+    tree->root = (NATreeBaseNode*)newleaf;
+    ((NATreeBaseNode*)newleaf)->parent = NA_NULL;
+    naMarkTreeRootLeaf(tree, NA_TRUE);
+  }
 }
 
 
@@ -148,14 +158,7 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
     naSetTreeIteratorCurLeaf(iter, leaf);
   }else{
     NATreeLeaf* newleaf = tree->config->leafCoreConstructor(tree, key, content);
-    if(leaf){
-      // We need to create a node holding both the old leaf and the new one.
-      tree->config->leafSplitter(tree, leaf, newleaf);
-    }else{
-      // Locating the key did not result in any leaf, which can only mean one
-      // thing: There was not root. Therefore, we create a first leaf.
-      naAddTreeRootLeaf(iter, newleaf);
-    }
+    naAddTreeLeafAtLeaf(tree, leaf, newleaf, NA_TREE_LEAF_SPLIT_KEY);
     naSetTreeIteratorCurLeaf(iter, newleaf);
   }
   return newcontentcreated;
