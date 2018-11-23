@@ -13,7 +13,7 @@ NA_RUNTIME_TYPE(NABuffer, naDeallocBuffer, NA_TRUE);
 
 
 #define NA_BUFFER_FLAG_RANGE_FIXED       0x01
-//#define NA_BUFFER_FLAG_VOLATILE_SOURCE   0x02
+#define NA_BUFFER_FLAG_VOLATILE_SOURCE   0x02
 
 
 
@@ -306,8 +306,8 @@ NA_DEF NABuffer* naNewBufferWithMutableData(void* data, NAUInt bytesize, NAMutat
 
 
 
-NA_DEF NABuffer* naNewBufferWithCustomSource(NABufferSourceDescriptor desc){
-  NA_UNUSED(desc);
+NA_DEF NABuffer* naNewBufferWithCustomSource(NABufferSource* source){
+  NA_UNUSED(source);
 //  NABuffer* buffer = naNew(NABuffer);
 //  naInitBufferStruct(buffer);
 //  
@@ -366,62 +366,44 @@ NA_DEF void naExtendBufferRange(NABuffer* buffer, NAInt bytesatstart, NAInt byte
     if(bytesatend < 0)
       naError("naExtendBufferRange", "bytesatend should not be negative");
   #endif
-  naEnsureBufferRange(buffer, naMakeRangei(buffer->range.origin - bytesatstart, buffer->range.length + bytesatstart + bytesatend));
+  naEnsureBufferRange(buffer, buffer->range.origin - bytesatstart, naGetRangeiEnd(buffer->range) + bytesatend);
 }
 
 
+
 NA_DEF NABool naHasBufferVolatileSource(const NABuffer* buffer){
-  NA_UNUSED(buffer);
-//  return ((buffer->flags & NA_BUFFER_FLAG_VOLATILE_SOURCE) == NA_BUFFER_FLAG_VOLATILE_SOURCE);
-  return NA_FALSE;
+  return naTestFlagu(buffer->flags, NA_BUFFER_FLAG_VOLATILE_SOURCE);
 }
 
 
 
 NA_DEF void naSetBufferVolatileSource(NABuffer* buffer, NABool volatil){
-  NA_UNUSED(buffer);
-  NA_UNUSED(volatil);
-//  if(volatil){
-//    buffer->flags |= NA_BUFFER_FLAG_VOLATILE_SOURCE;
-//  }else{
-//    buffer->flags &= (NAUInt)~NA_BUFFER_FLAG_VOLATILE_SOURCE;
-//  }
-  return;
+  naSetFlagu(&(buffer->flags), NA_BUFFER_FLAG_VOLATILE_SOURCE, volatil);
 }
 
 
 
 NA_DEF NANewlineEncoding naGetBufferNewlineEncoding(NABuffer* buffer){
-  NA_UNUSED(buffer);
-//  return buffer->newlineencoding;
-  return NA_NEWLINE_WIN;
+  return buffer->newlineencoding;
 }
 
 
 
 NA_DEF void naSetBufferNewlineEncoding(NABuffer* buffer, NANewlineEncoding newlineencoding){
-  NA_UNUSED(buffer);
-  NA_UNUSED(newlineencoding);
-//  buffer->newlineencoding = newlineencoding;
-  return;
-}
-
-
-
-NA_DEF void naSetBufferEndianness(NABuffer* buffer, NAInt endianness){
-  NA_UNUSED(buffer);
-  NA_UNUSED(endianness);
-//  buffer->endianness = endianness;
-//  buffer->converter = naMakeEndiannessConverter(endianness, NA_ENDIANNESS_NATIVE);
-  return;
+  buffer->newlineencoding = newlineencoding;
 }
 
 
 
 NA_DEF NAInt naGetBufferEndianness(NABuffer* buffer){
-  NA_UNUSED(buffer);
-//  return buffer->endianness;
-  return 0;
+  return buffer->endianness;
+}
+
+
+
+NA_DEF void naSetBufferEndianness(NABuffer* buffer, NAInt endianness){
+  buffer->endianness = endianness;
+  buffer->converter = naMakeEndiannessConverter(endianness, NA_ENDIANNESS_NATIVE);
 }
 
 

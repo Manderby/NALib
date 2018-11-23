@@ -164,14 +164,14 @@ NA_API  void  naRelease           (void* pointer);
 // Additionally, you can call naCollectGarbage to collect all temporary memory
 // which had been allocated with naMallocTmp.
 
-NA_API void   naStartRuntime(void);
-NA_API void   naStopRuntime(void);
+NA_API  void   naStartRuntime(void);
+NA_API  void   naStopRuntime(void);
 
-NA_API void   naCollectGarbage(void);
-NA_API NAUInt naGetRuntimeGarbageBytesize(void);
+NA_API  void   naCollectGarbage(void);
+NA_IAPI NAUInt naGetRuntimeGarbageBytesize(void);
 
-NA_API NAUInt naGetRuntimeMemoryPageSize(void);
-NA_API NAUInt naGetRuntimePoolPartSize(void);
+NA_IAPI NAUInt naGetRuntimeMemoryPageSize(void);
+NA_IAPI NAUInt naGetRuntimePoolPartSize(void);
 
 // In order to work with specific types, each type trying to use the runtime
 // system needs to register itself to the runtime system upon compile time.

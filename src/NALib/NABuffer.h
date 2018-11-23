@@ -9,9 +9,9 @@
 #endif
 
 
-// The typedef needs to be here to resolve cyclic include problems.
-// Note that NABuffer is a runtime type with reference counting.
+
 typedef struct NABuffer NABuffer;
+typedef struct NABufferSource NABufferSource;
 typedef struct NABufferIterator NABufferIterator;
 
 
@@ -134,33 +134,30 @@ NA_API NABuffer* naNewBufferWithMutableData(     void* data,
 // Buffer with custom source
 // ////////////////////////////////////////
 
-// You can create an NABuffer from any linear source you want by filling out a
-// descriptor and use it for naNewBufferCustomSource.
+// You can create an NABuffer from any linear source you want by creating a
+// custom source object. Such an object can have a custom filler function.
 
-// Prototype for the fill function.
+// Prototype for the filler function.
 // The function has to perform the task to fill dst with content. The data
-// will be the pointer given in the descriptor and the origin and length
-// of the desired data is given by range.
+// will be the pointer given to naCreateBufferSource and the range denotes
+// the desired origin in absolute source coordinates as well as the number
+// of bytes to process.
 typedef void (*NABufferSourceFiller)(void* data, void* dst, NARangei range);
 
-// Flags for the buffer source:
-#define NA_BUFFER_SOURCE_RANGE_LIMITED    0x01
+// Create, Retain and Release custom sources.
+// You can store a custom data object to the source which will be available
+// to the filler function as well as the destructor.
+NA_HAPI NABufferSource* naCreateBufferSource(void* data, NAMutator destructor, NABufferSourceFiller filler);
+NA_HAPI NABufferSource* naRetainBufferSource(NABufferSource* source);
+NA_HAPI void naReleaseBufferSource(NABufferSource* source);
 
-// Descriptor for a custom source.
-typedef struct NABufferSourceDescriptor NABufferSourceDescriptor;
-struct NABufferSourceDescriptor{
-  void*                data;        // ptr being sent to filler and destructor.
-  NAMutator            destructor;  // Data destructor.
-  NABufferSourceFiller filler;      // Fill function filling memory.
-  NAUInt               flags;       // Flags for the source
-  NARangei             limit;       // Source limit (only used if flags set)
-};
+// Limits the source to a specific range of bytes. This is for example used
+// when reading a file, where the source is limited to the file size.
+NA_HAPI void naSetBufferSourceLimit(NABufferSource* source, NARangei limit);
 
-// Creates a buffer with a custom source. Create a descriptor like this:
-//   NABufferSourceDescriptor desc;
-//   naNulln(&desc, sizeof(desc));
-// And fill in the desired values above.
-NA_API NABuffer* naNewBufferWithCustomSource(NABufferSourceDescriptor desc);
+// Creates a buffer with a custom source. Note that the NABuffer will retain
+// the source, meaning you can safely release the source after this function.
+NA_API NABuffer* naNewBufferWithCustomSource(NABufferSource* source);
 
 // ////////////////////////////////////////
 // Various buffer functions
@@ -202,8 +199,8 @@ NA_API void naSetBufferNewlineEncoding(             NABuffer* buffer,
 
 // Get or set the endianness setting of this buffer. If not stated otherwise,
 // the endianness of a new buffer is NA_ENDIANNESS_NATIVE.
-NA_API void   naSetBufferEndianness(NABuffer* buffer, NAInt endianness);
 NA_API NAInt  naGetBufferEndianness(NABuffer* buffer);
+NA_API void   naSetBufferEndianness(NABuffer* buffer, NAInt endianness);
 
 // Returns the byte at the given index. Warning: This function is costly. You
 // might want to use one of the Reading or Parsing functions instead.

@@ -125,33 +125,37 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
 
 NA_DEF int8 naGetBufferi8(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  int8 value;
 //  naRetrieveBufferBytes(iter, &value, 1, NA_FALSE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert8(&value);
+//  buffer->converter.convert8(&value);
 //  return value;
   return 0;
 }
 NA_DEF int16 naGetBufferi16(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  int16 value;
 //  naRetrieveBufferBytes(iter, &value, 2, NA_FALSE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
+//  buffer->converter.convert16(&value);
 //  return value;
   return 0;
 }
 NA_DEF int32 naGetBufferi32(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  int32 value;
 //  naRetrieveBufferBytes(iter, &value, 4, NA_FALSE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+//  buffer->converter.convert32(&value);
 //  return value;
   return 0;
 }
 NA_DEF int64 naGetBufferi64(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  int64 value;
 //  naRetrieveBufferBytes(iter, &value, 8, NA_FALSE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+//  buffer->converter.convert64(&value);
 //  return value;
   return 0;
 }
@@ -160,33 +164,37 @@ NA_DEF int64 naGetBufferi64(NABufferIterator* iter){
 
 NA_DEF uint8 naGetBufferu8(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  uint8 value;
 //  naRetrieveBufferBytes(iter, &value, 1, NA_FALSE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert8(&value);
+//  buffer->converter.convert8(&value);
 //  return value;
   return 0;
 }
 NA_DEF uint16 naGetBufferu16(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  uint16 value;
 //  naRetrieveBufferBytes(iter, &value, 2, NA_FALSE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
+//  buffer->converter.convert16(&value);
 //  return value;
   return 0;
 }
 NA_DEF uint32 naGetBufferu32(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  uint32 value;
 //  naRetrieveBufferBytes(iter, &value, 4, NA_FALSE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+//  buffer->converter.convert32(&value);
 //  return value;
   return 0;
 }
 NA_DEF uint64 naGetBufferu64(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  uint64 value;
 //  naRetrieveBufferBytes(iter, &value, 8, NA_FALSE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+//  buffer->converter.convert64(&value);
 //  return value;
   return 0;
 }
@@ -195,17 +203,19 @@ NA_DEF uint64 naGetBufferu64(NABufferIterator* iter){
 
 NA_DEF float naGetBufferf(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  float value;
 //  naRetrieveBufferBytes(iter, &value, 4, NA_FALSE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+//  buffer->converter.convert32(&value);
 //  return value;
   return 0;
 }
 NA_DEF double naGetBufferd(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  double value;
 //  naRetrieveBufferBytes(iter, &value, 8, NA_FALSE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+//  buffer->converter.convert64(&value);
 //  return value;
   return 0;
 }
@@ -228,33 +238,37 @@ NA_DEF void naReadBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize
 
 NA_DEF int8 naReadBufferi8(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  int8 value;
 //  naRetrieveBufferBytes(iter, &value, 1, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert8(&value);
+//  buffer->converter.convert8(&value);
 //  return value;
   return 0;
 }
 NA_DEF int16 naReadBufferi16(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  int16 value;
 //  naRetrieveBufferBytes(iter, &value, 2, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
+//  buffer->converter.convert16(&value);
 //  return value;
   return 0;
 }
 NA_DEF int32 naReadBufferi32(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  int32 value;
 //  naRetrieveBufferBytes(iter, &value, 4, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+//  buffer->converter.convert32(&value);
 //  return value;
   return 0;
 }
 NA_DEF int64 naReadBufferi64(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  int64 value;
 //  naRetrieveBufferBytes(iter, &value, 8, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+//  buffer->converter.convert64(&value);
 //  return value;
   return 0;
 }
@@ -262,33 +276,37 @@ NA_DEF int64 naReadBufferi64(NABufferIterator* iter){
 
 NA_DEF uint8 naReadBufferu8(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  uint8 value;
 //  naRetrieveBufferBytes(iter, &value, 1, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert8(&value);
+//  buffer->converter.convert8(&value);
 //  return value;
   return 0;
 }
 NA_DEF uint16 naReadBufferu16(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  uint16 value;
 //  naRetrieveBufferBytes(iter, &value, 2, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert16(&value);
+//  buffer->converter.convert16(&value);
 //  return value;
   return 0;
 }
 NA_DEF uint32 naReadBufferu32(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  uint32 value;
 //  naRetrieveBufferBytes(iter, &value, 4, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+//  buffer->converter.convert32(&value);
 //  return value;
   return 0;
 }
 NA_DEF uint64 naReadBufferu64(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  uint64 value;
 //  naRetrieveBufferBytes(iter, &value, 8, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+//  buffer->converter.convert64(&value);
 //  return value;
   return 0;
 }
@@ -296,17 +314,19 @@ NA_DEF uint64 naReadBufferu64(NABufferIterator* iter){
 
 NA_DEF float naReadBufferf(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  float value;
 //  naRetrieveBufferBytes(iter, &value, 4, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert32(&value);
+//  buffer->converter.convert32(&value);
 //  return value;
   return 0;
 }
 NA_DEF double naReadBufferd(NABufferIterator* iter){
   NA_UNUSED(iter);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  double value;
 //  naRetrieveBufferBytes(iter, &value, 8, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert64(&value);
+//  buffer->converter.convert64(&value);
 //  return value;
   return 0;
 }
@@ -317,32 +337,36 @@ NA_DEF void naReadBufferi8v(NABufferIterator* iter, int8* dst, NAInt count){
   NA_UNUSED(iter);
   NA_UNUSED(dst);
   NA_UNUSED(count);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  naRetrieveBufferBytes(iter, dst, count * 1, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert8v(dst, (NAUInt)count);
+//  buffer->converter.convert8v(dst, (NAUInt)count);
   return;
 }
 NA_DEF void naReadBufferi16v(NABufferIterator* iter, int16* dst, NAInt count){
   NA_UNUSED(iter);
   NA_UNUSED(dst);
   NA_UNUSED(count);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  naRetrieveBufferBytes(iter, dst, count * 2, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert16v(dst, (NAUInt)count);
+//  buffer->converter.convert16v(dst, (NAUInt)count);
   return;
 }
 NA_DEF void naReadBufferi32v(NABufferIterator* iter, int32* dst, NAInt count){
   NA_UNUSED(iter);
   NA_UNUSED(dst);
   NA_UNUSED(count);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  naRetrieveBufferBytes(iter, dst, count * 4, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert32v(dst, (NAUInt)count);
+//  buffer->converter.convert32v(dst, (NAUInt)count);
   return;
 }
 NA_DEF void naReadBufferi64v(NABufferIterator* iter, int64* dst, NAInt count){
   NA_UNUSED(iter);
   NA_UNUSED(dst);
   NA_UNUSED(count);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  naRetrieveBufferBytes(iter, dst, count * 8, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert64v(dst, (NAUInt)count);
+//  buffer->converter.convert64v(dst, (NAUInt)count);
   return;
 }
 
@@ -351,32 +375,36 @@ NA_DEF void naReadBufferu8v(NABufferIterator* iter, uint8* dst, NAInt count){
   NA_UNUSED(iter);
   NA_UNUSED(dst);
   NA_UNUSED(count);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  naRetrieveBufferBytes(iter, dst, count * 1, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert8v(dst, (NAUInt)count);
+//  buffer->converter.convert8v(dst, (NAUInt)count);
   return;
 }
 NA_DEF void naReadBufferu16v(NABufferIterator* iter, uint16* dst, NAInt count){
   NA_UNUSED(iter);
   NA_UNUSED(dst);
   NA_UNUSED(count);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  naRetrieveBufferBytes(iter, dst, count * 2, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert16v(dst, (NAUInt)count);
+//  buffer->converter.convert16v(dst, (NAUInt)count);
   return;
 }
 NA_DEF void naReadBufferu32v(NABufferIterator* iter, uint32* dst, NAInt count){
   NA_UNUSED(iter);
   NA_UNUSED(dst);
   NA_UNUSED(count);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  naRetrieveBufferBytes(iter, dst, count * 4, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert32v(dst, (NAUInt)count);
+//  buffer->converter.convert32v(dst, (NAUInt)count);
   return;
 }
 NA_DEF void naReadBufferu64v(NABufferIterator* iter, uint64* dst, NAInt count){
   NA_UNUSED(iter);
   NA_UNUSED(dst);
   NA_UNUSED(count);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  naRetrieveBufferBytes(iter, dst, count * 8, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert64v(dst, (NAUInt)count);
+//  buffer->converter.convert64v(dst, (NAUInt)count);
   return;
 }
 
@@ -385,16 +413,18 @@ NA_DEF void naReadBufferfv(NABufferIterator* iter, float* dst, NAInt count){
   NA_UNUSED(iter);
   NA_UNUSED(dst);
   NA_UNUSED(count);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  naRetrieveBufferBytes(iter, dst, count * 4, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert32v(dst, (NAUInt)count);
+//  buffer->converter.convert32v(dst, (NAUInt)count);
   return;
 }
 NA_DEF void naReadBufferdv(NABufferIterator* iter, double* dst, NAInt count){
   NA_UNUSED(iter);
   NA_UNUSED(dst);
   NA_UNUSED(count);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  naRetrieveBufferBytes(iter, dst, count * 8, NA_TRUE);
-//  naGetBufferIteratorBufferConst(iter)->converter.convert64v(dst, (NAUInt)count);
+//  buffer->converter.convert64v(dst, (NAUInt)count);
   return;
 }
 
@@ -483,7 +513,8 @@ NA_DEF void naPadBufferBits(NABufferIterator* iter){
 NA_DEF NABuffer* naReadBufferBuffer(NABufferIterator* iter, NAInt bytesize){
   NA_UNUSED(iter);
   NA_UNUSED(bytesize);
-//  return naNewBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangei(iter->curoffset, bytesize));
+//  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
+//  return naNewBufferExtraction(buffer, naMakeRangei(iter->curoffset, bytesize));
   return NA_NULL;
 }
 

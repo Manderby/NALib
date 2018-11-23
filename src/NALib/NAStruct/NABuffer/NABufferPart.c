@@ -6,12 +6,10 @@
 #include "NABuffer.h"
 
 
-// //////////////////////////////////////
-// Buffer Part
-// //////////////////////////////////////
 
-// Buffers are implemented in an highly granular way. The most granular part
-// is an NABufferPart. Consider the following two sentences as buffers:
+// Buffers are implemented in an highly granular way. The most granular parts
+// are an NABufferPart and an NABufferSourcePart. Consider the following two
+// sentences as buffers:
 //
 //                 +== BUFFER PART ==+== BUFFER PART ==+== BUFFER PART ==+
 // NABuffer buf1 = |     This is     |      very       |    exciting.    |
@@ -21,10 +19,16 @@
 // NABuffer buf2 = | Don't question  |       her       |    authority.   |
 //                 +-----------------+-----------------+-----------------+
 //
+// Additionally, we have a text file source with the following content where
+// the word "everywhere" with a bytesize of 10 is stored at byte position 16:
+//
+//                 +== SOURCE PART ==+= SOURCE PART ==+= SOURCE PART =+
+// readme.txt      | You can see ads |   everywhere   |  these days.  |
+//                 +-----------------+----------------+---------------+
+//
 // Now, consider the word "everywhere" which contains both the word "very" and
-// the word "her" as a part of itself. With NABufferPart, it is possible that
-// two NABuffers share a single memory block and use just the part which is
-// needed.
+// the word "her" as a part of itself. Two NABuffers can share a single source
+// part and use just the part which is needed:
 //
 //      +---------+------+-----------+
 //      | This is | very | exciting. |
@@ -32,19 +36,20 @@
 //               /        \
 //           +== BUFFER PART ==+
 //           | bytesize: 4     |    = very
-//           | byteoffset: 1 ------------------+
-//        +--- pointer         |               |
-//        |  +-----------------+               |
-//        |                                    |
-//        +-------> +=== POINTER ===+          |
-//                  | refcount = 2  |       +==V=========+
-//                  | data ---------------> | everywhere | (memoryblock)
-//        +-------> +---------------+       +-------A----+
-//        |                                         |
-//        |  +== BUFFER PART ==+                    |
-//        |  | bytesize: 3     |    = her           |
-//        |  | byteoffset: 6 -----------------------+
-//        +--- pointer         |
+//           | byteoffset: 1 -------------------------+
+//        +--- sourcepart      |                      |
+//        |  +-----------------+                      |
+//        |                                           |
+//        |         +=== SOURCE PART ===+             |
+//        +-------> | source            |             |
+//                  | range = (16, 10)  |          +==V=========+
+//        +-------> | data ----------------------> | everywhere |
+//        |         +-------------------+          +-------A----+
+//        |                                                |
+//        |  +== BUFFER PART ==+                           |
+//        |  | bytesize: 3     |    = her                  |
+//        |  | byteoffset: 6 ------------------------------+
+//        +--- sourcepart      |
 //           +-----------------+
 //                 \       /
 // +----------------\-----/------------+
@@ -63,20 +68,48 @@
 //    be available where the NABufferPart is positioned inside the NABuffer.
 //    This bytesize can be very large if needed. Later on, such a part can be
 //    split into smaller parts of a specified size to make sparse memory more
-//    granular (the size NA_INTERNAL_BUFFER_PART_BYTESIZE defines the default
-//    size). A sparse part can then reference a memory block, hence becoming
-//    a filled part.
+//    granular (the size NA_BUFFER_PART_BYTESIZE in NAConfiguration.h defines
+//    the default size). A sparse part can then reference a memory block,
+//    hence becoming a filled part.
 
-NA_HAPI void naDestructBufferPart(NABufferPart* part);
+
+
+// //////////////////////////////////////
+// Buffer Source Part
+// //////////////////////////////////////
+
+
+
+NA_RUNTIME_TYPE(NABufferSourcePart, naDestructBufferSourcePart, NA_TRUE);
+
+
+
+// Creates a buffer source part.
+NA_HDEF NABufferSourcePart* naNewBufferPartSparse(NABufferSource* source, NAUInt bytesize){
+  #ifndef NDEBUG
+    if(!naIsLengthValueUsefulu(bytesize))
+      naError("naNewBufferPartSparse", "bytesize is not useful");
+  #endif
+  NABufferSourcePart* part = naNew(NABufferSourcePart);
+  part->source = naRetainBufferSource(source);
+  part->byteoffset = 0;
+  part->bytesize = bytesize;
+  part->data = naMakePtrNull();
+
+  NABufferSource*  source;
+  NAUInt           sourceoffset;  // Origin of the referenced data
+  return part;
+}
+
+
+
+// //////////////////////////////////////
+// Buffer Part
+// //////////////////////////////////////
+
+
+
 NA_RUNTIME_TYPE(NABufferPart, naDestructBufferPart, NA_FALSE);
-
-
-
-#if NA_BUFFER_PART_BYTESIZE == 0
-  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAInt)naGetRuntimeMemoryPageSize())
-#else
-  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAInt)NA_BUFFER_PART_BYTESIZE)
-#endif
 
 
 
@@ -149,7 +182,7 @@ NA_HIDEF void naReferenceBufferPart(NABufferPart* part, NABufferPart* srcpart, N
 
 
 // Allocates memory for the range defined in part.
-NA_HIDEF void naAllocateBufferPartMemory(NABufferPart* part){
+NA_HDEF void naAllocateBufferPartMemory(NABufferPart* part){
   #ifndef NDEBUG
     if(part->byteoffset != 0)
       naError("naAllocateBufferPartMemory", "Byteoffset should be zero");
@@ -212,20 +245,6 @@ NA_HDEF NABool naIsBufferPartSparse(const NABufferPart* part){
 //
 //
 //
-//NA_HIDEF NAInt naGetBufferPartNormedStart(NAInt start){
-//  return (((start + (start < 0)) / NA_INTERNAL_BUFFER_PART_BYTESIZE) - (start < 0)) * NA_INTERNAL_BUFFER_PART_BYTESIZE;
-//// Note that (start < 0) either results in 0 or 1.
-//}
-//
-//
-//
-//NA_HIDEF NAInt naGetBufferPartNormedEnd(NAInt end){
-//  return naGetBufferPartNormedStart(naMakeMaxWithEndi(end)) + NA_INTERNAL_BUFFER_PART_BYTESIZE;
-//}
-//
-//
-//
-//
 //NA_HIDEF NABool naContainsBufferPartOffset(const NABufferPart* part, NAInt offset){
 //  #ifndef NDEBUG
 //    if(!part)
@@ -273,59 +292,68 @@ NA_HDEF NABool naIsBufferPartSparse(const NABufferPart* part){
 //    naDelete(nextpart);
 //  }
 //}
-//
-//
-//
-//// This function splits a sparse part such that there exists in the end a
-//// sparse part having precisely the desired range, possibly surrounded by
-//// other parts. At the end of this function, the iterator points to that
-//// very part.
-//NA_HIDEF void naSplitBufferSparsePart(NAListIterator* iter, NARangei range){
-//  NABufferPart* part = naGetListCurMutable(iter);
-//
-//  #ifndef NDEBUG
-//    if(!part)
-//      naCrash("naSplitBufferSparsePart", "iterator must not be at initial position");
-//    if(!naIsBufferPartSparse(part))
-//      naError("naSplitBufferSparsePart", "current part is not sparse");
-//    if(!naContainsRangeiRange(naGetBufferPartRange(part), range))
-//      naError("naSplitBufferSparsePart", "part range does not contain given range");
-//  #endif
-//
-//  if(naEqualRangei(naGetBufferPartRange(part), range)){
-//    // This sparse part fits the desired range already.
-//    // Nothing to do.
-//    
-//  }else if(naGetBufferPartStart(part) == range.origin){
-//    // The desired part will be put at the start of this sparse part.
-//    part->range = naMakeRangeiWithStartAndEnd(naGetRangeiEnd(range), naGetBufferPartEnd(part));
-//    part->origin = part->range.origin;
-//    part = naNewBufferPartSparse(range);
-//    naAddListBeforeMutable(iter, part);
-//    naIterateListBack(iter);
-//    
-//  }else if(naGetBufferPartEnd(part) == naGetRangeiEnd(range)){
-//    // The desired part will be put at the end of this sparse part.
-//    part->range = naMakeRangeiWithStartAndEnd(naGetBufferPartStart(part), range.origin);
-//    part->origin = part->range.origin;
-//    part = naNewBufferPartSparse(range);
-//    naAddListAfterMutable(iter, part);
-//    naIterateList(iter);
-//    
-//  }else{
-//    // The desired part will be put in the middle of this sparse part.
-//    NABufferPart* lastpart = naNewBufferPartSparse(naMakeRangeiWithStartAndEnd(naGetRangeiEnd(range), naGetBufferPartEnd(part)));
-//    naAddListAfterMutable(iter, lastpart);
-//    part->range = naMakeRangeiWithStartAndEnd(naGetBufferPartStart(part), range.origin);
-//    part->origin = part->range.origin;
-//    part = naNewBufferPartSparse(range);
-//    naAddListAfterMutable(iter, part);
-//    naIterateList(iter);
-//  }
-//}
-//
-//
-//
+
+
+
+// This function splits a sparse part such that there exists in the end a
+// sparse part having precisely the desired range, possibly surrounded by
+// other, newly created sparse parts. At the end of this function, the iterator
+// points to that very part.
+NA_HDEF void naSplitBufferSparsePart(NABufferIterator* iter, NAUInt start, NAUInt end){
+  NABufferPart* part = naGetTreeCurMutable(&(iter->partiter));
+  NABufferPart* newpart;
+
+  #ifndef NDEBUG
+    if(!part)
+      naCrash("naSplitBufferSparsePart", "iterator must not be at initial position");
+    if(!naIsBufferPartSparse(part))
+      naError("naSplitBufferSparsePart", "current part is not sparse");
+    if((NAInt)start < 0)
+      naError("naSplitBufferSparsePart", "start seems to be negative");
+    if(start > part->bytesize)
+      naError("naSplitBufferSparsePart", "start is too big");
+    if((NAInt)end < 0)
+      naError("naSplitBufferSparsePart", "end seems to be negative");
+    if(end > part->bytesize)
+      naError("naSplitBufferSparsePart", "end is too big");
+    if(!naIsTreeIteratorAlone(&(iter->partiter)))
+      naError("naSplitBufferSparsePart", "there is another iterator at this part. Splitting might lead to problems");
+  #endif
+  
+  NAUInt length = end - start;
+
+  if(length == part->bytesize){
+    // This sparse part fits the desired range already.
+    // Nothing to do.
+    
+  }else if(start == 0){
+    // The desired part is located at the start of this sparse part.
+    newpart = naNewBufferPartSparse(part->bytesize - length);
+    naAddTreeNextMutable(&(iter->partiter), newpart);
+    part->bytesize = length;
+    
+  }else if(end == part->bytesize){
+    // The desired part is located at the end of this sparse part.
+    newpart = naNewBufferPartSparse(part->bytesize - length);
+    naAddTreePrevMutable(&(iter->partiter), newpart);
+    part->bytesize = length;
+    iter->partoffset -= start;
+    
+  }else{
+    // The desired part is located in the middle of this sparse part.
+    // First, create the new part at the end.
+    newpart = naNewBufferPartSparse(part->bytesize - end);
+    naAddTreeNextMutable(&(iter->partiter), newpart);
+    // Then, create the new part at the beginning
+    newpart = naNewBufferPartSparse(start);
+    naAddTreePrevMutable(&(iter->partiter), newpart);
+    part->bytesize = length;
+    iter->partoffset -= start;
+  }
+}
+
+
+
 //// Returns a direct pointer to the raw data of this buffer part, given its
 //// absolute address.
 //NA_HIDEF NAByte* naGetBufferPartDataPointerConst(const NABufferPart* part, NAInt offset){

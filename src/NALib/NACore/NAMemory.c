@@ -105,58 +105,6 @@ NA_HDEF void naDestructPointer(NAPointer* pointer){
 // When you call naCollectGarbage or if you stop the Runtime, that memory
 // will be completely erased.
 
-typedef struct NAMallocGarbage NAMallocGarbage;
-typedef struct NACorePoolPart NACorePoolPart;
-typedef struct NACoreTypeInfo NACoreTypeInfo;
-typedef struct NARuntime NARuntime;
-
-struct NACoreTypeInfo{
-  NACorePoolPart*   curpart;
-  NAUInt            typesize;
-  NAMutator         destructor;
-  NABool            refcounting;
-  #ifndef NDEBUG
-    const char*     typename;
-  #endif
-};
-
-#define NA_MALLOC_GARBAGE_POINTER_COUNT (NA_POOLPART_BYTESIZE / NA_SYSTEM_ADDRESS_BYTES - 2)
-// The 2 denotes the first two entries in this struct.
-struct NAMallocGarbage{
-  NAMallocGarbage* next;
-  NASizeUInt cur;
-  void* pointers[NA_MALLOC_GARBAGE_POINTER_COUNT];
-};
-
-// This structure is stored in the first bytes of every part block.
-// Its size is ALWAYS 8 times an addresssize, the rest of the block is
-// available for the memory.
-struct NACorePoolPart{
-  NACoreTypeInfo* coretypeinfo;
-  NASizeUInt maxcount;
-  NASizeUInt usedcount;
-  NASizeUInt everusedcount;
-  void* firstunused;
-  NACorePoolPart* prevpart;
-  NACorePoolPart* nextpart;
-  // The following field is a dummy entry not in use.
-  // It shall not be removed though as the total amount of bytes used for
-  // an NACorePoolPart shall be 8 times an addresssize.
-  void* dummy; // used in debugging. Points at first byte of the whole pool
-               // for consistency check.
-};
-
-// The runtime struct stores base informations about the runtime.
-struct NARuntime{
-  NASizeUInt mempagesize;
-  NASizeUInt partsize;
-  NASizeUInt partsizemask;
-  NAMallocGarbage* mallocGarbage;
-  NASizeUInt totalmallocgarbagebytecount;
-  NAInt typeinfocount;
-  NACoreTypeInfo** typeinfos;
-};
-
 
 
 // The global runtime variable.
@@ -741,40 +689,6 @@ NA_DEF void naCollectGarbage(){
   }
   na_runtime->totalmallocgarbagebytecount = 0;
 }
-
-
-
-NA_DEF NAUInt naGetRuntimeGarbageBytesize(){
-  #ifndef NDEBUG
-    if(!na_runtime)
-      naCrash("naGetRuntimeGarbageBytesize", "Runtime not running. Use naStartRuntime()");
-  #endif
-  return na_runtime->totalmallocgarbagebytecount;
-}
-
-
-
-NA_DEF NAUInt naGetRuntimeMemoryPageSize(){
-  #ifndef NDEBUG
-    if(!na_runtime)
-      naCrash("naGetRuntimeMemoryPageSize", "Runtime not running. Use naStartRuntime()");
-  #endif
-  return na_runtime->mempagesize;
-}
-
-
-
-NA_DEF NAUInt naGetRuntimePoolPartSize(){
-  #ifndef NDEBUG
-    if(!na_runtime)
-      naCrash("naGetRuntimePoolPartSize", "Runtime not running. Use naStartRuntime()");
-  #endif
-  return na_runtime->partsize;
-}
-
-
-
-
 
 
 

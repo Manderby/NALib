@@ -67,6 +67,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
 //  NABool checkwindowsend = NA_FALSE;
 //  NAInt linestart = iter->curoffset;
 //  NAString* string = naNewString();
+//  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
 //  
 //  while(!naIsBufferAtInitial(iter)){
 //    const NAByte* curbyte;
@@ -95,7 +96,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
 //        }else{
 //          lineendingfound = NA_TRUE;
 //          naDelete(string);
-//          string = naNewStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(linestart, iter->curoffset));
+//          string = naNewStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(linestart, iter->curoffset));
 //        }
 //        checkwindowsend = (*curbyte == '\r');
 //      }
@@ -107,7 +108,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
 //
 //  if(!lineendingfound){
 //    naDelete(string);
-//    string = naNewStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(linestart, iter->curoffset));
+//    string = naNewStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(linestart, iter->curoffset));
 //  }
 //
 //  return string;
@@ -127,7 +128,8 @@ NA_DEF NAUInt naGetBufferLineNumber(NABufferIterator* iter){
 NA_DEF NAString* naParseBufferRemainder(NABufferIterator* iter){
   NA_UNUSED(iter);
 //  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-//  return naNewStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(iter->curoffset, naGetRangeiEnd(buffer->range)));
+//  todo: do we need the first buffer parameter to be mutable?
+//  return naNewStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(iter->curoffset, naGetRangeiEnd(buffer->range)));
   return NA_NULL;
 }
 
@@ -160,7 +162,8 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
 //    if(found){break;}
 //  }
 //
-//  string = naNewStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
+//  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
+//  string = naNewStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
 //  naSkipBufferWhitespaces(iter);
 //  return string;
   return NA_NULL;
@@ -196,7 +199,8 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8C
 //    if(found){break;}
 //  }
 //
-//  string = naNewStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
+//  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
+//  string = naNewStringWithBufferExtraction(buffer naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
 //  naSeekBufferRelative(iter, 1);
 //  return string;
   return NA_NULL;
@@ -231,7 +235,8 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter){
 //    if(found){break;}
 //  }
 //
-//  string = naNewStringWithBufferExtraction(naGetBufferIteratorBufferMutable(iter), naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
+//  buffer = naGetBufferIteratorBufferMutable(iter);
+//  string = naNewStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
 //  naSeekBufferRelative(iter, 1);
 //  return string;
   return NA_NULL;
@@ -255,11 +260,13 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64*
 //      naCrash("naParseBufferDecimalUnsignedInteger", "retint is Null-Pointer");
 //  #endif
 //
-//  if(naIsBufferEmpty(naGetBufferIteratorBufferConst(iter))){return 0;}
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+//
+//  if(naIsBufferEmpty(buffer)){return 0;}
 ////  if(naIsBufferAtInitial(iter)){naSeekBufferFromStart(iter, 0);}
 //  if(naIsBufferAtInitial(iter)){return 0;}
 //
-//  if(maxdigitcount == 0){maxdigitcount = naGetRangeiEnd(naGetBufferIteratorBufferConst(iter)->range) - iter->curoffset;}
+//  if(maxdigitcount == 0){maxdigitcount = naGetRangeiEnd(buffer->range) - iter->curoffset;}
 //  bytesused = 0;
 //  prevval = NA_ZERO_64u;
 //  
@@ -310,6 +317,7 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* re
   NA_UNUSED(maxdigitcount);
   NA_UNUSED(min);
   NA_UNUSED(max);
+//    const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  int64 sign = NA_ONE_64;
 //  NAInt bytesused = 0;
 //  int64 limit = max;
@@ -319,7 +327,7 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* re
 //
 //  *retint = NA_ZERO_64;
 //
-//  if(naIsBufferEmpty(naGetBufferIteratorBufferConst(iter))){return 0;}
+//  if(naIsBufferEmpty(buffer)){return 0;}
 //  if(naIsBufferAtInitial(iter)){return 0;}
 ////  if(naIsBufferAtInitial(iter)){naSeekBufferFromStart(iter, 0);}
 //  part = naGetListCurConst(&(iter->partiter));

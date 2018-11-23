@@ -14,17 +14,13 @@
 
 
 NA_HDEF const NABuffer* naGetBufferIteratorBufferConst(const NABufferIterator* iter){
-  NA_UNUSED(iter);
-//  return naGetPtrConst(&(iter->bufferptr));
-  return NA_NULL;
+  return naGetPtrConst(&(iter->bufferptr));
 }
 
 
 
 NA_HDEF NABuffer* naGetBufferIteratorBufferMutable(NABufferIterator* iter){
-  NA_UNUSED(iter);
-//  return naGetPtrMutable(&(iter->bufferptr));
-  return NA_NULL;
+  return naGetPtrMutable(&(iter->bufferptr));
 }
 
 
@@ -32,80 +28,75 @@ NA_HDEF NABuffer* naGetBufferIteratorBufferMutable(NABufferIterator* iter){
 
 NA_DEF NABufferIterator naMakeBufferAccessor(const NABuffer* buffer){
   NABufferIterator iter;
-//  #ifndef NDEBUG
-//    NABuffer* mutablebuffer;
-//    if(!buffer)
-//      naCrash("naMakeBufferAccessor", "buffer is Null pointer");
-//  #endif
+  #ifndef NDEBUG
+    NABuffer* mutablebuffer;
+    if(!buffer)
+      naCrash("naMakeBufferAccessor", "buffer is Null pointer");
+  #endif
   iter.bufferptr = naMakePtrWithDataConst(buffer);
-  iter.curoffset = 0;
+  iter.partiter = naMakeTreeAccessor(&(buffer->parts));
+  iter.partoffset = 0;
   iter.curbit = 0;
-////  iter.linenum = 0;
-//  iter.partiter = naMakeListAccessor(&(buffer->parts));
-//  #ifndef NDEBUG
-//    mutablebuffer = (NABuffer*)buffer;
-//    mutablebuffer->itercount++;
-//  #endif
-//  return iter;
+  iter.linenum = 0;
+  #ifndef NDEBUG
+    mutablebuffer = (NABuffer*)buffer;
+    mutablebuffer->itercount++;
+  #endif
   return iter;
 }
 
 
 
 NA_DEF NABufferIterator naMakeBufferMutator(const NABuffer* buffer){
-  NA_UNUSED(buffer);
   NABufferIterator iter;
-//  #ifndef NDEBUG
-//    NABuffer* mutablebuffer;
-//    if(!buffer)
-//      naCrash("naMakeBufferMutator", "buffer is Null pointer");
-//  #endif
+  #ifndef NDEBUG
+    NABuffer* mutablebuffer;
+    if(!buffer)
+      naCrash("naMakeBufferMutator", "buffer is Null pointer");
+  #endif
   iter.bufferptr = naMakePtrWithDataConst(buffer);
-  iter.curoffset = 0;
+  iter.partiter = naMakeTreeAccessor(&(buffer->parts));
+  iter.partoffset = 0;
   iter.curbit = 0;
-////  iter.linenum = 0;
-//  iter.partiter = naMakeListMutator(&(buffer->parts));
-//  #ifndef NDEBUG
-//    mutablebuffer = (NABuffer*)buffer;
-//    mutablebuffer->itercount++;
-//  #endif
+  iter.linenum = 0;
+  #ifndef NDEBUG
+    mutablebuffer = (NABuffer*)buffer;
+    mutablebuffer->itercount++;
+  #endif
   return iter;
 }
 
 
 
 NA_DEF NABufferIterator naMakeBufferModifier(NABuffer* buffer){
-  NA_UNUSED(buffer);
   NABufferIterator iter;
-//  #ifndef NDEBUG
-//    NABuffer* mutablebuffer;
-//    if(!buffer)
-//      naCrash("naMakeBufferAccessor", "buffer is Null pointer");
-//  #endif
+  #ifndef NDEBUG
+    NABuffer* mutablebuffer;
+    if(!buffer)
+      naCrash("naMakeBufferAccessor", "buffer is Null pointer");
+  #endif
   iter.bufferptr = naMakePtrWithDataMutable(buffer);
-  iter.curoffset = 0;
+  iter.partiter = naMakeTreeModifier(&(buffer->parts));
+  iter.partoffset = 0;
   iter.curbit = 0;
-////  iter.linenum = 0;
-//  iter.partiter = naMakeListModifier(&(buffer->parts));
-//  #ifndef NDEBUG
-//    mutablebuffer = (NABuffer*)buffer;
-//    mutablebuffer->itercount++;
-//  #endif
+  iter.linenum = 0;
+  #ifndef NDEBUG
+    mutablebuffer = (NABuffer*)buffer;
+    mutablebuffer->itercount++;
+  #endif
   return iter;
 }
 
 
 
 NA_DEF void naClearBufferIterator(NABufferIterator* iter){
-  NA_UNUSED(iter);
-//  naClearListIterator(&(iter->partiter));
-//  #ifndef NDEBUG
-//    NABuffer* mutablebuffer;
-//    mutablebuffer = naGetBufferIteratorBufferMutable(iter);
-//    if(mutablebuffer->itercount == 0)
-//      naError("naClearBufferIterator", "Too many clears: Buffer has no iterators to clear.");
-//    mutablebuffer->itercount--;
-//  #endif
+  naClearTreeIterator(&(iter->partiter));
+  #ifndef NDEBUG
+    NABuffer* mutablebuffer = (NABuffer*)naGetBufferIteratorBufferConst(iter);
+    if(mutablebuffer->itercount == 0)
+      naError("naClearBufferIterator", "Too many clears: Buffer has no iterators to clear.");
+    mutablebuffer->itercount--;
+  #endif
 }
 
 
@@ -115,6 +106,8 @@ NA_DEF NAInt naTellBuffer(const NABufferIterator* iter){
 //  #ifndef NDEBUG
 //    if(iter->curbit != 0)
 //      naError("naTellBuffer", "Buffer bitcount is not null.");
+//    if(naIsTreeAtInitial(&(iter->partiter)))
+//      naError("naTellBuffer", "Iterator is at initial position.");
 //  #endif
 //  return iter->curoffset;
   return 0;
@@ -125,8 +118,9 @@ NA_DEF NAInt naTellBuffer(const NABufferIterator* iter){
 NA_DEF void naSeekBufferAbsolute(NABufferIterator* iter, NAInt offset){
   NA_UNUSED(iter);
   NA_UNUSED(offset);
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  iter->curoffset = offset;
-//  if(!naIsBufferEmpty(naGetBufferIteratorBufferConst(iter))){
+//  if(!naIsBufferEmpty(buffer)){
 //    naLocateBufferPartOffset(&(iter->partiter), offset);
 //  }
   return;
@@ -147,7 +141,8 @@ NA_DEF void naSeekBufferRelative(NABufferIterator* iter, NAInt offset){
 NA_DEF void naSeekBufferSource(NABufferIterator* iter, NAInt offset){
   NA_UNUSED(iter);
   NA_UNUSED(offset);
-//  NAInt absoffset = naGetBufferIteratorBufferConst(iter)->srcoffset + offset;
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+//  NAInt absoffset = buffer->srcoffset + offset;
 //  naSeekBufferAbsolute(iter, absoffset);
   return;
 }
@@ -157,7 +152,8 @@ NA_DEF void naSeekBufferSource(NABufferIterator* iter, NAInt offset){
 NA_DEF void naSeekBufferFromStart(NABufferIterator* iter, NAInt offset){
   NA_UNUSED(iter);
   NA_UNUSED(offset);
-//  NAInt absoffset = naGetBufferIteratorBufferConst(iter)->range.origin + offset;
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+//  NAInt absoffset = buffer->range.origin + offset;
 //  naSeekBufferAbsolute(iter, absoffset);
   return;
 }
@@ -167,7 +163,8 @@ NA_DEF void naSeekBufferFromStart(NABufferIterator* iter, NAInt offset){
 NA_DEF void naSeekBufferFromEnd(NABufferIterator* iter, NAInt offset){
   NA_UNUSED(iter);
   NA_UNUSED(offset);
-//  NAInt absoffset = naGetRangeiEnd(naGetBufferIteratorBufferConst(iter)->range) + offset;
+//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+//  NAInt absoffset = naGetRangeiEnd(buffer->range) + offset;
 //  naSeekBufferAbsolute(iter, absoffset);
   return;
 }
@@ -228,6 +225,10 @@ NA_DEF NABool naIsBufferAtEnd(const NABufferIterator* iter){
 }
 
 
+
+//NA_HAPI NABool naIsBufferAtInitial(NABufferIterator* iter){
+//  return naIsListAtInitial(&(iter->partiter));
+//}
 
 
 

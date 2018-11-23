@@ -10,36 +10,73 @@
 // //////////////////////////////////////
 
 
-// The other flag NA_BUFFER_SOURCE_RANGE_LIMITED is defined in NABuffer.h
-#define NA_BUFFER_SOURCE_BUFFER           0x02
+struct NABufferSource{
+  NARefCount           refcount;
+  void*                data;        // ptr being sent to filler and destructor.
+  NAMutator            destructor;  // Data destructor.
+  NABufferSourceFiller filler;      // Fill function filling memory.
+  NAUInt               flags;       // Flags for the source
+  NARangei             limit;       // Source limit (only used if flags set)
+};
 
 
 
-NA_HAPI void naDeallocBufferSource(NABufferSource* source);
-NA_RUNTIME_TYPE(NABufferSource, naDeallocBufferSource, NA_TRUE);
-
+// Flags for the buffer source:
+#define NA_BUFFER_SOURCE_RANGE_LIMITED    0x01
+//#define NA_BUFFER_SOURCE_BUFFER           0x02
+#define NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE 0x80
 
 
 // Creates a buffer source with the given descriptor.
-NA_HIDEF NABufferSource* naNewBufferSource(NABufferSourceDescriptor descriptor){
-  NABufferSource* source = naNew(NABufferSource);
-  source->desc = descriptor;    // the whole struct is copied.
+NA_HDEF NABufferSource* naCreateBufferSource(void* data, NAMutator destructor, NABufferSourceFiller filler){
+  NABufferSource* source = naAlloc(NABufferSource);
+  naInitRefCount(&(source->refcount));
+  source->data = data;
+  source->destructor = destructor;
+  source->filler = filler;
+  source->flags = 0;
   return source;
 }
 
 
 
+NA_HDEF NABufferSource* naRetainBufferSource(NABufferSource* source){
+  #ifndef NDEBUG
+    source->flags |= NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE;
+  #endif
+  return (NABufferSource*)naRetainRefCount(&(source->refcount));
+}
+
+
+
 NA_HDEF void naDeallocBufferSource(NABufferSource* source){
-  if(source->desc.destructor){
-    source->desc.destructor(source->desc.data);
-  }
+  if(source->destructor){source->destructor(source->data);}
+  naFree(source);
+}
+
+
+
+NA_HDEF void naReleaseBufferSource(NABufferSource* source){
+  naReleaseRefCount(&(source->refcount), source, source->destructor);
+}
+
+
+
+NA_HDEF void naSetBufferSourceLimit(NABufferSource* source, NARangei limit){
+  #ifndef NDEBUG
+    if(source->flags & NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE)
+      naError("naSetBufferSourceLimit", "Source already used in a buffer. Mayor problems may occur in the future");
+  #endif
+  source->flags |= NA_BUFFER_SOURCE_RANGE_LIMITED;
+  source->limit = limit;
 }
 
 
 
 //// NAMutator used in the naNewBufferSourceWithBuffer function.
 //NA_HDEF void naDeallocBufferSourceBuffer(NABufferIterator* iter){
-//  naRelease(naGetBufferIteratorBufferMutable(iter));
+//  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
+//  naRelease(buffer);
 //  naClearBufferIterator(iter);
 //  naFree(iter);
 //}
@@ -103,24 +140,23 @@ NA_HDEF void naDeallocBufferSource(NABufferSource* source){
 ////    return NA_NULL;
 ////  }
 ////}
-////
-//
-////
-////// Calls the filler of the source descriptor for the range of the given part.
-////// Hence filling the memory with the desired content.
-////void naFillBufferSourcePart(NABufferSource* source, NABufferPart* part){
-////  #ifndef NDEBUG
-////    if(naIsBufferSourceLimited(source)){
-////      if(!naContainsRangeiRange(naGetBufferSourceLimit(source), naGetBufferPartRange(part)))
-////        naError("naFillBufferSourcePart", "part overflows the limited range of the source");
-////    }
-////  #endif
-////  // desc.filler can be null for non-secure memory as source
-////  if(source && source->desc.filler){
-////    source->desc.filler(source->desc.data, naGetBufferPartBaseDataPointerMutable(part), naGetBufferPartRange(part));
-////  }
-////}
-////
+
+
+
+// Calls the filler of the source descriptor for the range of the given part.
+// Hence filling the memory with the desired content.
+//void naFillBufferSourcePart(NABufferSource* source, NABufferPart* part){
+//  #ifndef NDEBUG
+//    if(naIsBufferSourceLimited(source)){
+//      if(!naContainsRangeiRange(naGetBufferSourceLimit(source), naGetBufferPartRange(part)))
+//        naError("naFillBufferSourcePart", "part overflows the limited range of the source");
+//    }
+//  #endif
+//  // desc.filler can be null for non-secure memory as source
+//  if(source && source->desc.filler){
+//    source->desc.filler(source->desc.data, naGetBufferPartBaseDataPointerMutable(part), naGetBufferPartRange(part));
+//  }
+//}
 
 
 

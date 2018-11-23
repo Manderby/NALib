@@ -176,6 +176,8 @@ NA_IAPI NATree* naInitTree(NATree* tree, NATreeConfiguration* config);
 NA_IAPI void naEmptyTree(NATree* tree);
 NA_IAPI void naClearTree();
 
+NA_IAPI NABool naIsTreeEmpty(const NATree* tree);
+
 NA_IAPI NABool naAddTreeFirstConst  (NATree* tree, const void* content);
 NA_IAPI NABool naAddTreeFirstMutable(NATree* tree,       void* content);
 NA_IAPI NABool naAddTreeLastConst   (NATree* tree, const void* content);
@@ -222,7 +224,7 @@ NA_IAPI void naClearTreeIterator(NATreeIterator* iter);
 // in the neighborhood of the current location. Do not set this flag if you
 // access elements more randomly. The wrong value can make quite a difference
 // in performance. Test it out!
-NA_IAPI NABool naLocateTree(     NATreeIterator* iter,
+NA_IAPI NABool naLocateTreeKey(  NATreeIterator* iter,
                                      const void* key,
                                           NABool assumeclose);
 NA_IAPI NABool naLocateTreeFirst(NATreeIterator* iter);
@@ -280,8 +282,14 @@ NA_IAPI NABool naAddTreeNextMutable(NATreeIterator* iter,
 // be moved to the next element.
 NA_IAPI void naRemoveTreeCur(NATreeIterator* iter, NABool advance);
 
+// Returns true if the iterator is at its initial position.
+NA_IAPI NABool naIsTreeAtInitial(NATreeIterator* iter);
 
-
+// Debugging function: Returns true if there are other iterators visiting
+// the same tree element as the given iterator.
+#ifndef NDEBUG
+  NA_IAPI NABool naIsTreeIteratorAlone(NATreeIterator* iter);
+#endif
 
 // Inline implementations are in a separate file:
 #include "NAStruct/NATree/NATreeII.h"

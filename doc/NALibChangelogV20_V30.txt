@@ -25,6 +25,7 @@ Version 22 (first published 20XX-XXX-XX)
 - Moved naMakeXXXPositive to NACoord and NAArray. Added naMakeRangeiAbsolute
   to NABuffer
 - Renamed naMakeNullPtr to naMakePtrNull
+- Made some of the runtime system functions inlineable.
 
 
 Version 21 (first published 2018-Mai-27)
