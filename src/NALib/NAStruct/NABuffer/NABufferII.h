@@ -16,6 +16,17 @@ typedef struct NABufferSourcePart NABufferSourcePart;
 
 
 
+struct NABufferSource{
+  NARefCount              refcount;
+  void*                   data;        // data sent to filler and destructor.
+  NAMutator               destructor;  // Data destructor.
+  NABufferSourceFiller    datafiller;  // Fill function filling memory.
+  NABufferDataAllocator   dataallocator;  // Data allocator
+  NABufferDataDeallocator datadeallocator;// Data deallocator
+  NAUInt                  flags;       // Flags for the source
+  NARangei                limit;       // Source limit (only used if flags set)
+};
+
 struct NABufferSourcePart{
   NABufferSource*  source;
   NARangei         range;         // Range of the referenced data
@@ -24,8 +35,8 @@ struct NABufferSourcePart{
 NA_EXTERN_RUNTIME_TYPE(NABufferSourcePart);
 
 struct NABufferPart{
-  NAUInt              bytesize;    // Number of bytes being referenced
-  NAUInt              byteoffset;  // Start-index in the referenced data
+  NAInt               bytesize;    // Number of bytes being referenced
+  NAInt               byteoffset;  // Start-index in the referenced data
   NABufferSourcePart* sourcepart;  // The referenced source part
   // todo: save some space by directly referencing data with NAPointer and
   // the bytesize sign as a distinction flag.
@@ -40,10 +51,10 @@ struct NABufferIterator{
 };
 
 struct NABuffer{
-  NABufferSource* source;
-  NAInt srcoffset;       // Offset of source relative to this buffers origin.
-                         // Add this offset to the desired pos to get the
-                         // position within the source.
+  NABufferSource* enhancesource;
+  NAInt enhancesourceoffset; // Offset of source relative to this buffers
+                             // origin. Add this offset to the desired pos to
+                             // get the position within the source.
   
   NAUInt flags;
   NARangei range;
@@ -63,13 +74,12 @@ struct NABuffer{
 
 
 // NABufferPart
-NA_HAPI NABufferPart* naNewBufferPartSparse(NAUInt bytesize);
-NA_HAPI NABufferPart* naNewBufferPartConstData(const NAByte* data, NAUInt bytesize);
-NA_HAPI NABufferPart* naNewBufferPartMutableData(NAByte* data, NAUInt bytesize, NAMutator destructor);
+NA_HAPI NABufferPart* naNewBufferPartSparse(NABufferSource* source, NARangei range);
+NA_HAPI NABufferPart* naNewBufferPartData(NABufferSource* source, NARangei range, NAPtr data);
 NA_HAPI void naAllocateBufferPartMemory(NABufferPart* part);
 NA_HAPI void naDestructBufferPart(NABufferPart* part);
 NA_HAPI NABool naIsBufferPartSparse(const NABufferPart* part);
-NA_HAPI void naSplitBufferSparsePart(NABufferIterator* iter, NAUInt start, NAUInt end);
+NA_HAPI void naSplitBufferSparsePart(NABufferIterator* iter, NAInt start, NAInt end);
 
 // NABufferHelper
 NA_HAPI void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end);

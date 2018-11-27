@@ -550,7 +550,6 @@ NA_DEF void naStartRuntime(){
     na_runtime->totalmallocgarbagebytecount = 0;
     na_runtime->typeinfocount = 0;
     na_runtime->typeinfos = NA_NULL;
-    
   #endif
 }
 

@@ -10,16 +10,6 @@
 // //////////////////////////////////////
 
 
-struct NABufferSource{
-  NARefCount           refcount;
-  void*                data;        // ptr being sent to filler and destructor.
-  NAMutator            destructor;  // Data destructor.
-  NABufferSourceFiller filler;      // Fill function filling memory.
-  NAUInt               flags;       // Flags for the source
-  NARangei             limit;       // Source limit (only used if flags set)
-};
-
-
 
 // Flags for the buffer source:
 #define NA_BUFFER_SOURCE_RANGE_LIMITED    0x01
@@ -28,13 +18,16 @@ struct NABufferSource{
 
 
 // Creates a buffer source with the given descriptor.
-NA_HDEF NABufferSource* naCreateBufferSource(void* data, NAMutator destructor, NABufferSourceFiller filler){
+NA_HDEF NABufferSource* naCreateBufferSource(void* data, NAMutator datadestructor, NABufferSourceFiller filler){
   NABufferSource* source = naAlloc(NABufferSource);
   naInitRefCount(&(source->refcount));
   source->data = data;
-  source->destructor = destructor;
-  source->filler = filler;
+  source->destructor = datadestructor;
+  source->datafiller = filler;
+  source->dataallocator = NA_NULL;
+  source->datadeallocator = NA_NULL;
   source->flags = 0;
+  source->limit = naMakeRangeiWithStartAndEnd(0, 0);
   return source;
 }
 
@@ -69,6 +62,17 @@ NA_HDEF void naSetBufferSourceLimit(NABufferSource* source, NARangei limit){
   #endif
   source->flags |= NA_BUFFER_SOURCE_RANGE_LIMITED;
   source->limit = limit;
+}
+
+
+
+NA_HDEF void naSetBufferSourceDataFunctions(NABufferSource* source, NABufferDataAllocator allocator, NABufferDataDeallocator deallocator){
+  #ifndef NDEBUG
+    if(source->flags & NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE)
+      naError("naSetBufferSourceDataFunctions", "Source already used in a buffer. Mayor problems may occur in the future");
+  #endif
+  source->dataallocator = allocator;
+  source->datadeallocator = deallocator;
 }
 
 

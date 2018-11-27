@@ -125,9 +125,9 @@ NA_API NABuffer* naNewBufferWithInpuFile(const char* filename);
 // data is mutable, you can give a destructor if you want to delete the
 // memory of the data pointer when no longer needed.
 NA_API NABuffer* naNewBufferWithConstData( const void* data,
-                                                NAUInt bytesize);
+                                                 NAInt bytesize);
 NA_API NABuffer* naNewBufferWithMutableData(     void* data,
-                                                NAUInt bytesize,
+                                                 NAInt bytesize,
                                              NAMutator destructor);
 
 // ////////////////////////////////////////
@@ -142,18 +142,28 @@ NA_API NABuffer* naNewBufferWithMutableData(     void* data,
 // will be the pointer given to naCreateBufferSource and the range denotes
 // the desired origin in absolute source coordinates as well as the number
 // of bytes to process.
-typedef void (*NABufferSourceFiller)(void* data, void* dst, NARangei range);
+typedef void  (*NABufferSourceFiller)   (void* sourcedata,
+                                         void* dst,
+                                      NARangei range);
+typedef NAPtr (*NABufferDataAllocator)  (void* sourcedata, NARangei range);
+typedef void  (*NABufferDataDeallocator)(void* sourcedata, NAPtr data);
 
 // Create, Retain and Release custom sources.
 // You can store a custom data object to the source which will be available
 // to the filler function as well as the destructor.
-NA_HAPI NABufferSource* naCreateBufferSource(void* data, NAMutator destructor, NABufferSourceFiller filler);
+NA_HAPI NABufferSource* naCreateBufferSource(          void* data,
+                                                   NAMutator datadestructor,
+                                        NABufferSourceFiller filler);
 NA_HAPI NABufferSource* naRetainBufferSource(NABufferSource* source);
-NA_HAPI void naReleaseBufferSource(NABufferSource* source);
+NA_HAPI void naReleaseBufferSource(          NABufferSource* source);
 
 // Limits the source to a specific range of bytes. This is for example used
 // when reading a file, where the source is limited to the file size.
-NA_HAPI void naSetBufferSourceLimit(NABufferSource* source, NARangei limit);
+NA_HAPI void naSetBufferSourceLimit(         NABufferSource* source,
+                                                    NARangei limit);
+NA_HAPI void naSetBufferSourceDataFunctions( NABufferSource* source,
+                                       NABufferDataAllocator allocator,
+                                     NABufferDataDeallocator deallocator);
 
 // Creates a buffer with a custom source. Note that the NABuffer will retain
 // the source, meaning you can safely release the source after this function.

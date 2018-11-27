@@ -256,21 +256,21 @@ NA_DEF NABuffer* naNewBufferWithInpuFile(const char* filename){
 
 
 
-NA_DEF NABuffer* naNewBufferWithConstData(const void* data, NAUInt bytesize){
+NA_DEF NABuffer* naNewBufferWithConstData(const void* data, NAInt bytesize){
   NABufferPart* part;
   
   NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
   
-  buffer->source = NA_NULL;
-  buffer->srcoffset = 0;
-
-  // Add the const data to the list.
-  part = naNewBufferPartConstData(data, bytesize);
-  naAddTreeFirstMutable(&(buffer->parts), part);
+  buffer->enhancesource = NA_NULL;
+  buffer->enhancesourceoffset = 0;
   
   buffer->range = naMakeRangeiWithStartAndEnd(0, (NAInt)bytesize);
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;
+
+  // Add the const data to the list.
+  part = naNewBufferPartData(NA_NULL, buffer->range, naMakePtrWithDataConst(data));
+  naAddTreeFirstMutable(&(buffer->parts), part);
 
   buffer->newlineencoding = NA_NEWLINE_NATIVE;
   buffer->endianness = NA_ENDIANNESS_UNKNOWN;
@@ -281,22 +281,26 @@ NA_DEF NABuffer* naNewBufferWithConstData(const void* data, NAUInt bytesize){
 
 
 
-NA_DEF NABuffer* naNewBufferWithMutableData(void* data, NAUInt bytesize, NAMutator destructor){
+NA_DEF NABuffer* naNewBufferWithMutableData(void* data, NAInt bytesize, NAMutator destructor){
   NABufferPart* part;
   
   NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
   
-  buffer->source = NA_NULL;
-  buffer->srcoffset = 0;
+  buffer->enhancesource = NA_NULL;
+  buffer->enhancesourceoffset = 0;
 
-  // Add the const data to the list.
-  part = naNewBufferPartMutableData(data, bytesize, destructor);
-  naAddTreeFirstMutable(&(buffer->parts), part);
-  
   buffer->range = naMakeRangeiWithStartAndEnd(0, (NAInt)bytesize);
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;
 
+  NABufferSource* source = naCreateBufferSource(NA_NULL, destructor, NA_NULL);
+
+  // Add the const data to the list.
+  part = naNewBufferPartData(source, buffer->range, naMakePtrWithDataMutable(data));
+  naAddTreeFirstMutable(&(buffer->parts), part);
+  
+  naReleaseBufferSource(source);
+  
   buffer->newlineencoding = NA_NEWLINE_NATIVE;
   buffer->endianness = NA_ENDIANNESS_UNKNOWN;
   buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
@@ -329,7 +333,7 @@ NA_HDEF void naDeallocBuffer(NABuffer* buffer){
     if(buffer->itercount)
       naError("naDeallocBuffer", "There are still iterators running. Did you forgot naClearBufferIterator?");
   #endif
-  if(buffer->source){naRelease(buffer->source);}
+  if(buffer->enhancesource){naRelease(buffer->enhancesource);}
   naEmptyTree(&(buffer->parts));
 }
 
