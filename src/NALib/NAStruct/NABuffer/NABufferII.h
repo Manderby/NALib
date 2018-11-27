@@ -18,13 +18,14 @@ typedef struct NABufferSourcePart NABufferSourcePart;
 
 struct NABufferSource{
   NARefCount              refcount;
-  void*                   data;        // data sent to filler and destructor.
-  NAMutator               destructor;  // Data destructor.
-  NABufferSourceFiller    datafiller;  // Fill function filling memory.
-  NABufferDataAllocator   dataallocator;  // Data allocator
-  NABufferDataDeallocator datadeallocator;// Data deallocator
-  NAUInt                  flags;       // Flags for the source
-  NARangei                limit;       // Source limit (only used if flags set)
+  void*                   data;          // data sent to filler and destructor.
+  NAMutator               datadestructor;// Data destructor.
+  NABufferFiller          buffiller;     // Fill function filling memory.
+  NABufferSourceBufAllocator   bufallocator;  // Data allocator
+  NABufferSourceBufDeallocator bufdeallocator;// Data deallocator
+  NAMutator               bufsimpledestructor;  // todo: is there a better way?
+  NAUInt                  flags;         // Flags for the source
+  NARangei                limit;         // Source limit (used if flags set)
 };
 
 struct NABufferSourcePart{
@@ -78,6 +79,7 @@ NA_HAPI NABufferPart* naNewBufferPartSparse(NABufferSource* source, NARangei ran
 NA_HAPI NABufferPart* naNewBufferPartData(NABufferSource* source, NARangei range, NAPtr data);
 NA_HAPI void naAllocateBufferPartMemory(NABufferPart* part);
 NA_HAPI void naDestructBufferPart(NABufferPart* part);
+NA_HAPI void naFillBufferPart(NABufferPart* part, NARangei range);
 NA_HAPI NABool naIsBufferPartSparse(const NABufferPart* part);
 NA_HAPI void naSplitBufferSparsePart(NABufferIterator* iter, NAInt start, NAInt end);
 
@@ -85,8 +87,15 @@ NA_HAPI void naSplitBufferSparsePart(NABufferIterator* iter, NAInt start, NAInt 
 NA_HAPI void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end);
 
 // NABufferIteration
-NA_HDEF const NABuffer* naGetBufferIteratorBufferConst(const NABufferIterator* iter);
-NA_HDEF NABuffer* naGetBufferIteratorBufferMutable(NABufferIterator* iter);
+NA_HAPI const NABuffer* naGetBufferIteratorBufferConst(const NABufferIterator* iter);
+NA_HAPI NABuffer* naGetBufferIteratorBufferMutable(NABufferIterator* iter);
+
+// NABufferSource
+NA_HAPI NARangei naGetBufferSourceLimit(NABufferSource* source);
+#ifndef NDEBUG
+  NA_HAPI NABool naIsBufferSourceLimited(const NABufferSource* source);
+#endif
+
 
 
 // Copyright (c) NALib, Tobias Stamm

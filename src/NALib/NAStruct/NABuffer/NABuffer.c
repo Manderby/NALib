@@ -293,7 +293,7 @@ NA_DEF NABuffer* naNewBufferWithMutableData(void* data, NAInt bytesize, NAMutato
   buffer->range = naMakeRangeiWithStartAndEnd(0, (NAInt)bytesize);
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;
 
-  NABufferSource* source = naCreateBufferSource(NA_NULL, destructor, NA_NULL);
+  NABufferSource* source = naCreateBufferSource(NA_NULL, destructor);
 
   // Add the const data to the list.
   part = naNewBufferPartData(source, buffer->range, naMakePtrWithDataMutable(data));

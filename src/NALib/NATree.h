@@ -224,11 +224,13 @@ NA_IAPI void naClearTreeIterator(NATreeIterator* iter);
 // in the neighborhood of the current location. Do not set this flag if you
 // access elements more randomly. The wrong value can make quite a difference
 // in performance. Test it out!
-NA_IAPI NABool naLocateTreeKey(  NATreeIterator* iter,
-                                     const void* key,
-                                          NABool assumeclose);
-NA_IAPI NABool naLocateTreeFirst(NATreeIterator* iter);
-NA_IAPI NABool naLocateTreeLast( NATreeIterator* iter);
+NA_IAPI NABool naLocateTreeKey(     NATreeIterator* iter,
+                                        const void* key,
+                                             NABool assumeclose);
+NA_IAPI NABool naLocateTreeFirst(   NATreeIterator* iter);
+NA_IAPI NABool naLocateTreeLast(    NATreeIterator* iter);
+NA_IAPI NABool naLocateTreeIterator(NATreeIterator* iter,
+                                    NATreeIterator* srciter);
 
 // /////////////////////////////////
 // Iterating

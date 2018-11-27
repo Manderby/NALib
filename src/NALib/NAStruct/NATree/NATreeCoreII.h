@@ -346,6 +346,18 @@ NA_IDEF NABool naLocateTreeLast(NATreeIterator* iter){
 
 
 
+NA_IDEF NABool naLocateTreeIterator(NATreeIterator* iter, NATreeIterator* srciter){
+  #ifndef NDEBUG
+    if(naGetPtrConst(&(iter->tree)) != naGetPtrConst(&(srciter->tree)))
+      naError("nalocateTreeIterator", "The two iterators do not belong to the same tree");
+  #endif
+  iter->leaf = srciter->leaf;
+  return (iter->leaf != NA_NULL);
+}
+
+
+
+
 NA_IDEF const void* naGetTreeCurKey(NATreeIterator* iter){
   const NATree* tree;
   #ifndef NDEBUG

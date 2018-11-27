@@ -87,6 +87,10 @@ NA_RUNTIME_TYPE(NABufferSourcePart, naDestructBufferSourcePart, NA_TRUE);
 
 // Creates a buffer source part.
 NA_HDEF NABufferSourcePart* naNewBufferSourcePart(NABufferSource* source, NARangei range, NAPtr data){
+  if(naIsBufferSourceLimited(source)){
+    if(!naContainsRangeiRange(naGetBufferSourceLimit(source), range))
+      naError("naNewBufferSourcePart", "range overflows the limited range of the source");
+  }
   NABufferSourcePart* part = naNew(NABufferSourcePart);
   part->source = naRetainBufferSource(source);
   part->range = range;
@@ -99,10 +103,10 @@ NA_HDEF NABufferSourcePart* naNewBufferSourcePart(NABufferSource* source, NARang
 NA_HDEF void naDestructBufferSourcePart(NABufferSourcePart* part){
   if(part->source){
     if(naGetPtrConst(&(part->data))){
-      if(part->source->datadeallocator){
-        part->source->datadeallocator(part->source->data, part->data);
+      if(part->source->bufdeallocator){
+        part->source->bufdeallocator(part->source->data, part->data);
       }else{
-        naFree(naGetPtrMutable(&(part->data)));
+        part->source->bufsimpledestructor(naGetPtrMutable(&(part->data)));
       }
     }
     naReleaseBufferSource(part->source);
@@ -125,11 +129,21 @@ NA_HDEF void naAllocateBufferSourcePartMemory(NABufferSourcePart* part){
       naError("naAllocateBufferSourcePartMemory", "Part already has memory");
   #endif
   if(part->source){
-    if(part->source->dataallocator){
-      part->data = part->source->dataallocator(part->source->data, part->range);
+    if(part->source->bufallocator){
+      part->data = part->source->bufallocator(part->source->data, part->range);
     }else{
       part->data = naMakePtrWithDataMutable(naMalloc((NAInt)part->range.length));
     }
+  }
+}
+
+
+
+// Calls the filler of the source descriptor for the range of the given part.
+// Hence filling the memory with the desired content.
+NA_HDEF void naFillBufferSourcePart(NABufferSourcePart* part, NARangei range){
+  if(part->source && part->source->buffiller){
+    part->source->buffiller(part->source->data, naGetPtrMutable(&(part->data)), naMakeRangei(range.origin + part->range.origin, range.length));
   }
 }
 
@@ -146,7 +160,7 @@ NA_RUNTIME_TYPE(NABufferPart, naDestructBufferPart, NA_FALSE);
 
 // Creates a memory block with sparse memory.
 // A sparse buffer is initialized with a byteoffset of 0. This will possibly
-// change when calling naReferenceBufferPart or naFillBufferSourcePart.
+// change when calling naReferenceBufferPart or naFillBufferPart.
 NA_HDEF NABufferPart* naNewBufferPartSparse(NABufferSource* source, NARangei range){
   #ifndef NDEBUG
     if(!naIsLengthValueUsefuli(range.length))
@@ -161,7 +175,7 @@ NA_HDEF NABufferPart* naNewBufferPartSparse(NABufferSource* source, NARangei ran
 
 
 
-// Creates a memory block with given const data buffer
+// Creates a memory block with given data buffer
 NA_HDEF NABufferPart* naNewBufferPartData(NABufferSource* source, NARangei range, NAPtr data){
   #ifndef NDEBUG
     if(!naIsLengthValueUsefuli(range.length))
@@ -199,6 +213,14 @@ NA_HDEF NABufferPart* naNewBufferPartData(NABufferSource* source, NARangei range
 // Allocates memory for the range defined in part.
 NA_HDEF void naAllocateBufferPartMemory(NABufferPart* part){
   naAllocateBufferSourcePartMemory(part->sourcepart);
+}
+
+
+
+// Calls the filler of the source descriptor for the range of the given part.
+// Hence filling the memory with the desired content.
+NA_HDEF void naFillBufferPart(NABufferPart* part, NARangei range){
+  naFillBufferSourcePart(part->sourcepart, range);
 }
 
 
