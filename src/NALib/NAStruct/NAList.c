@@ -20,7 +20,7 @@ NA_DEF NABool naLocateListData(NAListIterator* iterator, const void* data){
       return NA_TRUE;
     }
   }
-  
+
   // Reaching here, content could not be found.
   return NA_FALSE;
 }
@@ -45,7 +45,7 @@ NA_DEF NABool naLocateListIndex(NAListIterator* iterator, NAInt indx){
     iterator->cur = &(mutablelist->sentinel);
     return NA_FALSE;
   }
-  
+
   if(indx < ((NAInt)mutablelist->count / 2)){
     // Go forward from start to end
     iterator->cur = mutablelist->sentinel.next;

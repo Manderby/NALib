@@ -4,7 +4,7 @@
 
 #ifndef NA_DATETIME_INCLUDED
 #define NA_DATETIME_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -236,7 +236,7 @@ NA_IAPI void naSetDateTimeSummertime(NADateTime* datetime, NABool summertime);
 // Sets a custom time shift and daylight saving flag.
 NA_IAPI void naSetGlobalTimeShift(int16 shiftminutes, NABool summertime);
 // Sets the time shift and daylight saving flag to the system settings of the
-// local machine. 
+// local machine.
 NA_API void naSetGlobalTimeShiftToSystemSettings(void);
 
 
@@ -286,7 +286,7 @@ NA_API void naCorrectDateTimeForLeapSeconds(NADateTime* datetime,
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_DATETIME_INCLUDED

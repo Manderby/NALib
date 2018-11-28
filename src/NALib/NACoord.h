@@ -4,7 +4,7 @@
 
 #ifndef NA_COORD_INCLUDED
 #define NA_COORD_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -530,7 +530,7 @@ NA_IAPI NAInt     naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex
 // Sizes or rects with zero width or height are considered "empty". But no
 // special code will be executed! This might lead to unexpected behaviour.
 // When debugging, NALib checks if a size or rect is empty where it should
-// not be. But you as the programmer have to take care of that in your code! 
+// not be. But you as the programmer have to take care of that in your code!
 //
 // Negative sizes are not uncommon as well. While not forbidden and perfectly
 // meaningful, the functions of NALib only work properly with positive rects.
@@ -641,7 +641,7 @@ NA_IAPI NABool    naIsBoxiUseful (NABoxi box);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_COORD_INCLUDED

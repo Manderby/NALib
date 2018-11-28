@@ -4,7 +4,7 @@
 
 #ifndef NA_OCTTREE_INCLUDED
 #define NA_OCTTREE_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -51,7 +51,7 @@
 // ///////////////////////////////////////////
 
 // When creating an NAOctTree, you can create various callbacks which are
-// stored in a NAOctTreeConfiguration structure. Here are the signatures for 
+// stored in a NAOctTreeConfiguration structure. Here are the signatures for
 // these callbacks:
 
 // NAOctTreeLeafAllocator
@@ -102,7 +102,7 @@ typedef void  (*NAOctTreeLeafDeallocator)(  void* leafdata,
 // of a leaf defined when the NAOctTree was created.
 // Example (numbers are approximate):
 //          dstdata           srcdata
-//        O---------+       O---------+       
+//        O---------+       O---------+
 //        |         |       |s----+   |       srcorigin s: (1,1)
 //        |    d----+       ||    |   |       dstorigin d: (3,2)
 //        |    |    | <---- |+----+   |       volume: (4,2)
@@ -360,7 +360,7 @@ NA_API void naRemoveOctTreeCur(NAOctTreeIterator* iter);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_OCTTREE_INCLUDED

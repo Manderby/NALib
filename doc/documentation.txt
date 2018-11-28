@@ -278,7 +278,7 @@ the different structs together with the intended way of using them:
   function where you use the naDelete mutator as destructor function in the
   call to naReleaseRefCount. With that, you get reference counted pointers
   allocated and deallocated automatically using the NARuntime memory pools.
-  
+
 
 
 
@@ -487,11 +487,11 @@ without bumping into redefinitions.
 Further more, all header files are encapsulated by the standard c-linkage
 keyword:
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 ...
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 

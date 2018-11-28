@@ -88,19 +88,19 @@ NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NA
 
 NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
   tree->config = naRetainTreeConfiguration(config);
-  
+
   // If the config defines a callback for constructing a tree, call it.
   if(tree->config->treeConstructor){
     tree->config->treeConstructor(tree->config->data);
   }
-  
+
   // Init the tree root.
   tree->root = NA_NULL;
   tree->flags = 0;
   #ifndef NDEBUG
     tree->itercount = 0;
   #endif
-  
+
   return tree;
 }
 
@@ -113,7 +113,7 @@ NA_IDEF void naEmptyTree(NATree* tree){
   #endif
   if(tree->root){
     if(naIsTreeRootLeaf(tree)){
-      tree->config->leafCoreDestructor(tree, (NATreeLeaf*)tree->root);  
+      tree->config->leafCoreDestructor(tree, (NATreeLeaf*)tree->root);
     }else{
       tree->config->nodeCoreDestructor(tree, (NATreeNode*)tree->root, NA_TRUE);
     }
@@ -283,7 +283,11 @@ NA_HIDEF void naSetTreeIteratorCurLeaf(NATreeIterator* iter, NATreeLeaf* newleaf
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("naSetTreeIteratorCurLeaf", "This iterator has been cleared. You need to make it anew.");
-    if(!naIsTreeAtInitial(iter)){iter->leaf->itercount--;}
+    if(!naIsTreeAtInitial(iter)){
+      if(iter->leaf->itercount == 0)
+        naError("naSetTreeIteratorCurLeaf", "This leaf has zero iterators already");
+      iter->leaf->itercount--;
+    }
   #endif
   iter->leaf = newleaf;
   #ifndef NDEBUG
@@ -351,7 +355,7 @@ NA_IDEF NABool naLocateTreeIterator(NATreeIterator* iter, NATreeIterator* srcite
     if(naGetPtrConst(&(iter->tree)) != naGetPtrConst(&(srciter->tree)))
       naError("nalocateTreeIterator", "The two iterators do not belong to the same tree");
   #endif
-  iter->leaf = srciter->leaf;
+  naSetTreeIteratorCurLeaf(iter, srciter->leaf);
   return (iter->leaf != NA_NULL);
 }
 
@@ -463,8 +467,6 @@ NA_IDEF NABool naAddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafS
       naError("naAddTreeContent", "This function should not be called on trees with keys");
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("naAddTreeContent", "This iterator has been cleared. You need to make it anew.");
-    if(naIsTreeAtInitial(iter))
-      naError("naAddTreeContent", "Iterator is not at a leaf.");
   #endif
   NATreeLeaf* newleaf = tree->config->leafCoreConstructor(tree, NA_NULL, content);
   naAddTreeLeafAtLeaf(tree, iter->leaf, newleaf, splitOrder);
@@ -577,7 +579,7 @@ NA_HIDEF NAPtr naConstructLeafData(NATree* tree, const void* key, NAPtr data){
   if(tree->config->leafConstructor){
     return tree->config->leafConstructor(key, tree->config->data, data);
   }else{
-    return data; 
+    return data;
   }
 }
 
@@ -597,7 +599,7 @@ NA_HIDEF void naClearTreeLeaf(NATreeLeaf* leaf){
       naError("naClearTreeLeaf", "There are still iterators running on this leaf. Did you forget a call to naClearTreeIterator?");
   #else
     NA_UNUSED(leaf);
-  #endif  
+  #endif
 }
 
 

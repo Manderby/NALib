@@ -200,7 +200,7 @@ NA_HDEF void naDeallocOctTreeNode(NAOctTree* tree, NAOctTreeNode* node){
   naDeallocOctTreeNodeChild(tree, node, 5);
   naDeallocOctTreeNodeChild(tree, node, 6);
   naDeallocOctTreeNodeChild(tree, node, 7);
-  
+
   if(node->nodedata && tree->configuration.nodedeallocator){
     tree->configuration.nodedeallocator(node->nodedata);
   }
@@ -253,7 +253,7 @@ NA_HDEF NAVertex naGetOctTreeRootOrigin(int16 childexponent, NAVertex childorigi
   // In order to achieve a full coverage of the whole space
   // (negative and positive in all dimensions), we align parent nodes
   // in a cyclic way.
-  
+
   NAVolume childvolume = naGetOctTreeVolumeWithExponent(childexponent);
   NAVertex parentorigin = childorigin;
   int16 cycle = ((childexponent % 8) + 8 ) % 8;
@@ -275,16 +275,16 @@ NA_HDEF void naUpdateOctTreeNodeBubbling(NAOctTree* tree, NAOctTreeNode* parentn
     if(parentnode == NA_NULL)
       naError("naUpdateOctTreeNodeBubbling", "Parent is null.");
   #endif
-  
+
   NAVolume childvolume = naGetOctTreeVolumeWithExponent(parentnode->childexponent);
-  
+
   // We call the update callback.
   if(tree->configuration.childchanged){
     const void* childdata[8];
     naFillOctTreeNodeChildData(childdata, parentnode);
     bubble = tree->configuration.childchanged(parentnode->nodedata, segment, childdata, parentnode->leafmask, childvolume);
   }
-  
+
   // Then we propagate the message towards the root if requested.
   if(bubble && parentnode->parentnode){
     #ifndef NDEBUG
@@ -307,7 +307,7 @@ NA_HDEF void naUpdateOctTreeNodeBubbling(NAOctTree* tree, NAOctTreeNode* parentn
 // further.
 NA_HDEF NABool naUpdateOctTreeNodeCapturing(NAOctTree* tree, NAOctTreeNode* node){
   NABool bubble = NA_FALSE;
-  
+
   NAVolume childvolume = naGetOctTreeVolumeWithExponent(node->childexponent);
 
   #ifndef NDEBUG
@@ -343,7 +343,7 @@ NA_HDEF NABool naUpdateOctTreeNodeCapturing(NAOctTree* tree, NAOctTreeNode* node
     naFillOctTreeNodeChildData(childdata, node);
     bubble |= tree->configuration.childchanged(node->nodedata, -1, childdata, node->leafmask, childvolume);
   }
-  
+
   return bubble;
 }
 
@@ -368,7 +368,7 @@ NA_HIDEF void naSetOctTreeIteratorCurNode(NAOctTreeIterator* iter, NAOctTreeNode
 NA_HDEF void naRemoveOctTreeNode(NAOctTreeIterator* iter, NAOctTreeNode* replacenode){
   NAOctTreeNode* node = iter->node;
   NAOctTree* tree = naGetPtrMutable(&(iter->tree));
-  
+
   // As the current node will be erased, we adjust the iterator to point
   // at the parent.
   naSetOctTreeIteratorCurNode(iter, node->parentnode);
@@ -393,7 +393,7 @@ NA_HDEF void naRemoveOctTreeNode(NAOctTreeIterator* iter, NAOctTreeNode* replace
     }
     tree->root = replacenode;
   }
-  
+
   // Finally, we deallocate the node.
   naDeallocOctTreeNode(tree, node);
 }
@@ -471,7 +471,7 @@ NA_HDEF void naCreateOctTreeLeaf(NAOctTreeIterator* iter, const void* data){
     // We call this function recursively.
     naSetOctTreeIteratorCurNode(iter, tree->root);
     naCreateOctTreeLeaf(iter, data);
-    
+
   }else{
     // ...else we have a current node which is expected to contain the vertex.
     int16 segment;
@@ -481,7 +481,7 @@ NA_HDEF void naCreateOctTreeLeaf(NAOctTreeIterator* iter, const void* data){
       if(!naContainsBoxVertexE(nodebox, iter->vertex))
         naError("naCreateOctTreeLeaf", "Cur node does not contain the desired vertex.");
     #endif
-        
+
     segment = naGetOctTreeSegment(iter->node->origin, iter->node->childexponent, iter->vertex);
     if(iter->node->childs[segment]){
       #ifndef NDEBUG
@@ -514,7 +514,7 @@ NA_HDEF void naCreateOctTreeLeaf(NAOctTreeIterator* iter, const void* data){
       existingchildnode->segmentinparent = naGetOctTreeSegment(newparent->origin, newparent->childexponent, existingchildnode->origin);
       existingchildnode->parentnode = newparent;
       naSetOctTreeNodeSegment(newparent, existingchildnode->segmentinparent, existingchildnode);
-      
+
       // We call this function recursively.
       naSetOctTreeIteratorCurNode(iter, newparent);
       naCreateOctTreeLeaf(iter, data);
@@ -707,7 +707,7 @@ NA_DEF void naRemoveOctTreeCur(NAOctTreeIterator* iter){
       naError("naRemoveOctTreeCur", "iterator is not at a leaf");
   #endif
   tree = naGetPtrMutable(&(iter->tree));
-    
+
   // First, we destroy the data of the leaf chunk
   tree->configuration.leafdeallocator(iter->node->childs[iter->childsegment], tree->configuration.userdata);
   naSetOctTreeNodeSegment(iter->node, iter->childsegment, NA_NULL);
@@ -727,7 +727,7 @@ NA_HDEF NABool naLocateOctTreeNodeCapture(NAOctTreeIterator* iter){
       if(!naContainsBoxVertex(naGetOctTreeNodeBox(iter->node), iter->vertex))
         naError("naLocateOctTreeNodeCapture", "Inconsistent behaviour. Node should contain vertex");
     #endif
-  
+
     // The vertex is stored somewhere inside the box of this node
     int16 segment = naGetOctTreeSegment(iter->node->origin, iter->node->childexponent, iter->vertex);
     if((iter->node->childs[segment])){
@@ -750,7 +750,7 @@ NA_HDEF NABool naLocateOctTreeNodeCapture(NAOctTreeIterator* iter){
           break;
         }
       }
-      
+
     }else{
       // There is no segment where the vertex should be. No leaf found.
       // Bad ending. We are stuck with the closest parent node.
@@ -767,12 +767,12 @@ NA_HDEF NABool naLocateOctTreeNodeCapture(NAOctTreeIterator* iter){
 NA_HDEF NABool naLocateOctTreeNodeBubble(NAOctTreeIterator* iter){
   const NAOctTree* tree = naGetPtrConst(&(iter->tree));
   iter->childsegment = -1;
-  
+
   // If the iterator has no node set, we start at the root
   if(!iter->node){
     naSetOctTreeIteratorCurNode(iter, tree->root);
   }
-  
+
   // Then, we search towards the root until we find a node which contains the
   // desired vertex.
   while(iter->node){
@@ -787,10 +787,10 @@ NA_HDEF NABool naLocateOctTreeNodeBubble(NAOctTreeIterator* iter){
 
 NA_DEF NABool naIterateOctTree(NAOctTreeIterator* iter, const NABox* limit){
   const NAOctTree* tree = (const NAOctTree*)naGetPtrConst(&(iter->tree));
-  
+
   if(!tree->root){return NA_FALSE;}
-  
-  // If the iterator has no current node being visited, we use the root. 
+
+  // If the iterator has no current node being visited, we use the root.
   if(!iter->node){
     naSetOctTreeIteratorCurNode(iter, tree->root);
     #ifndef NDEBUG
@@ -802,7 +802,7 @@ NA_DEF NABool naIterateOctTree(NAOctTreeIterator* iter, const NABox* limit){
   // We go to the next segment. When we came to this function with segment -1,
   // we therefore start with the first segment.
   iter->childsegment++;
-    
+
   // Search for a segment which is available.
   while(iter->childsegment < 8){
     if(iter->node->childs[iter->childsegment]){
@@ -820,7 +820,7 @@ NA_DEF NABool naIterateOctTree(NAOctTreeIterator* iter, const NABox* limit){
     }
     iter->childsegment++;
   }
-  
+
   if(iter->childsegment < 8){
     // There is a segment available, either use the given leaf or go
     // downwards if it is an inner node.
@@ -835,7 +835,7 @@ NA_DEF NABool naIterateOctTree(NAOctTreeIterator* iter, const NABox* limit){
       iter->childsegment = -1;
       return naIterateOctTree(iter, limit);
     }
-    
+
   }else{
     // There is no more segment available in this node. Go upwards.
     if(iter->node->parentnode){
@@ -948,7 +948,7 @@ NA_DEF NAOctTree* naInitOctTreeCopy(NAOctTree* newtree, const NAOctTree* duptree
     naLocateOctTreeCoord(&newiter, duporigin);
     naCreateOctTreeLeaf(&newiter, dupdata);
   }
-  
+
   naClearOctTreeIterator(&dupiter);
   naClearOctTreeIterator(&newiter);
 
@@ -975,7 +975,7 @@ NA_DEF NAOctTree* naInitOctTreeCopyShifted(NAOctTree* newtree, const NAOctTree* 
   NAOctTreeIterator newiter;
   NAOctTreeIterator iter;
   NAVolume baseleafvolume;
-  
+
   #ifndef NDEBUG
     if(!newtree)
       naCrash("naCopyOctTreeWithShift", "newtree is Null-Pointer");
@@ -1003,10 +1003,10 @@ NA_DEF NAOctTree* naInitOctTreeCopyShifted(NAOctTree* newtree, const NAOctTree* 
   box5 = naMakeBoxE(naMakeVertex(shift.x + x2bound, shift.y, shift.z + z2bound), naMakeVolumeE(x1bound, y2bound, z1bound));
   box6 = naMakeBoxE(naMakeVertex(shift.x, shift.y + y2bound, shift.z + z2bound), naMakeVolumeE(x2bound, y1bound, z1bound));
   box7 = naMakeBoxE(naMakeVertex(shift.x + x2bound, shift.y + y2bound, shift.z + z2bound), naMakeVolumeE(x1bound, y1bound, z1bound));
-  
+
   newiter = naMakeOctTreeModifier(newtree);
   iter = naMakeOctTreeAccessor(duptree);
-  
+
   while(naIterateOctTree(&iter, NA_NULL)){
     NABox box;
     NAVertex neworigin;
@@ -1071,7 +1071,7 @@ NA_DEF NAOctTree* naInitOctTreeCopyShifted(NAOctTree* newtree, const NAOctTree* 
   }
   naClearOctTreeIterator(&iter);
   naClearOctTreeIterator(&newiter);
-  
+
   // Now, all the data has been copied. Update the whole tree.
   naUpdateOctTree(newtree);
   return newtree;

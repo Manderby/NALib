@@ -4,7 +4,7 @@
 
 #ifndef NA_BASE_INCLUDED
 #define NA_BASE_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -49,7 +49,7 @@
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_BASE_INCLUDED

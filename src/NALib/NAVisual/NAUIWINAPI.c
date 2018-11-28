@@ -224,7 +224,7 @@ NA_HDEF static VOID CALLBACK naTimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_
 
   UINT timerkey = (UINT)idEvent;
   app = (NAWINAPIApplication*)naGetApplication();
-  
+
   naBeginListModifierIteration(NATimerStruct* timerstruct, &(app->timers), iter);
     if(timerstruct->key == timerkey) {
       naRemoveListCurMutable(&iter, NA_FALSE);
@@ -520,11 +520,11 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeel
   NACoreUIElement* coreelement;
   NACoreUIElement* corerelelement;
   NAWINAPIApplication* app;
-  
+
   coreelement = (NACoreUIElement*)uielement;
   corerelelement = (NACoreUIElement*)relativeelement;
   app = (NAWINAPIApplication*)naGetApplication();
-  
+
   // First, let's handle the root case: Returning the application rect.
   if(coreelement == (NACoreUIElement*)app){
     #ifndef NDEBUG
@@ -533,10 +533,10 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeel
     #endif
     return naGetApplicationAbsoluteRect();
   }
-  
+
   // Now, we find the appropriate relative element.
   if(!corerelelement){corerelelement = naGetUIElementParent(coreelement);}
-  
+
   switch(coreelement->elementtype){
   case NA_UI_APPLICATION: rect = naGetApplicationAbsoluteRect(); break;
   case NA_UI_SCREEN:      rect = naGetScreenAbsoluteRect(coreelement); break;
@@ -555,7 +555,7 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeel
     rect = naMakeRectSE(0., 0., 0., 0.);
     break;
   }
-  
+
   switch(corerelelement->elementtype){
   case NA_UI_APPLICATION: relrect = naGetApplicationAbsoluteRect(); break;
   case NA_UI_SCREEN:      relrect = naGetScreenAbsoluteRect(corerelelement); break;
@@ -568,14 +568,14 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeel
     relrect = naMakeRectSE(0., 0., 0., 0.);
     break;
   }
-  
+
   rect.pos.x = rect.pos.x - relrect.pos.x;
   rect.pos.y = rect.pos.y - relrect.pos.y;
   rect.size.width = rect.size.width;
   rect.size.height = rect.size.height;
-  
+
   // Convert the rect into absolute coordinates.
-  
+
   return rect;
 }
 
@@ -669,8 +669,8 @@ NA_DEF NAWindow* naNewWindow(const char* title, NARect rect, NABool resizeable){
   windowrect.left = (int)rect.pos.x;
   AdjustWindowRect(&windowrect, style, NA_FALSE);
 
-	hWnd = CreateWindow( 
-		TEXT("NAWindow"), title, 
+	hWnd = CreateWindow(
+		TEXT("NAWindow"), title,
 		style,
 		windowrect.left, windowrect.top, windowrect.right - windowrect.left, windowrect.bottom - windowrect.top,
 		NULL, NULL, naGetUIElementNativeID(naGetApplication()), NULL);
@@ -768,7 +768,7 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullscreen){
       winapiwindow->windowedframe = naGetUIElementRect(window, naGetApplication(), NA_TRUE);
 
       newrect = naGetMainScreenRect();
-      
+
       memset(&screenSettings, 0, sizeof(screenSettings)); // set everything to 0
       screenSettings.dmSize = sizeof(screenSettings);
       //memcpy(screenSettings.dmDeviceName, fullscreendevicename, CCHDEVICENAME * sizeof(WCHAR));
@@ -822,8 +822,8 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
     int format;
     NAWINAPIOpenGLView* openglview;
 
-	  hWnd = CreateWindow( 
-		  TEXT("NAView"), "OpenGL View", 
+	  hWnd = CreateWindow(
+		  TEXT("NAView"), "OpenGL View",
 		  WS_CHILD | WS_VISIBLE | ES_READONLY,
 		  0, 0, (int)size.width, (int)size.height,
 		  (HWND)naGetUIElementNativeID(window), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
@@ -831,7 +831,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
     openglview = naAlloc(NAWINAPIOpenGLView);
     naRegisterCoreUIElement((NACoreUIElement*)openglview, (NACoreUIElement*)window, NA_UI_OPENGLVIEW, hWnd);
 
-    hDC = GetDC(hWnd); 
+    hDC = GetDC(hWnd);
 
     // Expected to be called when initializing. Do not multithread!
 	  // define pixel format for device context
@@ -887,7 +887,7 @@ NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmove
   screenframe = naGetMainScreenRect();
   centerpos.x = viewrect.pos.x + viewrect.size.width * .5f;
   centerpos.y = viewrect.pos.y + viewrect.size.height * .5f;
-  
+
 //  naGetUIElementWindow(uielement)->flags |= CUB_WINDOW_IGNORE_MOUSE_WARP;
   naSetMouseWarpedTo(centerpos);
   SetCursorPos((int)centerpos.x, (int)screenframe.size.height - (int)centerpos.y);

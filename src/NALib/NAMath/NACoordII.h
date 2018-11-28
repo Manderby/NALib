@@ -1633,7 +1633,7 @@ NA_IDEF NARangei naClampRangeiToRange(NARangei range, NARangei clamprange){
   if(naGetRangeiEnd(newrange) > value){
     newrange.length = value - newrange.origin;
   }
-  
+
   return newrange;
 }
 NA_IDEF NARangei naClampRangeiToMin(NARangei range, NAInt min){
@@ -1673,7 +1673,7 @@ NA_IDEF NARangei naClampRangeiToEnd(NARangei range, NAInt end){
   if(naGetRangeiEnd(newrange) > value){
     newrange.length = value - newrange.origin;
   }
-  
+
   return newrange;
 }
 
@@ -1744,7 +1744,7 @@ NA_IDEF NARect naClampRectToRect(NARect rect, NARect clamprect){
   if(naGetRectEndXE(newrect) > value){
     newrect.size.width = value - newrect.pos.x;
   }
-  
+
   // Adjust in second dimension
   value = clamprect.pos.y - newrect.pos.y;
   if(value > 0){
@@ -1786,7 +1786,7 @@ NA_IDEF NARecti naClampRectiToRect(NARecti rect, NARecti clamprect){
     newrect.size.width = value - newrect.pos.x;
     if(newrect.size.width <= 0){return newrect;}
   }
-  
+
   // Adjust in second dimension
   value = clamprect.pos.y - newrect.pos.y;
   if(value > 0){
@@ -1875,7 +1875,7 @@ NA_IDEF NABox naClampBoxToBox(NABox box, NABox clampbox){
   if(naGetBoxEndXE(newbox) > value){
     newbox.volume.width = value - newbox.vertex.x;
   }
-  
+
   // Adjust in second dimension
   value = clampbox.vertex.y - newbox.vertex.y;
   if(value > 0){
@@ -1928,7 +1928,7 @@ NA_IDEF NABoxi naClampBoxiToBox(NABoxi box, NABoxi clampbox){
     newbox.volume.width = value - newbox.vertex.x;
     if(newbox.volume.width <= 0){return newbox;}
   }
-  
+
   // Adjust in second dimension
   value = clampbox.vertex.y - newbox.vertex.y;
   if(value > 0){
@@ -2982,7 +2982,7 @@ NA_IDEF NABool naIsRangeiEmpty(NARangei range){
 NA_IDEF NABool naIsSizeEmpty (NASize size){
   // Note that opposed to the integer variant, we always check the single
   // values rather than multiplying them. This is because a floating point
-  // multiplication might lead to non-zero if one of the components is NaN. 
+  // multiplication might lead to non-zero if one of the components is NaN.
   return naIsLengthValueEmpty(size.width) || naIsLengthValueEmpty(size.height);
 }
 NA_IDEF NABool naIsSizeiEmpty(NASizei size){
@@ -3014,7 +3014,7 @@ NA_IDEF NABool naIsRectiEmptySlow(NARecti rect){
 NA_IDEF NABool naIsVolumeEmpty (NAVolume volume){
   // Note that opposed to the integer variant, we always check the single
   // values rather than multiplying them. This is because a floating point
-  // multiplication might lead to non-zero if one of the components is NaN. 
+  // multiplication might lead to non-zero if one of the components is NaN.
   return naIsLengthValueEmpty(volume.width) || naIsLengthValueEmpty(volume.height) || naIsLengthValueEmpty(volume.depth);
 }
 NA_IDEF NABool naIsVolumeiEmpty(NAVolumei volume){

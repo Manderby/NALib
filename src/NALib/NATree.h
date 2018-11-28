@@ -4,13 +4,13 @@
 
 #ifndef NA_TREE_INCLUDED
 #define NA_TREE_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
 // ///////////////////////////////////////////
 // Trees
-// 
+//
 // This is the implementation of a general tree structure for various kinds.
 // You use a NATreeConfiguration to define how the tree shall behave. Please
 // read carefully about the callback methods below.
@@ -220,7 +220,7 @@ NA_IAPI void naClearTreeIterator(NATreeIterator* iter);
 // Moves the iterator to the leaf containing the given key. If such a leaf is
 // not found in the tree, NA_FALSE ist returned and iter returns to the initial
 // state again.
-// The assumeclose parameter indicates that the desired key is expected to be 
+// The assumeclose parameter indicates that the desired key is expected to be
 // in the neighborhood of the current location. Do not set this flag if you
 // access elements more randomly. The wrong value can make quite a difference
 // in performance. Test it out!
@@ -298,7 +298,7 @@ NA_IAPI NABool naIsTreeAtInitial(NATreeIterator* iter);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_TREE_INCLUDED

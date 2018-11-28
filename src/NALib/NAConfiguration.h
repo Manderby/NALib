@@ -39,7 +39,7 @@
 //
 // Beware, although this might work, you maybe will get a lot of warnings.
 // Consider turning them off using -Wno-long-long.
- 
+
 #ifndef NA_TYPE_ASSUME_NATIVE_LONG_LONG
   #define NA_TYPE_ASSUME_NATIVE_LONG_LONG 0
 #endif
@@ -140,7 +140,7 @@
 // Usually, aligned memory can be created in unix like systems using several
 // methods. See the definitions of the following macros in NAMemory.h file
 // for more information.
-// - NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_CUSTOM 
+// - NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_CUSTOM
 // - NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_ALIGNED_ALLOC (needs full C11 support)
 // - NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_POSIX_MEMALIGN
 // Default is POSIX.
@@ -236,7 +236,7 @@
 // buffer part shall be. The value 0 denotes that the memory page size will be
 // used. Custom values typically are powers of 2, for example 4096.
 //
-// The default value is 0. 
+// The default value is 0.
 
 #ifndef NA_BUFFER_PART_BYTESIZE
   #define NA_BUFFER_PART_BYTESIZE 0
@@ -272,7 +272,7 @@
 
 // There are two ways to implement mutexes on windows: "Critical section" or
 // "Mutex". Both implementations work but some performence issues have been
-// observed with the "Mutex" implementation. 
+// observed with the "Mutex" implementation.
 //
 // Set this macro to 1 if you want to use the "critical section" or set it to
 // 0 if you want to use "Mutex". Default is 1

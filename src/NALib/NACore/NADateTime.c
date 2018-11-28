@@ -499,9 +499,9 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
   NAString* token;
   int16 int16value;
   NABufferIterator iter;
-  
+
   dts.nsec = 0;
-  
+
   str = naNewStringExtraction(string, 0, -1);
   iter = naMakeBufferAccessor(naGetStringBufferConst(str));
 
@@ -512,7 +512,7 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
     dts.mon = naGetMonthNumberWithEnglishAbbreviation(token);
     naDelete(token);
     dts.year = naParseBufferInt64(&iter, NA_TRUE);
-    
+
     dts.hour = naParseBufferInt32(&iter, NA_TRUE);
     dts.min = naParseBufferInt32(&iter, NA_TRUE);
     dts.sec = naParseBufferInt32(&iter, NA_TRUE);
@@ -569,7 +569,7 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
     dts.flags = 0;
     break;
   }
-  
+
   naClearBufferIterator(&iter);
   return naMakeDateTimeWithDateTimeStruct(&dts);
 }
@@ -607,7 +607,7 @@ NA_DEF NADateTime naMakeDateTimeFromBuffer(NABuffer* buffer, NABinDateTimeFormat
     dts.flags = 0;
     break;
   }
-  
+
   naClearBufferIterator(&iter);
   return naMakeDateTimeWithDateTimeStruct(&dts);
 }
@@ -634,11 +634,11 @@ NA_DEF const char* naGetDateTimeErrorString(uint8 errornum){
 //  naExtractDateTimeInformation(datetime, &dts, &dta);
 //
 //  switch(format){
-//  case NA_DATETIME_FORMAT_ICC_PROFILE:    
+//  case NA_DATETIME_FORMAT_ICC_PROFILE:
 //    // ICC section 5.1.1, page 4, dateTimeNumber
 //    bytearray = naInitByteArrayWithBytesize(bytearray, 12);
 //    ptr = naGetByteArrayMutablePointer(bytearray);
-//    
+//
 //    valueu16 = (uint16)dts.year;
 //    naConvertNativeBig16(&valueu16);
 //    naCopy16(&(ptr[ 0]), &valueu16);
@@ -683,7 +683,7 @@ NA_DEF NAString* naNewStringWithDateTime(const NADateTime* datetime,
   NADateTimeStruct dts;
   NADateTimeAttribute dta;
   naExtractDateTimeInformation(datetime, &dts, &dta);
-  
+
   switch(format){
   case NA_DATETIME_FORMAT_APACHE:
     string = naNewStringWithFormat("%02d/%s/%lld:%02d:%02d:%02d %c%02d%02d",
@@ -940,7 +940,7 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
   dts->errornum = datetime->errornum;
   dts->flags = datetime->flags;
   remainingsecs = naAddInt64(datetime->sisec, naMakeInt64WithLo(dts->shift * NA_SECONDS_PER_MINUTE));
-  
+
   if(naSmallerInt64(remainingsecs, NA_DATETIME_SISEC_START_GREGORIAN_PERIOD)){
     // julian system with astronomic year numbering
     remainingsecs = naSubInt64(remainingsecs, NA_DATETIME_SISEC_JULIAN_YEAR_ZERO);
@@ -952,7 +952,7 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
     if(naGreaterEqualInt64(remainingsecs, NA_SECONDS_IN_LEAP_YEAR)){
       naIncInt64(dts->year);
       remainingsecs = naSubInt64(remainingsecs, NA_SECONDS_IN_LEAP_YEAR);
-      
+
       remainingyears = naDivInt64(remainingsecs, NA_SECONDS_IN_NORMAL_YEAR);
       dts->year = naAddInt64(dts->year, remainingyears);
       remainingsecs = naSubInt64(remainingsecs, naMulInt64(remainingyears, NA_SECONDS_IN_NORMAL_YEAR));
@@ -968,7 +968,7 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
     years400 = naDivInt64(remainingsecs, NA_SECONDS_IN_400_YEAR_PERIOD);
     dts->year = naAddInt64(dts->year, naMulInt64(years400, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD));
     remainingsecs = naSubInt64(remainingsecs, naMulInt64(years400, NA_SECONDS_IN_400_YEAR_PERIOD));
-    
+
     exception100 = NA_FALSE;
     // The first 100-year period of a 400-year period has a leap day
     if(naGreaterEqualInt64(remainingsecs, naAddInt64(NA_SECONDS_IN_100_YEAR_PERIOD, naMakeInt64WithLo(NA_SECONDS_PER_DAY)))){
@@ -996,11 +996,11 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
         remainingsecs = naSubInt64(remainingsecs, naMulInt64(remainingyears, NA_SECONDS_IN_NORMAL_YEAR));
       }
     }
-    
+
     years4 = naDivInt64(remainingsecs, NA_SECONDS_IN_4_YEAR_PERIOD);
     dts->year = naAddInt64(dts->year, naMulInt64(years4, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD));
     remainingsecs = naSubInt64(remainingsecs, naMulInt64(years4, NA_SECONDS_IN_4_YEAR_PERIOD));
-    
+
     if(naGreaterEqualInt64(remainingsecs, NA_SECONDS_IN_LEAP_YEAR)){
       naIncInt64(dts->year);
       remainingsecs = naSubInt64(remainingsecs, NA_SECONDS_IN_LEAP_YEAR);
@@ -1063,7 +1063,7 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
 
   if(dta){
     int64 firstterm;
-    
+
     // Fill the NADateTimeAttribute struct with every information we have.
     if(dts->shift < 0){
       dta->shiftsign = -1;
@@ -1130,7 +1130,7 @@ NA_DEF NAString* naNewStringFromSecondDifference(double difference,
   allseconds = naDivInt64(allseconds, naMakeInt64WithLo(NA_MINUTES_PER_HOUR));
   hours = naCastInt64ToUInt8(naModInt64(allseconds, naMakeInt64WithLo(NA_HOURS_PER_DAY)));
   allseconds = naDivInt64(allseconds, naMakeInt64WithLo(NA_HOURS_PER_DAY));
-  
+
   if(decimaldigits){
     NAString* decimalformatstring;
     decimalformatstring = naNewStringWithFormat(".%%0%dlld", decimaldigits);
@@ -1139,21 +1139,21 @@ NA_DEF NAString* naNewStringFromSecondDifference(double difference,
   }else{
     decimalstring = naNewString();
   }
-  
+
   timestring = naNewStringWithFormat("%02d:%02d:%02d", hours, minutes, seconds);
-  
+
   if(!naEqualInt64(allseconds, NA_ZERO_64)){
     daystring = naNewStringWithFormat("%lldd ", allseconds);
   }else{
     daystring = naNewString();
   }
-  
+
   if(needsign){
     signstring = naNewStringWithUTF8CStringLiteral("-");
   }else{
     signstring = naNewString();
   }
-  
+
   string = naNewStringWithFormat("%s%s%s%s", naGetStringUTF8Pointer(signstring), naGetStringUTF8Pointer(daystring), naGetStringUTF8Pointer(timestring), naGetStringUTF8Pointer(decimalstring));
   naDelete(decimalstring);
   naDelete(timestring);

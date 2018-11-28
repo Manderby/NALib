@@ -4,7 +4,7 @@
 
 #ifndef NA_STACK_INCLUDED
 #define NA_STACK_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -135,7 +135,7 @@ NA_IAPI void naForeachStackpMutable(const NAStack* stack, NAMutator  mutator);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_STACK_INCLUDED

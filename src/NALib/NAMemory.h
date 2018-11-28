@@ -4,7 +4,7 @@
 
 #ifndef NA_MEMORY_INCLUDED
 #define NA_MEMORY_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -184,7 +184,7 @@ NA_IAPI NAUInt naGetRuntimePoolPartSize(void);
 // But note that this macro results in a variable definition and hence must be
 // written in an implementation file (.c). Also, the type must not be opaque
 // and the destructor must be declared before this macro.
-// 
+//
 // As though you may want to write inlineable code in your header files which
 // use naNew, you can use the NA_EXTERN_RUNTIME_TYPE macro to declare the
 // variable beforehand:
@@ -302,7 +302,7 @@ NA_IAPI NAPtr naMakePtrWithBytesize(NAInt bytesize);
 // Fills the given NAPtr struct with either a const or a non-const pointer
 // without copying any bytes.
 NA_IAPI NAPtr naMakePtrWithDataConst(       const void* data);
-NA_IAPI NAPtr naMakePtrWithDataMutable(           void* data);    
+NA_IAPI NAPtr naMakePtrWithDataMutable(           void* data);
 // Note that the creation functions of NAPtr are naMakeXXX functions which
 // makes it easy to implement. But the remaining functions require to provide
 // a pointer.
@@ -473,7 +473,7 @@ NA_IAPI       void* naGetPointerMutable(      NAPointer* pointer);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_MEMORY_INCLUDED

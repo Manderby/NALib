@@ -29,8 +29,8 @@ NA_IDEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* str
   NAString* pathcomponent;
   NABufferIterator iter;
 
-  url = naInitURL(url); 
-  if(!string){return url;} 
+  url = naInitURL(url);
+  if(!string){return url;}
   inputstring = naNewStringWithUTF8CStringLiteral(string);
 
   curchar = *naGetStringUTF8Pointer(inputstring);
@@ -38,9 +38,9 @@ NA_IDEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* str
     url->status |= NA_URL_PATH_ABSOLUTE;
     inputstring = naNewStringExtraction(inputstring, 1, -1);
   }
-  
+
   iter = naMakeBufferAccessor(naGetStringBufferConst(inputstring));
-  
+
   while(naGetStringBytesize(inputstring)){
     // Test for erroneous duplicate or ending delimiters
     curchar = *naGetStringUTF8Pointer(inputstring);
@@ -48,13 +48,13 @@ NA_IDEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* str
       inputstring = naNewStringExtraction(inputstring, 1, -1);
       continue;
     }
-    
+
     pathcomponent = naParseBufferPathComponent(&iter);
     naAddListLastMutable(&(url->path), &pathcomponent);
   }
-  
+
   naClearBufferIterator(&iter);
-  
+
   return url;
 }
 

@@ -94,7 +94,7 @@ NA_IDEF void naFree(void* ptr){
 
 
 NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
-  void* retptr;    
+  void* retptr;
 
   #if NA_OS == NA_OS_WINDOWS
     retptr = _aligned_malloc(bytesize, align);
@@ -131,12 +131,12 @@ NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
       #error "Invalid aligned alloc method chosen"
     #endif
   #endif
-  
+
   #ifndef NDEBUG
     if(((NAUInt)retptr & (NAUInt)(align - NA_ONE)) != NA_ZERO)
       naError("naMallocAligned", "pointer misaligned.");
   #endif
-  
+
   return retptr;
 }
 
@@ -335,7 +335,7 @@ struct NARefCount{
 // This means that not the full range of the count integer can be used for
 // reference counting. More precisely, the integer falls 6 Bits short. So in a
 // 32 bit system, you can have a max of 2^26 = 67 million references and on a
-// 64 bit system, you can have a max of 2^58 = [insert huge number here] refs. 
+// 64 bit system, you can have a max of 2^58 = [insert huge number here] refs.
 //
 // Note that when NDEBUG is undefined, there are additional flags which make
 // debugging easier and also serve to detect hard to find memory bugs. The
@@ -414,7 +414,7 @@ NA_IDEF void naReleaseRefCount(NARefCount* refcount, void* data, NAMutator destr
   // NDEBUG is not defined, this can be detected!
   refcount->count--;
 
-  if(refcount->count == NA_ZERO){    
+  if(refcount->count == NA_ZERO){
     // Call the destructor on the data if available.
     if(destructor){destructor(data);}
   }

@@ -58,7 +58,7 @@ NA_IDEF NAArray* naInitArrayWithCount(NAArray* array, NAInt typesize, NAInt coun
   #ifndef NDEBUG
     array->itercount = 0;
   #endif
-  
+
   return array;
 }
 
@@ -120,7 +120,7 @@ NA_IDEF void naClearArray(NAArray* array){
 NA_IDEF void naForeachArrayConst(NAArray* array, NAAccessor accessor){
   NAInt count;
   const NAByte* ptr;
-  
+
   #ifndef NDEBUG
     if(!accessor)
       naCrash("naForeachArray", "Accessor is Null");
@@ -158,7 +158,7 @@ NA_IDEF void naForeachArrayMutable(NAArray* array, NAMutator mutator){
 NA_IDEF void naForeachArraypConst(NAArray* array, NAAccessor accessor){
   NAInt count;
   const NAByte* ptr;
-  
+
   #ifndef NDEBUG
     if(!accessor)
       naCrash("naForeachArray", "Accessor is Null");
@@ -405,7 +405,7 @@ NA_IDEF NAArrayIterator naMakeArrayAccessor(const NAArray* array){
   #endif
   iter.array = naMakePtrWithDataConst(array);
   iter.indx = -1;
-  
+
   return iter;
 }
 
@@ -423,7 +423,7 @@ NA_IDEF NAArrayIterator naMakeArrayMutator(NAArray* array){
   #endif
   iter.array = naMakePtrWithDataMutable(array);
   iter.indx = -1;
-  
+
   return iter;
 }
 

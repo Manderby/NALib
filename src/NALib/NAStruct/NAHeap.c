@@ -571,10 +571,10 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
     }
   #endif
   heap->maxcount = count;
-  
+
   if(!(flags & NA_HEAP_STORES_BACKPOINTERS)){
     // entries store no backpointers
-    
+
     entrysize = sizeof(NAHeapNoBackEntry);
     heap->count = 0;
     heap->data = naMalloc((naAbsi(heap->maxcount) + 1) * entrysize);
@@ -627,7 +627,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
 
   }else{
     // Entries store backpointers
-    
+
     entrysize = sizeof(NAHeapBackEntry);
     heap->count = 0;
     heap->data = naMalloc((naAbsi(heap->maxcount) + 1) * entrysize);
@@ -640,7 +640,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
     heap->removePosConst = naRemoveHeapPosConstBack;
     heap->removePosMutable = naRemoveHeapPosMutableBack;
     heap->updateBack = naUpdateHeapElementBack;
-    
+
     switch(flags & NA_HEAP_DATATYPE_MASK){
     case NA_HEAP_USES_DOUBLE_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){

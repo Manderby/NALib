@@ -29,16 +29,16 @@ NA_HDEF void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt 
 //  }
 //  // After this function, all parts should be present and filled with memory.
 //  // The iterator should point to the buffer part containing offset.
-//  
+//
 //  // do as long as there is a bytesize remaining. Remember that the data may
 //  // be split into different buffer parts.
 //  while(bytesize){
 //    NABufferPart* part;
 //    NAInt possiblelength;
-//    
+//
 //    // The part pointed to by the iterator should be the one containing offset.
 //    part = naGetListCurMutable(&(iter->partiter));
-//    
+//
 //    // Reaching this point, we are sure, the current part contains offset and
 //    // is filled with memory.
 //    #ifndef NDEBUG
@@ -47,7 +47,7 @@ NA_HDEF void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt 
 //      if(!naContainsBufferPartOffset(part, iter->curoffset))
 //        naError("naPutBufferBytes", "Cur part does not contain current offset");
 //    #endif
-//    
+//
 //    // We get the data pointer where we can write bytes.
 //    dst = naGetBufferPartDataPointerMutable(part, iter->curoffset);
 //    // We detect, how many bytes actually can be put into the current part.
@@ -59,16 +59,16 @@ NA_HDEF void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt 
 //      if(possiblelength > naGetBufferPartRange(part).length)
 //        naError("naPutBufferBytes", "buffer overflow expected");
 //    #endif
-//    
+//
 //    if(possiblelength > bytesize){
 //      // If we can put in more bytes than needed, we copy all remaining bytes
 //      // and stay on this part.
 //      naCopyn(dst, src, bytesize);
-//      
+//
 //      if(advance){
 //        iter->curoffset += bytesize;
 //      }
-//      
+//
 //      // src += bytesize; // this line is not needed as the loop will end.
 //      bytesize = 0;
 //    }else{
@@ -88,7 +88,7 @@ NA_HDEF void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt 
 //      bytesize -= possiblelength;
 //    }
 //  }
-//  
+//
 //  // Reaching here, the whole range has been written to the parts and both
 //  // curoffset and iter point to the current position again.
   return;
@@ -444,22 +444,22 @@ NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffe
 //    dstbuffer = naGetBufferIteratorBufferMutable(iter);
 //    tmpsource = dstbuffer->source;
 //    tmpsrcoffset = dstbuffer->srcoffset;
-//    
+//
 //    mutablesrcbuffer = (NABuffer*)srcbuffer;
-//    
+//
 //    dstbuffer->source = naNewBufferSourceWithBuffer(mutablesrcbuffer);
 //    const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-//    
+//
 //    if(!naIsBufferEmpty(buffer) && naIsBufferAtInitial(iter)){
 //      iter->curoffset = naGetRangeiEnd(buffer->range);
 //    }
 //    dstbuffer->srcoffset = iter->curoffset - srcrange.origin;
-//    
+//
 //    naCacheBufferRange(dstbuffer, naMakeRangei(iter->curoffset, srcrange.length), NA_FALSE);
 //    iter->curoffset += srcrange.length;
-//    
+//
 //    naRelease(dstbuffer->source);
-//    
+//
 //    dstbuffer->source = tmpsource;
 //    dstbuffer->srcoffset = tmpsrcoffset;
 //  }
@@ -499,18 +499,18 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt by
 //
 //  readpart = naGetListCurConst(&readiter);
 //  writepart = naGetListCurMutable(&(iter->partiter));
-//  
+//
 //  // Now start copying the buffers.
 //  while(1){
 //    NAInt remaining;
-//    
+//
 //    remainingread = naGetBufferPartEnd(readpart) - readoffset;
 //    remainingwrite = naGetBufferPartEnd(writepart) - writeoffset;
 //
 //    remainingread = naMini(remainingread, distance);
 //    remaining = (remainingwrite < remainingread) ? remainingwrite : remainingread;
 //    remaining = naMini(remaining, bytesize);
-//    
+//
 //    naCopyn(naGetBufferPartDataPointerMutable(writepart, writeoffset), naGetBufferPartDataPointerConst(readpart, readoffset), remaining);
 //    bytesize -= remaining;
 //    writeoffset += remaining;
@@ -519,7 +519,7 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt by
 //
 //    remainingread = naGetBufferPartEnd(readpart) - readoffset;
 //    remainingwrite = naGetBufferPartEnd(writepart) - writeoffset;
-//    
+//
 //    if(remainingread == NA_ZERO){
 //      naIterateList(&readiter);
 //      readpart = naGetListCurConst(&readiter);

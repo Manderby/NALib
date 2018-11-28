@@ -91,8 +91,8 @@ void timeMaking(){
   int i;
   int64 i64 = NA_ZERO_64;
   uint64 ui64 = NA_ZERO_64u;
-  
-  
+
+
   t = getTime();
   for(i=0; i<TESTSIZE; i++){i64 = naAddInt64(naMakeInt64WithLo(-rand()), i64);}
   t = printAndSwapTime("naMakeInt64WithLo", t);
@@ -161,7 +161,7 @@ void timeBinary(){
   int i;
   int64 i64;
   uint64 ui64;
-  
+
   t = getTime();
   for(i=0; i<TESTSIZE; i++){i64 = naNotInt64(i64_1);}
   t = printAndSwapTime("naNotInt64", t);
@@ -243,7 +243,7 @@ void timeComparison(){
   double t;
   int i;
   NABool testbool = NA_FALSE;
-  
+
   t = getTime();
   for(i=0; i<TESTSIZE; i++){testbool ^= naEqualInt64(i01, i02); naIncInt64(i01); naDecInt64(i02);}
   t = printAndSwapTime("naEqualInt64", t);
@@ -298,7 +298,7 @@ void testArithmetic(){
   naDecInt64(i03);
   testEqualInt64(i03, 0xffffffff, 0xffffffff);
   naIncInt64(i03);
-  
+
   testEqualInt64(i03, 0x00000000, 0x00000000);
   i2 = naAddInt64(i01, i02);
   testEqualInt64(i2, 0xffff909d, 0x6ebb17ca);
@@ -316,7 +316,7 @@ void testArithmetic(){
   testEqualInt64(i2, 0xffffff1a, 0x0b49e4fb);
   i2 = naModInt64(i01, i04);
   testEqualInt64(i2, 0xffffffff, 0xffffffac);
-  
+
   naIncUInt64(ui01);
   testEqualUInt64(ui01, 0x00007048, 0x860ddf7a);
   naDecUInt64(ui01);
@@ -329,7 +329,7 @@ void testArithmetic(){
   testEqualUInt64(ui03, 0xffffffff, 0xffffffff);
   naIncUInt64(ui03);
   testEqualUInt64(ui03, 0x00000000, 0x00000000);
-  
+
   ui2 = naAddUInt64(ui01, ui02);
   testEqualUInt64(ui2, 0x0000712e, 0x7ad6d6bc);
   ui2 = naSubUInt64(ui01, ui02);
@@ -338,7 +338,7 @@ void testArithmetic(){
   testEqualUInt64(ui2, 0x00000000, 0x0000007c);
   ui2 = naModUInt64(ui01, ui02);
   testEqualUInt64(ui2, 0x000000e5, 0xf4b61b05);
-  
+
 }
 
 
@@ -350,7 +350,7 @@ void timeArithmetic(){
   int64 i64_2 = naCastUInt64ToInt64(naMakeUInt64WithLo(345275662));
   uint64 ui64_1 = naMakeUInt64WithLo(123876413);
   uint64 ui64_2 = naMakeUInt64WithLo(98372154);
-  
+
   t = getTime();
   for(i=0; i<TESTSIZE; i++){i64_1 = naNegInt64(randInt64());}
   t = printAndSwapTime("naNegInt64", t);
@@ -475,12 +475,12 @@ int main(void){
   testBinary();
   testComparison();
   testArithmetic();
-  
+
   timeMaking();
   timeBinary();
   timeComparison();
   timeArithmetic();
-  
+
 
 
 //  timeInt32_DoubleFunc(naGetDoubleExponent);

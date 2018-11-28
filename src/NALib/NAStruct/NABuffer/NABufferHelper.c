@@ -57,7 +57,7 @@
 NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
   NABufferPart* part;
   NAInt length;
-  
+
   #ifndef NDEBUG
     if((end - start) <= 0)
       naError("naEnsureBufferRange", "Range length shall be >= 0");
@@ -68,16 +68,16 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
   #endif
 
   length = end - start;
-  
+
   if(naIsBufferEmpty(buffer)){
     // If the buffer is empty, we just create one sparse part containing the
     // whole range.
     part = naNewBufferPartSparse(buffer->enhancesource, naMakeRangei(start + buffer->enhancesourceoffset, length));
     naAddTreeFirstMutable(&(buffer->parts), part);
     buffer->range = naMakeRangeiWithStartAndEnd(start, end);
-    
+
   }else{
-    
+
     // First, we test if we need to add a sparse part at the beginning.
     if(start < buffer->range.origin){
       NAInt additionalbytes = buffer->range.origin - start;
@@ -93,7 +93,7 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
       }
       buffer->range = naMakeRangeiWithStartAndEnd(start, naGetRangeiEnd(buffer->range));
     }
-    
+
     // Then, we test if we need to add a sparse part at the end.
     if(end > naGetRangeiEnd(buffer->range)){
       NAInt additionalbytes = end - naGetRangeiEnd(buffer->range);
@@ -108,7 +108,7 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
         naAddTreeLastMutable(&(buffer->parts), part);
       }
       buffer->range = naMakeRangeiWithStartAndEnd(buffer->range.origin, end);
-    }    
+    }
   }
 }
 
@@ -157,7 +157,6 @@ NA_HIDEF NAInt naGetBufferPartNormedEnd(NAInt end){
 // possibly resulting in the initial position of the list.
 NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool forcevolatile, NABool locatestart){
   NABuffer* buffer;
-//  NAInt originalbytecount;
   NABool volatil;
   NATreeIterator firstbufiterator;
   NAInt firstbufoffset = 0;
@@ -169,7 +168,6 @@ NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool for
       naError("naPrepareBuffer", "bytecount should be >= 1");
   #endif
 
-//  originalbytecount = bytecount;
   buffer = naGetBufferIteratorBufferMutable(iter);
   volatil = forcevolatile | naHasBufferVolatileSource(buffer);
   firstbufiterator = naMakeTreeAccessor(&(buffer->parts));
@@ -191,8 +189,8 @@ NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool for
       if(naHasBufferFixedRange(buffer)){normedend = naMini(normedend, naGetRangeiEnd(buffer->range));}
       naEnsureBufferRange(buffer, normedstart, normedend);
     }
-    
-    // Now, we can be sure that there is a part. We start at the beginning.
+
+    // We can be sure that there is a part. We start at the beginning.
     naLocateTreeFirst(&(iter->partiter));
     iter->partoffset = 0;
     #ifndef NDEBUG
@@ -200,7 +198,7 @@ NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool for
         naError("naPrepareBuffer", "No Buffer part found after being in initial state");
     #endif
   }
-  
+
   // We perform the preparation as long as there are still bytes left.
   while(bytecount){
     NABufferPart* part = naGetTreeCurMutable(&(iter->partiter));
@@ -219,22 +217,22 @@ NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool for
       NAInt normedstart = naGetBufferPartNormedStart(iter->partoffset);
       NAInt normedend = naGetBufferPartNormedEnd(iter->partoffset + bytecount);
       if(((NAInt)part->bytesize - normedend) < (NA_INTERNAL_BUFFER_PART_BYTESIZE / 2)){normedend = (NAInt)part->bytesize;}
-      
+
       // Note that the previous computation of normedstart and normedend also
       // automatically handles parts being smaller than the normed range and
       // hence never resulting in a subrange bigger than the range of the
       // actual part.
 
       // We split the sparse buffer if necessary.
-      naSplitBufferSparsePart(iter, normedstart, normedend);      
-      
+      naSplitBufferSparsePart(iter, normedstart, normedend);
+
       // Now, iter points at a sparse part containing the desired subrange
       // which can be created.
       naAllocateBufferPartMemory(part);
-      
+
       // After creation, we fill the memory with the appropriate data.
       naFillBufferPart(part, naMakeRangeiWithStartAndEnd(normedstart, normedend));
-      
+
     }else{
       // When the current part already contains bytes, we do not have to
       // allocate memory. But we might need to fill the memory anew if
@@ -245,13 +243,13 @@ NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool for
         naFillBufferPart(part, naMakeRangei(iter->partoffset, bytestofill));
       }
     }
-    
+
     // We save the first iterator for later.
-    if(!naIsTreeAtInitial(&firstbufiterator)){
+    if(naIsTreeAtInitial(&firstbufiterator)){
       firstbufoffset = iter->partoffset;
       naLocateTreeIterator(&(firstbufiterator), &(iter->partiter));
     }
-    
+
     // Reaching here, the current part is filled with memory. We take as many
     // bytes as we can. If there are enough bytes, we set bytecount to zero.
 
@@ -272,14 +270,14 @@ NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool for
     if(bytecount && naIsTreeAtInitial(&(iter->partiter))){
       // First, we place the iterator at the currently existing last part.
       naLocateTreeLast(&(iter->partiter));
-      
+
       // Then, we enhance the end of the buffer.
       NAInt normedend = naGetBufferPartNormedEnd(buffer->range.origin + bytecount);
       if(naHasBufferFixedRange(buffer)){normedend = naMini(normedend, naGetRangeiEnd(buffer->range));}
       naEnsureBufferRange(buffer, naGetRangeiEnd(buffer->range), normedend);
       // Then, we iterate one step and set the partoffset to the beginning
       // of that new part.
-      
+
       naIterateTree(&(iter->partiter));
       iter->partoffset = 0;
       #ifndef NDEBUG
@@ -295,6 +293,7 @@ NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool for
     iter->partoffset = firstbufoffset;
     naLocateTreeIterator(&(iter->partiter), &(firstbufiterator));
   }
+  naClearTreeIterator(&firstbufiterator);
 }
 
 
@@ -306,17 +305,17 @@ NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool for
 //  NAInt rangepos;
 //  NABufferPart* sparsepart;
 //  NAListIterator iter;
-//  
+//
 //  #ifndef NDEBUG
 //    if(naIsBufferEmpty(buffer))
 //      naError("naDismissBufferRange", "Buffer ist empty");
 //    if(!naContainsRangeiRange(buffer->range, range))
 //      naError("naDismissBufferRange", "Range of is not within buffer range");
 //  #endif
-//  
+//
 //  iter = naMakeListModifier(&(buffer->parts));
 //  naLocateBufferPartOffset(&iter, range.origin);
-//  
+//
 //  // We create a sparse part in place where the dismissed range lies.
 //  // As the range will change during the alrogithm, we create it now and
 //  // add it later.
@@ -328,7 +327,7 @@ NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool for
 //  while(range.length){
 //    NABufferPart* part;
 //    NARangei partrange;
-//    
+//
 //    part = naGetListCurMutable(&iter);
 //    partrange = naGetBufferPartRange(part);
 //    if(naContainsRangeiRange(range, partrange)){
@@ -395,4 +394,4 @@ NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool for
 // CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-  
+

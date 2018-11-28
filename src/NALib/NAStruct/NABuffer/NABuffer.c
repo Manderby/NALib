@@ -17,10 +17,19 @@ NA_RUNTIME_TYPE(NABuffer, naDeallocBuffer, NA_TRUE);
 
 
 
+void naDestructBufferTreeLeaf(NAPtr leafdata, NAPtr configdata){
+  NA_UNUSED(configdata);
+  NABufferPart* part = naGetPtrMutable(&leafdata);
+  naDelete(part);
+}
+
+
+
 NA_HDEF void naInitBufferStruct(NABuffer* buffer){
   buffer->flags = 0;
   buffer->range = naMakeRangeiWithStartAndEnd(0, 0);
   NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_NOKEY | NA_TREE_BALANCE_AVL);
+  naSetTreeConfigurationLeafCallbacks(config, NA_NULL, naDestructBufferTreeLeaf);
   naInitTree(&(buffer->parts), config);
   #ifndef NDEBUG
     buffer->itercount = 0;
@@ -49,7 +58,7 @@ NA_HDEF NABuffer* naNewBufferMemorySourceBuffer(NABool secure){
 //
 //  NABuffer* buffer = naNew(NABuffer);
 //  naInitBufferStruct(buffer);
-//  
+//
 //  // Setting up the source descriptor
 //  naNulln(&desc, sizeof(desc));
 //  if(secure){desc.filler = naFillBufferPartSecureMemory;}
@@ -71,7 +80,7 @@ NA_DEF NABuffer* naNewBuffer(NABool securememory){
   NA_UNUSED(securememory);
 //  NABuffer* buffer = naNew(NABuffer);
 //  naInitBufferStruct(buffer);
-//  
+//
 //  // The source is a memory buffer.
 //  buffer->source = naNewBufferSourceWithBuffer(naNewBufferMemorySourceBuffer(securememory));
 ////  buffer->srcoffset = 0;
@@ -118,9 +127,9 @@ NA_DEF NABuffer* naNewBufferExtraction(NABuffer* srcbuffer, NARangei range){  //
   NA_UNUSED(range);
 //  NABuffer* buffer = naNew(NABuffer);
 //  naInitBufferStruct(buffer);
-//  
+//
 //  NARangei absoluterange = naMakeRangeiAbsolute(range, srcbuffer->range);
-//  
+//
 //  buffer->source = naNewBufferSourceWithBuffer(srcbuffer);
 //  buffer->srcoffset = -range.origin;
 //
@@ -128,7 +137,7 @@ NA_DEF NABuffer* naNewBufferExtraction(NABuffer* srcbuffer, NARangei range){  //
 //  // after.
 //  if(absoluterange.length){naEnsureBufferRange(buffer, absoluterange);}
 //  buffer->flags = srcbuffer->flags | NA_BUFFER_FLAG_RANGE_FIXED;
-//  
+//
 //  buffer->newlineencoding = srcbuffer->newlineencoding;
 //  buffer->endianness = srcbuffer->endianness;
 //  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
@@ -151,7 +160,7 @@ NA_DEF NABuffer* naNewBufferCopy(const NABuffer* srcbuffer, NARangei range, NABo
 //
 //  srciter = naMakeBufferAccessor(srcbuffer);
 //  dstiter = naMakeBufferModifier(buffer);
-//  
+//
 //  naPrepareBuffer(&dstiter, naMakeRangei(0, range.length), NA_FALSE, NA_TRUE);
 //  naIterateBuffer(&srciter, 1);
 //
@@ -181,7 +190,7 @@ NA_DEF NABuffer* naNewBufferCopy(const NABuffer* srcbuffer, NARangei range, NABo
 NA_DEF NABuffer* naNewBufferPlain(){
 //  NABuffer* buffer = naNew(NABuffer);
 //  naInitBufferStruct(buffer);
-//  
+//
 //  // The source is a Null pointer.
 //  buffer->source = NA_NULL;
 //  buffer->srcoffset = 0;
@@ -200,12 +209,12 @@ NA_DEF NABuffer* naNewBufferWithSameSource(NABuffer* srcbuffer){
   NA_UNUSED(srcbuffer);
 //  NABuffer* buffer = naNew(NABuffer);
 //  naInitBufferStruct(buffer);
-//  
+//
 //  buffer->source = naRetain(srcbuffer->source);
 //  buffer->srcoffset = srcbuffer->srcoffset;
 //
 //  buffer->flags = srcbuffer->flags;
-//  
+//
 //  buffer->newlineencoding = srcbuffer->newlineencoding;
 //  buffer->endianness = srcbuffer->endianness;
 //  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
@@ -233,12 +242,12 @@ NA_DEF NABuffer* naNewBufferWithInpuFile(const char* filename){
 //
 //  NABuffer* buffer = naNew(NABuffer);
 //  naInitBufferStruct(buffer);
-//  
+//
 //  naNulln(&desc, sizeof(desc));
 //  desc.data = naCreateFileReadingFilename(filename);
 //  desc.destructor = (NAMutator)naReleaseFile;
 //  desc.filler = naFillBufferPartFile;
-//  desc.flags = NA_BUFFER_SOURCE_RANGE_LIMITED;  
+//  desc.flags = NA_BUFFER_SOURCE_RANGE_LIMITED;
 //  desc.limit = naMakeRangei(0, (NAInt)naComputeFileBytesize(desc.data));
 //  buffer->source = naNewBufferSource(desc);
 //  buffer->srcoffset = 0;
@@ -258,13 +267,13 @@ NA_DEF NABuffer* naNewBufferWithInpuFile(const char* filename){
 
 NA_DEF NABuffer* naNewBufferWithConstData(const void* data, NAInt bytesize){
   NABufferPart* part;
-  
+
   NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
-  
+
   buffer->enhancesource = NA_NULL;
   buffer->enhancesourceoffset = 0;
-  
+
   buffer->range = naMakeRangeiWithStartAndEnd(0, (NAInt)bytesize);
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;
 
@@ -283,10 +292,10 @@ NA_DEF NABuffer* naNewBufferWithConstData(const void* data, NAInt bytesize){
 
 NA_DEF NABuffer* naNewBufferWithMutableData(void* data, NAInt bytesize, NAMutator destructor){
   NABufferPart* part;
-  
+
   NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
-  
+
   buffer->enhancesource = NA_NULL;
   buffer->enhancesourceoffset = 0;
 
@@ -298,9 +307,9 @@ NA_DEF NABuffer* naNewBufferWithMutableData(void* data, NAInt bytesize, NAMutato
   // Add the const data to the list.
   part = naNewBufferPartData(source, buffer->range, naMakePtrWithDataMutable(data));
   naAddTreeFirstMutable(&(buffer->parts), part);
-  
+
   naReleaseBufferSource(source);
-  
+
   buffer->newlineencoding = NA_NEWLINE_NATIVE;
   buffer->endianness = NA_ENDIANNESS_UNKNOWN;
   buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
@@ -314,7 +323,7 @@ NA_DEF NABuffer* naNewBufferWithCustomSource(NABufferSource* source){
   NA_UNUSED(source);
 //  NABuffer* buffer = naNew(NABuffer);
 //  naInitBufferStruct(buffer);
-//  
+//
 //  buffer->source = naNewBufferSource(desc);
 //  buffer->srcoffset = 0;
 //
@@ -418,7 +427,7 @@ NA_DEF NAInt naSearchBufferByteOffset(const NABuffer* buffer, NAByte byte, NAInt
   NA_UNUSED(startoffset);
   NA_UNUSED(forward);
 //  NAListIterator iter;
-//  
+//
 //  NAInt retindex = NA_INVALID_MEMORY_INDEX;
 //  if(naIsBufferEmpty(buffer)){return NA_INVALID_MEMORY_INDEX;}
 //
@@ -436,7 +445,7 @@ NA_DEF NAInt naSearchBufferByteOffset(const NABuffer* buffer, NAByte byte, NAInt
 //      if(naIsBufferPartSparse(part))
 //        naError("naSearchBufferByteOffset", "sparse part detected.");
 //    #endif
-//    curbyte = naGetBufferPartDataPointerConst(part, startoffset); 
+//    curbyte = naGetBufferPartDataPointerConst(part, startoffset);
 //    if(forward){
 //      NAInt endoffset = naGetBufferPartEnd(part);
 //      while(startoffset < endoffset){
@@ -484,17 +493,17 @@ NA_DEF NABool naEqualBufferToBuffer(const NABuffer* buffer1, const NABuffer* buf
 //  if(buffer1 == buffer2){return NA_TRUE;}
 //  if(naGetBufferRange(buffer1).length != naGetBufferRange(buffer2).length){return NA_FALSE;}
 //  resultequal = NA_TRUE;;
-//  
+//
 //  iter1 = naMakeListAccessor(&(buffer1->parts));
 //  iter2 = naMakeListAccessor(&(buffer2->parts));
 //  naLocateListFirst(&iter1);
 //  naLocateListFirst(&iter2);
 //  part1 = naGetListCurConst(&iter1);
 //  part2 = naGetListCurConst(&iter2);
-//  
+//
 //  offset1 = naGetBufferRange(buffer1).origin;
 //  offset2 = naGetBufferRange(buffer2).origin;
-//  
+//
 //  while(part1 && part2){
 //    NAInt remainingbytes1;
 //    NAInt remainingbytes2;
@@ -530,7 +539,7 @@ NA_DEF NABool naEqualBufferToBuffer(const NABuffer* buffer1, const NABuffer* buf
 //      part2 = naGetListCurConst(&iter2);;
 //    }
 //  }
-//  
+//
 //  naClearListIterator(&iter1);
 //  naClearListIterator(&iter2);
 //  return resultequal;
@@ -552,16 +561,16 @@ NA_DEF NABool naEqualBufferToData(const NABuffer* buffer, const void* data, NAIn
 //  NAListIterator iter;
 //
 //  if(databytesize != buffer->range.length){return NA_FALSE;}
-//  
+//
 //  bytes = (const NAByte*)data;
-//  
+//
 //  iter = naMakeListAccessor(&(buffer->parts));
 //  naLocateListFirst(&iter);
 //  part = naGetListCurConst(&iter);
-//  
+//
 //  offset = naGetBufferRange(buffer).origin;
 //  remaininglength = buffer->range.length;
-//  
+//
 //  while(remaininglength){
 //    NAInt remainingbytes;
 //    const NAByte* bufferbytes;
@@ -584,7 +593,7 @@ NA_DEF NABool naEqualBufferToData(const NABuffer* buffer, const void* data, NAIn
 //    naIterateList(&iter);
 //    part = naGetListCurConst(&iter);;
 //  }
-//  
+//
 //  naClearListIterator(&iter);
 //  return resultequal;
   return NA_FALSE;
@@ -604,14 +613,12 @@ NA_DEF void naAppendBufferToBuffer(NABuffer* dstbuffer, const NABuffer* srcbuffe
 
 
 NA_DEF void naCacheBufferRange(NABuffer* buffer, NARangei range, NABool forcevolatile){
-  NA_UNUSED(buffer);
-  NA_UNUSED(range);
-  NA_UNUSED(forcevolatile);
-//  if(range.length){
-//    NABufferIterator iter = naMakeBufferModifier(buffer);
-//    naPrepareBuffer(&iter, range, forcevolatile, NA_FALSE);
-//    naClearBufferIterator(&iter);
-//  }
+  if(range.length){
+    NABufferIterator iter = naMakeBufferModifier(buffer);
+    // todo: move iterator to range.origin.
+    naPrepareBuffer(&iter, range.length, forcevolatile, NA_FALSE);
+    naClearBufferIterator(&iter);
+  }
 }
 
 

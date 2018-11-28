@@ -4,7 +4,7 @@
 
 #ifndef NA_LIST_INCLUDED
 #define NA_LIST_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -222,7 +222,7 @@ NA_IAPI void naClearListIterator(NAListIterator* iterator);
 // The Data and Index variants will return NA_FALSE, if the element has not
 // been found and NA_TRUE if it has been found. If not found, the iterator will
 // point to the initial list position.
-// 
+//
 // The other variants will always return NA_TRUE. That's because of speed.
 // Erroneous behaviour will only be checked when NDEBUG is undefined and hence
 // the programmer is already forced to do things right when debugging the code.
@@ -240,7 +240,7 @@ NA_IAPI void   naLocateListIterator (NAListIterator* dstiter,
 // Iterating
 // Moves the iterator one step forward. The Back-variant moves the iterator
 // one step backwards. The Step-variant moves the iterator forward or backward
-// the given number of positive or negative steps. 
+// the given number of positive or negative steps.
 //
 // If the step over- or underflows the stored elements and NDEBUG is undefined,
 // a warning is emitted.
@@ -364,7 +364,7 @@ NA_IAPI void naExchangeListParts(       NAListIterator* iter);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_LIST_INCLUDED

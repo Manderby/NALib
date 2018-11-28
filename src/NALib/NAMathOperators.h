@@ -4,7 +4,7 @@
 
 #ifndef NA_MATH_OPERATORS_INCLUDED
 #define NA_MATH_OPERATORS_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -311,7 +311,7 @@ NA_IAPI NABool naInsideNormEEf(float  x);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_MATH_OPERATORS_INCLUDED

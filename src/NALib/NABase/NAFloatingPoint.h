@@ -104,7 +104,7 @@
 #define NA_IEEE754_SINGLE_EXPONENT_MASK          (((1 << (NA_IEEE754_SINGLE_BITS - 1)) - 1) & ~NA_IEEE754_SINGLE_SIGNIFICAND_MASK)
 #define NA_IEEE754_SINGLE_SIGN_MASK              (1 << (NA_IEEE754_SINGLE_BITS  - 1))
 
-#define NA_IEEE754_DOUBLE_BITS                   NA_TYPE64_BITS                                                                                              
+#define NA_IEEE754_DOUBLE_BITS                   NA_TYPE64_BITS
 #define NA_IEEE754_DOUBLE_SIGNIFICAND_BITS       (DBL_MANT_DIG - 1)
 #define NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_HI    (1u << (NA_IEEE754_DOUBLE_SIGNIFICAND_BITS - NA_TYPE32_BITS))
 #define NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_LO    0x0u

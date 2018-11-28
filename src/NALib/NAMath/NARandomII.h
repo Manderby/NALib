@@ -57,7 +57,7 @@ NA_IDEF float naUniformRandZEf(){
   do{rnd = (float)naRand();} while(rnd == RAND_MAX);
   return rnd * NA_INV_RAND_MAXf;
 }
-    
+
 
 
 NA_IDEF double naUniformRandZI(){
@@ -66,7 +66,7 @@ NA_IDEF double naUniformRandZI(){
 NA_IDEF float naUniformRandZIf(){
   return (float)naRand() * NA_INV_RAND_MAXf;
 }
-    
+
 
 
 

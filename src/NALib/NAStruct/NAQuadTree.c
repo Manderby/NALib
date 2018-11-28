@@ -179,7 +179,7 @@ NA_HDEF void naDeallocQuadTreeNode(NAQuadTree* tree, NAQuadTreeNode* node){
   naDeallocQuadTreeNodeChild(tree, node, 1);
   naDeallocQuadTreeNodeChild(tree, node, 2);
   naDeallocQuadTreeNodeChild(tree, node, 3);
-  
+
   if(node->nodedata && tree->configuration.nodedeallocator){
     tree->configuration.nodedeallocator(node->nodedata);
   }
@@ -231,7 +231,7 @@ NA_HDEF NAPos naGetQuadTreeRootOrigin(int16 childexponent, NAPos childorigin){
   // In order to achieve a full coverage of the whole space
   // (negative and positive in all dimensions), we align parent nodes
   // in a cyclic way.
-  
+
   NASize childsize = naGetQuadTreeSizeWithExponent(childexponent);
   NAPos parentorigin = childorigin;
   int16 cycle = ((childexponent % 4) + 4 ) % 4;
@@ -252,16 +252,16 @@ NA_HDEF void naUpdateQuadTreeNodeBubbling(NAQuadTree* tree, NAQuadTreeNode* pare
     if(parentnode == NA_NULL)
       naError("naUpdateQuadTreeNodeBubbling", "Parent is null.");
   #endif
-  
+
   NASize childsize = naGetQuadTreeSizeWithExponent(parentnode->childexponent);
-  
+
   // We call the update callback.
   if(tree->configuration.childchanged){
     const void* childdata[4];
     naFillQuadTreeNodeChildData(childdata, parentnode);
     bubble = tree->configuration.childchanged(parentnode->nodedata, segment, childdata, parentnode->leafmask, childsize);
   }
-  
+
   // Then we propagate the message towards the root if requested.
   if(bubble && parentnode->parentnode){
     #ifndef NDEBUG
@@ -284,7 +284,7 @@ NA_HDEF void naUpdateQuadTreeNodeBubbling(NAQuadTree* tree, NAQuadTreeNode* pare
 // further.
 NA_HDEF NABool naUpdateQuadTreeNodeCapturing(NAQuadTree* tree, NAQuadTreeNode* node){
   NABool bubble = NA_FALSE;
-  
+
   NASize childsize = naGetQuadTreeSizeWithExponent(node->childexponent);
 
   #ifndef NDEBUG
@@ -308,7 +308,7 @@ NA_HDEF NABool naUpdateQuadTreeNodeCapturing(NAQuadTree* tree, NAQuadTreeNode* n
     naFillQuadTreeNodeChildData(childdata, node);
     bubble |= tree->configuration.childchanged(node->nodedata, -1, childdata, node->leafmask, childsize);
   }
-  
+
   return bubble;
 }
 
@@ -333,7 +333,7 @@ NA_HIDEF void naSetQuadTreeIteratorCurNode(NAQuadTreeIterator* iter, NAQuadTreeN
 NA_HDEF void naRemoveQuadTreeNode(NAQuadTreeIterator* iter, NAQuadTreeNode* replacenode){
   NAQuadTreeNode* node = iter->node;
   NAQuadTree* tree = naGetPtrMutable(&(iter->tree));
-  
+
   // As the current node will be erased, we adjust the iterator to point
   // at the parent.
   naSetQuadTreeIteratorCurNode(iter, node->parentnode);
@@ -358,7 +358,7 @@ NA_HDEF void naRemoveQuadTreeNode(NAQuadTreeIterator* iter, NAQuadTreeNode* repl
     }
     tree->root = replacenode;
   }
-  
+
   // Finally, we deallocate the node.
   naDeallocQuadTreeNode(tree, node);
 }
@@ -436,7 +436,7 @@ NA_HDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data){
     // We call this function recursively.
     naSetQuadTreeIteratorCurNode(iter, tree->root);
     naCreateQuadTreeLeaf(iter, data);
-    
+
   }else{
     // ...else we have a current node which is expected to contain the pos.
     int16 segment;
@@ -446,7 +446,7 @@ NA_HDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data){
       if(!naContainsRectPosE(noderect, iter->pos))
         naError("naCreateQuadTreeLeaf", "Cur node does not contain the desired pos.");
     #endif
-        
+
     segment = naGetQuadTreeSegment(iter->node->origin, iter->node->childexponent, iter->pos);
     if(iter->node->childs[segment]){
       #ifndef NDEBUG
@@ -479,7 +479,7 @@ NA_HDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data){
       existingchildnode->segmentinparent = naGetQuadTreeSegment(newparent->origin, newparent->childexponent, existingchildnode->origin);
       existingchildnode->parentnode = newparent;
       naSetNodeSegment(newparent, existingchildnode->segmentinparent, existingchildnode);
-      
+
       // We call this function recursively.
       naSetQuadTreeIteratorCurNode(iter, newparent);
       naCreateQuadTreeLeaf(iter, data);
@@ -668,7 +668,7 @@ NA_DEF void naRemoveQuadTreeCur(NAQuadTreeIterator* iter){
       naError("naRemoveQuadTreeCur", "iterator is not at a leaf");
   #endif
   tree = naGetPtrMutable(&(iter->tree));
-    
+
   // First, we destroy the data of the leaf chunk
   tree->configuration.leafdeallocator(iter->node->childs[iter->childsegment], tree->configuration.userdata);
   naSetNodeSegment(iter->node, iter->childsegment, NA_NULL);
@@ -688,7 +688,7 @@ NA_HDEF NABool naLocateQuadTreeNodeCapture(NAQuadTreeIterator* iter){
       if(!naContainsRectPos(naGetQuadTreeNodeRect(iter->node), iter->pos))
         naError("naLocateQuadTreeNodeCapture", "Inconsistent behaviour. Node should contain pos");
     #endif
-  
+
     // The pos is stored somewhere inside the rectangle of this node
     int16 segment = naGetQuadTreeSegment(iter->node->origin, iter->node->childexponent, iter->pos);
     if((iter->node->childs[segment])){
@@ -711,7 +711,7 @@ NA_HDEF NABool naLocateQuadTreeNodeCapture(NAQuadTreeIterator* iter){
           break;
         }
       }
-      
+
     }else{
       // There is no segment where the pos should be. No leaf found.
       // Bad ending. We are stuck with the closest parent node.
@@ -728,12 +728,12 @@ NA_HDEF NABool naLocateQuadTreeNodeCapture(NAQuadTreeIterator* iter){
 NA_HDEF NABool naLocateQuadTreeNodeBubble(NAQuadTreeIterator* iter){
   const NAQuadTree* tree = naGetPtrConst(&(iter->tree));
   iter->childsegment = -1;
-  
+
   // If the iterator has no node set, we start at the root
   if(!iter->node){
     naSetQuadTreeIteratorCurNode(iter, tree->root);
   }
-  
+
   // Then, we search towards the root until we find a node which contains the
   // desired position.
   while(iter->node){
@@ -748,10 +748,10 @@ NA_HDEF NABool naLocateQuadTreeNodeBubble(NAQuadTreeIterator* iter){
 
 NA_DEF NABool naIterateQuadTree(NAQuadTreeIterator* iter, const NARect* limit){
   const NAQuadTree* tree = (const NAQuadTree*)naGetPtrConst(&(iter->tree));
-  
+
   if(!tree->root){return NA_FALSE;}
-  
-  // If the iterator has no current node being visited, we use the root. 
+
+  // If the iterator has no current node being visited, we use the root.
   if(!iter->node){
     naSetQuadTreeIteratorCurNode(iter, tree->root);
     #ifndef NDEBUG
@@ -763,7 +763,7 @@ NA_DEF NABool naIterateQuadTree(NAQuadTreeIterator* iter, const NARect* limit){
   // We go to the next segment. When we came to this function with segment -1,
   // we therefore start with the first segment.
   iter->childsegment++;
-    
+
   // Search for a segment which is available.
   while(iter->childsegment < 4){
     if(iter->node->childs[iter->childsegment]){
@@ -781,7 +781,7 @@ NA_DEF NABool naIterateQuadTree(NAQuadTreeIterator* iter, const NARect* limit){
     }
     iter->childsegment++;
   }
-  
+
   if(iter->childsegment < 4){
     // There is a segment available, either use the given leaf or go
     // downwards if it is an inner node.
@@ -796,7 +796,7 @@ NA_DEF NABool naIterateQuadTree(NAQuadTreeIterator* iter, const NARect* limit){
       iter->childsegment = -1;
       return naIterateQuadTree(iter, limit);
     }
-    
+
   }else{
     // There is no more segment available in this node. Go upwards.
     if(iter->node->parentnode){
@@ -904,7 +904,7 @@ NA_DEF NAQuadTree* naInitQuadTreeCopy(NAQuadTree* newtree, const NAQuadTree* dup
     naLocateQuadTreeCoord(&newiter, duporigin);
     naCreateQuadTreeLeaf(&newiter, dupdata);
   }
-  
+
   naClearQuadTreeIterator(&dupiter);
   naClearQuadTreeIterator(&newiter);
 
@@ -925,7 +925,7 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
   NAQuadTreeIterator newiter;
   NAQuadTreeIterator iter;
   NASize baseleafsize;
-  
+
   #ifndef NDEBUG
     if(!newtree)
       naCrash("naCopyQuadTreeWithShift", "newtree is Null-Pointer");
@@ -947,10 +947,10 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
   rect1 = naMakeRectE(naMakePos(shift.x + x2bound, shift.y), naMakeSizeE(x1bound, y2bound));
   rect2 = naMakeRectE(naMakePos(shift.x, shift.y + y2bound), naMakeSizeE(x2bound, y1bound));
   rect3 = naMakeRectE(naMakePos(shift.x + x2bound, shift.y + y2bound), naMakeSizeE(x1bound, y1bound));
-  
+
   newiter = naMakeQuadTreeModifier(newtree);
   iter = naMakeQuadTreeAccessor(duptree);
-  
+
   while(naIterateQuadTree(&iter, NA_NULL)){
     NARect rect;
     NAPos neworigin;
@@ -991,7 +991,7 @@ NA_DEF NAQuadTree* naInitQuadTreeCopyShifted(NAQuadTree* newtree, const NAQuadTr
   }
   naClearQuadTreeIterator(&iter);
   naClearQuadTreeIterator(&newiter);
-  
+
   // Now, all the data has been copied. Update the whole tree.
   naUpdateQuadTree(newtree);
   return newtree;

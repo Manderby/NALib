@@ -1016,7 +1016,7 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* iterator, NAList* dst){
   #endif
   src = (NAList*)naGetPtrMutable(&(iterator->listptr));
 
-  
+
   if(!naIsListEmpty(src)){
     // Move to the first element if the list is rewinded.
     element = iterator->cur;
@@ -1032,22 +1032,22 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* iterator, NAList* dst){
     // Reroute the cur element
     element->prev = dst->sentinel.prev;
     dst->sentinel.prev->next = element;
-    
+
     // count the number of moved elements
     while(element->next != &(src->sentinel)){
       movecount++;
       element = element->next;
     }
-    
+
     // Reroute the last element from src to dst
     element->next = &(dst->sentinel);
     dst->sentinel.prev = element;
-    
+
     #ifndef NDEBUG
       if(src->count < movecount)
         naError("naMoveListRemainingToLast", "Internal error: List count negative.");
     #endif
-    
+
     src->count -= movecount;
     dst->count += movecount;
   }

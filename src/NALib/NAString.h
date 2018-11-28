@@ -4,7 +4,7 @@
 
 #ifndef NA_STRING_INCLUDED
 #define NA_STRING_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -247,7 +247,7 @@ NA_API double naParseStringDouble(const NAString* string);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_STRING_INCLUDED

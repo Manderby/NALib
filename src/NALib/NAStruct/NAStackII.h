@@ -101,7 +101,7 @@ NA_IDEF void naClearStack(NAStack* stack){
   #endif
 
   naClearListIterator(&(stack->curpos));
-  
+
   // Note: We reuse the stack->curpos iterator here because otherwise, we
   // have to declare a new one on top of this function. That would be ugly.
   naBeginListMutatorIteration(void* array, &(stack->arrays), stack->curpos);
@@ -117,7 +117,7 @@ NA_IDEF void* naPushStack(NAStack* stack){
   NAInt availablestack;
 
   stack->usedcount++;
-  
+
   availablestack = naGetStackTotalCount(stack, stack->curindex);
 
   if(stack->usedcount > availablestack){
@@ -127,7 +127,7 @@ NA_IDEF void* naPushStack(NAStack* stack){
     naIterateList(&(stack->curpos));
     stack->curindex++;
   }
-  
+
   return naTopStack(stack);
 }
 
@@ -137,7 +137,7 @@ NA_IDEF void* naTopStack(NAStack* stack){
   NAInt subindex;
   NAByte* array;
   subindex = stack->usedcount - naGetStackArrayBaseIndex(stack, stack->curindex) - 1;
-  
+
   array = (NAByte*)naGetListCurMutable(&(stack->curpos));
   return &(array[subindex * stack->typesize]);
 }
@@ -149,7 +149,7 @@ NA_IDEF void* naPopStack(NAStack* stack){
   void* retvalue = naTopStack(stack);
 
   stack->usedcount--;
-  
+
   baseindex = naGetStackArrayBaseIndex(stack, stack->curindex);
   if((stack->usedcount - 1) < baseindex){
     naIterateListBack(&(stack->curpos));
@@ -280,7 +280,7 @@ NA_IDEF void* naGetStackCurMutable(NAStackIterator* iterator){
 NA_IDEF const void* naGetStackCurpConst(NAStackIterator* iterator){
   const void** dataptr = (const void**)naGetStackCurConst(iterator);
   return *dataptr;
-//  
+//
 //  const NAByte* curbase;
 //  if(naGetStackArrayBaseIndex(iterator->stack, iterator->curarrayindex) + iterator->cur >= iterator->stack->usedcount){return NA_NULL;}
 //  curbase = (const NAByte*)naGetListCurConst(&(iterator->listiterator));

@@ -4,7 +4,7 @@
 
 #ifndef NA_URL_INCLUDED
 #define NA_URL_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -55,7 +55,7 @@ NA_IAPI NAString* naNewStringWithURLFilename(NAURL* url);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_ARRAY_INCLUDED

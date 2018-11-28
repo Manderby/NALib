@@ -46,7 +46,7 @@ NA_HDEF NATreeLeaf* naIterateTreeBubble(const NATree* tree, NATreeBaseNode* curn
 
 NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info){
   const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
-  
+
   // If the tree has no root, we do not iterate.
   if(!tree->root){
     #ifndef NDEBUG
@@ -55,7 +55,7 @@ NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* 
     #endif
     return NA_FALSE;
   }
-  
+
   NATreeLeaf* leaf;
   if(naIsTreeAtInitial(iter)){
     // If the iterator is at initial position, we use the root and capture.
@@ -95,14 +95,14 @@ NA_HDEF NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABo
     *matchfound = NA_FALSE;
     return NA_FALSE;
   }
-  
+
   NATreeNode* topnode = NA_NULL;
-  
+
   // Move the iterator to the topmost node which contains the given key.
   if(usebubble && !naIsTreeAtInitial(iter)){
     topnode = tree->config->bubbleLocator(tree, iter->leaf, key);
   }
-  
+
   // Search for the leaf containing key.
   NATreeLeaf* retnode = tree->config->captureLocator(tree, topnode, key, matchfound);
   #ifndef NDEBUG

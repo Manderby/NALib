@@ -4,7 +4,7 @@
 
 #ifndef NA_BUFFER_INCLUDED
 #define NA_BUFFER_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -56,7 +56,7 @@ typedef struct NABufferIterator NABufferIterator;
 // it at its own absolute position 0.
 //               |
 //   +-----------+
-// +-0----+   
+// +-0----+
 // | text |  The content of the buffer is "text"
 // +------+
 //
@@ -65,7 +65,7 @@ typedef struct NABufferIterator NABufferIterator;
 // it. This means, you can read a whole file, pick the contents you need to
 // to keep and close the file source again, resulting in all memory deallocated
 // which is not needed anymore and only leaving the memory active which is
-// actually in use. 
+// actually in use.
 //
 // In version 19, buffers became able to use multiple sources and stitch
 // together pieces arbitrarily. Like for example:
@@ -116,7 +116,7 @@ NA_API NABuffer* naNewBufferPlain(void);
 // Creates a buffer sharing the same source as the given buffer. Also uses
 // the same settings like endianness or newlines.
 NA_API NABuffer* naNewBufferWithSameSource(  NABuffer* srcbuffer);
-                    
+
 // Creates a buffer inputting contents from a file. Its origin is always at
 // zero and its range is fixed to the filesize.
 NA_API NABuffer* naNewBufferWithInpuFile(const char* filename);
@@ -604,7 +604,7 @@ NA_API uint64 naParseBufferUInt64(NABufferIterator* iter, NABool skipdelimiter);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_BUFFER_INCLUDED

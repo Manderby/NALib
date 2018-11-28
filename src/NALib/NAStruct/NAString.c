@@ -73,12 +73,12 @@ NA_DEF NAString* naNewString(void){
 NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
   NAString* string;
   NAInt length;
-  
+
   #ifndef NDEBUG
     if(!ptr)
       naCrash("naNewStringWithUTF8CStringLiteral", "ptr is Null-Pointer");
   #endif
-  
+
   length = (NAInt)naStrlen(ptr);
   if(length){
     // C-Strings are always expected to be Null-terminated, meaning: The Byte
@@ -90,11 +90,11 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
     #ifndef NDEBUG
       string->cachedstr = NA_NULL;
     #endif
-    
+
   }else{
     string = naNewString();
   }
-  
+
   #if NA_STRING_ALWAYS_CACHE == 1
     naGetStringUTF8Pointer(string);
   #endif
@@ -105,7 +105,7 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
 
 NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt length, NAMutator destructor){
   NAString* string = naNew(NAString);
-  string->buffer = naNewBufferWithMutableData(buffer, naAbsi(length), destructor); // todo: absi
+  string->buffer = naNewBufferWithMutableData(buffer, length, destructor);
   #ifndef NDEBUG
     string->cachedstr = NA_NULL;
   #endif
@@ -171,7 +171,7 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt offset, 
   #ifndef NDEBUG
     string->cachedstr = NA_NULL;
   #endif
-  
+
   // todo: is there a reason why the string must be cached?
 //  naCacheBufferRange(string->buffer, naGetBufferRange(string->buffer), NA_FALSE);
   #if NA_STRING_ALWAYS_CACHE == 1
@@ -216,7 +216,7 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
       return NA_NULL;
     }
   #endif
-    
+
   if(naIsStringEmpty(string)){
     return (const NAUTF8Char*)"";
   }else{
@@ -234,7 +234,7 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
     #ifndef NDEBUG
       mutablestring->cachedstr = newstr;
     #endif
-    return newstr;    
+    return newstr;
   }
 }
 

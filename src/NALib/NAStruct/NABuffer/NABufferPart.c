@@ -55,7 +55,7 @@
 // +----------------\-----/------------+
 // | Don't question | her | authority. |
 // +----------------+-----+------------+
-// 
+//
 // It is important to understand that it is the referenced data which is shared
 // amongst NABuffers, NOT the NABufferParts!
 //
@@ -87,12 +87,12 @@ NA_RUNTIME_TYPE(NABufferSourcePart, naDestructBufferSourcePart, NA_TRUE);
 
 // Creates a buffer source part.
 NA_HDEF NABufferSourcePart* naNewBufferSourcePart(NABufferSource* source, NARangei range, NAPtr data){
-  if(naIsBufferSourceLimited(source)){
-    if(!naContainsRangeiRange(naGetBufferSourceLimit(source), range))
+  #ifndef NDEBUG
+    if(source && naIsBufferSourceLimited(source) && !naContainsRangeiRange(naGetBufferSourceLimit(source), range))
       naError("naNewBufferSourcePart", "range overflows the limited range of the source");
-  }
+  #endif
   NABufferSourcePart* part = naNew(NABufferSourcePart);
-  part->source = naRetainBufferSource(source);
+  part->source = source ? naRetainBufferSource(source) : NA_NULL;
   part->range = range;
   part->data = data;
   return part;
@@ -302,12 +302,12 @@ NA_HDEF NABool naIsBufferPartSparse(const NABufferPart* part){
 //
 //
 //// This function combines the current part given by iter with its previous and
-//// next neighbor if possible. 
+//// next neighbor if possible.
 //NA_HIDEF void naCombineBufferPartAdjacents(NAListIterator* iter){
 //  NABufferPart* part = naGetListCurMutable(iter);
 //  NABufferPart* prevpart = naGetListPrevMutable(iter);
 //  NABufferPart* nextpart = naGetListNextMutable(iter);
-//  
+//
 //  if(prevpart && naAreBufferPartsEqualAndAdjacent(prevpart, part)){
 //    // we can combine the two parts.
 //    part->range = naMakeRangeiWithStartAndEnd(naGetBufferPartStart(prevpart), naGetBufferPartEnd(part));
@@ -350,7 +350,7 @@ NA_HDEF void naSplitBufferSparsePart(NABufferIterator* iter, NAInt start, NAInt 
     if(!naIsTreeIteratorAlone(&(iter->partiter)))
       naError("naSplitBufferSparsePart", "there is another iterator at this part. Splitting might lead to problems");
   #endif
-  
+
   NAInt length = end - start;
 
   // Only split, if the parts bytesize does not already equals the length.
@@ -363,7 +363,7 @@ NA_HDEF void naSplitBufferSparsePart(NABufferIterator* iter, NAInt start, NAInt 
       newpart = naNewBufferPartSparse(source, naMakeRangei(range.origin + end, range.length - end));
       naAddTreeNextMutable(&(iter->partiter), newpart);
     }
-    
+
     if(start > 0){
       // We need to add a new part at the beginning.
       newpart = naNewBufferPartSparse(source, naMakeRangei(range.origin, start));
@@ -371,7 +371,7 @@ NA_HDEF void naSplitBufferSparsePart(NABufferIterator* iter, NAInt start, NAInt 
       part->sourcepart->range.origin += start;
       iter->partoffset -= start;
     }
-    
+
     part->sourcepart->range.length = length;
     part->bytesize = length;
   }

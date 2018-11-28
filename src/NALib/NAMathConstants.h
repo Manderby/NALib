@@ -4,7 +4,7 @@
 
 #ifndef NA_MATH_CONSTANTS_INCLUDED
 #define NA_MATH_CONSTANTS_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -481,7 +481,7 @@
 #define NA_PRIME_BEFORE_2_16   65521
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_MATH_CONSTANTS_INCLUDED

@@ -33,9 +33,9 @@ NA_HDEF void naStartCoreApplication(NAInt bytesize, NANativeID nativeID){
     if(na_app)
       naError("naInitCoreApplication", "Application already running");
   #endif
-  
+
   na_app = (NACoreApplication*)naMalloc(bytesize);
-  
+
   naInitList(&(na_app->uielements));
   na_app->flags = 0;
   na_app->flags |= NA_APPLICATION_FLAG_RUNNING;
@@ -60,12 +60,12 @@ NA_HDEF void naClearCoreApplication(){
     if(!na_app)
       naCrash("naClearUI", "No Application running");
   #endif
-  
+
 //  naBeginListMutatorIteration(NAUIElement* elem, &(na_app->uielements), iter);
 //    naCloseWindow(na_ui->windows[i]);
 //    naClearWindow(na_ui->windows[i]);
 //  naEndListIteration(iter);
-  
+
   naClearList(&(na_app->uielements));
   naFree(na_app);
 }

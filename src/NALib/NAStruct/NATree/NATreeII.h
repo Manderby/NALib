@@ -87,7 +87,7 @@ typedef const void*     (*NATreeLeafKeyGetter)(NATreeLeaf* leaf);
 typedef NAPtr*          (*NATreeLeafDataGetter)(NATreeLeaf* leaf);
 
 struct NATreeConfiguration{
-  
+
   // User settings
   NARefCount                    refcount;
   NATreeContructorCallback      treeConstructor;
@@ -98,18 +98,18 @@ struct NATreeConfiguration{
   NATreeLeafDestructor          leafDestructor;
   NAPtr                         data;
   NAInt                         flags;
-  
+
   // Core settings:
   NAInt                         childpernode;
   NAKeyIndexGetter              keyIndexGetter;
   NAKeyEqualer                  keyEqualer;
   NAKeyAssigner                 keyAssigner;
   NAKeyTester                   keyTester;
-  
+
   NATreeNodeCoreDestructor      nodeCoreDestructor;
   NATreeLeafCoreConstructor     leafCoreConstructor;
   NATreeLeafCoreDestructor      leafCoreDestructor;
-  
+
   NATreeBubbleLocator           bubbleLocator;
   NATreeCaptureLocator          captureLocator;
   NATreeChildIndexGetter        childIndexGetter;

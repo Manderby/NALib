@@ -4,7 +4,7 @@
 
 #ifndef NA_COMPLEX_INCLUDED
 #define NA_COMPLEX_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -61,7 +61,7 @@ NA_IAPI NAComplex  naCosComplex   (NAComplex a);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_COMPLEX_INCLUDED

@@ -56,16 +56,16 @@ struct NABuffer{
   NAInt enhancesourceoffset; // Offset of source relative to this buffers
                              // origin. Add this offset to the desired pos to
                              // get the position within the source.
-  
+
   NAUInt flags;
   NARangei range;
-  
+
   NANewlineEncoding newlineencoding;  // The current newline encoding
   NAInt endianness;                   // The current endianness
   NAEndiannessConverter converter;    // The endianness converter.
 
   NATree parts;             // Tree with all parts in this buffer
-  
+
   #ifndef NDEBUG
     NAInt itercount;
   #endif
@@ -85,6 +85,7 @@ NA_HAPI void naSplitBufferSparsePart(NABufferIterator* iter, NAInt start, NAInt 
 
 // NABufferHelper
 NA_HAPI void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end);
+NA_HAPI void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool forcevolatile, NABool locatestart);
 
 // NABufferIteration
 NA_HAPI const NABuffer* naGetBufferIteratorBufferConst(const NABufferIterator* iter);

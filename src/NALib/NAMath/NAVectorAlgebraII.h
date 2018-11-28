@@ -7130,7 +7130,7 @@ NA_IDEF void naFillM33dWithRotationAlongAxis(double* NA_RESTRICT d, const double
   double ax12      = axis[1] * axis[2] * sinang;
   double ax2       = axis[2] * cosang;
   double ax22      = axis[2] * axis[2];
-  
+
   naFillM33dColumnFirst(d,
           1. + sinang2 * (ax00 - ax11 - ax22 - 1.),
           sinangT2 * (ax01 + ax2),
@@ -7158,7 +7158,7 @@ NA_IDEF void naFillM33fWithRotationAlongAxis(float* NA_RESTRICT d, const float* 
   float ax12      = axis[1] * axis[2] * sinang;
   float ax2       = axis[2] * cosang;
   float ax22      = axis[2] * axis[2];
-  
+
   naFillM33fColumnFirst(d,
           1.f + sinang2 * (ax00 - ax11 - ax22 - 1.f),
           sinangT2 * (ax01 + ax2),
@@ -7185,7 +7185,7 @@ NA_IDEF void naFillM33dWithRotationAngles(double* d, double roll, double pitch, 
           2. * (q1*q3 - q2*q4),
           2. * (q1*q2 - q3*q4),
           1. - 2. * ( q1*q1 - q3*q3),
-          2. * (q1*q4 + q2*q3),          
+          2. * (q1*q4 + q2*q3),
           2. * (q1*q3 + q2*q4),
           2. * (q2*q3 - q1*q4),
           1. - 2. * ( q1*q1 - q2*q2));

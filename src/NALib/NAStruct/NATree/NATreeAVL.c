@@ -35,7 +35,7 @@ NA_HIDEF void naRotateLeftBinary(NATree* tree, NATreeBinaryNode* parent, NATreeB
   #endif
   NATreeNode* grandparent = ((NATreeBaseNode*)parent)->parent;
   if(grandparent){
-    NAInt parentindx = naGetChildIndexBinary(grandparent, (NATreeBaseNode*)parent); 
+    NAInt parentindx = naGetChildIndexBinary(grandparent, (NATreeBaseNode*)parent);
     ((NATreeBinaryNode*)grandparent)->childs[parentindx] = (NATreeBaseNode*)rightchild;
   }else{
     tree->root = (NATreeBaseNode*)rightchild;
@@ -45,7 +45,7 @@ NA_HIDEF void naRotateLeftBinary(NATree* tree, NATreeBinaryNode* parent, NATreeB
   parent->childs[1]->parent = (NATreeNode*)parent;
   naMarkNodeChildLeaf((NATreeNode*)parent, 1, naIsNodeChildLeaf((NATreeNode*)rightchild, 0));
   ((NATreeBaseNode*)parent)->parent = (NATreeNode*)rightchild;
-  
+
   rightchild->childs[0] = (NATreeBaseNode*)parent;
   naMarkNodeChildLeaf((NATreeNode*)rightchild, 0, NA_FALSE);
   ((NATreeBaseNode*)rightchild)->parent = grandparent;
@@ -62,7 +62,7 @@ NA_HIDEF void naRotateRightBinary(NATree* tree, NATreeBinaryNode* leftchild, NAT
   #endif
   NATreeNode* grandparent = ((NATreeBaseNode*)parent)->parent;
   if(grandparent){
-    NAInt parentindx = naGetChildIndexBinary(grandparent, (NATreeBaseNode*)parent); 
+    NAInt parentindx = naGetChildIndexBinary(grandparent, (NATreeBaseNode*)parent);
     ((NATreeBinaryNode*)grandparent)->childs[parentindx] = (NATreeBaseNode*)leftchild;
   }else{
     tree->root = (NATreeBaseNode*)leftchild;
@@ -72,7 +72,7 @@ NA_HIDEF void naRotateRightBinary(NATree* tree, NATreeBinaryNode* leftchild, NAT
   parent->childs[0]->parent = (NATreeNode*)parent;
   naMarkNodeChildLeaf((NATreeNode*)parent, 0, naIsNodeChildLeaf((NATreeNode*)leftchild, 1));
   ((NATreeBaseNode*)parent)->parent = (NATreeNode*)leftchild;
-  
+
   leftchild->childs[1] = (NATreeBaseNode*)parent;
   naMarkNodeChildLeaf((NATreeNode*)leftchild, 1, NA_FALSE);
   ((NATreeBaseNode*)leftchild)->parent = grandparent;

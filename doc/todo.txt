@@ -22,7 +22,7 @@ Future
 - GUI
 - Compression in NAPNG
 - Add ARM, Linux
-- Make Memory addresses uint 
+- Make Memory addresses uint
 - release pools
 - MOB
 - Color

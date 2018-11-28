@@ -4,7 +4,7 @@
 
 #ifndef NA_BINARY_DATA_INCLUDED
 #define NA_BINARY_DATA_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -258,7 +258,7 @@ NA_API uint32 naGetChecksumResult(NAChecksum* checksum);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_BINARY_DATA_INCLUDED

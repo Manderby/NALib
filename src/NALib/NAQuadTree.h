@@ -4,7 +4,7 @@
 
 #ifndef NA_QUADTREE_INCLUDED
 #define NA_QUADTREE_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -47,7 +47,7 @@
 // ///////////////////////////////////////////
 
 // When creating an NAQuadTree, you can create various callbacks which are
-// stored in a NAQuadTreeConfiguration structure. Here are the signatures for 
+// stored in a NAQuadTreeConfiguration structure. Here are the signatures for
 // these callbacks:
 
 // NAQuadTreeLeafAllocator
@@ -98,7 +98,7 @@ typedef void  (*NAQuadTreeLeafDeallocator)(  void* leafdata,
 // of a leaf defined when the NAQuadTree was created.
 // Example (numbers are approximate):
 //          dstdata           srcdata
-//        O---------+       O---------+       
+//        O---------+       O---------+
 //        |         |       |s----+   |       srcorigin s: (1,1)
 //        |    d----+       ||    |   |       dstorigin d: (3,2)
 //        |    |    | <---- |+----+   |       size: (4,2)
@@ -355,7 +355,7 @@ NA_API void naRemoveQuadTreeCur(NAQuadTreeIterator* iter);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_QUADTREE_INCLUDED

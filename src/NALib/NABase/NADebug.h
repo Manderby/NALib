@@ -48,7 +48,7 @@
 #ifndef NDEBUG
 
   #include <stdio.h>    // for the fprintf function
-  #include <stdlib.h>   // for the exit function 
+  #include <stdlib.h>   // for the exit function
 
   // Prints an error. When this function gets called, the ongoing of the
   // application is undefined. Sometimes, the error might affect everything
@@ -76,7 +76,7 @@
   //
   // With a macro, the exit call is directly copied to the place the error
   // occurs and all code analysis tools are silented.
-    
+
   #define naCrash(functionsymbol, text)\
     {\
     naError(functionsymbol, text);\

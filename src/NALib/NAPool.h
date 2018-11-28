@@ -4,7 +4,7 @@
 
 #ifndef NA_POOL_INCLUDED
 #define NA_POOL_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -64,7 +64,7 @@ NA_IAPI void naForeachPool(const NAPool* pool, NAMutator mutator);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_POOL_INCLUDED

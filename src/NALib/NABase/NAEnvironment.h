@@ -81,7 +81,7 @@
   #else
     #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
   #endif
-  
+
 #else
   #warning "System not detected"
   #define NA_OS NA_OS_UNKNOWN

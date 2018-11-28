@@ -9,10 +9,10 @@ NA_DEF NAByte naGetBufferByteAtIndex(const NABuffer* buffer, NAInt indx){
   NA_UNUSED(buffer);
   NA_UNUSED(indx);
 //  NAListIterator iter;
-//  
+//
 //  const NAByte* retbyte = NA_NULL;
 //  if(naIsBufferEmpty(buffer)){return '\0';}
-//  
+//
 //  iter = naMakeListAccessor(&(buffer->parts));
 //  naLocateListLast(&iter);
 ////  naLocateListPosition(&iter, naGetListCurPosition(&(buffer->iter)));
@@ -42,22 +42,22 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
 //    if(iter->curbit != 0)
 //      naError("naRetrieveBufferBytes", "Bit offset not 0.");
 //  #endif
-//  
+//
 //  // We prepare the buffer for the whole range. There might be no parts or
 //  // sparse parts.
 //  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, bytesize), NA_FALSE, NA_TRUE);
 //  // After this function, all relevant parts should be present and filled with
 //  // memory. The iterator should point to the buffer part containing offset.
-//  
+//
 //  // do as long as there is a bytesize remaining. Remember that the data may
 //  // be split into different buffer parts.
 //  while(bytesize){
 //    NABufferPart* part;
 //    NAInt possiblelength;
-//    
+//
 //    // The part pointed to by the iterator should be the one containing offset.
 //    part = naGetListCurMutable(&(iter->partiter));
-//    
+//
 //    // Reaching this point, we are sure, the current part contains offset and
 //    // is filled with memory.
 //    #ifndef NDEBUG
@@ -68,7 +68,7 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
 ////      if(!naContainsBufferPartOffset(part, iter->curoffset))
 ////        naError("naPutBufferBytes", "Cur part does not contain current offset");
 //    #endif
-//    
+//
 //    // We get the data pointer where we can read bytes.
 //    src = naGetBufferPartDataPointerConst(part, iter->curoffset);
 //    // We detect, how many bytes actually can be read from the current part.
@@ -80,16 +80,16 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
 //      if(possiblelength > naGetBufferPartRange(part).length)
 //        naError("naPutBufferBytes", "buffer overflow expected");
 //    #endif
-//    
+//
 //    if(possiblelength > bytesize){
 //      // If we can get out more bytes than needed, we copy all remaining bytes
 //      // and stay on this part.
 //      naCopyn(dst, src, bytesize);
-//      
+//
 //      if(advance){
 //        iter->curoffset += bytesize;
 //      }
-//      
+//
 //      // dst += bytesize; // this line is not needed as the loop will end.
 //      bytesize = 0;
 //    }else{
@@ -109,7 +109,7 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
 //      bytesize -= possiblelength;
 //    }
 //  }
-//  
+//
 //  // Reaching here, the whole range has been written to the parts and both
 //  // curoffset and iter point to the current position again.
   return;
@@ -442,17 +442,17 @@ NA_DEF NABool naReadBufferBit(NABufferIterator* iter){
 //  if(iter->curbit == 0){
 //    naPrepareBuffer(iter, naMakeRangei(iter->curoffset, 1), NA_FALSE, NA_TRUE);
 //  }
-//  
+//
 //  // After this function, all parts should be present and filled with memory.
 //  // The iterator should point to the buffer part containing offset.
 //  part = naGetListCurMutable(&(iter->partiter));
 //  src = naGetBufferPartDataPointerConst(part, iter->curoffset);
 //  bit = (*src >> iter->curbit) & 0x01;
-//  
+//
 //  iter->curbit++;
 //  if(iter->curbit == 8){
 //    NAInt possiblelength;
-//    
+//
 //    // We advance to the next byte.
 //    iter->curbit = 0;
 //    iter->curoffset++;
@@ -461,7 +461,7 @@ NA_DEF NABool naReadBufferBit(NABufferIterator* iter){
 //      naIterateList(&(iter->partiter));
 //    }
 //  }
-//  
+//
 //  return bit;
   return NA_FALSE;
 }

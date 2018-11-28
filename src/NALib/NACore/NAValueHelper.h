@@ -4,7 +4,7 @@
 
 #ifndef NA_HELPER_INCLUDED
 #define NA_HELPER_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -59,7 +59,7 @@ NA_HIAPI NAInt  naMakeLengthWithMinAndMaxi   (NAInt  min,   NAInt  max);
 
 NA_HIAPI NAInt  naMakeIntWithIntegerFloat    (float x);
 NA_HIAPI NAInt  naMakeIntWithIntegerDouble   (double x);
-    
+
 
 // The following functions are mostly used in other datastructures such as
 // NARect and NARange. They define the default semantics against which values
@@ -423,7 +423,7 @@ NA_HIDEF double naAlignValued(double x, double offset, double alignlength){
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_HELPER_INCLUDED

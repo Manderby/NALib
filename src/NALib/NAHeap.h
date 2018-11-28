@@ -4,7 +4,7 @@
 
 #ifndef NA_HEAP_INCLUDED
 #define NA_HEAP_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -154,7 +154,7 @@ NA_IAPI void*       naRemoveHeapPosMutable( NAHeap* heap, NAInt backpointer);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_HEAP_INCLUDED

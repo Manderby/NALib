@@ -113,14 +113,14 @@ NA_HDEF void naSetBufferSourceBufferFunctions(NABufferSource* source, NABufferSo
 //  iter = naAlloc(NABufferIterator);
 //  *iter = naMakeBufferModifier(buffer);
 //  naRetain(buffer);
-//  desc.data = naNewPointerMutable(iter, (NAMutator)naDeallocBufferSourceBuffer);  
+//  desc.data = naNewPointerMutable(iter, (NAMutator)naDeallocBufferSourceBuffer);
 //  desc.destructor = (NAMutator)naReleasePointer;
 //  desc.flags |= NA_BUFFER_SOURCE_BUFFER;
 //  if(naHasBufferFixedRange(buffer)){
 //    desc.flags |= NA_BUFFER_SOURCE_RANGE_LIMITED;
 //    desc.limit = naGetBufferRange(buffer);
 //  }
-//  
+//
 //  // The new buffer source gets created
 //  return naNewBufferSource(desc);
 //}

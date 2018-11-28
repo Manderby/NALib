@@ -32,7 +32,7 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(const NABuffer* buffer, NABo
 //  dstiter = naMakeBufferModifier(dstbuffer);
 //
 //  srciter = naMakeBufferAccessor(buffer);
-//  
+//
 //  while(triples){
 //    naReadBufferBytes(&srciter, srctriple, 3);
 //    dsttriple[0] = (NAUTF8Char) (srctriple[0] >> 2);
@@ -55,9 +55,9 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(const NABuffer* buffer, NABo
 //    dsttriple[2] = (NAUTF8Char)((srctriple[1] & 0x0f) << 2);
 //    naWriteBufferBytes(&dstiter, dsttriple, 3);
 //  }
-//  
+//
 //  naClearBufferIterator(&srciter);
-//  naClearBufferIterator(&dstiter);  
+//  naClearBufferIterator(&dstiter);
 //
 //  dstiter = naMakeBufferModifier(dstbuffer);
 //  while(naIterateBuffer(&dstiter, 1)){
@@ -78,7 +78,7 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(const NABuffer* buffer, NABo
 //    naWriteBufferu8(&dstiter, '=');
 //  }
 //
-//  naClearBufferIterator(&dstiter);  
+//  naClearBufferIterator(&dstiter);
 //  retstring = naNewStringWithBufferExtraction(dstbuffer, dstbuffer->range);
 //  naRelease(dstbuffer);
 //  return retstring;
@@ -99,7 +99,7 @@ NA_DEF NABuffer* naNewBufferWithStringBase64Decoded(const NAString* string){
 //  NABufferIterator srciter = naMakeBufferAccessor(naGetStringBufferConst(string));
 //  NABuffer* ascbuffer = naNewBuffer(NA_FALSE);
 //  NABufferIterator asciter = naMakeBufferModifier(ascbuffer);
-//  
+//
 //  while(naIterateBuffer(&srciter, 1)){
 //    NAUTF8Char curchar = (NAUTF8Char)naGetBufferu8(&srciter);
 //    NAUTF8Char newchar;
@@ -124,10 +124,10 @@ NA_DEF NABuffer* naNewBufferWithStringBase64Decoded(const NAString* string){
 //  totalcharsize = ascbuffer->range.length;
 //  triples = totalcharsize / 4;
 //  remainder = totalcharsize % 4;
-//  
+//
 //  dstbuffer = naNewBuffer(NA_FALSE);
 //  dstiter = naMakeBufferModifier(dstbuffer);
-//  
+//
 //  asciter = naMakeBufferAccessor(ascbuffer);
 //
 //  while(triples){
@@ -183,7 +183,7 @@ NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum)
 //    curoffset = buffer->range.origin;
 //    iter = naMakeListMutator(&(buffer->parts));
 //    naLocateListFirst(&iter);
-//    
+//
 //    while(bytesize){
 //      NABufferPart* curpart;
 //      NAInt remainingbytes;
@@ -192,12 +192,12 @@ NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum)
 //      curpart = naGetListCurMutable(&iter);
 //      remainingbytes = naGetBufferPartEnd(curpart) - curoffset;
 //      src = naGetBufferPartDataPointerConst(curpart, curoffset);
-//      
+//
 //      #ifndef NDEBUG
 //        if(naIsBufferPartSparse(curpart))
 //          naError("naAccumulateBufferToChecksum", "Buffer contains sparse parts. Can not compute checksum");
 //      #endif
-//      
+//
 //      if(bytesize > remainingbytes){
 //        naAccumulateChecksum(checksum, src, remainingbytes);
 //        naIterateList(&iter);
@@ -208,7 +208,7 @@ NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum)
 //        bytesize = 0;
 //      }
 //    }
-//    
+//
 //    naClearListIterator(&iter);
 //  }
   return;
@@ -233,7 +233,7 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
 //    curoffset = buffer->range.origin;
 //    iter = naMakeListMutator(&(buffer->parts));
 //    naLocateListFirst(&iter);
-//    
+//
 //    while(bytesize){
 //      NABufferPart* curpart;
 //      NAInt remainingbytes;
@@ -242,12 +242,12 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
 //      curpart = naGetListCurMutable(&iter);
 //      remainingbytes = naGetBufferPartEnd(curpart) - curoffset;
 //      src = naGetBufferPartDataPointerConst(curpart, curoffset);
-//      
+//
 //      #ifndef NDEBUG
 //        if(naIsBufferPartSparse(curpart))
 //          naError("naWriteBufferToFile", "Buffer contains sparse parts.");
 //      #endif
-//      
+//
 //      if(bytesize > remainingbytes){
 //        naWriteFileBytes(file, src, remainingbytes);
 //        naIterateList(&iter);
@@ -258,7 +258,7 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
 //        bytesize = 0;
 //      }
 //    }
-//    
+//
 //    naClearListIterator(&iter);
 //  }
   return;
@@ -267,47 +267,19 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
 
 
 NA_DEF void naWriteBufferToData(NABuffer* buffer, void* data){
-  NA_UNUSED(buffer);
-  NA_UNUSED(data);
-//  NAInt bytesize;
-//  NAInt curoffset;
-//  NAListIterator iter;
-//  NAByte* dst = data;
-//
-//  bytesize = buffer->range.length;
-//  if(bytesize){
-//    curoffset = buffer->range.origin;
-//    iter = naMakeListMutator(&(buffer->parts));
-//    naLocateListFirst(&iter);
-//    
-//    while(bytesize){
-//      NABufferPart* curpart;
-//      NAInt remainingbytes;
-//      NAByte* src;
-//
-//      curpart = naGetListCurMutable(&iter);
-//      remainingbytes = naGetBufferPartEnd(curpart) - curoffset;
-//      src = naGetBufferPartDataPointerConst(curpart, curoffset);
-//      
-//      #ifndef NDEBUG
-//        if(naIsBufferPartSparse(curpart))
-//          naError("naWriteBufferToFile", "Buffer contains sparse parts.");
-//      #endif
-//      
-//      if(bytesize > remainingbytes){
-//        naCopyn(dst, src, remainingbytes);
-//        naIterateList(&iter);
-//        curoffset += remainingbytes;
-//        bytesize -= remainingbytes;
-//        dst += remainingbytes;
-//      }else{
-//        naCopyn(dst, src, bytesize);
-//        bytesize = 0;
-//      }
-//    }
-//    
-//    naClearListIterator(&iter);
-//  }
+  NATreeIterator iter;
+  iter = naMakeTreeAccessor(&(buffer->parts));
+
+  while(naIterateTree(&iter)){
+    NABufferPart* part = naGetTreeCurMutable(&iter);
+    #ifndef NDEBUG
+      if(naIsBufferPartSparse(part))
+        naError("naWriteBufferToData", "Buffer contains sparse parts.");
+    #endif
+    naCopyn(data, naGetPtrConst(&(part->sourcepart->data)), part->bytesize);
+  }
+
+  naClearTreeIterator(&iter);
   return;
 }
 

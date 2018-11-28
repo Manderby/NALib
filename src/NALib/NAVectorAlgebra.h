@@ -4,7 +4,7 @@
 
 #ifndef NA_VECTOR_ALGEBRA_INCLUDED
 #define NA_VECTOR_ALGEBRA_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -1147,7 +1147,7 @@ NA_IAPI void naFillM33fWithRotationAngles(     float* d,
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_VECTOR_ALGEBRA_INCLUDED

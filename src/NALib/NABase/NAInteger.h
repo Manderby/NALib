@@ -418,7 +418,7 @@ typedef int NABool;
 // Defining an NAByte as an uint8 can be very handy. In NALib, the NAByte type
 // is often used when a memory block needs to be accessed byte by byte. You
 // could also use a void-pointer for that but void-pointers are sometimes just
-// a little too cumbersome to work with and do not always have a bytesize 
+// a little too cumbersome to work with and do not always have a bytesize
 // defined depending on the standard used. Furthermore, a pointer to an uint8
 // can be displayed by a debugger while a pointer to void can not.
 // Why not using the signed variant? Because there are many implementations
@@ -437,7 +437,7 @@ typedef uint8 NAByte;
 // desired typesize might not be available and hence, NALib automatically
 // adapts NAInt to a suitable bytesize. The desired bytesize of an integer
 // can therefore differ from the size of an address and can be configured in
-// the NAConfiguration.h file with the NA_PREFERRED_NAINT_BITS macro. 
+// the NAConfiguration.h file with the NA_PREFERRED_NAINT_BITS macro.
 //
 // If you are still looking for an integer which has the same bytesize as
 // an address, have a look at NASizeInt.
