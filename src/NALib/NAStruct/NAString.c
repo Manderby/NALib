@@ -312,7 +312,7 @@ NA_DEF NAString* naNewStringCEscaped(const NAString* inputstring){
   buffer = naNewBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputstring->buffer);
   outiter = naMakeBufferModifier(buffer);
-  while(!naIsBufferAtEnd(&iter)){
+  while(!naIsBufferAtInitial(&iter)){
     NAUTF8Char curchar = naReadBufferi8(&iter);
     switch(curchar){
     case '\a': naWriteBufferBytes(&outiter, "\\a", 2); break;
@@ -350,7 +350,7 @@ NA_DEF NAString* naNewStringCUnescaped(const NAString* inputstring){
   buffer = naNewBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputstring->buffer);
   outiter = naMakeBufferModifier(buffer);
-  while(!naIsBufferAtEnd(&iter)){
+  while(!naIsBufferAtInitial(&iter)){
     NAUTF8Char curchar = naReadBufferi8(&iter);
     if(curchar == '\\'){
       curchar = naReadBufferi8(&iter);
@@ -398,7 +398,7 @@ NA_DEF NAString* naNewStringXMLEncoded(const NAString* inputstring){
   buffer = naNewBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputstring->buffer);
   outiter = naMakeBufferModifier(buffer);
-  while(!naIsBufferAtEnd(&iter)){
+  while(!naIsBufferAtInitial(&iter)){
     NAUTF8Char curchar = naReadBufferi8(&iter);
     switch(curchar){
     case '&': naWriteBufferBytes(&outiter, "&amp;", 5); break;
@@ -430,7 +430,7 @@ NA_DEF NAString* naNewStringXMLDecoded(const NAString* inputstring){
   buffer = naNewBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputstring->buffer);
   outiter = naMakeBufferModifier(buffer);
-  while(!naIsBufferAtEnd(&iter)){
+  while(!naIsBufferAtInitial(&iter)){
     NAUTF8Char curchar = naReadBufferi8(&iter);
     if(curchar == '&'){
       NAString* token = naParseBufferTokenWithDelimiter(&iter, ';');
@@ -472,7 +472,7 @@ NA_DEF NAString* naNewStringEPSEncoded(const NAString* inputstring){
   buffer = naNewBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputstring->buffer);
   outiter = naMakeBufferModifier(buffer);
-  while(!naIsBufferAtEnd(&iter)){
+  while(!naIsBufferAtInitial(&iter)){
     NAUTF8Char curchar = naReadBufferi8(&iter);
     switch(curchar){
     case '\\': naWriteBufferBytes(&outiter, "\\\\", 2); break;
@@ -500,7 +500,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputstring){
   buffer = naNewBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputstring->buffer);
   outiter = naMakeBufferModifier(buffer);
-  while(!naIsBufferAtEnd(&iter)){
+  while(!naIsBufferAtInitial(&iter)){
     NAUTF8Char curchar = naReadBufferi8(&iter);
     if(curchar == '\\'){
       curchar = naReadBufferi8(&iter);

@@ -13,22 +13,25 @@
 
 // Flags for the buffer source:
 #define NA_BUFFER_SOURCE_RANGE_LIMITED    0x01
-//#define NA_BUFFER_SOURCE_BUFFER           0x02
+#define NA_BUFFER_SOURCE_VOLATILE         0x02
+#define NA_BUFFER_SOURCE_HAS_UNDERLYING_BUFFER 0x04
+//#define NA_BUFFER_SOURCE_BUFFER           0x08
 #define NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE 0x80
 
 
 // Creates a buffer source with the given descriptor.
-NA_HDEF NABufferSource* naCreateBufferSource(NABufferFiller filler, NAMutator simpledestructor){
+NA_HDEF NABufferSource* naCreateBufferSource(NABufferFiller filler, NABuffer* buffer){
   NABufferSource* source = naAlloc(NABufferSource);
   naInitRefCount(&(source->refcount));
   source->data = NA_NULL;
   source->datadestructor = NA_NULL;
   source->buffiller = filler;
-  source->bufallocator = NA_NULL;
-  source->bufdeallocator = NA_NULL;
-  source->bufsimpledestructor = simpledestructor;
   source->flags = 0;
   source->limit = naMakeRangeiWithStartAndEnd(0, 0);
+  if(buffer){
+    source->flags |= NA_BUFFER_SOURCE_HAS_UNDERLYING_BUFFER;
+    source->bufiter = naMakeBufferModifier(buffer);
+  }
   return source;
 }
 
@@ -45,6 +48,7 @@ NA_HDEF NABufferSource* naRetainBufferSource(NABufferSource* source){
 
 NA_HDEF void naDeallocBufferSource(NABufferSource* source){
   if(source->datadestructor){source->datadestructor(source->data);}
+  naClearBufferIterator(&(source->bufiter));
   naFree(source);
 }
 
@@ -78,14 +82,17 @@ NA_HDEF void naSetBufferSourceLimit(NABufferSource* source, NARangei limit){
 
 
 
-NA_HDEF void naSetBufferSourceBufferFunctions(NABufferSource* source, NABufferSourceBufAllocator allocator, NABufferSourceBufDeallocator deallocator){
-  #ifndef NDEBUG
-    if(source->flags & NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE)
-      naError("naSetBufferSourceBufferFunctions", "Source already used in a buffer. Mayor problems may occur in the future");
-  #endif
-  source->bufallocator = allocator;
-  source->bufdeallocator = deallocator;
+NA_HDEF NABool naIsBufferSourceVolatile(const NABufferSource* source){
+  return naTestFlagu(source->flags, NA_BUFFER_SOURCE_VOLATILE);
 }
+
+
+
+NA_DEF void naSetBufferSourceVolatile(NABufferSource* source){
+  naSetFlagu(&(source->flags), NA_BUFFER_SOURCE_VOLATILE, NA_TRUE);
+}
+
+
 
 
 
@@ -157,6 +164,28 @@ NA_HDEF NARangei naGetBufferSourceLimit(NABufferSource* source){
 ////  }
 ////}
 
+
+
+NA_HDEF NABufferPart* naPrepareBufferSource(NABufferSource* source, NARangei range){
+  NABufferPart* newpart;
+  if(source->flags & NA_BUFFER_SOURCE_HAS_UNDERLYING_BUFFER){
+    // Todo: localize the origin.
+    naPrepareBuffer(&(source->bufiter), 1, NA_FALSE);
+    newpart = naGetTreeCurMutable(&(source->bufiter.partiter));
+  }else{
+    // We have no underlying buffer. Create memory.
+    NAInt normedstart = naGetBufferPartNormedStart(range.origin);
+    NAInt normedend = naGetBufferPartNormedEnd(naGetRangeiEnd(range));
+    // todo what about the limits?
+    NARangei normedrange = naMakeRangeiWithStartAndEnd(normedstart, normedend);
+    newpart = naNewBufferPartSparse(source, normedrange);
+    newpart->memblock = naNewMemoryBlock(newpart->bytesize);
+    if(source->buffiller){
+      source->buffiller(newpart->source->data, naGetPtrMutable(&(newpart->memblock->data)), normedrange);
+    }
+  }
+  return newpart;
+}
 
 
 

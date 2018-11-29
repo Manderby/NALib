@@ -25,7 +25,7 @@ NA_HDEF void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt 
 //    }else if(naIsBufferAtInitial(iter)){
 //      iter->curoffset = naGetRangeiEnd(buffer->range);
 //    }
-//    naPrepareBuffer(iter, naMakeRangei(iter->curoffset, bytesize), NA_FALSE, NA_TRUE);
+//    naPrepareBuffer(iter, naMakeRangei(iter->curoffset, bytesize), NA_FALSE);
 //  }
 //  // After this function, all parts should be present and filled with memory.
 //  // The iterator should point to the buffer part containing offset.
@@ -284,7 +284,7 @@ NA_DEF void naWriteBufferi8v(NABufferIterator* iter, const int8* src, NAInt coun
   NA_UNUSED(count);
 //  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  int8 value;
-//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 1), NA_FALSE, NA_TRUE);
+//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 1), NA_FALSE);
 //  while(count){
 //    value = *src;
 //    buffer->converter.convert8(&value);
@@ -299,7 +299,7 @@ NA_DEF void naWriteBufferi16v(NABufferIterator* iter, const int16* src, NAInt co
   NA_UNUSED(count);
 //  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  int16 value;
-//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 2), NA_FALSE, NA_TRUE);
+//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 2), NA_FALSE);
 //  while(count){
 //    value = *src;
 //    buffer->converter.convert16(&value);
@@ -314,7 +314,7 @@ NA_DEF void naWriteBufferi32v(NABufferIterator* iter, const int32* src, NAInt co
   NA_UNUSED(count);
 //  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  int32 value;
-//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 4), NA_FALSE, NA_TRUE);
+//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 4), NA_FALSE);
 //  while(count){
 //    value = *src;
 //    buffer->converter.convert32(&value);
@@ -329,7 +329,7 @@ NA_DEF void naWriteBufferi64v(NABufferIterator* iter, const int64* src, NAInt co
   NA_UNUSED(count);
 //  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  int64 value;
-//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 8), NA_FALSE, NA_TRUE);
+//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 8), NA_FALSE);
 //  while(count){
 //    value = *src;
 //    buffer->converter.convert64(&value);
@@ -344,7 +344,7 @@ NA_DEF void naWriteBufferu8v(NABufferIterator* iter, const uint8* src, NAInt cou
   NA_UNUSED(count);
 //  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  uint8 value;
-//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 1), NA_FALSE, NA_TRUE);
+//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 1), NA_FALSE);
 //  while(count){
 //    value = *src;
 //    buffer->converter.convert8(&value);
@@ -359,7 +359,7 @@ NA_DEF void naWriteBufferu16v(NABufferIterator* iter, const uint16* src, NAInt c
   NA_UNUSED(count);
 //  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  uint16 value;
-//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 2), NA_FALSE, NA_TRUE);
+//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 2), NA_FALSE);
 //  while(count){
 //    value = *src;
 //    buffer->converter.convert16(&value);
@@ -374,7 +374,7 @@ NA_DEF void naWriteBufferu32v(NABufferIterator* iter, const uint32* src, NAInt c
   NA_UNUSED(count);
 //  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  uint32 value;
-//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 4), NA_FALSE, NA_TRUE);
+//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 4), NA_FALSE);
 //  while(count){
 //    value = *src;
 //    buffer->converter.convert32(&value);
@@ -389,7 +389,7 @@ NA_DEF void naWriteBufferu64v(NABufferIterator* iter, const uint64* src, NAInt c
   NA_UNUSED(count);
 //  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  uint64 value;
-//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 8), NA_FALSE, NA_TRUE);
+//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 8), NA_FALSE);
 //  while(count){
 //    value = *src;
 //    buffer->converter.convert64(&value);
@@ -404,7 +404,7 @@ NA_DEF void naWriteBufferfv(NABufferIterator* iter, const float* src, NAInt coun
   NA_UNUSED(count);
 //  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  float value;
-//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 4), NA_FALSE, NA_TRUE);
+//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 4), NA_FALSE);
 //  while(count){
 //    value = *src;
 //    buffer->converter.convert32(&value);
@@ -419,7 +419,7 @@ NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, NAInt cou
   NA_UNUSED(count);
 //  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //  double value;
-//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 8), NA_FALSE, NA_TRUE);
+//  naPrepareBuffer(iter, naMakeRangei(iter->curoffset, count * 8), NA_FALSE);
 //  while(count){
 //    value = *src;
 //    buffer->converter.convert64(&value);
@@ -482,11 +482,11 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt by
 //
 //  // Prepare the write part
 //  writeoffset = iter->curoffset;
-//  naPrepareBuffer(iter, naMakeRangei(writeoffset, bytesize), NA_FALSE, NA_TRUE);
+//  naPrepareBuffer(iter, naMakeRangei(writeoffset, bytesize), NA_FALSE);
 //
 //  // Prepare the read part.
 //  readoffset = iter->curoffset - distance;
-//  naPrepareBuffer(iter, naMakeRangei(readoffset, bytesize), NA_FALSE, NA_TRUE);
+//  naPrepareBuffer(iter, naMakeRangei(readoffset, bytesize), NA_FALSE);
 //
 //  // Create the read iterator
 //  // Important: Do this after the prepare calls as otherwise there might be

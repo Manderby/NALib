@@ -267,13 +267,17 @@ NA_IAPI NABool naAddTreeKeyMutable( NATreeIterator* iter,
 // is at initial position, "Next" behaves like "First" and "Prev" behaves like
 // "Last".
 NA_IAPI NABool naAddTreePrevConst(  NATreeIterator* iter,
-                                        const void* content);
+                                        const void* content,
+                                             NABool movetonew);
 NA_IAPI NABool naAddTreePrevMutable(NATreeIterator* iter,
-                                              void* content);
+                                              void* content,
+                                             NABool movetonew);
 NA_IAPI NABool naAddTreeNextConst(  NATreeIterator* iter,
-                                        const void* content);
+                                        const void* content,
+                                             NABool movetonew);
 NA_IAPI NABool naAddTreeNextMutable(NATreeIterator* iter,
-                                              void* content);
+                                              void* content,
+                                             NABool movetonew);
 
 // /////////////////////////////////
 // Removes elements.

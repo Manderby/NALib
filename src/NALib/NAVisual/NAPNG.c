@@ -157,10 +157,10 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABufferIterator* iter){
   naReadBufferBytes(iter, chunk->typename, 4);
   if(chunk->length){
     chunk->data = naReadBufferBuffer(iter, chunk->length);
+    naSeekBufferRelative(iter, chunk->length);
   }else{
     chunk->data = naNewBuffer(NA_FALSE);
   }
-  naSeekBufferRelative(iter, chunk->length);
 
   chunk->type = NA_PNG_CHUNK_TYPE_UNKNOWN;
   for(i=0; i<NA_PNG_CHUNK_TYPE_COUNT; i++){
@@ -734,7 +734,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   bufiter = naMakeBufferModifier(buffer);
 
   // If the buffer is empty, there is no png to read.
-  if(naIsBufferAtEnd(&bufiter)){
+  if(naIsBufferEmpty(buffer)){
     goto NAEndReadingPNG;
   }
 

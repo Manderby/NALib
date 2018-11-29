@@ -60,14 +60,14 @@ NA_HDEF NABool naTestKeyBinaryNAInt(const void* leftlimit, const void* rightlimi
 
 NA_HDEF NATreeNode* naConstructTreeNodeBinary(NATree* tree, const void* key, NATreeLeaf* leftleaf, NATreeLeaf* rightleaf){
   #ifndef NDEBUG
-    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
-      naError("naConstructTreeNodeBinary", "tree is configured with no key");
+//    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
+//      naError("naConstructTreeNodeBinary", "tree is configured with no key");
   #endif
   NATreeBinaryNode* binnode = naNew(NATreeBinaryNode);
   naInitTreeNode((NATreeNode*)binnode);
 
   // Node-specific initialization
-  tree->config->keyAssigner(&(binnode->key), key);
+  if(tree->config->keyAssigner){tree->config->keyAssigner(&(binnode->key), key);}
   binnode->childs[0] = (NATreeBaseNode*)leftleaf;
   binnode->childs[1] = (NATreeBaseNode*)rightleaf;
   naMarkNodeChildLeaf((NATreeNode*)binnode, 0, NA_TRUE);

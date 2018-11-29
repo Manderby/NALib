@@ -15,6 +15,10 @@
 void testString(){
   NAString* string1 = naNewStringWithUTF8CStringLiteral("Hallo");
   naDelete(string1);
+  NAString* string2 = naNewStringWithMutableUTF8Buffer("wurst", 5, NA_NULL);
+  naDelete(string2);
+  NAString* string3 = naNewStringWithFormat("Ich will %d Flaschen Bier", 99);
+  naDelete(string3);
 }
 
 

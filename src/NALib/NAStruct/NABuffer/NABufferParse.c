@@ -14,7 +14,7 @@ NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
 //    NAInt endoffset;
 //    const NAByte* curbyte;
 //
-////    naPrepareBuffer(iter, naMakeRangei(iter->curoffset, 1), NA_FALSE, NA_TRUE);
+////    naPrepareBuffer(iter, naMakeRangei(iter->curoffset, 1), NA_FALSE);
 //
 //    const NABufferPart* part = naGetListCurConst(&(iter->partiter));
 //
@@ -331,7 +331,7 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* re
 //  if(naIsBufferAtInitial(iter)){return 0;}
 ////  if(naIsBufferAtInitial(iter)){naSeekBufferFromStart(iter, 0);}
 //  part = naGetListCurConst(&(iter->partiter));
-//  if(naIsBufferPartSparse(part)){naPrepareBuffer(iter, part->range, NA_FALSE, NA_TRUE);}
+//  if(naIsBufferPartSparse(part)){naPrepareBuffer(iter, part->range, NA_FALSE);}
 //  curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset);
 //
 //  // Check for a potential sign at the first character

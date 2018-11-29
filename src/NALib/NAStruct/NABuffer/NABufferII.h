@@ -9,6 +9,7 @@
 
 typedef struct NABufferPart NABufferPart;
 typedef struct NABufferSourcePart NABufferSourcePart;
+typedef struct NAMemoryBlock NAMemoryBlock;
 
 
 
@@ -16,39 +17,39 @@ typedef struct NABufferSourcePart NABufferSourcePart;
 
 
 
-struct NABufferSource{
-  NARefCount              refcount;
-  void*                   data;          // data sent to filler and destructor.
-  NAMutator               datadestructor;// Data destructor.
-  NABufferFiller          buffiller;     // Fill function filling memory.
-  NABufferSourceBufAllocator   bufallocator;  // Data allocator
-  NABufferSourceBufDeallocator bufdeallocator;// Data deallocator
-  NAMutator               bufsimpledestructor;  // todo: is there a better way?
-  NAUInt                  flags;         // Flags for the source
-  NARangei                limit;         // Source limit (used if flags set)
-};
-
-struct NABufferSourcePart{
-  NABufferSource*  source;
-  NARangei         range;         // Range of the referenced data
-  NAPtr            data;          // The data
-};
-NA_EXTERN_RUNTIME_TYPE(NABufferSourcePart);
-
-struct NABufferPart{
-  NAInt               bytesize;    // Number of bytes being referenced
-  NAInt               byteoffset;  // Start-index in the referenced data
-  NABufferSourcePart* sourcepart;  // The referenced source part
-  // todo: save some space by directly referencing data with NAPointer and
-  // the bytesize sign as a distinction flag.
-};
-
 struct NABufferIterator{
   NAPtr bufferptr;
   NATreeIterator partiter;
   NAInt partoffset;
   uint8 curbit;      // The current bit number
   NAUInt linenum;    // The line number, starting with 1 after first line read.
+};
+
+struct NABufferSource{
+  NARefCount              refcount;
+  void*                   data;          // data sent to filler and destructor.
+  NAMutator               datadestructor;// Data destructor.
+  NABufferFiller          buffiller;     // Fill function filling memory.
+  NAUInt                  flags;         // Flags for the source
+  NARangei                limit;         // Source limit (used if flags set)
+  NABufferIterator        bufiter;       // The underlying buffer, if any.
+};
+
+struct NAMemoryBlock{
+  NAPtr            data;
+  NAMutator        deallocator;
+  #ifndef NDEBUG
+    NAInt          bytesize;
+  #endif
+};
+NA_EXTERN_RUNTIME_TYPE(NAMemoryBlock);
+
+struct NABufferPart{
+  NABufferSource*     source;       // The referenced source.
+  NAInt               sourceoffset; // The byte offset relative to the source.
+  NAInt               blockoffset;  // The byte offset in the block.
+  NAInt               bytesize;     // The number of bytes referenced.
+  NAMemoryBlock*      memblock;     // The referenced memory block.
 };
 
 struct NABuffer{
@@ -74,18 +75,27 @@ struct NABuffer{
 
 
 
+// NAMemoryBlock
+NA_HDEF NAMemoryBlock* naNewMemoryBlock(NAInt bytesize);
+
 // NABufferPart
 NA_HAPI NABufferPart* naNewBufferPartSparse(NABufferSource* source, NARangei range);
-NA_HAPI NABufferPart* naNewBufferPartData(NABufferSource* source, NARangei range, NAPtr data);
-NA_HAPI void naAllocateBufferPartMemory(NABufferPart* part);
+NA_HAPI NABufferPart* naNewBufferPartWithConstData(const void* data, NAInt bytesize);
+NA_HAPI NABufferPart* naNewBufferPartWithMutableData(void* data, NAInt bytesize, NAMutator deallocator);
+NA_HAPI NAInt naGetBufferPartNormedStart(NAInt start);
+NA_HAPI NAInt naGetBufferPartNormedEnd(NAInt end);
+NA_HAPI NAInt naPrepareBufferPart(NABufferIterator* iter, NAInt bytecount, NABool forcevolatile);
+
+//NA_HAPI void naAllocateBufferPartMemory(NABufferPart* part);
 NA_HAPI void naDestructBufferPart(NABufferPart* part);
 NA_HAPI void naFillBufferPart(NABufferPart* part, NARangei range);
 NA_HAPI NABool naIsBufferPartSparse(const NABufferPart* part);
 NA_HAPI void naSplitBufferSparsePart(NABufferIterator* iter, NAInt start, NAInt end);
+NA_HAPI const void* naGetBufferPartDataPointerConst(const NABufferPart* part, NAInt offset);
 
 // NABufferHelper
 NA_HAPI void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end);
-NA_HAPI void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool forcevolatile, NABool locatestart);
+NA_HAPI void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool forcevolatile);
 
 // NABufferIteration
 NA_HAPI const NABuffer* naGetBufferIteratorBufferConst(const NABufferIterator* iter);
@@ -93,9 +103,11 @@ NA_HAPI NABuffer* naGetBufferIteratorBufferMutable(NABufferIterator* iter);
 
 // NABufferSource
 NA_HAPI NARangei naGetBufferSourceLimit(NABufferSource* source);
+NA_HAPI NABool naIsBufferSourceVolatile(const NABufferSource* source);
 #ifndef NDEBUG
   NA_HAPI NABool naIsBufferSourceLimited(const NABufferSource* source);
 #endif
+NA_HAPI NABufferPart* naPrepareBufferSource(NABufferSource* source, NARangei range);
 
 
 

@@ -267,16 +267,18 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
 
 
 NA_DEF void naWriteBufferToData(NABuffer* buffer, void* data){
+  NA_UNUSED(data);
   NATreeIterator iter;
   iter = naMakeTreeAccessor(&(buffer->parts));
 
   while(naIterateTree(&iter)){
     NABufferPart* part = naGetTreeCurMutable(&iter);
+    const void* src = naGetBufferPartDataPointerConst(part, 0);
     #ifndef NDEBUG
       if(naIsBufferPartSparse(part))
         naError("naWriteBufferToData", "Buffer contains sparse parts.");
     #endif
-    naCopyn(data, naGetPtrConst(&(part->sourcepart->data)), part->bytesize);
+    naCopyn(data, src, part->bytesize);
   }
 
   naClearTreeIterator(&iter);

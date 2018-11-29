@@ -33,7 +33,7 @@ NA_DEF NABufferIterator naMakeBufferAccessor(const NABuffer* buffer){
     if(!buffer)
       naCrash("naMakeBufferAccessor", "buffer is Null pointer");
   #endif
-  iter.bufferptr = naMakePtrWithDataConst(buffer);
+  iter.bufferptr = naMakePtrWithDataConst(naRetain(buffer));
   iter.partiter = naMakeTreeAccessor(&(buffer->parts));
   iter.partoffset = 0;
   iter.curbit = 0;
@@ -54,7 +54,7 @@ NA_DEF NABufferIterator naMakeBufferMutator(const NABuffer* buffer){
     if(!buffer)
       naCrash("naMakeBufferMutator", "buffer is Null pointer");
   #endif
-  iter.bufferptr = naMakePtrWithDataConst(buffer);
+  iter.bufferptr = naMakePtrWithDataConst(naRetain(buffer));
   iter.partiter = naMakeTreeAccessor(&(buffer->parts));
   iter.partoffset = 0;
   iter.curbit = 0;
@@ -75,7 +75,7 @@ NA_DEF NABufferIterator naMakeBufferModifier(NABuffer* buffer){
     if(!buffer)
       naCrash("naMakeBufferAccessor", "buffer is Null pointer");
   #endif
-  iter.bufferptr = naMakePtrWithDataMutable(buffer);
+  iter.bufferptr = naMakePtrWithDataMutable(naRetain(buffer));
   iter.partiter = naMakeTreeModifier(&(buffer->parts));
   iter.partoffset = 0;
   iter.curbit = 0;
@@ -97,6 +97,7 @@ NA_DEF void naClearBufferIterator(NABufferIterator* iter){
       naError("naClearBufferIterator", "Too many clears: Buffer has no iterators to clear.");
     mutablebuffer->itercount--;
   #endif
+  naRelease(naGetPtrMutable(&(iter->bufferptr)));
 }
 
 
@@ -213,22 +214,9 @@ NA_DEF NABool naIterateBuffer(NABufferIterator* iter, NAInt step){
 
 
 
-NA_DEF NABool naIsBufferAtEnd(const NABufferIterator* iter){
-  NA_UNUSED(iter);
-//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-//  #ifndef NDEBUG
-//    if(iter->curoffset > naGetRangeiEnd(buffer->range))
-//      naError("naIsBufferAtEnd", "Iterator is far off the end");
-//  #endif
-//  return (iter->curoffset == naGetRangeiEnd(buffer->range));
-  return NA_FALSE;
+NA_HAPI NABool naIsBufferAtInitial(NABufferIterator* iter){
+  return naIsTreeAtInitial(&(iter->partiter));
 }
-
-
-
-//NA_HAPI NABool naIsBufferAtInitial(NABufferIterator* iter){
-//  return naIsListAtInitial(&(iter->partiter));
-//}
 
 
 

@@ -152,17 +152,22 @@ typedef void  (*NABufferSourceBufDeallocator)(void* sourcedata, NAPtr data);
 // You can store a custom data object to the source which will be available
 // to the filler function as well as the destructor.
 NA_HAPI NABufferSource* naCreateBufferSource( NABufferFiller filler,
-                                                   NAMutator simpledestructor);
+                                                   NABuffer* buffer);
 NA_HAPI NABufferSource* naRetainBufferSource(NABufferSource* source);
 NA_HAPI void naReleaseBufferSource(          NABufferSource* source);
 
 // Limits the source to a specific range of bytes. This is for example used
 // when reading a file, where the source is limited to the file size.
+NA_HAPI void naSetBufferSourceData(         NABufferSource* source,
+                                                      void* data,
+                                                  NAMutator datadestructor);
 NA_HAPI void naSetBufferSourceLimit(        NABufferSource* source,
                                                    NARangei limit);
-NA_HAPI void naSetBufferSourceBufferFunctions( NABufferSource* source,
-                                 NABufferSourceBufAllocator allocator,
-                               NABufferSourceBufDeallocator deallocator);
+// Sets the volatile flag of the buffer.
+// A volatile Buffer always reads its content from the source anew upon every
+// call. Most of the time, you wont need that.
+NA_API void naSetBufferSourceVolatile(      NABufferSource* source);
+
 
 // Creates a buffer with a custom source. Note that the NABuffer will retain
 // the source, meaning you can safely release the source after this function.
@@ -190,13 +195,6 @@ NA_API void     naFixBufferRange            (NABuffer*       buffer);
 NA_API void     naExtendBufferRange         (NABuffer*       buffer,
                                                        NAInt bytesatstart,
                                                        NAInt bytesatend);
-
-// Sets or gets the volatile flag of the buffer.
-// A volatile Buffer always reads its content from the source anew upon every
-// call. Most of the time, you wont need that.
-NA_API NABool   naHasBufferVolatileSource(  const NABuffer* buffer);
-NA_API void     naSetBufferVolatileSource(        NABuffer* buffer,
-                                                     NABool volatil);
 
 // Get or set the newline encoding of this buffer. The newline encoding of a
 // new buffer is either NA_NEWLINE_NATIVE or the same encoding as the buffer
@@ -302,8 +300,8 @@ NA_API void   naSeekBufferFromStart (NABufferIterator* iter, NAInt offset);
 NA_API void   naSeekBufferFromEnd   (NABufferIterator* iter, NAInt offset);
 
 NA_API NABool naIterateBuffer(      NABufferIterator* iter, NAInt step);
-NA_API NABool naIsBufferAtEnd(      const NABufferIterator* iter);
 
+NA_API NABool naIsBufferAtInitial(  NABufferIterator* iter);
 
 
 

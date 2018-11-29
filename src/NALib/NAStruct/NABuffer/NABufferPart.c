@@ -75,76 +75,90 @@
 
 
 // //////////////////////////////////////
-// Buffer Source Part
+// Memory Block
 // //////////////////////////////////////
 
 
 
-NA_HAPI void naDestructBufferSourcePart(NABufferSourcePart* part);
-NA_RUNTIME_TYPE(NABufferSourcePart, naDestructBufferSourcePart, NA_TRUE);
+#if NA_BUFFER_PART_BYTESIZE == 0
+  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAInt)naGetRuntimeMemoryPageSize())
+#else
+  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAInt)NA_BUFFER_PART_BYTESIZE)
+#endif
 
 
 
-// Creates a buffer source part.
-NA_HDEF NABufferSourcePart* naNewBufferSourcePart(NABufferSource* source, NARangei range, NAPtr data){
+
+NA_HAPI void naDestructMemoryBlock(NAMemoryBlock* block);
+NA_RUNTIME_TYPE(NAMemoryBlock, naDestructMemoryBlock, NA_TRUE);
+
+
+
+NA_HDEF NAMemoryBlock* naNewMemoryBlock(NAInt bytesize){
+  NAMemoryBlock* block;
   #ifndef NDEBUG
-    if(source && naIsBufferSourceLimited(source) && !naContainsRangeiRange(naGetBufferSourceLimit(source), range))
-      naError("naNewBufferSourcePart", "range overflows the limited range of the source");
+    if(bytesize <= 0)
+      naError("naNewMemoryBlock", "bytesize invalid");
   #endif
-  NABufferSourcePart* part = naNew(NABufferSourcePart);
-  part->source = source ? naRetainBufferSource(source) : NA_NULL;
-  part->range = range;
-  part->data = data;
-  return part;
-}
-
-
-
-NA_HDEF void naDestructBufferSourcePart(NABufferSourcePart* part){
-  if(part->source){
-    if(naGetPtrConst(&(part->data))){
-      if(part->source->bufdeallocator){
-        part->source->bufdeallocator(part->source->data, part->data);
-      }else{
-        part->source->bufsimpledestructor(naGetPtrMutable(&(part->data)));
-      }
-    }
-    naReleaseBufferSource(part->source);
-  }
-}
-
-
-
-// Returns NA_TRUE if the given part does not store memory.
-NA_HDEF NABool naIsBufferSourcePartSparse(const NABufferSourcePart* part){
-  return (naGetPtrConst(&(part->data)) == NA_NULL);
-}
-
-
-
-// Allocates memory for the range defined in part.
-NA_HDEF void naAllocateBufferSourcePartMemory(NABufferSourcePart* part){
+  block = naNew(NAMemoryBlock);
+  block->data = naMakePtrWithDataMutable(naMalloc(bytesize));
+  block->deallocator = (NAMutator)naFree;
   #ifndef NDEBUG
-    if(!naIsBufferSourcePartSparse(part))
-      naError("naAllocateBufferSourcePartMemory", "Part already has memory");
+    block->bytesize = bytesize;
   #endif
-  if(part->source){
-    if(part->source->bufallocator){
-      part->data = part->source->bufallocator(part->source->data, part->range);
-    }else{
-      part->data = naMakePtrWithDataMutable(naMalloc((NAInt)part->range.length));
-    }
+  return block;
+}
+
+
+
+NA_HDEF NAMemoryBlock* naNewMemoryBlockWithConstData(const void* data, NAInt bytesize){
+  NAMemoryBlock* block;
+  #ifndef NDEBUG
+    if(bytesize <= 0)
+      naError("naNewMemoryBlock", "bytesize invalid");
+  #else
+    NA_UNUSED(bytesize);
+  #endif
+  block = naNew(NAMemoryBlock);
+  block->data = naMakePtrWithDataConst(data);
+  block->deallocator = NA_NULL;
+  #ifndef NDEBUG
+    block->bytesize = bytesize;
+  #endif
+  return block;
+}
+
+
+
+NA_HDEF NAMemoryBlock* naNewMemoryBlockWithMutableData(void* data, NAInt bytesize, NAMutator deallocator){
+  NAMemoryBlock* block;
+  #ifndef NDEBUG
+    if(bytesize <= 0)
+      naError("naNewMemoryBlock", "bytesize invalid");
+  #else
+    NA_UNUSED(bytesize);
+  #endif
+  block = naNew(NAMemoryBlock);
+  block->data = naMakePtrWithDataMutable(data);
+  block->deallocator = deallocator;
+  #ifndef NDEBUG
+    block->bytesize = bytesize;
+  #endif
+  return block;
+}
+
+
+
+NA_HDEF void naDestructMemoryBlock(NAMemoryBlock* block){
+  if(block->deallocator){
+    block->deallocator(naGetPtrMutable(&(block->data)));
   }
 }
 
 
 
-// Calls the filler of the source descriptor for the range of the given part.
-// Hence filling the memory with the desired content.
-NA_HDEF void naFillBufferSourcePart(NABufferSourcePart* part, NARangei range){
-  if(part->source && part->source->buffiller){
-    part->source->buffiller(part->source->data, naGetPtrMutable(&(part->data)), naMakeRangei(range.origin + part->range.origin, range.length));
-  }
+NA_HDEF const void* naGetMemoryBlockDataPointerConst(NAMemoryBlock* block, NAInt indx){
+  return (const void*)&(((const NAByte*)naGetPtrConst(&(block->data)))[indx]);
 }
 
 
@@ -154,6 +168,8 @@ NA_HDEF void naFillBufferSourcePart(NABufferSourcePart* part, NARangei range){
 
 
 
+// We enable Reference counting as there may be multiple iterators running
+// on a certain part.
 NA_RUNTIME_TYPE(NABufferPart, naDestructBufferPart, NA_FALSE);
 
 
@@ -164,30 +180,170 @@ NA_RUNTIME_TYPE(NABufferPart, naDestructBufferPart, NA_FALSE);
 NA_HDEF NABufferPart* naNewBufferPartSparse(NABufferSource* source, NARangei range){
   #ifndef NDEBUG
     if(!naIsLengthValueUsefuli(range.length))
-      naError("naNewBufferPartSparse", "bytesize is not useful");
+      naError("naNewBufferPartSparse", "range length is not useful");
+    if(!source && range.origin != 0)
+      naError("naNewBufferPartSparse", "origin unequal zero makes no sense without source");
   #endif
   NABufferPart* part = naNew(NABufferPart);
-  part->byteoffset = 0;
+  part->source = source ? naRetainBufferSource(source) : NA_NULL;
+  part->sourceoffset = range.origin;
+  part->blockoffset = 0;
   part->bytesize = range.length;
-  part->sourcepart = naNewBufferSourcePart(source, range, naMakePtrNull());
+  part->memblock = NA_NULL;
   return part;
 }
 
 
 
-// Creates a memory block with given data buffer
-NA_HDEF NABufferPart* naNewBufferPartData(NABufferSource* source, NARangei range, NAPtr data){
+// Creates a memory block with constant data
+NA_HDEF NABufferPart* naNewBufferPartWithConstData(const void* data, NAInt bytesize){
   #ifndef NDEBUG
-    if(!naIsLengthValueUsefuli(range.length))
-      naError("naNewBufferPartConstData", "bytesize is not useful");
+    if(!naIsLengthValueUsefuli(bytesize))
+      naError("naNewBufferPartWithConstData", "bytesize is not useful");
   #endif
   NABufferPart* part = naNew(NABufferPart);
-  part->byteoffset = 0;
-  part->bytesize = range.length;
-  part->sourcepart = naNewBufferSourcePart(source, range, data);
+  part->source = NA_NULL;
+  part->sourceoffset = 0;
+  part->blockoffset = 0;
+  part->bytesize = bytesize;
+  part->memblock = naNewMemoryBlockWithConstData(data, bytesize);
   return part;
 }
 
+
+
+// Creates a memory block with mutable data
+NA_HDEF NABufferPart* naNewBufferPartWithMutableData(void* data, NAInt bytesize, NAMutator deallocator){
+  #ifndef NDEBUG
+    if(!naIsLengthValueUsefuli(bytesize))
+      naError("naNewBufferPartWithMutableData", "bytesize is not useful");
+  #endif
+  NABufferPart* part = naNew(NABufferPart);
+  part->source = NA_NULL;
+  part->sourceoffset = 0;
+  part->blockoffset = 0;
+  part->bytesize = bytesize;
+  part->memblock = naNewMemoryBlockWithMutableData(data, bytesize, deallocator);
+  return part;
+}
+
+
+
+NA_HDEF NAInt naGetBufferPartNormedStart(NAInt start){
+  NAInt signshift = (start < 0);   // Note that (start < 0) either results in 0 or 1.
+  return (((start + signshift) / NA_INTERNAL_BUFFER_PART_BYTESIZE) - signshift) * NA_INTERNAL_BUFFER_PART_BYTESIZE;
+  // Examples explain best how this behaves (assume default partsize to be 10):
+  //  11:  (( 11 + 0) / 10) - 0 * 10 =  10
+  //  10:  (( 10 + 0) / 10) - 0 * 10 =  10
+  //   9:  ((  9 + 0) / 10) - 0 * 10 =   0
+  //   1:  ((  1 + 0) / 10) - 0 * 10 =   0
+  //   0:  ((  0 + 0) / 10) - 0 * 10 =   0
+  //  -1:  (( -1 + 1) / 10) - 1 * 10 = -10
+  //  -9:  (( -9 + 1) / 10) - 1 * 10 = -10
+  // -10:  ((-10 + 1) / 10) - 1 * 10 = -10
+  // -11:  ((-11 + 1) / 10) - 1 * 10 = -20
+}
+
+
+
+NA_HDEF NAInt naGetBufferPartNormedEnd(NAInt end){
+  // Return the end coordinate, such that end-1 (=max) is within it.
+  return naGetBufferPartNormedStart(naMakeMaxWithEndi(end)) + NA_INTERNAL_BUFFER_PART_BYTESIZE;
+}
+
+
+
+NA_HDEF NAInt naPrepareBufferPart(NABufferIterator* iter, NAInt bytecount, NABool forcevolatile){
+  NABufferPart* part = naGetTreeCurMutable(&(iter->partiter));
+  #ifndef NDEBUG
+    if(!part)
+      naError("naPrepareBufferPart", "Part is null");
+  #endif
+  
+  if(part->source){
+    if(naIsBufferPartSparse(part)){
+      // We try to prepare the buffer source. The following function returns
+      // a buffer part which contains at least the first desired byte.
+      NABufferPart* newpart = naPrepareBufferSource(part->source, naMakeRangei(part->sourceoffset + iter->partoffset, bytecount));
+      naSplitBufferSparsePart(iter, newpart->blockoffset, newpart->blockoffset + newpart->bytesize);
+      naRemoveTreeCur(&(iter->partiter), NA_FALSE);
+      
+      // Test if the previous block is a direct predecessor of the new block.
+      if(!naIsTreeAtInitial(&(iter->partiter))){
+        NABufferPart* prevpart = naGetTreeCurMutable(&(iter->partiter));
+        if((prevpart->memblock == newpart->memblock) && (prevpart->blockoffset + prevpart->bytesize == newpart->blockoffset)){
+          // We combine the new block with the previous one and use that one
+          // instead.
+          prevpart->bytesize += newpart->bytesize;
+          iter->partoffset += prevpart->bytesize;
+          naDelete(newpart);
+        }else{
+          // The new block is independent of the previous block.
+          naAddTreeNextMutable(&(iter->partiter), newpart, NA_TRUE);
+        }
+      }else{
+        // The new block is the first block.
+        naAddTreeNextMutable(&(iter->partiter), newpart, NA_TRUE);
+      }
+    }else if(forcevolatile | naIsBufferSourceVolatile(part->source)){
+      naFillBufferPart(part, naMakeRangei(iter->partoffset, bytecount));
+    }
+  }else{
+    #ifndef NDEBUG
+      if(forcevolatile)
+        naError("naPrepareBufferPart", "forcevolatile makes no sense without source");
+    #endif
+    if(naIsBufferPartSparse(part)){
+      // We create a suitable range for 1 byte which tries to be aligned at
+      // NA_INTERNAL_BUFFER_PART_BYTESIZE but has a certain margin to be bigger
+      // and hence reduce the number of small parts.
+      NAInt normedstart = naGetBufferPartNormedStart(iter->partoffset);
+      NAInt normedend = naGetBufferPartNormedEnd(iter->partoffset + 1);
+      if(((NAInt)part->bytesize - normedend) < (NA_INTERNAL_BUFFER_PART_BYTESIZE / 2)){
+        #ifndef NDEBUG
+          if(normedstart != 0)
+            naError("naPrepareBufferPart", "normedstart should be zero here.");
+        #endif
+        normedend = (NAInt)part->bytesize;
+      }
+
+      // Note that the previous computation of normedstart and normedend also
+      // automatically handles parts being smaller than the normed range and
+      // hence never resulting in a subrange bigger than the range of the
+      // actual part.
+
+      // We split the sparse buffer if necessary.
+      naSplitBufferSparsePart(iter, normedstart, normedend);
+
+      // Now, iter points at a sparse part containing the desired byte.
+      // Let's create the memory block.
+      part->memblock = naNewMemoryBlock(part->bytesize);
+    }
+  }
+  
+  NAInt preparedbytecount = part->bytesize - iter->partoffset;
+  #ifndef NDEBUG
+    if(preparedbytecount <= 0)
+      naError("naPrepareBufferPart", "Returned value should be greater zero");
+  #endif
+  return preparedbytecount;
+}
+
+
+NA_HDEF void naFillBufferPartConstAccess(NABufferPart* part, NAInt blockoffset, const void** src, NAInt* bytesize){
+  NA_UNUSED(part);
+  NA_UNUSED(blockoffset);
+  NA_UNUSED(src);
+  NA_UNUSED(bytesize);
+//  #ifndef NDEBUG
+//    if(blockoffset < 0)
+//      naError("naFillBufferPartConstAccess", "desired blockoffset is negative");
+//    if(part->bytesize - blockoffset <= 0)
+//      naError("naFillBufferPartConstAccess", "desired blockoffset is out of range");
+//  #endif
+//  *bytesize = part->bytesize - blockoffset;
+//  *src = naGetMemoryBlockConstAccess(part->memblock, blockoffset);
+}
 
 
 // This function makes a sparse part referencing the same memory block of an
@@ -211,23 +367,24 @@ NA_HDEF NABufferPart* naNewBufferPartData(NABufferSource* source, NARangei range
 
 
 // Allocates memory for the range defined in part.
-NA_HDEF void naAllocateBufferPartMemory(NABufferPart* part){
-  naAllocateBufferSourcePartMemory(part->sourcepart);
-}
+//NA_HDEF void naAllocateBufferPartMemory(NABufferPart* part){
+//  naAllocateBufferSourcePartMemory(part->sourcepart);
+//}
 
 
 
 // Calls the filler of the source descriptor for the range of the given part.
 // Hence filling the memory with the desired content.
 NA_HDEF void naFillBufferPart(NABufferPart* part, NARangei range){
-  naFillBufferSourcePart(part->sourcepart, range);
+  part->source->buffiller(part->source->data, naGetPtrMutable(&(part->memblock->data)), range);
 }
 
 
 
-// The destructor method which will automatically be called by naDelete.
+// The destructor method which will automatically be called by naRelease.
 NA_HDEF void naDestructBufferPart(NABufferPart* part){
-  naRelease(part->sourcepart);
+  if(part->source){naReleaseBufferSource(part->source);}
+  if(part->memblock){naRelease(part->memblock);}
 }
 
 
@@ -238,7 +395,7 @@ NA_HDEF NABool naIsBufferPartSparse(const NABufferPart* part){
     if(!part)
       naCrash("naIsBufferPartSparse", "part is Null pointer");
   #endif
-  return naIsBufferSourcePartSparse(part->sourcepart);
+  return part->memblock == NA_NULL;
 }
 
 
@@ -313,14 +470,14 @@ NA_HDEF NABool naIsBufferPartSparse(const NABufferPart* part){
 //    part->range = naMakeRangeiWithStartAndEnd(naGetBufferPartStart(prevpart), naGetBufferPartEnd(part));
 //    // then, we remove the previous part and delete it.
 //    naRemoveListPrevMutable(iter);
-//    naDelete(prevpart);
+//    naRelease(prevpart);
 //  }
 //  if(nextpart && naAreBufferPartsEqualAndAdjacent(part, nextpart)){
 //    // we can combine the two parts.
 //    part->range = naMakeRangeiWithStartAndEnd(naGetBufferPartStart(part), naGetBufferPartEnd(nextpart));
 //    // then, we remove the next part and delete it.
 //    naRemoveListNextMutable(iter);
-//    naDelete(nextpart);
+//    naRelease(nextpart);
 //  }
 //}
 
@@ -333,12 +490,15 @@ NA_HDEF NABool naIsBufferPartSparse(const NABufferPart* part){
 NA_HDEF void naSplitBufferSparsePart(NABufferIterator* iter, NAInt start, NAInt end){
   NABufferPart* part = naGetTreeCurMutable(&(iter->partiter));
   NABufferPart* newpart;
+  NAInt length = end - start;
 
   #ifndef NDEBUG
     if(!part)
       naCrash("naSplitBufferSparsePart", "iterator must not be at initial position");
     if(!naIsBufferPartSparse(part))
       naError("naSplitBufferSparsePart", "current part is not sparse");
+    if(!naIsLengthValueUsefuli(length))
+      naError("naSplitBufferSparsePart", "start and end make no sense");
     if(start < 0)
       naError("naSplitBufferSparsePart", "start should not be negative");
     if(start > part->bytesize)
@@ -351,53 +511,45 @@ NA_HDEF void naSplitBufferSparsePart(NABufferIterator* iter, NAInt start, NAInt 
       naError("naSplitBufferSparsePart", "there is another iterator at this part. Splitting might lead to problems");
   #endif
 
-  NAInt length = end - start;
-
   // Only split, if the parts bytesize does not already equals the length.
   if(length != part->bytesize){
-    NABufferSource* source = part->sourcepart->source;
-    NARangei range = part->sourcepart->range;
-
     if(end < part->bytesize){
       // We need to add a new part at the end
-      newpart = naNewBufferPartSparse(source, naMakeRangei(range.origin + end, range.length - end));
-      naAddTreeNextMutable(&(iter->partiter), newpart);
+      newpart = naNewBufferPartSparse(part->source, naMakeRangei(part->sourceoffset + end, part->bytesize - end));
+      naAddTreeNextMutable(&(iter->partiter), newpart, NA_FALSE);
     }
 
     if(start > 0){
       // We need to add a new part at the beginning.
-      newpart = naNewBufferPartSparse(source, naMakeRangei(range.origin, start));
-      naAddTreePrevMutable(&(iter->partiter), newpart);
-      part->sourcepart->range.origin += start;
+      newpart = naNewBufferPartSparse(part->source, naMakeRangei(part->sourceoffset, start));
+      naAddTreePrevMutable(&(iter->partiter), newpart, NA_FALSE);
+      part->sourceoffset += start;
       iter->partoffset -= start;
     }
 
-    part->sourcepart->range.length = length;
     part->bytesize = length;
   }
 }
 
 
 
-//// Returns a direct pointer to the raw data of this buffer part, given its
-//// absolute address.
-//NA_HIDEF NAByte* naGetBufferPartDataPointerConst(const NABufferPart* part, NAInt offset){
-//  #ifndef NDEBUG
-//    if(!part)
-//      naCrash("naGetBufferPartDataPointerConst", "buffer part is Null pointer");
-//    if(naIsBufferPartSparse(part))
-//      naError("naGetBufferPartDataPointerConst", "buffer part is sparse");
-//    if(!naContainsRangeiOffset(part->range, offset))
-//      naError("naGetBufferPartDataPointerConst", "offset not inside buffer part");
-//    if(offset - part->origin < 0)
-//      naError("naGetBufferPartDataPointerConst", "offset calculation wrong");
-//  #endif
-////  printf("getPointer %d %d %c\n", (int)offset, (int)part->origin, ((char*)part->data->sptr.ptr.data.d)[offset - part->origin]);
-//  return &(((NAByte*)naGetPointerConst(part->pointer))[offset - part->origin]);
-//}
-//
-//
-//
+// Returns a pointer to the raw data of this buffer part, given its offset.
+NA_HDEF const void* naGetBufferPartDataPointerConst(const NABufferPart* part, NAInt offset){
+  #ifndef NDEBUG
+    if(!part)
+      naCrash("naGetBufferPartDataPointerConst", "buffer part is Null pointer");
+    if(naIsBufferPartSparse(part))
+      naError("naGetBufferPartDataPointerConst", "buffer part is sparse");
+    if(offset < 0)
+      naError("naGetBufferPartDataPointerConst", "offset is negative");
+    if(offset >= part->bytesize)
+      naError("naGetBufferPartDataPointerConst", "offset not inside buffer part");
+  #endif
+  return naGetMemoryBlockDataPointerConst(part->memblock, part->blockoffset + offset);
+}
+
+
+
 //// Returns a direct pointer to the raw data of this buffer part, given its
 //// absolute address.
 //NA_HIDEF NAByte* naGetBufferPartDataPointerMutable(const NABufferPart* part, NAInt offset){
