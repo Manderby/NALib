@@ -133,8 +133,14 @@ NA_DEF NABuffer* naNewBufferExtraction(NABuffer* srcbuffer, NARangei range){
   buffer->range = naMakeRangei(0, absoluterange.length);
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;
 
-//  buffer->source = naNewBufferSourceWithBuffer(srcbuffer);
-//  buffer->srcoffset = -range.origin;
+  NABufferSource* bufsource = naCreateBufferSource(NA_NULL, srcbuffer);
+    buffer->enhancesource = naRetainBufferSource(bufsource);
+    buffer->enhancesourceoffset = 0;
+  naReleaseBufferSource(bufsource);
+  
+  // Add the const data to the list.
+  NABufferPart* part = naNewBufferPartSparse(bufsource, absoluterange);
+  naAddTreeFirstMutable(&(buffer->parts), part);
 
   buffer->flags = srcbuffer->flags | NA_BUFFER_FLAG_RANGE_FIXED;
 
@@ -231,7 +237,7 @@ NA_HIDEF void naFillBufferPartFile(void* data, void* dst, NARangei range){
 
 
 
-NA_DEF NABuffer* naNewBufferWithInpuFile(const char* filename){
+NA_DEF NABuffer* naNewBufferWithInputFile(const char* filename){
   NARangei range;
   NAFile* file;
 

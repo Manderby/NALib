@@ -28,18 +28,18 @@ NA_HDEF NABuffer* naGetBufferIteratorBufferMutable(NABufferIterator* iter){
 
 NA_DEF NABufferIterator naMakeBufferAccessor(const NABuffer* buffer){
   NABufferIterator iter;
+  NABuffer* mutablebuffer = (NABuffer*)buffer;
   #ifndef NDEBUG
-    NABuffer* mutablebuffer;
     if(!buffer)
       naCrash("naMakeBufferAccessor", "buffer is Null pointer");
   #endif
-  iter.bufferptr = naMakePtrWithDataConst(naRetain(buffer));
+  iter.bufferptr = naMakePtrWithDataConst(naRetain(mutablebuffer));
   iter.partiter = naMakeTreeAccessor(&(buffer->parts));
   iter.partoffset = 0;
   iter.curbit = 0;
   iter.linenum = 0;
   #ifndef NDEBUG
-    mutablebuffer = (NABuffer*)buffer;
+//    mutablebuffer = (NABuffer*)buffer;
     mutablebuffer->itercount++;
   #endif
   return iter;
@@ -49,18 +49,18 @@ NA_DEF NABufferIterator naMakeBufferAccessor(const NABuffer* buffer){
 
 NA_DEF NABufferIterator naMakeBufferMutator(const NABuffer* buffer){
   NABufferIterator iter;
+  NABuffer* mutablebuffer = (NABuffer*)buffer;
   #ifndef NDEBUG
-    NABuffer* mutablebuffer;
     if(!buffer)
       naCrash("naMakeBufferMutator", "buffer is Null pointer");
   #endif
-  iter.bufferptr = naMakePtrWithDataConst(naRetain(buffer));
+  iter.bufferptr = naMakePtrWithDataConst(naRetain(mutablebuffer));
   iter.partiter = naMakeTreeAccessor(&(buffer->parts));
   iter.partoffset = 0;
   iter.curbit = 0;
   iter.linenum = 0;
   #ifndef NDEBUG
-    mutablebuffer = (NABuffer*)buffer;
+//    mutablebuffer = (NABuffer*)buffer;
     mutablebuffer->itercount++;
   #endif
   return iter;
@@ -70,18 +70,18 @@ NA_DEF NABufferIterator naMakeBufferMutator(const NABuffer* buffer){
 
 NA_DEF NABufferIterator naMakeBufferModifier(NABuffer* buffer){
   NABufferIterator iter;
+  NABuffer* mutablebuffer = (NABuffer*)buffer;
   #ifndef NDEBUG
-    NABuffer* mutablebuffer;
     if(!buffer)
       naCrash("naMakeBufferAccessor", "buffer is Null pointer");
   #endif
-  iter.bufferptr = naMakePtrWithDataMutable(naRetain(buffer));
+  iter.bufferptr = naMakePtrWithDataMutable(naRetain(mutablebuffer));
   iter.partiter = naMakeTreeModifier(&(buffer->parts));
   iter.partoffset = 0;
   iter.curbit = 0;
   iter.linenum = 0;
   #ifndef NDEBUG
-    mutablebuffer = (NABuffer*)buffer;
+//    mutablebuffer = (NABuffer*)buffer;
     mutablebuffer->itercount++;
   #endif
   return iter;

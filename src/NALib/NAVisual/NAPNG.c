@@ -730,7 +730,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   png->pixelunit = NA_PIXEL_UNIT_RATIO;
   png->filtereddata = NA_NULL;
 
-  buffer = naNewBufferWithInpuFile(filename);
+  buffer = naNewBufferWithInputFile(filename);
   bufiter = naMakeBufferModifier(buffer);
 
   // If the buffer is empty, there is no png to read.

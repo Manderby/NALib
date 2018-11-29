@@ -119,7 +119,7 @@ NA_API NABuffer* naNewBufferWithSameSource(  NABuffer* srcbuffer);
 
 // Creates a buffer inputting contents from a file. Its origin is always at
 // zero and its range is fixed to the filesize.
-NA_API NABuffer* naNewBufferWithInpuFile(const char* filename);
+NA_API NABuffer* naNewBufferWithInputFile(const char* filename);
 
 // Creates a buffer accessing already existing const or mutable data. If the
 // data is mutable, you can give a destructor if you want to delete the
