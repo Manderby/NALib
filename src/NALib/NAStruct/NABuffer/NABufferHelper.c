@@ -166,12 +166,13 @@ NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool for
 
   // We perform the preparation as long as there are still bytes left.
   while(bytecount){
+
+    // We prepare the current part.
     NABufferPart* part = naGetTreeCurMutable(&(iter->partiter));
     #ifndef NDEBUG
       if(!part)
         naError("naPrepareBuffer", "No buffer part available.");
     #endif
-
     NAInt preparedbytecount = naPrepareBufferPart(iter, bytecount, forcevolatile);
 
     // Reaching here, the current part is filled with memory. Now, we can set

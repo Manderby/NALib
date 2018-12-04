@@ -112,7 +112,7 @@ NA_HAPI NABool naIsBufferSourceVolatile(const NABufferSource* source);
 #ifndef NDEBUG
   NA_HAPI NABool naIsBufferSourceLimited(const NABufferSource* source);
 #endif
-NA_HAPI NABufferPart* naPrepareBufferSource(NABufferSource* source, NARangei range);
+NA_HAPI NABufferPart* naPrepareBufferSource(NABufferSource* source, NAInt sourceoffset, NAInt* blockoffset);
 
 
 

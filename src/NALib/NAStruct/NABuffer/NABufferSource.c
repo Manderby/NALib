@@ -169,17 +169,19 @@ NA_HDEF NARangei naGetBufferSourceLimit(NABufferSource* source){
 // This function prepares the given buffer source such that its buffer iterator
 // points to a position where at least 1 Byte is available as non-sparse memory.
 // The buffer part located at that position is returned.
-NA_HDEF NABufferPart* naPrepareBufferSource(NABufferSource* source, NARangei range){
+// sourceoffset is given in this source coordinates (can be negative).
+NA_HDEF NABufferPart* naPrepareBufferSource(NABufferSource* source, NAInt sourceoffset, NAInt* blockoffset){
   NABufferPart* newpart;
   if(source->flags & NA_BUFFER_SOURCE_HAS_UNDERLYING_BUFFER){
     // We recursively prepare the first byte of the underlying buffer.
-    naLocateBuffer(&(source->bufiter), range.origin);
+    naLocateBuffer(&(source->bufiter), sourceoffset);
     naPrepareBuffer(&(source->bufiter), 1, NA_FALSE);
     newpart = naGetTreeCurMutable(&(source->bufiter.partiter));
+    *blockoffset = source->bufiter.partoffset; 
   }else{
     // We have no underlying buffer. Create memory.
-    NAInt normedstart = naGetBufferPartNormedStart(range.origin);
-    NAInt normedend = naGetBufferPartNormedEnd(naGetRangeiEnd(range));
+    NAInt normedstart = naGetBufferPartNormedStart(sourceoffset);
+    NAInt normedend = naGetBufferPartNormedEnd(sourceoffset + 1);
     // todo what about the limits?
     NARangei normedrange = naMakeRangeiWithStartAndEnd(normedstart, normedend);
     newpart = naNewBufferPartSparse(source, normedrange);
@@ -187,6 +189,7 @@ NA_HDEF NABufferPart* naPrepareBufferSource(NABufferSource* source, NARangei ran
     if(source->buffiller){
       source->buffiller(newpart->source->data, naGetPtrMutable(&(newpart->memblock->data)), normedrange);
     }
+    *blockoffset = sourceoffset - normedstart; 
   }
   #ifndef NDEBUG
     if(naIsBufferPartSparse(newpart))
