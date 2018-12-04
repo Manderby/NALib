@@ -15,7 +15,10 @@ typedef struct NATreeIterationInfo NATreeIterationInfo;
 // other flag must be non-overlapping with 0x0000ffff or having a bitshift
 // of 16 respectively.
 
-#define NA_TREE_NODE_AVL_BITSHIFT 16
+#define NA_TREE_NODE_MAX_CHILDS 16
+#define NA_TREE_CHILDS_MASK ((1 << NA_TREE_NODE_MAX_CHILDS) - 1)
+
+#define NA_TREE_NODE_AVL_BITSHIFT NA_TREE_NODE_MAX_CHILDS
 #define NA_TREE_NODE_AVL_LEFT  (0x00 << NA_TREE_NODE_AVL_BITSHIFT)
 #define NA_TREE_NODE_AVL_EQUAL (0x01 << NA_TREE_NODE_AVL_BITSHIFT)
 #define NA_TREE_NODE_AVL_RIGHT (0x02 << NA_TREE_NODE_AVL_BITSHIFT)
@@ -26,10 +29,11 @@ typedef struct NATreeIterationInfo NATreeIterationInfo;
 #define NA_TREE_FLAG_ROOT_IS_LEAF 0x01
 
 typedef enum{
-  NA_TREE_LEAF_SPLIT_KEY,
-  NA_TREE_LEAF_SPLIT_PREV,
-  NA_TREE_LEAF_SPLIT_NEXT,
-} NATreeLeafSplitOrder;
+  NA_TREE_LEAF_INSERT_ORDER_KEY,
+  NA_TREE_LEAF_INSERT_ORDER_PREV,
+  NA_TREE_LEAF_INSERT_ORDER_NEXT,
+  NA_TREE_LEAF_INSERT_ORDER_REPLACE,
+} NATreeLeafInsertOrder;
 
 // Callback function types for the different kind of trees. If you want to
 // implement your own tree kind, you need to provide the following functions
@@ -61,7 +65,7 @@ typedef enum{
 // NATreeLeafAdder           Sets the given child with the given type to the
 //                           parent at the given index.
 // NATreeLeafRemover         Removes the given leaf from the tree.
-// NATreeLeafSplitter        Expects the child ad childindx of grandparent to
+// NATreeLeafInserter        Expects the child ad childindx of grandparent to
 //                           be a leaf which will be split to a node containing
 //                           both that leaf and the new sibling.
 // NATreeLeafKeyGetter       Returns the key of the given leaf.
@@ -80,11 +84,11 @@ typedef NATreeLeaf*     (*NATreeCaptureLocator)(const NATree* tree, NATreeNode* 
 typedef NAInt           (*NATreeChildIndexGetter)(NATreeNode* parent, NATreeBaseNode* child);
 typedef NAInt           (*NATreeChildKeyIndexGetter)(const NATree* tree, NATreeNode* parent, const void* key);
 typedef NATreeBaseNode* (*NATreeChildGetter)(NATreeNode* parent, NAInt childindx);
-typedef void            (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
-typedef void            (*NATreeLeafReplacer)(NATree* tree, NATreeLeaf* leaf, NAPtr data);
-typedef void            (*NATreeLeafSplitter)(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf, NATreeLeafSplitOrder splitOrder);
+typedef NATreeNode*     (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
+typedef NATreeLeaf*     (*NATreeLeafInserter)(NATree* tree, NATreeLeaf* existingleaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 typedef const void*     (*NATreeLeafKeyGetter)(NATreeLeaf* leaf);
 typedef NAPtr*          (*NATreeLeafDataGetter)(NATreeLeaf* leaf);
+typedef NAPtr*          (*NATreeNodeDataGetter)(NATreeNode* node);
 
 struct NATreeConfiguration{
 
@@ -94,8 +98,11 @@ struct NATreeConfiguration{
   NATreeDestructorCallback      treeDestructor;
   NATreeNodeConstructor         nodeConstructor;
   NATreeNodeDestructor          nodeDestructor;
+  NATreeNodeChildUpdater        nodeChildUpdater;
   NATreeLeafConstructor         leafConstructor;
   NATreeLeafDestructor          leafDestructor;
+  NATreeNodeTokenSearcher       nodeTokenSearcher;
+  NATreeLeafTokenSearcher       leafTokenSearcher;
   NAPtr                         data;
   NAInt                         flags;
 
@@ -116,10 +123,10 @@ struct NATreeConfiguration{
   NATreeChildKeyIndexGetter     childKeyIndexGetter;
   NATreeChildGetter             childGetter;
   NATreeLeafRemover             leafRemover;
-  NATreeLeafReplacer            leafReplacer;
-  NATreeLeafSplitter            leafSplitter;
+  NATreeLeafInserter            leafInserter;
   NATreeLeafKeyGetter           leafKeyGetter;
   NATreeLeafDataGetter          leafDataGetter;
+  NATreeNodeDataGetter          nodeDataGetter;
 };
 
 struct NATreeBaseNode{

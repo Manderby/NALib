@@ -79,6 +79,17 @@ typedef NAPtr (*NATreeNodeConstructor)( const void* key,
 typedef void (*NATreeNodeDestructor)(NAPtr nodedata,
                                      NAPtr configdata);
 
+// Gets called whenever childs of a parent change. The parent data is the
+// data stored in the parent node. The childdatas parameter contains an
+// array of the datas stored in all children. The childindx parameter denotes
+// which child caused the updating or is -1 if no particular child caused the
+// update. The childmask parameter is a bitfield denoting 1 for the child
+// being a leaf and 0 for being an inner node.
+typedef NABool (*NATreeNodeChildUpdater)  (NAPtr parentdata,
+                                          NAPtr* childdatas,
+                                           NAInt childindx,
+                                           NAInt childmask);
+
 // NATreeLeafConstructor
 // Function which constructs the data stored in a leaf.
 //
@@ -118,6 +129,26 @@ typedef NAPtr (*NATreeLeafConstructor)( const void* key,
 // is the same as the data provided in NATreeConfiguration.
 typedef void (*NATreeLeafDestructor)(   NAPtr leafdata,
                                         NAPtr configdata);
+
+// NATreeNodeTokenSearcher and NATreeLeafTokenSearcher
+// For trees without keys, you can search using an arbitrary token. By calling
+// naLocateTreeToken(), the following two callbacks will be called either for
+// a node or a leaf given its stored data.
+// The node callback shall test where to search next by setting the nextindx
+// to the child index or -1 if the parent node shall be searched.
+// The leaf callback shall test if the given leaf is the one having searched
+// for, resulting in matchfound to be either true or false.
+// Both callbacks shall return NA_TRUE if the search must continue or NA_FALSE
+// if it shall be aborted.
+// When the node callback aborts, the leaf is considered to be not found.
+// When the leaf callback does not abort, automatically, the parent node is
+// tested, completely ignoring the matchfound parameter.
+typedef NABool (*NATreeNodeTokenSearcher)(  void* token,
+                                            NAPtr data,
+                                           NAInt* nextindx);
+typedef NABool (*NATreeLeafTokenSearcher)(  void* token,
+                                            NAPtr data,
+                                          NABool* matchfound);
 
 
 
@@ -164,7 +195,13 @@ NA_IAPI void naSetTreeConfigurationLeafCallbacks(
 NA_IAPI void naSetTreeConfigurationNodeCallbacks(
   NATreeConfiguration*       config,
   NATreeNodeConstructor      nodeconstructor,
-  NATreeNodeDestructor       nodedestructor);
+  NATreeNodeDestructor       nodedestructor,
+  NATreeNodeChildUpdater     nodeChildUpdater);
+
+NA_IAPI void naSetTreeConfigurationTokenCallbacks(
+  NATreeConfiguration*       config,
+  NATreeNodeTokenSearcher    nodeSearcher,
+  NATreeLeafTokenSearcher    leafSearcher);
 
 
 
@@ -188,7 +225,7 @@ NA_IAPI void*       naGetTreeFirstMutable(const NATree* tree);
 NA_IAPI const void* naGetTreeLastConst   (const NATree* tree);
 NA_IAPI void*       naGetTreeLastMutable (const NATree* tree);
 
-
+NA_IAPI void naUpdateTree(NATree* tree);
 
 // ////////////////////
 // NATreeIterator
@@ -231,6 +268,8 @@ NA_IAPI NABool naLocateTreeFirst(   NATreeIterator* iter);
 NA_IAPI NABool naLocateTreeLast(    NATreeIterator* iter);
 NA_IAPI NABool naLocateTreeIterator(NATreeIterator* iter,
                                     NATreeIterator* srciter);
+NA_IAPI NABool naLocateTreeToken   (NATreeIterator* iter,
+                                              void* token);
 
 // /////////////////////////////////
 // Iterating

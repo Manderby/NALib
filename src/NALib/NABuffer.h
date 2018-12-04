@@ -282,6 +282,8 @@ NA_API NABufferIterator naMakeBufferModifier(      NABuffer* buffer);
 
 NA_API void naClearBufferIterator(NABufferIterator* iter);
 
+NA_API void naLocateBuffer(NABufferIterator* iter, NAInt offset);
+
 // Returns or changes the current position within the buffer.
 // Absolute  searches relative to the zero-point of this buffer.
 // Relative  searches relative to the current position of this buffer.

@@ -166,10 +166,14 @@ NA_HDEF NARangei naGetBufferSourceLimit(NABufferSource* source){
 
 
 
+// This function prepares the given buffer source such that its buffer iterator
+// points to a position where at least 1 Byte is available as non-sparse memory.
+// The buffer part located at that position is returned.
 NA_HDEF NABufferPart* naPrepareBufferSource(NABufferSource* source, NARangei range){
   NABufferPart* newpart;
   if(source->flags & NA_BUFFER_SOURCE_HAS_UNDERLYING_BUFFER){
-    // Todo: localize the origin.
+    // We recursively prepare the first byte of the underlying buffer.
+    naLocateBuffer(&(source->bufiter), range.origin);
     naPrepareBuffer(&(source->bufiter), 1, NA_FALSE);
     newpart = naGetTreeCurMutable(&(source->bufiter.partiter));
   }else{
@@ -184,6 +188,10 @@ NA_HDEF NABufferPart* naPrepareBufferSource(NABufferSource* source, NARangei ran
       source->buffiller(newpart->source->data, naGetPtrMutable(&(newpart->memblock->data)), normedrange);
     }
   }
+  #ifndef NDEBUG
+    if(naIsBufferPartSparse(newpart))
+      naError("naPrepareBufferSource", "part is sparse");
+  #endif
   return newpart;
 }
 

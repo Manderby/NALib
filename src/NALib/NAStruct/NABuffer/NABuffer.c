@@ -24,11 +24,94 @@ void naDestructBufferTreeLeaf(NAPtr leafdata, NAPtr configdata){
 
 
 
+typedef struct NABufferTreeNodeData NABufferTreeNodeData;
+struct NABufferTreeNodeData{
+  NAInt len1;
+  NAInt len2;
+};
+
+
+
+NAPtr naConstructBufferTreeNode(const void* key, NAPtr configdata){
+  NABufferTreeNodeData* nodedata = naAlloc(NABufferTreeNodeData);
+  nodedata->len1 = 0;
+  nodedata->len2 = 0;
+  return naMakePtrWithDataMutable(nodedata);
+}
+
+
+
+void naDestructBufferTreeNode(NAPtr nodedata, NAPtr configdata){
+  naFree(naGetPtrMutable(&nodedata));
+}
+
+
+
+NABool naUpdateBufferTreeNode(NAPtr parentdata,  NAPtr* childdatas, NAInt childindx, NAInt childmask){
+  NABufferTreeNodeData* parentnodedata = (NABufferTreeNodeData*)naGetPtrMutable(&parentdata);
+  
+  NAInt prevlen1 = parentnodedata->len1;
+  if(childmask & 0x01){
+    NABufferPart* leafdata = (NABufferPart*)naGetPtrMutable(&(childdatas[0]));
+    parentnodedata->len1 = leafdata->bytesize;
+  }else{
+    NABufferTreeNodeData* childdata = (NABufferTreeNodeData*)naGetPtrMutable(&(childdatas[0]));
+    parentnodedata->len1 = childdata->len1 + childdata->len2;
+  }
+
+  NAInt prevlen2 = parentnodedata->len2;
+  if(childmask & 0x02){
+    NABufferPart* leafdata = (NABufferPart*)naGetPtrMutable(&(childdatas[1]));
+    parentnodedata->len2 = leafdata->bytesize;
+  }else{
+    NABufferTreeNodeData* childdata = (NABufferTreeNodeData*)naGetPtrMutable(&(childdatas[1]));
+    parentnodedata->len2 = childdata->len1 + childdata->len2;
+  }
+
+  return (parentnodedata->len1 != prevlen1) || (parentnodedata->len2 != prevlen2);
+}
+
+
+
+NA_HDEF NABool naSearchBufferNode(void* token, NAPtr data, NAInt* nextindx){
+  NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
+  NABufferTreeNodeData* nodedata = (NABufferTreeNodeData*)naGetPtrMutable(&data);
+  
+  if((searchtoken->searchoffset < searchtoken->curoffset) || (searchtoken->searchoffset >= searchtoken->curoffset + nodedata->len1 + nodedata->len2)){
+    *nextindx = -1;
+  }else{
+    if(searchtoken->searchoffset < searchtoken->curoffset + nodedata->len1){
+      *nextindx = 0;
+    }else{
+      *nextindx = 1;
+    }
+  }
+  return NA_TRUE;
+}
+
+
+
+NA_HDEF NA_HDEF NABool naSearchBufferLeaf(void* token, NAPtr data, NABool* matchfound){
+  NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
+  NABufferPart* leafdata = (NABufferPart*)naGetPtrMutable(&data);
+
+  if((searchtoken->searchoffset >= leafdata->sourceoffset) && (searchtoken->searchoffset < leafdata->sourceoffset + leafdata->bytesize)){
+    *matchfound = NA_TRUE;
+  }else{
+    *matchfound = NA_FALSE;
+  }
+  return NA_FALSE;
+}
+
+
+
 NA_HDEF void naInitBufferStruct(NABuffer* buffer){
   buffer->flags = 0;
   buffer->range = naMakeRangeiWithStartAndEnd(0, 0);
   NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_NOKEY | NA_TREE_BALANCE_AVL);
+  naSetTreeConfigurationNodeCallbacks(config, naConstructBufferTreeNode, naDestructBufferTreeNode, naUpdateBufferTreeNode);
   naSetTreeConfigurationLeafCallbacks(config, NA_NULL, naDestructBufferTreeLeaf);
+  naSetTreeConfigurationTokenCallbacks(config, naSearchBufferNode, naSearchBufferLeaf);
   naInitTree(&(buffer->parts), config);
   #ifndef NDEBUG
     buffer->itercount = 0;

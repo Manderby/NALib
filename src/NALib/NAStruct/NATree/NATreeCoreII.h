@@ -15,9 +15,12 @@
 
 // Prototypes
 NA_HAPI  NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABool* matchfound, NABool usebubble);
+NA_HAPI  NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NABool* matchfound);
 NA_HAPI  NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info);
-NA_HAPI void naAddTreeLeafAtLeaf(NATree* tree, NATreeLeaf* leaf, NATreeLeaf* newleaf, NATreeLeafSplitOrder splitOrder);
+NA_HAPI  NATreeLeaf* naAddTreeContentAtLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 NA_HAPI  NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace);
+NA_HAPI  void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childindx);
+NA_HAPI  NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node);
 NA_HIAPI NABool naIsTreeRootLeaf(const NATree* tree);
 
 
@@ -71,13 +74,25 @@ NA_IDEF void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NA
 
 
 
-NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NATreeNodeConstructor nodeconstructor, NATreeNodeDestructor nodedestructor){
+NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NATreeNodeConstructor nodeconstructor, NATreeNodeDestructor nodedestructor, NATreeNodeChildUpdater nodeChildUpdater){
   #ifndef NDEBUG
     if(config->flags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
       naError("naSetTreeConfigurationNodeCallbacks", "Configuration already used in a tree. Mayor problems may occur in the future");
   #endif
   config->nodeConstructor = nodeconstructor;
   config->nodeDestructor = nodedestructor;
+  config->nodeChildUpdater = nodeChildUpdater;
+}
+
+
+
+NA_IDEF void naSetTreeConfigurationTokenCallbacks(NATreeConfiguration* config, NATreeNodeTokenSearcher nodeSearcher, NATreeLeafTokenSearcher leafSearcher){
+  #ifndef NDEBUG
+    if(config->flags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
+      naError("naSetTreeConfigurationTokenCallbacks", "Configuration already used in a tree. Mayor problems may occur in the future");
+  #endif
+  config->nodeTokenSearcher = nodeSearcher;
+  config->leafTokenSearcher = leafSearcher;
 }
 
 
@@ -231,6 +246,14 @@ NA_IDEF void* naGetTreeLastMutable(const NATree* tree){
 }
 
 
+
+NA_IDEF void naUpdateTree(NATree* tree){
+  if(tree->root && !naIsTreeRootLeaf(tree)){
+    naUpdateTreeNodeCapturing(tree, (NATreeNode*)tree->root);
+  }
+}
+
+
 // /////////////////////////////////////
 // Iterator
 // /////////////////////////////////////
@@ -361,6 +384,19 @@ NA_IDEF NABool naLocateTreeIterator(NATreeIterator* iter, NATreeIterator* srcite
 
 
 
+NA_IAPI NABool naLocateTreeToken(NATreeIterator* iter, void* token){
+  NABool matchfound;
+  NATreeLeaf* leaf = naLocateTreeTokenLeaf(iter, token, &matchfound);
+  
+  if(leaf && matchfound){
+    naSetTreeIteratorCurLeaf(iter, leaf);
+  }else{
+    naSetTreeIteratorCurLeaf(iter, NA_NULL);
+  }
+  return matchfound;
+}
+
+
 
 NA_IDEF const void* naGetTreeCurKey(NATreeIterator* iter){
   const NATree* tree;
@@ -460,7 +496,7 @@ NA_IDEF NABool naIsTreeAtInitial(NATreeIterator* iter){
 
 
 
-NA_IDEF NABool naAddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafSplitOrder splitOrder, NABool movetonew){
+NA_IDEF NABool naAddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafInsertOrder insertOrder, NABool movetonew){
   NATree* tree = (NATree*)naGetPtrMutable(&(iter->tree));
   #ifndef NDEBUG
     if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
@@ -468,41 +504,45 @@ NA_IDEF NABool naAddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafS
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("naAddTreeContent", "This iterator has been cleared. You need to make it anew.");
   #endif
-  NATreeLeaf* newleaf = tree->config->leafCoreConstructor(tree, NA_NULL, content);
   if(!iter->leaf && tree->root){
     // There is a root but the iterator is not at a leaf. We need to find the
     // correct leaf.
-    switch(splitOrder){
-    case NA_TREE_LEAF_SPLIT_KEY:
+    switch(insertOrder){
+    case NA_TREE_LEAF_INSERT_ORDER_KEY:
       #ifndef NDEBUG
         naError("naAddTreeContent", "This should not happen.");
       #endif
       break;
-    case NA_TREE_LEAF_SPLIT_NEXT:
+    case NA_TREE_LEAF_INSERT_ORDER_NEXT:
       naIterateTree(iter);
-      splitOrder = NA_TREE_LEAF_SPLIT_PREV;
+      insertOrder = NA_TREE_LEAF_INSERT_ORDER_PREV;
       break;
-    case NA_TREE_LEAF_SPLIT_PREV:
+    case NA_TREE_LEAF_INSERT_ORDER_PREV:
       naIterateTreeBack(iter);
-      splitOrder = NA_TREE_LEAF_SPLIT_NEXT;
+      insertOrder = NA_TREE_LEAF_INSERT_ORDER_NEXT;
+      break;
+    case NA_TREE_LEAF_INSERT_ORDER_REPLACE:
+      #ifndef NDEBUG
+        naError("naAddTreeContent", "This case should not occur");
+      #endif
       break;
     }
   }
-  naAddTreeLeafAtLeaf(tree, iter->leaf, newleaf, splitOrder);
-  if(movetonew){naSetTreeIteratorCurLeaf(iter, newleaf);}
+  NATreeLeaf* contentleaf = naAddTreeContentAtLeaf(tree, iter->leaf, NA_NULL, content, insertOrder);
+  if(movetonew){naSetTreeIteratorCurLeaf(iter, contentleaf);}
   return NA_TRUE;
 }
 NA_IDEF NABool naAddTreePrevConst(NATreeIterator* iter, const void* content, NABool movetonew){
-  return naAddTreeContent(iter, naMakePtrWithDataConst(content), NA_TREE_LEAF_SPLIT_PREV, movetonew);
+  return naAddTreeContent(iter, naMakePtrWithDataConst(content), NA_TREE_LEAF_INSERT_ORDER_PREV, movetonew);
 }
 NA_IDEF NABool naAddTreePrevMutable(NATreeIterator* iter, void* content, NABool movetonew){
-  return naAddTreeContent(iter, naMakePtrWithDataMutable(content), NA_TREE_LEAF_SPLIT_PREV, movetonew);
+  return naAddTreeContent(iter, naMakePtrWithDataMutable(content), NA_TREE_LEAF_INSERT_ORDER_PREV, movetonew);
 }
 NA_IDEF NABool naAddTreeNextConst(NATreeIterator* iter, const void* content, NABool movetonew){
-  return naAddTreeContent(iter, naMakePtrWithDataConst(content), NA_TREE_LEAF_SPLIT_NEXT, movetonew);
+  return naAddTreeContent(iter, naMakePtrWithDataConst(content), NA_TREE_LEAF_INSERT_ORDER_NEXT, movetonew);
 }
 NA_IDEF NABool naAddTreeNextMutable(NATreeIterator* iter, void* content, NABool movetonew){
-  return naAddTreeContent(iter, naMakePtrWithDataMutable(content), NA_TREE_LEAF_SPLIT_NEXT, movetonew);
+  return naAddTreeContent(iter, naMakePtrWithDataMutable(content), NA_TREE_LEAF_INSERT_ORDER_NEXT, movetonew);
 }
 
 
@@ -517,7 +557,8 @@ NA_IDEF void naRemoveTreeCur(NATreeIterator* iter, NABool advance){
   NATree* tree = (NATree*)naGetPtrMutable(&(iter->tree));
   NATreeLeaf* curleaf = iter->leaf;
   if(advance){naIterateTree(iter);}else{naIterateTreeBack(iter);}
-  tree->config->leafRemover(tree, curleaf);
+  NATreeNode* newparent = tree->config->leafRemover(tree, curleaf);
+  naUpdateTreeNodeBubbling(tree, newparent, -1);
 }
 
 

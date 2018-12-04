@@ -50,11 +50,11 @@ NA_HAPI NATreeLeaf* naLocateCaptureBinary(const NATree* tree, NATreeNode* node, 
 NA_HAPI NAInt naGetChildIndexBinary(NATreeNode* parent, NATreeBaseNode* child);
 NA_HAPI NAInt naGetChildKeyIndexBinary(const NATree* tree, NATreeNode* parent, const void* key);
 NA_HAPI NATreeBaseNode* naGetChildBinary(NATreeNode* parent, NAInt childindx);
-NA_HAPI void naRemoveLeafBinary(NATree* tree, NATreeLeaf* leaf);
-NA_HAPI void naReplaceLeafBinary(NATree* tree, NATreeLeaf* leaf, NAPtr data);
-NA_HAPI void naSplitLeafBinary(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf, NATreeLeafSplitOrder splitOrder);
+NA_HAPI NATreeNode* naRemoveLeafBinary(NATree* tree, NATreeLeaf* leaf);
+NA_HAPI NATreeLeaf* naInsertLeafBinary(NATree* tree, NATreeLeaf* existingleaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 NA_HAPI const void* naGetLeafKeyBinary(NATreeLeaf* leaf);
 NA_HAPI NAPtr* naGetLeafDataBinary(NATreeLeaf* leaf);
+NA_HDEF NAPtr* naGetNodeDataBinary(NATreeNode* node);
 
 NA_HAPI void naInitNodeAVL(NATreeBinaryNode* node);
 NA_HAPI void naGrowAVL(NATree* tree, NATreeBinaryNode* node, NAInt childindx);

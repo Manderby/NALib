@@ -116,21 +116,66 @@ NA_HDEF NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABo
 
 
 
-NA_HDEF void naAddTreeLeafAtLeaf(NATree* tree, NATreeLeaf* leaf, NATreeLeaf* newleaf, NATreeLeafSplitOrder splitOrder){
+NA_HDEF NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NABool* matchfound){
+  const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
+  #ifndef NDEBUG
+    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+      naError("naLocateTreeTokenLeaf", "This iterator has been cleared. You need to make it anew.");
+    if(!tree->config->nodeTokenSearcher)
+      naError("naLocateTreeTokenLeaf", "Tree configuration is missing a node token searcher.");
+    if(!tree->config->leafTokenSearcher)
+      naError("naLocateTreeTokenLeaf", "Tree configuration is missing a leaf token searcher.");
+  #endif
+  if(naIsTreeEmpty(tree)){
+    naSetTreeIteratorCurLeaf(iter, NA_NULL);
+    return NA_FALSE;
+  }
+  
+  NATreeBaseNode* basenode = (NATreeBaseNode*)iter->leaf;
+  while(NA_TRUE){
+    NAInt nextindx;
+    if(!basenode){basenode = tree->root;}
+    if(naIsBaseNodeLeaf(tree, basenode)){
+      NAPtr* data = tree->config->leafDataGetter((NATreeLeaf*)basenode);
+      NABool continuesearch = tree->config->leafTokenSearcher(token, *data, matchfound);
+      if(!continuesearch){return (NATreeLeaf*)basenode;}
+      nextindx = -1;
+    }else{
+      NAPtr* data = tree->config->nodeDataGetter((NATreeNode*)basenode);
+      NABool continuesearch = tree->config->nodeTokenSearcher(token, *data, &nextindx);
+      if(!continuesearch){return NA_NULL;}
+    }
+    if(nextindx == -1){
+      basenode = (NATreeBaseNode*)(basenode->parent);
+    }else{
+      basenode = tree->config->childGetter((NATreeNode*)basenode, nextindx);
+    }
+  }
+}
+
+
+
+// Every Add resulting in a change in the tree must go through this function.
+NA_HDEF NATreeLeaf* naAddTreeContentAtLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
+  NATreeLeaf* contentleaf;
   if(leaf){
     // We need to create a node holding both the old leaf and the new one.
-    tree->config->leafSplitter(tree, leaf, newleaf, splitOrder);
+    contentleaf = tree->config->leafInserter(tree, leaf, key, content, insertOrder);
+    NATreeNode* parent = ((NATreeBaseNode*)contentleaf)->parent;
+    naUpdateTreeNodeBubbling(tree, parent, tree->config->childIndexGetter(parent, (NATreeBaseNode*)contentleaf));
   }else{
     #ifndef NDEBUG
       if(tree->root)
-        naError("naAddTreeLeafAtLeaf", "leaf is null but there is a root");
+        naError("naAddTreeContentAtLeaf", "leaf is null but there is a root");
     #endif
     // There is no leaf to add to, meaning there was no root. Therefore, we
     // create a first leaf.
-    tree->root = (NATreeBaseNode*)newleaf;
-    ((NATreeBaseNode*)newleaf)->parent = NA_NULL;
+    contentleaf = tree->config->leafCoreConstructor(tree, key, content);
+    tree->root = (NATreeBaseNode*)contentleaf;
+    ((NATreeBaseNode*)contentleaf)->parent = NA_NULL;
     naMarkTreeRootLeaf(tree, NA_TRUE);
   }
+  return contentleaf;
 }
 
 
@@ -145,24 +190,78 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
   // from it. Even worse, it performs mostly worse.
   NATreeLeaf* leaf = naLocateTreeLeaf(iter, key, &matchfound, NA_FALSE);
   NATree* tree = (NATree*)naGetPtrMutable(&(iter->tree));
-  NABool newcontentcreated = NA_TRUE;
 
-  if(matchfound){
-    if(replace){
-      // We need to replace this node
-      tree->config->leafReplacer(tree, leaf, content);
-    }else{
-      // We do not create anything new.
-      newcontentcreated = NA_FALSE;
-    }
-    naSetTreeIteratorCurLeaf(iter, leaf);
-  }else{
-    NATreeLeaf* newleaf = tree->config->leafCoreConstructor(tree, key, content);
-    naAddTreeLeafAtLeaf(tree, leaf, newleaf, NA_TREE_LEAF_SPLIT_KEY);
-    naSetTreeIteratorCurLeaf(iter, newleaf);
-  }
-  return newcontentcreated;
+  if(matchfound && !replace){return NA_FALSE;}
+
+  NATreeLeafInsertOrder insertOrder = matchfound ? NA_TREE_LEAF_INSERT_ORDER_REPLACE : NA_TREE_LEAF_INSERT_ORDER_KEY;
+  NATreeLeaf* contentleaf = naAddTreeContentAtLeaf(tree, leaf, key, content, insertOrder);
+  naSetTreeIteratorCurLeaf(iter, contentleaf);
+  return NA_TRUE;
 }
+
+
+
+NA_HDEF void naFillTreeNodeChildData(NATree* tree, NAPtr childdata[NA_TREE_NODE_MAX_CHILDS], NATreeNode* node){
+  for(NAInt i=0; i<tree->config->childpernode; i++){
+    NATreeBaseNode* child = tree->config->childGetter(node, i);
+    if(naIsNodeChildLeaf(node, i)){
+      childdata[i] = *(tree->config->leafDataGetter((NATreeLeaf*)child));
+    }else{
+      childdata[i] = *(tree->config->nodeDataGetter((NATreeNode*)child));
+    }
+  }
+}
+
+
+
+// Expects the parent node of a child which has changed. The segment indicates
+// which segment caused the trouble. If -1 is given, there is no particular
+// node.
+NA_HDEF void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childindx){
+  NABool bubble = NA_TRUE;
+  if(parent == NA_NULL){return;}
+
+  // We call the update callback.
+  if(tree->config->nodeChildUpdater){
+    NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
+    naFillTreeNodeChildData(tree, childdata, parent);
+    bubble = tree->config->nodeChildUpdater(*(tree->config->nodeDataGetter(parent)), childdata, childindx, parent->flags & NA_TREE_CHILDS_MASK);
+  }
+
+  // Then we propagate the message towards the root if requested.
+  if(bubble && ((NATreeBaseNode*)parent)->parent){
+    naUpdateTreeNodeBubbling(tree, ((NATreeBaseNode*)parent)->parent, tree->config->childIndexGetter(((NATreeBaseNode*)parent)->parent, (NATreeBaseNode*)parent));
+  }
+}
+
+
+
+
+// Propagates a capturing update event from the root to the leafes.
+// All leaf nodes will be called with the childchanged callback with -1
+// denoting all leafes shall be updated. These callbacks can send back a
+// bubbling request which after capturing all leafes will be propagated
+// upwards again so that every node in the path receives a childchanged
+// message which again can define if the message shall be bubbled even
+// further.
+NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
+  NABool bubble = NA_FALSE;
+
+  // this node stores subnodes
+  for(NAInt i=0; i<tree->config->childpernode; i++){
+    if(!naIsNodeChildLeaf(node, i)){
+      bubble |= naUpdateTreeNodeCapturing(tree, (NATreeNode*)tree->config->childGetter(node, i));
+    }
+  }
+  if(tree->config->nodeChildUpdater){
+    NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
+    naFillTreeNodeChildData(tree, childdata, node);
+    bubble |= tree->config->nodeChildUpdater(*(tree->config->nodeDataGetter(node)), childdata, -1, node->flags & NA_TREE_CHILDS_MASK);
+  }
+
+  return bubble;
+}
+
 
 
 

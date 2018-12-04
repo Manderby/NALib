@@ -50,10 +50,10 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   config->childKeyIndexGetter     = naGetChildKeyIndexBinary;
   config->childGetter             = naGetChildBinary;
   config->leafRemover             = naRemoveLeafBinary;
-  config->leafReplacer            = naReplaceLeafBinary;
-  config->leafSplitter            = naSplitLeafBinary;
+  config->leafInserter            = naInsertLeafBinary;
   config->leafKeyGetter           = naGetLeafKeyBinary;
   config->leafDataGetter          = naGetLeafDataBinary;
+  config->nodeDataGetter          = naGetNodeDataBinary;
 
   return config;
 }

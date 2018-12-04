@@ -102,6 +102,20 @@ NA_DEF void naClearBufferIterator(NABufferIterator* iter){
 
 
 
+NA_DEF void naLocateBuffer(NABufferIterator* iter, NAInt offset){
+  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+  NABufferSearchToken token;
+  token.searchoffset = offset;
+  token.curoffset = buffer->range.origin;
+  naResetTreeIterator(&(iter->partiter));
+  NABool found = naLocateTreeToken(&(iter->partiter), &token);
+  if(found){
+    iter->partoffset = token.searchoffset - token.curoffset;
+  }
+}
+
+
+
 NA_DEF NAInt naTellBuffer(const NABufferIterator* iter){
   NA_UNUSED(iter);
 //  #ifndef NDEBUG

@@ -10,6 +10,7 @@
 typedef struct NABufferPart NABufferPart;
 typedef struct NABufferSourcePart NABufferSourcePart;
 typedef struct NAMemoryBlock NAMemoryBlock;
+typedef struct NABufferSearchToken NABufferSearchToken;
 
 
 
@@ -72,6 +73,10 @@ struct NABuffer{
   #endif
 };
 
+struct NABufferSearchToken{
+  NAInt searchoffset;
+  NAInt curoffset;
+};
 
 
 

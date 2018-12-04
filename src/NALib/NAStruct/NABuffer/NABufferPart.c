@@ -265,7 +265,12 @@ NA_HDEF NAInt naPrepareBufferPart(NABufferIterator* iter, NAInt bytecount, NABoo
       // We try to prepare the buffer source. The following function returns
       // a buffer part which contains at least the first desired byte.
       NABufferPart* newpart = naPrepareBufferSource(part->source, naMakeRangei(part->sourceoffset + iter->partoffset, bytecount));
-      naSplitBufferSparsePart(iter, newpart->blockoffset, newpart->blockoffset + newpart->bytesize);
+      NAInt sourceshift = part->sourceoffset - newpart->sourceoffset;
+      #ifndef NDEBUG
+        if(sourceshift < 0)
+          naError("naPrepareBufferPart", "Source shift is negative");
+      #endif
+      naSplitBufferSparsePart(iter, -newpart->sourceoffset, bytecount);
       naRemoveTreeCur(&(iter->partiter), NA_FALSE);
       
       // Test if the previous block is a direct predecessor of the new block.

@@ -261,14 +261,15 @@ NA_HDEF NATreeBaseNode* naGetChildBinary(NATreeNode* parent, NAInt childindx){
 
 
 
-NA_HDEF void naRemoveLeafBinary(NATree* tree, NATreeLeaf* leaf){
+NA_HDEF NATreeNode* naRemoveLeafBinary(NATree* tree, NATreeLeaf* leaf){
   NATreeNode* parent = ((NATreeBaseNode*)leaf)->parent;
+  NATreeNode* grandparent = NA_NULL;
   if(parent){
     NAInt leafindx = naGetChildIndexBinary(parent, (NATreeBaseNode*)leaf);
     NATreeBaseNode* sibling = ((NATreeBinaryNode*)parent)->childs[1 - leafindx];
     NABool issiblingleaf = naIsNodeChildLeaf(parent, 1 - leafindx);
 
-    NATreeNode* grandparent = ((NATreeBaseNode*)parent)->parent;
+    grandparent = ((NATreeBaseNode*)parent)->parent;
     if(grandparent){
       NAInt parentindx = naGetChildIndexBinary(grandparent, (NATreeBaseNode*)parent);
       ((NATreeBinaryNode*)grandparent)->childs[parentindx] = sibling;
@@ -286,27 +287,29 @@ NA_HDEF void naRemoveLeafBinary(NATree* tree, NATreeLeaf* leaf){
     tree->root = NA_NULL;
   }
   naDestructTreeLeafBinary(tree, leaf);
+  return grandparent;
 }
 
 
 
-NA_HDEF void naReplaceLeafBinary(NATree* tree, NATreeLeaf* leaf, NAPtr data){
-  NATreeBinaryLeaf* binleaf = (NATreeBinaryLeaf*)leaf;
-  naDestructLeafData(tree, binleaf->data);
-  binleaf->data = naConstructLeafData(tree, &(binleaf->key), data);
-}
-
-
-
-NA_HDEF void naSplitLeafBinary(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf, NATreeLeafSplitOrder splitOrder){
+NA_HDEF NATreeLeaf* naInsertLeafBinary(NATree* tree, NATreeLeaf* existingleaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
   NATreeLeaf* left;
   NATreeLeaf* right;
 
-  switch(splitOrder){
-  case NA_TREE_LEAF_SPLIT_KEY:
+  if(insertOrder == NA_TREE_LEAF_INSERT_ORDER_REPLACE){
+    NATreeBinaryLeaf* binleaf = (NATreeBinaryLeaf*)existingleaf;
+    naDestructLeafData(tree, binleaf->data);
+    binleaf->data = naConstructLeafData(tree, &(binleaf->key), content);
+    return existingleaf;
+  }
+
+  NATreeLeaf* newleaf = tree->config->leafCoreConstructor(tree, key, content);
+
+  switch(insertOrder){
+  case NA_TREE_LEAF_INSERT_ORDER_KEY:
     #ifndef NDEBUG
       if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
-        naError("naSplitLeafBinary", "tree is configured with no key");
+        naError("naInsertLeafBinary", "tree is configured with no key");
     #endif
     if(tree->config->keyIndexGetter(&(((NATreeBinaryLeaf*)existingleaf)->key), &(((NATreeBinaryLeaf*)newleaf)->key)) == 1){
       left = existingleaf;
@@ -316,20 +319,29 @@ NA_HDEF void naSplitLeafBinary(NATree* tree, NATreeLeaf* existingleaf, NATreeLea
       right = existingleaf;
     }
     break;
-  case NA_TREE_LEAF_SPLIT_PREV:
+  case NA_TREE_LEAF_INSERT_ORDER_PREV:
     #ifndef NDEBUG
       if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
-        naError("naSplitLeafBinary", "tree is configured with key");
+        naError("naInsertLeafBinary", "tree is configured with key");
     #endif
     left = newleaf;
     right = existingleaf;
-  case NA_TREE_LEAF_SPLIT_NEXT:
+    break;
+  case NA_TREE_LEAF_INSERT_ORDER_NEXT:
     #ifndef NDEBUG
       if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
-        naError("naSplitLeafBinary", "tree is configured with key");
+        naError("naInsertLeafBinary", "tree is configured with key");
     #endif
     left = existingleaf;
     right = newleaf;
+    break;
+  case NA_TREE_LEAF_INSERT_ORDER_REPLACE:
+    #ifndef NDEBUG
+      naError("naInsertLeafBinary", "This case should not happen");
+    #endif
+    left = existingleaf;
+    right = newleaf;
+    break;
   }
 
   NATreeNode* existingparent = ((NATreeBaseNode*)existingleaf)->parent;
@@ -345,6 +357,8 @@ NA_HDEF void naSplitLeafBinary(NATree* tree, NATreeLeaf* existingleaf, NATreeLea
     tree->root = (NATreeBaseNode*)newparent;
     naMarkTreeRootLeaf(tree, NA_FALSE);
   }
+  
+  return newleaf;
 }
 
 
@@ -359,6 +373,13 @@ NA_HDEF const void* naGetLeafKeyBinary(NATreeLeaf* leaf){
 NA_HDEF NAPtr* naGetLeafDataBinary(NATreeLeaf* leaf){
   NATreeBinaryLeaf* binleaf = (NATreeBinaryLeaf*)(leaf);
   return &(binleaf->data);
+}
+
+
+
+NA_HDEF NAPtr* naGetNodeDataBinary(NATreeNode* node){
+  NATreeBinaryNode* binnode = (NATreeBinaryNode*)(node);
+  return &(binnode->data);
 }
 
 
