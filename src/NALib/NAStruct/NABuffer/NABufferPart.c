@@ -280,26 +280,33 @@ NA_HDEF NAInt naPrepareBufferPart(NABufferIterator* iter, NAInt bytecount, NABoo
       // that buffer source part. 
       NAInt blockoffset;
       NABufferPart* sourcepart = naPrepareBufferSource(part->source, part->sourceoffset + iter->partoffset, &blockoffset);
-      naSplitBufferSparsePart(iter, iter->partoffset, naMini(bytecount, sourcepart->bytesize - blockoffset));
-      naRemoveTreeCur(&(iter->partiter), NA_FALSE);
-      
-      // Test if the previous block is a direct predecessor of the new block.
-      if(!naIsTreeAtInitial(&(iter->partiter))){
-        NABufferPart* prevpart = naGetTreeCurMutable(&(iter->partiter));
-        if((prevpart->memblock == sourcepart->memblock) && (prevpart->blockoffset + prevpart->bytesize == sourcepart->blockoffset)){
-          // We combine the new block with the previous one and use that one
-          // instead.
-          prevpart->bytesize += sourcepart->bytesize;
-          iter->partoffset += prevpart->bytesize;
-          naDelete(sourcepart);
-        }else{
-          // The new block is independent of the previous block.
-          naAddTreeNextMutable(&(iter->partiter), sourcepart, NA_TRUE);
-        }
-      }else{
-        // The new block is the first block.
-        naAddTreeNextMutable(&(iter->partiter), sourcepart, NA_TRUE);
+      NAInt normedlength = sourcepart->bytesize - blockoffset;
+      if(part->bytesize - part->blockoffset < normedlength){
+        normedlength = part->bytesize - part->blockoffset;
       }
+      
+      naSplitBufferSparsePart(iter, iter->partoffset, normedlength);
+      part->blockoffset += blockoffset;
+      part->memblock = naRetain(sourcepart->memblock);
+//      naRemoveTreeCur(&(iter->partiter), NA_FALSE);
+//      
+//      // Test if the previous block is a direct predecessor of the new block.
+//      if(!naIsTreeAtInitial(&(iter->partiter))){
+//        NABufferPart* prevpart = naGetTreeCurMutable(&(iter->partiter));
+//        if((prevpart->memblock == sourcepart->memblock) && (prevpart->blockoffset + prevpart->bytesize == sourcepart->blockoffset)){
+//          // We combine the new block with the previous one and use that one
+//          // instead.
+//          prevpart->bytesize += sourcepart->bytesize;
+//          iter->partoffset += prevpart->bytesize;
+//          naDelete(sourcepart);
+//        }else{
+//          // The new block is independent of the previous block.
+//          naAddTreeNextMutable(&(iter->partiter), sourcepart, NA_TRUE);
+//        }
+//      }else{
+//        // The new block is the first block.
+//        naAddTreeNextMutable(&(iter->partiter), sourcepart, NA_TRUE);
+//      }
     }
   
   }else{

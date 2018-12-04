@@ -78,6 +78,11 @@ struct NABufferSearchToken{
   NAInt curoffset;
 };
 
+typedef struct NABufferTreeNodeData NABufferTreeNodeData;
+struct NABufferTreeNodeData{
+  NAInt len1;
+  NAInt len2;
+};
 
 
 // NAMemoryBlock

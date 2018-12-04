@@ -116,16 +116,29 @@ NA_DEF void naLocateBuffer(NABufferIterator* iter, NAInt offset){
 
 
 
-NA_DEF NAInt naTellBuffer(const NABufferIterator* iter){
-  NA_UNUSED(iter);
-//  #ifndef NDEBUG
-//    if(iter->curbit != 0)
-//      naError("naTellBuffer", "Buffer bitcount is not null.");
-//    if(naIsTreeAtInitial(&(iter->partiter)))
-//      naError("naTellBuffer", "Iterator is at initial position.");
-//  #endif
-//  return iter->curoffset;
-  return 0;
+NA_HDEF NABool naAccumulateBufferLocation(void* token, NAPtr nodedata, NAInt* childindx){
+  NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
+  NABufferTreeNodeData* buffernodedata = (NABufferTreeNodeData*)naGetPtrConst(&nodedata);
+  if(*childindx == 1){
+    searchtoken->curoffset += buffernodedata->len1;
+  }
+  *childindx = -1;
+  return NA_TRUE;
+}
+
+
+NA_DEF NAInt naGetBufferLocation(const NABufferIterator* iter){
+  #ifndef NDEBUG
+    if(iter->curbit != 0)
+      naError("naGetBufferLocation", "Buffer bitcount is not null.");
+    if(naIsTreeAtInitial(&(iter->partiter)))
+      naError("naGetBufferLocation", "Iterator is at initial position.");
+  #endif
+  NABufferSearchToken token;
+  token.searchoffset = 0;
+  token.curoffset = 0;
+  naBubbleTreeToken(&(iter->partiter), &token, naAccumulateBufferLocation);
+  return iter->partoffset + token.curoffset;
 }
 
 

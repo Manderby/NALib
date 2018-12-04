@@ -398,6 +398,30 @@ NA_IAPI NABool naLocateTreeToken(NATreeIterator* iter, void* token){
 
 
 
+NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNodeTokenSearcher tokenSearcher){
+  const NATree* tree;
+  #ifndef NDEBUG
+    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+      naError("naBubbleTreeToken", "This iterator has been cleared. You need to make it anew.");
+    if(naIsTreeAtInitial(iter))
+      naError("naBubbleTreeToken", "This iterator is not at a leaf.");
+  #endif
+  tree = (const NATree*)naGetPtrConst(&(iter->tree));
+  NATreeBaseNode* basenode = (NATreeBaseNode*)iter->leaf;
+  NABool continueBubbling = NA_TRUE;
+  while(continueBubbling && basenode->parent){
+    NAInt childindx = tree->config->childIndexGetter(basenode->parent, basenode);
+    continueBubbling = tokenSearcher(token, *(tree->config->nodeDataGetter(basenode->parent)), &childindx);
+    if(childindx == -1){
+      basenode = (NATreeBaseNode*)(basenode->parent);
+    }else{
+      basenode = tree->config->childGetter((NATreeNode*)basenode, childindx);
+    }
+  }
+}
+
+
+
 NA_IDEF const void* naGetTreeCurKey(NATreeIterator* iter){
   const NATree* tree;
   #ifndef NDEBUG
@@ -478,7 +502,7 @@ NA_IDEF NABool naAddTreeKeyMutable(NATreeIterator* iter, const void* key, void* 
 
 
 
-NA_IDEF NABool naIsTreeAtInitial(NATreeIterator* iter){
+NA_IDEF NABool naIsTreeAtInitial(const NATreeIterator* iter){
   return (iter->leaf == NA_NULL);
 }
 

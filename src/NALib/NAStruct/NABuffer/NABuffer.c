@@ -24,14 +24,6 @@ void naDestructBufferTreeLeaf(NAPtr leafdata, NAPtr configdata){
 
 
 
-typedef struct NABufferTreeNodeData NABufferTreeNodeData;
-struct NABufferTreeNodeData{
-  NAInt len1;
-  NAInt len2;
-};
-
-
-
 NAPtr naConstructBufferTreeNode(const void* key, NAPtr configdata){
   NABufferTreeNodeData* nodedata = naAlloc(NABufferTreeNodeData);
   nodedata->len1 = 0;
@@ -218,7 +210,7 @@ NA_DEF NABuffer* naNewBufferExtraction(NABuffer* srcbuffer, NARangei range){
 
   NABufferSource* bufsource = naCreateBufferSource(NA_NULL, srcbuffer);
     buffer->enhancesource = naRetainBufferSource(bufsource);
-    buffer->enhancesourceoffset = 0;
+    buffer->enhancesourceoffset = -range.origin;
   naReleaseBufferSource(bufsource);
   
   // Add the const data to the list.

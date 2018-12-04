@@ -294,7 +294,7 @@ NA_API void naLocateBuffer(NABufferIterator* iter, NAInt offset);
 // Important: The offset parameter ist always expected to be forward-oriented.
 // If you want to seek to the last byte, you would need to write
 // naSeekBufferFromEnd(buffer, -1).
-NA_API NAInt  naTellBuffer          (const NABufferIterator* iter);
+NA_API NAInt  naGetBufferLocation   (const NABufferIterator* iter);
 NA_API void   naSeekBufferAbsolute  (NABufferIterator* iter, NAInt offset);
 NA_API void   naSeekBufferRelative  (NABufferIterator* iter, NAInt offset);
 NA_API void   naSeekBufferSource    (NABufferIterator* iter, NAInt offset);

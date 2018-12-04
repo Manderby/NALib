@@ -157,7 +157,6 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABufferIterator* iter){
   naReadBufferBytes(iter, chunk->typename, 4);
   if(chunk->length){
     chunk->data = naReadBufferBuffer(iter, chunk->length);
-    naSeekBufferRelative(iter, chunk->length);
   }else{
     chunk->data = naNewBuffer(NA_FALSE);
   }

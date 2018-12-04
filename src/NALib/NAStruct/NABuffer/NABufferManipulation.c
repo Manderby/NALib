@@ -174,43 +174,43 @@ NA_DEF NABuffer* naNewBufferWithStringBase64Decoded(const NAString* string){
 NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum){
   NA_UNUSED(buffer);
   NA_UNUSED(checksum);
-//  NAInt bytesize;
-//  NAInt curoffset;
-//  NAListIterator iter;
-//
-//  bytesize = buffer->range.length;
-//  if(bytesize){
-//    curoffset = buffer->range.origin;
-//    iter = naMakeListMutator(&(buffer->parts));
-//    naLocateListFirst(&iter);
-//
-//    while(bytesize){
-//      NABufferPart* curpart;
-//      NAInt remainingbytes;
-//      NAByte* src;
-//
-//      curpart = naGetListCurMutable(&iter);
-//      remainingbytes = naGetBufferPartEnd(curpart) - curoffset;
-//      src = naGetBufferPartDataPointerConst(curpart, curoffset);
-//
-//      #ifndef NDEBUG
-//        if(naIsBufferPartSparse(curpart))
-//          naError("naAccumulateBufferToChecksum", "Buffer contains sparse parts. Can not compute checksum");
-//      #endif
-//
-//      if(bytesize > remainingbytes){
-//        naAccumulateChecksum(checksum, src, remainingbytes);
-//        naIterateList(&iter);
-//        curoffset += remainingbytes;
-//        bytesize -= remainingbytes;
-//      }else{
-//        naAccumulateChecksum(checksum, src, bytesize);
-//        bytesize = 0;
-//      }
-//    }
-//
-//    naClearListIterator(&iter);
-//  }
+  NAInt bytesize;
+  NAInt curoffset;
+  NATreeIterator iter;
+
+  bytesize = buffer->range.length;
+  if(bytesize){
+    curoffset = buffer->range.origin;
+    iter = naMakeTreeMutator(&(buffer->parts));
+    naLocateTreeFirst(&iter);
+
+    while(bytesize){
+      NABufferPart* curpart;
+      NAInt remainingbytes;
+      const void* src;
+
+      curpart = naGetTreeCurMutable(&iter);
+      remainingbytes = curpart->bytesize;
+      src = naGetBufferPartDataPointerConst(curpart, curoffset);
+
+      #ifndef NDEBUG
+        if(naIsBufferPartSparse(curpart))
+          naError("naAccumulateBufferToChecksum", "Buffer contains sparse parts. Can not compute checksum");
+      #endif
+
+      if(bytesize > remainingbytes){
+        naAccumulateChecksum(checksum, src, remainingbytes);
+        naIterateTree(&iter);
+        curoffset += remainingbytes;
+        bytesize -= remainingbytes;
+      }else{
+        naAccumulateChecksum(checksum, src, bytesize);
+        bytesize = 0;
+      }
+    }
+
+    naClearTreeIterator(&iter);
+  }
   return;
 }
 

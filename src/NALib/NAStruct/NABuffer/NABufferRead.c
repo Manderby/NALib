@@ -475,7 +475,10 @@ NA_DEF void naPadBufferBits(NABufferIterator* iter){
 
 NA_DEF NABuffer* naReadBufferBuffer(NABufferIterator* iter, NAInt bytesize){
   NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
-  return naNewBufferExtraction(buffer, naMakeRangei(iter->partoffset, bytesize));
+  NAInt abspos = naGetBufferLocation(iter);
+  NABuffer* newbuffer = naNewBufferExtraction(buffer, naMakeRangei(iter->partoffset, bytesize));
+  naLocateBuffer(iter, abspos + bytesize);
+  return newbuffer;
 }
 
 
