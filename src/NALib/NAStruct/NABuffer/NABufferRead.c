@@ -28,68 +28,6 @@ NA_DEF NAByte naGetBufferByteAtIndex(const NABuffer* buffer, NAInt indx){
 
 
 
-NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance){
-  NAByte* dst = data;
-
-  #ifndef NDEBUG
-    if(!advance)
-      naError("naRetrieveBufferBytes", "Not Advance is not implemented yet.");
-    if(!data)
-      naError("naRetrieveBufferBytes", "data is Null pointer.");
-    if(iter->curbit != 0)
-      naError("naRetrieveBufferBytes", "Bit offset not 0.");
-  #endif
-
-  // We prepare the buffer for the whole range. There might be no parts or
-  // sparse parts.
-  naPrepareBuffer(iter, bytesize, NA_FALSE);
-  // After this function, all relevant parts should be present and filled with
-  // memory. The iterator should point to the buffer part containing offset.
-
-  // do as long as there is a bytesize remaining. Remember that the data may
-  // be split into different buffer parts.
-  while(bytesize){
-    NABufferPart* part;
-    NAInt possiblelength;
-
-    // The part pointed to by the iterator should be the one containing offset.
-    part = naGetTreeCurMutable(&(iter->partiter));
-
-    // Reaching this point, we are sure, the current part contains offset and
-    // is filled with memory.
-    #ifndef NDEBUG
-      if(!part)
-        naError("naRetrieveBufferBytes", "No more parts containing memory");
-      if(naIsBufferPartSparse(part))
-        naError("naRetrieveBufferBytes", "Cur part is sparse");
-    #endif
-
-    // We get the data pointer where we can read bytes.
-    const void* src = naGetBufferPartDataPointerConst(part, iter->partoffset);
-    // We detect, how many bytes actually can be read from the current part.
-    possiblelength = part->bytesize - iter->partoffset;
-
-    #ifndef NDEBUG
-      if(possiblelength <= 0)
-        naError("naRetrieveBufferBytes", "possible length invalid");
-    #endif
-
-    if(possiblelength > bytesize){
-      // If we can get out more bytes than needed, we copy all remaining bytes
-      // and stay on this part.
-      possiblelength = bytesize;
-      iter->partoffset += bytesize;
-    }else{
-      // We copy as many bytes as possible and advance to the next part.
-      naIterateTree(&(iter->partiter));
-      iter->partoffset = 0;
-    }
-    naCopyn(dst, src, possiblelength);
-    dst += possiblelength;
-    bytesize -= possiblelength;
-  }
-}
-
 
 
 // ////////////////////////////////////
@@ -476,8 +414,14 @@ NA_DEF void naPadBufferBits(NABufferIterator* iter){
 NA_DEF NABuffer* naReadBufferBuffer(NABufferIterator* iter, NAInt bytesize){
   NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
   NAInt abspos = naGetBufferLocation(iter);
-  NABuffer* newbuffer = naNewBufferExtraction(buffer, naMakeRangei(iter->partoffset, bytesize));
-  naLocateBuffer(iter, abspos + bytesize);
+  NABuffer* newbuffer = naNewBufferExtraction(buffer, naMakeRangei(abspos, bytesize));
+  NABool found = naLocateBuffer(iter, abspos + bytesize);
+  #ifndef NDEBUG
+    if(!found)
+      naError("naReadBufferBuffer", "Could not locate end of buffer extraction");
+  #else
+    NA_UNUSED(found);
+  #endif
   return newbuffer;
 }
 

@@ -41,7 +41,7 @@ void naDestructBufferTreeNode(NAPtr nodedata, NAPtr configdata){
 
 NABool naUpdateBufferTreeNode(NAPtr parentdata,  NAPtr* childdatas, NAInt childindx, NAInt childmask){
   NABufferTreeNodeData* parentnodedata = (NABufferTreeNodeData*)naGetPtrMutable(&parentdata);
-  
+
   NAInt prevlen1 = parentnodedata->len1;
   if(childmask & 0x01){
     NABufferPart* leafdata = (NABufferPart*)naGetPtrMutable(&(childdatas[0]));
@@ -68,13 +68,14 @@ NABool naUpdateBufferTreeNode(NAPtr parentdata,  NAPtr* childdatas, NAInt childi
 NA_HDEF NABool naSearchBufferNode(void* token, NAPtr data, NAInt* nextindx){
   NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
   NABufferTreeNodeData* nodedata = (NABufferTreeNodeData*)naGetPtrMutable(&data);
-  
+
   if((searchtoken->searchoffset < searchtoken->curoffset) || (searchtoken->searchoffset >= searchtoken->curoffset + nodedata->len1 + nodedata->len2)){
     *nextindx = -1;
   }else{
     if(searchtoken->searchoffset < searchtoken->curoffset + nodedata->len1){
       *nextindx = 0;
     }else{
+      searchtoken->curoffset += nodedata->len1;
       *nextindx = 1;
     }
   }
@@ -87,8 +88,8 @@ NA_HDEF NA_HDEF NABool naSearchBufferLeaf(void* token, NAPtr data, NABool* match
   NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
   NABufferPart* leafdata = (NABufferPart*)naGetPtrMutable(&data);
 
-  if((searchtoken->searchoffset >= leafdata->sourceoffset) && (searchtoken->searchoffset < leafdata->sourceoffset + leafdata->bytesize)){
-    *matchfound = NA_TRUE;
+  if((searchtoken->searchoffset >= searchtoken->curoffset) && (searchtoken->searchoffset < searchtoken->curoffset + leafdata->bytesize)){
+    *matchfound = !naIsBufferPartSparse(leafdata);
   }else{
     *matchfound = NA_FALSE;
   }
@@ -153,7 +154,7 @@ NA_HDEF NABuffer* naNewBufferMemorySourceBuffer(NABool secure){
 NA_DEF NABuffer* naNewBuffer(NABool securememory){
   NA_UNUSED(securememory);
   // todo: secure source
-  
+
   NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
 
@@ -212,7 +213,7 @@ NA_DEF NABuffer* naNewBufferExtraction(NABuffer* srcbuffer, NARangei range){
     buffer->enhancesource = naRetainBufferSource(bufsource);
     buffer->enhancesourceoffset = -range.origin;
   naReleaseBufferSource(bufsource);
-  
+
   // Add the const data to the list.
   NABufferPart* part = naNewBufferPartSparse(bufsource, absoluterange);
   naAddTreeFirstMutable(&(buffer->parts), part);
@@ -688,7 +689,13 @@ NA_DEF void naAppendBufferToBuffer(NABuffer* dstbuffer, const NABuffer* srcbuffe
 NA_DEF void naCacheBufferRange(NABuffer* buffer, NARangei range, NABool forcevolatile){
   if(range.length){
     NABufferIterator iter = naMakeBufferModifier(buffer);
-    // todo: move iterator to range.origin.
+    NABool found = naLocateBuffer(&iter, range.origin);
+    #ifndef NDEBUG
+      if(!found)
+        naError("naCacheBufferRange", "could not find range origin in buffer");
+    #else
+      NA_UNUSED(found);
+    #endif
     naPrepareBuffer(&iter, range.length, forcevolatile);
     naClearBufferIterator(&iter);
   }

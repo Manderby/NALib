@@ -387,7 +387,7 @@ NA_IDEF NABool naLocateTreeIterator(NATreeIterator* iter, NATreeIterator* srcite
 NA_IAPI NABool naLocateTreeToken(NATreeIterator* iter, void* token){
   NABool matchfound;
   NATreeLeaf* leaf = naLocateTreeTokenLeaf(iter, token, &matchfound);
-  
+
   if(leaf && matchfound){
     naSetTreeIteratorCurLeaf(iter, leaf);
   }else{

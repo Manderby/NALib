@@ -49,7 +49,7 @@ NA_HIDEF void naRotateLeftBinary(NATree* tree, NATreeBinaryNode* parent, NATreeB
   rightchild->childs[0] = (NATreeBaseNode*)parent;
   naMarkNodeChildLeaf((NATreeNode*)rightchild, 0, NA_FALSE);
   ((NATreeBaseNode*)rightchild)->parent = grandparent;
-  
+
   naUpdateTreeNodeBubbling(tree, (NATreeNode*)parent, -1);
 }
 

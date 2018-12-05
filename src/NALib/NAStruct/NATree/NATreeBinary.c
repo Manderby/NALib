@@ -357,7 +357,7 @@ NA_HDEF NATreeLeaf* naInsertLeafBinary(NATree* tree, NATreeLeaf* existingleaf, c
     tree->root = (NATreeBaseNode*)newparent;
     naMarkTreeRootLeaf(tree, NA_FALSE);
   }
-  
+
   return newleaf;
 }
 

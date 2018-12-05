@@ -175,12 +175,12 @@ NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum)
   NA_UNUSED(buffer);
   NA_UNUSED(checksum);
   NAInt bytesize;
-  NAInt curoffset;
+//  NAInt curoffset;
   NATreeIterator iter;
 
   bytesize = buffer->range.length;
   if(bytesize){
-    curoffset = buffer->range.origin;
+//    curoffset = buffer->range.origin;
     iter = naMakeTreeMutator(&(buffer->parts));
     naLocateTreeFirst(&iter);
 
@@ -191,7 +191,7 @@ NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum)
 
       curpart = naGetTreeCurMutable(&iter);
       remainingbytes = curpart->bytesize;
-      src = naGetBufferPartDataPointerConst(curpart, curoffset);
+      src = naGetBufferPartDataPointerConst(curpart, 0);
 
       #ifndef NDEBUG
         if(naIsBufferPartSparse(curpart))
@@ -201,7 +201,7 @@ NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum)
       if(bytesize > remainingbytes){
         naAccumulateChecksum(checksum, src, remainingbytes);
         naIterateTree(&iter);
-        curoffset += remainingbytes;
+//        curoffset += remainingbytes;
         bytesize -= remainingbytes;
       }else{
         naAccumulateChecksum(checksum, src, bytesize);

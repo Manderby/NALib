@@ -128,9 +128,10 @@ NA_HDEF NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NAB
   #endif
   if(naIsTreeEmpty(tree)){
     naSetTreeIteratorCurLeaf(iter, NA_NULL);
+    *matchfound = NA_FALSE;
     return NA_FALSE;
   }
-  
+
   NATreeBaseNode* basenode = (NATreeBaseNode*)iter->leaf;
   while(NA_TRUE){
     NAInt nextindx;

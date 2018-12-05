@@ -282,7 +282,7 @@ NA_API NABufferIterator naMakeBufferModifier(      NABuffer* buffer);
 
 NA_API void naClearBufferIterator(NABufferIterator* iter);
 
-NA_API void naLocateBuffer(NABufferIterator* iter, NAInt offset);
+NA_API NABool naLocateBuffer(NABufferIterator* iter, NAInt offset);
 
 // Returns or changes the current position within the buffer.
 // Absolute  searches relative to the zero-point of this buffer.
@@ -304,6 +304,7 @@ NA_API void   naSeekBufferFromEnd   (NABufferIterator* iter, NAInt offset);
 NA_API NABool naIterateBuffer(      NABufferIterator* iter, NAInt step);
 
 NA_API NABool naIsBufferAtInitial(  NABufferIterator* iter);
+NA_API uint8 naGetBufferCurBit(NABufferIterator* iter);
 
 
 

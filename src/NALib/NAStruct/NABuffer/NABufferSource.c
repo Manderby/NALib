@@ -10,11 +10,22 @@
 // //////////////////////////////////////
 
 
+struct NABufferSource{
+  NARefCount              refcount;
+  void*                   data;          // data sent to filler and destructor.
+  NAMutator               datadestructor;// Data destructor.
+  NABufferFiller          buffiller;     // Fill function filling memory.
+  NAUInt                  flags;         // Flags for the source
+  NARangei                limit;         // Source limit (used if flag set)
+  NABuffer*               buffer;        // The underlying buffer, if any.
+};
+
+
+
 
 // Flags for the buffer source:
 #define NA_BUFFER_SOURCE_RANGE_LIMITED    0x01
 #define NA_BUFFER_SOURCE_VOLATILE         0x02
-#define NA_BUFFER_SOURCE_HAS_UNDERLYING_BUFFER 0x04
 //#define NA_BUFFER_SOURCE_BUFFER           0x08
 #define NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE 0x80
 
@@ -29,8 +40,9 @@ NA_HDEF NABufferSource* naCreateBufferSource(NABufferFiller filler, NABuffer* bu
   source->flags = 0;
   source->limit = naMakeRangeiWithStartAndEnd(0, 0);
   if(buffer){
-    source->flags |= NA_BUFFER_SOURCE_HAS_UNDERLYING_BUFFER;
-    source->bufiter = naMakeBufferModifier(buffer);
+    source->buffer = naRetain(buffer);
+  }else{
+    source->buffer = NA_NULL;
   }
   return source;
 }
@@ -48,7 +60,7 @@ NA_HDEF NABufferSource* naRetainBufferSource(NABufferSource* source){
 
 NA_HDEF void naDeallocBufferSource(NABufferSource* source){
   if(source->datadestructor){source->datadestructor(source->data);}
-  naClearBufferIterator(&(source->bufiter));
+  naRelease(source->buffer);
   naFree(source);
 }
 
@@ -92,6 +104,21 @@ NA_DEF void naSetBufferSourceVolatile(NABufferSource* source){
   naSetFlagu(&(source->flags), NA_BUFFER_SOURCE_VOLATILE, NA_TRUE);
 }
 
+
+
+NA_HDEF NABool naHasBufferSourceUnderlyingBuffer(const NABufferSource* source){
+  return (source->buffer != NA_NULL);
+}
+
+
+
+NA_HDEF NABuffer* naGetBufferSourceUnderlyingBuffer(NABufferSource* source){
+  #ifndef NDEBUG
+    if(!naHasBufferSourceUnderlyingBuffer(source))
+      naError("naHasBufferSourceUnderlyingBuffer", "Source has no underlying buffer");
+  #endif
+  return source->buffer;
+}
 
 
 
@@ -166,36 +193,59 @@ NA_HDEF NARangei naGetBufferSourceLimit(NABufferSource* source){
 
 
 
-// This function prepares the given buffer source such that its buffer iterator
-// points to a position where at least 1 Byte is available as non-sparse memory.
-// The buffer part located at that position is returned.
-// sourceoffset is given in this source coordinates (can be negative).
-NA_HDEF NABufferPart* naPrepareBufferSource(NABufferSource* source, NAInt sourceoffset, NAInt* blockoffset){
-  NABufferPart* newpart;
-  if(source->flags & NA_BUFFER_SOURCE_HAS_UNDERLYING_BUFFER){
+// This function returns a memory block which contains the desired sourceoffset.
+// The sourceoffset parameter is given in source coordinates (can be negative).
+// The parameter blockoffset returns the offset in the returned memory block
+// which corresponds to the desired sourceoffset.
+NA_HDEF NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourceoffset, NAInt* blockoffset){
+  NABufferPart* preparedpart;
+  #ifndef NDEBUG
+    if(naIsBufferSourceLimited(source) && !naContainsRangeiOffset(source->limit, sourceoffset))
+      naError("naPrepareBufferSource", "offset is not in source limits");
+  #endif
+  
+  if(naHasBufferSourceUnderlyingBuffer(source)){
+    NABufferIterator bufiter = naMakeBufferModifier(source->buffer);
     // We recursively prepare the first byte of the underlying buffer.
-    naLocateBuffer(&(source->bufiter), sourceoffset);
-    naPrepareBuffer(&(source->bufiter), 1, NA_FALSE);
-    newpart = naGetTreeCurMutable(&(source->bufiter.partiter));
-    *blockoffset = source->bufiter.partoffset; 
+    NABool found = naLocateBuffer(&bufiter, sourceoffset);
+    #ifndef NDEBUG
+      if(!found)
+        naError("naPrepareBufferSource", "Did not found offset in source buffer");
+    #else
+      NA_UNUSED(found);
+    #endif
+    naPrepareBuffer(&bufiter, 1, NA_FALSE);
+    preparedpart = naGetTreeCurMutable(naGetBufferIteratorPartIterator(&bufiter));
+    *blockoffset = preparedpart->blockoffset + naGetBufferIteratorPartOffset(&bufiter);
+    naClearBufferIterator(&bufiter);
+
   }else{
-    // We have no underlying buffer. Create memory.
+    // We have no underlying buffer. We find out a suitable range to contain
+    // at least 1 byte at the desired offset.
     NAInt normedstart = naGetBufferPartNormedStart(sourceoffset);
     NAInt normedend = naGetBufferPartNormedEnd(sourceoffset + 1);
-    // todo what about the limits?
     NARangei normedrange = naMakeRangeiWithStartAndEnd(normedstart, normedend);
-    newpart = naNewBufferPartSparse(source, normedrange);
-    newpart->memblock = naNewMemoryBlock(newpart->bytesize);
-    if(source->buffiller){
-      source->buffiller(newpart->source->data, naGetPtrMutable(&(newpart->memblock->data)), normedrange);
+    if(naIsBufferSourceLimited(source)){
+      normedrange = naClampRangeiToRange(normedrange, source->limit);
+      #ifndef NDEBUG
+        if(!naContainsRangeiOffset(normedrange, sourceoffset))
+          naError("naPrepareBufferSource", "limited range can not contain desired offset");
+      #endif
     }
-    *blockoffset = sourceoffset - normedstart; 
+    // Now, we create a new sparse buffer and fill it with memory immediately.
+    preparedpart = naNewBufferPartSparse(source, normedrange);
+    preparedpart->memblock = naNewMemoryBlock(preparedpart->bytesize);
+    if(source->buffiller){
+      source->buffiller(preparedpart->source->data, naGetPtrMutable(&(preparedpart->memblock->data)), normedrange);
+    }
+    *blockoffset = sourceoffset - normedrange.origin;
+
   }
   #ifndef NDEBUG
-    if(naIsBufferPartSparse(newpart))
-      naError("naPrepareBufferSource", "part is sparse");
+    if(naIsBufferPartSparse(preparedpart))
+      naError("naPrepareBufferSource", "prepared part is sparse");
   #endif
-  return newpart;
+  return preparedpart->memblock;
 }
 
 

@@ -271,7 +271,7 @@ NA_IAPI NABool naLocateTreeIterator(NATreeIterator* iter,
 NA_IAPI NABool naLocateTreeToken   (NATreeIterator* iter,
                                               void* token);
 NA_IAPI void naBubbleTreeToken(const NATreeIterator* iter,
-                                               void* token, 
+                                               void* token,
                              NATreeNodeTokenSearcher tokenSearcher);
 
 // /////////////////////////////////
