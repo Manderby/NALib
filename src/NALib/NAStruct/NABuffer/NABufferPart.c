@@ -186,7 +186,7 @@ NA_HDEF NABufferPart* naNewBufferPartSparse(NABufferSource* source, NARangei ran
   #endif
   NABufferPart* part = naNew(NABufferPart);
   if(source){
-    part->source = naRetainBufferSource(source);
+    part->source = naRetain(source);
     part->sourceoffset = range.origin;
     if(naHasBufferSourceUnderlyingBuffer(source)){
       NABuffer* sourcebuffer = naGetBufferSourceUnderlyingBuffer(source);
@@ -307,7 +307,7 @@ NA_HDEF void naFillBufferPartConstAccess(NABufferPart* part, NAInt blockoffset, 
 
 // The destructor method which will automatically be called by naRelease.
 NA_HDEF void naDestructBufferPart(NABufferPart* part){
-  if(part->source){naReleaseBufferSource(part->source);}
+  if(part->source){naRelease(part->source);}
   if(part->memblock){naRelease(part->memblock);}
 }
 

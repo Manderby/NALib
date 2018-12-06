@@ -324,7 +324,7 @@ NA_IAPI NARecti   naMakeRectiWithRectAndBorder (NARecti rect, NAInt  border);
 NA_IAPI NABox     naMakeBoxWithBoxAndBorder    (NABox  box, double border);
 NA_IAPI NABoxi    naMakeBoxiWithBoxAndBorder   (NABoxi box, NAInt  border);
 
-// The naMakeXXXXAbsolute function ensures that the lenghts/sizes/volumes of
+// The naMakeXXXXAbsolute function ensures that the lengths/sizes/volumes of
 // the given struct are not negative. If the these already were positive or
 // zero, they will not be changed.
 // For example:  A rect with pos(4., 6.) and size (-2., 7.) will change to

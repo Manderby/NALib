@@ -109,9 +109,6 @@ NA_API NABool naLocateBufferLastPart(NABufferIterator* iter);
 // NABufferSource
 NA_HAPI NARangei naGetBufferSourceLimit(NABufferSource* source);
 NA_HAPI NABool naIsBufferSourceVolatile(const NABufferSource* source);
-#ifndef NDEBUG
-  NA_HAPI NABool naIsBufferSourceLimited(const NABufferSource* source);
-#endif
 NA_HAPI NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourceoffset, NAInt* blockoffset);
 NA_HAPI NABool naHasBufferSourceUnderlyingBuffer(const NABufferSource* source);
 NA_HAPI NABuffer* naGetBufferSourceUnderlyingBuffer(NABufferSource* source);

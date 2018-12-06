@@ -130,53 +130,74 @@ NA_API NABuffer* naNewBufferWithMutableData(     void* data,
                                                  NAInt bytesize,
                                              NAMutator destructor);
 
+
+
 // ////////////////////////////////////////
 // Buffer with custom source
 // ////////////////////////////////////////
 
 // You can create an NABuffer from any linear source you want by creating a
-// custom source object. Such an object can have a custom filler function.
+// custom source object. Such a source has the purpose to fill memory blocks
+// denoting a certain range of the source with specific contents.
 
 // Prototype for the filler function.
-// The function has to perform the task to fill dst with content. The data
-// will be the pointer given to naCreateBufferSource and the range denotes
-// the desired origin in absolute source coordinates as well as the number
-// of bytes to process.
-typedef void  (*NABufferFiller)   (void* sourcedata,
-                                         void* dst,
-                                      NARangei range);
-typedef NAPtr (*NABufferSourceBufAllocator)  (void* sourcedata, NARangei range);
-typedef void  (*NABufferSourceBufDeallocator)(void* sourcedata, NAPtr data);
+// The function has to perform the task to fill dst with the content of the
+// custom source. The range denotes both the source origin of the first byte
+// of dst as well as the length in bytes the dst buffer holds. The sourcedata
+// parameter will be the data pointer given to naSetBufferSourceData.
+typedef void (*NABufferFiller)(void* dst, NARangei range, void* sourcedata);
 
-// Create, Retain and Release custom sources.
-// You can store a custom data object to the source which will be available
-// to the filler function as well as the destructor.
-NA_HAPI NABufferSource* naCreateBufferSource( NABufferFiller filler,
-                                                   NABuffer* buffer);
-NA_HAPI NABufferSource* naRetainBufferSource(NABufferSource* source);
-NA_HAPI void naReleaseBufferSource(          NABufferSource* source);
+// Create custom sources.
+// You can provide a filler function as well as an underlying buffer. Both
+// parameters can be NA_NULL. Their meaning is:
+// filler: The given function gets called whenever a certain memory block needs
+//         to be filled with the contents of the source. If NA_NULL is given,
+//         the memory blocks will be returned uninitialized.
+// buffer: An optional NABuffer which holds all memory blocks sorted by their
+//         linear address for later access. If NA_NULL is given, memory blocks
+//         will always be created anew and on the go, completely unordered. For
+//         example, a file buffer has a simple underlying NABuffer which holds
+//         all bytes which already have been read. 
+NA_API NABufferSource* naNewBufferSource(      NABufferFiller filler,
+                                                    NABuffer* buffer);
+
+// Add data to your source which will be available when the filler function
+// is called. Add a datadestructor to automatically clean up that deta when
+// the source is no longer needed.
+NA_API void naSetBufferSourceData(            NABufferSource* source,
+                                                        void* data,
+                                                    NAMutator datadestructor);
 
 // Limits the source to a specific range of bytes. This is for example used
 // when reading a file, where the source is limited to the file size.
-NA_HAPI void naSetBufferSourceData(         NABufferSource* source,
-                                                      void* data,
-                                                  NAMutator datadestructor);
-NA_HAPI void naSetBufferSourceLimit(        NABufferSource* source,
-                                                   NARangei limit);
+NA_API void naSetBufferSourceLimit(           NABufferSource* source,
+                                                     NARangei limit);
 // Sets the volatile flag of the buffer.
-// A volatile Buffer always reads its content from the source anew upon every
-// call. Most of the time, you wont need that.
-NA_API void naSetBufferSourceVolatile(      NABufferSource* source);
-
+// A volatile buffer always reads its content from the source anew upon every
+// call. Most of the time, you won't need that.
+NA_API void naSetBufferSourceVolatile(        NABufferSource* source);
 
 // Creates a buffer with a custom source. Note that the NABuffer will retain
 // the source, meaning you can safely release the source after this function.
-NA_API NABuffer* naNewBufferWithCustomSource(NABufferSource* source);
+// The sourceoffset denotes how many bytes the source is shifted away from the
+// bnew uffer. For example if source denotes a string like "Hello World",
+// ranging from 0 to 10 and you define an sourceoffset of -6, filling the new
+// buffer at index 0 results in "World", containing the source indices 6 to 10
+// of the source buffer.
+// Note that usually, offset is 0 but you may choose otherwise. Beware that
+// this can get rather confusing when the source itself has a range which
+// contains negative indices. For example, if the string "Hello World" ranges
+// from -2 to 8 instead and using a sourceoffset of -6, filling the new buffer
+// at index 0 results in "rld", containing the source indices 6 to 8 of the
+// source buffer.
+NA_API NABuffer* naNewBufferWithCustomSource( NABufferSource* source,
+                                                        NAInt sourceoffset);
+
+
 
 // ////////////////////////////////////////
 // Various buffer functions
 // ////////////////////////////////////////
-
 
 // Working with the range of the buffer.
 // A buffer has a current range denoting what the first and last index of

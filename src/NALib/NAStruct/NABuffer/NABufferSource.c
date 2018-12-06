@@ -4,75 +4,51 @@
 
 #include "NABuffer.h"
 
-
-// //////////////////////////////////////
-// Buffer Source
-// //////////////////////////////////////
-
-
 struct NABufferSource{
-  NARefCount              refcount;
-  void*                   data;          // data sent to filler and destructor.
-  NAMutator               datadestructor;// Data destructor.
-  NABufferFiller          buffiller;     // Fill function filling memory.
-  NAUInt                  flags;         // Flags for the source
-  NARangei                limit;         // Source limit (used if flag set)
-  NABuffer*               buffer;        // The underlying buffer, if any.
+  NABufferFiller    buffiller;      // Fill function filling memory.
+  NABuffer*         buffer;         // The underlying buffer, if any.
+  void*             data;           // data sent to filler and destructor.
+  NAMutator         datadestructor; // Data destructor.
+  NAUInt            flags;          // Flags for the source
+  NARangei          limit;          // Source limit (used if flag set)
 };
 
+NA_HAPI void naDestructBufferSource(NABufferSource* source);
+NA_RUNTIME_TYPE(NABufferSource, naDestructBufferSource, NA_TRUE);
 
 
 
 // Flags for the buffer source:
-#define NA_BUFFER_SOURCE_RANGE_LIMITED    0x01
-#define NA_BUFFER_SOURCE_VOLATILE         0x02
-//#define NA_BUFFER_SOURCE_BUFFER           0x08
+#define NA_BUFFER_SOURCE_RANGE_LIMITED        0x01
+#define NA_BUFFER_SOURCE_VOLATILE             0x02
 #define NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE 0x80
 
 
-// Creates a buffer source with the given descriptor.
-NA_HDEF NABufferSource* naCreateBufferSource(NABufferFiller filler, NABuffer* buffer){
-  NABufferSource* source = naAlloc(NABufferSource);
-  naInitRefCount(&(source->refcount));
+
+NA_DEF NABufferSource* naNewBufferSource(NABufferFiller filler, NABuffer* buffer){
+  NABufferSource* source = naNew(NABufferSource);
+
+  source->buffiller = filler;
+  source->buffer = buffer ? naRetain(buffer) : NA_NULL;
   source->data = NA_NULL;
   source->datadestructor = NA_NULL;
-  source->buffiller = filler;
   source->flags = 0;
   source->limit = naMakeRangeiWithStartAndEnd(0, 0);
-  if(buffer){
-    source->buffer = naRetain(buffer);
-  }else{
-    source->buffer = NA_NULL;
-  }
+
   return source;
 }
 
 
 
-NA_HDEF NABufferSource* naRetainBufferSource(NABufferSource* source){
-  #ifndef NDEBUG
-    source->flags |= NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE;
-  #endif
-  return (NABufferSource*)naRetainRefCount(&(source->refcount));
-}
-
-
-
-NA_HDEF void naDeallocBufferSource(NABufferSource* source){
+NA_HDEF void naDestructBufferSource(NABufferSource* source){
   if(source->datadestructor){source->datadestructor(source->data);}
-  naRelease(source->buffer);
+  if(source->buffer){naRelease(source->buffer);}
   naFree(source);
 }
 
 
 
-NA_HDEF void naReleaseBufferSource(NABufferSource* source){
-  naReleaseRefCount(&(source->refcount), source, source->datadestructor);
-}
-
-
-
-NA_HDEF void naSetBufferSourceData(NABufferSource* source, void* data, NAMutator datadestructor){
+NA_DEF void naSetBufferSourceData(NABufferSource* source, void* data, NAMutator datadestructor){
   #ifndef NDEBUG
     if(source->flags & NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE)
       naError("naSetBufferSourceData", "Source already used in a buffer. Mayor problems may occur in the future");
@@ -83,8 +59,10 @@ NA_HDEF void naSetBufferSourceData(NABufferSource* source, void* data, NAMutator
 
 
 
-NA_HDEF void naSetBufferSourceLimit(NABufferSource* source, NARangei limit){
+NA_DEF void naSetBufferSourceLimit(NABufferSource* source, NARangei limit){
   #ifndef NDEBUG
+    if(source->flags & NA_BUFFER_SOURCE_RANGE_LIMITED)
+      naError("naSetBufferSourceLimit", "Source already has a limit");
     if(source->flags & NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE)
       naError("naSetBufferSourceLimit", "Source already used in a buffer. Mayor problems may occur in the future");
   #endif
@@ -122,51 +100,10 @@ NA_HDEF NABuffer* naGetBufferSourceUnderlyingBuffer(NABufferSource* source){
 
 
 
-
-//// NAMutator used in the naNewBufferSourceWithBuffer function.
-//NA_HDEF void naDeallocBufferSourceBuffer(NABufferIterator* iter){
-//  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
-//  naRelease(buffer);
-//  naClearBufferIterator(iter);
-//  naFree(iter);
-//}
-
-
-
-//// This is one of the core concepts of buffer sources: Any NABuffer can again
-//// be a source. An iterator retains the desired buffer and manages the access.
-//NA_HIDEF NABufferSource* naNewBufferSourceWithBuffer(NABuffer* buffer){
-//  NABufferSourceDescriptor desc;
-//  NABufferIterator* iter;
-//
-//  naNulln(&desc, sizeof(desc));
-//
-//  // We store an iterator on the given buffer as the data. We must allocate
-//  // space for it which later will be freed when the pointer is not in use
-//  // anymore.
-//  iter = naAlloc(NABufferIterator);
-//  *iter = naMakeBufferModifier(buffer);
-//  naRetain(buffer);
-//  desc.data = naNewPointerMutable(iter, (NAMutator)naDeallocBufferSourceBuffer);
-//  desc.destructor = (NAMutator)naReleasePointer;
-//  desc.flags |= NA_BUFFER_SOURCE_BUFFER;
-//  if(naHasBufferFixedRange(buffer)){
-//    desc.flags |= NA_BUFFER_SOURCE_RANGE_LIMITED;
-//    desc.limit = naGetBufferRange(buffer);
-//  }
-//
-//  // The new buffer source gets created
-//  return naNewBufferSource(desc);
-//}
-
-
-
-#ifndef NDEBUG
-  // Returns NA_TRUE if the range is a valid limiting range.
-  NA_HDEF NABool naIsBufferSourceLimited(const NABufferSource* source){
-    return (source->flags & NA_BUFFER_SOURCE_RANGE_LIMITED);
-  }
-#endif
+// Returns NA_TRUE if the range is a valid limiting range.
+NA_HDEF NABool naIsBufferSourceLimited(const NABufferSource* source){
+  return (source->flags & NA_BUFFER_SOURCE_RANGE_LIMITED);
+}
 
 
 
@@ -181,18 +118,6 @@ NA_HDEF NARangei naGetBufferSourceLimit(NABufferSource* source){
 
 
 
-////// Returns the source data if there is a source and it is defined to be
-////// an NABuffer source. returns NA_NULL otherwise.
-////NA_HIDEF NABufferIterator* naGetBufferSourceBufferIterator(NABufferSource* source){
-////  if(source && (source->desc.flags & NA_BUFFER_SOURCE_BUFFER)){
-////    return naGetPointerMutable(source->desc.data);
-////  }else{
-////    return NA_NULL;
-////  }
-////}
-
-
-
 // This function returns a memory block which contains the desired sourceoffset.
 // The sourceoffset parameter is given in source coordinates (can be negative).
 // The parameter blockoffset returns the offset in the returned memory block
@@ -203,8 +128,6 @@ NA_HDEF NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourc
     if(naIsBufferSourceLimited(source) && !naContainsRangeiOffset(source->limit, sourceoffset))
       naError("naPrepareBufferSource", "offset is not in source limits");
   #endif
-
-
 
   if(naHasBufferSourceUnderlyingBuffer(source)){
     NABufferIterator bufiter = naMakeBufferModifier(source->buffer);
@@ -240,7 +163,7 @@ NA_HDEF NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourc
     preparedpart = naNewBufferPartSparse(source, normedrange);
     preparedpart->memblock = naNewMemoryBlock(preparedpart->bytesize);
     if(source->buffiller){
-      source->buffiller(preparedpart->source->data, naGetPtrMutable(&(preparedpart->memblock->data)), normedrange);
+      source->buffiller(naGetPtrMutable(&(preparedpart->memblock->data)), normedrange, preparedpart->source->data);
     }
     *blockoffset = sourceoffset - normedrange.origin;
 
