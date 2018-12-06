@@ -203,17 +203,21 @@ NA_HDEF NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourc
     if(naIsBufferSourceLimited(source) && !naContainsRangeiOffset(source->limit, sourceoffset))
       naError("naPrepareBufferSource", "offset is not in source limits");
   #endif
-  
+
+
+
   if(naHasBufferSourceUnderlyingBuffer(source)){
     NABufferIterator bufiter = naMakeBufferModifier(source->buffer);
     // We recursively prepare the first byte of the underlying buffer.
     NABool found = naLocateBuffer(&bufiter, sourceoffset);
-    #ifndef NDEBUG
-      if(!found)
-        naError("naPrepareBufferSource", "Did not found offset in source buffer");
-    #else
-      NA_UNUSED(found);
-    #endif
+    if(!found){
+      naEnsureBufferRange(naGetBufferSourceUnderlyingBuffer(source), sourceoffset, sourceoffset + 1);
+      found = naLocateBuffer(&bufiter, sourceoffset);
+      #ifndef NDEBUG
+        if(!found)
+          naError("naPrepareBufferSource", "Did not found offset in source buffer");
+      #endif
+    }
     naPrepareBuffer(&bufiter, 1, NA_FALSE);
     preparedpart = naGetTreeCurMutable(naGetBufferIteratorPartIterator(&bufiter));
     *blockoffset = preparedpart->blockoffset + naGetBufferIteratorPartOffset(&bufiter);
@@ -241,10 +245,7 @@ NA_HDEF NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourc
     *blockoffset = sourceoffset - normedrange.origin;
 
   }
-  #ifndef NDEBUG
-    if(naIsBufferPartSparse(preparedpart))
-      naError("naPrepareBufferSource", "prepared part is sparse");
-  #endif
+
   return preparedpart->memblock;
 }
 

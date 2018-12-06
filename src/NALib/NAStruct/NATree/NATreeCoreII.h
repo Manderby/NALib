@@ -254,6 +254,19 @@ NA_IDEF void naUpdateTree(NATree* tree){
 }
 
 
+
+NA_IDEF void naUpdateTreeLeaf(NATreeIterator* iter){
+  #ifndef NDEBUG
+    if(naIsTreeAtInitial(iter))
+      naError("naUpdateTreeLeaf", "Iterator is not at a leaf");
+  #endif
+  NATree* tree = (NATree*)naGetPtrConst(&(iter->tree));
+  NATreeNode* parent = ((NATreeBaseNode*)iter->leaf)->parent;
+  if(parent){
+    naUpdateTreeNodeBubbling(tree, parent, tree->config->childIndexGetter(parent, ((NATreeBaseNode*)iter->leaf)));
+  }
+}
+
 // /////////////////////////////////////
 // Iterator
 // /////////////////////////////////////
@@ -505,18 +518,6 @@ NA_IDEF NABool naAddTreeKeyMutable(NATreeIterator* iter, const void* key, void* 
 NA_IDEF NABool naIsTreeAtInitial(const NATreeIterator* iter){
   return (iter->leaf == NA_NULL);
 }
-
-
-
-#ifndef NDEBUG
-  NA_IDEF NABool naIsTreeIteratorAlone(NATreeIterator* iter){
-    if(iter->leaf){
-      return (iter->leaf->itercount == 1);
-    }else{
-      return NA_FALSE;
-    }
-  }
-#endif
 
 
 

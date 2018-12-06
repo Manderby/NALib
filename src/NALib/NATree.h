@@ -273,6 +273,7 @@ NA_IAPI NABool naLocateTreeToken   (NATreeIterator* iter,
 NA_IAPI void naBubbleTreeToken(const NATreeIterator* iter,
                                                void* token,
                              NATreeNodeTokenSearcher tokenSearcher);
+NA_IAPI void naUpdateTreeLeaf(NATreeIterator* iter);
 
 // /////////////////////////////////
 // Iterating
@@ -332,12 +333,6 @@ NA_IAPI void naRemoveTreeCur(NATreeIterator* iter, NABool advance);
 
 // Returns true if the iterator is at its initial position.
 NA_IAPI NABool naIsTreeAtInitial(const NATreeIterator* iter);
-
-// Debugging function: Returns true if there are other iterators visiting
-// the same tree element as the given iterator.
-#ifndef NDEBUG
-  NA_IAPI NABool naIsTreeIteratorAlone(NATreeIterator* iter);
-#endif
 
 // Inline implementations are in a separate file:
 #include "NAStruct/NATree/NATreeII.h"

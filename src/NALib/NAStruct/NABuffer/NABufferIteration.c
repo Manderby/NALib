@@ -115,12 +115,60 @@ NA_DEF NABool naLocateBuffer(NABufferIterator* iter, NAInt offset){
   naResetTreeIterator(&(iter->partiter));
   NABool found = naLocateTreeToken(&(iter->partiter), &token);
   if(found){
-//    const NABufferPart* part = naGetTreeCurConst(&(iter->partiter));
     iter->partoffset = token.searchoffset - token.curoffset;
   }else{
     iter->partoffset = offset;
   }
   return found;
+}
+
+
+
+NA_DEF NABool naLocateBufferFirstPart(NABufferIterator* iter){
+  iter->curbit = 0;
+  iter->linenum = 0;
+  naLocateTreeFirst(&(iter->partiter));
+  if(naIsTreeAtInitial(&(iter->partiter))){
+    const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+    iter->partoffset = buffer->range.origin;
+    return NA_FALSE;
+  }else{
+    iter->partoffset = 0;
+    return NA_TRUE;
+  }
+}
+
+
+
+NA_DEF NABool naLocateBufferLastPart(NABufferIterator* iter){
+  iter->curbit = 0;
+  iter->linenum = 0;
+  naLocateTreeLast(&(iter->partiter));
+  if(naIsTreeAtInitial(&(iter->partiter))){
+    const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+    iter->partoffset = naGetRangeiEnd(buffer->range);
+    return NA_FALSE;
+  }else{
+    iter->partoffset = 0;
+    return NA_TRUE;
+  }
+}
+
+
+
+NA_HDEF NABool naIterateBufferPart(NABufferIterator* iter){
+  #ifndef NDEBUG
+    if(iter->curbit != 0)
+      naError("naIterateBufferPart", "Buffer bitcount is not null.");
+    if(iter->partoffset != 0)
+      naError("naIterateBufferPart", "partoffset is not null.");
+  #endif
+  NABool success = naIterateTree(&(iter->partiter));
+  if(!success){
+    const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+    iter->partoffset = naGetRangeiEnd(buffer->range);
+  }
+  return success;
 }
 
 
@@ -274,6 +322,44 @@ NA_DEF uint8 naGetBufferCurBit(NABufferIterator* iter){
 
 
 
+NA_HDEF NABufferPart* naGetBufferPart(NABufferIterator* iter){
+  return naGetTreeCurMutable(&(iter->partiter));
+}
+
+
+
+// Returns NA_TRUE if the current part does not store memory. Repositions
+// the iterator if there was a change in position since the last time.
+NA_HDEF NABool naIsBufferPartSparse(NABufferIterator* iter){
+  #ifndef NDEBUG
+    if(naIsTreeAtInitial(&(iter->partiter)))
+      naError("naIsBufferPartSparse", "Iterator is at initial position.");
+    if(iter->partoffset < 0)
+      naError("naIsBufferPartSparse", "Negative offset not allowed");
+  #endif
+  const NABufferPart* part = naGetTreeCurConst(&(iter->partiter));
+  if(iter->partoffset >= part->bytesize){
+    // Something changed with the part in the meantime. We need to find the
+    // correct position. We do this by looking for the absolute position in
+    // the source.
+    NAInt searchpos = naGetBufferLocation(iter);
+    naLocateBuffer(iter, searchpos);
+    part = naGetTreeCurConst(&(iter->partiter));
+    #ifndef NDEBUG
+      if(iter->partoffset >= part->bytesize)
+        naError("naIsBufferPartSparse", "Still not found the correct part");
+    #endif
+  }
+
+
+
+  // Reaching here, we can be sure, the iterator points at the correct part.
+  return (part->memblock == NA_NULL);
+}
+
+
+
+
 NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance){
   NAByte* dst = data;
 
@@ -289,10 +375,10 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
   if(naIsTreeAtInitial(&(iter->partiter))){
     NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
     naLocateBuffer(iter, buffer->range.origin);
-    #ifndef NDEBUG
-      if(naIsTreeAtInitial(&(iter->partiter)))
-        naError("naRetrieveBufferBytes", "iterator is still at initial.");
-    #endif
+//    #ifndef NDEBUG
+//      if(naIsTreeAtInitial(&(iter->partiter)))
+//        naError("naRetrieveBufferBytes", "iterator is still at initial.");
+//    #endif
   }
 
   // We prepare the buffer for the whole range. There might be no parts or
@@ -307,20 +393,19 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
     NABufferPart* part;
     NAInt possiblelength;
 
-    // The part pointed to by the iterator should be the one containing offset.
-    part = naGetTreeCurMutable(&(iter->partiter));
-
-    // Reaching this point, we are sure, the current part contains offset and
-    // is filled with memory.
     #ifndef NDEBUG
-      if(!part)
-        naError("naRetrieveBufferBytes", "No more parts containing memory");
-      if(naIsBufferPartSparse(part))
+      if(naIsBufferPartSparse(iter))
         naError("naRetrieveBufferBytes", "Cur part is sparse");
     #endif
 
+    // The part pointed to by the iterator should be the one containing offset.
+    part = naGetBufferPart(iter);
+
+    // Reaching this point, we are sure, the current part contains offset and
+    // is filled with memory.
+
     // We get the data pointer where we can read bytes.
-    const void* src = naGetBufferPartDataPointerConst(part, iter->partoffset);
+    const void* src = naGetBufferPartDataPointerConst(iter);
     // We detect, how many bytes actually can be read from the current part.
     possiblelength = part->bytesize - iter->partoffset;
 
@@ -351,6 +436,8 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
 // sparse part having precisely the desired range, possibly surrounded by
 // other, newly created sparse parts. At the end of this function, the iterator
 // points to that very part.
+// The start and end parameters must be positive definite.
+
 NA_HDEF void naSplitBufferSparsePart(NABufferIterator* iter, NAInt start, NAInt end){
   NABufferPart* part = naGetTreeCurMutable(&(iter->partiter));
   NABufferPart* newpart;
@@ -361,7 +448,7 @@ NA_HDEF void naSplitBufferSparsePart(NABufferIterator* iter, NAInt start, NAInt 
       naError("naSplitBufferSparsePart", "Iterator is at initial position.");
     if(!part)
       naCrash("naSplitBufferSparsePart", "iterator must not be at initial position");
-    if(!naIsBufferPartSparse(part))
+    if(!naIsBufferPartSparse(iter))
       naError("naSplitBufferSparsePart", "current part is not sparse");
     if(!naIsLengthValueUsefuli(length))
       naError("naSplitBufferSparsePart", "start and end make no sense");
@@ -373,27 +460,40 @@ NA_HDEF void naSplitBufferSparsePart(NABufferIterator* iter, NAInt start, NAInt 
       naError("naSplitBufferSparsePart", "end should not be negative");
     if(end > part->bytesize)
       naError("naSplitBufferSparsePart", "end is too big");
-    if(!naIsTreeIteratorAlone(&(iter->partiter)))
-      naError("naSplitBufferSparsePart", "there is another iterator at this part. Splitting might lead to problems");
   #endif
 
   // Only split, if the parts bytesize does not already equals the length.
   if(length != part->bytesize){
     NAInt prevbytesize = part->bytesize;
-    part->bytesize = length;
+
+    // We try to split the full sparse part into two or three parts.
+    // It is important to adjust the length of the current part BEFORE adding
+    // any new part because the tree implementation will bubble a change
+    // message which requires the correct length in any leaf.
+    //
+    // Very important: The current part MUST NOT change its offset at all
+    // because there might be other buffer iterators visiting this part. In
+    // order to work properly, they need to be able to compare its current
+    // part offset with the offset of the part they are visiting. If that
+    // would change, the iterators would confuse their position.
 
     if(end < prevbytesize){
-      // We need to add a new part at the end
-      newpart = naNewBufferPartSparse(part->source, naMakeRangei(part->sourceoffset + end, prevbytesize - end));
+      // We need to add a new part at the end.
+      part->bytesize = end;
+      naUpdateTreeLeaf(&(iter->partiter));
+      newpart = naNewBufferPartSparse(part->source, naMakeRangeiWithStartAndEnd(part->sourceoffset + end, part->sourceoffset + prevbytesize));
       naAddTreeNextMutable(&(iter->partiter), newpart, NA_FALSE);
     }
 
     if(start > 0){
-      // We need to add a new part at the beginning.
-      newpart = naNewBufferPartSparse(part->source, naMakeRangei(part->sourceoffset, start));
-      naAddTreePrevMutable(&(iter->partiter), newpart, NA_FALSE);
-      part->sourceoffset += start;
-      iter->partoffset -= start;
+      // We need to add a new part which contains the bytes at the beginning.
+      // We change this parts size and add a new one after this one.
+      part->bytesize = start;
+      naUpdateTreeLeaf(&(iter->partiter));
+      newpart = naNewBufferPartSparse(part->source, naMakeRangeiWithStartAndEnd(part->sourceoffset + start, part->sourceoffset + end));
+      naAddTreeNextMutable(&(iter->partiter), newpart, NA_TRUE);
+      // Note that using the NA_TRUE, we automatically move to the new part.
+      // This means that iter now points to the desired part.
     }
   }
 }
@@ -422,8 +522,9 @@ NA_HDEF NAInt naPrepareBufferPart(NABufferIterator* iter, NAInt bytecount, NABoo
     part->memblock = NA_NULL;
   }
 
-  if(part->source){
-    if(naIsBufferPartSparse(part)){
+  if(naIsBufferPartSparse(iter)){
+    part = naGetBufferPart(iter);
+    if(part->source){
       // We first try to prepare the buffer source. The following function
       // returns a source part which contains at least the first desired byte.
       // We then split the current part of this function such that it fits
@@ -457,15 +558,13 @@ NA_HDEF NAInt naPrepareBufferPart(NABufferIterator* iter, NAInt bytecount, NABoo
 //        // The new block is the first block.
 //        naAddTreeNextMutable(&(iter->partiter), sourcepart, NA_TRUE);
 //      }
-    }
+    }else{
+      // We have no source, meaning, we prepare memory.
+      #ifndef NDEBUG
+        if(forcevolatile)
+          naError("naPrepareBufferPart", "forcevolatile makes no sense without source");
+      #endif
 
-  }else{
-    // We have no source, meaning, we prepare memory.
-    #ifndef NDEBUG
-      if(forcevolatile)
-        naError("naPrepareBufferPart", "forcevolatile makes no sense without source");
-    #endif
-    if(naIsBufferPartSparse(part)){
       // We create a suitable range for at least 1 byte which tries to be
       // aligned at NA_INTERNAL_BUFFER_PART_BYTESIZE.
       NAInt normedstart = naGetBufferPartNormedStart(iter->partoffset);
@@ -509,8 +608,8 @@ NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool for
   NAInt firstbufoffset = 0;
 
   #ifndef NDEBUG
-    if(naIsTreeAtInitial(&(iter->partiter)))
-      naError("naPrepareBuffer", "Iterator is at initial position.");
+//    if(naIsTreeAtInitial(&(iter->partiter)))
+//      naError("naPrepareBuffer", "Iterator is at initial position.");
     if(naGetBufferCurBit(iter))
       naError("naPrepareBuffer", "bitcount should be 0");
     if(bytecount <= 0)
@@ -563,13 +662,12 @@ NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool for
     // Reaching here, the current part is filled with memory. Now, we can set
     // the first iterator for later use.
     if(naIsTreeAtInitial(&firstbufiterator)){
-      naLocateTreeIterator(&firstbufiterator, &(iter->partiter));
-      firstbufoffset = iter->partoffset;
       #ifndef NDEBUG
-        const NABufferPart* firstpart = naGetTreeCurConst(&firstbufiterator);
-        if(naIsBufferPartSparse(firstpart))
+        if(naIsBufferPartSparse(iter))
           naError("naPrepareBuffer", "First part located on sparse part");
       #endif
+      naLocateTreeIterator(&firstbufiterator, &(iter->partiter));
+      firstbufoffset = iter->partoffset;
     }
 
     // We take as many bytes as we can. If there are enough bytes, we set

@@ -313,17 +313,6 @@ NA_HDEF void naDestructBufferPart(NABufferPart* part){
 
 
 
-// Returns NA_TRUE if the given part does not store memory.
-NA_HDEF NABool naIsBufferPartSparse(const NABufferPart* part){
-  #ifndef NDEBUG
-    if(!part)
-      naCrash("naIsBufferPartSparse", "part is Null pointer");
-  #endif
-  return part->memblock == NA_NULL;
-}
-
-
-
 //// Returns the range of the given part.
 //NA_HIDEF NARangei naGetBufferPartRange(const NABufferPart* part){
 //  #ifndef NDEBUG
@@ -408,18 +397,15 @@ NA_HDEF NABool naIsBufferPartSparse(const NABufferPart* part){
 
 
 // Returns a pointer to the raw data of this buffer part, given its offset.
-NA_HDEF const void* naGetBufferPartDataPointerConst(const NABufferPart* part, NAInt offset){
+NA_HDEF const void* naGetBufferPartDataPointerConst(NABufferIterator* iter){
   #ifndef NDEBUG
-    if(!part)
-      naCrash("naGetBufferPartDataPointerConst", "buffer part is Null pointer");
-    if(naIsBufferPartSparse(part))
+    if(!iter)
+      naCrash("naGetBufferPartDataPointerConst", "iterator is Null pointer");
+    if(naIsBufferPartSparse(iter))
       naError("naGetBufferPartDataPointerConst", "buffer part is sparse");
-    if(offset < 0)
-      naError("naGetBufferPartDataPointerConst", "offset is negative");
-    if(offset >= part->bytesize)
-      naError("naGetBufferPartDataPointerConst", "offset not inside buffer part");
   #endif
-  return naGetMemoryBlockDataPointerConst(part->memblock, part->blockoffset + offset);
+  NABufferPart* part = naGetBufferPart(iter);
+  return naGetMemoryBlockDataPointerConst(part->memblock, part->blockoffset + iter->partoffset);
 }
 
 

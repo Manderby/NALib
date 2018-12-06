@@ -416,12 +416,12 @@ NA_DEF NABuffer* naReadBufferBuffer(NABufferIterator* iter, NAInt bytesize){
   NAInt abspos = naGetBufferLocation(iter);
   NABuffer* newbuffer = naNewBufferExtraction(buffer, naMakeRangei(abspos, bytesize));
   NABool found = naLocateBuffer(iter, abspos + bytesize);
-  #ifndef NDEBUG
-    if(!found)
-      naError("naReadBufferBuffer", "Could not locate end of buffer extraction");
-  #else
+//  #ifndef NDEBUG
+//    if(!found)
+//      naError("naReadBufferBuffer", "Could not locate end of buffer extraction");
+//  #else
     NA_UNUSED(found);
-  #endif
+//  #endif
   return newbuffer;
 }
 

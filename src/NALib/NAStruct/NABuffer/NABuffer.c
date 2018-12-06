@@ -84,12 +84,12 @@ NA_HDEF NABool naSearchBufferNode(void* token, NAPtr data, NAInt* nextindx){
 
 
 
-NA_HDEF NA_HDEF NABool naSearchBufferLeaf(void* token, NAPtr data, NABool* matchfound){
+NA_HDEF NABool naSearchBufferLeaf(void* token, NAPtr data, NABool* matchfound){
   NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
   NABufferPart* leafdata = (NABufferPart*)naGetPtrMutable(&data);
 
   if((searchtoken->searchoffset >= searchtoken->curoffset) && (searchtoken->searchoffset < searchtoken->curoffset + leafdata->bytesize)){
-    *matchfound = !naIsBufferPartSparse(leafdata);
+    *matchfound = NA_TRUE;
   }else{
     *matchfound = NA_FALSE;
   }
@@ -690,12 +690,12 @@ NA_DEF void naCacheBufferRange(NABuffer* buffer, NARangei range, NABool forcevol
   if(range.length){
     NABufferIterator iter = naMakeBufferModifier(buffer);
     NABool found = naLocateBuffer(&iter, range.origin);
-    #ifndef NDEBUG
-      if(!found)
-        naError("naCacheBufferRange", "could not find range origin in buffer");
-    #else
+//    #ifndef NDEBUG
+//      if(!found)
+//        naError("naCacheBufferRange", "could not find range origin in buffer");
+//    #else
       NA_UNUSED(found);
-    #endif
+//    #endif
     naPrepareBuffer(&iter, range.length, forcevolatile);
     naClearBufferIterator(&iter);
   }
