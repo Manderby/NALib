@@ -177,27 +177,27 @@ NA_RUNTIME_TYPE(NABufferPart, naDestructBufferPart, NA_FALSE);
 // Creates a memory block with sparse memory.
 // A sparse buffer is initialized with a byteoffset of 0. This will possibly
 // change when calling naReferenceBufferPart or naFillBufferPart.
-NA_HDEF NABufferPart* naNewBufferPartSparse(NABufferSource* source, NARangei range){
+NA_HDEF NABufferPart* naNewBufferPartSparse(NABufferSource* source, NARangei sourcerange){
   #ifndef NDEBUG
-    if(!naIsLengthValueUsefuli(range.length))
+    if(!naIsLengthValueUsefuli(sourcerange.length))
       naError("naNewBufferPartSparse", "range length is not useful");
-    if(!source && range.origin != 0)
+    if(!source && sourcerange.origin != 0)
       naError("naNewBufferPartSparse", "origin unequal zero makes no sense without source");
   #endif
   NABufferPart* part = naNew(NABufferPart);
   if(source){
     part->source = naRetain(source);
-    part->sourceoffset = range.origin;
-    if(naHasBufferSourceUnderlyingBuffer(source)){
-      NABuffer* sourcebuffer = naGetBufferSourceUnderlyingBuffer(source);
-      naEnsureBufferRange(sourcebuffer, range.origin, naGetRangeiEnd(range));
+    part->sourceoffset = sourcerange.origin;
+    NABuffer* sourcebuffer = naGetBufferSourceUnderlyingBuffer(source);
+    if(sourcebuffer){
+      naEnsureBufferRange(sourcebuffer, sourcerange.origin, naGetRangeiEnd(sourcerange));
     }
   }else{
     part->source = NA_NULL;
     part->sourceoffset = 0;
   }
   part->blockoffset = 0;
-  part->bytesize = range.length;
+  part->bytesize = sourcerange.length;
   part->memblock = NA_NULL;
   return part;
 }

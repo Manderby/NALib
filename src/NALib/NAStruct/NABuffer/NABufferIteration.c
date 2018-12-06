@@ -125,6 +125,10 @@ NA_DEF NABool naLocateBuffer(NABufferIterator* iter, NAInt offset){
 
 
 NA_DEF NABool naLocateBufferFirstPart(NABufferIterator* iter){
+  #ifndef NDEBUG
+    if(iter->curbit != 0)
+      naError("naLocateBufferFirstPart", "Buffer bitcount is not null.");
+  #endif
   iter->curbit = 0;
   iter->linenum = 0;
   naLocateTreeFirst(&(iter->partiter));
@@ -141,6 +145,10 @@ NA_DEF NABool naLocateBufferFirstPart(NABufferIterator* iter){
 
 
 NA_DEF NABool naLocateBufferLastPart(NABufferIterator* iter){
+  #ifndef NDEBUG
+    if(iter->curbit != 0)
+      naError("naLocateBufferLastPart", "Buffer bitcount is not null.");
+  #endif
   iter->curbit = 0;
   iter->linenum = 0;
   naLocateTreeLast(&(iter->partiter));
@@ -150,6 +158,24 @@ NA_DEF NABool naLocateBufferLastPart(NABufferIterator* iter){
     return NA_FALSE;
   }else{
     iter->partoffset = 0;
+    return NA_TRUE;
+  }
+}
+
+
+
+NA_DEF NABool naLocateBufferLastIndex(NABufferIterator* iter){
+  #ifndef NDEBUG
+    if(iter->curbit != 0)
+      naError("naLocateBufferLastIndex", "Buffer bitcount is not null.");
+  #endif
+  naLocateTreeLast(&(iter->partiter));
+  if(naIsTreeAtInitial(&(iter->partiter))){
+    const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+    iter->partoffset = naGetRangeiEnd(buffer->range);
+    return NA_FALSE;
+  }else{
+    iter->partoffset = naGetBufferPart(iter)->bytesize - 1;
     return NA_TRUE;
   }
 }
@@ -294,12 +320,6 @@ NA_DEF NABool naIterateBuffer(NABufferIterator* iter, NAInt step){
 //  }
 //  return (part != NA_NULL);
   return NA_FALSE;
-}
-
-
-
-NA_HDEF NATreeIterator* naGetBufferIteratorPartIterator(NABufferIterator* iter){
-  return &(iter->partiter);
 }
 
 

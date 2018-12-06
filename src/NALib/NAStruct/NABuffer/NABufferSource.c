@@ -84,17 +84,7 @@ NA_DEF void naSetBufferSourceVolatile(NABufferSource* source){
 
 
 
-NA_HDEF NABool naHasBufferSourceUnderlyingBuffer(const NABufferSource* source){
-  return (source->buffer != NA_NULL);
-}
-
-
-
 NA_HDEF NABuffer* naGetBufferSourceUnderlyingBuffer(NABufferSource* source){
-  #ifndef NDEBUG
-    if(!naHasBufferSourceUnderlyingBuffer(source))
-      naError("naHasBufferSourceUnderlyingBuffer", "Source has no underlying buffer");
-  #endif
   return source->buffer;
 }
 
@@ -107,21 +97,10 @@ NA_HDEF NABool naIsBufferSourceLimited(const NABufferSource* source){
 
 
 
-// Returns the limit range of this source
-NA_HDEF NARangei naGetBufferSourceLimit(NABufferSource* source){
-  #ifndef NDEBUG
-    if(!naIsBufferSourceLimited(source))
-      naError("naGetBufferSourceLimit", "source is not limited");
-  #endif
-  return source->limit;
-}
-
-
-
 // This function returns a memory block which contains the desired sourceoffset.
 // The sourceoffset parameter is given in source coordinates (can be negative).
-// The parameter blockoffset returns the offset in the returned memory block
-// which corresponds to the desired sourceoffset.
+// The parameter blockoffset returns the (always positive) offset in the
+// returned memory block which corresponds to the given sourceoffset.
 NA_HDEF NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourceoffset, NAInt* blockoffset){
   NABufferPart* preparedpart;
   #ifndef NDEBUG
@@ -129,26 +108,41 @@ NA_HDEF NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourc
       naError("naPrepareBufferSource", "offset is not in source limits");
   #endif
 
-  if(naHasBufferSourceUnderlyingBuffer(source)){
-    NABufferIterator bufiter = naMakeBufferModifier(source->buffer);
-    // We recursively prepare the first byte of the underlying buffer.
-    NABool found = naLocateBuffer(&bufiter, sourceoffset);
+  NABuffer* sourcebuffer = naGetBufferSourceUnderlyingBuffer(source);
+  if(sourcebuffer){
+    // We have an underlying buffer and hence use it to find or create a
+    // suitable memory block by recursively preparing the underlying buffer.
+    NABufferIterator iter = naMakeBufferModifier(sourcebuffer);
+    NABool found = naLocateBuffer(&iter, sourceoffset);
     if(!found){
-      naEnsureBufferRange(naGetBufferSourceUnderlyingBuffer(source), sourceoffset, sourceoffset + 1);
-      found = naLocateBuffer(&bufiter, sourceoffset);
+      // If we haven't found a suitable part, we must create a new one.
+      naEnsureBufferRange(sourcebuffer, sourceoffset, sourceoffset + 1);
+      // We now know that the new byte must either be at the beginning or
+      // the end.
+      if(sourcebuffer->range.origin == sourceoffset){
+        naLocateBufferFirstPart(&iter);
+      }else{
+        naLocateBufferLastIndex(&iter);
+      }
       #ifndef NDEBUG
-        if(!found)
-          naError("naPrepareBufferSource", "Did not found offset in source buffer");
+        if(naGetBufferLocation(&iter) != sourceoffset)
+          naError("naPrepareBufferSource", "unsuccessfully enlarged buffer");
       #endif
     }
-    naPrepareBuffer(&bufiter, 1, NA_FALSE);
-    preparedpart = naGetTreeCurMutable(naGetBufferIteratorPartIterator(&bufiter));
-    *blockoffset = preparedpart->blockoffset + naGetBufferIteratorPartOffset(&bufiter);
-    naClearBufferIterator(&bufiter);
+    // Now we can be sure that the buffer iterator is at a part containing
+    // sourceoffset.
+    naPrepareBuffer(&iter, 1, NA_FALSE);
+    preparedpart = naGetBufferPart(&iter);
+    *blockoffset = preparedpart->blockoffset + naGetBufferIteratorPartOffset(&iter);
+    naClearBufferIterator(&iter);
 
   }else{
-    // We have no underlying buffer. We find out a suitable range to contain
-    // at least 1 byte at the desired offset.
+    // We have no underlying buffer. Therefore we have no information about
+    // any previous memory block used by this source and we create new blocks.
+    //
+    // We find out a suitable range to contain at least 1 byte at the desired
+    // offset. This will result in a range which has a byte cout of
+    // NA_INTERNAL_BUFFER_PART_BYTESIZE
     NAInt normedstart = naGetBufferPartNormedStart(sourceoffset);
     NAInt normedend = naGetBufferPartNormedEnd(sourceoffset + 1);
     NARangei normedrange = naMakeRangeiWithStartAndEnd(normedstart, normedend);
@@ -169,6 +163,10 @@ NA_HDEF NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourc
 
   }
 
+  #ifndef NDEBUG
+    if(*blockoffset < 0)
+      naError("naPrepareBufferSource", "returned blockoffset should be >= 0");
+  #endif
   return preparedpart->memblock;
 }
 

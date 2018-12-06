@@ -307,8 +307,9 @@ NA_DEF NABuffer* naNewBufferWithSameSource(NABuffer* srcbuffer){
 
 
 // This is the filler method of the file input source descriptor
-NA_HIDEF void naFillBufferPartFile(void* dst, NARangei range, void* data){
-  naReadFileBytes(data, dst, range.length);
+NA_HIDEF void naFillBufferPartFile(void* dst, NARangei sourcerange, void* data){
+  // todo: position at range.origin.
+  naReadFileBytes(data, dst, sourcerange.length);
 }
 
 

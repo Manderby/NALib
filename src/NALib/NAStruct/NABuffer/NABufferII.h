@@ -84,7 +84,6 @@ NA_HAPI NABufferPart* naNewBufferPartWithMutableData(void* data, NAInt bytesize,
 NA_HAPI NAInt naGetBufferPartNormedStart(NAInt start);
 NA_HAPI NAInt naGetBufferPartNormedEnd(NAInt end);
 NA_HAPI NAInt naPrepareBufferPart(NABufferIterator* iter, NAInt bytecount, NABool forcevolatile);
-NA_HAPI NATreeIterator* naGetBufferIteratorPartIterator(NABufferIterator* iter);
 NA_HAPI NAInt naGetBufferIteratorPartOffset(NABufferIterator* iter);
 NA_HAPI NABool naIsBufferPartSparse(NABufferIterator* iter);
 
@@ -105,13 +104,12 @@ NA_HAPI NABufferPart* naGetBufferPart(NABufferIterator* iter);
 NA_HAPI NABool naIterateBufferPart(NABufferIterator* iter);
 NA_API NABool naLocateBufferFirstPart(NABufferIterator* iter);
 NA_API NABool naLocateBufferLastPart(NABufferIterator* iter);
+NA_API NABool naLocateBufferLastIndex(NABufferIterator* iter);
 
 // NABufferSource
-NA_HAPI NARangei naGetBufferSourceLimit(NABufferSource* source);
 NA_HAPI NABool naIsBufferSourceVolatile(const NABufferSource* source);
-NA_HAPI NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourceoffset, NAInt* blockoffset);
-NA_HAPI NABool naHasBufferSourceUnderlyingBuffer(const NABufferSource* source);
 NA_HAPI NABuffer* naGetBufferSourceUnderlyingBuffer(NABufferSource* source);
+NA_HAPI NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourceoffset, NAInt* blockoffset);
 
 
 

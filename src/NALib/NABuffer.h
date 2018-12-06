@@ -145,7 +145,7 @@ NA_API NABuffer* naNewBufferWithMutableData(     void* data,
 // custom source. The range denotes both the source origin of the first byte
 // of dst as well as the length in bytes the dst buffer holds. The sourcedata
 // parameter will be the data pointer given to naSetBufferSourceData.
-typedef void (*NABufferFiller)(void* dst, NARangei range, void* sourcedata);
+typedef void (*NABufferFiller)(void* dst, NARangei sourcerange, void* sourcedata);
 
 // Create custom sources.
 // You can provide a filler function as well as an underlying buffer. Both
