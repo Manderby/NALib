@@ -7,71 +7,145 @@
 
 
 
-// Buffers are implemented in an highly granular way. The most granular parts
-// are an NABufferPart and an NABufferSourcePart. Consider the following two
-// sentences as buffers:
+// Buffers are implemented in an highly granular way. Each buffer is a series
+// of buffer parts stitched together. Consider the following three sentences
+// as buffers:
 //
 //                 +== BUFFER PART ==+== BUFFER PART ==+== BUFFER PART ==+
-// NABuffer buf1 = |     This is     |      very       |    exciting.    |
+// NABuffer buf1 = |     This is     |      very       |    exciting     |
 //                 +-----------------+-----------------+-----------------+
 //
 //                 +== BUFFER PART ==+== BUFFER PART ==+== BUFFER PART ==+
-// NABuffer buf2 = | Don't question  |       her       |    authority.   |
+// NABuffer buf2 = | Don't question  |       her       |    authority    |
 //                 +-----------------+-----------------+-----------------+
 //
-// Additionally, we have a text file source with the following content where
-// the word "everywhere" with a bytesize of 10 is stored at byte position 16:
+//                 +== BUFFER PART ==+== BUFFER PART ==+== BUFFER PART ==+
+// NABuffer buf3 = | You can see ads |    everywhere   |   these days    |
+//                 +-----------------+-----------------+-----------------+
 //
-//                 +== SOURCE PART ==+= SOURCE PART ==+= SOURCE PART =+
-// readme.txt      | You can see ads |   everywhere   |  these days.  |
-//                 +-----------------+----------------+---------------+
+// Let's look at a single buffer part in more detail: The buffer part
+// containing the word "everywhere" looks like this:
 //
-// Now, consider the word "everywhere" which contains both the word "very" and
-// the word "her" as a part of itself. Two NABuffers can share a single source
-// part and use just the part which is needed:
+// +==== BUFFER PART ====+
+// | blockoffset :  0    |
+// | bytesize    : 10    |       +==== MEMORY BLOCK ====+
+// | memblock ---------------->  |      everywhere      |
+// +=====================+       +======================+
 //
-//      +---------+------+-----------+
-//      | This is | very | exciting. |
-//      +---------/------\-----------+
-//               /        \
-//           +== BUFFER PART ==+
-//           | bytesize: 4     |    = very
-//           | byteoffset: 1 -------------------------+
-//        +--- sourcepart      |                      |
-//        |  +-----------------+                      |
-//        |                                           |
-//        |         +=== SOURCE PART ===+             |
-//        +-------> | source            |             |
-//                  | range = (16, 10)  |          +==V=========+
-//        +-------> | data ----------------------> | everywhere |
-//        |         +-------------------+          +-------A----+
-//        |                                                |
-//        |  +== BUFFER PART ==+                           |
-//        |  | bytesize: 3     |    = her                  |
-//        |  | byteoffset: 6 ------------------------------+
-//        +--- sourcepart      |
-//           +-----------------+
-//                 \       /
-// +----------------\-----/------------+
-// | Don't question | her | authority. |
-// +----------------+-----+------------+
+// It stores its content in a memory block which is self-organizing. This means
+// the memory block knows how and where to store or deallocate the memory
+// necessary to store the word "everywhere" and knows how many instances still
+// need the memory block to exist.
 //
-// It is important to understand that it is the referenced data which is shared
-// amongst NABuffers, NOT the NABufferParts!
+// A buffer part is only referencing such a memory block. It also defines
+// which bytes of that memory block are used. In this case 10 bytes starting
+// with index 0. 
 //
-// Buffer parts come in basically two forms:
-// 1. Filled parts: The pointer field points to a const or mutable memory block
-//    (which can be very large in size) which defines the referenced content.
-//    Other buffer parts may reference that memory block too.
-// 2. Sparse parts: The pointer field is NA_NULL. The referenced memory is yet
-//    undefined. This defines a placeholder defining the bytesize which shall
-//    be available where the NABufferPart is positioned inside the NABuffer.
-//    This bytesize can be very large if needed. Later on, such a part can be
-//    split into smaller parts of a specified size to make sparse memory more
-//    granular (the size NA_BUFFER_PART_BYTESIZE in NAConfiguration.h defines
-//    the default size). A sparse part can then reference a memory block,
-//    hence becoming a filled part.
-
+// Now, consider the words "very" and "her" which both are substrings of the
+// word "everywhere" (e-VERY-w-HER-e). The buffer parts can look like this:
+//
+// +==== BUFFER PART ====+
+// | blockoffset :  1    |
+// | bytesize    :  4    |
+// | memblock --------------\
+// +=====================+   \
+//                            -->  +==== MEMORY BLOCK ====+
+// +==== BUFFER PART ====+         |      everywhere      |
+// | blockoffset :  6    |    -->  +======================+
+// | bytesize    :  3    |   /
+// | memblock --------------/
+// +=====================+
+//
+// As you can see, the buffer parts share the same memory block. It is
+// important to understand that it is the referenced memery blocks which
+// are shared amongst NABuffers, NOT the buffer parts!
+//
+// Now consider the following C-like string written in source code and how
+// we easily turn that into an NABuffer:
+//
+// const char* mystring = "This is an exciting trend these days.";
+// NABuffer* buf4 = naNewBufferWithConstData(mystring, strlen(mystring));
+//
+// This results in a buf4 containing exactly one buffer part:
+//
+// +==== BUFFER PART ====+
+// | blockoffset :  0    |
+// | bytesize    : 37    |       +============ MEMORY BLOCK =============+
+// | memblock ---------------->  | This is an exciting trend these days. |
+// +=====================+       +=======================================+
+//
+// Note that the data stored in mystring will not be copied but referenced
+// and the memory block remembers that this was a const array and therefore
+// will NOT try to deallocate it if it is no longer in use.
+//
+// Going back to buf1, we can show the buffer a little more in detail:
+//
+//                 +=== BUFFER PART ==+=== BUFFER PART ==+=== BUFFER PART ==+
+// NABuffer buf1 = |     This is      |       very       |     exciting.    |
+//                 | blockoffset :  0 | blockoffset :  1 | blockoffset : 12 |
+//                 | bytesize    :  7 | bytesize    :  4 | bytesize    :  8 |
+//               +-- memblock         | memblock  --+    | memblock  --+    |
+//               | +------------------+-------------|----+-------------|----+
+//               |                                  |                  |
+//               |    +==== MEMORY BLOCK ====+      |                  |
+//               |    |      everywhere      | <----+                  |
+//               |    +======================+                         |
+//               |                                                     |
+//               |       +============ MEMORY BLOCK =============+     |
+//               +-----> | This is an exciting trend these days. | <---+
+//                       +=======================================+
+//
+// So far so good but let's go further.
+//
+// Imagine, buf3 being read from a file. In NALib, the file content stays on
+// disk as long as it is not explicitely used. Therefore at the beginning
+// when first creating buf3, it looks something like this:
+//
+//        +==================== BUFFER PART ====================+
+// buf3 = |                                                     |
+//        +-----------------------------------------------------+
+//
+// That single buffer part knows that the file content has in total 37 bytes
+// but it has not yet allocated a memory block. This is called a "sparse part".
+// When reading the file, such sparse parts will subsequentially be turned
+// into filled parts. For example when reading the file byte by byte, it
+// might looke somewhat like this:
+//
+//        +==================== BUFFER PART ====================+
+//   |    |                                                     |
+//   |    +== BUFFER PART ==+=========== BUFFER PART ===========+
+//   |    | You can see ads |                                   |
+//   |    +== BUFFER PART ==+== BUFFER PART ==+== BUFFER PART ==+
+//   |    | You can see ads |    everywhere   |                 |
+//   |    +== BUFFER PART ==+== BUFFER PART ==+== BUFFER PART ==+
+//   V    | You can see ads |    everywhere   |   these days    |
+//        +-----------------+-----------------+-----------------+
+//
+// The obvious advantage of that is that memory is only allocated when really
+// needed. This also works when for example only the first few bytes of a
+// large file need to be read and the last few bytes. In our little example,
+// this might look like this:
+//
+//        +== BUFFER PART ==+== BUFFER PART ==+== BUFFER PART ==+
+//        | You can see ads |                 |   these days    |
+//        +-----------------+-----------------+-----------------+
+//
+// The middle buffer part is sparse. Now, as good as the advantages sound,
+// this poses a problem. When looking above, buf1 and buf2 require the middle
+// buffer part to be filled with the word "everywhere".
+//
+// NALib solves this problem automatically by remembering, what the original
+// source of a buffer part should be. This is not shown here in the diagrams
+// of a buffer part, but whenever a buffer part is sparse, it remembers which
+// bytes from which source should be stored in that part. And whenever needed,
+// the sparse part will "ask" the source to fill up its own buffer part with
+// content, hence creating a memory block which then in turn will finally be
+// referenced.
+//
+// A source can for example be a file, a const char* array or another NABuffer.
+// You can create custom sources with naNewBufferSource and the corresponding
+// buffers by calling naNewBufferWithCustomSource. 
+//
 
 
 // //////////////////////////////////////
