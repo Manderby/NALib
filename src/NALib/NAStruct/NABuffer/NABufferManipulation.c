@@ -182,7 +182,7 @@ NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum)
         naError("naAccumulateBufferToChecksum", "Buffer contains sparse parts. Can not compute checksum. Use naCacheBuffer.");
     #endif
 
-    NAInt remainingbytes = naGetBufferPart(&iter)->bytesize;
+    NAInt remainingbytes = naGetBufferPartByteSize(naGetBufferPart(&iter));
     const void* src = naGetBufferPartDataPointerConst(&iter);
 
     if(bytesize > remainingbytes){
@@ -255,7 +255,7 @@ NA_DEF void naWriteBufferToData(NABuffer* buffer, void* data){
   NABufferIterator iter = naMakeBufferModifier(buffer);
 
   while(naIterateBufferPart(&iter)){
-    NAInt bytesize = naGetBufferPart(&iter)->bytesize;
+    NAInt bytesize = naGetBufferPartByteSize(naGetBufferPart(&iter));
     const void* src = naGetBufferPartDataPointerConst(&iter);
     #ifndef NDEBUG
       if(naIsBufferPartSparse(&iter))

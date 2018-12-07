@@ -39,13 +39,13 @@ void naDestructBufferTreeNode(NAPtr nodedata, NAPtr configdata){
 
 
 
-NABool naUpdateBufferTreeNode(NAPtr parentdata,  NAPtr* childdatas, NAInt childindx, NAInt childmask){
+NABool naUpdateBufferTreeNode(NAPtr parentdata, NAPtr* childdatas, NAInt childindx, NAInt childmask){
   NABufferTreeNodeData* parentnodedata = (NABufferTreeNodeData*)naGetPtrMutable(&parentdata);
 
   NAInt prevlen1 = parentnodedata->len1;
   if(childmask & 0x01){
-    NABufferPart* leafdata = (NABufferPart*)naGetPtrMutable(&(childdatas[0]));
-    parentnodedata->len1 = leafdata->bytesize;
+    NABufferPart* part = (NABufferPart*)naGetPtrMutable(&(childdatas[0]));
+    parentnodedata->len1 = naGetBufferPartByteSize(part);
   }else{
     NABufferTreeNodeData* childdata = (NABufferTreeNodeData*)naGetPtrMutable(&(childdatas[0]));
     parentnodedata->len1 = childdata->len1 + childdata->len2;
@@ -53,8 +53,8 @@ NABool naUpdateBufferTreeNode(NAPtr parentdata,  NAPtr* childdatas, NAInt childi
 
   NAInt prevlen2 = parentnodedata->len2;
   if(childmask & 0x02){
-    NABufferPart* leafdata = (NABufferPart*)naGetPtrMutable(&(childdatas[1]));
-    parentnodedata->len2 = leafdata->bytesize;
+    NABufferPart* part = (NABufferPart*)naGetPtrMutable(&(childdatas[1]));
+    parentnodedata->len2 = naGetBufferPartByteSize(part);
   }else{
     NABufferTreeNodeData* childdata = (NABufferTreeNodeData*)naGetPtrMutable(&(childdatas[1]));
     parentnodedata->len2 = childdata->len1 + childdata->len2;
@@ -86,9 +86,9 @@ NA_HDEF NABool naSearchBufferNode(void* token, NAPtr data, NAInt* nextindx){
 
 NA_HDEF NABool naSearchBufferLeaf(void* token, NAPtr data, NABool* matchfound){
   NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
-  NABufferPart* leafdata = (NABufferPart*)naGetPtrMutable(&data);
+  NABufferPart* part = (NABufferPart*)naGetPtrMutable(&data);
 
-  if((searchtoken->searchoffset >= searchtoken->curoffset) && (searchtoken->searchoffset < searchtoken->curoffset + leafdata->bytesize)){
+  if((searchtoken->searchoffset >= searchtoken->curoffset) && (searchtoken->searchoffset < searchtoken->curoffset + naGetBufferPartByteSize(part))){
     *matchfound = NA_TRUE;
   }else{
     *matchfound = NA_FALSE;
@@ -498,7 +498,7 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
   }else{
 
     NABufferIterator iter = naMakeBufferModifier(buffer);
-    
+
     // First, we test if we need to add a sparse part at the beginning.
     if(start < buffer->range.origin){
       naLocateBufferFirstPart(&iter);
@@ -507,8 +507,8 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
         // If the first part of this list is already sparse, we simply extend
         // its range.
         NABufferPart* part = naGetBufferPart(&iter);
-        part->bytesize += additionalbytes;
-        part->sourceoffset -= additionalbytes;
+        naSetBufferPartByteSize(part, naGetBufferPartByteSize(part) + additionalbytes);
+        naSetBufferPartSourceOffset(part, naGetBufferPartSourceOffset(part) - additionalbytes);
       }else{
         // We create a sparse part at the beginning.
         NABufferPart* part = naNewBufferPartSparse(buffer->enhancesource, naMakeRangei(start + buffer->enhancesourceoffset, additionalbytes));
@@ -525,7 +525,7 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
         // If the last part of this list is already sparse, we simply extend
         // its range.
         NABufferPart* part = naGetBufferPart(&iter);
-        part->bytesize += additionalbytes;
+        naSetBufferPartByteSize(part, naGetBufferPartByteSize(part) + additionalbytes);
       }else{
         // We create a sparse part at the end.
         NABufferPart* part = naNewBufferPartSparse(buffer->enhancesource, naMakeRangei(naGetRangeiEnd(buffer->range) + buffer->enhancesourceoffset, additionalbytes));
@@ -533,7 +533,7 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
       }
       buffer->range = naMakeRangeiWithStartAndEnd(buffer->range.origin, end);
     }
-    
+
     naClearBufferIterator(&iter);
   }
 }

@@ -157,7 +157,7 @@ typedef void (*NABufferFiller)(void* dst, NARangei sourcerange, void* sourcedata
 //         linear address for later access. If NA_NULL is given, memory blocks
 //         will always be created anew and on the go, completely unordered. For
 //         example, a file buffer has a simple underlying NABuffer which holds
-//         all bytes which already have been read. 
+//         all bytes which already have been read.
 NA_API NABufferSource* naNewBufferSource(      NABufferFiller filler,
                                                     NABuffer* buffer);
 

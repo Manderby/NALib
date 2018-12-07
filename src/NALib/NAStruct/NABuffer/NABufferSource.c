@@ -101,7 +101,7 @@ NA_HDEF NABool naIsBufferSourceLimited(const NABufferSource* source){
 // The sourceoffset parameter is given in source coordinates (can be negative).
 // The parameter blockoffset returns the (always positive) offset in the
 // returned memory block which corresponds to the given sourceoffset.
-NA_HDEF NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourceoffset, NAInt* blockoffset){
+NA_HDEF NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourceoffset, NAInt* blockoffset, NAInt* blocksize){
   NABufferPart* preparedpart;
   #ifndef NDEBUG
     if(naIsBufferSourceLimited(source) && !naContainsRangeiOffset(source->limit, sourceoffset))
@@ -133,7 +133,8 @@ NA_HDEF NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourc
     // sourceoffset.
     naPrepareBuffer(&iter, 1, NA_FALSE);
     preparedpart = naGetBufferPart(&iter);
-    *blockoffset = preparedpart->blockoffset + naGetBufferIteratorPartOffset(&iter);
+    *blockoffset = naGetBufferPartBlockOffset(preparedpart) + naGetBufferIteratorPartOffset(&iter);
+    *blocksize = naGetBufferPartByteSize(preparedpart) - naGetBufferIteratorPartOffset(&iter);
     naClearBufferIterator(&iter);
 
   }else{
@@ -155,11 +156,12 @@ NA_HDEF NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourc
     }
     // Now, we create a new sparse buffer and fill it with memory immediately.
     preparedpart = naNewBufferPartSparse(source, normedrange);
-    preparedpart->memblock = naNewMemoryBlock(preparedpart->bytesize);
+    naSetBufferPartMemoryBlock(preparedpart, naNewMemoryBlock(naGetBufferPartByteSize(preparedpart)));
     if(source->buffiller){
-      source->buffiller(naGetPtrMutable(&(preparedpart->memblock->data)), normedrange, preparedpart->source->data);
+      source->buffiller(naGetMemoryBlockDataPointerMutable(naGetBufferPartMemoryBlock(preparedpart), 0), normedrange, naGetBufferPartSource(preparedpart)->data);
     }
     *blockoffset = sourceoffset - normedrange.origin;
+    *blocksize = naGetBufferPartByteSize(preparedpart) - *blockoffset;
 
   }
 
@@ -167,7 +169,7 @@ NA_HDEF NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourc
     if(*blockoffset < 0)
       naError("naPrepareBufferSource", "returned blockoffset should be >= 0");
   #endif
-  return preparedpart->memblock;
+  return naGetBufferPartMemoryBlock(preparedpart);
 }
 
 
