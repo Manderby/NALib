@@ -211,19 +211,17 @@ NA_HAPI NABufferPart* naNewBufferPartWithConstData(const void* data, NAInt bytes
 NA_HAPI NABufferPart* naNewBufferPartWithMutableData(void* data, NAInt bytesize, NAMutator deallocator);
 NA_HAPI NABufferSource* naGetBufferPartSource(const NABufferPart* part);
 NA_HAPI NAInt naGetBufferPartByteSize(const NABufferPart* part);
-NA_HAPI void naSetBufferPartByteSize(NABufferPart* part, NAInt bytesize);
-NA_HAPI NAInt naGetBufferPartSourceOffset(const NABufferPart* part);
-NA_HAPI void naSetBufferPartSourceOffset(NABufferPart* part, NAInt sourceoffset);
-NA_HAPI NAInt naGetBufferPartBlockOffset(const NABufferPart* part);
-NA_HAPI void naSetBufferPartBlockOffset(NABufferPart* part, NAInt blockoffset);
 NA_HAPI NAMemoryBlock* naGetBufferPartMemoryBlock(const NABufferPart* part);
-NA_HAPI void naSetBufferPartMemoryBlock(NABufferPart* part, NAMemoryBlock* memblock);
+NA_HAPI NABool naIsBufferPartSparse(const NABufferPart* part);
 
 NA_HAPI NAInt naPrepareBufferPart(NABufferIterator* iter, NAInt bytecount, NABool forcevolatile);
 NA_HAPI NAInt naGetBufferIteratorPartOffset(NABufferIterator* iter);
-NA_HAPI NABool naIsBufferPartSparse(NABufferIterator* iter);
+NA_HAPI NABool naIsBufferIteratorSparse(NABufferIterator* iter);
 
-NA_HAPI void naSplitBufferSparsePart(NABufferIterator* iter, NAInt start, NAInt end);
+NA_HAPI NABufferPart* naSplitBufferPart(NATreeIterator* partiter, NAInt start, NAInt end);
+NA_HAPI void naEnlargeBufferPart(NABufferPart* part, NAInt bytesatstart, NAInt bytesatend);
+NA_HAPI void naPrepareBufferPartSourceBuffer(NATreeIterator* partiter, NARangei partrange);
+NA_HAPI NABufferPart* naPrepareBufferPartMemory(NATreeIterator* partiter, NARangei partrange);
 NA_HAPI const void* naGetBufferPartDataPointerConst(NABufferIterator* iter);
 
 // NABufferHelper
@@ -243,7 +241,9 @@ NA_API NABool naLocateBufferLastIndex(NABufferIterator* iter);
 // NABufferSource
 NA_HAPI NABool naIsBufferSourceVolatile(const NABufferSource* source);
 NA_HAPI NABuffer* naGetBufferSourceUnderlyingBuffer(NABufferSource* source);
-NA_HAPI NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourceoffset, NAInt* blockoffset, NAInt* blocksize);
+NA_HAPI NABool naIsBufferSourceLimited(const NABufferSource* source);
+NA_HAPI NARangei naGetBufferSourceLimit(const NABufferSource* source);
+NA_HDEF void naFillSourceBuffer(const NABufferSource* source, void* dst, NARangei range);
 
 
 

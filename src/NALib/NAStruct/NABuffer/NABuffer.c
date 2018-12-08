@@ -503,12 +503,10 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
     if(start < buffer->range.origin){
       naLocateBufferFirstPart(&iter);
       NAInt additionalbytes = buffer->range.origin - start;
-      if(naIsBufferPartSparse(&iter)){
+      if(naIsBufferIteratorSparse(&iter)){
         // If the first part of this list is already sparse, we simply extend
         // its range.
-        NABufferPart* part = naGetBufferPart(&iter);
-        naSetBufferPartByteSize(part, naGetBufferPartByteSize(part) + additionalbytes);
-        naSetBufferPartSourceOffset(part, naGetBufferPartSourceOffset(part) - additionalbytes);
+        naEnlargeBufferPart(naGetBufferPart(&iter), additionalbytes, 0);
       }else{
         // We create a sparse part at the beginning.
         NABufferPart* part = naNewBufferPartSparse(buffer->enhancesource, naMakeRangei(start + buffer->enhancesourceoffset, additionalbytes));
@@ -521,11 +519,10 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
     if(end > naGetRangeiEnd(buffer->range)){
       naLocateBufferLastPart(&iter);
       NAInt additionalbytes = end - naGetRangeiEnd(buffer->range);
-      if(naIsBufferPartSparse(&iter)){
+      if(naIsBufferIteratorSparse(&iter)){
         // If the last part of this list is already sparse, we simply extend
         // its range.
-        NABufferPart* part = naGetBufferPart(&iter);
-        naSetBufferPartByteSize(part, naGetBufferPartByteSize(part) + additionalbytes);
+        naEnlargeBufferPart(naGetBufferPart(&iter), 0, additionalbytes);
       }else{
         // We create a sparse part at the end.
         NABufferPart* part = naNewBufferPartSparse(buffer->enhancesource, naMakeRangei(naGetRangeiEnd(buffer->range) + buffer->enhancesourceoffset, additionalbytes));

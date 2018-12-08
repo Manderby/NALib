@@ -97,81 +97,21 @@ NA_HDEF NABool naIsBufferSourceLimited(const NABufferSource* source){
 
 
 
-// This function returns a memory block which contains the desired sourceoffset.
-// The sourceoffset parameter is given in source coordinates (can be negative).
-// The parameter blockoffset returns the (always positive) offset in the
-// returned memory block which corresponds to the given sourceoffset.
-NA_HDEF NAMemoryBlock* naPrepareBufferSource(NABufferSource* source, NAInt sourceoffset, NAInt* blockoffset, NAInt* blocksize){
-  NABufferPart* preparedpart;
+NA_HDEF NARangei naGetBufferSourceLimit(const NABufferSource* source){
   #ifndef NDEBUG
-    if(naIsBufferSourceLimited(source) && !naContainsRangeiOffset(source->limit, sourceoffset))
-      naError("naPrepareBufferSource", "offset is not in source limits");
+    if(!naIsBufferSourceLimited(source))
+      naError("naGetBufferSourceLimit", "source is not limited");
   #endif
-
-  NABuffer* sourcebuffer = naGetBufferSourceUnderlyingBuffer(source);
-  if(sourcebuffer){
-    // We have an underlying buffer and hence use it to find or create a
-    // suitable memory block by recursively preparing the underlying buffer.
-    NABufferIterator iter = naMakeBufferModifier(sourcebuffer);
-    NABool found = naLocateBuffer(&iter, sourceoffset);
-    if(!found){
-      // If we haven't found a suitable part, we must create a new one.
-      naEnsureBufferRange(sourcebuffer, sourceoffset, sourceoffset + 1);
-      // We now know that the new byte must either be at the beginning or
-      // the end.
-      if(sourcebuffer->range.origin == sourceoffset){
-        naLocateBufferFirstPart(&iter);
-      }else{
-        naLocateBufferLastIndex(&iter);
-      }
-      #ifndef NDEBUG
-        if(naGetBufferLocation(&iter) != sourceoffset)
-          naError("naPrepareBufferSource", "unsuccessfully enlarged buffer");
-      #endif
-    }
-    // Now we can be sure that the buffer iterator is at a part containing
-    // sourceoffset.
-    naPrepareBuffer(&iter, 1, NA_FALSE);
-    preparedpart = naGetBufferPart(&iter);
-    *blockoffset = naGetBufferPartBlockOffset(preparedpart) + naGetBufferIteratorPartOffset(&iter);
-    *blocksize = naGetBufferPartByteSize(preparedpart) - naGetBufferIteratorPartOffset(&iter);
-    naClearBufferIterator(&iter);
-
-  }else{
-    // We have no underlying buffer. Therefore we have no information about
-    // any previous memory block used by this source and we create new blocks.
-    //
-    // We find out a suitable range to contain at least 1 byte at the desired
-    // offset. This will result in a range which has a byte cout of
-    // NA_INTERNAL_BUFFER_PART_BYTESIZE
-    NAInt normedstart = naGetBufferPartNormedStart(sourceoffset);
-    NAInt normedend = naGetBufferPartNormedEnd(sourceoffset + 1);
-    NARangei normedrange = naMakeRangeiWithStartAndEnd(normedstart, normedend);
-    if(naIsBufferSourceLimited(source)){
-      normedrange = naClampRangeiToRange(normedrange, source->limit);
-      #ifndef NDEBUG
-        if(!naContainsRangeiOffset(normedrange, sourceoffset))
-          naError("naPrepareBufferSource", "limited range can not contain desired offset");
-      #endif
-    }
-    // Now, we create a new sparse buffer and fill it with memory immediately.
-    preparedpart = naNewBufferPartSparse(source, normedrange);
-    naSetBufferPartMemoryBlock(preparedpart, naNewMemoryBlock(naGetBufferPartByteSize(preparedpart)));
-    if(source->buffiller){
-      source->buffiller(naGetMemoryBlockDataPointerMutable(naGetBufferPartMemoryBlock(preparedpart), 0), normedrange, naGetBufferPartSource(preparedpart)->data);
-    }
-    *blockoffset = sourceoffset - normedrange.origin;
-    *blocksize = naGetBufferPartByteSize(preparedpart) - *blockoffset;
-
-  }
-
-  #ifndef NDEBUG
-    if(*blockoffset < 0)
-      naError("naPrepareBufferSource", "returned blockoffset should be >= 0");
-  #endif
-  return naGetBufferPartMemoryBlock(preparedpart);
+  return source->limit;
 }
 
+
+
+NA_HDEF void naFillSourceBuffer(const NABufferSource* source, void* dst, NARangei range){
+  if(source && source->buffiller){
+    source->buffiller(dst, range, source->data);
+  }
+}
 
 
 
