@@ -220,7 +220,7 @@ NA_HAPI NABool naIsBufferIteratorSparse(NABufferIterator* iter);
 
 NA_HAPI NABufferPart* naSplitBufferPart(NATreeIterator* partiter, NAInt start, NAInt end);
 NA_HAPI void naEnlargeBufferPart(NABufferPart* part, NAInt bytesatstart, NAInt bytesatend);
-NA_HAPI void naPrepareBufferPartSourceBuffer(NATreeIterator* partiter, NARangei partrange);
+NA_HAPI NABufferPart* naPrepareBufferPartSourceBuffer(NATreeIterator* partiter, NARangei partrange);
 NA_HAPI NABufferPart* naPrepareBufferPartMemory(NATreeIterator* partiter, NARangei partrange);
 NA_HAPI const void* naGetBufferPartDataPointerConst(NABufferIterator* iter);
 
@@ -234,9 +234,9 @@ NA_HAPI NABuffer* naGetBufferIteratorBufferMutable(NABufferIterator* iter);
 NA_HAPI void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance);
 NA_HAPI NABufferPart* naGetBufferPart(NABufferIterator* iter);
 NA_HAPI NABool naIterateBufferPart(NABufferIterator* iter);
-NA_API NABool naLocateBufferFirstPart(NABufferIterator* iter);
+NA_API NABool naLocateBufferFirst(NABufferIterator* iter);
 NA_API NABool naLocateBufferLastPart(NABufferIterator* iter);
-NA_API NABool naLocateBufferLastIndex(NABufferIterator* iter);
+NA_API NABool naLocateBufferMax(NABufferIterator* iter);
 
 // NABufferSource
 NA_HAPI NABool naIsBufferSourceVolatile(const NABufferSource* source);

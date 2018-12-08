@@ -124,10 +124,10 @@ NA_DEF NABool naLocateBuffer(NABufferIterator* iter, NAInt offset){
 
 
 
-NA_DEF NABool naLocateBufferFirstPart(NABufferIterator* iter){
+NA_DEF NABool naLocateBufferFirst(NABufferIterator* iter){
   #ifndef NDEBUG
     if(iter->curbit != 0)
-      naError("naLocateBufferFirstPart", "Buffer bitcount is not null.");
+      naError("naLocateBufferFirst", "Buffer bitcount is not null.");
   #endif
   iter->curbit = 0;
   iter->linenum = 0;
@@ -164,10 +164,10 @@ NA_DEF NABool naLocateBufferLastPart(NABufferIterator* iter){
 
 
 
-NA_DEF NABool naLocateBufferLastIndex(NABufferIterator* iter){
+NA_DEF NABool naLocateBufferMax(NABufferIterator* iter){
   #ifndef NDEBUG
     if(iter->curbit != 0)
-      naError("naLocateBufferLastIndex", "Buffer bitcount is not null.");
+      naError("naLocateBufferMax", "Buffer bitcount is not null.");
   #endif
   naLocateTreeLast(&(iter->partiter));
   if(naIsTreeAtInitial(&(iter->partiter))){
@@ -477,11 +477,12 @@ NA_HDEF NAInt naPrepareBufferPart(NABufferIterator* iter, NAInt bytecount, NABoo
     part = naGetBufferPart(iter);
     NABufferSource* source = naGetBufferPartSource(part);
     if(source && naGetBufferSourceUnderlyingBuffer(source)){
-      // There is a source, therefore we try to fill the buffer with it.
-      naPrepareBufferPartSourceBuffer(&(iter->partiter), naMakeRangei(iter->partoffset, bytecount));
+      // There is a source and a source buffer, therefore we try to fill the
+      // buffer with it.
+      part = naPrepareBufferPartSourceBuffer(&(iter->partiter), naMakeRangei(iter->partoffset, bytecount));
     }else{
       // We have no source or no source buffer, meaning, we prepare memory.
-      naPrepareBufferPartMemory(&(iter->partiter), naMakeRangei(iter->partoffset, bytecount));
+      part = naPrepareBufferPartMemory(&(iter->partiter), naMakeRangei(iter->partoffset, bytecount));
     }
   }
 

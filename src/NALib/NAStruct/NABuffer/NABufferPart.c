@@ -162,8 +162,6 @@ NA_HDEF NABufferPart* naSplitBufferPart(NATreeIterator* partiter, NAInt start, N
       naError("naSplitBufferPart", "part is not sparse");
     if(!naIsLengthValueUsefuli(length))
       naError("naSplitBufferPart", "start and end make no sense");
-    if(start < 0)
-      naError("naSplitBufferPart", "start should not be negative");
     if(start > part->bytesize)
       naError("naSplitBufferPart", "start is too big");
     if(end < 0)
@@ -172,6 +170,7 @@ NA_HDEF NABufferPart* naSplitBufferPart(NATreeIterator* partiter, NAInt start, N
 
   NAInt prevbytesize = part->bytesize;
 
+  if(start < 0){start = 0;}
   if(end > part->bytesize){end = part->bytesize;}
 
   // We try to split the full sparse part into two or three parts.
@@ -225,15 +224,12 @@ NA_HDEF void naEnlargeBufferPart(NABufferPart* part, NAInt bytesatstart, NAInt b
 // This function recursively prepares the source of the current part. If the
 // current part has no source, memory is prepared. In the end, the current part
 // will become a non-sparse part.
-NA_HDEF void naPrepareBufferPartSourceBuffer(NATreeIterator* partiter, NARangei partrange){
+NA_HDEF NABufferPart* naPrepareBufferPartSourceBuffer(NATreeIterator* partiter, NARangei partrange){
   NABufferPart* part = naGetTreeCurMutable(partiter);
   NABufferSource* source = part->source;
   NAInt sourceoffset = part->sourceoffset + partrange.origin;
+  NABuffer* sourcebuffer = naGetBufferSourceUnderlyingBuffer(source);
 
-  NAMemoryBlock* memblock;
-  NAInt newblockoffset;
-  NAInt newblockremainingsize;
-  
   #ifndef NDEBUG
     if(!naGetBufferSourceUnderlyingBuffer(source))
       naError("naPrepareBufferPartSourceBuffer", "source has no buffer");
@@ -243,50 +239,77 @@ NA_HDEF void naPrepareBufferPartSourceBuffer(NATreeIterator* partiter, NARangei 
       naError("naPrepareBufferPartSourceBuffer", "offset is not in source limits");
   #endif
 
-  NABuffer* sourcebuffer = naGetBufferSourceUnderlyingBuffer(source);
-  // We have an underlying buffer and hence use it to find or create a
-  // suitable memory block by recursively preparing the underlying buffer.
   NABufferIterator iter = naMakeBufferModifier(sourcebuffer);
-    NABool found = naLocateBuffer(&iter, sourceoffset);
-    if(!found){
-      // If we haven't found a suitable part, we must create a new one.
-      naEnsureBufferRange(sourcebuffer, sourceoffset, sourceoffset + 1);
-      // We now know that the new byte must either be at the beginning or
-      // the end.
-      if(sourcebuffer->range.origin == sourceoffset){
-        naLocateBufferFirstPart(&iter);
-      }else{
-        naLocateBufferLastIndex(&iter);
-      }
-      #ifndef NDEBUG
-        if(naGetBufferLocation(&iter) != sourceoffset)
-          naError("naPrepareBufferSource", "unsuccessfully enlarged buffer");
-      #endif
+
+  NABool found = naLocateBuffer(&iter, sourceoffset);
+  if(!found){
+    // If we haven't found a suitable part, we must ensure the desired range.
+    naEnsureBufferRange(sourcebuffer, sourceoffset, sourceoffset + partrange.length);
+    // We now know that the new byte must either be at the beginning or
+    // the end.
+    if(sourcebuffer->range.origin == sourceoffset){
+      naLocateBufferFirst(&iter);
+    }else{
+      naLocateBufferMax(&iter);
     }
-    // Now we can be sure that the buffer iterator is at a part containing
-    // sourceoffset.
-    naPrepareBuffer(&iter, 1, NA_FALSE);
-    NABufferPart* sourcepart = naGetBufferPart(&iter);
-    memblock = naGetBufferPartMemoryBlock(sourcepart);
-    newblockoffset = sourcepart->blockoffset + naGetBufferIteratorPartOffset(&iter);
-    newblockremainingsize = sourcepart->bytesize - naGetBufferIteratorPartOffset(&iter);
+    #ifndef NDEBUG
+      if(naGetBufferLocation(&iter) != sourceoffset)
+        naError("naPrepareBufferSource", "unsuccessfully enlarged buffer");
+    #endif
+  }
+  
+  // Now we can be sure that the buffer iterator is at a part containing
+  // sourceoffset.
+  
+  // Recursive call to the source buffer to prepare itself.
+  naPrepareBuffer(&iter, partrange.length, NA_FALSE);
+  NABufferPart* sourcepart = naGetBufferPart(&iter);
+  
+  #ifndef NDEBUG
+    if(naIsBufferPartSparse(sourcepart))
+      naError("naPrepareBufferSource", "source part is sparse");
+  #endif
+
+  // Reaching here, iter points at the desired byte in the source buffer.
+  // The computation is a little complicated, so here is a diagram:
+  //
+  //                              |<--- remainingbytesinsourcepart --->|
+  // +-- SOURCEPART --------------+------------------------------------+
+  // |       offsetinsourcepart ->X                                    |
+  // +----------------------------+------------------------------------+
+  //                              |
+  // +-- normedstart              |                        normedend --+
+  // |                            |                                    |
+  // V                            |                                    V
+  // +      +- PART --------------+------------------------+           +
+  // |      |  partrange.origin ->X                        |           |
+  // +      +---------------------+------------------------+           +
+  //
+  // Note that in general, part may be larger than sourcepart in which case
+  // naSplitBufferPart will split part into pieces.
+  //
+  // Note that the naSplitBufferPart function will ensure that normedstart
+  // and normedend are clamped to the parts boundaries if part is smaller
+  // than sourcepart.
+  
+  NAInt offsetinsourcepart = iter.partoffset;
+  NAInt remainingbytesinsourcepart = sourcepart->bytesize - iter.partoffset;
+  NAInt normedstart = partrange.origin - offsetinsourcepart;
+  NAInt normedend = partrange.origin + remainingbytesinsourcepart;
+  part = naSplitBufferPart(partiter, normedstart, normedend);
+
+  part->memblock = naRetain(naGetBufferPartMemoryBlock(sourcepart));
+  part->blockoffset = sourcepart->blockoffset + offsetinsourcepart;
+    
   naClearBufferIterator(&iter);
 
-  #ifndef NDEBUG
-    if(newblockoffset < 0)
-      naError("naPrepareBufferSource", "new blockoffset should be >= 0");
-  #endif
-  
-  // Reaching here, we have a memory block waiting to be referenced. But we
-  // reference only as many bytes as we need.
-  newblockremainingsize = naMini(newblockremainingsize, part->bytesize - part->blockoffset);
-  part = naSplitBufferPart(partiter, partrange.origin, partrange.origin + newblockremainingsize);
-  part->blockoffset = newblockoffset;
-  part->memblock = naRetain(memblock);
+  return part;
 }
 
 
 
+// This function expects a sparse buffer part, splits it such that a suitable
+// range can be made non-sparse and that range is filled with memory.
 NA_HDEF NABufferPart* naPrepareBufferPartMemory(NATreeIterator* partiter, NARangei partrange){
   NABufferPart* part = naGetTreeCurMutable(partiter);
   NABufferSource* source = part->source;

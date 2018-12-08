@@ -476,7 +476,6 @@ NA_DEF void naExtendBufferRange(NABuffer* buffer, NAInt bytesatstart, NAInt byte
 // this buffer. If not available, the buffer is extended with sparse parts
 // at the beginning and the end.
 NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
-//  NABufferPart* part;
   NAInt length = end - start;
 
   #ifndef NDEBUG
@@ -501,7 +500,7 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
 
     // First, we test if we need to add a sparse part at the beginning.
     if(start < buffer->range.origin){
-      naLocateBufferFirstPart(&iter);
+      naLocateBufferFirst(&iter);
       NAInt additionalbytes = buffer->range.origin - start;
       if(naIsBufferIteratorSparse(&iter)){
         // If the first part of this list is already sparse, we simply extend

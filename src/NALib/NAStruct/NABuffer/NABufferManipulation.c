@@ -174,7 +174,7 @@ NA_DEF NABuffer* naNewBufferWithStringBase64Decoded(const NAString* string){
 NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum){
   NAInt bytesize = buffer->range.length;
   NABufferIterator iter = naMakeBufferModifier(buffer);
-  naLocateBufferFirstPart(&iter);
+  naLocateBufferFirst(&iter);
 
   while(bytesize){
     #ifndef NDEBUG
