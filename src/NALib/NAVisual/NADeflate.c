@@ -527,7 +527,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
 
   naFixBufferRange(output);
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_ADLER_32);
-  naAccumulateBufferToChecksum(output, &checksum);
+  naAccumulateChecksumBuffer(&checksum, output);
   adler = naGetChecksumResult(&checksum);
   naClearChecksum(&checksum);
 
@@ -600,7 +600,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, N
   naSetBufferEndianness(output, NA_ENDIANNESS_NETWORK);
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_ADLER_32);
 //  naSeekBufferAbsolute(input, 0);
-  naAccumulateBufferToChecksum(input, &checksum);
+  naAccumulateChecksumBuffer(&checksum, input);
   adler = naGetChecksumResult(&checksum);
   naClearChecksum(&checksum);
   naWriteBufferu32(&iterout, adler);

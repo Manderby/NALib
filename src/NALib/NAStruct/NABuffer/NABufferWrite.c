@@ -432,37 +432,26 @@ NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, NAInt cou
 
 
 NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffer, NARangei srcrange){
-  NA_UNUSED(iter);
-  NA_UNUSED(srcbuffer);
-  NA_UNUSED(srcrange);
-//  NABuffer* dstbuffer;
-//  NABufferSource* tmpsource;
-//  NAInt tmpsrcoffset;
-//  NABuffer* mutablesrcbuffer;
-//
-//  if(!naIsRangeiEmpty(srcrange)){
-//    dstbuffer = naGetBufferIteratorBufferMutable(iter);
-//    tmpsource = dstbuffer->source;
-//    tmpsrcoffset = dstbuffer->srcoffset;
-//
-//    mutablesrcbuffer = (NABuffer*)srcbuffer;
-//
-//    dstbuffer->source = naNewBufferSourceWithBuffer(mutablesrcbuffer);
-//    const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-//
-//    if(!naIsBufferEmpty(buffer) && naIsBufferAtInitial(iter)){
-//      iter->curoffset = naGetRangeiEnd(buffer->range);
-//    }
-//    dstbuffer->srcoffset = iter->curoffset - srcrange.origin;
-//
-//    naCacheBufferRange(dstbuffer, naMakeRangei(iter->curoffset, srcrange.length), NA_FALSE);
-//    iter->curoffset += srcrange.length;
-//
-//    naRelease(dstbuffer->source);
-//
-//    dstbuffer->source = tmpsource;
-//    dstbuffer->srcoffset = tmpsrcoffset;
-//  }
+  NABuffer* dstbuffer;
+  NABufferSource* tmpsource;
+  NAInt tmpsourceoffset;
+  NABuffer* mutablesrcbuffer;
+
+  if(!naIsRangeiEmpty(srcrange)){
+    dstbuffer = naGetBufferIteratorBufferMutable(iter);
+    NAInt curpos = naGetBufferLocation(iter);
+    mutablesrcbuffer = (NABuffer*)srcbuffer;
+
+    tmpsource = dstbuffer->enhancesource;
+    tmpsourceoffset = dstbuffer->enhancesourceoffset;
+    dstbuffer->enhancesource = naNewBufferSource(NA_NULL, mutablesrcbuffer);
+    dstbuffer->enhancesourceoffset = curpos - srcrange.origin;
+
+    naCacheBufferRange(dstbuffer, naMakeRangei(curpos, srcrange.length), NA_FALSE);
+
+    dstbuffer->enhancesource = tmpsource;
+    dstbuffer->enhancesourceoffset = tmpsourceoffset;
+  }
 }
 
 

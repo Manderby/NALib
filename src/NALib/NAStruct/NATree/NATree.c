@@ -133,14 +133,15 @@ NA_HDEF NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NAB
   }
 
   NATreeBaseNode* basenode = (NATreeBaseNode*)iter->leaf;
-  while(NA_TRUE){
+  if(!basenode){basenode = tree->root;}
+  while(basenode){
     NAInt nextindx;
-    if(!basenode){basenode = tree->root;}
     if(naIsBaseNodeLeaf(tree, basenode)){
       NAPtr* data = tree->config->leafDataGetter((NATreeLeaf*)basenode);
       NABool continuesearch = tree->config->leafTokenSearcher(token, *data, matchfound);
-      if(!continuesearch){return (NATreeLeaf*)basenode;}
-      nextindx = -1;
+      return (NATreeLeaf*)basenode;
+//      if(!continuesearch){return (NATreeLeaf*)basenode;}
+//      nextindx = -1;
     }else{
       NAPtr* data = tree->config->nodeDataGetter((NATreeNode*)basenode);
       NABool continuesearch = tree->config->nodeTokenSearcher(token, *data, &nextindx);
@@ -152,6 +153,7 @@ NA_HDEF NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NAB
       basenode = tree->config->childGetter((NATreeNode*)basenode, nextindx);
     }
   }
+  return NA_NULL;
 }
 
 

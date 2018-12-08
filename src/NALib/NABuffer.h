@@ -108,11 +108,6 @@ NA_API NABuffer* naNewBufferExtraction( NABuffer* srcbuffer,
 //                                        NARangei range,
 //                                          NABool securememory);
 
-// Creates a buffer with no source and no content. It can be used as a
-// placeholder or to collect other buffers with naAppendBuffer or
-// naWriteBufferBuffer.
-NA_API NABuffer* naNewBufferPlain(void);
-
 // Creates a buffer sharing the same source as the given buffer. Also uses
 // the same settings like endianness or newlines.
 NA_API NABuffer* naNewBufferWithSameSource(  NABuffer* srcbuffer);
@@ -288,8 +283,8 @@ NA_API NABuffer* naNewBufferWithStringBase64Decoded(
 // Checksum: Adds all bytes to the checksum.
 NA_API void naWriteBufferToFile(NABuffer* buffer, NAFile* file);
 NA_API void naWriteBufferToData(NABuffer* buffer, void* data);
-NA_API void naAccumulateBufferToChecksum(     NABuffer* buffer,
-                                            NAChecksum* checksum);
+NA_API void naAccumulateChecksumBuffer( NAChecksum* checksum,
+                                          NABuffer* buffer);
 
 
 

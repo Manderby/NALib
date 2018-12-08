@@ -268,24 +268,6 @@ NA_DEF NABuffer* naNewBufferCopy(const NABuffer* srcbuffer, NARangei range, NABo
 
 
 
-NA_DEF NABuffer* naNewBufferPlain(){
-//  NABuffer* buffer = naNew(NABuffer);
-//  naInitBufferStruct(buffer);
-//
-//  // The source is a Null pointer.
-//  buffer->source = NA_NULL;
-//  buffer->srcoffset = 0;
-//
-//  buffer->newlineencoding = NA_NEWLINE_NATIVE;
-//  buffer->endianness = NA_ENDIANNESS_UNKNOWN;
-//  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
-//
-//  return buffer;
-  return NA_NULL;
-}
-
-
-
 NA_DEF NABuffer* naNewBufferWithSameSource(NABuffer* srcbuffer){
   NA_UNUSED(srcbuffer);
 //  NABuffer* buffer = naNew(NABuffer);
@@ -500,7 +482,7 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
 
     // First, we test if we need to add a sparse part at the beginning.
     if(start < buffer->range.origin){
-      naLocateBufferFirst(&iter);
+      naLocateBufferStart(&iter);
       NAInt additionalbytes = buffer->range.origin - start;
       if(naIsBufferIteratorSparse(&iter)){
         // If the first part of this list is already sparse, we simply extend
@@ -818,11 +800,10 @@ NA_DEF NABool naEqualBufferToData(const NABuffer* buffer, const void* data, NAIn
 
 
 NA_DEF void naAppendBufferToBuffer(NABuffer* dstbuffer, const NABuffer* srcbuffer){
-  NA_UNUSED(dstbuffer);
-  NA_UNUSED(srcbuffer);
-//  NABufferIterator iter = naMakeBufferModifier(dstbuffer);
-//  naWriteBufferBuffer(&iter, srcbuffer, naGetBufferRange(srcbuffer));
-//  naClearBufferIterator(&iter);
+  NABufferIterator iter = naMakeBufferModifier(dstbuffer);
+  naLocateBufferEnd(&iter);
+  naWriteBufferBuffer(&iter, srcbuffer, naGetBufferRange(srcbuffer));
+  naClearBufferIterator(&iter);
   return;
 }
 
@@ -831,13 +812,7 @@ NA_DEF void naAppendBufferToBuffer(NABuffer* dstbuffer, const NABuffer* srcbuffe
 NA_DEF void naCacheBufferRange(NABuffer* buffer, NARangei range, NABool forcevolatile){
   if(range.length){
     NABufferIterator iter = naMakeBufferModifier(buffer);
-    NABool found = naLocateBuffer(&iter, range.origin);
-//    #ifndef NDEBUG
-//      if(!found)
-//        naError("naCacheBufferRange", "could not find range origin in buffer");
-//    #else
-      NA_UNUSED(found);
-//    #endif
+    naLocateBuffer(&iter, range.origin);
     naPrepareBuffer(&iter, range.length, forcevolatile);
     naClearBufferIterator(&iter);
   }

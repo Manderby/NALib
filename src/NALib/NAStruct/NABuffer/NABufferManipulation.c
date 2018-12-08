@@ -171,15 +171,15 @@ NA_DEF NABuffer* naNewBufferWithStringBase64Decoded(const NAString* string){
 
 
 
-NA_DEF void naAccumulateBufferToChecksum(NABuffer* buffer, NAChecksum* checksum){
+NA_DEF void naAccumulateChecksumBuffer(NAChecksum* checksum, NABuffer* buffer){
   NAInt bytesize = buffer->range.length;
   NABufferIterator iter = naMakeBufferModifier(buffer);
-  naLocateBufferFirst(&iter);
+  naLocateBufferStart(&iter);
 
   while(bytesize){
     #ifndef NDEBUG
       if(naIsBufferIteratorSparse(&iter))
-        naError("naAccumulateBufferToChecksum", "Buffer contains sparse parts. Can not compute checksum. Use naCacheBuffer.");
+        naError("naAccumulateChecksumBuffer", "Buffer contains sparse parts. Can not compute checksum. Use naCacheBuffer.");
     #endif
 
     NAInt remainingbytes = naGetBufferPartByteSize(naGetBufferPart(&iter));

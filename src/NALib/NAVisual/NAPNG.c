@@ -175,12 +175,13 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABufferIterator* iter){
   #endif
 
   if(chunk->length){
+    // We cache the data to compute the checksum.
     naCacheBufferRange(chunk->data, naGetBufferRange(chunk->data), NA_FALSE);
   }
 
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
   naAccumulateChecksum(&checksum, chunk->typename, 4);
-  naAccumulateBufferToChecksum(chunk->data, &checksum);
+  naAccumulateChecksumBuffer(&checksum, chunk->data);
   crc = naGetChecksumResult(&checksum);
   naClearChecksum(&checksum);
 
@@ -375,7 +376,7 @@ NA_HDEF void naReadPNGIHDRChunk(NAPNG* png, NAPNGChunk* ihdr){
       naError("naReadPNGIHDRChunk", "IHDR chunk already read.");
   #endif
 
-  iter = naMakeBufferAccessor(ihdr->data);
+  iter = naMakeBufferModifier(ihdr->data);
 
   png->size.width = (NAInt)naReadBufferu32(&iter);
   png->size.height = (NAInt)naReadBufferu32(&iter);
@@ -757,7 +758,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   }
 
   // Create the buffer to hold the compressed and decompressed data
-  png->compresseddata = naNewBufferPlain();
+  png->compresseddata = naNewBuffer(NA_FALSE);
   naSetBufferEndianness(png->compresseddata, NA_ENDIANNESS_NETWORK);
   png->filtereddata = naNewBuffer(NA_FALSE);
 
@@ -868,7 +869,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
     naAccumulateChecksum(&checksum, chunk->typename, 4);
     if(chunk->length){
 //      naSeekBufferAbsolute(chunk->data, 0);
-      naAccumulateBufferToChecksum(chunk->data, &checksum);
+      naAccumulateChecksumBuffer(&checksum, chunk->data);
     }
     chunk->crc = naGetChecksumResult(&checksum);
     naClearChecksum(&checksum);
