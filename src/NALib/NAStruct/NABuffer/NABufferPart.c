@@ -221,7 +221,7 @@ NA_HDEF NABufferPart* naPrepareBufferPartSourceBuffer(NATreeIterator* partiter, 
 
   NABufferIterator iter = naMakeBufferModifier(sourcebuffer);
 
-  NABool found = naLocateBuffer(&iter, sourceoffset);
+  NABool found = naLocateBufferAbsolute(&iter, sourceoffset);
   if(!found){
     // If we haven't found a suitable part, we must ensure the desired range.
     naEnsureBufferRange(sourcebuffer, sourceoffset, sourceoffset + partrange.length);
@@ -332,49 +332,21 @@ NA_HDEF NABufferPart* naPrepareBufferPartMemory(NATreeIterator* partiter, NARang
 // completely prepared and the number of available bytes after the current byte
 // is returned.
 NA_HDEF NAInt naPrepareBufferPart(NABufferIterator* iter, NAInt bytecount, NABool forcevolatile){
-//  #ifndef NDEBUG
-//    if(naIsTreeAtInitial(&(iter->partiter)))
-//      naError("naPrepareBufferPart", "Iterator is at initial position.");
-//    if(naIsBufferIteratorSparse(iter) && !part->source && forcevolatile)
-//      naError("naPrepareBufferPart", "forcevolatile makes no sense without source");
-//  #endif
+  NA_UNUSED(forcevolatile);
 
-//  // If volatile is desired, we simply erase any existing memory block. This
-//  // could be ameliorated in the future.
-//  if(part->memblock && part->source && (forcevolatile || naIsBufferSourceVolatile(part->source))){
-//    naRelease(part->memblock);
-//    naSetBufferPartMemoryBlock(part, NA_NULL);
-//  }
-
-  // Now, we decide how to prepare the part. There are only two possibilities:
-  // 1. There is a source with an underlying source buffer. Therefore, we
-  //    first prepare the source buffer and borrow the according memory blocks.
-  // 2. In any other case, just create memory blocks by yourself.
-  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
   NABufferPart* part = naGetBufferPart(iter);
-  if(part){
-    if(naIsBufferIteratorSparse(iter)){
-      NABufferSource* source = part->source;
-      if(source && naGetBufferSourceUnderlyingBuffer(source)){
-        // There is a source and a source buffer, therefore we try to fill the
-        // buffer with it.
-        part = naPrepareBufferPartSourceBuffer(&(iter->partiter), naMakeRangei(iter->partoffset, bytecount));
-      }else{
-        // We have no source or no source buffer, meaning, we prepare memory.
-        part = naPrepareBufferPartMemory(&(iter->partiter), naMakeRangei(iter->partoffset, bytecount));
-      }
-    }
-  }else{
-    if(buffer->enhancesource && naGetBufferSourceUnderlyingBuffer(buffer->enhancesource)){
-      // There is a source and a source buffer, therefore we try to fill the
-      // buffer with it.
+  if(naIsBufferPartSparse(part)){
+    // We decide how to prepare the part.
+    NABuffer* sourcebuffer = naGetBufferIteratorSourceBuffer(iter);
+    if(sourcebuffer){
+      // There is a source buffer, so we try to fill the part with it.
       part = naPrepareBufferPartSourceBuffer(&(iter->partiter), naMakeRangei(iter->partoffset, bytecount));
     }else{
       // We have no source or no source buffer, meaning, we prepare memory.
       part = naPrepareBufferPartMemory(&(iter->partiter), naMakeRangei(iter->partoffset, bytecount));
     }
   }
-
+  
   // Reaching here, the current part is a prepared part. We compute the number
   // of remaining bytes in the part and return it.
   NAInt preparedbytecount = part->bytesize - iter->partoffset;

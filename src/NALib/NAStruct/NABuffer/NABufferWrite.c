@@ -445,7 +445,7 @@ NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffe
     tmpsource = dstbuffer->enhancesource;
     tmpsourceoffset = dstbuffer->enhancesourceoffset;
     dstbuffer->enhancesource = naNewBufferSource(NA_NULL, mutablesrcbuffer);
-    dstbuffer->enhancesourceoffset = curpos - srcrange.origin;
+    dstbuffer->enhancesourceoffset = srcrange.origin - curpos;
 
     naCacheBufferRange(dstbuffer, naMakeRangei(curpos, srcrange.length), NA_FALSE);
 

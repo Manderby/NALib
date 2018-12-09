@@ -447,11 +447,6 @@ NA_HDEF void naReadPNGPLTEChunk(NAPNG* png, NAPNGChunk* plte){
 
 NA_HDEF void naReadPNGIDATChunk(NAPNG* png, NAPNGChunk* idat){
   naAppendBufferToBuffer(png->compresseddata, idat->data);
-
-
-//  NAFile outfile = naCreateFileWritingFilename("test.raw", NA_FILEMODE_DEFAULT);
-//  naWriteBufferToFile(&(png->filtereddata), &outfile);
-//  naReleaseFile(&outfile);
 }
 
 
@@ -788,6 +783,10 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
     }
   naEndListIteration(iter);
 
+//  NAFile* outfile = naCreateFileWritingFilename("test.raw", NA_FILEMODE_DEFAULT);
+//  naWriteBufferToFile(png->compresseddata, outfile);
+//  naReleaseFile(outfile);
+
   naFixBufferRange(png->compresseddata);
   naFillBufferWithZLIBDecompression(png->filtereddata, png->compresseddata);
   naReconstructFilterData(png);
@@ -861,14 +860,14 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
     naWriteBufferBytes(&iterout, chunk->typename, 4);
 
     if(!naIsBufferEmpty(chunk->data)){
-//      naSeekBufferAbsolute(chunk->data, 0);
+//      naLocateBufferAbsolute(chunk->data, 0);
       naWriteBufferBuffer(&iterout, chunk->data, naGetBufferRange(chunk->data));
     }
 
     naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
     naAccumulateChecksum(&checksum, chunk->typename, 4);
     if(chunk->length){
-//      naSeekBufferAbsolute(chunk->data, 0);
+//      naLocateBufferAbsolute(chunk->data, 0);
       naAccumulateChecksumBuffer(&checksum, chunk->data);
     }
     chunk->crc = naGetChecksumResult(&checksum);

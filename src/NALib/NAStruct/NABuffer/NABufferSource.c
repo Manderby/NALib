@@ -43,7 +43,6 @@ NA_DEF NABufferSource* naNewBufferSource(NABufferFiller filler, NABuffer* buffer
 NA_HDEF void naDestructBufferSource(NABufferSource* source){
   if(source->datadestructor){source->datadestructor(source->data);}
   if(source->buffer){naRelease(source->buffer);}
-  naFree(source);
 }
 
 

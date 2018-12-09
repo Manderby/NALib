@@ -230,12 +230,15 @@ NA_HAPI void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool for
 
 // NABufferIteration
 NA_HAPI const NABuffer* naGetBufferIteratorBufferConst(const NABufferIterator* iter);
+NA_HAPI const NABuffer* naGetBufferIteratorBufferConst(const NABufferIterator* iter);
 NA_HAPI NABuffer* naGetBufferIteratorBufferMutable(NABufferIterator* iter);
+NA_HAPI NABuffer* naGetBufferIteratorSourceBuffer(NABufferIterator* iter);
 NA_HAPI void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance);
 NA_HAPI NABufferPart* naGetBufferPart(NABufferIterator* iter);
 NA_HAPI NABool naIterateBufferPart(NABufferIterator* iter);
 NA_API NABool naLocateBufferStart(NABufferIterator* iter);
 NA_API NABool naLocateBufferLastPart(NABufferIterator* iter);
+NA_DEF NABool naLocateBufferNextPart(NABufferIterator* iter);
 NA_API NABool naLocateBufferMax(NABufferIterator* iter);
 NA_API NABool naLocateBufferEnd(NABufferIterator* iter);
 

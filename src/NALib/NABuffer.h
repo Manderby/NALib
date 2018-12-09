@@ -298,8 +298,6 @@ NA_API NABufferIterator naMakeBufferModifier(      NABuffer* buffer);
 
 NA_API void naClearBufferIterator(NABufferIterator* iter);
 
-NA_API NABool naLocateBuffer(NABufferIterator* iter, NAInt offset);
-
 // Returns or changes the current position within the buffer.
 // Absolute  searches relative to the zero-point of this buffer.
 // Relative  searches relative to the current position of this buffer.
@@ -309,13 +307,12 @@ NA_API NABool naLocateBuffer(NABufferIterator* iter, NAInt offset);
 //
 // Important: The offset parameter ist always expected to be forward-oriented.
 // If you want to seek to the last byte, you would need to write
-// naSeekBufferFromEnd(buffer, -1).
+// naLocateBufferFromEnd(buffer, -1).
 NA_API NAInt  naGetBufferLocation   (const NABufferIterator* iter);
-NA_API void   naSeekBufferAbsolute  (NABufferIterator* iter, NAInt offset);
-NA_API void   naSeekBufferRelative  (NABufferIterator* iter, NAInt offset);
-NA_API void   naSeekBufferSource    (NABufferIterator* iter, NAInt offset);
-NA_API void   naSeekBufferFromStart (NABufferIterator* iter, NAInt offset);
-NA_API void   naSeekBufferFromEnd   (NABufferIterator* iter, NAInt offset);
+NA_API NABool naLocateBufferAbsolute  (NABufferIterator* iter, NAInt offset);
+NA_API NABool naLocateBufferRelative  (NABufferIterator* iter, NAInt offset);
+NA_API NABool naLocateBufferFromStart (NABufferIterator* iter, NAInt offset);
+NA_API NABool naLocateBufferFromEnd   (NABufferIterator* iter, NAInt offset);
 
 NA_API NABool naIterateBuffer(      NABufferIterator* iter, NAInt step);
 

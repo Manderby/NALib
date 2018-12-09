@@ -812,7 +812,7 @@ NA_DEF void naAppendBufferToBuffer(NABuffer* dstbuffer, const NABuffer* srcbuffe
 NA_DEF void naCacheBufferRange(NABuffer* buffer, NARangei range, NABool forcevolatile){
   if(range.length){
     NABufferIterator iter = naMakeBufferModifier(buffer);
-    naLocateBuffer(&iter, range.origin);
+    naLocateBufferAbsolute(&iter, range.origin);
     naPrepareBuffer(&iter, range.length, forcevolatile);
     naClearBufferIterator(&iter);
   }

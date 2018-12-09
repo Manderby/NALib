@@ -53,7 +53,7 @@ NA_DEF void naSkipBufferDelimiter(NABufferIterator* iter){
 //    if(curbyte <= ' '){
 //      naSkipBufferWhitespaces(iter);
 //    }else{
-//      naSeekBufferRelative(iter, 1);
+//      naLocateBufferRelative(iter, 1);
 //    }
 //  }
 }
@@ -140,7 +140,7 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
 //  NAString* string;
 //  NAInt tokenstart = iter->curoffset;
 //
-//  // todo: this always requires a naSeekBufferFromStart call. Make this better.
+//  // todo: this always requires a naLocateBufferFromStart call. Make this better.
 //  while(!naIsBufferAtInitial(iter)){
 //    const NAByte* curbyte;
 //    NAInt endoffset;
@@ -201,7 +201,7 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8C
 //
 //  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
 //  string = naNewStringWithBufferExtraction(buffer naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
-//  naSeekBufferRelative(iter, 1);
+//  naLocateBufferRelative(iter, 1);
 //  return string;
   return NA_NULL;
 }
@@ -237,7 +237,7 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter){
 //
 //  buffer = naGetBufferIteratorBufferMutable(iter);
 //  string = naNewStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
-//  naSeekBufferRelative(iter, 1);
+//  naLocateBufferRelative(iter, 1);
 //  return string;
   return NA_NULL;
 }
@@ -263,7 +263,7 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64*
 //  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
 //
 //  if(naIsBufferEmpty(buffer)){return 0;}
-////  if(naIsBufferAtInitial(iter)){naSeekBufferFromStart(iter, 0);}
+////  if(naIsBufferAtInitial(iter)){naLocateBufferFromStart(iter, 0);}
 //  if(naIsBufferAtInitial(iter)){return 0;}
 //
 //  if(maxdigitcount == 0){maxdigitcount = naGetRangeiEnd(buffer->range) - iter->curoffset;}
@@ -329,7 +329,7 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* re
 //
 //  if(naIsBufferEmpty(buffer)){return 0;}
 //  if(naIsBufferAtInitial(iter)){return 0;}
-////  if(naIsBufferAtInitial(iter)){naSeekBufferFromStart(iter, 0);}
+////  if(naIsBufferAtInitial(iter)){naLocateBufferFromStart(iter, 0);}
 //  part = naGetListCurConst(&(iter->partiter));
 //  if(naIsBufferPartSparse(part)){naPrepareBuffer(iter, part->range, NA_FALSE);}
 //  curbyte = naGetBufferPartDataPointerConst(part, iter->curoffset);
@@ -338,13 +338,13 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* re
 //  if(*curbyte == '+'){
 //    bytesused = 1;
 //    maxdigitcount--;
-//    naSeekBufferRelative(iter, 1);
+//    naLocateBufferRelative(iter, 1);
 //  }else if(*curbyte == '-'){
 //    sign = naNegInt64(NA_ONE_64);
 //    limit = naNegInt64(min);
 //    bytesused = 1;
 //    maxdigitcount--;
-//    naSeekBufferRelative(iter, 1);
+//    naLocateBufferRelative(iter, 1);
 //  }
 //  if(maxdigitcount == -1){maxdigitcount = 0;}
 //

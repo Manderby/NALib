@@ -444,7 +444,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   NA_UNUSED(dictadler);
 
   zbuffer = naNewBufferExtraction(input, naMakeRangei(naGetBufferLocation(&iterin), zbuffersize));
-  naSeekBufferRelative(&iterin, zbuffersize);
+  naLocateBufferRelative(&iterin, zbuffersize);
   zbufferadler = naReadBufferu32(&iterin);
 
   naClearBufferIterator(&iterin);
@@ -574,7 +574,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, N
   // todo: this should be in a separate buffer.
 
   bytesize = naGetBufferRange(input).length;
-//  naSeekBufferAbsolute(input, 0);
+//  naLocateBufferAbsolute(input, 0);
 
   curoffset = 0;
   while(bytesize > 0){
@@ -599,7 +599,7 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, N
   // todo: this should be in a separate buffer.
   naSetBufferEndianness(output, NA_ENDIANNESS_NETWORK);
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_ADLER_32);
-//  naSeekBufferAbsolute(input, 0);
+//  naLocateBufferAbsolute(input, 0);
   naAccumulateChecksumBuffer(&checksum, input);
   adler = naGetChecksumResult(&checksum);
   naClearChecksum(&checksum);
