@@ -133,14 +133,13 @@ NA_HDEF NABool naIsBufferPartSparse(const NABufferPart* part){
 NA_HDEF NABufferPart* naSplitBufferPart(NATreeIterator* partiter, NAInt start, NAInt end){
   NABufferPart* part = naGetTreeCurMutable(partiter);
   NABufferPart* newpart;
-  NAInt length = end - start;
 
   #ifndef NDEBUG
     if(naIsTreeAtInitial(partiter))
       naError("naSplitBufferPart", "Iterator is at initial position.");
     if(!naIsBufferPartSparse(part))
       naError("naSplitBufferPart", "part is not sparse");
-    if(!naIsLengthValueUsefuli(length))
+    if(!naIsLengthValueUsefuli(end - start))
       naError("naSplitBufferPart", "start and end make no sense");
     if(start > part->bytesize)
       naError("naSplitBufferPart", "start is too big");

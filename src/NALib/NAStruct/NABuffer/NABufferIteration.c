@@ -40,7 +40,7 @@ NA_HDEF NABuffer* naGetBufferIteratorSourceBuffer(NABufferIterator* iter){
 
 NA_DEF NABufferIterator naMakeBufferAccessor(NABuffer* buffer){
   NABufferIterator iter;
-  NABuffer* mutablebuffer = (NABuffer*)buffer;
+//  NABuffer* mutablebuffer = (NABuffer*)buffer;
   #ifndef NDEBUG
     if(!buffer)
       naCrash("naMakeBufferAccessor", "buffer is Null pointer");
@@ -60,7 +60,7 @@ NA_DEF NABufferIterator naMakeBufferAccessor(NABuffer* buffer){
 
 NA_DEF NABufferIterator naMakeBufferMutator(NABuffer* buffer){
   NABufferIterator iter;
-  NABuffer* mutablebuffer = (NABuffer*)buffer;
+//  NABuffer* mutablebuffer = (NABuffer*)buffer;
   #ifndef NDEBUG
     if(!buffer)
       naCrash("naMakeBufferMutator", "buffer is Null pointer");
@@ -80,7 +80,7 @@ NA_DEF NABufferIterator naMakeBufferMutator(NABuffer* buffer){
 
 NA_DEF NABufferIterator naMakeBufferModifier(NABuffer* buffer){
   NABufferIterator iter;
-  NABuffer* mutablebuffer = (NABuffer*)buffer;
+//  NABuffer* mutablebuffer = (NABuffer*)buffer;
   #ifndef NDEBUG
     if(!buffer)
       naCrash("naMakeBufferAccessor", "buffer is Null pointer");

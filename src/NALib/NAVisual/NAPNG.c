@@ -890,6 +890,7 @@ NA_HDEF void naDestructPNG(NAPNG* png){
   naForeachListMutable(&(png->chunks), (NAMutator)naDeallocPNGChunk);
   naClearList(&(png->chunks));
   if(png->pixeldata){naFree(png->pixeldata);}
+  if(png->compresseddata){naRelease(png->compresseddata);}
   if(png->filtereddata){naRelease(png->filtereddata);}
 }
 

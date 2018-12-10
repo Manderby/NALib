@@ -390,6 +390,7 @@ NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffe
     naCacheBufferRange(dstbuffer, naMakeRangei(curpos, srcrange.length), NA_FALSE);
     naLocateBufferAbsolute(iter, curpos + srcrange.length);
 
+    naRelease(dstbuffer->enhancesource);
     dstbuffer->enhancesource = tmpsource;
     dstbuffer->enhancesourceoffset = tmpsourceoffset;
   }
