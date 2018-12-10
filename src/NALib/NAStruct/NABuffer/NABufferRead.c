@@ -5,7 +5,81 @@
 #include "NABuffer.h"
 
 
-NA_DEF NAByte naGetBufferByteAtIndex(const NABuffer* buffer, NAInt indx){
+
+NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance){
+  NAByte* dst = data;
+
+  #ifndef NDEBUG
+    if(!data)
+      naError("naRetrieveBufferBytes", "data is Null pointer.");
+    if(naGetBufferCurBit(iter) != 0)
+      naError("naRetrieveBufferBytes", "Bit offset not 0.");
+  #endif
+
+  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+
+  // We prepare the buffer for the whole range. There might be no parts or
+  // sparse parts.
+  naPrepareBuffer(iter, bytesize, NA_FALSE);
+  // After this function, all relevant parts should be present and filled with
+  // memory. The iterator should point to the buffer part containing offset.
+  
+  // We store the current iterator to move back to it later on if necessary.
+  NAInt firstpartoffset = iter->partoffset;
+  NATreeIterator firstbufiter = naMakeTreeAccessor(&(buffer->parts));
+  naLocateTreeIterator(&firstbufiter, &(iter->partiter));
+
+  // do as long as there is a bytesize remaining. Remember that the data may
+  // be split into different buffer parts.
+  while(bytesize){
+    NABufferPart* part;
+    NAInt possiblelength;
+
+    #ifndef NDEBUG
+      if(naIsBufferIteratorSparse(iter))
+        naError("naRetrieveBufferBytes", "Cur part is sparse");
+    #endif
+
+    // The part pointed to by the iterator should be the one containing offset.
+    part = naGetBufferPart(iter);
+
+    // Reaching this point, we are sure, the current part contains offset and
+    // is filled with memory.
+
+    // We get the data pointer where we can read bytes.
+    const void* src = naGetBufferPartDataPointerConst(iter);
+    // We detect, how many bytes actually can be read from the current part.
+    possiblelength = naGetBufferPartByteSize(part) - iter->partoffset;
+
+    #ifndef NDEBUG
+      if(possiblelength <= 0)
+        naError("naRetrieveBufferBytes", "possible length invalid");
+    #endif
+
+    if(possiblelength > bytesize){
+      // If we can get out more bytes than needed, we copy all remaining bytes
+      // and stay on this part.
+      possiblelength = bytesize;
+      iter->partoffset += bytesize;
+    }else{
+      // We copy as many bytes as possible and advance to the next part.
+      naLocateBufferNextPart(iter);
+    }
+    naCopyn(dst, src, possiblelength);
+    dst += possiblelength;
+    bytesize -= possiblelength;
+  }
+  
+  if(!advance){
+    iter->partoffset = firstpartoffset;
+    naLocateTreeIterator(&(iter->partiter), &firstbufiter);
+  }
+  naClearTreeIterator(&firstbufiter);  
+}
+
+
+
+NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, NAInt indx){
   #ifndef NDEBUG
     if(buffer->range.origin != 0)
       naError("naGetBufferByteAtIndex", "This function should only be used for buffers with origin 0.");

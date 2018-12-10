@@ -227,11 +227,11 @@ NA_API void   naSetBufferEndianness(NABuffer* buffer, NAInt endianness);
 
 // Returns the byte at the given index. Warning: This function is costly. You
 // might want to use one of the Reading or Parsing functions instead.
-NA_API NAByte naGetBufferByteAtIndex(const NABuffer* buffer, NAInt indx);
+NA_API NAByte naGetBufferByteAtIndex(NABuffer* buffer, NAInt indx);
 
 // Searches for the given byte starting at (and including) startoffset, either
 // forward or backwards.
-NA_API NAInt naSearchBufferByteOffset(  const NABuffer* buffer,
+NA_API NAInt naSearchBufferByteOffset(        NABuffer* buffer,
                                                  NAByte byte,
                                                   NAInt startoffset,
                                                  NABool forward);
@@ -292,9 +292,9 @@ NA_API void naAccumulateChecksumBuffer( NAChecksum* checksum,
 // BUFFER ITERATION
 // ////////////////////////////////
 
-NA_API NABufferIterator naMakeBufferAccessor(const NABuffer* buffer);
-NA_API NABufferIterator naMakeBufferMutator (const NABuffer* buffer);
-NA_API NABufferIterator naMakeBufferModifier(      NABuffer* buffer);
+NA_API NABufferIterator naMakeBufferAccessor(NABuffer* buffer);
+NA_API NABufferIterator naMakeBufferMutator (NABuffer* buffer);
+NA_API NABufferIterator naMakeBufferModifier(NABuffer* buffer);
 
 NA_API void naClearBufferIterator(NABufferIterator* iter);
 

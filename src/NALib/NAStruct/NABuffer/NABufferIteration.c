@@ -38,14 +38,14 @@ NA_HDEF NABuffer* naGetBufferIteratorSourceBuffer(NABufferIterator* iter){
 
 
 
-NA_DEF NABufferIterator naMakeBufferAccessor(const NABuffer* buffer){
+NA_DEF NABufferIterator naMakeBufferAccessor(NABuffer* buffer){
   NABufferIterator iter;
   NABuffer* mutablebuffer = (NABuffer*)buffer;
   #ifndef NDEBUG
     if(!buffer)
       naCrash("naMakeBufferAccessor", "buffer is Null pointer");
   #endif
-  iter.bufferptr = naMakePtrWithDataConst(buffer);
+  iter.bufferptr = naMakePtrWithDataMutable(buffer);
   iter.partiter = naMakeTreeAccessor(&(buffer->parts));
   iter.partoffset = 0;
   iter.curbit = 0;
@@ -58,14 +58,14 @@ NA_DEF NABufferIterator naMakeBufferAccessor(const NABuffer* buffer){
 
 
 
-NA_DEF NABufferIterator naMakeBufferMutator(const NABuffer* buffer){
+NA_DEF NABufferIterator naMakeBufferMutator(NABuffer* buffer){
   NABufferIterator iter;
   NABuffer* mutablebuffer = (NABuffer*)buffer;
   #ifndef NDEBUG
     if(!buffer)
       naCrash("naMakeBufferMutator", "buffer is Null pointer");
   #endif
-  iter.bufferptr = naMakePtrWithDataConst(buffer);
+  iter.bufferptr = naMakePtrWithDataMutable(buffer);
   iter.partiter = naMakeTreeAccessor(&(buffer->parts));
   iter.partoffset = 0;
   iter.curbit = 0;
@@ -214,6 +214,26 @@ NA_DEF NABool naLocateBufferNextPart(NABufferIterator* iter){
     return NA_FALSE;
   }else{
     iter->partoffset = 0;
+    return NA_TRUE;
+  }
+}
+
+
+
+NA_DEF NABool naLocateBufferPrevPartMax(NABufferIterator* iter){
+  #ifndef NDEBUG
+    if(iter->curbit != 0)
+      naError("naLocateBufferNextPart", "Buffer bitcount is not null.");
+  #endif
+  iter->curbit = 0;
+  iter->linenum = 0;
+  naIterateTreeBack(&(iter->partiter));
+  if(naIsTreeAtInitial(&(iter->partiter))){
+    const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+    iter->partoffset = buffer->range.origin;
+    return NA_FALSE;
+  }else{
+    iter->partoffset = naGetBufferPartByteSize(naGetBufferPart(iter)) - 1;
     return NA_TRUE;
   }
 }
@@ -383,75 +403,6 @@ NA_HDEF NABool naIsBufferIteratorSparse(NABufferIterator* iter){
 
   // Reaching here, we can be sure, the iterator points at the correct part.
   return (naGetBufferPartMemoryBlock(part) == NA_NULL);
-}
-
-
-
-
-NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance){
-  NAByte* dst = data;
-
-  #ifndef NDEBUG
-    if(!advance)
-      naError("naRetrieveBufferBytes", "Not Advance is not implemented yet.");  // todo
-    if(!data)
-      naError("naRetrieveBufferBytes", "data is Null pointer.");
-    if(naGetBufferCurBit(iter) != 0)
-      naError("naRetrieveBufferBytes", "Bit offset not 0.");
-  #endif
-
-  if(naIsTreeAtInitial(&(iter->partiter))){
-    const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-    naLocateBufferAbsolute(iter, buffer->range.origin);
-  }
-
-  // We prepare the buffer for the whole range. There might be no parts or
-  // sparse parts.
-  naPrepareBuffer(iter, bytesize, NA_FALSE);
-  // After this function, all relevant parts should be present and filled with
-  // memory. The iterator should point to the buffer part containing offset.
-
-  // do as long as there is a bytesize remaining. Remember that the data may
-  // be split into different buffer parts.
-  while(bytesize){
-    NABufferPart* part;
-    NAInt possiblelength;
-
-    #ifndef NDEBUG
-      if(naIsBufferIteratorSparse(iter))
-        naError("naRetrieveBufferBytes", "Cur part is sparse");
-    #endif
-
-    // The part pointed to by the iterator should be the one containing offset.
-    part = naGetBufferPart(iter);
-
-    // Reaching this point, we are sure, the current part contains offset and
-    // is filled with memory.
-
-    // We get the data pointer where we can read bytes.
-    const void* src = naGetBufferPartDataPointerConst(iter);
-    // We detect, how many bytes actually can be read from the current part.
-    possiblelength = naGetBufferPartByteSize(part) - iter->partoffset;
-
-    #ifndef NDEBUG
-      if(possiblelength <= 0)
-        naError("naRetrieveBufferBytes", "possible length invalid");
-    #endif
-
-    if(possiblelength > bytesize){
-      // If we can get out more bytes than needed, we copy all remaining bytes
-      // and stay on this part.
-      possiblelength = bytesize;
-      iter->partoffset += bytesize;
-    }else{
-      // We copy as many bytes as possible and advance to the next part.
-      naIterateTree(&(iter->partiter));
-      iter->partoffset = 0;
-    }
-    naCopyn(dst, src, possiblelength);
-    dst += possiblelength;
-    bytesize -= possiblelength;
-  }
 }
 
 

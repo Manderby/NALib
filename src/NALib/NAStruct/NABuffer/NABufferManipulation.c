@@ -202,50 +202,40 @@ NA_DEF void naAccumulateChecksumBuffer(NAChecksum* checksum, NABuffer* buffer){
 
 
 NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
-  NA_UNUSED(buffer);
-  NA_UNUSED(file);
-//  NAInt bytesize;
-//  NAInt curoffset;
-//  NAListIterator iter;
-//
-//  #ifndef NDEBUG
-//    if(!naHasBufferFixedRange(buffer))
-//      naError("naWriteBufferToFile", "Buffer has no determined range. Use naFixBufferRange");
-//  #endif
-//
-//  bytesize = buffer->range.length;
-//  if(bytesize){
-//    curoffset = buffer->range.origin;
-//    iter = naMakeListMutator(&(buffer->parts));
-//    naLocateListFirst(&iter);
-//
-//    while(bytesize){
-//      NABufferPart* curpart;
-//      NAInt remainingbytes;
-//      NAByte* src;
-//
-//      curpart = naGetListCurMutable(&iter);
-//      remainingbytes = naGetBufferPartEnd(curpart) - curoffset;
-//      src = naGetBufferPartDataPointerConst(curpart, curoffset);
-//
-//      #ifndef NDEBUG
-//        if(naIsBufferPartSparse(curpart))
-//          naError("naWriteBufferToFile", "Buffer contains sparse parts.");
-//      #endif
-//
-//      if(bytesize > remainingbytes){
-//        naWriteFileBytes(file, src, remainingbytes);
-//        naIterateList(&iter);
-//        curoffset += remainingbytes;
-//        bytesize -= remainingbytes;
-//      }else{
-//        naWriteFileBytes(file, src, bytesize);
-//        bytesize = 0;
-//      }
-//    }
-//
-//    naClearListIterator(&iter);
-//  }
+  NAInt bytesize;
+  NABufferIterator iter;
+
+  #ifndef NDEBUG
+    if(!naHasBufferFixedRange(buffer))
+      naError("naWriteBufferToFile", "Buffer has no determined range. Use naFixBufferRange");
+  #endif
+
+  bytesize = buffer->range.length;
+  if(bytesize){
+    iter = naMakeBufferAccessor(buffer);
+    naLocateBufferStart(&iter);
+
+    while(bytesize){
+      NABufferPart* part;
+      NAInt remainingbytes;
+      const NAByte* src;
+
+      part = naGetBufferPart(&iter);
+      remainingbytes = naGetBufferPartByteSize(part);
+      src = naGetBufferPartDataPointerConst(&iter);
+
+      #ifndef NDEBUG
+        if(naIsBufferPartSparse(part))
+          naError("naWriteBufferToFile", "Buffer contains sparse parts.");
+      #endif
+
+      naWriteFileBytes(file, src, remainingbytes);
+      naLocateBufferNextPart(&iter);
+      bytesize -= remainingbytes;
+    }
+
+    naClearBufferIterator(&iter);
+  }
   return;
 }
 

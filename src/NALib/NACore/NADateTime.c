@@ -503,7 +503,7 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
   dts.nsec = 0;
 
   str = naNewStringExtraction(string, 0, -1);
-  iter = naMakeBufferAccessor(naGetStringBufferConst(str));
+  iter = naMakeBufferAccessor(naGetStringBufferMutable(str));
 
   switch(format){
   case NA_DATETIME_FORMAT_APACHE:

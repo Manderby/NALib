@@ -223,6 +223,7 @@ NA_HAPI void naEnlargeBufferPart(NABufferPart* part, NAInt bytesatstart, NAInt b
 NA_HAPI NABufferPart* naPrepareBufferPartSourceBuffer(NATreeIterator* partiter, NARangei partrange);
 NA_HAPI NABufferPart* naPrepareBufferPartMemory(NATreeIterator* partiter, NARangei partrange);
 NA_HAPI const void* naGetBufferPartDataPointerConst(NABufferIterator* iter);
+NA_HAPI void* naGetBufferPartDataPointerMutable(NABufferIterator* iter);
 
 // NABufferHelper
 NA_HAPI void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end);
@@ -239,6 +240,7 @@ NA_HAPI NABool naIterateBufferPart(NABufferIterator* iter);
 NA_API NABool naLocateBufferStart(NABufferIterator* iter);
 NA_API NABool naLocateBufferLastPart(NABufferIterator* iter);
 NA_DEF NABool naLocateBufferNextPart(NABufferIterator* iter);
+NA_DEF NABool naLocateBufferPrevPartMax(NABufferIterator* iter);
 NA_API NABool naLocateBufferMax(NABufferIterator* iter);
 NA_API NABool naLocateBufferEnd(NABufferIterator* iter);
 

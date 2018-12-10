@@ -860,14 +860,12 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
     naWriteBufferBytes(&iterout, chunk->typename, 4);
 
     if(!naIsBufferEmpty(chunk->data)){
-//      naLocateBufferAbsolute(chunk->data, 0);
       naWriteBufferBuffer(&iterout, chunk->data, naGetBufferRange(chunk->data));
     }
 
     naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
     naAccumulateChecksum(&checksum, chunk->typename, 4);
     if(chunk->length){
-//      naLocateBufferAbsolute(chunk->data, 0);
       naAccumulateChecksumBuffer(&checksum, chunk->data);
     }
     chunk->crc = naGetChecksumResult(&checksum);

@@ -39,7 +39,7 @@ NA_IDEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* str
     inputstring = naNewStringExtraction(inputstring, 1, -1);
   }
 
-  iter = naMakeBufferAccessor(naGetStringBufferConst(inputstring));
+  iter = naMakeBufferAccessor(naGetStringBufferMutable(inputstring));
 
   while(naGetStringBytesize(inputstring)){
     // Test for erroneous duplicate or ending delimiters

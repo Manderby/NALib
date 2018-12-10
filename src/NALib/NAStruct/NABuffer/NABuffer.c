@@ -114,43 +114,6 @@ NA_HDEF void naInitBufferStruct(NABuffer* buffer){
 
 
 
-// This is the filler method of the secure memory input source descriptor
-//NA_HIDEF void naFillBufferPartSecureMemory(void* data, void* dst, NARangei range){
-//  NA_UNUSED(data);
-//  NA_UNUSED(dst);
-//  NA_UNUSED(range);
-////  NA_UNUSED(data);
-////  naNulln(dst, range.length);
-//}
-
-
-
-// This is a special buffer creation method which is not visible to the
-// programmer.
-NA_HDEF NABuffer* naNewBufferMemorySourceBuffer(NABool secure){
-  NA_UNUSED(secure);
-//  NABufferSourceDescriptor desc;
-//
-//  NABuffer* buffer = naNew(NABuffer);
-//  naInitBufferStruct(buffer);
-//
-//  // Setting up the source descriptor
-//  naNulln(&desc, sizeof(desc));
-//  if(secure){desc.filler = naFillBufferPartSecureMemory;}
-//  // Creating the source
-//  buffer->source = naNewBufferSource(desc);
-//  buffer->srcoffset = 0;
-//
-//  buffer->newlineencoding = NA_NEWLINE_NATIVE;
-//  buffer->endianness = NA_ENDIANNESS_UNKNOWN;
-//  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
-//
-//  return buffer;
-  return NA_NULL;
-}
-
-
-
 NA_DEF NABuffer* naNewBuffer(NABool securememory){
   NA_UNUSED(securememory);
   // todo: secure source
@@ -519,10 +482,10 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
 
 
 
-//// This function makes the bytes declared in range unavailable by replacing
-//// that range with a sparse part. As a consequence, certain buffer parts may
-//// not be used anymore and will be automatically deallocated.
-//NA_HDEF void naUnlinkBufferRange(NABuffer* buffer, NARangei range){
+// This function makes the bytes declared in range unavailable by replacing
+// that range with a sparse part. As a consequence, certain buffer parts may
+// not be used anymore and will be automatically deallocated.
+NA_HDEF void naUnlinkBufferRange(NABuffer* buffer, NARangei range){
 //  NAInt rangepos;
 //  NABufferPart* sparsepart;
 //  NAListIterator iter;
@@ -591,7 +554,8 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
 //  naCombineBufferPartAdjacents(&iter);
 //
 //  naClearListIterator(&iter);
-//}
+}
+
 
 
 NA_DEF NANewlineEncoding naGetBufferNewlineEncoding(NABuffer* buffer){
@@ -619,59 +583,59 @@ NA_DEF void naSetBufferEndianness(NABuffer* buffer, NAInt endianness){
 
 
 
-NA_DEF NAInt naSearchBufferByteOffset(const NABuffer* buffer, NAByte byte, NAInt startoffset, NABool forward){
-  NA_UNUSED(buffer);
-  NA_UNUSED(byte);
-  NA_UNUSED(startoffset);
-  NA_UNUSED(forward);
-//  NAListIterator iter;
-//
-//  NAInt retindex = NA_INVALID_MEMORY_INDEX;
-//  if(naIsBufferEmpty(buffer)){return NA_INVALID_MEMORY_INDEX;}
-//
-//  iter = naMakeListAccessor(&(buffer->parts));
-//  naLocateListLast(&iter);
-////  naLocateListPosition(&iter, naGetListCurPosition(&(buffer->iter)));
-//  naLocateBufferPartOffset(&iter, startoffset);
-//
-//  while(!naIsListAtInitial(&iter)){
-//    const NABufferPart* part;
-//    const NAByte* curbyte;
-//
-//    part = naGetListCurConst(&iter);
-//    #ifndef NDEBUG
-//      if(naIsBufferPartSparse(part))
-//        naError("naSearchBufferByteOffset", "sparse part detected.");
-//    #endif
-//    curbyte = naGetBufferPartDataPointerConst(part, startoffset);
-//    if(forward){
-//      NAInt endoffset = naGetBufferPartEnd(part);
-//      while(startoffset < endoffset){
-//        if(*curbyte == byte){
-//          retindex = startoffset;
-//          break;
-//        }
-//        curbyte++;
-//        startoffset++;
-//      }
-//    }else{
-//      NAInt beginoffset = naGetBufferPartStart(part) - 1;
-//      while(startoffset > beginoffset){
-//        if(*curbyte == byte){
-//          retindex = startoffset;
-//          break;
-//        }
-//        curbyte--;
-//        startoffset--;
-//      }
-//    }
-//    if(retindex != NA_INVALID_MEMORY_INDEX){break;}
-//    if(forward){naIterateList(&iter);}else{naIterateListBack(&iter);}
-//  }
-//
-//  naClearListIterator(&iter);
-//  return retindex;
-  return 0;
+NA_DEF NAInt naSearchBufferByteOffset(NABuffer* buffer, NAByte byte, NAInt startoffset, NABool forward){
+  NABufferIterator iter;
+
+  if(naIsBufferEmpty(buffer)){return NA_INVALID_MEMORY_INDEX;}
+  NAInt indexshift = 0;
+  NABool found = NA_FALSE;
+
+  iter = naMakeBufferAccessor(buffer);
+  naLocateBufferAbsolute(&iter, startoffset);
+
+  while(!naIsTreeAtInitial(&(iter.partiter))){
+    const NABufferPart* part;
+    const NAByte* curbyte;
+
+    part = naGetBufferPart(&iter);
+    #ifndef NDEBUG
+      if(naIsBufferPartSparse(part))
+        naError("naSearchBufferByteOffset", "sparse part detected.");
+    #endif
+    curbyte = (const NAByte*)naGetBufferPartDataPointerConst(&iter);
+    if(forward){
+      NAInt remainingbytes = naGetBufferPartByteSize(part) - iter.partoffset;
+      while(remainingbytes){
+        if(*curbyte == byte){
+          found = NA_TRUE;
+          break;
+        }
+        indexshift++;
+        curbyte++;
+        remainingbytes--;
+      }
+    }else{
+      NAInt remainingbytes = iter.partoffset;
+      while(remainingbytes){
+        if(*curbyte == byte){
+          found = NA_TRUE;
+          break;
+        }
+        indexshift--;
+        curbyte--;
+        remainingbytes--;
+      }
+    }
+    if(found){break;}
+    if(forward){
+      naLocateBufferNextPart(&iter);
+    }else{
+      naLocateBufferPrevPartMax(&iter);
+    }
+  }
+
+  naClearBufferIterator(&iter);
+  return found ? (startoffset + indexshift) : NA_INVALID_MEMORY_INDEX;
 }
 
 

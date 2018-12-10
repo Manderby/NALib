@@ -35,8 +35,8 @@ NA_HDEF NABufferPart* naNewBufferPartSparse(NABufferSource* source, NARangei sou
   #ifndef NDEBUG
     if(!naIsLengthValueUsefuli(sourcerange.length))
       naError("naNewBufferPartSparse", "range length is not useful");
-    if(!source && sourcerange.origin != 0)
-      naError("naNewBufferPartSparse", "origin unequal zero makes no sense without source");
+//    if(!source && sourcerange.origin != 0)
+//      naError("naNewBufferPartSparse", "origin unequal zero makes no sense without source");
   #endif
   NABufferPart* part = naNew(NABufferPart);
   if(source){
@@ -369,6 +369,20 @@ NA_HDEF const void* naGetBufferPartDataPointerConst(NABufferIterator* iter){
   #endif
   NABufferPart* part = naGetBufferPart(iter);
   return naGetMemoryBlockDataPointerConst(part->memblock, part->blockoffset + iter->partoffset);
+}
+
+
+
+// Returns a pointer to the raw data of this buffer part, given its offset.
+NA_HDEF void* naGetBufferPartDataPointerMutable(NABufferIterator* iter){
+  #ifndef NDEBUG
+    if(!iter)
+      naCrash("naGetBufferPartDataPointerConst", "iterator is Null pointer");
+    if(naIsBufferIteratorSparse(iter))
+      naError("naGetBufferPartDataPointerConst", "buffer part is sparse");
+  #endif
+  NABufferPart* part = naGetBufferPart(iter);
+  return naGetMemoryBlockDataPointerMutable(part->memblock, part->blockoffset + iter->partoffset);
 }
 
 
