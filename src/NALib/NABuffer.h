@@ -96,7 +96,8 @@ NA_API NABuffer* naNewBuffer(NABool securememory);
 // the new buffer will be at zero and its range is fixed. Does NOT copy any
 // content, only references it.
 NA_API NABuffer* naNewBufferExtraction( NABuffer* srcbuffer,
-                                         NARangei range);
+                                            NAInt offset,
+                                            NAInt length);
 
 // Creates a buffer having an exact copy of the bytes in srcbuffer within the
 // given range. The new content will be COPIED to a new memory buffer which can
@@ -258,7 +259,7 @@ NA_API NABool naEqualBufferToBuffer(  const NABuffer* buffer1,
 
 // Assumes data to contain an equal amount of bytes as buffer and compares all
 // bytes for equality. If casesensitive is NA_TRUE, an exact match is tested.
-NA_API NABool naEqualBufferToData(    const NABuffer* buffer,
+NA_API NABool naEqualBufferToData(      NABuffer* buffer,
                                           const void* data,
                                                 NAInt databytesize,
                                                NABool casesensitive);
@@ -270,12 +271,12 @@ NA_API void naAppendBufferToBuffer(         NABuffer* dstbuffer,
 // Converts the bytes of the given buffer to a string encoded in Base64.
 // When appendendsign is NA_TRUE, equal signs = will be appended if needed.
 NA_API NAString* naNewStringWithBufferBase64Encoded(
-                                      const NABuffer* buffer,
+                                            NABuffer* buffer,
                                                NABool appendendsign);
 
 // Extracts the bytes from string encoded in Base64.
 NA_API NABuffer* naNewBufferWithStringBase64Decoded(
-                                      const NAString* string);
+                                       NAString* string);
 
 // Uses all bytes of the buffer to write to output or use it in other structs.
 // File:     Creates a new file and fills it with the content of the buffer.
@@ -317,6 +318,7 @@ NA_API NABool naLocateBufferFromEnd   (NABufferIterator* iter, NAInt offset);
 NA_API NABool naIterateBuffer(      NABufferIterator* iter, NAInt step);
 
 NA_API NABool naIsBufferAtInitial(  NABufferIterator* iter);
+NA_API NABool naIsBufferAtEnd(  NABufferIterator* iter);
 NA_API uint8 naGetBufferCurBit(NABufferIterator* iter);
 
 

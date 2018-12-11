@@ -443,7 +443,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   }
   NA_UNUSED(dictadler);
 
-  zbuffer = naNewBufferExtraction(input, naMakeRangei(naGetBufferLocation(&iterin), zbuffersize));
+  zbuffer = naNewBufferExtraction(input, naGetBufferLocation(&iterin), zbuffersize);
   naLocateBufferRelative(&iterin, zbuffersize);
   zbufferadler = naReadBufferu32(&iterin);
 

@@ -211,7 +211,7 @@ NA_IAPI void naSetTreeConfigurationTokenCallbacks(
 // Creates, Empties and Clears a tree.
 NA_IAPI NATree* naInitTree(NATree* tree, NATreeConfiguration* config);
 NA_IAPI void naEmptyTree(NATree* tree);
-NA_IAPI void naClearTree();
+NA_IAPI void naClearTree(NATree* tree);
 
 NA_IAPI NABool naIsTreeEmpty(const NATree* tree);
 

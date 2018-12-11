@@ -117,7 +117,7 @@ NA_API NAString* naNewStringExtraction(const NAString* srcstring,
                                                  NAInt length);
 
 NA_API NAString* naNewStringWithBufferExtraction( NABuffer* buffer,
-                                                   NARangei range);
+                                                      NARangei range);
 
 
 

@@ -25,6 +25,8 @@ void naDestructBufferTreeLeaf(NAPtr leafdata, NAPtr configdata){
 
 
 NAPtr naConstructBufferTreeNode(const void* key, NAPtr configdata){
+  NA_UNUSED(key);
+  NA_UNUSED(configdata);
   NABufferTreeNodeData* nodedata = naAlloc(NABufferTreeNodeData);
   nodedata->len1 = 0;
   nodedata->len2 = 0;
@@ -34,12 +36,14 @@ NAPtr naConstructBufferTreeNode(const void* key, NAPtr configdata){
 
 
 void naDestructBufferTreeNode(NAPtr nodedata, NAPtr configdata){
+  NA_UNUSED(configdata);
   naFree(naGetPtrMutable(&nodedata));
 }
 
 
 
 NABool naUpdateBufferTreeNode(NAPtr parentdata, NAPtr* childdatas, NAInt childindx, NAInt childmask){
+  NA_UNUSED(childindx);
   NABufferTreeNodeData* parentnodedata = (NABufferTreeNodeData*)naGetPtrMutable(&parentdata);
 
   NAInt prevlen1 = parentnodedata->len1;
@@ -138,15 +142,15 @@ NA_DEF NABuffer* naNewBuffer(NABool securememory){
 
 // Uses range to point into containingrange. Negative offset and length measure
 // bytes from the end of the buffer.
-NA_HIAPI NARangei naMakeRangeiAbsolute(NARangei range, NARangei containingrange){
+NA_HIAPI NARangei naMakeRangeiAbsolute(NAInt offset, NAInt length, NARangei containingrange){
   NAInt start;
   NAInt end;
   #ifndef NDEBUG
     if(!naIsLengthValueUseful(containingrange.length))
       naError("naMakeRangeiAbsolute", "Length of containing range is not useful.");
   #endif
-  start = containingrange.origin + (range.origin < 0) * containingrange.length + range.origin;
-  end = ((range.length >= 0) ? start : naGetRangeiEnd(containingrange)) + range.length;
+  start = containingrange.origin + (offset < 0) * containingrange.length + offset;
+  end = ((length >= 0) ? start : naGetRangeiEnd(containingrange)) + length;
   #ifndef NDEBUG
     if(!naContainsRangeiOffset(containingrange, start))
       naError("naMakeRangeiAbsolute", "Resulting range underflows containing range.");
@@ -160,11 +164,11 @@ NA_HIAPI NARangei naMakeRangeiAbsolute(NARangei range, NARangei containingrange)
 
 
 
-NA_DEF NABuffer* naNewBufferExtraction(NABuffer* srcbuffer, NARangei range){
+NA_DEF NABuffer* naNewBufferExtraction(NABuffer* srcbuffer, NAInt offset, NAInt length){
   NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
 
-  NARangei absoluterange = naMakeRangeiAbsolute(range, srcbuffer->range);
+  NARangei absoluterange = naMakeRangeiAbsolute(offset, length, srcbuffer->range);
 
   buffer->enhancesource = NA_NULL;
   buffer->enhancesourceoffset = 0;
@@ -486,15 +490,17 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
 // that range with a sparse part. As a consequence, certain buffer parts may
 // not be used anymore and will be automatically deallocated.
 NA_HDEF void naUnlinkBufferRange(NABuffer* buffer, NARangei range){
+  NA_UNUSED(buffer);
+  NA_UNUSED(range);
 //  NAInt rangepos;
 //  NABufferPart* sparsepart;
 //  NAListIterator iter;
 //
 //  #ifndef NDEBUG
 //    if(naIsBufferEmpty(buffer))
-//      naError("naDismissBufferRange", "Buffer ist empty");
+//      naError("naUnlinkBufferRange", "Buffer ist empty");
 //    if(!naContainsRangeiRange(buffer->range, range))
-//      naError("naDismissBufferRange", "Range of is not within buffer range");
+//      naError("naUnlinkBufferRange", "Range of is not within buffer range");
 //  #endif
 //
 //  iter = naMakeListModifier(&(buffer->parts));
@@ -710,55 +716,45 @@ NA_DEF NABool naEqualBufferToBuffer(const NABuffer* buffer1, const NABuffer* buf
 
 
 
-NA_DEF NABool naEqualBufferToData(const NABuffer* buffer, const void* data, NAInt databytesize, NABool casesensitive){
-  NA_UNUSED(buffer);
-  NA_UNUSED(data);
-  NA_UNUSED(databytesize);
-  NA_UNUSED(casesensitive);
-//  NABool resultequal = NA_TRUE;
-//  const NABufferPart* part;
-//  NAInt offset;
-//  NAInt remaininglength;
-//  const NAByte* bytes;
-//  NAListIterator iter;
-//
-//  if(databytesize != buffer->range.length){return NA_FALSE;}
-//
-//  bytes = (const NAByte*)data;
-//
-//  iter = naMakeListAccessor(&(buffer->parts));
-//  naLocateListFirst(&iter);
-//  part = naGetListCurConst(&iter);
-//
-//  offset = naGetBufferRange(buffer).origin;
-//  remaininglength = buffer->range.length;
-//
-//  while(remaininglength){
-//    NAInt remainingbytes;
-//    const NAByte* bufferbytes;
-//
-//    #ifndef NDEBUG
-//      if(naIsBufferPartSparse(part))
-//        naError("naEqualBufferToData", "Buffer has sparse part");
-//    #endif
-//    remainingbytes = naGetBufferPartEnd(part) - offset;
-//    bufferbytes = naGetBufferPartDataPointerConst(part, offset);
-//    if(bufferbytes != bytes){
-//      if(!naEqualUTF8CStringLiterals((NAUTF8Char*)bufferbytes, (NAUTF8Char*)bytes, remainingbytes, casesensitive)){
-//        resultequal = NA_FALSE;
-//        break;
-//      }
-//    }
-//    offset += remainingbytes;
-//    bytes += remainingbytes;
-//    remaininglength -= remainingbytes;
-//    naIterateList(&iter);
-//    part = naGetListCurConst(&iter);;
-//  }
-//
-//  naClearListIterator(&iter);
-//  return resultequal;
-  return NA_FALSE;
+NA_DEF NABool naEqualBufferToData(NABuffer* buffer, const void* data, NAInt databytesize, NABool casesensitive){
+  NABool resultequal = NA_TRUE;
+  NAInt remaininglength;
+  const NAByte* bytes;
+  NABufferIterator iter;
+
+  if(databytesize != buffer->range.length){return NA_FALSE;}
+
+  bytes = (const NAByte*)data;
+
+  iter = naMakeBufferAccessor(buffer);
+  remaininglength = buffer->range.length;
+
+  while(resultequal && remaininglength){
+    const NABufferPart* part;
+    NAInt remainingbytes;
+    const NAByte* bufferbytes;
+
+    naPrepareBuffer(&iter, 1, NA_FALSE);
+    part = naGetBufferPart(&iter);
+    #ifndef NDEBUG
+      if(naIsBufferPartSparse(part))
+        naError("naEqualBufferToData", "Buffer has sparse part");
+    #endif
+
+    remainingbytes = naGetBufferPartByteSize(part);
+    bufferbytes = naGetBufferPartDataPointerConst(&iter);
+    if(bufferbytes != bytes){
+      if(!naEqualUTF8CStringLiterals((NAUTF8Char*)bufferbytes, (NAUTF8Char*)bytes, remainingbytes, casesensitive)){
+        resultequal = NA_FALSE;
+        break;
+      }
+    }
+    bytes += remainingbytes;
+    remaininglength -= remainingbytes;
+  }
+
+  naClearBufferIterator(&iter);
+  return resultequal;
 }
 
 
@@ -785,10 +781,7 @@ NA_DEF void naCacheBufferRange(NABuffer* buffer, NARangei range, NABool forcevol
 
 
 NA_DEF void naDismissBufferRange(NABuffer* buffer, NARangei range){
-  NA_UNUSED(buffer);
-  NA_UNUSED(range);
-//  naUnlinkBufferRange(buffer, range);
-  return;
+  naUnlinkBufferRange(buffer, range);
 }
 
 

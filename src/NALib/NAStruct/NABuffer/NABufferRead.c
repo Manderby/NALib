@@ -107,28 +107,28 @@ NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, NAInt indx){
 NA_DEF int8 naRetrieveBufferi8(NABufferIterator* iter, NABool advance){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
   int8 value;
-  naRetrieveBufferBytes(iter, &value, 1, NA_TRUE);
+  naRetrieveBufferBytes(iter, &value, 1, advance);
   buffer->converter.convert8(&value);
   return value;
 }
 NA_DEF int16 naRetrieveBufferi16(NABufferIterator* iter, NABool advance){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
   int16 value;
-  naRetrieveBufferBytes(iter, &value, 2, NA_TRUE);
+  naRetrieveBufferBytes(iter, &value, 2, advance);
   buffer->converter.convert16(&value);
   return value;
 }
 NA_DEF int32 naRetrieveBufferi32(NABufferIterator* iter, NABool advance){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
   int32 value;
-  naRetrieveBufferBytes(iter, &value, 4, NA_TRUE);
+  naRetrieveBufferBytes(iter, &value, 4, advance);
   buffer->converter.convert32(&value);
   return value;
 }
 NA_DEF int64 naRetrieveBufferi64(NABufferIterator* iter, NABool advance){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
   int64 value;
-  naRetrieveBufferBytes(iter, &value, 8, NA_TRUE);
+  naRetrieveBufferBytes(iter, &value, 8, advance);
   buffer->converter.convert64(&value);
   return value;
 }
@@ -394,7 +394,7 @@ NA_DEF void naPadBufferBits(NABufferIterator* iter){
 NA_DEF NABuffer* naReadBufferBuffer(NABufferIterator* iter, NAInt bytesize){
   NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
   NAInt abspos = naGetBufferLocation(iter);
-  NABuffer* newbuffer = naNewBufferExtraction(buffer, naMakeRangei(abspos, bytesize));
+  NABuffer* newbuffer = naNewBufferExtraction(buffer, abspos, bytesize);
   naLocateBufferAbsolute(iter, abspos + bytesize);
   return newbuffer;
 }

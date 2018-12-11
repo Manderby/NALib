@@ -167,7 +167,7 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt offset, 
 
   // Extract the string
   naRelease(string->buffer);
-  string->buffer = naNewBufferExtraction(srcstring->buffer, naMakeRangei(offset, length));
+  string->buffer = naNewBufferExtraction(srcstring->buffer, offset, length);
   #ifndef NDEBUG
     string->cachedstr = NA_NULL;
   #endif
@@ -181,8 +181,14 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt offset, 
 
 
 NA_DEF NAString* naNewStringWithBufferExtraction(NABuffer* buffer, NARangei range){
+  #ifndef NDEBUG
+    if(!naIsLengthValueUseful(buffer->range.length))
+      naError("naNewStringWithBufferExtraction", "Buffer Range length is not useful.");
+    if(!naIsLengthValueUseful(range.length))
+      naError("naNewStringWithBufferExtraction", "Range length is not useful.");
+  #endif
   NAString* string = naNew(NAString);
-  string->buffer = naNewBufferExtraction(buffer, range);
+  string->buffer = naNewBufferExtraction(buffer, range.origin, range.length);
   #ifndef NDEBUG
     string->cachedstr = NA_NULL;
   #endif
@@ -307,8 +313,9 @@ NA_DEF NAString* naNewStringCEscaped(const NAString* inputstring){
   if(naIsStringEmpty(inputstring)){
     return naNewString();
   }
-  buffer = naNewBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputstring->buffer);
+  naLocateBufferStart(&iter);
+  buffer = naNewBuffer(NA_FALSE);
   outiter = naMakeBufferModifier(buffer);
   while(!naIsBufferAtInitial(&iter)){
     NAUTF8Char curchar = naReadBufferi8(&iter);
@@ -347,6 +354,7 @@ NA_DEF NAString* naNewStringCUnescaped(const NAString* inputstring){
   }
   buffer = naNewBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputstring->buffer);
+  naLocateBufferStart(&iter);
   outiter = naMakeBufferModifier(buffer);
   while(!naIsBufferAtInitial(&iter)){
     NAUTF8Char curchar = naReadBufferi8(&iter);
