@@ -17,7 +17,6 @@ typedef struct NABufferIterator NABufferIterator;
 
 
 #include "NABase.h"
-#include "NAMemory.h"
 #include "NACoord.h"
 #include "NAFile.h"
 #include "NAString.h"

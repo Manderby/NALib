@@ -62,40 +62,40 @@ NA_IDEF void naFillV4i(NAInt* d, NAInt a0, NAInt a1, NAInt a2, NAInt a3){
 }
 
 
-NA_IDEF void naNullV1d(double*  d){
+NA_IDEF void naZeroV1d(double*  d){
   d[0] = 0.;
 }
-NA_IDEF void naNullV2d(double*  d){
+NA_IDEF void naZeroV2d(double*  d){
   d[0] = 0.; d[1] = 0.;
 }
-NA_IDEF void naNullV3d(double*  d){
+NA_IDEF void naZeroV3d(double*  d){
   d[0] = 0.; d[1] = 0.; d[2] = 0.;
 }
-NA_IDEF void naNullV4d(double*  d){
+NA_IDEF void naZeroV4d(double*  d){
   d[0] = 0.; d[1] = 0.; d[2] = 0.; d[3] = 0.;
 }
-NA_IDEF void naNullV1f(float* d){
+NA_IDEF void naZeroV1f(float* d){
   d[0] = 0.f;
 }
-NA_IDEF void naNullV2f(float* d){
+NA_IDEF void naZeroV2f(float* d){
   d[0] = 0.f; d[1] = 0.f;
 }
-NA_IDEF void naNullV3f(float* d){
+NA_IDEF void naZeroV3f(float* d){
   d[0] = 0.f; d[1] = 0.f; d[2] = 0.f;
 }
-NA_IDEF void naNullV4f(float* d){
+NA_IDEF void naZeroV4f(float* d){
   d[0] = 0.f; d[1] = 0.f; d[2] = 0.f; d[3] = 0.f;
 }
-NA_IDEF void naNullV1i(NAInt* d){
+NA_IDEF void naZeroV1i(NAInt* d){
   d[0] = 0;
 }
-NA_IDEF void naNullV2i(NAInt* d){
+NA_IDEF void naZeroV2i(NAInt* d){
   d[0] = 0; d[1] = 0;
 }
-NA_IDEF void naNullV3i(NAInt* d){
+NA_IDEF void naZeroV3i(NAInt* d){
   d[0] = 0; d[1] = 0; d[2] = 0;
 }
-NA_IDEF void naNullV4i(NAInt* d){
+NA_IDEF void naZeroV4i(NAInt* d){
   d[0] = 0; d[1] = 0; d[2] = 0; d[3] = 0;
 }
 

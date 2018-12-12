@@ -265,7 +265,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
   curbyte = png->pixeldata;
 
   upbuffer = naMalloc(bytesperline);
-  naNulln(upbuffer, bytesperline);
+  naZeron(upbuffer, bytesperline);
   upbufptr = upbuffer;
 
   iterfilter = naMakeBufferMutator(png->filtereddata);

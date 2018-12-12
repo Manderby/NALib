@@ -24,7 +24,7 @@ NA_HDEF NABuffer* naGetBufferIteratorSourceBuffer(NABufferIterator* iter){
   NABufferSource* source;
   if(naIsTreeAtInitial(&(iter->partiter))){
     NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
-    source = buffer->enhancesource;
+    source = buffer->source;
   }else{
     NABufferPart* part = naGetBufferPart(iter);
     source = naGetBufferPartSource(part);

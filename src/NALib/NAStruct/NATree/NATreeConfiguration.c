@@ -9,7 +9,7 @@
 
 NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   NATreeConfiguration* config = naAlloc(NATreeConfiguration);
-  naNulln(config, sizeof(NATreeConfiguration));
+  naZeron(config, sizeof(NATreeConfiguration));
   config->flags = flags;
   naInitRefCount(&(config->refcount));
 

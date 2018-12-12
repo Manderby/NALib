@@ -262,7 +262,7 @@ NA_API void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   if(prestartup){prestartup(arg);}
 
   // Register the window class
-  naNulln(&wndclass, sizeof(WNDCLASS));
+  naZeron(&wndclass, sizeof(WNDCLASS));
 	wndclass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
 	wndclass.lpfnWndProc = WindowCallback;
 	wndclass.cbClsExtra = 0;
@@ -276,7 +276,7 @@ NA_API void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 	RegisterClass(&wndclass);
 
   // Register the view class
-  naNulln(&wndclass, sizeof(WNDCLASS));
+  naZeron(&wndclass, sizeof(WNDCLASS));
 	wndclass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
 	wndclass.lpfnWndProc = WindowCallback;
 	wndclass.cbClsExtra = 0;

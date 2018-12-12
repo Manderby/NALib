@@ -118,18 +118,27 @@ NA_HDEF void naInitBufferStruct(NABuffer* buffer){
 
 
 
-NA_DEF NABuffer* naNewBuffer(NABool securememory){
-  NA_UNUSED(securememory);
-  // todo: secure source
+// This is the fill callback for a secure memory buffer. It simply fills all
+// of the dst memory with binarz zero.
+NA_HDEF void naFillBufferSecureMemory(void* dst, NARangei sourcerange, void* sourcedata){
+  NA_UNUSED(sourcedata);
+  naZeron(dst, sourcerange.length);
+}
 
+
+
+NA_DEF NABuffer* naNewBuffer(NABool securememory){
   NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
 
-  buffer->enhancesource = NA_NULL;
-  buffer->enhancesourceoffset = 0;
-
-  buffer->range = naMakeRangeiWithStartAndEnd(0, 0);
-  buffer->flags = 0;
+  // When requiring secure memory, we create a source which fills all allocated
+  // memory with binary zero.
+  if(securememory){
+    buffer->source = naNewBufferSource(naFillBufferSecureMemory, NA_NULL);
+  }else{
+    buffer->source = NA_NULL;
+  }
+  buffer->sourceoffset = 0;
 
   buffer->newlineencoding = NA_NEWLINE_NATIVE;
   buffer->endianness = NA_ENDIANNESS_HOST;
@@ -169,19 +178,17 @@ NA_DEF NABuffer* naNewBufferExtraction(NABuffer* srcbuffer, NAInt offset, NAInt 
 
   NARangei absoluterange = naMakeRangeiAbsolute(offset, length, srcbuffer->range);
 
-  buffer->enhancesource = NA_NULL;
-  buffer->enhancesourceoffset = 0;
+  buffer->source = NA_NULL;
+  buffer->sourceoffset = 0;
 
   buffer->range = naMakeRangei(0, absoluterange.length);
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;
 
-  NABufferSource* bufsource = naNewBufferSource(NA_NULL, srcbuffer);
-    buffer->enhancesource = naRetain(bufsource);
-    buffer->enhancesourceoffset = -absoluterange.origin;
-  naRelease(bufsource);
+  buffer->source = naNewBufferSource(NA_NULL, srcbuffer);
+  buffer->sourceoffset = -absoluterange.origin;
 
   // Add the const data to the list.
-  NABufferPart* part = naNewBufferPartSparse(bufsource, absoluterange);
+  NABufferPart* part = naNewBufferPartSparse(buffer->source, absoluterange);
   naAddTreeFirstMutable(&(buffer->parts), part);
 
   buffer->flags = srcbuffer->flags | NA_BUFFER_FLAG_RANGE_FIXED;
@@ -275,13 +282,13 @@ NA_DEF NABuffer* naNewBufferWithInputFile(const char* filename){
   NABufferSource* readsource = naNewBufferSource(naFillBufferPartFile, NA_NULL);
     naSetBufferSourceData(readsource, file, (NAMutator)naReleaseFile);
     naSetBufferSourceLimit(readsource, range);
-    filebuffer->enhancesource = naRetain(readsource);
-    filebuffer->enhancesourceoffset = 0;
+    filebuffer->source = naRetain(readsource);
+    filebuffer->sourceoffset = 0;
   naRelease(readsource);
 
   NABufferSource* bufsource = naNewBufferSource(NA_NULL, filebuffer);
-    buffer->enhancesource = naRetain(bufsource);
-    buffer->enhancesourceoffset = 0;
+    buffer->source = naRetain(bufsource);
+    buffer->sourceoffset = 0;
   naRelease(bufsource);
   naRelease(filebuffer);
 
@@ -309,8 +316,8 @@ NA_DEF NABuffer* naNewBufferWithConstData(const void* data, NAInt bytesize){
   part = naNewBufferPartWithConstData(data, bytesize);
   naAddTreeFirstMutable(&(buffer->parts), part);
 
-  buffer->enhancesource = NA_NULL;
-  buffer->enhancesourceoffset = 0;
+  buffer->source = NA_NULL;
+  buffer->sourceoffset = 0;
 
   buffer->range = range;
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;
@@ -336,8 +343,8 @@ NA_DEF NABuffer* naNewBufferWithMutableData(void* data, NAInt bytesize, NAMutato
     part = naNewBufferPartWithMutableData(data, bytesize, destructor);
     naAddTreeFirstMutable(&(buffer->parts), part);
 
-  buffer->enhancesource = NA_NULL;
-  buffer->enhancesourceoffset = 0;
+  buffer->source = NA_NULL;
+  buffer->sourceoffset = 0;
 
   buffer->range = range;
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;
@@ -354,10 +361,8 @@ NA_DEF NABuffer* naNewBufferWithCustomSource(NABufferSource* source, NAInt sourc
   NABuffer* buffer = naNew(NABuffer);
   naInitBufferStruct(buffer);
 
-  buffer->enhancesource = source;
-  buffer->enhancesourceoffset = sourceoffset;
-
-  buffer->range = naMakeRangeiWithStartAndEnd(0, 0);
+  buffer->source = source;
+  buffer->sourceoffset = sourceoffset;
 
   buffer->newlineencoding = NA_NEWLINE_NATIVE;
   buffer->endianness = NA_ENDIANNESS_HOST;
@@ -372,7 +377,7 @@ NA_HDEF void naDeallocBuffer(NABuffer* buffer){
     if(buffer->itercount)
       naError("naDeallocBuffer", "There are still iterators running. Did you forgot naClearBufferIterator?");
   #endif
-  if(buffer->enhancesource){naRelease(buffer->enhancesource);}
+  if(buffer->source){naRelease(buffer->source);}
   naEmptyTree(&(buffer->parts));
 }
 
@@ -433,7 +438,7 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
   if(naIsBufferEmpty(buffer)){
     // If the buffer is empty, we just create one sparse part containing the
     // whole range.
-    NABufferPart* part = naNewBufferPartSparse(buffer->enhancesource, naMakeRangei(start + buffer->enhancesourceoffset, length));
+    NABufferPart* part = naNewBufferPartSparse(buffer->source, naMakeRangei(start + buffer->sourceoffset, length));
     naAddTreeFirstMutable(&(buffer->parts), part);
     buffer->range = naMakeRangeiWithStartAndEnd(start, end);
 
@@ -451,7 +456,7 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
         naEnlargeBufferPart(naGetBufferPart(&iter), additionalbytes, 0);
       }else{
         // We create a sparse part at the beginning.
-        NABufferPart* part = naNewBufferPartSparse(buffer->enhancesource, naMakeRangei(start + buffer->enhancesourceoffset, additionalbytes));
+        NABufferPart* part = naNewBufferPartSparse(buffer->source, naMakeRangei(start + buffer->sourceoffset, additionalbytes));
         naAddTreeFirstMutable(&(buffer->parts), part);
       }
       buffer->range = naMakeRangeiWithStartAndEnd(start, naGetRangeiEnd(buffer->range));
@@ -467,7 +472,7 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
         naEnlargeBufferPart(naGetBufferPart(&iter), 0, additionalbytes);
       }else{
         // We create a sparse part at the end.
-        NABufferPart* part = naNewBufferPartSparse(buffer->enhancesource, naMakeRangei(naGetRangeiEnd(buffer->range) + buffer->enhancesourceoffset, additionalbytes));
+        NABufferPart* part = naNewBufferPartSparse(buffer->source, naMakeRangei(naGetRangeiEnd(buffer->range) + buffer->sourceoffset, additionalbytes));
         naAddTreeLastMutable(&(buffer->parts), part);
       }
       buffer->range = naMakeRangeiWithStartAndEnd(buffer->range.origin, end);

@@ -137,19 +137,19 @@ NA_IAPI void naFillV2i(NAInt*  d, NAInt  a0, NAInt  a1);
 NA_IAPI void naFillV3i(NAInt*  d, NAInt  a0, NAInt  a1, NAInt  a2);
 NA_IAPI void naFillV4i(NAInt*  d, NAInt  a0, NAInt  a1, NAInt  a2, NAInt  a3);
 
-// Sets all components to Null
-NA_IAPI void naNullV1d(double* d);
-NA_IAPI void naNullV2d(double* d);
-NA_IAPI void naNullV3d(double* d);
-NA_IAPI void naNullV4d(double* d);
-NA_IAPI void naNullV1f(float*  d);
-NA_IAPI void naNullV2f(float*  d);
-NA_IAPI void naNullV3f(float*  d);
-NA_IAPI void naNullV4f(float*  d);
-NA_IAPI void naNullV1i(NAInt*  d);
-NA_IAPI void naNullV2i(NAInt*  d);
-NA_IAPI void naNullV3i(NAInt*  d);
-NA_IAPI void naNullV4i(NAInt*  d);
+// Sets all components to binary zero
+NA_IAPI void naZeroV1d(double* d);
+NA_IAPI void naZeroV2d(double* d);
+NA_IAPI void naZeroV3d(double* d);
+NA_IAPI void naZeroV4d(double* d);
+NA_IAPI void naZeroV1f(float*  d);
+NA_IAPI void naZeroV2f(float*  d);
+NA_IAPI void naZeroV3f(float*  d);
+NA_IAPI void naZeroV4f(float*  d);
+NA_IAPI void naZeroV1i(NAInt*  d);
+NA_IAPI void naZeroV2i(NAInt*  d);
+NA_IAPI void naZeroV3i(NAInt*  d);
+NA_IAPI void naZeroV4i(NAInt*  d);
 
 // Fills vector d with random values in [0, 1)
 NA_IAPI void naFillV1dRandom(double* d);

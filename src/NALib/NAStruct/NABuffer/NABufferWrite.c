@@ -382,17 +382,17 @@ NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffe
     NAInt curpos = naGetBufferLocation(iter);
     mutablesrcbuffer = (NABuffer*)srcbuffer;
 
-    tmpsource = dstbuffer->enhancesource;
-    tmpsourceoffset = dstbuffer->enhancesourceoffset;
-    dstbuffer->enhancesource = naNewBufferSource(NA_NULL, mutablesrcbuffer);
-    dstbuffer->enhancesourceoffset = srcrange.origin - curpos;
+    tmpsource = dstbuffer->source;
+    tmpsourceoffset = dstbuffer->sourceoffset;
+    dstbuffer->source = naNewBufferSource(NA_NULL, mutablesrcbuffer);
+    dstbuffer->sourceoffset = srcrange.origin - curpos;
 
     naCacheBufferRange(dstbuffer, naMakeRangei(curpos, srcrange.length), NA_FALSE);
     naLocateBufferAbsolute(iter, curpos + srcrange.length);
 
-    naRelease(dstbuffer->enhancesource);
-    dstbuffer->enhancesource = tmpsource;
-    dstbuffer->enhancesourceoffset = tmpsourceoffset;
+    naRelease(dstbuffer->source);
+    dstbuffer->source = tmpsource;
+    dstbuffer->sourceoffset = tmpsourceoffset;
   }
 }
 

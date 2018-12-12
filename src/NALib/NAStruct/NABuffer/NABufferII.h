@@ -168,8 +168,8 @@ struct NABufferIterator{
 };
 
 struct NABuffer{
-  NABufferSource* enhancesource;
-  NAInt enhancesourceoffset; // Offset of source relative to this buffers
+  NABufferSource* source;
+  NAInt sourceoffset; // Offset of source relative to this buffers
                              // origin. Add this offset to the desired pos to
                              // get the position within the source.
 

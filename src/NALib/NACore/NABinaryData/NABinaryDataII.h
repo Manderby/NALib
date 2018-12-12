@@ -9,6 +9,13 @@
 // including "NABinaryData.h"
 
 
+struct NAChecksum{
+  NAChecksumType type;
+  void* data;
+};
+
+
+
 #include "NAEndiannessII.h"
 
 
@@ -286,39 +293,39 @@ NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b){
 
 
 // ///////////////////////////////////////////////////////////
-// Fills all bytes with null values
+// Fills all bytes with zero values
 // ///////////////////////////////////////////////////////////
 
-NA_IDEF void naNulln32(void* d, int32 bytesize){
+NA_IDEF void naZeron32(void* d, int32 bytesize){
   #ifndef NDEBUG
     if(bytesize < NA_ONE_32)
-      naError("naNulln32", "count should not be < 1");
+      naError("naZeron32", "count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
   memset(d, 0, (size_t)bytesize);
 }
 
-NA_IDEF void naNulln64(void* d, int64 bytesize){
+NA_IDEF void naZeron64(void* d, int64 bytesize){
   #ifndef NDEBUG
     if(naSmallerInt64(bytesize, NA_ONE_64))
-      naError("naNulln64", "count should not be < 1");
+      naError("naZeron64", "count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
   #if defined NA_TYPE_INT64
     memset(d, 0, (size_t)bytesize);
   #else
     #ifndef NDEBUG
-      naError("naNulln64", "Impossible to convert to a 64 bit size_t type, as no accessible 64 bit integer type exists in this configuration. Falling back to 32 bits.");
+      naError("naZeron64", "Impossible to convert to a 64 bit size_t type, as no accessible 64 bit integer type exists in this configuration. Falling back to 32 bits.");
     #endif
     memset(d, 0, (size_t)naCastInt64ToInt32(bytesize));
   #endif
 }
 
-NA_IDEF void naNulln(void* d, NAInt bytesize){
+NA_IDEF void naZeron(void* d, NAInt bytesize){
   #if NA_TYPE_NAINT_BITS == 32
-    naNulln32(d, bytesize);
+    naZeron32(d, bytesize);
   #elif NA_TYPE_NAINT_BITS == 64
-    naNulln64(d, bytesize);
+    naZeron64(d, bytesize);
   #else
     #error "Integer bytesize unknown"
   #endif
@@ -338,7 +345,7 @@ NA_IDEF void naSetn32(void* d, int32 bytesize, NAByte value){
 NA_IDEF void naSetn64(void* d, int64 bytesize, NAByte value){
   #ifndef NDEBUG
     if(naSmallerInt64(bytesize, NA_ONE_64))
-      naError("naNulln64", "count should not be < 1");
+      naError("naSetn64", "count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
   #if defined NA_TYPE_INT64
@@ -524,21 +531,6 @@ NA_IDEF NABool naEqual128WithBytes(const void* s,
   if(*p   != b15){return NA_FALSE;}
   return NA_TRUE;
 }
-
-
-
-
-
-struct NAChecksum{
-  NAChecksumType type;
-  void* data;
-};
-
-
-
-
-
-
 
 
 
