@@ -178,7 +178,6 @@ struct NABuffer{
 
   NANewlineEncoding newlineencoding;  // The current newline encoding
   NAInt endianness;                   // The current endianness
-  NAEndiannessConverter converter;    // The endianness converter.
 
   NATree parts;             // Tree with all parts in this buffer
 

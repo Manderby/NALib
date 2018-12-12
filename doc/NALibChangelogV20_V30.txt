@@ -15,13 +15,13 @@ correct, complete or final.
 Version 22 (first published 20XX-XXX-XX)
 ==========
 
-- Huge Refactoring of NABuffer
 - Implemented NAOctTree the same way as NAQuadTree
 - Added NATree, a binary search tree.
+- Huge Refactoring of NABuffer
+- Rearranging large files into hierarchical folder structure.
 
 - Tweaked QuadTree implementation. Removed naSetQuadTreeInRect. Use iterators
   for that. MinLeafExponent is now a BaseLeafExponent
-- Rearranging large files into hierarchical folder structure.
 - Made NAPointer independent of naRuntimeSystem. Thinking about killing this
   structure alltogether as it has only small purpose but still keeping it.
 - Adding Leap Second information according Bulletin 56
@@ -31,6 +31,7 @@ Version 22 (first published 20XX-XXX-XX)
   to NABuffer
 - Renamed naMakeNullPtr to naMakePtrNull
 - Made some of the runtime system functions inlineable.
+- Altering Endianness functions. No more NAEndiannessConverter.
 
 
 Version 21 (first published 2018-Mai-27)

@@ -111,10 +111,10 @@ NA_IAPI NABool naEqual128WithBytes( const void* s,
 // ////////////////////
 
 
-// Static Endianness conversions.
-// Use those if you know exactly from which source endianness to which
-// destination endianness you want to convert. If you don't know it at
-// compile-time, use the NAEndiannessConverter below or NABuffer.
+// Endianness conversions.
+// Use those to convert from a source endianness to host endianness or vice
+// versa. You can also explicitely convert from Little to Big or vice versa.
+// Note that the NABuffer implementation offers more functionality.
 //
 // Will convert the data directly within the buffer
 // provided. All converters work in both ways, for example Little to Big
@@ -123,17 +123,18 @@ NA_IAPI NABool naEqual128WithBytes( const void* s,
 // The v-variants convert a whole array with count elements. The
 // non-v-variants convert only one single value.
 
-// Conversion between two same Endiannesses.
-NA_IAPI  void naConvertNative8(          void* buffer);
-NA_IAPI  void naConvertNative16(         void* buffer);
-NA_IAPI  void naConvertNative32(         void* buffer);
-NA_IAPI  void naConvertNative64(         void* buffer);
-NA_IAPI  void naConvertNative128(        void* buffer);
-NA_IAPI  void naConvertNative8v(         void* buffer, NAUInt count);
-NA_IAPI  void naConvertNative16v(        void* buffer, NAUInt count);
-NA_IAPI  void naConvertNative32v(        void* buffer, NAUInt count);
-NA_IAPI  void naConvertNative64v(        void* buffer, NAUInt count);
-NA_IAPI  void naConvertNative128v(       void* buffer, NAUInt count);
+// Conversion from host to the desired endianness. If endianness is the same
+// as the host endianness, nothing happends.
+NA_IAPI  void naConvertEndianness8(          NAInt endianness, void* buffer);
+NA_IAPI  void naConvertEndianness16(         NAInt endianness, void* buffer);
+NA_IAPI  void naConvertEndianness32(         NAInt endianness, void* buffer);
+NA_IAPI  void naConvertEndianness64(         NAInt endianness, void* buffer);
+NA_IAPI  void naConvertEndianness128(        NAInt endianness, void* buffer);
+NA_IAPI  void naConvertEndianness8v(         NAInt endianness, void* buffer, NAUInt count);
+NA_IAPI  void naConvertEndianness16v(        NAInt endianness, void* buffer, NAUInt count);
+NA_IAPI  void naConvertEndianness32v(        NAInt endianness, void* buffer, NAUInt count);
+NA_IAPI  void naConvertEndianness64v(        NAInt endianness, void* buffer, NAUInt count);
+NA_IAPI  void naConvertEndianness128v(       NAInt endianness, void* buffer, NAUInt count);
 
 // Conversion between Little and Big Endianness
 NA_IAPI  void naConvertLittleBig8(       void* buffer);
@@ -147,69 +148,12 @@ NA_IAPI  void naConvertLittleBig32v(     void* buffer, NAUInt count);
 NA_IAPI  void naConvertLittleBig64v(     void* buffer, NAUInt count);
 NA_IAPI  void naConvertLittleBig128v(    void* buffer, NAUInt count);
 
-// Conversion between Native and Little Endianness
-NA_IAPI  void naConvertNativeLittle8(    void* buffer);
-NA_IAPI  void naConvertNativeLittle16(   void* buffer);
-NA_IAPI  void naConvertNativeLittle32(   void* buffer);
-NA_IAPI  void naConvertNativeLittle64(   void* buffer);
-NA_IAPI  void naConvertNativeLittle128(  void* buffer);
-NA_IAPI  void naConvertNativeLittle8v(   void* buffer, NAUInt count);
-NA_IAPI  void naConvertNativeLittle16v(  void* buffer, NAUInt count);
-NA_IAPI  void naConvertNativeLittle32v(  void* buffer, NAUInt count);
-NA_IAPI  void naConvertNativeLittle64v(  void* buffer, NAUInt count);
-NA_IAPI  void naConvertNativeLittle128v( void* buffer, NAUInt count);
-
-// Conversion between Native and Big Endianness
-NA_IAPI  void naConvertNativeBig8(       void* buffer);
-NA_IAPI  void naConvertNativeBig16(      void* buffer);
-NA_IAPI  void naConvertNativeBig32(      void* buffer);
-NA_IAPI  void naConvertNativeBig64(      void* buffer);
-NA_IAPI  void naConvertNativeBig128(     void* buffer);
-NA_IAPI  void naConvertNativeBig8v(      void* buffer, NAUInt count);
-NA_IAPI  void naConvertNativeBig16v(     void* buffer, NAUInt count);
-NA_IAPI  void naConvertNativeBig32v(     void* buffer, NAUInt count);
-NA_IAPI  void naConvertNativeBig64v(     void* buffer, NAUInt count);
-NA_IAPI  void naConvertNativeBig128v(    void* buffer, NAUInt count);
-
-
-
-// If you have dynamically defined endiannesses, use an NAEndiannessConverter.
-// Use the naMakeEndiannessConverter function to fill the structure.
-// After creation, you can use the function-pointers stored in the
-// NAEndiannessConverter struct directly.
-//
-// These are the structs accessible to the programmer.
-
-typedef struct NAEndiannessConverter NAEndiannessConverter;
-struct NAEndiannessConverter{
-  void (*convert8)    (void* buffer);
-  void (*convert16)   (void* buffer);
-  void (*convert32)   (void* buffer);
-  void (*convert64)   (void* buffer);
-  void (*convert128)  (void* buffer);
-  void (*convert8v)   (void* buffer, NAUInt count);
-  void (*convert16v)  (void* buffer, NAUInt count);
-  void (*convert32v)  (void* buffer, NAUInt count);
-  void (*convert64v)  (void* buffer, NAUInt count);
-  void (*convert128v) (void* buffer, NAUInt count);
-};
-
-
-// Returns an NAEndiannessConverter structure with all converters for all
-// endiannesses available in NALib. Note that it does not really matter which
-// is the endianness1 and which is endianness2 as all converters can be used
-// bidirectional.
-NA_IAPI NAEndiannessConverter naMakeEndiannessConverter(NAInt endianness1,
-                                                        NAInt endianness2);
-
-
 // naIsEndiannessNative returns NA_TRUE if the given endianness is the same as
 // the endianness of this system. Also returns NA_TRUE when sending native or
 // unknown endianness. This function is useful for dynamically checking for
 // endiannesses. If you simply are interested in the (static) endianness of
-// this system, check the NA_SYSTEM_ENDIANNESS macro.
+// this host, check the NA_ENDIANNESS_HOST macro.
 NA_IAPI NABool naIsEndiannessNative(NAInt endianness);
-
 
 // Use the following functions to write and read a 4-byte endianness
 // marker. This is useful for files which state what endianness they
@@ -252,7 +196,7 @@ NA_API uint32 naGetChecksumResult(NAChecksum* checksum);
 
 
 // Inline implementations are in a separate file:
-#include "NACore/NABinaryDataII.h"
+#include "NACore/NABinaryData/NABinaryDataII.h"
 
 
 

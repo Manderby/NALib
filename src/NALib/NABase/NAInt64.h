@@ -91,7 +91,7 @@
 
     typedef struct NAInt64  NAInt64;
     typedef struct NAUInt64 NAUInt64;
-    #if NA_SYSTEM_ENDIANNESS == NA_ENDIANNESS_BIG
+    #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
       struct NAInt64 { int32 hi;  uint32 lo; };
       struct NAUInt64{ uint32 hi; uint32 lo; };
     #else

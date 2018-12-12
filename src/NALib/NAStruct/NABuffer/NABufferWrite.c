@@ -89,22 +89,22 @@ NA_HDEF void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt 
 
 NA_DEF void naStoreBufferi8(NABufferIterator* iter, int8 value, NABool advance){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  buffer->converter.convert8(&value);
+  naConvertEndianness8(buffer->endianness, &value);
   naStoreBufferBytes(iter, &value, 1, NA_TRUE, advance);
 }
 NA_DEF void naStoreBufferi16(NABufferIterator* iter, int16 value, NABool advance){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  buffer->converter.convert16(&value);
+  naConvertEndianness16(buffer->endianness, &value);
   naStoreBufferBytes(iter, &value, 2, NA_TRUE, advance);
 }
 NA_DEF void naStoreBufferi32(NABufferIterator* iter, int32 value, NABool advance){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  buffer->converter.convert32(&value);
+  naConvertEndianness32(buffer->endianness, &value);
   naStoreBufferBytes(iter, &value, 4, NA_TRUE, advance);
 }
 NA_DEF void naStoreBufferi64(NABufferIterator* iter, int64 value, NABool advance){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  buffer->converter.convert64(&value);
+  naConvertEndianness64(buffer->endianness, &value);
   naStoreBufferBytes(iter, &value, 8, NA_TRUE, advance);
 }
 
@@ -112,22 +112,22 @@ NA_DEF void naStoreBufferi64(NABufferIterator* iter, int64 value, NABool advance
 
 NA_DEF void naStoreBufferu8(NABufferIterator* iter, uint8 value, NABool advance){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  buffer->converter.convert8(&value);
+  naConvertEndianness8(buffer->endianness, &value);
   naStoreBufferBytes(iter, &value, 1, NA_TRUE, advance);
 }
 NA_DEF void naStoreBufferu16(NABufferIterator* iter, uint16 value, NABool advance){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  buffer->converter.convert16(&value);
+  naConvertEndianness16(buffer->endianness, &value);
   naStoreBufferBytes(iter, &value, 2, NA_TRUE, advance);
 }
 NA_DEF void naStoreBufferu32(NABufferIterator* iter, uint32 value, NABool advance){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  buffer->converter.convert32(&value);
+  naConvertEndianness32(buffer->endianness, &value);
   naStoreBufferBytes(iter, &value, 4, NA_TRUE, advance);
 }
 NA_DEF void naStoreBufferu64(NABufferIterator* iter, uint64 value, NABool advance){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  buffer->converter.convert64(&value);
+  naConvertEndianness64(buffer->endianness, &value);
   naStoreBufferBytes(iter, &value, 8, NA_TRUE, advance);
 }
 
@@ -135,12 +135,12 @@ NA_DEF void naStoreBufferu64(NABufferIterator* iter, uint64 value, NABool advanc
 
 NA_DEF void naStoreBufferf(NABufferIterator* iter, float value, NABool advance){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  buffer->converter.convert32(&value);
+  naConvertEndianness32(buffer->endianness, &value);
   naStoreBufferBytes(iter, &value, 4, NA_TRUE, advance);
 }
 NA_DEF void naStoreBufferd(NABufferIterator* iter, double value, NABool advance){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  buffer->converter.convert64(&value);
+  naConvertEndianness64(buffer->endianness, &value);
   naStoreBufferBytes(iter, &value, 8, NA_TRUE, advance);
 }
 
@@ -248,7 +248,7 @@ NA_DEF void naWriteBufferi8v(NABufferIterator* iter, const int8* src, NAInt coun
   naPrepareBuffer(iter, count * 1, NA_FALSE);
   while(count){
     value = *src;
-    buffer->converter.convert8(&value);
+    naConvertEndianness8(buffer->endianness, &value);
     naStoreBufferBytes(iter, &value, 1, NA_FALSE, NA_TRUE);
     src++;
     count--;
@@ -260,7 +260,7 @@ NA_DEF void naWriteBufferi16v(NABufferIterator* iter, const int16* src, NAInt co
   naPrepareBuffer(iter, count * 2, NA_FALSE);
   while(count){
     value = *src;
-    buffer->converter.convert16(&value);
+    naConvertEndianness16(buffer->endianness, &value);
     naStoreBufferBytes(iter, &value, 2, NA_FALSE, NA_TRUE);
     src++;
     count--;
@@ -272,7 +272,7 @@ NA_DEF void naWriteBufferi32v(NABufferIterator* iter, const int32* src, NAInt co
   naPrepareBuffer(iter, count * 4, NA_FALSE);
   while(count){
     value = *src;
-    buffer->converter.convert32(&value);
+    naConvertEndianness32(buffer->endianness, &value);
     naStoreBufferBytes(iter, &value, 4, NA_FALSE, NA_TRUE);
     src++;
     count--;
@@ -284,7 +284,7 @@ NA_DEF void naWriteBufferi64v(NABufferIterator* iter, const int64* src, NAInt co
   naPrepareBuffer(iter, count * 8, NA_FALSE);
   while(count){
     value = *src;
-    buffer->converter.convert64(&value);
+    naConvertEndianness64(buffer->endianness, &value);
     naStoreBufferBytes(iter, &value, 8, NA_FALSE, NA_TRUE);
     src++;
     count--;
@@ -299,7 +299,7 @@ NA_DEF void naWriteBufferu8v(NABufferIterator* iter, const uint8* src, NAInt cou
   naPrepareBuffer(iter, count * 1, NA_FALSE);
   while(count){
     value = *src;
-    buffer->converter.convert8(&value);
+    naConvertEndianness8(buffer->endianness, &value);
     naStoreBufferBytes(iter, &value, 1, NA_FALSE, NA_TRUE);
     src++;
     count--;
@@ -311,7 +311,7 @@ NA_DEF void naWriteBufferu16v(NABufferIterator* iter, const uint16* src, NAInt c
   naPrepareBuffer(iter, count * 2, NA_FALSE);
   while(count){
     value = *src;
-    buffer->converter.convert16(&value);
+    naConvertEndianness16(buffer->endianness, &value);
     naStoreBufferBytes(iter, &value, 2, NA_FALSE, NA_TRUE);
     src++;
     count--;
@@ -323,7 +323,7 @@ NA_DEF void naWriteBufferu32v(NABufferIterator* iter, const uint32* src, NAInt c
   naPrepareBuffer(iter, count * 4, NA_FALSE);
   while(count){
     value = *src;
-    buffer->converter.convert32(&value);
+    naConvertEndianness32(buffer->endianness, &value);
     naStoreBufferBytes(iter, &value, 4, NA_FALSE, NA_TRUE);
     src++;
     count--;
@@ -335,7 +335,7 @@ NA_DEF void naWriteBufferu64v(NABufferIterator* iter, const uint64* src, NAInt c
   naPrepareBuffer(iter, count * 8, NA_FALSE);
   while(count){
     value = *src;
-    buffer->converter.convert64(&value);
+    naConvertEndianness64(buffer->endianness, &value);
     naStoreBufferBytes(iter, &value, 8, NA_FALSE, NA_TRUE);
     src++;
     count--;
@@ -350,7 +350,7 @@ NA_DEF void naWriteBufferfv(NABufferIterator* iter, const float* src, NAInt coun
   naPrepareBuffer(iter, count * 4, NA_FALSE);
   while(count){
     value = *src;
-    buffer->converter.convert32(&value);
+    naConvertEndianness32(buffer->endianness, &value);
     naStoreBufferBytes(iter, &value, 4, NA_FALSE, NA_TRUE);
     src++;
     count--;
@@ -362,7 +362,7 @@ NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, NAInt cou
   naPrepareBuffer(iter, count * 8, NA_FALSE);
   while(count){
     value = *src;
-    buffer->converter.convert64(&value);
+    naConvertEndianness64(buffer->endianness, &value);
     naStoreBufferBytes(iter, &value, 8, NA_FALSE, NA_TRUE);
     src++;
     count--;

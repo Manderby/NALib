@@ -224,7 +224,7 @@ NA_API void naSetBufferNewlineEncoding(             NABuffer* buffer,
                                             NANewlineEncoding newlineencoding);
 
 // Get or set the endianness setting of this buffer. If not stated otherwise,
-// the endianness of a new buffer is NA_ENDIANNESS_NATIVE.
+// the endianness of a new buffer is NA_ENDIANNESS_HOST.
 NA_API NAInt  naGetBufferEndianness(NABuffer* buffer);
 NA_API void   naSetBufferEndianness(NABuffer* buffer, NAInt endianness);
 

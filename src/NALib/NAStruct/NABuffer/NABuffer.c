@@ -132,8 +132,7 @@ NA_DEF NABuffer* naNewBuffer(NABool securememory){
   buffer->flags = 0;
 
   buffer->newlineencoding = NA_NEWLINE_NATIVE;
-  buffer->endianness = NA_ENDIANNESS_UNKNOWN;
-  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
+  buffer->endianness = NA_ENDIANNESS_HOST;
 
   return buffer;
 }
@@ -189,7 +188,6 @@ NA_DEF NABuffer* naNewBufferExtraction(NABuffer* srcbuffer, NAInt offset, NAInt 
 
   buffer->newlineencoding = srcbuffer->newlineencoding;
   buffer->endianness = srcbuffer->endianness;
-  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
 
   return buffer;
 }
@@ -247,7 +245,7 @@ NA_DEF NABuffer* naNewBufferWithSameSource(NABuffer* srcbuffer){
 //
 //  buffer->newlineencoding = srcbuffer->newlineencoding;
 //  buffer->endianness = srcbuffer->endianness;
-//  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
+//  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_HOST);
 //
 //  return buffer;
   return NA_NULL;
@@ -291,8 +289,7 @@ NA_DEF NABuffer* naNewBufferWithInputFile(const char* filename){
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;
 
   buffer->newlineencoding = NA_NEWLINE_NATIVE;
-  buffer->endianness = NA_ENDIANNESS_UNKNOWN;
-  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
+  buffer->endianness = NA_ENDIANNESS_HOST;
 
   return buffer;
 }
@@ -319,8 +316,7 @@ NA_DEF NABuffer* naNewBufferWithConstData(const void* data, NAInt bytesize){
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;
 
   buffer->newlineencoding = NA_NEWLINE_NATIVE;
-  buffer->endianness = NA_ENDIANNESS_UNKNOWN;
-  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
+  buffer->endianness = NA_ENDIANNESS_HOST;
 
   return buffer;
 }
@@ -347,8 +343,7 @@ NA_DEF NABuffer* naNewBufferWithMutableData(void* data, NAInt bytesize, NAMutato
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;
 
   buffer->newlineencoding = NA_NEWLINE_NATIVE;
-  buffer->endianness = NA_ENDIANNESS_UNKNOWN;
-  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
+  buffer->endianness = NA_ENDIANNESS_HOST;
 
   return buffer;
 }
@@ -365,8 +360,7 @@ NA_DEF NABuffer* naNewBufferWithCustomSource(NABufferSource* source, NAInt sourc
   buffer->range = naMakeRangeiWithStartAndEnd(0, 0);
 
   buffer->newlineencoding = NA_NEWLINE_NATIVE;
-  buffer->endianness = NA_ENDIANNESS_UNKNOWN;
-  buffer->converter = naMakeEndiannessConverter(buffer->endianness, NA_ENDIANNESS_NATIVE);
+  buffer->endianness = NA_ENDIANNESS_HOST;
 
   return buffer;
 }
@@ -584,7 +578,6 @@ NA_DEF NAInt naGetBufferEndianness(NABuffer* buffer){
 
 NA_DEF void naSetBufferEndianness(NABuffer* buffer, NAInt endianness){
   buffer->endianness = endianness;
-  buffer->converter = naMakeEndiannessConverter(endianness, NA_ENDIANNESS_NATIVE);
 }
 
 

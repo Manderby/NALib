@@ -175,7 +175,7 @@
 
 
     #undef naMakeUInt64WithLiteralLo
-    #if NA_SYSTEM_ENDIANNESS == NA_ENDIANNESS_BIG
+    #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
       #define naMakeUInt64WithLiteralLo(lo)  {0,(lo)}
     #else
       #define naMakeUInt64WithLiteralLo(lo)  {(lo),0}
