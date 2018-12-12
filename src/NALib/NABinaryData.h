@@ -181,7 +181,6 @@ NA_IAPI  void naConvertNativeBig128v(    void* buffer, NAUInt count);
 // These are the structs accessible to the programmer.
 
 typedef struct NAEndiannessConverter NAEndiannessConverter;
-
 struct NAEndiannessConverter{
   void (*convert8)    (void* buffer);
   void (*convert16)   (void* buffer);

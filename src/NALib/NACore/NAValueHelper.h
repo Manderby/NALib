@@ -263,6 +263,8 @@ NA_HIDEF NAInt naMakeLengthWithMinAndMaxi(NAInt min, NAInt max){
 
 
 
+#include "../NAMathOperators.h"
+
 NA_HIDEF NAInt naMakeIntWithIntegerFloat(float x){
   #ifndef NDEBUG
     if(naRoundf(x) != x)

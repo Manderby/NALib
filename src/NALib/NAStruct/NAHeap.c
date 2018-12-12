@@ -4,6 +4,8 @@
 
 #include "../NAHeap.h"
 #include "../NAMemory.h"
+#include "NABinaryData.h"
+#include "NAMathOperators.h"
 
 
 // First note, that a heap structure is basically very simple and could

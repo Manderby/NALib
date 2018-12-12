@@ -2,24 +2,8 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-
-#include "../NAMemory.h"
-#include "../NAString.h"
-#include "../NAList.h"
-
-
-
-
-NA_RUNTIME_TYPE(NAPointer, NA_NULL, NA_FALSE);
-
-
-NA_HDEF void naDestructPointer(NAPointer* pointer){
-  if(pointer->destructor){
-    pointer->destructor(naGetSmartPtrMutable(&(pointer->sptr)));
-  }
-  naDelete(pointer);
-}
-
+#include "NAMemory.h"
+#include "NABinaryData.h"
 
 // //////////////////////////////////////
 // Implementation notes from the author about the Memory Pools.
@@ -107,10 +91,48 @@ NA_HDEF void naDestructPointer(NAPointer* pointer){
 
 
 
+// This structure is stored in the first bytes of every part block.
+// Its size is ALWAYS 8 times an addresssize, the rest of the block is
+// available for the memory.
+typedef struct NACorePoolPart NACorePoolPart;
+struct NACorePoolPart{
+  NACoreTypeInfo* coretypeinfo;
+  NASizeUInt maxcount;
+  NASizeUInt usedcount;
+  NASizeUInt everusedcount;
+  void* firstunused;
+  NACorePoolPart* prevpart;
+  NACorePoolPart* nextpart;
+  // The following field is a dummy entry not in use.
+  // It shall not be removed though as the total amount of bytes used for
+  // an NACorePoolPart shall be 8 times an addresssize.
+  void* dummy; // used in debugging. Points at first byte of the whole pool
+               // for consistency check.
+};
+
+struct NACoreTypeInfo{
+  NACorePoolPart*   curpart;
+  NAUInt            typesize;
+  NAMutator         destructor;
+  NABool            refcounting;
+  #ifndef NDEBUG
+    const char*     typename;
+  #endif
+};
+
+#define NA_MALLOC_GARBAGE_POINTER_COUNT (NA_POOLPART_BYTESIZE / NA_SYSTEM_ADDRESS_BYTES - 2)
+// The 2 denotes the first two entries in this struct.
+
+struct NAMallocGarbage{
+  NAMallocGarbage* next;
+  NASizeUInt cur;
+  void* pointers[NA_MALLOC_GARBAGE_POINTER_COUNT];
+};
+
+
+
 // The global runtime variable.
 NARuntime* na_runtime = NA_NULL;
-
-
 
 
 
@@ -207,7 +229,6 @@ NA_HDEF NAUInt naGetCoreTypeInfoAllocatedCount(NACoreTypeInfo* coretypeinfo){
 
 
 
-
 NA_HIDEF NABool naIsPoolPartFull(NACorePoolPart* part){
   return (part->usedcount == part->maxcount);
 }
@@ -276,7 +297,6 @@ NA_HIDEF void naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
 
 
 NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
-
   void* pointer;
   NACoreTypeInfo* coretypeinfo;
 
@@ -520,8 +540,6 @@ NA_DEF void naRelease(void* pointer){
 
 
 
-// Note that the runtime system in NALib currently is rather small. But it may
-// serve a greater purpose in a later version.
 NA_DEF void naStartRuntime(){
   #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
     #ifndef NDEBUG
@@ -617,7 +635,7 @@ NA_DEF void naStopRuntime(){
 
 
 
-NA_HDEF void naEnhanceMallocGarbage(){
+NA_HIDEF void naEnhanceMallocGarbage(){
   NAMallocGarbage* newgarbage = naAlloc(NAMallocGarbage);
   newgarbage->next = na_runtime->mallocGarbage;
   newgarbage->cur = 0;
@@ -688,7 +706,6 @@ NA_DEF void naCollectGarbage(){
   }
   na_runtime->totalmallocgarbagebytecount = 0;
 }
-
 
 
 

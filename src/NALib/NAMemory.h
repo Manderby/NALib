@@ -152,59 +152,6 @@ NA_API  void  naRelease           (void* pointer);
 
 
 
-
-// //////////////////////
-// Runtime system
-// //////////////////////
-
-// In order to make naNew and NADelete work, you need to run the NALib runtime
-// system. You can simply start the runtime at application start and stop it at
-// the end.
-//
-// Additionally, you can call naCollectGarbage to collect all temporary memory
-// which had been allocated with naMallocTmp.
-
-NA_API  void   naStartRuntime(void);
-NA_API  void   naStopRuntime(void);
-
-NA_API  void   naCollectGarbage(void);
-NA_IAPI NAUInt naGetRuntimeGarbageBytesize(void);
-
-NA_IAPI NAUInt naGetRuntimeMemoryPageSize(void);
-NA_IAPI NAUInt naGetRuntimePoolPartSize(void);
-
-// In order to work with specific types, each type trying to use the runtime
-// system needs to register itself to the runtime system upon compile time.
-// This is achieved by defining a very specific variable of type NATypeInfo.
-// You can do so using the macro NA_RUNTIME_TYPE. Just write the typename
-// and the function to use for destructing the type.
-
-#define NA_RUNTIME_TYPE(type, destructor, refcounting)
-
-// But note that this macro results in a variable definition and hence must be
-// written in an implementation file (.c). Also, the type must not be opaque
-// and the destructor must be declared before this macro.
-//
-// As though you may want to write inlineable code in your header files which
-// use naNew, you can use the NA_EXTERN_RUNTIME_TYPE macro to declare the
-// variable beforehand:
-
-#define NA_EXTERN_RUNTIME_TYPE(type)
-
-// For a deeper understanding on how that macro does what it does, please refer
-// to the definition of these macros in NAMemoryII.h and the implementation of
-// the runtime system in NAMemory.c
-
-// Every type using the runtime system will get a global typeinfo variable
-// which has the following type. The full type definition is in the file
-// "NAMemoryII.h"
-typedef struct NATypeInfo NATypeInfo;
-
-
-
-
-
-
 // ////////////////////////
 // NARefCount
 // ////////////////////////
@@ -243,7 +190,6 @@ NA_IAPI NARefCount* naRetainRefCount( NARefCount* refcount);
 NA_IAPI void        naReleaseRefCount(NARefCount* refcount,
                                             void* data,
                                         NAMutator destructor);
-
 
 
 
@@ -329,8 +275,6 @@ NA_IAPI NABool naIsPtrConst(const NAPtr* ptr);
 
 
 
-
-
 // ////////////////////////
 // NASmartPtr
 // ////////////////////////
@@ -386,11 +330,6 @@ NA_IAPI void*       naGetSmartPtrMutable(       NASmartPtr* sptr);
 
 
 
-
-
-
-
-
 // ////////////////////////
 // NAPointer
 // ////////////////////////
@@ -413,12 +352,8 @@ NA_IAPI void*       naGetSmartPtrMutable(       NASmartPtr* sptr);
 // struct called NASmartPtr which does not necessarily use the runtime system
 // but is a little more complicated to use.
 
-
-
 // The full type definition is in the file "NAMemoryII.h"
 typedef struct NAPointer NAPointer;
-
-
 
 // Creates an NAPointer struct around the given data pointer.
 //
@@ -435,9 +370,11 @@ typedef struct NAPointer NAPointer;
 // data pointer itself AFTER the destructor had been called. Depending on how
 // that pointer had been created in the first place, it must be cleaned up with
 // the appropriate deallocation function.
-NA_IAPI NAPointer* naNewPointerConst(   const void* data);
-NA_IAPI NAPointer* naNewPointerMutable(       void* data,
-                                          NAMutator destructor);
+NA_IAPI NAPointer* naInitPointerConst(    NAPointer* pointer,
+                                         const void* data);
+NA_IAPI NAPointer* naInitPointerMutable(  NAPointer* pointer,
+                                               void* data,
+                                           NAMutator destructor);
 
 // Retains and releases the given NAPointer. If the refcount reaches 0 when
 // releasing, this NAPointer is no longer needed. The data will be freed
@@ -466,9 +403,59 @@ NA_IAPI       void* naGetPointerMutable(      NAPointer* pointer);
 
 
 
+// //////////////////////
+// Runtime system
+// //////////////////////
 
-// Inline implementations are in a separate file:
-#include "NACore/NAMemoryII.h"
+// In order to make naNew and NADelete work, you need to run the NALib runtime
+// system. You can simply start the runtime at application start and stop it at
+// the end.
+//
+// Additionally, you can call naCollectGarbage to collect all temporary memory
+// which had been allocated with naMallocTmp.
+
+NA_API  void   naStartRuntime(void);
+NA_API  void   naStopRuntime(void);
+
+NA_API  void   naCollectGarbage(void);
+NA_IAPI NAUInt naGetRuntimeGarbageBytesize(void);
+
+NA_IAPI NAUInt naGetRuntimeMemoryPageSize(void);
+NA_IAPI NAUInt naGetRuntimePoolPartSize(void);
+
+// In order to work with specific types, each type trying to use the runtime
+// system needs to register itself to the runtime system upon compile time.
+// This is achieved by defining a very specific variable of type NATypeInfo.
+// You can do so using the macro NA_RUNTIME_TYPE. Just write the typename
+// and the function to use for destructing the type.
+
+#define NA_RUNTIME_TYPE(type, destructor, refcounting)
+
+// But note that this macro results in a variable definition and hence must be
+// written in an implementation file (.c). Also, the type must not be opaque
+// and the destructor must be declared before this macro.
+//
+// As though you may want to write inlineable code in your header files which
+// use naNew, you can use the NA_EXTERN_RUNTIME_TYPE macro to declare the
+// variable beforehand:
+
+#define NA_EXTERN_RUNTIME_TYPE(type)
+
+// For a deeper understanding on how that macro does what it does, please refer
+// to the definition of these macros in NAMemoryII.h and the implementation of
+// the runtime system in NAMemory.c
+
+// Every type using the runtime system will get a global typeinfo variable
+// which has the following type. The full type definition is in the file
+// "NAMemoryII.h"
+typedef struct NATypeInfo NATypeInfo;
+
+
+
+
+
+// Inline implementations are in separate files:
+#include "NACore/NAMemory/NAMemoryII.h"
 
 
 

@@ -67,8 +67,8 @@ typedef struct NABufferIterator NABufferIterator;
 // which is not needed anymore and only leaving the memory active which is
 // actually in use.
 //
-// In version 19, buffers became able to use multiple sources and stitch
-// together pieces arbitrarily. Like for example:
+// NABuffers are able to use multiple sources and stitch together pieces
+// arbitrarily. Like for example:
 //
 // +-0---------------------------+  +-0------------------------------------+
 // | This is the text of a file. |  | I am a const char* string in srccode |
@@ -79,17 +79,19 @@ typedef struct NABufferIterator NABufferIterator;
 // | text |----------| string |   The content of the buffer is "textstring"
 // +------+          +--------+
 //
+// For a more detailed explanation, see the NABufferII.h file.
 
 
 
 
 // ////////////////////////////////////////
-// Buffer creation, Retaining and Releasing
+// Buffer creation
+// You can use naRetain and naRelease after the creation.
 // ////////////////////////////////////////
 
-// Allocates an empty buffer. Can be extended using naWriteBuffer calls.
-// When securememory is set to NA_TRUE, each byte will be set to binary zero
-// before it can be used.
+// Allocates an empty buffer. Can for example be extended using naWriteBuffer
+// calls. When securememory is set to NA_TRUE, each byte will be set to binary
+// zero before it can be used.
 NA_API NABuffer* naNewBuffer(NABool securememory);
 
 // Creates a buffer referencing a subrange of another buffer. The origin of

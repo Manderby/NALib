@@ -944,22 +944,22 @@ NA_IDEF NAEndiannessConverter naMakeEndiannessConverter(NAInt end1, NAInt end2){
     converter.convert32        = &naConvertNative32;
     converter.convert16        = &naConvertNative16;
     converter.convert8         = &naConvertNative8;
-    converter.convert128v  = &naConvertNative128v;
-    converter.convert64v   = &naConvertNative64v;
-    converter.convert32v   = &naConvertNative32v;
-    converter.convert16v   = &naConvertNative16v;
-    converter.convert8v    = &naConvertNative8v;
+    converter.convert128v      = &naConvertNative128v;
+    converter.convert64v       = &naConvertNative64v;
+    converter.convert32v       = &naConvertNative32v;
+    converter.convert16v       = &naConvertNative16v;
+    converter.convert8v        = &naConvertNative8v;
   }else{
     converter.convert128       = &naConvertLittleBig128;
     converter.convert64        = &naConvertLittleBig64;
     converter.convert32        = &naConvertLittleBig32;
     converter.convert16        = &naConvertLittleBig16;
     converter.convert8         = &naConvertLittleBig8;
-    converter.convert128v  = &naConvertLittleBig128v;
-    converter.convert64v   = &naConvertLittleBig64v;
-    converter.convert32v   = &naConvertLittleBig32v;
-    converter.convert16v   = &naConvertLittleBig16v;
-    converter.convert8v    = &naConvertLittleBig8v;
+    converter.convert128v      = &naConvertLittleBig128v;
+    converter.convert64v       = &naConvertLittleBig64v;
+    converter.convert32v       = &naConvertLittleBig32v;
+    converter.convert16v       = &naConvertLittleBig16v;
+    converter.convert8v        = &naConvertLittleBig8v;
   }
   return converter;
 }
