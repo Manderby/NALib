@@ -176,7 +176,7 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABufferIterator* iter){
 
   if(chunk->length){
     // We cache the data to compute the checksum.
-    naCacheBufferRange(chunk->data, naGetBufferRange(chunk->data), NA_FALSE);
+    naCacheBufferRange(chunk->data, naGetBufferRange(chunk->data));
   }
 
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);

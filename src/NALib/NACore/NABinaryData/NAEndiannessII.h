@@ -168,10 +168,10 @@ NA_IDEF void naConvertLittleBig128v(void* buffer, NAUInt count){
 
 
 
-NA_IAPI NABool naIsEndiannessNative(NAInt endianness){
+NA_IAPI NABool naIsEndiannessHost(NAInt endianness){
   #ifndef NDEBUG
     if((endianness != 1) && (endianness != 2))
-      naError("naIsEndiannessNative", "endianness is invalid. Result is undefined.");
+      naError("naIsEndiannessHost", "endianness is invalid. Result is undefined.");
   #endif
   return (endianness == NA_ENDIANNESS_HOST);
 }

@@ -148,12 +148,12 @@ NA_IAPI  void naConvertLittleBig32v(     void* buffer, NAUInt count);
 NA_IAPI  void naConvertLittleBig64v(     void* buffer, NAUInt count);
 NA_IAPI  void naConvertLittleBig128v(    void* buffer, NAUInt count);
 
-// naIsEndiannessNative returns NA_TRUE if the given endianness is the same as
+// naIsEndiannessHost returns NA_TRUE if the given endianness is the same as
 // the endianness of this system. Also returns NA_TRUE when sending native or
 // unknown endianness. This function is useful for dynamically checking for
-// endiannesses. If you simply are interested in the (static) endianness of
-// this host, check the NA_ENDIANNESS_HOST macro.
-NA_IAPI NABool naIsEndiannessNative(NAInt endianness);
+// endiannesses. If you simply are interested in the endianness of this host,
+// check the NA_ENDIANNESS_HOST macro.
+NA_IAPI NABool naIsEndiannessHost(NAInt endianness);
 
 // Use the following functions to write and read a 4-byte endianness
 // marker. This is useful for files which state what endianness they

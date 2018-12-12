@@ -235,13 +235,17 @@ NA_IAPI void naResetTreeIterator(NATreeIterator* iter);
 NA_IAPI void naClearTreeIterator(NATreeIterator* iter);
 
 // Function callback types for the naLocateTreeToken function. See below.
-// For trees without keys, you can search using an arbitrary token. By calling
-// naLocateTreeToken(), the following two callbacks will be called either for
-// a node or a leaf given its stored data.
+//
+// You can search a tree using an arbitrary token using naLocateTreeToken.
+// The following two callbacks will be called either for a node or a leaf
+// given its stored data.
+//
 // The node callback shall test where to search next by setting the nextindx
-// to the child index or -1 if the parent node shall be searched.
+// to the desired child index or -1 if the parent node shall be searched.
+//
 // The leaf callback shall test if the given leaf is the one having searched
 // for, resulting in matchfound to be either true or false.
+//
 // Both callbacks shall return NA_TRUE if the search must continue or NA_FALSE
 // if it shall be aborted.
 // When the node callback aborts, the leaf is considered to be not found.
@@ -268,6 +272,8 @@ typedef NABool (*NATreeLeafTokenSearcher)(  void* token,
 //           given source iterator.
 // Token:    Searches a desired location in the tree using the given token
 //           You must provide the appropriate token callbacks. See above.
+//           This is the only function which allows searching for leafes in
+//           a tree which is configured to have no keys.
 NA_IAPI NABool naLocateTreeKey(     NATreeIterator* iter,
                                         const void* key,
                                              NABool assumeclose);

@@ -50,9 +50,9 @@ NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
 
 
 
-// This destruction function should actually not be inlined but we do not
-// want to waste a whole .c file just for this function. Therefore inline.
-NA_HIDEF void naDestructPointer(NAPointer* pointer){
+// This destruction function is declared static because we do not want to
+// waste a whole .c file just for this function.
+NA_HDEF static void naDestructPointer(NAPointer* pointer){
   if(pointer->destructor){
     pointer->destructor(naGetSmartPtrMutable(&(pointer->sptr)));
   }

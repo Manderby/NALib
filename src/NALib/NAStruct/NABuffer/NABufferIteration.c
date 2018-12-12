@@ -467,7 +467,7 @@ NA_HDEF void naEnsureBufferRangeAndLocate(NABufferIterator* iter, NAInt abspos, 
 // This function prepares the given number of bytes in the given buffer. This
 // means that after this function, it is guaranteed that all bytes are present
 // in memory.
-NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool forcevolatile){
+NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount){
   #ifndef NDEBUG
     if(naGetBufferCurBit(iter))
       naError("naPrepareBuffer", "bitcount should be 0");
@@ -502,7 +502,7 @@ NA_HDEF void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool for
 
     // //////////////////////////
     // We prepare the current part.
-    NAInt preparedbytecount = naPrepareBufferPart(iter, bytecount, forcevolatile);
+    NAInt preparedbytecount = naPrepareBufferPart(iter, bytecount);
     // //////////////////////////
 
     // Reaching here, iter points at a part filled with memory. Now, we can

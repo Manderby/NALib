@@ -13,7 +13,7 @@ NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
     const NAByte* curbyte;
     const NABufferPart* part;
     
-    naPrepareBuffer(iter, 1, NA_FALSE);
+    naPrepareBuffer(iter, 1);
     part = naGetBufferPart(iter);
     if(naIsBufferAtInitial(iter)){break;}
     curbyte = naGetBufferPartDataPointerConst(iter);
@@ -60,7 +60,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
 
     if(found && !checkwindowsend){break;}
     
-    naPrepareBuffer(iter, 1, NA_FALSE);
+    naPrepareBuffer(iter, 1);
     part = naGetBufferPart(iter);
     if(naIsBufferAtInitial(iter)){break;}
     curbyte = naGetBufferPartDataPointerConst(iter);
@@ -130,7 +130,7 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
     const NAByte* curbyte;
     const NABufferPart* part;
     
-    naPrepareBuffer(iter, 1, NA_FALSE);
+    naPrepareBuffer(iter, 1);
     part = naGetBufferPart(iter);
     if(naIsBufferAtInitial(iter)){break;}
     curbyte = naGetBufferPartDataPointerConst(iter);
@@ -249,7 +249,7 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64*
     const NAByte* curbyte;
     const NABufferPart* part;
     
-    naPrepareBuffer(iter, 1, NA_FALSE);
+    naPrepareBuffer(iter, 1);
     part = naGetBufferPart(iter);
     if(naIsBufferAtInitial(iter)){break;}
     curbyte = naGetBufferPartDataPointerConst(iter);
@@ -290,7 +290,7 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* re
 
   *retint = NA_ZERO_64;
 
-  naPrepareBuffer(iter, 1, NA_FALSE);
+  naPrepareBuffer(iter, 1);
   if(naIsBufferAtInitial(iter)){return 0;}
   curbyte = naGetBufferPartDataPointerConst(iter);
 

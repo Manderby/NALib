@@ -241,7 +241,7 @@ NA_HDEF NABufferPart* naPrepareBufferPartSourceBuffer(NATreeIterator* partiter, 
   // sourceoffset.
   
   // Recursive call to the source buffer to prepare itself.
-  naPrepareBuffer(&iter, partrange.length, NA_FALSE);
+  naPrepareBuffer(&iter, partrange.length);
   NABufferPart* sourcepart = naGetBufferPart(&iter);
   
   #ifndef NDEBUG
@@ -283,6 +283,38 @@ NA_HDEF NABufferPart* naPrepareBufferPartSourceBuffer(NATreeIterator* partiter, 
   naClearBufferIterator(&iter);
 
   return part;
+}
+
+
+
+#if NA_BUFFER_PART_BYTESIZE == 0
+  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAInt)naGetRuntimeMemoryPageSize())
+#else
+  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAInt)NA_BUFFER_PART_BYTESIZE)
+#endif
+
+
+
+NA_HIDEF NAInt naGetBufferPartNormedStart(NAInt start){
+  NAInt signshift = (start < 0);   // Note that (start < 0) either results in 0 or 1.
+  return (((start + signshift) / NA_INTERNAL_BUFFER_PART_BYTESIZE) - signshift) * NA_INTERNAL_BUFFER_PART_BYTESIZE;
+  // Examples explain best how this behaves (assume default partsize to be 10):
+  //  11:  (( 11 + 0) / 10) - 0 * 10 =  10
+  //  10:  (( 10 + 0) / 10) - 0 * 10 =  10
+  //   9:  ((  9 + 0) / 10) - 0 * 10 =   0
+  //   1:  ((  1 + 0) / 10) - 0 * 10 =   0
+  //   0:  ((  0 + 0) / 10) - 0 * 10 =   0
+  //  -1:  (( -1 + 1) / 10) - 1 * 10 = -10
+  //  -9:  (( -9 + 1) / 10) - 1 * 10 = -10
+  // -10:  ((-10 + 1) / 10) - 1 * 10 = -10
+  // -11:  ((-11 + 1) / 10) - 1 * 10 = -20
+}
+
+
+
+NA_HIDEF NAInt naGetBufferPartNormedEnd(NAInt end){
+  // Return the end coordinate, such that end-1 (=max) is within it.
+  return naGetBufferPartNormedStart(naMakeMaxWithEndi(end)) + NA_INTERNAL_BUFFER_PART_BYTESIZE;
 }
 
 
@@ -330,9 +362,7 @@ NA_HDEF NABufferPart* naPrepareBufferPartMemory(NATreeIterator* partiter, NARang
 // the current part but always results in iterator pointing to a part being
 // completely prepared and the number of available bytes after the current byte
 // is returned.
-NA_HDEF NAInt naPrepareBufferPart(NABufferIterator* iter, NAInt bytecount, NABool forcevolatile){
-  NA_UNUSED(forcevolatile);
-
+NA_HDEF NAInt naPrepareBufferPart(NABufferIterator* iter, NAInt bytecount){
   NABufferPart* part = naGetBufferPart(iter);
   if(naIsBufferPartSparse(part)){
     // We decide how to prepare the part.

@@ -699,7 +699,7 @@ NA_DEF NABool naEqualBufferToData(NABuffer* buffer, const void* data, NAInt data
     NAInt remainingbytes;
     const NAByte* bufferbytes;
 
-    naPrepareBuffer(&iter, 1, NA_FALSE);
+    naPrepareBuffer(&iter, 1);
     part = naGetBufferPart(&iter);
     #ifndef NDEBUG
       if(naIsBufferPartSparse(part))
@@ -734,11 +734,11 @@ NA_DEF void naAppendBufferToBuffer(NABuffer* dstbuffer, const NABuffer* srcbuffe
 
 
 
-NA_DEF void naCacheBufferRange(NABuffer* buffer, NARangei range, NABool forcevolatile){
+NA_DEF void naCacheBufferRange(NABuffer* buffer, NARangei range){
   if(range.length){
     NABufferIterator iter = naMakeBufferModifier(buffer);
     naLocateBufferAbsolute(&iter, range.origin);
-    naPrepareBuffer(&iter, range.length, forcevolatile);
+    naPrepareBuffer(&iter, range.length);
     naClearBufferIterator(&iter);
   }
 }

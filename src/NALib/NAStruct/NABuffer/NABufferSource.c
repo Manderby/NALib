@@ -20,7 +20,6 @@ NA_RUNTIME_TYPE(NABufferSource, naDestructBufferSource, NA_TRUE);
 
 // Flags for the buffer source:
 #define NA_BUFFER_SOURCE_RANGE_LIMITED        0x01
-#define NA_BUFFER_SOURCE_VOLATILE             0x02
 #define NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE 0x80
 
 
@@ -67,18 +66,6 @@ NA_DEF void naSetBufferSourceLimit(NABufferSource* source, NARangei limit){
   #endif
   source->flags |= NA_BUFFER_SOURCE_RANGE_LIMITED;
   source->limit = limit;
-}
-
-
-
-NA_HDEF NABool naIsBufferSourceVolatile(const NABufferSource* source){
-  return naTestFlagu(source->flags, NA_BUFFER_SOURCE_VOLATILE);
-}
-
-
-
-NA_DEF void naSetBufferSourceVolatile(NABufferSource* source){
-  naSetFlagu(&(source->flags), NA_BUFFER_SOURCE_VOLATILE, NA_TRUE);
 }
 
 

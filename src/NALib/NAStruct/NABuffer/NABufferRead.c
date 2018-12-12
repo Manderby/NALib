@@ -20,7 +20,7 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
 
   // We prepare the buffer for the whole range. There might be no parts or
   // sparse parts.
-  naPrepareBuffer(iter, bytesize, NA_FALSE);
+  naPrepareBuffer(iter, bytesize);
   // After this function, all relevant parts should be present and filled with
   // memory. The iterator should point to the buffer part containing offset.
   
@@ -100,239 +100,6 @@ NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, NAInt indx){
 
 
 
-// ////////////////////////////////////
-// RETRIEVING
-// ////////////////////////////////////
-
-NA_DEF int8 naRetrieveBufferi8(NABufferIterator* iter, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  int8 value;
-  naRetrieveBufferBytes(iter, &value, 1, advance);
-  naConvertEndianness8(buffer->endianness, &value);
-  return value;
-}
-NA_DEF int16 naRetrieveBufferi16(NABufferIterator* iter, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  int16 value;
-  naRetrieveBufferBytes(iter, &value, 2, advance);
-  naConvertEndianness16(buffer->endianness, &value);
-  return value;
-}
-NA_DEF int32 naRetrieveBufferi32(NABufferIterator* iter, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  int32 value;
-  naRetrieveBufferBytes(iter, &value, 4, advance);
-  naConvertEndianness32(buffer->endianness, &value);
-  return value;
-}
-NA_DEF int64 naRetrieveBufferi64(NABufferIterator* iter, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  int64 value;
-  naRetrieveBufferBytes(iter, &value, 8, advance);
-  naConvertEndianness64(buffer->endianness, &value);
-  return value;
-}
-
-
-
-NA_DEF uint8 naRetrieveBufferu8(NABufferIterator* iter, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  uint8 value;
-  naRetrieveBufferBytes(iter, &value, 1, advance);
-  naConvertEndianness8(buffer->endianness, &value);
-  return value;
-}
-NA_DEF uint16 naRetrieveBufferu16(NABufferIterator* iter, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  uint16 value;
-  naRetrieveBufferBytes(iter, &value, 2, advance);
-  naConvertEndianness16(buffer->endianness, &value);
-  return value;
-}
-NA_DEF uint32 naRetrieveBufferu32(NABufferIterator* iter, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  uint32 value;
-  naRetrieveBufferBytes(iter, &value, 4, advance);
-  naConvertEndianness32(buffer->endianness, &value);
-  return value;
-}
-NA_DEF uint64 naRetrieveBufferu64(NABufferIterator* iter, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  uint64 value;
-  naRetrieveBufferBytes(iter, &value, 8, advance);
-  naConvertEndianness64(buffer->endianness, &value);
-  return value;
-}
-
-
-
-NA_DEF float naRetrieveBufferf(NABufferIterator* iter, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  float value;
-  naRetrieveBufferBytes(iter, &value, 4, advance);
-  naConvertEndianness32(buffer->endianness, &value);
-  return value;
-}
-NA_DEF double naRetrieveBufferd(NABufferIterator* iter, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  double value;
-  naRetrieveBufferBytes(iter, &value, 8, advance);
-  naConvertEndianness64(buffer->endianness, &value);
-  return value;
-}
-
-
-
-// ///////////////////////////////////////
-// GETTING
-// ///////////////////////////////////////
-
-NA_DEF int8 naGetBufferi8(NABufferIterator* iter){
-  return naRetrieveBufferi8(iter, NA_FALSE);
-}
-NA_DEF int16 naGetBufferi16(NABufferIterator* iter){
-  return naRetrieveBufferi16(iter, NA_FALSE);
-}
-NA_DEF int32 naGetBufferi32(NABufferIterator* iter){
-  return naRetrieveBufferi32(iter, NA_FALSE);
-}
-NA_DEF int64 naGetBufferi64(NABufferIterator* iter){
-  return naRetrieveBufferi64(iter, NA_FALSE);
-}
-
-
-
-NA_DEF uint8 naGetBufferu8(NABufferIterator* iter){
-  return naRetrieveBufferu8(iter, NA_FALSE);
-}
-NA_DEF uint16 naGetBufferu16(NABufferIterator* iter){
-  return naRetrieveBufferu16(iter, NA_FALSE);
-}
-NA_DEF uint32 naGetBufferu32(NABufferIterator* iter){
-  return naRetrieveBufferu32(iter, NA_FALSE);
-}
-NA_DEF uint64 naGetBufferu64(NABufferIterator* iter){
-  return naRetrieveBufferu64(iter, NA_FALSE);
-}
-
-
-
-NA_DEF float naGetBufferf(NABufferIterator* iter){
-  return naRetrieveBufferf(iter, NA_FALSE);
-}
-NA_DEF double naGetBufferd(NABufferIterator* iter){
-  return naRetrieveBufferd(iter, NA_FALSE);
-}
-
-
-
-// ///////////////////////////////////////
-// READING
-// ///////////////////////////////////////
-
-NA_DEF void naReadBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize){
-  naRetrieveBufferBytes(iter, data, bytesize, NA_TRUE);
-}
-
-
-
-NA_DEF int8 naReadBufferi8(NABufferIterator* iter){
-  return naRetrieveBufferi8(iter, NA_TRUE);
-}
-NA_DEF int16 naReadBufferi16(NABufferIterator* iter){
-  return naRetrieveBufferi16(iter, NA_TRUE);
-}
-NA_DEF int32 naReadBufferi32(NABufferIterator* iter){
-  return naRetrieveBufferi32(iter, NA_TRUE);
-}
-NA_DEF int64 naReadBufferi64(NABufferIterator* iter){
-  return naRetrieveBufferi64(iter, NA_TRUE);
-}
-
-
-NA_DEF uint8 naReadBufferu8(NABufferIterator* iter){
-  return naRetrieveBufferu8(iter, NA_TRUE);
-}
-NA_DEF uint16 naReadBufferu16(NABufferIterator* iter){
-  return naRetrieveBufferu16(iter, NA_TRUE);
-}
-NA_DEF uint32 naReadBufferu32(NABufferIterator* iter){
-  return naRetrieveBufferu32(iter, NA_TRUE);
-}
-NA_DEF uint64 naReadBufferu64(NABufferIterator* iter){
-  return naRetrieveBufferu64(iter, NA_TRUE);
-}
-
-
-NA_DEF float naReadBufferf(NABufferIterator* iter){
-  return naRetrieveBufferf(iter, NA_TRUE);
-}
-NA_DEF double naReadBufferd(NABufferIterator* iter){
-  return naRetrieveBufferd(iter, NA_TRUE);
-}
-
-
-
-// /////////////////////////////////
-// MULTI READING
-// /////////////////////////////////
-
-NA_DEF void naReadBufferi8v(NABufferIterator* iter, int8* dst, NAInt count){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naRetrieveBufferBytes(iter, dst, count * 1, NA_TRUE);
-  naConvertEndianness8v(buffer->endianness, dst, (NAUInt)count);
-}
-NA_DEF void naReadBufferi16v(NABufferIterator* iter, int16* dst, NAInt count){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naRetrieveBufferBytes(iter, dst, count * 2, NA_TRUE);
-  naConvertEndianness16v(buffer->endianness, dst, (NAUInt)count);
-}
-NA_DEF void naReadBufferi32v(NABufferIterator* iter, int32* dst, NAInt count){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naRetrieveBufferBytes(iter, dst, count * 4, NA_TRUE);
-  naConvertEndianness32v(buffer->endianness, dst, (NAUInt)count);
-}
-NA_DEF void naReadBufferi64v(NABufferIterator* iter, int64* dst, NAInt count){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naRetrieveBufferBytes(iter, dst, count * 8, NA_TRUE);
-  naConvertEndianness64v(buffer->endianness, dst, (NAUInt)count);
-}
-
-
-NA_DEF void naReadBufferu8v(NABufferIterator* iter, uint8* dst, NAInt count){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naRetrieveBufferBytes(iter, dst, count * 1, NA_TRUE);
-  naConvertEndianness8v(buffer->endianness, dst, (NAUInt)count);
-}
-NA_DEF void naReadBufferu16v(NABufferIterator* iter, uint16* dst, NAInt count){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naRetrieveBufferBytes(iter, dst, count * 2, NA_TRUE);
-  naConvertEndianness16v(buffer->endianness, dst, (NAUInt)count);
-}
-NA_DEF void naReadBufferu32v(NABufferIterator* iter, uint32* dst, NAInt count){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naRetrieveBufferBytes(iter, dst, count * 4, NA_TRUE);
-  naConvertEndianness32v(buffer->endianness, dst, (NAUInt)count);
-}
-NA_DEF void naReadBufferu64v(NABufferIterator* iter, uint64* dst, NAInt count){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naRetrieveBufferBytes(iter, dst, count * 8, NA_TRUE);
-  naConvertEndianness64v(buffer->endianness, dst, (NAUInt)count);
-}
-
-
-NA_DEF void naReadBufferfv(NABufferIterator* iter, float* dst, NAInt count){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naRetrieveBufferBytes(iter, dst, count * 4, NA_TRUE);
-  naConvertEndianness32v(buffer->endianness, dst, (NAUInt)count);
-}
-NA_DEF void naReadBufferdv(NABufferIterator* iter, double* dst, NAInt count){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naRetrieveBufferBytes(iter, dst, count * 8, NA_TRUE);
-  naConvertEndianness64v(buffer->endianness, dst, (NAUInt)count);
-}
-
-
 
 // /////////////////////////////////
 // BIT MANIPULATION
@@ -345,7 +112,7 @@ NA_DEF NABool naReadBufferBit(NABufferIterator* iter){
   NABufferPart* part;
 
   if(iter->curbit == 0){
-    naPrepareBuffer(iter, 1, NA_FALSE);
+    naPrepareBuffer(iter, 1);
   }
 
   part = naGetBufferPart(iter);
@@ -387,16 +154,6 @@ NA_DEF void naPadBufferBits(NABufferIterator* iter){
     iter->curbit = 0;
     iter->partoffset++;
   }
-}
-
-
-
-NA_DEF NABuffer* naReadBufferBuffer(NABufferIterator* iter, NAInt bytesize){
-  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
-  NAInt abspos = naGetBufferLocation(iter);
-  NABuffer* newbuffer = naNewBufferExtraction(buffer, abspos, bytesize);
-  naLocateBufferAbsolute(iter, abspos + bytesize);
-  return newbuffer;
 }
 
 

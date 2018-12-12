@@ -172,7 +172,6 @@ struct NABuffer{
   NAInt sourceoffset; // Offset of source relative to this buffers
                              // origin. Add this offset to the desired pos to
                              // get the position within the source.
-
   NAUInt flags;
   NARangei range;
 
@@ -198,12 +197,6 @@ struct NABufferTreeNodeData{
 };
 
 
-// NAMemoryBlock
-NA_HAPI NAMemoryBlock* naNewMemoryBlock(NAInt bytesize);
-NA_HAPI NAMemoryBlock* naNewMemoryBlockWithData(NAPtr data, NAInt bytesize, NAMutator destructor);
-NA_HAPI const void* naGetMemoryBlockDataPointerConst(NAMemoryBlock* block, NAInt indx);
-NA_HAPI void* naGetMemoryBlockDataPointerMutable(NAMemoryBlock* block, NAInt indx);
-
 // NABufferPart
 NA_HAPI NABufferPart* naNewBufferPartSparse(NABufferSource* source, NARangei range);
 NA_HAPI NABufferPart* naNewBufferPartWithConstData(const void* data, NAInt bytesize);
@@ -213,7 +206,7 @@ NA_HAPI NAInt naGetBufferPartByteSize(const NABufferPart* part);
 NA_HAPI NAMemoryBlock* naGetBufferPartMemoryBlock(const NABufferPart* part);
 NA_HAPI NABool naIsBufferPartSparse(const NABufferPart* part);
 
-NA_HAPI NAInt naPrepareBufferPart(NABufferIterator* iter, NAInt bytecount, NABool forcevolatile);
+NA_HAPI NAInt naPrepareBufferPart(NABufferIterator* iter, NAInt bytecount);
 NA_HAPI NAInt naGetBufferIteratorPartOffset(NABufferIterator* iter);
 NA_HAPI NABool naIsBufferIteratorSparse(NABufferIterator* iter);
 
@@ -226,14 +219,13 @@ NA_HAPI void* naGetBufferPartDataPointerMutable(NABufferIterator* iter);
 
 // NABufferHelper
 NA_HAPI void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end);
-NA_HAPI void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount, NABool forcevolatile);
+NA_HAPI void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount);
 
 // NABufferIteration
 NA_HAPI const NABuffer* naGetBufferIteratorBufferConst(const NABufferIterator* iter);
 NA_HAPI const NABuffer* naGetBufferIteratorBufferConst(const NABufferIterator* iter);
 NA_HAPI NABuffer* naGetBufferIteratorBufferMutable(NABufferIterator* iter);
 NA_HAPI NABuffer* naGetBufferIteratorSourceBuffer(NABufferIterator* iter);
-NA_HAPI void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance);
 NA_HAPI NABufferPart* naGetBufferPart(NABufferIterator* iter);
 NA_HAPI NABool naIterateBufferPart(NABufferIterator* iter);
 NA_API NABool naLocateBufferStart(NABufferIterator* iter);
@@ -244,52 +236,25 @@ NA_API NABool naLocateBufferMax(NABufferIterator* iter);
 NA_API NABool naLocateBufferEnd(NABufferIterator* iter);
 
 // NABufferSource
-NA_HAPI NABool naIsBufferSourceVolatile(const NABufferSource* source);
 NA_HAPI NABuffer* naGetBufferSourceUnderlyingBuffer(NABufferSource* source);
 NA_HAPI NABool naIsBufferSourceLimited(const NABufferSource* source);
 NA_HAPI NARangei naGetBufferSourceLimit(const NABufferSource* source);
 NA_HDEF void naFillSourceBuffer(const NABufferSource* source, void* dst, NARangei range);
 
+// NABufferRead and NABufferWrite
+NA_HAPI void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance);
+NA_HAPI void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt bytesize, NABool prepare, NABool advance);
+
+// NAMemoryBlock
+NA_HIAPI NAMemoryBlock* naNewMemoryBlock(NAInt bytesize);
+NA_HIAPI NAMemoryBlock* naNewMemoryBlockWithData(NAPtr data, NAInt bytesize, NAMutator destructor);
+NA_HIAPI const void* naGetMemoryBlockDataPointerConst(NAMemoryBlock* block, NAInt indx);
+NA_HIAPI void* naGetMemoryBlockDataPointerMutable(NAMemoryBlock* block, NAInt indx);
 
 
-
-
-
-
-
-
-
-#if NA_BUFFER_PART_BYTESIZE == 0
-  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAInt)naGetRuntimeMemoryPageSize())
-#else
-  #define NA_INTERNAL_BUFFER_PART_BYTESIZE ((NAInt)NA_BUFFER_PART_BYTESIZE)
-#endif
-
-
-
-NA_HIDEF NAInt naGetBufferPartNormedStart(NAInt start){
-  NAInt signshift = (start < 0);   // Note that (start < 0) either results in 0 or 1.
-  return (((start + signshift) / NA_INTERNAL_BUFFER_PART_BYTESIZE) - signshift) * NA_INTERNAL_BUFFER_PART_BYTESIZE;
-  // Examples explain best how this behaves (assume default partsize to be 10):
-  //  11:  (( 11 + 0) / 10) - 0 * 10 =  10
-  //  10:  (( 10 + 0) / 10) - 0 * 10 =  10
-  //   9:  ((  9 + 0) / 10) - 0 * 10 =   0
-  //   1:  ((  1 + 0) / 10) - 0 * 10 =   0
-  //   0:  ((  0 + 0) / 10) - 0 * 10 =   0
-  //  -1:  (( -1 + 1) / 10) - 1 * 10 = -10
-  //  -9:  (( -9 + 1) / 10) - 1 * 10 = -10
-  // -10:  ((-10 + 1) / 10) - 1 * 10 = -10
-  // -11:  ((-11 + 1) / 10) - 1 * 10 = -20
-}
-
-
-
-NA_HIDEF NAInt naGetBufferPartNormedEnd(NAInt end){
-  // Return the end coordinate, such that end-1 (=max) is within it.
-  return naGetBufferPartNormedStart(naMakeMaxWithEndi(end)) + NA_INTERNAL_BUFFER_PART_BYTESIZE;
-}
-
-
+#include "NABufferReadII.h"
+#include "NABufferWriteII.h"
+#include "NAMemoryBlockII.h"
 
 
 // Copyright (c) NALib, Tobias Stamm

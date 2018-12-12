@@ -22,7 +22,7 @@ NA_HDEF void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt 
   // We prepare the buffer for the whole range. There might be no parts or
   // sparse parts.
   if(prepare){
-    naPrepareBuffer(iter, bytesize, NA_FALSE);
+    naPrepareBuffer(iter, bytesize);
   }
   // After this function, all relevant parts should be present and filled with
   // memory. The iterator should point to the buffer part containing offset.
@@ -82,162 +82,6 @@ NA_HDEF void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt 
 
 
 
-
-// ////////////////////////////////////
-// STORING
-// ////////////////////////////////////
-
-NA_DEF void naStoreBufferi8(NABufferIterator* iter, int8 value, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naConvertEndianness8(buffer->endianness, &value);
-  naStoreBufferBytes(iter, &value, 1, NA_TRUE, advance);
-}
-NA_DEF void naStoreBufferi16(NABufferIterator* iter, int16 value, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naConvertEndianness16(buffer->endianness, &value);
-  naStoreBufferBytes(iter, &value, 2, NA_TRUE, advance);
-}
-NA_DEF void naStoreBufferi32(NABufferIterator* iter, int32 value, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naConvertEndianness32(buffer->endianness, &value);
-  naStoreBufferBytes(iter, &value, 4, NA_TRUE, advance);
-}
-NA_DEF void naStoreBufferi64(NABufferIterator* iter, int64 value, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naConvertEndianness64(buffer->endianness, &value);
-  naStoreBufferBytes(iter, &value, 8, NA_TRUE, advance);
-}
-
-
-
-NA_DEF void naStoreBufferu8(NABufferIterator* iter, uint8 value, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naConvertEndianness8(buffer->endianness, &value);
-  naStoreBufferBytes(iter, &value, 1, NA_TRUE, advance);
-}
-NA_DEF void naStoreBufferu16(NABufferIterator* iter, uint16 value, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naConvertEndianness16(buffer->endianness, &value);
-  naStoreBufferBytes(iter, &value, 2, NA_TRUE, advance);
-}
-NA_DEF void naStoreBufferu32(NABufferIterator* iter, uint32 value, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naConvertEndianness32(buffer->endianness, &value);
-  naStoreBufferBytes(iter, &value, 4, NA_TRUE, advance);
-}
-NA_DEF void naStoreBufferu64(NABufferIterator* iter, uint64 value, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naConvertEndianness64(buffer->endianness, &value);
-  naStoreBufferBytes(iter, &value, 8, NA_TRUE, advance);
-}
-
-
-
-NA_DEF void naStoreBufferf(NABufferIterator* iter, float value, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naConvertEndianness32(buffer->endianness, &value);
-  naStoreBufferBytes(iter, &value, 4, NA_TRUE, advance);
-}
-NA_DEF void naStoreBufferd(NABufferIterator* iter, double value, NABool advance){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  naConvertEndianness64(buffer->endianness, &value);
-  naStoreBufferBytes(iter, &value, 8, NA_TRUE, advance);
-}
-
-
-
-// ////////////////////////////////////
-// SETTER
-// ////////////////////////////////////
-
-NA_DEF void naSetBufferi8(NABufferIterator* iter, int8 value){
-  naStoreBufferi8(iter, value, NA_FALSE);
-}
-NA_DEF void naSetBufferi16(NABufferIterator* iter, int16 value){
-  naStoreBufferi16(iter, value, NA_FALSE);
-}
-NA_DEF void naSetBufferi32(NABufferIterator* iter, int32 value){
-  naStoreBufferi32(iter, value, NA_FALSE);
-}
-NA_DEF void naSetBufferi64(NABufferIterator* iter, int64 value){
-  naStoreBufferi64(iter, value, NA_FALSE);
-}
-
-
-
-NA_DEF void naSetBufferu8(NABufferIterator* iter, uint8 value){
-  naStoreBufferu8(iter, value, NA_FALSE);
-}
-NA_DEF void naSetBufferu16(NABufferIterator* iter, uint16 value){
-  naStoreBufferu16(iter, value, NA_FALSE);
-}
-NA_DEF void naSetBufferu32(NABufferIterator* iter, uint32 value){
-  naStoreBufferu32(iter, value, NA_FALSE);
-}
-NA_DEF void naSetBufferu64(NABufferIterator* iter, uint64 value){
-  naStoreBufferu64(iter, value, NA_FALSE);
-}
-
-
-
-NA_DEF void naSetBufferf(NABufferIterator* iter, float value){
-  naStoreBufferf(iter, value, NA_FALSE);
-}
-NA_DEF void naSetBufferd(NABufferIterator* iter, double value){
-  naStoreBufferd(iter, value, NA_FALSE);
-}
-
-
-
-// ////////////////////////////////////
-// WRITING
-// ////////////////////////////////////
-
-NA_DEF void naWriteBufferBytes(NABufferIterator* iter, const void* data, NAInt bytesize){
-  naStoreBufferBytes(iter, data, bytesize, NA_TRUE, NA_TRUE);
-}
-
-
-
-NA_DEF void naWriteBufferi8(NABufferIterator* iter, int8 value){
-  naStoreBufferi8(iter, value, NA_TRUE);
-}
-NA_DEF void naWriteBufferi16(NABufferIterator* iter, int16 value){
-  naStoreBufferi16(iter, value, NA_TRUE);
-}
-NA_DEF void naWriteBufferi32(NABufferIterator* iter, int32 value){
-  naStoreBufferi32(iter, value, NA_TRUE);
-}
-NA_DEF void naWriteBufferi64(NABufferIterator* iter, int64 value){
-  naStoreBufferi64(iter, value, NA_TRUE);
-}
-
-
-
-NA_DEF void naWriteBufferu8(NABufferIterator* iter, uint8 value){
-  naStoreBufferu8(iter, value, NA_TRUE);
-}
-NA_DEF void naWriteBufferu16(NABufferIterator* iter, uint16 value){
-  naStoreBufferu16(iter, value, NA_TRUE);
-}
-NA_DEF void naWriteBufferu32(NABufferIterator* iter, uint32 value){
-  naStoreBufferu32(iter, value, NA_TRUE);
-}
-NA_DEF void naWriteBufferu64(NABufferIterator* iter, uint64 value){
-  naStoreBufferu64(iter, value, NA_TRUE);
-}
-
-
-
-NA_DEF void naWriteBufferf(NABufferIterator* iter, float value){
-  naStoreBufferf(iter, value, NA_TRUE);
-}
-NA_DEF void naWriteBufferd(NABufferIterator* iter, double value){
-  naStoreBufferd(iter, value, NA_TRUE);
-}
-
-
-
 // ////////////////////////////////////
 // MULTI WRITING
 // ////////////////////////////////////
@@ -245,7 +89,7 @@ NA_DEF void naWriteBufferd(NABufferIterator* iter, double value){
 NA_DEF void naWriteBufferi8v(NABufferIterator* iter, const int8* src, NAInt count){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
   int8 value;
-  naPrepareBuffer(iter, count * 1, NA_FALSE);
+  naPrepareBuffer(iter, count * 1);
   while(count){
     value = *src;
     naConvertEndianness8(buffer->endianness, &value);
@@ -257,7 +101,7 @@ NA_DEF void naWriteBufferi8v(NABufferIterator* iter, const int8* src, NAInt coun
 NA_DEF void naWriteBufferi16v(NABufferIterator* iter, const int16* src, NAInt count){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
   int16 value;
-  naPrepareBuffer(iter, count * 2, NA_FALSE);
+  naPrepareBuffer(iter, count * 2);
   while(count){
     value = *src;
     naConvertEndianness16(buffer->endianness, &value);
@@ -269,7 +113,7 @@ NA_DEF void naWriteBufferi16v(NABufferIterator* iter, const int16* src, NAInt co
 NA_DEF void naWriteBufferi32v(NABufferIterator* iter, const int32* src, NAInt count){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
   int32 value;
-  naPrepareBuffer(iter, count * 4, NA_FALSE);
+  naPrepareBuffer(iter, count * 4);
   while(count){
     value = *src;
     naConvertEndianness32(buffer->endianness, &value);
@@ -281,7 +125,7 @@ NA_DEF void naWriteBufferi32v(NABufferIterator* iter, const int32* src, NAInt co
 NA_DEF void naWriteBufferi64v(NABufferIterator* iter, const int64* src, NAInt count){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
   int64 value;
-  naPrepareBuffer(iter, count * 8, NA_FALSE);
+  naPrepareBuffer(iter, count * 8);
   while(count){
     value = *src;
     naConvertEndianness64(buffer->endianness, &value);
@@ -296,7 +140,7 @@ NA_DEF void naWriteBufferi64v(NABufferIterator* iter, const int64* src, NAInt co
 NA_DEF void naWriteBufferu8v(NABufferIterator* iter, const uint8* src, NAInt count){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
   uint8 value;
-  naPrepareBuffer(iter, count * 1, NA_FALSE);
+  naPrepareBuffer(iter, count * 1);
   while(count){
     value = *src;
     naConvertEndianness8(buffer->endianness, &value);
@@ -308,7 +152,7 @@ NA_DEF void naWriteBufferu8v(NABufferIterator* iter, const uint8* src, NAInt cou
 NA_DEF void naWriteBufferu16v(NABufferIterator* iter, const uint16* src, NAInt count){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
   uint16 value;
-  naPrepareBuffer(iter, count * 2, NA_FALSE);
+  naPrepareBuffer(iter, count * 2);
   while(count){
     value = *src;
     naConvertEndianness16(buffer->endianness, &value);
@@ -320,7 +164,7 @@ NA_DEF void naWriteBufferu16v(NABufferIterator* iter, const uint16* src, NAInt c
 NA_DEF void naWriteBufferu32v(NABufferIterator* iter, const uint32* src, NAInt count){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
   uint32 value;
-  naPrepareBuffer(iter, count * 4, NA_FALSE);
+  naPrepareBuffer(iter, count * 4);
   while(count){
     value = *src;
     naConvertEndianness32(buffer->endianness, &value);
@@ -332,7 +176,7 @@ NA_DEF void naWriteBufferu32v(NABufferIterator* iter, const uint32* src, NAInt c
 NA_DEF void naWriteBufferu64v(NABufferIterator* iter, const uint64* src, NAInt count){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
   uint64 value;
-  naPrepareBuffer(iter, count * 8, NA_FALSE);
+  naPrepareBuffer(iter, count * 8);
   while(count){
     value = *src;
     naConvertEndianness64(buffer->endianness, &value);
@@ -347,7 +191,7 @@ NA_DEF void naWriteBufferu64v(NABufferIterator* iter, const uint64* src, NAInt c
 NA_DEF void naWriteBufferfv(NABufferIterator* iter, const float* src, NAInt count){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
   float value;
-  naPrepareBuffer(iter, count * 4, NA_FALSE);
+  naPrepareBuffer(iter, count * 4);
   while(count){
     value = *src;
     naConvertEndianness32(buffer->endianness, &value);
@@ -359,7 +203,7 @@ NA_DEF void naWriteBufferfv(NABufferIterator* iter, const float* src, NAInt coun
 NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, NAInt count){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
   double value;
-  naPrepareBuffer(iter, count * 8, NA_FALSE);
+  naPrepareBuffer(iter, count * 8);
   while(count){
     value = *src;
     naConvertEndianness64(buffer->endianness, &value);
@@ -370,6 +214,10 @@ NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, NAInt cou
 }
 
 
+
+// ////////////////////////////////////
+// BLOCK WRITING
+// ////////////////////////////////////
 
 NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffer, NARangei srcrange){
   NABuffer* dstbuffer;
@@ -387,7 +235,7 @@ NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffe
     dstbuffer->source = naNewBufferSource(NA_NULL, mutablesrcbuffer);
     dstbuffer->sourceoffset = srcrange.origin - curpos;
 
-    naCacheBufferRange(dstbuffer, naMakeRangei(curpos, srcrange.length), NA_FALSE);
+    naCacheBufferRange(dstbuffer, naMakeRangei(curpos, srcrange.length));
     naLocateBufferAbsolute(iter, curpos + srcrange.length);
 
     naRelease(dstbuffer->source);
@@ -415,8 +263,8 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt by
     NAInt remainingread;
 
     // Prepare the two iterators
-    naPrepareBuffer(iter, bytesize, NA_FALSE);
-    naPrepareBuffer(&readiter, bytesize, NA_FALSE);
+    naPrepareBuffer(iter, bytesize);
+    naPrepareBuffer(&readiter, bytesize);
 
     readpart = naGetBufferPart(&readiter);
     writepart = naGetBufferPart(iter);
@@ -443,30 +291,12 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt by
 
 
 
-NA_DEF void naWriteBufferString(NABufferIterator* iter, const NAString* string){
-  naWriteBufferBuffer(iter, naGetStringBufferConst(string), naGetBufferRange(naGetStringBufferConst(string)));
-}
+// ////////////////////////////////////
+// STRING BUFFER WRITING
+// ////////////////////////////////////
 
-
-
-NA_DEF void naWriteBufferStringWithFormat(NABufferIterator* iter, const NAUTF8Char* format, ...){
-  va_list argumentlist;
-  va_start(argumentlist, format);
-  naWriteBufferStringWithArguments(iter, format, argumentlist);
-  va_end(argumentlist);
-}
-
-
-
-NA_DEF void naWriteBufferStringWithArguments(NABufferIterator* iter, const NAUTF8Char* format, va_list argumentlist){
-  NAString* string;
-  string = naNewStringWithArguments(format, argumentlist);
-  naWriteBufferString(iter, string);
-  naDelete(string);
-}
-
-
-
+// Note that string buffer writing are not inlined in order to prevent circular
+// dependencies
 
 NA_DEF void naWriteBufferTab(NABufferIterator* iter){
   naStoreBufferBytes(iter, NA_TAB, 1, NA_TRUE, NA_TRUE);
@@ -494,11 +324,21 @@ NA_DEF void naWriteBufferNewLine(NABufferIterator* iter){
 
 
 
-
-
+NA_DEF void naWriteBufferString(NABufferIterator* iter, const NAString* string){
+  naWriteBufferBuffer(iter, naGetStringBufferConst(string), naGetBufferRange(naGetStringBufferConst(string)));
+}
 NA_DEF void naWriteBufferLine(NABufferIterator* iter, const NAString* string){
   naWriteBufferString(iter, string);
   naWriteBufferNewLine(iter);
+}
+
+
+
+NA_DEF void naWriteBufferStringWithFormat(NABufferIterator* iter, const NAUTF8Char* format, ...){
+  va_list argumentlist;
+  va_start(argumentlist, format);
+  naWriteBufferStringWithArguments(iter, format, argumentlist);
+  va_end(argumentlist);
 }
 NA_DEF void naWriteBufferLineWithFormat(NABufferIterator* iter, const NAUTF8Char* format, ...){
   va_list argumentlist;
@@ -506,11 +346,19 @@ NA_DEF void naWriteBufferLineWithFormat(NABufferIterator* iter, const NAUTF8Char
   naWriteBufferLineWithArguments(iter, format, argumentlist);
   va_end(argumentlist);
 }
+
+
+
+NA_DEF void naWriteBufferStringWithArguments(NABufferIterator* iter, const NAUTF8Char* format, va_list argumentlist){
+  NAString* string;
+  string = naNewStringWithArguments(format, argumentlist);
+  naWriteBufferString(iter, string);
+  naDelete(string);
+}
 NA_DEF void naWriteBufferLineWithArguments(NABufferIterator* iter, const NAUTF8Char* format, va_list argumentlist){
   naWriteBufferStringWithArguments(iter, format, argumentlist);
   naWriteBufferNewLine(iter);
 }
-
 
 
 // Copyright (c) NALib, Tobias Stamm

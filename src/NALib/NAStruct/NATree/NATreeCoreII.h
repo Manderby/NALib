@@ -419,11 +419,7 @@ NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNo
   while(continueBubbling && basenode->parent){
     NAInt childindx = tree->config->childIndexGetter(basenode->parent, basenode);
     continueBubbling = nodeTokenCallback(token, *(tree->config->nodeDataGetter(basenode->parent)), childindx);
-    if(childindx == -1){
-      basenode = (NATreeBaseNode*)(basenode->parent);
-    }else{
-      basenode = tree->config->childGetter((NATreeNode*)basenode, childindx);
-    }
+    basenode = (NATreeBaseNode*)(basenode->parent);
   }
 }
 

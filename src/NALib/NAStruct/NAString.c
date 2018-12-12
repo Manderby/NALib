@@ -232,7 +232,7 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
         naError("naGetStringUTF8Pointer", "String is empty");
     #endif
     newstr = naMallocTmp((NAUInt)(strlen + 1));
-    naCacheBufferRange(string->buffer, naGetBufferRange(string->buffer), NA_FALSE);
+    naCacheBufferRange(string->buffer, naGetBufferRange(string->buffer));
     naWriteBufferToData(string->buffer, newstr);
     newstr[strlen] = '\0';
     #ifndef NDEBUG
