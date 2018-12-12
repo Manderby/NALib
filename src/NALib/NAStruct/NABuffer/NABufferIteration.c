@@ -110,13 +110,12 @@ NA_DEF void naClearBufferIterator(NABufferIterator* iter){
 
 
 
-NA_HDEF NABool naAccumulateBufferLocation(void* token, NAPtr nodedata, NAInt* childindx){
+NA_HDEF NABool naAccumulateBufferLocation(void* token, NAPtr nodedata, NAInt childindx){
   NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
   NABufferTreeNodeData* buffernodedata = (NABufferTreeNodeData*)naGetPtrConst(&nodedata);
-  if(*childindx == 1){
+  if(childindx == 1){
     searchtoken->curoffset += buffernodedata->len1;
   }
-  *childindx = -1;
   return NA_TRUE;
 }
 
@@ -143,13 +142,46 @@ NA_DEF NAInt naGetBufferLocation(const NABufferIterator* iter){
 
 
 
+NA_HDEF NABool naSearchBufferNode(void* token, NAPtr data, NAInt* nextindx){
+  NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
+  NABufferTreeNodeData* nodedata = (NABufferTreeNodeData*)naGetPtrMutable(&data);
+
+  if((searchtoken->searchoffset < searchtoken->curoffset) || (searchtoken->searchoffset >= searchtoken->curoffset + nodedata->len1 + nodedata->len2)){
+    *nextindx = -1;
+  }else{
+    if(searchtoken->searchoffset < searchtoken->curoffset + nodedata->len1){
+      *nextindx = 0;
+    }else{
+      searchtoken->curoffset += nodedata->len1;
+      *nextindx = 1;
+    }
+  }
+  return NA_TRUE;
+}
+
+
+
+NA_HDEF NABool naSearchBufferLeaf(void* token, NAPtr data, NABool* matchfound){
+  NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
+  NABufferPart* part = (NABufferPart*)naGetPtrMutable(&data);
+
+  if((searchtoken->searchoffset >= searchtoken->curoffset) && (searchtoken->searchoffset < searchtoken->curoffset + naGetBufferPartByteSize(part))){
+    *matchfound = NA_TRUE;
+  }else{
+    *matchfound = NA_FALSE;
+  }
+  return NA_FALSE;
+}
+
+
+
 NA_DEF NABool naLocateBufferAbsolute(NABufferIterator* iter, NAInt offset){
   const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
   NABufferSearchToken token;
   token.searchoffset = offset;
   token.curoffset = buffer->range.origin;
   naResetTreeIterator(&(iter->partiter));
-  NABool found = naLocateTreeToken(&(iter->partiter), &token);
+  NABool found = naLocateTreeToken(&(iter->partiter), &token, naSearchBufferNode, naSearchBufferLeaf);
   if(found){
     iter->partoffset = token.searchoffset - token.curoffset;
   }else{

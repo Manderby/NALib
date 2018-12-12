@@ -69,38 +69,6 @@ NABool naUpdateBufferTreeNode(NAPtr parentdata, NAPtr* childdatas, NAInt childin
 
 
 
-NA_HDEF NABool naSearchBufferNode(void* token, NAPtr data, NAInt* nextindx){
-  NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
-  NABufferTreeNodeData* nodedata = (NABufferTreeNodeData*)naGetPtrMutable(&data);
-
-  if((searchtoken->searchoffset < searchtoken->curoffset) || (searchtoken->searchoffset >= searchtoken->curoffset + nodedata->len1 + nodedata->len2)){
-    *nextindx = -1;
-  }else{
-    if(searchtoken->searchoffset < searchtoken->curoffset + nodedata->len1){
-      *nextindx = 0;
-    }else{
-      searchtoken->curoffset += nodedata->len1;
-      *nextindx = 1;
-    }
-  }
-  return NA_TRUE;
-}
-
-
-
-NA_HDEF NABool naSearchBufferLeaf(void* token, NAPtr data, NABool* matchfound){
-  NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
-  NABufferPart* part = (NABufferPart*)naGetPtrMutable(&data);
-
-  if((searchtoken->searchoffset >= searchtoken->curoffset) && (searchtoken->searchoffset < searchtoken->curoffset + naGetBufferPartByteSize(part))){
-    *matchfound = NA_TRUE;
-  }else{
-    *matchfound = NA_FALSE;
-  }
-  return NA_FALSE;
-}
-
-
 
 NA_HDEF void naInitBufferStruct(NABuffer* buffer){
   buffer->flags = 0;
@@ -108,7 +76,6 @@ NA_HDEF void naInitBufferStruct(NABuffer* buffer){
   NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_NOKEY | NA_TREE_BALANCE_AVL);
   naSetTreeConfigurationNodeCallbacks(config, naConstructBufferTreeNode, naDestructBufferTreeNode, naUpdateBufferTreeNode);
   naSetTreeConfigurationLeafCallbacks(config, NA_NULL, naDestructBufferTreeLeaf);
-  naSetTreeConfigurationTokenCallbacks(config, naSearchBufferNode, naSearchBufferLeaf);
   naInitTree(&(buffer->parts), config);
   #ifndef NDEBUG
     buffer->itercount = 0;

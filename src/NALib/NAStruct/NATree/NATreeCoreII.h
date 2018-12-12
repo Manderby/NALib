@@ -15,7 +15,7 @@
 
 // Prototypes
 NA_HAPI  NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABool* matchfound, NABool usebubble);
-NA_HAPI  NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NABool* matchfound);
+NA_HAPI  NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NATreeNodeTokenSearcher nodeSearcher, NATreeLeafTokenSearcher leafSearcher, NABool* matchfound);
 NA_HAPI  NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info);
 NA_HAPI  NATreeLeaf* naAddTreeContentAtLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 NA_HAPI  NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace);
@@ -75,25 +75,14 @@ NA_IDEF void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NA
 
 
 
-NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NATreeNodeConstructor nodeconstructor, NATreeNodeDestructor nodedestructor, NATreeNodeChildUpdater nodeChildUpdater){
+NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NATreeNodeConstructor nodeconstructor, NATreeNodeDestructor nodedestructor, NATreeNodeUpdater nodeUpdater){
   #ifndef NDEBUG
     if(config->flags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
       naError("naSetTreeConfigurationNodeCallbacks", "Configuration already used in a tree. Mayor problems may occur in the future");
   #endif
   config->nodeConstructor = nodeconstructor;
   config->nodeDestructor = nodedestructor;
-  config->nodeChildUpdater = nodeChildUpdater;
-}
-
-
-
-NA_IDEF void naSetTreeConfigurationTokenCallbacks(NATreeConfiguration* config, NATreeNodeTokenSearcher nodeSearcher, NATreeLeafTokenSearcher leafSearcher){
-  #ifndef NDEBUG
-    if(config->flags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
-      naError("naSetTreeConfigurationTokenCallbacks", "Configuration already used in a tree. Mayor problems may occur in the future");
-  #endif
-  config->nodeTokenSearcher = nodeSearcher;
-  config->leafTokenSearcher = leafSearcher;
+  config->nodeUpdater = nodeUpdater;
 }
 
 
@@ -249,6 +238,10 @@ NA_IDEF void* naGetTreeLastMutable(const NATree* tree){
 
 
 NA_IDEF void naUpdateTree(NATree* tree){
+  #ifndef NDEBUG
+    if(!tree->config->nodeUpdater)
+      naError("naUpdateTree", "tree is configured without nodeUpdater callback");
+  #endif
   if(tree->root && !naIsTreeRootLeaf(tree)){
     naUpdateTreeNodeCapturing(tree, (NATreeNode*)tree->root);
   }
@@ -398,9 +391,9 @@ NA_IDEF NABool naLocateTreeIterator(NATreeIterator* iter, NATreeIterator* srcite
 
 
 
-NA_IAPI NABool naLocateTreeToken(NATreeIterator* iter, void* token){
+NA_IAPI NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTokenSearcher nodeSearcher, NATreeLeafTokenSearcher leafSearcher){
   NABool matchfound;
-  NATreeLeaf* leaf = naLocateTreeTokenLeaf(iter, token, &matchfound);
+  NATreeLeaf* leaf = naLocateTreeTokenLeaf(iter, token, nodeSearcher, leafSearcher, &matchfound);
 
   if(leaf && matchfound){
     naSetTreeIteratorCurLeaf(iter, leaf);
@@ -412,7 +405,7 @@ NA_IAPI NABool naLocateTreeToken(NATreeIterator* iter, void* token){
 
 
 
-NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNodeTokenSearcher tokenSearcher){
+NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNodeTokenCallback nodeTokenCallback){
   const NATree* tree;
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
@@ -425,7 +418,7 @@ NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNo
   NABool continueBubbling = NA_TRUE;
   while(continueBubbling && basenode->parent){
     NAInt childindx = tree->config->childIndexGetter(basenode->parent, basenode);
-    continueBubbling = tokenSearcher(token, *(tree->config->nodeDataGetter(basenode->parent)), &childindx);
+    continueBubbling = nodeTokenCallback(token, *(tree->config->nodeDataGetter(basenode->parent)), childindx);
     if(childindx == -1){
       basenode = (NATreeBaseNode*)(basenode->parent);
     }else{

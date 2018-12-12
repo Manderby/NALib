@@ -98,11 +98,9 @@ struct NATreeConfiguration{
   NATreeDestructorCallback      treeDestructor;
   NATreeNodeConstructor         nodeConstructor;
   NATreeNodeDestructor          nodeDestructor;
-  NATreeNodeChildUpdater        nodeChildUpdater;
+  NATreeNodeUpdater             nodeUpdater;
   NATreeLeafConstructor         leafConstructor;
   NATreeLeafDestructor          leafDestructor;
-  NATreeNodeTokenSearcher       nodeTokenSearcher;
-  NATreeLeafTokenSearcher       leafTokenSearcher;
   NAPtr                         data;
   NAInt                         flags;
 

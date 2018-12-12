@@ -116,15 +116,15 @@ NA_HDEF NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABo
 
 
 
-NA_HDEF NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NABool* matchfound){
+NA_HDEF NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NATreeNodeTokenSearcher nodeSearcher, NATreeLeafTokenSearcher leafSearcher, NABool* matchfound){
   const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("naLocateTreeTokenLeaf", "This iterator has been cleared. You need to make it anew.");
-    if(!tree->config->nodeTokenSearcher)
-      naError("naLocateTreeTokenLeaf", "Tree configuration is missing a node token searcher.");
-    if(!tree->config->leafTokenSearcher)
-      naError("naLocateTreeTokenLeaf", "Tree configuration is missing a leaf token searcher.");
+    if(!nodeSearcher)
+      naError("naLocateTreeTokenLeaf", "node token searcher missing.");
+    if(!leafSearcher)
+      naError("naLocateTreeTokenLeaf", "leaf token searcher missing.");
   #endif
   if(naIsTreeEmpty(tree)){
     naSetTreeIteratorCurLeaf(iter, NA_NULL);
@@ -138,11 +138,11 @@ NA_HDEF NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NAB
     NAInt nextindx;
     if(naIsBaseNodeLeaf(tree, basenode)){
       NAPtr* data = tree->config->leafDataGetter((NATreeLeaf*)basenode);
-      tree->config->leafTokenSearcher(token, *data, matchfound);
+      leafSearcher(token, *data, matchfound);
       return (NATreeLeaf*)basenode;
     }else{
       NAPtr* data = tree->config->nodeDataGetter((NATreeNode*)basenode);
-      NABool continuesearch = tree->config->nodeTokenSearcher(token, *data, &nextindx);
+      NABool continuesearch = nodeSearcher(token, *data, &nextindx);
       if(!continuesearch){return NA_NULL;}
     }
     if(nextindx == -1){
@@ -223,10 +223,10 @@ NA_HDEF void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt ch
   if(parent == NA_NULL){return;}
 
   // We call the update callback.
-  if(tree->config->nodeChildUpdater){
+  if(tree->config->nodeUpdater){
     NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
     naFillTreeNodeChildData(tree, childdata, parent);
-    bubble = tree->config->nodeChildUpdater(*(tree->config->nodeDataGetter(parent)), childdata, childindx, parent->flags & NA_TREE_CHILDS_MASK);
+    bubble = tree->config->nodeUpdater(*(tree->config->nodeDataGetter(parent)), childdata, childindx, parent->flags & NA_TREE_CHILDS_MASK);
   }
 
   // Then we propagate the message towards the root if requested.
@@ -246,18 +246,28 @@ NA_HDEF void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt ch
 // message which again can define if the message shall be bubbled even
 // further.
 NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
+  #ifndef NDEBUG
+    if(!tree->config->nodeUpdater)
+      naError("naUpdateTreeNodeCapturing", "tree is configured without nodeUpdater callback");
+  #endif
   NABool bubble = NA_FALSE;
 
-  // this node stores subnodes
+  // Go through all childs and call the capturing message recursively.
   for(NAInt i=0; i<tree->config->childpernode; i++){
-    if(!naIsNodeChildLeaf(node, i)){
+    if(naIsNodeChildLeaf(node, i)){
+      bubble |= NA_TRUE;
+    }else{
+      // this node stores subnodes
       bubble |= naUpdateTreeNodeCapturing(tree, (NATreeNode*)tree->config->childGetter(node, i));
     }
   }
-  if(tree->config->nodeChildUpdater){
+  
+  // Only if at least one of the childs requested further bubbling, we update
+  // this very node.
+  if(bubble){
     NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
     naFillTreeNodeChildData(tree, childdata, node);
-    bubble |= tree->config->nodeChildUpdater(*(tree->config->nodeDataGetter(node)), childdata, -1, node->flags & NA_TREE_CHILDS_MASK);
+    bubble = tree->config->nodeUpdater(*(tree->config->nodeDataGetter(node)), childdata, -1, node->flags & NA_TREE_CHILDS_MASK);
   }
 
   return bubble;
