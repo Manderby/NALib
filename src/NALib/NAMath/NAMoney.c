@@ -11,6 +11,22 @@ int na_currency_decimals[NA_CURRENCY_COUNT] = {
 };
 
 
+
+NA_DEF NAString* naNewStringWithMoney(NAMoney money){
+  int digits = na_currency_decimals[money.currency];
+  int64 divisor = naMakeInt64WithDouble(pow(10., (double)digits));
+  int64 units = naDivInt64(money.cents, divisor);
+  int64 decimals = naModInt64(money.cents, divisor);
+  if(digits == 0){
+    return naNewStringWithFormat("%lld", units);
+  }else{
+    NAString* formatstring = naNewStringWithFormat("%%lld.%%0%dlld", (int)digits);
+    NAString* retstring = naNewStringWithFormat(naGetStringUTF8Pointer(formatstring), units, decimals);
+    naDelete(formatstring);
+    return retstring;
+  }
+}
+
 // Copyright (c) NALib, Tobias Stamm
 //
 // Permission is hereby granted, free of charge, to any person obtaining

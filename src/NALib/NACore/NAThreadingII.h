@@ -24,9 +24,6 @@
 
 
 
-
-
-
 // ////////////////////////////
 // SLEEPING
 // ////////////////////////////
@@ -67,10 +64,6 @@ NA_IDEF int naSleepS(double secs){
     return usleep((useconds_t)(secs * 1000000LL));
   #endif
 }
-
-
-
-
 
 
 
@@ -151,9 +144,6 @@ NA_IDEF void naRunThread(NAThread thread){
     dispatch_async_f(threadstruct->nativeThread, threadstruct->arg, threadstruct->function);
   #endif
 }
-
-
-
 
 
 
@@ -399,10 +389,6 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
 
 
 
-
-
-
-
 // ////////////////////////////
 // ALARMS
 // ////////////////////////////
@@ -467,7 +453,6 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarm, double maxwaittime){
     return (result ? NA_FALSE : NA_TRUE);
   #endif
 }
-
 
 
 

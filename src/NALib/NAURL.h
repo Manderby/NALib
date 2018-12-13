@@ -10,6 +10,7 @@
 
 
 #include "NAList.h"
+#include "NAString.h"
 
 
 #if NA_OS == NA_OS_WINDOWS
@@ -36,7 +37,7 @@ NA_IAPI NAURL* naInitURL(NAURL* url);
 //   Example: /usr/local is an absolute path, src/NALib is not.
 // - Erroneous duplicate path delimiters or ending delimiters will be ignored.
 //   Example: /usr//local/ results in /usr/local
-NA_IAPI NAURL* naInitURLWithUTF8CStringLiteral( NAURL* url,
+NA_API NAURL* naInitURLWithUTF8CStringLiteral( NAURL* url,
                                      const NAUTF8Char* string);
 NA_IAPI void naClearURL(NAURL* url);
 
@@ -44,7 +45,7 @@ NA_IAPI void naClearURL(NAURL* url);
 // Note that there is no distinction if the last component is the name of a
 // folder or of a file. If the file has a suffix, it is contained in the
 // returned string.
-NA_IAPI NAString* naNewStringWithURLFilename(NAURL* url);
+NA_API NAString* naNewStringWithURLFilename(NAURL* url);
 
 
 

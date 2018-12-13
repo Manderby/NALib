@@ -4,23 +4,10 @@
 
 #include "NABuffer.h"
 
-struct NABufferSource{
-  NABufferFiller    buffiller;      // Fill function filling memory.
-  NABuffer*         buffer;         // The underlying buffer, if any.
-  void*             data;           // data sent to filler and destructor.
-  NAMutator         datadestructor; // Data destructor.
-  NAUInt            flags;          // Flags for the source
-  NARangei          limit;          // Source limit (used if flag set)
-};
+
 
 NA_HAPI void naDestructBufferSource(NABufferSource* source);
 NA_RUNTIME_TYPE(NABufferSource, naDestructBufferSource, NA_TRUE);
-
-
-
-// Flags for the buffer source:
-#define NA_BUFFER_SOURCE_RANGE_LIMITED        0x01
-#define NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE 0x80
 
 
 
@@ -42,61 +29,6 @@ NA_DEF NABufferSource* naNewBufferSource(NABufferFiller filler, NABuffer* buffer
 NA_HDEF void naDestructBufferSource(NABufferSource* source){
   if(source->datadestructor){source->datadestructor(source->data);}
   if(source->buffer){naRelease(source->buffer);}
-}
-
-
-
-NA_DEF void naSetBufferSourceData(NABufferSource* source, void* data, NAMutator datadestructor){
-  #ifndef NDEBUG
-    if(source->flags & NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE)
-      naError("naSetBufferSourceData", "Source already used in a buffer. Mayor problems may occur in the future");
-  #endif
-  source->data = data;
-  source->datadestructor = datadestructor;
-}
-
-
-
-NA_DEF void naSetBufferSourceLimit(NABufferSource* source, NARangei limit){
-  #ifndef NDEBUG
-    if(source->flags & NA_BUFFER_SOURCE_RANGE_LIMITED)
-      naError("naSetBufferSourceLimit", "Source already has a limit");
-    if(source->flags & NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE)
-      naError("naSetBufferSourceLimit", "Source already used in a buffer. Mayor problems may occur in the future");
-  #endif
-  source->flags |= NA_BUFFER_SOURCE_RANGE_LIMITED;
-  source->limit = limit;
-}
-
-
-
-NA_HDEF NABuffer* naGetBufferSourceUnderlyingBuffer(NABufferSource* source){
-  return source->buffer;
-}
-
-
-
-// Returns NA_TRUE if the range is a valid limiting range.
-NA_HDEF NABool naIsBufferSourceLimited(const NABufferSource* source){
-  return (source->flags & NA_BUFFER_SOURCE_RANGE_LIMITED);
-}
-
-
-
-NA_HDEF NARangei naGetBufferSourceLimit(const NABufferSource* source){
-  #ifndef NDEBUG
-    if(!naIsBufferSourceLimited(source))
-      naError("naGetBufferSourceLimit", "source is not limited");
-  #endif
-  return source->limit;
-}
-
-
-
-NA_HDEF void naFillSourceBuffer(const NABufferSource* source, void* dst, NARangei range){
-  if(source && source->buffiller){
-    source->buffiller(dst, range, source->data);
-  }
 }
 
 

@@ -12,10 +12,6 @@ NA_RUNTIME_TYPE(NABuffer, naDeallocBuffer, NA_TRUE);
 
 
 
-#define NA_BUFFER_FLAG_RANGE_FIXED       0x01
-
-
-
 void naDestructBufferTreeLeaf(NAPtr leafdata, NAPtr configdata){
   NA_UNUSED(configdata);
   NABufferPart* part = naGetPtrMutable(&leafdata);
@@ -228,7 +224,7 @@ NA_DEF NABuffer* naNewBufferWithSameSource(NABuffer* srcbuffer){
 
 
 // This is the filler method of the file input source descriptor
-NA_HIDEF void naFillBufferPartFile(void* dst, NARangei sourcerange, void* data){
+NA_HDEF void naFillBufferPartFile(void* dst, NARangei sourcerange, void* data){
   // todo: position at range.origin.
   naReadFileBytes(data, dst, sourcerange.length);
 }
@@ -347,43 +343,6 @@ NA_HDEF void naDeallocBuffer(NABuffer* buffer){
   if(buffer->source){naRelease(buffer->source);}
   naEmptyTree(&(buffer->parts));
 }
-
-
-
-NA_DEF NABool naIsBufferEmpty(const NABuffer* buffer){
-  return naIsRangeiEmpty(buffer->range);
-}
-
-
-
-NA_DEF NARangei naGetBufferRange(const NABuffer* buffer){
-  return buffer->range;
-}
-
-
-
-NA_DEF void naFixBufferRange(NABuffer* buffer){
-  buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;
-}
-
-
-
-NA_DEF NABool naHasBufferFixedRange(const NABuffer* buffer){
-  return (buffer->flags & NA_BUFFER_FLAG_RANGE_FIXED);
-}
-
-
-
-NA_DEF void naExtendBufferRange(NABuffer* buffer, NAInt bytesatstart, NAInt bytesatend){
-  #ifndef NDEBUG
-    if(bytesatstart < 0)
-      naError("naExtendBufferRange", "bytesatstart should not be negative");
-    if(bytesatend < 0)
-      naError("naExtendBufferRange", "bytesatend should not be negative");
-  #endif
-  naEnsureBufferRange(buffer, buffer->range.origin - bytesatstart, naGetRangeiEnd(buffer->range) + bytesatend);
-}
-
 
 
 
@@ -526,30 +485,6 @@ NA_HDEF void naUnlinkBufferRange(NABuffer* buffer, NARangei range){
 //  naCombineBufferPartAdjacents(&iter);
 //
 //  naClearListIterator(&iter);
-}
-
-
-
-NA_DEF NANewlineEncoding naGetBufferNewlineEncoding(NABuffer* buffer){
-  return buffer->newlineencoding;
-}
-
-
-
-NA_DEF void naSetBufferNewlineEncoding(NABuffer* buffer, NANewlineEncoding newlineencoding){
-  buffer->newlineencoding = newlineencoding;
-}
-
-
-
-NA_DEF NAInt naGetBufferEndianness(NABuffer* buffer){
-  return buffer->endianness;
-}
-
-
-
-NA_DEF void naSetBufferEndianness(NABuffer* buffer, NAInt endianness){
-  buffer->endianness = endianness;
 }
 
 
@@ -748,6 +683,7 @@ NA_DEF void naCacheBufferRange(NABuffer* buffer, NARangei range){
 NA_DEF void naDismissBufferRange(NABuffer* buffer, NARangei range){
   naUnlinkBufferRange(buffer, range);
 }
+
 
 
 

@@ -7,37 +7,6 @@
 
 
 
-
-NA_HDEF const NABuffer* naGetBufferIteratorBufferConst(const NABufferIterator* iter){
-  return naGetPtrConst(&(iter->bufferptr));
-}
-
-
-
-NA_HDEF NABuffer* naGetBufferIteratorBufferMutable(NABufferIterator* iter){
-  return naGetPtrMutable(&(iter->bufferptr));
-}
-
-
-
-NA_HDEF NABuffer* naGetBufferIteratorSourceBuffer(NABufferIterator* iter){
-  NABufferSource* source;
-  if(naIsTreeAtInitial(&(iter->partiter))){
-    NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
-    source = buffer->source;
-  }else{
-    NABufferPart* part = naGetBufferPart(iter);
-    source = naGetBufferPartSource(part);
-  }
-  if(source){
-    return naGetBufferSourceUnderlyingBuffer(source);
-  }else{
-    return NA_NULL;
-  }
-}
-
-
-
 NA_DEF NABufferIterator naMakeBufferAccessor(NABuffer* buffer){
   NABufferIterator iter;
   #ifndef NDEBUG
@@ -175,24 +144,7 @@ NA_HDEF NABool naSearchBufferLeaf(void* token, NAPtr data, NABool* matchfound){
 
 
 
-NA_DEF NABool naLocateBufferAbsolute(NABufferIterator* iter, NAInt offset){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  NABufferSearchToken token;
-  token.searchoffset = offset;
-  token.curoffset = buffer->range.origin;
-  naResetTreeIterator(&(iter->partiter));
-  NABool found = naLocateTreeToken(&(iter->partiter), &token, naSearchBufferNode, naSearchBufferLeaf);
-  if(found){
-    iter->partoffset = token.searchoffset - token.curoffset;
-  }else{
-    iter->partoffset = offset;
-  }
-  return found;
-}
-
-
-
-NA_DEF NABool naLocateBufferStart(NABufferIterator* iter){
+NA_HDEF NABool naLocateBufferStart(NABufferIterator* iter){
   #ifndef NDEBUG
     if(iter->curbit != 0)
       naError("naLocateBufferStart", "Buffer bitcount is not null.");
@@ -212,7 +164,7 @@ NA_DEF NABool naLocateBufferStart(NABufferIterator* iter){
 
 
 
-NA_DEF NABool naLocateBufferLastPart(NABufferIterator* iter){
+NA_HDEF NABool naLocateBufferLastPart(NABufferIterator* iter){
   #ifndef NDEBUG
     if(iter->curbit != 0)
       naError("naLocateBufferLastPart", "Buffer bitcount is not null.");
@@ -232,7 +184,7 @@ NA_DEF NABool naLocateBufferLastPart(NABufferIterator* iter){
 
 
 
-NA_DEF NABool naLocateBufferNextPart(NABufferIterator* iter){
+NA_HDEF NABool naLocateBufferNextPart(NABufferIterator* iter){
   #ifndef NDEBUG
     if(iter->curbit != 0)
       naError("naLocateBufferNextPart", "Buffer bitcount is not null.");
@@ -252,7 +204,7 @@ NA_DEF NABool naLocateBufferNextPart(NABufferIterator* iter){
 
 
 
-NA_DEF NABool naLocateBufferPrevPartMax(NABufferIterator* iter){
+NA_HDEF NABool naLocateBufferPrevPartMax(NABufferIterator* iter){
   #ifndef NDEBUG
     if(iter->curbit != 0)
       naError("naLocateBufferNextPart", "Buffer bitcount is not null.");
@@ -272,7 +224,7 @@ NA_DEF NABool naLocateBufferPrevPartMax(NABufferIterator* iter){
 
 
 
-NA_DEF NABool naLocateBufferMax(NABufferIterator* iter){
+NA_HDEF NABool naLocateBufferMax(NABufferIterator* iter){
   #ifndef NDEBUG
     if(iter->curbit != 0)
       naError("naLocateBufferMax", "Buffer bitcount is not null.");
@@ -290,7 +242,7 @@ NA_DEF NABool naLocateBufferMax(NABufferIterator* iter){
 
 
 
-NA_DEF NABool naLocateBufferEnd(NABufferIterator* iter){
+NA_HDEF NABool naLocateBufferEnd(NABufferIterator* iter){
   #ifndef NDEBUG
     if(iter->curbit != 0)
       naError("naLocateBufferMax", "Buffer bitcount is not null.");
@@ -323,23 +275,37 @@ NA_HDEF NABool naIterateBufferPart(NABufferIterator* iter){
 
 
 
-NA_DEF NABool naLocateBufferRelative(NABufferIterator* iter, NAInt offset){
-  NAInt abspos = naGetBufferLocation(iter);
-  return naLocateBufferAbsolute(iter, abspos + offset);
+NA_DEF NABool naLocateBufferAbsolute(NABufferIterator* iter, NAInt offset){
+  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+  NABufferSearchToken token;
+  token.searchoffset = offset;
+  token.curoffset = buffer->range.origin;
+  naResetTreeIterator(&(iter->partiter));
+  NABool found = naLocateTreeToken(&(iter->partiter), &token, naSearchBufferNode, naSearchBufferLeaf);
+  if(found){
+    iter->partoffset = token.searchoffset - token.curoffset;
+  }else{
+    iter->partoffset = offset;
+  }
+  return found;
 }
 
 
 
-NA_DEF NABool naLocateBufferFromStart(NABufferIterator* iter, NAInt offset){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  return naLocateBufferAbsolute(iter, buffer->range.origin + offset);
-}
-
-
-
-NA_DEF NABool naLocateBufferFromEnd(NABufferIterator* iter, NAInt offset){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-  return naLocateBufferAbsolute(iter, naGetRangeiEnd(buffer->range) - offset);
+NA_HDEF NABuffer* naGetBufferIteratorSourceBuffer(NABufferIterator* iter){
+  NABufferSource* source;
+  if(naIsTreeAtInitial(&(iter->partiter))){
+    NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
+    source = buffer->source;
+  }else{
+    NABufferPart* part = naGetBufferPart(iter);
+    source = naGetBufferPartSource(part);
+  }
+  if(source){
+    return naGetBufferSourceUnderlyingBuffer(source);
+  }else{
+    return NA_NULL;
+  }
 }
 
 
@@ -382,43 +348,6 @@ NA_DEF NABool naIterateBuffer(NABufferIterator* iter, NAInt step){
 //  }
 //  return (part != NA_NULL);
   return NA_FALSE;
-}
-
-
-
-NA_HDEF NAInt naGetBufferIteratorPartOffset(NABufferIterator* iter){
-  return iter->partoffset;
-}
-
-
-
-NA_DEF NABool naIsBufferAtInitial(NABufferIterator* iter){
-  return naIsTreeAtInitial(&(iter->partiter));
-}
-
-
-
-NA_DEF NABool naIsBufferAtEnd(NABufferIterator* iter){
-  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
-  if(!naIsBufferAtInitial(iter)){
-    NABufferPart* part = naGetBufferPart(iter);
-    if(iter->partoffset < 0 || iter->partoffset >= naGetBufferPartByteSize(part)){
-      naLocateBufferAbsolute(iter, naGetBufferLocation(iter));
-    }
-  }
-  return (naIsBufferAtInitial(iter) && (iter->partoffset == naGetRangeiEnd(buffer->range)));
-}
-
-
-
-NA_DEF uint8 naGetBufferCurBit(NABufferIterator* iter){
-  return iter->curbit;
-}
-
-
-
-NA_HDEF NABufferPart* naGetBufferPart(NABufferIterator* iter){
-  return naGetTreeCurMutable(&(iter->partiter));
 }
 
 
