@@ -8,7 +8,7 @@ Future
 - Reintroduce volatile buffer sources
 - malloc uint
 - NAComplexPolar
-- All todos.
+- All todos
 - Fully implement NAString without always-cache
 - Remove old commented code
 - Documentation
