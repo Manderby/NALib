@@ -6,6 +6,9 @@ during 10 years in research and has then been transferred to C over the past
 and consumer market. The code also contains many didactical comments which
 explain why the soure code is written as it is.
 
+Current version is 22.
+Branch "version23" contains the latest developments.
+
 NALib is short for "Not A Library", which means that NALib is not distributed
 as a static or dynamic library, but only as source files.
 

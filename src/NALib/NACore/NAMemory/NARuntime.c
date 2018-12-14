@@ -2,8 +2,8 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#include "NAMemory.h"
-#include "NABinaryData.h"
+#include "../../NAMemory.h"
+#include "../../NABinaryData.h"
 
 // //////////////////////////////////////
 // Implementation notes from the author about the Memory Pools.

@@ -33,9 +33,9 @@
 // before C99 for example in the form of GNU extensions.
 //
 // NALib by default assumes, that the long long type and the integer suffix LL
-// is only available with the standards C99 or C++11 or newer. But you can
-// set the following macro to 1 which causes NALib to try to compile itself
-// with long long datatypes and LL suffixes.
+// is only available with the standards C99 or C++11 or newer or with visual
+// studio 7.1 or never. But you can set the following macro to 1 which causes
+// NALib to try to compile itself with long long datatypes and LL suffixes.
 //
 // Beware, although this might work, you maybe will get a lot of warnings.
 // Consider turning them off using -Wno-long-long.
@@ -51,6 +51,8 @@
 // core elements which will not work properly. Therefore, a warning is emitted.
 // If you know what you are doing, you can silence that warning by defining the
 // following macro to be 0.
+//
+// Default is 1
 
 #ifndef NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE
   #define NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE 1

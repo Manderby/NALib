@@ -2,7 +2,7 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#include "NAURL.h"
+#include "../NAURL.h"
 
 
 NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string){

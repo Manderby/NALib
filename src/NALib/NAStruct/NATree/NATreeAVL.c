@@ -2,7 +2,7 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#include "NATree.h"
+#include "../../NATree.h"
 #include "NATreeBinary.h"
 
 

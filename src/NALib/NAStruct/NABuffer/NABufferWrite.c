@@ -2,7 +2,7 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#include "NABuffer.h"
+#include "../../NABuffer.h"
 
 
 // This is the internal function actually preparing and storing the bytes

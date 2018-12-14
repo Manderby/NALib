@@ -29,8 +29,9 @@ typedef int NABool;
 
 // Defines, if the current system compiles with long long int types.
 // See NA_TYPE_ASSUME_NATIVE_LONG_LONG in the Configuration.h file for manually
-// configuring this.
-#if (defined NA_C99) || (defined NA_CPP11) || NA_TYPE_ASSUME_NATIVE_LONG_LONG
+// configuring this. Note that the test (_MSC_VER >= 1310) tests for
+// Visual Studio 7.1
+#if (defined NA_C99) || (defined NA_CPP11) || _MSC_VER >= 1310 || NA_TYPE_ASSUME_NATIVE_LONG_LONG
   #define NA_COMPILE_WITH_LONG_LONG 1
 #else
   #define NA_COMPILE_WITH_LONG_LONG 0
@@ -234,6 +235,7 @@ typedef int NABool;
 #endif
 
 // 64 Bits: Preference is first long long, then long, then int
+// Special case for MSVC compiler 6.0: User __int64
 #if NA_TYPE_NATIVE_LONG_LONG_INT_BITS == NA_TYPE64_BITS
   #define NA_TYPE_INT64 NA_TYPE_NATIVE_LONG_LONG_INT
 #elif NA_TYPE_NATIVE_LONG_INT_BITS == NA_TYPE64_BITS
@@ -249,7 +251,7 @@ typedef int NABool;
 // in older standards before C99, there was just no other way to do it.
 // In C99, the values are defined in stdint.h, but this implementation
 // covers that.
-#if defined NA_TYPE_ASSUME_NATIVE_LONG_LONG
+#if NA_COMPILE_WITH_LONG_LONG
   #define NA_PRINTF_CHAR_PREFIX "hh"
   #define NA_PRINTF_LONG_LONG_PREFIX "ll"
 #else
@@ -375,18 +377,31 @@ typedef int NABool;
   #define NA_SCNi64      "ld"
   #define NA_SCNu64      "lu"
 #elif NA_TYPE_INT64 == NA_TYPE_NATIVE_LONG_LONG_INT
-  #define NA_UINT64_MAX  ULLONG_MAX
-  #define NA_INT64_MAX   LLONG_MAX
-  #define NA_INT64_MIN   LLONG_MIN
-  typedef unsigned long long   uint64;
-  typedef signed long long     int64;
-  #define NA_ZERO_64     (0LL)
-  #define NA_ONE_64      (1LL)
-  #define NA_PRIi64      NA_PRINTF_LONG_LONG_PREFIX "d"
-  #define NA_PRIu64      NA_PRINTF_LONG_LONG_PREFIX "u"
-  #define NA_PRIx64      NA_PRINTF_LONG_LONG_PREFIX "x"
-  #define NA_SCNi64      NA_PRINTF_LONG_LONG_PREFIX "d"
-  #define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
+	#define NA_UINT64_MAX  ULLONG_MAX
+	#define NA_INT64_MAX   LLONG_MAX
+	#define NA_INT64_MIN   LLONG_MIN
+	typedef unsigned long long   uint64;
+	typedef signed long long     int64;
+	#define NA_ZERO_64     (0LL)
+	#define NA_ONE_64      (1LL)
+	#define NA_PRIi64      NA_PRINTF_LONG_LONG_PREFIX "d"
+	#define NA_PRIu64      NA_PRINTF_LONG_LONG_PREFIX "u"
+	#define NA_PRIx64      NA_PRINTF_LONG_LONG_PREFIX "x"
+	#define NA_SCNi64      NA_PRINTF_LONG_LONG_PREFIX "d"
+	#define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
+#elif NA_TYPE_INT64 == NA_TYPE_NATIVE__INT64
+	#define NA_UINT64_MAX  ULLONG_MAX
+	#define NA_INT64_MAX   LLONG_MAX
+	#define NA_INT64_MIN   LLONG_MIN
+	typedef unsigned __uint64   uint64;
+	typedef signed __int64      int64;
+	#define NA_ZERO_64     (0LL)
+	#define NA_ONE_64      (1LL)
+	#define NA_PRIi64      NA_PRINTF_LONG_LONG_PREFIX "d"
+	#define NA_PRIu64      NA_PRINTF_LONG_LONG_PREFIX "u"
+	#define NA_PRIx64      NA_PRINTF_LONG_LONG_PREFIX "x"
+	#define NA_SCNi64      NA_PRINTF_LONG_LONG_PREFIX "d"
+	#define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
 #else
   // The 64 bit integer type must be emulated. See NAInt64.h
   #define NA_UINT64_MAX  naMakeUInt64(NA_UINT32_MAX, NA_UINT32_MAX)

@@ -23,7 +23,7 @@ NA_HAPI  void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt c
 NA_HAPI  NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node);
 NA_HIAPI NABool naIsTreeRootLeaf(const NATree* tree);
 
-#include "NAValueHelper.h"
+#include "../../NACore/NAValueHelper.h"
 
 
 // /////////////////////////////////////

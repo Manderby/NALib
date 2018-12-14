@@ -31,7 +31,7 @@
 // If a later version is defined, all earlier versions are defined as well.
 #ifndef __cplusplus
   // This is a C compilation
-  #if defined __STDC__
+  #if defined __STDC__ || defined _MSC_VER
 
     #define NA_C89  // C89 and C90 are virtually the same thing.
     #define NA_C90

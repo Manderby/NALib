@@ -2,7 +2,7 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#include "NATree.h"
+#include "../../NATree.h"
 #include "NATreeBinary.h"
 
 
@@ -355,6 +355,13 @@ NA_HDEF NATreeLeaf* naInsertLeafBinary(NATree* tree, NATreeLeaf* existingleaf, c
     left = existingleaf;
     right = newleaf;
     break;
+  default:
+    #ifndef NDEBUG
+	  naError("naInsertLeafBinary", "Invalid insertOrder");
+    #endif
+	left = existingleaf;
+	right = newleaf;
+	break;
   }
 
   existingparent = ((NATreeBaseNode*)existingleaf)->parent;

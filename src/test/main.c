@@ -10,19 +10,6 @@
 //
 
 
-#include "NAString.h"
-
-void testString(){
-  NAString* string1 = naNewStringWithUTF8CStringLiteral("Hallo");
-  naDelete(string1);
-  NAString* string2 = naNewStringWithMutableUTF8Buffer("wurst", 5, NA_NULL);
-  naDelete(string2);
-  NAString* string3 = naNewStringWithFormat("Ich will %d Flaschen Bier", 99);
-  naDelete(string3);
-}
-
-
-
 #include "../NALib/NABase.h"
 #include <stdio.h>
 
@@ -35,13 +22,9 @@ int main(void){
   #endif
   printf("%d Bits Addresses, %d Bits Integers)\n", NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
-  printf("%d NA_TYPE_NAINT_BITS %d NA_SYSTEM_ADDRESS_BITS", NA_TYPE_NAINT_BITS, NA_SYSTEM_ADDRESS_BITS);
-//  naStartRuntime();
-//    testString();
-//  naStopRuntime();
-
   #if NA_OS == NA_OS_WINDOWS
-   NA_UNUSED(getchar());
+    printf("Finished.\n");
+    NA_UNUSED(getchar());
   #endif
 
   return 0;

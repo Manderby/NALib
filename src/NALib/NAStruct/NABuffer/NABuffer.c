@@ -4,7 +4,7 @@
 // Full license notice at the bottom.
 
 
-#include "NABuffer.h"
+#include "../../NABuffer.h"
 
 
 NA_HAPI void naDeallocBuffer(NABuffer* buffer);
@@ -124,7 +124,7 @@ NA_HIAPI NARangei naMakeRangeiAbsolute(NAInt offset, NAInt length, NARangei cont
   NAInt start;
   NAInt end;
   #ifndef NDEBUG
-    if(!naIsLengthValueUseful(containingrange.length))
+    if(!naIsLengthValueUsefuli(containingrange.length))
       naError("naMakeRangeiAbsolute", "Length of containing range is not useful.");
   #endif
   start = containingrange.origin + (offset < 0) * containingrange.length + offset;

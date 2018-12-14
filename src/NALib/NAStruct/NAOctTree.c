@@ -219,7 +219,7 @@ NA_HDEF NAOctTreeNode* naAddOctTreeNodeChild(NAOctTree* tree, NAOctTreeNode* par
       naError("naAddOctTreeNodeChild", "A child already exists at that segment of the parent node.");
   #endif
 
-  naGetOctTreeNodeSegmentBox(parentnode, segmentinparent);
+  segmentbox = naGetOctTreeNodeSegmentBox(parentnode, segmentinparent);
   node = naAllocOctTreeNode(parentnode->childexponent - 1, segmentinparent, parentnode, segmentbox.vertex, tree);
   naSetOctTreeNodeSegment(parentnode, segmentinparent, node);
   return node;
