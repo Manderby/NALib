@@ -35,9 +35,10 @@ int main(void){
   #endif
   printf("%d Bits Addresses, %d Bits Integers)\n", NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
-  naStartRuntime();
-    testString();
-  naStopRuntime();
+  printf("%d NA_TYPE_NAINT_BITS %d NA_SYSTEM_ADDRESS_BITS", NA_TYPE_NAINT_BITS, NA_SYSTEM_ADDRESS_BITS);
+//  naStartRuntime();
+//    testString();
+//  naStopRuntime();
 
   #if NA_OS == NA_OS_WINDOWS
    NA_UNUSED(getchar());

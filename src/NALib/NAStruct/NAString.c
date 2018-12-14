@@ -181,13 +181,14 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt offset, 
 
 
 NA_DEF NAString* naNewStringWithBufferExtraction(NABuffer* buffer, NARangei range){
+  NAString* string;
   #ifndef NDEBUG
     if(!naIsLengthValueUseful(buffer->range.length))
       naError("naNewStringWithBufferExtraction", "Buffer Range length is not useful.");
     if(!naIsLengthValueUseful(range.length))
       naError("naNewStringWithBufferExtraction", "Range length is not useful.");
   #endif
-  NAString* string = naNew(NAString);
+  string = naNew(NAString);
   string->buffer = naNewBufferExtraction(buffer, range.origin, range.length);
   #ifndef NDEBUG
     string->cachedstr = NA_NULL;

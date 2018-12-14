@@ -106,11 +106,9 @@ void timeMaking(){
   for(i=0; i<TESTSIZE; i++){ui64 = naAddUInt64(naMakeUInt64((uint32)rand(), (uint32)rand()), ui64);}
   t = printAndSwapTime("naMakeUInt64", t);
 
-  #if ! defined NA_TYPE_INT64
-    printf("Final Result: %d %d %d %d", ui64.lo, ui64.hi, ui64.lo, ui64.hi);
-  #else
-    printf("Final Result: %lld %lld", ui64, ui64);
-  #endif
+  NA_UNUSED(i64);
+  NA_UNUSED(ui64);
+  NA_UNUSED(t);
 }
 
 
@@ -189,11 +187,9 @@ void timeBinary(){
   for(i=0; i<TESTSIZE; i++){ui64 = naShrUInt64(ui64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
   t = printAndSwapTime("naShrUInt64", t);
 
-  #if ! defined NA_TYPE_INT64
-    printf("Final Result: %d %d %d %d", ui64_1.lo, ui64_1.hi, ui64_2.lo, ui64_2.hi);
-  #else
-    printf("Final Result: %lld %lld", ui64_1, ui64_2);
-  #endif
+  NA_UNUSED(i64);
+  NA_UNUSED(ui64);
+  NA_UNUSED(t);
 }
 
 
@@ -267,7 +263,11 @@ void timeComparison(){
   for(i=0; i<TESTSIZE; i++){testbool ^= naSmallerEqualUInt64(ui01, ui02); naIncUInt64(ui01); naDecUInt64(ui02);}
   t = printAndSwapTime("naSmallerEqualUInt64", t);
 
-  printf("Final Result: %d", (NABool)testbool);
+  NA_UNUSED(i01);
+  NA_UNUSED(i02);
+  NA_UNUSED(ui01);
+  NA_UNUSED(ui02);
+  NA_UNUSED(t);
 }
 
 
@@ -354,9 +354,9 @@ void timeArithmetic(){
   t = getTime();
   for(i=0; i<TESTSIZE; i++){i64_1 = naNegInt64(randInt64());}
   t = printAndSwapTime("naNegInt64", t);
-  for(i=0; i<TESTSIZE; i++){i64_1 = naIncInt64(i64_1);}
+  for(i=0; i<TESTSIZE; i++){naIncInt64(i64_1);}
   t = printAndSwapTime("naIncInt64", t);
-  for(i=0; i<TESTSIZE; i++){i64_1 = naDecInt64(i64_1);}
+  for(i=0; i<TESTSIZE; i++){naDecInt64(i64_1);}
   t = printAndSwapTime("naDecInt64", t);
   for(i=0; i<TESTSIZE; i++){i64_1 = naAddInt64(i64_1, i64_2);}
   t = printAndSwapTime("naAddInt64", t);
@@ -369,9 +369,9 @@ void timeArithmetic(){
   for(i=0; i<TESTSIZE; i++){i64_1 = naModInt64(i64_1, i64_2);}
   t = printAndSwapTime("naModInt64", t);
 
-  for(i=0; i<TESTSIZE; i++){ui64_1 = naIncUInt64(ui64_1);}
+  for(i=0; i<TESTSIZE; i++){naIncUInt64(ui64_1);}
   t = printAndSwapTime("naIncUInt64", t);
-  for(i=0; i<TESTSIZE; i++){ui64_1 = naDecUInt64(ui64_1);}
+  for(i=0; i<TESTSIZE; i++){naDecUInt64(ui64_1);}
   t = printAndSwapTime("naDecUInt64", t);
   for(i=0; i<TESTSIZE; i++){ui64_1 = naAddUInt64(ui64_1, ui64_2);}
   t = printAndSwapTime("naAddUInt64", t);
@@ -384,11 +384,11 @@ void timeArithmetic(){
   for(i=0; i<TESTSIZE; i++){ui64_1 = naModUInt64(ui64_1, ui64_2);}
   t = printAndSwapTime("naModUInt64", t);
 
-  #if ! defined NA_TYPE_INT64
-    printf("Final Result: %d %d %d %d", ui64_1.lo, ui64_1.hi, ui64_2.lo, ui64_2.hi);
-  #else
-    printf("Final Result: %lld %lld", ui64_1, ui64_2);
-  #endif
+  NA_UNUSED(i64_1);
+  NA_UNUSED(i64_2);
+  NA_UNUSED(ui64_1);
+  NA_UNUSED(ui64_2);
+  NA_UNUSED(t);
 }
 
 

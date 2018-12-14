@@ -115,6 +115,7 @@ NA_DEF NAString* naParseBufferRemainder(NABufferIterator* iter){
 
 NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
   NAString* string;
+  NARangei range;
   NABool found = NA_FALSE;
   NAInt start = naGetBufferLocation(iter);
   NAInt end = start;
@@ -143,7 +144,7 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
   if(!found){
     end = naGetRangeiEnd(buffer->range);
   }
-  NARangei range = naMakeRangeiWithStartAndEnd(start, end);
+  range = naMakeRangeiWithStartAndEnd(start, end);
   if(!naIsRangeiEmpty(range)){
     string = naNewStringWithBufferExtraction(buffer, range);
   }else{
@@ -229,14 +230,16 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter){
 
 
 NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64* retint, NAInt maxdigitcount, uint64 max){
+  NAInt bytesused;
+  uint64 prevval;
   NABool found = NA_FALSE;
   NAInt start = naGetBufferLocation(iter);
   NAInt end = start;
   NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
 
   *retint = NA_ZERO_64u;
-  NAInt bytesused = 0;
-  uint64 prevval = NA_ZERO_64u;
+  bytesused = 0;
+  prevval = NA_ZERO_64u;
   if(maxdigitcount == 0){maxdigitcount = naGetRangeiEnd(buffer->range) - start;}
 
   while(!found && !naIsBufferAtEnd(iter)){

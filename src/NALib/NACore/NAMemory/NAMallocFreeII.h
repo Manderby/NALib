@@ -27,7 +27,7 @@ NA_IDEF void* naMalloc(NAInt bytesize){
     if(bytesize == NA_ZERO)
       naCrash("naMalloc", "size is zero.");
     if(bytesize < NA_ZERO)
-      naError("naMalloc", "size is negative.");
+      naCrash("naMalloc", "size is negative.");
   #endif
 
   ptr = malloc((size_t)bytesize);

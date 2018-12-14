@@ -84,12 +84,12 @@
   #endif
 
 #else
-  #warning "System not detected"
+  #error "System not detected"
   #define NA_OS NA_OS_UNKNOWN
 #endif
 
 #ifndef NA_SYSTEM_ADDRESS_BITS
-  #warning "Address bits not detected, trying 32."
+  #error "Address bits not detected, trying 32."
   #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
 #endif
 

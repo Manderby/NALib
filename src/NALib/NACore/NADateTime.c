@@ -16,7 +16,7 @@
   #include <sys/time.h>
 //  NA_IDEF void Localtime(struct tm* storage, const time_t* tme){localtime_r(tme, storage);}
 #else
-  #warning "System undefined"
+  #error "System undefined"
 #endif
 
 
@@ -828,7 +828,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
     #else
       #if !defined NA_TYPE_INT64
         // We fall back to 32 bits as there simply is no solution to this problem.
-        #warning "impossible to convert int64. Falling back to int32"
+        #error "impossible to convert int64. Falling back to int32"
         timesp.tv_sec = (__darwin_time_t)naCastInt64ToInt32(naSubInt64(datetime->sisec, naSubInt64(naTAIPeriods[taiperiod].startsisec, naTAIPeriods[taiperiod].startgregsec)));
         timesp.tv_sec -= (__darwin_time_t)naCastInt64ToInt32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
       #else
@@ -874,7 +874,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
     #else
       #if !defined NA_TYPE_INT64
         // We fall back to 32 bits as there simply is no solution to this problem.
-        #warning "impossible to convert int64. Falling back to int32"
+        #error "impossible to convert int64. Falling back to int32"
         datetimesec = naMakeInt64WithLo(timesp->tv_sec + naCastInt64ToInt32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO));
       #else
         datetimesec = naAddInt64(timesp->tv_sec, naMakeInt64WithLo(NA_DATETIME_SISEC_UNIX_YEAR_ZERO));

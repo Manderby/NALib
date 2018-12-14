@@ -32,7 +32,7 @@ typedef enum{
   NA_TREE_LEAF_INSERT_ORDER_KEY,
   NA_TREE_LEAF_INSERT_ORDER_PREV,
   NA_TREE_LEAF_INSERT_ORDER_NEXT,
-  NA_TREE_LEAF_INSERT_ORDER_REPLACE,
+  NA_TREE_LEAF_INSERT_ORDER_REPLACE
 } NATreeLeafInsertOrder;
 
 // Callback function types for the different kind of trees. If you want to

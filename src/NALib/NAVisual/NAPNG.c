@@ -321,7 +321,9 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
       }
       break;
     default:
-//      printf("invalid filter" NA_NL);
+      #ifndef NDEBUG
+        naError("naReconstructFilterData", "Invalid Filter");
+      #endif
       curbyte += bytesperline;
       break;
     }
@@ -751,6 +753,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
     naAddListLastMutable(&(png->chunks), chunk);
     if(chunk->type == NA_PNG_CHUNK_TYPE_IEND){break;}
   }
+  naClearBufferIterator(&bufiter);
 
   // Create the buffer to hold the compressed and decompressed data
   png->compresseddata = naNewBuffer(NA_FALSE);
@@ -792,7 +795,6 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   naReconstructFilterData(png);
 
   NAEndReadingPNG:
-  naClearBufferIterator(&bufiter);
   naRelease(buffer);
 
   return png;

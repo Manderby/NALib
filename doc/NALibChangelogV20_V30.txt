@@ -16,7 +16,7 @@ Version 22 (first published 20XX-XXX-XX)
 ==========
 
 - Implemented NAOctTree the same way as NAQuadTree
-- Added NATree, a binary search tree.
+- Added NATree, a binary search tree (for the time being).
 - Huge Refactoring of NABuffer
 - Rearranging large files into hierarchical folder structure.
 
@@ -33,6 +33,7 @@ Version 22 (first published 20XX-XXX-XX)
 - Made some of the runtime system functions inlineable.
 - Altering Endianness functions. No more NAEndiannessConverter.
 - Renaming all naNull functions to naZero
+- Removing all warning preprocessor directives.
 
 
 Version 21 (first published 2018-Mai-27)

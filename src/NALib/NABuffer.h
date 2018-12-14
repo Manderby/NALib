@@ -540,7 +540,7 @@ NA_API void naSkipBufferDelimiter(NABufferIterator* iter);
 // Use naGetBufferLineNumber to get that number. Warning: Experimental feature,
 // not fully implemented!
 NA_API NAString* naParseBufferLine( NABufferIterator* iter,
-                                      NABool skipempty);
+                                               NABool skipempty);
 
 // Returns the current line number (starting with 1). This is an experimental
 // feature which currently only works reliably if naParseBufferLine is used.

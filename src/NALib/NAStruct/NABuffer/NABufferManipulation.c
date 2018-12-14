@@ -170,13 +170,15 @@ NA_DEF void naAccumulateChecksumBuffer(NAChecksum* checksum, NABuffer* buffer){
   naLocateBufferStart(&iter);
 
   while(bytesize){
+    NAInt remainingbytes;
+    const void* src;
     #ifndef NDEBUG
       if(naIsBufferIteratorSparse(&iter))
         naError("naAccumulateChecksumBuffer", "Buffer contains sparse parts. Can not compute checksum. Use naCacheBuffer.");
     #endif
 
-    NAInt remainingbytes = naGetBufferPartByteSize(naGetBufferPart(&iter));
-    const void* src = naGetBufferPartDataPointerConst(&iter);
+    remainingbytes = naGetBufferPartByteSize(naGetBufferPart(&iter));
+    src = naGetBufferPartDataPointerConst(&iter);
 
     if(bytesize > remainingbytes){
       naAccumulateChecksum(checksum, src, remainingbytes);

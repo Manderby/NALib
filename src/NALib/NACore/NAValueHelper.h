@@ -403,11 +403,12 @@ NA_HIDEF NABool naIsLengthValueUsefulu(NAUInt a){
 
 
 NA_HIDEF NAInt naAlignValuei(NAInt x, NAInt offset, NAInt alignlength){
+  NAInt shiftx;
   #ifndef NDEBUG
     if(!naIsLengthValueUsefuli(alignlength))
       naError("naAlignValuei", "Invalid size leads to range overflow. Correcting to empty range.");
   #endif
-  NAInt shiftx = x - offset;
+  shiftx = x - offset;
   if(shiftx < 0){
     return (((NAInt)((shiftx + 1) / alignlength) - 1) * alignlength) + offset;
   }else{
@@ -415,11 +416,12 @@ NA_HIDEF NAInt naAlignValuei(NAInt x, NAInt offset, NAInt alignlength){
   }
 }
 NA_HIDEF double naAlignValued(double x, double offset, double alignlength){
+  double shiftx;
   #ifndef NDEBUG
     if(!naIsLengthValueUseful(alignlength))
       naError("naAlignValued", "Invalid size leads to range overflow. Correcting to empty range.");
   #endif
-  double shiftx = x - offset;
+  shiftx = x - offset;
   return ((naFloor((shiftx) / alignlength)) * alignlength) + offset;
 }
 

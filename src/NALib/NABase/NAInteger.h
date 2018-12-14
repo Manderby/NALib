@@ -43,7 +43,7 @@ typedef int NABool;
   // limits.h library (note that stdint.h is only available since C99)
   #include <limits.h>
 #else
-  #warning "This is not a standard C compiler. NALib will make assumptions about typesizes."
+  #error "This is not a standard C compiler. NALib will make assumptions about typesizes."
   // If we are completely out of the standardized C reign, we simply create
   // the macros which should be in limits.h manually.
   // Note the -1 for the signed min values: Some compilers have problems with
@@ -116,7 +116,7 @@ typedef int NABool;
 // We test if the current system has a (positive) integer encoding suitable for
 // NALib. Some obscure compilers might handle this differently.
 #if (0x0100 >> 8) != 0x01
-  #warning "Unknown integer number encoding. NALib might not compile or run."
+  #error "Unknown integer number encoding. NALib might not compile or run."
 #endif
 
 
@@ -131,7 +131,7 @@ typedef int NABool;
   #define NA_SIGNED_INTEGER_ENCODING NA_SIGNED_INTEGER_ENCODING_SIGN_MAGNITUDE
 #else
   #define NA_SIGNED_INTEGER_ENCODING NA_SIGNED_INTEGER_ENCODING_UNKNOWN
-  #warning "Invalid signed integer encoding. NALib might not work properly."
+  #error "Invalid signed integer encoding. NALib might not work properly."
 #endif
 
 
@@ -574,7 +574,7 @@ typedef uint8 NAByte;
   typedef NAUInt NASizeUInt;
   #if NA_TYPE_NAINT_BITS < NA_SYSTEM_ADDRESS_BITS
     #if NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE == 1
-      #warning "No native integer type available to store an address"
+      #error "No native integer type available to store an address"
     #endif
     #define NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE 1
   #endif

@@ -74,7 +74,7 @@
 
 
 #if FLT_RADIX != 2
-  #warning "NALib requires floating points to have a radix of 2"
+  #error "NALib requires floating points to have a radix of 2"
 #endif
 
 // Following are the macros for the most important constants when working with

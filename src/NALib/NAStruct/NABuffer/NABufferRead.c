@@ -7,7 +7,10 @@
 
 
 NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance){
+  const NABuffer* buffer;
+  NAInt firstpartoffset;
   NAByte* dst = data;
+  NATreeIterator firstbufiter;
 
   #ifndef NDEBUG
     if(!data)
@@ -16,7 +19,7 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
       naError("naRetrieveBufferBytes", "Bit offset not 0.");
   #endif
 
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+  buffer = naGetBufferIteratorBufferConst(iter);
 
   // We prepare the buffer for the whole range. There might be no parts or
   // sparse parts.
@@ -25,8 +28,8 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
   // memory. The iterator should point to the buffer part containing offset.
   
   // We store the current iterator to move back to it later on if necessary.
-  NAInt firstpartoffset = iter->partoffset;
-  NATreeIterator firstbufiter = naMakeTreeAccessor(&(buffer->parts));
+  firstpartoffset = iter->partoffset;
+  firstbufiter = naMakeTreeAccessor(&(buffer->parts));
   naLocateTreeIterator(&firstbufiter, &(iter->partiter));
 
   // do as long as there is a bytesize remaining. Remember that the data may
@@ -34,6 +37,7 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
   while(bytesize){
     NABufferPart* part;
     NAInt possiblelength;
+    const void* src;
 
     #ifndef NDEBUG
       if(naIsBufferIteratorSparse(iter))
@@ -47,7 +51,7 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
     // is filled with memory.
 
     // We get the data pointer where we can read bytes.
-    const void* src = naGetBufferPartDataPointerConst(iter);
+    src = naGetBufferPartDataPointerConst(iter);
     // We detect, how many bytes actually can be read from the current part.
     possiblelength = naGetBufferPartByteSize(part) - iter->partoffset;
 
@@ -80,14 +84,17 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
 
 
 NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, NAInt indx){
+  NAByte retbyte;
+  NABufferIterator iter;
+  NABool found;
+  
   #ifndef NDEBUG
     if(buffer->range.origin != 0)
       naError("naGetBufferByteAtIndex", "This function should only be used for buffers with origin 0.");
   #endif
 
-  NAByte retbyte;
-  NABufferIterator iter = naMakeBufferAccessor(buffer);  
-  NABool found = naLocateBufferAbsolute(&iter, indx);
+  iter = naMakeBufferAccessor(buffer);  
+  found = naLocateBufferAbsolute(&iter, indx);
   if(found){
     retbyte = naGetBufferu8(&iter);
   }else{
@@ -106,16 +113,14 @@ NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, NAInt indx){
 // /////////////////////////////////
 
 NA_DEF NABool naReadBufferBit(NABufferIterator* iter){
-  NA_UNUSED(iter);
   const NAByte* src;
   NABool bit;
-  NABufferPart* part;
+  NA_UNUSED(iter);
 
   if(iter->curbit == 0){
     naPrepareBuffer(iter, 1);
   }
 
-  part = naGetBufferPart(iter);
   src = naGetBufferPartDataPointerConst(iter);
   bit = (*src >> iter->curbit) & 0x01;
   iter->curbit++;
