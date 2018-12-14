@@ -4,7 +4,7 @@
 
 #ifndef NA_HEAP_INCLUDED
 #define NA_HEAP_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -57,7 +57,8 @@
 // action is about to occur. The backpointer implementation is needed for
 // example if you store several heaps containing the same elements.
 //
-// Note that heaps are a very fast datastructure! One of the authors favourites!
+// Note that heaps are a very fast datastructure!
+// One of the authors favourites!
 
 
 
@@ -153,7 +154,7 @@ NA_IAPI void*       naRemoveHeapPosMutable( NAHeap* heap, NAInt backpointer);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_HEAP_INCLUDED

@@ -63,7 +63,7 @@ NA_IDEF NAList* naInitList(NAList* list){
       naCrash("naInitList", "list is NULL");
   #endif
   list->count = 0;
-  list->sentinel.ptr  = naMakeNullPtr();
+  list->sentinel.ptr  = naMakePtrNull();
   list->sentinel.next = &(list->sentinel);
   list->sentinel.prev = &(list->sentinel);
   #ifndef NDEBUG
@@ -200,7 +200,6 @@ NA_IDEF void naAddListLastMutable(NAList* list, void* content){
 ////////////////////////////
 // REMOVING ELEMENTS
 
-// These are helper functions. They should be hidden.
 NA_HIDEF void naEjectList(NAList* list, NAListElement* element, NABool deleteelement){
   element->prev->next = element->next;
   element->next->prev = element->prev;
@@ -212,6 +211,9 @@ NA_HIDEF void naEjectList(NAList* list, NAListElement* element, NABool deleteele
   list->count--;
   if(deleteelement){naDelete(element);}
 }
+
+
+
 NA_HIDEF void naEjectListConst(NAList* list, NAListElement* element, NABool deleteelement){
   #ifndef NDEBUG
     if(element == &(list->sentinel))
@@ -219,7 +221,9 @@ NA_HIDEF void naEjectListConst(NAList* list, NAListElement* element, NABool dele
   #endif
   naEjectList(list, element, deleteelement);
 }
-#include <stdio.h>
+
+
+
 NA_HIDEF void* naEjectListMutable(NAList* list, NAListElement* element, NABool deleteelement){
   void* contentpointer;
   #ifndef NDEBUG
@@ -1012,41 +1016,41 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* iterator, NAList* dst){
   #endif
   src = (NAList*)naGetPtrMutable(&(iterator->listptr));
 
-  
-  if(naIsListEmpty(src)){return;}
-  
-  // Move to the first element if the list is rewinded.
-  element = iterator->cur;
-  if(element == &(src->sentinel)){
-    element = src->sentinel.next;
-  }
 
-  // Reroute the cur element from src to dst
-  element->prev->next = &(src->sentinel);
-  src->sentinel.prev = element->prev;
-  iterator->cur = &(src->sentinel);
+  if(!naIsListEmpty(src)){
+    // Move to the first element if the list is rewinded.
+    element = iterator->cur;
+    if(element == &(src->sentinel)){
+      element = src->sentinel.next;
+    }
 
-  // Reroute the cur element
-  element->prev = dst->sentinel.prev;
-  dst->sentinel.prev->next = element;
-  
-  // count the number of moved elements
-  while(element->next != &(src->sentinel)){
-    movecount++;
-    element = element->next;
+    // Reroute the cur element from src to dst
+    element->prev->next = &(src->sentinel);
+    src->sentinel.prev = element->prev;
+    iterator->cur = &(src->sentinel);
+
+    // Reroute the cur element
+    element->prev = dst->sentinel.prev;
+    dst->sentinel.prev->next = element;
+
+    // count the number of moved elements
+    while(element->next != &(src->sentinel)){
+      movecount++;
+      element = element->next;
+    }
+
+    // Reroute the last element from src to dst
+    element->next = &(dst->sentinel);
+    dst->sentinel.prev = element;
+
+    #ifndef NDEBUG
+      if(src->count < movecount)
+        naError("naMoveListRemainingToLast", "Internal error: List count negative.");
+    #endif
+
+    src->count -= movecount;
+    dst->count += movecount;
   }
-  
-  // Reroute the last element from src to dst
-  element->next = &(dst->sentinel);
-  dst->sentinel.prev = element;
-  
-  #ifndef NDEBUG
-    if(src->count < movecount)
-      naError("naMoveListRemainingToLast", "Internal error: List count negative.");
-  #endif
-  
-  src->count -= movecount;
-  dst->count += movecount;
 }
 
 
@@ -1127,15 +1131,16 @@ NA_IDEF void naExchangeListParts(NAListIterator* iterator){
     if(iterator->cur == &(src->sentinel))
       naError("naExchangeListParts", "List has no current element set.");
   #endif
-  if((&(src->sentinel) == iterator->cur) || (src->sentinel.next == iterator->cur)){return;}
-  first = src->sentinel.next;
-  prev = iterator->cur->prev;
-  first->prev = src->sentinel.prev;
-  src->sentinel.prev->next = first;
-  src->sentinel.next = iterator->cur;
-  iterator->cur->prev = &(src->sentinel);
-  src->sentinel.prev = prev;
-  prev->next = &(src->sentinel);
+  if((&(src->sentinel) != iterator->cur) && (src->sentinel.next != iterator->cur)){
+    first = src->sentinel.next;
+    prev = iterator->cur->prev;
+    first->prev = src->sentinel.prev;
+    src->sentinel.prev->next = first;
+    src->sentinel.next = iterator->cur;
+    iterator->cur->prev = &(src->sentinel);
+    src->sentinel.prev = prev;
+    prev->next = &(src->sentinel);
+  }
 }
 
 

@@ -5,9 +5,10 @@ This file contains notes on what is still missing or needs to be done
 in NALib.
 
 Future
+- Reintroduce volatile buffer sources
 - malloc uint
 - NAComplexPolar
-- All todos.
+- All todos
 - Fully implement NAString without always-cache
 - Remove old commented code
 - Documentation
@@ -16,13 +17,12 @@ Future
 - All Container structs can store pointers.
 - make naAtof and parseStringFloat
 - Homogeneous coordinates
-- NATree and integration into NABuffer
 - Range tree
 - Threadsavety for structs
 - GUI
 - Compression in NAPNG
 - Add ARM, Linux
-- Make Memory addresses uint 
+- Make Memory addresses uint
 - release pools
 - MOB
 - Color

@@ -4,7 +4,7 @@
 
 #ifndef NA_FILE_INCLUDED
 #define NA_FILE_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -127,7 +127,7 @@ NA_IAPI NAUTF8Char* naGetCwd  (NAUTF8Char* buf, NAInt bufsize);
 // These are the declarations of NAFile. It is designed to be a very simple
 // struct with only a file descriptor but with a reference count. Therefore
 // you can retain and release files.
-// 
+//
 // An NAFile can either be a Read-File or a Write-File. Never both.
 //
 // Again, this struct only provides the most basic functionality of file input
@@ -222,7 +222,7 @@ NA_API NAString* naNewStringWithCurWorkingDirectory(void);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_FILE_INCLUDED

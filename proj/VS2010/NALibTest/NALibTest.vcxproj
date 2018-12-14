@@ -20,17 +20,30 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\src\NALib\NABase\NADebug.c" />
-    <ClCompile Include="..\..\..\src\NALib\NACore\NABinaryData.c" />
+    <ClCompile Include="..\..\..\src\NALib\NACore\NABinaryData\NABinaryData.c" />
     <ClCompile Include="..\..\..\src\NALib\NACore\NADateTime.c" />
     <ClCompile Include="..\..\..\src\NALib\NACore\NAFile.c" />
-    <ClCompile Include="..\..\..\src\NALib\NACore\NAMemory.c" />
+    <ClCompile Include="..\..\..\src\NALib\NACore\NAMemory\NARuntime.c" />
+    <ClCompile Include="..\..\..\src\NALib\NACore\NAURL.c" />
     <ClCompile Include="..\..\..\src\NALib\NAMath\NAMoney.c" />
-    <ClCompile Include="..\..\..\src\NALib\NAStruct\NABuffer.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NABuffer\NABuffer.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NABuffer\NABufferIteration.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NABuffer\NABufferManipulation.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NABuffer\NABufferParse.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NABuffer\NABufferPart.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NABuffer\NABufferRead.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NABuffer\NABufferSource.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NABuffer\NABufferWrite.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NABuffer\NAMemoryBlock.c" />
     <ClCompile Include="..\..\..\src\NALib\NAStruct\NAHeap.c" />
     <ClCompile Include="..\..\..\src\NALib\NAStruct\NAList.c" />
     <ClCompile Include="..\..\..\src\NALib\NAStruct\NAOctTree.c" />
     <ClCompile Include="..\..\..\src\NALib\NAStruct\NAQuadTree.c" />
     <ClCompile Include="..\..\..\src\NALib\NAStruct\NAString.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NATree\NATree.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NATree\NATreeAVL.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NATree\NATreeBinary.c" />
+    <ClCompile Include="..\..\..\src\NALib\NAStruct\NATree\NATreeConfiguration.c" />
     <ClCompile Include="..\..\..\src\NALib\NAVisual\NADeflate.c" />
     <ClCompile Include="..\..\..\src\NALib\NAVisual\NAPNG.c" />
     <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUI.c" />
@@ -38,6 +51,7 @@
     <ClCompile Include="..\..\..\src\NALib\NAVisual\NAUIWINAPI.c" />
     <ClCompile Include="..\..\..\src\test\int64test.c" />
     <ClCompile Include="..\..\..\src\test\main.c" />
+    <ClCompile Include="..\..\..\src\test\treetest.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\NALib\NAArray.h" />
@@ -60,10 +74,17 @@
     <ClInclude Include="..\..\..\src\NALib\NAComplex.h" />
     <ClInclude Include="..\..\..\src\NALib\NAConfiguration.h" />
     <ClInclude Include="..\..\..\src\NALib\NACoord.h" />
-    <ClInclude Include="..\..\..\src\NALib\NACore\NABinaryDataII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACore\NABinaryData\NABinaryDataII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACore\NABinaryData\NAEndiannessII.h" />
     <ClInclude Include="..\..\..\src\NALib\NACore\NADateTimeII.h" />
     <ClInclude Include="..\..\..\src\NALib\NACore\NAFileII.h" />
-    <ClInclude Include="..\..\..\src\NALib\NACore\NAMemoryII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAMemory\NAMallocFreeII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAMemory\NAMemoryII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAMemory\NAPointerII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAMemory\NAPtrII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAMemory\NARefCountII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAMemory\NARuntimeII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NACore\NAMemory\NASmartPtrII.h" />
     <ClInclude Include="..\..\..\src\NALib\NACore\NAThreadingII.h" />
     <ClInclude Include="..\..\..\src\NALib\NACore\NAURLII.h" />
     <ClInclude Include="..\..\..\src\NALib\NACore\NAValueHelper.h" />
@@ -90,7 +111,15 @@
     <ClInclude Include="..\..\..\src\NALib\NAStack.h" />
     <ClInclude Include="..\..\..\src\NALib\NAString.h" />
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NAArrayII.h" />
-    <ClInclude Include="..\..\..\src\NALib\NAStruct\NABufferII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NABuffer\NABufferHelperII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NABuffer\NABufferII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NABuffer\NABufferIterationII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NABuffer\NABufferParseII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NABuffer\NABufferPartII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NABuffer\NABufferReadII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NABuffer\NABufferSourceII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NABuffer\NABufferWriteII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NABuffer\NAMemoryBlockII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NACircularBufferII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NAHeapII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NAListII.h" />
@@ -99,7 +128,11 @@
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NAQuadTreeII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NAStackII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAStruct\NAStringII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NATree\NATreeBinary.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NATree\NATreeCoreII.h" />
+    <ClInclude Include="..\..\..\src\NALib\NAStruct\NATree\NATreeII.h" />
     <ClInclude Include="..\..\..\src\NALib\NAThreading.h" />
+    <ClInclude Include="..\..\..\src\NALib\NATree.h" />
     <ClInclude Include="..\..\..\src\NALib\NAUI.h" />
     <ClInclude Include="..\..\..\src\NALib\NAURL.h" />
     <ClInclude Include="..\..\..\src\NALib\NAVectorAlgebra.h" />

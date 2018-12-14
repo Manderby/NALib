@@ -12,6 +12,30 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Version 22 (first published 2018-Dec-14)
+==========
+
+- Implemented NAOctTree the same way as NAQuadTree
+- Added NATree, a binary search tree (for the time being).
+- Huge Refactoring of NABuffer
+- Rearranging large files into hierarchical folder structure.
+
+- Tweaked QuadTree implementation. Removed naSetQuadTreeInRect. Use iterators
+  for that. MinLeafExponent is now a BaseLeafExponent
+- Made NAPointer independent of naRuntimeSystem. Thinking about killing this
+  structure alltogether as it has only small purpose but still keeping it.
+- Adding Leap Second information according Bulletin 56
+- Cleaning up void returns and naCrashes
+- Extended ValueHelpers for unsighed integers a little
+- Moved naMakeXXXPositive to NACoord and NAArray. Added naMakeRangeiAbsolute
+  to NABuffer
+- Renamed naMakeNullPtr to naMakePtrNull
+- Made some of the runtime system functions inlineable.
+- Altering Endianness functions. No more NAEndiannessConverter.
+- Renaming all naNull functions to naZero
+- Removing all warning preprocessor directives.
+
+
 Version 21 (first published 2018-Mai-27)
 ==========
 

@@ -58,7 +58,7 @@ NA_IDEF NAArray* naInitArrayWithCount(NAArray* array, NAInt typesize, NAInt coun
   #ifndef NDEBUG
     array->itercount = 0;
   #endif
-  
+
   return array;
 }
 
@@ -120,7 +120,7 @@ NA_IDEF void naClearArray(NAArray* array){
 NA_IDEF void naForeachArrayConst(NAArray* array, NAAccessor accessor){
   NAInt count;
   const NAByte* ptr;
-  
+
   #ifndef NDEBUG
     if(!accessor)
       naCrash("naForeachArray", "Accessor is Null");
@@ -158,7 +158,7 @@ NA_IDEF void naForeachArrayMutable(NAArray* array, NAMutator mutator){
 NA_IDEF void naForeachArraypConst(NAArray* array, NAAccessor accessor){
   NAInt count;
   const NAByte* ptr;
-  
+
   #ifndef NDEBUG
     if(!accessor)
       naCrash("naForeachArray", "Accessor is Null");
@@ -223,6 +223,25 @@ NA_IDEF void* naGetArrayPointerMutable(NAArray* array){
 
 
 
+NA_HIDEF NAInt naMakeIndexAbsolute(NAInt indx, NAInt length){
+  #ifndef NDEBUG
+    if(length < 0)
+      naError("naMakeIndexAbsolute", "length should not be negative");
+  #endif
+  if(indx < 0){
+    indx += length;
+    #ifndef NDEBUG
+      if(indx < 0)
+        naError("naMakeIndexAbsolute", "positive index is not positive");
+      if(indx >= length)
+        naError("naMakeIndexAbsolute", "positive index overflows length");
+    #endif
+  }
+  return indx;
+}
+
+
+
 NA_IDEF const void* naGetArrayElementConst(const NAArray* array, NAInt indx){
   #ifndef NDEBUG
     if(!array){
@@ -233,7 +252,7 @@ NA_IDEF const void* naGetArrayElementConst(const NAArray* array, NAInt indx){
         naError("naGetArrayElementConst", "array is empty");
     }
   #endif
-  indx = naMakeIndexPositive(indx, naGetArrayCount(array));
+  indx = naMakeIndexAbsolute(indx, naGetArrayCount(array));
   #ifndef NDEBUG
     if(indx >= naGetArrayCount(array))
       naError("naGetArrayElementConst", "array overflow.");
@@ -253,7 +272,7 @@ NA_IDEF void* naGetArrayElementMutable(NAArray* array, NAInt indx){
         naError("naGetArrayElementMutable", "array is empty");
     }
   #endif
-  indx = naMakeIndexPositive(indx, naGetArrayCount(array));
+  indx = naMakeIndexAbsolute(indx, naGetArrayCount(array));
   #ifndef NDEBUG
     if(indx >= naGetArrayCount(array))
       naError("naGetArrayElementMutable", "array overflow.");
@@ -273,7 +292,7 @@ NA_IDEF const void* naGetArrayElementpConst(const NAArray* array, NAInt indx){
         naError("naGetArrayElementConst", "array is empty");
     }
   #endif
-  indx = naMakeIndexPositive(indx, naGetArrayCount(array));
+  indx = naMakeIndexAbsolute(indx, naGetArrayCount(array));
   #ifndef NDEBUG
     if(indx >= naGetArrayCount(array))
       naError("naGetArrayElementpConst", "array overflow.");
@@ -293,7 +312,7 @@ NA_IDEF void* naGetArrayElementpMutable(NAArray* array, NAInt indx){
         naError("naGetArrayElementMutable", "array is empty");
     }
   #endif
-  indx = naMakeIndexPositive(indx, naGetArrayCount(array));
+  indx = naMakeIndexAbsolute(indx, naGetArrayCount(array));
   #ifndef NDEBUG
     if(indx >= naGetArrayCount(array))
       naError("naGetArrayElementpMutable", "array overflow.");
@@ -386,7 +405,7 @@ NA_IDEF NAArrayIterator naMakeArrayAccessor(const NAArray* array){
   #endif
   iter.array = naMakePtrWithDataConst(array);
   iter.indx = -1;
-  
+
   return iter;
 }
 
@@ -404,7 +423,7 @@ NA_IDEF NAArrayIterator naMakeArrayMutator(NAArray* array){
   #endif
   iter.array = naMakePtrWithDataMutable(array);
   iter.indx = -1;
-  
+
   return iter;
 }
 
@@ -468,7 +487,7 @@ NA_IDEF NABool naLocateArrayIndex(NAArrayIterator* iterator, NAInt indx){
     if(naIsArrayEmpty(naGetPtrConst(&(iterator->array))))
       naError("naLocateArrayIndex", "Array is empty");
   #endif
-  indx = naMakeIndexPositive(indx, naGetArrayCount(naGetPtrConst(&(iterator->array))));
+  indx = naMakeIndexAbsolute(indx, naGetArrayCount(naGetPtrConst(&(iterator->array))));
   iterator->indx = indx;
   if(indx < 0){
     iterator->indx = -1;
@@ -632,7 +651,7 @@ NA_IDEF NABool naIsArrayAtIndex(const NAArrayIterator* iterator, NAInt indx){
       return NA_FALSE;
     }
   #endif
-  indx = naMakeIndexPositive(indx, naGetArrayCount(naGetPtrConst(&(iterator->array))));
+  indx = naMakeIndexAbsolute(indx, naGetArrayCount(naGetPtrConst(&(iterator->array))));
   return (iterator->indx == indx);
 }
 

@@ -4,7 +4,7 @@
 
 #ifndef NA_PNG_INCLUDED
 #define NA_PNG_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 

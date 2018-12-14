@@ -55,7 +55,7 @@ extern NABool na_globalsummertime;
 //#define NA_SECONDS_IN_400_YEAR_PERIOD \
 //  (4LL * NA_SECONDS_IN_100_YEAR_PERIOD + NA_SECONDS_PER_DAY)
 // NA_SECONDS_IN_400_YEAR_PERIOD:       12622780800
-#define NA_SECONDS_IN_400_YEAR_PERIOD_HI  0x00000002 
+#define NA_SECONDS_IN_400_YEAR_PERIOD_HI  0x00000002
 #define NA_SECONDS_IN_400_YEAR_PERIOD_LO  0xf0605980
 #define NA_SECONDS_IN_400_YEAR_PERIOD     naCastUInt64ToInt64(naMakeUInt64(NA_SECONDS_IN_400_YEAR_PERIOD_HI, NA_SECONDS_IN_400_YEAR_PERIOD_LO))
 
@@ -199,13 +199,15 @@ NA_IDEF NABool naHasDateTimeSummerTime(const NADateTime* datetime){
 NA_IDEF void naSetDateTimeSummertime(NADateTime* datetime, NABool summertime){
   datetime->errornum = NA_DATETIME_ERROR_NONE;
   if(summertime){
-    if(datetime->flags & NA_DATETIME_FLAG_SUMMERTIME){return;}
-    datetime->flags |= NA_DATETIME_FLAG_SUMMERTIME;
-    datetime->shift += NA_MINUTES_PER_HOUR;
+    if((datetime->flags & NA_DATETIME_FLAG_SUMMERTIME) == 0){
+      datetime->flags |= NA_DATETIME_FLAG_SUMMERTIME;
+      datetime->shift += NA_MINUTES_PER_HOUR;
+    }
   }else{
-    if(!(datetime->flags & NA_DATETIME_FLAG_SUMMERTIME)){return;}
-    datetime->flags &= ~NA_DATETIME_FLAG_SUMMERTIME;
-    datetime->shift -= NA_MINUTES_PER_HOUR;
+    if((datetime->flags & NA_DATETIME_FLAG_SUMMERTIME) != 0){
+      datetime->flags &= ~NA_DATETIME_FLAG_SUMMERTIME;
+      datetime->shift -= NA_MINUTES_PER_HOUR;
+    }
   }
 }
 

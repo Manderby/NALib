@@ -4,7 +4,7 @@
 
 #ifndef NA_COORD_INCLUDED
 #define NA_COORD_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -268,9 +268,9 @@ NA_IAPI NSRect    naMakeNSRectWithRect  (NARect  narect);
 // Creates a new origin which is the given origin floored to a multiple of
 // the given alignment. Also works for negative input offsets.
 NA_IAPI NAPosi    naMakePosiWithAlignment    (NAPosi    origin, NARecti alignrect);
-NA_IAPI NAPos     naMakePosdWithAlignment    (NAPos     origin, NARect  alignrect);
+NA_IAPI NAPos     naMakePosWithAlignment    (NAPos     origin, NARect  alignrect);
 NA_IAPI NAVertexi naMakeVertexiWithAlignment (NAVertexi origin, NABoxi  alignbox);
-NA_IAPI NAVertex  naMakeVertexdWithAlignment (NAVertex  origin, NABox   alignbox);
+NA_IAPI NAVertex  naMakeVertexWithAlignment (NAVertex  origin, NABox   alignbox);
 
 // Create the bounding box of two elements. The range, size or volume of the
 // resulting struct will never be negative. Note that the integer variant of
@@ -324,14 +324,16 @@ NA_IAPI NARecti   naMakeRectiWithRectAndBorder (NARecti rect, NAInt  border);
 NA_IAPI NABox     naMakeBoxWithBoxAndBorder    (NABox  box, double border);
 NA_IAPI NABoxi    naMakeBoxiWithBoxAndBorder   (NABoxi box, NAInt  border);
 
-// The naMakeRectPositive function ensures that the sizes of the given rect
-// are not negative. If the sizes already were positive or zero, they will not
-// be changed.
+// The naMakeXXXXAbsolute function ensures that the lengths/sizes/volumes of
+// the given struct are not negative. If the these already were positive or
+// zero, they will not be changed.
 // For example:  A rect with pos(4., 6.) and size (-2., 7.) will change to
 //            -> a rect with pos(2., 6.) and size ( 2., 7.) .
 // But: An integer rect with pos(4 , 6 ) and size (-2 , 7 ) will change to
 //            -> a rect with pos(3 , 6 ) and size ( 2 , 7 ) !
-// Will not perform any debugging tests.
+NA_IAPI NARange   naMakeRangePositive (NARange  range);
+NA_IAPI NARangei  naMakeRangeiPositive(NARangei range);
+
 NA_IAPI NARect    naMakeRectPositive (NARect  rect);
 NA_IAPI NARecti   naMakeRectiPositive(NARecti rect);
 
@@ -433,6 +435,7 @@ NA_IAPI NABool    naContainsRectiRect(NARecti outerrect, NARecti rect);
 NA_IAPI NABool    naContainsVolumeVertex (NAVolume  outervolume, NAVertex  vertex);
 NA_IAPI NABool    naContainsVolumeiVertex(NAVolumei outervolume, NAVertexi vertex);
 NA_IAPI NABool    naContainsBoxVertex    (NABox     outerbox,    NAVertex  vertex);
+NA_IAPI NABool    naContainsBoxVertexE   (NABox     outerbox,    NAVertex  vertex);
 NA_IAPI NABool    naContainsBoxiVertex   (NABoxi    outerbox,    NAVertexi vertex);
 NA_IAPI NABool    naContainsVolumeVolume (NAVolume  outervolume, NAVolume  volume);
 NA_IAPI NABool    naContainsVolumeiVolume(NAVolumei outervolume, NAVolumei volume);
@@ -527,7 +530,7 @@ NA_IAPI NAInt     naGetBoxiIndexOfVertexColumnFirst(NABoxi box, NAVertexi vertex
 // Sizes or rects with zero width or height are considered "empty". But no
 // special code will be executed! This might lead to unexpected behaviour.
 // When debugging, NALib checks if a size or rect is empty where it should
-// not be. But you as the programmer have to take care of that in your code! 
+// not be. But you as the programmer have to take care of that in your code!
 //
 // Negative sizes are not uncommon as well. While not forbidden and perfectly
 // meaningful, the functions of NALib only work properly with positive rects.
@@ -638,7 +641,7 @@ NA_IAPI NABool    naIsBoxiUseful (NABoxi box);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_COORD_INCLUDED

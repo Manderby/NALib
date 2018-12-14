@@ -63,10 +63,8 @@ struct NAHeapBackEntry{
 
 NA_IDEF void naClearHeap(NAHeap* heap){
   #ifndef NDEBUG
-    if(!heap){
+    if(!heap)
       naCrash("naClearHeap", "heap is Null-Pointer.");
-      return;
-    }
   #endif
   free(heap->data);
 }

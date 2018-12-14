@@ -176,9 +176,9 @@ D) Allocate with naNew and delete with naDelete:
 NAArray* myarray = naInitArray(naNew(NAArray));
 naDelete(myarray);
 
-E) Use an existing naCreateXXX function with naRelease:
-NABuffer* mybuffer = naCreateBuffer();
-naReleaseBuffer(mybuffer);
+E) Use an existing naCreateXXX function with naReleaseXXX:
+NAFile* myfile = naCreateFile();
+naReleaseFile(myfile);
 
 The cases listed here are usual scenarios. But in certain cases, a programmer
 might want to choose differently, for example to save time. If you choose so,
@@ -278,7 +278,7 @@ the different structs together with the intended way of using them:
   function where you use the naDelete mutator as destructor function in the
   call to naReleaseRefCount. With that, you get reference counted pointers
   allocated and deallocated automatically using the NARuntime memory pools.
-  
+
 
 
 
@@ -487,11 +487,11 @@ without bumping into redefinitions.
 Further more, all header files are encapsulated by the standard c-linkage
 keyword:
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 ...
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 

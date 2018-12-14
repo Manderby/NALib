@@ -2,24 +2,8 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-
-#include "../NAMemory.h"
-#include "../NAString.h"
-#include "../NAList.h"
-
-
-
-
-NA_RUNTIME_TYPE(NAPointer, NA_NULL, NA_FALSE);
-
-
-NA_HDEF void naDestructPointer(NAPointer* pointer){
-  if(pointer->destructor){
-    pointer->destructor(naGetSmartPtrMutable(&(pointer->sptr)));
-  }
-  naDelete(pointer);
-}
-
+#include "../../NAMemory.h"
+#include "../../NABinaryData.h"
 
 // //////////////////////////////////////
 // Implementation notes from the author about the Memory Pools.
@@ -105,32 +89,12 @@ NA_HDEF void naDestructPointer(NAPointer* pointer){
 // When you call naCollectGarbage or if you stop the Runtime, that memory
 // will be completely erased.
 
-typedef struct NAMallocGarbage NAMallocGarbage;
-typedef struct NACorePoolPart NACorePoolPart;
-typedef struct NACoreTypeInfo NACoreTypeInfo;
-typedef struct NARuntime NARuntime;
 
-struct NACoreTypeInfo{
-  NACorePoolPart*   curpart;
-  NAUInt            typesize;
-  NAMutator         destructor;
-  NABool            refcounting;
-  #ifndef NDEBUG
-    const char*     typename;
-  #endif
-};
-
-#define NA_MALLOC_GARBAGE_POINTER_COUNT (NA_POOLPART_BYTESIZE / NA_SYSTEM_ADDRESS_BYTES - 2)
-// The 2 denotes the first two entries in this struct.
-struct NAMallocGarbage{
-  NAMallocGarbage* next;
-  NASizeUInt cur;
-  void* pointers[NA_MALLOC_GARBAGE_POINTER_COUNT];
-};
 
 // This structure is stored in the first bytes of every part block.
 // Its size is ALWAYS 8 times an addresssize, the rest of the block is
 // available for the memory.
+typedef struct NACorePoolPart NACorePoolPart;
 struct NACorePoolPart{
   NACoreTypeInfo* coretypeinfo;
   NASizeUInt maxcount;
@@ -146,15 +110,23 @@ struct NACorePoolPart{
                // for consistency check.
 };
 
-// The runtime struct stores base informations about the runtime.
-struct NARuntime{
-  NASizeUInt mempagesize;
-  NASizeUInt partsize;
-  NASizeUInt partsizemask;
-  NAMallocGarbage* mallocGarbage;
-  NASizeUInt totalmallocgarbagebytecount;
-  NAInt typeinfocount;
-  NACoreTypeInfo** typeinfos;
+struct NACoreTypeInfo{
+  NACorePoolPart*   curpart;
+  NAUInt            typesize;
+  NAMutator         destructor;
+  NABool            refcounting;
+  #ifndef NDEBUG
+    const char*     typename;
+  #endif
+};
+
+#define NA_MALLOC_GARBAGE_POINTER_COUNT (NA_POOLPART_BYTESIZE / NA_SYSTEM_ADDRESS_BYTES - 2)
+// The 2 denotes the first two entries in this struct.
+
+struct NAMallocGarbage{
+  NAMallocGarbage* next;
+  NASizeUInt cur;
+  void* pointers[NA_MALLOC_GARBAGE_POINTER_COUNT];
 };
 
 
@@ -164,14 +136,13 @@ NARuntime* na_runtime = NA_NULL;
 
 
 
-
-
 // Security check: The pool bytesize must be big enough to store one struct
 // of NACorePoolPart. Note that bytesize 0 has the meaning of using the
 // memory page size.
 #if (NA_POOLPART_BYTESIZE != 0) && (NA_POOLPART_BYTESIZE <= 8 * NA_SYSTEM_ADDRESS_BYTES)
   #error "Core memory pool size is too small"
 #endif
+
 
 
 // Registers a runtime type. Adds the coretypeinfo to the typeinfos found
@@ -188,30 +159,31 @@ NA_HIDEF void naRegisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
     if(coretypeinfo->typesize > (na_runtime->partsize - sizeof(NACorePoolPart)))
       naError("naRegisterCoreTypeInfo", "Size of type is too big");
   #endif
-  
+
   // As this is the first time, the runtime type gets used, we correct the
   // typesize to incorporate reference counting, if any.
   if(coretypeinfo->refcounting){coretypeinfo->typesize += sizeof(NARefCount);}
-  
+
   // We enlarge the na_runtime info array by one. Yes, this is very bad
   // performance, but this code is usually called rather seldomly. If you
   // experience here a lot of memory allocations, you might want to check if
   // NA_MEMORY_POOL_AGGRESSIVE_CLEANUP is set to 1 and set it back to 0.
   newinfos = naMalloc(naSizeof(NACoreTypeInfo*) * (na_runtime->typeinfocount + NA_ONE));
-  
+
   // We copy all previous infos to the newly allocated memory block.
   if(na_runtime->typeinfos){
     naCopyn(newinfos, na_runtime->typeinfos, naSizeof(NACoreTypeInfo*) * na_runtime->typeinfocount);
   }
-  
+
   // We add the new typeinfo as a pointer to the na_runtime infos.
   newinfos[na_runtime->typeinfocount] = coretypeinfo;
   na_runtime->typeinfocount++;
-  
+
   // We cleanup the old infos and set the new ones to be valid.
   naFree(na_runtime->typeinfos);
   na_runtime->typeinfos = newinfos;
 }
+
 
 
 NA_HIDEF void naUnregisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
@@ -230,17 +202,18 @@ NA_HIDEF void naUnregisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
       oldindex++;
     }
   }
-  
+
   na_runtime->typeinfocount--;
-  
+
   // We cleanup the old infos and set the new ones to be valid.
   naFree(na_runtime->typeinfos);
   na_runtime->typeinfos = newinfos;
 
   // We restore the original typesize in case NA_MEMORY_POOL_AGGRESSIVE_CLEANUP
-  // is set to 1 which means, the type might get re-registered. 
+  // is set to 1 which means, the type might get re-registered.
   if(coretypeinfo->refcounting){coretypeinfo->typesize -= sizeof(NARefCount);}
 }
+
 
 
 NA_HDEF NAUInt naGetCoreTypeInfoAllocatedCount(NACoreTypeInfo* coretypeinfo){
@@ -261,6 +234,7 @@ NA_HIDEF NABool naIsPoolPartFull(NACorePoolPart* part){
 }
 
 
+
 NA_HIDEF void naAttachPoolPartAfterCurPoolPart(NACoreTypeInfo* coretypeinfo, NACorePoolPart* part){
   part->prevpart = coretypeinfo->curpart;
   part->nextpart = coretypeinfo->curpart->nextpart;
@@ -269,11 +243,12 @@ NA_HIDEF void naAttachPoolPartAfterCurPoolPart(NACoreTypeInfo* coretypeinfo, NAC
 }
 
 
+
 // This function gets called when no part has any more space.
 // A new part is created and added to the list at the current position.
 NA_HIDEF void naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
   NACorePoolPart* part;
-      
+
   // We create a new part with the size of a full part but we type it as
   // NACorePoolPart to access the first bytes.
   part = (NACorePoolPart*)naMallocAligned(na_runtime->partsize, na_runtime->partsize);
@@ -283,13 +258,13 @@ NA_HIDEF void naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
     if(((NASizeUInt)part & ~na_runtime->partsizemask) != 0)
       naError("naEnhanceCorePool", "pool part badly aligned");
   #endif
-  
+
   // We initialize the basic fields of part.
   part->coretypeinfo = coretypeinfo;
   part->maxcount = ((na_runtime->partsize - sizeof(NACorePoolPart)) / coretypeinfo->typesize);
   part->usedcount = 0;
   part->everusedcount = 0;
-  
+
   // Implementation note from the author: In earlier versions, everusedcount
   // did not exists and the whole memory block needed to be intialized either
   // with binary zero or with a precomputation step storing all next free
@@ -299,7 +274,7 @@ NA_HIDEF void naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
   // We set the pointer to the first available space to the first byte right
   // after the NACorePoolPart.
   part->firstunused = (void*)(((NAByte*)part) + sizeof(NACorePoolPart));
-  
+
   // If we are in debug mode, we also set the dummy variable for a consistency
   // check.
   #ifndef NDEBUG
@@ -314,17 +289,17 @@ NA_HIDEF void naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
     part->prevpart = part;
     part->nextpart = part;
   }
-  
+
   // Set the newly created part to be the current part.
   coretypeinfo->curpart = part;
 }
 
 
+
 NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
-  
   void* pointer;
   NACoreTypeInfo* coretypeinfo;
-  
+
   #ifndef NDEBUG
     if(!na_runtime)
       naCrash("naNewStruct", "Runtime not running. Use naStartRuntime()");
@@ -356,7 +331,7 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
     // space left and hence we must create a new part.
     if(naIsPoolPartFull(coretypeinfo->curpart)){naEnhanceCorePool(coretypeinfo);}
   }
-  
+
   // Now, we can be sure that the current part has space.
   #ifndef NDEBUG
     if(naIsPoolPartFull(coretypeinfo->curpart))
@@ -365,7 +340,7 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
 
   // We get the pointer to the first currently unused space.
   pointer = coretypeinfo->curpart->firstunused;
-  
+
   // We find out which will be the next pointer to return.
   if(coretypeinfo->curpart->usedcount == coretypeinfo->curpart->everusedcount){
     // The current space has not been used ever. Use the next address one
@@ -378,10 +353,10 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
     // stores now a pointer to the next unused space.
     coretypeinfo->curpart->firstunused = *((void**)coretypeinfo->curpart->firstunused);
   }
-  
+
   // Increase the number of spaces used in this part.
   coretypeinfo->curpart->usedcount++;
-  
+
   #ifndef NDEBUG
     #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
       naError("naNewStruct", "No native integer type to successfully run the runtime system.");
@@ -390,7 +365,7 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
         naError("naNewStruct", "Pointer seems to be outside of part");
     #endif
   #endif
-    
+
   // Now, the pointer points to a space which can be constructed. Initialize
   // the refcounter if applicable and return the pointer.
   if(coretypeinfo->refcounting){
@@ -402,14 +377,15 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
 }
 
 
+
 NA_HIDEF void naEjectCorePoolPartObject(NACorePoolPart* part, void* pointer){
   // The memory at pointer is expected to be erased and hence garbage.
-  
+
   // We explicitely store a pointer to the next unused space at that
   // position, ultimately creating a list.
   *((void**)pointer) = part->firstunused;
   part->firstunused = pointer;
-  
+
   // If the part was full up until now, we reattach it in the list such that
   // it comes one after the current part. But only if there are more than one
   // parts around and the current part of the coretypeinfo is not already the
@@ -420,9 +396,9 @@ NA_HIDEF void naEjectCorePoolPartObject(NACorePoolPart* part, void* pointer){
     naAttachPoolPartAfterCurPoolPart(part->coretypeinfo, part);
   }
 
-  // We reduce the number of used spaces in this part. 
+  // We reduce the number of used spaces in this part.
   part->usedcount--;
-      
+
   // If no more spaces are in use, we can shrink that part away.
   if(!part->usedcount){
     if(part->nextpart == part){
@@ -450,6 +426,7 @@ NA_HIDEF void naEjectCorePoolPartObject(NACorePoolPart* part, void* pointer){
 }
 
 
+
 NA_DEF void naDelete(void* pointer){
   NACorePoolPart* part;
 
@@ -461,8 +438,8 @@ NA_DEF void naDelete(void* pointer){
   #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
     NA_UNUSED(part);
     NA_UNUSED(pointer);
-    return;
   #else
+
     // Find the part entry at the beginning of the part by AND'ing the
     // address with the partsizemask
     part = (NACorePoolPart*)((NASizeUInt)pointer & na_runtime->partsizemask);
@@ -473,19 +450,20 @@ NA_DEF void naDelete(void* pointer){
       if(part->coretypeinfo->refcounting)
         naError("naDelete", "Pointer belongs to a reference-counting entity. Use naRelease instead of naDelete!");
     #endif
-    
+
     // Erase the content of the space with the destructor if applicable
     if(part->coretypeinfo->destructor){part->coretypeinfo->destructor(pointer);}
-    
+
     naEjectCorePoolPartObject(part, pointer);
 
   #endif
 }
 
 
+
 NA_DEF void* naRetain(void* pointer){
   NARefCount* refcount;
-  
+
   #ifndef NDEBUG
     NACorePoolPart* part;
     if(!na_runtime)
@@ -506,7 +484,7 @@ NA_DEF void* naRetain(void* pointer){
         naError("naRetain", "Pointer belongs to a NON-reference-counting entity. You can't use naRetain!");
     #endif
   #endif
-  
+
   // Retain the refcounter.
   refcount = (NARefCount*)((NAByte*)pointer - sizeof(NARefCount));
   naRetainRefCount(refcount);
@@ -514,10 +492,11 @@ NA_DEF void* naRetain(void* pointer){
 }
 
 
+
 NA_DEF void naRelease(void* pointer){
   NACorePoolPart* part;
   NARefCount* refcount;
-  
+
   #ifndef NDEBUG
     if(!na_runtime)
       naCrash("naRelease", "Runtime not running. Use naStartRuntime()");
@@ -534,8 +513,8 @@ NA_DEF void naRelease(void* pointer){
     #ifndef NDEBUG
       naError("naRelease", "No native integer type to successfully run the runtime system.");
     #endif
-    return;
   #else
+
     part = (NACorePoolPart*)((NASizeUInt)pointer & na_runtime->partsizemask);
 
     #ifndef NDEBUG
@@ -544,7 +523,7 @@ NA_DEF void naRelease(void* pointer){
       if(!part->coretypeinfo->refcounting)
         naError("naRelease", "Pointer belongs to a NON-reference-counting entity. Use naDelete instead of naRelease!");
     #endif
-    
+
     // Release the space and delete it with the destructor if refcount is zero.
     refcount = (NARefCount*)((NAByte*)pointer - sizeof(NARefCount));
     naReleaseRefCount(refcount, pointer, part->coretypeinfo->destructor);
@@ -560,15 +539,14 @@ NA_DEF void naRelease(void* pointer){
 }
 
 
-// Note that the runtime system in NALib currently is rather small. But it may
-// serve a greater purpose in a later version.
+
 NA_DEF void naStartRuntime(){
   #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
     #ifndef NDEBUG
       naError("naStartRuntime", "Unable to start runtime on system where no native int is able to store an address.");
     #endif
-    return;
   #else
+
     #ifndef NDEBUG
       if(na_runtime)
         naCrash("naStartRuntime", "Runtime already running");
@@ -594,6 +572,7 @@ NA_DEF void naStartRuntime(){
 }
 
 
+
 NA_DEF void naStopRuntime(){
   #ifndef NDEBUG
     NAInt i;
@@ -614,7 +593,7 @@ NA_DEF void naStopRuntime(){
     leakmessageprinted = NA_FALSE;
     if(!na_runtime)
       naCrash("naStopRuntime", "Runtime not running. Use naStartRuntime()");
-    
+
     // Go through all registered types and output a leak message if necessary.
     for(i=0; i< na_runtime->typeinfocount; i++){
       NAUInt spacecount = naGetCoreTypeInfoAllocatedCount(na_runtime->typeinfos[i]);
@@ -629,12 +608,12 @@ NA_DEF void naStopRuntime(){
   #endif
 
   // Go through all remaining registered types and completely erase them
-  // from memory. 
+  // from memory.
   while(na_runtime->typeinfos){
     NACorePoolPart* firstpart;
     NACorePoolPart* curpart;
     NACorePoolPart* nextpart;
-    
+
     // Free all parts.
     firstpart = na_runtime->typeinfos[0]->curpart;
     curpart = firstpart;
@@ -644,7 +623,7 @@ NA_DEF void naStopRuntime(){
       if(nextpart == firstpart){break;}
       curpart = nextpart;
     }
-    
+
     // Finally, unregister the type.
     na_runtime->typeinfos[0]->curpart = NA_NULL;
     naUnregisterCoreTypeInfo(na_runtime->typeinfos[0]);
@@ -656,7 +635,7 @@ NA_DEF void naStopRuntime(){
 
 
 
-NA_HDEF void naEnhanceMallocGarbage(){
+NA_HIDEF void naEnhanceMallocGarbage(){
   NAMallocGarbage* newgarbage = naAlloc(NAMallocGarbage);
   newgarbage->next = na_runtime->mallocGarbage;
   newgarbage->cur = 0;
@@ -708,7 +687,7 @@ NA_DEF void naCollectGarbage(){
       ptr++;
     }
     nextgarbage = na_runtime->mallocGarbage->next;
-    
+
     // If this was the last part, we decide if we want to delete it depending
     // on the aggressive setting.
     #if NA_MEMORY_POOL_AGGRESSIVE_CLEANUP == 1
@@ -723,45 +702,10 @@ NA_DEF void naCollectGarbage(){
         break;
       }
     #endif
-    
+
   }
   na_runtime->totalmallocgarbagebytecount = 0;
 }
-
-
-
-NA_DEF NAUInt naGetRuntimeGarbageBytesize(){
-  #ifndef NDEBUG
-    if(!na_runtime)
-      naCrash("naGetRuntimeGarbageBytesize", "Runtime not running. Use naStartRuntime()");
-  #endif
-  return na_runtime->totalmallocgarbagebytecount;
-}
-
-
-
-NA_DEF NAUInt naGetRuntimeMemoryPageSize(){
-  #ifndef NDEBUG
-    if(!na_runtime)
-      naCrash("naGetRuntimeMemoryPageSize", "Runtime not running. Use naStartRuntime()");
-  #endif
-  return na_runtime->mempagesize;
-}
-
-
-
-NA_DEF NAUInt naGetRuntimePoolPartSize(){
-  #ifndef NDEBUG
-    if(!na_runtime)
-      naCrash("naGetRuntimePoolPartSize", "Runtime not running. Use naStartRuntime()");
-  #endif
-  return na_runtime->partsize;
-}
-
-
-
-
-
 
 
 

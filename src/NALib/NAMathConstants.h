@@ -4,7 +4,7 @@
 
 #ifndef NA_MATH_CONSTANTS_INCLUDED
 #define NA_MATH_CONSTANTS_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -146,7 +146,7 @@
 // many times already.
 // The sub- and sup-norm macros correspond to 1 minus or 1 plus NA_SINGULARITY.
 #if (FLT_DIG < 6) || (DBL_DIG < 15)
-  #warning "FLT and DBL digits for NA_SINGULARITY not achieved on this system"
+  #error "FLT and DBL digits for NA_SINGULARITY not achieved on this system"
 #endif
 
 #define NA_SINGULARITYf    1e-5f
@@ -165,7 +165,7 @@
     #define NA_SUB_NORMl       NA_SUB_NORM
     #define NA_SUP_NORMl       NA_SUP_NORM
   #else
-    #warning "LDBL digits for NA_SINGULARITY not achieved on this system"
+    #error "LDBL digits for NA_SINGULARITY not achieved on this system"
   #endif
 #else
   #define NA_SINGULARITYl    1e-17L
@@ -481,7 +481,7 @@
 #define NA_PRIME_BEFORE_2_16   65521
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_MATH_CONSTANTS_INCLUDED

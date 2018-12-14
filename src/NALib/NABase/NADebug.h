@@ -34,9 +34,7 @@
 // function, you can simply set a breakpoint in the naError function.
 // This function is explicitely NOT inlined and is defined in a separate
 // implementation file (and therefore a separate translation unit) due to that
-// reason:
-//
-// NADebug.c
+// reason. See NADebug.c
 //
 // Also note that in NALib, code executed within NDEBUG will not alter the
 // runtime execution. In other words: Except from speed differences and outputs
@@ -50,7 +48,7 @@
 #ifndef NDEBUG
 
   #include <stdio.h>    // for the fprintf function
-  #include <stdlib.h>   // for the exit function 
+  #include <stdlib.h>   // for the exit function
 
   // Prints an error. When this function gets called, the ongoing of the
   // application is undefined. Sometimes, the error might affect everything
@@ -78,11 +76,11 @@
   //
   // With a macro, the exit call is directly copied to the place the error
   // occurs and all code analysis tools are silented.
-    
+
   #define naCrash(functionsymbol, text)\
     {\
     naError(functionsymbol, text);\
-    fprintf(stderr, NA_NL "Crashing the application deliberately..." NA_NL);\
+    fprintf(stderr, "\nCrashing the application deliberately...\n");\
     exit(EXIT_FAILURE);\
     }
 

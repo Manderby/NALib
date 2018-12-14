@@ -24,9 +24,6 @@
 
 
 
-
-
-
 // ////////////////////////////
 // SLEEPING
 // ////////////////////////////
@@ -67,10 +64,6 @@ NA_IDEF int naSleepS(double secs){
     return usleep((useconds_t)(secs * 1000000LL));
   #endif
 }
-
-
-
-
 
 
 
@@ -154,9 +147,6 @@ NA_IDEF void naRunThread(NAThread thread){
 
 
 
-
-
-
 // ////////////////////////////
 // MUTEXES
 // ////////////////////////////
@@ -218,7 +208,7 @@ NA_IDEF NAMutex naMakeMutex(void){
     #endif
     return windowsmutex;
   #else
-  
+
     #ifndef NDEBUG
       NAMacintoshMutex* macintoshmutex = naAlloc(NAMacintoshMutex);
       macintoshmutex->mutex = dispatch_semaphore_create(1);
@@ -328,7 +318,7 @@ NA_IDEF void naUnlockMutex(NAMutex mutex){
       NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
       return macintoshmutex->seemslocked;
     #endif
-  
+
     // This was the old code which worked but it introduced long wait times
     // when debugging. As this function is unreliable anyway, the whole test
     // whether being locked or not has been put into a debug flag in a
@@ -399,10 +389,6 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
 
 
 
-
-
-
-
 // ////////////////////////////
 // ALARMS
 // ////////////////////////////
@@ -467,7 +453,6 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarm, double maxwaittime){
     return (result ? NA_FALSE : NA_TRUE);
   #endif
 }
-
 
 
 

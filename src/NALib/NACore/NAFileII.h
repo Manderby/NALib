@@ -188,11 +188,10 @@ NA_IDEF NAFile* naCreateFileReadingFilename(const char* filename){
   NAFile* file = naAlloc(NAFile);
   naInitRefCount(&(file->refcount));
   file->desc = naOpen(filename, NA_FILE_OPEN_FLAGS_READ, NA_FILEMODE_DEFAULT);
-  if(file->desc < 0){
-    #ifndef NDEBUG
+  #ifndef NDEBUG
+    if(file->desc < 0)
       naError("naInitFileReadingFilename", "Could not open file.");
-    #endif
-  }
+  #endif
   return file;
 }
 
@@ -202,11 +201,10 @@ NA_IDEF NAFile* naCreateFileWritingFilename(const char* filename, NAFileMode mod
   NAFile* file = naAlloc(NAFile);
   naInitRefCount(&(file->refcount));
   file->desc = naOpen(filename, NA_FILE_OPEN_FLAGS_WRITE, mode);
-  if(file->desc < 0){
-    #ifndef NDEBUG
+  #ifndef NDEBUG
+    if(file->desc < 0)
       naError("naInitFileWritingFilename", "Could not create file.");
-    #endif
-  }
+  #endif
   return file;
 }
 
@@ -216,11 +214,10 @@ NA_IDEF NAFile* naCreateFileAppendingFilename(const char* filename, NAFileMode m
   NAFile* file = naAlloc(NAFile);
   naInitRefCount(&(file->refcount));
   file->desc = naOpen(filename, NA_FILE_OPEN_FLAGS_APPEND, mode);
-  if(file->desc < 0){
-    #ifndef NDEBUG
+  #ifndef NDEBUG
+    if(file->desc < 0)
       naError("naInitFileAppendingFilename", "Could not create file.");
-    #endif
-  }
+  #endif
   return file;
 }
 

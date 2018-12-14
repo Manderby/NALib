@@ -3,33 +3,22 @@
 // Full license notice at the bottom.
 
 
-// This file contains inline implementations of the file NABuffer.h
-// Do not include this file directly! It will automatically be included when
-// including "NABuffer.h"
-
-
-#include "../NAList.h"
+#include "../../NABuffer.h"
 
 
 
-struct NABufferIterator{
-  NAPtr bufferptr;
-  NAInt curoffset;
-  uint8 curbit;             // The current bit number
-  NAUInt linenum;           // The line number, starting with 1.
-  NAListIterator listiter;
-  #ifndef NDEBUG
-    NABool mutator;
-  #endif
-};
+NA_HAPI void naDestructMemoryBlock(NAMemoryBlock* block);
+NA_RUNTIME_TYPE(NAMemoryBlock, naDestructMemoryBlock, NA_TRUE);
 
 
-#ifndef NDEBUG
-  // Returns true if the given ptr is the same as the first pointer of the
-  // buffer. This function is primarily for consistency check reasons and
-  // should not be misused.
-  NA_HAPI NABool naTestBufferFirstPointer(const NABuffer* buffer, const void* ptr);
-#endif
+
+NA_HDEF void naDestructMemoryBlock(NAMemoryBlock* block){
+  if(block->destructor){
+    block->destructor(naGetPtrMutable(&(block->data)));
+  }
+}
+
+
 
 
 // Copyright (c) NALib, Tobias Stamm

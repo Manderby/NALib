@@ -25,13 +25,11 @@
 
 
 // The various Endianness-Settings:
-#define NA_ENDIANNESS_UNKNOWN 0 // Behaves the same as native.
 #define NA_ENDIANNESS_LITTLE  1
 #define NA_ENDIANNESS_BIG     2
 #define NA_ENDIANNESS_NETWORK 2 // Same as BIG
-#define NA_ENDIANNESS_NATIVE  3
-#define NA_ENDIANNESS_HOST    3 // Same as NATIVE
-#define NA_ENDIANNESS_COUNT   4
+#define NA_ENDIANNESS_HOST    // Will be set further below to whatever this
+                              // hosts endianness is.
 // Note that when expecting the endianness as an argument, it will have the
 // type NAInt. Unfortunately, these macros can not be defined as enums.
 
@@ -46,7 +44,7 @@
 // Figuring out what system this is. The following macros will be defined:
 //
 // NA_OS                    One of the system macros above
-// NA_SYSTEM_ENDIANNESS     One of the endianness macros above
+// NA_ENDIANNESS_HOST       Either big or little, see macros above
 // NA_SYSTEM_ADDRESS_BITS   32 or 64. Denoting the number of bits per address.
 //
 // Currently, there are the following system configurations assumed:
@@ -62,7 +60,8 @@
 // In the future, there might be more or different macros
 #if defined _WIN32
   #define NA_OS NA_OS_WINDOWS
-  #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_LITTLE
+  #undef  NA_ENDIANNESS_HOST
+  #define NA_ENDIANNESS_HOST NA_ENDIANNESS_LITTLE
   #if defined _WIN64
     #define NA_SYSTEM_ADDRESS_BITS NA_TYPE64_BITS
   #else
@@ -72,29 +71,30 @@
 #elif defined __APPLE__ && __MACH__
   #define NA_OS NA_OS_MAC_OS_X
   #if defined __LITTLE_ENDIAN__
-    #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_LITTLE
+    #undef  NA_ENDIANNESS_HOST
+    #define NA_ENDIANNESS_HOST NA_ENDIANNESS_LITTLE
   #elif defined __BIG_ENDIAN__
-    #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_BIG
+    #undef  NA_ENDIANNESS_HOST
+    #define NA_ENDIANNESS_HOST NA_ENDIANNESS_BIG
   #endif
   #if defined __LP64__
     #define NA_SYSTEM_ADDRESS_BITS NA_TYPE64_BITS
   #else
     #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
   #endif
-  
+
 #else
-  #warning "System not detected"
+  #error "System not detected"
   #define NA_OS NA_OS_UNKNOWN
 #endif
 
 #ifndef NA_SYSTEM_ADDRESS_BITS
-  #warning "Address bits not detected, trying 32."
+  #error "Address bits not detected, trying 32."
   #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
 #endif
 
-#ifndef NA_SYSTEM_ENDIANNESS
-  #warning "Endian format not detected."
-  #define NA_SYSTEM_ENDIANNESS NA_ENDIANNESS_UNKNOWN
+#ifndef NA_ENDIANNESS_HOST
+  #error "Endian format of host not detected."
 #endif
 
 

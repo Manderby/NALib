@@ -63,7 +63,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
     #endif
     codelengthcount[tree->codelengths[a]]++;
   }
-  
+
 
   // Prepare the next bit codes per codelength
   code = 0;
@@ -80,7 +80,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
       nextcodes[a] = code;
     }
   }
-  
+
   // Compute the actual codes of the alphabet
   for(a = 0; a < tree->alphabetcount; a++) {
     if(tree->codelengths[a]){
@@ -92,7 +92,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
       nextcodes[tree->codelengths[a]]++;
     }
   }
-  
+
   // Create the tree out of the codes.
   #ifndef NDEBUG
     openends = 1;
@@ -227,7 +227,7 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
       break;
     }
   }
-  
+
   naBuildHuffmanCodeTree(alphabethuffman);
   return alphabethuffman;
 }
@@ -329,14 +329,14 @@ NA_HDEF void naReadDymanicHuffmanCodes(NABufferIterator* iter, NAHuffmanCodeTree
   uint16 hlit = (uint16)naReadBufferBits(iter, 5) + 257;
   uint8 hdist = (uint8)naReadBufferBits(iter, 5) + 1;
   uint8 hclen = (uint8)naReadBufferBits(iter, 4) + 4;
-  
+
 //  naAlloc(NABuffer);
   NAHuffmanCodeTree* codelengthhuffman = naAllocHuffmanCodeTree(19);
   for(c=0; c<hclen; c++){
     codelengthhuffman->codelengths[codeorder[c]] = (uint16)naReadBufferBits(iter, 3);
   }
   naBuildHuffmanCodeTree(codelengthhuffman);
-  
+
   *literalhuffman = naReadCodeLengthHuffman(codelengthhuffman, iter, hlit);
   *distancehuffman = naReadCodeLengthHuffman(codelengthhuffman, iter, hdist);
 
@@ -349,7 +349,7 @@ NA_HDEF void naReadDymanicHuffmanCodes(NABufferIterator* iter, NAHuffmanCodeTree
 
 NA_HDEF void naAllocFixedHuffmanCodes(NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman){
   uint16 i;
-  
+
   *literalhuffman = naAllocHuffmanCodeTree(288);
   for(i=0; i<=143; i++){
     (*literalhuffman)->codelengths[i] = 8;
@@ -401,9 +401,9 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   NAInt zbuffersize = naGetBufferRange(input).length - 6;
   // The 6 Bytes are the CMF and FLG Bytes as well as the Adler number.
   // If there is a DICTID, zbuffersize will be reduced by 4 more bytes later.
-  
+
   iterin = naMakeBufferAccessor(input);
-  
+
   #ifndef NDEBUG
     if(naGetBufferEndianness(input) != NA_ENDIANNESS_NETWORK)
       naError("naInitBufferFromDeflateDecompression", "Input buffer should be big endianed");
@@ -443,20 +443,20 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   }
   NA_UNUSED(dictadler);
 
-  zbuffer = naNewBufferExtraction(input, naMakeRangei(naTellBuffer(&iterin), zbuffersize));
-  naSeekBufferRelative(&iterin, zbuffersize);
+  zbuffer = naNewBufferExtraction(input, naGetBufferLocation(&iterin), zbuffersize);
+  naLocateBufferRelative(&iterin, zbuffersize);
   zbufferadler = naReadBufferu32(&iterin);
-  
+
   naClearBufferIterator(&iterin);
-  
+
   // Now start RFC 1951
 
   // Important! RFC 1951 is Little-endianed, whereas RFC 1950 is big endianed!
   naSetBufferEndianness(zbuffer, NA_ENDIANNESS_LITTLE);
-  
+
   iterout = naMakeBufferModifier(output);
   iterz = naMakeBufferModifier(zbuffer);
-  
+
   while(1){
     NAByte isblockfinal = (NAByte)naReadBufferBits(&iterz, 1);
     NAByte blocktype = (NAByte)naReadBufferBits(&iterz, 2);
@@ -497,7 +497,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
       // Now, we have the literal and distance codes. Start reading until we
       // find the value 256.
       while(1){
-      
+
         uint16 curcode;
         uint16 length;
         uint16 dist;
@@ -514,23 +514,23 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
           naRepeatBufferBytes(&iterout, dist, length);
         }
       }
-      
+
       naDeallocHuffmanCodeTree(literalhuffman);
       naDeallocHuffmanCodeTree(distancehuffman);
     }
     if(isblockfinal){break;}
   }
-  
+
   naClearBufferIterator(&iterout);
   naClearBufferIterator(&iterz);
   naRelease(zbuffer);
-  
+
   naFixBufferRange(output);
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_ADLER_32);
-  naAccumulateBufferToChecksum(output, &checksum);
+  naAccumulateChecksumBuffer(&checksum, output);
   adler = naGetChecksumResult(&checksum);
   naClearChecksum(&checksum);
-  
+
   #ifndef NDEBUG
     if(adler != zbufferadler)
       naError("naInitBufferFromDeflateDecompression", "Adler code does not correspond to decompression result");
@@ -572,10 +572,10 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, N
   // Now, for the actual content, we change to little endian due to RFC 1951!
   naSetBufferEndianness(output, NA_ENDIANNESS_LITTLE);
   // todo: this should be in a separate buffer.
-  
+
   bytesize = naGetBufferRange(input).length;
-//  naSeekBufferAbsolute(input, 0);
-  
+//  naLocateBufferAbsolute(input, 0);
+
   curoffset = 0;
   while(bytesize > 0){
     uint16 curbytesize;
@@ -593,14 +593,14 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, N
     bytesize -= curbytesize;
     curoffset += curbytesize;
   }
-  
+
   // We write the adler number. Note that this must be in network byte order
   // again as it belongs to RFC 1950!
   // todo: this should be in a separate buffer.
   naSetBufferEndianness(output, NA_ENDIANNESS_NETWORK);
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_ADLER_32);
-//  naSeekBufferAbsolute(input, 0);
-  naAccumulateBufferToChecksum(input, &checksum);
+//  naLocateBufferAbsolute(input, 0);
+  naAccumulateChecksumBuffer(&checksum, input);
   adler = naGetChecksumResult(&checksum);
   naClearChecksum(&checksum);
   naWriteBufferu32(&iterout, adler);

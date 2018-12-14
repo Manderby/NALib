@@ -25,13 +25,15 @@
     NA_IDEF NAInt64 naMakeInt64WithDouble(double d){
       return naGetDoubleInteger(d);
     }
-    
-    
-    
+
+
+
     #undef naIncInt64
     #define naIncInt64(i) (i.hi += (i.lo == 0xffffffff), i.lo += 1, i)
     #undef naDecInt64
     #define naDecInt64(i) (i.hi -= (i.lo == 0x00000000), i.lo -= 1, i)
+
+
 
     NA_IDEF NAInt64 naNegInt64(NAInt64 i){
       NAInt64 retint = naNotInt64(i);
@@ -83,9 +85,9 @@
       if(!naEqualInt64(signa, NA_ONE_64)){retint = naNegInt64(retint);}
       return retint;
     }
-    
-    
-    
+
+
+
     NA_IDEF NAInt64 naNotInt64(NAInt64 i){
       return naCastUInt64ToInt64(naNotUInt64(naCastInt64ToUInt64(i)));
     }
@@ -119,9 +121,9 @@
       }
       return retint;
     }
-    
 
-    
+
+
     NA_IDEF NABool naEqualInt64(NAInt64 a, NAInt64 b){
       return naEqualUInt64(naCastInt64ToUInt64(a), naCastInt64ToUInt64(b));
     }
@@ -137,7 +139,7 @@
     NA_IDEF NABool naSmallerEqualInt64(NAInt64 a, NAInt64 b){
       return ((a.hi < b.hi) || ((a.hi == b.hi) && ((a.hi < 0) ? (a.lo >= b.lo) : (a.lo <= b.lo))));
     }
-    
+
 
 
     NA_IDEF uint8 naCastInt64ToUInt8(NAInt64 i){
@@ -173,11 +175,13 @@
 
 
     #undef naMakeUInt64WithLiteralLo
-    #if NA_SYSTEM_ENDIANNESS == NA_ENDIANNESS_BIG
+    #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
       #define naMakeUInt64WithLiteralLo(lo)  {0,(lo)}
     #else
       #define naMakeUInt64WithLiteralLo(lo)  {(lo),0}
     #endif
+
+
 
     NA_IDEF NAUInt64 naMakeUInt64(uint32 hi, uint32 lo){
       NAUInt64 retint;
@@ -198,13 +202,15 @@
       retint.lo = (uint32)(d - ((double)retint.hi * naMakeDoubleWithExponent(32)));
       return retint;
     }
-    
-    
-    
+
+
+
     #undef naIncUInt64
     #define naIncUInt64(i) (i.hi += (i.lo == 0xffffffff), i.lo += 1, i)
     #undef naDecUInt64
     #define naDecUInt64(i) (i.hi -= (i.lo == 0x00000000), i.lo -= 1, i)
+
+
 
     NA_IDEF NAUInt64 naAddUInt64(NAUInt64 a, NAUInt64 b){
       NAUInt64 retint;
@@ -218,7 +224,7 @@
     }
     NA_IDEF NAUInt64 naMulUInt64(NAUInt64 a, NAUInt64 b){
       NAUInt64 retint = NA_ZERO_64u;
-      
+
       uint32 a0 = a.lo & ((1<<16)-1);
       uint32 a1 = a.lo >> 16;
       uint32 a2 = a.hi & ((1<<16)-1);
@@ -227,7 +233,7 @@
       uint32 b1 = b.lo >> 16;
       uint32 b2 = b.hi & ((1<<16)-1);
       uint32 b3 = b.hi >> 16;
-      
+
       retint.lo += a0 * b0;
       retint.lo += (a0 * b1) << 16;
       retint.hi += (a0 * b1) >> 16;
@@ -243,7 +249,7 @@
       retint.hi += (a2 * b1) << 16;
 
       retint.hi += (a3 * b0) << 16;
-      
+
       return retint;
     }
     NA_HIDEF void naComputeUInt64Division(NAUInt64 a, NAUInt64 b, NAUInt64* div, NAUInt64* rem){
@@ -253,36 +259,44 @@
       NAUInt64 highestbitb;
       *div = NA_ZERO_64u;
       *rem = a;
-      if(naEqualUInt64(b, NA_ZERO_64u)){return;}
-      
-      // search for the highest bit of b.
-      highestbita = naMakeUInt64(NA_VALUE32_SIGN_MASK, 0x0);
-      while(!naEqualUInt64(naAndUInt64(a, highestbita), highestbita)){
-        highestbita = naShrUInt64(highestbita, 1);
-      }
-      highestbitb = naMakeUInt64(NA_VALUE32_SIGN_MASK, 0x0);
-      while(!naEqualUInt64(naAndUInt64(b, highestbitb), highestbitb)){
-        highestbitb = naShrUInt64(highestbitb, 1);
-      }
-      
-      tmpb = b;
-      shiftcount = 0;
-      // Make the dividend big enough
-      while(!naEqualUInt64(highestbita, highestbitb)){
-        if(naEqualUInt64(tmpb, NA_ZERO_64u)){return;}
-        tmpb = naShlUInt64(tmpb, 1);
-        highestbitb = naShlUInt64(highestbitb, 1);
-        shiftcount++;
-      }
-      
-      while(shiftcount >= 0){
-        *div = naShlUInt64(*div, 1);
-        if(naGreaterEqualUInt64(*rem, tmpb)){
-          *div = naOrUInt64(*div, NA_ONE_64u);
-          *rem = naSubUInt64(*rem, tmpb);
+      if(naEqualUInt64(b, NA_ZERO_64u)){
+        #ifndef NDEBUG
+          naCrash("naComputeUInt64Division", "Integer Division by 0");
+        #endif
+      }else{
+        // search for the highest bit of b.
+        highestbita = naMakeUInt64(NA_VALUE32_SIGN_MASK, 0x0);
+        while(!naEqualUInt64(naAndUInt64(a, highestbita), highestbita)){
+          highestbita = naShrUInt64(highestbita, 1);
         }
-        tmpb = naShrUInt64(tmpb, 1);
-        shiftcount--;
+        highestbitb = naMakeUInt64(NA_VALUE32_SIGN_MASK, 0x0);
+        while(!naEqualUInt64(naAndUInt64(b, highestbitb), highestbitb)){
+          highestbitb = naShrUInt64(highestbitb, 1);
+        }
+
+        tmpb = b;
+        shiftcount = 0;
+        // Make the dividend big enough
+        while(!naEqualUInt64(highestbita, highestbitb)){
+          if(naEqualUInt64(tmpb, NA_ZERO_64u)){
+            // b is larger than a and hence the result is zero.
+            shiftcount = 0;
+            break;
+          }
+          tmpb = naShlUInt64(tmpb, 1);
+          highestbitb = naShlUInt64(highestbitb, 1);
+          shiftcount++;
+        }
+
+        while(shiftcount >= 0){
+          *div = naShlUInt64(*div, 1);
+          if(naGreaterEqualUInt64(*rem, tmpb)){
+            *div = naOrUInt64(*div, NA_ONE_64u);
+            *rem = naSubUInt64(*rem, tmpb);
+          }
+          tmpb = naShrUInt64(tmpb, 1);
+          shiftcount--;
+        }
       }
     }
     NA_IDEF NAUInt64 naDivUInt64(NAUInt64 a, NAUInt64 b){
@@ -297,9 +311,9 @@
       naComputeUInt64Division(a, b, &divint, &remint);
       return remint;
     }
-    
-    
-    
+
+
+
     NA_IDEF NAUInt64  naNotUInt64(NAUInt64 i){
       NAUInt64 retint;
       retint.hi = ~i.hi;
@@ -353,9 +367,9 @@
       }
       return retint;
     }
-    
-    
-    
+
+
+
     NA_IDEF NABool naEqualUInt64(NAUInt64 a, NAUInt64 b){
       return ((a.hi == b.hi) && (a.lo == b.lo));
     }
@@ -371,9 +385,9 @@
     NA_IDEF NABool naSmallerEqualUInt64(NAUInt64 a, NAUInt64 b){
       return ((a.hi < b.hi) || ((a.hi == b.hi) && (a.lo <= b.lo)));
     }
-    
-    
-    
+
+
+
     NA_IDEF int8 naCastUInt64ToInt8(NAUInt64 i){
       return (int8)i.lo;
     }
@@ -403,8 +417,8 @@
     }
 
 
-  #endif
-#endif
+  #endif // NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+#endif // !defined NA_TYPE_INT64
 
 
 // Copyright (c) NALib, Tobias Stamm

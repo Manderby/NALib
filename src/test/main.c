@@ -9,6 +9,7 @@
 // This file should compile and run and print some version notes on the screen.
 //
 
+
 #include "../NALib/NABase.h"
 #include <stdio.h>
 
@@ -22,9 +23,10 @@ int main(void){
   printf("%d Bits Addresses, %d Bits Integers)\n", NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
   #if NA_OS == NA_OS_WINDOWS
-   NA_UNUSED(getchar());
+    printf("Finished.\n");
+    NA_UNUSED(getchar());
   #endif
-  
+
   return 0;
 }
 

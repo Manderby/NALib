@@ -4,7 +4,7 @@
 
 #ifndef NA_HELPER_INCLUDED
 #define NA_HELPER_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -59,7 +59,7 @@ NA_HIAPI NAInt  naMakeLengthWithMinAndMaxi   (NAInt  min,   NAInt  max);
 
 NA_HIAPI NAInt  naMakeIntWithIntegerFloat    (float x);
 NA_HIAPI NAInt  naMakeIntWithIntegerDouble   (double x);
-    
+
 
 // The following functions are mostly used in other datastructures such as
 // NARect and NARange. They define the default semantics against which values
@@ -70,14 +70,17 @@ NA_HIAPI NAInt  naMakeIntWithIntegerDouble   (double x);
 NA_HIAPI NABool naIsOffsetValueValid  (double a);
 NA_HIAPI NABool naIsOffsetValueValidf (float  a);
 NA_HIAPI NABool naIsOffsetValueValidi (NAInt  a);
+NA_HIAPI NABool naIsOffsetValueValidu (NAUInt a);
 NA_HIAPI NABool naIsLengthValueValid  (double a);
 NA_HIAPI NABool naIsLengthValueValidf (float  a);
 NA_HIAPI NABool naIsLengthValueValidi (NAInt  a);
+NA_HIAPI NABool naIsLengthValueValidu (NAUInt a);
 
 // EMPTY means: Precisely Zero.
 NA_HIAPI NABool naIsLengthValueEmpty  (double a);
 NA_HIAPI NABool naIsLengthValueEmptyf (float  a);
 NA_HIAPI NABool naIsLengthValueEmptyi (NAInt  a);
+NA_HIAPI NABool naIsLengthValueEmptyu (NAUInt a);
 
 // NEGATIVE means: Smaller than Zero.
 //
@@ -92,58 +95,18 @@ NA_HIAPI NABool naIsLengthValueEmptyi (NAInt  a);
 NA_HIAPI NABool naIsLengthValueNegative  (double a);
 NA_HIAPI NABool naIsLengthValueNegativef (float  a);
 NA_HIAPI NABool naIsLengthValueNegativei (NAInt  a);
+NA_HIAPI NABool naIsLengthValueNegativeu (NAUInt a);
 
 // USEFUL means: Positions must be valid. Lengths must be valid, not empty and
 // not negative.
 NA_HIAPI NABool naIsOffsetValueUseful  (double a);
 NA_HIAPI NABool naIsOffsetValueUsefulf (float  a);
 NA_HIAPI NABool naIsOffsetValueUsefuli (NAInt  a);
+NA_HIAPI NABool naIsOffsetValueUsefulu (NAUInt a);
 NA_HIAPI NABool naIsLengthValueUseful  (double a);
 NA_HIAPI NABool naIsLengthValueUsefulf (float  a);
 NA_HIAPI NABool naIsLengthValueUsefuli (NAInt  a);
-
-
-// This function alters the given origin and length such that length will become
-// positive while retaining the depicted range. For example with doubles:
-// origin = 3. and length = -2. will become origin = 1. and length = 2. The resulting
-// range starts at 1. and ends at 1. + 2. = 3.
-// Note: When using integers, the end must be computed with -1. Therefore
-// the result differs:
-// origin = 3 and length = -2 will become origin = 2 and length = 2. The resulting
-// range starts at 2 and ends at (2 + 2) - 1 = 3
-// If length already was positive, nothing will be changed.
-NA_HIAPI void naMakePositive      (double* NA_RESTRICT origin,
-                                   double* NA_RESTRICT length);
-NA_HIAPI void naMakePositivei     (NAInt*  NA_RESTRICT origin,
-                                   NAInt*  NA_RESTRICT length);
-
-
-NA_HIAPI NAInt naMakeIndexPositive(NAInt indx, NAInt length);
-
-
-// This function returns a pair of positive integers (positiveorigin,positivesize)
-// out of a possibly negative pair (pos,length) such that the resulting range
-// will be fully contained in a range given by [0, containingsize-1].
-// Negative values are treated as follows and in the following order:
-// - if origin is negative, it denotes the number of units from the end.
-//   For integers, origin -1 therefore corresponds to length-1.
-// - If the length is now 0, the function will return.
-// - if length is negative, it denotes the length up and including to the given
-//   number of units from the end, meaning -1 denotes the last unit.
-// - if the origin and length combination somehow leads to a resulting length of
-//   exactly 0, the resulting range will be empty without a warning emitted.
-// - If the origin and length combination somehow leads to an over- or underflow,
-//   a warning will be emitted if NDEBUG is defined. The resulting range will
-//   be empty.
-NA_HIAPI void naMakeIntegerRangePositiveInLength(
-                                    NAInt* NA_RESTRICT  positiveorigin,
-                                    NAInt* NA_RESTRICT  positivesize,
-                                    NAInt               origin,
-                                    NAInt               length,
-                                    NAInt               containinglength);
-// This function is declared as a helper function. It is used by some core
-// implementations of NAByteArray. It seems much more useful in this file
-// though.
+NA_HIAPI NABool naIsLengthValueUsefulu (NAUInt a);
 
 
 // Returns a value which is the given x floored to a multiple of
@@ -300,6 +263,8 @@ NA_HIDEF NAInt naMakeLengthWithMinAndMaxi(NAInt min, NAInt max){
 
 
 
+#include "../NAMathOperators.h"
+
 NA_HIDEF NAInt naMakeIntWithIntegerFloat(float x){
   #ifndef NDEBUG
     if(naRoundf(x) != x)
@@ -327,6 +292,15 @@ NA_HIDEF NABool naIsOffsetValueValidi(NAInt a){
   NA_UNUSED(a);
   return NA_TRUE;
 }
+NA_HIDEF NABool naIsOffsetValueValidu(NAUInt a){
+  #ifndef NDEBUG
+    if((NAInt)a < 0)
+      naError("naIsOffsetValueValidu", "Unsigned integer looks like a negative number");
+  #else
+    NA_UNUSED(a);
+  #endif
+  return NA_TRUE;
+}
 
 NA_HIDEF NABool naIsLengthValueValid(double a){
   return !naIsNaN(a);
@@ -338,6 +312,15 @@ NA_HIDEF NABool naIsLengthValueValidi(NAInt a){
   NA_UNUSED(a);
   return NA_TRUE;
 }
+NA_HIDEF NABool naIsLengthValueValidu(NAUInt a){
+  #ifndef NDEBUG
+    if((NAInt)a < 0)
+      naError("naIsLengthValueValidu", "Unsigned integer looks like a negative number");
+  #else
+    NA_UNUSED(a);
+  #endif
+  return NA_TRUE;
+}
 
 NA_HIDEF NABool naIsLengthValueEmpty(double a){
   return (a == 0.);
@@ -346,6 +329,13 @@ NA_HIDEF NABool naIsLengthValueEmptyf(float a){
   return (a == 0.f);
 }
 NA_HIDEF NABool naIsLengthValueEmptyi(NAInt a){
+  return (a == 0);
+}
+NA_HIDEF NABool naIsLengthValueEmptyu(NAUInt a){
+  #ifndef NDEBUG
+    if((NAInt)a < 0)
+      naError("naIsLengthValueEmptyu", "Unsigned integer looks like a negative number");
+  #endif
   return (a == 0);
 }
 
@@ -359,6 +349,15 @@ NA_HIDEF NABool naIsLengthValueNegativef(float a){
 NA_HIDEF NABool naIsLengthValueNegativei(NAInt a){
   return (a < 0);
 }
+NA_HIDEF NABool naIsLengthValueNegativeu(NAUInt a){
+  #ifndef NDEBUG
+    if((NAInt)a < 0)
+      naError("naIsLengthValueNegativeu", "Unsigned integer looks like a negative number");
+  #else
+    NA_UNUSED(a);
+  #endif
+  return NA_FALSE;
+}
 
 
 NA_HIDEF NABool naIsOffsetValueUseful(double a){
@@ -369,6 +368,15 @@ NA_HIDEF NABool naIsOffsetValueUsefulf(float a){
 }
 NA_HIDEF NABool naIsOffsetValueUsefuli(NAInt a){
   NA_UNUSED(a);
+  return NA_TRUE;
+}
+NA_HIDEF NABool naIsOffsetValueUsefulu(NAUInt a){
+  #ifndef NDEBUG
+    if((NAInt)a < 0)
+      naError("naIsOffsetValueUsefulu", "Unsigned integer looks like a negative number");
+  #else
+    NA_UNUSED(a);
+  #endif
   return NA_TRUE;
 }
 
@@ -384,104 +392,23 @@ NA_HIDEF NABool naIsLengthValueUsefulf(float a){
 NA_HIDEF NABool naIsLengthValueUsefuli(NAInt a){
   return (a > 0);
 }
-
-
-
-NA_HIDEF void naMakePositive(double* NA_RESTRICT origin, double* NA_RESTRICT length){
-  if(*length < 0.){
-    *origin = *origin + *length;
-    *length = -*length;
-  }
-}
-
-
-NA_HIDEF void naMakePositivei(NAInt* NA_RESTRICT origin, NAInt* NA_RESTRICT length){
-  if(*length < 0){
-    *origin = *origin + *length + 1; // important + 1 !
-    *length = -*length;
-  }
-}
-
-
-
-NA_HIDEF NAInt naMakeIndexPositive(NAInt indx, NAInt length){
+NA_HIDEF NABool naIsLengthValueUsefulu(NAUInt a){
   #ifndef NDEBUG
-    if(length < 0)
-      naError("naMakeIndexPositive", "length should not be negative");
+    if((NAInt)a < 0)
+      naError("naIsLengthValueUsefulu", "Unsigned integer looks like a negative number");
   #endif
-  if(indx < 0){
-    indx += length;
-    #ifndef NDEBUG
-      if(indx < 0)
-        naError("naMakeIndexPositive", "positive index is not positive");
-      if(indx >= length)
-        naError("naMakeIndexPositive", "positive index overflows length");
-    #endif
-  }
-  return indx;
+  return (a > 0);
 }
-
-
-
-NA_HIDEF void naMakeIntegerRangePositiveInLength(NAInt* NA_RESTRICT positiveorigin, NAInt* NA_RESTRICT positivesize, NAInt origin, NAInt length, NAInt containinglength){
-  // First, we ensure that pos is withing the containing range. After that
-  // we will look at the length parameter.
-  NAInt remainingsize = containinglength - origin;
-  if(origin < 0){
-    origin += containinglength;
-    remainingsize -= containinglength;
-  }
-  if(remainingsize < 0){
-    #ifndef NDEBUG
-      naError("naMakeIntegerRangePositiveInLength", "Invalid origin leads to range overflow. Correcting to empty range.");
-    #endif
-    *positiveorigin = 0;
-    *positivesize = 0;
-  }else if(remainingsize > containinglength){
-    #ifndef NDEBUG
-      naError("naMakeIntegerRangePositiveInLength", "Invalid pos leads to range underflow. Correcting to empty range.");
-    #endif
-    *positiveorigin = 0;
-    *positivesize = 0;
-  }else{
-    *positiveorigin = origin;
-    // The pos is positive. Now, adjust the size.
-    if(length < 0){ // negative size parameter
-      length = remainingsize + length + 1;  // Important + 1 !
-      if(length < 0){
-        // When the resulting size is smaller than 0, underflow.
-        #ifndef NDEBUG
-          naError("naMakeIntegerRangePositiveInLength", "Invalid size leads to range underflow. Correcting to empty range.");
-        #endif
-        *positiveorigin = 0;
-        *positivesize = 0;
-      }else{
-        *positivesize = length;
-      }
-    }else{ // positive or 0 size parameter
-      if(length > remainingsize){
-        // When the desired size is bigger than the size available, overflow.
-        #ifndef NDEBUG
-          naError("naMakeIntegerRangePositiveInLength", "Invalid size leads to range overflow. Correcting to empty range.");
-        #endif
-        *positiveorigin = 0;
-        *positivesize = 0;
-      }else{
-        *positivesize = length;
-      }
-    }
-  }
-}
-
 
 
 
 NA_HIDEF NAInt naAlignValuei(NAInt x, NAInt offset, NAInt alignlength){
+  NAInt shiftx;
   #ifndef NDEBUG
     if(!naIsLengthValueUsefuli(alignlength))
       naError("naAlignValuei", "Invalid size leads to range overflow. Correcting to empty range.");
   #endif
-  NAInt shiftx = x - offset;
+  shiftx = x - offset;
   if(shiftx < 0){
     return (((NAInt)((shiftx + 1) / alignlength) - 1) * alignlength) + offset;
   }else{
@@ -489,17 +416,18 @@ NA_HIDEF NAInt naAlignValuei(NAInt x, NAInt offset, NAInt alignlength){
   }
 }
 NA_HIDEF double naAlignValued(double x, double offset, double alignlength){
+  double shiftx;
   #ifndef NDEBUG
     if(!naIsLengthValueUseful(alignlength))
       naError("naAlignValued", "Invalid size leads to range overflow. Correcting to empty range.");
   #endif
-  double shiftx = x - offset;
+  shiftx = x - offset;
   return ((naFloor((shiftx) / alignlength)) * alignlength) + offset;
 }
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_HELPER_INCLUDED

@@ -4,7 +4,7 @@
 
 #ifndef NA_CIRCULAR_BUFFER_INCLUDED
 #define NA_CIRCULAR_BUFFER_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -51,7 +51,7 @@ void naPushCircularBuffer(NACircularBuffer* buffer, void* newdata);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_CIRCULAR_BUFFER_INCLUDED

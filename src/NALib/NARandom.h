@@ -4,7 +4,7 @@
 
 #ifndef NA_RANDOM_INCLUDED
 #define NA_RANDOM_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -58,7 +58,7 @@ NA_IAPI float  naUniformRandZIf(void);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_RANDOM_INCLUDED

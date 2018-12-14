@@ -4,7 +4,7 @@
 
 #ifndef NA_THREADING_INCLUDED
 #define NA_THREADING_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -139,7 +139,7 @@ NA_IAPI void naTriggerAlarm(NAAlarm alarm);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_THREADING_INCLUDED

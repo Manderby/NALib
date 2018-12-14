@@ -22,19 +22,14 @@ struct NAQuadTree{
 
 struct NAQuadTreeIterator{
   NAPtr tree;
-  NAQuadTreeNode* curnode;
-  NAInt cursegment;
-  NAPos leaforigin;
-  NAInt flags;
+  NAQuadTreeNode* node; // Denotes the node currently visiting
+  int16 childsegment;   // Denotes the child segment currently visiting.
+  NAPos pos;            // Denotes the exact position which was requested.
+  #ifndef NDEBUG
+    NAInt flags;
+  #endif
 };
 
-
-
-
-NA_HIDEF NASize naGetQuadTreeSizeWithExponent(NAInt exponent){
-  // todo
-  return naMakeSize(1 << exponent, 1 << exponent);
-}
 
 
 
@@ -44,60 +39,28 @@ NA_IDEF NABool naIsQuadTreeEmpty(const NAQuadTree* tree){
 
 
 
-NA_IDEF NAInt naGetQuadTreeMinLeafExponent(const NAQuadTree* tree){
-  return tree->configuration.minleafexponent;
-}
-
-
-
-NA_IDEF NAPos naGetQuadTreeAlignedCoord(NAInt leafexponent, NAPos coord){
-  NARect leafalign = naMakeRect(naMakePos(0, 0), naGetQuadTreeSizeWithExponent(leafexponent));
-  NAPos retpos = naMakePosWithAlignment(coord, leafalign);
-  return retpos;
-}
-
-
-
-NA_IDEF NAQuadTreeConfiguration naGetQuadTreeConfiguration(const NAQuadTree* tree){
-  return tree->configuration;
-}
-
-
-
 #undef naBeginQuadTreeAccessorIteration
-#define naBeginQuadTreeAccessorIteration(typedelem, quadtree, limit, create, iter)\
+#define naBeginQuadTreeAccessorIteration(typedelem, quadtree, limit, iter)\
   iter = naMakeQuadTreeAccessor(quadtree);\
-  while(naIterateQuadTree(&iter, limit, create)){\
+  while(naIterateQuadTree(&iter, limit)){\
     typedelem = naGetQuadTreeCurConst(&iter)
 
 #undef naBeginQuadTreeMutatorIteration
-#define naBeginQuadTreeMutatorIteration(typedelem, quadtree, limit, create, iter)\
+#define naBeginQuadTreeMutatorIteration(typedelem, quadtree, limit, iter)\
   iter = naMakeQuadTreeMutator(quadtree);\
-  while(naIterateQuadTree(&iter, limit, create)){\
-    typedelem = naGetQuadTreeCurMutable(&iter, create)
+  while(naIterateQuadTree(&iter, limit)){\
+    typedelem = naGetQuadTreeCurMutable(&iter, NA_FALSE)
 
 #undef naBeginQuadTreeModifierIteration
-#define naBeginQuadTreeModifierIteration(typedelem, quadtree, limit, create, iter)\
+#define naBeginQuadTreeModifierIteration(typedelem, quadtree, limit, iter)\
   iter = naMakeQuadTreeModifier(quadtree);\
-  while(naIterateQuadTree(&iter, limit, create)){\
-    typedelem = naGetQuadTreeCurMutable(&iter, create)
+  while(naIterateQuadTree(&iter, limit)){\
+    typedelem = naGetQuadTreeCurMutable(&iter, NA_FALSE)
 
 #undef naEndQuadTreeIteration
 #define naEndQuadTreeIteration(iter)\
   }\
   naClearQuadTreeIterator(&iter)
-
-
-
-NA_HIDEF void naInitQuadTreeIterator(NAQuadTreeIterator* iter){
-  #ifndef NDEBUG
-    NAQuadTree* mutabletree = (NAQuadTree*)naGetPtrConst(&(iter->tree));
-    mutabletree->itercount++;
-  #endif
-  iter->curnode = NA_NULL;
-  iter->cursegment= -1;
-  iter->flags = 0;
-}
 
 
 

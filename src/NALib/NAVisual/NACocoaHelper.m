@@ -12,14 +12,14 @@
 
 #include "NAUICocoa.h"
 
-
 #ifdef __OBJC__
 #if NA_OS == NA_OS_MAC_OS_X
-// Now, we are sure, we compile with Objective-C and on MacOSX. The two
+// Now, we are sure, we compile with Objective-C and on MacOSX. The
 // #if directives will be closed at the very bottom of this file.
 
-#import <Cocoa/Cocoa.h>
+
 #include "NAString.h"
+#import <Cocoa/Cocoa.h>
 
 
 NA_DEF NSString* naAllocNSStringWithNAString(const NAString* string){
@@ -31,6 +31,7 @@ NA_DEF NSString* naAllocNSStringWithNAString(const NAString* string){
 
 #endif // NA_OS == NA_OS_MAC_OS_X
 #endif // __OBJC__
+
 
 // Copyright (c) NALib, Tobias Stamm
 //

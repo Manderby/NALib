@@ -1,4 +1,4 @@
- 
+
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
@@ -14,13 +14,13 @@
 
   void naError(const char* functionsymbol, const char* text){
     fprintf(stderr, "Error in %s: %s", functionsymbol, text);
-    
+
     // //////////////////////////
     // Set a breakpoint in the following line to debug.
     // //////////////////////////
-    
+
     fprintf(stderr, NA_NL);
-    
+
     // //////////////////////////
   }
 

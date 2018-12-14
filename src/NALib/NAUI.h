@@ -4,7 +4,7 @@
 
 #ifndef NA_UI_INCLUDED
 #define NA_UI_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -498,7 +498,7 @@ typedef NAUInt NAUIKeyCode;
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_UI_INCLUDED

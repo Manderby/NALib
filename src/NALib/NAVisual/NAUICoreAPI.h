@@ -4,7 +4,7 @@
 
 #ifndef NA_UI_CORE_API_INCLUDED
 #define NA_UI_CORE_API_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -195,7 +195,7 @@ NA_HAPI void naSetMouseExitedAtPos(NAPos newpos);
 #endif //(NA_CONFIG_COMPILE_GUI == 1)
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_UI_CORE_API_INCLUDED

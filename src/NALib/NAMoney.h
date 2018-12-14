@@ -4,7 +4,7 @@
 
 #ifndef NA_MONEY_INCLUDED
 #define NA_MONEY_INCLUDED
-#ifdef __cplusplus 
+#ifdef __cplusplus
   extern "C"{
 #endif
 
@@ -25,7 +25,7 @@ NA_IAPI NAMoney naNegMoney(NAMoney money);
 NA_IAPI NAMoney naAddMoney(NAMoney moneyA, NAMoney moneyB);
 NA_IAPI NAMoney naSubMoney(NAMoney moneyA, NAMoney moneyB);
 
-NA_IAPI NAString* naNewStringWithMoney(NAMoney money);
+NA_API  NAString* naNewStringWithMoney(NAMoney money);
 
 
 
@@ -38,7 +38,7 @@ NA_IAPI NAString* naNewStringWithMoney(NAMoney money);
 
 
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
   } // extern "C"
 #endif
 #endif // NA_MONEY_INCLUDED
