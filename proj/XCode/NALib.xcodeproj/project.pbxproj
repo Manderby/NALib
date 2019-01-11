@@ -176,6 +176,20 @@
 		9087F70B1E2C313C00867CA7 /* treetest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = treetest.c; sourceTree = "<group>"; };
 		90B456451BC80AD300A53BDC /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		90BC6ECA2098A38D00CBD0FD /* int64test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = int64test.c; sourceTree = "<group>"; };
+		90CB7AFA21E875F500607FE3 /* NAVectorFiller.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAVectorFiller.h; sourceTree = "<group>"; };
+		90CB7AFB21E8771200607FE3 /* NAVectorBaseOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAVectorBaseOperations.h; sourceTree = "<group>"; };
+		90CB7AFC21E877F000607FE3 /* NAVectorComponentwise.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAVectorComponentwise.h; sourceTree = "<group>"; };
+		90CB7AFD21E8790000607FE3 /* NAVectorComparison.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAVectorComparison.h; sourceTree = "<group>"; };
+		90CB7AFE21E8794400607FE3 /* NAVectorProducts.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAVectorProducts.h; sourceTree = "<group>"; };
+		90CB7AFF21E8799F00607FE3 /* NAVectorGeometry.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAVectorGeometry.h; sourceTree = "<group>"; };
+		90CB7B0021E87A5600607FE3 /* NAMatrixFiller.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAMatrixFiller.h; sourceTree = "<group>"; };
+		90CB7B0121E87AB700607FE3 /* NAMatrixBaseOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAMatrixBaseOperations.h; sourceTree = "<group>"; };
+		90CB7B0221E87B5E00607FE3 /* NAMatrixComponentwise.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAMatrixComponentwise.h; sourceTree = "<group>"; };
+		90CB7B0321E9049700607FE3 /* NAMatrixMultiplication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAMatrixMultiplication.h; sourceTree = "<group>"; };
+		90CB7B0421E9055800607FE3 /* NAMatrixComparison.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAMatrixComparison.h; sourceTree = "<group>"; };
+		90CB7B0521E905B300607FE3 /* NAMatrixAlgebraOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAMatrixAlgebraOperations.h; sourceTree = "<group>"; };
+		90CB7B0621E9064400607FE3 /* NAHomogeneousCoordinates.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAHomogeneousCoordinates.h; sourceTree = "<group>"; };
+		90CB7B0721E9068D00607FE3 /* NAMatrixRotations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAMatrixRotations.h; sourceTree = "<group>"; };
 		90D4A22620BB3E3500171E61 /* todo.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = todo.txt; sourceTree = "<group>"; };
 		90D4A22720BB3E3500171E61 /* NALibChangelogV20_V30.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = NALibChangelogV20_V30.txt; sourceTree = "<group>"; };
 		90D4A22820BB3E3500171E61 /* documentation.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = documentation.txt; sourceTree = "<group>"; };
@@ -250,22 +264,22 @@
 		905CC08B21C24431002861BC /* NAStruct */ = {
 			isa = PBXGroup;
 			children = (
-				905CC08C21C24431002861BC /* NAStringII.h */,
-				905CC08D21C24431002861BC /* NABuffer */,
-				905CC0A021C24431002861BC /* NAStackII.h */,
-				905CC0A121C24431002861BC /* NAOctTreeII.h */,
-				905CC0A221C24431002861BC /* NAQuadTreeII.h */,
-				905CC0A321C24431002861BC /* NACircularBufferII.h */,
-				905CC0A421C24431002861BC /* NAHeapII.h */,
-				905CC0A521C24431002861BC /* NAQuadTree.c */,
-				905CC0A621C24431002861BC /* NATree */,
-				905CC0AE21C24431002861BC /* NAPoolII.h */,
-				905CC0AF21C24431002861BC /* NAListII.h */,
-				905CC0B021C24431002861BC /* NAString.c */,
-				905CC0B121C24431002861BC /* NAList.c */,
 				905CC0B221C24431002861BC /* NAArrayII.h */,
-				905CC0B321C24431002861BC /* NAOctTree.c */,
+				905CC08D21C24431002861BC /* NABuffer */,
+				905CC0A321C24431002861BC /* NACircularBufferII.h */,
 				905CC0B421C24431002861BC /* NAHeap.c */,
+				905CC0A421C24431002861BC /* NAHeapII.h */,
+				905CC0B121C24431002861BC /* NAList.c */,
+				905CC0AF21C24431002861BC /* NAListII.h */,
+				905CC0B321C24431002861BC /* NAOctTree.c */,
+				905CC0A121C24431002861BC /* NAOctTreeII.h */,
+				905CC0AE21C24431002861BC /* NAPoolII.h */,
+				905CC0A521C24431002861BC /* NAQuadTree.c */,
+				905CC0A221C24431002861BC /* NAQuadTreeII.h */,
+				905CC0A021C24431002861BC /* NAStackII.h */,
+				905CC0B021C24431002861BC /* NAString.c */,
+				905CC08C21C24431002861BC /* NAStringII.h */,
+				905CC0A621C24431002861BC /* NATree */,
 			);
 			path = NAStruct;
 			sourceTree = "<group>";
@@ -391,6 +405,7 @@
 		905CC0F021C24431002861BC /* NAMath */ = {
 			isa = PBXGroup;
 			children = (
+				90CB7AF821E875B900607FE3 /* NAVectorAlgebra */,
 				905CC0F121C24431002861BC /* NAMoney.c */,
 				905CC0F221C24431002861BC /* NAMoneyII.h */,
 				905CC0F321C24431002861BC /* NARandomII.h */,
@@ -419,6 +434,27 @@
 				90B456451BC80AD300A53BDC /* Cocoa.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		90CB7AF821E875B900607FE3 /* NAVectorAlgebra */ = {
+			isa = PBXGroup;
+			children = (
+				90CB7AFA21E875F500607FE3 /* NAVectorFiller.h */,
+				90CB7AFB21E8771200607FE3 /* NAVectorBaseOperations.h */,
+				90CB7AFC21E877F000607FE3 /* NAVectorComponentwise.h */,
+				90CB7AFD21E8790000607FE3 /* NAVectorComparison.h */,
+				90CB7AFE21E8794400607FE3 /* NAVectorProducts.h */,
+				90CB7AFF21E8799F00607FE3 /* NAVectorGeometry.h */,
+				90CB7B0021E87A5600607FE3 /* NAMatrixFiller.h */,
+				90CB7B0121E87AB700607FE3 /* NAMatrixBaseOperations.h */,
+				90CB7B0221E87B5E00607FE3 /* NAMatrixComponentwise.h */,
+				90CB7B0321E9049700607FE3 /* NAMatrixMultiplication.h */,
+				90CB7B0421E9055800607FE3 /* NAMatrixComparison.h */,
+				90CB7B0521E905B300607FE3 /* NAMatrixAlgebraOperations.h */,
+				90CB7B0621E9064400607FE3 /* NAHomogeneousCoordinates.h */,
+				90CB7B0721E9068D00607FE3 /* NAMatrixRotations.h */,
+			);
+			path = NAVectorAlgebra;
 			sourceTree = "<group>";
 		};
 		90D4A22520BB3E3500171E61 /* doc */ = {
