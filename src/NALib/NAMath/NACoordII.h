@@ -1442,7 +1442,7 @@ NA_IDEF NARange naMakeRangePositive(NARange range){
   return range;
 }
 NA_IDEF NARangei naMakeRangeiPositive(NARangei range){
-  NABool rangenegative = (range.length < 0);
+  NAInt rangenegative = (NAInt)(range.length < 0);
   range.origin += rangenegative * range.length;
   range.length += rangenegative * 2 * range.length;
   return range;

@@ -636,7 +636,7 @@ NA_HIDEF NABool naIsBaseNodeLeaf(const NATree* tree, NATreeBaseNode* basenode){
 
 NA_HIDEF void naMarkNodeChildLeaf(NATreeNode* node, NAInt childindx, NABool isleaf){
   node->flags &= ~(1 << childindx);
-  node->flags |= isleaf << childindx;
+  node->flags |= (NAInt)isleaf << childindx;
 }
 
 

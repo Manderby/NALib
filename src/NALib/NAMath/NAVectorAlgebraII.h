@@ -44,6 +44,7 @@
 #include "NAVectorAlgebra/NAMatrixComponentwise.h"
 #include "NAVectorAlgebra/NAMatrixMultiplication.h"
 #include "NAVectorAlgebra/NAMatrixComparison.h"
+#include "NAVectorAlgebra/NAHomogeneousCoordinates.h"
 #include "NAVectorAlgebra/NAMatrixAlgebraOperations.h"
 #include "NAVectorAlgebra/NAMatrixRotations.h"
 

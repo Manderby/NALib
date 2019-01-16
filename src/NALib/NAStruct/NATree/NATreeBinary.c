@@ -263,7 +263,7 @@ NA_HDEF NATreeBaseNode* naGetChildBinary(NATreeNode* parent, NAInt childindx){
   NATreeBinaryNode* binnode;
   #ifndef NDEBUG
     if(childindx < 0 || childindx >= 2)
-      naError("naGetChildBinary", "child index not valid");
+      naCrash("naGetChildBinary", "child index not valid");
   #endif
   binnode = (NATreeBinaryNode*)(parent);
   return binnode->childs[childindx];

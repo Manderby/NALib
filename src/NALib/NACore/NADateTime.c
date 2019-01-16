@@ -446,13 +446,13 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
     datetime.sisec = naAddInt64(datetime.sisec, naMulInt64(remainingyears, NA_SECONDS_IN_NORMAL_YEAR));
   }
   if((dts->mon < 0) || (dts->mon > 11)){datetime.errornum = NA_DATETIME_ERROR_INVALID_MONTH_NUMBER;}
-  datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(na_cumulativemonthstartdays[2 * dts->mon + (int32)isleap] * NA_SECONDS_PER_DAY));
+  datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(na_cumulativemonthstartdays[2 * dts->mon + (int32)isleap] * (int32)NA_SECONDS_PER_DAY));
   if((dts->day < 0) || ((na_cumulativemonthstartdays[2 * dts->mon + (int32)isleap] + dts->day) >= na_cumulativemonthstartdays[2 * (dts->mon + 1) + (int32)isleap])){datetime.errornum = NA_DATETIME_ERROR_INVALID_DAY_NUMBER;}
-  datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->day * NA_SECONDS_PER_DAY));
+  datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->day * (int32)NA_SECONDS_PER_DAY));
   if((dts->hour < 0) || (dts->hour > 23)){datetime.errornum = NA_DATETIME_ERROR_INVALID_HOUR_NUMBER;}
-  datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->hour * NA_SECONDS_PER_HOUR));
+  datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->hour * (int32)NA_SECONDS_PER_HOUR));
   if((dts->min < 0) || (dts->min > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_MINUTE_NUMBER;}
-  datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->min * NA_SECONDS_PER_MINUTE));
+  datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->min * (int32)NA_SECONDS_PER_MINUTE));
   if(calendarsystem == NA_CALENDAR_GREGORIAN_WITH_LEAP_SECONDS){
     if(naGreaterEqualInt64(datetime.sisec, naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec)){
       if((dts->sec < 0) || (dts->sec > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
@@ -481,7 +481,7 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
     if((dts->sec < 0) || (dts->sec > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
   }
   datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->sec));
-  datetime.sisec = naSubInt64(datetime.sisec, naMakeInt64WithLo(dts->shift * NA_SECONDS_PER_MINUTE));
+  datetime.sisec = naSubInt64(datetime.sisec, naMakeInt64WithLo(dts->shift * (int32)NA_SECONDS_PER_MINUTE));
   datetime.nsec  = dts->nsec;
   datetime.shift = dts->shift;
   datetime.flags = dts->flags;
@@ -940,7 +940,7 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
   dts->shift = datetime->shift;
   dts->errornum = datetime->errornum;
   dts->flags = datetime->flags;
-  remainingsecs = naAddInt64(datetime->sisec, naMakeInt64WithLo(dts->shift * NA_SECONDS_PER_MINUTE));
+  remainingsecs = naAddInt64(datetime->sisec, naMakeInt64WithLo(dts->shift * (int32)NA_SECONDS_PER_MINUTE));
 
   if(naSmallerInt64(remainingsecs, NA_DATETIME_SISEC_START_GREGORIAN_PERIOD)){
     // julian system with astronomic year numbering
@@ -1093,8 +1093,8 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
       J = naDivInt64(y, naMakeInt64WithLo(100));
     }
     if(naSmallerInt64(y, NA_ZERO_64)){naDecInt64(J);}
-    firstterm = naAddInt64(naAddInt64(naMakeInt64WithLo(d + ((mon + 1) * 26) / 10), K), naDivInt64(K, naMakeInt64WithLo(4)));
-    if(naSmallerInt64(naAddInt64(datetime->sisec, naMakeInt64WithLo(dts->shift * NA_SECONDS_PER_MINUTE)), NA_DATETIME_SISEC_START_GREGORIAN_PERIOD)){
+    firstterm = naAddInt64(naAddInt64(naMakeInt64WithLo(d + ((mon + (int32)1) * (int32)26) / (int32)10), K), naDivInt64(K, naMakeInt64WithLo(4)));
+    if(naSmallerInt64(naAddInt64(datetime->sisec, naMakeInt64WithLo(dts->shift * (int32)NA_SECONDS_PER_MINUTE)), NA_DATETIME_SISEC_START_GREGORIAN_PERIOD)){
       // Julian weedkday computation
       dta->weekday = naCastInt64ToInt32(naModInt64((naAddInt64((naModInt64((naAddInt64(naAddInt64(firstterm, naMakeInt64WithLo(5)), naMulInt64(naMakeInt64WithLo(6), J))), naMakeInt64WithLo(7))), naMakeInt64WithLo(12))), naMakeInt64WithLo(7)));
     }else{

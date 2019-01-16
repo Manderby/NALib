@@ -617,7 +617,7 @@ NA_DEF void naStopRuntime(){
     // Free all parts.
     firstpart = na_runtime->typeinfos[0]->curpart;
     curpart = firstpart;
-    while(1){
+    while(curpart){
       nextpart = curpart->nextpart;
       naFreeAligned(curpart);
       if(nextpart == firstpart){break;}
@@ -637,6 +637,10 @@ NA_DEF void naStopRuntime(){
 
 NA_HIDEF void naEnhanceMallocGarbage(){
   NAMallocGarbage* newgarbage = naAlloc(NAMallocGarbage);
+  #ifndef NDEBUG
+    if(!newgarbage)
+	    naCrash("naEnhanceMallocGarbage", "No garbage memory allocated");
+  #endif
   newgarbage->next = na_runtime->mallocGarbage;
   newgarbage->cur = 0;
   na_runtime->mallocGarbage = newgarbage;
@@ -656,7 +660,7 @@ NA_DEF void* naMallocTmp(NAUInt bytesize){
   #endif
   na_runtime->totalmallocgarbagebytecount += bytesize;
   newPtr = naMalloc((NAInt)bytesize);
-  if(!na_runtime->mallocGarbage || (na_runtime->mallocGarbage->cur == NA_MALLOC_GARBAGE_POINTER_COUNT)){
+  if(!na_runtime->mallocGarbage || (na_runtime->mallocGarbage->cur >= NA_MALLOC_GARBAGE_POINTER_COUNT)){
     naEnhanceMallocGarbage();
   }
   #ifndef NDEBUG

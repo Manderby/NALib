@@ -20,7 +20,6 @@
 
 
 
-
 // ///////////////////////////////////
 // WINDOW CALLBACK
 // ///////////////////////////////////
@@ -95,7 +94,7 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
       BeginPaint(hWnd, &ps);
 
       //if(uielement is opengl)
-      //        wglMakeCur(GetDC(naGetUIElementNativeID(&(openglview->uielement))), openglview->hRC);
+      //        wglMakeCurrent(GetDC(naGetUIElementNativeID(&(openglview->uielement))), openglview->hRC);
 
       hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW, NA_NULL);
       //uielement->refreshrequested = NA_FALSE;
@@ -464,9 +463,9 @@ NA_HDEF NARect naGetWindowAbsoluteInnerRect(NAUIElement* window){
   screenrect = naGetMainScreenRect();
 
   rect.pos.x = testpoint.x;
-  rect.pos.y = screenrect.size.height - (testpoint.y + (contentrect.bottom - contentrect.top));
-  rect.size.width = contentrect.right - contentrect.left;
-  rect.size.height = contentrect.bottom - contentrect.top;
+  rect.pos.y = screenrect.size.height - ((double)testpoint.y + (contentrect.bottom - contentrect.top));
+  rect.size.width = (double)contentrect.right - (double)contentrect.left;
+  rect.size.height = (double)contentrect.bottom - (double)contentrect.top;
   return rect;
 }
 
@@ -485,8 +484,8 @@ NA_HDEF NARect naGetWindowAbsoluteOuterRect(NAUIElement* window){
 
   rect.pos.x = windowrect.left;
   rect.pos.y = screenrect.size.height - windowrect.bottom;
-  rect.size.width = windowrect.right - windowrect.left;
-  rect.size.height = windowrect.bottom - windowrect.top;
+  rect.size.width = (double)windowrect.right - (double)windowrect.left;
+  rect.size.height = (double)windowrect.bottom - (double)windowrect.top;
   return rect;
 }
 
@@ -506,9 +505,9 @@ NA_HDEF NARect naGetViewAbsoluteInnerRect(NAUIElement* view){
   screenrect = naGetMainScreenRect();
 
   rect.pos.x = testpoint.x;
-  rect.pos.y = screenrect.size.height - (testpoint.y + (contentrect.bottom - contentrect.top));
-  rect.size.width = contentrect.right - contentrect.left;
-  rect.size.height = contentrect.bottom - contentrect.top;
+  rect.pos.y = screenrect.size.height - ((double)testpoint.y + (contentrect.bottom - contentrect.top));
+  rect.size.width = (double)contentrect.right - (double)contentrect.left;
+  rect.size.height = (double)contentrect.bottom - (double)contentrect.top;
   return rect;
 }
 
@@ -588,10 +587,10 @@ NA_API NARect naGetMainScreenRect(){
   screen = MonitorFromWindow(NA_NULL, MONITOR_DEFAULTTOPRIMARY);
   screeninfo.cbSize = sizeof(MONITORINFO);
   GetMonitorInfo(screen, &screeninfo);
-  rect.pos.x = screeninfo.rcMonitor.left;;
-  rect.pos.y = screeninfo.rcMonitor.bottom - screeninfo.rcMonitor.top;
-  rect.size.width = screeninfo.rcMonitor.right - screeninfo.rcMonitor.left;
-  rect.size.height = screeninfo.rcMonitor.bottom - screeninfo.rcMonitor.top;
+  rect.pos.x = screeninfo.rcMonitor.left;
+  rect.pos.y = (double)screeninfo.rcMonitor.bottom - (double)screeninfo.rcMonitor.top;
+  rect.size.width = (double)screeninfo.rcMonitor.right - (double)screeninfo.rcMonitor.left;
+  rect.size.height = (double)screeninfo.rcMonitor.bottom - (double)screeninfo.rcMonitor.top;
   return rect;
 }
 
@@ -850,7 +849,14 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 	
 	  // make render context with this device context.
 	  openglview->hRC = wglCreateContext(hDC);
-	  wglMakeCur(hDC, openglview->hRC);
+	  wglMakeCurrent(hDC, openglview->hRC);
+
+	  typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
+	  PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
+	  const char *extensions = (char*)glGetString(GL_EXTENSIONS);
+	  wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
+	  if (wglSwapIntervalEXT){wglSwapIntervalEXT(1);}
+
 
     // Now the OpenGL context is created and current. We can initialize it
     // if necessary.

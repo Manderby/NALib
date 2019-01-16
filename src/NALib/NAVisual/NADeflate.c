@@ -23,9 +23,8 @@ NAHuffmanCodeTree* naAllocHuffmanCodeTree(uint16 alphabetcount){
   tree->alphabetcount = alphabetcount;
   tree->codes = naMalloc(alphabetcount * sizeof(uint16));
   tree->codelengths = naMalloc(alphabetcount * sizeof(uint16));
-  tree->indextree = naMalloc((2 * alphabetcount - 1) * sizeof(int32));
+  tree->indextree = naMalloc((NAInt)(2 * (NAInt)alphabetcount - 1) * naSizeof(int32));
   for(i=0; i<alphabetcount; i++){tree->codelengths[i] = 0;}
-//  for(int16 i=0; i<(2 * alphabetcount - 1); i++){tree->indextree[i] = 0;}
   return tree;
 }
 
