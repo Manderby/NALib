@@ -15,7 +15,7 @@ NA_RUNTIME_TYPE(NABuffer, naDeallocBuffer, NA_TRUE);
 void naDestructBufferTreeLeaf(NAPtr leafdata, NAPtr configdata){
   NABufferPart* part;
   NA_UNUSED(configdata);
-  part = naGetPtrMutable(&leafdata);
+  part = naGetPtrMutable(leafdata);
   naDelete(part);
 }
 
@@ -35,7 +35,7 @@ NAPtr naConstructBufferTreeNode(const void* key, NAPtr configdata){
 
 void naDestructBufferTreeNode(NAPtr nodedata, NAPtr configdata){
   NA_UNUSED(configdata);
-  naFree(naGetPtrMutable(&nodedata));
+  naFree(naGetPtrMutable(nodedata));
 }
 
 
@@ -46,23 +46,23 @@ NABool naUpdateBufferTreeNode(NAPtr parentdata, NAPtr* childdatas, NAInt childin
   NAInt prevlen2;
   NA_UNUSED(childindx);
   
-  parentnodedata = (NABufferTreeNodeData*)naGetPtrMutable(&parentdata);
+  parentnodedata = (NABufferTreeNodeData*)naGetPtrMutable(parentdata);
 
   prevlen1 = parentnodedata->len1;
   if(childmask & 0x01){
-    NABufferPart* part = (NABufferPart*)naGetPtrMutable(&(childdatas[0]));
+    NABufferPart* part = (NABufferPart*)naGetPtrMutable(childdatas[0]);
     parentnodedata->len1 = naGetBufferPartByteSize(part);
   }else{
-    NABufferTreeNodeData* childdata = (NABufferTreeNodeData*)naGetPtrMutable(&(childdatas[0]));
+    NABufferTreeNodeData* childdata = (NABufferTreeNodeData*)naGetPtrMutable(childdatas[0]);
     parentnodedata->len1 = childdata->len1 + childdata->len2;
   }
 
   prevlen2 = parentnodedata->len2;
   if(childmask & 0x02){
-    NABufferPart* part = (NABufferPart*)naGetPtrMutable(&(childdatas[1]));
+    NABufferPart* part = (NABufferPart*)naGetPtrMutable(childdatas[1]);
     parentnodedata->len2 = naGetBufferPartByteSize(part);
   }else{
-    NABufferTreeNodeData* childdata = (NABufferTreeNodeData*)naGetPtrMutable(&(childdatas[1]));
+    NABufferTreeNodeData* childdata = (NABufferTreeNodeData*)naGetPtrMutable(childdatas[1]);
     parentnodedata->len2 = childdata->len1 + childdata->len2;
   }
 

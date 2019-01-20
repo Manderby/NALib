@@ -12,6 +12,7 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+- Simplified NAPtr by removing the pointer argument of most functions.
 - Splitting VectorAlgebra file into several files.
 - Adding Leap second information according bulletin C 57
 

@@ -334,7 +334,7 @@ NA_HIDEF void naSetQuadTreeIteratorCurNode(NAQuadTreeIterator* iter, NAQuadTreeN
 // shall get in place of this node.
 NA_HDEF void naRemoveQuadTreeNode(NAQuadTreeIterator* iter, NAQuadTreeNode* replacenode){
   NAQuadTreeNode* node = iter->node;
-  NAQuadTree* tree = naGetPtrMutable(&(iter->tree));
+  NAQuadTree* tree = naGetPtrMutable(iter->tree);
 
   // As the current node will be erased, we adjust the iterator to point
   // at the parent.
@@ -409,7 +409,7 @@ NA_HDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data){
       naError("naCreateQuadTreeLeaf", "iterator is already at a leaf");
   #endif
 
-  tree = (NAQuadTree*)naGetPtrMutable(&(iter->tree));
+  tree = (NAQuadTree*)naGetPtrMutable(iter->tree);
   baseleafexponent = naGetQuadTreeBaseLeafExponent(tree);
 
   if(!iter->node){
@@ -519,7 +519,7 @@ NA_HDEF void naCreateQuadTreeLeaf(NAQuadTreeIterator* iter, const void* data){
 
 NA_HIDEF void naInitQuadTreeIterator(NAQuadTreeIterator* iter){
   #ifndef NDEBUG
-    NAQuadTree* mutabletree = (NAQuadTree*)naGetPtrConst(&(iter->tree));
+    NAQuadTree* mutabletree = (NAQuadTree*)naGetPtrConst(iter->tree);
     mutabletree->itercount++;
   #endif
   iter->node = NA_NULL;
@@ -568,7 +568,7 @@ NA_DEF NAQuadTreeIterator naMakeQuadTreeModifier(NAQuadTree* tree){
 
 NA_DEF void naClearQuadTreeIterator(NAQuadTreeIterator* iter){
   #ifndef NDEBUG
-    NAQuadTree* mutabletree = (NAQuadTree*)naGetPtrConst(&(iter->tree));
+    NAQuadTree* mutabletree = (NAQuadTree*)naGetPtrConst(iter->tree);
     mutabletree->itercount--;
     if(iter->node){iter->node->itercount--;}
   #endif
@@ -636,7 +636,7 @@ NA_DEF NARecti naGetQuadTreeCurRecti(const NAQuadTreeIterator* iter){
       naError("naGetQuadTreeCurRecti", "Iterator has no valid position");
     if(iter->childsegment == -1)
       naError("naGetQuadTreeCurRecti", "Iterator is not positioned on a leaf");
-    tree = naGetPtrConst(&(iter->tree));
+    tree = naGetPtrConst(iter->tree);
     if(naGetQuadTreeBaseLeafExponent(tree) < 0)
       naError("naGetQuadTreeCurRecti", "Can not return valid integer rect for trees with exponents < 0");
   #endif
@@ -680,7 +680,7 @@ NA_DEF void naRemoveQuadTreeCur(NAQuadTreeIterator* iter){
     if(!naIsNodeSegmentLeaf(iter->node, iter->childsegment))
       naError("naRemoveQuadTreeCur", "iterator is not at a leaf");
   #endif
-  tree = naGetPtrMutable(&(iter->tree));
+  tree = naGetPtrMutable(iter->tree);
 
   // First, we destroy the data of the leaf chunk
   tree->configuration.leafdeallocator(iter->node->childs[iter->childsegment], tree->configuration.userdata);
@@ -740,7 +740,7 @@ NA_HDEF NABool naLocateQuadTreeNodeCapture(NAQuadTreeIterator* iter){
 // Moves the iterator to the closest parent node containing pos.
 // Phase 1: Bubbling.
 NA_HDEF NABool naLocateQuadTreeNodeBubble(NAQuadTreeIterator* iter){
-  const NAQuadTree* tree = naGetPtrConst(&(iter->tree));
+  const NAQuadTree* tree = naGetPtrConst(iter->tree);
   iter->childsegment = -1;
 
   // If the iterator has no node set, we start at the root
@@ -761,7 +761,7 @@ NA_HDEF NABool naLocateQuadTreeNodeBubble(NAQuadTreeIterator* iter){
 
 
 NA_DEF NABool naIterateQuadTree(NAQuadTreeIterator* iter, const NARect* limit){
-  const NAQuadTree* tree = (const NAQuadTree*)naGetPtrConst(&(iter->tree));
+  const NAQuadTree* tree = (const NAQuadTree*)naGetPtrConst(iter->tree);
 
   if(!tree->root){return NA_FALSE;}
 
@@ -849,7 +849,7 @@ NA_DEF NABool naLocateQuadTreeIterator(NAQuadTreeIterator* dstiter, const NAQuad
 
 
 NA_DEF NABool naLocateQuadTreeSteps(NAQuadTreeIterator* iter, NAInt stepx, NAInt stepy){
-  const NAQuadTree* tree = naGetPtrConst(&(iter->tree));
+  const NAQuadTree* tree = naGetPtrConst(iter->tree);
 
   NASize baseleafsize = naGetQuadTreeSizeWithExponent(naGetQuadTreeBaseLeafExponent(tree));
   iter->pos.x += stepx * baseleafsize.width;
@@ -862,7 +862,7 @@ NA_DEF NABool naLocateQuadTreeSteps(NAQuadTreeIterator* iter, NAInt stepx, NAInt
 
 NA_DEF void naUpdateQuadTreeCur(NAQuadTreeIterator* iter){
   if(iter->node){
-    NAQuadTree* tree = naGetPtrMutable(&(iter->tree));
+    NAQuadTree* tree = naGetPtrMutable(iter->tree);
     naUpdateQuadTreeNodeBubbling(tree, iter->node, iter->childsegment);
   }
 }

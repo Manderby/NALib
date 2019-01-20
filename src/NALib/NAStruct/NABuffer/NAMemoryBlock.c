@@ -14,7 +14,7 @@ NA_RUNTIME_TYPE(NAMemoryBlock, naDestructMemoryBlock, NA_TRUE);
 
 NA_HDEF void naDestructMemoryBlock(NAMemoryBlock* block){
   if(block->destructor){
-    block->destructor(naGetPtrMutable(&(block->data)));
+    block->destructor(naGetPtrMutable(block->data));
   }
 }
 

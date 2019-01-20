@@ -126,7 +126,7 @@ NA_IDEF void naForeachArrayConst(NAArray* array, NAAccessor accessor){
       naCrash("naForeachArray", "Accessor is Null");
   #endif
   count = naGetArrayCount(array);
-  ptr = naGetPtrConst(&(array->ptr));
+  ptr = naGetPtrConst(array->ptr);
   while(count){
     accessor(ptr);
     ptr += array->typesize;
@@ -145,7 +145,7 @@ NA_IDEF void naForeachArrayMutable(NAArray* array, NAMutator mutator){
       naCrash("naForeachArray", "Mutator is Null");
   #endif
   count = naGetArrayCount(array);
-  ptr = naGetPtrMutable(&(array->ptr));
+  ptr = naGetPtrMutable(array->ptr);
   while(count){
     mutator(ptr);
     ptr += array->typesize;
@@ -164,7 +164,7 @@ NA_IDEF void naForeachArraypConst(NAArray* array, NAAccessor accessor){
       naCrash("naForeachArray", "Accessor is Null");
   #endif
   count = naGetArrayCount(array);
-  ptr = naGetPtrConst(&(array->ptr));
+  ptr = naGetPtrConst(array->ptr);
   while(count){
     accessor(*((const void**)ptr));
     ptr += array->typesize;
@@ -183,7 +183,7 @@ NA_IDEF void naForeachArraypMutable(NAArray* array, NAMutator mutator){
       naCrash("naForeachArray", "Mutator is Null");
   #endif
   count = naGetArrayCount(array);
-  ptr = naGetPtrMutable(&(array->ptr));
+  ptr = naGetPtrMutable(array->ptr);
   while(count){
     mutator(*((void**)ptr));
     ptr += array->typesize;
@@ -203,7 +203,7 @@ NA_IDEF const void* naGetArrayPointerConst(const NAArray* array){
         naError("naGetArrayPointerConst", "array is empty, returned pointer is NULL");
     }
   #endif
-  return naGetPtrConst(&(array->ptr));
+  return naGetPtrConst(array->ptr);
 }
 
 
@@ -218,7 +218,7 @@ NA_IDEF void* naGetArrayPointerMutable(NAArray* array){
         naError("naGetArrayPointerMutable", "array is empty, returned pointer is NULL");
     }
   #endif
-  return naGetPtrMutable(&(array->ptr));
+  return naGetPtrMutable(array->ptr);
 }
 
 
@@ -257,7 +257,7 @@ NA_IDEF const void* naGetArrayElementConst(const NAArray* array, NAInt indx){
     if(indx >= naGetArrayCount(array))
       naError("naGetArrayElementConst", "array overflow.");
   #endif
-  return &(((NAByte*)naGetPtrConst(&(array->ptr)))[indx * array->typesize]);
+  return &(((NAByte*)naGetPtrConst(array->ptr))[indx * array->typesize]);
 }
 
 
@@ -277,7 +277,7 @@ NA_IDEF void* naGetArrayElementMutable(NAArray* array, NAInt indx){
     if(indx >= naGetArrayCount(array))
       naError("naGetArrayElementMutable", "array overflow.");
   #endif
-  return &(((NAByte*)naGetPtrMutable(&(array->ptr)))[indx * array->typesize]);
+  return &(((NAByte*)naGetPtrMutable(array->ptr))[indx * array->typesize]);
 }
 
 
@@ -297,7 +297,7 @@ NA_IDEF const void* naGetArrayElementpConst(const NAArray* array, NAInt indx){
     if(indx >= naGetArrayCount(array))
       naError("naGetArrayElementpConst", "array overflow.");
   #endif
-  return *((const void**)&(((NAByte*)naGetPtrConst(&(array->ptr)))[indx * array->typesize]));
+  return *((const void**)&(((NAByte*)naGetPtrConst(array->ptr))[indx * array->typesize]));
 }
 
 
@@ -317,7 +317,7 @@ NA_IDEF void* naGetArrayElementpMutable(NAArray* array, NAInt indx){
     if(indx >= naGetArrayCount(array))
       naError("naGetArrayElementpMutable", "array overflow.");
   #endif
-  return *((void**)&(((NAByte*)naGetPtrMutable(&(array->ptr)))[indx * array->typesize]));
+  return *((void**)&(((NAByte*)naGetPtrMutable(array->ptr))[indx * array->typesize]));
 }
 
 
@@ -431,7 +431,7 @@ NA_IDEF NAArrayIterator naMakeArrayMutator(NAArray* array){
 
 NA_IDEF void naClearArrayIterator(NAArrayIterator* iterator){
   #ifndef NDEBUG
-    NAArray* mutablearray = (NAArray*)naGetPtrConst(&(iterator->array));
+    NAArray* mutablearray = (NAArray*)naGetPtrConst(iterator->array);
     if(mutablearray->itercount == 0)
       naError("naClearArrayIterator", "Too many clears. Iterator count is already zero.");
     mutablearray->itercount--;
@@ -444,7 +444,7 @@ NA_IDEF void naClearArrayIterator(NAArrayIterator* iterator){
 
 NA_IDEF NABool naLocateArrayFirst(NAArrayIterator* iterator){
   #ifndef NDEBUG
-    if(naIsArrayEmpty(naGetPtrConst(&(iterator->array))))
+    if(naIsArrayEmpty(naGetPtrConst(iterator->array)))
       naError("naLocateArrayFirst", "Array is empty");
   #endif
   iterator->indx = 0;
@@ -455,25 +455,25 @@ NA_IDEF NABool naLocateArrayFirst(NAArrayIterator* iterator){
 
 NA_IDEF NABool naLocateArrayLast(NAArrayIterator* iterator){
   #ifndef NDEBUG
-    if(naIsArrayEmpty(naGetPtrConst(&(iterator->array))))
+    if(naIsArrayEmpty(naGetPtrConst(iterator->array)))
       naError("naLocateArrayLast", "Array is empty");
   #endif
-  iterator->indx = naGetArrayMaxIndex(naGetPtrConst(&(iterator->array)));
+  iterator->indx = naGetArrayMaxIndex(naGetPtrConst(iterator->array));
   return NA_TRUE;
 }
 
 
 
 NA_IDEF NABool naLocateArrayData(NAArrayIterator* iterator, const void* data){
-  const NAByte* ptr = naGetArrayPointerConst(naGetPtrConst(&(iterator->array)));
-  NAInt count = naGetArrayCount(naGetPtrConst(&(iterator->array)));
+  const NAByte* ptr = naGetArrayPointerConst(naGetPtrConst(iterator->array));
+  NAInt count = naGetArrayCount(naGetPtrConst(iterator->array));
   NAInt indx = 0;
   while(count){
     if(ptr == data){
       iterator->indx = indx;
       return NA_TRUE;
     }
-    ptr += naGetArrayTypesize(naGetPtrConst(&(iterator->array)));
+    ptr += naGetArrayTypesize(naGetPtrConst(iterator->array));
     count--;
     indx++;
   }
@@ -484,15 +484,15 @@ NA_IDEF NABool naLocateArrayData(NAArrayIterator* iterator, const void* data){
 
 NA_IDEF NABool naLocateArrayIndex(NAArrayIterator* iterator, NAInt indx){
   #ifndef NDEBUG
-    if(naIsArrayEmpty(naGetPtrConst(&(iterator->array))))
+    if(naIsArrayEmpty(naGetPtrConst(iterator->array)))
       naError("naLocateArrayIndex", "Array is empty");
   #endif
-  indx = naMakeIndexAbsolute(indx, naGetArrayCount(naGetPtrConst(&(iterator->array))));
+  indx = naMakeIndexAbsolute(indx, naGetArrayCount(naGetPtrConst(iterator->array)));
   iterator->indx = indx;
   if(indx < 0){
     iterator->indx = -1;
     return NA_FALSE;
-  }else if(indx >= naGetArrayCount(naGetPtrConst(&(iterator->array)))){
+  }else if(indx >= naGetArrayCount(naGetPtrConst(iterator->array))){
     iterator->indx = -1;
     return NA_FALSE;
   }
@@ -502,13 +502,13 @@ NA_IDEF NABool naLocateArrayIndex(NAArrayIterator* iterator, NAInt indx){
 
 
 NA_IDEF NABool naIterateArray(NAArrayIterator* iterator, NAInt step){
-  if(naIsArrayAtInitial(iterator) && step < 0){iterator->indx += naGetArrayCount(naGetPtrConst(&(iterator->array)));}
+  if(naIsArrayAtInitial(iterator) && step < 0){iterator->indx += naGetArrayCount(naGetPtrConst(iterator->array));}
   iterator->indx += step;
-  if(iterator->indx == naGetArrayCount(naGetPtrConst(&(iterator->array)))){iterator->indx = -1;}
+  if(iterator->indx == naGetArrayCount(naGetPtrConst(iterator->array))){iterator->indx = -1;}
   #ifndef NDEBUG
     if(iterator->indx < -1)
       naError("naIterateArray", "Iterator underflows");
-    if(iterator->indx >= naGetArrayCount(naGetPtrConst(&(iterator->array))))
+    if(iterator->indx >= naGetArrayCount(naGetPtrConst(iterator->array)))
       naError("naIterateArray", "Iterator overflows");
   #endif
   return (iterator->indx != -1);
@@ -526,9 +526,9 @@ NA_IDEF const void* naGetArrayPrevConst(const NAArrayIterator* iterator){
   if(iterator->indx == 0){
     return NA_NULL;
   }else if(naIsArrayAtInitial(iterator)){
-    return naGetArrayElementConst(naGetPtrConst(&(iterator->array)), -1);
+    return naGetArrayElementConst(naGetPtrConst(iterator->array), -1);
   }else{
-    return naGetArrayElementConst(naGetPtrConst(&(iterator->array)), iterator->indx - 1);
+    return naGetArrayElementConst(naGetPtrConst(iterator->array), iterator->indx - 1);
   }
 }
 
@@ -544,9 +544,9 @@ NA_IDEF void* naGetArrayPrevMutable(NAArrayIterator* iterator){
   if(iterator->indx == 0){
     return NA_NULL;
   }else if(naIsArrayAtInitial(iterator)){
-    return naGetArrayElementMutable(naGetPtrMutable(&(iterator->array)), -1);
+    return naGetArrayElementMutable(naGetPtrMutable(iterator->array), -1);
   }else{
-    return naGetArrayElementMutable(naGetPtrMutable(&(iterator->array)), iterator->indx - 1);
+    return naGetArrayElementMutable(naGetPtrMutable(iterator->array), iterator->indx - 1);
   }
 }
 
@@ -562,7 +562,7 @@ NA_IDEF const void* naGetArrayCurConst(const NAArrayIterator* iterator){
   if(naIsArrayAtInitial(iterator)){
     return NA_NULL;
   }else{
-    return naGetArrayElementConst(naGetPtrConst(&(iterator->array)), iterator->indx);
+    return naGetArrayElementConst(naGetPtrConst(iterator->array), iterator->indx);
   }
 }
 
@@ -578,7 +578,7 @@ NA_IDEF void* naGetArrayCurMutable(NAArrayIterator* iterator){
   if(naIsArrayAtInitial(iterator)){
     return NA_NULL;
   }else{
-    return naGetArrayElementMutable(naGetPtrMutable(&(iterator->array)), iterator->indx);
+    return naGetArrayElementMutable(naGetPtrMutable(iterator->array), iterator->indx);
   }
 }
 
@@ -591,12 +591,12 @@ NA_IDEF const void* naGetArrayNextConst(const NAArrayIterator* iterator){
       return NA_NULL;
     }
   #endif
-  if(iterator->indx == naGetArrayMaxIndex(naGetPtrConst(&(iterator->array)))){
+  if(iterator->indx == naGetArrayMaxIndex(naGetPtrConst(iterator->array))){
     return NA_NULL;
   }else if(naIsArrayAtInitial(iterator)){
-    return naGetArrayElementConst(naGetPtrConst(&(iterator->array)), 0);
+    return naGetArrayElementConst(naGetPtrConst(iterator->array), 0);
   }else{
-    return naGetArrayElementConst(naGetPtrConst(&(iterator->array)), iterator->indx + 1);
+    return naGetArrayElementConst(naGetPtrConst(iterator->array), iterator->indx + 1);
   }
 }
 
@@ -609,12 +609,12 @@ NA_IDEF void* naGetArrayNextMutable(NAArrayIterator* iterator){
       return NA_NULL;
     }
   #endif
-  if(iterator->indx == naGetArrayMaxIndex(naGetPtrConst(&(iterator->array)))){
+  if(iterator->indx == naGetArrayMaxIndex(naGetPtrConst(iterator->array))){
     return NA_NULL;
   }else if(naIsArrayAtInitial(iterator)){
-    return naGetArrayElementMutable(naGetPtrMutable(&(iterator->array)), 0);
+    return naGetArrayElementMutable(naGetPtrMutable(iterator->array), 0);
   }else{
-    return naGetArrayElementMutable(naGetPtrMutable(&(iterator->array)), iterator->indx + 1);
+    return naGetArrayElementMutable(naGetPtrMutable(iterator->array), iterator->indx + 1);
   }
 }
 
@@ -639,7 +639,7 @@ NA_IDEF NABool naIsArrayAtLast(const NAArrayIterator* iterator){
       return NA_FALSE;
     }
   #endif
-  return (iterator->indx == naGetArrayMaxIndex(naGetPtrConst(&(iterator->array))));
+  return (iterator->indx == naGetArrayMaxIndex(naGetPtrConst(iterator->array)));
 }
 
 
@@ -651,7 +651,7 @@ NA_IDEF NABool naIsArrayAtIndex(const NAArrayIterator* iterator, NAInt indx){
       return NA_FALSE;
     }
   #endif
-  indx = naMakeIndexAbsolute(indx, naGetArrayCount(naGetPtrConst(&(iterator->array))));
+  indx = naMakeIndexAbsolute(indx, naGetArrayCount(naGetPtrConst(iterator->array)));
   return (iterator->indx == indx);
 }
 

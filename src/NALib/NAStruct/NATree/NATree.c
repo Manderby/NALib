@@ -48,7 +48,7 @@ NA_HDEF NATreeLeaf* naIterateTreeBubble(const NATree* tree, NATreeBaseNode* curn
 
 NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info){
   NATreeLeaf* leaf;
-  const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
+  const NATree* tree = (const NATree*)naGetPtrConst(iter->tree);
 
   // If the tree has no root, we do not iterate.
   if(!tree->root){
@@ -89,7 +89,7 @@ NA_HDEF NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABo
       naError("naLocateTree", "This iterator has been cleared. You need to make it anew.");
   #endif
 
-  tree = (const NATree*)naGetPtrConst(&(iter->tree));
+  tree = (const NATree*)naGetPtrConst(iter->tree);
 
   if(!tree->root){
     #ifndef NDEBUG
@@ -122,7 +122,7 @@ NA_HDEF NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABo
 
 NA_HDEF NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NATreeNodeTokenSearcher nodeSearcher, NATreeLeafTokenSearcher leafSearcher, NABool* matchfound){
   NATreeBaseNode* basenode;
-  const NATree* tree = (const NATree*)naGetPtrConst(&(iter->tree));
+  const NATree* tree = (const NATree*)naGetPtrConst(iter->tree);
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("naLocateTreeTokenLeaf", "This iterator has been cleared. You need to make it anew.");
@@ -142,12 +142,12 @@ NA_HDEF NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NAT
   while(basenode){
     NAInt nextindx;
     if(naIsBaseNodeLeaf(tree, basenode)){
-      NAPtr* data = tree->config->leafDataGetter((NATreeLeaf*)basenode);
-      leafSearcher(token, *data, matchfound);
+      NAPtr data = tree->config->leafDataGetter((NATreeLeaf*)basenode);
+      leafSearcher(token, data, matchfound);
       return (NATreeLeaf*)basenode;
     }else{
-      NAPtr* data = tree->config->nodeDataGetter((NATreeNode*)basenode);
-      NABool continuesearch = nodeSearcher(token, *data, &nextindx);
+      NAPtr data = tree->config->nodeDataGetter((NATreeNode*)basenode);
+      NABool continuesearch = nodeSearcher(token, data, &nextindx);
       if(!continuesearch){return NA_NULL;}
     }
     if(nextindx == -1){
@@ -200,7 +200,7 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
   // We do not use bubbling when inserting as there is almost never a benefit
   // from it. Even worse, it performs mostly worse.
   leaf = naLocateTreeLeaf(iter, key, &matchfound, NA_FALSE);
-  tree = (NATree*)naGetPtrMutable(&(iter->tree));
+  tree = (NATree*)naGetPtrMutable(iter->tree);
 
   if(matchfound && !replace){return NA_FALSE;}
 
@@ -217,9 +217,9 @@ NA_HDEF void naFillTreeNodeChildData(NATree* tree, NAPtr childdata[NA_TREE_NODE_
   for(i=0; i<tree->config->childpernode; i++){
     NATreeBaseNode* child = tree->config->childGetter(node, i);
     if(naIsNodeChildLeaf(node, i)){
-      childdata[i] = *(tree->config->leafDataGetter((NATreeLeaf*)child));
+      childdata[i] = tree->config->leafDataGetter((NATreeLeaf*)child);
     }else{
-      childdata[i] = *(tree->config->nodeDataGetter((NATreeNode*)child));
+      childdata[i] = tree->config->nodeDataGetter((NATreeNode*)child);
     }
   }
 }
@@ -237,7 +237,7 @@ NA_HDEF void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt ch
   if(tree->config->nodeUpdater){
     NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
     naFillTreeNodeChildData(tree, childdata, parent);
-    bubble = tree->config->nodeUpdater(*(tree->config->nodeDataGetter(parent)), childdata, childindx, parent->flags & NA_TREE_CHILDS_MASK);
+    bubble = tree->config->nodeUpdater(tree->config->nodeDataGetter(parent), childdata, childindx, parent->flags & NA_TREE_CHILDS_MASK);
   }
 
   // Then we propagate the message towards the root if requested.
@@ -280,7 +280,7 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   if(bubble){
     NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
     naFillTreeNodeChildData(tree, childdata, node);
-    bubble = tree->config->nodeUpdater(*(tree->config->nodeDataGetter(node)), childdata, -1, node->flags & NA_TREE_CHILDS_MASK);
+    bubble = tree->config->nodeUpdater(tree->config->nodeDataGetter(node), childdata, -1, node->flags & NA_TREE_CHILDS_MASK);
   }
 
   return bubble;

@@ -87,8 +87,8 @@ typedef NATreeBaseNode* (*NATreeChildGetter)(NATreeNode* parent, NAInt childindx
 typedef NATreeNode*     (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
 typedef NATreeLeaf*     (*NATreeLeafInserter)(NATree* tree, NATreeLeaf* existingleaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 typedef const void*     (*NATreeLeafKeyGetter)(NATreeLeaf* leaf);
-typedef NAPtr*          (*NATreeLeafDataGetter)(NATreeLeaf* leaf);
-typedef NAPtr*          (*NATreeNodeDataGetter)(NATreeNode* node);
+typedef NAPtr          (*NATreeLeafDataGetter)(NATreeLeaf* leaf);
+typedef NAPtr          (*NATreeNodeDataGetter)(NATreeNode* node);
 
 struct NATreeConfiguration{
 
@@ -102,6 +102,7 @@ struct NATreeConfiguration{
   NATreeLeafConstructor         leafConstructor;
   NATreeLeafDestructor          leafDestructor;
   NAPtr                         data;
+  void*                         internaldata;
   NAInt                         flags;
 
   // Core settings:

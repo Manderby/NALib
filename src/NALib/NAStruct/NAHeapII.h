@@ -120,7 +120,7 @@ NA_IDEF const void* naGetHeapRootConst(const NAHeap* heap){
     if(heap->count == 0)
       naError("naGetHeapRootConst", "Heap is empty.");
   #endif
-  return naGetPtrConst(&(rootelem->ptr));
+  return naGetPtrConst(rootelem->ptr);
 }
 
 
@@ -133,7 +133,7 @@ NA_IDEF void* naGetHeapRootMutable(const NAHeap* heap){
     if(heap->count == 0)
       naError("naGetHeapRootMutable", "Heap is empty.");
   #endif
-  return naGetPtrMutable(&(rootelem->ptr));
+  return naGetPtrMutable(rootelem->ptr);
 }
 
 

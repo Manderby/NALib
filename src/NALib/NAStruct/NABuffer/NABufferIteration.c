@@ -87,7 +87,7 @@ NA_DEF void naClearBufferIterator(NABufferIterator* iter){
 
 NA_HDEF NABool naAccumulateBufferLocation(void* token, NAPtr nodedata, NAInt childindx){
   NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
-  NABufferTreeNodeData* buffernodedata = (NABufferTreeNodeData*)naGetPtrConst(&nodedata);
+  NABufferTreeNodeData* buffernodedata = (NABufferTreeNodeData*)naGetPtrConst(nodedata);
   if(childindx == 1){
     searchtoken->curoffset += buffernodedata->len1;
   }
@@ -119,7 +119,7 @@ NA_DEF NAInt naGetBufferLocation(const NABufferIterator* iter){
 
 NA_HDEF NABool naSearchBufferNode(void* token, NAPtr data, NAInt* nextindx){
   NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
-  NABufferTreeNodeData* nodedata = (NABufferTreeNodeData*)naGetPtrMutable(&data);
+  NABufferTreeNodeData* nodedata = (NABufferTreeNodeData*)naGetPtrMutable(data);
 
   if((searchtoken->searchoffset < searchtoken->curoffset) || (searchtoken->searchoffset >= searchtoken->curoffset + nodedata->len1 + nodedata->len2)){
     *nextindx = -1;
@@ -138,7 +138,7 @@ NA_HDEF NABool naSearchBufferNode(void* token, NAPtr data, NAInt* nextindx){
 
 NA_HDEF NABool naSearchBufferLeaf(void* token, NAPtr data, NABool* matchfound){
   NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
-  NABufferPart* part = (NABufferPart*)naGetPtrMutable(&data);
+  NABufferPart* part = (NABufferPart*)naGetPtrMutable(data);
 
   if((searchtoken->searchoffset >= searchtoken->curoffset) && (searchtoken->searchoffset < searchtoken->curoffset + naGetBufferPartByteSize(part))){
     *matchfound = NA_TRUE;

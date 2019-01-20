@@ -387,7 +387,7 @@ NA_HDEF const void* naRemoveHeapRootConstNoBack(NAHeap* heap){
     if(heap->count == 0)
       naError("naRemoveHeapRootConst", "Heap is empty.");
   #endif
-  returnvalue = naGetPtrConst(&(thedata[1].ptr));
+  returnvalue = naGetPtrConst(thedata[1].ptr);
   heap->count--;
   if(heap->count){
     NAInt curindex = heap->moveup(heap, thedata[heap->count + 1].key, 1);
@@ -405,7 +405,7 @@ NA_HDEF const void* naRemoveHeapRootConstBack(NAHeap* heap){
     if(heap->count == 0)
       naError("naRemoveHeapRootConst", "Heap is empty.");
   #endif
-  returnvalue = naGetPtrConst(&(thedata[1].ptr));
+  returnvalue = naGetPtrConst(thedata[1].ptr);
   *(thedata[1].backpointer) = 0;
   heap->count--;
   if(heap->count){
@@ -425,7 +425,7 @@ NA_HDEF void* naRemoveHeapRootMutableNoBack(NAHeap* heap){
     if(heap->count == 0)
       naError("naRemoveHeapRootMutable", "Heap is empty.");
   #endif
-  returnvalue = naGetPtrMutable(&(thedata[1].ptr));
+  returnvalue = naGetPtrMutable(thedata[1].ptr);
   heap->count--;
   if(heap->count){
     NAInt curindex = heap->moveup(heap, thedata[heap->count + 1].key, 1);
@@ -442,7 +442,7 @@ NA_HDEF void* naRemoveHeapRootMutableBack(NAHeap* heap){
     if(heap->count == 0)
       naError("naRemoveHeapRootMutable", "Heap is empty.");
   #endif
-  returnvalue = naGetPtrMutable(&(thedata[1].ptr));
+  returnvalue = naGetPtrMutable(thedata[1].ptr);
   *(thedata[1].backpointer) = 0;
   heap->count--;
   if(heap->count){
@@ -475,7 +475,7 @@ NA_HDEF const void* naRemoveHeapPosConstBack(NAHeap* heap, NAInt backpointer){
     if(backpointer == 0)
       naError("naRemovePosRootConstBack", "backpointer says that element is not part of the heap.");
   #endif
-  returnvalue = naGetPtrConst(&(thedata[backpointer].ptr));
+  returnvalue = naGetPtrConst(thedata[backpointer].ptr);
   *(thedata[backpointer].backpointer) = 0;
   heap->count--;
   if(heap->count){
@@ -507,7 +507,7 @@ NA_HDEF void* naRemoveHeapPosMutableBack(NAHeap* heap, NAInt backpointer){
     if(backpointer == 0)
       naError("naRemoveHeapPosMutableBack", "backpointer says that element is not part of the heap.");
   #endif
-  returnvalue = naGetPtrMutable(&(thedata[backpointer].ptr));
+  returnvalue = naGetPtrMutable(thedata[backpointer].ptr);
   *(thedata[backpointer].backpointer) = 0;
   heap->count--;
   if(heap->count){

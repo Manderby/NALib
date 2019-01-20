@@ -136,35 +136,21 @@ NA_IDEF NAPtr naMakePtrWithDataMutable(void* data){
 
 
 
-NA_IDEF const void* naGetPtrConst(const NAPtr* ptr){
-  #ifndef NDEBUG
-    if(!ptr){
-      naCrash("naGetPtrConst", "ptr is Null-Pointer.");
-      return NA_NULL;
-    }
-  #endif
-  return ptr->data.constd;
+NA_IDEF const void* naGetPtrConst(NAPtr ptr){
+  return ptr.data.constd;
 }
 
 
 
-NA_IDEF void* naGetPtrMutable(NAPtr* ptr){
-  #ifndef NDEBUG
-    if(!ptr){
-      naCrash("naGetPtrMutable", "ptr is Null-Pointer.");
-      return NA_NULL;
-    }
-    if(ptr->flags & NA_PTR_CONST_DATA)
-      naError("naGetPtrMutable", "Mutable access to const ptr.");
-  #endif
-  return ptr->data.d;
+NA_IDEF void* naGetPtrMutable(NAPtr ptr){
+  return ptr.data.d;
 }
 
 
 
-NA_IDEF NABool naIsPtrConst(const NAPtr* ptr){
+NA_IDEF NABool naIsPtrConst(NAPtr ptr){
   #ifndef NDEBUG
-    return (ptr->flags & NA_PTR_CONST_DATA);
+    return (ptr.flags & NA_PTR_CONST_DATA);
   #else
     NA_UNUSED(ptr);
     return NA_FALSE;

@@ -369,7 +369,7 @@ NA_HIDEF void naSetOctTreeIteratorCurNode(NAOctTreeIterator* iter, NAOctTreeNode
 // shall get in place of this node.
 NA_HDEF void naRemoveOctTreeNode(NAOctTreeIterator* iter, NAOctTreeNode* replacenode){
   NAOctTreeNode* node = iter->node;
-  NAOctTree* tree = naGetPtrMutable(&(iter->tree));
+  NAOctTree* tree = naGetPtrMutable(iter->tree);
 
   // As the current node will be erased, we adjust the iterator to point
   // at the parent.
@@ -444,7 +444,7 @@ NA_HDEF void naCreateOctTreeLeaf(NAOctTreeIterator* iter, const void* data){
       naError("naCreateOctTreeLeaf", "iterator is already at a leaf");
   #endif
 
-  tree = (NAOctTree*)naGetPtrMutable(&(iter->tree));
+  tree = (NAOctTree*)naGetPtrMutable(iter->tree);
   baseleafexponent = naGetOctTreeBaseLeafExponent(tree);
 
   if(!iter->node){
@@ -554,7 +554,7 @@ NA_HDEF void naCreateOctTreeLeaf(NAOctTreeIterator* iter, const void* data){
 
 NA_HIDEF void naInitOctTreeIterator(NAOctTreeIterator* iter){
   #ifndef NDEBUG
-    NAOctTree* mutabletree = (NAOctTree*)naGetPtrConst(&(iter->tree));
+    NAOctTree* mutabletree = (NAOctTree*)naGetPtrConst(iter->tree);
     mutabletree->itercount++;
   #endif
   iter->node = NA_NULL;
@@ -603,7 +603,7 @@ NA_DEF NAOctTreeIterator naMakeOctTreeModifier(NAOctTree* tree){
 
 NA_DEF void naClearOctTreeIterator(NAOctTreeIterator* iter){
   #ifndef NDEBUG
-    NAOctTree* mutabletree = (NAOctTree*)naGetPtrConst(&(iter->tree));
+    NAOctTree* mutabletree = (NAOctTree*)naGetPtrConst(iter->tree);
     mutabletree->itercount--;
     if(iter->node){iter->node->itercount--;}
   #endif
@@ -671,7 +671,7 @@ NA_DEF NABoxi naGetOctTreeCurBoxi(const NAOctTreeIterator* iter){
       naError("naGetOctTreeCurBoxi", "Iterator has no valid position");
     if(iter->childsegment == -1)
       naError("naGetOctTreeCurBoxi", "Iterator is not positioned on a leaf");
-    tree = naGetPtrConst(&(iter->tree));
+    tree = naGetPtrConst(iter->tree);
     if(naGetOctTreeBaseLeafExponent(tree) < 0)
       naError("naGetOctTreeCurBoxi", "Can not return valid integer box for trees with exponents < 0");
   #endif
@@ -719,7 +719,7 @@ NA_DEF void naRemoveOctTreeCur(NAOctTreeIterator* iter){
     if(!naIsOctTreeNodeSegmentLeaf(iter->node, iter->childsegment))
       naError("naRemoveOctTreeCur", "iterator is not at a leaf");
   #endif
-  tree = naGetPtrMutable(&(iter->tree));
+  tree = naGetPtrMutable(iter->tree);
 
   // First, we destroy the data of the leaf chunk
   tree->configuration.leafdeallocator(iter->node->childs[iter->childsegment], tree->configuration.userdata);
@@ -779,7 +779,7 @@ NA_HDEF NABool naLocateOctTreeNodeCapture(NAOctTreeIterator* iter){
 // Moves the iterator to the closest parent node containing vertex.
 // Phase 1: Bubbling.
 NA_HDEF NABool naLocateOctTreeNodeBubble(NAOctTreeIterator* iter){
-  const NAOctTree* tree = naGetPtrConst(&(iter->tree));
+  const NAOctTree* tree = naGetPtrConst(iter->tree);
   iter->childsegment = -1;
 
   // If the iterator has no node set, we start at the root
@@ -800,7 +800,7 @@ NA_HDEF NABool naLocateOctTreeNodeBubble(NAOctTreeIterator* iter){
 
 
 NA_DEF NABool naIterateOctTree(NAOctTreeIterator* iter, const NABox* limit){
-  const NAOctTree* tree = (const NAOctTree*)naGetPtrConst(&(iter->tree));
+  const NAOctTree* tree = (const NAOctTree*)naGetPtrConst(iter->tree);
 
   if(!tree->root){return NA_FALSE;}
 
@@ -892,7 +892,7 @@ NA_DEF NABool naLocateOctTreeIterator(NAOctTreeIterator* dstiter, const NAOctTre
 
 
 NA_DEF NABool naLocateOctTreeSteps(NAOctTreeIterator* iter, NAInt stepx, NAInt stepy, NAInt stepz){
-  const NAOctTree* tree = naGetPtrConst(&(iter->tree));
+  const NAOctTree* tree = naGetPtrConst(iter->tree);
 
   NAVolume baseleafvolume = naGetOctTreeVolumeWithExponent(naGetOctTreeBaseLeafExponent(tree));
   iter->vertex.x += stepx * baseleafvolume.width;
@@ -906,7 +906,7 @@ NA_DEF NABool naLocateOctTreeSteps(NAOctTreeIterator* iter, NAInt stepx, NAInt s
 
 NA_DEF void naUpdateOctTreeCur(NAOctTreeIterator* iter){
   if(iter->node){
-    NAOctTree* tree = naGetPtrMutable(&(iter->tree));
+    NAOctTree* tree = naGetPtrMutable(iter->tree);
     naUpdateOctTreeNodeBubbling(tree, iter->node, iter->childsegment);
   }
 }

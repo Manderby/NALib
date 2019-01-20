@@ -189,6 +189,7 @@ NA_IAPI NAPosi   naMakePosiWithPos(NAPos  pos);
 // The Integer variant assumes pos to only contain integers, hence using a
 // more advanced and quicker conversion. But pos must be integral to work.
 NA_IAPI NAPosi   naMakePosiWithIntegerPos(NAPos  pos);
+NA_IAPI NAPos    naMakePosWithV2(double* v);
 
 NA_IAPI NASize   naMakeSize   (double width,  double  height);
 NA_IAPI NASizei  naMakeSizei  (NAInt  width,  NAInt   height);
@@ -220,10 +221,11 @@ NA_IAPI NABounds4i naMakeBounds4i(NAInt  top, NAInt  right, NAInt  bottom, NAInt
 NA_IAPI NABounds4  naMakeBounds4WithBounds4i(NABounds4i bounds);
 NA_IAPI NABounds4i naMakeBounds4iWithBounds4(NABounds4  bounds);
 
-NA_IAPI NAVertex    naMakeVertex  (double x, double y, double z);
+NA_IAPI NAVertex    naMakeVertex      (double x, double y, double z);
 NA_IAPI NAVertexi   naMakeVertexi (NAInt  x, NAInt  y, NAInt  z);
 NA_IAPI NAVertex    naMakeVertexWithVertexi(NAVertexi vertex);
 NA_IAPI NAVertexi   naMakeVertexiWithVertex(NAVertex  vertex);
+NA_IAPI NAVertex    naMakeVertexWithV3(double* v);
 
 NA_IAPI NAVolume    naMakeVolume  (double  width, double height, double depth);
 NA_IAPI NAVolumei   naMakeVolumei (NAInt   width, NAInt  height, NAInt  depth);

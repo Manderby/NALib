@@ -42,7 +42,7 @@ NA_HIDEF NAMemoryBlock* naNewMemoryBlockWithData(NAPtr data, NAInt bytesize, NAM
   #ifndef NDEBUG
     if(bytesize <= 0)
       naError("naNewMemoryBlock", "bytesize invalid");
-    if(naIsPtrConst(&data) && destructor != NA_NULL)
+    if(naIsPtrConst(data) && destructor != NA_NULL)
       naError("naNewMemoryBlock", "having a destructor for const data is probably wrong.");
   #else
     NA_UNUSED(bytesize);
@@ -59,13 +59,13 @@ NA_HIDEF NAMemoryBlock* naNewMemoryBlockWithData(NAPtr data, NAInt bytesize, NAM
 
 
 NA_HIDEF const void* naGetMemoryBlockDataPointerConst(NAMemoryBlock* block, NAInt indx){
-  return (const void*)&(((const NAByte*)naGetPtrConst(&(block->data)))[indx]);
+  return (const void*)&(((const NAByte*)naGetPtrConst(block->data))[indx]);
 }
 
 
 
 NA_HIDEF void* naGetMemoryBlockDataPointerMutable(NAMemoryBlock* block, NAInt indx){
-  return (void*)&(((const NAByte*)naGetPtrMutable(&(block->data)))[indx]);
+  return (void*)&(((const NAByte*)naGetPtrMutable(block->data))[indx]);
 }
 
 

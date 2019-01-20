@@ -264,13 +264,13 @@ NA_IAPI void naCleanupPtr(NAPtr* ptr, NAMutator destructor);
 //
 // When NDEBUG IS defined, the const and mutable functions behave equally and
 // no test will be performed whatsoever.
-NA_IAPI const void* naGetPtrConst   (const NAPtr* ptr);
-NA_IAPI       void* naGetPtrMutable (      NAPtr* ptr);
+NA_IAPI const void* naGetPtrConst   (NAPtr ptr);
+NA_IAPI       void* naGetPtrMutable (NAPtr ptr);
 
 // Returns NA_TRUE, if the pointer stores const data. This function only is
 // useful when debugging. When NDEBUG is defined, this function always returns
 // NA_FALSE.
-NA_IAPI NABool naIsPtrConst(const NAPtr* ptr);
+NA_IAPI NABool naIsPtrConst(NAPtr ptr);
 
 
 

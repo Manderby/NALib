@@ -2,10 +2,6 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-// This file contains prototypes of the file NATreeBinary.c
-// Do not include this file directly! It will automatically be included when
-// including "NATreeII.h"
-
 
 typedef struct NATreeBinaryNode NATreeBinaryNode;
 struct NATreeBinaryNode{
@@ -40,7 +36,6 @@ NA_HAPI NABool naEqualKeyBinaryNAInt(const void* key1, const void* key2);
 NA_HAPI void naAssignKeyBinaryNAInt(void* dst, const void* src);
 NA_HAPI NABool naTestKeyBinaryNAInt(const void* leftlimit, const void* rightlimit, const void* key);
 
-NA_HAPI NATreeNode* naConstructTreeNodeBinary(NATree* tree, const void* key, NATreeLeaf* leftleaf, NATreeLeaf* rightleaf);
 NA_HAPI void naDestructTreeNodeBinary(NATree* tree, NATreeNode* node, NABool recursive);
 NA_HAPI NATreeLeaf* naConstructTreeLeafBinary(NATree* tree, const void* key, NAPtr data);
 NA_HAPI void naDestructTreeLeafBinary(NATree* tree, NATreeLeaf* leaf);
@@ -53,8 +48,8 @@ NA_HAPI NATreeBaseNode* naGetChildBinary(NATreeNode* parent, NAInt childindx);
 NA_HAPI NATreeNode* naRemoveLeafBinary(NATree* tree, NATreeLeaf* leaf);
 NA_HAPI NATreeLeaf* naInsertLeafBinary(NATree* tree, NATreeLeaf* existingleaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 NA_HAPI const void* naGetLeafKeyBinary(NATreeLeaf* leaf);
-NA_HAPI NAPtr* naGetLeafDataBinary(NATreeLeaf* leaf);
-NA_HDEF NAPtr* naGetNodeDataBinary(NATreeNode* node);
+NA_HAPI NAPtr naGetLeafDataBinary(NATreeLeaf* leaf);
+NA_HAPI NAPtr naGetNodeDataBinary(NATreeNode* node);
 
 NA_HAPI void naInitNodeAVL(NATreeBinaryNode* node);
 NA_HAPI void naGrowAVL(NATree* tree, NATreeBinaryNode* node, NAInt childindx);

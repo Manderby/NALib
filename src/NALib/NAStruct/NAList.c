@@ -16,7 +16,7 @@ NA_DEF NABool naLocateListData(NAListIterator* iterator, const void* data){
 
   naResetListIterator(iterator);
   while(naIterateList(iterator)){
-    if(naGetPtrConst(&(iterator->cur->ptr)) == data){
+    if(naGetPtrConst(iterator->cur->ptr) == data){
       return NA_TRUE;
     }
   }
@@ -28,7 +28,7 @@ NA_DEF NABool naLocateListData(NAListIterator* iterator, const void* data){
 
 
 NA_DEF NABool naLocateListIndex(NAListIterator* iterator, NAInt indx){
-  NAList* mutablelist = (NAList*)naGetPtrConst(&(iterator->listptr));
+  NAList* mutablelist = (NAList*)naGetPtrConst(iterator->listptr);
 
   if(indx < 0){indx += mutablelist->count;}
   if(indx < 0){

@@ -40,6 +40,7 @@
 		905CC11B21C24431002861BC /* NABinaryData.c in Sources */ = {isa = PBXBuildFile; fileRef = 905CC0EB21C24431002861BC /* NABinaryData.c */; };
 		905CC11C21C24431002861BC /* NAMoney.c in Sources */ = {isa = PBXBuildFile; fileRef = 905CC0F121C24431002861BC /* NAMoney.c */; };
 		905CC11F21C3ADBE002861BC /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 90250F2421ADD313009BE5A3 /* main.c */; };
+		90CB7BB821F058D200607FE3 /* NATreeOct.c in Sources */ = {isa = PBXBuildFile; fileRef = 90CB7BB721F058D200607FE3 /* NATreeOct.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -190,6 +191,8 @@
 		90CB7B0521E905B300607FE3 /* NAMatrixAlgebraOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAMatrixAlgebraOperations.h; sourceTree = "<group>"; };
 		90CB7B0621E9064400607FE3 /* NAHomogeneousCoordinates.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAHomogeneousCoordinates.h; sourceTree = "<group>"; };
 		90CB7B0721E9068D00607FE3 /* NAMatrixRotations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NAMatrixRotations.h; sourceTree = "<group>"; };
+		90CB7BB621F058C600607FE3 /* NATreeOct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NATreeOct.h; sourceTree = "<group>"; };
+		90CB7BB721F058D200607FE3 /* NATreeOct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATreeOct.c; sourceTree = "<group>"; };
 		90D4A22620BB3E3500171E61 /* todo.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = todo.txt; sourceTree = "<group>"; };
 		90D4A22720BB3E3500171E61 /* NALibChangelogV20_V30.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = NALibChangelogV20_V30.txt; sourceTree = "<group>"; };
 		90D4A22820BB3E3500171E61 /* documentation.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = documentation.txt; sourceTree = "<group>"; };
@@ -313,12 +316,14 @@
 			isa = PBXGroup;
 			children = (
 				905CC0A721C24431002861BC /* NATree.c */,
-				905CC0A821C24431002861BC /* NATreeBinary.c */,
-				905CC0A921C24431002861BC /* NATreeII.h */,
-				905CC0AA21C24431002861BC /* NATreeCoreII.h */,
-				905CC0AB21C24431002861BC /* NATreeConfiguration.c */,
-				905CC0AC21C24431002861BC /* NATreeBinary.h */,
 				905CC0AD21C24431002861BC /* NATreeAVL.c */,
+				905CC0A821C24431002861BC /* NATreeBinary.c */,
+				905CC0AC21C24431002861BC /* NATreeBinary.h */,
+				905CC0AB21C24431002861BC /* NATreeConfiguration.c */,
+				905CC0AA21C24431002861BC /* NATreeCoreII.h */,
+				905CC0A921C24431002861BC /* NATreeII.h */,
+				90CB7BB721F058D200607FE3 /* NATreeOct.c */,
+				90CB7BB621F058C600607FE3 /* NATreeOct.h */,
 			);
 			path = NATree;
 			sourceTree = "<group>";
@@ -548,6 +553,7 @@
 				905CC11421C24431002861BC /* NAUICocoa.m in Sources */,
 				905CC10C21C24431002861BC /* NAList.c in Sources */,
 				905CC10E21C24431002861BC /* NAHeap.c in Sources */,
+				90CB7BB821F058D200607FE3 /* NATreeOct.c in Sources */,
 				905CC11A21C24431002861BC /* NARuntime.c in Sources */,
 				905CC11F21C3ADBE002861BC /* main.c in Sources */,
 				905CC11B21C24431002861BC /* NABinaryData.c in Sources */,

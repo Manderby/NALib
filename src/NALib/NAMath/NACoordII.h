@@ -146,6 +146,18 @@ NA_IDEF NAPosi naMakePosiWithIntegerPos(NAPos pos){
   NAPosi newpos = naMakePosi(naMakeIntWithIntegerDouble(pos.x), naMakeIntWithIntegerDouble(pos.y));
   return newpos;
 }
+NA_IDEF NAPos naMakePosWithV2(double* v){
+  NAPos newpos;
+  #ifndef NDEBUG
+    if(!(naIsOffsetValueValid(v[0]) && naIsOffsetValueValid(v[1])))
+      naError("naMakePosWithV2", "Invalid values given.");
+    if(!(naIsOffsetValueUseful(v[0]) && naIsOffsetValueUseful(v[1])))
+      naError("naMakePosWithV2", "Values given are not useful.");
+  #endif
+  newpos.x = v[0];
+  newpos.y = v[1];
+  return newpos;
+}
 
 
 
@@ -394,6 +406,19 @@ NA_IDEF NAVertex naMakeVertexWithVertexi(NAVertexi vertex){
 }
 NA_IDEF NAVertexi naMakeVertexiWithVertex(NAVertex vertex){
   NAVertexi newvertex = naMakeVertexi((NAInt)vertex.x, (NAInt)vertex.y, (NAInt)vertex.z);
+  return newvertex;
+}
+NA_IDEF NAVertex naMakeVertexWithV3(double* v){
+  NAVertex newvertex;
+  #ifndef NDEBUG
+    if(!(naIsOffsetValueValid(v[0]) && naIsOffsetValueValid(v[1]) && naIsOffsetValueValid(v[2])))
+      naError("naMakeVertexWithV3", "Invalid values given.");
+    if(!(naIsOffsetValueUseful(v[0]) && naIsOffsetValueUseful(v[1]) && naIsOffsetValueUseful(v[2])))
+      naError("naMakeVertexWithV3", "Values given are not useful.");
+  #endif
+  newvertex.x = v[0];
+  newvertex.y = v[1];
+  newvertex.z = v[2];
   return newvertex;
 }
 

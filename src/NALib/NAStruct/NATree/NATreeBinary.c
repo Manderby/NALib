@@ -59,12 +59,13 @@ NA_HDEF NABool naTestKeyBinaryNAInt(const void* leftlimit, const void* rightlimi
 
 
 NA_HDEF NATreeNode* naConstructTreeNodeBinary(NATree* tree, const void* key, NATreeLeaf* leftleaf, NATreeLeaf* rightleaf){
-  #ifndef NDEBUG
-//    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
-//      naError("naConstructTreeNodeBinary", "tree is configured with no key");
-  #endif
   NATreeBinaryNode* binnode = naNew(NATreeBinaryNode);
   naInitTreeNode((NATreeNode*)binnode);
+
+  #ifndef NDEBUG
+    if(((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY) && key)
+      naError("naConstructTreeNodeBinary", "tree is configured with no key but key is given which is not NULL");
+  #endif
 
   // Node-specific initialization
   if(tree->config->keyAssigner){tree->config->keyAssigner(&(binnode->key), key);}
@@ -107,10 +108,6 @@ NA_HDEF void naDestructTreeNodeBinary(NATree* tree, NATreeNode* node, NABool rec
 
 
 NA_HDEF NATreeLeaf* naConstructTreeLeafBinary(NATree* tree, const void* key, NAPtr data){
-  #ifndef NDEBUG
-//    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
-//      naError("naConstructTreeLeafBinary", "tree is configured with no key");
-  #endif
   NATreeBinaryLeaf* binleaf = naNew(NATreeBinaryLeaf);
   naInitTreeLeaf(&(binleaf->leaf));
 
@@ -390,16 +387,16 @@ NA_HDEF const void* naGetLeafKeyBinary(NATreeLeaf* leaf){
 
 
 
-NA_HDEF NAPtr* naGetLeafDataBinary(NATreeLeaf* leaf){
+NA_HDEF NAPtr naGetLeafDataBinary(NATreeLeaf* leaf){
   NATreeBinaryLeaf* binleaf = (NATreeBinaryLeaf*)(leaf);
-  return &(binleaf->data);
+  return binleaf->data;
 }
 
 
 
-NA_HDEF NAPtr* naGetNodeDataBinary(NATreeNode* node){
+NA_HDEF NAPtr naGetNodeDataBinary(NATreeNode* node){
   NATreeBinaryNode* binnode = (NATreeBinaryNode*)(node);
-  return &(binnode->data);
+  return binnode->data;
 }
 
 
