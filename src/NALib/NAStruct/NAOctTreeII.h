@@ -22,9 +22,9 @@ struct NAOctTree{
 
 struct NAOctTreeIterator{
   NAPtr tree;
-  NAOctTreeNode* node; // Denotes the node currently visiting
+  NAOctTreeNode* node;  // Denotes the node currently visiting
   int16 childsegment;   // Denotes the child segment currently visiting.
-  NAVertex vertex;            // Denotes the exact position which was requested.
+  NAVertex vertex;      // Denotes the exact position which was requested.
   #ifndef NDEBUG
     NAInt flags;
   #endif
