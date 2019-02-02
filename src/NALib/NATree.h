@@ -182,6 +182,8 @@ NA_IAPI void naSetTreeConfigurationOcttreeBaseLeafExponent(
   NATreeConfiguration*       config,
   NAInt                      baseleafexponent);
 
+NA_IAPI NAInt naGetTreeConfigurationOcttreeBaseLeafExponent(
+  const NATreeConfiguration* config);
 
 
 // ////////////////////
@@ -273,7 +275,7 @@ typedef NABool (*NATreeLeafTokenSearcher)(  void* token,
 // in the tree, NA_FALSE ist returned and iter points to its initial state.
 //
 // Key:      Searches for the given key. The assumeclose parameter indicates
-//           that the desired key is expected to be n the neighborhood of the
+//           that the desired key is expected to be in the neighborhood of the
 //           current location. Do not set this flag if you access elements
 //           more randomly. The wrong value can make quite a difference in
 //           performance. Test it out!

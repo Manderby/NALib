@@ -40,7 +40,8 @@ typedef enum{
 // and set them in naCreateTreeConfiguration.
 //
 // NAKeyIndexGetter          Returns the childindex where key would be stored
-//                           on a node with the given basekey.
+//                           on a node with the given basekey. The data can
+//                           be any data required by the datastructure
 // NAKeyEqualer              Returns true if the two keys are equal.
 // NAKeyAssigner             Assigns the src key to dst.
 // NAKeyTester               Tests whether the key is within the given limits.
@@ -50,13 +51,11 @@ typedef enum{
 // NATreeLeafCoreConstructor Creates a new leaf with the given key and data
 // NATreeLeafCoreDestructor  Destroys the given leaf.
 //
-// NATreeBubbleLocator       Searches from the given node upwards the tree and
+// NATreeBubbleLocator       Searches from the given leaf upwards the tree and
 //                           returns the node which is guaranteed to contain
 //                           the given key or Null if there is no root.
 // NATreeCaptureLocator      Searches from the given node downwards the tree
-//                           and returns the parent node of the child which
-//                           should contain key. Returns the childindx of that
-//                           child in the childindx parameter.
+//                           and returns the leaf which should contain key.
 // NATreeChildIndexGetter    Returns the index of the child in the parent.
 // NATreeChildKeyIndexGetter Returns the index under which the given key should
 //                           be stored in the given parent.
@@ -70,7 +69,7 @@ typedef enum{
 //                           both that leaf and the new sibling.
 // NATreeLeafKeyGetter       Returns the key of the given leaf.
 // NATreeLeafDataGetter      Returns the data of the given leaf.
-typedef NAInt           (*NAKeyIndexGetter)(const void* basekey, const void* testkey);
+typedef NAInt           (*NAKeyIndexGetter)(const void* basekey, const void* testkey, const void* data);
 typedef NABool          (*NAKeyEqualer)(const void* key1, const void* key2);
 typedef void            (*NAKeyAssigner)(void* dst, const void* src);
 typedef NABool          (*NAKeyTester)(const void* leftlimit, const void* rightlimit, const void* key);

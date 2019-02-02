@@ -343,19 +343,19 @@ NA_IAPI NABox     naMakeBoxPositive (NABox  box);
 NA_IAPI NABoxi    naMakeBoxiPositive(NABoxi box);
 
 // Copies the contents of source s to destination d
-NA_IAPI void      naCopyPos       (NAPos*   posd,   NAPos*   poss);
-NA_IAPI void      naCopyPosi      (NAPosi*  posd,   NAPosi*  poss);
-NA_IAPI void      naCopySize      (NASize*  sized,  NASize*  sizes);
-NA_IAPI void      naCopySizei     (NASizei* sized,  NASizei* sizes);
-NA_IAPI void      naCopyRect      (NARect*  rectd,  NARect*  rects);
-NA_IAPI void      naCopyRecti     (NARecti* rectd,  NARecti* rects);
+NA_IAPI void      naCopyPos    (NAPos*   posd,   const NAPos*   poss);
+NA_IAPI void      naCopyPosi   (NAPosi*  posd,   const NAPosi*  poss);
+NA_IAPI void      naCopySize   (NASize*  sized,  const NASize*  sizes);
+NA_IAPI void      naCopySizei  (NASizei* sized,  const NASizei* sizes);
+NA_IAPI void      naCopyRect   (NARect*  rectd,  const NARect*  rects);
+NA_IAPI void      naCopyRecti  (NARecti* rectd,  const NARecti* rects);
 
-NA_IAPI void      naCopyVertex    (NAVertex*  vertexd,  NAVertex*  vertexs);
-NA_IAPI void      naCopyVertexi   (NAVertexi* vertexd,  NAVertexi* vertexs);
-NA_IAPI void      naCopyVolume    (NAVolume*  volumed,  NAVolume*  volumes);
-NA_IAPI void      naCopyVolumei   (NAVolumei* volumed,  NAVolumei* volumes);
-NA_IAPI void      naCopyBox       (NABox*  boxd,  NABox*  boxs);
-NA_IAPI void      naCopyBoxi      (NABoxi* boxd,  NABoxi* boxs);
+NA_IAPI void      naCopyVertex (NAVertex*  vertexd,  const NAVertex*  vertexs);
+NA_IAPI void      naCopyVertexi(NAVertexi* vertexd,  const NAVertexi* vertexs);
+NA_IAPI void      naCopyVolume (NAVolume*  volumed,  const NAVolume*  volumes);
+NA_IAPI void      naCopyVolumei(NAVolumei* volumed,  const NAVolumei* volumes);
+NA_IAPI void      naCopyBox    (NABox*  boxd,  const NABox*  boxs);
+NA_IAPI void      naCopyBoxi   (NABoxi* boxd,  const NABoxi* boxs);
 
 // Returns the center position / vertex
 NA_IAPI NAPos     naGetRectCenter (NARect rect);

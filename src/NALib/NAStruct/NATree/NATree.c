@@ -6,6 +6,9 @@
 
 
 
+// Returns the next leaf while capturing a given parent node. The "next" being
+// defined by the step in the info. If if no more leaf is available, NA_NULL
+// is returned.
 NA_HDEF NATreeLeaf* naIterateTreeCapture(const NATree* tree, NATreeNode* parent, NAInt previndx, NATreeIterationInfo* info){
   NAInt indx = previndx + info->step;
   if(indx != info->breakindx){
@@ -18,6 +21,7 @@ NA_HDEF NATreeLeaf* naIterateTreeCapture(const NATree* tree, NATreeNode* parent,
       return naIterateTreeCapture(tree, (NATreeNode*)child, info->startindx, info);
     }
   }
+  // No more leaf available.
   return NA_NULL;
 }
 
@@ -80,6 +84,8 @@ NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* 
 
 
 
+// Positions iter at the leaf containing key or which is closest to the key if
+// not found precisely.
 NA_HDEF NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABool* matchfound, NABool usebubble){
   const NATree* tree;
   NATreeNode* topnode;

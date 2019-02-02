@@ -1507,58 +1507,58 @@ NA_IDEF NABoxi naMakeBoxiPositive(NABoxi box){
 // COPY
 // /////////////////////////////////
 
-NA_IDEF void naCopyPos(NAPos* posd,  NAPos* poss){
+NA_IDEF void naCopyPos(NAPos* posd, const NAPos* poss){
   posd->x = poss->x;
   posd->y = poss->y;
 }
-NA_IDEF void naCopyPosi(NAPosi* posd,  NAPosi* poss){
+NA_IDEF void naCopyPosi(NAPosi* posd, const NAPosi* poss){
   posd->x = poss->x;
   posd->y = poss->y;
 }
-NA_IDEF void naCopySize(NASize* sized,  NASize* sizes){
+NA_IDEF void naCopySize(NASize* sized, const NASize* sizes){
   sized->width  = sizes->width;
   sized->height = sizes->height;
 }
-NA_IDEF void naCopySizei(NASizei* sized,  NASizei* sizes){
+NA_IDEF void naCopySizei(NASizei* sized, const NASizei* sizes){
   sized->width  = sizes->width;
   sized->height = sizes->height;
 }
-NA_IDEF void naCopyRect(NARect* rectd,  NARect* rects){
+NA_IDEF void naCopyRect(NARect* rectd, const NARect* rects){
   rectd->pos = rects->pos;
   rectd->size  = rects->size;
 }
-NA_IDEF void naCopyRecti(NARecti* rectd,  NARecti* rects){
+NA_IDEF void naCopyRecti(NARecti* rectd, const NARecti* rects){
   rectd->pos = rects->pos;
   rectd->size  = rects->size;
 }
 
 
 
-NA_IDEF void naCopyVertex(NAVertex* vertexd,  NAVertex* vertexs){
+NA_IDEF void naCopyVertex(NAVertex* vertexd, const NAVertex* vertexs){
   vertexd->x = vertexs->x;
   vertexd->y = vertexs->y;
   vertexd->z = vertexs->z;
 }
-NA_IDEF void naCopyVertexi(NAVertexi* vertexd,  NAVertexi* vertexs){
+NA_IDEF void naCopyVertexi(NAVertexi* vertexd, const NAVertexi* vertexs){
   vertexd->x = vertexs->x;
   vertexd->y = vertexs->y;
   vertexd->z = vertexs->z;
 }
-NA_IDEF void naCopyVolume(NAVolume* volumed,  NAVolume* volumes){
+NA_IDEF void naCopyVolume(NAVolume* volumed, const NAVolume* volumes){
   volumed->width  = volumes->width;
   volumed->height = volumes->height;
   volumed->depth  = volumes->depth;
 }
-NA_IDEF void naCopyVolumei(NAVolumei* volumed,  NAVolumei* volumes){
+NA_IDEF void naCopyVolumei(NAVolumei* volumed, const NAVolumei* volumes){
   volumed->width  = volumes->width;
   volumed->height = volumes->height;
   volumed->depth  = volumes->depth;
 }
-NA_IDEF void naCopyBox(NABox* boxd,  NABox* boxs){
+NA_IDEF void naCopyBox(NABox* boxd, const NABox* boxs){
   boxd->vertex = boxs->vertex;
   boxd->volume  = boxs->volume;
 }
-NA_IDEF void naCopyBoxi(NABoxi* boxd,  NABoxi* boxs){
+NA_IDEF void naCopyBoxi(NABoxi* boxd, const NABoxi* boxs){
   boxd->vertex = boxs->vertex;
   boxd->volume  = boxs->volume;
 }

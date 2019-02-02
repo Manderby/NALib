@@ -111,13 +111,15 @@ NA_IAPI void naSetTreeConfigurationOcttreeBaseLeafExponent(NATreeConfiguration* 
 
 
 
+NA_IAPI NAInt naGetTreeConfigurationOcttreeBaseLeafExponent(const NATreeConfiguration* config){
+  return *((NAInt*)(config->internaldata));
+}
+
+
+
 NA_IAPI NAPtr naGetTreeConfigurationData(const NATreeConfiguration* config){
   return config->data;
 }
-
-//NA_IAPI NAInt naGetTreeConfigurationOcttreeBaseLeafExponent(const NATreeConfiguration* config){
-//  return *((NAInt*)(config->internaldata));
-//}
 
 
 

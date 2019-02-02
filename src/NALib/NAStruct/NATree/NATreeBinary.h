@@ -26,12 +26,12 @@ struct NATreeBinaryLeaf{
 };
 NA_EXTERN_RUNTIME_TYPE(NATreeBinaryLeaf);
 
-NA_HAPI NAInt naGetKeyIndexBinaryDouble(const void* basekey, const void* testkey);
+NA_HAPI NAInt naGetKeyIndexBinaryDouble(const void* basekey, const void* testkey, const void* data);
 NA_HAPI NABool naEqualKeyBinaryDouble(const void* key1, const void* key2);
 NA_HAPI void naAssignKeyBinaryDouble(void* dst, const void* src);
 NA_HAPI NABool naTestKeyBinaryDouble(const void* leftlimit, const void* rightlimit, const void* key);
 
-NA_HAPI NAInt naGetKeyIndexBinaryNAInt(const void* basekey, const void* key);
+NA_HAPI NAInt naGetKeyIndexBinaryNAInt(const void* basekey, const void* key, const void* data);
 NA_HAPI NABool naEqualKeyBinaryNAInt(const void* key1, const void* key2);
 NA_HAPI void naAssignKeyBinaryNAInt(void* dst, const void* src);
 NA_HAPI NABool naTestKeyBinaryNAInt(const void* leftlimit, const void* rightlimit, const void* key);

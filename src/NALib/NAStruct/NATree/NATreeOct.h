@@ -7,11 +7,8 @@
 typedef struct NATreeOctNode NATreeOctNode;
 struct NATreeOctNode{
   NATreeNode node;
-//  union{
-//    double d;
-//    NAInt i;
-//  } key;
   NAVertex origin;
+  NAInt childexponent;
   NATreeBaseNode* childs[8];
   NAPtr data;
 };
@@ -20,16 +17,13 @@ NA_EXTERN_RUNTIME_TYPE(NATreeOctNode);
 typedef struct NATreeOctLeaf NATreeOctLeaf;
 struct NATreeOctLeaf{
   NATreeLeaf leaf;
-//  union{
-//    double d;
-//    NAInt i;
-//  } key;
   NAVertex origin;  // todo remove this maybe?
+  NAInt leafexponent; // todo remove this maybe?
   NAPtr data;
 };
 NA_EXTERN_RUNTIME_TYPE(NATreeOctLeaf);
 
-NA_HAPI NAInt naGetKeyIndexOctDouble(const void* basekey, const void* testkey);
+NA_HAPI NAInt naGetKeyIndexOctDouble(const void* basekey, const void* testkey, const void* data);
 NA_HAPI NABool naEqualKeyOctDouble(const void* key1, const void* key2);
 NA_HAPI void naAssignKeyOctDouble(void* dst, const void* src);
 NA_HAPI NABool naTestKeyOctDouble(const void* leftlimit, const void* rightlimit, const void* key);

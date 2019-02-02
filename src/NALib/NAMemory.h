@@ -429,7 +429,7 @@ NA_IAPI NAUInt naGetRuntimePoolPartSize(void);
 // You can do so using the macro NA_RUNTIME_TYPE. Just write the typename
 // and the function to use for destructing the type.
 
-#define NA_RUNTIME_TYPE(type, destructor, refcounting)
+#define NA_RUNTIME_TYPE(typename, destructor, refcounting)
 
 // But note that this macro results in a variable definition and hence must be
 // written in an implementation file (.c). Also, the type must not be opaque
@@ -439,7 +439,7 @@ NA_IAPI NAUInt naGetRuntimePoolPartSize(void);
 // use naNew, you can use the NA_EXTERN_RUNTIME_TYPE macro to declare the
 // variable beforehand:
 
-#define NA_EXTERN_RUNTIME_TYPE(type)
+#define NA_EXTERN_RUNTIME_TYPE(typename)
 
 // For a deeper understanding on how that macro does what it does, please refer
 // to the definition of these macros in NAMemoryII.h and the implementation of

@@ -28,7 +28,8 @@ NA_HIDEF void naDestructTreeChildBinary(NATree* tree, NATreeBinaryNode* binnode,
 // ////////////////////////////
 
 
-NA_HDEF NAInt naGetKeyIndexBinaryDouble(const void* basekey, const void* testkey){
+NA_HDEF NAInt naGetKeyIndexBinaryDouble(const void* basekey, const void* testkey, const void* data){
+  NA_UNUSED(data);
   return !(*(const double*)testkey < *(const double*)basekey); // results in 0 or 1
 }
 NA_HDEF NABool naEqualKeyBinaryDouble(const void* key1, const void* key2){
@@ -43,7 +44,8 @@ NA_HDEF NABool naTestKeyBinaryDouble(const void* leftlimit, const void* rightlim
 
 
 
-NA_HDEF NAInt naGetKeyIndexBinaryNAInt(const void* basekey, const void* key){
+NA_HDEF NAInt naGetKeyIndexBinaryNAInt(const void* basekey, const void* key, const void* data){
+  NA_UNUSED(data);
   return !(*(const NAInt*)key < *(const NAInt*)basekey); // results in 0 or 1
 }
 NA_HDEF NABool naEqualKeyBinaryNAInt(const void* key1, const void* key2){
@@ -63,8 +65,10 @@ NA_HDEF NATreeNode* naConstructTreeNodeBinary(NATree* tree, const void* key, NAT
   naInitTreeNode((NATreeNode*)binnode);
 
   #ifndef NDEBUG
-    if(((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY) && key)
-      naError("naConstructTreeNodeBinary", "tree is configured with no key but key is given which is not NULL");
+    // This check has to be removed until there is a better solution for the
+    // different key types than using a union.
+//    if(((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY) && key)
+//      naError("naConstructTreeNodeBinary", "tree is configured with no key but key is given which is not NULL");
   #endif
 
   // Node-specific initialization
@@ -147,7 +151,7 @@ NA_HDEF NATreeNode* naLocateBubbleBinaryWithLimits(const NATree* tree, NATreeNod
   #endif
   binnode = (NATreeBinaryNode*)(node);
   // If we are at a node which stores the key itself, return this node.
-  if(tree->config->keyEqualer(key, &(binnode->key))){return node;}
+  if(tree->config->keyEqualer(key, &(binnode->key))){return node;}  // todo what about key being <= or >= ?
   // Otherwise, we set the limits dependent on the previous node.
   if(naGetChildIndexBinary(node, prevnode) == 1){
     leftlimit = &(binnode->key);
@@ -251,7 +255,7 @@ NA_HDEF NAInt naGetChildKeyIndexBinary(const NATree* tree, NATreeNode* parent, c
       naError("naGetChildKeyIndexBinary", "tree is configured with no key");
   #endif
   binparent = (NATreeBinaryNode*)(parent);
-  return tree->config->keyIndexGetter(&(binparent->key), key);
+  return tree->config->keyIndexGetter(&(binparent->key), key, NA_NULL);
 }
 
 
@@ -321,7 +325,7 @@ NA_HDEF NATreeLeaf* naInsertLeafBinary(NATree* tree, NATreeLeaf* existingleaf, c
       if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
         naError("naInsertLeafBinary", "tree is configured with no key");
     #endif
-    if(tree->config->keyIndexGetter(&(((NATreeBinaryLeaf*)existingleaf)->key), &(((NATreeBinaryLeaf*)newleaf)->key)) == 1){
+    if(tree->config->keyIndexGetter(&(((NATreeBinaryLeaf*)existingleaf)->key), &(((NATreeBinaryLeaf*)newleaf)->key), NA_NULL) == 1){
       left = existingleaf;
       right = newleaf;
     }else{
