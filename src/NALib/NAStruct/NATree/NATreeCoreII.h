@@ -13,10 +13,17 @@
 #define NA_TREE_ITERATOR_MODIFIER 0x01
 #define NA_TREE_ITERATOR_CLEARED  0x80
 
-// Prototypes
-NA_HAPI  NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABool* matchfound, NABool usebubble);
-NA_HAPI  NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NATreeNodeTokenSearcher nodeSearcher, NATreeLeafTokenSearcher leafSearcher, NABool* matchfound);
+
+// Iterates through the tree by moving the iterator to the "next" leaf.
+// Returns NA_FALSE, if iteration is over.
 NA_HAPI  NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info);
+
+// Positions iter at the leaf containing key or which is closest to the key if
+// no match was found.
+NA_HAPI  NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABool* matchfound, NABool usebubble);
+
+// Prototypes
+NA_HAPI  NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NATreeNodeTokenSearcher nodeSearcher, NATreeLeafTokenSearcher leafSearcher, NABool* matchfound);
 NA_HAPI  NATreeLeaf* naAddTreeContentAtLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 NA_HAPI  NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace);
 NA_HAPI  void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childindx);
@@ -636,7 +643,7 @@ NA_IDEF NABool naIterateTree(NATreeIterator* iter){
   const NATree* tree;
   tree = (const NATree*)naGetPtrConst(iter->tree);
   info.step = 1;
-  info.startindx = -1;
+  info.startindx = 0;
   info.breakindx = tree->config->childpernode;
   return naIterateTreeWithInfo(iter, &info);
 }
@@ -648,7 +655,7 @@ NA_IDEF NABool naIterateTreeBack(NATreeIterator* iter){
   const NATree* tree;
   tree = (const NATree*)naGetPtrConst(iter->tree);
   info.step = -1;
-  info.startindx = tree->config->childpernode;
+  info.startindx = tree->config->childpernode - 1;
   info.breakindx = -1;
   return naIterateTreeWithInfo(iter, &info);
 }

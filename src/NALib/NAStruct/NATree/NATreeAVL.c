@@ -26,17 +26,17 @@ NA_HIDEF void naSetNodeAVL(NATreeBinNode* binnode, NAInt balance){
 
 
 
-NA_HIDEF void naRotateLeftBinary(NATree* tree, NATreeBinNode* parent, NATreeBinNode* rightchild){
+NA_HIDEF void naRotateLeftBin(NATree* tree, NATreeBinNode* parent, NATreeBinNode* rightchild){
   NATreeNode* grandparent;
   #ifndef NDEBUG
     if(naIsItemLeaf(tree, &(parent->node.item)))
-      naError("naRotateLeftBinary", "given parent is not a node");
+      naError("naRotateLeftBin", "given parent is not a node");
     if(naIsItemLeaf(tree, &(rightchild->node.item)))
-      naError("naRotateLeftBinary", "given right child is not a node");
+      naError("naRotateLeftBin", "given right child is not a node");
   #endif
   grandparent = parent->node.item.parent;
   if(!naIsTreeItemRoot(tree, &(parent->node.item))){
-    NAInt parentindx = naGetChildIndexBinary(grandparent, &(parent->node.item));
+    NAInt parentindx = naGetChildIndexBin(grandparent, &(parent->node.item));
     ((NATreeBinNode*)grandparent)->childs[parentindx] = &(rightchild->node.item);
   }else{
     tree->root = &(rightchild->node.item);
@@ -56,17 +56,17 @@ NA_HIDEF void naRotateLeftBinary(NATree* tree, NATreeBinNode* parent, NATreeBinN
 
 
 
-NA_HIDEF void naRotateRightBinary(NATree* tree, NATreeBinNode* leftchild, NATreeBinNode* parent){
+NA_HIDEF void naRotateRightBin(NATree* tree, NATreeBinNode* leftchild, NATreeBinNode* parent){
   NATreeNode* grandparent;
   #ifndef NDEBUG
     if(naIsItemLeaf(tree, &(leftchild->node.item)))
-      naError("naRotateRightBinary", "given left child is not a node");
+      naError("naRotateRightBin", "given left child is not a node");
     if(naIsItemLeaf(tree, &(parent->node.item)))
-      naError("naRotateRightBinary", "given parent is not a node");
+      naError("naRotateRightBin", "given parent is not a node");
   #endif
   grandparent = parent->node.item.parent;
   if(!naIsTreeItemRoot(tree, &(parent->node.item))){
-    NAInt parentindx = naGetChildIndexBinary(grandparent, &(parent->node.item));
+    NAInt parentindx = naGetChildIndexBin(grandparent, &(parent->node.item));
     ((NATreeBinNode*)grandparent)->childs[parentindx] = &(leftchild->node.item);
   }else{
     tree->root = &(leftchild->node.item);
@@ -88,7 +88,7 @@ NA_HIDEF void naRotateRightBinary(NATree* tree, NATreeBinNode* leftchild, NATree
 
 NA_HIDEF void naPropagateAVLGrow(NATree* tree, NATreeBinNode* binnode){
   if(!naIsTreeItemRoot(tree, &(binnode->node.item))){
-    naGrowAVL(tree, (NATreeBinNode*)(binnode->node.item.parent), naGetChildIndexBinary(binnode->node.item.parent, &(binnode->node.item)));
+    naGrowAVL(tree, (NATreeBinNode*)(binnode->node.item.parent), naGetChildIndexBin(binnode->node.item.parent, &(binnode->node.item)));
   }
 }
 
@@ -96,7 +96,7 @@ NA_HIDEF void naPropagateAVLGrow(NATree* tree, NATreeBinNode* binnode){
 
 NA_HIDEF void naPropagateAVLShrink(NATree* tree, NATreeBinNode* binnode){
   if(!naIsTreeItemRoot(tree, &(binnode->node.item))){
-    naShrinkAVL(tree, (NATreeBinNode*)(binnode->node.item.parent), naGetChildIndexBinary(binnode->node.item.parent, &(binnode->node.item)));
+    naShrinkAVL(tree, (NATreeBinNode*)(binnode->node.item.parent), naGetChildIndexBin(binnode->node.item.parent, &(binnode->node.item)));
   }
 }
 
@@ -114,7 +114,7 @@ NA_HDEF void naGrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx){
     NATreeBinNode* child = (NATreeBinNode*)binnode->childs[0];
     NAInt childbalance = naGetNodeAVL(child);
     if(childbalance == -1){
-      naRotateRightBinary(tree, child, binnode);
+      naRotateRightBin(tree, child, binnode);
       naSetNodeAVL(child, 0);
       naSetNodeAVL(binnode, 0);
     }else{
@@ -126,8 +126,8 @@ NA_HDEF void naGrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx){
       #endif
       grandchild = (NATreeBinNode*)child->childs[1];
       grandchildbalance = naGetNodeAVL(grandchild);
-      naRotateLeftBinary(tree, child, grandchild);
-      naRotateRightBinary(tree, grandchild, binnode);
+      naRotateLeftBin(tree, child, grandchild);
+      naRotateRightBin(tree, grandchild, binnode);
       if(grandchildbalance == -1){
         naSetNodeAVL(binnode, 1);
         naSetNodeAVL(grandchild, 0);
@@ -150,7 +150,7 @@ NA_HDEF void naGrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx){
     NATreeBinNode* child = (NATreeBinNode*)binnode->childs[1];
     NAInt childbalance = naGetNodeAVL(child);
     if(childbalance == 1){
-      naRotateLeftBinary(tree, binnode, child);
+      naRotateLeftBin(tree, binnode, child);
       naSetNodeAVL(binnode, 0);
       naSetNodeAVL(child, 0);
     }else{
@@ -162,8 +162,8 @@ NA_HDEF void naGrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx){
       #endif
       grandchild = (NATreeBinNode*)child->childs[0];
       grandchildbalance = naGetNodeAVL(grandchild);
-      naRotateRightBinary(tree, grandchild, child);
-      naRotateLeftBinary(tree, binnode, grandchild);
+      naRotateRightBin(tree, grandchild, child);
+      naRotateLeftBin(tree, binnode, grandchild);
       if(grandchildbalance == 1){
         naSetNodeAVL(binnode, -1);
         naSetNodeAVL(grandchild, 0);
@@ -203,11 +203,11 @@ NA_HDEF void naShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx){
     NATreeBinNode* child = (NATreeBinNode*)binnode->childs[1];
     NAInt childbalance = naGetNodeAVL(child);
     if(childbalance == 0){
-      naRotateLeftBinary(tree, binnode, child);
+      naRotateLeftBin(tree, binnode, child);
       naSetNodeAVL(binnode, 1);
       naSetNodeAVL(child, -1);
     }else if(childbalance == 1){
-      naRotateLeftBinary(tree, binnode, child);
+      naRotateLeftBin(tree, binnode, child);
       naSetNodeAVL(binnode, 0);
       naSetNodeAVL(child, 0);
       naPropagateAVLShrink(tree, child);
@@ -220,8 +220,8 @@ NA_HDEF void naShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx){
       #endif
       grandchild = (NATreeBinNode*)child->childs[0];
       grandchildbalance = naGetNodeAVL(grandchild);
-      naRotateRightBinary(tree, grandchild, child);
-      naRotateLeftBinary(tree, binnode, grandchild);
+      naRotateRightBin(tree, grandchild, child);
+      naRotateLeftBin(tree, binnode, grandchild);
       naSetNodeAVL(grandchild, 0);
       if(grandchildbalance == -1){
         naSetNodeAVL(binnode, 0);
@@ -243,11 +243,11 @@ NA_HDEF void naShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx){
     NATreeBinNode* child = (NATreeBinNode*)binnode->childs[0];
     NAInt childbalance = naGetNodeAVL(child);
     if(childbalance == 0){
-      naRotateRightBinary(tree, child, binnode);
+      naRotateRightBin(tree, child, binnode);
       naSetNodeAVL(child, 1);
       naSetNodeAVL(binnode, -1);
     }else if(childbalance == -1){
-      naRotateRightBinary(tree, child, binnode);
+      naRotateRightBin(tree, child, binnode);
       naSetNodeAVL(child, 0);
       naSetNodeAVL(binnode, 0);
       naPropagateAVLShrink(tree, child);
@@ -260,8 +260,8 @@ NA_HDEF void naShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx){
       #endif
       grandchild = (NATreeBinNode*)child->childs[1];
       grandchildbalance = naGetNodeAVL(grandchild);
-      naRotateLeftBinary(tree, child, grandchild);
-      naRotateRightBinary(tree, grandchild, binnode);
+      naRotateLeftBin(tree, child, grandchild);
+      naRotateRightBin(tree, grandchild, binnode);
       naSetNodeAVL(grandchild, 0);
       if(grandchildbalance == 1){
         naSetNodeAVL(child, -1);

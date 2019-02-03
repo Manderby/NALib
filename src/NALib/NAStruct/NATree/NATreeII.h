@@ -52,11 +52,6 @@ typedef enum{
 // NATreeLeafCoreConstructor Creates a new leaf with the given key and data
 // NATreeLeafCoreDestructor  Destroys the given leaf.
 //
-// NATreeBubbleLocator       Searches from the given leaf upwards the tree and
-//                           returns the node which is guaranteed to contain
-//                           the given key or Null if there is no root.
-// NATreeCaptureLocator      Searches from the given node downwards the tree
-//                           and returns the leaf which should contain key.
 // NATreeChildIndexGetter    Returns the index of the child in the parent.
 // NATreeChildKeyIndexGetter Returns the index under which the given key should
 //                           be stored in the given parent.
@@ -79,8 +74,17 @@ typedef void            (*NATreeNodeCoreDestructor)(NATree* tree, NATreeNode* no
 typedef NATreeLeaf*     (*NATreeLeafCoreConstructor)(NATree* tree, const void* key, NAPtr data);
 typedef void            (*NATreeLeafCoreDestructor)(NATree* tree, NATreeLeaf* leaf);
 
-typedef NATreeNode*     (*NATreeBubbleLocator)(const NATree* tree, NATreeLeaf* leaf, const void* key);
+// This function should return the uppermost node which contains the given key.
+// It must start searching for the key at the given item and bubble upwards.
+// Should return Null, if the key can not be placed anywhere in the tree. The
+// given item is never Null and hence the tree is guaranteed to be non-empty.
+typedef NATreeNode*     (*NATreeBubbleLocator)(const NATree* tree, NATreeItem* item, const void* key);
+// This function must search for the given key, starting from the given node
+// downwards the tree. If the key is found, matchfound must be set to true and
+// the resulting leaf must be returned. If key is not found, matchfound must
+// be set to false and the leaf closest to the key must be returned.
 typedef NATreeLeaf*     (*NATreeCaptureLocator)(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound);
+
 typedef NAInt           (*NATreeChildIndexGetter)(NATreeNode* parent, NATreeItem* child);
 typedef NAInt           (*NATreeChildKeyIndexGetter)(const NATree* tree, NATreeNode* parent, const void* key);
 typedef NATreeItem*     (*NATreeChildGetter)(NATreeNode* parent, NAInt childindx);

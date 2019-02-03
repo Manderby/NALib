@@ -183,13 +183,13 @@ NA_HDEF NATreeNode* naLocateBubbleOctWithLimits(const NATree* tree, NATreeNode* 
 
 
 
-NA_HDEF NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeLeaf* leaf, const void* origin){
+NA_HDEF NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeItem* item, const void* origin){
   #ifndef NDEBUG
-    if(leaf == NA_NULL)
+    if(item == NA_NULL)
       naCrash("naLocateBubbleOct", "leaf should not be null");
   #endif
-  if(!naIsTreeItemRoot(tree, &(leaf->item))){
-    return naLocateBubbleOctWithLimits(tree, leaf->item.parent, origin, NA_NULL, NA_NULL, &(leaf->item));
+  if(!naIsTreeItemRoot(tree, item)){
+    return naLocateBubbleOctWithLimits(tree, item->parent, origin, NA_NULL, NA_NULL, item);
   }else{
     return NA_NULL;
   }
