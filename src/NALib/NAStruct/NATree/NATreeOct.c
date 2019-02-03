@@ -13,7 +13,7 @@ NA_RUNTIME_TYPE(NATreeOctLeaf, NA_NULL, NA_FALSE);
 
 
 NA_HIDEF void naDestructTreeChildOct(NATree* tree, NATreeOctNode* octnode, NAInt childindx){
-  NATreeBaseNode* child = octnode->childs[childindx];
+  NATreeItem* child = octnode->childs[childindx];
   if(naIsNodeChildLeaf((NATreeNode*)octnode, childindx)){
     naDestructTreeLeafOct(tree, (NATreeLeaf*)child);
   }else{
@@ -81,13 +81,13 @@ NA_HDEF NATreeNode* naConstructTreeNodeOct(NATree* tree, const void* origin, NAT
 
   // Node-specific initialization
   tree->config->keyAssigner(&(octnode->origin), origin);
-  octnode->childs[0] = (NATreeBaseNode*)leftleaf;
-  octnode->childs[1] = (NATreeBaseNode*)rightleaf;
+  octnode->childs[0] = &(leftleaf->item);
+  octnode->childs[1] = &(rightleaf->item);
   octnode->childexponent = 0; /*todo childexponent*/
   naMarkNodeChildLeaf((NATreeNode*)octnode, 0, NA_TRUE);
   naMarkNodeChildLeaf((NATreeNode*)octnode, 1, NA_TRUE);
-  ((NATreeBaseNode*)leftleaf)->parent = (NATreeNode*)octnode;
-  ((NATreeBaseNode*)rightleaf)->parent = (NATreeNode*)octnode;
+  leftleaf->item.parent = (NATreeNode*)octnode;
+  rightleaf->item.parent = (NATreeNode*)octnode;
 
   if(tree->config->nodeConstructor){
     octnode->data = tree->config->nodeConstructor(&origin, tree->config->data);
@@ -149,12 +149,12 @@ NA_HDEF void naDestructTreeLeafOct(NATree* tree, NATreeLeaf* leaf){
 
 
 
-NA_HDEF NATreeNode* naLocateBubbleOctWithLimits(const NATree* tree, NATreeNode* node, const void* origin, const void* leftlimit, const void* rightlimit, NATreeBaseNode* prevnode){
+NA_HDEF NATreeNode* naLocateBubbleOctWithLimits(const NATree* tree, NATreeNode* node, const void* origin, const void* leftlimit, const void* rightlimit, NATreeItem* previtem){
   NATreeOctNode* octnode;
   #ifndef NDEBUG
     if(node == NA_NULL)
       naError("naLocateBubbleOctWithLimits", "node should not be null");
-    if(prevnode == NA_NULL)
+    if(previtem == NA_NULL)
       naError("naLocateBubbleOctWithLimits", "prevnode should not be null");
     if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("naLocateBubbleOctWithLimits", "tree is configured with no key");
@@ -163,7 +163,7 @@ NA_HDEF NATreeNode* naLocateBubbleOctWithLimits(const NATree* tree, NATreeNode* 
   // If we are at a node which stores the key itself, return this node.
   if(tree->config->keyEqualer(origin, &(octnode->origin))){return node;}
   // Otherwise, we set the limits dependent on the previous node.
-  if(naGetChildIndexOct(node, prevnode) == 1){
+  if(naGetChildIndexOct(node, previtem) == 1){
     leftlimit = &(octnode->origin);
   }else{
     rightlimit = &(octnode->origin);
@@ -173,8 +173,8 @@ NA_HDEF NATreeNode* naLocateBubbleOctWithLimits(const NATree* tree, NATreeNode* 
     return node;
   }
   // Otherwise, go up if possible.
-  if(((NATreeBaseNode*)node)->parent){
-    return naLocateBubbleOctWithLimits(tree, ((NATreeBaseNode*)node)->parent, origin, leftlimit, rightlimit, (NATreeBaseNode*)octnode);
+  if(!naIsTreeItemRoot(tree, &(node->item))){
+    return naLocateBubbleOctWithLimits(tree, node->item.parent, origin, leftlimit, rightlimit, &(octnode->node.item));
   }else{
     // We reached the root. No need to break a sweat. Simply return null.
     return NA_NULL;
@@ -188,8 +188,8 @@ NA_HDEF NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeLeaf* leaf, cons
     if(leaf == NA_NULL)
       naCrash("naLocateBubbleOct", "leaf should not be null");
   #endif
-  if(((NATreeBaseNode*)leaf)->parent){
-    return naLocateBubbleOctWithLimits(tree, ((NATreeBaseNode*)leaf)->parent, origin, NA_NULL, NA_NULL, (NATreeBaseNode*)leaf);
+  if(!naIsTreeItemRoot(tree, &(leaf->item))){
+    return naLocateBubbleOctWithLimits(tree, leaf->item.parent, origin, NA_NULL, NA_NULL, &(leaf->item));
   }else{
     return NA_NULL;
   }
@@ -200,7 +200,7 @@ NA_HDEF NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeLeaf* leaf, cons
 NA_HDEF NATreeLeaf* naLocateCaptureOct(const NATree* tree, NATreeNode* node, const void* origin, NABool* matchfound){
   NATreeOctNode* octnode;
   NAInt childindx;
-  NATreeBaseNode* child;
+  NATreeItem* child;
   #ifndef NDEBUG
     if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("naLocateCaptureOct", "tree is configured with no key");
@@ -238,7 +238,7 @@ NA_HDEF NATreeLeaf* naLocateCaptureOct(const NATree* tree, NATreeNode* node, con
 
 
 
-NA_HDEF NAInt naGetChildIndexOct(NATreeNode* parent, NATreeBaseNode* child){
+NA_HDEF NAInt naGetChildIndexOct(NATreeNode* parent, NATreeItem* child){
   NATreeOctNode* octparent;
   NAInt retvalue = -1;
   #ifndef NDEBUG
@@ -277,7 +277,7 @@ NA_HDEF NAInt naGetChildKeyIndexOct(const NATree* tree, NATreeNode* parent, cons
 
 
 
-NA_HDEF NATreeBaseNode* naGetChildOct(NATreeNode* parent, NAInt childindx){
+NA_HDEF NATreeItem* naGetChildOct(NATreeNode* parent, NAInt childindx){
   NATreeOctNode* octnode;
   #ifndef NDEBUG
     if(childindx < 0 || childindx >= 8)
@@ -290,16 +290,16 @@ NA_HDEF NATreeBaseNode* naGetChildOct(NATreeNode* parent, NAInt childindx){
 
 
 NA_HDEF NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
-  NATreeNode* parent = ((NATreeBaseNode*)leaf)->parent;
+  NATreeNode* parent = leaf->item.parent;
   NATreeNode* grandparent = NA_NULL;
-  if(parent){
-    NAInt leafindx = naGetChildIndexOct(parent, (NATreeBaseNode*)leaf);
-    NATreeBaseNode* sibling = ((NATreeOctNode*)parent)->childs[1 - leafindx];
+  if(!naIsTreeItemRoot(tree, &(leaf->item))){
+    NAInt leafindx = naGetChildIndexOct(parent, &(leaf->item));
+    NATreeItem* sibling = ((NATreeOctNode*)parent)->childs[1 - leafindx];
     NABool issiblingleaf = naIsNodeChildLeaf(parent, 1 - leafindx);
 
-    grandparent = ((NATreeBaseNode*)parent)->parent;
-    if(grandparent){
-      NAInt parentindx = naGetChildIndexOct(grandparent, (NATreeBaseNode*)parent);
+    grandparent = parent->item.parent;
+    if(!naIsTreeItemRoot(tree, &(parent->item))){
+      NAInt parentindx = naGetChildIndexOct(grandparent, &(parent->item));
       ((NATreeOctNode*)grandparent)->childs[parentindx] = sibling;
       naMarkNodeChildLeaf(grandparent, parentindx, issiblingleaf);
     }else{
@@ -381,16 +381,16 @@ NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeLeaf* existingleaf, cons
 	break;
   }
 
-  existingparent = ((NATreeBaseNode*)existingleaf)->parent;
+  existingparent = existingleaf->item.parent;
   newparent = (NATreeOctNode*)naConstructTreeNodeOct(tree, &(((NATreeOctLeaf*)right)->origin), left, right);
-  ((NATreeBaseNode*)newparent)->parent = existingparent;
-  if(existingparent){
-    NAInt existingindx = naGetChildIndexOct(existingparent, (NATreeBaseNode*)existingleaf);
+  newparent->node.item.parent = existingparent;
+  if(!naIsTreeItemRoot(tree, &(existingleaf->item))){
+    NAInt existingindx = naGetChildIndexOct(existingparent, &(existingleaf->item));
     naMarkNodeChildLeaf(existingparent, existingindx, NA_FALSE);
-    ((NATreeOctNode*)existingparent)->childs[existingindx] = (NATreeBaseNode*)newparent;
+    ((NATreeOctNode*)existingparent)->childs[existingindx] = &(newparent->node.item);
   }else{
     // The leaf was the root of the tree.
-    tree->root = (NATreeBaseNode*)newparent;
+    tree->root = &(newparent->node.item);
     naMarkTreeRootLeaf(tree, NA_FALSE);
   }
 

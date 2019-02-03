@@ -3,20 +3,20 @@
 // Full license notice at the bottom.
 
 
-typedef struct NATreeBinaryNode NATreeBinaryNode;
-struct NATreeBinaryNode{
+typedef struct NATreeBinNode NATreeBinNode;
+struct NATreeBinNode{
   NATreeNode node;
   union{
     double d;
     NAInt i;
   } key;
-  NATreeBaseNode* childs[2];
+  NATreeItem* childs[2];
   NAPtr data;
 };
-NA_EXTERN_RUNTIME_TYPE(NATreeBinaryNode);
+NA_EXTERN_RUNTIME_TYPE(NATreeBinNode);
 
-typedef struct NATreeBinaryLeaf NATreeBinaryLeaf;
-struct NATreeBinaryLeaf{
+typedef struct NATreeBinLeaf NATreeBinLeaf;
+struct NATreeBinLeaf{
   NATreeLeaf leaf;
   union{
     double d;
@@ -24,7 +24,7 @@ struct NATreeBinaryLeaf{
   } key;
   NAPtr data;
 };
-NA_EXTERN_RUNTIME_TYPE(NATreeBinaryLeaf);
+NA_EXTERN_RUNTIME_TYPE(NATreeBinLeaf);
 
 NA_HAPI NAInt naGetKeyIndexBinaryDouble(const void* basekey, const void* testkey, const void* data);
 NA_HAPI NABool naEqualKeyBinaryDouble(const void* key1, const void* key2);
@@ -42,18 +42,18 @@ NA_HAPI void naDestructTreeLeafBinary(NATree* tree, NATreeLeaf* leaf);
 
 NA_HAPI NATreeNode* naLocateBubbleBinary(const NATree* tree, NATreeLeaf* leaf, const void* key);
 NA_HAPI NATreeLeaf* naLocateCaptureBinary(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound);
-NA_HAPI NAInt naGetChildIndexBinary(NATreeNode* parent, NATreeBaseNode* child);
+NA_HAPI NAInt naGetChildIndexBinary(NATreeNode* parent, NATreeItem* child);
 NA_HAPI NAInt naGetChildKeyIndexBinary(const NATree* tree, NATreeNode* parent, const void* key);
-NA_HAPI NATreeBaseNode* naGetChildBinary(NATreeNode* parent, NAInt childindx);
+NA_HAPI NATreeItem* naGetChildBinary(NATreeNode* parent, NAInt childindx);
 NA_HAPI NATreeNode* naRemoveLeafBinary(NATree* tree, NATreeLeaf* leaf);
 NA_HAPI NATreeLeaf* naInsertLeafBinary(NATree* tree, NATreeLeaf* existingleaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 NA_HAPI const void* naGetLeafKeyBinary(NATreeLeaf* leaf);
 NA_HAPI NAPtr naGetLeafDataBinary(NATreeLeaf* leaf);
 NA_HAPI NAPtr naGetNodeDataBinary(NATreeNode* node);
 
-NA_HAPI void naInitNodeAVL(NATreeBinaryNode* node);
-NA_HAPI void naGrowAVL(NATree* tree, NATreeBinaryNode* node, NAInt childindx);
-NA_HAPI void naShrinkAVL(NATree* tree, NATreeBinaryNode* node, NAInt childindx);
+NA_HAPI void naInitNodeAVL(NATreeBinNode* binnode);
+NA_HAPI void naGrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx);
+NA_HAPI void naShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx);
 
 // Copyright (c) NALib, Tobias Stamm
 //

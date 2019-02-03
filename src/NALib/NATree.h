@@ -21,7 +21,7 @@
 //
 // With this structure, it is possible to...
 // - Store keys with inner nodes and leafes to automatically sort the tree.
-// - Automatically balance a binary tree using AVL.
+// - Automatically balance a bin tree using AVL.
 // - Store data for each inner node and/or leaf.
 // - Search according to keys or, if no keys are available, a token of any
 //   other kind.

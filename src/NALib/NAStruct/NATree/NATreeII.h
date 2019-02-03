@@ -6,7 +6,8 @@
 // Do not include this file directly! It will automatically be included when
 // including "NATree.h"
 
-typedef struct NATreeBaseNode NATreeBaseNode;
+// A Tree consists of Items which can either be a Node or a Leaf.
+typedef struct NATreeItem NATreeItem;
 typedef struct NATreeNode NATreeNode;
 typedef struct NATreeLeaf NATreeLeaf;
 typedef struct NATreeIterationInfo NATreeIterationInfo;
@@ -80,9 +81,9 @@ typedef void            (*NATreeLeafCoreDestructor)(NATree* tree, NATreeLeaf* le
 
 typedef NATreeNode*     (*NATreeBubbleLocator)(const NATree* tree, NATreeLeaf* leaf, const void* key);
 typedef NATreeLeaf*     (*NATreeCaptureLocator)(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound);
-typedef NAInt           (*NATreeChildIndexGetter)(NATreeNode* parent, NATreeBaseNode* child);
+typedef NAInt           (*NATreeChildIndexGetter)(NATreeNode* parent, NATreeItem* child);
 typedef NAInt           (*NATreeChildKeyIndexGetter)(const NATree* tree, NATreeNode* parent, const void* key);
-typedef NATreeBaseNode* (*NATreeChildGetter)(NATreeNode* parent, NAInt childindx);
+typedef NATreeItem*     (*NATreeChildGetter)(NATreeNode* parent, NAInt childindx);
 typedef NATreeNode*     (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
 typedef NATreeLeaf*     (*NATreeLeafInserter)(NATree* tree, NATreeLeaf* existingleaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 typedef const void*     (*NATreeLeafKeyGetter)(NATreeLeaf* leaf);
@@ -127,17 +128,17 @@ struct NATreeConfiguration{
   NATreeNodeDataGetter          nodeDataGetter;
 };
 
-struct NATreeBaseNode{
+struct NATreeItem{
   NATreeNode* parent;
 };
 
 struct NATreeNode{
-  NATreeBaseNode basenode;
+  NATreeItem item;
   NAInt flags;
 };
 
 struct NATreeLeaf{
-  NATreeBaseNode basenode;
+  NATreeItem item;
   #ifndef NDEBUG
     NAInt itercount;
   #endif
@@ -151,7 +152,7 @@ struct NATreeIterator{
 
 struct NATree{
   NATreeConfiguration* config;
-  NATreeBaseNode* root;
+  NATreeItem* root;
   NAInt flags;
   #ifndef NDEBUG
     NAInt itercount;

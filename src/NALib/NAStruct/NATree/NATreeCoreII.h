@@ -124,6 +124,119 @@ NA_IAPI NAPtr naGetTreeConfigurationData(const NATreeConfiguration* config){
 
 
 // /////////////////////////////////////
+// Item
+// /////////////////////////////////////
+
+NA_HIDEF NABool naIsTreeItemRoot(const NATree* tree, const NATreeItem* item){
+  NA_UNUSED(tree);
+  return (item->parent == NA_NULL);
+}
+
+
+
+// /////////////////////////////////////
+// Node
+// /////////////////////////////////////
+
+NA_HIDEF void naInitTreeNode(NATreeNode* node){
+  // We don not initialize the parent. That may seem dangerous but there is
+  // ony one function naAddTreeLeaf where leafes are created and there, the
+  // parent is always set afterwards with a call to leafAdder.
+  node->flags = 0;
+}
+
+
+
+NA_HIDEF void naClearTreeNode(NATreeNode* node){
+  NA_UNUSED(node);
+}
+
+
+
+NA_HIDEF NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx){
+  return (NABool)((node->flags >> childindx) & 0x01);
+}
+
+
+
+NA_HIDEF NABool naIsItemLeaf(const NATree* tree, NATreeItem* item){
+  NAInt childindx;
+  if(naIsTreeItemRoot(tree, item)){return naIsTreeRootLeaf(tree);}
+  childindx = tree->config->childIndexGetter(item->parent, item);
+  return naIsNodeChildLeaf(item->parent, childindx);
+}
+
+
+
+NA_HIDEF void naMarkNodeChildLeaf(NATreeNode* node, NAInt childindx, NABool isleaf){
+  node->flags &= ~(1 << childindx);
+  node->flags |= (NAInt)isleaf << childindx;
+}
+
+
+
+NA_HIDEF NABool naIsTreeRootLeaf(const NATree* tree){
+  return (NABool)((tree->flags & NA_TREE_FLAG_ROOT_IS_LEAF) == NA_TREE_FLAG_ROOT_IS_LEAF);
+}
+
+
+
+NA_HIDEF void naMarkTreeRootLeaf(NATree* tree, NABool isleaf){
+  tree->flags &= ~NA_TREE_FLAG_ROOT_IS_LEAF;
+  tree->flags |= (isleaf * NA_TREE_FLAG_ROOT_IS_LEAF);
+}
+
+
+
+// /////////////////////////////////////
+// Leaf
+// /////////////////////////////////////
+
+
+
+NA_HIDEF void naInitTreeLeaf(NATreeLeaf* leaf){
+  // We don not initialize the parent. That may seem dangerous but there is
+  // ony one function naAddTreeLeaf where leafes are created and there, the
+  // parent is always set afterwards with a call to leafAdder.
+  #ifndef NDEBUG
+    leaf->itercount = 0;
+  #else
+    NA_UNUSED(leaf);
+  #endif
+}
+
+
+
+NA_HIDEF NAPtr naConstructLeafData(NATree* tree, const void* key, NAPtr data){
+  if(tree->config->leafConstructor){
+    return tree->config->leafConstructor(key, tree->config->data, data);
+  }else{
+    return data;
+  }
+}
+
+
+
+NA_HIDEF void naDestructLeafData(NATree* tree, NAPtr data){
+  if(tree->config->leafDestructor){
+    tree->config->leafDestructor(data, tree->config->data);
+  }
+}
+
+
+
+NA_HIDEF void naClearTreeLeaf(NATreeLeaf* leaf){
+  #ifndef NDEBUG
+    if(leaf->itercount)
+      naError("naClearTreeLeaf", "There are still iterators running on this leaf. Did you forget a call to naClearTreeIterator?");
+  #else
+    NA_UNUSED(leaf);
+  #endif
+}
+
+
+
+// /////////////////////////////////////
 // Tree
 // /////////////////////////////////////
 
@@ -306,9 +419,9 @@ NA_IDEF void naUpdateTreeLeaf(NATreeIterator* iter){
       naError("naUpdateTreeLeaf", "Iterator is not at a leaf");
   #endif
   tree = (NATree*)naGetPtrConst(iter->tree);
-  parent = ((NATreeBaseNode*)iter->leaf)->parent;
-  if(parent){
-    naUpdateTreeNodeBubbling(tree, parent, tree->config->childIndexGetter(parent, ((NATreeBaseNode*)iter->leaf)));
+  parent = iter->leaf->item.parent;
+  if(!naIsTreeItemRoot(tree, &(iter->leaf->item))){
+    naUpdateTreeNodeBubbling(tree, parent, tree->config->childIndexGetter(parent, &(iter->leaf->item)));
   }
 }
 
@@ -456,7 +569,7 @@ NA_IAPI NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTo
 
 NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNodeTokenCallback nodeTokenCallback){
   const NATree* tree;
-  NATreeBaseNode* basenode;
+  NATreeItem* item;
   NABool continueBubbling;
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
@@ -465,12 +578,12 @@ NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNo
       naError("naBubbleTreeToken", "This iterator is not at a leaf.");
   #endif
   tree = (const NATree*)naGetPtrConst(iter->tree);
-  basenode = (NATreeBaseNode*)iter->leaf;
+  item = &(iter->leaf->item);
   continueBubbling = NA_TRUE;
-  while(continueBubbling && basenode->parent){
-    NAInt childindx = tree->config->childIndexGetter(basenode->parent, basenode);
-    continueBubbling = nodeTokenCallback(token, tree->config->nodeDataGetter(basenode->parent), childindx);
-    basenode = (NATreeBaseNode*)(basenode->parent);
+  while(continueBubbling && !naIsTreeItemRoot(tree, item)){
+    NAInt childindx = tree->config->childIndexGetter(item->parent, item);
+    continueBubbling = nodeTokenCallback(token, tree->config->nodeDataGetter(item->parent), childindx);
+    item = &(item->parent->item);
   }
 }
 
@@ -637,108 +750,6 @@ NA_IDEF void naRemoveTreeCur(NATreeIterator* iter, NABool advance){
   if(advance){naIterateTree(iter);}else{naIterateTreeBack(iter);}
   newparent = tree->config->leafRemover(tree, curleaf);
   naUpdateTreeNodeBubbling(tree, newparent, -1);
-}
-
-
-
-// /////////////////////////////////////
-// Node
-// /////////////////////////////////////
-
-NA_HIDEF void naInitTreeNode(NATreeNode* node){
-  // We don not initialize the parent. That may seem dangerous but there is
-  // ony one function naAddTreeLeaf where leafes are created and there, the
-  // parent is always set afterwards with a call to leafAdder.
-  node->flags = 0;
-}
-
-
-
-NA_HIDEF void naClearTreeNode(NATreeNode* node){
-  NA_UNUSED(node);
-}
-
-
-
-NA_HIDEF NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx){
-  return (NABool)((node->flags >> childindx) & 0x01);
-}
-
-
-
-NA_HIDEF NABool naIsBaseNodeLeaf(const NATree* tree, NATreeBaseNode* basenode){
-  NAInt childindx;
-  if(!basenode->parent){return naIsTreeRootLeaf(tree);}
-  childindx = tree->config->childIndexGetter(basenode->parent, basenode);
-  return naIsNodeChildLeaf(basenode->parent, childindx);
-}
-
-
-
-NA_HIDEF void naMarkNodeChildLeaf(NATreeNode* node, NAInt childindx, NABool isleaf){
-  node->flags &= ~(1 << childindx);
-  node->flags |= (NAInt)isleaf << childindx;
-}
-
-
-
-NA_HIDEF NABool naIsTreeRootLeaf(const NATree* tree){
-  return (NABool)((tree->flags & NA_TREE_FLAG_ROOT_IS_LEAF) == NA_TREE_FLAG_ROOT_IS_LEAF);
-}
-
-
-
-NA_HIDEF void naMarkTreeRootLeaf(NATree* tree, NABool isleaf){
-  tree->flags &= ~NA_TREE_FLAG_ROOT_IS_LEAF;
-  tree->flags |= (isleaf * NA_TREE_FLAG_ROOT_IS_LEAF);
-}
-
-
-
-// /////////////////////////////////////
-// Leaf
-// /////////////////////////////////////
-
-
-
-NA_HIDEF void naInitTreeLeaf(NATreeLeaf* leaf){
-  // We don not initialize the parent. That may seem dangerous but there is
-  // ony one function naAddTreeLeaf where leafes are created and there, the
-  // parent is always set afterwards with a call to leafAdder.
-  #ifndef NDEBUG
-    leaf->itercount = 0;
-  #else
-    NA_UNUSED(leaf);
-  #endif
-}
-
-
-
-NA_HIDEF NAPtr naConstructLeafData(NATree* tree, const void* key, NAPtr data){
-  if(tree->config->leafConstructor){
-    return tree->config->leafConstructor(key, tree->config->data, data);
-  }else{
-    return data;
-  }
-}
-
-
-
-NA_HIDEF void naDestructLeafData(NATree* tree, NAPtr data){
-  if(tree->config->leafDestructor){
-    tree->config->leafDestructor(data, tree->config->data);
-  }
-}
-
-
-
-NA_HIDEF void naClearTreeLeaf(NATreeLeaf* leaf){
-  #ifndef NDEBUG
-    if(leaf->itercount)
-      naError("naClearTreeLeaf", "There are still iterators running on this leaf. Did you forget a call to naClearTreeIterator?");
-  #else
-    NA_UNUSED(leaf);
-  #endif
 }
 
 

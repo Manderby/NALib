@@ -3,7 +3,7 @@
 // Full license notice at the bottom.
 
 #include "../../NATree.h"
-#include "NATreeBinary.h"
+#include "NATreeBin.h"
 #include "NATreeOct.h"
 
 

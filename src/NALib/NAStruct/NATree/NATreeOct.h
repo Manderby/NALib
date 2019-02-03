@@ -9,7 +9,7 @@ struct NATreeOctNode{
   NATreeNode node;
   NAVertex origin;
   NAInt childexponent;
-  NATreeBaseNode* childs[8];
+  NATreeItem* childs[8];
   NAPtr data;
 };
 NA_EXTERN_RUNTIME_TYPE(NATreeOctNode);
@@ -39,9 +39,9 @@ NA_HAPI void naDestructTreeLeafOct(NATree* tree, NATreeLeaf* leaf);
 
 NA_HAPI NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeLeaf* leaf, const void* key);
 NA_HAPI NATreeLeaf* naLocateCaptureOct(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound);
-NA_HAPI NAInt naGetChildIndexOct(NATreeNode* parent, NATreeBaseNode* child);
+NA_HAPI NAInt naGetChildIndexOct(NATreeNode* parent, NATreeItem* child);
 NA_HAPI NAInt naGetChildKeyIndexOct(const NATree* tree, NATreeNode* parent, const void* key);
-NA_HAPI NATreeBaseNode* naGetChildOct(NATreeNode* parent, NAInt childindx);
+NA_HAPI NATreeItem* naGetChildOct(NATreeNode* parent, NAInt childindx);
 NA_HAPI NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf);
 NA_HAPI NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeLeaf* existingleaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 NA_HAPI const void* naGetLeafKeyOct(NATreeLeaf* leaf);

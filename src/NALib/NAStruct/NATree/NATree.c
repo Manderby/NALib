@@ -12,7 +12,7 @@
 NA_HDEF NATreeLeaf* naIterateTreeCapture(const NATree* tree, NATreeNode* parent, NAInt previndx, NATreeIterationInfo* info){
   NAInt indx = previndx + info->step;
   if(indx != info->breakindx){
-    NATreeBaseNode* child = tree->config->childGetter(parent, indx);
+    NATreeItem* child = tree->config->childGetter(parent, indx);
     if(naIsNodeChildLeaf(parent, indx)){
       // We found the next leaf. Good ending
       return (NATreeLeaf*)child;
@@ -27,24 +27,24 @@ NA_HDEF NATreeLeaf* naIterateTreeCapture(const NATree* tree, NATreeNode* parent,
 
 
 
-// This function takes a given basenode and bubbles up to its parent. This
+// This function takes a given item and bubbles up to its parent. This
 // function works recursively until either a parent offers a next leaf or
 // there are no more parents.
-NA_HDEF NATreeLeaf* naIterateTreeBubble(const NATree* tree, NATreeBaseNode* curnode, NATreeIterationInfo* info){
+NA_HDEF NATreeLeaf* naIterateTreeBubble(const NATree* tree, NATreeItem* item, NATreeIterationInfo* info){
   NAInt indx;
   NATreeLeaf* leaf;
-  if(!curnode->parent){
+  if(naIsTreeItemRoot(tree, item)){
     // We reached the root with no further options. Iteration is over.
     return NA_NULL;
   }
-  indx = tree->config->childIndexGetter(curnode->parent, curnode);
+  indx = tree->config->childIndexGetter(item->parent, item);
 
-  leaf = naIterateTreeCapture(tree, curnode->parent, indx, info);
+  leaf = naIterateTreeCapture(tree, item->parent, indx, info);
   if(leaf){
     return leaf;
   }else{
-    // If non more childs are available, bubble further.
-    return naIterateTreeBubble(tree, (NATreeBaseNode*)(curnode->parent), info);
+    // If no more childs are available, bubble further.
+    return naIterateTreeBubble(tree, &(item->parent->item), info);
   }
 }
 
@@ -72,10 +72,10 @@ NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* 
     }
   }else{
     // Otherwise, we use the current leaf and bubble
-    leaf = naIterateTreeBubble(tree, (NATreeBaseNode*)(iter->leaf), info);
+    leaf = naIterateTreeBubble(tree, &(iter->leaf->item), info);
   }
   #ifndef NDEBUG
-    if(leaf && !naIsBaseNodeLeaf(tree, (NATreeBaseNode*)leaf))
+    if(leaf && !naIsItemLeaf(tree, &(leaf->item)))
       naError("naIterateTreeWithInfo", "Result should be a leaf");
   #endif
   naSetTreeIteratorCurLeaf(iter, leaf);
@@ -116,7 +116,7 @@ NA_HDEF NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABo
   // Search for the leaf containing key.
   retnode = tree->config->captureLocator(tree, topnode, key, matchfound);
   #ifndef NDEBUG
-    if(!naIsBaseNodeLeaf(tree, (NATreeBaseNode*)retnode))
+    if(!naIsItemLeaf(tree, &(retnode->item)))
     {
       naError("naLocateTreeLeaf", "Result should be a leaf");
       }
@@ -127,7 +127,7 @@ NA_HDEF NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABo
 
 
 NA_HDEF NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NATreeNodeTokenSearcher nodeSearcher, NATreeLeafTokenSearcher leafSearcher, NABool* matchfound){
-  NATreeBaseNode* basenode;
+  NATreeItem* item;
   const NATree* tree = (const NATree*)naGetPtrConst(iter->tree);
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
@@ -143,23 +143,23 @@ NA_HDEF NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NAT
     return NA_FALSE;
   }
 
-  basenode = (NATreeBaseNode*)iter->leaf;
-  if(!basenode){basenode = tree->root;}
-  while(basenode){
+  item = &(iter->leaf->item);
+  if(!item){item = tree->root;}
+  while(item){
     NAInt nextindx;
-    if(naIsBaseNodeLeaf(tree, basenode)){
-      NAPtr data = tree->config->leafDataGetter((NATreeLeaf*)basenode);
+    if(naIsItemLeaf(tree, item)){
+      NAPtr data = tree->config->leafDataGetter((NATreeLeaf*)item);
       leafSearcher(token, data, matchfound);
-      return (NATreeLeaf*)basenode;
+      return (NATreeLeaf*)item;
     }else{
-      NAPtr data = tree->config->nodeDataGetter((NATreeNode*)basenode);
+      NAPtr data = tree->config->nodeDataGetter((NATreeNode*)item);
       NABool continuesearch = nodeSearcher(token, data, &nextindx);
       if(!continuesearch){return NA_NULL;}
     }
     if(nextindx == -1){
-      basenode = (NATreeBaseNode*)(basenode->parent);
+      item = &(item->parent->item);
     }else{
-      basenode = tree->config->childGetter((NATreeNode*)basenode, nextindx);
+      item = tree->config->childGetter((NATreeNode*)item, nextindx);
     }
   }
   return NA_NULL;
@@ -174,8 +174,8 @@ NA_HDEF NATreeLeaf* naAddTreeContentAtLeaf(NATree* tree, NATreeLeaf* leaf, const
   if(leaf){
     // We need to create a node holding both the old leaf and the new one.
     contentleaf = tree->config->leafInserter(tree, leaf, key, content, insertOrder);
-    parent = ((NATreeBaseNode*)contentleaf)->parent;
-    naUpdateTreeNodeBubbling(tree, parent, tree->config->childIndexGetter(parent, (NATreeBaseNode*)contentleaf));
+    parent = contentleaf->item.parent;
+    naUpdateTreeNodeBubbling(tree, parent, tree->config->childIndexGetter(parent, &(contentleaf->item)));
   }else{
     #ifndef NDEBUG
       if(tree->root)
@@ -184,8 +184,8 @@ NA_HDEF NATreeLeaf* naAddTreeContentAtLeaf(NATree* tree, NATreeLeaf* leaf, const
     // There is no leaf to add to, meaning there was no root. Therefore, we
     // create a first leaf.
     contentleaf = tree->config->leafCoreConstructor(tree, key, content);
-    tree->root = (NATreeBaseNode*)contentleaf;
-    ((NATreeBaseNode*)contentleaf)->parent = NA_NULL;
+    tree->root = &(contentleaf->item);
+    contentleaf->item.parent = NA_NULL;
     naMarkTreeRootLeaf(tree, NA_TRUE);
   }
   return contentleaf;
@@ -221,7 +221,7 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
 NA_HDEF void naFillTreeNodeChildData(NATree* tree, NAPtr childdata[NA_TREE_NODE_MAX_CHILDS], NATreeNode* node){
   NAInt i;
   for(i=0; i<tree->config->childpernode; i++){
-    NATreeBaseNode* child = tree->config->childGetter(node, i);
+    NATreeItem* child = tree->config->childGetter(node, i);
     if(naIsNodeChildLeaf(node, i)){
       childdata[i] = tree->config->leafDataGetter((NATreeLeaf*)child);
     }else{
@@ -247,8 +247,8 @@ NA_HDEF void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt ch
   }
 
   // Then we propagate the message towards the root if requested.
-  if(bubble && ((NATreeBaseNode*)parent)->parent){
-    naUpdateTreeNodeBubbling(tree, ((NATreeBaseNode*)parent)->parent, tree->config->childIndexGetter(((NATreeBaseNode*)parent)->parent, (NATreeBaseNode*)parent));
+  if(bubble && !naIsTreeItemRoot(tree, &(parent->item))){
+    naUpdateTreeNodeBubbling(tree, parent->item.parent, tree->config->childIndexGetter(parent->item.parent, &(parent->item)));
   }
 }
 
