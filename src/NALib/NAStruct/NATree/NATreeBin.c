@@ -14,7 +14,7 @@ NA_RUNTIME_TYPE(NATreeBinLeaf, NA_NULL, NA_FALSE);
 
 NA_HIDEF void naDestructTreeChildBin(NATree* tree, NATreeBinNode* binnode, NAInt childindx){
   NATreeItem* child = binnode->childs[childindx];
-  if(naIsNodeChildLeaf((NATreeNode*)binnode, childindx)){
+  if(naIsNodeChildLeaf(&(binnode->node), childindx)){
     naDestructTreeLeafBin(tree, (NATreeLeaf*)child);
   }else{
     naDestructTreeNodeBin(tree, (NATreeNode*)child, NA_TRUE);
@@ -62,7 +62,7 @@ NA_HDEF NABool naTestKeyBinNAInt(const void* leftlimit, const void* rightlimit, 
 
 NA_HDEF NATreeNode* naConstructTreeNodeBin(NATree* tree, const void* key, NATreeLeaf* leftleaf, NATreeLeaf* rightleaf){
   NATreeBinNode* binnode = naNew(NATreeBinNode);
-  naInitTreeNode((NATreeNode*)binnode);
+  naInitTreeNode(&(binnode->node));
 
   #ifndef NDEBUG
     // This check has to be removed until there is a better solution for the
@@ -75,10 +75,10 @@ NA_HDEF NATreeNode* naConstructTreeNodeBin(NATree* tree, const void* key, NATree
   if(tree->config->keyAssigner){tree->config->keyAssigner(&(binnode->key), key);}
   binnode->childs[0] = &(leftleaf->item);
   binnode->childs[1] = &(rightleaf->item);
-  naMarkNodeChildLeaf((NATreeNode*)binnode, 0, NA_TRUE);
-  naMarkNodeChildLeaf((NATreeNode*)binnode, 1, NA_TRUE);
-  leftleaf->item.parent = (NATreeNode*)binnode;
-  rightleaf->item.parent = (NATreeNode*)binnode;
+  naMarkNodeChildLeaf(&(binnode->node), 0, NA_TRUE);
+  naMarkNodeChildLeaf(&(binnode->node), 1, NA_TRUE);
+  leftleaf->item.parent = &(binnode->node);
+  rightleaf->item.parent = &(binnode->node);
   if(tree->config->flags & NA_TREE_BALANCE_AVL){naInitNodeAVL((NATreeBinNode*)binnode);}
 
   if(tree->config->nodeConstructor){
@@ -87,7 +87,7 @@ NA_HDEF NATreeNode* naConstructTreeNodeBin(NATree* tree, const void* key, NATree
     binnode->data = naMakePtrNull();
   }
 
-  return (NATreeNode*)binnode;
+  return &(binnode->node);
 }
 
 
@@ -105,7 +105,7 @@ NA_HDEF void naDestructTreeNodeBin(NATree* tree, NATreeNode* node, NABool recurs
   }
 
   if(tree->config->nodeDestructor){tree->config->nodeDestructor(binnode->data, tree->config->data);}
-  naClearTreeNode((NATreeNode*)binnode);
+  naClearTreeNode(&(binnode->node));
   naDelete(node);
 }
 
@@ -119,7 +119,7 @@ NA_HDEF NATreeLeaf* naConstructTreeLeafBin(NATree* tree, const void* key, NAPtr 
   if(key){tree->config->keyAssigner(&(binleaf->key), key);}
   binleaf->data = naConstructLeafData(tree, &(binleaf->key), data);
 
-  return (NATreeLeaf*)binleaf;
+  return &(binleaf->leaf);
 }
 
 
@@ -174,15 +174,7 @@ NA_HDEF NATreeNode* naLocateBubbleBinWithLimits(const NATree* tree, NATreeNode* 
 
 
 NA_HDEF NATreeNode* naLocateBubbleBin(const NATree* tree, NATreeItem* item, const void* key){
-  #ifndef NDEBUG
-    if(item == NA_NULL)
-      naCrash("naLocateBubbleBin", "item should not be null");
-  #endif
-  if(!naIsTreeItemRoot(tree, item)){
-    return naLocateBubbleBinWithLimits(tree, item->parent, key, NA_NULL, NA_NULL, item);
-  }else{
-    return NA_NULL;
-  }
+  return naLocateBubbleBinWithLimits(tree, item->parent, key, NA_NULL, NA_NULL, item);
 }
 
 
@@ -199,15 +191,11 @@ NA_HDEF NATreeLeaf* naLocateCaptureBin(const NATree* tree, NATreeNode* node, con
   *matchfound = NA_FALSE;
 
   if(!node){
-    if(tree->root){
-      if(naIsTreeRootLeaf(tree)){
-        *matchfound = tree->config->keyEqualer(key, &(((NATreeBinLeaf*)tree->root)->key));
-        return (NATreeLeaf*)tree->root;
-      }else{
-        node = (NATreeNode*)tree->root;
-      }
+    if(naIsTreeRootLeaf(tree)){
+      *matchfound = tree->config->keyEqualer(key, &(((NATreeBinLeaf*)tree->root)->key));
+      return (NATreeLeaf*)tree->root;
     }else{
-      return NA_NULL;
+      node = (NATreeNode*)tree->root;
     }
   }
 

@@ -77,12 +77,13 @@ typedef void            (*NATreeLeafCoreDestructor)(NATree* tree, NATreeLeaf* le
 // This function should return the uppermost node which contains the given key.
 // It must start searching for the key at the given item and bubble upwards.
 // Should return Null, if the key can not be placed anywhere in the tree. The
-// given item is never Null and hence the tree is guaranteed to be non-empty.
+// given item is never Null and never the root of the tree which is never empty.
 typedef NATreeNode*     (*NATreeBubbleLocator)(const NATree* tree, NATreeItem* item, const void* key);
 // This function must search for the given key, starting from the given node
 // downwards the tree. If the key is found, matchfound must be set to true and
 // the resulting leaf must be returned. If key is not found, matchfound must
-// be set to false and the leaf closest to the key must be returned.
+// be set to false and the leaf closest to the key must be returned. The tree
+// is never empty.
 typedef NATreeLeaf*     (*NATreeCaptureLocator)(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound);
 
 typedef NAInt           (*NATreeChildIndexGetter)(NATreeNode* parent, NATreeItem* child);

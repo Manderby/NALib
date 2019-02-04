@@ -8,20 +8,20 @@
 
 
 NA_HDEF void naInitNodeAVL(NATreeBinNode* binnode){
-  ((NATreeNode*)binnode)->flags |= NA_TREE_NODE_AVL_EQUAL;
+  binnode->node.flags |= NA_TREE_NODE_AVL_EQUAL;
 }
 
 
 
 NA_HIDEF NAInt naGetNodeAVL(NATreeBinNode* binnode){
-  return (NAInt)((((NATreeNode*)binnode)->flags & NA_TREE_NODE_AVL_MASK) >> NA_TREE_NODE_AVL_BITSHIFT) - 1;
+  return (NAInt)((binnode->node.flags & NA_TREE_NODE_AVL_MASK) >> NA_TREE_NODE_AVL_BITSHIFT) - 1;
 }
 
 
 
 NA_HIDEF void naSetNodeAVL(NATreeBinNode* binnode, NAInt balance){
-  naSetFlagi(&(((NATreeNode*)binnode)->flags), NA_TREE_NODE_AVL_MASK, NA_FALSE);
-  ((NATreeNode*)binnode)->flags |= (balance + 1) << NA_TREE_NODE_AVL_BITSHIFT;
+  naSetFlagi(&(binnode->node.flags), NA_TREE_NODE_AVL_MASK, NA_FALSE);
+  binnode->node.flags |= (balance + 1) << NA_TREE_NODE_AVL_BITSHIFT;
 }
 
 
@@ -43,15 +43,15 @@ NA_HIDEF void naRotateLeftBin(NATree* tree, NATreeBinNode* parent, NATreeBinNode
   }
 
   parent->childs[1] = rightchild->childs[0];
-  parent->childs[1]->parent = (NATreeNode*)parent;
-  naMarkNodeChildLeaf((NATreeNode*)parent, 1, naIsNodeChildLeaf((NATreeNode*)rightchild, 0));
-  parent->node.item.parent = (NATreeNode*)rightchild;
+  parent->childs[1]->parent = &(parent->node);
+  naMarkNodeChildLeaf(&(parent->node), 1, naIsNodeChildLeaf(&(rightchild->node), 0));
+  parent->node.item.parent = &(rightchild->node);
 
   rightchild->childs[0] = &(parent->node.item);
-  naMarkNodeChildLeaf((NATreeNode*)rightchild, 0, NA_FALSE);
+  naMarkNodeChildLeaf(&(rightchild->node), 0, NA_FALSE);
   rightchild->node.item.parent = grandparent;
 
-  naUpdateTreeNodeBubbling(tree, (NATreeNode*)parent, -1);
+  naUpdateTreeNodeBubbling(tree, &(parent->node), -1);
 }
 
 
@@ -73,15 +73,15 @@ NA_HIDEF void naRotateRightBin(NATree* tree, NATreeBinNode* leftchild, NATreeBin
   }
 
   parent->childs[0] = leftchild->childs[1];
-  parent->childs[0]->parent = (NATreeNode*)parent;
-  naMarkNodeChildLeaf((NATreeNode*)parent, 0, naIsNodeChildLeaf((NATreeNode*)leftchild, 1));
-  parent->node.item.parent = (NATreeNode*)leftchild;
+  parent->childs[0]->parent = &(parent->node);
+  naMarkNodeChildLeaf(&(parent->node), 0, naIsNodeChildLeaf(&(leftchild->node), 1));
+  parent->node.item.parent = &(leftchild->node);
 
   leftchild->childs[1] = &(parent->node.item);
-  naMarkNodeChildLeaf((NATreeNode*)leftchild, 1, NA_FALSE);
+  naMarkNodeChildLeaf(&(leftchild->node), 1, NA_FALSE);
   leftchild->node.item.parent = grandparent;
 
-  naUpdateTreeNodeBubbling(tree, (NATreeNode*)parent, -1);
+  naUpdateTreeNodeBubbling(tree, &(parent->node), -1);
 }
 
 

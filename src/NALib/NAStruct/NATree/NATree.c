@@ -121,12 +121,13 @@ NA_HDEF NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABo
   node = NA_NULL;
 
   // If bubbling is requested, search for the topmost node which potentially
-  // contains the given key. But do not do this if the iter has no leaf set.
-  if(usebubble && !naIsTreeAtInitial(iter)){
+  // contains the given key. But make sure, the iterator is at a leaf and
+  // not at the root.
+  if(usebubble && !naIsTreeAtInitial(iter) && !naIsTreeItemRoot(tree, &(iter->leaf->item))){
     node = tree->config->bubbleLocator(tree, &(iter->leaf->item), key);
   }
 
-  // Search for the leaf containing key.
+  // Search for the leaf containing key, starting from the uppermost node.
   leaf = tree->config->captureLocator(tree, node, key, matchfound);
   #ifndef NDEBUG
     if(!leaf)
@@ -168,11 +169,12 @@ NA_HDEF NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NAT
       NAPtr data = tree->config->nodeDataGetter((NATreeNode*)item);
       NABool continuesearch = nodeSearcher(token, data, &nextindx);
       if(!continuesearch){return NA_NULL;}
-    }
-    if(nextindx == -1){
-      item = &(item->parent->item);
-    }else{
-      item = tree->config->childGetter((NATreeNode*)item, nextindx);
+
+      if(nextindx == -1){
+        item = &(item->parent->item);
+      }else{
+        item = tree->config->childGetter((NATreeNode*)item, nextindx);
+      }
     }
   }
   return NA_NULL;
