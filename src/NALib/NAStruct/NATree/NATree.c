@@ -62,7 +62,7 @@ NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* 
       naError("naIterateTreeWithInfo", "This iterator has been cleared. You need to make it anew.");
   #endif
 
-  tree = (const NATree*)naGetPtrConst(iter->tree);
+  tree = naGetTreeIteratorTreeConst(iter);
 
   // If the tree has no root, we do not iterate.
   if(!tree->root){
@@ -106,7 +106,7 @@ NA_HDEF NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABo
       naError("naLocateTree", "This iterator has been cleared. You need to make it anew.");
   #endif
 
-  tree = (const NATree*)naGetPtrConst(iter->tree);
+  tree = naGetTreeIteratorTreeConst(iter);
 
   // When there is no root, nothing can be found.
   if(!tree->root){
@@ -126,6 +126,7 @@ NA_HDEF NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABo
   if(usebubble && !naIsTreeAtInitial(iter) && !naIsTreeItemRoot(tree, &(iter->leaf->item))){
     node = tree->config->bubbleLocator(tree, &(iter->leaf->item), key);
   }
+  // todo add test if key contained.
 
   // Search for the leaf containing key, starting from the uppermost node.
   leaf = tree->config->captureLocator(tree, node, key, matchfound);
@@ -140,36 +141,41 @@ NA_HDEF NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABo
 
 
 
-NA_HDEF NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NATreeNodeTokenSearcher nodeSearcher, NATreeLeafTokenSearcher leafSearcher, NABool* matchfound){
+NA_HDEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTokenSearcher nodeSearcher, NATreeLeafTokenSearcher leafSearcher){
   NATreeItem* item;
-  const NATree* tree = (const NATree*)naGetPtrConst(iter->tree);
+  NABool matchfound = NA_FALSE;
+  NATreeLeaf* leaf = NA_NULL;
+  const NATree* tree = naGetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("naLocateTreeTokenLeaf", "This iterator has been cleared. You need to make it anew.");
     if(!nodeSearcher)
-      naCrash("naLocateTreeTokenLeaf", "node token searcher missing.");
+      naCrash("naLocateTreeTokenLeaf", "node token searcher is Null.");
     if(!leafSearcher)
-      naCrash("naLocateTreeTokenLeaf", "leaf token searcher missing.");
+      naCrash("naLocateTreeTokenLeaf", "leaf token searcher is Null.");
   #endif
-  if(naIsTreeEmpty(tree)){
-    naSetTreeIteratorCurLeaf(iter, NA_NULL);
-    *matchfound = NA_FALSE;
-    return NA_FALSE;
-  }
-
-  item = &(iter->leaf->item);
-  if(!item){item = tree->root;}
-  while(item){
-    NAInt nextindx;
-    if(naIsItemLeaf(tree, item)){
-      NAPtr data = tree->config->leafDataGetter((NATreeLeaf*)item);
-      leafSearcher(token, data, matchfound);
-      return (NATreeLeaf*)item;
-    }else{
-      NAPtr data = tree->config->nodeDataGetter((NATreeNode*)item);
-      NABool continuesearch = nodeSearcher(token, data, &nextindx);
-      if(!continuesearch){return NA_NULL;}
-
+  
+  // If the tree is empty, we do nothing.
+  if(!naIsTreeEmpty(tree)){
+    item = &(iter->leaf->item);
+    if(!item){item = tree->root;}
+    while(item){
+      NABool continuesearch;
+      NAInt nextindx = -1;
+      matchfound = NA_FALSE;
+      
+      if(naIsItemLeaf(tree, item)){
+        // If the current item is a leaf, call the leaf searcher callback.
+        NAPtr data = tree->config->leafDataGetter((NATreeLeaf*)item);
+        continuesearch = leafSearcher(token, data, &matchfound);
+        if(matchfound){leaf = (NATreeLeaf*)item;}
+      }else{
+        // If the current item is a node, call the node searcher callback.
+        NAPtr data = tree->config->nodeDataGetter((NATreeNode*)item);
+        continuesearch = nodeSearcher(token, data, &nextindx);
+      }
+      
+      if(!continuesearch){break;}
       if(nextindx == -1){
         item = &(item->parent->item);
       }else{
@@ -177,7 +183,9 @@ NA_HDEF NATreeLeaf* naLocateTreeTokenLeaf(NATreeIterator* iter, void* token, NAT
       }
     }
   }
-  return NA_NULL;
+
+  naSetTreeIteratorCurLeaf(iter, leaf);
+  return matchfound;
 }
 
 
@@ -221,7 +229,7 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
   // We do not use bubbling when inserting as there is almost never a benefit
   // from it. Even worse, it performs mostly worse.
   leaf = naLocateTreeLeaf(iter, key, &matchfound, NA_FALSE);
-  tree = (NATree*)naGetPtrMutable(iter->tree);
+  tree = naGetTreeIteratorTreeMutable(iter);
 
   if(matchfound && !replace){return NA_FALSE;}
 

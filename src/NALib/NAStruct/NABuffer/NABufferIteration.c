@@ -117,6 +117,7 @@ NA_DEF NAInt naGetBufferLocation(const NABufferIterator* iter){
 
 
 
+// Callback for naLocateBufferAbsolute
 NA_HDEF NABool naSearchBufferNode(void* token, NAPtr data, NAInt* nextindx){
   NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
   NABufferTreeNodeData* nodedata = (NABufferTreeNodeData*)naGetPtrMutable(data);
@@ -136,6 +137,7 @@ NA_HDEF NABool naSearchBufferNode(void* token, NAPtr data, NAInt* nextindx){
 
 
 
+// Callback for naLocateBufferAbsolute
 NA_HDEF NABool naSearchBufferLeaf(void* token, NAPtr data, NABool* matchfound){
   NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
   NABufferPart* part = (NABufferPart*)naGetPtrMutable(data);

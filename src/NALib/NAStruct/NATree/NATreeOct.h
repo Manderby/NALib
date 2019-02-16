@@ -48,6 +48,15 @@ NA_HAPI const void* naGetLeafKeyOct(NATreeLeaf* leaf);
 NA_HAPI NAPtr naGetLeafDataOct(NATreeLeaf* leaf);
 NA_HAPI NAPtr naGetNodeDataOct(NATreeNode* node);
 
+NA_HIAPI NATreeItem* naGetOctNodeItem(NATreeOctNode* octnode);
+
+
+
+
+NA_HIDEF NATreeItem* naGetOctNodeItem(NATreeOctNode* octnode){
+  return &(octnode->node.item);
+}
+
 // Copyright (c) NALib, Tobias Stamm
 //
 // Permission is hereby granted, free of charge, to any person obtaining

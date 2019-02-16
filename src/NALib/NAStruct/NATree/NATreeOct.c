@@ -173,8 +173,9 @@ NA_HDEF NATreeNode* naLocateBubbleOctWithLimits(const NATree* tree, NATreeNode* 
     return node;
   }
   // Otherwise, go up if possible.
-  if(!naIsTreeItemRoot(tree, &(node->item))){
-    return naLocateBubbleOctWithLimits(tree, node->item.parent, origin, leftlimit, rightlimit, &(octnode->node.item));
+  NATreeItem* item = &(node->item);
+  if(!naIsTreeItemRoot(tree, item)){
+    return naLocateBubbleOctWithLimits(tree, item->parent, origin, leftlimit, rightlimit, item);
   }else{
     // We reached the root. No need to break a sweat. Simply return null.
     return NA_NULL;
@@ -329,6 +330,7 @@ NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeLeaf* existingleaf, cons
         naError("naInsertLeafOct", "tree is configured with no key");
     #endif
     NAInt childexponent = ((NATreeOctLeaf*)existingleaf)->leafexponent;
+    // Find out if key inside box.
     if(tree->config->keyIndexGetter(&(((NATreeOctLeaf*)existingleaf)->origin), &(((NATreeOctLeaf*)newleaf)->origin), &childexponent) == 1){
       left = existingleaf;
       right = newleaf;
@@ -337,36 +339,13 @@ NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeLeaf* existingleaf, cons
       right = existingleaf;
     }
     break;
-  case NA_TREE_LEAF_INSERT_ORDER_PREV:
-    #ifndef NDEBUG
-      if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
-        naError("naInsertLeafOct", "octtrees can not insert at prev");
-    #endif
-    left = existingleaf;
-    right = newleaf;
-    break;
-  case NA_TREE_LEAF_INSERT_ORDER_NEXT:
-    #ifndef NDEBUG
-      if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
-        naError("naInsertLeafOct", "octtrees can not insert at next");
-    #endif
-    left = existingleaf;
-    right = newleaf;
-    break;
-  case NA_TREE_LEAF_INSERT_ORDER_REPLACE:
-    #ifndef NDEBUG
-      naError("naInsertLeafOct", "This case should not happen");
-    #endif
-    left = existingleaf;
-    right = newleaf;
-    break;
   default:
     #ifndef NDEBUG
 	  naError("naInsertLeafOct", "Invalid insertOrder");
     #endif
-	left = existingleaf;
-	right = newleaf;
-	break;
+    left = existingleaf;
+    right = newleaf;
+    break;
   }
 
   existingparent = existingleaf->item.parent;
@@ -375,10 +354,10 @@ NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeLeaf* existingleaf, cons
   if(!naIsTreeItemRoot(tree, &(existingleaf->item))){
     NAInt existingindx = naGetChildIndexOct(existingparent, &(existingleaf->item));
     naMarkNodeChildLeaf(existingparent, existingindx, NA_FALSE);
-    ((NATreeOctNode*)existingparent)->childs[existingindx] = &(newparent->node.item);
+    ((NATreeOctNode*)existingparent)->childs[existingindx] = naGetOctNodeItem(newparent);
   }else{
     // The leaf was the root of the tree.
-    tree->root = &(newparent->node.item);
+    tree->root = naGetOctNodeItem(newparent);
     naMarkTreeRootLeaf(tree, NA_FALSE);
   }
 

@@ -259,11 +259,17 @@ NA_IAPI void naClearTreeIterator(NATreeIterator* iter);
 // The leaf callback shall test if the given leaf is the one having searched
 // for, resulting in matchfound to be either true or false.
 //
-// Both callbacks shall return NA_TRUE if the search must continue or NA_FALSE
-// if it shall be aborted.
-// When the node callback aborts, the leaf is considered to be not found.
-// When the leaf callback does not abort, automatically, the parent node is
-// tested, completely ignoring the matchfound parameter.
+// Both callbacks shall return NA_FALSE if the search is over. Otherwise, the
+// function continues with the search. Here are the possibilities:
+
+// nodeSearcher returns false: The search gets aborted. The leaf is considered
+//                             to be not found. 
+// nodeSearcher returns true:  The search continues with nextindex.
+// leafSearcher returns false: The search is over, matchfound indicating if
+//                             the desired leaf has been found.
+// leafSearcher returns true:  The search continues with the parend node.
+//
+// Beware, this may lead to an endless loop if not implemented properly!
 typedef NABool (*NATreeNodeTokenSearcher)(  void* token,
                                             NAPtr data,
                                            NAInt* nextindx);
@@ -283,10 +289,11 @@ typedef NABool (*NATreeLeafTokenSearcher)(  void* token,
 // Last:     Locates the last element of the whole tree.
 // Iterator: Positions the given iterator at the exact same position as the
 //           given source iterator.
-// Token:    Searches a desired location in the tree using the given token
+// Token:    Searches a desired location in the tree using the given token.
 //           You must provide the appropriate token callbacks. See above.
 //           This is the only function which allows searching for leafes in
-//           a tree which is configured to have no keys.
+//           a tree which is configured to have no keys. The iterator will
+//           point to the last leaf for which matchfound was true.
 NA_IAPI NABool naLocateTreeKey(     NATreeIterator* iter,
                                         const void* key,
                                              NABool assumeclose);
@@ -294,7 +301,7 @@ NA_IAPI NABool naLocateTreeFirst(   NATreeIterator* iter);
 NA_IAPI NABool naLocateTreeLast(    NATreeIterator* iter);
 NA_IAPI NABool naLocateTreeIterator(NATreeIterator* iter,
                                     NATreeIterator* srciter);
-NA_IAPI NABool naLocateTreeToken   (NATreeIterator* iter,
+NA_API  NABool naLocateTreeToken   (NATreeIterator* iter,
                                               void* token,
                             NATreeNodeTokenSearcher nodeSearcher,
                             NATreeLeafTokenSearcher leafSearcher);

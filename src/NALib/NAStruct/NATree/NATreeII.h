@@ -63,8 +63,6 @@ typedef enum{
 // NATreeLeafInserter        Expects the child ad childindx of grandparent to
 //                           be a leaf which will be split to a node containing
 //                           both that leaf and the new sibling.
-// NATreeLeafKeyGetter       Returns the key of the given leaf.
-// NATreeLeafDataGetter      Returns the data of the given leaf.
 typedef NAInt           (*NAKeyIndexGetter)(const void* basekey, const void* testkey, const void* data);
 typedef NABool          (*NAKeyEqualer)(const void* key1, const void* key2);
 typedef void            (*NAKeyAssigner)(void* dst, const void* src);
@@ -76,7 +74,7 @@ typedef void            (*NATreeLeafCoreDestructor)(NATree* tree, NATreeLeaf* le
 
 // This function should return the uppermost node which contains the given key.
 // It must start searching for the key at the given item and bubble upwards.
-// Should return Null, if the key can not be placed anywhere in the tree. The
+// Should return Null, if the key does not fit anywhere in the tree. The
 // given item is never Null and never the root of the tree which is never empty.
 typedef NATreeNode*     (*NATreeBubbleLocator)(const NATree* tree, NATreeItem* item, const void* key);
 // This function must search for the given key, starting from the given node
@@ -92,8 +90,13 @@ typedef NATreeItem*     (*NATreeChildGetter)(NATreeNode* parent, NAInt childindx
 typedef NATreeNode*     (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
 typedef NATreeLeaf*     (*NATreeLeafInserter)(NATree* tree, NATreeLeaf* existingleaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 typedef const void*     (*NATreeLeafKeyGetter)(NATreeLeaf* leaf);
-typedef NAPtr          (*NATreeLeafDataGetter)(NATreeLeaf* leaf);
-typedef NAPtr          (*NATreeNodeDataGetter)(NATreeNode* node);
+
+// Must return the data of the given leaf.
+typedef NAPtr           (*NATreeLeafDataGetter)(NATreeLeaf* leaf);
+// Must return the data of the given node.
+typedef NAPtr           (*NATreeNodeDataGetter)(NATreeNode* node);
+
+
 
 struct NATreeConfiguration{
 

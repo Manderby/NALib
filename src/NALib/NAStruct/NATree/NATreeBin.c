@@ -163,8 +163,9 @@ NA_HDEF NATreeNode* naLocateBubbleBinWithLimits(const NATree* tree, NATreeNode* 
     return node;
   }
   // Otherwise, go up if possible.
-  if(!naIsTreeItemRoot(tree, &(node->item))){
-    return naLocateBubbleBinWithLimits(tree, node->item.parent, key, leftlimit, rightlimit, &(binnode->node.item));
+  NATreeItem* item = &(node->item);
+  if(!naIsTreeItemRoot(tree, item)){
+    return naLocateBubbleBinWithLimits(tree, item->parent, key, leftlimit, rightlimit, item);
   }else{
     // We reached the root. No need to break a sweat. Simply return null.
     return NA_NULL;
@@ -354,16 +355,17 @@ NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeLeaf* existingleaf, cons
   }
 
   existingparent = existingleaf->item.parent;
+  NABool wasTreeItemRoot = naIsTreeItemRoot(tree, &(existingleaf->item));
   newparent = (NATreeBinNode*)naConstructTreeNodeBin(tree, &(((NATreeBinLeaf*)right)->key), left, right);
   newparent->node.item.parent = existingparent;
-  if(!naIsTreeItemRoot(tree, &(existingleaf->item))){
+  if(!wasTreeItemRoot){
     NAInt existingindx = naGetChildIndexBin(existingparent, &(existingleaf->item));
     naMarkNodeChildLeaf(existingparent, existingindx, NA_FALSE);
-    ((NATreeBinNode*)existingparent)->childs[existingindx] = &(newparent->node.item);
+    ((NATreeBinNode*)existingparent)->childs[existingindx] = naGetBinNodeItem(newparent);
     if(tree->config->flags & NA_TREE_BALANCE_AVL){naGrowAVL(tree, (NATreeBinNode*)existingparent, existingindx);}
   }else{
     // The leaf was the root of the tree.
-    tree->root = &(newparent->node.item);
+    tree->root = naGetBinNodeItem(newparent);
     naMarkTreeRootLeaf(tree, NA_FALSE);
   }
 

@@ -55,6 +55,15 @@ NA_HAPI void naInitNodeAVL(NATreeBinNode* binnode);
 NA_HAPI void naGrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx);
 NA_HAPI void naShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx);
 
+NA_HIAPI NATreeItem* naGetBinNodeItem(NATreeBinNode* binnode);
+
+
+
+
+NA_HIDEF NATreeItem* naGetBinNodeItem(NATreeBinNode* binnode){
+  return &(binnode->node.item);
+}
+
 // Copyright (c) NALib, Tobias Stamm
 //
 // Permission is hereby granted, free of charge, to any person obtaining
