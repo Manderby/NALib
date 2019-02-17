@@ -45,6 +45,7 @@ NA_HAPI NATreeItem* naGetChildOct(NATreeNode* parent, NAInt childindx);
 NA_HAPI NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf);
 NA_HAPI NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeLeaf* existingleaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 NA_HAPI const void* naGetLeafKeyOct(NATreeLeaf* leaf);
+NA_HAPI const void* naGetNodeKeyOct(NATreeNode* node);
 NA_HAPI NAPtr naGetLeafDataOct(NATreeLeaf* leaf);
 NA_HAPI NAPtr naGetNodeDataOct(NATreeNode* node);
 

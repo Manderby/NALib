@@ -47,6 +47,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafRemover             = naRemoveLeafOct;
     config->leafInserter            = naInsertLeafOct;
     config->leafKeyGetter           = naGetLeafKeyOct;
+    config->nodeKeyGetter           = naGetNodeKeyOct;
     config->leafDataGetter          = naGetLeafDataOct;
     config->nodeDataGetter          = naGetNodeDataOct;
 
@@ -91,6 +92,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafRemover             = naRemoveLeafBin;
     config->leafInserter            = naInsertLeafBin;
     config->leafKeyGetter           = naGetLeafKeyBin;
+    config->nodeKeyGetter           = naGetNodeKeyBin;
     config->leafDataGetter          = naGetLeafDataBin;
     config->nodeDataGetter          = naGetNodeDataBin;
   }

@@ -49,7 +49,7 @@ NA_HIDEF NAInt naGetBufferIteratorPartOffset(NABufferIterator* iter){
 
 
 NA_HIDEF NABufferPart* naGetBufferPart(NABufferIterator* iter){
-  return naGetTreeCurMutable(&(iter->partiter));
+  return naGetTreeCurLeafMutable(&(iter->partiter));
 }
 
 

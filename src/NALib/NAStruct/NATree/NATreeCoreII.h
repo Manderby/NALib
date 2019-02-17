@@ -20,7 +20,7 @@ NA_HAPI  NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo*
 
 // Positions iter at the leaf containing key or which is closest to the key if
 // no match was found.
-NA_HAPI  NATreeLeaf* naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABool* matchfound, NABool usebubble);
+NA_HAPI  NABool naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABool usebubble);
 
 // Prototypes
 NA_HAPI  NATreeLeaf* naAddTreeContentAtLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
@@ -136,9 +136,43 @@ NA_IAPI NAPtr naGetTreeConfigurationData(const NATreeConfiguration* config){
 // Item
 // /////////////////////////////////////
 
+NA_HIDEF void naInitTreeItem(NATreeItem* item){
+  // We don not initialize the parent. Code must use naSetTreeItemParent.
+  #ifndef NDEBUG
+    item->itercount = 0;
+  #else
+    NA_UNUSED(item);
+  #endif
+}
+
+
+
+NA_HIDEF void naClearTreeItem(NATreeItem* item){
+  #ifndef NDEBUG
+    if(item->itercount)
+      naError("naClearTreeItem", "There are still iterators running on this item. Did you forget a call to naClearTreeIterator?");
+  #else
+    NA_UNUSED(item);
+  #endif
+}
+
+
+
+NA_HIDEF NATreeNode* naGetTreeItemParent(const NATreeItem* item){
+  return item->parent;
+}
+
+
+
+NA_HIDEF void naSetTreeItemParent(NATreeItem* item, NATreeNode* parent){
+  item->parent = parent;
+}
+
+
+
 NA_HIDEF NABool naIsTreeItemRoot(const NATree* tree, const NATreeItem* item){
   NA_UNUSED(tree);
-  return (item->parent == NA_NULL);
+  return (naGetTreeItemParent(item) == NA_NULL);
 }
 
 
@@ -148,16 +182,14 @@ NA_HIDEF NABool naIsTreeItemRoot(const NATree* tree, const NATreeItem* item){
 // /////////////////////////////////////
 
 NA_HIDEF void naInitTreeNode(NATreeNode* node){
-  // We don not initialize the parent. That may seem dangerous but there is
-  // ony one function naAddTreeLeaf where leafes are created and there, the
-  // parent is always set afterwards with a call to leafAdder.
+  naInitTreeItem(&(node->item));
   node->flags = 0;
 }
 
 
 
 NA_HIDEF void naClearTreeNode(NATreeNode* node){
-  NA_UNUSED(node);
+  naClearTreeItem(&(node->item));
 }
 
 
@@ -168,11 +200,13 @@ NA_HIDEF NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx){
 
 
 
-NA_HIDEF NABool naIsItemLeaf(const NATree* tree, NATreeItem* item){
+NA_HIDEF NABool naIsTreeItemLeaf(const NATree* tree, NATreeItem* item){
   NAInt childindx;
+  NATreeNode* parent;
   if(naIsTreeItemRoot(tree, item)){return naIsTreeRootLeaf(tree);}
-  childindx = tree->config->childIndexGetter(item->parent, item);
-  return naIsNodeChildLeaf(item->parent, childindx);
+  parent = naGetTreeItemParent(item);
+  childindx = tree->config->childIndexGetter(parent, item);
+  return naIsNodeChildLeaf(parent, childindx);
 }
 
 
@@ -204,14 +238,7 @@ NA_HIDEF void naMarkTreeRootLeaf(NATree* tree, NABool isleaf){
 
 
 NA_HIDEF void naInitTreeLeaf(NATreeLeaf* leaf){
-  // We don not initialize the parent. That may seem dangerous but there is
-  // ony one function naAddTreeLeaf where leafes are created and there, the
-  // parent is always set afterwards with a call to leafAdder.
-  #ifndef NDEBUG
-    leaf->itercount = 0;
-  #else
-    NA_UNUSED(leaf);
-  #endif
+  naInitTreeItem(&(leaf->item));
 }
 
 
@@ -235,12 +262,7 @@ NA_HIDEF void naDestructLeafData(NATree* tree, NAPtr data){
 
 
 NA_HIDEF void naClearTreeLeaf(NATreeLeaf* leaf){
-  #ifndef NDEBUG
-    if(leaf->itercount)
-      naError("naClearTreeLeaf", "There are still iterators running on this leaf. Did you forget a call to naClearTreeIterator?");
-  #else
-    NA_UNUSED(leaf);
-  #endif
+  naClearTreeItem(&(leaf->item));
 }
 
 
@@ -368,7 +390,7 @@ NA_IDEF const void* naGetTreeFirstConst(const NATree* tree){
   const void* retvalue;
   NATreeIterator iter = naMakeTreeAccessor(tree);
   naLocateTreeFirst(&iter);
-  retvalue = naGetTreeCurConst(&iter);
+  retvalue = naGetTreeCurLeafConst(&iter);
   naClearTreeIterator(&iter);
   return retvalue;
 }
@@ -379,7 +401,7 @@ NA_IDEF void* naGetTreeFirstMutable(const NATree* tree){
   void* retvalue;
   NATreeIterator iter = naMakeTreeAccessor(tree);
   naLocateTreeFirst(&iter);
-  retvalue = naGetTreeCurMutable(&iter);
+  retvalue = naGetTreeCurLeafMutable(&iter);
   naClearTreeIterator(&iter);
   return retvalue;
 }
@@ -390,7 +412,7 @@ NA_IDEF const void* naGetTreeLastConst(const NATree* tree){
   const void* retvalue;
   NATreeIterator iter = naMakeTreeAccessor(tree);
   naLocateTreeLast(&iter);
-  retvalue = naGetTreeCurConst(&iter);
+  retvalue = naGetTreeCurLeafConst(&iter);
   naClearTreeIterator(&iter);
   return retvalue;
 }
@@ -401,7 +423,7 @@ NA_IDEF void* naGetTreeLastMutable(const NATree* tree){
   void* retvalue;
   NATreeIterator iter = naMakeTreeAccessor(tree);
   naLocateTreeLast(&iter);
-  retvalue = naGetTreeCurMutable(&iter);
+  retvalue = naGetTreeCurLeafMutable(&iter);
   naClearTreeIterator(&iter);
   return retvalue;
 }
@@ -428,9 +450,9 @@ NA_IDEF void naUpdateTreeLeaf(NATreeIterator* iter){
       naError("naUpdateTreeLeaf", "Iterator is not at a leaf");
   #endif
   tree = naGetTreeIteratorTreeMutable(iter);
-  parent = iter->leaf->item.parent;
-  if(!naIsTreeItemRoot(tree, &(iter->leaf->item))){
-    naUpdateTreeNodeBubbling(tree, parent, tree->config->childIndexGetter(parent, &(iter->leaf->item)));
+  parent = naGetTreeItemParent(iter->item);
+  if(!naIsTreeItemRoot(tree, iter->item)){
+    naUpdateTreeNodeBubbling(tree, parent, tree->config->childIndexGetter(parent, iter->item));
   }
 }
 
@@ -448,7 +470,7 @@ NA_IDEF NATreeIterator naMakeTreeAccessor(const NATree* tree){
   #endif
   iter.flags = 0;
   iter.tree = naMakePtrWithDataConst(tree);
-  iter.leaf = NA_NULL;
+  iter.item = NA_NULL;
   return iter;
 }
 
@@ -461,7 +483,7 @@ NA_IDEF NATreeIterator naMakeTreeMutator(NATree* tree){
   #endif
   iter.flags = 0;
   iter.tree = naMakePtrWithDataMutable(tree);
-  iter.leaf = NA_NULL;
+  iter.item = NA_NULL;
   return iter;
 }
 
@@ -474,25 +496,25 @@ NA_IDEF NATreeIterator naMakeTreeModifier(NATree* tree){
   #endif
   iter.flags = NA_TREE_ITERATOR_MODIFIER;
   iter.tree = naMakePtrWithDataMutable(tree);
-  iter.leaf = NA_NULL;
+  iter.item = NA_NULL;
   return iter;
 }
 
 
 
-NA_HIDEF void naSetTreeIteratorCurLeaf(NATreeIterator* iter, NATreeLeaf* newleaf){
+NA_HIDEF void naSetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newitem){
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
-      naError("naSetTreeIteratorCurLeaf", "This iterator has been cleared. You need to make it anew.");
+      naError("naSetTreeIteratorCurItem", "This iterator has been cleared. You need to make it anew.");
     if(!naIsTreeAtInitial(iter)){
-      if(iter->leaf->itercount == 0)
-        naError("naSetTreeIteratorCurLeaf", "This leaf has zero iterators already");
-      iter->leaf->itercount--;
+      if(iter->item->itercount == 0)
+        naError("naSetTreeIteratorCurItem", "The current item has zero iterators already");
+      iter->item->itercount--;
     }
   #endif
-  iter->leaf = newleaf;
+  iter->item = newitem;
   #ifndef NDEBUG
-    if(!naIsTreeAtInitial(iter)){iter->leaf->itercount++;}
+    if(!naIsTreeAtInitial(iter)){iter->item->itercount++;}
   #endif
 }
 
@@ -503,7 +525,7 @@ NA_IDEF void naResetTreeIterator(NATreeIterator* iter){
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("naResetTreeIterator", "This iterator has been cleared. You need to make it anew.");
   #endif
-  naSetTreeIteratorCurLeaf(iter, NA_NULL);
+  naSetTreeIteratorCurItem(iter, NA_NULL);
 }
 
 
@@ -527,7 +549,7 @@ NA_IDEF void naClearTreeIterator(NATreeIterator* iter){
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("naClearTreeIterator", "This iterator has already been cleared.");
   #endif
-  naSetTreeIteratorCurLeaf(iter, NA_NULL);
+  naSetTreeIteratorCurItem(iter, NA_NULL);
   #ifndef NDEBUG
     naSetFlagi(&(iter->flags), NA_TREE_ITERATOR_CLEARED, NA_TRUE);
   #endif
@@ -536,15 +558,7 @@ NA_IDEF void naClearTreeIterator(NATreeIterator* iter){
 
 
 NA_IDEF NABool naLocateTreeKey(NATreeIterator* iter, const void* key, NABool assumeclose){
-  NABool matchfound;
-  NATreeLeaf* leaf = naLocateTreeLeaf(iter, key, &matchfound, assumeclose);
-
-  if(leaf && matchfound){
-    naSetTreeIteratorCurLeaf(iter, leaf);
-  }else{
-    naSetTreeIteratorCurLeaf(iter, NA_NULL);
-  }
-  return matchfound;
+  return naLocateTreeLeaf(iter, key, assumeclose);
 }
 
 
@@ -568,8 +582,8 @@ NA_IDEF NABool naLocateTreeIterator(NATreeIterator* iter, NATreeIterator* srcite
     if(naGetTreeIteratorTreeConst(iter) != naGetPtrConst(srciter->tree))
       naError("nalocateTreeIterator", "The two iterators do not belong to the same tree");
   #endif
-  naSetTreeIteratorCurLeaf(iter, srciter->leaf);
-  return (iter->leaf != NA_NULL);
+  naSetTreeIteratorCurItem(iter, srciter->item);
+  return !naIsTreeAtInitial(iter);
 }
 
 
@@ -585,63 +599,115 @@ NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNo
       naError("naBubbleTreeToken", "This iterator is not at a leaf.");
   #endif
   tree = naGetTreeIteratorTreeConst(iter);
-  item = &(iter->leaf->item);
+  item = iter->item;
   continueBubbling = NA_TRUE;
   while(continueBubbling && !naIsTreeItemRoot(tree, item)){
-    NAInt childindx = tree->config->childIndexGetter(item->parent, item);
-    continueBubbling = nodeTokenCallback(token, tree->config->nodeDataGetter(item->parent), childindx);
-    item = &(item->parent->item);
+    NATreeNode* parent = naGetTreeItemParent(item);
+    NAInt childindx = tree->config->childIndexGetter(parent, item);
+    continueBubbling = nodeTokenCallback(token, tree->config->nodeDataGetter(parent), childindx);
+    item = &(parent->item);
   }
 }
 
 
 
-NA_IDEF const void* naGetTreeCurKey(NATreeIterator* iter){
-  const NATree* tree;
+NA_IDEF const void* naGetTreeCurLeafKey(NATreeIterator* iter){
+  const NATree* tree = naGetTreeIteratorTreeConst(iter);;
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("naGetTreeConst", "This iterator has been cleared. You need to make it anew.");
     if(naIsTreeAtInitial(iter))
+      naError("naGetTreeConst", "This iterator is at initial position.");
+    if(!naIsTreeItemLeaf(tree, iter->item))
       naError("naGetTreeConst", "This iterator is not at a leaf.");
   #endif
-  tree = naGetTreeIteratorTreeConst(iter);
-  return tree->config->leafKeyGetter(iter->leaf);
+  return tree->config->leafKeyGetter((NATreeLeaf*)&(iter->item));
 }
 
 
 
-NA_IDEF const void* naGetTreeCurConst(NATreeIterator* iter){
-  const NATree* tree;
+NA_IDEF const void* naGetTreeCurNodeKey(NATreeIterator* iter){
+  const NATree* tree = naGetTreeIteratorTreeConst(iter);;
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("naGetTreeConst", "This iterator has been cleared. You need to make it anew.");
     if(naIsTreeAtInitial(iter))
-      naError("naGetTreeConst", "This iterator is not at a leaf.");
+      naError("naGetTreeConst", "This iterator is at initial position.");
+    if(naIsTreeItemLeaf(tree, iter->item))
+      naError("naGetTreeConst", "This iterator is not at a node.");
   #endif
-  tree = naGetTreeIteratorTreeConst(iter);
-  return naGetPtrConst(tree->config->leafDataGetter(iter->leaf));
+  return tree->config->nodeKeyGetter((NATreeNode*)&(iter->item));
 }
 
 
 
-NA_IDEF void* naGetTreeCurMutable(NATreeIterator* iter){
-  const NATree* tree;
+NA_IDEF const void* naGetTreeCurLeafConst(NATreeIterator* iter){
+  const NATree* tree = naGetTreeIteratorTreeConst(iter);
+  #ifndef NDEBUG
+    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+      naError("naGetTreeConst", "This iterator has been cleared. You need to make it anew.");
+    if(naIsTreeAtInitial(iter))
+      naError("naGetTreeConst", "This iterator is at initial position.");
+    if(!naIsTreeItemLeaf(tree, iter->item))
+      naError("naGetTreeConst", "This iterator is not at a leaf.");
+  #endif
+  return naGetPtrConst(tree->config->leafDataGetter((NATreeLeaf*)&(iter->item)));
+}
+
+
+
+NA_IDEF const void* naGetTreeCurNodeConst(NATreeIterator* iter){
+  const NATree* tree = naGetTreeIteratorTreeConst(iter);
+  #ifndef NDEBUG
+    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+      naError("naGetTreeConst", "This iterator has been cleared. You need to make it anew.");
+    if(naIsTreeAtInitial(iter))
+      naError("naGetTreeConst", "This iterator is at initial position.");
+    if(naIsTreeItemLeaf(tree, iter->item))
+      naError("naGetTreeConst", "This iterator is not at a node.");
+  #endif
+  return naGetPtrConst(tree->config->nodeDataGetter((NATreeNode*)&(iter->item)));
+}
+
+
+
+NA_IDEF void* naGetTreeCurLeafMutable(NATreeIterator* iter){
+  const NATree* tree = naGetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
   if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
     naError("naGetTreeMutable", "This iterator has been cleared. You need to make it anew.");
   if(naIsTreeAtInitial(iter))
-    naError("naGetTreeMutable", "This iterator is not at a leaf.");
+    naError("naGetTreeMutable", "This iterator is at initial position.");
+  if(!naIsTreeItemLeaf(tree, iter->item))
+    naError("naGetTreeConst", "This iterator is not at a leaf.");
   #endif
-  tree = naGetTreeIteratorTreeConst(iter);
-  return naGetPtrMutable(tree->config->leafDataGetter(iter->leaf));
+  return naGetPtrMutable(tree->config->leafDataGetter((NATreeLeaf*)&(iter->item)));
+}
+
+
+
+NA_IDEF void* naGetTreeCurNodeMutable(NATreeIterator* iter){
+  const NATree* tree = naGetTreeIteratorTreeConst(iter);
+  #ifndef NDEBUG
+  if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+    naError("naGetTreeMutable", "This iterator has been cleared. You need to make it anew.");
+  if(naIsTreeAtInitial(iter))
+    naError("naGetTreeMutable", "This iterator is at initial position.");
+  if(naIsTreeItemLeaf(tree, iter->item))
+    naError("naGetTreeConst", "This iterator is not at a node.");
+  #endif
+  return naGetPtrMutable(tree->config->nodeDataGetter((NATreeNode*)&(iter->item)));
 }
 
 
 
 NA_IDEF NABool naIterateTree(NATreeIterator* iter){
   NATreeIterationInfo info;
-  const NATree* tree;
-  tree = naGetTreeIteratorTreeConst(iter);
+  const NATree* tree = naGetTreeIteratorTreeConst(iter);
+  #ifndef NDEBUG
+    if(!naIsTreeItemLeaf(tree, iter->item))
+      naError("naIterateTree", "Iter is not placed at a leaf. Undefined behaviour. You should reset the iterator.");
+  #endif
   info.step = 1;
   info.startindx = 0;
   info.breakindx = tree->config->childpernode;
@@ -652,8 +718,11 @@ NA_IDEF NABool naIterateTree(NATreeIterator* iter){
 
 NA_IDEF NABool naIterateTreeBack(NATreeIterator* iter){
   NATreeIterationInfo info;
-  const NATree* tree;
-  tree = naGetTreeIteratorTreeConst(iter);
+  const NATree* tree = naGetTreeIteratorTreeConst(iter);
+  #ifndef NDEBUG
+    if(!naIsTreeItemLeaf(tree, iter->item))
+      naError("naIterateTreeBack", "Iter is not placed at a leaf. Undefined behaviour. You should reset the iterator.");
+  #endif
   info.step = -1;
   info.startindx = tree->config->childpernode - 1;
   info.breakindx = -1;
@@ -685,7 +754,7 @@ NA_IDEF NABool naAddTreeKeyMutable(NATreeIterator* iter, const void* key, void* 
 
 
 NA_IDEF NABool naIsTreeAtInitial(const NATreeIterator* iter){
-  return (iter->leaf == NA_NULL);
+  return (iter->item == NA_NULL);
 }
 
 
@@ -742,22 +811,22 @@ NA_IDEF NABool naAddTreeNextMutable(NATreeIterator* iter, void* content, NABool 
 
 
 
-NA_IDEF void naRemoveTreeCur(NATreeIterator* iter, NABool advance){
-  NATree* tree;
-  NATreeLeaf* curleaf;
+NA_IDEF void naRemoveTreeCurLeaf(NATreeIterator* iter, NABool advance){
+  NATree* tree = naGetTreeIteratorTreeMutable(iter);
   NATreeNode* newparent;
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("naLocateTree", "This iterator has been cleared. You need to make it anew.");
     if(naIsTreeAtInitial(iter))
+      naError("naLocateTree", "This iterator is at initial position.");
+    if(!naIsTreeItemLeaf(tree, iter->item))
       naError("naLocateTree", "Iterator is not at a leaf.");
   #endif
-  tree = naGetTreeIteratorTreeMutable(iter);
-  curleaf = iter->leaf;
   if(advance){naIterateTree(iter);}else{naIterateTreeBack(iter);}
-  newparent = tree->config->leafRemover(tree, curleaf);
+  newparent = tree->config->leafRemover(tree, (NATreeLeaf*)(iter->item));
   naUpdateTreeNodeBubbling(tree, newparent, -1);
 }
+
 
 
 

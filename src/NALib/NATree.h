@@ -253,32 +253,32 @@ NA_IAPI void naClearTreeIterator(NATreeIterator* iter);
 // The following two callbacks will be called either for a node or a leaf
 // given its stored data.
 //
-// The node callback shall test where to search next by setting the nextindx
-// to the desired child index or -1 if the parent node shall be searched.
+// The return value defines, how the search shall continue.
 //
-// The leaf callback shall test if the given leaf is the one having searched
-// for, resulting in matchfound to be either true or false.
+// For the node callback, you can return the index of the child where to
+// search next. If the parent node shall be searched, you can use the PARENT
+// macro below. If the search shall stop, either use the FOUND or ABORT macro
+// below.
 //
-// Both callbacks shall return NA_FALSE if the search is over. Otherwise, the
-// function continues with the search. Here are the possibilities:
+// For the child callback, return one of the macros below. Any other value is
+// not allowed.
+//
+// When using the FOUND macro, the search stops and the return value of the
+// naLocateTreeToken function will be NA_TRUE. When using the ABORT macro,
+// search stops as well but the return value will be NA_FALSE.
+//
+// Beware, you can very vell create an endless loop!
+#define NA_TREE_SEARCH_PARENT  -1
+#define NA_TREE_SEARCH_FOUND   -2
+#define NA_TREE_SEARCH_ABORT   -3
+typedef NAInt (*NATreeNodeTokenSearcher)(   void* token,
+                                            NAPtr data);
+typedef NAInt (*NATreeLeafTokenSearcher)(   void* token,
+                                            NAPtr data);
 
-// nodeSearcher returns false: The search gets aborted. The leaf is considered
-//                             to be not found. 
-// nodeSearcher returns true:  The search continues with nextindex.
-// leafSearcher returns false: The search is over, matchfound indicating if
-//                             the desired leaf has been found.
-// leafSearcher returns true:  The search continues with the parend node.
-//
-// Beware, this may lead to an endless loop if not implemented properly!
-typedef NABool (*NATreeNodeTokenSearcher)(  void* token,
-                                            NAPtr data,
-                                           NAInt* nextindx);
-typedef NABool (*NATreeLeafTokenSearcher)(  void* token,
-                                            NAPtr data,
-                                          NABool* matchfound);
-
-// Moves the iterator to the specified leaf. If the desired leaf is not found
-// in the tree, NA_FALSE ist returned and iter points to its initial state.
+// Moves the iterator to the specified position. If the desired position is
+// not found or the iterator points at the initial position, NA_FALSE is
+// returned.
 //
 // Key:      Searches for the given key. The assumeclose parameter indicates
 //           that the desired key is expected to be in the neighborhood of the
@@ -337,9 +337,16 @@ NA_IAPI NABool naIterateTreeBack    (NATreeIterator* iter);
 
 // /////////////////////////////////
 // Returns the content of the current element without moving the iterator.
-NA_IAPI const void* naGetTreeCurKey    (NATreeIterator* iter);
-NA_IAPI const void* naGetTreeCurConst  (NATreeIterator* iter);
-NA_IAPI void*       naGetTreeCurMutable(NATreeIterator* iter);
+// Beware: You must know whether the iterator is at a leaf or a node.
+// Of course this could be detected automatically by the iterator but that
+// would allow for very sloppy designs.
+NA_IAPI const void* naGetTreeCurLeafKey    (NATreeIterator* iter);
+NA_IAPI const void* naGetTreeCurLeafConst  (NATreeIterator* iter);
+NA_IAPI void*       naGetTreeCurLeafMutable(NATreeIterator* iter);
+
+NA_IAPI const void* naGetTreeCurNodeKey    (NATreeIterator* iter);
+NA_IAPI const void* naGetTreeCurNodeConst  (NATreeIterator* iter);
+NA_IAPI void*       naGetTreeCurNodeMutable(NATreeIterator* iter);
 
 // Adds the given content to the tree under the given key. These functions
 // only work on trees which are configured to have keys.
@@ -386,7 +393,7 @@ NA_IAPI NABool naAddTreeNextMutable(NATreeIterator* iter,
 // element has been removed. If advance is NA_FALSE, the iterator will be
 // moved to the previous element. If advance is NA_TRUE, the iterator will
 // be moved to the next element.
-NA_IAPI void naRemoveTreeCur(NATreeIterator* iter, NABool advance);
+NA_IAPI void naRemoveTreeCurLeaf(NATreeIterator* iter, NABool advance);
 
 // Returns true if the iterator is at its initial position.
 NA_IAPI NABool naIsTreeAtInitial(const NATreeIterator* iter);

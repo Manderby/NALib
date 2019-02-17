@@ -118,36 +118,38 @@ NA_DEF NAInt naGetBufferLocation(const NABufferIterator* iter){
 
 
 // Callback for naLocateBufferAbsolute
-NA_HDEF NABool naSearchBufferNode(void* token, NAPtr data, NAInt* nextindx){
+NA_HDEF NAInt naSearchBufferNode(void* token, NAPtr data){
   NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
   NABufferTreeNodeData* nodedata = (NABufferTreeNodeData*)naGetPtrMutable(data);
+  NAInt nextindx;
 
   if((searchtoken->searchoffset < searchtoken->curoffset) || (searchtoken->searchoffset >= searchtoken->curoffset + nodedata->len1 + nodedata->len2)){
-    *nextindx = -1;
+    nextindx = NA_TREE_SEARCH_PARENT;
   }else{
     if(searchtoken->searchoffset < searchtoken->curoffset + nodedata->len1){
-      *nextindx = 0;
+      nextindx = 0;
     }else{
       searchtoken->curoffset += nodedata->len1;
-      *nextindx = 1;
+      nextindx = 1;
     }
   }
-  return NA_TRUE;
+  return nextindx;
 }
 
 
 
 // Callback for naLocateBufferAbsolute
-NA_HDEF NABool naSearchBufferLeaf(void* token, NAPtr data, NABool* matchfound){
+NA_HDEF NAInt naSearchBufferLeaf(void* token, NAPtr data){
   NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
   NABufferPart* part = (NABufferPart*)naGetPtrMutable(data);
+  NAInt nextindx;
 
   if((searchtoken->searchoffset >= searchtoken->curoffset) && (searchtoken->searchoffset < searchtoken->curoffset + naGetBufferPartByteSize(part))){
-    *matchfound = NA_TRUE;
+    nextindx = NA_TREE_SEARCH_FOUND;
   }else{
-    *matchfound = NA_FALSE;
+    nextindx = NA_TREE_SEARCH_ABORT;
   }
-  return NA_FALSE;
+  return nextindx;
 }
 
 
@@ -374,14 +376,14 @@ NA_HDEF NABool naIsBufferIteratorSparse(NABufferIterator* iter){
     if(iter->partoffset < 0)
       naError("naIsBufferPartSparse", "Negative offset not allowed");
   #endif
-  part = naGetTreeCurConst(&(iter->partiter));
+  part = naGetTreeCurLeafConst(&(iter->partiter));
   if(iter->partoffset >= naGetBufferPartByteSize(part)){
     // Something changed with the part in the meantime. We need to find the
     // correct position. We do this by looking for the absolute position in
     // the source.
     NAInt searchpos = naGetBufferLocation(iter);
     naLocateBufferAbsolute(iter, searchpos);
-    part = naGetTreeCurConst(&(iter->partiter));
+    part = naGetTreeCurLeafConst(&(iter->partiter));
     #ifndef NDEBUG
       if(iter->partoffset >= naGetBufferPartByteSize(part))
         naError("naIsBufferPartSparse", "Still not found the correct part");

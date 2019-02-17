@@ -29,12 +29,12 @@ NA_HIDEF void naSetNodeAVL(NATreeBinNode* binnode, NAInt balance){
 NA_HIDEF void naRotateLeftBin(NATree* tree, NATreeBinNode* parent, NATreeBinNode* rightchild){
   NATreeNode* grandparent;
   #ifndef NDEBUG
-    if(naIsItemLeaf(tree, naGetBinNodeItem(parent)))
+    if(naIsTreeItemLeaf(tree, naGetBinNodeItem(parent)))
       naError("naRotateLeftBin", "given parent is not a node");
-    if(naIsItemLeaf(tree, naGetBinNodeItem(rightchild)))
+    if(naIsTreeItemLeaf(tree, naGetBinNodeItem(rightchild)))
       naError("naRotateLeftBin", "given right child is not a node");
   #endif
-  grandparent = parent->node.item.parent;
+  grandparent = naGetTreeItemParent(&(parent->node.item));
   if(!naIsTreeItemRoot(tree, naGetBinNodeItem(parent))){
     NAInt parentindx = naGetChildIndexBin(grandparent, naGetBinNodeItem(parent));
     ((NATreeBinNode*)grandparent)->childs[parentindx] = naGetBinNodeItem(rightchild);
@@ -45,11 +45,11 @@ NA_HIDEF void naRotateLeftBin(NATree* tree, NATreeBinNode* parent, NATreeBinNode
   parent->childs[1] = rightchild->childs[0];
   parent->childs[1]->parent = &(parent->node);
   naMarkNodeChildLeaf(&(parent->node), 1, naIsNodeChildLeaf(&(rightchild->node), 0));
-  parent->node.item.parent = &(rightchild->node);
+  naSetTreeItemParent(&(parent->node.item), &(rightchild->node));
 
   rightchild->childs[0] = naGetBinNodeItem(parent);
   naMarkNodeChildLeaf(&(rightchild->node), 0, NA_FALSE);
-  rightchild->node.item.parent = grandparent;
+  naSetTreeItemParent(&(rightchild->node.item), grandparent);
 
   naUpdateTreeNodeBubbling(tree, &(parent->node), -1);
 }
@@ -59,12 +59,12 @@ NA_HIDEF void naRotateLeftBin(NATree* tree, NATreeBinNode* parent, NATreeBinNode
 NA_HIDEF void naRotateRightBin(NATree* tree, NATreeBinNode* leftchild, NATreeBinNode* parent){
   NATreeNode* grandparent;
   #ifndef NDEBUG
-    if(naIsItemLeaf(tree, naGetBinNodeItem(leftchild)))
+    if(naIsTreeItemLeaf(tree, naGetBinNodeItem(leftchild)))
       naError("naRotateRightBin", "given left child is not a node");
-    if(naIsItemLeaf(tree, naGetBinNodeItem(parent)))
+    if(naIsTreeItemLeaf(tree, naGetBinNodeItem(parent)))
       naError("naRotateRightBin", "given parent is not a node");
   #endif
-  grandparent = parent->node.item.parent;
+  grandparent = naGetTreeItemParent(&(parent->node.item));
   if(!naIsTreeItemRoot(tree, naGetBinNodeItem(parent))){
     NAInt parentindx = naGetChildIndexBin(grandparent, naGetBinNodeItem(parent));
     ((NATreeBinNode*)grandparent)->childs[parentindx] = naGetBinNodeItem(leftchild);
@@ -75,11 +75,11 @@ NA_HIDEF void naRotateRightBin(NATree* tree, NATreeBinNode* leftchild, NATreeBin
   parent->childs[0] = leftchild->childs[1];
   parent->childs[0]->parent = &(parent->node);
   naMarkNodeChildLeaf(&(parent->node), 0, naIsNodeChildLeaf(&(leftchild->node), 1));
-  parent->node.item.parent = &(leftchild->node);
+  naSetTreeItemParent(&(parent->node.item), &(leftchild->node));
 
   leftchild->childs[1] = naGetBinNodeItem(parent);
   naMarkNodeChildLeaf(&(leftchild->node), 1, NA_FALSE);
-  leftchild->node.item.parent = grandparent;
+  naSetTreeItemParent(&(leftchild->node.item), grandparent);
 
   naUpdateTreeNodeBubbling(tree, &(parent->node), -1);
 }
@@ -88,7 +88,8 @@ NA_HIDEF void naRotateRightBin(NATree* tree, NATreeBinNode* leftchild, NATreeBin
 
 NA_HIDEF void naPropagateAVLGrow(NATree* tree, NATreeBinNode* binnode){
   if(!naIsTreeItemRoot(tree, naGetBinNodeItem(binnode))){
-    naGrowAVL(tree, (NATreeBinNode*)(binnode->node.item.parent), naGetChildIndexBin(binnode->node.item.parent, naGetBinNodeItem(binnode)));
+    NATreeNode* parent = naGetTreeItemParent(&(binnode->node.item));
+    naGrowAVL(tree, (NATreeBinNode*)parent, naGetChildIndexBin(parent, naGetBinNodeItem(binnode)));
   }
 }
 
@@ -96,7 +97,8 @@ NA_HIDEF void naPropagateAVLGrow(NATree* tree, NATreeBinNode* binnode){
 
 NA_HIDEF void naPropagateAVLShrink(NATree* tree, NATreeBinNode* binnode){
   if(!naIsTreeItemRoot(tree, naGetBinNodeItem(binnode))){
-    naShrinkAVL(tree, (NATreeBinNode*)(binnode->node.item.parent), naGetChildIndexBin(binnode->node.item.parent, naGetBinNodeItem(binnode)));
+    NATreeNode* parent = naGetTreeItemParent(&(binnode->node.item));
+    naShrinkAVL(tree, (NATreeBinNode*)parent, naGetChildIndexBin(parent, naGetBinNodeItem(binnode)));
   }
 }
 

@@ -235,7 +235,7 @@ typedef int NABool;
 #endif
 
 // 64 Bits: Preference is first long long, then long, then int
-// Special case for MSVC compiler 6.0: User __int64
+// Special case for MSVC compiler 6.0: Use __int64
 #if NA_TYPE_NATIVE_LONG_LONG_INT_BITS == NA_TYPE64_BITS
   #define NA_TYPE_INT64 NA_TYPE_NATIVE_LONG_LONG_INT
 #elif NA_TYPE_NATIVE_LONG_INT_BITS == NA_TYPE64_BITS
@@ -389,19 +389,19 @@ typedef int NABool;
 	#define NA_PRIx64      NA_PRINTF_LONG_LONG_PREFIX "x"
 	#define NA_SCNi64      NA_PRINTF_LONG_LONG_PREFIX "d"
 	#define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
-#elif NA_TYPE_INT64 == NA_TYPE_NATIVE__INT64
-	#define NA_UINT64_MAX  ULLONG_MAX
-	#define NA_INT64_MAX   LLONG_MAX
-	#define NA_INT64_MIN   LLONG_MIN
-	typedef unsigned __uint64   uint64;
-	typedef signed __int64      int64;
-	#define NA_ZERO_64     (0LL)
-	#define NA_ONE_64      (1LL)
-	#define NA_PRIi64      NA_PRINTF_LONG_LONG_PREFIX "d"
-	#define NA_PRIu64      NA_PRINTF_LONG_LONG_PREFIX "u"
-	#define NA_PRIx64      NA_PRINTF_LONG_LONG_PREFIX "x"
-	#define NA_SCNi64      NA_PRINTF_LONG_LONG_PREFIX "d"
-	#define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
+//#elif NA_TYPE_INT64 == NA_TYPE_NATIVE__INT64
+//  #define NA_UINT64_MAX  ULLONG_MAX
+//  #define NA_INT64_MAX   LLONG_MAX
+//  #define NA_INT64_MIN   LLONG_MIN
+//  typedef unsigned __uint64   uint64;
+//  typedef signed __int64      int64;
+//  #define NA_ZERO_64     (0LL)
+//  #define NA_ONE_64      (1LL)
+//  #define NA_PRIi64      NA_PRINTF_LONG_LONG_PREFIX "d"
+//  #define NA_PRIu64      NA_PRINTF_LONG_LONG_PREFIX "u"
+//  #define NA_PRIx64      NA_PRINTF_LONG_LONG_PREFIX "x"
+//  #define NA_SCNi64      NA_PRINTF_LONG_LONG_PREFIX "d"
+//  #define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
 #else
   // The 64 bit integer type must be emulated. See NAInt64.h
   #define NA_UINT64_MAX  naMakeUInt64(NA_UINT32_MAX, NA_UINT32_MAX)

@@ -95,7 +95,7 @@ NA_HDEF void naDestructBufferPart(NABufferPart* part){
 // The start and end parameters must be positive definite.
 // Moves the iterator to the desired part and returns that part.
 NA_HDEF NABufferPart* naSplitBufferPart(NATreeIterator* partiter, NAInt start, NAInt end){
-  NABufferPart* part = naGetTreeCurMutable(partiter);
+  NABufferPart* part = naGetTreeCurLeafMutable(partiter);
   NABufferPart* newpart;
   NAInt prevbytesize;
 
@@ -147,7 +147,7 @@ NA_HDEF NABufferPart* naSplitBufferPart(NATreeIterator* partiter, NAInt start, N
     // This means that iter now points to the desired part.
   }
 
-  return naGetTreeCurMutable(partiter);
+  return naGetTreeCurLeafMutable(partiter);
 }
 
 
@@ -164,7 +164,7 @@ NA_HDEF NABufferPart* naPrepareBufferPartSourceBuffer(NATreeIterator* partiter, 
   NAInt normedstart;
   NAInt normedend;
   
-  NABufferPart* part = naGetTreeCurMutable(partiter);
+  NABufferPart* part = naGetTreeCurLeafMutable(partiter);
   NABufferSource* source = part->source;
   NAInt sourceoffset = part->sourceoffset + partrange.origin;
   NABuffer* sourcebuffer = naGetBufferSourceUnderlyingBuffer(source);
@@ -285,7 +285,7 @@ NA_HDEF NABufferPart* naPrepareBufferPartMemory(NATreeIterator* partiter, NARang
   NAInt normedstart;
   NAInt normedend;
   void* dst;
-  NABufferPart* part = naGetTreeCurMutable(partiter);
+  NABufferPart* part = naGetTreeCurLeafMutable(partiter);
   NABufferSource* source = part->source;
 
   #ifndef NDEBUG

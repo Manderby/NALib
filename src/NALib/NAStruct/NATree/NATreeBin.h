@@ -48,6 +48,7 @@ NA_HAPI NATreeItem* naGetChildBin(NATreeNode* parent, NAInt childindx);
 NA_HAPI NATreeNode* naRemoveLeafBin(NATree* tree, NATreeLeaf* leaf);
 NA_HAPI NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeLeaf* existingleaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 NA_HAPI const void* naGetLeafKeyBin(NATreeLeaf* leaf);
+NA_HAPI const void* naGetNodeKeyBin(NATreeNode* node);
 NA_HAPI NAPtr naGetLeafDataBin(NATreeLeaf* leaf);
 NA_HAPI NAPtr naGetNodeDataBin(NATreeNode* node);
 

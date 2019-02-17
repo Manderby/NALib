@@ -90,6 +90,7 @@ typedef NATreeItem*     (*NATreeChildGetter)(NATreeNode* parent, NAInt childindx
 typedef NATreeNode*     (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
 typedef NATreeLeaf*     (*NATreeLeafInserter)(NATree* tree, NATreeLeaf* existingleaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 typedef const void*     (*NATreeLeafKeyGetter)(NATreeLeaf* leaf);
+typedef const void*     (*NATreeNodeKeyGetter)(NATreeNode* node);
 
 // Must return the data of the given leaf.
 typedef NAPtr           (*NATreeLeafDataGetter)(NATreeLeaf* leaf);
@@ -132,12 +133,16 @@ struct NATreeConfiguration{
   NATreeLeafRemover             leafRemover;
   NATreeLeafInserter            leafInserter;
   NATreeLeafKeyGetter           leafKeyGetter;
+  NATreeNodeKeyGetter           nodeKeyGetter;
   NATreeLeafDataGetter          leafDataGetter;
   NATreeNodeDataGetter          nodeDataGetter;
 };
 
 struct NATreeItem{
   NATreeNode* parent;
+  #ifndef NDEBUG
+    NAInt itercount;
+  #endif
 };
 
 struct NATreeNode{
@@ -147,15 +152,14 @@ struct NATreeNode{
 
 struct NATreeLeaf{
   NATreeItem item;
-  #ifndef NDEBUG
-    NAInt itercount;
-  #endif
 };
 
 struct NATreeIterator{
-  NAInt flags;
   NAPtr tree;
-  NATreeLeaf* leaf;
+  NATreeItem* item;
+  #ifndef NDEBUG
+    NAInt flags;
+  #endif
 };
 
 struct NATree{
