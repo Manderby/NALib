@@ -23,7 +23,7 @@ NA_IDEF NAMoney naMakeMoneyWithCurrency(double amount, NACurrency currency){
   double centamount = naRound(naPow(10., na_currency_decimals[currency]) * amount);
   #ifndef NDEBUG
     if(currency >= NA_CURRENCY_COUNT)
-      naError("naMakeMoneyWithCurrency", "invalid currency");
+      naError("invalid currency");
   #endif
   money.cents = naMakeInt64WithDouble(centamount);
   money.currency = currency;
@@ -45,7 +45,7 @@ NA_IDEF NAMoney naAddMoney(NAMoney moneyA, NAMoney moneyB){
   NAMoney money;
   #ifndef NDEBUG
     if(moneyA.currency != moneyB.currency)
-      naError("naAddMoney", "currencies do not match");
+      naError("currencies do not match");
   #endif
   money.cents = naAddInt64(moneyA.cents, moneyB.cents);
   money.currency = moneyA.currency;
@@ -58,7 +58,7 @@ NA_IDEF NAMoney naSubMoney(NAMoney moneyA, NAMoney moneyB){
   NAMoney money;
   #ifndef NDEBUG
     if(moneyA.currency != moneyB.currency)
-      naError("naSubMoney", "currencies do not match");
+      naError("currencies do not match");
   #endif
   money.cents = naSubInt64(moneyA.cents, moneyB.cents);
   money.currency = moneyA.currency;

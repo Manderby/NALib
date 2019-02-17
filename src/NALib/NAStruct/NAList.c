@@ -33,14 +33,14 @@ NA_DEF NABool naLocateListIndex(NAListIterator* iterator, NAInt indx){
   if(indx < 0){indx += mutablelist->count;}
   if(indx < 0){
     #ifndef NDEBUG
-      naError("naLocateListIndex", "Negative index underflows the range of the list");
+      naError("Negative index underflows the range of the list");
     #endif
     iterator->cur = &(mutablelist->sentinel);
     return NA_FALSE;
   }
   if(indx >= (NAInt)mutablelist->count){
     #ifndef NDEBUG
-      naError("naLocateListIndex", "Index overflows the range of the list");
+      naError("Index overflows the range of the list");
     #endif
     iterator->cur = &(mutablelist->sentinel);
     return NA_FALSE;

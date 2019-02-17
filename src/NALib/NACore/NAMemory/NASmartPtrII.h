@@ -43,7 +43,7 @@ NA_IDEF NASmartPtr* naRetainSmartPtr(NASmartPtr* sptr){
 NA_IDEF void naReleaseSmartPtr(NASmartPtr* sptr, NAMutator destructor, NABool onlydata){
   #ifndef NDEBUG
     if(!sptr)
-      naCrash("naReleaseSmartPtr", "sptr is Null-Pointer.");
+      naCrash("sptr is Null-Pointer.");
   #endif
   if(onlydata){
     naReleaseRefCount(&(sptr->refcount), naGetPtrMutable(sptr->ptr), destructor);

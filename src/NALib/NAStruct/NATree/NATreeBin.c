@@ -96,7 +96,7 @@ NA_HDEF void naDestructTreeNodeBin(NATree* tree, NATreeNode* node, NABool recurs
   NATreeBinNode* binnode;
   #ifndef NDEBUG
     if(!node)
-      naCrash("naDestructTreeNodeBin", "node shall not be Null");
+      naCrash("node shall not be Null");
   #endif
   binnode = (NATreeBinNode*)node;
   if(recursive){
@@ -128,7 +128,7 @@ NA_HDEF void naDestructTreeLeafBin(NATree* tree, NATreeLeaf* leaf){
   NATreeBinLeaf* binleaf;
   #ifndef NDEBUG
     if(!leaf)
-      naCrash("naDestructTreeLeafBin", "leaf shall not be Null");
+      naCrash("leaf shall not be Null");
   #endif
   binleaf = (NATreeBinLeaf*)leaf;
 
@@ -143,11 +143,11 @@ NA_HDEF NATreeNode* naLocateBubbleBinWithLimits(const NATree* tree, NATreeNode* 
   NATreeBinNode* binnode;
   #ifndef NDEBUG
     if(node == NA_NULL)
-      naError("naLocateBubbleBinWithLimits", "node should not be null");
+      naError("node should not be null");
     if(previtem == NA_NULL)
-      naError("naLocateBubbleBinWithLimits", "prevnode should not be null");
+      naError("prevnode should not be null");
     if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
-      naError("naLocateBubbleBinWithLimits", "tree is configured with no key");
+      naError("tree is configured with no key");
   #endif
   binnode = (NATreeBinNode*)(node);
   // If we are at a node which stores the key itself, return this node.
@@ -186,7 +186,7 @@ NA_HDEF NATreeLeaf* naLocateCaptureBin(const NATree* tree, NATreeNode* node, con
   NATreeItem* child;
   #ifndef NDEBUG
     if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
-      naError("naLocateCaptureBin", "tree is configured with no key");
+      naError("tree is configured with no key");
   #endif
 
   *matchfound = NA_FALSE;
@@ -222,13 +222,13 @@ NA_HDEF NAInt naGetChildIndexBin(NATreeNode* parent, NATreeItem* child){
   NAInt retvalue;
   #ifndef NDEBUG
     if(!child)
-      naError("naGetChildIndexBin", "Child should not be Null");
+      naError("Child should not be Null");
   #endif
   binparent = (NATreeBinNode*)(parent);
   retvalue = (child != binparent->childs[0]); // return 0 or 1
   #ifndef NDEBUG
     if(child != binparent->childs[retvalue])
-      naError("naGetChildIndexBin", "Child is no child of parent");
+      naError("Child is no child of parent");
   #endif
   return retvalue;
 }
@@ -239,9 +239,9 @@ NA_HDEF NAInt naGetChildKeyIndexBin(const NATree* tree, NATreeNode* parent, cons
   NATreeBinNode* binparent;
   #ifndef NDEBUG
     if(!parent)
-      naError("naGetChildKeyIndexBin", "parent is Null");
+      naError("parent is Null");
     if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
-      naError("naGetChildKeyIndexBin", "tree is configured with no key");
+      naError("tree is configured with no key");
   #endif
   binparent = (NATreeBinNode*)(parent);
   return tree->config->keyIndexGetter(&(binparent->key), key, NA_NULL);
@@ -253,7 +253,7 @@ NA_HDEF NATreeItem* naGetChildBin(NATreeNode* parent, NAInt childindx){
   NATreeBinNode* binnode;
   #ifndef NDEBUG
     if(childindx < 0 || childindx >= 2)
-      naCrash("naGetChildBin", "child index not valid");
+      naCrash("child index not valid");
   #endif
   binnode = (NATreeBinNode*)(parent);
   return binnode->childs[childindx];
@@ -312,7 +312,7 @@ NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeLeaf* existingleaf, cons
   case NA_TREE_LEAF_INSERT_ORDER_KEY:
     #ifndef NDEBUG
       if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
-        naError("naInsertLeafBin", "tree is configured with no key");
+        naError("tree is configured with no key");
     #endif
     if(tree->config->keyIndexGetter(&(((NATreeBinLeaf*)existingleaf)->key), &(((NATreeBinLeaf*)newleaf)->key), NA_NULL) == 1){
       left = existingleaf;
@@ -325,7 +325,7 @@ NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeLeaf* existingleaf, cons
   case NA_TREE_LEAF_INSERT_ORDER_PREV:
     #ifndef NDEBUG
       if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
-        naError("naInsertLeafBin", "tree is configured with key");
+        naError("tree is configured with key");
     #endif
     left = newleaf;
     right = existingleaf;
@@ -333,21 +333,21 @@ NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeLeaf* existingleaf, cons
   case NA_TREE_LEAF_INSERT_ORDER_NEXT:
     #ifndef NDEBUG
       if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
-        naError("naInsertLeafBin", "tree is configured with key");
+        naError("tree is configured with key");
     #endif
     left = existingleaf;
     right = newleaf;
     break;
   case NA_TREE_LEAF_INSERT_ORDER_REPLACE:
     #ifndef NDEBUG
-      naError("naInsertLeafBin", "This case should not happen");
+      naError("This case should not happen");
     #endif
     left = existingleaf;
     right = newleaf;
     break;
   default:
     #ifndef NDEBUG
-	  naError("naInsertLeafBin", "Invalid insertOrder");
+	  naError("Invalid insertOrder");
     #endif
 	left = existingleaf;
 	right = newleaf;

@@ -13,9 +13,9 @@ NA_HDEF void naIterateTreeCapture(NATreeIterator* iter, NAInt indx, NATreeIterat
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
     if(naIsTreeItemLeaf(tree, iter->item))
-      naError("naIterateTreeCapture", "Iter is not placed at a node");
+      naError("Iter is not placed at a node");
     if(indx == info->breakindx)
-      naError("naIterateTreeCapture", "Index is aready at breakindex. Function will not work properly.");
+      naError("Index is aready at breakindex. Function will not work properly.");
   #endif
   NATreeNode* parentnode = (NATreeNode*)iter->item;
 
@@ -45,7 +45,7 @@ NA_HDEF void naIterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
     if(!naIsTreeItemLeaf(tree, iter->item))
-      naError("naIterateTreeBubble", "Iter is not placed at a leaf");
+      naError("Iter is not placed at a leaf");
   #endif
 
   if(naIsTreeItemRoot(tree, iter->item)){
@@ -79,9 +79,9 @@ NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* 
   const NATree* tree;
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
-      naError("naIterateTreeWithInfo", "This iterator has been cleared. You need to make it anew.");
+      naError("This iterator has been cleared. You need to make it anew.");
     if(!naIsTreeItemLeaf(tree, iter->item))
-      naError("naIterateTreeWithInfo", "Iter is not placed at a leaf");
+      naError("Iter is not placed at a leaf");
   #endif
 
   tree = naGetTreeIteratorTreeConst(iter);
@@ -90,7 +90,7 @@ NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* 
   if(naIsTreeEmpty(tree)){
     #ifndef NDEBUG
       if(!naIsTreeAtInitial(iter))
-      naCrash("naIterateTreeWithInfo", "Current iterator item is set although no root available");
+      naCrash("Current iterator item is set although no root available");
     #endif
     return NA_FALSE;
   }
@@ -119,7 +119,7 @@ NA_HDEF NABool naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABool us
   NABool matchfound;
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
-      naError("naLocateTree", "This iterator has been cleared. You need to make it anew.");
+      naError("This iterator has been cleared. You need to make it anew.");
   #endif
 
   tree = naGetTreeIteratorTreeConst(iter);
@@ -128,7 +128,7 @@ NA_HDEF NABool naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABool us
   if(naIsTreeEmpty(tree)){
     #ifndef NDEBUG
       if(!naIsTreeAtInitial(iter))
-      naCrash("naIterateTree", "Current iterator item is set although no root available");
+      naCrash("Current iterator item is set although no root available");
     #endif
     return NA_FALSE;
   }
@@ -147,9 +147,9 @@ NA_HDEF NABool naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABool us
   leaf = tree->config->captureLocator(tree, node, key, &matchfound);
   #ifndef NDEBUG
     if(!leaf)
-      naError("naLocateTreeLeaf", "Result of captureLocator was Null");
+      naError("Result of captureLocator was Null");
     if(!naIsTreeItemLeaf(tree, &(leaf->item)))
-      naError("naLocateTreeLeaf", "Result should be a leaf");
+      naError("Result should be a leaf");
   #endif
   return matchfound;
 }
@@ -161,11 +161,11 @@ NA_HDEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTo
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
-      naError("naLocateTreeTokenLeaf", "This iterator has been cleared. You need to make it anew.");
+      naError("This iterator has been cleared. You need to make it anew.");
     if(!nodeSearcher)
-      naCrash("naLocateTreeTokenLeaf", "node token searcher is Null.");
+      naCrash("node token searcher is Null.");
     if(!leafSearcher)
-      naCrash("naLocateTreeTokenLeaf", "leaf token searcher is Null.");
+      naCrash("leaf token searcher is Null.");
   #endif
   
   // If the tree is empty, we do nothing.
@@ -185,11 +185,11 @@ NA_HDEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTo
       
       #ifndef NDEBUG
         if(nextindx < NA_TREE_SEARCH_ABORT)
-          naError("naLocateTreeToken", "Invalid return value given in callback");
+          naError("Invalid return value given in callback");
         if(naIsTreeItemLeaf(tree, iter->item) && nextindx >= 0)
-          naError("naLocateTreeToken", "Leaf callback must one of the predefined macros");
+          naError("Leaf callback must one of the predefined macros");
         if(!naIsTreeItemLeaf(tree, iter->item) && nextindx >= tree->config->childpernode)
-          naError("naLocateTreeToken", "child index returned in callback is too high");
+          naError("child index returned in callback is too high");
       #endif
       
       if(nextindx < NA_TREE_SEARCH_PARENT){break;}
@@ -221,7 +221,7 @@ NA_HDEF NATreeLeaf* naAddTreeContentAtLeaf(NATree* tree, NATreeLeaf* leaf, const
   }else{
     #ifndef NDEBUG
       if(tree->root)
-        naError("naAddTreeContentAtLeaf", "leaf is null but there is a root");
+        naError("leaf is null but there is a root");
     #endif
     // There is no leaf to add to, meaning there was no root. Therefore, we
     // create a first leaf.
@@ -242,7 +242,7 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
   NATreeLeaf* contentleaf;
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
-      naError("naAddTreeLeaf", "This iterator has been cleared. You need to make it anew.");
+      naError("This iterator has been cleared. You need to make it anew.");
   #endif
   tree = naGetTreeIteratorTreeMutable(iter);
   // We do not use bubbling when inserting as there is almost never a benefit
@@ -309,7 +309,7 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   NAInt i;
   #ifndef NDEBUG
     if(!tree->config->nodeUpdater)
-      naError("naUpdateTreeNodeCapturing", "tree is configured without nodeUpdater callback");
+      naError("tree is configured without nodeUpdater callback");
   #endif
   bubble = NA_FALSE;
 

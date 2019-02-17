@@ -61,16 +61,16 @@ NA_IDEF NARefCount* naInitRefCount(NARefCount* refcount){
 NA_IDEF NARefCount* naRetainRefCount(NARefCount* refcount){
   #ifndef NDEBUG
     if(!refcount){
-      naCrash("naRetainRefCount", "refcount is Null-Pointer.");
+      naCrash("refcount is Null-Pointer.");
       return NA_NULL;
     }else{
       if(refcount->dummy != NA_REFCOUNT_DUMMY_VALUE)
-        naError("naRetainRefCount", "Consistency problem: dummy value wrong. Is NARefCount really defined as the first field of this struct?");
+        naError("Consistency problem: dummy value wrong. Is NARefCount really defined as the first field of this struct?");
       // The next test can detect some erroneous behaviour in the code. Note
       // however that most likely the true cause of the error did occur long
       // before reaching here.
       if(refcount->count == NA_ZERO)
-        naCrash("naRetainRefCount", "Retaining NARefCount with a count of 0");
+        naCrash("Retaining NARefCount with a count of 0");
     }
   #endif
   refcount->count++;
@@ -78,7 +78,7 @@ NA_IDEF NARefCount* naRetainRefCount(NARefCount* refcount){
     // If refcount now suddenly becomes zero, there was either an error earlier
     // or the object has been retained too many times. Overflow.
     if(refcount->count == NA_ZERO)
-      naError("naRetainRefCount", "Reference count overflow");
+      naError("Reference count overflow");
   #endif
   return refcount;
 }
@@ -88,14 +88,14 @@ NA_IDEF NARefCount* naRetainRefCount(NARefCount* refcount){
 NA_IDEF void naReleaseRefCount(NARefCount* refcount, void* data, NAMutator destructor){
   #ifndef NDEBUG
     if(!refcount)
-      naCrash("naReleaseRefCount", "refcount is Null-Pointer.");
+      naCrash("refcount is Null-Pointer.");
     if(refcount->dummy != NA_REFCOUNT_DUMMY_VALUE)
-      naError("naReleaseRefCount", "Consistency problem: dummy value wrong. Is NARefCount really defined as the first field of this struct?");
+      naError("Consistency problem: dummy value wrong. Is NARefCount really defined as the first field of this struct?");
     // The next test can detect some erroneous behaviour in the code. Note
     // however that most likely the true cause of the error did occur long
     // before reaching here.
     if(refcount->count == NA_ZERO)
-      naCrash("naReleaseRefCount", "Releasing NARefCount with a count of 0");
+      naCrash("Releasing NARefCount with a count of 0");
   #endif
   // Note that the author decided to always count to zero, even if it is clear
   // that the pointer will eventually be freed and the data will be lost in

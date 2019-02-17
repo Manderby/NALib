@@ -15,6 +15,7 @@ correct, complete or final.
 - Simplified NAPtr by removing the pointer argument of most functions.
 - Splitting VectorAlgebra file into several files.
 - Adding Leap second information according bulletin C 57
+- Removed the functionsymbol parameter from naError and naCrash
 
 
 Version 22 (first published 2018-Dec-14)

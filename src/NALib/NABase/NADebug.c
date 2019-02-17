@@ -12,7 +12,7 @@
   // The error printing method. Errors will be emitted to the stderr output.
   // When NDEBUG is defined, this function is OBSOLETE!
 
-  void naError(const char* functionsymbol, const char* text){
+  NA_HDEF void naPrintError(const char* functionsymbol, const char* text){
     fprintf(stderr, "Error in %s: %s", functionsymbol, text);
 
     // //////////////////////////

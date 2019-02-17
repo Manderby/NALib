@@ -64,7 +64,7 @@ struct NAHeapBackEntry{
 NA_IDEF void naClearHeap(NAHeap* heap){
   #ifndef NDEBUG
     if(!heap)
-      naCrash("naClearHeap", "heap is Null-Pointer.");
+      naCrash("heap is Null-Pointer.");
   #endif
   free(heap->data);
 }
@@ -77,10 +77,8 @@ NA_IDEF void naEmptyHeap(NAHeap* heap){
 
 NA_IDEF NAInt naGetHeapCount (const NAHeap* heap){
   #ifndef NDEBUG
-    if(!heap){
-      naCrash("naGetHeapCount", "heap is Null-Pointer.");
-      return NA_TRUE;
-    }
+    if(!heap)
+      naCrash("heap is Null-Pointer.");
   #endif
   return heap->count;
 }
@@ -88,10 +86,8 @@ NA_IDEF NAInt naGetHeapCount (const NAHeap* heap){
 
 NA_IDEF NAInt naGetHeapMaxCount(const NAHeap* heap){
   #ifndef NDEBUG
-    if(!heap){
-      naCrash("naGetHeapCount", "heap is Null-Pointer.");
-      return 0;
-    }
+    if(!heap)
+      naCrash("heap is Null-Pointer.");
   #endif
   return heap->maxcount;
 }
@@ -118,7 +114,7 @@ NA_IDEF const void* naGetHeapRootConst(const NAHeap* heap){
   NAHeapNoBackEntry* rootelem = (NAHeapNoBackEntry*)(heap->root);
   #ifndef NDEBUG
     if(heap->count == 0)
-      naError("naGetHeapRootConst", "Heap is empty.");
+      naError("Heap is empty.");
   #endif
   return naGetPtrConst(rootelem->ptr);
 }
@@ -131,7 +127,7 @@ NA_IDEF void* naGetHeapRootMutable(const NAHeap* heap){
   NAHeapNoBackEntry* rootelem = (NAHeapNoBackEntry*)(heap->root);
   #ifndef NDEBUG
     if(heap->count == 0)
-      naError("naGetHeapRootMutable", "Heap is empty.");
+      naError("Heap is empty.");
   #endif
   return naGetPtrMutable(rootelem->ptr);
 }
@@ -152,7 +148,7 @@ NA_IDEF const void* naGetHeapRootKey(const NAHeap* heap){
   NAHeapNoBackEntry* rootelem = (NAHeapNoBackEntry*)(heap->root);
   #ifndef NDEBUG
     if(heap->count == 0)
-      naError("naGetHeapRoot", "Heap is empty.");
+      naError("Heap is empty.");
   #endif
   return rootelem->key;
 }

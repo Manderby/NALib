@@ -37,9 +37,9 @@ NA_HDEF NAInt naGetKeyIndexOctDouble(const void* baseorigin, const void* testori
   double childwidth = naMakeDoubleWithExponent((int32)childexponent);
   #ifndef NDEBUG
     if((testvertex->x < basevertex->x) || (testvertex->y < basevertex->y) || (testvertex->z < basevertex->z))
-      naError("naGetKeyIndexOctDouble", "Vertex lies below test origin");
+      naError("Vertex lies below test origin");
     if((testvertex->x >= basevertex->x + 2 * childwidth) || (testvertex->y >= basevertex->y + 2 * childwidth) || (testvertex->z >= basevertex->z + 2 * childwidth))
-      naError("naGetKeyIndexOctDouble", "Vertex lies above test origin");
+      naError("Vertex lies above test origin");
   #endif
   if(testvertex->x >= basevertex->x + childwidth){indx |= 1;}
   if(testvertex->y >= basevertex->y + childwidth){indx |= 2;}
@@ -104,7 +104,7 @@ NA_HDEF void naDestructTreeNodeOct(NATree* tree, NATreeNode* node, NABool recurs
   NATreeOctNode* octnode;
   #ifndef NDEBUG
     if(!node)
-      naCrash("naDestructTreeNodeOct", "node shall not be Null");
+      naCrash("node shall not be Null");
   #endif
   octnode = (NATreeOctNode*)node;
   if(recursive){
@@ -138,7 +138,7 @@ NA_HDEF void naDestructTreeLeafOct(NATree* tree, NATreeLeaf* leaf){
   NATreeOctLeaf* octleaf;
   #ifndef NDEBUG
     if(!leaf)
-      naCrash("naDestructTreeLeafOct", "leaf shall not be Null");
+      naCrash("leaf shall not be Null");
   #endif
   octleaf = (NATreeOctLeaf*)leaf;
 
@@ -153,11 +153,11 @@ NA_HDEF NATreeNode* naLocateBubbleOctWithLimits(const NATree* tree, NATreeNode* 
   NATreeOctNode* octnode;
   #ifndef NDEBUG
     if(node == NA_NULL)
-      naError("naLocateBubbleOctWithLimits", "node should not be null");
+      naError("node should not be null");
     if(previtem == NA_NULL)
-      naError("naLocateBubbleOctWithLimits", "prevnode should not be null");
+      naError("prevnode should not be null");
     if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
-      naError("naLocateBubbleOctWithLimits", "tree is configured with no key");
+      naError("tree is configured with no key");
   #endif
   octnode = (NATreeOctNode*)(node);
   // If we are at a node which stores the key itself, return this node.
@@ -196,7 +196,7 @@ NA_HDEF NATreeLeaf* naLocateCaptureOct(const NATree* tree, NATreeNode* node, con
   NATreeItem* child;
   #ifndef NDEBUG
     if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
-      naError("naLocateCaptureOct", "tree is configured with no key");
+      naError("tree is configured with no key");
   #endif
 
   *matchfound = NA_FALSE;
@@ -232,7 +232,7 @@ NA_HDEF NAInt naGetChildIndexOct(NATreeNode* parent, NATreeItem* child){
   NAInt retvalue = -1;
   #ifndef NDEBUG
     if(!child)
-      naError("naGetChildIndexOct", "Child should not be Null");
+      naError("Child should not be Null");
   #endif
   octparent = (NATreeOctNode*)(parent);
   if     (octparent->childs[0] == child){retvalue = 0;}
@@ -245,7 +245,7 @@ NA_HDEF NAInt naGetChildIndexOct(NATreeNode* parent, NATreeItem* child){
   else if(octparent->childs[7] == child){retvalue = 7;}
   #ifndef NDEBUG
     if(retvalue == -1)
-      naError("naGetChildIndexOct", "Child is no child of parent");
+      naError("Child is no child of parent");
   #endif
   return retvalue;
 }
@@ -256,9 +256,9 @@ NA_HDEF NAInt naGetChildKeyIndexOct(const NATree* tree, NATreeNode* parent, cons
   NATreeOctNode* octparent;
   #ifndef NDEBUG
     if(!parent)
-      naError("naGetChildKeyIndexOct", "parent is Null");
+      naError("parent is Null");
     if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
-      naError("naGetChildKeyIndexOct", "tree is configured with no key");
+      naError("tree is configured with no key");
   #endif
   octparent = (NATreeOctNode*)(parent);
   return tree->config->keyIndexGetter(&(octparent->origin), origin, 0 /*todo childexponent*/);
@@ -270,7 +270,7 @@ NA_HDEF NATreeItem* naGetChildOct(NATreeNode* parent, NAInt childindx){
   NATreeOctNode* octnode;
   #ifndef NDEBUG
     if(childindx < 0 || childindx >= 8)
-      naCrash("naGetChildOct", "child index not valid");
+      naCrash("child index not valid");
   #endif
   octnode = (NATreeOctNode*)(parent);
   return octnode->childs[childindx];
@@ -327,7 +327,7 @@ NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeLeaf* existingleaf, cons
   case NA_TREE_LEAF_INSERT_ORDER_KEY:
     #ifndef NDEBUG
       if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
-        naError("naInsertLeafOct", "tree is configured with no key");
+        naError("tree is configured with no key");
     #endif
     NAInt childexponent = ((NATreeOctLeaf*)existingleaf)->leafexponent;
     // Find out if key inside box.
@@ -341,7 +341,7 @@ NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeLeaf* existingleaf, cons
     break;
   default:
     #ifndef NDEBUG
-	  naError("naInsertLeafOct", "Invalid insertOrder");
+	  naError("Invalid insertOrder");
     #endif
     left = existingleaf;
     right = newleaf;

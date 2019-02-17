@@ -14,9 +14,9 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
 
   #ifndef NDEBUG
     if(!data)
-      naError("naRetrieveBufferBytes", "data is Null pointer.");
+      naError("data is Null pointer.");
     if(naGetBufferCurBit(iter) != 0)
-      naError("naRetrieveBufferBytes", "Bit offset not 0.");
+      naError("Bit offset not 0.");
   #endif
 
   buffer = naGetBufferIteratorBufferConst(iter);
@@ -41,7 +41,7 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
 
     #ifndef NDEBUG
       if(naIsBufferIteratorSparse(iter))
-        naError("naRetrieveBufferBytes", "Cur part is sparse");
+        naError("Cur part is sparse");
     #endif
 
     // The part pointed to by the iterator should be the one containing offset.
@@ -57,7 +57,7 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
 
     #ifndef NDEBUG
       if(possiblelength <= 0)
-        naError("naRetrieveBufferBytes", "possible length invalid");
+        naError("possible length invalid");
     #endif
 
     if(possiblelength > bytesize){
@@ -90,7 +90,7 @@ NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, NAInt indx){
   
   #ifndef NDEBUG
     if(buffer->range.origin != 0)
-      naError("naGetBufferByteAtIndex", "This function should only be used for buffers with origin 0.");
+      naError("This function should only be used for buffers with origin 0.");
   #endif
 
   iter = naMakeBufferAccessor(buffer);  
@@ -141,7 +141,7 @@ NA_DEF NAUInt naReadBufferBits(NABufferIterator* iter, uint8 count){
   NAUInt curmask = 1;
   #ifndef NDEBUG
     if(count > NA_TYPE_NAINT_BITS)
-      naError("naReadBufferBits", "Max bit readable per function call exceeded.");
+      naError("Max bit readable per function call exceeded.");
   #endif
   while(count){
     curbit = naReadBufferBit(iter);

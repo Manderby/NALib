@@ -97,7 +97,7 @@ NA_HDEF NAChecksum* naInitChecksum(NAChecksum* checksum, NAChecksumType type){
     break;
   default:
     #ifndef NDEBUG
-      naError("naInitChecksum", "Checksum type invalid");
+      naError("Checksum type invalid");
     #endif
     break;
   }
@@ -124,7 +124,7 @@ NA_HDEF void naResetChecksum(NAChecksum* checksum){
     break;
   default:
     #ifndef NDEBUG
-      naError("naResetChecksum", "Checksum type invalid");
+      naError("Checksum type invalid");
     #endif
     break;
   }
@@ -142,7 +142,7 @@ NA_HDEF void naAccumulateChecksum(NAChecksum* checksum, const NAByte* buf, NAInt
     break;
   default:
     #ifndef NDEBUG
-      naError("naResetChecksum", "Checksum type invalid");
+      naError("Checksum type invalid");
     #endif
     break;
   }
@@ -161,7 +161,7 @@ NA_HDEF uint32 naGetChecksumResult(NAChecksum* checksum){
     break;
   default:
     #ifndef NDEBUG
-      naError("naGetChecksumResult", "Checksum type invalid");
+      naError("Checksum type invalid");
     #endif
     retvalue = 0;
     break;

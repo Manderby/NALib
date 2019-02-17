@@ -26,13 +26,13 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       break;
     default:
       #ifndef NDEBUG
-        naError("naCreateTreeConfiguration", "Octtree must have type double. Other options are not implemented yet.");
+        naError("Octtree must have type double. Other options are not implemented yet.");
       #endif
       break;
     }
     if(flags & NA_TREE_BALANCE_AVL){
       #ifndef NDEBUG
-        naError("naCreateTreeConfiguration", "Octtree can not have AVL balance.");
+        naError("Octtree can not have AVL balance.");
       #endif
     }
     config->nodeCoreDestructor      = naDestructTreeNodeOct;
@@ -75,7 +75,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       break;
     default:
       #ifndef NDEBUG
-        naError("naCreateTreeConfiguration", "Invalid key type in flags");
+        naError("Invalid key type in flags");
       #endif
       break;
     }

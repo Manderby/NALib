@@ -261,7 +261,7 @@
       *rem = a;
       if(naEqualUInt64(b, NA_ZERO_64u)){
         #ifndef NDEBUG
-          naCrash("naComputeUInt64Division", "Integer Division by 0");
+          naCrash("Integer Division by 0");
         #endif
       }else{
         // search for the highest bit of b.

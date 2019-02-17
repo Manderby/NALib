@@ -16,9 +16,9 @@
 NA_IDEF void naMulM22dV2d(double* NA_RESTRICT d, const double* NA_RESTRICT A, const double* NA_RESTRICT v){
   #ifndef NDEBUG
     if(naInsidei(-3, 1, (NASizeInt)(A-d)))
-      naError("naMulM22dV2d", "A overlaps with d.");
+      naError("A overlaps with d.");
     if(naAbsi((NASizeInt)(v-d)) < 2)
-      naError("naMulM22dV2d", "v overlaps with d.");
+      naError("v overlaps with d.");
   #endif
   d[0] = A[0]*v[0] + A[2]*v[1];
   d[1] = A[1]*v[0] + A[3]*v[1];
@@ -26,9 +26,9 @@ NA_IDEF void naMulM22dV2d(double* NA_RESTRICT d, const double* NA_RESTRICT A, co
 NA_IDEF void naMulM33dV3d(double* NA_RESTRICT d, const double* NA_RESTRICT A, const double* NA_RESTRICT v){
   #ifndef NDEBUG
     if(naInsidei(-8, 2, (NASizeInt)(A-d)))
-      naError("naMulM33dV3d", "A overlaps with d.");
+      naError("A overlaps with d.");
     if(naAbsi((NASizeInt)(v-d)) < 3)
-      naError("naMulM33dV3d", "v overlaps with d.");
+      naError("v overlaps with d.");
   #endif
   d[0] = A[0]*v[0] + A[3]*v[1] + A[6]*v[2];
   d[1] = A[1]*v[0] + A[4]*v[1] + A[7]*v[2];
@@ -37,9 +37,9 @@ NA_IDEF void naMulM33dV3d(double* NA_RESTRICT d, const double* NA_RESTRICT A, co
 NA_IDEF void naMulM44dV4d(double* NA_RESTRICT d, const double* NA_RESTRICT A, const double* NA_RESTRICT v){
   #ifndef NDEBUG
     if(naInsidei(-15, 3, (NASizeInt)(A-d)))
-      naError("naMulM44dV4d", "A overlaps with d.");
+      naError("A overlaps with d.");
     if(naAbsi((NASizeInt)(v-d)) < 4)
-      naError("naMulM44dV4d", "v overlaps with d.");
+      naError("v overlaps with d.");
   #endif
   d[0] = A[0]*v[0] + A[4]*v[1] + A[ 8]*v[2] + A[12]*v[3];
   d[1] = A[1]*v[0] + A[5]*v[1] + A[ 9]*v[2] + A[13]*v[3];
@@ -49,9 +49,9 @@ NA_IDEF void naMulM44dV4d(double* NA_RESTRICT d, const double* NA_RESTRICT A, co
 NA_IDEF void naMulM22fV2f(float* NA_RESTRICT d, const float* NA_RESTRICT A, const float* NA_RESTRICT v){
   #ifndef NDEBUG
     if(naInsidei(-3, 1, (NASizeInt)(A-d)))
-      naError("naMulM22fV2f", "A overlaps with d.");
+      naError("A overlaps with d.");
     if(naAbsi((NASizeInt)(v-d)) < 2)
-      naError("naMulM22fV2f", "v overlaps with d.");
+      naError("v overlaps with d.");
   #endif
   d[0] = A[0]*v[0] + A[2]*v[1];
   d[1] = A[1]*v[0] + A[3]*v[1];
@@ -59,9 +59,9 @@ NA_IDEF void naMulM22fV2f(float* NA_RESTRICT d, const float* NA_RESTRICT A, cons
 NA_IDEF void naMulM33fV3f(float* NA_RESTRICT d, const float* NA_RESTRICT A, const float* NA_RESTRICT v){
   #ifndef NDEBUG
     if(naInsidei(-8, 2, (NASizeInt)(A-d)))
-      naError("naMulM33fV3f", "A overlaps with d.");
+      naError("A overlaps with d.");
     if(naAbsi((NASizeInt)(v-d)) < 3)
-      naError("naMulM33fV3f", "v overlaps with d.");
+      naError("v overlaps with d.");
   #endif
   d[0] = A[0]*v[0] + A[3]*v[1] + A[6]*v[2];
   d[1] = A[1]*v[0] + A[4]*v[1] + A[7]*v[2];
@@ -70,9 +70,9 @@ NA_IDEF void naMulM33fV3f(float* NA_RESTRICT d, const float* NA_RESTRICT A, cons
 NA_IDEF void naMulM44fV4f(float* NA_RESTRICT d, const float* NA_RESTRICT A, const float* NA_RESTRICT v){
   #ifndef NDEBUG
     if(naInsidei(-15, 3, (NASizeInt)(A-d)))
-      naError("naMulM44fV4f", "A overlaps with d.");
+      naError("A overlaps with d.");
     if(naAbsi((NASizeInt)(v-d)) < 4)
-      naError("naMulM44fV4f", "v overlaps with d.");
+      naError("v overlaps with d.");
   #endif
   d[0] = A[0]*v[0] + A[4]*v[1] + A[ 8]*v[2] + A[12]*v[3];
   d[1] = A[1]*v[0] + A[5]*v[1] + A[ 9]*v[2] + A[13]*v[3];
@@ -88,9 +88,9 @@ NA_IDEF void naMulM44fV4f(float* NA_RESTRICT d, const float* NA_RESTRICT A, cons
 NA_IDEF void naMulM22dM22d(double* NA_RESTRICT D, const double* A, const double* B){
   #ifndef NDEBUG
     if(naAbsi((NASizeInt)(D-A)) < 4)
-      naError("naMulM22dM22d", "A overlaps with D.");
+      naError("A overlaps with D.");
     if(naAbsi((NASizeInt)(D-B)) < 4)
-      naError("naMulM22dM22d", "B overlaps with D.");
+      naError("B overlaps with D.");
   #endif
   D[0] = A[0]*B[0] + A[2]*B[1];
   D[1] = A[1]*B[0] + A[3]*B[1];
@@ -100,9 +100,9 @@ NA_IDEF void naMulM22dM22d(double* NA_RESTRICT D, const double* A, const double*
 NA_IDEF void naMulM33dM33d(double* NA_RESTRICT D, const double* A, const double* B){
   #ifndef NDEBUG
     if(naAbsi((NASizeInt)(D-A)) < 9)
-      naError("naMulM33dM33d", "A overlaps with D.");
+      naError("A overlaps with D.");
     if(naAbsi((NASizeInt)(D-B)) < 9)
-      naError("naMulM33dM33d", "B overlaps with D.");
+      naError("B overlaps with D.");
   #endif
   D[0] = A[0]*B[0] + A[3]*B[1] + A[6]*B[2];
   D[1] = A[1]*B[0] + A[4]*B[1] + A[7]*B[2];
@@ -117,9 +117,9 @@ NA_IDEF void naMulM33dM33d(double* NA_RESTRICT D, const double* A, const double*
 NA_IDEF void naMulM44dM44d(double* NA_RESTRICT D, const double* A, const double* B){
   #ifndef NDEBUG
     if(naAbsi((NASizeInt)(D-A)) < 16)
-      naError("naMulM44dM44d", "A overlaps with D.");
+      naError("A overlaps with D.");
     if(naAbsi((NASizeInt)(D-B)) < 16)
-      naError("naMulM44dM44d", "B overlaps with D.");
+      naError("B overlaps with D.");
   #endif
   D[ 0] = A[0]*B[ 0] + A[4]*B[ 1] + A[ 8]*B[ 2] + A[12]*B[ 3];
   D[ 1] = A[1]*B[ 0] + A[5]*B[ 1] + A[ 9]*B[ 2] + A[13]*B[ 3];
@@ -141,9 +141,9 @@ NA_IDEF void naMulM44dM44d(double* NA_RESTRICT D, const double* A, const double*
 NA_IDEF void naMulM22fM22f(float* NA_RESTRICT D, const float* A, const float* B){
   #ifndef NDEBUG
     if(naAbsi((NASizeInt)(D-A)) < 4)
-      naError("naMulM22fM22f", "A overlaps with D.");
+      naError("A overlaps with D.");
     if(naAbsi((NASizeInt)(D-B)) < 4)
-      naError("naMulM22fM22f", "B overlaps with D.");
+      naError("B overlaps with D.");
   #endif
   D[0] = A[0]*B[0] + A[2]*B[1];
   D[1] = A[1]*B[0] + A[3]*B[1];
@@ -153,9 +153,9 @@ NA_IDEF void naMulM22fM22f(float* NA_RESTRICT D, const float* A, const float* B)
 NA_IDEF void naMulM33fM33f(float* NA_RESTRICT D, const float* A, const float* B){
   #ifndef NDEBUG
     if(naAbsi((NASizeInt)(D-A)) < 9)
-      naError("naMulM33fM33f", "A overlaps with D.");
+      naError("A overlaps with D.");
     if(naAbsi((NASizeInt)(D-B)) < 9)
-      naError("naMulM33fM33f", "B overlaps with D.");
+      naError("B overlaps with D.");
   #endif
   D[0] = A[0]*B[0] + A[3]*B[1] + A[6]*B[2];
   D[1] = A[1]*B[0] + A[4]*B[1] + A[7]*B[2];
@@ -170,9 +170,9 @@ NA_IDEF void naMulM33fM33f(float* NA_RESTRICT D, const float* A, const float* B)
 NA_IDEF void naMulM44fM44f(float* NA_RESTRICT D, const float* A, const float* B){
   #ifndef NDEBUG
     if(naAbsi((NASizeInt)(D-A)) < 16)
-      naError("naMulM44fM44f", "A overlaps with D.");
+      naError("A overlaps with D.");
     if(naAbsi((NASizeInt)(D-B)) < 16)
-      naError("naMulM44fM44f", "B overlaps with D.");
+      naError("B overlaps with D.");
   #endif
   D[ 0] = A[0]*B[ 0] + A[4]*B[ 1] + A[ 8]*B[ 2] + A[12]*B[ 3];
   D[ 1] = A[1]*B[ 0] + A[5]*B[ 1] + A[ 9]*B[ 2] + A[13]*B[ 3];

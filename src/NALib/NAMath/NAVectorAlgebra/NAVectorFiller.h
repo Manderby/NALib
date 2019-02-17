@@ -246,72 +246,72 @@ NA_IDEF void naFillV4fRandomSpherical(float* d, NABool filled){
 NA_IDEF void naCopyV1d(double* NA_RESTRICT d, const double* NA_RESTRICT a){
   #ifndef NDEBUG
     if(d == a)
-      naError("naCopyV1d", "Pointers are equal. Use E variant.");
+      naError("Pointers are equal. Use E variant.");
     else if(naAbsi((NASizeInt)(d-a)) < 1)
-      naError("naCopyV1d", "Pointers overlap. Use restrict pointers or the E variant");
+      naError("Pointers overlap. Use restrict pointers or the E variant");
   #endif
   d[0] = a[0];
 }
 NA_IDEF void naCopyV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a){
   #ifndef NDEBUG
     if(d == a)
-      naError("naCopyV2d", "Pointers are equal. Use E variant.");
+      naError("Pointers are equal. Use E variant.");
     else if(naAbsi((NASizeInt)(d-a)) < 2)
-      naError("naCopyV2d", "Pointers overlap. Use restrict pointers or the E variant");
+      naError("Pointers overlap. Use restrict pointers or the E variant");
   #endif
   d[0] = a[0]; d[1] = a[1];
 }
 NA_IDEF void naCopyV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a){
   #ifndef NDEBUG
     if(d == a)
-      naError("naCopyV3d", "Pointers are equal. Use E variant.");
+      naError("Pointers are equal. Use E variant.");
     else if(naAbsi((NASizeInt)(d-a)) < 3)
-      naError("naCopyV3d", "Pointers overlap. Use restrict pointers or the E variant");
+      naError("Pointers overlap. Use restrict pointers or the E variant");
   #endif
   d[0] = a[0]; d[1] = a[1]; d[2] = a[2];
 }
 NA_IDEF void naCopyV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a){
   #ifndef NDEBUG
     if(d == a)
-      naError("naCopyV4d", "Pointers are equal. Use E variant.");
+      naError("Pointers are equal. Use E variant.");
     else if(naAbsi((NASizeInt)(d-a)) < 4)
-      naError("naCopyV4d", "Pointers overlap. Use restrict pointers or the E variant");
+      naError("Pointers overlap. Use restrict pointers or the E variant");
   #endif
   d[0] = a[0]; d[1] = a[1]; d[2] = a[2]; d[3] = a[3];
 }
 NA_IDEF void naCopyV1f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
   #ifndef NDEBUG
     if(d == a)
-      naError("naCopyV1f", "Pointers are equal. Use E variant.");
+      naError("Pointers are equal. Use E variant.");
     else if(naAbsi((NASizeInt)(d-a)) < 1)
-      naError("naCopyV1f", "Pointers overlap. Use restrict pointers or the E variant");
+      naError("Pointers overlap. Use restrict pointers or the E variant");
   #endif
   d[0] = a[0];
 }
 NA_IDEF void naCopyV2f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
   #ifndef NDEBUG
     if(d == a)
-      naError("naCopyV2f", "Pointers are equal. Use E variant.");
+      naError("Pointers are equal. Use E variant.");
     else if(naAbsi((NASizeInt)(d-a)) < 2)
-      naError("naCopyV2f", "Pointers overlap. Use restrict pointers or the E variant");
+      naError("Pointers overlap. Use restrict pointers or the E variant");
   #endif
   d[0] = a[0]; d[1] = a[1];
 }
 NA_IDEF void naCopyV3f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
   #ifndef NDEBUG
     if(d == a)
-      naError("naCopyV3f", "Pointers are equal. Use E variant.");
+      naError("Pointers are equal. Use E variant.");
     else if(naAbsi((NASizeInt)(d-a)) < 3)
-      naError("naCopyV3f", "Pointers overlap. Use restrict pointers or the E variant");
+      naError("Pointers overlap. Use restrict pointers or the E variant");
   #endif
   d[0] = a[0]; d[1] = a[1]; d[2] = a[2];
 }
 NA_IDEF void naCopyV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
   #ifndef NDEBUG
     if(d == a)
-      naError("naCopyV4f", "Pointers are equal. Use E variant.");
+      naError("Pointers are equal. Use E variant.");
     else if(naAbsi((NASizeInt)(d-a)) < 4)
-      naError("naCopyV4f", "Pointers overlap. Use restrict pointers or the E variant");
+      naError("Pointers overlap. Use restrict pointers or the E variant");
   #endif
   d[0] = a[0]; d[1] = a[1]; d[2] = a[2]; d[3] = a[3];
 }
@@ -321,21 +321,21 @@ NA_IDEF void naCopyV1dE (double* d, const double* a){
 NA_IDEF void naCopyV2dE (double* d, const double* a){
   #ifndef NDEBUG
     if((d != a) && (naAbsi((NASizeInt)(d-a)) < 2))
-      naError("naCopyV2dE", "Pointers are overlapping misaligned. Result undefined.");
+      naError("Pointers are overlapping misaligned. Result undefined.");
   #endif
   d[0] = a[0]; d[1] = a[1];
 }
 NA_IDEF void naCopyV3dE (double* d, const double* a){
   #ifndef NDEBUG
     if((d != a) && (naAbsi((NASizeInt)(d-a)) < 3))
-      naError("naCopyV3dE", "Pointers are overlapping misaligned. Result undefined.");
+      naError("Pointers are overlapping misaligned. Result undefined.");
   #endif
   d[0] = a[0]; d[1] = a[1]; d[2] = a[2];
 }
 NA_IDEF void naCopyV4dE (double* d, const double* a){
   #ifndef NDEBUG
     if((d != a) && (naAbsi((NASizeInt)(d-a)) < 4))
-      naError("naCopyV4dE", "Pointers are overlapping misaligned. Result undefined.");
+      naError("Pointers are overlapping misaligned. Result undefined.");
   #endif
   d[0] = a[0]; d[1] = a[1]; d[2] = a[2]; d[3] = a[3];
 }
@@ -345,21 +345,21 @@ NA_IDEF void naCopyV1fE(float*  d, const float*  a){
 NA_IDEF void naCopyV2fE(float*  d, const float*  a){
   #ifndef NDEBUG
     if((d != a) && (naAbsi((NASizeInt)(d-a)) < 2))
-      naError("naCopyV2fE", "Pointers are overlapping misaligned. Result undefined.");
+      naError("Pointers are overlapping misaligned. Result undefined.");
   #endif
   d[0] = a[0]; d[1] = a[1];
 }
 NA_IDEF void naCopyV3fE(float*  d, const float*  a){
   #ifndef NDEBUG
     if((d != a) && (naAbsi((NASizeInt)(d-a)) < 3))
-      naError("naCopyV3fE", "Pointers are overlapping misaligned. Result undefined.");
+      naError("Pointers are overlapping misaligned. Result undefined.");
   #endif
   d[0] = a[0]; d[1] = a[1]; d[2] = a[2];
 }
 NA_IDEF void naCopyV4fE(float*  d, const float*  a){
   #ifndef NDEBUG
     if((d != a) && (naAbsi((NASizeInt)(d-a)) < 4))
-      naError("naCopyV4fE", "Pointers are overlapping misaligned. Result undefined.");
+      naError("Pointers are overlapping misaligned. Result undefined.");
   #endif
   d[0] = a[0]; d[1] = a[1]; d[2] = a[2]; d[3] = a[3];
 }
