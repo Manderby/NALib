@@ -81,8 +81,8 @@ NA_HDEF NATreeNode* naConstructTreeNodeBin(NATree* tree, const void* key, NATree
   naSetTreeItemParent(&(rightleaf->item), &(binnode->node));
   if(tree->config->flags & NA_TREE_BALANCE_AVL){naInitNodeAVL((NATreeBinNode*)binnode);}
 
-  if(tree->config->nodeConstructor){
-    binnode->data = tree->config->nodeConstructor(&key, tree->config->data);
+  if(tree->config->nodeDataConstructor){
+    binnode->data = tree->config->nodeDataConstructor(&key, tree->config->data);
   }else{
     binnode->data = naMakePtrNull();
   }
@@ -104,7 +104,7 @@ NA_HDEF void naDestructTreeNodeBin(NATree* tree, NATreeNode* node, NABool recurs
     naDestructTreeChildBin(tree, binnode, 1);
   }
 
-  if(tree->config->nodeDestructor){tree->config->nodeDestructor(binnode->data, tree->config->data);}
+  if(tree->config->nodeDataDestructor){tree->config->nodeDataDestructor(binnode->data, tree->config->data);}
   naClearTreeNode(&(binnode->node));
   naDelete(node);
 }

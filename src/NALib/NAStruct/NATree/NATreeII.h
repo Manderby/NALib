@@ -12,7 +12,7 @@ typedef struct NATreeNode NATreeNode;
 typedef struct NATreeLeaf NATreeLeaf;
 typedef struct NATreeIterationInfo NATreeIterationInfo;
 
-// Currently, an NATree is suppost to store a max of 16 childs, meaning any
+// Currently, an NATree is supposed to store a max of 16 childs, meaning any
 // other flag must be non-overlapping with 0x0000ffff or having a bitshift
 // of 16 respectively.
 
@@ -105,11 +105,11 @@ struct NATreeConfiguration{
   NARefCount                    refcount;
   NATreeContructorCallback      treeConstructor;
   NATreeDestructorCallback      treeDestructor;
-  NATreeNodeConstructor         nodeConstructor;
-  NATreeNodeDestructor          nodeDestructor;
+  NATreeLeafDataConstructor     leafDataConstructor;
+  NATreeLeafDataDestructor      leafDataDestructor;
+  NATreeNodeDataConstructor     nodeDataConstructor;
+  NATreeNodeDataDestructor      nodeDataDestructor;
   NATreeNodeUpdater             nodeUpdater;
-  NATreeLeafConstructor         leafConstructor;
-  NATreeLeafDestructor          leafDestructor;
   NAPtr                         data;
   void*                         internaldata;
   NAInt                         flags;

@@ -155,7 +155,6 @@ typedef struct NAMemoryBlock NAMemoryBlock;
 typedef struct NABufferSearchToken NABufferSearchToken;
 
 
-
 #include "NATree.h"
 
 

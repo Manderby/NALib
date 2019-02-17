@@ -89,8 +89,8 @@ NA_HDEF NATreeNode* naConstructTreeNodeOct(NATree* tree, const void* origin, NAT
   naSetTreeItemParent(&(leftleaf->item), &(octnode->node));
   naSetTreeItemParent(&(rightleaf->item), &(octnode->node));
 
-  if(tree->config->nodeConstructor){
-    octnode->data = tree->config->nodeConstructor(&origin, tree->config->data);
+  if(tree->config->nodeDataConstructor){
+    octnode->data = tree->config->nodeDataConstructor(&origin, tree->config->data);
   }else{
     octnode->data = naMakePtrNull();
   }
@@ -112,7 +112,7 @@ NA_HDEF void naDestructTreeNodeOct(NATree* tree, NATreeNode* node, NABool recurs
     naDestructTreeChildOct(tree, octnode, 1);
   }
 
-  if(tree->config->nodeDestructor){tree->config->nodeDestructor(octnode->data, tree->config->data);}
+  if(tree->config->nodeDataDestructor){tree->config->nodeDataDestructor(octnode->data, tree->config->data);}
   naClearTreeNode(&(octnode->node));
   naDelete(node);
 }

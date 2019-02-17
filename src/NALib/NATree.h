@@ -64,7 +64,7 @@ typedef struct NATreeConfiguration NATreeConfiguration;
 typedef void (*NATreeContructorCallback)(NAPtr configdata);
 typedef void (*NATreeDestructorCallback)(NAPtr configdata);
 
-// NATreeLeafConstructor and NATreeLeafDestructor
+// NATreeLeafDataConstructor and NATreeLeafDataDestructor
 // The constructor will be called when creating a new leaf. The destructor is
 // called, when a leaf ultimately gets deleted.
 //
@@ -88,14 +88,14 @@ typedef void (*NATreeDestructorCallback)(NAPtr configdata);
 // Use naGetPtrConst and naGetPtrMutable to read leafdata.
 // Use naMakePtrWithDataConst and naMakePtrWithDataMutable to create the
 // return value.
-typedef NAPtr (*NATreeLeafConstructor)(const void* key,
-                                             NAPtr configdata,
-                                             NAPtr leafdata);
+typedef NAPtr (*NATreeLeafDataConstructor)(const void* key,
+                                                 NAPtr configdata,
+                                                 NAPtr leafdata);
                                               
-typedef void (*NATreeLeafDestructor)(        NAPtr leafdata,
-                                             NAPtr configdata);
+typedef void (*NATreeLeafDataDestructor)(        NAPtr leafdata,
+                                                 NAPtr configdata);
 
-// NATreeNodeConstructor and NATreeNodeDestructor
+// NATreeNodeDataConstructor and NATreeNodeDataDestructor
 // The constructor is called when a tree creates an internal tree node other
 // than a leaf. The destructor is called before a tree ultimately deletes an
 // internal node.
@@ -108,11 +108,11 @@ typedef void (*NATreeLeafDestructor)(        NAPtr leafdata,
 // key, that parameter is Null. The configdata parameter corresponds to the
 // data provided in the naSetTreeConfigurationData function. Note that both
 // parameters are here just for information. You may or may not use it.
-typedef NAPtr (*NATreeNodeConstructor)(const void* key,
-                                             NAPtr configdata);
+typedef NAPtr (*NATreeNodeDataConstructor)(const void* key,
+                                                 NAPtr configdata);
                                               
-typedef void (*NATreeNodeDestructor)(        NAPtr nodedata,
-                                             NAPtr configdata);
+typedef void (*NATreeNodeDataDestructor)(        NAPtr nodedata,
+                                                 NAPtr configdata);
 
 // NATreeNodeUpdater 
 // Gets called whenever childs of a parent node change. The parent data is the
@@ -169,13 +169,13 @@ NA_IAPI void naSetTreeConfigurationTreeCallbacks(
 
 NA_IAPI void naSetTreeConfigurationLeafCallbacks(
   NATreeConfiguration*       config,
-  NATreeLeafConstructor      leafconstructor,
-  NATreeLeafDestructor       leafdestructor);
+  NATreeLeafDataConstructor  leafdataconstructor,
+  NATreeLeafDataDestructor   leafdatadestructor);
 
 NA_IAPI void naSetTreeConfigurationNodeCallbacks(
   NATreeConfiguration*       config,
-  NATreeNodeConstructor      nodeconstructor,
-  NATreeNodeDestructor       nodedestructor,
+  NATreeNodeDataConstructor  nodedataconstructor,
+  NATreeNodeDataDestructor   nodedatadestructor,
   NATreeNodeUpdater          nodeUpdater);
 
 NA_IAPI void naSetTreeConfigurationOcttreeBaseLeafExponent(

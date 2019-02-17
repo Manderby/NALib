@@ -47,7 +47,7 @@ NA_HIDEF void naDeallocConfiguration(NATreeConfiguration* config){
 }
 
 
-
+// X
 NA_IDEF void naReleaseTreeConfiguration(NATreeConfiguration* config){
   naReleaseRefCount(&(config->refcount), &(config->refcount), (NAMutator)naDeallocConfiguration);
 }
@@ -62,8 +62,8 @@ NA_HIDEF NATreeConfiguration* naRetainTreeConfiguration(NATreeConfiguration* con
 }
 
 
-
-NA_IAPI void naSetTreeConfigurationData(NATreeConfiguration* config, NAPtr data){
+// X
+NA_IDEF void naSetTreeConfigurationData(NATreeConfiguration* config, NAPtr data){
   #ifndef NDEBUG
     if(naGetPtrConst(config->data))
       naError("Configuration already has data");
@@ -72,7 +72,7 @@ NA_IAPI void naSetTreeConfigurationData(NATreeConfiguration* config, NAPtr data)
 }
 
 
-
+// X
 NA_IDEF void naSetTreeConfigurationTreeCallbacks(NATreeConfiguration* config, NATreeContructorCallback treeConstructor, NATreeDestructorCallback  treeDestructor){
   #ifndef NDEBUG
     if(config->flags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
@@ -83,31 +83,31 @@ NA_IDEF void naSetTreeConfigurationTreeCallbacks(NATreeConfiguration* config, NA
 }
 
 
-
-NA_IDEF void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NATreeLeafConstructor leafConstructor, NATreeLeafDestructor leafDestructor){
+// X
+NA_IDEF void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NATreeLeafDataConstructor leafDataConstructor, NATreeLeafDataDestructor leafDataDestructor){
   #ifndef NDEBUG
     if(config->flags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
       naError("Configuration already used in a tree. Mayor problems may occur in the future");
   #endif
-  config->leafConstructor = leafConstructor;
-  config->leafDestructor = leafDestructor;
+  config->leafDataConstructor = leafDataConstructor;
+  config->leafDataDestructor = leafDataDestructor;
 }
 
 
-
-NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NATreeNodeConstructor nodeconstructor, NATreeNodeDestructor nodedestructor, NATreeNodeUpdater nodeUpdater){
+// X
+NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NATreeNodeDataConstructor nodedataconstructor, NATreeNodeDataDestructor nodedatadestructor, NATreeNodeUpdater nodeUpdater){
   #ifndef NDEBUG
     if(config->flags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
       naError("Configuration already used in a tree. Mayor problems may occur in the future");
   #endif
-  config->nodeConstructor = nodeconstructor;
-  config->nodeDestructor = nodedestructor;
+  config->nodeDataConstructor = nodedataconstructor;
+  config->nodeDataDestructor = nodedatadestructor;
   config->nodeUpdater = nodeUpdater;
 }
 
 
-
-NA_IAPI void naSetTreeConfigurationOcttreeBaseLeafExponent(NATreeConfiguration* config, NAInt baseleafexponent){
+// X
+NA_IDEF void naSetTreeConfigurationOcttreeBaseLeafExponent(NATreeConfiguration* config, NAInt baseleafexponent){
   #ifndef NDEBUG
     if(!(config->flags & NA_TREE_OCTTREE))
       naError("This configuration is not for an octtree");
@@ -119,15 +119,9 @@ NA_IAPI void naSetTreeConfigurationOcttreeBaseLeafExponent(NATreeConfiguration* 
 }
 
 
-
-NA_IAPI NAInt naGetTreeConfigurationOcttreeBaseLeafExponent(const NATreeConfiguration* config){
+// X
+NA_IDEF NAInt naGetTreeConfigurationOcttreeBaseLeafExponent(const NATreeConfiguration* config){
   return *((NAInt*)(config->internaldata));
-}
-
-
-
-NA_IAPI NAPtr naGetTreeConfigurationData(const NATreeConfiguration* config){
-  return config->data;
 }
 
 
@@ -244,8 +238,8 @@ NA_HIDEF void naInitTreeLeaf(NATreeLeaf* leaf){
 
 
 NA_HIDEF NAPtr naConstructLeafData(NATree* tree, const void* key, NAPtr data){
-  if(tree->config->leafConstructor){
-    return tree->config->leafConstructor(key, tree->config->data, data);
+  if(tree->config->leafDataConstructor){
+    return tree->config->leafDataConstructor(key, tree->config->data, data);
   }else{
     return data;
   }
@@ -254,8 +248,8 @@ NA_HIDEF NAPtr naConstructLeafData(NATree* tree, const void* key, NAPtr data){
 
 
 NA_HIDEF void naDestructLeafData(NATree* tree, NAPtr data){
-  if(tree->config->leafDestructor){
-    tree->config->leafDestructor(data, tree->config->data);
+  if(tree->config->leafDataDestructor){
+    tree->config->leafDataDestructor(data, tree->config->data);
   }
 }
 
@@ -705,7 +699,7 @@ NA_IDEF NABool naIterateTree(NATreeIterator* iter){
   NATreeIterationInfo info;
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
-    if(!naIsTreeItemLeaf(tree, iter->item))
+    if(iter->item && !naIsTreeItemLeaf(tree, iter->item))
       naError("Iter is not placed at a leaf. Undefined behaviour. You should reset the iterator.");
   #endif
   info.step = 1;
@@ -720,7 +714,7 @@ NA_IDEF NABool naIterateTreeBack(NATreeIterator* iter){
   NATreeIterationInfo info;
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
-    if(!naIsTreeItemLeaf(tree, iter->item))
+    if(iter->item && !naIsTreeItemLeaf(tree, iter->item))
       naError("Iter is not placed at a leaf. Undefined behaviour. You should reset the iterator.");
   #endif
   info.step = -1;
@@ -768,7 +762,7 @@ NA_IDEF NABool naAddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafI
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
   #endif
-  if(!iter->leaf && tree->root){
+  if(!iter->item && tree->root){
     // There is a root but the iterator is not at a leaf. We need to find the
     // correct leaf.
     switch(insertOrder){
@@ -792,8 +786,8 @@ NA_IDEF NABool naAddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafI
       break;
     }
   }
-  contentleaf = naAddTreeContentAtLeaf(tree, iter->leaf, NA_NULL, content, insertOrder);
-  if(movetonew){naSetTreeIteratorCurLeaf(iter, contentleaf);}
+  contentleaf = naAddTreeContentAtLeaf(tree, (NATreeLeaf*)iter->item, NA_NULL, content, insertOrder);
+  if(movetonew){naSetTreeIteratorCurItem(iter, &(contentleaf->item));}
   return NA_TRUE;
 }
 NA_IDEF NABool naAddTreePrevConst(NATreeIterator* iter, const void* content, NABool movetonew){
