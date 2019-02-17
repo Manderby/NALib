@@ -30,9 +30,9 @@ NA_HIDEF void naRotateLeftBinary(NATree* tree, NATreeBinaryNode* parent, NATreeB
   NATreeNode* grandparent;
   #ifndef NDEBUG
     if(naIsBaseNodeLeaf(tree, (NATreeBaseNode*)parent))
-      naError("naRotateLeftBinary", "given parent is not a node");
+      naError("given parent is not a node");
     if(naIsBaseNodeLeaf(tree, (NATreeBaseNode*)rightchild))
-      naError("naRotateLeftBinary", "given right child is not a node");
+      naError("given right child is not a node");
   #endif
   grandparent = ((NATreeBaseNode*)parent)->parent;
   if(grandparent){
@@ -60,9 +60,9 @@ NA_HIDEF void naRotateRightBinary(NATree* tree, NATreeBinaryNode* leftchild, NAT
   NATreeNode* grandparent;
   #ifndef NDEBUG
     if(naIsBaseNodeLeaf(tree, (NATreeBaseNode*)leftchild))
-      naError("naRotateRightBinary", "given left child is not a node");
+      naError("given left child is not a node");
     if(naIsBaseNodeLeaf(tree, (NATreeBaseNode*)parent))
-      naError("naRotateRightBinary", "given parent is not a node");
+      naError("given parent is not a node");
   #endif
   grandparent = ((NATreeBaseNode*)parent)->parent;
   if(grandparent){
@@ -122,7 +122,7 @@ NA_HDEF void naGrowAVL(NATree* tree, NATreeBinaryNode* node, NAInt childindx){
       NAInt grandchildbalance;
       #ifndef NDEBUG
         if(childbalance != 1)
-          naError("naGrowAVL", "child balance invalid with node balance -2");
+          naError("child balance invalid with node balance -2");
       #endif
       grandchild = (NATreeBinaryNode*)child->childs[1];
       grandchildbalance = naGetNodeAVL(grandchild);
@@ -139,7 +139,7 @@ NA_HDEF void naGrowAVL(NATree* tree, NATreeBinaryNode* node, NAInt childindx){
       }else{
         #ifndef NDEBUG
           if(grandchildbalance != 1)
-            naError("naGrowAVL", "grandchild balance invalid with node balance -2");
+            naError("grandchild balance invalid with node balance -2");
         #endif
         naSetNodeAVL(node, 0);
         naSetNodeAVL(grandchild, 0);
@@ -158,7 +158,7 @@ NA_HDEF void naGrowAVL(NATree* tree, NATreeBinaryNode* node, NAInt childindx){
       NAInt grandchildbalance;
       #ifndef NDEBUG
         if(childbalance != -1)
-          naError("naGrowAVL", "child balance invalid with node balance 2");
+          naError("child balance invalid with node balance 2");
       #endif
       grandchild = (NATreeBinaryNode*)child->childs[0];
       grandchildbalance = naGetNodeAVL(grandchild);
@@ -175,7 +175,7 @@ NA_HDEF void naGrowAVL(NATree* tree, NATreeBinaryNode* node, NAInt childindx){
       }else{
         #ifndef NDEBUG
           if(grandchildbalance != -1)
-            naError("naGrowAVL", "grandchild balance invalid with node balance 2");
+            naError("grandchild balance invalid with node balance 2");
         #endif
         naSetNodeAVL(node, 0);
         naSetNodeAVL(grandchild, 0);
@@ -184,7 +184,7 @@ NA_HDEF void naGrowAVL(NATree* tree, NATreeBinaryNode* node, NAInt childindx){
     }
   }else{
     #ifndef NDEBUG
-      naError("naGrowAVL", "AVL balance out of balance");
+      naError("AVL balance out of balance");
     #endif
   }
 }
@@ -216,7 +216,7 @@ NA_HDEF void naShrinkAVL(NATree* tree, NATreeBinaryNode* node, NAInt childindx){
       NAInt grandchildbalance;
       #ifndef NDEBUG
         if(childbalance != -1)
-          naError("naShrinkAVL", "child balance invalid with node balance 2");
+          naError("child balance invalid with node balance 2");
       #endif
       grandchild = (NATreeBinaryNode*)child->childs[0];
       grandchildbalance = naGetNodeAVL(grandchild);
@@ -232,7 +232,7 @@ NA_HDEF void naShrinkAVL(NATree* tree, NATreeBinaryNode* node, NAInt childindx){
       }else{
         #ifndef NDEBUG
           if(grandchildbalance != 1)
-            naError("naShrinkAVL", "grandchild balance invalid with node balance 2");
+            naError("grandchild balance invalid with node balance 2");
         #endif
         naSetNodeAVL(node, -1);
         naSetNodeAVL(child, 0);
@@ -256,7 +256,7 @@ NA_HDEF void naShrinkAVL(NATree* tree, NATreeBinaryNode* node, NAInt childindx){
       NAInt grandchildbalance;
       #ifndef NDEBUG
         if(childbalance != 1)
-          naError("naShrinkAVL", "child balance invalid with node balance -2");
+          naError("child balance invalid with node balance -2");
       #endif
       grandchild = (NATreeBinaryNode*)child->childs[1];
       grandchildbalance = naGetNodeAVL(grandchild);
@@ -272,7 +272,7 @@ NA_HDEF void naShrinkAVL(NATree* tree, NATreeBinaryNode* node, NAInt childindx){
       }else{
         #ifndef NDEBUG
           if(grandchildbalance != -1)
-            naError("naShrinkAVL", "grandchild balance invalid with node balance -2");
+            naError("grandchild balance invalid with node balance -2");
         #endif
         naSetNodeAVL(child, 0);
         naSetNodeAVL(node, 1);
@@ -281,7 +281,7 @@ NA_HDEF void naShrinkAVL(NATree* tree, NATreeBinaryNode* node, NAInt childindx){
     }
   }else{
     #ifndef NDEBUG
-      naError("naShrinkAVL", "AVL balance out of balance");
+      naError("AVL balance out of balance");
     #endif
   }
 }

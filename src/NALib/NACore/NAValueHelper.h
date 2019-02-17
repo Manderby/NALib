@@ -160,14 +160,14 @@ NA_IDEF NABool naToggleFlagu(NAUInt* flags, NAUInt flag){
 NA_HIDEF int32 naMakeMaxWithEndi32(int32 end){
   #ifndef NDEBUG
     if(end == NA_INT32_MIN)
-      naError("naMakeMaxWithEndi32", "Integer underflow");
+      naError("Integer underflow");
   #endif
   return end - NA_ONE_32;
 }
 NA_HIDEF int64 naMakeMaxWithEndi64(int64 end){
   #ifndef NDEBUG
     if(naEqualInt64(end, NA_INT64_MIN))
-      naError("naMakeMaxWithEndi64", "Integer underflow");
+      naError("Integer underflow");
   #endif
   return naSubInt64(end, NA_ONE_64);
 }
@@ -181,14 +181,14 @@ NA_HIDEF NAInt naMakeMaxWithEndi(NAInt end){
 NA_HIDEF int32 naMakeEndWithMaxi32(int32 max){
   #ifndef NDEBUG
     if(max == NA_INT32_MAX)
-      naError("naMakeEndWithMaxi32", "Integer overflow");
+      naError("Integer overflow");
   #endif
   return max + NA_ONE_32;
 }
 NA_HIDEF int64 naMakeEndWithMaxi64(int64 max){
   #ifndef NDEBUG
     if(naEqualInt64(max, NA_INT64_MAX))
-      naError("naMakeEndWithMaxi64", "Integer overflow");
+      naError("Integer overflow");
   #endif
   return naAddInt64(max, NA_ONE_64);
 }
@@ -206,7 +206,7 @@ NA_HIDEF double naMakeEndWithStartAndLength(double start, double length){
   double result = start + length;
   #ifndef NDEBUG
     if(!naIsOffsetValueValid(result)){
-      naError("naMakeEndWithStartAndLength", "result invalid");
+      naError("result invalid");
     }
   #endif
   return result;
@@ -215,7 +215,7 @@ NA_HIDEF float naMakeEndWithStartAndLengthf(float start, float length){
   float result = start + length;
   #ifndef NDEBUG
     if(!naIsOffsetValueValidf(result)){
-      naError("naMakeEndWithStartAndLengthf", "result invalid");
+      naError("result invalid");
     }
   #endif
   return result;
@@ -225,10 +225,10 @@ NA_HIDEF NAInt naMakeEndWithStartAndLengthi(NAInt start, NAInt length){
   #ifndef NDEBUG
     if(length > 0){
       if(result < start)
-        naError("naMakeEndWithStartAndLengthi", "Integer overflow");
+        naError("Integer overflow");
     }else{
       if(result > start)
-        naError("naMakeEndWithStartAndLengthi", "Integer underflow");
+        naError("Integer underflow");
     }
   #endif
   return result;
@@ -238,10 +238,10 @@ NA_HIDEF NAInt naMakeMaxWithMinAndLengthi(NAInt min, NAInt length){
   #ifndef NDEBUG
     if(length > 0){
       if(result < min)
-        naError("naMakeMaxWithMinAndLengthi", "Integer overflow");
+        naError("Integer overflow");
     }else{
       if(result > min)
-        naError("naMakeMaxWithMinAndLengthi", "Integer underflow");
+        naError("Integer underflow");
     }
   #endif
   return result;
@@ -268,14 +268,14 @@ NA_HIDEF NAInt naMakeLengthWithMinAndMaxi(NAInt min, NAInt max){
 NA_HIDEF NAInt naMakeIntWithIntegerFloat(float x){
   #ifndef NDEBUG
     if(naRoundf(x) != x)
-      naError("naMakeIntWithIntegerFloat", "Given float is not an integer number");
+      naError("Given float is not an integer number");
   #endif
   return (NAInt)x;
 }
 NA_HIDEF NAInt naMakeIntWithIntegerDouble(double x){
   #ifndef NDEBUG
     if(naRound(x) != x)
-      naError("naMakeIntWithIntegerDouble", "Given double is not an integer number");
+      naError("Given double is not an integer number");
   #endif
   return (NAInt)x;
 }
@@ -295,7 +295,7 @@ NA_HIDEF NABool naIsOffsetValueValidi(NAInt a){
 NA_HIDEF NABool naIsOffsetValueValidu(NAUInt a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
-      naError("naIsOffsetValueValidu", "Unsigned integer looks like a negative number");
+      naError("Unsigned integer looks like a negative number");
   #else
     NA_UNUSED(a);
   #endif
@@ -315,7 +315,7 @@ NA_HIDEF NABool naIsLengthValueValidi(NAInt a){
 NA_HIDEF NABool naIsLengthValueValidu(NAUInt a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
-      naError("naIsLengthValueValidu", "Unsigned integer looks like a negative number");
+      naError("Unsigned integer looks like a negative number");
   #else
     NA_UNUSED(a);
   #endif
@@ -334,7 +334,7 @@ NA_HIDEF NABool naIsLengthValueEmptyi(NAInt a){
 NA_HIDEF NABool naIsLengthValueEmptyu(NAUInt a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
-      naError("naIsLengthValueEmptyu", "Unsigned integer looks like a negative number");
+      naError("Unsigned integer looks like a negative number");
   #endif
   return (a == 0);
 }
@@ -352,7 +352,7 @@ NA_HIDEF NABool naIsLengthValueNegativei(NAInt a){
 NA_HIDEF NABool naIsLengthValueNegativeu(NAUInt a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
-      naError("naIsLengthValueNegativeu", "Unsigned integer looks like a negative number");
+      naError("Unsigned integer looks like a negative number");
   #else
     NA_UNUSED(a);
   #endif
@@ -373,7 +373,7 @@ NA_HIDEF NABool naIsOffsetValueUsefuli(NAInt a){
 NA_HIDEF NABool naIsOffsetValueUsefulu(NAUInt a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
-      naError("naIsOffsetValueUsefulu", "Unsigned integer looks like a negative number");
+      naError("Unsigned integer looks like a negative number");
   #else
     NA_UNUSED(a);
   #endif
@@ -395,7 +395,7 @@ NA_HIDEF NABool naIsLengthValueUsefuli(NAInt a){
 NA_HIDEF NABool naIsLengthValueUsefulu(NAUInt a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
-      naError("naIsLengthValueUsefulu", "Unsigned integer looks like a negative number");
+      naError("Unsigned integer looks like a negative number");
   #endif
   return (a > 0);
 }
@@ -406,7 +406,7 @@ NA_HIDEF NAInt naAlignValuei(NAInt x, NAInt offset, NAInt alignlength){
   NAInt shiftx;
   #ifndef NDEBUG
     if(!naIsLengthValueUsefuli(alignlength))
-      naError("naAlignValuei", "Invalid size leads to range overflow. Correcting to empty range.");
+      naError("Invalid size leads to range overflow. Correcting to empty range.");
   #endif
   shiftx = x - offset;
   if(shiftx < 0){
@@ -419,7 +419,7 @@ NA_HIDEF double naAlignValued(double x, double offset, double alignlength){
   double shiftx;
   #ifndef NDEBUG
     if(!naIsLengthValueUseful(alignlength))
-      naError("naAlignValued", "Invalid size leads to range overflow. Correcting to empty range.");
+      naError("Invalid size leads to range overflow. Correcting to empty range.");
   #endif
   shiftx = x - offset;
   return ((naFloor((shiftx) / alignlength)) * alignlength) + offset;

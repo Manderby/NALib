@@ -64,7 +64,7 @@ NA_HDEF static void naDestructPointer(NAPointer* pointer){
 NA_IDEF void naReleasePointer(NAPointer* pointer){
   #ifndef NDEBUG
     if(!pointer)
-      naCrash("naReleasePointer", "pointer is Null-Pointer.");
+      naCrash("pointer is Null-Pointer.");
   #endif
   naReleaseSmartPtr(&(pointer->sptr), (NAMutator)naDestructPointer, NA_FALSE);
 }

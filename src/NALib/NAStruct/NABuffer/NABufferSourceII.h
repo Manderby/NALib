@@ -30,7 +30,7 @@ NA_EXTERN_RUNTIME_TYPE(NABufferSource);
 NA_DEF void naSetBufferSourceData(NABufferSource* source, void* data, NAMutator datadestructor){
   #ifndef NDEBUG
     if(source->flags & NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE)
-      naError("naSetBufferSourceData", "Source already used in a buffer. Mayor problems may occur in the future");
+      naError("Source already used in a buffer. Mayor problems may occur in the future");
   #endif
   source->data = data;
   source->datadestructor = datadestructor;
@@ -41,9 +41,9 @@ NA_DEF void naSetBufferSourceData(NABufferSource* source, void* data, NAMutator 
 NA_DEF void naSetBufferSourceLimit(NABufferSource* source, NARangei limit){
   #ifndef NDEBUG
     if(source->flags & NA_BUFFER_SOURCE_RANGE_LIMITED)
-      naError("naSetBufferSourceLimit", "Source already has a limit");
+      naError("Source already has a limit");
     if(source->flags & NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE)
-      naError("naSetBufferSourceLimit", "Source already used in a buffer. Mayor problems may occur in the future");
+      naError("Source already used in a buffer. Mayor problems may occur in the future");
   #endif
   source->flags |= NA_BUFFER_SOURCE_RANGE_LIMITED;
   source->limit = limit;
@@ -67,7 +67,7 @@ NA_HDEF NABool naIsBufferSourceLimited(const NABufferSource* source){
 NA_HDEF NARangei naGetBufferSourceLimit(const NABufferSource* source){
   #ifndef NDEBUG
     if(!naIsBufferSourceLimited(source))
-      naError("naGetBufferSourceLimit", "source is not limited");
+      naError("source is not limited");
   #endif
   return source->limit;
 }

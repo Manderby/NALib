@@ -330,7 +330,7 @@ NA_DEF int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str){
   }
   #ifndef NDEBUG
     if(monthindex == -1)
-      naError("naGetMonthNumberWithEnglishAbbreviation", "Month abbreviation unknown. Returning -1.");
+      naError("Month abbreviation unknown. Returning -1.");
   #endif
   return monthindex;
 }
@@ -366,7 +366,7 @@ NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
   }
   #ifndef NDEBUG
     if(monthindex == -1)
-      naError("naGetMonthNumberFromUTF8CStringLiteral", "Month unknown. Returning -1.");
+      naError("Month unknown. Returning -1.");
   #endif
   return monthindex;
 }
@@ -618,7 +618,7 @@ NA_DEF NADateTime naMakeDateTimeFromBuffer(NABuffer* buffer, NABinDateTimeFormat
 NA_DEF const char* naGetDateTimeErrorString(uint8 errornum){
   if(errornum >= NA_DATETIME_ERROR_COUNT){
     #ifndef NDEBUG
-      naError("naGetDateTimeErrorString", "Error number invalid");
+      naError("Error number invalid");
     #endif
     return NA_NULL;
   }

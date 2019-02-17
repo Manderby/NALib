@@ -49,7 +49,7 @@ NA_IDEF  void naConvertEndianness128v(NAInt endianness, void* buffer, NAUInt cou
 NA_IDEF void naConvertLittleBig8(void* buffer){
   #ifndef NDEBUG
     if(!buffer)
-      naError("naConvertLittleBig8", "Buffer is Null-Pointer");
+      naError("Buffer is Null-Pointer");
   #endif
   NA_UNUSED(buffer);
 }
@@ -57,7 +57,7 @@ NA_IDEF void naConvertLittleBig8(void* buffer){
 NA_IDEF void naConvertLittleBig16(void* buffer){
   #ifndef NDEBUG
     if(!buffer)
-      naCrash("naConvertLittleBig16", "Buffer is Null-Pointer");
+      naCrash("Buffer is Null-Pointer");
   #endif
   naSwap8(((NAByte*)buffer)+1, ((NAByte*)buffer)+0);
 }
@@ -65,7 +65,7 @@ NA_IDEF void naConvertLittleBig16(void* buffer){
 NA_IDEF void naConvertLittleBig32(void* buffer){
   #ifndef NDEBUG
     if(!buffer)
-      naCrash("naConvertLittleBig32", "Buffer is Null-Pointer");
+      naCrash("Buffer is Null-Pointer");
   #endif
   naSwap8(((NAByte*)buffer)+3, ((NAByte*)buffer)+0);
   naSwap8(((NAByte*)buffer)+2, ((NAByte*)buffer)+1);
@@ -74,7 +74,7 @@ NA_IDEF void naConvertLittleBig32(void* buffer){
 NA_IDEF void naConvertLittleBig64(void* buffer){
   #ifndef NDEBUG
     if(!buffer)
-      naCrash("naConvertLittleBig64", "Buffer is Null-Pointer");
+      naCrash("Buffer is Null-Pointer");
   #endif
   naSwap8(((NAByte*)buffer)+7, ((NAByte*)buffer)+0);
   naSwap8(((NAByte*)buffer)+6, ((NAByte*)buffer)+1);
@@ -85,7 +85,7 @@ NA_IDEF void naConvertLittleBig64(void* buffer){
 NA_IDEF void naConvertLittleBig128(void* buffer){
   #ifndef NDEBUG
     if(!buffer)
-      naCrash("naConvertLittleBig128", "Buffer is Null-Pointer");
+      naCrash("Buffer is Null-Pointer");
   #endif
   naSwap8(((NAByte*)buffer)+15, ((NAByte*)buffer)+0);
   naSwap8(((NAByte*)buffer)+14, ((NAByte*)buffer)+1);
@@ -112,7 +112,7 @@ NA_IDEF void naConvertLittleBig128(void* buffer){
 NA_IDEF void naConvertLittleBig8v(void* buffer, NAUInt count){
   #ifndef NDEBUG
     if(!buffer)
-      naError("naConvertLittleBig8v", "buffer is Null-Pointer");
+      naError("buffer is Null-Pointer");
   #endif
   NA_UNUSED(buffer);
   NA_UNUSED(count);
@@ -122,7 +122,7 @@ NA_IDEF void naConvertLittleBig16v(void* buffer, NAUInt count){
   NAUInt i;
   #ifndef NDEBUG
     if(!buffer)
-      naError("naConvertLittleBig16v", "buffer is Null-Pointer");
+      naError("buffer is Null-Pointer");
   #endif
   for(i=0; i<count; i++){
     naConvertLittleBig16(buffer);
@@ -134,7 +134,7 @@ NA_IDEF void naConvertLittleBig32v(void* buffer, NAUInt count){
   NAUInt i;
   #ifndef NDEBUG
     if(!buffer)
-      naError("naConvertLittleBig32v", "buffer is Null-Pointer");
+      naError("buffer is Null-Pointer");
   #endif
   for(i=0; i<count; i++){
     naConvertLittleBig32(buffer);
@@ -146,7 +146,7 @@ NA_IDEF void naConvertLittleBig64v(void* buffer, NAUInt count){
   NAUInt i;
   #ifndef NDEBUG
     if(!buffer)
-      naError("naConvertLittleBig64v", "buffer is Null-Pointer");
+      naError("buffer is Null-Pointer");
   #endif
   for(i=0; i<count; i++){
     naConvertLittleBig64(buffer);
@@ -158,7 +158,7 @@ NA_IDEF void naConvertLittleBig128v(void* buffer, NAUInt count){
   NAUInt i;
   #ifndef NDEBUG
     if(!buffer)
-      naError("naConvertLittleBig128v", "buffer is Null-Pointer");
+      naError("buffer is Null-Pointer");
   #endif
   for(i=0; i<count; i++){
     naConvertLittleBig128(buffer);
@@ -171,7 +171,7 @@ NA_IDEF void naConvertLittleBig128v(void* buffer, NAUInt count){
 NA_IAPI NABool naIsEndiannessHost(NAInt endianness){
   #ifndef NDEBUG
     if((endianness != 1) && (endianness != 2))
-      naError("naIsEndiannessHost", "endianness is invalid. Result is undefined.");
+      naError("endianness is invalid. Result is undefined.");
   #endif
   return (endianness == NA_ENDIANNESS_HOST);
 }
@@ -212,7 +212,7 @@ NA_IDEF NAInt naParseEndiannessMarker(const NAByte marker[4]){
     break;
   default:
     #ifndef NDEBUG
-      naError("naParseEndiannessMarker", "Endianness unknown. Returning Little");
+      naError("Endianness unknown. Returning Little");
     #endif
     return NA_ENDIANNESS_LITTLE;
     break;

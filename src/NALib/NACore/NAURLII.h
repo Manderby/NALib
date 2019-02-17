@@ -12,7 +12,7 @@
 NA_IDEF NAURL* naInitURL(NAURL* url){
   #ifndef NDEBUG
     if(!url)
-      naCrash("naInitURL", "url is Null-Pointer");
+      naCrash("url is Null-Pointer");
   #endif
   url->status = 0;
   naInitList(&(url->path));

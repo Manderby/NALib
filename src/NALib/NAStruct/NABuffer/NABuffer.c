@@ -125,17 +125,17 @@ NA_HIAPI NARangei naMakeRangeiAbsolute(NAInt offset, NAInt length, NARangei cont
   NAInt end;
   #ifndef NDEBUG
     if(!naIsLengthValueUsefuli(containingrange.length))
-      naError("naMakeRangeiAbsolute", "Length of containing range is not useful.");
+      naError("Length of containing range is not useful.");
   #endif
   start = containingrange.origin + (offset < 0) * containingrange.length + offset;
   end = ((length >= 0) ? start : naGetRangeiEnd(containingrange)) + length;
   #ifndef NDEBUG
     if(!naContainsRangeiOffset(containingrange, start))
-      naError("naMakeRangeiAbsolute", "Resulting range underflows containing range.");
+      naError("Resulting range underflows containing range.");
     if(!naContainsRangeiOffset(containingrange, naMakeMaxWithEndi(end)))
-      naError("naMakeRangeiAbsolute", "Resulting range overflows containing range.");
+      naError("Resulting range overflows containing range.");
     if(end < start)
-      naError("naMakeRangeiAbsolute", "Resulting range has negative length.");
+      naError("Resulting range has negative length.");
   #endif
   return naMakeRangeiWithStartAndEnd(start, end);
 }
@@ -351,7 +351,7 @@ NA_DEF NABuffer* naNewBufferWithCustomSource(NABufferSource* source, NAInt sourc
 NA_HDEF void naDeallocBuffer(NABuffer* buffer){
   #ifndef NDEBUG
     if(buffer->itercount)
-      naError("naDeallocBuffer", "There are still iterators running. Did you forgot naClearBufferIterator?");
+      naError("There are still iterators running. Did you forgot naClearBufferIterator?");
   #endif
   if(buffer->source){naRelease(buffer->source);}
   naEmptyTree(&(buffer->parts));
@@ -367,11 +367,11 @@ NA_HDEF void naEnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
 
   #ifndef NDEBUG
     if(length <= 0)
-      naError("naEnsureBufferRange", "Range length shall be >= 0");
+      naError("Range length shall be >= 0");
     if(naHasBufferFixedRange(buffer) && (start < buffer->range.origin))
-      naError("naEnsureBufferRange", "Range of buffer is fixed but trying to access range below");
+      naError("Range of buffer is fixed but trying to access range below");
     if(naHasBufferFixedRange(buffer) && (end > naGetRangeiEnd(buffer->range)))
-      naError("naEnsureBufferRange", "Range of buffer is fixed but trying to access range above");
+      naError("Range of buffer is fixed but trying to access range above");
   #endif
 
   if(naIsBufferEmpty(buffer)){
@@ -523,7 +523,7 @@ NA_DEF NAInt naSearchBufferByteOffset(NABuffer* buffer, NAByte byte, NAInt start
     part = naGetBufferPart(&iter);
     #ifndef NDEBUG
       if(naIsBufferPartSparse(part))
-        naError("naSearchBufferByteOffset", "sparse part detected.");
+        naError("sparse part detected.");
     #endif
     curbyte = (const NAByte*)naGetBufferPartDataPointerConst(&iter);
     if(forward){
@@ -655,7 +655,7 @@ NA_DEF NABool naEqualBufferToData(NABuffer* buffer, const void* data, NAInt data
     part = naGetBufferPart(&iter);
     #ifndef NDEBUG
       if(naIsBufferPartSparse(part))
-        naError("naEqualBufferToData", "Buffer has sparse part");
+        naError("Buffer has sparse part");
     #endif
 
     remainingbytes = naGetBufferPartByteSize(part);

@@ -49,9 +49,9 @@ NA_IDEF double naDetM44d(double* A){
 NA_IDEF void naTransposeM22d( double* NA_RESTRICT D, double* NA_RESTRICT A){
   #ifndef NDEBUG
     if(A == D)
-      naError("naTransposeM22d", "A equals D. Use E or S variant.");
+      naError("A equals D. Use E or S variant.");
     else if(naAbsi((NASizeInt)(D-A)) < 4)
-      naError("naTransposeM22d", "A overlaps misaligned with D");
+      naError("A overlaps misaligned with D");
   #endif
   D[0] = A[0]; D[2] = A[1];
   D[1] = A[2]; D[3] = A[3];
@@ -59,9 +59,9 @@ NA_IDEF void naTransposeM22d( double* NA_RESTRICT D, double* NA_RESTRICT A){
 NA_IDEF void naTransposeM33d( double* NA_RESTRICT D, double* NA_RESTRICT A){
   #ifndef NDEBUG
     if(A == D)
-      naError("naTransposeM33d", "A equals D. Use E or S variant.");
+      naError("A equals D. Use E or S variant.");
     else if(naAbsi((NASizeInt)(D-A)) < 9)
-      naError("naTransposeM33d", "A overlaps misaligned with D");
+      naError("A overlaps misaligned with D");
   #endif
   D[0] = A[0]; D[3] = A[1]; D[6] = A[2];
   D[1] = A[3]; D[4] = A[4]; D[7] = A[5];
@@ -70,9 +70,9 @@ NA_IDEF void naTransposeM33d( double* NA_RESTRICT D, double* NA_RESTRICT A){
 NA_IDEF void naTransposeM44d( double* NA_RESTRICT D, double* NA_RESTRICT A){
   #ifndef NDEBUG
     if(A == D)
-      naError("naTransposeM44d", "A equals D. Use E or S variant.");
+      naError("A equals D. Use E or S variant.");
     else if(naAbsi((NASizeInt)(D-A)) < 16)
-      naError("naTransposeM44d", "A overlaps misaligned with D");
+      naError("A overlaps misaligned with D");
   #endif
   D[0] = A[0]; D[4] = A[1]; D[8] = A[2]; D[12] = A[3];
   D[1] = A[4]; D[5] = A[5]; D[9] = A[6]; D[13] = A[7];
@@ -82,9 +82,9 @@ NA_IDEF void naTransposeM44d( double* NA_RESTRICT D, double* NA_RESTRICT A){
 NA_IDEF void naTransposeM22f( float* NA_RESTRICT D, float* NA_RESTRICT A){
   #ifndef NDEBUG
     if(A == D)
-      naError("naTransposeM22f", "A equals D. Use E or S variant.");
+      naError("A equals D. Use E or S variant.");
     else if(naAbsi((NASizeInt)(D-A)) < 4)
-      naError("naTransposeM22f", "A overlaps misaligned with D");
+      naError("A overlaps misaligned with D");
   #endif
   D[0] = A[0]; D[2] = A[1];
   D[1] = A[2]; D[3] = A[3];
@@ -92,9 +92,9 @@ NA_IDEF void naTransposeM22f( float* NA_RESTRICT D, float* NA_RESTRICT A){
 NA_IDEF void naTransposeM33f( float* NA_RESTRICT D, float* NA_RESTRICT A){
   #ifndef NDEBUG
     if(A == D)
-      naError("naTransposeM33f", "A equals D. Use E or S variant.");
+      naError("A equals D. Use E or S variant.");
     else if(naAbsi((NASizeInt)(D-A)) < 9)
-      naError("naTransposeM33f", "A overlaps misaligned with D");
+      naError("A overlaps misaligned with D");
   #endif
   D[0] = A[0]; D[3] = A[1]; D[6] = A[2];
   D[1] = A[3]; D[4] = A[4]; D[7] = A[5];
@@ -103,9 +103,9 @@ NA_IDEF void naTransposeM33f( float* NA_RESTRICT D, float* NA_RESTRICT A){
 NA_IDEF void naTransposeM44f( float* NA_RESTRICT D, float* NA_RESTRICT A){
   #ifndef NDEBUG
     if(A == D)
-      naError("naTransposeM44f", "A equals D. Use E or S variant.");
+      naError("A equals D. Use E or S variant.");
     else if(naAbsi((NASizeInt)(D-A)) < 16)
-      naError("naTransposeM44f", "A overlaps misaligned with D");
+      naError("A overlaps misaligned with D");
   #endif
   D[0] = A[0]; D[4] = A[1]; D[8] = A[2]; D[12] = A[3];
   D[1] = A[4]; D[5] = A[5]; D[9] = A[6]; D[13] = A[7];
@@ -115,7 +115,7 @@ NA_IDEF void naTransposeM44f( float* NA_RESTRICT D, float* NA_RESTRICT A){
 NA_IDEF void naTransposeM22dE( double* D, double* A){
   #ifndef NDEBUG
     if((A != D) && naAbsi((NASizeInt)(D-A)) < 4)
-      naError("naTransposeM22dE", "A overlaps misaligned with D");
+      naError("A overlaps misaligned with D");
   #endif
   D[0] = A[0]; D[2] = A[1];
   D[1] = A[2]; D[3] = A[3];
@@ -123,7 +123,7 @@ NA_IDEF void naTransposeM22dE( double* D, double* A){
 NA_IDEF void naTransposeM33dE( double* D, double* A){
   #ifndef NDEBUG
     if((A != D) && naAbsi((NASizeInt)(D-A)) < 9)
-      naError("naTransposeM33dE", "A overlaps misaligned with D");
+      naError("A overlaps misaligned with D");
   #endif
   D[0] = A[0]; D[3] = A[1]; D[6] = A[2];
   D[1] = A[3]; D[4] = A[4]; D[7] = A[5];
@@ -132,7 +132,7 @@ NA_IDEF void naTransposeM33dE( double* D, double* A){
 NA_IDEF void naTransposeM44dE( double* D, double* A){
   #ifndef NDEBUG
     if((A != D) && naAbsi((NASizeInt)(D-A)) < 16)
-      naError("naTransposeM44dE", "A overlaps misaligned with D");
+      naError("A overlaps misaligned with D");
   #endif
   D[0] = A[0]; D[4] = A[1]; D[8] = A[2]; D[12] = A[3];
   D[1] = A[4]; D[5] = A[5]; D[9] = A[6]; D[13] = A[7];
@@ -142,7 +142,7 @@ NA_IDEF void naTransposeM44dE( double* D, double* A){
 NA_IDEF void naTransposeM22fE( float* D, float* A){
   #ifndef NDEBUG
     if((A != D) && naAbsi((NASizeInt)(D-A)) < 4)
-      naError("naTransposeM22fE", "A overlaps misaligned with D");
+      naError("A overlaps misaligned with D");
   #endif
   D[0] = A[0]; D[2] = A[1];
   D[1] = A[2]; D[3] = A[3];
@@ -150,7 +150,7 @@ NA_IDEF void naTransposeM22fE( float* D, float* A){
 NA_IDEF void naTransposeM33fE( float* D, float* A){
   #ifndef NDEBUG
     if((A != D) && naAbsi((NASizeInt)(D-A)) < 9)
-      naError("naTransposeM33fE", "A overlaps misaligned with D");
+      naError("A overlaps misaligned with D");
   #endif
   D[0] = A[0]; D[3] = A[1]; D[6] = A[2];
   D[1] = A[3]; D[4] = A[4]; D[7] = A[5];
@@ -159,7 +159,7 @@ NA_IDEF void naTransposeM33fE( float* D, float* A){
 NA_IDEF void naTransposeM44fE( float* D, float* A){
   #ifndef NDEBUG
     if((A != D) && naAbsi((NASizeInt)(D-A)) < 16)
-      naError("naTransposeM44fE", "A overlaps misaligned with D");
+      naError("A overlaps misaligned with D");
   #endif
   D[0] = A[0]; D[4] = A[1]; D[8] = A[2]; D[12] = A[3];
   D[1] = A[4]; D[5] = A[5]; D[9] = A[6]; D[13] = A[7];

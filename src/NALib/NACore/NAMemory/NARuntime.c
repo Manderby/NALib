@@ -153,11 +153,11 @@ NA_HIDEF void naRegisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
 
   #ifndef NDEBUG
     if(coretypeinfo->curpart)
-      naError("naRegisterCoreTypeInfo", "Newly registered type should have NULL as current part.");
+      naError("Newly registered type should have NULL as current part.");
     if(coretypeinfo->typesize < NA_SYSTEM_ADDRESS_BYTES)
-      naError("naRegisterCoreTypeInfo", "Size of type is too small");
+      naError("Size of type is too small");
     if(coretypeinfo->typesize > (na_runtime->partsize - sizeof(NACorePoolPart)))
-      naError("naRegisterCoreTypeInfo", "Size of type is too big");
+      naError("Size of type is too big");
   #endif
 
   // As this is the first time, the runtime type gets used, we correct the
@@ -256,7 +256,7 @@ NA_HIDEF void naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
     // Do you think the following check is not necessary? You'd be surprised
     // how many systems do not align memory correctly!
     if(((NASizeUInt)part & ~na_runtime->partsizemask) != 0)
-      naError("naEnhanceCorePool", "pool part badly aligned");
+      naError("pool part badly aligned");
   #endif
 
   // We initialize the basic fields of part.
@@ -302,11 +302,11 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
 
   #ifndef NDEBUG
     if(!na_runtime)
-      naCrash("naNewStruct", "Runtime not running. Use naStartRuntime()");
+      naCrash("Runtime not running. Use naStartRuntime()");
     if(!typeinfo)
-      naCrash("naNewStruct", "Given type identifier is Null-Pointer. Do not call naNewStruct directly. Use the naNew macro.");
+      naCrash("Given type identifier is Null-Pointer. Do not call naNewStruct directly. Use the naNew macro.");
     if(typeinfo->typesize == 0)
-      naError("naNewStruct", "Type size is zero. Is the type void?");
+      naError("Type size is zero. Is the type void?");
   #endif
 
   coretypeinfo = (NACoreTypeInfo*)typeinfo;
@@ -320,7 +320,7 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
     naEnhanceCorePool(coretypeinfo);
     #ifndef NDEBUG
       if(!coretypeinfo->curpart)
-        naCrash("naNewStruct", "No part available even after enhancing.");
+        naCrash("No part available even after enhancing.");
     #endif
   }
 
@@ -335,7 +335,7 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
   // Now, we can be sure that the current part has space.
   #ifndef NDEBUG
     if(naIsPoolPartFull(coretypeinfo->curpart))
-      naCrash("naNewStruct", "Still no space after creating new space.");
+      naCrash("Still no space after creating new space.");
   #endif
 
   // We get the pointer to the first currently unused space.
@@ -359,10 +359,10 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
 
   #ifndef NDEBUG
     #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
-      naError("naNewStruct", "No native integer type to successfully run the runtime system.");
+      naError("No native integer type to successfully run the runtime system.");
     #else
       if(coretypeinfo->curpart != (NACorePoolPart*)((NASizeUInt)pointer & na_runtime->partsizemask))
-        naError("naNewStruct", "Pointer seems to be outside of part");
+        naError("Pointer seems to be outside of part");
     #endif
   #endif
 
@@ -432,7 +432,7 @@ NA_DEF void naDelete(void* pointer){
 
   #ifndef NDEBUG
     if(!na_runtime)
-      naCrash("naDelete", "Runtime not running. Use naStartRuntime()");
+      naCrash("Runtime not running. Use naStartRuntime()");
   #endif
 
   #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
@@ -446,9 +446,9 @@ NA_DEF void naDelete(void* pointer){
 
     #ifndef NDEBUG
       if(part->dummy != part)
-        naError("naDelete", "Pointer seems not to be from a pool.");
+        naError("Pointer seems not to be from a pool.");
       if(part->coretypeinfo->refcounting)
-        naError("naDelete", "Pointer belongs to a reference-counting entity. Use naRelease instead of naDelete!");
+        naError("Pointer belongs to a reference-counting entity. Use naRelease instead of naDelete!");
     #endif
 
     // Erase the content of the space with the destructor if applicable
@@ -467,21 +467,21 @@ NA_DEF void* naRetain(void* pointer){
   #ifndef NDEBUG
     NACorePoolPart* part;
     if(!na_runtime)
-      naCrash("naRetain", "Runtime not running. Use naStartRuntime()");
+      naCrash("Runtime not running. Use naStartRuntime()");
     if(!pointer)
-      naCrash("naRetain", "pointer is null");
+      naCrash("pointer is null");
 
     // Find the part entry at the beginning of the part by AND'ing the
     // address with the partsizemask
     #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
-      naError("naRetain", "No native integer type to successfully run the runtime system.");
+      naError("No native integer type to successfully run the runtime system.");
       NA_UNUSED(part);
     #else
       part = (NACorePoolPart*)((NASizeUInt)pointer & na_runtime->partsizemask);
       if(part->dummy != part)
-        naError("naRetain", "Pointer seems not to be from a pool.");
+        naError("Pointer seems not to be from a pool.");
       if(!part->coretypeinfo->refcounting)
-        naError("naRetain", "Pointer belongs to a NON-reference-counting entity. You can't use naRetain!");
+        naError("Pointer belongs to a NON-reference-counting entity. You can't use naRetain!");
     #endif
   #endif
 
@@ -499,9 +499,9 @@ NA_DEF void naRelease(void* pointer){
 
   #ifndef NDEBUG
     if(!na_runtime)
-      naCrash("naRelease", "Runtime not running. Use naStartRuntime()");
+      naCrash("Runtime not running. Use naStartRuntime()");
     if(!pointer)
-      naCrash("naRelease", "pointer is null");
+      naCrash("pointer is null");
   #endif
 
   // Find the corepool entry at the beginning of the part by AND'ing the
@@ -511,7 +511,7 @@ NA_DEF void naRelease(void* pointer){
     NA_UNUSED(pointer);
     NA_UNUSED(refcount);
     #ifndef NDEBUG
-      naError("naRelease", "No native integer type to successfully run the runtime system.");
+      naError("No native integer type to successfully run the runtime system.");
     #endif
   #else
 
@@ -519,9 +519,9 @@ NA_DEF void naRelease(void* pointer){
 
     #ifndef NDEBUG
       if(part->dummy != part)
-        naError("naRelease", "Pointer seems not to be from a pool.");
+        naError("Pointer seems not to be from a pool.");
       if(!part->coretypeinfo->refcounting)
-        naError("naRelease", "Pointer belongs to a NON-reference-counting entity. Use naDelete instead of naRelease!");
+        naError("Pointer belongs to a NON-reference-counting entity. Use naDelete instead of naRelease!");
     #endif
 
     // Release the space and delete it with the destructor if refcount is zero.
@@ -543,15 +543,15 @@ NA_DEF void naRelease(void* pointer){
 NA_DEF void naStartRuntime(){
   #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
     #ifndef NDEBUG
-      naError("naStartRuntime", "Unable to start runtime on system where no native int is able to store an address.");
+      naError("Unable to start runtime on system where no native int is able to store an address.");
     #endif
   #else
 
     #ifndef NDEBUG
       if(na_runtime)
-        naCrash("naStartRuntime", "Runtime already running");
+        naCrash("Runtime already running");
       if(sizeof(NACorePoolPart) != (8 * NA_SYSTEM_ADDRESS_BYTES))
-        naError("naStartRuntime", "NACorePoolPart struct encoding misaligned");
+        naError("NACorePoolPart struct encoding misaligned");
     #endif
     na_runtime = naAlloc(NARuntime);
     na_runtime->mempagesize = naGetSystemMemoryPagesize();
@@ -592,7 +592,7 @@ NA_DEF void naStopRuntime(){
   #ifndef NDEBUG
     leakmessageprinted = NA_FALSE;
     if(!na_runtime)
-      naCrash("naStopRuntime", "Runtime not running. Use naStartRuntime()");
+      naCrash("Runtime not running. Use naStartRuntime()");
 
     // Go through all registered types and output a leak message if necessary.
     for(i=0; i< na_runtime->typeinfocount; i++){
@@ -639,7 +639,7 @@ NA_HIDEF void naEnhanceMallocGarbage(){
   NAMallocGarbage* newgarbage = naAlloc(NAMallocGarbage);
   #ifndef NDEBUG
     if(!newgarbage)
-	    naCrash("naEnhanceMallocGarbage", "No garbage memory allocated");
+	    naCrash("No garbage memory allocated");
   #endif
   newgarbage->next = na_runtime->mallocGarbage;
   newgarbage->cur = 0;
@@ -653,7 +653,7 @@ NA_DEF void* naMallocTmp(NAUInt bytesize){
   NAMallocGarbage* garbage;
   #ifndef NDEBUG
     if(!na_runtime)
-      naCrash("naMallocTmp", "Runtime not running. Use naStartRuntime()");
+      naCrash("Runtime not running. Use naStartRuntime()");
   #endif
   #if NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT != 0
     if(na_runtime->totalmallocgarbagebytecount > NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT){naCollectGarbage();}
@@ -665,9 +665,9 @@ NA_DEF void* naMallocTmp(NAUInt bytesize){
   }
   #ifndef NDEBUG
     if(na_runtime->mallocGarbage->cur >= NA_MALLOC_GARBAGE_POINTER_COUNT)
-      naError("naMallocTmp", "Buffer overrun.");
+      naError("Buffer overrun.");
     if(!na_runtime->mallocGarbage)
-      naCrash("naMallocTmp", "Garbage struct is null");
+      naCrash("Garbage struct is null");
   #endif
   garbage = na_runtime->mallocGarbage;
   garbage->pointers[garbage->cur] = newPtr;
@@ -680,7 +680,7 @@ NA_DEF void* naMallocTmp(NAUInt bytesize){
 NA_DEF void naCollectGarbage(){
   #ifndef NDEBUG
     if(!na_runtime)
-      naCrash("naCollectRuntimeGarbage", "Runtime not running. Use naStartRuntime()");
+      naCrash("Runtime not running. Use naStartRuntime()");
   #endif
   while(na_runtime->mallocGarbage){
     NAUInt i;

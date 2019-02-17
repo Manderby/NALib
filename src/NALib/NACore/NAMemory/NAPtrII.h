@@ -88,7 +88,7 @@ NA_IDEF NAPtr naMakePtrWithBytesize(NAInt bytesize){
   NAPtr ptr;
   #ifndef NDEBUG
     if(bytesize == NA_ZERO)
-      naError("naMakePtrWithBytesize", "bytesize is zero.");
+      naError("bytesize is zero.");
   #endif
   ptr.data.d = naMalloc(bytesize);
   #ifndef NDEBUG
@@ -102,9 +102,9 @@ NA_IDEF NAPtr naMakePtrWithBytesize(NAInt bytesize){
 NA_IDEF void naCleanupPtr(NAPtr* ptr, NAMutator destructor){
   #ifndef NDEBUG
     if(ptr->flags & NA_PTR_CLEANED)
-      naError("naCleanupPtr", "NAPtr has already been cleaned once.");
+      naError("NAPtr has already been cleaned once.");
     if(destructor && ptr->flags & NA_PTR_CONST_DATA)
-      naError("naCleanupPtr", "Calling a destructor on const data. This smells fishy.");
+      naError("Calling a destructor on const data. This smells fishy.");
   #endif
   if(destructor){destructor(ptr->data.d);}
   #ifndef NDEBUG
@@ -139,7 +139,7 @@ NA_IDEF NAPtr naMakePtrWithDataMutable(void* data){
 NA_IDEF const void* naGetPtrConst(const NAPtr* ptr){
   #ifndef NDEBUG
     if(!ptr){
-      naCrash("naGetPtrConst", "ptr is Null-Pointer.");
+      naCrash("ptr is Null-Pointer.");
       return NA_NULL;
     }
   #endif
@@ -151,11 +151,11 @@ NA_IDEF const void* naGetPtrConst(const NAPtr* ptr){
 NA_IDEF void* naGetPtrMutable(NAPtr* ptr){
   #ifndef NDEBUG
     if(!ptr){
-      naCrash("naGetPtrMutable", "ptr is Null-Pointer.");
+      naCrash("ptr is Null-Pointer.");
       return NA_NULL;
     }
     if(ptr->flags & NA_PTR_CONST_DATA)
-      naError("naGetPtrMutable", "Mutable access to const ptr.");
+      naError("Mutable access to const ptr.");
   #endif
   return ptr->data.d;
 }

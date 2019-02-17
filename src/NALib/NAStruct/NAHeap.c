@@ -271,7 +271,7 @@ NA_HDEF void naGrowHeap(NAHeap* heap){
 NA_DEF void naShrinkHeapIfNecessary(NAHeap* heap){
   #ifndef NDEBUG
     if(heap->maxcount > 0)
-      naError("naShrinkHeapIfNecessary", "Heap defined with a fixed count of elements.");
+      naError("Heap defined with a fixed count of elements.");
   #endif
   if((NAInt)heap->count < -heap->maxcount / 4){
     NAInt entrysize = (NASizeInt)((NAByte*)(heap->root) - (NAByte*)(heap->data));
@@ -292,9 +292,9 @@ NA_HDEF void naInsertHeapElementConstNoBack(NAHeap* heap, const void* data, cons
   NA_UNUSED(backpointer);
   #ifndef NDEBUG
     if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
-      naError("naInsertHeapElementConstNoBack", "Heap overflow.");
+      naError("Heap overflow.");
     if(backpointer)
-      naError("naInsertHeapElementConstNoBack", "Heap dos not store backpointers. packpointer should be null. Ignored.");
+      naError("Heap dos not store backpointers. packpointer should be null. Ignored.");
   #endif
   if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
@@ -311,7 +311,7 @@ NA_HDEF void naInsertHeapElementConstBack(NAHeap* heap, const void* data, const 
   NAHeapBackEntry* thedata;
   #ifndef NDEBUG
     if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
-      naError("naInsertHeapElementConstBack", "Heap overflow.");
+      naError("Heap overflow.");
   #endif
   if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
@@ -339,9 +339,9 @@ NA_HDEF void naInsertHeapElementMutableNoBack(NAHeap* heap, void* data, const vo
   NA_UNUSED(backpointer);
   #ifndef NDEBUG
     if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
-      naError("naInsertHeapElementMutableNoBack", "Heap overflow.");
+      naError("Heap overflow.");
     if(backpointer)
-      naError("naInsertHeapElementMutableNoBack", "Heap dos not store backpointers. packpointer should be null. Ignored.");
+      naError("Heap dos not store backpointers. packpointer should be null. Ignored.");
   #endif
   if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
@@ -358,7 +358,7 @@ NA_HDEF void naInsertHeapElementMutableBack(NAHeap* heap, void* data, const void
   NAHeapBackEntry* thedata;
   #ifndef NDEBUG
     if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
-      naError("naInsertHeapElementMutableBack", "Heap overflow.");
+      naError("Heap overflow.");
   #endif
   if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
@@ -385,7 +385,7 @@ NA_HDEF const void* naRemoveHeapRootConstNoBack(NAHeap* heap){
   const void* returnvalue;
   #ifndef NDEBUG
     if(heap->count == 0)
-      naError("naRemoveHeapRootConst", "Heap is empty.");
+      naError("Heap is empty.");
   #endif
   returnvalue = naGetPtrConst(&(thedata[1].ptr));
   heap->count--;
@@ -403,7 +403,7 @@ NA_HDEF const void* naRemoveHeapRootConstBack(NAHeap* heap){
   const void* returnvalue;
   #ifndef NDEBUG
     if(heap->count == 0)
-      naError("naRemoveHeapRootConst", "Heap is empty.");
+      naError("Heap is empty.");
   #endif
   returnvalue = naGetPtrConst(&(thedata[1].ptr));
   *(thedata[1].backpointer) = 0;
@@ -423,7 +423,7 @@ NA_HDEF void* naRemoveHeapRootMutableNoBack(NAHeap* heap){
   void* returnvalue;
   #ifndef NDEBUG
     if(heap->count == 0)
-      naError("naRemoveHeapRootMutable", "Heap is empty.");
+      naError("Heap is empty.");
   #endif
   returnvalue = naGetPtrMutable(&(thedata[1].ptr));
   heap->count--;
@@ -440,7 +440,7 @@ NA_HDEF void* naRemoveHeapRootMutableBack(NAHeap* heap){
   void* returnvalue;
   #ifndef NDEBUG
     if(heap->count == 0)
-      naError("naRemoveHeapRootMutable", "Heap is empty.");
+      naError("Heap is empty.");
   #endif
   returnvalue = naGetPtrMutable(&(thedata[1].ptr));
   *(thedata[1].backpointer) = 0;
@@ -459,7 +459,7 @@ NA_HDEF const void* naRemoveHeapPosConstNoBack(NAHeap* heap, NAInt backpointer){
   NA_UNUSED(heap);
   NA_UNUSED(backpointer);
   #ifndef NDEBUG
-    naError("naRemoveHeapPosConstNoBack", "Can not update heap as he stores no backpointers. Function has no effect");
+    naError("Can not update heap as he stores no backpointers. Function has no effect");
   #endif
   return NA_NULL;
 }
@@ -471,9 +471,9 @@ NA_HDEF const void* naRemoveHeapPosConstBack(NAHeap* heap, NAInt backpointer){
   const void* returnvalue;
   #ifndef NDEBUG
     if(backpointer > heap->count)
-      naError("naRemovePosRootConstBack", "backpointer makes no sense.");
+      naError("backpointer makes no sense.");
     if(backpointer == 0)
-      naError("naRemovePosRootConstBack", "backpointer says that element is not part of the heap.");
+      naError("backpointer says that element is not part of the heap.");
   #endif
   returnvalue = naGetPtrConst(&(thedata[backpointer].ptr));
   *(thedata[backpointer].backpointer) = 0;
@@ -492,7 +492,7 @@ NA_HDEF void* naRemoveHeapPosMutableNoBack(NAHeap* heap, NAInt backpointer){
   NA_UNUSED(heap);
   NA_UNUSED(backpointer);
   #ifndef NDEBUG
-    naError("naRemoveHeapPosMutableNoBack", "Can not update heap as he stores no backpointers. Function has no effect");
+    naError("Can not update heap as he stores no backpointers. Function has no effect");
   #endif
   return NA_NULL;
 }
@@ -503,9 +503,9 @@ NA_HDEF void* naRemoveHeapPosMutableBack(NAHeap* heap, NAInt backpointer){
   void* returnvalue;
   #ifndef NDEBUG
     if(backpointer > heap->count)
-      naError("naRemoveHeapPosMutableBack", "backpointer makes no sense.");
+      naError("backpointer makes no sense.");
     if(backpointer == 0)
-      naError("naRemoveHeapPosMutableBack", "backpointer says that element is not part of the heap.");
+      naError("backpointer says that element is not part of the heap.");
   #endif
   returnvalue = naGetPtrMutable(&(thedata[backpointer].ptr));
   *(thedata[backpointer].backpointer) = 0;
@@ -523,7 +523,7 @@ NA_HDEF void naUpdateHeapElementNoBack(NAHeap* heap, NAInt backpointer){
   NA_UNUSED(heap);
   NA_UNUSED(backpointer);
   #ifndef NDEBUG
-    naError("naUpdateHeapElementNoBack", "Can not update heap as he stores no backpointers. Function has no effect");
+    naError("Can not update heap as he stores no backpointers. Function has no effect");
   #endif
 }
 
@@ -535,9 +535,9 @@ NA_HDEF void naUpdateHeapElementBack(NAHeap* heap, NAInt backpointer){
   NAInt curindex;
   #ifndef NDEBUG
     if(backpointer > heap->count)
-      naError("naUpdateHeapElement", "backpointer makes no sense.");
+      naError("backpointer makes no sense.");
     if(backpointer == 0)
-      naError("naUpdateHeapElement", "backpointer says that element is not part of the heap.");
+      naError("backpointer says that element is not part of the heap.");
   #endif
   tmp = thedata[backpointer];
   curindex = heap->moveup(heap, tmp.key, backpointer);
@@ -554,22 +554,22 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
   NAInt entrysize;
   #ifndef NDEBUG
     if(!heap)
-      naCrash("naInitHeap", "heap is Null-Pointer");
+      naCrash("heap is Null-Pointer");
     // there is always count + 1 elements stored in the array.
     if(count >= NA_INT_MAX){
-      naCrash("naInitHeap", "Heap count is too big.");
+      naCrash("Heap count is too big.");
       return NA_NULL;
     }
     // Note that the following case count==0 could be automatically converted
     // to -1. But there might be a different use in the future. Therefore, we
     // define these two values to be invalid now.
     if(count == 0)
-      naError("naInitHeap", "count == 0 is not allowed.");
+      naError("count == 0 is not allowed.");
     // Make sure, the negative count is a power of 2.
     if(count < 0){
       NAInt countpower = naLog2i(-count);
       if((NAInt)naPow(2., (double)countpower) != -count)
-        naError("naInitHeap", "negative count must be a power of 2.");
+        naError("negative count must be a power of 2.");
     }
   #endif
   heap->maxcount = count;
@@ -620,7 +620,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
       break;
     default:
       #ifndef NDEBUG
-        naCrash("naInitHeap", "flag combination not implemented.");
+        naCrash("flag combination not implemented.");
         return NA_NULL;
       #else
         break;
@@ -673,7 +673,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
       break;
     default:
       #ifndef NDEBUG
-        naCrash("naInitHeap", "flag combination not implemented.");
+        naCrash("flag combination not implemented.");
         return NA_NULL;
       #else
         break;

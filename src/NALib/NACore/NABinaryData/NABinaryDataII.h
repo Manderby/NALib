@@ -28,11 +28,11 @@ NA_IDEF void naCopy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s){
     NAInt dist = (NAInt)((NAByte*)d - (NAByte*)s);
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 1)
-      naError("naCopy8", "Restrict pointers overlap.");
+      naError("Restrict pointers overlap.");
     if(!d)
-      naCrash("naCopy8", "Pointer d is Null-Pointer.");
+      naCrash("Pointer d is Null-Pointer.");
     if(!s)
-      naCrash("naCopy8", "Pointer s is Null-Pointer.");
+      naCrash("Pointer s is Null-Pointer.");
   #endif
   *(uint8*)d = *(uint8*)s;
 }
@@ -41,11 +41,11 @@ NA_IDEF void naCopy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
     NAInt dist = (NAInt)((NAByte*)d - (NAByte*)s);
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 2)
-      naError("naCopy16", "Restrict pointers overlap.");
+      naError("Restrict pointers overlap.");
     if(!d)
-      naCrash("naCopy16", "Pointer d is Null-Pointer.");
+      naCrash("Pointer d is Null-Pointer.");
     if(!s)
-      naCrash("naCopy16", "Pointer s is Null-Pointer.");
+      naCrash("Pointer s is Null-Pointer.");
   #endif
   *(uint16*)d = *(uint16*)s;
 }
@@ -54,11 +54,11 @@ NA_IDEF void naCopy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
     NAInt dist = (NAInt)((NAByte*)d - (NAByte*)s);
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 4)
-      naError("naCopy32", "Restrict pointers overlap.");
+      naError("Restrict pointers overlap.");
     if(!d)
-      naCrash("naCopy32", "Pointer d is Null-Pointer.");
+      naCrash("Pointer d is Null-Pointer.");
     if(!s)
-      naCrash("naCopy32", "Pointer s is Null-Pointer.");
+      naCrash("Pointer s is Null-Pointer.");
   #endif
   *(uint32*)d = *(uint32*)s;
 }
@@ -67,11 +67,11 @@ NA_IDEF void naCopy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
     NAInt dist = (NAInt)((NAByte*)d - (NAByte*)s);
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 8)
-      naError("naCopy64", "Restrict pointers overlap.");
+      naError("Restrict pointers overlap.");
     if(!d)
-      naCrash("naCopy64", "Pointer d is Null-Pointer.");
+      naCrash("Pointer d is Null-Pointer.");
     if(!s)
-      naCrash("naCopy64", "Pointer s is Null-Pointer.");
+      naCrash("Pointer s is Null-Pointer.");
   #endif
   #if defined NA_TYPE_INT64
     *(uint64*)d = *(uint64*)s;
@@ -87,11 +87,11 @@ NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
     NAInt dist = (NAInt)((NAByte*)d - (NAByte*)s);
     if((NAByte*)d<(NAByte*)s){dist = -dist;};
     if(dist < 16)
-      naError("naCopy128", "Restrict pointers overlap.");
+      naError("Restrict pointers overlap.");
     if(!d)
-      naCrash("naCopy128", "Pointer d is Null-Pointer.");
+      naCrash("Pointer d is Null-Pointer.");
     if(!s)
-      naCrash("naCopy128", "Pointer s is Null-Pointer.");
+      naCrash("Pointer s is Null-Pointer.");
   #endif
   #if defined NA_TYPE_INT64
     *(uint64*)d = *(uint64*)s;
@@ -115,11 +115,11 @@ NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
 NA_IDEF void naCopyn(void* NA_RESTRICT d, const void* NA_RESTRICT s, NAInt bytesize){
   #ifndef NDEBUG
     if(!d)
-      naCrash("naCopy8", "Pointer d is Null-Pointer.");
+      naCrash("Pointer d is Null-Pointer.");
     if(!s)
-      naCrash("naCopy8", "Pointer s is Null-Pointer.");
+      naCrash("Pointer s is Null-Pointer.");
     if(bytesize < 1)
-      naCrash("naCopyn", "count is smaller than 1.");
+      naCrash("count is smaller than 1.");
   #endif
   memcpy(d, s, (size_t)bytesize);
 }
@@ -136,11 +136,11 @@ NA_IDEF void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b){
     NAInt dist = (NAInt)((NAByte*)a - (NAByte*)b);
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
     if(dist < 1)
-      naError("naSwap8", "Restrict pointers overlap.");
+      naError("Restrict pointers overlap.");
     if(!a)
-      naCrash("naSwap8", "Pointer a is Null-Pointer");
+      naCrash("Pointer a is Null-Pointer");
     if(!b)
-      naCrash("naSwap8", "Pointer b is Null-Pointer");
+      naCrash("Pointer b is Null-Pointer");
   #endif
   // Note: Do not write the following 3 lines as 1 line. The compiler might
   // cache the result of the dereference operators!
@@ -154,11 +154,11 @@ NA_IDEF void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
     NAInt dist = (NAInt)((NAByte*)a - (NAByte*)b);
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
     if(dist < 2)
-      naError("naSwap16", "Restrict pointers overlap.");
+      naError("Restrict pointers overlap.");
     if(!a)
-      naCrash("naSwap16", "Pointer a is Null-Pointer");
+      naCrash("Pointer a is Null-Pointer");
     if(!b)
-      naCrash("naSwap16", "Pointer b is Null-Pointer");
+      naCrash("Pointer b is Null-Pointer");
   #endif
   // Note: Do not write the following 3 lines as 1 line. The compiler might
   // cache the result of the dereference operators!
@@ -172,11 +172,11 @@ NA_IDEF void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
     NAInt dist = (NAInt)((NAByte*)a - (NAByte*)b);
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
     if(dist < 4)
-      naError("naSwap32", "Restrict pointers overlap.");
+      naError("Restrict pointers overlap.");
     if(!a)
-      naCrash("naSwap32", "Pointer a is Null-Pointer");
+      naCrash("Pointer a is Null-Pointer");
     if(!b)
-      naCrash("naSwap32", "Pointer b is Null-Pointer");
+      naCrash("Pointer b is Null-Pointer");
   #endif
   // Note: Do not write the following 3 lines as 1 line. The compiler might
   // cache the result of the dereference operators!
@@ -190,11 +190,11 @@ NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
     NAInt dist = (NAInt)((NAByte*)a - (NAByte*)b);
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
     if(dist < 8)
-      naError("naSwap64", "Restrict pointers overlap.");
+      naError("Restrict pointers overlap.");
     if(!a)
-      naCrash("naSwap64", "Pointer a is Null-Pointer");
+      naCrash("Pointer a is Null-Pointer");
     if(!b)
-      naCrash("naSwap64", "Pointer b is Null-Pointer");
+      naCrash("Pointer b is Null-Pointer");
   #endif
   // Note: Do not write the following 3 lines as 1 line. The compiler might
   // cache the result of the dereference operators!
@@ -215,11 +215,11 @@ NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
     NAInt dist = (NAInt)((NAByte*)a - (NAByte*)b);
     if((NAByte*)a<(NAByte*)b){dist = -dist;};
     if(dist < 16)
-      naError("naSwap128", "Restrict pointers overlap.");
+      naError("Restrict pointers overlap.");
     if(!a)
-      naCrash("naSwap128", "Pointer a is Null-Pointer");
+      naCrash("Pointer a is Null-Pointer");
     if(!b)
-      naCrash("naSwap128", "Pointer b is Null-Pointer");
+      naCrash("Pointer b is Null-Pointer");
   #endif
   naSwap64(a, b);
   a = ((NAByte*)a) + 8;
@@ -299,7 +299,7 @@ NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b){
 NA_IDEF void naZeron32(void* d, int32 bytesize){
   #ifndef NDEBUG
     if(bytesize < NA_ONE_32)
-      naError("naZeron32", "count should not be < 1");
+      naError("count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
   memset(d, 0, (size_t)bytesize);
@@ -308,14 +308,14 @@ NA_IDEF void naZeron32(void* d, int32 bytesize){
 NA_IDEF void naZeron64(void* d, int64 bytesize){
   #ifndef NDEBUG
     if(naSmallerInt64(bytesize, NA_ONE_64))
-      naError("naZeron64", "count should not be < 1");
+      naError("count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
   #if defined NA_TYPE_INT64
     memset(d, 0, (size_t)bytesize);
   #else
     #ifndef NDEBUG
-      naError("naZeron64", "Impossible to convert to a 64 bit size_t type, as no accessible 64 bit integer type exists in this configuration. Falling back to 32 bits.");
+      naError("Impossible to convert to a 64 bit size_t type, as no accessible 64 bit integer type exists in this configuration. Falling back to 32 bits.");
     #endif
     memset(d, 0, (size_t)naCastInt64ToInt32(bytesize));
   #endif
@@ -336,7 +336,7 @@ NA_IDEF void naZeron(void* d, NAInt bytesize){
 NA_IDEF void naSetn32(void* d, int32 bytesize, NAByte value){
   #ifndef NDEBUG
     if(bytesize < NA_ONE_32)
-      naError("naSetn32", "count should not be < 1");
+      naError("count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
   memset(d, value, (size_t)bytesize);
@@ -345,14 +345,14 @@ NA_IDEF void naSetn32(void* d, int32 bytesize, NAByte value){
 NA_IDEF void naSetn64(void* d, int64 bytesize, NAByte value){
   #ifndef NDEBUG
     if(naSmallerInt64(bytesize, NA_ONE_64))
-      naError("naSetn64", "count should not be < 1");
+      naError("count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
   #if defined NA_TYPE_INT64
     memset(d, value, (size_t)bytesize);
   #else
     #ifndef NDEBUG
-      naError("naSetn64", "Impossible to convert to a 64 bit size_t type, as no accessible 64 bit integer type exists in this configuration. Falling back to 32 bits.");
+      naError("Impossible to convert to a 64 bit size_t type, as no accessible 64 bit integer type exists in this configuration. Falling back to 32 bits.");
     #endif
     memset(d, value, (size_t)naCastInt64ToInt32(bytesize));
   #endif
@@ -380,7 +380,7 @@ NA_IDEF void naFill8WithBytes( void* d,
   NAByte* p;
   #ifndef NDEBUG
     if(!d)
-      naCrash("naFill8WithBytes", "Pointer is Null-Pointer.");
+      naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)d;
   *p = b0;
@@ -391,7 +391,7 @@ NA_IDEF void naFill16WithBytes( void* d,
   NAByte* p;
   #ifndef NDEBUG
     if(!d)
-      naCrash("naFill16WithBytes", "Pointer is Null-Pointer.");
+      naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)d;
   *p++ = b0; *p = b1;
@@ -402,7 +402,7 @@ NA_IDEF void naFill32WithBytes( void* d,
   NAByte* p;
   #ifndef NDEBUG
     if(!d)
-      naCrash("naFill32WithBytes", "Pointer is Null-Pointer.");
+      naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)d;
   *p++ = b0; *p++ = b1; *p++ = b2; *p = b3;
@@ -414,7 +414,7 @@ NA_IDEF void naFill64WithBytes( void* d,
   NAByte* p;
   #ifndef NDEBUG
     if(!d)
-      naCrash("naFill64WithBytes", "Pointer is Null-Pointer.");
+      naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)d;
   *p++ = b0; *p++ = b1; *p++ = b2; *p++ = b3;
@@ -429,7 +429,7 @@ NA_IDEF void naFill128WithBytes( void* d,
   NAByte* p;
   #ifndef NDEBUG
     if(!d)
-      naCrash("naFill128WithBytes", "Pointer is Null-Pointer.");
+      naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)d;
   *p++ = b0;  *p++ = b1;  *p++ = b2;  *p++ = b3;
@@ -448,7 +448,7 @@ NA_IDEF NABool naEqual8WithBytes(const void* s, NAByte b0){
   NAByte* p;
   #ifndef NDEBUG
     if(!s)
-      naCrash("naEqual8WithBytes", "Pointer is Null-Pointer.");
+      naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)s;
   if(*p   != b0){return NA_FALSE;}
@@ -459,7 +459,7 @@ NA_IDEF NABool naEqual16WithBytes(const void* s, NAByte b0, NAByte b1){
   NAByte* p;
   #ifndef NDEBUG
     if(!s)
-      naCrash("naEqual16WithBytes", "Pointer is Null-Pointer.");
+      naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)s;
   if(*p++ != b0){return NA_FALSE;}
@@ -472,7 +472,7 @@ NA_IDEF NABool naEqual32WithBytes(const void* s,
   NAByte* p;
   #ifndef NDEBUG
     if(!s)
-      naCrash("naEqual32WithBytes", "Pointer is Null-Pointer.");
+      naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)s;
   if(*p++ != b0){return NA_FALSE;}
@@ -488,7 +488,7 @@ NA_IDEF NABool naEqual64WithBytes(const void* s,
   NAByte* p;
   #ifndef NDEBUG
     if(!s)
-      naCrash("naEqual64WithBytes", "Pointer is Null-Pointer.");
+      naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)s;
   if(*p++ != b0){return NA_FALSE;}
@@ -510,7 +510,7 @@ NA_IDEF NABool naEqual128WithBytes(const void* s,
   NAByte* p;
   #ifndef NDEBUG
     if(!s)
-      naCrash("naEqual128WithBytes", "Pointer is Null-Pointer.");
+      naCrash("Pointer is Null-Pointer.");
   #endif
   p = (NAByte*)s;
   if(*p++ != b0) {return NA_FALSE;}

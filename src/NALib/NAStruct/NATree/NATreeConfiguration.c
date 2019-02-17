@@ -35,7 +35,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     break;
   default:
     #ifndef NDEBUG
-      naError("naCreateTreeConfiguration", "Invalid key type in flags");
+      naError("Invalid key type in flags");
     #endif
     break;
   }

@@ -15,9 +15,9 @@ NA_HDEF void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt 
 
   #ifndef NDEBUG
     if(!data)
-      naError("naStoreBufferBytes", "data is Null pointer.");
+      naError("data is Null pointer.");
     if(naGetBufferCurBit(iter) != 0)
-      naError("naStoreBufferBytes", "Bit offset not 0.");
+      naError("Bit offset not 0.");
   #endif
 
   buffer = naGetBufferIteratorBufferConst(iter);
@@ -44,7 +44,7 @@ NA_HDEF void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt 
 
     #ifndef NDEBUG
       if(naIsBufferIteratorSparse(iter))
-        naError("naStoreBufferBytes", "Cur part is sparse");
+        naError("Cur part is sparse");
     #endif
 
     // The part pointed to by the iterator should be the one containing offset.
@@ -60,7 +60,7 @@ NA_HDEF void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt 
 
     #ifndef NDEBUG
       if(possiblelength <= 0)
-        naError("naStoreBufferBytes", "possible length invalid");
+        naError("possible length invalid");
     #endif
 
     if(possiblelength > bytesize){
