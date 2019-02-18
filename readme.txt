@@ -1,25 +1,29 @@
-NALib is a collection of source files written in the programming language C
+NALib is a collection of source files written in the C programming language
 which contains code like system-dependent macros, high-performance functions
-and modern container structs. It is based on a C++ library which had been used
-during 10 years in research and has then been transferred to C over the past
-5 years and been verified continuously in selling products for the industry
-and consumer market. The code also contains many didactical comments which
-explain why the soure code is written as it is.
+and container structs, a small runtime system with memory pools and optional
+reference counting and many helpful comments.
+
+It evolved since 2004, using a very modern coding style using C11 features but
+at the same time being compatible back to ANSI-C (except for the // comments).
+It had been used in research, consumer market and industry where it had been
+verified continuously in selling products.
 
 Current version is 22.
 Branch "version23" contains the latest developments.
 
+Installation:
+--------------
 NALib is short for "Not A Library", which means that NALib is not distributed
 as a static or dynamic library, but only as source files.
 
 - Simply include the whole NALib folder into your project.
 - NALib just needs the standard libraries.
-- Use NDEBUG for testing.
+- Compilation of the whole collection usually takes less than 5 seconds.
 
 Documentation:
 --------------
-Can be found directly within the source files.
-Some design principles can be read in the doc/documentation.txt file.
+- Can be found directly within the source files.
+- Some design principles can be read in the doc/documentation.txt file.
 
 Contribute:
 -----------
