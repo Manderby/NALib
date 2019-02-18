@@ -41,6 +41,7 @@
 		90CB7C8A2219E02500607FE3 /* NATreeOct.c in Sources */ = {isa = PBXBuildFile; fileRef = 90CB7C832219E02500607FE3 /* NATreeOct.c */; };
 		90CB7C8B2219E02500607FE3 /* NATreeConfiguration.c in Sources */ = {isa = PBXBuildFile; fileRef = 90CB7C852219E02500607FE3 /* NATreeConfiguration.c */; };
 		90CB7C8C2219E02500607FE3 /* NATreeAVL.c in Sources */ = {isa = PBXBuildFile; fileRef = 90CB7C862219E02500607FE3 /* NATreeAVL.c */; };
+		90CB7C93221AE87E00607FE3 /* NATreeIteration.c in Sources */ = {isa = PBXBuildFile; fileRef = 90CB7C92221AE87E00607FE3 /* NATreeIteration.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -190,9 +191,13 @@
 		90CB7C812219E02500607FE3 /* NATreeII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATreeII.h; sourceTree = "<group>"; };
 		90CB7C822219E02500607FE3 /* NATreeBin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATreeBin.c; sourceTree = "<group>"; };
 		90CB7C832219E02500607FE3 /* NATreeOct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATreeOct.c; sourceTree = "<group>"; };
-		90CB7C842219E02500607FE3 /* NATreeCoreII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATreeCoreII.h; sourceTree = "<group>"; };
 		90CB7C852219E02500607FE3 /* NATreeConfiguration.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATreeConfiguration.c; sourceTree = "<group>"; };
 		90CB7C862219E02500607FE3 /* NATreeAVL.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATreeAVL.c; sourceTree = "<group>"; };
+		90CB7C8E221A8E4700607FE3 /* NATreeConfigurationII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NATreeConfigurationII.h; sourceTree = "<group>"; };
+		90CB7C8F221A8F1B00607FE3 /* NATreeItemII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NATreeItemII.h; sourceTree = "<group>"; };
+		90CB7C90221A92EB00607FE3 /* NATreeIterationII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NATreeIterationII.h; sourceTree = "<group>"; };
+		90CB7C91221AE70700607FE3 /* NATreeUtilitiesII.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NATreeUtilitiesII.h; sourceTree = "<group>"; };
+		90CB7C92221AE87E00607FE3 /* NATreeIteration.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NATreeIteration.c; sourceTree = "<group>"; };
 		90D4A22620BB3E3500171E61 /* todo.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = todo.txt; sourceTree = "<group>"; };
 		90D4A22720BB3E3500171E61 /* NALibChangelogV20_V30.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = NALibChangelogV20_V30.txt; sourceTree = "<group>"; };
 		90D4A22820BB3E3500171E61 /* documentation.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = documentation.txt; sourceTree = "<group>"; };
@@ -454,10 +459,14 @@
 				90CB7C822219E02500607FE3 /* NATreeBin.c */,
 				90CB7C7E2219E02500607FE3 /* NATreeBin.h */,
 				90CB7C852219E02500607FE3 /* NATreeConfiguration.c */,
-				90CB7C842219E02500607FE3 /* NATreeCoreII.h */,
+				90CB7C8E221A8E4700607FE3 /* NATreeConfigurationII.h */,
 				90CB7C812219E02500607FE3 /* NATreeII.h */,
+				90CB7C8F221A8F1B00607FE3 /* NATreeItemII.h */,
+				90CB7C92221AE87E00607FE3 /* NATreeIteration.c */,
+				90CB7C90221A92EB00607FE3 /* NATreeIterationII.h */,
 				90CB7C832219E02500607FE3 /* NATreeOct.c */,
 				90CB7C7D2219E02500607FE3 /* NATreeOct.h */,
+				90CB7C91221AE70700607FE3 /* NATreeUtilitiesII.h */,
 			);
 			path = NATree;
 			sourceTree = "<group>";
@@ -564,6 +573,7 @@
 				905CC10121C24431002861BC /* NABufferWrite.c in Sources */,
 				905CC11021C24431002861BC /* NAPNG.c in Sources */,
 				905CC0FF21C24431002861BC /* NABufferRead.c in Sources */,
+				90CB7C93221AE87E00607FE3 /* NATreeIteration.c in Sources */,
 				905CC11621C24431002861BC /* NADeflate.c in Sources */,
 				905CC11C21C24431002861BC /* NAMoney.c in Sources */,
 				905CC10D21C24431002861BC /* NAOctTree.c in Sources */,

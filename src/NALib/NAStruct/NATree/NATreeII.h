@@ -111,10 +111,10 @@ struct NATreeConfiguration{
   NATreeNodeDataDestructor      nodeDataDestructor;
   NATreeNodeUpdater             nodeUpdater;
   NAPtr                         data;
-  void*                         internaldata;
-  NAInt                         flags;
 
   // Core settings:
+  void*                         internaldata;
+  NAInt                         flags;
   NAInt                         childpernode;
   NAKeyIndexGetter              keyIndexGetter;
   NAKeyEqualer                  keyEqualer;
@@ -177,8 +177,55 @@ struct NATreeIterationInfo{
   NAInt breakindx;
 };
 
-#include "NATreeCoreII.h"
 
+
+// Helper functions. Do not use as public API.
+
+// Configuration
+NA_HIAPI void naDeallocConfiguration(NATreeConfiguration* config);
+NA_HIAPI NATreeConfiguration* naRetainTreeConfiguration(NATreeConfiguration* config);
+
+// Item
+NA_HIAPI void naInitTreeItem(NATreeItem* item);
+NA_HIAPI void naClearTreeItem(NATreeItem* item);
+NA_HIAPI NATreeNode* naGetTreeItemParent(const NATreeItem* item);
+NA_HIAPI void naSetTreeItemParent(NATreeItem* item, NATreeNode* parent);
+NA_HIAPI NABool naIsTreeItemRoot(const NATree* tree, const NATreeItem* item);
+
+// Node
+NA_HIAPI void naInitTreeNode(NATreeNode* node);
+NA_HIAPI void naClearTreeNode(NATreeNode* node);
+NA_HIAPI NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx);
+NA_HIAPI void naMarkNodeChildLeaf(NATreeNode* node, NAInt childindx, NABool isleaf);
+
+// Leaf
+NA_HIAPI void naInitTreeLeaf(NATreeLeaf* leaf);
+NA_HIAPI NAPtr naConstructLeafData(NATree* tree, const void* key, NAPtr data);
+NA_HIAPI void naDestructLeafData(NATree* tree, NAPtr data);
+NA_HIAPI void naClearTreeLeaf(NATreeLeaf* leaf);
+
+// Iterator
+NA_HIAPI void naSetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newitem);
+NA_HIAPI const NATree* naGetTreeIteratorTreeConst(const NATreeIterator* iter);
+NA_HIAPI NATree* naGetTreeIteratorTreeMutable(NATreeIterator* iter);
+NA_HIAPI NABool naAddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafInsertOrder insertOrder, NABool movetonew);
+NA_HAPI  NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info);
+NA_HAPI  NABool naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABool usebubble);
+NA_HAPI  NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace);
+
+// Utilities
+NA_HIAPI NABool naIsTreeRootLeaf(const NATree* tree);
+NA_HIAPI void naMarkTreeRootLeaf(NATree* tree, NABool isleaf);
+NA_HIAPI NABool naIsTreeItemLeaf(const NATree* tree, NATreeItem* item);
+NA_HAPI  NATreeLeaf* naAddTreeContentAtLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
+NA_HAPI  void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childindx);
+NA_HAPI  NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node);
+
+#include "../../NACore/NAValueHelper.h"
+#include "NATreeConfigurationII.h"
+#include "NATreeItemII.h"
+#include "NATreeIterationII.h"
+#include "NATreeUtilitiesII.h"
 
 
 // Copyright (c) NALib, Tobias Stamm

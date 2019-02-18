@@ -201,13 +201,23 @@ NA_IAPI NABool naIsTreeEmpty(const NATree* tree);
 // Returns the data stored at the first or last leaf. Note that trying to get
 // a mutable pointer of a data object which was stored as const will result
 // in a warning when NDEBUG is undefined.
+//
+// Note that these are just convenience functions. They internally createn an
+// iterator, search for the desired item and clear the iterator again. You can
+// do this manually if you want. The results are exactly the same.
 NA_IAPI const void* naGetTreeFirstConst  (const NATree* tree);
 NA_IAPI void*       naGetTreeFirstMutable(const NATree* tree);
 NA_IAPI const void* naGetTreeLastConst   (const NATree* tree);
 NA_IAPI void*       naGetTreeLastMutable (const NATree* tree);
 
 // Adds the given content at the beginning or end of a tree which is configured
-// without keys. These functions will not work with keyed trees.
+// without keys. These functions will not work with keyed trees. All functions
+// return always true to be consistent with the other add functions below which
+// return true when a new item has been added to the tree.
+//
+// Note that these are just convenience functions. They internally create an
+// iterator, add the element and clear the iterator again. You can do this
+// manually if you want. The results are exactly the same.
 NA_IAPI NABool naAddTreeFirstConst  (NATree* tree, const void* content);
 NA_IAPI NABool naAddTreeFirstMutable(NATree* tree,       void* content);
 NA_IAPI NABool naAddTreeLastConst   (NATree* tree, const void* content);
