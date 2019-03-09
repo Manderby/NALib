@@ -14,6 +14,14 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   config->flags = flags;
   naInitRefCount(&(config->refcount));
 
+  #ifndef NDEBUG
+    // Just some security measures in case the programmer forgets to set.
+    config->leafKeyOffset  = -1;
+    config->nodeKeyOffset  = -1;
+    config->leafDataOffset = -1;
+    config->nodeDataOffset = -1;
+  #endif
+  
   if(flags & NA_TREE_OCTTREE){
   
     config->childpernode            = 8;
@@ -46,10 +54,11 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->childGetter             = naGetChildOct;
     config->leafRemover             = naRemoveLeafOct;
     config->leafInserter            = naInsertLeafOct;
-    config->leafKeyGetter           = naGetLeafKeyOct;
-    config->nodeKeyGetter           = naGetNodeKeyOct;
-    config->leafDataGetter          = naGetLeafDataOct;
-    config->nodeDataGetter          = naGetNodeDataOct;
+
+    config->leafKeyOffset           = LEAF_KEY_OFFSET_OCT;
+    config->nodeKeyOffset           = NODE_KEY_OFFSET_OCT;
+    config->leafDataOffset          = LEAF_DATA_OFFSET_OCT;
+    config->nodeDataOffset          = NODE_DATA_OFFSET_OCT;
 
   }else{
 
@@ -91,10 +100,11 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->childGetter             = naGetChildBin;
     config->leafRemover             = naRemoveLeafBin;
     config->leafInserter            = naInsertLeafBin;
-    config->leafKeyGetter           = naGetLeafKeyBin;
-    config->nodeKeyGetter           = naGetNodeKeyBin;
-    config->leafDataGetter          = naGetLeafDataBin;
-    config->nodeDataGetter          = naGetNodeDataBin;
+    
+    config->leafKeyOffset           = LEAF_KEY_OFFSET_BIN;
+    config->nodeKeyOffset           = NODE_KEY_OFFSET_BIN;
+    config->leafDataOffset          = LEAF_DATA_OFFSET_BIN;
+    config->nodeDataOffset          = NODE_DATA_OFFSET_BIN;
   }
   
   return config;

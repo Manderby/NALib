@@ -274,7 +274,7 @@ NA_IAPI void naClearTreeIterator(NATreeIterator* iter);
 // not allowed.
 //
 // When using the FOUND macro, the search stops and the return value of the
-// naLocateTreeToken function will be NA_TRUE. When using the ABORT macro,
+// LocateTreeToken function will be NA_TRUE. When using the ABORT macro,
 // search stops as well but the return value will be NA_FALSE.
 //
 // Beware, you can very vell create an endless loop!

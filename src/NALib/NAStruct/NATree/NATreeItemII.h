@@ -78,12 +78,20 @@ NA_HIDEF void naMarkNodeChildLeaf(NATreeNode* node, NAInt childindx, NABool isle
 
 
 
+NA_HIDEF const void* naGetTreeNodeKey(const NATree* tree, NATreeNode* node){
+  return ((const char*)node) + tree->config->nodeKeyOffset; 
+}
+
+
+
+NA_HIDEF NAPtr naGetTreeNodeData(const NATree* tree, NATreeNode* node){
+  return *(NAPtr*)(((char*)node) + tree->config->nodeDataOffset); 
+}
+
 
 // /////////////////////////////////////
 // Leaf
 // /////////////////////////////////////
-
-
 
 NA_HIDEF void naInitTreeLeaf(NATreeLeaf* leaf){
   naInitTreeItem(&(leaf->item));
@@ -101,7 +109,7 @@ NA_HIDEF NAPtr naConstructLeafData(NATree* tree, const void* key, NAPtr data){
 
 
 
-NA_HIDEF void naDestructLeafData(NATree* tree, NAPtr data){
+NA_HIDEF void naDestructLeafData(const NATree* tree, NAPtr data){
   if(tree->config->leafDataDestructor){
     tree->config->leafDataDestructor(data, tree->config->data);
   }
@@ -113,6 +121,23 @@ NA_HIDEF void naClearTreeLeaf(NATreeLeaf* leaf){
   naClearTreeItem(&(leaf->item));
 }
 
+
+
+NA_HIDEF const void* naGetTreeLeafKey(const NATree* tree, NATreeLeaf* leaf){
+  return ((const char*)leaf) + tree->config->leafKeyOffset; 
+}
+
+
+
+NA_HIDEF NAPtr naGetTreeLeafData(const NATree* tree, NATreeLeaf* leaf){
+  return *(NAPtr*)(((char*)leaf) + tree->config->leafDataOffset); 
+}
+
+
+
+NA_HIDEF void naSetTreeLeafData(const NATree* tree, NATreeLeaf* leaf, NAPtr newcontent){
+  *(NAPtr*)(((char*)leaf) + tree->config->leafDataOffset) = newcontent; 
+}
 
 
 // Copyright (c) NALib, Tobias Stamm

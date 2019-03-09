@@ -203,7 +203,7 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
   if(element == (NACoreUIElement*)app){
     #ifndef NDEBUG
       if(relelement && (relelement != (NACoreUIElement*)app))
-        naError("naGetUIElementRect", "The relative element is invalid for the given uielement, which seems to be the application.");
+        naError("The relative element is invalid for the given uielement, which seems to be the application.");
     #endif
     return naGetApplicationAbsoluteRect();
   }

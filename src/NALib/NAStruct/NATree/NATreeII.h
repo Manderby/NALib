@@ -32,8 +32,7 @@ typedef struct NATreeIterationInfo NATreeIterationInfo;
 typedef enum{
   NA_TREE_LEAF_INSERT_ORDER_KEY,
   NA_TREE_LEAF_INSERT_ORDER_PREV,
-  NA_TREE_LEAF_INSERT_ORDER_NEXT,
-  NA_TREE_LEAF_INSERT_ORDER_REPLACE
+  NA_TREE_LEAF_INSERT_ORDER_NEXT
 } NATreeLeafInsertOrder;
 
 // Callback function types for the different kind of trees. If you want to
@@ -75,7 +74,8 @@ typedef void            (*NATreeLeafCoreDestructor)(NATree* tree, NATreeLeaf* le
 // This function should return the uppermost node which contains the given key.
 // It must start searching for the key at the given item and bubble upwards.
 // Should return Null, if the key does not fit anywhere in the tree. The
-// given item is never Null and never the root of the tree which is never empty.
+// given item is never Null and never the root of the tree which itself is
+// never empty.
 typedef NATreeNode*     (*NATreeBubbleLocator)(const NATree* tree, NATreeItem* item, const void* key);
 // This function must search for the given key, starting from the given node
 // downwards the tree. If the key is found, matchfound must be set to true and
@@ -83,19 +83,14 @@ typedef NATreeNode*     (*NATreeBubbleLocator)(const NATree* tree, NATreeItem* i
 // be set to false and the leaf closest to the key must be returned. The tree
 // is never empty.
 typedef NATreeLeaf*     (*NATreeCaptureLocator)(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound);
+// This function must create a new node which contains both the existing leaf
+// and the newleaf and attach the newleaf to it.
+typedef void            (*NATreeLeafInserter)(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf, NATreeLeafInsertOrder insertOrder);
 
 typedef NAInt           (*NATreeChildIndexGetter)(NATreeNode* parent, NATreeItem* child);
 typedef NAInt           (*NATreeChildKeyIndexGetter)(const NATree* tree, NATreeNode* parent, const void* key);
 typedef NATreeItem*     (*NATreeChildGetter)(NATreeNode* parent, NAInt childindx);
 typedef NATreeNode*     (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
-typedef NATreeLeaf*     (*NATreeLeafInserter)(NATree* tree, NATreeLeaf* existingleaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
-typedef const void*     (*NATreeLeafKeyGetter)(NATreeLeaf* leaf);
-typedef const void*     (*NATreeNodeKeyGetter)(NATreeNode* node);
-
-// Must return the data of the given leaf.
-typedef NAPtr           (*NATreeLeafDataGetter)(NATreeLeaf* leaf);
-// Must return the data of the given node.
-typedef NAPtr           (*NATreeNodeDataGetter)(NATreeNode* node);
 
 
 
@@ -132,10 +127,11 @@ struct NATreeConfiguration{
   NATreeChildGetter             childGetter;
   NATreeLeafRemover             leafRemover;
   NATreeLeafInserter            leafInserter;
-  NATreeLeafKeyGetter           leafKeyGetter;
-  NATreeNodeKeyGetter           nodeKeyGetter;
-  NATreeLeafDataGetter          leafDataGetter;
-  NATreeNodeDataGetter          nodeDataGetter;
+  
+  int                           leafKeyOffset;
+  int                           nodeKeyOffset;
+  int                           leafDataOffset;
+  int                           nodeDataOffset;
 };
 
 struct NATreeItem{
@@ -197,18 +193,25 @@ NA_HIAPI void naInitTreeNode(NATreeNode* node);
 NA_HIAPI void naClearTreeNode(NATreeNode* node);
 NA_HIAPI NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx);
 NA_HIAPI void naMarkNodeChildLeaf(NATreeNode* node, NAInt childindx, NABool isleaf);
+NA_HIAPI const void* naGetTreeNodeKey(const NATree* tree, NATreeNode* node);
+NA_HIAPI NAPtr naGetTreeNodeData(const NATree* tree, NATreeNode* node);
 
 // Leaf
 NA_HIAPI void naInitTreeLeaf(NATreeLeaf* leaf);
 NA_HIAPI NAPtr naConstructLeafData(NATree* tree, const void* key, NAPtr data);
-NA_HIAPI void naDestructLeafData(NATree* tree, NAPtr data);
+NA_HIAPI void naDestructLeafData(const NATree* tree, NAPtr data);
 NA_HIAPI void naClearTreeLeaf(NATreeLeaf* leaf);
+NA_HIAPI const void* naGetTreeLeafKey(const NATree* tree, NATreeLeaf* leaf);
+NA_HIAPI NAPtr naGetTreeLeafData(const NATree* tree, NATreeLeaf* leaf);
+NA_HIDEF void naSetTreeLeafData(const NATree* tree, NATreeLeaf* leaf, NAPtr newcontent);
 
 // Iterator
 NA_HIAPI void naSetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newitem);
 NA_HIAPI const NATree* naGetTreeIteratorTreeConst(const NATreeIterator* iter);
 NA_HIAPI NATree* naGetTreeIteratorTreeMutable(NATreeIterator* iter);
 NA_HIAPI NABool naAddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafInsertOrder insertOrder, NABool movetonew);
+NA_HAPI void naIterateTreeCapture(NATreeIterator* iter, NAInt indx, NATreeIterationInfo* info);
+NA_HAPI void naIterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info);
 NA_HAPI  NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info);
 NA_HAPI  NABool naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABool usebubble);
 NA_HAPI  NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace);

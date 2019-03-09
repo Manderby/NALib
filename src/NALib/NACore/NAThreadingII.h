@@ -442,7 +442,7 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarm, double maxwaittime){
     long result;
     #ifndef NDEBUG
       if(maxwaittime < 0.)
-        naError("naAwaitAlarm", "maxwaittime should not be negative. Beware of the zero!");
+        naError("maxwaittime should not be negative. Beware of the zero!");
     #endif
     if(maxwaittime == 0){
       result = dispatch_semaphore_wait(alarm, DISPATCH_TIME_FOREVER);

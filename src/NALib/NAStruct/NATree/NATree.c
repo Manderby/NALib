@@ -11,9 +11,10 @@
 NA_HDEF NATreeLeaf* naAddTreeContentAtLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
   NATreeLeaf* contentleaf;
   NATreeNode* parent;
+  contentleaf = tree->config->leafCoreConstructor(tree, key, content);
   if(leaf){
     // We need to create a node holding both the old leaf and the new one.
-    contentleaf = tree->config->leafInserter(tree, leaf, key, content, insertOrder);
+    tree->config->leafInserter(tree, leaf, contentleaf, insertOrder);
     parent = naGetTreeItemParent(&(contentleaf->item));
     naUpdateTreeNodeBubbling(tree, parent, tree->config->childIndexGetter(parent, &(contentleaf->item)));
   }else{
@@ -23,7 +24,6 @@ NA_HDEF NATreeLeaf* naAddTreeContentAtLeaf(NATree* tree, NATreeLeaf* leaf, const
     #endif
     // There is no leaf to add to, meaning there was no root. Therefore, we
     // create a first leaf.
-    contentleaf = tree->config->leafCoreConstructor(tree, key, content);
     tree->root = &(contentleaf->item);
     naSetTreeItemParent(&(contentleaf->item), NA_NULL);
     naMarkTreeRootLeaf(tree, NA_TRUE);
@@ -38,9 +38,9 @@ NA_HDEF void naFillTreeNodeChildData(NATree* tree, NAPtr childdata[NA_TREE_NODE_
   for(i=0; i<tree->config->childpernode; i++){
     NATreeItem* child = tree->config->childGetter(node, i);
     if(naIsNodeChildLeaf(node, i)){
-      childdata[i] = tree->config->leafDataGetter((NATreeLeaf*)child);
+      childdata[i] = naGetTreeLeafData(tree, (NATreeLeaf*)child);
     }else{
-      childdata[i] = tree->config->nodeDataGetter((NATreeNode*)child);
+      childdata[i] = naGetTreeNodeData(tree, (NATreeNode*)child);
     }
   }
 }
@@ -58,7 +58,7 @@ NA_HDEF void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt ch
   if(tree->config->nodeUpdater){
     NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
     naFillTreeNodeChildData(tree, childdata, parent);
-    bubble = tree->config->nodeUpdater(tree->config->nodeDataGetter(parent), childdata, childindx, parent->flags & NA_TREE_CHILDS_MASK);
+    bubble = tree->config->nodeUpdater(naGetTreeNodeData(tree, parent), childdata, childindx, parent->flags & NA_TREE_CHILDS_MASK);
   }
 
   // Then we propagate the message towards the root if requested.
@@ -102,7 +102,7 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   if(bubble){
     NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
     naFillTreeNodeChildData(tree, childdata, node);
-    bubble = tree->config->nodeUpdater(tree->config->nodeDataGetter(node), childdata, -1, node->flags & NA_TREE_CHILDS_MASK);
+    bubble = tree->config->nodeUpdater(naGetTreeNodeData(tree, node), childdata, -1, node->flags & NA_TREE_CHILDS_MASK);
   }
 
   return bubble;

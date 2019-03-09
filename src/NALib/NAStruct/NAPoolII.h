@@ -23,9 +23,9 @@ struct NAPool{
 NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, NAUInt count){
   #ifndef NDEBUG
     if(!pool)
-      naCrash("naInitPoolEmpty", "pool is Null-Pointer");
+      naCrash("pool is Null-Pointer");
     if(count == 0)
-      naError("naInitPoolEmpty", "count is 0");
+      naError("count is 0");
   #endif
   pool->drops = naMalloc(count * sizeof(void*));
   pool->count = count;
@@ -43,11 +43,11 @@ NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, NAUInt typesize){
 
   #ifndef NDEBUG
     if(!pool)
-      naCrash("naInitPoolFilled", "pool is Null-Pointer");
+      naCrash("pool is Null-Pointer");
     if(count == 0)
-      naError("naInitPoolFilled", "count is 0");
+      naError("count is 0");
     if(typesize == 0)
-      naError("naInitPoolFilled", "typesize is 0");
+      naError("typesize is 0");
   #endif
   pool->drops = naMalloc(count * sizeof(void*));
   pool->count = count;
@@ -74,13 +74,13 @@ NA_IDEF void naClearPool(NAPool* pool){
   if(pool->storagearray){
     #ifndef NDEBUG
       if(pool->cur != pool->count)
-        naError("naClearPool", "Pool was created filled but is not filled now.");
+        naError("Pool was created filled but is not filled now.");
     #endif
     free(pool->storagearray);
   }else{
     #ifndef NDEBUG
       if(pool->cur != 0)
-        naError("naClearPool", "Pool was created empty but is not empty now.");
+        naError("Pool was created empty but is not empty now.");
     #endif
   }
   free(pool->drops);
@@ -91,7 +91,7 @@ NA_IDEF void naClearPool(NAPool* pool){
 NA_IDEF void* naSuckPool(NAPool* pool){
   #ifndef NDEBUG
     if(pool->cur == 0)
-      naError("naSuckPool", "Pool is empty");
+      naError("Pool is empty");
   #endif
   pool->cur--;
   return pool->drops[pool->cur];
@@ -102,9 +102,9 @@ NA_IDEF void* naSuckPool(NAPool* pool){
 NA_IDEF void naSpitPool(NAPool* pool, void* drop){
   #ifndef NDEBUG
     if(pool->cur == pool->count)
-      naError("naSpitPool", "Pool is full");
+      naError("Pool is full");
     if(pool->storagearray && (!naInsidei((NAByte*)drop - (NAByte*)pool->storagearray, 0, pool->typesize * pool->count)))
-      naError("naSpitPool", "Pool was created filled. This drop does not seem to be a drop of this pool.");
+      naError("Pool was created filled. This drop does not seem to be a drop of this pool.");
   #endif
   pool->drops[pool->cur] = drop;
   pool->cur++;

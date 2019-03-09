@@ -26,7 +26,7 @@ struct NAArray{
 NA_IDEF NAArray* naInitArray(NAArray* array){
   #ifndef NDEBUG
     if(!array)
-      naCrash("naInitArray", "array is Null-Pointer");
+      naCrash("array is Null-Pointer");
   #endif
   array->ptr = naMakePtrWithDataConst(NA_NULL);
   // The typesize is set to 1 such that calls to naGetArrayCount will not
@@ -45,11 +45,11 @@ NA_IDEF NAArray* naInitArray(NAArray* array){
 NA_IDEF NAArray* naInitArrayWithCount(NAArray* array, NAInt typesize, NAInt count){
   #ifndef NDEBUG
     if(!array)
-      naCrash("naInitArrayWithCount", "array is Null-Pointer");
+      naCrash("array is Null-Pointer");
     if(typesize < 1)
-      naError("naInitArrayWithCount", "typesize should not be < 1.");
+      naError("typesize should not be < 1.");
     if(count < 0)
-      naError("naInitArrayWithCount", "count should not be < 0.");
+      naError("count should not be < 0.");
   #endif
   array->typesize = typesize;
   array->count = count;
@@ -67,9 +67,9 @@ NA_IDEF NAArray* naInitArrayWithCount(NAArray* array, NAInt typesize, NAInt coun
 NA_IDEF NAArray* naInitArrayWithDataConst(NAArray* array, const void* data, NAInt typesize, NAInt count){
   #ifndef NDEBUG
     if(!array)
-      naCrash("naInitArrayWithDataConst", "array is Null-Pointer");
+      naCrash("array is Null-Pointer");
     if(typesize < 1)
-      naError("naInitArrayWithDataConst", "typesize should not be < 1");
+      naError("typesize should not be < 1");
   #endif
   array->typesize = typesize;
   array->count = count;
@@ -87,9 +87,9 @@ NA_IDEF NAArray* naInitArrayWithDataConst(NAArray* array, const void* data, NAIn
 NA_IDEF NAArray* naInitArrayWithDataMutable(NAArray* array, void* data, NAInt typesize, NAInt count, NAMutator destructor){
   #ifndef NDEBUG
     if(!array)
-      naCrash("naInitArrayWithDataMutable", "array is Null-Pointer");
+      naCrash("array is Null-Pointer");
     if(typesize < 1)
-      naError("naInitArrayWithDataMutable", "typesize should not be < 1");
+      naError("typesize should not be < 1");
   #endif
   array->typesize = typesize;
   array->count = count;
@@ -107,10 +107,10 @@ NA_IDEF NAArray* naInitArrayWithDataMutable(NAArray* array, void* data, NAInt ty
 NA_IDEF void naClearArray(NAArray* array){
   #ifndef NDEBUG
     if(!array){
-      naCrash("naClearArray", "array is Null-Pointer.");
+      naCrash("array is Null-Pointer.");
     }
     if(array->itercount)
-      naError("naClearArray", "There are still some iterators operating upon this array. Did you use naClearArrayIterator?");
+      naError("There are still some iterators operating upon this array. Did you use naClearArrayIterator?");
   #endif
   naCleanupPtr(&(array->ptr), array->destructor);
 }
@@ -123,7 +123,7 @@ NA_IDEF void naForeachArrayConst(NAArray* array, NAAccessor accessor){
 
   #ifndef NDEBUG
     if(!accessor)
-      naCrash("naForeachArray", "Accessor is Null");
+      naCrash("Accessor is Null");
   #endif
   count = naGetArrayCount(array);
   ptr = naGetPtrConst(array->ptr);
@@ -142,7 +142,7 @@ NA_IDEF void naForeachArrayMutable(NAArray* array, NAMutator mutator){
 
   #ifndef NDEBUG
     if(!mutator)
-      naCrash("naForeachArray", "Mutator is Null");
+      naCrash("Mutator is Null");
   #endif
   count = naGetArrayCount(array);
   ptr = naGetPtrMutable(array->ptr);
@@ -161,7 +161,7 @@ NA_IDEF void naForeachArraypConst(NAArray* array, NAAccessor accessor){
 
   #ifndef NDEBUG
     if(!accessor)
-      naCrash("naForeachArray", "Accessor is Null");
+      naCrash("Accessor is Null");
   #endif
   count = naGetArrayCount(array);
   ptr = naGetPtrConst(array->ptr);
@@ -180,7 +180,7 @@ NA_IDEF void naForeachArraypMutable(NAArray* array, NAMutator mutator){
 
   #ifndef NDEBUG
     if(!mutator)
-      naCrash("naForeachArray", "Mutator is Null");
+      naCrash("Mutator is Null");
   #endif
   count = naGetArrayCount(array);
   ptr = naGetPtrMutable(array->ptr);
@@ -196,11 +196,11 @@ NA_IDEF void naForeachArraypMutable(NAArray* array, NAMutator mutator){
 NA_IDEF const void* naGetArrayPointerConst(const NAArray* array){
   #ifndef NDEBUG
     if(!array){
-      naCrash("naGetArrayPointerConst", "array is Null-Pointer.");
+      naCrash("array is Null-Pointer.");
       return NA_NULL;
     }else{
       if(naIsArrayEmpty(array))
-        naError("naGetArrayPointerConst", "array is empty, returned pointer is NULL");
+        naError("array is empty, returned pointer is NULL");
     }
   #endif
   return naGetPtrConst(array->ptr);
@@ -211,11 +211,11 @@ NA_IDEF const void* naGetArrayPointerConst(const NAArray* array){
 NA_IDEF void* naGetArrayPointerMutable(NAArray* array){
   #ifndef NDEBUG
     if(!array){
-      naCrash("naGetArrayPointerMutable", "array is Null-Pointer.");
+      naCrash("array is Null-Pointer.");
       return NA_NULL;
     }else{
       if(naIsArrayEmpty(array))
-        naError("naGetArrayPointerMutable", "array is empty, returned pointer is NULL");
+        naError("array is empty, returned pointer is NULL");
     }
   #endif
   return naGetPtrMutable(array->ptr);
@@ -226,15 +226,15 @@ NA_IDEF void* naGetArrayPointerMutable(NAArray* array){
 NA_HIDEF NAInt naMakeIndexAbsolute(NAInt indx, NAInt length){
   #ifndef NDEBUG
     if(length < 0)
-      naError("naMakeIndexAbsolute", "length should not be negative");
+      naError("length should not be negative");
   #endif
   if(indx < 0){
     indx += length;
     #ifndef NDEBUG
       if(indx < 0)
-        naError("naMakeIndexAbsolute", "positive index is not positive");
+        naError("positive index is not positive");
       if(indx >= length)
-        naError("naMakeIndexAbsolute", "positive index overflows length");
+        naError("positive index overflows length");
     #endif
   }
   return indx;
@@ -245,17 +245,17 @@ NA_HIDEF NAInt naMakeIndexAbsolute(NAInt indx, NAInt length){
 NA_IDEF const void* naGetArrayElementConst(const NAArray* array, NAInt indx){
   #ifndef NDEBUG
     if(!array){
-      naCrash("naGetArrayElementConst", "array is Null-Pointer.");
+      naCrash("array is Null-Pointer.");
       return NA_NULL;
     }else{
       if(naIsArrayEmpty(array))
-        naError("naGetArrayElementConst", "array is empty");
+        naError("array is empty");
     }
   #endif
   indx = naMakeIndexAbsolute(indx, naGetArrayCount(array));
   #ifndef NDEBUG
     if(indx >= naGetArrayCount(array))
-      naError("naGetArrayElementConst", "array overflow.");
+      naError("array overflow.");
   #endif
   return &(((NAByte*)naGetPtrConst(array->ptr))[indx * array->typesize]);
 }
@@ -265,17 +265,17 @@ NA_IDEF const void* naGetArrayElementConst(const NAArray* array, NAInt indx){
 NA_IDEF void* naGetArrayElementMutable(NAArray* array, NAInt indx){
   #ifndef NDEBUG
     if(!array){
-      naCrash("naGetArrayElementMutable", "array is Null-Pointer.");
+      naCrash("array is Null-Pointer.");
       return NA_NULL;
     }else{
       if(naIsArrayEmpty(array))
-        naError("naGetArrayElementMutable", "array is empty");
+        naError("array is empty");
     }
   #endif
   indx = naMakeIndexAbsolute(indx, naGetArrayCount(array));
   #ifndef NDEBUG
     if(indx >= naGetArrayCount(array))
-      naError("naGetArrayElementMutable", "array overflow.");
+      naError("array overflow.");
   #endif
   return &(((NAByte*)naGetPtrMutable(array->ptr))[indx * array->typesize]);
 }
@@ -285,17 +285,17 @@ NA_IDEF void* naGetArrayElementMutable(NAArray* array, NAInt indx){
 NA_IDEF const void* naGetArrayElementpConst(const NAArray* array, NAInt indx){
   #ifndef NDEBUG
     if(!array){
-      naCrash("naGetArrayElementConst", "array is Null-Pointer.");
+      naCrash("array is Null-Pointer.");
       return NA_NULL;
     }else{
       if(naIsArrayEmpty(array))
-        naError("naGetArrayElementConst", "array is empty");
+        naError("array is empty");
     }
   #endif
   indx = naMakeIndexAbsolute(indx, naGetArrayCount(array));
   #ifndef NDEBUG
     if(indx >= naGetArrayCount(array))
-      naError("naGetArrayElementpConst", "array overflow.");
+      naError("array overflow.");
   #endif
   return *((const void**)&(((NAByte*)naGetPtrConst(array->ptr))[indx * array->typesize]));
 }
@@ -305,17 +305,17 @@ NA_IDEF const void* naGetArrayElementpConst(const NAArray* array, NAInt indx){
 NA_IDEF void* naGetArrayElementpMutable(NAArray* array, NAInt indx){
   #ifndef NDEBUG
     if(!array){
-      naCrash("naGetArrayElementMutable", "array is Null-Pointer.");
+      naCrash("array is Null-Pointer.");
       return NA_NULL;
     }else{
       if(naIsArrayEmpty(array))
-        naError("naGetArrayElementMutable", "array is empty");
+        naError("array is empty");
     }
   #endif
   indx = naMakeIndexAbsolute(indx, naGetArrayCount(array));
   #ifndef NDEBUG
     if(indx >= naGetArrayCount(array))
-      naError("naGetArrayElementpMutable", "array overflow.");
+      naError("array overflow.");
   #endif
   return *((void**)&(((NAByte*)naGetPtrMutable(array->ptr))[indx * array->typesize]));
 }
@@ -325,11 +325,11 @@ NA_IDEF void* naGetArrayElementpMutable(NAArray* array, NAInt indx){
 NA_IDEF NAInt naGetArrayCount(const NAArray* array){
   #ifndef NDEBUG
     if(!array){
-      naCrash("naGetArrayCount", "array is Null-Pointer.");
+      naCrash("array is Null-Pointer.");
       return 0;
     }
     if((NAInt)(array->count) < 0)
-      naError("naGetArrayCount", "Array count looks like it was negative when interpreted as signed integer. Do not create Arrays with negative sizes!");
+      naError("Array count looks like it was negative when interpreted as signed integer. Do not create Arrays with negative sizes!");
   #endif
   // Note that an empty array has a typesize of 1.
   return array->count;
@@ -340,11 +340,11 @@ NA_IDEF NAInt naGetArrayCount(const NAArray* array){
 NA_IDEF NAInt naGetArrayMaxIndex(const NAArray* array){
   #ifndef NDEBUG
     if(!array){
-      naCrash("naGetArrayMaxIndex", "array is Null-Pointer.");
+      naCrash("array is Null-Pointer.");
       return 0;
     }
     if(naIsArrayEmpty(array))
-      naError("naGetArrayMaxIndex", "array is empty.");
+      naError("array is empty.");
   #endif
   return naMakeMaxWithEndi(naGetArrayCount(array));
 }
@@ -354,7 +354,7 @@ NA_IDEF NAInt naGetArrayMaxIndex(const NAArray* array){
 NA_IDEF NAInt naGetArrayTypesize(const NAArray* array){
   #ifndef NDEBUG
     if(!array){
-      naCrash("naGetArrayTypesize", "array is Null-Pointer.");
+      naCrash("array is Null-Pointer.");
       return 0;
     }
   #endif
@@ -366,7 +366,7 @@ NA_IDEF NAInt naGetArrayTypesize(const NAArray* array){
 NA_IDEF NABool naIsArrayEmpty(const NAArray* array){
   #ifndef NDEBUG
     if(!array){
-      naCrash("naIsArrayEmpty", "array is Null-Pointer.");
+      naCrash("array is Null-Pointer.");
       return NA_TRUE;
     }
   #endif
@@ -398,7 +398,7 @@ NA_IDEF NAArrayIterator naMakeArrayAccessor(const NAArray* array){
   #ifndef NDEBUG
     NAArray* mutablearray;
     if(!array)
-      naCrash("naMakeArrayAccessor", "array is Null pointer");
+      naCrash("array is Null pointer");
     mutablearray = (NAArray*)array;
     mutablearray->itercount++;
     iter.mutator = NA_FALSE;
@@ -416,7 +416,7 @@ NA_IDEF NAArrayIterator naMakeArrayMutator(NAArray* array){
   #ifndef NDEBUG
     NAArray* mutablearray;
     if(!array)
-      naCrash("naMakeArrayMutator", "array is Null pointer");
+      naCrash("array is Null pointer");
     mutablearray = (NAArray*)array;
     mutablearray->itercount++;
     iter.mutator = NA_TRUE;
@@ -433,7 +433,7 @@ NA_IDEF void naClearArrayIterator(NAArrayIterator* iterator){
   #ifndef NDEBUG
     NAArray* mutablearray = (NAArray*)naGetPtrConst(iterator->array);
     if(mutablearray->itercount == 0)
-      naError("naClearArrayIterator", "Too many clears. Iterator count is already zero.");
+      naError("Too many clears. Iterator count is already zero.");
     mutablearray->itercount--;
   #else
     NA_UNUSED(iterator);
@@ -445,7 +445,7 @@ NA_IDEF void naClearArrayIterator(NAArrayIterator* iterator){
 NA_IDEF NABool naLocateArrayFirst(NAArrayIterator* iterator){
   #ifndef NDEBUG
     if(naIsArrayEmpty(naGetPtrConst(iterator->array)))
-      naError("naLocateArrayFirst", "Array is empty");
+      naError("Array is empty");
   #endif
   iterator->indx = 0;
   return NA_TRUE;
@@ -456,7 +456,7 @@ NA_IDEF NABool naLocateArrayFirst(NAArrayIterator* iterator){
 NA_IDEF NABool naLocateArrayLast(NAArrayIterator* iterator){
   #ifndef NDEBUG
     if(naIsArrayEmpty(naGetPtrConst(iterator->array)))
-      naError("naLocateArrayLast", "Array is empty");
+      naError("Array is empty");
   #endif
   iterator->indx = naGetArrayMaxIndex(naGetPtrConst(iterator->array));
   return NA_TRUE;
@@ -485,7 +485,7 @@ NA_IDEF NABool naLocateArrayData(NAArrayIterator* iterator, const void* data){
 NA_IDEF NABool naLocateArrayIndex(NAArrayIterator* iterator, NAInt indx){
   #ifndef NDEBUG
     if(naIsArrayEmpty(naGetPtrConst(iterator->array)))
-      naError("naLocateArrayIndex", "Array is empty");
+      naError("Array is empty");
   #endif
   indx = naMakeIndexAbsolute(indx, naGetArrayCount(naGetPtrConst(iterator->array)));
   iterator->indx = indx;
@@ -507,9 +507,9 @@ NA_IDEF NABool naIterateArray(NAArrayIterator* iterator, NAInt step){
   if(iterator->indx == naGetArrayCount(naGetPtrConst(iterator->array))){iterator->indx = -1;}
   #ifndef NDEBUG
     if(iterator->indx < -1)
-      naError("naIterateArray", "Iterator underflows");
+      naError("Iterator underflows");
     if(iterator->indx >= naGetArrayCount(naGetPtrConst(iterator->array)))
-      naError("naIterateArray", "Iterator overflows");
+      naError("Iterator overflows");
   #endif
   return (iterator->indx != -1);
 }
@@ -519,7 +519,7 @@ NA_IDEF NABool naIterateArray(NAArrayIterator* iterator, NAInt step){
 NA_IDEF const void* naGetArrayPrevConst(const NAArrayIterator* iterator){
   #ifndef NDEBUG
     if(!iterator){
-      naCrash("naGetArrayPrevConst", "iterator is Null-Pointer.");
+      naCrash("iterator is Null-Pointer.");
       return NA_NULL;
     }
   #endif
@@ -537,7 +537,7 @@ NA_IDEF const void* naGetArrayPrevConst(const NAArrayIterator* iterator){
 NA_IDEF void* naGetArrayPrevMutable(NAArrayIterator* iterator){
   #ifndef NDEBUG
     if(!iterator){
-      naCrash("naGetArrayPrevMutable", "iterator is Null-Pointer.");
+      naCrash("iterator is Null-Pointer.");
       return NA_NULL;
     }
   #endif
@@ -555,7 +555,7 @@ NA_IDEF void* naGetArrayPrevMutable(NAArrayIterator* iterator){
 NA_IDEF const void* naGetArrayCurConst(const NAArrayIterator* iterator){
   #ifndef NDEBUG
     if(!iterator){
-      naCrash("naGetArrayCurConst", "iterator is Null-Pointer.");
+      naCrash("iterator is Null-Pointer.");
       return NA_NULL;
     }
   #endif
@@ -571,7 +571,7 @@ NA_IDEF const void* naGetArrayCurConst(const NAArrayIterator* iterator){
 NA_IDEF void* naGetArrayCurMutable(NAArrayIterator* iterator){
   #ifndef NDEBUG
     if(!iterator){
-      naCrash("naGetArrayCurMutable", "iterator is Null-Pointer.");
+      naCrash("iterator is Null-Pointer.");
       return NA_NULL;
     }
   #endif
@@ -587,7 +587,7 @@ NA_IDEF void* naGetArrayCurMutable(NAArrayIterator* iterator){
 NA_IDEF const void* naGetArrayNextConst(const NAArrayIterator* iterator){
   #ifndef NDEBUG
     if(!iterator){
-      naCrash("naGetArrayPrevConst", "iterator is Null-Pointer.");
+      naCrash("iterator is Null-Pointer.");
       return NA_NULL;
     }
   #endif
@@ -605,7 +605,7 @@ NA_IDEF const void* naGetArrayNextConst(const NAArrayIterator* iterator){
 NA_IDEF void* naGetArrayNextMutable(NAArrayIterator* iterator){
   #ifndef NDEBUG
     if(!iterator){
-      naCrash("naGetArrayNextMutable", "iterator is Null-Pointer.");
+      naCrash("iterator is Null-Pointer.");
       return NA_NULL;
     }
   #endif
@@ -623,7 +623,7 @@ NA_IDEF void* naGetArrayNextMutable(NAArrayIterator* iterator){
 NA_IDEF NABool naIsArrayAtFirst(const NAArrayIterator* iterator){
   #ifndef NDEBUG
     if(!iterator){
-      naCrash("naIsArratAtIndex", "iterator is Null-Pointer.");
+      naCrash("iterator is Null-Pointer.");
       return NA_FALSE;
     }
   #endif
@@ -635,7 +635,7 @@ NA_IDEF NABool naIsArrayAtFirst(const NAArrayIterator* iterator){
 NA_IDEF NABool naIsArrayAtLast(const NAArrayIterator* iterator){
   #ifndef NDEBUG
     if(!iterator){
-      naCrash("naIsArratAtIndex", "iterator is Null-Pointer.");
+      naCrash("iterator is Null-Pointer.");
       return NA_FALSE;
     }
   #endif
@@ -647,7 +647,7 @@ NA_IDEF NABool naIsArrayAtLast(const NAArrayIterator* iterator){
 NA_IDEF NABool naIsArrayAtIndex(const NAArrayIterator* iterator, NAInt indx){
   #ifndef NDEBUG
     if(!iterator){
-      naCrash("naIsArratAtIndex", "iterator is Null-Pointer.");
+      naCrash("iterator is Null-Pointer.");
       return NA_FALSE;
     }
   #endif
@@ -660,7 +660,7 @@ NA_IDEF NABool naIsArrayAtIndex(const NAArrayIterator* iterator, NAInt indx){
 NA_IDEF NABool naIsArrayAtInitial(const NAArrayIterator* iterator){
   #ifndef NDEBUG
     if(!iterator){
-      naCrash("naIsArrayAtInitial", "iterator is Null-Pointer.");
+      naCrash("iterator is Null-Pointer.");
       return NA_FALSE;
     }
   #endif
@@ -672,11 +672,11 @@ NA_IDEF NABool naIsArrayAtInitial(const NAArrayIterator* iterator){
 NA_IDEF NAInt naGetArrayCurIndex(const NAArrayIterator* iterator){
   #ifndef NDEBUG
     if(!iterator){
-      naCrash("naGetArrayCurIndex", "iterator is Null-Pointer.");
+      naCrash("iterator is Null-Pointer.");
       return NA_INVALID_MEMORY_INDEX;
     }
     if(naIsArrayAtInitial(iterator))
-      naError("naGetArrayCurIndex", "iterator is at initial position.");
+      naError("iterator is at initial position.");
   #endif
   return iterator->indx;
 }

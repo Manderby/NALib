@@ -26,6 +26,12 @@ struct NATreeBinLeaf{
 };
 NA_EXTERN_RUNTIME_TYPE(NATreeBinLeaf);
 
+#include <stddef.h>
+#define LEAF_KEY_OFFSET_BIN offsetof(NATreeBinLeaf, key)
+#define NODE_KEY_OFFSET_BIN offsetof(NATreeBinNode, key)
+#define LEAF_DATA_OFFSET_BIN offsetof(NATreeBinLeaf, data)
+#define NODE_DATA_OFFSET_BIN offsetof(NATreeBinNode, data)
+
 NA_HAPI NAInt naGetKeyIndexBinDouble(const void* basekey, const void* testkey, const void* data);
 NA_HAPI NABool naEqualKeyBinDouble(const void* key1, const void* key2);
 NA_HAPI void naAssignKeyBinDouble(void* dst, const void* src);
@@ -46,18 +52,13 @@ NA_HAPI NAInt naGetChildIndexBin(NATreeNode* parent, NATreeItem* child);
 NA_HAPI NAInt naGetChildKeyIndexBin(const NATree* tree, NATreeNode* parent, const void* key);
 NA_HAPI NATreeItem* naGetChildBin(NATreeNode* parent, NAInt childindx);
 NA_HAPI NATreeNode* naRemoveLeafBin(NATree* tree, NATreeLeaf* leaf);
-NA_HAPI NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeLeaf* existingleaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
-NA_HAPI const void* naGetLeafKeyBin(NATreeLeaf* leaf);
-NA_HAPI const void* naGetNodeKeyBin(NATreeNode* node);
-NA_HAPI NAPtr naGetLeafDataBin(NATreeLeaf* leaf);
-NA_HAPI NAPtr naGetNodeDataBin(NATreeNode* node);
+NA_HAPI void naInsertLeafBin(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf, NATreeLeafInsertOrder insertOrder);
 
 NA_HAPI void naInitNodeAVL(NATreeBinNode* binnode);
 NA_HAPI void naGrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx);
 NA_HAPI void naShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx);
 
 NA_HIAPI NATreeItem* naGetBinNodeItem(NATreeBinNode* binnode);
-
 
 
 

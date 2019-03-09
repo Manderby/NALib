@@ -292,21 +292,11 @@ NA_HDEF NATreeNode* naRemoveLeafBin(NATree* tree, NATreeLeaf* leaf){
 
 
 
-NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeLeaf* existingleaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
+NA_HDEF void naInsertLeafBin(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf, NATreeLeafInsertOrder insertOrder){
   NATreeLeaf* left;
   NATreeLeaf* right;
-  NATreeLeaf* newleaf;
   NATreeNode* existingparent;
   NATreeBinNode* newparent;
-
-  if(insertOrder == NA_TREE_LEAF_INSERT_ORDER_REPLACE){
-    NATreeBinLeaf* binleaf = (NATreeBinLeaf*)existingleaf;
-    naDestructLeafData(tree, binleaf->data);
-    binleaf->data = naConstructLeafData(tree, &(binleaf->key), content);
-    return existingleaf;
-  }
-
-  newleaf = tree->config->leafCoreConstructor(tree, key, content);
 
   switch(insertOrder){
   case NA_TREE_LEAF_INSERT_ORDER_KEY:
@@ -338,13 +328,6 @@ NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeLeaf* existingleaf, cons
     left = existingleaf;
     right = newleaf;
     break;
-  case NA_TREE_LEAF_INSERT_ORDER_REPLACE:
-    #ifndef NDEBUG
-      naError("This case should not happen");
-    #endif
-    left = existingleaf;
-    right = newleaf;
-    break;
   default:
     #ifndef NDEBUG
 	  naError("Invalid insertOrder");
@@ -368,36 +351,6 @@ NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeLeaf* existingleaf, cons
     tree->root = naGetBinNodeItem(newparent);
     naMarkTreeRootLeaf(tree, NA_FALSE);
   }
-
-  return newleaf;
-}
-
-
-
-NA_HDEF const void* naGetLeafKeyBin(NATreeLeaf* leaf){
-  NATreeBinLeaf* binleaf = (NATreeBinLeaf*)(leaf);
-  return &(binleaf->key);
-}
-
-
-
-NA_HDEF const void* naGetNodeKeyBin(NATreeNode* node){
-  NATreeBinNode* binnode = (NATreeBinNode*)(node);
-  return &(binnode->key);
-}
-
-
-
-NA_HDEF NAPtr naGetLeafDataBin(NATreeLeaf* leaf){
-  NATreeBinLeaf* binleaf = (NATreeBinLeaf*)(leaf);
-  return binleaf->data;
-}
-
-
-
-NA_HDEF NAPtr naGetNodeDataBin(NATreeNode* node){
-  NATreeBinNode* binnode = (NATreeBinNode*)(node);
-  return binnode->data;
 }
 
 

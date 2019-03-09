@@ -307,45 +307,29 @@ NA_HDEF NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
 
 
 
-NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeLeaf* existingleaf, const void* origin, NAPtr content, NATreeLeafInsertOrder insertOrder){
+NA_HDEF void naInsertLeafOct(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf, NATreeLeafInsertOrder insertOrder){
   NATreeLeaf* left;
   NATreeLeaf* right;
-  NATreeLeaf* newleaf;
   NATreeNode* existingparent;
   NATreeOctNode* newparent;
 
-  if(insertOrder == NA_TREE_LEAF_INSERT_ORDER_REPLACE){
-    NATreeOctLeaf* octleaf = (NATreeOctLeaf*)existingleaf;
-    naDestructLeafData(tree, octleaf->data);
-    octleaf->data = naConstructLeafData(tree, &(octleaf->origin), content);
-    return existingleaf;
-  }
+  NAInt childexponent;
 
-  newleaf = tree->config->leafCoreConstructor(tree, origin, content);
-
-  switch(insertOrder){
-  case NA_TREE_LEAF_INSERT_ORDER_KEY:
-    #ifndef NDEBUG
-      if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
-        naError("tree is configured with no key");
-    #endif
-    NAInt childexponent = ((NATreeOctLeaf*)existingleaf)->leafexponent;
-    // Find out if key inside box.
-    if(tree->config->keyIndexGetter(&(((NATreeOctLeaf*)existingleaf)->origin), &(((NATreeOctLeaf*)newleaf)->origin), &childexponent) == 1){
-      left = existingleaf;
-      right = newleaf;
-    }else{
-      left = newleaf;
-      right = existingleaf;
-    }
-    break;
-  default:
-    #ifndef NDEBUG
-	  naError("Invalid insertOrder");
-    #endif
+  #ifndef NDEBUG
+    if(insertOrder != NA_TREE_LEAF_INSERT_ORDER_KEY)
+      naError("Invalid insertOrder");
+    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
+      naError("tree is configured with no key");
+  #endif
+  
+  childexponent = ((NATreeOctLeaf*)existingleaf)->leafexponent;
+  // Find out if key inside box.
+  if(tree->config->keyIndexGetter(&(((NATreeOctLeaf*)existingleaf)->origin), &(((NATreeOctLeaf*)newleaf)->origin), &childexponent) == 1){
     left = existingleaf;
     right = newleaf;
-    break;
+  }else{
+    left = newleaf;
+    right = existingleaf;
   }
 
   existingparent = naGetTreeItemParent(&(existingleaf->item));
@@ -360,37 +344,6 @@ NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeLeaf* existingleaf, cons
     tree->root = naGetOctNodeItem(newparent);
     naMarkTreeRootLeaf(tree, NA_FALSE);
   }
-
-  return newleaf;
-}
-
-
-
-NA_HDEF const void* naGetLeafKeyOct(NATreeLeaf* leaf){
-  NATreeOctLeaf* octleaf = (NATreeOctLeaf*)(leaf);
-  return &(octleaf->origin);
-}
-
-
-
-NA_HDEF const void* naGetNodeKeyOct(NATreeNode* node){
-  NATreeOctNode* octnode = (NATreeOctNode*)(node);
-  return &(octnode->origin);
-}
-
-
-
-// DONE
-NA_HDEF NAPtr naGetLeafDataOct(NATreeLeaf* leaf){
-  NATreeOctLeaf* octleaf = (NATreeOctLeaf*)(leaf);
-  return octleaf->data;
-}
-
-
-
-NA_HDEF NAPtr naGetNodeDataOct(NATreeNode* node){
-  NATreeOctNode* octnode = (NATreeOctNode*)(node);
-  return octnode->data;
 }
 
 

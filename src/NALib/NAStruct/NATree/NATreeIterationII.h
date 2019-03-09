@@ -14,8 +14,8 @@ NA_IDEF NATreeIterator naMakeTreeAccessor(const NATree* tree){
   #ifndef NDEBUG
     NATree* mutabletree = (NATree*)tree;
     mutabletree->itercount++;
+    iter.flags = 0;
   #endif
-  iter.flags = 0;
   iter.tree = naMakePtrWithDataConst(tree);
   iter.item = NA_NULL;
   return iter;
@@ -27,8 +27,8 @@ NA_IDEF NATreeIterator naMakeTreeMutator(NATree* tree){
   NATreeIterator iter;
   #ifndef NDEBUG
     tree->itercount++;
+    iter.flags = 0;
   #endif
-  iter.flags = 0;
   iter.tree = naMakePtrWithDataMutable(tree);
   iter.item = NA_NULL;
   return iter;
@@ -41,8 +41,8 @@ NA_IDEF NATreeIterator naMakeTreeModifier(NATree* tree){
   NATreeIterator iter;
   #ifndef NDEBUG
     tree->itercount++;
+    iter.flags = NA_TREE_ITERATOR_MODIFIER;
   #endif
-  iter.flags = NA_TREE_ITERATOR_MODIFIER;
   iter.tree = naMakePtrWithDataMutable(tree);
   iter.item = NA_NULL;
   return iter;
@@ -156,7 +156,7 @@ NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNo
   while(continueBubbling && !naIsTreeItemRoot(tree, item)){
     NATreeNode* parent = naGetTreeItemParent(item);
     NAInt childindx = tree->config->childIndexGetter(parent, item);
-    continueBubbling = nodeTokenCallback(token, tree->config->nodeDataGetter(parent), childindx);
+    continueBubbling = nodeTokenCallback(token, naGetTreeNodeData(tree, parent), childindx);
     item = &(parent->item);
   }
 }
@@ -164,7 +164,7 @@ NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNo
 
 
 NA_IDEF const void* naGetTreeCurLeafKey(NATreeIterator* iter){
-  const NATree* tree = naGetTreeIteratorTreeConst(iter);;
+  const NATree* tree = naGetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
@@ -173,13 +173,13 @@ NA_IDEF const void* naGetTreeCurLeafKey(NATreeIterator* iter){
     if(!naIsTreeItemLeaf(tree, iter->item))
       naError("This iterator is not at a leaf.");
   #endif
-  return tree->config->leafKeyGetter((NATreeLeaf*)&(iter->item));
+  return naGetTreeLeafKey(tree, (NATreeLeaf*)iter->item);
 }
 
 
 
 NA_IDEF const void* naGetTreeCurNodeKey(NATreeIterator* iter){
-  const NATree* tree = naGetTreeIteratorTreeConst(iter);;
+  const NATree* tree = naGetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
@@ -188,7 +188,7 @@ NA_IDEF const void* naGetTreeCurNodeKey(NATreeIterator* iter){
     if(naIsTreeItemLeaf(tree, iter->item))
       naError("This iterator is not at a node.");
   #endif
-  return tree->config->nodeKeyGetter((NATreeNode*)&(iter->item));
+  return naGetTreeNodeKey(tree, (NATreeNode*)iter->item);
 }
 
 
@@ -203,7 +203,7 @@ NA_IDEF const void* naGetTreeCurLeafConst(NATreeIterator* iter){
     if(!naIsTreeItemLeaf(tree, iter->item))
       naError("This iterator is not at a leaf.");
   #endif
-  return naGetPtrConst(tree->config->leafDataGetter((NATreeLeaf*)&(iter->item)));
+  return naGetPtrConst(naGetTreeLeafData(tree, (NATreeLeaf*)iter->item));
 }
 
 
@@ -218,7 +218,7 @@ NA_IDEF const void* naGetTreeCurNodeConst(NATreeIterator* iter){
     if(naIsTreeItemLeaf(tree, iter->item))
       naError("This iterator is not at a node.");
   #endif
-  return naGetPtrConst(tree->config->nodeDataGetter((NATreeNode*)&(iter->item)));
+  return naGetPtrConst(naGetTreeNodeData(tree, (NATreeNode*)iter->item));
 }
 
 
@@ -233,7 +233,7 @@ NA_IDEF void* naGetTreeCurLeafMutable(NATreeIterator* iter){
   if(!naIsTreeItemLeaf(tree, iter->item))
     naError("This iterator is not at a leaf.");
   #endif
-  return naGetPtrMutable(tree->config->leafDataGetter((NATreeLeaf*)&(iter->item)));
+  return naGetPtrMutable(naGetTreeLeafData(tree, (NATreeLeaf*)iter->item));
 }
 
 
@@ -248,7 +248,7 @@ NA_IDEF void* naGetTreeCurNodeMutable(NATreeIterator* iter){
   if(naIsTreeItemLeaf(tree, iter->item))
     naError("This iterator is not at a node.");
   #endif
-  return naGetPtrMutable(tree->config->nodeDataGetter((NATreeNode*)&(iter->item)));
+  return naGetPtrMutable(naGetTreeNodeData(tree, (NATreeNode*)iter->item));
 }
 
 
@@ -336,11 +336,6 @@ NA_HIDEF NABool naAddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeaf
     case NA_TREE_LEAF_INSERT_ORDER_PREV:
       naIterateTreeBack(iter);
       insertOrder = NA_TREE_LEAF_INSERT_ORDER_NEXT;
-      break;
-    case NA_TREE_LEAF_INSERT_ORDER_REPLACE:
-      #ifndef NDEBUG
-        naError("This case should not occur");
-      #endif
       break;
     }
   }
