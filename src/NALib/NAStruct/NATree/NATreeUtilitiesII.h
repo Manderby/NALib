@@ -35,7 +35,7 @@ NA_IDEF void naEmptyTree(NATree* tree){
   #endif
   if(tree->root){
     if(naIsTreeRootLeaf(tree)){
-      tree->config->leafCoreDestructor(tree, (NATreeLeaf*)tree->root);
+      naDestructTreeLeaf(tree, (NATreeLeaf*)tree->root);
     }else{
       tree->config->nodeCoreDestructor(tree, (NATreeNode*)tree->root, NA_TRUE);
     }
@@ -193,7 +193,7 @@ NA_HIDEF NABool naIsTreeItemLeaf(const NATree* tree, NATreeItem* item){
     retvalue = naIsTreeRootLeaf(tree);
   }else{
     NATreeNode* parent = naGetTreeItemParent(item);
-    NAInt childindx = tree->config->childIndexGetter(parent, item);
+    NAInt childindx = naGetTreeNodeChildIndex(tree, parent, item);
     retvalue = naIsNodeChildLeaf(parent, childindx);
   }
   return retvalue;

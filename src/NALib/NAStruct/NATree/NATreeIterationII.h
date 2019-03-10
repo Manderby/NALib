@@ -155,7 +155,7 @@ NA_IDEF void naBubbleTreeToken(const NATreeIterator* iter, void* token, NATreeNo
   continueBubbling = NA_TRUE;
   while(continueBubbling && !naIsTreeItemRoot(tree, item)){
     NATreeNode* parent = naGetTreeItemParent(item);
-    NAInt childindx = tree->config->childIndexGetter(parent, item);
+    NAInt childindx = naGetTreeNodeChildIndex(tree, parent, item);
     continueBubbling = nodeTokenCallback(token, naGetTreeNodeData(tree, parent), childindx);
     item = &(parent->item);
   }
@@ -386,7 +386,7 @@ NA_IDEF void naUpdateTreeLeaf(NATreeIterator* iter){
   tree = naGetTreeIteratorTreeMutable(iter);
   parent = naGetTreeItemParent(iter->item);
   if(!naIsTreeItemRoot(tree, iter->item)){
-    naUpdateTreeNodeBubbling(tree, parent, tree->config->childIndexGetter(parent, iter->item));
+    naUpdateTreeNodeBubbling(tree, parent, naGetTreeNodeChildIndex(tree, parent, iter->item));
   }
 }
 

@@ -28,26 +28,18 @@ NA_EXTERN_RUNTIME_TYPE(NATreeOctLeaf);
 #define NODE_KEY_OFFSET_OCT offsetof(NATreeOctNode, origin)
 #define LEAF_DATA_OFFSET_OCT offsetof(NATreeOctLeaf, data)
 #define NODE_DATA_OFFSET_OCT offsetof(NATreeOctNode, data)
+#define NODE_CHILDS_OFFSET_OCT offsetof(NATreeOctNode, childs)
 
 NA_HAPI NAInt naGetKeyIndexOctDouble(const void* basekey, const void* testkey, const void* data);
 NA_HAPI NABool naEqualKeyOctDouble(const void* key1, const void* key2);
 NA_HAPI void naAssignKeyOctDouble(void* dst, const void* src);
 NA_HAPI NABool naTestKeyOctDouble(const void* leftlimit, const void* rightlimit, const void* key);
 
-//NA_HAPI NAInt naGetKeyIndexOctNAInt(const void* basekey, const void* key);
-//NA_HAPI NABool naEqualKeyOctNAInt(const void* key1, const void* key2);
-//NA_HAPI void naAssignKeyOctNAInt(void* dst, const void* src);
-//NA_HAPI NABool naTestKeyOctNAInt(const void* leftlimit, const void* rightlimit, const void* key);
-
 NA_HAPI void naDestructTreeNodeOct(NATree* tree, NATreeNode* node, NABool recursive);
 NA_HAPI NATreeLeaf* naConstructTreeLeafOct(NATree* tree, const void* key, NAPtr data);
-NA_HAPI void naDestructTreeLeafOct(NATree* tree, NATreeLeaf* leaf);
 
 NA_HAPI NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeItem* item, const void* key);
 NA_HAPI NATreeLeaf* naLocateCaptureOct(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound);
-NA_HAPI NAInt naGetChildIndexOct(NATreeNode* parent, NATreeItem* child);
-NA_HAPI NAInt naGetChildKeyIndexOct(const NATree* tree, NATreeNode* parent, const void* key);
-NA_HAPI NATreeItem* naGetChildOct(NATreeNode* parent, NAInt childindx);
 NA_HAPI NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf);
 NA_HAPI void naInsertLeafOct(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf, NATreeLeafInsertOrder insertOrder);
 
@@ -56,8 +48,20 @@ NA_HIAPI NATreeItem* naGetOctNodeItem(NATreeOctNode* octnode);
 
 
 
+NA_HIDEF NATreeNode* naGetOctNodeNode(NATreeOctNode* octnode){
+  return &(octnode->node);
+}
+NA_HIDEF NATreeLeaf* naGetOctLeafLeaf(NATreeOctLeaf* octleaf){
+  return &(octleaf->leaf);
+}
+
+
+
 NA_HIDEF NATreeItem* naGetOctNodeItem(NATreeOctNode* octnode){
-  return &(octnode->node.item);
+  return naGetTreeNodeItem(naGetOctNodeNode(octnode));
+}
+NA_HIDEF NATreeItem* naGetOctLeafItem(NATreeOctLeaf* octleaf){
+  return naGetTreeLeafItem(naGetOctLeafLeaf(octleaf));
 }
 
 // Copyright (c) NALib, Tobias Stamm

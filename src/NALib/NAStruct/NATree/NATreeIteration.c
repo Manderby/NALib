@@ -22,7 +22,7 @@ NA_HDEF void naIterateTreeCapture(NATreeIterator* iter, NAInt indx, NATreeIterat
   // Note: It is safe to assume that this loop is executed at least once.
   while(indx != info->breakindx){
     // We set the iterator to whatever is stored in the desired child.
-    naSetTreeIteratorCurItem(iter, tree->config->childGetter(parentnode, indx));
+    naSetTreeIteratorCurItem(iter, naGetTreeNodeChild(tree, parentnode, indx));
 
     if(iter->item){
       // If the child is a leaf, we found our goal. Good ending.
@@ -53,7 +53,7 @@ NA_HDEF void naIterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info
 
   while(!naIsTreeItemRoot(tree, item)){
     NATreeNode* parent = naGetTreeItemParent(item);
-    NAInt nextindx = tree->config->childIndexGetter(parent, item) + info->step;
+    NAInt nextindx = naGetTreeNodeChildIndex(tree, parent, item) + info->step;
 
     // Capture the next sibling, if any.
     if(nextindx != info->breakindx){
@@ -193,7 +193,7 @@ NA_HDEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTo
       // Note that when the iterator is now at the root, the while loop will
       // break automatically and this function returns NA_FALSE.
       }else{
-        naSetTreeIteratorCurItem(iter, tree->config->childGetter((NATreeNode*)iter->item, nextindx));
+        naSetTreeIteratorCurItem(iter, naGetTreeNodeChild(tree, (NATreeNode*)iter->item, nextindx));
       }
     }
   }

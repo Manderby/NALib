@@ -249,7 +249,7 @@ NA_HIDEF int16 naGetOctTreeSegment(NAVertex parentorigin, int16 childexponent, N
 // be placed at a different origin. To make this completely deterministic,
 // one would force the origin to align to a predefined pattern which is
 // - due to the cyclic manner of the parent - a little complicated and
-// frankly should be not important in any case. Therefore... maybe later.
+// frankly should be not important in any case. Therefore... fuckit.
 NA_HDEF NAVertex naGetOctTreeRootOrigin(int16 childexponent, NAVertex childorigin){
   // In order to achieve a full coverage of the whole space
   // (negative and positive in all dimensions), we align parent nodes

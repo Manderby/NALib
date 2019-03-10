@@ -31,6 +31,7 @@ NA_EXTERN_RUNTIME_TYPE(NATreeBinLeaf);
 #define NODE_KEY_OFFSET_BIN offsetof(NATreeBinNode, key)
 #define LEAF_DATA_OFFSET_BIN offsetof(NATreeBinLeaf, data)
 #define NODE_DATA_OFFSET_BIN offsetof(NATreeBinNode, data)
+#define NODE_CHILDS_OFFSET_BIN offsetof(NATreeBinNode, childs)
 
 NA_HAPI NAInt naGetKeyIndexBinDouble(const void* basekey, const void* testkey, const void* data);
 NA_HAPI NABool naEqualKeyBinDouble(const void* key1, const void* key2);
@@ -44,13 +45,9 @@ NA_HAPI NABool naTestKeyBinNAInt(const void* leftlimit, const void* rightlimit, 
 
 NA_HAPI void naDestructTreeNodeBin(NATree* tree, NATreeNode* node, NABool recursive);
 NA_HAPI NATreeLeaf* naConstructTreeLeafBin(NATree* tree, const void* key, NAPtr data);
-NA_HAPI void naDestructTreeLeafBin(NATree* tree, NATreeLeaf* leaf);
 
 NA_HAPI NATreeNode* naLocateBubbleBin(const NATree* tree, NATreeItem* item, const void* key);
 NA_HAPI NATreeLeaf* naLocateCaptureBin(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound);
-NA_HAPI NAInt naGetChildIndexBin(NATreeNode* parent, NATreeItem* child);
-NA_HAPI NAInt naGetChildKeyIndexBin(const NATree* tree, NATreeNode* parent, const void* key);
-NA_HAPI NATreeItem* naGetChildBin(NATreeNode* parent, NAInt childindx);
 NA_HAPI NATreeNode* naRemoveLeafBin(NATree* tree, NATreeLeaf* leaf);
 NA_HAPI void naInsertLeafBin(NATree* tree, NATreeLeaf* existingleaf, NATreeLeaf* newleaf, NATreeLeafInsertOrder insertOrder);
 
@@ -62,9 +59,26 @@ NA_HIAPI NATreeItem* naGetBinNodeItem(NATreeBinNode* binnode);
 
 
 
-NA_HIDEF NATreeItem* naGetBinNodeItem(NATreeBinNode* binnode){
-  return &(binnode->node.item);
+
+
+
+NA_HIDEF NATreeNode* naGetBinNodeNode(NATreeBinNode* binnode){
+  return &(binnode->node);
 }
+NA_HIDEF NATreeLeaf* naGetBinLeafLeaf(NATreeBinLeaf* binleaf){
+  return &(binleaf->leaf);
+}
+
+
+
+NA_HIDEF NATreeItem* naGetBinNodeItem(NATreeBinNode* binnode){
+  return naGetTreeNodeItem(naGetBinNodeNode(binnode));
+}
+NA_HIDEF NATreeItem* naGetBinLeafItem(NATreeBinLeaf* binleaf){
+  return naGetTreeLeafItem(naGetBinLeafLeaf(binleaf));
+}
+
+
 
 // Copyright (c) NALib, Tobias Stamm
 //
