@@ -44,8 +44,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
         naError("Octtree can not have AVL balance.");
       #endif
     }
-    config->nodeCoreDestructor      = naDestructTreeNodeOct;
-    config->leafCoreConstructor     = naConstructTreeLeafOct;
+    config->leafConstructor         = naConstructTreeLeafOct;
+    config->leafDestructor          = naDestructTreeLeafOct;
 
     config->bubbleLocator           = naLocateBubbleOct;
     config->captureLocator          = naLocateCaptureOct;
@@ -87,8 +87,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       break;
     }
 
-    config->nodeCoreDestructor      = naDestructTreeNodeBin;
-    config->leafCoreConstructor     = naConstructTreeLeafBin;
+    config->leafConstructor         = naConstructTreeLeafBin;
+    config->leafDestructor          = naDestructTreeLeafBin;
 
     config->bubbleLocator           = naLocateBubbleBin;
     config->captureLocator          = naLocateCaptureBin;

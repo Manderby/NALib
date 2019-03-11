@@ -47,7 +47,6 @@ typedef enum{
 // NAKeyTester               Tests whether the key is within the given limits.
 //
 // NATreeNodeCoreConstructor Creates a new node with the given key.
-// NATreeNodeCoreDestructor  Destroys the given node
 // NATreeLeafCoreConstructor Creates a new leaf with the given key and data
 //
 // NATreeLeafAdder           Sets the given child with the given type to the
@@ -61,8 +60,8 @@ typedef NABool          (*NAKeyEqualer)(const void* key1, const void* key2);
 typedef void            (*NAKeyAssigner)(void* dst, const void* src);
 typedef NABool          (*NAKeyTester)(const void* leftlimit, const void* rightlimit, const void* key);
 
-typedef void            (*NATreeNodeCoreDestructor)(NATree* tree, NATreeNode* node, NABool recursive);
-typedef NATreeLeaf*     (*NATreeLeafCoreConstructor)(NATree* tree, const void* key, NAPtr data);
+typedef NATreeLeaf*     (*NATreeLeafCoreConstructor)(const NATree* tree);
+typedef void            (*NATreeLeafCoreDestructor)(NATreeLeaf* leaf);
 
 // This function shall return the uppermost node which contains the given key.
 // It must start searching for the key at the given item and bubble upwards.
@@ -85,17 +84,9 @@ typedef NATreeNode*     (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
 
 
 struct NATreeConfiguration{
-
+  
+  // Core settings
   NARefCount                    refcount;
-  NATreeContructorCallback      treeConstructor;
-  NATreeDestructorCallback      treeDestructor;
-  NATreeLeafDataConstructor     leafDataConstructor;
-  NATreeLeafDataDestructor      leafDataDestructor;
-  NATreeNodeDataConstructor     nodeDataConstructor;
-  NATreeNodeDataDestructor      nodeDataDestructor;
-  NATreeNodeUpdater             nodeUpdater;
-  NAPtr                         data;
-  void*                         internaldata;
   NAInt                         flags;
 
   NAInt                         childpernode;
@@ -104,19 +95,30 @@ struct NATreeConfiguration{
   int                           leafDataOffset;
   int                           nodeDataOffset;
   int                           nodeChildsOffset;
+  void*                         coredata;
 
   NAKeyIndexGetter              keyIndexGetter;
   NAKeyEqualer                  keyEqualer;
   NAKeyAssigner                 keyAssigner;
   NAKeyTester                   keyTester;
 
-  NATreeNodeCoreDestructor      nodeCoreDestructor;
-  NATreeLeafCoreConstructor     leafCoreConstructor;
+  NATreeLeafCoreConstructor     leafConstructor;
+  NATreeLeafCoreDestructor      leafDestructor;
 
   NATreeBubbleLocator           bubbleLocator;
   NATreeCaptureLocator          captureLocator;
   NATreeLeafRemover             leafRemover;
   NATreeLeafInserter            leafInserter;
+
+  // User settings (callbacks and data defined in configuration)
+  NATreeContructorCallback      treeConstructor;
+  NATreeDestructorCallback      treeDestructor;
+  NATreeLeafDataConstructor     leafDataConstructor;
+  NATreeLeafDataDestructor      leafDataDestructor;
+  NATreeNodeDataConstructor     nodeDataConstructor;
+  NATreeNodeDataDestructor      nodeDataDestructor;
+  NATreeNodeUpdater             nodeUpdater;
+  NAPtr                         data;
 };
 
 struct NATreeItem{
@@ -177,6 +179,8 @@ NA_HIAPI NABool naIsTreeItemRoot(const NATree* tree, const NATreeItem* item);
 NA_HIAPI NATreeItem* naGetTreeNodeItem(NATreeNode* node);
 NA_HIAPI void naInitTreeNode(NATreeNode* node);
 NA_HIAPI void naClearTreeNode(NATreeNode* node);
+NA_HIAPI void naDestructNodeData(const NATree* tree, NAPtr data);
+NA_HIAPI void naDestructTreeNode(NATree* tree, NATreeNode* node, NABool recursive);
 NA_HIAPI NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx);
 NA_HIAPI void naMarkNodeChildLeaf(NATreeNode* node, NAInt childindx, NABool isleaf);
 NA_HIAPI const void* naGetTreeNodeKey(const NATree* tree, NATreeNode* node);
@@ -186,12 +190,12 @@ NA_HIAPI NAInt naGetTreeNodeChildIndex(const NATree* tree, NATreeNode* parent, N
 
 // Leaf
 NA_HIAPI NATreeItem* naGetTreeLeafItem(NATreeLeaf* leaf);
-NA_HIAPI void naInitTreeLeaf(NATreeLeaf* leaf);
+NA_HIAPI void naInitTreeLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr data);
+NA_HIAPI void naClearTreeLeaf(NATreeLeaf* leaf);
+NA_HIAPI void naDestructLeafData(const NATree* tree, NAPtr data);
 NA_HIAPI void naDestructTreeLeaf(NATree* tree, NATreeLeaf* leaf);
 NA_HIAPI NAPtr naConstructLeafData(NATree* tree, const void* key, NAPtr data);
-NA_HIAPI void naDestructLeafData(const NATree* tree, NAPtr data);
-NA_HIAPI void naClearTreeLeaf(NATreeLeaf* leaf);
-NA_HIAPI const void* naGetTreeLeafKey(const NATree* tree, NATreeLeaf* leaf);
+NA_HIAPI void* naGetTreeLeafKey(const NATree* tree, NATreeLeaf* leaf);
 NA_HIAPI NAPtr naGetTreeLeafData(const NATree* tree, NATreeLeaf* leaf);
 NA_HIAPI void naSetTreeLeafData(const NATree* tree, NATreeLeaf* leaf, NAPtr newcontent);
 

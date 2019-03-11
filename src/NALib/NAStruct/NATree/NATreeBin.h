@@ -43,8 +43,8 @@ NA_HAPI NABool naEqualKeyBinNAInt(const void* key1, const void* key2);
 NA_HAPI void naAssignKeyBinNAInt(void* dst, const void* src);
 NA_HAPI NABool naTestKeyBinNAInt(const void* leftlimit, const void* rightlimit, const void* key);
 
-NA_HAPI void naDestructTreeNodeBin(NATree* tree, NATreeNode* node, NABool recursive);
-NA_HAPI NATreeLeaf* naConstructTreeLeafBin(NATree* tree, const void* key, NAPtr data);
+NA_HAPI NATreeLeaf* naConstructTreeLeafBin(const NATree* tree);
+NA_HAPI void naDestructTreeLeafBin(NATreeLeaf* leaf);
 
 NA_HAPI NATreeNode* naLocateBubbleBin(const NATree* tree, NATreeItem* item, const void* key);
 NA_HAPI NATreeLeaf* naLocateCaptureBin(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound);

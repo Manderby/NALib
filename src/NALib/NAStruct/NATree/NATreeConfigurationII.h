@@ -9,7 +9,7 @@
 
 
 NA_HIDEF void naDeallocConfiguration(NATreeConfiguration* config){
-  if(config->internaldata){naFree(config->internaldata);}
+  if(config->coredata){naFree(config->coredata);}
   naFree(config);
 }
 
@@ -79,16 +79,16 @@ NA_IDEF void naSetTreeConfigurationOcttreeBaseLeafExponent(NATreeConfiguration* 
     if(!(config->flags & NA_TREE_OCTTREE))
       naError("This configuration is not for an octtree");
   #endif
-  if(config->internaldata){naFree(config->internaldata);}
+  if(config->coredata){naFree(config->coredata);}
   NAInt* octtreedata = naMalloc(naSizeof(NAInt));
   *octtreedata = baseleafexponent;
-  config->internaldata = octtreedata;
+  config->coredata = octtreedata;
 }
 
 
 
 NA_IDEF NAInt naGetTreeConfigurationOcttreeBaseLeafExponent(const NATreeConfiguration* config){
-  return *((NAInt*)(config->internaldata));
+  return *((NAInt*)(config->coredata));
 }
 
 // Copyright (c) NALib, Tobias Stamm

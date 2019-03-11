@@ -24,17 +24,6 @@ NA_HIDEF NAInt* naGetOctNodeChildExponent(NATreeOctNode* octnode){
 
 
 
-NA_HIDEF void naDestructTreeChildOct(NATree* tree, NATreeOctNode* octnode, NAInt childindx){
-  NATreeItem* child = octnode->childs[childindx];
-  if(naIsNodeChildLeaf(naGetOctNodeNode(octnode), childindx)){
-    naDestructTreeLeaf(tree, (NATreeLeaf*)child);
-  }else{
-    naDestructTreeNodeOct(tree, (NATreeNode*)child, NA_TRUE);
-  }
-}
-
-
-
 NA_HIDEF NABool naContainsTreeNodeChildOct(NAVertex* basevertex, NAVertex* testvertex, NAInt childexponent){
   double childwidth = naMakeDoubleWithExponent((int32)childexponent);
   return (testvertex->x >= basevertex->x)
@@ -143,38 +132,16 @@ NA_HDEF NABool naTestKeyOctDouble(const void* leftlimit, const void* rightlimit,
 
 
 
-NA_HDEF void naDestructTreeNodeOct(NATree* tree, NATreeNode* node, NABool recursive){
-  NATreeOctNode* octnode;
-  #ifndef NDEBUG
-    if(!node)
-      naCrash("node shall not be Null");
-  #endif
-  octnode = (NATreeOctNode*)node;
-  if(recursive){
-    naDestructTreeChildOct(tree, octnode, 0);
-    naDestructTreeChildOct(tree, octnode, 1);
-  }
-
-  if(tree->config->nodeDataDestructor){tree->config->nodeDataDestructor(octnode->data, tree->config->data);}
-  naClearTreeNode(naGetOctNodeNode(octnode));
-  naDelete(node);
+NA_HDEF NATreeLeaf* naConstructTreeLeafOct(const NATree* tree){
+  NATreeOctLeaf* octleaf = naNew(NATreeOctLeaf);
+  octleaf->leafexponent = naGetTreeConfigurationOcttreeBaseLeafExponent(tree->config);
+  return naGetOctLeafLeaf(octleaf);
 }
 
 
 
-NA_HDEF NATreeLeaf* naConstructTreeLeafOct(NATree* tree, const void* origin, NAPtr data){
-  NATreeOctLeaf* octleaf = naNew(NATreeOctLeaf);
-  naInitTreeLeaf(naGetOctLeafLeaf(octleaf));
-  #ifndef NDEBUG
-    if(!origin)
-      naError("Origin is Null pointer");
-  #endif 
-  // Node-specific initialization
-  tree->config->keyAssigner(naGetOctLeafKey(octleaf), origin);
-  octleaf->data = naConstructLeafData(tree, naGetOctLeafKey(octleaf), data);
-  octleaf->leafexponent = naGetTreeConfigurationOcttreeBaseLeafExponent(tree->config);
-
-  return naGetOctLeafLeaf(octleaf);
+NA_HDEF void naDestructTreeLeafOct(NATreeLeaf* leaf){
+  naDelete(leaf);
 }
 
 
@@ -278,7 +245,7 @@ NA_HDEF NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
     }
     sibling->parent = grandparent;
 
-    naDestructTreeNodeOct(tree, parent, NA_FALSE);
+    naDestructTreeNode(tree, parent, NA_FALSE);
   }else{
     tree->root = NA_NULL;
   }

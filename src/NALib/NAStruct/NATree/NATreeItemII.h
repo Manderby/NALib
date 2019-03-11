@@ -71,6 +71,38 @@ NA_HIDEF void naClearTreeNode(NATreeNode* node){
 
 
 
+NA_HIDEF void naDestructNodeData(const NATree* tree, NAPtr data){
+  if(tree->config->nodeDataDestructor){
+    tree->config->nodeDataDestructor(data, tree->config->data);
+  }
+}
+
+
+
+NA_HIDEF void naDestructTreeNode(NATree* tree, NATreeNode* node, NABool recursive){
+  #ifndef NDEBUG
+    if(!node)
+      naCrash("node shall not be Null");
+  #endif
+  
+  if(recursive){
+    for(NAInt i = 0; i < tree->config->childpernode; i++){
+      NATreeItem* child = naGetTreeNodeChild(tree, node, i);
+      if(naIsNodeChildLeaf(node, i)){
+        naDestructTreeLeaf(tree, (NATreeLeaf*)child);
+      }else{
+        naDestructTreeNode(tree, (NATreeNode*)child, NA_TRUE);
+      }
+    }
+  }
+
+  naDestructNodeData(tree, naGetTreeNodeData(tree, node));
+  naClearTreeNode(node);
+  naDelete(node);
+}
+
+
+
 NA_HIDEF NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx){
   return (NABool)((node->flags >> childindx) & 0x01);
 }
@@ -147,8 +179,27 @@ NA_HIDEF NATreeItem* naGetTreeLeafItem(NATreeLeaf* leaf){
 
 
 
-NA_HIDEF void naInitTreeLeaf(NATreeLeaf* leaf){
+NA_HIDEF void naInitTreeLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr data){
   naInitTreeItem(naGetTreeLeafItem(leaf));
+  
+  if(tree->config->keyAssigner){
+    tree->config->keyAssigner(naGetTreeLeafKey(tree, leaf), key);
+  }
+  naSetTreeLeafData(tree, leaf, naConstructLeafData(tree, key, data));
+}
+
+
+
+NA_HIDEF void naClearTreeLeaf(NATreeLeaf* leaf){
+  naClearTreeItem(naGetTreeLeafItem(leaf));
+}
+
+
+
+NA_HIDEF void naDestructLeafData(const NATree* tree, NAPtr data){
+  if(tree->config->leafDataDestructor){
+    tree->config->leafDataDestructor(data, tree->config->data);
+  }
 }
 
 
@@ -160,7 +211,7 @@ NA_HIDEF void naDestructTreeLeaf(NATree* tree, NATreeLeaf* leaf){
   #endif
   naDestructLeafData(tree, naGetTreeLeafData(tree, leaf));
   naClearTreeLeaf(leaf);
-  naDelete(leaf);
+  tree->config->leafDestructor(leaf);
 }
 
 
@@ -175,22 +226,8 @@ NA_HIDEF NAPtr naConstructLeafData(NATree* tree, const void* key, NAPtr data){
 
 
 
-NA_HIDEF void naDestructLeafData(const NATree* tree, NAPtr data){
-  if(tree->config->leafDataDestructor){
-    tree->config->leafDataDestructor(data, tree->config->data);
-  }
-}
-
-
-
-NA_HIDEF void naClearTreeLeaf(NATreeLeaf* leaf){
-  naClearTreeItem(naGetTreeLeafItem(leaf));
-}
-
-
-
-NA_HIDEF const void* naGetTreeLeafKey(const NATree* tree, NATreeLeaf* leaf){
-  return ((const char*)leaf) + tree->config->leafKeyOffset; 
+NA_HIDEF void* naGetTreeLeafKey(const NATree* tree, NATreeLeaf* leaf){
+  return ((char*)leaf) + tree->config->leafKeyOffset; 
 }
 
 

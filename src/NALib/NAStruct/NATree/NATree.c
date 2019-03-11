@@ -11,7 +11,11 @@
 NA_HDEF NATreeLeaf* naAddTreeContentAtLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
   NATreeLeaf* contentleaf;
   NATreeNode* parent;
-  contentleaf = tree->config->leafCoreConstructor(tree, key, content);
+  
+  // Create the new leaf and initialize it.
+  contentleaf = tree->config->leafConstructor(tree);
+  naInitTreeLeaf(tree, contentleaf, key, content);
+
   if(leaf){
     // We need to create a node holding both the old leaf and the new one.
     tree->config->leafInserter(tree, leaf, contentleaf, insertOrder);

@@ -7,7 +7,7 @@ NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
   tree->config = naRetainTreeConfiguration(config);
 
   #ifndef NDEBUG
-    if((tree->config->flags & NA_TREE_OCTTREE) && !tree->config->internaldata)
+    if((tree->config->flags & NA_TREE_OCTTREE) && !tree->config->coredata)
       naError("Octtree configuration needs more information. Use naSetTreeConfigurationOcttreeBaseLeafExponent");
   #endif
 
@@ -37,7 +37,7 @@ NA_IDEF void naEmptyTree(NATree* tree){
     if(naIsTreeRootLeaf(tree)){
       naDestructTreeLeaf(tree, (NATreeLeaf*)tree->root);
     }else{
-      tree->config->nodeCoreDestructor(tree, (NATreeNode*)tree->root, NA_TRUE);
+      naDestructTreeNode(tree, (NATreeNode*)tree->root, NA_TRUE);
     }
   }
   tree->root = NA_NULL;

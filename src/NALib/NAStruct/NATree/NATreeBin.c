@@ -21,22 +21,12 @@ NA_HIDEF void* naGetBinLeafKey(NATreeBinLeaf* binleaf){
 
 
 
-NA_HIDEF void naDestructTreeChildBin(NATree* tree, NATreeBinNode* binnode, NAInt childindx){
-  NATreeItem* child = binnode->childs[childindx];
-  if(naIsNodeChildLeaf(naGetBinNodeNode(binnode), childindx)){
-    naDestructTreeLeaf(tree, (NATreeLeaf*)child);
-  }else{
-    naDestructTreeNodeBin(tree, (NATreeNode*)child, NA_TRUE);
-  }
-}
-
-
-
-NA_HIDEF void naAddTreeNodeChildBin(NATree* tree, NATreeBinNode* parent, NATreeItem* child, NAInt childindx, NABool isChildLeaf){
+NA_HIDEF void naAddTreeNodeChildBin(NATree* tree, NATreeBinNode* parent, NATreeItem* child, NAInt childIndex, NABool isChildLeaf){
   NA_UNUSED(tree);
-  parent->childs[childindx] = child;
-  naMarkNodeChildLeaf(naGetBinNodeNode(parent), childindx, isChildLeaf);
-  naSetTreeItemParent(child, naGetBinNodeNode(parent));
+  parent->childs[childIndex] = child;
+  NATreeNode* parentNode = naGetBinNodeNode(parent);
+  naMarkNodeChildLeaf(parentNode, childIndex, isChildLeaf);
+  naSetTreeItemParent(child, parentNode);
 }
 
 
@@ -95,7 +85,7 @@ NA_HDEF NATreeBinNode* naConstructTreeNodeBin(NATree* tree, const void* key, NAT
   naAddTreeNodeChildBin(tree, binnode, naGetTreeLeafItem(leftleaf),  0, NA_TRUE);
   naAddTreeNodeChildBin(tree, binnode, naGetTreeLeafItem(rightleaf), 1, NA_TRUE);
 
-  if(tree->config->flags & NA_TREE_BALANCE_AVL){naInitNodeAVL((NATreeBinNode*)binnode);}
+  if(tree->config->flags & NA_TREE_BALANCE_AVL){naInitNodeAVL(binnode);}
 
   if(tree->config->nodeDataConstructor){
     binnode->data = tree->config->nodeDataConstructor(&key, tree->config->data);
@@ -108,34 +98,16 @@ NA_HDEF NATreeBinNode* naConstructTreeNodeBin(NATree* tree, const void* key, NAT
 
 
 
-NA_HDEF void naDestructTreeNodeBin(NATree* tree, NATreeNode* node, NABool recursive){
-  NATreeBinNode* binnode;
-  #ifndef NDEBUG
-    if(!node)
-      naCrash("node shall not be Null");
-  #endif
-  binnode = (NATreeBinNode*)node;
-  if(recursive){
-    naDestructTreeChildBin(tree, binnode, 0);
-    naDestructTreeChildBin(tree, binnode, 1);
-  }
-
-  if(tree->config->nodeDataDestructor){tree->config->nodeDataDestructor(binnode->data, tree->config->data);}
-  naClearTreeNode(naGetBinNodeNode(binnode));
-  naDelete(node);
+NA_HDEF NATreeLeaf* naConstructTreeLeafBin(const NATree* tree){
+  NA_UNUSED(tree);
+  NATreeBinLeaf* binleaf = naNew(NATreeBinLeaf);
+  return naGetBinLeafLeaf(binleaf);
 }
 
 
 
-NA_HDEF NATreeLeaf* naConstructTreeLeafBin(NATree* tree, const void* key, NAPtr data){
-  NATreeBinLeaf* binleaf = naNew(NATreeBinLeaf);
-  naInitTreeLeaf(naGetBinLeafLeaf(binleaf));
-
-  // Node-specific initialization
-  if(key){tree->config->keyAssigner(naGetBinLeafKey(binleaf), key);}
-  binleaf->data = naConstructLeafData(tree, naGetBinLeafKey(binleaf ), data);
-
-  return naGetBinLeafLeaf(binleaf);
+NA_HDEF void naDestructTreeLeafBin(NATreeLeaf* leaf){
+  naDelete(leaf);
 }
 
 
@@ -183,7 +155,7 @@ NA_HDEF NATreeNode* naLocateBubbleBin(const NATree* tree, NATreeItem* item, cons
 
 NA_HDEF NATreeLeaf* naLocateCaptureBin(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound){
   NATreeBinNode* binnode;
-  NAInt childindx;
+  NAInt childIndex;
   NATreeItem* child;
   #ifndef NDEBUG
     if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
@@ -202,10 +174,10 @@ NA_HDEF NATreeLeaf* naLocateCaptureBin(const NATree* tree, NATreeNode* node, con
   }
 
   binnode = (NATreeBinNode*)(node);
-  childindx = tree->config->keyIndexGetter(naGetBinNodeKey(binnode), key, NA_NULL);
-  child = binnode->childs[childindx];
+  childIndex = tree->config->keyIndexGetter(naGetBinNodeKey(binnode), key, NA_NULL);
+  child = binnode->childs[childIndex];
 
-  if(naIsNodeChildLeaf(node, childindx)){
+  if(naIsNodeChildLeaf(node, childIndex)){
     // When the subtree denotes a leaf, we test, if the key is equal and return
     // the result.
     *matchfound = tree->config->keyEqualer(key, naGetBinLeafKey(((NATreeBinLeaf*)child)));
@@ -239,7 +211,7 @@ NA_HDEF NATreeNode* naRemoveLeafBin(NATree* tree, NATreeLeaf* leaf){
     }
     sibling->parent = grandparent;
 
-    naDestructTreeNodeBin(tree, parent, NA_FALSE);
+    naDestructTreeNode(tree, parent, NA_FALSE);
   }else{
     tree->root = NA_NULL;
   }

@@ -35,8 +35,8 @@ NA_HAPI NABool naEqualKeyOctDouble(const void* key1, const void* key2);
 NA_HAPI void naAssignKeyOctDouble(void* dst, const void* src);
 NA_HAPI NABool naTestKeyOctDouble(const void* leftlimit, const void* rightlimit, const void* key);
 
-NA_HAPI void naDestructTreeNodeOct(NATree* tree, NATreeNode* node, NABool recursive);
-NA_HAPI NATreeLeaf* naConstructTreeLeafOct(NATree* tree, const void* key, NAPtr data);
+NA_HAPI NATreeLeaf* naConstructTreeLeafOct(const NATree* tree);
+NA_HAPI void naDestructTreeLeafOct(NATreeLeaf* leaf);
 
 NA_HAPI NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeItem* item, const void* key);
 NA_HAPI NATreeLeaf* naLocateCaptureOct(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound);
