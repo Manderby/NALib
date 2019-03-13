@@ -58,9 +58,23 @@ NA_HIDEF NATreeItem* naGetTreeNodeItem(NATreeNode* node){
 
 
 
-NA_HIDEF void naInitTreeNode(NATreeNode* node){
+NA_HIDEF void naInitTreeNode(const NATree* tree, NATreeNode* node, const void* key){
   naInitTreeItem(naGetTreeNodeItem(node));
   node->flags = 0;
+
+  if(tree->config->keyAssigner){
+    tree->config->keyAssigner(naGetTreeNodeKey(tree, node), key);
+  }
+
+  for(NAInt i = 0; i < tree->config->childpernode; i++){
+    naSetTreeNodeChild(tree, node, i, NA_NULL);
+  }
+
+  if(tree->config->nodeDataConstructor){
+    naSetTreeNodeData(tree, node, tree->config->nodeDataConstructor(&key, tree->config->data));
+  }else{
+    naSetTreeNodeData(tree, node, naMakePtrNull());
+  }
 }
 
 
@@ -98,7 +112,7 @@ NA_HIDEF void naDestructTreeNode(NATree* tree, NATreeNode* node, NABool recursiv
 
   naDestructNodeData(tree, naGetTreeNodeData(tree, node));
   naClearTreeNode(node);
-  naDelete(node);
+  tree->config->nodeDestructor(node);
 }
 
 
@@ -116,16 +130,22 @@ NA_HIDEF void naMarkNodeChildLeaf(NATreeNode* node, NAInt childindx, NABool isle
 
 
 
-NA_HIDEF const void* naGetTreeNodeKey(const NATree* tree, NATreeNode* node){
+NA_HIDEF void* naGetTreeNodeKey(const NATree* tree, NATreeNode* node){
   // We thank the power of pointer arithmetic!
-  return ((const char*)node) + tree->config->nodeKeyOffset; 
+  return ((char*)node) + tree->config->nodeKeyOffset; 
 }
-
 
 
 NA_HIDEF NAPtr naGetTreeNodeData(const NATree* tree, NATreeNode* node){
   // We thank the power of pointer arithmetic!
   return *(NAPtr*)(((char*)node) + tree->config->nodeDataOffset); 
+}
+
+
+
+NA_HIDEF void naSetTreeNodeData(const NATree* tree, NATreeNode* node, NAPtr newdata){
+  // We thank the power of pointer arithmetic!
+  *(NAPtr*)(((char*)node) + tree->config->nodeDataOffset) = newdata; 
 }
 
 
@@ -139,6 +159,12 @@ NA_HIDEF NATreeItem* naGetTreeNodeChild(const NATree* tree, NATreeNode* parent, 
   #endif
   // We thank the power of pointer arithmetic!
   return ((NATreeItem**)(((char*)parent) + tree->config->nodeChildsOffset))[childindx]; 
+}
+
+
+
+NA_HIDEF void naSetTreeNodeChild(const NATree* tree, NATreeNode* parent, NAInt childindx, NATreeItem* newchild){
+  ((NATreeItem**)(((char*)parent) + tree->config->nodeChildsOffset))[childindx] = newchild;
 }
 
 

@@ -9,28 +9,11 @@
 
 // Every Add resulting in a change in the tree must go through this function.
 NA_HDEF NATreeLeaf* naAddTreeContentAtLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
-  NATreeLeaf* contentleaf;
-  NATreeNode* parent;
-  
-  // Create the new leaf and initialize it.
-  contentleaf = tree->config->leafConstructor(tree);
-  naInitTreeLeaf(tree, contentleaf, key, content);
-
-  if(leaf){
-    // We need to create a node holding both the old leaf and the new one.
-    tree->config->leafInserter(tree, leaf, contentleaf, insertOrder);
-    parent = naGetTreeItemParent(&(contentleaf->item));
+  // We need to create a node holding both the old leaf and the new one.
+  NATreeLeaf* contentleaf = tree->config->leafInserter(tree, leaf, key, content, insertOrder);
+  NATreeNode* parent = naGetTreeItemParent(&(contentleaf->item));
+  if(parent){
     naUpdateTreeNodeBubbling(tree, parent, naGetTreeNodeChildIndex(tree, parent, &(contentleaf->item)));
-  }else{
-    #ifndef NDEBUG
-      if(tree->root)
-        naError("leaf is null but there is a root");
-    #endif
-    // There is no leaf to add to, meaning there was no root. Therefore, we
-    // create a first leaf.
-    tree->root = &(contentleaf->item);
-    naSetTreeItemParent(&(contentleaf->item), NA_NULL);
-    naMarkTreeRootLeaf(tree, NA_TRUE);
   }
   return contentleaf;
 }
