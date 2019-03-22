@@ -16,11 +16,11 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
 
   #ifndef NDEBUG
     // Just some security measures in case the programmer forgets to set.
-    config->leafKeyOffset    = -1;
-    config->nodeKeyOffset    = -1;
-    config->leafDataOffset   = -1;
-    config->nodeDataOffset   = -1;
-    config->nodeChildsOffset = -1;
+    config->nodeChildsOffset     = -1;
+    config->leafKeyOffset        = -1;
+    config->nodeKeyOffset        = -1;
+    config->leafUserDataOffset   = -1;
+    config->nodeUserDataOffset   = -1;
   #endif
   
   if(flags & NA_TREE_OCTTREE){
@@ -28,10 +28,12 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->childpernode            = 8;
     switch(flags & NA_TREE_KEY_TYPE_MASK){
     case NA_TREE_KEY_DOUBLE:
+      config->childIndexGetter      = naGetChildIndexOctDouble;
       config->keyIndexGetter        = naGetKeyIndexOctDouble;
       config->keyEqualer            = naEqualKeyOctDouble;
       config->keyAssigner           = naAssignKeyOctDouble;
       config->keyTester             = naTestKeyOctDouble;
+      config->keyContainTester      = naTestKeyContainOctDouble;
       break;
     default:
       #ifndef NDEBUG
@@ -48,15 +50,14 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafDestructor          = naDestructTreeLeafOct;
 
     config->bubbleLocator           = naLocateBubbleOct;
-    config->captureLocator          = naLocateCaptureOct;
     config->leafRemover             = naRemoveLeafOct;
     config->leafInserter            = naInsertLeafOct;
 
+    config->nodeChildsOffset        = NODE_CHILDS_OFFSET_OCT;
     config->leafKeyOffset           = LEAF_KEY_OFFSET_OCT;
     config->nodeKeyOffset           = NODE_KEY_OFFSET_OCT;
-    config->leafDataOffset          = LEAF_DATA_OFFSET_OCT;
-    config->nodeDataOffset          = NODE_DATA_OFFSET_OCT;
-    config->nodeChildsOffset        = NODE_CHILDS_OFFSET_OCT;
+    config->leafUserDataOffset      = LEAF_USERDATA_OFFSET_OCT;
+    config->nodeUserDataOffset      = NODE_USERDATA_OFFSET_OCT;
 
   }else{
 
@@ -67,18 +68,23 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->keyEqualer            = NA_NULL;
       config->keyAssigner           = NA_NULL;
       config->keyTester             = NA_NULL;
+      config->keyContainTester      = NA_NULL;
       break;
     case NA_TREE_KEY_DOUBLE:
+      config->childIndexGetter      = naGetChildIndexBinDouble;
       config->keyIndexGetter        = naGetKeyIndexBinDouble;
       config->keyEqualer            = naEqualKeyBinDouble;
       config->keyAssigner           = naAssignKeyBinDouble;
       config->keyTester             = naTestKeyBinDouble;
+      config->keyContainTester      = naTestKeyContainBinDouble;
       break;
     case NA_TREE_KEY_NAINT:
+      config->childIndexGetter      = naGetChildIndexBinNAInt;
       config->keyIndexGetter        = naGetKeyIndexBinNAInt;
       config->keyEqualer            = naEqualKeyBinNAInt;
       config->keyAssigner           = naAssignKeyBinNAInt;
       config->keyTester             = naTestKeyBinNAInt;
+      config->keyContainTester      = naTestKeyContainBinNAInt;
       break;
     default:
       #ifndef NDEBUG
@@ -91,15 +97,14 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafDestructor          = naDestructTreeLeafBin;
 
     config->bubbleLocator           = naLocateBubbleBin;
-    config->captureLocator          = naLocateCaptureBin;
     config->leafRemover             = naRemoveLeafBin;
     config->leafInserter            = naInsertLeafBin;
     
+    config->nodeChildsOffset        = NODE_CHILDS_OFFSET_BIN;
     config->leafKeyOffset           = LEAF_KEY_OFFSET_BIN;
     config->nodeKeyOffset           = NODE_KEY_OFFSET_BIN;
-    config->leafDataOffset          = LEAF_DATA_OFFSET_BIN;
-    config->nodeDataOffset          = NODE_DATA_OFFSET_BIN;
-    config->nodeChildsOffset        = NODE_CHILDS_OFFSET_BIN;
+    config->leafUserDataOffset      = LEAF_USERDATA_OFFSET_BIN;
+    config->nodeUserDataOffset      = NODE_USERDATA_OFFSET_BIN;
   }
   
   return config;

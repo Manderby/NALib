@@ -136,16 +136,17 @@ NA_HIDEF void* naGetTreeNodeKey(const NATree* tree, NATreeNode* node){
 }
 
 
+
 NA_HIDEF NAPtr naGetTreeNodeData(const NATree* tree, NATreeNode* node){
   // We thank the power of pointer arithmetic!
-  return *(NAPtr*)(((char*)node) + tree->config->nodeDataOffset); 
+  return *(NAPtr*)(((char*)node) + tree->config->nodeUserDataOffset); 
 }
 
 
 
 NA_HIDEF void naSetTreeNodeData(const NATree* tree, NATreeNode* node, NAPtr newdata){
   // We thank the power of pointer arithmetic!
-  *(NAPtr*)(((char*)node) + tree->config->nodeDataOffset) = newdata; 
+  *(NAPtr*)(((char*)node) + tree->config->nodeUserDataOffset) = newdata; 
 }
 
 
@@ -260,14 +261,14 @@ NA_HIDEF void* naGetTreeLeafKey(const NATree* tree, NATreeLeaf* leaf){
 
 NA_HIDEF NAPtr naGetTreeLeafData(const NATree* tree, NATreeLeaf* leaf){
   // We thank the power of pointer arithmetic!
-  return *(NAPtr*)(((char*)leaf) + tree->config->leafDataOffset); 
+  return *(NAPtr*)(((char*)leaf) + tree->config->leafUserDataOffset); 
 }
 
 
 
 NA_HIDEF void naSetTreeLeafData(const NATree* tree, NATreeLeaf* leaf, NAPtr newcontent){
   // We thank the power of pointer arithmetic!
-  *(NAPtr*)(((char*)leaf) + tree->config->leafDataOffset) = newcontent; 
+  *(NAPtr*)(((char*)leaf) + tree->config->leafUserDataOffset) = newcontent; 
 }
 
 

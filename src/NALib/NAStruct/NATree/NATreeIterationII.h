@@ -110,7 +110,7 @@ NA_IDEF void naClearTreeIterator(NATreeIterator* iter){
 
 
 NA_IDEF NABool naLocateTreeKey(NATreeIterator* iter, const void* key, NABool assumeclose){
-  return naLocateTreeLeaf(iter, key, assumeclose);
+  return naLocateTreeKeyCore(iter, key, assumeclose);
 }
 
 
@@ -339,7 +339,7 @@ NA_HIDEF NABool naAddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeaf
       break;
     }
   }
-  contentleaf = naAddTreeContentAtLeaf(tree, (NATreeLeaf*)iter->item, NA_NULL, content, insertOrder);
+  contentleaf = naAddTreeContentInPlace(tree, iter->item, NA_NULL, content, insertOrder);
   if(movetonew){naSetTreeIteratorCurItem(iter, &(contentleaf->item));}
   return NA_TRUE;
 }

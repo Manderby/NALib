@@ -108,10 +108,54 @@ NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* 
 
 
 
-NA_HDEF NABool naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABool usebubble){
-  const NATree* tree = naGetTreeIteratorTreeConst(iter);;
+NA_HDEF NATreeItem* naLocateTreeKeyCapture(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound){
+  NAInt childindx;
+  NATreeItem* child;
+  #ifndef NDEBUG
+    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
+      naError("tree is configured with no key");
+  #endif
+
+  *matchfound = NA_FALSE;
+
+  if(!node){
+    if(naIsTreeRootLeaf(tree)){
+      *matchfound = tree->config->keyEqualer(key, naGetTreeLeafKey(tree, (NATreeLeaf*)tree->root));
+      return tree->root;
+    }else{
+      node = (NATreeNode*)tree->root;
+    }
+  }
+
+  // Test if the node still contains the desired key. If not, we arrived at
+  // the node closest to the desired key.
+  if(!tree->config->keyContainTester(node, key)){
+    return naGetTreeNodeItem(node);
+  }
+
+  childindx = tree->config->childIndexGetter(node, key);
+  child = naGetTreeNodeChild(tree, node, childindx);
+
+  if(!child){
+    // No child at the desired position. Return the closest parent.
+    return naGetTreeNodeItem(node);
+  }else if(naIsNodeChildLeaf(node, childindx)){
+    // When the subtree denotes a leaf, we test, if the key is equal and return
+    // the result.
+    *matchfound = tree->config->keyEqualer(key, naGetTreeLeafKey(tree, (NATreeLeaf*)child));
+    return child;
+  }else{
+    // When the subtree denotes a node, we follow it.
+    return naLocateTreeKeyCapture(tree, (NATreeNode*)child, key, matchfound);
+  }
+}
+
+
+
+NA_HDEF NABool naLocateTreeKeyCore(NATreeIterator* iter, const void* key, NABool usebubble){
+  const NATree* tree = naGetTreeIteratorTreeConst(iter);
   NATreeNode* node;
-  NATreeLeaf* leaf;
+  NATreeItem* founditem;
   NABool matchfound;
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
@@ -135,16 +179,13 @@ NA_HDEF NABool naLocateTreeLeaf(NATreeIterator* iter, const void* key, NABool us
   if(usebubble && !naIsTreeAtInitial(iter) && !naIsTreeItemRoot(tree, iter->item)){
     node = tree->config->bubbleLocator(tree, iter->item, key);
   }
-  // todo add test if key contained.
 
   // Search for the leaf containing key, starting from the uppermost node.
-  leaf = tree->config->captureLocator(tree, node, key, &matchfound);
-  naSetTreeIteratorCurItem(iter, &(leaf->item));
+  founditem = naLocateTreeKeyCapture(tree, node, key, &matchfound);
+  naSetTreeIteratorCurItem(iter, founditem);
   #ifndef NDEBUG
-    if(!leaf)
-      naError("Result of captureLocator was Null");
-    if(!naIsTreeItemLeaf(tree, &(leaf->item)))
-      naError("Result should be a leaf");
+    if(!founditem)
+      naError("Result of capture locator was Null");
   #endif
   return matchfound;
 }
@@ -213,7 +254,12 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
   #endif
   // We do not use bubbling when inserting as there is almost never a benefit
   // from it. Even more so, it performs mostly worse.
-  found = naLocateTreeLeaf(iter, key, NA_FALSE);
+
+//  if(((double*)key)[0] == 32 && ((double*)key)[1] == 32 && ((double*)key)[2] == 48){
+////  if(((double*)key)[0] == 0 && ((double*)key)[1] == 32 && ((double*)key)[2] == 48){
+//    printf("asdf");
+//  }
+  found = naLocateTreeKeyCore(iter, key, NA_FALSE);
 
   if(found && !replace){return NA_FALSE;}
 
@@ -223,7 +269,7 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
     naSetTreeLeafData(tree, (NATreeLeaf*)iter->item, content);
   }else{
     // Add the new data and set the iterator to that newly created position.
-    NATreeLeaf* contentleaf = naAddTreeContentAtLeaf(tree, (NATreeLeaf*)iter->item, key, content, NA_TREE_LEAF_INSERT_ORDER_KEY);
+    NATreeLeaf* contentleaf = naAddTreeContentInPlace(tree, iter->item, key, content, NA_TREE_LEAF_INSERT_ORDER_KEY);
     naSetTreeIteratorCurItem(iter, &(contentleaf->item));
   }
   return NA_TRUE;

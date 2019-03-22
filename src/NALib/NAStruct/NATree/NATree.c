@@ -8,9 +8,9 @@
 
 
 // Every Add resulting in a change in the tree must go through this function.
-NA_HDEF NATreeLeaf* naAddTreeContentAtLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
+NA_HDEF NATreeLeaf* naAddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
   // We need to create a node holding both the old leaf and the new one.
-  NATreeLeaf* contentleaf = tree->config->leafInserter(tree, leaf, key, content, insertOrder);
+  NATreeLeaf* contentleaf = tree->config->leafInserter(tree, item, key, content, insertOrder);
   NATreeNode* parent = naGetTreeItemParent(&(contentleaf->item));
   if(parent){
     naUpdateTreeNodeBubbling(tree, parent, naGetTreeNodeChildIndex(tree, parent, &(contentleaf->item)));
