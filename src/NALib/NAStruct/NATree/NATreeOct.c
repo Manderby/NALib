@@ -195,41 +195,68 @@ NA_HDEF NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeItem* item, cons
 
 
 
-NA_HDEF NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
-  NATreeItem* leafItem = naGetTreeLeafItem(leaf);
-  NATreeNode* parent = naGetTreeItemParent(leafItem);
-  NATreeNode* grandparent = NA_NULL;
-  if(!naIsTreeItemRoot(tree, leafItem)){
-    NAInt leafindx = naGetTreeNodeChildIndex(tree, parent, leafItem);
-    NATreeItem* sibling = ((NATreeOctNode*)parent)->childs[1 - leafindx];
-    NABool issiblingleaf = naIsNodeChildLeaf(parent, 1 - leafindx);
-
-    NATreeItem* parentItem = naGetTreeNodeItem(parent);
-    grandparent = naGetTreeItemParent(parentItem);
-    if(!naIsTreeItemRoot(tree, parentItem)){
-      NAInt parentindx = naGetTreeNodeChildIndex(tree, grandparent, parentItem);
-      ((NATreeOctNode*)grandparent)->childs[parentindx] = sibling;
-      naMarkNodeChildLeaf(grandparent, parentindx, issiblingleaf);
-    }else{
-      tree->root = sibling;
-      naMarkTreeRootLeaf(tree, issiblingleaf);
-    }
-    sibling->parent = grandparent;
-
-    naDestructTreeNode(tree, parent, NA_FALSE);
-  }else{
-    tree->root = NA_NULL;
-  }
-  naDestructTreeLeaf(tree, leaf);
-  return grandparent;
-}
-
-
-
 NA_HDEF void naSetTreeNodeChildOct(NATreeOctNode* parent, NATreeItem* child, NAInt childIndex, NABool isChildLeaf){
   naSetTreeItemParent(child, naGetOctNodeNode(parent));
   naMarkNodeChildLeaf(naGetOctNodeNode(parent), childIndex, isChildLeaf);
   parent->childs[childIndex] = child;
+}
+
+
+
+NA_HDEF NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
+  NATreeItem* leafItem = naGetTreeLeafItem(leaf);
+  NATreeNode* parent = naGetTreeItemParent(leafItem);
+  if(naIsTreeItemRoot(tree, leafItem)){
+    tree->root = NA_NULL;
+  }else{
+    NAInt leafindx = naGetTreeNodeChildIndex(tree, parent, leafItem);
+    #ifndef NDEBUG
+      if(!naIsNodeChildLeaf(parent, leafindx))
+        naError("Child is no leaf");
+      if(((NATreeOctNode*)parent)->childs[leafindx] == NA_NULL)
+        naError("No child to erase");
+      if(!parent)
+        naError("That is strange. parent should not be Null");
+    #endif
+    ((NATreeOctNode*)parent)->childs[leafindx] = NA_NULL;
+
+    while(parent)
+    {
+      // Search for a sibling and count if there is more than one.
+      NATreeItem* sibling = NA_NULL;
+      NAInt siblingcount = 0;
+      NAInt siblingindex;
+      if(((NATreeOctNode*)parent)->childs[0]){siblingindex = 0; sibling = ((NATreeOctNode*)parent)->childs[siblingindex]; siblingcount++;}
+      if(((NATreeOctNode*)parent)->childs[1]){siblingindex = 1; sibling = ((NATreeOctNode*)parent)->childs[siblingindex]; siblingcount++;}
+      if(((NATreeOctNode*)parent)->childs[2]){siblingindex = 2; sibling = ((NATreeOctNode*)parent)->childs[siblingindex]; siblingcount++;}
+      if(((NATreeOctNode*)parent)->childs[3]){siblingindex = 3; sibling = ((NATreeOctNode*)parent)->childs[siblingindex]; siblingcount++;}
+      if(((NATreeOctNode*)parent)->childs[4]){siblingindex = 4; sibling = ((NATreeOctNode*)parent)->childs[siblingindex]; siblingcount++;}
+      if(((NATreeOctNode*)parent)->childs[5]){siblingindex = 5; sibling = ((NATreeOctNode*)parent)->childs[siblingindex]; siblingcount++;}
+      if(((NATreeOctNode*)parent)->childs[6]){siblingindex = 6; sibling = ((NATreeOctNode*)parent)->childs[siblingindex]; siblingcount++;}
+      if(((NATreeOctNode*)parent)->childs[7]){siblingindex = 7; sibling = ((NATreeOctNode*)parent)->childs[siblingindex]; siblingcount++;}
+      if(siblingcount > 1){break;}
+      #ifndef NDEBUG
+        if(!siblingcount)
+          naError("This should not happen");
+      #endif
+      NATreeOctNode* grandparent = (NATreeOctNode*)naGetTreeItemParent(naGetTreeNodeItem(parent));
+      NABool isSiblingLeaf = naIsTreeItemLeaf(tree, sibling);
+      if(grandparent){
+        NAInt parentindex = naGetTreeNodeChildIndex(tree, naGetOctNodeNode(grandparent), naGetTreeNodeItem(parent));
+        naSetTreeNodeChildOct(grandparent, sibling, parentindex, isSiblingLeaf);
+        naDestructTreeNode(tree, parent, NA_FALSE);
+      }else{
+        // This was the last parent before being a root. Attach the sibling as
+        // the new root.
+        tree->root = sibling;
+        naMarkTreeRootLeaf(tree, isSiblingLeaf);
+        sibling->parent = NA_NULL;
+      }
+      parent = naGetOctNodeNode(grandparent);
+    }
+  }
+  naDestructTreeLeaf(tree, leaf);
+  return parent;
 }
 
 
@@ -365,6 +392,10 @@ NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, cons
         // The two items share the same child. Go further down.
         smallestParentOrigin = naGetChildOriginOct(smallestParentOrigin, smallestNewLeafIndex, smallestParentChildExponent);
         smallestParentChildExponent--;
+        #ifndef NDEBUG
+          if(smallestParentChildExponent < naGetTreeConfigurationOcttreeBaseLeafExponent(tree->config))
+            naError("child exponent shrank too deep");
+        #endif
       }
       
       // Now, smallestParentOrigin and smallestParentChildExponent denote the

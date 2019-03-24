@@ -403,7 +403,7 @@ NA_IAPI NABool naAddTreeNextMutable(NATreeIterator* iter,
 // element has been removed. If advance is NA_FALSE, the iterator will be
 // moved to the previous element. If advance is NA_TRUE, the iterator will
 // be moved to the next element.
-NA_IAPI void naRemoveTreeCurLeaf(NATreeIterator* iter, NABool advance);
+NA_IAPI void naRemoveTreeCurLeaf(NATreeIterator* iter);
 
 // Returns true if the iterator is at its initial position.
 NA_IAPI NABool naIsTreeAtInitial(const NATreeIterator* iter);
