@@ -7,7 +7,7 @@ NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
   tree->config = naRetainTreeConfiguration(config);
 
   #ifndef NDEBUG
-    if((tree->config->flags & NA_TREE_OCTTREE) && !tree->config->coredata)
+    if((tree->config->flags & NA_TREE_OCTTREE) && !tree->config->configdata)
       naError("Octtree configuration needs more information. Use naSetTreeConfigurationOcttreeBaseLeafExponent");
   #endif
 

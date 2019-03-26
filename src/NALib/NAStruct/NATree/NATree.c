@@ -70,7 +70,7 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   NAInt i;
   #ifndef NDEBUG
     if(!tree->config->nodeUpdater)
-      naError("tree is configured without nodeUpdater callback");
+      naCrash("tree is configured without nodeUpdater callback");
   #endif
   bubble = NA_FALSE;
 

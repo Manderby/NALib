@@ -49,21 +49,6 @@ NA_HIAPI NATreeItem* naGetOctNodeItem(NATreeOctNode* octnode);
 
 
 
-NA_HIDEF NATreeNode* naGetOctNodeNode(NATreeOctNode* octnode){
-  return &(octnode->node);
-}
-NA_HIDEF NATreeLeaf* naGetOctLeafLeaf(NATreeOctLeaf* octleaf){
-  return &(octleaf->leaf);
-}
-
-
-
-NA_HIDEF NATreeItem* naGetOctNodeItem(NATreeOctNode* octnode){
-  return naGetTreeNodeItem(naGetOctNodeNode(octnode));
-}
-NA_HIDEF NATreeItem* naGetOctLeafItem(NATreeOctLeaf* octleaf){
-  return naGetTreeLeafItem(naGetOctLeafLeaf(octleaf));
-}
 
 // Copyright (c) NALib, Tobias Stamm
 //

@@ -88,7 +88,7 @@ struct NATreeConfiguration{
   int                           nodeKeyOffset;
   int                           leafUserDataOffset;
   int                           nodeUserDataOffset;
-  void*                         coredata;
+  void*                         configdata;
 
   NAKeyIndexGetter              keyIndexGetter;
   NAChildIndexGetter            childIndexGetter;
