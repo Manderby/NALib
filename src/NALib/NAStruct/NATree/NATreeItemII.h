@@ -71,7 +71,7 @@ NA_HIDEF void naInitTreeNode(const NATree* tree, NATreeNode* node, const void* k
   }
 
   if(tree->config->nodeDataConstructor){
-    naSetTreeNodeData(tree, node, tree->config->nodeDataConstructor(&key, tree->config->data));
+    naSetTreeNodeData(tree, node, tree->config->nodeDataConstructor(&key));
   }else{
     naSetTreeNodeData(tree, node, naMakePtrNull());
   }
@@ -87,7 +87,7 @@ NA_HIDEF void naClearTreeNode(NATreeNode* node){
 
 NA_HIDEF void naDestructNodeData(const NATree* tree, NAPtr data){
   if(tree->config->nodeDataDestructor){
-    tree->config->nodeDataDestructor(data, tree->config->data);
+    tree->config->nodeDataDestructor(data);
   }
 }
 
@@ -206,13 +206,13 @@ NA_HIDEF NATreeItem* naGetTreeLeafItem(NATreeLeaf* leaf){
 
 
 
-NA_HIDEF void naInitTreeLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr data){
+NA_HIDEF void naInitTreeLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr constructordata){
   naInitTreeItem(naGetTreeLeafItem(leaf));
   
   if(tree->config->keyAssigner){
     tree->config->keyAssigner(naGetTreeLeafKey(tree, leaf), key);
   }
-  naSetTreeLeafData(tree, leaf, naConstructLeafData(tree, key, data));
+  naSetTreeLeafData(tree, leaf, naConstructLeafData(tree, key, constructordata));
 }
 
 
@@ -225,7 +225,7 @@ NA_HIDEF void naClearTreeLeaf(NATreeLeaf* leaf){
 
 NA_HIDEF void naDestructLeafData(const NATree* tree, NAPtr data){
   if(tree->config->leafDataDestructor){
-    tree->config->leafDataDestructor(data, tree->config->data);
+    tree->config->leafDataDestructor(data);
   }
 }
 
@@ -243,11 +243,12 @@ NA_HIDEF void naDestructTreeLeaf(NATree* tree, NATreeLeaf* leaf){
 
 
 
-NA_HIDEF NAPtr naConstructLeafData(NATree* tree, const void* key, NAPtr data){
+NA_HIDEF NAPtr naConstructLeafData(NATree* tree, const void* key, NAPtr constructordata){
   if(tree->config->leafDataConstructor){
-    return tree->config->leafDataConstructor(key, tree->config->data, data);
+    return tree->config->leafDataConstructor(key, constructordata);
   }else{
-    return data;
+    // If there is no constructor, we plainly store the given constructordata.
+    return constructordata;
   }
 }
 

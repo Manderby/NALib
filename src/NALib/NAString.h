@@ -140,7 +140,7 @@ NA_API NABuffer* naGetStringBufferMutable(NAString* string);
 NA_API NAUTF8Char naGetStringChar(NAString* string, NAInt indx);
 
 
-#if (NA_OS == NA_OS_MAC_OS_X) && (defined __OBJC__)
+#if (NA_OS == NA_OS_MAC_OS_X) && (defined __OBJC__) && (NA_CONFIG_COMPILE_GUI == 1)
   // Defined in NACocoaHelper.m
   #import <Cocoa/Cocoa.h>
   NA_API NSString* naAllocNSStringWithNAString(const NAString* string);

@@ -71,7 +71,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 
 
 NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, double timediff){
-  dispatch_time_t nexttime = dispatch_time(DISPATCH_TIME_NOW, 1000000000 * timediff);
+  dispatch_time_t nexttime = dispatch_time(DISPATCH_TIME_NOW, (int64)(1000000000. * timediff));
   dispatch_queue_t queue = dispatch_get_main_queue();
   dispatch_after_f(nexttime, queue, arg, function);
 }

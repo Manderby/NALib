@@ -38,7 +38,7 @@ typedef struct NACoreOpenGLView     NACoreOpenGLView;
 // The naInitUI functions are system dependent and will call this function
 // before doing anything else.
 NA_HAPI void naStartCoreApplication(NAInt bytesize, NANativeID nativeID);
-NA_HAPI void naStopCoreApplication();
+NA_HAPI void naStopCoreApplication(void);
 NA_HAPI void naClearCoreApplication(void);
 NA_HAPI NACoreApplication* naGetCoreApplication(void);
 NA_HAPI NABool naIsCoreApplicationRunning(void);

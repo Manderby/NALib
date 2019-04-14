@@ -7,17 +7,22 @@ NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
   tree->config = naRetainTreeConfiguration(config);
 
   #ifndef NDEBUG
-    if((tree->config->flags & NA_TREE_OCTTREE) && !tree->config->configdata)
-      naError("Octtree configuration needs more information. Use naSetTreeConfigurationOcttreeBaseLeafExponent");
+    if(((tree->config->flags & NA_TREE_QUADTREE) || (tree->config->flags & NA_TREE_OCTTREE)) && !tree->config->configdata)
+      naError("Quadtree or Octtree configuration need more information. Use naSetTreeConfigurationBaseLeafExponent");
   #endif
 
   // If the config has a callback for constructing a tree, call it.
   if(tree->config->treeConstructor){
-    tree->config->treeConstructor(tree->config->data);
+    tree->config->treeConstructor(tree->config->userdata);
   }
 
   // Init the tree root.
   tree->root = NA_NULL;
+  if(config->keyByteSize){
+    tree->tmpkey = naMalloc(config->keyByteSize);
+  }else{
+    tree->tmpkey = NA_NULL;
+  }
   tree->flags = 0;
   #ifndef NDEBUG
     tree->itercount = 0;
@@ -49,8 +54,9 @@ NA_IDEF void naClearTree(NATree* tree){
   naEmptyTree(tree);
   // If the config has a callback function for deleting a tree, call it.
   if(tree->config->treeDestructor){
-    tree->config->treeDestructor(tree->config->data);
+    tree->config->treeDestructor(tree->config->userdata);
   }
+  naFree(tree->tmpkey);
   naReleaseTreeConfiguration(tree->config);
 }
 
@@ -65,7 +71,7 @@ NA_IDEF NABool naIsTreeEmpty(const NATree* tree){
 NA_IDEF NABool naAddTreeFirstConst(NATree* tree, const void* content){
   NATreeIterator iter;
   #ifndef NDEBUG
-    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
+    if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
       naError("This function should not be called on trees with keys");
   #endif
   iter = naMakeTreeModifier(tree);
@@ -79,7 +85,7 @@ NA_IDEF NABool naAddTreeFirstConst(NATree* tree, const void* content){
 NA_IDEF NABool naAddTreeFirstMutable(NATree* tree, void* content){
   NATreeIterator iter;
   #ifndef NDEBUG
-    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
+    if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
       naError("This function should not be called on trees with keys");
   #endif
   iter = naMakeTreeModifier(tree);
@@ -93,7 +99,7 @@ NA_IDEF NABool naAddTreeFirstMutable(NATree* tree, void* content){
 NA_IDEF NABool naAddTreeLastConst(NATree* tree, const void* content){
   NATreeIterator iter;
   #ifndef NDEBUG
-    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
+    if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
       naError("This function should not be called on trees with keys");
   #endif
   iter = naMakeTreeModifier(tree);
@@ -107,7 +113,7 @@ NA_IDEF NABool naAddTreeLastConst(NATree* tree, const void* content){
 NA_IDEF NABool naAddTreeLastMutable(NATree* tree, void* content){
   NATreeIterator iter;
   #ifndef NDEBUG
-    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
+    if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
       naError("This function should not be called on trees with keys");
   #endif
   iter = naMakeTreeModifier(tree);
@@ -200,6 +206,23 @@ NA_HIDEF NABool naIsTreeItemLeaf(const NATree* tree, NATreeItem* item){
 }
 
 
+NA_HIDEF void* naRequestTreeTmpKey(const NATree* tree){
+  NATree* mutabletree = (NATree*)tree;  // Wanna complain? Send a fax.
+  #ifndef NDEBUG
+    if(naTestFlagi(mutabletree->flags, NA_TREE_FLAG_TMP_KEY_TAKEN))
+      naError("Tmp key already taken");
+    naSetFlagi(&(mutabletree->flags), NA_TREE_FLAG_TMP_KEY_TAKEN, NA_TRUE);
+  #endif
+  return mutabletree->tmpkey;
+}
+NA_HIDEF void naResignTreeTmpKey(const NATree* tree){
+  NATree* mutabletree = (NATree*)tree;  // Wanna complain? Send a fax.
+  #ifndef NDEBUG
+    if(!naTestFlagi(mutabletree->flags, NA_TREE_FLAG_TMP_KEY_TAKEN))
+      naError("Tmp key was not taken");
+    naSetFlagi(&(mutabletree->flags), NA_TREE_FLAG_TMP_KEY_TAKEN, NA_FALSE);
+  #endif
+}
 
 
 

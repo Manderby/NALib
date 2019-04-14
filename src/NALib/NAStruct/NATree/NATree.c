@@ -8,9 +8,9 @@
 
 
 // Every Add resulting in a change in the tree must go through this function.
-NA_HDEF NATreeLeaf* naAddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
+NA_HDEF NATreeLeaf* naAddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr constructordata, NATreeLeafInsertOrder insertOrder){
   // We need to create a node holding both the old leaf and the new one.
-  NATreeLeaf* contentleaf = tree->config->leafInserter(tree, item, key, content, insertOrder);
+  NATreeLeaf* contentleaf = tree->config->leafInserter(tree, item, key, constructordata, insertOrder);
   NATreeNode* parent = naGetTreeItemParent(&(contentleaf->item));
   if(parent){
     naUpdateTreeNodeBubbling(tree, parent, naGetTreeNodeChildIndex(tree, parent, &(contentleaf->item)));
@@ -45,7 +45,7 @@ NA_HDEF void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt ch
   if(tree->config->nodeUpdater){
     NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
     naFillTreeNodeChildData(tree, childdata, parent);
-    bubble = tree->config->nodeUpdater(naGetTreeNodeData(tree, parent), childdata, childindx, parent->flags & NA_TREE_CHILDS_MASK);
+    bubble = tree->config->nodeUpdater(naGetTreeNodeData(tree, parent), childdata, childindx, parent->flags & NA_TREE_NODE_CHILDS_MASK);
   }
 
   // Then we propagate the message towards the root if requested.
@@ -89,7 +89,7 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   if(bubble){
     NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
     naFillTreeNodeChildData(tree, childdata, node);
-    bubble = tree->config->nodeUpdater(naGetTreeNodeData(tree, node), childdata, -1, node->flags & NA_TREE_CHILDS_MASK);
+    bubble = tree->config->nodeUpdater(naGetTreeNodeData(tree, node), childdata, -1, node->flags & NA_TREE_NODE_CHILDS_MASK);
   }
 
   return bubble;

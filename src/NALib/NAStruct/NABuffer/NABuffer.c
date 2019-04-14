@@ -12,19 +12,17 @@ NA_RUNTIME_TYPE(NABuffer, naDeallocBuffer, NA_TRUE);
 
 
 
-void naDestructBufferTreeLeaf(NAPtr leafdata, NAPtr configdata){
+void naDestructBufferTreeLeaf(NAPtr leafdata){
   NABufferPart* part;
-  NA_UNUSED(configdata);
   part = naGetPtrMutable(leafdata);
   naDelete(part);
 }
 
 
 
-NAPtr naConstructBufferTreeNode(const void* key, NAPtr configdata){
+NAPtr naConstructBufferTreeNode(const void* key){
   NABufferTreeNodeData* nodedata;
   NA_UNUSED(key);
-  NA_UNUSED(configdata);
   nodedata = naAlloc(NABufferTreeNodeData);
   nodedata->len1 = 0;
   nodedata->len2 = 0;
@@ -33,8 +31,7 @@ NAPtr naConstructBufferTreeNode(const void* key, NAPtr configdata){
 
 
 
-void naDestructBufferTreeNode(NAPtr nodedata, NAPtr configdata){
-  NA_UNUSED(configdata);
+void naDestructBufferTreeNode(NAPtr nodedata){
   naFree(naGetPtrMutable(nodedata));
 }
 
@@ -77,8 +74,8 @@ NA_HDEF void naInitBufferStruct(NABuffer* buffer){
   buffer->flags = 0;
   buffer->range = naMakeRangeiWithStartAndEnd(0, 0);
   config = naCreateTreeConfiguration(NA_TREE_KEY_NOKEY | NA_TREE_BALANCE_AVL);
-  naSetTreeConfigurationNodeCallbacks(config, naConstructBufferTreeNode, naDestructBufferTreeNode, naUpdateBufferTreeNode);
   naSetTreeConfigurationLeafCallbacks(config, NA_NULL, naDestructBufferTreeLeaf);
+  naSetTreeConfigurationNodeCallbacks(config, naConstructBufferTreeNode, naDestructBufferTreeNode, naUpdateBufferTreeNode);
   naInitTree(&(buffer->parts), config);
   #ifndef NDEBUG
     buffer->itercount = 0;

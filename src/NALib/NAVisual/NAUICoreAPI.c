@@ -48,7 +48,7 @@ NA_HDEF void naStartCoreApplication(NAInt bytesize, NANativeID nativeID){
 
 
 
-NA_HDEF void naStopCoreApplication(){
+NA_HDEF void naStopCoreApplication(void){
   na_app->flags &= ~NA_APPLICATION_FLAG_RUNNING;
 }
 

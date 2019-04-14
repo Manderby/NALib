@@ -399,6 +399,14 @@ NA_IAPI NABool    naEqualBox    (NABox     box1,    NABox     box2);
 NA_IAPI NABool    naEqualVolumei(NAVolumei volume1, NAVolumei volume2);
 NA_IAPI NABool    naEqualBoxi   (NABoxi    box1,    NABoxi    box2);
 
+// Use the following functions to make comparison tests between elements.
+// They only return true if the condition is true for all components: xyz.
+NA_IAPI NABool    naLowerPos  (NAPos   pos1,  NAPos   pos2);
+NA_IAPI NABool    naLowerEqualPos  (NAPos   pos1,  NAPos   pos2);
+
+NA_IAPI NABool    naLowerVertex (NAVertex  vertex1, NAVertex  vertex2);
+NA_IAPI NABool    naLowerEqualVertex (NAVertex  vertex1, NAVertex  vertex2);
+
 // Adding and subtracting delta values: A delta is a size or volume.
 // Adding a size to a position returns a position. Subtracting two positions
 // from each other returns a size.

@@ -9,6 +9,31 @@
 
 
 
+#undef naBeginTreeAccessorIteration
+#define naBeginTreeAccessorIteration(typedelem, tree, lowerlimit, upperlimit, iter)\
+  iter = naMakeTreeAccessor(tree);\
+  while(naIterateTree(&iter, lowerlimit, upperlimit)){\
+    typedelem = naGetTreeCurLeafConst(&iter)
+
+#undef naBeginTreeMutatorIteration
+#define naBeginTreeMutatorIteration(typedelem, tree, lowerlimit, upperlimit, iter)\
+  iter = naMakeTreeMutator(tree);\
+  while(naIterateTree(&iter, lowerlimit, upperlimit)){\
+    typedelem = naGetTreeCurLeafMutable(&iter)
+
+#undef naBeginTreeModifierIteration
+#define naBeginTreeModifierIteration(typedelem, tree, lowerlimit, upperlimit, iter)\
+  iter = naMakeTreeModifier(tree);\
+  while(naIterateTree(&iter, lowerlimit, upperlimit)){\
+    typedelem = naGetTreeCurLeafMutable(&iter)
+
+#undef naEndTreeIteration
+#define naEndTreeIteration(iter)\
+  }\
+  naClearTreeIterator(&iter)
+
+
+
 NA_IDEF NATreeIterator naMakeTreeAccessor(const NATree* tree){
   NATreeIterator iter;
   #ifndef NDEBUG
@@ -109,22 +134,49 @@ NA_IDEF void naClearTreeIterator(NATreeIterator* iter){
 
 
 
-NA_IDEF NABool naLocateTreeKey(NATreeIterator* iter, const void* key, NABool assumeclose){
-  return naLocateTreeKeyCore(iter, key, assumeclose);
+NA_IDEF NABool naLocateTreeKey(NATreeIterator* iter, const void* key){
+  const NATree* tree = naGetTreeIteratorTreeConst(iter);
+  #ifndef NDEBUG
+    if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
+      naError("tree is configured with no key");
+  #endif
+  return naLocateTreeKeyCore(iter, key, NA_FALSE);
+}
+
+
+
+NA_IDEF NABool naLocateTreeKeyDelta(NATreeIterator* iter, const void* keydelta){
+  const NATree* tree = naGetTreeIteratorTreeConst(iter);
+  #ifndef NDEBUG
+    if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
+      naError("tree is configured with no key");
+    if(naIsTreeAtInitial(iter))
+      naError("Iterator is at its initial state.");
+    if(naIsTreeItemLeaf(tree, iter->item))
+      naError("Iterator is not at a leaf.");
+  #endif
+  void* absoluteKey = naRequestTreeTmpKey(tree);
+  if(naIsTreeItemLeaf(tree, iter->item)){
+    tree->config->keyAdder(absoluteKey, naGetTreeLeafKey(tree, (NATreeLeaf*)(iter->item)), keydelta);
+  }else{
+    tree->config->keyAdder(absoluteKey, naGetTreeNodeKey(tree, (NATreeNode*)(iter->item)), keydelta);
+  }
+  naResignTreeTmpKey(tree);
+  return naLocateTreeKeyCore(iter, absoluteKey, NA_TRUE);
 }
 
 
 
 NA_IDEF NABool naLocateTreeFirst(NATreeIterator* iter){
   naResetTreeIterator(iter);
-  return naIterateTree(iter);
+  return naIterateTree(iter, NA_NULL, NA_NULL);
 }
 
 
 
 NA_IDEF NABool naLocateTreeLast(NATreeIterator* iter){
   naResetTreeIterator(iter);
-  return naIterateTreeBack(iter);
+  return naIterateTreeBack(iter, NA_NULL, NA_NULL);
 }
 
 
@@ -253,54 +305,66 @@ NA_IDEF void* naGetTreeCurNodeMutable(NATreeIterator* iter){
 
 
 
-NA_IDEF NABool naIterateTree(NATreeIterator* iter){
+NA_IDEF NABool naIterateTree(NATreeIterator* iter, const void* lowerlimit, const void* upperlimit){
   NATreeIterationInfo info;
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
     if(iter->item && !naIsTreeItemLeaf(tree, iter->item))
       naError("Iter is not placed at a leaf. Undefined behaviour. You should reset the iterator.");
+    if(lowerlimit && ((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY))
+      naError("Tree requires to have a key in order to use a lower limit.");
+    if(upperlimit && ((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY))
+      naError("Tree requires to have a key in order to use an upper limit.");
   #endif
   info.step = 1;
   info.startindx = 0;
   info.breakindx = tree->config->childpernode;
+  info.lowerlimit = lowerlimit;
+  info.upperlimit = upperlimit;
   return naIterateTreeWithInfo(iter, &info);
 }
 
 
 
-NA_IDEF NABool naIterateTreeBack(NATreeIterator* iter){
+NA_IDEF NABool naIterateTreeBack(NATreeIterator* iter, const void* lowerlimit, const void* upperlimit){
   NATreeIterationInfo info;
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
     if(iter->item && !naIsTreeItemLeaf(tree, iter->item))
       naError("Iter is not placed at a leaf. Undefined behaviour. You should reset the iterator.");
+    if(lowerlimit && ((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY))
+      naError("Tree requires to have a key in order to use a lower limit.");
+    if(upperlimit && ((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY))
+      naError("Tree requires to have a key in order to use an upper limit.");
   #endif
   info.step = -1;
   info.startindx = tree->config->childpernode - 1;
   info.breakindx = -1;
+  info.lowerlimit = lowerlimit;
+  info.upperlimit = upperlimit;
   return naIterateTreeWithInfo(iter, &info);
 }
 
 
 
-NA_IDEF NABool naAddTreeKeyConst(NATreeIterator* iter, const void* key, const void* content, NABool replace){
+NA_IDEF NABool naAddTreeKeyConst(NATreeIterator* iter, const void* key, const void* constructordata, NABool replace){
   #ifndef NDEBUG
     const NATree* tree = naGetTreeIteratorTreeConst(iter);
-    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
+    if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("This function should not be called on trees without keys");
   #endif
-  return naAddTreeLeaf(iter, key, naMakePtrWithDataConst(content), replace);
+  return naAddTreeLeaf(iter, key, naMakePtrWithDataConst(constructordata), replace);
 }
 
 
 
-NA_IDEF NABool naAddTreeKeyMutable(NATreeIterator* iter, const void* key, void* content, NABool replace){
+NA_IDEF NABool naAddTreeKeyMutable(NATreeIterator* iter, const void* key, void* constructordata, NABool replace){
   #ifndef NDEBUG
     const NATree* tree = naGetTreeIteratorTreeConst(iter);
-    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
+    if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("This function should not be called on trees without keys");
   #endif
-  return naAddTreeLeaf(iter, key, naMakePtrWithDataMutable(content), replace);
+  return naAddTreeLeaf(iter, key, naMakePtrWithDataMutable(constructordata), replace);
 }
 
 
@@ -311,11 +375,11 @@ NA_IDEF NABool naIsTreeAtInitial(const NATreeIterator* iter){
 
 
 
-NA_HIDEF NABool naAddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafInsertOrder insertOrder, NABool movetonew){
+NA_HIDEF NABool naAddTreeContent(NATreeIterator* iter, NAPtr constructordata, NATreeLeafInsertOrder insertOrder, NABool movetonew){
   NATreeLeaf* contentleaf;
   NATree* tree = naGetTreeIteratorTreeMutable(iter);
   #ifndef NDEBUG
-    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
+    if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
       naError("This function should not be called on trees with keys");
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
@@ -330,30 +394,30 @@ NA_HIDEF NABool naAddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeaf
       #endif
       break;
     case NA_TREE_LEAF_INSERT_ORDER_NEXT:
-      naIterateTree(iter);
+      naIterateTree(iter, NA_NULL, NA_NULL);
       insertOrder = NA_TREE_LEAF_INSERT_ORDER_PREV;
       break;
     case NA_TREE_LEAF_INSERT_ORDER_PREV:
-      naIterateTreeBack(iter);
+      naIterateTreeBack(iter, NA_NULL, NA_NULL);
       insertOrder = NA_TREE_LEAF_INSERT_ORDER_NEXT;
       break;
     }
   }
-  contentleaf = naAddTreeContentInPlace(tree, iter->item, NA_NULL, content, insertOrder);
+  contentleaf = naAddTreeContentInPlace(tree, iter->item, NA_NULL, constructordata, insertOrder);
   if(movetonew){naSetTreeIteratorCurItem(iter, &(contentleaf->item));}
   return NA_TRUE;
 }
-NA_IDEF NABool naAddTreePrevConst(NATreeIterator* iter, const void* content, NABool movetonew){
-  return naAddTreeContent(iter, naMakePtrWithDataConst(content), NA_TREE_LEAF_INSERT_ORDER_PREV, movetonew);
+NA_IDEF NABool naAddTreePrevConst(NATreeIterator* iter, const void* constructordata, NABool movetonew){
+  return naAddTreeContent(iter, naMakePtrWithDataConst(constructordata), NA_TREE_LEAF_INSERT_ORDER_PREV, movetonew);
 }
-NA_IDEF NABool naAddTreePrevMutable(NATreeIterator* iter, void* content, NABool movetonew){
-  return naAddTreeContent(iter, naMakePtrWithDataMutable(content), NA_TREE_LEAF_INSERT_ORDER_PREV, movetonew);
+NA_IDEF NABool naAddTreePrevMutable(NATreeIterator* iter, void* constructordata, NABool movetonew){
+  return naAddTreeContent(iter, naMakePtrWithDataMutable(constructordata), NA_TREE_LEAF_INSERT_ORDER_PREV, movetonew);
 }
-NA_IDEF NABool naAddTreeNextConst(NATreeIterator* iter, const void* content, NABool movetonew){
-  return naAddTreeContent(iter, naMakePtrWithDataConst(content), NA_TREE_LEAF_INSERT_ORDER_NEXT, movetonew);
+NA_IDEF NABool naAddTreeNextConst(NATreeIterator* iter, const void* constructordata, NABool movetonew){
+  return naAddTreeContent(iter, naMakePtrWithDataConst(constructordata), NA_TREE_LEAF_INSERT_ORDER_NEXT, movetonew);
 }
-NA_IDEF NABool naAddTreeNextMutable(NATreeIterator* iter, void* content, NABool movetonew){
-  return naAddTreeContent(iter, naMakePtrWithDataMutable(content), NA_TREE_LEAF_INSERT_ORDER_NEXT, movetonew);
+NA_IDEF NABool naAddTreeNextMutable(NATreeIterator* iter, void* constructordata, NABool movetonew){
+  return naAddTreeContent(iter, naMakePtrWithDataMutable(constructordata), NA_TREE_LEAF_INSERT_ORDER_NEXT, movetonew);
 }
 
 

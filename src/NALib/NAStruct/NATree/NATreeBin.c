@@ -45,9 +45,9 @@ NA_HDEF NATreeNode* naConstructTreeNodeBin(NATree* tree, const void* key, NATree
 
 
 
-NA_HDEF NATreeLeaf* naConstructTreeLeafBin(NATree* tree, const void* key, NAPtr content){
+NA_HDEF NATreeLeaf* naConstructTreeLeafBin(NATree* tree, const void* key, NAPtr constructordata){
   NATreeBinLeaf* binleaf = naNew(NATreeBinLeaf);
-  naInitTreeLeaf(tree, naGetBinLeafLeaf(binleaf), key, content);
+  naInitTreeLeaf(tree, naGetBinLeafLeaf(binleaf), key, constructordata);
   return naGetBinLeafLeaf(binleaf);
 }
 
@@ -69,16 +69,20 @@ NA_HDEF NAInt naGetKeyIndexBinDouble(const void* basekey, const void* testkey, c
 NA_HDEF NABool naEqualKeyBinDouble(const void* key1, const void* key2){
   return (*(const double*)key1 == *(const double*)key2);
 }
+NA_HDEF NABool naLowerKeyBinDouble(const void* key1, const void* key2){
+  return (*(const double*)key1 < *(const double*)key2);
+}
+NA_HDEF NABool naLowerEqualKeyBinDouble(const void* key1, const void* key2){
+  return (*(const double*)key1 <= *(const double*)key2);
+}
 NA_HDEF void naAssignKeyBinDouble(void* dst, const void* src){
   *(double*)dst = *(const double*)src;
 }
-NA_HDEF NABool naTestKeyBinDouble(const void* leftlimit, const void* rightlimit, const void* key){
-  return ((*(const double*)leftlimit <= *(const double*)key) && (*(const double*)rightlimit >= *(const double*)key));
+NA_HDEF void naAddKeyBinDouble(void* dst, const void* src1, const void* src2){
+  *(double*)dst = *(const double*)src1 + *(const double*)src2;
 }
-NA_HDEF NABool naTestKeyContainBinDouble(NATreeNode* parentnode, const void* key){
-  NA_UNUSED(parentnode);
-  NA_UNUSED(key);
-  return NA_TRUE;
+NA_HDEF NABool naTestKeyBinDouble(const void* lowerlimit, const void* upperlimit, const void* key){
+  return ((*(const double*)lowerlimit <= *(const double*)key) && (*(const double*)key) < *(const double*)upperlimit);
 }
 
 
@@ -89,21 +93,26 @@ NA_HDEF NAInt naGetChildIndexBinNAInt(NATreeNode* parentnode, const void* childk
 }
 NA_HDEF NAInt naGetKeyIndexBinNAInt(const void* basekey, const void* key, const void* data){
   NA_UNUSED(data);
+  // if key is equal to basekey, the return value must be 1.
   return !(*(const NAInt*)key < *(const NAInt*)basekey); // results in 0 or 1
 }
 NA_HDEF NABool naEqualKeyBinNAInt(const void* key1, const void* key2){
   return (*(const NAInt*)key1 == *(const NAInt*)key2);
 }
+NA_HDEF NABool naLowerKeyBinNAInt(const void* key1, const void* key2){
+  return (*(const NAInt*)key1 < *(const NAInt*)key2);
+}
+NA_HDEF NABool naLowerEqualKeyBinNAInt(const void* key1, const void* key2){
+  return (*(const NAInt*)key1 <= *(const NAInt*)key2);
+}
 NA_HDEF void naAssignKeyBinNAInt(void* dst, const void* src){
   *(NAInt*)dst = *(const NAInt*)src;
 }
-NA_HDEF NABool naTestKeyBinNAInt(const void* leftlimit, const void* rightlimit, const void* key){
-  return ((*(const NAInt*)leftlimit <= *(const NAInt*)key) && (*(const NAInt*)rightlimit >= *(const NAInt*)key));
+NA_HDEF void naAddKeyBinNAInt(void* dst, const void* src1, const void* src2){
+  *(NAInt*)dst = *(const NAInt*)src1 + *(const NAInt*)src2;
 }
-NA_HDEF NABool naTestKeyContainBinNAInt(NATreeNode* parentnode, const void* key){
-  NA_UNUSED(parentnode);
-  NA_UNUSED(key);
-  return NA_TRUE;
+NA_HDEF NABool naTestKeyBinNAInt(const void* lowerlimit, const void* upperlimit, const void* key){
+  return ((*(const NAInt*)lowerlimit <= *(const NAInt*)key) && (*(const NAInt*)upperlimit >= *(const NAInt*)key));
 }
 
 
@@ -120,33 +129,33 @@ NA_HDEF void naDestructTreeLeafBin(NATreeLeaf* leaf){
 
 
 
-NA_HDEF NATreeNode* naLocateBubbleBinWithLimits(const NATree* tree, NATreeNode* node, const void* key, const void* leftlimit, const void* rightlimit, NATreeItem* previtem){
+NA_HDEF NATreeNode* naLocateBubbleBinWithLimits(const NATree* tree, NATreeNode* node, const void* key, const void* lowerlimit, const void* upperlimit, NATreeItem* previtem){
   NATreeBinNode* binnode;
   #ifndef NDEBUG
     if(node == NA_NULL)
       naError("node should not be null");
     if(previtem == NA_NULL)
       naError("prevnode should not be null");
-    if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
+    if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("tree is configured with no key");
   #endif
   binnode = (NATreeBinNode*)(node);
   // If we are at a node which stores the key itself, return this node.
-  if(tree->config->keyEqualer(key, naGetBinNodeKey(binnode))){return node;}  // todo what about key being <= or >= ?
+  if(tree->config->keyEqualComparer(key, naGetBinNodeKey(binnode))){return node;}
   // Otherwise, we set the limits dependent on the previous node.
   if(naGetTreeNodeChildIndex(tree, node, previtem) == 1){
-    leftlimit = naGetBinNodeKey(binnode);
+    lowerlimit = naGetBinNodeKey(binnode);
   }else{
-    rightlimit = naGetBinNodeKey(binnode);
+    upperlimit = naGetBinNodeKey(binnode);
   }
   // If we know both limits and the key is contained within, return.
-  if(leftlimit && rightlimit && tree->config->keyTester(leftlimit, rightlimit, key)){
+  if(lowerlimit && upperlimit && tree->config->keyTester(lowerlimit, upperlimit, key)){
     return node;
   }
   // Otherwise, go up if possible.
   NATreeItem* item = naGetTreeNodeItem(node);
   if(!naIsTreeItemRoot(tree, item)){
-    return naLocateBubbleBinWithLimits(tree, naGetTreeItemParent(item), key, leftlimit, rightlimit, item);
+    return naLocateBubbleBinWithLimits(tree, naGetTreeItemParent(item), key, lowerlimit, upperlimit, item);
   }else{
     // We reached the root. No need to break a sweat. Simply return null.
     return NA_NULL;
@@ -192,12 +201,12 @@ NA_HDEF NATreeNode* naRemoveLeafBin(NATree* tree, NATreeLeaf* leaf){
 
 
 
-NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
+NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr constructordata, NATreeLeafInsertOrder insertOrder){
   NATreeLeaf* left;
   NATreeLeaf* right;
 
   // Create the new leaf and initialize it.
-  NATreeLeaf* newleaf = naConstructTreeLeafBin(tree, key, content);
+  NATreeLeaf* newleaf = naConstructTreeLeafBin(tree, key, constructordata);
 
   if(!existingItem){
     // There is no leaf to add to, meaning there was no root. Therefore, we
@@ -218,7 +227,7 @@ NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeItem* existingItem, cons
     switch(insertOrder){
     case NA_TREE_LEAF_INSERT_ORDER_KEY:
       #ifndef NDEBUG
-        if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
+        if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
           naError("tree is configured with no key");
       #endif
       if(tree->config->keyIndexGetter(naGetBinLeafKey(((NATreeBinLeaf*)existingItem)), naGetBinLeafKey(((NATreeBinLeaf*)newleaf)), NA_NULL) == 1){
@@ -231,7 +240,7 @@ NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeItem* existingItem, cons
       break;
     case NA_TREE_LEAF_INSERT_ORDER_PREV:
       #ifndef NDEBUG
-        if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
+        if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
           naError("tree is configured with key");
       #endif
       left = newleaf;
@@ -239,7 +248,7 @@ NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeItem* existingItem, cons
       break;
     case NA_TREE_LEAF_INSERT_ORDER_NEXT:
       #ifndef NDEBUG
-        if((tree->config->flags & NA_TREE_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
+        if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) != NA_TREE_KEY_NOKEY)
           naError("tree is configured with key");
       #endif
       left = existingLeaf;

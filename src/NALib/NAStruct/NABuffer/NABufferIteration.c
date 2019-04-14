@@ -201,7 +201,7 @@ NA_HDEF NABool naLocateBufferNextPart(NABufferIterator* iter){
   #endif
   iter->curbit = 0;
   iter->linenum = 0;
-  naIterateTree(&(iter->partiter));
+  naIterateTree(&(iter->partiter), NA_NULL, NA_NULL);
   if(naIsTreeAtInitial(&(iter->partiter))){
     const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
     iter->partoffset = naGetRangeiEnd(buffer->range);
@@ -221,7 +221,7 @@ NA_HDEF NABool naLocateBufferPrevPartMax(NABufferIterator* iter){
   #endif
   iter->curbit = 0;
   iter->linenum = 0;
-  naIterateTreeBack(&(iter->partiter));
+  naIterateTreeBack(&(iter->partiter), NA_NULL, NA_NULL);
   if(naIsTreeAtInitial(&(iter->partiter))){
     const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
     iter->partoffset = buffer->range.origin;
@@ -277,7 +277,7 @@ NA_HDEF NABool naIterateBufferPart(NABufferIterator* iter){
     if(iter->partoffset != 0)
       naError("partoffset is not null.");
   #endif
-  success = naIterateTree(&(iter->partiter));
+  success = naIterateTree(&(iter->partiter), NA_NULL, NA_NULL);
   if(!success){
     const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
     iter->partoffset = naGetRangeiEnd(buffer->range);

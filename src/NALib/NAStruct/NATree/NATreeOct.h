@@ -30,19 +30,22 @@ NA_EXTERN_RUNTIME_TYPE(NATreeOctLeaf);
 #define LEAF_USERDATA_OFFSET_OCT   offsetof(NATreeOctLeaf, userdata)
 #define NODE_USERDATA_OFFSET_OCT   offsetof(NATreeOctNode, userdata)
 
-NA_HAPI NAInt naGetChildIndexOctDouble(NATreeNode* parentnode, const void* childkey);
-NA_HAPI NAInt naGetKeyIndexOctDouble(const void* basekey, const void* testkey, const void* data);
-NA_HAPI NABool naEqualKeyOctDouble(const void* key1, const void* key2);
-NA_HAPI void naAssignKeyOctDouble(void* dst, const void* src);
-NA_HAPI NABool naTestKeyOctDouble(const void* leftlimit, const void* rightlimit, const void* key);
-NA_HAPI NABool naTestKeyContainOctDouble(NATreeNode* parentnode, const void* key);
+NA_HAPI  NAInt naGetChildIndexOctDouble(NATreeNode* parentnode, const void* childkey);
+NA_HAPI  NAInt naGetKeyIndexOctDouble(const void* basekey, const void* testkey, const void* data);
+NA_HAPI  NABool naEqualKeyOctDouble(const void* key1, const void* key2);
+NA_HAPI  NABool naLowerKeyOctDouble(const void* origin1, const void* origin2);
+NA_HAPI  NABool naLowerEqualKeyOctDouble(const void* origin1, const void* origin2);
+NA_HAPI  void naAssignKeyOctDouble(void* dst, const void* src);
+NA_HAPI  void naAddKeyOctDouble(void* dst, const void* src1, const void* src2);
+NA_HAPI  NABool naTestKeyOctDouble(const void* lowerlimit, const void* upperlimit, const void* key);
+NA_HAPI  NABool naTestKeyContainOctDouble(NATreeNode* parentnode, const void* key);
 
-NA_HAPI void naDestructTreeNodeOct(NATreeNode* node);
-NA_HAPI void naDestructTreeLeafOct(NATreeLeaf* leaf);
+NA_HAPI  void naDestructTreeNodeOct(NATreeNode* node);
+NA_HAPI  void naDestructTreeLeafOct(NATreeLeaf* leaf);
 
-NA_HAPI NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeItem* item, const void* key);
-NA_HAPI NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf);
-NA_HAPI NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
+NA_HAPI  NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeItem* item, const void* key);
+NA_HAPI  NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf);
+NA_HAPI  NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr constructordata, NATreeLeafInsertOrder insertOrder);
 
 NA_HIAPI NATreeItem* naGetOctNodeItem(NATreeOctNode* octnode);
 
