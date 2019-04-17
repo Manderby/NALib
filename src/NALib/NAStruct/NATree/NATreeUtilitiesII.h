@@ -33,6 +33,30 @@ NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
 
 
 
+//NA_DEF NATree* naInitTreeCopy(NATree* newtree, const NATree* originaltree){
+//  NATreeIterator newiter;
+//  NATreeIterator dupiter;
+//  newtree = naInitTree(newtree, originaltree->config);
+//
+//  newiter = naMakeTreeModifier(newtree);
+//  dupiter = naMakeTreeAccessor(originaltree);
+//  while(naIterateTree(&dupiter, NA_NULL, NA_NULL)){
+//    const void* key = naGetTreeCurLeafKey(&dupiter);
+//    NAPtr dupdata = naGetTreeLeafData(originaltree, (NATreeLeaf*)(dupiter.item));
+//    NAPtr newcontent = newtree->config->leafDataCopier(dupdata);
+//    naAddTreeLeaf(&newiter, key, newcontent, NA_FALSE);
+//  }
+//
+//  naClearTreeIterator(&dupiter);
+//  naClearTreeIterator(&newiter);
+//
+//  naUpdateTree(newtree);
+//
+//  return newtree;
+//}
+
+
+
 NA_IDEF void naEmptyTree(NATree* tree){
   #ifndef NDEBUG
     if(tree->itercount != 0)
@@ -175,6 +199,21 @@ NA_IDEF void naUpdateTree(NATree* tree){
   #endif
   if(tree->root && !naIsTreeRootLeaf(tree)){
     naUpdateTreeNodeCapturing(tree, (NATreeNode*)tree->root);
+  }
+}
+
+
+
+NA_IAPI NAPtr naGetRootNodeContent(NATree* tree)
+{
+  if(tree->root){
+    #ifndef NDEBUG
+      if(naIsTreeRootLeaf(tree))
+        naError("Root of the tree is not a node");
+    #endif
+    return naGetTreeNodeData(tree, (NATreeNode*)(tree->root));
+  }else{
+    return naMakePtrNull();
   }
 }
 

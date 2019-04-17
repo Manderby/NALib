@@ -45,9 +45,9 @@ NA_HDEF NATreeNode* naConstructTreeNodeBin(NATree* tree, const void* key, NATree
 
 
 
-NA_HDEF NATreeLeaf* naConstructTreeLeafBin(NATree* tree, const void* key, NAPtr constructordata){
+NA_HDEF NATreeLeaf* naConstructTreeLeafBin(NATree* tree, const void* key, NAPtr content){
   NATreeBinLeaf* binleaf = naNew(NATreeBinLeaf);
-  naInitTreeLeaf(tree, naGetBinLeafLeaf(binleaf), key, constructordata);
+  naInitTreeLeaf(tree, naGetBinLeafLeaf(binleaf), key, content);
   return naGetBinLeafLeaf(binleaf);
 }
 
@@ -201,12 +201,12 @@ NA_HDEF NATreeNode* naRemoveLeafBin(NATree* tree, NATreeLeaf* leaf){
 
 
 
-NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr constructordata, NATreeLeafInsertOrder insertOrder){
+NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
   NATreeLeaf* left;
   NATreeLeaf* right;
 
   // Create the new leaf and initialize it.
-  NATreeLeaf* newleaf = naConstructTreeLeafBin(tree, key, constructordata);
+  NATreeLeaf* newleaf = naConstructTreeLeafBin(tree, key, content);
 
   if(!existingItem){
     // There is no leaf to add to, meaning there was no root. Therefore, we

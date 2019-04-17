@@ -84,9 +84,9 @@ NA_HDEF NATreeQuadNode* naConstructTreeNodeQuad(NATree* tree, NAPos origin, NAIn
 
 
 
-NA_HDEF NATreeLeaf* naConstructTreeLeafQuad(NATree* tree, const void* key, NAPtr constructordata){
+NA_HDEF NATreeLeaf* naConstructTreeLeafQuad(NATree* tree, const void* key, NAPtr content){
   NATreeQuadLeaf* quadLeaf = naNew(NATreeQuadLeaf);
-  naInitTreeLeaf(tree, naGetQuadLeafLeaf(quadLeaf), key, constructordata);
+  naInitTreeLeaf(tree, naGetQuadLeafLeaf(quadLeaf), key, content);
   quadLeaf->leafexponent = naGetTreeConfigurationBaseLeafExponent(tree->config);
   return naGetQuadLeafLeaf(quadLeaf);
 }
@@ -281,7 +281,7 @@ NA_HDEF NATreeNode* naRemoveLeafQuad(NATree* tree, NATreeLeaf* leaf){
 
 
 // Oomph. That code is mighty confusing!
-NA_HDEF NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr constructordata, NATreeLeafInsertOrder insertOrder){
+NA_HDEF NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
   NA_UNUSED(insertOrder);
   #ifndef NDEBUG
     if(insertOrder != NA_TREE_LEAF_INSERT_ORDER_KEY)
@@ -291,7 +291,7 @@ NA_HDEF NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, con
   #endif
   
   // Create the new leaf and initialize it.
-  NATreeLeaf* newLeaf = naConstructTreeLeafQuad(tree, key, constructordata);
+  NATreeLeaf* newLeaf = naConstructTreeLeafQuad(tree, key, content);
 
   if(!existingItem){
     // There is no leaf to add to, meaning there was no root. Therefore, we

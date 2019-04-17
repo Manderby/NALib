@@ -56,7 +56,7 @@ NA_HAPI  void naDestructTreeLeafBin(NATreeLeaf* leaf);
 
 NA_HAPI  NATreeNode* naLocateBubbleBin(const NATree* tree, NATreeItem* item, const void* key);
 NA_HAPI  NATreeNode* naRemoveLeafBin(NATree* tree, NATreeLeaf* leaf);
-NA_HAPI  NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr constructordata, NATreeLeafInsertOrder insertOrder);
+NA_HAPI  NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 
 NA_HAPI  void naInitNodeAVL(NATreeBinNode* binnode);
 NA_HAPI  void naGrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx);

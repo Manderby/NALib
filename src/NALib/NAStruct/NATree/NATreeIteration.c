@@ -260,7 +260,7 @@ NA_HDEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTo
 
 
 
-NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr constructordata, NABool replace){
+NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace){
   NABool found;
   NATree* tree = naGetTreeIteratorTreeMutable(iter);;
   #ifndef NDEBUG
@@ -276,10 +276,10 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr constr
     if(found){
       // Destruct the leaf and recreate it again.
       naDestructLeafData(tree, naGetTreeLeafData(tree, (NATreeLeaf*)(iter->item)));
-      naSetTreeLeafData(tree, (NATreeLeaf*)(iter->item), naConstructLeafData(tree, key, constructordata));
+      naSetTreeLeafData(tree, (NATreeLeaf*)(iter->item), naConstructLeafData(tree, key, content));
     }else{
       // Add the new data and set the iterator to that newly created position.
-      NATreeLeaf* contentleaf = naAddTreeContentInPlace(tree, iter->item, key, constructordata, NA_TREE_LEAF_INSERT_ORDER_KEY);
+      NATreeLeaf* contentleaf = naAddTreeContentInPlace(tree, iter->item, key, content, NA_TREE_LEAF_INSERT_ORDER_KEY);
       naSetTreeIteratorCurItem(iter, &(contentleaf->item));
     }
   }

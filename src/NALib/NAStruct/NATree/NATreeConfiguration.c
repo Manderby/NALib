@@ -18,14 +18,12 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   #ifndef NDEBUG
     // Just some security measures in case the programmer sees no purpos in
     // setting it.
-    config->keyByteSize          = 0;
     config->leafKeyOffset        = -1;
     config->nodeKeyOffset        = -1;
     config->nodeChildsOffset     = -1;
     config->leafUserDataOffset   = -1;
     config->nodeUserDataOffset   = -1;
   #endif
-  config->configdata           = NA_NULL;
   
   if(flags & NA_TREE_QUADTREE){
   
@@ -95,7 +93,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     }
     config->nodeDestructor          = naDestructTreeNodeOct;
     config->leafDestructor          = naDestructTreeLeafOct;
-
+    
     config->bubbleLocator           = naLocateBubbleOct;
     config->leafRemover             = naRemoveLeafOct;
     config->leafInserter            = naInsertLeafOct;

@@ -206,13 +206,13 @@ NA_HIDEF NATreeItem* naGetTreeLeafItem(NATreeLeaf* leaf){
 
 
 
-NA_HIDEF void naInitTreeLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr constructordata){
+NA_HIDEF void naInitTreeLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr content){
   naInitTreeItem(naGetTreeLeafItem(leaf));
   
   if(tree->config->keyAssigner){
     tree->config->keyAssigner(naGetTreeLeafKey(tree, leaf), key);
   }
-  naSetTreeLeafData(tree, leaf, naConstructLeafData(tree, key, constructordata));
+  naSetTreeLeafData(tree, leaf, naConstructLeafData(tree, key, content));
 }
 
 
@@ -243,12 +243,12 @@ NA_HIDEF void naDestructTreeLeaf(NATree* tree, NATreeLeaf* leaf){
 
 
 
-NA_HIDEF NAPtr naConstructLeafData(NATree* tree, const void* key, NAPtr constructordata){
+NA_HIDEF NAPtr naConstructLeafData(NATree* tree, const void* key, NAPtr content){
   if(tree->config->leafDataConstructor){
-    return tree->config->leafDataConstructor(key, constructordata);
+    return tree->config->leafDataConstructor(key, content);
   }else{
-    // If there is no constructor, we plainly store the given constructordata.
-    return constructordata;
+    // If there is no constructor, we plainly store the given content.
+    return content;
   }
 }
 

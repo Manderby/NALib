@@ -65,30 +65,33 @@ typedef void (*NATreeDestructorCallback)(NAPtr userdata);
 // The constructor will be called when creating a new leaf. The destructor is
 // called, when a leaf ultimately gets deleted.
 //
-// The constructor allows you to process the given leafdata before storing.
-// The return value will be stored in the tree. If a tread does not define a
-// leaf constructor, a leaf will simply store the leafdata pointer without any
-// processing.
+// The constructor allows you to process the given content before storing. In
+// the end, you have to return an NAPtr which then will be stored in the tree.
+// Use this to either just process the given content and return it in the end
+// or create a completely new content out of the given content. If a tree does
+// not define a leaf constructor, a leaf will simply store the given content
+// without any processing.
+//
+// In the destructor, the leafdata denotes the data which was returned from the
+// constructor.
 //
 // The key parameter denotes the key of the node. If the tree does not use a
-// key, that parameter is Null. Note that the constructordata parameter is here
-// just for information. You may or may not use it.
+// key, that parameter is Null.
 //
 // Use these callbacks for example, if you want to store a reference counted
 // pointer which shall be incremented before storing it in the tree. Or you
-// can use the data stored in constructordata to allocate a memory block from
+// can use the data stored in content to allocate a memory block from
 // a user defined pool-structure and store the leafdata within, ultimately
-// returning the memory block. Or maybe the constructordata contains just an
-// integer which counts the number of elements in the tree. Many more examples
-// exist.
+// returning the memory block. Or maybe content contains just an integer which
+// counts the number of elements in the tree and you just return naMakePtrNull.
+// Many more examples exist.
 //
-// Use naGetPtrConst and naGetPtrMutable to read leafdata.
+// Use naGetPtrConst and naGetPtrMutable to read content and leafdata.
 // Use naMakePtrWithDataConst and naMakePtrWithDataMutable to create the
 // return value.
-typedef NAPtr (*NATreeLeafDataConstructor)(const void* key,
-                                                 NAPtr constructordata);
-                                              
-typedef void (*NATreeLeafDataDestructor)(        NAPtr leafdata);
+typedef NAPtr (*NATreeLeafDataConstructor)(const void* key, NAPtr content);
+typedef void  (*NATreeLeafDataDestructor) (NAPtr leafdata);
+//typedef NAPtr (*NATreeLeafDataCopier)(NAPtr leafdata);
 
 // NATreeNodeDataConstructor and NATreeNodeDataDestructor
 // The constructor is called when a tree creates an internal tree node other
@@ -100,11 +103,10 @@ typedef void (*NATreeLeafDataDestructor)(        NAPtr leafdata);
 // This data pointer will then be available to other callback functions.
 //
 // The key parameter denotes the key of the node. If the tree does not use a
-// key, that parameter is Null. Note that the constructordata parameter is here
+// key, that parameter is Null. Note that the content parameter is here
 // just for information. You may or may not use it.
 typedef NAPtr (*NATreeNodeDataConstructor)(const void* key);
-                                              
-typedef void (*NATreeNodeDataDestructor)(        NAPtr nodedata);
+typedef void  (*NATreeNodeDataDestructor) (NAPtr nodedata);
 
 // NATreeNodeUpdater 
 // Gets called whenever childs of a parent node change. The parent data is the
@@ -163,7 +165,8 @@ NA_IAPI void naSetTreeConfigurationTreeCallbacks(
 NA_IAPI void naSetTreeConfigurationLeafCallbacks(
   NATreeConfiguration*       config,
   NATreeLeafDataConstructor  leafdataconstructor,
-  NATreeLeafDataDestructor   leafdatadestructor);
+  NATreeLeafDataDestructor   leafdatadestructor/*,
+  NATreeLeafDataCopier       leafdatacopier*/);
 
 NA_IAPI void naSetTreeConfigurationNodeCallbacks(
   NATreeConfiguration*       config,
@@ -185,6 +188,7 @@ NA_IAPI NAInt naGetTreeConfigurationBaseLeafExponent(
 
 // Creates, Empties and Clears a tree. The config gets retained.
 NA_IAPI NATree* naInitTree(NATree* tree, NATreeConfiguration* config);
+//NA_IAPI NATree* naInitTreeCopy(NATree* tree, const NATree* originaltree);
 NA_IAPI void naEmptyTree(NATree* tree);
 NA_IAPI void naClearTree(NATree* tree);
 
@@ -220,7 +224,8 @@ NA_IAPI NABool naAddTreeLastMutable (NATree* tree,       void* content);
 // inner node from the leaves towards the root.
 NA_IAPI void naUpdateTree(NATree* tree);
 
-
+// Returns the content stored in the root node, if any.
+NA_IAPI NAPtr naGetRootNodeContent(NATree* tree);
 
 // ////////////////////////////////////
 // Iterators
@@ -396,7 +401,7 @@ NA_IAPI void*       naGetTreeCurNodeMutable(NATreeIterator* iter);
 // either replace the existing content when the replace parameter is true or
 // the existing content stays as it was when the replace parameter is false.
 // When replacing, the data stored in the existing item will be destructed
-// and a new data will be constructed with the new constructordata, if any.
+// and a new data will be constructed with the new content, if any.
 //
 // The functions return NA_TRUE if the given key was found.
 //
@@ -404,11 +409,11 @@ NA_IAPI void*       naGetTreeCurNodeMutable(NATreeIterator* iter);
 // key, no matter if it is the replaced content or the existing content.
 NA_IAPI NABool naAddTreeKeyConst(   NATreeIterator* iter,
                                         const void* key,
-                                        const void* constructordata,
+                                        const void* content,
                                              NABool replace);
 NA_IAPI NABool naAddTreeKeyMutable( NATreeIterator* iter,
                                         const void* key,
-                                              void* constructordata,
+                                              void* content,
                                              NABool replace);
 
 // Adds the given content at the specified position. Note that if the iterator
@@ -417,16 +422,16 @@ NA_IAPI NABool naAddTreeKeyMutable( NATreeIterator* iter,
 //
 // These functions only work on trees which are configured to have no keys.
 NA_IAPI NABool naAddTreePrevConst(  NATreeIterator* iter,
-                                        const void* constructordata,
+                                        const void* content,
                                              NABool movetonew);
 NA_IAPI NABool naAddTreePrevMutable(NATreeIterator* iter,
-                                              void* constructordata,
+                                              void* content,
                                              NABool movetonew);
 NA_IAPI NABool naAddTreeNextConst(  NATreeIterator* iter,
-                                        const void* constructordata,
+                                        const void* content,
                                              NABool movetonew);
 NA_IAPI NABool naAddTreeNextMutable(NATreeIterator* iter,
-                                              void* constructordata,
+                                              void* content,
                                              NABool movetonew);
 
 // /////////////////////////////////

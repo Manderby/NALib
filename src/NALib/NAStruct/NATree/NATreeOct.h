@@ -45,7 +45,7 @@ NA_HAPI  void naDestructTreeLeafOct(NATreeLeaf* leaf);
 
 NA_HAPI  NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeItem* item, const void* key);
 NA_HAPI  NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf);
-NA_HAPI  NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr constructordata, NATreeLeafInsertOrder insertOrder);
+NA_HAPI  NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 
 NA_HIAPI NATreeItem* naGetOctNodeItem(NATreeOctNode* octnode);
 

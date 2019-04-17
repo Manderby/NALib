@@ -88,9 +88,9 @@ NA_HDEF NATreeOctNode* naConstructTreeNodeOct(NATree* tree, NAVertex origin, NAI
 
 
 
-NA_HDEF NATreeLeaf* naConstructTreeLeafOct(NATree* tree, const void* key, NAPtr constructordata){
+NA_HDEF NATreeLeaf* naConstructTreeLeafOct(NATree* tree, const void* key, NAPtr content){
   NATreeOctLeaf* octLeaf = naNew(NATreeOctLeaf);
-  naInitTreeLeaf(tree, naGetOctLeafLeaf(octLeaf), key, constructordata);
+  naInitTreeLeaf(tree, naGetOctLeafLeaf(octLeaf), key, content);
   octLeaf->leafexponent = naGetTreeConfigurationBaseLeafExponent(tree->config);
   return naGetOctLeafLeaf(octLeaf);
 }
@@ -291,7 +291,7 @@ NA_HDEF NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
 
 
 // Oomph. That code is mighty confusing!
-NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr constructordata, NATreeLeafInsertOrder insertOrder){
+NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
   NA_UNUSED(insertOrder);
   #ifndef NDEBUG
     if(insertOrder != NA_TREE_LEAF_INSERT_ORDER_KEY)
@@ -301,7 +301,7 @@ NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, cons
   #endif
   
   // Create the new leaf and initialize it.
-  NATreeLeaf* newLeaf = naConstructTreeLeafOct(tree, key, constructordata);
+  NATreeLeaf* newLeaf = naConstructTreeLeafOct(tree, key, content);
 
   if(!existingItem){
     // There is no leaf to add to, meaning there was no root. Therefore, we
