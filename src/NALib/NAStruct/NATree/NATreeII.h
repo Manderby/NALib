@@ -25,6 +25,8 @@ typedef struct NATreeIterationInfo NATreeIterationInfo;
 #define NA_TREE_NODE_AVL_RIGHT (0x02 << NA_TREE_NODE_AVL_BITSHIFT)
 #define NA_TREE_NODE_AVL_MASK  (0x03 << NA_TREE_NODE_AVL_BITSHIFT)
 
+// This is directly linked to the types defined in NATree.h.
+// See NA_TREE_KEY_NAINT for example.
 #define NA_TREE_CONFIG_KEY_TYPE_MASK  0x07
 
 #define NA_TREE_FLAG_ROOT_IS_LEAF 0x01
@@ -90,7 +92,6 @@ struct NATreeConfiguration{
   int                           keyByteSize;
   int                           leafKeyOffset;
   int                           nodeKeyOffset;
-  int                           nodeChildsOffset;
   int                           leafUserDataOffset;
   int                           nodeUserDataOffset;
   void*                         configdata;
@@ -166,6 +167,8 @@ struct NATreeIterationInfo{
 };
 
 
+#define NA_TREE_NOTE_CHILDS_OFFSET sizeof(NATreeNode)
+
 
 // Helper functions. Do not use as public API.
 
@@ -178,33 +181,34 @@ NA_HIAPI void naInitTreeItem(NATreeItem* item);
 NA_HIAPI void naClearTreeItem(NATreeItem* item);
 NA_HIAPI NATreeNode* naGetTreeItemParent(const NATreeItem* item);
 NA_HIAPI void naSetTreeItemParent(NATreeItem* item, NATreeNode* parent);
-NA_HIAPI NABool naIsTreeItemRoot(const NATree* tree, const NATreeItem* item);
+NA_HIAPI NABool naIsTreeItemRoot(const NATreeItem* item);
 
 // Node
 NA_HIAPI NATreeItem* naGetTreeNodeItem(NATreeNode* node);
-NA_HIAPI void naInitTreeNode(const NATree* tree, NATreeNode* node, const void* key);
+NA_HIAPI void naInitTreeNode(const NATreeConfiguration* config, NATreeNode* node, const void* key);
 NA_HIAPI void naClearTreeNode(NATreeNode* node);
-NA_HIAPI void naDestructNodeData(const NATree* tree, NAPtr data);
-NA_HIAPI void naDestructTreeNode(NATree* tree, NATreeNode* node, NABool recursive);
+NA_HIAPI void naDestructNodeData(const NATreeConfiguration* config, NAPtr data);
+NA_HIAPI void naDestructTreeNode(const NATreeConfiguration* config, NATreeNode* node, NABool recursive);
 NA_HIAPI NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx);
 NA_HIAPI void naMarkNodeChildLeaf(NATreeNode* node, NAInt childindx, NABool isleaf);
-NA_HIAPI void* naGetTreeNodeKey(const NATree* tree, NATreeNode* node);
-NA_HIAPI NAPtr naGetTreeNodeData(const NATree* tree, NATreeNode* node);
-NA_HIAPI void naSetTreeNodeData(const NATree* tree, NATreeNode* node, NAPtr newdata);
-NA_HIAPI NATreeItem* naGetTreeNodeChild(const NATree* tree, NATreeNode* parent, NAInt childindx);
-NA_HIAPI void naSetTreeNodeChild(const NATree* tree, NATreeNode* parent, NAInt childindx, NATreeItem* newchild);
-NA_HIAPI NAInt naGetTreeNodeChildIndex(const NATree* tree, NATreeNode* parent, NATreeItem* child);
+NA_HIAPI void* naGetTreeNodeKey(const NATreeConfiguration* config, NATreeNode* node);
+NA_HIAPI NAPtr naGetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node);
+NA_HIAPI void naSetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node, NAPtr newdata);
+NA_HIAPI NATreeItem** naGetTreeNodeChildStorage(NATreeNode* parent);
+NA_HIAPI NATreeItem* naGetTreeNodeChild(const NATreeConfiguration* config, NATreeNode* parent, NAInt childindx);
+NA_HIAPI void naSetTreeNodeChild(NATreeNode* parent, NAInt childindx, NATreeItem* newchild);
+NA_HIAPI NAInt naGetTreeNodeChildIndex(const NATreeConfiguration* config, NATreeNode* parent, NATreeItem* child);
 
 // Leaf
 NA_HIAPI NATreeItem* naGetTreeLeafItem(NATreeLeaf* leaf);
-NA_HIAPI void naInitTreeLeaf(NATree* tree, NATreeLeaf* leaf, const void* key, NAPtr content);
+NA_HIAPI void naInitTreeLeaf(const NATreeConfiguration* config, NATreeLeaf* leaf, const void* key, NAPtr content);
 NA_HIAPI void naClearTreeLeaf(NATreeLeaf* leaf);
-NA_HIAPI void naDestructLeafData(const NATree* tree, NAPtr data);
-NA_HIAPI void naDestructTreeLeaf(NATree* tree, NATreeLeaf* leaf);
-NA_HIAPI NAPtr naConstructLeafData(NATree* tree, const void* key, NAPtr content);
-NA_HIAPI void* naGetTreeLeafKey(const NATree* tree, NATreeLeaf* leaf);
-NA_HIAPI NAPtr naGetTreeLeafData(const NATree* tree, NATreeLeaf* leaf);
-NA_HIAPI void naSetTreeLeafData(const NATree* tree, NATreeLeaf* leaf, NAPtr newcontent);
+NA_HIAPI void naDestructLeafData(const NATreeConfiguration* config, NAPtr data);
+NA_HIAPI void naDestructTreeLeaf(const NATreeConfiguration* config, NATreeLeaf* leaf);
+NA_HIAPI NAPtr naConstructLeafData(const NATreeConfiguration* config, const void* key, NAPtr content);
+NA_HIAPI void* naGetTreeLeafKey(const NATreeConfiguration* config, NATreeLeaf* leaf);
+NA_HIAPI NAPtr naGetTreeLeafData(const NATreeConfiguration* config, NATreeLeaf* leaf);
+NA_HIAPI void naSetTreeLeafData(const NATreeConfiguration* config, NATreeLeaf* leaf, NAPtr newcontent);
 
 // Iterator
 NA_HIAPI void naSetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newitem);
@@ -218,6 +222,8 @@ NA_HAPI  NABool naLocateTreeKeyCore(NATreeIterator* iter, const void* key, NABoo
 NA_HAPI  NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace);
 
 // Utilities
+NA_HIAPI void naSetTreeRoot(NATree* tree, NATreeItem* newroot, NABool isLeaf);
+NA_HIAPI void naClearTreeRoot(NATree* tree);
 NA_HIAPI NABool naIsTreeRootLeaf(const NATree* tree);
 NA_HIAPI void naMarkTreeRootLeaf(NATree* tree, NABool isleaf);
 NA_HIAPI NABool naIsTreeItemLeaf(const NATree* tree, NATreeItem* item);

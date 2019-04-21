@@ -64,9 +64,9 @@ NA_IDEF void naEmptyTree(NATree* tree){
   #endif
   if(tree->root){
     if(naIsTreeRootLeaf(tree)){
-      naDestructTreeLeaf(tree, (NATreeLeaf*)tree->root);
+      naDestructTreeLeaf(tree->config, (NATreeLeaf*)tree->root);
     }else{
-      naDestructTreeNode(tree, (NATreeNode*)tree->root, NA_TRUE);
+      naDestructTreeNode(tree->config, (NATreeNode*)tree->root, NA_TRUE);
     }
   }
   tree->root = NA_NULL;
@@ -204,17 +204,37 @@ NA_IDEF void naUpdateTree(NATree* tree){
 
 
 
-NA_IAPI NAPtr naGetRootNodeContent(NATree* tree)
+NA_IDEF NAPtr naGetRootNodeContent(NATree* tree)
 {
+  NAPtr retdata;
   if(tree->root){
     #ifndef NDEBUG
       if(naIsTreeRootLeaf(tree))
         naError("Root of the tree is not a node");
     #endif
-    return naGetTreeNodeData(tree, (NATreeNode*)(tree->root));
+    retdata = naGetTreeNodeData(tree->config, (NATreeNode*)(tree->root));
   }else{
-    return naMakePtrNull();
+    retdata = naMakePtrNull();
   }
+  return retdata;
+}
+
+
+
+NA_HIDEF void naSetTreeRoot(NATree* tree, NATreeItem* newroot, NABool isLeaf){
+  #ifndef NDEBUG
+    if(!newroot)
+      naError("Do not send null as new root. Use naClearTreeRoot for that.");
+  #endif
+  tree->root = newroot;
+  naMarkTreeRootLeaf(tree, isLeaf);
+  newroot->parent = NA_NULL;
+}
+
+
+
+NA_HIDEF void naClearTreeRoot(NATree* tree){
+  tree->root = NA_NULL;
 }
 
 
@@ -234,11 +254,11 @@ NA_HIDEF void naMarkTreeRootLeaf(NATree* tree, NABool isleaf){
 // todo: If this shows up in performance, adding rootparent again? Or adding childindx as flag in every item?
 NA_HIDEF NABool naIsTreeItemLeaf(const NATree* tree, NATreeItem* item){
   NABool retvalue;
-  if(naIsTreeItemRoot(tree, item)){
+  if(naIsTreeItemRoot(item)){
     retvalue = naIsTreeRootLeaf(tree);
   }else{
     NATreeNode* parent = naGetTreeItemParent(item);
-    NAInt childindx = naGetTreeNodeChildIndex(tree, parent, item);
+    NAInt childindx = naGetTreeNodeChildIndex(tree->config, parent, item);
     retvalue = naIsNodeChildLeaf(parent, childindx);
   }
   return retvalue;

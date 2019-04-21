@@ -135,12 +135,17 @@ typedef NABool (*NATreeNodeUpdater)       (NAPtr parentdata,
 // KEY_DOUBLE       Set this flag for your keys to have the double type.
 // KEY_NAINT        Set this flag for your keys to have the NAInt type.
 // BALANCE_AVL      Makes the tree a self-balancing tree using the AVL method
-#define NA_TREE_KEY_NOKEY   0x00
-#define NA_TREE_KEY_DOUBLE  0x01
-#define NA_TREE_KEY_NAINT   0x02
-#define NA_TREE_BALANCE_AVL 0x10
-#define NA_TREE_QUADTREE    0x20
-#define NA_TREE_OCTTREE     0x40
+// NA_TREE_QUADTREE Makes the tree a quadtree using 2-dimensional keys.
+// NA_TREE_OCTTREE  Makes the tree an octtree using 3-dimensional keys.
+// NA_TREE_ROOT_NO_LEAF Ensures that the root of the tree never is a leaf.
+//                      (currently available only for quadtree and octtree)
+#define NA_TREE_KEY_NOKEY     0x0000
+#define NA_TREE_KEY_DOUBLE    0x0001
+#define NA_TREE_KEY_NAINT     0x0002
+#define NA_TREE_BALANCE_AVL   0x0010
+#define NA_TREE_QUADTREE      0x0020
+#define NA_TREE_OCTTREE       0x0040
+#define NA_TREE_ROOT_NO_LEAF  0x0100
 
 // This is the callback struct you can use to create an NATree. Please read the
 // extensive comments at the appropriate callback signatures to understand how

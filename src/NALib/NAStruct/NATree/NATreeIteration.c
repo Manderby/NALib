@@ -22,12 +22,12 @@ NA_HDEF void naIterateTreeCapture(NATreeIterator* iter, NAInt indx, NATreeIterat
   // Note: It is safe to assume that this loop is executed at least once.
   while(indx != info->breakindx){
     // We set the iterator to whatever is stored in the desired child.
-    naSetTreeIteratorCurItem(iter, naGetTreeNodeChild(tree, parentNode, indx));
+    naSetTreeIteratorCurItem(iter, naGetTreeNodeChild(tree->config, parentNode, indx));
 
     if(iter->item){
       if(naIsNodeChildLeaf(parentNode, indx)){
         // The child is a leaf.
-        const void* key = naGetTreeLeafKey(tree, (NATreeLeaf*)iter->item);
+        const void* key = naGetTreeLeafKey(tree->config, (NATreeLeaf*)iter->item);
         if(  (!info->lowerlimit || tree->config->keyLowerEqualComparer(info->lowerlimit, key))
           || (!info->upperlimit || tree->config->keyLowerComparer(key, info->upperlimit)))
         {
@@ -36,7 +36,7 @@ NA_HDEF void naIterateTreeCapture(NATreeIterator* iter, NAInt indx, NATreeIterat
         }
       }else{
         // The child is a node.
-        const void* key = naGetTreeNodeKey(tree, (NATreeNode*)iter->item);
+        const void* key = naGetTreeNodeKey(tree->config, (NATreeNode*)iter->item);
         if(  (!info->lowerlimit || tree->config->keyLowerEqualComparer(info->lowerlimit, key))
           || (!info->upperlimit || tree->config->keyLowerComparer(key, info->upperlimit)))
         {
@@ -66,9 +66,9 @@ NA_HDEF void naIterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info
   NATreeItem* item = iter->item;
   naSetTreeIteratorCurItem(iter, NA_NULL);
 
-  while(!naIsTreeItemRoot(tree, item)){
+  while(!naIsTreeItemRoot(item)){
     NATreeNode* parent = naGetTreeItemParent(item);
-    NAInt nextindx = naGetTreeNodeChildIndex(tree, parent, item) + info->step;
+    NAInt nextindx = naGetTreeNodeChildIndex(tree->config, parent, item) + info->step;
 
     // Capture the next sibling, if any.
     if(nextindx != info->breakindx){
@@ -135,7 +135,7 @@ NA_HDEF NATreeItem* naLocateTreeKeyCapture(const NATree* tree, NATreeNode* node,
 
   if(!node){
     if(naIsTreeRootLeaf(tree)){
-      *matchfound = tree->config->keyEqualComparer(key, naGetTreeLeafKey(tree, (NATreeLeaf*)tree->root));
+      *matchfound = tree->config->keyEqualComparer(key, naGetTreeLeafKey(tree->config, (NATreeLeaf*)tree->root));
       return tree->root;
     }else{
       node = (NATreeNode*)tree->root;
@@ -149,7 +149,7 @@ NA_HDEF NATreeItem* naLocateTreeKeyCapture(const NATree* tree, NATreeNode* node,
   }
 
   childindx = tree->config->childIndexGetter(node, key);
-  child = naGetTreeNodeChild(tree, node, childindx);
+  child = naGetTreeNodeChild(tree->config, node, childindx);
 
   if(!child){
     // No child at the desired position. Return the closest parent.
@@ -157,7 +157,7 @@ NA_HDEF NATreeItem* naLocateTreeKeyCapture(const NATree* tree, NATreeNode* node,
   }else if(naIsNodeChildLeaf(node, childindx)){
     // When the subtree denotes a leaf, we test, if the key is equal and return
     // the result.
-    *matchfound = tree->config->keyEqualComparer(key, naGetTreeLeafKey(tree, (NATreeLeaf*)child));
+    *matchfound = tree->config->keyEqualComparer(key, naGetTreeLeafKey(tree->config, (NATreeLeaf*)child));
     return child;
   }else{
     // When the subtree denotes a node, we follow it.
@@ -191,7 +191,7 @@ NA_HDEF NABool naLocateTreeKeyCore(NATreeIterator* iter, const void* key, NABool
   // If bubbling is requested, search for the topmost node which potentially
   // contains the given key. But make sure, the iterator is at a leaf and
   // not at the root.
-  if(usebubble && !naIsTreeAtInitial(iter) && !naIsTreeItemRoot(tree, iter->item)){
+  if(usebubble && !naIsTreeAtInitial(iter) && !naIsTreeItemRoot(iter->item)){
     node = tree->config->bubbleLocator(tree, iter->item, key);
   }
 
@@ -226,11 +226,11 @@ NA_HDEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTo
     while(iter->item){
       if(naIsTreeItemLeaf(tree, iter->item)){
         // If the current item is a leaf, call the leaf searcher callback.
-        NAPtr data = naGetTreeLeafData(tree, (NATreeLeaf*)iter->item);
+        NAPtr data = naGetTreeLeafData(tree->config, (NATreeLeaf*)iter->item);
         nextindx = leafSearcher(token, data);
       }else{
         // If the current item is a node, call the node searcher callback.
-        NAPtr data = naGetTreeNodeData(tree, (NATreeNode*)iter->item);
+        NAPtr data = naGetTreeNodeData(tree->config, (NATreeNode*)iter->item);
         nextindx = nodeSearcher(token, data);
       }
       
@@ -249,7 +249,7 @@ NA_HDEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTo
       // Note that when the iterator is now at the root, the while loop will
       // break automatically and this function returns NA_FALSE.
       }else{
-        naSetTreeIteratorCurItem(iter, naGetTreeNodeChild(tree, (NATreeNode*)iter->item, nextindx));
+        naSetTreeIteratorCurItem(iter, naGetTreeNodeChild(tree->config, (NATreeNode*)iter->item, nextindx));
       }
     }
   }
@@ -275,8 +275,8 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
   if(!found || replace){
     if(found){
       // Destruct the leaf and recreate it again.
-      naDestructLeafData(tree, naGetTreeLeafData(tree, (NATreeLeaf*)(iter->item)));
-      naSetTreeLeafData(tree, (NATreeLeaf*)(iter->item), naConstructLeafData(tree, key, content));
+      naDestructLeafData(tree->config, naGetTreeLeafData(tree->config, (NATreeLeaf*)(iter->item)));
+      naSetTreeLeafData(tree->config, (NATreeLeaf*)(iter->item), naConstructLeafData(tree->config, key, content));
     }else{
       // Add the new data and set the iterator to that newly created position.
       NATreeLeaf* contentleaf = naAddTreeContentInPlace(tree, iter->item, key, content, NA_TREE_LEAF_INSERT_ORDER_KEY);

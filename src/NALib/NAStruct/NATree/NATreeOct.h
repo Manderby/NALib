@@ -7,8 +7,8 @@
 typedef struct NATreeOctNode NATreeOctNode;
 struct NATreeOctNode{
   NATreeNode node;
-  NAVertex origin;
   NATreeItem* childs[8];
+  NAVertex origin;
   NAPtr userdata;
   NAInt childexponent;
 };

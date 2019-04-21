@@ -72,9 +72,9 @@ NA_HDEF NAPos naGetChildOriginQuad(NAPos parentorigin, NAInt childindx, NAInt ch
 
 
 
-NA_HDEF NATreeQuadNode* naConstructTreeNodeQuad(NATree* tree, NAPos origin, NAInt childexponent){
+NA_HDEF NATreeQuadNode* naConstructTreeNodeQuad(const NATreeConfiguration* config, NAPos origin, NAInt childexponent){
   NATreeQuadNode* quadNode = naNew(NATreeQuadNode);
-  naInitTreeNode(tree, naGetQuadNodeNode(quadNode), &origin);
+  naInitTreeNode(config, naGetQuadNodeNode(quadNode), &origin);
 
   // Node-specific initialization
   quadNode->childexponent = childexponent;
@@ -84,10 +84,10 @@ NA_HDEF NATreeQuadNode* naConstructTreeNodeQuad(NATree* tree, NAPos origin, NAIn
 
 
 
-NA_HDEF NATreeLeaf* naConstructTreeLeafQuad(NATree* tree, const void* key, NAPtr content){
+NA_HDEF NATreeLeaf* naConstructTreeLeafQuad(const NATreeConfiguration* config, const void* key, NAPtr content){
   NATreeQuadLeaf* quadLeaf = naNew(NATreeQuadLeaf);
-  naInitTreeLeaf(tree, naGetQuadLeafLeaf(quadLeaf), key, content);
-  quadLeaf->leafexponent = naGetTreeConfigurationBaseLeafExponent(tree->config);
+  naInitTreeLeaf(config, naGetQuadLeafLeaf(quadLeaf), key, content);
+  quadLeaf->leafexponent = naGetTreeConfigurationBaseLeafExponent(config);
   return naGetQuadLeafLeaf(quadLeaf);
 }
 
@@ -183,7 +183,7 @@ NA_HDEF NATreeNode* naLocateBubbleQuadWithLimits(const NATree* tree, NATreeNode*
   // If we are at a node which stores the key itself, return this node.
   if(tree->config->keyEqualComparer(origin, naGetQuadNodeKey(quadNode))){return node;}
   // Otherwise, we set the limits dependent on the previous node.
-  if(naGetTreeNodeChildIndex(tree, node, previtem) == 1){ // for quad trees, this is of course wrong.
+  if(naGetTreeNodeChildIndex(tree->config, node, previtem) == 1){ // for quad trees, this is of course wrong.
     lowerlimit = naGetQuadNodeKey(quadNode);
   }else{
     upperlimit = naGetQuadNodeKey(quadNode);
@@ -194,7 +194,7 @@ NA_HDEF NATreeNode* naLocateBubbleQuadWithLimits(const NATree* tree, NATreeNode*
   }
   // Otherwise, go up if possible.
   NATreeItem* item = naGetTreeNodeItem(node);
-  if(!naIsTreeItemRoot(tree, item)){
+  if(!naIsTreeItemRoot(item)){
     return naLocateBubbleQuadWithLimits(tree, naGetTreeItemParent(item), origin, lowerlimit, upperlimit, item);
   }else{
     // We reached the root. No need to break a sweat. Simply return null.
@@ -210,18 +210,10 @@ NA_HDEF NATreeNode* naLocateBubbleQuad(const NATree* tree, NATreeItem* item, con
 
 
 
-NA_HDEF void naSetTreeRootQuad(NATree* tree, NATreeItem* newroot, NABool isLeaf){
-  tree->root = newroot;
-  naMarkTreeRootLeaf(tree, isLeaf);
-  newroot->parent = NA_NULL;
-}
-
-
-
 NA_HDEF void naSetTreeNodeChildQuad(NATreeQuadNode* parent, NATreeItem* child, NAInt childIndex, NABool isChildLeaf){
   naSetTreeItemParent(child, naGetQuadNodeNode(parent));
   naMarkNodeChildLeaf(naGetQuadNodeNode(parent), childIndex, isChildLeaf);
-  parent->childs[childIndex] = child;
+  naSetTreeNodeChild(naGetQuadNodeNode(parent), childIndex, child);
 }
 
 
@@ -229,10 +221,10 @@ NA_HDEF void naSetTreeNodeChildQuad(NATreeQuadNode* parent, NATreeItem* child, N
 NA_HDEF NATreeNode* naRemoveLeafQuad(NATree* tree, NATreeLeaf* leaf){
   NATreeItem* leafItem = naGetTreeLeafItem(leaf);
   NATreeNode* parent = naGetTreeItemParent(leafItem);
-  if(naIsTreeItemRoot(tree, leafItem)){
+  if(naIsTreeItemRoot(leafItem)){
     tree->root = NA_NULL;
   }else{
-    NAInt leafindx = naGetTreeNodeChildIndex(tree, parent, leafItem);
+    NAInt leafindx = naGetTreeNodeChildIndex(tree->config, parent, leafItem);
     #ifndef NDEBUG
       if(!naIsNodeChildLeaf(parent, leafindx))
         naError("Child is no leaf");
@@ -263,18 +255,18 @@ NA_HDEF NATreeNode* naRemoveLeafQuad(NATree* tree, NATreeLeaf* leaf){
       if(grandparent){
         // There is a grandparent. Simply add the sibling at the place where
         // the parent was and delete the parent.
-        NAInt parentindex = naGetTreeNodeChildIndex(tree, naGetQuadNodeNode(grandparent), naGetTreeNodeItem(parent));
+        NAInt parentindex = naGetTreeNodeChildIndex(tree->config, naGetQuadNodeNode(grandparent), naGetTreeNodeItem(parent));
         naSetTreeNodeChildQuad(grandparent, sibling, parentindex, isSiblingLeaf);
-        naDestructTreeNode(tree, parent, NA_FALSE);
+        naDestructTreeNode(tree->config, parent, NA_FALSE);
       }else{
         // This was the last parent before being a root. Attach the sibling as
         // the new root.
-        naSetTreeRootQuad(tree, sibling, isSiblingLeaf);
+        naSetTreeRoot(tree, sibling, isSiblingLeaf);
       }
       parent = naGetQuadNodeNode(grandparent);
     }
   }
-  naDestructTreeLeaf(tree, leaf);
+  naDestructTreeLeaf(tree->config, leaf);
   return parent;
 }
 
@@ -291,12 +283,12 @@ NA_HDEF NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, con
   #endif
   
   // Create the new leaf and initialize it.
-  NATreeLeaf* newLeaf = naConstructTreeLeafQuad(tree, key, content);
+  NATreeLeaf* newLeaf = naConstructTreeLeafQuad(tree->config, key, content);
 
   if(!existingItem){
     // There is no leaf to add to, meaning there was no root. Therefore, we
     // create a first leaf.
-    naSetTreeRootQuad(tree, naGetTreeLeafItem(newLeaf), NA_TRUE);
+    naSetTreeRoot(tree, naGetTreeLeafItem(newLeaf), NA_TRUE);
     
   }else{
   
@@ -361,7 +353,7 @@ NA_HDEF NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, con
       // Reaching here, newRootOrigin and newRootChildExponent
       // denote a new parent containing both the existing child and the new leaf.
       // We create a new node which will become the root.
-      NATreeQuadNode* newRoot = naConstructTreeNodeQuad(tree, newRootOrigin, newRootChildExponent);
+      NATreeQuadNode* newRoot = naConstructTreeNodeQuad(tree->config, newRootOrigin, newRootChildExponent);
       
       // Now, we attach the previous root to the new root at the appropriate
       // child index.
@@ -370,7 +362,7 @@ NA_HDEF NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, con
 
       // Finally, we set the newRoot to be the root of the tree and mark
       // it to be a node.
-      naSetTreeRootQuad(tree, naGetQuadNodeItem(newRoot), NA_FALSE);
+      naSetTreeRoot(tree, naGetQuadNodeItem(newRoot), NA_FALSE);
 
       // Now, the newRoot becomes our existing parent.
       existingParent = newRoot;
@@ -421,7 +413,7 @@ NA_HDEF NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, con
       // existingParent and existingChild.
       
       if(smallestParentChildExponent != existingParentChildExponent){
-        NATreeQuadNode* smallestParent = naConstructTreeNodeQuad(tree, smallestParentOrigin, smallestParentChildExponent);
+        NATreeQuadNode* smallestParent = naConstructTreeNodeQuad(tree->config, smallestParentOrigin, smallestParentChildExponent);
         
         // First, attach the previous item to the new parent.
         NABool isPrevExistingChildLeaf = naIsTreeItemLeaf(tree, prevExistingChild);

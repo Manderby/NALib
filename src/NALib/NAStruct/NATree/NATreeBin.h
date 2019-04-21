@@ -6,11 +6,11 @@
 typedef struct NATreeBinNode NATreeBinNode;
 struct NATreeBinNode{
   NATreeNode node;
+  NATreeItem* childs[2];
   union{
     double d;
     NAInt i;
   } key;
-  NATreeItem* childs[2];
   NAPtr userdata;
 };
 NA_EXTERN_RUNTIME_TYPE(NATreeBinNode);

@@ -15,12 +15,15 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   config->flags = flags;
   naInitRefCount(&(config->refcount));
 
+  // This is just for testing if the implemented nodes "inheriting" from the
+  // NATreeNode structure have their childs storage at the correct position.
+  int nodeChildsOffset = -1;
+
   #ifndef NDEBUG
     // Just some security measures in case the programmer sees no purpos in
     // setting it.
     config->leafKeyOffset        = -1;
     config->nodeKeyOffset        = -1;
-    config->nodeChildsOffset     = -1;
     config->leafUserDataOffset   = -1;
     config->nodeUserDataOffset   = -1;
   #endif
@@ -30,6 +33,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->childpernode            = 4;
     switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
     case NA_TREE_KEY_DOUBLE:
+      config->keyByteSize             = sizeof(NAPos);
       config->childIndexGetter      = naGetChildIndexQuadDouble;
       config->keyIndexGetter        = naGetKeyIndexQuadDouble;
       config->keyEqualComparer      = naEqualKeyQuadDouble;
@@ -58,10 +62,9 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafRemover             = naRemoveLeafQuad;
     config->leafInserter            = naInsertLeafQuad;
 
-    config->keyByteSize             = sizeof(NAPos);
+    nodeChildsOffset                = NODE_CHILDS_OFFSET_QUAD;
     config->leafKeyOffset           = LEAF_KEY_OFFSET_QUAD;
     config->nodeKeyOffset           = NODE_KEY_OFFSET_QUAD;
-    config->nodeChildsOffset        = NODE_CHILDS_OFFSET_QUAD;
     config->leafUserDataOffset      = LEAF_USERDATA_OFFSET_QUAD;
     config->nodeUserDataOffset      = NODE_USERDATA_OFFSET_QUAD;
 
@@ -70,6 +73,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->childpernode            = 8;
     switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
     case NA_TREE_KEY_DOUBLE:
+      config->keyByteSize             = sizeof(NAVertex);
       config->childIndexGetter      = naGetChildIndexOctDouble;
       config->keyIndexGetter        = naGetKeyIndexOctDouble;
       config->keyEqualComparer      = naEqualKeyOctDouble;
@@ -98,10 +102,9 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafRemover             = naRemoveLeafOct;
     config->leafInserter            = naInsertLeafOct;
 
-    config->keyByteSize             = sizeof(NAVertex);
+    nodeChildsOffset                = NODE_CHILDS_OFFSET_OCT;
     config->leafKeyOffset           = LEAF_KEY_OFFSET_OCT;
     config->nodeKeyOffset           = NODE_KEY_OFFSET_OCT;
-    config->nodeChildsOffset        = NODE_CHILDS_OFFSET_OCT;
     config->leafUserDataOffset      = LEAF_USERDATA_OFFSET_OCT;
     config->nodeUserDataOffset      = NODE_USERDATA_OFFSET_OCT;
 
@@ -157,12 +160,17 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafRemover             = naRemoveLeafBin;
     config->leafInserter            = naInsertLeafBin;
     
+    nodeChildsOffset                = NODE_CHILDS_OFFSET_BIN;
     config->leafKeyOffset           = LEAF_KEY_OFFSET_BIN;
     config->nodeKeyOffset           = NODE_KEY_OFFSET_BIN;
-    config->nodeChildsOffset        = NODE_CHILDS_OFFSET_BIN;
     config->leafUserDataOffset      = LEAF_USERDATA_OFFSET_BIN;
     config->nodeUserDataOffset      = NODE_USERDATA_OFFSET_BIN;
   }
+  
+  #ifndef NDEBUG
+    if(nodeChildsOffset != NA_TREE_NOTE_CHILDS_OFFSET)
+      naError("The childs storage must come right after the node storage.");
+  #endif
   
   return config;
 }

@@ -13,21 +13,21 @@ NA_HDEF NATreeLeaf* naAddTreeContentInPlace(NATree* tree, NATreeItem* item, cons
   NATreeLeaf* contentleaf = tree->config->leafInserter(tree, item, key, content, insertOrder);
   NATreeNode* parent = naGetTreeItemParent(&(contentleaf->item));
   if(parent){
-    naUpdateTreeNodeBubbling(tree, parent, naGetTreeNodeChildIndex(tree, parent, &(contentleaf->item)));
+    naUpdateTreeNodeBubbling(tree, parent, naGetTreeNodeChildIndex(tree->config, parent, &(contentleaf->item)));
   }
   return contentleaf;
 }
 
 
 
-NA_HDEF void naFillTreeNodeChildData(NATree* tree, NAPtr childdata[NA_TREE_NODE_MAX_CHILDS], NATreeNode* node){
+NA_HDEF void naFillTreeNodeChildData(const NATreeConfiguration* config, NAPtr childdata[NA_TREE_NODE_MAX_CHILDS], NATreeNode* node){
   NAInt i;
-  for(i=0; i<tree->config->childpernode; i++){
-    NATreeItem* child = naGetTreeNodeChild(tree, node, i);
+  for(i=0; i<config->childpernode; i++){
+    NATreeItem* child = naGetTreeNodeChild(config, node, i);
     if(naIsNodeChildLeaf(node, i)){
-      childdata[i] = naGetTreeLeafData(tree, (NATreeLeaf*)child);
+      childdata[i] = naGetTreeLeafData(config, (NATreeLeaf*)child);
     }else{
-      childdata[i] = naGetTreeNodeData(tree, (NATreeNode*)child);
+      childdata[i] = naGetTreeNodeData(config, (NATreeNode*)child);
     }
   }
 }
@@ -44,14 +44,14 @@ NA_HDEF void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt ch
   // We call the update callback.
   if(tree->config->nodeUpdater){
     NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
-    naFillTreeNodeChildData(tree, childdata, parent);
-    bubble = tree->config->nodeUpdater(naGetTreeNodeData(tree, parent), childdata, childindx, parent->flags & NA_TREE_NODE_CHILDS_MASK);
+    naFillTreeNodeChildData(tree->config, childdata, parent);
+    bubble = tree->config->nodeUpdater(naGetTreeNodeData(tree->config, parent), childdata, childindx, parent->flags & NA_TREE_NODE_CHILDS_MASK);
   }
 
   // Then we propagate the message towards the root if requested.
-  if(bubble && !naIsTreeItemRoot(tree, &(parent->item))){
+  if(bubble && !naIsTreeItemRoot(&(parent->item))){
     NATreeNode* grandparent = naGetTreeItemParent(&(parent->item));
-    naUpdateTreeNodeBubbling(tree, grandparent, naGetTreeNodeChildIndex(tree, grandparent, &(parent->item)));
+    naUpdateTreeNodeBubbling(tree, grandparent, naGetTreeNodeChildIndex(tree->config, grandparent, &(parent->item)));
   }
 }
 
@@ -80,7 +80,7 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
       bubble |= NA_TRUE;
     }else{
       // this node stores subnodes
-      bubble |= naUpdateTreeNodeCapturing(tree, (NATreeNode*)naGetTreeNodeChild(tree, node, i));
+      bubble |= naUpdateTreeNodeCapturing(tree, (NATreeNode*)naGetTreeNodeChild(tree->config, node, i));
     }
   }
   
@@ -88,8 +88,8 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   // this very node.
   if(bubble){
     NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
-    naFillTreeNodeChildData(tree, childdata, node);
-    bubble = tree->config->nodeUpdater(naGetTreeNodeData(tree, node), childdata, -1, node->flags & NA_TREE_NODE_CHILDS_MASK);
+    naFillTreeNodeChildData(tree->config, childdata, node);
+    bubble = tree->config->nodeUpdater(naGetTreeNodeData(tree->config, node), childdata, -1, node->flags & NA_TREE_NODE_CHILDS_MASK);
   }
 
   return bubble;

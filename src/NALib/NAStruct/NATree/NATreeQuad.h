@@ -7,8 +7,8 @@
 typedef struct NATreeQuadNode NATreeQuadNode;
 struct NATreeQuadNode{
   NATreeNode node;
-  NAVertex origin;
   NATreeItem* childs[4];
+  NAVertex origin;
   NAPtr userdata;
   NAInt childexponent;
 };
