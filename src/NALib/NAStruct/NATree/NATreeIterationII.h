@@ -134,35 +134,13 @@ NA_IDEF void naClearTreeIterator(NATreeIterator* iter){
 
 
 
-NA_IDEF NABool naLocateTreeKey(NATreeIterator* iter, const void* key){
+NA_IDEF NABool naLocateTreeKey(NATreeIterator* iter, const void* key, NABool assumeclose){
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("tree is configured with no key");
   #endif
-  return naLocateTreeKeyCore(iter, key, NA_FALSE);
-}
-
-
-
-NA_IDEF NABool naLocateTreeKeyDelta(NATreeIterator* iter, const void* keydelta){
-  const NATree* tree = naGetTreeIteratorTreeConst(iter);
-  #ifndef NDEBUG
-    if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
-      naError("tree is configured with no key");
-    if(naIsTreeAtInitial(iter))
-      naError("Iterator is at its initial state.");
-    if(naIsTreeItemLeaf(tree, iter->item))
-      naError("Iterator is not at a leaf.");
-  #endif
-  void* absoluteKey = naRequestTreeTmpKey(tree);
-  if(naIsTreeItemLeaf(tree, iter->item)){
-    tree->config->keyAdder(absoluteKey, naGetTreeLeafKey(tree->config, (NATreeLeaf*)(iter->item)), keydelta);
-  }else{
-    tree->config->keyAdder(absoluteKey, naGetTreeNodeKey(tree->config, (NATreeNode*)(iter->item)), keydelta);
-  }
-  naResignTreeTmpKey(tree);
-  return naLocateTreeKeyCore(iter, absoluteKey, NA_TRUE);
+  return naLocateTreeKeyCore(iter, key, assumeclose);
 }
 
 

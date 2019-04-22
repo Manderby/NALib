@@ -91,7 +91,6 @@ typedef void (*NATreeDestructorCallback)(NAPtr userdata);
 // return value.
 typedef NAPtr (*NATreeLeafDataConstructor)(const void* key, NAPtr content);
 typedef void  (*NATreeLeafDataDestructor) (NAPtr leafdata);
-//typedef NAPtr (*NATreeLeafDataCopier)(NAPtr leafdata);
 
 // NATreeNodeDataConstructor and NATreeNodeDataDestructor
 // The constructor is called when a tree creates an internal tree node other
@@ -170,8 +169,7 @@ NA_IAPI void naSetTreeConfigurationTreeCallbacks(
 NA_IAPI void naSetTreeConfigurationLeafCallbacks(
   NATreeConfiguration*       config,
   NATreeLeafDataConstructor  leafdataconstructor,
-  NATreeLeafDataDestructor   leafdatadestructor/*,
-  NATreeLeafDataCopier       leafdatacopier*/);
+  NATreeLeafDataDestructor   leafdatadestructor);
 
 NA_IAPI void naSetTreeConfigurationNodeCallbacks(
   NATreeConfiguration*       config,
@@ -193,7 +191,6 @@ NA_IAPI NAInt naGetTreeConfigurationBaseLeafExponent(
 
 // Creates, Empties and Clears a tree. The config gets retained.
 NA_IAPI NATree* naInitTree(NATree* tree, NATreeConfiguration* config);
-//NA_IAPI NATree* naInitTreeCopy(NATree* tree, const NATree* originaltree);
 NA_IAPI void naEmptyTree(NATree* tree);
 NA_IAPI void naClearTree(NATree* tree);
 
@@ -322,13 +319,10 @@ typedef NAInt (*NATreeLeafTokenSearcher)(   void* token,
 // not found or the iterator points at the initial position, NA_FALSE is
 // returned.
 //
-// Key:      Searches for the given absolute key.
-// KeyDelta: Searches for the given delta relative to the current key. Assumes
-//           the desired key to be in the neighborhood of the current location.
-//           Beware, if the desired key is NOT in the neighborhood, it is
-//           better to compute the absolute key first and search with the
-//           naLocateTreeKey function. This can make quite a difference in
-//           performance. Test it out!
+// Key:      Searches for the given absolute key. When assumeclose is true, the 
+//           desired key is assumed to be in the neighborhood of the current
+//           location. Beware, only set it to true if you are sure it is close.
+//           This can make quite a difference in performance. Test it out!
 // First:    Locates the first element of the whole tree.
 // Last:     Locates the last element of the whole tree.
 // Iterator: Positions the given iterator at the exact same position as the
@@ -339,9 +333,8 @@ typedef NAInt (*NATreeLeafTokenSearcher)(   void* token,
 //           a tree which is configured to have no keys. The iterator will
 //           point to the last leaf for which matchfound was true.
 NA_IAPI NABool naLocateTreeKey(     NATreeIterator* iter,
-                                        const void* key);
-NA_IAPI NABool naLocateTreeKeyDelta(NATreeIterator* iter,
-                                        const void* keydelta);
+                                        const void* key,
+                                             NABool assumeclose);
 NA_IAPI NABool naLocateTreeFirst(   NATreeIterator* iter);
 NA_IAPI NABool naLocateTreeLast(    NATreeIterator* iter);
 NA_IAPI NABool naLocateTreeIterator(NATreeIterator* iter,

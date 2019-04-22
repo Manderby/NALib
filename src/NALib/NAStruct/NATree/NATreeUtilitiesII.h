@@ -18,11 +18,6 @@ NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
 
   // Init the tree root.
   tree->root = NA_NULL;
-  if(config->keyByteSize){
-    tree->tmpkey = naMalloc(config->keyByteSize);
-  }else{
-    tree->tmpkey = NA_NULL;
-  }
   tree->flags = 0;
   #ifndef NDEBUG
     tree->itercount = 0;
@@ -30,30 +25,6 @@ NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
 
   return tree;
 }
-
-
-
-//NA_DEF NATree* naInitTreeCopy(NATree* newtree, const NATree* originaltree){
-//  NATreeIterator newiter;
-//  NATreeIterator dupiter;
-//  newtree = naInitTree(newtree, originaltree->config);
-//
-//  newiter = naMakeTreeModifier(newtree);
-//  dupiter = naMakeTreeAccessor(originaltree);
-//  while(naIterateTree(&dupiter, NA_NULL, NA_NULL)){
-//    const void* key = naGetTreeCurLeafKey(&dupiter);
-//    NAPtr dupdata = naGetTreeLeafData(originaltree, (NATreeLeaf*)(dupiter.item));
-//    NAPtr newcontent = newtree->config->leafDataCopier(dupdata);
-//    naAddTreeLeaf(&newiter, key, newcontent, NA_FALSE);
-//  }
-//
-//  naClearTreeIterator(&dupiter);
-//  naClearTreeIterator(&newiter);
-//
-//  naUpdateTree(newtree);
-//
-//  return newtree;
-//}
 
 
 
@@ -80,7 +51,6 @@ NA_IDEF void naClearTree(NATree* tree){
   if(tree->config->treeDestructor){
     tree->config->treeDestructor(tree->config->userdata);
   }
-  naFree(tree->tmpkey);
   naReleaseTreeConfiguration(tree->config);
 }
 
@@ -262,25 +232,6 @@ NA_HIDEF NABool naIsTreeItemLeaf(const NATree* tree, NATreeItem* item){
     retvalue = naIsNodeChildLeaf(parent, childindx);
   }
   return retvalue;
-}
-
-
-NA_HIDEF void* naRequestTreeTmpKey(const NATree* tree){
-  NATree* mutabletree = (NATree*)tree;  // Wanna complain? Send a fax.
-  #ifndef NDEBUG
-    if(naTestFlagi(mutabletree->flags, NA_TREE_FLAG_TMP_KEY_TAKEN))
-      naError("Tmp key already taken");
-    naSetFlagi(&(mutabletree->flags), NA_TREE_FLAG_TMP_KEY_TAKEN, NA_TRUE);
-  #endif
-  return mutabletree->tmpkey;
-}
-NA_HIDEF void naResignTreeTmpKey(const NATree* tree){
-  NATree* mutabletree = (NATree*)tree;  // Wanna complain? Send a fax.
-  #ifndef NDEBUG
-    if(!naTestFlagi(mutabletree->flags, NA_TREE_FLAG_TMP_KEY_TAKEN))
-      naError("Tmp key was not taken");
-    naSetFlagi(&(mutabletree->flags), NA_TREE_FLAG_TMP_KEY_TAKEN, NA_FALSE);
-  #endif
 }
 
 

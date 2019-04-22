@@ -117,7 +117,6 @@ struct NATreeConfiguration{
   NATreeDestructorCallback      treeDestructor;
   NATreeLeafDataConstructor     leafDataConstructor;
   NATreeLeafDataDestructor      leafDataDestructor;
-//  NATreeLeafDataCopier          leafDataCopier;
   NATreeNodeDataConstructor     nodeDataConstructor;
   NATreeNodeDataDestructor      nodeDataDestructor;
   NATreeNodeUpdater             nodeUpdater;
@@ -151,7 +150,6 @@ struct NATreeIterator{
 struct NATree{
   NATreeConfiguration* config;
   NATreeItem* root;
-  void* tmpkey;
   NAInt flags;
   #ifndef NDEBUG
     NAInt itercount;
@@ -227,8 +225,6 @@ NA_HIAPI void naClearTreeRoot(NATree* tree);
 NA_HIAPI NABool naIsTreeRootLeaf(const NATree* tree);
 NA_HIAPI void naMarkTreeRootLeaf(NATree* tree, NABool isleaf);
 NA_HIAPI NABool naIsTreeItemLeaf(const NATree* tree, NATreeItem* item);
-NA_HIAPI void* naRequestTreeTmpKey(const NATree* tree);
-NA_HIAPI void naResignTreeTmpKey(const NATree* tree);
 NA_HAPI  NATreeLeaf* naAddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 NA_HAPI  void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childindx);
 NA_HAPI  NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node);

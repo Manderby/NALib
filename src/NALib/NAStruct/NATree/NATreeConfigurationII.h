@@ -51,14 +51,13 @@ NA_IDEF void naSetTreeConfigurationTreeCallbacks(NATreeConfiguration* config, NA
 
 
 
-NA_IDEF void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NATreeLeafDataConstructor leafDataConstructor, NATreeLeafDataDestructor leafDataDestructor/*, NATreeLeafDataCopier leafDataCopier*/){
+NA_IDEF void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NATreeLeafDataConstructor leafDataConstructor, NATreeLeafDataDestructor leafDataDestructor){
   #ifndef NDEBUG
     if(config->flags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
       naError("Configuration already used in a tree. Mayor problems may occur in the future");
   #endif
   config->leafDataConstructor = leafDataConstructor;
   config->leafDataDestructor = leafDataDestructor;
-//  config->leafDataCopier = leafDataCopier;
 }
 
 
