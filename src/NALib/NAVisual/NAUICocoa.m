@@ -441,6 +441,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
   naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_REDRAW, &dirtyRect);
 }
 - (void)reshape{
+  [super reshape];
   [[self openGLContext] update];
   NARect bounds = naMakeRectWithNSRect([self bounds]);
   naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_RESHAPE, &bounds);
