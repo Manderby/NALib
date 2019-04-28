@@ -101,10 +101,12 @@ NA_HIDEF void naDestructTreeNode(const NATreeConfiguration* config, NATreeNode* 
   if(recursive){
     for(NAInt i = 0; i < config->childpernode; i++){
       NATreeItem* child = naGetTreeNodeChild(config, node, i);
-      if(naIsNodeChildLeaf(node, i)){
-        naDestructTreeLeaf(config, (NATreeLeaf*)child);
-      }else{
-        naDestructTreeNode(config, (NATreeNode*)child, NA_TRUE);
+      if(child){
+        if(naIsNodeChildLeaf(node, i)){
+          naDestructTreeLeaf(config, (NATreeLeaf*)child);
+        }else{
+          naDestructTreeNode(config, (NATreeNode*)child, NA_TRUE);
+        }
       }
     }
   }

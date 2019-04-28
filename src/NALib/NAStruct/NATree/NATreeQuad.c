@@ -84,10 +84,20 @@ NA_HDEF NATreeQuadNode* naConstructTreeNodeQuad(const NATreeConfiguration* confi
 
 
 
+NA_HIDEF NAPos naGetQuadTreeAlignedPos(NAInt leafexponent, const NAPos* pos){
+  double leafwidth = naMakeDoubleWithExponent((int32)leafexponent);
+  NARect leafalign = naMakeRect(naMakePos(0, 0), naMakeSize(leafwidth, leafwidth));
+  return naMakePosWithAlignment(*pos, leafalign);
+}
+
+
+
 NA_HDEF NATreeLeaf* naConstructTreeLeafQuad(const NATreeConfiguration* config, const void* key, NAPtr content){
+  NAInt leafexponent = naGetTreeConfigurationBaseLeafExponent(config);
   NATreeQuadLeaf* quadLeaf = naNew(NATreeQuadLeaf);
-  naInitTreeLeaf(config, naGetQuadLeafLeaf(quadLeaf), key, content);
-  quadLeaf->leafexponent = naGetTreeConfigurationBaseLeafExponent(config);
+  NAPos alignedPos = naGetQuadTreeAlignedPos(leafexponent, key);
+  naInitTreeLeaf(config, naGetQuadLeafLeaf(quadLeaf), &alignedPos, content);
+  quadLeaf->leafexponent = leafexponent;
   return naGetQuadLeafLeaf(quadLeaf);
 }
 

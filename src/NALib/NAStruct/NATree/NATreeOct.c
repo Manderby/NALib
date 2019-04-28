@@ -88,10 +88,20 @@ NA_HDEF NATreeOctNode* naConstructTreeNodeOct(const NATreeConfiguration* config,
 
 
 
+NA_HIDEF NAVertex naGetOctTreeAlignedVertex(NAInt leafexponent, const NAVertex* pos){
+  double leafwidth = naMakeDoubleWithExponent((int32)leafexponent);
+  NABox leafalign = naMakeBox(naMakeVertex(0, 0, 0), naMakeVolume(leafwidth, leafwidth, leafwidth));
+  return naMakeVertexWithAlignment(*pos, leafalign);
+}
+
+
+
 NA_HDEF NATreeLeaf* naConstructTreeLeafOct(const NATreeConfiguration* config, const void* key, NAPtr content){
+  NAInt leafexponent = naGetTreeConfigurationBaseLeafExponent(config);
   NATreeOctLeaf* octLeaf = naNew(NATreeOctLeaf);
-  naInitTreeLeaf(config, naGetOctLeafLeaf(octLeaf), key, content);
-  octLeaf->leafexponent = naGetTreeConfigurationBaseLeafExponent(config);
+  NAVertex alignedVertex = naGetOctTreeAlignedVertex(leafexponent, key);
+  naInitTreeLeaf(config, naGetOctLeafLeaf(octLeaf), &alignedVertex, content);
+  octLeaf->leafexponent = leafexponent;
   return naGetOctLeafLeaf(octLeaf);
 }
 
