@@ -45,7 +45,7 @@ typedef enum{
 // NAKeyIndexGetter          Returns the childindex where key would be stored
 //                           on a node with the given basekey. The data can
 //                           be any data required by the datastructure
-// NAKeyEqualComparer              Returns true if the two keys are equal.
+// NAKeyEqualComparer        Returns true if the two keys map to the same equal key.
 // NAKeyAssigner             Assigns the src key to dst.
 // NAKeyTester               Tests whether the key is within the given limits.
 //
@@ -63,7 +63,8 @@ typedef NABool          (*NAKeyLowerEqualComparer)(const void* key1, const void*
 typedef void            (*NAKeyAssigner)(void* dst, const void* src);
 typedef void            (*NAKeyAdder)(void* dst, const void* src1, const void* src2);
 typedef NABool          (*NAKeyTester)(const void* lowerlimit, const void* upperlimit, const void* key);
-typedef NABool          (*NAKeyContainTester)(NATreeNode* parentnode, const void* key);
+typedef NABool          (*NAKeyNodeContainTester)(NATreeNode* parentnode, const void* key);
+typedef NABool          (*NAKeyLeafContainTester)(NATreeLeaf* leaf, const void* key);
 
 typedef void            (*NATreeNodeCoreDestructor)(NATreeNode* node);
 typedef void            (*NATreeLeafCoreDestructor)(NATreeLeaf* leaf);
@@ -104,7 +105,8 @@ struct NATreeConfiguration{
   NAKeyAssigner                 keyAssigner;
   NAKeyAdder                    keyAdder;
   NAKeyTester                   keyTester;
-  NAKeyContainTester            keyContainTester;
+  NAKeyNodeContainTester        keyNodeContainTester;
+  NAKeyLeafContainTester        keyLeafContainTester;
 
   NATreeNodeCoreDestructor      nodeDestructor;
   NATreeLeafCoreDestructor      leafDestructor;

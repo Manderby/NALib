@@ -38,7 +38,8 @@ NA_HAPI  NABool naLowerEqualKeyOctDouble(const void* origin1, const void* origin
 NA_HAPI  void naAssignKeyOctDouble(void* dst, const void* src);
 NA_HAPI  void naAddKeyOctDouble(void* dst, const void* src1, const void* src2);
 NA_HAPI  NABool naTestKeyOctDouble(const void* lowerlimit, const void* upperlimit, const void* key);
-NA_HAPI  NABool naTestKeyContainOctDouble(NATreeNode* parentnode, const void* key);
+NA_HAPI  NABool naTestKeyNodeContainOctDouble(NATreeNode* parentnode, const void* key);
+NA_HAPI  NABool naTestKeyLeafContainOctDouble(NATreeLeaf* leaf, const void* key);
 
 NA_HAPI  void naDestructTreeNodeOct(NATreeNode* node);
 NA_HAPI  void naDestructTreeLeafOct(NATreeLeaf* leaf);

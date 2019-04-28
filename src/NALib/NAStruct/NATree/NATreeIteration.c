@@ -135,7 +135,7 @@ NA_HDEF NATreeItem* naLocateTreeKeyCapture(const NATree* tree, NATreeNode* node,
 
   if(!node){
     if(naIsTreeRootLeaf(tree)){
-      *matchfound = tree->config->keyEqualComparer(key, naGetTreeLeafKey(tree->config, (NATreeLeaf*)tree->root));
+      *matchfound = tree->config->keyLeafContainTester((NATreeLeaf*)tree->root, key);
       return tree->root;
     }else{
       node = (NATreeNode*)tree->root;
@@ -144,7 +144,7 @@ NA_HDEF NATreeItem* naLocateTreeKeyCapture(const NATree* tree, NATreeNode* node,
 
   // Test if the node still contains the desired key. If not, we arrived at
   // the node closest to the desired key.
-  if(tree->config->keyContainTester && !tree->config->keyContainTester(node, key)){
+  if(tree->config->keyNodeContainTester && !tree->config->keyNodeContainTester(node, key)){
     return naGetTreeNodeItem(node);
   }
 
@@ -157,7 +157,7 @@ NA_HDEF NATreeItem* naLocateTreeKeyCapture(const NATree* tree, NATreeNode* node,
   }else if(naIsNodeChildLeaf(node, childindx)){
     // When the subtree denotes a leaf, we test, if the key is equal and return
     // the result.
-    *matchfound = tree->config->keyEqualComparer(key, naGetTreeLeafKey(tree->config, (NATreeLeaf*)child));
+    *matchfound = tree->config->keyLeafContainTester((NATreeLeaf*)child, key);
     return child;
   }else{
     // When the subtree denotes a node, we follow it.

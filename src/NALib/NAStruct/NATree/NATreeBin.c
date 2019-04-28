@@ -84,7 +84,12 @@ NA_HDEF void naAddKeyBinDouble(void* dst, const void* src1, const void* src2){
 NA_HDEF NABool naTestKeyBinDouble(const void* lowerlimit, const void* upperlimit, const void* key){
   return ((*(const double*)lowerlimit <= *(const double*)key) && (*(const double*)key) < *(const double*)upperlimit);
 }
-
+NA_HDEF NABool naTestKeyLeafContainBinDouble(NATreeLeaf* leaf, const void* key){
+  // Same as naEqualKeyBinDouble.
+  double* key1 = (double*)naGetBinLeafKey((NATreeBinLeaf*)leaf);
+  double* key2 = (double*)key;
+  return *key1 == *key2;
+}
 
 
 NA_HDEF NAInt naGetChildIndexBinNAInt(NATreeNode* parentnode, const void* childkey){
@@ -113,6 +118,12 @@ NA_HDEF void naAddKeyBinNAInt(void* dst, const void* src1, const void* src2){
 }
 NA_HDEF NABool naTestKeyBinNAInt(const void* lowerlimit, const void* upperlimit, const void* key){
   return ((*(const NAInt*)lowerlimit <= *(const NAInt*)key) && (*(const NAInt*)upperlimit >= *(const NAInt*)key));
+}
+NA_HDEF NABool naTestKeyLeafContainBinNAInt(NATreeLeaf* leaf, const void* key){
+  // Same as naEqualKeyBinDouble.
+  NAInt* key1 = (NAInt*)naGetBinLeafKey((NATreeBinLeaf*)leaf);
+  NAInt* key2 = (NAInt*)key;
+  return *key1 == *key2;
 }
 
 

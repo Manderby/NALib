@@ -42,7 +42,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->keyAssigner           = naAssignKeyQuadDouble;
       config->keyAdder              = naAddKeyQuadDouble;
       config->keyTester             = naTestKeyQuadDouble;
-      config->keyContainTester      = naTestKeyContainQuadDouble;
+      config->keyNodeContainTester  = naTestKeyNodeContainQuadDouble;
+      config->keyLeafContainTester  = naTestKeyLeafContainQuadDouble;
       break;
     default:
       #ifndef NDEBUG
@@ -82,7 +83,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->keyAssigner           = naAssignKeyOctDouble;
       config->keyAdder              = naAddKeyOctDouble;
       config->keyTester             = naTestKeyOctDouble;
-      config->keyContainTester      = naTestKeyContainOctDouble;
+      config->keyNodeContainTester  = naTestKeyNodeContainOctDouble;
+      config->keyLeafContainTester  = naTestKeyLeafContainOctDouble;
       break;
     default:
       #ifndef NDEBUG
@@ -120,7 +122,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->keyAssigner           = NA_NULL;
       config->keyAdder              = NA_NULL;
       config->keyTester             = NA_NULL;
-      config->keyContainTester      = NA_NULL;
+      config->keyNodeContainTester  = NA_NULL;
+      config->keyLeafContainTester  = NA_NULL;
       break;
     case NA_TREE_KEY_DOUBLE:
       config->keyByteSize           = sizeof(double);
@@ -132,7 +135,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->keyAssigner           = naAssignKeyBinDouble;
       config->keyAdder              = naAddKeyBinDouble;
       config->keyTester             = naTestKeyBinDouble;
-      config->keyContainTester      = NA_NULL;
+      config->keyNodeContainTester  = NA_NULL;
+      config->keyLeafContainTester  = naTestKeyLeafContainBinDouble;
       break;
     case NA_TREE_KEY_NAINT:
       config->keyByteSize           = sizeof(NAInt);
@@ -144,7 +148,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->keyAssigner           = naAssignKeyBinNAInt;
       config->keyAdder              = naAddKeyBinNAInt;
       config->keyTester             = naTestKeyBinNAInt;
-      config->keyContainTester      = NA_NULL;
+      config->keyNodeContainTester  = NA_NULL;
+      config->keyLeafContainTester  = naTestKeyLeafContainBinNAInt;
       break;
     default:
       #ifndef NDEBUG

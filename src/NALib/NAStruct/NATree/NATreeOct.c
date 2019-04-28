@@ -12,14 +12,14 @@ NA_RUNTIME_TYPE(NATreeOctLeaf, NA_NULL, NA_FALSE);
 
 
 
-NA_HIDEF NATreeNode* naGetOctNodeNode(NATreeOctNode* octnode){
-  return &(octnode->node);
+NA_HIDEF NATreeNode* naGetOctNodeNode(NATreeOctNode* octNode){
+  return &(octNode->node);
 }
-NA_HIDEF NATreeLeaf* naGetOctLeafLeaf(NATreeOctLeaf* octleaf){
-  return &(octleaf->leaf);
+NA_HIDEF NATreeLeaf* naGetOctLeafLeaf(NATreeOctLeaf* octLeaf){
+  return &(octLeaf->leaf);
 }
-NA_HIDEF NATreeItem* naGetOctNodeItem(NATreeOctNode* octnode){
-  return naGetTreeNodeItem(naGetOctNodeNode(octnode));
+NA_HIDEF NATreeItem* naGetOctNodeItem(NATreeOctNode* octNode){
+  return naGetTreeNodeItem(naGetOctNodeNode(octNode));
 }
 NA_HIDEF void* naGetOctNodeKey(NATreeOctNode* octNode){
   return &(octNode->origin);
@@ -30,14 +30,14 @@ NA_HIDEF void* naGetOctLeafKey(NATreeOctLeaf* octLeaf){
 
 
 
-NA_HIDEF NABool naContainsTreeNodeChildOct(const NAVertex* basevertex, const NAVertex* testvertex, NAInt childexponent){
+NA_HIDEF NABool naContainsTreeNodeChildOct(const NAVertex* baseVertex, const NAVertex* testVertex, NAInt childexponent){
   double childwidth = naMakeDoubleWithExponent((int32)childexponent);
-  return (testvertex->x >= basevertex->x)
-      && (testvertex->y >= basevertex->y)
-      && (testvertex->z >= basevertex->z)
-      && (testvertex->x < (basevertex->x + 2 * childwidth))
-      && (testvertex->y < (basevertex->y + 2 * childwidth))
-      && (testvertex->z < (basevertex->z + 2 * childwidth));
+  return (testVertex->x >= baseVertex->x)
+      && (testVertex->y >= baseVertex->y)
+      && (testVertex->z >= baseVertex->z)
+      && (testVertex->x < (baseVertex->x + 2 * childwidth))
+      && (testVertex->y < (baseVertex->y + 2 * childwidth))
+      && (testVertex->z < (baseVertex->z + 2 * childwidth));
 }
 
 
@@ -109,17 +109,17 @@ NA_HDEF NAInt naGetChildIndexOctDouble(NATreeNode* parentnode, const void* child
 // The data parameter contains the leaf exponent of the children.
 NA_HDEF NAInt naGetKeyIndexOctDouble(const void* baseorigin, const void* testorigin, const void* data){
   NAInt childexponent = *((NAInt*)data);
-  NAVertex* basevertex = (NAVertex*)baseorigin;
-  NAVertex* testvertex = (NAVertex*)testorigin;
+  NAVertex* baseVertex = (NAVertex*)baseorigin;
+  NAVertex* testVertex = (NAVertex*)testorigin;
   #ifndef NDEBUG
-    if(!naContainsTreeNodeChildOct(basevertex, testvertex, childexponent))
+    if(!naContainsTreeNodeChildOct(baseVertex, testVertex, childexponent))
       naError("Vertex lies outside");
   #endif
   NAInt indx = 0;
   double childwidth = naMakeDoubleWithExponent((int32)childexponent);
-  if(testvertex->x >= basevertex->x + childwidth){indx |= 1;}
-  if(testvertex->y >= basevertex->y + childwidth){indx |= 2;}
-  if(testvertex->z >= basevertex->z + childwidth){indx |= 4;}
+  if(testVertex->x >= baseVertex->x + childwidth){indx |= 1;}
+  if(testVertex->y >= baseVertex->y + childwidth){indx |= 2;}
+  if(testVertex->z >= baseVertex->z + childwidth){indx |= 4;}
   return indx;
 }
 NA_HDEF NABool naEqualKeyOctDouble(const void* origin1, const void* origin2){
@@ -151,11 +151,17 @@ NA_HDEF void naAddKeyOctDouble(void* dst, const void* src1, const void* src2){
 NA_HDEF NABool naTestKeyOctDouble(const void* lowerlimit, const void* upperlimit, const void* key){
   return naLowerEqualKeyOctDouble(lowerlimit, key) && naLowerKeyOctDouble(key, upperlimit);
 }
-NA_HDEF NABool naTestKeyContainOctDouble(NATreeNode* parentnode, const void* key){
+NA_HDEF NABool naTestKeyNodeContainOctDouble(NATreeNode* parentnode, const void* key){
   NATreeOctNode* octNode = (NATreeOctNode*)(parentnode);
   double childwidth = naMakeDoubleWithExponent((int32)octNode->childexponent);
   NAVertex upperlimit = naMakeVertex(octNode->origin.x + 2 * childwidth, octNode->origin.y + 2 * childwidth, octNode->origin.z + 2 * childwidth);
   return naLowerEqualKeyOctDouble(&(octNode->origin), key) && naLowerKeyOctDouble(key, &upperlimit);
+}
+NA_HDEF NABool naTestKeyLeafContainOctDouble(NATreeLeaf* leaf, const void* key){
+  NATreeOctLeaf* octLeaf = (NATreeOctLeaf*)(leaf);
+  double leafwidth = naMakeDoubleWithExponent((int32)octLeaf->leafexponent);
+  NAVertex upperlimit = naMakeVertex(octLeaf->origin.x + leafwidth, octLeaf->origin.y + 2 * leafwidth, octLeaf->origin.z + leafwidth);
+  return naLowerEqualKeyOctDouble(&(octLeaf->origin), key) && naLowerKeyOctDouble(key, &upperlimit);
 }
 
 
@@ -187,7 +193,7 @@ NA_HDEF NATreeNode* naLocateBubbleOctWithLimits(const NATree* tree, NATreeNode* 
   #endif
   octNode = (NATreeOctNode*)node;
   // If we are at a node which stores the key itself, return this node.
-  if(tree->config->keyEqualComparer(origin, naGetOctNodeKey(octNode))){return node;}
+//  if(tree->config->keyEqualComparer(origin, naGetOctNodeKey(octNode))){return node;}  // Wrong! todo
   // Otherwise, we set the limits dependent on the previous node.
   if(naGetTreeNodeChildIndex(tree->config, node, previtem) == 1){ // for octtrees, that is of course wrong.
     lowerlimit = naGetOctNodeKey(octNode);

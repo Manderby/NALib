@@ -24,7 +24,9 @@ NA_HDEF void naFillTreeNodeChildData(const NATreeConfiguration* config, NAPtr ch
   NAInt i;
   for(i=0; i<config->childpernode; i++){
     NATreeItem* child = naGetTreeNodeChild(config, node, i);
-    if(naIsNodeChildLeaf(node, i)){
+    if(!child){
+      childdata[i] = naMakePtrNull();
+    }else if(naIsNodeChildLeaf(node, i)){
       childdata[i] = naGetTreeLeafData(config, (NATreeLeaf*)child);
     }else{
       childdata[i] = naGetTreeNodeData(config, (NATreeNode*)child);

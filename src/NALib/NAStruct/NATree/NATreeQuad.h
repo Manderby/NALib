@@ -8,7 +8,7 @@ typedef struct NATreeQuadNode NATreeQuadNode;
 struct NATreeQuadNode{
   NATreeNode node;
   NATreeItem* childs[4];
-  NAVertex origin;
+  NAPos origin;
   NAPtr userdata;
   NAInt childexponent;
 };
@@ -17,7 +17,7 @@ NA_EXTERN_RUNTIME_TYPE(NATreeQuadNode);
 typedef struct NATreeQuadLeaf NATreeQuadLeaf;
 struct NATreeQuadLeaf{
   NATreeLeaf leaf;
-  NAVertex origin;  // todo remove this maybe?
+  NAPos origin;  // todo remove this maybe?
   NAPtr userdata;
   NAInt leafexponent; // todo remove this maybe?
 };
@@ -38,7 +38,8 @@ NA_HAPI  NABool naLowerEqualKeyQuadDouble(const void* origin1, const void* origi
 NA_HAPI  void naAssignKeyQuadDouble(void* dst, const void* src);
 NA_HAPI  void naAddKeyQuadDouble(void* dst, const void* src1, const void* src2);
 NA_HAPI  NABool naTestKeyQuadDouble(const void* lowerlimit, const void* upperlimit, const void* key);
-NA_HAPI  NABool naTestKeyContainQuadDouble(NATreeNode* parentnode, const void* key);
+NA_HAPI  NABool naTestKeyNodeContainQuadDouble(NATreeNode* parentnode, const void* key);
+NA_HAPI  NABool naTestKeyLeafContainQuadDouble(NATreeLeaf* leaf, const void* key);
 
 NA_HAPI  void naDestructTreeNodeQuad(NATreeNode* node);
 NA_HAPI  void naDestructTreeLeafQuad(NATreeLeaf* leaf);
