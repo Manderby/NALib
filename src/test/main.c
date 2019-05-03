@@ -13,6 +13,7 @@
 #include "NAString.h"
 
 
+
 #include "../NALib/NABase.h"
 #include <stdio.h>
 
@@ -24,14 +25,6 @@ int main(void){
     printf("(Release ");
   #endif
   printf("%d Bits Addresses, %d Bits Integers)\n", NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
-
-  naStartRuntime();
-  NAString* teststring1 = naNewStringWithFormat("Das ist \n ein Test.\" Juhu.");
-  NAString* escape = naNewStringCEscaped(teststring1);
-  printf("%s", naGetStringUTF8Pointer(escape));
-  naDelete(escape);
-  naDelete(teststring1);
-  naStopRuntime();
 
   #if NA_OS == NA_OS_WINDOWS
     printf("Finished.\n");

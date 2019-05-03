@@ -72,7 +72,7 @@ NA_HDEF NAInt naHeapMoveDownMinDoubleNoBack(NAHeap* heap, const void* key, NAInt
 NA_HDEF NAInt naHeapMoveDownMinFloatNoBack(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEDOWN_NOBACK(float, >)
 }
-NA_HDEF NAInt naHeapMoveDownMinIntNoBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveDownMinNAIntNoBack(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEDOWN_NOBACK(NAInt, >)
 }
 
@@ -82,7 +82,7 @@ NA_HDEF NAInt naHeapMoveDownMaxDoubleNoBack(NAHeap* heap, const void* key, NAInt
 NA_HDEF NAInt naHeapMoveDownMaxFloatNoBack(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEDOWN_NOBACK(float, <)
 }
-NA_HDEF NAInt naHeapMoveDownMaxIntNoBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveDownMaxNAIntNoBack(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEDOWN_NOBACK(NAInt, <)
 }
 
@@ -92,7 +92,7 @@ NA_HDEF NAInt naHeapMoveDownMinDoubleBack(NAHeap* heap, const void* key, NAInt c
 NA_HDEF NAInt naHeapMoveDownMinFloatBack(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEDOWN_BACK(float, >)
 }
-NA_HDEF NAInt naHeapMoveDownMinIntBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveDownMinNAIntBack(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEDOWN_BACK(NAInt, >)
 }
 
@@ -102,7 +102,7 @@ NA_HDEF NAInt naHeapMoveDownMaxDoubleBack(NAHeap* heap, const void* key, NAInt c
 NA_HDEF NAInt naHeapMoveDownMaxFloatBack(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEDOWN_BACK(float, <)
 }
-NA_HDEF NAInt naHeapMoveDownMaxIntBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveDownMaxNAIntBack(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEDOWN_BACK(NAInt, <)
 }
 
@@ -218,7 +218,7 @@ NA_HDEF NAInt naHeapMoveUpMinDoubleNoBack(NAHeap* heap, const void* key, NAInt c
 NA_HDEF NAInt naHeapMoveUpMinFloatNoBack(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEUP_NOBACK(float, <)
 }
-NA_HDEF NAInt naHeapMoveUpMinIntNoBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveUpMinNAIntNoBack(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEUP_NOBACK(NAInt, <)
 }
 
@@ -228,7 +228,7 @@ NA_HDEF NAInt naHeapMoveUpMaxDoubleNoBack(NAHeap* heap, const void* key, NAInt c
 NA_HDEF NAInt naHeapMoveUpMaxFloatNoBack(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEUP_NOBACK(float, >)
 }
-NA_HDEF NAInt naHeapMoveUpMaxIntNoBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveUpMaxNAIntNoBack(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEUP_NOBACK(NAInt, >)
 }
 
@@ -238,7 +238,7 @@ NA_HDEF NAInt naHeapMoveUpMinDoubleBack(NAHeap* heap, const void* key, NAInt cur
 NA_HDEF NAInt naHeapMoveUpMinFloatBack(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEUP_BACK(float, <)
 }
-NA_HDEF NAInt naHeapMoveUpMinIntBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveUpMinNAIntBack(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEUP_BACK(NAInt, <)
 }
 
@@ -248,7 +248,7 @@ NA_HDEF NAInt naHeapMoveUpMaxDoubleBack(NAHeap* heap, const void* key, NAInt cur
 NA_HDEF NAInt naHeapMoveUpMaxFloatBack(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEUP_BACK(float, >)
 }
-NA_HDEF NAInt naHeapMoveUpMaxIntBack(NAHeap* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt naHeapMoveUpMaxNAIntBack(NAHeap* heap, const void* key, NAInt curindex){
   NA_HEAPMOVEUP_BACK(NAInt, >)
 }
 
@@ -609,13 +609,13 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
         heap->moveup   = naHeapMoveUpMinFloatNoBack;
       }
       break;
-    case NA_HEAP_USES_INT_KEY:
+    case NA_HEAP_USES_NAINT_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = naHeapMoveDownMaxIntNoBack;
-        heap->moveup   = naHeapMoveUpMaxIntNoBack;
+        heap->movedown = naHeapMoveDownMaxNAIntNoBack;
+        heap->moveup   = naHeapMoveUpMaxNAIntNoBack;
       }else{
-        heap->movedown = naHeapMoveDownMinIntNoBack;
-        heap->moveup   = naHeapMoveUpMinIntNoBack;
+        heap->movedown = naHeapMoveDownMinNAIntNoBack;
+        heap->moveup   = naHeapMoveUpMinNAIntNoBack;
       }
       break;
     default:
@@ -662,13 +662,13 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
         heap->moveup   = naHeapMoveUpMinFloatBack;
       }
       break;
-    case NA_HEAP_USES_INT_KEY:
+    case NA_HEAP_USES_NAINT_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = naHeapMoveDownMaxIntBack;
-        heap->moveup   = naHeapMoveUpMaxIntBack;
+        heap->movedown = naHeapMoveDownMaxNAIntBack;
+        heap->moveup   = naHeapMoveUpMaxNAIntBack;
       }else{
-        heap->movedown = naHeapMoveDownMinIntBack;
-        heap->moveup   = naHeapMoveUpMinIntBack;
+        heap->movedown = naHeapMoveDownMinNAIntBack;
+        heap->moveup   = naHeapMoveUpMinNAIntBack;
       }
       break;
     default:
