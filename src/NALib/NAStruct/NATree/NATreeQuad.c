@@ -226,14 +226,6 @@ NA_HDEF NATreeNode* naLocateBubbleQuad(const NATree* tree, NATreeItem* item, con
 
 
 
-NA_HDEF void naSetTreeNodeChildQuad(NATreeQuadNode* parent, NATreeItem* child, NAInt childIndex, NABool isChildLeaf){
-  naSetTreeItemParent(child, naGetQuadNodeNode(parent));
-  naMarkNodeChildLeaf(naGetQuadNodeNode(parent), childIndex, isChildLeaf);
-  naSetTreeNodeChild(naGetQuadNodeNode(parent), childIndex, child);
-}
-
-
-
 NA_HDEF NATreeNode* naRemoveLeafQuad(NATree* tree, NATreeLeaf* leaf){
   NATreeItem* leafItem = naGetTreeLeafItem(leaf);
   NATreeNode* parent = naGetTreeItemParent(leafItem);
@@ -281,6 +273,7 @@ NA_HDEF NATreeNode* naRemoveLeafQuad(NATree* tree, NATreeLeaf* leaf){
           #endif
           naClearTreeRoot(tree);
           naDestructTreeNode(tree->config, parent, NA_FALSE);
+          parent = NA_NULL;
           break;
         }else{
           #ifndef NDEBUG
@@ -324,7 +317,7 @@ NA_HDEF NATreeNode* naRemoveLeafQuad(NATree* tree, NATreeLeaf* leaf){
       // There is a grandparent. Simply add the sibling at the place where
       // the parent was and delete the parent.
       NAInt parentindex = naGetTreeNodeChildIndex(tree->config, naGetQuadNodeNode(grandparent), naGetTreeNodeItem(parent));
-      naSetTreeNodeChildQuad(grandparent, sibling, parentindex, isSiblingLeaf);
+      naSetTreeNodeChild(naGetQuadNodeNode(grandparent), sibling, parentindex, isSiblingLeaf);
       naDestructTreeNode(tree->config, parent, NA_FALSE);
 
       // Repeat for the next parent.
@@ -391,7 +384,7 @@ NA_HDEF void naEnlargeTreeRootQuad(NATree* tree, const void* containedKey){
   // Now, we attach the previous root to the new root at the appropriate
   // child index.
   NAInt prevRootIndx = tree->config->keyIndexGetter(newRootOrigin, prevRootOrigin, &newRootChildExponent);
-  naSetTreeNodeChildQuad(newRoot, tree->root, prevRootIndx, naIsTreeRootLeaf(tree));
+  naSetTreeNodeChild(naGetQuadNodeNode(newRoot), tree->root, prevRootIndx, naIsTreeRootLeaf(tree));
 
   // Finally, we set the newRoot to be the root of the tree and mark
   // it to be a node.
@@ -470,7 +463,7 @@ NA_HDEF NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, con
 
     if(!desiredChild){
       // If the space for the new child if free, take it.
-      naSetTreeNodeChildQuad(existingParent, naGetTreeLeafItem(newLeaf), desiredChildIndex, NA_TRUE);
+      naSetTreeNodeChild(naGetQuadNodeNode(existingParent), naGetTreeLeafItem(newLeaf), desiredChildIndex, NA_TRUE);
     }else{
       // If there is a child at the desired index, we have to make some
       // adjustments to the tree.
@@ -510,7 +503,7 @@ NA_HDEF NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, con
         // First, attach the previous item to the new parent.
         NABool isPrevExistingChildLeaf = naIsTreeItemLeaf(tree, prevExistingChild);
         NAInt smallestExistingIndex = tree->config->keyIndexGetter(&smallestParentOrigin, existingChildOrigin, &smallestParentChildExponent);
-        naSetTreeNodeChildQuad(smallestParent, prevExistingChild, smallestExistingIndex, isPrevExistingChildLeaf);
+        naSetTreeNodeChild(naGetQuadNodeNode(smallestParent), prevExistingChild, smallestExistingIndex, isPrevExistingChildLeaf);
               
         #ifndef NDEBUG
           if(smallestParentChildExponent >= existingParent->childexponent)
@@ -523,7 +516,7 @@ NA_HDEF NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, con
           if(testExistingIndex != prevExistingChildIndex)
             naError("Newly computed index differs from previously computed index");
         #endif
-        naSetTreeNodeChildQuad(existingParent, naGetQuadNodeItem(smallestParent), prevExistingChildIndex, NA_FALSE);
+        naSetTreeNodeChild(naGetQuadNodeNode(existingParent), naGetQuadNodeItem(smallestParent), prevExistingChildIndex, NA_FALSE);
         
         existingParent = smallestParent;
       }
@@ -534,7 +527,7 @@ NA_HDEF NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, con
         if(existingParent->childs[smallestNewLeafIndex])
           naError("Child is already occupied");
       #endif
-      naSetTreeNodeChildQuad(existingParent, naGetTreeLeafItem(newLeaf), smallestNewLeafIndex, NA_TRUE);
+      naSetTreeNodeChild(naGetQuadNodeNode(existingParent), naGetTreeLeafItem(newLeaf), smallestNewLeafIndex, NA_TRUE);
     }
   }
 

@@ -423,6 +423,7 @@ NA_IDEF void naRemoveTreeCurLeaf(NATreeIterator* iter){
 NA_IDEF void naUpdateTreeLeaf(NATreeIterator* iter){
   NATree* tree;
   NATreeNode* parent;
+  if(naIsTreeAtInitial(iter)){return;}
   #ifndef NDEBUG
     if(naIsTreeAtInitial(iter))
       naError("Iterator is not at a leaf");

@@ -148,6 +148,12 @@ NA_IDEF void* naGetPtrMutable(NAPtr ptr){
 
 
 
+NA_IDEF NABool naIsPtrValid(NAPtr ptr){
+  return ptr.data.d != NA_NULL;
+}
+
+
+
 NA_IDEF NABool naIsPtrConst(NAPtr ptr){
   #ifndef NDEBUG
     return (ptr.flags & NA_PTR_CONST_DATA);

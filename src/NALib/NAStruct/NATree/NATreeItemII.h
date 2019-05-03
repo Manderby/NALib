@@ -66,7 +66,7 @@ NA_HIDEF void naInitTreeNode(const NATreeConfiguration* config, NATreeNode* node
   }
 
   for(NAInt i = 0; i < config->childpernode; i++){
-    naSetTreeNodeChild(node, i, NA_NULL);
+    naSetTreeNodeChildEmpty(node, i);
   }
 
   if(config->nodeDataConstructor){
@@ -176,9 +176,26 @@ NA_HIDEF NATreeItem* naGetTreeNodeChild(const NATreeConfiguration* config, NATre
 
 
 
-NA_HIDEF void naSetTreeNodeChild(NATreeNode* parent, NAInt childindx, NATreeItem* newchild){
+NA_HIDEF void naSetTreeNodeChildEmpty(NATreeNode* parent, NAInt childindx){
   // We thank the power of pointer arithmetic!
-  naGetTreeNodeChildStorage(parent)[childindx] = newchild;
+//  #ifndef NDEBUG
+//    if(!(naGetTreeNodeChildStorage(parent)[childindx]))
+//      naError("Child was not existent before.");
+//  #endif
+  naGetTreeNodeChildStorage(parent)[childindx] = NA_NULL;
+}
+
+
+
+NA_HIDEF void naSetTreeNodeChild(NATreeNode* parent, NATreeItem* child, NAInt childindx, NABool isChildLeaf){
+  // We thank the power of pointer arithmetic!
+//  #ifndef NDEBUG
+//    if((naGetTreeNodeChildStorage(parent)[childindx]))
+//      naError("Duplicate child assign.");
+//  #endif
+  naSetTreeItemParent(child, parent);
+  naMarkNodeChildLeaf(parent, childindx, isChildLeaf);
+  naGetTreeNodeChildStorage(parent)[childindx] = child;
 }
 
 

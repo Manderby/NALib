@@ -267,6 +267,9 @@ NA_IAPI void naCleanupPtr(NAPtr* ptr, NAMutator destructor);
 NA_IAPI const void* naGetPtrConst   (NAPtr ptr);
 NA_IAPI       void* naGetPtrMutable (NAPtr ptr);
 
+// Returns true if there is a pointer stored, false if it stores NA_NULL
+NA_IAPI NABool naIsPtrValid(NAPtr ptr);
+
 // Returns NA_TRUE, if the pointer stores const data. This function only is
 // useful when debugging. When NDEBUG is defined, this function always returns
 // NA_FALSE.

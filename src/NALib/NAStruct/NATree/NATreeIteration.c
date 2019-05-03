@@ -46,6 +46,7 @@ NA_HDEF void naIterateTreeCapture(NATreeIterator* iter, NAInt indx, NATreeIterat
           continue;
         }
       }
+      naSetTreeIteratorCurItem(iter, NA_NULL);
     }
     // In any other case, just try the next child.
     indx += info->step;
@@ -77,8 +78,9 @@ NA_HDEF void naIterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info
       // unnecessary function call.
       naSetTreeIteratorCurItem(iter, &(parent->item));
       naIterateTreeCapture(iter, nextindx, info);
-      // If we found an item, break.
-      if(!naIsTreeAtInitial(iter)){break;}
+      // If we found a leaf, break.
+      if(!naIsTreeAtInitial(iter) && naIsTreeItemLeaf(tree, iter->item)){break;}
+      naSetTreeIteratorCurItem(iter, NA_NULL);
     }
     item = &(parent->item);
   }

@@ -78,11 +78,14 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
 
   // Go through all childs and call the capturing message recursively.
   for(i=0; i<tree->config->childpernode; i++){
-    if(naIsNodeChildLeaf(node, i)){
-      bubble |= NA_TRUE;
-    }else{
-      // this node stores subnodes
-      bubble |= naUpdateTreeNodeCapturing(tree, (NATreeNode*)naGetTreeNodeChild(tree->config, node, i));
+    NATreeNode* subnode = (NATreeNode*)naGetTreeNodeChild(tree->config, node, i);
+    if(subnode){
+      if(naIsNodeChildLeaf(node, i)){
+        bubble |= NA_TRUE;
+      }else{
+        // this node stores subnodes
+        bubble |= naUpdateTreeNodeCapturing(tree, subnode);
+      }
     }
   }
   

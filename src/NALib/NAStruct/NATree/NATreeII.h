@@ -196,7 +196,8 @@ NA_HIAPI NAPtr naGetTreeNodeData(const NATreeConfiguration* config, NATreeNode* 
 NA_HIAPI void naSetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node, NAPtr newdata);
 NA_HIAPI NATreeItem** naGetTreeNodeChildStorage(NATreeNode* parent);
 NA_HIAPI NATreeItem* naGetTreeNodeChild(const NATreeConfiguration* config, NATreeNode* parent, NAInt childindx);
-NA_HIAPI void naSetTreeNodeChild(NATreeNode* parent, NAInt childindx, NATreeItem* newchild);
+NA_HIAPI void naSetTreeNodeChildEmpty(NATreeNode* parent, NAInt childindx);
+NA_HIAPI void naSetTreeNodeChild(NATreeNode* parent, NATreeItem* child, NAInt childindx, NABool isChildLeaf);
 NA_HIAPI NAInt naGetTreeNodeChildIndex(const NATreeConfiguration* config, NATreeNode* parent, NATreeItem* child);
 
 // Leaf

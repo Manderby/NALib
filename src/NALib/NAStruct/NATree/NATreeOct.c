@@ -232,14 +232,6 @@ NA_HDEF NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeItem* item, cons
 
 
 
-NA_HDEF void naSetTreeNodeChildOct(NATreeOctNode* parent, NATreeItem* child, NAInt childIndex, NABool isChildLeaf){
-  naSetTreeItemParent(child, naGetOctNodeNode(parent));
-  naMarkNodeChildLeaf(naGetOctNodeNode(parent), childIndex, isChildLeaf);
-  naSetTreeNodeChild(naGetOctNodeNode(parent), childIndex, child);
-}
-
-
-
 NA_HDEF NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
   NATreeItem* leafItem = naGetTreeLeafItem(leaf);
   NATreeNode* parent = naGetTreeItemParent(leafItem);
@@ -334,7 +326,7 @@ NA_HDEF NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
       // There is a grandparent. Simply add the sibling at the place where
       // the parent was and delete the parent.
       NAInt parentindex = naGetTreeNodeChildIndex(tree->config, naGetOctNodeNode(grandparent), naGetTreeNodeItem(parent));
-      naSetTreeNodeChildOct(grandparent, sibling, parentindex, isSiblingLeaf);
+      naSetTreeNodeChild(naGetOctNodeNode(grandparent), sibling, parentindex, isSiblingLeaf);
       naDestructTreeNode(tree->config, parent, NA_FALSE);
 
       // Repeat for the next parent.
@@ -402,7 +394,7 @@ NA_HDEF void naEnlargeTreeRootOct(NATree* tree, const void* containedKey){
   // Now, we attach the previous root to the new root at the appropriate
   // child index.
   NAInt prevRootIndx = tree->config->keyIndexGetter(newRootOrigin, prevRootOrigin, &newRootChildExponent);
-  naSetTreeNodeChildOct(newRoot, tree->root, prevRootIndx, naIsTreeRootLeaf(tree));
+  naSetTreeNodeChild(naGetOctNodeNode(newRoot), tree->root, prevRootIndx, naIsTreeRootLeaf(tree));
 
   // Finally, we set the newRoot to be the root of the tree and mark
   // it to be a node.
@@ -481,7 +473,7 @@ NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, cons
 
     if(!desiredChild){
       // If the space for the new child if free, take it.
-      naSetTreeNodeChildOct(existingParent, naGetTreeLeafItem(newLeaf), desiredChildIndex, NA_TRUE);
+      naSetTreeNodeChild(naGetOctNodeNode(existingParent), naGetTreeLeafItem(newLeaf), desiredChildIndex, NA_TRUE);
     }else{
       // If there is a child at the desired index, we have to make some
       // adjustments to the tree.
@@ -521,7 +513,7 @@ NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, cons
         // First, attach the previous item to the new parent.
         NABool isPrevExistingChildLeaf = naIsTreeItemLeaf(tree, prevExistingChild);
         NAInt smallestExistingIndex = tree->config->keyIndexGetter(&smallestParentOrigin, existingChildOrigin, &smallestParentChildExponent);
-        naSetTreeNodeChildOct(smallestParent, prevExistingChild, smallestExistingIndex, isPrevExistingChildLeaf);
+        naSetTreeNodeChild(naGetOctNodeNode(smallestParent), prevExistingChild, smallestExistingIndex, isPrevExistingChildLeaf);
               
         #ifndef NDEBUG
           if(smallestParentChildExponent >= existingParent->childexponent)
@@ -534,7 +526,7 @@ NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, cons
           if(testExistingIndex != prevExistingChildIndex)
             naError("Newly computed index differs from previously computed index");
         #endif
-        naSetTreeNodeChildOct(existingParent, naGetOctNodeItem(smallestParent), prevExistingChildIndex, NA_FALSE);
+        naSetTreeNodeChild(naGetOctNodeNode(existingParent), naGetOctNodeItem(smallestParent), prevExistingChildIndex, NA_FALSE);
         
         existingParent = smallestParent;
       }
@@ -545,7 +537,7 @@ NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, cons
         if(existingParent->childs[smallestNewLeafIndex])
           naError("Child is already occupied");
       #endif
-      naSetTreeNodeChildOct(existingParent, naGetTreeLeafItem(newLeaf), smallestNewLeafIndex, NA_TRUE);
+      naSetTreeNodeChild(naGetOctNodeNode(existingParent), naGetTreeLeafItem(newLeaf), smallestNewLeafIndex, NA_TRUE);
     }
   }
 
