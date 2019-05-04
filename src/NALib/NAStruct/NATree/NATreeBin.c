@@ -22,9 +22,11 @@ NA_HIDEF void* naGetBinLeafKey(NATreeBinLeaf* binleaf){
 
 
 NA_HIDEF void naAddTreeNodeChildBin(NATree* tree, NATreeBinNode* parent, NATreeItem* child, NAInt childIndex, NABool isChildLeaf){
+  NATreeNode* parentNode;
   NA_UNUSED(tree);
+  
   parent->childs[childIndex] = child;
-  NATreeNode* parentNode = naGetBinNodeNode(parent);
+  parentNode = naGetBinNodeNode(parent);
   naMarkNodeChildLeaf(parentNode, childIndex, isChildLeaf);
   naSetTreeItemParent(child, parentNode);
 }
@@ -142,6 +144,8 @@ NA_HDEF void naDestructTreeLeafBin(NATreeLeaf* leaf){
 
 NA_HDEF NATreeNode* naLocateBubbleBinWithLimits(const NATree* tree, NATreeNode* node, const void* key, const void* lowerlimit, const void* upperlimit, NATreeItem* previtem){
   NATreeBinNode* binnode;
+  NATreeItem* item;
+  
   #ifndef NDEBUG
     if(node == NA_NULL)
       naError("node should not be null");
@@ -164,7 +168,7 @@ NA_HDEF NATreeNode* naLocateBubbleBinWithLimits(const NATree* tree, NATreeNode* 
     return node;
   }
   // Otherwise, go up if possible.
-  NATreeItem* item = naGetTreeNodeItem(node);
+  item = naGetTreeNodeItem(node);
   if(!naIsTreeItemRoot(item)){
     return naLocateBubbleBinWithLimits(tree, naGetTreeItemParent(item), key, lowerlimit, upperlimit, item);
   }else{
@@ -234,7 +238,10 @@ NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeItem* existingItem, cons
         naError("Item should be a leaf");
     #endif
     NATreeLeaf* existingLeaf = (NATreeLeaf*)existingItem;
-
+    NATreeNode* existingParent;
+    NABool wasTreeItemRoot;
+    NATreeItem* newParent;
+  
     switch(insertOrder){
     case NA_TREE_LEAF_INSERT_ORDER_KEY:
       #ifndef NDEBUG
@@ -274,9 +281,9 @@ NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeItem* existingItem, cons
     break;
     }
 
-    NATreeNode* existingParent = naGetTreeItemParent(existingItem);
-    NABool wasTreeItemRoot = naIsTreeItemRoot(existingItem);
-    NATreeItem* newParent = naGetTreeNodeItem(naConstructTreeNodeBin(tree, naGetBinLeafKey(((NATreeBinLeaf*)right)), left, right));
+    existingParent = naGetTreeItemParent(existingItem);
+    wasTreeItemRoot = naIsTreeItemRoot(existingItem);
+    newParent = naGetTreeNodeItem(naConstructTreeNodeBin(tree, naGetBinLeafKey(((NATreeBinLeaf*)right)), left, right));
     
     naSetTreeItemParent(newParent, existingParent);
     if(!wasTreeItemRoot){

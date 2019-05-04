@@ -58,6 +58,7 @@ NA_HIDEF NATreeItem* naGetTreeNodeItem(NATreeNode* node){
 
 
 NA_HIDEF void naInitTreeNode(const NATreeConfiguration* config, NATreeNode* node, const void* key){
+  NAInt i;
   naInitTreeItem(naGetTreeNodeItem(node));
   node->flags = 0;
 
@@ -65,7 +66,7 @@ NA_HIDEF void naInitTreeNode(const NATreeConfiguration* config, NATreeNode* node
     config->keyAssigner(naGetTreeNodeKey(config, node), key);
   }
 
-  for(NAInt i = 0; i < config->childpernode; i++){
+  for(i = 0; i < config->childpernode; i++){
     naSetTreeNodeChildEmpty(node, i);
   }
 
@@ -93,13 +94,14 @@ NA_HIDEF void naDestructNodeData(const NATreeConfiguration* config, NAPtr data){
 
 
 NA_HIDEF void naDestructTreeNode(const NATreeConfiguration* config, NATreeNode* node, NABool recursive){
+  NAInt i;
   #ifndef NDEBUG
     if(!node)
       naCrash("node shall not be Null");
   #endif
   
   if(recursive){
-    for(NAInt i = 0; i < config->childpernode; i++){
+    for(i = 0; i < config->childpernode; i++){
       NATreeItem* child = naGetTreeNodeChild(config, node, i);
       if(child){
         if(naIsNodeChildLeaf(node, i)){
@@ -169,6 +171,8 @@ NA_HIDEF NATreeItem* naGetTreeNodeChild(const NATreeConfiguration* config, NATre
       naError("childindx must be >= 0");
     if(childindx >= config->childpernode)
       naError("childindx out of bounds");
+  #else
+    NA_UNUSED(config);
   #endif
   // We thank the power of pointer arithmetic!
   return naGetTreeNodeChildStorage(parent)[childindx]; 

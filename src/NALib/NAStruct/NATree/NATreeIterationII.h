@@ -135,8 +135,8 @@ NA_IDEF void naClearTreeIterator(NATreeIterator* iter){
 
 
 NA_IDEF NABool naLocateTreeKey(NATreeIterator* iter, const void* key, NABool assumeclose){
-  const NATree* tree = naGetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
+    const NATree* tree = naGetTreeIteratorTreeConst(iter);
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("tree is configured with no key");
   #endif

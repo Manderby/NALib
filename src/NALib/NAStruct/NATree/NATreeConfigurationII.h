@@ -75,12 +75,13 @@ NA_IDEF void naSetTreeConfigurationNodeCallbacks(NATreeConfiguration* config, NA
 
 
 NA_IDEF void naSetTreeConfigurationBaseLeafExponent(NATreeConfiguration* config, NAInt baseleafexponent){
+  NAInt* configdata;
   #ifndef NDEBUG
     if(!(config->flags & NA_TREE_QUADTREE) && !(config->flags & NA_TREE_OCTTREE))
       naError("This configuration is not for a quadtree and not for an octtree");
   #endif
   if(config->configdata){naFree(config->configdata);}
-  NAInt* configdata = naMalloc(naSizeof(NAInt));
+  configdata = naMalloc(naSizeof(NAInt));
   *configdata = baseleafexponent;
   config->configdata = configdata;
 }

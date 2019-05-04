@@ -10,6 +10,7 @@
 
 
 NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
+  int nodeChildsOffset;
   NATreeConfiguration* config = naAlloc(NATreeConfiguration);
   naZeron(config, sizeof(NATreeConfiguration));
   config->flags = flags;
@@ -17,7 +18,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
 
   // This is just for testing if the implemented nodes "inheriting" from the
   // NATreeNode structure have their childs storage at the correct position.
-  int nodeChildsOffset = -1;
+  nodeChildsOffset = -1;
 
   #ifndef NDEBUG
     // Just some security measures in case the programmer sees no purpos in
