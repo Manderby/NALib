@@ -74,7 +74,7 @@ NA_HDEF void naInitBufferStruct(NABuffer* buffer){
   buffer->flags = 0;
   buffer->range = naMakeRangeiWithStartAndEnd(0, 0);
   config = naCreateTreeConfiguration(NA_TREE_KEY_NOKEY | NA_TREE_BALANCE_AVL);
-  naSetTreeConfigurationLeafCallbacks(config, NA_NULL, naDestructBufferTreeLeaf/*, NA_NULL*/);
+  naSetTreeConfigurationLeafCallbacks(config, NA_NULL, naDestructBufferTreeLeaf);
   naSetTreeConfigurationNodeCallbacks(config, naConstructBufferTreeNode, naDestructBufferTreeNode, naUpdateBufferTreeNode);
   naInitTree(&(buffer->parts), config);
   #ifndef NDEBUG

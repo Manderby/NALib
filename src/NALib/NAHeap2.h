@@ -2,8 +2,8 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#ifndef NA_HEAP_INCLUDED
-#define NA_HEAP_INCLUDED
+#ifndef NA_HEAP2_INCLUDED
+#define NA_HEAP2_INCLUDED
 #ifdef __cplusplus
   extern "C"{
 #endif
@@ -63,7 +63,7 @@
 
 
 // The full type definition is in the file "NAHeapII.h"
-typedef struct NAHeap NAHeap;
+typedef struct NAHeap2 NAHeap2;
 
 // Use the following flags to define what type the key is.
 // If this flag is 0 or not present, the heap will use double-value keys.
@@ -89,31 +89,31 @@ typedef struct NAHeap NAHeap;
 //
 // Beware in multithreaded environments that growing and shrinking requires
 // memory allocation and deallocation.
-NA_API NAHeap* naInitHeap   (NAHeap* heap, NAInt count, NAInt flags);
+NA_API NAHeap2* naInitHeap2   (NAHeap2* heap, NAInt count, NAInt flags);
 
 // Clears the given heap.
-NA_IAPI void   naClearHeap    (NAHeap* heap);
+NA_IAPI void   naClearHeap2    (NAHeap2* heap);
 
 // Empties the heap without deallocating the memory
-NA_IAPI void   naEmptyHeap    (NAHeap* heap);
+NA_IAPI void   naEmptyHeap2    (NAHeap2* heap);
 
 // Returns the number of elements stored
-NA_IAPI NAInt naGetHeapCount (const NAHeap* heap);
+NA_IAPI NAInt naGetHeap2Count (const NAHeap2* heap);
 
 // Returns the maximum number of elements that can be stored. Result is
 // negative when a negative count was given to naInitHeap.
-NA_IAPI NAInt  naGetHeapMaxCount(const NAHeap* heap);
+NA_IAPI NAInt  naGetHeap2MaxCount(const NAHeap2* heap);
 
 // Shrinks the heap if at least three quarters of the heap are unused. Can only
 // be called if the initial count given to naInitHeap was negative.
-NA_API void naShrinkHeapIfNecessary(NAHeap* heap);
+NA_API void naShrinkHeap2IfNecessary(NAHeap2* heap);
 
 // Adds a new element to the heap. See text above for more information.
-NA_IAPI void naInsertHeapElementConst(    NAHeap* heap,
+NA_IAPI void naInsertHeap2ElementConst(    NAHeap2* heap,
                                       const void* ptr,
                                       const void* key,
                                            NAInt* backpointer);
-NA_IAPI void naInsertHeapElementMutable(  NAHeap* heap,
+NA_IAPI void naInsertHeap2ElementMutable(  NAHeap2* heap,
                                             void* ptr,
                                       const void* key,
                                            NAInt* backpointer);
@@ -121,13 +121,13 @@ NA_IAPI void naInsertHeapElementMutable(  NAHeap* heap,
 // Returns the root element of the heap.
 // The Remove-Function will additionally remove that element such that the
 // next one can take its place.
-NA_IAPI const void* naGetHeapRootConst(     const NAHeap* heap);
-NA_IAPI void*       naGetHeapRootMutable(   const NAHeap* heap);
-NA_IAPI const void* naRemoveHeapRootConst(        NAHeap* heap);
-NA_IAPI void*       naRemoveHeapRootMutable(      NAHeap* heap);
+NA_IAPI const void* naGetHeap2RootConst(     const NAHeap2* heap);
+NA_IAPI void*       naGetHeap2RootMutable(   const NAHeap2* heap);
+NA_IAPI const void* naRemoveHeap2RootConst(        NAHeap2* heap);
+NA_IAPI void*       naRemoveHeap2RootMutable(      NAHeap2* heap);
 
 // Returns the key of the root element.
-NA_IAPI const void* naGetHeapRootKey(const NAHeap* heap);
+NA_IAPI const void* naGetHeap2RootKey(const NAHeap2* heap);
 
 // The following function can only be used when a backpointer is stored:
 //
@@ -138,17 +138,17 @@ NA_IAPI const void* naGetHeapRootKey(const NAHeap* heap);
 //
 // If the stored backpointer is 0, the element is considered to not be in the
 // heap.
-NA_IAPI void naUpdateHeapElement(           NAHeap* heap, NAInt backpointer);
+NA_IAPI void naUpdateHeap2Element(           NAHeap2* heap, NAInt backpointer);
 
 // If you have such a backpointer, you can also remove an element.
-NA_IAPI const void* naRemoveHeapPosConst(   NAHeap* heap, NAInt backpointer);
-NA_IAPI void*       naRemoveHeapPosMutable( NAHeap* heap, NAInt backpointer);
+NA_IAPI const void* naRemoveHeap2PosConst(   NAHeap2* heap, NAInt backpointer);
+NA_IAPI void*       naRemoveHeap2PosMutable( NAHeap2* heap, NAInt backpointer);
 
 
 
 
 // Inline implementations are in a separate file:
-#include "NAStruct/NAHeap/NAHeapII.h"
+#include "NAStruct/NAHeap/NAHeap2II.h"
 
 
 
@@ -157,7 +157,7 @@ NA_IAPI void*       naRemoveHeapPosMutable( NAHeap* heap, NAInt backpointer);
 #ifdef __cplusplus
   } // extern "C"
 #endif
-#endif // NA_HEAP_INCLUDED
+#endif // NA_HEAP2_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm
 //

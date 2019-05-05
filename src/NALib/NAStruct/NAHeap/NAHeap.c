@@ -2,10 +2,10 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#include "../NAHeap.h"
-#include "../NAMemory.h"
-#include "../NABinaryData.h"
-#include "../NAMathOperators.h"
+#include "../../NAHeap.h"
+#include "../../NAMemory.h"
+#include "../../NABinaryData.h"
+#include "../../NAMathOperators.h"
 
 
 // First note, that a heap structure is basically very simple and could

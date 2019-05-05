@@ -49,13 +49,13 @@ struct NAHeap{
 // below no matter what struct type is stored.
 typedef struct NAHeapNoBackEntry NAHeapNoBackEntry;
 struct NAHeapNoBackEntry{
-  NAPtr             ptr;
   const void*       key;
+  NAPtr             ptr;
 };
 typedef struct NAHeapBackEntry NAHeapBackEntry;
 struct NAHeapBackEntry{
-  NAPtr             ptr;
   const void*       key;
+  NAPtr             ptr;
   NAInt*            backpointer;
 };
 
@@ -169,7 +169,6 @@ NA_IDEF const void* naRemoveHeapPosConst(NAHeap* heap, NAInt backpointer){
 NA_IDEF void* naRemoveHeapPosMutable(NAHeap* heap, NAInt backpointer){
   return heap->removePosMutable(heap, backpointer);
 }
-
 
 
 
