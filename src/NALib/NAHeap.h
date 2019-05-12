@@ -2,8 +2,8 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#ifndef NA_HEAP_INCLUDED
-#define NA_HEAP_INCLUDED
+#ifndef NA_HEAP2_INCLUDED
+#define NA_HEAP2_INCLUDED
 #ifdef __cplusplus
   extern "C"{
 #endif
@@ -157,7 +157,7 @@ NA_IAPI void*       naRemoveHeapPosMutable( NAHeap* heap, NAInt backpointer);
 #ifdef __cplusplus
   } // extern "C"
 #endif
-#endif // NA_HEAP_INCLUDED
+#endif // NA_HEAP2_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm
 //

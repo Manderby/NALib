@@ -3,6 +3,7 @@
 // Full license notice at the bottom.
 
 #include "../../NATree.h"
+#include "NAKey.h"
 #include "NATreeBin.h"
 #include "NATreeQuad.h"
 #include "NATreeOct.h"
@@ -34,14 +35,12 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->childpernode            = 4;
     switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
     case NA_TREE_KEY_DOUBLE:
-      config->keyByteSize             = sizeof(NAPos);
       config->childIndexGetter      = naGetChildIndexQuadDouble;
       config->keyIndexGetter        = naGetKeyIndexQuadDouble;
-      config->keyEqualComparer      = naEqualKeyQuadDouble;
-      config->keyLowerComparer      = naLowerKeyQuadDouble;
-      config->keyLowerEqualComparer = naLowerEqualKeyQuadDouble;
-      config->keyAssigner           = naAssignKeyQuadDouble;
-      config->keyAdder              = naAddKeyQuadDouble;
+      config->keyEqualComparer      = NA_KEY_OP(Equal, NAPos);
+      config->keyLowerComparer      = NA_KEY_OP(Lower, NAPos);
+      config->keyLowerEqualComparer = NA_KEY_OP(LowerEqual, NAPos);
+      config->keyAssigner           = NA_KEY_OP(Assign, NAPos);
       config->keyTester             = naTestKeyQuadDouble;
       config->keyNodeContainTester  = naTestKeyNodeContainQuadDouble;
       config->keyLeafContainTester  = naTestKeyLeafContainQuadDouble;
@@ -75,14 +74,12 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->childpernode            = 8;
     switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
     case NA_TREE_KEY_DOUBLE:
-      config->keyByteSize             = sizeof(NAVertex);
       config->childIndexGetter      = naGetChildIndexOctDouble;
       config->keyIndexGetter        = naGetKeyIndexOctDouble;
-      config->keyEqualComparer      = naEqualKeyOctDouble;
-      config->keyLowerComparer      = naLowerKeyOctDouble;
-      config->keyLowerEqualComparer = naLowerEqualKeyOctDouble;
-      config->keyAssigner           = naAssignKeyOctDouble;
-      config->keyAdder              = naAddKeyOctDouble;
+      config->keyEqualComparer      = NA_KEY_OP(Equal, NAVertex);
+      config->keyLowerComparer      = NA_KEY_OP(Lower, NAVertex);
+      config->keyLowerEqualComparer = NA_KEY_OP(LowerEqual, NAVertex);
+      config->keyAssigner           = NA_KEY_OP(Assign, NAVertex);
       config->keyTester             = naTestKeyOctDouble;
       config->keyNodeContainTester  = naTestKeyNodeContainOctDouble;
       config->keyLeafContainTester  = naTestKeyLeafContainOctDouble;
@@ -121,33 +118,28 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->keyLowerComparer      = NA_NULL;
       config->keyLowerEqualComparer = NA_NULL;
       config->keyAssigner           = NA_NULL;
-      config->keyAdder              = NA_NULL;
       config->keyTester             = NA_NULL;
       config->keyNodeContainTester  = NA_NULL;
       config->keyLeafContainTester  = NA_NULL;
       break;
     case NA_TREE_KEY_DOUBLE:
-      config->keyByteSize           = sizeof(double);
       config->childIndexGetter      = naGetChildIndexBinDouble;
       config->keyIndexGetter        = naGetKeyIndexBinDouble;
-      config->keyEqualComparer      = naEqualKeyBinDouble;
-      config->keyLowerComparer      = naLowerKeyBinDouble;
-      config->keyLowerEqualComparer = naLowerEqualKeyBinDouble;
-      config->keyAssigner           = naAssignKeyBinDouble;
-      config->keyAdder              = naAddKeyBinDouble;
+      config->keyEqualComparer      = NA_KEY_OP(Equal, double);
+      config->keyLowerComparer      = NA_KEY_OP(Lower, double);
+      config->keyLowerEqualComparer = NA_KEY_OP(LowerEqual, double);
+      config->keyAssigner           = NA_KEY_OP(Assign, double);
       config->keyTester             = naTestKeyBinDouble;
       config->keyNodeContainTester  = NA_NULL;
       config->keyLeafContainTester  = naTestKeyLeafContainBinDouble;
       break;
     case NA_TREE_KEY_NAINT:
-      config->keyByteSize           = sizeof(NAInt);
       config->childIndexGetter      = naGetChildIndexBinNAInt;
       config->keyIndexGetter        = naGetKeyIndexBinNAInt;
-      config->keyEqualComparer      = naEqualKeyBinNAInt;
-      config->keyLowerComparer      = naLowerKeyBinNAInt;
-      config->keyLowerEqualComparer = naLowerEqualKeyBinNAInt;
-      config->keyAssigner           = naAssignKeyBinNAInt;
-      config->keyAdder              = naAddKeyBinNAInt;
+      config->keyEqualComparer      = NA_KEY_OP(Equal, NAInt);
+      config->keyLowerComparer      = NA_KEY_OP(Lower, NAInt);
+      config->keyLowerEqualComparer = NA_KEY_OP(LowerEqual, NAInt);
+      config->keyAssigner           = NA_KEY_OP(Assign, NAInt);
       config->keyTester             = naTestKeyBinNAInt;
       config->keyNodeContainTester  = NA_NULL;
       config->keyLeafContainTester  = naTestKeyLeafContainBinNAInt;

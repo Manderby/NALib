@@ -45,6 +45,7 @@
 
 // Additional definitions
 #include "NABase/NAChar.h"
+#include "NABase/NATemplate.h"
 
 
 

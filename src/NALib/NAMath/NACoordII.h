@@ -2155,6 +2155,24 @@ NA_IDEF NABool naLowerEqualPos(NAPos pos1, NAPos pos2){
   #endif
   return ((pos1.x <= pos2.x) && (pos1.y <= pos2.y));
 }
+NA_IDEF NABool naGreaterEqualPos(NAPos pos1, NAPos pos2){
+  #ifndef NDEBUG
+    if(!naIsPosValid(pos1))
+      naError("pos1 is invalid.");
+    if(!naIsPosValid(pos2))
+      naError("pos2 is invalid.");
+  #endif
+  return ((pos1.x >= pos2.x) && (pos1.y >= pos2.y));
+}
+NA_IDEF NABool naGreaterPos(NAPos pos1, NAPos pos2){
+  #ifndef NDEBUG
+    if(!naIsPosValid(pos1))
+      naError("pos1 is invalid.");
+    if(!naIsPosValid(pos2))
+      naError("pos2 is invalid.");
+  #endif
+  return ((pos1.x > pos2.x) && (pos1.y > pos2.y));
+}
 
 
 
@@ -2175,6 +2193,24 @@ NA_IDEF NABool naLowerEqualVertex(NAVertex vertex1, NAVertex vertex2){
       naError("vertex2 is invalid.");
   #endif
   return ((vertex1.x <= vertex2.x) && (vertex1.y <= vertex2.y) && (vertex1.z <= vertex2.z));
+}
+NA_IDEF NABool naGreaterEqualVertex(NAVertex vertex1, NAVertex vertex2){
+  #ifndef NDEBUG
+    if(!naIsVertexValid(vertex1))
+      naError("vertex1 is invalid.");
+    if(!naIsVertexValid(vertex2))
+      naError("vertex2 is invalid.");
+  #endif
+  return ((vertex1.x >= vertex2.x) && (vertex1.y >= vertex2.y) && (vertex1.z >= vertex2.z));
+}
+NA_IDEF NABool naGreaterVertex(NAVertex vertex1, NAVertex vertex2){
+  #ifndef NDEBUG
+    if(!naIsVertexValid(vertex1))
+      naError("vertex1 is invalid.");
+    if(!naIsVertexValid(vertex2))
+      naError("vertex2 is invalid.");
+  #endif
+  return ((vertex1.x > vertex2.x) && (vertex1.y > vertex2.y) && (vertex1.z > vertex2.z));
 }
 
 

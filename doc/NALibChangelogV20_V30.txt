@@ -12,8 +12,15 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Version 23 (first published xxxx)
+==========
+
 Highlights:
 - Integrated NAQuadTree and NAOctTree into NATree. One tree to rule them all.
+- Added template architecture. Very crude at the moment. Let's see where that
+  takes us.
+- Added NAKey. Core component for key values.
+- Reprogrammed NAHeap with a new template architecture.
 
 Other things:
 - Simplified NAPtr by removing the pointer argument of most functions.

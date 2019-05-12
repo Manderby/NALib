@@ -4,6 +4,7 @@
 
 #include "../../NATree.h"
 #include "NATreeQuad.h"
+#include "NAKey.h"
 
 
 
@@ -127,45 +128,20 @@ NA_HDEF NAInt naGetKeyIndexQuadDouble(const void* baseorigin, const void* testor
   if(testPos->y >= basePos->y + childwidth){indx |= 2;}
   return indx;
 }
-NA_HDEF NABool naEqualKeyQuadDouble(const void* origin1, const void* origin2){
-  NAPos* pos1 = (NAPos*)origin1;
-  NAPos* pos2 = (NAPos*)origin2;
-  return naEqualPos(*pos1, *pos2);
-}
-NA_HDEF NABool naLowerKeyQuadDouble(const void* origin1, const void* origin2){
-  NAPos* pos1 = (NAPos*)origin1;
-  NAPos* pos2 = (NAPos*)origin2;
-  return naLowerPos(*pos1, *pos2);
-}
-NA_HDEF NABool naLowerEqualKeyQuadDouble(const void* origin1, const void* origin2){
-  NAPos* pos1 = (NAPos*)origin1;
-  NAPos* pos2 = (NAPos*)origin2;
-  return naLowerEqualPos(*pos1, *pos2);
-}
-NA_HDEF void naAssignKeyQuadDouble(void* dst, const void* src){
-  naCopyPos(dst, src);
-}
-NA_HDEF void naAddKeyQuadDouble(void* dst, const void* src1, const void* src2){
-  NAPos* dstPos = (NAPos*)dst; 
-  NAPos* src1Pos = (NAPos*)src1; 
-  NAPos* src2Pos = (NAPos*)src2; 
-  dstPos->x = src1Pos->x + src2Pos->x;
-  dstPos->y = src1Pos->y + src2Pos->y;
-}
 NA_HDEF NABool naTestKeyQuadDouble(const void* lowerlimit, const void* upperlimit, const void* key){
-  return naLowerEqualKeyQuadDouble(lowerlimit, key) && naLowerKeyQuadDouble(key, upperlimit);
+  return NA_KEY_OP(LowerEqual, NAPos)(lowerlimit, key) && NA_KEY_OP(Lower, NAPos)(key, upperlimit);
 }
 NA_HDEF NABool naTestKeyNodeContainQuadDouble(NATreeNode* parentnode, const void* key){
   NATreeQuadNode* quadNode = (NATreeQuadNode*)(parentnode);
   double childwidth = naMakeDoubleWithExponent((int32)quadNode->childexponent);
   NAPos upperlimit = naMakePos(quadNode->origin.x + 2 * childwidth, quadNode->origin.y + 2 * childwidth);
-  return naLowerEqualKeyQuadDouble(&(quadNode->origin), key) && naLowerKeyQuadDouble(key, &upperlimit);
+  return NA_KEY_OP(LowerEqual, NAPos)(&(quadNode->origin), key) && NA_KEY_OP(Lower, NAPos)(key, &upperlimit);
 }
 NA_HDEF NABool naTestKeyLeafContainQuadDouble(NATreeLeaf* leaf, const void* key){
   NATreeQuadLeaf* quadLeaf = (NATreeQuadLeaf*)(leaf);
   double leafwidth = naMakeDoubleWithExponent((int32)quadLeaf->leafexponent);
   NAPos upperlimit = naMakePos(quadLeaf->origin.x + leafwidth, quadLeaf->origin.y + leafwidth);
-  return naLowerEqualKeyQuadDouble(&(quadLeaf->origin), key) && naLowerKeyQuadDouble(key, &upperlimit);
+  return NA_KEY_OP(LowerEqual, NAPos)(&(quadLeaf->origin), key) && NA_KEY_OP(Lower, NAPos)(key, &upperlimit);
 }
 
 

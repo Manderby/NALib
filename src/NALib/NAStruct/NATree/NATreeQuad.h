@@ -32,11 +32,6 @@ NA_EXTERN_RUNTIME_TYPE(NATreeQuadLeaf);
 
 NA_HAPI  NAInt naGetChildIndexQuadDouble(NATreeNode* parentnode, const void* childkey);
 NA_HAPI  NAInt naGetKeyIndexQuadDouble(const void* basekey, const void* testkey, const void* data);
-NA_HAPI  NABool naEqualKeyQuadDouble(const void* key1, const void* key2);
-NA_HAPI  NABool naLowerKeyQuadDouble(const void* origin1, const void* origin2);
-NA_HAPI  NABool naLowerEqualKeyQuadDouble(const void* origin1, const void* origin2);
-NA_HAPI  void naAssignKeyQuadDouble(void* dst, const void* src);
-NA_HAPI  void naAddKeyQuadDouble(void* dst, const void* src1, const void* src2);
 NA_HAPI  NABool naTestKeyQuadDouble(const void* lowerlimit, const void* upperlimit, const void* key);
 NA_HAPI  NABool naTestKeyNodeContainQuadDouble(NATreeNode* parentnode, const void* key);
 NA_HAPI  NABool naTestKeyLeafContainQuadDouble(NATreeLeaf* leaf, const void* key);

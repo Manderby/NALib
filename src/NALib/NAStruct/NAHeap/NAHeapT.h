@@ -12,16 +12,16 @@
 // return value is the index in which the key can safely be inserted. The
 // curindex points at the starting position and the element at curindex is
 // assumed to be empty (or contain no useful information).
-NA_HDEF NAInt NA_T3(naHeap2MoveDown, NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE, NA_T_USE_BACKPOINTERS)(NAHeap2* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt NA_T3(naHeapMoveDown, NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE, NA_T_USE_BACKPOINTERS)(NAHeap* heap, const void* key, NAInt curindex){
   #if NA_T_USE_BACKPOINTERS
-    NAHeap2BackEntry* entries = heap->data;
+    NAHeapBackEntry* entries = heap->data;
   #else
-    NAHeap2Entry* entries = heap->data;
+    NAHeapEntry* entries = heap->data;
   #endif
   NAInt nextindex = curindex / 2;
   
   // Go from the leaf to the root and test, where the new element shall lie.
-  while((nextindex > 0) && NA_KEY_OPERATOR(NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE)(entries[nextindex].key, key)){
+  while((nextindex > 0) && NA_KEY_OP(NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE)(entries[nextindex].key, key)){
     entries[curindex] = entries[nextindex];
     #if NA_T_USE_BACKPOINTERS
       *(entries[curindex].backpointer) = curindex;
@@ -39,11 +39,11 @@ NA_HDEF NAInt NA_T3(naHeap2MoveDown, NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE, 
 // Assumes the given index to point at an element which is empty (or contains
 // no useful information). Performs a reordering of the heap such that the
 // given key can be inserted at a suitable index and returns this index.
-NA_HDEF NAInt NA_T3(naHeap2MoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T_USE_BACKPOINTERS)(NAHeap2* heap, const void* key, NAInt curindex){
+NA_HDEF NAInt NA_T3(naHeapMoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T_USE_BACKPOINTERS)(NAHeap* heap, const void* key, NAInt curindex){
   #if NA_T_USE_BACKPOINTERS
-    NAHeap2BackEntry* entries = heap->data;
+    NAHeapBackEntry* entries = heap->data;
   #else
-    NAHeap2Entry* entries = heap->data;
+    NAHeapEntry* entries = heap->data;
   #endif
 
   NAInt indexl = curindex * 2 + 0;
@@ -56,7 +56,7 @@ NA_HDEF NAInt NA_T3(naHeap2MoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T
       
       if(indexl <= heap->count){
         // only the left element must be checked. 
-        if(NA_KEY_OPERATOR(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[indexl].key, key)){
+        if(NA_KEY_OP(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[indexl].key, key)){
           entries[curindex] = entries[indexl];
           #if NA_T_USE_BACKPOINTERS
             *(entries[curindex].backpointer) = curindex;
@@ -68,9 +68,9 @@ NA_HDEF NAInt NA_T3(naHeap2MoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T
       break;
     }
 
-    if(NA_KEY_OPERATOR(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[indexl].key, entries[indexr].key)){
+    if(NA_KEY_OP(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[indexl].key, entries[indexr].key)){
       // the left element is more important than the right 
-      if(NA_KEY_OPERATOR(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[indexl].key, key)){
+      if(NA_KEY_OP(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[indexl].key, key)){
         // the left is more important than the key 
         entries[curindex] = entries[indexl];
         #if NA_T_USE_BACKPOINTERS
@@ -83,7 +83,7 @@ NA_HDEF NAInt NA_T3(naHeap2MoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T
       }
     }else{
       // the right element is more important than the left
-      if(NA_KEY_OPERATOR(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[indexr].key, key)){
+      if(NA_KEY_OP(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[indexr].key, key)){
         // the right is more important than the key 
         entries[curindex] = entries[indexr];
         #if NA_T_USE_BACKPOINTERS

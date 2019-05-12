@@ -90,7 +90,6 @@ struct NATreeConfiguration{
   NAInt                         flags;
 
   NAInt                         childpernode;
-  int                           keyByteSize;
   int                           leafKeyOffset;
   int                           nodeKeyOffset;
   int                           leafUserDataOffset;
@@ -103,7 +102,6 @@ struct NATreeConfiguration{
   NAKeyLowerComparer            keyLowerComparer;
   NAKeyLowerEqualComparer       keyLowerEqualComparer;
   NAKeyAssigner                 keyAssigner;
-  NAKeyAdder                    keyAdder;
   NAKeyTester                   keyTester;
   NAKeyNodeContainTester        keyNodeContainTester;
   NAKeyLeafContainTester        keyLeafContainTester;

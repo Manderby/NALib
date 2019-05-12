@@ -32,11 +32,6 @@ NA_EXTERN_RUNTIME_TYPE(NATreeOctLeaf);
 
 NA_HAPI  NAInt naGetChildIndexOctDouble(NATreeNode* parentnode, const void* childkey);
 NA_HAPI  NAInt naGetKeyIndexOctDouble(const void* basekey, const void* testkey, const void* data);
-NA_HAPI  NABool naEqualKeyOctDouble(const void* key1, const void* key2);
-NA_HAPI  NABool naLowerKeyOctDouble(const void* origin1, const void* origin2);
-NA_HAPI  NABool naLowerEqualKeyOctDouble(const void* origin1, const void* origin2);
-NA_HAPI  void naAssignKeyOctDouble(void* dst, const void* src);
-NA_HAPI  void naAddKeyOctDouble(void* dst, const void* src1, const void* src2);
 NA_HAPI  NABool naTestKeyOctDouble(const void* lowerlimit, const void* upperlimit, const void* key);
 NA_HAPI  NABool naTestKeyNodeContainOctDouble(NATreeNode* parentnode, const void* key);
 NA_HAPI  NABool naTestKeyLeafContainOctDouble(NATreeLeaf* leaf, const void* key);
