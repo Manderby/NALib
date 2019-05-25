@@ -124,10 +124,11 @@ NA_IAPI       void* naGetListLastMutable    (const NAList* list);
 NA_IAPI void naForeachListConst  (const NAList* list, NAAccessor accessor);
 NA_IAPI void naForeachListMutable(const NAList* list, NAMutator  mutator);
 
-// Removes the first element of the src list and reattaches it as the last
-// element of dst list.
+// Removes the whole list or the first element of the src list and reattaches
+// it as the last element of dst list.
 //
-// Note that there is no memory allocation or deallocation used in the process!
+// Note that there is NO memory allocation or deallocation used in the process!
+NA_IAPI void naMoveListToLast(     NAList* src, NAList* dst);
 NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 
 
@@ -322,8 +323,8 @@ NA_IAPI NABool    naIsListAtInitial         (const NAListIterator* iter);
 //
 // The Remaining function will move all elements starting with the current
 // element till the last to the new list. If the iterator is at initial
-// position, the whole list will be moved. The iterator of the src list will
-// then be unset.
+// position, the whole list will be moved. After this function, the iterator
+// will be unset.
 //
 // The "This" functions will move the current element but also will alter the
 // iterator itself to point to the new list. These functions are very useful

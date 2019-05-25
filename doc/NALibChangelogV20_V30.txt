@@ -27,6 +27,7 @@ Other things:
 - Splitting VectorAlgebra file into several files.
 - Adding Leap second information according bulletin C 57
 - Removed the functionsymbol parameter from naError and naCrash
+- Extended NAList with naMoveListToLast
 
 
 Version 22 (first published 2018-Dec-14)
