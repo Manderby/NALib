@@ -19,7 +19,7 @@ Highlights:
 - Integrated NAQuadTree and NAOctTree into NATree. One tree to rule them all.
 - Added template architecture. Very crude at the moment. Let's see where that
   takes us.
-- Added NAKey. Core component for key values.
+- Added NAKey. Core component for key values. Very crude at the moment.
 - Reprogrammed NAHeap with a new template architecture.
 
 Other things:
@@ -27,7 +27,7 @@ Other things:
 - Splitting VectorAlgebra file into several files.
 - Adding Leap second information according bulletin C 57
 - Removed the functionsymbol parameter from naError and naCrash
-- Extended NAList with naMoveListToLast
+- Extended NAList with naMoveListToLast and some debug checks
 
 
 Version 22 (first published 2018-Dec-14)
