@@ -4,7 +4,7 @@
 
 #include "../../NATree.h"
 #include "NATreeQuad.h"
-#include "NAKey.h"
+#include "../../NAKey.h"
 
 
 
@@ -118,12 +118,15 @@ NA_HDEF NAInt naGetKeyIndexQuadDouble(const void* baseorigin, const void* testor
   NAInt childexponent = *((NAInt*)data);
   NAPos* basePos = (NAPos*)baseorigin;
   NAPos* testPos = (NAPos*)testorigin;
+  NAInt indx = 0;
+  double childwidth;
+
   #ifndef NDEBUG
     if(!naContainsTreeNodeChildQuad(basePos, testPos, childexponent))
       naError("Pos lies outside");
   #endif
-  NAInt indx = 0;
-  double childwidth = naMakeDoubleWithExponent((int32)childexponent);
+
+  childwidth = naMakeDoubleWithExponent((int32)childexponent);
   if(testPos->x >= basePos->x + childwidth){indx |= 1;}
   if(testPos->y >= basePos->y + childwidth){indx |= 2;}
   return indx;
@@ -328,11 +331,14 @@ NA_HDEF NATreeQuadNode* naCreateTreeParentQuad(NATree* tree, NATreeItem* item, N
   tree->config->keyAssigner(&newRootOrigin, prevRootOrigin);
   
   while(1){
+    #ifndef NDEBUG
+      NAPos testRootOrigin;
+    #endif
     newRootChildExponent++;
     #ifndef NDEBUG
       if(newRootChildExponent >= NA_SYSTEM_ADDRESS_BITS)
         naCrash("childexponent grown too big.");
-      NAPos testRootOrigin = newRootOrigin;
+      testRootOrigin = newRootOrigin;
     #endif
     newRootOrigin = naGetTreeNewRootOriginQuad(newRootChildExponent, newRootOrigin);
     #ifndef NDEBUG
@@ -492,6 +498,9 @@ NA_HDEF NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, con
       // existingParent and existingChild.
       
       if(smallestParentChildExponent != existingParentChildExponent){
+        #ifndef NDEBUG
+          NAInt testExistingIndex;
+        #endif
         NATreeQuadNode* smallestParent = naConstructTreeNodeQuad(tree->config, smallestParentOrigin, smallestParentChildExponent);
         
         // First, attach the previous item to the new parent.
@@ -506,7 +515,7 @@ NA_HDEF NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, con
         
         // Then, attach the new parent to the existing parent.
         #ifndef NDEBUG
-          NAInt testExistingIndex = tree->config->keyIndexGetter(naGetQuadNodeKey(existingParent), naGetQuadNodeKey(smallestParent), &(existingParent->childexponent));
+          testExistingIndex = tree->config->keyIndexGetter(naGetQuadNodeKey(existingParent), naGetQuadNodeKey(smallestParent), &(existingParent->childexponent));
           if(testExistingIndex != prevExistingChildIndex)
             naError("Newly computed index differs from previously computed index");
         #endif

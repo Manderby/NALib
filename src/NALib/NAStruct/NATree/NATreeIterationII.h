@@ -403,6 +403,8 @@ NA_IDEF NABool naAddTreeNextMutable(NATreeIterator* iter, void* content, NABool 
 NA_IDEF void naRemoveTreeCurLeaf(NATreeIterator* iter){
   NATree* tree = naGetTreeIteratorTreeMutable(iter);
   NATreeNode* newparent;
+  NATreeItem* removeItem;
+
   #ifndef NDEBUG
     if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
@@ -411,7 +413,8 @@ NA_IDEF void naRemoveTreeCurLeaf(NATreeIterator* iter){
     if(!naIsTreeItemLeaf(tree, iter->item))
       naError("Iterator is not at a leaf.");
   #endif
-  NATreeItem* removeItem = iter->item;
+  
+  removeItem = iter->item;
   naSetTreeIteratorCurItem(iter, NA_NULL);  // temporarily remove the iterator. // todo: make it advance, rev-advance or not.
   newparent = tree->config->leafRemover(tree, (NATreeLeaf*)(removeItem));
   if(newparent){naSetTreeIteratorCurItem(iter, naGetTreeNodeItem(newparent));}

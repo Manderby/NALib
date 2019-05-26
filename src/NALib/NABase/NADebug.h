@@ -50,7 +50,11 @@
   #include <stdio.h>    // for the fprintf function
   #include <stdlib.h>   // for the exit function
 
-  #define NA_DEBUG_FUNCTIONSYMBOL __func__
+  #if NA_OS == NA_OS_WINDOWS
+    #define NA_DEBUG_FUNCTIONSYMBOL __FUNCTION__
+  #else
+    #define NA_DEBUG_FUNCTIONSYMBOL __func__
+  #endif
 
   // Prints an error. When this function gets called, the ongoing of the
   // application is undefined. Sometimes, the error might affect everything

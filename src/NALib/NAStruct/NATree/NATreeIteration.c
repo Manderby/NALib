@@ -11,13 +11,16 @@
 // iterator is set to the initial position.
 NA_HDEF void naIterateTreeCapture(NATreeIterator* iter, NAInt indx, NATreeIterationInfo* info){
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
+  NATreeNode* parentNode;
+
   #ifndef NDEBUG
     if(naIsTreeItemLeaf(tree, iter->item))
       naError("Iter is not placed at a node");
     if(indx == info->breakindx)
       naError("Index is aready at breakindex. Function will not work properly.");
   #endif
-  NATreeNode* parentNode = (NATreeNode*)iter->item;
+  
+  parentNode = (NATreeNode*)iter->item;
 
   // Note: It is safe to assume that this loop is executed at least once.
   while(indx != info->breakindx){
@@ -59,12 +62,14 @@ NA_HDEF void naIterateTreeCapture(NATreeIterator* iter, NAInt indx, NATreeIterat
 // searches for the the "next" item by bubbling to the parent.
 NA_HDEF void naIterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info){
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
+  NATreeItem* item;
+  
   #ifndef NDEBUG
     if(!naIsTreeItemLeaf(tree, iter->item))
       naError("Iter is not placed at a leaf");
   #endif
 
-  NATreeItem* item = iter->item;
+  item = iter->item;
   naSetTreeIteratorCurItem(iter, NA_NULL);
 
   while(!naIsTreeItemRoot(item)){

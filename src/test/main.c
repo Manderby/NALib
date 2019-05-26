@@ -9,13 +9,13 @@
 // This file should compile and run and print some version notes on the screen.
 //
 
-#include "NATree.h"
-#include "NAHeap.h"
-#include "NAHeap.h"
-#include "NARandom.h"
+#include "../NALib/NATree.h"
+#include "../NALib/NAHeap.h"
+#include "../NALib/NAHeap.h"
+#include "../NALib/NARandom.h"
 
-#define TESTSIZE    1000000
-#define SUBTESTSIZE  100000.
+#define TESTSIZE    100000
+#define SUBTESTSIZE  10000.
 
 int compare(const void* a, const void* b)
 {
@@ -38,18 +38,22 @@ void testQSort(double* keys){
 
 void testHeap(const double* keys){
   NAHeap heap;
+  NADateTime t1;
+  NADateTime t2;
+  NADateTime t3;
+  int i;
+  double prevkey = 0.;
 
   naInitHeap(&heap, -1, NA_HEAP_USES_DOUBLE_KEY);
   
-  NADateTime t1 = naMakeDateTimeNow();
-  for(int i=0; i<TESTSIZE; i++){
+  t1 = naMakeDateTimeNow();
+  for(i=0; i<TESTSIZE; i++){
     naInsertHeapElementConst(&heap, &(keys[i]), &(keys[i]), NA_NULL);
   }
 
-  NADateTime t2 = naMakeDateTimeNow();
+  t2 = naMakeDateTimeNow();
 
-  double prevkey = 0.;
-  for(int i=0; i<TESTSIZE; i++){
+  for(i=0; i<TESTSIZE; i++){
     const double* curkey = naRemoveHeapRootConst(&heap);
     if(prevkey > *curkey){
       printf("Error in sorting");
@@ -58,7 +62,7 @@ void testHeap(const double* keys){
 //    printf("%f\n", *curkey);
   }
 
-  NADateTime t3 = naMakeDateTimeNow();
+  t3 = naMakeDateTimeNow();
 
   printf("Heap Insert: %f\n", naGetDateTimeDifference(&t2, &t1));
   printf("Heap Iterate: %f\n", naGetDateTimeDifference(&t3, &t2));
@@ -71,13 +75,16 @@ void testHeap(const double* keys){
 void testTree(){
   NATreeConfiguration* config = naCreateTreeConfiguration(NA_TREE_KEY_DOUBLE | NA_TREE_BALANCE_AVL);
   NATree tree;
-  naInitTree(&tree, config); 
   NADateTime t1, t2;
   NATreeIterator iter;
+  int i;
+  double prevkey = -1.;
+
+  naInitTree(&tree, config); 
 
   t1 = naMakeDateTimeNow();
   iter = naMakeTreeModifier(&tree);
-  for(int i=0; i<TESTSIZE; i++){
+  for(i=0; i<TESTSIZE; i++){
 //    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
     double key = naUniformRandZE();
 //    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
@@ -91,7 +98,7 @@ void testTree(){
 
   t1 = naMakeDateTimeNow();
   iter = naMakeTreeAccessor(&tree);
-  for(int i=0; i<TESTSIZE; i++){
+  for(i=0; i<TESTSIZE; i++){
 //    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
 //    double key = naUniformRandZE();
     double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
@@ -106,11 +113,11 @@ void testTree(){
   printf("Tree Locate: %f\n", naGetDateTimeDifference(&t2, &t1));
 
 //  NAInt prevkey = -1.;
-  double prevkey = -1.;
   t1 = naMakeDateTimeNow();
   iter = naMakeTreeModifier(&tree);
-  int i = 0;
+  i = 0;
   while(naIterateTree(&iter, NA_NULL, NA_NULL)){
+    const double* key;
     i++;
 //    const NAInt* key = naGetTreeCurKey(&iter);
 //    if(*key < prevkey){
@@ -119,7 +126,7 @@ void testTree(){
 //    prevkey = *key;
 //    if(i < 5){printf("%"NA_PRIi"\n", *key);}
 
-    const double* key = naGetTreeCurLeafKey(&iter);
+    key = naGetTreeCurLeafKey(&iter);
     if(*key < prevkey){
       printf("Wrong sorting: %d: %f, %f\n", i, *key, prevkey);
     }
@@ -161,6 +168,9 @@ void testTree(){
 #include <stdio.h>
 
 int main(void){
+  double* keys;
+  int i;
+
   printf("NALib Version: %d ", NA_VERSION);
   #ifndef NDEBUG
     printf("(Debug ");
@@ -170,8 +180,8 @@ int main(void){
   printf("%d Bits Addresses, %d Bits Integers)\n", NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
   naStartRuntime();
-    double* keys = naMalloc(TESTSIZE * sizeof(double*));
-    for(int i=0; i<TESTSIZE; i++){
+    keys = (double*)naMalloc(TESTSIZE * sizeof(double));
+    for(i=0; i<TESTSIZE; i++){
       keys[i] = naUniformRandZE();
 //      keys[i] = TESTSIZE - i;
 //      keys[i] = i;

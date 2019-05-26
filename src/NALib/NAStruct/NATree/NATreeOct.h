@@ -2,7 +2,7 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#include "NACoord.h"
+#include "../../NACoord.h"
 
 typedef struct NATreeOctNode NATreeOctNode;
 struct NATreeOctNode{

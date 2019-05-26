@@ -200,15 +200,17 @@ NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeItem* existingItem, cons
     naMarkTreeRootLeaf(tree, NA_TRUE);
   
   }else{
+    NATreeLeaf* existingLeaf;
+    NATreeNode* existingParent;
+    NABool wasTreeItemRoot;
+    NATreeItem* newParent;
 
     #ifndef NDEBUG
       if(!naIsTreeItemLeaf(tree, existingItem))
         naError("Item should be a leaf");
     #endif
-    NATreeLeaf* existingLeaf = (NATreeLeaf*)existingItem;
-    NATreeNode* existingParent;
-    NABool wasTreeItemRoot;
-    NATreeItem* newParent;
+
+    existingLeaf = (NATreeLeaf*)existingItem;
   
     switch(insertOrder){
     case NA_TREE_LEAF_INSERT_ORDER_KEY:

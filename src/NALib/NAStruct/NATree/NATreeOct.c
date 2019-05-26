@@ -3,8 +3,8 @@
 // Full license notice at the bottom.
 
 #include "../../NATree.h"
+#include "../../NAKey.h"
 #include "NATreeOct.h"
-#include "NAKey.h"
 
 
 
@@ -122,12 +122,15 @@ NA_HDEF NAInt naGetKeyIndexOctDouble(const void* baseorigin, const void* testori
   NAInt childexponent = *((NAInt*)data);
   NAVertex* baseVertex = (NAVertex*)baseorigin;
   NAVertex* testVertex = (NAVertex*)testorigin;
+  NAInt indx = 0;
+  double childwidth;
+
   #ifndef NDEBUG
     if(!naContainsTreeNodeChildOct(baseVertex, testVertex, childexponent))
       naError("Vertex lies outside");
   #endif
-  NAInt indx = 0;
-  double childwidth = naMakeDoubleWithExponent((int32)childexponent);
+
+  childwidth = naMakeDoubleWithExponent((int32)childexponent);
   if(testVertex->x >= baseVertex->x + childwidth){indx |= 1;}
   if(testVertex->y >= baseVertex->y + childwidth){indx |= 2;}
   if(testVertex->z >= baseVertex->z + childwidth){indx |= 4;}
@@ -338,11 +341,14 @@ NA_HDEF NATreeOctNode* naCreateTreeParentOct(NATree* tree, NATreeItem* item, NAB
   tree->config->keyAssigner(&newRootOrigin, prevRootOrigin);
   
   while(1){
+    #ifndef NDEBUG
+      NAVertex testRootOrigin;
+    #endif
     newRootChildExponent++;
     #ifndef NDEBUG
       if(newRootChildExponent >= NA_SYSTEM_ADDRESS_BITS)
         naCrash("childexponent grown too big.");
-      NAVertex testRootOrigin = newRootOrigin;
+      testRootOrigin = newRootOrigin;
     #endif
     newRootOrigin = naGetTreeNewRootOriginOct(newRootChildExponent, newRootOrigin);
     #ifndef NDEBUG
@@ -502,6 +508,9 @@ NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, cons
       // existingParent and existingChild.
       
       if(smallestParentChildExponent != existingParentChildExponent){
+        #ifndef NDEBUG
+          NAInt testExistingIndex;
+        #endif
         NATreeOctNode* smallestParent = naConstructTreeNodeOct(tree->config, smallestParentOrigin, smallestParentChildExponent);
         
         // First, attach the previous item to the new parent.
@@ -516,7 +525,7 @@ NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, cons
         
         // Then, attach the new parent to the existing parent.
         #ifndef NDEBUG
-          NAInt testExistingIndex = tree->config->keyIndexGetter(naGetOctNodeKey(existingParent), naGetOctNodeKey(smallestParent), &(existingParent->childexponent));
+          testExistingIndex = tree->config->keyIndexGetter(naGetOctNodeKey(existingParent), naGetOctNodeKey(smallestParent), &(existingParent->childexponent));
           if(testExistingIndex != prevExistingChildIndex)
             naError("Newly computed index differs from previously computed index");
         #endif

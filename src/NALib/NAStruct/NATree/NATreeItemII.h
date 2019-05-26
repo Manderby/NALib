@@ -206,13 +206,15 @@ NA_HIDEF void naSetTreeNodeChild(NATreeNode* parent, NATreeItem* child, NAInt ch
 
 NA_HDEF NAInt naGetTreeNodeChildIndex(const NATreeConfiguration* config, NATreeNode* parent, NATreeItem* child){
   NAInt retvalue;
+  NATreeItem** childs;
+
   #ifndef NDEBUG
     if(!child)
       naError("Child should not be Null");
   #endif
   
   // We thank the power of pointer arithmetic!
-  NATreeItem** childs = naGetTreeNodeChildStorage(parent);
+  childs = naGetTreeNodeChildStorage(parent);
   
   // We assume, the child MUST be a child of this parent. Therefore we only
   // search until childpernode - 1 and just return the last possibility in

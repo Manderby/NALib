@@ -1053,6 +1053,7 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* iterator, NAList* dst){
   NAListElement* element;
   NAInt movecount = 1;
   #ifndef NDEBUG
+    NAListElement* testelem;
     if(!iterator->mutator)
       naError("Trying to mutate elements with an accessor iterator");
     if(naIsPtrConst(iterator->listptr))
@@ -1073,7 +1074,7 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* iterator, NAList* dst){
 
     #ifndef NDEBUG
       // Test all remaining elements for iterators
-      NAListElement* testelem = iterator->cur;
+      testelem = iterator->cur;
       while(testelem != &(src->sentinel)){
         if(testelem->itercount)
           naError("Element still has an iterator");
