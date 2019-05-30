@@ -873,7 +873,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
         #error "impossible to convert int64. Falling back to int32"
         datetimesec = naMakeInt64WithLo(timesp->tv_sec + naCastInt64ToInt32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO));
       #else
-        datetimesec = naAddInt64(timesp->tv_sec, naMakeInt64WithLo(NA_DATETIME_SISEC_UNIX_YEAR_ZERO));
+        datetimesec = naAddInt64(timesp->tv_sec, NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
       #endif
     #endif
     if(naGreaterInt64(datetimesec, NA_ZERO_64)){

@@ -183,28 +183,39 @@
 
 
 // Universal Constants
-// - CHAR_IMP_VAC       characteristic impedance of vacuum, Z_0 in [Ohm]
-// - ELEC_CONST         electric constant, epsilon_0 in [Fm-1]
+// - VAC_ELEC_PERMET    Vacuum electric permittivity, Z_0 in [Ohm]
+// - VAC_MAG_PERMET     Vacuum magnetic permeability, epsilon_0 in [Fm-1]
 // - MAG_CONST          magnetic constant, mu_0 in [NA-2], = 4*PI*10^-7
 // - GRAV               Newtonian constant of gravitation, G in [m3kg-1s-2]
 // - GRAV_HBARC         Newtonian constant of gravitation over h-bar c,
 //                      G/(h_bar c) in [(GeV/c2)-2]
 // - PLANCK             Planck constant, h in [Js]
 // - PLANCK_EVS         Planck constant in eV s, h in [eVs]
-// - PLANCK_2PI         Planck constant over 2 pi, h_bar in [Js]
-// - PLANCK_2PI_EVS     Planck constant over 2 pi in eV s, h_bar in [eVs]
-// - PLANCK_2PIC        Planck constant over 2 pi times c in MeV fm, h_bar c
-//                      in [MeV fm]
+// - PLANCK_REDUCED     Reduced Planck constant, h_bar in [Js]
+// - PLANCK_REDUCED_EVS Reduced Planck constant in eV s, h_bar in [eVs]
+// - PLANCK_REDUCED_C   Reduced Planck constant times c in MeV fm, h_bar c
+//                      in [MeV fm].
 // - PLANCK_LEN         Planck length, l_P in [m]
 // - PLANCK_MASS        Planck mass, m_P in [kg]
-// - PLANCK_MASS_GEV    Planck mass energy equivalent in GeV, m_P c2 in [GeV]
+// - PLANCK_MASS_EQU    Planck mass energy equivalent in GeV, m_P c2 in [GeV]
 // - PLANCK_TEMP        Planck temperature, T_P in [K]
 // - PLANCK_TIME        Planck time, t_P in [s]
 // - LIGHT_SPEED_VAC    speed of light in vacuum, c_0 in [ms-1]
 //
 // - NA_ZERO_DEGREES_CELSIUS    273.15 Kelvin.
 
+// Note that with the new SI system of 2018, some constants changed their
+// name. Please use the new macro names starting with 2018:
+//
+// NA_CHAR_IMP_VAC     -> NA_VAC_ELEC_PERMET
+// NA_ELEC_CONST       -> NA_VAC_ELEC_PERMET
+// PLANCK_2PI          -> PLANCK_REDUCED
+// PLANCK_2PI_EVS      -> PLANCK_REDUCED_EVS
+// PLANCK_2PIC         -> PLANCK_REDUCED_C
+// NA_PLANCK_MASS_GEV  -> PLANCK_MASS_EQU
+
 #if (NA_NIST_CODATA_YEAR == 2006)
+  #define NA_LIGHT_SPEED_VAC     299792458.
   #define NA_CHAR_IMP_VAC        376.730313461
   #define NA_ELEC_CONST          8.854187817e-12
   #define NA_MAG_CONST           12.566370614e-7
@@ -220,8 +231,8 @@
   #define NA_PLANCK_MASS_GEV     1.220892e19
   #define NA_PLANCK_TEMP         1.416785e32
   #define NA_PLANCK_TIME         5.39124e-44
-  #define NA_LIGHT_SPEED_VAC     299792458.
 #elif (NA_NIST_CODATA_YEAR == 2010)
+  #define NA_LIGHT_SPEED_VAC     299792458.         // same as 2006
   #define NA_CHAR_IMP_VAC        376.730313461      // same as 2006
   #define NA_ELEC_CONST          8.854187817e-12    // same as 2006
   #define NA_MAG_CONST           12.566370614e-7    // same as 2006
@@ -237,8 +248,8 @@
   #define NA_PLANCK_MASS_GEV     1.220932e19
   #define NA_PLANCK_TEMP         1.416833e32
   #define NA_PLANCK_TIME         5.39106e-44
-  #define NA_LIGHT_SPEED_VAC     299792458.         // same as 2006
 #elif (NA_NIST_CODATA_YEAR == 2014)
+  #define NA_LIGHT_SPEED_VAC     299792458.         // same as 2010
   #define NA_CHAR_IMP_VAC        376.730313461      // same as 2010
   #define NA_ELEC_CONST          8.854187817e-12    // same as 2010
   #define NA_MAG_CONST           12.566370614e-7    // same as 2010
@@ -254,7 +265,23 @@
   #define NA_PLANCK_MASS_GEV     1.220910e19
   #define NA_PLANCK_TEMP         1.416808e32
   #define NA_PLANCK_TIME         5.39116e-44
-  #define NA_LIGHT_SPEED_VAC     299792458.         // same as 2010
+#elif (NA_NIST_CODATA_YEAR == 2018)
+  #define NA_LIGHT_SPEED_VAC     299792458.         // same as 2014
+  #define NA_CHAR_IMP_VAC        376.730313668
+  #define NA_VAC_ELEC_PERMET     8.8541878128e-12   // was NA_ELEC_CONST
+  #define NA_VAC_MAG_PERMET      1.25663706212e-6   // was NA_MAG_CONST
+  #define NA_GRAV                6.67430e-11
+  #define NA_GRAV_HBARC          6.70883e-39
+  #define NA_PLANCK              6.62607015e-34
+  #define NA_PLANCK_EVS          4.135667696e-15
+  #define NA_PLANCK_REDUCED      1.054571817e-34    // was NA_PLANCK_2PI
+  #define NA_PLANCK_REDUCED_EVS  6.582119569e-16    // was NA_PLANCK_2PI_EVS
+  #define NA_PLANCK_REDUCED_C    197.3269804        // was NA_PLANCK_2PIC
+  #define NA_PLANCK_LEN          1.616255e-35
+  #define NA_PLANCK_MASS         2.176434e-8
+  #define NA_PLANCK_MASS_EQU     1.220890e19        // was NA_PLANCK_MASS_GEV
+  #define NA_PLANCK_TEMP         1.416784e32
+  #define NA_PLANCK_TIME         5.391247e-44
 #endif
 
 #define NA_ZERO_DEGREES_CELSIUS  273.15
@@ -334,6 +361,24 @@
   #define NA_NUC_MAG_KT          3.6582690e-4
   #define NA_NUC_MAG_MHZT        7.622593285
   #define NA_VON_KLITZING        25812.8074555
+#elif (NA_NIST_CODATA_YEAR == 2018)
+  #define NA_BOHR                9.2740100783e-24
+  #define NA_BOHR_EVT            5.7883818060e-5
+  #define NA_BOHR_HZT            1.39962449361e10
+  #define NA_BOHR_MTESLA         46.686447783 
+  #define NA_BOHR_KT             0.67171381563 
+  #define NA_COND_QUANT          7.748091729e-5
+  #define NA_COND_QUANT_INV      12906.40372
+  #define NA_E_CHARGE            1.602176634e-19
+  #define NA_E_CHARGE_H          2.417989242e14
+  #define NA_JOSEPHSON           483597.8484e9
+  #define NA_MAG_FLUX_QUANT      2.067833848e-15
+  #define NA_NUC_MAG             5.0507837461e-27
+  #define NA_NUC_MAG_EVT         3.15245125844e-8
+  #define NA_NUC_MAG_MTESLA      2.54262341353e-2
+  #define NA_NUC_MAG_KT          3.6582677756e-4
+  #define NA_NUC_MAG_MHZT        7.6225932291
+  #define NA_VON_KLITZING        25812.80745
 #endif
 
 // Physico-chemical constants
@@ -358,6 +403,7 @@
 // - MOL_GAS            molar gas constant, R in [Jmol-1K-1]
 // - MOL_PLANCK         molar Planck constant, N_Ah in [Jsmol-1]
 // - MOL_PLANCK_C       molar Planck constant times c, N_Ahc in [Jm*mol-1]
+//                      Macro removed since 2018
 // - MOL_IDEAL_GAS_100  molar volume of ideal gas (273.15 K, 100 kPa), V_m
 //                      in [m3mol-1]
 // - MOL_IDEAL_GAS_101  molar volume of ideal gas (273.15 K, 101.325 kPa), V_m
@@ -444,6 +490,30 @@
   #define NA_STEF_BOLTZ          5.670367e-8
   #define NA_WIEN_FREQ           5.8789238e10
   #define NA_WIEN_WAVE           2.8977729e-3
+#elif (NA_NIST_CODATA_YEAR == 2018)
+  #define NA_ATOM_MASS           1.66053906660e-27
+  #define NA_ATOM_MASS_ENERGY    1.49241808560e-10
+  #define NA_ATOM_MASS_MEV       931.49410242
+  #define NA_AVOGADRO            6.02214076e23
+  #define NA_BOLTZMANN           1.380649e-23
+  #define NA_BOLTZMANN_EVK       8.617333262e-5
+  #define NA_BOLTZMANN_HZK       2.083661912e10
+  #define NA_BOLTZMANN_MK        69.50348004
+  #define NA_FARADAY             96485.33212
+  #define NA_FIRST_RAD           3.741771852e-16
+  #define NA_FIRST_RAD_SPECT     1.191042972e-16
+  #define NA_SECOND_RAD          1.438776877e-2
+  #define NA_LOSCHMIDT_100       2.651645804e25
+  #define NA_LOSCHMIDT_101       2.686780111e25
+  #define NA_MOL_GAS             8.314462618
+  #define NA_MOL_PLANCK          3.990312712e-10
+  #define NA_MOL_IDEAL_GAS_100   22.71095464e-3
+  #define NA_MOL_IDEAL_GAS_101   22.41396954e-3
+  #define NA_SACKUR_TETRODE_100  -1.15170753706
+  #define NA_SACKUR_TETRODE_101  -1.16487052358
+  #define NA_STEF_BOLTZ          5.670374419e-8
+  #define NA_WIEN_FREQ           5.878925757e10
+  #define NA_WIEN_WAVE           2.897771955e-3
 #endif
 
 // Mathematical constants
