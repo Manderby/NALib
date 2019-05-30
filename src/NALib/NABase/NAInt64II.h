@@ -7,7 +7,10 @@
 // including "NABase.h"
 
 
-#if !defined NA_TYPE_INT64
+#if defined NA_TYPE_INT64
+  NA_IDEF int64 naMakeInt64WithLo(int32 lo){return (int64)lo;}
+  NA_IDEF int64 naMakeInt64WithDouble(double lo){return (int64)lo;}
+#else
   #if NA_SIGNED_INTEGER_ENCODING != NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
 
     #error "The NAInt64 emulation is not provided for the current signed integer encoding"
@@ -418,7 +421,7 @@
 
 
   #endif // NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-#endif // !defined NA_TYPE_INT64
+#endif // defined NA_TYPE_INT64
 
 
 // Copyright (c) NALib, Tobias Stamm

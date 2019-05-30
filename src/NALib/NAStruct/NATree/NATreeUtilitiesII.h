@@ -194,7 +194,7 @@ NA_IDEF NAPtr naGetRootNodeContent(NATree* tree)
 NA_HIDEF void naSetTreeRoot(NATree* tree, NATreeItem* newroot, NABool isLeaf){
   #ifndef NDEBUG
     if(!newroot)
-      naError("Do not send null as new root. Use naClearTreeRoot for that.");
+      naCrash("Do not send null as new root. Use naClearTreeRoot for that.");
   #endif
   tree->root = newroot;
   naMarkTreeRootLeaf(tree, isLeaf);

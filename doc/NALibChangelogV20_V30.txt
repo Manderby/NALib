@@ -28,7 +28,9 @@ Other things:
 - Adding Leap second information according bulletin C 57
 - Removed the functionsymbol parameter from naError and naCrash
 - Extended NAList with naMoveListToLast and some debug checks
-- Completed some NABuffer functions and fixed some bugs.
+- Completed some NABuffer functions and fixed some bugs. NABuffer
+  is very slow at the moment. Pity.
+- Reduced warnings by making basic int64 macros inline functions.
 
 
 Version 22 (first published 2018-Dec-14)

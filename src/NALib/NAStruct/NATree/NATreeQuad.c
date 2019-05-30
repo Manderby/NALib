@@ -223,7 +223,7 @@ NA_HDEF NATreeNode* naRemoveLeafQuad(NATree* tree, NATreeLeaf* leaf){
       if(((NATreeQuadNode*)parent)->childs[leafindx] == NA_NULL)
         naError("Child seems to be not linked to the tree");
       if(!parent)
-        naError("That is strange. parent should not be Null");
+        naCrash("That is strange. parent should not be Null");
     #endif
     
     // First, remove the child from the parent.
