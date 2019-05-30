@@ -106,9 +106,9 @@ NA_API NABuffer* naNewBufferExtraction( NABuffer* srcbuffer,
 // at zero.
 // All content will be loaded in the new buffer. If there are sparse parts
 // in the src buffer, they will be filled with the current source.
-//NA_API NABuffer* naNewBufferCopy(const NABuffer* srcbuffer,
-//                                        NARangei range,
-//                                          NABool securememory);
+NA_API NABuffer* naNewBufferCopy(const NABuffer* srcbuffer,
+                                        NARangei range,
+                                          NABool securememory);
 
 // Creates a buffer sharing the same source as the given buffer. Also uses
 // the same settings like endianness or newlines.
@@ -289,7 +289,7 @@ NA_API void naAccumulateChecksumBuffer( NAChecksum* checksum,
 // BUFFER ITERATION
 // ////////////////////////////////
 
-NA_API NABufferIterator naMakeBufferAccessor(NABuffer* buffer);
+NA_API NABufferIterator naMakeBufferAccessor(const NABuffer* buffer);
 NA_API NABufferIterator naMakeBufferMutator (NABuffer* buffer);
 NA_API NABufferIterator naMakeBufferModifier(NABuffer* buffer);
 

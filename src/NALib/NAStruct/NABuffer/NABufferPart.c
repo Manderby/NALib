@@ -80,6 +80,15 @@ NA_HDEF NABufferPart* naNewBufferPartWithMutableData(void* data, NAInt bytesize,
 
 
 
+NA_HDEF void naSeparateBufferPart(NABufferPart* part){
+  NAMemoryBlock* newblock = naNewMemoryBlock(part->bytesize);
+  naCopyn(naGetMemoryBlockDataPointerMutable(newblock, 0), naGetMemoryBlockDataPointerConst(part->memblock, part->blockoffset), part->bytesize);
+  naRelease(part->memblock);
+  part->memblock = newblock;
+}
+
+
+
 // The destructor method which will automatically be called by naRelease.
 NA_HDEF void naDestructBufferPart(NABufferPart* part){
   if(part->source){naRelease(part->source);}
@@ -313,7 +322,7 @@ NA_HDEF NABufferPart* naPrepareBufferPartMemory(NATreeIterator* partiter, NARang
   
   // Fill the memory block according to the source.
   dst = naGetMemoryBlockDataPointerMutable(part->memblock, 0);
-  naFillSourceBuffer(source, dst, naMakeRangeiWithStartAndEnd(normedstart, normedend));
+  naFillSourceBuffer(source, dst, naMakeRangeiWithStartAndEnd(normedstart, normedstart + part->bytesize));
 
   return part;
 }

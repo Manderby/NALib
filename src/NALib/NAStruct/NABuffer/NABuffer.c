@@ -125,7 +125,7 @@ NA_HIAPI NARangei naMakeRangeiAbsolute(NAInt offset, NAInt length, NARangei cont
       naError("Length of containing range is not useful.");
   #endif
   start = containingrange.origin + (offset < 0) * containingrange.length + offset;
-  end = ((length >= 0) ? start : naGetRangeiEnd(containingrange)) + length;
+  end = ((length >= 0) ? start : (naGetRangeiEnd(containingrange) + 1)) + length;
   #ifndef NDEBUG
     if(!naContainsRangeiOffset(containingrange, start))
       naError("Resulting range underflows containing range.");
@@ -172,40 +172,26 @@ NA_DEF NABuffer* naNewBufferExtraction(NABuffer* srcbuffer, NAInt offset, NAInt 
 
 
 NA_DEF NABuffer* naNewBufferCopy(const NABuffer* srcbuffer, NARangei range, NABool securememory){
-  NA_UNUSED(srcbuffer);
-  NA_UNUSED(range);
-  NA_UNUSED(securememory);
-//  NABufferIterator srciter;
-//  NABufferIterator dstiter;
-//  NABuffer* buffer = naNewBuffer(securememory);
-//
-//  if(range.length == 0){return buffer;}
-//
-//  srciter = naMakeBufferAccessor(srcbuffer);
-//  dstiter = naMakeBufferModifier(buffer);
-//
-//  naPrepareBuffer(&dstiter, naMakeRangei(0, range.length), NA_FALSE);
-//  naIterateBuffer(&srciter, 1);
-//
-//  while(range.length){
-//    NABufferPart* dstpart = naGetListCurMutable(&(dstiter.partiter));
-//    const NABufferPart* srcpart = naGetListCurConst(&(srciter.partiter));
-//    NAInt remainingsrc = naGetBufferPartEnd(srcpart) - range.origin;
-//    NAInt remainingdst = naGetBufferPartEnd(dstpart) - naTellBuffer(&dstiter);
-//    NAInt remaining = naMini(remainingsrc, remainingdst);
-////    remaining = naMini(remaining, range.length);
-//    naCopyn(naGetBufferPartDataPointerMutable(dstpart, naTellBuffer(&dstiter)), naGetBufferPartDataPointerConst(srcpart, range.origin), remaining);
-//    naIterateBuffer(&srciter, remaining);
-//    naIterateBuffer(&dstiter, remaining);
-//    range.origin += remaining;
-//    range.length -= remaining;
-//  }
-//
-//  naClearBufferIterator(&srciter);
-//  naClearBufferIterator(&dstiter);
-//
-//  return buffer;
-  return NA_NULL;
+  NABufferIterator iter;
+  NATreeIterator partiter;
+  NABuffer* buffer = naNewBuffer(securememory);
+
+  if(range.length == 0){return buffer;}
+
+  // Borrow the contents of the src buffer
+  iter = naMakeBufferModifier(buffer);
+  naWriteBufferBuffer(&iter, srcbuffer, range);
+  naClearBufferIterator(&iter);
+  
+  // Make the parts of this buffer unique.
+  partiter = naMakeTreeMutator(&(buffer->parts));
+  while(naIterateTree(&partiter, NA_NULL, NA_NULL)){
+    NABufferPart* part = naGetTreeCurLeafMutable(&partiter);
+    naSeparateBufferPart(part);
+  }
+  naClearTreeIterator(&partiter);
+
+  return buffer;
 }
 
 

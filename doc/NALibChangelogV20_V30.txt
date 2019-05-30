@@ -12,7 +12,7 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
-Version 23 (first published xxxx)
+Version 23 (first published 2019-Jun-27)
 ==========
 
 Highlights:
@@ -28,6 +28,7 @@ Other things:
 - Adding Leap second information according bulletin C 57
 - Removed the functionsymbol parameter from naError and naCrash
 - Extended NAList with naMoveListToLast and some debug checks
+- Completed some NABuffer functions and fixed some bugs.
 
 
 Version 22 (first published 2018-Dec-14)

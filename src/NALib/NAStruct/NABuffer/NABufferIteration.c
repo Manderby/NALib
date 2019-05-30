@@ -7,7 +7,7 @@
 
 
 
-NA_DEF NABufferIterator naMakeBufferAccessor(NABuffer* buffer){
+NA_DEF NABufferIterator naMakeBufferAccessor(const NABuffer* buffer){
   NABufferIterator iter;
   #ifndef NDEBUG
     NABuffer* mutablebuffer;
@@ -15,7 +15,7 @@ NA_DEF NABufferIterator naMakeBufferAccessor(NABuffer* buffer){
       naCrash("buffer is Null pointer");
     mutablebuffer = (NABuffer*)buffer;
   #endif
-  iter.bufferptr = naMakePtrWithDataMutable(buffer);
+  iter.bufferptr = naMakePtrWithDataConst(buffer);
   iter.partiter = naMakeTreeAccessor(&(buffer->parts));
   iter.partoffset = 0;
   iter.curbit = 0;
@@ -325,43 +325,51 @@ NA_HDEF NABuffer* naGetBufferIteratorSourceBuffer(NABufferIterator* iter){
 
 
 NA_DEF NABool naIterateBuffer(NABufferIterator* iter, NAInt step){
-  NA_UNUSED(iter);
-  NA_UNUSED(step);
-//  const NABufferPart* part;
-//  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
-//  #ifndef NDEBUG
-//    if(!step)
-//      naError("naIterateBuffer", "step is zero");
-//  #endif
-//  if(naIsBufferEmpty(buffer)){
-//    return NA_FALSE;
-//  }
-//  part = naGetListCurConst(&(iter->partiter));
-//  if(!part){
-//    if(step > 0){
-//      naLocateListFirst(&(iter->partiter));
-//      part = naGetListCurConst(&(iter->partiter));
-//      iter->curoffset = buffer->range.origin;
-//    }else{
-//      naLocateListLast(&(iter->partiter));
-//      part = naGetListCurConst(&(iter->partiter));
-//      iter->curoffset = naGetRangeiEnd(buffer->range);
-//    }
-//  }
-//  iter->curoffset += step;
-//  if(step > 0){
-//    while(part && !naContainsBufferPartOffset(part, iter->curoffset)){
-//      naIterateList(&(iter->partiter));
-//      part = naGetListCurConst(&(iter->partiter));
-//    }
-//  }else{
-//    while(part && !naContainsBufferPartOffset(part, iter->curoffset)){
-//      naIterateListBack(&(iter->partiter));
-//      part = naGetListCurConst(&(iter->partiter));
-//    }
-//  }
-//  return (part != NA_NULL);
-  return NA_FALSE;
+  const NABufferPart* part;
+  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+  #ifndef NDEBUG
+    if(!step)
+      naError("step is zero");
+  #endif
+  if(naIsBufferEmpty(buffer)){
+    return NA_FALSE;
+  }
+  if(naIsTreeAtInitial(&(iter->partiter))){
+    if(step > 0){
+      naLocateTreeFirst(&(iter->partiter));
+      part = naGetTreeCurLeafConst(&(iter->partiter));
+      iter->partoffset = -1;
+    }else{
+      naLocateTreeLast(&(iter->partiter));
+      part = naGetTreeCurLeafConst(&(iter->partiter));
+      iter->partoffset = naGetBufferPartByteSize(part);
+    }
+  }else{
+    part = naGetTreeCurLeafConst(&(iter->partiter));
+  }
+  iter->partoffset += step;
+  if(step > 0){
+    while(!naIsTreeAtInitial(&(iter->partiter)) && iter->partoffset >= naGetBufferPartByteSize(part)){
+      iter->partoffset -= naGetBufferPartByteSize(part);
+      naIterateTree(&(iter->partiter), NA_NULL, NA_NULL);
+      if(!naIsTreeAtInitial(&(iter->partiter))){
+        part = naGetTreeCurLeafConst(&(iter->partiter));
+      }else{
+        part = NA_NULL;
+      }
+    }
+  }else{
+    while(!naIsTreeAtInitial(&(iter->partiter)) && iter->partoffset < 0){
+      naIterateTreeBack(&(iter->partiter), NA_NULL, NA_NULL);
+      if(!naIsTreeAtInitial(&(iter->partiter))){
+        part = naGetTreeCurLeafConst(&(iter->partiter));
+        iter->partoffset += naGetBufferPartByteSize(part);
+      }else{
+        part = NA_NULL;
+      }
+    }
+  }
+  return (part != NA_NULL);
 }
 
 
