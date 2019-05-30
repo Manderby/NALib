@@ -189,6 +189,7 @@ NA_IAPI NAPosi   naMakePosiWithPos(NAPos  pos);
 // The Integer variant assumes pos to only contain integers, hence using a
 // more advanced and quicker conversion. But pos must be integral to work.
 NA_IAPI NAPosi   naMakePosiWithIntegerPos(NAPos  pos);
+NA_IAPI NAPos    naMakePosWithV2(double* v);
 
 NA_IAPI NASize   naMakeSize   (double width,  double  height);
 NA_IAPI NASizei  naMakeSizei  (NAInt  width,  NAInt   height);
@@ -220,10 +221,11 @@ NA_IAPI NABounds4i naMakeBounds4i(NAInt  top, NAInt  right, NAInt  bottom, NAInt
 NA_IAPI NABounds4  naMakeBounds4WithBounds4i(NABounds4i bounds);
 NA_IAPI NABounds4i naMakeBounds4iWithBounds4(NABounds4  bounds);
 
-NA_IAPI NAVertex    naMakeVertex  (double x, double y, double z);
+NA_IAPI NAVertex    naMakeVertex      (double x, double y, double z);
 NA_IAPI NAVertexi   naMakeVertexi (NAInt  x, NAInt  y, NAInt  z);
 NA_IAPI NAVertex    naMakeVertexWithVertexi(NAVertexi vertex);
 NA_IAPI NAVertexi   naMakeVertexiWithVertex(NAVertex  vertex);
+NA_IAPI NAVertex    naMakeVertexWithV3(double* v);
 
 NA_IAPI NAVolume    naMakeVolume  (double  width, double height, double depth);
 NA_IAPI NAVolumei   naMakeVolumei (NAInt   width, NAInt  height, NAInt  depth);
@@ -341,19 +343,19 @@ NA_IAPI NABox     naMakeBoxPositive (NABox  box);
 NA_IAPI NABoxi    naMakeBoxiPositive(NABoxi box);
 
 // Copies the contents of source s to destination d
-NA_IAPI void      naCopyPos       (NAPos*   posd,   NAPos*   poss);
-NA_IAPI void      naCopyPosi      (NAPosi*  posd,   NAPosi*  poss);
-NA_IAPI void      naCopySize      (NASize*  sized,  NASize*  sizes);
-NA_IAPI void      naCopySizei     (NASizei* sized,  NASizei* sizes);
-NA_IAPI void      naCopyRect      (NARect*  rectd,  NARect*  rects);
-NA_IAPI void      naCopyRecti     (NARecti* rectd,  NARecti* rects);
+NA_IAPI void      naCopyPos    (NAPos*   posd,   const NAPos*   poss);
+NA_IAPI void      naCopyPosi   (NAPosi*  posd,   const NAPosi*  poss);
+NA_IAPI void      naCopySize   (NASize*  sized,  const NASize*  sizes);
+NA_IAPI void      naCopySizei  (NASizei* sized,  const NASizei* sizes);
+NA_IAPI void      naCopyRect   (NARect*  rectd,  const NARect*  rects);
+NA_IAPI void      naCopyRecti  (NARecti* rectd,  const NARecti* rects);
 
-NA_IAPI void      naCopyVertex    (NAVertex*  vertexd,  NAVertex*  vertexs);
-NA_IAPI void      naCopyVertexi   (NAVertexi* vertexd,  NAVertexi* vertexs);
-NA_IAPI void      naCopyVolume    (NAVolume*  volumed,  NAVolume*  volumes);
-NA_IAPI void      naCopyVolumei   (NAVolumei* volumed,  NAVolumei* volumes);
-NA_IAPI void      naCopyBox       (NABox*  boxd,  NABox*  boxs);
-NA_IAPI void      naCopyBoxi      (NABoxi* boxd,  NABoxi* boxs);
+NA_IAPI void      naCopyVertex (NAVertex*  vertexd,  const NAVertex*  vertexs);
+NA_IAPI void      naCopyVertexi(NAVertexi* vertexd,  const NAVertexi* vertexs);
+NA_IAPI void      naCopyVolume (NAVolume*  volumed,  const NAVolume*  volumes);
+NA_IAPI void      naCopyVolumei(NAVolumei* volumed,  const NAVolumei* volumes);
+NA_IAPI void      naCopyBox    (NABox*  boxd,  const NABox*  boxs);
+NA_IAPI void      naCopyBoxi   (NABoxi* boxd,  const NABoxi* boxs);
 
 // Returns the center position / vertex
 NA_IAPI NAPos     naGetRectCenter (NARect rect);
@@ -396,6 +398,18 @@ NA_IAPI NABool    naEqualVolume (NAVolume  volume1, NAVolume  volume2);
 NA_IAPI NABool    naEqualBox    (NABox     box1,    NABox     box2);
 NA_IAPI NABool    naEqualVolumei(NAVolumei volume1, NAVolumei volume2);
 NA_IAPI NABool    naEqualBoxi   (NABoxi    box1,    NABoxi    box2);
+
+// Use the following functions to make comparison tests between elements.
+// They only return true if the condition is true for all components: xyz.
+NA_IAPI NABool    naLowerPos       (NAPos   pos1,  NAPos   pos2);
+NA_IAPI NABool    naLowerEqualPos  (NAPos   pos1,  NAPos   pos2);
+NA_IAPI NABool    naGreaterEqualPos(NAPos   pos1,  NAPos   pos2);
+NA_IAPI NABool    naGreaterPos     (NAPos   pos1,  NAPos   pos2);
+
+NA_IAPI NABool    naLowerVertex        (NAVertex  vertex1, NAVertex  vertex2);
+NA_IAPI NABool    naLowerEqualVertex   (NAVertex  vertex1, NAVertex  vertex2);
+NA_IAPI NABool    naGreaterEqualVertex (NAVertex  vertex1, NAVertex  vertex2);
+NA_IAPI NABool    naGreaterVertex      (NAVertex  vertex1, NAVertex  vertex2);
 
 // Adding and subtracting delta values: A delta is a size or volume.
 // Adding a size to a position returns a position. Subtracting two positions

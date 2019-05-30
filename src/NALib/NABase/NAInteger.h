@@ -235,7 +235,7 @@ typedef int NABool;
 #endif
 
 // 64 Bits: Preference is first long long, then long, then int
-// Special case for MSVC compiler 6.0: User __int64
+// Special case for MSVC compiler 6.0: Use __int64
 #if NA_TYPE_NATIVE_LONG_LONG_INT_BITS == NA_TYPE64_BITS
   #define NA_TYPE_INT64 NA_TYPE_NATIVE_LONG_LONG_INT
 #elif NA_TYPE_NATIVE_LONG_INT_BITS == NA_TYPE64_BITS
@@ -346,9 +346,6 @@ typedef int NABool;
   #define NA_SCNu32      "lu"
 #endif
 
-// At this point, it is finally time to import the NAInt64 fallback.
-#include "NAInt64.h"
-
 // 64 bits
 #if NA_TYPE_INT64 == NA_TYPE_NATIVE_INT
   #define NA_UINT64_MAX  UINT_MAX
@@ -389,21 +386,26 @@ typedef int NABool;
 	#define NA_PRIx64      NA_PRINTF_LONG_LONG_PREFIX "x"
 	#define NA_SCNi64      NA_PRINTF_LONG_LONG_PREFIX "d"
 	#define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
-#elif NA_TYPE_INT64 == NA_TYPE_NATIVE__INT64
-	#define NA_UINT64_MAX  ULLONG_MAX
-	#define NA_INT64_MAX   LLONG_MAX
-	#define NA_INT64_MIN   LLONG_MIN
-	typedef unsigned __uint64   uint64;
-	typedef signed __int64      int64;
-	#define NA_ZERO_64     (0LL)
-	#define NA_ONE_64      (1LL)
-	#define NA_PRIi64      NA_PRINTF_LONG_LONG_PREFIX "d"
-	#define NA_PRIu64      NA_PRINTF_LONG_LONG_PREFIX "u"
-	#define NA_PRIx64      NA_PRINTF_LONG_LONG_PREFIX "x"
-	#define NA_SCNi64      NA_PRINTF_LONG_LONG_PREFIX "d"
-	#define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
-#else
-  // The 64 bit integer type must be emulated. See NAInt64.h
+  //#elif NA_TYPE_INT64 == NA_TYPE_NATIVE__INT64
+//  #define NA_UINT64_MAX  ULLONG_MAX
+//  #define NA_INT64_MAX   LLONG_MAX
+//  #define NA_INT64_MIN   LLONG_MIN
+//  typedef unsigned __uint64   uint64;
+//  typedef signed __int64      int64;
+//  #define NA_ZERO_64     (0LL)
+//  #define NA_ONE_64      (1LL)
+//  #define NA_PRIi64      NA_PRINTF_LONG_LONG_PREFIX "d"
+//  #define NA_PRIu64      NA_PRINTF_LONG_LONG_PREFIX "u"
+//  #define NA_PRIx64      NA_PRINTF_LONG_LONG_PREFIX "x"
+//  #define NA_SCNi64      NA_PRINTF_LONG_LONG_PREFIX "d"
+//  #define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
+#endif
+
+// We include the int64 macros after the type int64 has been defined.
+#include "NAInt64.h"
+
+// But in case, there was no int64 defined, we have to emulate it now.
+#if !defined NA_TYPE_INT64
   #define NA_UINT64_MAX  naMakeUInt64(NA_UINT32_MAX, NA_UINT32_MAX)
   #define NA_INT64_MAX   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_INT32_MAX, NA_UINT32_MAX))
   #define NA_INT64_MIN   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_INT32_MIN, 0x0))

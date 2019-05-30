@@ -68,13 +68,13 @@ NA_HIDEF void naAddStackNewSpace(NAStack* stack){
 NA_IDEF NAStack* naInitStack(NAStack* stack, NAInt typesize, NAInt minimalcount){
   #ifndef NDEBUG
     if(!stack)
-      naCrash("naInitStack", "stack is Null-Pointer");
+      naCrash("stack is Null-Pointer");
     if(typesize <= 0)
-      naError("naInitStack", "typesize is invalid.");
+      naError("typesize is invalid.");
     // The following test states that 0 and 1 are invalid values. They could be
     // automatically converted to 2 but they are reserved for future use.
     if(minimalcount < 2)
-      naError("naInitStack", "minimalcount must be at least 2");
+      naError("minimalcount must be at least 2");
   #endif
   naInitList(&(stack->arrays));
   stack->curpos = naMakeListModifier(&(stack->arrays));
@@ -95,9 +95,9 @@ NA_IDEF NAStack* naInitStack(NAStack* stack, NAInt typesize, NAInt minimalcount)
 NA_IDEF void naClearStack(NAStack* stack){
   #ifndef NDEBUG
     if(!stack)
-      naCrash("naClearStack", "stack is Null-Pointer.");
+      naCrash("stack is Null-Pointer.");
     if(stack->itercount != 0)
-      naError("naClearStack", "There are still iterators on this stack. Did you forget naClearStackIterator?");
+      naError("There are still iterators on this stack. Did you forget naClearStackIterator?");
   #endif
 
   naClearListIterator(&(stack->curpos));
@@ -235,7 +235,7 @@ NA_IDEF void naClearStackIterator(NAStackIterator* iterator){
     mutablestack = (NAStack*)iterator->stack;
     mutablestack->itercount --;
     if(mutablestack->itercount < 0)
-      naError("naClearStackIterator", "Too many cleared iterators on that stack.");
+      naError("Too many cleared iterators on that stack.");
   #endif
 }
 

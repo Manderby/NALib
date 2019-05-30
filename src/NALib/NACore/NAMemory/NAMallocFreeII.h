@@ -25,16 +25,16 @@ NA_IDEF void* naMalloc(NAInt bytesize){
 
   #ifndef NDEBUG
     if(bytesize == NA_ZERO)
-      naCrash("naMalloc", "size is zero.");
+      naCrash("size is zero.");
     if(bytesize < NA_ZERO)
-      naCrash("naMalloc", "size is negative.");
+      naCrash("size is negative.");
   #endif
 
   ptr = malloc((size_t)bytesize);
 
   #ifndef NDEBUG
   if(!ptr)
-    naCrash("naMalloc", "Out of memory");
+    naCrash("Out of memory");
   #endif
 
   return ptr;
@@ -88,7 +88,7 @@ NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
       int error = posix_memalign(&retptr, align, bytesize);
       #ifndef NDEBUG
       if(error)
-        naCrash("naMallocAligned", "Memory alignment failed");
+        naCrash("Memory alignment failed");
       #else
         NA_UNUSED(error);
       #endif
@@ -99,7 +99,7 @@ NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
 
   #ifndef NDEBUG
     if(((NAUInt)retptr & (NAUInt)(align - NA_ONE)) != NA_ZERO)
-      naError("naMallocAligned", "pointer misaligned.");
+      naError("pointer misaligned.");
   #endif
 
   return retptr;

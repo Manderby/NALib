@@ -18,6 +18,7 @@ Future
 - make naAtof and parseStringFloat
 - Homogeneous coordinates
 - Range tree
+- Red Black Tree
 - Threadsavety for structs
 - GUI
 - Compression in NAPNG

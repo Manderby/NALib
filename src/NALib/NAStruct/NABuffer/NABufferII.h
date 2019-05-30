@@ -150,10 +150,8 @@
 
 
 typedef struct NABufferPart NABufferPart;
-typedef struct NABufferSourcePart NABufferSourcePart;
 typedef struct NAMemoryBlock NAMemoryBlock;
 typedef struct NABufferSearchToken NABufferSearchToken;
-
 
 
 #include "NATree.h"
@@ -222,6 +220,7 @@ NA_HAPI void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount);
 NA_HAPI NABufferPart* naNewBufferPartSparse(NABufferSource* source, NARangei range);
 NA_HAPI NABufferPart* naNewBufferPartWithConstData(const void* data, NAInt bytesize);
 NA_HAPI NABufferPart* naNewBufferPartWithMutableData(void* data, NAInt bytesize, NAMutator deallocator);
+NA_HAPI void naSeparateBufferPart(NABufferPart* part);
 
 NA_HIAPI NABufferSource* naGetBufferPartSource(const NABufferPart* part);
 NA_HIAPI NAInt naGetBufferPartByteSize(const NABufferPart* part);

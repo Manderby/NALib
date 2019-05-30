@@ -12,8 +12,9 @@
 
   #define naMakeUInt64WithLiteralLo(lo) (lo ## uLL)
 
-  #define naMakeInt64WithLo(lo)         ((int64)(lo))
-  #define naMakeInt64WithDouble(d)      ((int64)(d))
+  // We declare these as inline functions to reduce warnings.
+  NA_IAPI int64 naMakeInt64WithLo       (int32 lo);
+  NA_IAPI int64 naMakeInt64WithDouble   (double lo);
 
   #define naNegInt64(i)                 (-(i))
   #define naIncInt64(i)                 ((i)++)

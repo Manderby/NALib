@@ -16,6 +16,7 @@ struct NAHeap{
   NAInt count;
   void* data;
   void* root; // Pointer to the first byte of the root element
+  NAInt entryByteSize;
   NAInt maxcount; // heap holds max elements. If this value is < 0, the
                   // heap grows automatically.
   void        (*insertConst)      (NAHeap*, const void*, const void*, NAInt*);
@@ -25,8 +26,8 @@ struct NAHeap{
   const void* (*removePosConst)   (NAHeap*, NAInt);
   void*       (*removePosMutable) (NAHeap*, NAInt);
   void        (*updateBack)       (NAHeap*, NAInt);
-  NAInt       (*movedown)         (NAHeap*, const void*, NAInt);
   NAInt       (*moveup)           (NAHeap*, const void*, NAInt);
+  NAInt       (*movedown)         (NAHeap*, const void*, NAInt);
 };
 // The root field is needed because the inline functions below have no idea
 // whether the heap stores backpointers or not. But as the root element is
@@ -47,15 +48,17 @@ struct NAHeap{
 // The important thing is that the ptr and key field are at the same position
 // in the struct such that they can be accessed by the inlined functions
 // below no matter what struct type is stored.
-typedef struct NAHeapNoBackEntry NAHeapNoBackEntry;
-struct NAHeapNoBackEntry{
-  NAPtr             ptr;
+typedef struct NAHeapEntry NAHeapEntry;
+struct NAHeapEntry{
   const void*       key;
+  NAPtr             ptr;
+//  NABool            importantindex;
 };
 typedef struct NAHeapBackEntry NAHeapBackEntry;
 struct NAHeapBackEntry{
-  NAPtr             ptr;
   const void*       key;
+  NAPtr             ptr;
+//  NABool            importantindex;
   NAInt*            backpointer;
 };
 
@@ -64,7 +67,7 @@ struct NAHeapBackEntry{
 NA_IDEF void naClearHeap(NAHeap* heap){
   #ifndef NDEBUG
     if(!heap)
-      naCrash("naClearHeap", "heap is Null-Pointer.");
+      naCrash("heap is Null-Pointer.");
   #endif
   free(heap->data);
 }
@@ -77,10 +80,8 @@ NA_IDEF void naEmptyHeap(NAHeap* heap){
 
 NA_IDEF NAInt naGetHeapCount (const NAHeap* heap){
   #ifndef NDEBUG
-    if(!heap){
-      naCrash("naGetHeapCount", "heap is Null-Pointer.");
-      return NA_TRUE;
-    }
+    if(!heap)
+      naCrash("heap is Null-Pointer.");
   #endif
   return heap->count;
 }
@@ -88,10 +89,8 @@ NA_IDEF NAInt naGetHeapCount (const NAHeap* heap){
 
 NA_IDEF NAInt naGetHeapMaxCount(const NAHeap* heap){
   #ifndef NDEBUG
-    if(!heap){
-      naCrash("naGetHeapCount", "heap is Null-Pointer.");
-      return 0;
-    }
+    if(!heap)
+      naCrash("heap is Null-Pointer.");
   #endif
   return heap->maxcount;
 }
@@ -115,12 +114,12 @@ NA_IDEF const void* naGetHeapRootConst(const NAHeap* heap){
   // Note that it is irrelevant whether the heap stores elements with or
   // without backpoitners. The ptr and key field are always at the same
   // position.
-  NAHeapNoBackEntry* rootelem = (NAHeapNoBackEntry*)(heap->root);
+  NAHeapEntry* rootelem = (NAHeapEntry*)(heap->root);
   #ifndef NDEBUG
     if(heap->count == 0)
-      naError("naGetHeapRootConst", "Heap is empty.");
+      naError("Heap is empty.");
   #endif
-  return naGetPtrConst(&(rootelem->ptr));
+  return naGetPtrConst(rootelem->ptr);
 }
 
 
@@ -128,12 +127,12 @@ NA_IDEF void* naGetHeapRootMutable(const NAHeap* heap){
   // Note that it is irrelevant whether the heap stores elements with or
   // without backpoitners. The ptr and key field are always at the same
   // position.
-  NAHeapNoBackEntry* rootelem = (NAHeapNoBackEntry*)(heap->root);
+  NAHeapEntry* rootelem = (NAHeapEntry*)(heap->root);
   #ifndef NDEBUG
     if(heap->count == 0)
-      naError("naGetHeapRootMutable", "Heap is empty.");
+      naError("Heap is empty.");
   #endif
-  return naGetPtrMutable(&(rootelem->ptr));
+  return naGetPtrMutable(rootelem->ptr);
 }
 
 
@@ -149,10 +148,10 @@ NA_IDEF const void* naGetHeapRootKey(const NAHeap* heap){
   // Note that it is irrelevant whether the heap stores elements with or
   // without backpoitners. The ptr and key field are always at the same
   // position.
-  NAHeapNoBackEntry* rootelem = (NAHeapNoBackEntry*)(heap->root);
+  NAHeapEntry* rootelem = (NAHeapEntry*)(heap->root);
   #ifndef NDEBUG
     if(heap->count == 0)
-      naError("naGetHeapRoot", "Heap is empty.");
+      naError("Heap is empty.");
   #endif
   return rootelem->key;
 }

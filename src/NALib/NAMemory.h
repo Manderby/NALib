@@ -264,13 +264,16 @@ NA_IAPI void naCleanupPtr(NAPtr* ptr, NAMutator destructor);
 //
 // When NDEBUG IS defined, the const and mutable functions behave equally and
 // no test will be performed whatsoever.
-NA_IAPI const void* naGetPtrConst   (const NAPtr* ptr);
-NA_IAPI       void* naGetPtrMutable (      NAPtr* ptr);
+NA_IAPI const void* naGetPtrConst   (NAPtr ptr);
+NA_IAPI       void* naGetPtrMutable (NAPtr ptr);
+
+// Returns true if there is a pointer stored, false if it stores NA_NULL
+NA_IAPI NABool naIsPtrValid(NAPtr ptr);
 
 // Returns NA_TRUE, if the pointer stores const data. This function only is
 // useful when debugging. When NDEBUG is defined, this function always returns
 // NA_FALSE.
-NA_IAPI NABool naIsPtrConst(const NAPtr* ptr);
+NA_IAPI NABool naIsPtrConst(NAPtr ptr);
 
 
 
@@ -429,7 +432,7 @@ NA_IAPI NAUInt naGetRuntimePoolPartSize(void);
 // You can do so using the macro NA_RUNTIME_TYPE. Just write the typename
 // and the function to use for destructing the type.
 
-#define NA_RUNTIME_TYPE(type, destructor, refcounting)
+#define NA_RUNTIME_TYPE(typename, destructor, refcounting)
 
 // But note that this macro results in a variable definition and hence must be
 // written in an implementation file (.c). Also, the type must not be opaque
@@ -439,7 +442,7 @@ NA_IAPI NAUInt naGetRuntimePoolPartSize(void);
 // use naNew, you can use the NA_EXTERN_RUNTIME_TYPE macro to declare the
 // variable beforehand:
 
-#define NA_EXTERN_RUNTIME_TYPE(type)
+#define NA_EXTERN_RUNTIME_TYPE(typename)
 
 // For a deeper understanding on how that macro does what it does, please refer
 // to the definition of these macros in NAMemoryII.h and the implementation of

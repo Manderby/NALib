@@ -10,10 +10,10 @@ Table of Content:
 1.   Short Introduction
 2    Memory and Structs
 2.1    Creation and deletion of memory blocks
-2.2    Initializating and Clearing of structs
-2.3    Iteration of container structs
-2.4    Built-in reference counting
-3.   Runtime System
+2.2    Construction and Destruction of structs
+2.3    Runtime system memory and struct functions
+2.4    Manual reference counting, smart pointers
+3.   Iteration of container structs
 4.   C90 variable definitions
 5.   Inline Implementations
 6.   Opaque types
@@ -32,7 +32,8 @@ Table of Content:
 If you are curious on how NALib works, start at the most basic files:
 - NABase.h        Functions, Macros and Definitions, System-Dependancy
 - NAMemory.h      Functions to work with the memory
-- NABinaryData.h  Memory manipulations
+
+Other than that, all important include files are in the base src folder.
 
 For more information, visit
 http://manderc.com/nalib/index.php
@@ -61,135 +62,191 @@ that in NALib.
 2.1 Creation and deletion of memory blocks
 ------------------------------------------
 You can use the default malloc and free functions to create memory blocks
-as you like. NALib nontheless provides its own allocation methods (which are
-basically mappings to malloc and free):
+as you like. NALib nontheless provides its own allocation functions (which 
+are basically mappings to malloc and free):
 
-- naMalloc            Allocates the given number of bytes.
-- naAlloc             Allocates space for the given NALib structure. Use it
-                      for example like this: NAArray* a = naAlloc(NAArray);
-- naFree              Frees the memory allocated with above functions.
+- naMalloc             Allocates the given number of bytes.
+- naAlloc              Allocates space for the given structure. Use it
+                       for example like this: NAArray* a = naAlloc(NAArray);
+- naFree               Frees the memory allocated with above functions.
 
 You can also allocate memory on byte numbers or even page boundaries:
 
-- naMallocAligned     Allocates memory aligne to a certain byte number.
-- naMallocPageAligned Allocates the given number of bytes but the first byte
-                      will be aligned to a page boundary.
-- naFreePageAligned   Frees the aligned memory.
+- naMallocAligned      Allocates memory aligned to a certain byte number.
+- naMallocPageAligned  Allocates the given number of bytes but the first byte
+                       will be aligned to a page boundary.
+- naFreePageAligned    Frees the aligned memory.
 
-Additionally, starting with NALib version 10, you can use the following
-two functions (See section 3 for more information):
-
-- naNew:        Uses the NARuntime system to quickly provide a pointer.
-- naDelete:     Deletes a pointer allocated with naNew.
+Additionally, starting with NALib version 10, you can also use the runtime-
+system to allocate memory. See next sections.
 
 
 
 
-2.2 Initializating and Clearing of structs
--------------------------
-
-Other than these basic memory allocation methods, NALib offers creation and
-deletion functions for many structs.
-
-The naming scheme guides you:
-
---- MAKE, FILL, INIT and CLEAR ---
-- naMakeXXX:    Returns the struct as a value. Only very basic structs (pod)
-                will provide such functions.
-- naFillXXX:    Expects the first argument to be a pointer to the struct.
-                Again, only basic structs (pod) will offer such functions.
-- naInitXXX:    Expects a pointer to an existing struct in memory. That pointer
-                is expected to point at a non-initialized struct and will now
-                be initialized. Returns the pointer again.
-- naClearXXX:   Expects a pointer to a struct which shall be cleared. Is used
-                both by pod and non-pod structs.
-
---- NEW and DELETE ---
-- naNewXXX:     Starting with NALib version 10, certain structs like NAPointer
-                have been restricted to be managed by the runtime system. These
-                structs do not provide naInitXXX_functions but naNewXXX-
-                functions instead.
-- naNew:        The plain naNew function allocates enough space for the given
-                type. Must use NA_RUNTIME_TYPE in order to work.
-- naDelete:     Deletes the given pointer which previously has been created
-                using an naNewXXX function.
-
---- CREATE, RETAIN and RELEASE ---
-- naCreateXXX:  Starting with NALib version 18, certain structs have reference
-                counting built in. After creation, you shall use naRetainXXX
-                and naReleaseXXX.
-- naRetainXXX:  Adds 1 to the reference count of the struct.
-- naReleaseXXX: Subtracts 1 from the reference count of the struct. If zero is
-                reached, the struct will automatically be destroyed.
-
+2.2 Construction and Destruction of structs
+-------------------------------------------
 
 Structs usually must be initialized before being able to use them and must
 be destroyed when not needed anymore. As NALib is a C library, there are no
 constructors or destructors like in typical OOP languages and consequently,
 such initialization must be done manually by the programmer.
 
+Therefore, NALib offers construction and destruction functions for many
+structs. The naming scheme guides you.
+
+POD functions MAKE, FILL
+------------------------
 Simple structs like NAPos are very basic structs and are generally called
-pod (plain old data). Such often provide an naMakeXXX or naFillXXX functions
-and sometimes need a corresponding naClearXXX function. See the specific API
-for more information.
+pod (plain old data). Such usually provide an naMakeXXX or naFillXXX function.
+Sometimes to destruct such a struct, a corresponding naClearXXX function is
+needed. See the specific API for more information.
 
-For more complex structs, the construction-functions usually are called
-naInitXXX, naNewXXX or naCreateXXX. The corresponding destruction function
-again is called naClearXXX. The naInitXXX-functions usually assume the given
-struct to be uninitialized and will overwrite all values. The naNewXXX
-functions use the runtime of NALib to allocate enough space and the naCreateXXX
-functions do the allocation in their own way.
+- naMakeXXX:    Returns the struct as a value. Only very basic structs (pod)
+                will provide such functions.
+- naFillXXX:    Expects the first argument to be a pointer to the struct.
+                Again, only basic structs (pod) will offer such functions.
 
-The naClearXXX-functions expect a pointer to an initialized struct and will
-perform all necessary destructions. Beware that naClearXXX will only erase
-the contents but not the pointer itself.
+Struct functions INIT, CLEAR, NEW, DELETE, CREATE, RETAIN, RELEASE
+------------------------------------------------------------------
+For more complex structs like NAArray, NAFile or NAString, the construction-
+functions usually are called naInitXXX, naCreateXXX or naNewXXX. These
+functions usually assume the given struct to be uninitialized and will
+overwrite all values.
+
+- naInitXXX:    Expects a pointer to an existing struct in memory. That pointer
+                is expected to point at a non-initialized struct and will now
+                be initialized. Returns the pointer again.
+- naNewXXX:     Starting with NALib version 10, certain structs like NAString
+                have been restricted to be managed by the runtime system. These
+                structs do not provide naInitXXX functions but naNewXXX
+                functions instead.
+- naCreateXXX:  Starting with NALib version 18, certain structs have reference
+                counting built in. This function initializes the reference
+                count to 1. After creation, you shall use naRetainXXX and
+                naReleaseXXX.
+
+The corresponding destruction functions are the following:
+
+- naClearXXX:   Expects a pointer to a struct initialized with naInitXXX which
+                shall be cleared. Is sometimes is also required for pod structs
+                initialized with naMakeXXX. See the specific API for more
+                information.
+- naDeleteXXX:  Deletes the given pointer which previously has been created
+                using an naNewXXX function.
+- naRetainXXX:  Adds 1 to the reference count of a struct created with an
+                naCreateXXX function.
+- naReleaseXXX: Subtracts 1 from the reference count of a struct created with
+                an naCreateXXX function. If zero is reached, the struct will
+                automatically be destroyed.
+
+All destruction functions expect a pointer to an initialized struct and will
+perform all necessary destructions.
 
 When using naInitXXX functions, the struct itself must always be allocated
-outside of the naInitXXX function.
-
-Considering creation and deletion, you can think of the following scenarios:
-
-A) Use the pointer to an existing struct:
-NAArray myarray;
-naInitArray(&myarray);
-naClearArray(&myarray);
-
-B) Allocate with malloc, naMalloc or naAlloc and delete with free or naFree:
-NAArray* myarray1;
-NAArray* myarray2;
-NAArray* myarray3;
-myarray1 = naInitArray(malloc(sizeof(NAArray)));
-myarray2 = naInitArray(naMalloc(sizeof(NAArray)));
-myarray3 = naInitArray(naAlloc(NAArray));
-naClearArray(myarray1);
-naClearArray(myarray2);
-naClearArray(myarray3);
-free(myarray1);
-naFree(myarray2);
-naFree(myarray3);
-
-C) Use an existing naNewXXX function with naDelete:
-NAPNG* myPNG = naNewPNG();
-naDelete(myPNG);
-
-D) Allocate with naNew and delete with naDelete:
-NAArray* myarray = naInitArray(naNew(NAArray));
-naDelete(myarray);
-
-E) Use an existing naCreateXXX function with naReleaseXXX:
-NAFile* myfile = naCreateFile();
-naReleaseFile(myfile);
-
-The cases listed here are usual scenarios. But in certain cases, a programmer
-might want to choose differently, for example to save time. If you choose so,
-just make sure you know what you are doing.
+outside of the naInitXXX function. Therefore beware that naClearXXX will only
+erase the contents but not the pointer itself.
 
 
+Runtime system functions NEW, DELETE, RETAIN, RELEASE, MALLOCTMP
+----------------------------------------------------------------
+There exists a small Runtime System in NALib which allows you to quickly
+allocate memory for any structs by using inifinitely large pools. Using that
+runtime system is quite a bit faster than malloc and free but requires a bit
+of additional memory. Another advantage is that for any struct, an appropriate
+destructor can be called automatically upon deletion and each "object" can
+even have automatic reference counting.
 
-2.3 Iteration of container structs
+In order to use the runtime system, an instance of NARuntime must be created
+before any naNew function is called. When NDEBUG is undefined, a friendly
+warning tells you to start the runtime system. You can start it by a simple
+call to
+
+naStartRuntime();
+
+When you no longer need the runtime system, you can stop it using
+
+naStopRuntime();
+
+As soon as the runtime system is running, the following functions can be used:
+
+- naNew:        Uses the NARuntime system to quickly provide a pointer. Since
+                version 21, runtime types can even have automatic reference
+                counting. The desired type must be declared with the
+                NA_RUNTIME_TYPE macro in order to work.
+- naDelete:     Deletes a non-reference counting pointer allocated with naNew.
+- naRetain:     Retains a reference counting pointer allocated with naNew.
+- naRelease:    Releases a reference counting pointer allocated with naNew.
+
+A runtime type which is not using reference counting must be deleted with
+naDelete. Reference counting types can use the naRetain and naRelease functions
+and will automatically deallocate the struct when reference counting reaches
+zero.
+
+Additionally, the runtime system provides a garbage memory struct which allows
+you to allocate memory which is automatically placed in a pool which will be
+deleted all at once. Use it with the following two functions:
+
+- naMallocTmp:      Allocates a given number of bytes and stores the pointer in
+                    a pool for later deletion.
+- naCollectGarbage: Collects all pointers created with naMallocTmp at once.
+                    This function should only be called at designated spots
+                    like for example between the execution of two UI commands.
+
+To use the runtime system for your own custom structs, the desired type must
+be declared with the NA_RUNTIME_TYPE macro as follows:
+
+NA_RUNTIME_TYPE(typename, destructor, refcounting);
+
+This declaration can be made opaque by putting it into an implementation file
+and using NA_EXTERN_RUNTIME_TYPE in the .h file. For more information, see
+the Memory.h file.
+
+
+
+
+2.3 Manual reference counting, smart pointers
+---------------------------------------------
+
+In the NAMemory.h file, many structures do not only allow to allocate and
+deallocate memory but also to add manual reference counting. Here are listed
+the different structs together with the intended way of using them:
+
+- NARefCount
+  Use this type in your own custom structs as the first member / field and
+  initialize it upon creation with naInitRefCount. Use naRetainRefCount to
+  retain your struct. Create your own function like releaseMyStruct which
+  calls naReleaseRefCount. If your struct needs a destructor, implement it and
+  set it as the destructor parameter of naReleaseRefCount.
+  Note that structs of NALib which use this scenario always use naCreateXXX
+  as the creator function.
+- NASmartPtr
+  An NASmartPtr stores two things: An NARefCount and an NAPtr. Use this struct
+  when you want to store a pointer with a reference count. You can use the
+  naRetainSmartPtr function to retain the struct and call naReleaseSmartPtr
+  with a potential destructor callback to release the struct.
+  This is a raw implementation of a reference count which does not require
+  the NALib runtime system.
+- NAPointer
+  An NAPointer stores an NASmartPtr together with a destructor. You will not
+  need to remember the destructor upon releasing like with NARefCount or with
+  NASmartPtr. Note that an NAPointer is instanciated using a fast memory pool.
+  This requires the runtime system.
+  
+Authors note about smart pointers:
 ----------------------------------
+Since the introduction of naNew and automatic reference counting using the
+NALib runtime system, the NASmartPtr and NAPointer structs are not in use in
+NALib anymore but stay in the source code as many developers are used to write
+smart pointer code. These structs are comparable to shared_ptr<X> from boost
+or the C++11 standard. The author does not like them. He thinks, they're poop.
 
-Container structs like NAArray, NAList, NABuffer, ... implement iterators
+
+
+
+3 Iteration of container structs
+--------------------------------
+
+Container structs like NAArray, NAList, NABuffer, etc. implement iterators
 which allow the programmer to visit all elements in a specific order without
 having to manage the container data or pointers. With NALib version 19, all
 iterators have been implemented in the same way:
@@ -202,10 +259,10 @@ NAXXXIterator iter = naMakeXXXMutator (container);
 NAXXXIterator iter = naMakeXXXModifier(container);
 
 You have to choose between one of these three functions.
-Accessors let you access existing elements as const.
-Mutators let you access existing elements as non-const or const.
-Modifiers are the same as Mutators but also allow you to alter the whole
-container struct by for example removing or adding elements.
+- Accessors let you access existing elements as const.
+- Mutators let you access existing elements as non-const or const.
+- Modifiers are the same as Mutators but also allow you to alter the whole
+  container struct by for example removing or adding elements.
 
 As soon as the iterator is created, you can use the iterate functions in a
 while loop to visit all elements:
@@ -230,93 +287,18 @@ naClearXXXIterator(&iter);
 
 If you forget that call, many warnings will be emitted. The container struct
 as well as the single elements will keep track of whether there are still
-iterators operation upon. If at any time, some element will be removed or a
+iterators operating upon. If at any time, some element will be removed or a
 complete struct will be erased where there is still an iterator visiting, NALib
 will emit a warning. These warnings will be completely omitted when NDEBUG
 ist defined.
 
 
 
-2.4 Built-in reference counting
--------------------------------
-
-In the NAMemory.h file, many structures do not only allow to allocate and
-deallocate memory but also to add automatic reference counting. Here are listed
-the different structs together with the intended way of using them:
-
-- NARefCount
-  Use this type in your own custom structs as the first member / field and
-  initialize it upon creation with naInitRefCount. Use the naRetain macro
-  to retain your struct. Create your own function like releaseMyStruct which
-  calls naReleaseRefCount. If your struct needs a destructor, implement it and
-  set it as the destructor parameter of naReleaseRefCount.
-  Note that structs of NALib which use this scenario always use naCreateXXX
-  as the creator function.
-- NASmartPtr
-  An NASmartPtr stores two things: An NARefCount and an NAPtr. Use this struct
-  when you want to store a pointer with a reference count. You can use either
-  naRetainSmartPtr or the naRetain macro to retain the struct and a call to
-  naReleaseSmartPtr with a potential destructor callback to release the struct.
-  This is the raw implementation of a reference count which does not require
-  the NALib runtime system.
-- NAPointer
-  An NAPointer stores an NASmartPtr together with a destructor. You will not
-  need to remember the destructor upon releasing like with NARefCount or with
-  NASmartPtr. This struct is very comfortable to use. The two macros naRetain
-  and naRelease are made specifically for this struct. Note also that the
-  NAPointer struct itself is instanciated using a fast memory pool. This struct
-  is optimal for quick programming, but requires the runtime system. Structs
-  in NALib which use this scenario use naNewXXX as the creator function.
-- NA_RUNTIME_TYPE, naNew and naDelete
-  When you implement a struct which uses NA_RUNTIME_TYPE, you can allocate and
-  deallocate the structs with naNew and naDelete. The destructor is defined
-  once per NA_RUNTIME_TYPE and does not requires memory for the callback like
-  with NAPointer.
-- Combination NA_RUNTIME_TYPE with NARefCount as first field
-  When you define a struct containing an NARefCount as their first field and
-  define it to implement NA_RUNTIME_TYPE, you can simply define a ReleaseMyType
-  function where you use the naDelete mutator as destructor function in the
-  call to naReleaseRefCount. With that, you get reference counted pointers
-  allocated and deallocated automatically using the NARuntime memory pools.
-
-
-
-
-
-3 Runtime System
------------
-Since NALib version 10, there exists a small Runtime System which needs to be
-running for certain structs. It mainly provided inifinitely large pools for
-specific NALib structures for quick allocation. Starting with NALib version 16,
-that runtime system can easily be enhanced for custom types.
-
-The author decided to add such a system because certain structs which becomes
-way easier to manage when they are always provided as pointers.
-
-In order to manage the pointers, an instance of NARuntime must be created
-before any naNew function can be called. When NDEBUG is undefined, a friendly
-warning tells you to start the runtime system. You can start it by a simple
-call to
-
-naStartRuntime();
-
-When you no longer need the runtime system, you can stop it using
-
-naStopRuntime();
-
-The runtime system may be enhanced in future versions like with deallocation
-pools or even some sort of garbage collection or (in the far future)
-just-in-time compilation.
-
-
-
-
 
 4. C90 variable definitions
 ----------------------------
-Note that this code has been written to be compatible with C90. This means in
-particular that all variables have to be defined prior to any implementation in
-the same code block.
+Note that this code has been written to be compatible with ANSI C and C90
+(except for the comments which are // comments, not /**/ comments).
 
 The standard C90 is partially still in use by some compilers. This standard
 states that each variable MUST be declared before it is used. Later standards

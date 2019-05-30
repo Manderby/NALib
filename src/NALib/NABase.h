@@ -16,7 +16,7 @@
 
 
 // The version number of this NALib distribution.
-#define NA_VERSION 22
+#define NA_VERSION 23
 
 
 
@@ -45,6 +45,7 @@
 
 // Additional definitions
 #include "NABase/NAChar.h"
+#include "NABase/NATemplate.h"
 
 
 

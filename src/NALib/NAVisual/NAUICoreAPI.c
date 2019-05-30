@@ -31,7 +31,7 @@ NA_HDEF void naStartCoreApplication(NAInt bytesize, NANativeID nativeID){
   // functions implemented dependent on the system compiled for.
   #ifndef NDEBUG
     if(na_app)
-      naError("naInitCoreApplication", "Application already running");
+      naError("Application already running");
   #endif
 
   na_app = (NACoreApplication*)naMalloc(bytesize);
@@ -48,7 +48,7 @@ NA_HDEF void naStartCoreApplication(NAInt bytesize, NANativeID nativeID){
 
 
 
-NA_HDEF void naStopCoreApplication(){
+NA_HDEF void naStopCoreApplication(void){
   na_app->flags &= ~NA_APPLICATION_FLAG_RUNNING;
 }
 
@@ -58,7 +58,7 @@ NA_HDEF void naClearCoreApplication(){
 //  NAListIterator iter;
   #ifndef NDEBUG
     if(!na_app)
-      naCrash("naClearUI", "No Application running");
+      naCrash("No Application running");
   #endif
 
 //  naBeginListMutatorIteration(NAUIElement* elem, &(na_app->uielements), iter);
@@ -75,7 +75,7 @@ NA_HDEF void naClearCoreApplication(){
 NA_HDEF NACoreApplication* naGetCoreApplication(void){
   #ifndef NDEBUG
     if(naGetListFirstMutable(&(na_app->uielements)) != na_app)
-      naError("naGetCoreApplication", "Internal error: application is not in ui elements list");
+      naError("Internal error: application is not in ui elements list");
   #endif
   return na_app;
 }
@@ -112,7 +112,7 @@ NA_HDEF void naUnregisterCoreUIElement(NACoreUIElement* coreuielement){
     naRemoveListCurMutable(&iter, NA_FALSE);
   }else{
     #ifndef NDEBUG
-      naError("naUnregisterCoreUIElement", "Element not found");
+      naError("Element not found");
     #endif
   }
   naClearListIterator(&iter);
@@ -216,17 +216,17 @@ NA_DEF void naAddUIReaction(void* controller, NAUIElement* uielement, NAUIComman
   NACoreUIElement* element = (NACoreUIElement*)uielement;
   #ifndef NDEBUG
     if((command == NA_UI_COMMAND_RESHAPE) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
-      naError("naAddUIReaction", "Only windows can receyve RESHAPE commands.");
+      naError("Only windows can receyve RESHAPE commands.");
 //    if((command == NA_UI_COMMAND_KEYDOWN) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
-//      naError("naAddUIReaction", "Only windows can receyve KEYDOWN commands.");
+//      naError("Only windows can receyve KEYDOWN commands.");
 //    if((command == NA_UI_COMMAND_KEYUP) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
-//      naError("naAddUIReaction", "Only windows can receyve KEYUP commands.");
+//      naError("Only windows can receyve KEYUP commands.");
     if((command == NA_UI_COMMAND_MOUSE_MOVED) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
-      naError("naAddUIReaction", "Only windows can receyve MOUSE_MOVED commands.");
+      naError("Only windows can receyve MOUSE_MOVED commands.");
     if((command == NA_UI_COMMAND_MOUSE_ENTERED) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
-      naError("naAddUIReaction", "Only windows can receyve MOUSE_ENTERED commands.");
+      naError("Only windows can receyve MOUSE_ENTERED commands.");
     if((command == NA_UI_COMMAND_MOUSE_EXITED) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
-      naError("naAddUIReaction", "Only windows can receyve MOUSE_EXITED commands.");
+      naError("Only windows can receyve MOUSE_EXITED commands.");
   #endif
   newreaction = naAlloc(NAReaction);
   newreaction->controller = controller;

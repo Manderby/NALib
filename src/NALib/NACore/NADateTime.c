@@ -76,7 +76,7 @@ typedef struct{
 } NATAIPeriod;
 
 // Leap second information:
-#define NA_NUMBER_OF_TAI_PERIODS 101
+#define NA_NUMBER_OF_TAI_PERIODS 102
 
 // This table stores all leap second entries since 1958. Every year has at
 // least 1 entry. Every entry defines, what the number of its first second is.
@@ -187,6 +187,7 @@ NATAIPeriod naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS] = {
   {naMakeUInt64WithLiteralLo(1861920000), naMakeUInt64WithLiteralLo(1861920037), 2017, NA_START_JANUARY_FIRST},
   {naMakeUInt64WithLiteralLo(1893456000), naMakeUInt64WithLiteralLo(1893456037), 2018, NA_START_JANUARY_FIRST},
   {naMakeUInt64WithLiteralLo(1924992000), naMakeUInt64WithLiteralLo(1924992037), 2019, NA_START_JANUARY_FIRST},           // [100]
+  {naMakeUInt64WithLiteralLo(1940630400), naMakeUInt64WithLiteralLo(1940630437), 2019, NA_START_JULY_FIRST},
   // the last entry is the first date with unknown future leap seconds.
   // everything up and including that date is known.
 };
@@ -329,7 +330,7 @@ NA_DEF int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str){
   }
   #ifndef NDEBUG
     if(monthindex == -1)
-      naError("naGetMonthNumberWithEnglishAbbreviation", "Month abbreviation unknown. Returning -1.");
+      naError("Month abbreviation unknown. Returning -1.");
   #endif
   return monthindex;
 }
@@ -365,7 +366,7 @@ NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
   }
   #ifndef NDEBUG
     if(monthindex == -1)
-      naError("naGetMonthNumberFromUTF8CStringLiteral", "Month unknown. Returning -1.");
+      naError("Month unknown. Returning -1.");
   #endif
   return monthindex;
 }
@@ -377,11 +378,6 @@ NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
 
 
 NA_DEF NADateTime naMakeDateTimeNow(){
-//  printf("%llx %lld\n", NA_DATETIME_SISEC_START_GREGORIAN_PERIOD, NA_DATETIME_SISEC_START_GREGORIAN_PERIOD);
-//  printf("%llx %lld\n", NA_DATETIME_SISEC_JULIAN_YEAR_ZERO, NA_DATETIME_SISEC_JULIAN_YEAR_ZERO);
-//  printf("%llx %lld\n", NA_DATETIME_SISEC_GREGORIAN_YEAR_ZERO, NA_DATETIME_SISEC_GREGORIAN_YEAR_ZERO);
-//  printf("%016llx %+lld\n", NA_DATETIME_SISEC_UNIX_YEAR_ZERO, NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
-//  printf("%llx %lld\n", NA_DATETIME_SISEC_FILETIME_YEAR_ZERO, NA_DATETIME_SISEC_FILETIME_YEAR_ZERO);
   #if NA_OS == NA_OS_WINDOWS
     FILETIME filetime;
     NATimeZone timezone;
@@ -445,13 +441,13 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
     datetime.sisec = naAddInt64(datetime.sisec, naMulInt64(remainingyears, NA_SECONDS_IN_NORMAL_YEAR));
   }
   if((dts->mon < 0) || (dts->mon > 11)){datetime.errornum = NA_DATETIME_ERROR_INVALID_MONTH_NUMBER;}
-  datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(na_cumulativemonthstartdays[2 * dts->mon + (int32)isleap] * NA_SECONDS_PER_DAY));
+  datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(na_cumulativemonthstartdays[2 * dts->mon + (int32)isleap] * (int32)NA_SECONDS_PER_DAY));
   if((dts->day < 0) || ((na_cumulativemonthstartdays[2 * dts->mon + (int32)isleap] + dts->day) >= na_cumulativemonthstartdays[2 * (dts->mon + 1) + (int32)isleap])){datetime.errornum = NA_DATETIME_ERROR_INVALID_DAY_NUMBER;}
-  datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->day * NA_SECONDS_PER_DAY));
+  datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->day * (int32)NA_SECONDS_PER_DAY));
   if((dts->hour < 0) || (dts->hour > 23)){datetime.errornum = NA_DATETIME_ERROR_INVALID_HOUR_NUMBER;}
-  datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->hour * NA_SECONDS_PER_HOUR));
+  datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->hour * (int32)NA_SECONDS_PER_HOUR));
   if((dts->min < 0) || (dts->min > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_MINUTE_NUMBER;}
-  datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->min * NA_SECONDS_PER_MINUTE));
+  datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->min * (int32)NA_SECONDS_PER_MINUTE));
   if(calendarsystem == NA_CALENDAR_GREGORIAN_WITH_LEAP_SECONDS){
     if(naGreaterEqualInt64(datetime.sisec, naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec)){
       if((dts->sec < 0) || (dts->sec > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
@@ -480,7 +476,7 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
     if((dts->sec < 0) || (dts->sec > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
   }
   datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->sec));
-  datetime.sisec = naSubInt64(datetime.sisec, naMakeInt64WithLo(dts->shift * NA_SECONDS_PER_MINUTE));
+  datetime.sisec = naSubInt64(datetime.sisec, naMakeInt64WithLo(dts->shift * (int32)NA_SECONDS_PER_MINUTE));
   datetime.nsec  = dts->nsec;
   datetime.shift = dts->shift;
   datetime.flags = dts->flags;
@@ -617,7 +613,7 @@ NA_DEF NADateTime naMakeDateTimeFromBuffer(NABuffer* buffer, NABinDateTimeFormat
 NA_DEF const char* naGetDateTimeErrorString(uint8 errornum){
   if(errornum >= NA_DATETIME_ERROR_COUNT){
     #ifndef NDEBUG
-      naError("naGetDateTimeErrorString", "Error number invalid");
+      naError("Error number invalid");
     #endif
     return NA_NULL;
   }
@@ -877,7 +873,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
         #error "impossible to convert int64. Falling back to int32"
         datetimesec = naMakeInt64WithLo(timesp->tv_sec + naCastInt64ToInt32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO));
       #else
-        datetimesec = naAddInt64(timesp->tv_sec, naMakeInt64WithLo(NA_DATETIME_SISEC_UNIX_YEAR_ZERO));
+        datetimesec = naAddInt64(timesp->tv_sec, NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
       #endif
     #endif
     if(naGreaterInt64(datetimesec, NA_ZERO_64)){
@@ -939,7 +935,7 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
   dts->shift = datetime->shift;
   dts->errornum = datetime->errornum;
   dts->flags = datetime->flags;
-  remainingsecs = naAddInt64(datetime->sisec, naMakeInt64WithLo(dts->shift * NA_SECONDS_PER_MINUTE));
+  remainingsecs = naAddInt64(datetime->sisec, naMakeInt64WithLo(dts->shift * (int32)NA_SECONDS_PER_MINUTE));
 
   if(naSmallerInt64(remainingsecs, NA_DATETIME_SISEC_START_GREGORIAN_PERIOD)){
     // julian system with astronomic year numbering
@@ -1092,8 +1088,8 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
       J = naDivInt64(y, naMakeInt64WithLo(100));
     }
     if(naSmallerInt64(y, NA_ZERO_64)){naDecInt64(J);}
-    firstterm = naAddInt64(naAddInt64(naMakeInt64WithLo(d + ((mon + 1) * 26) / 10), K), naDivInt64(K, naMakeInt64WithLo(4)));
-    if(naSmallerInt64(naAddInt64(datetime->sisec, naMakeInt64WithLo(dts->shift * NA_SECONDS_PER_MINUTE)), NA_DATETIME_SISEC_START_GREGORIAN_PERIOD)){
+    firstterm = naAddInt64(naAddInt64(naMakeInt64WithLo(d + ((mon + (int32)1) * (int32)26) / (int32)10), K), naDivInt64(K, naMakeInt64WithLo(4)));
+    if(naSmallerInt64(naAddInt64(datetime->sisec, naMakeInt64WithLo(dts->shift * (int32)NA_SECONDS_PER_MINUTE)), NA_DATETIME_SISEC_START_GREGORIAN_PERIOD)){
       // Julian weedkday computation
       dta->weekday = naCastInt64ToInt32(naModInt64((naAddInt64((naModInt64((naAddInt64(naAddInt64(firstterm, naMakeInt64WithLo(5)), naMulInt64(naMakeInt64WithLo(6), J))), naMakeInt64WithLo(7))), naMakeInt64WithLo(12))), naMakeInt64WithLo(7)));
     }else{

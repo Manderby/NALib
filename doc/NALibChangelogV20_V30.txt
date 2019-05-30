@@ -12,6 +12,26 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+Version 23 (first published 2019-Jun-30)
+==========
+
+Highlights:
+- Integrated NAQuadTree and NAOctTree into NATree. One tree to rule them all.
+- Added template architecture. Very crude at the moment. Let's see where that
+  takes us.
+- Added NAKey. Core component for key values. Very crude at the moment.
+- Reprogrammed NAHeap with a new template architecture.
+
+Other things:
+- Simplified NAPtr by removing the pointer argument of most functions.
+- Splitting VectorAlgebra file into several files.
+- Adding Leap second information according bulletin C 57
+- Removed the functionsymbol parameter from naError and naCrash
+- Extended NAList with naMoveListToLast and some debug checks
+- Completed some NABuffer functions and fixed some bugs.
+- Added CODATA 2018 physical constants. Warning: Macro names changed!
+
+
 Version 22 (first published 2018-Dec-14)
 ==========
 

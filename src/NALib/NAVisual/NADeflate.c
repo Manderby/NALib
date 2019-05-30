@@ -23,9 +23,8 @@ NAHuffmanCodeTree* naAllocHuffmanCodeTree(uint16 alphabetcount){
   tree->alphabetcount = alphabetcount;
   tree->codes = naMalloc(alphabetcount * sizeof(uint16));
   tree->codelengths = naMalloc(alphabetcount * sizeof(uint16));
-  tree->indextree = naMalloc((2 * alphabetcount - 1) * sizeof(int32));
+  tree->indextree = naMalloc((NAInt)(2 * (NAInt)alphabetcount - 1) * naSizeof(int32));
   for(i=0; i<alphabetcount; i++){tree->codelengths[i] = 0;}
-//  for(int16 i=0; i<(2 * alphabetcount - 1); i++){tree->indextree[i] = 0;}
   return tree;
 }
 
@@ -59,7 +58,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
 //      if(tree->codelengths[a] == 0)
 //        naError("naBuildHuffmanCodeTree", "Found a codelength of 0");
       if(tree->codelengths[a] > 16)
-        naError("naBuildHuffmanCodeTree", "Found a codelength of more than 16");
+        naError("Found a codelength of more than 16");
     #endif
     codelengthcount[tree->codelengths[a]]++;
   }
@@ -73,7 +72,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
       if(codelengthcount[a] > (1<<a))
         // Note that the case of having exaclty 1<<a codelengths can actually
         // occur. For example with the fixed huffman codes.
-        naError("naBuildHuffmanCodeTree", "Too many codelengths of the same length");
+        naError("Too many codelengths of the same length");
     #endif
     code = (uint16)((code + codelengthcount[a - 1]) << 1);
     if(codelengthcount[a]){ // this if is not necessary but is easier to debug
@@ -86,7 +85,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
     if(tree->codelengths[a]){
       #ifndef NDEBUG
         if(tree->codelengths[a] > 16)
-          naError("naBuildHuffmanCodeTree", "Suddenly found a codelength of more than 16");
+          naError("Suddenly found a codelength of more than 16");
       #endif
       tree->codes[a] = nextcodes[tree->codelengths[a]];
       nextcodes[tree->codelengths[a]]++;
@@ -110,7 +109,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
       if(tree->indextree[curindex] == 0){
         #ifndef NDEBUG
           if(newtreeindex >= (2 * tree->alphabetcount - 1))
-            naError("naBuildHuffmanCodeTree", "tree index suddenly overflows");
+            naError("tree index suddenly overflows");
         #endif
         tree->indextree[curindex] = newtreeindex;
         tree->indextree[newtreeindex] = 0;
@@ -129,31 +128,31 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
     }
     #ifndef NDEBUG
       if(curindex >= (2 * tree->alphabetcount - 1))
-        naError("naBuildHuffmanCodeTree", "tree index overflow");
+        naError("tree index overflow");
     #endif
     // reaching here, curindex denotes the position of where the alphabet must
     // be stored. We store the alphabet as negative value.
     tree->indextree[curindex] = -1 - (int32)a;
     #ifndef NDEBUG
       if(tree->indextree[curindex] >= 0)
-        naError("naBuildHuffmanCodeTree", "code can not be stored as a negative number");
+        naError("code can not be stored as a negative number");
     #endif
 
     #ifndef NDEBUG
       openends --;
       if(openends < 0)
-        naError("naBuildHuffmanCodeTree", "Tree overfilled");
+        naError("Tree overfilled");
     #endif
 
   }
 
   #ifndef NDEBUG
     if(openends != 0)
-      naError("naBuildHuffmanCodeTree", "Tree incomplete");
+      naError("Tree incomplete");
 
     for(a = 0; a < newtreeindex; a++) {
       if(tree->indextree[a] == 0)
-        naError("naBuildHuffmanCodeTree", "undefined index in tree");
+        naError("undefined index in tree");
     }
   #endif
 
@@ -198,7 +197,7 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
       repeatcount = (uint16)naReadBufferBits(iter, 2) + 3;
       #ifndef NDEBUG
         if((curalphabetcount + repeatcount) > alphabetcount)
-          naError("naReadCodeLengthHuffman", "Internal Error: Reading too many literals at codelength 16");
+          naError("Internal Error: Reading too many literals at codelength 16");
       #endif
       for(i=0; i<repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = alphabethuffman->codelengths[curalphabetcount - 1];}
       curalphabetcount += repeatcount;
@@ -207,7 +206,7 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
       repeatcount = (uint16)naReadBufferBits(iter, 3) + 3;
       #ifndef NDEBUG
         if((curalphabetcount + repeatcount) > alphabetcount)
-          naError("naReadCodeLengthHuffman", "Internal Error: Reading too many literals at codelength 17");
+          naError("Internal Error: Reading too many literals at codelength 17");
       #endif
       for(i=0; i<repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = 0;}
       curalphabetcount += repeatcount;
@@ -216,7 +215,7 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
       repeatcount =(uint16) naReadBufferBits(iter, 7) + 11;
       #ifndef NDEBUG
         if((curalphabetcount + repeatcount) > alphabetcount)
-          naError("naReadCodeLengthHuffman", "Internal Error: Reading too many literals at codelength 18");
+          naError("Internal Error: Reading too many literals at codelength 18");
       #endif
       for(i=0; i<repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = 0;}
       curalphabetcount += repeatcount;
@@ -268,7 +267,7 @@ uint16 naDecodeLiteralLength(NABufferIterator* iter, uint16 code){
   case 285: retvalue = 258; break;
   default:
     #ifndef NDEBUG
-      naError("naDecodeLiteralLength", "Invalid literal length code receyved");
+      naError("Invalid literal length code receyved");
     #endif
     retvalue = 0;
     break;
@@ -312,7 +311,7 @@ uint16 naDecodeDistance(NABufferIterator* iter, uint16 code){
   case 29: retvalue = 24577 + (uint16)naReadBufferBits(iter, 13); break;
   default:
     #ifndef NDEBUG
-      naError("naDecodeDistance", "Invalid distance code receyved");
+      naError("Invalid distance code receyved");
     #endif
     retvalue = 0;
     break;
@@ -406,25 +405,25 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
 
   #ifndef NDEBUG
     if(naGetBufferEndianness(input) != NA_ENDIANNESS_NETWORK)
-      naError("naInitBufferFromDeflateDecompression", "Input buffer should be big endianed");
+      naError("Input buffer should be big endianed");
   #endif
   compressionmethodflags = naReadBufferu8(&iterin);
   compressionmethod = compressionmethodflags & 0x0f;
   #ifndef NDEBUG
     if(compressionmethod != NA_ZLIB_CMF_COMPRESSION_DEFLATE)
-      naError("naInitBufferFromDeflateDecompression", "Compression method of Deflate buffer unknown");
+      naError("Compression method of Deflate buffer unknown");
   #endif
   compressioninfo = (compressionmethodflags & 0xf0) >> 4;
   #ifndef NDEBUG
     if(compressioninfo > NA_ZLIB_CMF_MAX_WINDOW_SIZE)
-      naError("naInitBufferFromDeflateDecompression", "Window size too big");
+      naError("Window size too big");
   #endif
   windowsize = (uint16)(1 << (compressioninfo + 8));
   compressionadditionalflags = naReadBufferu8(&iterin);
   flagcheck = compressionmethodflags * 256 + compressionadditionalflags;
   #ifndef NDEBUG
     if(flagcheck % 31)
-      naError("naInitBufferFromDeflateDecompression", "Flag check failed");
+      naError("Flag check failed");
   #endif
   haspresetdict = (compressionadditionalflags & (1 << 5)) ? NA_TRUE : NA_FALSE;
   compressionlevel = (NADeflateCompressionLevel) ((compressionadditionalflags >> 6) & 0x03);
@@ -462,7 +461,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
     NAByte blocktype = (NAByte)naReadBufferBits(&iterz, 2);
     #ifndef NDEBUG
       if(blocktype == 0x03)
-      naError("naInitBufferFromDeflateDecompression", "Block compression invalid");
+      naError("Block compression invalid");
     #endif
     if(blocktype == 0x00){
       // Blocktype 0x00 is an uncompressed block.
@@ -475,7 +474,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
       nlen = naReadBufferu16(&iterz);
       #ifndef NDEBUG
         if((uint16)len != (uint16)(~nlen))
-        naError("naInitBufferFromDeflateDecompression", "Len and NLen do not match in one's complement");
+        naError("Len and NLen do not match in one's complement");
       #else
         NA_UNUSED(nlen);
       #endif
@@ -533,7 +532,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
 
   #ifndef NDEBUG
     if(adler != zbufferadler)
-      naError("naInitBufferFromDeflateDecompression", "Adler code does not correspond to decompression result");
+      naError("Adler code does not correspond to decompression result");
   #else
     NA_UNUSED(zbufferadler);
     NA_UNUSED(adler);
@@ -556,9 +555,9 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, N
 
   #ifndef NDEBUG
     if(naGetBufferEndianness(output) != NA_ENDIANNESS_NETWORK)
-      naError("naInitBufferFromDeflateDecompression", "Output buffer should be big endianed");
+      naError("Output buffer should be big endianed");
     if(naGetBufferEndianness(input) != NA_ENDIANNESS_NETWORK)
-      naError("naInitBufferFromDeflateDecompression", "Input buffer should be big endianed");
+      naError("Input buffer should be big endianed");
   #endif
 
   iterout = naMakeBufferModifier(output);

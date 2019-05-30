@@ -71,7 +71,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 
 
 NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, double timediff){
-  dispatch_time_t nexttime = dispatch_time(DISPATCH_TIME_NOW, 1000000000 * timediff);
+  dispatch_time_t nexttime = dispatch_time(DISPATCH_TIME_NOW, (int64)(1000000000. * timediff));
   dispatch_queue_t queue = dispatch_get_main_queue();
   dispatch_after_f(nexttime, queue, arg, function);
 }
@@ -203,7 +203,7 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
   if(element == (NACoreUIElement*)app){
     #ifndef NDEBUG
       if(relelement && (relelement != (NACoreUIElement*)app))
-        naError("naGetUIElementRect", "The relative element is invalid for the given uielement, which seems to be the application.");
+        naError("The relative element is invalid for the given uielement, which seems to be the application.");
     #endif
     return naGetApplicationAbsoluteRect();
   }
@@ -441,6 +441,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
   naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_REDRAW, &dirtyRect);
 }
 - (void)reshape{
+  [super reshape];
   [[self openGLContext] update];
   NARect bounds = naMakeRectWithNSRect([self bounds]);
   naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_RESHAPE, &bounds);

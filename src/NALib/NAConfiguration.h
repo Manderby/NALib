@@ -299,7 +299,7 @@
 // By default, NALib uses the latest setting.
 
 #ifndef NA_NIST_CODATA_YEAR
-  #define NA_NIST_CODATA_YEAR 2014
+  #define NA_NIST_CODATA_YEAR 2018
 #endif
 
 

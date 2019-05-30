@@ -6,17 +6,18 @@
 // Do not include this file directly! It will automatically be included when
 // including "NATree.h"
 
-typedef struct NATreeBaseNode NATreeBaseNode;
+// A Tree consists of Items which can either be a Node or a Leaf.
+typedef struct NATreeItem NATreeItem;
 typedef struct NATreeNode NATreeNode;
 typedef struct NATreeLeaf NATreeLeaf;
 typedef struct NATreeIterationInfo NATreeIterationInfo;
 
-// Currently, an NATree is suppost to store a max of 16 childs, meaning any
+// Currently, an NATree is supposed to store a max of 16 childs, meaning any
 // other flag must be non-overlapping with 0x0000ffff or having a bitshift
 // of 16 respectively.
 
 #define NA_TREE_NODE_MAX_CHILDS 16
-#define NA_TREE_CHILDS_MASK ((1 << NA_TREE_NODE_MAX_CHILDS) - 1)
+#define NA_TREE_NODE_CHILDS_MASK ((1 << NA_TREE_NODE_MAX_CHILDS) - 1)
 
 #define NA_TREE_NODE_AVL_BITSHIFT NA_TREE_NODE_MAX_CHILDS
 #define NA_TREE_NODE_AVL_LEFT  (0x00 << NA_TREE_NODE_AVL_BITSHIFT)
@@ -24,15 +25,17 @@ typedef struct NATreeIterationInfo NATreeIterationInfo;
 #define NA_TREE_NODE_AVL_RIGHT (0x02 << NA_TREE_NODE_AVL_BITSHIFT)
 #define NA_TREE_NODE_AVL_MASK  (0x03 << NA_TREE_NODE_AVL_BITSHIFT)
 
-#define NA_TREE_KEY_TYPE_MASK  0x07
+// This is directly linked to the types defined in NATree.h.
+// See NA_TREE_KEY_NAINT for example.
+#define NA_TREE_CONFIG_KEY_TYPE_MASK  0x07
 
 #define NA_TREE_FLAG_ROOT_IS_LEAF 0x01
+#define NA_TREE_FLAG_TMP_KEY_TAKEN 0x02
 
 typedef enum{
   NA_TREE_LEAF_INSERT_ORDER_KEY,
   NA_TREE_LEAF_INSERT_ORDER_PREV,
-  NA_TREE_LEAF_INSERT_ORDER_NEXT,
-  NA_TREE_LEAF_INSERT_ORDER_REPLACE
+  NA_TREE_LEAF_INSERT_ORDER_NEXT
 } NATreeLeafInsertOrder;
 
 // Callback function types for the different kind of trees. If you want to
@@ -40,118 +43,113 @@ typedef enum{
 // and set them in naCreateTreeConfiguration.
 //
 // NAKeyIndexGetter          Returns the childindex where key would be stored
-//                           on a node with the given basekey.
-// NAKeyEqualer              Returns true if the two keys are equal.
+//                           on a node with the given basekey. The data can
+//                           be any data required by the datastructure
+// NAKeyEqualComparer        Returns true if the two keys map to the same equal key.
 // NAKeyAssigner             Assigns the src key to dst.
 // NAKeyTester               Tests whether the key is within the given limits.
 //
-// NATreeNodeCoreConstructor Creates a new node with the given key.
-// NATreeNodeCoreDestructor  Destroys the given node
-// NATreeLeafCoreConstructor Creates a new leaf with the given key and data
-// NATreeLeafCoreDestructor  Destroys the given leaf.
-//
-// NATreeBubbleLocator       Searches from the given node upwards the tree and
-//                           returns the node which is guaranteed to contain
-//                           the given key or Null if there is no root.
-// NATreeCaptureLocator      Searches from the given node downwards the tree
-//                           and returns the parent node of the child which
-//                           should contain key. Returns the childindx of that
-//                           child in the childindx parameter.
-// NATreeChildIndexGetter    Returns the index of the child in the parent.
-// NATreeChildKeyIndexGetter Returns the index under which the given key should
-//                           be stored in the given parent.
-// NATreeChildGetter         Returns the Child of the given parent with the
-//                           given index.
 // NATreeLeafAdder           Sets the given child with the given type to the
 //                           parent at the given index.
 // NATreeLeafRemover         Removes the given leaf from the tree.
 // NATreeLeafInserter        Expects the child ad childindx of grandparent to
 //                           be a leaf which will be split to a node containing
 //                           both that leaf and the new sibling.
-// NATreeLeafKeyGetter       Returns the key of the given leaf.
-// NATreeLeafDataGetter      Returns the data of the given leaf.
-typedef NAInt           (*NAKeyIndexGetter)(const void* basekey, const void* testkey);
-typedef NABool          (*NAKeyEqualer)(const void* key1, const void* key2);
+typedef NAInt           (*NAKeyIndexGetter)(const void* basekey, const void* testkey, const void* data);
+typedef NAInt           (*NAChildIndexGetter)(NATreeNode* parentnode, const void* childkey);
+typedef NABool          (*NAKeyEqualComparer)(const void* key1, const void* key2);
+typedef NABool          (*NAKeyLowerComparer)(const void* key1, const void* key2);
+typedef NABool          (*NAKeyLowerEqualComparer)(const void* key1, const void* key2);
 typedef void            (*NAKeyAssigner)(void* dst, const void* src);
-typedef NABool          (*NAKeyTester)(const void* leftlimit, const void* rightlimit, const void* key);
+typedef void            (*NAKeyAdder)(void* dst, const void* src1, const void* src2);
+typedef NABool          (*NAKeyTester)(const void* lowerlimit, const void* upperlimit, const void* key);
+typedef NABool          (*NAKeyNodeContainTester)(NATreeNode* parentnode, const void* key);
+typedef NABool          (*NAKeyLeafContainTester)(NATreeLeaf* leaf, const void* key);
 
-typedef void            (*NATreeNodeCoreDestructor)(NATree* tree, NATreeNode* node, NABool recursive);
-typedef NATreeLeaf*     (*NATreeLeafCoreConstructor)(NATree* tree, const void* key, NAPtr data);
-typedef void            (*NATreeLeafCoreDestructor)(NATree* tree, NATreeLeaf* leaf);
+typedef void            (*NATreeNodeCoreDestructor)(NATreeNode* node);
+typedef void            (*NATreeLeafCoreDestructor)(NATreeLeaf* leaf);
 
-typedef NATreeNode*     (*NATreeBubbleLocator)(const NATree* tree, NATreeLeaf* leaf, const void* key);
-typedef NATreeLeaf*     (*NATreeCaptureLocator)(const NATree* tree, NATreeNode* node, const void* key, NABool* matchfound);
-typedef NAInt           (*NATreeChildIndexGetter)(NATreeNode* parent, NATreeBaseNode* child);
-typedef NAInt           (*NATreeChildKeyIndexGetter)(const NATree* tree, NATreeNode* parent, const void* key);
-typedef NATreeBaseNode* (*NATreeChildGetter)(NATreeNode* parent, NAInt childindx);
+// This function shall return the uppermost node which contains the given key.
+// It must start searching for the key at the given item and bubble upwards.
+// Should return Null, if the key does not fit anywhere in the tree. The
+// given item is never Null and never the root of the tree which itself is
+// never empty.
+typedef NATreeNode*     (*NATreeBubbleLocator)(const NATree* tree, NATreeItem* item, const void* key);
+// This function must insert the given newleaf into the tree, positioned
+// relative to the existingleaf as defined by insertOrder.
+typedef NATreeLeaf*     (*NATreeLeafInserter)(NATree* tree, NATreeItem* existingitem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
+
 typedef NATreeNode*     (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
-typedef NATreeLeaf*     (*NATreeLeafInserter)(NATree* tree, NATreeLeaf* existingleaf, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
-typedef const void*     (*NATreeLeafKeyGetter)(NATreeLeaf* leaf);
-typedef NAPtr*          (*NATreeLeafDataGetter)(NATreeLeaf* leaf);
-typedef NAPtr*          (*NATreeNodeDataGetter)(NATreeNode* node);
+
+
 
 struct NATreeConfiguration{
-
-  // User settings
+  
+  // Core settings
   NARefCount                    refcount;
-  NATreeContructorCallback      treeConstructor;
-  NATreeDestructorCallback      treeDestructor;
-  NATreeNodeConstructor         nodeConstructor;
-  NATreeNodeDestructor          nodeDestructor;
-  NATreeNodeUpdater             nodeUpdater;
-  NATreeLeafConstructor         leafConstructor;
-  NATreeLeafDestructor          leafDestructor;
-  NAPtr                         data;
   NAInt                         flags;
 
-  // Core settings:
   NAInt                         childpernode;
+  int                           leafKeyOffset;
+  int                           nodeKeyOffset;
+  int                           leafUserDataOffset;
+  int                           nodeUserDataOffset;
+  void*                         configdata;
+
   NAKeyIndexGetter              keyIndexGetter;
-  NAKeyEqualer                  keyEqualer;
+  NAChildIndexGetter            childIndexGetter;
+  NAKeyEqualComparer            keyEqualComparer;
+  NAKeyLowerComparer            keyLowerComparer;
+  NAKeyLowerEqualComparer       keyLowerEqualComparer;
   NAKeyAssigner                 keyAssigner;
   NAKeyTester                   keyTester;
+  NAKeyNodeContainTester        keyNodeContainTester;
+  NAKeyLeafContainTester        keyLeafContainTester;
 
-  NATreeNodeCoreDestructor      nodeCoreDestructor;
-  NATreeLeafCoreConstructor     leafCoreConstructor;
-  NATreeLeafCoreDestructor      leafCoreDestructor;
-
+  NATreeNodeCoreDestructor      nodeDestructor;
+  NATreeLeafCoreDestructor      leafDestructor;
   NATreeBubbleLocator           bubbleLocator;
-  NATreeCaptureLocator          captureLocator;
-  NATreeChildIndexGetter        childIndexGetter;
-  NATreeChildKeyIndexGetter     childKeyIndexGetter;
-  NATreeChildGetter             childGetter;
   NATreeLeafRemover             leafRemover;
   NATreeLeafInserter            leafInserter;
-  NATreeLeafKeyGetter           leafKeyGetter;
-  NATreeLeafDataGetter          leafDataGetter;
-  NATreeNodeDataGetter          nodeDataGetter;
+
+  // User settings (callbacks and data defined in configuration)
+  NATreeContructorCallback      treeConstructor;
+  NATreeDestructorCallback      treeDestructor;
+  NATreeLeafDataConstructor     leafDataConstructor;
+  NATreeLeafDataDestructor      leafDataDestructor;
+  NATreeNodeDataConstructor     nodeDataConstructor;
+  NATreeNodeDataDestructor      nodeDataDestructor;
+  NATreeNodeUpdater             nodeUpdater;
+  NAPtr                         userdata;
 };
 
-struct NATreeBaseNode{
+struct NATreeItem{
   NATreeNode* parent;
-};
-
-struct NATreeNode{
-  NATreeBaseNode basenode;
-  NAInt flags;
-};
-
-struct NATreeLeaf{
-  NATreeBaseNode basenode;
   #ifndef NDEBUG
     NAInt itercount;
   #endif
 };
 
-struct NATreeIterator{
+struct NATreeNode{
+  NATreeItem item;
   NAInt flags;
+};
+
+struct NATreeLeaf{
+  NATreeItem item;
+};
+
+struct NATreeIterator{
   NAPtr tree;
-  NATreeLeaf* leaf;
+  NATreeItem* item;
+  #ifndef NDEBUG
+    NAInt flags;
+  #endif
 };
 
 struct NATree{
   NATreeConfiguration* config;
-  NATreeBaseNode* root;
+  NATreeItem* root;
   NAInt flags;
   #ifndef NDEBUG
     NAInt itercount;
@@ -162,10 +160,81 @@ struct NATreeIterationInfo{
   NAInt step;
   NAInt startindx;
   NAInt breakindx;
+  const void* lowerlimit;
+  const void* upperlimit;
 };
 
-#include "NATreeCoreII.h"
 
+#define NA_TREE_NOTE_CHILDS_OFFSET sizeof(NATreeNode)
+
+
+// Helper functions. Do not use as public API.
+
+// Configuration
+NA_HIAPI void naDeallocConfiguration(NATreeConfiguration* config);
+NA_HIAPI NATreeConfiguration* naRetainTreeConfiguration(NATreeConfiguration* config);
+
+// Item
+NA_HIAPI void naInitTreeItem(NATreeItem* item);
+NA_HIAPI void naClearTreeItem(NATreeItem* item);
+NA_HIAPI NATreeNode* naGetTreeItemParent(const NATreeItem* item);
+NA_HIAPI void naSetTreeItemParent(NATreeItem* item, NATreeNode* parent);
+NA_HIAPI NABool naIsTreeItemRoot(const NATreeItem* item);
+
+// Node
+NA_HIAPI NATreeItem* naGetTreeNodeItem(NATreeNode* node);
+NA_HIAPI void naInitTreeNode(const NATreeConfiguration* config, NATreeNode* node, const void* key);
+NA_HIAPI void naClearTreeNode(NATreeNode* node);
+NA_HIAPI void naDestructNodeData(const NATreeConfiguration* config, NAPtr data);
+NA_HIAPI void naDestructTreeNode(const NATreeConfiguration* config, NATreeNode* node, NABool recursive);
+NA_HIAPI NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx);
+NA_HIAPI void naMarkNodeChildLeaf(NATreeNode* node, NAInt childindx, NABool isleaf);
+NA_HIAPI void* naGetTreeNodeKey(const NATreeConfiguration* config, NATreeNode* node);
+NA_HIAPI NAPtr naGetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node);
+NA_HIAPI void naSetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node, NAPtr newdata);
+NA_HIAPI NATreeItem** naGetTreeNodeChildStorage(NATreeNode* parent);
+NA_HIAPI NATreeItem* naGetTreeNodeChild(const NATreeConfiguration* config, NATreeNode* parent, NAInt childindx);
+NA_HIAPI void naSetTreeNodeChildEmpty(NATreeNode* parent, NAInt childindx);
+NA_HIAPI void naSetTreeNodeChild(NATreeNode* parent, NATreeItem* child, NAInt childindx, NABool isChildLeaf);
+NA_HIAPI NAInt naGetTreeNodeChildIndex(const NATreeConfiguration* config, NATreeNode* parent, NATreeItem* child);
+
+// Leaf
+NA_HIAPI NATreeItem* naGetTreeLeafItem(NATreeLeaf* leaf);
+NA_HIAPI void naInitTreeLeaf(const NATreeConfiguration* config, NATreeLeaf* leaf, const void* key, NAPtr content);
+NA_HIAPI void naClearTreeLeaf(NATreeLeaf* leaf);
+NA_HIAPI void naDestructLeafData(const NATreeConfiguration* config, NAPtr data);
+NA_HIAPI void naDestructTreeLeaf(const NATreeConfiguration* config, NATreeLeaf* leaf);
+NA_HIAPI NAPtr naConstructLeafData(const NATreeConfiguration* config, const void* key, NAPtr content);
+NA_HIAPI void* naGetTreeLeafKey(const NATreeConfiguration* config, NATreeLeaf* leaf);
+NA_HIAPI NAPtr naGetTreeLeafData(const NATreeConfiguration* config, NATreeLeaf* leaf);
+NA_HIAPI void naSetTreeLeafData(const NATreeConfiguration* config, NATreeLeaf* leaf, NAPtr newcontent);
+
+// Iterator
+NA_HIAPI void naSetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newitem);
+NA_HIAPI const NATree* naGetTreeIteratorTreeConst(const NATreeIterator* iter);
+NA_HIAPI NATree* naGetTreeIteratorTreeMutable(NATreeIterator* iter);
+NA_HIAPI NABool naAddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafInsertOrder insertOrder, NABool movetonew);
+NA_HAPI void naIterateTreeCapture(NATreeIterator* iter, NAInt indx, NATreeIterationInfo* info);
+NA_HAPI void naIterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info);
+NA_HAPI  NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info);
+NA_HAPI  NABool naLocateTreeKeyCore(NATreeIterator* iter, const void* key, NABool usebubble);
+NA_HAPI  NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace);
+
+// Utilities
+NA_HIAPI void naSetTreeRoot(NATree* tree, NATreeItem* newroot, NABool isLeaf);
+NA_HIAPI void naClearTreeRoot(NATree* tree);
+NA_HIAPI NABool naIsTreeRootLeaf(const NATree* tree);
+NA_HIAPI void naMarkTreeRootLeaf(NATree* tree, NABool isleaf);
+NA_HIAPI NABool naIsTreeItemLeaf(const NATree* tree, NATreeItem* item);
+NA_HAPI  NATreeLeaf* naAddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
+NA_HAPI  void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childindx);
+NA_HAPI  NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node);
+
+#include "../../NACore/NAValueHelper.h"
+#include "NATreeConfigurationII.h"
+#include "NATreeItemII.h"
+#include "NATreeIterationII.h"
+#include "NATreeUtilitiesII.h"
 
 
 // Copyright (c) NALib, Tobias Stamm

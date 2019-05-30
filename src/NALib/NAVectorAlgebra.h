@@ -350,6 +350,45 @@ NA_IAPI void naDivV2fS(float*  d, float  s);
 NA_IAPI void naDivV3fS(float*  d, float  s);
 NA_IAPI void naDivV4fS(float*  d, float  s);
 
+// Multiply and add: Computes d = a + b * s
+// E-variant allow the pointers to be equal without warning.
+// S-variant computes d += b * s
+// SE-variant will not warn about pointers being equal.
+NA_IAPI void naMadV1d  (double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b, double s);
+NA_IAPI void naMadV2d  (double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b, double s);
+NA_IAPI void naMadV3d  (double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b, double s);
+NA_IAPI void naMadV4d  (double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b, double s);
+NA_IAPI void naMadV1f  (float*  NA_RESTRICT d, const float*  NA_RESTRICT a, const float*  NA_RESTRICT b, float  s);
+NA_IAPI void naMadV2f  (float*  NA_RESTRICT d, const float*  NA_RESTRICT a, const float*  NA_RESTRICT b, float  s);
+NA_IAPI void naMadV3f  (float*  NA_RESTRICT d, const float*  NA_RESTRICT a, const float*  NA_RESTRICT b, float  s);
+NA_IAPI void naMadV4f  (float*  NA_RESTRICT d, const float*  NA_RESTRICT a, const float*  NA_RESTRICT b, float  s);
+NA_IAPI void naMadV1dE (double* d, const double* a, const double* b, double s);
+NA_IAPI void naMadV2dE (double* d, const double* a, const double* b, double s);
+NA_IAPI void naMadV3dE (double* d, const double* a, const double* b, double s);
+NA_IAPI void naMadV4dE (double* d, const double* a, const double* b, double s);
+NA_IAPI void naMadV1fE (float*  d, const float*  a, const float*  b, float  s);
+NA_IAPI void naMadV2fE (float*  d, const float*  a, const float*  b, float  s);
+NA_IAPI void naMadV3fE (float*  d, const float*  a, const float*  b, float  s);
+NA_IAPI void naMadV4fE (float*  d, const float*  a, const float*  b, float  s);
+NA_IAPI void naMadV1dS (double* NA_RESTRICT d, const double* NA_RESTRICT b, double s);
+NA_IAPI void naMadV2dS (double* NA_RESTRICT d, const double* NA_RESTRICT b, double s);
+NA_IAPI void naMadV3dS (double* NA_RESTRICT d, const double* NA_RESTRICT b, double s);
+NA_IAPI void naMadV4dS (double* NA_RESTRICT d, const double* NA_RESTRICT b, double s);
+NA_IAPI void naMadV1fS (float*  NA_RESTRICT d, const float*  NA_RESTRICT b, float  s);
+NA_IAPI void naMadV2fS (float*  NA_RESTRICT d, const float*  NA_RESTRICT b, float  s);
+NA_IAPI void naMadV3fS (float*  NA_RESTRICT d, const float*  NA_RESTRICT b, float  s);
+NA_IAPI void naMadV4fS (float*  NA_RESTRICT d, const float*  NA_RESTRICT b, float  s);
+NA_IAPI void naMadV1dES(double* d, const double* b, double s);
+NA_IAPI void naMadV2dES(double* d, const double* b, double s);
+NA_IAPI void naMadV3dES(double* d, const double* b, double s);
+NA_IAPI void naMadV4dES(double* d, const double* b, double s);
+NA_IAPI void naMadV1fES(float*  d, const float*  b, float  s);
+NA_IAPI void naMadV2fES(float*  d, const float*  b, float  s);
+NA_IAPI void naMadV3fES(float*  d, const float*  b, float  s);
+NA_IAPI void naMadV4fES(float*  d, const float*  b, float  s);
+
+// Where is multiply and subtract? Just negate the scalar of Mad.
+
 // Inverts the vector componentwise. d = 1 ./ s
 // E-variant allow the pointers to be equal without warning.
 // S-variant computes d /= 1. / d
@@ -451,45 +490,6 @@ NA_IAPI void naDivCompV1fV1fSE(float*  d, const float*  b);
 NA_IAPI void naDivCompV2fV2fSE(float*  d, const float*  b);
 NA_IAPI void naDivCompV3fV3fSE(float*  d, const float*  b);
 NA_IAPI void naDivCompV4fV4fSE(float*  d, const float*  b);
-
-// Multiply and add: Computes d = a + b * s
-// E-variant allow the pointers to be equal without warning.
-// S-variant computes d += b * s
-// SE-variant will not warn about pointers being equal.
-NA_IAPI void naMadV1d  (double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b, double s);
-NA_IAPI void naMadV2d  (double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b, double s);
-NA_IAPI void naMadV3d  (double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b, double s);
-NA_IAPI void naMadV4d  (double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT b, double s);
-NA_IAPI void naMadV1f  (float*  NA_RESTRICT d, const float*  NA_RESTRICT a, const float*  NA_RESTRICT b, float  s);
-NA_IAPI void naMadV2f  (float*  NA_RESTRICT d, const float*  NA_RESTRICT a, const float*  NA_RESTRICT b, float  s);
-NA_IAPI void naMadV3f  (float*  NA_RESTRICT d, const float*  NA_RESTRICT a, const float*  NA_RESTRICT b, float  s);
-NA_IAPI void naMadV4f  (float*  NA_RESTRICT d, const float*  NA_RESTRICT a, const float*  NA_RESTRICT b, float  s);
-NA_IAPI void naMadV1dE (double* d, const double* a, const double* b, double s);
-NA_IAPI void naMadV2dE (double* d, const double* a, const double* b, double s);
-NA_IAPI void naMadV3dE (double* d, const double* a, const double* b, double s);
-NA_IAPI void naMadV4dE (double* d, const double* a, const double* b, double s);
-NA_IAPI void naMadV1fE (float*  d, const float*  a, const float*  b, float  s);
-NA_IAPI void naMadV2fE (float*  d, const float*  a, const float*  b, float  s);
-NA_IAPI void naMadV3fE (float*  d, const float*  a, const float*  b, float  s);
-NA_IAPI void naMadV4fE (float*  d, const float*  a, const float*  b, float  s);
-NA_IAPI void naMadV1dS (double* NA_RESTRICT d, const double* NA_RESTRICT b, double s);
-NA_IAPI void naMadV2dS (double* NA_RESTRICT d, const double* NA_RESTRICT b, double s);
-NA_IAPI void naMadV3dS (double* NA_RESTRICT d, const double* NA_RESTRICT b, double s);
-NA_IAPI void naMadV4dS (double* NA_RESTRICT d, const double* NA_RESTRICT b, double s);
-NA_IAPI void naMadV1fS (float*  NA_RESTRICT d, const float*  NA_RESTRICT b, float  s);
-NA_IAPI void naMadV2fS (float*  NA_RESTRICT d, const float*  NA_RESTRICT b, float  s);
-NA_IAPI void naMadV3fS (float*  NA_RESTRICT d, const float*  NA_RESTRICT b, float  s);
-NA_IAPI void naMadV4fS (float*  NA_RESTRICT d, const float*  NA_RESTRICT b, float  s);
-NA_IAPI void naMadV1dES(double* d, const double* b, double s);
-NA_IAPI void naMadV2dES(double* d, const double* b, double s);
-NA_IAPI void naMadV3dES(double* d, const double* b, double s);
-NA_IAPI void naMadV4dES(double* d, const double* b, double s);
-NA_IAPI void naMadV1fES(float*  d, const float*  b, float  s);
-NA_IAPI void naMadV2fES(float*  d, const float*  b, float  s);
-NA_IAPI void naMadV3fES(float*  d, const float*  b, float  s);
-NA_IAPI void naMadV4fES(float*  d, const float*  b, float  s);
-
-// Where is multiply and subtract? Just negate the scalar of Mad.
 
 // Returns true if the two vectors are equal
 // E-variant allow the pointers to be equal without warning.
@@ -827,28 +827,6 @@ NA_IAPI void naNegM22fS(float*  D);
 NA_IAPI void naNegM33fS(float*  D);
 NA_IAPI void naNegM44fS(float*  D);
 
-// Transposes the matrix.
-// E variant allows both pointers to be equal
-// S variant transposes the matrix itself.
-NA_IAPI void naTransposeM22d (double* NA_RESTRICT D, double* NA_RESTRICT A);
-NA_IAPI void naTransposeM33d (double* NA_RESTRICT D, double* NA_RESTRICT A);
-NA_IAPI void naTransposeM44d (double* NA_RESTRICT D, double* NA_RESTRICT A);
-NA_IAPI void naTransposeM22f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
-NA_IAPI void naTransposeM33f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
-NA_IAPI void naTransposeM44f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
-NA_IAPI void naTransposeM22dE(double* D, double* A);
-NA_IAPI void naTransposeM33dE(double* D, double* A);
-NA_IAPI void naTransposeM44dE(double* D, double* A);
-NA_IAPI void naTransposeM22fE(float*  D, float*  A);
-NA_IAPI void naTransposeM33fE(float*  D, float*  A);
-NA_IAPI void naTransposeM44fE(float*  D, float*  A);
-NA_IAPI void naTransposeM22dS(double* D);
-NA_IAPI void naTransposeM33dS(double* D);
-NA_IAPI void naTransposeM44dS(double* D);
-NA_IAPI void naTransposeM22fS(float*  D);
-NA_IAPI void naTransposeM33fS(float*  D);
-NA_IAPI void naTransposeM44fS(float*  D);
-
 // Adds two matrices: D = A + B
 // E variant allows A and B to be the same as D
 // S variant computes D += B
@@ -1087,6 +1065,28 @@ NA_IAPI NABool naEqualM44fE(const float*  a, const float*  b);
 NA_IAPI double naDetM22d(double* A);
 NA_IAPI double naDetM33d(double* A);
 NA_IAPI double naDetM44d(double* A);
+
+// Transposes the matrix.
+// E variant allows both pointers to be equal
+// S variant transposes the matrix itself.
+NA_IAPI void naTransposeM22d (double* NA_RESTRICT D, double* NA_RESTRICT A);
+NA_IAPI void naTransposeM33d (double* NA_RESTRICT D, double* NA_RESTRICT A);
+NA_IAPI void naTransposeM44d (double* NA_RESTRICT D, double* NA_RESTRICT A);
+NA_IAPI void naTransposeM22f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
+NA_IAPI void naTransposeM33f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
+NA_IAPI void naTransposeM44f (float*  NA_RESTRICT D, float*  NA_RESTRICT A);
+NA_IAPI void naTransposeM22dE(double* D, double* A);
+NA_IAPI void naTransposeM33dE(double* D, double* A);
+NA_IAPI void naTransposeM44dE(double* D, double* A);
+NA_IAPI void naTransposeM22fE(float*  D, float*  A);
+NA_IAPI void naTransposeM33fE(float*  D, float*  A);
+NA_IAPI void naTransposeM44fE(float*  D, float*  A);
+NA_IAPI void naTransposeM22dS(double* D);
+NA_IAPI void naTransposeM33dS(double* D);
+NA_IAPI void naTransposeM44dS(double* D);
+NA_IAPI void naTransposeM22fS(float*  D);
+NA_IAPI void naTransposeM33fS(float*  D);
+NA_IAPI void naTransposeM44fS(float*  D);
 
 // Computes the inverse of a matrix
 // No E or S variants exist.

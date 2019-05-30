@@ -10,13 +10,13 @@
 
 
 NA_HIDEF const NABuffer* naGetBufferIteratorBufferConst(const NABufferIterator* iter){
-  return naGetPtrConst(&(iter->bufferptr));
+  return naGetPtrConst(iter->bufferptr);
 }
 
 
 
 NA_HIDEF NABuffer* naGetBufferIteratorBufferMutable(NABufferIterator* iter){
-  return naGetPtrMutable(&(iter->bufferptr));
+  return naGetPtrMutable(iter->bufferptr);
 }
 
 
@@ -49,7 +49,7 @@ NA_HIDEF NAInt naGetBufferIteratorPartOffset(NABufferIterator* iter){
 
 
 NA_HIDEF NABufferPart* naGetBufferPart(NABufferIterator* iter){
-  return naGetTreeCurMutable(&(iter->partiter));
+  return naGetTreeCurLeafMutable(&(iter->partiter));
 }
 
 

@@ -24,25 +24,25 @@ struct NATypeInfo{
 
 
 #undef NA_EXTERN_RUNTIME_TYPE
-#define NA_EXTERN_RUNTIME_TYPE(type)\
-  extern NATypeInfo na_ ## type ## _typeinfo
+#define NA_EXTERN_RUNTIME_TYPE(typename)\
+  extern NATypeInfo na_ ## typename ## _typeinfo
 
 
 
 #undef NA_RUNTIME_TYPE
 #ifndef NDEBUG
-  #define NA_RUNTIME_TYPE(type, destructor, refcounting)\
-    NATypeInfo na_ ## type ## _typeinfo =\
+  #define NA_RUNTIME_TYPE(typename, destructor, refcounting)\
+    NATypeInfo na_ ## typename ## _typeinfo =\
     {NA_NULL,\
-    naSizeof(type),\
+    naSizeof(typename),\
     (NAMutator)destructor,\
     refcounting,\
-    #type}
+    #typename}
 #else
-  #define NA_RUNTIME_TYPE(type, destructor, refcounting)\
-    NATypeInfo na_ ## type ## _typeinfo =\
+  #define NA_RUNTIME_TYPE(typename, destructor, refcounting)\
+    NATypeInfo na_ ## typename ## _typeinfo =\
     {NA_NULL,\
-    naSizeof(type),\
+    naSizeof(typename),\
     (NAMutator)destructor,\
     refcounting}
 #endif
@@ -50,7 +50,7 @@ struct NATypeInfo{
 
 
 #undef naNew
-#define naNew(type) (type*)naNewStruct(&na_ ## type ## _typeinfo)
+#define naNew(typename) (typename*)naNewStruct(&na_ ## typename ## _typeinfo)
 // If you experience an error here with naNew: Have you marked your type with
 // NA_RUNTIME_TYPE? See NA_RUNTIME_TYPE below.
 
@@ -80,7 +80,7 @@ extern NARuntime* na_runtime;
 NA_IDEF NAUInt naGetRuntimeGarbageBytesize(){
   #ifndef NDEBUG
     if(!na_runtime)
-      naCrash("naGetRuntimeGarbageBytesize", "Runtime not running. Use naStartRuntime()");
+      naCrash("Runtime not running. Use naStartRuntime()");
   #endif
   return na_runtime->totalmallocgarbagebytecount;
 }
@@ -90,7 +90,7 @@ NA_IDEF NAUInt naGetRuntimeGarbageBytesize(){
 NA_IDEF NAUInt naGetRuntimeMemoryPageSize(){
   #ifndef NDEBUG
     if(!na_runtime)
-      naCrash("naGetRuntimeMemoryPageSize", "Runtime not running. Use naStartRuntime()");
+      naCrash("Runtime not running. Use naStartRuntime()");
   #endif
   return na_runtime->mempagesize;
 }
@@ -100,7 +100,7 @@ NA_IDEF NAUInt naGetRuntimeMemoryPageSize(){
 NA_IDEF NAUInt naGetRuntimePoolPartSize(){
   #ifndef NDEBUG
     if(!na_runtime)
-      naCrash("naGetRuntimePoolPartSize", "Runtime not running. Use naStartRuntime()");
+      naCrash("Runtime not running. Use naStartRuntime()");
   #endif
   return na_runtime->partsize;
 }

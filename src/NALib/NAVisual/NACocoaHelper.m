@@ -12,7 +12,8 @@
 
 #include "NAUICocoa.h"
 
-#ifdef __OBJC__
+#if (NA_CONFIG_COMPILE_GUI == 1)  // We need this, in case of ANSI C
+#if defined __OBJC__
 #if NA_OS == NA_OS_MAC_OS_X
 // Now, we are sure, we compile with Objective-C and on MacOSX. The
 // #if directives will be closed at the very bottom of this file.
@@ -30,7 +31,8 @@ NA_DEF NSString* naAllocNSStringWithNAString(const NAString* string){
 
 
 #endif // NA_OS == NA_OS_MAC_OS_X
-#endif // __OBJC__
+#endif // defined __OBJC__
+#endif // (NA_CONFIG_COMPILE_GUI == 1)
 
 
 // Copyright (c) NALib, Tobias Stamm

@@ -97,7 +97,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
   
   #ifndef NDEBUG
     if(!string)
-      naError("naParseBufferLine", "string not initialized");
+      naError("string not initialized");
   #endif
 
   return string;
@@ -258,9 +258,9 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64*
       *retint = naAddUInt64(naMulUInt64(*retint, naMakeUInt64WithLo(10)), naMakeUInt64WithLo(*curbyte - '0'));
       #ifndef NDEBUG
         if(naGreaterUInt64(*retint, max))
-          naError("naParseBufferDecimalUnsignedInteger", "The value overflowed max.");
+          naError("The value overflowed max.");
         if(naSmallerUInt64(*retint, prevval))
-          naError("naParseBufferDecimalUnsignedInteger", "The value overflowed 64 bit integer space.");
+          naError("The value overflowed 64 bit integer space.");
       #endif
       if(naSmallerUInt64(*retint, prevval) || naGreaterUInt64(*retint, max)){
         *retint = max;

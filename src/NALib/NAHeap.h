@@ -2,8 +2,8 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#ifndef NA_HEAP_INCLUDED
-#define NA_HEAP_INCLUDED
+#ifndef NA_HEAP2_INCLUDED
+#define NA_HEAP2_INCLUDED
 #ifdef __cplusplus
   extern "C"{
 #endif
@@ -69,7 +69,7 @@ typedef struct NAHeap NAHeap;
 // If this flag is 0 or not present, the heap will use double-value keys.
 #define NA_HEAP_USES_DOUBLE_KEY       0x0000
 #define NA_HEAP_USES_FLOAT_KEY        0x0001
-#define NA_HEAP_USES_INT_KEY          0x0002
+#define NA_HEAP_USES_NAINT_KEY        0x0002
 #define NA_HEAP_DATATYPE_MASK         0x0003
 // Use the following flags to define if the heap shall be a min- or a max-heap.
 // If this flag is 0 or not present, the heap will be a min-heap.
@@ -148,7 +148,7 @@ NA_IAPI void*       naRemoveHeapPosMutable( NAHeap* heap, NAInt backpointer);
 
 
 // Inline implementations are in a separate file:
-#include "NAStruct/NAHeapII.h"
+#include "NAStruct/NAHeap/NAHeapII.h"
 
 
 
@@ -157,7 +157,7 @@ NA_IAPI void*       naRemoveHeapPosMutable( NAHeap* heap, NAInt backpointer);
 #ifdef __cplusplus
   } // extern "C"
 #endif
-#endif // NA_HEAP_INCLUDED
+#endif // NA_HEAP2_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm
 //

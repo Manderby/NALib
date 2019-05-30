@@ -150,8 +150,8 @@ NA_IDEF void naCorrectDateTimeZone( NADateTime* datetime,
                                   int16 newshift,
                                  NABool summertime){
   datetime->errornum = NA_DATETIME_ERROR_NONE;
-  datetime->sisec = naSubInt64(datetime->sisec, naMakeInt64WithLo(datetime->shift * NA_SECONDS_PER_MINUTE));
-  datetime->sisec = naAddInt64(datetime->sisec, naMakeInt64WithLo(newshift * NA_SECONDS_PER_MINUTE));
+  datetime->sisec = naSubInt64(datetime->sisec, naMakeInt64WithLo(datetime->shift * (int32)NA_SECONDS_PER_MINUTE));
+  datetime->sisec = naAddInt64(datetime->sisec, naMakeInt64WithLo(newshift * (int32)NA_SECONDS_PER_MINUTE));
   naSetDateTimeZone(datetime, newshift, summertime);
 }
 

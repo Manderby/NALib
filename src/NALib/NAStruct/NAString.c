@@ -76,7 +76,7 @@ NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
 
   #ifndef NDEBUG
     if(!ptr)
-      naCrash("naNewStringWithUTF8CStringLiteral", "ptr is Null-Pointer");
+      naCrash("ptr is Null-Pointer");
   #endif
 
   length = (NAInt)naStrlen(ptr);
@@ -162,7 +162,7 @@ NA_DEF NAString* naNewStringExtraction(const NAString* srcstring, NAInt offset, 
 
   #ifndef NDEBUG
     if(!srcstring)
-      naCrash("naNewStringExtraction", "srcstring is Null-Pointer.");
+      naCrash("srcstring is Null-Pointer.");
   #endif
 
   // Extract the string
@@ -184,19 +184,18 @@ NA_DEF NAString* naNewStringWithBufferExtraction(NABuffer* buffer, NARangei rang
   NAString* string;
   #ifndef NDEBUG
     if(!naIsLengthValueUsefuli(buffer->range.length))
-      naError("naNewStringWithBufferExtraction", "Buffer Range length is not useful.");
+      naError("Buffer Range length is not useful.");
     if(!naIsLengthValueUsefuli(range.length))
-      naError("naNewStringWithBufferExtraction", "Range length is not useful.");
+      naError("Range length is not useful.");
   #endif
   string = naNew(NAString);
   string->buffer = naNewBufferExtraction(buffer, range.origin, range.length);
   #ifndef NDEBUG
     string->cachedstr = NA_NULL;
   #endif
-//  #if NA_STRING_ALWAYS_CACHE == 1
-//    naGetStringUTF8Pointer(string);
-//  #endif
-  naGetStringUTF8Pointer(string); // todo caerful: behaves differently release and debug!
+  #if NA_STRING_ALWAYS_CACHE == 1
+    naGetStringUTF8Pointer(string);
+  #endif
   return string;
 }
 
@@ -217,7 +216,7 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
   #ifndef NDEBUG
     NAString* mutablestring = (NAString*)string;
     if(!string){
-      naCrash("naGetStringUTF8Pointer", "string is Null-Pointer.");
+      naCrash("string is Null-Pointer.");
       return NA_NULL;
     }
   #endif
@@ -230,7 +229,7 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
     strlen = naGetBufferRange(string->buffer).length;
     #ifndef NDEBUG
       if(!strlen)
-        naError("naGetStringUTF8Pointer", "String is empty");
+        naError("String is empty");
     #endif
     newstr = naMallocTmp((NAUInt)(strlen + 1));
     naCacheBufferRange(string->buffer, naGetBufferRange(string->buffer));
@@ -248,7 +247,7 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
 NA_DEF NABool naIsStringEmpty(const NAString* string){
   #ifndef NDEBUG
     if(!string){
-      naCrash("naIsStringEmpty", "string is Null-Pointer.");
+      naCrash("string is Null-Pointer.");
       return NA_TRUE;
     }
   #endif
@@ -376,7 +375,7 @@ NA_DEF NAString* naNewStringCUnescaped(const NAString* inputstring){
     // todo: Add more escapes
       default:
         #ifndef NDEBUG
-          naError("naNewStringCUnescaped", "Unrecognized escape character");
+          naError("Unrecognized escape character");
         #endif
         naWriteBufferi8(&outiter, curchar);
         break;
@@ -448,7 +447,7 @@ NA_DEF NAString* naNewStringXMLDecoded(const NAString* inputstring){
       else if(naEqualStringToUTF8CStringLiteral(token, "apos",  NA_TRUE)){naWriteBufferi8(&outiter, '\'');}
       else{
         #ifndef NDEBUG
-          naError("naNewStringXMLDecoded", "Could not decode entity");
+          naError("Could not decode entity");
         #endif
         naWriteBufferi8(&outiter, curchar);
         naWriteBufferString(&outiter, token);
@@ -517,7 +516,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputstring){
       case ')':  naWriteBufferi8(&outiter, ')');  break;
       default:
         #ifndef NDEBUG
-          naError("naNewStringEPSDecoded", "Unrecognized escape character");
+          naError("Unrecognized escape character");
         #endif
         naWriteBufferi8(&outiter, curchar);
         break;
@@ -693,7 +692,7 @@ NA_DEF float naParseStringFloat(const NAString* string){
   if(len > 20){
     len = 20;
     #ifndef NDEBUG
-      naError("naParseStringFloat", "String truncated to 20 characters");
+      naError("String truncated to 20 characters");
     #endif
   }
   buf = naMalloc((len + 1) * naSizeof(NAUTF8Char));
@@ -713,7 +712,7 @@ NA_DEF double naParseStringDouble(const NAString* string){
   if(len > 20){
     len = 20;
     #ifndef NDEBUG
-      naError("naParseStringFloat", "String truncated to 20 characters");
+      naError("String truncated to 20 characters");
     #endif
   }
   buf = naMalloc((len + 1) * naSizeof(NAUTF8Char));
