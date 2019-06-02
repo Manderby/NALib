@@ -37,8 +37,6 @@ struct NACocoaApplication{
 
 struct NACocoaWindow{
   NACoreWindow corewindow;
-  NAUInt trackingcount;
-  NSTrackingArea* trackingarea;
 };
 
 
@@ -50,6 +48,8 @@ struct NACocoaWindow{
 
 @interface NANativeWindow : NSWindow <NSWindowDelegate>{
   NACocoaWindow* cocoawindow;
+  NAUInt trackingcount;
+  NSTrackingArea* trackingarea;
 }
 @end
 

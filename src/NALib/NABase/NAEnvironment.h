@@ -82,6 +82,11 @@
   #else
     #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
   #endif
+  #if __has_feature(objc_arc)
+    #define NA_ARC_BRIDGE __bridge
+  #else
+    #define NA_ARC_BRIDGE
+  #endif
 
 #else
   #error "System not detected"

@@ -117,7 +117,11 @@ NA_IDEF void naClearThread(NAThread thread){
   #if NA_OS == NA_OS_WINDOWS
     CloseHandle(threadstruct->nativeThread);
   #else
-    dispatch_release(threadstruct->nativeThread);
+    #if __has_feature(objc_arc)
+      // Thread will be released automatically when ARC is turned on.
+    #else
+      dispatch_release(threadstruct->nativeThread);
+    #endif
   #endif
   naFree(threadstruct);
 }
@@ -235,7 +239,11 @@ NA_IDEF void naClearMutex(NAMutex mutex){
   #else
     #ifndef NDEBUG
       NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
-      dispatch_release(macintoshmutex->mutex);
+      #if __has_feature(objc_arc)
+      // Mutex will be released automatically when ARC is turned on.
+      #else
+        dispatch_release(macintoshmutex->mutex);
+      #endif
       naFree(macintoshmutex);
     #else
       dispatch_release(mutex);
@@ -405,11 +413,15 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
 NA_IDEF NAAlarm naMakeAlarm(void){
   NANativeAlarm alarm;
   #if NA_OS == NA_OS_WINDOWS
-    alarm = CreateEvent(NULL, FALSE, FALSE, NULL);
+    return CreateEvent(NULL, FALSE, FALSE, NULL);
   #else
     alarm = dispatch_semaphore_create(0);
+    #if __has_feature(objc_arc)
+      return (NAAlarm)CFBridgingRetain(alarm);
+    #else
+      return (NAAlarm)alarm;
+    #endif
   #endif
-  return alarm;
 }
 
 
@@ -418,7 +430,11 @@ NA_IDEF void naClearAlarm(NAAlarm alarm){
   #if NA_OS == NA_OS_WINDOWS
     CloseHandle(alarm);
   #else
-    dispatch_release(alarm);
+    #if __has_feature(objc_arc)
+      CFBridgingRelease(alarm);
+    #else
+      dispatch_release(alarm);
+    #endif
   #endif
 }
 
@@ -445,10 +461,18 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarm, double maxwaittime){
         naError("maxwaittime should not be negative. Beware of the zero!");
     #endif
     if(maxwaittime == 0){
-      result = dispatch_semaphore_wait(alarm, DISPATCH_TIME_FOREVER);
+      #if __has_feature(objc_arc)
+        result = dispatch_semaphore_wait((dispatch_semaphore_t)CFBridgingRelease(alarm), DISPATCH_TIME_FOREVER);
+      #else
+        result = dispatch_semaphore_wait((dispatch_semaphore_t)alarm, DISPATCH_TIME_FOREVER);
+      #endif
     }else{
       dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1000000000 * maxwaittime));
-      result = dispatch_semaphore_wait(alarm, timeout);
+      #if __has_feature(objc_arc)
+        result = dispatch_semaphore_wait((dispatch_semaphore_t)CFBridgingRelease(alarm), timeout);
+      #else
+        result = dispatch_semaphore_wait((dispatch_semaphore_t)alarm, timeout);
+      #endif
     }
     return (result ? NA_FALSE : NA_TRUE);
   #endif
@@ -460,7 +484,11 @@ NA_IDEF void naTriggerAlarm(NAAlarm alarm){
   #if NA_OS == NA_OS_WINDOWS
     SetEvent(alarm);
   #else
-    dispatch_semaphore_signal(alarm);
+    #if __has_feature(objc_arc)
+      dispatch_semaphore_signal((dispatch_semaphore_t)CFBridgingRelease(alarm));
+    #else
+      dispatch_semaphore_signal((dispatch_semaphore_t)alarm);
+    #endif
   #endif
 }
 

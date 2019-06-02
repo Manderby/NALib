@@ -24,10 +24,35 @@
 #include "NAThreading.h"
 
 
+// Mapping of deprecated entities
+#if !defined __MAC_10_12
+  #define NAEventMaskAny                  NSAnyEventMask
+  #define NAWindowStyleMaskTitled         NSTitledWindowMask
+  #define NAWindowStyleMaskClosable       NSClosableWindowMask
+  #define NAWindowStyleMaskMiniaturizable NSMiniaturizableWindowMask
+  #define NAWindowStyleMaskResizable      NSResizableWindowMask
+  #define NAWindowStyleMaskBorderless     NSBorderlessWindowMask
+  #define NAEventModifierFlagShift        NSShiftKeyMask
+  #define NAEventModifierFlagOption       NSAlternateKeyMask
+  #define NAEventModifierFlagControl      NSControlKeyMask
+  #define NAEventModifierFlagCommand      NSCommandKeyMask
+#else
+  #define NAEventMaskAny                  NSEventMaskAny
+  #define NAWindowStyleMaskTitled         NSWindowStyleMaskTitled
+  #define NAWindowStyleMaskClosable       NSWindowStyleMaskClosable
+  #define NAWindowStyleMaskMiniaturizable NSWindowStyleMaskMiniaturizable
+  #define NAWindowStyleMaskResizable      NSWindowStyleMaskResizable
+  #define NAWindowStyleMaskBorderless     NSWindowStyleMaskBorderless
+  #define NAEventModifierFlagShift        NSEventModifierFlagShift
+  #define NAEventModifierFlagOption       NSEventModifierFlagOption
+  #define NAEventModifierFlagControl      NSEventModifierFlagControl
+  #define NAEventModifierFlagCommand      NSEventModifierFlagCommand
+#endif
 
 
 
-
+NA_HAPI void naRenewWindowMouseTracking(NACocoaWindow* cocoawindow);
+NA_HAPI void naClearWindowMouseTracking(NACocoaWindow* cocoawindow);
 
 
 // ///////////////////////////////////
@@ -42,26 +67,38 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 
   // Start the Cocoa application and set the native ID of the application.
   [NSApplication sharedApplication];
-  naStartCoreApplication(sizeof(NACocoaApplication), NSApp);
+  #if __has_feature(objc_arc)
+    naStartCoreApplication(sizeof(NACocoaApplication), (NANativeID)CFBridgingRetain(NSApp));
+  #else
+    naStartCoreApplication(sizeof(NACocoaApplication), (NANativeID)NSApp);
+  #endif
 
   // Put an autorelease pool in place for the startup sequence.
-  NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+  #if !__has_feature(objc_arc)
+    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+  #endif
     // Call prestartup if desired.
     if(prestartup){prestartup(arg);}
     // Let the Macintosh System know that the app is ready to run.
     [NSApp finishLaunching];
     // Call poststartup if desired.
     if(poststartup){poststartup(arg);}
-  [pool drain];
+  #if !__has_feature(objc_arc)
+    [pool drain];
+  #endif
 
   // Start the event loop.
   NSDate* distantfuture = [NSDate distantFuture];
   while(naIsCoreApplicationRunning()){
-    pool = [[NSAutoreleasePool alloc] init];
-      NSEvent* curevent = [NSApp nextEventMatchingMask:NSAnyEventMask untilDate:distantfuture inMode:NSDefaultRunLoopMode dequeue:YES];
+    #if !__has_feature(objc_arc)
+      pool = [[NSAutoreleasePool alloc] init];
+    #endif
+      NSEvent* curevent = [NSApp nextEventMatchingMask:NAEventMaskAny untilDate:distantfuture inMode:NSDefaultRunLoopMode dequeue:YES];
       naCollectGarbage();
       if(curevent){[NSApp sendEvent:curevent];}
-    [pool drain];
+    #if !__has_feature(objc_arc)
+      [pool drain];
+    #endif
   }
 
   // When reaching here, the application had been stopped.
@@ -93,7 +130,11 @@ NA_DEF void naOpenConsoleWindow(const char* windowtitle){
 
 
 NA_DEF void naRefreshUIElementNow(NAUIElement* uielement){
-  [((NSView*)naGetUIElementNativeID(uielement)) setNeedsDisplay:YES];
+  #if __has_feature(objc_arc)
+    [((NSView*)CFBridgingRelease(naGetUIElementNativeID(uielement))) setNeedsDisplay:YES];
+  #else
+    [((NSView*)naGetUIElementNativeID(uielement)) setNeedsDisplay:YES];
+  #endif
 }
 
 
@@ -133,7 +174,11 @@ NA_HDEF NARect naGetScreenAbsoluteRect(NACoreUIElement* screen){
   NSRect frame;
   NSRect mainframe;
   mainframe = [[NSScreen mainScreen] frame];
-  frame = [(NSScreen*)(naGetUIElementNativeID((NAUIElement*)screen)) frame];
+  #if __has_feature(objc_arc)
+    frame = [(NSScreen*)CFBridgingRelease(naGetUIElementNativeID((NAUIElement*)screen)) frame];
+  #else
+    frame = [(NSScreen*)(naGetUIElementNativeID((NAUIElement*)screen)) frame];
+  #endif
   rect.pos.x = frame.origin.x;
   rect.pos.y = mainframe.size.height - frame.size.height - frame.origin.y;
   rect.size.width = frame.size.width;
@@ -147,7 +192,11 @@ NA_HDEF NARect naGetWindowAbsoluteInnerRect(NACoreUIElement* window){
   NARect rect;
   NSRect contentrect;
   NSRect windowframe;
-  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+  #if __has_feature(objc_arc)
+    NANativeWindow* nativewindow = (NANativeWindow*)CFBridgingRelease(naGetUIElementNativeID((NAUIElement*)window));
+  #else
+    NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+  #endif
   contentrect = [[nativewindow contentView] frame];
   windowframe = [nativewindow frame];
   rect.pos.x = windowframe.origin.x + contentrect.origin.x;
@@ -162,7 +211,11 @@ NA_HDEF NARect naGetWindowAbsoluteInnerRect(NACoreUIElement* window){
 NA_HDEF NARect naGetWindowAbsoluteOuterRect(NACoreUIElement* window){
   NARect rect;
   NSRect windowframe;
-  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+  #if __has_feature(objc_arc)
+    NANativeWindow* nativewindow = (NANativeWindow*)CFBridgingRelease(naGetUIElementNativeID((NAUIElement*)window));
+  #else
+    NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+  #endif
   windowframe = [nativewindow frame];
   rect.pos.x = windowframe.origin.x;
   rect.pos.y = windowframe.origin.y;
@@ -178,7 +231,11 @@ NA_HDEF NARect naGetViewAbsoluteInnerRect(NACoreUIElement* view){
   NSRect contentrect;
   NARect windowrect;
   // Warning: does not work when frame unequal bounds.
-  contentrect = [(NSView*)(naGetUIElementNativeID((NAUIElement*)view)) frame];
+  #if __has_feature(objc_arc)
+    contentrect = [(NSView*)CFBridgingRelease(naGetUIElementNativeID((NAUIElement*)view)) frame];
+  #else
+    contentrect = [(NSView*)(naGetUIElementNativeID((NAUIElement*)view)) frame];
+  #endif
   windowrect = naGetWindowAbsoluteInnerRect((NACoreUIElement*)naGetUIElementWindow((NAUIElement*)view));
   rect.pos.x = windowrect.pos.x + contentrect.origin.x;
   rect.pos.y = windowrect.pos.y + contentrect.origin.y;
@@ -263,10 +320,47 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
 - (id) initWithCocoaWindow:(NACocoaWindow*)nawindow contentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag screen:(NSScreen *)screen{
   self = [super initWithContentRect:contentRect styleMask:aStyle backing:bufferingType defer:flag screen:screen];
   cocoawindow = nawindow;
+  trackingcount = 0;
+  trackingarea = nil;
   return self;
 }
 - (NACocoaWindow*) cocoawindow{
   return cocoawindow;
+}
+- (NSTrackingArea*) trackingarea{
+  return trackingarea;
+}
+- (NAUInt) trackingcount{
+  return trackingcount;
+}
+- (void)renewMouseTracking{
+  trackingarea = [[NSTrackingArea alloc] initWithRect:[[self contentView] bounds]
+      options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveWhenFirstResponder
+      owner:self userInfo:nil];
+  [[self contentView] addTrackingArea:trackingarea];
+}
+- (void)clearMouseTracking{
+  [[self contentView] removeTrackingArea:trackingarea];
+  #if __has_feature(objc_arc)
+    // TrackingArea will be released automatically when ARC is turned on.
+  #else
+    [trackingarea release];
+  #endif
+  trackingarea = nil;
+}
+- (void)retainMouseTracking{
+  trackingcount++;
+  if(trackingcount == 1){
+    [self setAcceptsMouseMovedEvents:YES];
+    naRenewWindowMouseTracking(cocoawindow);
+  }
+}
+- (void)releaseMouseTracking{
+  trackingcount--;
+  if(trackingcount == 0){
+    [self setAcceptsMouseMovedEvents:NO];
+    naClearWindowMouseTracking(cocoawindow);
+  }
 }
 - (void)mouseMoved:(NSEvent*)event{
 //  double deltaX = [event deltaX];
@@ -296,59 +390,68 @@ NA_DEF NAWindow* naNewWindow(const char* title, NARect rect, NABool resizeable){
   NACocoaWindow* cocoawindow = naAlloc(NACocoaWindow);
   cocoawindow->corewindow.windowedframe = rect;
   cocoawindow->corewindow.fullscreen = NA_FALSE;
-  cocoawindow->trackingcount = 0;
-  cocoawindow->trackingarea = nil;
 
   NSRect contentRect = naMakeNSRectWithRect(cocoawindow->corewindow.windowedframe);
-  void* nativeID = [[NANativeWindow alloc] initWithCocoaWindow:cocoawindow contentRect:contentRect styleMask:NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask backing:NSBackingStoreBuffered defer:NO screen:[NSScreen mainScreen]];
-  NANativeView* nativeView = [[[NANativeView alloc] initWithFrame:[[(NANativeWindow*)nativeID contentView] frame]] autorelease];
-  [(NANativeWindow*)nativeID setDelegate:(NANativeWindow*)nativeID];
-  [(NANativeWindow*)nativeID setContentView:nativeView];
-  [(NANativeWindow*)nativeID setInitialFirstResponder:[(NANativeWindow*)nativeID contentView]];
-  naRegisterCoreUIElement(&(cocoawindow->corewindow.uielement), (NACoreUIElement*)naGetApplication(), NA_UI_WINDOW, nativeID);
+  NANativeWindow* nativewindow = [[NANativeWindow alloc] initWithCocoaWindow:cocoawindow contentRect:contentRect styleMask:NAWindowStyleMaskTitled | NAWindowStyleMaskClosable | NAWindowStyleMaskMiniaturizable | NAWindowStyleMaskResizable backing:NSBackingStoreBuffered defer:NO screen:[NSScreen mainScreen]];
+  NANativeView* nativeView = [[NANativeView alloc] initWithFrame:[[nativewindow contentView] frame]];
+  #if __has_feature(objc_arc)
+    // View will be released automatically when ARC is turned on.
+  #else
+    [nativeView autorelease];
+  #endif
+  [nativewindow setDelegate:nativewindow];
+  [nativewindow setContentView:nativeView];
+  [nativewindow setInitialFirstResponder:[nativewindow contentView]];
+  #if __has_feature(objc_arc)
+    naRegisterCoreUIElement(&(cocoawindow->corewindow.uielement), (NACoreUIElement*)naGetApplication(), NA_UI_WINDOW, (void*)CFBridgingRetain(nativewindow));
+  #else
+    naRegisterCoreUIElement(&(cocoawindow->corewindow.uielement), (NACoreUIElement*)naGetApplication(), NA_UI_WINDOW, (void*)nativewindow);
+  #endif
   return (NAWindow*)cocoawindow;
 }
 
 
 
 NA_HDEF void naRenewWindowMouseTracking(NACocoaWindow* cocoawindow){
-  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)cocoawindow));
-  cocoawindow->trackingarea = [[NSTrackingArea alloc] initWithRect:[[nativewindow contentView] bounds]
-      options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveWhenFirstResponder
-      owner:nativewindow userInfo:nil];
-  [[nativewindow contentView] addTrackingArea:cocoawindow->trackingarea];
+  #if __has_feature(objc_arc)
+    NANativeWindow* nativewindow = (NANativeWindow*)CFBridgingRelease(naGetUIElementNativeID((NAUIElement*)cocoawindow));
+  #else
+    NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)cocoawindow));
+  #endif
+  [nativewindow renewMouseTracking];
 }
 
 
 
 NA_HDEF void naClearWindowMouseTracking(NACocoaWindow* cocoawindow){
-  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)cocoawindow));
-  [[nativewindow contentView] removeTrackingArea:cocoawindow->trackingarea];
-  [cocoawindow->trackingarea release];
-  cocoawindow->trackingarea = nil;
+  #if __has_feature(objc_arc)
+    NANativeWindow* nativewindow = (NANativeWindow*)CFBridgingRelease(naGetUIElementNativeID((NAUIElement*)cocoawindow));
+  #else
+    NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)cocoawindow));
+  #endif
+  [nativewindow clearMouseTracking];
 }
 
 
 
 NA_HDEF void naRetainWindowMouseTracking(NAWindow* window){
-  NACocoaWindow* cocoawindow = (NACocoaWindow*)window;
-  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
-  cocoawindow->trackingcount++;
-  if(cocoawindow->trackingcount == 1){
-    [nativewindow setAcceptsMouseMovedEvents:YES];
-    naRenewWindowMouseTracking(cocoawindow);
-  }
+  #if __has_feature(objc_arc)
+    NANativeWindow* nativewindow = (NANativeWindow*)CFBridgingRelease(naGetUIElementNativeID((NAUIElement*)window));
+  #else
+    NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+  #endif
+  [nativewindow retainMouseTracking];
 }
 
 
 
 NA_HDEF void naReleaseWindowMouseTracking(NACocoaWindow* cocoawindow){
-  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)cocoawindow));
-  cocoawindow->trackingcount--;
-  if(cocoawindow->trackingcount == 0){
-    [nativewindow setAcceptsMouseMovedEvents:NO];
-    naClearWindowMouseTracking(cocoawindow);
-  }
+  #if __has_feature(objc_arc)
+    NANativeWindow* nativewindow = (NANativeWindow*)CFBridgingRelease(naGetUIElementNativeID((NAUIElement*)cocoawindow));
+  #else
+    NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)cocoawindow));
+  #endif
+  [nativewindow releaseMouseTracking];
 }
 
 
@@ -360,7 +463,11 @@ NA_DEF void naClearWindow(NAWindow* window){
 
 
 NA_DEF void naShowWindow(NAWindow* window){
-  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+  #if __has_feature(objc_arc)
+    NANativeWindow* nativewindow = (NANativeWindow*)CFBridgingRelease(naGetUIElementNativeID((NAUIElement*)window));
+  #else
+    NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+  #endif
   [nativewindow makeKeyAndOrderFront:NA_NULL];
 }
 
@@ -368,12 +475,21 @@ NA_DEF void naShowWindow(NAWindow* window){
 
 NA_DEF void naSetWindowContentView(NAWindow* window, NAUIElement* uielement){
   NACocoaWindow* cocoawindow = (NACocoaWindow*)window;
-  if(cocoawindow->trackingarea){naClearWindowMouseTracking(cocoawindow);}
+  #if __has_feature(objc_arc)
+    NANativeWindow* nativewindow = (NANativeWindow*)CFBridgingRelease(naGetUIElementNativeID((NAUIElement*)window));
+  #else
+    NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+  #endif
+  if([nativewindow trackingarea]){naClearWindowMouseTracking(cocoawindow);}
   NACoreUIElement* element = (NACoreUIElement*)uielement;
-  NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
-  [nativewindow setContentView:element->nativeID];
-  [(NSWindow*)naGetUIElementNativeID((NAUIElement*)window) setInitialFirstResponder:[nativewindow contentView]];
-  if(cocoawindow->trackingcount){naRenewWindowMouseTracking(cocoawindow);}
+  #if __has_feature(objc_arc)
+    [nativewindow setContentView:(NSView*)CFBridgingRelease(element->nativeID)];
+    [(NSWindow*)CFBridgingRelease(naGetUIElementNativeID((NAUIElement*)window)) setInitialFirstResponder:[nativewindow contentView]];
+  #else
+    [nativewindow setContentView:(NSView*)element->nativeID];
+    [(NSWindow*)naGetUIElementNativeID((NAUIElement*)window) setInitialFirstResponder:[nativewindow contentView]];
+  #endif
+  if([nativewindow trackingcount]){naRenewWindowMouseTracking(cocoawindow);}
 }
 
 
@@ -381,14 +497,22 @@ NA_DEF void naSetWindowContentView(NAWindow* window, NAUIElement* uielement){
 NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullscreen){
   NACoreWindow* corewindow = (NACoreWindow*)window;
   if(fullscreen != corewindow->fullscreen){
-    NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+    #if __has_feature(objc_arc)
+      NANativeWindow* nativewindow = (NANativeWindow*)CFBridgingRelease(naGetUIElementNativeID((NAUIElement*)window));
+    #else
+      NANativeWindow* nativewindow = (NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+    #endif
     if(fullscreen){
-      corewindow->windowedframe = naMakeRectWithNSRect([(NSWindow*)(corewindow->uielement.nativeID) frame]);
-      [nativewindow setStyleMask:NSBorderlessWindowMask];
+      #if __has_feature(objc_arc)
+        corewindow->windowedframe = naMakeRectWithNSRect([(NSWindow*)CFBridgingRelease(corewindow->uielement.nativeID) frame]);
+      #else
+        corewindow->windowedframe = naMakeRectWithNSRect([(NSWindow*)(corewindow->uielement.nativeID) frame]);
+      #endif
+      [nativewindow setStyleMask:NAWindowStyleMaskBorderless];
       [nativewindow setFrame:[[NSScreen mainScreen] frame] display:YES];
       [nativewindow setLevel:kCGScreenSaverWindowLevel];
     }else{
-      [nativewindow setStyleMask:NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask];
+      [nativewindow setStyleMask:NAWindowStyleMaskTitled | NAWindowStyleMaskClosable | NAWindowStyleMaskMiniaturizable | NAWindowStyleMaskResizable];
       [nativewindow setFrame:naMakeNSRectWithRect(corewindow->windowedframe) display:YES];
       [nativewindow setLevel:NSNormalWindowLevel];
     }
@@ -456,10 +580,10 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 }
 - (void)flagsChanged:(NSEvent*)event{
   NAUIKeyCode keyCode;
-  NABool shift   = ([event modifierFlags] & NSShiftKeyMask)    ?NA_TRUE:NA_FALSE;
-  NABool alt     = ([event modifierFlags] & NSAlternateKeyMask)?NA_TRUE:NA_FALSE;
-  NABool control = ([event modifierFlags] & NSControlKeyMask)  ?NA_TRUE:NA_FALSE;
-  NABool command = ([event modifierFlags] & NSCommandKeyMask)  ?NA_TRUE:NA_FALSE;
+  NABool shift   = ([event modifierFlags] & NAEventModifierFlagShift)    ?NA_TRUE:NA_FALSE;
+  NABool alt     = ([event modifierFlags] & NAEventModifierFlagOption)   ?NA_TRUE:NA_FALSE;
+  NABool control = ([event modifierFlags] & NAEventModifierFlagControl)  ?NA_TRUE:NA_FALSE;
+  NABool command = ([event modifierFlags] & NAEventModifierFlagCommand)  ?NA_TRUE:NA_FALSE;
 
   keyCode = NA_KEYCODE_SHIFT;
   naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
@@ -486,9 +610,19 @@ NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAMutator in
     NSOpenGLPFADepthSize, 64,
     NSOpenGLPFAAllowOfflineRenderers, // lets OpenGL know this context is offline renderer aware
 		0 };
-	NSOpenGLPixelFormat *pixelformat = [[[NSOpenGLPixelFormat alloc] initWithAttributes:attr] autorelease];
+	NSOpenGLPixelFormat *pixelformat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attr];
+  #if __has_feature(objc_arc)
+    // View will be released automatically when ARC is turned on.
+  #else
+    [pixelformat autorelease];
+  #endif
   NSRect frameRect = NSMakeRect(0.f, 0.f, (CGFloat)size.width, (CGFloat)size.height);
-  void* nativeID = [[[NANativeOpenGLView alloc] initWithNALibView:coreopenglview frame:frameRect pixelFormat:pixelformat initFunc:initfunc initData:initdata] autorelease];
+  NANativeOpenGLView* nativeView = [[NANativeOpenGLView alloc] initWithNALibView:coreopenglview frame:frameRect pixelFormat:pixelformat initFunc:initfunc initData:initdata];
+  #if __has_feature(objc_arc)
+    // View will be released automatically when ARC is turned on.
+  #else
+    [nativeView autorelease];
+  #endif
 
 //  if([self respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
 //    #if defined __MAC_10_7
@@ -496,14 +630,22 @@ NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAMutator in
 //    #endif
 //  }
 
-  naRegisterCoreUIElement(&(coreopenglview->uielement), (NACoreUIElement*)window, NA_UI_OPENGLVIEW, nativeID);
+  #if __has_feature(objc_arc)
+    naRegisterCoreUIElement(&(coreopenglview->uielement), (NACoreUIElement*)window, NA_UI_OPENGLVIEW, (void*) CFBridgingRetain(nativeView));
+  #else
+    naRegisterCoreUIElement(&(coreopenglview->uielement), (NACoreUIElement*)window, NA_UI_OPENGLVIEW, (void*) nativeView);
+  #endif
   return coreopenglview;
 }
 
 
 NA_DEF void naSwapOpenGLBuffer(NAOpenGLView* openglview){
   NACoreOpenGLView* coreopenglview = (NACoreOpenGLView*)openglview;
-  [[(NANativeOpenGLView*)(coreopenglview->uielement.nativeID) openGLContext] flushBuffer];
+  #if __has_feature(objc_arc)
+    [[(NANativeOpenGLView*)CFBridgingRelease(coreopenglview->uielement.nativeID) openGLContext] flushBuffer];
+  #else
+    [[(NANativeOpenGLView*)(coreopenglview->uielement.nativeID) openGLContext] flushBuffer];
+  #endif
 }
 
 NA_DEF void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds){

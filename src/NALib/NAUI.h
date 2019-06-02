@@ -175,15 +175,15 @@ NA_API void naStartApplication(  NAMutator prestartup,
 //
 // Mac: - NALib calls [NSApplication sharedApplication]
 //      - NALib allocates some structures in the background to run the UI.
-//      - NALib creates an NSAutoreleasePool
+//      - NALib creates an NSAutoreleasePool (only when ARC is turned of)
 //        * NALib calls prestartup with arg.
 //        * NALib calls [NSApp finishLaunching] which in turn will post an
 //          NSApplicationDidFinishLaunchingNotification to whatever application
 //          delegate you might have set.
 //        * NALib calls poststartup with arg.
-//      - NALib drains the autorelease pool.
-//      - NALib will start a message loop wich a new NSAutoreleasePools for
-//        each and every message.
+//      - NALib drains the autorelease pool. (only when ARC is turned of)
+//      - NALib will start a message loop. When ARC is turned off, a new
+//        NSAutoreleasePools is created for each and every message.
 //
 // Win: - NALib allocates some structures in the background to run the UI.
 //      - NALib calls prestartup with arg.
