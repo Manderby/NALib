@@ -57,7 +57,7 @@ NA_HIDEF NAInt naGetStackTotalCount(const NAStack* stack, NAInt indx){
 // This is a helper function which has one purpose: Add another memory block
 // to the stack which is double the element count of the previous block. The first block
 // has the element count given to naInitStack
-NA_HIDEF void naAddStackNewSpace(NAStack* stack){
+NA_HIDEF void naAddStackMoreMemory(NAStack* stack){
   void* newarray;
   newarray = naMalloc(naGetStackArrayAvailableCount(stack, naGetListCount(&(stack->arrays))) * stack->typesize);
   naAddListLastMutable(&(stack->arrays), newarray);
@@ -86,7 +86,7 @@ NA_IDEF NAStack* naInitStack(NAStack* stack, NAInt typesize, NAInt minimalcount)
     stack->itercount = 0;
   #endif
   if(stack->minimalexp == 0){stack->minimalexp = 1;}
-  naAddStackNewSpace(stack);
+  naAddStackMoreMemory(stack);
   return stack;
 }
 
@@ -122,7 +122,7 @@ NA_IDEF void* naPushStack(NAStack* stack){
 
   if(stack->usedcount > availablestack){
     if(naGetListCount(&(stack->arrays)) <= (stack->curindex + 1)){
-      naAddStackNewSpace(stack);
+      naAddStackMoreMemory(stack);
     }
     naIterateList(&(stack->curpos));
     stack->curindex++;

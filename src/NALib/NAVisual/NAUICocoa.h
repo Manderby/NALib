@@ -23,28 +23,58 @@
 
 //#include <objc/message.h>
 
-#include "NAUICoreAPI.h"
+#include "NAUICore.h"
 
 
 typedef struct NACocoaApplication NACocoaApplication;
-typedef struct NACocoaWindow NACocoaWindow;
+typedef struct NACocoaWindow      NACocoaWindow;
+typedef struct NACocoaSpace       NACocoaSpace;
+typedef struct NACocoaOpenGlSpace NACocoaOpenGLSpace;
+typedef struct NACocoaButton      NACocoaButton;
 
+
+// ////////////////
+// The bridging structs
+//
+// Native:       Adapter for the native implementation (in a specific language)
+// Cocoa/WINAPI: Adapter for the technology (for any language)
+// Core:         Adapter for NALib
+// UIElement:    Direct pointer back to the native struct.
+//
+// Native:       Compiled with Objective-C - native class inheriting from Cocoa
+// Cocoa/WINAPI: Compiled with Objective-C - C struct inheriting Core
+// Core:         Compiled with C           - C struct inheriting UIElement
+// UIElement:    Compiled with C           - C struct pointer to native.
+//
+// Native:       Compiled with Swift       - native class inheriting from Cocoa
+// Cocoa/WINAPI: Compiled with Swift       - C struct inheriting Core
+// Core:         Compiled with C           - C struct inheriting UIElement
+// UIElement:    Compiled with C           - C struct pointer to native.
 
 struct NACocoaApplication{
   NACoreApplication coreapp;
 };
 
-
 struct NACocoaWindow{
   NACoreWindow corewindow;
 };
 
+struct NACocoaSpace{
+  NACoreSpace corespace;
+};
+
+struct NACocoaOpenGLSpace{
+  NACoreOpenGLSpace coreopenglspace;
+};
+
+struct NACocoaButton{
+  NACoreButton corebutton;
+};
 
 
 
-@interface NANativeView : NSView
-@end
-
+// ///////////////
+// The native classes
 
 @interface NANativeWindow : NSWindow <NSWindowDelegate>{
   NACocoaWindow* cocoawindow;
@@ -53,11 +83,22 @@ struct NACocoaWindow{
 }
 @end
 
+@interface NANativeSpace : NSView{
+  NACocoaSpace* cocoaspace;
+}
+@end
 
-@interface NANativeOpenGLView : NSOpenGLView{
-  NAOpenGLView* nalibopenglview;
-  NAMutator initFunc;
-  void* initData;
+#if (NA_CONFIG_COMPILE_OPENGL == 1)
+  @interface NANativeOpenGLSpace : NSOpenGLSpace{
+    NACocoaOpenGLSpace* cocoaopenglspace;
+    NAMutator initFunc;
+    void* initData;
+  }
+  @end
+#endif
+
+@interface NANativeButton : NSButton{
+  NACocoaButton* cocoabutton;
 }
 @end
 

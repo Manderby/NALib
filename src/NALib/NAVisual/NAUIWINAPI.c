@@ -94,7 +94,7 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
       BeginPaint(hWnd, &ps);
 
       //if(uielement is opengl)
-      //        wglMakeCurrent(GetDC(naGetUIElementNativeID(&(openglview->uielement))), openglview->hRC);
+      //        wglMakeCurrent(GetDC(naGetUIElementNativeID(&(openglspace->uielement))), openglspace->hRC);
 
       hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW, NA_NULL);
       //uielement->refreshrequested = NA_FALSE;
@@ -274,7 +274,7 @@ NA_API void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 	wndclass.lpszClassName = TEXT("NAWindow");
 	RegisterClass(&wndclass);
 
-  // Register the view class
+  // Register the space class
   naZeron(&wndclass, sizeof(WNDCLASS));
 	wndclass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
 	wndclass.lpfnWndProc = WindowCallback;
@@ -285,7 +285,7 @@ NA_API void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 	wndclass.hCursor = LoadCursor( NULL, IDC_ARROW );
 	wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
 	wndclass.lpszMenuName = NULL;
-	wndclass.lpszClassName = TEXT("NAView");
+	wndclass.lpszClassName = TEXT("NASpace");
 	RegisterClass(&wndclass);
 
   // Call poststartup if desired.
@@ -491,17 +491,17 @@ NA_HDEF NARect naGetWindowAbsoluteOuterRect(NAUIElement* window){
 
 
 
-NA_HDEF NARect naGetViewAbsoluteInnerRect(NAUIElement* view){
+NA_HDEF NARect naGetSpaceAbsoluteInnerRect(NAUIElement* space){
   NARect rect;
   NARect screenrect;
   RECT contentrect;
   POINT testpoint = {0, 0};
-  NACoreUIElement* coreview;
+  NACoreUIElement* corespace;
 
-  coreview = (NACoreUIElement*)view;
+  corespace = (NACoreUIElement*)space;
 
-  GetClientRect(coreview->nativeID, &contentrect);
-  ClientToScreen(coreview->nativeID, &testpoint);
+  GetClientRect(corespace->nativeID, &contentrect);
+  ClientToScreen(corespace->nativeID, &testpoint);
   screenrect = naGetMainScreenRect();
 
   rect.pos.x = testpoint.x;
@@ -546,7 +546,7 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeel
       rect = naGetWindowAbsoluteInnerRect(coreelement);
     }
     break;
-  case NA_UI_OPENGLVIEW:  rect = naGetViewAbsoluteInnerRect(coreelement); break;
+  case NA_UI_OPENGLVIEW:  rect = naGetSpaceAbsoluteInnerRect(coreelement); break;
   default:
     #ifndef NDEBUG
       naError("naGetUIElementRect", "Invalid UI type");
@@ -559,7 +559,7 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeel
   case NA_UI_APPLICATION: relrect = naGetApplicationAbsoluteRect(); break;
   case NA_UI_SCREEN:      relrect = naGetScreenAbsoluteRect(corerelelement); break;
   case NA_UI_WINDOW:      relrect = naGetWindowAbsoluteInnerRect(corerelelement); break;
-  case NA_UI_OPENGLVIEW:  relrect = naGetViewAbsoluteInnerRect(corerelelement); break;
+  case NA_UI_OPENGLVIEW:  relrect = naGetSpaceAbsoluteInnerRect(corerelelement); break;
   default:
     #ifndef NDEBUG
       naError("naGetUIElementRect", "Invalid UI type");
@@ -738,7 +738,7 @@ NA_DEF void naShowWindow(NAWindow* window){
 
 
 
-NA_DEF void naSetWindowContentView(NAWindow* window, void* uielement){
+NA_DEF void naSetWindowContentSpace(NAWindow* window, void* uielement){
   NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)window;
   naAddListLastMutable(&(winapiwindow->corewindow.uielement.childs), uielement); // todo: this is a hack just for now.
   //NAUIElement* element = (NAUIElement*)uielement;
@@ -813,22 +813,22 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 //}
 
 #if NA_CONFIG_COMPILE_OPENGL == 1
-  NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
+  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
 	
     HWND hWnd;
     HDC hDC;
  	  PIXELFORMATDESCRIPTOR pfd;
     int format;
-    NAWINAPIOpenGLView* openglview;
+    NAWINAPIOpenGLSpace* openglspace;
 
 	  hWnd = CreateWindow(
-		  TEXT("NAView"), "OpenGL View",
+		  TEXT("NASpace"), "OpenGL Space",
 		  WS_CHILD | WS_VISIBLE | ES_READONLY,
 		  0, 0, (int)size.width, (int)size.height,
 		  (HWND)naGetUIElementNativeID(window), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
 
-    openglview = naAlloc(NAWINAPIOpenGLView);
-    naRegisterCoreUIElement((NACoreUIElement*)openglview, (NACoreUIElement*)window, NA_UI_OPENGLVIEW, hWnd);
+    openglspace = naAlloc(NAWINAPIOpenGLSpace);
+    naRegisterCoreUIElement((NACoreUIElement*)openglspace, (NACoreUIElement*)window, NA_UI_OPENGLVIEW, hWnd);
 
     hDC = GetDC(hWnd);
 
@@ -848,8 +848,8 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 	  SetPixelFormat( hDC, format, &pfd );
 	
 	  // make render context with this device context.
-	  openglview->hRC = wglCreateContext(hDC);
-	  wglMakeCurrent(hDC, openglview->hRC);
+	  openglspace->hRC = wglCreateContext(hDC);
+	  wglMakeCurrent(hDC, openglspace->hRC);
 
 	  typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
 	  PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
@@ -865,34 +865,34 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
     }
 
 	  //glewInit();
-    return openglview;
+    return openglspace;
   }
 
 
-  NA_DEF void naSwapOpenGLBuffer(NAOpenGLView* openglview){
-    NAWINAPIOpenGLView* winapiopenglview = (NAWINAPIOpenGLView*)openglview;
-    SwapBuffers(GetDC((HWND)naGetUIElementNativeID(&(winapiopenglview->coreopenglview.uielement))));
+  NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
+    NAWINAPIOpenGLSpace* winapiopenglspace = (NAWINAPIOpenGLSpace*)openglspace;
+    SwapBuffers(GetDC((HWND)naGetUIElementNativeID(&(winapiopenglspace->coreopenglspace.uielement))));
   }
 
 
 
-  NA_API void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds){
-    //NARect windowrect = naGetUIElementRect(naGetUIElementParent(openglview), naGetApplication(), NA_FALSE);
-    SetWindowPos((HWND)naGetUIElementNativeID(openglview), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
+  NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){
+    //NARect windowrect = naGetUIElementRect(naGetUIElementParent(openglspace), naGetApplication(), NA_FALSE);
+    SetWindowPos((HWND)naGetUIElementNativeID(openglspace), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
   }
 
 #endif
 
 
 NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage){
-  NARect viewrect;
+  NARect spacerect;
   NARect screenframe;
   NAPos centerpos;
-  viewrect = naGetUIElementRect(uielement, naGetApplication(), includebounds);
+  spacerect = naGetUIElementRect(uielement, naGetApplication(), includebounds);
   // todo: screen not defined
   screenframe = naGetMainScreenRect();
-  centerpos.x = viewrect.pos.x + viewrect.size.width * .5f;
-  centerpos.y = viewrect.pos.y + viewrect.size.height * .5f;
+  centerpos.x = spacerect.pos.x + spacerect.size.width * .5f;
+  centerpos.y = spacerect.pos.y + spacerect.size.height * .5f;
 
 //  naGetUIElementWindow(uielement)->flags |= CUB_WINDOW_IGNORE_MOUSE_WARP;
   naSetMouseWarpedTo(centerpos);

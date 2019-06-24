@@ -2,7 +2,7 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#include "NAUICoreAPI.h"
+#include "NAUICore.h"
 
 #if (NA_CONFIG_COMPILE_GUI == 1)
 

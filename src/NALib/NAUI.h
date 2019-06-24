@@ -41,8 +41,8 @@
 // In NALib, you create a GUI by starting an NAApplication and then adding
 // user interface elements to that application one by one. The topmost ui
 // element is the application itself. From there, you can access the screens
-// and add Windows. Windows may contain views and subviews where you place
-// elements like buttons, sliders, OpenGL views, etc.
+// and add Windows. Windows may contain spaces and subspaces where you place
+// elements like buttons, sliders, OpenGL spaces, etc.
 //
 // User interactions can be captured by defining so called "reactions".
 //
@@ -60,8 +60,8 @@
 // - Application
 // - Screen
 // - Window
-// - View
-// - Subviews...
+// - Space
+// - Subspaces...
 // - Elements like Buttons, Sliders, ...
 //
 // In NALib, the implementation of the corresponding structs is hidden in
@@ -75,7 +75,9 @@ typedef void  NAUIElement;
 typedef void  NAApplication;
 typedef void  NAScreen;
 typedef void  NAWindow;
-typedef void  NAOpenGLView;
+typedef void  NASpace;
+typedef void  NAOpenGLSpace;
+typedef void  NAButton;
 
 
 
@@ -87,14 +89,16 @@ typedef enum{
   NA_UI_APPLICATION,
   NA_UI_SCREEN,
   NA_UI_WINDOW,
-  NA_UI_OPENGLVIEW
+  NA_UI_VIEW,
+  NA_UI_OPENGLVIEW,
+  NA_UI_BUTTON,
 } NAUIElementType;
 
 NA_API NAUIElementType naGetUIElementType(NAUIElement* uielement);
 
 
 // Any ui element has a strict hierarchical ordering: Application - Screen -
-// Window - View - Subview - Subsubview ... You can get the parent element
+// Window - Space - Subspace - Subsubspace ... You can get the parent element
 // with this function. The parent of the Application will be NA_NULL.
 NA_API NAUIElement* naGetUIElementParent  (NAUIElement* uielement);
 
@@ -123,10 +127,10 @@ NA_API NARect naGetUIElementRect(   NAUIElement* uielement,
 
 // You can ask any ui element to refresh its contents. This will cause the
 // element to be displayed anew. The time difference defines when the refresh
-// shall occur in seconds. Note that even when using the Now variant or a value
-// of 0 as timediff, the redraw method will not execute immediately but put a
-// message to the default message queue of the application. Therefore, this
-// function will always immediately return.
+// shall occur in seconds. Note that even when using 0 as timediff, the redraw
+// method will not execute immediately but put a message to the default message
+// queue of the application. Therefore, this function will always immediately
+// return.
 NA_API void naRefreshUIElement    (NAUIElement* uielement, double timediff);
 
 
@@ -167,7 +171,7 @@ NA_API NANativeID naGetUIElementNativeID(NAUIElement* element);
 
 NA_API void naStartApplication(  NAMutator prestartup,
                                  NAMutator poststartup,
-                                  void* arg);
+                                     void* arg);
 
 // All arguments can be NA_NULL but you can ask NALib to call the given two
 // startup functions with the given arg. The precise order of the calls is
@@ -175,13 +179,13 @@ NA_API void naStartApplication(  NAMutator prestartup,
 //
 // Mac: - NALib calls [NSApplication sharedApplication]
 //      - NALib allocates some structures in the background to run the UI.
-//      - NALib creates an NSAutoreleasePool (only when ARC is turned of)
+//      - NALib creates an NSAutoreleasePool (only when ARC is turned off)
 //        * NALib calls prestartup with arg.
 //        * NALib calls [NSApp finishLaunching] which in turn will post an
 //          NSApplicationDidFinishLaunchingNotification to whatever application
 //          delegate you might have set.
 //        * NALib calls poststartup with arg.
-//      - NALib drains the autorelease pool. (only when ARC is turned of)
+//      - NALib drains the autorelease pool. (only when ARC is turned off)
 //      - NALib will start a message loop. When ARC is turned off, a new
 //        NSAutoreleasePools is created for each and every message.
 //
@@ -229,8 +233,8 @@ NA_API void naStopApplication(void);
 // it only makes sense if there is a message loop which only exists when
 // running a UI.
 NA_API void naCallApplicationFunctionInSeconds(  NAMutator function,
-                                                  void* arg,
-                                                 double timediff);
+                                                     void* arg,
+                                                    double timediff);
 
 // When using a GUI on windows, you will sooner or later have to set the
 // subsystem in the project properties->linker->system to /SUBSYSTEM:WINDOWS.
@@ -302,7 +306,7 @@ NA_API void naAddUIReaction(          void* controllerdata,
 // work in pairs. The controllerdata given to naAddUIReaction is an arbitrary
 // void pointer which simply will be set as the first parameter of the
 // reaction handler. You probably will use either NA_NULL or some kind of
-// master control struct for that, hence the name controller. The uielement
+// controller pointer for that, hence the name controller. The uielement
 // is the NAUIElement where the command occurs and the command sent is the
 // command observed.
 //
@@ -357,17 +361,22 @@ struct NACursorInfo{
 NA_API NAWindow* naNewWindow(const char* title, NARect rect, NABool resizeable);
 
 
+NA_API NASpace* naNewSpace(NARect rect);
+void naAddSpaceChild(NASpace* space, NAUIElement* child);
 
+NA_API NAButton* naNewButton(void);
 
 
 
 NA_API NARect naGetMainScreenRect(void);
 
 NA_API void naShowWindow(NAWindow* window);
-NA_API void naSetWindowContentView(NAWindow* window, NAUIElement* uielement);
+NA_API void naSetWindowContentSpace(NAWindow* window, NAUIElement* uielement);
 NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullscreen);
 NA_API NABool naIsWindowFullscreen(NAWindow* window);
 //NA_API NARect naGetWindowRect(NAWindow* window);
+
+NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
 
 #if NA_CONFIG_COMPILE_OPENGL == 1
   // the initfunc will be called with initdata as the input parameter as
@@ -375,16 +384,16 @@ NA_API NABool naIsWindowFullscreen(NAWindow* window);
   // initialization necessary like for example uploading of textures to the
   // GPU.
   // Note that the initFunc will be called...
-  // Win: Right within the naNewOpenGLView
+  // Win: Right within the naNewOpenGLSpace
   // Mac: when prepareOpenGL is called (which may be as late as when the
-  //      view comes onsceen)
-  NA_API NAOpenGLView* naNewOpenGLView( NAWindow* window,
+  //      space comes onsceen)
+  NA_API NAOpenGLSpace* naNewOpenGLSpace( NAWindow* window,
                                            NASize size,
                                         NAMutator initfunc,
                                             void* initdata);
   // Swaps the OpenGL buffer.
-  NA_API void naSwapOpenGLBuffer(NAOpenGLView* openglview);
-  NA_API void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds);
+  NA_API void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace);
+  NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds);
 #endif
 
 NA_API void naCenterMouse(   void* uielement,

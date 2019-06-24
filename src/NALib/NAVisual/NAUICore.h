@@ -26,27 +26,35 @@
 // declared with a global void* or integer big enough to encapsulate all
 // possible casts on all systems.
 
-
 typedef struct NAReaction           NAReaction;
 typedef struct NACoreUIElement      NACoreUIElement;
 typedef struct NACoreApplication    NACoreApplication;
 typedef struct NACoreWindow         NACoreWindow;
-typedef struct NACoreOpenGLView     NACoreOpenGLView;
+typedef struct NACoreSpace          NACoreSpace;
+typedef struct NACoreOpenGLSpace    NACoreOpenGLSpace;
+typedef struct NACoreButton         NACoreButton;
 
+
+
+// ////////////////////////////
+// Application
 
 // Performs all necessary initialization of the UI independent of the system.
 // The naInitUI functions are system dependent and will call this function
 // before doing anything else.
 NA_HAPI void naStartCoreApplication(NAInt bytesize, NANativeID nativeID);
+
 NA_HAPI void naStopCoreApplication(void);
 NA_HAPI void naClearCoreApplication(void);
 NA_HAPI NACoreApplication* naGetCoreApplication(void);
 NA_HAPI NABool naIsCoreApplicationRunning(void);
 
 
+// ///////////////////////
 // UIElements
+
+// Initialized the UIElement and registers it in the global ui list.
 NA_HAPI void naRegisterCoreUIElement( NACoreUIElement* coreuielement,
-                                      NACoreUIElement* parent,
                                        NAUIElementType elementtype,
                                                  void* nativeID);
 NA_HAPI void naUnregisterCoreUIElement(NACoreUIElement* coreuielement);
@@ -59,6 +67,7 @@ NA_HAPI NACoreWindow* naGetCoreUIElementWindow(NACoreUIElement* coreuielement);
 
 NA_HAPI void naRefreshUIElementNow(NAUIElement* uielement);
 
+NA_API void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent);
 
 
 
@@ -101,22 +110,7 @@ struct NACoreApplication{
 #define NA_APPLICATION_FLAG_MOUSE_VISIBLE   0x02
 
 
-//struct NAWindow{
-//  NACoreUIElement uielement;
-//  NABool fullscreen;
-//  NARect windowedframe;
-//  NASize size;
-//  NABounds4 bounds;
-//};
-
-
 struct NAScreen{
-  NACoreUIElement uielement;
-};
-
-
-
-struct NACoreOpenGLView{
   NACoreUIElement uielement;
 };
 
@@ -127,6 +121,27 @@ struct NACoreWindow{
   NABool fullscreen;
   NARect windowedframe;
 };
+
+
+
+struct NACoreSpace{
+  NACoreUIElement uielement;
+};
+
+
+
+struct NACoreOpenGLSpace{
+  NACoreUIElement uielement;
+};
+
+
+
+struct NACoreButton{
+  NACoreUIElement uielement;
+};
+
+
+
 
 
 
@@ -157,7 +172,7 @@ NA_HAPI void naRetainWindowMouseTracking(NAWindow* window);
 
 
 
-// Returns a pointer to the gui element which uses the given native ID.
+// Returns a pointer to the ui element which uses the given native ID.
 // Every gui element which is handeled by NALib uses a native struct which is
 // dependent on the system running. When handling events, a native ID is sent
 // but this native ID can in general not be mapped directly to a corresponding
@@ -169,7 +184,7 @@ NA_HAPI void* naGetUINALibEquivalent(void* nativeID);
 // in the NAReactionHandler function handler, it will be bubbling upwards in
 // the following order:
 // - First responder
-// - containing view
+// - containing space
 // - window
 // - application
 // - discard command as unhandled.
@@ -192,7 +207,7 @@ NA_HAPI void naSetMouseExitedAtPos(NAPos newpos);
 
 
 
-#endif //(NA_CONFIG_COMPILE_GUI == 1)
+#endif // (NA_CONFIG_COMPILE_GUI == 1)
 
 
 #ifdef __cplusplus

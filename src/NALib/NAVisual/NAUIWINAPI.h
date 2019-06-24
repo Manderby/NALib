@@ -3,7 +3,7 @@
 // Full license notice at the bottom.
 
 
-#include "NAUICoreAPI.h"
+#include "NAUICore.h"
 
 #if (NA_CONFIG_COMPILE_GUI == 1)
 #if NA_OS == NA_OS_WINDOWS
@@ -16,15 +16,9 @@
 
 #define CUB_WINDOW_IGNORE_MOUSE_WARP  0x01
 
-
-
-// The struct NAWINAPIApplication stores a list of timers which could otherwise
-// not be done.
 typedef struct NAWINAPIApplication NAWINAPIApplication;
-struct NAWINAPIApplication {
-  NACoreApplication coreapp;
-  NAList timers;
-};
+typedef struct NAWINAPIWindow NAWINAPIWindow;
+typedef struct NAWINAPIOpenGLSpace NAWINAPIOpenGLSpace;
 
 
 
@@ -37,8 +31,13 @@ struct NATimerStruct {
   void* arg;
 };
 
+// The struct NAWINAPIApplication stores a list of timers which could otherwise
+// not be done.
+struct NAWINAPIApplication {
+  NACoreApplication coreapp;
+  NAList timers;
+};
 
-typedef struct NAWINAPIWindow NAWINAPIWindow;
 struct NAWINAPIWindow {
   NACoreWindow corewindow;
   uint32 flags;
@@ -49,10 +48,8 @@ struct NAWINAPIWindow {
   NABounds4 bounds;
 };
 
-
-typedef struct NAWINAPIOpenGLView NAWINAPIOpenGLView;
-struct NAWINAPIOpenGLView {
-  NACoreOpenGLView coreopenglview;
+struct NAWINAPIOpenGLSpace {
+  NACoreOpenGLSpace coreopenglspace;
   HGLRC hRC;    // The rendering context for OpenGL
 };
 

@@ -19,6 +19,8 @@
 // Now, we are sure, we compile with Objective-C and on MacOSX. The two
 // #if directives will be closed at the very bottom of this file.
 
+
+
 #include "NAMemory.h"
 #include "NACoord.h"
 #include "NAThreading.h"
@@ -50,6 +52,11 @@
 #endif
 
 
+NA_HAPI NARect naGetApplicationAbsoluteRect(void);
+NA_HAPI NARect naGetScreenAbsoluteRect(NACoreUIElement* screen);
+NA_HAPI NARect naGetWindowAbsoluteOuterRect(NACoreUIElement* window);
+NA_HAPI NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space);
+NA_HAPI NARect naGetButtonAbsoluteInnerRect(NACoreUIElement* space);
 
 NA_HAPI void naRenewWindowMouseTracking(NACocoaWindow* cocoawindow);
 NA_HAPI void naClearWindowMouseTracking(NACocoaWindow* cocoawindow);
@@ -59,7 +66,6 @@ NA_HAPI void naClearWindowMouseTracking(NACocoaWindow* cocoawindow);
 // APPLICATION
 // ///////////////////////////////////
 
-
 NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void* arg){
   // The ((id (*)(id, SEL)) part is a cast of the objc_msgSend function which
   // is requires since a later version of Objective-C
@@ -67,11 +73,40 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 
   // Start the Cocoa application and set the native ID of the application.
   [NSApplication sharedApplication];
+  
+//  NSMenu* myMenu = [[NSMenu alloc] initWithTitle:@"Wurst"];
+//  NSMenuItem* mainMenuItem = [[NSMenuItem alloc] initWithTitle:@"Superwurst" action:NA_NULL keyEquivalent:@"A"];
+//  NSMenu* subMenu = [[NSMenu alloc] initWithTitle:@"SubWurst"];
+////  [mainMenuItem setMenu:subMenu];
+//  [myMenu addItem:mainMenuItem];  
+//  [NSApp setMainMenu:myMenu];
+
+//  NSImage* myIcon = [[NSImage alloc] initWithContentsOfFile:@"~/Desktop/nalibtitle.png"];
+//  [NSApp setApplicationIconImage:myIcon];
+
+//  NSBundle* bundle = NA_NULL;
+  NSBundle* bundle = [NSBundle mainBundle];
+  NSDictionary<NSString *, id>* plist = [bundle infoDictionary];
+  
+//  NSAppearance* appearance = [[NSAppearance alloc] initWithAppearanceNamed:NSAppearanceNameVibrantDark bundle:bundle];
+//  [NSApp setAppearance:appearance];
+//  [NSApp setPresentationOptions:NSApplicationPresentationHideDock];
+
+
+  [plist setValue:@"ch.manderc.testapp" forKey:[NSString stringWithUTF8String:CFStringGetCStringPtr(kCFBundleIdentifierKey, kCFStringEncodingUTF8)]];
+  
+//    [plist setValue:@"Knackwurst" forKey:[NSString stringWithUTF8String:CFStringGetCStringPtr(kCFBundleNameKey, kCFStringEncodingUTF8)]];
+
+//  [NSApp finishLaunching];
+  
+
+  
   #if __has_feature(objc_arc)
     naStartCoreApplication(sizeof(NACocoaApplication), (NANativeID)CFBridgingRetain(NSApp));
   #else
     naStartCoreApplication(sizeof(NACocoaApplication), (NANativeID)NSApp);
   #endif
+
 
   // Put an autorelease pool in place for the startup sequence.
   #if !__has_feature(objc_arc)
@@ -131,10 +166,17 @@ NA_DEF void naOpenConsoleWindow(const char* windowtitle){
 
 NA_DEF void naRefreshUIElementNow(NAUIElement* uielement){
   #if __has_feature(objc_arc)
-    [((NSView*)CFBridgingRelease(naGetUIElementNativeID(uielement))) setNeedsDisplay:YES];
+  [((NSView*)CFBridgingRelease(naGetUIElementNativeID(uielement))) setNeedsDisplay:YES];
   #else
     [((NSView*)naGetUIElementNativeID(uielement)) setNeedsDisplay:YES];
   #endif
+}
+
+
+NA_DEF void naSetUIElementParent (NAUIElement* uielement, NAUIElement* parent){
+  NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
+  // todo: remove from old parent
+  coreelement->parent = parent;
 }
 
 
@@ -156,9 +198,7 @@ NA_DEF void naRefreshUIElementNow(NAUIElement* uielement){
 
 
 
-
-
-NA_HDEF NARect naGetApplicationAbsoluteRect(){
+NA_HDEF NARect naGetApplicationAbsoluteRect(void){
   NARect rect;
   rect.pos.x = 0;
   rect.pos.y = 0;
@@ -226,17 +266,17 @@ NA_HDEF NARect naGetWindowAbsoluteOuterRect(NACoreUIElement* window){
 
 
 
-NA_HDEF NARect naGetViewAbsoluteInnerRect(NACoreUIElement* view){
+NA_HDEF NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space){
   NARect rect;
   NSRect contentrect;
   NARect windowrect;
   // Warning: does not work when frame unequal bounds.
   #if __has_feature(objc_arc)
-    contentrect = [(NSView*)CFBridgingRelease(naGetUIElementNativeID((NAUIElement*)view)) frame];
+    contentrect = [(NSView*)CFBridgingRelease(naGetUIElementNativeID((NAUIElement*)space)) frame];
   #else
-    contentrect = [(NSView*)(naGetUIElementNativeID((NAUIElement*)view)) frame];
+    contentrect = [(NSView*)(naGetUIElementNativeID((NAUIElement*)space)) frame];
   #endif
-  windowrect = naGetWindowAbsoluteInnerRect((NACoreUIElement*)naGetUIElementWindow((NAUIElement*)view));
+  windowrect = naGetWindowAbsoluteInnerRect((NACoreUIElement*)naGetUIElementWindow((NAUIElement*)space));
   rect.pos.x = windowrect.pos.x + contentrect.origin.x;
   rect.pos.y = windowrect.pos.y + contentrect.origin.y;
   rect.size.width = contentrect.size.width;
@@ -278,14 +318,18 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
       rect = naGetWindowAbsoluteInnerRect(element);
     }
     break;
-  case NA_UI_OPENGLVIEW:  rect = naGetViewAbsoluteInnerRect(element); break;
+  case NA_UI_VIEW :       rect = naGetSpaceAbsoluteInnerRect(element); break;
+  case NA_UI_OPENGLVIEW:  rect = naGetSpaceAbsoluteInnerRect(element); break;
+  case NA_UI_BUTTON :     rect = naGetButtonAbsoluteInnerRect(element); break;
   }
 
   switch(relelement->elementtype){
   case NA_UI_APPLICATION: relrect = naGetApplicationAbsoluteRect(); break;
   case NA_UI_SCREEN:      relrect = naGetScreenAbsoluteRect(relelement); break;
   case NA_UI_WINDOW:      relrect = naGetWindowAbsoluteInnerRect(relelement); break;
-  case NA_UI_OPENGLVIEW:  relrect = naGetViewAbsoluteInnerRect(relelement); break;
+  case NA_UI_VIEW:        relrect = naGetSpaceAbsoluteInnerRect(relelement); break;
+  case NA_UI_OPENGLVIEW:  relrect = naGetSpaceAbsoluteInnerRect(relelement); break;
+  case NA_UI_BUTTON:      relrect = naGetButtonAbsoluteInnerRect(relelement); break;
   }
 
   rect.pos.x = rect.pos.x - relrect.pos.x;
@@ -306,20 +350,13 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
 
 
 
-@implementation NANativeView
-- (void)drawRect:(NSRect)dirtyRect{
-  NA_UNUSED(dirtyRect);
-}
-@end
-
-
-
-
+// ////////////////////////////
+// Window
 
 @implementation NANativeWindow
-- (id) initWithCocoaWindow:(NACocoaWindow*)nawindow contentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag screen:(NSScreen *)screen{
+- (id) initWithCocoaWindow:(NACocoaWindow*)newcocoawindow contentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag screen:(NSScreen *)screen{
   self = [super initWithContentRect:contentRect styleMask:aStyle backing:bufferingType defer:flag screen:screen];
-  cocoawindow = nawindow;
+  cocoawindow = newcocoawindow;
   trackingcount = 0;
   trackingarea = nil;
   return self;
@@ -393,20 +430,18 @@ NA_DEF NAWindow* naNewWindow(const char* title, NARect rect, NABool resizeable){
 
   NSRect contentRect = naMakeNSRectWithRect(cocoawindow->corewindow.windowedframe);
   NANativeWindow* nativewindow = [[NANativeWindow alloc] initWithCocoaWindow:cocoawindow contentRect:contentRect styleMask:NAWindowStyleMaskTitled | NAWindowStyleMaskClosable | NAWindowStyleMaskMiniaturizable | NAWindowStyleMaskResizable backing:NSBackingStoreBuffered defer:NO screen:[NSScreen mainScreen]];
-  NANativeView* nativeView = [[NANativeView alloc] initWithFrame:[[nativewindow contentView] frame]];
-  #if __has_feature(objc_arc)
-    // View will be released automatically when ARC is turned on.
-  #else
-    [nativeView autorelease];
-  #endif
+  
   [nativewindow setDelegate:nativewindow];
-  [nativewindow setContentView:nativeView];
   [nativewindow setInitialFirstResponder:[nativewindow contentView]];
   #if __has_feature(objc_arc)
-    naRegisterCoreUIElement(&(cocoawindow->corewindow.uielement), (NACoreUIElement*)naGetApplication(), NA_UI_WINDOW, (void*)CFBridgingRetain(nativewindow));
+    naRegisterCoreUIElement(&(cocoawindow->corewindow.uielement), NA_UI_WINDOW, (void*)CFBridgingRetain(nativewindow));
   #else
-    naRegisterCoreUIElement(&(cocoawindow->corewindow.uielement), (NACoreUIElement*)naGetApplication(), NA_UI_WINDOW, (void*)nativewindow);
+    naRegisterCoreUIElement(&(cocoawindow->corewindow.uielement), NA_UI_WINDOW, (void*)nativewindow);
   #endif
+
+  NASpace* space = naNewSpace(naMakeRectWithNSRect([[nativewindow contentView] frame]));
+  naSetWindowContentSpace(cocoawindow, space);
+
   return (NAWindow*)cocoawindow;
 }
 
@@ -473,7 +508,7 @@ NA_DEF void naShowWindow(NAWindow* window){
 
 
 
-NA_DEF void naSetWindowContentView(NAWindow* window, NAUIElement* uielement){
+NA_DEF void naSetWindowContentSpace(NAWindow* window, NAUIElement* uielement){
   NACocoaWindow* cocoawindow = (NACocoaWindow*)window;
   #if __has_feature(objc_arc)
     NANativeWindow* nativewindow = (NANativeWindow*)CFBridgingRelease(naGetUIElementNativeID((NAUIElement*)window));
@@ -489,6 +524,10 @@ NA_DEF void naSetWindowContentView(NAWindow* window, NAUIElement* uielement){
     [nativewindow setContentView:(NSView*)element->nativeID];
     [(NSWindow*)naGetUIElementNativeID((NAUIElement*)window) setInitialFirstResponder:[nativewindow contentView]];
   #endif
+  
+  naAddListLastMutable(&(cocoawindow->corewindow.uielement.childs), uielement);
+  naSetUIElementParent(uielement, window);
+  
   if([nativewindow trackingcount]){naRenewWindowMouseTracking(cocoawindow);}
 }
 
@@ -531,144 +570,261 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 }
 
 
+NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){
+  NACoreWindow* corewindow = (NACoreWindow*)window;
+  return naGetListFirstMutable(&(corewindow->uielement.childs));
+}
 
 
 
 
-@implementation NANativeOpenGLView
-- (id)initWithNALibView:(NAOpenGLView*)naopenglview frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
-  self = [super initWithFrame:frameRect pixelFormat:pixelformat];
-  nalibopenglview = naopenglview;
-  initFunc = newinitFunc;
-  initData = newinitData;
+
+// ////////////////////////////
+// Space
+
+@implementation NANativeSpace
+- (id) initWithCocoaSpace:(NACocoaSpace*)newcocoaspace frame:(NSRect)frame{
+  self = [super initWithFrame:frame];
+  cocoaspace = newcocoaspace;
   return self;
 }
-- (BOOL)acceptsFirstResponder{
-  return YES; // This is required to get keyboard input.
-}
-- (void)prepareOpenGL{
-  // When entering this function, the opengl context is set.
-  [super prepareOpenGL];
-  // Make sure OpenGL always swaps the buffers of the default framebuffer. If
-  // this is not done, sometimes, the double buffer will not work properly.
-  GLint swapInt = 1;
-  [[self openGLContext] setValues:&swapInt forParameter:NSOpenGLCPSwapInterval];
-
-  // Now the OpenGL context is created and current. We can initialize it
-  // if necessary.
-  if(initFunc){
-    initFunc(initData);
-  }
-}
 - (void)drawRect:(NSRect)dirtyRect{
-  [[self openGLContext] makeCurrentContext];
-  naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_REDRAW, &dirtyRect);
-}
-- (void)reshape{
-  [super reshape];
-  [[self openGLContext] update];
-  NARect bounds = naMakeRectWithNSRect([self bounds]);
-  naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_RESHAPE, &bounds);
-}
-- (void)keyDown:(NSEvent*)event{
-  NAUIKeyCode keyCode = [event keyCode];
-  naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_KEYDOWN, &keyCode);
-}
-- (void)keyUp:(NSEvent*)event{
-  NAUIKeyCode keyCode = [event keyCode];
-  naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, NA_UI_COMMAND_KEYUP, &keyCode);
-}
-- (void)flagsChanged:(NSEvent*)event{
-  NAUIKeyCode keyCode;
-  NABool shift   = ([event modifierFlags] & NAEventModifierFlagShift)    ?NA_TRUE:NA_FALSE;
-  NABool alt     = ([event modifierFlags] & NAEventModifierFlagOption)   ?NA_TRUE:NA_FALSE;
-  NABool control = ([event modifierFlags] & NAEventModifierFlagControl)  ?NA_TRUE:NA_FALSE;
-  NABool command = ([event modifierFlags] & NAEventModifierFlagCommand)  ?NA_TRUE:NA_FALSE;
-
-  keyCode = NA_KEYCODE_SHIFT;
-  naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
-  keyCode = NA_KEYCODE_OPTION;
-  naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, (alt?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
-  keyCode = NA_KEYCODE_CONTROL;
-  naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, (control?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
-  keyCode = NA_KEYCODE_LEFT_COMMAND;
-  naDispatchUIElementCommand((NACoreUIElement*)nalibopenglview, (command?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+  NA_UNUSED(dirtyRect);
+  dirtyRect.origin.x += 100;
+  dirtyRect.origin.y += 50;
+  dirtyRect.size.width /= 2.;
+  dirtyRect.size.height /= 2.;
+  [[NSColor blueColor] setFill];
+    NSRectFill(dirtyRect);
+    [super drawRect:dirtyRect];
 }
 @end
 
 
 
+NA_DEF NASpace* naNewSpace(NARect rect){
+  NACocoaSpace* cocoaspace = naAlloc(NACocoaSpace);
 
-NA_DEF NAOpenGLView* naNewOpenGLView(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
-  NACoreOpenGLView* coreopenglview = naAlloc(NACoreOpenGLView);
-
-  // Configure the OpenGL Context and initialize this object.
-  NSOpenGLPixelFormatAttribute attr[] = {
-		NSOpenGLPFADoubleBuffer,
-		NSOpenGLPFAColorSize, 24,
-//		NSOpenGLPFAAlphaSize, 8,
-    NSOpenGLPFADepthSize, 64,
-    NSOpenGLPFAAllowOfflineRenderers, // lets OpenGL know this context is offline renderer aware
-		0 };
-	NSOpenGLPixelFormat *pixelformat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attr];
+  NSRect contentRect = naMakeNSRectWithRect(rect);
+  NANativeSpace* nativeSpace = [[NANativeSpace alloc] initWithCocoaSpace:cocoaspace frame:contentRect];
   #if __has_feature(objc_arc)
-    // View will be released automatically when ARC is turned on.
+    // Space will be released automatically when ARC is turned on.
   #else
-    [pixelformat autorelease];
+    [nativeSpace autorelease];
   #endif
-  NSRect frameRect = NSMakeRect(0.f, 0.f, (CGFloat)size.width, (CGFloat)size.height);
-  NANativeOpenGLView* nativeView = [[NANativeOpenGLView alloc] initWithNALibView:coreopenglview frame:frameRect pixelFormat:pixelformat initFunc:initfunc initData:initdata];
+  
   #if __has_feature(objc_arc)
-    // View will be released automatically when ARC is turned on.
+    naRegisterCoreUIElement(&(cocoaspace->corespace.uielement), NA_UI_VIEW, (void*)CFBridgingRetain(nativeSpace));
   #else
-    [nativeView autorelease];
+    naRegisterCoreUIElement(&(cocoaspace->corespace.uielement), NA_UI_VIEW, (void*)nativeSpace);
   #endif
-
-//  if([self respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
-//    #if defined __MAC_10_7
-//      [self setWantsBestResolutionOpenGLSurface:YES];
-//    #endif
-//  }
-
-  #if __has_feature(objc_arc)
-    naRegisterCoreUIElement(&(coreopenglview->uielement), (NACoreUIElement*)window, NA_UI_OPENGLVIEW, (void*) CFBridgingRetain(nativeView));
-  #else
-    naRegisterCoreUIElement(&(coreopenglview->uielement), (NACoreUIElement*)window, NA_UI_OPENGLVIEW, (void*) nativeView);
-  #endif
-  return coreopenglview;
-}
-
-
-NA_DEF void naSwapOpenGLBuffer(NAOpenGLView* openglview){
-  NACoreOpenGLView* coreopenglview = (NACoreOpenGLView*)openglview;
-  #if __has_feature(objc_arc)
-    [[(NANativeOpenGLView*)CFBridgingRelease(coreopenglview->uielement.nativeID) openGLContext] flushBuffer];
-  #else
-    [[(NANativeOpenGLView*)(coreopenglview->uielement.nativeID) openGLContext] flushBuffer];
-  #endif
-}
-
-NA_DEF void naSetOpenGLInnerRect(NAOpenGLView* openglview, NARect bounds){
-  NA_UNUSED(openglview);
-  NA_UNUSED(bounds);
+  return (NASpace*)cocoaspace;
 }
 
 
 
+void naAddSpaceChild(NASpace* space, NAUIElement* child){
+  NANativeSpace* nativespace = CFBridgingRelease(naGetUIElementNativeID(space));
+  NANativeID nativechild = naGetUIElementNativeID(child);
+  [nativespace addSubview:CFBridgingRelease(nativechild)];
+}
 
+
+
+// ////////////////////////////
+// OpenGL Space
+
+#if (NA_CONFIG_COMPILE_OPENGL == 1)
+  @implementation NANativeOpenGLSpace
+  - (id)initWithCocoaOpenGLSpace:(NAOpenGLSpace*)newcocoaopenglspace frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
+    self = [super initWithFrame:frameRect pixelFormat:pixelformat];
+    cocoaopenglspace = newcocoaopenglspace;
+    initFunc = newinitFunc;
+    initData = newinitData;
+    return self;
+  }
+  - (BOOL)acceptsFirstResponder{
+    return YES; // This is required to get keyboard input.
+  }
+  - (void)prepareOpenGL{
+    // When entering this function, the opengl context is set.
+    [super prepareOpenGL];
+    // Make sure OpenGL always swaps the buffers of the default framebuffer. If
+    // this is not done, sometimes, the double buffer will not work properly.
+    GLint swapInt = 1;
+    [[self openGLContext] setValues:&swapInt forParameter:NSOpenGLCPSwapInterval];
+
+    // Now the OpenGL context is created and current. We can initialize it
+    // if necessary.
+    if(initFunc){
+      initFunc(initData);
+    }
+  }
+  - (void)drawRect:(NSRect)dirtyRect{
+    [[self openGLContext] makeCurrentContext];
+    naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, NA_UI_COMMAND_REDRAW, &dirtyRect);
+  }
+  - (void)reshape{
+    [super reshape];
+    [[self openGLContext] update];
+    NARect bounds = naMakeRectWithNSRect([self bounds]);
+    naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, NA_UI_COMMAND_RESHAPE, &bounds);
+  }
+  - (void)keyDown:(NSEvent*)event{
+    NAUIKeyCode keyCode = [event keyCode];
+    naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, NA_UI_COMMAND_KEYDOWN, &keyCode);
+  }
+  - (void)keyUp:(NSEvent*)event{
+    NAUIKeyCode keyCode = [event keyCode];
+    naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, NA_UI_COMMAND_KEYUP, &keyCode);
+  }
+  - (void)flagsChanged:(NSEvent*)event{
+    NAUIKeyCode keyCode;
+    NABool shift   = ([event modifierFlags] & NAEventModifierFlagShift)    ?NA_TRUE:NA_FALSE;
+    NABool alt     = ([event modifierFlags] & NAEventModifierFlagOption)   ?NA_TRUE:NA_FALSE;
+    NABool control = ([event modifierFlags] & NAEventModifierFlagControl)  ?NA_TRUE:NA_FALSE;
+    NABool command = ([event modifierFlags] & NAEventModifierFlagCommand)  ?NA_TRUE:NA_FALSE;
+
+    keyCode = NA_KEYCODE_SHIFT;
+    naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+    keyCode = NA_KEYCODE_OPTION;
+    naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, (alt?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+    keyCode = NA_KEYCODE_CONTROL;
+    naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, (control?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+    keyCode = NA_KEYCODE_LEFT_COMMAND;
+    naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, (command?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+  }
+  @end
+
+
+
+  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
+    NACoreOpenGLSpace* coreopenglspace = naAlloc(NACoreOpenGLSpace);
+
+    // Configure the OpenGL Context and initialize this object.
+    NSOpenGLPixelFormatAttribute attr[] = {
+      NSOpenGLPFADoubleBuffer,
+      NSOpenGLPFAColorSize, 24,
+  //		NSOpenGLPFAAlphaSize, 8,
+      NSOpenGLPFADepthSize, 64,
+      NSOpenGLPFAAllowOfflineRenderers, // lets OpenGL know this context is offline renderer aware
+      0 };
+    NSOpenGLPixelFormat *pixelformat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attr];
+    #if __has_feature(objc_arc)
+      // Space will be released automatically when ARC is turned on.
+    #else
+      [pixelformat autorelease];
+    #endif
+    NSRect frameRect = NSMakeRect(0.f, 0.f, (CGFloat)size.width, (CGFloat)size.height);
+    NANativeOpenGLSpace* nativeSpace = [[NANativeOpenGLSpace alloc] initWithCocoaOpenGLSpace:coreopenglspace frame:frameRect pixelFormat:pixelformat initFunc:initfunc initData:initdata];
+    #if __has_feature(objc_arc)
+      // Space will be released automatically when ARC is turned on.
+    #else
+      [nativeSpace autorelease];
+    #endif
+
+  //  if([self respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
+  //    #if defined __MAC_10_7
+  //      [self setWantsBestResolutionOpenGLSurface:YES];
+  //    #endif
+  //  }
+
+    #if __has_feature(objc_arc)
+      naRegisterCoreUIElement(&(coreopenglspace->uielement), (NACoreUIElement*)window, NA_UI_OPENGLVIEW, (void*) CFBridgingRetain(nativeSpace));
+    #else
+      naRegisterCoreUIElement(&(coreopenglspace->uielement), (NACoreUIElement*)window, NA_UI_OPENGLVIEW, (void*) nativeSpace);
+    #endif
+    return coreopenglspace;
+  }
+
+
+  NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
+    NACoreOpenGLSpace* coreopenglspace = (NACoreOpenGLSpace*)openglspace;
+    #if __has_feature(objc_arc)
+      [[(NANativeOpenGLSpace*)CFBridgingRelease(coreopenglspace->uielement.nativeID) openGLContext] flushBuffer];
+    #else
+      [[(NANativeOpenGLSpace*)(coreopenglspace->uielement.nativeID) openGLContext] flushBuffer];
+    #endif
+  }
+
+  NA_DEF void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){
+    NA_UNUSED(openglspace);
+    NA_UNUSED(bounds);
+  }
+
+#endif  // NA_CONFIG_COMPILE_OPENGL
+
+
+
+
+// ////////////////////////////
+// Button
+
+@implementation NANativeButton
+- (id) initWithCocoaButton:(NACocoaButton*)newcocoabutton frame:(NSRect)frame{
+  self = [super initWithFrame:frame];
+  [self setTitle:@"TheBöttn"];
+  [self setButtonType:NSButtonTypeMomentaryPushIn];
+  [self setBezelStyle:NSBezelStyleShadowlessSquare];
+  [self setBordered:YES];
+  cocoabutton = newcocoabutton;
+  return self;
+}
+//- (void)drawRect:(NSRect)dirtyRect{
+//  NA_UNUSED(dirtyRect);
+//  dirtyRect.origin.x += 100;
+//  dirtyRect.origin.y += 50;
+//  dirtyRect.size.width /= 2.;
+//  dirtyRect.size.height /= 2.;
+//  [[NSColor blueColor] setFill];
+//    NSRectFill(dirtyRect);
+//    [super drawRect:dirtyRect];
+//}
+@end
+
+
+
+NA_DEF NAButton* naNewButton(void){
+  NACocoaButton* cocoabutton = naAlloc(NACocoaButton);
+
+  NSRect contentRect = NSMakeRect(40, 70, 100, 50);
+  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCocoaButton:cocoabutton frame:contentRect];
+  #if __has_feature(objc_arc)
+    // Button will be released automatically when ARC is turned on.
+  #else
+    [nativeButton autorelease];
+  #endif
+  
+  #if __has_feature(objc_arc)
+    naRegisterCoreUIElement(&(cocoabutton->corebutton.uielement), NA_UI_BUTTON, (void*)CFBridgingRetain(nativeButton));
+  #else
+    naRegisterCoreUIElement(&(cocoabutton->corebutton.uielement), NA_UI_BUTTON, (void*)nativeButton);
+  #endif
+  return (NAButton*)cocoabutton;
+}
+
+
+NA_HDEF NARect naGetButtonAbsoluteInnerRect(NACoreUIElement* space){
+  return naMakeRectS(20, 40, 100, 50);
+}
+
+
+
+
+// ///////////////////
 
 
 NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage){
   NA_UNUSED(sendmovemessage);
-  NARect viewrect;
+  NARect spacerect;
   NSRect screenframe;
   CGPoint centerpos;
-  viewrect = naGetUIElementRect(uielement, (NAUIElement*)naGetApplication(), includebounds);
+  spacerect = naGetUIElementRect(uielement, (NAUIElement*)naGetApplication(), includebounds);
   screenframe = [[NSScreen mainScreen] frame];
-//  centerpos.x = viewrect.pos.x + viewrect.size.width * .5f;
-//  centerpos.y = viewrect.pos.y + viewrect.size.height * .5f;
-  centerpos.x = (CGFloat)viewrect.pos.x + (CGFloat)viewrect.size.width * .5f;
-  centerpos.y = (CGFloat)screenframe.size.height - (CGFloat)(viewrect.pos.y + viewrect.size.height * .5f);
+//  centerpos.x = spacerect.pos.x + spacerect.size.width * .5f;
+//  centerpos.y = spacerect.pos.y + spacerect.size.height * .5f;
+  centerpos.x = (CGFloat)spacerect.pos.x + (CGFloat)spacerect.size.width * .5f;
+  centerpos.y = (CGFloat)screenframe.size.height - (CGFloat)(spacerect.pos.y + spacerect.size.height * .5f);
 
   CGWarpMouseCursorPosition(centerpos);
 //  CGDisplayMoveCursorToPoint(kCGDirectMainDisplay, centerpos);

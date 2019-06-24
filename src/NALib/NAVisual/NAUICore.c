@@ -2,7 +2,7 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#include "NAUICoreAPI.h"
+#include "NAUICore.h"
 
 #if (NA_CONFIG_COMPILE_GUI == 1)
 
@@ -43,7 +43,7 @@ NA_HDEF void naStartCoreApplication(NAInt bytesize, NANativeID nativeID){
 
   // After this function, the calling function shall add the NAApplication as the
   // first entry in the list of ui elements.
-  naRegisterCoreUIElement(&(na_app->uielement), NA_NULL, NA_UI_APPLICATION, nativeID);
+  naRegisterCoreUIElement(&(na_app->uielement), NA_UI_APPLICATION, nativeID);
 }
 
 
@@ -94,8 +94,8 @@ NA_HDEF NABool naIsCoreApplicationRunning(void){
 // UI ELEMENT
 // ///////////////////////////////////
 
-NA_HDEF void naRegisterCoreUIElement(NACoreUIElement* coreuielement, NACoreUIElement* parent, NAUIElementType elementtype, void* nativeID){
-  coreuielement->parent = parent;
+NA_HDEF void naRegisterCoreUIElement(NACoreUIElement* coreuielement, NAUIElementType elementtype, void* nativeID){
+  coreuielement->parent = NA_NULL;
   coreuielement->elementtype = elementtype;
   coreuielement->nativeID = nativeID;
   naInitList(&(coreuielement->childs));
@@ -106,16 +106,7 @@ NA_HDEF void naRegisterCoreUIElement(NACoreUIElement* coreuielement, NACoreUIEle
 
 
 NA_HDEF void naUnregisterCoreUIElement(NACoreUIElement* coreuielement){
-  NAListIterator iter = naMakeListMutator(&(na_app->uielements));
-  NABool found = naLocateListData(&iter, coreuielement);
-  if(found){
-    naRemoveListCurMutable(&iter, NA_FALSE);
-  }else{
-    #ifndef NDEBUG
-      naError("Element not found");
-    #endif
-  }
-  naClearListIterator(&iter);
+  naRemoveListData(&(na_app->uielements), coreuielement);
 }
 
 

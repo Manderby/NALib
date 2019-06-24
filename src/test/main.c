@@ -16,7 +16,8 @@ NABool resizeWindow(void* controllerdata, NAUIElement* uielement, NAUICommand co
   NA_UNUSED(uielement);
   NA_UNUSED(command);
   NA_UNUSED(arg);
-  return NA_FALSE;
+//  printf("Resize\n");
+  return NA_TRUE;
 }
 
 NABool drawWindow(void* controllerdata, NAUIElement* uielement, NAUICommand command, void* arg){
@@ -24,14 +25,60 @@ NABool drawWindow(void* controllerdata, NAUIElement* uielement, NAUICommand comm
   NA_UNUSED(uielement);
   NA_UNUSED(command);
   NA_UNUSED(arg);
-  return NA_FALSE;
+//  printf("Draw\n");
+  return NA_TRUE;
+}
+
+NABool cubPressWindowKey(void* controllerdata, NAUIElement* uielement, NAUICommand command, void* arg){
+  NA_UNUSED(controllerdata);
+  NA_UNUSED(uielement);
+  NA_UNUSED(command);
+  NA_UNUSED(arg);
+//  printf("Key Press\n");
+  return NA_TRUE;
+}
+
+NABool cubReleaseWindowKey(void* controllerdata, NAUIElement* uielement, NAUICommand command, void* arg){
+  NA_UNUSED(controllerdata);
+  NA_UNUSED(uielement);
+  NA_UNUSED(command);
+  NA_UNUSED(arg);
+//  printf("Key Release\n");
+  return NA_TRUE;
+}
+
+NABool cubMoveWindowMouse(void* controllerdata, NAUIElement* uielement, NAUICommand command, void* arg){
+  NA_UNUSED(controllerdata);
+  NA_UNUSED(uielement);
+  NA_UNUSED(command);
+  NA_UNUSED(arg);
+//  printf("Mouse Move\n");
+  return NA_TRUE;
+}
+
+NABool cubEnterWindowMouse(void* controllerdata, NAUIElement* uielement, NAUICommand command, void* arg){
+  NA_UNUSED(controllerdata);
+  NA_UNUSED(uielement);
+  NA_UNUSED(command);
+  NA_UNUSED(arg);
+//  printf("Mouse Enter\n");
+  return NA_TRUE;
+}
+
+NABool cubExitWindowMouse(void* controllerdata, NAUIElement* uielement, NAUICommand command, void* arg){
+  NA_UNUSED(controllerdata);
+  NA_UNUSED(uielement);
+  NA_UNUSED(command);
+  NA_UNUSED(arg);
+//  printf("Mouse exit\n");
+  return NA_TRUE;
 }
 
 void prestartup(void* arg){
   NA_UNUSED(arg);
 }
 
-void initOpenGLView(void* initData){
+void initOpenGLSpace(void* initData){
   NA_UNUSED(initData);
 }
 
@@ -39,11 +86,21 @@ void poststartup(void* arg){
   NA_UNUSED(arg);
   NARect windowrect = naMakeRectS(20, 20, 400, 300);
   NAWindow* window = naNewWindow("Wurst", windowrect, NA_TRUE);
-  naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_RESHAPE, resizeWindow);
-  naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_REDRAW, drawWindow);
+  naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_RESHAPE,       resizeWindow);
+  naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_REDRAW,        drawWindow);
+  naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_KEYDOWN,       cubPressWindowKey);
+  naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_KEYUP,         cubReleaseWindowKey);
+  naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_MOUSE_MOVED,   cubMoveWindowMouse);
+  naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_MOUSE_ENTERED, cubEnterWindowMouse);
+  naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_MOUSE_EXITED,  cubExitWindowMouse);
 
-  NAOpenGLView* openglview = naNewOpenGLView(window, windowrect.size, initOpenGLView, window);
-  naSetWindowContentView(window, openglview);
+//  NAOpenGLSpace* openglspace = naNewOpenGLSpace(window, windowrect.size, initOpenGLSpace, window);
+//  naSetWindowContentSpace(window, openglspace);
+
+  NAButton* button = naNewButton();
+  NASpace* contentSpace = naGetWindowContentSpace(window);
+  naAddSpaceChild(contentSpace, button);
+
   naShowWindow(window);
 }
 
