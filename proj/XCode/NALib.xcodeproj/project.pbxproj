@@ -8,36 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		90AF3C2B22A2617B004B1786 /* heaptest.c in Sources */ = {isa = PBXBuildFile; fileRef = 90AF3C2A22A2617B004B1786 /* heaptest.c */; };
-		90AF3C3822A26332004B1786 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 90250F2421ADD313009BE5A3 /* main.c */; };
-		90AF3C3922A2635E004B1786 /* NADebug.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40116227CCA8900EC1656 /* NADebug.c */; };
-		90AF3C3A22A2637D004B1786 /* NAUI.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40127227CCA8900EC1656 /* NAUI.c */; };
-		90AF3C3B22A26386004B1786 /* NACocoaHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 90B40129227CCA8900EC1656 /* NACocoaHelper.m */; };
-		90AF3C3C22A26388004B1786 /* NAUICocoa.m in Sources */ = {isa = PBXBuildFile; fileRef = 90B4012A227CCA8900EC1656 /* NAUICocoa.m */; };
-		90AF3C3D22A2638C004B1786 /* NAUICore.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B4012B227CCA8900EC1656 /* NAUICore.c */; };
-		90AF3C3E22A26C6A004B1786 /* NARuntime.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40147227CCA8900EC1656 /* NARuntime.c */; };
-		90AF3C3F22A26C72004B1786 /* NAList.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40111227CCA8900EC1656 /* NAList.c */; };
-		90AF3C4022A26C7D004B1786 /* NAString.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40110227CCA8900EC1656 /* NAString.c */; };
-		90AF3C4122A26C8F004B1786 /* NABufferManipulation.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B400EA227CCA8900EC1656 /* NABufferManipulation.c */; };
-		90AF3C4222A26C8F004B1786 /* NABufferPart.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B400EB227CCA8900EC1656 /* NABufferPart.c */; };
-		90AF3C4322A26C8F004B1786 /* NABufferRead.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B400ED227CCA8900EC1656 /* NABufferRead.c */; };
-		90AF3C4422A26C8F004B1786 /* NABufferIteration.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B400F0227CCA8900EC1656 /* NABufferIteration.c */; };
-		90AF3C4522A26C8F004B1786 /* NABufferWrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B400F1227CCA8900EC1656 /* NABufferWrite.c */; };
-		90AF3C4622A26C8F004B1786 /* NABufferParse.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B400F4227CCA8900EC1656 /* NABufferParse.c */; };
-		90AF3C4722A26C8F004B1786 /* NABuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B400F6227CCA8900EC1656 /* NABuffer.c */; };
-		90AF3C4822A26C8F004B1786 /* NAMemoryBlock.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B400F7227CCA8900EC1656 /* NAMemoryBlock.c */; };
-		90AF3C4922A26C8F004B1786 /* NABufferSource.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B400F9227CCA8900EC1656 /* NABufferSource.c */; };
-		90AF3C4A22A26C9F004B1786 /* NAFile.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40138227CCA8900EC1656 /* NAFile.c */; };
-		90AF3C4B22A26CA1004B1786 /* NADateTime.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40139227CCA8900EC1656 /* NADateTime.c */; };
-		90AF3C4C22A26CA4004B1786 /* NAURL.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B4013E227CCA8900EC1656 /* NAURL.c */; };
-		90AF3C4D22A26CA8004B1786 /* NABinaryData.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B4014A227CCA8900EC1656 /* NABinaryData.c */; };
-		90AF3C4E22A26CBE004B1786 /* NATree.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40101227CCA8900EC1656 /* NATree.c */; };
-		90AF3C4F22A26CBE004B1786 /* NATreeAVL.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B4010C227CCA8900EC1656 /* NATreeAVL.c */; };
-		90AF3C5022A26CBE004B1786 /* NATreeBin.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40107227CCA8900EC1656 /* NATreeBin.c */; };
-		90AF3C5122A26CBE004B1786 /* NATreeConfiguration.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B4010A227CCA8900EC1656 /* NATreeConfiguration.c */; };
-		90AF3C5222A26CBE004B1786 /* NATreeIteration.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40102227CCA8900EC1656 /* NATreeIteration.c */; };
-		90AF3C5322A26CBE004B1786 /* NATreeOct.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40108227CCA8900EC1656 /* NATreeOct.c */; };
-		90AF3C5422A26CBE004B1786 /* NATreeQuad.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40109227CCA8900EC1656 /* NATreeQuad.c */; };
-		90AF3C5522A26CC2004B1786 /* NAHeap.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B4018E227EE6F500EC1656 /* NAHeap.c */; };
 		90B40168227CCA8900EC1656 /* NABufferManipulation.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B400EA227CCA8900EC1656 /* NABufferManipulation.c */; };
 		90B40169227CCA8900EC1656 /* NABufferPart.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B400EB227CCA8900EC1656 /* NABufferPart.c */; };
 		90B4016A227CCA8900EC1656 /* NABufferRead.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B400ED227CCA8900EC1656 /* NABufferRead.c */; };
@@ -82,9 +52,6 @@
 		90D6EC4022B5D26800E752C5 /* NAUICocoa.m in Sources */ = {isa = PBXBuildFile; fileRef = 90B4012A227CCA8900EC1656 /* NAUICocoa.m */; };
 		90D6EC4122B5D26800E752C5 /* NAUICore.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B4012B227CCA8900EC1656 /* NAUICore.c */; };
 		90D6EC4222B5D26800E752C5 /* NADeflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B4012D227CCA8900EC1656 /* NADeflate.c */; };
-		90D6EC4322B5D26A00E752C5 /* NAPNG.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40126227CCA8900EC1656 /* NAPNG.c */; };
-		90D6EC4422B5D26A00E752C5 /* NAUIWINAPI.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40128227CCA8900EC1656 /* NAUIWINAPI.c */; };
-		90D6EC4522B5D26A00E752C5 /* NADeflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B4012D227CCA8900EC1656 /* NADeflate.c */; };
 		90D6EC4622B5D27F00E752C5 /* NAList.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40111227CCA8900EC1656 /* NAList.c */; };
 		90D6EC4722B5D27F00E752C5 /* NAString.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40110227CCA8900EC1656 /* NAString.c */; };
 		90D6EC4822B5D28900E752C5 /* NABufferManipulation.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B400EA227CCA8900EC1656 /* NABufferManipulation.c */; };
@@ -110,18 +77,11 @@
 		90D6EC5D22B5D2DB00E752C5 /* NATreeIteration.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40102227CCA8900EC1656 /* NATreeIteration.c */; };
 		90D6EC5E22B5D2DB00E752C5 /* NATreeOct.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40108227CCA8900EC1656 /* NATreeOct.c */; };
 		90D6EC5F22B5D2DB00E752C5 /* NATreeQuad.c in Sources */ = {isa = PBXBuildFile; fileRef = 90B40109227CCA8900EC1656 /* NATreeQuad.c */; };
+		90D6EC6422C3435A00E752C5 /* NATranslator.c in Sources */ = {isa = PBXBuildFile; fileRef = 90D6EC6322C3435900E752C5 /* NATranslator.c */; };
+		90D6EC6622C3435A00E752C5 /* NATranslator.c in Sources */ = {isa = PBXBuildFile; fileRef = 90D6EC6322C3435900E752C5 /* NATranslator.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		90AF3C2E22A26282004B1786 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
 		B9B2EA101716922700943D91 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 12;
@@ -137,7 +97,6 @@
 		90250F2421ADD313009BE5A3 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		9087F70B1E2C313C00867CA7 /* treetest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = treetest.c; sourceTree = "<group>"; };
 		90AF3C2A22A2617B004B1786 /* heaptest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = heaptest.c; sourceTree = "<group>"; };
-		90AF3C3022A26282004B1786 /* testUI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testUI; sourceTree = BUILT_PRODUCTS_DIR; };
 		90B400D9227CCA8900EC1656 /* NAMathConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAMathConstants.h; sourceTree = "<group>"; };
 		90B400DA227CCA8900EC1656 /* NAMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAMemory.h; sourceTree = "<group>"; };
 		90B400DB227CCA8900EC1656 /* NAComplex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAComplex.h; sourceTree = "<group>"; };
@@ -292,17 +251,14 @@
 		90D6EC2C22B5C95000E752C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		90D6EC2D22B5C95000E752C5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		90D6EC2F22B5C95000E752C5 /* testCocoa.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = testCocoa.entitlements; sourceTree = "<group>"; };
+		90D6EC6022C2B75A00E752C5 /* translations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = translations.h; sourceTree = "<group>"; };
+		90D6EC6122C2B9C400E752C5 /* translationIDs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = translationIDs.h; sourceTree = "<group>"; };
+		90D6EC6222C2BFA900E752C5 /* NATranslator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NATranslator.h; sourceTree = "<group>"; };
+		90D6EC6322C3435900E752C5 /* NATranslator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATranslator.c; sourceTree = "<group>"; };
 		B9B2EA121716922700943D91 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		90AF3C2D22A26282004B1786 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		90D6EC1F22B5C94B00E752C5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -336,6 +292,8 @@
 				90AF3C2A22A2617B004B1786 /* heaptest.c */,
 				90BC6ECA2098A38D00CBD0FD /* int64test.c */,
 				90250F2421ADD313009BE5A3 /* main.c */,
+				90D6EC6022C2B75A00E752C5 /* translations.h */,
+				90D6EC6122C2B9C400E752C5 /* translationIDs.h */,
 			);
 			name = test;
 			path = ../../src/test;
@@ -372,6 +330,7 @@
 				90B400E4227CCA8900EC1656 /* NAString.h */,
 				90B400E6227CCA8900EC1656 /* NAStruct */,
 				90B400E0227CCA8900EC1656 /* NAThreading.h */,
+				90D6EC6222C2BFA900E752C5 /* NATranslator.h */,
 				90B4014D227CCA8900EC1656 /* NATree.h */,
 				90B40136227CCA8900EC1656 /* NAUI.h */,
 				90B40122227CCA8900EC1656 /* NAURL.h */,
@@ -473,6 +432,7 @@
 				90B40129227CCA8900EC1656 /* NACocoaHelper.m */,
 				90B4012D227CCA8900EC1656 /* NADeflate.c */,
 				90B40126227CCA8900EC1656 /* NAPNG.c */,
+				90D6EC6322C3435900E752C5 /* NATranslator.c */,
 				90B40127227CCA8900EC1656 /* NAUI.c */,
 				90B4012E227CCA8900EC1656 /* NAUICocoa.h */,
 				90B4012A227CCA8900EC1656 /* NAUICocoa.m */,
@@ -626,7 +586,6 @@
 			isa = PBXGroup;
 			children = (
 				B9B2EA121716922700943D91 /* test */,
-				90AF3C3022A26282004B1786 /* testUI */,
 				90D6EC2222B5C94B00E752C5 /* testCocoa.app */,
 			);
 			name = Products;
@@ -635,23 +594,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		90AF3C2F22A26282004B1786 /* testUI */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 90AF3C3422A26282004B1786 /* Build configuration list for PBXNativeTarget "testUI" */;
-			buildPhases = (
-				90AF3C2C22A26282004B1786 /* Sources */,
-				90AF3C2D22A26282004B1786 /* Frameworks */,
-				90AF3C2E22A26282004B1786 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = testUI;
-			productName = testUI;
-			productReference = 90AF3C3022A26282004B1786 /* testUI */;
-			productType = "com.apple.product-type.tool";
-		};
 		90D6EC2122B5C94B00E752C5 /* testCocoa */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 90D6EC3022B5C95000E752C5 /* Build configuration list for PBXNativeTarget "testCocoa" */;
@@ -694,10 +636,6 @@
 			attributes = {
 				LastUpgradeCheck = 0820;
 				TargetAttributes = {
-					90AF3C2F22A26282004B1786 = {
-						CreatedOnToolsVersion = 10.2.1;
-						ProvisioningStyle = Automatic;
-					};
 					90D6EC2122B5C94B00E752C5 = {
 						CreatedOnToolsVersion = 10.2.1;
 						ProvisioningStyle = Automatic;
@@ -719,7 +657,6 @@
 			projectRoot = "";
 			targets = (
 				B9B2EA111716922700943D91 /* test */,
-				90AF3C2F22A26282004B1786 /* testUI */,
 				90D6EC2122B5C94B00E752C5 /* testCocoa */,
 			);
 		};
@@ -738,46 +675,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		90AF3C2C22A26282004B1786 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				90AF3C4C22A26CA4004B1786 /* NAURL.c in Sources */,
-				90AF3C4322A26C8F004B1786 /* NABufferRead.c in Sources */,
-				90AF3C4422A26C8F004B1786 /* NABufferIteration.c in Sources */,
-				90AF3C4E22A26CBE004B1786 /* NATree.c in Sources */,
-				90AF3C3D22A2638C004B1786 /* NAUICore.c in Sources */,
-				90AF3C5322A26CBE004B1786 /* NATreeOct.c in Sources */,
-				90AF3C4622A26C8F004B1786 /* NABufferParse.c in Sources */,
-				90AF3C4F22A26CBE004B1786 /* NATreeAVL.c in Sources */,
-				90AF3C4A22A26C9F004B1786 /* NAFile.c in Sources */,
-				90AF3C4722A26C8F004B1786 /* NABuffer.c in Sources */,
-				90AF3C4922A26C8F004B1786 /* NABufferSource.c in Sources */,
-				90AF3C3922A2635E004B1786 /* NADebug.c in Sources */,
-				90AF3C4D22A26CA8004B1786 /* NABinaryData.c in Sources */,
-				90AF3C4522A26C8F004B1786 /* NABufferWrite.c in Sources */,
-				90D6EC4322B5D26A00E752C5 /* NAPNG.c in Sources */,
-				90AF3C4B22A26CA1004B1786 /* NADateTime.c in Sources */,
-				90AF3C5222A26CBE004B1786 /* NATreeIteration.c in Sources */,
-				90AF3C5022A26CBE004B1786 /* NATreeBin.c in Sources */,
-				90D6EC4522B5D26A00E752C5 /* NADeflate.c in Sources */,
-				90D6EC4422B5D26A00E752C5 /* NAUIWINAPI.c in Sources */,
-				90AF3C3822A26332004B1786 /* main.c in Sources */,
-				90AF3C3B22A26386004B1786 /* NACocoaHelper.m in Sources */,
-				90AF3C3F22A26C72004B1786 /* NAList.c in Sources */,
-				90AF3C3A22A2637D004B1786 /* NAUI.c in Sources */,
-				90AF3C3E22A26C6A004B1786 /* NARuntime.c in Sources */,
-				90AF3C5422A26CBE004B1786 /* NATreeQuad.c in Sources */,
-				90AF3C3C22A26388004B1786 /* NAUICocoa.m in Sources */,
-				90AF3C5522A26CC2004B1786 /* NAHeap.c in Sources */,
-				90AF3C5122A26CBE004B1786 /* NATreeConfiguration.c in Sources */,
-				90AF3C4022A26C7D004B1786 /* NAString.c in Sources */,
-				90AF3C4222A26C8F004B1786 /* NABufferPart.c in Sources */,
-				90AF3C4822A26C8F004B1786 /* NAMemoryBlock.c in Sources */,
-				90AF3C4122A26C8F004B1786 /* NABufferManipulation.c in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		90D6EC1E22B5C94B00E752C5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -815,6 +712,7 @@
 				90D6EC4022B5D26800E752C5 /* NAUICocoa.m in Sources */,
 				90D6EC2622B5C94B00E752C5 /* AppDelegate.m in Sources */,
 				90D6EC4122B5D26800E752C5 /* NAUICore.c in Sources */,
+				90D6EC6622C3435A00E752C5 /* NATranslator.c in Sources */,
 				90D6EC3522B5D18400E752C5 /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -856,6 +754,7 @@
 				90B40168227CCA8900EC1656 /* NABufferManipulation.c in Sources */,
 				90B4016B227CCA8900EC1656 /* NABufferIteration.c in Sources */,
 				90B40179227CCA8900EC1656 /* NAList.c in Sources */,
+				90D6EC6422C3435A00E752C5 /* NATranslator.c in Sources */,
 				90B40178227CCA8900EC1656 /* NAString.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -959,140 +858,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Optimize;
-		};
-		90AF3C3522A26282004B1786 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"NA_CONFIG_COMPILE_OPENGL=1",
-					"NA_CONFIG_COMPILE_GUI=1",
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		90AF3C3622A26282004B1786 /* Optimize */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"NA_CONFIG_COMPILE_GUI=1",
-					"NA_CONFIG_COMPILE_OPENGL=1",
-					NDEBUG,
-				);
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Optimize;
-		};
-		90AF3C3722A26282004B1786 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CODE_SIGN_IDENTITY = "-";
-				CODE_SIGN_STYLE = Automatic;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"NA_CONFIG_COMPILE_GUI=1",
-					"NA_CONFIG_COMPILE_OPENGL=1",
-					NDEBUG,
-				);
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.14;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
 		};
 		90D6EC3122B5C95000E752C5 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1424,16 +1189,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		90AF3C3422A26282004B1786 /* Build configuration list for PBXNativeTarget "testUI" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				90AF3C3522A26282004B1786 /* Debug */,
-				90AF3C3622A26282004B1786 /* Optimize */,
-				90AF3C3722A26282004B1786 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		90D6EC3022B5C95000E752C5 /* Build configuration list for PBXNativeTarget "testCocoa" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

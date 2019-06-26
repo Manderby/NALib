@@ -67,6 +67,8 @@ NA_IAPI void naClearStack  (NAStack* stack);
 // Top:   Accesses the topmost element by returning a pointer to that element.
 // Pop:   Shrinks the stack by 1 element and returns a pointer to the element
 //        which just had beed popped.
+// Peek:  Looks at the element with the given index. Warning: Not very fast.
+//        Better use iterators if you want to visit all elements of the stack.
 //
 // Note that the Pop function returns the element which had been removed. It
 // will still be available shortly after a call to this function as the stack
@@ -75,6 +77,7 @@ NA_IAPI void naClearStack  (NAStack* stack);
 NA_IAPI void* naPushStack(NAStack* stack);
 NA_IAPI void* naTopStack(NAStack* stack);
 NA_IAPI void* naPopStack(NAStack* stack);
+NA_IAPI void* naPeekStack(NAStack* stack, NAInt index);
 
 // Returns the number of elements actually stored in the stack
 NA_IAPI NAInt naGetStackCount(const NAStack* stack);

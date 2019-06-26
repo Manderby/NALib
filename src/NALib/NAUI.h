@@ -197,9 +197,11 @@ NA_API void naStartApplication(  NAMutator prestartup,
 //
 // prestartup:
 // The prestartup function is here for initialization of global variables
-// which have nothing to do with UI. Especially on a Mac, this function is
-// intended to not execute Objective-C code although you of course may. This
-// function is rarely used but it is here for you if you really need it.
+// and structures before any of the UI specific functions gets called.
+// This function is intended to execute mainly C code but you of course are
+// free to use other languages like Objective-C alongside with it. This
+// function is the perfect place to load your localizations (strings which
+// are translated into different languages).
 //
 // poststartup:
 // In the poststartup function, you usually start building the UI with the

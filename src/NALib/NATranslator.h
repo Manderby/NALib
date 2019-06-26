@@ -2,58 +2,51 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#ifndef NA_BASE_INCLUDED
-#define NA_BASE_INCLUDED
+#ifndef NA_MONEY_INCLUDED
+#define NA_MONEY_INCLUDED
 #ifdef __cplusplus
   extern "C"{
 #endif
 
 
-// This is the base of the whole NALib implementation. Pretty much all files
-// need this file. It contains the most basic type definitions, functions and
-// preprocessor macros.
+
+#include "NABase.h"
+
+// These codes denote the standardized ISO 639-3 codes.
+typedef enum{
+  NA_LANG_DEU,  // German
+  NA_LANG_ENG,  // English
+  NA_LANG_GSW   // Swiss German
+} NALanguageCode;
+
+#define NA_LOC_LANG(lang)   naSetTranslatorLanguage(lang)
+#define NA_LOC_GROUP(group) naSetTranslatorGroup(group)
+#define NA_LOC(id, str)     naSetTranslatorString(id, str)
+
+typedef struct NATranslator NATranslator;
 
 
 
-// The version number of this NALib distribution.
-#define NA_VERSION 24
+void naStartTranslator(void);
+void naStopTranslator(void);
 
+void naSetTranslatorLanguage(NAInt lang);
 
+void naSetTranslatorGroup(NAInt group);
 
-// Include the configuration of NALib.
-// Have a look at this file to find out how you can configure NALib by adding
-// preprocessor macros to your compiler.
-#include "NAConfiguration.h"
+void naSetTranslatorString(NAInt id, const char* str);
 
-// Gather information about where, how and what to compile.
-#include "NABase/NAEnvironment.h"
-#include "NABase/NACompiler.h"
-#include "NABase/NALanguage.h"
+void naLoadTranslatorFile(const char* filepath);
 
-// declaring numeric base types and related stuff
-#include "NABase/NAInteger.h"
-#include "NABase/NAFloatingPoint.h"
-#include "NABase/NANumerics.h"
-
-// Enabling the code to use debugger runtime testing (DRT)
-#include "NABase/NADebug.h"
-
-// Now, including implementations of the most basic kind...
-#include "NABase/NAInt64II.h"
-#include "NABase/NAFloatingPointII.h"
-#include "NABase/NANumericsII.h"
-
-// Additional definitions
-#include "NABase/NAChar.h"
-#include "NABase/NATemplate.h"
-
+const char* naTranslate(NAInt group, NAInt id);
 
 
 
 #ifdef __cplusplus
   } // extern "C"
 #endif
-#endif // NA_BASE_INCLUDED
+#endif // NA_MONEY_INCLUDED
+
 
 // Copyright (c) NALib, Tobias Stamm
 //

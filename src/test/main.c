@@ -10,6 +10,8 @@
 //
 
 #include "../NALib/NAUI.h"
+#include "../NALib/NATranslator.h"
+#include "translationIDs.h"
 
 NABool resizeWindow(void* controllerdata, NAUIElement* uielement, NAUICommand command, void* arg){
   NA_UNUSED(controllerdata);
@@ -76,6 +78,8 @@ NABool cubExitWindowMouse(void* controllerdata, NAUIElement* uielement, NAUIComm
 
 void prestartup(void* arg){
   NA_UNUSED(arg);
+//  naLoadTranslatorFile("translations.h");
+  #include "translations.h"
 }
 
 void initOpenGLSpace(void* initData){
@@ -84,6 +88,16 @@ void initOpenGLSpace(void* initData){
 
 void poststartup(void* arg){
   NA_UNUSED(arg);
+
+//  naSetTranslatorLanguage(NA_LANG_DEU);
+//  naSetTranslatorLanguage(NA_LANG_ENG);
+  naSetTranslatorLanguage(NA_LANG_GSW);
+  printf ("%s\n", naTranslate(TR_GENERAL, TR_HELLO_WORLD));
+  printf ("%s\n", naTranslate(TR_GENERAL, TR_99_BEER));
+  printf ("%s\n", naTranslate(TR_GENERAL, TR_BREADCRUMB_BEAVERSPIT));
+  printf ("%s\n", naTranslate(TR_FINANCE, TR_PROFIT));
+  printf ("%s\n", naTranslate(TR_FINANCE, TR_LOSS));
+
   NARect windowrect = naMakeRectS(20, 20, 400, 300);
   NAWindow* window = naNewWindow("Wurst", windowrect, NA_TRUE);
   naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_RESHAPE,       resizeWindow);
@@ -119,7 +133,9 @@ int main(void){
   printf("%d Bits Addresses, %d Bits Integers)\n", NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
   naStartRuntime();
-    naStartApplication(prestartup, poststartup, NA_NULL);
+    naStartTranslator();
+      naStartApplication(prestartup, poststartup, NA_NULL);
+    naStopTranslator();
   naStopRuntime();
 
   #if NA_OS == NA_OS_WINDOWS
