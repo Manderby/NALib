@@ -181,6 +181,7 @@ NA_API void naStartApplication(  NAMutator prestartup,
 //      - NALib allocates some structures in the background to run the UI.
 //      - NALib creates an NSAutoreleasePool (only when ARC is turned off)
 //        * NALib calls prestartup with arg.
+//        * NALib sets the translator languages according to the user prefs.
 //        * NALib calls [NSApp finishLaunching] which in turn will post an
 //          NSApplicationDidFinishLaunchingNotification to whatever application
 //          delegate you might have set.
@@ -191,6 +192,7 @@ NA_API void naStartApplication(  NAMutator prestartup,
 //
 // Win: - NALib allocates some structures in the background to run the UI.
 //      - NALib calls prestartup with arg.
+//      - NALib sets the translator languages according to the user prefs.
 //      - NALib registers its window classes
 //      - NALib calls poststartup with arg.
 //      - NALib will start a message loop.
@@ -201,7 +203,8 @@ NA_API void naStartApplication(  NAMutator prestartup,
 // This function is intended to execute mainly C code but you of course are
 // free to use other languages like Objective-C alongside with it. This
 // function is the perfect place to load your localizations (strings which
-// are translated into different languages).
+// are translated into different languages). After this function, the
+// preferred languages of the user are set in the translator.
 //
 // poststartup:
 // In the poststartup function, you usually start building the UI with the

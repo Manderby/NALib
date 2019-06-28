@@ -24,6 +24,7 @@
 #include "NAMemory.h"
 #include "NACoord.h"
 #include "NAThreading.h"
+#include "NATranslator.h"
 
 
 // Mapping of deprecated entities
@@ -114,8 +115,19 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   #endif
     // Call prestartup if desired.
     if(prestartup){prestartup(arg);}
+
+    // Set the preferred translator languages.
+    NAInt lang = (NAInt)[[NSLocale preferredLanguages] count] - 1;
+    while(lang >= 0){
+      NSString* language = [[NSLocale preferredLanguages] objectAtIndex:(NSUInteger)lang];
+      NALanguageCode3 langcode = naGetLanguageCode([language UTF8String]);
+      naSetTranslatorLanguagePreference(langcode);
+      lang--;
+    }
+
     // Let the Macintosh System know that the app is ready to run.
     [NSApp finishLaunching];
+    
     // Call poststartup if desired.
     if(poststartup){poststartup(arg);}
   #if !__has_feature(objc_arc)

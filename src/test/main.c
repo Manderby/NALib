@@ -13,6 +13,9 @@
 #include "../NALib/NATranslator.h"
 #include "translationIDs.h"
 
+NAInt trFinanceGroup;
+NAInt trGeneralGroup;
+
 NABool resizeWindow(void* controllerdata, NAUIElement* uielement, NAUICommand command, void* arg){
   NA_UNUSED(controllerdata);
   NA_UNUSED(uielement);
@@ -78,8 +81,10 @@ NABool cubExitWindowMouse(void* controllerdata, NAUIElement* uielement, NAUIComm
 
 void prestartup(void* arg){
   NA_UNUSED(arg);
-//  naLoadTranslatorFile("translations.h");
-  #include "translations.h"
+  trFinanceGroup = naRegisterTranslatorGroup();
+  #include "translationsFinance.h"
+  trGeneralGroup = naRegisterTranslatorGroup();
+  #include "translationsGeneral.h"
 }
 
 void initOpenGLSpace(void* initData){
@@ -89,14 +94,16 @@ void initOpenGLSpace(void* initData){
 void poststartup(void* arg){
   NA_UNUSED(arg);
 
-//  naSetTranslatorLanguage(NA_LANG_DEU);
-//  naSetTranslatorLanguage(NA_LANG_ENG);
-  naSetTranslatorLanguage(NA_LANG_GSW);
-  printf ("%s\n", naTranslate(TR_GENERAL, TR_HELLO_WORLD));
-  printf ("%s\n", naTranslate(TR_GENERAL, TR_99_BEER));
-  printf ("%s\n", naTranslate(TR_GENERAL, TR_BREADCRUMB_BEAVERSPIT));
-  printf ("%s\n", naTranslate(TR_FINANCE, TR_PROFIT));
-  printf ("%s\n", naTranslate(TR_FINANCE, TR_LOSS));
+//  naSetTranslatorLanguagePreference(naGetLanguageCode("deu"));
+//  naSetTranslatorLanguagePreference(naGetLanguageCode("eng"));
+//  naSetTranslatorLanguagePreference(naGetLanguageCode("gsw"));
+  printf ("%s\n", naTranslate(trGeneralGroup, TR_HELLO_WORLD));
+  printf ("%s\n", naTranslate(trGeneralGroup, TR_99_BEER));
+  printf ("%s\n", naTranslate(trGeneralGroup, TR_BREADCRUMBS_BEAVERSPIT));
+  printf ("%s\n", naTranslate(trFinanceGroup, TR_PROFIT));
+  printf ("%s\n", naTranslate(trFinanceGroup, TR_LOSS));
+
+//  printf("%d\n", (int)naGetLanguageCode("deu"));
 
   NARect windowrect = naMakeRectS(20, 20, 400, 300);
   NAWindow* window = naNewWindow("Wurst", windowrect, NA_TRUE);

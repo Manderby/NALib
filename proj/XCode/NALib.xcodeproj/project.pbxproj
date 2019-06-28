@@ -251,10 +251,11 @@
 		90D6EC2C22B5C95000E752C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		90D6EC2D22B5C95000E752C5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		90D6EC2F22B5C95000E752C5 /* testCocoa.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = testCocoa.entitlements; sourceTree = "<group>"; };
-		90D6EC6022C2B75A00E752C5 /* translations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = translations.h; sourceTree = "<group>"; };
+		90D6EC6022C2B75A00E752C5 /* translationsGeneral.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = translationsGeneral.h; sourceTree = "<group>"; };
 		90D6EC6122C2B9C400E752C5 /* translationIDs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = translationIDs.h; sourceTree = "<group>"; };
 		90D6EC6222C2BFA900E752C5 /* NATranslator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NATranslator.h; sourceTree = "<group>"; };
 		90D6EC6322C3435900E752C5 /* NATranslator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATranslator.c; sourceTree = "<group>"; };
+		90F4B9AF22C51F4A0027E5F2 /* translationsFinance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = translationsFinance.h; sourceTree = "<group>"; };
 		B9B2EA121716922700943D91 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -292,7 +293,8 @@
 				90AF3C2A22A2617B004B1786 /* heaptest.c */,
 				90BC6ECA2098A38D00CBD0FD /* int64test.c */,
 				90250F2421ADD313009BE5A3 /* main.c */,
-				90D6EC6022C2B75A00E752C5 /* translations.h */,
+				90F4B9AF22C51F4A0027E5F2 /* translationsFinance.h */,
+				90D6EC6022C2B75A00E752C5 /* translationsGeneral.h */,
 				90D6EC6122C2B9C400E752C5 /* translationIDs.h */,
 			);
 			name = test;

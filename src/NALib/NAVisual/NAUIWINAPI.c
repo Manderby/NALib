@@ -260,6 +260,9 @@ NA_API void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   // Call prestartup if desired.
   if(prestartup){prestartup(arg);}
 
+  // Set the language of the translator
+  TODO
+
   // Register the window class
   naZeron(&wndclass, sizeof(WNDCLASS));
 	wndclass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
