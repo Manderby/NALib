@@ -111,7 +111,7 @@ NA_DEF void naSwitchTranslatorInsertionLanguage(NALanguageCode3 code){
   naClearListIterator(&it);
   
   if(!codefound){
-    NALanguageCode3* newcode = naAlloc(NALanguageCode3);
+    NAInt* newcode = naAlloc(NAInt);  // No, not TranslatorCode3, enums may have not the same size!!!
     *newcode = code;
     naAddListLastMutable(&(na_translator->languagepreferences), newcode);
   }
@@ -162,7 +162,7 @@ NA_DEF void naSetTranslatorLanguagePreference(NALanguageCode3 code){
   naClearListIterator(&it);
   
   if(!codefound){
-    NALanguageCode3* newcode = naAlloc(NALanguageCode3);
+    NAInt* newcode = naAlloc(NAInt);  // No, not TranslatorCode3, enums may have not the same size!!!
     *newcode = code;
     naAddListFirstMutable(&(na_translator->languagepreferences), newcode);
   }
