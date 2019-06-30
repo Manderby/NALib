@@ -817,6 +817,7 @@ NA_DEF NAButton* naNewButton(void){
 
 
 NA_HDEF NARect naGetButtonAbsoluteInnerRect(NACoreUIElement* space){
+  NA_UNUSED(space);
   return naMakeRectS(20, 40, 100, 50);
 }
 

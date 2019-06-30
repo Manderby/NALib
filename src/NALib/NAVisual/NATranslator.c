@@ -89,6 +89,10 @@ NA_DEF void naStopTranslator(void){
 
 
 NA_DEF NAInt naRegisterTranslatorGroup(void){
+  #ifndef NDEBUG
+    if(!na_translator)
+      naCrash("No translator running. Please use naStartTranslator.");
+  #endif
   na_translator->curgroup++;
   return na_translator->curgroup;
 }

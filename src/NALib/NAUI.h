@@ -183,8 +183,9 @@ NA_API void naStartApplication(  NAMutator prestartup,
 //        * NALib calls prestartup with arg.
 //        * NALib sets the translator languages according to the user prefs.
 //        * NALib calls [NSApp finishLaunching] which in turn will post an
-//          NSApplicationDidFinishLaunchingNotification to whatever application
-//          delegate you might have set.
+//          NSApplicationWillFinishLaunchingNotification and an
+//          NSApplicationDidFinishLaunchingNotification to whatever
+//          application delegate you might have set.
 //        * NALib calls poststartup with arg.
 //      - NALib drains the autorelease pool. (only when ARC is turned off)
 //      - NALib will start a message loop. When ARC is turned off, a new
