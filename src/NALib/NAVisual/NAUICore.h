@@ -33,7 +33,10 @@ typedef struct NACoreWindow         NACoreWindow;
 typedef struct NACoreSpace          NACoreSpace;
 typedef struct NACoreOpenGLSpace    NACoreOpenGLSpace;
 typedef struct NACoreButton         NACoreButton;
+typedef struct NACoreLabel          NACoreLabel;
 
+
+extern NACoreApplication* na_app;
 
 
 // ////////////////////////////
@@ -57,7 +60,9 @@ NA_HAPI NABool naIsCoreApplicationRunning(void);
 NA_HAPI void naRegisterCoreUIElement( NACoreUIElement* coreuielement,
                                        NAUIElementType elementtype,
                                                  void* nativeID);
-NA_HAPI void naUnregisterCoreUIElement(NACoreUIElement* coreuielement);
+NA_HAPI void naReleaseUIElement(NAUIElement* uielement);
+
+NA_HAPI void* naUnregisterCoreUIElement(NACoreUIElement* coreuielement);
 NA_HAPI NAUIElementType naGetCoreUIElementType(NACoreUIElement* coreuielement);
 NA_HAPI NANativeID naGetCoreUIElementNativeID(NACoreUIElement* coreuielement);
 NA_HAPI void naRefreshCoreUIElement(  NACoreUIElement* coreuielement,
@@ -90,6 +95,7 @@ struct NAReaction{
 // is just a typedef of a void*. But internally, every UI element has the
 // following struct as its base:
 struct NACoreUIElement{
+  NARefCount refcount;
   NAUIElementType elementtype;
   NACoreUIElement* parent;
   NAList childs;
@@ -97,10 +103,12 @@ struct NACoreUIElement{
   void* nativeID;  // The native object
 };
 
+#include "../NATranslator.h"
 
 struct NACoreApplication{
   NACoreUIElement uielement;
-  NAList uielements;   // A list of all ui elements.
+  NAList          uielements;   // A list of all ui elements.
+  NATranslator*   translator;
   NACursorInfo    mouse; // The mouse cursor info
   NAInt           flags;
 };
@@ -142,6 +150,12 @@ struct NACoreButton{
 
 
 
+struct NACoreLabel{
+  NACoreUIElement uielement;
+};
+
+
+
 
 
 
@@ -160,7 +174,6 @@ struct NACoreButton{
 // be helper functions.
 
 #include "../NAList.h"
-
 
 
 

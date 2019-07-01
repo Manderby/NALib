@@ -36,6 +36,9 @@ NA_HDEF void naStartCoreApplication(NAInt bytesize, NANativeID nativeID){
 
   na_app = (NACoreApplication*)naMalloc(bytesize);
 
+  na_app->translator = NA_NULL;
+  naStartTranslator();
+  
   naInitList(&(na_app->uielements));
   na_app->flags = 0;
   na_app->flags |= NA_APPLICATION_FLAG_RUNNING;
@@ -50,6 +53,12 @@ NA_HDEF void naStartCoreApplication(NAInt bytesize, NANativeID nativeID){
 
 NA_HDEF void naStopCoreApplication(void){
   na_app->flags &= ~NA_APPLICATION_FLAG_RUNNING;
+  while(naGetListCount(&(na_app->uielements))){
+    naReleaseUIElement(naGetListFirstMutable(&(na_app->uielements)));
+  }
+//  naForeachListMutable(&(na_app->uielements), naReleaseUIElement);
+  naClearList(&(na_app->uielements));
+  naStopTranslator();
 }
 
 
@@ -95,6 +104,7 @@ NA_HDEF NABool naIsCoreApplicationRunning(void){
 // ///////////////////////////////////
 
 NA_HDEF void naRegisterCoreUIElement(NACoreUIElement* coreuielement, NAUIElementType elementtype, void* nativeID){
+  naInitRefCount(&(coreuielement->refcount));
   coreuielement->parent = NA_NULL;
   coreuielement->elementtype = elementtype;
   coreuielement->nativeID = nativeID;
@@ -105,8 +115,9 @@ NA_HDEF void naRegisterCoreUIElement(NACoreUIElement* coreuielement, NAUIElement
 
 
 
-NA_HDEF void naUnregisterCoreUIElement(NACoreUIElement* coreuielement){
+NA_HDEF void* naUnregisterCoreUIElement(NACoreUIElement* coreuielement){
   naRemoveListData(&(na_app->uielements), coreuielement);
+  return coreuielement->nativeID;
 }
 
 
@@ -189,13 +200,36 @@ NA_HDEF void* naGetUINALibEquivalent(NANativeID nativeID){
 
 
 
-NA_DEF void naClearUIElement(NAUIElement* uielement){
-  NAListIterator iter;
+NA_DEF void naReleaseUIElement(NAUIElement* uielement){
+//  NAListIterator iter;
   NACoreUIElement* element = (NACoreUIElement*)uielement;
-  naBeginListMutatorIteration(NAReaction* curreaction, &(element->reactions), iter);
-    naFree(curreaction);
-  naEndListIteration(iter);
+
+  naForeachListMutable(&(element->reactions), naFree);
+//  naBeginListMutatorIteration(NAReaction* curreaction, &(element->reactions), iter);
+//    naFree(curreaction);
+//  naEndListIteration(iter);
   naClearList(&(element->reactions));
+
+  naForeachListMutable(&(element->childs), naReleaseUIElement);
+  naClearList(&(element->childs));
+
+  switch(naGetUIElementType(element))
+  {
+  case NA_UI_APPLICATION: naReleaseRefCount(&(element->refcount), uielement, naDestructApplication); break;
+//  case NA_UI_SCREEN:      naDeleteScreen(uielement);
+  case NA_UI_WINDOW:      naReleaseRefCount(&(element->refcount), uielement, naDestructWindow); break;
+  case NA_UI_SPACE:       naReleaseRefCount(&(element->refcount), uielement, naDestructSpace); break;
+  #if NA_CONFIG_COMPILE_OPENGL == 1
+    case NA_UI_OPENGLSPACE: naReleaseRefCount(&(element->refcount), uielement, naDestructOpenGLSpace); break;
+  #endif
+  case NA_UI_BUTTON:      naReleaseRefCount(&(element->refcount), uielement, naDestructButton); break;
+  case NA_UI_LABEL:       naReleaseRefCount(&(element->refcount), uielement, naDestructLabel); break;
+  default:
+    #ifndef NDEBUG
+      naError("Invalid element type");
+    #endif
+    break;
+  }
 }
 
 

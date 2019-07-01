@@ -29,8 +29,9 @@
 typedef struct NACocoaApplication NACocoaApplication;
 typedef struct NACocoaWindow      NACocoaWindow;
 typedef struct NACocoaSpace       NACocoaSpace;
-typedef struct NACocoaOpenGlSpace NACocoaOpenGLSpace;
+typedef struct NACocoaOpenGLSpace NACocoaOpenGLSpace;
 typedef struct NACocoaButton      NACocoaButton;
+typedef struct NACocoaLabel       NACocoaLabel;
 
 
 // ////////////////
@@ -71,6 +72,10 @@ struct NACocoaButton{
   NACoreButton corebutton;
 };
 
+struct NACocoaLabel{
+  NACoreLabel corelabel;
+};
+
 
 
 // ///////////////
@@ -89,7 +94,7 @@ struct NACocoaButton{
 @end
 
 #if (NA_CONFIG_COMPILE_OPENGL == 1)
-  @interface NANativeOpenGLSpace : NSOpenGLSpace{
+  @interface NANativeOpenGLSpace : NSOpenGLView{
     NACocoaOpenGLSpace* cocoaopenglspace;
     NAMutator initFunc;
     void* initData;
@@ -99,6 +104,11 @@ struct NACocoaButton{
 
 @interface NANativeButton : NSButton{
   NACocoaButton* cocoabutton;
+}
+@end
+
+@interface NANativeLabel : NSTextField{
+  NACocoaLabel* cocoalabel;
 }
 @end
 

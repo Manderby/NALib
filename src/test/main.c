@@ -25,20 +25,13 @@ NABool resizeWindow(void* controllerdata, NAUIElement* uielement, NAUICommand co
   return NA_TRUE;
 }
 
-NABool drawWindow(void* controllerdata, NAUIElement* uielement, NAUICommand command, void* arg){
-  NA_UNUSED(controllerdata);
-  NA_UNUSED(uielement);
-  NA_UNUSED(command);
-  NA_UNUSED(arg);
-//  printf("Draw\n");
-  return NA_TRUE;
-}
-
 NABool cubPressWindowKey(void* controllerdata, NAUIElement* uielement, NAUICommand command, void* arg){
   NA_UNUSED(controllerdata);
   NA_UNUSED(uielement);
   NA_UNUSED(command);
   NA_UNUSED(arg);
+  NAUIKeyCode* key = (NAUIKeyCode*)arg;
+  if(*key == NA_KEYCODE_ESC){naStopApplication();}
 //  printf("Key Press\n");
   return NA_TRUE;
 }
@@ -108,7 +101,6 @@ void poststartup(void* arg){
   NARect windowrect = naMakeRectS(20, 20, 400, 300);
   NAWindow* window = naNewWindow("Wurst", windowrect, NA_TRUE);
   naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_RESHAPE,       resizeWindow);
-  naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_REDRAW,        drawWindow);
   naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_KEYDOWN,       cubPressWindowKey);
   naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_KEYUP,         cubReleaseWindowKey);
   naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_MOUSE_MOVED,   cubMoveWindowMouse);
@@ -118,9 +110,13 @@ void poststartup(void* arg){
 //  NAOpenGLSpace* openglspace = naNewOpenGLSpace(window, windowrect.size, initOpenGLSpace, window);
 //  naSetWindowContentSpace(window, openglspace);
 
-  NAButton* button = naNewButton();
   NASpace* contentSpace = naGetWindowContentSpace(window);
+
+  NAButton* button = naNewButton();
   naAddSpaceChild(contentSpace, button);
+
+  NALabel* label = naNewLabel();
+  naAddSpaceChild(contentSpace, label);
 
   naShowWindow(window);
 }
@@ -140,9 +136,8 @@ int main(void){
   printf("%d Bits Addresses, %d Bits Integers)\n", NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
   naStartRuntime();
-    naStartTranslator();
-      naStartApplication(prestartup, poststartup, NA_NULL);
-    naStopTranslator();
+    naStartApplication(prestartup, poststartup, NA_NULL);
+//    naStopTranslator();
   naStopRuntime();
 
   #if NA_OS == NA_OS_WINDOWS

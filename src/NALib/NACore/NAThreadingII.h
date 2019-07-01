@@ -416,11 +416,7 @@ NA_IDEF NAAlarm naMakeAlarm(void){
     return CreateEvent(NULL, FALSE, FALSE, NULL);
   #else
     alarm = dispatch_semaphore_create(0);
-    #if __has_feature(objc_arc)
-      return (NAAlarm)CFBridgingRetain(alarm);
-    #else
-      return (NAAlarm)alarm;
-    #endif
+    return (NAAlarm)NA_COCOA_RETAIN(alarm);
   #endif
 }
 
@@ -461,18 +457,10 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarm, double maxwaittime){
         naError("maxwaittime should not be negative. Beware of the zero!");
     #endif
     if(maxwaittime == 0){
-      #if __has_feature(objc_arc)
-        result = dispatch_semaphore_wait((dispatch_semaphore_t)CFBridgingRelease(alarm), DISPATCH_TIME_FOREVER);
-      #else
-        result = dispatch_semaphore_wait((dispatch_semaphore_t)alarm, DISPATCH_TIME_FOREVER);
-      #endif
+      result = dispatch_semaphore_wait((NA_COCOA_BRIDGE dispatch_semaphore_t)alarm, DISPATCH_TIME_FOREVER);
     }else{
       dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1000000000 * maxwaittime));
-      #if __has_feature(objc_arc)
-        result = dispatch_semaphore_wait((dispatch_semaphore_t)CFBridgingRelease(alarm), timeout);
-      #else
-        result = dispatch_semaphore_wait((dispatch_semaphore_t)alarm, timeout);
-      #endif
+      result = dispatch_semaphore_wait((NA_COCOA_BRIDGE dispatch_semaphore_t)alarm, timeout);
     }
     return (result ? NA_FALSE : NA_TRUE);
   #endif
@@ -484,11 +472,7 @@ NA_IDEF void naTriggerAlarm(NAAlarm alarm){
   #if NA_OS == NA_OS_WINDOWS
     SetEvent(alarm);
   #else
-    #if __has_feature(objc_arc)
-      dispatch_semaphore_signal((dispatch_semaphore_t)CFBridgingRelease(alarm));
-    #else
-      dispatch_semaphore_signal((dispatch_semaphore_t)alarm);
-    #endif
+    dispatch_semaphore_signal((NA_COCOA_BRIDGE dispatch_semaphore_t)alarm);
   #endif
 }
 

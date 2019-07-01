@@ -90,7 +90,7 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
   case WM_PAINT:
     // wParam: Unused
     // lParam: Unused
-    if (uielement->elementtype == NA_UI_OPENGLVIEW) {
+    if (uielement->elementtype == NA_UI_OPENGLSPACE) {
       BeginPaint(hWnd, &ps);
 
       //if(uielement is opengl)
@@ -549,7 +549,7 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeel
       rect = naGetWindowAbsoluteInnerRect(coreelement);
     }
     break;
-  case NA_UI_OPENGLVIEW:  rect = naGetSpaceAbsoluteInnerRect(coreelement); break;
+  case NA_UI_OPENGLSPACE:  rect = naGetSpaceAbsoluteInnerRect(coreelement); break;
   default:
     #ifndef NDEBUG
       naError("naGetUIElementRect", "Invalid UI type");
@@ -562,7 +562,7 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeel
   case NA_UI_APPLICATION: relrect = naGetApplicationAbsoluteRect(); break;
   case NA_UI_SCREEN:      relrect = naGetScreenAbsoluteRect(corerelelement); break;
   case NA_UI_WINDOW:      relrect = naGetWindowAbsoluteInnerRect(corerelelement); break;
-  case NA_UI_OPENGLVIEW:  relrect = naGetSpaceAbsoluteInnerRect(corerelelement); break;
+  case NA_UI_OPENGLSPACE:  relrect = naGetSpaceAbsoluteInnerRect(corerelelement); break;
   default:
     #ifndef NDEBUG
       naError("naGetUIElementRect", "Invalid UI type");
@@ -831,7 +831,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 		  (HWND)naGetUIElementNativeID(window), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
 
     openglspace = naAlloc(NAWINAPIOpenGLSpace);
-    naRegisterCoreUIElement((NACoreUIElement*)openglspace, (NACoreUIElement*)window, NA_UI_OPENGLVIEW, hWnd);
+    naRegisterCoreUIElement((NACoreUIElement*)openglspace, (NACoreUIElement*)window, NA_UI_OPENGLSPACE, hWnd);
 
     hDC = GetDC(hWnd);
 

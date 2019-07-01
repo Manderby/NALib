@@ -83,9 +83,13 @@
     #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
   #endif
   #if __has_feature(objc_arc)
-    #define NA_ARC_BRIDGE __bridge
+    #define NA_COCOA_BRIDGE __bridge
+    #define NA_COCOA_RETAIN(obj) CFBridgingRetain(obj)
+    #define NA_COCOA_RELEASE(obj) CFBridgingRelease(obj)
   #else
-    #define NA_ARC_BRIDGE
+    #define NA_COCOA_BRIDGE
+    #define NA_COCOA_RETAIN(obj) obj
+    #define NA_COCOA_RELEASE(obj) [(id)obj release]
   #endif
 
 #else

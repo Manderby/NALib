@@ -78,6 +78,7 @@ typedef void  NAWindow;
 typedef void  NASpace;
 typedef void  NAOpenGLSpace;
 typedef void  NAButton;
+typedef void  NALabel;
 
 
 
@@ -89,9 +90,10 @@ typedef enum{
   NA_UI_APPLICATION,
   NA_UI_SCREEN,
   NA_UI_WINDOW,
-  NA_UI_VIEW,
-  NA_UI_OPENGLVIEW,
+  NA_UI_SPACE,
+  NA_UI_OPENGLSPACE,
   NA_UI_BUTTON,
+  NA_UI_LABEL,
 } NAUIElementType;
 
 NA_API NAUIElementType naGetUIElementType(NAUIElement* uielement);
@@ -178,7 +180,8 @@ NA_API void naStartApplication(  NAMutator prestartup,
 // described here:
 //
 // Mac: - NALib calls [NSApplication sharedApplication]
-//      - NALib allocates some structures in the background to run the UI.
+//      - NALib allocates some structures in the background to run the UI
+//        including the application internal translator.
 //      - NALib creates an NSAutoreleasePool (only when ARC is turned off)
 //        * NALib calls prestartup with arg.
 //        * NALib sets the translator languages according to the user prefs.
@@ -191,7 +194,8 @@ NA_API void naStartApplication(  NAMutator prestartup,
 //      - NALib will start a message loop. When ARC is turned off, a new
 //        NSAutoreleasePools is created for each and every message.
 //
-// Win: - NALib allocates some structures in the background to run the UI.
+// Win: - NALib allocates some structures in the background to run the UI
+//        including the application internal translator.
 //      - NALib calls prestartup with arg.
 //      - NALib sets the translator languages according to the user prefs.
 //      - NALib registers its window classes
@@ -213,6 +217,26 @@ NA_API void naStartApplication(  NAMutator prestartup,
 // you would like to control. You are of course free to do this in the
 // didFinishLaunching method of you NSApplication delegate on a Mac, if you
 // really want to.
+//
+// //// Intermission: Mixing an existing Cocoa application with NAApplication:
+// If you require a mix of both environments, here is a very simple scheme you
+// can use in your main.m file:
+// 
+// void poststartup(void* arg){
+//   [NSBundle loadNibNamed:@"MainMenu" owner:NSApp];
+//   Now, do UI stuff with NALib. 
+// }
+//
+// int main(int argc, char *argv[]){
+//   naStartRuntime();
+//   [MyExistingApplication sharedApplication];
+//   naStartApplication(NA_NULL, poststartup, NA_NULL);
+//   return 0;
+// }
+//
+// Make sure to use the correct type for MyExistingApplication! Other than
+// that, NAApplication will forward all uncaptured events to the NSEvent loop.
+// //////// End intermission
 //
 // Note that both in the prestartup as well as the poststartup function, the
 // global NAApplication struct of NALib is ready to be used. You can get this
@@ -361,17 +385,23 @@ struct NACursorInfo{
 };
 
 
+NA_API void naDestructApplication(NAApplication* application);
 
 
 // rect is the outer rect of the window.
-NA_API NAWindow* naNewWindow(const char* title, NARect rect, NABool resizeable);
-
+NA_API NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resizeable);
+NA_API void naDestructWindow(NAWindow* window);
 
 NA_API NASpace* naNewSpace(NARect rect);
+NA_API void naDestructSpace(NASpace* space);
+
 void naAddSpaceChild(NASpace* space, NAUIElement* child);
 
 NA_API NAButton* naNewButton(void);
+NA_API void naDestructButton(NAButton* button);
 
+NA_API NALabel* naNewLabel(void);
+NA_API void naDestructLabel(NALabel* label);
 
 
 NA_API NARect naGetMainScreenRect(void);
@@ -397,6 +427,9 @@ NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
                                            NASize size,
                                         NAMutator initfunc,
                                             void* initdata);
+
+  NA_API void naDestructOpenGLSpace(NAOpenGLSpace* space);
+
   // Swaps the OpenGL buffer.
   NA_API void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace);
   NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds);

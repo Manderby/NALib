@@ -8,7 +8,7 @@
   extern "C"{
 #endif
 
-
+typedef struct NATranslator NATranslator;
 
 #include "NABase.h"
 
