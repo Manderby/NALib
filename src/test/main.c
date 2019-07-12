@@ -115,7 +115,7 @@ void poststartup(void* arg){
   NAButton* button = naNewButton();
   naAddSpaceChild(contentSpace, button);
 
-  NALabel* label = naNewLabel();
+  NALabel* label = naNewLabel("101010");
   naAddSpaceChild(contentSpace, label);
 
   naShowWindow(window);

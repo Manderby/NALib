@@ -78,6 +78,7 @@ typedef void  NAWindow;
 typedef void  NASpace;
 typedef void  NAOpenGLSpace;
 typedef void  NAButton;
+typedef void  NARadioButton;
 typedef void  NALabel;
 
 
@@ -93,6 +94,7 @@ typedef enum{
   NA_UI_SPACE,
   NA_UI_OPENGLSPACE,
   NA_UI_BUTTON,
+  NA_UI_RADIOBUTTON,
   NA_UI_LABEL,
 } NAUIElementType;
 
@@ -298,7 +300,18 @@ NA_API void naOpenConsoleWindow(const char* windowtitle);
 
 
 
+typedef enum{
+  NA_FONT_KIND_SYSTEM,
+  NA_FONT_KIND_MONOSPACE,
+  NA_FONT_KIND_PARAGRAPH,
+  NA_FONT_KIND_MATH
+} NAFontKind;
 
+typedef enum{
+  NA_TEXT_ALIGNMENT_LEFT,
+  NA_TEXT_ALIGNMENT_RIGHT,
+  NA_TEXT_ALIGNMENT_CENTER,
+} NATextAlignment;
 
 
 // //////////////////////////////
@@ -314,7 +327,8 @@ typedef enum{
   NA_UI_COMMAND_KEYUP,
   NA_UI_COMMAND_MOUSE_MOVED,
   NA_UI_COMMAND_MOUSE_ENTERED,
-  NA_UI_COMMAND_MOUSE_EXITED
+  NA_UI_COMMAND_MOUSE_EXITED,
+  NA_UI_COMMAND_PRESSED
 } NAUICommand;
 
 // A programmer reacts to commands by calling naAddUIReaction. When a specific
@@ -352,6 +366,7 @@ NA_API void naAddUIReaction(          void* controllerdata,
 // MOUSE_MOVED   -            NA_NULL
 // MOUSE_ENTERED -            NA_NULL
 // MOUSE_EXITED  -            NA_NULL
+// PRESSED       -            NA_NULL
 //
 // The INIT method will be called once per element.
 //
@@ -395,13 +410,25 @@ NA_API void naDestructWindow(NAWindow* window);
 NA_API NASpace* naNewSpace(NARect rect);
 NA_API void naDestructSpace(NASpace* space);
 
-void naAddSpaceChild(NASpace* space, NAUIElement* child);
+NA_API void naAddSpaceChild(NASpace* space, NAUIElement* child);
+NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 
-NA_API NAButton* naNewButton(void);
+NA_API NAButton* naNewButton(const char* text, NARect rect);
 NA_API void naDestructButton(NAButton* button);
+NA_API void naSetButtonState(NAButton* button, NABool state);
 
-NA_API NALabel* naNewLabel(void);
+
+NA_DEF NARadioButton* naNewRadioButton(const char* text, NARect rect);
+NA_DEF void naDestructRadioButton(NARadioButton* radiobutton);
+NA_HDEF void naSetRadioButtonState(NARadioButton* radiobutton, NABool state);
+
+
+
+NA_API NALabel* naNewLabel(const NAUTF8Char* text, NARect rect);
 NA_API void naDestructLabel(NALabel* label);
+NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text);
+NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
+NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind);
 
 
 NA_API NARect naGetMainScreenRect(void);

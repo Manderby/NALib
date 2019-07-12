@@ -33,6 +33,7 @@ typedef struct NACoreWindow         NACoreWindow;
 typedef struct NACoreSpace          NACoreSpace;
 typedef struct NACoreOpenGLSpace    NACoreOpenGLSpace;
 typedef struct NACoreButton         NACoreButton;
+typedef struct NACoreRadioButton    NACoreRadioButton;
 typedef struct NACoreLabel          NACoreLabel;
 
 
@@ -98,7 +99,6 @@ struct NACoreUIElement{
   NARefCount refcount;
   NAUIElementType elementtype;
   NACoreUIElement* parent;
-  NAList childs;
   NAList reactions;
   void* nativeID;  // The native object
 };
@@ -126,6 +126,7 @@ struct NAScreen{
 
 struct NACoreWindow{
   NACoreUIElement uielement;
+  NACoreSpace* contentspace;
   NABool fullscreen;
   NARect windowedframe;
 };
@@ -134,6 +135,7 @@ struct NACoreWindow{
 
 struct NACoreSpace{
   NACoreUIElement uielement;
+  NABool alternatebackground;
 };
 
 
@@ -145,6 +147,12 @@ struct NACoreOpenGLSpace{
 
 
 struct NACoreButton{
+  NACoreUIElement uielement;
+};
+
+
+
+struct NACoreRadioButton{
   NACoreUIElement uielement;
 };
 

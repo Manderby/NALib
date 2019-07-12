@@ -31,6 +31,7 @@ typedef struct NACocoaWindow      NACocoaWindow;
 typedef struct NACocoaSpace       NACocoaSpace;
 typedef struct NACocoaOpenGLSpace NACocoaOpenGLSpace;
 typedef struct NACocoaButton      NACocoaButton;
+typedef struct NACocoaRadioButton NACocoaRadioButton;
 typedef struct NACocoaLabel       NACocoaLabel;
 
 
@@ -72,6 +73,14 @@ struct NACocoaButton{
   NACoreButton corebutton;
 };
 
+struct NACocoaRadioButton{
+  NACoreRadioButton coreradiobutton;
+  // Cocoa thinks it's smart by doing things automatically. Unfortunately, we
+  // have to encapsulate the radiobutton into its own view to get the behaviour
+  // we need.
+  NSView* containingnsview;
+};
+
 struct NACocoaLabel{
   NACoreLabel corelabel;
 };
@@ -104,6 +113,15 @@ struct NACocoaLabel{
 
 @interface NANativeButton : NSButton{
   NACocoaButton* cocoabutton;
+}
+@end
+
+@interface NANativeRadioButton : NSButton{
+  NACocoaRadioButton* cocoaradiobutton;
+}
+@end
+
+@interface MDVerticallyCenteredTextFieldCell : NSTextFieldCell{
 }
 @end
 

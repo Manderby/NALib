@@ -108,7 +108,6 @@ NA_HDEF void naRegisterCoreUIElement(NACoreUIElement* coreuielement, NAUIElement
   coreuielement->parent = NA_NULL;
   coreuielement->elementtype = elementtype;
   coreuielement->nativeID = nativeID;
-  naInitList(&(coreuielement->childs));
   naInitList(&(coreuielement->reactions));
   naAddListLastMutable(&(na_app->uielements), coreuielement);
 }
@@ -205,13 +204,7 @@ NA_DEF void naReleaseUIElement(NAUIElement* uielement){
   NACoreUIElement* element = (NACoreUIElement*)uielement;
 
   naForeachListMutable(&(element->reactions), naFree);
-//  naBeginListMutatorIteration(NAReaction* curreaction, &(element->reactions), iter);
-//    naFree(curreaction);
-//  naEndListIteration(iter);
   naClearList(&(element->reactions));
-
-  naForeachListMutable(&(element->childs), naReleaseUIElement);
-  naClearList(&(element->childs));
 
   switch(naGetUIElementType(element))
   {
@@ -223,6 +216,7 @@ NA_DEF void naReleaseUIElement(NAUIElement* uielement){
     case NA_UI_OPENGLSPACE: naReleaseRefCount(&(element->refcount), uielement, naDestructOpenGLSpace); break;
   #endif
   case NA_UI_BUTTON:      naReleaseRefCount(&(element->refcount), uielement, naDestructButton); break;
+  case NA_UI_RADIOBUTTON: naReleaseRefCount(&(element->refcount), uielement, naDestructRadioButton); break;
   case NA_UI_LABEL:       naReleaseRefCount(&(element->refcount), uielement, naDestructLabel); break;
   default:
     #ifndef NDEBUG
@@ -252,6 +246,8 @@ NA_DEF void naAddUIReaction(void* controller, NAUIElement* uielement, NAUIComman
       naError("Only windows can receyve MOUSE_ENTERED commands.");
     if((command == NA_UI_COMMAND_MOUSE_EXITED) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
       naError("Only windows can receyve MOUSE_EXITED commands.");
+    if((command == NA_UI_COMMAND_PRESSED) && (naGetUIElementType(uielement) != NA_UI_BUTTON) && (naGetUIElementType(uielement) != NA_UI_RADIOBUTTON))
+      naError("Only buttons and radiobuttons can receyve PRESSED commands.");
   #endif
   newreaction = naAlloc(NAReaction);
   newreaction->controller = controller;

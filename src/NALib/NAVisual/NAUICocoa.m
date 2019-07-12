@@ -57,8 +57,9 @@ NA_HAPI NARect naGetApplicationAbsoluteRect(void);
 NA_HAPI NARect naGetScreenAbsoluteRect(NACoreUIElement* screen);
 NA_HAPI NARect naGetWindowAbsoluteOuterRect(NACoreUIElement* window);
 NA_HAPI NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space);
-NA_HAPI NARect naGetButtonAbsoluteInnerRect(NACoreUIElement* space);
-NA_HAPI NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* space);
+NA_HAPI NARect naGetButtonAbsoluteInnerRect(NACoreUIElement* button);
+NA_HAPI NARect naGetRadioButtonAbsoluteInnerRect(NACoreUIElement* radiobutton);
+NA_HAPI NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* label);
 
 NA_HAPI void naRenewWindowMouseTracking(NACocoaWindow* cocoawindow);
 NA_HAPI void naClearWindowMouseTracking(NACocoaWindow* cocoawindow);
@@ -311,10 +312,11 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
       rect = naGetWindowAbsoluteInnerRect(element);
     }
     break;
-  case NA_UI_SPACE :       rect = naGetSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_OPENGLSPACE:  rect = naGetSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_BUTTON :     rect = naGetButtonAbsoluteInnerRect(element); break;
-  case NA_UI_LABEL  :     rect = naGetLabelAbsoluteInnerRect(element); break;
+  case NA_UI_SPACE:       rect = naGetSpaceAbsoluteInnerRect(element); break;
+  case NA_UI_OPENGLSPACE: rect = naGetSpaceAbsoluteInnerRect(element); break;
+  case NA_UI_BUTTON:      rect = naGetButtonAbsoluteInnerRect(element); break;
+  case NA_UI_RADIOBUTTON: rect = naGetRadioButtonAbsoluteInnerRect(element); break;
+  case NA_UI_LABEL:       rect = naGetLabelAbsoluteInnerRect(element); break;
   }
 
   // Now, we find the appropriate relative element.
@@ -325,9 +327,10 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
     case NA_UI_APPLICATION: relrect = naGetApplicationAbsoluteRect(); break;
     case NA_UI_SCREEN:      relrect = naGetScreenAbsoluteRect(relelement); break;
     case NA_UI_WINDOW:      relrect = naGetWindowAbsoluteInnerRect(relelement); break;
-    case NA_UI_SPACE:        relrect = naGetSpaceAbsoluteInnerRect(relelement); break;
-    case NA_UI_OPENGLSPACE:  relrect = naGetSpaceAbsoluteInnerRect(relelement); break;
+    case NA_UI_SPACE:       relrect = naGetSpaceAbsoluteInnerRect(relelement); break;
+    case NA_UI_OPENGLSPACE: relrect = naGetSpaceAbsoluteInnerRect(relelement); break;
     case NA_UI_BUTTON:      relrect = naGetButtonAbsoluteInnerRect(relelement); break;
+    case NA_UI_RADIOBUTTON: relrect = naGetRadioButtonAbsoluteInnerRect(relelement); break;
     case NA_UI_LABEL:       relrect = naGetLabelAbsoluteInnerRect(relelement); break;
     }
 
@@ -502,7 +505,7 @@ NA_DEF void naSetWindowContentSpace(NAWindow* window, NAUIElement* uielement){
   [nativewindow setContentView:(NA_COCOA_BRIDGE NSView*)element->nativeID];
   [(NA_COCOA_BRIDGE NSWindow*)naGetUIElementNativeID((NAUIElement*)window) setInitialFirstResponder:[nativewindow contentView]];
   
-  naAddListLastMutable(&(cocoawindow->corewindow.uielement.childs), uielement);
+  cocoawindow->corewindow.contentspace = (NACoreSpace*)uielement;
   naSetUIElementParent(uielement, window);
   
   if([nativewindow trackingcount]){naRenewWindowMouseTracking(cocoawindow);}
@@ -541,7 +544,7 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 
 NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){
   NACoreWindow* corewindow = (NACoreWindow*)window;
-  return naGetListFirstMutable(&(corewindow->uielement.childs));
+  return corewindow->contentspace;
 }
 
 
@@ -558,14 +561,13 @@ NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){
   return self;
 }
 - (void)drawRect:(NSRect)dirtyRect{
-  NA_UNUSED(dirtyRect);
-  dirtyRect.origin.x += 100;
-  dirtyRect.origin.y += 50;
-  dirtyRect.size.width /= 2.;
-  dirtyRect.size.height /= 2.;
-  [[NSColor blueColor] setFill];
+  [super drawRect:dirtyRect];
+  if(cocoaspace->corespace.alternatebackground){
+    NSColor* alternatecolor = [NSColor controlTextColor];
+    
+    [[alternatecolor colorWithAlphaComponent:.075] setFill];
     NSRectFill(dirtyRect);
-    [super drawRect:dirtyRect];
+  }
 }
 @end
 
@@ -573,6 +575,7 @@ NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){
 
 NA_DEF NASpace* naNewSpace(NARect rect){
   NACocoaSpace* cocoaspace = naAlloc(NACocoaSpace);
+  cocoaspace->corespace.alternatebackground = NA_FALSE;
 
   NSRect contentRect = naMakeNSRectWithRect(rect);
   NANativeSpace* nativeSpace = [[NANativeSpace alloc] initWithCocoaSpace:cocoaspace frame:contentRect];  
@@ -590,10 +593,27 @@ NA_DEF void naDestructSpace(NASpace* space){
 
 
 
-void naAddSpaceChild(NASpace* space, NAUIElement* child){
+NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child){
   NANativeSpace* nativespace = (NA_COCOA_BRIDGE NANativeSpace*)(naGetUIElementNativeID(space));
-  NANativeID nativechild = naGetUIElementNativeID(child);
-  [nativespace addSubview:(NA_COCOA_BRIDGE NSView*)(nativechild)];
+  NACocoaRadioButton* cocoaradiobutton;
+  switch(naGetUIElementType(child)){
+  case NA_UI_RADIOBUTTON:
+    cocoaradiobutton = (NACocoaRadioButton*)child;
+    [nativespace addSubview:cocoaradiobutton->containingnsview];
+    break;
+  default:
+    [nativespace addSubview:(NA_COCOA_BRIDGE NSView*)naGetUIElementNativeID(child)];
+    break;
+  }
+}
+
+
+
+NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
+  NACocoaSpace* cocoaspace = (NACocoaSpace*)space;
+  cocoaspace->corespace.alternatebackground = alternate;
+  NANativeSpace* nativespace = (NA_COCOA_BRIDGE NANativeSpace*)(naGetUIElementNativeID(space));
+  [nativespace setNeedsDisplay:YES];
 }
 
 
@@ -717,23 +737,35 @@ void naAddSpaceChild(NASpace* space, NAUIElement* child){
 @implementation NANativeButton
 - (id) initWithCocoaButton:(NACocoaButton*)newcocoabutton frame:(NSRect)frame{
   self = [super initWithFrame:frame];
-  [self setTitle:@"TheBöttn"];
-  [self setButtonType:NSButtonTypeMomentaryPushIn];
-  [self setBezelStyle:NSBezelStyleShadowlessSquare];
+  [self setButtonType:NSButtonTypeOnOff];
+  [self setBezelStyle:NSBezelStyleRounded];
+//  [self setBezelStyle:NSBezelStyleShadowlessSquare];
   [self setBordered:YES];
   cocoabutton = newcocoabutton;
+  [self setTarget:self];
+  [self setAction:@selector(onPressed:)];
   return self;
+}
+- (void) setText:(const NAUTF8Char*)text{
+  [self setTitle:[NSString stringWithUTF8String:text]];
+}
+- (void) onPressed:(id)sender{
+  NA_UNUSED(sender);
+  naDispatchUIElementCommand((NACoreUIElement*)cocoabutton, NA_UI_COMMAND_PRESSED, NA_NULL);
+}
+- (void) setButtonState:(NABool)state{
+  [self setState:state ? NSOnState : NSOffState];
 }
 @end
 
 
 
-NA_DEF NAButton* naNewButton(void){
+NA_DEF NAButton* naNewButton(const char* text, NARect rect){
   NACocoaButton* cocoabutton = naAlloc(NACocoaButton);
 
-  NSRect contentRect = NSMakeRect(40, 70, 100, 50);
-  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCocoaButton:cocoabutton frame:contentRect];  
+  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCocoaButton:cocoabutton frame:naMakeNSRectWithRect(rect)];
   naRegisterCoreUIElement(&(cocoabutton->corebutton.uielement), NA_UI_BUTTON, (void*)NA_COCOA_RETAIN(nativeButton));
+  [nativeButton setText:text];
   
   return (NAButton*)cocoabutton;
 }
@@ -747,9 +779,83 @@ NA_DEF void naDestructButton(NAButton* button){
 
 
 
-NA_HDEF NARect naGetButtonAbsoluteInnerRect(NACoreUIElement* space){
-  NA_UNUSED(space);
+NA_HDEF NARect naGetButtonAbsoluteInnerRect(NACoreUIElement* button){
+  NA_UNUSED(button);
   return naMakeRectS(20, 40, 100, 50);
+}
+
+
+
+NA_HDEF void naSetButtonState(NAButton* button, NABool state){
+  [((NA_COCOA_BRIDGE NANativeButton*)naGetUIElementNativeID(button)) setButtonState:state];
+}
+
+
+
+// ////////////////////////////
+// Radio Button
+
+@implementation NANativeRadioButton
+- (id) initWithCocoaRadioButton:(NACocoaRadioButton*)newcocoaradiobutton frame:(NSRect)frame{
+  self = [super initWithFrame:frame];
+  [self setButtonType:NSButtonTypeRadio];
+//  [self setBezelStyle:NSBezelStyleRounded];
+//  [self setBezelStyle:NSBezelStyleShadowlessSquare];
+//  [self setBordered:YES];
+  cocoaradiobutton = newcocoaradiobutton;
+  [self setTarget:self];
+  [self setAction:@selector(onPressed:)];
+  return self;
+}
+- (void) setText:(const NAUTF8Char*)text{
+  [self setTitle:[NSString stringWithUTF8String:text]];
+}
+- (void) onPressed:(id)sender{
+  NA_UNUSED(sender);
+  naDispatchUIElementCommand((NACoreUIElement*)cocoaradiobutton, NA_UI_COMMAND_PRESSED, NA_NULL);
+}
+- (void) setButtonState:(NABool)state{
+  [self setState:state ? NSOnState : NSOffState];
+}
+@end
+
+
+
+NA_DEF NARadioButton* naNewRadioButton(const char* text, NARect rect){
+  NACocoaRadioButton* cocoaradiobutton = naAlloc(NACocoaRadioButton);
+  NSRect framerect = naMakeNSRectWithRect(rect);
+  NSRect boundrect = framerect;
+  boundrect.origin.x = 0;
+  boundrect.origin.y = 0;
+
+  cocoaradiobutton->containingnsview = [[NSView alloc] initWithFrame:framerect];
+  NANativeRadioButton* nativeRadioButton = [[NANativeRadioButton alloc] initWithCocoaRadioButton:cocoaradiobutton frame:boundrect];
+  [cocoaradiobutton->containingnsview addSubview:nativeRadioButton];
+  
+  naRegisterCoreUIElement(&(cocoaradiobutton->coreradiobutton.uielement), NA_UI_RADIOBUTTON, (void*)NA_COCOA_RETAIN(nativeRadioButton));
+  [nativeRadioButton setText:text];
+  
+  return (NARadioButton*)cocoaradiobutton;
+}
+
+
+
+NA_DEF void naDestructRadioButton(NARadioButton* radiobutton){
+  NACocoaRadioButton* cocoaradiobutton = (NACocoaRadioButton*)radiobutton;
+  NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoaradiobutton->coreradiobutton.uielement)));
+}
+
+
+
+NA_HDEF NARect naGetRadioButtonAbsoluteInnerRect(NACoreUIElement* radiobutton){
+  NA_UNUSED(radiobutton);
+  return naMakeRectS(20, 40, 100, 50);
+}
+
+
+
+NA_HDEF void naSetRadioButtonState(NARadioButton* radiobutton, NABool state){
+  [((NA_COCOA_BRIDGE NANativeRadioButton*)naGetUIElementNativeID(radiobutton)) setButtonState:state];
 }
 
 
@@ -757,28 +863,174 @@ NA_HDEF NARect naGetButtonAbsoluteInnerRect(NACoreUIElement* space){
 // ////////////////////////////
 // Label
 
+@implementation MDVerticallyCenteredTextFieldCell
+
+- (NSRect)adjustedFrameToVerticallyCenterText:(NSRect)rect {
+//  static int blah = 0;
+//    CGFloat fontSize = self.font.boundingRectForFont.size.height;
+//    NSRect boundRect = [[self font] boundingRectForFont];
+//    CGFloat ascender = [[self font] ascender];
+//    CGFloat capHeight = [[self font] capHeight];
+//    CGFloat descender = [[self font] descender];
+//    CGFloat xHeight = [[self font] xHeight];
+//    CGFloat test = fontSize - ascender + descender;
+//    CGFloat offset = 15 - (fontSize + (fontSize + boundRect.origin.y - ascender + descender));
+//    CGFloat offset = 18 - (floor(fontSize) + floor(boundRect.origin.y));
+    CGFloat offset = 0;
+    return NSMakeRect(rect.origin.x, offset, rect.size.width, rect.size.height - offset);
+//    return NSMakeRect(rect.origin.x, 15 - (fontSize + boundRect.origin.y), rect.size.width, fontSize);
+}
+- (void)editWithFrame:(NSRect)aRect inView:(NSView *)controlView
+         editor:(NSText *)editor delegate:(id)delegate event:(NSEvent *)event {
+    [super editWithFrame:[self adjustedFrameToVerticallyCenterText:aRect]
+          inView:controlView editor:editor delegate:delegate event:event];
+}
+
+- (void)selectWithFrame:(NSRect)aRect inView:(NSView *)controlView
+                 editor:(NSText *)editor delegate:(id)delegate 
+                  start:(NSInteger)start length:(NSInteger)length {
+
+    [super selectWithFrame:[self adjustedFrameToVerticallyCenterText:aRect]
+                    inView:controlView editor:editor delegate:delegate
+                     start:start length:length];
+}
+
+//- (void)drawInteriorWithFrame:(NSRect)frame inView:(NSView *)view {
+//    [super drawInteriorWithFrame:[self adjustedFrameToVerticallyCenterText:frame] inView:view];
+//}
+- (void)drawWithFrame:(NSRect)frame inView:(NSView *)view {
+//    CGFontRef cgfont = CTFontCopyGraphicsFont([self font], nil);
+//  CGFloat cgAscent = CGFontGetAscent(cgfont);
+
+//  NSLayoutManager* layout = [[NSLayoutManager alloc] init];
+//  CGFloat defaultLineHeight = [layout defaultLineHeightForFont:[self font]];
+//  CGFloat baselineOffset = [layout defaultBaselineOffsetForFont:[self font]];
+//
+//    NSRect titleRect = [self titleRectForBounds:frame];
+//    CGFloat fontHeight = self.font.boundingRectForFont.size.height;
+//    NSRect boundRect = [[self font] boundingRectForFont];
+//    CGFloat origin = boundRect.origin.y;
+//    CGFloat ascender = ([[self font] ascender]);
+//    CGFloat capHeight = [[self font] capHeight];
+//    CGFloat descender = ([[self font] descender]);
+//    CGFloat xHeight = [[self font] xHeight];
+//    CGFloat underlinePos = [[self font] underlinePosition];
+//    CGFloat leading = [[self font] leading];
+//    NSRect glyphrect = [[self font] boundingRectForCGGlyph:'x'];
+//    const CGFloat* matrix = [[self font] matrix];
+//CGFloat baseline = ceil(NSMinY(titleRect) + [[self font] ascender]);
+//    
+//    CGFloat testleading = leading;
+//    if(testleading < 0){testleading = 0;}
+//    testleading = floor(testleading + .5);
+//    
+//    CGFloat testlineheight = floor(ascender + .5) - ceil(descender - .5) + leading;
+//    CGFloat testDelta = 0;
+//    if(leading <= 0){
+//      testDelta = floor (0.2 * testlineheight + 0.5);
+//    }
+//    
+//    CGFloat test = defaultLineHeight;
+//
+//    printf("%f\n", baselineOffset);
+//
+//    [[NSColor yellowColor] setFill];
+//    boundRect.origin.y = 0;
+////    boundRect.size.height = defaultLineHeight;
+//    boundRect.size.width += 20;
+//    NSRectFill(boundRect);
+//    boundRect.size.width -= 20;
+//
+//    [[NSColor orangeColor] setFill];
+//    boundRect.origin.y = 0;
+//    boundRect.size.height = ascender;
+//    NSRectFill(boundRect);
+//
+//    [[NSColor redColor] setFill];
+//    boundRect.origin.y = ascender;
+//    boundRect.size.height = -descender;
+//    NSRectFill(boundRect);
+//
+//    [[NSColor orangeColor] setFill];
+//    boundRect.origin.y = test;
+//    boundRect.size.height = ascender;
+//    NSRectFill(boundRect);
+//
+//    [[NSColor redColor] setFill];
+//    boundRect.origin.y = test + ascender;
+//    boundRect.size.height = -descender;
+//    NSRectFill(boundRect);
+    
+    [super drawWithFrame:[self adjustedFrameToVerticallyCenterText:frame] inView:view];
+}
+
+@end
+
 @implementation NANativeLabel
 - (id) initWithCocoaLabel:(NACocoaLabel*)newcocoalabel frame:(NSRect)frame{
   self = [super initWithFrame:frame];
-  [self setStringValue:@"testtext"];
+//  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Wurst"]];
+  [self setSelectable:YES];
   [self setEditable:NO];
   [self setBordered:NO];
+  [self setBackgroundColor:[NSColor colorWithCalibratedRed:0. green:0. blue:1. alpha:.1]];
   [self setDrawsBackground:NO];
-//  double test = [NSFont labelFontSize];
   [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
   cocoalabel = newcocoalabel;
   return self;
+}
+- (void) setText:(const NAUTF8Char*)text{
+  [self setStringValue:[NSString stringWithUTF8String:text]];
+}
+- (void) setTextAlignment:(NATextAlignment) alignment{
+  switch(alignment){
+  case NA_TEXT_ALIGNMENT_LEFT: [self setAlignment:NSTextAlignmentLeft]; break;
+  case NA_TEXT_ALIGNMENT_RIGHT: [self setAlignment:NSTextAlignmentRight]; break;
+  case NA_TEXT_ALIGNMENT_CENTER: [self setAlignment:NSTextAlignmentCenter]; break;
+  default:
+    #ifndef NDEBUG
+      naError("Invalid alignment enumeration");
+    #endif
+    break;
+  }
+}
+- (void) setFontKind:(NAFontKind)kind{
+  CGFloat systemSize = [NSFont systemFontSize];
+  NSFontDescriptor* descriptor;
+  switch(kind){
+    case NA_FONT_KIND_SYSTEM:
+      [self setFont:[NSFont labelFontOfSize:systemSize]];
+      break;
+    case NA_FONT_KIND_MONOSPACE:
+      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:@{
+                                       NSFontFamilyAttribute : @"Courier", 
+                                       NSFontFaceAttribute : @"Regular"}];
+      [self setFont:[NSFont fontWithDescriptor:descriptor size:systemSize]];
+      break;
+    case NA_FONT_KIND_PARAGRAPH:
+      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:@{
+                                       NSFontFamilyAttribute : @"Palatino", 
+                                       NSFontFaceAttribute : @"Regular"}];
+      [self setFont:[NSFont fontWithDescriptor:descriptor size:systemSize + 1]];
+      break;
+    case NA_FONT_KIND_MATH:
+      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:@{
+                                       NSFontFamilyAttribute : @"Times New Roman", 
+                                       NSFontFaceAttribute : @"Italic"}];
+      [self setFont:[NSFont fontWithDescriptor:descriptor size:systemSize]];
+      break;
+  }
 }
 @end
 
 
 
-NA_DEF NALabel* naNewLabel(void){
+NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NARect rect){
   NACocoaLabel* cocoalabel = naAlloc(NACocoaLabel);
 
-  NSRect contentRect = NSMakeRect(60, 100, 100, 50);
-  NANativeLabel* nativeLabel = [[NANativeLabel alloc] initWithCocoaLabel:cocoalabel frame:contentRect];
+  NANativeLabel* nativeLabel = [[NANativeLabel alloc] initWithCocoaLabel:cocoalabel frame:naMakeNSRectWithRect(rect)];
   naRegisterCoreUIElement(&(cocoalabel->corelabel.uielement), NA_UI_LABEL, (void*)NA_COCOA_RETAIN(nativeLabel));
+  naSetLabelText(cocoalabel, text);
   
   return (NALabel*)cocoalabel;
 }
@@ -788,6 +1040,24 @@ NA_DEF NALabel* naNewLabel(void){
 NA_DEF void naDestructLabel(NALabel* label){
   NACocoaLabel* cocoalabel = (NACocoaLabel*)label;
   NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoalabel->corelabel.uielement)));
+}
+
+
+
+NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
+  [((NA_COCOA_BRIDGE NANativeLabel*)naGetUIElementNativeID(label)) setText:text];
+}
+
+
+
+NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
+  [((NA_COCOA_BRIDGE NANativeLabel*)naGetUIElementNativeID(label)) setTextAlignment: alignment];
+}
+
+
+
+NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind){
+  [((NA_COCOA_BRIDGE NANativeLabel*)naGetUIElementNativeID(label)) setFontKind:kind];
 }
 
 
