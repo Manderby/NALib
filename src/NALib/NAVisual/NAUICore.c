@@ -242,10 +242,10 @@ NA_DEF void naAddUIReaction(void* controller, NAUIElement* uielement, NAUIComman
 //      naError("Only windows can receyve KEYUP commands.");
     if((command == NA_UI_COMMAND_MOUSE_MOVED) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
       naError("Only windows can receyve MOUSE_MOVED commands.");
-    if((command == NA_UI_COMMAND_MOUSE_ENTERED) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
-      naError("Only windows can receyve MOUSE_ENTERED commands.");
-    if((command == NA_UI_COMMAND_MOUSE_EXITED) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
-      naError("Only windows can receyve MOUSE_EXITED commands.");
+//    if((command == NA_UI_COMMAND_MOUSE_ENTERED) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
+//      naError("Only windows can receyve MOUSE_ENTERED commands.");
+//    if((command == NA_UI_COMMAND_MOUSE_EXITED) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
+//      naError("Only windows can receyve MOUSE_EXITED commands.");
     if((command == NA_UI_COMMAND_PRESSED) && (naGetUIElementType(uielement) != NA_UI_BUTTON) && (naGetUIElementType(uielement) != NA_UI_RADIOBUTTON))
       naError("Only buttons and radiobuttons can receyve PRESSED commands.");
   #endif
@@ -253,7 +253,7 @@ NA_DEF void naAddUIReaction(void* controller, NAUIElement* uielement, NAUIComman
   newreaction->controller = controller;
   newreaction->handler = handler;
   newreaction->command = command;
-  if(command ==  NA_UI_COMMAND_MOUSE_MOVED){naRetainWindowMouseTracking(naGetUIElementWindow(uielement));}
+  if(command == NA_UI_COMMAND_MOUSE_MOVED){naRetainWindowMouseTracking(naGetUIElementWindow(uielement));}
   naAddListLastMutable(&((element)->reactions), newreaction);
 }
 

@@ -557,17 +557,34 @@ NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){
 @implementation NANativeSpace
 - (id) initWithCocoaSpace:(NACocoaSpace*)newcocoaspace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
+
+  trackingarea = [[NSTrackingArea alloc] initWithRect:[self bounds]
+      options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow
+      owner:self userInfo:nil];
+  [self addTrackingArea:trackingarea];
+  [self setWantsLayer:YES];
+
   cocoaspace = newcocoaspace;
   return self;
 }
 - (void)drawRect:(NSRect)dirtyRect{
   [super drawRect:dirtyRect];
   if(cocoaspace->corespace.alternatebackground){
-    NSColor* alternatecolor = [NSColor controlTextColor];
-    
-    [[alternatecolor colorWithAlphaComponent:.075] setFill];
+    [[[NSColor controlTextColor] colorWithAlphaComponent:.075] setFill];
     NSRectFill(dirtyRect);
   }
+}
+- (void)mouseMoved:(NSEvent*)event{
+  NA_UNUSED(event);
+  naDispatchUIElementCommand((NACoreUIElement*)cocoaspace, NA_UI_COMMAND_MOUSE_MOVED, NA_NULL);
+}
+- (void)mouseEntered:(NSEvent*)event{
+  NA_UNUSED(event);
+  naDispatchUIElementCommand((NACoreUIElement*)cocoaspace, NA_UI_COMMAND_MOUSE_ENTERED, NA_NULL);
+}
+- (void)mouseExited:(NSEvent*)event{
+  NA_UNUSED(event);
+  naDispatchUIElementCommand((NACoreUIElement*)cocoaspace, NA_UI_COMMAND_MOUSE_EXITED, NA_NULL);
 }
 @end
 
@@ -982,6 +999,9 @@ NA_HDEF void naSetRadioButtonState(NARadioButton* radiobutton, NABool state){
 - (void) setText:(const NAUTF8Char*)text{
   [self setStringValue:[NSString stringWithUTF8String:text]];
 }
+- (void) setLabelEnabled:(NABool)enabled{
+  [self setAlphaValue:enabled ? 1. : .35];
+}
 - (void) setTextAlignment:(NATextAlignment) alignment{
   switch(alignment){
   case NA_TEXT_ALIGNMENT_LEFT: [self setAlignment:NSTextAlignmentLeft]; break;
@@ -1046,6 +1066,12 @@ NA_DEF void naDestructLabel(NALabel* label){
 
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
   [((NA_COCOA_BRIDGE NANativeLabel*)naGetUIElementNativeID(label)) setText:text];
+}
+
+
+
+NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled){
+  [((NA_COCOA_BRIDGE NANativeLabel*)naGetUIElementNativeID(label)) setLabelEnabled:enabled];
 }
 
 

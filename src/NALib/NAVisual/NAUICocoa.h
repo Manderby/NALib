@@ -99,6 +99,7 @@ struct NACocoaLabel{
 
 @interface NANativeSpace : NSView{
   NACocoaSpace* cocoaspace;
+  NSTrackingArea* trackingarea;
 }
 @end
 

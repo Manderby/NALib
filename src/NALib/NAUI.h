@@ -427,6 +427,7 @@ NA_HDEF void naSetRadioButtonState(NARadioButton* radiobutton, NABool state);
 NA_API NALabel* naNewLabel(const NAUTF8Char* text, NARect rect);
 NA_API void naDestructLabel(NALabel* label);
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text);
+NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled);
 NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
 NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind);
 
