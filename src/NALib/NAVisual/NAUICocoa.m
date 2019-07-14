@@ -10,7 +10,10 @@
 // you can simply delete the .m File from your source tree.
 
 
-#include "NAUICocoa.h"
+#import <Cocoa/Cocoa.h>
+#include "NABase.h"
+//#include "NAUICocoa.h"
+//#include <objc/message.h>
 
 
 #if (NA_CONFIG_COMPILE_GUI == 1)
@@ -20,11 +23,68 @@
 // #if directives will be closed at the very bottom of this file.
 
 
-
+#include "NAUICore.h"
 #include "NAMemory.h"
 #include "NACoord.h"
 #include "NAThreading.h"
 #include "NATranslator.h"
+
+
+typedef struct NACocoaApplication NACocoaApplication;
+typedef struct NACocoaWindow      NACocoaWindow;
+typedef struct NACocoaSpace       NACocoaSpace;
+typedef struct NACocoaOpenGLSpace NACocoaOpenGLSpace;
+typedef struct NACocoaButton      NACocoaButton;
+typedef struct NACocoaRadioButton NACocoaRadioButton;
+typedef struct NACocoaLabel       NACocoaLabel;
+
+
+// ////////////////
+// The bridging structs
+//
+// Native:       Adapter for the native implementation (in a specific language)
+// Cocoa/WINAPI: Adapter for the technology (for any language)
+// Core:         Adapter for NALib
+// UIElement:    Direct pointer back to the native struct.
+//
+// Native:       Compiled with Objective-C - native class inheriting from Cocoa
+// Cocoa/WINAPI: Compiled with Objective-C - C struct inheriting Core
+// Core:         Compiled with C           - C struct inheriting UIElement
+// UIElement:    Compiled with C           - C struct pointer to native.
+//
+// Native:       Compiled with Swift       - native class inheriting from Cocoa
+// Cocoa/WINAPI: Compiled with Swift       - C struct inheriting Core
+// Core:         Compiled with C           - C struct inheriting UIElement
+// UIElement:    Compiled with C           - C struct pointer to native.
+
+struct NACocoaApplication{
+  NACoreApplication coreapp;
+};
+
+struct NACocoaWindow{
+  NACoreWindow corewindow;
+};
+
+struct NACocoaSpace{
+  NACoreSpace corespace;
+};
+
+struct NACocoaOpenGLSpace{
+  NACoreOpenGLSpace coreopenglspace;
+};
+
+struct NACocoaButton{
+  NACoreButton corebutton;
+};
+
+struct NACocoaRadioButton{
+  NACoreRadioButton coreradiobutton;
+};
+
+struct NACocoaLabel{
+  NACoreLabel corelabel;
+};
+
 
 
 // Mapping of deprecated entities
@@ -63,6 +123,54 @@ NA_HAPI NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* label);
 
 NA_HAPI void naRenewWindowMouseTracking(NACocoaWindow* cocoawindow);
 NA_HAPI void naClearWindowMouseTracking(NACocoaWindow* cocoawindow);
+
+
+@interface NANativeWindow : NSWindow <NSWindowDelegate>{
+  NACocoaWindow* cocoawindow;
+  NAUInt trackingcount;
+  NSTrackingArea* trackingarea;
+}
+@end
+
+@interface NANativeSpace : NSView{
+  NACocoaSpace* cocoaspace;
+  NSTrackingArea* trackingarea;
+}
+@end
+
+#if (NA_CONFIG_COMPILE_OPENGL == 1)
+  @interface NANativeOpenGLSpace : NSOpenGLView{
+    NACocoaOpenGLSpace* cocoaopenglspace;
+    NAMutator initFunc;
+    void* initData;
+  }
+  @end
+#endif
+
+@interface NANativeButton : NSButton{
+  NACocoaButton* cocoabutton;
+}
+@end
+
+@interface NANativeRadioButton : NSButton{
+  NACocoaRadioButton* cocoaradiobutton;
+  // Cocoa thinks it's smart by doing things automatically. Unfortunately, we
+  // have to encapsulate the radiobutton into its own view to get the behaviour
+  // we need.
+  NSView* containingview;
+}
+- (NSView*) getContainingView;
+@end
+
+@interface MDVerticallyCenteredTextFieldCell : NSTextFieldCell{
+}
+@end
+
+@interface NANativeLabel : NSTextField{
+  NACocoaLabel* cocoalabel;
+}
+@end
+
 
 
 // ///////////////////////////////////
@@ -237,117 +345,6 @@ NA_HDEF NARect naGetScreenAbsoluteRect(NACoreUIElement* screen){
 
 
 
-NA_HDEF NARect naGetWindowAbsoluteInnerRect(NACoreUIElement* window){
-  NARect rect;
-  NSRect contentrect;
-  NSRect windowframe;
-  NANativeWindow* nativewindow = (NA_COCOA_BRIDGE NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
-  contentrect = [[nativewindow contentView] frame];
-  windowframe = [nativewindow frame];
-  rect.pos.x = windowframe.origin.x + contentrect.origin.x;
-  rect.pos.y = windowframe.origin.y + contentrect.origin.y;
-  rect.size.width = contentrect.size.width;
-  rect.size.height = contentrect.size.height;
-  return rect;
-}
-
-
-
-NA_HDEF NARect naGetWindowAbsoluteOuterRect(NACoreUIElement* window){
-  NARect rect;
-  NSRect windowframe;
-  NANativeWindow* nativewindow = (NA_COCOA_BRIDGE NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
-  windowframe = [nativewindow frame];
-  rect.pos.x = windowframe.origin.x;
-  rect.pos.y = windowframe.origin.y;
-  rect.size.width = windowframe.size.width;
-  rect.size.height = windowframe.size.height;
-  return rect;
-}
-
-
-
-NA_HDEF NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space){
-  NARect rect;
-  NSRect contentrect;
-  NARect windowrect;
-  // Warning: does not work when frame unequal bounds.
-  contentrect = [(NA_COCOA_BRIDGE NSView*)(naGetUIElementNativeID((NAUIElement*)space)) frame];
-  windowrect = naGetWindowAbsoluteInnerRect((NACoreUIElement*)naGetUIElementWindow((NAUIElement*)space));
-  rect.pos.x = windowrect.pos.x + contentrect.origin.x;
-  rect.pos.y = windowrect.pos.y + contentrect.origin.y;
-  rect.size.width = contentrect.size.width;
-  rect.size.height = contentrect.size.height;
-  return rect;
-}
-
-
-
-NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeuielement, NABool includeborder){
-  NARect rect;
-  NARect relrect;
-  NACoreUIElement* element;
-  NACoreUIElement* relelement;
-
-  element = (NACoreUIElement*)uielement;
-  relelement = (NACoreUIElement*)relativeuielement;
-  NAApplication* app = naGetApplication();
-
-  // First, let's handle the root case: Returning the application rect.
-  if(element == (NACoreUIElement*)app){
-    #ifndef NDEBUG
-      if(relelement && (relelement != (NACoreUIElement*)app))
-        naError("The relative element is invalid for the given uielement, which seems to be the application.");
-    #endif
-    return naGetApplicationAbsoluteRect();
-  }
-
-  switch(element->elementtype){
-  case NA_UI_APPLICATION: rect = naGetApplicationAbsoluteRect(); break;
-  case NA_UI_SCREEN:      rect = naGetScreenAbsoluteRect(element); break;
-  case NA_UI_WINDOW:
-    if(includeborder){
-      rect = naGetWindowAbsoluteOuterRect(element);
-    }else{
-      rect = naGetWindowAbsoluteInnerRect(element);
-    }
-    break;
-  case NA_UI_SPACE:       rect = naGetSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_OPENGLSPACE: rect = naGetSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_BUTTON:      rect = naGetButtonAbsoluteInnerRect(element); break;
-  case NA_UI_RADIOBUTTON: rect = naGetRadioButtonAbsoluteInnerRect(element); break;
-  case NA_UI_LABEL:       rect = naGetLabelAbsoluteInnerRect(element); break;
-  }
-
-  // Now, we find the appropriate relative element.
-  if(!relelement){relelement = (NACoreUIElement*)naGetUIElementParent((NAUIElement*)element);}
-
-  if(relelement){
-    switch(relelement->elementtype){
-    case NA_UI_APPLICATION: relrect = naGetApplicationAbsoluteRect(); break;
-    case NA_UI_SCREEN:      relrect = naGetScreenAbsoluteRect(relelement); break;
-    case NA_UI_WINDOW:      relrect = naGetWindowAbsoluteInnerRect(relelement); break;
-    case NA_UI_SPACE:       relrect = naGetSpaceAbsoluteInnerRect(relelement); break;
-    case NA_UI_OPENGLSPACE: relrect = naGetSpaceAbsoluteInnerRect(relelement); break;
-    case NA_UI_BUTTON:      relrect = naGetButtonAbsoluteInnerRect(relelement); break;
-    case NA_UI_RADIOBUTTON: relrect = naGetRadioButtonAbsoluteInnerRect(relelement); break;
-    case NA_UI_LABEL:       relrect = naGetLabelAbsoluteInnerRect(relelement); break;
-    }
-
-    rect.pos.x = rect.pos.x - relrect.pos.x;
-    rect.pos.y = rect.pos.y - relrect.pos.y;
-  }
-
-//  rect.size.width = rect.size.width;
-//  rect.size.height = rect.size.height;
-
-  // Convert the rect into absolute coordinates.
-
-  return rect;
-}
-
-
-
 
 
 
@@ -360,6 +357,7 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
   cocoawindow = newcocoawindow;
   trackingcount = 0;
   trackingarea = nil;
+  self.releasedWhenClosed = NO;
   return self;
 }
 - (NACocoaWindow*) cocoawindow{
@@ -452,6 +450,36 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
 NA_DEF void naDestructWindow(NAWindow* window){
   NACocoaWindow* cocoawindow = (NACocoaWindow*)window;
   NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoawindow->corewindow.uielement)));
+}
+
+
+
+NA_HDEF NARect naGetWindowAbsoluteInnerRect(NACoreUIElement* window){
+  NARect rect;
+  NSRect contentrect;
+  NSRect windowframe;
+  NANativeWindow* nativewindow = (NA_COCOA_BRIDGE NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+  contentrect = [[nativewindow contentView] frame];
+  windowframe = [nativewindow frame];
+  rect.pos.x = windowframe.origin.x + contentrect.origin.x;
+  rect.pos.y = windowframe.origin.y + contentrect.origin.y;
+  rect.size.width = contentrect.size.width;
+  rect.size.height = contentrect.size.height;
+  return rect;
+}
+
+
+
+NA_HDEF NARect naGetWindowAbsoluteOuterRect(NACoreUIElement* window){
+  NARect rect;
+  NSRect windowframe;
+  NANativeWindow* nativewindow = (NA_COCOA_BRIDGE NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+  windowframe = [nativewindow frame];
+  rect.pos.x = windowframe.origin.x;
+  rect.pos.y = windowframe.origin.y;
+  rect.size.width = windowframe.size.width;
+  rect.size.height = windowframe.size.height;
+  return rect;
 }
 
 
@@ -612,16 +640,34 @@ NA_DEF void naDestructSpace(NASpace* space){
 
 NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child){
   NANativeSpace* nativespace = (NA_COCOA_BRIDGE NANativeSpace*)(naGetUIElementNativeID(space));
-  NACocoaRadioButton* cocoaradiobutton;
+  NANativeRadioButton* nativeradiobutton;;
+//  NACocoaRadioButton* cocoaradiobutton;
   switch(naGetUIElementType(child)){
   case NA_UI_RADIOBUTTON:
-    cocoaradiobutton = (NACocoaRadioButton*)child;
-    [nativespace addSubview:cocoaradiobutton->containingnsview];
+    nativeradiobutton = (NA_COCOA_BRIDGE NANativeRadioButton*)(naGetUIElementNativeID(child));
+//    cocoaradiobutton = (NACocoaRadioButton*)child;
+    [nativespace addSubview:[nativeradiobutton getContainingView]];
     break;
   default:
     [nativespace addSubview:(NA_COCOA_BRIDGE NSView*)naGetUIElementNativeID(child)];
     break;
   }
+}
+
+
+
+NA_HDEF NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space){
+  NARect rect;
+  NSRect contentrect;
+  NARect windowrect;
+  // Warning: does not work when frame unequal bounds.
+  contentrect = [(NA_COCOA_BRIDGE NSView*)(naGetUIElementNativeID((NAUIElement*)space)) frame];
+  windowrect = naGetWindowAbsoluteInnerRect((NACoreUIElement*)naGetUIElementWindow((NAUIElement*)space));
+  rect.pos.x = windowrect.pos.x + contentrect.origin.x;
+  rect.pos.y = windowrect.pos.y + contentrect.origin.y;
+  rect.size.width = contentrect.size.width;
+  rect.size.height = contentrect.size.height;
+  return rect;
 }
 
 
@@ -639,6 +685,7 @@ NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
 // OpenGL Space
 
 #if (NA_CONFIG_COMPILE_OPENGL == 1)
+
   @implementation NANativeOpenGLSpace
   - (id)initWithCocoaOpenGLSpace:(NAOpenGLSpace*)newcocoaopenglspace frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
     self = [super initWithFrame:frameRect pixelFormat:pixelformat];
@@ -814,7 +861,12 @@ NA_HDEF void naSetButtonState(NAButton* button, NABool state){
 
 @implementation NANativeRadioButton
 - (id) initWithCocoaRadioButton:(NACocoaRadioButton*)newcocoaradiobutton frame:(NSRect)frame{
-  self = [super initWithFrame:frame];
+  NSRect newbounds = frame;
+  newbounds.origin.x = 0;
+  newbounds.origin.y = 0;
+
+  self = [super initWithFrame:newbounds];
+  
   [self setButtonType:NSButtonTypeRadio];
 //  [self setBezelStyle:NSBezelStyleRounded];
 //  [self setBezelStyle:NSBezelStyleShadowlessSquare];
@@ -822,7 +874,14 @@ NA_HDEF void naSetButtonState(NAButton* button, NABool state){
   cocoaradiobutton = newcocoaradiobutton;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
+
+  containingview = [[NSView alloc] initWithFrame:frame];
+  [containingview addSubview:self];
+
   return self;
+}
+- (NSView*) getContainingView{
+  return containingview;
 }
 - (void) setText:(const NAUTF8Char*)text{
   [self setTitle:[NSString stringWithUTF8String:text]];
@@ -845,9 +904,7 @@ NA_DEF NARadioButton* naNewRadioButton(const char* text, NARect rect){
   boundrect.origin.x = 0;
   boundrect.origin.y = 0;
 
-  cocoaradiobutton->containingnsview = [[NSView alloc] initWithFrame:framerect];
-  NANativeRadioButton* nativeRadioButton = [[NANativeRadioButton alloc] initWithCocoaRadioButton:cocoaradiobutton frame:boundrect];
-  [cocoaradiobutton->containingnsview addSubview:nativeRadioButton];
+  NANativeRadioButton* nativeRadioButton = [[NANativeRadioButton alloc] initWithCocoaRadioButton:cocoaradiobutton frame:framerect];
   
   naRegisterCoreUIElement(&(cocoaradiobutton->coreradiobutton.uielement), NA_UI_RADIOBUTTON, (void*)NA_COCOA_RETAIN(nativeRadioButton));
   [nativeRadioButton setText:text];
@@ -1130,6 +1187,72 @@ NA_DEF void naHideMouse(){
     CGDisplayHideCursor(kCGDirectMainDisplay);
     coreapp->flags &= ~NA_APPLICATION_FLAG_MOUSE_VISIBLE;
   }
+}
+
+
+
+
+NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeuielement, NABool includeborder){
+  NARect rect;
+  NARect relrect;
+  NACoreUIElement* element;
+  NACoreUIElement* relelement;
+
+  element = (NACoreUIElement*)uielement;
+  relelement = (NACoreUIElement*)relativeuielement;
+  NAApplication* app = naGetApplication();
+
+  // First, let's handle the root case: Returning the application rect.
+  if(element == (NACoreUIElement*)app){
+    #ifndef NDEBUG
+      if(relelement && (relelement != (NACoreUIElement*)app))
+        naError("The relative element is invalid for the given uielement, which seems to be the application.");
+    #endif
+    return naGetApplicationAbsoluteRect();
+  }
+
+  switch(element->elementtype){
+  case NA_UI_APPLICATION: rect = naGetApplicationAbsoluteRect(); break;
+  case NA_UI_SCREEN:      rect = naGetScreenAbsoluteRect(element); break;
+  case NA_UI_WINDOW:
+    if(includeborder){
+      rect = naGetWindowAbsoluteOuterRect(element);
+    }else{
+      rect = naGetWindowAbsoluteInnerRect(element);
+    }
+    break;
+  case NA_UI_SPACE:       rect = naGetSpaceAbsoluteInnerRect(element); break;
+  case NA_UI_OPENGLSPACE: rect = naGetSpaceAbsoluteInnerRect(element); break;
+  case NA_UI_BUTTON:      rect = naGetButtonAbsoluteInnerRect(element); break;
+  case NA_UI_RADIOBUTTON: rect = naGetRadioButtonAbsoluteInnerRect(element); break;
+  case NA_UI_LABEL:       rect = naGetLabelAbsoluteInnerRect(element); break;
+  }
+
+  // Now, we find the appropriate relative element.
+  if(!relelement){relelement = (NACoreUIElement*)naGetUIElementParent((NAUIElement*)element);}
+
+  if(relelement){
+    switch(relelement->elementtype){
+    case NA_UI_APPLICATION: relrect = naGetApplicationAbsoluteRect(); break;
+    case NA_UI_SCREEN:      relrect = naGetScreenAbsoluteRect(relelement); break;
+    case NA_UI_WINDOW:      relrect = naGetWindowAbsoluteInnerRect(relelement); break;
+    case NA_UI_SPACE:       relrect = naGetSpaceAbsoluteInnerRect(relelement); break;
+    case NA_UI_OPENGLSPACE: relrect = naGetSpaceAbsoluteInnerRect(relelement); break;
+    case NA_UI_BUTTON:      relrect = naGetButtonAbsoluteInnerRect(relelement); break;
+    case NA_UI_RADIOBUTTON: relrect = naGetRadioButtonAbsoluteInnerRect(relelement); break;
+    case NA_UI_LABEL:       relrect = naGetLabelAbsoluteInnerRect(relelement); break;
+    }
+
+    rect.pos.x = rect.pos.x - relrect.pos.x;
+    rect.pos.y = rect.pos.y - relrect.pos.y;
+  }
+
+//  rect.size.width = rect.size.width;
+//  rect.size.height = rect.size.height;
+
+  // Convert the rect into absolute coordinates.
+
+  return rect;
 }
 
 
