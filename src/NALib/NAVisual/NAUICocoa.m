@@ -35,7 +35,8 @@ typedef struct NACocoaWindow      NACocoaWindow;
 typedef struct NACocoaSpace       NACocoaSpace;
 typedef struct NACocoaOpenGLSpace NACocoaOpenGLSpace;
 typedef struct NACocoaButton      NACocoaButton;
-typedef struct NACocoaRadioButton NACocoaRadioButton;
+typedef struct NACocoaRadio       NACocoaRadio;
+typedef struct NACocoaCheckbox    NACocoaCheckbox;
 typedef struct NACocoaLabel       NACocoaLabel;
 
 
@@ -77,8 +78,12 @@ struct NACocoaButton{
   NACoreButton corebutton;
 };
 
-struct NACocoaRadioButton{
-  NACoreRadioButton coreradiobutton;
+struct NACocoaRadio{
+  NACoreRadio coreradio;
+};
+
+struct NACocoaCheckbox{
+  NACoreCheckbox corecheckbox;
 };
 
 struct NACocoaLabel{
@@ -118,7 +123,7 @@ NA_HAPI NARect naGetScreenAbsoluteRect(NACoreUIElement* screen);
 NA_HAPI NARect naGetWindowAbsoluteOuterRect(NACoreUIElement* window);
 NA_HAPI NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space);
 NA_HAPI NARect naGetButtonAbsoluteInnerRect(NACoreUIElement* button);
-NA_HAPI NARect naGetRadioButtonAbsoluteInnerRect(NACoreUIElement* radiobutton);
+NA_HAPI NARect naGetRadioAbsoluteInnerRect(NACoreUIElement* radio);
 NA_HAPI NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* label);
 
 NA_HAPI void naRenewWindowMouseTracking(NACocoaWindow* cocoawindow);
@@ -152,14 +157,19 @@ NA_HAPI void naClearWindowMouseTracking(NACocoaWindow* cocoawindow);
 }
 @end
 
-@interface NANativeRadioButton : NSButton{
-  NACocoaRadioButton* cocoaradiobutton;
+@interface NANativeRadio : NSButton{
+  NACocoaRadio* cocoaradio;
   // Cocoa thinks it's smart by doing things automatically. Unfortunately, we
-  // have to encapsulate the radiobutton into its own view to get the behaviour
+  // have to encapsulate the radio into its own view to get the behaviour
   // we need.
   NSView* containingview;
 }
 - (NSView*) getContainingView;
+@end
+
+@interface NANativeCheckbox : NSButton{
+  NACocoaCheckbox* cocoacheckbox;
+}
 @end
 
 @interface MDVerticallyCenteredTextFieldCell : NSTextFieldCell{
@@ -222,13 +232,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
     if(prestartup){prestartup(arg);}
 
     // Set the preferred translator languages.
-    NAInt lang = (NAInt)[[NSLocale preferredLanguages] count] - 1;
-    while(lang >= 0){
-      NSString* language = [[NSLocale preferredLanguages] objectAtIndex:(NSUInteger)lang];
-      NALanguageCode3 langcode = naGetLanguageCode([language UTF8String]);
-      naSetTranslatorLanguagePreference(langcode);
-      lang--;
-    }
+    naResetApplicationPreferredTranslatorLanguages();
 
     // Let the Macintosh System know that the app is ready to run.
     [NSApp finishLaunching];
@@ -255,6 +259,18 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 
   // When reaching here, the application had been stopped.
   naClearCoreApplication();
+}
+
+
+
+NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
+  NAInt lang = (NAInt)[[NSLocale preferredLanguages] count] - 1;
+  while(lang >= 0){
+    NSString* language = [[NSLocale preferredLanguages] objectAtIndex:(NSUInteger)lang];
+    NALanguageCode3 langcode = naGetLanguageCode([language UTF8String]);
+    naSetTranslatorLanguagePreference(langcode);
+    lang--;
+  }
 }
 
 
@@ -525,6 +541,13 @@ NA_DEF void naShowWindow(NAWindow* window){
 
 
 
+NA_DEF void naCloseWindow(NAWindow* window){
+  NANativeWindow* nativewindow = (NA_COCOA_BRIDGE NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
+  [nativewindow performClose:NA_NULL];
+}
+
+
+
 NA_DEF void naSetWindowContentSpace(NAWindow* window, NAUIElement* uielement){
   NACocoaWindow* cocoawindow = (NACocoaWindow*)window;
   NANativeWindow* nativewindow = (NA_COCOA_BRIDGE NANativeWindow*)(naGetUIElementNativeID((NAUIElement*)window));
@@ -640,13 +663,11 @@ NA_DEF void naDestructSpace(NASpace* space){
 
 NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child){
   NANativeSpace* nativespace = (NA_COCOA_BRIDGE NANativeSpace*)(naGetUIElementNativeID(space));
-  NANativeRadioButton* nativeradiobutton;;
-//  NACocoaRadioButton* cocoaradiobutton;
+  NANativeRadio* nativeradio;
   switch(naGetUIElementType(child)){
-  case NA_UI_RADIOBUTTON:
-    nativeradiobutton = (NA_COCOA_BRIDGE NANativeRadioButton*)(naGetUIElementNativeID(child));
-//    cocoaradiobutton = (NACocoaRadioButton*)child;
-    [nativespace addSubview:[nativeradiobutton getContainingView]];
+  case NA_UI_RADIO:
+    nativeradio = (NA_COCOA_BRIDGE NANativeRadio*)(naGetUIElementNativeID(child));
+    [nativespace addSubview:[nativeradio getContainingView]];
     break;
   default:
     [nativespace addSubview:(NA_COCOA_BRIDGE NSView*)naGetUIElementNativeID(child)];
@@ -801,9 +822,8 @@ NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
 @implementation NANativeButton
 - (id) initWithCocoaButton:(NACocoaButton*)newcocoabutton frame:(NSRect)frame{
   self = [super initWithFrame:frame];
-  [self setButtonType:NSButtonTypeOnOff];
+  [self setButtonType:NSButtonTypeMomentaryLight];
   [self setBezelStyle:NSBezelStyleRounded];
-//  [self setBezelStyle:NSBezelStyleShadowlessSquare];
   [self setBordered:YES];
   cocoabutton = newcocoabutton;
   [self setTarget:self];
@@ -859,8 +879,8 @@ NA_HDEF void naSetButtonState(NAButton* button, NABool state){
 // ////////////////////////////
 // Radio Button
 
-@implementation NANativeRadioButton
-- (id) initWithCocoaRadioButton:(NACocoaRadioButton*)newcocoaradiobutton frame:(NSRect)frame{
+@implementation NANativeRadio
+- (id) initWithCocoaRadio:(NACocoaRadio*)newcocoaradio frame:(NSRect)frame{
   NSRect newbounds = frame;
   newbounds.origin.x = 0;
   newbounds.origin.y = 0;
@@ -871,7 +891,7 @@ NA_HDEF void naSetButtonState(NAButton* button, NABool state){
 //  [self setBezelStyle:NSBezelStyleRounded];
 //  [self setBezelStyle:NSBezelStyleShadowlessSquare];
 //  [self setBordered:YES];
-  cocoaradiobutton = newcocoaradiobutton;
+  cocoaradio = newcocoaradio;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
 
@@ -888,48 +908,122 @@ NA_HDEF void naSetButtonState(NAButton* button, NABool state){
 }
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  naDispatchUIElementCommand((NACoreUIElement*)cocoaradiobutton, NA_UI_COMMAND_PRESSED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)cocoaradio, NA_UI_COMMAND_PRESSED, NA_NULL);
 }
-- (void) setButtonState:(NABool)state{
+- (void) setRadioState:(NABool)state{
   [self setState:state ? NSOnState : NSOffState];
 }
 @end
 
 
 
-NA_DEF NARadioButton* naNewRadioButton(const char* text, NARect rect){
-  NACocoaRadioButton* cocoaradiobutton = naAlloc(NACocoaRadioButton);
+NA_DEF NARadio* naNewRadio(const char* text, NARect rect){
+  NACocoaRadio* cocoaradio = naAlloc(NACocoaRadio);
   NSRect framerect = naMakeNSRectWithRect(rect);
   NSRect boundrect = framerect;
   boundrect.origin.x = 0;
   boundrect.origin.y = 0;
 
-  NANativeRadioButton* nativeRadioButton = [[NANativeRadioButton alloc] initWithCocoaRadioButton:cocoaradiobutton frame:framerect];
+  NANativeRadio* nativeRadio = [[NANativeRadio alloc] initWithCocoaRadio:cocoaradio frame:framerect];
   
-  naRegisterCoreUIElement(&(cocoaradiobutton->coreradiobutton.uielement), NA_UI_RADIOBUTTON, (void*)NA_COCOA_RETAIN(nativeRadioButton));
-  [nativeRadioButton setText:text];
+  naRegisterCoreUIElement(&(cocoaradio->coreradio.uielement), NA_UI_RADIO, (void*)NA_COCOA_RETAIN(nativeRadio));
+  [nativeRadio setText:text];
   
-  return (NARadioButton*)cocoaradiobutton;
+  return (NARadio*)cocoaradio;
 }
 
 
 
-NA_DEF void naDestructRadioButton(NARadioButton* radiobutton){
-  NACocoaRadioButton* cocoaradiobutton = (NACocoaRadioButton*)radiobutton;
-  NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoaradiobutton->coreradiobutton.uielement)));
+NA_DEF void naDestructRadio(NARadio* radio){
+  NACocoaRadio* cocoaradio = (NACocoaRadio*)radio;
+  NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoaradio->coreradio.uielement)));
 }
 
 
 
-NA_HDEF NARect naGetRadioButtonAbsoluteInnerRect(NACoreUIElement* radiobutton){
-  NA_UNUSED(radiobutton);
+NA_HDEF NARect naGetRadioAbsoluteInnerRect(NACoreUIElement* radio){
+  NA_UNUSED(radio);
   return naMakeRectS(20, 40, 100, 50);
 }
 
 
 
-NA_HDEF void naSetRadioButtonState(NARadioButton* radiobutton, NABool state){
-  [((NA_COCOA_BRIDGE NANativeRadioButton*)naGetUIElementNativeID(radiobutton)) setButtonState:state];
+NA_HDEF void naSetRadioState(NARadio* radio, NABool state){
+  [((NA_COCOA_BRIDGE NANativeRadio*)naGetUIElementNativeID(radio)) setRadioState:state];
+}
+
+
+
+// ////////////////////////////
+// Checkbox
+
+@implementation NANativeCheckbox
+- (id) initWithCocoaCheckbox:(NACocoaCheckbox*)newcocoacheckbox frame:(NSRect)frame{
+  self = [super initWithFrame:frame];
+  
+  [self setButtonType:NSButtonTypeSwitch];
+  cocoacheckbox = newcocoacheckbox;
+  [self setTarget:self];
+  [self setAction:@selector(onPressed:)];
+
+  return self;
+}
+- (void) setText:(const NAUTF8Char*)text{
+  [self setTitle:[NSString stringWithUTF8String:text]];
+}
+- (void) onPressed:(id)sender{
+  NA_UNUSED(sender);
+  naDispatchUIElementCommand((NACoreUIElement*)cocoacheckbox, NA_UI_COMMAND_PRESSED, NA_NULL);
+}
+- (void) setCheckboxState:(NABool)state{
+  [self setState:state ? NSOnState : NSOffState];
+}
+- (NABool) checkboxState{
+  return ([self state] == NSOnState) ? NA_TRUE : NA_FALSE;
+}
+@end
+
+
+
+NA_DEF NACheckbox* naNewCheckbox(const char* text, NARect rect){
+  NACocoaCheckbox* cocoacheckbox = naAlloc(NACocoaCheckbox);
+  NSRect framerect = naMakeNSRectWithRect(rect);
+  NSRect boundrect = framerect;
+  boundrect.origin.x = 0;
+  boundrect.origin.y = 0;
+
+  NANativeCheckbox* nativeCheckbox = [[NANativeCheckbox alloc] initWithCocoaCheckbox:cocoacheckbox frame:framerect];
+  
+  naRegisterCoreUIElement(&(cocoacheckbox->corecheckbox.uielement), NA_UI_CHECKBOX, (void*)NA_COCOA_RETAIN(nativeCheckbox));
+  [nativeCheckbox setText:text];
+  
+  return (NACheckbox*)cocoacheckbox;
+}
+
+
+
+NA_DEF void naDestructCheckbox(NACheckbox* checkbox){
+  NACocoaCheckbox* cocoacheckbox = (NACocoaCheckbox*)checkbox;
+  NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoacheckbox->corecheckbox.uielement)));
+}
+
+
+
+NA_HDEF NARect naGetCheckboxAbsoluteInnerRect(NACoreUIElement* checkbox){
+  NA_UNUSED(checkbox);
+  return naMakeRectS(20, 40, 100, 50);
+}
+
+
+
+NA_HDEF void naSetCheckboxState(NACheckbox* checkbox, NABool state){
+  [((NA_COCOA_BRIDGE NANativeCheckbox*)naGetUIElementNativeID(checkbox)) setCheckboxState:state];
+}
+
+
+
+NA_HDEF NABool naGetCheckboxState(NACheckbox* checkbox){
+  return [((NA_COCOA_BRIDGE NANativeCheckbox*)naGetUIElementNativeID(checkbox)) checkboxState];
 }
 
 
@@ -1224,7 +1318,8 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
   case NA_UI_SPACE:       rect = naGetSpaceAbsoluteInnerRect(element); break;
   case NA_UI_OPENGLSPACE: rect = naGetSpaceAbsoluteInnerRect(element); break;
   case NA_UI_BUTTON:      rect = naGetButtonAbsoluteInnerRect(element); break;
-  case NA_UI_RADIOBUTTON: rect = naGetRadioButtonAbsoluteInnerRect(element); break;
+  case NA_UI_RADIO:       rect = naGetRadioAbsoluteInnerRect(element); break;
+  case NA_UI_CHECKBOX:    rect = naGetCheckboxAbsoluteInnerRect(element); break;
   case NA_UI_LABEL:       rect = naGetLabelAbsoluteInnerRect(element); break;
   }
 
@@ -1239,7 +1334,8 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
     case NA_UI_SPACE:       relrect = naGetSpaceAbsoluteInnerRect(relelement); break;
     case NA_UI_OPENGLSPACE: relrect = naGetSpaceAbsoluteInnerRect(relelement); break;
     case NA_UI_BUTTON:      relrect = naGetButtonAbsoluteInnerRect(relelement); break;
-    case NA_UI_RADIOBUTTON: relrect = naGetRadioButtonAbsoluteInnerRect(relelement); break;
+    case NA_UI_RADIO:       relrect = naGetRadioAbsoluteInnerRect(relelement); break;
+    case NA_UI_CHECKBOX:    relrect = naGetCheckboxAbsoluteInnerRect(relelement); break;
     case NA_UI_LABEL:       relrect = naGetLabelAbsoluteInnerRect(relelement); break;
     }
 

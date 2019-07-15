@@ -33,7 +33,8 @@ typedef struct NACoreWindow         NACoreWindow;
 typedef struct NACoreSpace          NACoreSpace;
 typedef struct NACoreOpenGLSpace    NACoreOpenGLSpace;
 typedef struct NACoreButton         NACoreButton;
-typedef struct NACoreRadioButton    NACoreRadioButton;
+typedef struct NACoreRadio          NACoreRadio;
+typedef struct NACoreCheckbox       NACoreCheckbox;
 typedef struct NACoreLabel          NACoreLabel;
 
 
@@ -152,7 +153,13 @@ struct NACoreButton{
 
 
 
-struct NACoreRadioButton{
+struct NACoreRadio{
+  NACoreUIElement uielement;
+};
+
+
+
+struct NACoreCheckbox{
   NACoreUIElement uielement;
 };
 

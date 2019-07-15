@@ -216,7 +216,8 @@ NA_DEF void naReleaseUIElement(NAUIElement* uielement){
     case NA_UI_OPENGLSPACE: naReleaseRefCount(&(element->refcount), uielement, naDestructOpenGLSpace); break;
   #endif
   case NA_UI_BUTTON:      naReleaseRefCount(&(element->refcount), uielement, naDestructButton); break;
-  case NA_UI_RADIOBUTTON: naReleaseRefCount(&(element->refcount), uielement, naDestructRadioButton); break;
+  case NA_UI_RADIO:       naReleaseRefCount(&(element->refcount), uielement, naDestructRadio); break;
+  case NA_UI_CHECKBOX:    naReleaseRefCount(&(element->refcount), uielement, naDestructCheckbox); break;
   case NA_UI_LABEL:       naReleaseRefCount(&(element->refcount), uielement, naDestructLabel); break;
   default:
     #ifndef NDEBUG
@@ -246,8 +247,11 @@ NA_DEF void naAddUIReaction(void* controller, NAUIElement* uielement, NAUIComman
 //      naError("Only windows can receyve MOUSE_ENTERED commands.");
 //    if((command == NA_UI_COMMAND_MOUSE_EXITED) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
 //      naError("Only windows can receyve MOUSE_EXITED commands.");
-    if((command == NA_UI_COMMAND_PRESSED) && (naGetUIElementType(uielement) != NA_UI_BUTTON) && (naGetUIElementType(uielement) != NA_UI_RADIOBUTTON))
-      naError("Only buttons and radiobuttons can receyve PRESSED commands.");
+    if((command == NA_UI_COMMAND_PRESSED)
+      && (naGetUIElementType(uielement) != NA_UI_BUTTON)
+      && (naGetUIElementType(uielement) != NA_UI_RADIO)
+      && (naGetUIElementType(uielement) != NA_UI_CHECKBOX))
+      naError("Only buttons, radios and checkboxes can receyve PRESSED commands.");
   #endif
   newreaction = naAlloc(NAReaction);
   newreaction->controller = controller;

@@ -78,7 +78,8 @@ typedef void  NAWindow;
 typedef void  NASpace;
 typedef void  NAOpenGLSpace;
 typedef void  NAButton;
-typedef void  NARadioButton;
+typedef void  NARadio;
+typedef void  NACheckbox;
 typedef void  NALabel;
 
 
@@ -94,7 +95,8 @@ typedef enum{
   NA_UI_SPACE,
   NA_UI_OPENGLSPACE,
   NA_UI_BUTTON,
-  NA_UI_RADIOBUTTON,
+  NA_UI_RADIO,
+  NA_UI_CHECKBOX,
   NA_UI_LABEL,
 } NAUIElementType;
 
@@ -186,7 +188,7 @@ NA_API void naStartApplication(  NAMutator prestartup,
 //        including the application internal translator.
 //      - NALib creates an NSAutoreleasePool (only when ARC is turned off)
 //        * NALib calls prestartup with arg.
-//        * NALib sets the translator languages according to the user prefs.
+//        * NALib calls naResetApplicationPreferredTranslatorLanguages().
 //        * NALib calls [NSApp finishLaunching] which in turn will post an
 //          NSApplicationWillFinishLaunchingNotification and an
 //          NSApplicationDidFinishLaunchingNotification to whatever
@@ -199,7 +201,7 @@ NA_API void naStartApplication(  NAMutator prestartup,
 // Win: - NALib allocates some structures in the background to run the UI
 //        including the application internal translator.
 //      - NALib calls prestartup with arg.
-//      - NALib sets the translator languages according to the user prefs.
+//      - NALib calls naResetApplicationPreferredTranslatorLanguages().
 //      - NALib registers its window classes
 //      - NALib calls poststartup with arg.
 //      - NALib will start a message loop.
@@ -208,10 +210,12 @@ NA_API void naStartApplication(  NAMutator prestartup,
 // The prestartup function is here for initialization of global variables
 // and structures before any of the UI specific functions gets called.
 // This function is intended to execute mainly C code but you of course are
-// free to use other languages like Objective-C alongside with it. This
-// function is the perfect place to load your localizations (strings which
-// are translated into different languages). After this function, the
-// preferred languages of the user are set in the translator.
+// free to use other languages like Objective-C alongside with it.
+//
+// Note that the prestartup function is the perfect place to load your
+// localizations (strings which are translated into different human languages).
+// After this function, the preferred languages of the user are set in the
+// translator.
 //
 // poststartup:
 // In the poststartup function, you usually start building the UI with the
@@ -219,8 +223,10 @@ NA_API void naStartApplication(  NAMutator prestartup,
 // you would like to control. You are of course free to do this in the
 // didFinishLaunching method of you NSApplication delegate on a Mac, if you
 // really want to.
+
+// ////////////////////
+// Mixing an existing Cocoa application with NAApplication:
 //
-// //// Intermission: Mixing an existing Cocoa application with NAApplication:
 // If you require a mix of both environments, here is a very simple scheme you
 // can use in your main.m file:
 // 
@@ -236,10 +242,12 @@ NA_API void naStartApplication(  NAMutator prestartup,
 //   return 0;
 // }
 //
-// Make sure to use the correct type for MyExistingApplication! Other than
-// that, NAApplication will forward all uncaptured events to the NSEvent loop.
-// //////// End intermission
+// Make sure to use the correct type for MyExistingApplication!
+// Note that NAApplication will forward all uncaptured events unaltered.
+// You can of course add a prestartup function with translations for example.
 //
+// //////// End intermission
+
 // Note that both in the prestartup as well as the poststartup function, the
 // global NAApplication struct of NALib is ready to be used. You can get this
 // struct using the following call:
@@ -400,6 +408,8 @@ struct NACursorInfo{
 };
 
 
+NA_API void naResetApplicationPreferredTranslatorLanguages(void);
+
 NA_API void naDestructApplication(NAApplication* application);
 
 
@@ -418,9 +428,14 @@ NA_API void naDestructButton(NAButton* button);
 NA_API void naSetButtonState(NAButton* button, NABool state);
 
 
-NA_DEF NARadioButton* naNewRadioButton(const char* text, NARect rect);
-NA_DEF void naDestructRadioButton(NARadioButton* radiobutton);
-NA_HDEF void naSetRadioButtonState(NARadioButton* radiobutton, NABool state);
+NA_DEF NARadio* naNewRadio(const char* text, NARect rect);
+NA_DEF void naDestructRadio(NARadio* radio);
+NA_HDEF void naSetRadioState(NARadio* radio, NABool state);
+
+NA_DEF NACheckbox* naNewCheckbox(const char* text, NARect rect);
+NA_DEF void naDestructCheckbox(NACheckbox* checkbox);
+NA_HDEF void naSetCheckboxState(NACheckbox* checkbox, NABool state);
+NA_HDEF NABool naGetCheckboxState(NACheckbox* checkbox);
 
 
 
@@ -435,6 +450,7 @@ NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind);
 NA_API NARect naGetMainScreenRect(void);
 
 NA_API void naShowWindow(NAWindow* window);
+NA_DEF void naCloseWindow(NAWindow* window);
 NA_API void naSetWindowContentSpace(NAWindow* window, NAUIElement* uielement);
 NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullscreen);
 NA_API NABool naIsWindowFullscreen(NAWindow* window);
