@@ -233,6 +233,7 @@ NA_HAPI NABufferPart* naPrepareBufferPartMemory(NATreeIterator* partiter, NARang
 NA_HAPI NAInt naPrepareBufferPart(NABufferIterator* iter, NAInt bytecount);
 
 NA_HIAPI void naEnlargeBufferPart(NABufferPart* part, NAInt bytesatstart, NAInt bytesatend);
+NA_HIAPI NAInt naGetBufferPartRemainingBytes(NABufferIterator* iter);
 NA_HIAPI const void* naGetBufferPartDataPointerConst(NABufferIterator* iter);
 NA_HIAPI void* naGetBufferPartDataPointerMutable(NABufferIterator* iter);
 

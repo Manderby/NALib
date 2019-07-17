@@ -547,78 +547,67 @@ NA_DEF NAInt naSearchBufferByteOffset(NABuffer* buffer, NAByte byte, NAInt start
 
 
 NA_DEF NABool naEqualBufferToBuffer(const NABuffer* buffer1, const NABuffer* buffer2, NABool casesensitive){
-  NA_UNUSED(buffer1);
-  NA_UNUSED(buffer2);
-  NA_UNUSED(casesensitive);
-//  NABool resultequal;
-//  NAListIterator iter1;
-//  NAListIterator iter2;
-//  const NABufferPart* part1;
-//  const NABufferPart* part2;
-//  NAInt offset1;
-//  NAInt offset2;
-//
-//  if(buffer1 == buffer2){return NA_TRUE;}
-//  if(naGetBufferRange(buffer1).length != naGetBufferRange(buffer2).length){return NA_FALSE;}
-//  resultequal = NA_TRUE;;
-//
-//  iter1 = naMakeListAccessor(&(buffer1->parts));
-//  iter2 = naMakeListAccessor(&(buffer2->parts));
-//  naLocateListFirst(&iter1);
-//  naLocateListFirst(&iter2);
-//  part1 = naGetListCurConst(&iter1);
-//  part2 = naGetListCurConst(&iter2);
-//
-//  offset1 = naGetBufferRange(buffer1).origin;
-//  offset2 = naGetBufferRange(buffer2).origin;
-//
-//  while(part1 && part2){
-//    NAInt remainingbytes1;
-//    NAInt remainingbytes2;
-//    NAInt remainingbytes;
-//    const NAByte* bytes1;
-//    const NAByte* bytes2;
-//
-//    #ifndef NDEBUG
-//      if(naIsBufferPartSparse(part1))
-//        naError("naEqualBufferToBuffer", "Buffer 1 has sparse part");
-//      if(naIsBufferPartSparse(part2))
-//        naError("naEqualBufferToBuffer", "Buffer 2 has sparse part");
-//    #endif
-//    remainingbytes1 = naGetBufferPartEnd(part1) - offset1;
-//    remainingbytes2 = naGetBufferPartEnd(part2) - offset2;
-//    remainingbytes = naMini(remainingbytes1, remainingbytes2);
-//    bytes1 = naGetBufferPartDataPointerConst(part1, offset1);
-//    bytes2 = naGetBufferPartDataPointerConst(part2, offset2);
-//    if(bytes1 != bytes2){
-//      if(!naEqualUTF8CStringLiterals((NAUTF8Char*)bytes1, (NAUTF8Char*)bytes2, remainingbytes, casesensitive)){
-//        resultequal = NA_FALSE;
-//        break;
-//      }
-//    }
-//    offset1 += remainingbytes;
-//    offset2 += remainingbytes;
-//    if(remainingbytes1 == remainingbytes){
-//      naIterateList(&iter1);
-//      part1 = naGetListCurConst(&iter1);;
-//    }
-//    if(remainingbytes2 == remainingbytes){
-//      naIterateList(&iter2);
-//      part2 = naGetListCurConst(&iter2);;
-//    }
-//  }
-//
-//  naClearListIterator(&iter1);
-//  naClearListIterator(&iter2);
-//  return resultequal;
-  return NA_FALSE;
+  NABool resultequal;
+  NAInt totalremainingbytes;
+  NABufferIterator iter1;
+  NABufferIterator iter2;
+
+  if(buffer1 == buffer2){return NA_TRUE;}
+  if(naGetBufferRange(buffer1).length != naGetBufferRange(buffer2).length){return NA_FALSE;}
+  resultequal = NA_TRUE;
+
+  iter1 = naMakeBufferAccessor(buffer1);
+  iter2 = naMakeBufferAccessor(buffer2);
+  totalremainingbytes = buffer1->range.length;
+  naLocateBufferStart(&iter1);
+  naLocateBufferStart(&iter2);
+
+  while(resultequal && totalremainingbytes){
+    NAInt remainingbytes;
+    const NABufferPart* part1;
+    const NABufferPart* part2;
+    NAInt remainingbytes1;
+    NAInt remainingbytes2;
+    const NAByte* bufferbytes1;
+    const NAByte* bufferbytes2;
+
+    part1 = naGetBufferPart(&iter1);
+    part2 = naGetBufferPart(&iter2);
+    #ifndef NDEBUG
+      if(naIsBufferPartSparse(part1))
+        naError("Buffer 1 has sparse part");
+      if(naIsBufferPartSparse(part2))
+        naError("Buffer 2 has sparse part");
+    #endif
+
+    remainingbytes1 = naGetBufferPartRemainingBytes(&iter1);
+    remainingbytes2 = naGetBufferPartRemainingBytes(&iter2);
+    remainingbytes = naMini(remainingbytes1, remainingbytes2);
+    bufferbytes1 = naGetBufferPartDataPointerConst(&iter1);
+    bufferbytes2 = naGetBufferPartDataPointerConst(&iter2);
+
+    if(bufferbytes1 != bufferbytes2){
+      if(!naEqualUTF8CStringLiterals((NAUTF8Char*)bufferbytes1, (NAUTF8Char*)bufferbytes2, remainingbytes, casesensitive)){
+        resultequal = NA_FALSE;
+        break;
+      }
+    }
+    
+    totalremainingbytes -= remainingbytes;
+    naIterateBuffer(&iter1, remainingbytes);
+    naIterateBuffer(&iter2, remainingbytes);
+  }
+
+  naClearBufferIterator(&iter1);
+  naClearBufferIterator(&iter2);
+  return resultequal;
 }
 
 
 
 NA_DEF NABool naEqualBufferToData(NABuffer* buffer, const void* data, NAInt databytesize, NABool casesensitive){
   NABool resultequal = NA_TRUE;
-  NAInt remaininglength;
+  NAInt totalremainingbytes;
   const NAByte* bytes;
   NABufferIterator iter;
 
@@ -627,14 +616,14 @@ NA_DEF NABool naEqualBufferToData(NABuffer* buffer, const void* data, NAInt data
   bytes = (const NAByte*)data;
 
   iter = naMakeBufferAccessor(buffer);
-  remaininglength = buffer->range.length;
+  totalremainingbytes = buffer->range.length;
+  naLocateBufferStart(&iter);
 
-  while(resultequal && remaininglength){
+  while(resultequal && totalremainingbytes){
     const NABufferPart* part;
     NAInt remainingbytes;
     const NAByte* bufferbytes;
 
-    naPrepareBuffer(&iter, 1);
     part = naGetBufferPart(&iter);
     #ifndef NDEBUG
       if(naIsBufferPartSparse(part))
@@ -650,7 +639,8 @@ NA_DEF NABool naEqualBufferToData(NABuffer* buffer, const void* data, NAInt data
       }
     }
     bytes += remainingbytes;
-    remaininglength -= remainingbytes;
+    totalremainingbytes -= remainingbytes;
+    naIterateBuffer(&iter, remainingbytes);
   }
 
   naClearBufferIterator(&iter);

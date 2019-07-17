@@ -57,6 +57,21 @@ NA_HIDEF void naEnlargeBufferPart(NABufferPart* part, NAInt bytesatstart, NAInt 
 
 
 
+// Returns a the number of bytes left in this part at given offet.
+NA_HIDEF NAInt naGetBufferPartRemainingBytes(NABufferIterator* iter){
+  NABufferPart* part;
+  #ifndef NDEBUG
+    if(!iter)
+      naCrash("iterator is Null pointer");
+    if(naIsBufferIteratorSparse(iter))
+      naError("buffer part is sparse");
+  #endif
+  part = naGetBufferPart(iter);
+  return part->bytesize - iter->partoffset;
+}
+
+
+
 // Returns a pointer to the raw data of this buffer part, given its offset.
 NA_HIDEF const void* naGetBufferPartDataPointerConst(NABufferIterator* iter){
   NABufferPart* part;
