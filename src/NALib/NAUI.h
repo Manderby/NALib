@@ -502,10 +502,10 @@ NA_API NASize naGetCursorDelta(const NACursorInfo* cursorinfo);
 
 
 #if NA_OS == NA_OS_MAC_OS_X
-  NAString* naNewBundleApplicationName();
-  NAString* naNewBundleVersionString();
-  NAString* naNewBundleBuildString();
-  NAString* naNewBundleIconPath();
+  NAString* naNewBundleApplicationName(void);
+  NAString* naNewBundleVersionString(void);
+  NAString* naNewBundleBuildString(void);
+  NAString* naNewBundleIconPath(void);
   NAString* naNewBundleResourcePath(const NAUTF8Char* basename, const NAUTF8Char* suffix);
 #endif
 
