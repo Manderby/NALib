@@ -33,6 +33,7 @@
 typedef struct NACocoaApplication NACocoaApplication;
 typedef struct NACocoaWindow      NACocoaWindow;
 typedef struct NACocoaSpace       NACocoaSpace;
+typedef struct NACocoaImageSpace  NACocoaImageSpace;
 typedef struct NACocoaOpenGLSpace NACocoaOpenGLSpace;
 typedef struct NACocoaButton      NACocoaButton;
 typedef struct NACocoaRadio       NACocoaRadio;
@@ -68,6 +69,10 @@ struct NACocoaWindow{
 
 struct NACocoaSpace{
   NACoreSpace corespace;
+};
+
+struct NACocoaImageSpace{
+  NACoreImageSpace coreimagespace;
 };
 
 struct NACocoaOpenGLSpace{
@@ -122,6 +127,8 @@ NA_HAPI NARect naGetApplicationAbsoluteRect(void);
 NA_HAPI NARect naGetScreenAbsoluteRect(NACoreUIElement* screen);
 NA_HAPI NARect naGetWindowAbsoluteOuterRect(NACoreUIElement* window);
 NA_HAPI NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space);
+NA_HDEF NARect naGetImageSpaceAbsoluteInnerRect(NACoreUIElement* imagespace);
+NA_HDEF NARect naGetOpenGLSpaceAbsoluteInnerRect(NACoreUIElement* space);
 NA_HAPI NARect naGetButtonAbsoluteInnerRect(NACoreUIElement* button);
 NA_HAPI NARect naGetRadioAbsoluteInnerRect(NACoreUIElement* radio);
 NA_HAPI NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* label);
@@ -140,6 +147,11 @@ NA_HAPI void naClearWindowMouseTracking(NACocoaWindow* cocoawindow);
 @interface NANativeSpace : NSView{
   NACocoaSpace* cocoaspace;
   NSTrackingArea* trackingarea;
+}
+@end
+
+@interface NANativeImageSpace : NSImageView{
+  NACocoaImageSpace* cocoaimagespace;
 }
 @end
 
@@ -297,8 +309,46 @@ NA_DEF void naOpenConsoleWindow(const char* windowtitle){
 }
 
 
+#define NA_COCOA_BUNDLE_PLIST @"InfoPlist"
+#define NA_COCOA_BUNDLE_APPLICATION_NAME @"CFBundleDisplayName"
+#define NA_COCOA_BUNDLE_VERSION_SHORT_KEY @"CFBundleShortVersionString"
+#define NA_COCOA_BUNDLE_VERSION_KEY @"CFBundleVersion"
+#define NA_COCOA_BUNDLE_ICON_FILE_KEY @"CFBundleIconFile"
 
+NAString* naNewBundleApplicationName(){
+  NSString* applicationname = [[NSBundle mainBundle] localizedStringForKey:NA_COCOA_BUNDLE_APPLICATION_NAME value:nil table:NA_COCOA_BUNDLE_PLIST];
+  if(!applicationname){
+    applicationname = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_APPLICATION_NAME];
+  }
+  NAString* retstring = naNewStringWithFormat("%s", [applicationname UTF8String]);
+  return retstring;
+}
 
+NAString* naNewBundleVersionString(){
+  NSString* versionstring = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_SHORT_KEY];
+  NAString* retstring = naNewStringWithFormat("%s", [versionstring UTF8String]);
+  return retstring;
+}
+
+NAString* naNewBundleBuildString(){
+  NSString* buildstring = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_KEY];
+  NAString* retstring = naNewStringWithFormat("%s", [buildstring UTF8String]);
+  return retstring;
+}
+
+NAString* naNewBundleIconPath(){
+  NSString* iconfilename = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_ICON_FILE_KEY];
+  NSString* iconbasename = [iconfilename stringByDeletingPathExtension];
+  NSURL* url = [[NSBundle mainBundle] URLForResource:iconbasename withExtension:@"icns"];
+  NAString* retstring = naNewStringWithFormat("%s", [[url path] UTF8String]);
+  return retstring;
+}
+
+NAString* naNewBundleResourcePath(const NAUTF8Char* basename, const NAUTF8Char* suffix){
+  NSURL* url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix]];
+  NAString* retstring = naNewStringWithFormat("%s", [[url path] UTF8String]);
+  return retstring;
+}
 
 // ///////////////////////////////////
 // UI ELEMENT
@@ -703,6 +753,57 @@ NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
 
 
 // ////////////////////////////
+// Image Space
+
+@implementation NANativeImageSpace
+- (id) initWithCocoaImageSpace:(NACocoaImageSpace*)newcocoaimagespace frame:(NSRect)frame{
+  self = [super initWithFrame:frame];
+  cocoaimagespace = newcocoaimagespace;
+  return self;
+}
+- (void) setImageURL:(const NAUTF8Char*)imagePath{
+  NSURL* url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:imagePath]];
+  NSImage* image = [[NSImage alloc] initWithContentsOfURL:url];
+  [self setImage:image];
+  [image release];
+}
+@end
+
+
+
+NA_DEF NAImageSpace* naNewImageSpace(NARect rect){
+  NACocoaImageSpace* cocoaImageSpace = naAlloc(NACocoaImageSpace);
+
+  NSRect contentRect = naMakeNSRectWithRect(rect);
+  NANativeImageSpace* nativeImageSpace = [[NANativeImageSpace alloc] initWithCocoaImageSpace:cocoaImageSpace frame:contentRect];  
+  naRegisterCoreUIElement(&(cocoaImageSpace->coreimagespace.uielement), NA_UI_IMAGESPACE, (void*)NA_COCOA_RETAIN(nativeImageSpace));
+  
+  return (NAImageSpace*)cocoaImageSpace;
+}
+
+
+
+NA_DEF void naDestructImageSpace(NAImageSpace* imagespace){
+  NACocoaImageSpace* cocoaimagespace = (NACocoaImageSpace*)imagespace;
+  NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoaimagespace->coreimagespace.uielement)));
+}
+
+
+
+NA_DEF void naSetImageSpacePath(NAImageSpace* imagespace, const NAUTF8Char* imagePath){
+  [((NA_COCOA_BRIDGE NANativeImageSpace*)naGetUIElementNativeID(imagespace)) setImageURL:imagePath];
+}
+
+
+
+NA_HDEF NARect naGetImageSpaceAbsoluteInnerRect(NACoreUIElement* imagespace){
+  NA_UNUSED(imagespace);
+  return naMakeRectS(20, 40, 100, 50);
+}
+
+
+
+// ////////////////////////////
 // OpenGL Space
 
 #if (NA_CONFIG_COMPILE_OPENGL == 1)
@@ -810,8 +911,12 @@ NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
     NA_UNUSED(openglspace);
     NA_UNUSED(bounds);
   }
-
+  
 #endif  // NA_CONFIG_COMPILE_OPENGL
+
+NA_HDEF NARect naGetOpenGLSpaceAbsoluteInnerRect(NACoreUIElement* openglspace){
+  return naGetSpaceAbsoluteInnerRect(openglspace);
+}
 
 
 
@@ -1150,6 +1255,27 @@ NA_HDEF NABool naGetCheckboxState(NACheckbox* checkbox){
 - (void) setText:(const NAUTF8Char*)text{
   [self setStringValue:[NSString stringWithUTF8String:text]];
 }
+- (void) setLink:(const NAUTF8Char*)url{
+  [self setAllowsEditingTextAttributes: YES];
+  [self setSelectable: YES];
+
+  NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] initWithString: [self stringValue]];
+  NSRange range = NSMakeRange(0, [attrString length]);
+
+  NSURL* nsurl = [NSURL URLWithString:[NSString stringWithUTF8String:url]];
+  [attrString beginEditing];
+  [attrString addAttribute:NSLinkAttributeName value:[nsurl absoluteString] range:range];
+  NSMutableParagraphStyle* paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+  [paragraphStyle setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
+  paragraphStyle.alignment = [self alignment];
+  [attrString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:range];
+  [attrString addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInt:NSUnderlineStyleSingle] range:range];
+  [attrString addAttribute:NSForegroundColorAttributeName value:[NSColor blueColor] range:range];
+  [attrString endEditing];
+  
+  [self setAttributedStringValue: attrString];
+  [attrString release];
+}
 - (void) setLabelEnabled:(NABool)enabled{
   [self setAlphaValue:enabled ? 1. : .35];
 }
@@ -1170,7 +1296,10 @@ NA_HDEF NABool naGetCheckboxState(NACheckbox* checkbox){
   NSFontDescriptor* descriptor;
   switch(kind){
     case NA_FONT_KIND_SYSTEM:
-      [self setFont:[NSFont labelFontOfSize:systemSize]];
+      [self setFont:[NSFont systemFontOfSize:systemSize]];
+      break;
+    case NA_FONT_KIND_TITLE:
+      [self setFont:[NSFont boldSystemFontOfSize:systemSize]];
       break;
     case NA_FONT_KIND_MONOSPACE:
       descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:@{
@@ -1217,6 +1346,12 @@ NA_DEF void naDestructLabel(NALabel* label){
 
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
   [((NA_COCOA_BRIDGE NANativeLabel*)naGetUIElementNativeID(label)) setText:text];
+}
+
+
+
+NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
+  [((NA_COCOA_BRIDGE NANativeLabel*)naGetUIElementNativeID(label)) setLink: url];
 }
 
 
@@ -1316,7 +1451,8 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
     }
     break;
   case NA_UI_SPACE:       rect = naGetSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_OPENGLSPACE: rect = naGetSpaceAbsoluteInnerRect(element); break;
+  case NA_UI_IMAGESPACE:  rect = naGetImageSpaceAbsoluteInnerRect(element); break;
+  case NA_UI_OPENGLSPACE: rect = naGetOpenGLSpaceAbsoluteInnerRect(element); break;
   case NA_UI_BUTTON:      rect = naGetButtonAbsoluteInnerRect(element); break;
   case NA_UI_RADIO:       rect = naGetRadioAbsoluteInnerRect(element); break;
   case NA_UI_CHECKBOX:    rect = naGetCheckboxAbsoluteInnerRect(element); break;
@@ -1332,7 +1468,8 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
     case NA_UI_SCREEN:      relrect = naGetScreenAbsoluteRect(relelement); break;
     case NA_UI_WINDOW:      relrect = naGetWindowAbsoluteInnerRect(relelement); break;
     case NA_UI_SPACE:       relrect = naGetSpaceAbsoluteInnerRect(relelement); break;
-    case NA_UI_OPENGLSPACE: relrect = naGetSpaceAbsoluteInnerRect(relelement); break;
+    case NA_UI_IMAGESPACE:  relrect = naGetImageSpaceAbsoluteInnerRect(relelement); break;
+    case NA_UI_OPENGLSPACE: relrect = naGetOpenGLSpaceAbsoluteInnerRect(relelement); break;
     case NA_UI_BUTTON:      relrect = naGetButtonAbsoluteInnerRect(relelement); break;
     case NA_UI_RADIO:       relrect = naGetRadioAbsoluteInnerRect(relelement); break;
     case NA_UI_CHECKBOX:    relrect = naGetCheckboxAbsoluteInnerRect(relelement); break;

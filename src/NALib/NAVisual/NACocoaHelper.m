@@ -10,8 +10,6 @@
 // you can simply delete the .m File from your source tree.
 
 
-#include "NAUICocoa.h"
-
 #if (NA_CONFIG_COMPILE_GUI == 1)  // We need this, in case of ANSI C
 #if defined __OBJC__
 #if NA_OS == NA_OS_MAC_OS_X

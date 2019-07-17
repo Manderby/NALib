@@ -31,6 +31,7 @@ typedef struct NACoreUIElement      NACoreUIElement;
 typedef struct NACoreApplication    NACoreApplication;
 typedef struct NACoreWindow         NACoreWindow;
 typedef struct NACoreSpace          NACoreSpace;
+typedef struct NACoreImageSpace     NACoreImageSpace;
 typedef struct NACoreOpenGLSpace    NACoreOpenGLSpace;
 typedef struct NACoreButton         NACoreButton;
 typedef struct NACoreRadio          NACoreRadio;
@@ -137,6 +138,12 @@ struct NACoreWindow{
 struct NACoreSpace{
   NACoreUIElement uielement;
   NABool alternatebackground;
+};
+
+
+
+struct NACoreImageSpace{
+  NACoreUIElement uielement;
 };
 
 

@@ -212,6 +212,7 @@ NA_DEF void naReleaseUIElement(NAUIElement* uielement){
 //  case NA_UI_SCREEN:      naDeleteScreen(uielement);
   case NA_UI_WINDOW:      naReleaseRefCount(&(element->refcount), uielement, naDestructWindow); break;
   case NA_UI_SPACE:       naReleaseRefCount(&(element->refcount), uielement, naDestructSpace); break;
+  case NA_UI_IMAGESPACE:  naReleaseRefCount(&(element->refcount), uielement, naDestructImageSpace); break;
   #if NA_CONFIG_COMPILE_OPENGL == 1
     case NA_UI_OPENGLSPACE: naReleaseRefCount(&(element->refcount), uielement, naDestructOpenGLSpace); break;
   #endif

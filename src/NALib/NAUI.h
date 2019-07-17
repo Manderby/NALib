@@ -30,6 +30,7 @@
 
 
 #include "NACoord.h"
+#include "NAString.h"
 
 // NALib provides a simple implementation for Graphical User Interfaces (GUI).
 //
@@ -76,6 +77,7 @@ typedef void  NAApplication;
 typedef void  NAScreen;
 typedef void  NAWindow;
 typedef void  NASpace;
+typedef void  NAImageSpace;
 typedef void  NAOpenGLSpace;
 typedef void  NAButton;
 typedef void  NARadio;
@@ -93,6 +95,7 @@ typedef enum{
   NA_UI_SCREEN,
   NA_UI_WINDOW,
   NA_UI_SPACE,
+  NA_UI_IMAGESPACE,
   NA_UI_OPENGLSPACE,
   NA_UI_BUTTON,
   NA_UI_RADIO,
@@ -310,6 +313,7 @@ NA_API void naOpenConsoleWindow(const char* windowtitle);
 
 typedef enum{
   NA_FONT_KIND_SYSTEM,
+  NA_FONT_KIND_TITLE,
   NA_FONT_KIND_MONOSPACE,
   NA_FONT_KIND_PARAGRAPH,
   NA_FONT_KIND_MATH
@@ -423,6 +427,10 @@ NA_API void naDestructSpace(NASpace* space);
 NA_API void naAddSpaceChild(NASpace* space, NAUIElement* child);
 NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 
+NA_DEF NAImageSpace* naNewImageSpace(NARect rect);
+NA_DEF void naDestructImageSpace(NAImageSpace* imagespace);
+NA_DEF void naSetImageSpacePath(NAImageSpace* imagespace, const NAUTF8Char* imagePath);
+
 NA_API NAButton* naNewButton(const char* text, NARect rect);
 NA_API void naDestructButton(NAButton* button);
 NA_API void naSetButtonState(NAButton* button, NABool state);
@@ -442,6 +450,8 @@ NA_HDEF NABool naGetCheckboxState(NACheckbox* checkbox);
 NA_API NALabel* naNewLabel(const NAUTF8Char* text, NARect rect);
 NA_API void naDestructLabel(NALabel* label);
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text);
+// Note that text alignment must be set before calling this method.
+NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url);
 NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled);
 NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
 NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind);
@@ -488,6 +498,16 @@ NA_API void naHideMouse(void);
 NA_API const NACursorInfo* naGetMouseInfo(void);
 NA_API NAPos naGetCursorPos(const NACursorInfo* cursorinfo);
 NA_API NASize naGetCursorDelta(const NACursorInfo* cursorinfo);
+
+
+
+#if NA_OS == NA_OS_MAC_OS_X
+  NAString* naNewBundleApplicationName();
+  NAString* naNewBundleVersionString();
+  NAString* naNewBundleBuildString();
+  NAString* naNewBundleIconPath();
+  NAString* naNewBundleResourcePath(const NAUTF8Char* basename, const NAUTF8Char* suffix);
+#endif
 
 
 // Note that although this API would perfectly fit into the NAThreading.h file,
