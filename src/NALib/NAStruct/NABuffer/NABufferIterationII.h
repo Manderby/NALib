@@ -65,7 +65,10 @@ NA_IDEF NABool naIsBufferAtEnd(NABufferIterator* iter){
   if(!naIsBufferAtInitial(iter)){
     NABufferPart* part = naGetBufferPart(iter);
     if(iter->partoffset < 0 || iter->partoffset >= naGetBufferPartByteSize(part)){
-      naLocateBufferAbsolute(iter, naGetBufferLocation(iter));
+      NABool found = naLocateBufferAbsolute(iter, naGetBufferLocation(iter));
+      if(!found){
+        naResetTreeIterator(&(iter->partiter));
+      }
     }
   }
   return (naIsBufferAtInitial(iter) && (iter->partoffset == naGetRangeiEnd(buffer->range)));

@@ -246,6 +246,8 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64*
     const NAByte* curbyte;
     const NABufferPart* part;
     
+    naIsBufferAtEnd(iter);
+    
     naPrepareBuffer(iter, 1);
     part = naGetBufferPart(iter);
     if(naIsBufferAtInitial(iter)){break;}
