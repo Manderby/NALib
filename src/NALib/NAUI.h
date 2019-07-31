@@ -245,9 +245,14 @@ NA_API void naStartApplication(  NAMutator prestartup,
 //   return 0;
 // }
 //
-// Make sure to use the correct type for MyExistingApplication!
-// Note that NAApplication will forward all uncaptured events unaltered.
-// You can of course add a prestartup function with translations for example.
+// Notes:
+// - Make sure to use the correct type for MyExistingApplication!
+// - NAApplication will forward all uncaptured events unaltered.
+// - You can of course add a prestartup function with translations for example.
+// - Also note that the loading of nib files must sometimes be done in the
+//   willFinishLaunching method of the application delegate already.
+// - In order to react to willFinishLaunching and didFinishLaunching, your
+//   application class must use the <NSApplicationDelegate> protocol.
 //
 // //////// End intermission
 
@@ -411,6 +416,12 @@ struct NACursorInfo{
   NAPos prevpos;
 };
 
+typedef enum{
+  NA_ALERT_BOX_INFO,
+  NA_ALERT_BOX_WARNING,
+  NA_ALERT_BOX_ERROR,
+} NAAlertBoxType;
+
 
 NA_API void naResetApplicationPreferredTranslatorLanguages(void);
 
@@ -445,8 +456,6 @@ NA_DEF void naDestructCheckbox(NACheckbox* checkbox);
 NA_HDEF void naSetCheckboxState(NACheckbox* checkbox, NABool state);
 NA_HDEF NABool naGetCheckboxState(NACheckbox* checkbox);
 
-
-
 NA_API NALabel* naNewLabel(const NAUTF8Char* text, NARect rect);
 NA_API void naDestructLabel(NALabel* label);
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text);
@@ -456,6 +465,7 @@ NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled);
 NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
 NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind);
 
+NA_API void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText);
 
 NA_API NARect naGetMainScreenRect(void);
 

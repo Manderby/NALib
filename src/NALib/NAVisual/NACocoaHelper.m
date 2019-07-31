@@ -17,8 +17,8 @@
 // #if directives will be closed at the very bottom of this file.
 
 
-#include "NAString.h"
 #import <Cocoa/Cocoa.h>
+#include "NAString.h"
 
 
 NA_DEF NSString* naAllocNSStringWithNAString(const NAString* string){

@@ -487,6 +487,10 @@ NA_HDEF NARect naGetScreenAbsoluteRect(NACoreUIElement* screen){
   naSetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
   naDispatchUIElementCommand((NACoreUIElement*)cocoawindow, NA_UI_COMMAND_MOUSE_EXITED, NA_NULL);
 }
+- (void)keyUp:(NSEvent*)event{
+  NAUIKeyCode keyCode = [event keyCode];
+  naDispatchUIElementCommand((NACoreUIElement*)cocoawindow, NA_UI_COMMAND_KEYUP, &keyCode);
+}
 @end
 
 
@@ -873,6 +877,7 @@ NA_HDEF NARect naGetImageSpaceAbsoluteInnerRect(NACoreUIElement* imagespace){
 
 
   NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
+    NA_UNUSED(window);
     NACoreOpenGLSpace* coreopenglspace = naAlloc(NACoreOpenGLSpace);
 
     // Configure the OpenGL Context and initialize this object.
@@ -903,9 +908,15 @@ NA_HDEF NARect naGetImageSpaceAbsoluteInnerRect(NACoreUIElement* imagespace){
   }
 
 
+  NA_DEF void naDestructOpenGLSpace(NAOpenGLSpace* openglspace){
+    NACocoaOpenGLSpace* cocoaopenglspace = (NACocoaOpenGLSpace*)openglspace;
+    NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoaopenglspace->coreopenglspace.uielement)));
+  }
+
+
   NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
-    NACoreOpenGLSpace* coreopenglspace = (NACoreOpenGLSpace*)openglspace;
-    [[(NA_COCOA_BRIDGE NANativeOpenGLSpace*)(coreopenglspace->uielement.nativeID) openGLContext] flushBuffer];
+    NACocoaOpenGLSpace* cocoaopenglspace = (NACocoaOpenGLSpace*)openglspace;
+    [[(NA_COCOA_BRIDGE NANativeOpenGLSpace*)(cocoaopenglspace->coreopenglspace.uielement.nativeID) openGLContext] flushBuffer];
   }
 
   NA_DEF void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){
@@ -1382,6 +1393,21 @@ NA_HDEF NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* space){
 
 
 // ///////////////////
+
+
+NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText){
+    NSAlert* alert = [[NSAlert alloc] init];
+    switch(alertBoxType){
+    case NA_ALERT_BOX_INFO:    alert.alertStyle = NSInformationalAlertStyle; break;
+    case NA_ALERT_BOX_WARNING: alert.alertStyle = NSAlertStyleWarning; break;
+    case NA_ALERT_BOX_ERROR:   alert.alertStyle = NSAlertStyleCritical; break;
+    }
+    alert.messageText = [NSString stringWithUTF8String:titleText];
+    alert.informativeText = [NSString stringWithUTF8String:infoText];
+    [alert runModal];
+    [alert release];
+}
+
 
 
 NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage){
