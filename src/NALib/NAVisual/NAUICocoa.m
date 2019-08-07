@@ -39,6 +39,7 @@ typedef struct NACocoaButton      NACocoaButton;
 typedef struct NACocoaRadio       NACocoaRadio;
 typedef struct NACocoaCheckbox    NACocoaCheckbox;
 typedef struct NACocoaLabel       NACocoaLabel;
+typedef struct NACocoaTextField   NACocoaTextField;
 
 
 // ////////////////
@@ -95,6 +96,10 @@ struct NACocoaLabel{
   NACoreLabel corelabel;
 };
 
+struct NACocoaTextField{
+  NACoreTextField coretextfield;
+};
+
 
 
 // Mapping of deprecated entities
@@ -132,6 +137,7 @@ NA_HDEF NARect naGetOpenGLSpaceAbsoluteInnerRect(NACoreUIElement* space);
 NA_HAPI NARect naGetButtonAbsoluteInnerRect(NACoreUIElement* button);
 NA_HAPI NARect naGetRadioAbsoluteInnerRect(NACoreUIElement* radio);
 NA_HAPI NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* label);
+NA_HDEF NARect naGetTextFieldAbsoluteInnerRect(NACoreUIElement* textfield);
 
 NA_HAPI void naRenewWindowMouseTracking(NACocoaWindow* cocoawindow);
 NA_HAPI void naClearWindowMouseTracking(NACocoaWindow* cocoawindow);
@@ -190,6 +196,11 @@ NA_HAPI void naClearWindowMouseTracking(NACocoaWindow* cocoawindow);
 
 @interface NANativeLabel : NSTextField{
   NACocoaLabel* cocoalabel;
+}
+@end
+
+@interface NANativeTextField : NSTextField <NSTextFieldDelegate>{
+  NACocoaTextField* cocoatextfield;
 }
 @end
 
@@ -441,6 +452,9 @@ NA_HDEF NARect naGetScreenAbsoluteRect(NACoreUIElement* screen){
   NARect framerect = naMakeRectWithNSRect(frame);
   naDispatchUIElementCommand((NACoreUIElement*)cocoawindow, NA_UI_COMMAND_RESHAPE, &framerect);
 }
+- (void)setWindowTitle:(const NAUTF8Char*) title{
+  [self setTitle:[NSString stringWithUTF8String:title]];
+}
 - (void)renewMouseTracking{
   trackingarea = [[NSTrackingArea alloc] initWithRect:[[self contentView] bounds]
       options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveWhenFirstResponder
@@ -521,6 +535,12 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
 NA_DEF void naDestructWindow(NAWindow* window){
   NACocoaWindow* cocoawindow = (NACocoaWindow*)window;
   NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoawindow->corewindow.uielement)));
+}
+
+
+
+NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title){
+  [((NA_COCOA_BRIDGE NANativeWindow*)naGetUIElementNativeID(window)) setWindowTitle:title];
 }
 
 
@@ -1260,6 +1280,7 @@ NA_HDEF NABool naGetCheckboxState(NACheckbox* checkbox){
   [self setBordered:NO];
   [self setBackgroundColor:[NSColor colorWithCalibratedRed:0. green:0. blue:1. alpha:.1]];
   [self setDrawsBackground:NO];
+  [self setLineBreakMode:NSLineBreakByWordWrapping];
   [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
   cocoalabel = newcocoalabel;
   return self;
@@ -1386,8 +1407,138 @@ NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind){
 
 
 
-NA_HDEF NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* space){
-  NA_UNUSED(space);
+NA_HDEF NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* label){
+  NA_UNUSED(label);
+  return naMakeRectS(20, 40, 100, 50);
+}
+
+
+@implementation NANativeTextField
+- (id) initWithCocoaTextField:(NACocoaTextField*)newcocoatextfield frame:(NSRect)frame{
+  self = [super initWithFrame:frame];
+//  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Wurst"]];
+  [self setSelectable:YES];
+  [self setEditable:YES];
+  [self setBordered:YES];
+//  [self setLineBreakMode:NSLineBreakByWordWrapping];
+  [self setTarget:self];
+  [self setAction:@selector(onEdited:)];
+  [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
+  [self setDelegate:self];
+  cocoatextfield = newcocoatextfield;
+  return self;
+}
+- (void) onEdited:(id)sender{
+  NA_UNUSED(sender);
+  naDispatchUIElementCommand((NACoreUIElement*)cocoatextfield, NA_UI_COMMAND_EDITED, NA_NULL);
+}
+- (void)controlTextDidChange:(NSNotification *)obj{
+  naDispatchUIElementCommand((NACoreUIElement*)cocoatextfield, NA_UI_COMMAND_EDITED, NA_NULL);
+}
+- (void) setText:(const NAUTF8Char*)text{
+  [self setStringValue:[NSString stringWithUTF8String:text]];
+}
+- (NAString*) newStringWithText{
+  return naNewStringWithFormat([[self stringValue] UTF8String]);
+}
+- (void) setTextFieldEnabled:(NABool)enabled{
+//  [self setAlphaValue:enabled ? 1. : .35];
+}
+- (void) setTextAlignment:(NATextAlignment) alignment{
+//  switch(alignment){
+//  case NA_TEXT_ALIGNMENT_LEFT: [self setAlignment:NSTextAlignmentLeft]; break;
+//  case NA_TEXT_ALIGNMENT_RIGHT: [self setAlignment:NSTextAlignmentRight]; break;
+//  case NA_TEXT_ALIGNMENT_CENTER: [self setAlignment:NSTextAlignmentCenter]; break;
+//  default:
+//    #ifndef NDEBUG
+//      naError("Invalid alignment enumeration");
+//    #endif
+//    break;
+//  }
+}
+- (void) setFontKind:(NAFontKind)kind{
+//  CGFloat systemSize = [NSFont systemFontSize];
+//  NSFontDescriptor* descriptor;
+//  switch(kind){
+//    case NA_FONT_KIND_SYSTEM:
+//      [self setFont:[NSFont systemFontOfSize:systemSize]];
+//      break;
+//    case NA_FONT_KIND_TITLE:
+//      [self setFont:[NSFont boldSystemFontOfSize:systemSize]];
+//      break;
+//    case NA_FONT_KIND_MONOSPACE:
+//      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:@{
+//                                       NSFontFamilyAttribute : @"Courier", 
+//                                       NSFontFaceAttribute : @"Regular"}];
+//      [self setFont:[NSFont fontWithDescriptor:descriptor size:systemSize]];
+//      break;
+//    case NA_FONT_KIND_PARAGRAPH:
+//      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:@{
+//                                       NSFontFamilyAttribute : @"Palatino", 
+//                                       NSFontFaceAttribute : @"Regular"}];
+//      [self setFont:[NSFont fontWithDescriptor:descriptor size:systemSize + 1]];
+//      break;
+//    case NA_FONT_KIND_MATH:
+//      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:@{
+//                                       NSFontFamilyAttribute : @"Times New Roman", 
+//                                       NSFontFaceAttribute : @"Italic"}];
+//      [self setFont:[NSFont fontWithDescriptor:descriptor size:systemSize]];
+//      break;
+//  }
+}
+@end
+
+NA_DEF NATextField* naNewTextField(const NAUTF8Char* text, NARect rect){
+  NACocoaTextField* cocoatextfield = naAlloc(NACocoaTextField);
+
+  NANativeTextField* nativeTextField = [[NANativeTextField alloc] initWithCocoaTextField:cocoatextfield frame:naMakeNSRectWithRect(rect)];
+  naRegisterCoreUIElement(&(cocoatextfield->coretextfield.uielement), NA_UI_TEXTFIELD, (void*)NA_COCOA_RETAIN(nativeTextField));
+  naSetTextFieldText(cocoatextfield, text);
+  
+  return (NATextField*)cocoatextfield;
+}
+
+
+
+NA_DEF void naDestructTextField(NATextField* textfield){
+  NACocoaTextField* cocoatextfield = (NACocoaTextField*)textfield;
+  NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoatextfield->coretextfield.uielement)));
+}
+
+
+
+NA_DEF void naSetTextFieldText(NATextField* textfield, const NAUTF8Char* text){
+  [((NA_COCOA_BRIDGE NANativeTextField*)naGetUIElementNativeID(textfield)) setText:text];
+}
+
+
+
+NA_DEF NAString* naNewStringWithTextFieldText(NATextField* textfield){
+  return [((NA_COCOA_BRIDGE NANativeTextField*)naGetUIElementNativeID(textfield)) newStringWithText];
+}
+
+
+
+NA_DEF void naSetTextFieldEnabled(NATextField* textfield, NABool enabled){
+  [((NA_COCOA_BRIDGE NANativeTextField*)naGetUIElementNativeID(textfield)) setTextFieldEnabled:enabled];
+}
+
+
+
+NA_DEF void naSetTextFieldTextAlignment(NATextField* textfield, NATextAlignment alignment){
+  [((NA_COCOA_BRIDGE NANativeTextField*)naGetUIElementNativeID(textfield)) setTextAlignment: alignment];
+}
+
+
+
+NA_DEF void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind){
+  [((NA_COCOA_BRIDGE NANativeTextField*)naGetUIElementNativeID(textfield)) setFontKind:kind];
+}
+
+
+
+NA_HDEF NARect naGetTextFieldAbsoluteInnerRect(NACoreUIElement* textfield){
+  NA_UNUSED(textfield);
   return naMakeRectS(20, 40, 100, 50);
 }
 
@@ -1484,6 +1635,7 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
   case NA_UI_RADIO:       rect = naGetRadioAbsoluteInnerRect(element); break;
   case NA_UI_CHECKBOX:    rect = naGetCheckboxAbsoluteInnerRect(element); break;
   case NA_UI_LABEL:       rect = naGetLabelAbsoluteInnerRect(element); break;
+  case NA_UI_TEXTFIELD:   rect = naGetTextFieldAbsoluteInnerRect(element); break;
   }
 
   // Now, we find the appropriate relative element.
@@ -1501,6 +1653,7 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
     case NA_UI_RADIO:       relrect = naGetRadioAbsoluteInnerRect(relelement); break;
     case NA_UI_CHECKBOX:    relrect = naGetCheckboxAbsoluteInnerRect(relelement); break;
     case NA_UI_LABEL:       relrect = naGetLabelAbsoluteInnerRect(relelement); break;
+    case NA_UI_TEXTFIELD:   relrect = naGetTextFieldAbsoluteInnerRect(relelement); break;
     }
 
     rect.pos.x = rect.pos.x - relrect.pos.x;

@@ -37,6 +37,7 @@ typedef struct NACoreButton         NACoreButton;
 typedef struct NACoreRadio          NACoreRadio;
 typedef struct NACoreCheckbox       NACoreCheckbox;
 typedef struct NACoreLabel          NACoreLabel;
+typedef struct NACoreTextField      NACoreTextField;
 
 
 extern NACoreApplication* na_app;
@@ -173,6 +174,12 @@ struct NACoreCheckbox{
 
 
 struct NACoreLabel{
+  NACoreUIElement uielement;
+};
+
+
+
+struct NACoreTextField{
   NACoreUIElement uielement;
 };
 

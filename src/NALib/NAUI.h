@@ -83,6 +83,7 @@ typedef void  NAButton;
 typedef void  NARadio;
 typedef void  NACheckbox;
 typedef void  NALabel;
+typedef void  NATextField;
 
 
 
@@ -101,6 +102,7 @@ typedef enum{
   NA_UI_RADIO,
   NA_UI_CHECKBOX,
   NA_UI_LABEL,
+  NA_UI_TEXTFIELD,
 } NAUIElementType;
 
 NA_API NAUIElementType naGetUIElementType(NAUIElement* uielement);
@@ -345,7 +347,8 @@ typedef enum{
   NA_UI_COMMAND_MOUSE_MOVED,
   NA_UI_COMMAND_MOUSE_ENTERED,
   NA_UI_COMMAND_MOUSE_EXITED,
-  NA_UI_COMMAND_PRESSED
+  NA_UI_COMMAND_PRESSED,
+  NA_UI_COMMAND_EDITED
 } NAUICommand;
 
 // A programmer reacts to commands by calling naAddUIReaction. When a specific
@@ -431,6 +434,7 @@ NA_API void naDestructApplication(NAApplication* application);
 // rect is the outer rect of the window.
 NA_API NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resizeable);
 NA_API void naDestructWindow(NAWindow* window);
+NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
 
 NA_API NASpace* naNewSpace(NARect rect);
 NA_API void naDestructSpace(NASpace* space);
@@ -464,6 +468,14 @@ NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url);
 NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled);
 NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
 NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind);
+
+NA_DEF NATextField* naNewTextField(const NAUTF8Char* text, NARect rect);
+NA_DEF void naDestructTextField(NATextField* textfield);
+NA_DEF void naSetTextFieldText(NATextField* textfield, const NAUTF8Char* text);
+NA_DEF NAString* naNewStringWithTextFieldText(NATextField* textfield);
+NA_DEF void naSetTextFieldEnabled(NATextField* textfield, NABool enabled);
+NA_DEF void naSetTextFieldTextAlignment(NATextField* textfield, NATextAlignment alignment);
+NA_DEF void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind);
 
 NA_API void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText);
 

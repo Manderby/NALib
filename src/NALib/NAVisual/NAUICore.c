@@ -220,6 +220,7 @@ NA_DEF void naReleaseUIElement(NAUIElement* uielement){
   case NA_UI_RADIO:       naReleaseRefCount(&(element->refcount), uielement, naDestructRadio); break;
   case NA_UI_CHECKBOX:    naReleaseRefCount(&(element->refcount), uielement, naDestructCheckbox); break;
   case NA_UI_LABEL:       naReleaseRefCount(&(element->refcount), uielement, naDestructLabel); break;
+  case NA_UI_TEXTFIELD:   naReleaseRefCount(&(element->refcount), uielement, naDestructTextField); break;
   default:
     #ifndef NDEBUG
       naError("Invalid element type");
@@ -253,6 +254,8 @@ NA_DEF void naAddUIReaction(void* controller, NAUIElement* uielement, NAUIComman
       && (naGetUIElementType(uielement) != NA_UI_RADIO)
       && (naGetUIElementType(uielement) != NA_UI_CHECKBOX))
       naError("Only buttons, radios and checkboxes can receyve PRESSED commands.");
+    if((command == NA_UI_COMMAND_EDITED) && (naGetUIElementType(uielement) != NA_UI_TEXTFIELD))
+      naError("Only textfields can receyve EDITED commands.");
   #endif
   newreaction = naAlloc(NAReaction);
   newreaction->controller = controller;
