@@ -84,6 +84,7 @@ typedef void  NARadio;
 typedef void  NACheckbox;
 typedef void  NALabel;
 typedef void  NATextField;
+typedef void  NATextBox;
 
 
 
@@ -103,6 +104,7 @@ typedef enum{
   NA_UI_CHECKBOX,
   NA_UI_LABEL,
   NA_UI_TEXTFIELD,
+  NA_UI_TEXTBOX,
 } NAUIElementType;
 
 NA_API NAUIElementType naGetUIElementType(NAUIElement* uielement);
@@ -435,6 +437,7 @@ NA_API void naDestructApplication(NAApplication* application);
 NA_API NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resizeable);
 NA_API void naDestructWindow(NAWindow* window);
 NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
+NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop);
 
 NA_API NASpace* naNewSpace(NARect rect);
 NA_API void naDestructSpace(NASpace* space);
@@ -473,9 +476,17 @@ NA_DEF NATextField* naNewTextField(const NAUTF8Char* text, NARect rect);
 NA_DEF void naDestructTextField(NATextField* textfield);
 NA_DEF void naSetTextFieldText(NATextField* textfield, const NAUTF8Char* text);
 NA_DEF NAString* naNewStringWithTextFieldText(NATextField* textfield);
+NA_DEF void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind);
 NA_DEF void naSetTextFieldEnabled(NATextField* textfield, NABool enabled);
 NA_DEF void naSetTextFieldTextAlignment(NATextField* textfield, NATextAlignment alignment);
 NA_DEF void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind);
+
+NA_DEF NATextBox* naNewTextBox(const NAUTF8Char* text, NARect rect);
+NA_DEF void naDestructTextBox(NATextBox* textbox);
+NA_DEF void naSetTextBoxText(NATextBox* textbox, const NAUTF8Char* text);
+NA_DEF NAString* naNewStringWithTextBoxText(NATextBox* textbox);
+NA_DEF void naSetTextBoxTextAlignment(NATextBox* textbox, NATextAlignment alignment);
+NA_DEF void naSetTextBoxFontKind(NATextBox* textbox, NAFontKind kind);
 
 NA_API void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText);
 

@@ -64,12 +64,15 @@ NA_HDEF void naDestructGroups(NAPtr leafdata){
 
 NA_DEF void naStartTranslator(void){
   #ifndef NDEBUG
-    if(NA_CONFIG_COMPILE_GUI == 1 && !na_app)
-      naCrash("Translator requires application to run. Please use naStartApplication.");
-    if(NA_CONFIG_COMPILE_GUI == 1 && na_app && NA_TRANSLATOR)
-      naCrash("Application translator already started.");
-    if(NA_CONFIG_COMPILE_GUI == 0 && NA_TRANSLATOR)
-      naCrash("Translator already started.");
+    #if NA_CONFIG_COMPILE_GUI == 1
+      if(!na_app)
+        naCrash("Translator requires application to run. Please use naStartApplication.");
+      if(na_app && NA_TRANSLATOR)
+        naCrash("Application translator already started.");
+    #else
+      if(NA_TRANSLATOR)
+        naCrash("Translator already started.");
+    #endif
   #endif
   NA_TRANSLATOR = naAlloc(NATranslator);
 
@@ -89,10 +92,13 @@ NA_DEF void naStartTranslator(void){
 
 NA_DEF void naStopTranslator(void){
   #ifndef NDEBUG
-    if(NA_CONFIG_COMPILE_GUI == 1 && !na_app)
-      naCrash("Translator requires application to run. Please use naStartApplication.");
-    if(NA_CONFIG_COMPILE_GUI == 0 && !NA_TRANSLATOR)
-      naCrash("No translator running. Please use naStartTranslator.");
+    #if NA_CONFIG_COMPILE_GUI == 1
+      if(!na_app)
+        naCrash("Translator requires application to run. Please use naStartApplication.");
+    #else
+      if(!NA_TRANSLATOR)
+        naCrash("No translator running. Please use naStartTranslator.");
+    #endif
   #endif
   naClearTree(&(NA_TRANSLATOR->groups));
   naForeachListMutable(&(NA_TRANSLATOR->languagepreferences), naFree);
@@ -109,10 +115,13 @@ NA_DEF void naStopTranslator(void){
 
 NA_DEF NAInt naRegisterTranslatorGroup(void){
   #ifndef NDEBUG
-    if(NA_CONFIG_COMPILE_GUI == 1 && !na_app)
-      naCrash("Translator requires application to run. Please use naStartApplication.");
-    if(NA_CONFIG_COMPILE_GUI == 0 && !NA_TRANSLATOR)
-      naCrash("No translator running. Please use naStartTranslator.");
+    #if NA_CONFIG_COMPILE_GUI == 1
+      if(!na_app)
+        naCrash("Translator requires application to run. Please use naStartApplication.");
+    #else
+      if(!NA_TRANSLATOR)
+        naCrash("No translator running. Please use naStartTranslator.");
+    #endif
   #endif
   NA_TRANSLATOR->curgroup++;
   return NA_TRANSLATOR->curgroup;
@@ -122,10 +131,13 @@ NA_DEF NAInt naRegisterTranslatorGroup(void){
 
 NA_DEF void naSwitchTranslatorInsertionLanguage(NALanguageCode3 code){
   #ifndef NDEBUG
-    if(NA_CONFIG_COMPILE_GUI == 1 && !na_app)
-      naCrash("Translator requires application to run. Please use naStartApplication.");
-    if(NA_CONFIG_COMPILE_GUI == 0 && !NA_TRANSLATOR)
-      naCrash("No translator running. Please use naStartTranslator.");
+    #if NA_CONFIG_COMPILE_GUI == 1
+      if(!na_app)
+        naCrash("Translator requires application to run. Please use naStartApplication.");
+    #else
+      if(!NA_TRANSLATOR)
+        naCrash("No translator running. Please use naStartTranslator.");
+    #endif
   #endif
   NA_TRANSLATOR->curlang = code;
   
@@ -148,10 +160,13 @@ NA_DEF void naSwitchTranslatorInsertionLanguage(NALanguageCode3 code){
 
 NA_DEF void naInsertTranslatorString(NAInt id, NAUTF8Char* str){
   #ifndef NDEBUG
-    if(NA_CONFIG_COMPILE_GUI == 1 && !na_app)
-      naCrash("Translator requires application to run. Please use naStartApplication.");
-    if(NA_CONFIG_COMPILE_GUI == 0 && !NA_TRANSLATOR)
-      naCrash("No translator running. Please use naStartTranslator.");
+    #if NA_CONFIG_COMPILE_GUI == 1
+      if(!na_app)
+        naCrash("Translator requires application to run. Please use naStartApplication.");
+    #else
+      if(!NA_TRANSLATOR)
+        naCrash("No translator running. Please use naStartTranslator.");
+    #endif
   #endif
   
   // Search for the group pack and create it if necessary.
@@ -176,10 +191,13 @@ NA_DEF void naInsertTranslatorString(NAInt id, NAUTF8Char* str){
 
 NA_DEF void naSetTranslatorLanguagePreference(NALanguageCode3 code){
   #ifndef NDEBUG
-    if(NA_CONFIG_COMPILE_GUI == 1 && !na_app)
-      naCrash("Translator requires application to run. Please use naStartApplication.");
-    if(NA_CONFIG_COMPILE_GUI == 0 && !NA_TRANSLATOR)
-      naCrash("No translator running. Please use naStartTranslator.");
+    #if NA_CONFIG_COMPILE_GUI == 1
+      if(!na_app)
+        naCrash("Translator requires application to run. Please use naStartApplication.");
+    #else
+      if(!NA_TRANSLATOR)
+        naCrash("No translator running. Please use naStartTranslator.");
+    #endif
   #endif
   NABool codefound = NA_FALSE;
   NAListIterator it = naMakeListModifier(&(NA_TRANSLATOR->languagepreferences));
@@ -203,10 +221,13 @@ NA_DEF void naSetTranslatorLanguagePreference(NALanguageCode3 code){
 
 NA_DEF const NAUTF8Char* naTranslate(NAInt group, NAInt id){
   #ifndef NDEBUG
-    if(NA_CONFIG_COMPILE_GUI == 1 && !na_app)
-      naCrash("Translator requires application to run. Please use naStartApplication.");
-    if(NA_CONFIG_COMPILE_GUI == 0 && !NA_TRANSLATOR)
-      naCrash("No translator running. Please use naStartTranslator.");
+    #if NA_CONFIG_COMPILE_GUI == 1
+      if(!na_app)
+        naCrash("Translator requires application to run. Please use naStartApplication.");
+    #else
+      if(!NA_TRANSLATOR)
+        naCrash("No translator running. Please use naStartTranslator.");
+    #endif
   #endif
   const NAUTF8Char* retvalue = "String not found";
   

@@ -38,6 +38,7 @@ typedef struct NACoreRadio          NACoreRadio;
 typedef struct NACoreCheckbox       NACoreCheckbox;
 typedef struct NACoreLabel          NACoreLabel;
 typedef struct NACoreTextField      NACoreTextField;
+typedef struct NACoreTextBox        NACoreTextBox;
 
 
 extern NACoreApplication* na_app;
@@ -125,8 +126,6 @@ struct NAScreen{
   NACoreUIElement uielement;
 };
 
-
-
 struct NACoreWindow{
   NACoreUIElement uielement;
   NACoreSpace* contentspace;
@@ -134,52 +133,40 @@ struct NACoreWindow{
   NARect windowedframe;
 };
 
-
-
 struct NACoreSpace{
   NACoreUIElement uielement;
   NABool alternatebackground;
 };
 
-
-
 struct NACoreImageSpace{
   NACoreUIElement uielement;
 };
-
-
 
 struct NACoreOpenGLSpace{
   NACoreUIElement uielement;
 };
 
-
-
 struct NACoreButton{
   NACoreUIElement uielement;
 };
-
-
 
 struct NACoreRadio{
   NACoreUIElement uielement;
 };
 
-
-
 struct NACoreCheckbox{
   NACoreUIElement uielement;
 };
-
-
 
 struct NACoreLabel{
   NACoreUIElement uielement;
 };
 
-
-
 struct NACoreTextField{
+  NACoreUIElement uielement;
+};
+
+struct NACoreTextBox{
   NACoreUIElement uielement;
 };
 
