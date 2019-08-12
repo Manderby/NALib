@@ -334,6 +334,127 @@ typedef enum{
   NA_TEXT_ALIGNMENT_CENTER,
 } NATextAlignment;
 
+// //////////////////////////////////////
+// Additional macro definitions used for the UI
+
+// When handling keyboard input, NALib captures the keys pressed and provides
+// you commands for KeyDown and KeyUp. The key pressed is stored in the
+// following type:
+typedef NAUInt NAUIKeyCode;
+
+// A NAUIKeyCode can have the following values. These values correspond to the
+// "US extended" keyboard layout. They represent the physical keys and not the
+// characters they might result in.
+#if NA_OS == NA_OS_WINDOWS
+  #define NA_KEYCODE_0              0x??
+  #define NA_KEYCODE_1              0x??
+  #define NA_KEYCODE_2              0x??
+  #define NA_KEYCODE_3              0x??
+  #define NA_KEYCODE_4              0x??
+  #define NA_KEYCODE_5              0x??
+  #define NA_KEYCODE_6              0x??
+  #define NA_KEYCODE_7              0x??
+  #define NA_KEYCODE_8              0x??
+  #define NA_KEYCODE_9              0x??
+  #define NA_KEYCODE_A              0x1e
+  #define NA_KEYCODE_B              0x30
+  #define NA_KEYCODE_C              0x2e
+  #define NA_KEYCODE_D              0x20
+  #define NA_KEYCODE_E              0x12
+  #define NA_KEYCODE_F              0x21
+  #define NA_KEYCODE_G              0x22
+  #define NA_KEYCODE_H              0x23
+  #define NA_KEYCODE_I              0x17
+  #define NA_KEYCODE_J              0x24
+  #define NA_KEYCODE_K              0x25
+  #define NA_KEYCODE_L              0x26
+  #define NA_KEYCODE_M              0x32
+  #define NA_KEYCODE_N              0x31
+  #define NA_KEYCODE_O              0x18
+  #define NA_KEYCODE_P              0x19
+  #define NA_KEYCODE_Q              0x10
+  #define NA_KEYCODE_R              0x13
+  #define NA_KEYCODE_S              0x1f
+  #define NA_KEYCODE_T              0x14
+  #define NA_KEYCODE_U              0x16
+  #define NA_KEYCODE_V              0x2f
+  #define NA_KEYCODE_W              0x11
+  #define NA_KEYCODE_X              0x2d
+  #define NA_KEYCODE_Y              0x15
+  #define NA_KEYCODE_Z              0x2c
+  #define NA_KEYCODE_SPACE          0x39
+  #define NA_KEYCODE_LEFT_SHIFT     0x2a
+  #define NA_KEYCODE_RIGHT_SHIFT    0x??
+  #define NA_KEYCODE_CONTROL        0x1d
+  #define NA_KEYCODE_LEFT_OPTION    0xff // Handeled differently on windows
+  #define NA_KEYCODE_RIGHT_OPTION   0x??
+  #define NA_KEYCODE_LEFT_COMMAND   0x5b
+  #define NA_KEYCODE_RIGHT_COMMAND  0x??
+  #define NA_KEYCODE_FN             0x3f
+  #define NA_KEYCODE_ESC            0x01
+  #define NA_KEYCODE_F11            0x57
+  #define NA_KEYCODE_MINUS          0x0c
+  #define NA_KEYCODE_EQUAL          0x0d
+  #define NA_KEYCODE_NUMPAD_MINUS   0x4a
+  #define NA_KEYCODE_NUMPAD_PLUS    0x4e
+#elif NA_OS == NA_OS_MAC_OS_X
+  #define NA_KEYCODE_0              0x1d
+  #define NA_KEYCODE_1              0x12
+  #define NA_KEYCODE_2              0x13
+  #define NA_KEYCODE_3              0x14
+  #define NA_KEYCODE_4              0x15
+  #define NA_KEYCODE_5              0x17
+  #define NA_KEYCODE_6              0x16
+  #define NA_KEYCODE_7              0x1a
+  #define NA_KEYCODE_8              0x1c
+  #define NA_KEYCODE_9              0x19
+  #define NA_KEYCODE_A              0x00
+  #define NA_KEYCODE_B              0x0b
+  #define NA_KEYCODE_C              0x08
+  #define NA_KEYCODE_D              0x02
+  #define NA_KEYCODE_E              0x0e
+  #define NA_KEYCODE_F              0x03
+  #define NA_KEYCODE_G              0x05
+  #define NA_KEYCODE_H              0x04
+  #define NA_KEYCODE_I              0x22
+  #define NA_KEYCODE_J              0x26
+  #define NA_KEYCODE_K              0x28
+  #define NA_KEYCODE_L              0x25
+  #define NA_KEYCODE_M              0x2e
+  #define NA_KEYCODE_N              0x2d
+  #define NA_KEYCODE_O              0x1f
+  #define NA_KEYCODE_P              0x23
+  #define NA_KEYCODE_Q              0x0c
+  #define NA_KEYCODE_R              0x0f
+  #define NA_KEYCODE_S              0x01
+  #define NA_KEYCODE_T              0x11
+  #define NA_KEYCODE_U              0x20
+  #define NA_KEYCODE_V              0x09
+  #define NA_KEYCODE_W              0x0d
+  #define NA_KEYCODE_X              0x07
+  #define NA_KEYCODE_Y              0x10
+  #define NA_KEYCODE_Z              0x06
+  #define NA_KEYCODE_SPACE          0x31
+  #define NA_KEYCODE_LEFT_SHIFT     0x38
+  #define NA_KEYCODE_RIGHT_SHIFT    0x3c
+  #define NA_KEYCODE_CONTROL        0x3b
+  #define NA_KEYCODE_LEFT_OPTION    0x3a
+  #define NA_KEYCODE_RIGHT_OPTION   0x3d
+  #define NA_KEYCODE_LEFT_COMMAND   0x37
+  #define NA_KEYCODE_RIGHT_COMMAND  0x36
+  #define NA_KEYCODE_FN             0x3f
+  #define NA_KEYCODE_ESC            0x35
+  #define NA_KEYCODE_F11            0x67
+  #define NA_KEYCODE_MINUS          0x1b
+  #define NA_KEYCODE_EQUAL          0x18
+  #define NA_KEYCODE_NUMPAD_MINUS   0x4e
+  #define NA_KEYCODE_NUMPAD_PLUS    0x45
+#endif
+
+
+
+
+
 
 // //////////////////////////////
 // Reacting to events
@@ -350,26 +471,49 @@ typedef enum{
   NA_UI_COMMAND_MOUSE_ENTERED,
   NA_UI_COMMAND_MOUSE_EXITED,
   NA_UI_COMMAND_PRESSED,
-  NA_UI_COMMAND_EDITED
+  NA_UI_COMMAND_EDITED,
+  NA_UI_COMMAND_KEYBOARD_SHORTCUT,
 } NAUICommand;
+
+typedef enum{
+  NA_MODIFIER_FLAG_SHIFT         = 0x0003,
+  NA_MODIFIER_FLAG_CONTROL       = 0x000c,
+  NA_MODIFIER_FLAG_OPTION        = 0x0030,
+  NA_MODIFIER_FLAG_COMMAND       = 0x00c0,
+
+  // The following flags will be available in the future. Please be patient.
+//  NA_MODIFIER_FLAG_LEFT_SHIFT    = 0x0001,
+//  NA_MODIFIER_FLAG_RIGHT_SHIFT   = 0x0002,
+//  NA_MODIFIER_FLAG_LEFT_CONTROL  = 0x0004,
+//  NA_MODIFIER_FLAG_RIGHT_CONTROL = 0x0008,
+//  NA_MODIFIER_FLAG_LEFT_OPTION   = 0x0010,
+//  NA_MODIFIER_FLAG_RIGHT_OPTION  = 0x0020,
+//  NA_MODIFIER_FLAG_LEFT_COMMAND  = 0x0040,
+//  NA_MODIFIER_FLAG_RIGHT_COMMAND = 0x0080,
+} NAModifierFlag;
 
 // A programmer reacts to commands by calling naAddUIReaction. When a specific
 // command occurs, a function handler will be called with the function
 // prototype NAReactionHandler.
 
-typedef NABool (*NAReactionHandler)(  void* controllerdata,
+typedef NABool (*NAReactionHandler)(  void* controller,
                                NAUIElement* uielement,
                                 NAUICommand command,
                                       void* arg);
 
-NA_API void naAddUIReaction(          void* controllerdata,
+NA_API void naAddUIReaction(          void* controller,
                                NAUIElement* uielement,
                                 NAUICommand command,
                           NAReactionHandler handler);
 
+NA_API void naAddUIKeyboardShortcut(  void* controller,
+                               NAUIElement* uielement,
+                             NAModifierFlag modifierFlags,
+                                NAUIKeyCode keyCode,
+                          NAReactionHandler handler);
 
 // The function naAddUIReaction and the function prototype NAReactionHandler
-// work in pairs. The controllerdata given to naAddUIReaction is an arbitrary
+// work in pairs. The controller given to naAddUIReaction is an arbitrary
 // void pointer which simply will be set as the first parameter of the
 // reaction handler. You probably will use either NA_NULL or some kind of
 // controller pointer for that, hence the name controller. The uielement
@@ -378,17 +522,18 @@ NA_API void naAddUIReaction(          void* controllerdata,
 //
 // The arg sent to the reaction handler is dependent on the command:
 //
-// command       arg type     arg
-// ----------------------------------------------------------------------
-// INIT          -            NA_NULL
-// REDRAW        NARect*      Outer rect of the uielement relative to parent.
-// RESHAPE       NARect*      Outer rect relative to parent.
-// KEYDOWN       NAUIKeyCode* The keycode of the key pressed.
-// KEYUP         NAUIKeyCode* The keycode of the key pressed.
-// MOUSE_MOVED   -            NA_NULL
-// MOUSE_ENTERED -            NA_NULL
-// MOUSE_EXITED  -            NA_NULL
-// PRESSED       -            NA_NULL
+// command           arg type     arg
+// --------------------------------------------------------------------------
+// INIT              -            NA_NULL
+// REDRAW            NARect*      Outer rect of uielement relative to parent.
+// RESHAPE           NARect*      Outer rect relative to parent.
+// KEYDOWN           NAUIKeyCode* The keycode of the key pressed.
+// KEYUP             NAUIKeyCode* The keycode of the key pressed.
+// MOUSE_MOVED       -            NA_NULL
+// MOUSE_ENTERED     -            NA_NULL
+// MOUSE_EXITED      -            NA_NULL
+// PRESSED           -            NA_NULL
+// KEYBOARD_SHORTCUT NAUIKeyCode* The keycode of the key pressed.
 //
 // The INIT method will be called once per element.
 //
@@ -430,6 +575,7 @@ typedef enum{
 
 NA_API void naResetApplicationPreferredTranslatorLanguages(void);
 
+NA_DEF NAApplication* naNewApplication(void);
 NA_API void naDestructApplication(NAApplication* application);
 
 
@@ -546,100 +692,6 @@ NA_API NASize naGetCursorDelta(const NACursorInfo* cursorinfo);
 // Note that although this API would perfectly fit into the NAThreading.h file,
 // it is located here as it only makes sense to use when an application with
 // a message loop is running.
-
-
-// //////////////////////////////////////
-// Additional macro definitions used for the UI
-
-// When handling keyboard input, NALib captures the keys pressed and provides
-// you commands for KeyDown and KeyUp. The key pressed is stored in the
-// following type:
-
-typedef NAUInt NAUIKeyCode;
-
-// A NAUIKeyCode can have the following values. These values correspond to the
-// "US extended" keyboard layout. They represent the physical keys and not the
-// characters they might result in.
-#if NA_OS == NA_OS_WINDOWS
-  #define NA_KEYCODE_A              0x1e
-  #define NA_KEYCODE_B              0x30
-  #define NA_KEYCODE_C              0x2e
-  #define NA_KEYCODE_D              0x20
-  #define NA_KEYCODE_E              0x12
-  #define NA_KEYCODE_F              0x21
-  #define NA_KEYCODE_G              0x22
-  #define NA_KEYCODE_H              0x23
-  #define NA_KEYCODE_I              0x17
-  #define NA_KEYCODE_J              0x24
-  #define NA_KEYCODE_K              0x25
-  #define NA_KEYCODE_L              0x26
-  #define NA_KEYCODE_M              0x32
-  #define NA_KEYCODE_N              0x31
-  #define NA_KEYCODE_O              0x18
-  #define NA_KEYCODE_P              0x19
-  #define NA_KEYCODE_Q              0x10
-  #define NA_KEYCODE_R              0x13
-  #define NA_KEYCODE_S              0x1f
-  #define NA_KEYCODE_T              0x14
-  #define NA_KEYCODE_U              0x16
-  #define NA_KEYCODE_V              0x2f
-  #define NA_KEYCODE_W              0x11
-  #define NA_KEYCODE_X              0x2d
-  #define NA_KEYCODE_Y              0x15
-  #define NA_KEYCODE_Z              0x2c
-  #define NA_KEYCODE_SPACE          0x39
-  #define NA_KEYCODE_LEFT_COMMAND   0x5b
-  #define NA_KEYCODE_SHIFT          0x2a
-  #define NA_KEYCODE_OPTION         0xff // Handeled differently on windows
-  #define NA_KEYCODE_CONTROL        0x1d
-  #define NA_KEYCODE_ESC            0x01
-  #define NA_KEYCODE_F11            0x57
-  #define NA_KEYCODE_MINUS          0x0c
-  #define NA_KEYCODE_EQUAL          0x0d
-  #define NA_KEYCODE_NUMPAD_MINUS   0x4a
-  #define NA_KEYCODE_NUMPAD_PLUS    0x4e
-#elif NA_OS == NA_OS_MAC_OS_X
-  #define NA_KEYCODE_A              0x00
-  #define NA_KEYCODE_B              0x0b
-  #define NA_KEYCODE_C              0x08
-  #define NA_KEYCODE_D              0x02
-  #define NA_KEYCODE_E              0x0e
-  #define NA_KEYCODE_F              0x03
-  #define NA_KEYCODE_G              0x05
-  #define NA_KEYCODE_H              0x04
-  #define NA_KEYCODE_I              0x22
-  #define NA_KEYCODE_J              0x26
-  #define NA_KEYCODE_K              0x28
-  #define NA_KEYCODE_L              0x25
-  #define NA_KEYCODE_M              0x2e
-  #define NA_KEYCODE_N              0x2d
-  #define NA_KEYCODE_O              0x1f
-  #define NA_KEYCODE_P              0x23
-  #define NA_KEYCODE_Q              0x0c
-  #define NA_KEYCODE_R              0x0f
-  #define NA_KEYCODE_S              0x01
-  #define NA_KEYCODE_T              0x11
-  #define NA_KEYCODE_U              0x20
-  #define NA_KEYCODE_V              0x09
-  #define NA_KEYCODE_W              0x0d
-  #define NA_KEYCODE_X              0x07
-  #define NA_KEYCODE_Y              0x10
-  #define NA_KEYCODE_Z              0x06
-  #define NA_KEYCODE_SPACE          0x31
-  #define NA_KEYCODE_LEFT_COMMAND   0x37
-  #define NA_KEYCODE_SHIFT          0x38
-  #define NA_KEYCODE_OPTION         0x3a
-  #define NA_KEYCODE_CONTROL        0x3b
-  #define NA_KEYCODE_ESC            0x35
-  #define NA_KEYCODE_F11            0x67
-  #define NA_KEYCODE_MINUS          0x1b
-  #define NA_KEYCODE_EQUAL          0x18
-  #define NA_KEYCODE_NUMPAD_MINUS   0x4e
-  #define NA_KEYCODE_NUMPAD_PLUS    0x45
-#endif
-
-
-
 
 
 

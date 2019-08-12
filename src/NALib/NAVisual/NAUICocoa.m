@@ -62,7 +62,7 @@ typedef struct NACocoaTextBox     NACocoaTextBox;
 // UIElement:    Compiled with C           - C struct pointer to native.
 
 struct NACocoaApplication{
-  NACoreApplication coreapp;
+  NACoreApplication coreapplication;
 };
 
 struct NACocoaWindow{
@@ -149,6 +149,11 @@ NA_HAPI void naRenewWindowMouseTracking(NACocoaWindow* cocoawindow);
 NA_HAPI void naClearWindowMouseTracking(NACocoaWindow* cocoawindow);
 
 
+@interface NANativeApplication : NSApplication{
+  NACocoaApplication* cocoaapplication;
+}
+@end
+
 @interface NANativeWindow : NSWindow <NSWindowDelegate>{
   NACocoaWindow* cocoawindow;
   NAUInt trackingcount;
@@ -222,6 +227,38 @@ NA_HAPI void naClearWindowMouseTracking(NACocoaWindow* cocoawindow);
 // APPLICATION
 // ///////////////////////////////////
 
+NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
+  NABool retvalue = NA_FALSE;
+  if([event type] == NSEventTypeKeyDown){
+    NAListIterator iter = naMakeListAccessor(&(na_app->uielement.shortcuts));
+    while(naIterateList(&iter)){
+      const NAKeyboardShortcut* shortcut = naGetListCurConst(&iter);
+      NAUIKeyCode keyCode = [event keyCode];
+      if(shortcut->keyCode == keyCode){
+        NSEventModifierFlags flags = [event modifierFlags];
+        NABool needsShift   = (shortcut->modifierFlags & NA_MODIFIER_FLAG_SHIFT)   != 0;
+        NABool needsControl = (shortcut->modifierFlags & NA_MODIFIER_FLAG_CONTROL) != 0;
+        NABool needsOption  = (shortcut->modifierFlags & NA_MODIFIER_FLAG_OPTION)  != 0;
+        NABool needsCommand = (shortcut->modifierFlags & NA_MODIFIER_FLAG_COMMAND) != 0;
+        NABool hasShift     = (flags & NAEventModifierFlagShift)   != 0;
+        NABool hasControl   = (flags & NAEventModifierFlagControl) != 0;
+        NABool hasOption    = (flags & NAEventModifierFlagOption)  != 0;
+        NABool hasCommand   = (flags & NAEventModifierFlagCommand) != 0;
+        if(needsShift   == hasShift
+        && needsControl == hasControl
+        && needsOption  == hasOption
+        && needsCommand == hasCommand){
+          retvalue = shortcut->handler(shortcut->controller, na_app, NA_UI_COMMAND_KEYBOARD_SHORTCUT, &keyCode);
+        }
+      }
+    }
+    naClearListIterator(&iter);
+  }
+  return retvalue;
+}
+
+
+
 NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void* arg){
   // The ((id (*)(id, SEL)) part is a cast of the objc_msgSend function which
   // is requires since a later version of Objective-C
@@ -256,8 +293,8 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 //  [NSApp finishLaunching];
   
 
-  
-  naStartCoreApplication(sizeof(NACocoaApplication), (NANativeID)NA_COCOA_RETAIN(NSApp));
+  NAApplication* app = naNewApplication();
+//  naStartCoreApplication(sizeof(NACocoaApplication), (NANativeID)NA_COCOA_RETAIN(NSApp));
 
   // Put an autorelease pool in place for the startup sequence.
   #if !__has_feature(objc_arc)
@@ -287,15 +324,19 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
       NSEvent* curevent = [NSApp nextEventMatchingMask:NAEventMaskAny untilDate:distantfuture inMode:NSDefaultRunLoopMode dequeue:YES];
 //      if([curevent type] == NSEventType)
       naCollectGarbage();
-      if(curevent){[NSApp sendEvent:curevent];}
+      if(!naInterceptKeyboardShortcut(curevent)){
+        if(curevent){[NSApp sendEvent:curevent];}
+      }
     #if !__has_feature(objc_arc)
       [pool drain];
     #endif
   }
 
   // When reaching here, the application had been stopped.
-  naClearCoreApplication();
+//  naClearCoreApplication();
+  naReleaseUIElement(app);
 }
+
 
 
 
@@ -311,11 +352,26 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 
 
+NA_DEF NAApplication* naNewApplication(void){
+  NACocoaApplication* cocoaapplication = naAlloc(NACocoaApplication);
+
+  naInitCoreApplication(&(cocoaapplication->coreapplication));
+//  if(!na_app){
+//    na_app = &(cocoaapplication->coreapplication);
+//  }
+  naRegisterCoreUIElement(&(cocoaapplication->coreapplication.uielement), NA_UI_APPLICATION, (void*)NA_COCOA_RETAIN(NSApp));
+
+  return (NAApplication*)cocoaapplication;
+}
+
+
+
 NA_DEF void naDestructApplication(NAApplication* application){
-  NA_UNUSED(application);
-  naUnregisterCoreUIElement(&(na_app->uielement));
-//  NACocoaApplication* cocoaapplication = (NACocoaApplication*)application;
-//  NA_COCOA_RELEASE((NANativeApplication*)naUnregisterCoreUIElement(&(cocoaapplication->coreapplication.uielement)));
+  NACocoaApplication* cocoaapplication = (NACocoaApplication*)application;
+  NA_COCOA_RELEASE((NANativeApplication*)naUnregisterCoreUIElement(&(cocoaapplication->coreapplication.uielement)));
+//  if(na_app == &(cocoaapplication->coreapplication)){
+//    na_app = NA_NULL;
+//  }
 }
 
 
@@ -505,13 +561,14 @@ NA_HDEF NARect naGetScreenAbsoluteRect(NACoreUIElement* screen){
 //  int asdf= 1234;
 //  return NO;
 //}
-- (BOOL)performKeyEquivalent:(NSEvent *)event{
-//  int asdf= 1234;
-//  NSString* chars = [event charactersIgnoringModifiers];
-//  NSString* charsMod = [event characters];
-//  NSEventModifierFlags flags = [event modifierFlags] & NSEventModifierFlagDeviceIndependentFlagsMask;
-  return NO;
-}
+//- (BOOL)performKeyEquivalent:(NSEvent *)event{
+//  NA_UNUSED(event);
+////  int asdf= 1234;
+////  NSString* chars = [event charactersIgnoringModifiers];
+////  NSString* charsMod = [event characters];
+////  NSEventModifierFlags flags = [event modifierFlags] & NSEventModifierFlagDeviceIndependentFlagsMask;
+//  return NO;
+//}
 - (NSTrackingArea*) trackingarea{
   return trackingarea;
 }
@@ -801,12 +858,12 @@ NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){
 //  naDispatchUIElementCommand((NACoreUIElement*)cocoaspace, NA_UI_COMMAND_KEYDOWN, &keyCode);
 //}
 //- (void)flagsChanged:(NSEvent*)event{
-//  NAUIKeyCode keyCode;
+//  NAUIKeyCode keyCode = [event keyCode];
 //  NABool shift   = ([event modifierFlags] & NAEventModifierFlagShift)    ?NA_TRUE:NA_FALSE;
 //  NABool alt     = ([event modifierFlags] & NAEventModifierFlagOption)   ?NA_TRUE:NA_FALSE;
 //  NABool control = ([event modifierFlags] & NAEventModifierFlagControl)  ?NA_TRUE:NA_FALSE;
 //  NABool command = ([event modifierFlags] & NAEventModifierFlagCommand)  ?NA_TRUE:NA_FALSE;
-//
+
 //  keyCode = NA_KEYCODE_SHIFT;
 //  naDispatchUIElementCommand((NACoreUIElement*)cocoaspace, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
 //  keyCode = NA_KEYCODE_OPTION;
@@ -986,6 +1043,10 @@ NA_HDEF NARect naGetImageSpaceAbsoluteInnerRect(NACoreUIElement* imagespace){
     NABool alt     = ([event modifierFlags] & NAEventModifierFlagOption)   ?NA_TRUE:NA_FALSE;
     NABool control = ([event modifierFlags] & NAEventModifierFlagControl)  ?NA_TRUE:NA_FALSE;
     NABool command = ([event modifierFlags] & NAEventModifierFlagCommand)  ?NA_TRUE:NA_FALSE;
+
+//    [event modifierFlags]; NSEventModifierFlagCapsLock;
+//    let isLeftShift = event.modifierFlags.rawValue & UInt(NX_DEVICELSHIFTKEYMASK) != 0
+//    let isRightShift = event.modifierFlags.rawValue & UInt(NX_DEVICERSHIFTKEYMASK) != 0
 
     keyCode = NA_KEYCODE_SHIFT;
     naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
@@ -1500,7 +1561,8 @@ NA_HDEF NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* label){
   NA_UNUSED(sender);
   naDispatchUIElementCommand((NACoreUIElement*)cocoatextfield, NA_UI_COMMAND_EDITED, NA_NULL);
 }
-- (void)controlTextDidChange:(NSNotification *)obj{
+- (void)controlTextDidChange:(NSNotification *)notification{
+  NA_UNUSED(notification);
   naDispatchUIElementCommand((NACoreUIElement*)cocoatextfield, NA_UI_COMMAND_EDITED, NA_NULL);
 }
 - (void) setText:(const NAUTF8Char*)text{
@@ -1595,7 +1657,7 @@ NA_HDEF NARect naGetTextFieldAbsoluteInnerRect(NACoreUIElement* textfield){
 //  [self setAction:@selector(onEdited:)];
 //  [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
 //  [self setDelegate:self];
-//  cocoatextbox = newcocoatextbox;
+  cocoatextbox = newcocoatextbox;
   return self;
 }
 //- (void) onEdited:(id)sender{

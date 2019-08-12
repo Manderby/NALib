@@ -251,7 +251,8 @@ NA_API void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 
   // Start the WINAPI application and set the native ID of the application.
   nativeApp = GetModuleHandle(NULL);
-  naStartCoreApplication(sizeof(NAWINAPIApplication), nativeApp);
+  NAApplication* app = naNewApplication();
+//  naStartCoreApplication(sizeof(NAWINAPIApplication), nativeApp);
 
   // Init the timer list.
   app = (NAWINAPIApplication*)naGetApplication();
@@ -311,7 +312,8 @@ NA_API void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
     }
   }
 
-  naClearCoreApplication();
+//  naClearCoreApplication();
+  naReleaseUIElement(app);
 }
 
 

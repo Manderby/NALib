@@ -26,28 +26,42 @@ NACoreApplication* na_app = NA_NULL;
 // APPLICATION
 // ///////////////////////////////////
 
-NA_HDEF void naStartCoreApplication(NAInt bytesize, NANativeID nativeID){
-  // This function is called as the first thing in the naStartApplication
-  // functions implemented dependent on the system compiled for.
-  #ifndef NDEBUG
-    if(na_app)
-      naError("Application already running");
-  #endif
+NA_HDEF void naInitCoreApplication(NACoreApplication* coreapplication){
+  na_app = coreapplication;
 
-  na_app = (NACoreApplication*)naMalloc(bytesize);
-
-  na_app->translator = NA_NULL;
+  coreapplication->translator = NA_NULL;
   naStartTranslator();
   
-  naInitList(&(na_app->uielements));
-  na_app->flags = 0;
-  na_app->flags |= NA_APPLICATION_FLAG_RUNNING;
-  na_app->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
-
-  // After this function, the calling function shall add the NAApplication as the
-  // first entry in the list of ui elements.
-  naRegisterCoreUIElement(&(na_app->uielement), NA_UI_APPLICATION, nativeID);
+  naInitList(&(coreapplication->uielements));
+  coreapplication->flags = 0;
+  coreapplication->flags |= NA_APPLICATION_FLAG_RUNNING;
+  coreapplication->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
 }
+
+
+
+//NA_HDEF void naStartCoreApplication(NAInt bytesize, NANativeID nativeID){
+//  // This function is called as the first thing in the naStartApplication
+//  // functions implemented dependent on the system compiled for.
+//  #ifndef NDEBUG
+//    if(na_app)
+//      naError("Application already running");
+//  #endif
+//
+//  na_app = (NACoreApplication*)naMalloc(bytesize);
+//
+//  na_app->translator = NA_NULL;
+//  naStartTranslator();
+//  
+//  naInitList(&(na_app->uielements));
+//  na_app->flags = 0;
+//  na_app->flags |= NA_APPLICATION_FLAG_RUNNING;
+//  na_app->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
+//
+//  // After this function, the calling function shall add the NAApplication as the
+//  // first entry in the list of ui elements.
+//  naRegisterCoreUIElement(&(na_app->uielement), NA_UI_APPLICATION, nativeID);
+//}
 
 
 
@@ -56,7 +70,6 @@ NA_HDEF void naStopCoreApplication(void){
   while(naGetListCount(&(na_app->uielements))){
     naReleaseUIElement(naGetListFirstMutable(&(na_app->uielements)));
   }
-//  naForeachListMutable(&(na_app->uielements), naReleaseUIElement);
   naClearList(&(na_app->uielements));
   naStopTranslator();
 }
@@ -109,6 +122,7 @@ NA_HDEF void naRegisterCoreUIElement(NACoreUIElement* coreuielement, NAUIElement
   coreuielement->elementtype = elementtype;
   coreuielement->nativeID = nativeID;
   naInitList(&(coreuielement->reactions));
+  naInitList(&(coreuielement->shortcuts));
   naAddListLastMutable(&(na_app->uielements), coreuielement);
 }
 
@@ -204,7 +218,9 @@ NA_DEF void naReleaseUIElement(NAUIElement* uielement){
   NACoreUIElement* element = (NACoreUIElement*)uielement;
 
   naForeachListMutable(&(element->reactions), naFree);
+  naForeachListMutable(&(element->shortcuts), naFree);
   naClearList(&(element->reactions));
+  naClearList(&(element->shortcuts));
 
   switch(naGetUIElementType(element))
   {
@@ -260,12 +276,25 @@ NA_DEF void naAddUIReaction(void* controller, NAUIElement* uielement, NAUIComman
   #endif
   newreaction = naAlloc(NAReaction);
   newreaction->controller = controller;
-  newreaction->handler = handler;
   newreaction->command = command;
+  newreaction->handler = handler;
   if(command == NA_UI_COMMAND_MOUSE_MOVED){naRetainWindowMouseTracking(naGetUIElementWindow(uielement));}
   naAddListLastMutable(&((element)->reactions), newreaction);
 }
 
+NA_API void naAddUIKeyboardShortcut(void* controller, NAUIElement* uielement, NAModifierFlag modifierFlags, NAUIKeyCode keyCode, NAReactionHandler handler){
+  NACoreUIElement* element = (NACoreUIElement*)uielement;
+  #ifndef NDEBUG
+    if(uielement != na_app)
+      naError("Currently, only the application is allowed as uielement. Use naGetApplication()");
+  #endif
+  NAKeyboardShortcut* newshortcut = naAlloc(NAKeyboardShortcut);
+  newshortcut->controller = controller;
+  newshortcut->modifierFlags = modifierFlags;
+  newshortcut->keyCode = keyCode;
+  newshortcut->handler = handler;
+  naAddListLastMutable(&((element)->shortcuts), newshortcut);
+}
 
 
 

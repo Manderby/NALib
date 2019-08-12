@@ -26,7 +26,6 @@
 // declared with a global void* or integer big enough to encapsulate all
 // possible casts on all systems.
 
-typedef struct NAReaction           NAReaction;
 typedef struct NACoreUIElement      NACoreUIElement;
 typedef struct NACoreApplication    NACoreApplication;
 typedef struct NACoreWindow         NACoreWindow;
@@ -50,7 +49,8 @@ extern NACoreApplication* na_app;
 // Performs all necessary initialization of the UI independent of the system.
 // The naInitUI functions are system dependent and will call this function
 // before doing anything else.
-NA_HAPI void naStartCoreApplication(NAInt bytesize, NANativeID nativeID);
+NA_HDEF void naInitCoreApplication(NACoreApplication* coreapplication);
+//NA_HAPI void naStartCoreApplication(NAInt bytesize, NANativeID nativeID);
 
 NA_HAPI void naStopCoreApplication(void);
 NA_HAPI void naClearCoreApplication(void);
@@ -86,11 +86,22 @@ NA_API void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent);
 
 
 
+typedef struct NAReaction NAReaction;
 struct NAReaction{
   void* controller;
   NAReactionHandler handler;
   NAUICommand command;
 };
+
+typedef struct NAKeyboardShortcut NAKeyboardShortcut;
+struct NAKeyboardShortcut{
+  void* controller;
+  NAModifierFlag modifierFlags;
+  NAUIKeyCode keyCode;
+  NAReactionHandler handler;
+};
+
+
 
 
 // The base type of any ui element. All ui element struct definitions have
@@ -104,6 +115,7 @@ struct NACoreUIElement{
   NAUIElementType elementtype;
   NACoreUIElement* parent;
   NAList reactions;
+  NAList shortcuts;
   void* nativeID;  // The native object
 };
 
