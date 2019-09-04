@@ -2,35 +2,17 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
+// This file is an inline implmenentation (II) file which is included in the
+// NACocoa.m file. This is a bit special as it is marked as a .h file but
+// actually contains non-inlinenable code. See NACocoa.m for more information.
+// Do not include this file anywhere else!
 
-// This file is a .m-File which is an implementation file in Objective-C.
-// This is required on Macintosh systems to link against the Cocoa-Framework.
-// If you do not have an Objective-C compiler such as in windows, this file
-// will simply be ignored and hence nothing is linked. If this is not the case,
-// you can simply delete the .m File from your source tree.
-
-
-#if (NA_CONFIG_COMPILE_GUI == 1)  // We need this, in case of ANSI C
-#if defined __OBJC__
-#if NA_OS == NA_OS_MAC_OS_X
-// Now, we are sure, we compile with Objective-C and on MacOSX. The
-// #if directives will be closed at the very bottom of this file.
-
-
-#import <Cocoa/Cocoa.h>
 #include "NAString.h"
 
 
 NA_DEF NSString* naAllocNSStringWithNAString(const NAString* string){
   return [NSString stringWithUTF8String:naGetStringUTF8Pointer(string)];
 }
-
-
-
-
-#endif // NA_OS == NA_OS_MAC_OS_X
-#endif // defined __OBJC__
-#endif // (NA_CONFIG_COMPILE_GUI == 1)
 
 
 // Copyright (c) NALib, Tobias Stamm

@@ -14,6 +14,7 @@ correct, complete or final.
 - Adding GUI. Yeah Baby!
 - Adding NATranslator. Very easy localization.
 - Adding NAPreferences. System dependent default values mapping
+- Adding NABabyColor
 
 - Enabled ARC (automatic reference counting) on cocoa for mac for threading
   and ui.

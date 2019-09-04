@@ -18,6 +18,12 @@ NACoreApplication* na_app = NA_NULL;
 
 
 
+NAKeyboardShortcut naMakeKeybardShortcut(NAInt modifiers, NAUIKeyCode keyCode){
+  NAKeyboardShortcut newshortcut;
+  newshortcut.modifiers = modifiers;
+  newshortcut.keyCode = keyCode;
+  return newshortcut;
+}
 
 
 
@@ -40,61 +46,39 @@ NA_HDEF void naInitCoreApplication(NACoreApplication* coreapplication){
 
 
 
-//NA_HDEF void naStartCoreApplication(NAInt bytesize, NANativeID nativeID){
-//  // This function is called as the first thing in the naStartApplication
-//  // functions implemented dependent on the system compiled for.
-//  #ifndef NDEBUG
-//    if(na_app)
-//      naError("Application already running");
-//  #endif
-//
-//  na_app = (NACoreApplication*)naMalloc(bytesize);
-//
-//  na_app->translator = NA_NULL;
-//  naStartTranslator();
-//  
-//  naInitList(&(na_app->uielements));
-//  na_app->flags = 0;
-//  na_app->flags |= NA_APPLICATION_FLAG_RUNNING;
-//  na_app->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
-//
-//  // After this function, the calling function shall add the NAApplication as the
-//  // first entry in the list of ui elements.
-//  naRegisterCoreUIElement(&(na_app->uielement), NA_UI_APPLICATION, nativeID);
-//}
 
-
-
-NA_HDEF void naStopCoreApplication(void){
+NA_HDEF void naStopApplication(void){
   na_app->flags &= ~NA_APPLICATION_FLAG_RUNNING;
-  while(naGetListCount(&(na_app->uielements))){
-    naReleaseUIElement(naGetListFirstMutable(&(na_app->uielements)));
-  }
-  naClearList(&(na_app->uielements));
-  naStopTranslator();
 }
 
 
 
-NA_HDEF void naClearCoreApplication(){
+NA_HDEF void naClearCoreApplication(NACoreApplication* coreapplication){
+  NA_UNUSED(coreapplication);
 //  NAListIterator iter;
   #ifndef NDEBUG
     if(!na_app)
       naCrash("No Application running");
   #endif
 
+  while(naGetListCount(&(na_app->uielements))){
+    naReleaseUIElement(naGetListFirstMutable(&(na_app->uielements)));
+  }
+  naClearList(&(na_app->uielements));
+  naStopTranslator();
+
 //  naBeginListMutatorIteration(NAUIElement* elem, &(na_app->uielements), iter);
 //    naCloseWindow(na_ui->windows[i]);
 //    naClearWindow(na_ui->windows[i]);
 //  naEndListIteration(iter);
 
-  naClearList(&(na_app->uielements));
-  naFree(na_app);
+//  naClearList(&(na_app->uielements));
+//  naFree(na_app);
 }
 
 
 
-NA_HDEF NACoreApplication* naGetCoreApplication(void){
+NA_HDEF NAApplication* naGetApplication(void){
   #ifndef NDEBUG
     if(naGetListFirstMutable(&(na_app->uielements)) != na_app)
       naError("Internal error: application is not in ui elements list");
@@ -135,44 +119,45 @@ NA_HDEF void* naUnregisterCoreUIElement(NACoreUIElement* coreuielement){
 
 
 
-NA_HDEF NAUIElementType naGetCoreUIElementType(NACoreUIElement* coreuielement){
-  return coreuielement->elementtype;
+NA_HDEF NAUIElementType naGetUIElementType(NAUIElement* coreuielement){
+  return ((NACoreUIElement*)coreuielement)->elementtype;
 }
 
 
 
-NA_HDEF NANativeID naGetCoreUIElementNativeID(NACoreUIElement* coreuielement){
-  return coreuielement->nativeID;
+NA_HDEF NANativeID naGetUIElementNativeID(NAUIElement* coreuielement){
+  return ((NACoreUIElement*)coreuielement)->nativeID;
 }
 
 
 
-NA_HDEF void naRefreshCoreUIElement(NACoreUIElement* coreuielement, double timediff){
+NA_HDEF void naRefreshUIElement(NAUIElement* coreuielement, double timediff){
   //if(timediff == 0.){
   //  naRefreshUIElementNow(coreuielement);
   //}else{
-    naCallApplicationFunctionInSeconds(naRefreshUIElementNow, coreuielement, timediff);
+    naCallApplicationFunctionInSeconds(naRefreshUIElementNow, (NACoreUIElement*)coreuielement, timediff);
   //}
 }
 
 
 
-NA_HDEF NACoreUIElement* naGetCoreUIElementParent(NACoreUIElement* coreuielement){
-  return coreuielement->parent;
+NA_HDEF NAUIElement* naGetUIElementParent(NAUIElement* coreuielement){
+  return ((NACoreUIElement*)coreuielement)->parent;
 }
 
 
 
-NA_HDEF NACoreWindow* naGetCoreUIElementWindow(NACoreUIElement* coreuielement){
+NA_HDEF NAWindow* naGetUIElementWindow(NAUIElement* coreuielement){
   NACoreWindow* elementwindow;
-  if(coreuielement->elementtype == NA_UI_APPLICATION){
+  NAUIElementType elementType = ((NACoreUIElement*)coreuielement)->elementtype;
+  if(elementType == NA_UI_APPLICATION){
     elementwindow = NA_NULL;
-  }else if(coreuielement->elementtype == NA_UI_SCREEN){
+  }else if(elementType == NA_UI_SCREEN){
     elementwindow = NA_NULL;
-  }else if(coreuielement->elementtype == NA_UI_WINDOW){
+  }else if(elementType == NA_UI_WINDOW){
     elementwindow = (NACoreWindow*)coreuielement;
   }else{
-    elementwindow = naGetCoreUIElementWindow(naGetUIElementParent(coreuielement));
+    elementwindow = naGetUIElementWindow(naGetUIElementParent(coreuielement));
   }
   return elementwindow;
 }
@@ -234,7 +219,7 @@ NA_DEF void naReleaseUIElement(NAUIElement* uielement){
   #endif
   case NA_UI_BUTTON:      naReleaseRefCount(&(element->refcount), uielement, naDestructButton); break;
   case NA_UI_RADIO:       naReleaseRefCount(&(element->refcount), uielement, naDestructRadio); break;
-  case NA_UI_CHECKBOX:    naReleaseRefCount(&(element->refcount), uielement, naDestructCheckbox); break;
+  case NA_UI_CHECKBOX:    naReleaseRefCount(&(element->refcount), uielement, naDestructCheckBox); break;
   case NA_UI_LABEL:       naReleaseRefCount(&(element->refcount), uielement, naDestructLabel); break;
   case NA_UI_TEXTFIELD:   naReleaseRefCount(&(element->refcount), uielement, naDestructTextField); break;
   case NA_UI_TEXTBOX:     naReleaseRefCount(&(element->refcount), uielement, naDestructTextBox); break;
@@ -266,6 +251,8 @@ NA_DEF void naAddUIReaction(void* controller, NAUIElement* uielement, NAUIComman
 //      naError("Only windows can receyve MOUSE_ENTERED commands.");
 //    if((command == NA_UI_COMMAND_MOUSE_EXITED) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
 //      naError("Only windows can receyve MOUSE_EXITED commands.");
+    if((command == NA_UI_COMMAND_CLOSES) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
+      naError("Only windows can receyve CLOSES commands.");
     if((command == NA_UI_COMMAND_PRESSED)
       && (naGetUIElementType(uielement) != NA_UI_BUTTON)
       && (naGetUIElementType(uielement) != NA_UI_RADIO)
@@ -282,18 +269,17 @@ NA_DEF void naAddUIReaction(void* controller, NAUIElement* uielement, NAUIComman
   naAddListLastMutable(&((element)->reactions), newreaction);
 }
 
-NA_API void naAddUIKeyboardShortcut(void* controller, NAUIElement* uielement, NAModifierFlag modifierFlags, NAUIKeyCode keyCode, NAReactionHandler handler){
+NA_API void naAddUIKeyboardShortcut(void* controller, NAUIElement* uielement, NAKeyboardShortcut shortcut, NAReactionHandler handler){
   NACoreUIElement* element = (NACoreUIElement*)uielement;
   #ifndef NDEBUG
-    if(uielement != na_app)
-      naError("Currently, only the application is allowed as uielement. Use naGetApplication()");
+    if((naGetUIElementType(uielement) != NA_UI_APPLICATION) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
+      naError("Currently, only applications and windows are allowed as uielement. Use naGetApplication() for the app.");
   #endif
-  NAKeyboardShortcut* newshortcut = naAlloc(NAKeyboardShortcut);
-  newshortcut->controller = controller;
-  newshortcut->modifierFlags = modifierFlags;
-  newshortcut->keyCode = keyCode;
-  newshortcut->handler = handler;
-  naAddListLastMutable(&((element)->shortcuts), newshortcut);
+  NAKeyboardShortcutReaction* newshortcutreaction = naAlloc(NAKeyboardShortcutReaction);
+  newshortcutreaction->controller = controller;
+  newshortcutreaction->shortcut = shortcut;
+  newshortcutreaction->handler = handler;
+  naAddListLastMutable(&((element)->shortcuts), newshortcutreaction);
 }
 
 

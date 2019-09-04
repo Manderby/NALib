@@ -2,28 +2,12 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
+// This file is an inline implmenentation (II) file which is included in the
+// NACocoa.m file. This is a bit special as it is marked as a .h file but
+// actually contains non-inlinenable code. See NACocoa.m for more information.
+// Do not include this file anywhere else!
 
-// This file is a .m-File which is an implementation file in Objective-C.
-// This is required on Macintosh systems to link against the Cocoa-Framework.
-// If you do not have an Objective-C compiler such as in windows, this file
-// will simply be ignored and hence nothing is linked. If this is not the case,
-// you can simply delete the .m File from your source tree.
-
-
-#include "NABase.h"
-
-
-#if (NA_CONFIG_COMPILE_GUI == 1)
-#ifdef __OBJC__
-#if NA_OS == NA_OS_MAC_OS_X
-// Now, we are sure, we compile with Objective-C and on MacOSX. The two
-// #if directives will be closed at the very bottom of this file.
-
-
-
-#import <Cocoa/Cocoa.h>
 #include "NAPreferences.h"
-
 
 
 NA_HIDEF NSUserDefaults* naGetNativePreferences(){
@@ -40,7 +24,6 @@ NA_DEF void naInitPreferencesBool(const char* key, NABool value){
     [userdefaults setInteger:(value ? 1 : -1) forKey:nskey];
   }
 }
-
 NA_DEF void naInitPreferencesInt(const char* key, NAInt value){
   #ifndef NDEBUG
     if(value == NSIntegerMin)
@@ -52,7 +35,6 @@ NA_DEF void naInitPreferencesInt(const char* key, NAInt value){
     [userdefaults setInteger:((value == 0) ? NSIntegerMin : value) forKey:nskey];
   }
 }
-
 NA_DEF void naInitPreferencesEnum(const char* key, NAInt value){
   NSUserDefaults* userdefaults = naGetNativePreferences();
   NSString* nskey = [NSString stringWithUTF8String:key];
@@ -60,7 +42,6 @@ NA_DEF void naInitPreferencesEnum(const char* key, NAInt value){
     [userdefaults setInteger:value + 1 forKey:nskey];
   }
 }
-
 NA_DEF void naInitPreferencesDouble(const char* key, double value){
   #ifndef NDEBUG
     if(naIsNaN(value))
@@ -72,7 +53,6 @@ NA_DEF void naInitPreferencesDouble(const char* key, double value){
     [userdefaults setDouble:((value == 0) ? NA_NAN : value) forKey:nskey];
   }
 }
-
 NA_DEF void naInitPreferencesString(const char* key, NAString* value){
   NSUserDefaults* userdefaults = naGetNativePreferences();
   NSString* nskey = [NSString stringWithUTF8String:key];
@@ -89,7 +69,6 @@ NA_DEF void naSetPreferencesBool(const char* key, NABool value){
   NSString* nskey = [NSString stringWithUTF8String:key];
   [userdefaults setInteger:(value ? 1 : -1) forKey:nskey];
 }
-
 NA_DEF void naSetPreferencesInt(const char* key, NAInt value){
   #ifndef NDEBUG
     if(value == NSIntegerMin)
@@ -99,13 +78,11 @@ NA_DEF void naSetPreferencesInt(const char* key, NAInt value){
   NSString* nskey = [NSString stringWithUTF8String:key];
   [userdefaults setInteger:((value == 0) ? NSIntegerMin : value) forKey:nskey];
 }
-
 NA_DEF void naSetPreferencesEnum(const char* key, NAInt value){
   NSUserDefaults* userdefaults = naGetNativePreferences();
   NSString* nskey = [NSString stringWithUTF8String:key];
   [userdefaults setInteger:value + 1 forKey:nskey];
 }
-
 NA_DEF void naSetPreferencesDouble(const char* key, double value){
   #ifndef NDEBUG
     if(naIsNaN(value))
@@ -115,7 +92,6 @@ NA_DEF void naSetPreferencesDouble(const char* key, double value){
   NSString* nskey = [NSString stringWithUTF8String:key];
   [userdefaults setDouble:((value == 0) ? NA_NAN : value) forKey:nskey];
 }
-
 NA_DEF void naSetPreferencesString(const char* key, NAString* value){
   NSUserDefaults* userdefaults = naGetNativePreferences();
   NSString* nskey = [NSString stringWithUTF8String:key];
@@ -130,27 +106,23 @@ NA_DEF NABool naGetPreferencesBool(const char* key){
   NSString* nskey = [NSString stringWithUTF8String:key];
   return (([userdefaults integerForKey:nskey] == 1) ? NA_TRUE : NA_FALSE);
 }
-
 NA_DEF NAInt naGetPreferencesInt(const char* key){
   NSUserDefaults* userdefaults = naGetNativePreferences();
   NSString* nskey = [NSString stringWithUTF8String:key];
   NSInteger integer = [userdefaults integerForKey:nskey];
   return (NAInt)((integer == NSIntegerMin) ? 0 : integer);
 }
-
 NA_DEF NAInt naGetPreferencesEnum(const char* key){
   NSUserDefaults* userdefaults = naGetNativePreferences();
   NSString* nskey = [NSString stringWithUTF8String:key];
   return (NAInt)[userdefaults integerForKey:nskey] - 1;
 }
-
 NA_DEF double naGetPreferencesDouble(const char* key){
   NSUserDefaults* userdefaults = naGetNativePreferences();
   NSString* nskey = [NSString stringWithUTF8String:key];
   double dbl = [userdefaults doubleForKey:nskey];
   return (double)(naIsNaN(dbl) ? 0. : dbl);
 }
-
 NA_DEF NAString* naNewPreferencesString(const char* key){
   NSUserDefaults* userdefaults = naGetNativePreferences();
   NSString* nskey = [NSString stringWithUTF8String:key];
@@ -169,11 +141,6 @@ NA_DEF NABool naTogglePreferencesBool(const char* key){
 }
 
 
-
-
-#endif // NA_OS == NA_OS_MAC_OS_X
-#endif // __OBJC__
-#endif // (NA_CONFIG_COMPILE_GUI == 1)
 
 // Copyright (c) NALib, Tobias Stamm
 //

@@ -27,6 +27,7 @@
 // possible casts on all systems.
 
 typedef struct NACoreUIElement      NACoreUIElement;
+
 typedef struct NACoreApplication    NACoreApplication;
 typedef struct NACoreWindow         NACoreWindow;
 typedef struct NACoreSpace          NACoreSpace;
@@ -34,75 +35,31 @@ typedef struct NACoreImageSpace     NACoreImageSpace;
 typedef struct NACoreOpenGLSpace    NACoreOpenGLSpace;
 typedef struct NACoreButton         NACoreButton;
 typedef struct NACoreRadio          NACoreRadio;
-typedef struct NACoreCheckbox       NACoreCheckbox;
+typedef struct NACoreCheckBox       NACoreCheckBox;
 typedef struct NACoreLabel          NACoreLabel;
 typedef struct NACoreTextField      NACoreTextField;
 typedef struct NACoreTextBox        NACoreTextBox;
 
-
 extern NACoreApplication* na_app;
-
-
-// ////////////////////////////
-// Application
-
-// Performs all necessary initialization of the UI independent of the system.
-// The naInitUI functions are system dependent and will call this function
-// before doing anything else.
-NA_HDEF void naInitCoreApplication(NACoreApplication* coreapplication);
-//NA_HAPI void naStartCoreApplication(NAInt bytesize, NANativeID nativeID);
-
-NA_HAPI void naStopCoreApplication(void);
-NA_HAPI void naClearCoreApplication(void);
-NA_HAPI NACoreApplication* naGetCoreApplication(void);
-NA_HAPI NABool naIsCoreApplicationRunning(void);
-
-
-// ///////////////////////
-// UIElements
-
-// Initialized the UIElement and registers it in the global ui list.
-NA_HAPI void naRegisterCoreUIElement( NACoreUIElement* coreuielement,
-                                       NAUIElementType elementtype,
-                                                 void* nativeID);
-NA_HAPI void naReleaseUIElement(NAUIElement* uielement);
-
-NA_HAPI void* naUnregisterCoreUIElement(NACoreUIElement* coreuielement);
-NA_HAPI NAUIElementType naGetCoreUIElementType(NACoreUIElement* coreuielement);
-NA_HAPI NANativeID naGetCoreUIElementNativeID(NACoreUIElement* coreuielement);
-NA_HAPI void naRefreshCoreUIElement(  NACoreUIElement* coreuielement,
-                                                double timediff);
-NA_HAPI NACoreUIElement* naGetCoreUIElementParent(NACoreUIElement* coreuielement);
-NA_HAPI NACoreWindow* naGetCoreUIElementWindow(NACoreUIElement* coreuielement);
-
-NA_HAPI void naRefreshUIElementNow(NAUIElement* uielement);
-
-NA_API void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent);
-
-
-
-
-
-
-
 
 typedef struct NAReaction NAReaction;
 struct NAReaction{
   void* controller;
-  NAReactionHandler handler;
   NAUICommand command;
-};
-
-typedef struct NAKeyboardShortcut NAKeyboardShortcut;
-struct NAKeyboardShortcut{
-  void* controller;
-  NAModifierFlag modifierFlags;
-  NAUIKeyCode keyCode;
   NAReactionHandler handler;
 };
 
+typedef struct NAKeyboardShortcutReaction NAKeyboardShortcutReaction;
+struct NAKeyboardShortcutReaction{
+  void* controller;
+  NAKeyboardShortcut shortcut;
+  NAReactionHandler handler;
+};
 
+#include "../NATranslator.h"
 
+#define NA_APPLICATION_FLAG_RUNNING         0x01
+#define NA_APPLICATION_FLAG_MOUSE_VISIBLE   0x02
 
 // The base type of any ui element. All ui element struct definitions have
 // an NACoreUIElement as the first entry.
@@ -119,20 +76,13 @@ struct NACoreUIElement{
   void* nativeID;  // The native object
 };
 
-#include "../NATranslator.h"
-
 struct NACoreApplication{
   NACoreUIElement uielement;
   NAList          uielements;   // A list of all ui elements.
   NATranslator*   translator;
-  NACursorInfo    mouse; // The mouse cursor info
+  NACursorInfo    mouse;        // The mouse cursor info
   NAInt           flags;
 };
-
-
-#define NA_APPLICATION_FLAG_RUNNING         0x01
-#define NA_APPLICATION_FLAG_MOUSE_VISIBLE   0x02
-
 
 struct NAScreen{
   NACoreUIElement uielement;
@@ -166,7 +116,7 @@ struct NACoreRadio{
   NACoreUIElement uielement;
 };
 
-struct NACoreCheckbox{
+struct NACoreCheckBox{
   NACoreUIElement uielement;
 };
 
@@ -181,6 +131,44 @@ struct NACoreTextField{
 struct NACoreTextBox{
   NACoreUIElement uielement;
 };
+
+
+
+// ///////////////////////
+// UIElements
+
+// Initializes the UIElement and registers it in the global ui list.
+NA_HAPI void naRegisterCoreUIElement( NACoreUIElement* coreuielement,
+                                       NAUIElementType elementtype,
+                                                 void* nativeID);
+
+NA_HAPI void* naUnregisterCoreUIElement(NACoreUIElement* coreuielement);
+
+NA_HAPI void naRefreshUIElementNow(NAUIElement* uielement);
+
+NA_API void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent);
+
+
+
+
+
+// ////////////////////////////
+// Application
+
+// Performs all necessary initialization of the UI independent of the system.
+// The naInitUI functions are system dependent and will call this function
+// before doing anything else.
+NA_HDEF void naInitCoreApplication(NACoreApplication* coreapplication);
+
+NA_HAPI void naClearCoreApplication(NACoreApplication* coreapplication);
+NA_HAPI NABool naIsCoreApplicationRunning(void);
+
+
+
+
+
+
+
 
 
 

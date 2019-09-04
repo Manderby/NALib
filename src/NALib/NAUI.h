@@ -81,7 +81,7 @@ typedef void  NAImageSpace;
 typedef void  NAOpenGLSpace;
 typedef void  NAButton;
 typedef void  NARadio;
-typedef void  NACheckbox;
+typedef void  NACheckBox;
 typedef void  NALabel;
 typedef void  NATextField;
 typedef void  NATextBox;
@@ -109,6 +109,7 @@ typedef enum{
 
 NA_API NAUIElementType naGetUIElementType(NAUIElement* uielement);
 
+NA_API void naReleaseUIElement(NAUIElement* uielement);
 
 // Any ui element has a strict hierarchical ordering: Application - Screen -
 // Window - Space - Subspace - Subsubspace ... You can get the parent element
@@ -202,6 +203,7 @@ NA_API void naStartApplication(  NAMutator prestartup,
 //          application delegate you might have set.
 //        * NALib calls poststartup with arg.
 //      - NALib drains the autorelease pool. (only when ARC is turned off)
+//      - NALib sets its own internal application object as the apps delegate.
 //      - NALib will start a message loop. When ARC is turned off, a new
 //        NSAutoreleasePools is created for each and every message.
 //
@@ -383,6 +385,7 @@ typedef NAUInt NAUIKeyCode;
   #define NA_KEYCODE_Y              0x15
   #define NA_KEYCODE_Z              0x2c
   #define NA_KEYCODE_SPACE          0x39
+  #define NA_KEYCODE_ENTER          0x??
   #define NA_KEYCODE_LEFT_SHIFT     0x2a
   #define NA_KEYCODE_RIGHT_SHIFT    0x??
   #define NA_KEYCODE_CONTROL        0x1d
@@ -395,6 +398,7 @@ typedef NAUInt NAUIKeyCode;
   #define NA_KEYCODE_F11            0x57
   #define NA_KEYCODE_MINUS          0x0c
   #define NA_KEYCODE_EQUAL          0x0d
+  #define NA_KEYCODE_PERIOD         0x??
   #define NA_KEYCODE_NUMPAD_MINUS   0x4a
   #define NA_KEYCODE_NUMPAD_PLUS    0x4e
 #elif NA_OS == NA_OS_MAC_OS_X
@@ -435,6 +439,7 @@ typedef NAUInt NAUIKeyCode;
   #define NA_KEYCODE_Y              0x10
   #define NA_KEYCODE_Z              0x06
   #define NA_KEYCODE_SPACE          0x31
+  #define NA_KEYCODE_ENTER          0x24
   #define NA_KEYCODE_LEFT_SHIFT     0x38
   #define NA_KEYCODE_RIGHT_SHIFT    0x3c
   #define NA_KEYCODE_CONTROL        0x3b
@@ -447,6 +452,7 @@ typedef NAUInt NAUIKeyCode;
   #define NA_KEYCODE_F11            0x67
   #define NA_KEYCODE_MINUS          0x1b
   #define NA_KEYCODE_EQUAL          0x18
+  #define NA_KEYCODE_PERIOD         0x2f
   #define NA_KEYCODE_NUMPAD_MINUS   0x4e
   #define NA_KEYCODE_NUMPAD_PLUS    0x45
 #endif
@@ -470,12 +476,14 @@ typedef enum{
   NA_UI_COMMAND_MOUSE_MOVED,
   NA_UI_COMMAND_MOUSE_ENTERED,
   NA_UI_COMMAND_MOUSE_EXITED,
+  NA_UI_COMMAND_CLOSES,
   NA_UI_COMMAND_PRESSED,
   NA_UI_COMMAND_EDITED,
   NA_UI_COMMAND_KEYBOARD_SHORTCUT,
 } NAUICommand;
 
 typedef enum{
+  NA_MODIFIER_FLAG_NONE          = 0x0000,
   NA_MODIFIER_FLAG_SHIFT         = 0x0003,
   NA_MODIFIER_FLAG_CONTROL       = 0x000c,
   NA_MODIFIER_FLAG_OPTION        = 0x0030,
@@ -491,6 +499,14 @@ typedef enum{
 //  NA_MODIFIER_FLAG_LEFT_COMMAND  = 0x0040,
 //  NA_MODIFIER_FLAG_RIGHT_COMMAND = 0x0080,
 } NAModifierFlag;
+
+typedef struct NAKeyboardShortcut NAKeyboardShortcut;
+struct NAKeyboardShortcut{
+  NAInt modifiers;
+  NAUIKeyCode keyCode;
+};
+
+NAKeyboardShortcut naMakeKeybardShortcut(NAInt modifiers, NAUIKeyCode keyCode);
 
 // A programmer reacts to commands by calling naAddUIReaction. When a specific
 // command occurs, a function handler will be called with the function
@@ -508,8 +524,7 @@ NA_API void naAddUIReaction(          void* controller,
 
 NA_API void naAddUIKeyboardShortcut(  void* controller,
                                NAUIElement* uielement,
-                             NAModifierFlag modifierFlags,
-                                NAUIKeyCode keyCode,
+                         NAKeyboardShortcut shortcut,
                           NAReactionHandler handler);
 
 // The function naAddUIReaction and the function prototype NAReactionHandler
@@ -532,7 +547,9 @@ NA_API void naAddUIKeyboardShortcut(  void* controller,
 // MOUSE_MOVED       -            NA_NULL
 // MOUSE_ENTERED     -            NA_NULL
 // MOUSE_EXITED      -            NA_NULL
+// CLOSES            NABool*      Bool* returning if shall close. Default is 1
 // PRESSED           -            NA_NULL
+// EDITED            -            NA_NULL
 // KEYBOARD_SHORTCUT NAUIKeyCode* The keycode of the key pressed.
 //
 // The INIT method will be called once per element.
@@ -573,42 +590,63 @@ typedef enum{
 } NAAlertBoxType;
 
 
-NA_API void naResetApplicationPreferredTranslatorLanguages(void);
+// UIElement
+NA_HDEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextelem);
 
+// Application
 NA_DEF NAApplication* naNewApplication(void);
 NA_API void naDestructApplication(NAApplication* application);
+NA_API void naResetApplicationPreferredTranslatorLanguages(void);
 
-
+// Window
 // rect is the outer rect of the window.
 NA_API NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resizeable);
 NA_API void naDestructWindow(NAWindow* window);
 NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
 NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop);
+NA_DEF void naSetWindowRect(NAWindow* window, NARect rect);
+NA_HDEF void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* nextelem);
+NA_API void naShowWindow(NAWindow* window);
+NA_DEF void naCloseWindow(NAWindow* window);
+NA_API void naSetWindowContentSpace(NAWindow* window, NAUIElement* uielement);
+NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullscreen);
+NA_API NABool naIsWindowFullscreen(NAWindow* window);
+//NA_API NARect naGetWindowRect(NAWindow* window);
 
+// Space
 NA_API NASpace* naNewSpace(NARect rect);
 NA_API void naDestructSpace(NASpace* space);
-
 NA_API void naAddSpaceChild(NASpace* space, NAUIElement* child);
 NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 
+// ImageSpace
 NA_DEF NAImageSpace* naNewImageSpace(NARect rect);
 NA_DEF void naDestructImageSpace(NAImageSpace* imagespace);
 NA_DEF void naSetImageSpacePath(NAImageSpace* imagespace, const NAUTF8Char* imagePath);
 
-NA_API NAButton* naNewButton(const char* text, NARect rect);
+// Button
+NA_API NAButton* naNewPushButton(const NAUTF8Char* text, NARect rect);
+NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NARect rect);
+NA_DEF NAButton* naNewImageOptionButton(const NAUTF8Char* imagePath, NARect rect);
+NA_DEF NAButton* naNewImageButton(const char* imagePath, NARect rect);
 NA_API void naDestructButton(NAButton* button);
 NA_API void naSetButtonState(NAButton* button, NABool state);
+//NA_HDEF void naSimulateButtonPress(NAButton* button);
+NA_HDEF void naSetButtonSubmit(NAButton* button, NAUIElement* controller, NAReactionHandler handler);
+NA_HDEF void naSetButtonAbort(NAButton* button, NAUIElement* controller, NAReactionHandler handler);
 
-
-NA_DEF NARadio* naNewRadio(const char* text, NARect rect);
+// Radio
+NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NARect rect);
 NA_DEF void naDestructRadio(NARadio* radio);
 NA_HDEF void naSetRadioState(NARadio* radio, NABool state);
 
-NA_DEF NACheckbox* naNewCheckbox(const char* text, NARect rect);
-NA_DEF void naDestructCheckbox(NACheckbox* checkbox);
-NA_HDEF void naSetCheckboxState(NACheckbox* checkbox, NABool state);
-NA_HDEF NABool naGetCheckboxState(NACheckbox* checkbox);
+// CheckBox
+NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NARect rect);
+NA_DEF void naDestructCheckBox(NACheckBox* checkbox);
+NA_HDEF void naSetCheckBoxState(NACheckBox* checkbox, NABool state);
+NA_HDEF NABool naGetCheckBoxState(NACheckBox* checkbox);
 
+// Label
 NA_API NALabel* naNewLabel(const NAUTF8Char* text, NARect rect);
 NA_API void naDestructLabel(NALabel* label);
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text);
@@ -618,7 +656,8 @@ NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled);
 NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
 NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind);
 
-NA_DEF NATextField* naNewTextField(const NAUTF8Char* text, NARect rect);
+// TextField
+NA_DEF NATextField* naNewTextField(NARect rect);
 NA_DEF void naDestructTextField(NATextField* textfield);
 NA_DEF void naSetTextFieldText(NATextField* textfield, const NAUTF8Char* text);
 NA_DEF NAString* naNewStringWithTextFieldText(NATextField* textfield);
@@ -627,23 +666,20 @@ NA_DEF void naSetTextFieldEnabled(NATextField* textfield, NABool enabled);
 NA_DEF void naSetTextFieldTextAlignment(NATextField* textfield, NATextAlignment alignment);
 NA_DEF void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind);
 
-NA_DEF NATextBox* naNewTextBox(const NAUTF8Char* text, NARect rect);
+// TextBox
+NA_DEF NATextBox* naNewTextBox(NARect rect);
 NA_DEF void naDestructTextBox(NATextBox* textbox);
 NA_DEF void naSetTextBoxText(NATextBox* textbox, const NAUTF8Char* text);
-NA_DEF NAString* naNewStringWithTextBoxText(NATextBox* textbox);
 NA_DEF void naSetTextBoxTextAlignment(NATextBox* textbox, NATextAlignment alignment);
 NA_DEF void naSetTextBoxFontKind(NATextBox* textbox, NAFontKind kind);
+
+
+
 
 NA_API void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText);
 
 NA_API NARect naGetMainScreenRect(void);
 
-NA_API void naShowWindow(NAWindow* window);
-NA_DEF void naCloseWindow(NAWindow* window);
-NA_API void naSetWindowContentSpace(NAWindow* window, NAUIElement* uielement);
-NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullscreen);
-NA_API NABool naIsWindowFullscreen(NAWindow* window);
-//NA_API NARect naGetWindowRect(NAWindow* window);
 
 NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
 
@@ -677,6 +713,8 @@ NA_API void naHideMouse(void);
 NA_API const NACursorInfo* naGetMouseInfo(void);
 NA_API NAPos naGetCursorPos(const NACursorInfo* cursorinfo);
 NA_API NASize naGetCursorDelta(const NACursorInfo* cursorinfo);
+
+NA_API void naOpenURLInBrowser(const NAUTF8Char* url);
 
 
 
