@@ -28,7 +28,8 @@
 
 #import <Cocoa/Cocoa.h>
 
-#include "NACocoaHelperII.h"
+#include "NAHelperCocoaII.h"
+#include "NAUIImageCocoaII.h"
 
 #if (NA_CONFIG_COMPILE_GUI == 1)
 

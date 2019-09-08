@@ -41,6 +41,7 @@ typedef struct NABabyImage NABabyImage;
 
 // Note that BLACK_GREEN and WHITE_GREEN only work for opaque images.
 typedef enum{
+  NA_BLEND_ZERO,        // Does not blend at all. The base remains as it is.
   NA_BLEND,             // Linear interpolation according blend factor.
   NA_BLEND_OVERLAY,     // Blends where top is opaque.
   NA_BLEND_OPAQUE,      // Blends where base is opaque.

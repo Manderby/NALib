@@ -67,9 +67,13 @@ NA_DEF NABabyImage* naAllocBabyImage(NASizei size, const NABabyColor color){
 
 
 NA_HDEF void naBlendBabyImage(NAInt pixelCount, float* ret, const float* base, const float* top, NABlendMode mode, float blend, NABool baseIsImage, NABool topIsImage){
+  blend = naLinearizeColorValue(blend);
   for(NAInt i = 0; i < pixelCount; i++){
     float topblend;
     switch(mode){
+    case NA_BLEND_ZERO:
+      naCopyV4f(ret, base);
+      break;
     case NA_BLEND:
       topblend = blend;
       naFillV4f(ret,
@@ -87,12 +91,12 @@ NA_HDEF void naBlendBabyImage(NAInt pixelCount, float* ret, const float* base, c
         base[3] + (1.f - base[3]) * topblend);
       break;
     case NA_BLEND_OPAQUE:
-      topblend = base[3] * blend;
+      topblend = top[3] * blend;
       naFillV4f(ret,
         (1.f - topblend) * base[0] + topblend * top[0],
         (1.f - topblend) * base[1] + topblend * top[1],
         (1.f - topblend) * base[2] + topblend * top[2],
-        base[3]);
+        base[3] * (1.f - (1.f - top[3]) * blend));
       break;
     case NA_BLEND_BLACK_GREEN:
       topblend = top[3] * blend;
@@ -100,7 +104,7 @@ NA_HDEF void naBlendBabyImage(NAInt pixelCount, float* ret, const float* base, c
         (1.f - topblend) * base[0] + topblend * top[0],
         (1.f - topblend) * base[1] + topblend * top[1],
         (1.f - topblend) * base[2] + topblend * top[2],
-        (1.f - topblend) * base[3] + topblend * top[3]);
+        (1.f - base[1]) * base[3] * (1.f - (1.f - top[3]) * blend));
       break;
     case NA_BLEND_WHITE_GREEN:
       topblend = top[3] * blend;
@@ -108,7 +112,7 @@ NA_HDEF void naBlendBabyImage(NAInt pixelCount, float* ret, const float* base, c
         (1.f - topblend) * base[0] + topblend * top[0],
         (1.f - topblend) * base[1] + topblend * top[1],
         (1.f - topblend) * base[2] + topblend * top[2],
-        (1.f - topblend) * base[3] + topblend * top[3]);
+        base[1] * base[3] * (1.f - (1.f - top[3]) * blend));
       break;
     }
     if(ret[3] == 0.f){
@@ -247,6 +251,8 @@ NA_DEF void naConvertBabyImageToUInt8(const NABabyImage* image, void* data, NABo
     uint8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
   }
 }
+
+
 
 // Copyright (c) NALib, Tobias Stamm
 //

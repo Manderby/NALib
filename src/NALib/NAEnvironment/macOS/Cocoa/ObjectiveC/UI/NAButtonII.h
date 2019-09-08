@@ -28,9 +28,34 @@
 - (void) setButtonText:(const NAUTF8Char*)text{
   [self setTitle:[NSString stringWithUTF8String:text]];
 }
-- (void) setButtonImage:(const char*)imagePath{
-  NSURL* url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:imagePath]];
-  NSImage* image = [[NSImage alloc] initWithContentsOfURL:url];
+- (void) setButtonImage:(NAUIImage*)uiimage{
+  NSSize imagesize = NSMakeSize(naGetUIImage1xSize(uiimage).width, naGetUIImage1xSize(uiimage).height);
+  NSImage* image = [NSImage imageWithSize:imagesize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
+    NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
+    if(uiimage->tintMode != NA_BLEND_ZERO){
+      NSAppearanceName appearancename = [[NSAppearance currentAppearance] name];
+      if (@available(macOS 10.14, *)) {
+        skin = ( appearancename == NSAppearanceNameAqua
+              || appearancename == NSAppearanceNameVibrantLight
+              || appearancename == NSAppearanceNameAccessibilityHighContrastAqua
+              || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantLight)
+        ? NA_UIIMAGE_SKIN_LIGHT : NA_UIIMAGE_SKIN_DARK;
+      }else{
+        skin = (appearancename == NSAppearanceNameAqua
+             || appearancename == NSAppearanceNameVibrantLight)
+        ? NA_UIIMAGE_SKIN_LIGHT : NA_UIIMAGE_SKIN_DARK;
+      }
+    }
+    NAUIImageResolution resolution = naGetWindowUIScaleFactor(naGetUIElementWindow(&(cocoabutton->corebutton.uielement)));
+    CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
+    CGImageRef imgref = naGetUIImageRef(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
+    if(!imgref){
+      imgref = naGetUIImageRef(uiimage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, skin);
+    }
+    CGContextDrawImage(context, dstRect, imgref);
+    return YES;
+  }];
+
 //  CGImageRef imgRef = [image CGImageForProposedRect:nil context:nil hints:nil];
   [self setImage:image];
   [self setImageScaling:NSImageScaleProportionallyUpOrDown];
@@ -87,24 +112,24 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NARect rect){
 
 
 
-NA_DEF NAButton* naNewImageOptionButton(const char* imagePath, NARect rect){
+NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NARect rect){
   NACocoaButton* cocoabutton = naAlloc(NACocoaButton);
 
   NANativeButton* nativeButton = [[NANativeButton alloc] initWithCocoaButton:cocoabutton bezelStyle:NSBezelStyleShadowlessSquare frame:naMakeNSRectWithRect(rect)];
   naRegisterCoreUIElement(&(cocoabutton->corebutton.uielement), NA_UI_BUTTON, (void*)NA_COCOA_RETAIN(nativeButton));
-  [nativeButton setButtonImage:imagePath];
+  [nativeButton setButtonImage:uiimage];
   
   return (NAButton*)cocoabutton;
 }
 
 
 
-NA_DEF NAButton* naNewImageButton(const char* imagePath, NARect rect){
+NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NARect rect){
   NACocoaButton* cocoabutton = naAlloc(NACocoaButton);
 
   NANativeButton* nativeButton = [[NANativeButton alloc] initWithCocoaButton:cocoabutton bezelStyle:0 frame:naMakeNSRectWithRect(rect)];
   naRegisterCoreUIElement(&(cocoabutton->corebutton.uielement), NA_UI_BUTTON, (void*)NA_COCOA_RETAIN(nativeButton));
-  [nativeButton setButtonImage:imagePath];
+  [nativeButton setButtonImage:uiimage];
   
   return (NAButton*)cocoabutton;
 }

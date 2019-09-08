@@ -2,17 +2,32 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-// This file is an inline implmenentation (II) file which is included in the
-// NACocoa.m file. This is a bit special as it is marked as a .h file but
-// actually contains non-inlinenable code. See NACocoa.m for more information.
-// Do not include this file anywhere else!
-
-#include "NAString.h"
+// This file contains inline implementations of the file NAUIImage
+// Do not include this file directly! It will automatically be included when
+// including "NAUIImage.h"
 
 
-NA_DEF NSString* naAllocNSStringWithNAString(const NAString* string){
-  return [NSString stringWithUTF8String:naGetStringUTF8Pointer(string)];
+struct NAUIImage {
+  NASizei size1x;
+  NABlendMode tintMode;
+  void* imgref[NA_UIIMAGE_RESOLUTION_COUNT* NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT];
+};
+
+
+NA_HIAPI void* naGetUIImageRef(NAUIImage* image, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin);
+NA_HIAPI void naSetUIImageRef(NAUIImage* image, void* imgref, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin);
+
+
+
+
+
+
+NA_IDEF NASizei naGetUIImage1xSize(const NAUIImage* image){
+  return image->size1x;
 }
+
+
+
 
 
 // Copyright (c) NALib, Tobias Stamm
@@ -26,8 +41,7 @@ NA_DEF NSString* naAllocNSStringWithNAString(const NAString* string){
 // the following conditions:
 //
 // The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the source-code inherently
-// dependent on this software.
+// in all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
@@ -36,3 +50,5 @@ NA_DEF NSString* naAllocNSStringWithNAString(const NAString* string){
 // CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+

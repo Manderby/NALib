@@ -10,6 +10,7 @@
 
 
 
+
 @implementation NANativeWindow
 - (id) initWithCocoaWindow:(NACocoaWindow*)newcocoawindow contentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag screen:(NSScreen *)screen{
   self = [super initWithContentRect:contentRect styleMask:aStyle backing:bufferingType defer:flag screen:screen];
@@ -164,6 +165,22 @@ NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
   [((NA_COCOA_BRIDGE NANativeWindow*)naGetUIElementNativeID(window)) setContentRect:rect];
 }
 
+
+
+NA_DEF float naGetWindowUIScaleFactor(NAWindow* window){
+  NANativeWindow* nativeWindow = naGetUIElementNativeID(window);
+  CGFloat res = 1.;
+  if(NSAppKitVersionNumber >= NSAppKitVersionNumber10_7){
+    #ifdef __MAC_10_7
+      res = [nativeWindow backingScaleFactor];
+    #endif
+  }else{
+    #ifndef __MAC_10_7
+      res = [nativeWindow userSpaceScaleFactor];
+    #endif
+  }
+  return (res == 1.) ? NA_UIIMAGE_RESOLUTION_1x : NA_UIIMAGE_RESOLUTION_2x;
+}
 
 
 NA_HDEF void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* nextelem){

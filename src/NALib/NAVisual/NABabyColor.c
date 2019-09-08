@@ -8,17 +8,23 @@
 
 
 
+//NA_IDEF float naUnlinearizeColorValue(float value){
+//  return value / (.7f * value + .3f);
+//}
+//NA_IDEF float naLinearizeColorValue(float value){
+//  return .3f * value / (1.f - .7f * value);
+//}
 
 NA_HIDEF void naUnlinearizeRGB(float* outcolor, const float* incolor){
-  outcolor[0] = incolor[0] / (.7f * incolor[0] + .3f);
-  outcolor[1] = incolor[1] / (.7f * incolor[1] + .3f);
-  outcolor[2] = incolor[2] / (.7f * incolor[2] + .3f);
+  outcolor[0] = naUnlinearizeColorValue(incolor[0]);
+  outcolor[1] = naUnlinearizeColorValue(incolor[1]);
+  outcolor[2] = naUnlinearizeColorValue(incolor[2]);
 }
 
 NA_HIDEF void naLinearizeRGB(float* outcolor, const float* incolor){
-  outcolor[0] = .3f * incolor[0] / (1.f - .7f * incolor[0]);
-  outcolor[1] = .3f * incolor[1] / (1.f - .7f * incolor[1]);
-  outcolor[2] = .3f * incolor[2] / (1.f - .7f * incolor[2]);
+  outcolor[0] = naLinearizeColorValue(incolor[0]);
+  outcolor[1] = naLinearizeColorValue(incolor[1]);
+  outcolor[2] = naLinearizeColorValue(incolor[2]);
 }
 
 // This is an reference implementation using a simplified gamma of 2.2

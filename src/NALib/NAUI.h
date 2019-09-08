@@ -31,6 +31,7 @@
 
 #include "NACoord.h"
 #include "NAString.h"
+#include "NABabyImage.h"
 
 // NALib provides a simple implementation for Graphical User Interfaces (GUI).
 //
@@ -574,7 +575,7 @@ NA_API void naAddUIKeyboardShortcut(  void* controller,
 
 // From here on, the documentation might be garbage.
 
-
+#include "NAUIImage.h"
 
 
 typedef struct NACursorInfo NACursorInfo;
@@ -605,6 +606,7 @@ NA_API void naDestructWindow(NAWindow* window);
 NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
 NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop);
 NA_DEF void naSetWindowRect(NAWindow* window, NARect rect);
+NA_DEF float naGetWindowUIScaleFactor(NAWindow* window);
 NA_HDEF void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* nextelem);
 NA_API void naShowWindow(NAWindow* window);
 NA_DEF void naCloseWindow(NAWindow* window);
@@ -627,8 +629,8 @@ NA_DEF void naSetImageSpacePath(NAImageSpace* imagespace, const NAUTF8Char* imag
 // Button
 NA_API NAButton* naNewPushButton(const NAUTF8Char* text, NARect rect);
 NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NARect rect);
-NA_DEF NAButton* naNewImageOptionButton(const NAUTF8Char* imagePath, NARect rect);
-NA_DEF NAButton* naNewImageButton(const char* imagePath, NARect rect);
+NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NARect rect);
+NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NARect rect);
 NA_API void naDestructButton(NAButton* button);
 NA_API void naSetButtonState(NAButton* button, NABool state);
 //NA_HDEF void naSimulateButtonPress(NAButton* button);
@@ -723,7 +725,8 @@ NA_API void naOpenURLInBrowser(const NAUTF8Char* url);
   NAString* naNewBundleVersionString(void);
   NAString* naNewBundleBuildString(void);
   NAString* naNewBundleIconPath(void);
-  NAString* naNewBundleResourcePath(const NAUTF8Char* basename, const NAUTF8Char* suffix);
+  // dir can be Null to search in the base resource folder.
+  NAString* naNewBundleResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix);
 #endif
 
 

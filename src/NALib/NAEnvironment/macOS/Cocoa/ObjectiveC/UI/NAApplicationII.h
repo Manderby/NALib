@@ -175,8 +175,13 @@ NAString* naNewBundleIconPath(void){
   return retstring;
 }
 
-NAString* naNewBundleResourcePath(const NAUTF8Char* basename, const NAUTF8Char* suffix){
-  NSURL* url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix]];
+NAString* naNewBundleResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
+  NSURL* url;
+  if(dir){
+    url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix] subdirectory:[NSString stringWithUTF8String:dir]];
+  }else{
+    url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix]];
+  }
   NAString* retstring = naNewStringWithFormat("%s", [[url path] UTF8String]);
   return retstring;
 }

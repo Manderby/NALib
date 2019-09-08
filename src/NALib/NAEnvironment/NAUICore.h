@@ -20,7 +20,6 @@
 
 #include "../NAList.h"
 
-
 // Very much the same as the native ID, there are certain types which are
 // casted differently on the different systems and therefore they are
 // declared with a global void* or integer big enough to encapsulate all
