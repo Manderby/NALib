@@ -118,7 +118,7 @@
 @end
 
 @implementation NANativeLabel
-- (id) initWithCocoaLabel:(NACocoaLabel*)newcocoalabel frame:(NSRect)frame{
+- (id) initWithCoreLabel:(NACoreLabel*)newcorelabel frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 //  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Wurst"]];
   [self setSelectable:YES];
@@ -128,7 +128,7 @@
   [self setDrawsBackground:NO];
   [self setLineBreakMode:NSLineBreakByWordWrapping];
   [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
-  cocoalabel = newcocoalabel;
+  corelabel = newcorelabel;
   return self;
 }
 - (void) setText:(const NAUTF8Char*)text{
@@ -169,20 +169,20 @@
 
 
 NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NARect rect){
-  NACocoaLabel* cocoalabel = naAlloc(NACocoaLabel);
+  NACoreLabel* corelabel = naAlloc(NACoreLabel);
 
-  NANativeLabel* nativeLabel = [[NANativeLabel alloc] initWithCocoaLabel:cocoalabel frame:naMakeNSRectWithRect(rect)];
-  naRegisterCoreUIElement(&(cocoalabel->corelabel.uielement), NA_UI_LABEL, (void*)NA_COCOA_RETAIN(nativeLabel));
-  naSetLabelText(cocoalabel, text);
+  NANativeLabel* nativeLabel = [[NANativeLabel alloc] initWithCoreLabel:corelabel frame:naMakeNSRectWithRect(rect)];
+  naInitCoreLabel(corelabel, (void*)NA_COCOA_RETAIN(nativeLabel));
+  naSetLabelText(corelabel, text);
   
-  return (NALabel*)cocoalabel;
+  return (NALabel*)corelabel;
 }
 
 
 
 NA_DEF void naDestructLabel(NALabel* label){
-  NACocoaLabel* cocoalabel = (NACocoaLabel*)label;
-  NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoalabel->corelabel.uielement)));
+  NACoreLabel* corelabel = (NACoreLabel*)label;
+  naClearCoreLabel(corelabel);
 }
 
 

@@ -12,9 +12,9 @@
 #if (NA_CONFIG_COMPILE_OPENGL == 1)
 
   @implementation NANativeOpenGLSpace
-  - (id)initWithCocoaOpenGLSpace:(NAOpenGLSpace*)newcocoaopenglspace frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
+  - (id)initWithCoreOpenGLSpace:(NAOpenGLSpace*)newcoreopenglspace frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
     self = [super initWithFrame:frameRect pixelFormat:pixelformat];
-    cocoaopenglspace = newcocoaopenglspace;
+    coreopenglspace = newcoreopenglspace;
     initFunc = newinitFunc;
     initData = newinitData;
     return self;
@@ -38,21 +38,21 @@
   }
   - (void)drawRect:(NSRect)dirtyRect{
     [[self openGLContext] makeCurrentContext];
-    naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, NA_UI_COMMAND_REDRAW, &dirtyRect);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_REDRAW, &dirtyRect);
   }
   - (void)reshape{
     [super reshape];
     [[self openGLContext] update];
     NARect bounds = naMakeRectWithNSRect([self bounds]);
-    naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, NA_UI_COMMAND_RESHAPE, &bounds);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_RESHAPE, &bounds);
   }
   - (void)keyDown:(NSEvent*)event{
     NAUIKeyCode keyCode = [event keyCode];
-    naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, NA_UI_COMMAND_KEYDOWN, &keyCode);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_KEYDOWN, &keyCode);
   }
   - (void)keyUp:(NSEvent*)event{
     NAUIKeyCode keyCode = [event keyCode];
-    naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, NA_UI_COMMAND_KEYUP, &keyCode);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_KEYUP, &keyCode);
   }
   - (void)flagsChanged:(NSEvent*)event{
     NAUIKeyCode keyCode;
@@ -66,13 +66,13 @@
 //    let isRightShift = event.modifierFlags.rawValue & UInt(NX_DEVICERSHIFTKEYMASK) != 0
 
     keyCode = NA_KEYCODE_SHIFT;
-    naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
     keyCode = NA_KEYCODE_OPTION;
-    naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, (alt?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, (alt?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
     keyCode = NA_KEYCODE_CONTROL;
-    naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, (control?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, (control?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
     keyCode = NA_KEYCODE_LEFT_COMMAND;
-    naDispatchUIElementCommand((NACoreUIElement*)cocoaopenglspace, (command?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, (command?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
   }
   @end
 
@@ -97,7 +97,7 @@
       [pixelformat autorelease];
     #endif
     NSRect frameRect = NSMakeRect(0.f, 0.f, (CGFloat)size.width, (CGFloat)size.height);
-    NANativeOpenGLSpace* nativeSpace = [[NANativeOpenGLSpace alloc] initWithCocoaOpenGLSpace:coreopenglspace frame:frameRect pixelFormat:pixelformat initFunc:initfunc initData:initdata];
+    NANativeOpenGLSpace* nativeSpace = [[NANativeOpenGLSpace alloc] initWithCoreOpenGLSpace:coreopenglspace frame:frameRect pixelFormat:pixelformat initFunc:initfunc initData:initdata];
 
   //  if([self respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
   //    #if defined __MAC_10_7
@@ -105,20 +105,20 @@
   //    #endif
   //  }
 
-    naRegisterCoreUIElement(&(coreopenglspace->uielement), NA_UI_OPENGLSPACE, (void*) NA_COCOA_RETAIN(nativeSpace));
+    naInitCoreOpenGLSpace(&(coreopenglspace->uielement), (void*) NA_COCOA_RETAIN(nativeSpace));
     return coreopenglspace;
   }
 
 
   NA_DEF void naDestructOpenGLSpace(NAOpenGLSpace* openglspace){
-    NACocoaOpenGLSpace* cocoaopenglspace = (NACocoaOpenGLSpace*)openglspace;
-    NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoaopenglspace->coreopenglspace.uielement)));
+    NACoreOpenGLSpace* coreopenglspace = (NACoreOpenGLSpace*)openglspace;
+    naClearCoreOpenGLSpace(&(coreopenglspace->coreopenglspace));
   }
 
 
   NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
-    NACocoaOpenGLSpace* cocoaopenglspace = (NACocoaOpenGLSpace*)openglspace;
-    [[(NA_COCOA_BRIDGE NANativeOpenGLSpace*)(cocoaopenglspace->coreopenglspace.uielement.nativeID) openGLContext] flushBuffer];
+    NACoreOpenGLSpace* coreopenglspace = (NACoreOpenGLSpace*)openglspace;
+    [[(NA_COCOA_BRIDGE NANativeOpenGLSpace*)(coreopenglspace->coreopenglspace.uielement.nativeID) openGLContext] flushBuffer];
   }
 
   NA_DEF void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){

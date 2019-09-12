@@ -9,91 +9,11 @@
 // Do not include this file anywhere else!
 
 
-//#include "NAUICocoa.h"
-//#include <objc/message.h>
-
-
 #include "NAUICore.h"
 #include "NAMemory.h"
 #include "NACoord.h"
 #include "NAThreading.h"
 #include "NATranslator.h"
-
-
-typedef struct NACocoaApplication NACocoaApplication;
-typedef struct NACocoaWindow      NACocoaWindow;
-typedef struct NACocoaSpace       NACocoaSpace;
-typedef struct NACocoaImageSpace  NACocoaImageSpace;
-typedef struct NACocoaOpenGLSpace NACocoaOpenGLSpace;
-typedef struct NACocoaButton      NACocoaButton;
-typedef struct NACocoaRadio       NACocoaRadio;
-typedef struct NACocoaCheckBox    NACocoaCheckBox;
-typedef struct NACocoaLabel       NACocoaLabel;
-typedef struct NACocoaTextField   NACocoaTextField;
-typedef struct NACocoaTextBox     NACocoaTextBox;
-
-
-// ////////////////
-// The bridging structs
-//
-// Native:       Adapter for the native implementation (in a specific language)
-// Cocoa/WINAPI: Adapter for the technology (for any language)
-// Core:         Adapter for NALib
-// UIElement:    Direct pointer back to the native struct.
-//
-// Native:       Compiled with Objective-C - native class inheriting from Cocoa
-// Cocoa/WINAPI: Compiled with Objective-C - C struct inheriting Core
-// Core:         Compiled with C           - C struct inheriting UIElement
-// UIElement:    Compiled with C           - C struct pointer to native.
-//
-// Native:       Compiled with Swift       - native class inheriting from Cocoa
-// Cocoa/WINAPI: Compiled with Swift       - C struct inheriting Core
-// Core:         Compiled with C           - C struct inheriting UIElement
-// UIElement:    Compiled with C           - C struct pointer to native.
-
-struct NACocoaApplication{
-  NACoreApplication coreapplication;
-};
-
-struct NACocoaWindow{
-  NACoreWindow corewindow;
-};
-
-struct NACocoaSpace{
-  NACoreSpace corespace;
-};
-
-struct NACocoaImageSpace{
-  NACoreImageSpace coreimagespace;
-};
-
-struct NACocoaOpenGLSpace{
-  NACoreOpenGLSpace coreopenglspace;
-};
-
-struct NACocoaButton{
-  NACoreButton corebutton;
-};
-
-struct NACocoaRadio{
-  NACoreRadio coreradio;
-};
-
-struct NACocoaCheckBox{
-  NACoreCheckBox corecheckbox;
-};
-
-struct NACocoaLabel{
-  NACoreLabel corelabel;
-};
-
-struct NACocoaTextField{
-  NACoreTextField coretextfield;
-};
-
-struct NACocoaTextBox{
-  NACoreTextBox coretextbox;
-};
 
 
 
@@ -138,36 +58,36 @@ NA_HDEF NARect naGetTextBoxAbsoluteInnerRect(NACoreUIElement* textbox);
 
 NA_HDEF NARect naGetWindowAbsoluteInnerRect(NACoreUIElement* window);
 
-NA_HAPI void naRenewWindowMouseTracking(NACocoaWindow* cocoawindow);
-NA_HAPI void naClearWindowMouseTracking(NACocoaWindow* cocoawindow);
+NA_HAPI void naRenewWindowMouseTracking(NACoreWindow* corewindow);
+NA_HAPI void naClearWindowMouseTracking(NACoreWindow* corewindow);
 
 
 @interface NANativeApplicationDelegate : NSObject <NSApplicationDelegate>{
-  NACocoaApplication* cocoaapplication;
+  NACoreApplication* coreapplication;
 }
 @end
 
 @interface NANativeWindow : NSWindow <NSWindowDelegate>{
-  NACocoaWindow* cocoawindow;
+  NACoreWindow* corewindow;
   NAUInt trackingcount;
   NSTrackingArea* trackingarea;
 }
 @end
 
 @interface NANativeSpace : NSView{
-  NACocoaSpace* cocoaspace;
+  NACoreSpace* corespace;
   NSTrackingArea* trackingarea;
 }
 @end
 
 @interface NANativeImageSpace : NSImageView{
-  NACocoaImageSpace* cocoaimagespace;
+  NACoreImageSpace* coreimagespace;
 }
 @end
 
 #if (NA_CONFIG_COMPILE_OPENGL == 1)
   @interface NANativeOpenGLSpace : NSOpenGLView{
-    NACocoaOpenGLSpace* cocoaopenglspace;
+    NACoreOpenGLSpace* coreopenglspace;
     NAMutator initFunc;
     void* initData;
   }
@@ -175,13 +95,13 @@ NA_HAPI void naClearWindowMouseTracking(NACocoaWindow* cocoawindow);
 #endif
 
 @interface NANativeButton : NSButton{
-  NACocoaButton* cocoabutton;
+  NACoreButton* corebutton;
 }
 @end
 
 @interface NANativeRadio : NSButton{
-  NACocoaRadio* cocoaradio;
-  // Cocoa thinks it's smart by doing things automatically. Unfortunately, we
+  NACoreRadio* coreradio;
+  // Core thinks it's smart by doing things automatically. Unfortunately, we
   // have to encapsulate the radio into its own view to get the behaviour
   // we need.
   NSView* containingview;
@@ -190,7 +110,7 @@ NA_HAPI void naClearWindowMouseTracking(NACocoaWindow* cocoawindow);
 @end
 
 @interface NANativeCheckBox : NSButton{
-  NACocoaCheckBox* cocoacheckbox;
+  NACoreCheckBox* corecheckbox;
 }
 @end
 
@@ -199,23 +119,27 @@ NA_HAPI void naClearWindowMouseTracking(NACocoaWindow* cocoawindow);
 @end
 
 @interface NANativeLabel : NSTextField{
-  NACocoaLabel* cocoalabel;
+  NACoreLabel* corelabel;
 }
 @end
 
 @interface NANativeTextField : NSTextField <NSTextFieldDelegate>{
-  NACocoaTextField* cocoatextfield;
+  NACoreTextField* coretextfield;
 }
 @end
 
 @interface NANativeTextBox : NSTextView{
-  NACocoaTextBox* cocoatextbox;
+  NACoreTextBox* coretextbox;
   NSScrollView* scrollview;
 }
 - (NSView*) getContainingView;
 @end
 
 
+
+NA_HDEF void naClearUINativeId(NANativeID nativeId){
+  NA_COCOA_RELEASE(nativeId);
+}
 
 
 NA_HDEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextelem){

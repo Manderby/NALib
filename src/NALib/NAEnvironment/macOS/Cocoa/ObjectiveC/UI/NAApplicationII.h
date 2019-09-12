@@ -10,9 +10,9 @@
 
 
 @implementation NANativeApplicationDelegate
-- (id) initWithCocoaApplication:(NACocoaApplication*)newcocoaapplication{
+- (id) initWithCoreApplication:(NACoreApplication*)newcoreapplication{
   self = [super init];
-  cocoaapplication = newcocoaapplication;
+  coreapplication = newcoreapplication;
   return self;
 }
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender{
@@ -32,7 +32,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   // is requires since a later version of Objective-C
 //  ( (id (*)(id, SEL)) objc_msgSend)(objc_getClass("NSApplication"), sel_registerName("sharedApplication"));
 
-  // Start the Cocoa application and set the native ID of the application.
+  // Start the Core application and set the native ID of the application.
   [NSApplication sharedApplication];
   NAApplication* app = naNewApplication();
 
@@ -101,27 +101,19 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 
 NA_DEF NAApplication* naNewApplication(void){
-  NACocoaApplication* cocoaapplication = naAlloc(NACocoaApplication);
+  NACoreApplication* coreapplication = naAlloc(NACoreApplication);
 
-  NANativeApplicationDelegate* nativeappdelegate = [[NANativeApplicationDelegate alloc] initWithCocoaApplication:cocoaapplication];
+  NANativeApplicationDelegate* nativeappdelegate = [[NANativeApplicationDelegate alloc] initWithCoreApplication:coreapplication];
 
-  naInitCoreApplication(&(cocoaapplication->coreapplication));
-//  if(!na_app){
-//    na_app = &(cocoaapplication->coreapplication);
-//  }
-  naRegisterCoreUIElement(&(cocoaapplication->coreapplication.uielement), NA_UI_APPLICATION, (void*)NA_COCOA_RETAIN(nativeappdelegate));
+  naInitCoreApplication(coreapplication, (void*)NA_COCOA_RETAIN(nativeappdelegate));
 
-  return (NAApplication*)cocoaapplication;
+  return (NAApplication*)coreapplication;
 }
 
 
 NA_DEF void naDestructApplication(NAApplication* application){
-  NACocoaApplication* cocoaapplication = (NACocoaApplication*)application;
-  NA_COCOA_RELEASE((NANativeApplicationDelegate*)naUnregisterCoreUIElement(&(cocoaapplication->coreapplication.uielement)));
-  naClearCoreApplication(&(cocoaapplication->coreapplication));
-//  if(na_app == &(cocoaapplication->coreapplication)){
-//    na_app = NA_NULL;
-//  }
+  NACoreApplication* coreapplication = (NACoreApplication*)application;
+  naClearCoreApplication(coreapplication);
 }
 
 

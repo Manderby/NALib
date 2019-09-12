@@ -11,7 +11,7 @@
 
 
 @implementation NANativeSpace
-- (id) initWithCocoaSpace:(NACocoaSpace*)newcocoaspace frame:(NSRect)frame{
+- (id) initWithCoreSpace:(NACoreSpace*)newcorespace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
   trackingarea = [[NSTrackingArea alloc] initWithRect:[self bounds]
@@ -20,31 +20,31 @@
   [self addTrackingArea:trackingarea];
   [self setWantsLayer:YES];
 
-  cocoaspace = newcocoaspace;
+  corespace = newcorespace;
   return self;
 }
 - (void)drawRect:(NSRect)dirtyRect{
   [super drawRect:dirtyRect];
-  if(cocoaspace->corespace.alternatebackground){
+  if(corespace->alternatebackground){
     [[[NSColor controlTextColor] colorWithAlphaComponent:.075] setFill];
     NSRectFill(dirtyRect);
   }
 }
 - (void)mouseMoved:(NSEvent*)event{
   NA_UNUSED(event);
-  naDispatchUIElementCommand((NACoreUIElement*)cocoaspace, NA_UI_COMMAND_MOUSE_MOVED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_MOUSE_MOVED, NA_NULL);
 }
 - (void)mouseEntered:(NSEvent*)event{
   NA_UNUSED(event);
-  naDispatchUIElementCommand((NACoreUIElement*)cocoaspace, NA_UI_COMMAND_MOUSE_ENTERED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_MOUSE_ENTERED, NA_NULL);
 }
 - (void)mouseExited:(NSEvent*)event{
   NA_UNUSED(event);
-  naDispatchUIElementCommand((NACoreUIElement*)cocoaspace, NA_UI_COMMAND_MOUSE_EXITED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_MOUSE_EXITED, NA_NULL);
 }
 //- (void)keyDown:(NSEvent*)event{
 //  NAUIKeyCode keyCode = [event keyCode];
-//  naDispatchUIElementCommand((NACoreUIElement*)cocoaspace, NA_UI_COMMAND_KEYDOWN, &keyCode);
+//  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_KEYDOWN, &keyCode);
 //}
 //- (void)flagsChanged:(NSEvent*)event{
 //  NAUIKeyCode keyCode = [event keyCode];
@@ -54,34 +54,34 @@
 //  NABool command = ([event modifierFlags] & NAEventModifierFlagCommand)  ?NA_TRUE:NA_FALSE;
 
 //  keyCode = NA_KEYCODE_SHIFT;
-//  naDispatchUIElementCommand((NACoreUIElement*)cocoaspace, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+//  naDispatchUIElementCommand((NACoreUIElement*)corespace, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
 //  keyCode = NA_KEYCODE_OPTION;
-//  naDispatchUIElementCommand((NACoreUIElement*)cocoaspace, (alt?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+//  naDispatchUIElementCommand((NACoreUIElement*)corespace, (alt?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
 //  keyCode = NA_KEYCODE_CONTROL;
-//  naDispatchUIElementCommand((NACoreUIElement*)cocoaspace, (control?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+//  naDispatchUIElementCommand((NACoreUIElement*)corespace, (control?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
 //  keyCode = NA_KEYCODE_LEFT_COMMAND;
-//  naDispatchUIElementCommand((NACoreUIElement*)cocoaspace, (command?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+//  naDispatchUIElementCommand((NACoreUIElement*)corespace, (command?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
 //}
 @end
 
 
 
 NA_DEF NASpace* naNewSpace(NARect rect){
-  NACocoaSpace* cocoaspace = naAlloc(NACocoaSpace);
-  cocoaspace->corespace.alternatebackground = NA_FALSE;
+  NACoreSpace* corespace = naAlloc(NACoreSpace);
+  corespace->alternatebackground = NA_FALSE;
 
   NSRect contentRect = naMakeNSRectWithRect(rect);
-  NANativeSpace* nativeSpace = [[NANativeSpace alloc] initWithCocoaSpace:cocoaspace frame:contentRect];  
-  naRegisterCoreUIElement(&(cocoaspace->corespace.uielement), NA_UI_SPACE, (void*)NA_COCOA_RETAIN(nativeSpace));
+  NANativeSpace* nativeSpace = [[NANativeSpace alloc] initWithCoreSpace:corespace frame:contentRect];  
+  naInitCoreSpace(corespace, (void*)NA_COCOA_RETAIN(nativeSpace));
   
-  return (NASpace*)cocoaspace;
+  return (NASpace*)corespace;
 }
 
 
 
 NA_DEF void naDestructSpace(NASpace* space){
-  NACocoaSpace* cocoaspace = (NACocoaSpace*)space;
-  NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoaspace->corespace.uielement)));
+  NACoreSpace* corespace = (NACoreSpace*)space;
+  naClearCoreSpace(corespace);
 }
 
 
@@ -125,8 +125,8 @@ NA_HDEF NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space){
 
 
 NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
-  NACocoaSpace* cocoaspace = (NACocoaSpace*)space;
-  cocoaspace->corespace.alternatebackground = alternate;
+  NACoreSpace* corespace = (NACoreSpace*)space;
+  corespace->alternatebackground = alternate;
   NANativeSpace* nativespace = (NA_COCOA_BRIDGE NANativeSpace*)(naGetUIElementNativeID(space));
   [nativespace setNeedsDisplay:YES];
 }

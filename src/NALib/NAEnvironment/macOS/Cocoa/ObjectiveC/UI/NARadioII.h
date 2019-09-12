@@ -13,7 +13,7 @@
 
 
 @implementation NANativeRadio
-- (id) initWithCocoaRadio:(NACocoaRadio*)newcocoaradio frame:(NSRect)frame{
+- (id) initWithCoreRadio:(NACoreRadio*)newcoreradio frame:(NSRect)frame{
   NSRect newbounds = frame;
   newbounds.origin.x = 0;
   newbounds.origin.y = 0;
@@ -24,7 +24,7 @@
 //  [self setBezelStyle:NSBezelStyleRounded];
 //  [self setBezelStyle:NSBezelStyleShadowlessSquare];
 //  [self setBordered:YES];
-  cocoaradio = newcocoaradio;
+  coreradio = newcoreradio;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
 
@@ -41,7 +41,7 @@
 }
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  naDispatchUIElementCommand((NACoreUIElement*)cocoaradio, NA_UI_COMMAND_PRESSED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)coreradio, NA_UI_COMMAND_PRESSED, NA_NULL);
 }
 - (void) setRadioState:(NABool)state{
   [self setState:state ? NSOnState : NSOffState];
@@ -51,25 +51,20 @@
 
 
 NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NARect rect){
-  NACocoaRadio* cocoaradio = naAlloc(NACocoaRadio);
-  NSRect framerect = naMakeNSRectWithRect(rect);
-  NSRect boundrect = framerect;
-  boundrect.origin.x = 0;
-  boundrect.origin.y = 0;
+  NACoreRadio* coreradio = naAlloc(NACoreRadio);
 
-  NANativeRadio* nativeRadio = [[NANativeRadio alloc] initWithCocoaRadio:cocoaradio frame:framerect];
-  
-  naRegisterCoreUIElement(&(cocoaradio->coreradio.uielement), NA_UI_RADIO, (void*)NA_COCOA_RETAIN(nativeRadio));
+  NANativeRadio* nativeRadio = [[NANativeRadio alloc] initWithCoreRadio:coreradio frame:naMakeNSRectWithRect(rect)];
+  naInitCoreRadio(coreradio, (void*)NA_COCOA_RETAIN(nativeRadio));
   [nativeRadio setText:text];
   
-  return (NARadio*)cocoaradio;
+  return (NARadio*)coreradio;
 }
 
 
 
 NA_DEF void naDestructRadio(NARadio* radio){
-  NACocoaRadio* cocoaradio = (NACocoaRadio*)radio;
-  NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoaradio->coreradio.uielement)));
+  NACoreRadio* coreradio = (NACoreRadio*)radio;
+  naClearCoreRadio(coreradio);
 }
 
 

@@ -10,9 +10,9 @@
 
 
 @implementation NANativeImageSpace
-- (id) initWithCocoaImageSpace:(NACocoaImageSpace*)newcocoaimagespace frame:(NSRect)frame{
+- (id) initWithCoreImageSpace:(NACoreImageSpace*)newcoreimagespace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
-  cocoaimagespace = newcocoaimagespace;
+  coreimagespace = newcoreimagespace;
   return self;
 }
 - (void) setImageURL:(const NAUTF8Char*)imagePath{
@@ -26,20 +26,20 @@
 
 
 NA_DEF NAImageSpace* naNewImageSpace(NARect rect){
-  NACocoaImageSpace* cocoaImageSpace = naAlloc(NACocoaImageSpace);
+  NACoreImageSpace* coreImageSpace = naAlloc(NACoreImageSpace);
 
   NSRect contentRect = naMakeNSRectWithRect(rect);
-  NANativeImageSpace* nativeImageSpace = [[NANativeImageSpace alloc] initWithCocoaImageSpace:cocoaImageSpace frame:contentRect];  
-  naRegisterCoreUIElement(&(cocoaImageSpace->coreimagespace.uielement), NA_UI_IMAGESPACE, (void*)NA_COCOA_RETAIN(nativeImageSpace));
+  NANativeImageSpace* nativeImageSpace = [[NANativeImageSpace alloc] initWithCoreImageSpace:coreImageSpace frame:contentRect];  
+  naInitCoreImageSpace(coreImageSpace, (void*)NA_COCOA_RETAIN(nativeImageSpace));
   
-  return (NAImageSpace*)cocoaImageSpace;
+  return (NAImageSpace*)coreImageSpace;
 }
 
 
 
 NA_DEF void naDestructImageSpace(NAImageSpace* imagespace){
-  NACocoaImageSpace* cocoaimagespace = (NACocoaImageSpace*)imagespace;
-  NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoaimagespace->coreimagespace.uielement)));
+  NACoreImageSpace* coreimagespace = (NACoreImageSpace*)imagespace;
+  naClearCoreImageSpace(coreimagespace);
 }
 
 

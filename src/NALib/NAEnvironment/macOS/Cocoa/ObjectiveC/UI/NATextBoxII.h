@@ -11,7 +11,7 @@
 
 
 @implementation NANativeTextBox
-- (id) initWithCocoaTextBox:(NACocoaTextBox*)newcocoatextbox frame:(NSRect)frame{
+- (id) initWithCoreTextBox:(NACoreTextBox*)newcoretextbox frame:(NSRect)frame{
   NSRect documentrect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
   self = [super initWithFrame:documentrect];
 
@@ -28,7 +28,7 @@
   [scrollview setAutomaticallyAdjustsContentInsets:YES];
   [[scrollview contentView] setAutomaticallyAdjustsContentInsets:YES];
 
-  cocoatextbox = newcocoatextbox;
+  coretextbox = newcoretextbox;
   return self;
 }
 - (void) setText:(const NAUTF8Char*)text{
@@ -45,20 +45,22 @@
 }
 @end
 
-NA_DEF NATextBox* naNewTextBox(NARect rect){
-  NACocoaTextBox* cocoatextbox = naAlloc(NACocoaTextBox);
 
-  NANativeTextBox* nativeTextBox = [[NANativeTextBox alloc] initWithCocoaTextBox:cocoatextbox frame:naMakeNSRectWithRect(rect)];
-  naRegisterCoreUIElement(&(cocoatextbox->coretextbox.uielement), NA_UI_TEXTBOX, (void*)NA_COCOA_RETAIN(nativeTextBox));
+
+NA_DEF NATextBox* naNewTextBox(NARect rect){
+  NACoreTextBox* coretextbox = naAlloc(NACoreTextBox);
   
-  return (NATextBox*)cocoatextbox;
+  NANativeTextBox* nativeTextBox = [[NANativeTextBox alloc] initWithCoreTextBox:coretextbox frame:naMakeNSRectWithRect(rect)];
+  naInitCoreTextBox(coretextbox, (void*)NA_COCOA_RETAIN(nativeTextBox));
+  
+  return (NATextBox*)coretextbox;
 }
 
 
 
 NA_DEF void naDestructTextBox(NATextBox* textbox){
-  NACocoaTextBox* cocoatextbox = (NACocoaTextBox*)textbox;
-  NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoatextbox->coretextbox.uielement)));
+  NACoreTextBox* coretextbox = (NACoreTextBox*)textbox;
+  naClearCoreTextBox(coretextbox);
 }
 
 

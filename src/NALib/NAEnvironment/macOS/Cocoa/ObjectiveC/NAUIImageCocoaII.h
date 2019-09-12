@@ -111,7 +111,7 @@ NA_HIDEF void naSetUIImageRef(NAUIImage* image, void* imgref, NAUIImageResolutio
 
 
 
-NAUIImage* naAllocUIImage(NABabyImage* main, NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
+NA_DEF NAUIImage* naAllocUIImage(NABabyImage* main, NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
   #ifndef NDEBUG
     if(!main)
       naError("There mus be a main image");
@@ -155,6 +155,15 @@ NAUIImage* naAllocUIImage(NABabyImage* main, NABabyImage* alt, NAUIImageResoluti
   }
 
   return uiImage;
+}
+
+
+
+NA_API void naDeallocUIImage(NAUIImage* uiimage){
+  for(NAInt i = 0; i < NA_UIIMAGE_RESOLUTION_COUNT * NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT; i++){
+    if(uiimage->imgref[i]){CGImageRelease(uiimage->imgref[i]);}
+  }
+  naFree(uiimage);
 }
 
 

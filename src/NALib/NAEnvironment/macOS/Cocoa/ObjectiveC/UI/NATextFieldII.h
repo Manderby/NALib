@@ -11,7 +11,7 @@
 
 
 @implementation NANativeTextField
-- (id) initWithCocoaTextField:(NACocoaTextField*)newcocoatextfield frame:(NSRect)frame{
+- (id) initWithCoreTextField:(NACoreTextField*)newcoretextfield frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 //  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Wurst"]];
   [self setSelectable:YES];
@@ -22,16 +22,16 @@
   [self setAction:@selector(onEdited:)];
   [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
   [self setDelegate:self];
-  cocoatextfield = newcocoatextfield;
+  coretextfield = newcoretextfield;
   return self;
 }
 - (void) onEdited:(id)sender{
   NA_UNUSED(sender);
-  naDispatchUIElementCommand((NACoreUIElement*)cocoatextfield, NA_UI_COMMAND_EDITED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)coretextfield, NA_UI_COMMAND_EDITED, NA_NULL);
 }
 - (void)controlTextDidChange:(NSNotification *)notification{
   NA_UNUSED(notification);
-  naDispatchUIElementCommand((NACoreUIElement*)cocoatextfield, NA_UI_COMMAND_EDITED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)coretextfield, NA_UI_COMMAND_EDITED, NA_NULL);
 }
 - (void) setText:(const NAUTF8Char*)text{
   [self setStringValue:[NSString stringWithUTF8String:text]];
@@ -50,20 +50,22 @@
 }
 @end
 
-NA_DEF NATextField* naNewTextField(NARect rect){
-  NACocoaTextField* cocoatextfield = naAlloc(NACocoaTextField);
 
-  NANativeTextField* nativeTextField = [[NANativeTextField alloc] initWithCocoaTextField:cocoatextfield frame:naMakeNSRectWithRect(rect)];
-  naRegisterCoreUIElement(&(cocoatextfield->coretextfield.uielement), NA_UI_TEXTFIELD, (void*)NA_COCOA_RETAIN(nativeTextField));
+
+NA_DEF NATextField* naNewTextField(NARect rect){
+  NACoreTextField* coretextfield = naAlloc(NACoreTextField);
   
-  return (NATextField*)cocoatextfield;
+  NANativeTextField* nativeTextField = [[NANativeTextField alloc] initWithCoreTextField:coretextfield frame:naMakeNSRectWithRect(rect)];
+  naInitCoreTextField(coretextfield, (void*)NA_COCOA_RETAIN(nativeTextField));
+  
+  return (NATextField*)coretextfield;
 }
 
 
 
 NA_DEF void naDestructTextField(NATextField* textfield){
-  NACocoaTextField* cocoatextfield = (NACocoaTextField*)textfield;
-  NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoatextfield->coretextfield.uielement)));
+  NACoreTextField* coretextfield = (NACoreTextField*)textfield;
+  naClearCoreTextField(coretextfield);
 }
 
 

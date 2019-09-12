@@ -19,15 +19,18 @@
 #if (NA_CONFIG_COMPILE_GUI == 1)
 
 #include "../NAList.h"
+#include "../NATranslator.h"
 
 // Very much the same as the native ID, there are certain types which are
 // casted differently on the different systems and therefore they are
 // declared with a global void* or integer big enough to encapsulate all
-// possible casts on all systems.
+// possible casts on all systems. Internally, they are caseted to these
+// types:
 
 typedef struct NACoreUIElement      NACoreUIElement;
 
 typedef struct NACoreApplication    NACoreApplication;
+typedef struct NACoreScreen         NACoreScreen;
 typedef struct NACoreWindow         NACoreWindow;
 typedef struct NACoreSpace          NACoreSpace;
 typedef struct NACoreImageSpace     NACoreImageSpace;
@@ -39,40 +42,16 @@ typedef struct NACoreLabel          NACoreLabel;
 typedef struct NACoreTextField      NACoreTextField;
 typedef struct NACoreTextBox        NACoreTextBox;
 
-extern NACoreApplication* na_app;
+// NACoreUIElement is the base type of any ui element. All ui element struct
+// definitions have an NACoreUIElement as the first entry:
 
-typedef struct NAReaction NAReaction;
-struct NAReaction{
-  void* controller;
-  NAUICommand command;
-  NAReactionHandler handler;
-};
-
-typedef struct NAKeyboardShortcutReaction NAKeyboardShortcutReaction;
-struct NAKeyboardShortcutReaction{
-  void* controller;
-  NAKeyboardShortcut shortcut;
-  NAReactionHandler handler;
-};
-
-#include "../NATranslator.h"
-
-#define NA_APPLICATION_FLAG_RUNNING         0x01
-#define NA_APPLICATION_FLAG_MOUSE_VISIBLE   0x02
-
-// The base type of any ui element. All ui element struct definitions have
-// an NACoreUIElement as the first entry.
-// The definition of NACoreUIElement should normally be hidden to the user. So,
-// there exists a public NAUIElement type which
-// is just a typedef of a void*. But internally, every UI element has the
-// following struct as its base:
 struct NACoreUIElement{
   NARefCount refcount;
   NAUIElementType elementtype;
   NACoreUIElement* parent;
   NAList reactions;
   NAList shortcuts;
-  void* nativeID;  // The native object
+  void* nativeID;               // The native object
 };
 
 struct NACoreApplication{
@@ -83,7 +62,7 @@ struct NACoreApplication{
   NAInt           flags;
 };
 
-struct NAScreen{
+struct NACoreScreen{
   NACoreUIElement uielement;
 };
 
@@ -133,34 +112,44 @@ struct NACoreTextBox{
 
 
 
-// ///////////////////////
-// UIElements
+NA_HAPI void naRegisterCoreUIElement( NACoreUIElement* coreuielement, NAUIElementType elementtype, void* nativeID);
+NA_HAPI void naUnregisterCoreUIElement(NACoreUIElement* coreuielement);
 
-// Initializes the UIElement and registers it in the global ui list.
-NA_HAPI void naRegisterCoreUIElement( NACoreUIElement* coreuielement,
-                                       NAUIElementType elementtype,
-                                                 void* nativeID);
-
-NA_HAPI void* naUnregisterCoreUIElement(NACoreUIElement* coreuielement);
-
-NA_HAPI void naRefreshUIElementNow(NAUIElement* uielement);
-
-NA_API void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent);
-
-
-
-
-
-// ////////////////////////////
-// Application
-
-// Performs all necessary initialization of the UI independent of the system.
-// The naInitUI functions are system dependent and will call this function
-// before doing anything else.
-NA_HDEF void naInitCoreApplication(NACoreApplication* coreapplication);
-
+NA_HAPI void naInitCoreApplication(NACoreApplication* coreapplication, void* nativeId);
 NA_HAPI void naClearCoreApplication(NACoreApplication* coreapplication);
-NA_HAPI NABool naIsCoreApplicationRunning(void);
+
+NA_HAPI void naInitCoreScreen(NACoreScreen* corescreen, void* nativeId);
+NA_HAPI void naClearCoreScreen(NACoreScreen* corescreen);
+
+NA_HAPI void naInitCoreWindow(NACoreWindow* corewindow, void* nativeId, NACoreSpace* contentspace, NABool fullscreen, NARect windowedframe);
+NA_HAPI void naClearCoreWindow(NACoreWindow* corewindow);
+
+NA_HAPI void naInitCoreSpace(NACoreSpace* corespace, void* nativeId);
+NA_HAPI void naClearCoreSpace(NACoreSpace* corecorespace);
+
+NA_HAPI void naInitCoreImageSpace(NACoreImageSpace* coreimagespace, void* nativeId);
+NA_HAPI void naClearCoreImageSpace(NACoreImageSpace* corecoreimagespace);
+
+NA_HAPI void naInitCoreOpenGLSpace(NACoreOpenGLSpace* coreopenglspace, void* nativeId);
+NA_HAPI void naClearCoreOpenGLSpace(NACoreOpenGLSpace* corecoreopenglspace);
+
+NA_HAPI void naInitCoreButton(NACoreButton* corebutton, void* nativeId);
+NA_HAPI void naClearCoreButton(NACoreButton* corebutton);
+
+NA_HAPI void naInitCoreRadio(NACoreRadio* coreradio, void* nativeId);
+NA_HAPI void naClearCoreRadio(NACoreRadio* coreradio);
+
+NA_HAPI void naInitCoreCheckBox(NACoreCheckBox* corecheckbox, void* nativeId);
+NA_HAPI void naClearCoreCheckBox(NACoreCheckBox* corecheckbox);
+
+NA_HAPI void naInitCoreLabel(NACoreLabel* corelabel, void* nativeId);
+NA_HAPI void naClearCoreLabel(NACoreLabel* corelabel);
+
+NA_HAPI void naInitCoreTextField(NACoreTextField* coretextfield, void* nativeId);
+NA_HAPI void naClearCoreTextField(NACoreTextField* coretextfield);
+
+NA_HAPI void naInitCoreTextBox(NACoreTextBox* coretextbox, void* nativeId);
+NA_HAPI void naClearCoreTextBox(NACoreTextBox* coretextbox);
 
 
 
@@ -168,6 +157,26 @@ NA_HAPI NABool naIsCoreApplicationRunning(void);
 
 
 
+extern NACoreApplication* na_app;
+
+
+
+typedef struct NAReaction NAReaction;
+struct NAReaction{
+  void* controller;
+  NAUICommand command;
+  NAReactionHandler handler;
+};
+
+typedef struct NAKeyboardShortcutReaction NAKeyboardShortcutReaction;
+struct NAKeyboardShortcutReaction{
+  void* controller;
+  NAKeyboardShortcut shortcut;
+  NAReactionHandler handler;
+};
+
+#define NA_APPLICATION_FLAG_RUNNING         0x01
+#define NA_APPLICATION_FLAG_MOUSE_VISIBLE   0x02
 
 
 
@@ -192,6 +201,9 @@ NA_HAPI NABool naIsCoreApplicationRunning(void);
 
 
 
+NA_HAPI void naRefreshUIElementNow(NAUIElement* uielement);
+
+NA_API void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent);
 
 
 NA_HAPI void naRetainWindowMouseTracking(NAWindow* window);
@@ -199,6 +211,7 @@ NA_HAPI void naRetainWindowMouseTracking(NAWindow* window);
 
 
 
+NA_HAPI NABool naIsCoreApplicationRunning(void);
 
 // Returns a pointer to the ui element which uses the given native ID.
 // Every gui element which is handeled by NALib uses a native struct which is
@@ -206,6 +219,8 @@ NA_HAPI void naRetainWindowMouseTracking(NAWindow* window);
 // but this native ID can in general not be mapped directly to a corresponding
 // NALib struct. This function solves that. Slow, but does the job.
 NA_HAPI void* naGetUINALibEquivalent(void* nativeID);
+
+NA_HAPI void naClearUINativeId(NANativeID nativeId);
 
 // Dispatches a command with the given uielement and arg.
 // As long as the command has not been finished using NA_TRUE as a return value

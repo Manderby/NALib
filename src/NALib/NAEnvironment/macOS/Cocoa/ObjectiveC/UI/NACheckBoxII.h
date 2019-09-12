@@ -10,11 +10,11 @@
 
 
 @implementation NANativeCheckBox
-- (id) initWithCocoaCheckBox:(NACocoaCheckBox*)newcocoacheckbox frame:(NSRect)frame{
+- (id) initWithCoreCheckBox:(NACoreCheckBox*)newcorecheckbox frame:(NSRect)frame{
   self = [super initWithFrame:frame];
   
   [self setButtonType:NSButtonTypeSwitch];
-  cocoacheckbox = newcocoacheckbox;
+  corecheckbox = newcorecheckbox;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
 
@@ -25,7 +25,7 @@
 }
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  naDispatchUIElementCommand((NACoreUIElement*)cocoacheckbox, NA_UI_COMMAND_PRESSED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)corecheckbox, NA_UI_COMMAND_PRESSED, NA_NULL);
 }
 - (void) setCheckBoxState:(NABool)state{
   [self setState:state ? NSOnState : NSOffState];
@@ -38,25 +38,24 @@
 
 
 NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NARect rect){
-  NACocoaCheckBox* cocoacheckbox = naAlloc(NACocoaCheckBox);
+  NACoreCheckBox* corecheckbox = naAlloc(NACoreCheckBox);
   NSRect framerect = naMakeNSRectWithRect(rect);
   NSRect boundrect = framerect;
   boundrect.origin.x = 0;
   boundrect.origin.y = 0;
 
-  NANativeCheckBox* nativeCheckBox = [[NANativeCheckBox alloc] initWithCocoaCheckBox:cocoacheckbox frame:framerect];
-  
-  naRegisterCoreUIElement(&(cocoacheckbox->corecheckbox.uielement), NA_UI_CHECKBOX, (void*)NA_COCOA_RETAIN(nativeCheckBox));
+  NANativeCheckBox* nativeCheckBox = [[NANativeCheckBox alloc] initWithCoreCheckBox:corecheckbox frame:framerect];
+  naInitCoreCheckBox(corecheckbox, (void*)NA_COCOA_RETAIN(nativeCheckBox));
   [nativeCheckBox setText:text];
   
-  return (NACheckBox*)cocoacheckbox;
+  return (NACheckBox*)corecheckbox;
 }
 
 
 
 NA_DEF void naDestructCheckBox(NACheckBox* checkbox){
-  NACocoaCheckBox* cocoacheckbox = (NACocoaCheckBox*)checkbox;
-  NA_COCOA_RELEASE(naUnregisterCoreUIElement(&(cocoacheckbox->corecheckbox.uielement)));
+  NACoreCheckBox* corecheckbox = (NACoreCheckBox*)checkbox;
+  naClearCoreCheckBox(corecheckbox);
 }
 
 

@@ -16,25 +16,27 @@ NACoreApplication* na_app = NA_NULL;
 
 
 
-
-
-NAKeyboardShortcut naMakeKeybardShortcut(NAInt modifiers, NAUIKeyCode keyCode){
-  NAKeyboardShortcut newshortcut;
-  newshortcut.modifiers = modifiers;
-  newshortcut.keyCode = keyCode;
-  return newshortcut;
+NA_HDEF void naRegisterCoreUIElement(NACoreUIElement* coreuielement, NAUIElementType elementtype, void* nativeID){
+  naInitRefCount(&(coreuielement->refcount));
+  coreuielement->parent = NA_NULL;
+  coreuielement->elementtype = elementtype;
+  coreuielement->nativeID = nativeID;
+  naInitList(&(coreuielement->reactions));
+  naInitList(&(coreuielement->shortcuts));
+  naAddListLastMutable(&(na_app->uielements), coreuielement);
 }
 
 
 
+NA_HDEF void naUnregisterCoreUIElement(NACoreUIElement* coreuielement){
+  naRemoveListData(&(na_app->uielements), coreuielement);
+  naClearUINativeId(coreuielement->nativeID);
+}
 
-// ///////////////////////////////////
-// APPLICATION
-// ///////////////////////////////////
 
-NA_HDEF void naInitCoreApplication(NACoreApplication* coreapplication){
+
+NA_HDEF void naInitCoreApplication(NACoreApplication* coreapplication, void* nativeId){
   na_app = coreapplication;
-
   coreapplication->translator = NA_NULL;
   naStartTranslator();
   
@@ -42,13 +44,8 @@ NA_HDEF void naInitCoreApplication(NACoreApplication* coreapplication){
   coreapplication->flags = 0;
   coreapplication->flags |= NA_APPLICATION_FLAG_RUNNING;
   coreapplication->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
-}
 
-
-
-
-NA_HDEF void naStopApplication(void){
-  na_app->flags &= ~NA_APPLICATION_FLAG_RUNNING;
+  naRegisterCoreUIElement(&(coreapplication->uielement), NA_UI_APPLICATION, nativeId);
 }
 
 
@@ -66,101 +63,123 @@ NA_HDEF void naClearCoreApplication(NACoreApplication* coreapplication){
   }
   naClearList(&(na_app->uielements));
   naStopTranslator();
-
-//  naBeginListMutatorIteration(NAUIElement* elem, &(na_app->uielements), iter);
-//    naCloseWindow(na_ui->windows[i]);
-//    naClearWindow(na_ui->windows[i]);
-//  naEndListIteration(iter);
-
-//  naClearList(&(na_app->uielements));
-//  naFree(na_app);
+  naUnregisterCoreUIElement(&(coreapplication->uielement));
 }
 
 
 
-NA_HDEF NAApplication* naGetApplication(void){
-  #ifndef NDEBUG
-    if(naGetListFirstMutable(&(na_app->uielements)) != na_app)
-      naError("Internal error: application is not in ui elements list");
-  #endif
-  return na_app;
+NA_HDEF void naInitCoreScreen(NACoreScreen* corescreen, void* nativeId){
+  naRegisterCoreUIElement(&(corescreen->uielement), NA_UI_SCREEN, nativeId);
+}
+NA_HDEF void naClearCoreScreen(NACoreScreen* corescreen){
+  naUnregisterCoreUIElement(&(corescreen->uielement));
 }
 
 
 
-NA_HDEF NABool naIsCoreApplicationRunning(void){
-  return (na_app->flags & NA_APPLICATION_FLAG_RUNNING);
+NA_HDEF void naInitCoreWindow(NACoreWindow* corewindow, void* nativeId, NACoreSpace* contentspace, NABool fullscreen, NARect windowedframe){
+  naRegisterCoreUIElement(&(corewindow->uielement), NA_UI_WINDOW, nativeId);
+  corewindow->contentspace = contentspace;
+  corewindow->fullscreen = fullscreen;
+  corewindow->windowedframe = windowedframe;
+}
+NA_HDEF void naClearCoreWindow(NACoreWindow* corewindow){
+  naUnregisterCoreUIElement(&(corewindow->uielement));
+}
+
+
+
+NA_HAPI void naInitCoreSpace(NACoreSpace* coreespace, void* nativeId){
+  naRegisterCoreUIElement(&(coreespace->uielement), NA_UI_SPACE, nativeId);
+}
+NA_HAPI void naClearCoreSpace(NACoreSpace* coreespace){
+  naUnregisterCoreUIElement(&(coreespace->uielement));
+}
+
+
+
+NA_HAPI void naInitCoreImageSpace(NACoreImageSpace* coreimagespace, void* nativeId){
+  naRegisterCoreUIElement(&(coreimagespace->uielement), NA_UI_IMAGESPACE, nativeId);
+}
+NA_HAPI void naClearCoreImageSpace(NACoreImageSpace* coreimagespace){
+  naUnregisterCoreUIElement(&(coreimagespace->uielement));
+}
+
+
+
+NA_HAPI void naInitCoreOpenGLSpace(NACoreOpenGLSpace* coreopenglspace, void* nativeId){
+  naRegisterCoreUIElement(&(coreopenglspace->uielement), NA_UI_OPENGLSPACE, nativeId);
+}
+NA_HAPI void naClearCoreOpenGLSpace(NACoreOpenGLSpace* coreopenglspace){
+  naUnregisterCoreUIElement(&(coreopenglspace->uielement));
+}
+
+
+
+NA_HAPI void naInitCoreButton(NACoreButton* corebutton, void* nativeId){
+  naRegisterCoreUIElement(&(corebutton->uielement), NA_UI_BUTTON, nativeId);
+}
+NA_HAPI void naClearCoreButton(NACoreButton* corebutton){
+  naUnregisterCoreUIElement(&(corebutton->uielement));
+}
+
+
+
+NA_HAPI void naInitCoreRadio(NACoreRadio* coreradio, void* nativeId){
+  naRegisterCoreUIElement(&(coreradio->uielement), NA_UI_RADIO, nativeId);
+}
+NA_HAPI void naClearCoreRadio(NACoreRadio* coreradio){
+  naUnregisterCoreUIElement(&(coreradio->uielement));
+}
+
+
+
+NA_HAPI void naInitCoreCheckBox(NACoreCheckBox* corecheckbox, void* nativeId){
+  naRegisterCoreUIElement(&(corecheckbox->uielement), NA_UI_CHECKBOX, nativeId);
+}
+NA_HAPI void naClearCoreCheckBox(NACoreCheckBox* corecheckbox){
+  naUnregisterCoreUIElement(&(corecheckbox->uielement));
+}
+
+
+
+NA_HAPI void naInitCoreLabel(NACoreLabel* corelabel, void* nativeId){
+  naRegisterCoreUIElement(&(corelabel->uielement), NA_UI_LABEL, nativeId);
+}
+NA_HAPI void naClearCoreLabel(NACoreLabel* corelabel){
+  naUnregisterCoreUIElement(&(corelabel->uielement));
+}
+
+
+
+NA_HAPI void naInitCoreTextField(NACoreTextField* coretextfield, void* nativeId){
+  naRegisterCoreUIElement(&(coretextfield->uielement), NA_UI_TEXTFIELD, nativeId);
+}
+NA_HAPI void naClearCoreTextField(NACoreTextField* coretextfield){
+  naUnregisterCoreUIElement(&(coretextfield->uielement));
+}
+
+
+
+NA_HAPI void naInitCoreTextBox(NACoreTextBox* coretextbox, void* nativeId){
+  naRegisterCoreUIElement(&(coretextbox->uielement), NA_UI_TEXTBOX, nativeId);
+}
+NA_HAPI void naClearCoreTextBox(NACoreTextBox* coretextbox){
+  naUnregisterCoreUIElement(&(coretextbox->uielement));
 }
 
 
 
 
 
-// ///////////////////////////////////
-// UI ELEMENT
-// ///////////////////////////////////
-
-NA_HDEF void naRegisterCoreUIElement(NACoreUIElement* coreuielement, NAUIElementType elementtype, void* nativeID){
-  naInitRefCount(&(coreuielement->refcount));
-  coreuielement->parent = NA_NULL;
-  coreuielement->elementtype = elementtype;
-  coreuielement->nativeID = nativeID;
-  naInitList(&(coreuielement->reactions));
-  naInitList(&(coreuielement->shortcuts));
-  naAddListLastMutable(&(na_app->uielements), coreuielement);
-}
 
 
 
-NA_HDEF void* naUnregisterCoreUIElement(NACoreUIElement* coreuielement){
-  naRemoveListData(&(na_app->uielements), coreuielement);
-  return coreuielement->nativeID;
-}
 
 
 
-NA_HDEF NAUIElementType naGetUIElementType(NAUIElement* coreuielement){
-  return ((NACoreUIElement*)coreuielement)->elementtype;
-}
 
 
-
-NA_HDEF NANativeID naGetUIElementNativeID(NAUIElement* coreuielement){
-  return ((NACoreUIElement*)coreuielement)->nativeID;
-}
-
-
-
-NA_HDEF void naRefreshUIElement(NAUIElement* coreuielement, double timediff){
-  //if(timediff == 0.){
-  //  naRefreshUIElementNow(coreuielement);
-  //}else{
-    naCallApplicationFunctionInSeconds(naRefreshUIElementNow, (NACoreUIElement*)coreuielement, timediff);
-  //}
-}
-
-
-
-NA_HDEF NAUIElement* naGetUIElementParent(NAUIElement* coreuielement){
-  return ((NACoreUIElement*)coreuielement)->parent;
-}
-
-
-
-NA_HDEF NAWindow* naGetUIElementWindow(NAUIElement* coreuielement){
-  NACoreWindow* elementwindow;
-  NAUIElementType elementType = ((NACoreUIElement*)coreuielement)->elementtype;
-  if(elementType == NA_UI_APPLICATION){
-    elementwindow = NA_NULL;
-  }else if(elementType == NA_UI_SCREEN){
-    elementwindow = NA_NULL;
-  }else if(elementType == NA_UI_WINDOW){
-    elementwindow = (NACoreWindow*)coreuielement;
-  }else{
-    elementwindow = naGetUIElementWindow(naGetUIElementParent(coreuielement));
-  }
-  return elementwindow;
-}
 
 
 
@@ -178,23 +197,6 @@ NA_HDEF void* naGetUINALibEquivalent(NANativeID nativeID){
   naEndListIteration(iter);
   return retelem;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -359,6 +361,83 @@ NA_DEF void naSetMouseExitedAtPos(NAPos newpos){
 
 
 
+
+
+
+
+NA_HDEF NAUIElementType naGetUIElementType(NAUIElement* coreuielement){
+  return ((NACoreUIElement*)coreuielement)->elementtype;
+}
+
+
+
+NA_HDEF NANativeID naGetUIElementNativeID(NAUIElement* coreuielement){
+  return ((NACoreUIElement*)coreuielement)->nativeID;
+}
+
+
+
+NA_HDEF void naRefreshUIElement(NAUIElement* coreuielement, double timediff){
+  //if(timediff == 0.){
+  //  naRefreshUIElementNow(coreuielement);
+  //}else{
+    naCallApplicationFunctionInSeconds(naRefreshUIElementNow, (NACoreUIElement*)coreuielement, timediff);
+  //}
+}
+
+
+
+NA_HDEF NAUIElement* naGetUIElementParent(NAUIElement* coreuielement){
+  return ((NACoreUIElement*)coreuielement)->parent;
+}
+
+
+
+NA_HDEF NAWindow* naGetUIElementWindow(NAUIElement* coreuielement){
+  NACoreWindow* elementwindow;
+  NAUIElementType elementType = ((NACoreUIElement*)coreuielement)->elementtype;
+  if(elementType == NA_UI_APPLICATION){
+    elementwindow = NA_NULL;
+  }else if(elementType == NA_UI_SCREEN){
+    elementwindow = NA_NULL;
+  }else if(elementType == NA_UI_WINDOW){
+    elementwindow = (NACoreWindow*)coreuielement;
+  }else{
+    elementwindow = naGetUIElementWindow(naGetUIElementParent(coreuielement));
+  }
+  return elementwindow;
+}
+
+
+
+NA_HDEF void naStopApplication(void){
+  na_app->flags &= ~NA_APPLICATION_FLAG_RUNNING;
+}
+
+
+
+NA_HDEF NAApplication* naGetApplication(void){
+  #ifndef NDEBUG
+    if(naGetListFirstMutable(&(na_app->uielements)) != na_app)
+      naError("Internal error: application is not in ui elements list");
+  #endif
+  return na_app;
+}
+
+
+
+NA_HDEF NABool naIsCoreApplicationRunning(void){
+  return (na_app->flags & NA_APPLICATION_FLAG_RUNNING);
+}
+
+
+
+NAKeyboardShortcut naMakeKeybardShortcut(NAInt modifiers, NAUIKeyCode keyCode){
+  NAKeyboardShortcut newshortcut;
+  newshortcut.modifiers = modifiers;
+  newshortcut.keyCode = keyCode;
+  return newshortcut;
+}
 
 
 

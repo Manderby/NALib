@@ -681,6 +681,7 @@ NA_DEF NAWindow* naNewWindow(const char* title, NARect rect, NABool resizeable){
   //lasterror = GetLastError();
 	//hDC = GetDC(hWnd);
 
+  // bugfix: probably remove applicatoin as parent
   naRegisterCoreUIElement((NACoreUIElement*)window, (NAUIElement*)naGetApplication(), NA_UI_WINDOW, hWnd);
 
   window->flags = 0;
@@ -832,6 +833,8 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
 		  (HWND)naGetUIElementNativeID(window), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
 
     openglspace = naAlloc(NAWINAPIOpenGLSpace);
+    
+    // Bugfix: Probably remove window as parent
     naRegisterCoreUIElement((NACoreUIElement*)openglspace, (NACoreUIElement*)window, NA_UI_OPENGLSPACE, hWnd);
 
     hDC = GetDC(hWnd);
