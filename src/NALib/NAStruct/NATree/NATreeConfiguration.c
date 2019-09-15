@@ -13,7 +13,9 @@
 NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   // This is just for testing if the implemented nodes "inheriting" from the
   // NATreeNode structure have their childs storage at the correct position.
-  int nodeChildsOffset;
+  #ifndef NDEBUG
+    int nodeChildsOffset;
+  #endif
 
   NATreeConfiguration* config = naAlloc(NATreeConfiguration);
   naZeron(config, sizeof(NATreeConfiguration));
@@ -62,7 +64,9 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafRemover             = naRemoveLeafQuad;
     config->leafInserter            = naInsertLeafQuad;
 
-    nodeChildsOffset                = NODE_CHILDS_OFFSET_QUAD;
+    #ifndef NDEBUG
+      nodeChildsOffset                = NODE_CHILDS_OFFSET_QUAD;
+    #endif
     config->leafKeyOffset           = LEAF_KEY_OFFSET_QUAD;
     config->nodeKeyOffset           = NODE_KEY_OFFSET_QUAD;
     config->leafUserDataOffset      = LEAF_USERDATA_OFFSET_QUAD;
@@ -101,7 +105,9 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafRemover             = naRemoveLeafOct;
     config->leafInserter            = naInsertLeafOct;
 
-    nodeChildsOffset                = NODE_CHILDS_OFFSET_OCT;
+    #ifndef NDEBUG
+      nodeChildsOffset                = NODE_CHILDS_OFFSET_OCT;
+    #endif
     config->leafKeyOffset           = LEAF_KEY_OFFSET_OCT;
     config->nodeKeyOffset           = NODE_KEY_OFFSET_OCT;
     config->leafUserDataOffset      = LEAF_USERDATA_OFFSET_OCT;
@@ -157,7 +163,9 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->leafRemover             = naRemoveLeafBin;
     config->leafInserter            = naInsertLeafBin;
     
-    nodeChildsOffset                = NODE_CHILDS_OFFSET_BIN;
+    #ifndef NDEBUG
+      nodeChildsOffset                = NODE_CHILDS_OFFSET_BIN;
+    #endif
     config->leafKeyOffset           = LEAF_KEY_OFFSET_BIN;
     config->nodeKeyOffset           = NODE_KEY_OFFSET_BIN;
     config->leafUserDataOffset      = LEAF_USERDATA_OFFSET_BIN;

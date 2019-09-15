@@ -28,10 +28,12 @@
   #endif
 #endif
 
-
 #include "NACoord.h"
 #include "NAString.h"
 #include "NABabyImage.h"
+#include "NAUIImage.h"
+
+
 
 // NALib provides a simple implementation for Graphical User Interfaces (GUI).
 //
@@ -148,6 +150,10 @@ NA_API NARect naGetUIElementRect(   NAUIElement* uielement,
 // return.
 NA_API void naRefreshUIElement    (NAUIElement* uielement, double timediff);
 
+// When navigating with the tab key, this method defines, which will be the
+// next ui element to have the focus. You start the tab order with a call to
+// naSetWindowFirstTabElement.
+NA_API void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextelem);
 
 // Native IDs
 //
@@ -169,7 +175,7 @@ NA_API void naRefreshUIElement    (NAUIElement* uielement, double timediff);
 //
 // Use the following function to retrieve the native ID for any ui element:
 
-typedef void*  NANativeID;
+typedef void* NANativeID;
 
 NA_API NANativeID naGetUIElementNativeID(NAUIElement* element);
 
@@ -177,7 +183,7 @@ NA_API NANativeID naGetUIElementNativeID(NAUIElement* element);
 
 
 // ////////////////////////////////
-// The application
+// The Application
 //
 // On each system, there is at some point a so called message loop where the
 // system informs NALib that the user performed an action on a ui element which
@@ -199,14 +205,16 @@ NA_API void naStartApplication(  NAMutator prestartup,
 //        * NALib calls prestartup with arg.
 //        * NALib calls naResetApplicationPreferredTranslatorLanguages().
 //        * NALib calls [NSApp finishLaunching] which in turn will post an
-//          NSApplicationWillFinishLaunchingNotification and an
-//          NSApplicationDidFinishLaunchingNotification to whatever
+//          NSApplicationWillFinishLaunchingNotification to whatever
 //          application delegate you might have set.
 //        * NALib calls poststartup with arg.
 //      - NALib drains the autorelease pool. (only when ARC is turned off)
 //      - NALib sets its own internal application object as the apps delegate.
 //      - NALib will start a message loop. When ARC is turned off, a new
-//        NSAutoreleasePools is created for each and every message.
+//        NSAutoreleasePools is created for each and every message. At its
+//        first run, a message to NSApplicationDidFinishLaunchingNotification
+//        will be forwarded to whatever your application delegate was before
+//        it was set to the NALib internal application object.
 //
 // Win: - NALib allocates some structures in the background to run the UI
 //        including the application internal translator.
@@ -231,7 +239,7 @@ NA_API void naStartApplication(  NAMutator prestartup,
 // In the poststartup function, you usually start building the UI with the
 // ui elements explained below. And you add reactions to those elements which
 // you would like to control. You are of course free to do this in the
-// didFinishLaunching method of you NSApplication delegate on a Mac, if you
+// didFinishLaunching method of your NSApplication delegate on a Mac, if you
 // really want to.
 
 // ////////////////////
@@ -242,7 +250,7 @@ NA_API void naStartApplication(  NAMutator prestartup,
 // 
 // void poststartup(void* arg){
 //   [NSBundle loadNibNamed:@"MainMenu" owner:NSApp];
-//   Now, do UI stuff with NALib. 
+//   // Now, do UI stuff with NALib. 
 // }
 //
 // int main(int argc, char *argv[]){
@@ -291,51 +299,23 @@ NA_API void naCallApplicationFunctionInSeconds(  NAMutator function,
                                                      void* arg,
                                                     double timediff);
 
-// When using a GUI on windows, you will sooner or later have to set the
-// subsystem in the project properties->linker->system to /SUBSYSTEM:WINDOWS.
-// This means two things:
-// 1. Instead of in main(int, char**), you need
-//    int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
-// 2. There is no console output using the standard channels 0, 1 and 2 like
-//    they are used with printf and such.
-//
-// In order to have a console output, you can call naOpenConsoleWindow
-// which opens up a separate console window when running. Note that NALib
-// will NOT automatically hide the console when NDEBUG is defined! This
-// function does nothing on a Mac.
+// Causes the translator to reset its preferred language list to the preferred
+// settings of the current user. This method is called automatically during
+// naStartApplication but there might be times where you want to call it
+// manually.
+NA_API void naResetApplicationPreferredTranslatorLanguages(void);
 
-NA_API void naOpenConsoleWindow(const char* windowtitle);
-
-
-
+// The application binary usually resides in some kind of base package folder
+// and resources are located relative to that location. Using the following
+// functions, you can retrieve various informations.
+NA_API NAString* naNewApplicationName(void);
+NA_API NAString* naNewApplicationVersionString(void);
+NA_API NAString* naNewApplicationBuildString(void);
+NA_API NAString* naNewApplicationIconPath(void);
+// dir can be Null to search in the base package folder.
+NA_API NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix);
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-typedef enum{
-  NA_FONT_KIND_SYSTEM,
-  NA_FONT_KIND_TITLE,
-  NA_FONT_KIND_MONOSPACE,
-  NA_FONT_KIND_PARAGRAPH,
-  NA_FONT_KIND_MATH
-} NAFontKind;
-
-typedef enum{
-  NA_TEXT_ALIGNMENT_LEFT,
-  NA_TEXT_ALIGNMENT_RIGHT,
-  NA_TEXT_ALIGNMENT_CENTER,
-} NATextAlignment;
 
 // //////////////////////////////////////
 // Additional macro definitions used for the UI
@@ -458,11 +438,6 @@ typedef NAUInt NAUIKeyCode;
   #define NA_KEYCODE_NUMPAD_PLUS    0x45
 #endif
 
-
-
-
-
-
 // //////////////////////////////
 // Reacting to events
 //
@@ -501,32 +476,42 @@ typedef enum{
 //  NA_MODIFIER_FLAG_RIGHT_COMMAND = 0x0080,
 } NAModifierFlag;
 
-typedef struct NAKeyboardShortcut NAKeyboardShortcut;
-struct NAKeyboardShortcut{
+typedef struct NAKeyboardStatus NAKeyboardStatus;
+struct NAKeyboardStatus{
   NAInt modifiers;
   NAUIKeyCode keyCode;
 };
 
-NAKeyboardShortcut naMakeKeybardShortcut(NAInt modifiers, NAUIKeyCode keyCode);
+NAKeyboardStatus naMakeKeybardStatus(NAInt modifiers, NAUIKeyCode keyCode);
+
+typedef struct NAMouseStatus NAMouseStatus;
+struct NAMouseStatus{
+  NAPos pos;
+  NAPos prevpos;
+};
 
 // A programmer reacts to commands by calling naAddUIReaction. When a specific
 // command occurs, a function handler will be called with the function
 // prototype NAReactionHandler.
 
-typedef NABool (*NAReactionHandler)(  void* controller,
-                               NAUIElement* uielement,
-                                NAUICommand command,
-                                      void* arg);
+typedef struct NAReaction NAReaction;
+struct NAReaction{
+  NAUIElement* uielement;
+  NAUICommand command;
+  void* controller;
+};
 
-NA_API void naAddUIReaction(          void* controller,
-                               NAUIElement* uielement,
-                                NAUICommand command,
-                          NAReactionHandler handler);
+typedef NABool (*NAReactionHandler)(NAReaction reaction);
 
-NA_API void naAddUIKeyboardShortcut(  void* controller,
-                               NAUIElement* uielement,
-                         NAKeyboardShortcut shortcut,
-                          NAReactionHandler handler);
+NA_API void naAddUIReaction(        NAUIElement* uielement,
+                                     NAUICommand command,
+                               NAReactionHandler handler,
+                                           void* controller);
+
+NA_API void naAddUIKeyboardShortcut(NAUIElement* uielement,
+                                NAKeyboardStatus shortcut,
+                               NAReactionHandler handler,
+                                           void* controller);
 
 // The function naAddUIReaction and the function prototype NAReactionHandler
 // work in pairs. The controller given to naAddUIReaction is an arbitrary
@@ -534,29 +519,17 @@ NA_API void naAddUIKeyboardShortcut(  void* controller,
 // reaction handler. You probably will use either NA_NULL or some kind of
 // controller pointer for that, hence the name controller. The uielement
 // is the NAUIElement where the command occurs and the command sent is the
-// command observed.
-//
-// The arg sent to the reaction handler is dependent on the command:
-//
-// command           arg type     arg
-// --------------------------------------------------------------------------
-// INIT              -            NA_NULL
-// REDRAW            NARect*      Outer rect of uielement relative to parent.
-// RESHAPE           NARect*      Outer rect relative to parent.
-// KEYDOWN           NAUIKeyCode* The keycode of the key pressed.
-// KEYUP             NAUIKeyCode* The keycode of the key pressed.
-// MOUSE_MOVED       -            NA_NULL
-// MOUSE_ENTERED     -            NA_NULL
-// MOUSE_EXITED      -            NA_NULL
-// CLOSES            NABool*      Bool* returning if shall close. Default is 1
-// PRESSED           -            NA_NULL
-// EDITED            -            NA_NULL
-// KEYBOARD_SHORTCUT NAUIKeyCode* The keycode of the key pressed.
+// command observed or the shortcut is the shortcut pressed respectively.
 //
 // The INIT method will be called once per element.
 //
 // The KEYDOWN and KEYUP method will only be called to a window but may
 // propagate to parent elements.
+//
+// The CLOSES command will be called when a window tries to close. You can
+// prevent it from closing by calling naPreventWindowFromClosing. That
+// function only works in conjunction with such a command and will emit an
+// error otherwise.
 //
 // You can have as many reactions as you like for any number of elements. They
 // will be stored separately for every ui element in a list which will always
@@ -569,122 +542,57 @@ NA_API void naAddUIKeyboardShortcut(  void* controller,
 
 
 
-
-
-
-
-// From here on, the documentation might be garbage.
-
-#include "NAUIImage.h"
-
-
-typedef struct NACursorInfo NACursorInfo;
-struct NACursorInfo{
-  NAPos pos;
-  NAPos prevpos;
-};
+// /////////////////////////////////
+// The actual UI elements
+// 
+// Following is a collection of UI elements like Buttons, Windows, Checkboxes
+// you can use in NALib. They are mostly undocumented but should be easy to
+// understand.
 
 typedef enum{
-  NA_ALERT_BOX_INFO,
-  NA_ALERT_BOX_WARNING,
-  NA_ALERT_BOX_ERROR,
-} NAAlertBoxType;
+  NA_FONT_KIND_SYSTEM,      // The default system font
+  NA_FONT_KIND_TITLE,       // A bolder kind of the default system font
+  NA_FONT_KIND_MONOSPACE,   // A monospace font.
+  NA_FONT_KIND_PARAGRAPH,   // A nice to read font for displaying longer texts.
+  NA_FONT_KIND_MATH         // A font close to mathematical representation.
+} NAFontKind;
 
+typedef enum{
+  NA_TEXT_ALIGNMENT_LEFT,
+  NA_TEXT_ALIGNMENT_RIGHT,
+  NA_TEXT_ALIGNMENT_CENTER,
+} NATextAlignment;
 
-// UIElement
-NA_HDEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextelem);
-
-// Application
-NA_DEF NAApplication* naNewApplication(void);
-NA_API void naDestructApplication(NAApplication* application);
-NA_API void naResetApplicationPreferredTranslatorLanguages(void);
+// Screen
+// Screens are not implemented yet, but you can get the main screen rect:
+NA_API NARect naGetMainScreenRect(void);
 
 // Window
-// rect is the outer rect of the window.
-NA_API NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resizeable);
-NA_API void naDestructWindow(NAWindow* window);
-NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
-NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop);
-NA_DEF void naSetWindowRect(NAWindow* window, NARect rect);
-NA_DEF float naGetWindowUIScaleFactor(NAWindow* window);
-NA_HDEF void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* nextelem);
+NA_API NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resizeable, NAInt storageTag);
+NA_API void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
+NA_API void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop);
+NA_API void naSetWindowRect(NAWindow* window, NARect rect);
+NA_API NAUIImageResolution naGetWindowUIResolution(NAWindow* window);
+NA_API void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstElem);
 NA_API void naShowWindow(NAWindow* window);
-NA_DEF void naCloseWindow(NAWindow* window);
+NA_API void naCloseWindow(NAWindow* window);
+NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
 NA_API void naSetWindowContentSpace(NAWindow* window, NAUIElement* uielement);
 NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullscreen);
 NA_API NABool naIsWindowFullscreen(NAWindow* window);
-//NA_API NARect naGetWindowRect(NAWindow* window);
+NA_API NABool naIsWindowResizeable(NAWindow* window);
+NA_API void naPreventWindowFromClosing(NAWindow* window, NABool prevent);
 
-// Space
+// Space (In other frameworks called View, Frame, Area, Widget...)
 NA_API NASpace* naNewSpace(NARect rect);
-NA_API void naDestructSpace(NASpace* space);
 NA_API void naAddSpaceChild(NASpace* space, NAUIElement* child);
 NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 
 // ImageSpace
-NA_DEF NAImageSpace* naNewImageSpace(NARect rect);
-NA_DEF void naDestructImageSpace(NAImageSpace* imagespace);
-NA_DEF void naSetImageSpacePath(NAImageSpace* imagespace, const NAUTF8Char* imagePath);
+NA_API NAImageSpace* naNewImageSpace(NARect rect);
+NA_API void naSetImageSpacePath(NAImageSpace* imagespace, const NAUTF8Char* imagePath);
 
-// Button
-NA_API NAButton* naNewPushButton(const NAUTF8Char* text, NARect rect);
-NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NARect rect);
-NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NARect rect);
-NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NARect rect);
-NA_API void naDestructButton(NAButton* button);
-NA_API void naSetButtonState(NAButton* button, NABool state);
-//NA_HDEF void naSimulateButtonPress(NAButton* button);
-NA_HDEF void naSetButtonSubmit(NAButton* button, NAUIElement* controller, NAReactionHandler handler);
-NA_HDEF void naSetButtonAbort(NAButton* button, NAUIElement* controller, NAReactionHandler handler);
-
-// Radio
-NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NARect rect);
-NA_DEF void naDestructRadio(NARadio* radio);
-NA_HDEF void naSetRadioState(NARadio* radio, NABool state);
-
-// CheckBox
-NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NARect rect);
-NA_DEF void naDestructCheckBox(NACheckBox* checkbox);
-NA_HDEF void naSetCheckBoxState(NACheckBox* checkbox, NABool state);
-NA_HDEF NABool naGetCheckBoxState(NACheckBox* checkbox);
-
-// Label
-NA_API NALabel* naNewLabel(const NAUTF8Char* text, NARect rect);
-NA_API void naDestructLabel(NALabel* label);
-NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text);
-// Note that text alignment must be set before calling this method.
-NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url);
-NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled);
-NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
-NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind);
-
-// TextField
-NA_DEF NATextField* naNewTextField(NARect rect);
-NA_DEF void naDestructTextField(NATextField* textfield);
-NA_DEF void naSetTextFieldText(NATextField* textfield, const NAUTF8Char* text);
-NA_DEF NAString* naNewStringWithTextFieldText(NATextField* textfield);
-NA_DEF void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind);
-NA_DEF void naSetTextFieldEnabled(NATextField* textfield, NABool enabled);
-NA_DEF void naSetTextFieldTextAlignment(NATextField* textfield, NATextAlignment alignment);
-NA_DEF void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind);
-
-// TextBox
-NA_DEF NATextBox* naNewTextBox(NARect rect);
-NA_DEF void naDestructTextBox(NATextBox* textbox);
-NA_DEF void naSetTextBoxText(NATextBox* textbox, const NAUTF8Char* text);
-NA_DEF void naSetTextBoxTextAlignment(NATextBox* textbox, NATextAlignment alignment);
-NA_DEF void naSetTextBoxFontKind(NATextBox* textbox, NAFontKind kind);
-
-
-
-
-NA_API void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText);
-
-NA_API NARect naGetMainScreenRect(void);
-
-
-NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
-
+// OpenGLSpace
 #if NA_CONFIG_COMPILE_OPENGL == 1
   // the initfunc will be called with initdata as the input parameter as
   // soon as there is an OpenGLContext available. You can put there all
@@ -694,45 +602,94 @@ NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
   // Win: Right within the naNewOpenGLSpace
   // Mac: when prepareOpenGL is called (which may be as late as when the
   //      space comes onsceen)
-  NA_API NAOpenGLSpace* naNewOpenGLSpace( NAWindow* window,
-                                           NASize size,
-                                        NAMutator initfunc,
-                                            void* initdata);
-
-  NA_API void naDestructOpenGLSpace(NAOpenGLSpace* space);
-
-  // Swaps the OpenGL buffer.
+  NA_API NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator initfunc, void* initdata);
   NA_API void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace);
   NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds);
 #endif
 
-NA_API void naCenterMouse(   void* uielement,
-                            NABool includebounds,
-                            NABool sendmovemessage);
+// Button
+NA_API NAButton* naNewPushButton(const NAUTF8Char* text, NARect rect);
+NA_API NAButton* naNewTextOptionButton(const NAUTF8Char* text, NARect rect);
+NA_API NAButton* naNewImageOptionButton(NAUIImage* uiimage, NARect rect);
+NA_API NAButton* naNewImageButton(NAUIImage* uiimage, NARect rect);
+NA_API void naSetButtonState(NAButton* button, NABool state);
+NA_API void naSetButtonSubmit(NAButton* button, NAUIElement* controller, NAReactionHandler handler);
+NA_API void naSetButtonAbort(NAButton* button, NAUIElement* controller, NAReactionHandler handler);
+
+// Radio
+NA_API NARadio* naNewRadio(const NAUTF8Char* text, NARect rect);
+NA_API void naSetRadioState(NARadio* radio, NABool state);
+
+// CheckBox
+NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, NARect rect);
+NA_API void naSetCheckBoxState(NACheckBox* checkbox, NABool state);
+NA_API NABool naGetCheckBoxState(NACheckBox* checkbox);
+
+// Label
+NA_API NALabel* naNewLabel(const NAUTF8Char* text, NARect rect);
+NA_API void naSetLabelText(NALabel* label, const NAUTF8Char* text);
+// Note that text alignment must be set before calling this method.
+NA_API void naSetLabelLink(NALabel* label, const NAUTF8Char* url);
+NA_API void naSetLabelEnabled(NALabel* label, NABool enabled);
+NA_API void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
+NA_API void naSetLabelFontKind(NALabel* label, NAFontKind kind);
+
+// TextField
+NA_API NATextField* naNewTextField(NARect rect);
+NA_API void naSetTextFieldText(NATextField* textfield, const NAUTF8Char* text);
+NA_API NAString* naNewStringWithTextFieldText(NATextField* textfield);
+NA_API void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind);
+NA_API void naSetTextFieldEnabled(NATextField* textfield, NABool enabled);
+NA_API void naSetTextFieldTextAlignment(NATextField* textfield, NATextAlignment alignment);
+NA_API void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind);
+
+// TextBox
+NA_API NATextBox* naNewTextBox(NARect rect);
+NA_API void naSetTextBoxText(NATextBox* textbox, const NAUTF8Char* text);
+NA_API void naSetTextBoxTextAlignment(NATextBox* textbox, NATextAlignment alignment);
+NA_API void naSetTextBoxFontKind(NATextBox* textbox, NAFontKind kind);
+
+
+
+// Mouse
+NA_API const NAMouseStatus* naGetMouseStatus(void);
+NA_API NAPos naGetMousePos(const NAMouseStatus* mousestatus);
+NA_API NASize naGetMouseDelta(const NAMouseStatus* mousestatus);
+NA_API void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage);
 NA_API void naShowMouse(void);
 NA_API void naHideMouse(void);
 
-NA_API const NACursorInfo* naGetMouseInfo(void);
-NA_API NAPos naGetCursorPos(const NACursorInfo* cursorinfo);
-NA_API NASize naGetCursorDelta(const NACursorInfo* cursorinfo);
+// Keyboard
+NA_API NAKeyboardStatus naGetKeyboardStatus(void);
 
+
+
+// ////////////////////////////////
+// Other UI functions.
+
+typedef enum{
+  NA_ALERT_BOX_INFO,
+  NA_ALERT_BOX_WARNING,
+  NA_ALERT_BOX_ERROR,
+} NAAlertBoxType;
+
+NA_API void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText);
 NA_API void naOpenURLInBrowser(const NAUTF8Char* url);
 
+// When using a GUI on windows, you will sooner or later have to set the
+// subsystem in the project properties->linker->system to /SUBSYSTEM:WINDOWS.
+// This means two things:
+// 1. Instead of in main(int, char**), you need
+//    int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int);
+// 2. There is no console output using the standard channels 0, 1 and 2 like
+//    they are used with printf and such.
+//
+// In order to have a console output, you can call naOpenConsoleWindow
+// which opens up a separate console window when running. Note that NALib
+// will NOT automatically hide the console when NDEBUG is defined! This
+// function does nothing on a Mac.
 
-
-#if NA_OS == NA_OS_MAC_OS_X
-  NAString* naNewBundleApplicationName(void);
-  NAString* naNewBundleVersionString(void);
-  NAString* naNewBundleBuildString(void);
-  NAString* naNewBundleIconPath(void);
-  // dir can be Null to search in the base resource folder.
-  NAString* naNewBundleResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix);
-#endif
-
-
-// Note that although this API would perfectly fit into the NAThreading.h file,
-// it is located here as it only makes sense to use when an application with
-// a message loop is running.
+NA_API void naOpenConsoleWindow(const char* windowtitle);
 
 
 

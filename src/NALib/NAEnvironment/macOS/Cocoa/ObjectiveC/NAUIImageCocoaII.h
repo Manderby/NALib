@@ -150,7 +150,9 @@ NA_DEF NAUIImage* naAllocUIImage(NABabyImage* main, NABabyImage* alt, NAUIImageR
     }
     break;
   default:
-    naError("Unknown resolution");
+    #ifndef NDEBUG
+      naError("Unknown resolution");
+    #endif
     break;
   }
 
@@ -174,10 +176,10 @@ void* naAllocNativeImageWithUIImage(NAUIImage* uiimage, NAUIImageKind kind, NAUI
 
   CGImageRef img1x = naGetUIImageRef(uiimage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
   CGImageRef img2x = naGetUIImageRef(uiimage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
-  if(img1x){[image addRepresentation:[[[NSBitmapImageRep alloc] initWithCGImage:img1x] autorelease]];}
-  if(img2x){[image addRepresentation:[[[NSBitmapImageRep alloc] initWithCGImage:img2x] autorelease]];}
+  if(img1x){[image addRepresentation:NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img1x])];}
+  if(img2x){[image addRepresentation:NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img2x])];}
   
-  return image;
+  return NA_COCOA_TAKE_OWNERSHIP(image);
 }
 
 

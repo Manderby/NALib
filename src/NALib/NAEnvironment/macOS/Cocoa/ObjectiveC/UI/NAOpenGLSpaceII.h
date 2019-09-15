@@ -38,13 +38,13 @@
   }
   - (void)drawRect:(NSRect)dirtyRect{
     [[self openGLContext] makeCurrentContext];
-    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_REDRAW, &dirtyRect);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_REDRAW, NA_NULL);
   }
   - (void)reshape{
     [super reshape];
     [[self openGLContext] update];
     NARect bounds = naMakeRectWithNSRect([self bounds]);
-    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_RESHAPE, &bounds);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_RESHAPE, NA_NULL);
   }
   - (void)keyDown:(NSEvent*)event{
     NAUIKeyCode keyCode = [event keyCode];
@@ -90,12 +90,8 @@
       NSOpenGLPFADepthSize, 64,
       NSOpenGLPFAAllowOfflineRenderers, // lets OpenGL know this context is offline renderer aware
       0 };
-    NSOpenGLPixelFormat *pixelformat = [[NSOpenGLPixelFormat alloc] initWithAttributes:attr];
-    #if __has_feature(objc_arc)
-      // Space will be released automatically when ARC is turned on.
-    #else
-      [pixelformat autorelease];
-    #endif
+    NSOpenGLPixelFormat *pixelformat = NA_COCOA_AUTORELEASE([[NSOpenGLPixelFormat alloc] initWithAttributes:attr]);
+    
     NSRect frameRect = NSMakeRect(0.f, 0.f, (CGFloat)size.width, (CGFloat)size.height);
     NANativeOpenGLSpace* nativeSpace = [[NANativeOpenGLSpace alloc] initWithCoreOpenGLSpace:coreopenglspace frame:frameRect pixelFormat:pixelformat initFunc:initfunc initData:initdata];
 
@@ -105,7 +101,7 @@
   //    #endif
   //  }
 
-    naInitCoreOpenGLSpace(&(coreopenglspace->uielement), (void*) NA_COCOA_RETAIN(nativeSpace));
+    naInitCoreOpenGLSpace(&(coreopenglspace->uielement), NA_COCOA_TAKE_OWNERSHIP(nativeSpace));
     return coreopenglspace;
   }
 
@@ -118,7 +114,7 @@
 
   NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
     NACoreOpenGLSpace* coreopenglspace = (NACoreOpenGLSpace*)openglspace;
-    [[(NA_COCOA_BRIDGE NANativeOpenGLSpace*)(coreopenglspace->coreopenglspace.uielement.nativeID) openGLContext] flushBuffer];
+    [[(NANativeOpenGLSpace*)(coreopenglspace->coreopenglspace.uielement.nativeID) openGLContext] flushBuffer];
   }
 
   NA_DEF void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){

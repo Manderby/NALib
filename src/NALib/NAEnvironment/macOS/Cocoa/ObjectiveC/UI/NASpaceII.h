@@ -32,36 +32,16 @@
 }
 - (void)mouseMoved:(NSEvent*)event{
   NA_UNUSED(event);
-  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_MOUSE_MOVED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_MOUSE_MOVED);
 }
 - (void)mouseEntered:(NSEvent*)event{
   NA_UNUSED(event);
-  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_MOUSE_ENTERED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_MOUSE_ENTERED);
 }
 - (void)mouseExited:(NSEvent*)event{
   NA_UNUSED(event);
-  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_MOUSE_EXITED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_MOUSE_EXITED);
 }
-//- (void)keyDown:(NSEvent*)event{
-//  NAUIKeyCode keyCode = [event keyCode];
-//  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_KEYDOWN, &keyCode);
-//}
-//- (void)flagsChanged:(NSEvent*)event{
-//  NAUIKeyCode keyCode = [event keyCode];
-//  NABool shift   = ([event modifierFlags] & NAEventModifierFlagShift)    ?NA_TRUE:NA_FALSE;
-//  NABool alt     = ([event modifierFlags] & NAEventModifierFlagOption)   ?NA_TRUE:NA_FALSE;
-//  NABool control = ([event modifierFlags] & NAEventModifierFlagControl)  ?NA_TRUE:NA_FALSE;
-//  NABool command = ([event modifierFlags] & NAEventModifierFlagCommand)  ?NA_TRUE:NA_FALSE;
-
-//  keyCode = NA_KEYCODE_SHIFT;
-//  naDispatchUIElementCommand((NACoreUIElement*)corespace, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
-//  keyCode = NA_KEYCODE_OPTION;
-//  naDispatchUIElementCommand((NACoreUIElement*)corespace, (alt?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
-//  keyCode = NA_KEYCODE_CONTROL;
-//  naDispatchUIElementCommand((NACoreUIElement*)corespace, (control?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
-//  keyCode = NA_KEYCODE_LEFT_COMMAND;
-//  naDispatchUIElementCommand((NACoreUIElement*)corespace, (command?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
-//}
 @end
 
 
@@ -72,7 +52,7 @@ NA_DEF NASpace* naNewSpace(NARect rect){
 
   NSRect contentRect = naMakeNSRectWithRect(rect);
   NANativeSpace* nativeSpace = [[NANativeSpace alloc] initWithCoreSpace:corespace frame:contentRect];  
-  naInitCoreSpace(corespace, (void*)NA_COCOA_RETAIN(nativeSpace));
+  naInitCoreSpace(corespace, NA_COCOA_TAKE_OWNERSHIP(nativeSpace));
   
   return (NASpace*)corespace;
 }
@@ -87,20 +67,21 @@ NA_DEF void naDestructSpace(NASpace* space){
 
 
 NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child){
-  NANativeSpace* nativespace = (NA_COCOA_BRIDGE NANativeSpace*)(naGetUIElementNativeID(space));
+  naDefineNativeCocoaObject(NANativeSpace, nativespace, space);
+  naDefineNativeCocoaObject(NSView, nativeview, child);
   NANativeRadio* nativeradio;
   NANativeTextBox* nativetextbox;
   switch(naGetUIElementType(child)){
   case NA_UI_RADIO:
-    nativeradio = (NA_COCOA_BRIDGE NANativeRadio*)(naGetUIElementNativeID(child));
+    nativeradio = (NANativeRadio*)nativeview;
     [nativespace addSubview:[nativeradio getContainingView]];
     break;
   case NA_UI_TEXTBOX:
-    nativetextbox = (NA_COCOA_BRIDGE NANativeTextBox*)(naGetUIElementNativeID(child));
+    nativetextbox = (NANativeTextBox*)nativeview;
     [nativespace addSubview:[nativetextbox getContainingView]];
     break;
   default:
-    [nativespace addSubview:(NA_COCOA_BRIDGE NSView*)naGetUIElementNativeID(child)];
+    [nativespace addSubview:nativeview];
     break;
   }
   naSetUIElementParent(child, space);
@@ -112,8 +93,9 @@ NA_HDEF NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space){
   NARect rect;
   NSRect contentrect;
   NARect windowrect;
+  naDefineNativeCocoaObject(NANativeSpace, nativespace, space);
   // Warning: does not work when frame unequal bounds.
-  contentrect = [(NA_COCOA_BRIDGE NSView*)(naGetUIElementNativeID((NAUIElement*)space)) frame];
+  contentrect = [nativespace frame];
   windowrect = naGetWindowAbsoluteInnerRect((NACoreUIElement*)naGetUIElementWindow((NAUIElement*)space));
   rect.pos.x = windowrect.pos.x + contentrect.origin.x;
   rect.pos.y = windowrect.pos.y + contentrect.origin.y;
@@ -127,7 +109,7 @@ NA_HDEF NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space){
 NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
   NACoreSpace* corespace = (NACoreSpace*)space;
   corespace->alternatebackground = alternate;
-  NANativeSpace* nativespace = (NA_COCOA_BRIDGE NANativeSpace*)(naGetUIElementNativeID(space));
+  naDefineNativeCocoaObject(NANativeSpace, nativespace, space);
   [nativespace setNeedsDisplay:YES];
 }
 

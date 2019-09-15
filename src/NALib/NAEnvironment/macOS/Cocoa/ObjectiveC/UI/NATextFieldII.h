@@ -27,11 +27,11 @@
 }
 - (void) onEdited:(id)sender{
   NA_UNUSED(sender);
-  naDispatchUIElementCommand((NACoreUIElement*)coretextfield, NA_UI_COMMAND_EDITED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)coretextfield, NA_UI_COMMAND_EDITED);
 }
 - (void)controlTextDidChange:(NSNotification *)notification{
   NA_UNUSED(notification);
-  naDispatchUIElementCommand((NACoreUIElement*)coretextfield, NA_UI_COMMAND_EDITED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)coretextfield, NA_UI_COMMAND_EDITED);
 }
 - (void) setText:(const NAUTF8Char*)text{
   [self setStringValue:[NSString stringWithUTF8String:text]];
@@ -56,7 +56,7 @@ NA_DEF NATextField* naNewTextField(NARect rect){
   NACoreTextField* coretextfield = naAlloc(NACoreTextField);
   
   NANativeTextField* nativeTextField = [[NANativeTextField alloc] initWithCoreTextField:coretextfield frame:naMakeNSRectWithRect(rect)];
-  naInitCoreTextField(coretextfield, (void*)NA_COCOA_RETAIN(nativeTextField));
+  naInitCoreTextField(coretextfield, NA_COCOA_TAKE_OWNERSHIP(nativeTextField));
   
   return (NATextField*)coretextfield;
 }
@@ -71,31 +71,35 @@ NA_DEF void naDestructTextField(NATextField* textfield){
 
 
 NA_DEF void naSetTextFieldText(NATextField* textfield, const NAUTF8Char* text){
-  [((NA_COCOA_BRIDGE NANativeTextField*)naGetUIElementNativeID(textfield)) setText:text];
+  naDefineNativeCocoaObject(NANativeTextField, nativetextfield, textfield);
+  [nativetextfield setText:text];
 }
 
 
 
 NA_DEF NAString* naNewStringWithTextFieldText(NATextField* textfield){
-  return [((NA_COCOA_BRIDGE NANativeTextField*)naGetUIElementNativeID(textfield)) newStringWithText];
+  naDefineNativeCocoaObject(NANativeTextField, nativetextfield, textfield);
+  return [nativetextfield newStringWithText];
 }
 
 
 
 //NA_DEF void naSetTextFieldEnabled(NATextField* textfield, NABool enabled){
-//  [((NA_COCOA_BRIDGE NANativeTextField*)naGetUIElementNativeID(textfield)) setTextFieldEnabled:enabled];
+//  [((NANativeTextField*)naGetUIElementNativeID(textfield)) setTextFieldEnabled:enabled];
 //}
 
 
 
 NA_DEF void naSetTextFieldTextAlignment(NATextField* textfield, NATextAlignment alignment){
-  [((NA_COCOA_BRIDGE NANativeTextField*)naGetUIElementNativeID(textfield)) setTextAlignment:alignment];
+  naDefineNativeCocoaObject(NANativeTextField, nativetextfield, textfield);
+  [nativetextfield setTextAlignment:alignment];
 }
 
 
 
 NA_DEF void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind){
-  [((NA_COCOA_BRIDGE NANativeTextField*)naGetUIElementNativeID(textfield)) setFontKind:kind];
+  naDefineNativeCocoaObject(NANativeTextField, nativetextfield, textfield);
+  [nativetextfield setFontKind:kind];
 }
 
 

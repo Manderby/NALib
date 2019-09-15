@@ -46,7 +46,7 @@
         ? NA_UIIMAGE_SKIN_LIGHT : NA_UIIMAGE_SKIN_DARK;
       }
     }
-    NAUIImageResolution resolution = naGetWindowUIScaleFactor(naGetUIElementWindow(&(corebutton->uielement)));
+    NAUIImageResolution resolution = naGetWindowUIResolution(naGetUIElementWindow(&(corebutton->uielement)));
     CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
     CGImageRef imgref = naGetUIImageRef(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
     if(!imgref){
@@ -59,7 +59,7 @@
 //  CGImageRef imgRef = [image CGImageForProposedRect:nil context:nil hints:nil];
   [self setImage:image];
   [self setImageScaling:NSImageScaleProportionallyUpOrDown];
-  [image release];
+//  [image release];
 //  [self setBezelStyle:NSBezelStyleShadowlessSquare];
   // OptionButton: NSBezelStyleShadowlessSquare
   // NSBezelStyleRegularSquare : 5 5 5 5
@@ -69,14 +69,11 @@
 }
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  naDispatchUIElementCommand((NACoreUIElement*)corebutton, NA_UI_COMMAND_PRESSED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)corebutton, NA_UI_COMMAND_PRESSED);
 }
 - (void) setButtonState:(NABool)state{
   [self setState:state ? NSOnState : NSOffState];
 }
-//- (void) simulatePress{
-//  [self performClick:nil];
-//}
 - (void) setDefaultButton:(NABool)isDefault{
   if(isDefault){
     [self setKeyEquivalent:@"\r"];
@@ -92,7 +89,7 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NARect rect){
   NACoreButton* corebutton = naAlloc(NACoreButton);
 
   NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NSBezelStyleRounded frame:naMakeNSRectWithRect(rect)];
-  naInitCoreButton(corebutton, (void*)NA_COCOA_RETAIN(nativeButton));
+  naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
   [nativeButton setButtonText:text];
   
   return (NAButton*)corebutton;
@@ -104,7 +101,7 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NARect rect){
   NACoreButton* corebutton = naAlloc(NACoreButton);
 
   NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NSBezelStyleShadowlessSquare frame:naMakeNSRectWithRect(rect)];
-  naInitCoreButton(corebutton, (void*)NA_COCOA_RETAIN(nativeButton));
+  naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
   [nativeButton setButtonText:text];
   
   return (NAButton*)corebutton;
@@ -116,7 +113,7 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NARect rect){
   NACoreButton* corebutton = naAlloc(NACoreButton);
 
   NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NSBezelStyleShadowlessSquare frame:naMakeNSRectWithRect(rect)];
-  naInitCoreButton(corebutton, (void*)NA_COCOA_RETAIN(nativeButton));
+  naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
   [nativeButton setButtonImage:uiimage];
   
   return (NAButton*)corebutton;
@@ -128,7 +125,7 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NARect rect){
   NACoreButton* corebutton = naAlloc(NACoreButton);
 
   NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:0 frame:naMakeNSRectWithRect(rect)];
-  naInitCoreButton(corebutton, (void*)NA_COCOA_RETAIN(nativeButton));
+  naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
   [nativeButton setButtonImage:uiimage];
   
   return (NAButton*)corebutton;
@@ -144,28 +141,24 @@ NA_DEF void naDestructButton(NAButton* button){
 
 
 NA_HDEF void naSetButtonState(NAButton* button, NABool state){
-  [((NA_COCOA_BRIDGE NANativeButton*)naGetUIElementNativeID(button)) setButtonState:state];
+  naDefineNativeCocoaObject(NANativeButton, nativebutton, button);
+  [nativebutton setButtonState:state];
 }
 
 
 
 NA_HDEF void naSetButtonSubmit(NAButton* button, NAUIElement* controller, NAReactionHandler handler){
-  [((NA_COCOA_BRIDGE NANativeButton*)naGetUIElementNativeID(button)) setDefaultButton:NA_TRUE];
-  naAddUIKeyboardShortcut(controller, naGetUIElementWindow(button), naMakeKeybardShortcut(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER), handler);
+  naDefineNativeCocoaObject(NANativeButton, nativebutton, button);
+  [nativebutton setDefaultButton:NA_TRUE];
+  naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER), handler, controller);
 }
 
 
 
 NA_HDEF void naSetButtonAbort(NAButton* button, NAUIElement* controller, NAReactionHandler handler){
-  naAddUIKeyboardShortcut(controller, naGetUIElementWindow(button), naMakeKeybardShortcut(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC), handler);
-  naAddUIKeyboardShortcut(controller, naGetUIElementWindow(button), naMakeKeybardShortcut(NA_MODIFIER_FLAG_COMMAND, NA_KEYCODE_PERIOD), handler);
+  naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC), handler, controller);
+  naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_COMMAND, NA_KEYCODE_PERIOD), handler, controller);
 }
-
-
-
-//NA_HDEF void naSimulateButtonPress(NAButton* button){
-//  [((NA_COCOA_BRIDGE NANativeButton*)naGetUIElementNativeID(button)) simulatePress];
-//}
 
 
 

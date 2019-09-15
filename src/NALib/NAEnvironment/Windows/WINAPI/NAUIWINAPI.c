@@ -41,7 +41,7 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
   NAUIKeyCode scancode;   // used as UINT, converted to NAUIKeyCode
   NASize size;
   NAPos pos;
-  const NACursorInfo* cursorinfo;
+  const NAMouseStatus* mousestatus;
 
   NACoreUIElement* uielement = (NACoreUIElement*)naGetUINALibEquivalent(hWnd);
   if (!uielement) {
@@ -71,7 +71,7 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     rect = naGetUIElementRect(window, NA_NULL, NA_FALSE);
     rect.pos.x = (double)((int)(short)LOWORD(lParam));
     rect.pos.y = (double)((int)(short)HIWORD(lParam));
-    hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE, &rect);
+    hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE, NA_NULL);
     if (hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW, NA_NULL); }
     break;
 
@@ -83,7 +83,7 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     rect = naGetUIElementRect(window, NA_NULL, NA_FALSE);
     rect.size.width = LOWORD(lParam);
     rect.size.height = HIWORD(lParam);
-    hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE, &rect);
+    hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE, NA_NULL);
     if (hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW, NA_NULL); }
     break;
 
@@ -158,8 +158,8 @@ LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
     rect = naGetUIElementRect(uielement, naGetApplication(), NA_FALSE);
     size.width += rect.pos.x;
     size.height += rect.pos.y;
-    cursorinfo = naGetMouseInfo();
-    pos = naGetCursorPos(cursorinfo);
+    mousestatus = naGetMouseStatus();
+    pos = naGetMousePos(mousestatus);
     naSetMouseMovedByDiff(size.width - pos.x, size.height - pos.y);
     hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_MOUSE_MOVED, &size);
     //}

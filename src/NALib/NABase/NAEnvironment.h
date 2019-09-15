@@ -84,12 +84,14 @@
   #endif
   #if __has_feature(objc_arc)
     #define NA_COCOA_BRIDGE __bridge
-    #define NA_COCOA_RETAIN(obj) CFBridgingRetain(obj)
-    #define NA_COCOA_RELEASE(obj) CFBridgingRelease(obj)
+    #define NA_COCOA_TAKE_OWNERSHIP(obj) (__bridge_retained void*)(obj)
+    #define NA_COCOA_DISPOSE(obj) CFBridgingRelease(obj)
+    #define NA_COCOA_AUTORELEASE(obj) obj
   #else
     #define NA_COCOA_BRIDGE
-    #define NA_COCOA_RETAIN(obj) obj
-    #define NA_COCOA_RELEASE(obj) [(id)obj release]
+    #define NA_COCOA_TAKE_OWNERSHIP(obj) obj
+    #define NA_COCOA_DISPOSE(obj) [(id)obj release]
+    #define NA_COCOA_AUTORELEASE(obj) [(id)obj autorelease]
   #endif
 
 #else

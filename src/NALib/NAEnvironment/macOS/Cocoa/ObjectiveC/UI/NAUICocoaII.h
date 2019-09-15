@@ -62,6 +62,7 @@ NA_HAPI void naRenewWindowMouseTracking(NACoreWindow* corewindow);
 NA_HAPI void naClearWindowMouseTracking(NACoreWindow* corewindow);
 
 
+
 @interface NANativeApplicationDelegate : NSObject <NSApplicationDelegate>{
   NACoreApplication* coreapplication;
 }
@@ -137,19 +138,47 @@ NA_HAPI void naClearWindowMouseTracking(NACoreWindow* corewindow);
 
 
 
+#define naDefineNativeCocoaObject(nativetype, var, uielement)\
+  nativetype* var = (NA_COCOA_BRIDGE nativetype*)(naGetUIElementNativeID((NAUIElement*)uielement))
+
+
 NA_HDEF void naClearUINativeId(NANativeID nativeId){
-  NA_COCOA_RELEASE(nativeId);
+  NA_COCOA_DISPOSE(nativeId);
 }
 
 
-NA_HDEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextelem){
-  [((NA_COCOA_BRIDGE NANativeTextField*)naGetUIElementNativeID(elem)) setNextKeyView:naGetUIElementNativeID(nextelem)];
+
+NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextelem){
+  naDefineNativeCocoaObject(NANativeTextField, nativeelem, elem);
+  naDefineNativeCocoaObject(NSView, nativeview, nextelem);
+  [nativeelem setNextKeyView:nativeview];
 }
+
+
+
+NA_HDEF void naCaptureKeyboardStatus(NSEvent* event){  
+  NAUIKeyCode keyCode = [event keyCode];
+  na_app->keyboardStatus.keyCode = keyCode;
+  NSEventModifierFlags flags = [event modifierFlags];
+  NABool hasShift     = (flags & NAEventModifierFlagShift)   != 0;
+  NABool hasControl   = (flags & NAEventModifierFlagControl) != 0;
+  NABool hasOption    = (flags & NAEventModifierFlagOption)  != 0;
+  NABool hasCommand   = (flags & NAEventModifierFlagCommand) != 0;
+  na_app->keyboardStatus.modifiers = 0;
+  na_app->keyboardStatus.modifiers |= hasShift * NA_MODIFIER_FLAG_SHIFT;
+  na_app->keyboardStatus.modifiers |= hasControl * NA_MODIFIER_FLAG_CONTROL;
+  na_app->keyboardStatus.modifiers |= hasOption * NA_MODIFIER_FLAG_OPTION;
+  na_app->keyboardStatus.modifiers |= hasCommand * NA_MODIFIER_FLAG_COMMAND;
+}
+
 
 
 NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
   NABool retvalue = NA_FALSE;
-  if([event type] == NSEventTypeKeyDown){
+  if([event type] == NSEventTypeKeyUp){
+    naCaptureKeyboardStatus(event);
+  }else if([event type] == NSEventTypeKeyDown){
+    naCaptureKeyboardStatus(event);
     
     // Search for the native first responder which is represented in NALib.
     NACoreUIElement* elem = NA_NULL;
@@ -158,7 +187,7 @@ NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
       NSResponder* firstResponder = [keyWindow firstResponder];
       if(firstResponder){
         while(!elem && firstResponder){
-          elem = naGetUINALibEquivalent(firstResponder);
+          elem = naGetUINALibEquivalent((NA_COCOA_BRIDGE NANativeID)(firstResponder));
           if(!elem){
             if(firstResponder == keyWindow){
               elem = naGetApplication();
@@ -168,7 +197,7 @@ NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
           }
         }
       }else{
-        elem = naGetUINALibEquivalent(keyWindow);
+        elem = naGetUINALibEquivalent((NA_COCOA_BRIDGE NANativeID)(keyWindow));
       }
     }else{
       elem = naGetApplication();
@@ -178,23 +207,22 @@ NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
     while(!retvalue && elem){
       NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
       while(!retvalue && naIterateList(&iter)){
-        const NAKeyboardShortcutReaction* shortcutReaction = naGetListCurConst(&iter);
-        NAUIKeyCode keyCode = [event keyCode];
-        if(shortcutReaction->shortcut.keyCode == keyCode){
-          NSEventModifierFlags flags = [event modifierFlags];
-          NABool needsShift   = (shortcutReaction->shortcut.modifiers & NA_MODIFIER_FLAG_SHIFT)   != 0;
-          NABool needsControl = (shortcutReaction->shortcut.modifiers & NA_MODIFIER_FLAG_CONTROL) != 0;
-          NABool needsOption  = (shortcutReaction->shortcut.modifiers & NA_MODIFIER_FLAG_OPTION)  != 0;
-          NABool needsCommand = (shortcutReaction->shortcut.modifiers & NA_MODIFIER_FLAG_COMMAND) != 0;
-          NABool hasShift     = (flags & NAEventModifierFlagShift)   != 0;
-          NABool hasControl   = (flags & NAEventModifierFlagControl) != 0;
-          NABool hasOption    = (flags & NAEventModifierFlagOption)  != 0;
-          NABool hasCommand   = (flags & NAEventModifierFlagCommand) != 0;
+        const NACoreKeyboardShortcutReaction* corereaction = naGetListCurConst(&iter);
+        if(corereaction->shortcut.keyCode == na_app->keyboardStatus.keyCode){
+          NABool needsShift   = naGetFlagi(corereaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool needsControl = naGetFlagi(corereaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool needsOption  = naGetFlagi(corereaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool needsCommand = naGetFlagi(corereaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
+          NABool hasShift   = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool hasControl = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool hasOption  = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool hasCommand = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_COMMAND);
           if(needsShift   == hasShift
           && needsControl == hasControl
           && needsOption  == hasOption
           && needsCommand == hasCommand){
-            retvalue = shortcutReaction->handler(shortcutReaction->controller, na_app, NA_UI_COMMAND_KEYBOARD_SHORTCUT, &keyCode);
+            NAReaction reaction = {na_app, NA_UI_COMMAND_KEYBOARD_SHORTCUT, corereaction->controller};
+            retvalue = corereaction->handler(reaction);
           }
         }
       }
@@ -212,15 +240,10 @@ NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
 
 
 NA_DEF void naRefreshUIElementNow(NAUIElement* uielement){
-  [((NA_COCOA_BRIDGE NSView*)naGetUIElementNativeID(uielement)) setNeedsDisplay:YES];
+  naDefineNativeCocoaObject(NSView, nativeview, uielement);
+  [nativeview setNeedsDisplay:YES];
 }
 
-
-NA_DEF void naSetUIElementParent (NAUIElement* uielement, NAUIElement* parent){
-  NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
-  // todo: remove from old parent
-  coreelement->parent = parent;
-}
 
 
 
@@ -261,7 +284,9 @@ NSFont* getNSFontWithKind(NAFontKind kind){
       font = [NSFont fontWithDescriptor:descriptor size:systemSize];
       break;
     default:
-      naError("Unknown font kind");
+      #ifndef NDEBUG
+        naError("Unknown font kind");
+      #endif
       break;
   }
   return font;
@@ -303,8 +328,9 @@ NA_HDEF NARect naGetScreenAbsoluteRect(NACoreUIElement* screen){
   NARect rect;
   NSRect frame;
   NSRect mainframe;
+  naDefineNativeCocoaObject(NSScreen, nativescreen, screen);
   mainframe = [[NSScreen mainScreen] frame];
-  frame = [(NA_COCOA_BRIDGE NSScreen*)(naGetUIElementNativeID((NAUIElement*)screen)) frame];
+  frame = [nativescreen frame];
   rect.pos.x = frame.origin.x;
   rect.pos.y = mainframe.size.height - frame.size.height - frame.origin.y;
   rect.size.width = frame.size.width;
@@ -324,16 +350,17 @@ NA_HDEF NARect naGetScreenAbsoluteRect(NACoreUIElement* screen){
 
 
 NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText){
-    NSAlert* alert = [[NSAlert alloc] init];
+    NSAlert* alert = NA_COCOA_AUTORELEASE([[NSAlert alloc] init]);
+
     switch(alertBoxType){
     case NA_ALERT_BOX_INFO:    alert.alertStyle = NSInformationalAlertStyle; break;
     case NA_ALERT_BOX_WARNING: alert.alertStyle = NSAlertStyleWarning; break;
     case NA_ALERT_BOX_ERROR:   alert.alertStyle = NSAlertStyleCritical; break;
     }
+    
     alert.messageText = [NSString stringWithUTF8String:titleText];
     alert.informativeText = [NSString stringWithUTF8String:infoText];
     [alert runModal];
-    [alert release];
 }
 
 

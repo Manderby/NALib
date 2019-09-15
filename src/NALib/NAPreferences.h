@@ -15,12 +15,13 @@
 
 
 // If the given key does not exists yet, creates a preference for it and sets
-// the value.
-NA_API void naInitPreferencesBool      (const char* key, NABool value);
-NA_API void naInitPreferencesInt       (const char* key, NAInt value);
-NA_API void naInitPreferencesEnum      (const char* key, NAInt value);
-NA_API void naInitPreferencesDouble    (const char* key, double value);
-NA_API void naInitPreferencesString    (const char* key, NAString* value);
+// the value. Returns either the value stored or the given default value.
+// Note: The string is always a new string, never the given value pointer.
+NA_API NABool    naInitPreferencesBool    (const char* key, NABool value);
+NA_API NAInt     naInitPreferencesInt     (const char* key, NAInt value);
+NA_API NAInt     naInitPreferencesEnum    (const char* key, NAInt value);
+NA_API double    naInitPreferencesDouble    (const char* key, double value);
+NA_API NAString* naInitPreferencesString    (const char* key, NAString* value);
 
 // Sets or toggles the preference
 NA_API void   naSetPreferencesBool     (const char* key, NABool value);

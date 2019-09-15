@@ -41,7 +41,7 @@
 }
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  naDispatchUIElementCommand((NACoreUIElement*)coreradio, NA_UI_COMMAND_PRESSED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)coreradio, NA_UI_COMMAND_PRESSED);
 }
 - (void) setRadioState:(NABool)state{
   [self setState:state ? NSOnState : NSOffState];
@@ -54,7 +54,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NARect rect){
   NACoreRadio* coreradio = naAlloc(NACoreRadio);
 
   NANativeRadio* nativeRadio = [[NANativeRadio alloc] initWithCoreRadio:coreradio frame:naMakeNSRectWithRect(rect)];
-  naInitCoreRadio(coreradio, (void*)NA_COCOA_RETAIN(nativeRadio));
+  naInitCoreRadio(coreradio, NA_COCOA_TAKE_OWNERSHIP(nativeRadio));
   [nativeRadio setText:text];
   
   return (NARadio*)coreradio;
@@ -77,7 +77,8 @@ NA_HDEF NARect naGetRadioAbsoluteInnerRect(NACoreUIElement* radio){
 
 
 NA_HDEF void naSetRadioState(NARadio* radio, NABool state){
-  [((NA_COCOA_BRIDGE NANativeRadio*)naGetUIElementNativeID(radio)) setRadioState:state];
+  naDefineNativeCocoaObject(NANativeRadio, nativeradio, radio);
+  [nativeradio setRadioState:state];
 }
 
 

@@ -96,7 +96,7 @@ NA_HDEF void naIterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info
 NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info){
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
-    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+    if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
     if(!naIsTreeAtInitial(iter) && !naIsTreeItemLeaf(tree, iter->item))
       naError("Iter is not placed at a leaf");
@@ -180,7 +180,7 @@ NA_HDEF NABool naLocateTreeKeyCore(NATreeIterator* iter, const void* key, NABool
   NATreeItem* founditem;
   NABool matchfound;
   #ifndef NDEBUG
-    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+    if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
   #endif
 
@@ -218,7 +218,7 @@ NA_HDEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTo
   NAInt nextindx = NA_TREE_SEARCH_ABORT;
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
-    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+    if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
     if(!nodeSearcher)
       naCrash("node token searcher is Null.");
@@ -252,9 +252,13 @@ NA_HDEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTo
       
       if(nextindx < NA_TREE_SEARCH_PARENT){break;}
       if(nextindx == NA_TREE_SEARCH_PARENT){
-        naSetTreeIteratorCurItem(iter, &(naGetTreeItemParent(iter->item)->item));
-      // Note that when the iterator is now at the root, the while loop will
-      // break automatically and this function returns NA_FALSE.
+        NATreeNode* parentNode = naGetTreeItemParent(iter->item);
+        if(parentNode){
+          naSetTreeIteratorCurItem(iter, &(parentNode->item));
+        }else{
+          naResetTreeIterator(iter);
+          nextindx = NA_TREE_SEARCH_ABORT;
+        }
       }else{
         naSetTreeIteratorCurItem(iter, naGetTreeNodeChild(tree->config, (NATreeNode*)iter->item, nextindx));
       }
@@ -271,7 +275,7 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
   NABool found;
   NATree* tree = naGetTreeIteratorTreeMutable(iter);;
   #ifndef NDEBUG
-    if(naTestFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
+    if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has been cleared. You need to make it anew.");
   #endif
   // We do not use bubbling when inserting as there is almost never a benefit

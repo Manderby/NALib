@@ -17,9 +17,8 @@
 }
 - (void) setImageURL:(const NAUTF8Char*)imagePath{
   NSURL* url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:imagePath]];
-  NSImage* image = [[NSImage alloc] initWithContentsOfURL:url];
+  NSImage* image = NA_COCOA_AUTORELEASE([[NSImage alloc] initWithContentsOfURL:url]);
   [self setImage:image];
-  [image release];
 }
 @end
 
@@ -30,7 +29,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NARect rect){
 
   NSRect contentRect = naMakeNSRectWithRect(rect);
   NANativeImageSpace* nativeImageSpace = [[NANativeImageSpace alloc] initWithCoreImageSpace:coreImageSpace frame:contentRect];  
-  naInitCoreImageSpace(coreImageSpace, (void*)NA_COCOA_RETAIN(nativeImageSpace));
+  naInitCoreImageSpace(coreImageSpace, NA_COCOA_TAKE_OWNERSHIP(nativeImageSpace));
   
   return (NAImageSpace*)coreImageSpace;
 }
@@ -45,7 +44,8 @@ NA_DEF void naDestructImageSpace(NAImageSpace* imagespace){
 
 
 NA_DEF void naSetImageSpacePath(NAImageSpace* imagespace, const NAUTF8Char* imagePath){
-  [((NA_COCOA_BRIDGE NANativeImageSpace*)naGetUIElementNativeID(imagespace)) setImageURL:imagePath];
+  naDefineNativeCocoaObject(NANativeImageSpace, nativeimagespace, imagespace);
+  [nativeimagespace setImageURL:imagePath];
 }
 
 

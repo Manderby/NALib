@@ -25,7 +25,7 @@
 }
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  naDispatchUIElementCommand((NACoreUIElement*)corecheckbox, NA_UI_COMMAND_PRESSED, NA_NULL);
+  naDispatchUIElementCommand((NACoreUIElement*)corecheckbox, NA_UI_COMMAND_PRESSED);
 }
 - (void) setCheckBoxState:(NABool)state{
   [self setState:state ? NSOnState : NSOffState];
@@ -45,7 +45,7 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NARect rect){
   boundrect.origin.y = 0;
 
   NANativeCheckBox* nativeCheckBox = [[NANativeCheckBox alloc] initWithCoreCheckBox:corecheckbox frame:framerect];
-  naInitCoreCheckBox(corecheckbox, (void*)NA_COCOA_RETAIN(nativeCheckBox));
+  naInitCoreCheckBox(corecheckbox, NA_COCOA_TAKE_OWNERSHIP(nativeCheckBox));
   [nativeCheckBox setText:text];
   
   return (NACheckBox*)corecheckbox;
@@ -68,13 +68,15 @@ NA_HDEF NARect naGetCheckBoxAbsoluteInnerRect(NACoreUIElement* checkbox){
 
 
 NA_HDEF void naSetCheckBoxState(NACheckBox* checkbox, NABool state){
-  [((NA_COCOA_BRIDGE NANativeCheckBox*)naGetUIElementNativeID(checkbox)) setCheckBoxState:state];
+  naDefineNativeCocoaObject(NANativeCheckBox, nativecheckbox, checkbox);
+  [nativecheckbox setCheckBoxState:state];
 }
 
 
 
 NA_HDEF NABool naGetCheckBoxState(NACheckBox* checkbox){
-  return [((NA_COCOA_BRIDGE NANativeCheckBox*)naGetUIElementNativeID(checkbox)) checkboxState];
+  naDefineNativeCocoaObject(NANativeCheckBox, nativecheckbox, checkbox);
+  return [nativecheckbox checkboxState];
 }
 
 

@@ -51,7 +51,7 @@ NA_DEF NATextBox* naNewTextBox(NARect rect){
   NACoreTextBox* coretextbox = naAlloc(NACoreTextBox);
   
   NANativeTextBox* nativeTextBox = [[NANativeTextBox alloc] initWithCoreTextBox:coretextbox frame:naMakeNSRectWithRect(rect)];
-  naInitCoreTextBox(coretextbox, (void*)NA_COCOA_RETAIN(nativeTextBox));
+  naInitCoreTextBox(coretextbox, NA_COCOA_TAKE_OWNERSHIP(nativeTextBox));
   
   return (NATextBox*)coretextbox;
 }
@@ -66,19 +66,22 @@ NA_DEF void naDestructTextBox(NATextBox* textbox){
 
 
 NA_DEF void naSetTextBoxText(NATextBox* textbox, const NAUTF8Char* text){
-  [((NA_COCOA_BRIDGE NANativeTextBox*)naGetUIElementNativeID(textbox)) setText:text];
+  naDefineNativeCocoaObject(NANativeTextBox, nativetextbox, textbox);
+  [nativetextbox setText:text];
 }
 
 
 
 NA_DEF void naSetTextBoxTextAlignment(NATextBox* textbox, NATextAlignment alignment){
-  [((NA_COCOA_BRIDGE NANativeTextBox*)naGetUIElementNativeID(textbox)) setTextAlignment:alignment];
+  naDefineNativeCocoaObject(NANativeTextBox, nativetextbox, textbox);
+  [nativetextbox setTextAlignment:alignment];
 }
 
 
 
 NA_DEF void naSetTextBoxFontKind(NATextBox* textbox, NAFontKind kind){
-  [((NA_COCOA_BRIDGE NANativeTextBox*)naGetUIElementNativeID(textbox)) setFontKind:kind];
+  naDefineNativeCocoaObject(NANativeTextBox, nativetextbox, textbox);
+  [nativetextbox setFontKind:kind];
 }
 
 

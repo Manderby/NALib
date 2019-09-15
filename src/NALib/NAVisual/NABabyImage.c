@@ -128,7 +128,7 @@ NA_HDEF void naBlendBabyImage(NAInt pixelCount, float* ret, const float* base, c
 NA_DEF NABabyImage* naAllocBabyImageWithTint(const NABabyImage* base, const NABabyColor tint, NABlendMode mode, float blend){
   #ifndef NDEBUG
     if(!tint)
-      naError("tint is Null");
+      naCrash("tint is Null");
     if(tint[3] == 0.f && (tint[0] != 0.f || tint[1] != 0.f || tint[2] != 0.f))
       naError("insecure tint color given");
   #endif
@@ -152,7 +152,7 @@ NA_DEF NABabyImage* naAllocBabyImageWithTint(const NABabyImage* base, const NABa
 NA_DEF NABabyImage* naAllocBabyImageWithBlend(const NABabyImage* base, const NABabyImage* top, NABlendMode mode, float blend){
   #ifndef NDEBUG
     if(!top)
-      naError("top is Null");
+      naCrash("top is Null");
     if(base && !naEqualSizei(naGetBabyImageSize(base), naGetBabyImageSize(top)))
       naError("The two images have not the same size");
   #endif

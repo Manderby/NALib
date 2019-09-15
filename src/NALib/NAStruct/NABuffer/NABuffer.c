@@ -564,16 +564,14 @@ NA_DEF NABool naEqualBufferToBuffer(const NABuffer* buffer1, const NABuffer* buf
 
   while(resultequal && totalremainingbytes){
     NAInt remainingbytes;
-    const NABufferPart* part1;
-    const NABufferPart* part2;
     NAInt remainingbytes1;
     NAInt remainingbytes2;
     const NAByte* bufferbytes1;
     const NAByte* bufferbytes2;
 
-    part1 = naGetBufferPart(&iter1);
-    part2 = naGetBufferPart(&iter2);
     #ifndef NDEBUG
+      const NABufferPart* part1 = naGetBufferPart(&iter1);
+      const NABufferPart* part2 = naGetBufferPart(&iter2);
       if(naIsBufferPartSparse(part1))
         naError("Buffer 1 has sparse part");
       if(naIsBufferPartSparse(part2))

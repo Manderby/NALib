@@ -55,7 +55,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
     [pool drain];
   #endif
 
-  [NSApp setDelegate:naGetUIElementNativeID(app)];
+  [NSApp setDelegate:(NA_COCOA_BRIDGE id)naGetUIElementNativeID(app)];
   
 //  SEL selector = @selector(doSomethingWithObject:afterDelay:);
 //  IMP newImp = (IMP)swizzledDoSometingWithObjectAfterDelay;
@@ -100,12 +100,12 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 
 
-NA_DEF NAApplication* naNewApplication(void){
+NA_HDEF NAApplication* naNewApplication(void){
   NACoreApplication* coreapplication = naAlloc(NACoreApplication);
 
   NANativeApplicationDelegate* nativeappdelegate = [[NANativeApplicationDelegate alloc] initWithCoreApplication:coreapplication];
 
-  naInitCoreApplication(coreapplication, (void*)NA_COCOA_RETAIN(nativeappdelegate));
+  naInitCoreApplication(coreapplication, NA_COCOA_TAKE_OWNERSHIP(nativeappdelegate));
 
   return (NAApplication*)coreapplication;
 }
@@ -138,7 +138,7 @@ NA_DEF void naOpenConsoleWindow(const NAUTF8Char* windowtitle){
 #define NA_COCOA_BUNDLE_VERSION_KEY @"CFBundleVersion"
 #define NA_COCOA_BUNDLE_ICON_FILE_KEY @"CFBundleIconFile"
 
-NAString* naNewBundleApplicationName(void){
+NA_DEF NAString* naNewApplicationName(void){
   NSString* applicationname = [[NSBundle mainBundle] localizedStringForKey:NA_COCOA_BUNDLE_APPLICATION_NAME value:nil table:NA_COCOA_BUNDLE_PLIST];
   if(!applicationname){
     applicationname = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_APPLICATION_NAME];
@@ -147,19 +147,19 @@ NAString* naNewBundleApplicationName(void){
   return retstring;
 }
 
-NAString* naNewBundleVersionString(void){
+NA_DEF NAString* naNewApplicationVersionString(void){
   NSString* versionstring = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_SHORT_KEY];
   NAString* retstring = naNewStringWithFormat("%s", [versionstring UTF8String]);
   return retstring;
 }
 
-NAString* naNewBundleBuildString(void){
+NA_DEF NAString* naNewApplicationBuildString(void){
   NSString* buildstring = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_KEY];
   NAString* retstring = naNewStringWithFormat("%s", [buildstring UTF8String]);
   return retstring;
 }
 
-NAString* naNewBundleIconPath(void){
+NA_DEF NAString* naNewApplicationIconPath(void){
   NSString* iconfilename = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_ICON_FILE_KEY];
   NSString* iconbasename = [iconfilename stringByDeletingPathExtension];
   NSURL* url = [[NSBundle mainBundle] URLForResource:iconbasename withExtension:@"icns"];
@@ -167,7 +167,7 @@ NAString* naNewBundleIconPath(void){
   return retstring;
 }
 
-NAString* naNewBundleResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
+NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
   NSURL* url;
   if(dir){
     url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix] subdirectory:[NSString stringWithUTF8String:dir]];

@@ -19,6 +19,7 @@ correct, complete or final.
 - Enabled ARC (automatic reference counting) on cocoa for mac for threading
   and ui.
 - Added naPeekStack
+- naTestFlag is now called naGetFlag
 
 
 Version 23 (first published 2019-Jun-30)

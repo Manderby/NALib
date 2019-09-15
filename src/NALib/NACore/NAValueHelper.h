@@ -26,9 +26,9 @@
 
 
 // Tests a bit mask for the specified flag and returns NA_TRUE if it is set.
-NA_IAPI NABool naTestFlag(int flags, int flag);
-NA_IAPI NABool naTestFlagi(NAInt flags, NAInt flag);
-NA_IAPI NABool naTestFlagu(NAUInt flags, NAUInt flag);
+NA_IAPI NABool naGetFlag(int flags, int flag);
+NA_IAPI NABool naGetFlagi(NAInt flags, NAInt flag);
+NA_IAPI NABool naGetFlagu(NAUInt flags, NAUInt flag);
 // Sets the given flag in the bit mask according to the boolean parameter set.
 NA_IAPI void   naSetFlag(int* flags, int flag, NABool set);
 NA_IAPI void   naSetFlagi(NAInt* flags, NAInt flag, NABool set);
@@ -122,35 +122,47 @@ NA_HIAPI double naAlignValued(double x, double offset, double alignlength);
 
 
 
-NA_IDEF NABool naTestFlag(int flags, int flag){
+NA_IDEF NABool naGetFlag(int flags, int flag){
   return ((flags & flag) == flag);
 }
-NA_IDEF NABool naTestFlagi(NAInt flags, NAInt flag){
+NA_IDEF NABool naGetFlagi(NAInt flags, NAInt flag){
   return ((flags & flag) == flag);
 }
-NA_IDEF NABool naTestFlagu(NAUInt flags, NAUInt flag){
+NA_IDEF NABool naGetFlagu(NAUInt flags, NAUInt flag){
   return ((flags & flag) == flag);
 }
 NA_IDEF void naSetFlag(int* flags, int flag, NABool set){
-  if(set){(*flags) |= flag;}else{(*flags) &= ~flag;}
+  #ifndef NDEBUG
+    if(set != NA_FALSE && set != NA_TRUE)
+      naError("Boolean value invalid");
+  #endif
+  *flags = (*flags & ~flag) | (set * flag);
 }
 NA_IDEF void naSetFlagi(NAInt* flags, NAInt flag, NABool set){
-  if(set){(*flags) |= flag;}else{(*flags) &= ~flag;}
+  #ifndef NDEBUG
+    if(set != NA_FALSE && set != NA_TRUE)
+      naError("Boolean value invalid");
+  #endif
+  *flags = (*flags & ~flag) | (set * flag);
 }
 NA_IDEF void naSetFlagu(NAUInt* flags, NAUInt flag, NABool set){
-  if(set){(*flags) |= flag;}else{(*flags) &= ~flag;}
+  #ifndef NDEBUG
+    if(set != NA_FALSE && set != NA_TRUE)
+      naError("Boolean value invalid");
+  #endif
+  *flags = (*flags & ~flag) | ((NAUInt)set * flag);
 }
 NA_IDEF NABool naToggleFlag(int* flags, int flag){
   (*flags) ^= flag;
-  return naTestFlag(*flags, flag);
+  return naGetFlag(*flags, flag);
 }
 NA_IDEF NABool naToggleFlagi(NAInt* flags, NAInt flag){
   (*flags) ^= flag;
-  return naTestFlagi(*flags, flag);
+  return naGetFlagi(*flags, flag);
 }
 NA_IDEF NABool naToggleFlagu(NAUInt* flags, NAUInt flag){
   (*flags) ^= flag;
-  return naTestFlagu(*flags, flag);
+  return naGetFlagu(*flags, flag);
 }
 
 

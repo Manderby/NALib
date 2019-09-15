@@ -16,7 +16,7 @@ NACoreApplication* na_app = NA_NULL;
 
 
 
-NA_HDEF void naRegisterCoreUIElement(NACoreUIElement* coreuielement, NAUIElementType elementtype, void* nativeID){
+NA_HDEF void naRegisterCoreUIElement(NACoreUIElement* coreuielement, NAUIElementType elementtype, NANativeID nativeID){
   naInitRefCount(&(coreuielement->refcount));
   coreuielement->parent = NA_NULL;
   coreuielement->elementtype = elementtype;
@@ -35,12 +35,28 @@ NA_HDEF void naUnregisterCoreUIElement(NACoreUIElement* coreuielement){
 
 
 
-NA_HDEF void naInitCoreApplication(NACoreApplication* coreapplication, void* nativeId){
+NA_HDEF void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent){
+  NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
+  // todo: remove from old parent
+  coreelement->parent = parent;
+}
+
+
+
+NA_HDEF void naInitCoreApplication(NACoreApplication* coreapplication, NANativeID nativeId){
   na_app = coreapplication;
+
+  naInitList(&(coreapplication->uielements));
+
   coreapplication->translator = NA_NULL;
   naStartTranslator();
   
-  naInitList(&(coreapplication->uielements));
+  coreapplication->mouseStatus.pos = naMakePos(0, 0);
+  coreapplication->mouseStatus.prevpos = naMakePos(0, 0);
+  
+  coreapplication->keyboardStatus.keyCode = NA_KEYCODE_ESC;
+  coreapplication->keyboardStatus.modifiers = 0;
+  
   coreapplication->flags = 0;
   coreapplication->flags |= NA_APPLICATION_FLAG_RUNNING;
   coreapplication->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
@@ -77,114 +93,107 @@ NA_HDEF void naClearCoreScreen(NACoreScreen* corescreen){
 
 
 
-NA_HDEF void naInitCoreWindow(NACoreWindow* corewindow, void* nativeId, NACoreSpace* contentspace, NABool fullscreen, NARect windowedframe){
+NA_HDEF void naInitCoreWindow(NACoreWindow* corewindow, void* nativeId, NACoreSpace* contentspace, NABool fullscreen, NABool resizeable, NARect windowedframe){
   naRegisterCoreUIElement(&(corewindow->uielement), NA_UI_WINDOW, nativeId);
   corewindow->contentspace = contentspace;
-  corewindow->fullscreen = fullscreen;
+  corewindow->flags = 0;
+  if(fullscreen){corewindow->flags |= NA_CORE_WINDOW_FLAG_FULLSCREEN;}
+  if(resizeable){corewindow->flags |= NA_CORE_WINDOW_FLAG_RESIZEABLE;}
   corewindow->windowedframe = windowedframe;
 }
 NA_HDEF void naClearCoreWindow(NACoreWindow* corewindow){
   naUnregisterCoreUIElement(&(corewindow->uielement));
 }
 
+NA_DEF void naPreventWindowFromClosing(NAWindow* window, NABool prevent){
+  NACoreWindow* corewindow = (NACoreWindow*)window;
+  #ifndef NDEBUG
+    if(!naGetFlagi(corewindow->flags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE))
+      naError("This function is only allowed during a \"CLOSES\" event");
+  #endif
+  naSetFlagi(&(corewindow->flags), NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, prevent);
+}
 
 
-NA_HAPI void naInitCoreSpace(NACoreSpace* coreespace, void* nativeId){
+
+NA_HDEF void naInitCoreSpace(NACoreSpace* coreespace, void* nativeId){
   naRegisterCoreUIElement(&(coreespace->uielement), NA_UI_SPACE, nativeId);
 }
-NA_HAPI void naClearCoreSpace(NACoreSpace* coreespace){
+NA_HDEF void naClearCoreSpace(NACoreSpace* coreespace){
   naUnregisterCoreUIElement(&(coreespace->uielement));
 }
 
 
 
-NA_HAPI void naInitCoreImageSpace(NACoreImageSpace* coreimagespace, void* nativeId){
+NA_HDEF void naInitCoreImageSpace(NACoreImageSpace* coreimagespace, void* nativeId){
   naRegisterCoreUIElement(&(coreimagespace->uielement), NA_UI_IMAGESPACE, nativeId);
 }
-NA_HAPI void naClearCoreImageSpace(NACoreImageSpace* coreimagespace){
+NA_HDEF void naClearCoreImageSpace(NACoreImageSpace* coreimagespace){
   naUnregisterCoreUIElement(&(coreimagespace->uielement));
 }
 
 
 
-NA_HAPI void naInitCoreOpenGLSpace(NACoreOpenGLSpace* coreopenglspace, void* nativeId){
+NA_HDEF void naInitCoreOpenGLSpace(NACoreOpenGLSpace* coreopenglspace, void* nativeId){
   naRegisterCoreUIElement(&(coreopenglspace->uielement), NA_UI_OPENGLSPACE, nativeId);
 }
-NA_HAPI void naClearCoreOpenGLSpace(NACoreOpenGLSpace* coreopenglspace){
+NA_HDEF void naClearCoreOpenGLSpace(NACoreOpenGLSpace* coreopenglspace){
   naUnregisterCoreUIElement(&(coreopenglspace->uielement));
 }
 
 
 
-NA_HAPI void naInitCoreButton(NACoreButton* corebutton, void* nativeId){
+NA_HDEF void naInitCoreButton(NACoreButton* corebutton, void* nativeId){
   naRegisterCoreUIElement(&(corebutton->uielement), NA_UI_BUTTON, nativeId);
 }
-NA_HAPI void naClearCoreButton(NACoreButton* corebutton){
+NA_HDEF void naClearCoreButton(NACoreButton* corebutton){
   naUnregisterCoreUIElement(&(corebutton->uielement));
 }
 
 
 
-NA_HAPI void naInitCoreRadio(NACoreRadio* coreradio, void* nativeId){
+NA_HDEF void naInitCoreRadio(NACoreRadio* coreradio, void* nativeId){
   naRegisterCoreUIElement(&(coreradio->uielement), NA_UI_RADIO, nativeId);
 }
-NA_HAPI void naClearCoreRadio(NACoreRadio* coreradio){
+NA_HDEF void naClearCoreRadio(NACoreRadio* coreradio){
   naUnregisterCoreUIElement(&(coreradio->uielement));
 }
 
 
 
-NA_HAPI void naInitCoreCheckBox(NACoreCheckBox* corecheckbox, void* nativeId){
+NA_HDEF void naInitCoreCheckBox(NACoreCheckBox* corecheckbox, void* nativeId){
   naRegisterCoreUIElement(&(corecheckbox->uielement), NA_UI_CHECKBOX, nativeId);
 }
-NA_HAPI void naClearCoreCheckBox(NACoreCheckBox* corecheckbox){
+NA_HDEF void naClearCoreCheckBox(NACoreCheckBox* corecheckbox){
   naUnregisterCoreUIElement(&(corecheckbox->uielement));
 }
 
 
 
-NA_HAPI void naInitCoreLabel(NACoreLabel* corelabel, void* nativeId){
+NA_HDEF void naInitCoreLabel(NACoreLabel* corelabel, void* nativeId){
   naRegisterCoreUIElement(&(corelabel->uielement), NA_UI_LABEL, nativeId);
 }
-NA_HAPI void naClearCoreLabel(NACoreLabel* corelabel){
+NA_HDEF void naClearCoreLabel(NACoreLabel* corelabel){
   naUnregisterCoreUIElement(&(corelabel->uielement));
 }
 
 
 
-NA_HAPI void naInitCoreTextField(NACoreTextField* coretextfield, void* nativeId){
+NA_HDEF void naInitCoreTextField(NACoreTextField* coretextfield, void* nativeId){
   naRegisterCoreUIElement(&(coretextfield->uielement), NA_UI_TEXTFIELD, nativeId);
 }
-NA_HAPI void naClearCoreTextField(NACoreTextField* coretextfield){
+NA_HDEF void naClearCoreTextField(NACoreTextField* coretextfield){
   naUnregisterCoreUIElement(&(coretextfield->uielement));
 }
 
 
 
-NA_HAPI void naInitCoreTextBox(NACoreTextBox* coretextbox, void* nativeId){
+NA_HDEF void naInitCoreTextBox(NACoreTextBox* coretextbox, void* nativeId){
   naRegisterCoreUIElement(&(coretextbox->uielement), NA_UI_TEXTBOX, nativeId);
 }
-NA_HAPI void naClearCoreTextBox(NACoreTextBox* coretextbox){
+NA_HDEF void naClearCoreTextBox(NACoreTextBox* coretextbox){
   naUnregisterCoreUIElement(&(coretextbox->uielement));
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -200,8 +209,106 @@ NA_HDEF void* naGetUINALibEquivalent(NANativeID nativeID){
 
 
 
+NA_HDEF NABool naDispatchUIElementCommand(NACoreUIElement* element, NAUICommand command){
+  NABool finished = NA_FALSE;
+  NAListIterator iter;
+
+  naBeginListMutatorIteration(NACoreReaction* corereaction, &(element->reactions), iter);
+    if(corereaction->command == command){
+      NAReaction reaction = {(NAUIElement*)element, command, corereaction->controller};
+      finished = corereaction->handler(reaction);
+      // If the handler tells us to stop handling the command, we do so.
+      if(finished){break;}
+    }
+  naEndListIteration(iter);
+
+  // If the command has not been finished, search for other reactions in the parent elements.
+  if(!finished){
+    NACoreUIElement* parentelement = (NACoreUIElement*)naGetUIElementParent((NAUIElement*)element);
+    if(parentelement){finished = naDispatchUIElementCommand(parentelement, command);}
+  }
+
+  return finished;
+}
+
+
+
+NA_HDEF void naSetMouseWarpedTo(NAPos newpos){
+  na_app->mouseStatus.prevpos = newpos;
+  na_app->mouseStatus.pos = newpos;
+}
+
+
+NA_HDEF void naSetMouseMovedByDiff(double deltaX, double deltaY){
+  na_app->mouseStatus.prevpos = na_app->mouseStatus.pos;
+  na_app->mouseStatus.pos.x += deltaX;
+  na_app->mouseStatus.pos.y += deltaY;
+}
+
+
+NA_HDEF void naSetMouseEnteredAtPos(NAPos newpos){
+  na_app->mouseStatus.prevpos = newpos;
+  na_app->mouseStatus.pos = newpos;
+}
+
+
+NA_HDEF void naSetMouseExitedAtPos(NAPos newpos){
+  na_app->mouseStatus.prevpos = na_app->mouseStatus.pos;
+  na_app->mouseStatus.pos = newpos;
+}
+
+
+
+NA_HDEF NAUIElementType naGetUIElementType(NAUIElement* coreuielement){
+  return ((NACoreUIElement*)coreuielement)->elementtype;
+}
+
+
+
+NA_HDEF NANativeID naGetUIElementNativeID(NAUIElement* coreuielement){
+  return ((NACoreUIElement*)coreuielement)->nativeID;
+}
+
+
+
+NA_HDEF void naRefreshUIElement(NAUIElement* coreuielement, double timediff){
+  //if(timediff == 0.){
+  //  naRefreshUIElementNow(coreuielement);
+  //}else{
+    naCallApplicationFunctionInSeconds(naRefreshUIElementNow, (NACoreUIElement*)coreuielement, timediff);
+  //}
+}
+
+
+
+NA_HDEF NABool naIsCoreApplicationRunning(void){
+  return (na_app->flags & NA_APPLICATION_FLAG_RUNNING);
+}
+
+
+
+
+// //////////////////////////////////////
+// Public functions
+
+
+
+// Prototypes for the naReleaseUIElement frunction.
+NA_API void naDestructApplication(NAApplication* application);
+NA_API void naDestructWindow(NAWindow* window);
+NA_API void naDestructSpace(NASpace* space);
+NA_API void naDestructImageSpace(NAImageSpace* imagespace);
+NA_API void naDestructOpenGLSpace(NAOpenGLSpace* space);
+NA_API void naDestructButton(NAButton* button);
+NA_API void naDestructRadio(NARadio* radio);
+NA_API void naDestructCheckBox(NACheckBox* checkbox);
+NA_API void naDestructLabel(NALabel* label);
+NA_API void naDestructTextField(NATextField* textfield);
+NA_API void naDestructTextBox(NATextBox* textbox);
+
+
+
 NA_DEF void naReleaseUIElement(NAUIElement* uielement){
-//  NAListIterator iter;
   NACoreUIElement* element = (NACoreUIElement*)uielement;
 
   naForeachListMutable(&(element->reactions), naFree);
@@ -235,10 +342,8 @@ NA_DEF void naReleaseUIElement(NAUIElement* uielement){
 
 
 
-
-
-NA_DEF void naAddUIReaction(void* controller, NAUIElement* uielement, NAUICommand command, NAReactionHandler handler){
-  NAReaction* newreaction;
+NA_DEF void naAddUIReaction(NAUIElement* uielement, NAUICommand command, NAReactionHandler handler, void* controller){
+  NACoreReaction* corereaction;
   NACoreUIElement* element = (NACoreUIElement*)uielement;
   #ifndef NDEBUG
     if((command == NA_UI_COMMAND_RESHAPE) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
@@ -263,126 +368,52 @@ NA_DEF void naAddUIReaction(void* controller, NAUIElement* uielement, NAUIComman
     if((command == NA_UI_COMMAND_EDITED) && (naGetUIElementType(uielement) != NA_UI_TEXTFIELD))
       naError("Only textfields can receyve EDITED commands.");
   #endif
-  newreaction = naAlloc(NAReaction);
-  newreaction->controller = controller;
-  newreaction->command = command;
-  newreaction->handler = handler;
+  corereaction = naAlloc(NACoreReaction);
+  corereaction->controller = controller;
+  corereaction->command = command;
+  corereaction->handler = handler;
   if(command == NA_UI_COMMAND_MOUSE_MOVED){naRetainWindowMouseTracking(naGetUIElementWindow(uielement));}
-  naAddListLastMutable(&((element)->reactions), newreaction);
+  naAddListLastMutable(&((element)->reactions), corereaction);
 }
 
-NA_API void naAddUIKeyboardShortcut(void* controller, NAUIElement* uielement, NAKeyboardShortcut shortcut, NAReactionHandler handler){
+
+
+NA_DEF NAKeyboardStatus naMakeKeybardStatus(NAInt modifiers, NAUIKeyCode keyCode){
+  NAKeyboardStatus newshtatus;
+  newshtatus.modifiers = modifiers;
+  newshtatus.keyCode = keyCode;
+  return newshtatus;
+}
+
+
+
+NA_DEF void naAddUIKeyboardShortcut(NAUIElement* uielement, NAKeyboardStatus shortcut, NAReactionHandler handler, void* controller){
   NACoreUIElement* element = (NACoreUIElement*)uielement;
   #ifndef NDEBUG
     if((naGetUIElementType(uielement) != NA_UI_APPLICATION) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
       naError("Currently, only applications and windows are allowed as uielement. Use naGetApplication() for the app.");
   #endif
-  NAKeyboardShortcutReaction* newshortcutreaction = naAlloc(NAKeyboardShortcutReaction);
-  newshortcutreaction->controller = controller;
-  newshortcutreaction->shortcut = shortcut;
-  newshortcutreaction->handler = handler;
-  naAddListLastMutable(&((element)->shortcuts), newshortcutreaction);
+  NACoreKeyboardShortcutReaction* corekeyreaction = naAlloc(NACoreKeyboardShortcutReaction);
+  corekeyreaction->controller = controller;
+  corekeyreaction->shortcut = shortcut;
+  corekeyreaction->handler = handler;
+  naAddListLastMutable(&((element)->shortcuts), corekeyreaction);
 }
 
 
 
-
-
-NA_DEF NABool naDispatchUIElementCommand(NACoreUIElement* element, NAUICommand command, void* arg){
-  NABool finished = NA_FALSE;
-  NAListIterator iter;
-
-  naBeginListMutatorIteration(NAReaction* curreaction, &(element->reactions), iter);
-    if(curreaction->command == command){
-      finished = curreaction->handler(curreaction->controller, (NAUIElement*)element, command, arg);
-      // If the handler tells us to stop handling the command, we do so.
-      if(finished){break;}
-    }
-  naEndListIteration(iter);
-
-  // If the command has not been finished, search for other reactions in the parent elements.
-  if(!finished){
-    NACoreUIElement* parentelement = (NACoreUIElement*)naGetUIElementParent((NAUIElement*)element);
-    if(parentelement){finished = naDispatchUIElementCommand(parentelement, command, arg);}
-  }
-
-  return finished;
+NA_HDEF void naStopApplication(void){
+  na_app->flags &= ~NA_APPLICATION_FLAG_RUNNING;
 }
 
 
 
-
-
-
-
-
-NA_DEF const NACursorInfo* naGetMouseInfo(){
-  return &(na_app->mouse);
-}
-
-
-
-NA_DEF NAPos naGetCursorPos(const NACursorInfo* cursorinfo){
-  return cursorinfo->pos;
-}
-
-
-NA_DEF NASize naGetCursorDelta(const NACursorInfo* cursorinfo){
-  return naMakeSizeE(cursorinfo->pos.x - cursorinfo->prevpos.x, cursorinfo->pos.y - cursorinfo->prevpos.y);
-}
-
-
-
-
-NA_DEF void naSetMouseWarpedTo(NAPos newpos){
-  na_app->mouse.prevpos = newpos;
-  na_app->mouse.pos = newpos;
-}
-
-
-NA_DEF void naSetMouseMovedByDiff(double deltaX, double deltaY){
-  na_app->mouse.prevpos = na_app->mouse.pos;
-  na_app->mouse.pos.x += deltaX;
-  na_app->mouse.pos.y += deltaY;
-}
-
-
-NA_DEF void naSetMouseEnteredAtPos(NAPos newpos){
-  na_app->mouse.prevpos = newpos;
-  na_app->mouse.pos = newpos;
-}
-
-
-NA_DEF void naSetMouseExitedAtPos(NAPos newpos){
-  na_app->mouse.prevpos = na_app->mouse.pos;
-  na_app->mouse.pos = newpos;
-}
-
-
-
-
-
-
-
-
-NA_HDEF NAUIElementType naGetUIElementType(NAUIElement* coreuielement){
-  return ((NACoreUIElement*)coreuielement)->elementtype;
-}
-
-
-
-NA_HDEF NANativeID naGetUIElementNativeID(NAUIElement* coreuielement){
-  return ((NACoreUIElement*)coreuielement)->nativeID;
-}
-
-
-
-NA_HDEF void naRefreshUIElement(NAUIElement* coreuielement, double timediff){
-  //if(timediff == 0.){
-  //  naRefreshUIElementNow(coreuielement);
-  //}else{
-    naCallApplicationFunctionInSeconds(naRefreshUIElementNow, (NACoreUIElement*)coreuielement, timediff);
-  //}
+NA_HDEF NAApplication* naGetApplication(void){
+  #ifndef NDEBUG
+    if(naGetListFirstMutable(&(na_app->uielements)) != na_app)
+      naError("Internal error: application is not in ui elements list");
+  #endif
+  return na_app;
 }
 
 
@@ -410,41 +441,30 @@ NA_HDEF NAWindow* naGetUIElementWindow(NAUIElement* coreuielement){
 
 
 
-NA_HDEF void naStopApplication(void){
-  na_app->flags &= ~NA_APPLICATION_FLAG_RUNNING;
+NA_DEF const NAMouseStatus* naGetMouseStatus(){
+  return &(na_app->mouseStatus);
 }
 
 
 
-NA_HDEF NAApplication* naGetApplication(void){
-  #ifndef NDEBUG
-    if(naGetListFirstMutable(&(na_app->uielements)) != na_app)
-      naError("Internal error: application is not in ui elements list");
-  #endif
-  return na_app;
+NA_DEF NAPos naGetMousePos(const NAMouseStatus* mousestatus){
+  return mousestatus->pos;
 }
 
 
 
-NA_HDEF NABool naIsCoreApplicationRunning(void){
-  return (na_app->flags & NA_APPLICATION_FLAG_RUNNING);
+NA_DEF NASize naGetMouseDelta(const NAMouseStatus* mousestatus){
+  return naMakeSizeE(mousestatus->pos.x - mousestatus->prevpos.x, mousestatus->pos.y - mousestatus->prevpos.y);
 }
 
 
 
-NAKeyboardShortcut naMakeKeybardShortcut(NAInt modifiers, NAUIKeyCode keyCode){
-  NAKeyboardShortcut newshortcut;
-  newshortcut.modifiers = modifiers;
-  newshortcut.keyCode = keyCode;
-  return newshortcut;
+NA_DEF NAKeyboardStatus naGetKeyboardStatus(){
+  return na_app->keyboardStatus;
 }
-
 
 
 #endif // (NA_CONFIG_COMPILE_GUI == 1)
-
-
-
 
 // Copyright (c) NALib, Tobias Stamm
 //

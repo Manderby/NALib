@@ -17,49 +17,66 @@ NA_HIDEF NSUserDefaults* naGetNativePreferences(){
 
 
 
-NA_DEF void naInitPreferencesBool(const char* key, NABool value){
+NA_DEF NABool naInitPreferencesBool(const char* key, NABool value){
   NSUserDefaults* userdefaults = naGetNativePreferences();
   NSString* nskey = [NSString stringWithUTF8String:key];
-  if([userdefaults integerForKey:nskey] == 0){
-    [userdefaults setInteger:(value ? 1 : -1) forKey:nskey];
+  NSInteger curValue = [userdefaults integerForKey:nskey];
+  if(curValue == 0){
+    curValue = (value ? 1 : -1);
+    [userdefaults setInteger:curValue forKey:nskey];
   }
+  return (NABool)(curValue == 1);
 }
-NA_DEF void naInitPreferencesInt(const char* key, NAInt value){
+NA_DEF NAInt naInitPreferencesInt(const char* key, NAInt value){
   #ifndef NDEBUG
     if(value == NSIntegerMin)
       naError("Minimal integer value is reserved");
   #endif
   NSUserDefaults* userdefaults = naGetNativePreferences();
   NSString* nskey = [NSString stringWithUTF8String:key];
-  if([userdefaults integerForKey:nskey] == 0){
-    [userdefaults setInteger:((value == 0) ? NSIntegerMin : value) forKey:nskey];
+  NSInteger curValue = [userdefaults integerForKey:nskey];
+  if(curValue == 0){
+    curValue = ((value == 0) ? NSIntegerMin : value);
+    [userdefaults setInteger:curValue forKey:nskey];
   }
+  return (NAInt)((curValue == NSIntegerMin) ? 0 : curValue);
 }
-NA_DEF void naInitPreferencesEnum(const char* key, NAInt value){
+NA_DEF NAInt naInitPreferencesEnum(const char* key, NAInt value){
+  #ifndef NDEBUG
+    if(value == -1)
+      naError("Value -1 can not be stored correctly.");
+  #endif
   NSUserDefaults* userdefaults = naGetNativePreferences();
   NSString* nskey = [NSString stringWithUTF8String:key];
-  if([userdefaults integerForKey:nskey] == 0){
-    [userdefaults setInteger:value + 1 forKey:nskey];
+  NSInteger curValue = [userdefaults integerForKey:nskey];
+  if(curValue == 0){
+    curValue = value + 1;
+    [userdefaults setInteger:curValue forKey:nskey];
   }
+  return (NAInt)curValue - 1;
 }
-NA_DEF void naInitPreferencesDouble(const char* key, double value){
+NA_DEF double naInitPreferencesDouble(const char* key, double value){
   #ifndef NDEBUG
     if(naIsNaN(value))
       naError("NaN value is reserved");
   #endif
   NSUserDefaults* userdefaults = naGetNativePreferences();
   NSString* nskey = [NSString stringWithUTF8String:key];
-  if([userdefaults doubleForKey:nskey] == 0.){
-    [userdefaults setDouble:((value == 0) ? NA_NAN : value) forKey:nskey];
+  double curValue = [userdefaults doubleForKey:nskey] ;
+  if(curValue == 0.){
+    curValue = ((value == 0) ? NA_NAN : value);
+    [userdefaults setDouble:curValue forKey:nskey];
   }
+  return (double)(naIsNaN(curValue) ? 0. : curValue);
 }
-NA_DEF void naInitPreferencesString(const char* key, NAString* value){
+NA_DEF NAString* naInitPreferencesString(const char* key, NAString* value){
   NSUserDefaults* userdefaults = naGetNativePreferences();
   NSString* nskey = [NSString stringWithUTF8String:key];
   if([userdefaults objectForKey:nskey] == nil){
     NSString* valueobj = [NSString stringWithUTF8String:naGetStringUTF8Pointer(value)];
     [userdefaults setObject:valueobj forKey:nskey];
   }
+  return naNewPreferencesString(key);
 }
 
 
@@ -79,6 +96,10 @@ NA_DEF void naSetPreferencesInt(const char* key, NAInt value){
   [userdefaults setInteger:((value == 0) ? NSIntegerMin : value) forKey:nskey];
 }
 NA_DEF void naSetPreferencesEnum(const char* key, NAInt value){
+  #ifndef NDEBUG
+    if(value == -1)
+      naError("Value -1 can not be stored correctly.");
+  #endif
   NSUserDefaults* userdefaults = naGetNativePreferences();
   NSString* nskey = [NSString stringWithUTF8String:key];
   [userdefaults setInteger:value + 1 forKey:nskey];

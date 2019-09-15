@@ -138,7 +138,7 @@
   [self setAllowsEditingTextAttributes: YES];
   [self setSelectable: YES];
 
-  NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] initWithString: [self stringValue]];
+  NSMutableAttributedString* attrString = NA_COCOA_AUTORELEASE([[NSMutableAttributedString alloc] initWithString: [self stringValue]]);
   NSRange range = NSMakeRange(0, [attrString length]);
 
   NSURL* nsurl = [NSURL URLWithString:[NSString stringWithUTF8String:url]];
@@ -153,7 +153,6 @@
   [attrString endEditing];
   
   [self setAttributedStringValue: attrString];
-  [attrString release];
 }
 - (void) setLabelEnabled:(NABool)enabled{
   [self setAlphaValue:enabled ? 1. : .35];
@@ -172,7 +171,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NARect rect){
   NACoreLabel* corelabel = naAlloc(NACoreLabel);
 
   NANativeLabel* nativeLabel = [[NANativeLabel alloc] initWithCoreLabel:corelabel frame:naMakeNSRectWithRect(rect)];
-  naInitCoreLabel(corelabel, (void*)NA_COCOA_RETAIN(nativeLabel));
+  naInitCoreLabel(corelabel, NA_COCOA_TAKE_OWNERSHIP(nativeLabel));
   naSetLabelText(corelabel, text);
   
   return (NALabel*)corelabel;
@@ -188,31 +187,36 @@ NA_DEF void naDestructLabel(NALabel* label){
 
 
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
-  [((NA_COCOA_BRIDGE NANativeLabel*)naGetUIElementNativeID(label)) setText:text];
+  naDefineNativeCocoaObject(NANativeLabel, nativelabel, label);
+  [nativelabel setText:text];
 }
 
 
 
 NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
-  [((NA_COCOA_BRIDGE NANativeLabel*)naGetUIElementNativeID(label)) setLink: url];
+  naDefineNativeCocoaObject(NANativeLabel, nativelabel, label);
+  [nativelabel setLink: url];
 }
 
 
 
 NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled){
-  [((NA_COCOA_BRIDGE NANativeLabel*)naGetUIElementNativeID(label)) setLabelEnabled:enabled];
+  naDefineNativeCocoaObject(NANativeLabel, nativelabel, label);
+  [nativelabel setLabelEnabled:enabled];
 }
 
 
 
 NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
-  [((NA_COCOA_BRIDGE NANativeLabel*)naGetUIElementNativeID(label)) setTextAlignment:alignment];
+  naDefineNativeCocoaObject(NANativeLabel, nativelabel, label);
+  [nativelabel setTextAlignment:alignment];
 }
 
 
 
 NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind){
-  [((NA_COCOA_BRIDGE NANativeLabel*)naGetUIElementNativeID(label)) setFontKind:kind];
+  naDefineNativeCocoaObject(NANativeLabel, nativelabel, label);
+  [nativelabel setFontKind:kind];
 }
 
 
