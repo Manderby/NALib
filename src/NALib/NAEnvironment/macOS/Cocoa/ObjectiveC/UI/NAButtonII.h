@@ -147,7 +147,7 @@ NA_HDEF void naSetButtonState(NAButton* button, NABool state){
 
 
 
-NA_HDEF void naSetButtonSubmit(NAButton* button, NAUIElement* controller, NAReactionHandler handler){
+NA_HDEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, NAUIElement* controller){
   naDefineNativeCocoaObject(NANativeButton, nativebutton, button);
   [nativebutton setDefaultButton:NA_TRUE];
   naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER), handler, controller);
@@ -155,7 +155,7 @@ NA_HDEF void naSetButtonSubmit(NAButton* button, NAUIElement* controller, NAReac
 
 
 
-NA_HDEF void naSetButtonAbort(NAButton* button, NAUIElement* controller, NAReactionHandler handler){
+NA_HDEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, NAUIElement* controller){
   naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC), handler, controller);
   naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_COMMAND, NA_KEYCODE_PERIOD), handler, controller);
 }

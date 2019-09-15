@@ -1,7 +1,11 @@
 .DS_Store
 build/
 publishedbundles/
+.vs
 *xcodeproj/manderim.*
 *xcshareddata*
 *xcuserdata*
 *xcworkspace*
+*vcxproj.user
+proj/VS2017/x64/
+proj/VS2017/NALibTest/x64/

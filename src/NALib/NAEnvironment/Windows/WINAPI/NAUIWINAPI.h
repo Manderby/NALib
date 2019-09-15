@@ -3,7 +3,7 @@
 // Full license notice at the bottom.
 
 
-#include "NAUICore.h"
+#include "../../NAUICore.h"
 
 #if (NA_CONFIG_COMPILE_GUI == 1)
 #if NA_OS == NA_OS_WINDOWS

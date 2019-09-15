@@ -266,7 +266,7 @@ NA_IDEF void naLockMutex(NAMutex mutex){
     #endif
     #ifndef NDEBUG
       if(windowsmutex->islockedbythisthread)
-        naError("naLockMutex", "Mutex was already locked by this thread. This is not how Mutexes in NALib work.");
+        naError("Mutex was already locked by this thread. This is not how Mutexes in NALib work.");
     #endif
     windowsmutex->islockedbythisthread = NA_TRUE;
     #ifndef NDEBUG
@@ -293,7 +293,7 @@ NA_IDEF void naUnlockMutex(NAMutex mutex){
     NAWindowsMutex* windowsmutex = (NAWindowsMutex*)mutex;
     #ifndef NDEBUG
       if(!naIsMutexLocked(mutex))
-        naError("naUnlockMutex", "Mutex was not locked. Note: If this only happends once and very rarely, it might be because this check is unreliable!");
+        naError("Mutex was not locked. Note: If this only happends once and very rarely, it might be because this check is unreliable!");
     #endif
     #ifndef NDEBUG
       windowsmutex->seemslocked = NA_FALSE;
@@ -413,11 +413,11 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
 NA_IDEF NAAlarm naMakeAlarm(void){
   NANativeAlarm alarm;
   #if NA_OS == NA_OS_WINDOWS
-    return CreateEvent(NULL, FALSE, FALSE, NULL);
+    alarm = CreateEvent(NULL, FALSE, FALSE, NULL);
   #else
     alarm = dispatch_semaphore_create(0);
-    return (NAAlarm)alarm;
   #endif
+  return (NAAlarm)alarm;
 }
 
 
@@ -441,7 +441,7 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarm, double maxwaittime){
     DWORD result;
     #ifndef NDEBUG
       if(maxwaittime < 0.)
-        naError("naAwaitAlarm", "maxwaittime should not be negative. Beware of the zero!");
+        naError("maxwaittime should not be negative. Beware of the zero!");
     #endif
     ResetEvent(alarm);
     if(maxwaittime == 0){
