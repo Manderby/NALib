@@ -9,3 +9,5 @@ publishedbundles/
 *vcxproj.user
 proj/VS2017/x64/
 proj/VS2017/NALibTest/x64/
+src/Debug
+src/x64

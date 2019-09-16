@@ -111,6 +111,7 @@ NA_HDEF NAApplication* naNewApplication(void){
 }
 
 
+
 NA_DEF void naDestructApplication(NAApplication* application){
   NACoreApplication* coreapplication = (NACoreApplication*)application;
   naClearCoreApplication(coreapplication);

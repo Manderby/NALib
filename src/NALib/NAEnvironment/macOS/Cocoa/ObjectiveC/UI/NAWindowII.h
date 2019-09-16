@@ -231,11 +231,14 @@ NA_DEF NAUIImageResolution naGetWindowUIResolution(NAWindow* window){
 }
 
 
+
 NA_HDEF void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstElem){
   naDefineNativeCocoaObject(NANativeWindow, nativewindow, window);
   naDefineNativeCocoaObject(NSView, nativefirst, firstElem);
   [nativewindow setInitialFirstResponder:nativefirst];
 }
+
+
 
 NA_HDEF NARect naGetWindowAbsoluteInnerRect(NACoreUIElement* window){
   NARect rect;
@@ -359,10 +362,14 @@ NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
   return naGetFlagi(corewindow->flags, NA_CORE_WINDOW_FLAG_FULLSCREEN);
 }
 
+
+
 NA_DEF NABool naIsWindowResizeable(NAWindow* window){
   NACoreWindow* corewindow = (NACoreWindow*)window;
   return naGetFlagi(corewindow->flags, NA_CORE_WINDOW_FLAG_RESIZEABLE);
 }
+
+
 
 NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){
   NACoreWindow* corewindow = (NACoreWindow*)window;

@@ -20,6 +20,7 @@
 // one single file speeds up the compilation considerably!
 
 
+#include "NABase.h"
 
 #if NA_OS == NA_OS_MAC_OS_X
 #if defined __OBJC__
@@ -28,8 +29,8 @@
 
 #import <Cocoa/Cocoa.h>
 
-#include "NAHelperCocoaII.h"
-#include "NAUIImageCocoaII.h"
+#include "ObjectiveC/NAHelperCocoaII.h"
+#include "ObjectiveC/NAUIImageCocoaII.h"
 
 #if (NA_CONFIG_COMPILE_GUI == 1)
 

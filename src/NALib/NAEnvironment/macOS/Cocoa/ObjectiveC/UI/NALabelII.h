@@ -10,10 +10,6 @@
 
 
 
-
-
-
-
 @implementation MDVerticallyCenteredTextFieldCell
 
 - (NSRect)adjustedFrameToVerticallyCenterText:(NSRect)rect {

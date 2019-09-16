@@ -10,59 +10,60 @@
 
 
 
-@implementation NANativeRadio
-- (id) initWithCoreRadio:(NACoreRadio*)newcoreradio frame:(NSRect)frame{
-  NSRect newbounds = frame;
-  newbounds.origin.x = 0;
-  newbounds.origin.y = 0;
-
-  self = [super initWithFrame:newbounds];
-  
-  [self setButtonType:NSButtonTypeRadio];
-//  [self setBezelStyle:NSBezelStyleRounded];
-//  [self setBezelStyle:NSBezelStyleShadowlessSquare];
-//  [self setBordered:YES];
-  coreradio = newcoreradio;
-  [self setTarget:self];
-  [self setAction:@selector(onPressed:)];
-
-  containingview = [[NSView alloc] initWithFrame:frame];
-  [containingview addSubview:self];
-
-  return self;
-}
-- (NSView*) getContainingView{
-  return containingview;
-}
-- (void) setText:(const NAUTF8Char*)text{
-  [self setTitle:[NSString stringWithUTF8String:text]];
-}
-- (void) onPressed:(id)sender{
-  NA_UNUSED(sender);
-  naDispatchUIElementCommand((NACoreUIElement*)coreradio, NA_UI_COMMAND_PRESSED);
-}
-- (void) setRadioState:(NABool)state{
-  [self setState:state ? NSOnState : NSOffState];
-}
-@end
+//@implementation NANativeRadio
+//- (id) initWithCoreRadio:(NACoreRadio*)newcoreradio frame:(NSRect)frame{
+//  NSRect newbounds = frame;
+//  newbounds.origin.x = 0;
+//  newbounds.origin.y = 0;
+//
+//  self = [super initWithFrame:newbounds];
+//  
+//  [self setButtonType:NSButtonTypeRadio];
+////  [self setBezelStyle:NSBezelStyleRounded];
+////  [self setBezelStyle:NSBezelStyleShadowlessSquare];
+////  [self setBordered:YES];
+//  coreradio = newcoreradio;
+//  [self setTarget:self];
+//  [self setAction:@selector(onPressed:)];
+//
+//  containingview = [[NSView alloc] initWithFrame:frame];
+//  [containingview addSubview:self];
+//
+//  return self;
+//}
+//- (NSView*) getContainingView{
+//  return containingview;
+//}
+//- (void) setText:(const NAUTF8Char*)text{
+//  [self setTitle:[NSString stringWithUTF8String:text]];
+//}
+//- (void) onPressed:(id)sender{
+//  NA_UNUSED(sender);
+//  naDispatchUIElementCommand((NACoreUIElement*)coreradio, NA_UI_COMMAND_PRESSED);
+//}
+//- (void) setRadioState:(NABool)state{
+//  [self setState:state ? NSOnState : NSOffState];
+//}
+//@end
 
 
 
 NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NARect rect){
-  NACoreRadio* coreradio = naAlloc(NACoreRadio);
-
-  NANativeRadio* nativeRadio = [[NANativeRadio alloc] initWithCoreRadio:coreradio frame:naMakeNSRectWithRect(rect)];
-  naInitCoreRadio(coreradio, NA_COCOA_TAKE_OWNERSHIP(nativeRadio));
-  [nativeRadio setText:text];
-  
-  return (NARadio*)coreradio;
+//  NACoreRadio* coreradio = naAlloc(NACoreRadio);
+//
+//  NANativeRadio* nativeRadio = [[NANativeRadio alloc] initWithCoreRadio:coreradio frame:naMakeNSRectWithRect(rect)];
+//  naInitCoreRadio(coreradio, NA_COCOA_TAKE_OWNERSHIP(nativeRadio));
+//  [nativeRadio setText:text];
+//  
+//  return (NARadio*)coreradio;
+  return NA_NULL;
 }
 
 
 
 NA_DEF void naDestructRadio(NARadio* radio){
-  NACoreRadio* coreradio = (NACoreRadio*)radio;
-  naClearCoreRadio(coreradio);
+//  NACoreRadio* coreradio = (NACoreRadio*)radio;
+//  naClearCoreRadio(coreradio);
 }
 
 
@@ -75,8 +76,8 @@ NA_HDEF NARect naGetRadioAbsoluteInnerRect(NACoreUIElement* radio){
 
 
 NA_HDEF void naSetRadioState(NARadio* radio, NABool state){
-  naDefineNativeCocoaObject(NANativeRadio, nativeradio, radio);
-  [nativeradio setRadioState:state];
+//  naDefineNativeCocoaObject(NANativeRadio, nativeradio, radio);
+//  [nativeradio setRadioState:state];
 }
 
 
