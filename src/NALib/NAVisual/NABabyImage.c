@@ -34,6 +34,12 @@ NA_HIDEF NAInt naGetBabyImageDataSize(const NABabyImage* image){
 
 
 
+NA_DEF float* naGetBabyImageData(const NABabyImage* image){
+  return image->data;
+}
+
+
+
 NA_DEF NASizei naGetBabyImageSize(const NABabyImage* image){
   return naMakeSizei(image->width, image->height);
 }

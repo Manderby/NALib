@@ -24,8 +24,8 @@ NABool resizeWindow(NAReaction reaction){
 
 NABool cubPressWindowKey(NAReaction reaction){
   NA_UNUSED(reaction);
-  //NAUIKeyCode* key = (NAUIKeyCode*)arg;
-  //if(*key == NA_KEYCODE_ESC){naStopApplication();}
+//  NAUIKeyCode* key = (NAUIKeyCode*)arg;
+//  if(*key == NA_KEYCODE_ESC){naStopApplication();}
 //  printf("Key Press\n");
   return NA_TRUE;
 }

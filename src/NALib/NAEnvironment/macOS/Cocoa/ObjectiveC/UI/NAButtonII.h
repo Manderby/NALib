@@ -16,9 +16,9 @@
 @implementation NANativeButton
 - (id) initWithCoreButton:(NACoreButton*)newcorebutton bezelStyle:(NSBezelStyle)bezelStyle frame:(NSRect)frame{
   self = [super initWithFrame:frame];
-  [self setButtonType:(bezelStyle == NSRoundedBezelStyle) ? NSButtonTypeMomentaryLight : NSButtonTypePushOnPushOff];
+  [self setButtonType:(bezelStyle == NABezelStyleRounded) ? NSButtonTypeMomentaryLight : NSButtonTypePushOnPushOff];
   // NSBezelStyleShadowlessSquare is used to have a transparent background. The option 0 has a grey background.
-  [self setBezelStyle:bezelStyle ? bezelStyle : NSBezelStyleShadowlessSquare]; 
+  [self setBezelStyle:bezelStyle ? bezelStyle : NABezelStyleShadowlessSquare]; 
   [self setBordered:bezelStyle ? YES : NO];
   corebutton = newcorebutton;
   [self setTarget:self];
@@ -47,7 +47,11 @@
       }
     }
     NAUIImageResolution resolution = naGetWindowUIResolution(naGetUIElementWindow(&(corebutton->uielement)));
-    CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
+    #if !defined __MAC_10_14
+      CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
+    #else
+      CGContextRef context = [[NSGraphicsContext currentContext] CGContext];
+    #endif
     CGImageRef imgref = naGetUIImageRef(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
     if(!imgref){
       imgref = naGetUIImageRef(uiimage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, skin);
@@ -72,7 +76,7 @@
   naDispatchUIElementCommand((NACoreUIElement*)corebutton, NA_UI_COMMAND_PRESSED);
 }
 - (void) setButtonState:(NABool)state{
-  [self setState:state ? NSOnState : NSOffState];
+  [self setState:state ? NAStateOn : NAStateOff];
 }
 - (void) setDefaultButton:(NABool)isDefault{
   if(isDefault){
@@ -88,7 +92,7 @@
 NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NARect rect){
   NACoreButton* corebutton = naAlloc(NACoreButton);
 
-  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NSBezelStyleRounded frame:naMakeNSRectWithRect(rect)];
+  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NABezelStyleRounded frame:naMakeNSRectWithRect(rect)];
   naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
   [nativeButton setButtonText:text];
   
@@ -100,7 +104,7 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NARect rect){
 NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NARect rect){
   NACoreButton* corebutton = naAlloc(NACoreButton);
 
-  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NSBezelStyleShadowlessSquare frame:naMakeNSRectWithRect(rect)];
+  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NABezelStyleShadowlessSquare frame:naMakeNSRectWithRect(rect)];
   naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
   [nativeButton setButtonText:text];
   
@@ -112,7 +116,7 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NARect rect){
 NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NARect rect){
   NACoreButton* corebutton = naAlloc(NACoreButton);
 
-  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NSBezelStyleShadowlessSquare frame:naMakeNSRectWithRect(rect)];
+  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NABezelStyleShadowlessSquare frame:naMakeNSRectWithRect(rect)];
   naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
   [nativeButton setButtonImage:uiimage];
   

@@ -7,6 +7,7 @@
 #include "../NABuffer.h"
 #include "../NADeflate.h"
 #include "../NAFile.h"
+#include "../NABabyImage.h"
 
 // Reference: http://www.w3.org/TR/PNG
 
@@ -812,6 +813,23 @@ NA_DEF void* naGetPNGPixelData(NAPNG* png){
 NA_DEF NAInt naGetPNGPixelDataBytesize(NAPNG* png){
   NAInt bpp = naGetPNGBytesPerPixel(png->colortype);
   return png->size.width * png->size.height * bpp;
+}
+
+
+
+NA_DEF NABabyImage* naAllocPNGBabyImage(NAPNG* png){
+  NABabyImage* babyimage = naAllocBabyImage(png->size, NA_NULL);
+  switch(png->colortype){
+  case NA_PNG_COLORTYPE_TRUECOLOR_ALPHA:
+    naFillBabyImageWithUInt8(babyimage, png->pixeldata, NA_FALSE);
+    break;
+  default:
+    #ifndef NDEBUG
+      naError("Not implemented yet");
+    #endif
+    break;
+  }
+  return babyimage;
 }
 
 
