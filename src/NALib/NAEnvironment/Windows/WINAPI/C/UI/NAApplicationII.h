@@ -31,21 +31,18 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   NAWINAPIApplication* app;
   WNDCLASS wndclass;
   MSG message;
-  NANativeID nativeApp;
 
   // Start the WINAPI application and set the native ID of the application.
-  nativeApp = GetModuleHandle(NULL);
   app = naNewApplication();
 
   // Init the timer list.
-  app = (NAWINAPIApplication*)naGetApplication();
   naInitList(&(app->timers));
 
   // Call prestartup if desired.
   if(prestartup){prestartup(arg);}
 
   // Set the language of the translator
-  //TODO
+  naResetApplicationPreferredTranslatorLanguages();
 
   // Register the window class
   naZeron(&wndclass, sizeof(WNDCLASS));
@@ -53,7 +50,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 	wndclass.lpfnWndProc = WindowCallback;
 	wndclass.cbClsExtra = 0;
 	wndclass.cbWndExtra = 0;
-	wndclass.hInstance = nativeApp;
+	wndclass.hInstance = naGetUIElementNativeID(app);
 	wndclass.hIcon = LoadIcon( NULL, IDI_APPLICATION );
 	wndclass.hCursor = LoadCursor( NULL, IDC_ARROW );
 	wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
@@ -67,7 +64,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 	wndclass.lpfnWndProc = WindowCallback;
 	wndclass.cbClsExtra = 0;
 	wndclass.cbWndExtra = 0;
-	wndclass.hInstance = nativeApp;
+	wndclass.hInstance = naGetUIElementNativeID(app);
 	wndclass.hIcon = LoadIcon( NULL, IDI_APPLICATION );
 	wndclass.hCursor = LoadCursor( NULL, IDC_ARROW );
 	wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
@@ -95,8 +92,9 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
     }
   }
 
+  // When reaching here, the application had been stopped.
 //  naClearCoreApplication();
-  naReleaseUIElement(app);
+//  naReleaseUIElement(app);
 }
 
 
@@ -115,14 +113,13 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 
 NA_HDEF NAApplication* naNewApplication(void){
-//  NACoreApplication* coreapplication = naAlloc(NACoreApplication);
-//
-//  NANativeApplicationDelegate* nativeappdelegate = [[NANativeApplicationDelegate alloc] initWithCoreApplication:coreapplication];
-//
-//  naInitCoreApplication(coreapplication, NA_COCOA_TAKE_OWNERSHIP(nativeappdelegate));
-//
-//  return (NAApplication*)coreapplication;
-  return NA_NULL;
+  NAWINAPIApplication* winapiapplication = naAlloc(NAWINAPIApplication);
+
+  NANativeID nativeApp = GetModuleHandle(NULL);
+
+  naInitCoreApplication(&(winapiapplication->coreapplication), nativeApp);
+
+  return (NAApplication*)winapiapplication;
 }
 
 

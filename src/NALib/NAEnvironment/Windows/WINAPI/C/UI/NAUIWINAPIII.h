@@ -56,7 +56,7 @@ struct NATimerStruct {
 // The struct NAWINAPIApplication stores a list of timers which could otherwise
 // not be done.
 struct NAWINAPIApplication {
-  NACoreApplication coreapp;
+  NACoreApplication coreapplication;
   NAList timers;
 };
 
@@ -81,6 +81,27 @@ NA_HDEF void naClearUINativeId(NANativeID nativeId){
   //NA_COCOA_DISPOSE(nativeId);
 }
 
+
+NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText){
+    //NSAlert* alert = NA_COCOA_AUTORELEASE([[NSAlert alloc] init]);
+
+    //switch(alertBoxType){
+    //case NA_ALERT_BOX_INFO:    alert.alertStyle = NSInformationalAlertStyle; break;
+    //case NA_ALERT_BOX_WARNING: alert.alertStyle = NSAlertStyleWarning; break;
+    //case NA_ALERT_BOX_ERROR:   alert.alertStyle = NSAlertStyleCritical; break;
+    //}
+    //
+    //alert.messageText = [NSString stringWithUTF8String:titleText];
+    //alert.informativeText = [NSString stringWithUTF8String:infoText];
+    //[alert runModal];
+}
+
+
+NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextelem){
+  //naDefineNativeCocoaObject(NANativeTextField, nativeelem, elem);
+  //naDefineNativeCocoaObject(NSView, nativeview, nextelem);
+  //[nativeelem setNextKeyView:nativeview];
+}
 
 
 
@@ -402,24 +423,25 @@ NA_DEF NARect naGetUIElementRect(NACoreUIElement* uielement, NAUIElement* relati
     break;
   }
 
-  switch(corerelelement->elementtype){
-  case NA_UI_APPLICATION: relrect = naGetApplicationAbsoluteRect(); break;
-  case NA_UI_SCREEN:      relrect = naGetScreenAbsoluteRect(corerelelement); break;
-  case NA_UI_WINDOW:      relrect = naGetWindowAbsoluteInnerRect(corerelelement); break;
-  case NA_UI_OPENGLSPACE:  relrect = naGetSpaceAbsoluteInnerRect(corerelelement); break;
-  default:
-    #ifndef NDEBUG
-      naError("Invalid UI type");
-    #endif
-    relrect = naMakeRectSE(0., 0., 0., 0.);
-    break;
+  if(corerelelement){
+    switch(corerelelement->elementtype){
+    case NA_UI_APPLICATION: relrect = naGetApplicationAbsoluteRect(); break;
+    case NA_UI_SCREEN:      relrect = naGetScreenAbsoluteRect(corerelelement); break;
+    case NA_UI_WINDOW:      relrect = naGetWindowAbsoluteInnerRect(corerelelement); break;
+    case NA_UI_OPENGLSPACE:  relrect = naGetSpaceAbsoluteInnerRect(corerelelement); break;
+    default:
+      #ifndef NDEBUG
+        naError("Invalid UI type");
+      #endif
+      relrect = naMakeRectSE(0., 0., 0., 0.);
+      break;
+    }
+
+    rect.pos.x = rect.pos.x - relrect.pos.x;
+    rect.pos.y = rect.pos.y - relrect.pos.y;
+    rect.size.width = rect.size.width;
+    rect.size.height = rect.size.height;
   }
-
-  rect.pos.x = rect.pos.x - relrect.pos.x;
-  rect.pos.y = rect.pos.y - relrect.pos.y;
-  rect.size.width = rect.size.width;
-  rect.size.height = rect.size.height;
-
   // Convert the rect into absolute coordinates.
 
   return rect;

@@ -329,16 +329,16 @@ typedef NAUInt NAUIKeyCode;
 // "US extended" keyboard layout. They represent the physical keys and not the
 // characters they might result in.
 #if NA_OS == NA_OS_WINDOWS
-  #define NA_KEYCODE_0              0x00 //??
-  #define NA_KEYCODE_1              0x01 //??
-  #define NA_KEYCODE_2              0x02 //??
-  #define NA_KEYCODE_3              0x00 //??
-  #define NA_KEYCODE_4              0x00 //??
-  #define NA_KEYCODE_5              0x00 //??
-  #define NA_KEYCODE_6              0x00 //??
-  #define NA_KEYCODE_7              0x00 //??
-  #define NA_KEYCODE_8              0x00 //??
-  #define NA_KEYCODE_9              0x00 //??
+  #define NA_KEYCODE_0              0x0b
+  #define NA_KEYCODE_1              0x02
+  #define NA_KEYCODE_2              0x03
+  #define NA_KEYCODE_3              0x04
+  #define NA_KEYCODE_4              0x05
+  #define NA_KEYCODE_5              0x06
+  #define NA_KEYCODE_6              0x07
+  #define NA_KEYCODE_7              0x08
+  #define NA_KEYCODE_8              0x09
+  #define NA_KEYCODE_9              0x0a
   #define NA_KEYCODE_A              0x1e
   #define NA_KEYCODE_B              0x30
   #define NA_KEYCODE_C              0x2e
@@ -366,20 +366,20 @@ typedef NAUInt NAUIKeyCode;
   #define NA_KEYCODE_Y              0x15
   #define NA_KEYCODE_Z              0x2c
   #define NA_KEYCODE_SPACE          0x39
-  #define NA_KEYCODE_ENTER          0x??
+  #define NA_KEYCODE_ENTER          0x1c
   #define NA_KEYCODE_LEFT_SHIFT     0x2a
-  #define NA_KEYCODE_RIGHT_SHIFT    0x00 //??
+  #define NA_KEYCODE_RIGHT_SHIFT    0x2a
   #define NA_KEYCODE_CONTROL        0x1d
   #define NA_KEYCODE_LEFT_OPTION    0xff // Handeled differently on windows
-  #define NA_KEYCODE_RIGHT_OPTION   0x00 //??
+  #define NA_KEYCODE_RIGHT_OPTION   0xff // Handeled differently on windows
   #define NA_KEYCODE_LEFT_COMMAND   0x5b
-  #define NA_KEYCODE_RIGHT_COMMAND  0x00 //??
+  #define NA_KEYCODE_RIGHT_COMMAND  0x5c
   #define NA_KEYCODE_FN             0x3f
   #define NA_KEYCODE_ESC            0x01
   #define NA_KEYCODE_F11            0x57
   #define NA_KEYCODE_MINUS          0x0c
   #define NA_KEYCODE_EQUAL          0x0d
-  #define NA_KEYCODE_PERIOD         0x00 //??
+  #define NA_KEYCODE_PERIOD         0x34
   #define NA_KEYCODE_NUMPAD_MINUS   0x4a
   #define NA_KEYCODE_NUMPAD_PLUS    0x4e
 #elif NA_OS == NA_OS_MAC_OS_X

@@ -69,9 +69,9 @@ void initOpenGLSpace(void* initData){
 void poststartup(void* arg){
   NA_UNUSED(arg);
 
-//  naSetTranslatorLanguagePreference(naGetLanguageCode("deu"));
-//  naSetTranslatorLanguagePreference(naGetLanguageCode("eng"));
-//  naSetTranslatorLanguagePreference(naGetLanguageCode("gsw"));
+  naSetTranslatorLanguagePreference(naGetLanguageCode("deu"));
+  //naSetTranslatorLanguagePreference(naGetLanguageCode("eng"));
+  //naSetTranslatorLanguagePreference(naGetLanguageCode("gsw"));
   printf ("%s\n", naTranslate(trGeneralGroup, TR_HELLO_WORLD));
   printf ("%s\n", naTranslate(trGeneralGroup, TR_99_BEER));
   printf ("%s\n", naTranslate(trGeneralGroup, TR_BREADCRUMBS_BEAVERSPIT));
