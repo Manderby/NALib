@@ -20,7 +20,6 @@ Future
 - Range tree
 - Red Black Tree
 - Threadsavety for structs
-- GUI
 - Compression in NAPNG
 - Add ARM, Linux
 - Make Memory addresses uint

@@ -44,7 +44,7 @@
   naDispatchUIElementCommand((NACoreUIElement*)coreradio, NA_UI_COMMAND_PRESSED);
 }
 - (void) setRadioState:(NABool)state{
-  [self setState:state ? NSOnState : NSOffState];
+  [self setState:state ? NAStateOn : NAStateOff];
 }
 @end
 

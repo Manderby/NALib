@@ -83,6 +83,9 @@ NA_API NAInt naGetBabyImageValuesPerLine(const NABabyImage* image);
 // Returns the image dimensions.
 NA_API NASizei naGetBabyImageSize(const NABabyImage* image);
 
+// Returns the raw image data.
+NA_API float* naGetBabyImageData(const NABabyImage* image);
+
 // Fills the image with the given data. The data is expected to contain as
 // many RGBA values stored as uint8 necessary for the whole image.
 NA_API void naFillBabyImageWithUInt8(NABabyImage* image, const void* data, NABool premultiplied);

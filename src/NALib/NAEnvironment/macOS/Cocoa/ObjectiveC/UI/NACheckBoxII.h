@@ -28,10 +28,10 @@
   naDispatchUIElementCommand((NACoreUIElement*)corecheckbox, NA_UI_COMMAND_PRESSED);
 }
 - (void) setCheckBoxState:(NABool)state{
-  [self setState:state ? NSOnState : NSOffState];
+  [self setState:state ? NAStateOn : NAStateOff];
 }
 - (NABool) checkboxState{
-  return ([self state] == NSOnState) ? NA_TRUE : NA_FALSE;
+  return ([self state] == NAStateOn) ? NA_TRUE : NA_FALSE;
 }
 @end
 

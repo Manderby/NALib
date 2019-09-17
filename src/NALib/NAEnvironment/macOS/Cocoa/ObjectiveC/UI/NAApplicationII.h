@@ -21,7 +21,9 @@
   return NSTerminateCancel;
 }
 - (void)applicationDidFinishLaunching:(NSNotification *)notification{
-  [NSApp applicationDidFinishLaunching:notification];
+  if([NSApp delegate] && [NSApp delegate] != self){
+    [[NSApp delegate] applicationDidFinishLaunching:notification];
+  }
 }
 @end
 

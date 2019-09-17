@@ -29,6 +29,10 @@
   #define NAEventModifierFlagOption       NSAlternateKeyMask
   #define NAEventModifierFlagControl      NSControlKeyMask
   #define NAEventModifierFlagCommand      NSCommandKeyMask
+
+  #define NAAlertStyleWarning             NSInformationalAlertStyle
+  #define NAAlertStyleInfo                NSAlertStyleWarning
+  #define NSAlertStyleError               NSAlertStyleCritical
 #else
   #define NAEventMaskAny                  NSEventMaskAny
   #define NAWindowStyleMaskTitled         NSWindowStyleMaskTitled
@@ -40,6 +44,24 @@
   #define NAEventModifierFlagOption       NSEventModifierFlagOption
   #define NAEventModifierFlagControl      NSEventModifierFlagControl
   #define NAEventModifierFlagCommand      NSEventModifierFlagCommand
+
+  #define NAAlertStyleWarning             NSAlertStyleInformational
+  #define NAAlertStyleInfo                NSAlertStyleWarning
+  #define NSAlertStyleError               NSAlertStyleCritical
+#endif
+
+#if !defined __MAC_10_14
+  #define NABezelStyleRounded             NSRoundedBezelStyle
+  #define NABezelStyleShadowlessSquare    NSShadowlessSquareBezelStyle
+
+  #define NAStateOn                       NSOnState
+  #define NAStateOff                      NSOffState
+#else
+  #define NABezelStyleRounded             NSBezelStyleRounded
+  #define NABezelStyleShadowlessSquare    NSBezelStyleShadowlessSquare
+
+  #define NAStateOn                       NSControlStateValueOn
+  #define NAStateOff                      NSControlStateValueOff
 #endif
 
 
@@ -353,9 +375,9 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
     NSAlert* alert = NA_COCOA_AUTORELEASE([[NSAlert alloc] init]);
 
     switch(alertBoxType){
-    case NA_ALERT_BOX_INFO:    alert.alertStyle = NSInformationalAlertStyle; break;
-    case NA_ALERT_BOX_WARNING: alert.alertStyle = NSAlertStyleWarning; break;
-    case NA_ALERT_BOX_ERROR:   alert.alertStyle = NSAlertStyleCritical; break;
+    case NA_ALERT_BOX_INFO:    alert.alertStyle = NAAlertStyleWarning; break;
+    case NA_ALERT_BOX_WARNING: alert.alertStyle = NAAlertStyleInfo; break;
+    case NA_ALERT_BOX_ERROR:   alert.alertStyle = NSAlertStyleError; break;
     }
     
     alert.messageText = [NSString stringWithUTF8String:titleText];

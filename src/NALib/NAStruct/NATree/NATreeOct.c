@@ -297,6 +297,9 @@ NA_HDEF NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
         if(siblingCount != 1)
           naError("Parent should have precisely one child");
       #endif
+      
+      if(siblingCount == 0){break;} // This is only here for code sanity checks.
+      
       grandparent = (NATreeOctNode*)naGetTreeItemParent(naGetTreeNodeItem(parent));
       isSiblingLeaf = naIsTreeItemLeaf(tree, sibling);
       if(!grandparent){

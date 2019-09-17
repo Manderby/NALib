@@ -16,58 +16,40 @@
 NAInt trFinanceGroup;
 NAInt trGeneralGroup;
 
-NABool resizeWindow(void* controllerdata, NAUIElement* uielement, NAUICommand command, void* arg){
-  NA_UNUSED(controllerdata);
-  NA_UNUSED(uielement);
-  NA_UNUSED(command);
-  NA_UNUSED(arg);
+NABool resizeWindow(NAReaction reaction){
+  NA_UNUSED(reaction);
 //  printf("Resize\n");
   return NA_TRUE;
 }
 
-NABool cubPressWindowKey(void* controllerdata, NAUIElement* uielement, NAUICommand command, void* arg){
-  NA_UNUSED(controllerdata);
-  NA_UNUSED(uielement);
-  NA_UNUSED(command);
-  NA_UNUSED(arg);
-  NAUIKeyCode* key = (NAUIKeyCode*)arg;
-  if(*key == NA_KEYCODE_ESC){naStopApplication();}
+NABool cubPressWindowKey(NAReaction reaction){
+  NA_UNUSED(reaction);
+//  NAUIKeyCode* key = (NAUIKeyCode*)arg;
+//  if(*key == NA_KEYCODE_ESC){naStopApplication();}
 //  printf("Key Press\n");
   return NA_TRUE;
 }
 
-NABool cubReleaseWindowKey(void* controllerdata, NAUIElement* uielement, NAUICommand command, void* arg){
-  NA_UNUSED(controllerdata);
-  NA_UNUSED(uielement);
-  NA_UNUSED(command);
-  NA_UNUSED(arg);
+NABool cubReleaseWindowKey(NAReaction reaction){
+  NA_UNUSED(reaction);
 //  printf("Key Release\n");
   return NA_TRUE;
 }
 
-NABool cubMoveWindowMouse(void* controllerdata, NAUIElement* uielement, NAUICommand command, void* arg){
-  NA_UNUSED(controllerdata);
-  NA_UNUSED(uielement);
-  NA_UNUSED(command);
-  NA_UNUSED(arg);
+NABool cubMoveWindowMouse(NAReaction reaction){
+  NA_UNUSED(reaction);
 //  printf("Mouse Move\n");
   return NA_TRUE;
 }
 
-NABool cubEnterWindowMouse(void* controllerdata, NAUIElement* uielement, NAUICommand command, void* arg){
-  NA_UNUSED(controllerdata);
-  NA_UNUSED(uielement);
-  NA_UNUSED(command);
-  NA_UNUSED(arg);
+NABool cubEnterWindowMouse(NAReaction reaction){
+  NA_UNUSED(reaction);
 //  printf("Mouse Enter\n");
   return NA_TRUE;
 }
 
-NABool cubExitWindowMouse(void* controllerdata, NAUIElement* uielement, NAUICommand command, void* arg){
-  NA_UNUSED(controllerdata);
-  NA_UNUSED(uielement);
-  NA_UNUSED(command);
-  NA_UNUSED(arg);
+NABool cubExitWindowMouse(NAReaction reaction){
+  NA_UNUSED(reaction);
 //  printf("Mouse exit\n");
   return NA_TRUE;
 }
@@ -99,23 +81,23 @@ void poststartup(void* arg){
 //  printf("%d\n", (int)naGetLanguageCode("deu"));
 
   NARect windowrect = naMakeRectS(20, 20, 400, 300);
-  NAWindow* window = naNewWindow("Wurst", windowrect, NA_TRUE);
-  naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_RESHAPE,       resizeWindow);
-  naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_KEYDOWN,       cubPressWindowKey);
-  naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_KEYUP,         cubReleaseWindowKey);
-  naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_MOUSE_MOVED,   cubMoveWindowMouse);
-  naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_MOUSE_ENTERED, cubEnterWindowMouse);
-  naAddUIReaction(NA_NULL, window, NA_UI_COMMAND_MOUSE_EXITED,  cubExitWindowMouse);
+  NAWindow* window = naNewWindow("Wurst", windowrect, NA_TRUE, 0);
+  naAddUIReaction(window, NA_UI_COMMAND_RESHAPE,       resizeWindow, NA_NULL);
+  naAddUIReaction(window, NA_UI_COMMAND_KEYDOWN,       cubPressWindowKey, NA_NULL);
+  naAddUIReaction(window, NA_UI_COMMAND_KEYUP,         cubReleaseWindowKey, NA_NULL);
+  naAddUIReaction(window, NA_UI_COMMAND_MOUSE_MOVED,   cubMoveWindowMouse, NA_NULL);
+  naAddUIReaction(window, NA_UI_COMMAND_MOUSE_ENTERED, cubEnterWindowMouse, NA_NULL);
+  naAddUIReaction(window, NA_UI_COMMAND_MOUSE_EXITED,  cubExitWindowMouse, NA_NULL);
 
 //  NAOpenGLSpace* openglspace = naNewOpenGLSpace(window, windowrect.size, initOpenGLSpace, window);
 //  naSetWindowContentSpace(window, openglspace);
 
   NASpace* contentSpace = naGetWindowContentSpace(window);
 
-  NAButton* button = naNewButton();
+  NAButton* button = naNewPushButton("Test", naMakeRectS(10., 20., 30., 40.));
   naAddSpaceChild(contentSpace, button);
 
-  NALabel* label = naNewLabel("101010");
+  NALabel* label = naNewLabel("101010", naMakeRectS(10., 120., 30., 40.));
   naAddSpaceChild(contentSpace, label);
 
   naShowWindow(window);
