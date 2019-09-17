@@ -8,7 +8,7 @@
 // Do not include this file anywhere else!
 
 
-#include "NAUIImage.h"
+#include "../../../NAUIImage.h"
 
 
 void naFillBabyColorWithSkin(NABabyColor color, NAUIImageSkin skin){

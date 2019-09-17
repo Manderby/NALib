@@ -2,11 +2,11 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#include "NATranslator.h"
-#include "NAStack.h"
-#include "NATree.h"
-#include "NAString.h"
-#include "NAUI.h"
+#include "../NATranslator.h"
+#include "../NAStack.h"
+#include "../NATree.h"
+#include "../NAString.h"
+#include "../NAUI.h"
 #include "NAUICore.h"
 #include <ctype.h>
 
@@ -287,6 +287,7 @@ NA_DEF NALanguageCode3 naConvertLanguageCode1To3(NALanguageCode1 code1){
   switch(code1){
   case NA_LANG_DE: return NA_LANG_DEU;
   case NA_LANG_EN: return NA_LANG_ENG;
+  default: return NA_LANG_ENG;
   }
 }
 

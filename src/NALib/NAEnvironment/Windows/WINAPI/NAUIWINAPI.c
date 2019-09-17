@@ -11,8 +11,8 @@
 // closed at the bottom of this file.
 
 
-#include "../NAList.h"
-#include "../NACoord.h"
+#include "../../../NAList.h"
+#include "../../../NACoord.h"
 
 
 

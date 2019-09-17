@@ -15,7 +15,7 @@
 // ///////////////////////////
 
 
-#include "NABabyImage.h"
+#include "../NABabyImage.h"
 
 typedef enum{
   NA_UIIMAGE_RESOLUTION_1x,
@@ -59,8 +59,9 @@ void naFillBabyColorWithSkin(NABabyColor color, NAUIImageSkin skin);
 
 #if NA_OS == NA_OS_MAC_OS_X
   NABabyImage* naAllocBabyImageFromImageRef(const void* imageref);
-  NABabyImage* naAllocBabyImageFromFilePath(const NAUTF8Char* pathStr);
 #endif
+
+NABabyImage* naAllocBabyImageFromFilePath(const NAUTF8Char* pathStr);
 
 
 
