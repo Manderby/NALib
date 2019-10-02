@@ -22,17 +22,18 @@ NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* stri
   }
 
   iter = naMakeBufferAccessor(naGetStringBufferMutable(inputstring));
+  naLocateBufferStart(&iter);
 
-  while(naGetStringBytesize(inputstring)){
+  while(!naIsBufferAtInitial(&iter)){
     // Test for erroneous duplicate or ending delimiters
-    curchar = *naGetStringUTF8Pointer(inputstring);
+    curchar = naGetBufferu8(&iter);
     if((curchar == NA_PATH_DELIMITER_UNIX) || (curchar == NA_PATH_DELIMITER_WIN)){
-      inputstring = naNewStringExtraction(inputstring, 1, -1);
+      naIterateBuffer(&iter, 1);
       continue;
     }
 
     pathcomponent = naParseBufferPathComponent(&iter);
-    naAddListLastMutable(&(url->path), &pathcomponent);
+    naAddListLastMutable(&(url->path), pathcomponent);
   }
 
   naClearBufferIterator(&iter);

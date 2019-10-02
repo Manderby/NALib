@@ -10,6 +10,27 @@
 
 
 
+typedef struct NAWINAPITextBox NAWINAPITextBox;
+struct NAWINAPITextBox {
+  NACoreTextBox coretextbox;
+};
+
+
+
+NABool naTextBoxWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NABool hasbeenhandeled = NA_FALSE;
+
+  switch(message){
+  default:
+    //printf("Uncaught TextBox message\n");
+    break;
+  }
+  
+  return hasbeenhandeled;
+}
+
+
+
 //@implementation NANativeTextBox
 //- (id) initWithCoreTextBox:(NACoreTextBox*)newcoretextbox frame:(NSRect)frame{
 //  NSRect documentrect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
@@ -48,13 +69,21 @@
 
 
 NA_DEF NATextBox* naNewTextBox(NARect rect){
-//  NACoreTextBox* coretextbox = naAlloc(NACoreTextBox);
-//  
-//  NANativeTextBox* nativeTextBox = [[NANativeTextBox alloc] initWithCoreTextBox:coretextbox frame:naMakeNSRectWithRect(rect)];
-//  naInitCoreTextBox(coretextbox, NA_COCOA_TAKE_OWNERSHIP(nativeTextBox));
-//  
-//  return (NATextBox*)coretextbox;
-  return NA_NULL;
+  HWND hWnd;
+  DWORD style;
+
+  NAWINAPITextBox* winapitextbox = naAlloc(NAWINAPITextBox);
+
+  style = WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN;
+
+	hWnd = CreateWindow(
+		TEXT("EDIT"), "", style,
+		(int)rect.pos.x, (int)rect.pos.y, (int)rect.size.width, (int)rect.size.height,
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+  
+  naInitCoreTextBox(&(winapitextbox->coretextbox), hWnd);
+
+  return (NATextBox*)winapitextbox;
 }
 
 

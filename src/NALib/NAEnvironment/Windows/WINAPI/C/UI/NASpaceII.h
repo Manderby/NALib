@@ -10,6 +10,27 @@
 
 
 
+typedef struct NAWINAPISpace NAWINAPISpace;
+struct NAWINAPISpace {
+  NACoreSpace corespace;
+};
+
+
+
+NABool naSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NABool hasbeenhandeled = NA_FALSE;
+
+  switch(message){
+  default:
+    //printf("Uncaught Space message\n");
+    break;
+  }
+  
+  return hasbeenhandeled;
+}
+
+
+
 //@implementation NANativeSpace
 //- (id) initWithCoreSpace:(NACoreSpace*)newcorespace frame:(NSRect)frame{
 //  self = [super initWithFrame:frame];
@@ -47,15 +68,25 @@
 
 
 NA_DEF NASpace* naNewSpace(NARect rect){
-//  NACoreSpace* corespace = naAlloc(NACoreSpace);
-//  corespace->alternatebackground = NA_FALSE;
-//
-//  NSRect contentRect = naMakeNSRectWithRect(rect);
-//  NANativeSpace* nativeSpace = [[NANativeSpace alloc] initWithCoreSpace:corespace frame:contentRect];  
-//  naInitCoreSpace(corespace, NA_COCOA_TAKE_OWNERSHIP(nativeSpace));
-//  
-//  return (NASpace*)corespace;
-  return NA_NULL;
+  HWND hWnd;
+  DWORD exStyle;
+  DWORD style;
+
+  NAWINAPISpace* winapispace = naAlloc(NAWINAPISpace);
+
+  exStyle = 0;
+  style = WS_CHILD | WS_VISIBLE;
+
+	hWnd = CreateWindow(
+		TEXT("NASpace"), "Space", style,
+		0, 0, (int)rect.size.width, (int)rect.size.height,
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+  DWORD lasterror = GetLastError();
+
+  naInitCoreSpace(&(winapispace->corespace), hWnd);
+  winapispace->corespace.alternatebackground = NA_FALSE;
+
+  return (NASpace*)winapispace;
 }
 
 
@@ -85,7 +116,7 @@ NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child){
 //    [nativespace addSubview:nativeview];
 //    break;
 //  }
-//  naSetUIElementParent(child, space);
+  naSetUIElementParent(child, space);
 }
 
 

@@ -9,6 +9,45 @@
 // Do not include this file anywhere else!
 
 
+
+#include "../../../../../NAString.h"
+#include "../../../../../NAURL.h"
+
+#include <commctrl.h>
+
+// The following struct stores all relevant data which will then be stored in
+// a list of the running NAWINAPIApplication.
+typedef struct NATimerStruct NATimerStruct;
+struct NATimerStruct {
+  UINT key;
+  NAMutator func;
+  void* arg;
+};
+
+// The struct NAWINAPIApplication stores a list of timers which could otherwise
+// not be done.
+typedef struct NAWINAPIApplication NAWINAPIApplication;
+struct NAWINAPIApplication {
+  NACoreApplication coreapplication;
+  NAList timers;
+  HWND offscreenWindow;
+  NONCLIENTMETRICS nonclientmetrics; 
+};
+
+
+
+NABool naApplicationWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NABool hasbeenhandeled = NA_FALSE;
+
+  switch(message){
+  default:
+    //printf("Uncaught Application message\n");
+    break;
+  }
+  
+  return hasbeenhandeled;
+}
+
 //@implementation NANativeApplicationDelegate
 //- (id) initWithCoreApplication:(NACoreApplication*)newcoreapplication{
 //  self = [super init];
@@ -32,25 +71,21 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   WNDCLASS wndclass;
   MSG message;
 
-  // Start the WINAPI application and set the native ID of the application.
-  app = naNewApplication();
+  //SetProcessDPIAware();
+  //DPI_AWARENESS awareness = DPI_AWARENESS_SYSTEM_AWARE;
+  //SetProcessDpiAwarenessContext(&awareness);
 
-  // Init the timer list.
-  naInitList(&(app->timers));
-
-  // Call prestartup if desired.
-  if(prestartup){prestartup(arg);}
-
-  // Set the language of the translator
-  naResetApplicationPreferredTranslatorLanguages();
-
+  #if NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6 == 1
+    InitCommonControls();   // enable visual styles
+  #endif
+  
   // Register the window class
   naZeron(&wndclass, sizeof(WNDCLASS));
 	wndclass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
 	wndclass.lpfnWndProc = WindowCallback;
 	wndclass.cbClsExtra = 0;
 	wndclass.cbWndExtra = 0;
-	wndclass.hInstance = naGetUIElementNativeID(app);
+	wndclass.hInstance = GetModuleHandle(NULL);
 	wndclass.hIcon = LoadIcon( NULL, IDI_APPLICATION );
 	wndclass.hCursor = LoadCursor( NULL, IDC_ARROW );
 	wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
@@ -58,19 +93,42 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 	wndclass.lpszClassName = TEXT("NAWindow");
 	RegisterClass(&wndclass);
 
-  // Register the space class
+    // Register the window class
   naZeron(&wndclass, sizeof(WNDCLASS));
-	wndclass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
+	wndclass.style = CS_HREDRAW | CS_VREDRAW;
 	wndclass.lpfnWndProc = WindowCallback;
 	wndclass.cbClsExtra = 0;
 	wndclass.cbWndExtra = 0;
-	wndclass.hInstance = naGetUIElementNativeID(app);
+	wndclass.hInstance = GetModuleHandle(NULL);
+	wndclass.hIcon = NULL;
+	wndclass.hCursor = NULL;
+	wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
+	wndclass.lpszMenuName = NULL;
+	wndclass.lpszClassName = TEXT("NAOffscreenWindow");
+	RegisterClass(&wndclass);
+
+  // Register the space class
+  naZeron(&wndclass, sizeof(WNDCLASS));
+	wndclass.style = CS_HREDRAW | CS_VREDRAW | CS_PARENTDC;
+	wndclass.lpfnWndProc = WindowCallback;
+	wndclass.cbClsExtra = 0;
+	wndclass.cbWndExtra = 0;
+	wndclass.hInstance = GetModuleHandle(NULL);
 	wndclass.hIcon = LoadIcon( NULL, IDI_APPLICATION );
 	wndclass.hCursor = LoadCursor( NULL, IDC_ARROW );
 	wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
 	wndclass.lpszMenuName = NULL;
 	wndclass.lpszClassName = TEXT("NASpace");
 	RegisterClass(&wndclass);
+
+  // Start the WINAPI application and set the native ID of the application.
+  app = naNewApplication();
+
+  // Call prestartup if desired.
+  if(prestartup){prestartup(arg);}
+
+  // Set the language of the translator
+  naResetApplicationPreferredTranslatorLanguages();
 
   // Call poststartup if desired.
   if(poststartup){poststartup(arg);}
@@ -113,19 +171,73 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 
 NA_HDEF NAApplication* naNewApplication(void){
+
   NAWINAPIApplication* winapiapplication = naAlloc(NAWINAPIApplication);
 
-  NANativeID nativeApp = GetModuleHandle(NULL);
+  naInitCoreApplication(&(winapiapplication->coreapplication), GetModuleHandle(NULL));
 
-  naInitCoreApplication(&(winapiapplication->coreapplication), nativeApp);
+  naInitList(&(winapiapplication->timers));
+
+	winapiapplication->offscreenWindow = CreateWindow(
+		TEXT("NAOffscreenWindow"), "Offscreen window", WS_OVERLAPPEDWINDOW,
+		0, 0, 0, 0,
+		NULL, NULL, GetModuleHandle(NULL), NULL);
+
+  winapiapplication->nonclientmetrics.cbSize = sizeof(NONCLIENTMETRICS);
+  SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &(winapiapplication->nonclientmetrics), 0);
 
   return (NAApplication*)winapiapplication;
 }
 
 
+
 NA_DEF void naDestructApplication(NAApplication* application){
-//  NACoreApplication* coreapplication = (NACoreApplication*)application;
-//  naClearCoreApplication(coreapplication);
+  NAWINAPIApplication* winapiapplication = (NAWINAPIApplication*)application;
+  // todo clear the rest of the app.
+  naClearCoreApplication(&(winapiapplication->coreapplication));
+  
+}
+
+
+
+HWND naGetApplicationOffscreenWindow(void){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  return app->offscreenWindow;
+}
+
+const NONCLIENTMETRICS* naGetApplicationMetrics(void){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  return &(app->nonclientmetrics);
+}
+
+
+// ///////////////////////////////////
+// TIMER
+// ///////////////////////////////////
+
+
+// This is the native WINAPI callback function. It finds the corresponding
+// registered timer struct of the application and executes the function
+// stored in that struct with the stored argument.
+//
+// Definitely not the fastest and best method. But as for now, it's ok. todo.
+NA_HDEF static VOID CALLBACK naTimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
+  //todo something is wrong here with the type.
+  NAWINAPIApplication* app;
+  NAListIterator iter;
+
+  UINT timerkey = (UINT)idEvent;
+  app = (NAWINAPIApplication*)naGetApplication();
+
+  naBeginListModifierIteration(NATimerStruct* timerstruct, &(app->timers), iter);
+    if(timerstruct->key == timerkey) {
+      naRemoveListCurMutable(&iter, NA_FALSE);
+      KillTimer(hwnd, idEvent);
+      timerstruct->func(timerstruct->arg);
+      naFree(timerstruct);
+      break;
+    }
+  naEndListIteration(iter);
 }
 
 
@@ -140,6 +252,16 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, do
   app = (NAWINAPIApplication*)naGetApplication();
   naAddListLastMutable(&(app->timers), timerstruct);
 }
+
+
+
+#if (NA_SYSTEM_ADDRESS_BITS == 64)
+  typedef intptr_t NAWINAPIHANDLE;
+#elif (NA_SYSTEM_ADDRESS_BITS == 32)
+  typedef long NAWINAPIHANDLE;
+#else
+  #error "Undefined system address bytesize"
+#endif
 
 
 
@@ -182,18 +304,22 @@ NA_DEF void naOpenConsoleWindow(const char* windowtitle){
 
 //#define NA_COCOA_BUNDLE_PLIST @"InfoPlist"
 //#define NA_COCOA_BUNDLE_APPLICATION_NAME @"CFBundleDisplayName"
-//#define NA_COCOA_BUNDLE_VERSION_SHORT_KEY @"CFBundleShortVersionString"
+//#define NA_COCOA_BUNDLE_VERSION_SHORT_KEY @"CFBundleShortVersionString"applicationname
 //#define NA_COCOA_BUNDLE_VERSION_KEY @"CFBundleVersion"
 //#define NA_COCOA_BUNDLE_ICON_FILE_KEY @"CFBundleIconFile"
 
 NA_DEF NAString* naNewApplicationName(void){
-//  NSString* applicationname = [[NSBundle mainBundle] localizedStringForKey:NA_COCOA_BUNDLE_APPLICATION_NAME value:nil table:NA_COCOA_BUNDLE_PLIST];
-//  if(!applicationname){
-//    applicationname = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_APPLICATION_NAME];
-//  }
-//  NAString* retstring = naNewStringWithFormat("%s", [applicationname UTF8String]);
-//  return retstring;
-  return NA_NULL;
+  TCHAR modulename[MAX_PATH];
+  GetModuleFileName(NULL, modulename, MAX_PATH);
+
+  NAURL url;
+  naInitURLWithUTF8CStringLiteral(&url, modulename);
+  NAString* applicationname = naNewStringWithURLFilename(&url);
+  NAString* applicationbasename = naNewStringWithBasenameOfFilename(applicationname);
+  naClearURL(&url);
+  naDelete(applicationname);
+
+  return applicationbasename;
 }
 
 NA_DEF NAString* naNewApplicationVersionString(void){
@@ -220,17 +346,50 @@ NA_DEF NAString* naNewApplicationIconPath(void){
 }
 
 NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
-//  NSURL* url;
-//  if(dir){
-//    url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix] subdirectory:[NSString stringWithUTF8String:dir]];
-//  }else{
-//    url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix]];
-//  }
-//  NAString* retstring = naNewStringWithFormat("%s", [[url path] UTF8String]);
-//  return retstring;
-  return NA_NULL;
+  NAString* retstring;
+  if(dir){
+    retstring = naNewStringWithFormat("%s/%s.%s", dir, basename, suffix);
+  }else{
+    retstring = naNewStringWithFormat("%s.%s", basename, suffix);
+  }
+  return retstring;
 }
 
+
+
+NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage){
+  NARect spacerect;
+  NARect screenframe;
+  NAPos centerpos;
+  spacerect = naGetUIElementRect(uielement, naGetApplication(), includebounds);
+  // todo: screen not defined
+  screenframe = naGetMainScreenRect();
+  centerpos.x = spacerect.pos.x + spacerect.size.width * .5f;
+  centerpos.y = spacerect.pos.y + spacerect.size.height * .5f;
+
+//  naGetUIElementWindow(uielement)->flags |= CUB_WINDOW_IGNORE_MOUSE_WARP;
+  naSetMouseWarpedTo(centerpos);
+  SetCursorPos((int)centerpos.x, (int)screenframe.size.height - (int)centerpos.y);
+}
+
+
+
+NA_DEF void naShowMouse(){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  //if(!app->ismousevisible){
+  //  ShowCursor(1);
+  //  app->ismousevisible = NA_TRUE;
+  //}
+}
+
+
+NA_DEF void naHideMouse(){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  //if(app->ismousevisible){
+  //  ShowCursor(0);
+  //  app->ismousevisible = NA_FALSE;
+  //}
+}
 
 
 // Copyright (c) NALib, Tobias Stamm

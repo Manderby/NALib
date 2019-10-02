@@ -9,6 +9,26 @@
 // Do not include this file anywhere else!
 
 
+typedef struct NAWINAPIButton NAWINAPIButton;
+struct NAWINAPIButton {
+  NACoreButton corebutton;
+};
+
+
+
+NABool naButtonWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NABool hasbeenhandeled = NA_FALSE;
+
+  switch(message){
+  default:
+    //printf("Uncaught Button message\n");
+    break;
+  }
+  
+  return hasbeenhandeled;
+}
+
+
 //// Push (Text only) (24px height fixed)
 //// Option (Text / Image) (3px padding on all sides)
 //// Borderless (Image only) (0px padding on all sides)
@@ -86,27 +106,53 @@
 
 
 NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NARect rect){
-//  NACoreButton* corebutton = naAlloc(NACoreButton);
-//
-//  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NSBezelStyleRounded frame:naMakeNSRectWithRect(rect)];
-//  naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
-//  [nativeButton setButtonText:text];
-//  
-//  return (NAButton*)corebutton;
-  return NA_NULL;
+  HWND hWnd;
+  DWORD style;
+
+  NAWINAPIButton* winapibutton = naAlloc(NAWINAPIButton);
+
+  style = WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON;
+
+	hWnd = CreateWindow(
+		TEXT("BUTTON"), text, style,
+		(int)rect.pos.x, (int)rect.pos.y, (int)rect.size.width, (int)rect.size.height,
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+  
+  naInitCoreButton(&(winapibutton->corebutton), hWnd);
+
+  #if NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6 == 1
+    HFONT font = CreateFontIndirect(&(naGetApplicationMetrics()->lfMessageFont));
+    // destroy font with DeleteObject(font);
+    SendMessage(hWnd, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
+  #endif
+
+  return (NAButton*)winapibutton;
 }
 
 
 
 NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NARect rect){
-//  NACoreButton* corebutton = naAlloc(NACoreButton);
-//
-//  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NSBezelStyleShadowlessSquare frame:naMakeNSRectWithRect(rect)];
-//  naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
-//  [nativeButton setButtonText:text];
-//  
-//  return (NAButton*)corebutton;
-  return NA_NULL;
+  HWND hWnd;
+  DWORD style;
+
+  NAWINAPIButton* winapibutton = naAlloc(NAWINAPIButton);
+
+  style = WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON;
+
+	hWnd = CreateWindow(
+		TEXT("BUTTON"), text, style,
+		(int)rect.pos.x, (int)rect.pos.y, (int)rect.size.width, (int)rect.size.height,
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+  
+  naInitCoreButton(&(winapibutton->corebutton), hWnd);
+
+  #if NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6 == 1
+    HFONT font = CreateFontIndirect(&(naGetApplicationMetrics()->lfMessageFont));
+    // destroy font with DeleteObject(font);
+    SendMessage(hWnd, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
+  #endif
+
+  return (NAButton*)winapibutton;
 }
 
 

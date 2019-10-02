@@ -12,6 +12,99 @@
 #include "../../../../../NAPreferences.h"
 
 
+typedef struct NAWINAPIWindow NAWINAPIWindow;
+struct NAWINAPIWindow {
+  NACoreWindow corewindow;
+  NAUInt trackingcount;
+  //NABounds4 bounds;
+};
+
+
+
+NABool naWindowWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NAWindow* window;
+  //NARect rect;
+  //NASize size;
+  //NAPos pos;
+  //const NAMouseStatus* mousestatus;
+  NABool hasbeenhandeled = NA_FALSE;
+
+  switch(message){
+  case WM_SHOWWINDOW:
+    // wParam: true for show, false for hide
+    // lParam: status of window
+    break;
+
+  case WM_MOVE:
+    // wParam: Unused
+    // lParam: LOWORD: x coordinate, HIWORD: y coordinate
+    window = naGetUIElementWindow(uielement);
+    //rect = naGetUIElementRect(window, NA_NULL, NA_FALSE);
+    //rect.pos.x = (double)((int)(short)LOWORD(lParam));
+    //rect.pos.y = (double)((int)(short)HIWORD(lParam));
+    hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE);
+    if (hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW); }
+    break;
+
+  case WM_SIZE:
+    // wParam: Type of resizing (maximize, minimize, ...)
+    // lParam: LOWORD: width, HIWORD: height
+    window = naGetUIElementWindow(uielement);
+    //rect = naGetUIElementRect(window, NA_NULL, NA_FALSE);
+    //rect.size.width = LOWORD(lParam);
+    //rect.size.height = HIWORD(lParam);
+    hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE);
+    if (hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW); }
+    break;
+
+  //case WM_MOUSEMOVE:
+  //  // wParam: several special keys
+  //  // GET_X_LPARAM(lParam): x coord relative to top left
+  //  // GET_Y_LPARAM(lParam): y coord relative to top left
+  //  window = naGetUIElementWindow(uielement);
+  //  //if(window->flags & CUB_WINDOW_IGNORE_MOUSE_WARP){
+  //  //  window->flags &= ~CUB_WINDOW_IGNORE_MOUSE_WARP;
+  //  //  hasbeenhandeled = NA_TRUE;
+  //  //}else{
+  //  // todo: this should be GET_X_LPARAM and GET_Y_LPARAM
+  //  // but is undefined somehow.
+  //  size.width = LOWORD(lParam);
+  //  size.height = HIWORD(lParam);
+  //  rect = naGetUIElementRect(uielement, naGetApplication(), NA_FALSE);
+  //  size.width += rect.pos.x;
+  //  size.height += rect.pos.y;
+  //  mousestatus = naGetMouseStatus();
+  //  pos = naGetMousePos(mousestatus);
+  //  naSetMouseMovedByDiff(size.width - pos.x, size.height - pos.y);
+  //  hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_MOUSE_MOVED);
+  //  //}
+  //  break;
+
+
+  case WM_WINDOWPOSCHANGING:
+  case WM_ACTIVATEAPP:
+  case WM_NCACTIVATE:
+  case WM_GETICON:
+  case WM_ACTIVATE:
+  case WM_IME_SETCONTEXT:
+  case WM_WINDOWPOSCHANGED:
+  case WM_SYNCPAINT:
+  case WM_DWMNCRENDERINGCHANGED:
+  case WM_GETMINMAXINFO:
+  case WM_KILLFOCUS:
+  case WM_IME_NOTIFY:
+  case WM_PAINT:
+  case WM_SETFOCUS:
+    break;
+
+  default:
+    //printf("Uncaught Window message: %X\n", (int)message);
+    break;
+  }
+  
+  return hasbeenhandeled;
+}
+
 //@implementation NANativeWindow
 //- (id) initWithCoreWindow:(NACoreWindow*)newcorewindow contentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag screen:(NSScreen *)screen{
 //  self = [super initWithContentRect:contentRect styleMask:aStyle backing:bufferingType defer:flag screen:screen];
@@ -123,26 +216,33 @@
 
 
 NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resizeable, NAInt storageTag){
+  DWORD exStyle;
   DWORD style;
   HWND hWnd;
   RECT windowrect;
-  NAWINAPIWindow* window = naAlloc(NAWINAPIWindow);
   NARect screenrect;
-  //DWORD lasterror;
+  
+  NAWINAPIWindow* winapiwindow = naAlloc(NAWINAPIWindow);
 
-	//hRC = NULL;
-	//hDC = NULL;
- // elements = NULL;
- // numelements = 0;
- // winrect.posx = newposx;
- // winrect.posy = newposy;
- // winrect.width = newwidth;
- // winrect.height = newheight;
- // erasebackground = MB_TRUE;
- // quitonclose = MB_FALSE;
- // fullscreen = MB_FALSE;
- // controller = newcontroller;
+  //corewindow->storageTag = storageTag;
+  //if(corewindow->storageTag){
+  //  NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, corewindow->storageTag);
+  //  NAString* prefPosYString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_Y, corewindow->storageTag);
+  //  rect.pos.x = naInitPreferencesDouble(naGetStringUTF8Pointer(prefPosXString), rect.pos.x);
+  //  rect.pos.y = naInitPreferencesDouble(naGetStringUTF8Pointer(prefPosYString), rect.pos.y);
+  //  naDelete(prefPosXString);
+  //  naDelete(prefPosYString);
+  //  if(resizeable){
+  //    NAString* prefSizeWidthString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_WIDTH, corewindow->storageTag);
+  //    NAString* prefSizeHeightString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_HEIGHT, corewindow->storageTag);
+  //    rect.size.width = naInitPreferencesDouble(naGetStringUTF8Pointer(prefSizeWidthString), rect.size.width);
+  //    rect.size.height = naInitPreferencesDouble(naGetStringUTF8Pointer(prefSizeHeightString), rect.size.height);
+  //    naDelete(prefSizeWidthString);
+  //    naDelete(prefSizeHeightString);
+  //  }
+  //}
 
+  exStyle = WS_EX_CLIENTEDGE;
   style = WS_OVERLAPPEDWINDOW;
   if(!resizeable){style &= ~WS_THICKFRAME;}
   screenrect = naGetMainScreenRect();
@@ -154,22 +254,23 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   AdjustWindowRect(&windowrect, style, NA_FALSE);
 
 	hWnd = CreateWindow(
-		TEXT("NAWindow"), title,
-		style,
+		TEXT("NAWindow"), title, style,
 		windowrect.left, windowrect.top, windowrect.right - windowrect.left, windowrect.bottom - windowrect.top,
 		NULL, NULL, naGetUIElementNativeID(naGetApplication()), NULL);
 
-  //lasterror = GetLastError();
+  //DWORD lasterror = GetLastError();
 	//hDC = GetDC(hWnd);
 
-  // bugfix: probably remove applicatoin as parent
-  naRegisterCoreUIElement((NACoreUIElement*)window, NA_UI_WINDOW, hWnd);
+  naInitCoreWindow(&(winapiwindow->corewindow), hWnd, NA_NULL, NA_FALSE, resizeable, rect);
+  winapiwindow->trackingcount = 0;
 
-  window->flags = 0;
-  window->trackingcount = 0;
-  window->fullscreen = NA_FALSE;
+  NARect contentFrame = naMakeRect(naMakePos(0., 0.), rect.size);
+  NASpace* space = naNewSpace(contentFrame);
+  naSetWindowContentSpace(winapiwindow, space);
 
-  return window;
+  naSetUIElementParent(winapiwindow, naGetApplication());
+
+  return (NAWindow*)winapiwindow;
 }
 
 
@@ -354,83 +455,62 @@ NA_DEF void naCloseWindow(NAWindow* window){
 
 
 NA_DEF void naSetWindowContentSpace(NAWindow* window, NAUIElement* uielement){
-  NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)window;
-  //naAddListLastMutable(&(winapiwindow->corewindow.uielement.childs), uielement); // todo: this is a hack just for now.
+  NACoreWindow* corewindow = (NACoreWindow*)window;
+  //naAddListLastMutable(&(corewindow->uielement.childs), uielement); // todo: this is a hack just for now.
   //NAUIElement* element = (NAUIElement*)uielement;
   //[(NANativeWindow*)(window->uielement.nativeID) setContentView:element->nativeID];
+
+  corewindow->contentspace = (NACoreSpace*)uielement;
+  naSetUIElementParent(uielement, window);
 }
 
 
 
 NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullscreen){
-  DWORD style;
+  //DWORD style;
   //NABool hasbeenhandeled;
-  NARect newrect;
-  NARect screenrect;
+  //NARect newrect;
+  //NARect screenrect;
   NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)window;
 
-  if(fullscreen != winapiwindow->fullscreen){
-    winapiwindow->fullscreen = fullscreen;
+  //if(fullscreen != winapiwindow->fullscreen){
+  //  winapiwindow->fullscreen = fullscreen;
 
-    //HWND taskbar = FindWindow(TEXT("Shell_TrayWnd"), NULL);
-    //HWND startbutton = FindWindow(TEXT("Button"), NULL);
+  //  //HWND taskbar = FindWindow(TEXT("Shell_TrayWnd"), NULL);
+  //  //HWND startbutton = FindWindow(TEXT("Button"), NULL);
 
-    screenrect = naGetMainScreenRect();
+  //  screenrect = naGetMainScreenRect();
 
-    if(fullscreen){
-      DEVMODE screenSettings;
-      winapiwindow->windowedframe = naGetUIElementRect(window, naGetApplication(), NA_TRUE);
+  //  if(fullscreen){
+  //    DEVMODE screenSettings;
+  //    winapiwindow->windowedframe = naGetUIElementRect(window, naGetApplication(), NA_TRUE);
 
-      newrect = naGetMainScreenRect();
+  //    newrect = naGetMainScreenRect();
 
-      memset(&screenSettings, 0, sizeof(screenSettings)); // set everything to 0
-      screenSettings.dmSize = sizeof(screenSettings);
-      //memcpy(screenSettings.dmDeviceName, fullscreendevicename, CCHDEVICENAME * sizeof(WCHAR));
-      screenSettings.dmPelsWidth = (DWORD)newrect.size.width;
-      screenSettings.dmPelsHeight = (DWORD)newrect.size.height;
-      screenSettings.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
+  //    memset(&screenSettings, 0, sizeof(screenSettings)); // set everything to 0
+  //    screenSettings.dmSize = sizeof(screenSettings);
+  //    //memcpy(screenSettings.dmDeviceName, fullscreendevicename, CCHDEVICENAME * sizeof(WCHAR));
+  //    screenSettings.dmPelsWidth = (DWORD)newrect.size.width;
+  //    screenSettings.dmPelsHeight = (DWORD)newrect.size.height;
+  //    screenSettings.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
 
-      style = WS_POPUP;
-      SetWindowLongPtr(naGetUIElementNativeID(window), GWL_STYLE, style);
-      SetWindowPos(naGetUIElementNativeID(window), HWND_TOPMOST, (int)screenrect.pos.x, (int)(screenrect.pos.y - screenrect.pos.y), (int)screenrect.size.width, (int)screenrect.size.height, SWP_SHOWWINDOW);
-      //ChangeDisplaySettings(NULL, 0);
-      ChangeDisplaySettings(&screenSettings, CDS_FULLSCREEN);
-    }else{
-      newrect = winapiwindow->windowedframe;
-      style = WS_OVERLAPPEDWINDOW;
-      SetWindowLongPtr(naGetUIElementNativeID(window), GWL_STYLE, style);
-      SetWindowPos(naGetUIElementNativeID(window), HWND_NOTOPMOST, (int)winapiwindow->windowedframe.pos.x, (int)(screenrect.size.height - winapiwindow->windowedframe.pos.y), (int)winapiwindow->windowedframe.size.width, (int)winapiwindow->windowedframe.size.height, SWP_SHOWWINDOW);
-      ChangeDisplaySettings(NULL, 0);
-    }
+  //    style = WS_POPUP;
+  //    SetWindowLongPtr(naGetUIElementNativeID(window), GWL_STYLE, style);
+  //    SetWindowPos(naGetUIElementNativeID(window), HWND_TOPMOST, (int)screenrect.pos.x, (int)(screenrect.pos.y - screenrect.pos.y), (int)screenrect.size.width, (int)screenrect.size.height, SWP_SHOWWINDOW);
+  //    //ChangeDisplaySettings(NULL, 0);
+  //    ChangeDisplaySettings(&screenSettings, CDS_FULLSCREEN);
+  //  }else{
+  //    newrect = winapiwindow->windowedframe;
+  //    style = WS_OVERLAPPEDWINDOW;
+  //    SetWindowLongPtr(naGetUIElementNativeID(window), GWL_STYLE, style);
+  //    SetWindowPos(naGetUIElementNativeID(window), HWND_NOTOPMOST, (int)winapiwindow->windowedframe.pos.x, (int)(screenrect.size.height - winapiwindow->windowedframe.pos.y), (int)winapiwindow->windowedframe.size.width, (int)winapiwindow->windowedframe.size.height, SWP_SHOWWINDOW);
+  //    ChangeDisplaySettings(NULL, 0);
+  //  }
 
-    //hasbeenhandeled = naDispatchUIElementCommand(window, NA_UI_COMMAND_RESHAPE, &newrect);
-    //if(hasbeenhandeled){naDispatchUIElementCommand(window, NA_UI_COMMAND_REDRAW, NA_NULL);}
-  }
+  //  //hasbeenhandeled = naDispatchUIElementCommand(window, NA_UI_COMMAND_RESHAPE, &newrect);
+  //  //if(hasbeenhandeled){naDispatchUIElementCommand(window, NA_UI_COMMAND_REDRAW, NA_NULL);}
+  //}
 }
-
-
-
-NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
-  NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)window;
-  return winapiwindow->fullscreen;
-}
-
-
-
-NA_DEF NABool naIsWindowResizeable(NAWindow* window){
-//  NACoreWindow* corewindow = (NACoreWindow*)window;
-//  return naGetFlagi(corewindow->flags, NA_CORE_WINDOW_FLAG_RESIZEABLE);
-  return NA_FALSE;
-}
-
-
-
-NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){
-//  NACoreWindow* corewindow = (NACoreWindow*)window;
-//  return corewindow->contentspace;
-  return NA_NULL;
-}
-
 
 
 

@@ -10,6 +10,26 @@
 
 
 
+typedef struct NAWINAPITextField NAWINAPITextField;
+struct NAWINAPITextField {
+  NACoreTextField coretextfield;
+};
+
+
+
+NABool naTextFieldWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NABool hasbeenhandeled = NA_FALSE;
+
+  switch(message){
+  default:
+    //printf("Uncaught TextField message\n");
+    break;
+  }
+  
+  return hasbeenhandeled;
+}
+
+
 //@implementation NANativeTextField
 //- (id) initWithCoreTextField:(NACoreTextField*)newcoretextfield frame:(NSRect)frame{
 //  self = [super initWithFrame:frame];
@@ -53,13 +73,21 @@
 
 
 NA_DEF NATextField* naNewTextField(NARect rect){
-//  NACoreTextField* coretextfield = naAlloc(NACoreTextField);
-//  
-//  NANativeTextField* nativeTextField = [[NANativeTextField alloc] initWithCoreTextField:coretextfield frame:naMakeNSRectWithRect(rect)];
-//  naInitCoreTextField(coretextfield, NA_COCOA_TAKE_OWNERSHIP(nativeTextField));
-//  
-//  return (NATextField*)coretextfield;
-  return NA_NULL;
+  HWND hWnd;
+  DWORD style;
+
+  NAWINAPITextField* winapitextfield = naAlloc(NAWINAPITextField);
+
+  style = WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL;
+
+	hWnd = CreateWindow(
+		TEXT("EDIT"), "", style,
+		(int)rect.pos.x, (int)rect.pos.y, (int)rect.size.width, (int)rect.size.height,
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+  
+  naInitCoreTextField(&(winapitextfield->coretextfield), hWnd);
+
+  return (NATextField*)winapitextfield;
 }
 
 

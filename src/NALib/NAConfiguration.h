@@ -126,11 +126,24 @@
 // macro to 1.
 //
 // If done so, you MUST link your program to the appropriate library:
-// Windows: WinAPI
+// Windows: WinAPI (available automatically) and ComCtl32.lib, see next macro.
 // Macintosh: Cocoa
 
 #ifndef NA_CONFIG_COMPILE_GUI
   #define NA_CONFIG_COMPILE_GUI 0
+#endif
+
+
+// On windows, GUI programming is done with WINAPI. This would by default use
+// the version 5 of common controls which looks very outdated. As usually,
+// a newer look is preferred, the default in NALib is to load version 6.
+// Unfortunately, this requires you to link your binary to ComCtl32.lib.
+// Set this macro to 0 if you want the old look or not link to the library.
+//
+// Default is 1.
+
+#ifndef NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6
+  #define NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6 1
 #endif
 
 

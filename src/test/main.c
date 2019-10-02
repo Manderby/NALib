@@ -80,25 +80,32 @@ void poststartup(void* arg){
 
 //  printf("%d\n", (int)naGetLanguageCode("deu"));
 
-  NARect windowrect = naMakeRectS(20, 20, 400, 300);
+  NARect windowrect = naMakeRectS(120, 120, 400, 300);
   NAWindow* window = naNewWindow("Wurst", windowrect, NA_TRUE, 0);
   naAddUIReaction(window, NA_UI_COMMAND_RESHAPE,       resizeWindow, NA_NULL);
   naAddUIReaction(window, NA_UI_COMMAND_KEYDOWN,       cubPressWindowKey, NA_NULL);
   naAddUIReaction(window, NA_UI_COMMAND_KEYUP,         cubReleaseWindowKey, NA_NULL);
-  naAddUIReaction(window, NA_UI_COMMAND_MOUSE_MOVED,   cubMoveWindowMouse, NA_NULL);
-  naAddUIReaction(window, NA_UI_COMMAND_MOUSE_ENTERED, cubEnterWindowMouse, NA_NULL);
-  naAddUIReaction(window, NA_UI_COMMAND_MOUSE_EXITED,  cubExitWindowMouse, NA_NULL);
+  //naAddUIReaction(window, NA_UI_COMMAND_MOUSE_MOVED,   cubMoveWindowMouse, NA_NULL);
+  //naAddUIReaction(window, NA_UI_COMMAND_MOUSE_ENTERED, cubEnterWindowMouse, NA_NULL);
+  //naAddUIReaction(window, NA_UI_COMMAND_MOUSE_EXITED,  cubExitWindowMouse, NA_NULL);
 
 //  NAOpenGLSpace* openglspace = naNewOpenGLSpace(window, windowrect.size, initOpenGLSpace, window);
 //  naSetWindowContentSpace(window, openglspace);
 
   NASpace* contentSpace = naGetWindowContentSpace(window);
 
-  NAButton* button = naNewPushButton("Test", naMakeRectS(20., 30., 40., 50.));
+  NAButton* button = naNewPushButton("PushButton asdf", naMakeRectS(20., 20., 200., 20.));
   naAddSpaceChild(contentSpace, button);
-
-  NALabel* label = naNewLabel("101010", naMakeRectS(120., 130., 40., 50.));
+  NACheckBox* checkbox = naNewCheckBox("Checkbox asdf", naMakeRectS(20., 40., 200., 20.));
+  naAddSpaceChild(contentSpace, checkbox);
+  NALabel* label = naNewLabel("Label asdf", naMakeRectS(20., 60., 200., 20.));
   naAddSpaceChild(contentSpace, label);
+  NARadio* radio = naNewRadio("Radio asdf", naMakeRectS(20., 80., 200., 20.));
+  naAddSpaceChild(contentSpace, radio);
+  NATextBox* textbox = naNewTextBox(naMakeRectS(20., 100., 200., 40.));
+  naAddSpaceChild(contentSpace, textbox);
+  NATextField* textfield = naNewTextField(naMakeRectS(20., 140., 200., 20.));
+  naAddSpaceChild(contentSpace, textfield);
 
   naShowWindow(window);
 }

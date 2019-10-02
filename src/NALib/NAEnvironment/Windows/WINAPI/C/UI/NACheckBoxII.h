@@ -9,6 +9,26 @@
 // Do not include this file anywhere else!
 
 
+typedef struct NAWINAPICheckBox NAWINAPICheckBox;
+struct NAWINAPICheckBox {
+  NACoreCheckBox corecheckbox;
+};
+
+
+
+NABool naCheckBoxWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NABool hasbeenhandeled = NA_FALSE;
+
+  switch(message){
+  default:
+    //printf("Uncaught CheckBox message\n");
+    break;
+  }
+  
+  return hasbeenhandeled;
+}
+
+
 //@implementation NANativeCheckBox
 //- (id) initWithCoreCheckBox:(NACoreCheckBox*)newcorecheckbox frame:(NSRect)frame{
 //  self = [super initWithFrame:frame];
@@ -38,18 +58,21 @@
 
 
 NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NARect rect){
-//  NACoreCheckBox* corecheckbox = naAlloc(NACoreCheckBox);
-//  NSRect framerect = naMakeNSRectWithRect(rect);
-//  NSRect boundrect = framerect;
-//  boundrect.origin.x = 0;
-//  boundrect.origin.y = 0;
-//
-//  NANativeCheckBox* nativeCheckBox = [[NANativeCheckBox alloc] initWithCoreCheckBox:corecheckbox frame:framerect];
-//  naInitCoreCheckBox(corecheckbox, NA_COCOA_TAKE_OWNERSHIP(nativeCheckBox));
-//  [nativeCheckBox setText:text];
-//  
-//  return (NACheckBox*)corecheckbox;
-  return NA_NULL;
+  HWND hWnd;
+  DWORD style;
+
+  NAWINAPICheckBox* winapicheckbox = naAlloc(NAWINAPICheckBox);
+
+  style = WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_AUTOCHECKBOX;
+
+	hWnd = CreateWindow(
+		TEXT("BUTTON"), text, style,
+		(int)rect.pos.x, (int)rect.pos.y, (int)rect.size.width, (int)rect.size.height,
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+  
+  naInitCoreCheckBox(&(winapicheckbox->corecheckbox), hWnd);
+
+  return (NACheckBox*)winapicheckbox;
 }
 
 

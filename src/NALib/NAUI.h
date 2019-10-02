@@ -216,11 +216,11 @@ NA_API void naStartApplication(  NAMutator prestartup,
 //        will be forwarded to whatever your application delegate was before
 //        it was set to the NALib internal application object.
 //
-// Win: - NALib allocates some structures in the background to run the UI
+// Win: - NALib registers its window classes
+//      - NALib allocates some structures in the background to run the UI
 //        including the application internal translator.
 //      - NALib calls prestartup with arg.
 //      - NALib calls naResetApplicationPreferredTranslatorLanguages().
-//      - NALib registers its window classes
 //      - NALib calls poststartup with arg.
 //      - NALib will start a message loop.
 //

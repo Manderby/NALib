@@ -10,6 +10,27 @@
 
 
 
+typedef struct NAWINAPIRadio NAWINAPIRadio;
+struct NAWINAPIRadio {
+  NACoreRadio coreradio;
+};
+
+
+
+NABool naRadioWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NABool hasbeenhandeled = NA_FALSE;
+
+  switch(message){
+  default:
+    //printf("Uncaught Radio message\n");
+    break;
+  }
+  
+  return hasbeenhandeled;
+}
+
+
+
 //@implementation NANativeRadio
 //- (id) initWithCoreRadio:(NACoreRadio*)newcoreradio frame:(NSRect)frame{
 //  NSRect newbounds = frame;
@@ -49,14 +70,21 @@
 
 
 NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NARect rect){
-//  NACoreRadio* coreradio = naAlloc(NACoreRadio);
-//
-//  NANativeRadio* nativeRadio = [[NANativeRadio alloc] initWithCoreRadio:coreradio frame:naMakeNSRectWithRect(rect)];
-//  naInitCoreRadio(coreradio, NA_COCOA_TAKE_OWNERSHIP(nativeRadio));
-//  [nativeRadio setText:text];
-//  
-//  return (NARadio*)coreradio;
-  return NA_NULL;
+  HWND hWnd;
+  DWORD style;
+
+  NAWINAPIRadio* winapiradio = naAlloc(NAWINAPIRadio);
+
+  style = WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_AUTORADIOBUTTON;
+
+	hWnd = CreateWindow(
+		TEXT("BUTTON"), text, style,
+		(int)rect.pos.x, (int)rect.pos.y, (int)rect.size.width, (int)rect.size.height,
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+  
+  naInitCoreRadio(&(winapiradio->coreradio), hWnd);
+
+  return (NARadio*)winapiradio;
 }
 
 

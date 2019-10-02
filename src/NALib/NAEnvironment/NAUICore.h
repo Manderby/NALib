@@ -149,7 +149,6 @@ extern NACoreApplication* na_app;
 // gathered here. You are free to use them but note that these are supposed to
 // be helper functions.
 
-NA_HAPI void naRegisterCoreUIElement( NACoreUIElement* coreuielement, NAUIElementType elementtype, NANativeID nativeID);
 NA_HAPI void naUnregisterCoreUIElement(NACoreUIElement* coreuielement);
 NA_HAPI void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent);
 

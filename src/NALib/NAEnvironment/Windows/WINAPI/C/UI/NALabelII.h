@@ -10,6 +10,26 @@
 
 
 
+typedef struct NAWINAPILabel NAWINAPILabel;
+struct NAWINAPILabel {
+  NACoreLabel corelabel;
+};
+
+
+
+NABool naLabelWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NABool hasbeenhandeled = NA_FALSE;
+
+  switch(message){
+  default:
+    //printf("Uncaught Label message\n");
+    break;
+  }
+  
+  return hasbeenhandeled;
+}
+
+
 //@implementation MDVerticallyCenteredTextFieldCell
 //
 //- (NSRect)adjustedFrameToVerticallyCenterText:(NSRect)rect {
@@ -164,14 +184,21 @@
 
 
 NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NARect rect){
-//  NACoreLabel* corelabel = naAlloc(NACoreLabel);
-//
-//  NANativeLabel* nativeLabel = [[NANativeLabel alloc] initWithCoreLabel:corelabel frame:naMakeNSRectWithRect(rect)];
-//  naInitCoreLabel(corelabel, NA_COCOA_TAKE_OWNERSHIP(nativeLabel));
-//  naSetLabelText(corelabel, text);
-//  
-//  return (NALabel*)corelabel;
-  return NA_NULL;
+  HWND hWnd;
+  DWORD style;
+
+  NAWINAPILabel* winapilabel = naAlloc(NAWINAPILabel);
+
+  style = WS_CHILD | WS_VISIBLE | SS_LEFT | SS_SIMPLE;
+
+	hWnd = CreateWindow(
+		TEXT("STATIC"), text, style,
+		(int)rect.pos.x, (int)rect.pos.y, (int)rect.size.width, (int)rect.size.height,
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+  
+  naInitCoreLabel(&(winapilabel->corelabel), hWnd);
+
+  return (NALabel*)winapilabel;
 }
 
 

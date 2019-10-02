@@ -169,6 +169,12 @@ NA_HDEF void naClearUINativeId(NANativeID nativeId){
 }
 
 
+NA_HDEF void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent){
+  NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
+  // todo: remove from old parent
+  coreelement->parent = parent;
+}
+
 
 NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextelem){
   naDefineNativeCocoaObject(NANativeTextField, nativeelem, elem);

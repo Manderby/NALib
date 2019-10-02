@@ -35,14 +35,6 @@ NA_HDEF void naUnregisterCoreUIElement(NACoreUIElement* coreuielement){
 
 
 
-NA_HDEF void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent){
-  NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
-  // todo: remove from old parent
-  coreelement->parent = parent;
-}
-
-
-
 NA_HDEF void naInitCoreApplication(NACoreApplication* coreapplication, NANativeID nativeId){
   na_app = coreapplication;
 
@@ -101,6 +93,7 @@ NA_HDEF void naInitCoreWindow(NACoreWindow* corewindow, void* nativeId, NACoreSp
   if(resizeable){corewindow->flags |= NA_CORE_WINDOW_FLAG_RESIZEABLE;}
   corewindow->windowedframe = windowedframe;
 }
+
 NA_HDEF void naClearCoreWindow(NACoreWindow* corewindow){
   naUnregisterCoreUIElement(&(corewindow->uielement));
 }
@@ -112,6 +105,21 @@ NA_DEF void naPreventWindowFromClosing(NAWindow* window, NABool prevent){
       naError("This function is only allowed during a \"CLOSES\" event");
   #endif
   naSetFlagi(&(corewindow->flags), NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, prevent);
+}
+
+NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
+  NACoreWindow* corewindow = (NACoreWindow*)window;
+  return naGetFlagi(corewindow->flags, NA_CORE_WINDOW_FLAG_FULLSCREEN);
+}
+
+NA_DEF NABool naIsWindowResizeable(NAWindow* window){
+  NACoreWindow* corewindow = (NACoreWindow*)window;
+  return naGetFlagi(corewindow->flags, NA_CORE_WINDOW_FLAG_RESIZEABLE);
+}
+
+NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){
+  NACoreWindow* corewindow = (NACoreWindow*)window;
+  return corewindow->contentspace;
 }
 
 

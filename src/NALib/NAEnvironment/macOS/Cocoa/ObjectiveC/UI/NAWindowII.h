@@ -357,24 +357,6 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullscreen){
 
 
 
-NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
-  NACoreWindow* corewindow = (NACoreWindow*)window;
-  return naGetFlagi(corewindow->flags, NA_CORE_WINDOW_FLAG_FULLSCREEN);
-}
-
-
-
-NA_DEF NABool naIsWindowResizeable(NAWindow* window){
-  NACoreWindow* corewindow = (NACoreWindow*)window;
-  return naGetFlagi(corewindow->flags, NA_CORE_WINDOW_FLAG_RESIZEABLE);
-}
-
-
-
-NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){
-  NACoreWindow* corewindow = (NACoreWindow*)window;
-  return corewindow->contentspace;
-}
 
 
 

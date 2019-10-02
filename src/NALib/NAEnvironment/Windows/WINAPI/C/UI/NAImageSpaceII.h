@@ -9,6 +9,27 @@
 // Do not include this file anywhere else!
 
 
+typedef struct NAWINAPIImageSpace NAWINAPIImageSpace;
+struct NAWINAPIImageSpace {
+  NACoreImageSpace coreimagespace;
+};
+
+
+
+NABool naImageSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NABool hasbeenhandeled = NA_FALSE;
+
+  switch(message){
+  default:
+    //printf("Uncaught Image Space message\n");
+    break;
+  }
+  
+  return hasbeenhandeled;
+}
+
+
+
 //@implementation NANativeImageSpace
 //- (id) initWithCoreImageSpace:(NACoreImageSpace*)newcoreimagespace frame:(NSRect)frame{
 //  self = [super initWithFrame:frame];
