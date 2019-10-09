@@ -66,7 +66,7 @@ NA_DEF void naDestructSpace(NASpace* space){
 
 
 
-NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child){
+NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos){
   naDefineNativeCocoaObject(NANativeSpace, nativespace, space);
   naDefineNativeCocoaObject(NSView, nativeview, child);
   NANativeRadio* nativeradio;

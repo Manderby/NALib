@@ -45,6 +45,8 @@ typedef struct NACoreTextBox        NACoreTextBox;
 typedef struct NACoreReaction       NACoreReaction;
 typedef struct NACoreKeyboardShortcutReaction NACoreKeyboardShortcutReaction;
 
+typedef void*  NAFont;
+
 // //////////////////////////////
 //
 // NACoreUIElement is the base type of any ui element. All ui element struct
@@ -201,6 +203,8 @@ NA_HAPI void* naGetUINALibEquivalent(void* nativeID);
 
 
 NA_HAPI NABool naIsCoreApplicationRunning(void);
+
+NAFont getFontWithKind(NAFontKind kind);
 
 // Dispatches a command with the given uielement.
 // As long as the command has not been finished using NA_TRUE as a return value

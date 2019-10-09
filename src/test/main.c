@@ -94,18 +94,18 @@ void poststartup(void* arg){
 
   NASpace* contentSpace = naGetWindowContentSpace(window);
 
-  NAButton* button = naNewPushButton("PushButton asdf", naMakeRectS(20., 20., 200., 20.));
-  naAddSpaceChild(contentSpace, button);
-  NACheckBox* checkbox = naNewCheckBox("Checkbox asdf", naMakeRectS(20., 40., 200., 20.));
-  naAddSpaceChild(contentSpace, checkbox);
-  NALabel* label = naNewLabel("Label asdf", naMakeRectS(20., 60., 200., 20.));
-  naAddSpaceChild(contentSpace, label);
-  NARadio* radio = naNewRadio("Radio asdf", naMakeRectS(20., 80., 200., 20.));
-  naAddSpaceChild(contentSpace, radio);
-  NATextBox* textbox = naNewTextBox(naMakeRectS(20., 100., 200., 40.));
-  naAddSpaceChild(contentSpace, textbox);
-  NATextField* textfield = naNewTextField(naMakeRectS(20., 140., 200., 20.));
-  naAddSpaceChild(contentSpace, textfield);
+  NAButton* button = naNewPushButton("PushButton asdf", naMakeSize(200., 20.));
+  naAddSpaceChild(contentSpace, button, naMakePos(20., 20.));
+  NACheckBox* checkbox = naNewCheckBox("Checkbox asdf", naMakeSize(200., 20.));
+  naAddSpaceChild(contentSpace, checkbox, naMakePos(20., 40.));
+  NALabel* label = naNewLabel("Label asdf", naMakeSize(200., 20.));
+  naAddSpaceChild(contentSpace, label, naMakePos(20., 60.));
+  NARadio* radio = naNewRadio("Radio asdf", naMakeSize(200., 20.));
+  naAddSpaceChild(contentSpace, radio, naMakePos(20., 80.));
+  NATextBox* textbox = naNewTextBox(naMakeSize(200., 40.));
+  naAddSpaceChild(contentSpace, textbox, naMakePos(20., 100.));
+  NATextField* textfield = naNewTextField(naMakeSize(200., 20.));
+  naAddSpaceChild(contentSpace, textfield, naMakePos(20., 140.));
 
   naShowWindow(window);
 }

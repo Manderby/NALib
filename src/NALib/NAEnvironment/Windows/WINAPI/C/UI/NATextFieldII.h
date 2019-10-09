@@ -17,8 +17,8 @@ struct NAWINAPITextField {
 
 
 
-NABool naTextFieldWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
-  NABool hasbeenhandeled = NA_FALSE;
+NAWINAPICallbackInfo naTextFieldWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
   default:
@@ -26,7 +26,7 @@ NABool naTextFieldWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam
     break;
   }
   
-  return hasbeenhandeled;
+  return info;
 }
 
 
@@ -72,7 +72,7 @@ NABool naTextFieldWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam
 
 
 
-NA_DEF NATextField* naNewTextField(NARect rect){
+NA_DEF NATextField* naNewTextField(NASize size){
   HWND hWnd;
   DWORD style;
 
@@ -82,10 +82,12 @@ NA_DEF NATextField* naNewTextField(NARect rect){
 
 	hWnd = CreateWindow(
 		TEXT("EDIT"), "", style,
-		(int)rect.pos.x, (int)rect.pos.y, (int)rect.size.width, (int)rect.size.height,
+		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
   naInitCoreTextField(&(winapitextfield->coretextfield), hWnd);
+
+  SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NATextField*)winapitextfield;
 }
@@ -128,8 +130,8 @@ NA_DEF void naSetTextFieldTextAlignment(NATextField* textfield, NATextAlignment 
 
 
 NA_DEF void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind){
-//  naDefineNativeCocoaObject(NANativeTextField, nativetextfield, textfield);
-//  [nativetextfield setFontKind:kind];
+  NAWINAPITextField* winapitextfield = (NAWINAPITextField*)textfield;
+  SendMessage(naGetUIElementNativeID(winapitextfield), WM_SETFONT, (WPARAM)getFontWithKind(kind), MAKELPARAM(TRUE, 0));
 }
 
 

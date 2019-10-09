@@ -17,19 +17,98 @@ struct NAWINAPISpace {
 
 
 
-NABool naSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
-  NABool hasbeenhandeled = NA_FALSE;
+NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapispace);
+
+
+
+NAWINAPICallbackInfo naSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  RECT spacerect;
+  NACoreUIElement* childelement;
+  NAWINAPISpace* winapispace = (NAWINAPISpace*)uielement;
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  NAWINAPIColor* bgColor;
 
   switch(message){
+  case WM_SHOWWINDOW:
+  case WM_WINDOWPOSCHANGING:
+  case WM_CHILDACTIVATE:
+  case WM_WINDOWPOSCHANGED:
+  case WM_MOVE:
+  case WM_PAINT:
+  case WM_NCPAINT:
+  case WM_PRINTCLIENT:
+  case WM_CTLCOLORBTN:
+  case WM_CTLCOLOREDIT:
+  case WM_NCHITTEST:
+  case WM_SETCURSOR:
+    break;
+
+  case WM_MOUSEMOVE:
+    printf("hoi");
+    info.result = 0;
+    break;
+
+  case WM_MOUSELEAVE:
+    printf("boi\n");
+    info.result = 0;
+    break;
+
+  case WM_CTLCOLORSTATIC: // Message is sent to parent space. wParam: device context, lParam HWND handle to actual control, return: background color brush
+    childelement = (NACoreUIElement*)naGetUINALibEquivalent((HWND)lParam);
+    switch(childelement->elementtype){
+    case NA_UI_LABEL:
+      if(naIsLabelEnabled(childelement)){
+        SetTextColor((HDC)wParam, app->fgColor.color);
+      }else{
+        SetTextColor((HDC)wParam, app->fgColorDisabled.color);
+      }
+      bgColor = naGetWINAPISpaceBackgroundColor(uielement);
+      SetBkColor((HDC)wParam, bgColor->color);
+      info.result = (LRESULT)bgColor->brush;
+      info.hasbeenhandeled = NA_TRUE;
+      break;
+    }
+    break;
+
+  case WM_ERASEBKGND: // wParam: Device context, return >1 if erasing, 0 otherwise
+    GetClientRect(naGetUIElementNativeID(uielement), &spacerect);
+    bgColor = naGetWINAPISpaceBackgroundColor(uielement);
+    if(bgColor != &(app->bgColor)){ // Only draw if not transparent
+      FillRect((HDC)wParam, &spacerect, bgColor->brush);
+    }
+    info.hasbeenhandeled = NA_TRUE;
+    info.result = 1;
+    break;
+
   default:
     //printf("Uncaught Space message\n");
     break;
   }
   
-  return hasbeenhandeled;
+  return info;
 }
 
 
+
+NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapispace){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  NAWINAPIColor* retcolor;
+  NAInt alternateLevel = 0;
+  NAUIElement* parent = winapispace;
+  while(parent){
+    if(naGetSpaceAlternateBackground(parent)){alternateLevel++;}
+    parent = naGetUIElementParentSpace(parent);
+  }
+  switch(alternateLevel){
+  case 0: retcolor = &(app->bgColor); break;
+  case 1: retcolor = &(app->bgColorAlternate); break;
+  case 2:
+  default:
+    retcolor = &(app->bgColorAlternate2); break;
+  }
+  return retcolor;
+}
 
 //@implementation NANativeSpace
 //- (id) initWithCoreSpace:(NACoreSpace*)newcorespace frame:(NSRect)frame{
@@ -67,7 +146,7 @@ NABool naSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LP
 
 
 
-NA_DEF NASpace* naNewSpace(NARect rect){
+NA_DEF NASpace* naNewSpace(NASize size){
   HWND hWnd;
   DWORD exStyle;
   DWORD style;
@@ -79,7 +158,7 @@ NA_DEF NASpace* naNewSpace(NARect rect){
 
 	hWnd = CreateWindow(
 		TEXT("NASpace"), "Space", style,
-		0, 0, (int)rect.size.width, (int)rect.size.height,
+		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   DWORD lasterror = GetLastError();
 
@@ -92,30 +171,20 @@ NA_DEF NASpace* naNewSpace(NARect rect){
 
 
 NA_DEF void naDestructSpace(NASpace* space){
-//  NACoreSpace* corespace = (NACoreSpace*)space;
-//  naClearCoreSpace(corespace);
+  NAWINAPISpace* winapispace = (NAWINAPISpace*)space;
+  naClearCoreSpace(&(winapispace->corespace));
 }
 
 
 
-NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child){
-//  naDefineNativeCocoaObject(NANativeSpace, nativespace, space);
-//  naDefineNativeCocoaObject(NSView, nativeview, child);
-//  NANativeRadio* nativeradio;
-//  NANativeTextBox* nativetextbox;
-//  switch(naGetUIElementType(child)){
-//  case NA_UI_RADIO:
-//    nativeradio = (NANativeRadio*)nativeview;
-//    [nativespace addSubview:[nativeradio getContainingView]];
-//    break;
-//  case NA_UI_TEXTBOX:
-//    nativetextbox = (NANativeTextBox*)nativeview;
-//    [nativespace addSubview:[nativetextbox getContainingView]];
-//    break;
-//  default:
-//    [nativespace addSubview:nativeview];
-//    break;
-//  }
+NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos){
+  RECT spacerect;
+  RECT childrect;
+  GetClientRect(naGetUIElementNativeID(space), &spacerect);
+  GetClientRect(naGetUIElementNativeID(child), &childrect);
+  int spaceheight = spacerect.bottom - spacerect.top;
+  int childheight = childrect.bottom - childrect.top;
+  SetWindowPos(naGetUIElementNativeID(child), HWND_TOP, (int)pos.x, spaceheight - (int)pos.y - childheight, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
   naSetUIElementParent(child, space);
 }
 
@@ -144,10 +213,9 @@ NA_HDEF NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space){
 
 
 NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
-//  NACoreSpace* corespace = (NACoreSpace*)space;
-//  corespace->alternatebackground = alternate;
-//  naDefineNativeCocoaObject(NANativeSpace, nativespace, space);
-//  [nativespace setNeedsDisplay:YES];
+  NACoreSpace* corespace = (NACoreSpace*)space;
+  corespace->alternatebackground = alternate;
+  naRefreshUIElement(space, 0.);
 }
 
 

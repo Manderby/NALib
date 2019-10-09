@@ -130,6 +130,10 @@ NA_HDEF void naInitCoreSpace(NACoreSpace* coreespace, void* nativeId){
 NA_HDEF void naClearCoreSpace(NACoreSpace* coreespace){
   naUnregisterCoreUIElement(&(coreespace->uielement));
 }
+NA_DEF NABool naGetSpaceAlternateBackground(NASpace* space){
+  NACoreSpace* corespace = (NACoreSpace*)space;
+  return corespace->alternatebackground;
+}
 
 
 
@@ -426,25 +430,28 @@ NA_HDEF NAApplication* naGetApplication(void){
 
 
 
-NA_HDEF NAUIElement* naGetUIElementParent(NAUIElement* coreuielement){
-  return ((NACoreUIElement*)coreuielement)->parent;
+NA_HDEF NAUIElement* naGetUIElementParent(NAUIElement* uielement){
+  return ((NACoreUIElement*)uielement)->parent;
 }
 
 
 
-NA_HDEF NAWindow* naGetUIElementWindow(NAUIElement* coreuielement){
-  NACoreWindow* elementwindow;
-  NAUIElementType elementType = ((NACoreUIElement*)coreuielement)->elementtype;
-  if(elementType == NA_UI_APPLICATION){
-    elementwindow = NA_NULL;
-  }else if(elementType == NA_UI_SCREEN){
-    elementwindow = NA_NULL;
-  }else if(elementType == NA_UI_WINDOW){
-    elementwindow = (NACoreWindow*)coreuielement;
-  }else{
-    elementwindow = naGetUIElementWindow(naGetUIElementParent(coreuielement));
+NA_HDEF NAWindow* naGetUIElementWindow(NAUIElement* uielement){
+  NAUIElement* curelement = uielement;
+  while(curelement && naGetUIElementType(curelement) != NA_UI_WINDOW){
+    curelement = naGetUIElementParent(curelement);
   }
-  return elementwindow;
+  return curelement;
+}
+
+
+
+NA_HDEF NASpace* naGetUIElementParentSpace(NAUIElement* uielement){
+  NACoreSpace* parent = naGetUIElementParent(uielement);
+  while(parent && naGetUIElementType(parent) != NA_UI_SPACE){
+    parent = naGetUIElementParent(parent);
+  }
+  return parent;
 }
 
 

@@ -13,126 +13,56 @@
 typedef struct NAWINAPILabel NAWINAPILabel;
 struct NAWINAPILabel {
   NACoreLabel corelabel;
+  NABool enabled;
 };
 
 
+WNDPROC oldLabelWindowProc = NA_NULL;
 
-NABool naLabelWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
-  NABool hasbeenhandeled = NA_FALSE;
+NAWINAPICallbackInfo naLabelWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
+  case WM_SETFONT:
+  case WM_STYLECHANGING:
+  case WM_WINDOWPOSCHANGING:
+  case WM_CHILDACTIVATE:
+  case WM_MOVE:
+  case WM_SHOWWINDOW:
+  case WM_STYLECHANGED:
+  case WM_WINDOWPOSCHANGED:
+  case WM_SETTEXT:
+  case WM_PAINT:
+  case WM_NCPAINT:
+    break;
+
+  case WM_ERASEBKGND:
+    info.hasbeenhandeled = NA_TRUE;
+    info.result = 1;
+    break;
+
   default:
     //printf("Uncaught Label message\n");
     break;
   }
   
-  return hasbeenhandeled;
+  if(!info.hasbeenhandeled){
+    info.result = CallWindowProc(oldLabelWindowProc, naGetUIElementNativeID(uielement), message, wParam, lParam);
+  }
+
+  return info;
 }
 
 
-//@implementation MDVerticallyCenteredTextFieldCell
-//
-//- (NSRect)adjustedFrameToVerticallyCenterText:(NSRect)rect {
-////  static int blah = 0;
-////    CGFloat fontSize = self.font.boundingRectForFont.size.height;
-////    NSRect boundRect = [[self font] boundingRectForFont];
-////    CGFloat ascender = [[self font] ascender];
-////    CGFloat capHeight = [[self font] capHeight];
-////    CGFloat descender = [[self font] descender];
-////    CGFloat xHeight = [[self font] xHeight];
-////    CGFloat test = fontSize - ascender + descender;
-////    CGFloat offset = 15 - (fontSize + (fontSize + boundRect.origin.y - ascender + descender));
-////    CGFloat offset = 18 - (floor(fontSize) + floor(boundRect.origin.y));
-//    CGFloat offset = 0;
-//    return NSMakeRect(rect.origin.x, offset, rect.size.width, rect.size.height - offset);
-////    return NSMakeRect(rect.origin.x, 15 - (fontSize + boundRect.origin.y), rect.size.width, fontSize);
+
+
+//LRESULT CALLBACK LabelWindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+//  NACoreUIElement* uielement = (NACoreUIElement*)naGetUINALibEquivalent(hWnd);
+//  return naLabelWINAPIProc(uielement, message, wParam, lParam);
 //}
-//- (void)editWithFrame:(NSRect)aRect inView:(NSView *)controlView
-//         editor:(NSText *)editor delegate:(id)delegate event:(NSEvent *)event {
-//    [super editWithFrame:[self adjustedFrameToVerticallyCenterText:aRect]
-//          inView:controlView editor:editor delegate:delegate event:event];
-//}
-//
-//- (void)selectWithFrame:(NSRect)aRect inView:(NSView *)controlView
-//                 editor:(NSText *)editor delegate:(id)delegate 
-//                  start:(NSInteger)start length:(NSInteger)length {
-//
-//    [super selectWithFrame:[self adjustedFrameToVerticallyCenterText:aRect]
-//                    inView:controlView editor:editor delegate:delegate
-//                     start:start length:length];
-//}
-//
-////- (void)drawInteriorWithFrame:(NSRect)frame inView:(NSView *)view {
-////    [super drawInteriorWithFrame:[self adjustedFrameToVerticallyCenterText:frame] inView:view];
-////}
-//- (void)drawWithFrame:(NSRect)frame inView:(NSView *)view {
-////    CGFontRef cgfont = CTFontCopyGraphicsFont([self font], nil);
-////  CGFloat cgAscent = CGFontGetAscent(cgfont);
-//
-////  NSLayoutManager* layout = [[NSLayoutManager alloc] init];
-////  CGFloat defaultLineHeight = [layout defaultLineHeightForFont:[self font]];
-////  CGFloat baselineOffset = [layout defaultBaselineOffsetForFont:[self font]];
-////
-////    NSRect titleRect = [self titleRectForBounds:frame];
-////    CGFloat fontHeight = self.font.boundingRectForFont.size.height;
-////    NSRect boundRect = [[self font] boundingRectForFont];
-////    CGFloat origin = boundRect.origin.y;
-////    CGFloat ascender = ([[self font] ascender]);
-////    CGFloat capHeight = [[self font] capHeight];
-////    CGFloat descender = ([[self font] descender]);
-////    CGFloat xHeight = [[self font] xHeight];
-////    CGFloat underlinePos = [[self font] underlinePosition];
-////    CGFloat leading = [[self font] leading];
-////    NSRect glyphrect = [[self font] boundingRectForCGGlyph:'x'];
-////    const CGFloat* matrix = [[self font] matrix];
-////CGFloat baseline = ceil(NSMinY(titleRect) + [[self font] ascender]);
-////    
-////    CGFloat testleading = leading;
-////    if(testleading < 0){testleading = 0;}
-////    testleading = floor(testleading + .5);
-////    
-////    CGFloat testlineheight = floor(ascender + .5) - ceil(descender - .5) + leading;
-////    CGFloat testDelta = 0;
-////    if(leading <= 0){
-////      testDelta = floor (0.2 * testlineheight + 0.5);
-////    }
-////    
-////    CGFloat test = defaultLineHeight;
-////
-////    printf("%f\n", baselineOffset);
-////
-////    [[NSColor yellowColor] setFill];
-////    boundRect.origin.y = 0;
-//////    boundRect.size.height = defaultLineHeight;
-////    boundRect.size.width += 20;
-////    NSRectFill(boundRect);
-////    boundRect.size.width -= 20;
-////
-////    [[NSColor orangeColor] setFill];
-////    boundRect.origin.y = 0;
-////    boundRect.size.height = ascender;
-////    NSRectFill(boundRect);
-////
-////    [[NSColor redColor] setFill];
-////    boundRect.origin.y = ascender;
-////    boundRect.size.height = -descender;
-////    NSRectFill(boundRect);
-////
-////    [[NSColor orangeColor] setFill];
-////    boundRect.origin.y = test;
-////    boundRect.size.height = ascender;
-////    NSRectFill(boundRect);
-////
-////    [[NSColor redColor] setFill];
-////    boundRect.origin.y = test + ascender;
-////    boundRect.size.height = -descender;
-////    NSRectFill(boundRect);
-//    
-//    [super drawWithFrame:[self adjustedFrameToVerticallyCenterText:frame] inView:view];
-//}
-//
-//@end
-//
+
+
+
 //@implementation NANativeLabel
 //- (id) initWithCoreLabel:(NACoreLabel*)newcorelabel frame:(NSRect)frame{
 //  self = [super initWithFrame:frame];
@@ -146,9 +76,6 @@ NABool naLabelWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LP
 //  [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
 //  corelabel = newcorelabel;
 //  return self;
-//}
-//- (void) setText:(const NAUTF8Char*)text{
-//  [self setStringValue:[NSString stringWithUTF8String:text]];
 //}
 //- (void) setLink:(const NAUTF8Char*)url{
 //  [self setAllowsEditingTextAttributes: YES];
@@ -173,30 +100,31 @@ NABool naLabelWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LP
 //- (void) setLabelEnabled:(NABool)enabled{
 //  [self setAlphaValue:enabled ? 1. : .35];
 //}
-//- (void) setTextAlignment:(NATextAlignment) alignment{
-//  [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
-//}
-//- (void) setFontKind:(NAFontKind)kind{
-//  [self setFont:getNSFontWithKind(kind)];
-//}
 //@end
 
 
 
-NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NARect rect){
+NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   HWND hWnd;
   DWORD style;
 
   NAWINAPILabel* winapilabel = naAlloc(NAWINAPILabel);
 
-  style = WS_CHILD | WS_VISIBLE | SS_LEFT | SS_SIMPLE;
+  // We need a read only edit control here, otherwise on windows, the user is not able to select text.
+  style = WS_CHILD | WS_VISIBLE | ES_LEFT | ES_READONLY | ES_MULTILINE;
 
 	hWnd = CreateWindow(
-		TEXT("STATIC"), text, style,
-		(int)rect.pos.x, (int)rect.pos.y, (int)rect.size.width, (int)rect.size.height,
+		TEXT("EDIT"), text, style,
+		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  if(!oldLabelWindowProc){oldLabelWindowProc = oldproc;}
+
   naInitCoreLabel(&(winapilabel->corelabel), hWnd);
+
+  winapilabel->enabled = NA_TRUE;
+  SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NALabel*)winapilabel;
 }
@@ -204,15 +132,14 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NARect rect){
 
 
 NA_DEF void naDestructLabel(NALabel* label){
-//  NACoreLabel* corelabel = (NACoreLabel*)label;
-//  naClearCoreLabel(corelabel);
+  NAWINAPILabel* winapilabel = (NAWINAPILabel*)label;
+  naClearCoreLabel(&(winapilabel->corelabel));
 }
 
 
 
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
-//  naDefineNativeCocoaObject(NANativeLabel, nativelabel, label);
-//  [nativelabel setText:text];
+  SetWindowText(naGetUIElementNativeID(label), text);
 }
 
 
@@ -224,23 +151,31 @@ NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
 
 
 
+NA_DEF NABool naIsLabelEnabled(NALabel* label){
+  NAWINAPILabel* winapilabel = (NAWINAPILabel*)label;
+  return winapilabel->enabled;
+}
+
+
+
 NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled){
-//  naDefineNativeCocoaObject(NANativeLabel, nativelabel, label);
-//  [nativelabel setLabelEnabled:enabled];
+  NAWINAPILabel* winapilabel = (NAWINAPILabel*)label;
+  winapilabel->enabled = enabled;
+  naRefreshUIElement(label, 0);
 }
 
 
 
 NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
-//  naDefineNativeCocoaObject(NANativeLabel, nativelabel, label);
-//  [nativelabel setTextAlignment:alignment];
+  long style = GetWindowLongPtr(naGetUIElementNativeID(label), GWL_STYLE);
+  style = (style & ~SS_TYPEMASK) | getWINAPITextAlignmentWithAlignment(alignment);
+  SetWindowLongPtr(naGetUIElementNativeID(label), GWL_STYLE, style);
 }
 
 
 
 NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind){
-//  naDefineNativeCocoaObject(NANativeLabel, nativelabel, label);
-//  [nativelabel setFontKind:kind];
+  SendMessage(naGetUIElementNativeID(label), WM_SETFONT, (WPARAM)getFontWithKind(kind), MAKELPARAM(TRUE, 0));
 }
 
 

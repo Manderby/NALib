@@ -125,6 +125,12 @@ NA_API NAUIElement* naGetUIElementParent  (NAUIElement* uielement);
 // it is contained in.
 NA_API NAWindow*  naGetUIElementWindow  (NAUIElement* uielement);
 
+// You can get the parent space of any ui element. Note that when the
+// given element is itself a space, the parental space will be returned.
+// If there is no parental space, NA_NULL will be returned. Applications,
+// screens and windows will always return NA_NULL.
+NA_API NASpace* naGetUIElementParentSpace(NAUIElement* uielement);
+
 // In NALib, all coordinates of the UI are described in a mathematical, right-
 // handed coordinate system. The origin of the global coordinate system is
 // at the lower left screen corner of the main screen.
@@ -554,7 +560,8 @@ typedef enum{
   NA_FONT_KIND_TITLE,       // A bolder kind of the default system font
   NA_FONT_KIND_MONOSPACE,   // A monospace font.
   NA_FONT_KIND_PARAGRAPH,   // A nice to read font for displaying longer texts.
-  NA_FONT_KIND_MATH         // A font close to mathematical representation.
+  NA_FONT_KIND_MATH,        // A font close to mathematical representation.
+  NA_FONT_KIND_COUNT
 } NAFontKind;
 
 typedef enum{
@@ -584,12 +591,13 @@ NA_API NABool naIsWindowResizeable(NAWindow* window);
 NA_API void naPreventWindowFromClosing(NAWindow* window, NABool prevent);
 
 // Space (In other frameworks called View, Frame, Area, Widget...)
-NA_API NASpace* naNewSpace(NARect rect);
-NA_API void naAddSpaceChild(NASpace* space, NAUIElement* child);
+NA_API NASpace* naNewSpace(NASize size);
+NA_API void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos);
 NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
+NA_API NABool naGetSpaceAlternateBackground(NASpace* space);
 
 // ImageSpace
-NA_API NAImageSpace* naNewImageSpace(NARect rect);
+NA_API NAImageSpace* naNewImageSpace(NASize size);
 NA_API void naSetImageSpacePath(NAImageSpace* imagespace, const NAUTF8Char* imagePath);
 
 // OpenGLSpace
@@ -608,34 +616,35 @@ NA_API void naSetImageSpacePath(NAImageSpace* imagespace, const NAUTF8Char* imag
 #endif
 
 // Button
-NA_API NAButton* naNewPushButton(const NAUTF8Char* text, NARect rect);
-NA_API NAButton* naNewTextOptionButton(const NAUTF8Char* text, NARect rect);
-NA_API NAButton* naNewImageOptionButton(NAUIImage* uiimage, NARect rect);
-NA_API NAButton* naNewImageButton(NAUIImage* uiimage, NARect rect);
+NA_API NAButton* naNewPushButton(const NAUTF8Char* text, NASize size);
+NA_API NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size);
+NA_API NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size);
+NA_API NAButton* naNewImageButton(NAUIImage* uiimage, NASize size);
 NA_API void naSetButtonState(NAButton* button, NABool state);
 NA_API void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, NAUIElement* controller);
 NA_API void naSetButtonAbort(NAButton* button, NAReactionHandler handler, NAUIElement* controller);
 
 // Radio
-NA_API NARadio* naNewRadio(const NAUTF8Char* text, NARect rect);
+NA_API NARadio* naNewRadio(const NAUTF8Char* text, NASize size);
 NA_API void naSetRadioState(NARadio* radio, NABool state);
 
 // CheckBox
-NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, NARect rect);
+NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size);
 NA_API void naSetCheckBoxState(NACheckBox* checkbox, NABool state);
 NA_API NABool naGetCheckBoxState(NACheckBox* checkbox);
 
 // Label
-NA_API NALabel* naNewLabel(const NAUTF8Char* text, NARect rect);
+NA_API NALabel* naNewLabel(const NAUTF8Char* text, NASize size);
 NA_API void naSetLabelText(NALabel* label, const NAUTF8Char* text);
 // Note that text alignment must be set before calling this method.
 NA_API void naSetLabelLink(NALabel* label, const NAUTF8Char* url);
+NA_API NABool naIsLabelEnabled(NALabel* label);
 NA_API void naSetLabelEnabled(NALabel* label, NABool enabled);
 NA_API void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment);
 NA_API void naSetLabelFontKind(NALabel* label, NAFontKind kind);
 
 // TextField
-NA_API NATextField* naNewTextField(NARect rect);
+NA_API NATextField* naNewTextField(NASize size);
 NA_API void naSetTextFieldText(NATextField* textfield, const NAUTF8Char* text);
 NA_API NAString* naNewStringWithTextFieldText(NATextField* textfield);
 NA_API void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind);
@@ -644,7 +653,7 @@ NA_API void naSetTextFieldTextAlignment(NATextField* textfield, NATextAlignment 
 NA_API void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind);
 
 // TextBox
-NA_API NATextBox* naNewTextBox(NARect rect);
+NA_API NATextBox* naNewTextBox(NASize size);
 NA_API void naSetTextBoxText(NATextBox* textbox, const NAUTF8Char* text);
 NA_API void naSetTextBoxTextAlignment(NATextBox* textbox, NATextAlignment alignment);
 NA_API void naSetTextBoxFontKind(NATextBox* textbox, NAFontKind kind);

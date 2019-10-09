@@ -11,7 +11,6 @@
 
 #include "../../../../../NAPreferences.h"
 
-
 typedef struct NAWINAPIWindow NAWINAPIWindow;
 struct NAWINAPIWindow {
   NACoreWindow corewindow;
@@ -21,46 +20,53 @@ struct NAWINAPIWindow {
 
 
 
-NABool naWindowWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NAWindow* window;
   //NARect rect;
   //NASize size;
   //NAPos pos;
   //const NAMouseStatus* mousestatus;
-  NABool hasbeenhandeled = NA_FALSE;
+  //DWORD colorization;
 
   switch(message){
   case WM_SHOWWINDOW:
     // wParam: true for show, false for hide
     // lParam: status of window
+    // result: 0 when handeled.
     break;
 
   case WM_MOVE:
     // wParam: Unused
     // lParam: LOWORD: x coordinate, HIWORD: y coordinate
+    // result: 0 when handeled.
     window = naGetUIElementWindow(uielement);
     //rect = naGetUIElementRect(window, NA_NULL, NA_FALSE);
     //rect.pos.x = (double)((int)(short)LOWORD(lParam));
     //rect.pos.y = (double)((int)(short)HIWORD(lParam));
-    hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE);
-    if (hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW); }
+    info.hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE);
+    if (info.hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW); }
+    info.result = 0;
     break;
 
   case WM_SIZE:
     // wParam: Type of resizing (maximize, minimize, ...)
     // lParam: LOWORD: width, HIWORD: height
+    // result: 0 when handeled.
     window = naGetUIElementWindow(uielement);
     //rect = naGetUIElementRect(window, NA_NULL, NA_FALSE);
     //rect.size.width = LOWORD(lParam);
     //rect.size.height = HIWORD(lParam);
-    hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE);
-    if (hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW); }
+    info.hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE);
+    if (info.hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW); }
+    info.result = 0;
     break;
 
   //case WM_MOUSEMOVE:
   //  // wParam: several special keys
   //  // GET_X_LPARAM(lParam): x coord relative to top left
   //  // GET_Y_LPARAM(lParam): y coord relative to top left
+    // result: 0 when handeled.
   //  window = naGetUIElementWindow(uielement);
   //  //if(window->flags & CUB_WINDOW_IGNORE_MOUSE_WARP){
   //  //  window->flags &= ~CUB_WINDOW_IGNORE_MOUSE_WARP;
@@ -78,6 +84,7 @@ NABool naWindowWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, L
   //  naSetMouseMovedByDiff(size.width - pos.x, size.height - pos.y);
   //  hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_MOUSE_MOVED);
   //  //}
+  //  info.result = 0;
   //  break;
 
 
@@ -97,12 +104,23 @@ NABool naWindowWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, L
   case WM_SETFOCUS:
     break;
 
+  // Dark mode stuff
+  //case WM_DWMCOLORIZATIONCOLORCHANGED:
+  //  DwmGetColorizationColor(&colorization, &lParam);
+  //  info.result = 0;
+  //  break;
+  //case WM_THEMECHANGED :
+  //case WM_WININICHANGE:
+  //  "hello dark mode";
+  //  break;
+
   default:
     //printf("Uncaught Window message: %X\n", (int)message);
+    //info.result = 0;
     break;
   }
   
-  return hasbeenhandeled;
+  return info;
 }
 
 //@implementation NANativeWindow
@@ -264,8 +282,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   naInitCoreWindow(&(winapiwindow->corewindow), hWnd, NA_NULL, NA_FALSE, resizeable, rect);
   winapiwindow->trackingcount = 0;
 
-  NARect contentFrame = naMakeRect(naMakePos(0., 0.), rect.size);
-  NASpace* space = naNewSpace(contentFrame);
+  NASpace* space = naNewSpace(rect.size);
   naSetWindowContentSpace(winapiwindow, space);
 
   naSetUIElementParent(winapiwindow, naGetApplication());

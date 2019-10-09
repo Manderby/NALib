@@ -38,7 +38,7 @@
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
 }
 - (void) setFontKind:(NAFontKind)kind{
-  [self setFont:getNSFontWithKind(kind)];
+  [self setFont:(NSFont*)getFontWithKind(kind)];
 }
 - (NSView*) getContainingView{
   return scrollview;

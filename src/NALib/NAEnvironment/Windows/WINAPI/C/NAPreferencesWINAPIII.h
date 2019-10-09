@@ -131,7 +131,7 @@ NA_DEF NABool naGetPreferencesBool(const char* key){
 //  NSUserDefaults* userdefaults = naGetNativePreferences();
 //  NSString* nskey = [NSString stringWithUTF8String:key];
 //  return (([userdefaults integerForKey:nskey] == 1) ? NA_TRUE : NA_FALSE);
-  return NA_FALSE;
+  return NA_TRUE;
 }
 NA_DEF NAInt naGetPreferencesInt(const char* key){
 //  NSUserDefaults* userdefaults = naGetNativePreferences();

@@ -19,7 +19,7 @@ struct NAWINAPIOpenGLSpace {
 
 
 
-NABool naOpenGLSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
   NABool hasbeenhandeled = NA_FALSE;
 
   switch(message){

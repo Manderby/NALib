@@ -17,11 +17,17 @@
 
 // The following struct stores all relevant data which will then be stored in
 // a list of the running NAWINAPIApplication.
-typedef struct NATimerStruct NATimerStruct;
-struct NATimerStruct {
+typedef struct NAWINAPITimerStruct NAWINAPITimerStruct;
+struct NAWINAPITimerStruct {
   UINT key;
   NAMutator func;
   void* arg;
+};
+
+typedef struct NAWINAPIColor NAWINAPIColor;
+struct NAWINAPIColor {
+  COLORREF color;
+  HBRUSH brush;
 };
 
 // The struct NAWINAPIApplication stores a list of timers which could otherwise
@@ -32,12 +38,17 @@ struct NAWINAPIApplication {
   NAList timers;
   HWND offscreenWindow;
   NONCLIENTMETRICS nonclientmetrics; 
+  NAWINAPIColor fgColor;
+  NAWINAPIColor fgColorDisabled;
+  NAWINAPIColor bgColor;
+  NAWINAPIColor bgColorAlternate;
+  NAWINAPIColor bgColorAlternate2;
 };
 
 
 
-NABool naApplicationWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
-  NABool hasbeenhandeled = NA_FALSE;
+NAWINAPICallbackInfo naApplicationWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
   default:
@@ -45,7 +56,7 @@ NABool naApplicationWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wPar
     break;
   }
   
-  return hasbeenhandeled;
+  return info;
 }
 
 //@implementation NANativeApplicationDelegate
@@ -82,7 +93,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   // Register the window class
   naZeron(&wndclass, sizeof(WNDCLASS));
 	wndclass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
-	wndclass.lpfnWndProc = WindowCallback;
+	wndclass.lpfnWndProc = naWINAPIWindowCallback;
 	wndclass.cbClsExtra = 0;
 	wndclass.cbWndExtra = 0;
 	wndclass.hInstance = GetModuleHandle(NULL);
@@ -93,10 +104,10 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 	wndclass.lpszClassName = TEXT("NAWindow");
 	RegisterClass(&wndclass);
 
-    // Register the window class
+    // Register the offscreen window class
   naZeron(&wndclass, sizeof(WNDCLASS));
 	wndclass.style = CS_HREDRAW | CS_VREDRAW;
-	wndclass.lpfnWndProc = WindowCallback;
+	wndclass.lpfnWndProc = naWINAPIWindowCallback;
 	wndclass.cbClsExtra = 0;
 	wndclass.cbWndExtra = 0;
 	wndclass.hInstance = GetModuleHandle(NULL);
@@ -110,7 +121,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   // Register the space class
   naZeron(&wndclass, sizeof(WNDCLASS));
 	wndclass.style = CS_HREDRAW | CS_VREDRAW | CS_PARENTDC;
-	wndclass.lpfnWndProc = WindowCallback;
+	wndclass.lpfnWndProc = naWINAPIWindowCallback;
 	wndclass.cbClsExtra = 0;
 	wndclass.cbWndExtra = 0;
 	wndclass.hInstance = GetModuleHandle(NULL);
@@ -185,6 +196,18 @@ NA_HDEF NAApplication* naNewApplication(void){
 
   winapiapplication->nonclientmetrics.cbSize = sizeof(NONCLIENTMETRICS);
   SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &(winapiapplication->nonclientmetrics), 0);
+  
+  winapiapplication->fgColor.color = GetSysColor(COLOR_WINDOWTEXT);
+  winapiapplication->fgColorDisabled.color = GetSysColor(COLOR_GRAYTEXT);
+  winapiapplication->bgColor.color = GetSysColor(COLOR_BTNFACE);
+  winapiapplication->bgColorAlternate.color = RGB(226, 226, 226);
+  winapiapplication->bgColorAlternate2.color = RGB(197, 197, 197);
+
+  winapiapplication->fgColor.brush = CreateSolidBrush(winapiapplication->fgColor.color);
+  winapiapplication->fgColorDisabled.brush = CreateSolidBrush(winapiapplication->fgColorDisabled.color);
+  winapiapplication->bgColor.brush = CreateSolidBrush(winapiapplication->bgColor.color);
+  winapiapplication->bgColorAlternate.brush = CreateSolidBrush(winapiapplication->bgColorAlternate.color);
+  winapiapplication->bgColorAlternate2.brush = CreateSolidBrush(winapiapplication->bgColorAlternate2.color);
 
   return (NAApplication*)winapiapplication;
 }
@@ -192,10 +215,22 @@ NA_HDEF NAApplication* naNewApplication(void){
 
 
 NA_DEF void naDestructApplication(NAApplication* application){
-  NAWINAPIApplication* winapiapplication = (NAWINAPIApplication*)application;
-  // todo clear the rest of the app.
-  naClearCoreApplication(&(winapiapplication->coreapplication));
-  
+  NAWINAPIApplication* app = (NAWINAPIApplication*)application;
+
+  naReleaseUIElement(app->offscreenWindow);
+
+  DeleteObject(app->fgColor.brush);
+  DeleteObject(app->fgColorDisabled.brush);
+  DeleteObject(app->bgColor.brush);
+  DeleteObject(app->bgColorAlternate.brush);
+  DeleteObject(app->bgColorAlternate2.brush);
+
+  naClearCoreApplication(&(app->coreapplication));  
+
+  // Now that all windows are destroyed, all dependent timers are deleted. We can
+  // safely release the timer structs. todo: Make killing the timers a sport.
+  naForeachListMutable(&(app->timers), (NAMutator)naFree);
+  naClearList(&(app->timers));
 }
 
 
@@ -229,7 +264,7 @@ NA_HDEF static VOID CALLBACK naTimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_
   UINT timerkey = (UINT)idEvent;
   app = (NAWINAPIApplication*)naGetApplication();
 
-  naBeginListModifierIteration(NATimerStruct* timerstruct, &(app->timers), iter);
+  naBeginListModifierIteration(NAWINAPITimerStruct* timerstruct, &(app->timers), iter);
     if(timerstruct->key == timerkey) {
       naRemoveListCurMutable(&iter, NA_FALSE);
       KillTimer(hwnd, idEvent);
@@ -244,7 +279,7 @@ NA_HDEF static VOID CALLBACK naTimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_
 
 NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, double timediff){
   NAWINAPIApplication* app;
-  NATimerStruct* timerstruct = naAlloc(NATimerStruct);
+  NAWINAPITimerStruct* timerstruct = naAlloc(NAWINAPITimerStruct);
   timerstruct->func = function;
   timerstruct->arg = arg;
   // todo: Check type

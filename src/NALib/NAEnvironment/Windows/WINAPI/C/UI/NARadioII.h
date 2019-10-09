@@ -17,8 +17,8 @@ struct NAWINAPIRadio {
 
 
 
-NABool naRadioWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
-  NABool hasbeenhandeled = NA_FALSE;
+NAWINAPICallbackInfo naRadioWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
   default:
@@ -26,7 +26,7 @@ NABool naRadioWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LP
     break;
   }
   
-  return hasbeenhandeled;
+  return info;
 }
 
 
@@ -69,7 +69,7 @@ NABool naRadioWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LP
 
 
 
-NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NARect rect){
+NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
   HWND hWnd;
   DWORD style;
 
@@ -79,10 +79,12 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NARect rect){
 
 	hWnd = CreateWindow(
 		TEXT("BUTTON"), text, style,
-		(int)rect.pos.x, (int)rect.pos.y, (int)rect.size.width, (int)rect.size.height,
+		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
   naInitCoreRadio(&(winapiradio->coreradio), hWnd);
+
+  SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NARadio*)winapiradio;
 }

@@ -16,8 +16,8 @@ struct NAWINAPIButton {
 
 
 
-NABool naButtonWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
-  NABool hasbeenhandeled = NA_FALSE;
+NAWINAPICallbackInfo naButtonWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
   default:
@@ -25,7 +25,7 @@ NABool naButtonWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, L
     break;
   }
   
-  return hasbeenhandeled;
+  return info;
 }
 
 
@@ -105,7 +105,7 @@ NABool naButtonWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, L
 
 
 
-NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NARect rect){
+NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
   HWND hWnd;
   DWORD style;
 
@@ -115,23 +115,19 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NARect rect){
 
 	hWnd = CreateWindow(
 		TEXT("BUTTON"), text, style,
-		(int)rect.pos.x, (int)rect.pos.y, (int)rect.size.width, (int)rect.size.height,
+		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
   naInitCoreButton(&(winapibutton->corebutton), hWnd);
 
-  #if NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6 == 1
-    HFONT font = CreateFontIndirect(&(naGetApplicationMetrics()->lfMessageFont));
-    // destroy font with DeleteObject(font);
-    SendMessage(hWnd, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-  #endif
+  SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NAButton*)winapibutton;
 }
 
 
 
-NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NARect rect){
+NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
   HWND hWnd;
   DWORD style;
 
@@ -141,23 +137,19 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NARect rect){
 
 	hWnd = CreateWindow(
 		TEXT("BUTTON"), text, style,
-		(int)rect.pos.x, (int)rect.pos.y, (int)rect.size.width, (int)rect.size.height,
+		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
   naInitCoreButton(&(winapibutton->corebutton), hWnd);
 
-  #if NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6 == 1
-    HFONT font = CreateFontIndirect(&(naGetApplicationMetrics()->lfMessageFont));
-    // destroy font with DeleteObject(font);
-    SendMessage(hWnd, WM_SETFONT, (WPARAM)font, MAKELPARAM(TRUE, 0));
-  #endif
+  SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NAButton*)winapibutton;
 }
 
 
 
-NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NARect rect){
+NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size){
 //  NACoreButton* corebutton = naAlloc(NACoreButton);
 //
 //  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NSBezelStyleShadowlessSquare frame:naMakeNSRectWithRect(rect)];
@@ -170,7 +162,7 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NARect rect){
 
 
 
-NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NARect rect){
+NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
 //  NACoreButton* corebutton = naAlloc(NACoreButton);
 //
 //  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:0 frame:naMakeNSRectWithRect(rect)];

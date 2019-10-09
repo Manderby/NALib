@@ -17,8 +17,8 @@ struct NAWINAPITextBox {
 
 
 
-NABool naTextBoxWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
-  NABool hasbeenhandeled = NA_FALSE;
+NAWINAPICallbackInfo naTextBoxWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
   default:
@@ -26,7 +26,7 @@ NABool naTextBoxWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, 
     break;
   }
   
-  return hasbeenhandeled;
+  return info;
 }
 
 
@@ -68,7 +68,7 @@ NABool naTextBoxWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, 
 
 
 
-NA_DEF NATextBox* naNewTextBox(NARect rect){
+NA_DEF NATextBox* naNewTextBox(NASize size){
   HWND hWnd;
   DWORD style;
 
@@ -78,10 +78,12 @@ NA_DEF NATextBox* naNewTextBox(NARect rect){
 
 	hWnd = CreateWindow(
 		TEXT("EDIT"), "", style,
-		(int)rect.pos.x, (int)rect.pos.y, (int)rect.size.width, (int)rect.size.height,
+		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
   naInitCoreTextBox(&(winapitextbox->coretextbox), hWnd);
+
+  SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NATextBox*)winapitextbox;
 }
@@ -110,8 +112,8 @@ NA_DEF void naSetTextBoxTextAlignment(NATextBox* textbox, NATextAlignment alignm
 
 
 NA_DEF void naSetTextBoxFontKind(NATextBox* textbox, NAFontKind kind){
-//  naDefineNativeCocoaObject(NANativeTextBox, nativetextbox, textbox);
-//  [nativetextbox setFontKind:kind];
+  NAWINAPITextBox* winapitextbox = (NAWINAPITextBox*)textbox;
+  SendMessage(naGetUIElementNativeID(winapitextbox), WM_SETFONT, (WPARAM)getFontWithKind(kind), MAKELPARAM(TRUE, 0));
 }
 
 

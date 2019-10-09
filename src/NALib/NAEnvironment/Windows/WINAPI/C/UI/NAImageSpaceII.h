@@ -16,8 +16,8 @@ struct NAWINAPIImageSpace {
 
 
 
-NABool naImageSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
-  NABool hasbeenhandeled = NA_FALSE;
+NAWINAPICallbackInfo naImageSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
   default:
@@ -25,7 +25,7 @@ NABool naImageSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wPara
     break;
   }
   
-  return hasbeenhandeled;
+  return info;
 }
 
 
@@ -45,7 +45,7 @@ NABool naImageSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wPara
 
 
 
-NA_DEF NAImageSpace* naNewImageSpace(NARect rect){
+NA_DEF NAImageSpace* naNewImageSpace(NASize size){
 //  NACoreImageSpace* coreImageSpace = naAlloc(NACoreImageSpace);
 //
 //  NSRect contentRect = naMakeNSRectWithRect(rect);

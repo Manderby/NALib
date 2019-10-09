@@ -52,7 +52,7 @@ struct NAWINAPIOpenGLSpace {
 
 
 NA_HDEF void naClearUINativeId(NANativeID nativeId){
-  //NA_COCOA_DISPOSE(nativeId);
+    DestroyWindow(nativeId);
 }
 
 
@@ -95,164 +95,166 @@ NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextele
 // WINDOW CALLBACK
 // ///////////////////////////////////
 
+typedef struct NAWINAPICallbackInfo NAWINAPICallbackInfo;
+struct NAWINAPICallbackInfo{
+  NABool hasbeenhandeled;
+  LRESULT result;
+};
+
 // Prototypes of the WindowProc handlers
-NABool naApplicationWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-NABool naWindowWINAPIProc     (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-NABool naSpaceWINAPIProc      (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-NABool naImageSpaceWINAPIProc (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naApplicationWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naWindowWINAPIProc     (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naSpaceWINAPIProc      (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naImageSpaceWINAPIProc (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
 #if (NA_CONFIG_COMPILE_OPENGL == 1)
-  NABool naOpenGLSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
+  NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
 #endif
-NABool naButtonWINAPIProc     (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-NABool naRadioWINAPIProc      (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-NABool naCheckBoxWINAPIProc   (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-NABool naLabelWINAPIProc      (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-NABool naTextFieldWINAPIProc  (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-NABool naTextBoxWINAPIProc    (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naButtonWINAPIProc     (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naRadioWINAPIProc      (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naCheckBoxWINAPIProc   (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naLabelWINAPIProc      (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naTextFieldWINAPIProc  (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naTextBoxWINAPIProc    (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
 
 // This is the one and only, master of destruction, defender of chaos and
 // pimp of the century function handling all and everything in WINAPI.
 
-LRESULT CALLBACK WindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-  PAINTSTRUCT ps; // Paint information. Needed for WM_PAINT messages
-  NABool hasbeenhandeled = NA_FALSE;
-  LRESULT retvalue;
-  NAUIKeyCode keycode;
-  NAUIKeyCode scancode;   // used as UINT, converted to NAUIKeyCode
+LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+  //PAINTSTRUCT ps; // Paint information. Needed for WM_PAINT messages
+  //LRESULT retvalue;
+  //NAUIKeyCode keycode;
+  //NAUIKeyCode scancode;   // used as UINT, converted to NAUIKeyCode
 
   NACoreUIElement* uielement = (NACoreUIElement*)naGetUINALibEquivalent(hWnd);
 
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+
   if(uielement){
     switch(naGetUIElementType(uielement)){
-    case NA_UI_APPLICATION: hasbeenhandeled = naApplicationWINAPIProc(uielement, message, wParam, lParam); break;
-    case NA_UI_WINDOW:      hasbeenhandeled = naWindowWINAPIProc     (uielement, message, wParam, lParam); break;
-    case NA_UI_SPACE:       hasbeenhandeled = naSpaceWINAPIProc      (uielement, message, wParam, lParam); break;
-    case NA_UI_IMAGESPACE:  hasbeenhandeled = naImageSpaceWINAPIProc (uielement, message, wParam, lParam); break;
+    case NA_UI_APPLICATION: info = naApplicationWINAPIProc(uielement, message, wParam, lParam); break;
+    case NA_UI_WINDOW:      info = naWindowWINAPIProc     (uielement, message, wParam, lParam); break;
+    case NA_UI_SPACE:       info = naSpaceWINAPIProc      (uielement, message, wParam, lParam); break;
+    case NA_UI_IMAGESPACE:  info = naImageSpaceWINAPIProc (uielement, message, wParam, lParam); break;
     #if (NA_CONFIG_COMPILE_OPENGL == 1)
-      case NA_UI_OPENGLSPACE: hasbeenhandeled = naOpenGLSpaceWINAPIProc(uielement, message, wParam, lParam); break;
+      case NA_UI_OPENGLSPACE: info = naOpenGLSpaceWINAPIProc(uielement, message, wParam, lParam); break;
     #endif
-    case NA_UI_BUTTON:      hasbeenhandeled = naButtonWINAPIProc     (uielement, message, wParam, lParam); break;
-    case NA_UI_RADIO:       hasbeenhandeled = naRadioWINAPIProc      (uielement, message, wParam, lParam); break;
-    case NA_UI_CHECKBOX:    hasbeenhandeled = naCheckBoxWINAPIProc   (uielement, message, wParam, lParam); break;
-    case NA_UI_LABEL:       hasbeenhandeled = naLabelWINAPIProc      (uielement, message, wParam, lParam); break;
-    case NA_UI_TEXTFIELD:   hasbeenhandeled = naTextFieldWINAPIProc  (uielement, message, wParam, lParam); break;
-    case NA_UI_TEXTBOX:     hasbeenhandeled = naTextBoxWINAPIProc    (uielement, message, wParam, lParam); break;
+    case NA_UI_BUTTON:      info = naButtonWINAPIProc     (uielement, message, wParam, lParam); break;
+    case NA_UI_RADIO:       info = naRadioWINAPIProc      (uielement, message, wParam, lParam); break;
+    case NA_UI_CHECKBOX:    info = naCheckBoxWINAPIProc   (uielement, message, wParam, lParam); break;
+    case NA_UI_LABEL:       info = naLabelWINAPIProc      (uielement, message, wParam, lParam); break;
+    case NA_UI_TEXTFIELD:   info = naTextFieldWINAPIProc  (uielement, message, wParam, lParam); break;
+    case NA_UI_TEXTBOX:     info = naTextBoxWINAPIProc    (uielement, message, wParam, lParam); break;
     default: break;
     }
   }
 
   // If the event has not been handeled, hand it over to the default procedure.
-  return hasbeenhandeled ? 0 : DefWindowProc(hWnd, message, wParam, lParam);
+  if(!info.hasbeenhandeled){
+    info.result = DefWindowProc(hWnd, message, wParam, lParam);
+  }
+  return info.result;
 
 
 
 
-  //if((message >= WM_USER) && (message <= 0x7fff)){
-  //  // User defined message
-  //  naDispatchUIElementCommand(uielement, ???, wParam);
-  //  return 0;
+  ////if((message >= WM_USER) && (message <= 0x7fff)){
+  ////  // User defined message
+  ////  naDispatchUIElementCommand(uielement, ???, wParam);
+  ////  return 0;
+  ////}
+
+  //switch (message) {
+
+  //case WM_PAINT:
+  //  // wParam: Unused
+  //  // lParam: Unused
+  //  if (uielement->elementtype == NA_UI_OPENGLSPACE) {
+  //    BeginPaint(hWnd, &ps);
+
+  //    //if(uielement is opengl)
+  //    //        wglMakeCurrent(GetDC(naGetUIElementNativeID(&(openglspace->uielement))), openglspace->hRC);
+
+  //    hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW);
+  //    //uielement->refreshrequested = NA_FALSE;
+  //    EndPaint(hWnd, &ps);
+  //  }
+  //  break;
+
+  //case WM_CREATE:
+  //  hasbeenhandeled = NA_FALSE;
+  //  //  if(window->eraseBackground()){
+  //  //    DefWindowProc(hWnd, message, wParam, lParam);
+  //  //  }else{
+  //  //  }
+  //  break;
+
+  //case WM_TIMER:
+  //  // Note: Does not work with hWnd == NULL. Will not be called here.
+  //  // wParam: timer identifier as an UINT
+  //  // lParam: callback function. Unused in NALib
+  //  //hasbeenhandeled = naExecuteApplicationTimer((UINT)wParam);
+  //  break;
+
+  //case WM_HSCROLL:
+  //  //  uielement = window->getUIElement((HWND)lParam);
+  //  //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(LOWORD(wParam), 0);} // note that this is the loword
+  //  break;
+
+  //case WM_KEYDOWN:
+  //  // wParam: virtual key code
+  //  // lParam: several values, attributes, flags, ...
+  //  keycode = wParam;
+  //  scancode = (NAUIKeyCode)MapVirtualKey((UINT)keycode, MAPVK_VK_TO_VSC);
+  //  hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_KEYDOWN);
+  //  break;
+
+  //case WM_KEYUP:
+  //  // wParam: virtual key code
+  //  // lParam: several values, attributes, flags, ...
+  //  keycode = wParam;
+  //  scancode = MapVirtualKey((UINT)keycode, MAPVK_VK_TO_VSC);
+  //  hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_KEYUP);
+  //  break;
+
+  //case WM_MOUSELEAVE:
+  //  //  window->mouseLeave();
+  //  break;
+
+  //case WM_LBUTTONUP:
+  //  //  window->leftMouseUp(LOWORD(lParam), HIWORD(lParam), wParam);
+  //  break;
+
+  //case WM_COMMAND:
+  //  //  uielement = window->getUIElement((HWND)lParam);
+  //  //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(HIWORD(wParam), 0);}
+  //  break;
+
+  //case WM_NOTIFY:
+  //  //  uielement = window->getUIElement(((LPNMHDR)lParam)->hwndFrom);
+  //  //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(((LPNMHDR)lParam)->code, lParam);}
+  //  break;
+
+  //case WM_USER:
+  //  //  uielement = window->getUIElement((HWND)lParam);
+  //  //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(HIWORD(wParam), 0);}
+  //  break;
+
+  //case WM_CLOSE:
+  //  //  window->close();
+  //  //  if(!::gui->numwindows){PostQuitMessage(0);}
+  //  break;
+
+  //default:
+  //  break;
+
   //}
 
-  switch (message) {
-
-  case WM_PAINT:
-    // wParam: Unused
-    // lParam: Unused
-    if (uielement->elementtype == NA_UI_OPENGLSPACE) {
-      BeginPaint(hWnd, &ps);
-
-      //if(uielement is opengl)
-      //        wglMakeCurrent(GetDC(naGetUIElementNativeID(&(openglspace->uielement))), openglspace->hRC);
-
-      hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW);
-      //uielement->refreshrequested = NA_FALSE;
-      EndPaint(hWnd, &ps);
-    }
-    break;
-
-  case WM_CREATE:
-    hasbeenhandeled = NA_FALSE;
-    //  if(window->eraseBackground()){
-    //    DefWindowProc(hWnd, message, wParam, lParam);
-    //  }else{
-    //  }
-    break;
-
-  case WM_ERASEBKGND:
-    //hasbeenhandeled = NA_TRUE;
-    //  if(window->eraseBackground()){
-    //    DefWindowProc(hWnd, message, wParam, lParam);
-    //  }else{
-    //  }
-    break;
-
-  case WM_TIMER:
-    // Note: Does not work with hWnd == NULL. Will not be called here.
-    // wParam: timer identifier as an UINT
-    // lParam: callback function. Unused in NALib
-    //hasbeenhandeled = naExecuteApplicationTimer((UINT)wParam);
-    break;
-
-  case WM_HSCROLL:
-    //  uielement = window->getUIElement((HWND)lParam);
-    //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(LOWORD(wParam), 0);} // note that this is the loword
-    break;
-
-  case WM_KEYDOWN:
-    // wParam: virtual key code
-    // lParam: several values, attributes, flags, ...
-    keycode = wParam;
-    scancode = (NAUIKeyCode)MapVirtualKey((UINT)keycode, MAPVK_VK_TO_VSC);
-    hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_KEYDOWN);
-    break;
-
-  case WM_KEYUP:
-    // wParam: virtual key code
-    // lParam: several values, attributes, flags, ...
-    keycode = wParam;
-    scancode = MapVirtualKey((UINT)keycode, MAPVK_VK_TO_VSC);
-    hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_KEYUP);
-    break;
-
-  case WM_MOUSELEAVE:
-    //  window->mouseLeave();
-    break;
-
-  case WM_LBUTTONUP:
-    //  window->leftMouseUp(LOWORD(lParam), HIWORD(lParam), wParam);
-    break;
-
-  case WM_COMMAND:
-    //  uielement = window->getUIElement((HWND)lParam);
-    //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(HIWORD(wParam), 0);}
-    break;
-
-  case WM_NOTIFY:
-    //  uielement = window->getUIElement(((LPNMHDR)lParam)->hwndFrom);
-    //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(((LPNMHDR)lParam)->code, lParam);}
-    break;
-
-  case WM_USER:
-    //  uielement = window->getUIElement((HWND)lParam);
-    //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(HIWORD(wParam), 0);}
-    break;
-
-  case WM_CLOSE:
-    //  window->close();
-    //  if(!::gui->numwindows){PostQuitMessage(0);}
-    break;
-
-  default:
-    break;
-
-  }
-
-  if(hasbeenhandeled) {
-    retvalue = 0;
-  }else{
-    retvalue = DefWindowProc(hWnd, message, wParam, lParam);
-  }
-  return retvalue;
+  //if(hasbeenhandeled) {
+  //  retvalue = 0;
+  //}else{
+  //  retvalue = DefWindowProc(hWnd, message, wParam, lParam);
+  //}
+  //return retvalue;
 }
 
 
@@ -380,6 +382,139 @@ NA_API NARect naGetMainScreenRect(){
   rect.size.width = (double)screeninfo.rcMonitor.right - (double)screeninfo.rcMonitor.left;
   rect.size.height = (double)screeninfo.rcMonitor.bottom - (double)screeninfo.rcMonitor.top;
   return rect;
+}
+
+
+//int CALLBACK enumFonts(
+//  _In_ ENUMLOGFONT   *lpelf,
+//  _In_ NEWTEXTMETRIC *lpntm,
+//  _In_ DWORD         FontType,
+//  _In_ LPARAM        lParam
+//){
+//  int x = 1234;
+//  printf("%s\n", lpelf->elfFullName);
+//}
+
+NAFont getFontWithKind(NAFontKind kind){
+  HFONT font = NA_NULL;
+  #if NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6 == 1
+
+  const NONCLIENTMETRICSA* metrics = naGetApplicationMetrics();
+
+  //EnumFontFamilies(GetDC(NA_NULL), NA_NULL, enumFonts, NA_NULL);
+
+//  CGFloat systemSize = [NSFont systemFontSize];
+  switch(kind){
+    case NA_FONT_KIND_SYSTEM:
+      font = CreateFont(
+        metrics->lfMessageFont.lfHeight,
+        0,
+        0,
+        0,
+        FW_NORMAL,
+        NA_FALSE,
+        NA_FALSE,
+        NA_FALSE,
+        DEFAULT_CHARSET,
+        OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS,
+        DEFAULT_QUALITY,
+        DEFAULT_PITCH | FF_DONTCARE,
+        metrics->lfMessageFont.lfFaceName);
+      break;
+    case NA_FONT_KIND_TITLE:
+      font = CreateFont(
+        metrics->lfMessageFont.lfHeight,
+        0,
+        0,
+        0,
+        FW_BOLD,
+        NA_FALSE,
+        NA_FALSE,
+        NA_FALSE,
+        DEFAULT_CHARSET,
+        OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS,
+        DEFAULT_QUALITY,
+        DEFAULT_PITCH | FF_DONTCARE,
+        metrics->lfMessageFont.lfFaceName);
+      break;
+    case NA_FONT_KIND_MONOSPACE:
+      font = CreateFont(
+        metrics->lfMessageFont.lfHeight,
+        0,
+        0,
+        0,
+        FW_BOLD,
+        NA_FALSE,
+        NA_FALSE,
+        NA_FALSE,
+        DEFAULT_CHARSET,
+        OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS,
+        DEFAULT_QUALITY,
+        DEFAULT_PITCH | FF_DONTCARE,
+        "Courier New");
+      break;
+    case NA_FONT_KIND_PARAGRAPH:
+      font = CreateFont(
+        metrics->lfMessageFont.lfHeight,
+        0,
+        0,
+        0,
+        FW_BOLD,
+        NA_FALSE,
+        NA_FALSE,
+        NA_FALSE,
+        DEFAULT_CHARSET,
+        OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS,
+        DEFAULT_QUALITY,
+        DEFAULT_PITCH | FF_DONTCARE,
+        "Palatino Linotype");
+      break;
+    case NA_FONT_KIND_MATH:
+      font = CreateFont(
+        metrics->lfMessageFont.lfHeight,
+        0,
+        0,
+        0,
+        FW_BOLD,
+        NA_TRUE,
+        NA_FALSE,
+        NA_FALSE,
+        DEFAULT_CHARSET,
+        OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS,
+        DEFAULT_QUALITY,
+        DEFAULT_PITCH | FF_DONTCARE,
+        "Times New Roman");
+      break;
+    default:
+      #ifndef NDEBUG
+        naError("Unknown font kind");
+      #endif
+      break;
+  }
+  #endif
+    //// destroy font with DeleteObject(font);
+  return (NAFont)font;
+}
+
+
+long getWINAPITextAlignmentWithAlignment(NATextAlignment alignment){
+  long winapialignment;
+  switch(alignment){
+  case NA_TEXT_ALIGNMENT_LEFT: winapialignment = ES_LEFT; break;
+  case NA_TEXT_ALIGNMENT_RIGHT: winapialignment = ES_RIGHT; break;
+  case NA_TEXT_ALIGNMENT_CENTER: winapialignment = ES_CENTER; break;
+  default:
+    #ifndef NDEBUG
+      naError("Invalid alignment enumeration");
+    #endif
+    break;
+  }
+  return winapialignment;
 }
 
 
