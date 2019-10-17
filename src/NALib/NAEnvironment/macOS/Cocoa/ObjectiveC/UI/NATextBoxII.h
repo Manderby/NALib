@@ -86,6 +86,13 @@ NA_DEF void naSetTextBoxFontKind(NATextBox* textbox, NAFontKind kind){
 
 
 
+NA_DEF void naSetTextBoxEditable(NATextBox* textbox, NABool editable){
+  naDefineNativeCocoaObject(NANativeTextBox, nativetextbox, textbox);
+  [nativetextbox setReadonly:!editable];
+}
+
+
+
 NA_HDEF NARect naGetTextBoxAbsoluteInnerRect(NACoreUIElement* textbox){
   NA_UNUSED(textbox);
   return naMakeRectS(20, 40, 100, 50);

@@ -13,6 +13,7 @@
 typedef struct NAWINAPISpace NAWINAPISpace;
 struct NAWINAPISpace {
   NACoreSpace corespace;
+  NAWINAPIColor* lastBgColor;
 };
 
 
@@ -44,16 +45,6 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPA
   case WM_SETCURSOR:
     break;
 
-  case WM_MOUSEMOVE:
-    printf("hoi");
-    info.result = 0;
-    break;
-
-  case WM_MOUSELEAVE:
-    printf("boi\n");
-    info.result = 0;
-    break;
-
   case WM_CTLCOLORSTATIC: // Message is sent to parent space. wParam: device context, lParam HWND handle to actual control, return: background color brush
     childelement = (NACoreUIElement*)naGetUINALibEquivalent((HWND)lParam);
     switch(childelement->elementtype){
@@ -74,8 +65,9 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPA
   case WM_ERASEBKGND: // wParam: Device context, return >1 if erasing, 0 otherwise
     GetClientRect(naGetUIElementNativeID(uielement), &spacerect);
     bgColor = naGetWINAPISpaceBackgroundColor(uielement);
-    if(bgColor != &(app->bgColor)){ // Only draw if not transparent
+    if(bgColor != winapispace->lastBgColor){ // Only draw if changed
       FillRect((HDC)wParam, &spacerect, bgColor->brush);
+      winapispace->lastBgColor = bgColor;
     }
     info.hasbeenhandeled = NA_TRUE;
     info.result = 1;
@@ -150,6 +142,7 @@ NA_DEF NASpace* naNewSpace(NASize size){
   HWND hWnd;
   DWORD exStyle;
   DWORD style;
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
   NAWINAPISpace* winapispace = naAlloc(NAWINAPISpace);
 
@@ -157,12 +150,13 @@ NA_DEF NASpace* naNewSpace(NASize size){
   style = WS_CHILD | WS_VISIBLE;
 
 	hWnd = CreateWindow(
-		TEXT("NASpace"), "Space", style,
+		TEXT("NASpace"), TEXT("Space"), style,
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
-  DWORD lasterror = GetLastError();
+  //DWORD lasterror = GetLastError();
 
   naInitCoreSpace(&(winapispace->corespace), hWnd);
+  winapispace->lastBgColor = &(app->bgColor);
   winapispace->corespace.alternatebackground = NA_FALSE;
 
   return (NASpace*)winapispace;

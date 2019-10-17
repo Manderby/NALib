@@ -31,7 +31,7 @@
 // If a later version is defined, all earlier versions are defined as well.
 #ifndef __cplusplus
   // This is a C compilation
-  #if defined __STDC__ || defined _MSC_VER
+  #if defined __STDC__
 
     #define NA_C89  // C89 and C90 are virtually the same thing.
     #define NA_C90
@@ -46,6 +46,19 @@
       #if __STDC_VERSION__ >= 201112L
         #define NA_C11
       #endif
+    #endif
+
+  #elif defined _MSC_VER
+
+    #define NA_C89  // C89 and C90 are virtually the same thing.
+    #define NA_C90
+
+    #if _MSC_VER >= 1800  // VS2013 started to support some C99
+      #define NA_C94
+      #define NA_C99
+    #endif
+    #if _MSC_VER >= 1910  // VS2017 does C11, but not completely.
+      #define NA_C11
     #endif
 
   #endif

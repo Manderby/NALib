@@ -20,11 +20,51 @@ NAWINAPICallbackInfo naButtonWINAPIProc(NAUIElement* uielement, UINT message, WP
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
+  case WM_SETFONT:
+  case WM_WINDOWPOSCHANGING:
+  case WM_CHILDACTIVATE:
+  case WM_WINDOWPOSCHANGED:
+  case WM_MOVE:
+  case WM_SHOWWINDOW:
+  case WM_PAINT:
+  case WM_NCPAINT:
+  case WM_ERASEBKGND:
+  case WM_GETTEXTLENGTH:
+  case WM_GETTEXT:
+  case WM_NCHITTEST:
+  case WM_SETCURSOR:
+  case WM_MOUSEMOVE:
+  case WM_MOUSELEAVE:
+  case WM_MOUSEACTIVATE:
+  case WM_LBUTTONDOWN:
+  case WM_IME_SETCONTEXT:
+  case WM_SETFOCUS:
+  case BM_SETSTATE:
+  case WM_CANCELMODE:
+  case WM_CAPTURECHANGED:
+  case WM_KILLFOCUS:
+  case WM_IME_NOTIFY:
+  case WM_LBUTTONUP:
+    break;
+
   default:
     //printf("Uncaught Button message\n");
     break;
   }
   
+  return info;
+}
+
+
+NAWINAPICallbackInfo naButtonWINAPINotify(NAUIElement* uielement, WORD notificationCode){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  switch(notificationCode){
+    case BN_CLICKED:
+      naDispatchUIElementCommand(uielement, NA_UI_COMMAND_PRESSED);
+      info.hasbeenhandeled = NA_TRUE;
+      info.result = 0;
+      break;
+  }
   return info;
 }
 
@@ -108,16 +148,24 @@ NAWINAPICallbackInfo naButtonWINAPIProc(NAUIElement* uielement, UINT message, WP
 NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
   HWND hWnd;
   DWORD style;
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
   NAWINAPIButton* winapibutton = naAlloc(NAWINAPIButton);
 
   style = WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON;
 
+  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text, 0);
+
 	hWnd = CreateWindow(
-		TEXT("BUTTON"), text, style,
+		TEXT("BUTTON"), systemtext, style,
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
+  naFree(systemtext);
+
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
+
   naInitCoreButton(&(winapibutton->corebutton), hWnd);
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
@@ -135,11 +183,15 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
 
   style = WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON;
 
+  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text, 0);
+
 	hWnd = CreateWindow(
-		TEXT("BUTTON"), text, style,
+		TEXT("BUTTON"), systemtext, style,
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
+  naFree(systemtext);
+
   naInitCoreButton(&(winapibutton->corebutton), hWnd);
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
@@ -163,21 +215,30 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size){
 
 
 NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
-//  NACoreButton* corebutton = naAlloc(NACoreButton);
-//
-//  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:0 frame:naMakeNSRectWithRect(rect)];
-//  naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
-//  [nativeButton setButtonImage:uiimage];
-//  
-//  return (NAButton*)corebutton;
-  return NA_NULL;
+  HWND hWnd;
+  DWORD style;
+
+  NAWINAPIButton* winapibutton = naAlloc(NAWINAPIButton);
+
+  style = WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON;
+
+	hWnd = CreateWindow(
+		TEXT("BUTTON"), TEXT("X"), style,
+		0, 0, (int)size.width, (int)size.height,
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+  
+  naInitCoreButton(&(winapibutton->corebutton), hWnd);
+
+  SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+
+  return (NAButton*)winapibutton;
 }
 
 
 
 NA_DEF void naDestructButton(NAButton* button){
-//  NACoreButton* corebutton = (NACoreButton*)button;
-//  naClearCoreButton(corebutton);
+  NAWINAPIButton* winapibutton = (NAWINAPIButton*)button;
+  naClearCoreButton(&(winapibutton->corebutton));
 }
 
 

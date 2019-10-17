@@ -174,17 +174,17 @@ NA_API NAString* naNewStringXMLDecoded(const NAString* inputstring);
 NA_API NAString* naNewStringEPSEncoded(const NAString* inputstring);
 NA_API NAString* naNewStringEPSDecoded(const NAString* inputstring);
 
-// The following functions are system dependent.
-// Currently, this is only necessary on windows.
+
 #if NA_OS == NA_OS_WINDOWS
+
   // Returns a newly allocated memory block containing the system-encoded
   // string. If you do not provide the length, it will be automatically
   // computed. The resulting string must be freed manually. COPIES ALWAYS!
-  NA_API SystemChar* naAllocSystemStringWithUTF8String(
-                                            const NAUTF8Char* utf8str,
-                                                       NAUInt length);
-  //// Creates a new NAString from a system-encoded string. COPIES ALWAYS!
-  //NA_API NAString* naNewStringFromSystemString(SystemChar* systemstring);
+  NA_API TCHAR* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8string, NAUInt length);
+
+  // Creates a new NAString from a system-encoded string. COPIES ALWAYS!
+  NA_API NAString* naNewStringFromSystemString(TCHAR* systemstring, NAUInt length);
+
 #endif
 
 

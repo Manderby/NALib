@@ -27,6 +27,7 @@
 #endif
 
 #include <windows.h>
+#include <windowsx.h>
 
 #include "C/NAHelperWINAPIII.h"
 #include "C/NAUIImageWINAPIII.h"

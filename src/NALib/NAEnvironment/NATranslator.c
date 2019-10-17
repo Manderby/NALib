@@ -268,7 +268,7 @@ NA_DEF const NAUTF8Char* naTranslate(NAInt group, NAInt id){
 
 
 
-NA_DEF NALanguageCode3 naGetLanguageCode(const char* str){
+NA_DEF NALanguageCode3 naGetLanguageCode(const NAUTF8Char* str){
   NAInt strlength = naStrlen(str);
   NAInt code = 0;
   int i = 0;

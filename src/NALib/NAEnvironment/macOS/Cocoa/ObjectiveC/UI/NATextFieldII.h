@@ -84,12 +84,6 @@ NA_DEF NAString* naNewStringWithTextFieldText(NATextField* textfield){
 
 
 
-//NA_DEF void naSetTextFieldEnabled(NATextField* textfield, NABool enabled){
-//  [((NANativeTextField*)naGetUIElementNativeID(textfield)) setTextFieldEnabled:enabled];
-//}
-
-
-
 NA_DEF void naSetTextFieldTextAlignment(NATextField* textfield, NATextAlignment alignment){
   naDefineNativeCocoaObject(NANativeTextField, nativetextfield, textfield);
   [nativetextfield setTextAlignment:alignment];

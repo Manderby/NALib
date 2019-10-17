@@ -23,6 +23,9 @@ NA_HDEF void naRegisterCoreUIElement(NACoreUIElement* coreuielement, NAUIElement
   coreuielement->nativeID = nativeID;
   naInitList(&(coreuielement->reactions));
   naInitList(&(coreuielement->shortcuts));
+  coreuielement->mouseinside = NA_FALSE;
+  coreuielement->allownotifications = NA_TRUE;
+
   naAddListLastMutable(&(na_app->uielements), coreuielement);
 }
 
@@ -235,7 +238,7 @@ NA_HDEF NABool naDispatchUIElementCommand(NACoreUIElement* element, NAUICommand 
   naEndListIteration(iter);
 
   // If the command has not been finished, search for other reactions in the parent elements.
-  if(!finished){
+  if(!finished && command != NA_UI_COMMAND_MOUSE_ENTERED && command != NA_UI_COMMAND_MOUSE_EXITED){
     NACoreUIElement* parentelement = (NACoreUIElement*)naGetUIElementParent((NAUIElement*)element);
     if(parentelement){finished = naDispatchUIElementCommand(parentelement, command);}
   }
@@ -327,6 +330,7 @@ NA_DEF void naReleaseUIElement(NAUIElement* uielement){
   naForeachListMutable(&(element->shortcuts), naFree);
   naClearList(&(element->reactions));
   naClearList(&(element->shortcuts));
+  element->mouseinside = NA_FALSE;
 
   switch(naGetUIElementType(element))
   {
@@ -384,7 +388,13 @@ NA_DEF void naAddUIReaction(NAUIElement* uielement, NAUICommand command, NAReact
   corereaction->controller = controller;
   corereaction->command = command;
   corereaction->handler = handler;
-  if(command == NA_UI_COMMAND_MOUSE_MOVED){naRetainWindowMouseTracking(naGetUIElementWindow(uielement));}
+  // todo: this needs some attention on macOS
+  //if(command == NA_UI_COMMAND_MOUSE_MOVED || command == NA_UI_COMMAND_MOUSE_ENTERED || command == NA_UI_COMMAND_MOUSE_EXITED){
+  //  element->moustrackingcount++;
+  //  if(element->moustrackingcount == 1){
+  //    element->mousetracking = naAllocMouseTracking(naGetUIElementNativeID(element));
+  //  }
+  //}
   naAddListLastMutable(&((element)->reactions), corereaction);
 }
 

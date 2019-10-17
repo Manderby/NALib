@@ -14,7 +14,7 @@
 typedef struct NAWINAPIWindow NAWINAPIWindow;
 struct NAWINAPIWindow {
   NACoreWindow corewindow;
-  NAUInt trackingcount;
+  //NAUInt trackingcount;
   //NABounds4 bounds;
 };
 
@@ -23,11 +23,6 @@ struct NAWINAPIWindow {
 NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NAWindow* window;
-  //NARect rect;
-  //NASize size;
-  //NAPos pos;
-  //const NAMouseStatus* mousestatus;
-  //DWORD colorization;
 
   switch(message){
   case WM_SHOWWINDOW:
@@ -38,12 +33,9 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
 
   case WM_MOVE:
     // wParam: Unused
-    // lParam: LOWORD: x coordinate, HIWORD: y coordinate
+    // lParam: (int)(short)LOWORD: x coordinate, (int)(short)HIWORD: y coordinate
     // result: 0 when handeled.
     window = naGetUIElementWindow(uielement);
-    //rect = naGetUIElementRect(window, NA_NULL, NA_FALSE);
-    //rect.pos.x = (double)((int)(short)LOWORD(lParam));
-    //rect.pos.y = (double)((int)(short)HIWORD(lParam));
     info.hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE);
     if (info.hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW); }
     info.result = 0;
@@ -54,9 +46,6 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
     // lParam: LOWORD: width, HIWORD: height
     // result: 0 when handeled.
     window = naGetUIElementWindow(uielement);
-    //rect = naGetUIElementRect(window, NA_NULL, NA_FALSE);
-    //rect.size.width = LOWORD(lParam);
-    //rect.size.height = HIWORD(lParam);
     info.hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE);
     if (info.hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW); }
     info.result = 0;
@@ -74,8 +63,8 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
   //  //}else{
   //  // todo: this should be GET_X_LPARAM and GET_Y_LPARAM
   //  // but is undefined somehow.
-  //  size.width = LOWORD(lParam);
-  //  size.height = HIWORD(lParam);
+  //  size.width = GET_X_LPARAM(lParam);
+  //  size.height = GET_Y_LPARAM(lParam);
   //  rect = naGetUIElementRect(uielement, naGetApplication(), NA_FALSE);
   //  size.width += rect.pos.x;
   //  size.height += rect.pos.y;
@@ -271,16 +260,19 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   windowrect.left = (int)rect.pos.x;
   AdjustWindowRect(&windowrect, style, NA_FALSE);
 
+  TCHAR* systemtitle = naAllocSystemStringWithUTF8String(title, 0);
+
 	hWnd = CreateWindow(
-		TEXT("NAWindow"), title, style,
+		TEXT("NAWindow"), systemtitle, style,
 		windowrect.left, windowrect.top, windowrect.right - windowrect.left, windowrect.bottom - windowrect.top,
 		NULL, NULL, naGetUIElementNativeID(naGetApplication()), NULL);
+
+  naFree(systemtitle);
 
   //DWORD lasterror = GetLastError();
 	//hDC = GetDC(hWnd);
 
   naInitCoreWindow(&(winapiwindow->corewindow), hWnd, NA_NULL, NA_FALSE, resizeable, rect);
-  winapiwindow->trackingcount = 0;
 
   NASpace* space = naNewSpace(rect.size);
   naSetWindowContentSpace(winapiwindow, space);
@@ -426,28 +418,6 @@ NA_HDEF void naClearWindowMouseTracking(NACoreWindow* corewindow){
   //[[(NSWindow*)naGetUIElementNativeID(window) contentView] removeTrackingArea:window->trackingarea];
   //[window->trackingarea release];
   //window->trackingarea = nil;
-}
-
-
-
-NA_HDEF void naRetainWindowMouseTracking(NAWindow* window){
-  NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)window;
-  winapiwindow->trackingcount++;
-  //if(winapiwindow->trackingcount == 1){
-  //  [(NSWindow*)naGetUIElementNativeID(window) setAcceptsMouseMovedEvents:YES];
-  //  naRenewWindowMouseTracking(window);
-  //}
-}
-
-
-
-NA_HDEF void naReleaseWindowMouseTracking(NACoreWindow* corewindow){
-  NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)corewindow;
-  winapiwindow->trackingcount--;
-  //if(winapiwindow->trackingcount == 0){
-  //  [(NSWindow*)naGetUIElementNativeID(window) setAcceptsMouseMovedEvents:NO];
-  //  naClearWindowMouseTracking(window);
-  //}
 }
 
 

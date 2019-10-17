@@ -8,46 +8,39 @@
 // Characters and system dependent strings
 // The tabs and newlines used on different systems. The native newline argument
 // NA_NL denotes the native newline of the current system.
-#define NA_NL_UNIX  "\n"
-#define NA_NL_MAC9  "\r"
-#define NA_NL_WIN   "\r\n"
+#if defined NA_C11
+  #define NA_NL_UNIX  u8"\n"
+  #define NA_NL_MAC9  u8"\r"
+  #define NA_NL_WIN   u8"\r\n"
+  #define NA_TAB      u8"\t"
+#else
+  #define NA_NL_UNIX  "\n"
+  #define NA_NL_MAC9  "\r"
+  #define NA_NL_WIN   "\r\n"
+  #define NA_TAB      "\t"
+#endif
+
 #if NA_OS == NA_OS_WINDOWS
   #define NA_NL NA_NL_WIN
 #else
   #define NA_NL NA_NL_UNIX
 #endif
 
-#define NA_TAB      "\t"
 #define NA_PATH_DELIMITER_UNIX '/'
 #define NA_PATH_DELIMITER_WIN  '\\'
 #define NA_SUFFIX_DELIMITER    '.'
 
 // Note that in NALib, a String is internally always encoded in UTF-8.
 // The encoding of strings given by system calls though may be of
-// different kind. Therefore, there exist two typedefs: NAUTF8Char
-// and SystemChar.
+// different kind. Especially on windows, one should use TCHAR which is
+// either CHAR or WCHAR depending on the project settings and then use
+// naAllocSystemStringWithUTF8String and naNewStringFromSystemString.
 //
 // Note that NAUTF8Char is defined as char to simplify debugging.
 // Types like NAByte, int8 or uint8 can not be used as it these are
 // defined to be incompatible with char. But at least we can be sure that
 // a char consists of 8 Bits. See definition of NAByte for that.
 typedef char NAUTF8Char;
-
-#if NA_OS == NA_OS_WINDOWS
-  #include <windows.h>
-  // The SystemChar is a character type which denotes the one used in the
-  // project preferences. It is CHAR for "Multi Byte Character Set" and
-  // WCHAR for "Unicode character set".
-  #ifdef UNICODE
-    typedef WCHAR SystemChar;
-  #else
-    typedef CHAR SystemChar;
-  #endif
-#elif NA_OS == NA_OS_MAC_OS_X
-  // typedef short SystemChar;  // unused at the moment
-#else
-#endif
-
 
 
 // Copyright (c) NALib, Tobias Stamm

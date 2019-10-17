@@ -23,7 +23,7 @@ NA_DEF NAString* naNewStringWithCurWorkingDirectory(){
 
 NA_DEF NABool naIsDir(const char* path){
   #if NA_OS == NA_OS_WINDOWS
-    SystemChar* sysstring;
+    TCHAR* sysstring;
     NABool retvalue;
     sysstring = naAllocSystemStringWithUTF8String(path, 0);
     retvalue = (GetFileAttributes(sysstring)  & FILE_ATTRIBUTE_DIRECTORY) ? NA_TRUE : NA_FALSE;
@@ -39,7 +39,7 @@ NA_DEF NABool naIsDir(const char* path){
 
 NA_DEF NABool naIsHidden(const char* path){
   #if NA_OS == NA_OS_WINDOWS
-    SystemChar* sysstring;
+    TCHAR* sysstring;
     NABool retvalue;
     sysstring = naAllocSystemStringWithUTF8String(path, 0);
     retvalue = (GetFileAttributes(sysstring) & FILE_ATTRIBUTE_HIDDEN) ? NA_TRUE : NA_FALSE;

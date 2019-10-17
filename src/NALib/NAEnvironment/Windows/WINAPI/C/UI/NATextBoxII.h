@@ -31,43 +31,6 @@ NAWINAPICallbackInfo naTextBoxWINAPIProc(NAUIElement* uielement, UINT message, W
 
 
 
-//@implementation NANativeTextBox
-//- (id) initWithCoreTextBox:(NACoreTextBox*)newcoretextbox frame:(NSRect)frame{
-//  NSRect documentrect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
-//  self = [super initWithFrame:documentrect];
-//
-//  scrollview = [[NSScrollView alloc] initWithFrame:frame];
-//  [scrollview setHasHorizontalScroller:NO];
-//  [scrollview setHasVerticalScroller:YES];
-//  [scrollview setAutohidesScrollers:YES];
-//
-//  NSRect clipRect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
-//  NSClipView* clipView = [[NSClipView alloc] initWithFrame:clipRect];
-//  [scrollview setContentView:clipView];
-//  [scrollview setDocumentView:self];
-//
-//  [scrollview setAutomaticallyAdjustsContentInsets:YES];
-//  [[scrollview contentView] setAutomaticallyAdjustsContentInsets:YES];
-//
-//  coretextbox = newcoretextbox;
-//  return self;
-//}
-//- (void) setText:(const NAUTF8Char*)text{
-//  [self setString:[NSString stringWithUTF8String:text]];
-//}
-//- (void) setTextAlignment:(NATextAlignment) alignment{
-//  [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
-//}
-//- (void) setFontKind:(NAFontKind)kind{
-//  [self setFont:getNSFontWithKind(kind)];
-//}
-//- (NSView*) getContainingView{
-//  return scrollview;
-//}
-//@end
-
-
-
 NA_DEF NATextBox* naNewTextBox(NASize size){
   HWND hWnd;
   DWORD style;
@@ -77,7 +40,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
   style = WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN;
 
 	hWnd = CreateWindow(
-		TEXT("EDIT"), "", style,
+		TEXT("EDIT"), TEXT(""), style,
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
@@ -91,22 +54,24 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
 
 
 NA_DEF void naDestructTextBox(NATextBox* textbox){
-//  NACoreTextBox* coretextbox = (NACoreTextBox*)textbox;
-//  naClearCoreTextBox(coretextbox);
+  NAWINAPITextBox* winapitextbox = (NAWINAPITextBox*)textbox;
+  naClearCoreTextBox(&(winapitextbox->coretextbox));
 }
 
 
 
 NA_DEF void naSetTextBoxText(NATextBox* textbox, const NAUTF8Char* text){
-//  naDefineNativeCocoaObject(NANativeTextBox, nativetextbox, textbox);
-//  [nativetextbox setText:text];
+  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text, 0);
+  SendMessage(naGetUIElementNativeID(textbox), WM_SETTEXT, 0, (LPARAM)systemtext);
+  naFree(systemtext);
 }
 
 
 
 NA_DEF void naSetTextBoxTextAlignment(NATextBox* textbox, NATextAlignment alignment){
-//  naDefineNativeCocoaObject(NANativeTextBox, nativetextbox, textbox);
-//  [nativetextbox setTextAlignment:alignment];
+  long style = GetWindowLongPtr(naGetUIElementNativeID(textbox), GWL_STYLE);
+  style = (style & ~SS_TYPEMASK) | getWINAPITextAlignmentWithAlignment(alignment);
+  SetWindowLongPtr(naGetUIElementNativeID(textbox), GWL_STYLE, style);
 }
 
 
@@ -114,6 +79,12 @@ NA_DEF void naSetTextBoxTextAlignment(NATextBox* textbox, NATextAlignment alignm
 NA_DEF void naSetTextBoxFontKind(NATextBox* textbox, NAFontKind kind){
   NAWINAPITextBox* winapitextbox = (NAWINAPITextBox*)textbox;
   SendMessage(naGetUIElementNativeID(winapitextbox), WM_SETFONT, (WPARAM)getFontWithKind(kind), MAKELPARAM(TRUE, 0));
+}
+
+
+
+NA_DEF void naSetTextBoxEditable(NATextBox* textbox, NABool editable){
+  SendMessage(naGetUIElementNativeID(textbox), EM_SETREADONLY, (WPARAM)!editable, 0);
 }
 
 

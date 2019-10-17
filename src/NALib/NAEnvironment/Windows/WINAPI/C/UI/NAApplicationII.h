@@ -38,12 +38,37 @@ struct NAWINAPIApplication {
   NAList timers;
   HWND offscreenWindow;
   NONCLIENTMETRICS nonclientmetrics; 
+
+  WNDPROC oldButtonWindowProc;
+  WNDPROC oldRadioWindowProc;
+  WNDPROC oldCheckBoxWindowProc;
+  WNDPROC oldLabelWindowProc;
+  WNDPROC oldTextFieldWindowProc;
+
   NAWINAPIColor fgColor;
   NAWINAPIColor fgColorDisabled;
   NAWINAPIColor bgColor;
   NAWINAPIColor bgColorAlternate;
   NAWINAPIColor bgColorAlternate2;
 };
+
+
+
+WNDPROC naGetApplicationOldButtonWindowProc(){
+  return ((NAWINAPIApplication*)naGetApplication())->oldButtonWindowProc;
+}
+WNDPROC naGetApplicationOldRadioWindowProc(){
+  return ((NAWINAPIApplication*)naGetApplication())->oldRadioWindowProc;
+}
+WNDPROC naGetApplicationOldCheckBoxWindowProc(){
+  return ((NAWINAPIApplication*)naGetApplication())->oldCheckBoxWindowProc;
+}
+WNDPROC naGetApplicationOldLabelWindowProc(){
+  return ((NAWINAPIApplication*)naGetApplication())->oldLabelWindowProc;
+}
+WNDPROC naGetApplicationOldTextFieldWindowProc(){
+  return ((NAWINAPIApplication*)naGetApplication())->oldTextFieldWindowProc;
+}
 
 
 
@@ -190,18 +215,24 @@ NA_HDEF NAApplication* naNewApplication(void){
   naInitList(&(winapiapplication->timers));
 
 	winapiapplication->offscreenWindow = CreateWindow(
-		TEXT("NAOffscreenWindow"), "Offscreen window", WS_OVERLAPPEDWINDOW,
+		TEXT("NAOffscreenWindow"), TEXT("Offscreen window"), WS_OVERLAPPEDWINDOW,
 		0, 0, 0, 0,
 		NULL, NULL, GetModuleHandle(NULL), NULL);
 
   winapiapplication->nonclientmetrics.cbSize = sizeof(NONCLIENTMETRICS);
   SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &(winapiapplication->nonclientmetrics), 0);
-  
+
+  winapiapplication->oldButtonWindowProc = NA_NULL;
+  winapiapplication->oldRadioWindowProc = NA_NULL;
+  winapiapplication->oldCheckBoxWindowProc = NA_NULL;
+  winapiapplication->oldLabelWindowProc = NA_NULL;
+  winapiapplication->oldTextFieldWindowProc = NA_NULL;
+
   winapiapplication->fgColor.color = GetSysColor(COLOR_WINDOWTEXT);
   winapiapplication->fgColorDisabled.color = GetSysColor(COLOR_GRAYTEXT);
   winapiapplication->bgColor.color = GetSysColor(COLOR_BTNFACE);
   winapiapplication->bgColorAlternate.color = RGB(226, 226, 226);
-  winapiapplication->bgColorAlternate2.color = RGB(197, 197, 197);
+  winapiapplication->bgColorAlternate2.color = RGB(205, 205, 205);
 
   winapiapplication->fgColor.brush = CreateSolidBrush(winapiapplication->fgColor.color);
   winapiapplication->fgColorDisabled.brush = CreateSolidBrush(winapiapplication->fgColorDisabled.color);
@@ -309,7 +340,11 @@ NA_DEF void naOpenConsoleWindow(const char* windowtitle){
   FILE *inFile;
 //  CONSOLE_SCREEN_BUFFER_INFO coninfo;
   AllocConsole();
-  SetConsoleTitle(windowtitle);
+
+  TCHAR* systemtitle = naAllocSystemStringWithUTF8String(windowtitle, 0);
+  SetConsoleTitle(systemtitle);
+  naFree(systemtitle);
+
 //    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo);
 //    coninfo.dwSize.Y = 9999;
 //    SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), coninfo.dwSize);
@@ -344,11 +379,13 @@ NA_DEF void naOpenConsoleWindow(const char* windowtitle){
 //#define NA_COCOA_BUNDLE_ICON_FILE_KEY @"CFBundleIconFile"
 
 NA_DEF NAString* naNewApplicationName(void){
-  TCHAR modulename[MAX_PATH];
-  GetModuleFileName(NULL, modulename, MAX_PATH);
+  TCHAR modulepath[MAX_PATH];
+  GetModuleFileName(NULL, modulepath, MAX_PATH);
+  NAString* utf8modulepath = naNewStringFromSystemString(modulepath, 0);
 
   NAURL url;
-  naInitURLWithUTF8CStringLiteral(&url, modulename);
+  naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8modulepath));
+  naDelete(utf8modulepath);
   NAString* applicationname = naNewStringWithURLFilename(&url);
   NAString* applicationbasename = naNewStringWithBasenameOfFilename(applicationname);
   naClearURL(&url);

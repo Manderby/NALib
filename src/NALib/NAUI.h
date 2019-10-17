@@ -626,6 +626,7 @@ NA_API void naSetButtonAbort(NAButton* button, NAReactionHandler handler, NAUIEl
 
 // Radio
 NA_API NARadio* naNewRadio(const NAUTF8Char* text, NASize size);
+NA_API NABool naGetRadioState(NARadio* radio);
 NA_API void naSetRadioState(NARadio* radio, NABool state);
 
 // CheckBox
@@ -648,7 +649,6 @@ NA_API NATextField* naNewTextField(NASize size);
 NA_API void naSetTextFieldText(NATextField* textfield, const NAUTF8Char* text);
 NA_API NAString* naNewStringWithTextFieldText(NATextField* textfield);
 NA_API void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind);
-NA_API void naSetTextFieldEnabled(NATextField* textfield, NABool enabled);
 NA_API void naSetTextFieldTextAlignment(NATextField* textfield, NATextAlignment alignment);
 NA_API void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind);
 
@@ -657,6 +657,7 @@ NA_API NATextBox* naNewTextBox(NASize size);
 NA_API void naSetTextBoxText(NATextBox* textbox, const NAUTF8Char* text);
 NA_API void naSetTextBoxTextAlignment(NATextBox* textbox, NATextAlignment alignment);
 NA_API void naSetTextBoxFontKind(NATextBox* textbox, NAFontKind kind);
+NA_API void naSetTextBoxEditable(NATextBox* textbox, NABool editable);
 
 
 

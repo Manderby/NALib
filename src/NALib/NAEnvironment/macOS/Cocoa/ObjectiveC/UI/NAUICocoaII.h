@@ -92,14 +92,14 @@ NA_HAPI void naClearWindowMouseTracking(NACoreWindow* corewindow);
 
 @interface NANativeWindow : NSWindow <NSWindowDelegate>{
   NACoreWindow* corewindow;
-  NAUInt trackingcount;
-  NSTrackingArea* trackingarea;
+  //NAUInt trackingcount;
+  //NSTrackingArea* trackingarea;
 }
 @end
 
 @interface NANativeSpace : NSView{
   NACoreSpace* corespace;
-  NSTrackingArea* trackingarea;
+  //NSTrackingArea* trackingarea;
 }
 @end
 
