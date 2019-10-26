@@ -28,9 +28,10 @@
 // - RGB are stored without gamma, meaning it's linear, meaning it's in
 //   densitometric space.
 // - Simplified conversion from and to perceyved space uses the following
-//   formulas:   y = .3x / (1-.7x)   and   y = x / (.7x + .3)
-//   Both are nowhere near any valid standard but are visually pleasing and
-//   have no numerical problems around 0 and 1. And they are very fast.
+//   formulas:   y = .25x / (1 - .75x)   and   y = x / (.75x + .25)
+//   Both formulas try to anneal the Lab L* response curve standard, hence are
+//   visually pleasing but also have no numerical problems around 0 and 1.
+//   And they are very fast to compute.
 // - Alpha is 0 = Transparent, 1 = opaque. Linear interpolation factor.
 // - Alpha is NOT premultiplied. 
 // - Simplified conversion from/to uint8 is done with multiplication of 255.
@@ -55,13 +56,37 @@ NA_API void naFillBabyColorWithUInt8(float* outcolor, const uint8* incolor, NABo
 
 
 
+// This factor 
+#define NA_BABY_FACTOR 0.75f
 
 NA_IDEF float naUnlinearizeColorValue(float value){
-  return value / (.7f * value + .3f);
+  return value / (NA_BABY_FACTOR * value + (1.f - NA_BABY_FACTOR));
 }
 NA_IDEF float naLinearizeColorValue(float value){
-  return .3f * value / (1.f - .7f * value);
+  return (1.f - NA_BABY_FACTOR) * value / (1.f - NA_BABY_FACTOR * value);
 }
+
+
+
+//NA_IDEF float naUnlinearizeColorValue(float value){
+//  return value;
+//}
+//NA_IDEF float naLinearizeColorValue(float value){
+//  return value;
+//}
+
+
+
+#define NA_BABY_GAMMA 2.2f
+#include "NAMathOperators.h"
+
+//NA_IDEF float naUnlinearizeColorValue(float value){
+//  float invgamma = 1.f / NA_BABY_GAMMA;
+//  return naPowf(value, invgamma);
+//}
+//NA_IDEF float naLinearizeColorValue(float value){
+//  return naPowf(value, NA_BABY_GAMMA);
+//}
 
 
 #ifdef __cplusplus

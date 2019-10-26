@@ -819,7 +819,22 @@ NA_DEF NAInt naGetPNGPixelDataBytesize(NAPNG* png){
 
 NA_DEF NABabyImage* naAllocPNGBabyImage(NAPNG* png){
   NABabyImage* babyimage = naAllocBabyImage(png->size, NA_NULL);
+  NAByte* pngptr;
+  float* babyptr = naGetBabyImageData(babyimage);
+  uint8 inbuf[4];
   switch(png->colortype){
+  case NA_PNG_COLORTYPE_TRUECOLOR:
+    pngptr = png->pixeldata;
+    inbuf[3] = 255;
+    for(NAInt i = 0; i < png->size.width * png->size.height; i++){
+      inbuf[0] = pngptr[0];
+      inbuf[1] = pngptr[1];
+      inbuf[2] = pngptr[2];
+      naFillBabyColorWithUInt8(babyptr, inbuf, NA_FALSE);
+      babyptr += 4;
+      pngptr += 3;
+    }
+    break;
   case NA_PNG_COLORTYPE_TRUECOLOR_ALPHA:
     naFillBabyImageWithUInt8(babyimage, png->pixeldata, NA_FALSE);
     break;

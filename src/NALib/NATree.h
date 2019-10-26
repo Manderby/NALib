@@ -445,6 +445,9 @@ NA_IAPI void naRemoveTreeCurLeaf(NATreeIterator* iter);
 NA_IAPI NABool naIsTreeAtInitial(const NATreeIterator* iter);
 
 
+#ifndef NDEBUG
+  void naDebugTree(NATree* tree);
+#endif 
 
 // Inline implementations are in a separate file:
 #include "NAStruct/NATree/NATreeII.h"

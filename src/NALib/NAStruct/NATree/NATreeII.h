@@ -96,6 +96,11 @@ struct NATreeConfiguration{
   int                           nodeUserDataOffset;
   void*                         configdata;
 
+  #ifndef NDEBUG
+  NAInt                         sizeofNode;
+  NAInt                         sizeofLeaf;
+  #endif
+
   NAKeyIndexGetter              keyIndexGetter;
   NAChildIndexGetter            childIndexGetter;
   NAKeyEqualComparer            keyEqualComparer;

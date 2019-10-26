@@ -251,48 +251,68 @@ NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffe
 
 
 
-NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt bytesize){
+NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt bytesize, NABool useCopy){
   NABufferPart* writepart;
   const NABufferPart* readpart;
   NABufferIterator readiter;
   NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
-  NAInt writeoffset = naGetBufferLocation(iter);
 
   // Create the read iterator
+  NAInt writeoffset = naGetBufferLocation(iter);
   readiter = naMakeBufferAccessor(buffer);
   naLocateBufferAbsolute(&readiter, writeoffset - distance);
 
-  // Now start copying the buffers.
-  while(bytesize){
-    NAInt remainingwrite;
-    NAInt remainingread;
-    const void* src;
-    void* dst;
+  if(useCopy){
+    NAByte* buf = naMalloc(bytesize);
+    
+    NAInt segmentsize = naMini(distance, bytesize);
+    naReadBufferBytes(&readiter, buf, segmentsize);
+    NAInt remainingbytesize = bytesize - segmentsize;
+    
+    NAByte* bufptr = &(buf[segmentsize]);
+    while(remainingbytesize){
+      *bufptr = bufptr[-segmentsize]; //todo
+      remainingbytesize--;
+      bufptr++;
+    }
 
-    // Prepare the two iterators
-    naPrepareBuffer(iter, bytesize);
-    naPrepareBuffer(&readiter, bytesize);
+    NABuffer* tmpbuffer = naNewBufferWithMutableData(buf, bytesize, naFree);
+    naWriteBufferBuffer(iter, tmpbuffer, naMakeRangei(0, bytesize));
+    naRelease(tmpbuffer);
 
-    readpart = naGetBufferPart(&readiter);
-    writepart = naGetBufferPart(iter);
+  }else{
+    // Now start copying the buffers.
+    while(bytesize){
+      NAInt remainingwrite;
+      NAInt remainingread;
+      const void* src;
+      void* dst;
 
-    remainingread = naGetBufferPartByteSize(readpart) - readiter.partoffset;
-    remainingwrite = naGetBufferPartByteSize(writepart) - iter->partoffset;
+      // Prepare the two iterators
+      naPrepareBuffer(iter, bytesize);
+      naPrepareBuffer(&readiter, bytesize);
 
-    // We reduce the remainingread such that it does not overflow either the
-    // distance, the remainingwrite or the bytesize.
-    remainingread = naMini(remainingread, distance);
-    remainingread = naMini(remainingread, remainingwrite);
-    remainingread = naMini(remainingread, bytesize);
+      readpart = naGetBufferPart(&readiter);
+      writepart = naGetBufferPart(iter);
 
-    src = naGetBufferPartDataPointerConst(&readiter);
-    dst = naGetBufferPartDataPointerMutable(iter);
-    naCopyn(dst, src, remainingread);
-    bytesize -= remainingread;
-    iter->partoffset += remainingread;
-    readiter.partoffset += remainingread;
+      remainingread = naGetBufferPartByteSize(readpart) - readiter.partoffset;
+      remainingwrite = naGetBufferPartByteSize(writepart) - iter->partoffset;
+
+      // We reduce the remainingread such that it does not overflow either the
+      // distance, the remainingwrite or the bytesize.
+      remainingread = naMini(remainingread, distance);
+      remainingread = naMini(remainingread, remainingwrite);
+      remainingread = naMini(remainingread, bytesize);
+
+      src = naGetBufferPartDataPointerConst(&readiter);
+      dst = naGetBufferPartDataPointerMutable(iter);
+      naCopyn(dst, src, remainingread);
+      bytesize -= remainingread;
+      iter->partoffset += remainingread;
+      readiter.partoffset += remainingread;
+    }
+
   }
-
   naClearBufferIterator(&readiter);
 }
 

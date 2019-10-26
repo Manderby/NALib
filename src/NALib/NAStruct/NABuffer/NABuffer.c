@@ -298,9 +298,9 @@ NA_DEF NABuffer* naNewBufferWithMutableData(void* data, NAInt bytesize, NAMutato
 
   range = naMakeRangeiWithStartAndEnd(0, (NAInt)bytesize);
 
-    // Add the mutable data to the list.
-    part = naNewBufferPartWithMutableData(data, bytesize, destructor);
-    naAddTreeFirstMutable(&(buffer->parts), part);
+  // Add the mutable data to the list.
+  part = naNewBufferPartWithMutableData(data, bytesize, destructor);
+  naAddTreeFirstMutable(&(buffer->parts), part);
 
   buffer->source = NA_NULL;
   buffer->sourceoffset = 0;

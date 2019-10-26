@@ -33,6 +33,11 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   
   if(flags & NA_TREE_QUADTREE){
   
+    #ifndef NDEBUG
+      config->sizeofNode = naSizeof(NATreeQuadNode);
+      config->sizeofLeaf = naSizeof(NATreeQuadLeaf);
+    #endif
+    
     config->childpernode            = 4;
     switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
     case NA_TREE_KEY_DOUBLE:
@@ -74,6 +79,11 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
 
   }else if(flags & NA_TREE_OCTTREE){
   
+    #ifndef NDEBUG
+      config->sizeofNode = naSizeof(NATreeOctNode);
+      config->sizeofLeaf = naSizeof(NATreeOctLeaf);
+    #endif
+
     config->childpernode            = 8;
     switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
     case NA_TREE_KEY_DOUBLE:
@@ -114,6 +124,11 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->nodeUserDataOffset      = NODE_USERDATA_OFFSET_OCT;
 
   }else{
+
+    #ifndef NDEBUG
+      config->sizeofNode = naSizeof(NATreeBinNode);
+      config->sizeofLeaf = naSizeof(NATreeBinLeaf);
+    #endif
 
     config->childpernode            = 2;
     switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){

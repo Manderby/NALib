@@ -41,19 +41,23 @@ NA_HDEF void naFillTreeNodeChildData(const NATreeConfiguration* config, NAPtr ch
 // node.
 NA_HDEF void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childindx){
   NABool bubble = NA_TRUE;
-  if(parent == NA_NULL){return;}
 
-  // We call the update callback.
-  if(tree->config->nodeUpdater){
-    NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
-    naFillTreeNodeChildData(tree->config, childdata, parent);
-    bubble = tree->config->nodeUpdater(naGetTreeNodeData(tree->config, parent), childdata, childindx, parent->flags & NA_TREE_NODE_CHILDS_MASK);
-  }
+  while(bubble && parent){
+    // We call the update callback.
+    if(tree->config->nodeUpdater){
+      NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
+      naFillTreeNodeChildData(tree->config, childdata, parent);
+      bubble = tree->config->nodeUpdater(naGetTreeNodeData(tree->config, parent), childdata, childindx, parent->flags & NA_TREE_NODE_CHILDS_MASK);
+    }
 
-  // Then we propagate the message towards the root if requested.
-  if(bubble && !naIsTreeItemRoot(&(parent->item))){
-    NATreeNode* grandparent = naGetTreeItemParent(&(parent->item));
-    naUpdateTreeNodeBubbling(tree, grandparent, naGetTreeNodeChildIndex(tree->config, grandparent, &(parent->item)));
+    // Then we propagate the message towards the root if requested.
+    if(bubble && !naIsTreeItemRoot(&(parent->item))){
+      NATreeNode* grandparent = naGetTreeItemParent(&(parent->item));
+      childindx = naGetTreeNodeChildIndex(tree->config, grandparent, &(parent->item));
+      parent = grandparent;
+    }else{
+      parent = NA_NULL;
+    }
   }
 }
 
@@ -100,6 +104,66 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   return bubble;
 }
 
+
+
+#ifndef NDEBUG
+
+  typedef struct NADebugTreeToken NADebugTreeToken;
+  struct NADebugTreeToken{
+    NATree* tree;
+    NAInt nodecount;
+    NAInt leafcount;
+    NAInt curdepth;
+    NAInt maxdepth;
+    NAInt previndx;
+  };
+  
+  NAInt debugNode(void* token, NAPtr data){
+    NA_UNUSED(data);
+    NADebugTreeToken* debugtoken = (NADebugTreeToken*)token;
+    debugtoken->nodecount++;
+    debugtoken->curdepth++;
+    if(debugtoken->curdepth > debugtoken->maxdepth){debugtoken->maxdepth = debugtoken->curdepth;}
+
+    debugtoken->previndx++;
+//    if(debugtoken->previndx == tree->config->childcound){
+//      // last child just has been visited. Go up to the parent.
+//      if()
+//    }else{
+//    
+//    }
+    debugtoken->curdepth--;
+    return NA_TREE_SEARCH_PARENT;
+  }
+
+  NAInt debugLeaf(void* token, NAPtr data){
+    NA_UNUSED(data);
+    NADebugTreeToken* debugtoken = (NADebugTreeToken*)token;
+    debugtoken->leafcount++;
+    return NA_TREE_SEARCH_PARENT;
+  }
+
+  void naDebugTree(NATree* tree){
+    printf("Tree Debug:\n");
+    printf("\tStructure uses %d bytes.\n", (int)naSizeof(NATree));
+    printf("\t%d iterators running on the tree.\n", (int)tree->itercount);
+    if(tree->root){
+      NATreeIterator iter = naMakeTreeAccessor(tree);
+      NADebugTreeToken token;
+      naZeron(&token, naSizeof(NADebugTreeToken));
+      token.tree = tree;
+      token.previndx = -1;
+      naLocateTreeToken(&iter, &token, debugNode, debugLeaf);
+      
+      printf("\tInner node count: %d * %d Bytes = %d bytes\n", (int)token.nodecount, (int)tree->config->sizeofNode, (int)(token.nodecount * tree->config->sizeofNode));
+      printf("\tLeaf count: %d * %d Bytes = %d bytes\n", (int)token.leafcount, (int)tree->config->sizeofLeaf, (int)(token.leafcount * tree->config->sizeofLeaf));
+      printf("\tMax node depth: %d\n", (int)token.maxdepth);
+      naClearTreeIterator(&iter);
+    }else{
+      printf("\tTree has no root.\n");
+    }
+  }
+#endif
 
 
 

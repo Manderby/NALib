@@ -510,7 +510,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
           length = naDecodeLiteralLength(&iterz, curcode);
           distcode = naDecodeHuffman(distancehuffman, &iterz);
           dist = naDecodeDistance(&iterz, distcode);
-          naRepeatBufferBytes(&iterout, dist, length);
+          naRepeatBufferBytes(&iterout, dist, length, NA_TRUE);
         }
       }
 
@@ -536,6 +536,10 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
   #else
     NA_UNUSED(zbufferadler);
     NA_UNUSED(adler);
+  #endif
+  
+  #ifndef NDEBUG
+//    naDebugTree(&(output->parts));
   #endif
 }
 

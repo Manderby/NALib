@@ -443,7 +443,8 @@ NA_API void naWriteBufferBuffer(  NABufferIterator* iter,
 // there.
 NA_API void naRepeatBufferBytes(  NABufferIterator* iter,
                                               NAInt distance,
-                                              NAInt bytesize);
+                                              NAInt bytesize,
+                                             NABool useCopy);
 
 
 
