@@ -106,16 +106,20 @@
   }
 
 
+
   NA_DEF void naDestructOpenGLSpace(NAOpenGLSpace* openglspace){
     NACoreOpenGLSpace* coreopenglspace = (NACoreOpenGLSpace*)openglspace;
     naClearCoreOpenGLSpace(&(coreopenglspace->coreopenglspace));
   }
 
 
+
   NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
     NACoreOpenGLSpace* coreopenglspace = (NACoreOpenGLSpace*)openglspace;
     [[(NANativeOpenGLSpace*)(coreopenglspace->coreopenglspace.uielement.nativeID) openGLContext] flushBuffer];
   }
+
+
 
   NA_DEF void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){
     NA_UNUSED(openglspace);

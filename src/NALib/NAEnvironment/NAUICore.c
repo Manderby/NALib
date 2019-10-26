@@ -35,14 +35,6 @@ NA_HDEF void naUnregisterCoreUIElement(NACoreUIElement* coreuielement){
 
 
 
-NA_HDEF void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent){
-  NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
-  // todo: remove from old parent
-  coreelement->parent = parent;
-}
-
-
-
 NA_HDEF void naInitCoreApplication(NACoreApplication* coreapplication, NANativeID nativeId){
   na_app = coreapplication;
 
@@ -101,6 +93,7 @@ NA_HDEF void naInitCoreWindow(NACoreWindow* corewindow, void* nativeId, NACoreSp
   if(resizeable){corewindow->flags |= NA_CORE_WINDOW_FLAG_RESIZEABLE;}
   corewindow->windowedframe = windowedframe;
 }
+
 NA_HDEF void naClearCoreWindow(NACoreWindow* corewindow){
   naUnregisterCoreUIElement(&(corewindow->uielement));
 }
@@ -114,6 +107,21 @@ NA_DEF void naPreventWindowFromClosing(NAWindow* window, NABool prevent){
   naSetFlagi(&(corewindow->flags), NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, prevent);
 }
 
+NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
+  NACoreWindow* corewindow = (NACoreWindow*)window;
+  return naGetFlagi(corewindow->flags, NA_CORE_WINDOW_FLAG_FULLSCREEN);
+}
+
+NA_DEF NABool naIsWindowResizeable(NAWindow* window){
+  NACoreWindow* corewindow = (NACoreWindow*)window;
+  return naGetFlagi(corewindow->flags, NA_CORE_WINDOW_FLAG_RESIZEABLE);
+}
+
+NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){
+  NACoreWindow* corewindow = (NACoreWindow*)window;
+  return corewindow->contentspace;
+}
+
 
 
 NA_HDEF void naInitCoreSpace(NACoreSpace* coreespace, void* nativeId){
@@ -121,6 +129,10 @@ NA_HDEF void naInitCoreSpace(NACoreSpace* coreespace, void* nativeId){
 }
 NA_HDEF void naClearCoreSpace(NACoreSpace* coreespace){
   naUnregisterCoreUIElement(&(coreespace->uielement));
+}
+NA_DEF NABool naGetSpaceAlternateBackground(NASpace* space){
+  NACoreSpace* corespace = (NACoreSpace*)space;
+  return corespace->alternatebackground;
 }
 
 
@@ -418,25 +430,28 @@ NA_HDEF NAApplication* naGetApplication(void){
 
 
 
-NA_HDEF NAUIElement* naGetUIElementParent(NAUIElement* coreuielement){
-  return ((NACoreUIElement*)coreuielement)->parent;
+NA_HDEF NAUIElement* naGetUIElementParent(NAUIElement* uielement){
+  return ((NACoreUIElement*)uielement)->parent;
 }
 
 
 
-NA_HDEF NAWindow* naGetUIElementWindow(NAUIElement* coreuielement){
-  NACoreWindow* elementwindow;
-  NAUIElementType elementType = ((NACoreUIElement*)coreuielement)->elementtype;
-  if(elementType == NA_UI_APPLICATION){
-    elementwindow = NA_NULL;
-  }else if(elementType == NA_UI_SCREEN){
-    elementwindow = NA_NULL;
-  }else if(elementType == NA_UI_WINDOW){
-    elementwindow = (NACoreWindow*)coreuielement;
-  }else{
-    elementwindow = naGetUIElementWindow(naGetUIElementParent(coreuielement));
+NA_HDEF NAWindow* naGetUIElementWindow(NAUIElement* uielement){
+  NAUIElement* curelement = uielement;
+  while(curelement && naGetUIElementType(curelement) != NA_UI_WINDOW){
+    curelement = naGetUIElementParent(curelement);
   }
-  return elementwindow;
+  return curelement;
+}
+
+
+
+NA_HDEF NASpace* naGetUIElementParentSpace(NAUIElement* uielement){
+  NACoreSpace* parent = naGetUIElementParent(uielement);
+  while(parent && naGetUIElementType(parent) != NA_UI_SPACE){
+    parent = naGetUIElementParent(parent);
+  }
+  return parent;
 }
 
 

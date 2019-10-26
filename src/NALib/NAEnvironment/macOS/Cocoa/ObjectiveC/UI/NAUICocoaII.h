@@ -169,6 +169,12 @@ NA_HDEF void naClearUINativeId(NANativeID nativeId){
 }
 
 
+NA_HDEF void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent){
+  NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
+  // todo: remove from old parent
+  coreelement->parent = parent;
+}
+
 
 NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextelem){
   naDefineNativeCocoaObject(NANativeTextField, nativeelem, elem);
@@ -276,7 +282,7 @@ NA_DEF void naRefreshUIElementNow(NAUIElement* uielement){
 
 
 
-NSFont* getNSFontWithKind(NAFontKind kind){
+NAFont getFontWithKind(NAFontKind kind){
   NSFont* font;
   CGFloat systemSize = [NSFont systemFontSize];
   NSFontDescriptor* descriptor;
@@ -311,7 +317,7 @@ NSFont* getNSFontWithKind(NAFontKind kind){
       #endif
       break;
   }
-  return font;
+  return (NAFont)font;
 }
 
 

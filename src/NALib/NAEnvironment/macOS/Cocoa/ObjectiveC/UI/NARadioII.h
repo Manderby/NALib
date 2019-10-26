@@ -10,8 +10,6 @@
 
 
 
-
-
 @implementation NANativeRadio
 - (id) initWithCoreRadio:(NACoreRadio*)newcoreradio frame:(NSRect)frame{
   NSRect newbounds = frame;

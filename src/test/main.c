@@ -69,9 +69,9 @@ void initOpenGLSpace(void* initData){
 void poststartup(void* arg){
   NA_UNUSED(arg);
 
-//  naSetTranslatorLanguagePreference(naGetLanguageCode("deu"));
-//  naSetTranslatorLanguagePreference(naGetLanguageCode("eng"));
-//  naSetTranslatorLanguagePreference(naGetLanguageCode("gsw"));
+  naSetTranslatorLanguagePreference(naGetLanguageCode("deu"));
+  //naSetTranslatorLanguagePreference(naGetLanguageCode("eng"));
+  //naSetTranslatorLanguagePreference(naGetLanguageCode("gsw"));
   printf ("%s\n", naTranslate(trGeneralGroup, TR_HELLO_WORLD));
   printf ("%s\n", naTranslate(trGeneralGroup, TR_99_BEER));
   printf ("%s\n", naTranslate(trGeneralGroup, TR_BREADCRUMBS_BEAVERSPIT));
@@ -80,25 +80,32 @@ void poststartup(void* arg){
 
 //  printf("%d\n", (int)naGetLanguageCode("deu"));
 
-  NARect windowrect = naMakeRectS(20, 20, 400, 300);
+  NARect windowrect = naMakeRectS(120, 120, 400, 300);
   NAWindow* window = naNewWindow("Wurst", windowrect, NA_TRUE, 0);
   naAddUIReaction(window, NA_UI_COMMAND_RESHAPE,       resizeWindow, NA_NULL);
   naAddUIReaction(window, NA_UI_COMMAND_KEYDOWN,       cubPressWindowKey, NA_NULL);
   naAddUIReaction(window, NA_UI_COMMAND_KEYUP,         cubReleaseWindowKey, NA_NULL);
-  naAddUIReaction(window, NA_UI_COMMAND_MOUSE_MOVED,   cubMoveWindowMouse, NA_NULL);
-  naAddUIReaction(window, NA_UI_COMMAND_MOUSE_ENTERED, cubEnterWindowMouse, NA_NULL);
-  naAddUIReaction(window, NA_UI_COMMAND_MOUSE_EXITED,  cubExitWindowMouse, NA_NULL);
+  //naAddUIReaction(window, NA_UI_COMMAND_MOUSE_MOVED,   cubMoveWindowMouse, NA_NULL);
+  //naAddUIReaction(window, NA_UI_COMMAND_MOUSE_ENTERED, cubEnterWindowMouse, NA_NULL);
+  //naAddUIReaction(window, NA_UI_COMMAND_MOUSE_EXITED,  cubExitWindowMouse, NA_NULL);
 
 //  NAOpenGLSpace* openglspace = naNewOpenGLSpace(window, windowrect.size, initOpenGLSpace, window);
 //  naSetWindowContentSpace(window, openglspace);
 
   NASpace* contentSpace = naGetWindowContentSpace(window);
 
-  NAButton* button = naNewPushButton("Test", naMakeRectS(10., 20., 30., 40.));
-  naAddSpaceChild(contentSpace, button);
-
-  NALabel* label = naNewLabel("101010", naMakeRectS(10., 120., 30., 40.));
-  naAddSpaceChild(contentSpace, label);
+  NAButton* button = naNewPushButton("PushButton asdf", naMakeSize(200., 20.));
+  naAddSpaceChild(contentSpace, button, naMakePos(20., 20.));
+  NACheckBox* checkbox = naNewCheckBox("Checkbox asdf", naMakeSize(200., 20.));
+  naAddSpaceChild(contentSpace, checkbox, naMakePos(20., 40.));
+  NALabel* label = naNewLabel("Label asdf", naMakeSize(200., 20.));
+  naAddSpaceChild(contentSpace, label, naMakePos(20., 60.));
+  NARadio* radio = naNewRadio("Radio asdf", naMakeSize(200., 20.));
+  naAddSpaceChild(contentSpace, radio, naMakePos(20., 80.));
+  NATextBox* textbox = naNewTextBox(naMakeSize(200., 40.));
+  naAddSpaceChild(contentSpace, textbox, naMakePos(20., 100.));
+  NATextField* textfield = naNewTextField(naMakeSize(200., 20.));
+  naAddSpaceChild(contentSpace, textfield, naMakePos(20., 140.));
 
   naShowWindow(window);
 }
