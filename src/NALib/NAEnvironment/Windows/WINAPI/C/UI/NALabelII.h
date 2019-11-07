@@ -108,7 +108,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   // We need a read only edit control here, otherwise on windows, the user is not able to select text.
   style = WS_CHILD | WS_VISIBLE | ES_LEFT | ES_READONLY | ES_MULTILINE;
 
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text, 0);
+  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
 
 	hWnd = CreateWindow(
 		TEXT("EDIT"), systemtext, style,
@@ -138,7 +138,7 @@ NA_DEF void naDestructLabel(NALabel* label){
 
 
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text, 0);
+  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
   SendMessage(naGetUIElementNativeID(label), WM_SETTEXT, 0, (LPARAM)systemtext);
   naFree(systemtext);
 }

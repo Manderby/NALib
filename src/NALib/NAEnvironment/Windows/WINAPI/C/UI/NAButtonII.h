@@ -12,8 +12,10 @@
 typedef struct NAWINAPIButton NAWINAPIButton;
 struct NAWINAPIButton {
   NACoreButton corebutton;
+  NAUIImage* image;
 };
 
+void drawImage(NACoreUIElement* uielement);
 
 
 NAWINAPICallbackInfo naButtonWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
@@ -55,6 +57,35 @@ NAWINAPICallbackInfo naButtonWINAPIProc(NAUIElement* uielement, UINT message, WP
   return info;
 }
 
+#define IMG_WIDTH 100
+#define IMG_HEIGHT 10
+
+//HBITMAP createBitmap(){
+//  NAByte* buffer = naMalloc(IMG_WIDTH * IMG_HEIGHT * 4 *2);
+//  for(int i=0; i<IMG_WIDTH * IMG_HEIGHT * 4 *2; i++){
+//    buffer[i] = 128;
+//  }
+//
+//  HBITMAP hNewBitmap = CreateBitmap(IMG_WIDTH, IMG_HEIGHT, 1, 32, buffer);
+//  naFree(buffer);
+//  return hNewBitmap;
+//}
+//
+//void drawImage(NACoreUIElement* uielement){
+//  HDC hDC = GetDC(naGetUIElementNativeID(uielement));
+//  HDC hMemDC = CreateCompatibleDC(hDC);
+//  HBITMAP hOldBitmap;
+//  HBITMAP hNewBitmap = createBitmap();
+//
+//  hOldBitmap = SelectObject(hMemDC, hNewBitmap);
+//  BitBlt(hDC, 0, 0, IMG_WIDTH, IMG_HEIGHT, hMemDC, 0, 0, SRCCOPY);
+//
+//  SelectObject(hMemDC, hOldBitmap);
+//  DeleteObject(hNewBitmap);
+//  DeleteDC(hMemDC);
+//  ReleaseDC(naGetUIElementNativeID(uielement), hDC);
+//}
+
 
 NAWINAPICallbackInfo naButtonWINAPINotify(NAUIElement* uielement, WORD notificationCode){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
@@ -68,6 +99,36 @@ NAWINAPICallbackInfo naButtonWINAPINotify(NAUIElement* uielement, WORD notificat
   return info;
 }
 
+NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTRUCT* drawitemstruct){
+  NAWINAPIButton* button = (NAWINAPIButton*)uielement;
+  NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
+
+  HDC hMemDC = CreateCompatibleDC(drawitemstruct->hDC);
+  HBITMAP hOldBitmap;
+
+  HBITMAP hNewBitmap = naGetUIImageNativeImage(button->image, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
+
+
+  NABabyImage* testimage = naCreateBabyImageFromNativeImage(hNewBitmap);
+
+
+  hOldBitmap = SelectObject(hMemDC, hNewBitmap);
+  NASizei size1x = naGetUIImage1xSize(button->image);
+
+  //NAByte* buffer = naMalloc(size1x.width * size1x.height * 4 *2);
+  //HBITMAP hBackBitmap = CreateBitmap(size1x.width, size1x.height, 1, 32, buffer);
+  //BitBlt(hMemDC, 0, 0, size1x.width, size1x.height, drawitemstruct->hDC, 0, 0, SRCCOPY);
+
+  BitBlt(drawitemstruct->hDC, 0, 0, size1x.width, size1x.height, hMemDC, 0, 0, SRCCOPY);
+  SelectObject(hMemDC, hOldBitmap);
+  //DeleteObject(hBackBitmap);
+  //naFree(buffer);
+
+  DeleteDC(hMemDC);
+  ReleaseDC(naGetUIElementNativeID(uielement), drawitemstruct->hDC);
+
+  return info;
+}
 
 //// Push (Text only) (24px height fixed)
 //// Option (Text / Image) (3px padding on all sides)
@@ -108,11 +169,11 @@ NAWINAPICallbackInfo naButtonWINAPINotify(NAUIElement* uielement, WORD notificat
 //    }
 //    NAUIImageResolution resolution = naGetWindowUIResolution(naGetUIElementWindow(&(corebutton->uielement)));
 //    CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
-//    CGImageRef imgref = naGetUIImageRef(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
-//    if(!imgref){
-//      imgref = naGetUIImageRef(uiimage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, skin);
+//    CGImageRef nativeimage = naGetUIImageRef(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
+//    if(!nativeimage){
+//      nativeimage = naGetUIImageRef(uiimage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, skin);
 //    }
-//    CGContextDrawImage(context, dstRect, imgref);
+//    CGContextDrawImage(context, dstRect, nativeimage);
 //    return YES;
 //  }];
 //
@@ -154,7 +215,7 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
 
   style = WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON;
 
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text, 0);
+  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
 
 	hWnd = CreateWindow(
 		TEXT("BUTTON"), systemtext, style,
@@ -167,6 +228,7 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
   naInitCoreButton(&(winapibutton->corebutton), hWnd);
+  winapibutton->image = NA_NULL;
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
@@ -183,7 +245,7 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
 
   style = WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON;
 
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text, 0);
+  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
 
 	hWnd = CreateWindow(
 		TEXT("BUTTON"), systemtext, style,
@@ -193,6 +255,7 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
   naFree(systemtext);
 
   naInitCoreButton(&(winapibutton->corebutton), hWnd);
+  winapibutton->image = NA_NULL;
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
@@ -220,14 +283,18 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
 
   NAWINAPIButton* winapibutton = naAlloc(NAWINAPIButton);
 
-  style = WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON;
+  style = WS_CHILD | WS_VISIBLE | BS_OWNERDRAW;
 
 	hWnd = CreateWindow(
-		TEXT("BUTTON"), TEXT("X"), style,
+		TEXT("BUTTON"), TEXT(""), style,
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
+  //HBITMAP hBitmap = createBitmap();
+  //SendMessage(hWnd, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBitmap);
+
   naInitCoreButton(&(winapibutton->corebutton), hWnd);
+  winapibutton->image = uiimage;
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 

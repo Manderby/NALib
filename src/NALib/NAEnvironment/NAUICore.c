@@ -334,20 +334,20 @@ NA_DEF void naReleaseUIElement(NAUIElement* uielement){
 
   switch(naGetUIElementType(element))
   {
-  case NA_UI_APPLICATION: naReleaseRefCount(&(element->refcount), uielement, naDestructApplication); break;
+  case NA_UI_APPLICATION: naReleaseRefCount(&element->refcount, uielement, naDestructApplication); break;
 //  case NA_UI_SCREEN:      naDeleteScreen(uielement);
-  case NA_UI_WINDOW:      naReleaseRefCount(&(element->refcount), uielement, naDestructWindow); break;
-  case NA_UI_SPACE:       naReleaseRefCount(&(element->refcount), uielement, naDestructSpace); break;
-  case NA_UI_IMAGESPACE:  naReleaseRefCount(&(element->refcount), uielement, naDestructImageSpace); break;
+  case NA_UI_WINDOW:      naReleaseRefCount(&element->refcount, uielement, naDestructWindow); break;
+  case NA_UI_SPACE:       naReleaseRefCount(&element->refcount, uielement, naDestructSpace); break;
+  case NA_UI_IMAGESPACE:  naReleaseRefCount(&element->refcount, uielement, naDestructImageSpace); break;
   #if NA_CONFIG_COMPILE_OPENGL == 1
     case NA_UI_OPENGLSPACE: naReleaseRefCount(&(element->refcount), uielement, naDestructOpenGLSpace); break;
   #endif
-  case NA_UI_BUTTON:      naReleaseRefCount(&(element->refcount), uielement, naDestructButton); break;
-  case NA_UI_RADIO:       naReleaseRefCount(&(element->refcount), uielement, naDestructRadio); break;
-  case NA_UI_CHECKBOX:    naReleaseRefCount(&(element->refcount), uielement, naDestructCheckBox); break;
-  case NA_UI_LABEL:       naReleaseRefCount(&(element->refcount), uielement, naDestructLabel); break;
-  case NA_UI_TEXTFIELD:   naReleaseRefCount(&(element->refcount), uielement, naDestructTextField); break;
-  case NA_UI_TEXTBOX:     naReleaseRefCount(&(element->refcount), uielement, naDestructTextBox); break;
+  case NA_UI_BUTTON:      naReleaseRefCount(&element->refcount, uielement, naDestructButton); break;
+  case NA_UI_RADIO:       naReleaseRefCount(&element->refcount, uielement, naDestructRadio); break;
+  case NA_UI_CHECKBOX:    naReleaseRefCount(&element->refcount, uielement, naDestructCheckBox); break;
+  case NA_UI_LABEL:       naReleaseRefCount(&element->refcount, uielement, naDestructLabel); break;
+  case NA_UI_TEXTFIELD:   naReleaseRefCount(&element->refcount, uielement, naDestructTextField); break;
+  case NA_UI_TEXTBOX:     naReleaseRefCount(&element->refcount, uielement, naDestructTextBox); break;
   default:
     #ifndef NDEBUG
       naError("Invalid element type");

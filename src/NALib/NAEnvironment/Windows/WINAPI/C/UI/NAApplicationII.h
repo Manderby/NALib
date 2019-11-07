@@ -37,7 +37,9 @@ struct NAWINAPIApplication {
   NACoreApplication coreapplication;
   NAList timers;
   HWND offscreenWindow;
-  NONCLIENTMETRICS nonclientmetrics; 
+  NONCLIENTMETRICS nonclientmetrics;
+
+  NACoreUIElement* mouseHoverElement;
 
   WNDPROC oldButtonWindowProc;
   WNDPROC oldRadioWindowProc;
@@ -222,6 +224,8 @@ NA_HDEF NAApplication* naNewApplication(void){
   winapiapplication->nonclientmetrics.cbSize = sizeof(NONCLIENTMETRICS);
   SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &(winapiapplication->nonclientmetrics), 0);
 
+  winapiapplication->mouseHoverElement = NA_NULL;
+
   winapiapplication->oldButtonWindowProc = NA_NULL;
   winapiapplication->oldRadioWindowProc = NA_NULL;
   winapiapplication->oldCheckBoxWindowProc = NA_NULL;
@@ -269,6 +273,16 @@ NA_DEF void naDestructApplication(NAApplication* application){
 HWND naGetApplicationOffscreenWindow(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   return app->offscreenWindow;
+}
+
+NACoreUIElement* naGetApplicationMouseHoverElement(void){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  return app->mouseHoverElement;
+}
+
+void naSetApplicationMouseHoverElement(NACoreUIElement* element){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  app->mouseHoverElement = element;
 }
 
 const NONCLIENTMETRICS* naGetApplicationMetrics(void){
@@ -341,7 +355,7 @@ NA_DEF void naOpenConsoleWindow(const char* windowtitle){
 //  CONSOLE_SCREEN_BUFFER_INFO coninfo;
   AllocConsole();
 
-  TCHAR* systemtitle = naAllocSystemStringWithUTF8String(windowtitle, 0);
+  TCHAR* systemtitle = naAllocSystemStringWithUTF8String(windowtitle);
   SetConsoleTitle(systemtitle);
   naFree(systemtitle);
 
@@ -381,7 +395,7 @@ NA_DEF void naOpenConsoleWindow(const char* windowtitle){
 NA_DEF NAString* naNewApplicationName(void){
   TCHAR modulepath[MAX_PATH];
   GetModuleFileName(NULL, modulepath, MAX_PATH);
-  NAString* utf8modulepath = naNewStringFromSystemString(modulepath, 0);
+  NAString* utf8modulepath = naNewStringFromSystemString(modulepath);
 
   NAURL url;
   naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8modulepath));

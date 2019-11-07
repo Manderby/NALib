@@ -61,7 +61,7 @@ NA_DEF void naDestructTextBox(NATextBox* textbox){
 
 
 NA_DEF void naSetTextBoxText(NATextBox* textbox, const NAUTF8Char* text){
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text, 0);
+  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
   SendMessage(naGetUIElementNativeID(textbox), WM_SETTEXT, 0, (LPARAM)systemtext);
   naFree(systemtext);
 }

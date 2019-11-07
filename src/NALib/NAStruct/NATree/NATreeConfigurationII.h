@@ -16,7 +16,7 @@ NA_HIDEF void naDeallocConfiguration(NATreeConfiguration* config){
 
 
 NA_IDEF void naReleaseTreeConfiguration(NATreeConfiguration* config){
-  naReleaseRefCount(&(config->refcount), &(config->refcount), (NAMutator)naDeallocConfiguration);
+  naReleaseRefCount(&config->refcount, config, (NAMutator)naDeallocConfiguration);
 }
 
 

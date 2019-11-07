@@ -260,7 +260,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   windowrect.left = (int)rect.pos.x;
   AdjustWindowRect(&windowrect, style, NA_FALSE);
 
-  TCHAR* systemtitle = naAllocSystemStringWithUTF8String(title, 0);
+  TCHAR* systemtitle = naAllocSystemStringWithUTF8String(title);
 
 	hWnd = CreateWindow(
 		TEXT("NAWindow"), systemtitle, style,

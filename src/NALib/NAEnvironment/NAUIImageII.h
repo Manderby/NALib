@@ -10,20 +10,26 @@
 struct NAUIImage {
   NASizei size1x;
   NABlendMode tintMode;
-  void* imgref[NA_UIIMAGE_RESOLUTION_COUNT * NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT];
+  NABabyImage* babyimages[NA_UIIMAGE_RESOLUTION_COUNT * NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT];
+  void* nativeimages[NA_UIIMAGE_RESOLUTION_COUNT * NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT];
 };
 
 
-NA_HIAPI void* naGetUIImageRef(NAUIImage* image, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin);
-NA_HIAPI void naSetUIImageRef(NAUIImage* image, void* imgref, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin);
+NA_HAPI NABabyImage* naGetUIImageBabyImage(
+  NAUIImage* uiimage,
+  NAUIImageResolution resolution,
+  NAUIImageKind kind,
+  NAUIImageSkin skin);
+NA_HAPI void* naGetUIImageNativeImage(
+  NAUIImage* uiimage,
+  NAUIImageResolution resolution,
+  NAUIImageKind kind,
+  NAUIImageSkin skin);
 
 
 
-
-
-
-NA_IDEF NASizei naGetUIImage1xSize(const NAUIImage* image){
-  return image->size1x;
+NA_IDEF NASizei naGetUIImage1xSize(const NAUIImage* uiimage){
+  return uiimage->size1x;
 }
 
 

@@ -817,11 +817,11 @@ NA_DEF NAInt naGetPNGPixelDataBytesize(NAPNG* png){
 
 
 
-NA_DEF NABabyImage* naAllocPNGBabyImage(NAPNG* png){
-  NABabyImage* babyimage = naAllocBabyImage(png->size, NA_NULL);
+NA_DEF NABabyImage* naCreateBabyImageFromPNG(NAPNG* png){
+  NABabyImage* babyimage = naCreateBabyImage(png->size, NA_NULL);
   switch(png->colortype){
   case NA_PNG_COLORTYPE_TRUECOLOR_ALPHA:
-    naFillBabyImageWithUInt8(babyimage, png->pixeldata, NA_FALSE);
+    naFillBabyImageWithUInt8(babyimage, png->pixeldata, NA_TRUE, NA_FALSE);
     break;
   default:
     #ifndef NDEBUG

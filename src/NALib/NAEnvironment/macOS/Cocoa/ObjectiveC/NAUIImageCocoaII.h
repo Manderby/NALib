@@ -11,38 +11,13 @@
 #include "../../../NAUIImage.h"
 
 
-void naFillBabyColorWithSkin(NABabyColor color, NAUIImageSkin skin){
-  uint8 skincolor[4];
-  switch(skin){
-  case NA_UIIMAGE_SKIN_LIGHT:
-    skincolor[0] = 16;
-    skincolor[1] = 16;
-    skincolor[2] = 16;
-    skincolor[3] = 255;
-    break;
-  case NA_UIIMAGE_SKIN_DARK:
-    skincolor[0] = 240;
-    skincolor[1] = 240;
-    skincolor[2] = 240;
-    skincolor[3] = 255;
-    break;
-  default:
-    #ifndef NDEBUG
-      naError("Cannot provide color for plain skin");
-    #endif
-    break;
-  }
-  naFillBabyColorWithUInt8(color, skincolor, NA_FALSE);
-}
-
-
-NABabyImage* naAllocBabyImageFromImageRef(const void* imageref){
+NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeimage){
   NABabyImage* image;
   
-  CFDataRef rawData = CGDataProviderCopyData(CGImageGetDataProvider((CGImageRef)imageref));
-  image = naAllocBabyImage(naMakeSizei((NAInt)CGImageGetWidth((CGImageRef)imageref), (NAInt)CGImageGetHeight((CGImageRef)imageref)), NA_NULL);
+  CFDataRef rawData = CGDataProviderCopyData(CGImageGetDataProvider((CGImageRef)nativeimage));
+  image = naCreateBabyImage(naMakeSizei((NAInt)CGImageGetWidth((CGImageRef)nativeimage), (NAInt)CGImageGetHeight((CGImageRef)nativeimage)), NA_NULL);
   // Note that reading PNG files directly does not premultiply alpha!
-  naFillBabyImageWithUInt8(image, CFDataGetBytePtr(rawData), NA_FALSE);
+  naFillBabyImageWithUInt8(image, CFDataGetBytePtr(rawData), NA_TRUE, NA_FALSE);
   CFRelease(rawData);
   
   return image;
@@ -50,16 +25,16 @@ NABabyImage* naAllocBabyImageFromImageRef(const void* imageref){
 
 
 
-NABabyImage* naAllocBabyImageFromFilePath(const NAUTF8Char* pathStr){
+NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
   NABabyImage* image = NA_NULL;
   
   CGDataProviderRef dataprovider = CGDataProviderCreateWithFilename(pathStr);
   if(dataprovider){
   
-    CGImageRef imageref = CGImageCreateWithPNGDataProvider(dataprovider, NULL, NA_FALSE, kCGRenderingIntentAbsoluteColorimetric);
-    image = naAllocBabyImageFromImageRef(imageref);
+    CGImageRef nativeimage = CGImageCreateWithPNGDataProvider(dataprovider, NULL, NA_FALSE, kCGRenderingIntentAbsoluteColorimetric);
+    image = naCreateBabyImageFromNativeImage(nativeimage);
     
-    CGImageRelease(imageref);
+    CGImageRelease(nativeimage);
     CGDataProviderRelease(dataprovider);
   }
 
@@ -68,119 +43,40 @@ NABabyImage* naAllocBabyImageFromFilePath(const NAUTF8Char* pathStr){
 
 
 
-NA_DEF CGImageRef naCreateCGImageWithBabyImage(const NABabyImage* image){
+NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
   CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
   NASizei imageSize = naGetBabyImageSize(image);
   CGContextRef cgcontext = CGBitmapContextCreateWithData(NULL, (size_t)imageSize.width, (size_t)imageSize.height, 8, (size_t)naGetBabyImageValuesPerLine(image), colorSpace, kCGImageAlphaPremultipliedLast, NULL, NULL);
 
   uint8* imgdata = CGBitmapContextGetData(cgcontext);
-  naConvertBabyImageToUInt8(image, imgdata, NA_TRUE);
+  naConvertBabyImageToUInt8(image, imgdata, NA_TRUE, NA_TRUE);
   
-  CGImageRef imageref = CGBitmapContextCreateImage(cgcontext);
+  CGImageRef nativeimage = CGBitmapContextCreateImage(cgcontext);
   CGContextRelease(cgcontext);
   CGColorSpaceRelease(colorSpace);
-  return imageref;
+  return nativeimage;
 }
 
 
 
-NA_HIDEF void* naGetUIImageRef(NAUIImage* image, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
-  void* retimg = image->imgref[(resolution * NA_UIIMAGE_KIND_COUNT + kind) * NA_UIIMAGE_SKIN_COUNT + skin];
-  if(!retimg && skin != NA_UIIMAGE_SKIN_PLAIN){
-    void* plainimg = image->imgref[(resolution * NA_UIIMAGE_KIND_COUNT + kind) * NA_UIIMAGE_SKIN_COUNT + NA_UIIMAGE_SKIN_PLAIN];
-    if(plainimg){
-      NABabyImage* plainbabyimg = naAllocBabyImageFromImageRef(plainimg);
-      
-      NABabyColor skincolor;
-      naFillBabyColorWithSkin(skincolor, skin);
-      NABabyImage* skinnedImage = naAllocBabyImageWithTint(plainbabyimg, skincolor, image->tintMode, 1.f);
-      retimg = naCreateCGImageWithBabyImage(skinnedImage);
-      naSetUIImageRef(image, retimg, resolution, kind, skin);
-      naDeallocBabyImage(skinnedImage);
-      naDeallocBabyImage(plainbabyimg);
-    }
-  }
-  return retimg;
-}
+//void* naAllocNativeImageWithUIImage(NAUIImage* uiimage, NAUIImageKind kind, NAUIImageSkin skin){
+//  NASizei imagesize = naGetUIImage1xSize(uiimage);
+//  NSImage* image = [[NSImage alloc] initWithSize:NSMakeSize(imagesize.width, imagesize.height)];
+//
+//  CGImageRef img1x = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
+//  CGImageRef img2x = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
+//  if(img1x){[image addRepresentation:NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img1x])];}
+//  if(img2x){[image addRepresentation:NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img2x])];}
+//  
+//  return NA_COCOA_TAKE_OWNERSHIP(image);
+//}
 
 
 
-NA_HIDEF void naSetUIImageRef(NAUIImage* image, void* imgref, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
-  image->imgref[(resolution * NA_UIIMAGE_KIND_COUNT + kind) * NA_UIIMAGE_SKIN_COUNT + skin] = imgref;
-}
+void naDeallocNativeImage(void* nativeimage){
+  CGImageRelease(nativeimage);
+} 
 
-
-
-NA_DEF NAUIImage* naAllocUIImage(NABabyImage* main, NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
-  #ifndef NDEBUG
-    if(!main)
-      naError("There mus be a main image");
-    if(alt && !naEqualSizei(naGetBabyImageSize(main), naGetBabyImageSize(alt)))
-      naError("Both images must have the same size.");
-  #endif
-  NAUIImage* uiImage = naAlloc(NAUIImage);
-  
-  uiImage->size1x = naGetBabyImageSize(main);
-  uiImage->tintMode = tintMode;
-  naZeron(uiImage->imgref, NA_UIIMAGE_RESOLUTION_COUNT * NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT * naSizeof(CGImageRef));
-  
-  switch(resolution){
-  case NA_UIIMAGE_RESOLUTION_1x:
-    naSetUIImageRef(uiImage, naCreateCGImageWithBabyImage(main), NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
-    if(alt){
-      naSetUIImageRef(uiImage, naCreateCGImageWithBabyImage(alt), NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
-    }
-    break;
-  case NA_UIIMAGE_RESOLUTION_2x:
-    #ifndef NDEBUG
-      if(uiImage->size1x.width % 2 || uiImage->size1x.height % 2)
-        naError("Image size is not divisable by 2");
-    #endif
-    uiImage->size1x.width /= 2;
-    uiImage->size1x.height /= 2;
-    naSetUIImageRef(uiImage, naCreateCGImageWithBabyImage(main), NA_UIIMAGE_RESOLUTION_2x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
-    NABabyImage* main1x = naAllocBabyImageWithHalfSize(main);
-    naSetUIImageRef(uiImage, naCreateCGImageWithBabyImage(main1x), NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
-    naDeallocBabyImage(main1x);
-    if(alt){
-      naSetUIImageRef(uiImage, naCreateCGImageWithBabyImage(alt), NA_UIIMAGE_RESOLUTION_2x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
-      NABabyImage* alt1x = naAllocBabyImageWithHalfSize(alt);
-      naSetUIImageRef(uiImage, naCreateCGImageWithBabyImage(alt1x), NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
-      naDeallocBabyImage(alt1x);
-    }
-    break;
-  default:
-    #ifndef NDEBUG
-      naError("Unknown resolution");
-    #endif
-    break;
-  }
-
-  return uiImage;
-}
-
-
-
-NA_API void naDeallocUIImage(NAUIImage* uiimage){
-  for(NAInt i = 0; i < NA_UIIMAGE_RESOLUTION_COUNT * NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT; i++){
-    if(uiimage->imgref[i]){CGImageRelease(uiimage->imgref[i]);}
-  }
-  naFree(uiimage);
-}
-
-
-
-void* naAllocNativeImageWithUIImage(NAUIImage* uiimage, NAUIImageKind kind, NAUIImageSkin skin){
-  NASizei imagesize = naGetUIImage1xSize(uiimage);
-  NSImage* image = [[NSImage alloc] initWithSize:NSMakeSize(imagesize.width, imagesize.height)];
-
-  CGImageRef img1x = naGetUIImageRef(uiimage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
-  CGImageRef img2x = naGetUIImageRef(uiimage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
-  if(img1x){[image addRepresentation:NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img1x])];}
-  if(img2x){[image addRepresentation:NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img2x])];}
-  
-  return NA_COCOA_TAKE_OWNERSHIP(image);
-}
 
 
 // Copyright (c) NALib, Tobias Stamm

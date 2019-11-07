@@ -45,7 +45,11 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPA
   case WM_SETCURSOR:
     break;
 
-  case WM_CTLCOLORSTATIC: // Message is sent to parent space. wParam: device context, lParam HWND handle to actual control, return: background color brush
+  case WM_CTLCOLORSTATIC:
+    // Message is sent to parent space.
+    // wParam: device context
+    // lParam HWND handle to actual control
+    // return: background color brush
     childelement = (NACoreUIElement*)naGetUINALibEquivalent((HWND)lParam);
     switch(childelement->elementtype){
     case NA_UI_LABEL:

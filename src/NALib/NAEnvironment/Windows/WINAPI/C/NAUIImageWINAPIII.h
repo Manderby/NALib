@@ -12,231 +12,85 @@
 #include "../../../NAPNG.h"
 #include <wincodec.h>
 
-void naFillBabyColorWithSkin(NABabyColor color, NAUIImageSkin skin){
-//  uint8 skincolor[4];
-//  switch(skin){
-//  case NA_UIIMAGE_SKIN_LIGHT:
-//    skincolor[0] = 16;
-//    skincolor[1] = 16;
-//    skincolor[2] = 16;
-//    skincolor[3] = 255;
-//    break;
-//  case NA_UIIMAGE_SKIN_DARK:
-//    skincolor[0] = 240;
-//    skincolor[1] = 240;
-//    skincolor[2] = 240;
-//    skincolor[3] = 255;
-//    break;
-//  default:
-//    #ifndef NDEBUG
-//      naError("Cannot provide color for plain skin");
-//    #endif
-//    break;
-//  }
-//  naFillBabyColorWithUInt8(color, skincolor, NA_FALSE);
-}
 
 
-NABabyImage* naAllocBabyImageFromImageRef(const void* imageref){
-//  NABabyImage* image;
-//  
-//  CFDataRef rawData = CGDataProviderCopyData(CGImageGetDataProvider((CGImageRef)imageref));
-//  image = naAllocBabyImage(naMakeSizei((NAInt)CGImageGetWidth((CGImageRef)imageref), (NAInt)CGImageGetHeight((CGImageRef)imageref)), NA_NULL);
-//  // Note that reading PNG files directly does not premultiply alpha!
-//  naFillBabyImageWithUInt8(image, CFDataGetBytePtr(rawData), NA_FALSE);
-//  CFRelease(rawData);
-//  
-//  return image;
-  return NA_NULL;
+NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeimage){
+  HDC hdcSource = GetDC(NA_NULL); // the source device context
+  HBITMAP hSource = (HBITMAP)nativeimage; // the bitmap selected into the device context
+
+  BITMAPINFO MyBMInfo = {0};
+  MyBMInfo.bmiHeader.biSize = sizeof(MyBMInfo.bmiHeader);
+
+  // Get the BITMAPINFO structure from the bitmap
+  GetDIBits(hdcSource, hSource, 0, 0, NULL, &MyBMInfo, DIB_RGB_COLORS);
+
+  // create the pixel buffer
+  BYTE* lpPixels = naMalloc(MyBMInfo.bmiHeader.biSizeImage);
+
+  MyBMInfo.bmiHeader.biBitCount = 32;
+  MyBMInfo.bmiHeader.biCompression = BI_RGB;  // no compression -> easier to use
+
+  // Call GetDIBits a second time, this time to (format and) store the actual
+  // bitmap data (the "pixels") in the buffer lpPixels
+  GetDIBits(hdcSource, hSource, 0, MyBMInfo.bmiHeader.biHeight, lpPixels, &MyBMInfo, DIB_RGB_COLORS);
+
+  NABabyImage* babyimage = naCreateBabyImage(naMakeSizei(MyBMInfo.bmiHeader.biWidth, MyBMInfo.bmiHeader.biHeight), NA_NULL);
+  naFillBabyImageWithUInt8(babyimage, lpPixels, NA_FALSE, NA_FALSE);
+  naFree(lpPixels);
+
+  // clean up: deselect bitmap from device context, close handles, delete buffer
+  return babyimage;
 }
 
 
 
- //BOOL LoadBitmapFromBMPFile( LPTSTR szFileName, HBITMAP *phBitmap,
- //  HPALETTE *phPalette )
- //  {
-
- //  BITMAP  bm;
-
- //  *phBitmap = NULL;
- //  *phPalette = NULL;
-
- //  // Use LoadImage() to get the image loaded into a DIBSection
- //  *phBitmap = (HBITMAP)LoadImage( NULL, szFileName, IMAGE_BITMAP, 0, 0,
- //              LR_CREATEDIBSECTION | LR_DEFAULTSIZE | LR_LOADFROMFILE );
- //  if( *phBitmap == NULL )
- //    return FALSE;
-
- //  // Get the color depth of the DIBSection
- //  GetObject(*phBitmap, sizeof(BITMAP), &bm );
- //  // If the DIBSection is 256 color or less, it has a color table
- //  if( ( bm.bmBitsPixel * bm.bmPlanes ) <= 8 )
- //  {
- //  HDC           hMemDC;
- //  HBITMAP       hOldBitmap;
- //  RGBQUAD       rgb[256];
- //  LPLOGPALETTE  pLogPal;
- //  WORD          i;
-
- //  // Create a memory DC and select the DIBSection into it
- //  hMemDC = CreateCompatibleDC( NULL );
- //  hOldBitmap = (HBITMAP)SelectObject( hMemDC, *phBitmap );
- //  // Get the DIBSection's color table
- //  GetDIBColorTable( hMemDC, 0, 256, rgb );
- //  // Create a palette from the color tabl
- //  pLogPal = (LOGPALETTE *)malloc( sizeof(LOGPALETTE) + (256*sizeof(PALETTEENTRY)) );
- //  pLogPal->palVersion = 0x300;
- //  pLogPal->palNumEntries = 256;
- //  for(i=0;i<256;i++)
- //  {
- //    pLogPal->palPalEntry[i].peRed = rgb[i].rgbRed;
- //    pLogPal->palPalEntry[i].peGreen = rgb[i].rgbGreen;
- //    pLogPal->palPalEntry[i].peBlue = rgb[i].rgbBlue;
- //    pLogPal->palPalEntry[i].peFlags = 0;
- //  }
- //  *phPalette = CreatePalette( pLogPal );
- //  // Clean up
- //  free( pLogPal );
- //  SelectObject( hMemDC, hOldBitmap );
- //  DeleteDC( hMemDC );
- //  }
- //  else   // It has no color table, so use a halftone palette
- //  {
- //  HDC    hRefDC;
-
- //  hRefDC = GetDC( NULL );
- //  *phPalette = CreateHalftonePalette( hRefDC );
- //  ReleaseDC( NULL, hRefDC );
- //  }
- //  return TRUE;
-
- //  }
-
-
-
-NABabyImage* naAllocBabyImageFromFilePath(const NAUTF8Char* pathStr){
+NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
+  // Currently, only png is possible
   NAPNG* png = naNewPNGWithFile(pathStr);
-  NABabyImage* babyImage = naAllocPNGBabyImage(png);
+  NABabyImage* babyImage = naCreateBabyImageFromPNG(png);
   return babyImage;
 }
 
 
 
-//NA_DEF CGImageRef naCreateCGImageWithBabyImage(const NABabyImage* image){
-//  CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
-//  NASizei imageSize = naGetBabyImageSize(image);
-//  CGContextRef cgcontext = CGBitmapContextCreateWithData(NULL, (size_t)imageSize.width, (size_t)imageSize.height, 8, (size_t)naGetBabyImageValuesPerLine(image), colorSpace, kCGImageAlphaPremultipliedLast, NULL, NULL);
+NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
+
+  NASizei size = naGetBabyImageSize(image);
+
+  NAByte* buffer = naMalloc(size.width * size.height * 4);
+  for(int i = 0; i < size.width * size.height * 4; i += 4){
+    buffer[i+0] = (NAByte)(naGetBabyImageData(image)[i+2] * 255.);
+    buffer[i+1] = (NAByte)(naGetBabyImageData(image)[i+1] * 255.);
+    buffer[i+2] = (NAByte)(naGetBabyImageData(image)[i+0] * 255.);
+    buffer[i+3] = (NAByte)(naGetBabyImageData(image)[i+3] * 255.);
+  }
+
+  HBITMAP hNewBitmap = CreateBitmap(size.width, size.height, 1, 32, buffer);
+  naFree(buffer);
+
+  return hNewBitmap;
+}
+
+
+
+//void* naAllocNativeImageWithUIImage(NAUIImage* uiimage, NAUIImageKind kind, NAUIImageSkin skin){
+//  //NASizei imagesize = naGetUIImage1xSize(uiimage);
+//  //NSImage* image = [[NSImage alloc] initWithSize:NSMakeSize(imagesize.width, imagesize.height)];
 //
-//  uint8* imgdata = CGBitmapContextGetData(cgcontext);
-//  naConvertBabyImageToUInt8(image, imgdata, NA_TRUE);
-//  
-//  CGImageRef imageref = CGBitmapContextCreateImage(cgcontext);
-//  CGContextRelease(cgcontext);
-//  CGColorSpaceRelease(colorSpace);
-//  return imageref;
+//  //CGImageRef img1x = naGetUIImageRef(uiimage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
+//  //CGImageRef img2x = naGetUIImageRef(uiimage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
+//  //if(img1x){[image addRepresentation:NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img1x])];}
+//  //if(img2x){[image addRepresentation:NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img2x])];}
+//  //
+//  //return NA_COCOA_TAKE_OWNERSHIP(image);
+//  return NA_NULL;
 //}
 
 
 
-NA_HIDEF void* naGetUIImageRef(NAUIImage* image, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
-//  void* retimg = image->imgref[(resolution * NA_UIIMAGE_KIND_COUNT + kind) * NA_UIIMAGE_SKIN_COUNT + skin];
-//  if(!retimg && skin != NA_UIIMAGE_SKIN_PLAIN){
-//    void* plainimg = image->imgref[(resolution * NA_UIIMAGE_KIND_COUNT + kind) * NA_UIIMAGE_SKIN_COUNT + NA_UIIMAGE_SKIN_PLAIN];
-//    if(plainimg){
-//      NABabyImage* plainbabyimg = naAllocBabyImageFromImageRef(plainimg);
-//      
-//      NABabyColor skincolor;
-//      naFillBabyColorWithSkin(skincolor, skin);
-//      NABabyImage* skinnedImage = naAllocBabyImageWithTint(plainbabyimg, skincolor, image->tintMode, 1.f);
-//      retimg = naCreateCGImageWithBabyImage(skinnedImage);
-//      naSetUIImageRef(image, retimg, resolution, kind, skin);
-//      naDeallocBabyImage(skinnedImage);
-//      naDeallocBabyImage(plainbabyimg);
-//    }
-//  }
-//  return retimg;
-}
-
-
-
-NA_HIDEF void naSetUIImageRef(NAUIImage* image, void* imgref, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
-//  image->imgref[(resolution * NA_UIIMAGE_KIND_COUNT + kind) * NA_UIIMAGE_SKIN_COUNT + skin] = imgref;
-}
-
-
-
-NA_DEF NAUIImage* naAllocUIImage(NABabyImage* main, NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
-//  #ifndef NDEBUG
-//    if(!main)
-//      naError("There mus be a main image");
-//    if(alt && !naEqualSizei(naGetBabyImageSize(main), naGetBabyImageSize(alt)))
-//      naError("Both images must have the same size.");
-//  #endif
-//  NAUIImage* uiImage = naAlloc(NAUIImage);
-//  
-//  uiImage->size1x = naGetBabyImageSize(main);
-//  uiImage->tintMode = tintMode;
-//  naZeron(uiImage->imgref, NA_UIIMAGE_RESOLUTION_COUNT * NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT * naSizeof(CGImageRef));
-//  
-//  switch(resolution){
-//  case NA_UIIMAGE_RESOLUTION_1x:
-//    naSetUIImageRef(uiImage, naCreateCGImageWithBabyImage(main), NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
-//    if(alt){
-//      naSetUIImageRef(uiImage, naCreateCGImageWithBabyImage(alt), NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
-//    }
-//    break;
-//  case NA_UIIMAGE_RESOLUTION_2x:
-//    #ifndef NDEBUG
-//      if(uiImage->size1x.width % 2 || uiImage->size1x.height % 2)
-//        naError("Image size is not divisable by 2");
-//    #endif
-//    uiImage->size1x.width /= 2;
-//    uiImage->size1x.height /= 2;
-//    naSetUIImageRef(uiImage, naCreateCGImageWithBabyImage(main), NA_UIIMAGE_RESOLUTION_2x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
-//    NABabyImage* main1x = naAllocBabyImageWithHalfSize(main);
-//    naSetUIImageRef(uiImage, naCreateCGImageWithBabyImage(main1x), NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
-//    naDeallocBabyImage(main1x);
-//    if(alt){
-//      naSetUIImageRef(uiImage, naCreateCGImageWithBabyImage(alt), NA_UIIMAGE_RESOLUTION_2x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
-//      NABabyImage* alt1x = naAllocBabyImageWithHalfSize(alt);
-//      naSetUIImageRef(uiImage, naCreateCGImageWithBabyImage(alt1x), NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
-//      naDeallocBabyImage(alt1x);
-//    }
-//    break;
-//  default:
-//    #ifndef NDEBUG
-//      naError("Unknown resolution");
-//    #endif
-//    break;
-//  }
-//
-//  return uiImage;
-  return NA_NULL;
-}
-
-
-
-NA_API void naDeallocUIImage(NAUIImage* uiimage){
-//  for(NAInt i = 0; i < NA_UIIMAGE_RESOLUTION_COUNT * NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT; i++){
-//    if(uiimage->imgref[i]){CGImageRelease(uiimage->imgref[i]);}
-//  }
-//  naFree(uiimage);
-}
-
-
-
-void* naAllocNativeImageWithUIImage(NAUIImage* uiimage, NAUIImageKind kind, NAUIImageSkin skin){
-//  NASizei imagesize = naGetUIImage1xSize(uiimage);
-//  NSImage* image = [[NSImage alloc] initWithSize:NSMakeSize(imagesize.width, imagesize.height)];
-//
-//  CGImageRef img1x = naGetUIImageRef(uiimage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
-//  CGImageRef img2x = naGetUIImageRef(uiimage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
-//  if(img1x){[image addRepresentation:NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img1x])];}
-//  if(img2x){[image addRepresentation:NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img2x])];}
-//  
-//  return NA_COCOA_TAKE_OWNERSHIP(image);
-  return NA_NULL;
-}
+void naDeallocNativeImage(void* nativeimage){
+  DeleteObject(nativeimage);
+} 
 
 
 // Copyright (c) NALib, Tobias Stamm

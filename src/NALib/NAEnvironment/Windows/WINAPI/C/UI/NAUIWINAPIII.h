@@ -40,6 +40,10 @@ NA_HDEF NARect naGetWindowAbsoluteInnerRect(NACoreUIElement* window);
 NA_HAPI void naRenewWindowMouseTracking(NACoreWindow* corewindow);
 NA_HAPI void naClearWindowMouseTracking(NACoreWindow* corewindow);
 
+HWND naGetApplicationOffscreenWindow(void);
+NACoreUIElement* naGetApplicationMouseHoverElement(void);
+void naSetApplicationMouseHoverElement(NACoreUIElement* element);
+const NONCLIENTMETRICS* naGetApplicationMetrics(void);
 
 
 
@@ -152,6 +156,7 @@ WNDPROC naGetApplicationOldTextFieldWindowProc();
 // Prototypes of the WindowProc handlers
 NAWINAPICallbackInfo naUIElementWINAPIProc  (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam);
 
 NAWINAPICallbackInfo naApplicationWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naWindowWINAPIProc     (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
@@ -171,6 +176,8 @@ NAWINAPICallbackInfo naButtonWINAPINotify   (NAUIElement* uielement, WORD notifi
 NAWINAPICallbackInfo naCheckBoxWINAPINotify (NAUIElement* uielement, WORD notificationCode);
 NAWINAPICallbackInfo naTextFieldWINAPINotify(NAUIElement* uielement, WORD notificationCode);
 
+NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTRUCT* drawitemstruct);
+
 // This is the one and only, master of destruction, defender of chaos and
 // pimp of the century function handling all and everything in WINAPI.
 
@@ -189,6 +196,10 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
   if(message == WM_COMMAND)
   {
     info = naWINAPINotificationProc(wParam, lParam);
+  }
+  if(message == WM_DRAWITEM)
+  {
+    info = naWINAPIDrawItemProc(wParam, lParam);
   }
 
   while(uielement && !info.hasbeenhandeled){
@@ -303,83 +314,133 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
 }
 
 
-NAWINAPICallbackInfo naUIElementWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
-  NAWINAPICallbackInfo info = {NA_FALSE, 0};
-  NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
+void naWINAPICaptureMouseHover(){
   DWORD msgpos;
   POINT pt;
   HWND hWndUnderMouse;
   NACoreUIElement* elementUnderMouse;
+  NACoreUIElement* curElement;
   NACoreUIElement* commonParent;
+
+  msgpos = GetMessagePos();
+  pt.x = GET_X_LPARAM(msgpos);
+  pt.y = GET_Y_LPARAM(msgpos);
+  hWndUnderMouse = WindowFromPoint(pt);
+  elementUnderMouse = (NACoreUIElement*)naGetUINALibEquivalent(hWndUnderMouse);
+  curElement = naGetApplicationMouseHoverElement();
+
+  if(curElement != elementUnderMouse){
+    commonParent = naGetUIElementCommonParent(curElement, elementUnderMouse);
+
+    // Send a leave reaction to all elements which are not hovered anymore.
+    while(curElement && curElement != commonParent){
+      curElement->mouseinside = NA_FALSE;
+      naDispatchUIElementCommand(curElement, NA_UI_COMMAND_MOUSE_EXITED);
+      curElement = naGetUIElementParent(curElement);
+    }
+
+    // Reset the hover element to the current one and track the mouse leaving it.
+    naSetApplicationMouseHoverElement(elementUnderMouse);
+    if(elementUnderMouse){
+    TRACKMOUSEEVENT winapitracking;
+      winapitracking.cbSize = sizeof(TRACKMOUSEEVENT);
+      winapitracking.dwFlags = TME_LEAVE;
+      winapitracking.hwndTrack = naGetUIElementNativeID(elementUnderMouse);
+      winapitracking.dwHoverTime = HOVER_DEFAULT;
+      TrackMouseEvent(&winapitracking);
+    }
+
+    // Send the entered message to all elements which are newly hovered.
+    while(elementUnderMouse && elementUnderMouse != commonParent){
+      elementUnderMouse->mouseinside = NA_TRUE;
+      naDispatchUIElementCommand(elementUnderMouse, NA_UI_COMMAND_MOUSE_ENTERED);
+      elementUnderMouse = naGetUIElementParent(elementUnderMouse);
+    }
+  }
+}
+
+
+NAWINAPICallbackInfo naUIElementWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
+  //DWORD msgpos;
+  //POINT pt;
+  //HWND hWndUnderMouse;
+  //NACoreUIElement* elementUnderMouse;
+  //NACoreUIElement* commonParent;
 
   switch(message){
   case WM_MOUSEHOVER: // being inside the hWND for a specified amout of time.
     break;
 
   case WM_MOUSEMOVE:
-    if(!coreelement->mouseinside){
-      msgpos = GetMessagePos();
-      pt.x = GET_X_LPARAM(msgpos);
-      pt.y = GET_Y_LPARAM(msgpos);
-      // beware! This returns the HWND being under RIGHT NOW! If you are debugging this, you will get a HWND of your current IDE!
-      hWndUnderMouse = WindowFromPoint(pt);
-      elementUnderMouse = (NACoreUIElement*)naGetUINALibEquivalent(hWndUnderMouse);
+    //if(!coreelement->mouseinside){
+    //  //msgpos = GetMessagePos();
+    //  //pt.x = GET_X_LPARAM(msgpos);
+    //  //pt.y = GET_Y_LPARAM(msgpos);
+    //  // beware! This returns the HWND being under RIGHT NOW! If you are debugging this, you will get a HWND of your current IDE!
+    //  //hWndUnderMouse = WindowFromPoint(pt);
+    //  //elementUnderMouse = (NACoreUIElement*)naGetUINALibEquivalent(hWndUnderMouse);
 
-      if(elementUnderMouse){
-        // Go through the whole tree and send an enter to all elements up until the common parent.
-        while(coreelement && !coreelement->mouseinside){
-          coreelement->mouseinside = NA_TRUE;
-          naDispatchUIElementCommand(coreelement, NA_UI_COMMAND_MOUSE_ENTERED);
-          coreelement = naGetUIElementParent(coreelement);
-        }
-      }
+    //  if(elementUnderMouse){
+    //    // Go through the whole tree and send an enter to all elements up until the common parent.
+    //    while(coreelement && !coreelement->mouseinside){
+    //      coreelement->mouseinside = NA_TRUE;
+    //      naDispatchUIElementCommand(coreelement, NA_UI_COMMAND_MOUSE_ENTERED);
+    //      coreelement = naGetUIElementParent(coreelement);
+    //    }
+    //  }
 
-      // Reset the core element to the current one and track the mouse leaving it.
-      coreelement = (NACoreUIElement*)uielement;
-      TRACKMOUSEEVENT winapitracking;
-      winapitracking.cbSize = sizeof(TRACKMOUSEEVENT);
-      winapitracking.dwFlags = TME_LEAVE;
-      winapitracking.hwndTrack = naGetUIElementNativeID(uielement);
-      winapitracking.dwHoverTime = HOVER_DEFAULT;
-      TrackMouseEvent(&winapitracking);
-    }
+    //  // Reset the core element to the current one and track the mouse leaving it.
+    //  coreelement = (NACoreUIElement*)uielement;
+    //  TRACKMOUSEEVENT winapitracking;
+    //  winapitracking.cbSize = sizeof(TRACKMOUSEEVENT);
+    //  winapitracking.dwFlags = TME_LEAVE;
+    //  winapitracking.hwndTrack = naGetUIElementNativeID(uielement);
+    //  winapitracking.dwHoverTime = HOVER_DEFAULT;
+    //  TrackMouseEvent(&winapitracking);
+    //}
 
-    // Important: Not not mark this as handeled. Selecting text will not
-    // work if WM_MOUSEMOVE is not propagated.
+    //// Important: Not not mark this as handeled. Selecting text will not
+    //// work if WM_MOUSEMOVE is not propagated.
 
-    //info.hasbeenhandeled = NA_TRUE;
-    //info.result = 0;
+    ////info.hasbeenhandeled = NA_TRUE;
+    ////info.result = 0;
 
+    naWINAPICaptureMouseHover();
     break;
 
   case WM_MOUSELEAVE:
-    msgpos = GetMessagePos();
-    pt.x = GET_X_LPARAM(msgpos);
-    pt.y = GET_Y_LPARAM(msgpos);
-    // beware! This returns the HWND being under RIGHT NOW! If you are debugging this, you will get a HWND of your current IDE!
-    hWndUnderMouse = WindowFromPoint(pt);
-    elementUnderMouse = (NACoreUIElement*)naGetUINALibEquivalent(hWndUnderMouse);
-    commonParent = naGetUIElementCommonParent(uielement, elementUnderMouse);
-    
-    if(elementUnderMouse){
-      // Go through the whole tree and send an exit to all elements up until the common parent.
-      while(coreelement != commonParent){
-        coreelement->mouseinside = NA_FALSE;
-        naDispatchUIElementCommand(coreelement, NA_UI_COMMAND_MOUSE_EXITED);
-        coreelement = naGetUIElementParent(coreelement);
-      }
-    }
+    //msgpos = GetMessagePos();
+    //pt.x = GET_X_LPARAM(msgpos);
+    //pt.y = GET_Y_LPARAM(msgpos);
+    //// beware! This returns the HWND being under RIGHT NOW! If you are debugging this, you will get a HWND of your current IDE!
+    //hWndUnderMouse = WindowFromPoint(pt);
+    //elementUnderMouse = (NACoreUIElement*)naGetUINALibEquivalent(hWndUnderMouse);
+    //commonParent = naGetUIElementCommonParent(uielement, elementUnderMouse);
+    //
+    //if(elementUnderMouse){
+    //  // Go through the whole tree and send an exit to all elements up until the common parent.
+    //  while(coreelement != commonParent){
+    //    //coreelement->mouseinside = NA_FALSE;
+    //    //naDispatchUIElementCommand(coreelement, NA_UI_COMMAND_MOUSE_EXITED);
+    //    //coreelement = naGetUIElementParent(coreelement);
+    //  }
+    //}
 
     // Currently, do not set this message as handeled. We don't know yet what
     // windows does with its controls.
     //info.hasbeenhandeled = NA_TRUE;
     //info.result = 0;
+    
+    naWINAPICaptureMouseHover();
     break;
 
   }
 
   return info;
 }
+
 
 
 NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
@@ -402,10 +463,22 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
   return info;
 }
 
+NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  DRAWITEMSTRUCT* drawitemstruct = (DRAWITEMSTRUCT*)lParam;
+  NACoreUIElement* uielement = (NACoreUIElement*)naGetUINALibEquivalent(drawitemstruct->hwndItem);
 
+  if(uielement){
+    switch(naGetUIElementType(uielement)){
+    case NA_UI_BUTTON:    info = naButtonWINAPIDrawItem   (uielement, drawitemstruct); break;
+    default:
+      //printf("Uncaught draw item message\n");
+      break;
+    }
+  }
+  return info;
+}
 
-HWND naGetApplicationOffscreenWindow(void);
-const NONCLIENTMETRICS* naGetApplicationMetrics(void);
 
 
 

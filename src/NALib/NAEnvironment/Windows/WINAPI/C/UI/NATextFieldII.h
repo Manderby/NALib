@@ -122,7 +122,7 @@ NA_DEF void naDestructTextField(NATextField* textfield){
 
 NA_DEF void naSetTextFieldText(NATextField* textfield, const NAUTF8Char* text){
   NAWINAPITextField* winapitextfield = (NAWINAPITextField*)textfield;
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text, 0);
+  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
   naBlockUIElementNotifications(&(winapitextfield->coretextfield.uielement));
   SendMessage(naGetUIElementNativeID(textfield), WM_SETTEXT, 0, (LPARAM)systemtext);
   naAllowUIElementNotifications(&(winapitextfield->coretextfield.uielement));
@@ -136,7 +136,7 @@ NA_DEF NAString* naNewStringWithTextFieldText(NATextField* textfield){
   if(textlength){
     TCHAR* buffer = naMalloc((textlength + 1) * sizeof(TCHAR));
     SendMessage(naGetUIElementNativeID(textfield), WM_GETTEXT, textlength + 1, (LPARAM)buffer);
-    return naNewStringFromSystemString(buffer, (NAUInt)textlength);
+    return naNewStringFromSystemString(buffer);
   }else{
     return naNewString();
   }

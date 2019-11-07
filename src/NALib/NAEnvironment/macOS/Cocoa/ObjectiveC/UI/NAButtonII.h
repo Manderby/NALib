@@ -52,11 +52,11 @@
     #else
       CGContextRef context = [[NSGraphicsContext currentContext] CGContext];
     #endif
-    CGImageRef imgref = naGetUIImageRef(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
-    if(!imgref){
-      imgref = naGetUIImageRef(uiimage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, skin);
+    CGImageRef nativeimage = naGetUIImageNativeImage(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
+    if(!nativeimage){
+      nativeimage = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, skin);
     }
-    CGContextDrawImage(context, dstRect, imgref);
+    CGContextDrawImage(context, dstRect, nativeimage);
     return YES;
   }];
 

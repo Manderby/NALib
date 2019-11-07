@@ -201,6 +201,36 @@ NA_DEF NAString* naNewStringWithBufferExtraction(NABuffer* buffer, NARangei rang
 
 
 
+NA_API NAString* naNewStringWithNewlineSanitization( NAString* string, NANewlineEncoding encoding){
+  NAString* newstring;
+  if(naIsStringEmpty(string)){
+    newstring = naNewString();
+  }else{
+    NABuffer* newbuffer = naNewBuffer(NA_FALSE);
+    naSetBufferNewlineEncoding(newbuffer, encoding);
+    NABufferIterator readiter = naMakeBufferAccessor(naGetStringBufferConst(string));
+    NABufferIterator writeiter = naMakeBufferModifier(newbuffer);
+    NABool writeNL = NA_FALSE;
+    while(!naIsBufferAtEnd(&readiter)){
+      if(writeNL){
+        naWriteBufferNewLine(&writeiter);
+      }else{
+        writeNL = NA_TRUE;
+      }
+      NAString* line = naParseBufferLine(&readiter, NA_FALSE);
+      naWriteBufferString(&writeiter, line);
+      naDelete(line);
+    }
+    naClearBufferIterator(&readiter);
+    naClearBufferIterator(&writeiter);
+    newstring = naNewStringWithBufferExtraction(newbuffer, naGetBufferRange(newbuffer));
+    naRelease(newbuffer);
+  }
+  return newstring;
+}
+
+
+
 NA_HDEF void naDestructString(NAString* string){
   naRelease(string->buffer);
 }
@@ -538,22 +568,25 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputstring){
   // Returns a newly allocated memory block containing the system-encoded
   // string. If you do not provide the length, it will be automatically
   // computed. The resulting string must be freed manually. COPIES ALWAYS!
-  NA_DEF TCHAR* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8string, NAUInt length){
+  NA_DEF TCHAR* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8string){
     TCHAR* outstr;
+    NAUInt length;
+    NAString* string = naNewStringWithUTF8CStringLiteral(utf8string);
+    NAString* newlinestring = naNewStringWithNewlineSanitization(string, NA_NEWLINE_WIN);
+    length = naGetStringBytesize(newlinestring);
+    naDelete(string);
     #ifdef UNICODE
       NAUInt widelength;
-      if(!length){length = naStrlen(utf8string);}
-      widelength = MultiByteToWideChar(CP_UTF8, 0, utf8string, length, NULL, 0);
+      widelength = MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), length, NULL, 0);
       outstr = (TCHAR*)naMalloc(((widelength + 1) * naSizeof(TCHAR)));
-      MultiByteToWideChar(CP_UTF8, 0, utf8string, length, outstr, widelength);
+      MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), length, outstr, widelength);
       outstr[widelength] = 0;
     #else
       NAUInt widelength;
       wchar_t* wstr;
-      if(!length){length = naStrlen(utf8string);}
-      widelength = MultiByteToWideChar(CP_UTF8, 0, utf8string, length, NULL, 0);
+      widelength = MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), length, NULL, 0);
       wstr = naMalloc(((widelength + 1) * naSizeof(wchar_t)));
-      MultiByteToWideChar(CP_UTF8, 0, utf8string, length, wstr, widelength);
+      MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), length, wstr, widelength);
       wstr[widelength] = 0;
       NAUInt ansilength = WideCharToMultiByte(CP_ACP, 0, wstr, widelength, NA_NULL, 0, NA_NULL, NA_NULL);
       outstr = (TCHAR*)naMalloc(((ansilength + 1) * naSizeof(TCHAR)));
@@ -561,25 +594,28 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputstring){
       naFree(wstr);
       outstr[ansilength] = 0;
     #endif
+    naDelete(newlinestring);
     return outstr;
   }
 
   // Creates a new NAString from a system-encoded string. COPIES ALWAYS!
-  NA_DEF NAString* naNewStringFromSystemString(TCHAR* systemstring, NAUInt length){
+  NA_DEF NAString* naNewStringFromSystemString(TCHAR* systemstring){
     NAString* string;
+    NAString* newlinestring;
+    NAUInt length;
     #ifdef UNICODE
       NAInt utf8length;
       NAUTF8Char* stringbuf;
-      if(!length){length = wcslen(systemstring);}
+      length = wcslen(systemstring);
       utf8length = WideCharToMultiByte(CP_UTF8, 0, systemstring, length, NULL, 0, NULL, NULL);
       stringbuf = naMalloc((utf8length + 1) * naSizeof(NAUTF8Char));
       WideCharToMultiByte(CP_UTF8, 0, systemstring, length, stringbuf, utf8length, NULL, NULL);
-      string = naNewStringWithMutableUTF8Buffer(stringbuf, utf8length, (NAMutator)naFree);
+      newlinestring = naNewStringWithMutableUTF8Buffer(stringbuf, utf8length, (NAMutator)naFree);
     #else
       NAUInt widelength;
       wchar_t* wstr;
       NAUTF8Char* stringbuf;
-      if(!length){length = strlen(systemstring);}
+      length = strlen(systemstring);
       widelength = MultiByteToWideChar(CP_ACP, 0, systemstring, length, NULL, 0);
       wstr = naMalloc(((widelength + 1) * naSizeof(wchar_t)));
       MultiByteToWideChar(CP_ACP, 0, systemstring, length, wstr, widelength);
@@ -589,8 +625,10 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputstring){
       WideCharToMultiByte(CP_UTF8, 0, wstr, widelength, stringbuf, utf8length, NA_NULL, NA_NULL);
       naFree(wstr);
       stringbuf[utf8length] = 0;
-      string = naNewStringWithMutableUTF8Buffer(stringbuf, utf8length, (NAMutator)naFree);
+      newlinestring = naNewStringWithMutableUTF8Buffer(stringbuf, utf8length, (NAMutator)naFree);
     #endif
+    string = naNewStringWithNewlineSanitization(newlinestring, NA_NEWLINE_UNIX);
+    naDelete(newlinestring);
     return string;
   }
 #endif

@@ -25,7 +25,7 @@ NA_DEF NABool naIsDir(const char* path){
   #if NA_OS == NA_OS_WINDOWS
     TCHAR* sysstring;
     NABool retvalue;
-    sysstring = naAllocSystemStringWithUTF8String(path, 0);
+    sysstring = naAllocSystemStringWithUTF8String(path);
     retvalue = (GetFileAttributes(sysstring)  & FILE_ATTRIBUTE_DIRECTORY) ? NA_TRUE : NA_FALSE;
     free(sysstring);
     return retvalue;
@@ -41,7 +41,7 @@ NA_DEF NABool naIsHidden(const char* path){
   #if NA_OS == NA_OS_WINDOWS
     TCHAR* sysstring;
     NABool retvalue;
-    sysstring = naAllocSystemStringWithUTF8String(path, 0);
+    sysstring = naAllocSystemStringWithUTF8String(path);
     retvalue = (GetFileAttributes(sysstring) & FILE_ATTRIBUTE_HIDDEN) ? NA_TRUE : NA_FALSE;
     free(sysstring);
     return retvalue;

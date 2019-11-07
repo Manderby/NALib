@@ -86,7 +86,7 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
 
   style = WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_CHECKBOX;
 
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text, 0);
+  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
 
 	hWnd = CreateWindow(
 		TEXT("BUTTON"), systemtext, style,
