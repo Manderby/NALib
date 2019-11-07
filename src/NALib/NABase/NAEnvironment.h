@@ -95,12 +95,16 @@
   #endif
 
 #else
-  #error "System not detected"
+  #warning "System not detected. Assuming 32bit addresses, 32bit integer, little endian"
   #define NA_OS NA_OS_UNKNOWN
+  #define NA_ENDIANNESS_HOST NA_ENDIANNESS_LITTLE
+  #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
+  #undef NA_PREFERRED_NAINT_BITS
+  #define NA_PREFERRED_NAINT_BITS 32
 #endif
 
 #ifndef NA_SYSTEM_ADDRESS_BITS
-  #error "Address bits not detected, trying 32."
+  #warning "Address bits not detected, trying 32."
   #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
 #endif
 

@@ -47,13 +47,13 @@
 //  naInitHeap(&heap, -1, NA_HEAP_USES_DOUBLE_KEY);
 //  
 //  t1 = naMakeDateTimeNow();
-//  for(i=0; i<TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++){
 //    naInsertHeapElementConst(&heap, &(keys[i]), &(keys[i]), NA_NULL);
 //  }
 //
 //  t2 = naMakeDateTimeNow();
 //
-//  for(i=0; i<TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++){
 //    const double* curkey = naRemoveHeapRootConst(&heap);
 //    if(prevkey > *curkey){
 //      printf("Error in sorting");
@@ -84,7 +84,7 @@
 //
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeModifier(&tree);
-//  for(i=0; i<TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++){
 ////    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
 //    double key = naUniformRandZE();
 ////    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
@@ -98,7 +98,7 @@
 //
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeAccessor(&tree);
-//  for(i=0; i<TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++){
 ////    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
 ////    double key = naUniformRandZE();
 //    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
@@ -142,7 +142,7 @@
 ////  naEmptyTree(&tree);
 //  t1 = naMakeDateTimeNow();
 //  iter = naMakeTreeModifier(&tree);
-//  for(i=0; i<TESTSIZE; i++){
+//  for(i = 0; i < TESTSIZE; i++){
 ////    NAInt key = (NAInt)(naUniformRandZE() * TESTSIZE);
 //    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
 ////    double key = (double)i / TESTSIZE;
@@ -181,7 +181,7 @@
 //
 //  naStartRuntime();
 //    keys = (double*)naMalloc(TESTSIZE * sizeof(double));
-//    for(i=0; i<TESTSIZE; i++){
+//    for(i = 0; i < TESTSIZE; i++){
 //      keys[i] = naUniformRandZE();
 ////      keys[i] = TESTSIZE - i;
 ////      keys[i] = i;

@@ -113,12 +113,12 @@
       }else{
         if(n <= 32){
           retint.lo = a.lo >> n;
-          retint.lo |= (uint32)(a.hi << (32 - n));
-          retint.hi = a.hi >> n;
+          retint.lo |= ((uint32)a.hi << (32 - n));
+          retint.hi = (uint32)a.hi >> n;
         }else{
-          retint.lo = (uint32)(a.hi >> (n - 32));
-          retint.hi = (int32)(a.hi >> 31 >> 1); // Sign preservation!
-          // The splitting in >> 31 and >> 1 actually is required to silence
+          retint.lo = ((uint32)a.hi >> (n - 32));
+          retint.hi = (int32)((uint32)a.hi >> 31 >> 1); // Sign preservation!
+          // The splitting in >> 31 and >> 1 and the additional casts area required to silence
           // some compiler warnings.
         }
       }
@@ -172,7 +172,7 @@
     NA_IDEF double naCastInt64ToDouble(NAInt64 i){
       // warning: this seems to be troublesome in the lower part. Find a
       // better solution in the future by using bit manipulation. todo
-      return (double)i.hi * naMakeDoubleWithExponent(32) + ((i.hi<0) ? -(double)i.lo : (double)i.lo);
+      return (double)i.hi * naMakeDoubleWithExponent(32) + ((i.hi < 0) ? -(double)i.lo : (double)i.lo);
     }
 
 
@@ -228,13 +228,13 @@
     NA_IDEF NAUInt64 naMulUInt64(NAUInt64 a, NAUInt64 b){
       NAUInt64 retint = NA_ZERO_64u;
 
-      uint32 a0 = a.lo & ((1<<16)-1);
+      uint32 a0 = a.lo & ((1 << 16) - 1);
       uint32 a1 = a.lo >> 16;
-      uint32 a2 = a.hi & ((1<<16)-1);
+      uint32 a2 = a.hi & ((1 << 16) - 1);
       uint32 a3 = a.hi >> 16;
-      uint32 b0 = b.lo & ((1<<16)-1);
+      uint32 b0 = b.lo & ((1 << 16) - 1);
       uint32 b1 = b.lo >> 16;
-      uint32 b2 = b.hi & ((1<<16)-1);
+      uint32 b2 = b.hi & ((1 << 16) - 1);
       uint32 b3 = b.hi >> 16;
 
       retint.lo += a0 * b0;
@@ -257,7 +257,6 @@
     }
     NA_HIDEF void naComputeUInt64Division(NAUInt64 a, NAUInt64 b, NAUInt64* div, NAUInt64* rem){
       NAUInt64 tmpb;
-      int shiftcount;
       NAUInt64 highestbita;
       NAUInt64 highestbitb;
       *div = NA_ZERO_64u;
@@ -267,6 +266,8 @@
           naCrash("Integer Division by 0");
         #endif
       }else{
+        int shiftcount;
+
         // search for the highest bit of b.
         highestbita = naMakeUInt64(NA_VALUE32_SIGN_MASK, 0x0);
         while(!naEqualUInt64(naAndUInt64(a, highestbita), highestbita)){

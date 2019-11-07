@@ -72,6 +72,10 @@
 // they were somewhat sufficiently being represented by these subnormal numbers
 // and hence the positive exponents gained a whole power of 2 more. The end.
 
+#ifndef FLT_RADIX
+  #warning "NALib assumes floating points to have a radix of 2"
+  #define FLT_RADIX 2
+#endif
 
 #if FLT_RADIX != 2
   #error "NALib requires floating points to have a radix of 2"
@@ -101,8 +105,8 @@
 #define NA_IEEE754_SINGLE_EXPONENT_BIAS          ((1 << (NA_IEEE754_SINGLE_EXPONENT_BITS - 1)) - 1)
 #define NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL     (-NA_IEEE754_SINGLE_EXPONENT_BIAS)
 #define NA_IEEE754_SINGLE_EXPONENT_SPECIAL       ((1 << NA_IEEE754_SINGLE_EXPONENT_BITS) - NA_IEEE754_SINGLE_EXPONENT_BIAS - 1)
-#define NA_IEEE754_SINGLE_EXPONENT_MASK          (((1 << (NA_IEEE754_SINGLE_BITS - 1)) - 1) & ~NA_IEEE754_SINGLE_SIGNIFICAND_MASK)
-#define NA_IEEE754_SINGLE_SIGN_MASK              (1 << (NA_IEEE754_SINGLE_BITS  - 1))
+#define NA_IEEE754_SINGLE_EXPONENT_MASK          (((1u << (NA_IEEE754_SINGLE_BITS - 1)) - 1) & ~NA_IEEE754_SINGLE_SIGNIFICAND_MASK)
+#define NA_IEEE754_SINGLE_SIGN_MASK              (1u << (NA_IEEE754_SINGLE_BITS  - 1))
 
 #define NA_IEEE754_DOUBLE_BITS                   NA_TYPE64_BITS
 #define NA_IEEE754_DOUBLE_SIGNIFICAND_BITS       (DBL_MANT_DIG - 1)

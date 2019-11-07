@@ -66,7 +66,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPA
     }
     break;
 
-  case WM_ERASEBKGND: // wParam: Device context, return >1 if erasing, 0 otherwise
+  case WM_ERASEBKGND: // wParam: Device context, return > 1 if erasing, 0 otherwise
     GetClientRect(naGetUIElementNativeID(uielement), &spacerect);
     bgColor = naGetWINAPISpaceBackgroundColor(uielement);
     if(bgColor != winapispace->lastBgColor){ // Only draw if changed

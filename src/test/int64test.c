@@ -54,7 +54,7 @@
 ////  int64 i64_1 = NA_ZERO_64;
 ////  int64 i64_2 = NA_ZERO_64;
 ////  int i;
-////  for(i=0; i<TESTSIZE; i++){func(i64_1, i64_2);}
+////  for(i = 0; i < TESTSIZE; i++){func(i64_1, i64_2);}
 ////  *t = printAndSwapTime("naMakeInt64WithDouble", *t);
 ////}
 ////void timeInt64_DoubleFunc(naInt64_Double func){
@@ -63,7 +63,7 @@
 ////  int64 r;
 ////  int i;
 ////  t = getTime();
-////  for(i=0; i<TESTSIZE; i++){r = naXorInt64(func(d), r);}
+////  for(i = 0; i < TESTSIZE; i++){r = naXorInt64(func(d), r);}
 ////  printAndSwapTime("naMakeInt64WithDouble", t);
 ////
 ////  #if ! defined NA_TYPE_INT64
@@ -78,7 +78,7 @@
 ////  int32 r = 0;
 ////  int i;
 ////  t = getTime();
-////  for(i=0; i<TESTSIZE; i++){r ^= func(d);}
+////  for(i = 0; i < TESTSIZE; i++){r ^= func(d);}
 ////  printAndSwapTime("naMakeInt64WithDouble", t);
 ////
 ////  printf("Final Result: %d", r);
@@ -94,16 +94,16 @@
 //
 //
 //  t = getTime();
-//  for(i=0; i<TESTSIZE; i++){i64 = naAddInt64(naMakeInt64WithLo(-rand()), i64);}
+//  for(i = 0; i < TESTSIZE; i++){i64 = naAddInt64(naMakeInt64WithLo(-rand()), i64);}
 //  t = printAndSwapTime("naMakeInt64WithLo", t);
-//  for(i=0; i<TESTSIZE; i++){i64 = naAddInt64(naMakeInt64WithDouble(-(double)rand() * (double)rand()), i64);}
+//  for(i = 0; i < TESTSIZE; i++){i64 = naAddInt64(naMakeInt64WithDouble(-(double)rand() * (double)rand()), i64);}
 //  t = printAndSwapTime("naMakeInt64WithDouble", t);
 //
-//  for(i=0; i<TESTSIZE; i++){ui64 = naAddUInt64(naMakeUInt64WithLo((uint32)rand()), ui64);}
+//  for(i = 0; i < TESTSIZE; i++){ui64 = naAddUInt64(naMakeUInt64WithLo((uint32)rand()), ui64);}
 //  t = printAndSwapTime("naMakeUInt64WithLo", t);
-//  for(i=0; i<TESTSIZE; i++){ui64 = naAddUInt64(naMakeUInt64WithDouble((double)rand() * (double)rand()), ui64);}
+//  for(i = 0; i < TESTSIZE; i++){ui64 = naAddUInt64(naMakeUInt64WithDouble((double)rand() * (double)rand()), ui64);}
 //  t = printAndSwapTime("naMakeUInt64WithDouble", t);
-//  for(i=0; i<TESTSIZE; i++){ui64 = naAddUInt64(naMakeUInt64((uint32)rand(), (uint32)rand()), ui64);}
+//  for(i = 0; i < TESTSIZE; i++){ui64 = naAddUInt64(naMakeUInt64((uint32)rand(), (uint32)rand()), ui64);}
 //  t = printAndSwapTime("naMakeUInt64", t);
 //
 //  NA_UNUSED(i64);
@@ -161,30 +161,30 @@
 //  uint64 ui64;
 //
 //  t = getTime();
-//  for(i=0; i<TESTSIZE; i++){i64 = naNotInt64(i64_1);}
+//  for(i = 0; i < TESTSIZE; i++){i64 = naNotInt64(i64_1);}
 //  t = printAndSwapTime("naNotInt64", t);
-//  for(i=0; i<TESTSIZE; i++){i64 = naOrInt64(i64_1, i64_2);}
+//  for(i = 0; i < TESTSIZE; i++){i64 = naOrInt64(i64_1, i64_2);}
 //  t = printAndSwapTime("naOrInt64", t);
-//  for(i=0; i<TESTSIZE; i++){i64 = naAndInt64(i64_1, i64_2);}
+//  for(i = 0; i < TESTSIZE; i++){i64 = naAndInt64(i64_1, i64_2);}
 //  t = printAndSwapTime("naAndInt64", t);
-//  for(i=0; i<TESTSIZE; i++){i64 = naXorInt64(i64_1, i64_2);}
+//  for(i = 0; i < TESTSIZE; i++){i64 = naXorInt64(i64_1, i64_2);}
 //  t = printAndSwapTime("naXorInt64", t);
-//  for(i=0; i<TESTSIZE; i++){i64 = naShlInt64(i64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
+//  for(i = 0; i < TESTSIZE; i++){i64 = naShlInt64(i64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
 //  t = printAndSwapTime("naShlInt64", t);
-//  for(i=0; i<TESTSIZE; i++){i64 = naShrInt64(i64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
+//  for(i = 0; i < TESTSIZE; i++){i64 = naShrInt64(i64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
 //  t = printAndSwapTime("naShrInt64", t);
 //
-//  for(i=0; i<TESTSIZE; i++){ui64 = naNotUInt64(ui64_1);}
+//  for(i = 0; i < TESTSIZE; i++){ui64 = naNotUInt64(ui64_1);}
 //  t = printAndSwapTime("naNotUInt64", t);
-//  for(i=0; i<TESTSIZE; i++){ui64 = naOrUInt64(ui64_1, ui64_2);}
+//  for(i = 0; i < TESTSIZE; i++){ui64 = naOrUInt64(ui64_1, ui64_2);}
 //  t = printAndSwapTime("naOrUInt64", t);
-//  for(i=0; i<TESTSIZE; i++){ui64 = naAndUInt64(ui64_1, ui64_2);}
+//  for(i = 0; i < TESTSIZE; i++){ui64 = naAndUInt64(ui64_1, ui64_2);}
 //  t = printAndSwapTime("naAndUInt64", t);
-//  for(i=0; i<TESTSIZE; i++){ui64 = naXorUInt64(ui64_1, ui64_2);}
+//  for(i = 0; i < TESTSIZE; i++){ui64 = naXorUInt64(ui64_1, ui64_2);}
 //  t = printAndSwapTime("naXorUInt64", t);
-//  for(i=0; i<TESTSIZE; i++){ui64 = naShlUInt64(ui64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
+//  for(i = 0; i < TESTSIZE; i++){ui64 = naShlUInt64(ui64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
 //  t = printAndSwapTime("naShlUInt64", t);
-//  for(i=0; i<TESTSIZE; i++){ui64 = naShrUInt64(ui64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
+//  for(i = 0; i < TESTSIZE; i++){ui64 = naShrUInt64(ui64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
 //  t = printAndSwapTime("naShrUInt64", t);
 //
 //  NA_UNUSED(i64);
@@ -241,26 +241,26 @@
 //  NABool testbool = NA_FALSE;
 //
 //  t = getTime();
-//  for(i=0; i<TESTSIZE; i++){testbool ^= naEqualInt64(i01, i02); naIncInt64(i01); naDecInt64(i02);}
+//  for(i = 0; i < TESTSIZE; i++){testbool ^= naEqualInt64(i01, i02); naIncInt64(i01); naDecInt64(i02);}
 //  t = printAndSwapTime("naEqualInt64", t);
-//  for(i=0; i<TESTSIZE; i++){testbool ^= naGreaterInt64(i01, i02); naIncInt64(i01); naDecInt64(i02);}
+//  for(i = 0; i < TESTSIZE; i++){testbool ^= naGreaterInt64(i01, i02); naIncInt64(i01); naDecInt64(i02);}
 //  t = printAndSwapTime("naGreaterInt64", t);
-//  for(i=0; i<TESTSIZE; i++){testbool ^= naGreaterEqualInt64(i01, i02); naIncInt64(i01); naDecInt64(i02);}
+//  for(i = 0; i < TESTSIZE; i++){testbool ^= naGreaterEqualInt64(i01, i02); naIncInt64(i01); naDecInt64(i02);}
 //  t = printAndSwapTime("naGreaterEqualInt64", t);
-//  for(i=0; i<TESTSIZE; i++){testbool ^= naSmallerInt64(i01, i02); naIncInt64(i01); naDecInt64(i02);}
+//  for(i = 0; i < TESTSIZE; i++){testbool ^= naSmallerInt64(i01, i02); naIncInt64(i01); naDecInt64(i02);}
 //  t = printAndSwapTime("naSmallerInt64", t);
-//  for(i=0; i<TESTSIZE; i++){testbool ^= naSmallerEqualInt64(i01, i02); naIncInt64(i01); naDecInt64(i02);}
+//  for(i = 0; i < TESTSIZE; i++){testbool ^= naSmallerEqualInt64(i01, i02); naIncInt64(i01); naDecInt64(i02);}
 //  t = printAndSwapTime("naSmallerEqualInt64", t);
 //
-//  for(i=0; i<TESTSIZE; i++){testbool ^= naEqualUInt64(ui01, ui02); naIncUInt64(ui01); naDecUInt64(ui02);}
+//  for(i = 0; i < TESTSIZE; i++){testbool ^= naEqualUInt64(ui01, ui02); naIncUInt64(ui01); naDecUInt64(ui02);}
 //  t = printAndSwapTime("naEqualUInt64", t);
-//  for(i=0; i<TESTSIZE; i++){testbool ^= naGreaterUInt64(ui01, ui02); naIncUInt64(ui01); naDecUInt64(ui02);}
+//  for(i = 0; i < TESTSIZE; i++){testbool ^= naGreaterUInt64(ui01, ui02); naIncUInt64(ui01); naDecUInt64(ui02);}
 //  t = printAndSwapTime("naGreaterUInt64", t);
-//  for(i=0; i<TESTSIZE; i++){testbool ^= naGreaterEqualUInt64(ui01, ui02); naIncUInt64(ui01); naDecUInt64(ui02);}
+//  for(i = 0; i < TESTSIZE; i++){testbool ^= naGreaterEqualUInt64(ui01, ui02); naIncUInt64(ui01); naDecUInt64(ui02);}
 //  t = printAndSwapTime("naGreaterEqualUInt64", t);
-//  for(i=0; i<TESTSIZE; i++){testbool ^= naSmallerUInt64(ui01, ui02); naIncUInt64(ui01); naDecUInt64(ui02);}
+//  for(i = 0; i < TESTSIZE; i++){testbool ^= naSmallerUInt64(ui01, ui02); naIncUInt64(ui01); naDecUInt64(ui02);}
 //  t = printAndSwapTime("naSmallerUInt64", t);
-//  for(i=0; i<TESTSIZE; i++){testbool ^= naSmallerEqualUInt64(ui01, ui02); naIncUInt64(ui01); naDecUInt64(ui02);}
+//  for(i = 0; i < TESTSIZE; i++){testbool ^= naSmallerEqualUInt64(ui01, ui02); naIncUInt64(ui01); naDecUInt64(ui02);}
 //  t = printAndSwapTime("naSmallerEqualUInt64", t);
 //
 //  NA_UNUSED(i01);
@@ -352,36 +352,36 @@
 //  uint64 ui64_2 = naMakeUInt64WithLo(98372154);
 //
 //  t = getTime();
-//  for(i=0; i<TESTSIZE; i++){i64_1 = naNegInt64(randInt64());}
+//  for(i = 0; i < TESTSIZE; i++){i64_1 = naNegInt64(randInt64());}
 //  t = printAndSwapTime("naNegInt64", t);
-//  for(i=0; i<TESTSIZE; i++){naIncInt64(i64_1);}
+//  for(i = 0; i < TESTSIZE; i++){naIncInt64(i64_1);}
 //  t = printAndSwapTime("naIncInt64", t);
-//  for(i=0; i<TESTSIZE; i++){naDecInt64(i64_1);}
+//  for(i = 0; i < TESTSIZE; i++){naDecInt64(i64_1);}
 //  t = printAndSwapTime("naDecInt64", t);
-//  for(i=0; i<TESTSIZE; i++){i64_1 = naAddInt64(i64_1, i64_2);}
+//  for(i = 0; i < TESTSIZE; i++){i64_1 = naAddInt64(i64_1, i64_2);}
 //  t = printAndSwapTime("naAddInt64", t);
-//  for(i=0; i<TESTSIZE; i++){i64_2 = naSubInt64(i64_1, i64_2);}
+//  for(i = 0; i < TESTSIZE; i++){i64_2 = naSubInt64(i64_1, i64_2);}
 //  t = printAndSwapTime("naSubInt64", t);
-//  for(i=0; i<TESTSIZE; i++){i64_1 = naMulInt64(i64_1, i64_2);}
+//  for(i = 0; i < TESTSIZE; i++){i64_1 = naMulInt64(i64_1, i64_2);}
 //  t = printAndSwapTime("naMulInt64", t);
-//  for(i=0; i<TESTSIZE; i++){i64_1 = naDivInt64(i64_1, i64_2);}
+//  for(i = 0; i < TESTSIZE; i++){i64_1 = naDivInt64(i64_1, i64_2);}
 //  t = printAndSwapTime("naDivInt64", t);
-//  for(i=0; i<TESTSIZE; i++){i64_1 = naModInt64(i64_1, i64_2);}
+//  for(i = 0; i < TESTSIZE; i++){i64_1 = naModInt64(i64_1, i64_2);}
 //  t = printAndSwapTime("naModInt64", t);
 //
-//  for(i=0; i<TESTSIZE; i++){naIncUInt64(ui64_1);}
+//  for(i = 0; i < TESTSIZE; i++){naIncUInt64(ui64_1);}
 //  t = printAndSwapTime("naIncUInt64", t);
-//  for(i=0; i<TESTSIZE; i++){naDecUInt64(ui64_1);}
+//  for(i = 0; i < TESTSIZE; i++){naDecUInt64(ui64_1);}
 //  t = printAndSwapTime("naDecUInt64", t);
-//  for(i=0; i<TESTSIZE; i++){ui64_1 = naAddUInt64(ui64_1, ui64_2);}
+//  for(i = 0; i < TESTSIZE; i++){ui64_1 = naAddUInt64(ui64_1, ui64_2);}
 //  t = printAndSwapTime("naAddUInt64", t);
-//  for(i=0; i<TESTSIZE; i++){ui64_1 = naSubUInt64(ui64_1, ui64_2);}
+//  for(i = 0; i < TESTSIZE; i++){ui64_1 = naSubUInt64(ui64_1, ui64_2);}
 //  t = printAndSwapTime("naSubUInt64", t);
-//  for(i=0; i<TESTSIZE; i++){ui64_2 = naMulUInt64(ui64_1, ui64_2);}
+//  for(i = 0; i < TESTSIZE; i++){ui64_2 = naMulUInt64(ui64_1, ui64_2);}
 //  t = printAndSwapTime("naMulUInt64", t);
-//  for(i=0; i<TESTSIZE; i++){ui64_1 = naDivUInt64(ui64_1, ui64_2);}
+//  for(i = 0; i < TESTSIZE; i++){ui64_1 = naDivUInt64(ui64_1, ui64_2);}
 //  t = printAndSwapTime("naDivUInt64", t);
-//  for(i=0; i<TESTSIZE; i++){ui64_1 = naModUInt64(ui64_1, ui64_2);}
+//  for(i = 0; i < TESTSIZE; i++){ui64_1 = naModUInt64(ui64_1, ui64_2);}
 //  t = printAndSwapTime("naModUInt64", t);
 //
 //  NA_UNUSED(i64_1);

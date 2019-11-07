@@ -344,7 +344,6 @@ NA_IDEF void* naGetListLastMutable(const NAList* list){
 NA_IDEF void naForeachListConst(const NAList* list, NAAccessor accessor){
   NAListElement* cur;
   #ifndef NDEBUG
-    NAListElement* next;
     if (!list)
       naCrash("list is Null-Pointer.");
     if (!accessor)
@@ -353,7 +352,7 @@ NA_IDEF void naForeachListConst(const NAList* list, NAAccessor accessor){
   cur = list->sentinel.next;
   while(cur != &(list->sentinel)){
     #ifndef NDEBUG
-      next = cur->next;
+      NAListElement* next = cur->next;
     #endif
     accessor(naGetPtrConst(cur->ptr));
     #ifndef NDEBUG
@@ -368,7 +367,6 @@ NA_IDEF void naForeachListConst(const NAList* list, NAAccessor accessor){
 NA_IDEF void naForeachListMutable(const NAList* list, NAMutator mutator){
   NAListElement* cur;
   #ifndef NDEBUG
-    NAListElement* next;
     if(!list)
       naCrash("list is Null-Pointer.");
     if(!mutator)
@@ -377,7 +375,7 @@ NA_IDEF void naForeachListMutable(const NAList* list, NAMutator mutator){
   cur = list->sentinel.next;
   while(cur != &(list->sentinel)){
     #ifndef NDEBUG
-      next = cur->next;
+      NAListElement* next = cur->next;
     #endif
     mutator(naGetPtrMutable(cur->ptr));
     #ifndef NDEBUG
@@ -1051,7 +1049,6 @@ NA_IDEF void naMoveListCurToLast(NAListIterator* iterator, NABool advance, NALis
 NA_IDEF void naMoveListRemainingToLast(NAListIterator* iterator, NAList* dst){
   NAList* src;
   NAListElement* element;
-  NAInt movecount = 1;
   #ifndef NDEBUG
     NAListElement* testelem;
     if(!iterator->mutator)
@@ -1062,6 +1059,8 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* iterator, NAList* dst){
   src = (NAList*)naGetPtrMutable(iterator->listptr);
 
   if(!naIsListEmpty(src)){
+    NAInt movecount = 1;
+
     #ifndef NDEBUG
       iterator->cur->itercount--;
     #endif

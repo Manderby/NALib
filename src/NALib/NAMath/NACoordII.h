@@ -863,7 +863,6 @@ NA_IDEF NARect naMakeRectWithRectAndPos(NARect rect, NAPos pos){
 }
 NA_IDEF NARect naMakeRectWithRectAndPosE(NARect rect, NAPos pos){
   NARect newrect;
-  double end;
   #ifndef NDEBUG
     if(!naIsRectEmpty(rect) && !naIsRectValid(rect))
       naError("rect is invalid.");
@@ -874,8 +873,9 @@ NA_IDEF NARect naMakeRectWithRectAndPosE(NARect rect, NAPos pos){
     newrect.pos = pos;
     newrect.size = naMakeSize(1., 1.);
   }else{
+    double end;
     newrect.pos.x = naMin(rect.pos.x, pos.x);
-    newrect.pos.y = naMin(rect.pos.y, pos.y);
+    newrect.pos.y = naMin(rect.pos.y, pos.y); 
     // Note: We do compute the end instead of the max, because this may require
     // one less instruction. Save whatever you can!
     end = naGetRectEndX(rect);
@@ -978,7 +978,6 @@ NA_IDEF NARecti naMakeRectiWithRectAndPos(NARecti rect, NAPosi pos){
 }
 NA_IDEF NARecti naMakeRectiWithRectAndPosE(NARecti rect, NAPosi pos){
   NARecti newrect;
-  NAInt max;
   #ifndef NDEBUG
     if(!naIsRectiValid(rect))
       naError("rect is invalid.");
@@ -989,6 +988,7 @@ NA_IDEF NARecti naMakeRectiWithRectAndPosE(NARecti rect, NAPosi pos){
     newrect.pos = pos;
     newrect.size = naMakeSizei(1, 1);
   }else{
+    NAInt max;
     newrect.pos.x = naMini(rect.pos.x, pos.x);
     newrect.pos.y = naMini(rect.pos.y, pos.y);
     // Note: We do compute the end instead of the max, because this may require
@@ -1213,7 +1213,6 @@ NA_IDEF NABoxi naMakeBoxiWithBoxAndVertex(NABoxi box, NAVertexi vertex){
 }
 NA_IDEF NABoxi naMakeBoxiWithBoxAndVertexE(NABoxi box, NAVertexi vertex){
   NABoxi newbox;
-  NAInt max;
   #ifndef NDEBUG
     if(!naIsBoxiValid(box))
       naError("box is invalid.");
@@ -1224,6 +1223,7 @@ NA_IDEF NABoxi naMakeBoxiWithBoxAndVertexE(NABoxi box, NAVertexi vertex){
     newbox.vertex = vertex;
     newbox.volume = naMakeVolumei(1, 1, 1);
   }else{
+    NAInt max;
     newbox.vertex.x = naMini(box.vertex.x, vertex.x);
     newbox.vertex.y = naMini(box.vertex.y, vertex.y);
     newbox.vertex.z = naMini(box.vertex.z, vertex.z);

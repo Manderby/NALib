@@ -44,7 +44,7 @@ typedef int NABool;
   // limits.h library (note that stdint.h is only available since C99)
   #include <limits.h>
 #else
-  #error "This is not a standard C compiler. NALib will make assumptions about typesizes."
+  #warning "This is not a standard C compiler. NALib will make assumptions about typesizes."
   // If we are completely out of the standardized C reign, we simply create
   // the macros which should be in limits.h manually.
   // Note the -1 for the signed min values: Some compilers have problems with

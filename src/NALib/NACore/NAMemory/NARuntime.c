@@ -595,14 +595,14 @@ NA_DEF void naStopRuntime(){
       naCrash("Runtime not running. Use naStartRuntime()");
 
     // Go through all registered types and output a leak message if necessary.
-    for(i=0; i< na_runtime->typeinfocount; i++){
+    for(i = 0; i < na_runtime->typeinfocount; i++){
       NAUInt spacecount = naGetCoreTypeInfoAllocatedCount(na_runtime->typeinfos[i]);
       if(spacecount){
         if(!leakmessageprinted){
           printf(NA_NL "Memory leaks detected in NARuntime:" NA_NL);
           leakmessageprinted = NA_TRUE;
         }
-        printf("%s: %" NA_PRIu " * %" NA_PRIu " = %" NA_PRIu " Bytes" NA_NL, na_runtime->typeinfos[i]->typename, spacecount, na_runtime->typeinfos[i]->typesize, spacecount * na_runtime->typeinfos[i]->typesize);
+        printf("%s: %" NA_PRIu64 " * %" NA_PRIu64 " = %" NA_PRIu " Bytes" NA_NL, na_runtime->typeinfos[i]->typename, spacecount, na_runtime->typeinfos[i]->typesize, spacecount * na_runtime->typeinfos[i]->typesize);
       }
     }
   #endif
@@ -686,7 +686,7 @@ NA_DEF void naCollectGarbage(){
     NAUInt i;
     NAMallocGarbage* nextgarbage;
     void** ptr = na_runtime->mallocGarbage->pointers;
-    for(i=0; i<na_runtime->mallocGarbage->cur; i++){
+    for(i = 0; i < na_runtime->mallocGarbage->cur; i++){
       naFree(*ptr);
       ptr++;
     }

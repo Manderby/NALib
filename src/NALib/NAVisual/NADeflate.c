@@ -24,7 +24,7 @@ NAHuffmanCodeTree* naAllocHuffmanCodeTree(uint16 alphabetcount){
   tree->codes = naMalloc(alphabetcount * sizeof(uint16));
   tree->codelengths = naMalloc(alphabetcount * sizeof(uint16));
   tree->indextree = naMalloc((NAInt)(2 * (NAInt)alphabetcount - 1) * naSizeof(int32));
-  for(i=0; i<alphabetcount; i++){tree->codelengths[i] = 0;}
+  for(i = 0; i < alphabetcount; i++){tree->codelengths[i] = 0;}
   return tree;
 }
 
@@ -51,7 +51,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
   #endif
 
   // Count the number of code lengths
-  for(a=0; a<tree->alphabetcount; a++){
+  for(a = 0; a < tree->alphabetcount; a++){
     #ifndef NDEBUG
       // Literals of the alphabet which are not in use have a codelength
       // of 0 and therefore, we need to allow that value.
@@ -199,7 +199,7 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
         if((curalphabetcount + repeatcount) > alphabetcount)
           naError("Internal Error: Reading too many literals at codelength 16");
       #endif
-      for(i=0; i<repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = alphabethuffman->codelengths[curalphabetcount - 1];}
+      for(i = 0; i < repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = alphabethuffman->codelengths[curalphabetcount - 1];}
       curalphabetcount += repeatcount;
       break;
     case 17:
@@ -208,7 +208,7 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
         if((curalphabetcount + repeatcount) > alphabetcount)
           naError("Internal Error: Reading too many literals at codelength 17");
       #endif
-      for(i=0; i<repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = 0;}
+      for(i = 0; i < repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = 0;}
       curalphabetcount += repeatcount;
       break;
     case 18:
@@ -217,7 +217,7 @@ NAHuffmanCodeTree* naReadCodeLengthHuffman(NAHuffmanCodeTree* codelengthhuffman,
         if((curalphabetcount + repeatcount) > alphabetcount)
           naError("Internal Error: Reading too many literals at codelength 18");
       #endif
-      for(i=0; i<repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = 0;}
+      for(i = 0; i < repeatcount; i++){alphabethuffman->codelengths[curalphabetcount + i] = 0;}
       curalphabetcount += repeatcount;
       break;
     default:
@@ -331,7 +331,7 @@ NA_HDEF void naReadDymanicHuffmanCodes(NABufferIterator* iter, NAHuffmanCodeTree
 
 //  naAlloc(NABuffer);
   NAHuffmanCodeTree* codelengthhuffman = naAllocHuffmanCodeTree(19);
-  for(c=0; c<hclen; c++){
+  for(c = 0; c < hclen; c++){
     codelengthhuffman->codelengths[codeorder[c]] = (uint16)naReadBufferBits(iter, 3);
   }
   naBuildHuffmanCodeTree(codelengthhuffman);
@@ -350,16 +350,16 @@ NA_HDEF void naAllocFixedHuffmanCodes(NAHuffmanCodeTree** literalhuffman, NAHuff
   uint16 i;
 
   *literalhuffman = naAllocHuffmanCodeTree(288);
-  for(i=0; i<=143; i++){
+  for(i = 0; i <= 143; i++){
     (*literalhuffman)->codelengths[i] = 8;
   }
-  for(i=144; i<=255; i++){
+  for(i = 144; i <= 255; i++){
     (*literalhuffman)->codelengths[i] = 9;
   }
-  for(i=256; i<=279; i++){
+  for(i = 256; i <= 279; i++){
     (*literalhuffman)->codelengths[i] = 7;
   }
-  for(i=280; i<=287; i++){
+  for(i = 280; i <= 287; i++){
     (*literalhuffman)->codelengths[i] = 8;
   }
   naBuildHuffmanCodeTree(*literalhuffman);
@@ -367,7 +367,7 @@ NA_HDEF void naAllocFixedHuffmanCodes(NAHuffmanCodeTree** literalhuffman, NAHuff
   // Note that only the values up to 29 are used but we fill up the remaining
   // thre values anyway as otherwise, the huffman tree will be incomplete.
   *distancehuffman = naAllocHuffmanCodeTree(32);
-  for(i=0; i<32; i++){
+  for(i = 0; i < 32; i++){
     (*distancehuffman)->codelengths[i] = 5;
   }
   naBuildHuffmanCodeTree(*distancehuffman);
@@ -583,8 +583,8 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, N
   while(bytesize > 0){
     uint16 curbytesize;
     NAByte headbyte = (0 << 1);
-    if(bytesize >= (1<<15)){
-      curbytesize = (1<<15) - 1;
+    if(bytesize >= (1 << 15)){
+      curbytesize = (1 << 15) - 1;
     }else{
       curbytesize = (uint16)bytesize;
       headbyte |= 1;
