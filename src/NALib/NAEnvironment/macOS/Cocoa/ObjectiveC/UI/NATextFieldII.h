@@ -52,10 +52,11 @@
 
 
 
-NA_DEF NATextField* naNewTextField(NARect rect){
+NA_DEF NATextField* naNewTextField(NASize size){
   NACoreTextField* coretextfield = naAlloc(NACoreTextField);
   
-  NANativeTextField* nativeTextField = [[NANativeTextField alloc] initWithCoreTextField:coretextfield frame:naMakeNSRectWithRect(rect)];
+  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NANativeTextField* nativeTextField = [[NANativeTextField alloc] initWithCoreTextField:coretextfield frame:frameRect];
   naInitCoreTextField(coretextfield, NA_COCOA_TAKE_OWNERSHIP(nativeTextField));
   
   return (NATextField*)coretextfield;

@@ -26,7 +26,7 @@ NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* stri
 
   while(!naIsBufferAtInitial(&iter)){
     // Test for erroneous duplicate or ending delimiters
-    curchar = naGetBufferu8(&iter);
+    curchar = (NAUTF8Char)naGetBufferu8(&iter);
     if((curchar == NA_PATH_DELIMITER_UNIX) || (curchar == NA_PATH_DELIMITER_WIN)){
       naIterateBuffer(&iter, 1);
       continue;

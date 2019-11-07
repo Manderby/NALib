@@ -48,10 +48,11 @@
 
 
 
-NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NARect rect){
+NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
   NACoreRadio* coreradio = naAlloc(NACoreRadio);
 
-  NANativeRadio* nativeRadio = [[NANativeRadio alloc] initWithCoreRadio:coreradio frame:naMakeNSRectWithRect(rect)];
+  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NANativeRadio* nativeRadio = [[NANativeRadio alloc] initWithCoreRadio:coreradio frame:frameRect];
   naInitCoreRadio(coreradio, NA_COCOA_TAKE_OWNERSHIP(nativeRadio));
   [nativeRadio setText:text];
   

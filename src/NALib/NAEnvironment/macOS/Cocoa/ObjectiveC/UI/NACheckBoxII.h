@@ -37,14 +37,14 @@
 
 
 
-NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NARect rect){
+NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
   NACoreCheckBox* corecheckbox = naAlloc(NACoreCheckBox);
-  NSRect framerect = naMakeNSRectWithRect(rect);
-  NSRect boundrect = framerect;
+  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NSRect boundrect = frameRect;
   boundrect.origin.x = 0;
   boundrect.origin.y = 0;
 
-  NANativeCheckBox* nativeCheckBox = [[NANativeCheckBox alloc] initWithCoreCheckBox:corecheckbox frame:framerect];
+  NANativeCheckBox* nativeCheckBox = [[NANativeCheckBox alloc] initWithCoreCheckBox:corecheckbox frame:frameRect];
   naInitCoreCheckBox(corecheckbox, NA_COCOA_TAKE_OWNERSHIP(nativeCheckBox));
   [nativeCheckBox setText:text];
   

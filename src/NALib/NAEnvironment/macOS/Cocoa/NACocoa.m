@@ -30,10 +30,10 @@
 #import <Cocoa/Cocoa.h>
 
 #include "ObjectiveC/NAHelperCocoaII.h"
-#include "ObjectiveC/NAUIImageCocoaII.h"
 
 #if (NA_CONFIG_COMPILE_GUI == 1)
 
+#include "ObjectiveC/NAUIImageCocoaII.h"
 #include "ObjectiveC/NAPreferencesCocoaII.h"
 
 #include "ObjectiveC/UI/NAUICocoaII.h"

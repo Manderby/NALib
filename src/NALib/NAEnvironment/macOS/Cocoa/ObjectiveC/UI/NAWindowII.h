@@ -153,8 +153,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   [nativewindow setInitialFirstResponder:[nativewindow contentView]];
   naInitCoreWindow(corewindow, NA_COCOA_TAKE_OWNERSHIP(nativewindow), NA_NULL, NA_FALSE, resizeable, rect);
 
-  NARect contentFrame = naMakeRect(naMakePos(0., 0.), rect.size);
-  NASpace* space = naNewSpace(contentFrame);
+  NASpace* space = naNewSpace(rect.size);
   naSetWindowContentSpace(corewindow, space);
 
   naSetUIElementParent(corewindow, naGetApplication());

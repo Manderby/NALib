@@ -163,10 +163,11 @@
 
 
 
-NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NARect rect){
+NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   NACoreLabel* corelabel = naAlloc(NACoreLabel);
 
-  NANativeLabel* nativeLabel = [[NANativeLabel alloc] initWithCoreLabel:corelabel frame:naMakeNSRectWithRect(rect)];
+  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NANativeLabel* nativeLabel = [[NANativeLabel alloc] initWithCoreLabel:corelabel frame:frameRect];
   naInitCoreLabel(corelabel, NA_COCOA_TAKE_OWNERSHIP(nativeLabel));
   naSetLabelText(corelabel, text);
   

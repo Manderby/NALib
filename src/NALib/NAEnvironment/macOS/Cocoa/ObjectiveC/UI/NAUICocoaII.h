@@ -315,6 +315,7 @@ NAFont getFontWithKind(NAFontKind kind){
       #ifndef NDEBUG
         naError("Unknown font kind");
       #endif
+      font = [NSFont systemFontOfSize:systemSize];
       break;
   }
   return (NAFont)font;

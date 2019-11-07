@@ -89,10 +89,11 @@
 
 
 
-NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NARect rect){
+NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
   NACoreButton* corebutton = naAlloc(NACoreButton);
 
-  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NABezelStyleRounded frame:naMakeNSRectWithRect(rect)];
+  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NABezelStyleRounded frame:frameRect];
   naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
   [nativeButton setButtonText:text];
   
@@ -101,10 +102,11 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NARect rect){
 
 
 
-NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NARect rect){
+NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
   NACoreButton* corebutton = naAlloc(NACoreButton);
 
-  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NABezelStyleShadowlessSquare frame:naMakeNSRectWithRect(rect)];
+  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NABezelStyleShadowlessSquare frame:frameRect];
   naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
   [nativeButton setButtonText:text];
   
@@ -113,10 +115,11 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NARect rect){
 
 
 
-NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NARect rect){
+NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size){
   NACoreButton* corebutton = naAlloc(NACoreButton);
 
-  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NABezelStyleShadowlessSquare frame:naMakeNSRectWithRect(rect)];
+  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NABezelStyleShadowlessSquare frame:frameRect];
   naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
   [nativeButton setButtonImage:uiimage];
   
@@ -125,10 +128,11 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NARect rect){
 
 
 
-NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NARect rect){
+NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
   NACoreButton* corebutton = naAlloc(NACoreButton);
 
-  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:0 frame:naMakeNSRectWithRect(rect)];
+  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:0 frame:frameRect];
   naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
   [nativeButton setButtonImage:uiimage];
   

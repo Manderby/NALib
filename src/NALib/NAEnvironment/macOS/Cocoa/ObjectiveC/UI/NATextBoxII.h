@@ -47,10 +47,11 @@
 
 
 
-NA_DEF NATextBox* naNewTextBox(NARect rect){
+NA_DEF NATextBox* naNewTextBox(NASize size){
   NACoreTextBox* coretextbox = naAlloc(NACoreTextBox);
   
-  NANativeTextBox* nativeTextBox = [[NANativeTextBox alloc] initWithCoreTextBox:coretextbox frame:naMakeNSRectWithRect(rect)];
+  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NANativeTextBox* nativeTextBox = [[NANativeTextBox alloc] initWithCoreTextBox:coretextbox frame:frameRect];
   naInitCoreTextBox(coretextbox, NA_COCOA_TAKE_OWNERSHIP(nativeTextBox));
   
   return (NATextBox*)coretextbox;

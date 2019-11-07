@@ -24,11 +24,11 @@
 
 
 
-NA_DEF NAImageSpace* naNewImageSpace(NARect rect){
+NA_DEF NAImageSpace* naNewImageSpace(NASize size){
   NACoreImageSpace* coreImageSpace = naAlloc(NACoreImageSpace);
 
-  NSRect contentRect = naMakeNSRectWithRect(rect);
-  NANativeImageSpace* nativeImageSpace = [[NANativeImageSpace alloc] initWithCoreImageSpace:coreImageSpace frame:contentRect];  
+  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NANativeImageSpace* nativeImageSpace = [[NANativeImageSpace alloc] initWithCoreImageSpace:coreImageSpace frame:frameRect];  
   naInitCoreImageSpace(coreImageSpace, NA_COCOA_TAKE_OWNERSHIP(nativeImageSpace));
   
   return (NAImageSpace*)coreImageSpace;
