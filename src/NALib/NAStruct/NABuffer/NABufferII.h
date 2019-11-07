@@ -64,8 +64,8 @@
 // Now consider the following C-like string written in source code and how
 // we easily turn that into an NABuffer:
 //
-// const char* mystring = "This is an exciting trend these days.";
-// NABuffer* buf4 = naNewBufferWithConstData(mystring, strlen(mystring));
+// const NAUTF8Char* mystring = "This is an exciting trend these days.";
+// NABuffer* buf4 = naNewBufferWithConstData(mystring, naStrlen(mystring));
 //
 // This results in a buf4 containing exactly one buffer part:
 //

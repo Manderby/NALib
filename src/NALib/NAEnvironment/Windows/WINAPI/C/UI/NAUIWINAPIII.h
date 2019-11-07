@@ -40,6 +40,10 @@ NA_HDEF NARect naGetWindowAbsoluteInnerRect(NACoreUIElement* window);
 NA_HAPI void naRenewWindowMouseTracking(NACoreWindow* corewindow);
 NA_HAPI void naClearWindowMouseTracking(NACoreWindow* corewindow);
 
+HWND naGetApplicationOffscreenWindow(void);
+NACoreUIElement* naGetApplicationMouseHoverElement(void);
+void naSetApplicationMouseHoverElement(NACoreUIElement* element);
+const NONCLIENTMETRICS* naGetApplicationMetrics(void);
 
 
 
@@ -64,6 +68,48 @@ NA_HDEF void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent){
   coreelement->parent = parent;
   HWND result = SetParent(coreelement->nativeID, coreparent->nativeID);
 }
+
+
+NA_HDEF NACoreUIElement* naGetUIElementCommonParent(NACoreUIElement* elem1, NACoreUIElement* elem2){
+  NACoreUIElement* commonParent = NA_NULL;
+  NACoreUIElement* tmpelem2;
+  while(elem1){
+    tmpelem2 = elem2;
+    while(tmpelem2){
+      if(elem1 == tmpelem2){commonParent = elem1; break;}
+      tmpelem2 = naGetUIElementParent(tmpelem2);
+    }
+    if(commonParent){break;}
+    elem1 = naGetUIElementParent(elem1);
+  }
+  return commonParent;
+}
+
+
+
+NA_HAPI void naBlockUIElementNotifications(NACoreUIElement* elem){
+  #ifndef NDEBUG
+    if(elem->allownotifications == NA_FALSE)
+      naError("Element already blocks notifications");
+  #endif
+  elem->allownotifications = NA_FALSE;
+}
+
+
+NA_HAPI void naAllowUIElementNotifications(NACoreUIElement* elem){
+  #ifndef NDEBUG
+    if(elem->allownotifications == NA_TRUE)
+      naError("Element already allows notifications");
+  #endif
+  elem->allownotifications = NA_TRUE;
+}
+
+
+NA_HAPI NABool naAreUIElementNotificationsAllowed(NACoreUIElement* elem){
+  return elem->allownotifications;
+}
+
+
 
 
 NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText){
@@ -101,7 +147,17 @@ struct NAWINAPICallbackInfo{
   LRESULT result;
 };
 
+WNDPROC naGetApplicationOldButtonWindowProc();
+WNDPROC naGetApplicationOldRadioWindowProc();
+WNDPROC naGetApplicationOldCheckBoxWindowProc();
+WNDPROC naGetApplicationOldLabelWindowProc();
+WNDPROC naGetApplicationOldTextFieldWindowProc();
+
 // Prototypes of the WindowProc handlers
+NAWINAPICallbackInfo naUIElementWINAPIProc  (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam);
+
 NAWINAPICallbackInfo naApplicationWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naWindowWINAPIProc     (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naSpaceWINAPIProc      (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
@@ -116,6 +172,12 @@ NAWINAPICallbackInfo naLabelWINAPIProc      (NAUIElement* uielement, UINT messag
 NAWINAPICallbackInfo naTextFieldWINAPIProc  (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naTextBoxWINAPIProc    (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
 
+NAWINAPICallbackInfo naButtonWINAPINotify   (NAUIElement* uielement, WORD notificationCode);
+NAWINAPICallbackInfo naCheckBoxWINAPINotify (NAUIElement* uielement, WORD notificationCode);
+NAWINAPICallbackInfo naTextFieldWINAPINotify(NAUIElement* uielement, WORD notificationCode);
+
+NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTRUCT* drawitemstruct);
+
 // This is the one and only, master of destruction, defender of chaos and
 // pimp of the century function handling all and everything in WINAPI.
 
@@ -126,10 +188,24 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
   //NAUIKeyCode scancode;   // used as UINT, converted to NAUIKeyCode
 
   NACoreUIElement* uielement = (NACoreUIElement*)naGetUINALibEquivalent(hWnd);
+  //todo: this is a fallback but maybe it is not clever to use application for that?
+  NAUIElementType firsttype = uielement ? naGetUIElementType(uielement) : NA_UI_APPLICATION;
 
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
-  if(uielement){
+  if(message == WM_COMMAND)
+  {
+    info = naWINAPINotificationProc(wParam, lParam);
+  }
+  if(message == WM_DRAWITEM)
+  {
+    info = naWINAPIDrawItemProc(wParam, lParam);
+  }
+
+  while(uielement && !info.hasbeenhandeled){
+    info = naUIElementWINAPIProc(uielement, message, wParam, lParam);
+    if(info.hasbeenhandeled){break;}
+
     switch(naGetUIElementType(uielement)){
     case NA_UI_APPLICATION: info = naApplicationWINAPIProc(uielement, message, wParam, lParam); break;
     case NA_UI_WINDOW:      info = naWindowWINAPIProc     (uielement, message, wParam, lParam); break;
@@ -146,16 +222,23 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
     case NA_UI_TEXTBOX:     info = naTextBoxWINAPIProc    (uielement, message, wParam, lParam); break;
     default: break;
     }
+    uielement = naGetUIElementParent(uielement);
   }
 
   // If the event has not been handeled, hand it over to the default procedure.
   if(!info.hasbeenhandeled){
-    info.result = DefWindowProc(hWnd, message, wParam, lParam);
+    switch(firsttype){
+    case NA_UI_BUTTON:    info.result = CallWindowProc(naGetApplicationOldButtonWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_RADIO:     info.result = CallWindowProc(naGetApplicationOldRadioWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_CHECKBOX:  info.result = CallWindowProc(naGetApplicationOldCheckBoxWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_LABEL:     info.result = CallWindowProc(naGetApplicationOldLabelWindowProc(), hWnd, message, wParam, lParam); break;
+    case NA_UI_TEXTFIELD: info.result = CallWindowProc(naGetApplicationOldTextFieldWindowProc(), hWnd, message, wParam, lParam); break;
+    default:
+      info.result = DefWindowProc(hWnd, message, wParam, lParam);
+      break;
+    }
   }
   return info.result;
-
-
-
 
   ////if((message >= WM_USER) && (message <= 0x7fff)){
   ////  // User defined message
@@ -180,24 +263,11 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
   //  }
   //  break;
 
-  //case WM_CREATE:
-  //  hasbeenhandeled = NA_FALSE;
-  //  //  if(window->eraseBackground()){
-  //  //    DefWindowProc(hWnd, message, wParam, lParam);
-  //  //  }else{
-  //  //  }
-  //  break;
-
   //case WM_TIMER:
   //  // Note: Does not work with hWnd == NULL. Will not be called here.
   //  // wParam: timer identifier as an UINT
   //  // lParam: callback function. Unused in NALib
   //  //hasbeenhandeled = naExecuteApplicationTimer((UINT)wParam);
-  //  break;
-
-  //case WM_HSCROLL:
-  //  //  uielement = window->getUIElement((HWND)lParam);
-  //  //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(LOWORD(wParam), 0);} // note that this is the loword
   //  break;
 
   //case WM_KEYDOWN:
@@ -220,23 +290,9 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
   //  //  window->mouseLeave();
   //  break;
 
-  //case WM_LBUTTONUP:
-  //  //  window->leftMouseUp(LOWORD(lParam), HIWORD(lParam), wParam);
-  //  break;
-
-  //case WM_COMMAND:
-  //  //  uielement = window->getUIElement((HWND)lParam);
-  //  //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(HIWORD(wParam), 0);}
-  //  break;
-
   //case WM_NOTIFY:
   //  //  uielement = window->getUIElement(((LPNMHDR)lParam)->hwndFrom);
   //  //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(((LPNMHDR)lParam)->code, lParam);}
-  //  break;
-
-  //case WM_USER:
-  //  //  uielement = window->getUIElement((HWND)lParam);
-  //  //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(HIWORD(wParam), 0);}
   //  break;
 
   //case WM_CLOSE:
@@ -258,12 +314,171 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
 }
 
 
+void naWINAPICaptureMouseHover(){
+  DWORD msgpos;
+  POINT pt;
+  HWND hWndUnderMouse;
+  NACoreUIElement* elementUnderMouse;
+  NACoreUIElement* curElement;
+  NACoreUIElement* commonParent;
+
+  msgpos = GetMessagePos();
+  pt.x = GET_X_LPARAM(msgpos);
+  pt.y = GET_Y_LPARAM(msgpos);
+  hWndUnderMouse = WindowFromPoint(pt);
+  elementUnderMouse = (NACoreUIElement*)naGetUINALibEquivalent(hWndUnderMouse);
+  curElement = naGetApplicationMouseHoverElement();
+
+  if(curElement != elementUnderMouse){
+    commonParent = naGetUIElementCommonParent(curElement, elementUnderMouse);
+
+    // Send a leave reaction to all elements which are not hovered anymore.
+    while(curElement && curElement != commonParent){
+      curElement->mouseinside = NA_FALSE;
+      naDispatchUIElementCommand(curElement, NA_UI_COMMAND_MOUSE_EXITED);
+      curElement = naGetUIElementParent(curElement);
+    }
+
+    // Reset the hover element to the current one and track the mouse leaving it.
+    naSetApplicationMouseHoverElement(elementUnderMouse);
+    if(elementUnderMouse){
+    TRACKMOUSEEVENT winapitracking;
+      winapitracking.cbSize = sizeof(TRACKMOUSEEVENT);
+      winapitracking.dwFlags = TME_LEAVE;
+      winapitracking.hwndTrack = naGetUIElementNativeID(elementUnderMouse);
+      winapitracking.dwHoverTime = HOVER_DEFAULT;
+      TrackMouseEvent(&winapitracking);
+    }
+
+    // Send the entered message to all elements which are newly hovered.
+    while(elementUnderMouse && elementUnderMouse != commonParent){
+      elementUnderMouse->mouseinside = NA_TRUE;
+      naDispatchUIElementCommand(elementUnderMouse, NA_UI_COMMAND_MOUSE_ENTERED);
+      elementUnderMouse = naGetUIElementParent(elementUnderMouse);
+    }
+  }
+}
+
+
+NAWINAPICallbackInfo naUIElementWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
+  //DWORD msgpos;
+  //POINT pt;
+  //HWND hWndUnderMouse;
+  //NACoreUIElement* elementUnderMouse;
+  //NACoreUIElement* commonParent;
+
+  switch(message){
+  case WM_MOUSEHOVER: // being inside the hWND for a specified amout of time.
+    break;
+
+  case WM_MOUSEMOVE:
+    //if(!coreelement->mouseinside){
+    //  //msgpos = GetMessagePos();
+    //  //pt.x = GET_X_LPARAM(msgpos);
+    //  //pt.y = GET_Y_LPARAM(msgpos);
+    //  // beware! This returns the HWND being under RIGHT NOW! If you are debugging this, you will get a HWND of your current IDE!
+    //  //hWndUnderMouse = WindowFromPoint(pt);
+    //  //elementUnderMouse = (NACoreUIElement*)naGetUINALibEquivalent(hWndUnderMouse);
+
+    //  if(elementUnderMouse){
+    //    // Go through the whole tree and send an enter to all elements up until the common parent.
+    //    while(coreelement && !coreelement->mouseinside){
+    //      coreelement->mouseinside = NA_TRUE;
+    //      naDispatchUIElementCommand(coreelement, NA_UI_COMMAND_MOUSE_ENTERED);
+    //      coreelement = naGetUIElementParent(coreelement);
+    //    }
+    //  }
+
+    //  // Reset the core element to the current one and track the mouse leaving it.
+    //  coreelement = (NACoreUIElement*)uielement;
+    //  TRACKMOUSEEVENT winapitracking;
+    //  winapitracking.cbSize = sizeof(TRACKMOUSEEVENT);
+    //  winapitracking.dwFlags = TME_LEAVE;
+    //  winapitracking.hwndTrack = naGetUIElementNativeID(uielement);
+    //  winapitracking.dwHoverTime = HOVER_DEFAULT;
+    //  TrackMouseEvent(&winapitracking);
+    //}
+
+    //// Important: Not not mark this as handeled. Selecting text will not
+    //// work if WM_MOUSEMOVE is not propagated.
+
+    ////info.hasbeenhandeled = NA_TRUE;
+    ////info.result = 0;
+
+    naWINAPICaptureMouseHover();
+    break;
+
+  case WM_MOUSELEAVE:
+    //msgpos = GetMessagePos();
+    //pt.x = GET_X_LPARAM(msgpos);
+    //pt.y = GET_Y_LPARAM(msgpos);
+    //// beware! This returns the HWND being under RIGHT NOW! If you are debugging this, you will get a HWND of your current IDE!
+    //hWndUnderMouse = WindowFromPoint(pt);
+    //elementUnderMouse = (NACoreUIElement*)naGetUINALibEquivalent(hWndUnderMouse);
+    //commonParent = naGetUIElementCommonParent(uielement, elementUnderMouse);
+    //
+    //if(elementUnderMouse){
+    //  // Go through the whole tree and send an exit to all elements up until the common parent.
+    //  while(coreelement != commonParent){
+    //    //coreelement->mouseinside = NA_FALSE;
+    //    //naDispatchUIElementCommand(coreelement, NA_UI_COMMAND_MOUSE_EXITED);
+    //    //coreelement = naGetUIElementParent(coreelement);
+    //  }
+    //}
+
+    // Currently, do not set this message as handeled. We don't know yet what
+    // windows does with its controls.
+    //info.hasbeenhandeled = NA_TRUE;
+    //info.result = 0;
+    
+    naWINAPICaptureMouseHover();
+    break;
+
+  }
+
+  return info;
+}
 
 
 
+NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  WORD notificationCode = HIWORD(wParam);
+  WORD controlIdentifier = LOWORD(wParam);
+  HWND controlWnd = (HWND)lParam;
+  NACoreUIElement* uielement = (NACoreUIElement*)naGetUINALibEquivalent(controlWnd);
 
-HWND naGetApplicationOffscreenWindow(void);
-const NONCLIENTMETRICS* naGetApplicationMetrics(void);
+  if(uielement && naAreUIElementNotificationsAllowed(uielement)){
+    switch(naGetUIElementType(uielement)){
+    case NA_UI_BUTTON:    info = naButtonWINAPINotify   (uielement, notificationCode); break;
+    case NA_UI_CHECKBOX:  info = naCheckBoxWINAPINotify (uielement, notificationCode); break;
+    case NA_UI_TEXTFIELD: info = naTextFieldWINAPINotify(uielement, notificationCode); break;
+    default:
+      //printf("Uncaught notification\n");
+      break;
+    }
+  }
+  return info;
+}
+
+NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  DRAWITEMSTRUCT* drawitemstruct = (DRAWITEMSTRUCT*)lParam;
+  NACoreUIElement* uielement = (NACoreUIElement*)naGetUINALibEquivalent(drawitemstruct->hwndItem);
+
+  if(uielement){
+    switch(naGetUIElementType(uielement)){
+    case NA_UI_BUTTON:    info = naButtonWINAPIDrawItem   (uielement, drawitemstruct); break;
+    default:
+      //printf("Uncaught draw item message\n");
+      break;
+    }
+  }
+  return info;
+}
+
 
 
 
@@ -272,7 +487,8 @@ const NONCLIENTMETRICS* naGetApplicationMetrics(void);
 // ///////////////////////////////////
 
 NA_HDEF void naRefreshUIElementNow(NAUIElement* uielement){
-  PostMessage(naGetUIElementNativeID(uielement), WM_PAINT, (WPARAM)NA_NULL, (LPARAM)NA_NULL);
+  RedrawWindow(naGetUIElementNativeID(uielement), NA_NULL, NA_NULL, RDW_INVALIDATE | RDW_ERASE);
+  //PostMessage(naGetUIElementNativeID(uielement), WM_PAINT, (WPARAM)NA_NULL, (LPARAM)NA_NULL);
 }
 
 
@@ -370,6 +586,28 @@ NA_DEF NARect naGetUIElementRect(NACoreUIElement* uielement, NAUIElement* relati
 
 
 
+NA_HDEF void* naAllocMouseTracking(NANativeID nativeId){
+  TRACKMOUSEEVENT* winapitracking = naAlloc(TRACKMOUSEEVENT);
+  winapitracking->cbSize = sizeof(TRACKMOUSEEVENT);
+  winapitracking->dwFlags = TME_LEAVE;
+  winapitracking->hwndTrack = nativeId;
+  winapitracking->dwHoverTime = HOVER_DEFAULT;
+  NABool success = TrackMouseEvent(winapitracking);
+  //DWORD lasterror = GetLastError();
+  return winapitracking;
+}
+
+
+
+NA_HDEF void naDeallocMouseTracking(void* tracking){
+  TRACKMOUSEEVENT* winapitracking = (TRACKMOUSEEVENT*)tracking;
+  winapitracking->dwFlags |= TME_CANCEL;
+  TrackMouseEvent(winapitracking);
+  naFree(winapitracking);
+}
+
+
+
 NA_API NARect naGetMainScreenRect(){
   HMONITOR screen;
   MONITORINFO screeninfo;
@@ -399,7 +637,7 @@ NAFont getFontWithKind(NAFontKind kind){
   HFONT font = NA_NULL;
   #if NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6 == 1
 
-  const NONCLIENTMETRICSA* metrics = naGetApplicationMetrics();
+  const NONCLIENTMETRICS* metrics = naGetApplicationMetrics();
 
   //EnumFontFamilies(GetDC(NA_NULL), NA_NULL, enumFonts, NA_NULL);
 
@@ -454,7 +692,7 @@ NAFont getFontWithKind(NAFontKind kind){
         CLIP_DEFAULT_PRECIS,
         DEFAULT_QUALITY,
         DEFAULT_PITCH | FF_DONTCARE,
-        "Courier New");
+        TEXT("Courier New"));
       break;
     case NA_FONT_KIND_PARAGRAPH:
       font = CreateFont(
@@ -471,7 +709,7 @@ NAFont getFontWithKind(NAFontKind kind){
         CLIP_DEFAULT_PRECIS,
         DEFAULT_QUALITY,
         DEFAULT_PITCH | FF_DONTCARE,
-        "Palatino Linotype");
+        TEXT("Palatino Linotype"));
       break;
     case NA_FONT_KIND_MATH:
       font = CreateFont(
@@ -488,7 +726,7 @@ NAFont getFontWithKind(NAFontKind kind){
         CLIP_DEFAULT_PRECIS,
         DEFAULT_QUALITY,
         DEFAULT_PITCH | FF_DONTCARE,
-        "Times New Roman");
+        TEXT("Times New Roman"));
       break;
     default:
       #ifndef NDEBUG

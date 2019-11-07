@@ -49,33 +49,34 @@ typedef enum{
   NA_BLEND_WHITE_GREEN  // Blends where base has light green pixels
 } NABlendMode;
 
-// Allocates an image with the specified size and fills it with the given color.
+// Creates an image with the specified size and fills it with the given color.
 // If color is Null, the image contents will be uninitialized.
-NA_API NABabyImage* naAllocBabyImage(NASizei size, const NABabyColor color);
+NA_API NABabyImage* naCreateBabyImage(NASizei size, const NABabyColor color);
 
-// Allocates a new image with a semi-transparent one-color representation of
+// Creates a new image with a semi-transparent one-color representation of
 // the base image. The mode defines, how the tint color will be applied. The
 // blend factor defines how strong the tinting is.
-NA_API NABabyImage* naAllocBabyImageWithTint(
+NA_API NABabyImage* naCreateBabyImageWithTint(
   const NABabyImage* base,
   const NABabyColor tint,
   NABlendMode mode,
   float blend);
 
-// Allocates a new image blending the top image upon the base image using the
+// Creates a new image blending the top image upon the base image using the
 // given blend factor and blend mode. If base is Null, mode is ignored and
 // the top image is just blended on top of a transparent background.
-NA_DEF NABabyImage* naAllocBabyImageWithBlend(
+NA_DEF NABabyImage* naCreateBabyImageWithBlend(
   const NABabyImage* base,
   const NABabyImage* top,
   NABlendMode mode,
   float blend);
 
-// Allocates an image half the size. Rescales data bilinearily.
-NA_API NABabyImage* naAllocBabyImageWithHalfSize(const NABabyImage* image);
+// Creates an image half the size. Rescales data bilinearily.
+NA_API NABabyImage* naCreateBabyImageWithHalfSize(const NABabyImage* image);
 
-// Deallocates an image.
-NA_API void naDeallocBabyImage(NABabyImage* image);
+// Retains and Releases an image.
+NA_API NABabyImage* naRetainBabyImage(NABabyImage* image);
+NA_API void naReleaseBabyImage(NABabyImage* image);
 
 // Returns the number of bytes per horizontal line.
 NA_API NAInt naGetBabyImageValuesPerLine(const NABabyImage* image);
@@ -87,12 +88,24 @@ NA_API NASizei naGetBabyImageSize(const NABabyImage* image);
 NA_API float* naGetBabyImageData(const NABabyImage* image);
 
 // Fills the image with the given data. The data is expected to contain as
-// many RGBA values stored as uint8 necessary for the whole image.
-NA_API void naFillBabyImageWithUInt8(NABabyImage* image, const void* data, NABool premultiplied);
+// many RGBA values stored as uint8 necessary for the whole image with no
+// padding. Depending on the toptobottom flag, the data is expected as such.
+// Note that a BabyImage internally always stores images bottom to top.
+NA_API void naFillBabyImageWithUInt8(
+  NABabyImage* image,
+  const void* data,
+  NABool toptobottom,
+  NABool premultiplied);
 
 // Writes the contents of the image into a buffer. The output data will be
-// RGBA values stored as uint8. The data buffer must be big enough.
-NA_API void naConvertBabyImageToUInt8(const NABabyImage* image, void* data, NABool premultiplied);
+// RGBA values stored as uint8 with no padding. The data buffer must be big
+// enough. Depending on the toptobottom flag, the data is expected as such.
+// Note that a BabyImage internally always stores images bottom to top.
+NA_API void naConvertBabyImageToUInt8(
+  const NABabyImage* image,
+  void* data,
+  NABool toptobottom,
+  NABool premultiplied);
 
 
 #ifdef __cplusplus

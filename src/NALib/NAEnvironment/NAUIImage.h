@@ -36,6 +36,8 @@ typedef enum{
   NA_UIIMAGE_SKIN_COUNT
 } NAUIImageSkin;
 
+#define NA_UIIMAGE_SUBIMAGES_COUNT (NA_UIIMAGE_RESOLUTION_COUNT * NA_UIIMAGE_KIND_COUNT * NA_UIIMAGE_SKIN_COUNT)
+
 typedef struct NAUIImage NAUIImage;
 
 
@@ -51,17 +53,15 @@ NA_API NAUIImage* naAllocUIImage(NABabyImage* main, NABabyImage* alt, NAUIImageR
 // Deallocates the uiimage
 NA_API void naDeallocUIImage(NAUIImage* uiimage);
 
-NA_API void* naAllocNativeImageWithUIImage(NAUIImage* uiimage, NAUIImageKind kind, NAUIImageSkin skin);
-
-NA_IAPI NASizei naGetUIImage1xSize(const NAUIImage* image);
+NA_IAPI NASizei naGetUIImage1xSize(const NAUIImage* uiimage);
 
 void naFillBabyColorWithSkin(NABabyColor color, NAUIImageSkin skin);
 
-#if NA_OS == NA_OS_MAC_OS_X
-  NABabyImage* naAllocBabyImageFromImageRef(const void* imageref);
-#endif
-
-NABabyImage* naAllocBabyImageFromFilePath(const NAUTF8Char* pathStr);
+NABabyImage* naCreateBabyImageFromNativeImage(const void* imageref);
+NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr);
+NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image);
+//NA_API void* naAllocNativeImageWithUIImage(NAUIImage* uiimage, NAUIImageKind kind, NAUIImageSkin skin);
+void naDeallocNativeImage(void* nativeimage);
 
 
 

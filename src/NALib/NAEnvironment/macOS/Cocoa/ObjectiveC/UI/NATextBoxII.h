@@ -40,6 +40,9 @@
 - (void) setFontKind:(NAFontKind)kind{
   [self setFont:(NSFont*)getFontWithKind(kind)];
 }
+- (void) setReadOnly:(NABool)readonly{
+  [self setEditable:!readonly];
+}
 - (NSView*) getContainingView{
   return scrollview;
 }
@@ -83,6 +86,13 @@ NA_DEF void naSetTextBoxTextAlignment(NATextBox* textbox, NATextAlignment alignm
 NA_DEF void naSetTextBoxFontKind(NATextBox* textbox, NAFontKind kind){
   naDefineNativeCocoaObject(NANativeTextBox, nativetextbox, textbox);
   [nativetextbox setFontKind:kind];
+}
+
+
+
+NA_DEF void naSetTextBoxEditable(NATextBox* textbox, NABool editable){
+  naDefineNativeCocoaObject(NANativeTextBox, nativetextbox, textbox);
+  [nativetextbox setReadOnly:!editable];
 }
 
 

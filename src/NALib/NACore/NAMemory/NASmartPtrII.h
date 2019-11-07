@@ -46,9 +46,9 @@ NA_IDEF void naReleaseSmartPtr(NASmartPtr* sptr, NAMutator destructor, NABool on
       naCrash("sptr is Null-Pointer.");
   #endif
   if(onlydata){
-    naReleaseRefCount(&(sptr->refcount), naGetPtrMutable(sptr->ptr), destructor);
+    naReleaseRefCount(&sptr->refcount, naGetPtrMutable(sptr->ptr), destructor);
   }else{
-    naReleaseRefCount(&(sptr->refcount), &(sptr->refcount), destructor);
+    naReleaseRefCount(&sptr->refcount, sptr, destructor);
   }
 }
 

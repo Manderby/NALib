@@ -8,6 +8,7 @@
 
 
 struct NABabyImage{
+  NARefCount refcount;
   int32 width;
   int32 height;
   float* data;
@@ -46,7 +47,7 @@ NA_DEF NASizei naGetBabyImageSize(const NABabyImage* image){
 
 
 
-NA_DEF NABabyImage* naAllocBabyImage(NASizei size, const NABabyColor color){
+NA_DEF NABabyImage* naCreateBabyImage(NASizei size, const NABabyColor color){
   #ifndef NDEBUG
     if(size.width <= 0 || size.height <= 0)
       naError("size must be > 0");
@@ -56,6 +57,7 @@ NA_DEF NABabyImage* naAllocBabyImage(NASizei size, const NABabyColor color){
       naError("insecure color given");
   #endif
   NABabyImage* image = naAlloc(NABabyImage);
+  naInitRefCount(&image->refcount);
   image->width = (int32)size.width;
   image->height = (int32)size.height;
   image->data = naMalloc(naGetBabyImageDataSize(image));
@@ -131,7 +133,7 @@ NA_HDEF void naBlendBabyImage(NAInt pixelCount, float* ret, const float* base, c
 }
 
 
-NA_DEF NABabyImage* naAllocBabyImageWithTint(const NABabyImage* base, const NABabyColor tint, NABlendMode mode, float blend){
+NA_DEF NABabyImage* naCreateBabyImageWithTint(const NABabyImage* base, const NABabyColor tint, NABlendMode mode, float blend){
   #ifndef NDEBUG
     if(!tint)
       naCrash("tint is Null");
@@ -139,7 +141,7 @@ NA_DEF NABabyImage* naAllocBabyImageWithTint(const NABabyImage* base, const NABa
       naError("insecure tint color given");
   #endif
   
-  NABabyImage* retimage = naAllocBabyImage(naGetBabyImageSize(base), NA_NULL);
+  NABabyImage* retimage = naCreateBabyImage(naGetBabyImageSize(base), NA_NULL);
   NAInt pixelCount = naGetBabyImagePixelCount(base);
   
   if(base){
@@ -155,7 +157,7 @@ NA_DEF NABabyImage* naAllocBabyImageWithTint(const NABabyImage* base, const NABa
 
 
 
-NA_DEF NABabyImage* naAllocBabyImageWithBlend(const NABabyImage* base, const NABabyImage* top, NABlendMode mode, float blend){
+NA_DEF NABabyImage* naCreateBabyImageWithBlend(const NABabyImage* base, const NABabyImage* top, NABlendMode mode, float blend){
   #ifndef NDEBUG
     if(!top)
       naCrash("top is Null");
@@ -163,7 +165,7 @@ NA_DEF NABabyImage* naAllocBabyImageWithBlend(const NABabyImage* base, const NAB
       naError("The two images have not the same size");
   #endif
   
-  NABabyImage* retimage = naAllocBabyImage(naGetBabyImageSize(top), NA_NULL);
+  NABabyImage* retimage = naCreateBabyImage(naGetBabyImageSize(top), NA_NULL);
   NAInt pixelCount = naGetBabyImagePixelCount(top);
     
   if(base){
@@ -179,14 +181,14 @@ NA_DEF NABabyImage* naAllocBabyImageWithBlend(const NABabyImage* base, const NAB
 
 
 
-NA_DEF NABabyImage* naAllocBabyImageWithHalfSize(const NABabyImage* image){
+NA_DEF NABabyImage* naCreateBabyImageWithHalfSize(const NABabyImage* image){
   #ifndef NDEBUG
     if((image->width % 2) || (image->height % 2))
       naError("Width or height not divisible by 2");
   #endif
   NASizei halfsize = naMakeSizei(image->width / 2, image->height / 2);
 
-  NABabyImage* outimage = naAllocBabyImage(halfsize, NA_NULL);
+  NABabyImage* outimage = naCreateBabyImage(halfsize, NA_NULL);
   NAInt valuesPerLine = naGetBabyImageValuesPerLine(image);
   
   float* inptr1 = image->data;
@@ -223,38 +225,70 @@ NA_DEF NABabyImage* naAllocBabyImageWithHalfSize(const NABabyImage* image){
 
 
 
-NA_DEF void naDeallocBabyImage(NABabyImage* image){
+NA_HDEF void naDestroyBabyImage(NABabyImage* image){
   naFree(image->data);
   naFree(image);
 }
 
+NA_API NABabyImage* naRetainBabyImage(NABabyImage* image){
+  return (NABabyImage*)naRetainRefCount(&image->refcount);
+}
+
+NA_DEF void naReleaseBabyImage(NABabyImage* image){
+  naReleaseRefCount(&image->refcount, image, (NAMutator)naDestroyBabyImage);
+}
 
 
-NA_DEF void naFillBabyImageWithUInt8(NABabyImage* image, const void* data, NABool premultiplied){
+
+NA_DEF void naFillBabyImageWithUInt8(NABabyImage* image, const void* data, NABool toptobottom, NABool premultiplied){
   float* imgptr = image->data;
   const uint8* uint8ptr;
-  NAInt pixelCount = naGetBabyImagePixelCount(image);
 
-  uint8ptr = data;
-  for(NAInt i = 0; i < pixelCount; i++){
-    naFillBabyColorWithUInt8(imgptr, uint8ptr, premultiplied);
-    imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
-    uint8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
+  if(toptobottom){
+    NASizei size = naGetBabyImageSize(image);
+    for(NAInt y = 0; y < size.height; y++){
+      uint8ptr = &(((uint8*)data)[(size.height - y - 1) * naGetBabyImageValuesPerLine(image)]);
+      for(NAInt x = 0; x < size.width; x++){
+        naFillBabyColorWithUInt8(imgptr, uint8ptr, premultiplied);
+        imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
+        uint8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
+      }
+    }
+  }else{
+    uint8ptr = data;
+    NAInt pixelCount = naGetBabyImagePixelCount(image);
+    for(NAInt i = 0; i < pixelCount; i++){
+      naFillBabyColorWithUInt8(imgptr, uint8ptr, premultiplied);
+      imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
+      uint8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
+    }
   }
 }
 
 
 
-NA_DEF void naConvertBabyImageToUInt8(const NABabyImage* image, void* data, NABool premultiplied){
+NA_DEF void naConvertBabyImageToUInt8(const NABabyImage* image, void* data, NABool toptobottom, NABool premultiplied){
   const float* imgptr = image->data;
   uint8* uint8ptr;
-  NAInt pixelCount = naGetBabyImagePixelCount(image);
 
-  uint8ptr = data;
-  for(NAInt i = 0; i < pixelCount; i++){
-    naFillUInt8WithBabyColor(uint8ptr, imgptr, premultiplied);
-    imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
-    uint8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
+  if(toptobottom){
+    NASizei size = naGetBabyImageSize(image);
+    for(NAInt y = 0; y < size.height; y++){
+      uint8ptr = &(((uint8*)data)[(size.height - y - 1) * naGetBabyImageValuesPerLine(image)]);
+      for(NAInt x = 0; x < size.width; x++){
+        naFillUInt8WithBabyColor(uint8ptr, imgptr, premultiplied);
+        imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
+        uint8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
+      }
+    }
+  }else{
+    uint8ptr = data;
+    NAInt pixelCount = naGetBabyImagePixelCount(image);
+    for(NAInt i = 0; i < pixelCount; i++){
+      naFillUInt8WithBabyColor(uint8ptr, imgptr, premultiplied);
+      imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
+      uint8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
+    }
   }
 }
 

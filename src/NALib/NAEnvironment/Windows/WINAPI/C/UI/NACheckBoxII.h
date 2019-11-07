@@ -20,6 +20,33 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc(NAUIElement* uielement, UINT message, 
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
+  case WM_SETFONT:
+  case WM_WINDOWPOSCHANGING:
+  case WM_CHILDACTIVATE:
+  case WM_WINDOWPOSCHANGED:
+  case WM_MOVE:
+  case WM_SHOWWINDOW:
+  case BM_SETCHECK:
+  case WM_PAINT:
+  case WM_NCPAINT:
+  case WM_ERASEBKGND:
+  case WM_GETTEXTLENGTH:
+  case WM_GETTEXT:
+  case WM_NCHITTEST:
+  case WM_SETCURSOR:
+  case WM_MOUSEACTIVATE:
+  case WM_LBUTTONDOWN:
+  case WM_IME_SETCONTEXT:
+  case WM_SETFOCUS:
+  case BM_SETSTATE:
+  case WM_CANCELMODE:
+  case WM_CAPTURECHANGED:
+  case WM_KILLFOCUS:
+  case WM_IME_NOTIFY:
+  case BM_GETSTATE:
+  case WM_LBUTTONUP:
+    break;
+
   default:
     //printf("Uncaught CheckBox message\n");
     break;
@@ -29,47 +56,48 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc(NAUIElement* uielement, UINT message, 
 }
 
 
-//@implementation NANativeCheckBox
-//- (id) initWithCoreCheckBox:(NACoreCheckBox*)newcorecheckbox frame:(NSRect)frame{
-//  self = [super initWithFrame:frame];
-//  
-//  [self setButtonType:NSButtonTypeSwitch];
-//  corecheckbox = newcorecheckbox;
-//  [self setTarget:self];
-//  [self setAction:@selector(onPressed:)];
-//
-//  return self;
-//}
-//- (void) setText:(const NAUTF8Char*)text{
-//  [self setTitle:[NSString stringWithUTF8String:text]];
-//}
-//- (void) onPressed:(id)sender{
-//  NA_UNUSED(sender);
-//  naDispatchUIElementCommand((NACoreUIElement*)corecheckbox, NA_UI_COMMAND_PRESSED);
-//}
-//- (void) setCheckBoxState:(NABool)state{
-//  [self setState:state ? NSOnState : NSOffState];
-//}
-//- (NABool) checkboxState{
-//  return ([self state] == NSOnState) ? NA_TRUE : NA_FALSE;
-//}
-//@end
+
+NAWINAPICallbackInfo naCheckBoxWINAPINotify(NAUIElement* uielement, WORD notificationCode){
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NABool check;
+
+  switch(notificationCode){
+    case BN_CLICKED:
+      ReleaseCapture();
+      check = naGetCheckBoxState(uielement);
+      naSetCheckBoxState(uielement, !check);
+      naDispatchUIElementCommand(uielement, NA_UI_COMMAND_PRESSED);
+      info.hasbeenhandeled = NA_TRUE;
+      info.result = 0;
+      break;
+  }
+
+  return info;
+}
 
 
 
 NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
   HWND hWnd;
   DWORD style;
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
   NAWINAPICheckBox* winapicheckbox = naAlloc(NAWINAPICheckBox);
 
-  style = WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_AUTOCHECKBOX;
+  style = WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_CHECKBOX;
+
+  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
 
 	hWnd = CreateWindow(
-		TEXT("BUTTON"), text, style,
+		TEXT("BUTTON"), systemtext, style,
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
-  
+
+  naFree(systemtext);
+
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  if(!app->oldCheckBoxWindowProc){app->oldCheckBoxWindowProc = oldproc;}
+
   naInitCoreCheckBox(&(winapicheckbox->corecheckbox), hWnd);
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
@@ -80,8 +108,8 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
 
 
 NA_DEF void naDestructCheckBox(NACheckBox* checkbox){
-//  NACoreCheckBox* corecheckbox = (NACoreCheckBox*)checkbox;
-//  naClearCoreCheckBox(corecheckbox);
+  NAWINAPICheckBox* winapicheckbox = (NAWINAPICheckBox*)checkbox;
+  naClearCoreCheckBox(&(winapicheckbox->corecheckbox));
 }
 
 
@@ -93,19 +121,17 @@ NA_HDEF NARect naGetCheckBoxAbsoluteInnerRect(NACoreUIElement* checkbox){
 
 
 
-NA_HDEF void naSetCheckBoxState(NACheckBox* checkbox, NABool state){
-//  naDefineNativeCocoaObject(NANativeCheckBox, nativecheckbox, checkbox);
-//  [nativecheckbox setCheckBoxState:state];
-}
-
-
-
 NA_HDEF NABool naGetCheckBoxState(NACheckBox* checkbox){
-//  naDefineNativeCocoaObject(NANativeCheckBox, nativecheckbox, checkbox);
-//  return [nativecheckbox checkboxState];
-  return NA_FALSE;
+  LPARAM state = SendMessage(naGetUIElementNativeID(checkbox), BM_GETSTATE, 0, 0);
+  return (state & BST_CHECKED) == BST_CHECKED;
 }
 
+
+
+NA_HDEF void naSetCheckBoxState(NACheckBox* checkbox, NABool state){
+  LPARAM lParam = state ? BST_CHECKED : BST_UNCHECKED;
+  SendMessage(naGetUIElementNativeID(checkbox), BM_SETCHECK, lParam, 0);
+}
 
 
 

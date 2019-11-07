@@ -58,6 +58,8 @@ struct NACoreUIElement{
   NACoreUIElement* parent;
   NAList reactions;
   NAList shortcuts;
+  NABool mouseinside;
+  NABool allownotifications;
   void* nativeID;               // The native object
 };
 
@@ -153,6 +155,10 @@ extern NACoreApplication* na_app;
 
 NA_HAPI void naUnregisterCoreUIElement(NACoreUIElement* coreuielement);
 NA_HAPI void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent);
+NA_HAPI NACoreUIElement* naGetUIElementCommonParent(NACoreUIElement* elem1, NACoreUIElement* elem2);
+NA_HAPI void naBlockUIElementNotifications(NACoreUIElement* elem);
+NA_HAPI void naAllowUIElementNotifications(NACoreUIElement* elem);
+NA_HAPI NABool naAreUIElementNotificationsAllowed(NACoreUIElement* elem);
 
 NA_HAPI NAApplication* naNewApplication(void);
 NA_HAPI void naInitCoreApplication(NACoreApplication* coreapplication, NANativeID nativeId);
@@ -237,7 +243,10 @@ NA_HAPI void naRefreshUIElementNow(NAUIElement* uielement);
 // Calls the system specific method to clear/deallocate the given native id.
 NA_HAPI void naClearUINativeId(NANativeID nativeId);
 
-NA_HAPI void naRetainWindowMouseTracking(NAWindow* window);
+NA_HAPI void* naAllocMouseTracking(NANativeID nativeId);
+NA_HAPI void naDeallocMouseTracking(void* tracking);
+
+
 
 
 

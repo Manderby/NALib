@@ -8,7 +8,6 @@
 // Do not include this file anywhere else!
 
 #include "NAString.h"
-#include "NABabyImage.h"
 
 
 NA_DEF NSString* naAllocNSStringWithNAString(const NAString* string){

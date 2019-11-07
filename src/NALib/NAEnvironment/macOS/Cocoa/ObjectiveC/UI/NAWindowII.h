@@ -283,17 +283,17 @@ NA_HDEF void naClearWindowMouseTracking(NACoreWindow* corewindow){
 
 
 
-NA_HDEF void naRetainWindowMouseTracking(NAWindow* window){
-  naDefineNativeCocoaObject(NANativeWindow, nativewindow, window);
-  [nativewindow retainMouseTracking];
-}
-
-
-
-NA_HDEF void naReleaseWindowMouseTracking(NACoreWindow* corewindow){
-  naDefineNativeCocoaObject(NANativeWindow, nativewindow, corewindow);
-  [nativewindow releaseMouseTracking];
-}
+//NA_HDEF void* naAllocMouseTracking(NAWindow* window){
+//  naDefineNativeCocoaObject(NANativeWindow, nativewindow, window);
+//  [nativewindow retainMouseTracking];
+//}
+//
+//
+//
+//NA_HDEF void naDeallocMouseTracking(NACoreWindow* corewindow){
+//  naDefineNativeCocoaObject(NANativeWindow, nativewindow, corewindow);
+//  [nativewindow releaseMouseTracking];
+//}
 
 
 

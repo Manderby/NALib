@@ -255,7 +255,7 @@ NA_HAPI void naDeallocFile(NAFile* file);
 
 
 NA_IDEF void naReleaseFile(NAFile* file){
-  naReleaseRefCount(&(file->refcount), &(file->refcount), (NAMutator)naDeallocFile);
+  naReleaseRefCount(&file->refcount, file, (NAMutator)naDeallocFile);
 }
 
 

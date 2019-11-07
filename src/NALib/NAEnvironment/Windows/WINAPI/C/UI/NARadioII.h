@@ -19,8 +19,46 @@ struct NAWINAPIRadio {
 
 NAWINAPICallbackInfo naRadioWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  NABool check;
 
   switch(message){
+  case WM_SETFONT:
+  case WM_WINDOWPOSCHANGING:
+  case WM_CHILDACTIVATE:
+  case WM_WINDOWPOSCHANGED:
+  case WM_MOVE:
+  case WM_SHOWWINDOW:
+  case WM_PAINT:
+  case WM_NCPAINT:
+  case WM_ERASEBKGND:
+  case WM_GETTEXTLENGTH:
+  case WM_GETTEXT:
+  case WM_NCHITTEST:
+  case WM_SETCURSOR:
+  case WM_MOUSEACTIVATE:
+  case WM_IME_SETCONTEXT:
+  case WM_SETFOCUS:
+  case WM_CANCELMODE:
+  case WM_CAPTURECHANGED:
+  case WM_KILLFOCUS:
+  case WM_IME_NOTIFY:
+  case WM_GETDLGCODE:
+  case WM_STYLECHANGING:
+  case WM_STYLECHANGED:
+  case WM_LBUTTONDOWN:
+  case BM_SETSTATE: // only highlighting, not state changing.
+  case BM_SETCHECK: // when pressed the button or manually sends BM_SETCHECK
+    break;
+
+  case WM_LBUTTONUP:
+    ReleaseCapture();
+    check = naGetRadioState(uielement);
+    naSetRadioState(uielement, !check);
+    naDispatchUIElementCommand(uielement, NA_UI_COMMAND_PRESSED);
+    info.hasbeenhandeled = NA_TRUE;
+    info.result = 0;
+    break;
+
   default:
     //printf("Uncaught Radio message\n");
     break;
@@ -31,57 +69,27 @@ NAWINAPICallbackInfo naRadioWINAPIProc(NAUIElement* uielement, UINT message, WPA
 
 
 
-//@implementation NANativeRadio
-//- (id) initWithCoreRadio:(NACoreRadio*)newcoreradio frame:(NSRect)frame{
-//  NSRect newbounds = frame;
-//  newbounds.origin.x = 0;
-//  newbounds.origin.y = 0;
-//
-//  self = [super initWithFrame:newbounds];
-//  
-//  [self setButtonType:NSButtonTypeRadio];
-////  [self setBezelStyle:NSBezelStyleRounded];
-////  [self setBezelStyle:NSBezelStyleShadowlessSquare];
-////  [self setBordered:YES];
-//  coreradio = newcoreradio;
-//  [self setTarget:self];
-//  [self setAction:@selector(onPressed:)];
-//
-//  containingview = [[NSView alloc] initWithFrame:frame];
-//  [containingview addSubview:self];
-//
-//  return self;
-//}
-//- (NSView*) getContainingView{
-//  return containingview;
-//}
-//- (void) setText:(const NAUTF8Char*)text{
-//  [self setTitle:[NSString stringWithUTF8String:text]];
-//}
-//- (void) onPressed:(id)sender{
-//  NA_UNUSED(sender);
-//  naDispatchUIElementCommand((NACoreUIElement*)coreradio, NA_UI_COMMAND_PRESSED);
-//}
-//- (void) setRadioState:(NABool)state{
-//  [self setState:state ? NSOnState : NSOffState];
-//}
-//@end
-
-
-
 NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
   HWND hWnd;
   DWORD style;
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
   NAWINAPIRadio* winapiradio = naAlloc(NAWINAPIRadio);
 
-  style = WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_AUTORADIOBUTTON;
+  style = WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_RADIOBUTTON;
+
+  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
 
 	hWnd = CreateWindow(
-		TEXT("BUTTON"), text, style,
+		TEXT("BUTTON"), systemtext, style,
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
+  naFree(systemtext);
+
+  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  if(!app->oldRadioWindowProc){app->oldRadioWindowProc = oldproc;}
+
   naInitCoreRadio(&(winapiradio->coreradio), hWnd);
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
@@ -92,8 +100,8 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
 
 
 NA_DEF void naDestructRadio(NARadio* radio){
-//  NACoreRadio* coreradio = (NACoreRadio*)radio;
-//  naClearCoreRadio(coreradio);
+  NAWINAPIRadio* winapiradio = (NAWINAPIRadio*)radio;
+  naClearCoreRadio(&(winapiradio->coreradio));
 }
 
 
@@ -105,10 +113,18 @@ NA_HDEF NARect naGetRadioAbsoluteInnerRect(NACoreUIElement* radio){
 
 
 
-NA_HDEF void naSetRadioState(NARadio* radio, NABool state){
-//  naDefineNativeCocoaObject(NANativeRadio, nativeradio, radio);
-//  [nativeradio setRadioState:state];
+NA_DEF NABool naGetRadioState(NARadio* radio){
+  LPARAM state = SendMessage(naGetUIElementNativeID(radio), BM_GETSTATE, 0, 0);
+  return (state & BST_CHECKED) == BST_CHECKED;
 }
+
+
+
+NA_HDEF void naSetRadioState(NARadio* radio, NABool state){
+  LPARAM lParam = state ? BST_CHECKED : BST_UNCHECKED;
+  SendMessage(naGetUIElementNativeID(radio), BM_SETCHECK, lParam, 0);
+}
+
 
 
 // Copyright (c) NALib, Tobias Stamm

@@ -54,7 +54,7 @@ NA_API void naSwitchTranslatorInsertionLanguage(NALanguageCode3 code);
 NA_API void naInsertTranslatorString(NAInt id, NAUTF8Char* str);
 
 // Usually, when working with translator files, you will be using the following
-// macros:
+// macros with the strings being encoded in UTF-8:
 #define NA_LOC_LANG(langstr) naSwitchTranslatorInsertionLanguage(naGetLanguageCode(langstr))
 #define NA_LOC(id, str)      naInsertTranslatorString(id, str)
 
@@ -81,7 +81,7 @@ NA_API const NAUTF8Char* naTranslate(NAInt group, NAInt id);
 // Helper functions for language codes
 
 // Returns an enum denoting the provided ISO 639-3 string. For example "eng".
-NA_API NALanguageCode3 naGetLanguageCode(const char* str);
+NA_API NALanguageCode3 naGetLanguageCode(const NAUTF8Char* str);
 
 // Converts a code of ISO 639-1 into ISO 639-3. For example, converts en to eng
 // or de to deu. Try to avoid this function, it's bloated. Use ISO 639-3.

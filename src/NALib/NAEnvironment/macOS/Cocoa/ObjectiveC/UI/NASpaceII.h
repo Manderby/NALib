@@ -14,6 +14,7 @@
 - (id) initWithCoreSpace:(NACoreSpace*)newcorespace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
+  // todo: make this dependent on whether tracking is needed or not.
   trackingarea = [[NSTrackingArea alloc] initWithRect:[self bounds]
       options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow
       owner:self userInfo:nil];

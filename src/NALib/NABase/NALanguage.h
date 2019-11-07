@@ -42,34 +42,41 @@
 // not matter and therefore the NA_LINKER_NO_EXPORT macro is defined here
 // together with the NA_LINKER_EXPORT macro.
 
-#if (defined NA_C99) || (defined NA_CPP98)
-  #define NA_INLINE             inline
-  #ifdef __cplusplus
-    // c++ does not handles restrict consistently. So we just omit it.
-    #define NA_RESTRICT
-  #else
-    #define NA_RESTRICT         restrict
-  #endif
-#else
-  #define NA_INLINE
-#endif
-
 #if NA_OS == NA_OS_WINDOWS
-  #if !defined NA_RESTRICT
-    #define NA_RESTRICT         __restrict
-  #endif
-  #if !defined NA_INLINE
-    #define NA_INLINE           _inline
-  #endif
+  #define NA_RESTRICT           __restrict
+  #define NA_INLINE             _inline
   #define NA_LINKER_NO_EXPORT
   #define NA_LINKER_EXPORT      __declspec(dllexport)
 #elif NA_OS == NA_OS_MAC_OS_X
+  #if (defined NA_C99) || (defined NA_CPP98)
+    #define NA_INLINE             inline
+    #ifdef __cplusplus
+      // c++ does not handles restrict consistently. So we just omit it.
+      #define NA_RESTRICT
+    #else
+      #define NA_RESTRICT         restrict
+    #endif
+  #else
+    #define NA_INLINE
+  #endif
+
   #if !defined NA_RESTRICT
     #define NA_RESTRICT         __restrict__
   #endif
   #define NA_LINKER_NO_EXPORT   __attribute__ ((visibility("hidden")))
   #define NA_LINKER_EXPORT      __attribute__ ((visibility("default")))
 #else
+  #if (defined NA_C99) || (defined NA_CPP98)
+    #define NA_INLINE             inline
+    #ifdef __cplusplus
+      // c++ does not handles restrict consistently. So we just omit it.
+      #define NA_RESTRICT
+    #else
+      #define NA_RESTRICT         restrict
+    #endif
+  #else
+    #define NA_INLINE
+  #endif
 #endif
 
 

@@ -88,6 +88,7 @@ NA_API NAString* naNewStringWithFormat(const NAUTF8Char* format,
 NA_API NAString* naNewStringWithArguments(const NAUTF8Char* format,
                                                     va_list argumentlist);
 
+
 // Fills deststring with a desired part of srcstring.
 //
 // - if charoffset is negative, it denotes the number of chars from the end.
@@ -119,6 +120,10 @@ NA_API NAString* naNewStringExtraction(const NAString* srcstring,
 NA_API NAString* naNewStringWithBufferExtraction( NABuffer* buffer,
                                                       NARangei range);
 
+// Returns a string equal to the given string but all newlines are
+// converted to the given newline encoding.
+NA_API NAString* naNewStringWithNewlineSanitization( NAString* string,
+                                             NANewlineEncoding encoding);
 
 
 // Returns the length of the string in bytes.
@@ -174,17 +179,17 @@ NA_API NAString* naNewStringXMLDecoded(const NAString* inputstring);
 NA_API NAString* naNewStringEPSEncoded(const NAString* inputstring);
 NA_API NAString* naNewStringEPSDecoded(const NAString* inputstring);
 
-// The following functions are system dependent.
-// Currently, this is only necessary on windows.
+
 #if NA_OS == NA_OS_WINDOWS
+
   // Returns a newly allocated memory block containing the system-encoded
   // string. If you do not provide the length, it will be automatically
   // computed. The resulting string must be freed manually. COPIES ALWAYS!
-  NA_API SystemChar* naAllocSystemStringWithUTF8String(
-                                            const NAUTF8Char* utf8str,
-                                                       NAUInt length);
-  //// Creates a new NAString from a system-encoded string. COPIES ALWAYS!
-  //NA_API NAString* naNewStringFromSystemString(SystemChar* systemstring);
+  NA_API TCHAR* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8string);
+
+  // Creates a new NAString from a system-encoded string. COPIES ALWAYS!
+  NA_API NAString* naNewStringFromSystemString(TCHAR* systemstring);
+
 #endif
 
 
