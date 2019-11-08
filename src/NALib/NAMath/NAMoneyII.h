@@ -21,10 +21,6 @@ struct NAMoney{
 NA_IDEF NAMoney naMakeMoneyWithCurrency(double amount, NACurrency currency){
   NAMoney money;
   double centamount = naRound(naPow(10., na_currency_decimals[currency]) * amount);
-  #ifndef NDEBUG
-    if(currency >= NA_CURRENCY_COUNT)
-      naError("invalid currency");
-  #endif
   money.cents = naMakeInt64WithDouble(centamount);
   money.currency = currency;
   return money;

@@ -125,7 +125,7 @@ NA_IAPI NASizeUInt naGetSystemMemoryPagesizeMask(void);
 //                      operator known from C++. But it is dependent on a
 //                      custom runtime system described further below.
 // naDelete             Deletes a pointer created with naNew by properly
-//                      calling the correct desctructor.
+//                      calling the correct destructor.
 //
 // Authors note:
 // Having only a handful allocation function helps detecting basic memory
@@ -323,7 +323,7 @@ NA_IAPI NASmartPtr* naInitSmartPtrMutable(  NASmartPtr* sptr,
 // to data, then the data is cleaned up and finally, the struct is cleaned up.
 NA_IAPI NASmartPtr* naRetainSmartPtr (NASmartPtr* sptr);
 NA_IAPI void        naReleaseSmartPtr(NASmartPtr* sptr,
-                                        NAMutator desctructor,
+                                        NAMutator destructor,
                                            NABool onlydata);
 
 // Returns either a const or a mutable pointer to the data stored.

@@ -94,13 +94,13 @@ NA_HIDEF void naDestructNodeData(const NATreeConfiguration* config, NAPtr data){
 
 
 NA_HIDEF void naDestructTreeNode(const NATreeConfiguration* config, NATreeNode* node, NABool recursive){
-  NAInt i;
   #ifndef NDEBUG
     if(!node)
       naCrash("node shall not be Null");
   #endif
   
   if(recursive){
+    NAInt i;
     for(i = 0; i < config->childpernode; i++){
       NATreeItem* child = naGetTreeNodeChild(config, node, i);
       if(child){

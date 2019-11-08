@@ -978,48 +978,48 @@ NA_IAPI void naDivCompM44fV4fS(float*  NA_RESTRICT D, const float*  NA_RESTRICT 
 // Multiplies all elements of matrix A componentwise with matrix B:
 // D = A .* B
 // E variant allows A to be the same as D
-// S variant computes D *= diag(v)
-NA_IAPI void naMulCompM22dM22d (double* NA_RESTRICT D, const double* NA_RESTRICT A, const double* NA_RESTRICT v);
-NA_IAPI void naMulCompM33dM33d (double* NA_RESTRICT D, const double* NA_RESTRICT A, const double* NA_RESTRICT v);
-NA_IAPI void naMulCompM44dM44d (double* NA_RESTRICT D, const double* NA_RESTRICT A, const double* NA_RESTRICT v);
-NA_IAPI void naMulCompM22fM22f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A, const float*  NA_RESTRICT v);
-NA_IAPI void naMulCompM33fM33f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A, const float*  NA_RESTRICT v);
-NA_IAPI void naMulCompM44fM44f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A, const float*  NA_RESTRICT v);
-NA_IAPI void naMulCompM22dM22dE(double* D, const double* A, const double* v);
-NA_IAPI void naMulCompM33dM33dE(double* D, const double* A, const double* v);
-NA_IAPI void naMulCompM44dM44dE(double* D, const double* A, const double* v);
-NA_IAPI void naMulCompM22fM22fE(float*  D, const float*  A, const float*  v);
-NA_IAPI void naMulCompM33fM33fE(float*  D, const float*  A, const float*  v);
-NA_IAPI void naMulCompM44fM44fE(float*  D, const float*  A, const float*  v);
-NA_IAPI void naMulCompM22dM22dS(double* NA_RESTRICT D, const double* NA_RESTRICT v);
-NA_IAPI void naMulCompM33dM33dS(double* NA_RESTRICT D, const double* NA_RESTRICT v);
-NA_IAPI void naMulCompM44dM44dS(double* NA_RESTRICT D, const double* NA_RESTRICT v);
-NA_IAPI void naMulCompM22fM22fS(float*  NA_RESTRICT D, const float*  NA_RESTRICT v);
-NA_IAPI void naMulCompM33fM33fS(float*  NA_RESTRICT D, const float*  NA_RESTRICT v);
-NA_IAPI void naMulCompM44fM44fS(float*  NA_RESTRICT D, const float*  NA_RESTRICT v);
+// S variant computes D .*= B
+NA_IAPI void naMulCompM22dM22d (double* NA_RESTRICT D, const double* NA_RESTRICT A, const double* NA_RESTRICT B);
+NA_IAPI void naMulCompM33dM33d (double* NA_RESTRICT D, const double* NA_RESTRICT A, const double* NA_RESTRICT B);
+NA_IAPI void naMulCompM44dM44d (double* NA_RESTRICT D, const double* NA_RESTRICT A, const double* NA_RESTRICT B);
+NA_IAPI void naMulCompM22fM22f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A, const float*  NA_RESTRICT B);
+NA_IAPI void naMulCompM33fM33f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A, const float*  NA_RESTRICT B);
+NA_IAPI void naMulCompM44fM44f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A, const float*  NA_RESTRICT B);
+NA_IAPI void naMulCompM22dM22dE(double* D, const double* A, const double* B);
+NA_IAPI void naMulCompM33dM33dE(double* D, const double* A, const double* B);
+NA_IAPI void naMulCompM44dM44dE(double* D, const double* A, const double* B);
+NA_IAPI void naMulCompM22fM22fE(float*  D, const float*  A, const float*  B);
+NA_IAPI void naMulCompM33fM33fE(float*  D, const float*  A, const float*  B);
+NA_IAPI void naMulCompM44fM44fE(float*  D, const float*  A, const float*  B);
+NA_IAPI void naMulCompM22dM22dS(double* NA_RESTRICT D, const double* NA_RESTRICT B);
+NA_IAPI void naMulCompM33dM33dS(double* NA_RESTRICT D, const double* NA_RESTRICT B);
+NA_IAPI void naMulCompM44dM44dS(double* NA_RESTRICT D, const double* NA_RESTRICT B);
+NA_IAPI void naMulCompM22fM22fS(float*  NA_RESTRICT D, const float*  NA_RESTRICT B);
+NA_IAPI void naMulCompM33fM33fS(float*  NA_RESTRICT D, const float*  NA_RESTRICT B);
+NA_IAPI void naMulCompM44fM44fS(float*  NA_RESTRICT D, const float*  NA_RESTRICT B);
 
 // Divides all elements of matrix A componentwise with matrix B:
 // D = A ./ B
 // E variant allows A to be the same as D
-// S variant computes D *= diag(v)
-NA_IAPI void naDivCompM22dM22d (double* NA_RESTRICT D, const double* NA_RESTRICT A, const double* NA_RESTRICT v);
-NA_IAPI void naDivCompM33dM33d (double* NA_RESTRICT D, const double* NA_RESTRICT A, const double* NA_RESTRICT v);
-NA_IAPI void naDivCompM44dM44d (double* NA_RESTRICT D, const double* NA_RESTRICT A, const double* NA_RESTRICT v);
-NA_IAPI void naDivCompM22fM22f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A, const float*  NA_RESTRICT v);
-NA_IAPI void naDivCompM33fM33f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A, const float*  NA_RESTRICT v);
-NA_IAPI void naDivCompM44fM44f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A, const float*  NA_RESTRICT v);
-NA_IAPI void naDivCompM22dM22dE(double* D, const double* A, const double* v);
-NA_IAPI void naDivCompM33dM33dE(double* D, const double* A, const double* v);
-NA_IAPI void naDivCompM44dM44dE(double* D, const double* A, const double* v);
-NA_IAPI void naDivCompM22fM22fE(float*  D, const float*  A, const float*  v);
-NA_IAPI void naDivCompM33fM33fE(float*  D, const float*  A, const float*  v);
-NA_IAPI void naDivCompM44fM44fE(float*  D, const float*  A, const float*  v);
-NA_IAPI void naDivCompM22dM22dS(double* NA_RESTRICT D, const double* NA_RESTRICT v);
-NA_IAPI void naDivCompM33dM33dS(double* NA_RESTRICT D, const double* NA_RESTRICT v);
-NA_IAPI void naDivCompM44dM44dS(double* NA_RESTRICT D, const double* NA_RESTRICT v);
-NA_IAPI void naDivCompM22fM22fS(float*  NA_RESTRICT D, const float*  NA_RESTRICT v);
-NA_IAPI void naDivCompM33fM33fS(float*  NA_RESTRICT D, const float*  NA_RESTRICT v);
-NA_IAPI void naDivCompM44fM44fS(float*  NA_RESTRICT D, const float*  NA_RESTRICT v);
+// S variant computes D ./= B
+NA_IAPI void naDivCompM22dM22d (double* NA_RESTRICT D, const double* NA_RESTRICT A, const double* NA_RESTRICT B);
+NA_IAPI void naDivCompM33dM33d (double* NA_RESTRICT D, const double* NA_RESTRICT A, const double* NA_RESTRICT B);
+NA_IAPI void naDivCompM44dM44d (double* NA_RESTRICT D, const double* NA_RESTRICT A, const double* NA_RESTRICT B);
+NA_IAPI void naDivCompM22fM22f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A, const float*  NA_RESTRICT B);
+NA_IAPI void naDivCompM33fM33f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A, const float*  NA_RESTRICT B);
+NA_IAPI void naDivCompM44fM44f (float*  NA_RESTRICT D, const float*  NA_RESTRICT A, const float*  NA_RESTRICT B);
+NA_IAPI void naDivCompM22dM22dE(double* D, const double* A, const double* B);
+NA_IAPI void naDivCompM33dM33dE(double* D, const double* A, const double* B);
+NA_IAPI void naDivCompM44dM44dE(double* D, const double* A, const double* B);
+NA_IAPI void naDivCompM22fM22fE(float*  D, const float*  A, const float*  B);
+NA_IAPI void naDivCompM33fM33fE(float*  D, const float*  A, const float*  B);
+NA_IAPI void naDivCompM44fM44fE(float*  D, const float*  A, const float*  B);
+NA_IAPI void naDivCompM22dM22dS(double* NA_RESTRICT D, const double* NA_RESTRICT B);
+NA_IAPI void naDivCompM33dM33dS(double* NA_RESTRICT D, const double* NA_RESTRICT B);
+NA_IAPI void naDivCompM44dM44dS(double* NA_RESTRICT D, const double* NA_RESTRICT B);
+NA_IAPI void naDivCompM22fM22fS(float*  NA_RESTRICT D, const float*  NA_RESTRICT B);
+NA_IAPI void naDivCompM33fM33fS(float*  NA_RESTRICT D, const float*  NA_RESTRICT B);
+NA_IAPI void naDivCompM44fM44fS(float*  NA_RESTRICT D, const float*  NA_RESTRICT B);
 
 
 // Multiplies matrix with vector. d = A * v

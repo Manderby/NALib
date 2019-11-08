@@ -260,14 +260,14 @@ NA_HIDEF NAInt naMakeMaxWithMinAndLengthi(NAInt min, NAInt length){
 }
 
 
-NA_HIDEF double naMakeLengthWithStartAndEnd(double min, double end){
-  return end - min;
+NA_HIDEF double naMakeLengthWithStartAndEnd(double start, double end){
+  return end - start;
 }
-NA_HIDEF float naMakeLengthWithStartAndEndf(float min, float end){
-  return end - min;
+NA_HIDEF float naMakeLengthWithStartAndEndf(float start, float end){
+  return end - start;
 }
-NA_HIDEF NAInt naMakeLengthWithStartAndEndi(NAInt min, NAInt end){
-  return end - min;
+NA_HIDEF NAInt naMakeLengthWithStartAndEndi(NAInt start, NAInt end){
+  return end - start;
 }
 NA_HIDEF NAInt naMakeLengthWithMinAndMaxi(NAInt min, NAInt max){
   return naMakeEndWithMaxi(max) - min;

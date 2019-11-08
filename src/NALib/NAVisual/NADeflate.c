@@ -42,7 +42,6 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
   uint16 nextcodes[17] = {0};
   uint16 a;
   uint16 code;
-  uint16 len;
   int32  curindex;
   uint16 newtreeindex;
   uint16 curmask;
@@ -100,7 +99,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
   newtreeindex = 1;
   for(a = 0; a < tree->alphabetcount; a++){
     code = tree->codes[a];
-    len = tree->codelengths[a];
+    uint16 len = tree->codelengths[a];
     if(!len){continue;}
     curmask = (uint16)(1 << (len - 1));
     curindex = 0;

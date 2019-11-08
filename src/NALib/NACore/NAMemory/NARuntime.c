@@ -55,7 +55,7 @@
 // Otherwise, when that space has already been used once and has been deleted
 // in the meantime, it will now contain an address to the next free space.
 // This can be ensured upon deletion of the previos space: After calling the
-// optional desctructor, the values stored at that space become garbage values.
+// optional destructor, the values stored at that space become garbage values.
 // Now, NALib puts the address of the next free space at the first bytes of the
 // deleted space and sets the next-unused-pointer of the NACorePoolPart to this
 // just deleted space, hence ultimately creating a linear list. With this

@@ -10,13 +10,13 @@ NA_RUNTIME_TYPE(NAListElement, NA_NULL, NA_FALSE);
 
 
 
-NA_DEF NABool naLocateListData(NAListIterator* iterator, const void* data){
+NA_DEF NABool naLocateListData(NAListIterator* iter, const void* data){
   // todo: search in left-right exponential search starting from the current
   // position.
 
-  naResetListIterator(iterator);
-  while(naIterateList(iterator)){
-    if(naGetPtrConst(iterator->cur->ptr) == data){
+  naResetListIterator(iter);
+  while(naIterateList(iter)){
+    if(naGetPtrConst(iter->cur->ptr) == data){
       return NA_TRUE;
     }
   }
@@ -27,38 +27,38 @@ NA_DEF NABool naLocateListData(NAListIterator* iterator, const void* data){
 
 
 
-NA_DEF NABool naLocateListIndex(NAListIterator* iterator, NAInt indx){
-  NAList* mutablelist = (NAList*)naGetPtrConst(iterator->listptr);
+NA_DEF NABool naLocateListIndex(NAListIterator* iter, NAInt indx){
+  NAList* mutablelist = (NAList*)naGetPtrConst(iter->listptr);
 
   if(indx < 0){indx += mutablelist->count;}
   if(indx < 0){
     #ifndef NDEBUG
       naError("Negative index underflows the range of the list");
     #endif
-    iterator->cur = &(mutablelist->sentinel);
+    iter->cur = &(mutablelist->sentinel);
     return NA_FALSE;
   }
   if(indx >= (NAInt)mutablelist->count){
     #ifndef NDEBUG
       naError("Index overflows the range of the list");
     #endif
-    iterator->cur = &(mutablelist->sentinel);
+    iter->cur = &(mutablelist->sentinel);
     return NA_FALSE;
   }
 
   if(indx < ((NAInt)mutablelist->count / 2)){
     // Go forward from start to end
-    iterator->cur = mutablelist->sentinel.next;
+    iter->cur = mutablelist->sentinel.next;
     while(indx){
-      iterator->cur = iterator->cur->next;
+      iter->cur = iter->cur->next;
       indx--;
     }
   }else{
     // Go backward from end to start
-    iterator->cur = mutablelist->sentinel.prev;
+    iter->cur = mutablelist->sentinel.prev;
     indx = indx - mutablelist->count + 1;
     while(indx){
-      iterator->cur = iterator->cur->prev;
+      iter->cur = iter->cur->prev;
       indx++;
     }
   }
