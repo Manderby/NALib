@@ -141,7 +141,7 @@ NA_IDEF NABool naCopyFile(const char* dstpath, const char* srcpath){
 NA_IDEF NABool naAccess(const char* path, NABool exists, NABool read, NABool write, NABool execute){
   #if NA_OS == NA_OS_WINDOWS
     int testmode = 0;
-    testmode |= (exists?00:0);
+    // testmode |= (exists?00:0); // This line has been commented out because of static code analysis.
     testmode |= (read?04:0);
     testmode |= (write?02:0);
     NA_UNUSED(execute); // Under windows, the executable flag does not exist.
@@ -353,6 +353,8 @@ NA_IDEF NAInt naScanDecimal(){
     scanf_s("%" NA_SCNi, &retvalue);
   #elif NA_OS == NA_OS_MAC_OS_X
     scanf("%" NA_SCNi, &retvalue);
+  #else
+    scanf("%" NA_SCNi, &retvalue);  // Might not compile on an undetected system.
   #endif
   return retvalue;
 }

@@ -203,8 +203,8 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 NA_IAPI NAListIterator naMakeListAccessor(const NAList* list);
 NA_IAPI NAListIterator naMakeListMutator (const NAList* list);
 NA_IAPI NAListIterator naMakeListModifier(      NAList* list);
-NA_IAPI void naResetListIterator(NAListIterator* iterator);
-NA_IAPI void naClearListIterator(NAListIterator* iterator);
+NA_IAPI void naResetListIterator(NAListIterator* iter);
+NA_IAPI void naClearListIterator(NAListIterator* iter);
 
 // After having created an iterator, it is at the initial position but you may
 // position it to a desired element by using one of the Locate functions:

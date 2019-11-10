@@ -456,7 +456,7 @@ NA_IDEF int32 naLog2i32(int32 x){
     if(x < 0)
       naError("Logarithm of negative number.");
   #endif
-  if(x<=0){return 0;}
+  if(x <= 0){return 0;}
   x--;
   retvalue = 0;
   while(x){retvalue++; x>>=1;}
@@ -589,7 +589,7 @@ NA_IDEF double naPowerOf2(NAInt n){
 
 NA_IDEF NAInt naFactorize(NAInt x){
   NAInt result = 1;
-  while(x>1){result *= x--;}
+  while(x > 1){result *= x--;}
   return result;
 }
 

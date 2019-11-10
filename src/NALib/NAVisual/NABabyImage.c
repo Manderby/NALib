@@ -18,30 +18,50 @@ struct NABabyImage{
 
 
 NA_DEF NAInt naGetBabyImageValuesPerLine(const NABabyImage* image){
+  #ifndef NDEBUG
+    if(!image)
+      naCrash("Given image is a Null-Pointer");
+  #endif
   return image->width * NA_BABY_COLOR_CHANNEL_COUNT;
 }
 
 
 
 NA_HIDEF NAInt naGetBabyImagePixelCount(const NABabyImage* image){
+  #ifndef NDEBUG
+    if(!image)
+      naCrash("Given image is a Null-Pointer");
+  #endif
   return image->width * image->height;
 }
 
 
 
 NA_HIDEF NAInt naGetBabyImageDataSize(const NABabyImage* image){
+  #ifndef NDEBUG
+    if(!image)
+      naCrash("Given image is a Null-Pointer");
+  #endif
   return image->width * image->height * NA_BABY_COLOR_BYTES_PER_COMPONENT;
 }
 
 
 
 NA_DEF float* naGetBabyImageData(const NABabyImage* image){
+  #ifndef NDEBUG
+    if(!image)
+      naCrash("Given image is a Null-Pointer");
+  #endif
   return image->data;
 }
 
 
 
 NA_DEF NASizei naGetBabyImageSize(const NABabyImage* image){
+  #ifndef NDEBUG
+    if(!image)
+      naCrash("Given image is a Null-Pointer");
+  #endif
   return naMakeSizei(image->width, image->height);
 }
 
@@ -139,8 +159,11 @@ NA_HDEF void naBlendBabyImage(NAInt pixelCount, float* ret, const float* base, c
 NA_DEF NABabyImage* naCreateBabyImageWithTint(const NABabyImage* base, const NABabyColor tint, NABlendMode mode, float blend){
   NABabyImage* retimage;
   NAInt pixelCount;
+  const float* baseptr;
   
   #ifndef NDEBUG
+    if(!base)
+      naCrash("Given base image is a Null-Pointer");
     if(!tint)
       naCrash("tint is Null");
     if(tint[3] == 0.f && (tint[0] != 0.f || tint[1] != 0.f || tint[2] != 0.f))
@@ -150,13 +173,8 @@ NA_DEF NABabyImage* naCreateBabyImageWithTint(const NABabyImage* base, const NAB
   retimage = naCreateBabyImage(naGetBabyImageSize(base), NA_NULL);
   pixelCount = naGetBabyImagePixelCount(base);
   
-  if(base){
-    const float* baseptr = base->data;
-    naBlendBabyImage(pixelCount, retimage->data, baseptr, tint, mode, blend, NA_TRUE, NA_FALSE);
-  }else{
-    NABabyColor transparent = {0.f, 0.f, 0.f, 0.f};
-    naBlendBabyImage(pixelCount, retimage->data, transparent, tint, mode, blend, NA_FALSE, NA_FALSE);
-  }
+  baseptr = base->data;
+  naBlendBabyImage(pixelCount, retimage->data, baseptr, tint, mode, blend, NA_TRUE, NA_FALSE);
 
   return retimage;
 }

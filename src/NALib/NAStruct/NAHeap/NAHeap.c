@@ -404,7 +404,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
       naCrash("Heap count is too big.");
       return NA_NULL;
     }
-    // Note that the following case count==0 could be automatically converted
+    // Note that the following case count == 0 could be automatically converted
     // to -1. But there might be a different use in the future. Therefore, we
     // define these two values to be invalid now.
     if(count == 0)

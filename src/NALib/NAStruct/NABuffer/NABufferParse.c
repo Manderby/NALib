@@ -32,9 +32,8 @@ NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
 
 
 NA_DEF void naSkipBufferDelimiter(NABufferIterator* iter){
-  const NAByte* curbyte;
   if(!naIsBufferAtEnd(iter)){
-    curbyte = (const NAByte*)naGetBufferPartDataPointerConst(iter);
+    const NAByte* curbyte = (const NAByte*)naGetBufferPartDataPointerConst(iter);
     if(*curbyte <= ' '){
       naSkipBufferWhitespaces(iter);
     }else{
@@ -48,18 +47,15 @@ NA_DEF void naSkipBufferDelimiter(NABufferIterator* iter){
 NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
   NAString* string = NA_NULL;
   NABool found = NA_FALSE;
+  NABool checkwindowsend = NA_FALSE;
   NAInt start = naGetBufferLocation(iter);
   NAInt end = start;
   NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
 
-  NABool checkwindowsend = NA_FALSE;
-
-  while(!found && !naIsBufferAtEnd(iter)){
+  while((!found || checkwindowsend) && !naIsBufferAtEnd(iter)){
     const NAByte* curbyte;
     const NABufferPart* part;
 
-    if(found && !checkwindowsend){break;}
-    
     naPrepareBuffer(iter, 1);
     part = naGetBufferPart(iter);
     if(naIsBufferAtInitial(iter)){break;}

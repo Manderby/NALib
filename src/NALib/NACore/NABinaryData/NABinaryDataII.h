@@ -25,53 +25,57 @@ struct NAChecksum{
 
 NA_IDEF void naCopy8  (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
-    NAInt dist = (NAInt)((NAByte*)d - (NAByte*)s);
-    if((NAByte*)d<(NAByte*)s){dist = -dist;};
-    if(dist < 1)
-      naError("Restrict pointers overlap.");
+    NAInt dist;
     if(!d)
       naCrash("Pointer d is Null-Pointer.");
     if(!s)
       naCrash("Pointer s is Null-Pointer.");
+    dist = (NAInt)((NAByte*)d - (NAByte*)s);
+    if((NAByte*)d<(NAByte*)s){dist = -dist;};
+    if(dist < 1)
+      naError("Restrict pointers overlap.");
   #endif
   *(uint8*)d = *(uint8*)s;
 }
 NA_IDEF void naCopy16 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
-    NAInt dist = (NAInt)((NAByte*)d - (NAByte*)s);
-    if((NAByte*)d<(NAByte*)s){dist = -dist;};
-    if(dist < 2)
-      naError("Restrict pointers overlap.");
+    NAInt dist;
     if(!d)
       naCrash("Pointer d is Null-Pointer.");
     if(!s)
       naCrash("Pointer s is Null-Pointer.");
+    dist = (NAInt)((NAByte*)d - (NAByte*)s);
+    if((NAByte*)d<(NAByte*)s){dist = -dist;};
+    if(dist < 2)
+      naError("Restrict pointers overlap.");
   #endif
   *(uint16*)d = *(uint16*)s;
 }
 NA_IDEF void naCopy32 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
-    NAInt dist = (NAInt)((NAByte*)d - (NAByte*)s);
-    if((NAByte*)d<(NAByte*)s){dist = -dist;};
-    if(dist < 4)
-      naError("Restrict pointers overlap.");
+    NAInt dist;
     if(!d)
       naCrash("Pointer d is Null-Pointer.");
     if(!s)
       naCrash("Pointer s is Null-Pointer.");
+    dist = (NAInt)((NAByte*)d - (NAByte*)s);
+    if((NAByte*)d<(NAByte*)s){dist = -dist;};
+    if(dist < 4)
+      naError("Restrict pointers overlap.");
   #endif
   *(uint32*)d = *(uint32*)s;
 }
 NA_IDEF void naCopy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
-    NAInt dist = (NAInt)((NAByte*)d - (NAByte*)s);
-    if((NAByte*)d<(NAByte*)s){dist = -dist;};
-    if(dist < 8)
-      naError("Restrict pointers overlap.");
+    NAInt dist;
     if(!d)
       naCrash("Pointer d is Null-Pointer.");
     if(!s)
       naCrash("Pointer s is Null-Pointer.");
+    dist = (NAInt)((NAByte*)d - (NAByte*)s);
+    if((NAByte*)d<(NAByte*)s){dist = -dist;};
+    if(dist < 8)
+      naError("Restrict pointers overlap.");
   #endif
   #if defined NA_TYPE_INT64
     *(uint64*)d = *(uint64*)s;
@@ -84,14 +88,15 @@ NA_IDEF void naCopy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
 }
 NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
-    NAInt dist = (NAInt)((NAByte*)d - (NAByte*)s);
-    if((NAByte*)d<(NAByte*)s){dist = -dist;};
-    if(dist < 16)
-      naError("Restrict pointers overlap.");
+    NAInt dist;
     if(!d)
       naCrash("Pointer d is Null-Pointer.");
     if(!s)
       naCrash("Pointer s is Null-Pointer.");
+    dist = (NAInt)((NAByte*)d - (NAByte*)s);
+    if((NAByte*)d<(NAByte*)s){dist = -dist;};
+    if(dist < 16)
+      naError("Restrict pointers overlap.");
   #endif
   #if defined NA_TYPE_INT64
     *(uint64*)d = *(uint64*)s;
@@ -133,14 +138,15 @@ NA_IDEF void naCopyn(void* NA_RESTRICT d, const void* NA_RESTRICT s, NAInt bytes
 
 NA_IDEF void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
-    NAInt dist = (NAInt)((NAByte*)a - (NAByte*)b);
-    if((NAByte*)a<(NAByte*)b){dist = -dist;};
-    if(dist < 1)
-      naError("Restrict pointers overlap.");
+    NAInt dist;
     if(!a)
       naCrash("Pointer a is Null-Pointer");
     if(!b)
       naCrash("Pointer b is Null-Pointer");
+    dist = (NAInt)((NAByte*)a - (NAByte*)b);
+    if((NAByte*)a<(NAByte*)b){dist = -dist;};
+    if(dist < 1)
+      naError("Restrict pointers overlap.");
   #endif
   // Note: Do not write the following 3 lines as 1 line. The compiler might
   // cache the result of the dereference operators!
@@ -151,14 +157,15 @@ NA_IDEF void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b){
 
 NA_IDEF void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
-    NAInt dist = (NAInt)((NAByte*)a - (NAByte*)b);
-    if((NAByte*)a<(NAByte*)b){dist = -dist;};
-    if(dist < 2)
-      naError("Restrict pointers overlap.");
+    NAInt dist;
     if(!a)
       naCrash("Pointer a is Null-Pointer");
     if(!b)
       naCrash("Pointer b is Null-Pointer");
+    dist = (NAInt)((NAByte*)a - (NAByte*)b);
+    if((NAByte*)a<(NAByte*)b){dist = -dist;};
+    if(dist < 2)
+      naError("Restrict pointers overlap.");
   #endif
   // Note: Do not write the following 3 lines as 1 line. The compiler might
   // cache the result of the dereference operators!
@@ -169,14 +176,15 @@ NA_IDEF void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
 
 NA_IDEF void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
-    NAInt dist = (NAInt)((NAByte*)a - (NAByte*)b);
-    if((NAByte*)a<(NAByte*)b){dist = -dist;};
-    if(dist < 4)
-      naError("Restrict pointers overlap.");
+    NAInt dist;
     if(!a)
       naCrash("Pointer a is Null-Pointer");
     if(!b)
       naCrash("Pointer b is Null-Pointer");
+    dist = (NAInt)((NAByte*)a - (NAByte*)b);
+    if((NAByte*)a<(NAByte*)b){dist = -dist;};
+    if(dist < 4)
+      naError("Restrict pointers overlap.");
   #endif
   // Note: Do not write the following 3 lines as 1 line. The compiler might
   // cache the result of the dereference operators!
@@ -187,14 +195,15 @@ NA_IDEF void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
 
 NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
-    NAInt dist = (NAInt)((NAByte*)a - (NAByte*)b);
-    if((NAByte*)a<(NAByte*)b){dist = -dist;};
-    if(dist < 8)
-      naError("Restrict pointers overlap.");
+    NAInt dist;
     if(!a)
       naCrash("Pointer a is Null-Pointer");
     if(!b)
       naCrash("Pointer b is Null-Pointer");
+    dist = (NAInt)((NAByte*)a - (NAByte*)b);
+    if((NAByte*)a<(NAByte*)b){dist = -dist;};
+    if(dist < 8)
+      naError("Restrict pointers overlap.");
   #endif
   // Note: Do not write the following 3 lines as 1 line. The compiler might
   // cache the result of the dereference operators!
@@ -212,14 +221,15 @@ NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
 
 NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #ifndef NDEBUG
-    NAInt dist = (NAInt)((NAByte*)a - (NAByte*)b);
-    if((NAByte*)a<(NAByte*)b){dist = -dist;};
-    if(dist < 16)
-      naError("Restrict pointers overlap.");
+    NAInt dist;
     if(!a)
       naCrash("Pointer a is Null-Pointer");
     if(!b)
       naCrash("Pointer b is Null-Pointer");
+    dist = (NAInt)((NAByte*)a - (NAByte*)b);
+    if((NAByte*)a < (NAByte*)b){dist = -dist;};
+    if(dist < 16)
+      naError("Restrict pointers overlap.");
   #endif
   naSwap64(a, b);
   a = ((NAByte*)a) + 8;

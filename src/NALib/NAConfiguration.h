@@ -178,7 +178,7 @@
 //
 // With the following macro, you can define, what the byte size of the memory
 // pool parts shall be. This size is used for allocation with naNew, as well
-// as for garbage collection. The default value for the part size is (1<<16).
+// as for garbage collection. The default value for the part size is (1 << 16).
 // If you set this macro to 0, the memory page size will be used.
 //
 // Turns out, on most systems, the pagesize is far too small to result in good

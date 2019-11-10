@@ -163,7 +163,7 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABufferIterator* iter){
   }
 
   chunk->type = NA_PNG_CHUNK_TYPE_UNKNOWN;
-  for(i=0; i<NA_PNG_CHUNK_TYPE_COUNT; i++){
+  for(i = 0; i < NA_PNG_CHUNK_TYPE_COUNT; i++){
     if(naEqual32(na_png_chunk_type_names[i], chunk->typename)){
       chunk->type = (NAChunkType)i;
       break;
@@ -271,7 +271,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
 
   iterfilter = naMakeBufferMutator(png->filtereddata);
 
-  for(y=0; y<png->size.height; y++){
+  for(y = 0; y < png->size.height; y++){
 
     NAByte filtertype = naReadBufferu8(&iterfilter);
     naReadBufferu8v(&iterfilter, curbyte, bytesperline);
@@ -282,40 +282,40 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
       curbyte += bytesperline;
       break;
     case NA_PNG_FILTER_TYPE_SUB:
-      for(x=0; x<bpp; x++){
+      for(x = 0; x < bpp; x++){
         curbyte++;  // The first byte adds value 0 from the virtual left byte.
       }
-      for(x=bpp; x<(png->size.width * bpp); x++){
+      for(x = bpp; x < (png->size.width * bpp); x++){
         *curbyte += *(curbyte - bpp);
         curbyte++;
       }
       break;
     case NA_PNG_FILTER_TYPE_UP:
-      for(x=0; x<(png->size.width * bpp); x++){
+      for(x = 0; x < (png->size.width * bpp); x++){
         *curbyte += *upbufptr;
         curbyte++;
         upbufptr++;
       }
       break;
     case NA_PNG_FILTER_TYPE_AVERAGE:
-      for(x=0; x<bpp; x++){
+      for(x = 0; x < bpp; x++){
         *curbyte += (NAByte)(((NAUInt)*upbufptr) / 2);
         curbyte++;
         upbufptr++;
       }
-      for(x=bpp; x<(png->size.width * bpp); x++){
+      for(x = bpp; x < (png->size.width * bpp); x++){
         *curbyte += (NAByte)(((NAUInt)*(curbyte - bpp) + (NAUInt)*upbufptr) / 2);
         curbyte++;
         upbufptr++;
       }
       break;
     case NA_PNG_FILTER_TYPE_PAETH:
-      for(x=0; x<bpp; x++){
+      for(x = 0; x < bpp; x++){
         *curbyte += naGetPaethPredictor(0, *upbufptr, 0);
         curbyte++;
         upbufptr++;
       }
-      for(x=bpp; x<(png->size.width * bpp); x++){
+      for(x = bpp; x < (png->size.width * bpp); x++){
         *curbyte += naGetPaethPredictor(*(curbyte - bpp), *upbufptr, *(upbufptr - bpp));
         curbyte++;
         upbufptr++;
@@ -356,7 +356,7 @@ NA_DEF void naFilterData(NAPNG* png){
   pixeldata = naGetPNGPixelData(png);
 
   iter = naMakeBufferModifier(png->filtereddata);
-  for(y=0; y<png->size.height; y++){
+  for(y = 0; y < png->size.height; y++){
     naWriteBufferu8(&iter, NA_PNG_FILTER_TYPE_NONE);
     naWriteBufferBytes(&iter, pixeldata, png->size.width * bpp);
     pixeldata += png->size.width * bpp;

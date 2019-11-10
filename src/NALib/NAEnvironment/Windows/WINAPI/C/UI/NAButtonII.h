@@ -61,8 +61,8 @@ NAWINAPICallbackInfo naButtonWINAPIProc(NAUIElement* uielement, UINT message, WP
 #define IMG_HEIGHT 10
 
 //HBITMAP createBitmap(){
-//  NAByte* buffer = naMalloc(IMG_WIDTH * IMG_HEIGHT * 4 *2);
-//  for(int i=0; i<IMG_WIDTH * IMG_HEIGHT * 4 *2; i++){
+//  NAByte* buffer = naMalloc(IMG_WIDTH * IMG_HEIGHT * 4 * 2);
+//  for(int i = 0; i < IMG_WIDTH * IMG_HEIGHT * 4 * 2; i++){
 //    buffer[i] = 128;
 //  }
 //

@@ -66,13 +66,13 @@ NA_DEF void naFillUInt8WithBabyColor(uint8* outcolor, const float* incolor, NABo
 
 
 NA_DEF void naFillBabyColorWithUInt8(float* outcolor, const uint8* incolor, NABool premultiplied){
-  float tmpcolor[4];
   if(!incolor[3]){
     outcolor[0] = 0.f;
     outcolor[1] = 0.f;
     outcolor[2] = 0.f;
     outcolor[3] = 0.f;
   }else{
+    float tmpcolor[4];
     float inv = 1.f / 255.f;
     outcolor[3] = (float)incolor[3] * inv;
     if(premultiplied){

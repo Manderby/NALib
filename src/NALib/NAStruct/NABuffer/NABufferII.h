@@ -217,9 +217,9 @@ NA_HIAPI NABufferPart* naGetBufferPart(NABufferIterator* iter);
 NA_HAPI void naPrepareBuffer(NABufferIterator* iter, NAInt bytecount);
 
 // NABufferPart
-NA_HAPI NABufferPart* naNewBufferPartSparse(NABufferSource* source, NARangei range);
+NA_HAPI NABufferPart* naNewBufferPartSparse(NABufferSource* source, NARangei sourcerange);
 NA_HAPI NABufferPart* naNewBufferPartWithConstData(const void* data, NAInt bytesize);
-NA_HAPI NABufferPart* naNewBufferPartWithMutableData(void* data, NAInt bytesize, NAMutator deallocator);
+NA_HAPI NABufferPart* naNewBufferPartWithMutableData(void* data, NAInt bytesize, NAMutator destructor);
 NA_HAPI void naSeparateBufferPart(NABufferPart* part);
 
 NA_HIAPI NABufferSource* naGetBufferPartSource(const NABufferPart* part);

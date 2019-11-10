@@ -137,14 +137,13 @@ NA_DEF NABool naReadBufferBit(NABufferIterator* iter){
 
 NA_DEF NAUInt naReadBufferBits(NABufferIterator* iter, uint8 count){
   NAUInt retint = 0;
-  NABool curbit;
   NAUInt curmask = 1;
   #ifndef NDEBUG
     if(count > NA_TYPE_NAINT_BITS)
       naError("Max bit readable per function call exceeded.");
   #endif
   while(count){
-    curbit = naReadBufferBit(iter);
+    NABool curbit = naReadBufferBit(iter);
     retint |= curmask * (NAUInt)curbit;
     curmask <<= 1;
     count--;

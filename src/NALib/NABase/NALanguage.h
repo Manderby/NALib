@@ -156,8 +156,8 @@
 // the following if not available.
 #if (!defined NA_C99) && (!defined NA_CPP98)
   #ifndef va_copy
-    #define va_copy(d,s) (memcpy (&d, &s, sizeof (va_list)))
-    // This definition is proposed to be the most secure fallback solution. But
+    #define va_copy(d,s) {va_start(d, d); memcpy (&d, &s, sizeof (va_list))}
+    // This definition is proposed to a secure fallback solution. But
     // on many systems, the following definition works as well:
     // #define va_copy(d,s) ((d) = (s))
   #endif

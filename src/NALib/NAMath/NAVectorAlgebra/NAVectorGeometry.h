@@ -13,29 +13,29 @@
 // Length
 // ///////////////////////////////
 
-NA_IDEF double naLengthV1d(const double* a){
-  return naAbs(a[0]);
+NA_IDEF double naLengthV1d(const double* v){
+  return naAbs(v[0]);
 }
-NA_IDEF double naLengthV2d(const double* a){
-  return naSqrt(naDotV2dS(a));
+NA_IDEF double naLengthV2d(const double* v){
+  return naSqrt(naDotV2dS(v));
 }
-NA_IDEF double naLengthV3d(const double* a){
-  return naSqrt(naDotV3dS(a));
+NA_IDEF double naLengthV3d(const double* v){
+  return naSqrt(naDotV3dS(v));
 }
-NA_IDEF double naLengthV4d(const double* a){
-  return naSqrt(naDotV4dS(a));
+NA_IDEF double naLengthV4d(const double* v){
+  return naSqrt(naDotV4dS(v));
 }
-NA_IDEF float naLengthV1f(const float* a){
-  return naAbsf(a[0]);
+NA_IDEF float naLengthV1f(const float* v){
+  return naAbsf(v[0]);
 }
-NA_IDEF float naLengthV2f(const float* a){
-  return naSqrtf(naDotV2fS(a));
+NA_IDEF float naLengthV2f(const float* v){
+  return naSqrtf(naDotV2fS(v));
 }
-NA_IDEF float naLengthV3f(const float* a){
-  return naSqrtf(naDotV3fS(a));
+NA_IDEF float naLengthV3f(const float* v){
+  return naSqrtf(naDotV3fS(v));
 }
-NA_IDEF float naLengthV4f(const float* a){
-  return naSqrtf(naDotV4fS(a));
+NA_IDEF float naLengthV4f(const float* v){
+  return naSqrtf(naDotV4fS(v));
 }
 
 
