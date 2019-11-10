@@ -88,9 +88,9 @@ NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos){
     break;
   }
   [nativespace addSubview:subview];
-  NSRect bounds = [subview bounds];
-  bounds.origin = NSMakePoint(pos.x, pos.y);
-  [subview setBounds: bounds];
+  NSRect frame = [subview frame];
+  frame.origin = NSMakePoint(pos.x, pos.y);
+  [subview setFrame: frame];
   naSetUIElementParent(child, space);
 }
 
