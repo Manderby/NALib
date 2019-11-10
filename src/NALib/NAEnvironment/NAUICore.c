@@ -228,9 +228,12 @@ NA_HDEF NABool naDispatchUIElementCommand(NACoreUIElement* element, NAUICommand 
   NABool finished = NA_FALSE;
   NAListIterator iter;
 
+  NAReaction reaction;
+  reaction.uielement = (NAUIElement*)element;
+  reaction.command = command;
   naBeginListMutatorIteration(NACoreReaction* corereaction, &(element->reactions), iter);
     if(corereaction->command == command){
-      NAReaction reaction = {(NAUIElement*)element, command, corereaction->controller};
+      reaction.controller = corereaction->controller;
       finished = corereaction->handler(reaction);
       // If the handler tells us to stop handling the command, we do so.
       if(finished){break;}
@@ -410,12 +413,13 @@ NA_DEF NAKeyboardStatus naMakeKeybardStatus(NAInt modifiers, NAUIKeyCode keyCode
 
 
 NA_DEF void naAddUIKeyboardShortcut(NAUIElement* uielement, NAKeyboardStatus shortcut, NAReactionHandler handler, void* controller){
+  NACoreKeyboardShortcutReaction* corekeyreaction;
   NACoreUIElement* element = (NACoreUIElement*)uielement;
   #ifndef NDEBUG
     if((naGetUIElementType(uielement) != NA_UI_APPLICATION) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
       naError("Currently, only applications and windows are allowed as uielement. Use naGetApplication() for the app.");
   #endif
-  NACoreKeyboardShortcutReaction* corekeyreaction = naAlloc(NACoreKeyboardShortcutReaction);
+  corekeyreaction = naAlloc(NACoreKeyboardShortcutReaction);
   corekeyreaction->controller = controller;
   corekeyreaction->shortcut = shortcut;
   corekeyreaction->handler = handler;

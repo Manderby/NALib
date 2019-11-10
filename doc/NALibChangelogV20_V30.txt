@@ -20,6 +20,7 @@ correct, complete or final.
   and ui.
 - Added naPeekStack
 - naTestFlag is now called naGetFlag
+- fixing lots of warnings, static code analysis, using cppcheck
 
 
 Version 23 (first published 2019-Jun-30)

@@ -16,7 +16,7 @@ typedef struct NATranslator NATranslator;
 typedef enum{
   NA_LANG_DEU = 6579573,  // German
   NA_LANG_ENG = 6647399,  // English
-  NA_LANG_GSW = 6779767,  // Swiss German
+  NA_LANG_GSW = 6779767   // Swiss German
 } NALanguageCode3;
 
 // These codes denote the standardized ISO 639-1 codes. They should not be
@@ -24,7 +24,7 @@ typedef enum{
 // function naConvertLanguageCode1To3
 typedef enum{
   NA_LANG_DE = 25701,  // German
-  NA_LANG_EN = 25966,  // English
+  NA_LANG_EN = 25966   // English
 } NALanguageCode1;
 
 

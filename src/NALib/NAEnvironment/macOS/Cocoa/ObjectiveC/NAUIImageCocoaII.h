@@ -44,6 +44,7 @@ NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
 
 
 NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
+  CGImageRef nativeimage;
   CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
   NASizei imageSize = naGetBabyImageSize(image);
   CGContextRef cgcontext = CGBitmapContextCreateWithData(NULL, (size_t)imageSize.width, (size_t)imageSize.height, 8, (size_t)naGetBabyImageValuesPerLine(image), colorSpace, kCGImageAlphaPremultipliedLast, NULL, NULL);
@@ -51,7 +52,7 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
   uint8* imgdata = CGBitmapContextGetData(cgcontext);
   naConvertBabyImageToUInt8(image, imgdata, NA_TRUE, NA_TRUE);
   
-  CGImageRef nativeimage = CGBitmapContextCreateImage(cgcontext);
+  nativeimage = CGBitmapContextCreateImage(cgcontext);
   CGContextRelease(cgcontext);
   CGColorSpaceRelease(colorSpace);
   return nativeimage;

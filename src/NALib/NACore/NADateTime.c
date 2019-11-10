@@ -76,7 +76,7 @@ typedef struct{
 } NATAIPeriod;
 
 // Leap second information:
-#define NA_NUMBER_OF_TAI_PERIODS 102
+#define NA_TAI_PERIODS_COUNT 102
 
 // This table stores all leap second entries since 1958. Every year has at
 // least 1 entry. Every entry defines, what the number of its first second is.
@@ -85,7 +85,7 @@ typedef struct{
 // structure is future-proof for at least some centuries, as it will be able to
 // map leap seconds even if they are introduced every second. The same goes for
 // negative leap seconds. But there have not been introduced any so far.
-NATAIPeriod naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS] = {
+NATAIPeriod naTAIPeriods[NA_TAI_PERIODS_COUNT] = {
   {naMakeUInt64WithLiteralLo(         0), naMakeUInt64WithLiteralLo(         0), 1958, NA_START_JANUARY_FIRST},           // [0]
   {naMakeUInt64WithLiteralLo(  31536000), naMakeUInt64WithLiteralLo(  31536000), 1959, NA_START_JANUARY_FIRST},
   {naMakeUInt64WithLiteralLo(  63072000), naMakeUInt64WithLiteralLo(  63072000), 1960, NA_START_JANUARY_FIRST},
@@ -255,16 +255,16 @@ NA_DEF NAInt naGetTAIPeriodIndexForSISecond(int64 sisecond){
   // given date is within the last 3 entries. Three entries because the entry
   // of one leap second always contains the leap second itself plus the two
   // surrounding "normal" periods.
-  if(naSmallerEqualInt64(naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 3].startsisec, sisecond)){
-    if(naSmallerEqualInt64(naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 2].startsisec, sisecond)){
-      if(naSmallerEqualInt64(naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec, sisecond)){
+  if(naSmallerEqualInt64(naTAIPeriods[NA_TAI_PERIODS_COUNT - 3].startsisec, sisecond)){
+    if(naSmallerEqualInt64(naTAIPeriods[NA_TAI_PERIODS_COUNT - 2].startsisec, sisecond)){
+      if(naSmallerEqualInt64(naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsisec, sisecond)){
         // Note that the last TAI period is explicitely returned, even if the
         // desired date is far in the future.
-        return NA_NUMBER_OF_TAI_PERIODS - 1;
+        return NA_TAI_PERIODS_COUNT - 1;
       }
-      return NA_NUMBER_OF_TAI_PERIODS - 2;
+      return NA_TAI_PERIODS_COUNT - 2;
     }
-    return NA_NUMBER_OF_TAI_PERIODS - 3;
+    return NA_TAI_PERIODS_COUNT - 3;
   }
   // Just in case the given date is not in leap second age at all...
   if(naSmallerInt64(sisecond, NA_ZERO_64)){
@@ -272,7 +272,7 @@ NA_DEF NAInt naGetTAIPeriodIndexForSISecond(int64 sisecond){
   }else{
     // In all other cases, perform a binary search in all TAI periods.
     l = 0;
-    r = NA_NUMBER_OF_TAI_PERIODS - 4;
+    r = NA_TAI_PERIODS_COUNT - 4;
     while(l != r){  // binary search
       m = (l+r)/2;
       if(naSmallerEqualInt64(naTAIPeriods[m + 1].startsisec, sisecond)){l = m + 1;}else{r = m;}
@@ -290,16 +290,16 @@ NA_DEF NAInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond){
   // given date is within the last 3 entries. Three entries because the entry
   // of one leap second always contains the leap second itself plus the two
   // surrounding "normal" periods.
-  if(naSmallerEqualInt64(naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 3].startgregsec, gregsecond)){
-    if(naSmallerEqualInt64(naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 2].startgregsec, gregsecond)){
-      if(naSmallerEqualInt64(naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startgregsec, gregsecond)){
+  if(naSmallerEqualInt64(naTAIPeriods[NA_TAI_PERIODS_COUNT - 3].startgregsec, gregsecond)){
+    if(naSmallerEqualInt64(naTAIPeriods[NA_TAI_PERIODS_COUNT - 2].startgregsec, gregsecond)){
+      if(naSmallerEqualInt64(naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startgregsec, gregsecond)){
         // Note that the last TAI period is explicitely returned, even if the
         // desired date is far in the future.
-        return NA_NUMBER_OF_TAI_PERIODS - 1;
+        return NA_TAI_PERIODS_COUNT - 1;
       }
-      return NA_NUMBER_OF_TAI_PERIODS - 2;
+      return NA_TAI_PERIODS_COUNT - 2;
     }
-    return NA_NUMBER_OF_TAI_PERIODS - 3;
+    return NA_TAI_PERIODS_COUNT - 3;
   }
   // Just in case the given date is not in leap second age at all...
   if(naSmallerInt64(gregsecond, NA_ZERO_64)){
@@ -307,7 +307,7 @@ NA_DEF NAInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond){
   }else{
     // In all other cases, perform a binary search in all TAI periods.
     l = 0;
-    r = NA_NUMBER_OF_TAI_PERIODS - 4;
+    r = NA_TAI_PERIODS_COUNT - 4;
     while(l != r){  // binary search
       m = (l+r)/2;
       if(naSmallerEqualInt64(naTAIPeriods[m + 1].startgregsec, gregsecond)){l = m + 1;}else{r = m;}
@@ -449,17 +449,17 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
   if((dts->min < 0) || (dts->min > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_MINUTE_NUMBER;}
   datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->min * (int32)NA_SECONDS_PER_MINUTE));
   if(calendarsystem == NA_CALENDAR_GREGORIAN_WITH_LEAP_SECONDS){
-    if(naGreaterEqualInt64(datetime.sisec, naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec)){
+    if(naGreaterEqualInt64(datetime.sisec, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsisec)){
       if((dts->sec < 0) || (dts->sec > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
-      datetime.sisec = naAddInt64(datetime.sisec, naSubInt64(naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec, naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startgregsec));
+      datetime.sisec = naAddInt64(datetime.sisec, naSubInt64(naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsisec, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startgregsec));
     }else{
       NAInt r = naGetLatestTAIPeriodIndexForGregorianSecond(datetime.sisec);
       // r now defines the index of the NATAIPeriod
       datetime.sisec = naAddInt64(datetime.sisec, naSubInt64(naTAIPeriods[r].startsisec, naTAIPeriods[r].startgregsec));
       datetime.sisec = naAddInt64(datetime.sisec, naMakeInt64WithLo(dts->sec));
-      if((r < NA_NUMBER_OF_TAI_PERIODS-1) && naGreaterEqualInt64(datetime.sisec, naTAIPeriods[r+1].startsisec)){
+      if((r < NA_TAI_PERIODS_COUNT-1) && naGreaterEqualInt64(datetime.sisec, naTAIPeriods[r+1].startsisec)){
         if((naTAIPeriods[r+1].indicator == NA_POSITIVE_LEAP_SECONDS_JUNE) || (naTAIPeriods[r+1].indicator == NA_POSITIVE_LEAP_SECONDS_DECEMBER)){
-          if((r+2 < NA_NUMBER_OF_TAI_PERIODS) && naGreaterEqualInt64(datetime.sisec, naTAIPeriods[r+2].startsisec)){ // todo. What is wrong here?
+          if((r+2 < NA_TAI_PERIODS_COUNT) && naGreaterEqualInt64(datetime.sisec, naTAIPeriods[r+2].startsisec)){ // todo. What is wrong here?
             // The leap seconds are overflown
             datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;
           }
@@ -954,10 +954,10 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
       remainingsecs = naSubInt64(remainingsecs, naMulInt64(remainingyears, NA_SECONDS_IN_NORMAL_YEAR));
     }
     isleapyear = naIsLeapYearJulian(dts->year);
-  }else if(naSmallerInt64(remainingsecs, NA_ZERO_64) || naGreaterEqualInt64(remainingsecs, naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS-1].startsisec)){
+  }else if(naSmallerInt64(remainingsecs, NA_ZERO_64) || naGreaterEqualInt64(remainingsecs, naTAIPeriods[NA_TAI_PERIODS_COUNT-1].startsisec)){
     // gregorian system
-    if(naGreaterEqualInt64(remainingsecs, naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS-1].startsisec)){
-      remainingsecs = naSubInt64(remainingsecs, naSubInt64(naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS-1].startsisec, naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS-1].startgregsec));
+    if(naGreaterEqualInt64(remainingsecs, naTAIPeriods[NA_TAI_PERIODS_COUNT-1].startsisec)){
+      remainingsecs = naSubInt64(remainingsecs, naSubInt64(naTAIPeriods[NA_TAI_PERIODS_COUNT-1].startsisec, naTAIPeriods[NA_TAI_PERIODS_COUNT-1].startgregsec));
     }
     remainingsecs = naSubInt64(remainingsecs, NA_DATETIME_SISEC_GREGORIAN_YEAR_ZERO);
 
@@ -1167,11 +1167,11 @@ NA_DEF NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber){
   if(naSmallerInt64(olduncertainsecondnumber, NA_ZERO_64)){return NA_DATETIME_INVALID_UNCERTAIN_SECOND_NUMBER;}
   // Note that the last entry of the structure storing all TAI periods always
   // is a non-leap-second-entry.
-  if(naEqualInt64(olduncertainsecondnumber, naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec)){return NA_DATETIME_NO_CORRECTION_NEEDED;}
-  if(naGreaterInt64(olduncertainsecondnumber, naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS - 1].startsisec)){return NA_DATETIME_NEW_LIBRARY_IS_OLDER_THAN_BEFORE;}
+  if(naEqualInt64(olduncertainsecondnumber, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsisec)){return NA_DATETIME_NO_CORRECTION_NEEDED;}
+  if(naGreaterInt64(olduncertainsecondnumber, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsisec)){return NA_DATETIME_NEW_LIBRARY_IS_OLDER_THAN_BEFORE;}
   taiperiod = naGetTAIPeriodIndexForSISecond(olduncertainsecondnumber);
   // Find the earliest second which needs correction.
-  while(taiperiod < NA_NUMBER_OF_TAI_PERIODS){
+  while(taiperiod < NA_TAI_PERIODS_COUNT){
     if(naTAIPeriods[taiperiod].indicator == NA_POSITIVE_LEAP_SECONDS_JUNE){return taiperiod;}
     if(naTAIPeriods[taiperiod].indicator == NA_POSITIVE_LEAP_SECONDS_DECEMBER){return taiperiod;}
     taiperiod++;
@@ -1201,7 +1201,7 @@ NA_DEF void naSetGlobalTimeShiftToSystemSettings(){
 NA_DEF int64 naGetFirstUncertainSecondNumber(){
   // The first uncertain second number is here defined to be the first second
   // of the last known TAI period.
-  return naTAIPeriods[NA_NUMBER_OF_TAI_PERIODS-1].startsisec;
+  return naTAIPeriods[NA_TAI_PERIODS_COUNT-1].startsisec;
 }
 
 

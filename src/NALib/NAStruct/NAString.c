@@ -206,18 +206,23 @@ NA_API NAString* naNewStringWithNewlineSanitization( NAString* string, NANewline
   if(naIsStringEmpty(string)){
     newstring = naNewString();
   }else{
+    NABufferIterator readiter;
+    NABufferIterator writeiter;
+    NABool writeNL;
+    
     NABuffer* newbuffer = naNewBuffer(NA_FALSE);
     naSetBufferNewlineEncoding(newbuffer, encoding);
-    NABufferIterator readiter = naMakeBufferAccessor(naGetStringBufferConst(string));
-    NABufferIterator writeiter = naMakeBufferModifier(newbuffer);
-    NABool writeNL = NA_FALSE;
+    readiter = naMakeBufferAccessor(naGetStringBufferConst(string));
+    writeiter = naMakeBufferModifier(newbuffer);
+    writeNL = NA_FALSE;
     while(!naIsBufferAtEnd(&readiter)){
+      NAString* line;
       if(writeNL){
         naWriteBufferNewLine(&writeiter);
       }else{
         writeNL = NA_TRUE;
       }
-      NAString* line = naParseBufferLine(&readiter, NA_FALSE);
+      line = naParseBufferLine(&readiter, NA_FALSE);
       naWriteBufferString(&writeiter, line);
       naDelete(line);
     }

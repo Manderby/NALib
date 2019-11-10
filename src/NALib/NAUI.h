@@ -107,7 +107,7 @@ typedef enum{
   NA_UI_CHECKBOX,
   NA_UI_LABEL,
   NA_UI_TEXTFIELD,
-  NA_UI_TEXTBOX,
+  NA_UI_TEXTBOX
 } NAUIElementType;
 
 NA_API NAUIElementType naGetUIElementType(NAUIElement* uielement);
@@ -461,7 +461,7 @@ typedef enum{
   NA_UI_COMMAND_CLOSES,
   NA_UI_COMMAND_PRESSED,
   NA_UI_COMMAND_EDITED,
-  NA_UI_COMMAND_KEYBOARD_SHORTCUT,
+  NA_UI_COMMAND_KEYBOARD_SHORTCUT
 } NAUICommand;
 
 typedef enum{
@@ -469,7 +469,7 @@ typedef enum{
   NA_MODIFIER_FLAG_SHIFT         = 0x0003,
   NA_MODIFIER_FLAG_CONTROL       = 0x000c,
   NA_MODIFIER_FLAG_OPTION        = 0x0030,
-  NA_MODIFIER_FLAG_COMMAND       = 0x00c0,
+  NA_MODIFIER_FLAG_COMMAND       = 0x00c0
 
   // The following flags will be available in the future. Please be patient.
 //  NA_MODIFIER_FLAG_LEFT_SHIFT    = 0x0001,
@@ -567,7 +567,7 @@ typedef enum{
 typedef enum{
   NA_TEXT_ALIGNMENT_LEFT,
   NA_TEXT_ALIGNMENT_RIGHT,
-  NA_TEXT_ALIGNMENT_CENTER,
+  NA_TEXT_ALIGNMENT_CENTER
 } NATextAlignment;
 
 // Screen
@@ -680,7 +680,7 @@ NA_API NAKeyboardStatus naGetKeyboardStatus(void);
 typedef enum{
   NA_ALERT_BOX_INFO,
   NA_ALERT_BOX_WARNING,
-  NA_ALERT_BOX_ERROR,
+  NA_ALERT_BOX_ERROR
 } NAAlertBoxType;
 
 NA_API void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText);

@@ -822,12 +822,13 @@ NA_DEF NABabyImage* naCreateBabyImageFromPNG(NAPNG* png){
   NAByte* pngptr;
   float* babyptr = naGetBabyImageData(babyimage);
   uint8 inbuf[4];
+  NAInt i;
 
   switch(png->colortype){
   case NA_PNG_COLORTYPE_TRUECOLOR:
     pngptr = png->pixeldata;
     inbuf[3] = 255;
-    for(NAInt i = 0; i < png->size.width * png->size.height; i++){
+    for(i = 0; i < png->size.width * png->size.height; i++){
       inbuf[0] = pngptr[0];
       inbuf[1] = pngptr[1];
       inbuf[2] = pngptr[2];

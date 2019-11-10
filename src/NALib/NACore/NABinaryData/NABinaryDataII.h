@@ -144,9 +144,9 @@ NA_IDEF void naSwap8(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #endif
   // Note: Do not write the following 3 lines as 1 line. The compiler might
   // cache the result of the dereference operators!
-  *(uint8*)a^=*(uint8*)b;
-  *(uint8*)b^=*(uint8*)a;
-  *(uint8*)a^=*(uint8*)b;
+  *(uint8*)a ^= *(uint8*)b;
+  *(uint8*)b ^= *(uint8*)a;
+  *(uint8*)a ^= *(uint8*)b;
 }
 
 NA_IDEF void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
@@ -162,9 +162,9 @@ NA_IDEF void naSwap16(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #endif
   // Note: Do not write the following 3 lines as 1 line. The compiler might
   // cache the result of the dereference operators!
-  *(uint16*)a^=*(uint16*)b;
-  *(uint16*)b^=*(uint16*)a;
-  *(uint16*)a^=*(uint16*)b;
+  *(uint16*)a ^= *(uint16*)b;
+  *(uint16*)b ^= *(uint16*)a;
+  *(uint16*)a ^= *(uint16*)b;
 }
 
 NA_IDEF void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
@@ -180,9 +180,9 @@ NA_IDEF void naSwap32(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #endif
   // Note: Do not write the following 3 lines as 1 line. The compiler might
   // cache the result of the dereference operators!
-  *(uint32*)a^=*(uint32*)b;
-  *(uint32*)b^=*(uint32*)a;
-  *(uint32*)a^=*(uint32*)b;
+  *(uint32*)a ^= *(uint32*)b;
+  *(uint32*)b ^= *(uint32*)a;
+  *(uint32*)a ^= *(uint32*)b;
 }
 
 NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
@@ -199,9 +199,9 @@ NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
   // Note: Do not write the following 3 lines as 1 line. The compiler might
   // cache the result of the dereference operators!
   #if defined NA_TYPE_INT64
-    *(uint64*)a^=*(uint64*)b;
-    *(uint64*)b^=*(uint64*)a;
-    *(uint64*)a^=*(uint64*)b;
+    *(uint64*)a ^= *(uint64*)b;
+    *(uint64*)b ^= *(uint64*)a;
+    *(uint64*)a ^= *(uint64*)b;
   #else
     naSwap32(a, b);
     a = ((NAByte*)a) + 4;

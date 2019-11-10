@@ -48,11 +48,13 @@
 
 
 NA_DEF NASpace* naNewSpace(NASize size){
+  NSRect contentRect;
+  NANativeSpace* nativeSpace;
   NACoreSpace* corespace = naAlloc(NACoreSpace);
   corespace->alternatebackground = NA_FALSE;
 
-  NSRect contentRect = NSMakeRect(0., 0., size.width, size.height);
-  NANativeSpace* nativeSpace = [[NANativeSpace alloc] initWithCoreSpace:corespace frame:contentRect];  
+  contentRect = NSMakeRect(0., 0., size.width, size.height);
+  nativeSpace = [[NANativeSpace alloc] initWithCoreSpace:corespace frame:contentRect];  
   naInitCoreSpace(corespace, NA_COCOA_TAKE_OWNERSHIP(nativeSpace));
   
   return (NASpace*)corespace;
@@ -73,6 +75,7 @@ NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos){
   NANativeRadio* nativeradio;
   NANativeTextBox* nativetextbox;
   NSView* subview;
+  NSRect frame;
   
   switch(naGetUIElementType(child)){
   case NA_UI_RADIO:
@@ -88,7 +91,7 @@ NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos){
     break;
   }
   [nativespace addSubview:subview];
-  NSRect frame = [subview frame];
+  frame = [subview frame];
   frame.origin = NSMakePoint(pos.x, pos.y);
   [subview setFrame: frame];
   naSetUIElementParent(child, space);
@@ -114,9 +117,9 @@ NA_HDEF NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space){
 
 
 NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
+  naDefineNativeCocoaObject(NANativeSpace, nativespace, space);
   NACoreSpace* corespace = (NACoreSpace*)space;
   corespace->alternatebackground = alternate;
-  naDefineNativeCocoaObject(NANativeSpace, nativespace, space);
   [nativespace setNeedsDisplay:YES];
 }
 

@@ -119,8 +119,9 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   };
   
   NAInt debugNode(void* token, NAPtr data){
+    NADebugTreeToken* debugtoken;
     NA_UNUSED(data);
-    NADebugTreeToken* debugtoken = (NADebugTreeToken*)token;
+    debugtoken = (NADebugTreeToken*)token;
     debugtoken->nodecount++;
     debugtoken->curdepth++;
     if(debugtoken->curdepth > debugtoken->maxdepth){debugtoken->maxdepth = debugtoken->curdepth;}
@@ -137,8 +138,9 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   }
 
   NAInt debugLeaf(void* token, NAPtr data){
+    NADebugTreeToken* debugtoken;
     NA_UNUSED(data);
-    NADebugTreeToken* debugtoken = (NADebugTreeToken*)token;
+    debugtoken = (NADebugTreeToken*)token;
     debugtoken->leafcount++;
     return NA_TREE_SEARCH_PARENT;
   }

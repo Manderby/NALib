@@ -131,16 +131,21 @@
   [self setStringValue:[NSString stringWithUTF8String:text]];
 }
 - (void) setLink:(const NAUTF8Char*)url{
+  NSMutableAttributedString* attrString;
+  NSRange range;
+  NSURL* nsurl;
+  NSMutableParagraphStyle* paragraphStyle;
+  
   [self setAllowsEditingTextAttributes: YES];
   [self setSelectable: YES];
 
-  NSMutableAttributedString* attrString = NA_COCOA_AUTORELEASE([[NSMutableAttributedString alloc] initWithString: [self stringValue]]);
-  NSRange range = NSMakeRange(0, [attrString length]);
+  attrString = NA_COCOA_AUTORELEASE([[NSMutableAttributedString alloc] initWithString: [self stringValue]]);
+  range = NSMakeRange(0, [attrString length]);
 
-  NSURL* nsurl = [NSURL URLWithString:[NSString stringWithUTF8String:url]];
+  nsurl = [NSURL URLWithString:[NSString stringWithUTF8String:url]];
   [attrString beginEditing];
   [attrString addAttribute:NSLinkAttributeName value:[nsurl absoluteString] range:range];
-  NSMutableParagraphStyle* paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+  paragraphStyle = [[NSMutableParagraphStyle alloc] init];
   [paragraphStyle setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
   paragraphStyle.alignment = [self alignment];
   [attrString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:range];

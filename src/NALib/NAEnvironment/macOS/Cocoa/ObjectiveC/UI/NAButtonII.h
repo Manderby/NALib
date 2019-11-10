@@ -31,6 +31,10 @@
 - (void) setButtonImage:(NAUIImage*)uiimage{
   NSSize imagesize = NSMakeSize(naGetUIImage1xSize(uiimage).width, naGetUIImage1xSize(uiimage).height);
   NSImage* image = [NSImage imageWithSize:imagesize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
+    NAUIImageResolution resolution;
+    CGContextRef context;
+    CGImageRef nativeimage;
+    
     NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
     if(uiimage->tintMode != NA_BLEND_ZERO){
       NSAppearanceName appearancename = [[NSAppearance currentAppearance] name];
@@ -46,13 +50,13 @@
         ? NA_UIIMAGE_SKIN_LIGHT : NA_UIIMAGE_SKIN_DARK;
       }
     }
-    NAUIImageResolution resolution = naGetWindowUIResolution(naGetUIElementWindow(&(corebutton->uielement)));
+    resolution = naGetWindowUIResolution(naGetUIElementWindow(&(corebutton->uielement)));
     #if !defined __MAC_10_14
-      CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
+      context = [[NSGraphicsContext currentContext] graphicsPort];
     #else
-      CGContextRef context = [[NSGraphicsContext currentContext] CGContext];
+      context = [[NSGraphicsContext currentContext] CGContext];
     #endif
-    CGImageRef nativeimage = naGetUIImageNativeImage(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
+    nativeimage = naGetUIImageNativeImage(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
     if(!nativeimage){
       nativeimage = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, skin);
     }

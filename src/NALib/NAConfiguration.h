@@ -33,15 +33,18 @@
 // before C99 for example in the form of GNU extensions.
 //
 // NALib by default assumes, that the long long type and the integer suffix LL
-// is only available with the standards C99 or C++11 or newer or with visual
-// studio 7.1 or never. But you can set the following macro to 1 which causes
-// NALib to try to compile itself with long long datatypes and LL suffixes.
+// is available only when:
+// - the standards C99 or C++11 or newer are used
+// - Visual Studio 7.1 or newer is used
+// If you are not in any of these scenarios, you can set the following macro
+// to 1 which causes NALib to try to compile itself with long long datatypes
+// and LL suffixes anyway.
 //
 // Beware, although this might work, you maybe will get a lot of warnings.
 // Consider turning them off using -Wno-long-long.
 
 #ifndef NA_TYPE_ASSUME_NATIVE_LONG_LONG
-  #define NA_TYPE_ASSUME_NATIVE_LONG_LONG 0
+  #define NA_TYPE_ASSUME_NATIVE_LONG_LONG 1
 #endif
 
 // In case you try to compile on a 64 bit system with a standard before C99

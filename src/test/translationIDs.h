@@ -7,6 +7,6 @@ typedef enum{
 
 typedef enum{
   TR_PROFIT,
-  TR_LOSS,
+  TR_LOSS
 } TrFinance;
 

@@ -255,28 +255,33 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt by
   NABufferPart* writepart;
   const NABufferPart* readpart;
   NABufferIterator readiter;
-  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
+  NABuffer* buffer;
+  NAByte* bufptr;
 
   // Create the read iterator
   NAInt writeoffset = naGetBufferLocation(iter);
+  buffer = naGetBufferIteratorBufferMutable(iter);
   readiter = naMakeBufferAccessor(buffer);
   naLocateBufferAbsolute(&readiter, writeoffset - distance);
 
   if(useCopy){
+    NAInt remainingbytesize;
+    NABuffer* tmpbuffer;
+    
     NAByte* buf = naMalloc(bytesize);
     
     NAInt segmentsize = naMini(distance, bytesize);
     naReadBufferBytes(&readiter, buf, segmentsize);
-    NAInt remainingbytesize = bytesize - segmentsize;
+    remainingbytesize = bytesize - segmentsize;
     
-    NAByte* bufptr = &(buf[segmentsize]);
+    bufptr = &(buf[segmentsize]);
     while(remainingbytesize){
       *bufptr = bufptr[-segmentsize]; //todo
       remainingbytesize--;
       bufptr++;
     }
 
-    NABuffer* tmpbuffer = naNewBufferWithMutableData(buf, bytesize, naFree);
+    tmpbuffer = naNewBufferWithMutableData(buf, bytesize, naFree);
     naWriteBufferBuffer(iter, tmpbuffer, naMakeRangei(0, bytesize));
     naRelease(tmpbuffer);
 

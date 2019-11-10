@@ -24,14 +24,15 @@
 
 #if NA_OS == NA_OS_MAC_OS_X
 #if defined __OBJC__
+#if (NA_CONFIG_COMPILE_GUI == 1)
 // Now, we are sure, we compile with Objective-C and on MacOSX. The
 // #if directives will be closed at the very bottom of this file.
 
+#if !defined NA_TYPE_INT64
+  #error Compiling NALib and Cocoa without a native int64 type will not work.
+#endif
+
 #import <Cocoa/Cocoa.h>
-
-#include "ObjectiveC/NAHelperCocoaII.h"
-
-#if (NA_CONFIG_COMPILE_GUI == 1)
 
 #include "ObjectiveC/NAUIImageCocoaII.h"
 #include "ObjectiveC/NAPreferencesCocoaII.h"

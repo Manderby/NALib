@@ -67,6 +67,16 @@ void initOpenGLSpace(void* initData){
 }
 
 void poststartup(void* arg){
+  NARect windowrect;
+  NAWindow* window;
+  NASpace* contentSpace;
+  
+  NAButton* button;
+  NACheckBox* checkbox;
+  NALabel* label;
+  NARadio* radio;
+  NATextBox* textbox;
+  NATextField* textfield;
   NA_UNUSED(arg);
 
   naSetTranslatorLanguagePreference(naGetLanguageCode("deu"));
@@ -80,8 +90,8 @@ void poststartup(void* arg){
 
 //  printf("%d\n", (int)naGetLanguageCode("deu"));
 
-  NARect windowrect = naMakeRectS(120, 120, 400, 300);
-  NAWindow* window = naNewWindow("Wurst", windowrect, NA_TRUE, 0);
+  windowrect = naMakeRectS(120, 120, 400, 300);
+  window = naNewWindow("Wurst", windowrect, NA_TRUE, 0);
   naAddUIReaction(window, NA_UI_COMMAND_RESHAPE,       resizeWindow, NA_NULL);
   naAddUIReaction(window, NA_UI_COMMAND_KEYDOWN,       cubPressWindowKey, NA_NULL);
   naAddUIReaction(window, NA_UI_COMMAND_KEYUP,         cubReleaseWindowKey, NA_NULL);
@@ -92,19 +102,19 @@ void poststartup(void* arg){
 //  NAOpenGLSpace* openglspace = naNewOpenGLSpace(window, windowrect.size, initOpenGLSpace, window);
 //  naSetWindowContentSpace(window, openglspace);
 
-  NASpace* contentSpace = naGetWindowContentSpace(window);
+  contentSpace = naGetWindowContentSpace(window);
 
-  NAButton* button = naNewPushButton("PushButton asdf", naMakeSize(200., 20.));
+  button = naNewPushButton("PushButton asdf", naMakeSize(200., 20.));
   naAddSpaceChild(contentSpace, button, naMakePos(20., 20.));
-  NACheckBox* checkbox = naNewCheckBox("Checkbox asdf", naMakeSize(200., 20.));
+  checkbox = naNewCheckBox("Checkbox asdf", naMakeSize(200., 20.));
   naAddSpaceChild(contentSpace, checkbox, naMakePos(20., 40.));
-  NALabel* label = naNewLabel("Label asdf", naMakeSize(200., 20.));
+  label = naNewLabel("Label asdf", naMakeSize(200., 20.));
   naAddSpaceChild(contentSpace, label, naMakePos(20., 60.));
-  NARadio* radio = naNewRadio("Radio asdf", naMakeSize(200., 20.));
+  radio = naNewRadio("Radio asdf", naMakeSize(200., 20.));
   naAddSpaceChild(contentSpace, radio, naMakePos(20., 80.));
-  NATextBox* textbox = naNewTextBox(naMakeSize(200., 40.));
+  textbox = naNewTextBox(naMakeSize(200., 40.));
   naAddSpaceChild(contentSpace, textbox, naMakePos(20., 100.));
-  NATextField* textfield = naNewTextField(naMakeSize(200., 20.));
+  textfield = naNewTextField(naMakeSize(200., 20.));
   naAddSpaceChild(contentSpace, textfield, naMakePos(20., 140.));
 
   naShowWindow(window);

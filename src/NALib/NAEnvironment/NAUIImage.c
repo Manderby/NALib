@@ -48,8 +48,9 @@ NA_HDEF NABabyImage* naGetUIImageBabyImage(NAUIImage* uiimage, NAUIImageResoluti
     NABabyImage* plainimg = uiimage->babyimages[plainIndex];
     if(plainimg){
       NABabyColor skincolor;
+      NABabyImage* skinnedImage;
       naFillBabyColorWithSkin(skincolor, skin);
-      NABabyImage* skinnedImage = naCreateBabyImageWithTint(plainimg, skincolor, uiimage->tintMode, 1.f);
+      skinnedImage = naCreateBabyImageWithTint(plainimg, skincolor, uiimage->tintMode, 1.f);
       naSetUIImageBabyImage(uiimage, skinnedImage, resolution, kind, skin);
       naReleaseBabyImage(skinnedImage);
       retimg = uiimage->babyimages[subIndex];
@@ -60,10 +61,11 @@ NA_HDEF NABabyImage* naGetUIImageBabyImage(NAUIImage* uiimage, NAUIImageResoluti
 
 
 NA_HDEF void* naGetUIImageNativeImage(NAUIImage* uiimage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
+  NAInt subIndex;
   // Let the following function do the hard work.
   naGetUIImageBabyImage(uiimage, resolution, kind, skin);
   // Now, we are sure that, if ever possible, nativeimages will contain the desired image.
-  NAInt subIndex = naGetUIImageSubImageIndex(resolution, kind, skin);
+  subIndex = naGetUIImageSubImageIndex(resolution, kind, skin);
   return uiimage->nativeimages[subIndex];
 }
 
@@ -78,6 +80,10 @@ NA_HIDEF void naSetUIImageBabyImage(NAUIImage* uiimage, NABabyImage* babyimage, 
 
 
 NA_DEF NAUIImage* naAllocUIImage(NABabyImage* main, NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
+  NAUIImage* uiImage;
+  NABabyImage* main1x;
+  NABabyImage* alt1x;
+  
   #ifndef NDEBUG
     #if NA_OS == NA_OS_WINDOWS
       if(sizeof(WORD) > 4)
@@ -88,7 +94,7 @@ NA_DEF NAUIImage* naAllocUIImage(NABabyImage* main, NABabyImage* alt, NAUIImageR
     if(alt && !naEqualSizei(naGetBabyImageSize(main), naGetBabyImageSize(alt)))
       naError("Both images must have the same size.");
   #endif
-  NAUIImage* uiImage = naAlloc(NAUIImage);
+  uiImage = naAlloc(NAUIImage);
   
   uiImage->size1x = naGetBabyImageSize(main);
   uiImage->tintMode = tintMode;
@@ -114,12 +120,12 @@ NA_DEF NAUIImage* naAllocUIImage(NABabyImage* main, NABabyImage* alt, NAUIImageR
     uiImage->size1x.width /= 2;
     uiImage->size1x.height /= 2;
     naSetUIImageBabyImage(uiImage, main, NA_UIIMAGE_RESOLUTION_2x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
-    NABabyImage* main1x = naCreateBabyImageWithHalfSize(main);
+    main1x = naCreateBabyImageWithHalfSize(main);
     naSetUIImageBabyImage(uiImage, main1x, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
     naReleaseBabyImage(main1x);
     if(alt){
       naSetUIImageBabyImage(uiImage, alt, NA_UIIMAGE_RESOLUTION_2x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
-      NABabyImage* alt1x = naCreateBabyImageWithHalfSize(alt);
+      alt1x = naCreateBabyImageWithHalfSize(alt);
       naSetUIImageBabyImage(uiImage, alt1x, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
       naReleaseBabyImage(alt1x);
     }
@@ -137,7 +143,8 @@ NA_DEF NAUIImage* naAllocUIImage(NABabyImage* main, NABabyImage* alt, NAUIImageR
 
 
 NA_API void naDeallocUIImage(NAUIImage* uiimage){
-  for(NAInt i = 0; i < NA_UIIMAGE_SUBIMAGES_COUNT; i++){
+  NAInt i;
+  for(i = 0; i < NA_UIIMAGE_SUBIMAGES_COUNT; i++){
     if(uiimage->nativeimages[i]){naDeallocNativeImage(uiimage->nativeimages[i]);}
     if(uiimage->nativeimages[i]){naReleaseBabyImage(uiimage->babyimages[i]);}
   }

@@ -185,13 +185,18 @@ NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextele
 
 
 NA_HDEF void naCaptureKeyboardStatus(NSEvent* event){  
+  NSEventModifierFlags flags;
+  NABool hasShift;
+  NABool hasControl;
+  NABool hasOption;
+  NABool hasCommand;
   NAUIKeyCode keyCode = [event keyCode];
   na_app->keyboardStatus.keyCode = keyCode;
-  NSEventModifierFlags flags = [event modifierFlags];
-  NABool hasShift     = (flags & NAEventModifierFlagShift)   != 0;
-  NABool hasControl   = (flags & NAEventModifierFlagControl) != 0;
-  NABool hasOption    = (flags & NAEventModifierFlagOption)  != 0;
-  NABool hasCommand   = (flags & NAEventModifierFlagCommand) != 0;
+  flags = [event modifierFlags];
+  hasShift     = (flags & NAEventModifierFlagShift)   != 0;
+  hasControl   = (flags & NAEventModifierFlagControl) != 0;
+  hasOption    = (flags & NAEventModifierFlagOption)  != 0;
+  hasCommand   = (flags & NAEventModifierFlagCommand) != 0;
   na_app->keyboardStatus.modifiers = 0;
   na_app->keyboardStatus.modifiers |= hasShift * NA_MODIFIER_FLAG_SHIFT;
   na_app->keyboardStatus.modifiers |= hasControl * NA_MODIFIER_FLAG_CONTROL;
@@ -206,11 +211,13 @@ NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
   if([event type] == NSEventTypeKeyUp){
     naCaptureKeyboardStatus(event);
   }else if([event type] == NSEventTypeKeyDown){
+    NACoreUIElement* elem;
+    NSWindow* keyWindow;
     naCaptureKeyboardStatus(event);
     
     // Search for the native first responder which is represented in NALib.
-    NACoreUIElement* elem = NA_NULL;
-    NSWindow* keyWindow = [NSApp keyWindow];
+    elem = NA_NULL;
+    keyWindow = [NSApp keyWindow];
     if(keyWindow){
       NSResponder* firstResponder = [keyWindow firstResponder];
       if(firstResponder){
@@ -249,7 +256,10 @@ NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
           && needsControl == hasControl
           && needsOption  == hasOption
           && needsCommand == hasCommand){
-            NAReaction reaction = {na_app, NA_UI_COMMAND_KEYBOARD_SHORTCUT, corereaction->controller};
+            NAReaction reaction;
+            reaction.uielement = na_app;
+            reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
+            reaction.controller = corereaction->controller;
             retvalue = corereaction->handler(reaction);
           }
         }
@@ -395,10 +405,10 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 
 
 NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage){
-  NA_UNUSED(sendmovemessage);
   NARect spacerect;
   NSRect screenframe;
   CGPoint centerpos;
+  NA_UNUSED(sendmovemessage);
   spacerect = naGetUIElementRect(uielement, (NAUIElement*)naGetApplication(), includebounds);
   screenframe = [[NSScreen mainScreen] frame];
 //  centerpos.x = spacerect.pos.x + spacerect.size.width * .5f;
@@ -437,10 +447,11 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
   NARect relrect;
   NACoreUIElement* element;
   NACoreUIElement* relelement;
+  NAApplication* app;
 
   element = (NACoreUIElement*)uielement;
   relelement = (NACoreUIElement*)relativeuielement;
-  NAApplication* app = naGetApplication();
+  app = naGetApplication();
 
   // First, let's handle the root case: Returning the application rect.
   if(element == (NACoreUIElement*)app){

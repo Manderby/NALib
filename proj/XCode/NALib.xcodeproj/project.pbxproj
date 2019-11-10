@@ -77,11 +77,11 @@
 		9047853823749C18007AB965 /* NAUIImage.c in Sources */ = {isa = PBXBuildFile; fileRef = 904784D923749C18007AB965 /* NAUIImage.c */; };
 		9047853923749C18007AB965 /* NAMoney.c in Sources */ = {isa = PBXBuildFile; fileRef = 904784DC23749C18007AB965 /* NAMoney.c */; };
 		9047853A23749C18007AB965 /* NAMoney.c in Sources */ = {isa = PBXBuildFile; fileRef = 904784DC23749C18007AB965 /* NAMoney.c */; };
-		90AF3C2B22A2617B004B1786 /* heaptest.c in Sources */ = {isa = PBXBuildFile; fileRef = 90AF3C2A22A2617B004B1786 /* heaptest.c */; };
+		904786222377BA4C007AB965 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 90250F2421ADD313009BE5A3 /* main.c */; };
+		904786232377BC01007AB965 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 90250F2421ADD313009BE5A3 /* main.c */; };
 		90D6EC2622B5C94B00E752C5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 90D6EC2522B5C94B00E752C5 /* AppDelegate.m */; };
 		90D6EC2822B5C95000E752C5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 90D6EC2722B5C95000E752C5 /* Assets.xcassets */; };
 		90D6EC2B22B5C95000E752C5 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 90D6EC2922B5C95000E752C5 /* MainMenu.xib */; };
-		90D6EC3522B5D18400E752C5 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 90250F2421ADD313009BE5A3 /* main.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -223,7 +223,6 @@
 		904784BC23749C18007AB965 /* NAImageSpaceII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAImageSpaceII.h; sourceTree = "<group>"; };
 		904784BD23749C18007AB965 /* NALabelII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NALabelII.h; sourceTree = "<group>"; };
 		904784BE23749C18007AB965 /* NATextFieldII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATextFieldII.h; sourceTree = "<group>"; };
-		904784BF23749C18007AB965 /* NAHelperCocoaII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAHelperCocoaII.h; sourceTree = "<group>"; };
 		904784C023749C18007AB965 /* NAUIImageCocoaII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAUIImageCocoaII.h; sourceTree = "<group>"; };
 		904784C123749C18007AB965 /* NATranslator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NATranslator.c; sourceTree = "<group>"; };
 		904784C223749C18007AB965 /* NAUIImageII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAUIImageII.h; sourceTree = "<group>"; };
@@ -244,7 +243,6 @@
 		904784D523749C18007AB965 /* NATextFieldII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NATextFieldII.h; sourceTree = "<group>"; };
 		904784D623749C18007AB965 /* NAUIImageWINAPIII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAUIImageWINAPIII.h; sourceTree = "<group>"; };
 		904784D723749C18007AB965 /* NAPreferencesWINAPIII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAPreferencesWINAPIII.h; sourceTree = "<group>"; };
-		904784D823749C18007AB965 /* NAHelperWINAPIII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAHelperWINAPIII.h; sourceTree = "<group>"; };
 		904784D923749C18007AB965 /* NAUIImage.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAUIImage.c; sourceTree = "<group>"; };
 		904784DA23749C18007AB965 /* NABabyColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NABabyColor.h; sourceTree = "<group>"; };
 		904784DC23749C18007AB965 /* NAMoney.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = NAMoney.c; sourceTree = "<group>"; };
@@ -547,7 +545,6 @@
 			children = (
 				904784B123749C18007AB965 /* NAPreferencesCocoaII.h */,
 				904784B223749C18007AB965 /* UI */,
-				904784BF23749C18007AB965 /* NAHelperCocoaII.h */,
 				904784C023749C18007AB965 /* NAUIImageCocoaII.h */,
 			);
 			path = ObjectiveC;
@@ -595,7 +592,6 @@
 				904784C923749C18007AB965 /* UI */,
 				904784D623749C18007AB965 /* NAUIImageWINAPIII.h */,
 				904784D723749C18007AB965 /* NAPreferencesWINAPIII.h */,
-				904784D823749C18007AB965 /* NAHelperWINAPIII.h */,
 			);
 			path = C;
 			sourceTree = "<group>";
@@ -855,13 +851,13 @@
 				9047852E23749C18007AB965 /* NABinaryData.c in Sources */,
 				9047853023749C18007AB965 /* NACocoa.m in Sources */,
 				9047850A23749C18007AB965 /* NATree.c in Sources */,
-				90D6EC3522B5D18400E752C5 /* main.c in Sources */,
 				9047852A23749C18007AB965 /* NAURL.c in Sources */,
 				9047853423749C18007AB965 /* NAUICore.c in Sources */,
 				9047851223749C18007AB965 /* NATreeQuad.c in Sources */,
 				9047851E23749C18007AB965 /* NAPNG.c in Sources */,
 				9047852623749C18007AB965 /* NAFile.c in Sources */,
 				9047850823749C18007AB965 /* NABufferSource.c in Sources */,
+				904786232377BC01007AB965 /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -894,7 +890,6 @@
 				9047852523749C18007AB965 /* NAFile.c in Sources */,
 				904784F723749C18007AB965 /* NABufferManipulation.c in Sources */,
 				9047850B23749C18007AB965 /* NATreeIteration.c in Sources */,
-				90AF3C2B22A2617B004B1786 /* heaptest.c in Sources */,
 				9047851B23749C18007AB965 /* NADebug.c in Sources */,
 				9047851D23749C18007AB965 /* NAPNG.c in Sources */,
 				9047853123749C18007AB965 /* NATranslator.c in Sources */,
@@ -905,6 +900,7 @@
 				9047852F23749C18007AB965 /* NACocoa.m in Sources */,
 				9047852123749C18007AB965 /* NABabyImage.c in Sources */,
 				904784F923749C18007AB965 /* NABufferPart.c in Sources */,
+				904786222377BA4C007AB965 /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -939,7 +935,9 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES_AGGRESSIVE;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu89;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -954,8 +952,10 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-Wno-long-long";
 			};
 			name = Optimize;
 		};
@@ -976,10 +976,6 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					NDEBUG,
-					"NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE=0",
-				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1015,7 +1011,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -1037,16 +1032,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-					"NA_CONFIG_COMPILE_GUI=1",
-				);
+				GCC_PREPROCESSOR_DEFINITIONS = NA_CONFIG_COMPILE_GUI;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = testCocoa/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -1066,7 +1055,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -1089,13 +1077,11 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"NA_CONFIG_COMPILE_GUI=1",
 					NDEBUG,
+					NA_CONFIG_COMPILE_GUI,
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = testCocoa/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -1115,7 +1101,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
@@ -1138,13 +1123,11 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"NA_CONFIG_COMPILE_GUI=1",
 					NDEBUG,
+					NA_CONFIG_COMPILE_GUI,
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				INFOPLIST_FILE = testCocoa/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
@@ -1175,6 +1158,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu89;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
@@ -1190,8 +1174,10 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CFLAGS = "-Wno-long-long";
 			};
 			name = Debug;
 		};
@@ -1212,7 +1198,9 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES_AGGRESSIVE;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu89;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -1227,7 +1215,9 @@
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
+				GCC_WARN_UNUSED_FUNCTION = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				OTHER_CFLAGS = "-Wno-long-long";
 			};
 			name = Release;
 		};
@@ -1249,7 +1239,6 @@
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = "NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE=0";
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
@@ -1299,10 +1288,6 @@
 				DEPLOYMENT_POSTPROCESSING = YES;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					NDEBUG,
-					"NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE=0",
-				);
 				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
 				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

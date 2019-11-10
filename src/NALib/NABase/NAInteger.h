@@ -386,19 +386,6 @@ typedef int NABool;
 	#define NA_PRIx64      NA_PRINTF_LONG_LONG_PREFIX "x"
 	#define NA_SCNi64      NA_PRINTF_LONG_LONG_PREFIX "d"
 	#define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
-  //#elif NA_TYPE_INT64 == NA_TYPE_NATIVE__INT64
-//  #define NA_UINT64_MAX  ULLONG_MAX
-//  #define NA_INT64_MAX   LLONG_MAX
-//  #define NA_INT64_MIN   LLONG_MIN
-//  typedef unsigned __uint64   uint64;
-//  typedef signed __int64      int64;
-//  #define NA_ZERO_64     (0LL)
-//  #define NA_ONE_64      (1LL)
-//  #define NA_PRIi64      NA_PRINTF_LONG_LONG_PREFIX "d"
-//  #define NA_PRIu64      NA_PRINTF_LONG_LONG_PREFIX "u"
-//  #define NA_PRIx64      NA_PRINTF_LONG_LONG_PREFIX "x"
-//  #define NA_SCNi64      NA_PRINTF_LONG_LONG_PREFIX "d"
-//  #define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
 #endif
 
 // We include the int64 macros after the type int64 has been defined.
@@ -574,8 +561,9 @@ typedef uint8 NAByte;
 // NASizeInt is always a native int type, never emulated. If for any reason,
 // there does not exist a native integer type which holds that much bits, the
 // type is defined to be the same as NAInt. If that NAInt holds less than the
-// required bits, a warning is emitted and a special macro is defined. If you
-// want to silence the warning, see NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE.
+// required bits, some parts NALib, especially NARuntime, might not work
+// properly. A warning is emitted and a special macro is defined. If you want
+// to silence the warning, see NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE.
 
 #if NA_SYSTEM_ADDRESS_BITS == NA_TYPE64_BITS && defined NA_TYPE_INT64
   typedef int64  NASizeInt;
@@ -591,9 +579,9 @@ typedef uint8 NAByte;
   typedef NAUInt NASizeUInt;
   #if NA_TYPE_NAINT_BITS < NA_SYSTEM_ADDRESS_BITS
     #if NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE == 1
-      #error "No native integer type available to store an address"
+      #warning "No native integer type available to store an address"
     #endif
-    #define NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE 1
+    #define NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
   #endif
 #endif
 

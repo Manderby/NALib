@@ -34,13 +34,19 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   // is requires since a later version of Objective-C
 //  ( (id (*)(id, SEL)) objc_msgSend)(objc_getClass("NSApplication"), sel_registerName("sharedApplication"));
 
+  NAApplication* app;
+  NSDate* distantfuture;
+  #if !__has_feature(objc_arc)
+    NSAutoreleasePool* pool;
+  #endif
+  
   // Start the Core application and set the native ID of the application.
   [NSApplication sharedApplication];
-  NAApplication* app = naNewApplication();
+  app = naNewApplication();
 
   // Put an autorelease pool in place for the startup sequence.
   #if !__has_feature(objc_arc)
-    NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    pool = [[NSAutoreleasePool alloc] init];
   #endif
     // Call prestartup if desired.
     if(prestartup){prestartup(arg);}
@@ -67,12 +73,13 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 //  class_replaceMethod([MyClass class], selector, newIMP, encoding);
 
   // Start the event loop.
-  NSDate* distantfuture = [NSDate distantFuture];
+  distantfuture = [NSDate distantFuture];
   while(naIsCoreApplicationRunning()){
+    NSEvent* curevent;
     #if !__has_feature(objc_arc)
       pool = [[NSAutoreleasePool alloc] init];
     #endif
-      NSEvent* curevent = [NSApp nextEventMatchingMask:NAEventMaskAny untilDate:distantfuture inMode:NSDefaultRunLoopMode dequeue:YES];
+      curevent = [NSApp nextEventMatchingMask:NAEventMaskAny untilDate:distantfuture inMode:NSDefaultRunLoopMode dequeue:YES];
 //      if([curevent type] == NSEventType)
       naCollectGarbage();
       if(!naInterceptKeyboardShortcut(curevent)){
@@ -143,11 +150,12 @@ NA_DEF void naOpenConsoleWindow(const NAUTF8Char* windowtitle){
 #define NA_COCOA_BUNDLE_ICON_FILE_KEY @"CFBundleIconFile"
 
 NA_DEF NAString* naNewApplicationName(void){
+  NAString* retstring;
   NSString* applicationname = [[NSBundle mainBundle] localizedStringForKey:NA_COCOA_BUNDLE_APPLICATION_NAME value:nil table:NA_COCOA_BUNDLE_PLIST];
   if(!applicationname){
     applicationname = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_APPLICATION_NAME];
   }
-  NAString* retstring = naNewStringWithFormat("%s", [applicationname UTF8String]);
+  retstring = naNewStringWithFormat("%s", [applicationname UTF8String]);
   return retstring;
 }
 
@@ -173,12 +181,13 @@ NA_DEF NAString* naNewApplicationIconPath(void){
 
 NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
   NSURL* url;
+  NAString* retstring;
   if(dir){
     url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix] subdirectory:[NSString stringWithUTF8String:dir]];
   }else{
     url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix]];
   }
-  NAString* retstring = naNewStringWithFormat("%s", [[url path] UTF8String]);
+  retstring = naNewStringWithFormat("%s", [[url path] UTF8String]);
   return retstring;
 }
 

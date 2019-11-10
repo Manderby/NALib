@@ -12,6 +12,8 @@
 
 @implementation NANativeTextBox
 - (id) initWithCoreTextBox:(NACoreTextBox*)newcoretextbox frame:(NSRect)frame{
+  NSRect clipRect;
+  NSClipView* clipView;
   NSRect documentrect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
   self = [super initWithFrame:documentrect];
 
@@ -20,8 +22,8 @@
   [scrollview setHasVerticalScroller:YES];
   [scrollview setAutohidesScrollers:YES];
 
-  NSRect clipRect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
-  NSClipView* clipView = [[NSClipView alloc] initWithFrame:clipRect];
+  clipRect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
+  clipView = [[NSClipView alloc] initWithFrame:clipRect];
   [scrollview setContentView:clipView];
   [scrollview setDocumentView:self];
 

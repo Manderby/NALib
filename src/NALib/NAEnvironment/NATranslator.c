@@ -31,9 +31,10 @@ struct NATranslator{
 
 
 NA_HDEF NAPtr naConstructLanguages(const void* key, NAPtr content){
+  NATree* strings;
   NA_UNUSED(key);
   NA_UNUSED(content);
-  NATree* strings = naAlloc(NATree);
+  strings = naAlloc(NATree);
   naInitTree(strings, NA_TRANSLATOR->stringsconfig);
   return naMakePtrWithDataMutable(strings);
 }
@@ -47,9 +48,10 @@ NA_HDEF void naDestructLanguages(NAPtr leafdata){
 
 
 NA_HDEF NAPtr naConstructGroups(const void* key, NAPtr content){
+  NATree* languages;
   NA_UNUSED(key);
   NA_UNUSED(content);
-  NATree* languages = naAlloc(NATree);
+  languages = naAlloc(NATree);
   naInitTree(languages, NA_TRANSLATOR->languagesconfig);
   return naMakePtrWithDataMutable(languages);
 }
@@ -130,6 +132,9 @@ NA_DEF NAInt naRegisterTranslatorGroup(void){
 
 
 NA_DEF void naSwitchTranslatorInsertionLanguage(NALanguageCode3 code){
+  NABool codefound;
+  NAListIterator it;
+  
   #ifndef NDEBUG
     #if NA_CONFIG_COMPILE_GUI == 1
       if(!na_app)
@@ -141,8 +146,8 @@ NA_DEF void naSwitchTranslatorInsertionLanguage(NALanguageCode3 code){
   #endif
   NA_TRANSLATOR->curlang = code;
   
-  NABool codefound = NA_FALSE;
-  NAListIterator it = naMakeListAccessor(&(NA_TRANSLATOR->languagepreferences));
+  codefound = NA_FALSE;
+  it = naMakeListAccessor(&(NA_TRANSLATOR->languagepreferences));
   while(naIterateList(&it)){
     const NALanguageCode3* curcode = naGetListCurConst(&it);
     if(*curcode == code){codefound = NA_TRUE;}
@@ -159,6 +164,12 @@ NA_DEF void naSwitchTranslatorInsertionLanguage(NALanguageCode3 code){
 
 
 NA_DEF void naInsertTranslatorString(NAInt id, NAUTF8Char* str){
+  NATreeIterator groupiter;
+  NATree* grouppack;
+  NATreeIterator languageiter;
+  NATree* languagepack;
+  NATreeIterator stringiter;
+  
   #ifndef NDEBUG
     #if NA_CONFIG_COMPILE_GUI == 1
       if(!na_app)
@@ -170,19 +181,19 @@ NA_DEF void naInsertTranslatorString(NAInt id, NAUTF8Char* str){
   #endif
   
   // Search for the group pack and create it if necessary.
-  NATreeIterator groupiter = naMakeTreeModifier(&(NA_TRANSLATOR->groups));
+  groupiter = naMakeTreeModifier(&(NA_TRANSLATOR->groups));
   naAddTreeKeyConst(&groupiter, &(NA_TRANSLATOR->curgroup), NA_NULL, NA_FALSE);
-  NATree* grouppack = naGetTreeCurLeafMutable(&groupiter);
+  grouppack = naGetTreeCurLeafMutable(&groupiter);
   naClearTreeIterator(&groupiter);
 
   // Search for the language pack and create it if necessary.
-  NATreeIterator languageiter = naMakeTreeModifier(grouppack);
+  languageiter = naMakeTreeModifier(grouppack);
   naAddTreeKeyConst(&languageiter, &(NA_TRANSLATOR->curlang), NA_NULL, NA_FALSE);
-  NATree* languagepack = naGetTreeCurLeafMutable(&languageiter);
+  languagepack = naGetTreeCurLeafMutable(&languageiter);
   naClearTreeIterator(&languageiter);
   
   // Search for the string entry and replace it if necessary.
-  NATreeIterator stringiter = naMakeTreeModifier(languagepack);
+  stringiter = naMakeTreeModifier(languagepack);
   naAddTreeKeyConst(&stringiter, &id, str, NA_TRUE);
   naClearTreeIterator(&stringiter);
 }
@@ -190,6 +201,9 @@ NA_DEF void naInsertTranslatorString(NAInt id, NAUTF8Char* str){
 
 
 NA_DEF void naSetTranslatorLanguagePreference(NALanguageCode3 code){
+  NABool codefound;
+  NAListIterator it;
+  
   #ifndef NDEBUG
     #if NA_CONFIG_COMPILE_GUI == 1
       if(!na_app)
@@ -199,8 +213,8 @@ NA_DEF void naSetTranslatorLanguagePreference(NALanguageCode3 code){
         naCrash("No translator running. Please use naStartTranslator.");
     #endif
   #endif
-  NABool codefound = NA_FALSE;
-  NAListIterator it = naMakeListModifier(&(NA_TRANSLATOR->languagepreferences));
+  codefound = NA_FALSE;
+  it = naMakeListModifier(&(NA_TRANSLATOR->languagepreferences));
   while(!codefound && naIterateList(&it)){
     const NALanguageCode3* curcode = naGetListCurConst(&it);
     if(*curcode == code){
@@ -220,6 +234,10 @@ NA_DEF void naSetTranslatorLanguagePreference(NALanguageCode3 code){
 
 
 NA_DEF const NAUTF8Char* naTranslate(NAInt group, NAInt id){
+  const NAUTF8Char* retvalue = "String not found";
+  NATreeIterator groupiter;
+  NABool groupfound;
+  
   #ifndef NDEBUG
     #if NA_CONFIG_COMPILE_GUI == 1
       if(!na_app)
@@ -229,11 +247,10 @@ NA_DEF const NAUTF8Char* naTranslate(NAInt group, NAInt id){
         naCrash("No translator running. Please use naStartTranslator.");
     #endif
   #endif
-  const NAUTF8Char* retvalue = "String not found";
   
   // Search for the group pack.
-  NATreeIterator groupiter = naMakeTreeModifier(&(NA_TRANSLATOR->groups));
-  NABool groupfound = naLocateTreeKey(&groupiter, &group, NA_TRUE);
+  groupiter = naMakeTreeModifier(&(NA_TRANSLATOR->groups));
+  groupfound = naLocateTreeKey(&groupiter, &group, NA_TRUE);
   if(groupfound){
     NATree* grouppack = naGetTreeCurLeafMutable(&groupiter);
 
