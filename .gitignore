@@ -8,8 +8,10 @@ publishedbundles/
 *xcworkspace*
 *vcxproj.user
 proj/VS2017/Debug
+proj/VS2017/Release
 proj/VS2017/x64/
 proj/VS2017/NALibTest/x64/
 Debug
+Release
 x64
 NALib.vcxproj

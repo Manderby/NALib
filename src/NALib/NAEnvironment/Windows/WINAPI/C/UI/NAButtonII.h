@@ -119,7 +119,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTR
   //HBITMAP hBackBitmap = CreateBitmap(size1x.width, size1x.height, 1, 32, buffer);
   //BitBlt(hMemDC, 0, 0, size1x.width, size1x.height, drawitemstruct->hDC, 0, 0, SRCCOPY);
 
-  BitBlt(drawitemstruct->hDC, 0, 0, size1x.width, size1x.height, hMemDC, 0, 0, SRCCOPY);
+  BitBlt(drawitemstruct->hDC, 0, 0, (int)size1x.width, (int)size1x.height, hMemDC, 0, 0, SRCCOPY);
   SelectObject(hMemDC, hOldBitmap);
   //DeleteObject(hBackBitmap);
   //naFree(buffer);

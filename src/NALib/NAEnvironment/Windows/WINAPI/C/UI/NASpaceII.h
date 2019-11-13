@@ -202,7 +202,7 @@ NA_HDEF NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space){
   screenrect = naGetMainScreenRect();
 
   rect.pos.x = testpoint.x;
-  rect.pos.y = screenrect.size.height - ((double)testpoint.y + (contentrect.bottom - contentrect.top));
+  rect.pos.y = (double)screenrect.size.height - ((double)testpoint.y + ((double)contentrect.bottom - (double)contentrect.top));
   rect.size.width = (double)contentrect.right - (double)contentrect.left;
   rect.size.height = (double)contentrect.bottom - (double)contentrect.top;
   return rect;

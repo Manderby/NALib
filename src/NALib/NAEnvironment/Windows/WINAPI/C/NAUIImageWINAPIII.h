@@ -65,7 +65,7 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
     buffer[i+3] = (NAByte)(naGetBabyImageData(image)[i+3] * 255.);
   }
 
-  HBITMAP hNewBitmap = CreateBitmap(size.width, size.height, 1, 32, buffer);
+  HBITMAP hNewBitmap = CreateBitmap((int)size.width, (int)size.height, 1, 32, buffer);
   naFree(buffer);
 
   return hNewBitmap;

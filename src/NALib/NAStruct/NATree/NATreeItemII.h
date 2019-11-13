@@ -121,12 +121,20 @@ NA_HIDEF void naDestructTreeNode(const NATreeConfiguration* config, NATreeNode* 
 
 
 NA_HIDEF NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx){
+  #ifndef NDEBUG
+    if(!node)
+      naCrash("Node is Null Pointer.");
+  #endif
   return (NABool)((node->flags >> childindx) & 0x01);
 }
 
 
 
 NA_HIDEF void naMarkNodeChildLeaf(NATreeNode* node, NAInt childindx, NABool isleaf){
+  #ifndef NDEBUG
+    if(!node)
+      naCrash("Node is Null Pointer.");
+  #endif
   node->flags &= ~(1 << childindx);
   node->flags |= (NAInt)isleaf << childindx;
 }
@@ -134,6 +142,10 @@ NA_HIDEF void naMarkNodeChildLeaf(NATreeNode* node, NAInt childindx, NABool isle
 
 
 NA_HIDEF void* naGetTreeNodeKey(const NATreeConfiguration* config, NATreeNode* node){
+  #ifndef NDEBUG
+    if(!node)
+      naCrash("Node is Null Pointer.");
+  #endif
   // We thank the power of pointer arithmetic!
   return ((char*)node) + config->nodeKeyOffset; 
 }
@@ -141,6 +153,10 @@ NA_HIDEF void* naGetTreeNodeKey(const NATreeConfiguration* config, NATreeNode* n
 
 
 NA_HIDEF NAPtr naGetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node){
+  #ifndef NDEBUG
+    if(!node)
+      naCrash("Node is Null Pointer.");
+  #endif
   // We thank the power of pointer arithmetic!
   return *(NAPtr*)(((char*)node) + config->nodeUserDataOffset); 
 }
@@ -148,6 +164,10 @@ NA_HIDEF NAPtr naGetTreeNodeData(const NATreeConfiguration* config, NATreeNode* 
 
 
 NA_HIDEF void naSetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node, NAPtr newdata){
+  #ifndef NDEBUG
+    if(!node)
+      naCrash("Node is Null Pointer.");
+  #endif
   // We thank the power of pointer arithmetic!
   *(NAPtr*)(((char*)node) + config->nodeUserDataOffset) = newdata; 
 }
@@ -155,6 +175,10 @@ NA_HIDEF void naSetTreeNodeData(const NATreeConfiguration* config, NATreeNode* n
 
 
 NA_HIDEF NATreeItem** naGetTreeNodeChildStorage(NATreeNode* parent){
+  #ifndef NDEBUG
+    if(!parent)
+      naCrash("Parent is Null Pointer.");
+  #endif
   // We thank the power of pointer arithmetic!
   return (NATreeItem**)(((char*)parent) + NA_TREE_NOTE_CHILDS_OFFSET);
   // Note that this computation has originally been done using an integer

@@ -400,8 +400,6 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
   NADateTime datetime;
 
   int64 remainingyears = dts->year;
-  int64 years400;
-  int64 years100;
   int64 years4;
   NABool isleap;
   NACalendarSystem calendarsystem;
@@ -418,6 +416,8 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
     calendarsystem = NA_CALENDAR_JULIAN;
   }else{
     // gregorian system
+    int64 years400;
+    int64 years100;
     datetime.sisec = NA_DATETIME_SISEC_GREGORIAN_YEAR_ZERO;
     years400 = naDivInt64(remainingyears, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD);
     datetime.sisec = naAddInt64(datetime.sisec, naMulInt64(years400, NA_SECONDS_IN_400_YEAR_PERIOD));
@@ -919,9 +919,6 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
   NABool isleapyear;
   NABool exception100;
   NAInt l, r;
-  int64 y;
-  int64 K;
-  int64 J;
 
   dts->year = NA_ZERO_64;
   dts->mon = 0;
@@ -1059,6 +1056,9 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
     int32 d;
     int32 mon;
     int64 firstterm;
+    int64 y;
+    int64 K;
+    int64 J;
 
     // Fill the NADateTimeAttribute struct with every information we have.
     if(dts->shift < 0){

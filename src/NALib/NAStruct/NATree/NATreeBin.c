@@ -185,9 +185,6 @@ NA_HDEF NATreeNode* naRemoveLeafBin(NATree* tree, NATreeLeaf* leaf){
 
 
 NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
-  NATreeLeaf* left;
-  NATreeLeaf* right;
-
   // Create the new leaf and initialize it.
   NATreeLeaf* newleaf = naConstructTreeLeafBin(tree, key, content);
 
@@ -204,6 +201,8 @@ NA_HDEF NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeItem* existingItem, cons
     NATreeNode* existingParent;
     NABool wasTreeItemRoot;
     NATreeItem* newParent;
+    NATreeLeaf* left;
+    NATreeLeaf* right;
 
     #ifndef NDEBUG
       if(!naIsTreeItemLeaf(tree, existingItem))

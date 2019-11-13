@@ -224,13 +224,13 @@ NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, NAInt cou
 // ////////////////////////////////////
 
 NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffer, NARangei srcrange){
-  NABuffer* dstbuffer;
-  NABufferSource* tmpsource;
-  NAInt tmpsourceoffset;
-  NABuffer* mutablesrcbuffer;
-
   if(!naIsRangeiEmpty(srcrange)){
+    NABuffer* dstbuffer;
+    NABufferSource* tmpsource;
+    NAInt tmpsourceoffset;
+    NABuffer* mutablesrcbuffer;
     NAInt curpos;
+
     dstbuffer = naGetBufferIteratorBufferMutable(iter);
     curpos = naGetBufferLocation(iter);
     mutablesrcbuffer = (NABuffer*)srcbuffer;
@@ -252,8 +252,6 @@ NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffe
 
 
 NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt bytesize, NABool useCopy){
-  NABufferPart* writepart;
-  const NABufferPart* readpart;
   NABufferIterator readiter;
   NABuffer* buffer;
   NAByte* bufptr;
@@ -290,6 +288,8 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt by
     while(bytesize){
       NAInt remainingwrite;
       NAInt remainingread;
+      NABufferPart* writepart;
+      const NABufferPart* readpart;
       const void* src;
       void* dst;
 

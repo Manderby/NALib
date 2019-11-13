@@ -19,8 +19,8 @@ NA_HIDEF NATreeNode* naGetOctNodeNode(NATreeOctNode* octNode){
 NA_HIDEF NATreeLeaf* naGetOctLeafLeaf(NATreeOctLeaf* octLeaf){
   return &(octLeaf->leaf);
 }
-NA_HIDEF NATreeItem* naGetOctNodeItem(NATreeOctNode* octNode){
-  return naGetTreeNodeItem(naGetOctNodeNode(octNode));
+NA_HIDEF NATreeItem* naGetOctNodeItem(NATreeOctNode* octnode){
+  return naGetTreeNodeItem(naGetOctNodeNode(octnode));
 }
 NA_HIDEF void* naGetOctNodeKey(NATreeOctNode* octNode){
   return &(octNode->origin);
@@ -118,10 +118,10 @@ NA_HDEF NAInt naGetChildIndexOctDouble(NATreeNode* parentnode, const void* child
   return naGetKeyIndexOctDouble(naGetOctNodeKey(octNode), childkey, &(octNode->childexponent));
 }
 // The data parameter contains the leaf exponent of the children.
-NA_HDEF NAInt naGetKeyIndexOctDouble(const void* baseorigin, const void* testorigin, const void* data){
+NA_HDEF NAInt naGetKeyIndexOctDouble(const void* basekey, const void* testkey, const void* data){
   NAInt childexponent = *((NAInt*)data);
-  NAVertex* baseVertex = (NAVertex*)baseorigin;
-  NAVertex* testVertex = (NAVertex*)testorigin;
+  NAVertex* baseVertex = (NAVertex*)basekey;
+  NAVertex* testVertex = (NAVertex*)testkey;
   NAInt indx = 0;
   double childwidth;
 
@@ -206,8 +206,8 @@ NA_HDEF NATreeNode* naLocateBubbleOctWithLimits(const NATree* tree, NATreeNode* 
 
 
 
-NA_HDEF NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeItem* item, const void* origin){
-  return naLocateBubbleOctWithLimits(tree, naGetTreeItemParent(item), origin, NA_NULL, NA_NULL, item);
+NA_HDEF NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeItem* item, const void* key){
+  return naLocateBubbleOctWithLimits(tree, naGetTreeItemParent(item), key, NA_NULL, NA_NULL, item);
 }
 
 
@@ -226,10 +226,10 @@ NA_HDEF NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
     #ifndef NDEBUG
       if(!naIsNodeChildLeaf(parent, leafindx))
         naError("Child is not marked as a leaf");
-      if(((NATreeOctNode*)parent)->childs[leafindx] == NA_NULL)
-        naError("Child seems to be not linked to the tree");
       if(!parent)
         naCrash("That is strange. parent should not be Null");
+      if(((NATreeOctNode*)parent)->childs[leafindx] == NA_NULL)
+        naError("Child seems to be not linked to the tree");
     #endif
     
     // First, remove the child from the parent.
@@ -489,10 +489,9 @@ NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, cons
       // but with different childindex.
       NAVertex smallestParentOrigin = *existingParentOrigin;
       NAInt smallestParentChildExponent = existingParentChildExponent;
-      NAInt smallestExistingChildIndex = -1;
       NAInt smallestNewLeafIndex = -1;
       while(1){
-        smallestExistingChildIndex = tree->config->keyIndexGetter(&smallestParentOrigin, existingChildOrigin, &smallestParentChildExponent);
+        NAInt smallestExistingChildIndex = tree->config->keyIndexGetter(&smallestParentOrigin, existingChildOrigin, &smallestParentChildExponent);
         smallestNewLeafIndex       = tree->config->keyIndexGetter(&smallestParentOrigin, newLeafOrigin,       &smallestParentChildExponent);
         if(smallestExistingChildIndex != smallestNewLeafIndex){break;}
         // The two items share the same child. Go further down.

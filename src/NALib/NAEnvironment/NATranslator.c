@@ -289,7 +289,7 @@ NA_DEF NALanguageCode3 naGetLanguageCode(const NAUTF8Char* str){
   NAInt strlength = naStrlen(str);
   NAInt code = 0;
   int i = 0;
-  while(i < strlength && i < 3 && isalpha(str[i])){
+  while(i < strlength && i < 3 && isalpha((unsigned char)str[i])){
     code = code << 8;
     code |= tolower(str[i]);
     i++;

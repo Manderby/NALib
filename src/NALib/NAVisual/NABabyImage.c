@@ -22,7 +22,7 @@ NA_DEF NAInt naGetBabyImageValuesPerLine(const NABabyImage* image){
     if(!image)
       naCrash("Given image is a Null-Pointer");
   #endif
-  return image->width * NA_BABY_COLOR_CHANNEL_COUNT;
+  return (NAInt)image->width * NA_BABY_COLOR_CHANNEL_COUNT;
 }
 
 
@@ -32,7 +32,7 @@ NA_HIDEF NAInt naGetBabyImagePixelCount(const NABabyImage* image){
     if(!image)
       naCrash("Given image is a Null-Pointer");
   #endif
-  return image->width * image->height;
+  return (NAInt)image->width * (NAInt)image->height;
 }
 
 
@@ -42,7 +42,7 @@ NA_HIDEF NAInt naGetBabyImageDataSize(const NABabyImage* image){
     if(!image)
       naCrash("Given image is a Null-Pointer");
   #endif
-  return image->width * image->height * NA_BABY_COLOR_BYTES_PER_COMPONENT;
+  return (NAInt)image->width * (NAInt)image->height * NA_BABY_COLOR_BYTES_PER_COMPONENT;
 }
 
 

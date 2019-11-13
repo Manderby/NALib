@@ -37,7 +37,7 @@ void naFillBabyColorWithSkin(NABabyColor color, NAUIImageSkin skin){
 
 
 NA_HIDEF NAInt naGetUIImageSubImageIndex(NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
-  return (resolution * NA_UIIMAGE_KIND_COUNT + kind) * NA_UIIMAGE_SKIN_COUNT + skin;
+  return ((NAInt)resolution * (NAInt)NA_UIIMAGE_KIND_COUNT + (NAInt)kind) * (NAInt)NA_UIIMAGE_SKIN_COUNT + (NAInt)skin;
 }
 
 NA_HDEF NABabyImage* naGetUIImageBabyImage(NAUIImage* uiimage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
@@ -82,7 +82,6 @@ NA_HIDEF void naSetUIImageBabyImage(NAUIImage* uiimage, NABabyImage* babyimage, 
 NA_DEF NAUIImage* naAllocUIImage(NABabyImage* main, NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode){
   NAUIImage* uiImage;
   NABabyImage* main1x;
-  NABabyImage* alt1x;
   
   #ifndef NDEBUG
     #if NA_OS == NA_OS_WINDOWS
@@ -124,6 +123,7 @@ NA_DEF NAUIImage* naAllocUIImage(NABabyImage* main, NABabyImage* alt, NAUIImageR
     naSetUIImageBabyImage(uiImage, main1x, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
     naReleaseBabyImage(main1x);
     if(alt){
+      NABabyImage* alt1x;
       naSetUIImageBabyImage(uiImage, alt, NA_UIIMAGE_RESOLUTION_2x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
       alt1x = naCreateBabyImageWithHalfSize(alt);
       naSetUIImageBabyImage(uiImage, alt1x, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_ALT, NA_UIIMAGE_SKIN_PLAIN);
@@ -146,7 +146,7 @@ NA_API void naDeallocUIImage(NAUIImage* uiimage){
   NAInt i;
   for(i = 0; i < NA_UIIMAGE_SUBIMAGES_COUNT; i++){
     if(uiimage->nativeimages[i]){naDeallocNativeImage(uiimage->nativeimages[i]);}
-    if(uiimage->nativeimages[i]){naReleaseBabyImage(uiimage->babyimages[i]);}
+    if(uiimage->babyimages[i]){naReleaseBabyImage(uiimage->babyimages[i]);}
   }
   naFree(uiimage);
 }

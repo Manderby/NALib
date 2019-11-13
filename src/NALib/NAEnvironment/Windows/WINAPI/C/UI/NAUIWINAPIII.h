@@ -612,7 +612,8 @@ NA_API NARect naGetMainScreenRect(){
   HMONITOR screen;
   MONITORINFO screeninfo;
   NARect rect;
-  screen = MonitorFromWindow(NA_NULL, MONITOR_DEFAULTTOPRIMARY);
+  POINT origin = {0, 0};
+  screen = MonitorFromPoint(origin, MONITOR_DEFAULTTOPRIMARY);
   screeninfo.cbSize = sizeof(MONITORINFO);
   GetMonitorInfo(screen, &screeninfo);
   rect.pos.x = screeninfo.rcMonitor.left;
@@ -750,6 +751,7 @@ long getWINAPITextAlignmentWithAlignment(NATextAlignment alignment){
     #ifndef NDEBUG
       naError("Invalid alignment enumeration");
     #endif
+    winapialignment = ES_LEFT; break;
     break;
   }
   return winapialignment;

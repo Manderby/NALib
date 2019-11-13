@@ -40,24 +40,24 @@ NA_IDEF void naSetTreeConfigurationUserData(NATreeConfiguration* config, NAPtr u
 
 
 
-NA_IDEF void naSetTreeConfigurationTreeCallbacks(NATreeConfiguration* config, NATreeContructorCallback treeConstructor, NATreeDestructorCallback  treeDestructor){
+NA_IDEF void naSetTreeConfigurationTreeCallbacks(NATreeConfiguration* config, NATreeContructorCallback treeconstructor, NATreeDestructorCallback  treedestructor){
   #ifndef NDEBUG
     if(config->flags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
       naError("Configuration already used in a tree. Mayor problems may occur in the future");
   #endif
-  config->treeConstructor = treeConstructor;
-  config->treeDestructor = treeDestructor;
+  config->treeConstructor = treeconstructor;
+  config->treeDestructor = treedestructor;
 }
 
 
 
-NA_IDEF void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NATreeLeafDataConstructor leafDataConstructor, NATreeLeafDataDestructor leafDataDestructor){
+NA_IDEF void naSetTreeConfigurationLeafCallbacks(NATreeConfiguration* config, NATreeLeafDataConstructor leafdataconstructor, NATreeLeafDataDestructor leafdatadestructor){
   #ifndef NDEBUG
     if(config->flags & NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE)
       naError("Configuration already used in a tree. Mayor problems may occur in the future");
   #endif
-  config->leafDataConstructor = leafDataConstructor;
-  config->leafDataDestructor = leafDataDestructor;
+  config->leafDataConstructor = leafdataconstructor;
+  config->leafDataDestructor = leafdatadestructor;
 }
 
 

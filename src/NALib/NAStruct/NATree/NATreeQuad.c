@@ -19,8 +19,8 @@ NA_HIDEF NATreeNode* naGetQuadNodeNode(NATreeQuadNode* quadNode){
 NA_HIDEF NATreeLeaf* naGetQuadLeafLeaf(NATreeQuadLeaf* quadLeaf){
   return &(quadLeaf->leaf);
 }
-NA_HIDEF NATreeItem* naGetQuadNodeItem(NATreeQuadNode* quadNode){
-  return naGetTreeNodeItem(naGetQuadNodeNode(quadNode));
+NA_HIDEF NATreeItem* naGetQuadNodeItem(NATreeQuadNode* quadnode){
+  return naGetTreeNodeItem(naGetQuadNodeNode(quadnode));
 }
 NA_HIDEF void* naGetQuadNodeKey(NATreeQuadNode* quadNode){
   return &(quadNode->origin);
@@ -114,10 +114,10 @@ NA_HDEF NAInt naGetChildIndexQuadDouble(NATreeNode* parentnode, const void* chil
   return naGetKeyIndexQuadDouble(naGetQuadNodeKey(quadNode), childkey, &(quadNode->childexponent));
 }
 // The data parameter contains the leaf exponent of the children.
-NA_HDEF NAInt naGetKeyIndexQuadDouble(const void* baseorigin, const void* testorigin, const void* data){
+NA_HDEF NAInt naGetKeyIndexQuadDouble(const void* basekey, const void* testkey, const void* data){
   NAInt childexponent = *((NAInt*)data);
-  NAPos* basePos = (NAPos*)baseorigin;
-  NAPos* testPos = (NAPos*)testorigin;
+  NAPos* basePos = (NAPos*)basekey;
+  NAPos* testPos = (NAPos*)testkey;
   NAInt indx = 0;
   double childwidth;
 
@@ -200,8 +200,8 @@ NA_HDEF NATreeNode* naLocateBubbleQuadWithLimits(const NATree* tree, NATreeNode*
 
 
 
-NA_HDEF NATreeNode* naLocateBubbleQuad(const NATree* tree, NATreeItem* item, const void* origin){
-  return naLocateBubbleQuadWithLimits(tree, naGetTreeItemParent(item), origin, NA_NULL, NA_NULL, item);
+NA_HDEF NATreeNode* naLocateBubbleQuad(const NATree* tree, NATreeItem* item, const void* key){
+  return naLocateBubbleQuadWithLimits(tree, naGetTreeItemParent(item), key, NA_NULL, NA_NULL, item);
 }
 
 
@@ -220,10 +220,10 @@ NA_HDEF NATreeNode* naRemoveLeafQuad(NATree* tree, NATreeLeaf* leaf){
     #ifndef NDEBUG
       if(!naIsNodeChildLeaf(parent, leafindx))
         naError("Child is not marked as a leaf");
-      if(((NATreeQuadNode*)parent)->childs[leafindx] == NA_NULL)
-        naError("Child seems to be not linked to the tree");
       if(!parent)
         naCrash("That is strange. parent should not be Null");
+      if(((NATreeQuadNode*)parent)->childs[leafindx] == NA_NULL)
+        naError("Child seems to be not linked to the tree");
     #endif
     
     // First, remove the child from the parent.
@@ -479,10 +479,9 @@ NA_HDEF NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, con
       // but with different childindex.
       NAPos smallestParentOrigin = *existingParentOrigin;
       NAInt smallestParentChildExponent = existingParentChildExponent;
-      NAInt smallestExistingChildIndex = -1;
       NAInt smallestNewLeafIndex = -1;
       while(1){
-        smallestExistingChildIndex = tree->config->keyIndexGetter(&smallestParentOrigin, existingChildOrigin, &smallestParentChildExponent);
+        NAInt smallestExistingChildIndex = tree->config->keyIndexGetter(&smallestParentOrigin, existingChildOrigin, &smallestParentChildExponent);
         smallestNewLeafIndex       = tree->config->keyIndexGetter(&smallestParentOrigin, newLeafOrigin,       &smallestParentChildExponent);
         if(smallestExistingChildIndex != smallestNewLeafIndex){break;}
         // The two items share the same child. Go further down.

@@ -54,7 +54,7 @@ struct NATypeInfo{
 // If you experience an error here with naNew: Have you marked your type with
 // NA_RUNTIME_TYPE? See NA_RUNTIME_TYPE below.
 
-NA_API void*        naNewStruct(NATypeInfo* typeidentifier);
+NA_API void* naNewStruct(NATypeInfo* typeinfo);
 
 
 

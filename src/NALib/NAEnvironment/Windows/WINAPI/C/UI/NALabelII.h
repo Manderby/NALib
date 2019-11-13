@@ -168,7 +168,7 @@ NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled){
 
 
 NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
-  long style = GetWindowLongPtr(naGetUIElementNativeID(label), GWL_STYLE);
+  long style = (long)GetWindowLongPtr(naGetUIElementNativeID(label), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | getWINAPITextAlignmentWithAlignment(alignment);
   SetWindowLongPtr(naGetUIElementNativeID(label), GWL_STYLE, style);
 }

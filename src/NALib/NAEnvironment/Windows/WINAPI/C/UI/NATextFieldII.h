@@ -145,7 +145,7 @@ NA_DEF NAString* naNewStringWithTextFieldText(NATextField* textfield){
 
 
 NA_DEF void naSetTextFieldTextAlignment(NATextField* textfield, NATextAlignment alignment){
-  long style = GetWindowLongPtr(naGetUIElementNativeID(textfield), GWL_STYLE);
+  long style = (long)GetWindowLongPtr(naGetUIElementNativeID(textfield), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | getWINAPITextAlignmentWithAlignment(alignment);
   SetWindowLongPtr(naGetUIElementNativeID(textfield), GWL_STYLE, style);
 }

@@ -69,7 +69,7 @@ NA_DEF void naSetTextBoxText(NATextBox* textbox, const NAUTF8Char* text){
 
 
 NA_DEF void naSetTextBoxTextAlignment(NATextBox* textbox, NATextAlignment alignment){
-  long style = GetWindowLongPtr(naGetUIElementNativeID(textbox), GWL_STYLE);
+  long style = (long)GetWindowLongPtr(naGetUIElementNativeID(textbox), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | getWINAPITextAlignmentWithAlignment(alignment);
   SetWindowLongPtr(naGetUIElementNativeID(textbox), GWL_STYLE, style);
 }

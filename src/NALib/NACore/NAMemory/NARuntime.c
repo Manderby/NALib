@@ -602,7 +602,7 @@ NA_DEF void naStopRuntime(){
           printf(NA_NL "Memory leaks detected in NARuntime:" NA_NL);
           leakmessageprinted = NA_TRUE;
         }
-        printf("%s: %" NA_PRIu64 " * %" NA_PRIu64 " = %" NA_PRIu " Bytes" NA_NL, na_runtime->typeinfos[i]->typename, spacecount, na_runtime->typeinfos[i]->typesize, spacecount * na_runtime->typeinfos[i]->typesize);
+        printf("%s: %" NA_PRIu " * %" NA_PRIu " = %" NA_PRIu " Bytes" NA_NL, na_runtime->typeinfos[i]->typename, spacecount, na_runtime->typeinfos[i]->typesize, spacecount * na_runtime->typeinfos[i]->typesize);
       }
     }
   #endif
@@ -664,10 +664,10 @@ NA_DEF void* naMallocTmp(NAUInt bytesize){
     naEnhanceMallocGarbage();
   }
   #ifndef NDEBUG
-    if(na_runtime->mallocGarbage->cur >= NA_MALLOC_GARBAGE_POINTER_COUNT)
-      naError("Buffer overrun.");
     if(!na_runtime->mallocGarbage)
       naCrash("Garbage struct is null");
+    if(na_runtime->mallocGarbage->cur >= NA_MALLOC_GARBAGE_POINTER_COUNT)
+      naCrash("Buffer overrun.");
   #endif
   garbage = na_runtime->mallocGarbage;
   garbage->pointers[garbage->cur] = newPtr;
