@@ -49,7 +49,7 @@ struct NAPNG{
   NADateTime modificationdate;
   NAPNGInterlaceMethod interlacemethod;
 
-  NAByte* pixeldata;
+  NAByte* pixeldata;  // stored from top to bottom
   NABuffer* compresseddata;
   NABuffer* filtereddata;
 };
@@ -241,9 +241,9 @@ NA_API NAInt naGetPNGBytesPerPixel(NAPNGColorType colortype){
 NA_DEF NAByte naGetPaethPredictor(NAByte a, NAByte b, NAByte c){
   NAByte retvalue;
   NAInt p = (NAInt)a + (NAInt)b - (NAInt)c;
-  NAInt pa = naAbsi(p - a);
-  NAInt pb = naAbsi(p - b);
-  NAInt pc = naAbsi(p - c);
+  NAInt pa = naAbsi(p - (NAInt)a);
+  NAInt pb = naAbsi(p - (NAInt)b);
+  NAInt pc = naAbsi(p - (NAInt)c);
   if((pa <= pb) && (pa <= pc)){retvalue = a;}
   else if(pb <= pc){retvalue = b;}
   else{retvalue = c;}
@@ -803,6 +803,13 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
 
 
 
+NA_API NAPNG* naNewPNGWithBabyImage(NABabyImage* babyimage){
+  NAPNG* png = naNewPNG(naGetBabyImageSize(babyimage), NA_PNG_COLORTYPE_TRUECOLOR_ALPHA, 8);
+  naConvertBabyImageToUInt8(babyimage, png->pixeldata, NA_TRUE, NA_FALSE);
+  return png;
+}
+
+
 
 NA_DEF void* naGetPNGPixelData(NAPNG* png){
   return png->pixeldata;
@@ -820,24 +827,29 @@ NA_DEF NAInt naGetPNGPixelDataBytesize(NAPNG* png){
 NA_DEF NABabyImage* naCreateBabyImageFromPNG(NAPNG* png){
   NABabyImage* babyimage = naCreateBabyImage(png->size, NA_NULL);
   NAByte* pngptr;
-  float* babyptr = naGetBabyImageData(babyimage);
+  float* babyptr;
   uint8 inbuf[4];
-  NAInt i;
+  NAInt x, y;
+  const uint8* uint8ptr;
 
   switch(png->colortype){
   case NA_PNG_COLORTYPE_TRUECOLOR:
     pngptr = png->pixeldata;
     inbuf[3] = 255;
-    for(i = 0; i < png->size.width * png->size.height; i++){
-      inbuf[0] = pngptr[0];
-      inbuf[1] = pngptr[1];
-      inbuf[2] = pngptr[2];
-      naFillBabyColorWithUInt8(babyptr, inbuf, NA_FALSE);
-      babyptr += 4;
-      pngptr += 3;
+    for(y = 0; y < png->size.height; y++){
+      babyptr = &(naGetBabyImageData(babyimage)[(png->size.height - y - 1) * naGetBabyImageValuesPerLine(babyimage)]);
+      for(x = 0; x < png->size.width; x++){
+        inbuf[0] = pngptr[0];
+        inbuf[1] = pngptr[1];
+        inbuf[2] = pngptr[2];
+        naFillBabyColorWithUInt8(babyptr, inbuf, NA_FALSE);
+        babyptr += 4;
+        pngptr += 3;
+      }
     }
     break;
   case NA_PNG_COLORTYPE_TRUECOLOR_ALPHA:
+    uint8ptr = &(((uint8*)png->pixeldata)[(40 - 18 - 1) * (40*4)]);
     naFillBabyImageWithUInt8(babyimage, png->pixeldata, NA_TRUE, NA_FALSE);
     break;
   default:

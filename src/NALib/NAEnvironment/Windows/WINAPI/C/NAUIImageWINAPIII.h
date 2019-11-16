@@ -56,13 +56,19 @@ NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
 NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
 
   NASizei size = naGetBabyImageSize(image);
-
   NAByte* buffer = naMalloc(size.width * size.height * 4);
-  for(int i = 0; i < size.width * size.height * 4; i += 4){
-    buffer[i+0] = (NAByte)(naGetBabyImageData(image)[i+2] * 255.);
-    buffer[i+1] = (NAByte)(naGetBabyImageData(image)[i+1] * 255.);
-    buffer[i+2] = (NAByte)(naGetBabyImageData(image)[i+0] * 255.);
-    buffer[i+3] = (NAByte)(naGetBabyImageData(image)[i+3] * 255.);
+  float* babyptr = naGetBabyImageData(image);
+
+  for(int y = 0; y < size.height; y++){
+    NAByte* bufptr = &(buffer[(size.height - y - 1) * (size.width * 4)]);
+    for(int x = 0; x < size.width * 4; x += 4){
+      bufptr[0] = (NAByte)(babyptr[2] * 255.f);
+      bufptr[1] = (NAByte)(babyptr[1] * 255.f);
+      bufptr[2] = (NAByte)(babyptr[0] * 255.f);
+      bufptr[3] = (NAByte)(babyptr[3] * 255.f);
+      babyptr += 4;
+      bufptr += 4;
+    }
   }
 
   HBITMAP hNewBitmap = CreateBitmap((int)size.width, (int)size.height, 1, 32, buffer);

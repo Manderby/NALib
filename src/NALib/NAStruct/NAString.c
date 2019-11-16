@@ -584,7 +584,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputstring){
       NAUInt widelength;
       widelength = MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), (int)length, NULL, 0);
       outstr = (TCHAR*)naMalloc(((widelength + 1) * naSizeof(TCHAR)));
-      MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), (int)length, outstr, widelength);
+      MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), (int)length, outstr, (int)widelength);
       outstr[widelength] = 0;
     #else
       NAUInt widelength;
@@ -612,9 +612,9 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputstring){
       NAInt utf8length;
       NAUTF8Char* stringbuf;
       length = wcslen(systemstring);
-      utf8length = WideCharToMultiByte(CP_UTF8, 0, systemstring, length, NULL, 0, NULL, NULL);
+      utf8length = WideCharToMultiByte(CP_UTF8, 0, systemstring, (int)length, NULL, 0, NULL, NULL);
       stringbuf = naMalloc((utf8length + 1) * naSizeof(NAUTF8Char));
-      WideCharToMultiByte(CP_UTF8, 0, systemstring, length, stringbuf, utf8length, NULL, NULL);
+      WideCharToMultiByte(CP_UTF8, 0, systemstring, (int)length, stringbuf, (int)utf8length, NULL, NULL);
       newlinestring = naNewStringWithMutableUTF8Buffer(stringbuf, utf8length, (NAMutator)naFree);
     #else
       NAUInt widelength;

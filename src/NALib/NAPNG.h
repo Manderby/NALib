@@ -27,6 +27,7 @@ typedef enum{
 
 NA_API NAPNG* naNewPNG(NASizei size, NAPNGColorType colortype, NAUInt bitdepth);
 NA_API NAPNG* naNewPNGWithFile(const char* filename);
+NA_API NAPNG* naNewPNGWithBabyImage(NABabyImage* babyimage);
 
 NA_API void* naGetPNGPixelData(NAPNG* png);
 NA_API NAInt naGetPNGPixelDataBytesize(NAPNG* png);

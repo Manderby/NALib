@@ -510,7 +510,7 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
           length = naDecodeLiteralLength(&iterz, curcode);
           distcode = naDecodeHuffman(distancehuffman, &iterz);
           dist = naDecodeDistance(&iterz, distcode);
-          naRepeatBufferBytes(&iterout, dist, length, NA_TRUE);
+          naRepeatBufferBytes(&iterout, dist, length, NA_FALSE);
         }
       }
 

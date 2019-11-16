@@ -109,7 +109,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTR
   HBITMAP hNewBitmap = naGetUIImageNativeImage(button->image, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
 
 
-  NABabyImage* testimage = naCreateBabyImageFromNativeImage(hNewBitmap);
+  //NABabyImage* testimage = naCreateBabyImageFromNativeImage(hNewBitmap);
 
 
   hOldBitmap = SelectObject(hMemDC, hNewBitmap);
@@ -125,7 +125,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTR
   //naFree(buffer);
 
   DeleteDC(hMemDC);
-  ReleaseDC(naGetUIElementNativeID(uielement), drawitemstruct->hDC);
+  ReleaseDC(drawitemstruct->hwndItem, drawitemstruct->hDC);
 
   return info;
 }

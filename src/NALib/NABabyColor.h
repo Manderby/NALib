@@ -56,7 +56,7 @@ NA_API void naFillBabyColorWithUInt8(float* outcolor, const uint8* incolor, NABo
 
 
 
-// This factor 
+// This factor is nice and easy to remember.
 #define NA_BABY_FACTOR 0.75f
 
 NA_IDEF float naUnlinearizeColorValue(float value){

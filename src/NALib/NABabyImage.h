@@ -78,7 +78,7 @@ NA_API NABabyImage* naCreateBabyImageWithHalfSize(const NABabyImage* image);
 NA_API NABabyImage* naRetainBabyImage(NABabyImage* image);
 NA_API void naReleaseBabyImage(NABabyImage* image);
 
-// Returns the number of bytes per horizontal line.
+// Returns the number of float values per horizontal line.
 NA_API NAInt naGetBabyImageValuesPerLine(const NABabyImage* image);
 
 // Returns the image dimensions.
