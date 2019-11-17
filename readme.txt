@@ -8,8 +8,8 @@ at the same time being compatible back to ANSI-C (except for the // comments).
 It had been used in research, consumer market and industry where it had been
 verified continuously in selling products.
 
-Current version is 23.
-Branch "version24" contains the latest developments.
+Master contains the latest developments on Version 24.
+Older release versions are available as tags.
 
 Installation:
 --------------
