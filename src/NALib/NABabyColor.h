@@ -46,13 +46,21 @@ typedef float NABabyColorValueType;
 
 typedef NABabyColorValueType NABabyColor[NA_BABY_COLOR_CHANNEL_COUNT];
 
+typedef enum{
+  NA_COLOR_BUFFER_RGBA,
+  NA_COLOR_BUFFER_RGBAPre,
+  NA_COLOR_BUFFER_RGB,
+  NA_COLOR_BUFFER_BGR0,
+} NAColorBufferType;
+
+
 NA_IAPI float naUnlinearizeColorValue(float value);
 NA_IAPI float naLinearizeColorValue(float value);
 
 // When premultiplied is set to NA_TRUE, the uint8 variant is assumed to be
 // premultiplied with the alpha values.
-NA_API void naFillUInt8WithBabyColor(uint8* outcolor, const float* incolor, NABool premultiplied);
-NA_API void naFillBabyColorWithUInt8(float* outcolor, const uint8* incolor, NABool premultiplied);
+NA_API void naFillUInt8WithBabyColor(uint8* outcolor, const float* incolor, NAColorBufferType bufferType);
+NA_API void naFillBabyColorWithUInt8(float* outcolor, const uint8* incolor, NAColorBufferType bufferType);
 
 
 
@@ -67,7 +75,7 @@ NA_IDEF float naLinearizeColorValue(float value){
 }
 
 
-
+// This is a test implementation where the value gets not altered at all.
 //NA_IDEF float naUnlinearizeColorValue(float value){
 //  return value;
 //}
@@ -77,9 +85,13 @@ NA_IDEF float naLinearizeColorValue(float value){
 
 
 
-#define NA_BABY_GAMMA 2.2f
-#include "NAMathOperators.h"
-
+// This is an reference implementation using a simplified gamma of 2.2
+// But as it is using the pow function, it is considerably slower than the
+// implementation above.
+//
+//#define NA_BABY_GAMMA 2.2f
+//#include "NAMathOperators.h"
+//
 //NA_IDEF float naUnlinearizeColorValue(float value){
 //  float invgamma = 1.f / NA_BABY_GAMMA;
 //  return naPowf(value, invgamma);

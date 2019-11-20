@@ -13,7 +13,6 @@
 @implementation MDVerticallyCenteredTextFieldCell
 
 - (NSRect)adjustedFrameToVerticallyCenterText:(NSRect)rect {
-//  static int blah = 0;
 //    CGFloat fontSize = self.font.boundingRectForFont.size.height;
 //    NSRect boundRect = [[self font] boundingRectForFont];
 //    CGFloat ascender = [[self font] ascender];

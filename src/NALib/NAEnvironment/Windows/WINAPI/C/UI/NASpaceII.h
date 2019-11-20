@@ -106,40 +106,6 @@ NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapispace){
   return retcolor;
 }
 
-//@implementation NANativeSpace
-//- (id) initWithCoreSpace:(NACoreSpace*)newcorespace frame:(NSRect)frame{
-//  self = [super initWithFrame:frame];
-//
-//  trackingarea = [[NSTrackingArea alloc] initWithRect:[self bounds]
-//      options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow
-//      owner:self userInfo:nil];
-//  [self addTrackingArea:trackingarea];
-//  [self setWantsLayer:YES];
-//
-//  corespace = newcorespace;
-//  return self;
-//}
-//- (void)drawRect:(NSRect)dirtyRect{
-//  [super drawRect:dirtyRect];
-//  if(corespace->alternatebackground){
-//    [[[NSColor controlTextColor] colorWithAlphaComponent:.075] setFill];
-//    NSRectFill(dirtyRect);
-//  }
-//}
-//- (void)mouseMoved:(NSEvent*)event{
-//  NA_UNUSED(event);
-//  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_MOUSE_MOVED);
-//}
-//- (void)mouseEntered:(NSEvent*)event{
-//  NA_UNUSED(event);
-//  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_MOUSE_ENTERED);
-//}
-//- (void)mouseExited:(NSEvent*)event{
-//  NA_UNUSED(event);
-//  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_MOUSE_EXITED);
-//}
-//@end
-
 
 
 NA_DEF NASpace* naNewSpace(NASize size){
@@ -154,10 +120,9 @@ NA_DEF NASpace* naNewSpace(NASize size){
   style = WS_CHILD | WS_VISIBLE;
 
 	hWnd = CreateWindow(
-		TEXT("NASpace"), TEXT("Space"), style,
+		TEXT("NASpace"), TEXT(""), style,
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
-  //DWORD lasterror = GetLastError();
 
   naInitCoreSpace(&(winapispace->corespace), hWnd);
   winapispace->lastBgColor = &(app->bgColor);

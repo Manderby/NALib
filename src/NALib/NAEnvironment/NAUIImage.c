@@ -31,7 +31,7 @@ void naFillBabyColorWithSkin(NABabyColor color, NAUIImageSkin skin){
     #endif
     break;
   }
-  naFillBabyColorWithUInt8(color, skincolor, NA_FALSE);
+  naFillBabyColorWithUInt8(color, skincolor, NA_COLOR_BUFFER_RGBA);
 }
 
 
