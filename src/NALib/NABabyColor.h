@@ -41,22 +41,30 @@
 #include "NAMemory.h"
 
 #define NA_BABY_COLOR_CHANNEL_COUNT 4
-#define NA_BABY_COLOR_BYTES_PER_COMPONENT (NA_BABY_COLOR_CHANNEL_COUNT * naSizeof(float))
-typedef float NABabyColorValueType;
+#define NA_BABY_COLOR_BYTES_PER_COMPONENT \
+  (NA_BABY_COLOR_CHANNEL_COUNT * naSizeof(float))
+typedef float NABabyColor[NA_BABY_COLOR_CHANNEL_COUNT];
 
-typedef NABabyColorValueType NABabyColor[NA_BABY_COLOR_CHANNEL_COUNT];
-
-NA_IAPI float naUnlinearizeColorValue(float value);
+// Linearizes or unlinearizes a single float value using a baby transformation.
 NA_IAPI float naLinearizeColorValue(float value);
+NA_IAPI float naUnlinearizeColorValue(float value);
 
+// Converts between BabyColor and an uint8 representation.
 // When premultiplied is set to NA_TRUE, the uint8 variant is assumed to be
 // premultiplied with the alpha values.
-NA_API void naFillUInt8WithBabyColor(uint8* outcolor, const float* incolor, NABool premultiplied);
-NA_API void naFillBabyColorWithUInt8(float* outcolor, const uint8* incolor, NABool premultiplied);
+NA_API void naFillUInt8WithBabyColor(
+  uint8* outcolor,
+  const NABabyColor incolor,
+  NABool premultiplied);
+NA_API void naFillBabyColorWithUInt8(
+  NABabyColor outcolor,
+  const uint8* incolor,
+  NABool premultiplied);
 
 
 
-// This factor is nice and easy to remember.
+// This factor is nice and easy to remember. There is no greater mathematical
+// purpose in this number. It's just nice.
 #define NA_BABY_FACTOR 0.75f
 
 NA_IDEF float naUnlinearizeColorValue(float value){
@@ -67,26 +75,6 @@ NA_IDEF float naLinearizeColorValue(float value){
 }
 
 
-
-//NA_IDEF float naUnlinearizeColorValue(float value){
-//  return value;
-//}
-//NA_IDEF float naLinearizeColorValue(float value){
-//  return value;
-//}
-
-
-
-#define NA_BABY_GAMMA 2.2f
-#include "NAMathOperators.h"
-
-//NA_IDEF float naUnlinearizeColorValue(float value){
-//  float invgamma = 1.f / NA_BABY_GAMMA;
-//  return naPowf(value, invgamma);
-//}
-//NA_IDEF float naLinearizeColorValue(float value){
-//  return naPowf(value, NA_BABY_GAMMA);
-//}
 
 
 #ifdef __cplusplus

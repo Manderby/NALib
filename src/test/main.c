@@ -57,9 +57,9 @@ NABool cubExitWindowMouse(NAReaction reaction){
 void prestartup(void* arg){
   NA_UNUSED(arg);
   trFinanceGroup = naRegisterTranslatorGroup();
-  #include "translationsFinance.h"
+  #include "translationsFinance.txt"
   trGeneralGroup = naRegisterTranslatorGroup();
-  #include "translationsGeneral.h"
+  #include "translationsGeneral.txt"
 }
 
 void initOpenGLSpace(void* initData){

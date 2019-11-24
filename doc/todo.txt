@@ -9,8 +9,6 @@ Future
 - malloc uint
 - NAComplexPolar
 - All todos
-- Fully implement NAString without always-cache
-- Remove old commented code
 - Documentation
 - int uint
 - Iterators store start and end.
@@ -29,4 +27,4 @@ Future
 - Timezones
 - NASocket
 - URL
-- CODATA 2018
+- CODATA 2022

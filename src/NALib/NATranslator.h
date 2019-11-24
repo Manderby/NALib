@@ -8,6 +8,65 @@
   extern "C"{
 #endif
 
+// ////////////////
+// A translator is a very basic way of adding multilingual support to an
+// application. You need to define some ids but it then works without external
+// tools or preprocessors but still allows you to use translator files which
+// can be translated independently.
+//
+// A translator file is a simple UTF-8 encoded text file with contents like
+// the following:
+//
+// // English
+// NA_LOC_LANG("eng");
+// NA_LOC(HELLO_WORLD,            "Hello World");
+// NA_LOC(99_BEER,                "99 Bottles of beer");
+// NA_LOC(BREADCRUMBS_BEAVERSPIT, "Bread crumbs and beaver spit");
+//
+// // German
+// NA_LOC_LANG("deu");
+// NA_LOC(HELLO_WORLD,            "Hallo Welt");
+// NA_LOC(99_BEER,                "99 Flaschen Bier");
+// NA_LOC(BREADCRUMBS_BEAVERSPIT, "Brotkrumen und Biberspucke");
+//
+// You can use // comments and split the content into as many files you like.
+// These textfiles are then simply included into your application code:
+// 
+// void myInitTranslations(){
+//   myTranslatorGroup = naRegisterTranslatorGroup();
+//   #include "../res/translations/eng.txt"
+//   #include "../res/translations/deu.txt"
+// }
+//
+// The myTranslatorGroup is an NAInt identifying a group of translations.
+// For example, your application has a group "myAppTranslations" but you might
+// compile this project together with a separate project which definies and
+// includes its own strings in a group called "MyConverterTranslations" 
+//
+// In order for the includes to work, somewhere, an enum must be defined,
+// declaring the identifiers of the translation items:
+//
+//typedef enum{
+//  HELLO_WORLD,
+//  99_BEER,
+//  BREADCRUMBS_BEAVERSPIT
+//} SomeTranslationsNeededInMyApplication;
+//
+// Be sure to have called naStartTranslator() somewere before including your
+// translator files. Note that when using naStartApplication(), a translator
+// will already have been started for you.
+//
+// Finally, when you want to have a translated string, you call naTranslate
+// with the desired group and string identifier.
+//
+// printf ("%s\n", naTranslate(myTranslatorGroup, BREADCRUMBS_BEAVERSPIT));
+//
+// To switch the language, you can use naSetTranslatorLanguagePreference but
+// when working with an naApplication, you will not need to switch at all, as
+// the user-preferred language of the system will automatically be detected.
+
+
+
 typedef struct NATranslator NATranslator;
 
 #include "NABase.h"
@@ -69,6 +128,8 @@ NA_API void naInsertTranslatorString(NAInt id, NAUTF8Char* str);
 // call this function in backwards order with "fra" first, and then "eng".
 // Note that if you never call this function, the existing language from
 // string registering will automatically be available in order of insertion.
+// Also note that when using naStartApplication, the user preferences of the
+// system will automatically be set for you.
 NA_API void naSetTranslatorLanguagePreference(NALanguageCode3 code);
 
 // Returns the UTF8-String of the given id in the given group, according to

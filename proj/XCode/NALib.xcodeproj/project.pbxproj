@@ -288,9 +288,9 @@
 		90D6EC2C22B5C95000E752C5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		90D6EC2D22B5C95000E752C5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		90D6EC2F22B5C95000E752C5 /* testCocoa.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = testCocoa.entitlements; sourceTree = "<group>"; };
-		90D6EC6022C2B75A00E752C5 /* translationsGeneral.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = translationsGeneral.h; sourceTree = "<group>"; };
+		90D6EC6022C2B75A00E752C5 /* translationsGeneral.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = translationsGeneral.txt; sourceTree = "<group>"; };
 		90D6EC6122C2B9C400E752C5 /* translationIDs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = translationIDs.h; sourceTree = "<group>"; };
-		90F4B9AF22C51F4A0027E5F2 /* translationsFinance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = translationsFinance.h; sourceTree = "<group>"; };
+		90F4B9AF22C51F4A0027E5F2 /* translationsFinance.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = translationsFinance.txt; sourceTree = "<group>"; };
 		B9B2EA121716922700943D91 /* test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = test; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -315,44 +315,44 @@
 		9047843323749C18007AB965 /* NALib */ = {
 			isa = PBXGroup;
 			children = (
-				9047843423749C18007AB965 /* NAMathConstants.h */,
-				9047843523749C18007AB965 /* NAMemory.h */,
+				9047843A23749C18007AB965 /* NAArray.h */,
+				904784DA23749C18007AB965 /* NABabyColor.h */,
+				9047843F23749C18007AB965 /* NABabyImage.h */,
+				9047847323749C18007AB965 /* NABase */,
+				9047843823749C18007AB965 /* NABase.h */,
+				9047848F23749C18007AB965 /* NABinaryData.h */,
+				9047843923749C18007AB965 /* NABuffer.h */,
+				904784AA23749C18007AB965 /* NACircularBuffer.h */,
 				9047843623749C18007AB965 /* NAComplex.h */,
 				9047843723749C18007AB965 /* NAConfiguration.h */,
-				9047843823749C18007AB965 /* NABase.h */,
-				9047843923749C18007AB965 /* NABuffer.h */,
-				9047843A23749C18007AB965 /* NAArray.h */,
-				9047843B23749C18007AB965 /* NAThreading.h */,
-				9047843C23749C18007AB965 /* NAStack.h */,
-				9047843D23749C18007AB965 /* NADeflate.h */,
-				9047843E23749C18007AB965 /* NAList.h */,
-				9047843F23749C18007AB965 /* NABabyImage.h */,
-				9047844023749C18007AB965 /* NAString.h */,
-				9047844123749C18007AB965 /* NARandom.h */,
-				9047844223749C18007AB965 /* NAPreferences.h */,
-				9047844323749C18007AB965 /* NAStruct */,
-				9047847323749C18007AB965 /* NABase */,
-				9047848223749C18007AB965 /* NAURL.h */,
-				9047848323749C18007AB965 /* NAHeap.h */,
-				9047848423749C18007AB965 /* NAVisual */,
-				9047848923749C18007AB965 /* NAPNG.h */,
-				9047848A23749C18007AB965 /* NAFile.h */,
-				9047848B23749C18007AB965 /* NAMoney.h */,
-				9047848C23749C18007AB965 /* NAVectorAlgebra.h */,
-				9047848D23749C18007AB965 /* NAMathOperators.h */,
-				9047848E23749C18007AB965 /* NADateTime.h */,
-				9047848F23749C18007AB965 /* NABinaryData.h */,
-				9047849023749C18007AB965 /* NAUI.h */,
-				9047849123749C18007AB965 /* NACore */,
-				904784A823749C18007AB965 /* NAKey.h */,
-				904784A923749C18007AB965 /* NATree.h */,
-				904784AA23749C18007AB965 /* NACircularBuffer.h */,
-				904784AB23749C18007AB965 /* NAEnvironment */,
-				904784DA23749C18007AB965 /* NABabyColor.h */,
-				904784DB23749C18007AB965 /* NAMath */,
-				904784F223749C18007AB965 /* NATranslator.h */,
 				904784F323749C18007AB965 /* NACoord.h */,
+				9047849123749C18007AB965 /* NACore */,
+				9047848E23749C18007AB965 /* NADateTime.h */,
+				9047843D23749C18007AB965 /* NADeflate.h */,
+				904784AB23749C18007AB965 /* NAEnvironment */,
+				9047848A23749C18007AB965 /* NAFile.h */,
+				9047848323749C18007AB965 /* NAHeap.h */,
+				904784A823749C18007AB965 /* NAKey.h */,
+				9047843E23749C18007AB965 /* NAList.h */,
+				904784DB23749C18007AB965 /* NAMath */,
+				9047843423749C18007AB965 /* NAMathConstants.h */,
+				9047848D23749C18007AB965 /* NAMathOperators.h */,
+				9047843523749C18007AB965 /* NAMemory.h */,
+				9047848B23749C18007AB965 /* NAMoney.h */,
+				9047848923749C18007AB965 /* NAPNG.h */,
 				904784F423749C18007AB965 /* NAPool.h */,
+				9047844223749C18007AB965 /* NAPreferences.h */,
+				9047844123749C18007AB965 /* NARandom.h */,
+				9047843C23749C18007AB965 /* NAStack.h */,
+				9047844023749C18007AB965 /* NAString.h */,
+				9047844323749C18007AB965 /* NAStruct */,
+				9047843B23749C18007AB965 /* NAThreading.h */,
+				904784F223749C18007AB965 /* NATranslator.h */,
+				904784A923749C18007AB965 /* NATree.h */,
+				9047849023749C18007AB965 /* NAUI.h */,
+				9047848223749C18007AB965 /* NAURL.h */,
+				9047848C23749C18007AB965 /* NAVectorAlgebra.h */,
+				9047848423749C18007AB965 /* NAVisual */,
 			);
 			name = NALib;
 			path = ../../src/NALib;
@@ -666,8 +666,8 @@
 				90AF3C2A22A2617B004B1786 /* heaptest.c */,
 				90BC6ECA2098A38D00CBD0FD /* int64test.c */,
 				90250F2421ADD313009BE5A3 /* main.c */,
-				90F4B9AF22C51F4A0027E5F2 /* translationsFinance.h */,
-				90D6EC6022C2B75A00E752C5 /* translationsGeneral.h */,
+				90F4B9AF22C51F4A0027E5F2 /* translationsFinance.txt */,
+				90D6EC6022C2B75A00E752C5 /* translationsGeneral.txt */,
 				90D6EC6122C2B9C400E752C5 /* translationIDs.h */,
 			);
 			name = test;

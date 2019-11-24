@@ -4,16 +4,8 @@
 
 
 #include "../NABabyColor.h"
-//#include "../NAMathOperators.h"
 
 
-
-//NA_IDEF float naUnlinearizeColorValue(float value){
-//  return value / (.7f * value + .3f);
-//}
-//NA_IDEF float naLinearizeColorValue(float value){
-//  return .3f * value / (1.f - .7f * value);
-//}
 
 NA_HIDEF void naUnlinearizeRGB(float* outcolor, const float* incolor){
   outcolor[0] = naUnlinearizeColorValue(incolor[0]);
@@ -48,7 +40,7 @@ NA_HIDEF void naLinearizeRGB(float* outcolor, const float* incolor){
 
 
 
-NA_DEF void naFillUInt8WithBabyColor(uint8* outcolor, const float* incolor, NABool premultiplied){
+NA_DEF void naFillUInt8WithBabyColor(uint8* outcolor, const NABabyColor incolor, NABool premultiplied){
   float tmpcolor[4];
   naUnlinearizeRGB(tmpcolor, incolor);
   tmpcolor[3] = incolor[3];
@@ -65,7 +57,7 @@ NA_DEF void naFillUInt8WithBabyColor(uint8* outcolor, const float* incolor, NABo
 
 
 
-NA_DEF void naFillBabyColorWithUInt8(float* outcolor, const uint8* incolor, NABool premultiplied){
+NA_DEF void naFillBabyColorWithUInt8(NABabyColor outcolor, const uint8* incolor, NABool premultiplied){
   
   if(!incolor[3]){
     outcolor[0] = 0.f;

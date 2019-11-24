@@ -3,8 +3,8 @@
 // Full license notice at the bottom.
 
 #include "../NATranslator.h"
-#include "../NAStack.h"
 #include "../NATree.h"
+#include "../NAList.h"
 #include "../NAString.h"
 #include "../NAUI.h"
 #include "NAUICore.h"
