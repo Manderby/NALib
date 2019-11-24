@@ -4,7 +4,7 @@
 
 
 #include "../NABabyColor.h"
-
+#include "../NAMathOperators.h"
 
 
 NA_HIDEF void naUnlinearizeRGB(float* outcolor, const float* incolor){
@@ -19,57 +19,79 @@ NA_HIDEF void naLinearizeRGB(float* outcolor, const float* incolor){
   outcolor[2] = naLinearizeColorValue(incolor[2]);
 }
 
-// This is an reference implementation using a simplified gamma of 2.2
-// But as it is using the pow function, it is considerably slower than the
-// implementation above.
-//
-//#define NA_BABY_GAMMA 2.2f
-//
-//NA_HIDEF void naUnlinearizeRGB(float* outcolor, const float* incolor){
-//  float invgamma = 1.f / NA_BABY_GAMMA;
-//  outcolor[0] = naPowf(incolor[0], invgamma);
-//  outcolor[1] = naPowf(incolor[1], invgamma);
-//  outcolor[2] = naPowf(incolor[2], invgamma);
-//}
-//
-//NA_HIDEF void naLinearizeRGB(float* outcolor, const float* incolor){
-//  outcolor[0] = naPowf(incolor[0], NA_BABY_GAMMA);
-//  outcolor[1] = naPowf(incolor[1], NA_BABY_GAMMA);
-//  outcolor[2] = naPowf(incolor[2], NA_BABY_GAMMA);
-//}
 
 
+NA_HIDEF void naLimitColorComponentUInt8(uint8* outvalue, const float invalue){
+  if(invalue < 0.f){
+    *outvalue = 0;
+  }else if(invalue > 1.f){
+    *outvalue = 255;
+  }else{
+    *outvalue = (uint8)(invalue * 255);
+  }
+}
 
-NA_DEF void naFillUInt8WithBabyColor(uint8* outcolor, const NABabyColor incolor, NABool premultiplied){
+NA_DEF void naFillUInt8WithBabyColor(uint8* outcolor, const NABabyColor incolor, NAColorBufferType bufferType){
   float tmpcolor[4];
   naUnlinearizeRGB(tmpcolor, incolor);
-  tmpcolor[3] = incolor[3];
-  if(premultiplied){
+
+  switch(bufferType){
+  case NA_COLOR_BUFFER_RGBA:
+    tmpcolor[3] = incolor[3];
+    naLimitColorComponentUInt8(&outcolor[0], tmpcolor[0]);
+    naLimitColorComponentUInt8(&outcolor[1], tmpcolor[1]);
+    naLimitColorComponentUInt8(&outcolor[2], tmpcolor[2]);
+    naLimitColorComponentUInt8(&outcolor[3], tmpcolor[3]);
+    break;
+  case NA_COLOR_BUFFER_RGBAPre:
+    tmpcolor[3] = incolor[3];
     tmpcolor[0] *= incolor[3];
     tmpcolor[1] *= incolor[3];
     tmpcolor[2] *= incolor[3];
+    naLimitColorComponentUInt8(&outcolor[0], tmpcolor[0]);
+    naLimitColorComponentUInt8(&outcolor[1], tmpcolor[1]);
+    naLimitColorComponentUInt8(&outcolor[2], tmpcolor[2]);
+    naLimitColorComponentUInt8(&outcolor[3], tmpcolor[3]);
+    break;
+  case NA_COLOR_BUFFER_RGB:
+    naLimitColorComponentUInt8(&outcolor[0], tmpcolor[0]);
+    naLimitColorComponentUInt8(&outcolor[1], tmpcolor[1]);
+    naLimitColorComponentUInt8(&outcolor[2], tmpcolor[2]);
+    break;
+  case NA_COLOR_BUFFER_BGR0:
+    naLimitColorComponentUInt8(&outcolor[0], tmpcolor[2]);
+    naLimitColorComponentUInt8(&outcolor[1], tmpcolor[1]);
+    naLimitColorComponentUInt8(&outcolor[2], tmpcolor[0]);
+    naLimitColorComponentUInt8(&outcolor[3], 0);
+    break;
   }
-  if(tmpcolor[0] < 0.f){outcolor[0] = 0;}else if(tmpcolor[0] > 1.f){outcolor[0] = 255;}else{outcolor[0] = (uint8)(tmpcolor[0] * 255);}
-  if(tmpcolor[1] < 0.f){outcolor[1] = 0;}else if(tmpcolor[1] > 1.f){outcolor[1] = 255;}else{outcolor[1] = (uint8)(tmpcolor[1] * 255);}
-  if(tmpcolor[2] < 0.f){outcolor[2] = 0;}else if(tmpcolor[2] > 1.f){outcolor[2] = 255;}else{outcolor[2] = (uint8)(tmpcolor[2] * 255);}
-  if(tmpcolor[3] < 0.f){outcolor[3] = 0;}else if(tmpcolor[3] > 1.f){outcolor[3] = 255;}else{outcolor[3] = (uint8)(tmpcolor[3] * 255);}
 }
 
 
 
-NA_DEF void naFillBabyColorWithUInt8(NABabyColor outcolor, const uint8* incolor, NABool premultiplied){
-  
-  if(!incolor[3]){
+NA_DEF void naFillBabyColorWithUInt8(NABabyColor outcolor, const uint8* incolor, NAColorBufferType bufferType){
+  float tmpcolor[4];
+  float inv = 1.f / 255.f;
+
+  if(!incolor[3] && (bufferType != NA_COLOR_BUFFER_RGB) && bufferType != NA_COLOR_BUFFER_BGR0){
     outcolor[0] = 0.f;
     outcolor[1] = 0.f;
     outcolor[2] = 0.f;
     outcolor[3] = 0.f;
   }else{
-    float tmpcolor[4];
-    float inv = 1.f / 255.f;
-    outcolor[3] = (float)incolor[3] * inv;
-    if(premultiplied){
-      inv /= outcolor[3];
+    switch(bufferType){
+    case NA_COLOR_BUFFER_RGBA:
+      outcolor[3] = (float)incolor[3] * inv;
+      break;
+    case NA_COLOR_BUFFER_RGBAPre:
+      outcolor[3] = (float)incolor[3] * inv;
+      inv = naInvf((float)incolor[3]);
+      break;
+    case NA_COLOR_BUFFER_RGB:
+      break;
+    case NA_COLOR_BUFFER_BGR0:
+      outcolor[3] = 1.f;
+      break;
     }
     tmpcolor[0] = (float)incolor[0] * inv;
     tmpcolor[1] = (float)incolor[1] * inv;

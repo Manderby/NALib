@@ -95,7 +95,7 @@ NA_API void naFillBabyImageWithUInt8(
   NABabyImage* image,
   const void* data,
   NABool toptobottom,
-  NABool premultiplied);
+  NAColorBufferType bufferType);
 
 // Writes the contents of the image into a buffer. The output data will be
 // RGBA values stored as uint8 with no padding. The data buffer must be big
@@ -105,7 +105,7 @@ NA_API void naConvertBabyImageToUInt8(
   const NABabyImage* image,
   void* data,
   NABool toptobottom,
-  NABool premultiplied);
+  NAColorBufferType bufferType);
 
 
 #ifdef __cplusplus

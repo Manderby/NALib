@@ -275,7 +275,7 @@ NA_DEF void naReleaseBabyImage(NABabyImage* image){
 
 
 
-NA_DEF void naFillBabyImageWithUInt8(NABabyImage* image, const void* data, NABool toptobottom, NABool premultiplied){
+NA_DEF void naFillBabyImageWithUInt8(NABabyImage* image, const void* data, NABool toptobottom, NAColorBufferType bufferType){
   float* imgptr = image->data;
   const uint8* uint8ptr;
 
@@ -285,7 +285,7 @@ NA_DEF void naFillBabyImageWithUInt8(NABabyImage* image, const void* data, NABoo
     for(y = 0; y < size.height; y++){
       uint8ptr = &(((uint8*)data)[(size.height - y - 1) * naGetBabyImageValuesPerLine(image)]);
       for(x = 0; x < size.width; x++){
-        naFillBabyColorWithUInt8(imgptr, uint8ptr, premultiplied);
+        naFillBabyColorWithUInt8(imgptr, uint8ptr, bufferType);
         imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
         uint8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
       }
@@ -296,7 +296,7 @@ NA_DEF void naFillBabyImageWithUInt8(NABabyImage* image, const void* data, NABoo
     uint8ptr = data;
     pixelCount = naGetBabyImagePixelCount(image);
     for(i = 0; i < pixelCount; i++){
-      naFillBabyColorWithUInt8(imgptr, uint8ptr, premultiplied);
+      naFillBabyColorWithUInt8(imgptr, uint8ptr, bufferType);
       imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
       uint8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
     }
@@ -305,7 +305,7 @@ NA_DEF void naFillBabyImageWithUInt8(NABabyImage* image, const void* data, NABoo
 
 
 
-NA_DEF void naConvertBabyImageToUInt8(const NABabyImage* image, void* data, NABool toptobottom, NABool premultiplied){
+NA_DEF void naConvertBabyImageToUInt8(const NABabyImage* image, void* data, NABool toptobottom, NAColorBufferType bufferType){
   const float* imgptr = image->data;
   uint8* uint8ptr;
 
@@ -315,7 +315,7 @@ NA_DEF void naConvertBabyImageToUInt8(const NABabyImage* image, void* data, NABo
     for(y = 0; y < size.height; y++){
       uint8ptr = &(((uint8*)data)[(size.height - y - 1) * naGetBabyImageValuesPerLine(image)]);
       for(x = 0; x < size.width; x++){
-        naFillUInt8WithBabyColor(uint8ptr, imgptr, premultiplied);
+        naFillUInt8WithBabyColor(uint8ptr, imgptr, bufferType);
         imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
         uint8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
       }
@@ -326,7 +326,7 @@ NA_DEF void naConvertBabyImageToUInt8(const NABabyImage* image, void* data, NABo
     uint8ptr = data;
     pixelCount = naGetBabyImagePixelCount(image);
     for(i = 0; i < pixelCount; i++){
-      naFillUInt8WithBabyColor(uint8ptr, imgptr, premultiplied);
+      naFillUInt8WithBabyColor(uint8ptr, imgptr, bufferType);
       imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
       uint8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
     }

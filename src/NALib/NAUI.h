@@ -597,8 +597,7 @@ NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 NA_API NABool naGetSpaceAlternateBackground(NASpace* space);
 
 // ImageSpace
-NA_API NAImageSpace* naNewImageSpace(NASize size);
-NA_API void naSetImageSpacePath(NAImageSpace* imagespace, const NAUTF8Char* imagePath);
+NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size);
 
 // OpenGLSpace
 #if NA_CONFIG_COMPILE_OPENGL == 1

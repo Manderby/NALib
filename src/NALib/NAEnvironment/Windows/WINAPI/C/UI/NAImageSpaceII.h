@@ -12,7 +12,11 @@
 typedef struct NAWINAPIImageSpace NAWINAPIImageSpace;
 struct NAWINAPIImageSpace {
   NACoreImageSpace coreimagespace;
+  NAUIImage* image;
 };
+
+
+NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (NAUIElement* uielement);
 
 
 
@@ -20,6 +24,20 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(NAUIElement* uielement, UINT message
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
+  case WM_WINDOWPOSCHANGING:
+  case WM_CHILDACTIVATE:
+  case WM_WINDOWPOSCHANGED:
+  case WM_MOVE:
+  case WM_SHOWWINDOW:
+  case WM_NCPAINT:
+  case WM_ERASEBKGND:
+    break;
+
+  case WM_PAINT:
+    naImageSpaceWINAPIDrawItem(uielement);
+    info.hasbeenhandeled = NA_TRUE;
+    break;
+
   default:
     //printf("Uncaught Image Space message\n");
     break;
@@ -30,44 +48,84 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(NAUIElement* uielement, UINT message
 
 
 
-//@implementation NANativeImageSpace
-//- (id) initWithCoreImageSpace:(NACoreImageSpace*)newcoreimagespace frame:(NSRect)frame{
-//  self = [super initWithFrame:frame];
-//  coreimagespace = newcoreimagespace;
-//  return self;
-//}
-//- (void) setImageURL:(const NAUTF8Char*)imagePath{
-//  NSURL* url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:imagePath]];
-//  NSImage* image = NA_COCOA_AUTORELEASE([[NSImage alloc] initWithContentsOfURL:url]);
-//  [self setImage:image];
-//}
-//@end
+NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (NAUIElement* uielement){
+  PAINTSTRUCT paintStruct;
+  HBITMAP hOldBitmap;
+  BeginPaint(naGetUIElementNativeID(uielement), &paintStruct);
+  HDC hMemDC = CreateCompatibleDC(paintStruct.hdc);
+
+  NAWINAPIImageSpace* imagespace = (NAWINAPIImageSpace*)uielement;
+  NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
+
+  NASizei size1x = naGetUIImage1xSize(imagespace->image);
+
+  NABabyImage* foreImage = naGetUIImageBabyImage(imagespace->image, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_LIGHT);
+
+  // We store the background where the image will be placed.
+  NAByte* backBuffer = naMalloc(size1x.width * size1x.height * 4);
+  HBITMAP hBackBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, backBuffer);
+  hOldBitmap = SelectObject(hMemDC, hBackBitmap);
+  BitBlt(hMemDC, 0, 0, (int)size1x.width, (int)size1x.height, paintStruct.hdc, 0, 0, SRCCOPY);
+  NABabyImage* backImage = naCreateBabyImageFromNativeImage(hBackBitmap);
+
+  // Now we blend manually the foreground to the background.
+  NABabyImage* blendedImage = naCreateBabyImageWithBlend(backImage, foreImage, NA_BLEND_OVERLAY, 1.f);
+  NAByte* blendedBuffer = naMalloc(size1x.width * size1x.height * 4);
+  naConvertBabyImageToUInt8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
+  HBITMAP hBlendedBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, blendedBuffer);
+
+  // Finally, we put the blended image onscreen.
+  SelectObject(hMemDC, hBlendedBitmap);
+  BitBlt(paintStruct.hdc, 0, 0, (int)size1x.width, (int)size1x.height, hMemDC, 0, 0, SRCCOPY);
+  SelectObject(hMemDC, hOldBitmap);
+
+  // Deleting the blended objects and buffers
+  DeleteObject(hBlendedBitmap);
+  naFree(blendedBuffer);
+  naReleaseBabyImage(blendedImage);
+
+  // Deleting background objects and buffers
+  DeleteObject(hBackBitmap);
+  naFree(backBuffer);
+  naReleaseBabyImage(backImage);
+
+  // Deleting device contexts
+  DeleteDC(hMemDC);
+  ReleaseDC(naGetUIElementNativeID(uielement), paintStruct.hdc);
+  EndPaint(naGetUIElementNativeID(uielement), &paintStruct);
+
+  return info;
+}
 
 
 
-NA_DEF NAImageSpace* naNewImageSpace(NASize size){
-//  NACoreImageSpace* coreImageSpace = naAlloc(NACoreImageSpace);
-//
-//  NSRect contentRect = naMakeNSRectWithRect(rect);
-//  NANativeImageSpace* nativeImageSpace = [[NANativeImageSpace alloc] initWithCoreImageSpace:coreImageSpace frame:contentRect];  
-//  naInitCoreImageSpace(coreImageSpace, NA_COCOA_TAKE_OWNERSHIP(nativeImageSpace));
-//  
-//  return (NAImageSpace*)coreImageSpace;
-  return NA_NULL;
+NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
+  HWND hWnd;
+  DWORD exStyle;
+  DWORD style;
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+
+  NAWINAPIImageSpace* winapiimagespace = naAlloc(NAWINAPIImageSpace);
+
+  exStyle = 0;
+  style = WS_CHILD | WS_VISIBLE;
+
+	hWnd = CreateWindow(
+		TEXT("NASpace"), TEXT("Space"), style,
+		0, 0, (int)size.width, (int)size.height,
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+
+  naInitCoreImageSpace(&(winapiimagespace->coreimagespace), hWnd);
+  winapiimagespace->image = uiimage;
+
+  return (NAImageSpace*)winapiimagespace;
 }
 
 
 
 NA_DEF void naDestructImageSpace(NAImageSpace* imagespace){
-//  NACoreImageSpace* coreimagespace = (NACoreImageSpace*)imagespace;
-//  naClearCoreImageSpace(coreimagespace);
-}
-
-
-
-NA_DEF void naSetImageSpacePath(NAImageSpace* imagespace, const NAUTF8Char* imagePath){
-//  naDefineNativeCocoaObject(NANativeImageSpace, nativeimagespace, imagespace);
-//  [nativeimagespace setImageURL:imagePath];
+  NAWINAPIImageSpace* winapiimagespace = (NAWINAPIImageSpace*)imagespace;
+  naClearCoreImageSpace(&(winapiimagespace->coreimagespace));
 }
 
 

@@ -17,7 +17,7 @@ NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeimage){
   CFDataRef rawData = CGDataProviderCopyData(CGImageGetDataProvider((CGImageRef)nativeimage));
   image = naCreateBabyImage(naMakeSizei((NAInt)CGImageGetWidth((CGImageRef)nativeimage), (NAInt)CGImageGetHeight((CGImageRef)nativeimage)), NA_NULL);
   // Note that reading PNG files directly does not premultiply alpha!
-  naFillBabyImageWithUInt8(image, CFDataGetBytePtr(rawData), NA_TRUE, NA_FALSE);
+  naFillBabyImageWithUInt8(image, CFDataGetBytePtr(rawData), NA_COLOR_BUFFER_RGBAPre);
   CFRelease(rawData);
   
   return image;
@@ -50,7 +50,7 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
   CGContextRef cgcontext = CGBitmapContextCreateWithData(NULL, (size_t)imageSize.width, (size_t)imageSize.height, 8, (size_t)naGetBabyImageValuesPerLine(image), colorSpace, kCGImageAlphaPremultipliedLast, NULL, NULL);
 
   uint8* imgdata = CGBitmapContextGetData(cgcontext);
-  naConvertBabyImageToUInt8(image, imgdata, NA_TRUE, NA_TRUE);
+  naConvertBabyImageToUInt8(image, imgdata, NA_TRUE, NA_COLOR_BUFFER_RGBAPre);
   
   nativeimage = CGBitmapContextCreateImage(cgcontext);
   CGContextRelease(cgcontext);

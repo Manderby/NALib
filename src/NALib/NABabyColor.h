@@ -45,6 +45,14 @@
   (NA_BABY_COLOR_CHANNEL_COUNT * naSizeof(float))
 typedef float NABabyColor[NA_BABY_COLOR_CHANNEL_COUNT];
 
+typedef enum{
+  NA_COLOR_BUFFER_RGBA,
+  NA_COLOR_BUFFER_RGBAPre,
+  NA_COLOR_BUFFER_RGB,
+  NA_COLOR_BUFFER_BGR0,
+} NAColorBufferType;
+
+
 // Linearizes or unlinearizes a single float value using a baby transformation.
 NA_IAPI float naLinearizeColorValue(float value);
 NA_IAPI float naUnlinearizeColorValue(float value);
@@ -55,11 +63,11 @@ NA_IAPI float naUnlinearizeColorValue(float value);
 NA_API void naFillUInt8WithBabyColor(
   uint8* outcolor,
   const NABabyColor incolor,
-  NABool premultiplied);
+  NAColorBufferType bufferType);
 NA_API void naFillBabyColorWithUInt8(
   NABabyColor outcolor,
   const uint8* incolor,
-  NABool premultiplied);
+  NAColorBufferType bufferType);
 
 
 
@@ -73,7 +81,6 @@ NA_IDEF float naUnlinearizeColorValue(float value){
 NA_IDEF float naLinearizeColorValue(float value){
   return (1.f - NA_BABY_FACTOR) * value / (1.f - NA_BABY_FACTOR * value);
 }
-
 
 
 

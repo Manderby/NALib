@@ -24,7 +24,7 @@
 
 
 
-NA_DEF NAImageSpace* naNewImageSpace(NASize size){
+NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
   NACoreImageSpace* coreImageSpace = naAlloc(NACoreImageSpace);
 
   NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
@@ -39,13 +39,6 @@ NA_DEF NAImageSpace* naNewImageSpace(NASize size){
 NA_DEF void naDestructImageSpace(NAImageSpace* imagespace){
   NACoreImageSpace* coreimagespace = (NACoreImageSpace*)imagespace;
   naClearCoreImageSpace(coreimagespace);
-}
-
-
-
-NA_DEF void naSetImageSpacePath(NAImageSpace* imagespace, const NAUTF8Char* imagePath){
-  naDefineNativeCocoaObject(NANativeImageSpace, nativeimagespace, imagespace);
-  [nativeimagespace setImageURL:imagePath];
 }
 
 

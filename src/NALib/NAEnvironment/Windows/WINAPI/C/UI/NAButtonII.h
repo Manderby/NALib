@@ -15,7 +15,6 @@ struct NAWINAPIButton {
   NAUIImage* image;
 };
 
-void drawImage(NACoreUIElement* uielement);
 
 
 NAWINAPICallbackInfo naButtonWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
@@ -57,34 +56,6 @@ NAWINAPICallbackInfo naButtonWINAPIProc(NAUIElement* uielement, UINT message, WP
   return info;
 }
 
-#define IMG_WIDTH 100
-#define IMG_HEIGHT 10
-
-//HBITMAP createBitmap(){
-//  NAByte* buffer = naMalloc(IMG_WIDTH * IMG_HEIGHT * 4 * 2);
-//  for(int i = 0; i < IMG_WIDTH * IMG_HEIGHT * 4 * 2; i++){
-//    buffer[i] = 128;
-//  }
-//
-//  HBITMAP hNewBitmap = CreateBitmap(IMG_WIDTH, IMG_HEIGHT, 1, 32, buffer);
-//  naFree(buffer);
-//  return hNewBitmap;
-//}
-//
-//void drawImage(NACoreUIElement* uielement){
-//  HDC hDC = GetDC(naGetUIElementNativeID(uielement));
-//  HDC hMemDC = CreateCompatibleDC(hDC);
-//  HBITMAP hOldBitmap;
-//  HBITMAP hNewBitmap = createBitmap();
-//
-//  hOldBitmap = SelectObject(hMemDC, hNewBitmap);
-//  BitBlt(hDC, 0, 0, IMG_WIDTH, IMG_HEIGHT, hMemDC, 0, 0, SRCCOPY);
-//
-//  SelectObject(hMemDC, hOldBitmap);
-//  DeleteObject(hNewBitmap);
-//  DeleteDC(hMemDC);
-//  ReleaseDC(naGetUIElementNativeID(uielement), hDC);
-//}
 
 
 NAWINAPICallbackInfo naButtonWINAPINotify(NAUIElement* uielement, WORD notificationCode){
@@ -99,31 +70,48 @@ NAWINAPICallbackInfo naButtonWINAPINotify(NAUIElement* uielement, WORD notificat
   return info;
 }
 
+
+
 NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTRUCT* drawitemstruct){
+  HBITMAP hOldBitmap;
+  HDC hMemDC = CreateCompatibleDC(drawitemstruct->hDC);
+
   NAWINAPIButton* button = (NAWINAPIButton*)uielement;
   NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
 
-  HDC hMemDC = CreateCompatibleDC(drawitemstruct->hDC);
-  HBITMAP hOldBitmap;
-
-  HBITMAP hNewBitmap = naGetUIImageNativeImage(button->image, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
-
-
-  //NABabyImage* testimage = naCreateBabyImageFromNativeImage(hNewBitmap);
-
-
-  hOldBitmap = SelectObject(hMemDC, hNewBitmap);
   NASizei size1x = naGetUIImage1xSize(button->image);
 
-  //NAByte* buffer = naMalloc(size1x.width * size1x.height * 4 *2);
-  //HBITMAP hBackBitmap = CreateBitmap(size1x.width, size1x.height, 1, 32, buffer);
-  //BitBlt(hMemDC, 0, 0, size1x.width, size1x.height, drawitemstruct->hDC, 0, 0, SRCCOPY);
+  NABabyImage* foreImage = naGetUIImageBabyImage(button->image, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_LIGHT);
 
+  // We store the background where the image will be placed.
+  NAByte* backBuffer = naMalloc(size1x.width * size1x.height * 4);
+  HBITMAP hBackBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, backBuffer);
+  hOldBitmap = SelectObject(hMemDC, hBackBitmap);
+  BitBlt(hMemDC, 0, 0, (int)size1x.width, (int)size1x.height, drawitemstruct->hDC, 0, 0, SRCCOPY);
+  NABabyImage* backImage = naCreateBabyImageFromNativeImage(hBackBitmap);
+
+  // Now we blend manually the foreground to the background.
+  NABabyImage* blendedImage = naCreateBabyImageWithBlend(backImage, foreImage, NA_BLEND_OVERLAY, 1.f);
+  NAByte* blendedBuffer = naMalloc(size1x.width * size1x.height * 4);
+  naConvertBabyImageToUInt8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
+  HBITMAP hBlendedBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, blendedBuffer);
+
+  // Finally, we put the blended image onscreen.
+  SelectObject(hMemDC, hBlendedBitmap);
   BitBlt(drawitemstruct->hDC, 0, 0, (int)size1x.width, (int)size1x.height, hMemDC, 0, 0, SRCCOPY);
   SelectObject(hMemDC, hOldBitmap);
-  //DeleteObject(hBackBitmap);
-  //naFree(buffer);
 
+  // Deleting the blended objects and buffers
+  DeleteObject(hBlendedBitmap);
+  naFree(blendedBuffer);
+  naReleaseBabyImage(blendedImage);
+
+  // Deleting background objects and buffers
+  DeleteObject(hBackBitmap);
+  naFree(backBuffer);
+  naReleaseBabyImage(backImage);
+
+  // Deleting device contexts
   DeleteDC(hMemDC);
   ReleaseDC(drawitemstruct->hwndItem, drawitemstruct->hDC);
 
@@ -290,13 +278,8 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
-  //HBITMAP hBitmap = createBitmap();
-  //SendMessage(hWnd, BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hBitmap);
-
   naInitCoreButton(&(winapibutton->corebutton), hWnd);
   winapibutton->image = uiimage;
-
-  SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NAButton*)winapibutton;
 }
