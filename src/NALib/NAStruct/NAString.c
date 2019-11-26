@@ -570,71 +570,102 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputstring){
 
 
 #if NA_OS == NA_OS_WINDOWS
-  // Returns a newly allocated memory block containing the system-encoded
-  // string. If you do not provide the length, it will be automatically
-  // computed. The resulting string must be freed manually. COPIES ALWAYS!
-  NA_DEF TCHAR* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8string){
-    TCHAR* outstr;
+  NA_DEF wchar_t* naAllocWideCharStringWithUTF8String(const NAUTF8Char* utf8string){
+    wchar_t* outstr;
     NAUInt length;
     NAString* string = naNewStringWithUTF8CStringLiteral(utf8string);
     NAString* newlinestring = naNewStringWithNewlineSanitization(string, NA_NEWLINE_WIN);
     length = naGetStringBytesize(newlinestring);
     naDelete(string);
-    #ifdef UNICODE
-      NAUInt widelength;
-      widelength = MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), (int)length, NULL, 0);
-      outstr = (TCHAR*)naMalloc(((widelength + 1) * naSizeof(TCHAR)));
-      MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), (int)length, outstr, (int)widelength);
-      outstr[widelength] = 0;
-    #else
-      NAUInt widelength;
-      wchar_t* wstr;
-      widelength = MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), (int)length, NULL, 0);
-      wstr = naMalloc(((widelength + 1) * naSizeof(wchar_t)));
-      MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), (int)length, wstr, (int)widelength);
-      wstr[widelength] = 0;
-      NAUInt ansilength = WideCharToMultiByte(CP_ACP, 0, wstr, (int)widelength, NA_NULL, 0, NA_NULL, NA_NULL);
-      outstr = (TCHAR*)naMalloc(((ansilength + 1) * naSizeof(TCHAR)));
-      WideCharToMultiByte(CP_ACP, 0, wstr, (int)widelength, outstr, (int)ansilength, NA_NULL, NA_NULL);
-      naFree(wstr);
-      outstr[ansilength] = 0;
-    #endif
+    NAUInt widelength;
+    widelength = MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), (int)length, NULL, 0);
+    outstr = (wchar_t*)naMalloc(((widelength + 1) * naSizeof(wchar_t)));
+    MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), (int)length, outstr, (int)widelength);
+    outstr[widelength] = 0;
     naDelete(newlinestring);
     return outstr;
   }
 
-  // Creates a new NAString from a system-encoded string. COPIES ALWAYS!
-  NA_DEF NAString* naNewStringFromSystemString(TCHAR* systemstring){
+  NA_DEF char* naAllocAnsiStringWithUTF8String(const NAUTF8Char* utf8string){
+    char* outstr;
+    NAUInt length;
+    NAString* string = naNewStringWithUTF8CStringLiteral(utf8string);
+    NAString* newlinestring = naNewStringWithNewlineSanitization(string, NA_NEWLINE_WIN);
+    length = naGetStringBytesize(newlinestring);
+    naDelete(string);
+    NAUInt widelength;
+    wchar_t* wstr;
+    // We have to convert UTF8 first to WideChar, then back to 8 bit Ansi.
+    widelength = MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), (int)length, NULL, 0);
+    wstr = naMalloc(((widelength + 1) * naSizeof(wchar_t)));
+    MultiByteToWideChar(CP_UTF8, 0, naGetStringUTF8Pointer(newlinestring), (int)length, wstr, (int)widelength);
+    wstr[widelength] = 0;
+    NAUInt ansilength = WideCharToMultiByte(CP_ACP, 0, wstr, (int)widelength, NA_NULL, 0, NA_NULL, NA_NULL);
+    outstr = (char*)naMalloc(((ansilength + 1) * naSizeof(char)));
+    WideCharToMultiByte(CP_ACP, 0, wstr, (int)widelength, outstr, (int)ansilength, NA_NULL, NA_NULL);
+    naFree(wstr);
+    outstr[ansilength] = 0;
+    naDelete(newlinestring);
+    return outstr;
+  }
+
+  // Returns a newly allocated memory block containing the system-encoded
+  // string. If you do not provide the length, it will be automatically
+  // computed. The resulting string must be freed manually. COPIES ALWAYS!
+  NA_DEF TCHAR* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8string){
+    #ifdef UNICODE
+      return naAllocWideCharStringWithUTF8String(utf8string);
+    #else
+      return naAllocAnsiStringWithUTF8String(utf8string);
+    #endif
+  }
+
+  NA_DEF NAString* naNewStringFromWideCharString(wchar_t* wcharstring){
     NAString* string;
     NAString* newlinestring;
     NAUInt length;
-    #ifdef UNICODE
-      NAInt utf8length;
-      NAUTF8Char* stringbuf;
-      length = wcslen(systemstring);
-      utf8length = WideCharToMultiByte(CP_UTF8, 0, systemstring, (int)length, NULL, 0, NULL, NULL);
-      stringbuf = naMalloc((utf8length + 1) * naSizeof(NAUTF8Char));
-      WideCharToMultiByte(CP_UTF8, 0, systemstring, (int)length, stringbuf, (int)utf8length, NULL, NULL);
-      newlinestring = naNewStringWithMutableUTF8Buffer(stringbuf, utf8length, (NAMutator)naFree);
-    #else
-      NAUInt widelength;
-      wchar_t* wstr;
-      NAUTF8Char* stringbuf;
-      length = strlen(systemstring);
-      widelength = MultiByteToWideChar(CP_ACP, 0, systemstring, (int)length, NULL, 0);
-      wstr = naMalloc(((widelength + 1) * naSizeof(wchar_t)));
-      MultiByteToWideChar(CP_ACP, 0, systemstring, (int)length, wstr, (int)widelength);
-      wstr[widelength] = 0;
-      NAUInt utf8length = WideCharToMultiByte(CP_UTF8, 0, wstr, (int)widelength, NA_NULL, 0, NA_NULL, NA_NULL);
-      stringbuf = (NAUTF8Char*)naMalloc(((utf8length + 1) * naSizeof(NAUTF8Char)));
-      WideCharToMultiByte(CP_UTF8, 0, wstr, (int)widelength, stringbuf, (int)utf8length, NA_NULL, NA_NULL);
-      naFree(wstr);
-      stringbuf[utf8length] = 0;
-      newlinestring = naNewStringWithMutableUTF8Buffer(stringbuf, utf8length, (NAMutator)naFree);
-    #endif
+    NAInt utf8length;
+    NAUTF8Char* stringbuf;
+    length = wcslen(wcharstring);
+    utf8length = WideCharToMultiByte(CP_UTF8, 0, wcharstring, (int)length, NULL, 0, NULL, NULL);
+    stringbuf = naMalloc((utf8length + 1) * naSizeof(NAUTF8Char));
+    WideCharToMultiByte(CP_UTF8, 0, wcharstring, (int)length, stringbuf, (int)utf8length, NULL, NULL);
+    newlinestring = naNewStringWithMutableUTF8Buffer(stringbuf, utf8length, (NAMutator)naFree);
     string = naNewStringWithNewlineSanitization(newlinestring, NA_NEWLINE_UNIX);
     naDelete(newlinestring);
     return string;
+  }
+
+  NA_DEF NAString* naNewStringFromAnsiString(char* ansistring){
+    NAString* string;
+    NAString* newlinestring;
+    NAUInt length;
+    NAUInt widelength;
+    wchar_t* wstr;
+    NAUTF8Char* stringbuf;
+    length = strlen(ansistring);
+    widelength = MultiByteToWideChar(CP_ACP, 0, ansistring, (int)length, NULL, 0);
+    wstr = naMalloc(((widelength + 1) * naSizeof(wchar_t)));
+    MultiByteToWideChar(CP_ACP, 0, ansistring, (int)length, wstr, (int)widelength);
+    wstr[widelength] = 0;
+    NAUInt utf8length = WideCharToMultiByte(CP_UTF8, 0, wstr, (int)widelength, NA_NULL, 0, NA_NULL, NA_NULL);
+    stringbuf = (NAUTF8Char*)naMalloc(((utf8length + 1) * naSizeof(NAUTF8Char)));
+    WideCharToMultiByte(CP_UTF8, 0, wstr, (int)widelength, stringbuf, (int)utf8length, NA_NULL, NA_NULL);
+    naFree(wstr);
+    stringbuf[utf8length] = 0;
+    newlinestring = naNewStringWithMutableUTF8Buffer(stringbuf, utf8length, (NAMutator)naFree);
+    string = naNewStringWithNewlineSanitization(newlinestring, NA_NEWLINE_UNIX);
+    naDelete(newlinestring);
+    return string;
+  }
+
+  // Creates a new NAString from a system-encoded string. COPIES ALWAYS!
+  NA_DEF NAString* naNewStringFromSystemString(TCHAR* systemstring){
+    #ifdef UNICODE
+      return naNewStringFromWideCharString(systemstring);
+    #else
+      return naNewStringFromAnsiString(systemstring);
+    #endif
   }
 #endif
 

@@ -176,12 +176,19 @@ NA_API NAString* naNewStringEPSDecoded(const NAString* inputstring);
 
 #if NA_OS == NA_OS_WINDOWS
 
-  // Returns a newly allocated memory block containing the system-encoded
-  // string. If you do not provide the length, it will be automatically
-  // computed. The resulting string must be freed manually. COPIES ALWAYS!
-  NA_API TCHAR* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8string);
+  // Basic conversion between UTF8 and either UTF16 or Ansi
+  // Returns a newly mallocated memory block containing the encoded
+  // string. The resulting string must be freed manually. COPIES ALWAYS!
+  NA_API wchar_t* naAllocWideCharStringWithUTF8String(const NAUTF8Char* utf8string);
+  NA_API char* naAllocAnsiStringWithUTF8String(const NAUTF8Char* utf8string);
 
-  // Creates a new NAString from a system-encoded string. COPIES ALWAYS!
+  // Creates a new NAString from an encoded string. COPIES ALWAYS!
+  NA_API NAString* naNewStringFromWideCharString(wchar_t* wcharstring);
+  NA_API NAString* naNewStringFromAnsiString(char* ansistring);
+
+  // Conversions based on the application setting.
+  // (See project properties, character set)
+  NA_API TCHAR* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8string);
   NA_API NAString* naNewStringFromSystemString(TCHAR* systemstring);
 
 #endif

@@ -11,6 +11,10 @@
 
 
 NA_HIDEF NSUserDefaults* naGetNativePreferences(){
+  #ifndef NDEBUG
+    if(!naGetApplication())
+      naError("No application running. Use naStartApplication.");
+  #endif
 //  return [[NSUserDefaults alloc] initWithSuiteName:@"XXXXXXX.group.com.mycompany.appidentifier"];
   return [NSUserDefaults standardUserDefaults];
 }
@@ -73,7 +77,7 @@ NA_DEF double naInitPreferencesDouble(const char* key, double value){
   nskey = [NSString stringWithUTF8String:key];
   curValue = [userdefaults doubleForKey:nskey] ;
   if(curValue == 0.){
-    curValue = ((value == 0) ? NA_NAN : value);
+    curValue = ((value == 0.) ? NA_NAN : value);
     [userdefaults setDouble:curValue forKey:nskey];
   }
   return (double)(naIsNaN(curValue) ? 0. : curValue);
@@ -128,7 +132,7 @@ NA_DEF void naSetPreferencesDouble(const char* key, double value){
   #endif
   userdefaults = naGetNativePreferences();
   nskey = [NSString stringWithUTF8String:key];
-  [userdefaults setDouble:((value == 0) ? NA_NAN : value) forKey:nskey];
+  [userdefaults setDouble:((value == 0.) ? NA_NAN : value) forKey:nskey];
 }
 NA_DEF void naSetPreferencesString(const char* key, NAString* value){
   NSUserDefaults* userdefaults;

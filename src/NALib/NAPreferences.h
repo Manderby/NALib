@@ -8,11 +8,16 @@
   extern "C"{
 #endif
 
-
-
 #include "NAString.h"
 
 
+
+// This file allows a programmer to store user preferences for an application.
+// This is a system dependent implementation. On Mac, the NSUserDefaults class
+// is used and on Win, the Registry is used.
+//
+// Please only use ASCII-7 characters to encode keys. Otherwise, it might not
+// work.
 
 // If the given key does not exists yet, creates a preference for it and sets
 // the value. Returns either the value stored or the given default value.
@@ -20,8 +25,8 @@
 NA_API NABool    naInitPreferencesBool    (const char* key, NABool value);
 NA_API NAInt     naInitPreferencesInt     (const char* key, NAInt value);
 NA_API NAInt     naInitPreferencesEnum    (const char* key, NAInt value);
-NA_API double    naInitPreferencesDouble    (const char* key, double value);
-NA_API NAString* naInitPreferencesString    (const char* key, NAString* value);
+NA_API double    naInitPreferencesDouble  (const char* key, double value);
+NA_API NAString* naInitPreferencesString  (const char* key, NAString* value);
 
 // Sets or toggles the preference
 NA_API void   naSetPreferencesBool     (const char* key, NABool value);
