@@ -311,14 +311,27 @@ NA_API void naCallApplicationFunctionInSeconds(  NAMutator function,
 // manually.
 NA_API void naResetApplicationPreferredTranslatorLanguages(void);
 
-// The application binary usually resides in some kind of base package folder
-// and resources are located relative to that location. Using the following
-// functions, you can retrieve various informations.
+// Define basic information about the application. On a mac, these informations
+// can be extracted automatically from a plist file if not defined. On windows
+// though, one has to provide it using the following functions. Note that also
+// on Mac, the settings provided here overwrite anything else.
+NA_API void naSetApplicationName(NAUTF8Char* name);
+NA_API void naSetApplicationCompanyName(NAUTF8Char* name);
+NA_API void naSetApplicationVersionString(NAUTF8Char* string);
+NA_API void naSetApplicationBuildString(NAUTF8Char* string);
+NA_API void naSetApplicationIconPath(NAUTF8Char* path);
+
+// Retrieve the informations. All functions might return NA_NULL.
 NA_API NAString* naNewApplicationName(void);
+NA_API NAString* naNewApplicationCompanyName(void);
 NA_API NAString* naNewApplicationVersionString(void);
 NA_API NAString* naNewApplicationBuildString(void);
 NA_API NAString* naNewApplicationIconPath(void);
-// dir can be Null to search in the base package folder.
+
+// The application binary usually resides in some kind of base package folder
+// and resources are located relative to that location. Using the following
+// function, you can retrieve various informations. dir can be Null to search
+// in the base package folder.
 NA_API NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix);
 
 
@@ -698,7 +711,7 @@ NA_API void naOpenURLInBrowser(const NAUTF8Char* url);
 // will NOT automatically hide the console when NDEBUG is defined! This
 // function does nothing on a Mac.
 
-NA_API void naOpenConsoleWindow(const char* windowtitle);
+NA_API void naOpenConsoleWindow(void);
 
 
 

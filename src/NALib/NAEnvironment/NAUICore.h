@@ -70,6 +70,12 @@ struct NACoreApplication{
   NAMouseStatus     mouseStatus;     // The mouse cursor status
   NAKeyboardStatus  keyboardStatus;  // The keyboard status
   NAInt             flags;
+
+  NAUTF8Char* name;
+  NAUTF8Char* companyName;
+  NAUTF8Char* versionString;
+  NAUTF8Char* buildString;
+  NAUTF8Char* iconPath;
 };
 
 struct NACoreScreen{

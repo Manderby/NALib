@@ -63,6 +63,12 @@ NA_DEF void naFillUInt8WithBabyColor(uint8* outcolor, const NABabyColor incolor,
     naLimitColorComponentUInt8(&outcolor[1], tmpcolor[1]);
     naLimitColorComponentUInt8(&outcolor[2], tmpcolor[0]);
     naLimitColorComponentUInt8(&outcolor[3], 0);
+  case NA_COLOR_BUFFER_BGRA:
+    tmpcolor[3] = incolor[3];
+    naLimitColorComponentUInt8(&outcolor[0], tmpcolor[2]);
+    naLimitColorComponentUInt8(&outcolor[1], tmpcolor[1]);
+    naLimitColorComponentUInt8(&outcolor[2], tmpcolor[0]);
+    naLimitColorComponentUInt8(&outcolor[3], tmpcolor[3]);
     break;
   }
 }
@@ -91,6 +97,9 @@ NA_DEF void naFillBabyColorWithUInt8(NABabyColor outcolor, const uint8* incolor,
       break;
     case NA_COLOR_BUFFER_BGR0:
       outcolor[3] = 1.f;
+      break;
+    case NA_COLOR_BUFFER_BGRA:
+      outcolor[3] = (float)incolor[3] * inv;
       break;
     }
     tmpcolor[0] = (float)incolor[0] * inv;

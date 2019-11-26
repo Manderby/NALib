@@ -56,6 +56,12 @@ NA_HDEF void naInitCoreApplication(NACoreApplication* coreapplication, NANativeI
   coreapplication->flags |= NA_APPLICATION_FLAG_RUNNING;
   coreapplication->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
 
+  coreapplication->name = NA_NULL;
+  coreapplication->companyName = NA_NULL;
+  coreapplication->versionString = NA_NULL;
+  coreapplication->buildString = NA_NULL;
+  coreapplication->iconPath = NA_NULL;
+
   naRegisterCoreUIElement(&(coreapplication->uielement), NA_UI_APPLICATION, nativeId);
 }
 

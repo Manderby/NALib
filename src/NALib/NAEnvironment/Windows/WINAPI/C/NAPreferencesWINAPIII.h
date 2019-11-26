@@ -18,13 +18,22 @@ NA_HIDEF HKEY naGetNativePreferences(){
       naError("No application running. Use naStartApplication.");
   #endif
   NAString* appname = naNewApplicationName();
-  TCHAR* systemappname = naAllocSystemStringWithUTF8String(naGetStringUTF8Pointer(appname));
-  LSTATUS errorcode = RegOpenKeyW(HKEY_CURRENT_USER, systemappname, &resultKey);
-  if(errorcode != ERROR_SUCCESS){
-    errorcode = RegCreateKeyW(HKEY_CURRENT_USER, systemappname, &resultKey);
+  NAString* companyname = naNewApplicationCompanyName();
+  NAString* fullkeyname;
+  if(companyname){
+    fullkeyname = naNewStringWithFormat("Software\\%s\\%s", naGetStringUTF8Pointer(companyname), naGetStringUTF8Pointer(appname));
+  }else{
+    fullkeyname = naNewStringWithFormat("Software\\%s", naGetStringUTF8Pointer(appname));
   }
-  naFree(systemappname);
+  TCHAR* systemfullkeyname = naAllocSystemStringWithUTF8String(naGetStringUTF8Pointer(fullkeyname));
+  LSTATUS errorcode = RegOpenKeyW(HKEY_CURRENT_USER, systemfullkeyname, &resultKey);
+  if(errorcode != ERROR_SUCCESS){
+    errorcode = RegCreateKeyW(HKEY_CURRENT_USER, systemfullkeyname, &resultKey);
+  }
+  naFree(systemfullkeyname);
   naDelete(appname);
+  if(companyname){naDelete(companyname);}
+  naDelete(fullkeyname);
   return resultKey;
 }
 
@@ -192,7 +201,6 @@ NA_DEF void naSetPreferencesString(const char* key, NAString* value){
   // format as only the W functions can store unicode strings.
   // Stupid dog. You make this look bad.
   DWORD valuesize;
-  DWORD type;
   wchar_t* storedvalue;
   HKEY hKey = naGetNativePreferences();
   wchar_t* systemkey = naAllocWideCharStringWithUTF8String(key);

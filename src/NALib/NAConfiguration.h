@@ -121,7 +121,7 @@
 
 
 // ////////////////////////////////
-// GUI support
+// GUI application support
 // ////////////////////////////////
 
 // By default, the following macro is defined as 0 and therefore, NALib does
@@ -135,6 +135,7 @@
 #ifndef NA_CONFIG_COMPILE_GUI
   #define NA_CONFIG_COMPILE_GUI 0
 #endif
+
 
 
 // On windows, GUI programming is done with WINAPI. This would by default use

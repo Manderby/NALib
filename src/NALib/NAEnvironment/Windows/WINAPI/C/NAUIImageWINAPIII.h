@@ -61,17 +61,7 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
   NAByte* buffer = naMalloc(size.width * size.height * 4);
   float* babyptr = naGetBabyImageData(image);
 
-  for(int y = 0; y < size.height; y++){
-    NAByte* bufptr = &(buffer[(size.height - y - 1) * (size.width * 4)]);
-    for(int x = 0; x < size.width * 4; x += 4){
-      bufptr[0] = (NAByte)(babyptr[2] * 255.f);
-      bufptr[1] = (NAByte)(babyptr[1] * 255.f);
-      bufptr[2] = (NAByte)(babyptr[0] * 255.f);
-      bufptr[3] = (NAByte)(babyptr[3] * 255.f);
-      babyptr += 4;
-      bufptr += 4;
-    }
-  }
+  naConvertBabyImageToUInt8(image, buffer, NA_TRUE, NA_COLOR_BUFFER_BGRA);
 
   HBITMAP hNewBitmap = CreateBitmap((int)size.width, (int)size.height, 1, 32, buffer);
   naFree(buffer);
