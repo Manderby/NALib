@@ -17,7 +17,7 @@ NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeimage){
   CFDataRef rawData = CGDataProviderCopyData(CGImageGetDataProvider((CGImageRef)nativeimage));
   image = naCreateBabyImage(naMakeSizei((NAInt)CGImageGetWidth((CGImageRef)nativeimage), (NAInt)CGImageGetHeight((CGImageRef)nativeimage)), NA_NULL);
   // Note that reading PNG files directly does not premultiply alpha!
-  naFillBabyImageWithUInt8(image, CFDataGetBytePtr(rawData), NA_COLOR_BUFFER_RGBAPre);
+  naFillBabyImageWithUInt8(image, CFDataGetBytePtr(rawData), NA_TRUE, NA_COLOR_BUFFER_RGBAPre);
   CFRelease(rawData);
   
   return image;
@@ -61,17 +61,17 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
 
 
 
-//void* naAllocNativeImageWithUIImage(NAUIImage* uiimage, NAUIImageKind kind, NAUIImageSkin skin){
-//  NASizei imagesize = naGetUIImage1xSize(uiimage);
-//  NSImage* image = [[NSImage alloc] initWithSize:NSMakeSize(imagesize.width, imagesize.height)];
-//
-//  CGImageRef img1x = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
-//  CGImageRef img2x = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
-//  if(img1x){[image addRepresentation:NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img1x])];}
-//  if(img2x){[image addRepresentation:NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img2x])];}
-//  
-//  return NA_COCOA_TAKE_OWNERSHIP(image);
-//}
+void* naAllocNativeImageWithUIImage(NAUIImage* uiimage, NAUIImageKind kind, NAUIImageSkin skin){
+  NASizei imagesize = naGetUIImage1xSize(uiimage);
+  NSImage* image = [[NSImage alloc] initWithSize:NSMakeSize(imagesize.width, imagesize.height)];
+
+  CGImageRef img1x = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
+  CGImageRef img2x = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
+  if(img1x){[image addRepresentation:NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img1x])];}
+  if(img2x){[image addRepresentation:NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img2x])];}
+  
+  return NA_COCOA_TAKE_OWNERSHIP(image);
+}
 
 
 

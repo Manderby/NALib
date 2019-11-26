@@ -9,34 +9,42 @@
 #endif
 
 
+// NAPreferences provides a system dependent implementation to handle
+// user preferences. You can use it like in any native app.
+//
+// On Mac, this translates to using the NSUserDefaults class.
+// On Win, this translates to using the Registry.
+//
+// Note that currently, this implementation only works for code which uses
+// the NALib GUI implementation. Or, more precisely, as soon as you use the
+// function naStartApplication().
+
 
 #include "NAString.h"
-
-
 
 // If the given key does not exists yet, creates a preference for it and sets
 // the value. Returns either the value stored or the given default value.
 // Note: The string is always a new string, never the given value pointer.
-NA_API NABool    naInitPreferencesBool    (const char* key, NABool value);
-NA_API NAInt     naInitPreferencesInt     (const char* key, NAInt value);
-NA_API NAInt     naInitPreferencesEnum    (const char* key, NAInt value);
-NA_API double    naInitPreferencesDouble    (const char* key, double value);
-NA_API NAString* naInitPreferencesString    (const char* key, NAString* value);
+NA_API NABool    naInitPreferencesBool   (const char* key, NABool value);
+NA_API NAInt     naInitPreferencesInt    (const char* key, NAInt value);
+NA_API NAInt     naInitPreferencesEnum   (const char* key, NAInt value);
+NA_API double    naInitPreferencesDouble (const char* key, double value);
+NA_API NAString* naInitPreferencesString (const char* key, NAString* value);
 
 // Sets or toggles the preference
-NA_API void   naSetPreferencesBool     (const char* key, NABool value);
-NA_API void   naSetPreferencesInt      (const char* key, NAInt value);
-NA_API void   naSetPreferencesEnum     (const char* key, NAInt value);
-NA_API void   naSetPreferencesDouble   (const char* key, double value);
-NA_API void   naSetPreferencesString   (const char* key, NAString* value);
-NA_API NABool naTogglePreferencesBool  (const char* key);
+NA_API void   naSetPreferencesBool       (const char* key, NABool value);
+NA_API void   naSetPreferencesInt        (const char* key, NAInt value);
+NA_API void   naSetPreferencesEnum       (const char* key, NAInt value);
+NA_API void   naSetPreferencesDouble     (const char* key, double value);
+NA_API void   naSetPreferencesString     (const char* key, NAString* value);
+NA_API NABool naTogglePreferencesBool    (const char* key);
 
 // Gets the preference. Beware for strings, naDelete must be called afterwards.
-NA_API NABool    naGetPreferencesBool  (const char* key);
-NA_API NAInt     naGetPreferencesInt   (const char* key);
-NA_API NAInt     naGetPreferencesEnum  (const char* key);
-NA_API double    naGetPreferencesDouble(const char* key);
-NA_API NAString* naNewPreferencesString(const char* key);
+NA_API NABool    naGetPreferencesBool    (const char* key);
+NA_API NAInt     naGetPreferencesInt     (const char* key);
+NA_API NAInt     naGetPreferencesEnum    (const char* key);
+NA_API double    naGetPreferencesDouble  (const char* key);
+NA_API NAString* naNewPreferencesString  (const char* key);
 
 
 

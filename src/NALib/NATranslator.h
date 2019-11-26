@@ -9,10 +9,10 @@
 #endif
 
 // ////////////////
-// A translator is a very basic way of adding multilingual support to an
-// application. You need to define some ids but it then works without external
-// tools or preprocessors but still allows you to use translator files which
-// can be translated independently.
+// NATranslator is a very basic way of adding multilingual support to an
+// application. It links arbitrary defined enum ids with strings defined in
+// external files. These files get included into the source code directly,
+// therefore, no external tools or preprocessors are needed.
 //
 // A translator file is a simple UTF-8 encoded text file with contents like
 // the following:
@@ -30,7 +30,8 @@
 // NA_LOC(BREADCRUMBS_BEAVERSPIT, "Brotkrumen und Biberspucke");
 //
 // You can use // comments and split the content into as many files you like.
-// These textfiles are then simply included into your application code:
+// These textfiles are then simply included into your sourcecode like for
+// example:
 // 
 // void myInitTranslations(){
 //   myTranslatorGroup = naRegisterTranslatorGroup();
@@ -38,13 +39,16 @@
 //   #include "../res/translations/deu.txt"
 // }
 //
-// The myTranslatorGroup is an NAInt identifying a group of translations.
-// For example, your application has a group "myAppTranslations" but you might
-// compile this project together with a separate project which definies and
-// includes its own strings in a group called "MyConverterTranslations" 
+// The myTranslatorGroup is an NAInt identifying a group of strings belonging
+// to the same execution unit. For example, your application has a group
+// "myAppTranslations" but you might compile this project together with a
+// separate project which definies and includes its own strings in a group
+// called "MyConverterTranslations". Later, you will identify the strings
+// using this NAInt group identifier.
 //
-// In order for the includes to work, somewhere, an enum must be defined,
-// declaring the identifiers of the translation items:
+// In order for the #includes to work, somewhere in your code, integer ids must
+// be provided, defining the identifiers of the translation items.
+// Most probably, you want to do this using an enum:
 //
 //typedef enum{
 //  HELLO_WORLD,
@@ -64,6 +68,12 @@
 // To switch the language, you can use naSetTranslatorLanguagePreference but
 // when working with an naApplication, you will not need to switch at all, as
 // the user-preferred language of the system will automatically be detected.
+//
+// If some string is undefined in one language, the next available string is
+// taken according to the defined language preference. See the function
+// naSetTranslatorLanguagePreference for more information.
+//
+// If a string is not available in any language, a default string is returned.
 
 
 
@@ -73,17 +83,17 @@ typedef struct NATranslator NATranslator;
 
 // These codes denote the standardized ISO 639-3 codes.
 typedef enum{
-  NA_LANG_DEU = 6579573,  // German
-  NA_LANG_ENG = 6647399,  // English
-  NA_LANG_GSW = 6779767   // Swiss German
+  NA_LANG_DEU = 0x646575,  // German
+  NA_LANG_ENG = 0x656e67,  // English
+  NA_LANG_GSW = 0x677377   // Swiss German
 } NALanguageCode3;
 
 // These codes denote the standardized ISO 639-1 codes. They should not be
 // used, please use the 3 variant whenever possible or use the conversion
 // function naConvertLanguageCode1To3
 typedef enum{
-  NA_LANG_DE = 25701,  // German
-  NA_LANG_EN = 25966   // English
+  NA_LANG_DE = 0x6465,  // German
+  NA_LANG_EN = 0x656e   // English
 } NALanguageCode1;
 
 

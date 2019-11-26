@@ -23,6 +23,9 @@
 #include "NABase.h"
 
 #if NA_OS == NA_OS_MAC_OS_X
+
+//#import <Carbon/Carbon>
+
 #if defined __OBJC__
 #if (NA_CONFIG_COMPILE_GUI == 1)
 // Now, we are sure, we compile with Objective-C and on MacOSX. The

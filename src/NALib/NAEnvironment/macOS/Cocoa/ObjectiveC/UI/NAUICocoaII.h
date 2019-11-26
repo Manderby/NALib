@@ -105,6 +105,7 @@ NA_HAPI void naClearWindowMouseTracking(NACoreWindow* corewindow);
 
 @interface NANativeImageSpace : NSImageView{
   NACoreImageSpace* coreimagespace;
+  NAUIImage* uiimage;
 }
 @end
 
