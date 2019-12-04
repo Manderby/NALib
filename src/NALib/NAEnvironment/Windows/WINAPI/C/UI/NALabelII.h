@@ -14,6 +14,7 @@ typedef struct NAWINAPILabel NAWINAPILabel;
 struct NAWINAPILabel {
   NACoreLabel corelabel;
   NABool enabled;
+  NAString* href;
 };
 
 
@@ -32,6 +33,22 @@ NAWINAPICallbackInfo naLabelWINAPIProc(NAUIElement* uielement, UINT message, WPA
   case WM_SETTEXT:
   case WM_PAINT:
   case WM_NCPAINT:
+  case WM_GETFONT:
+  case WM_DESTROY:
+  case WM_NCDESTROY:
+  case WM_NCHITTEST:
+  case WM_SETCURSOR:
+  case WM_MOUSEMOVE:
+  case WM_MOUSELEAVE:
+  case WM_MOUSEACTIVATE:
+  case WM_LBUTTONDOWN:
+  case WM_IME_SETCONTEXT:
+  case WM_SETFOCUS:
+  case WM_CANCELMODE:
+  case WM_CAPTURECHANGED:
+  case WM_KILLFOCUS:
+  case WM_IME_NOTIFY:
+  case WM_LBUTTONUP:
     break;
 
   case WM_ERASEBKGND:
@@ -49,11 +66,20 @@ NAWINAPICallbackInfo naLabelWINAPIProc(NAUIElement* uielement, UINT message, WPA
 
 
 
-
-//LRESULT CALLBACK LabelWindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-//  NACoreUIElement* uielement = (NACoreUIElement*)naGetUINALibEquivalent(hWnd);
-//  return naLabelWINAPIProc(uielement, message, wParam, lParam);
-//}
+NAWINAPICallbackInfo naLabelWINAPINotify(NAUIElement* uielement, WORD notificationCode){
+  NAWINAPILabel* winapilabel = (NAWINAPILabel*)uielement;
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  switch(notificationCode){
+    case EN_SETFOCUS:
+      if(winapilabel->href){
+        system(naGetStringUTF8Pointer(winapilabel->href));
+        info.hasbeenhandeled = NA_TRUE;
+        info.result = 0;
+      }
+      break;
+  }
+  return info;
+}
 
 
 
@@ -123,6 +149,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   naInitCoreLabel(&(winapilabel->corelabel), hWnd);
 
   winapilabel->enabled = NA_TRUE;
+  winapilabel->href = NA_NULL;
   SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NALabel*)winapilabel;
@@ -132,6 +159,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
 
 NA_DEF void naDestructLabel(NALabel* label){
   NAWINAPILabel* winapilabel = (NAWINAPILabel*)label;
+  if(winapilabel->href){naDelete(winapilabel->href);}
   naClearCoreLabel(&(winapilabel->corelabel));
 }
 
@@ -146,8 +174,19 @@ NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
 
 
 NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
-//  naDefineNativeCocoaObject(NANativeLabel, nativelabel, label);
-//  [nativelabel setLink: url];
+  NAWINAPILabel* winapilabel = (NAWINAPILabel*)label;
+  #ifndef NDEBUG
+    if(!url || !*url)
+      naError("url must be something useful. Deleting a Link is not possible yet.");
+  #endif
+  HFONT hOriginalFont = (HFONT)SendMessage(naGetUIElementNativeID(label), WM_GETFONT, 0, 0);
+  LOGFONT lf;
+  GetObject(hOriginalFont, sizeof(LOGFONT), &lf);
+  lf.lfUnderline = NA_TRUE;
+  HFONT hFont = CreateFontIndirect(&lf);
+  SendMessage(naGetUIElementNativeID(label), WM_SETFONT, (WPARAM)hFont, NA_FALSE);
+
+  winapilabel->href = naNewStringWithFormat("start %s", url);
 }
 
 

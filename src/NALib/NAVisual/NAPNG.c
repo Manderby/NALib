@@ -830,7 +830,6 @@ NA_DEF NABabyImage* naCreateBabyImageFromPNG(NAPNG* png){
   float* babyptr;
   uint8 inbuf[4];
   NAInt x, y;
-  const uint8* uint8ptr;
 
   switch(png->colortype){
   case NA_PNG_COLORTYPE_TRUECOLOR:
@@ -849,7 +848,6 @@ NA_DEF NABabyImage* naCreateBabyImageFromPNG(NAPNG* png){
     }
     break;
   case NA_PNG_COLORTYPE_TRUECOLOR_ALPHA:
-    uint8ptr = &(((uint8*)png->pixeldata)[(40 - 18 - 1) * (40*4)]);
     naFillBabyImageWithUInt8(babyimage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
     break;
   default:

@@ -16,8 +16,9 @@
   return self;
 }
 - (void) setUIImage:(NAUIImage*)newuiimage{
+  NSImage* image;
   uiimage = newuiimage;
-  NSImage* image = naAllocNativeImageWithUIImage(uiimage, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN);
+  image = NA_COCOA_PTR_C_TO_OBJC(naAllocNativeImageWithUIImage(uiimage, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_PLAIN));
 //  NSURL* url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:imagePath]];
 //  NSImage* image = NA_COCOA_AUTORELEASE([[NSImage alloc] initWithContentsOfURL:url]);
   [self setImage:image];
@@ -31,7 +32,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
 
   NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
   NANativeImageSpace* nativeImageSpace = [[NANativeImageSpace alloc] initWithCoreImageSpace:coreImageSpace frame:frameRect];  
-  naInitCoreImageSpace(coreImageSpace, NA_COCOA_TAKE_OWNERSHIP(nativeImageSpace));
+  naInitCoreImageSpace(coreImageSpace, NA_COCOA_PTR_OBJC_TO_C(nativeImageSpace));
   
   [nativeImageSpace setUIImage: uiimage];
   

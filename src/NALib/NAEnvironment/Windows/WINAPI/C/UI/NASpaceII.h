@@ -124,6 +124,8 @@ NA_DEF NASpace* naNewSpace(NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
 
+  //DWORD lasterror = GetLastError();
+
   naInitCoreSpace(&(winapispace->corespace), hWnd);
   winapispace->lastBgColor = &(app->bgColor);
   winapispace->corespace.alternatebackground = NA_FALSE;

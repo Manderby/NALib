@@ -53,7 +53,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
 
   NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
   NANativeRadio* nativeRadio = [[NANativeRadio alloc] initWithCoreRadio:coreradio frame:frameRect];
-  naInitCoreRadio(coreradio, NA_COCOA_TAKE_OWNERSHIP(nativeRadio));
+  naInitCoreRadio(coreradio, NA_COCOA_PTR_OBJC_TO_C(nativeRadio));
   [nativeRadio setText:text];
   
   return (NARadio*)coreradio;

@@ -40,7 +40,7 @@
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
 }
 - (void) setFontKind:(NAFontKind)kind{
-  [self setFont:(NSFont*)getFontWithKind(kind)];
+  [self setFont:NA_COCOA_PTR_C_TO_OBJC(getFontWithKind(kind))];
 }
 - (void) setReadOnly:(NABool)readonly{
   [self setEditable:!readonly];
@@ -57,7 +57,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
   
   NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
   NANativeTextBox* nativeTextBox = [[NANativeTextBox alloc] initWithCoreTextBox:coretextbox frame:frameRect];
-  naInitCoreTextBox(coretextbox, NA_COCOA_TAKE_OWNERSHIP(nativeTextBox));
+  naInitCoreTextBox(coretextbox, NA_COCOA_PTR_OBJC_TO_C(nativeTextBox));
   
   return (NATextBox*)coretextbox;
 }

@@ -9,22 +9,19 @@
 #endif
 
 
-// NAPreferences provides a system dependent implementation to handle
-// user preferences. You can use it like in any native app.
-//
-// On Mac, this translates to using the NSUserDefaults class.
-// On Win, this translates to using the Registry.
-//
-// Note that currently, this implementation only works for code which uses
-// the NALib GUI implementation. Or, more precisely, as soon as you use the
-// function naStartApplication().
-
-
 #include "NAString.h"
+
+// This file allows a programmer to store user preferences for an application.
+// This is a system dependent implementation. On Mac, the NSUserDefaults class
+// is used and on Win, the Registry is used.
+//
+// Please only use ASCII-7 characters to encode keys. Otherwise, it might not
+// work.
 
 // If the given key does not exists yet, creates a preference for it and sets
 // the value. Returns either the value stored or the given default value.
 // Note: The string is always a new string, never the given value pointer.
+
 NA_API NABool    naInitPreferencesBool   (const char* key, NABool value);
 NA_API NAInt     naInitPreferencesInt    (const char* key, NAInt value);
 NA_API NAInt     naInitPreferencesEnum   (const char* key, NAInt value);

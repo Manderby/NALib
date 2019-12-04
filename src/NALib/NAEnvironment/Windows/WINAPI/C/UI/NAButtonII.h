@@ -256,7 +256,7 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size){
 //  NACoreButton* corebutton = naAlloc(NACoreButton);
 //
 //  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NSBezelStyleShadowlessSquare frame:naMakeNSRectWithRect(rect)];
-//  naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
+//  naInitCoreButton(corebutton, NA_COCOA_PTR_OBJC_TO_C(nativeButton));
 //  [nativeButton setButtonImage:uiimage];
 //  
 //  return (NAButton*)corebutton;

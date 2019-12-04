@@ -267,10 +267,27 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
 		windowrect.left, windowrect.top, windowrect.right - windowrect.left, windowrect.bottom - windowrect.top,
 		NULL, NULL, naGetUIElementNativeID(naGetApplication()), NULL);
 
-  naFree(systemtitle);
 
-  //DWORD lasterror = GetLastError();
-	//hDC = GetDC(hWnd);
+
+  NAString* iconPath = naNewApplicationIconPath();
+  NABabyImage* iconBabyImage = naCreateBabyImageFromFilePath(naGetStringUTF8Pointer(iconPath));
+  HBITMAP bitmap = naAllocNativeImageWithBabyImage(iconBabyImage);
+   
+  HBITMAP hbmMask = CreateCompatibleBitmap(
+    GetDC(NULL), 
+    (int)naGetBabyImageSize(iconBabyImage).width,
+    (int)naGetBabyImageSize(iconBabyImage).height);
+
+  ICONINFO ii = {0};
+  ii.fIcon    = TRUE;
+  ii.hbmColor = bitmap;
+  ii.hbmMask  = hbmMask;
+  HICON hIcon = CreateIconIndirect(&ii);
+  SendMessage(hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
+  SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+
+
+  naFree(systemtitle);
 
   naInitCoreWindow(&(winapiwindow->corewindow), hWnd, NA_NULL, NA_FALSE, resizeable, rect);
 

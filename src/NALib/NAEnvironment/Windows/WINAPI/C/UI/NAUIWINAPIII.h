@@ -174,6 +174,7 @@ NAWINAPICallbackInfo naTextBoxWINAPIProc    (NAUIElement* uielement, UINT messag
 
 NAWINAPICallbackInfo naButtonWINAPINotify   (NAUIElement* uielement, WORD notificationCode);
 NAWINAPICallbackInfo naCheckBoxWINAPINotify (NAUIElement* uielement, WORD notificationCode);
+NAWINAPICallbackInfo naLabelWINAPINotify    (NAUIElement* uielement, WORD notificationCode);
 NAWINAPICallbackInfo naTextFieldWINAPINotify(NAUIElement* uielement, WORD notificationCode);
 
 NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTRUCT* drawitemstruct);
@@ -454,6 +455,7 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
     switch(naGetUIElementType(uielement)){
     case NA_UI_BUTTON:    info = naButtonWINAPINotify   (uielement, notificationCode); break;
     case NA_UI_CHECKBOX:  info = naCheckBoxWINAPINotify (uielement, notificationCode); break;
+    case NA_UI_LABEL:     info = naLabelWINAPINotify    (uielement, notificationCode); break;
     case NA_UI_TEXTFIELD: info = naTextFieldWINAPINotify(uielement, notificationCode); break;
     default:
       //printf("Uncaught notification\n");

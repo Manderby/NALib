@@ -55,7 +55,7 @@ NA_DEF NASpace* naNewSpace(NASize size){
 
   contentRect = NSMakeRect(0., 0., size.width, size.height);
   nativeSpace = [[NANativeSpace alloc] initWithCoreSpace:corespace frame:contentRect];  
-  naInitCoreSpace(corespace, NA_COCOA_TAKE_OWNERSHIP(nativeSpace));
+  naInitCoreSpace(corespace, NA_COCOA_PTR_OBJC_TO_C(nativeSpace));
   
   return (NASpace*)corespace;
 }

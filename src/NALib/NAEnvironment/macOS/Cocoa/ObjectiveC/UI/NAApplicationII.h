@@ -10,9 +10,9 @@
 
 
 @implementation NANativeApplicationDelegate
-- (id) initWithCoreApplication:(NACoreApplication*)newcoreapplication{
+- (id) initWithCocoaApplication:(NACocoaApplication*)newcocoaapplication{
   self = [super init];
-  coreapplication = newcoreapplication;
+  cocoaapplication = newcocoaapplication;
   return self;
 }
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender{
@@ -64,7 +64,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   #endif
 
   NA_UNUSED(app);
-//  [NSApp setDelegate:(NA_COCOA_BRIDGE id)naGetUIElementNativeID(app)];
+  [NSApp setDelegate:(NA_COCOA_BRIDGE id)naGetUIElementNativeID(app)];
   
 //  SEL selector = @selector(doSomethingWithObject:afterDelay:);
 //  IMP newImp = (IMP)swizzledDoSometingWithObjectAfterDelay;
@@ -91,8 +91,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   }
 
   // When reaching here, the application had been stopped.
-//  naClearCoreApplication();
-//  naReleaseUIElement(app);
+  naReleaseUIElement(app);
 }
 
 
@@ -111,20 +110,21 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 
 NA_HDEF NAApplication* naNewApplication(void){
-  NACoreApplication* coreapplication = naAlloc(NACoreApplication);
+  NACocoaApplication* cocoaapplication = naAlloc(NACocoaApplication);
 
-  NANativeApplicationDelegate* nativeappdelegate = [[NANativeApplicationDelegate alloc] initWithCoreApplication:coreapplication];
+  NANativeApplicationDelegate* nativeappdelegate = [[NANativeApplicationDelegate alloc] initWithCocoaApplication:cocoaapplication];
 
-  naInitCoreApplication(coreapplication, NA_COCOA_TAKE_OWNERSHIP(nativeappdelegate));
+  naInitCoreApplication(&(cocoaapplication->coreapplication), NA_COCOA_PTR_OBJC_TO_C(nativeappdelegate));
 
-  return (NAApplication*)coreapplication;
+  return (NAApplication*)cocoaapplication;
 }
 
 
 
 NA_DEF void naDestructApplication(NAApplication* application){
-  NACoreApplication* coreapplication = (NACoreApplication*)application;
-  naClearCoreApplication(coreapplication);
+  NACocoaApplication* cocoaapplication = (NACocoaApplication*)application;
+  // Do not clear the core application. It will only call this method again.
+  naClearCoreApplication(&(cocoaapplication->coreapplication));
 }
 
 
@@ -137,8 +137,7 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, do
 
 
 
-NA_DEF void naOpenConsoleWindow(const NAUTF8Char* windowtitle){
-  NA_UNUSED(windowtitle);
+NA_DEF void naOpenConsoleWindow(void){
   // Does nothing on the Mac
 }
 
@@ -150,33 +149,57 @@ NA_DEF void naOpenConsoleWindow(const NAUTF8Char* windowtitle){
 #define NA_COCOA_BUNDLE_ICON_FILE_KEY @"CFBundleIconFile"
 
 NA_DEF NAString* naNewApplicationName(void){
-  NAString* retstring;
-  NSString* applicationname = [[NSBundle mainBundle] localizedStringForKey:NA_COCOA_BUNDLE_APPLICATION_NAME value:nil table:NA_COCOA_BUNDLE_PLIST];
-  if(!applicationname){
-    applicationname = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_APPLICATION_NAME];
+  NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
+  if(app->coreapplication.name){
+    return naNewStringWithFormat("%s", app->coreapplication.name);
+  }else{
+    NSString* applicationname = [[NSBundle mainBundle] localizedStringForKey:NA_COCOA_BUNDLE_APPLICATION_NAME value:nil table:NA_COCOA_BUNDLE_PLIST];
+    if(!applicationname){
+      applicationname = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_APPLICATION_NAME];
+    }
+    return naNewStringWithFormat("%s", [applicationname UTF8String]);
   }
-  retstring = naNewStringWithFormat("%s", [applicationname UTF8String]);
-  return retstring;
+}
+
+NA_DEF NAString* naNewApplicationCompanyName(void){
+  NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
+  if(app->coreapplication.companyName){
+    return naNewStringWithFormat("%s", app->coreapplication.companyName);
+  }else{
+    return NA_NULL;
+  }
 }
 
 NA_DEF NAString* naNewApplicationVersionString(void){
-  NSString* versionstring = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_SHORT_KEY];
-  NAString* retstring = naNewStringWithFormat("%s", [versionstring UTF8String]);
-  return retstring;
+  NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
+  if(app->coreapplication.versionString){
+    return naNewStringWithFormat("%s", app->coreapplication.versionString);
+  }else{
+    NSString* versionstring = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_SHORT_KEY];
+    return naNewStringWithFormat("%s", [versionstring UTF8String]);
+  }
 }
 
 NA_DEF NAString* naNewApplicationBuildString(void){
-  NSString* buildstring = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_KEY];
-  NAString* retstring = naNewStringWithFormat("%s", [buildstring UTF8String]);
-  return retstring;
+  NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
+  if(app->coreapplication.buildString){
+    return naNewStringWithFormat("%s", app->coreapplication.buildString);
+  }else{
+    NSString* buildstring = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_KEY];
+    return naNewStringWithFormat("%s", [buildstring UTF8String]);
+  }
 }
 
 NA_DEF NAString* naNewApplicationIconPath(void){
-  NSString* iconfilename = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_ICON_FILE_KEY];
-  NSString* iconbasename = [iconfilename stringByDeletingPathExtension];
-  NSURL* url = [[NSBundle mainBundle] URLForResource:iconbasename withExtension:@"icns"];
-  NAString* retstring = naNewStringWithFormat("%s", [[url path] UTF8String]);
-  return retstring;
+  NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
+  if(app->coreapplication.iconPath){
+    return naNewStringWithFormat("%s", app->coreapplication.iconPath);
+  }else{
+    NSString* iconfilename = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_ICON_FILE_KEY];
+    NSString* iconbasename = [iconfilename stringByDeletingPathExtension];
+    NSURL* url = [[NSBundle mainBundle] URLForResource:iconbasename withExtension:@"icns"];
+    return naNewStringWithFormat("%s", [[url path] UTF8String]);
+  }
 }
 
 NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){

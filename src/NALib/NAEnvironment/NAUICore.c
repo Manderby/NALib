@@ -56,6 +56,12 @@ NA_HDEF void naInitCoreApplication(NACoreApplication* coreapplication, NANativeI
   coreapplication->flags |= NA_APPLICATION_FLAG_RUNNING;
   coreapplication->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
 
+  coreapplication->name = NA_NULL;
+  coreapplication->companyName = NA_NULL;
+  coreapplication->versionString = NA_NULL;
+  coreapplication->buildString = NA_NULL;
+  coreapplication->iconPath = NA_NULL;
+
   naRegisterCoreUIElement(&(coreapplication->uielement), NA_UI_APPLICATION, nativeId);
 }
 
@@ -69,12 +75,17 @@ NA_HDEF void naClearCoreApplication(NACoreApplication* coreapplication){
       naCrash("No Application running");
   #endif
 
-  while(naGetListCount(&(na_app->uielements))){
-    naReleaseUIElement(naGetListFirstMutable(&(na_app->uielements)));
+  while(naGetListCount(&(na_app->uielements)) > 1){
+    NAListIterator iter = naMakeListModifier(&(na_app->uielements));
+    naLocateListFirst(&iter);
+    naIterateList(&iter);
+    NAUIElement* uielement = naGetListCurMutable(&iter);
+    naClearListIterator(&iter);
+    naReleaseUIElement(uielement);
   }
-  naClearList(&(na_app->uielements));
   naStopTranslator();
   naUnregisterCoreUIElement(&(coreapplication->uielement));
+  naClearList(&(na_app->uielements));
 }
 
 

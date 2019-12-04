@@ -161,7 +161,7 @@
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
 }
 - (void) setFontKind:(NAFontKind)kind{
-  [self setFont:(NSFont*)getFontWithKind(kind)];
+  [self setFont:NA_COCOA_PTR_C_TO_OBJC(getFontWithKind(kind))];
 }
 @end
 
@@ -172,7 +172,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
 
   NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
   NANativeLabel* nativeLabel = [[NANativeLabel alloc] initWithCoreLabel:corelabel frame:frameRect];
-  naInitCoreLabel(corelabel, NA_COCOA_TAKE_OWNERSHIP(nativeLabel));
+  naInitCoreLabel(corelabel, NA_COCOA_PTR_OBJC_TO_C(nativeLabel));
   naSetLabelText(corelabel, text);
   
   return (NALabel*)corelabel;

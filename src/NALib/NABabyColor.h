@@ -50,6 +50,7 @@ typedef enum{
   NA_COLOR_BUFFER_RGBAPre,
   NA_COLOR_BUFFER_RGB,
   NA_COLOR_BUFFER_BGR0,
+  NA_COLOR_BUFFER_BGRA
 } NAColorBufferType;
 
 

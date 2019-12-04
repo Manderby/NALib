@@ -98,7 +98,7 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
 
   NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
   NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NABezelStyleRounded frame:frameRect];
-  naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
+  naInitCoreButton(corebutton, NA_COCOA_PTR_OBJC_TO_C(nativeButton));
   [nativeButton setButtonText:text];
   
   return (NAButton*)corebutton;
@@ -111,7 +111,7 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
 
   NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
   NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NABezelStyleShadowlessSquare frame:frameRect];
-  naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
+  naInitCoreButton(corebutton, NA_COCOA_PTR_OBJC_TO_C(nativeButton));
   [nativeButton setButtonText:text];
   
   return (NAButton*)corebutton;
@@ -124,7 +124,7 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size){
 
   NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
   NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NABezelStyleShadowlessSquare frame:frameRect];
-  naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
+  naInitCoreButton(corebutton, NA_COCOA_PTR_OBJC_TO_C(nativeButton));
   [nativeButton setButtonImage:uiimage];
   
   return (NAButton*)corebutton;
@@ -137,7 +137,7 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
 
   NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
   NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:0 frame:frameRect];
-  naInitCoreButton(corebutton, NA_COCOA_TAKE_OWNERSHIP(nativeButton));
+  naInitCoreButton(corebutton, NA_COCOA_PTR_OBJC_TO_C(nativeButton));
   [nativeButton setButtonImage:uiimage];
   
   return (NAButton*)corebutton;

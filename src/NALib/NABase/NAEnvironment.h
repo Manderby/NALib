@@ -22,6 +22,11 @@
 #define NA_TYPE32_BITS  (32)
 #define NA_TYPE64_BITS  (64)
 
+#define NA_TYPE8_BYTES   (NA_TYPE8_BITS  / 8)
+#define NA_TYPE16_BYTES  (NA_TYPE16_BITS / 8)
+#define NA_TYPE32_BYTES  (NA_TYPE32_BITS / 8)
+#define NA_TYPE64_BYTES  (NA_TYPE64_BITS / 8)
+
 
 
 // The various Endianness-Settings:
@@ -84,12 +89,14 @@
   #endif
   #if __has_feature(objc_arc)
     #define NA_COCOA_BRIDGE __bridge
-    #define NA_COCOA_TAKE_OWNERSHIP(obj) (__bridge_retained void*)(obj)
-    #define NA_COCOA_DISPOSE(obj) CFBridgingRelease(obj)
+    #define NA_COCOA_PTR_OBJC_TO_C(obj) (void*)CFBridgingRetain(obj)
+    #define NA_COCOA_PTR_C_TO_OBJC(ptr) (id)CFBridgingRelease(ptr)
+    #define NA_COCOA_DISPOSE(obj) (void)obj
     #define NA_COCOA_AUTORELEASE(obj) obj
   #else
     #define NA_COCOA_BRIDGE
-    #define NA_COCOA_TAKE_OWNERSHIP(obj) obj
+    #define NA_COCOA_PTR_OBJC_TO_C(obj) (void*)obj
+    #define NA_COCOA_PTR_C_TO_OBJC(ptr) (id)ptr
     #define NA_COCOA_DISPOSE(obj) [(id)obj release]
     #define NA_COCOA_AUTORELEASE(obj) [(id)obj autorelease]
   #endif

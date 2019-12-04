@@ -84,9 +84,15 @@ NA_HAPI void naRenewWindowMouseTracking(NACoreWindow* corewindow);
 NA_HAPI void naClearWindowMouseTracking(NACoreWindow* corewindow);
 
 
+// Not much of use currently, but consistent with the WINAPI implementation.
+typedef struct NACocoaApplication NACocoaApplication;
+struct NACocoaApplication {
+  NACoreApplication coreapplication;
+};
+
 
 @interface NANativeApplicationDelegate : NSObject <NSApplicationDelegate>{
-  NACoreApplication* coreapplication;
+  NACocoaApplication* cocoaapplication;
 }
 @end
 
@@ -329,7 +335,7 @@ NAFont getFontWithKind(NAFontKind kind){
       font = [NSFont systemFontOfSize:systemSize];
       break;
   }
-  return (NAFont)font;
+  return NA_COCOA_PTR_OBJC_TO_C(font);
 }
 
 

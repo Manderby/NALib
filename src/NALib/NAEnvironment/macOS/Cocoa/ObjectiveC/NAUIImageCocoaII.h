@@ -9,6 +9,7 @@
 
 
 #include "../../../NAUIImage.h"
+#include "../../../../NAPNG.h"
 
 
 NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeimage){
@@ -27,16 +28,29 @@ NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeimage){
 
 NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
   NABabyImage* image = NA_NULL;
-  
-  CGDataProviderRef dataprovider = CGDataProviderCreateWithFilename(pathStr);
-  if(dataprovider){
-  
-    CGImageRef nativeimage = CGImageCreateWithPNGDataProvider(dataprovider, NULL, NA_FALSE, kCGRenderingIntentAbsoluteColorimetric);
-    image = naCreateBabyImageFromNativeImage(nativeimage);
-    
-    CGImageRelease(nativeimage);
-    CGDataProviderRelease(dataprovider);
-  }
+
+//  // Currently, only png is possible
+//  NAPNG* png = naNewPNGWithFile(pathStr);
+//  NABabyImage* babyImage = naCreateBabyImageFromPNG(png);
+//  return babyImage;
+
+//  CGDataProviderRef dataprovider = CGDataProviderCreateWithFilename(pathStr);
+//  if(dataprovider){
+//  
+//    CGImageRef nativeimage = CGImageCreateWithPNGDataProvider(dataprovider, NULL, NA_FALSE, kCGRenderingIntentAbsoluteColorimetric);
+//    image = naCreateBabyImageFromNativeImage(nativeimage);
+//    
+//    CGImageRelease(nativeimage);
+//    CGDataProviderRelease(dataprovider);
+//  }
+
+  NSURL* url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:pathStr]];
+  NSImage* nsimage = [[NSImage alloc] initWithContentsOfURL:url];
+  CGImageRef nativeimage = [nsimage CGImageForProposedRect:NA_NULL context:NA_NULL hints:NA_NULL];
+  image = naCreateBabyImageFromNativeImage(nativeimage);
+
+  NA_COCOA_DISPOSE(nsimage);
+  // Important: Do not use CGImageRelease on nativeimage. It is part of nsimage.
 
   return image;
 }
@@ -67,10 +81,16 @@ void* naAllocNativeImageWithUIImage(NAUIImage* uiimage, NAUIImageKind kind, NAUI
 
   CGImageRef img1x = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
   CGImageRef img2x = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
-  if(img1x){[image addRepresentation:NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img1x])];}
-  if(img2x){[image addRepresentation:NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img2x])];}
+  if(img1x){
+    NSBitmapImageRep* rep = NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img1x]);
+    [image addRepresentation:rep];
+  }
+  if(img2x){
+    NSBitmapImageRep* rep = NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img2x]);
+    [image addRepresentation:rep];
+  }
   
-  return NA_COCOA_TAKE_OWNERSHIP(image);
+  return NA_COCOA_PTR_OBJC_TO_C(image);
 }
 
 

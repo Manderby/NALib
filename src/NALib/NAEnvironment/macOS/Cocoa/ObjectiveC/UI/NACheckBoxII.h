@@ -46,7 +46,7 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
   boundrect.origin.y = 0;
 
   nativeCheckBox = [[NANativeCheckBox alloc] initWithCoreCheckBox:corecheckbox frame:frameRect];
-  naInitCoreCheckBox(corecheckbox, NA_COCOA_TAKE_OWNERSHIP(nativeCheckBox));
+  naInitCoreCheckBox(corecheckbox, NA_COCOA_PTR_OBJC_TO_C(nativeCheckBox));
   [nativeCheckBox setText:text];
   
   return (NACheckBox*)corecheckbox;

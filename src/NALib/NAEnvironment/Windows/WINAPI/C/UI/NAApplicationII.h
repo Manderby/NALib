@@ -117,6 +117,10 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
     InitCommonControls();   // enable visual styles
   #endif
   
+  // First, register the window classes. This is required as the
+  // offscreen window class must be present upon the call to
+  // naNewApplication.
+
   // Register the window class
   naZeron(&wndclass, sizeof(WNDCLASS));
 	wndclass.style = CS_OWNDC | CS_HREDRAW | CS_VREDRAW;
@@ -124,14 +128,14 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 	wndclass.cbClsExtra = 0;
 	wndclass.cbWndExtra = 0;
 	wndclass.hInstance = GetModuleHandle(NULL);
-	wndclass.hIcon = LoadIcon( NULL, IDI_APPLICATION );
+	wndclass.hIcon = LoadIcon( wndclass.hInstance, IDI_APPLICATION );
 	wndclass.hCursor = LoadCursor( NULL, IDC_ARROW );
 	wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
 	wndclass.lpszMenuName = NULL;
 	wndclass.lpszClassName = TEXT("NAWindow");
 	RegisterClass(&wndclass);
 
-    // Register the offscreen window class
+  // Register the offscreen window class
   naZeron(&wndclass, sizeof(WNDCLASS));
 	wndclass.style = CS_HREDRAW | CS_VREDRAW;
 	wndclass.lpfnWndProc = naWINAPIWindowCallback;
@@ -159,7 +163,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 	wndclass.lpszClassName = TEXT("NASpace");
 	RegisterClass(&wndclass);
 
-  // Start the WINAPI application and set the native ID of the application.
+    // Start the WINAPI application and set the native ID of the application.
   app = naNewApplication();
 
   // Call prestartup if desired.
@@ -220,6 +224,8 @@ NA_HDEF NAApplication* naNewApplication(void){
 		TEXT("NAOffscreenWindow"), TEXT("Offscreen window"), WS_OVERLAPPEDWINDOW,
 		0, 0, 0, 0,
 		NULL, NULL, GetModuleHandle(NULL), NULL);
+
+      //DWORD lasterror = GetLastError();
 
   winapiapplication->nonclientmetrics.cbSize = sizeof(NONCLIENTMETRICS);
   SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &(winapiapplication->nonclientmetrics), 0);
@@ -347,7 +353,7 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, do
 
 #include <io.h>
 #include <fcntl.h>
-NA_DEF void naOpenConsoleWindow(const char* windowtitle){
+NA_DEF void naOpenConsoleWindow(void){
 //  int outHandle, errHandle, inHandle;
   FILE *outFile;
   FILE *errFile;
@@ -355,9 +361,8 @@ NA_DEF void naOpenConsoleWindow(const char* windowtitle){
 //  CONSOLE_SCREEN_BUFFER_INFO coninfo;
   AllocConsole();
 
-  TCHAR* systemtitle = naAllocSystemStringWithUTF8String(windowtitle);
+  TCHAR* systemtitle = TEXT("Debug Console");
   SetConsoleTitle(systemtitle);
-  naFree(systemtitle);
 
 //    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo);
 //    coninfo.dwSize.Y = 9999;
@@ -383,52 +388,89 @@ NA_DEF void naOpenConsoleWindow(const char* windowtitle){
   //setvbuf( stderr, NULL, _IONBF, 0 );
   //setvbuf( stdin, NULL, _IONBF, 0 );
 
+
 }
 
 
-//#define NA_COCOA_BUNDLE_PLIST @"InfoPlist"
-//#define NA_COCOA_BUNDLE_APPLICATION_NAME @"CFBundleDisplayName"
-//#define NA_COCOA_BUNDLE_VERSION_SHORT_KEY @"CFBundleShortVersionString"applicationname
-//#define NA_COCOA_BUNDLE_VERSION_KEY @"CFBundleVersion"
-//#define NA_COCOA_BUNDLE_ICON_FILE_KEY @"CFBundleIconFile"
+
+NA_DEF void naSetApplicationName(NAUTF8Char* name){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  app->coreapplication.name = name;
+}
+NA_DEF void naSetApplicationCompanyName(NAUTF8Char* name){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  app->coreapplication.companyName = name;
+}
+NA_DEF void naSetApplicationVersionString(NAUTF8Char* string){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  app->coreapplication.versionString = string;
+}
+NA_DEF void naSetApplicationBuildString(NAUTF8Char* string){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  app->coreapplication.buildString = string;
+}
+NA_DEF void naSetApplicationIconPath(NAUTF8Char* path){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  app->coreapplication.iconPath = path;
+}
+
+
 
 NA_DEF NAString* naNewApplicationName(void){
-  TCHAR modulepath[MAX_PATH];
-  GetModuleFileName(NULL, modulepath, MAX_PATH);
-  NAString* utf8modulepath = naNewStringFromSystemString(modulepath);
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  if(app->coreapplication.name){
+    return naNewStringWithFormat("%s", app->coreapplication.name);
+  }else{
+    TCHAR modulepath[MAX_PATH];
+    GetModuleFileName(NULL, modulepath, MAX_PATH);
+    NAString* utf8modulepath = naNewStringFromSystemString(modulepath);
 
-  NAURL url;
-  naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8modulepath));
-  naDelete(utf8modulepath);
-  NAString* applicationname = naNewStringWithURLFilename(&url);
-  NAString* applicationbasename = naNewStringWithBasenameOfFilename(applicationname);
-  naClearURL(&url);
-  naDelete(applicationname);
+    NAURL url;
+    naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8modulepath));
+    naDelete(utf8modulepath);
+    NAString* applicationname = naNewStringWithURLFilename(&url);
+    NAString* applicationbasename = naNewStringWithBasenameOfFilename(applicationname);
+    naClearURL(&url);
+    naDelete(applicationname);
 
-  return applicationbasename;
+    return applicationbasename;
+  }
+}
+
+NA_DEF NAString* naNewApplicationCompanyName(void){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  if(app->coreapplication.companyName){
+    return naNewStringWithFormat("%s", app->coreapplication.companyName);
+  }else{
+    return NA_NULL;
+  }
 }
 
 NA_DEF NAString* naNewApplicationVersionString(void){
-//  NSString* versionstring = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_SHORT_KEY];
-//  NAString* retstring = naNewStringWithFormat("%s", [versionstring UTF8String]);
-//  return retstring;
-  return NA_NULL;
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  if(app->coreapplication.versionString){
+    return naNewStringWithFormat("%s", app->coreapplication.versionString);
+  }else{
+    return NA_NULL;
+  }
 }
 
 NA_DEF NAString* naNewApplicationBuildString(void){
-//  NSString* buildstring = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_KEY];
-//  NAString* retstring = naNewStringWithFormat("%s", [buildstring UTF8String]);
-//  return retstring;
-  return NA_NULL;
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  if(app->coreapplication.buildString){
+    return naNewStringWithFormat("%s", app->coreapplication.buildString);
+  }else{
+    return NA_NULL;
+  }
 }
 
 NA_DEF NAString* naNewApplicationIconPath(void){
-//  NSString* iconfilename = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_ICON_FILE_KEY];
-//  NSString* iconbasename = [iconfilename stringByDeletingPathExtension];
-//  NSURL* url = [[NSBundle mainBundle] URLForResource:iconbasename withExtension:@"icns"];
-//  NAString* retstring = naNewStringWithFormat("%s", [[url path] UTF8String]);
-//  return retstring;
-  return NA_NULL;
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  if(app->coreapplication.iconPath){
+    return naNewStringWithFormat("%s", app->coreapplication.iconPath);
+  }else{
+    return NA_NULL;
+  }
 }
 
 NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){

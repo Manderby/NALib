@@ -62,11 +62,7 @@
 }
 - (void)clearMouseTracking{
   [[self contentView] removeTrackingArea:trackingarea];
-  #if __has_feature(objc_arc)
-    // TrackingArea will be released automatically when ARC is turned on.
-  #else
-    [trackingarea release];
-  #endif
+  NA_COCOA_DISPOSE(trackingarea);
   trackingarea = nil;
 }
 - (void)retainMouseTracking{
@@ -156,7 +152,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   [nativewindow setDelegate:nativewindow];
   [nativewindow setTitle:[NSString stringWithUTF8String:title]];
   [nativewindow setInitialFirstResponder:[nativewindow contentView]];
-  naInitCoreWindow(corewindow, NA_COCOA_TAKE_OWNERSHIP(nativewindow), NA_NULL, NA_FALSE, resizeable, rect);
+  naInitCoreWindow(corewindow, NA_COCOA_PTR_OBJC_TO_C(nativewindow), NA_NULL, NA_FALSE, resizeable, rect);
 
   space = naNewSpace(rect.size);
   naSetWindowContentSpace(corewindow, space);

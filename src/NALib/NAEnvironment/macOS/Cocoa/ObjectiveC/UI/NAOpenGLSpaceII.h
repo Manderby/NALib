@@ -101,7 +101,7 @@
   //    #endif
   //  }
 
-    naInitCoreOpenGLSpace(&(coreopenglspace->uielement), NA_COCOA_TAKE_OWNERSHIP(nativeSpace));
+    naInitCoreOpenGLSpace(&(coreopenglspace->uielement), NA_COCOA_PTR_OBJC_TO_C(nativeSpace));
     return coreopenglspace;
   }
 

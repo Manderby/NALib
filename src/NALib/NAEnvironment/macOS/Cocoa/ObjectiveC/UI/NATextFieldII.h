@@ -46,7 +46,7 @@
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
 }
 - (void) setFontKind:(NAFontKind)kind{
-   [self setFont:(NSFont*)getFontWithKind(kind)];
+   [self setFont:NA_COCOA_PTR_C_TO_OBJC(getFontWithKind(kind))];
 }
 @end
 
@@ -57,7 +57,7 @@ NA_DEF NATextField* naNewTextField(NASize size){
   
   NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
   NANativeTextField* nativeTextField = [[NANativeTextField alloc] initWithCoreTextField:coretextfield frame:frameRect];
-  naInitCoreTextField(coretextfield, NA_COCOA_TAKE_OWNERSHIP(nativeTextField));
+  naInitCoreTextField(coretextfield, NA_COCOA_PTR_OBJC_TO_C(nativeTextField));
   
   return (NATextField*)coretextfield;
 }
