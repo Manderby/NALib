@@ -194,12 +194,10 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
 
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
-  if(message == WM_COMMAND)
-  {
+  if(message == WM_COMMAND){
     info = naWINAPINotificationProc(wParam, lParam);
   }
-  if(message == WM_DRAWITEM)
-  {
+  if(message == WM_DRAWITEM){
     info = naWINAPIDrawItemProc(wParam, lParam);
   }
 
@@ -480,7 +478,6 @@ NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam){
   }
   return info;
 }
-
 
 
 

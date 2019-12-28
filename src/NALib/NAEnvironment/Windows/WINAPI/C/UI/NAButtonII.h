@@ -13,6 +13,7 @@ typedef struct NAWINAPIButton NAWINAPIButton;
 struct NAWINAPIButton {
   NACoreButton corebutton;
   NAUIImage* image;
+  NABool transparent;
 };
 
 
@@ -79,7 +80,25 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTR
   NAWINAPIButton* button = (NAWINAPIButton*)uielement;
   NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
 
+  if(!button->transparent){
+    long oldstyle = (long)GetWindowLongPtr(naGetUIElementNativeID(uielement), GWL_STYLE);
+    long newstyle = (oldstyle & ~BS_OWNERDRAW) | BS_TEXT | BS_CENTER | BS_VCENTER;
+    SetWindowLongPtr(naGetUIElementNativeID(uielement), GWL_STYLE, (LONG_PTR)newstyle);
+    // Oh boi. That is one hell of a hidden feature. Usually, the WM_PAINT message does not
+    // use wparam and lparam at all. But there are some common controls (and button seems to
+    // be one of them) which in fact only work if you send the device context in wparam.
+    CallWindowProc(naGetApplicationOldButtonWindowProc(), naGetUIElementNativeID(uielement), WM_PAINT, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
+    SetWindowLongPtr(naGetUIElementNativeID(uielement), GWL_STYLE, (LONG_PTR)oldstyle);
+  }
+
   NASizei size1x = naGetUIImage1xSize(button->image);
+
+  NASizei buttonsize = naMakeSizei(
+    drawitemstruct->rcItem.right - drawitemstruct->rcItem.left,
+    drawitemstruct->rcItem.bottom - drawitemstruct->rcItem.top);
+  NAPosi offset = naMakePosi(
+    (buttonsize.width - size1x.width) / 2,
+    (buttonsize.height - size1x.height) / 2);
 
   NABabyImage* foreImage = naGetUIImageBabyImage(button->image, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_LIGHT);
 
@@ -87,7 +106,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTR
   NAByte* backBuffer = naMalloc(size1x.width * size1x.height * 4);
   HBITMAP hBackBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, backBuffer);
   hOldBitmap = SelectObject(hMemDC, hBackBitmap);
-  BitBlt(hMemDC, 0, 0, (int)size1x.width, (int)size1x.height, drawitemstruct->hDC, 0, 0, SRCCOPY);
+  BitBlt(hMemDC, 0, 0, (int)size1x.width, (int)size1x.height, drawitemstruct->hDC, (int)offset.x, (int)offset.y, SRCCOPY);
   NABabyImage* backImage = naCreateBabyImageFromNativeImage(hBackBitmap);
 
   // Now we blend manually the foreground to the background.
@@ -98,7 +117,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTR
 
   // Finally, we put the blended image onscreen.
   SelectObject(hMemDC, hBlendedBitmap);
-  BitBlt(drawitemstruct->hDC, 0, 0, (int)size1x.width, (int)size1x.height, hMemDC, 0, 0, SRCCOPY);
+  BitBlt(drawitemstruct->hDC, (int)offset.x, (int)offset.y, (int)size1x.width, (int)size1x.height, hMemDC, 0, 0, SRCCOPY);
   SelectObject(hMemDC, hOldBitmap);
 
   // Deleting the blended objects and buffers
@@ -253,14 +272,23 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
 
 
 NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size){
-//  NACoreButton* corebutton = naAlloc(NACoreButton);
-//
-//  NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NSBezelStyleShadowlessSquare frame:naMakeNSRectWithRect(rect)];
-//  naInitCoreButton(corebutton, NA_COCOA_PTR_OBJC_TO_C(nativeButton));
-//  [nativeButton setButtonImage:uiimage];
-//  
-//  return (NAButton*)corebutton;
-  return NA_NULL;
+  HWND hWnd;
+  DWORD style;
+
+  NAWINAPIButton* winapibutton = naAlloc(NAWINAPIButton);
+
+  style = WS_CHILD | WS_VISIBLE | BS_OWNERDRAW | BS_PUSHBUTTON;
+
+	hWnd = CreateWindow(
+		TEXT("BUTTON"), TEXT(""), style,
+		0, 0, (int)size.width, (int)size.height,
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+  
+  naInitCoreButton(&(winapibutton->corebutton), hWnd);
+  winapibutton->image = uiimage;
+  winapibutton->transparent = NA_FALSE;
+
+  return (NAButton*)winapibutton;
 }
 
 
@@ -280,6 +308,7 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
   
   naInitCoreButton(&(winapibutton->corebutton), hWnd);
   winapibutton->image = uiimage;
+  winapibutton->transparent = NA_TRUE;
 
   return (NAButton*)winapibutton;
 }
@@ -294,23 +323,24 @@ NA_DEF void naDestructButton(NAButton* button){
 
 
 NA_HDEF void naSetButtonState(NAButton* button, NABool state){
-//  naDefineNativeCocoaObject(NANativeButton, nativebutton, button);
-//  [nativebutton setButtonState:state];
+  NAWINAPIButton* winapibutton = (NAWINAPIButton*)button;
+  SendMessage(naGetUIElementNativeID(winapibutton), BM_SETSTATE, (WPARAM)state, (LPARAM)NA_NULL);
 }
 
 
 
 NA_HDEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, NAUIElement* controller){
-//  naDefineNativeCocoaObject(NANativeButton, nativebutton, button);
-//  [nativebutton setDefaultButton:NA_TRUE];
-//  naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER), handler, controller);
+  NAWINAPIButton* winapibutton = (NAWINAPIButton*)button;
+  long style = (long)GetWindowLongPtr(naGetUIElementNativeID(winapibutton), GWL_STYLE);
+  style = (style & ~SS_TYPEMASK) | BS_DEFPUSHBUTTON;
+  SetWindowLongPtr(naGetUIElementNativeID(winapibutton), GWL_STYLE, (LONG_PTR)style);
+  naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER), handler, controller);
 }
 
 
 
 NA_HDEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, NAUIElement* controller){
-//  naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC), handler, controller);
-//  naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_COMMAND, NA_KEYCODE_PERIOD), handler, controller);
+  naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC), handler, controller);
 }
 
 
