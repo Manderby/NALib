@@ -187,8 +187,10 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
       if(message.message == WM_QUIT){
         break;
       }
-      TranslateMessage(&message);
-      DispatchMessage(&message);
+      if(!naInterceptKeyboardShortcut(&message)){
+        TranslateMessage(&message);
+        DispatchMessage(&message);
+      }
     }
   }
 

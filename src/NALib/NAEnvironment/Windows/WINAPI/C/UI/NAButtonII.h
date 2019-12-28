@@ -41,12 +41,13 @@ NAWINAPICallbackInfo naButtonWINAPIProc(NAUIElement* uielement, UINT message, WP
   case WM_LBUTTONDOWN:
   case WM_IME_SETCONTEXT:
   case WM_SETFOCUS:
-  case BM_SETSTATE:
   case WM_CANCELMODE:
   case WM_CAPTURECHANGED:
   case WM_KILLFOCUS:
   case WM_IME_NOTIFY:
   case WM_LBUTTONUP:
+  case BM_SETSTATE:
+  case BM_SETCHECK:
     break;
 
   default:

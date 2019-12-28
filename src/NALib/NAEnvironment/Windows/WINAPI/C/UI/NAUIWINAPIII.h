@@ -10,6 +10,7 @@
 
 
 #include "../../../../NAUICore.h"
+#include "../../../../../NACore/NAValueHelper.h"
 
 
 
@@ -61,7 +62,7 @@ NA_HDEF void naClearUINativeId(NANativeID nativeId){
 
 
 NA_HDEF void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent){
-  if(parent == naGetApplication()){return;}
+  //if(parent == naGetApplication()){return;}
   NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
   NACoreUIElement* coreparent = (NACoreUIElement*)parent;
   // todo: remove from old parent
@@ -134,6 +135,94 @@ NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextele
 }
 
 
+
+NA_HDEF void naCaptureKeyboardStatus(MSG* message){  
+  NABool hasShift   = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_SHIFT);
+  NABool hasControl = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_CONTROL);
+  NABool hasOption  = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_OPTION);
+  NABool hasCommand = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_COMMAND);
+  NABool isExtendedKey = (message->lParam >> 24) & 0x01;  // Extended keys usually are the ones on the right.
+
+  NAUIKeyCode scancode = (NAUIKeyCode)MapVirtualKey((UINT)message->wParam, MAPVK_VK_TO_VSC);
+  na_app->keyboardStatus.keyCode = scancode;
+  NABool lShift = (GetKeyState(VK_LSHIFT) & 0x8000) >> 15;
+  NABool rShift = (GetKeyState(VK_RSHIFT) & 0x8000) >> 15;
+  // Note: Due to the right shift key not properly being detected by the extended key flag
+  // of lParam, we have to rely on GetKeyState. Pity.
+  hasShift = lShift | rShift;
+  NABool lControl = (GetKeyState(VK_LCONTROL) & 0x8000) >> 15;
+  NABool rControl = (GetKeyState(VK_RCONTROL) & 0x8000) >> 15;
+  hasControl = lControl | rControl;
+  NABool lOption = (GetKeyState(VK_LMENU) & 0x8000) >> 15;
+  NABool rOption = (GetKeyState(VK_RMENU) & 0x8000) >> 15;
+  // Note: AltGr actually sends first an rControl and then an rOption. Don't know why.
+  hasOption = lOption | rOption;
+  hasCommand = scancode == NA_KEYCODE_LEFT_COMMAND || scancode == NA_KEYCODE_RIGHT_COMMAND;
+
+  // Note, this implementation is far from finished. It does strange things, but that
+  // just seems to be a thing with windows key mappings. :(
+
+  na_app->keyboardStatus.modifiers = 0;
+  na_app->keyboardStatus.modifiers |= hasShift * NA_MODIFIER_FLAG_SHIFT;
+  na_app->keyboardStatus.modifiers |= hasControl * NA_MODIFIER_FLAG_CONTROL;
+  na_app->keyboardStatus.modifiers |= hasOption * NA_MODIFIER_FLAG_OPTION;
+  na_app->keyboardStatus.modifiers |= hasCommand * NA_MODIFIER_FLAG_COMMAND;
+}
+
+
+
+NA_HDEF NABool naInterceptKeyboardShortcut(MSG* message){
+  NABool retvalue = NA_FALSE;
+  if(message->message == WM_KEYUP || message->message == WM_SYSKEYDOWN || message->message == WM_SYSKEYUP){
+    naCaptureKeyboardStatus(message);
+  }else if(message->message == WM_KEYDOWN){
+    NACoreUIElement* elem;
+    HWND keyWindow;
+    naCaptureKeyboardStatus(message);
+    
+    // Search for the native first responder which is represented in NALib.
+    elem = NA_NULL;
+    keyWindow = GetFocus();
+    while(!elem && keyWindow){
+      elem = naGetUINALibEquivalent(keyWindow);
+      keyWindow = GetParent(keyWindow);
+    }
+    if(!elem){
+      elem = naGetApplication();
+    }
+
+    // Search for a matching keyboard shortcut by bubbling.
+    while(!retvalue && elem){
+      NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
+      while(!retvalue && naIterateList(&iter)){
+        const NACoreKeyboardShortcutReaction* corereaction = naGetListCurConst(&iter);
+        if(corereaction->shortcut.keyCode == na_app->keyboardStatus.keyCode){
+          NABool needsShift   = naGetFlagi(corereaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool needsControl = naGetFlagi(corereaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool needsOption  = naGetFlagi(corereaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool needsCommand = naGetFlagi(corereaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
+          NABool hasShift   = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool hasControl = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool hasOption  = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool hasCommand = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_COMMAND);
+          if(needsShift   == hasShift
+          && needsControl == hasControl
+          && needsOption  == hasOption
+          && needsCommand == hasCommand){
+            NAReaction reaction;
+            reaction.uielement = na_app;
+            reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
+            reaction.controller = corereaction->controller;
+            retvalue = corereaction->handler(reaction);
+          }
+        }
+      }
+      naClearListIterator(&iter);
+      elem = naGetUIElementParent(elem);
+    }
+  }
+  return retvalue;
+}
 
 
 

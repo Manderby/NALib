@@ -77,6 +77,10 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
   //  break;
 
 
+  case WM_CHILDACTIVATE:
+  case WM_STYLECHANGING:
+  case WM_STYLECHANGED:
+  case WM_SETTEXT:
   case WM_WINDOWPOSCHANGING:
   case WM_ACTIVATEAPP:
   case WM_NCACTIVATE:
@@ -90,7 +94,41 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
   case WM_KILLFOCUS:
   case WM_IME_NOTIFY:
   case WM_PAINT:
+  case WM_NCPAINT:
+  case WM_ERASEBKGND:
+  case WM_GETFONT:
+  case WM_SETFONT:
   case WM_SETFOCUS:
+  case WM_NCHITTEST:
+  case WM_CTLCOLORSTATIC:
+  case WM_CTLCOLOREDIT:
+  case WM_CTLCOLORBTN:
+  case WM_PRINTCLIENT:
+  case WM_GETTEXTLENGTH:
+  case WM_GETTEXT:
+  case WM_SETCURSOR:
+  case WM_NCMOUSEMOVE:
+  case WM_NCMOUSELEAVE:
+  case WM_MOUSEMOVE: // same as WM_MOUSEFIRST
+  case WM_MOUSELEAVE:
+  case WM_PARENTNOTIFY:
+  case WM_MOUSEACTIVATE:
+  case WM_LBUTTONDOWN:
+  case WM_CANCELMODE:
+  case WM_CAPTURECHANGED:
+  case WM_LBUTTONUP:
+  case WM_TIMER:
+  case WM_KEYDOWN:  // same as WM_KEYFIRST
+  case WM_CHAR:
+  case WM_KEYUP:
+  case WM_SYSKEYDOWN: // the alt key
+  case WM_SYSKEYUP:
+  case WM_SYSCOMMAND:
+  case WM_ENTERMENULOOP:
+  case WM_INITMENU:
+  case WM_MENUSELECT:
+  case WM_EXITMENULOOP:
+  case WM_ENTERIDLE:
     break;
 
   // Dark mode stuff
