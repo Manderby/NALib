@@ -3,16 +3,22 @@
 // Full license notice at the bottom.
 
 
-//
-// This is just a small file to get you started using NALib.
-//
-// This file should compile and run and print some version notes on the screen.
-//
+// To be able to include header files from NALib, you need to either add the
+// src directory of NALib as an additional project source path, or you can
+// help yourself using the following two lines. Just provide the correct
+// relative path to the root directory of the NALib source:
 
-#include "../NALib/NATree.h"
-#include "../NALib/NAHeap.h"
-#include "../NALib/NARandom.h"
-#include "../NALib/NAMemory.h"
+#define TRYOUT_STRINGIFY(A) #A
+#define TRYOUT_NALIB_PATH(file) TRYOUT_STRINGIFY(../../NALib/src/file)
+
+// This allows you to reference any NALib file using for example this:
+// #include TRYOUT_NALIB_PATH(NABase.h)
+
+
+#include TRYOUT_NALIB_PATH(NATree.h)
+#include TRYOUT_NALIB_PATH(NAHeap.h)
+#include TRYOUT_NALIB_PATH(NARandom.h)
+#include TRYOUT_NALIB_PATH(NAMemory.h)
 
 #define TESTSIZE    1000000
 #define SUBTESTSIZE  100000.
@@ -175,7 +181,6 @@ void testTree(){
 
 
 
-#include "../NALib/NABase.h"
 #include <stdio.h>
 
 int main(void){

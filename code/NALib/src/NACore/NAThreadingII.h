@@ -219,7 +219,7 @@ NA_IDEF NAMutex naMakeMutex(void){
       macintoshmutex->seemslocked = NA_FALSE;
       return macintoshmutex;
     #else
-      NAMutex mutex = dispatch_semaphore_create(1);
+      NAMutex mutex = NA_COCOA_PTR_OBJC_TO_C(dispatch_semaphore_create(1));
       return mutex;
     #endif
   #endif
@@ -246,7 +246,11 @@ NA_IDEF void naClearMutex(NAMutex mutex){
       #endif
       naFree(macintoshmutex);
     #else
-      dispatch_release(mutex);
+      #if __has_feature(objc_arc)
+      // Mutex will be released automatically when ARC is turned on.
+      #else
+        dispatch_release(mutex);
+      #endif
     #endif
   #endif
 }
@@ -278,7 +282,7 @@ NA_IDEF void naLockMutex(NAMutex mutex){
       dispatch_semaphore_wait(macintoshmutex->mutex, DISPATCH_TIME_FOREVER);
       macintoshmutex->seemslocked = NA_TRUE;
     #else
-      dispatch_semaphore_wait(mutex, DISPATCH_TIME_FOREVER);
+      dispatch_semaphore_wait(NA_COCOA_PTR_C_TO_OBJC(mutex), DISPATCH_TIME_FOREVER);
     #endif
   #endif
 }
@@ -310,7 +314,7 @@ NA_IDEF void naUnlockMutex(NAMutex mutex){
       macintoshmutex->seemslocked = NA_FALSE;
       dispatch_semaphore_signal(macintoshmutex->mutex);
     #else
-      dispatch_semaphore_signal(mutex);
+      dispatch_semaphore_signal(NA_COCOA_PTR_C_TO_OBJC(mutex));
     #endif
   #endif
 }
@@ -389,7 +393,7 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
         macintoshmutex->seemslocked = NA_TRUE;
       }
     #else
-      long retvalue = dispatch_semaphore_wait(mutex, DISPATCH_TIME_NOW);
+      long retvalue = dispatch_semaphore_wait(NA_COCOA_PTR_C_TO_OBJC(mutex), DISPATCH_TIME_NOW);
       return (retvalue ? NA_FALSE : NA_TRUE);
     #endif
   #endif
@@ -428,7 +432,7 @@ NA_IDEF void naClearAlarm(NAAlarm alarm){
     CloseHandle(alarm);
   #else
     #if __has_feature(objc_arc)
-      CFBridgingRelease(alarm);
+      // Alarm will be released automatically when ARC is turned on.
     #else
       dispatch_release(alarm);
     #endif

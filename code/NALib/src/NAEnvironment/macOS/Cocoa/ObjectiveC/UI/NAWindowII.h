@@ -167,7 +167,7 @@ NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop){
 
 NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
   naDefineNativeCocoaObject(NANativeWindow, nativewindow, window);
-  NARect currect = naGetUIElementRect(naGetNativeUIElement(nativewindow));
+  NARect currect = naGetUIElementRect(window, NA_NULL, NA_FALSE);
   if(!naEqualRect(currect, rect)){
     [nativewindow setContentRect:rect];
   }

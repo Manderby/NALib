@@ -507,7 +507,8 @@ NA_DEF NAKeyboardStatus naGetKeyboardStatus(){
 
 
 
-NA_HDEF NARect naSetWindowStorageTag(NACoreWindow* corewindow, NAInt storageTag, NARect rect, NABool resizeable){
+NA_HDEF NARect naSetWindowStorageTag(NAWindow* window, NAInt storageTag, NARect rect, NABool resizeable){
+  NACoreWindow* corewindow = (NACoreWindow*)window;
   corewindow->storageTag = storageTag;
   if(corewindow->storageTag){
     NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, corewindow->storageTag);

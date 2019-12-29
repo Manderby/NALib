@@ -12,7 +12,7 @@
 #define GUITRYOUT_NALIB_PATH(file) GUITRYOUT_STRINGIFY(../../NALib/src/file)
 
 // This allows you to reference any NALib file using for example this:
-// #include TRYOUT_NALIB_PATH(NABase.h)
+// #include GUITRYOUT_NALIB_PATH(NABase.h)
 
 
 #include GUITRYOUT_NALIB_PATH(NAUI.h)

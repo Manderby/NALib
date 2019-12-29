@@ -3,9 +3,20 @@
 // Full license notice at the bottom.
 
 
+// To be able to include header files from NALib, you need to either add the
+// src directory of NALib as an additional project source path, or you can
+// help yourself using the following two lines. Just provide the correct
+// relative path to the root directory of the NALib source:
 
-#include "../NALib/NABase.h"
-#include "../NALib/NADateTime.h"
+#define TRYOUT_STRINGIFY(A) #A
+#define TRYOUT_NALIB_PATH(file) TRYOUT_STRINGIFY(../../NALib/src/file)
+
+// This allows you to reference any NALib file using for example this:
+// #include TRYOUT_NALIB_PATH(NABase.h)
+
+
+#include TRYOUT_NALIB_PATH(NABase.h)
+#include TRYOUT_NALIB_PATH(NADateTime.h)
 #include <stdio.h>
 #include <time.h>
 #if NA_OS != NA_OS_WINDOWS
