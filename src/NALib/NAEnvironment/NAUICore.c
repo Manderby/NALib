@@ -9,6 +9,7 @@
 #include "../NAMemory.h"
 #include "../NACoord.h"
 #include "../NAThreading.h"
+#include "../NAPreferences.h"
 
 
 // The core element storing the app if any.
@@ -503,6 +504,50 @@ NA_DEF NAKeyboardStatus naGetKeyboardStatus(){
   return na_app->keyboardStatus;
 }
 
+
+
+NA_HDEF NARect naSetWindowStorageTag(NACoreWindow* corewindow, NAInt storageTag, NARect rect, NABool resizeable){
+  corewindow->storageTag = storageTag;
+  if(corewindow->storageTag){
+    NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, corewindow->storageTag);
+    NAString* prefPosYString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_Y, corewindow->storageTag);
+    rect.pos.x = naInitPreferencesDouble(naGetStringUTF8Pointer(prefPosXString), rect.pos.x);
+    rect.pos.y = naInitPreferencesDouble(naGetStringUTF8Pointer(prefPosYString), rect.pos.y);
+    naDelete(prefPosXString);
+    naDelete(prefPosYString);
+    if(resizeable){
+      NAString* prefSizeWidthString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_WIDTH, corewindow->storageTag);
+      NAString* prefSizeHeightString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_HEIGHT, corewindow->storageTag);
+      rect.size.width = naInitPreferencesDouble(naGetStringUTF8Pointer(prefSizeWidthString), rect.size.width);
+      rect.size.height = naInitPreferencesDouble(naGetStringUTF8Pointer(prefSizeHeightString), rect.size.height);
+      naDelete(prefSizeWidthString);
+      naDelete(prefSizeHeightString);
+    }
+  }
+  return rect;
+}
+
+
+
+NA_HDEF void naRememberWindowPosition(NACoreWindow* corewindow){
+  if(corewindow->storageTag){
+    NARect rect = naGetWindowAbsoluteInnerRect(&(corewindow->uielement));
+    NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, corewindow->storageTag);
+    NAString* prefPosYString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_Y, corewindow->storageTag);
+    naSetPreferencesDouble(naGetStringUTF8Pointer(prefPosXString), rect.pos.x);
+    naSetPreferencesDouble(naGetStringUTF8Pointer(prefPosYString), rect.pos.y);
+    naDelete(prefPosXString);
+    naDelete(prefPosYString);
+    if(naIsWindowResizeable(corewindow)){
+      NAString* prefSizeWidthString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_WIDTH, corewindow->storageTag);
+      NAString* prefSizeHeightString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_HEIGHT, corewindow->storageTag);
+      naSetPreferencesDouble(naGetStringUTF8Pointer(prefSizeWidthString), rect.size.width);
+      naSetPreferencesDouble(naGetStringUTF8Pointer(prefSizeHeightString), rect.size.height);
+      naDelete(prefSizeWidthString);
+      naDelete(prefSizeHeightString);
+    }
+  }
+}
 
 #endif // (NA_CONFIG_COMPILE_GUI == 1)
 

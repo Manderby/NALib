@@ -151,6 +151,11 @@ extern NACoreApplication* na_app;
 #define NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE        0x04
 #define NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING  0x08
 
+#define NA_WINDOW_PREF_STRING_POS_X "NAWindow_%" NA_PRIi "_Pos_x"
+#define NA_WINDOW_PREF_STRING_POS_Y "NAWindow_%" NA_PRIi "_Pos_y"
+#define NA_WINDOW_PREF_STRING_SIZE_WIDTH "NAWindow_%" NA_PRIi "_Size_Width"
+#define NA_WINDOW_PREF_STRING_SIZE_HEIGHT "NAWindow_%" NA_PRIi "_Size_Height"
+
 // //////////////////////////////////////////
 // Hidden API
 
@@ -176,6 +181,7 @@ NA_HAPI void naClearCoreScreen(NACoreScreen* corescreen);
 NA_HAPI void naInitCoreWindow(NACoreWindow* corewindow, void* nativeId, NACoreSpace* contentspace, NABool fullscreen, NABool resizeable, NARect windowedframe);
 NA_HAPI void naClearCoreWindow(NACoreWindow* corewindow);
 NA_HAPI void naRememberWindowPosition(NACoreWindow* corewindow);
+NA_HDEF NARect naGetWindowAbsoluteInnerRect(NACoreUIElement* window);
 
 NA_HAPI void naInitCoreSpace(NACoreSpace* corespace, void* nativeId);
 NA_HAPI void naClearCoreSpace(NACoreSpace* corecorespace);

@@ -603,6 +603,7 @@ NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullscreen);
 NA_API NABool naIsWindowFullscreen(NAWindow* window);
 NA_API NABool naIsWindowResizeable(NAWindow* window);
 NA_API void naPreventWindowFromClosing(NAWindow* window, NABool prevent);
+NA_API NARect naSetWindowStorageTag(NAWindow* window, NAInt storageTag, NARect rect, NABool resizeable);
 
 // Space (In other frameworks called View, Frame, Area, Widget...)
 NA_API NASpace* naNewSpace(NASize size);

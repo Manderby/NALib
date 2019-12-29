@@ -36,8 +36,6 @@ NA_HAPI NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* label);
 NA_HDEF NARect naGetTextFieldAbsoluteInnerRect(NACoreUIElement* textfield);
 NA_HDEF NARect naGetTextBoxAbsoluteInnerRect(NACoreUIElement* textbox);
 
-NA_HDEF NARect naGetWindowAbsoluteInnerRect(NACoreUIElement* window);
-
 NA_HAPI void naRenewWindowMouseTracking(NACoreWindow* corewindow);
 NA_HAPI void naClearWindowMouseTracking(NACoreWindow* corewindow);
 

@@ -38,6 +38,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
     window = naGetUIElementWindow(uielement);
     info.hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE);
     if (info.hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW); }
+    naRememberWindowPosition(window);
     info.result = 0;
     break;
 
@@ -48,6 +49,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
     window = naGetUIElementWindow(uielement);
     info.hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE);
     if (info.hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW); }
+    naRememberWindowPosition(window);
     info.result = 0;
     break;
 
@@ -269,29 +271,13 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   
   NAWINAPIWindow* winapiwindow = naAlloc(NAWINAPIWindow);
 
-  //corewindow->storageTag = storageTag;
-  //if(corewindow->storageTag){
-  //  NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, corewindow->storageTag);
-  //  NAString* prefPosYString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_Y, corewindow->storageTag);
-  //  rect.pos.x = naInitPreferencesDouble(naGetStringUTF8Pointer(prefPosXString), rect.pos.x);
-  //  rect.pos.y = naInitPreferencesDouble(naGetStringUTF8Pointer(prefPosYString), rect.pos.y);
-  //  naDelete(prefPosXString);
-  //  naDelete(prefPosYString);
-  //  if(resizeable){
-  //    NAString* prefSizeWidthString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_WIDTH, corewindow->storageTag);
-  //    NAString* prefSizeHeightString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_HEIGHT, corewindow->storageTag);
-  //    rect.size.width = naInitPreferencesDouble(naGetStringUTF8Pointer(prefSizeWidthString), rect.size.width);
-  //    rect.size.height = naInitPreferencesDouble(naGetStringUTF8Pointer(prefSizeHeightString), rect.size.height);
-  //    naDelete(prefSizeWidthString);
-  //    naDelete(prefSizeHeightString);
-  //  }
-  //}
+  rect = naSetWindowStorageTag(winapiwindow, storageTag, rect, resizeable);
 
   exStyle = WS_EX_CLIENTEDGE;
   style = WS_OVERLAPPEDWINDOW;
   if(!resizeable){style &= ~WS_THICKFRAME;}
-  screenrect = naGetMainScreenRect();
 
+  screenrect = naGetMainScreenRect();
   windowrect.top = (int)(screenrect.size.height - rect.pos.y - rect.size.height);
   windowrect.right = (int)(rect.pos.x + rect.size.width);
   windowrect.bottom = (int)(screenrect.size.height - rect.pos.y);
@@ -304,8 +290,6 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
 		TEXT("NAWindow"), systemtitle, style,
 		windowrect.left, windowrect.top, windowrect.right - windowrect.left, windowrect.bottom - windowrect.top,
 		NULL, NULL, naGetUIElementNativeID(naGetApplication()), NULL);
-
-
 
   NAString* iconPath = naNewApplicationIconPath();
   NABabyImage* iconBabyImage = naCreateBabyImageFromFilePath(naGetStringUTF8Pointer(iconPath));
@@ -323,6 +307,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   HICON hIcon = CreateIconIndirect(&ii);
   SendMessage(hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
   SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
+
   // todo: destroy the icon at the end of the windows lifetime.
   //DestroyIcon(hIcon);
 
@@ -336,26 +321,6 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   naSetUIElementParent(winapiwindow, naGetApplication());
 
   return (NAWindow*)winapiwindow;
-}
-
-
-
-NA_HDEF void naRememberWindowPosition(NACoreWindow* corewindow){
-//  NARect rect = naGetWindowAbsoluteInnerRect(&(corewindow->uielement));
-//  NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, corewindow->storageTag);
-//  NAString* prefPosYString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_Y, corewindow->storageTag);
-//  naSetPreferencesDouble(naGetStringUTF8Pointer(prefPosXString), rect.pos.x);
-//  naSetPreferencesDouble(naGetStringUTF8Pointer(prefPosYString), rect.pos.y);
-//  naDelete(prefPosXString);
-//  naDelete(prefPosYString);
-//  if(naIsWindowResizeable(corewindow)){
-//    NAString* prefSizeWidthString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_WIDTH, corewindow->storageTag);
-//    NAString* prefSizeHeightString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_HEIGHT, corewindow->storageTag);
-//    naSetPreferencesDouble(naGetStringUTF8Pointer(prefSizeWidthString), rect.size.width);
-//    naSetPreferencesDouble(naGetStringUTF8Pointer(prefSizeHeightString), rect.size.height);
-//    naDelete(prefSizeWidthString);
-//    naDelete(prefSizeHeightString);
-//  }
 }
 
 
@@ -385,8 +350,27 @@ NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop){
 
 
 NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
-//  naDefineNativeCocoaObject(NANativeWindow, nativewindow, window);
-//  [nativewindow setContentRect:rect];
+  NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)window;
+  NARect currect = naGetUIElementRect(&(winapiwindow->corewindow.uielement), NA_NULL, NA_FALSE);
+  if(!naEqualRect(currect, rect)){
+    RECT windowrect;
+    NARect screenrect = naGetMainScreenRect();
+    windowrect.top = (int)(screenrect.size.height - rect.pos.y - rect.size.height);
+    windowrect.right = (int)(rect.pos.x + rect.size.width);
+    windowrect.bottom = (int)(screenrect.size.height - rect.pos.y);
+    windowrect.left = (int)rect.pos.x;
+    //long style = (long)GetWindowLongPtr(naGetUIElementNativeID(window), GWL_STYLE);
+    //AdjustWindowRect(&windowrect, style, NA_FALSE);
+
+    MoveWindow(
+      naGetUIElementNativeID(winapiwindow),
+      windowrect.left,
+      screenrect.size.height - windowrect.bottom,
+      windowrect.right - windowrect.left,
+      windowrect.bottom - windowrect.top,
+      NA_FALSE);
+    naRememberWindowPosition(&(winapiwindow->corewindow));
+  }
 }
 
 
