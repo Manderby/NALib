@@ -88,15 +88,17 @@
     #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
   #endif
   #if __has_feature(objc_arc)
+    // Note: Do not use a cast for the release as the compiler not necessarily
+    // is an objective-C compiler and hence does not know the id type.
     #define NA_COCOA_BRIDGE __bridge
     #define NA_COCOA_PTR_OBJC_TO_C(obj) (void*)CFBridgingRetain(obj)
-    #define NA_COCOA_PTR_C_TO_OBJC(ptr) (id)CFBridgingRelease(ptr)
+    #define NA_COCOA_PTR_C_TO_OBJC(ptr) CFBridgingRelease(ptr)
     #define NA_COCOA_DISPOSE(obj) (void)obj
     #define NA_COCOA_AUTORELEASE(obj) obj
   #else
     #define NA_COCOA_BRIDGE
     #define NA_COCOA_PTR_OBJC_TO_C(obj) (void*)obj
-    #define NA_COCOA_PTR_C_TO_OBJC(ptr) (id)ptr
+    #define NA_COCOA_PTR_C_TO_OBJC(ptr) ptr
     #define NA_COCOA_DISPOSE(obj) [(id)obj release]
     #define NA_COCOA_AUTORELEASE(obj) [(id)obj autorelease]
   #endif

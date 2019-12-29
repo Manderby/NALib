@@ -50,7 +50,7 @@
         ? NA_UIIMAGE_SKIN_LIGHT : NA_UIIMAGE_SKIN_DARK;
       }
     }
-    resolution = naGetWindowUIResolution(naGetUIElementWindow(&(corebutton->uielement)));
+    resolution = naGetWindowUIResolution(naGetUIElementWindow(&(self->corebutton->uielement)));
     #if !defined __MAC_10_14
       context = [[NSGraphicsContext currentContext] graphicsPort];
     #else

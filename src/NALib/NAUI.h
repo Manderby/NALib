@@ -8,15 +8,9 @@
   extern "C"{
 #endif
 
-
-// //////////////////
-//
-// Warning: This file is still in development. It works but it is not
-// recommended for streamlined use just yet.
-//
-// //////////////////
-
 #include "NABase.h"
+#if NA_CONFIG_COMPILE_GUI == 1
+
 
 // Have a look at NAConfiguration.h to use OpenGL
 #if (NA_CONFIG_COMPILE_OPENGL == 1)
@@ -715,7 +709,7 @@ NA_API void naOpenURLInBrowser(const NAUTF8Char* url);
 
 NA_API void naOpenConsoleWindow(void);
 
-
+#endif // NA_CONFIG_COMPILE_GUI == 1
 
 #ifdef __cplusplus
   } // extern "C"

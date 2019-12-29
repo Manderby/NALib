@@ -4,6 +4,7 @@
 
 #include "NAUIImage.h"
 
+#if (NA_CONFIG_COMPILE_GUI == 1)
 
 // Will retain the babyimage.
 NA_HIAPI void naSetUIImageBabyImage(NAUIImage* uiimage, NABabyImage* babyimage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin);
@@ -150,6 +151,9 @@ NA_API void naDeallocUIImage(NAUIImage* uiimage){
   }
   naFree(uiimage);
 }
+
+
+#endif // (NA_CONFIG_COMPILE_GUI == 1)
 
 // Copyright (c) NALib, Tobias Stamm
 //

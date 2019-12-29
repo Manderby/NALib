@@ -8,7 +8,6 @@
   extern "C"{
 #endif
 
-
 // ///////////////////////////
 // This file contains API which should be hidden to the programmer but which
 // is shared among the different implementations of the UI in Mac and Win.
@@ -59,9 +58,9 @@ void naFillBabyColorWithSkin(NABabyColor color, NAUIImageSkin skin);
 
 NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeimage);
 NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr);
-NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image);
+NA_API void* naAllocNativeImageWithBabyImage(const NABabyImage* image);
 NA_API void* naAllocNativeImageWithUIImage(NAUIImage* uiimage, NAUIImageKind kind, NAUIImageSkin skin);
-void naDeallocNativeImage(void* nativeimage);
+NA_API void naDeallocNativeImage(void* nativeimage);
 
 
 

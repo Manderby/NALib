@@ -9,8 +9,8 @@
 
 
 #include <math.h>
-#include "NAMathConstants.h"
-#include "NABinaryData.h"
+#include "../NAMathConstants.h"
+#include "../NABinaryData.h"
 
 
 // Note that the smaller- or greater-operator often is faster than the
