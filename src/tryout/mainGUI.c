@@ -18,48 +18,49 @@ NAInt trGeneralGroup;
 
 NABool resizeWindow(NAReaction reaction){
   NA_UNUSED(reaction);
-//  printf("Resize\n");
+  printf("Resize\n");
   return NA_TRUE;
 }
 
 NABool cubPressWindowKey(NAReaction reaction){
   NA_UNUSED(reaction);
-//  NAUIKeyCode* key = (NAUIKeyCode*)arg;
-//  if(*key == NA_KEYCODE_ESC){naStopApplication();}
-//  printf("Key Press\n");
+  NAKeyboardStatus keyStatus = naGetKeyboardStatus();
+  NAUIKeyCode key = keyStatus.keyCode;
+  if(key == NA_KEYCODE_ESC){naStopApplication();}
+  printf("Key Press\n");
   return NA_TRUE;
 }
 
 NABool cubReleaseWindowKey(NAReaction reaction){
   NA_UNUSED(reaction);
-//  printf("Key Release\n");
+  printf("Key Release\n");
   return NA_TRUE;
 }
 
 NABool cubMoveWindowMouse(NAReaction reaction){
   NA_UNUSED(reaction);
-//  printf("Mouse Move\n");
+  printf("Mouse Move\n");
   return NA_TRUE;
 }
 
 NABool cubEnterWindowMouse(NAReaction reaction){
   NA_UNUSED(reaction);
-//  printf("Mouse Enter\n");
+  printf("Mouse Enter\n");
   return NA_TRUE;
 }
 
 NABool cubExitWindowMouse(NAReaction reaction){
   NA_UNUSED(reaction);
-//  printf("Mouse exit\n");
+  printf("Mouse exit\n");
   return NA_TRUE;
 }
 
 void prestartup(void* arg){
   NA_UNUSED(arg);
   trFinanceGroup = naRegisterTranslatorGroup();
-  #include "translationsFinance.txt"
+  #include "res/translationsFinance.txt"
   trGeneralGroup = naRegisterTranslatorGroup();
-  #include "translationsGeneral.txt"
+  #include "res/translationsGeneral.txt"
 }
 
 void initOpenGLSpace(void* initData){
@@ -90,14 +91,14 @@ void poststartup(void* arg){
 
 //  printf("%d\n", (int)naGetLanguageCode("deu"));
 
-  windowrect = naMakeRectS(120, 120, 400, 300);
+  windowrect = naMakeRectS(20, 20, 400, 300);
   window = naNewWindow("Wurst", windowrect, NA_TRUE, 0);
   naAddUIReaction(window, NA_UI_COMMAND_RESHAPE,       resizeWindow, NA_NULL);
   naAddUIReaction(window, NA_UI_COMMAND_KEYDOWN,       cubPressWindowKey, NA_NULL);
   naAddUIReaction(window, NA_UI_COMMAND_KEYUP,         cubReleaseWindowKey, NA_NULL);
-  //naAddUIReaction(window, NA_UI_COMMAND_MOUSE_MOVED,   cubMoveWindowMouse, NA_NULL);
-  //naAddUIReaction(window, NA_UI_COMMAND_MOUSE_ENTERED, cubEnterWindowMouse, NA_NULL);
-  //naAddUIReaction(window, NA_UI_COMMAND_MOUSE_EXITED,  cubExitWindowMouse, NA_NULL);
+  naAddUIReaction(window, NA_UI_COMMAND_MOUSE_MOVED,   cubMoveWindowMouse, NA_NULL);
+  naAddUIReaction(window, NA_UI_COMMAND_MOUSE_ENTERED, cubEnterWindowMouse, NA_NULL);
+  naAddUIReaction(window, NA_UI_COMMAND_MOUSE_EXITED,  cubExitWindowMouse, NA_NULL);
 
 //  NAOpenGLSpace* openglspace = naNewOpenGLSpace(window, windowrect.size, initOpenGLSpace, window);
 //  naSetWindowContentSpace(window, openglspace);
@@ -136,7 +137,6 @@ int main(void){
 
   naStartRuntime();
     naStartApplication(prestartup, poststartup, NA_NULL);
-//    naStopTranslator();
   naStopRuntime();
 
   #if NA_OS == NA_OS_WINDOWS

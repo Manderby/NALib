@@ -5,7 +5,7 @@
 #ifndef NA_BINARY_OPERATORS_INCLUDED
 #define NA_BINARY_OPERATORS_INCLUDED
 
-#include "NABase.h"
+#include "../NABase.h"
 #include "float.h"
 
 // In this file, you find floating point constants defined by IEEE-754. Some
@@ -64,13 +64,18 @@
 // outcomes. But what decided to have 1 more in the positive range? It was the
 // handling of subnormal numbers. There was an ancient fight in how to handle
 // numbers which are too low to be expressed as a floating point number: The
-// subnormal numbers. One party said, they should be treated like zero, the
-// other party said they could be treated slightly differently than the rest
-// of the floating point numbers, namely as so called gradual underflow. Both
-// sides have advantages and disadvantages, but long story short, the second
-// party won over and therefore, now, fewer negative exponents were needed as
-// they were somewhat sufficiently being represented by these subnormal numbers
-// and hence the positive exponents gained a whole power of 2 more. The end.
+// subnormal numbers. One party (DEC, bias 128) said, they should be treated
+// like zero, the other party (IEEE, bias 127) said they could be treated
+// slightly differently than the rest of the normalized floating point numbers,
+// namely as so called gradual underflow. Both sides had their advantages and
+// disadvantages back in the day, but long story short, the second party (IEEE)
+// found ways to diminish the disadvantages, won over and therefore, today,
+// fewer negative exponents were needed as they were somewhat sufficiently
+// being represented by these subnormal numbers and hence the positive
+// exponents gained a whole power of 2 more. The end.
+//
+// Source:
+// https://people.eecs.berkeley.edu/~wkahan/ieee754status/754story.html
 
 #ifndef FLT_RADIX
   #warning "NALib assumes floating points to have a radix of 2"

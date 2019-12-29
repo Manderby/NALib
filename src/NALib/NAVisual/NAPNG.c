@@ -426,11 +426,11 @@ NA_HDEF NAPNGChunk* naAllocPNGIHDRChunk(NAPNG* png){
 
   naWriteBufferu32(&iter, (uint32)png->size.width);
   naWriteBufferu32(&iter, (uint32)png->size.height);
-  naWriteBufferi8(&iter, png->bitdepth);
-  naWriteBufferi8(&iter, png->colortype);
-  naWriteBufferi8(&iter, png->compressionmethod);
-  naWriteBufferi8(&iter, png->filtermethod);
-  naWriteBufferi8(&iter, png->interlacemethod);
+  naWriteBufferi8(&iter, (int8)png->bitdepth);
+  naWriteBufferi8(&iter, (int8)png->colortype);
+  naWriteBufferi8(&iter, (int8)png->compressionmethod);
+  naWriteBufferi8(&iter, (int8)png->filtermethod);
+  naWriteBufferi8(&iter, (int8)png->interlacemethod);
 
   naClearBufferIterator(&iter);
 

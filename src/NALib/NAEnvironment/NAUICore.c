@@ -76,10 +76,11 @@ NA_HDEF void naClearCoreApplication(NACoreApplication* coreapplication){
   #endif
 
   while(naGetListCount(&(na_app->uielements)) > 1){
+    NAUIElement* uielement;
     NAListIterator iter = naMakeListModifier(&(na_app->uielements));
     naLocateListFirst(&iter);
     naIterateList(&iter);
-    NAUIElement* uielement = naGetListCurMutable(&iter);
+    uielement = naGetListCurMutable(&iter);
     naClearListIterator(&iter);
     naReleaseUIElement(uielement);
   }

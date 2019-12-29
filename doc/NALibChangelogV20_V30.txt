@@ -25,6 +25,7 @@ Version 24 (not officially released yet)
 - naTestFlag is now called naGetFlag
 - fixing lots of warnings, static code analysis, and using cppcheck
 - Switching to tag-based release cycles
+- Reordering the files and folders into a more general purpose way.
 
 
 Version 23 (first published 2019-Jun-30)
