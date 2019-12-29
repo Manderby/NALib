@@ -1,6 +1,5 @@
 .DS_Store
 .vs
-*xcodeproj/manderim.*
 *xcshareddata*
 *xcuserdata*
 *xcworkspace*
