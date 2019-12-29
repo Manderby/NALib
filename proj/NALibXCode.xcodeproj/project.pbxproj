@@ -178,7 +178,6 @@
 		909ECC0A23B90947002CA78D /* NATranslator.h in Headers */ = {isa = PBXBuildFile; fileRef = 909ECB5F23B90947002CA78D /* NATranslator.h */; };
 		909ECC0B23B90947002CA78D /* NACoord.h in Headers */ = {isa = PBXBuildFile; fileRef = 909ECB6023B90947002CA78D /* NACoord.h */; };
 		909ECC0C23B90947002CA78D /* NAPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 909ECB6123B90947002CA78D /* NAPool.h */; };
-		909ECC1F23B909FE002CA78D /* libNALib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9036280323B8BBD5002F3698 /* libNALib.a */; };
 		909ECC2223B90A81002CA78D /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 909ECC1623B90973002CA78D /* main.c */; };
 		909ECC2323B90ACF002CA78D /* mainGUI.c in Sources */ = {isa = PBXBuildFile; fileRef = 909ECC1823B90973002CA78D /* mainGUI.c */; };
 		909ECC2923B90B33002CA78D /* NAComplexII.h in Headers */ = {isa = PBXBuildFile; fileRef = 909ECB4C23B90947002CA78D /* NAComplexII.h */; };
@@ -352,25 +351,7 @@
 		909ECCD223B90B33002CA78D /* NAList.c in Sources */ = {isa = PBXBuildFile; fileRef = 909ECAE023B90946002CA78D /* NAList.c */; };
 		909ECCD323B90B33002CA78D /* NAString.c in Sources */ = {isa = PBXBuildFile; fileRef = 909ECADF23B90946002CA78D /* NAString.c */; };
 		909ECCD423B90B33002CA78D /* NATranslator.c in Sources */ = {isa = PBXBuildFile; fileRef = 909ECB2F23B90946002CA78D /* NATranslator.c */; };
-		909ECCDD23B90B6F002CA78D /* libNALibGUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 909ECCDA23B90B33002CA78D /* libNALibGUI.a */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		909ECC1D23B909F4002CA78D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B9B2EA07171683C200943D91 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9036280223B8BBD5002F3698;
-			remoteInfo = NALib;
-		};
-		909ECCDB23B90B68002CA78D /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = B9B2EA07171683C200943D91 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 909ECC2723B90B33002CA78D;
-			remoteInfo = NALibGUI;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		909EC6E323B8C06C002CA78D /* CopyFiles */ = {
@@ -596,7 +577,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				909ECCDD23B90B6F002CA78D /* libNALibGUI.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -611,7 +591,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				909ECC1F23B909FE002CA78D /* libNALib.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1350,7 +1329,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				909ECCDC23B90B68002CA78D /* PBXTargetDependency */,
 			);
 			name = NALibGUITryout;
 			productName = NALibGUI;
@@ -1385,7 +1363,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				909ECC1E23B909F4002CA78D /* PBXTargetDependency */,
 			);
 			name = NALibTryout;
 			productName = test;
@@ -1413,7 +1390,7 @@
 					};
 				};
 			};
-			buildConfigurationList = B9B2EA0A171683C200943D91 /* Build configuration list for PBXProject "XCode" */;
+			buildConfigurationList = B9B2EA0A171683C200943D91 /* Build configuration list for PBXProject "NALibXCode" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -1537,19 +1514,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		909ECC1E23B909F4002CA78D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9036280223B8BBD5002F3698 /* NALib */;
-			targetProxy = 909ECC1D23B909F4002CA78D /* PBXContainerItemProxy */;
-		};
-		909ECCDC23B90B68002CA78D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 909ECC2723B90B33002CA78D /* NALibGUI */;
-			targetProxy = 909ECCDB23B90B68002CA78D /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		9036280423B8BBD5002F3698 /* Debug */ = {
@@ -2244,7 +2208,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B9B2EA0A171683C200943D91 /* Build configuration list for PBXProject "XCode" */ = {
+		B9B2EA0A171683C200943D91 /* Build configuration list for PBXProject "NALibXCode" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B9B2EA0B171683C200943D91 /* Debug */,

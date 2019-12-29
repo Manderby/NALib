@@ -40,7 +40,8 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
     NSAutoreleasePool* pool;
   #endif
   
-  // Start the Core application and set the native ID of the application.
+  // Start the Core application if not started already and set the native ID
+  // of the application.
   [NSApplication sharedApplication];
   app = naNewApplication();
 
