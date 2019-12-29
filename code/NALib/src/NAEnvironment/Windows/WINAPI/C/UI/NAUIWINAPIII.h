@@ -698,12 +698,12 @@ NA_API NARect naGetMainScreenRect(){
   HMONITOR screen;
   MONITORINFO screeninfo;
   NARect rect;
-  POINT origin = {0, 0};
+  POINT origin = {0, 0};  // top left point which surely is on the main screen.
   screen = MonitorFromPoint(origin, MONITOR_DEFAULTTOPRIMARY);
   screeninfo.cbSize = sizeof(MONITORINFO);
   GetMonitorInfo(screen, &screeninfo);
-  rect.pos.x = screeninfo.rcMonitor.left;
-  rect.pos.y = (double)screeninfo.rcMonitor.bottom - (double)screeninfo.rcMonitor.top;
+  rect.pos.x = 0; // The main monitor is by definition at (0,0)
+  rect.pos.y = 0; // which in NALib is the bottom left corner.
   rect.size.width = (double)screeninfo.rcMonitor.right - (double)screeninfo.rcMonitor.left;
   rect.size.height = (double)screeninfo.rcMonitor.bottom - (double)screeninfo.rcMonitor.top;
   return rect;
