@@ -195,8 +195,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   }
 
   // When reaching here, the application had been stopped.
-//  naClearCoreApplication();
-//  naReleaseUIElement(app);
+  naReleaseUIElement(app);
 }
 
 
@@ -260,7 +259,7 @@ NA_HDEF NAApplication* naNewApplication(void){
 NA_DEF void naDestructApplication(NAApplication* application){
   NAWINAPIApplication* app = (NAWINAPIApplication*)application;
 
-  naReleaseUIElement(app->offscreenWindow);
+  DestroyWindow(app->offscreenWindow);
 
   DeleteObject(app->fgColor.brush);
   DeleteObject(app->fgColorDisabled.brush);

@@ -22,7 +22,8 @@ struct NAWINAPIWindow {
 
 NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
-  NAWindow* window;
+  NACoreWindow* corewindow;
+  NABool shouldClose;
 
   switch(message){
   case WM_SHOWWINDOW:
@@ -35,10 +36,10 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
     // wParam: Unused
     // lParam: (int)(short)LOWORD: x coordinate, (int)(short)HIWORD: y coordinate
     // result: 0 when handeled.
-    window = naGetUIElementWindow(uielement);
+    corewindow = (NACoreWindow*)naGetUIElementWindow(uielement);
     info.hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE);
     if (info.hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW); }
-    naRememberWindowPosition(window);
+    naRememberWindowPosition(corewindow);
     info.result = 0;
     break;
 
@@ -46,10 +47,10 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
     // wParam: Type of resizing (maximize, minimize, ...)
     // lParam: LOWORD: width, HIWORD: height
     // result: 0 when handeled.
-    window = naGetUIElementWindow(uielement);
+    corewindow = (NACoreWindow*)naGetUIElementWindow(uielement);
     info.hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE);
     if (info.hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW); }
-    naRememberWindowPosition(window);
+    naRememberWindowPosition(corewindow);
     info.result = 0;
     break;
 
@@ -78,6 +79,15 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
   //  info.result = 0;
   //  break;
 
+  case WM_CLOSE:
+    corewindow = (NACoreWindow*)naGetUIElementWindow(uielement);
+    naDispatchUIElementCommand(uielement, NA_UI_COMMAND_CLOSES);
+    shouldClose = !naGetFlagi(corewindow->flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
+    naSetFlagi(&(corewindow->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
+    if(shouldClose){naCloseWindow(corewindow);}
+    info.hasbeenhandeled = NA_TRUE;
+    info.result = 0;
+    break;
 
   case WM_CHILDACTIVATE:
   case WM_STYLECHANGING:
@@ -131,6 +141,15 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
   case WM_MENUSELECT:
   case WM_EXITMENULOOP:
   case WM_ENTERIDLE:
+  case WM_NCCALCSIZE:
+  case WM_NCLBUTTONDOWN:
+  case SPI_GETDOCKMOVING:
+  case WM_DESTROY:
+  case WM_NCDESTROY:
+    break;
+
+  // Cases being called due to bubbling the message.
+  case BM_SETCHECK:
     break;
 
   // Dark mode stuff
@@ -322,11 +341,10 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
 
 
 NA_DEF void naDestructWindow(NAWindow* window){
-//  NACoreWindow* corewindow = (NACoreWindow*)window;
-//  naDefineNativeCocoaObject(NANativeWindow, nativewindow, window);
-//  [nativewindow close];
-//  naReleaseUIElement(corewindow->contentspace);
-//  naClearCoreWindow(corewindow);
+  NACoreWindow* corewindow = (NACoreWindow*)window;
+  DestroyWindow(naGetUIElementNativeID(window));
+  naReleaseUIElement(corewindow->contentspace);
+  naClearCoreWindow(corewindow);
 }
 
 
@@ -482,18 +500,13 @@ NA_DEF void naShowWindow(NAWindow* window){
 
 
 NA_DEF void naCloseWindow(NAWindow* window){
-//  naDefineNativeCocoaObject(NANativeWindow, nativewindow, window);
-//  [nativewindow performClose:NA_NULL];
+  ShowWindow(naGetUIElementNativeID(window), SW_HIDE);
 }
 
 
 
 NA_DEF void naSetWindowContentSpace(NAWindow* window, NAUIElement* uielement){
   NACoreWindow* corewindow = (NACoreWindow*)window;
-  //naAddListLastMutable(&(corewindow->uielement.childs), uielement); // todo: this is a hack just for now.
-  //NAUIElement* element = (NAUIElement*)uielement;
-  //[(NANativeWindow*)(window->uielement.nativeID) setContentView:element->nativeID];
-
   corewindow->contentspace = (NACoreSpace*)uielement;
   naSetUIElementParent(uielement, window);
 }
