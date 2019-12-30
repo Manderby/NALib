@@ -322,6 +322,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
     SendMessage(hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
     SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
   }
+  naDelete(iconPath);
 
   // todo: destroy the icon at the end of the windows lifetime.
   //DestroyIcon(hIcon);

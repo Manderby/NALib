@@ -186,6 +186,7 @@ NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
   HFONT hFont = CreateFontIndirect(&lf);
   SendMessage(naGetUIElementNativeID(label), WM_SETFONT, (WPARAM)hFont, NA_FALSE);
 
+  if(winapilabel->href){naDelete(winapilabel->href);}
   winapilabel->href = naNewStringWithFormat("start %s", url);
 }
 

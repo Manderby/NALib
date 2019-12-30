@@ -50,6 +50,7 @@ NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
   // Currently, only png is possible
   NAPNG* png = naNewPNGWithFile(pathStr);
   NABabyImage* babyImage = naCreateBabyImageFromPNG(png);
+  naDelete(png);
   return babyImage;
 }
 
