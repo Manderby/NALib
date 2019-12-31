@@ -13,6 +13,8 @@
 typedef struct NAWINAPITextField NAWINAPITextField;
 struct NAWINAPITextField {
  NACoreTextField coretextfield;
+ NAUIElement* nextTabStop;
+ NAUIElement* prevTabStop;
 };
 
 
@@ -50,7 +52,7 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(NAUIElement* uielement, UINT message,
  case EM_LINEFROMCHAR:
  case EM_POSFROMCHAR:
  case WM_LBUTTONUP:
- case 0x43C:
+ case 0x43C:  // undocumented
  case WM_GETTEXT:
  case WM_SETTEXT:
  case EM_LINELENGTH:
@@ -59,13 +61,15 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(NAUIElement* uielement, UINT message,
  case WM_CHAR:
  case WM_KEYDOWN: // capture enter and tab here.
  case WM_SYSKEYDOWN: // the alt key!
+ case WM_MOUSEMOVE:
+ case WM_MOUSELEAVE:
 
  // note that any change of the edit control is captured in naWINAPINotificationProc.
  break;
 
  default:
- //printf("Uncaught TextField message\n");
- break;
+   //printf("Uncaught TextField message\n");
+  break;
  }
  
  return info;
@@ -74,15 +78,15 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(NAUIElement* uielement, UINT message,
 
 
 NAWINAPICallbackInfo naTextFieldWINAPINotify(NAUIElement* uielement, WORD notificationCode){
- NAWINAPICallbackInfo info = {NA_FALSE, 0};
- switch(notificationCode){
- case EN_CHANGE:
- naDispatchUIElementCommand(uielement, NA_UI_COMMAND_EDITED);
- info.hasbeenhandeled = NA_TRUE;
- info.result = 0;
- break;
- }
- return info;
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  switch(notificationCode){
+  case EN_CHANGE:
+    naDispatchUIElementCommand(uielement, NA_UI_COMMAND_EDITED);
+    info.hasbeenhandeled = NA_TRUE;
+    info.result = 0;
+    break;
+  }
+  return info;
 }
 
 
@@ -94,7 +98,9 @@ NA_DEF NATextField* naNewTextField(NASize size){
 
  NAWINAPITextField* winapitextfield = naAlloc(NAWINAPITextField);
 
- style = WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL;
+ // WS_TABSTOP and WS_GROUP seem not to work... strange. I solved it using the
+ // naInterceptKeyboardShortcut function. 
+ style = WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_GROUP | ES_AUTOHSCROLL;
 
 	hWnd = CreateWindow(
 		TEXT("EDIT"), TEXT(""), style,
@@ -105,6 +111,8 @@ NA_DEF NATextField* naNewTextField(NASize size){
  if(!app->oldTextFieldWindowProc){app->oldTextFieldWindowProc = oldproc;}
 
  naInitCoreTextField(&(winapitextfield->coretextfield), hWnd);
+ winapitextfield->nextTabStop = winapitextfield;
+ winapitextfield->prevTabStop = winapitextfield;
 
  SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
@@ -155,6 +163,20 @@ NA_DEF void naSetTextFieldTextAlignment(NATextField* textfield, NATextAlignment 
 NA_DEF void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind){
  NAWINAPITextField* winapitextfield = (NAWINAPITextField*)textfield;
  SendMessage(naGetUIElementNativeID(winapitextfield), WM_SETFONT, (WPARAM)getFontWithKind(kind), MAKELPARAM(TRUE, 0));
+}
+
+
+
+NA_HDEF NAUIElement** naGetTextFieldNextTabReference(NATextField* textfield){
+  NAWINAPITextField* winapitextfield = (NAWINAPITextField*)textfield;
+  return &(winapitextfield->nextTabStop);
+}
+
+
+
+NA_HDEF NAUIElement** naGetTextFieldPrevTabReference(NATextField* textfield){
+  NAWINAPITextField* winapitextfield = (NAWINAPITextField*)textfield;
+  return &(winapitextfield->prevTabStop);
 }
 
 

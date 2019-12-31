@@ -83,47 +83,6 @@ NAWINAPICallbackInfo naLabelWINAPINotify(NAUIElement* uielement, WORD notificati
 
 
 
-//@implementation NANativeLabel
-//- (id) initWithCoreLabel:(NACoreLabel*)newcorelabel frame:(NSRect)frame{
-//  self = [super initWithFrame:frame];
-////  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Wurst"]];
-//  [self setSelectable:YES];
-//  [self setEditable:NO];
-//  [self setBordered:NO];
-//  [self setBackgroundColor:[NSColor colorWithCalibratedRed:0. green:0. blue:1. alpha:.1]];
-//  [self setDrawsBackground:NO];
-//  [self setLineBreakMode:NSLineBreakByWordWrapping];
-//  [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
-//  corelabel = newcorelabel;
-//  return self;
-//}
-//- (void) setLink:(const NAUTF8Char*)url{
-//  [self setAllowsEditingTextAttributes: YES];
-//  [self setSelectable: YES];
-//
-//  NSMutableAttributedString* attrString = NA_COCOA_AUTORELEASE([[NSMutableAttributedString alloc] initWithString: [self stringValue]]);
-//  NSRange range = NSMakeRange(0, [attrString length]);
-//
-//  NSURL* nsurl = [NSURL URLWithString:[NSString stringWithUTF8String:url]];
-//  [attrString beginEditing];
-//  [attrString addAttribute:NSLinkAttributeName value:[nsurl absoluteString] range:range];
-//  NSMutableParagraphStyle* paragraphStyle = [[NSMutableParagraphStyle alloc] init];
-//  [paragraphStyle setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
-//  paragraphStyle.alignment = [self alignment];
-//  [attrString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:range];
-//  [attrString addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInt:NSUnderlineStyleSingle] range:range];
-//  [attrString addAttribute:NSForegroundColorAttributeName value:[NSColor blueColor] range:range];
-//  [attrString endEditing];
-//  
-//  [self setAttributedStringValue: attrString];
-//}
-//- (void) setLabelEnabled:(NABool)enabled{
-//  [self setAlphaValue:enabled ? 1. : .35];
-//}
-//@end
-
-
-
 NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   HWND hWnd;
   DWORD style;

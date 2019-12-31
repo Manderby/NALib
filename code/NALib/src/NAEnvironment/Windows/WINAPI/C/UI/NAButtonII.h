@@ -86,8 +86,8 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTR
     long newstyle = (oldstyle & ~BS_OWNERDRAW) | BS_TEXT | BS_CENTER | BS_VCENTER;
     SetWindowLongPtr(naGetUIElementNativeID(uielement), GWL_STYLE, (LONG_PTR)newstyle);
     // Oh boi. That is one hell of a hidden feature. Usually, the WM_PAINT message does not
-    // use wparam and lparam at all. But there are some common controls (and button seems to
-    // be one of them) which in fact only work if you send the device context in wparam.
+    // use wParam and lParam at all. But there are some common controls (and buttons seems to
+    // be one of them) which in fact only work if you send the device context in wParam.
     CallWindowProc(naGetApplicationOldButtonWindowProc(), naGetUIElementNativeID(uielement), WM_PAINT, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
     SetWindowLongPtr(naGetUIElementNativeID(uielement), GWL_STYLE, (LONG_PTR)oldstyle);
   }
@@ -137,80 +137,6 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTR
 
   return info;
 }
-
-//// Push (Text only) (24px height fixed)
-//// Option (Text / Image) (3px padding on all sides)
-//// Borderless (Image only) (0px padding on all sides)
-//
-//@implementation NANativeButton
-//- (id) initWithCoreButton:(NACoreButton*)newcorebutton bezelStyle:(NSBezelStyle)bezelStyle frame:(NSRect)frame{
-//  self = [super initWithFrame:frame];
-//  [self setButtonType:(bezelStyle == NSRoundedBezelStyle) ? NSButtonTypeMomentaryLight : NSButtonTypePushOnPushOff];
-//  // NSBezelStyleShadowlessSquare is used to have a transparent background. The option 0 has a grey background.
-//  [self setBezelStyle:bezelStyle ? bezelStyle : NSBezelStyleShadowlessSquare]; 
-//  [self setBordered:bezelStyle ? YES : NO];
-//  corebutton = newcorebutton;
-//  [self setTarget:self];
-//  [self setAction:@selector(onPressed:)];
-//  return self;
-//}
-//- (void) setButtonText:(const NAUTF8Char*)text{
-//  [self setTitle:[NSString stringWithUTF8String:text]];
-//}
-//- (void) setButtonImage:(NAUIImage*)uiimage{
-//  NSSize imagesize = NSMakeSize(naGetUIImage1xSize(uiimage).width, naGetUIImage1xSize(uiimage).height);
-//  NSImage* image = [NSImage imageWithSize:imagesize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
-//    NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
-//    if(uiimage->tintMode != NA_BLEND_ZERO){
-//      NSAppearanceName appearancename = [[NSAppearance currentAppearance] name];
-//      if (@available(macOS 10.14, *)) {
-//        skin = ( appearancename == NSAppearanceNameAqua
-//              || appearancename == NSAppearanceNameVibrantLight
-//              || appearancename == NSAppearanceNameAccessibilityHighContrastAqua
-//              || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantLight)
-//        ? NA_UIIMAGE_SKIN_LIGHT : NA_UIIMAGE_SKIN_DARK;
-//      }else{
-//        skin = (appearancename == NSAppearanceNameAqua
-//             || appearancename == NSAppearanceNameVibrantLight)
-//        ? NA_UIIMAGE_SKIN_LIGHT : NA_UIIMAGE_SKIN_DARK;
-//      }
-//    }
-//    NAUIImageResolution resolution = naGetWindowUIResolution(naGetUIElementWindow(&(corebutton->uielement)));
-//    CGContextRef context = [[NSGraphicsContext currentContext] graphicsPort];
-//    CGImageRef nativeimage = naGetUIImageRef(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
-//    if(!nativeimage){
-//      nativeimage = naGetUIImageRef(uiimage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, skin);
-//    }
-//    CGContextDrawImage(context, dstRect, nativeimage);
-//    return YES;
-//  }];
-//
-////  CGImageRef imgRef = [image CGImageForProposedRect:nil context:nil hints:nil];
-//  [self setImage:image];
-//  [self setImageScaling:NSImageScaleProportionallyUpOrDown];
-////  [image release];
-////  [self setBezelStyle:NSBezelStyleShadowlessSquare];
-//  // OptionButton: NSBezelStyleShadowlessSquare
-//  // NSBezelStyleRegularSquare : 5 5 5 5
-//  // NSBezelStyleShadowlessSquare : 3 3 3 3
-//  // NSBezelStyleSmallSquare : 2 1 2 1
-////  [self setBordered:NO];
-//}
-//- (void) onPressed:(id)sender{
-//  NA_UNUSED(sender);
-//  naDispatchUIElementCommand((NACoreUIElement*)corebutton, NA_UI_COMMAND_PRESSED);
-//}
-//- (void) setButtonState:(NABool)state{
-//  [self setState:state ? NSOnState : NSOffState];
-//}
-//- (void) setDefaultButton:(NABool)isDefault{
-//  if(isDefault){
-//    [self setKeyEquivalent:@"\r"];
-//  }else{
-//    [self setKeyEquivalent:@""];
-//  }
-//}
-//@end
 
 
 

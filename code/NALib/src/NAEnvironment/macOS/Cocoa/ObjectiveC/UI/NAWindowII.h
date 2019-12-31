@@ -192,10 +192,10 @@ NA_DEF NAUIImageResolution naGetWindowUIResolution(NAWindow* window){
 
 
 
-NA_HDEF void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstElem){
+NA_HDEF void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstTabElem){
   naDefineNativeCocoaObject(NANativeWindow, nativewindow, window);
-  naDefineNativeCocoaObject(NSView, nativefirst, firstElem);
-  [nativewindow setInitialFirstResponder:nativefirst];
+  naDefineNativeCocoaObject(NSView, nativeFirstTab, firstTabElem);
+  [nativewindow setInitialFirstResponder:nativeFirstTab];
 }
 
 

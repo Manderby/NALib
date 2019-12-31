@@ -43,6 +43,44 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPA
   case WM_CTLCOLOREDIT:
   case WM_NCHITTEST:
   case WM_SETCURSOR:
+  case WM_STYLECHANGING:
+  case WM_STYLECHANGED:
+  case WM_SETTEXT:
+  case WM_GETFONT:
+  case WM_SETFONT:
+  case WM_GETTEXTLENGTH:
+  case WM_GETTEXT:
+  case WM_MOUSEMOVE:
+  case WM_MOUSELEAVE:
+  case WM_PARENTNOTIFY:
+  case WM_MOUSEACTIVATE:
+  case WM_LBUTTONDOWN:
+  case WM_IME_SETCONTEXT:
+  case WM_SETFOCUS:
+  case WM_IME_NOTIFY:
+  case WM_CANCELMODE:
+  case WM_CAPTURECHANGED:
+  case WM_KILLFOCUS:
+  case WM_LBUTTONUP:
+  case WM_KEYDOWN:
+  case WM_CHAR:
+  case WM_KEYUP:
+  case 0x43c: // undocumented
+    break;
+
+  // Dialog messages
+  case WM_UPDATEUISTATE:
+  case WM_GETDLGCODE:
+  case WM_CHANGEUISTATE:
+
+  // Cases being called due to bubbling the message.
+  case BM_SETCHECK:
+  case EM_GETSEL:
+  case EM_GETRECT:
+  case EM_CHARFROMPOS:
+  case EM_LINEFROMCHAR:
+  case EM_POSFROMCHAR:
+  case EM_SETSEL:
     break;
 
   case WM_CTLCOLORSTATIC:
@@ -123,8 +161,6 @@ NA_DEF NASpace* naNewSpace(NASize size){
 		TEXT("NASpace"), TEXT(""), style,
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
-
-  //DWORD lasterror = GetLastError();
 
   naInitCoreSpace(&(winapispace->corespace), hWnd);
   winapispace->lastBgColor = &(app->bgColor);

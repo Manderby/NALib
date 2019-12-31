@@ -36,6 +36,13 @@ NA_HAPI NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* label);
 NA_HDEF NARect naGetTextFieldAbsoluteInnerRect(NACoreUIElement* textfield);
 NA_HDEF NARect naGetTextBoxAbsoluteInnerRect(NACoreUIElement* textbox);
 
+NA_HAPI NAUIElement** naGetUIElementNextTabReference(NATextField* textfield);
+NA_HAPI NAUIElement** naGetUIElementPrevTabReference(NATextField* textfield);
+NA_HAPI NAUIElement** naGetTextFieldNextTabReference(NATextField* textfield);
+NA_HAPI NAUIElement** naGetTextFieldPrevTabReference(NATextField* textfield);
+NA_HAPI NAUIElement** naGetTextBoxNextTabReference(NATextBox* textbox);
+NA_HAPI NAUIElement** naGetTextBoxPrevTabReference(NATextBox* textbox);
+
 NA_HAPI void naRenewWindowMouseTracking(NACoreWindow* corewindow);
 NA_HAPI void naClearWindowMouseTracking(NACoreWindow* corewindow);
 
@@ -60,7 +67,6 @@ NA_HDEF void naClearUINativeId(NANativeID nativeId){
 
 
 NA_HDEF void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent){
-  //if(parent == naGetApplication()){return;}
   NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
   NACoreUIElement* coreparent = (NACoreUIElement*)parent;
   // todo: remove from old parent
@@ -130,14 +136,6 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
   naFree(systemMessage);
   naFree(systemTitle);
 }
-
-
-NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextelem){
-  //naDefineNativeCocoaObject(NANativeTextField, nativeelem, elem);
-  //naDefineNativeCocoaObject(NSView, nativeview, nextelem);
-  //[nativeelem setNextKeyView:nativeview];
-}
-
 
 
 NA_HDEF void naCaptureKeyboardStatus(MSG* message){  
@@ -272,15 +270,12 @@ NAWINAPICallbackInfo naTextFieldWINAPINotify(NAUIElement* uielement, WORD notifi
 
 NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTRUCT* drawitemstruct);
 
+
+
 // This is the one and only, master of destruction, defender of chaos and
 // pimp of the century function handling all and everything in WINAPI.
 
 LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-  //PAINTSTRUCT ps; // Paint information. Needed for WM_PAINT messages
-  //LRESULT retvalue;
-  //NAUIKeyCode keycode;
-  //NAUIKeyCode scancode;   // used as UINT, converted to NAUIKeyCode
-
   NACoreUIElement* uielement = (NACoreUIElement*)naGetUINALibEquivalent(hWnd);
   //todo: this is a fallback but maybe it is not clever to use application for that?
   NAUIElementType firsttype = uielement ? naGetUIElementType(uielement) : NA_UI_APPLICATION;
@@ -580,10 +575,68 @@ NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam){
 
 NA_HDEF void naRefreshUIElementNow(NAUIElement* uielement){
   RedrawWindow(naGetUIElementNativeID(uielement), NA_NULL, NA_NULL, RDW_INVALIDATE | RDW_ERASE);
-  //PostMessage(naGetUIElementNativeID(uielement), WM_PAINT, (WPARAM)NA_NULL, (LPARAM)NA_NULL);
 }
 
 
+
+NA_HDEF NAUIElement** naGetUIElementNextTabReference(NAUIElement* uielement){
+  switch(naGetUIElementType(uielement)){
+  case NA_UI_TEXTFIELD: return naGetTextFieldNextTabReference(uielement); break;
+  case NA_UI_TEXTBOX:   return naGetTextBoxNextTabReference(uielement); break;
+  default:
+    #ifndef NDEBUG
+      naError("Invalid type");
+    #endif
+    return NA_NULL;
+  }
+}
+
+
+
+NA_HDEF NAUIElement** naGetUIElementPrevTabReference(NAUIElement* uielement){
+  switch(naGetUIElementType(uielement)){
+  case NA_UI_TEXTFIELD: return naGetTextFieldPrevTabReference(uielement); break;
+  case NA_UI_TEXTBOX:   return naGetTextBoxPrevTabReference(uielement); break;
+  default:
+    #ifndef NDEBUG
+      naError("Invalid type");
+    #endif
+    return NA_NULL;
+  }
+}
+
+
+
+NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextTabElem){
+  if(  naGetUIElementType(elem) != NA_UI_TEXTFIELD
+    && naGetUIElementType(elem) != NA_UI_TEXTBOX){
+    #ifndef NDEBUG
+      naError("elem has a type which can not be used as a next tab.");
+    #endif
+    return;
+  }
+
+  if(  naGetUIElementType(nextTabElem) != NA_UI_TEXTFIELD
+    && naGetUIElementType(nextTabElem) != NA_UI_TEXTBOX){
+    #ifndef NDEBUG
+      naError("nextTabElem has a type which can not be used as a next tab.");
+    #endif
+    return;
+  }
+
+  NAUIElement** elemNextRef = naGetUIElementNextTabReference(elem);
+  NAUIElement** nextPrevRef = naGetUIElementPrevTabReference(nextTabElem);
+  NAUIElement** elemNextPrevRef = naGetUIElementPrevTabReference(*elemNextRef);
+  NAUIElement** nextPrevNextRef = naGetUIElementNextTabReference(*nextPrevRef);
+
+  *nextPrevNextRef = *elemNextRef;
+  *elemNextPrevRef = *nextPrevRef;
+  *nextPrevRef = elem;
+  *elemNextRef = nextTabElem;
+
+  // This is how it is supposed to work on windows, but it doesn't.
+  //SetWindowPos(((NACoreUIElement*)nextTabElem)->nativeID, ((NACoreUIElement*)elem)->nativeID, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE); 
+}
 
 
 
@@ -645,9 +698,9 @@ NA_DEF NARect naGetUIElementRect(NACoreUIElement* uielement, NAUIElement* relati
     break;
   case NA_UI_OPENGLSPACE:  rect = naGetSpaceAbsoluteInnerRect(coreelement); break;
   default:
-    //#ifndef NDEBUG
-    //  naError("Invalid UI type");
-    //#endif
+    #ifndef NDEBUG
+      naError("Invalid UI type");
+    #endif
     rect = naMakeRectSE(0., 0., 0., 0.);
     break;
   }
@@ -671,7 +724,6 @@ NA_DEF NARect naGetUIElementRect(NACoreUIElement* uielement, NAUIElement* relati
     rect.size.width = rect.size.width;
     rect.size.height = rect.size.height;
   }
-  // Convert the rect into absolute coordinates.
 
   return rect;
 }
@@ -685,7 +737,6 @@ NA_HDEF void* naAllocMouseTracking(NANativeID nativeId){
   winapitracking->hwndTrack = nativeId;
   winapitracking->dwHoverTime = HOVER_DEFAULT;
   NABool success = TrackMouseEvent(winapitracking);
-  //DWORD lasterror = GetLastError();
   return winapitracking;
 }
 
@@ -716,6 +767,8 @@ NA_API NARect naGetMainScreenRect(){
 }
 
 
+
+// This is just a small code snipplet useful for debugging. See call to EnumFontFamilies below.
 //int CALLBACK enumFonts(
 //  _In_ ENUMLOGFONT   *lpelf,
 //  _In_ NEWTEXTMETRIC *lpntm,
@@ -734,7 +787,6 @@ NAFont getFontWithKind(NAFontKind kind){
 
   //EnumFontFamilies(GetDC(NA_NULL), NA_NULL, enumFonts, NA_NULL);
 
-//  CGFloat systemSize = [NSFont systemFontSize];
   switch(kind){
     case NA_FONT_KIND_SYSTEM:
       font = CreateFont(
@@ -828,7 +880,7 @@ NAFont getFontWithKind(NAFontKind kind){
       break;
   }
   #endif
-    //// destroy font with DeleteObject(font);
+    // destroy font with DeleteObject(font);
   return (NAFont)font;
 }
 
@@ -886,21 +938,6 @@ long getWINAPITextAlignmentWithAlignment(NATextAlignment alignment){
 //  tme.dwHoverTime = HOVER_DEFAULT;
 //  TrackMouseEvent(&tme);
 //}
-
-
-
-
-//NA_DEF NARect naGetWindowRect(NAWindow* window){
-//  NARect rect;
-//  WINDOWINFO windowinfo;
-//  windowinfo.cbSize = sizeof(WINDOWINFO);
-//  GetWindowInfo(naGetUIElementNativeID(window), &windowinfo);
-//  rect.size.width = windowinfo.rcWindow.right - windowinfo.rcWindow.left;
-//  rect.size.height = windowinfo.rcWindow.bottom - windowinfo.rcWindow.top;
-//  return rect;
-//}
-
-
 
 
 

@@ -13,6 +13,8 @@
 typedef struct NAWINAPITextBox NAWINAPITextBox;
 struct NAWINAPITextBox {
   NACoreTextBox coretextbox;
+  NAUIElement* nextTabStop;
+  NAUIElement* prevTabStop;
 };
 
 
@@ -45,6 +47,8 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
   naInitCoreTextBox(&(winapitextbox->coretextbox), hWnd);
+  winapitextbox->nextTabStop = winapitextbox;
+  winapitextbox->prevTabStop = winapitextbox;
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
@@ -85,6 +89,20 @@ NA_DEF void naSetTextBoxFontKind(NATextBox* textbox, NAFontKind kind){
 
 NA_DEF void naSetTextBoxEditable(NATextBox* textbox, NABool editable){
   SendMessage(naGetUIElementNativeID(textbox), EM_SETREADONLY, (WPARAM)!editable, 0);
+}
+
+
+
+NA_HDEF NAUIElement** naGetTextBoxNextTabReference(NATextBox* textbox){
+  NAWINAPITextBox* winapitextbox = (NAWINAPITextBox*)textbox;
+  return &(winapitextbox->nextTabStop);
+}
+
+
+
+NA_HDEF NAUIElement** naGetTextBoxPrevTabReference(NATextBox* textbox){
+  NAWINAPITextBox* winapitextbox = (NAWINAPITextBox*)textbox;
+  return &(winapitextbox->prevTabStop);
 }
 
 

@@ -152,7 +152,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
   case BM_SETCHECK:
     break;
 
-  // Dark mode stuff
+  // Dark mode stuff. Commented out for the future.
   //case WM_DWMCOLORIZATIONCOLORCHANGED:
   //  DwmGetColorizationColor(&colorization, &lParam);
   //  info.result = 0;
@@ -171,112 +171,9 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
   return info;
 }
 
-//@implementation NANativeWindow
-//- (id) initWithCoreWindow:(NACoreWindow*)newcorewindow contentRect:(NSRect)contentRect styleMask:(NSUInteger)aStyle backing:(NSBackingStoreType)bufferingType defer:(BOOL)flag screen:(NSScreen *)screen{
-//  self = [super initWithContentRect:contentRect styleMask:aStyle backing:bufferingType defer:flag screen:screen];
-//  corewindow = newcorewindow;
-//  trackingcount = 0;
-//  trackingarea = nil;
-//  self.releasedWhenClosed = NO;
-//  return self;
-//}
-//- (NACoreWindow*) corewindow{
-//  return corewindow;
-//}
-//- (NSTrackingArea*) trackingarea{
-//  return trackingarea;
-//}
-//- (NAUInt) trackingcount{
-//  return trackingcount;
-//}
-//- (BOOL)windowShouldClose:(id)sender{
-//  NA_UNUSED(sender);
-//  naSetFlagi(&(corewindow->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
-//  naDispatchUIElementCommand((NACoreUIElement*)corewindow, NA_UI_COMMAND_CLOSES);
-//  NABool shouldClose = !naGetFlagi(corewindow->flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
-//  naSetFlagi(&(corewindow->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
-//  return (BOOL)shouldClose;
-//}
-//- (void)setContentRect:(NARect)rect{
-//  NSRect frame = [NSWindow frameRectForContentRect:naMakeNSRectWithRect(rect) styleMask:[self styleMask]];
-//  [super setFrame:frame display:YES];
-//  naDispatchUIElementCommand((NACoreUIElement*)corewindow, NA_UI_COMMAND_RESHAPE);
-//}
-//- (void)setWindowTitle:(const NAUTF8Char*) title{
-//  [self setTitle:[NSString stringWithUTF8String:title]];
-//}
-//- (void)setKeepOnTop:(NABool) keepOnTop{
-//  if(keepOnTop){
-//    [self setLevel:NSFloatingWindowLevel];
-//  }else{
-//    [self setLevel:NSNormalWindowLevel];
-//  }
-//}
-//- (void)renewMouseTracking{
-//  trackingarea = [[NSTrackingArea alloc] initWithRect:[[self contentView] bounds]
-//      options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveWhenFirstResponder
-//      owner:self userInfo:nil];
-//  [[self contentView] addTrackingArea:trackingarea];
-//}
-//- (void)clearMouseTracking{
-//  [[self contentView] removeTrackingArea:trackingarea];
-//  #if __has_feature(objc_arc)
-//    // TrackingArea will be released automatically when ARC is turned on.
-//  #else
-//    [trackingarea release];
-//  #endif
-//  trackingarea = nil;
-//}
-//- (void)retainMouseTracking{
-//  trackingcount++;
-//  if(trackingcount == 1){
-//    [self setAcceptsMouseMovedEvents:YES];
-//    naRenewWindowMouseTracking(corewindow);
-//  }
-//}
-//- (void)releaseMouseTracking{
-//  trackingcount--;
-//  if(trackingcount == 0){
-//    [self setAcceptsMouseMovedEvents:NO];
-//    naClearWindowMouseTracking(corewindow);
-//  }
-//}
-//- (void)mouseMoved:(NSEvent*)event{
-////  double deltaX = [event deltaX];
-////  double deltaY = [event deltaY];
-//  naSetMouseMovedByDiff([event deltaX], [event deltaY]);
-//  naDispatchUIElementCommand((NACoreUIElement*)corewindow, NA_UI_COMMAND_MOUSE_MOVED);
-////  [NSEvent setMouseCoalescingEnabled:NO];
-//}
-//- (void)mouseEntered:(NSEvent*)event{
-//  NA_UNUSED(event);
-//  naSetMouseEnteredAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
-//  naDispatchUIElementCommand((NACoreUIElement*)corewindow, NA_UI_COMMAND_MOUSE_ENTERED);
-//}
-//- (void)mouseExited:(NSEvent*)event{
-//  NA_UNUSED(event);
-//  naSetMouseExitedAtPos(naMakePosWithNSPoint([NSEvent mouseLocation]));
-//  naDispatchUIElementCommand((NACoreUIElement*)corewindow, NA_UI_COMMAND_MOUSE_EXITED);
-//}
-//- (void)keyUp:(NSEvent*)event{
-//  NA_UNUSED(event);
-//  naDispatchUIElementCommand((NACoreUIElement*)corewindow, NA_UI_COMMAND_KEYUP);
-//}
-//- (void)windowDidResize:(NSNotification *)notification{
-//  NA_UNUSED(notification);
-//  naRememberWindowPosition(corewindow);
-//}
-//- (void)windowDidMove:(NSNotification *)notification{
-//  NA_UNUSED(notification);
-//  naRememberWindowPosition(corewindow);
-//}
-//@end
-
-
 
 
 NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resizeable, NAInt storageTag){
-  DWORD exStyle;
   DWORD style;
   HWND hWnd;
   RECT windowrect;
@@ -286,9 +183,11 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
 
   rect = naSetWindowStorageTag(winapiwindow, storageTag, rect, resizeable);
 
-  exStyle = WS_EX_CLIENTEDGE;
   style = WS_OVERLAPPEDWINDOW;
-  if(!resizeable){style &= ~WS_THICKFRAME;}
+  if(!resizeable){
+    style &= ~WS_THICKFRAME;
+    style &= ~WS_MAXIMIZEBOX;
+  }
 
   screenrect = naGetMainScreenRect();
   windowrect.top = (int)(screenrect.size.height - rect.pos.y - rect.size.height);
@@ -351,15 +250,20 @@ NA_DEF void naDestructWindow(NAWindow* window){
 
 
 NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title){
-//  naDefineNativeCocoaObject(NANativeWindow, nativewindow, window);
-//  [nativewindow setWindowTitle:title];
+  NACoreWindow* corewindow = (NACoreWindow*)window;
+  TCHAR* systemtitle = naAllocSystemStringWithUTF8String(title);
+  SetWindowText(naGetUIElementNativeID(window), systemtitle);
+  naFree(systemtitle);
 }
 
 
 
 NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop){
-//  naDefineNativeCocoaObject(NANativeWindow, nativewindow, window);
-//  [nativewindow setKeepOnTop:keepOnTop];
+  if(keepOnTop){
+    SetWindowPos(naGetUIElementNativeID(window), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+  }else{
+    SetWindowPos(naGetUIElementNativeID(window), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+  }
 }
 
 
@@ -400,24 +304,13 @@ NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
 
 
 NA_DEF NAUIImageResolution naGetWindowUIResolution(NAWindow* window){
-//  naDefineNativeCocoaObject(NANativeWindow, nativewindow, window);
-//  CGFloat res = 1.;
-//  if(NSAppKitVersionNumber >= NSAppKitVersionNumber10_7){
-//    #ifdef __MAC_10_7
-//      res = [nativewindow backingScaleFactor];
-//    #endif
-//  }else{
-//    #ifndef __MAC_10_7
-//      res = [nativewindow userSpaceScaleFactor];
-//    #endif
-//  }
-//  return (res == 1.) ? NA_UIIMAGE_RESOLUTION_1x : NA_UIIMAGE_RESOLUTION_2x;
+  // Currently, NALib for windows GUI is not resolution aware. Be patient.
   return NA_UIIMAGE_RESOLUTION_1x;
 }
 
 
 
-NA_HDEF void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstElem){
+NA_HDEF void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstTabElem){
 //  naDefineNativeCocoaObject(NANativeWindow, nativewindow, window);
 //  naDefineNativeCocoaObject(NSView, nativefirst, firstElem);
 //  [nativewindow setInitialFirstResponder:nativefirst];

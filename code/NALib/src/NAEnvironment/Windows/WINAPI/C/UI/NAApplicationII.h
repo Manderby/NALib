@@ -86,22 +86,6 @@ NAWINAPICallbackInfo naApplicationWINAPIProc(NAUIElement* uielement, UINT messag
   return info;
 }
 
-//@implementation NANativeApplicationDelegate
-//- (id) initWithCoreApplication:(NACoreApplication*)newcoreapplication{
-//  self = [super init];
-//  coreapplication = newcoreapplication;
-//  return self;
-//}
-//- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender{
-//  NA_UNUSED(sender);
-//  naStopApplication();
-//  return NSTerminateCancel;
-//}
-//- (void)applicationDidFinishLaunching:(NSNotification *)notification{
-//  [NSApp applicationDidFinishLaunching:notification];
-//}
-//@end
-
 
 
 NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void* arg){
@@ -109,6 +93,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   WNDCLASS wndclass;
   MSG message;
 
+  // Uncommented for future use.
   //SetProcessDPIAware();
   //DPI_AWARENESS awareness = DPI_AWARENESS_SYSTEM_AWARE;
   //SetProcessDpiAwarenessContext(&awareness);
@@ -187,9 +172,16 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
       if(message.message == WM_QUIT){
         break;
       }
+      // Capture any keyboard shortcuts overwritten by the NALib user
       if(!naInterceptKeyboardShortcut(&message)){
-        TranslateMessage(&message);
-        DispatchMessage(&message);
+        // Capture any dialog messages (needed for TAB order)
+        NACoreUIElement* uielement = (NACoreUIElement*)naGetUINALibEquivalent(message.hwnd);
+        NACoreUIElement* corewindow = naGetUIElementWindow(uielement);
+        if(!corewindow || !IsDialogMessage(naGetUIElementNativeID(corewindow), &message)){
+          // Do the normal message dispatch.
+          TranslateMessage(&message);
+          DispatchMessage(&message);
+        }
       }
     }
   }
@@ -225,8 +217,6 @@ NA_HDEF NAApplication* naNewApplication(void){
 		TEXT("NAOffscreenWindow"), TEXT("Offscreen window"), WS_OVERLAPPEDWINDOW,
 		0, 0, 0, 0,
 		NULL, NULL, GetModuleHandle(NULL), NULL);
-
-      //DWORD lasterror = GetLastError();
 
   winapiapplication->nonclientmetrics.cbSize = sizeof(NONCLIENTMETRICS);
   SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &(winapiapplication->nonclientmetrics), 0);
@@ -355,41 +345,17 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, do
 #include <io.h>
 #include <fcntl.h>
 NA_DEF void naOpenConsoleWindow(void){
-//  int outHandle, errHandle, inHandle;
   FILE *outFile;
   FILE *errFile;
   FILE *inFile;
-//  CONSOLE_SCREEN_BUFFER_INFO coninfo;
   AllocConsole();
 
   TCHAR* systemtitle = TEXT("Debug Console");
   SetConsoleTitle(systemtitle);
 
-//    GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo);
-//    coninfo.dwSize.Y = 9999;
-//    SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE), coninfo.dwSize);
-
   freopen_s(&inFile, "CONIN$", "r", stdin);
   freopen_s(&outFile, "CONOUT$", "w", stdout);
   freopen_s(&errFile, "CONERR$", "w", stderr);
-
-  //outHandle = _open_osfhandle((NAWINAPIHANDLE)GetStdHandle(STD_OUTPUT_HANDLE), _O_TEXT);
-  //errHandle = _open_osfhandle((NAWINAPIHANDLE)GetStdHandle(STD_ERROR_HANDLE),_O_TEXT);
-  //inHandle = _open_osfhandle((NAWINAPIHANDLE)GetStdHandle(STD_INPUT_HANDLE),_O_TEXT );
-
-  //outFile = _fdopen(outHandle, "w" );
-  //errFile = _fdopen(errHandle, "w");
-  //inFile =  _fdopen(inHandle, "r");
-
-  //*stdout = *outFile;
-  //*stderr = *errFile;
-  //*stdin = *inFile;
-
-  //setvbuf( stdout, NULL, _IONBF, 0 );
-  //setvbuf( stderr, NULL, _IONBF, 0 );
-  //setvbuf( stdin, NULL, _IONBF, 0 );
-
-
 }
 
 
@@ -437,6 +403,8 @@ NA_DEF NAString* naNewApplicationName(void){
     return applicationbasename;
   }
 }
+
+
 
 NA_DEF NAString* naNewApplicationCompanyName(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();

@@ -153,7 +153,7 @@ NA_API void naRefreshUIElement    (NAUIElement* uielement, double timediff);
 // When navigating with the tab key, this method defines, which will be the
 // next ui element to have the focus. You start the tab order with a call to
 // naSetWindowFirstTabElement.
-NA_API void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextelem);
+NA_API void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextTabElem);
 
 // Native IDs
 //
@@ -588,7 +588,7 @@ NA_API void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
 NA_API void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop);
 NA_API void naSetWindowRect(NAWindow* window, NARect rect);
 NA_API NAUIImageResolution naGetWindowUIResolution(NAWindow* window);
-NA_API void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstElem);
+NA_API void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstTabElem);
 NA_API void naShowWindow(NAWindow* window);
 NA_API void naCloseWindow(NAWindow* window);
 NA_API NASpace* naGetWindowContentSpace(NAWindow* window);

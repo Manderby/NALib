@@ -181,13 +181,6 @@ NA_HDEF void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent){
 }
 
 
-NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextelem){
-  naDefineNativeCocoaObject(NANativeTextField, nativeelem, elem);
-  naDefineNativeCocoaObject(NSView, nativeview, nextelem);
-  [nativeelem setNextKeyView:nativeview];
-}
-
-
 
 NA_HDEF void naCaptureKeyboardStatus(NSEvent* event){  
   NSEventModifierFlags flags;
@@ -290,6 +283,27 @@ NA_DEF void naRefreshUIElementNow(NAUIElement* uielement){
 
 
 
+NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextTabElem){
+  if(  naGetUIElementType(elem) != NA_UI_TEXTFIELD
+    && naGetUIElementType(elem) != NA_UI_TEXTBOX){
+    #ifndef NDEBUG
+      naError("elem has a type which can not be used as a next tab.");
+    #endif
+    return;
+  }
+
+  if(  naGetUIElementType(nextTabElem) != NA_UI_TEXTFIELD
+    && naGetUIElementType(nextTabElem) != NA_UI_TEXTBOX){
+    #ifndef NDEBUG
+      naError("nextTabElem has a type which can not be used as a next tab.");
+    #endif
+    return;
+  }
+
+  naDefineNativeCocoaObject(NSView, nativeElem, textfield);
+  naDefineNativeCocoaObject(NSView, nativeNextTabElem, nextTabElem);
+  [nativeElem setNextKeyView:nativeNextTabElem];
+}
 
 
 
