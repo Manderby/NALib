@@ -215,28 +215,11 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
 		windowrect.left, windowrect.top, windowrect.right - windowrect.left, windowrect.bottom - windowrect.top,
 		NULL, NULL, naGetUIElementNativeID(naGetApplication()), NULL);
 
-  NAString* iconPath = naNewApplicationIconPath();
-  if(iconPath){
-    NABabyImage* iconBabyImage = naCreateBabyImageFromFilePath(naGetStringUTF8Pointer(iconPath));
-    HBITMAP bitmap = naAllocNativeImageWithBabyImage(iconBabyImage);
-   
-    HBITMAP hbmMask = CreateCompatibleBitmap(
-      GetDC(NULL), 
-      (int)naGetBabyImageSize(iconBabyImage).width,
-      (int)naGetBabyImageSize(iconBabyImage).height);
-
-    ICONINFO ii = {0};
-    ii.fIcon    = TRUE;
-    ii.hbmColor = bitmap;
-    ii.hbmMask  = hbmMask;
-    HICON hIcon = CreateIconIndirect(&ii);
+  HICON hIcon = naGetWINAPIApplicationIcon();
+  if(hIcon){   
     SendMessage(hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
     SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
   }
-  naDelete(iconPath);
-
-  // todo: destroy the icon at the end of the windows lifetime.
-  //DestroyIcon(hIcon);
 
   naFree(systemtitle);
 

@@ -38,6 +38,7 @@ struct NAWINAPIApplication {
   NAList timers;
   HWND offscreenWindow;
   NONCLIENTMETRICS nonclientmetrics;
+  HICON appIcon;
 
   NACoreUIElement* mouseHoverElement;
 
@@ -194,6 +195,26 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 
 
 NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
+  ULONG languageCount = 0;
+  ULONG bufferSize = 0;
+  WCHAR* languageBuf; 
+  BOOL success;
+
+  success = GetUserPreferredUILanguages(
+    MUI_LANGUAGE_NAME,
+    &languageCount,
+    NA_NULL,
+    &bufferSize
+  );
+  languageBuf = naMalloc(bufferSize * naSizeof(WCHAR));
+  GetUserPreferredUILanguages(
+    MUI_LANGUAGE_NAME,
+    &languageCount,
+    languageBuf,
+    &bufferSize
+  );
+  naFree(languageBuf);
+
 //  NAInt lang = (NAInt)[[NSLocale preferredLanguages] count] - 1;
 //  while(lang >= 0){
 //    NSString* language = [[NSLocale preferredLanguages] objectAtIndex:(NSUInteger)lang];
@@ -220,6 +241,8 @@ NA_HDEF NAApplication* naNewApplication(void){
 
   winapiapplication->nonclientmetrics.cbSize = sizeof(NONCLIENTMETRICS);
   SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &(winapiapplication->nonclientmetrics), 0);
+
+  winapiapplication->appIcon = NA_NULL;
 
   winapiapplication->mouseHoverElement = NA_NULL;
 
@@ -256,6 +279,8 @@ NA_DEF void naDestructApplication(NAApplication* application){
   DeleteObject(app->bgColor.brush);
   DeleteObject(app->bgColorAlternate.brush);
   DeleteObject(app->bgColorAlternate2.brush);
+
+  DestroyIcon(app->appIcon);
 
   naClearCoreApplication(&(app->coreapplication));  
 
@@ -379,6 +404,24 @@ NA_DEF void naSetApplicationBuildString(NAUTF8Char* string){
 NA_DEF void naSetApplicationIconPath(NAUTF8Char* path){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   app->coreapplication.iconPath = path;
+
+  if(path){
+    NABabyImage* iconBabyImage = naCreateBabyImageFromFilePath(path);
+    HBITMAP bitmap = naAllocNativeImageWithBabyImage(iconBabyImage);
+   
+    HBITMAP hbmMask = CreateCompatibleBitmap(
+      GetDC(NULL), 
+      (int)naGetBabyImageSize(iconBabyImage).width,
+      (int)naGetBabyImageSize(iconBabyImage).height);
+
+    ICONINFO ii = {0};
+    ii.fIcon    = TRUE;
+    ii.hbmColor = bitmap;
+    ii.hbmMask  = hbmMask;
+    app->appIcon = CreateIconIndirect(&ii);
+  }
+
+  // todo: destroy the icon at the end of the windows lifetime.
 }
 
 
@@ -450,6 +493,13 @@ NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF
     retstring = naNewStringWithFormat("%s.%s", basename, suffix);
   }
   return retstring;
+}
+
+
+
+NA_DEF HICON naGetWINAPIApplicationIcon(void){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  return app->appIcon;
 }
 
 
