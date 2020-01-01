@@ -337,7 +337,7 @@ NA_HDEF void naDeallocBuffer(NABuffer* buffer){
       naError("There are still iterators running. Did you forgot naClearBufferIterator?");
   #endif
   if(buffer->source){naRelease(buffer->source);}
-  naEmptyTree(&(buffer->parts));
+  naClearTree(&(buffer->parts));
 }
 
 
