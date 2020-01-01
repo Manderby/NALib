@@ -428,10 +428,10 @@ NA_DEF NAKeyboardStatus naMakeKeybardStatus(NAInt modifiers, NAUIKeyCode keyCode
 NA_DEF void naAddUIKeyboardShortcut(NAUIElement* uielement, NAKeyboardStatus shortcut, NAReactionHandler handler, void* controller){
   NACoreKeyboardShortcutReaction* corekeyreaction;
   NACoreUIElement* element = (NACoreUIElement*)uielement;
-  #ifndef NDEBUG
-    if((naGetUIElementType(uielement) != NA_UI_APPLICATION) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
-      naError("Currently, only applications and windows are allowed as uielement. Use naGetApplication() for the app.");
-  #endif
+  //#ifndef NDEBUG
+  //  if((naGetUIElementType(uielement) != NA_UI_APPLICATION) && (naGetUIElementType(uielement) != NA_UI_WINDOW))
+  //    naError("Currently, only applications and windows are allowed as uielement. Use naGetApplication() for the app.");
+  //#endif
   corekeyreaction = naAlloc(NACoreKeyboardShortcutReaction);
   corekeyreaction->controller = controller;
   corekeyreaction->shortcut = shortcut;

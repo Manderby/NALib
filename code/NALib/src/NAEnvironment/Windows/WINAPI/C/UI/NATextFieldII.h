@@ -91,6 +91,28 @@ NAWINAPICallbackInfo naTextFieldWINAPINotify(NAUIElement* uielement, WORD notifi
 
 
 
+NABool naHandleTextFieldTabOrder(NAReaction reaction){
+  NAWINAPITextField* winapitextfield = (NAWINAPITextField*)reaction.uielement;
+  if(winapitextfield->nextTabStop){
+    SetFocus(naGetUIElementNativeID(winapitextfield->nextTabStop));
+    return NA_TRUE;
+  }
+  return NA_FALSE;
+}
+
+
+
+NABool naHandleTextFieldReverseTabOrder(NAReaction reaction){
+  NAWINAPITextField* winapitextfield = (NAWINAPITextField*)reaction.uielement;
+  if(winapitextfield->prevTabStop){
+    SetFocus(naGetUIElementNativeID(winapitextfield->prevTabStop));
+    return NA_TRUE;
+  }
+  return NA_FALSE;
+}
+
+
+
 NA_DEF NATextField* naNewTextField(NASize size){
  HWND hWnd;
  DWORD style;
@@ -113,6 +135,9 @@ NA_DEF NATextField* naNewTextField(NASize size){
  naInitCoreTextField(&(winapitextfield->coretextfield), hWnd);
  winapitextfield->nextTabStop = winapitextfield;
  winapitextfield->prevTabStop = winapitextfield;
+
+ naAddUIKeyboardShortcut(winapitextfield, naMakeKeybardStatus(0, NA_KEYCODE_TAB), naHandleTextFieldTabOrder, NA_NULL);
+ naAddUIKeyboardShortcut(winapitextfield, naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB), naHandleTextFieldReverseTabOrder, NA_NULL);
 
  SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 

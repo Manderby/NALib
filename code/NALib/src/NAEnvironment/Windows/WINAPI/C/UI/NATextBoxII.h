@@ -33,6 +33,28 @@ NAWINAPICallbackInfo naTextBoxWINAPIProc(NAUIElement* uielement, UINT message, W
 
 
 
+NABool naHandleTextBoxTabOrder(NAReaction reaction){
+  NAWINAPITextBox* winapitextbox = (NAWINAPITextBox*)reaction.uielement;
+  if(winapitextbox->nextTabStop){
+    SetFocus(naGetUIElementNativeID(winapitextbox->nextTabStop));
+    return NA_TRUE;
+  }
+  return NA_FALSE;
+}
+
+
+
+NABool naHandleTextBoxReverseTabOrder(NAReaction reaction){
+  NAWINAPITextBox* winapitextbox = (NAWINAPITextBox*)reaction.uielement;
+  if(winapitextbox->prevTabStop){
+    SetFocus(naGetUIElementNativeID(winapitextbox->prevTabStop));
+    return NA_TRUE;
+  }
+  return NA_FALSE;
+}
+
+
+
 NA_DEF NATextBox* naNewTextBox(NASize size){
   HWND hWnd;
   DWORD style;
@@ -49,6 +71,9 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
   naInitCoreTextBox(&(winapitextbox->coretextbox), hWnd);
   winapitextbox->nextTabStop = winapitextbox;
   winapitextbox->prevTabStop = winapitextbox;
+
+   naAddUIKeyboardShortcut(winapitextbox, naMakeKeybardStatus(0, NA_KEYCODE_TAB), naHandleTextBoxTabOrder, NA_NULL);
+ naAddUIKeyboardShortcut(winapitextbox, naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB), naHandleTextBoxReverseTabOrder, NA_NULL);
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 

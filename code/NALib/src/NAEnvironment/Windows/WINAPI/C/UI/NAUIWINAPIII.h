@@ -212,7 +212,7 @@ NA_HDEF NABool naInterceptKeyboardShortcut(MSG* message){
           && needsOption  == hasOption
           && needsCommand == hasCommand){
             NAReaction reaction;
-            reaction.uielement = na_app;
+            reaction.uielement = elem;
             reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
             reaction.controller = corereaction->controller;
             retvalue = corereaction->handler(reaction);

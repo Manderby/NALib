@@ -14,6 +14,7 @@
 typedef struct NAWINAPIWindow NAWINAPIWindow;
 struct NAWINAPIWindow {
   NACoreWindow corewindow;
+  NAUIElement* firstResponder;
   //NAUInt trackingcount;
   //NABounds4 bounds;
 };
@@ -173,6 +174,17 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
 
 
 
+NABool naHandleWindowTabOrder(NAReaction reaction){
+  NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)reaction.uielement;
+  if(winapiwindow->firstResponder){
+    SetFocus(naGetUIElementNativeID(winapiwindow->firstResponder));
+    return NA_TRUE;
+  }
+  return NA_FALSE;
+}
+
+
+
 NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resizeable, NAInt storageTag){
   DWORD style;
   HWND hWnd;
@@ -229,6 +241,10 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   naFree(systemtitle);
 
   naInitCoreWindow(&(winapiwindow->corewindow), hWnd, NA_NULL, NA_FALSE, resizeable, rect);
+  winapiwindow->firstResponder = NA_NULL;
+
+  naAddUIKeyboardShortcut(winapiwindow, naMakeKeybardStatus(0, NA_KEYCODE_TAB), naHandleWindowTabOrder, NA_NULL);
+  naAddUIKeyboardShortcut(winapiwindow, naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB), naHandleWindowTabOrder, NA_NULL);
 
   NASpace* space = naNewSpace(rect.size);
   naSetWindowContentSpace(winapiwindow, space);
@@ -311,9 +327,9 @@ NA_DEF NAUIImageResolution naGetWindowUIResolution(NAWindow* window){
 
 
 NA_HDEF void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstTabElem){
-//  naDefineNativeCocoaObject(NANativeWindow, nativewindow, window);
-//  naDefineNativeCocoaObject(NSView, nativefirst, firstElem);
-//  [nativewindow setInitialFirstResponder:nativefirst];
+  // todo: Handle erase of element.
+  NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)window;
+  winapiwindow->firstResponder = firstTabElem;
 }
 
 
