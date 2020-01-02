@@ -199,45 +199,23 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 #include "muiload.h"
 
 NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
-  ULONG languageCount = 0;
-  ULONG bufferSize = 0;
-  WCHAR* languageBuf; 
-  BOOL success;
+  int numchars;
+  NAUTF8Char* languageBuf; 
+  NALanguageCode3 languageCode;
+  LCID userLocalId;
 
-  WCHAR teststr[1000];
-  WCHAR testbuf[1000];
-  ULONG testfallbackcount;
+  userLocalId = GetUserDefaultLCID();
+  numchars = GetLocaleInfoA(userLocalId, LOCALE_SISO639LANGNAME2, NA_NULL, 0);
+  languageBuf = naMalloc((numchars + 1) * naSizeof(NAUTF8Char));
+  GetLocaleInfoA(userLocalId, LOCALE_SISO639LANGNAME2, languageBuf, numchars);
+  languageCode = naGetLanguageCode(languageBuf);
 
-  LCID testid = GetUserDefaultLCID();
-  int numchars = GetLocaleInfo(testid, LOCALE_SISO639LANGNAME2, teststr, 999);
+  // Tried to do this with GetUserPreferredUILanguages but it does not
+  // work. Not reliably, not at all, not no nada.
 
-  GetUILanguageFallbackList(testbuf, 999, &testfallbackcount);
+  naSetTranslatorLanguagePreference(languageCode);
 
-  success = GetUserPreferredUILanguages(
-    MUI_LANGUAGE_NAME,
-    &languageCount,
-    NA_NULL,
-    &bufferSize
-  );
-
-  //printf("num languages: %d\n", (int)languageCount);
-
-  languageBuf = naMalloc(bufferSize * naSizeof(WCHAR));
-  GetUserPreferredUILanguages(
-    MUI_LANGUAGE_NAME,
-    &languageCount,
-    languageBuf,
-    &bufferSize
-  );
   naFree(languageBuf);
-
-//  NAInt lang = (NAInt)[[NSLocale preferredLanguages] count] - 1;
-//  while(lang >= 0){
-//    NSString* language = [[NSLocale preferredLanguages] objectAtIndex:(NSUInteger)lang];
-//    NALanguageCode3 langcode = naGetLanguageCode([language UTF8String]);
-//    naSetTranslatorLanguagePreference(langcode);
-//    lang--;
-//  }
 }
 
 
