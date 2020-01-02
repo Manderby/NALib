@@ -291,7 +291,6 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTR
 
 LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
   NACoreUIElement* uielement = (NACoreUIElement*)naGetUINALibEquivalent(hWnd);
-  //todo: this is a fallback but maybe it is not clever to use application for that?
   NAUIElementType firsttype = uielement ? naGetUIElementType(uielement) : NA_UI_APPLICATION;
 
   NAWINAPICallbackInfo info = {NA_FALSE, 0};

@@ -68,6 +68,9 @@ NAWINAPICallbackInfo naButtonWINAPINotify(NAUIElement* uielement, WORD notificat
       info.hasbeenhandeled = NA_TRUE;
       info.result = 0;
       break;
+    default:
+      //printf("Uncaught Button notification\n");
+      break;
   }
   return info;
 }

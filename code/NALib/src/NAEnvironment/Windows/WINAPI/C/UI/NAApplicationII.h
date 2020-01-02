@@ -180,15 +180,13 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
         break;
       }
       // Capture any keyboard shortcuts overwritten by the NALib user
+      // Note: Usually, the IsDialogMessage function is responsible for
+      // capturing TAB events but it has proven to be difficult to handle
+      // and therefore, everything is captured in naInterceptKeyboardShortcut.
       if(!naInterceptKeyboardShortcut(&message)){
-        // Capture any dialog messages (needed for TAB order)
-        NACoreUIElement* uielement = (NACoreUIElement*)naGetUINALibEquivalent(message.hwnd);
-        NACoreUIElement* corewindow = naGetUIElementWindow(uielement);
-        if(!corewindow || !IsDialogMessage(naGetUIElementNativeID(corewindow), &message)){
-          // Do the normal message dispatch.
-          TranslateMessage(&message);
-          DispatchMessage(&message);
-        }
+        // Do the normal message dispatch.
+        TranslateMessage(&message);
+        DispatchMessage(&message);
       }
     }
   }
@@ -450,8 +448,6 @@ NA_DEF void naSetApplicationIconPath(NAUTF8Char* path){
     ii.hbmMask  = hbmMask;
     app->appIcon = CreateIconIndirect(&ii);
   }
-
-  // todo: destroy the icon at the end of the windows lifetime.
 }
 
 
