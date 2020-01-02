@@ -40,6 +40,12 @@ struct NAWINAPIApplication {
   NONCLIENTMETRICS nonclientmetrics;
   HICON appIcon;
 
+  HFONT systemFont;
+  HFONT titleFont;
+  HFONT monospaceFont;
+  HFONT paragraphFont;
+  HFONT mathFont;
+
   NACoreUIElement* mouseHoverElement;
 
   WNDPROC oldButtonWindowProc;
@@ -244,6 +250,12 @@ NA_HDEF NAApplication* naNewApplication(void){
 
   winapiapplication->appIcon = NA_NULL;
 
+  winapiapplication->systemFont = NA_NULL;
+  winapiapplication->titleFont = NA_NULL;
+  winapiapplication->monospaceFont = NA_NULL;
+  winapiapplication->paragraphFont = NA_NULL;
+  winapiapplication->mathFont = NA_NULL;
+
   winapiapplication->mouseHoverElement = NA_NULL;
 
   winapiapplication->oldButtonWindowProc = NA_NULL;
@@ -279,6 +291,12 @@ NA_DEF void naDestructApplication(NAApplication* application){
   DeleteObject(app->bgColor.brush);
   DeleteObject(app->bgColorAlternate.brush);
   DeleteObject(app->bgColorAlternate2.brush);
+
+  if(app->systemFont){DeleteObject(app->systemFont);}
+  if(app->titleFont){DeleteObject(app->titleFont);}
+  if(app->monospaceFont){DeleteObject(app->monospaceFont);}
+  if(app->paragraphFont){DeleteObject(app->paragraphFont);}
+  if(app->mathFont){DeleteObject(app->mathFont);}
 
   DestroyIcon(app->appIcon);
 
@@ -502,6 +520,143 @@ NA_DEF HICON naGetWINAPIApplicationIcon(void){
   return app->appIcon;
 }
 
+
+
+// This is just a small code snipplet useful for debugging. See call to EnumFontFamilies below.
+//int CALLBACK enumFonts(
+//  _In_ ENUMLOGFONT   *lpelf,
+//  _In_ NEWTEXTMETRIC *lpntm,
+//  _In_ DWORD         FontType,
+//  _In_ LPARAM        lParam
+//){
+//  int x = 1234;
+//  printf("%s\n", lpelf->elfFullName);
+//}
+
+
+
+NA_DEF NAFont getFontWithKind(NAFontKind kind){
+  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
+  HFONT retfont = NA_NULL;
+
+  ////EnumFontFamilies(GetDC(NA_NULL), NA_NULL, enumFonts, NA_NULL);
+
+  #if NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6 == 1
+
+  const NONCLIENTMETRICS* metrics = naGetApplicationMetrics();
+
+  switch(kind){
+    case NA_FONT_KIND_SYSTEM:
+      if(!app->systemFont){
+        app->systemFont = CreateFont(
+          metrics->lfMessageFont.lfHeight,
+          0,
+          0,
+          0,
+          FW_NORMAL,
+          NA_FALSE,
+          NA_FALSE,
+          NA_FALSE,
+          DEFAULT_CHARSET,
+          OUT_DEFAULT_PRECIS,
+          CLIP_DEFAULT_PRECIS,
+          DEFAULT_QUALITY,
+          DEFAULT_PITCH | FF_DONTCARE,
+          metrics->lfMessageFont.lfFaceName);
+      }
+      retfont = app->systemFont;
+      break;
+    case NA_FONT_KIND_TITLE:
+      if(!app->titleFont){
+        app->titleFont = CreateFont(
+        metrics->lfMessageFont.lfHeight,
+        0,
+        0,
+        0,
+        FW_BOLD,
+        NA_FALSE,
+        NA_FALSE,
+        NA_FALSE,
+        DEFAULT_CHARSET,
+        OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS,
+        DEFAULT_QUALITY,
+        DEFAULT_PITCH | FF_DONTCARE,
+        metrics->lfMessageFont.lfFaceName);
+      }
+      retfont = app->titleFont;
+      break;
+    case NA_FONT_KIND_MONOSPACE:
+      if(!app->monospaceFont){
+        app->monospaceFont = CreateFont(
+        metrics->lfMessageFont.lfHeight,
+        0,
+        0,
+        0,
+        FW_BOLD,
+        NA_FALSE,
+        NA_FALSE,
+        NA_FALSE,
+        DEFAULT_CHARSET,
+        OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS,
+        DEFAULT_QUALITY,
+        DEFAULT_PITCH | FF_DONTCARE,
+        TEXT("Courier New"));
+      }
+      retfont = app->monospaceFont;
+      break;
+    case NA_FONT_KIND_PARAGRAPH:
+      if(!app->paragraphFont){
+        app->paragraphFont = CreateFont(
+        metrics->lfMessageFont.lfHeight,
+        0,
+        0,
+        0,
+        FW_BOLD,
+        NA_FALSE,
+        NA_FALSE,
+        NA_FALSE,
+        DEFAULT_CHARSET,
+        OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS,
+        DEFAULT_QUALITY,
+        DEFAULT_PITCH | FF_DONTCARE,
+        TEXT("Palatino Linotype"));
+      }
+      retfont = app->paragraphFont;
+      break;
+    case NA_FONT_KIND_MATH:
+      if(!app->mathFont){
+        app->mathFont = CreateFont(
+        metrics->lfMessageFont.lfHeight,
+        0,
+        0,
+        0,
+        FW_BOLD,
+        NA_TRUE,
+        NA_FALSE,
+        NA_FALSE,
+        DEFAULT_CHARSET,
+        OUT_DEFAULT_PRECIS,
+        CLIP_DEFAULT_PRECIS,
+        DEFAULT_QUALITY,
+        DEFAULT_PITCH | FF_DONTCARE,
+        TEXT("Times New Roman"));
+      }
+      retfont = app->mathFont;
+      break;
+    default:
+      #ifndef NDEBUG
+        naError("Unknown font kind");
+      #endif
+      break;
+  }
+
+  #endif
+
+  return (NAFont)retfont;
+}
 
 
 NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage){
