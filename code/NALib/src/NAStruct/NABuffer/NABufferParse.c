@@ -49,7 +49,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
   NABool found = NA_FALSE;
   NABool checkwindowsend = NA_FALSE;
   NAInt start = naGetBufferLocation(iter);
-  NAInt end = start;
+  NAInt end = start + 1;
   NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
 
   while((!found || checkwindowsend) && !naIsBufferAtEnd(iter)){

@@ -179,6 +179,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
       if(message.message == WM_QUIT){
         break;
       }
+      //if(!IsDialogMessage(message.hwnd, &message)){
       // Capture any keyboard shortcuts overwritten by the NALib user
       // Note: Usually, the IsDialogMessage function is responsible for
       // capturing TAB events but it has proven to be difficult to handle
@@ -188,6 +189,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
         TranslateMessage(&message);
         DispatchMessage(&message);
       }
+      //}
     }
   }
 
@@ -195,8 +197,6 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   naReleaseUIElement(app);
 }
 
-
-#include "muiload.h"
 
 NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
   int numchars;

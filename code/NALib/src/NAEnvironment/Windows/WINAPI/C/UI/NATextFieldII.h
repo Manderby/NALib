@@ -122,7 +122,7 @@ NA_DEF NATextField* naNewTextField(NASize size){
 
  // WS_TABSTOP and WS_GROUP seem not to work... strange. I solved it using the
  // naInterceptKeyboardShortcut function. 
- style = WS_CHILD | WS_VISIBLE | WS_TABSTOP | WS_GROUP | ES_AUTOHSCROLL;
+ style = WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL;
 
 	hWnd = CreateWindow(
 		TEXT("EDIT"), TEXT(""), style,

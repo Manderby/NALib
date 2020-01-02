@@ -40,14 +40,16 @@ NAWINAPICallbackInfo naButtonWINAPIProc(NAUIElement* uielement, UINT message, WP
   case WM_MOUSEACTIVATE:
   case WM_LBUTTONDOWN:
   case WM_IME_SETCONTEXT:
-  case WM_SETFOCUS:
   case WM_CANCELMODE:
   case WM_CAPTURECHANGED:
+  case WM_STYLECHANGING:
+  case WM_STYLECHANGED:
   case WM_KILLFOCUS:
   case WM_IME_NOTIFY:
   case WM_LBUTTONUP:
   case BM_SETSTATE:
   case BM_SETCHECK:
+  case WM_SETFOCUS:
     break;
 
   default:
@@ -83,6 +85,8 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTR
 
   NAWINAPIButton* button = (NAWINAPIButton*)uielement;
   NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
+
+  CallWindowProc(naGetApplicationOldButtonWindowProc(), naGetUIElementNativeID(uielement), WM_ERASEBKGND, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
 
   if(!button->transparent){
     long oldstyle = (long)GetWindowLongPtr(naGetUIElementNativeID(uielement), GWL_STYLE);
@@ -157,7 +161,7 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
 	hWnd = CreateWindow(
 		TEXT("BUTTON"), systemtext, style,
 		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL);
   
   naFree(systemtext);
 

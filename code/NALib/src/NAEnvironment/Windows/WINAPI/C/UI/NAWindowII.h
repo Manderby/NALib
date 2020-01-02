@@ -398,6 +398,7 @@ NA_DEF void naClearWindow(NAWindow* window){
 
 NA_DEF void naShowWindow(NAWindow* window){
   ShowWindow(naGetUIElementNativeID(window), SW_SHOW);
+  BringWindowToTop(naGetUIElementNativeID(window));
 }
 
 

@@ -140,7 +140,7 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
   case NA_ALERT_BOX_ERROR:   iconType = MB_ICONERROR; break;
   }
 
-  NAString* messageString = naNewStringWithFormat("%s\n\n%s", titleText, infoText);
+  NAString* messageString = naNewStringWithFormat("%s\n%s", titleText, infoText);
   TCHAR* systemTitle = naAllocSystemStringWithUTF8String(titleText);
   TCHAR* systemMessage = naAllocSystemStringWithUTF8String(naGetStringUTF8Pointer(messageString));
 

@@ -264,9 +264,6 @@ NA_DEF NAString* naNewPreferencesString(const char* key){
   wchar_t* systemkey = naAllocWideCharStringWithUTF8String(key);
   LSTATUS errorcode = RegQueryValueExW(hKey, systemkey, NULL, &type, NULL, &valuesize);
   if(errorcode != ERROR_SUCCESS){
-    #ifndef NDEBUG
-      naError("Could not read string length from Registry");
-    #endif
     return NA_NULL;
   }
   storedvalue = naMalloc(valuesize);
