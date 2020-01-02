@@ -198,7 +198,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 }
 
 
-
+#include "muiload.h"
 
 NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
   ULONG languageCount = 0;
@@ -206,12 +206,24 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
   WCHAR* languageBuf; 
   BOOL success;
 
+  WCHAR teststr[1000];
+  WCHAR testbuf[1000];
+  ULONG testfallbackcount;
+
+  LCID testid = GetUserDefaultLCID();
+  int numchars = GetLocaleInfo(testid, LOCALE_SISO639LANGNAME2, teststr, 999);
+
+  GetUILanguageFallbackList(testbuf, 999, &testfallbackcount);
+
   success = GetUserPreferredUILanguages(
     MUI_LANGUAGE_NAME,
     &languageCount,
     NA_NULL,
     &bufferSize
   );
+
+  //printf("num languages: %d\n", (int)languageCount);
+
   languageBuf = naMalloc(bufferSize * naSizeof(WCHAR));
   GetUserPreferredUILanguages(
     MUI_LANGUAGE_NAME,

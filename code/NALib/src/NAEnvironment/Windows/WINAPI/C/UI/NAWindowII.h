@@ -310,9 +310,19 @@ NA_DEF NAUIImageResolution naGetWindowUIResolution(NAWindow* window){
 
 
 NA_HDEF void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstTabElem){
-  // todo: Handle erase of element.
+  #ifndef NDEBUG
+    if(naGetUIElementWindow(firstTabElem) != window)
+      naError("Element is not part of the window.");
+  #endif
   NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)window;
   winapiwindow->firstResponder = firstTabElem;
+}
+
+
+
+NA_HDEF NAUIElement* naGetWindowFirstTabElement(NAWindow* window){
+  NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)window;
+  return winapiwindow->firstResponder;
 }
 
 

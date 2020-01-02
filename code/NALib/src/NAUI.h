@@ -591,6 +591,7 @@ NA_API void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop);
 NA_API void naSetWindowRect(NAWindow* window, NARect rect);
 NA_API NAUIImageResolution naGetWindowUIResolution(NAWindow* window);
 NA_API void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstTabElem);
+NA_API NAUIElement* naGetWindowFirstTabElement(NAWindow* window);
 NA_API void naShowWindow(NAWindow* window);
 NA_API void naCloseWindow(NAWindow* window);
 NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
@@ -602,6 +603,8 @@ NA_API void naPreventWindowFromClosing(NAWindow* window, NABool prevent);
 NA_API NARect naSetWindowStorageTag(NAWindow* window, NAInt storageTag, NARect rect, NABool resizeable);
 
 // Space (In other frameworks called View, Frame, Area, Widget...)
+// Beware that adding a child to a space which formerly was the first responder
+// of a window, that windows first responder will be reset to NULL.
 NA_API NASpace* naNewSpace(NASize size);
 NA_API void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos);
 NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);

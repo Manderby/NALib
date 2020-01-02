@@ -67,11 +67,25 @@ NA_HDEF void naClearUINativeId(NANativeID nativeId){
 
 
 NA_HDEF void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent){
+  #ifndef NDEBUG
+    if(!uielement)
+      naError("uielement is NULL");
+  #endif
   NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
   NACoreUIElement* coreparent = (NACoreUIElement*)parent;
-  // todo: remove from old parent
-  coreelement->parent = parent;
-  HWND result = SetParent(coreelement->nativeID, coreparent->nativeID);
+
+  NACoreWindow* window = naGetUIElementWindow(uielement);
+  if(window && naGetWindowFirstTabElement(window) == coreelement){
+    naSetWindowFirstTabElement(window, NA_NULL);
+  }
+
+  if(!coreparent){
+    coreelement->parent = NA_NULL;
+    HWND result = SetParent(coreelement->nativeID, HWND_MESSAGE);
+  }else{
+    coreelement->parent = parent;
+    HWND result = SetParent(coreelement->nativeID, coreparent->nativeID);
+  }
 }
 
 
@@ -608,6 +622,11 @@ NA_HDEF NAUIElement** naGetUIElementPrevTabReference(NAUIElement* uielement){
 
 
 NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextTabElem){
+  #ifndef NDEBUG
+    if(naGetUIElementWindow(elem) != naGetUIElementWindow(nextTabElem))
+      naError("element do not share the same window.");
+  #endif
+
   if(  naGetUIElementType(elem) != NA_UI_TEXTFIELD
     && naGetUIElementType(elem) != NA_UI_TEXTBOX){
     #ifndef NDEBUG
