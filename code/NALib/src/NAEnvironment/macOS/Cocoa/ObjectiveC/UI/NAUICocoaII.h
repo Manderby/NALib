@@ -300,7 +300,7 @@ NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextTab
     return;
   }
 
-  naDefineNativeCocoaObject(NSView, nativeElem, textfield);
+  naDefineNativeCocoaObject(NSView, nativeElem, elem);
   naDefineNativeCocoaObject(NSView, nativeNextTabElem, nextTabElem);
   [nativeElem setNextKeyView:nativeNextTabElem];
 }
