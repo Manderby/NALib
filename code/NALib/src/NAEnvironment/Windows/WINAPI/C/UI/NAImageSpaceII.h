@@ -57,6 +57,8 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (NAUIElement* uielement){
   NAWINAPIImageSpace* imagespace = (NAWINAPIImageSpace*)uielement;
   NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
 
+  CallWindowProc(naGetApplicationOldButtonWindowProc(), naGetUIElementNativeID(uielement), WM_ERASEBKGND, (WPARAM)paintStruct.hdc, (LPARAM)NA_NULL);
+
   NASizei size1x = naGetUIImage1xSize(imagespace->image);
 
   NASizei spacesize = naMakeSizei(

@@ -144,7 +144,7 @@ NA_IDEF NABool naAccess(const char* path, NABool doesExists, NABool canRead, NAB
     // testmode |= (exists?00:0); // This line has been commented out because of static code analysis.
     testmode |= (canRead?04:0);
     testmode |= (canWrite?02:0);
-    NA_UNUSED(execute); // Under windows, the executable flag does not exist.
+    NA_UNUSED(canExecute); // Under windows, the executable flag does not exist.
     return (_access(path, testmode) == 0);
   #elif NA_OS == NA_OS_MAC_OS_X
     int testmode = 0;
