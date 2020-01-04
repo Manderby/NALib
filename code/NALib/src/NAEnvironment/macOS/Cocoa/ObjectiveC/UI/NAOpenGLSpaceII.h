@@ -28,7 +28,15 @@
     // Make sure OpenGL always swaps the buffers of the default framebuffer. If
     // this is not done, sometimes, the double buffer will not work properly.
     GLint swapInt = 1;
-    [[self openGLContext] setValues:&swapInt forParameter:NSOpenGLCPSwapInterval];
+    if(NSAppKitVersionNumber >= NSAppKitVersionNumber10_14){
+      #ifdef __MAC_10_14
+        [[self openGLContext] setValues:&swapInt forParameter:NSOpenGLContextParameterSwapInterval];
+      #endif
+    }else{
+      #ifndef __MAC_10_14
+        [[self openGLContext] setValues:&swapInt forParameter:NSOpenGLCPSwapInterval];
+      #endif
+    }
 
     // Now the OpenGL context is created and current. We can initialize it
     // if necessary.
@@ -37,22 +45,22 @@
     }
   }
   - (void)drawRect:(NSRect)dirtyRect{
+    NA_UNUSED(dirtyRect);
     [[self openGLContext] makeCurrentContext];
-    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_REDRAW, NA_NULL);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_REDRAW);
   }
   - (void)reshape{
     [super reshape];
     [[self openGLContext] update];
-    NARect bounds = naMakeRectWithNSRect([self bounds]);
-    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_RESHAPE, NA_NULL);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_RESHAPE);
   }
   - (void)keyDown:(NSEvent*)event{
-    NAUIKeyCode keyCode = [event keyCode];
-    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_KEYDOWN, &keyCode);
+    NA_UNUSED(event);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_KEYDOWN);
   }
   - (void)keyUp:(NSEvent*)event{
-    NAUIKeyCode keyCode = [event keyCode];
-    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_KEYUP, &keyCode);
+NA_UNUSED(event);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_KEYUP);
   }
   - (void)flagsChanged:(NSEvent*)event{
     NAUIKeyCode keyCode;
@@ -65,14 +73,14 @@
 //    let isLeftShift = event.modifierFlags.rawValue & UInt(NX_DEVICELSHIFTKEYMASK) != 0
 //    let isRightShift = event.modifierFlags.rawValue & UInt(NX_DEVICERSHIFTKEYMASK) != 0
 
-    keyCode = NA_KEYCODE_SHIFT;
-    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
-    keyCode = NA_KEYCODE_OPTION;
-    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, (alt?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+    keyCode = NA_KEYCODE_LEFT_SHIFT;
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP));
+    keyCode = NA_KEYCODE_LEFT_OPTION;
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, (alt?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP));
     keyCode = NA_KEYCODE_CONTROL;
-    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, (control?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, (control?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP));
     keyCode = NA_KEYCODE_LEFT_COMMAND;
-    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, (command?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, (command?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP));
   }
   @end
 
@@ -101,7 +109,7 @@
   //    #endif
   //  }
 
-    naInitCoreOpenGLSpace(&(coreopenglspace->uielement), NA_COCOA_PTR_OBJC_TO_C(nativeSpace));
+    naInitCoreOpenGLSpace(coreopenglspace, NA_COCOA_PTR_OBJC_TO_C(nativeSpace));
     return coreopenglspace;
   }
 
@@ -109,14 +117,14 @@
 
   NA_DEF void naDestructOpenGLSpace(NAOpenGLSpace* openglspace){
     NACoreOpenGLSpace* coreopenglspace = (NACoreOpenGLSpace*)openglspace;
-    naClearCoreOpenGLSpace(&(coreopenglspace->coreopenglspace));
+    naClearCoreOpenGLSpace(coreopenglspace);
   }
 
 
 
   NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
     NACoreOpenGLSpace* coreopenglspace = (NACoreOpenGLSpace*)openglspace;
-    [[(NANativeOpenGLSpace*)(coreopenglspace->coreopenglspace.uielement.nativeID) openGLContext] flushBuffer];
+    [[(NANativeOpenGLSpace*)NA_COCOA_PTR_C_TO_OBJC(coreopenglspace->uielement.nativeID) openGLContext] flushBuffer];
   }
 
 

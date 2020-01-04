@@ -92,7 +92,7 @@ typedef enum{
 // used, please use the 3 variant whenever possible or use the conversion
 // function naConvertLanguageCode1To3
 typedef enum{
-  NA_LANG_DE = 0x6465,  // German
+  NA_LANG_DE = 0x6465,  // German hallo
   NA_LANG_EN = 0x656e   // English
 } NALanguageCode1;
 

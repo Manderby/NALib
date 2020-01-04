@@ -27,8 +27,11 @@
   [scrollview setContentView:clipView];
   [scrollview setDocumentView:self];
 
-  [scrollview setAutomaticallyAdjustsContentInsets:YES];
-  [[scrollview contentView] setAutomaticallyAdjustsContentInsets:YES];
+  NA_MACOS_LEGACY_EXECUTE(10,
+    {}, // not applicable before macOS 10.10
+    { [scrollview setAutomaticallyAdjustsContentInsets:YES];
+      [[scrollview contentView] setAutomaticallyAdjustsContentInsets:YES];}
+  );
 
   coretextbox = newcoretextbox;
   return self;

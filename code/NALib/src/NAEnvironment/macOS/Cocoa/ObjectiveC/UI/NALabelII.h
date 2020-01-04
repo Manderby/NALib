@@ -121,7 +121,10 @@
   [self setBordered:NO];
   [self setBackgroundColor:[NSColor colorWithCalibratedRed:0. green:0. blue:1. alpha:.1]];
   [self setDrawsBackground:NO];
-  [self setLineBreakMode:NSLineBreakByWordWrapping];
+  NA_MACOS_LEGACY_EXECUTE(10,
+    {[[self cell] setLineBreakMode:NSLineBreakByWordWrapping];},
+    {[self setLineBreakMode:NSLineBreakByWordWrapping];}
+  );
   [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
   corelabel = newcorelabel;
   return self;

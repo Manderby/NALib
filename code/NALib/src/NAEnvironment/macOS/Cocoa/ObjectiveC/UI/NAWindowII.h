@@ -124,7 +124,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   contentRect = naMakeNSRectWithRect(rect);
   styleMask = NAWindowStyleMaskTitled | NAWindowStyleMaskClosable | NAWindowStyleMaskMiniaturizable;
   if(resizeable){styleMask |= NAWindowStyleMaskResizable;}
-  nativewindow = [[NANativeWindow alloc] initWithCoreWindow:corewindow contentRect:contentRect styleMask:styleMask backing:NSBackingStoreBuffered defer:NO screen:[NSScreen mainScreen]];
+  nativewindow = [[NANativeWindow alloc] initWithCoreWindow:corewindow contentRect:contentRect styleMask:styleMask backing:NSBackingStoreBuffered defer:NO screen:nil];
   
   [nativewindow setDelegate:nativewindow];
   [nativewindow setTitle:[NSString stringWithUTF8String:title]];
@@ -178,15 +178,9 @@ NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
 NA_DEF NAUIImageResolution naGetWindowUIResolution(NAWindow* window){
   naDefineNativeCocoaObject(NANativeWindow, nativewindow, window);
   CGFloat res = 1.;
-  if(NSAppKitVersionNumber >= NSAppKitVersionNumber10_7){
-    #ifdef __MAC_10_7
-      res = [nativewindow backingScaleFactor];
-    #endif
-  }else{
-    #ifndef __MAC_10_7
-      res = [nativewindow userSpaceScaleFactor];
-    #endif
-  }
+  NA_MACOS_LEGACY_EXECUTE(7,
+    {res = [nativewindow userSpaceScaleFactor];},
+    {res = [nativewindow backingScaleFactor];})
   return (res == 1.) ? NA_UIIMAGE_RESOLUTION_1x : NA_UIIMAGE_RESOLUTION_2x;
 }
 

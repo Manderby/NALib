@@ -30,39 +30,56 @@
 }
 - (void) setButtonImage:(NAUIImage*)uiimage{
   NSSize imagesize = NSMakeSize(naGetUIImage1xSize(uiimage).width, naGetUIImage1xSize(uiimage).height);
-  NSImage* image = [NSImage imageWithSize:imagesize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
-    NAUIImageResolution resolution;
-    CGContextRef context;
-    CGImageRef nativeimage;
-    
-    NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
-    if(uiimage->tintMode != NA_BLEND_ZERO){
-      NSAppearanceName appearancename = [[NSAppearance currentAppearance] name];
-      if (@available(macOS 10.14, *)) {
-        skin = ( appearancename == NSAppearanceNameAqua
-              || appearancename == NSAppearanceNameVibrantLight
-              || appearancename == NSAppearanceNameAccessibilityHighContrastAqua
-              || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantLight)
-        ? NA_UIIMAGE_SKIN_LIGHT : NA_UIIMAGE_SKIN_DARK;
-      }else{
-        skin = (appearancename == NSAppearanceNameAqua
-             || appearancename == NSAppearanceNameVibrantLight)
-        ? NA_UIIMAGE_SKIN_LIGHT : NA_UIIMAGE_SKIN_DARK;
-      }
+  NSImage* image = nil; // todo: this must be implemented before macOS 10.8
+  NA_MACOS_LEGACY_EXECUTE(8,
+    {}, // not applicable before macOS 10.10
+    { image = [NSImage imageWithSize:imagesize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
+        NAUIImageResolution resolution;
+        CGContextRef context = NA_NULL;
+        CGImageRef nativeimage;
+        
+        NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
+        if(uiimage->tintMode != NA_BLEND_ZERO){
+          skin = NA_UIIMAGE_SKIN_LIGHT;
+          NA_MACOS_LEGACY_EXECUTE(9,
+            {}, // not applicable before macOS 10.9
+            { NSAppearanceName appearancename = [[NSAppearance currentAppearance] name];
+              NA_MACOS_LEGACY_EXECUTE(10,
+                {}, // not applicable before macOS 10.10
+                {if(appearancename == NSAppearanceNameVibrantDark){skin = NA_UIIMAGE_SKIN_DARK;}}
+              );
+              NA_MACOS_LEGACY_EXECUTE(14,
+                {}, // not applicable before macOS 10.14
+                { if(appearancename == NSAppearanceNameDarkAqua
+                  || appearancename == NSAppearanceNameAccessibilityHighContrastDarkAqua
+                  || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantDark){
+                    skin = NA_UIIMAGE_SKIN_DARK;}
+                }
+              );
+          });
+        }
+        resolution = naGetWindowUIResolution(naGetUIElementWindow(&(self->corebutton->uielement)));
+        if(NSAppKitVersionNumber >= NSAppKitVersionNumber10_14){
+        #ifdef __MAC_10_14
+          if(@available(macOS 10.14, *)){
+            context = [[NSGraphicsContext currentContext] CGContext];
+          }
+        #else
+          #error IDE-compiler-baseSDK-devTarget combination not supported
+        #endif
+        }else{
+          context = [[NSGraphicsContext currentContext] graphicsPort];
+        }
+
+        nativeimage = naGetUIImageNativeImage(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
+        if(!nativeimage){
+          nativeimage = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, skin);
+        }
+        CGContextDrawImage(context, dstRect, nativeimage);
+        return YES;
+      }];
     }
-    resolution = naGetWindowUIResolution(naGetUIElementWindow(&(self->corebutton->uielement)));
-    #if !defined __MAC_10_14
-      context = [[NSGraphicsContext currentContext] graphicsPort];
-    #else
-      context = [[NSGraphicsContext currentContext] CGContext];
-    #endif
-    nativeimage = naGetUIImageNativeImage(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
-    if(!nativeimage){
-      nativeimage = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, skin);
-    }
-    CGContextDrawImage(context, dstRect, nativeimage);
-    return YES;
-  }];
+  );
 
 //  CGImageRef imgRef = [image CGImageForProposedRect:nil context:nil hints:nil];
   [self setImage:image];

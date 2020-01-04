@@ -17,7 +17,10 @@
   [self setSelectable:YES];
   [self setEditable:YES];
   [self setBordered:YES];
-  [self setLineBreakMode:NSLineBreakByTruncatingHead];
+  NA_MACOS_LEGACY_EXECUTE(10,
+    {[[self cell] setLineBreakMode:NSLineBreakByTruncatingHead];},
+    {[self setLineBreakMode:NSLineBreakByTruncatingHead];}
+  );
   [self setTarget:self];
   [self setAction:@selector(onEdited:)];
   [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];

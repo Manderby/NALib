@@ -31,6 +31,37 @@
 // Now, we are sure, we compile with Objective-C and on MacOSX. The
 // #if directives will be closed at the very bottom of this file.
 
+
+
+#if __clang_major__ >= 5  // Supposedly, clang 5 is needed for @available.
+  #define NA_MACOS_LEGACY_EXECUTE(deprecationVersion, oldCode, newCode)\
+    if(@available(macOS 10.##deprecationVersion, *)){\
+      newCode\
+    }else{\
+      oldCode\
+    }
+#else
+  // This likely produces warnings on older compilers / IDEs. But heck I
+  // don't have the time to redo this over and over again. It's a mess, Apple!
+  #define NA_MACOS_LEGACY_EXECUTE(deprecationVersion, oldCode, newCode)\
+    if(NSAppKitVersionNumber >= NSAppKitVersionNumber10_##deprecationVersion){\
+      newCode\
+    }else{\
+      oldCode\
+    }
+
+  // Before XCode 11, The following lines worked perfectly. Now everything is
+  // broken again. Damn!
+  // #include <Availability.h>
+  // #ifdef __MAC_10_##deprecationVersion\
+  //   if([nativewindow respondsToSelector:@selector(backingScaleFactor)]){
+  //     res = [nativewindow backingScaleFactor];
+  //   }
+  // #endif
+#endif
+
+
+
 #if !defined NA_TYPE_INT64
   #error Compiling NALib and Cocoa without a native int64 type will not work.
 #endif
