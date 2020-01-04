@@ -27,7 +27,7 @@
 - (void)drawRect:(NSRect)dirtyRect{
   [super drawRect:dirtyRect];
   if(corespace->alternatebackground){
-    [[[NSColor controlTextColor] colorWithAlphaComponent:.075] setFill];
+    [[[NSColor controlTextColor] colorWithAlphaComponent:(CGFloat).075] setFill];
     NSRectFill(dirtyRect);
   }
 }
@@ -53,7 +53,7 @@ NA_DEF NASpace* naNewSpace(NASize size){
   NACoreSpace* corespace = naAlloc(NACoreSpace);
   corespace->alternatebackground = NA_FALSE;
 
-  contentRect = NSMakeRect(0., 0., size.width, size.height);
+  contentRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   nativeSpace = [[NANativeSpace alloc] initWithCoreSpace:corespace frame:contentRect];  
   naInitCoreSpace(corespace, NA_COCOA_PTR_OBJC_TO_C(nativeSpace));
   
@@ -92,7 +92,7 @@ NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos){
   }
   [nativespace addSubview:subview];
   frame = [subview frame];
-  frame.origin = NSMakePoint(pos.x, pos.y);
+  frame.origin = NSMakePoint((CGFloat)pos.x, (CGFloat)pos.y);
   [subview setFrame: frame];
   naSetUIElementParent(child, space);
 }

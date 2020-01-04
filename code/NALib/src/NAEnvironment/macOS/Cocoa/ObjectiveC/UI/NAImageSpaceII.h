@@ -30,7 +30,7 @@
 NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
   NACoreImageSpace* coreImageSpace = naAlloc(NACoreImageSpace);
 
-  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NANativeImageSpace* nativeImageSpace = [[NANativeImageSpace alloc] initWithCoreImageSpace:coreImageSpace frame:frameRect];  
   naInitCoreImageSpace(coreImageSpace, NA_COCOA_PTR_OBJC_TO_C(nativeImageSpace));
   

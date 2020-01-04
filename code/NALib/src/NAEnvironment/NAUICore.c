@@ -313,7 +313,7 @@ NA_HDEF void naRefreshUIElement(NAUIElement* coreuielement, double timediff){
 
 
 NA_HDEF NABool naIsCoreApplicationRunning(void){
-  return (na_app->flags & NA_APPLICATION_FLAG_RUNNING);
+  return (NABool)(na_app->flags & NA_APPLICATION_FLAG_RUNNING);
 }
 
 

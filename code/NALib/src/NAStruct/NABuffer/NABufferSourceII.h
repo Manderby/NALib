@@ -59,7 +59,7 @@ NA_HDEF NABuffer* naGetBufferSourceUnderlyingBuffer(NABufferSource* source){
 
 // Returns NA_TRUE if the range is a valid limiting range.
 NA_HDEF NABool naIsBufferSourceLimited(const NABufferSource* source){
-  return (source->flags & NA_BUFFER_SOURCE_RANGE_LIMITED);
+  return (NABool)(source->flags & NA_BUFFER_SOURCE_RANGE_LIMITED);
 }
 
 

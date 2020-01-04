@@ -43,7 +43,7 @@ NA_HAPI  NATreeNode* naLocateBubbleQuad(const NATree* tree, NATreeItem* item, co
 NA_HAPI  NATreeNode* naRemoveLeafQuad(NATree* tree, NATreeLeaf* leaf);
 NA_HAPI  NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 
-NA_HIAPI NATreeItem* naGetQuadNodeItem(NATreeQuadNode* quadnode);
+//NA_HIAPI NATreeItem* naGetQuadNodeItem(NATreeQuadNode* quadnode);
 
 
 

@@ -26,7 +26,7 @@ NA_IDEF NARangei naGetBufferRange(const NABuffer* buffer){
 
 
 NA_IDEF NABool naHasBufferFixedRange(const NABuffer* buffer){
-  return (buffer->flags & NA_BUFFER_FLAG_RANGE_FIXED);
+  return (NABool)(buffer->flags & NA_BUFFER_FLAG_RANGE_FIXED);
 }
 
 

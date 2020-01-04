@@ -713,6 +713,18 @@ NA_DEF void naCollectGarbage(){
 
 
 
+
+// This is the lonely implimentation of the destruction function of a
+// NAPointer. Needed a place to exists in a .c file so we gave the homeless
+// a place here.
+NA_HDEF void naDestructPointer(NAPointer* pointer){
+  if(pointer->destructor){
+    pointer->destructor(naGetSmartPtrMutable(&(pointer->sptr)));
+  }
+  naDelete(pointer);
+}
+
+
 // Copyright (c) NALib, Tobias Stamm
 //
 // Permission is hereby granted, free of charge, to any person obtaining

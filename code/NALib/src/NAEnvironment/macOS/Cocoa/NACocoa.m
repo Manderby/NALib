@@ -32,32 +32,98 @@
 // #if directives will be closed at the very bottom of this file.
 
 
-
 #if __clang_major__ >= 5  // Supposedly, clang 5 is needed for @available.
-  #define NA_MACOS_LEGACY_EXECUTE(deprecationVersion, oldCode, newCode)\
-    if(@available(macOS 10.##deprecationVersion, *)){\
-      newCode\
-    }else{\
-      oldCode\
-    }
+//  if(@available(macOS 10.6, *)){
+//    #define NA_MACOS_AVAILABILITY_10_6 1
+//  }else{
+//    #define NA_MACOS_AVAILABILITY_10_6 0
+//  }
+//  if(@available(macOS 10.7, *)){
+//    #define NA_MACOS_AVAILABILITY_10_7 1
+//  }else{
+//    #define NA_MACOS_AVAILABILITY_10_7 0
+//  }
+//  if(@available(macOS 10.8, *)){
+//    #define NA_MACOS_AVAILABILITY_10_8 1
+//  }else{
+//    #define NA_MACOS_AVAILABILITY_10_8 0
+//  }
+//  if(@available(macOS 10.9, *)){
+//    #define NA_MACOS_AVAILABILITY_10_9 1
+//  }else{
+//    #define NA_MACOS_AVAILABILITY_10_9 0
+//  }
+//  if(@available(macOS 10.10, *)){
+//    #define NA_MACOS_AVAILABILITY_10_10 1
+//  }else{
+//    #define NA_MACOS_AVAILABILITY_10_10 0
+//  }
+//  if(@available(macOS 10.11, *)){
+//    #define NA_MACOS_AVAILABILITY_10_11 1
+//  }else{
+//    #define NA_MACOS_AVAILABILITY_10_11 0
+//  }
+//  if(@available(macOS 10.12, *)){
+//    #define NA_MACOS_AVAILABILITY_10_12 1
+//  }else{
+//    #define NA_MACOS_AVAILABILITY_10_12 0
+//  }
+//  if(@available(macOS 10.13, *)){
+//    #define NA_MACOS_AVAILABILITY_10_13 1
+//  }else{
+//    #define NA_MACOS_AVAILABILITY_10_13 0
+//  }
+//  if(@available(macOS 10.14, *)){
+//    #define NA_MACOS_AVAILABILITY_10_14 1
+//  }else{
+//    #define NA_MACOS_AVAILABILITY_10_14 0
+//  }
 #else
-  // This likely produces warnings on older compilers / IDEs. But heck I
-  // don't have the time to redo this over and over again. It's a mess, Apple!
-  #define NA_MACOS_LEGACY_EXECUTE(deprecationVersion, oldCode, newCode)\
-    if(NSAppKitVersionNumber >= NSAppKitVersionNumber10_##deprecationVersion){\
-      newCode\
-    }else{\
-      oldCode\
-    }
-
-  // Before XCode 11, The following lines worked perfectly. Now everything is
-  // broken again. Damn!
-  // #include <Availability.h>
-  // #ifdef __MAC_10_##deprecationVersion\
-  //   if([nativewindow respondsToSelector:@selector(backingScaleFactor)]){
-  //     res = [nativewindow backingScaleFactor];
-  //   }
-  // #endif
+  #ifdef __MAC_10_6
+    #define NA_MACOS_AVAILABILITY_10_6 1
+  #else
+    #define NA_MACOS_AVAILABILITY_10_6 0
+  #endif
+  #ifdef __MAC_10_7
+    #define NA_MACOS_AVAILABILITY_10_7 1
+  #else
+    #define NA_MACOS_AVAILABILITY_10_7 0
+  #endif
+  #ifdef __MAC_10_8
+    #define NA_MACOS_AVAILABILITY_10_8 1
+  #else
+    #define NA_MACOS_AVAILABILITY_10_8 0
+  #endif
+  #ifdef __MAC_10_9
+    #define NA_MACOS_AVAILABILITY_10_9 1
+  #else
+    #define NA_MACOS_AVAILABILITY_10_9 0
+  #endif
+  #ifdef __MAC_10_10
+    #define NA_MACOS_AVAILABILITY_10_10 1
+  #else
+    #define NA_MACOS_AVAILABILITY_10_10 0
+  #endif
+  #ifdef __MAC_10_11
+    #define NA_MACOS_AVAILABILITY_10_11 1
+  #else
+    #define NA_MACOS_AVAILABILITY_10_11 0
+  #endif
+  #ifdef __MAC_10_12
+    #define NA_MACOS_AVAILABILITY_10_12 1
+  #else
+    #define NA_MACOS_AVAILABILITY_10_12 0
+  #endif
+  #ifdef __MAC_10_13
+    #define NA_MACOS_AVAILABILITY_10_13 1
+  #else
+    #define NA_MACOS_AVAILABILITY_10_13 0
+  #endif
+  #ifdef __MAC_10_14
+    #define NA_MACOS_AVAILABILITY_10_14 1
+  #else
+    #define NA_MACOS_AVAILABILITY_10_14 0
+  #endif
 #endif
 
 

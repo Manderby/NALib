@@ -50,14 +50,8 @@ NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
 
 
 
-// This destruction function is declared static because we do not want to
-// waste a whole .c file just for this function.
-NA_HDEF static void naDestructPointer(NAPointer* pointer){
-  if(pointer->destructor){
-    pointer->destructor(naGetSmartPtrMutable(&(pointer->sptr)));
-  }
-  naDelete(pointer);
-}
+// The implementation of this function is in the NARuntime.c file.
+NA_HAPI void naDestructPointer(NAPointer* pointer);
 
 
 

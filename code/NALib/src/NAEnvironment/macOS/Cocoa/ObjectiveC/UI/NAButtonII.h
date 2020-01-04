@@ -16,7 +16,7 @@
 @implementation NANativeButton
 - (id) initWithCoreButton:(NACoreButton*)newcorebutton bezelStyle:(NSBezelStyle)bezelStyle frame:(NSRect)frame{
   self = [super initWithFrame:frame];
-  [self setButtonType:(bezelStyle == NABezelStyleRounded) ? NSButtonTypeMomentaryLight : NSButtonTypePushOnPushOff];
+  [self setButtonType:(bezelStyle == NABezelStyleRounded) ? NAButtonTypeMomentaryLight : NAButtonTypePushOnPushOff];
   // NSBezelStyleShadowlessSquare is used to have a transparent background. The option 0 has a grey background.
   [self setBezelStyle:bezelStyle ? bezelStyle : NABezelStyleShadowlessSquare]; 
   [self setBordered:bezelStyle ? YES : NO];
@@ -31,59 +31,58 @@
 - (void) setButtonImage:(NAUIImage*)uiimage{
   NSSize imagesize = NSMakeSize(naGetUIImage1xSize(uiimage).width, naGetUIImage1xSize(uiimage).height);
   NSImage* image = nil; // todo: this must be implemented before macOS 10.8
-  NA_MACOS_LEGACY_EXECUTE(8,
-    {}, // not applicable before macOS 10.10
-    { image = [NSImage imageWithSize:imagesize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
-        NAUIImageResolution resolution;
-        CGContextRef context = NA_NULL;
-        CGImageRef nativeimage;
-        
-        NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
-        if(uiimage->tintMode != NA_BLEND_ZERO){
-          skin = NA_UIIMAGE_SKIN_LIGHT;
-          NA_MACOS_LEGACY_EXECUTE(9,
-            {}, // not applicable before macOS 10.9
-            { NSAppearanceName appearancename = [[NSAppearance currentAppearance] name];
-              NA_MACOS_LEGACY_EXECUTE(10,
-                {}, // not applicable before macOS 10.10
-                {if(appearancename == NSAppearanceNameVibrantDark){skin = NA_UIIMAGE_SKIN_DARK;}}
-              );
-              NA_MACOS_LEGACY_EXECUTE(14,
-                {}, // not applicable before macOS 10.14
-                { if(appearancename == NSAppearanceNameDarkAqua
-                  || appearancename == NSAppearanceNameAccessibilityHighContrastDarkAqua
-                  || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantDark){
-                    skin = NA_UIIMAGE_SKIN_DARK;}
-                }
-              );
-          });
-        }
-        resolution = naGetWindowUIResolution(naGetUIElementWindow(&(self->corebutton->uielement)));
-        if(NSAppKitVersionNumber >= NSAppKitVersionNumber10_14){
-        #ifdef __MAC_10_14
-          if(@available(macOS 10.14, *)){
-            context = [[NSGraphicsContext currentContext] CGContext];
-          }
-        #else
-          #error IDE-compiler-baseSDK-devTarget combination not supported
-        #endif
-        }else{
-          context = [[NSGraphicsContext currentContext] graphicsPort];
-        }
 
-        nativeimage = naGetUIImageNativeImage(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
-        if(!nativeimage){
-          nativeimage = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, skin);
+  #if NA_MACOS_AVAILABILITY_10_8
+    image = [NSImage imageWithSize:imagesize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
+      NAUIImageResolution resolution;
+      CGContextRef context = NA_NULL;
+      CGImageRef nativeimage;
+      
+      NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
+      if(uiimage->tintMode != NA_BLEND_ZERO){
+        skin = NA_UIIMAGE_SKIN_LIGHT;
+        #if NA_MACOS_AVAILABILITY_10_9
+          NSAppearanceName appearancename = [[NSAppearance currentAppearance] name];
+          #if NA_MACOS_AVAILABILITY_10_10
+            if(appearancename == NSAppearanceNameVibrantDark){skin = NA_UIIMAGE_SKIN_DARK;}
+          #endif
+          #if NA_MACOS_AVAILABILITY_10_14
+            if(appearancename == NSAppearanceNameDarkAqua
+            || appearancename == NSAppearanceNameAccessibilityHighContrastDarkAqua
+            || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantDark){
+              skin = NA_UIIMAGE_SKIN_DARK;}
+          #endif
+        #endif
+      }
+      resolution = naGetWindowUIResolution(naGetUIElementWindow(&(self->corebutton->uielement)));
+      if(NSAppKitVersionNumber >= NSAppKitVersionNumber10_14){
+      #ifdef __MAC_10_14
+        if(@available(macOS 10.14, *)){
+          context = [[NSGraphicsContext currentContext] CGContext];
         }
-        CGContextDrawImage(context, dstRect, nativeimage);
-        return YES;
-      }];
-    }
-  );
+      #else
+        #error IDE-compiler-baseSDK-devTarget combination not supported
+      #endif
+      }else{
+        context = [[NSGraphicsContext currentContext] graphicsPort];
+      }
+
+      nativeimage = naGetUIImageNativeImage(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
+      if(!nativeimage){
+        nativeimage = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, skin);
+      }
+      CGContextDrawImage(context, dstRect, nativeimage);
+      return YES;
+    }];
+  #else
+    NA_UNUSED(imagesize);
+  #endif
 
 //  CGImageRef imgRef = [image CGImageForProposedRect:nil context:nil hints:nil];
   [self setImage:image];
-  [self setImageScaling:NSImageScaleProportionallyUpOrDown];
+  #if NA_MACOS_AVAILABILITY_10_7
+    [self setImageScaling:NSImageScaleProportionallyUpOrDown];
+  #endif
 //  [image release];
 //  [self setBezelStyle:NSBezelStyleShadowlessSquare];
   // OptionButton: NSBezelStyleShadowlessSquare
@@ -113,7 +112,7 @@
 NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
   NACoreButton* corebutton = naAlloc(NACoreButton);
 
-  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NABezelStyleRounded frame:frameRect];
   naInitCoreButton(corebutton, NA_COCOA_PTR_OBJC_TO_C(nativeButton));
   [nativeButton setButtonText:text];
@@ -126,7 +125,7 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
 NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
   NACoreButton* corebutton = naAlloc(NACoreButton);
 
-  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NABezelStyleShadowlessSquare frame:frameRect];
   naInitCoreButton(corebutton, NA_COCOA_PTR_OBJC_TO_C(nativeButton));
   [nativeButton setButtonText:text];
@@ -139,7 +138,7 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
 NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size){
   NACoreButton* corebutton = naAlloc(NACoreButton);
 
-  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:NABezelStyleShadowlessSquare frame:frameRect];
   naInitCoreButton(corebutton, NA_COCOA_PTR_OBJC_TO_C(nativeButton));
   [nativeButton setButtonImage:uiimage];
@@ -152,7 +151,7 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size){
 NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
   NACoreButton* corebutton = naAlloc(NACoreButton);
 
-  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NANativeButton* nativeButton = [[NANativeButton alloc] initWithCoreButton:corebutton bezelStyle:0 frame:frameRect];
   naInitCoreButton(corebutton, NA_COCOA_PTR_OBJC_TO_C(nativeButton));
   [nativeButton setButtonImage:uiimage];

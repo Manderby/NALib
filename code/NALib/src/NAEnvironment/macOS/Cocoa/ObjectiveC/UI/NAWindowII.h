@@ -18,7 +18,7 @@
   corewindow = newcorewindow;
   trackingcount = 0;
   trackingarea = nil;
-  self.releasedWhenClosed = NO;
+  [self setReleasedWhenClosed:NO];
   return self;
 }
 - (NACoreWindow*) corewindow{
@@ -177,10 +177,12 @@ NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
 
 NA_DEF NAUIImageResolution naGetWindowUIResolution(NAWindow* window){
   naDefineNativeCocoaObject(NANativeWindow, nativewindow, window);
-  CGFloat res = 1.;
-  NA_MACOS_LEGACY_EXECUTE(7,
-    {res = [nativewindow userSpaceScaleFactor];},
-    {res = [nativewindow backingScaleFactor];})
+  CGFloat res = (CGFloat)1.;
+  #if NA_MACOS_AVAILABILITY_10_7
+    res = [nativewindow backingScaleFactor];
+  #else
+    res = [nativewindow userSpaceScaleFactor];
+  #endif
   return (res == 1.) ? NA_UIIMAGE_RESOLUTION_1x : NA_UIIMAGE_RESOLUTION_2x;
 }
 

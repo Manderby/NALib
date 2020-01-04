@@ -117,7 +117,7 @@ NA_IDEF void naClearThread(NAThread thread){
   #if NA_OS == NA_OS_WINDOWS
     CloseHandle(threadstruct->nativeThread);
   #else
-    #if __has_feature(objc_arc)
+    #if NA_MACOS_USES_ARC
       // Thread will be released automatically when ARC is turned on.
     #else
       dispatch_release(threadstruct->nativeThread);
@@ -239,14 +239,14 @@ NA_IDEF void naClearMutex(NAMutex mutex){
   #else
     #ifndef NDEBUG
       NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
-      #if __has_feature(objc_arc)
+      #if NA_MACOS_USES_ARC
       // Mutex will be released automatically when ARC is turned on.
       #else
         dispatch_release(macintoshmutex->mutex);
       #endif
       naFree(macintoshmutex);
     #else
-      #if __has_feature(objc_arc)
+      #if NA_MACOS_USES_ARC
       // Mutex will be released automatically when ARC is turned on.
       #else
         dispatch_release(mutex);
@@ -415,45 +415,45 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
 
 
 NA_IDEF NAAlarm naMakeAlarm(void){
-  NANativeAlarm alarm;
+  NANativeAlarm alarmer;
   #if NA_OS == NA_OS_WINDOWS
-    alarm = CreateEvent(NULL, FALSE, FALSE, NULL);
-    return (NAAlarm)alarm;
+    alarmer = CreateEvent(NULL, FALSE, FALSE, NULL);
+    return (NAAlarm)alarmer;
 #else
-    alarm = dispatch_semaphore_create(0);
-    return (NAAlarm)alarm;
+    alarmer = dispatch_semaphore_create(0);
+    return (NAAlarm)alarmer;
   #endif
 }
 
 
 
-NA_IDEF void naClearAlarm(NAAlarm alarm){
+NA_IDEF void naClearAlarm(NAAlarm alarmer){
   #if NA_OS == NA_OS_WINDOWS
-    CloseHandle(alarm);
+    CloseHandle(alarmer);
   #else
-    #if __has_feature(objc_arc)
-      NA_UNUSED(alarm);
+    #if NA_MACOS_USES_ARC
+      NA_UNUSED(alarmer);
       // Alarm will be released automatically when ARC is turned on.
     #else
-      dispatch_release(alarm);
+      dispatch_release(alarmer);
     #endif
   #endif
 }
 
 
 
-NA_IDEF NABool naAwaitAlarm(NAAlarm alarm, double maxwaittime){
+NA_IDEF NABool naAwaitAlarm(NAAlarm alarmer, double maxwaittime){
   #if NA_OS == NA_OS_WINDOWS
     DWORD result;
     #ifndef NDEBUG
       if(maxwaittime < 0.)
         naError("maxwaittime should not be negative. Beware of the zero!");
     #endif
-    ResetEvent(alarm);
+    ResetEvent(alarmer);
     if(maxwaittime == 0){
-      result = WaitForSingleObject(alarm, INFINITE);
+      result = WaitForSingleObject(alarmer, INFINITE);
     }else{
-      result = WaitForSingleObject(alarm, (DWORD)(1000. * maxwaittime));
+      result = WaitForSingleObject(alarmer, (DWORD)(1000. * maxwaittime));
     }
     return (result == WAIT_OBJECT_0);
   #else
@@ -463,10 +463,10 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarm, double maxwaittime){
         naError("maxwaittime should not be negative. Beware of the zero!");
     #endif
     if(maxwaittime == 0){
-      result = dispatch_semaphore_wait(alarm, DISPATCH_TIME_FOREVER);
+      result = dispatch_semaphore_wait(alarmer, DISPATCH_TIME_FOREVER);
     }else{
       dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1000000000 * maxwaittime));
-      result = dispatch_semaphore_wait(alarm, timeout);
+      result = dispatch_semaphore_wait(alarmer, timeout);
     }
     return (result ? NA_FALSE : NA_TRUE);
   #endif
@@ -474,11 +474,11 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarm, double maxwaittime){
 
 
 
-NA_IDEF void naTriggerAlarm(NAAlarm alarm){
+NA_IDEF void naTriggerAlarm(NAAlarm alarmer){
   #if NA_OS == NA_OS_WINDOWS
-    SetEvent(alarm);
+    SetEvent(alarmer);
   #else
-    dispatch_semaphore_signal(alarm);
+    dispatch_semaphore_signal(alarmer);
   #endif
 }
 

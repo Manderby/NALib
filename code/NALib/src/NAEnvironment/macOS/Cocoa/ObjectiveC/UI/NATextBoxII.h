@@ -27,11 +27,10 @@
   [scrollview setContentView:clipView];
   [scrollview setDocumentView:self];
 
-  NA_MACOS_LEGACY_EXECUTE(10,
-    {}, // not applicable before macOS 10.10
-    { [scrollview setAutomaticallyAdjustsContentInsets:YES];
-      [[scrollview contentView] setAutomaticallyAdjustsContentInsets:YES];}
-  );
+  #if NA_MACOS_AVAILABILITY_10_10
+    [scrollview setAutomaticallyAdjustsContentInsets:YES];
+    [[scrollview contentView] setAutomaticallyAdjustsContentInsets:YES];
+  #endif
 
   coretextbox = newcoretextbox;
   return self;
@@ -58,7 +57,7 @@
 NA_DEF NATextBox* naNewTextBox(NASize size){
   NACoreTextBox* coretextbox = naAlloc(NACoreTextBox);
   
-  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NANativeTextBox* nativeTextBox = [[NANativeTextBox alloc] initWithCoreTextBox:coretextbox frame:frameRect];
   naInitCoreTextBox(coretextbox, NA_COCOA_PTR_OBJC_TO_C(nativeTextBox));
   

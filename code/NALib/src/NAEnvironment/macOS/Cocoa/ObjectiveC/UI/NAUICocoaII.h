@@ -18,22 +18,33 @@
 
 
 // Mapping of deprecated entities
-#if !defined __MAC_10_12
-  #define NAEventMaskAny                  NSAnyEventMask
-  #define NAWindowStyleMaskTitled         NSTitledWindowMask
-  #define NAWindowStyleMaskClosable       NSClosableWindowMask
-  #define NAWindowStyleMaskMiniaturizable NSMiniaturizableWindowMask
-  #define NAWindowStyleMaskResizable      NSResizableWindowMask
-  #define NAWindowStyleMaskBorderless     NSBorderlessWindowMask
-  #define NAEventModifierFlagShift        NSShiftKeyMask
-  #define NAEventModifierFlagOption       NSAlternateKeyMask
-  #define NAEventModifierFlagControl      NSControlKeyMask
-  #define NAEventModifierFlagCommand      NSCommandKeyMask
+#if defined __MAC_10_7
+  #define NAEventTypeKeyUp                NSEventTypeKeyUp
+  #define NAEventTypeKeyDown              NSEventTypeKeyDown
 
-  #define NAAlertStyleWarning             NSInformationalAlertStyle
-  #define NAAlertStyleInfo                NSAlertStyleWarning
-  #define NSAlertStyleError               NSAlertStyleCritical
-#else
+  #define NAButtonTypeRadio               NSButtonTypeRadio
+  #define NAButtonTypeMomentaryLight      NSButtonTypeMomentaryLight
+  #define NAButtonTypePushOnPushOff       NSButtonTypePushOnPushOff
+  #define NAButtonTypeSwitch              NSButtonTypeSwitch
+  
+  #define NATextAlignmentLeft             NSTextAlignmentLeft
+  #define NATextAlignmentRight            NSTextAlignmentRight
+  #define NATextAlignmentCenter           NSTextAlignmentCenter
+#else // deprecated definitions before 10.6
+  #define NAEventTypeKeyUp                NSKeyUp
+  #define NAEventTypeKeyDown              NSKeyDown
+  
+  #define NAButtonTypeRadio               NSRadioButton
+  #define NAButtonTypeMomentaryLight      NSMomentaryLightButton
+  #define NAButtonTypePushOnPushOff       NSPushOnPushOffButton
+  #define NAButtonTypeSwitch              NSSwitchButton
+
+  #define NATextAlignmentLeft             NSLeftTextAlignment
+  #define NATextAlignmentRight            NSRightTextAlignment
+  #define NATextAlignmentCenter           NSCenterTextAlignment
+#endif
+
+#if defined __MAC_10_12
   #define NAEventMaskAny                  NSEventMaskAny
   #define NAWindowStyleMaskTitled         NSWindowStyleMaskTitled
   #define NAWindowStyleMaskClosable       NSWindowStyleMaskClosable
@@ -48,20 +59,35 @@
   #define NAAlertStyleWarning             NSAlertStyleInformational
   #define NAAlertStyleInfo                NSAlertStyleWarning
   #define NSAlertStyleError               NSAlertStyleCritical
+#else // deprecated definitions before 10.12
+  #define NAEventMaskAny                  NSAnyEventMask
+  #define NAWindowStyleMaskTitled         NSTitledWindowMask
+  #define NAWindowStyleMaskClosable       NSClosableWindowMask
+  #define NAWindowStyleMaskMiniaturizable NSMiniaturizableWindowMask
+  #define NAWindowStyleMaskResizable      NSResizableWindowMask
+  #define NAWindowStyleMaskBorderless     NSBorderlessWindowMask
+  #define NAEventModifierFlagShift        NSShiftKeyMask
+  #define NAEventModifierFlagOption       NSAlternateKeyMask
+  #define NAEventModifierFlagControl      NSControlKeyMask
+  #define NAEventModifierFlagCommand      NSCommandKeyMask
+
+  #define NAAlertStyleWarning             NSInformationalAlertStyle
+  #define NAAlertStyleInfo                NSWarningAlertStyle
+  #define NSAlertStyleError               NSCriticalAlertStyle
 #endif
 
-#if !defined __MAC_10_14
-  #define NABezelStyleRounded             NSRoundedBezelStyle
-  #define NABezelStyleShadowlessSquare    NSShadowlessSquareBezelStyle
-
-  #define NAStateOn                       NSOnState
-  #define NAStateOff                      NSOffState
-#else
+#if defined __MAC_10_14
   #define NABezelStyleRounded             NSBezelStyleRounded
   #define NABezelStyleShadowlessSquare    NSBezelStyleShadowlessSquare
 
   #define NAStateOn                       NSControlStateValueOn
   #define NAStateOff                      NSControlStateValueOff
+#else // deprecated definitions before 10.14
+  #define NABezelStyleRounded             NSRoundedBezelStyle
+  #define NABezelStyleShadowlessSquare    NSShadowlessSquareBezelStyle
+
+  #define NAStateOn                       NSOnState
+  #define NAStateOff                      NSOffState
 #endif
 
 
@@ -125,6 +151,7 @@ struct NACocoaApplication {
 @interface NANativeButton : NSButton{
   NACoreButton* corebutton;
 }
+- (void) onPressed:(id)sender;
 @end
 
 @interface NANativeRadio : NSButton{
@@ -154,6 +181,7 @@ struct NACocoaApplication {
 @interface NANativeTextField : NSTextField <NSTextFieldDelegate>{
   NACoreTextField* coretextfield;
 }
+- (void) onEdited:(id)sender;
 @end
 
 @interface NANativeTextBox : NSTextView{
@@ -182,19 +210,31 @@ NA_HDEF void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent){
 
 
 
-NA_HDEF void naCaptureKeyboardStatus(NSEvent* event){  
-  NSEventModifierFlags flags;
+NA_HDEF void naCaptureKeyboardStatus(NSEvent* event){
+  #if NA_MACOS_AVAILABILITY_10_10
+    NSEventModifierFlags flags;
+  #else
+    NSUInteger flags;
+  #endif
   NABool hasShift;
   NABool hasControl;
   NABool hasOption;
   NABool hasCommand;
   NAUIKeyCode keyCode = [event keyCode];
   na_app->keyboardStatus.keyCode = keyCode;
+  [event modifierFlags];
   flags = [event modifierFlags];
-  hasShift     = (flags & NAEventModifierFlagShift)   != 0;
-  hasControl   = (flags & NAEventModifierFlagControl) != 0;
-  hasOption    = (flags & NAEventModifierFlagOption)  != 0;
-  hasCommand   = (flags & NAEventModifierFlagCommand) != 0;
+  #if NA_MACOS_AVAILABILITY_10_10
+    hasShift     = (flags & NAEventModifierFlagShift)   != 0;
+    hasControl   = (flags & NAEventModifierFlagControl) != 0;
+    hasOption    = (flags & NAEventModifierFlagOption)  != 0;
+    hasCommand   = (flags & NAEventModifierFlagCommand) != 0;
+  #else
+    hasShift     = (flags & NSShiftKeyMask)     != 0;
+    hasControl   = (flags & NSControlKeyMask)   != 0;
+    hasOption    = (flags & NSAlternateKeyMask) != 0;
+    hasCommand   = (flags & NSCommandKeyMask)   != 0;
+  #endif
   na_app->keyboardStatus.modifiers = 0;
   na_app->keyboardStatus.modifiers |= hasShift * NA_MODIFIER_FLAG_SHIFT;
   na_app->keyboardStatus.modifiers |= hasControl * NA_MODIFIER_FLAG_CONTROL;
@@ -206,23 +246,23 @@ NA_HDEF void naCaptureKeyboardStatus(NSEvent* event){
 
 NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
   NABool retvalue = NA_FALSE;
-  if([event type] == NSEventTypeKeyUp){
+  if([event type] == NAEventTypeKeyDown){
     naCaptureKeyboardStatus(event);
-  }else if([event type] == NSEventTypeKeyDown){
+  }else if([event type] == NAEventTypeKeyUp){
     NACoreUIElement* elem;
-    NSWindow* keyWindow;
+    NSWindow* focusWindow;
     naCaptureKeyboardStatus(event);
     
     // Search for the native first responder which is represented in NALib.
     elem = NA_NULL;
-    keyWindow = [NSApp keyWindow];
-    if(keyWindow){
-      NSResponder* firstResponder = [keyWindow firstResponder];
+    focusWindow = [NSApp keyWindow];
+    if(focusWindow){
+      NSResponder* firstResponder = [focusWindow firstResponder];
       if(firstResponder){
         while(!elem && firstResponder){
           elem = naGetUINALibEquivalent((NA_COCOA_BRIDGE NANativeID)(firstResponder));
           if(!elem){
-            if(firstResponder == keyWindow){
+            if(firstResponder == focusWindow){
               elem = naGetApplication();
             }else{
               firstResponder = [(NSView*)firstResponder superview];
@@ -230,7 +270,7 @@ NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
           }
         }
       }else{
-        elem = naGetUINALibEquivalent((NA_COCOA_BRIDGE NANativeID)(keyWindow));
+        elem = naGetUINALibEquivalent((NA_COCOA_BRIDGE NANativeID)(focusWindow));
       }
     }else{
       elem = naGetApplication();
@@ -315,6 +355,7 @@ NAFont getFontWithKind(NAFontKind kind){
   NSFont* font;
   CGFloat systemSize = [NSFont systemFontSize];
   NSFontDescriptor* descriptor;
+  NSDictionary* dict;
   switch(kind){
     case NA_FONT_KIND_SYSTEM:
       font = [NSFont systemFontOfSize:systemSize];
@@ -323,21 +364,24 @@ NAFont getFontWithKind(NAFontKind kind){
       font = [NSFont boldSystemFontOfSize:systemSize];
       break;
     case NA_FONT_KIND_MONOSPACE:
-      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:@{
-                                       NSFontFamilyAttribute : @"Courier", 
-                                       NSFontFaceAttribute : @"Regular"}];
+      dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                            NSFontFamilyAttribute, @"Courier", 
+                            NSFontFaceAttribute, @"Regular", nil];
+      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
       font = [NSFont fontWithDescriptor:descriptor size:systemSize];
       break;
     case NA_FONT_KIND_PARAGRAPH:
-      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:@{
-                                       NSFontFamilyAttribute : @"Palatino", 
-                                       NSFontFaceAttribute : @"Regular"}];
+      dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                            NSFontFamilyAttribute, @"Palatino", 
+                            NSFontFaceAttribute, @"Regular", nil];
+      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
       font = [NSFont fontWithDescriptor:descriptor size:systemSize + 1];
       break;
     case NA_FONT_KIND_MATH:
-      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:@{
-                                       NSFontFamilyAttribute : @"Times New Roman", 
-                                       NSFontFaceAttribute : @"Italic"}];
+      dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                            NSFontFamilyAttribute, @"Times New Roman", 
+                            NSFontFaceAttribute, @"Italic", nil];
+      descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
       font = [NSFont fontWithDescriptor:descriptor size:systemSize];
       break;
     default:
@@ -355,9 +399,9 @@ NAFont getFontWithKind(NAFontKind kind){
 NSTextAlignment getNSTextAlignmentWithAlignment(NATextAlignment alignment){
   NSTextAlignment nsalignment;
   switch(alignment){
-  case NA_TEXT_ALIGNMENT_LEFT: nsalignment = NSTextAlignmentLeft; break;
-  case NA_TEXT_ALIGNMENT_RIGHT: nsalignment = NSTextAlignmentRight; break;
-  case NA_TEXT_ALIGNMENT_CENTER: nsalignment = NSTextAlignmentCenter; break;
+    case NA_TEXT_ALIGNMENT_LEFT: nsalignment = NATextAlignmentLeft; break;
+    case NA_TEXT_ALIGNMENT_RIGHT: nsalignment = NATextAlignmentRight; break;
+    case NA_TEXT_ALIGNMENT_CENTER: nsalignment = NATextAlignmentCenter; break;
   default:
     #ifndef NDEBUG
       naError("Invalid alignment enumeration");

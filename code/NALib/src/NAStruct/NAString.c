@@ -259,17 +259,17 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
   if(naIsStringEmpty(string)){
     return (const NAUTF8Char*)"";
   }else{
-    NAInt strlen;
+    NAInt numchars;
     NAUTF8Char* newstr;
-    strlen = naGetBufferRange(string->buffer).length;
+    numchars = naGetBufferRange(string->buffer).length;
     #ifndef NDEBUG
-      if(!strlen)
+      if(!numchars)
         naError("String is empty");
     #endif
-    newstr = naMallocTmp((NAUInt)(strlen + 1));
+    newstr = naMallocTmp((NAUInt)(numchars + 1));
     naCacheBufferRange(string->buffer, naGetBufferRange(string->buffer));
     naWriteBufferToData(string->buffer, newstr);
-    newstr[strlen] = '\0';
+    newstr[numchars] = '\0';
     #ifndef NDEBUG
       mutablestring->cachedstr = newstr;
     #endif

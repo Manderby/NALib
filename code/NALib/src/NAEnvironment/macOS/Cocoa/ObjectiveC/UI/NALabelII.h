@@ -119,12 +119,13 @@
   [self setSelectable:YES];
   [self setEditable:NO];
   [self setBordered:NO];
-  [self setBackgroundColor:[NSColor colorWithCalibratedRed:0. green:0. blue:1. alpha:.1]];
+  [self setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)0. green:(CGFloat)0. blue:(CGFloat)1. alpha:(CGFloat).1]];
   [self setDrawsBackground:NO];
-  NA_MACOS_LEGACY_EXECUTE(10,
-    {[[self cell] setLineBreakMode:NSLineBreakByWordWrapping];},
-    {[self setLineBreakMode:NSLineBreakByWordWrapping];}
-  );
+  #if NA_MACOS_AVAILABILITY_10_10
+    [self setLineBreakMode:NSLineBreakByWordWrapping];
+  #else
+    [[self cell] setLineBreakMode:NSLineBreakByWordWrapping];
+  #endif
   [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
   corelabel = newcorelabel;
   return self;
@@ -158,7 +159,7 @@
   [self setAttributedStringValue: attrString];
 }
 - (void) setLabelEnabled:(NABool)enabled{
-  [self setAlphaValue:enabled ? 1. : .35];
+  [self setAlphaValue:enabled ? (CGFloat)1. : (CGFloat).35];
 }
 - (void) setTextAlignment:(NATextAlignment) alignment{
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
@@ -173,7 +174,7 @@
 NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   NACoreLabel* corelabel = naAlloc(NACoreLabel);
 
-  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NANativeLabel* nativeLabel = [[NANativeLabel alloc] initWithCoreLabel:corelabel frame:frameRect];
   naInitCoreLabel(corelabel, NA_COCOA_PTR_OBJC_TO_C(nativeLabel));
   naSetLabelText(corelabel, text);

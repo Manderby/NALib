@@ -13,7 +13,7 @@
 - (id) initWithCoreCheckBox:(NACoreCheckBox*)newcorecheckbox frame:(NSRect)frame{
   self = [super initWithFrame:frame];
   
-  [self setButtonType:NSButtonTypeSwitch];
+  [self setButtonType:NAButtonTypeSwitch];
   corecheckbox = newcorecheckbox;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
@@ -40,7 +40,7 @@
 NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
   NANativeCheckBox* nativeCheckBox;
   NACoreCheckBox* corecheckbox = naAlloc(NACoreCheckBox);
-  NSRect frameRect = NSMakeRect(0., 0., size.width, size.height);
+  NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NSRect boundrect = frameRect;
   boundrect.origin.x = 0;
   boundrect.origin.y = 0;

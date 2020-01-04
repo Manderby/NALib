@@ -87,7 +87,12 @@
   #else
     #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
   #endif
-  #if __has_feature(objc_arc)
+  #if defined __has_feature
+    #define NA_MACOS_USES_ARC __has_feature(objc_arc)
+  #else
+    #define NA_MACOS_USES_ARC 0
+  #endif
+  #if NA_MACOS_USES_ARC
     // Note: Do not use a cast for the release as the compiler not necessarily
     // is an objective-C compiler and hence does not know the id type.
     #define NA_COCOA_BRIDGE __bridge

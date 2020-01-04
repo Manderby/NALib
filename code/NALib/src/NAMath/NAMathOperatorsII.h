@@ -491,7 +491,7 @@ NA_IDEF float naExp2f(float x){
     return exp2f(x);
   #endif
 }
-NA_IDEF double naExp2(double x){
+NA_IDEF double naExp2d(double x){
   #if NA_OS == NA_OS_WINDOWS
     return pow(2., x);
   #elif NA_OS == NA_OS_MAC_OS_X
@@ -529,7 +529,7 @@ NA_IDEF int64 naExp2i64(int64 x){
 NA_IDEF float naExp10f(float x){
   return powf(10.f, x);
 }
-NA_IDEF double naExp10(double x){
+NA_IDEF double naExp10d(double x){
   return pow(10., x);
 }
 NA_IDEF NAInt naExp10i(NAInt x){

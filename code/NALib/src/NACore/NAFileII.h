@@ -138,20 +138,20 @@ NA_IDEF NABool naCopyFile(const char* dstpath, const char* srcpath){
 
 
 
-NA_IDEF NABool naAccess(const char* path, NABool exists, NABool read, NABool write, NABool execute){
+NA_IDEF NABool naAccess(const char* path, NABool doesExists, NABool canRead, NABool canWrite, NABool canExecute){
   #if NA_OS == NA_OS_WINDOWS
     int testmode = 0;
     // testmode |= (exists?00:0); // This line has been commented out because of static code analysis.
-    testmode |= (read?04:0);
-    testmode |= (write?02:0);
+    testmode |= (canRead?04:0);
+    testmode |= (canWrite?02:0);
     NA_UNUSED(execute); // Under windows, the executable flag does not exist.
     return (_access(path, testmode) == 0);
   #elif NA_OS == NA_OS_MAC_OS_X
     int testmode = 0;
-    testmode |= (exists?F_OK:0);
-    testmode |= (read?R_OK:0);
-    testmode |= (write?W_OK:0);
-    testmode |= (execute?X_OK:0);
+    testmode |= (doesExists?F_OK:0);
+    testmode |= (canRead?R_OK:0);
+    testmode |= (canWrite?W_OK:0);
+    testmode |= (canExecute?X_OK:0);
     return (access(path, testmode) == 0);
   #endif
 }

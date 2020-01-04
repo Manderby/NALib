@@ -36,7 +36,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 
   NAApplication* app;
   NSDate* distantfuture;
-  #if !__has_feature(objc_arc)
+  #if !NA_MACOS_USES_ARC
     NSAutoreleasePool* pool;
   #endif
   
@@ -46,7 +46,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   app = naNewApplication();
 
   // Put an autorelease pool in place for the startup sequence.
-  #if !__has_feature(objc_arc)
+  #if !NA_MACOS_USES_ARC
     pool = [[NSAutoreleasePool alloc] init];
   #endif
     // Call prestartup if desired.
@@ -60,7 +60,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
     
     // Call poststartup if desired.
     if(poststartup){poststartup(arg);}
-  #if !__has_feature(objc_arc)
+  #if !NA_MACOS_USES_ARC
     [pool drain];
   #endif
 
@@ -77,7 +77,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   distantfuture = [NSDate distantFuture];
   while(naIsCoreApplicationRunning()){
     NSEvent* curevent;
-    #if !__has_feature(objc_arc)
+    #if !NA_MACOS_USES_ARC
       pool = [[NSAutoreleasePool alloc] init];
     #endif
       curevent = [NSApp nextEventMatchingMask:NAEventMaskAny untilDate:distantfuture inMode:NSDefaultRunLoopMode dequeue:YES];
@@ -86,7 +86,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
       if(!naInterceptKeyboardShortcut(curevent)){
         if(curevent){[NSApp sendEvent:curevent];}
       }
-    #if !__has_feature(objc_arc)
+    #if !NA_MACOS_USES_ARC
       [pool drain];
     #endif
   }

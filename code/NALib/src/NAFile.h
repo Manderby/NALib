@@ -115,8 +115,11 @@ NA_API  NABool      naIsDir   (const char* path);
 NA_API  NABool      naIsHidden(const char* path);
 NA_IAPI int         naRemove  (const char* path);
 NA_IAPI NABool      naCopyFile(const char* dstpath, const char* srcpath);
-NA_IAPI NABool      naAccess  (const char* path, NABool exists, NABool read,
-                               NABool write, NABool execute);
+NA_IAPI NABool      naAccess  (const char* path,
+                                    NABool doesExists,
+                                    NABool canRead,
+                                    NABool canWrite,
+                                    NABool canExecute);
 NA_IAPI NAUTF8Char* naGetCwd  (NAUTF8Char* buf, NAInt bufsize);
 
 

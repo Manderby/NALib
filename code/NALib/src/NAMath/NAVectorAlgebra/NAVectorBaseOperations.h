@@ -989,222 +989,222 @@ NA_IDEF void naMulV4fS(float* d, float s){
 // ///////////////////////////////
 
 NA_IDEF void naDivV1d(double* NA_RESTRICT d, const double* NA_RESTRICT a, double s){
-  double div;
+  double divisor;
   #ifndef NDEBUG
     if(a==d)
       naError("a equals d. Use S or E variant");
     else if(naAbsi((NASizeInt)(d-a)) < 1)
       naError("a overlaps misaligned with d.");
   #endif
-  div = naInv(s);
-  d[0] = a[0] * div;
+  divisor = naInv(s);
+  d[0] = a[0] * divisor;
 }
 NA_IDEF void naDivV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a, double s){
-  double div;
+  double divisor;
   #ifndef NDEBUG
     if(a==d)
       naError("a equals d. Use S or E variant");
     else if(naAbsi((NASizeInt)(d-a)) < 2)
       naError("a overlaps misaligned with d.");
   #endif
-  div = naInv(s);
-  d[0] = a[0] * div;
-  d[1] = a[1] * div;
+  divisor = naInv(s);
+  d[0] = a[0] * divisor;
+  d[1] = a[1] * divisor;
 }
 NA_IDEF void naDivV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a, double s){
-  double div;
+  double divisor;
   #ifndef NDEBUG
     if(a==d)
       naError("a equals d. Use S or E variant");
     else if(naAbsi((NASizeInt)(d-a)) < 3)
       naError("a overlaps misaligned with d.");
   #endif
-  div = naInv(s);
-  d[0] = a[0] * div;
-  d[1] = a[1] * div;
-  d[2] = a[2] * div;
+  divisor = naInv(s);
+  d[0] = a[0] * divisor;
+  d[1] = a[1] * divisor;
+  d[2] = a[2] * divisor;
 }
 NA_IDEF void naDivV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a, double s){
-  double div;
+  double divisor;
   #ifndef NDEBUG
     if(a==d)
       naError("a equals d. Use S or E variant");
     else if(naAbsi((NASizeInt)(d-a)) < 4)
       naError("a overlaps misaligned with d.");
   #endif
-  div = naInv(s);
-  d[0] = a[0] * div;
-  d[1] = a[1] * div;
-  d[2] = a[2] * div;
-  d[3] = a[3] * div;
+  divisor = naInv(s);
+  d[0] = a[0] * divisor;
+  d[1] = a[1] * divisor;
+  d[2] = a[2] * divisor;
+  d[3] = a[3] * divisor;
 }
 NA_IDEF void naDivV1f(float* NA_RESTRICT d, const float* NA_RESTRICT a, float s){
-  float div;
+  float divisor;
   #ifndef NDEBUG
     if(a==d)
       naError("a equals d. Use S or E variant");
     else if(naAbsi((NASizeInt)(d-a)) < 1)
       naError("a overlaps misaligned with d.");
   #endif
-  div = naInvf(s);
-  d[0] = a[0] * div;
+  divisor = naInvf(s);
+  d[0] = a[0] * divisor;
 }
 NA_IDEF void naDivV2f(float* NA_RESTRICT d, const float* NA_RESTRICT a, float s){
-  float div;
+  float divisor;
   #ifndef NDEBUG
     if(a==d)
       naError("a equals d. Use S or E variant");
     else if(naAbsi((NASizeInt)(d-a)) < 2)
       naError("a overlaps misaligned with d.");
   #endif
-  div = naInvf(s);
-  d[0] = a[0] * div;
-  d[1] = a[1] * div;
+  divisor = naInvf(s);
+  d[0] = a[0] * divisor;
+  d[1] = a[1] * divisor;
 }
 NA_IDEF void naDivV3f(float* NA_RESTRICT d, const float* NA_RESTRICT a, float s){
-  float div;
+  float divisor;
   #ifndef NDEBUG
     if(a==d)
       naError("a equals d. Use S or E variant");
     else if(naAbsi((NASizeInt)(d-a)) < 3)
       naError("a overlaps misaligned with d.");
   #endif
-  div = naInvf(s);
-  d[0] = a[0] * div;
-  d[1] = a[1] * div;
-  d[2] = a[2] * div;
+  divisor = naInvf(s);
+  d[0] = a[0] * divisor;
+  d[1] = a[1] * divisor;
+  d[2] = a[2] * divisor;
 }
 NA_IDEF void naDivV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a, float s){
-  float div;
+  float divisor;
   #ifndef NDEBUG
     if(a==d)
       naError("a equals d. Use S or E variant");
     else if(naAbsi((NASizeInt)(d-a)) < 4)
       naError("a overlaps misaligned with d.");
   #endif
-  div = naInvf(s);
-  d[0] = a[0] * div;
-  d[1] = a[1] * div;
-  d[2] = a[2] * div;
-  d[3] = a[3] * div;
+  divisor = naInvf(s);
+  d[0] = a[0] * divisor;
+  d[1] = a[1] * divisor;
+  d[2] = a[2] * divisor;
+  d[3] = a[3] * divisor;
 }
 NA_IDEF void naDivV1dE(double* d, const double* a, double s){
-  double div = naInv(s);
-  d[0] = a[0] * div;
+  double divisor = naInv(s);
+  d[0] = a[0] * divisor;
 }
 NA_IDEF void naDivV2dE(double* d, const double* a, double s){
-  double div;
+  double divisor;
   #ifndef NDEBUG
     if((a!=d) && (naAbsi((NASizeInt)(d-a)) < 2))
       naError("a overlaps misaligned with d. Result undefined.");
   #endif
-  div = naInv(s);
-  d[0] = a[0] * div;
-  d[1] = a[1] * div;
+  divisor = naInv(s);
+  d[0] = a[0] * divisor;
+  d[1] = a[1] * divisor;
 }
 NA_IDEF void naDivV3dE(double* d, const double* a, double s){
-  double div;
+  double divisor;
   #ifndef NDEBUG
     if((a!=d) && (naAbsi((NASizeInt)(d-a)) < 3))
       naError("a overlaps misaligned with d. Result undefined.");
   #endif
-  div = naInv(s);
-  d[0] = a[0] * div;
-  d[1] = a[1] * div;
-  d[2] = a[2] * div;
+  divisor = naInv(s);
+  d[0] = a[0] * divisor;
+  d[1] = a[1] * divisor;
+  d[2] = a[2] * divisor;
 }
 NA_IDEF void naDivV4dE(double* d, const double* a, double s){
-  double div;
+  double divisor;
   #ifndef NDEBUG
     if((a!=d) && (naAbsi((NASizeInt)(d-a)) < 4))
       naError("a overlaps misaligned with d. Result undefined.");
   #endif
-  div = naInv(s);
-  d[0] = a[0] * div;
-  d[1] = a[1] * div;
-  d[2] = a[2] * div;
-  d[3] = a[3] * div;
+  divisor = naInv(s);
+  d[0] = a[0] * divisor;
+  d[1] = a[1] * divisor;
+  d[2] = a[2] * divisor;
+  d[3] = a[3] * divisor;
 }
 NA_IDEF void naDivV1fE(float*  d, const float*  a, float s){
-  float div = naInvf(s);
-  d[0] = a[0] * div;
+  float divisor = naInvf(s);
+  d[0] = a[0] * divisor;
 }
 NA_IDEF void naDivV2fE(float*  d, const float*  a, float s){
-  float div;
+  float divisor;
   #ifndef NDEBUG
     if((a!=d) && (naAbsi((NASizeInt)(d-a)) < 2))
       naError("a overlaps misaligned with d. Result undefined.");
   #endif
-  div = naInvf(s);
-  d[0] = a[0] * div;
-  d[1] = a[1] * div;
+  divisor = naInvf(s);
+  d[0] = a[0] * divisor;
+  d[1] = a[1] * divisor;
 }
 NA_IDEF void naDivV3fE(float*  d, const float*  a, float s){
-  float div;
+  float divisor;
   #ifndef NDEBUG
     if((a!=d) && (naAbsi((NASizeInt)(d-a)) < 3))
       naError("a overlaps misaligned with d. Result undefined.");
   #endif
-  div = naInvf(s);
-  d[0] = a[0] * div;
-  d[1] = a[1] * div;
-  d[2] = a[2] * div;
+  divisor = naInvf(s);
+  d[0] = a[0] * divisor;
+  d[1] = a[1] * divisor;
+  d[2] = a[2] * divisor;
 }
 NA_IDEF void naDivV4fE(float*  d, const float*  a, float s){
-  float div;
+  float divisor;
   #ifndef NDEBUG
     if((a!=d) && (naAbsi((NASizeInt)(d-a)) < 4))
       naError("a overlaps misaligned with d. Result undefined.");
   #endif
-  div = naInvf(s);
-  d[0] = a[0] * div;
-  d[1] = a[1] * div;
-  d[2] = a[2] * div;
-  d[3] = a[3] * div;
+  divisor = naInvf(s);
+  d[0] = a[0] * divisor;
+  d[1] = a[1] * divisor;
+  d[2] = a[2] * divisor;
+  d[3] = a[3] * divisor;
 }
 NA_IDEF void naDivV1dS(double* d, double s){
-  double div = naInv(s);
-  d[0] *= div;
+  double divisor = naInv(s);
+  d[0] *= divisor;
 }
 NA_IDEF void naDivV2dS(double* d, double s){
-  double div = naInv(s);
-  d[0] *= div;
-  d[1] *= div;
+  double divisor = naInv(s);
+  d[0] *= divisor;
+  d[1] *= divisor;
 }
 NA_IDEF void naDivV3dS(double* d, double s){
-  double div = naInv(s);
-  d[0] *= div;
-  d[1] *= div;
-  d[2] *= div;
+  double divisor = naInv(s);
+  d[0] *= divisor;
+  d[1] *= divisor;
+  d[2] *= divisor;
 }
 NA_IDEF void naDivV4dS(double* d, double s){
-  double div = naInv(s);
-  d[0] *= div;
-  d[1] *= div;
-  d[2] *= div;
-  d[3] *= div;
+  double divisor = naInv(s);
+  d[0] *= divisor;
+  d[1] *= divisor;
+  d[2] *= divisor;
+  d[3] *= divisor;
 }
 NA_IDEF void naDivV1fS(float* d, float s){
-  float div = naInvf(s);
-  d[0] *= div;
+  float divisor = naInvf(s);
+  d[0] *= divisor;
 }
 NA_IDEF void naDivV2fS(float* d, float s){
-  float div = naInvf(s);
-  d[0] *= div;
-  d[1] *= div;
+  float divisor = naInvf(s);
+  d[0] *= divisor;
+  d[1] *= divisor;
 }
 NA_IDEF void naDivV3fS(float* d, float s){
-  float div = naInvf(s);
-  d[0] *= div;
-  d[1] *= div;
-  d[2] *= div;
+  float divisor = naInvf(s);
+  d[0] *= divisor;
+  d[1] *= divisor;
+  d[2] *= divisor;
 }
 NA_IDEF void naDivV4fS(float* d, float s){
-  float div = naInvf(s);
-  d[0] *= div;
-  d[1] *= div;
-  d[2] *= div;
-  d[3] *= div;
+  float divisor = naInvf(s);
+  d[0] *= divisor;
+  d[1] *= divisor;
+  d[2] *= divisor;
+  d[3] *= divisor;
 }
 
 

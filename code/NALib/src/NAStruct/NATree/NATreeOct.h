@@ -43,7 +43,7 @@ NA_HAPI  NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeItem* item, con
 NA_HAPI  NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf);
 NA_HAPI  NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 
-NA_HIAPI NATreeItem* naGetOctNodeItem(NATreeOctNode* octnode);
+//NA_HIAPI NATreeItem* naGetOctNodeItem(NATreeOctNode* octnode);
 
 
 

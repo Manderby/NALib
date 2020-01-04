@@ -646,8 +646,8 @@ NA_IDEF NSPoint naMakeNSPointWithPos(NAPos napos){
     if(!(naIsOffsetValueUseful(napos.x) && naIsOffsetValueUseful(napos.y)))
       naError("Values given are not useful.");
   #endif
-  newpoint.x = napos.x;
-  newpoint.y = napos.y;
+  newpoint.x = (CGFloat)napos.x;
+  newpoint.y = (CGFloat)napos.y;
   return newpoint;
 }
 NA_IDEF NASize naMakeSizeWithNSSize(NSSize nssize){
@@ -670,8 +670,8 @@ NA_IDEF NSSize naMakeNSSizeWithSize(NASize nasize){
     if(!(naIsLengthValueUseful(nasize.width) && naIsLengthValueUseful(nasize.height)))
       naError("Values given are not useful.");
   #endif
-  newsize.width = nasize.width;
-  newsize.height = nasize.height;
+  newsize.width = (CGFloat)nasize.width;
+  newsize.height = (CGFloat)nasize.height;
   return newsize;
 }
 NA_IDEF NARect naMakeRectWithNSRect(NSRect nsrect){
