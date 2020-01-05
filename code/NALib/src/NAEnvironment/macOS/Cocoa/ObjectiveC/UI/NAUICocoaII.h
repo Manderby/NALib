@@ -365,22 +365,22 @@ NAFont getFontWithKind(NAFontKind kind){
       break;
     case NA_FONT_KIND_MONOSPACE:
       dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                            NSFontFamilyAttribute, @"Courier", 
-                            NSFontFaceAttribute, @"Regular", nil];
+                            @"Courier", NSFontFamilyAttribute, 
+                            @"Regular", NSFontFaceAttribute, nil];
       descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
       font = [NSFont fontWithDescriptor:descriptor size:systemSize];
       break;
     case NA_FONT_KIND_PARAGRAPH:
       dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                            NSFontFamilyAttribute, @"Palatino", 
-                            NSFontFaceAttribute, @"Regular", nil];
+                            @"Palatino", NSFontFamilyAttribute, 
+                            @"Regular", NSFontFaceAttribute, nil];
       descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
       font = [NSFont fontWithDescriptor:descriptor size:systemSize + 1];
       break;
     case NA_FONT_KIND_MATH:
       dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                            NSFontFamilyAttribute, @"Times New Roman", 
-                            NSFontFaceAttribute, @"Italic", nil];
+                            @"Times New Roman", NSFontFamilyAttribute, 
+                            @"Italic", NSFontFaceAttribute, nil];
       descriptor = [NSFontDescriptor fontDescriptorWithFontAttributes:dict];
       font = [NSFont fontWithDescriptor:descriptor size:systemSize];
       break;

@@ -29,10 +29,10 @@
   [self setTitle:[NSString stringWithUTF8String:text]];
 }
 - (void) setButtonImage:(NAUIImage*)uiimage{
-  NSSize imagesize = NSMakeSize(naGetUIImage1xSize(uiimage).width, naGetUIImage1xSize(uiimage).height);
   NSImage* image = nil; // todo: this must be implemented before macOS 10.8
 
   #if NA_MACOS_AVAILABILITY_10_8
+    NSSize imagesize = NSMakeSize(naGetUIImage1xSize(uiimage).width, naGetUIImage1xSize(uiimage).height);
     image = [NSImage imageWithSize:imagesize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
       NAUIImageResolution resolution;
       CGContextRef context = NA_NULL;
@@ -75,14 +75,14 @@
       return YES;
     }];
   #else
-    NA_UNUSED(imagesize);
+    image = NA_COCOA_PTR_C_TO_OBJC(naAllocNativeImageWithUIImage(uiimage, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_LIGHT));
   #endif
 
 //  CGImageRef imgRef = [image CGImageForProposedRect:nil context:nil hints:nil];
   [self setImage:image];
-  #if NA_MACOS_AVAILABILITY_10_7
+//  #if NA_MACOS_AVAILABILITY_10_6
     [self setImageScaling:NSImageScaleProportionallyUpOrDown];
-  #endif
+//  #endif
 //  [image release];
 //  [self setBezelStyle:NSBezelStyleShadowlessSquare];
   // OptionButton: NSBezelStyleShadowlessSquare
