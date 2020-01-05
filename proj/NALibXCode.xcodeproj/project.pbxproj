@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		906E95FB23C0B69000EC6047 /* libNALibGUI.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 909ECCDA23B90B33002CA78D /* libNALibGUI.a */; };
+		909E4AD423C20E4000F9F837 /* NAUICocoaLegacyII.h in Headers */ = {isa = PBXBuildFile; fileRef = 909E4AD323C20E4000F9F837 /* NAUICocoaLegacyII.h */; };
+		909E4AD523C20E4000F9F837 /* NAUICocoaLegacyII.h in Headers */ = {isa = PBXBuildFile; fileRef = 909E4AD323C20E4000F9F837 /* NAUICocoaLegacyII.h */; };
 		909ECB6223B90947002CA78D /* NAMathConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 909ECAA323B90946002CA78D /* NAMathConstants.h */; };
 		909ECB6323B90947002CA78D /* NAMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 909ECAA423B90946002CA78D /* NAMemory.h */; };
 		909ECB6423B90947002CA78D /* NAComplex.h in Headers */ = {isa = PBXBuildFile; fileRef = 909ECAA523B90946002CA78D /* NAComplex.h */; };
@@ -378,6 +380,7 @@
 
 /* Begin PBXFileReference section */
 		9036280323B8BBD5002F3698 /* libNALib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNALib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		909E4AD323C20E4000F9F837 /* NAUICocoaLegacyII.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAUICocoaLegacyII.h; sourceTree = "<group>"; };
 		909EC6E523B8C06C002CA78D /* NALibGUITryout */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = NALibGUITryout; sourceTree = BUILT_PRODUCTS_DIR; };
 		909ECAA123B90946002CA78D /* NALib.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = NALib.vcxproj; sourceTree = "<group>"; };
 		909ECAA323B90946002CA78D /* NAMathConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAMathConstants.h; sourceTree = "<group>"; };
@@ -851,18 +854,19 @@
 		909ECB2123B90946002CA78D /* UI */ = {
 			isa = PBXGroup;
 			children = (
-				909ECB2223B90946002CA78D /* NATextBoxII.h */,
 				909ECB2323B90946002CA78D /* NAApplicationII.h */,
-				909ECB2423B90946002CA78D /* NAWindowII.h */,
 				909ECB2523B90946002CA78D /* NAButtonII.h */,
 				909ECB2623B90946002CA78D /* NACheckBoxII.h */,
-				909ECB2723B90946002CA78D /* NARadioII.h */,
-				909ECB2823B90946002CA78D /* NAOpenGLSpaceII.h */,
-				909ECB2923B90946002CA78D /* NAUICocoaII.h */,
-				909ECB2A23B90946002CA78D /* NASpaceII.h */,
 				909ECB2B23B90946002CA78D /* NAImageSpaceII.h */,
 				909ECB2C23B90946002CA78D /* NALabelII.h */,
+				909ECB2823B90946002CA78D /* NAOpenGLSpaceII.h */,
+				909ECB2723B90946002CA78D /* NARadioII.h */,
+				909ECB2A23B90946002CA78D /* NASpaceII.h */,
+				909ECB2223B90946002CA78D /* NATextBoxII.h */,
 				909ECB2D23B90946002CA78D /* NATextFieldII.h */,
+				909ECB2923B90946002CA78D /* NAUICocoaII.h */,
+				909E4AD323C20E4000F9F837 /* NAUICocoaLegacyII.h */,
+				909ECB2423B90946002CA78D /* NAWindowII.h */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -1049,6 +1053,7 @@
 				909ECB7423B90947002CA78D /* NAStringII.h in Headers */,
 				909ECBD723B90947002CA78D /* NACheckBoxII.h in Headers */,
 				909ECC0023B90947002CA78D /* NAMatrixAlgebraOperations.h in Headers */,
+				909E4AD423C20E4000F9F837 /* NAUICocoaLegacyII.h in Headers */,
 				909ECBC323B90947002CA78D /* NAMallocFreeII.h in Headers */,
 				909ECBFB23B90947002CA78D /* NAVectorComponentwise.h in Headers */,
 				909ECBBB23B90947002CA78D /* NADateTimeII.h in Headers */,
@@ -1192,6 +1197,7 @@
 				909ECC4323B90B33002CA78D /* NAStringII.h in Headers */,
 				909ECC4423B90B33002CA78D /* NACheckBoxII.h in Headers */,
 				909ECC4523B90B33002CA78D /* NAMatrixAlgebraOperations.h in Headers */,
+				909E4AD523C20E4000F9F837 /* NAUICocoaLegacyII.h in Headers */,
 				909ECC4623B90B33002CA78D /* NAMallocFreeII.h in Headers */,
 				909ECC4723B90B33002CA78D /* NAVectorComponentwise.h in Headers */,
 				909ECC4823B90B33002CA78D /* NADateTimeII.h in Headers */,
@@ -1680,7 +1686,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_FUNCTION = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-Wno-long-long";
 			};
@@ -2030,7 +2035,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_FUNCTION = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-Wno-long-long";
 			};
@@ -2071,7 +2075,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNKNOWN_PRAGMAS = YES;
 				GCC_WARN_UNUSED_FUNCTION = NO;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				OTHER_CFLAGS = "-Wno-long-long";
 			};
 			name = Release;

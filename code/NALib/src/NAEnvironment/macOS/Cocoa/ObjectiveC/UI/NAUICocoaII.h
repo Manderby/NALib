@@ -17,80 +17,6 @@
 
 
 
-// Mapping of deprecated entities
-#if defined __MAC_10_7
-  #define NAEventTypeKeyUp                NSEventTypeKeyUp
-  #define NAEventTypeKeyDown              NSEventTypeKeyDown
-
-  #define NAButtonTypeRadio               NSButtonTypeRadio
-  #define NAButtonTypeMomentaryLight      NSButtonTypeMomentaryLight
-  #define NAButtonTypePushOnPushOff       NSButtonTypePushOnPushOff
-  #define NAButtonTypeSwitch              NSButtonTypeSwitch
-  
-  #define NATextAlignmentLeft             NSTextAlignmentLeft
-  #define NATextAlignmentRight            NSTextAlignmentRight
-  #define NATextAlignmentCenter           NSTextAlignmentCenter
-#else // deprecated definitions before 10.6
-  #define NAEventTypeKeyUp                NSKeyUp
-  #define NAEventTypeKeyDown              NSKeyDown
-  
-  #define NAButtonTypeRadio               NSRadioButton
-  #define NAButtonTypeMomentaryLight      NSMomentaryLightButton
-  #define NAButtonTypePushOnPushOff       NSPushOnPushOffButton
-  #define NAButtonTypeSwitch              NSSwitchButton
-
-  #define NATextAlignmentLeft             NSLeftTextAlignment
-  #define NATextAlignmentRight            NSRightTextAlignment
-  #define NATextAlignmentCenter           NSCenterTextAlignment
-#endif
-
-#if defined __MAC_10_12
-  #define NAEventMaskAny                  NSEventMaskAny
-  #define NAWindowStyleMaskTitled         NSWindowStyleMaskTitled
-  #define NAWindowStyleMaskClosable       NSWindowStyleMaskClosable
-  #define NAWindowStyleMaskMiniaturizable NSWindowStyleMaskMiniaturizable
-  #define NAWindowStyleMaskResizable      NSWindowStyleMaskResizable
-  #define NAWindowStyleMaskBorderless     NSWindowStyleMaskBorderless
-  #define NAEventModifierFlagShift        NSEventModifierFlagShift
-  #define NAEventModifierFlagOption       NSEventModifierFlagOption
-  #define NAEventModifierFlagControl      NSEventModifierFlagControl
-  #define NAEventModifierFlagCommand      NSEventModifierFlagCommand
-
-  #define NAAlertStyleWarning             NSAlertStyleInformational
-  #define NAAlertStyleInfo                NSAlertStyleWarning
-  #define NSAlertStyleError               NSAlertStyleCritical
-#else // deprecated definitions before 10.12
-  #define NAEventMaskAny                  NSAnyEventMask
-  #define NAWindowStyleMaskTitled         NSTitledWindowMask
-  #define NAWindowStyleMaskClosable       NSClosableWindowMask
-  #define NAWindowStyleMaskMiniaturizable NSMiniaturizableWindowMask
-  #define NAWindowStyleMaskResizable      NSResizableWindowMask
-  #define NAWindowStyleMaskBorderless     NSBorderlessWindowMask
-  #define NAEventModifierFlagShift        NSShiftKeyMask
-  #define NAEventModifierFlagOption       NSAlternateKeyMask
-  #define NAEventModifierFlagControl      NSControlKeyMask
-  #define NAEventModifierFlagCommand      NSCommandKeyMask
-
-  #define NAAlertStyleWarning             NSInformationalAlertStyle
-  #define NAAlertStyleInfo                NSWarningAlertStyle
-  #define NSAlertStyleError               NSCriticalAlertStyle
-#endif
-
-#if defined __MAC_10_14
-  #define NABezelStyleRounded             NSBezelStyleRounded
-  #define NABezelStyleShadowlessSquare    NSBezelStyleShadowlessSquare
-
-  #define NAStateOn                       NSControlStateValueOn
-  #define NAStateOff                      NSControlStateValueOff
-#else // deprecated definitions before 10.14
-  #define NABezelStyleRounded             NSRoundedBezelStyle
-  #define NABezelStyleShadowlessSquare    NSShadowlessSquareBezelStyle
-
-  #define NAStateOn                       NSOnState
-  #define NAStateOff                      NSOffState
-#endif
-
-
 NA_HAPI NARect naGetApplicationAbsoluteRect(void);
 NA_HAPI NARect naGetScreenAbsoluteRect(NACoreUIElement* screen);
 NA_HAPI NARect naGetWindowAbsoluteOuterRect(NACoreUIElement* window);
@@ -211,11 +137,7 @@ NA_HDEF void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent){
 
 
 NA_HDEF void naCaptureKeyboardStatus(NSEvent* event){
-  #if NA_MACOS_AVAILABILITY_10_10
-    NSEventModifierFlags flags;
-  #else
-    NSUInteger flags;
-  #endif
+  NSUInteger flags;
   NABool hasShift;
   NABool hasControl;
   NABool hasOption;
@@ -223,18 +145,11 @@ NA_HDEF void naCaptureKeyboardStatus(NSEvent* event){
   NAUIKeyCode keyCode = [event keyCode];
   na_app->keyboardStatus.keyCode = keyCode;
   [event modifierFlags];
-  flags = [event modifierFlags];
-  #if NA_MACOS_AVAILABILITY_10_10
-    hasShift     = (flags & NAEventModifierFlagShift)   != 0;
-    hasControl   = (flags & NAEventModifierFlagControl) != 0;
-    hasOption    = (flags & NAEventModifierFlagOption)  != 0;
-    hasCommand   = (flags & NAEventModifierFlagCommand) != 0;
-  #else
-    hasShift     = (flags & NSShiftKeyMask)     != 0;
-    hasControl   = (flags & NSControlKeyMask)   != 0;
-    hasOption    = (flags & NSAlternateKeyMask) != 0;
-    hasCommand   = (flags & NSCommandKeyMask)   != 0;
-  #endif
+  flags = (NSUInteger)[event modifierFlags];
+  hasShift     = (flags & NAEventModifierFlagShift)   != 0;
+  hasControl   = (flags & NAEventModifierFlagControl) != 0;
+  hasOption    = (flags & NAEventModifierFlagOption)  != 0;
+  hasCommand   = (flags & NAEventModifierFlagCommand) != 0;
   na_app->keyboardStatus.modifiers = 0;
   na_app->keyboardStatus.modifiers |= hasShift * NA_MODIFIER_FLAG_SHIFT;
   na_app->keyboardStatus.modifiers |= hasControl * NA_MODIFIER_FLAG_CONTROL;
@@ -247,8 +162,6 @@ NA_HDEF void naCaptureKeyboardStatus(NSEvent* event){
 NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
   NABool retvalue = NA_FALSE;
   if([event type] == NAEventTypeKeyDown){
-    naCaptureKeyboardStatus(event);
-  }else if([event type] == NAEventTypeKeyUp){
     NACoreUIElement* elem;
     NSWindow* focusWindow;
     naCaptureKeyboardStatus(event);

@@ -580,6 +580,10 @@ typedef enum{
   NA_TEXT_ALIGNMENT_CENTER
 } NATextAlignment;
 
+#if NA_OS == NA_OS_MAC_OS_X
+  NABool naLoadNib(NAUTF8Char* nibName);
+#endif
+
 // Screen
 // Screens are not implemented yet, but you can get the main screen rect:
 NA_API NARect naGetMainScreenRect(void);

@@ -177,12 +177,8 @@ NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
 
 NA_DEF NAUIImageResolution naGetWindowUIResolution(NAWindow* window){
   naDefineNativeCocoaObject(NANativeWindow, nativewindow, window);
-  CGFloat res = (CGFloat)1.;
-  #if NA_MACOS_AVAILABILITY_10_7
-    res = [nativewindow backingScaleFactor];
-  #else
-    res = [nativewindow userSpaceScaleFactor];
-  #endif
+  CGFloat res = naGetWindowBackingScaleFactor(nativewindow);
+
   return (res == 1.) ? NA_UIIMAGE_RESOLUTION_1x : NA_UIIMAGE_RESOLUTION_2x;
 }
 

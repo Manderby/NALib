@@ -31,65 +31,40 @@
 - (void) setButtonImage:(NAUIImage*)uiimage{
   NSImage* image = nil; // todo: this must be implemented before macOS 10.8
 
-  #if NA_MACOS_AVAILABILITY_10_8
+  if([NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]){
     NSSize imagesize = NSMakeSize(naGetUIImage1xSize(uiimage).width, naGetUIImage1xSize(uiimage).height);
-    image = [NSImage imageWithSize:imagesize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
-      NAUIImageResolution resolution;
-      CGContextRef context = NA_NULL;
-      CGImageRef nativeimage;
-      
-      NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
-      if(uiimage->tintMode != NA_BLEND_ZERO){
-        skin = NA_UIIMAGE_SKIN_LIGHT;
-        #if NA_MACOS_AVAILABILITY_10_9
-          NSAppearanceName appearancename = [[NSAppearance currentAppearance] name];
-          #if NA_MACOS_AVAILABILITY_10_10
-            if(appearancename == NSAppearanceNameVibrantDark){skin = NA_UIIMAGE_SKIN_DARK;}
-          #endif
-          #if NA_MACOS_AVAILABILITY_10_14
-            if(appearancename == NSAppearanceNameDarkAqua
-            || appearancename == NSAppearanceNameAccessibilityHighContrastDarkAqua
-            || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantDark){
-              skin = NA_UIIMAGE_SKIN_DARK;}
-          #endif
-        #endif
-      }
-      resolution = naGetWindowUIResolution(naGetUIElementWindow(&(self->corebutton->uielement)));
-      if(NSAppKitVersionNumber >= NSAppKitVersionNumber10_14){
-      #ifdef __MAC_10_14
-        if(@available(macOS 10.14, *)){
-          context = [[NSGraphicsContext currentContext] CGContext];
+    NA_MACOS_AVAILABILITY_GUARD_10_8(
+      image = [NSImage imageWithSize:imagesize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
+        NAUIImageResolution resolution;
+        CGContextRef context = NA_NULL;
+        CGImageRef nativeimage;
+        
+        NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
+        if(uiimage->tintMode != NA_BLEND_ZERO){
+          skin = naGetSkinForCurrentAppearance();
         }
-      #else
-        #error IDE-compiler-baseSDK-devTarget combination not supported
-      #endif
-      }else{
-        context = [[NSGraphicsContext currentContext] graphicsPort];
-      }
 
-      nativeimage = naGetUIImageNativeImage(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
-      if(!nativeimage){
-        nativeimage = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, skin);
-      }
-      CGContextDrawImage(context, dstRect, nativeimage);
-      return YES;
-    }];
-  #else
+        resolution = naGetWindowUIResolution(naGetUIElementWindow(&(self->corebutton->uielement)));
+        context = naGetCGContextRef([NSGraphicsContext currentContext]);
+
+        nativeimage = naGetUIImageNativeImage(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
+        if(!nativeimage){
+          nativeimage = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, skin);
+        }
+        CGContextDrawImage(context, dstRect, nativeimage);
+        return YES;
+      }];
+    ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
+  }else{
     image = NA_COCOA_PTR_C_TO_OBJC(naAllocNativeImageWithUIImage(uiimage, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_LIGHT));
-  #endif
+  }
 
-//  CGImageRef imgRef = [image CGImageForProposedRect:nil context:nil hints:nil];
   [self setImage:image];
-//  #if NA_MACOS_AVAILABILITY_10_6
-    [self setImageScaling:NSImageScaleProportionallyUpOrDown];
-//  #endif
-//  [image release];
-//  [self setBezelStyle:NSBezelStyleShadowlessSquare];
+  [[self cell] setImageScaling:NSImageScaleProportionallyUpOrDown];
   // OptionButton: NSBezelStyleShadowlessSquare
   // NSBezelStyleRegularSquare : 5 5 5 5
   // NSBezelStyleShadowlessSquare : 3 3 3 3
   // NSBezelStyleSmallSquare : 2 1 2 1
-//  [self setBordered:NO];
 }
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);

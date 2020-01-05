@@ -28,15 +28,8 @@
     // Make sure OpenGL always swaps the buffers of the default framebuffer. If
     // this is not done, sometimes, the double buffer will not work properly.
     GLint swapInt = 1;
-    if(NSAppKitVersionNumber >= NSAppKitVersionNumber10_14){
-      #ifdef __MAC_10_14
-        [[self openGLContext] setValues:&swapInt forParameter:NSOpenGLContextParameterSwapInterval];
-      #endif
-    }else{
-      #ifndef __MAC_10_14
-        [[self openGLContext] setValues:&swapInt forParameter:NSOpenGLCPSwapInterval];
-      #endif
-    }
+    
+    [[self openGLContext] setValues:&swapInt forParameter:NAOpenGLContextParameterSwapInterval];
 
     // Now the OpenGL context is created and current. We can initialize it
     // if necessary.
@@ -103,11 +96,11 @@ NA_UNUSED(event);
     NSRect frameRect = NSMakeRect(0.f, 0.f, (CGFloat)size.width, (CGFloat)size.height);
     NANativeOpenGLSpace* nativeSpace = [[NANativeOpenGLSpace alloc] initWithCoreOpenGLSpace:coreopenglspace frame:frameRect pixelFormat:pixelformat initFunc:initfunc initData:initdata];
 
-  //  if([self respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
-  //    #if defined __MAC_10_7
-  //      [self setWantsBestResolutionOpenGLSurface:YES];
-  //    #endif
-  //  }
+    if([self respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
+      NA_MACOS_AVAILABILITY_GUARD_10_7(
+        [self setWantsBestResolutionOpenGLSurface:YES];
+      )
+    }
 
     naInitCoreOpenGLSpace(coreopenglspace, NA_COCOA_PTR_OBJC_TO_C(nativeSpace));
     return coreopenglspace;

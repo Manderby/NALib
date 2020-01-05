@@ -27,10 +27,16 @@
   [scrollview setContentView:clipView];
   [scrollview setDocumentView:self];
 
-  #if NA_MACOS_AVAILABILITY_10_10
-    [scrollview setAutomaticallyAdjustsContentInsets:YES];
-    [[scrollview contentView] setAutomaticallyAdjustsContentInsets:YES];
-  #endif
+  if([scrollview respondsToSelector:@selector(setAutomaticallyAdjustsContentInsets:)]){
+    NA_MACOS_AVAILABILITY_GUARD_10_10(
+      [scrollview setAutomaticallyAdjustsContentInsets:YES];
+    )
+  }
+  if([[scrollview contentView] respondsToSelector:@selector(setAutomaticallyAdjustsContentInsets:)]){
+    NA_MACOS_AVAILABILITY_GUARD_10_10(
+      [[scrollview contentView] setAutomaticallyAdjustsContentInsets:YES];
+    )
+  }
 
   coretextbox = newcoretextbox;
   return self;

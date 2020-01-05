@@ -17,11 +17,13 @@
   [self setSelectable:YES];
   [self setEditable:YES];
   [self setBordered:YES];
-  #if NA_MACOS_AVAILABILITY_10_10
-    [self setLineBreakMode:NSLineBreakByTruncatingHead];
-  #else
+  if([self respondsToSelector:@selector(setLineBreakMode:)]){
+    NA_MACOS_AVAILABILITY_GUARD_10_10(
+      [self setLineBreakMode:NSLineBreakByTruncatingHead];
+    )
+  }else{
     [[self cell] setLineBreakMode:NSLineBreakByTruncatingHead];
-  #endif
+  }
   [self setTarget:self];
   [self setAction:@selector(onEdited:)];
   [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];

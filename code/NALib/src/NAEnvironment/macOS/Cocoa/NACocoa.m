@@ -31,103 +31,6 @@
 // Now, we are sure, we compile with Objective-C and on MacOSX. The
 // #if directives will be closed at the very bottom of this file.
 
-
-#if __clang_major__ >= 5  // Supposedly, clang 5 is needed for @available.
-//  if(@available(macOS 10.6, *)){
-//    #define NA_MACOS_AVAILABILITY_10_6 1
-//  }else{
-//    #define NA_MACOS_AVAILABILITY_10_6 0
-//  }
-//  if(@available(macOS 10.7, *)){
-//    #define NA_MACOS_AVAILABILITY_10_7 1
-//  }else{
-//    #define NA_MACOS_AVAILABILITY_10_7 0
-//  }
-//  if(@available(macOS 10.8, *)){
-//    #define NA_MACOS_AVAILABILITY_10_8 1
-//  }else{
-//    #define NA_MACOS_AVAILABILITY_10_8 0
-//  }
-//  if(@available(macOS 10.9, *)){
-//    #define NA_MACOS_AVAILABILITY_10_9 1
-//  }else{
-//    #define NA_MACOS_AVAILABILITY_10_9 0
-//  }
-//  if(@available(macOS 10.10, *)){
-//    #define NA_MACOS_AVAILABILITY_10_10 1
-//  }else{
-//    #define NA_MACOS_AVAILABILITY_10_10 0
-//  }
-//  if(@available(macOS 10.11, *)){
-//    #define NA_MACOS_AVAILABILITY_10_11 1
-//  }else{
-//    #define NA_MACOS_AVAILABILITY_10_11 0
-//  }
-//  if(@available(macOS 10.12, *)){
-//    #define NA_MACOS_AVAILABILITY_10_12 1
-//  }else{
-//    #define NA_MACOS_AVAILABILITY_10_12 0
-//  }
-//  if(@available(macOS 10.13, *)){
-//    #define NA_MACOS_AVAILABILITY_10_13 1
-//  }else{
-//    #define NA_MACOS_AVAILABILITY_10_13 0
-//  }
-//  if(@available(macOS 10.14, *)){
-//    #define NA_MACOS_AVAILABILITY_10_14 1
-//  }else{
-//    #define NA_MACOS_AVAILABILITY_10_14 0
-//  }
-#else
-  #ifdef __MAC_10_6
-    #define NA_MACOS_AVAILABILITY_10_6 1
-  #else
-    #define NA_MACOS_AVAILABILITY_10_6 0
-  #endif
-  #ifdef __MAC_10_7
-    #define NA_MACOS_AVAILABILITY_10_7 1
-  #else
-    #define NA_MACOS_AVAILABILITY_10_7 0
-  #endif
-  #ifdef __MAC_10_8
-    #define NA_MACOS_AVAILABILITY_10_8 1
-  #else
-    #define NA_MACOS_AVAILABILITY_10_8 0
-  #endif
-  #ifdef __MAC_10_9
-    #define NA_MACOS_AVAILABILITY_10_9 1
-  #else
-    #define NA_MACOS_AVAILABILITY_10_9 0
-  #endif
-  #ifdef __MAC_10_10
-    #define NA_MACOS_AVAILABILITY_10_10 1
-  #else
-    #define NA_MACOS_AVAILABILITY_10_10 0
-  #endif
-  #ifdef __MAC_10_11
-    #define NA_MACOS_AVAILABILITY_10_11 1
-  #else
-    #define NA_MACOS_AVAILABILITY_10_11 0
-  #endif
-  #ifdef __MAC_10_12
-    #define NA_MACOS_AVAILABILITY_10_12 1
-  #else
-    #define NA_MACOS_AVAILABILITY_10_12 0
-  #endif
-  #ifdef __MAC_10_13
-    #define NA_MACOS_AVAILABILITY_10_13 1
-  #else
-    #define NA_MACOS_AVAILABILITY_10_13 0
-  #endif
-  #ifdef __MAC_10_14
-    #define NA_MACOS_AVAILABILITY_10_14 1
-  #else
-    #define NA_MACOS_AVAILABILITY_10_14 0
-  #endif
-#endif
-
-
-
 #if !defined NA_TYPE_INT64
   #error Compiling NALib and Cocoa without a native int64 type will not work.
 #endif
@@ -137,6 +40,7 @@
 #include "ObjectiveC/NAUIImageCocoaII.h"
 #include "ObjectiveC/NAPreferencesCocoaII.h"
 
+#include "ObjectiveC/UI/NAUICocoaLegacyII.h"
 #include "ObjectiveC/UI/NAUICocoaII.h"
 #include "ObjectiveC/UI/NAApplicationII.h"
 #include "ObjectiveC/UI/NAWindowII.h"
