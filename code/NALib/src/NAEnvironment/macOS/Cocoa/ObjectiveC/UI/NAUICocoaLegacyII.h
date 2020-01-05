@@ -24,16 +24,16 @@
   #define NA_MACOS_AVAILABILITY_GUARD_10_14(code) if(@available(macOS 10.14, *)){ code }
   #define NA_MACOS_AVAILABILITY_GUARD_10_15(code) if(@available(macOS 10.15, *)){ code }
 #else
-  #define NA_MACOS_AVAILABILITY_GUARD_10_6(code)  if(0){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_7(code)  if(0){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_8(code)  if(0){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_9(code)  if(0){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_10(code) if(0){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_11(code) if(0){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_12(code) if(0){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_13(code) if(0){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_14(code) if(0){ code }
-  #define NA_MACOS_AVAILABILITY_GUARD_10_15(code) if(0){ code }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_6(code)  if(0){ }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_7(code)  if(0){ }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_8(code)  if(0){ }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_9(code)  if(0){ }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_10(code) if(0){ }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_11(code) if(0){ }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_12(code) if(0){ }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_13(code) if(0){ }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_14(code) if(0){ }
+  #define NA_MACOS_AVAILABILITY_GUARD_10_15(code) if(0){ }
 #endif
 
 
@@ -118,8 +118,10 @@
 
 
 // Damnit Apple or clang or whoever responsible for this mess!
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#if defined __clang_major__
+  #pragma clang diagnostic push
+  #pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
 
 
@@ -135,28 +137,33 @@ CGContextRef naGetCGContextRef(NSGraphicsContext* graphicsContext){
 
 
 
-NAUIImageSkin naGetSkinForCurrentAppearance(void){
-  NAUIImageSkin skin = NA_UIIMAGE_SKIN_LIGHT;
-  if([NSAppearance respondsToSelector:@selector(currentAppearance)]){
-    NSAppearanceName appearancename = NSAppearanceNameAqua;
-    if([[NSAppearance currentAppearance] respondsToSelector:@selector(name)]){
-      NA_MACOS_AVAILABILITY_GUARD_10_9(
-        appearancename = [[NSAppearance currentAppearance] name];
+#if defined __MAC_10_9
+  NAUIImageSkin naGetSkinForCurrentAppearance(void){
+    NAUIImageSkin skin = NA_UIIMAGE_SKIN_LIGHT;
+    if([NSAppearance respondsToSelector:@selector(currentAppearance)]){
+      NSAppearanceName appearancename = NSAppearanceNameAqua;
+      if([[NSAppearance currentAppearance] respondsToSelector:@selector(name)]){
+        NA_MACOS_AVAILABILITY_GUARD_10_9(
+          appearancename = [[NSAppearance currentAppearance] name];
+        )
+      }
+      NA_MACOS_AVAILABILITY_GUARD_10_10(
+        if(appearancename == NSAppearanceNameVibrantDark){skin = NA_UIIMAGE_SKIN_DARK;}
+      )
+      NA_MACOS_AVAILABILITY_GUARD_10_14(
+        if(appearancename == NSAppearanceNameDarkAqua
+        || appearancename == NSAppearanceNameAccessibilityHighContrastDarkAqua
+        || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantDark){
+          skin = NA_UIIMAGE_SKIN_DARK;}
       )
     }
-    NA_MACOS_AVAILABILITY_GUARD_10_10(
-      if(appearancename == NSAppearanceNameVibrantDark){skin = NA_UIIMAGE_SKIN_DARK;}
-    )
-    NA_MACOS_AVAILABILITY_GUARD_10_14(
-      if(appearancename == NSAppearanceNameDarkAqua
-      || appearancename == NSAppearanceNameAccessibilityHighContrastDarkAqua
-      || appearancename == NSAppearanceNameAccessibilityHighContrastVibrantDark){
-        skin = NA_UIIMAGE_SKIN_DARK;}
-    )
+    return skin;
   }
-  return skin;
-}
-
+#else
+  NAUIImageSkin naGetSkinForCurrentAppearance(void){
+    return NA_UIIMAGE_SKIN_LIGHT;
+  }
+#endif
 
 
 CGFloat naGetWindowBackingScaleFactor(NSWindow* window){
@@ -185,7 +192,10 @@ NABool naLoadNib(NAUTF8Char* nibName){
 }
 
 
-#pragma clang diagnostic pop
+
+#if defined __clang_major__
+  #pragma clang diagnostic pop
+#endif
 
 
 // Copyright (c) NALib, Tobias Stamm

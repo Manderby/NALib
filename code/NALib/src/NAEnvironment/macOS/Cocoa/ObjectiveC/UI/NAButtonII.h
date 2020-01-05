@@ -32,8 +32,8 @@
   NSImage* image = nil; // todo: this must be implemented before macOS 10.8
 
   if([NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]){
-    NSSize imagesize = NSMakeSize(naGetUIImage1xSize(uiimage).width, naGetUIImage1xSize(uiimage).height);
     NA_MACOS_AVAILABILITY_GUARD_10_8(
+      NSSize imagesize = NSMakeSize(naGetUIImage1xSize(uiimage).width, naGetUIImage1xSize(uiimage).height);
       image = [NSImage imageWithSize:imagesize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
         NAUIImageResolution resolution;
         CGContextRef context = NA_NULL;

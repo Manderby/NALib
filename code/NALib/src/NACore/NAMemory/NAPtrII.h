@@ -156,7 +156,7 @@ NA_IDEF NABool naIsPtrValid(NAPtr ptr){
 
 NA_IDEF NABool naIsPtrConst(NAPtr ptr){
   #ifndef NDEBUG
-    return (ptr.flags & NA_PTR_CONST_DATA);
+    return (NABool)(ptr.flags & NA_PTR_CONST_DATA);
   #else
     NA_UNUSED(ptr);
     return NA_FALSE;
