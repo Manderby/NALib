@@ -10,7 +10,7 @@
 
 
 
-@implementation NANativeTextBox
+@implementation NACocoaTextBox
 - (id) initWithCoreTextBox:(NACoreTextBox*)newcoretextbox frame:(NSRect)frame{
   NSRect clipRect;
   NSClipView* clipView;
@@ -64,8 +64,8 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
   NACoreTextBox* coretextbox = naAlloc(NACoreTextBox);
   
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NANativeTextBox* nativeTextBox = [[NANativeTextBox alloc] initWithCoreTextBox:coretextbox frame:frameRect];
-  naInitCoreTextBox(coretextbox, NA_COCOA_PTR_OBJC_TO_C(nativeTextBox));
+  NACocoaTextBox* cocoaTextBox = [[NACocoaTextBox alloc] initWithCoreTextBox:coretextbox frame:frameRect];
+  naInitCoreTextBox(coretextbox, NA_COCOA_PTR_OBJC_TO_C(cocoaTextBox));
   
   return (NATextBox*)coretextbox;
 }
@@ -80,29 +80,29 @@ NA_DEF void naDestructTextBox(NATextBox* textbox){
 
 
 NA_DEF void naSetTextBoxText(NATextBox* textbox, const NAUTF8Char* text){
-  naDefineNativeCocoaObject(NANativeTextBox, nativetextbox, textbox);
-  [nativetextbox setText:text];
+  naDefineCocoaObject(NACocoaTextBox, cocoaTextBox, textbox);
+  [cocoaTextBox setText:text];
 }
 
 
 
 NA_DEF void naSetTextBoxTextAlignment(NATextBox* textbox, NATextAlignment alignment){
-  naDefineNativeCocoaObject(NANativeTextBox, nativetextbox, textbox);
-  [nativetextbox setTextAlignment:alignment];
+  naDefineCocoaObject(NACocoaTextBox, cocoaTextBox, textbox);
+  [cocoaTextBox setTextAlignment:alignment];
 }
 
 
 
 NA_DEF void naSetTextBoxFontKind(NATextBox* textbox, NAFontKind kind){
-  naDefineNativeCocoaObject(NANativeTextBox, nativetextbox, textbox);
-  [nativetextbox setFontKind:kind];
+  naDefineCocoaObject(NACocoaTextBox, cocoaTextBox, textbox);
+  [cocoaTextBox setFontKind:kind];
 }
 
 
 
 NA_DEF void naSetTextBoxEditable(NATextBox* textbox, NABool editable){
-  naDefineNativeCocoaObject(NANativeTextBox, nativetextbox, textbox);
-  [nativetextbox setReadOnly:!editable];
+  naDefineCocoaObject(NACocoaTextBox, cocoaTextBox, textbox);
+  [cocoaTextBox setReadOnly:!editable];
 }
 
 

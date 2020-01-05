@@ -11,7 +11,7 @@
 
 #if (NA_CONFIG_COMPILE_OPENGL == 1)
 
-  @implementation NANativeOpenGLSpace
+  @implementation NACocoaOpenGLSpace
   - (id)initWithCoreOpenGLSpace:(NAOpenGLSpace*)newcoreopenglspace frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
     self = [super initWithFrame:frameRect pixelFormat:pixelformat];
     coreopenglspace = newcoreopenglspace;
@@ -94,7 +94,7 @@ NA_UNUSED(event);
     NSOpenGLPixelFormat *pixelformat = NA_COCOA_AUTORELEASE([[NSOpenGLPixelFormat alloc] initWithAttributes:attr]);
     
     NSRect frameRect = NSMakeRect(0.f, 0.f, (CGFloat)size.width, (CGFloat)size.height);
-    NANativeOpenGLSpace* nativeSpace = [[NANativeOpenGLSpace alloc] initWithCoreOpenGLSpace:coreopenglspace frame:frameRect pixelFormat:pixelformat initFunc:initfunc initData:initdata];
+    NACocoaOpenGLSpace* cocoaSpace = [[NACocoaOpenGLSpace alloc] initWithCoreOpenGLSpace:coreopenglspace frame:frameRect pixelFormat:pixelformat initFunc:initfunc initData:initdata];
 
     if([self respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
       NA_MACOS_AVAILABILITY_GUARD_10_7(
@@ -102,7 +102,7 @@ NA_UNUSED(event);
       )
     }
 
-    naInitCoreOpenGLSpace(coreopenglspace, NA_COCOA_PTR_OBJC_TO_C(nativeSpace));
+    naInitCoreOpenGLSpace(coreopenglspace, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
     return coreopenglspace;
   }
 
@@ -117,7 +117,7 @@ NA_UNUSED(event);
 
   NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
     NACoreOpenGLSpace* coreopenglspace = (NACoreOpenGLSpace*)openglspace;
-    [[(NANativeOpenGLSpace*)NA_COCOA_PTR_C_TO_OBJC(coreopenglspace->uielement.nativeID) openGLContext] flushBuffer];
+    [[(NACocoaOpenGLSpace*)NA_COCOA_PTR_C_TO_OBJC(coreopenglspace->uielement.nativeID) openGLContext] flushBuffer];
   }
 
 

@@ -41,32 +41,32 @@ struct NACocoaApplication {
 };
 
 
-@interface NANativeApplicationDelegate : NSObject <NSApplicationDelegate>{
+@interface NACocoaApplicationDelegate : NSObject <NSApplicationDelegate>{
   NACocoaApplication* cocoaapplication;
 }
 @end
 
-@interface NANativeWindow : NSWindow <NSWindowDelegate>{
+@interface NACocoaWindow : NSWindow <NSWindowDelegate>{
   NACoreWindow* corewindow;
   NAUInt trackingcount;
   NSTrackingArea* trackingarea;
 }
 @end
 
-@interface NANativeSpace : NSView{
+@interface NAcocoaSpace : NSView{
   NACoreSpace* corespace;
   NSTrackingArea* trackingarea;
 }
 @end
 
-@interface NANativeImageSpace : NSImageView{
+@interface NACocoaImageSpace : NSImageView{
   NACoreImageSpace* coreimagespace;
   NAUIImage* uiimage;
 }
 @end
 
 #if (NA_CONFIG_COMPILE_OPENGL == 1)
-  @interface NANativeOpenGLSpace : NSOpenGLView{
+  @interface NACocoaOpenGLSpace : NSOpenGLView{
     NACoreOpenGLSpace* coreopenglspace;
     NAMutator initFunc;
     void* initData;
@@ -74,13 +74,13 @@ struct NACocoaApplication {
   @end
 #endif
 
-@interface NANativeButton : NSButton{
+@interface NACocoaButton : NSButton{
   NACoreButton* corebutton;
 }
 - (void) onPressed:(id)sender;
 @end
 
-@interface NANativeRadio : NSButton{
+@interface NACocoaRadio : NSButton{
   NACoreRadio* coreradio;
   // Core thinks it's smart by doing things automatically. Unfortunately, we
   // have to encapsulate the radio into its own view to get the behaviour
@@ -90,7 +90,7 @@ struct NACocoaApplication {
 - (NSView*) getContainingView;
 @end
 
-@interface NANativeCheckBox : NSButton{
+@interface NACocoaCheckBox : NSButton{
   NACoreCheckBox* corecheckbox;
 }
 @end
@@ -99,18 +99,18 @@ struct NACocoaApplication {
 }
 @end
 
-@interface NANativeLabel : NSTextField{
+@interface NACocoaLabel : NSTextField{
   NACoreLabel* corelabel;
 }
 @end
 
-@interface NANativeTextField : NSTextField <NSTextFieldDelegate>{
+@interface NACocoaTextField : NSTextField <NSTextFieldDelegate>{
   NACoreTextField* coretextfield;
 }
 - (void) onEdited:(id)sender;
 @end
 
-@interface NANativeTextBox : NSTextView{
+@interface NACocoaTextBox : NSTextView{
   NACoreTextBox* coretextbox;
   NSScrollView* scrollview;
 }
@@ -119,8 +119,8 @@ struct NACocoaApplication {
 
 
 
-#define naDefineNativeCocoaObject(nativetype, var, uielement)\
-  nativetype* var = (NA_COCOA_BRIDGE nativetype*)(naGetUIElementNativeID((NAUIElement*)uielement))
+#define naDefineCocoaObject(cocoatype, var, uielement)\
+  cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativeID((NAUIElement*)uielement))
 
 
 NA_HDEF void naClearUINativeId(NANativeID nativeId){
@@ -166,7 +166,7 @@ NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
     NSWindow* focusWindow;
     naCaptureKeyboardStatus(event);
     
-    // Search for the native first responder which is represented in NALib.
+    // Search for the first responder which is represented in NALib.
     elem = NA_NULL;
     focusWindow = [NSApp keyWindow];
     if(focusWindow){
@@ -229,8 +229,8 @@ NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
 
 
 NA_DEF void naRefreshUIElementNow(NAUIElement* uielement){
-  naDefineNativeCocoaObject(NSView, nativeview, uielement);
-  [nativeview setNeedsDisplay:YES];
+  naDefineCocoaObject(NSView, cocoaview, uielement);
+  [cocoaview setNeedsDisplay:YES];
 }
 
 
@@ -253,9 +253,9 @@ NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextTab
     return;
   }
 
-  naDefineNativeCocoaObject(NSView, nativeElem, elem);
-  naDefineNativeCocoaObject(NSView, nativeNextTabElem, nextTabElem);
-  [nativeElem setNextKeyView:nativeNextTabElem];
+  naDefineCocoaObject(NSView, cocoaelem, elem);
+  naDefineCocoaObject(NSView, cocoaNextTabElem, nextTabElem);
+  [cocoaelem setNextKeyView:cocoaNextTabElem];
 }
 
 
@@ -343,9 +343,9 @@ NA_HDEF NARect naGetScreenAbsoluteRect(NACoreUIElement* screen){
   NARect rect;
   NSRect frame;
   NSRect mainframe;
-  naDefineNativeCocoaObject(NSScreen, nativescreen, screen);
+  naDefineCocoaObject(NSScreen, cocoascreen, screen);
   mainframe = [[NSScreen mainScreen] frame];
-  frame = [nativescreen frame];
+  frame = [cocoascreen frame];
   rect.pos.x = frame.origin.x;
   rect.pos.y = mainframe.size.height - frame.size.height - frame.origin.y;
   rect.size.width = frame.size.width;

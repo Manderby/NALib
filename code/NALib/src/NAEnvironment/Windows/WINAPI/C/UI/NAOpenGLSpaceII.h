@@ -4,8 +4,8 @@
 
 
 // This file is an inline implmenentation (II) file which is included in the
-// NACocoa.m file. This is a bit special as it is marked as a .h file but
-// actually contains non-inlinenable code. See NACocoa.m for more information.
+// NAWINAPI.c file. This is a bit special as it is marked as a .h file but
+// actually contains non-inlinenable code. See NAWINAPI.c for more information.
 // Do not include this file anywhere else!
 
 
@@ -32,7 +32,7 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(NAUIElement* uielement, UINT messag
 }
 
 
-//  @implementation NANativeOpenGLSpace
+//  @implementation NACocoaOpenGLSpace
 //  - (id)initWithCoreOpenGLSpace:(NAOpenGLSpace*)newcoreopenglspace frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
 //    self = [super initWithFrame:frameRect pixelFormat:pixelformat];
 //    coreopenglspace = newcoreopenglspace;

@@ -10,7 +10,7 @@
 
 
 
-@implementation NANativeRadio
+@implementation NACocoaRadio
 - (id) initWithCoreRadio:(NACoreRadio*)newcoreradio frame:(NSRect)frame{
   NSRect newbounds = frame;
   newbounds.origin.x = 0;
@@ -52,9 +52,9 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
   NACoreRadio* coreradio = naAlloc(NACoreRadio);
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NANativeRadio* nativeRadio = [[NANativeRadio alloc] initWithCoreRadio:coreradio frame:frameRect];
-  naInitCoreRadio(coreradio, NA_COCOA_PTR_OBJC_TO_C(nativeRadio));
-  [nativeRadio setText:text];
+  NACocoaRadio* cocoaRadio = [[NACocoaRadio alloc] initWithCoreRadio:coreradio frame:frameRect];
+  naInitCoreRadio(coreradio, NA_COCOA_PTR_OBJC_TO_C(cocoaRadio));
+  [cocoaRadio setText:text];
   
   return (NARadio*)coreradio;
 }
@@ -76,8 +76,8 @@ NA_HDEF NARect naGetRadioAbsoluteInnerRect(NACoreUIElement* radio){
 
 
 NA_HDEF void naSetRadioState(NARadio* radio, NABool state){
-  naDefineNativeCocoaObject(NANativeRadio, nativeradio, radio);
-  [nativeradio setRadioState:state];
+  naDefineCocoaObject(NACocoaRadio, cocoaRadio, radio);
+  [cocoaRadio setRadioState:state];
 }
 
 

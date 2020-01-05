@@ -9,7 +9,7 @@
 // Do not include this file anywhere else!
 
 
-@implementation NANativeImageSpace
+@implementation NACocoaImageSpace
 - (id) initWithCoreImageSpace:(NACoreImageSpace*)newcoreimagespace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
   coreimagespace = newcoreimagespace;
@@ -31,10 +31,10 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
   NACoreImageSpace* coreImageSpace = naAlloc(NACoreImageSpace);
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NANativeImageSpace* nativeImageSpace = [[NANativeImageSpace alloc] initWithCoreImageSpace:coreImageSpace frame:frameRect];  
-  naInitCoreImageSpace(coreImageSpace, NA_COCOA_PTR_OBJC_TO_C(nativeImageSpace));
+  NACocoaImageSpace* cocoaImageSpace = [[NACocoaImageSpace alloc] initWithCoreImageSpace:coreImageSpace frame:frameRect];  
+  naInitCoreImageSpace(coreImageSpace, NA_COCOA_PTR_OBJC_TO_C(cocoaImageSpace));
   
-  [nativeImageSpace setUIImage: uiimage];
+  [cocoaImageSpace setUIImage: uiimage];
   
   return (NAImageSpace*)coreImageSpace;
 }

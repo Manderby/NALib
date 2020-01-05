@@ -9,7 +9,7 @@
 // Do not include this file anywhere else!
 
 
-@implementation NANativeCheckBox
+@implementation NACocoaCheckBox
 - (id) initWithCoreCheckBox:(NACoreCheckBox*)newcorecheckbox frame:(NSRect)frame{
   self = [super initWithFrame:frame];
   
@@ -38,16 +38,16 @@
 
 
 NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
-  NANativeCheckBox* nativeCheckBox;
+  NACocoaCheckBox* cocoaCheckBox;
   NACoreCheckBox* corecheckbox = naAlloc(NACoreCheckBox);
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NSRect boundrect = frameRect;
   boundrect.origin.x = 0;
   boundrect.origin.y = 0;
 
-  nativeCheckBox = [[NANativeCheckBox alloc] initWithCoreCheckBox:corecheckbox frame:frameRect];
-  naInitCoreCheckBox(corecheckbox, NA_COCOA_PTR_OBJC_TO_C(nativeCheckBox));
-  [nativeCheckBox setText:text];
+  cocoaCheckBox = [[NACocoaCheckBox alloc] initWithCoreCheckBox:corecheckbox frame:frameRect];
+  naInitCoreCheckBox(corecheckbox, NA_COCOA_PTR_OBJC_TO_C(cocoaCheckBox));
+  [cocoaCheckBox setText:text];
   
   return (NACheckBox*)corecheckbox;
 }
@@ -69,15 +69,15 @@ NA_HDEF NARect naGetCheckBoxAbsoluteInnerRect(NACoreUIElement* checkbox){
 
 
 NA_HDEF void naSetCheckBoxState(NACheckBox* checkbox, NABool state){
-  naDefineNativeCocoaObject(NANativeCheckBox, nativecheckbox, checkbox);
-  [nativecheckbox setCheckBoxState:state];
+  naDefineCocoaObject(NACocoaCheckBox, cocoaCheckBox, checkbox);
+  [cocoaCheckBox setCheckBoxState:state];
 }
 
 
 
 NA_HDEF NABool naGetCheckBoxState(NACheckBox* checkbox){
-  naDefineNativeCocoaObject(NANativeCheckBox, nativecheckbox, checkbox);
-  return [nativecheckbox checkboxState];
+  naDefineCocoaObject(NACocoaCheckBox, cocoaCheckBox, checkbox);
+  return [cocoaCheckBox checkboxState];
 }
 
 

@@ -9,7 +9,7 @@
 // Do not include this file anywhere else!
 
 
-@implementation NANativeApplicationDelegate
+@implementation NACocoaApplicationDelegate
 - (id) initWithCocoaApplication:(NACocoaApplication*)newcocoaapplication{
   self = [super init];
   cocoaapplication = newcocoaapplication;
@@ -113,9 +113,9 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 NA_HDEF NAApplication* naNewApplication(void){
   NACocoaApplication* cocoaapplication = naAlloc(NACocoaApplication);
 
-  NANativeApplicationDelegate* nativeappdelegate = [[NANativeApplicationDelegate alloc] initWithCocoaApplication:cocoaapplication];
+  NACocoaApplicationDelegate* cocoaappdelegate = [[NACocoaApplicationDelegate alloc] initWithCocoaApplication:cocoaapplication];
 
-  naInitCoreApplication(&(cocoaapplication->coreapplication), NA_COCOA_PTR_OBJC_TO_C(nativeappdelegate));
+  naInitCoreApplication(&(cocoaapplication->coreapplication), NA_COCOA_PTR_OBJC_TO_C(cocoaappdelegate));
 
   return (NAApplication*)cocoaapplication;
 }

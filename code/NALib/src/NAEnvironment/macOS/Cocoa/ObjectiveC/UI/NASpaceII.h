@@ -10,7 +10,7 @@
 
 
 
-@implementation NANativeSpace
+@implementation NAcocoaSpace
 - (id) initWithCoreSpace:(NACoreSpace*)newcorespace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
@@ -49,13 +49,13 @@
 
 NA_DEF NASpace* naNewSpace(NASize size){
   NSRect contentRect;
-  NANativeSpace* nativeSpace;
+  NAcocoaSpace* cocoaSpace;
   NACoreSpace* corespace = naAlloc(NACoreSpace);
   corespace->alternatebackground = NA_FALSE;
 
   contentRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  nativeSpace = [[NANativeSpace alloc] initWithCoreSpace:corespace frame:contentRect];  
-  naInitCoreSpace(corespace, NA_COCOA_PTR_OBJC_TO_C(nativeSpace));
+  cocoaSpace = [[NAcocoaSpace alloc] initWithCoreSpace:corespace frame:contentRect];  
+  naInitCoreSpace(corespace, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
   
   return (NASpace*)corespace;
 }
@@ -70,27 +70,27 @@ NA_DEF void naDestructSpace(NASpace* space){
 
 
 NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos){
-  naDefineNativeCocoaObject(NANativeSpace, nativespace, space);
-  naDefineNativeCocoaObject(NSView, nativeview, child);
-  NANativeRadio* nativeradio;
-  NANativeTextBox* nativetextbox;
+  naDefineCocoaObject(NAcocoaSpace, cocoaSpace, space);
+  naDefineCocoaObject(NSView, cocoaview, child);
+  NACocoaRadio* cocoaRadio;
+  NACocoaTextBox* cocoaTextBox;
   NSView* subview;
   NSRect frame;
   
   switch(naGetUIElementType(child)){
   case NA_UI_RADIO:
-    nativeradio = (NANativeRadio*)nativeview;
-    subview = [nativeradio getContainingView];
+    cocoaRadio = (NACocoaRadio*)cocoaview;
+    subview = [cocoaRadio getContainingView];
     break;
   case NA_UI_TEXTBOX:
-    nativetextbox = (NANativeTextBox*)nativeview;
-    subview = [nativetextbox getContainingView];
+    cocoaTextBox = (NACocoaTextBox*)cocoaview;
+    subview = [cocoaTextBox getContainingView];
     break;
   default:
-    subview = nativeview;
+    subview = cocoaview;
     break;
   }
-  [nativespace addSubview:subview];
+  [cocoaSpace addSubview:subview];
   frame = [subview frame];
   frame.origin = NSMakePoint((CGFloat)pos.x, (CGFloat)pos.y);
   [subview setFrame: frame];
@@ -103,9 +103,9 @@ NA_HDEF NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space){
   NARect rect;
   NSRect contentrect;
   NARect windowrect;
-  naDefineNativeCocoaObject(NANativeSpace, nativespace, space);
+  naDefineCocoaObject(NAcocoaSpace, cocoaSpace, space);
   // Warning: does not work when frame unequal bounds.
-  contentrect = [nativespace frame];
+  contentrect = [cocoaSpace frame];
   windowrect = naGetWindowAbsoluteInnerRect((NACoreUIElement*)naGetUIElementWindow((NAUIElement*)space));
   rect.pos.x = windowrect.pos.x + contentrect.origin.x;
   rect.pos.y = windowrect.pos.y + contentrect.origin.y;
@@ -117,10 +117,10 @@ NA_HDEF NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space){
 
 
 NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
-  naDefineNativeCocoaObject(NANativeSpace, nativespace, space);
+  naDefineCocoaObject(NAcocoaSpace, cocoaSpace, space);
   NACoreSpace* corespace = (NACoreSpace*)space;
   corespace->alternatebackground = alternate;
-  [nativespace setNeedsDisplay:YES];
+  [cocoaSpace setNeedsDisplay:YES];
 }
 
 
