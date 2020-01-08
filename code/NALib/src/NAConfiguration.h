@@ -111,8 +111,11 @@
 // not compile with OpenGL support. But if you want to, simply set the this
 // macro to 1.
 //
-// If done so, you MUST link your program to the OpenGL library. The #include
-// directives can be found on top of the NAUI.h file
+// If done so, you MUST link your program to the appropriate library:
+// Windows: WinAPI (available automatically) and opengl32.lib, see next macro.
+// Macintosh: Cocoa
+//
+// The #include directives can be found on top of the NAUI.h file
 
 #ifndef NA_CONFIG_COMPILE_OPENGL
   #define NA_CONFIG_COMPILE_OPENGL 0

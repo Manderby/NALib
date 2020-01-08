@@ -10,7 +10,7 @@
 
 
 
-@implementation NAcocoaSpace
+@implementation NACocoaSpace
 - (id) initWithCoreSpace:(NACoreSpace*)newcorespace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
@@ -49,12 +49,12 @@
 
 NA_DEF NASpace* naNewSpace(NASize size){
   NSRect contentRect;
-  NAcocoaSpace* cocoaSpace;
+  NACocoaSpace* cocoaSpace;
   NACoreSpace* corespace = naAlloc(NACoreSpace);
   corespace->alternatebackground = NA_FALSE;
 
   contentRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  cocoaSpace = [[NAcocoaSpace alloc] initWithCoreSpace:corespace frame:contentRect];  
+  cocoaSpace = [[NACocoaSpace alloc] initWithCoreSpace:corespace frame:contentRect];  
   naInitCoreSpace(corespace, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
   
   return (NASpace*)corespace;
@@ -69,8 +69,17 @@ NA_DEF void naDestructSpace(NASpace* space){
 
 
 
+NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
+  naDefineCocoaObject(NACocoaSpace, cocoaSpace, space);
+  NSRect frame = [subview frame];
+  frame.origin = NSMakePoint(0, 0);
+  [subview setFrame: frame];
+}
+
+
+
 NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos){
-  naDefineCocoaObject(NAcocoaSpace, cocoaSpace, space);
+  naDefineCocoaObject(NACocoaSpace, cocoaSpace, space);
   naDefineCocoaObject(NSView, cocoaview, child);
   NACocoaRadio* cocoaRadio;
   NACocoaTextBox* cocoaTextBox;
@@ -103,7 +112,7 @@ NA_HDEF NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space){
   NARect rect;
   NSRect contentrect;
   NARect windowrect;
-  naDefineCocoaObject(NAcocoaSpace, cocoaSpace, space);
+  naDefineCocoaObject(NACocoaSpace, cocoaSpace, space);
   // Warning: does not work when frame unequal bounds.
   contentrect = [cocoaSpace frame];
   windowrect = naGetWindowAbsoluteInnerRect((NACoreUIElement*)naGetUIElementWindow((NAUIElement*)space));
@@ -117,7 +126,7 @@ NA_HDEF NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space){
 
 
 NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
-  naDefineCocoaObject(NAcocoaSpace, cocoaSpace, space);
+  naDefineCocoaObject(NACocoaSpace, cocoaSpace, space);
   NACoreSpace* corespace = (NACoreSpace*)space;
   corespace->alternatebackground = alternate;
   [cocoaSpace setNeedsDisplay:YES];

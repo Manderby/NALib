@@ -19,8 +19,6 @@
 //  #include <GL/GL.h>
 //#endif
 
-#define CUB_WINDOW_IGNORE_MOUSE_WARP  0x01
-
 
 
 NA_HAPI NARect naGetApplicationAbsoluteRect(void);
@@ -43,21 +41,10 @@ NA_HAPI NAUIElement** naGetTextFieldPrevTabReference(NATextField* textfield);
 NA_HAPI NAUIElement** naGetTextBoxNextTabReference(NATextBox* textbox);
 NA_HAPI NAUIElement** naGetTextBoxPrevTabReference(NATextBox* textbox);
 
-NA_HAPI void naRenewWindowMouseTracking(NACoreWindow* corewindow);
-NA_HAPI void naClearWindowMouseTracking(NACoreWindow* corewindow);
-
 HWND naGetApplicationOffscreenWindow(void);
 NACoreUIElement* naGetApplicationMouseHoverElement(void);
 void naSetApplicationMouseHoverElement(NACoreUIElement* element);
 const NONCLIENTMETRICS* naGetApplicationMetrics(void);
-
-
-
-typedef struct NAWINAPIOpenGLSpace NAWINAPIOpenGLSpace;
-struct NAWINAPIOpenGLSpace {
-  NACoreOpenGLSpace coreopenglspace;
-  HGLRC hRC;    // The rendering context for OpenGL
-};
 
 
 
@@ -339,78 +326,6 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
     }
   }
   return info.result;
-
-  ////if((message >= WM_USER) && (message <= 0x7fff)){
-  ////  // User defined message
-  ////  naDispatchUIElementCommand(uielement, ???, wParam);
-  ////  return 0;
-  ////}
-
-  //switch (message) {
-
-  //case WM_PAINT:
-  //  // wParam: Unused
-  //  // lParam: Unused
-  //  if (uielement->elementtype == NA_UI_OPENGLSPACE) {
-  //    BeginPaint(hWnd, &ps);
-
-  //    //if(uielement is opengl)
-  //    //        wglMakeCurrent(GetDC(naGetUIElementNativeID(&(openglspace->uielement))), openglspace->hRC);
-
-  //    hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW);
-  //    //uielement->refreshrequested = NA_FALSE;
-  //    EndPaint(hWnd, &ps);
-  //  }
-  //  break;
-
-  //case WM_TIMER:
-  //  // Note: Does not work with hWnd == NULL. Will not be called here.
-  //  // wParam: timer identifier as an UINT
-  //  // lParam: callback function. Unused in NALib
-  //  //hasbeenhandeled = naExecuteApplicationTimer((UINT)wParam);
-  //  break;
-
-  //case WM_KEYDOWN:
-  //  // wParam: virtual key code
-  //  // lParam: several values, attributes, flags, ...
-  //  keycode = wParam;
-  //  scancode = (NAUIKeyCode)MapVirtualKey((UINT)keycode, MAPVK_VK_TO_VSC);
-  //  hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_KEYDOWN);
-  //  break;
-
-  //case WM_KEYUP:
-  //  // wParam: virtual key code
-  //  // lParam: several values, attributes, flags, ...
-  //  keycode = wParam;
-  //  scancode = MapVirtualKey((UINT)keycode, MAPVK_VK_TO_VSC);
-  //  hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_KEYUP);
-  //  break;
-
-  //case WM_MOUSELEAVE:
-  //  //  window->mouseLeave();
-  //  break;
-
-  //case WM_NOTIFY:
-  //  //  uielement = window->getUIElement(((LPNMHDR)lParam)->hwndFrom);
-  //  //  if(!uielement){retvalue = 0;}else{uielement->dispatchCommand(((LPNMHDR)lParam)->code, lParam);}
-  //  break;
-
-  //case WM_CLOSE:
-  //  //  window->close();
-  //  //  if(!::gui->numwindows){PostQuitMessage(0);}
-  //  break;
-
-  //default:
-  //  break;
-
-  //}
-
-  //if(hasbeenhandeled) {
-  //  retvalue = 0;
-  //}else{
-  //  retvalue = DefWindowProc(hWnd, message, wParam, lParam);
-  //}
-  //return retvalue;
 }
 
 
@@ -463,77 +378,56 @@ void naWINAPICaptureMouseHover(){
 NAWINAPICallbackInfo naUIElementWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
-  //DWORD msgpos;
-  //POINT pt;
-  //HWND hWndUnderMouse;
-  //NACoreUIElement* elementUnderMouse;
-  //NACoreUIElement* commonParent;
+  NABool handeled;
+  NAPos pos;
+  NASize size;
+  NARect rect;
+  const NAMouseStatus* mouseStatus;
 
   switch(message){
   case WM_MOUSEHOVER: // being inside the hWND for a specified amout of time.
     break;
 
   case WM_MOUSEMOVE:
-    //if(!coreelement->mouseinside){
-    //  //msgpos = GetMessagePos();
-    //  //pt.x = GET_X_LPARAM(msgpos);
-    //  //pt.y = GET_Y_LPARAM(msgpos);
-    //  // beware! This returns the HWND being under RIGHT NOW! If you are debugging this, you will get a HWND of your current IDE!
-    //  //hWndUnderMouse = WindowFromPoint(pt);
-    //  //elementUnderMouse = (NACoreUIElement*)naGetUINALibEquivalent(hWndUnderMouse);
-
-    //  if(elementUnderMouse){
-    //    // Go through the whole tree and send an enter to all elements up until the common parent.
-    //    while(coreelement && !coreelement->mouseinside){
-    //      coreelement->mouseinside = NA_TRUE;
-    //      naDispatchUIElementCommand(coreelement, NA_UI_COMMAND_MOUSE_ENTERED);
-    //      coreelement = naGetUIElementParent(coreelement);
-    //    }
-    //  }
-
-    //  // Reset the core element to the current one and track the mouse leaving it.
-    //  coreelement = (NACoreUIElement*)uielement;
-    //  TRACKMOUSEEVENT winapitracking;
-    //  winapitracking.cbSize = sizeof(TRACKMOUSEEVENT);
-    //  winapitracking.dwFlags = TME_LEAVE;
-    //  winapitracking.hwndTrack = naGetUIElementNativeID(uielement);
-    //  winapitracking.dwHoverTime = HOVER_DEFAULT;
-    //  TrackMouseEvent(&winapitracking);
-    //}
-
-    //// Important: Not not mark this as handeled. Selecting text will not
-    //// work if WM_MOUSEMOVE is not propagated.
-
-    ////info.hasbeenhandeled = NA_TRUE;
-    ////info.result = 0;
-
+    // wParam: several special keys
+    // GET_X_LPARAM(lParam): x coord relative to top left
+    // GET_Y_LPARAM(lParam): y coord relative to top left
     naWINAPICaptureMouseHover();
+
+    size.width = GET_X_LPARAM(lParam);
+    size.height = GET_Y_LPARAM(lParam);
+    rect = naGetUIElementRect(uielement, naGetApplication(), NA_FALSE);
+    size.width += rect.pos.x;
+    size.height = rect.pos.y + rect.size.height - size.height;
+    mouseStatus = naGetMouseStatus();
+    pos = naGetMousePos(mouseStatus);
+    naSetMouseMovedByDiff(size.width - pos.x, size.height - pos.y);
+
+    handeled = naDispatchUIElementCommand(coreelement, NA_UI_COMMAND_MOUSE_MOVED);
+    if(handeled){
+      info.hasbeenhandeled = NA_TRUE;
+      info.result = 0;
+    }
     break;
 
   case WM_MOUSELEAVE:
-    //msgpos = GetMessagePos();
-    //pt.x = GET_X_LPARAM(msgpos);
-    //pt.y = GET_Y_LPARAM(msgpos);
-    //// beware! This returns the HWND being under RIGHT NOW! If you are debugging this, you will get a HWND of your current IDE!
-    //hWndUnderMouse = WindowFromPoint(pt);
-    //elementUnderMouse = (NACoreUIElement*)naGetUINALibEquivalent(hWndUnderMouse);
-    //commonParent = naGetUIElementCommonParent(uielement, elementUnderMouse);
-    //
-    //if(elementUnderMouse){
-    //  // Go through the whole tree and send an exit to all elements up until the common parent.
-    //  while(coreelement != commonParent){
-    //    //coreelement->mouseinside = NA_FALSE;
-    //    //naDispatchUIElementCommand(coreelement, NA_UI_COMMAND_MOUSE_EXITED);
-    //    //coreelement = naGetUIElementParent(coreelement);
-    //  }
-    //}
-
-    // Currently, do not set this message as handeled. We don't know yet what
-    // windows does with its controls.
-    //info.hasbeenhandeled = NA_TRUE;
-    //info.result = 0;
-    
     naWINAPICaptureMouseHover();
+    break;
+
+  case WM_KEYDOWN:
+    handeled = naDispatchUIElementCommand(coreelement, NA_UI_COMMAND_KEYDOWN);
+    if(handeled){
+      info.hasbeenhandeled = NA_TRUE;
+      info.result = 0;
+    }
+    break;
+
+  case WM_KEYUP:
+    handeled = naDispatchUIElementCommand(coreelement, NA_UI_COMMAND_KEYUP);
+    if(handeled){
+      info.hasbeenhandeled = NA_TRUE;
+      info.result = 0;
+    }
     break;
 
   }
@@ -801,48 +695,6 @@ long getWINAPITextAlignmentWithAlignment(NATextAlignment alignment){
   }
   return winapialignment;
 }
-
-
-//void MBUIElement::setEnabled(MBBool enabled){
-//  SendMessage(hWnd, WM_ENABLE, (WPARAM)enabled, 0);
-//}
-//
-//
-//
-//void MBUIElement::leftMouseUp(int32 x, int32 y, int32 modifierkeys){
-//  mousex = x;
-//  mousey = y;
-//}
-//
-//void MBUIElement::mouseMove(int32 x, int32 y, int32 modifierkeys){
-//  if(mousex == -1){
-//    TRACKMOUSEEVENT tme;
-//    tme.cbSize = sizeof(TRACKMOUSEEVENT);
-//    tme.dwFlags = TME_LEAVE;
-//    tme.hwndTrack = hWnd;
-//    tme.dwHoverTime = HOVER_DEFAULT;
-//    TrackMouseEvent(&tme);
-//  }
-//
-//  mousex = x;
-//  mousey = y;
-//}
-//
-//void MBUIElement::mouseLeave(){
-//  mousex = -1;
-//  mousey = -1;
-//
-//  TRACKMOUSEEVENT tme;
-//  tme.cbSize = sizeof(TRACKMOUSEEVENT);
-//  tme.dwFlags = TME_CANCEL;
-//  tme.hwndTrack = hWnd;
-//  tme.dwHoverTime = HOVER_DEFAULT;
-//  TrackMouseEvent(&tme);
-//}
-
-
-
-
 
 
 

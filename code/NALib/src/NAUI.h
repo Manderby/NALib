@@ -613,6 +613,7 @@ NA_API NASpace* naNewSpace(NASize size);
 NA_API void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos);
 NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 NA_API NABool naGetSpaceAlternateBackground(NASpace* space);
+NA_API void naSetSpaceRect(NASpace* space, NARect rect);
 
 // ImageSpace
 NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size);

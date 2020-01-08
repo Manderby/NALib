@@ -50,8 +50,8 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPA
   case WM_SETFONT:
   case WM_GETTEXTLENGTH:
   case WM_GETTEXT:
-  case WM_MOUSEMOVE:
-  case WM_MOUSELEAVE:
+  case WM_MOUSEMOVE: // captured in naUIElementWINAPIProc
+  case WM_MOUSELEAVE: // captured in naUIElementWINAPIProc
   case WM_PARENTNOTIFY:
   case WM_MOUSEACTIVATE:
   case WM_LBUTTONDOWN:
@@ -148,13 +148,11 @@ NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapispace){
 
 NA_DEF NASpace* naNewSpace(NASize size){
   HWND hWnd;
-  DWORD exStyle;
   DWORD style;
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
   NAWINAPISpace* winapispace = naAlloc(NAWINAPISpace);
 
-  exStyle = 0;
   style = WS_CHILD | WS_VISIBLE;
 
 	hWnd = CreateWindow(
@@ -174,6 +172,12 @@ NA_DEF NASpace* naNewSpace(NASize size){
 NA_DEF void naDestructSpace(NASpace* space){
   NAWINAPISpace* winapispace = (NAWINAPISpace*)space;
   naClearCoreSpace(&(winapispace->corespace));
+}
+
+
+
+NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
+  SetWindowPos(naGetUIElementNativeID(space), HWND_TOP, 0, 0, rect.size.width, rect.size.height, SWP_NOMOVE | SWP_NOZORDER);
 }
 
 

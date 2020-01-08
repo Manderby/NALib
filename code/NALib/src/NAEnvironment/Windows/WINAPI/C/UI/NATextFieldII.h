@@ -61,8 +61,8 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(NAUIElement* uielement, UINT message,
  case WM_CHAR:
  case WM_KEYDOWN: // capture enter and tab here.
  case WM_SYSKEYDOWN: // the alt key!
- case WM_MOUSEMOVE:
- case WM_MOUSELEAVE:
+ case WM_MOUSEMOVE: // captured in naUIElementWINAPIProc
+ case WM_MOUSELEAVE: // captured in naUIElementWINAPIProc
 
  // note that any change of the edit control is captured in naWINAPINotificationProc.
  break;

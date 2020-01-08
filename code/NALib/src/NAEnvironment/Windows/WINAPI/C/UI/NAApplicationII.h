@@ -655,7 +655,6 @@ NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmove
   centerpos.x = spacerect.pos.x + spacerect.size.width * .5f;
   centerpos.y = spacerect.pos.y + spacerect.size.height * .5f;
 
-//  naGetUIElementWindow(uielement)->flags |= CUB_WINDOW_IGNORE_MOUSE_WARP;
   naSetMouseWarpedTo(centerpos);
   SetCursorPos((int)centerpos.x, (int)screenframe.size.height - (int)centerpos.y);
 }
@@ -663,20 +662,20 @@ NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmove
 
 
 NA_DEF void naShowMouse(){
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  //if(!app->ismousevisible){
-  //  ShowCursor(1);
-  //  app->ismousevisible = NA_TRUE;
-  //}
+  NACoreApplication* coreapp = (NACoreApplication*)naGetApplication();
+  if(!(coreapp->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE)){
+    ShowCursor(1);
+    coreapp->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
+  }
 }
 
 
 NA_DEF void naHideMouse(){
-  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  //if(app->ismousevisible){
-  //  ShowCursor(0);
-  //  app->ismousevisible = NA_FALSE;
-  //}
+  NACoreApplication* coreapp = (NACoreApplication*)naGetApplication();
+  if(coreapp->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE){
+    ShowCursor(0);
+    coreapp->flags &= ~NA_APPLICATION_FLAG_MOUSE_VISIBLE;
+  }
 }
 
 

@@ -484,7 +484,8 @@ NA_HDEF NASpace* naGetUIElementParentSpace(NAUIElement* uielement){
 
 
 NA_DEF const NAMouseStatus* naGetMouseStatus(){
-  return &(na_app->mouseStatus);
+  return &(na_app->mouseStatus
+  );
 }
 
 

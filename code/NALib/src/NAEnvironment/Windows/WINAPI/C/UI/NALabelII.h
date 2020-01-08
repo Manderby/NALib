@@ -38,8 +38,8 @@ NAWINAPICallbackInfo naLabelWINAPIProc(NAUIElement* uielement, UINT message, WPA
   case WM_NCDESTROY:
   case WM_NCHITTEST:
   case WM_SETCURSOR:
-  case WM_MOUSEMOVE:
-  case WM_MOUSELEAVE:
+  case WM_MOUSEMOVE: // captured in naUIElementWINAPIProc
+  case WM_MOUSELEAVE: // captured in naUIElementWINAPIProc
   case WM_MOUSEACTIVATE:
   case WM_LBUTTONDOWN:
   case WM_IME_SETCONTEXT:

@@ -15,169 +15,104 @@
 typedef struct NAWINAPIOpenGLSpace NAWINAPIOpenGLSpace;
 struct NAWINAPIOpenGLSpace {
   NACoreOpenGLSpace coreopenglspace;
+  HGLRC hRC;    // The rendering context for OpenGL
 };
 
 
 
 NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
-  NABool hasbeenhandeled = NA_FALSE;
+  NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
+  case WM_PAINT:
+    info.hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW);
+    info.result = 0;
+    break;
+
   default:
     //printf("Uncaught OpenGL Space message\n");
     break;
   }
   
-  return hasbeenhandeled;
+  return info;
 }
 
 
-//  @implementation NACocoaOpenGLSpace
-//  - (id)initWithCoreOpenGLSpace:(NAOpenGLSpace*)newcoreopenglspace frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
-//    self = [super initWithFrame:frameRect pixelFormat:pixelformat];
-//    coreopenglspace = newcoreopenglspace;
-//    initFunc = newinitFunc;
-//    initData = newinitData;
-//    return self;
-//  }
-//  - (BOOL)acceptsFirstResponder{
-//    return YES; // This is required to get keyboard input.
-//  }
-//  - (void)prepareOpenGL{
-//    // When entering this function, the opengl context is set.
-//    [super prepareOpenGL];
-//    // Make sure OpenGL always swaps the buffers of the default framebuffer. If
-//    // this is not done, sometimes, the double buffer will not work properly.
-//    GLint swapInt = 1;
-//    [[self openGLContext] setValues:&swapInt forParameter:NSOpenGLCPSwapInterval];
-//
-//    // Now the OpenGL context is created and current. We can initialize it
-//    // if necessary.
-//    if(initFunc){
-//      initFunc(initData);
-//    }
-//  }
-//  - (void)drawRect:(NSRect)dirtyRect{
-//    [[self openGLContext] makeCurrentContext];
-//    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_REDRAW, NA_NULL);
-//  }
-//  - (void)reshape{
-//    [super reshape];
-//    [[self openGLContext] update];
-//    NARect bounds = naMakeRectWithNSRect([self bounds]);
-//    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_RESHAPE, NA_NULL);
-//  }
-//  - (void)keyDown:(NSEvent*)event{
-//    NAUIKeyCode keyCode = [event keyCode];
-//    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_KEYDOWN, &keyCode);
-//  }
-//  - (void)keyUp:(NSEvent*)event{
-//    NAUIKeyCode keyCode = [event keyCode];
-//    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_KEYUP, &keyCode);
-//  }
-//  - (void)flagsChanged:(NSEvent*)event{
-//    NAUIKeyCode keyCode;
-//    NABool shift   = ([event modifierFlags] & NAEventModifierFlagShift)    ?NA_TRUE:NA_FALSE;
-//    NABool alt     = ([event modifierFlags] & NAEventModifierFlagOption)   ?NA_TRUE:NA_FALSE;
-//    NABool control = ([event modifierFlags] & NAEventModifierFlagControl)  ?NA_TRUE:NA_FALSE;
-//    NABool command = ([event modifierFlags] & NAEventModifierFlagCommand)  ?NA_TRUE:NA_FALSE;
-//
-////    [event modifierFlags]; NSEventModifierFlagCapsLock;
-////    let isLeftShift = event.modifierFlags.rawValue & UInt(NX_DEVICELSHIFTKEYMASK) != 0
-////    let isRightShift = event.modifierFlags.rawValue & UInt(NX_DEVICERSHIFTKEYMASK) != 0
-//
-//    keyCode = NA_KEYCODE_SHIFT;
-//    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
-//    keyCode = NA_KEYCODE_OPTION;
-//    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, (alt?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
-//    keyCode = NA_KEYCODE_CONTROL;
-//    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, (control?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
-//    keyCode = NA_KEYCODE_LEFT_COMMAND;
-//    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, (command?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP), &keyCode);
-//  }
-//  @end
-
-
-
-  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
+NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
 	
-    HWND hWnd;
-    HDC hDC;
- 	  PIXELFORMATDESCRIPTOR pfd;
-    int format;
-    NAWINAPIOpenGLSpace* openglspace;
-    DWORD style;
+  HWND hWnd;
+  HDC hDC;
+ 	PIXELFORMATDESCRIPTOR pfd;
+  int format;
+  DWORD style;
 
-    style = WS_CHILD | WS_VISIBLE | ES_READONLY;
+  NAWINAPIOpenGLSpace* winapiopenglspace = naAlloc(NAWINAPIOpenGLSpace);
 
-	  hWnd = CreateWindow(
-		  TEXT("NAOpenGLSpace"), "OpenGL Space", style,
-		  0, 0, (int)size.width, (int)size.height,
-		  (HWND)naGetUIElementNativeID(window), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+  style = WS_CHILD | WS_VISIBLE | ES_READONLY;
 
-    openglspace = naAlloc(NAWINAPIOpenGLSpace);
+	hWnd = CreateWindow(
+		TEXT("NASpace"), TEXT(""), style,
+		0, 0, (int)size.width, (int)size.height,
+		(HWND)naGetUIElementNativeID(window), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
     
-    // Bugfix: Probably remove window as parent
-    naRegisterCoreUIElement((NACoreUIElement*)openglspace, (NACoreUIElement*)window, NA_UI_OPENGLSPACE, hWnd);
+  hDC = GetDC(hWnd);
 
-    hDC = GetDC(hWnd);
+  // Expected to be called when initializing. Do not multithread!
+	// define pixel format for device context
+	ZeroMemory( &pfd, sizeof( pfd ) );
+	pfd.nSize = sizeof( pfd );
+	pfd.nVersion = 1;
+	pfd.dwFlags = PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+	pfd.iPixelType = PFD_TYPE_RGBA;
+	pfd.cAlphaBits = 8;
+	pfd.cColorBits = 24;
+	pfd.cDepthBits = 16;
+	pfd.iLayerType = PFD_MAIN_PLANE;
+	format = ChoosePixelFormat( GetDC(hWnd), &pfd );
 
-    // Expected to be called when initializing. Do not multithread!
-	  // define pixel format for device context
-	  ZeroMemory( &pfd, sizeof( pfd ) );
-	  pfd.nSize = sizeof( pfd );
-	  pfd.nVersion = 1;
-	  pfd.dwFlags = PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-	  pfd.iPixelType = PFD_TYPE_RGBA;
-	  pfd.cAlphaBits = 8;
-	  pfd.cColorBits = 24;
-	  pfd.cDepthBits = 16;
-	  pfd.iLayerType = PFD_MAIN_PLANE;
-	  format = ChoosePixelFormat( GetDC(hWnd), &pfd );
-
-	  SetPixelFormat( hDC, format, &pfd );
+	SetPixelFormat( hDC, format, &pfd );
 	
-	  // make render context with this device context.
-	  openglspace->hRC = wglCreateContext(hDC);
-	  wglMakeCurrent(hDC, openglspace->hRC);
+	// make render context with this device context.
+	winapiopenglspace->hRC = wglCreateContext(hDC);
+	wglMakeCurrent(hDC, winapiopenglspace->hRC);
 
-	  typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
-	  PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
-	  const char *extensions = (char*)glGetString(GL_EXTENSIONS);
-	  wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
-	  if (wglSwapIntervalEXT){wglSwapIntervalEXT(1);}
+	typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
+	PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
+	const char *extensions = (char*)glGetString(GL_EXTENSIONS);
+	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
+	if (wglSwapIntervalEXT){wglSwapIntervalEXT(1);}
 
+  naInitCoreOpenGLSpace(&(winapiopenglspace->coreopenglspace), hWnd);
 
-    // Now the OpenGL context is created and current. We can initialize it
-    // if necessary.
-    if(initfunc){
-      initfunc(initdata);
-    }
-
-	  //glewInit();
-    return openglspace;
+  // Now the OpenGL context is created and current. We can initialize it
+  // if necessary.
+  if(initfunc){
+    initfunc(initdata);
   }
 
-
-  NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
-    NAWINAPIOpenGLSpace* winapiopenglspace = (NAWINAPIOpenGLSpace*)openglspace;
-    SwapBuffers(GetDC((HWND)naGetUIElementNativeID(&(winapiopenglspace->coreopenglspace.uielement))));
-  }
+	//glewInit();
+  return (NAOpenGLSpace*)winapiopenglspace;
+}
 
 
-
-  NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){
-    //NARect windowrect = naGetUIElementRect(naGetUIElementParent(openglspace), naGetApplication(), NA_FALSE);
-    SetWindowPos((HWND)naGetUIElementNativeID(openglspace), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
-  }
+NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
+  NAWINAPIOpenGLSpace* winapiopenglspace = (NAWINAPIOpenGLSpace*)openglspace;
+  SwapBuffers(GetDC((HWND)naGetUIElementNativeID(&(winapiopenglspace->coreopenglspace.uielement))));
+}
 
 
 
+NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){
+  SetWindowPos((HWND)naGetUIElementNativeID(openglspace), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
+}
 
-  NA_DEF void naDestructOpenGLSpace(NAOpenGLSpace* openglspace){
-//    NACoreOpenGLSpace* coreopenglspace = (NACoreOpenGLSpace*)openglspace;
-//    naClearCoreOpenGLSpace(&(coreopenglspace->coreopenglspace));
-  }
+
+
+
+NA_DEF void naDestructOpenGLSpace(NAOpenGLSpace* openglspace){
+  NACoreOpenGLSpace* coreopenglspace = (NACoreOpenGLSpace*)openglspace;
+  naClearCoreOpenGLSpace(coreopenglspace);
+}
 
 
 

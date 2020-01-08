@@ -53,7 +53,7 @@ struct NACocoaApplication {
 }
 @end
 
-@interface NAcocoaSpace : NSView{
+@interface NACocoaSpace : NSView{
   NACoreSpace* corespace;
   NSTrackingArea* trackingarea;
 }
@@ -387,13 +387,10 @@ NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmove
   NA_UNUSED(sendmovemessage);
   spacerect = naGetUIElementRect(uielement, (NAUIElement*)naGetApplication(), includebounds);
   screenframe = [[NSScreen mainScreen] frame];
-//  centerpos.x = spacerect.pos.x + spacerect.size.width * .5f;
-//  centerpos.y = spacerect.pos.y + spacerect.size.height * .5f;
   centerpos.x = (CGFloat)spacerect.pos.x + (CGFloat)spacerect.size.width * .5f;
   centerpos.y = (CGFloat)screenframe.size.height - (CGFloat)(spacerect.pos.y + spacerect.size.height * .5f);
 
   CGWarpMouseCursorPosition(centerpos);
-//  CGDisplayMoveCursorToPoint(kCGDirectMainDisplay, centerpos);
 }
 
 
