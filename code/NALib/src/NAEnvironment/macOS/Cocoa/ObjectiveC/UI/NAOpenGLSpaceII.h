@@ -14,6 +14,13 @@
   @implementation NACocoaOpenGLSpace
   - (id)initWithCoreOpenGLSpace:(NAOpenGLSpace*)newcoreopenglspace frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
     self = [super initWithFrame:frameRect pixelFormat:pixelformat];
+
+    // todo: make this dependent on whether tracking is needed or not.
+    trackingarea = [[NSTrackingArea alloc] initWithRect:[self bounds]
+        options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow
+        owner:self userInfo:nil];
+    [self addTrackingArea:trackingarea];
+
     coreopenglspace = newcoreopenglspace;
     initFunc = newinitFunc;
     initData = newinitData;
@@ -46,6 +53,11 @@
     [super reshape];
     [[self openGLContext] update];
     naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_RESHAPE);
+  }
+  - (void)mouseMoved:(NSEvent*)event{
+    naSetMouseMovedByDiff([event deltaX], -[event deltaY]);
+    naDispatchUIElementCommand((NACoreUIElement*)coreopenglspace, NA_UI_COMMAND_MOUSE_MOVED);
+  //  [NSEvent setMouseCoalescingEnabled:NO];
   }
   - (void)keyDown:(NSEvent*)event{
     NA_UNUSED(event);
@@ -96,9 +108,9 @@ NA_UNUSED(event);
     NSRect frameRect = NSMakeRect(0.f, 0.f, (CGFloat)size.width, (CGFloat)size.height);
     NACocoaOpenGLSpace* cocoaSpace = [[NACocoaOpenGLSpace alloc] initWithCoreOpenGLSpace:coreopenglspace frame:frameRect pixelFormat:pixelformat initFunc:initfunc initData:initdata];
 
-    if([self respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
+    if([cocoaSpace respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
       NA_MACOS_AVAILABILITY_GUARD_10_7(
-        [self setWantsBestResolutionOpenGLSurface:YES];
+        [cocoaSpace setWantsBestResolutionOpenGLSurface:YES];
       )
     }
 
@@ -125,6 +137,10 @@ NA_UNUSED(event);
   NA_DEF void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){
     NA_UNUSED(openglspace);
     NA_UNUSED(bounds);
+    naDefineCocoaObject(NACocoaOpenGLSpace, cocoaOpenGLSpace, openglspace);
+    NSRect frame = naMakeNSRectWithRect(bounds);
+    frame.origin = NSMakePoint(0, 0);
+    [cocoaOpenGLSpace setFrame: frame];
   }
   
 #endif  // NA_CONFIG_COMPILE_OPENGL

@@ -177,7 +177,7 @@ NA_DEF void naDestructSpace(NASpace* space){
 
 
 NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
-  SetWindowPos(naGetUIElementNativeID(space), HWND_TOP, 0, 0, rect.size.width, rect.size.height, SWP_NOMOVE | SWP_NOZORDER);
+  SetWindowPos(naGetUIElementNativeID(space), HWND_TOP, 0, 0, (int)rect.size.width, (int)rect.size.height, SWP_NOMOVE | SWP_NOZORDER);
 }
 
 
@@ -185,10 +185,13 @@ NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
 NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos){
   RECT spacerect;
   RECT childrect;
+  int spaceheight;
+  int childheight;
+
   GetClientRect(naGetUIElementNativeID(space), &spacerect);
   GetClientRect(naGetUIElementNativeID(child), &childrect);
-  int spaceheight = spacerect.bottom - spacerect.top;
-  int childheight = childrect.bottom - childrect.top;
+  spaceheight = spacerect.bottom - spacerect.top;
+  childheight = childrect.bottom - childrect.top;
   SetWindowPos(naGetUIElementNativeID(child), HWND_TOP, (int)pos.x, spaceheight - (int)pos.y - childheight, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
   naSetUIElementParent(child, space);
 }

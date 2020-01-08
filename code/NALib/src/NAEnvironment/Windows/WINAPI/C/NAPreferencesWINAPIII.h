@@ -13,20 +13,26 @@
 
 NA_HIDEF HKEY naGetNativePreferences(){
   HKEY resultKey;
+  WCHAR* systemfullkeyname;
+  LSTATUS errorcode;
+  NAString* appname;
+  NAString* companyname;
+  NAString* fullkeyname;
+
   #ifndef NDEBUG
     if(!naGetApplication())
       naError("No application running. Use naStartApplication.");
   #endif
-  NAString* appname = naNewApplicationName();
-  NAString* companyname = naNewApplicationCompanyName();
-  NAString* fullkeyname;
+  appname = naNewApplicationName();
+  companyname = naNewApplicationCompanyName();
+  fullkeyname;
   if(companyname){
     fullkeyname = naNewStringWithFormat("Software\\%s\\%s", naGetStringUTF8Pointer(companyname), naGetStringUTF8Pointer(appname));
   }else{
     fullkeyname = naNewStringWithFormat("Software\\%s", naGetStringUTF8Pointer(appname));
   }
-  TCHAR* systemfullkeyname = naAllocSystemStringWithUTF8String(naGetStringUTF8Pointer(fullkeyname));
-  LSTATUS errorcode = RegOpenKeyW(HKEY_CURRENT_USER, systemfullkeyname, &resultKey);
+  systemfullkeyname = naAllocWideCharStringWithUTF8String(naGetStringUTF8Pointer(fullkeyname));
+  errorcode = RegOpenKeyW(HKEY_CURRENT_USER, systemfullkeyname, &resultKey);
   if(errorcode != ERROR_SUCCESS){
     errorcode = RegCreateKeyW(HKEY_CURRENT_USER, systemfullkeyname, &resultKey);
   }
@@ -74,15 +80,19 @@ NA_DEF NAInt naInitPreferencesInt(const char* key, NAInt value){
   return (NAInt)((storedvalue == NA_INT64_MIN) ? 0 : storedvalue);
 }
 NA_DEF NAInt naInitPreferencesEnum(const char* key, NAInt value){
+  DWORD valuesize;
+  DWORD type;
+  int64 storedvalue;
+  HKEY hKey;
+  LSTATUS errorcode;
+
   #ifndef NDEBUG
     if(value == -1)
       naError("Value -1 can not be stored correctly.");
   #endif
-  DWORD valuesize = NA_TYPE64_BYTES;
-  DWORD type;
-  int64 storedvalue;
-  HKEY hKey = naGetNativePreferences();
-  LSTATUS errorcode = RegGetValueA(hKey, NULL, key, RRF_RT_ANY, &type, &storedvalue, (LPDWORD)&valuesize);
+  valuesize = NA_TYPE64_BYTES;
+  hKey = naGetNativePreferences();
+  errorcode = RegGetValueA(hKey, NULL, key, RRF_RT_ANY, &type, &storedvalue, (LPDWORD)&valuesize);
   if(errorcode != ERROR_SUCCESS){
     storedvalue = value + 1;
     errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
@@ -118,6 +128,8 @@ NA_DEF NAString* naInitPreferencesString(const char* key, NAString* value){
   DWORD valuesize;
   DWORD type;
   wchar_t* storedvalue;
+  NAString* retString;
+
   HKEY hKey = naGetNativePreferences();
   wchar_t* systemkey = naAllocWideCharStringWithUTF8String(key);
   LSTATUS errorcode = RegQueryValueExW(hKey, systemkey, NULL, &type, NULL, &valuesize);
@@ -139,7 +151,7 @@ NA_DEF NAString* naInitPreferencesString(const char* key, NAString* value){
       #endif
     }
   }
-  NAString* retString = naNewStringFromSystemString(storedvalue);
+  retString = naNewStringFromWideCharString(storedvalue);
   naFree(storedvalue);
   naFree(systemkey);
   return retString;
@@ -171,14 +183,19 @@ NA_DEF void naSetPreferencesInt(const char* key, NAInt value){
   }
 }
 NA_DEF void naSetPreferencesEnum(const char* key, NAInt value){
+  DWORD valuesize;
+  int64 storedvalue;
+  HKEY hKey;
+  LSTATUS errorcode;
+
   #ifndef NDEBUG
     if(value == -1)
       naError("Value -1 can not be stored correctly.");
   #endif
-  DWORD valuesize = NA_TYPE64_BYTES;
-  int64 storedvalue = value + 1;
-  HKEY hKey = naGetNativePreferences();
-  LSTATUS errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
+  valuesize = NA_TYPE64_BYTES;
+  storedvalue = value + 1;
+  hKey = naGetNativePreferences();
+  errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
   if(errorcode != ERROR_SUCCESS){
     #ifndef NDEBUG
       naError("Could not store value in registry.");
@@ -186,10 +203,15 @@ NA_DEF void naSetPreferencesEnum(const char* key, NAInt value){
   }
 }
 NA_DEF void naSetPreferencesDouble(const char* key, double value){
-  DWORD valuesize = NA_TYPE64_BYTES;
-  double storedvalue = ((value == 0.) ? NA_NAN : value);
-  HKEY hKey = naGetNativePreferences();
-  LSTATUS errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
+  DWORD valuesize;
+  double storedvalue;
+  HKEY hKey;
+  LSTATUS errorcode;
+
+  valuesize = NA_TYPE64_BYTES;
+  storedvalue = ((value == 0.) ? NA_NAN : value);
+  hKey = naGetNativePreferences();
+  errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
   if(errorcode != ERROR_SUCCESS){
     #ifndef NDEBUG
       naError("Could not store value in registry.");
@@ -202,11 +224,15 @@ NA_DEF void naSetPreferencesString(const char* key, NAString* value){
   // Stupid dog. You make this look bad.
   DWORD valuesize;
   wchar_t* storedvalue;
-  HKEY hKey = naGetNativePreferences();
-  wchar_t* systemkey = naAllocWideCharStringWithUTF8String(key);
+  LSTATUS errorcode;
+  HKEY hKey;
+  wchar_t* systemkey;
+
+  hKey = naGetNativePreferences();
+  systemkey = naAllocWideCharStringWithUTF8String(key);
   storedvalue = naAllocWideCharStringWithUTF8String(naGetStringUTF8Pointer(value));
   valuesize = ((DWORD)wcslen(storedvalue) + 1) * sizeof(wchar_t);
-  LSTATUS errorcode = RegSetKeyValueW(hKey, NULL, systemkey, REG_SZ, storedvalue, valuesize);
+  errorcode = RegSetKeyValueW(hKey, NULL, systemkey, REG_SZ, storedvalue, valuesize);
   if(errorcode != ERROR_SUCCESS){
     #ifndef NDEBUG
       naError("Could not store value in registry");
@@ -222,8 +248,11 @@ NA_DEF NABool naGetPreferencesBool(const char* key){
   DWORD valuesize = NA_TYPE64_BYTES;
   DWORD type;
   int64 storedvalue;
-  HKEY hKey = naGetNativePreferences();
-  LSTATUS errorcode = RegGetValueA(hKey, NULL, key, RRF_RT_ANY, &type, &storedvalue, &valuesize);
+  HKEY hKey;
+  LSTATUS errorcode;
+
+  hKey = naGetNativePreferences();
+  errorcode = RegGetValueA(hKey, NULL, key, RRF_RT_ANY, &type, &storedvalue, &valuesize);
   if(errorcode != ERROR_SUCCESS){storedvalue = 0;}
   return ((storedvalue == 1) ? NA_TRUE : NA_FALSE);
 }
@@ -231,8 +260,11 @@ NA_DEF NAInt naGetPreferencesInt(const char* key){
   DWORD valuesize = NA_TYPE64_BYTES;
   DWORD type;
   int64 storedvalue;
-  HKEY hKey = naGetNativePreferences();
-  LSTATUS errorcode = RegGetValueA(hKey, NULL, key, RRF_RT_ANY, &type, &storedvalue, &valuesize);
+  HKEY hKey;
+  LSTATUS errorcode;
+
+  hKey = naGetNativePreferences();
+  errorcode = RegGetValueA(hKey, NULL, key, RRF_RT_ANY, &type, &storedvalue, &valuesize);
   if(errorcode != ERROR_SUCCESS){storedvalue = NA_INT64_MIN;}
   return (NAInt)((storedvalue == NA_INT64_MIN) ? 0 : storedvalue);
 }
@@ -240,8 +272,11 @@ NA_DEF NAInt naGetPreferencesEnum(const char* key){
   DWORD valuesize = NA_TYPE64_BYTES;
   DWORD type;
   int64 storedvalue;
-  HKEY hKey = naGetNativePreferences();
-  LSTATUS errorcode = RegGetValueA(hKey, NULL, key, RRF_RT_ANY, &type, &storedvalue, &valuesize);
+  HKEY hKey;
+  LSTATUS errorcode;
+
+  hKey = naGetNativePreferences();
+  errorcode = RegGetValueA(hKey, NULL, key, RRF_RT_ANY, &type, &storedvalue, &valuesize);
   if(errorcode != ERROR_SUCCESS){storedvalue = 1;}
   return (NAInt)(storedvalue - 1);
 }
@@ -249,8 +284,11 @@ NA_DEF double naGetPreferencesDouble(const char* key){
   DWORD valuesize = NA_TYPE64_BYTES;
   DWORD type;
   double storedvalue;
-  HKEY hKey = naGetNativePreferences();
-  LSTATUS errorcode = RegGetValueA(hKey, NULL, key, RRF_RT_ANY, &type, &storedvalue, &valuesize);
+  HKEY hKey;
+  LSTATUS errorcode;
+
+  hKey = naGetNativePreferences();
+  errorcode = RegGetValueA(hKey, NULL, key, RRF_RT_ANY, &type, &storedvalue, &valuesize);
   if(errorcode != ERROR_SUCCESS){storedvalue = 0.;}
   return (naIsNaN(storedvalue) ? 0. : storedvalue);
 }
@@ -260,9 +298,14 @@ NA_DEF NAString* naNewPreferencesString(const char* key){
   DWORD valuesize;
   DWORD type;
   wchar_t* storedvalue;
-  HKEY hKey = naGetNativePreferences();
-  wchar_t* systemkey = naAllocWideCharStringWithUTF8String(key);
-  LSTATUS errorcode = RegQueryValueExW(hKey, systemkey, NULL, &type, NULL, &valuesize);
+  NAString* retString;
+  HKEY hKey;
+  wchar_t* systemkey;
+  LSTATUS errorcode;
+
+  hKey = naGetNativePreferences();
+  systemkey = naAllocWideCharStringWithUTF8String(key);
+  errorcode = RegQueryValueExW(hKey, systemkey, NULL, &type, NULL, &valuesize);
   if(errorcode != ERROR_SUCCESS){
     return NA_NULL;
   }
@@ -274,7 +317,7 @@ NA_DEF NAString* naNewPreferencesString(const char* key){
     #endif
     return NA_NULL;
   }
-  NAString* retString = naNewStringFromSystemString(storedvalue);
+  retString = naNewStringFromWideCharString(storedvalue);
   naFree(storedvalue);
   naFree(systemkey);
   return retString;

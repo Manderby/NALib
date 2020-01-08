@@ -86,6 +86,9 @@ NAWINAPICallbackInfo naLabelWINAPINotify(NAUIElement* uielement, WORD notificati
 NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   HWND hWnd;
   DWORD style;
+  TCHAR* systemtext;
+  WNDPROC oldproc;
+
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
   NAWINAPILabel* winapilabel = naAlloc(NAWINAPILabel);
@@ -93,7 +96,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   // We need a read only edit control here, otherwise on windows, the user is not able to select text.
   style = WS_CHILD | WS_VISIBLE | ES_LEFT | ES_READONLY | ES_MULTILINE;
 
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
+  systemtext = naAllocSystemStringWithUTF8String(text);
 
 	hWnd = CreateWindow(
 		TEXT("EDIT"), systemtext, style,
@@ -102,7 +105,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   
   naFree(systemtext);
 
-  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldLabelWindowProc){app->oldLabelWindowProc = oldproc;}
 
   naInitCoreLabel(&(winapilabel->corelabel), hWnd);
@@ -133,16 +136,19 @@ NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
 
 
 NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
+  HFONT hFont;
+  HFONT hOriginalFont;
+  LOGFONT lf;
+
   NAWINAPILabel* winapilabel = (NAWINAPILabel*)label;
   #ifndef NDEBUG
     if(!url || !*url)
       naError("url must be something useful. Deleting a Link is not possible yet.");
   #endif
-  HFONT hOriginalFont = (HFONT)SendMessage(naGetUIElementNativeID(label), WM_GETFONT, 0, 0);
-  LOGFONT lf;
+  hOriginalFont = (HFONT)SendMessage(naGetUIElementNativeID(label), WM_GETFONT, 0, 0);
   GetObject(hOriginalFont, sizeof(LOGFONT), &lf);
   lf.lfUnderline = NA_TRUE;
-  HFONT hFont = CreateFontIndirect(&lf);
+  hFont = CreateFontIndirect(&lf);
   SendMessage(naGetUIElementNativeID(label), WM_SETFONT, (WPARAM)hFont, NA_FALSE);
 
   if(winapilabel->href){naDelete(winapilabel->href);}

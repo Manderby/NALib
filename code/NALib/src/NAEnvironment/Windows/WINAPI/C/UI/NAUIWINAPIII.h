@@ -54,24 +54,30 @@ NA_HDEF void naClearUINativeId(NANativeID nativeId){
 
 
 NA_HDEF void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent){
+  NACoreUIElement* coreelement;
+  NACoreUIElement* coreparent;
+  NACoreWindow* window;
+
   #ifndef NDEBUG
     if(!uielement)
       naError("uielement is NULL");
   #endif
-  NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
-  NACoreUIElement* coreparent = (NACoreUIElement*)parent;
+  coreelement = (NACoreUIElement*)uielement;
+  coreparent = (NACoreUIElement*)parent;
 
-  NACoreWindow* window = naGetUIElementWindow(uielement);
+  window = naGetUIElementWindow(uielement);
   if(window && naGetWindowFirstTabElement(window) == coreelement){
     naSetWindowFirstTabElement(window, NA_NULL);
   }
 
   if(!coreparent){
+    HWND result;
     coreelement->parent = NA_NULL;
-    HWND result = SetParent(coreelement->nativeID, HWND_MESSAGE);
+    result = SetParent(coreelement->nativeID, HWND_MESSAGE);
   }else{
+    HWND result;
     coreelement->parent = parent;
-    HWND result = SetParent(coreelement->nativeID, coreparent->nativeID);
+    result = SetParent(coreelement->nativeID, coreparent->nativeID);
   }
 }
 
@@ -119,6 +125,9 @@ NA_HAPI NABool naAreUIElementNotificationsAllowed(NACoreUIElement* elem){
 
 
 NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* titleText, const NAUTF8Char* infoText){
+  NAString* messageString;
+  TCHAR* systemTitle;
+  TCHAR* systemMessage;
   UINT iconType = MB_ICONINFORMATION;
 
   switch(alertBoxType){
@@ -127,9 +136,9 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
   case NA_ALERT_BOX_ERROR:   iconType = MB_ICONERROR; break;
   }
 
-  NAString* messageString = naNewStringWithFormat("%s\n%s", titleText, infoText);
-  TCHAR* systemTitle = naAllocSystemStringWithUTF8String(titleText);
-  TCHAR* systemMessage = naAllocSystemStringWithUTF8String(naGetStringUTF8Pointer(messageString));
+  messageString = naNewStringWithFormat("%s\n%s", titleText, infoText);
+  systemTitle = naAllocSystemStringWithUTF8String(titleText);
+  systemMessage = naAllocSystemStringWithUTF8String(naGetStringUTF8Pointer(messageString));
 
   MessageBox(NA_NULL, systemMessage, systemTitle, MB_OK | iconType);
 
@@ -140,6 +149,12 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 
 
 NA_HDEF void naCaptureKeyboardStatus(MSG* message){  
+  NABool lShift;
+  NABool rShift;
+  NABool lControl;
+  NABool rControl;
+  NABool lOption;
+  NABool rOption;
   NABool hasShift   = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_SHIFT);
   NABool hasControl = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_CONTROL);
   NABool hasOption  = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_OPTION);
@@ -148,16 +163,16 @@ NA_HDEF void naCaptureKeyboardStatus(MSG* message){
 
   NAUIKeyCode scancode = (NAUIKeyCode)MapVirtualKey((UINT)message->wParam, MAPVK_VK_TO_VSC);
   na_app->keyboardStatus.keyCode = scancode;
-  NABool lShift = (GetKeyState(VK_LSHIFT) & 0x8000) >> 15;
-  NABool rShift = (GetKeyState(VK_RSHIFT) & 0x8000) >> 15;
+  lShift = (GetKeyState(VK_LSHIFT) & 0x8000) >> 15;
+  rShift = (GetKeyState(VK_RSHIFT) & 0x8000) >> 15;
   // Note: Due to the right shift key not properly being detected by the extended key flag
   // of lParam, we have to rely on GetKeyState. Pity.
   hasShift = lShift | rShift;
-  NABool lControl = (GetKeyState(VK_LCONTROL) & 0x8000) >> 15;
-  NABool rControl = (GetKeyState(VK_RCONTROL) & 0x8000) >> 15;
+  lControl = (GetKeyState(VK_LCONTROL) & 0x8000) >> 15;
+  rControl = (GetKeyState(VK_RCONTROL) & 0x8000) >> 15;
   hasControl = lControl | rControl;
-  NABool lOption = (GetKeyState(VK_LMENU) & 0x8000) >> 15;
-  NABool rOption = (GetKeyState(VK_RMENU) & 0x8000) >> 15;
+  lOption = (GetKeyState(VK_LMENU) & 0x8000) >> 15;
+  rOption = (GetKeyState(VK_RMENU) & 0x8000) >> 15;
   // Note: AltGr actually sends first an rControl and then an rOption. Don't know why.
   hasOption = lOption | rOption;
   hasCommand = scancode == NA_KEYCODE_LEFT_COMMAND || scancode == NA_KEYCODE_RIGHT_COMMAND;
@@ -515,6 +530,11 @@ NA_HDEF NAUIElement** naGetUIElementPrevTabReference(NAUIElement* uielement){
 
 
 NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextTabElem){
+  NAUIElement** elemNextRef;
+  NAUIElement** nextPrevRef;
+  NAUIElement** elemNextPrevRef;
+  NAUIElement** nextPrevNextRef;
+
   #ifndef NDEBUG
     if(naGetUIElementWindow(elem) != naGetUIElementWindow(nextTabElem))
       naError("element do not share the same window.");
@@ -536,10 +556,10 @@ NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextTab
     return;
   }
 
-  NAUIElement** elemNextRef = naGetUIElementNextTabReference(elem);
-  NAUIElement** nextPrevRef = naGetUIElementPrevTabReference(nextTabElem);
-  NAUIElement** elemNextPrevRef = naGetUIElementPrevTabReference(*elemNextRef);
-  NAUIElement** nextPrevNextRef = naGetUIElementNextTabReference(*nextPrevRef);
+  elemNextRef = naGetUIElementNextTabReference(elem);
+  nextPrevRef = naGetUIElementPrevTabReference(nextTabElem);
+  elemNextPrevRef = naGetUIElementPrevTabReference(*elemNextRef);
+  nextPrevNextRef = naGetUIElementNextTabReference(*nextPrevRef);
 
   *nextPrevNextRef = *elemNextRef;
   *elemNextPrevRef = *nextPrevRef;
@@ -610,9 +630,9 @@ NA_DEF NARect naGetUIElementRect(NACoreUIElement* uielement, NAUIElement* relati
     break;
   case NA_UI_OPENGLSPACE:  rect = naGetSpaceAbsoluteInnerRect(coreelement); break;
   default:
-    #ifndef NDEBUG
-      naError("Invalid UI type");
-    #endif
+    //#ifndef NDEBUG
+    //  naError("Invalid UI type");
+    //#endif
     rect = naMakeRectSE(0., 0., 0., 0.);
     break;
   }
@@ -643,12 +663,13 @@ NA_DEF NARect naGetUIElementRect(NACoreUIElement* uielement, NAUIElement* relati
 
 
 NA_HDEF void* naAllocMouseTracking(NANativeID nativeId){
+  NABool success;
   TRACKMOUSEEVENT* winapitracking = naAlloc(TRACKMOUSEEVENT);
   winapitracking->cbSize = sizeof(TRACKMOUSEEVENT);
   winapitracking->dwFlags = TME_LEAVE;
   winapitracking->hwndTrack = nativeId;
   winapitracking->dwHoverTime = HOVER_DEFAULT;
-  NABool success = TrackMouseEvent(winapitracking);
+  success = TrackMouseEvent(winapitracking);
   return winapitracking;
 }
 

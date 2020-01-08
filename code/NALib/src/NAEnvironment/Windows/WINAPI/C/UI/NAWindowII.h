@@ -165,6 +165,9 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   HWND hWnd;
   RECT windowrect;
   NARect screenrect;
+  TCHAR* systemtitle;
+  HICON hIcon;
+  NASpace* space;
   
   NAWINAPIWindow* winapiwindow = naAlloc(NAWINAPIWindow);
 
@@ -183,14 +186,14 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   windowrect.left = (int)rect.pos.x;
   AdjustWindowRect(&windowrect, style, NA_FALSE);
 
-  TCHAR* systemtitle = naAllocSystemStringWithUTF8String(title);
+  systemtitle = naAllocSystemStringWithUTF8String(title);
 
 	hWnd = CreateWindow(
 		TEXT("NAWindow"), systemtitle, style,
 		windowrect.left, windowrect.top, windowrect.right - windowrect.left, windowrect.bottom - windowrect.top,
 		NULL, NULL, naGetUIElementNativeID(naGetApplication()), NULL);
 
-  HICON hIcon = naGetWINAPIApplicationIcon();
+  hIcon = naGetWINAPIApplicationIcon();
   if(hIcon){   
     SendMessage(hWnd, WM_SETICON, ICON_BIG, (LPARAM)hIcon);
     SendMessage(hWnd, WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
@@ -204,7 +207,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   naAddUIKeyboardShortcut(winapiwindow, naMakeKeybardStatus(0, NA_KEYCODE_TAB), naHandleWindowTabOrder, NA_NULL);
   naAddUIKeyboardShortcut(winapiwindow, naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB), naHandleWindowTabOrder, NA_NULL);
 
-  NASpace* space = naNewSpace(rect.size);
+  space = naNewSpace(rect.size);
   naSetWindowContentSpace(winapiwindow, space);
 
   naSetUIElementParent(winapiwindow, naGetApplication());
@@ -249,15 +252,20 @@ NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
     POINT testpoint = {0, 0};
     RECT clientrect;
     RECT windowrect;
+    LONG leftdiff;
+    LONG topdiff;
+    LONG rightdiff;
+    LONG bottomdiff;
+
     NARect screenrect = naGetMainScreenRect();
     GetClientRect(naGetUIElementNativeID(window), &clientrect);
     GetWindowRect(naGetUIElementNativeID(window), &windowrect);
     ClientToScreen(naGetUIElementNativeID(window), &testpoint);
 
-    LONG leftdiff = (testpoint.x - windowrect.left);
-    LONG topdiff =  (testpoint.y - windowrect.top);
-    LONG rightdiff =  ((windowrect.right - windowrect.left) - (clientrect.right - clientrect.left) - leftdiff);
-    LONG bottomdiff =  ((windowrect.bottom - windowrect.top) - (clientrect.bottom - clientrect.top) - topdiff);
+    leftdiff = (testpoint.x - windowrect.left);
+    topdiff =  (testpoint.y - windowrect.top);
+    rightdiff =  ((windowrect.right - windowrect.left) - (clientrect.right - clientrect.left) - leftdiff);
+    bottomdiff =  ((windowrect.bottom - windowrect.top) - (clientrect.bottom - clientrect.top) - topdiff);
     rect.pos.x -= leftdiff;
     rect.pos.y -= bottomdiff;
     rect.size.width += leftdiff;
@@ -285,11 +293,13 @@ NA_DEF NAUIImageResolution naGetWindowUIResolution(NAWindow* window){
 
 
 NA_HDEF void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstTabElem){
+  NAWINAPIWindow* winapiwindow;
+  
   #ifndef NDEBUG
     if(naGetUIElementWindow(firstTabElem) != window)
       naError("Element is not part of the window.");
   #endif
-  NAWINAPIWindow* winapiwindow = (NAWINAPIWindow*)window;
+  winapiwindow = (NAWINAPIWindow*)window;
   winapiwindow->firstResponder = firstTabElem;
 }
 

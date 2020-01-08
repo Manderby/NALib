@@ -29,9 +29,12 @@ NABool reshapeWindow(NAReaction reaction){
 }
 
 NABool cubPressWindowKey(NAReaction reaction){
+  NAKeyboardStatus keyStatus;
+  NAUIKeyCode key;
+
   NA_UNUSED(reaction);
-  NAKeyboardStatus keyStatus = naGetKeyboardStatus();
-  NAUIKeyCode key = keyStatus.keyCode;
+  keyStatus = naGetKeyboardStatus();
+  key = keyStatus.keyCode;
   if(key == NA_KEYCODE_ESC){naStopApplication();}
   printf("Key Press\n");
   return NA_TRUE;

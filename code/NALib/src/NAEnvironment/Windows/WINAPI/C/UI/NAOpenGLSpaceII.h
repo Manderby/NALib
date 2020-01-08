@@ -38,6 +38,8 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(NAUIElement* uielement, UINT messag
 }
 
 
+typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
+
 NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
 	
   HWND hWnd;
@@ -45,6 +47,8 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator 
  	PIXELFORMATDESCRIPTOR pfd;
   int format;
   DWORD style;
+	PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
+  const char *extensions;
 
   NAWINAPIOpenGLSpace* winapiopenglspace = naAlloc(NAWINAPIOpenGLSpace);
 
@@ -76,9 +80,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator 
 	winapiopenglspace->hRC = wglCreateContext(hDC);
 	wglMakeCurrent(hDC, winapiopenglspace->hRC);
 
-	typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
-	PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
-	const char *extensions = (char*)glGetString(GL_EXTENSIONS);
+	extensions = (char*)glGetString(GL_EXTENSIONS);
 	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
 	if (wglSwapIntervalEXT){wglSwapIntervalEXT(1);}
 

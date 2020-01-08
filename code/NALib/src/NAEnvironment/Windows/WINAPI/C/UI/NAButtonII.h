@@ -81,6 +81,17 @@ NAWINAPICallbackInfo naButtonWINAPINotify(NAUIElement* uielement, WORD notificat
 
 NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTRUCT* drawitemstruct){
   HBITMAP hOldBitmap;
+  NASizei size1x;
+  NASizei buttonsize;
+  NAPosi offset;
+  NABabyImage* foreImage;
+  NAByte* backBuffer;
+  HBITMAP hBackBitmap;
+  NABabyImage* backImage;
+  NABabyImage* blendedImage;
+  NAByte* blendedBuffer;
+  HBITMAP hBlendedBitmap;
+
   HDC hMemDC = CreateCompatibleDC(drawitemstruct->hDC);
 
   NAWINAPIButton* button = (NAWINAPIButton*)uielement;
@@ -99,29 +110,29 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTR
     SetWindowLongPtr(naGetUIElementNativeID(uielement), GWL_STYLE, (LONG_PTR)oldstyle);
   }
 
-  NASizei size1x = naGetUIImage1xSize(button->image);
+  size1x = naGetUIImage1xSize(button->image);
 
-  NASizei buttonsize = naMakeSizei(
+  buttonsize = naMakeSizei(
     drawitemstruct->rcItem.right - drawitemstruct->rcItem.left,
     drawitemstruct->rcItem.bottom - drawitemstruct->rcItem.top);
-  NAPosi offset = naMakePosi(
+  offset = naMakePosi(
     (buttonsize.width - size1x.width) / 2,
     (buttonsize.height - size1x.height) / 2);
 
-  NABabyImage* foreImage = naGetUIImageBabyImage(button->image, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_LIGHT);
+  foreImage = naGetUIImageBabyImage(button->image, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_LIGHT);
 
   // We store the background where the image will be placed.
-  NAByte* backBuffer = naMalloc(size1x.width * size1x.height * 4);
-  HBITMAP hBackBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, backBuffer);
+  backBuffer = naMalloc(size1x.width * size1x.height * 4);
+  hBackBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, backBuffer);
   hOldBitmap = SelectObject(hMemDC, hBackBitmap);
   BitBlt(hMemDC, 0, 0, (int)size1x.width, (int)size1x.height, drawitemstruct->hDC, (int)offset.x, (int)offset.y, SRCCOPY);
-  NABabyImage* backImage = naCreateBabyImageFromNativeImage(hBackBitmap);
+  backImage = naCreateBabyImageFromNativeImage(hBackBitmap);
 
   // Now we blend manually the foreground to the background.
-  NABabyImage* blendedImage = naCreateBabyImageWithBlend(backImage, foreImage, NA_BLEND_OVERLAY, 1.f);
-  NAByte* blendedBuffer = naMalloc(size1x.width * size1x.height * 4);
+  blendedImage = naCreateBabyImageWithBlend(backImage, foreImage, NA_BLEND_OVERLAY, 1.f);
+  blendedBuffer = naMalloc(size1x.width * size1x.height * 4);
   naConvertBabyImageToUInt8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
-  HBITMAP hBlendedBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, blendedBuffer);
+  hBlendedBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, blendedBuffer);
 
   // Finally, we put the blended image onscreen.
   SelectObject(hMemDC, hBlendedBitmap);
@@ -150,13 +161,16 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTR
 NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
   HWND hWnd;
   DWORD style;
+  TCHAR* systemtext;
+  WNDPROC oldproc;
+
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
   NAWINAPIButton* winapibutton = naAlloc(NAWINAPIButton);
 
   style = WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON;
 
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
+  systemtext = naAllocSystemStringWithUTF8String(text);
 
 	hWnd = CreateWindow(
 		TEXT("BUTTON"), systemtext, style,
@@ -165,7 +179,7 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
   
   naFree(systemtext);
 
-  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
   naInitCoreButton(&(winapibutton->corebutton), hWnd);
@@ -181,12 +195,13 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
 NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
   HWND hWnd;
   DWORD style;
+  TCHAR* systemtext;
 
   NAWINAPIButton* winapibutton = naAlloc(NAWINAPIButton);
 
   style = WS_CHILD | WS_VISIBLE | BS_CENTER | BS_VCENTER | BS_TEXT | BS_PUSHBUTTON;
 
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
+  systemtext = naAllocSystemStringWithUTF8String(text);
 
 	hWnd = CreateWindow(
 		TEXT("BUTTON"), systemtext, style,

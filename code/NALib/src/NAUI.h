@@ -435,7 +435,7 @@ typedef NAUInt NAUIKeyCode;
   #define NA_KEYCODE_Y              0x10
   #define NA_KEYCODE_Z              0x06
   #define NA_KEYCODE_SPACE          0x31
-  #define NA_KEYCODE_TAB            0xff  // todo: unknown yet
+  #define NA_KEYCODE_TAB            0x30
   #define NA_KEYCODE_ENTER          0x24
   #define NA_KEYCODE_LEFT_SHIFT     0x38
   #define NA_KEYCODE_RIGHT_SHIFT    0x3c

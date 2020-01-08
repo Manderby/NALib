@@ -72,13 +72,16 @@ NAWINAPICallbackInfo naRadioWINAPIProc(NAUIElement* uielement, UINT message, WPA
 NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
   HWND hWnd;
   DWORD style;
+  TCHAR* systemtext;
+  WNDPROC oldproc;
+
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
   NAWINAPIRadio* winapiradio = naAlloc(NAWINAPIRadio);
 
   style = WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_RADIOBUTTON;
 
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
+  systemtext = naAllocSystemStringWithUTF8String(text);
 
 	hWnd = CreateWindow(
 		TEXT("BUTTON"), systemtext, style,
@@ -87,7 +90,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
   
   naFree(systemtext);
 
-  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldRadioWindowProc){app->oldRadioWindowProc = oldproc;}
 
   naInitCoreRadio(&(winapiradio->coreradio), hWnd);

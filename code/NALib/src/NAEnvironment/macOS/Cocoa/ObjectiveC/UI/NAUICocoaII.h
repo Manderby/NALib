@@ -68,6 +68,7 @@ struct NACocoaApplication {
 #if (NA_CONFIG_COMPILE_OPENGL == 1)
   @interface NACocoaOpenGLSpace : NSOpenGLView{
     NACoreOpenGLSpace* coreopenglspace;
+    NSTrackingArea* trackingarea;
     NAMutator initFunc;
     void* initData;
   }
@@ -161,7 +162,7 @@ NA_HDEF void naCaptureKeyboardStatus(NSEvent* event){
 
 NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
   NABool retvalue = NA_FALSE;
-  if([event type] == NAEventTypeKeyDown){
+  if([event type] == NAEventTypeKeyDown || [event type] == NSEventTypeFlagsChanged){
     NACoreUIElement* elem;
     NSWindow* focusWindow;
     naCaptureKeyboardStatus(event);

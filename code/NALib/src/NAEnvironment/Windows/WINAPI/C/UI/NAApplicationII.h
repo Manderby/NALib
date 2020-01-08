@@ -379,9 +379,11 @@ NA_DEF void naOpenConsoleWindow(void){
   FILE *outFile;
   FILE *errFile;
   FILE *inFile;
+  TCHAR* systemtitle;
+
   AllocConsole();
 
-  TCHAR* systemtitle = TEXT("Debug Console");
+  systemtitle = TEXT("Debug Console");
   SetConsoleTitle(systemtitle);
 
   freopen_s(&inFile, "CONIN$", "r", stdin);
@@ -436,14 +438,18 @@ NA_DEF NAString* naNewApplicationName(void){
     return naNewStringWithFormat("%s", app->coreapplication.name);
   }else{
     TCHAR modulepath[MAX_PATH];
-    GetModuleFileName(NULL, modulepath, MAX_PATH);
-    NAString* utf8modulepath = naNewStringFromSystemString(modulepath);
-
+    NAString* utf8modulepath;
     NAURL url;
+    NAString* applicationname;
+    NAString* applicationbasename;
+
+    GetModuleFileName(NULL, modulepath, MAX_PATH);
+    utf8modulepath = naNewStringFromSystemString(modulepath);
+
     naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8modulepath));
     naDelete(utf8modulepath);
-    NAString* applicationname = naNewStringWithURLFilename(&url);
-    NAString* applicationbasename = naNewStringWithBasenameOfFilename(applicationname);
+    applicationname = naNewStringWithURLFilename(&url);
+    applicationbasename = naNewStringWithBasenameOfFilename(applicationname);
     naClearURL(&url);
     naDelete(applicationname);
 

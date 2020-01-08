@@ -116,6 +116,8 @@ NABool naHandleTextFieldReverseTabOrder(NAReaction reaction){
 NA_DEF NATextField* naNewTextField(NASize size){
  HWND hWnd;
  DWORD style;
+ WNDPROC oldproc;
+
  NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
  NAWINAPITextField* winapitextfield = naAlloc(NAWINAPITextField);
@@ -129,7 +131,7 @@ NA_DEF NATextField* naNewTextField(NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
  
- WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+ oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
  if(!app->oldTextFieldWindowProc){app->oldTextFieldWindowProc = oldproc;}
 
  naInitCoreTextField(&(winapitextfield->coretextfield), hWnd);

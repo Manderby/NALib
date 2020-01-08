@@ -15,6 +15,9 @@
 
 
 NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeimage){
+  BYTE* lpPixels;
+  NABabyImage* babyimage;
+
   HDC hdcSource = GetDC(NA_NULL); // the source device context
   HBITMAP hSource = (HBITMAP)nativeimage; // the bitmap selected into the device context
 
@@ -25,7 +28,7 @@ NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeimage){
   GetDIBits(hdcSource, hSource, 0, 0, NULL, &MyBMInfo, DIB_RGB_COLORS);
 
   // create the pixel buffer
-  BYTE* lpPixels = naMalloc(MyBMInfo.bmiHeader.biSizeImage);
+  lpPixels = naMalloc(MyBMInfo.bmiHeader.biSizeImage);
 
   MyBMInfo.bmiHeader.biBitCount = 32;
   MyBMInfo.bmiHeader.biCompression = BI_RGB;  // no compression -> easier to use
@@ -34,7 +37,7 @@ NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeimage){
   // bitmap data (the "pixels") in the buffer lpPixels
   GetDIBits(hdcSource, hSource, 0, MyBMInfo.bmiHeader.biHeight, lpPixels, &MyBMInfo, DIB_RGB_COLORS);
 
-  NABabyImage* babyimage = naCreateBabyImage(naMakeSizei(MyBMInfo.bmiHeader.biWidth, MyBMInfo.bmiHeader.biHeight), NA_NULL);
+  babyimage = naCreateBabyImage(naMakeSizei(MyBMInfo.bmiHeader.biWidth, MyBMInfo.bmiHeader.biHeight), NA_NULL);
   // Windows does store an alpha component but it is not in use and therefore zero.
   // We therefore ignore it in the following call and receyve a completely opaque image.
   naFillBabyImageWithUInt8(babyimage, lpPixels, NA_FALSE, NA_COLOR_BUFFER_BGR0);
@@ -57,6 +60,7 @@ NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
 
 
 NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
+  HBITMAP hNewBitmap;
 
   NASizei size = naGetBabyImageSize(image);
   NAByte* buffer = naMalloc(size.width * size.height * 4);
@@ -64,7 +68,7 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
 
   naConvertBabyImageToUInt8(image, buffer, NA_TRUE, NA_COLOR_BUFFER_BGRA);
 
-  HBITMAP hNewBitmap = CreateBitmap((int)size.width, (int)size.height, 1, 32, buffer);
+  hNewBitmap = CreateBitmap((int)size.width, (int)size.height, 1, 32, buffer);
   naFree(buffer);
 
   return hNewBitmap;

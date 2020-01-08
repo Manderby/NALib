@@ -80,13 +80,16 @@ NAWINAPICallbackInfo naCheckBoxWINAPINotify(NAUIElement* uielement, WORD notific
 NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
   HWND hWnd;
   DWORD style;
+  TCHAR* systemtext;
+  WNDPROC oldproc;
+
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
   NAWINAPICheckBox* winapicheckbox = naAlloc(NAWINAPICheckBox);
 
   style = WS_CHILD | WS_VISIBLE | BS_LEFT | BS_VCENTER | BS_TEXT | BS_CHECKBOX;
 
-  TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
+  systemtext = naAllocSystemStringWithUTF8String(text);
 
 	hWnd = CreateWindow(
 		TEXT("BUTTON"), systemtext, style,
@@ -95,7 +98,7 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
 
   naFree(systemtext);
 
-  WNDPROC oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
+  oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldCheckBoxWindowProc){app->oldCheckBoxWindowProc = oldproc;}
 
   naInitCoreCheckBox(&(winapicheckbox->corecheckbox), hWnd);

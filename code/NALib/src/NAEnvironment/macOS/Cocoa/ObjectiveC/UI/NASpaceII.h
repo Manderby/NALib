@@ -71,9 +71,9 @@ NA_DEF void naDestructSpace(NASpace* space){
 
 NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
   naDefineCocoaObject(NACocoaSpace, cocoaSpace, space);
-  NSRect frame = [subview frame];
+  NSRect frame = naMakeNSRectWithRect(rect);
   frame.origin = NSMakePoint(0, 0);
-  [subview setFrame: frame];
+  [cocoaSpace setFrame: frame];
 }
 
 

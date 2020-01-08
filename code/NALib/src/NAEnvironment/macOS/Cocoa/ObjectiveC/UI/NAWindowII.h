@@ -80,8 +80,6 @@
   }
 }
 - (void)mouseMoved:(NSEvent*)event{
-//  double deltaX = [event deltaX];
-//  double deltaY = [event deltaY];
   naSetMouseMovedByDiff([event deltaX], -[event deltaY]);
   naDispatchUIElementCommand((NACoreUIElement*)corewindow, NA_UI_COMMAND_MOUSE_MOVED);
 //  [NSEvent setMouseCoalescingEnabled:NO];

@@ -78,6 +78,11 @@ NA_IAPI void naRunThread(NAThread thread);
 NA_IAPI NAMutex naMakeMutex(void);
 NA_IAPI void naClearMutex(NAMutex mutex);
 
+// Fallback on older Visual Studio compilers
+#if !defined _When_
+  #define _When_(expr, annolist)
+#endif
+
 // Locks and unlocks a mutex. Waiting threads wait forever.
 #if (NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
 _When_(NA_TRUE, _Acquires_lock_(windowsmutex->mutex))
