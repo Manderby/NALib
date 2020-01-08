@@ -26,6 +26,7 @@ Version 24 (not officially released yet)
 - fixing lots of warnings, static code analysis, and using cppcheck
 - Switching to tag-based release cycles
 - Reordering the files and folders into a more general purpose way.
+- Adding Leap second information according bulletin C 58 and C 59
 
 
 Version 23 (first published 2019-Jun-30)
