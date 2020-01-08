@@ -11,7 +11,8 @@ This file contains information about changes in the package NALib. These are
 purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
-Version 24 (not officially released yet)
+
+Version 24 (released 2020-Jan-09)
 ==========
 
 - Adding GUI. For Mac and Windows. Yeah Baby!
