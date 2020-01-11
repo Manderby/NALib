@@ -148,9 +148,6 @@ NA_DEF NABuffer* naNewBufferExtraction(NABuffer* srcbuffer, NAInt offset, NAInt 
 
   absoluterange = naMakeRangeiAbsolute(offset, length, srcbuffer->range);
 
-  buffer->source = NA_NULL;
-  buffer->sourceoffset = 0;
-
   buffer->range = naMakeRangei(0, absoluterange.length);
   buffer->flags |= NA_BUFFER_FLAG_RANGE_FIXED;
 
@@ -581,6 +578,8 @@ NA_DEF NABool naEqualBufferToBuffer(const NABuffer* buffer1, const NABuffer* buf
     remainingbytes1 = naGetBufferPartRemainingBytes(&iter1);
     remainingbytes2 = naGetBufferPartRemainingBytes(&iter2);
     remainingbytes = naMini(remainingbytes1, remainingbytes2);
+    naPrepareBuffer(&iter1, remainingbytes);
+    naPrepareBuffer(&iter2, remainingbytes);
     bufferbytes1 = naGetBufferPartDataPointerConst(&iter1);
     bufferbytes2 = naGetBufferPartDataPointerConst(&iter2);
 
