@@ -228,7 +228,7 @@ NA_API NABool naEqualStringToString(            const NAString* string1,
                                                          NABool casesensitive);
 // Compares a string with a C string literal and returns NA_TRUE if they are
 // equal.
-NA_API NABool naEqualStringToUTF8CStringLiteral(const NAString* string1,
+NA_API NABool naEqualStringToUTF8CString(const NAString* string1,
                                               const NAUTF8Char* string2,
                                                          NABool casesensitive);
 

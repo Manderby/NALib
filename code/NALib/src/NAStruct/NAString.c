@@ -475,11 +475,11 @@ NA_DEF NAString* naNewStringXMLDecoded(const NAString* inputstring){
     NAUTF8Char curchar = naReadBufferi8(&iter);
     if(curchar == '&'){
       NAString* token = naParseBufferTokenWithDelimiter(&iter, ';');
-      if     (naEqualStringToUTF8CStringLiteral(token, "amp",   NA_TRUE)){naWriteBufferi8(&outiter, '&');}
-      else if(naEqualStringToUTF8CStringLiteral(token, "lt",    NA_TRUE)){naWriteBufferi8(&outiter, '<');}
-      else if(naEqualStringToUTF8CStringLiteral(token, "gt",    NA_TRUE)){naWriteBufferi8(&outiter, '>');}
-      else if(naEqualStringToUTF8CStringLiteral(token, "quot",  NA_TRUE)){naWriteBufferi8(&outiter, '\"');}
-      else if(naEqualStringToUTF8CStringLiteral(token, "apos",  NA_TRUE)){naWriteBufferi8(&outiter, '\'');}
+      if     (naEqualStringToUTF8CString(token, "amp",   NA_TRUE)){naWriteBufferi8(&outiter, '&');}
+      else if(naEqualStringToUTF8CString(token, "lt",    NA_TRUE)){naWriteBufferi8(&outiter, '<');}
+      else if(naEqualStringToUTF8CString(token, "gt",    NA_TRUE)){naWriteBufferi8(&outiter, '>');}
+      else if(naEqualStringToUTF8CString(token, "quot",  NA_TRUE)){naWriteBufferi8(&outiter, '\"');}
+      else if(naEqualStringToUTF8CString(token, "apos",  NA_TRUE)){naWriteBufferi8(&outiter, '\'');}
       else{
         #ifndef NDEBUG
           naError("Could not decode entity");
@@ -711,7 +711,7 @@ NA_DEF NABool naEqualStringToString(const NAString* string1, const NAString* str
 
 
 
-NA_DEF NABool naEqualStringToUTF8CStringLiteral(const NAString* string1, const NAUTF8Char* string2, NABool casesensitive){
+NA_DEF NABool naEqualStringToUTF8CString(const NAString* string1, const NAUTF8Char* string2, NABool casesensitive){
   return naEqualBufferToData(string1->buffer, string2, naStrlen(string2), casesensitive);
 }
 

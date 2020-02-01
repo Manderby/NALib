@@ -324,7 +324,7 @@ NA_DEF int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str){
   int32 i;
   int32 monthindex = -1;
   for(i = 0; i < NA_MONTHS_PER_YEAR; i++){
-    if(naEqualStringToUTF8CStringLiteral(str, na_monthenglishabbreviationnames[i], NA_TRUE)){
+    if(naEqualStringToUTF8CString(str, na_monthenglishabbreviationnames[i], NA_TRUE)){
       monthindex = i;
       break;
     }

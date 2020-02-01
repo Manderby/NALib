@@ -107,7 +107,6 @@
     <ClInclude Include="src\NAMath\NAComplexII.h" />
     <ClInclude Include="src\NAMath\NACoordII.h" />
     <ClInclude Include="src\NAMath\NAMathOperatorsII.h" />
-    <ClInclude Include="src\NAMath\NAMoneyII.h" />
     <ClInclude Include="src\NAMath\NARandomII.h" />
     <ClInclude Include="src\NAMath\NAVectorAlgebraII.h" />
     <ClInclude Include="src\NAMath\NAVectorAlgebra\NAHomogeneousCoordinates.h" />
@@ -125,7 +124,6 @@
     <ClInclude Include="src\NAMath\NAVectorAlgebra\NAVectorGeometry.h" />
     <ClInclude Include="src\NAMath\NAVectorAlgebra\NAVectorProducts.h" />
     <ClInclude Include="src\NAMemory.h" />
-    <ClInclude Include="src\NAMoney.h" />
     <ClInclude Include="src\NAPNG.h" />
     <ClInclude Include="src\NAPool.h" />
     <ClInclude Include="src\NAPreferences.h" />
@@ -175,7 +173,6 @@
     <ClCompile Include="src\NAEnvironment\NAUICore.c" />
     <ClCompile Include="src\NAEnvironment\NAUIImage.c" />
     <ClCompile Include="src\NAEnvironment\Windows\WINAPI\NAUIWINAPI.c" />
-    <ClCompile Include="src\NAMath\NAMoney.c" />
     <ClCompile Include="src\NAStruct\NABuffer\NABuffer.c" />
     <ClCompile Include="src\NAStruct\NABuffer\NABufferIteration.c" />
     <ClCompile Include="src\NAStruct\NABuffer\NABufferManipulation.c" />
