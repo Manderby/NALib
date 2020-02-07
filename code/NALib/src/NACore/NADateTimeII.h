@@ -92,18 +92,7 @@ NA_IDEF NABool naIsLeapYear(int64 year){
 
 
 
-NA_IDEF NADateTime naMakeDateTimeWithNALibSecondNumber(int64 secondnumber){
-  NADateTime datetime;
-  datetime.sisec = secondnumber;
-  datetime.nsec = 0;
-  datetime.shift = 0;
-  datetime.errornum = NA_DATETIME_ERROR_NONE;
-  datetime.flags = 0;
-  return datetime;
-}
-
-
-NA_IDEF NADateTime naMakeDateTimeWithValues(int64 year, int32 mon, int32 day, int32 hour, int32 min, int32 sec){
+NA_IDEF NADateTime naMakeDateTime(int64 year, int32 mon, int32 day, int32 hour, int32 min, int32 sec){
   NADateTimeStruct dts;
   dts.year = year;
   dts.mon = mon - 1;
@@ -118,6 +107,17 @@ NA_IDEF NADateTime naMakeDateTimeWithValues(int64 year, int32 mon, int32 day, in
   return naMakeDateTimeWithDateTimeStruct(&dts);
 }
 
+
+
+NA_IDEF NADateTime naMakeDateTimeWithNALibSecondNumber(int64 secondnumber){
+  NADateTime datetime;
+  datetime.sisec = secondnumber;
+  datetime.nsec = 0;
+  datetime.shift = 0;
+  datetime.errornum = NA_DATETIME_ERROR_NONE;
+  datetime.flags = 0;
+  return datetime;
+}
 
 
 

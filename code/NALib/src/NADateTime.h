@@ -105,6 +105,22 @@ NA_IAPI NABool naIsLeapYear            (int64 year);
 
 
 
+// Creates a new NADateTime struct with the given values. This function is a
+// convenience function which is easy to use and implement.
+//
+// The mon and day values are expected 1-indexed (1 is January or the first
+// day of the month respectively). This is in contrast to the NADateTimeStruct
+// where mon and day always are expressed 0-indexed. The timezone is set to
+// the global setting, see below. If you want to set the timezone manually or
+// provide any additional information, use the constructor with the
+// NADateTimeStruct as an argument instead, it is much more powerful.
+NA_IAPI NADateTime naMakeDateTime(  int64 year,
+                                    int32 mon,
+                                    int32 day,
+                                    int32 hour,
+                                    int32 min,
+                                    int32 sec);
+
 // Returns an NADateTime struct with the current system clock including the
 // systems timezone. Note that an NADateTime does not require naClearXXX upon
 // deletion!
@@ -119,22 +135,6 @@ NA_IAPI NADateTime naMakeDateTimeWithNALibSecondNumber(int64 secondnumber);
 
 // Create a new NADateTime struct with the values provided.
 NA_API NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts);
-
-// Creates a new NADateTime struct with the given values. This function is a
-// convenience function which is easy to use and implement.
-//
-// The mon and day values are expected 1-indexed (1 is January or the first
-// day of the month respectively). This is in contrast to the NADateTimeStruct
-// where mon and day always are expressed 0-indexed. The timezone is set to
-// the global setting, see below. If you want to set the timezone manually or
-// provide any additional information, use the constructor with the
-// NADateTimeStruct as an argument instead, it is much more powerful.
-NA_IAPI NADateTime naMakeDateTimeWithValues(  int64 year,
-                                              int32 mon,
-                                              int32 day,
-                                              int32 hour,
-                                              int32 min,
-                                              int32 sec);
 
 // Creates a new NADateTime struct from a given string with a given format.
 NA_API NADateTime naMakeDateTimeFromString( const NAString* string,
