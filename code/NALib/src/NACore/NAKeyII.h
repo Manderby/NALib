@@ -8,6 +8,7 @@
 // including "NAKey.h"
 
 #include "NACoord.h"
+#include "NADateTime.h"
 
 
 
@@ -30,9 +31,6 @@ NA_IDEF NABool NA_KEY_OP(Greater, double)(const void*
 a, const void* b){
   return *(const double*)a > *(const double*)b;
 }
-NA_IDEF void NA_KEY_OP(Add, double)(void* dst, const void* src1, const void* src2){
-  *(double*)dst = *(const double*)src1 + *(const double*)src2;
-}
 
 
 
@@ -53,9 +51,6 @@ NA_IDEF NABool NA_KEY_OP(GreaterEqual, float)(const void* a, const void* b){
 }
 NA_IDEF NABool NA_KEY_OP(Greater, float)(const void* a, const void* b){
   return *(const float*)a > *(const float*)b;
-}
-NA_IDEF void NA_KEY_OP(Add, float)(void* dst, const void* src1, const void* src2){
-  *(float*)dst = *(const float*)src1 + *(const float*)src2;
 }
 
 
@@ -78,9 +73,6 @@ NA_IDEF NABool NA_KEY_OP(GreaterEqual, NAInt)(const void* a, const void* b){
 NA_IDEF NABool NA_KEY_OP(Greater, NAInt)(const void* a, const void* b){
   return *(const NAInt*)a > *(const NAInt*)b;
 }
-NA_IDEF void NA_KEY_OP(Add, NAInt)(void* dst, const void* src1, const void* src2){
-  *(NAInt*)dst = *(const NAInt*)src1 + *(const NAInt*)src2;
-}
 
 
 
@@ -101,13 +93,6 @@ NA_IDEF NABool NA_KEY_OP(GreaterEqual, NAPos)(const void* a, const void* b){
 }
 NA_IDEF NABool NA_KEY_OP(Greater, NAPos)(const void* a, const void* b){
   return naGreaterPos(*(const NAPos*)a, *(const NAPos*)b);
-}
-NA_IDEF void NA_KEY_OP(Add, NAPos)(void* dst, const void* src1, const void* src2){
-  NAPos* dstPos = (NAPos*)dst; 
-  NAPos* src1Pos = (NAPos*)src1; 
-  NAPos* src2Pos = (NAPos*)src2; 
-  dstPos->x = src1Pos->x + src2Pos->x;
-  dstPos->y = src1Pos->y + src2Pos->y;
 }
 
 
@@ -130,13 +115,42 @@ NA_IDEF NABool NA_KEY_OP(GreaterEqual, NAVertex)(const void* a, const void* b){
 NA_IDEF NABool NA_KEY_OP(Greater, NAVertex)(const void* a, const void* b){
   return naGreaterVertex(*(const NAVertex*)a, *(const NAVertex*)b);
 }
-NA_IDEF void NA_KEY_OP(Add, NAVertex)(void* dst, const void* src1, const void* src2){
-  NAVertex* dstVertex = (NAVertex*)dst; 
-  NAVertex* src1Vertex = (NAVertex*)src1; 
-  NAVertex* src2Vertex = (NAVertex*)src2; 
-  dstVertex->x = src1Vertex->x + src2Vertex->x;
-  dstVertex->y = src1Vertex->y + src2Vertex->y;
-  dstVertex->z = src1Vertex->z + src2Vertex->z;
+
+
+
+NA_IDEF void NA_KEY_OP(Assign, NADateTime)(void* dst, const void* src){
+  NADateTime* dstDateTime = (NADateTime*)dst; 
+  const NADateTime* srcDateTime = (const NADateTime*)src; 
+  *dstDateTime = *srcDateTime;
+}
+NA_IDEF NABool NA_KEY_OP(Lower, NADateTime)(const void* a, const void* b){
+  const NADateTime* aDateTime = (const NADateTime*)a; 
+  const NADateTime* bDateTime = (const NADateTime*)b; 
+  return (aDateTime->sisec < bDateTime->sisec)
+    || ((aDateTime->sisec == bDateTime->sisec) && (aDateTime->nsec < bDateTime->nsec));
+}
+NA_IDEF NABool NA_KEY_OP(LowerEqual, NADateTime)(const void* a, const void* b){
+  const NADateTime* aDateTime = (const NADateTime*)a; 
+  const NADateTime* bDateTime = (const NADateTime*)b; 
+  return (aDateTime->sisec <= bDateTime->sisec)
+    || ((aDateTime->sisec == bDateTime->sisec) && (aDateTime->nsec <= bDateTime->nsec));
+}
+NA_IDEF NABool NA_KEY_OP(Equal, NADateTime)(const void* a, const void* b){
+  const NADateTime* aDateTime = (const NADateTime*)a; 
+  const NADateTime* bDateTime = (const NADateTime*)b; 
+  return (aDateTime->sisec == bDateTime->sisec) && (aDateTime->nsec == bDateTime->nsec);
+}
+NA_IDEF NABool NA_KEY_OP(GreaterEqual, NADateTime)(const void* a, const void* b){
+  const NADateTime* aDateTime = (const NADateTime*)a; 
+  const NADateTime* bDateTime = (const NADateTime*)b; 
+  return (aDateTime->sisec >= bDateTime->sisec)
+    || ((aDateTime->sisec == bDateTime->sisec) && (aDateTime->nsec >= bDateTime->nsec));
+}
+NA_IDEF NABool NA_KEY_OP(Greater, NADateTime)(const void* a, const void* b){
+  const NADateTime* aDateTime = (const NADateTime*)a; 
+  const NADateTime* bDateTime = (const NADateTime*)b; 
+  return (aDateTime->sisec > bDateTime->sisec)
+    || ((aDateTime->sisec == bDateTime->sisec) && (aDateTime->nsec > bDateTime->nsec));
 }
 
 

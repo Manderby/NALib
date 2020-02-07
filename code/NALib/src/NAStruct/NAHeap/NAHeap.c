@@ -42,6 +42,10 @@
     #define NA_T_TYPE NAInt
       #include "NAHeapT.h"
     #undef NA_T_TYPE
+
+    #define NA_T_TYPE NADateTime
+      #include "NAHeapT.h"
+    #undef NA_T_TYPE
   #undef NA_T_DONT_MOVE_DOWN_COMPARATOR
   #undef NA_T_DONT_MOVE_UP_COMPARATOR
 
@@ -56,6 +60,10 @@
     #undef NA_T_TYPE
 
     #define NA_T_TYPE NAInt
+      #include "NAHeapT.h"
+    #undef NA_T_TYPE
+
+    #define NA_T_TYPE NADateTime
       #include "NAHeapT.h"
     #undef NA_T_TYPE
   #undef NA_T_DONT_MOVE_DOWN_COMPARATOR
@@ -76,6 +84,10 @@
     #define NA_T_TYPE NAInt
       #include "NAHeapT.h"
     #undef NA_T_TYPE
+
+    #define NA_T_TYPE NADateTime
+      #include "NAHeapT.h"
+    #undef NA_T_TYPE
   #undef NA_T_DONT_MOVE_DOWN_COMPARATOR
   #undef NA_T_DONT_MOVE_UP_COMPARATOR
 
@@ -90,6 +102,10 @@
     #undef NA_T_TYPE
 
     #define NA_T_TYPE NAInt
+      #include "NAHeapT.h"
+    #undef NA_T_TYPE
+
+    #define NA_T_TYPE NADateTime
       #include "NAHeapT.h"
     #undef NA_T_TYPE
   #undef NA_T_DONT_MOVE_DOWN_COMPARATOR
@@ -463,6 +479,15 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
         heap->moveup   = NA_T3(naHeapMoveUp,   Lower,   NAInt, 0);
       }
       break;
+    case NA_HEAP_USES_DATETIME_KEY:
+      if(flags & NA_HEAP_IS_MAX_HEAP){
+        heap->movedown = NA_T3(naHeapMoveDown, Lower,   NADateTime, 0);
+        heap->moveup   = NA_T3(naHeapMoveUp,   Greater, NADateTime, 0);
+      }else{
+        heap->movedown = NA_T3(naHeapMoveDown, Greater, NADateTime, 0);
+        heap->moveup   = NA_T3(naHeapMoveUp,   Lower,   NADateTime, 0);
+      }
+      break;
     default:
       #ifndef NDEBUG
         naCrash("flag combination not implemented.");
@@ -515,6 +540,15 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
       }else{
         heap->movedown = NA_T3(naHeapMoveDown, Greater, NAInt, 1);
         heap->moveup   = NA_T3(naHeapMoveUp,   Lower,   NAInt, 1);
+      }
+      break;
+    case NA_HEAP_USES_DATETIME_KEY:
+      if(flags & NA_HEAP_IS_MAX_HEAP){
+        heap->movedown = NA_T3(naHeapMoveDown, Lower,   NADateTime, 1);
+        heap->moveup   = NA_T3(naHeapMoveUp,   Greater, NADateTime, 1);
+      }else{
+        heap->movedown = NA_T3(naHeapMoveDown, Greater, NADateTime, 1);
+        heap->moveup   = NA_T3(naHeapMoveUp,   Lower,   NADateTime, 1);
       }
       break;
     default:

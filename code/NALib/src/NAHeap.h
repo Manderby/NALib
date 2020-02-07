@@ -70,6 +70,7 @@ typedef struct NAHeap NAHeap;
 #define NA_HEAP_USES_DOUBLE_KEY       0x0000
 #define NA_HEAP_USES_FLOAT_KEY        0x0001
 #define NA_HEAP_USES_NAINT_KEY        0x0002
+#define NA_HEAP_USES_DATETIME_KEY     0x0003
 #define NA_HEAP_DATATYPE_MASK         0x0003
 // Use the following flags to define if the heap shall be a min- or a max-heap.
 // If this flag is 0 or not present, the heap will be a min-heap.

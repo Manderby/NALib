@@ -21,8 +21,10 @@
 #include TRYOUT_NALIB_PATH(NAHeap.h)
 #include TRYOUT_NALIB_PATH(NARandom.h)
 
-#define TESTSIZE    100000
+#define TESTSIZE    1000000
 #define SUBTESTSIZE  10000.
+
+#define KEYTYPE double
 
 int compare(const void* a, const void* b)
 {
@@ -170,6 +172,54 @@ void testTree(){
 
 
 
+#include TRYOUT_NALIB_PATH(NAKey.h)
+
+void testDateTimeHeap(){
+  NAHeap heap;
+  NADateTime t1;
+  NADateTime t2;
+  NADateTime t3;
+  int i;
+  NADateTime prevkey = naMakeDateTimeWithNALibSecondNumber(-1E20);
+  NADateTime* keys;
+
+  keys = (NADateTime*)naMalloc(TESTSIZE * sizeof(NADateTime));
+  for(i = 0; i < TESTSIZE; i++){
+    keys[i] = naMakeDateTimeWithNALibSecondNumber((int64)(naUniformRandZE() * 1.E12 - 1.E11));
+  }
+
+  naInitHeap(&heap, -1, NA_HEAP_USES_DATETIME_KEY);
+  
+  t1 = naMakeDateTimeNow();
+  for(i = 0; i < TESTSIZE; i++){
+    naInsertHeapElementConst(&heap, &(keys[i]), &(keys[i]), NA_NULL);
+  }
+
+  t2 = naMakeDateTimeNow();
+
+  for(i = 0; i < TESTSIZE; i++){
+    const NADateTime* curkey = naRemoveHeapRootConst(&heap);
+    if(NA_KEY_OP(Greater, NADateTime)(&prevkey, curkey)){
+      printf("Error in sorting");
+    }
+    prevkey = *curkey;
+    //NAString* datestring = naNewStringWithDateTime(curkey, NA_DATETIME_FORMAT_NATURAL);
+    //printf("%s\n", naGetStringUTF8Pointer(datestring));
+    //naDelete(datestring);
+  }
+
+  t3 = naMakeDateTimeNow();
+
+  printf("Heap Insert: %f\n", naGetDateTimeDifference(&t2, &t1));
+  printf("Heap Iterate: %f\n", naGetDateTimeDifference(&t3, &t2));
+
+  naClearHeap(&heap);
+  
+  naFree(keys);
+}
+
+
+
 
 #include <stdio.h>
 
@@ -186,6 +236,9 @@ int main(void){
   printf("%d Bits Addresses, %d Bits Integers)\n", NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
   naStartRuntime();
+
+    testDateTimeHeap();
+
     keys = (double*)naMalloc(TESTSIZE * sizeof(double));
     for(i = 0; i < TESTSIZE; i++){
       keys[i] = naUniformRandZE();

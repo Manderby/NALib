@@ -38,7 +38,22 @@ int main(void){
     NA_UNUSED(getchar());
   #endif
 
+
+  naTestGroup(testArray);
+  naSpeedTestGroup(speedArray);
+  naMemoryTestGroup(memoryArray);
+
+
   return 0;
+}
+
+
+void testArray(){
+  naTestActivate(NA_TRUE);
+  testArrayCreation()
+  testArrayDeletion();
+  naTestActivate(NA_FALSE);
+  testArrayIteration();
 }
 
 
