@@ -134,51 +134,49 @@ NA_IAPI NABool naIsInfinite(double x){
   #endif
 }
 
-
-
 NA_IDEF float naMinf(float a, float b){
-  return (a<b)?a:b;
+  return (a < b) ? a : b;
 }
 NA_IDEF double naMin(double a, double b){
-  return (a<b)?a:b;
+  return (a < b) ? a : b;
 }
 NA_IDEF NAInt naMini(NAInt a, NAInt b){
-  return (a<b)?a:b;
+  return (a < b) ? a : b;
 }
 NA_IDEF int8 naMini8(int8 a, int8 b){
-  return (a<b)?a:b;
+  return (a < b) ? a : b;
 }
 NA_IDEF int16 naMini16(int16 a, int16 b){
-  return (a<b)?a:b;
+  return (a < b) ? a : b;
 }
 NA_IDEF int32 naMini32(int32 a, int32 b){
-  return (a<b)?a:b;
+  return (a < b) ? a : b;
 }
-NA_IDEF int64 naMini64(int64 a, int64 b){
-  return naSmallerInt64(a,b)?a:b;
+NA_IDEF NAInt64 naMini64(NAInt64 a, NAInt64 b){
+  return naSmallerInt64(a, b) ? a : b;
 }
 
 
 NA_IDEF float naMaxf(float a, float b){
-  return (a>b)?a:b;
+  return (a > b) ? a : b;
 }
 NA_IDEF double naMax(double a, double b){
-  return (a>b)?a:b;
+  return (a > b) ? a : b;
 }
 NA_IDEF NAInt naMaxi(NAInt a, NAInt b){
-  return (a>b)?a:b;
+  return (a > b) ? a : b;
 }
 NA_IDEF int8 naMaxi8(int8 a, int8 b){
-  return (a>b)?a:b;
+  return (a > b) ? a : b;
 }
 NA_IDEF int16 naMaxi16(int16 a, int16 b){
-  return (a>b)?a:b;
+  return (a > b) ? a : b;
 }
 NA_IDEF int32 naMaxi32(int32 a, int32 b){
-  return (a>b)?a:b;
+  return (a > b) ? a : b;
 }
-NA_IDEF int64 naMaxi64(int64 a, int64 b){
-  return naGreaterInt64(a,b)?a:b;
+NA_IDEF NAInt64 naMaxi64(NAInt64 a, NAInt64 b){
+  return naGreaterInt64(a, b) ? a : b;
 }
 
 
@@ -462,8 +460,8 @@ NA_IDEF int32 naLog2i32(int32 x){
   while(x){retvalue++; x>>=1;}
   return retvalue;
 }
-NA_IDEF int64 naLog2i64(int64 x){
-  int64 retvalue;
+NA_IDEF NAInt64 naLog2i64(NAInt64 x){
+  NAInt64 retvalue;
   #ifndef NDEBUG
     if(naSmallerInt64(x, NA_ZERO_64))
       naError("Logarithm of negative number.");
@@ -514,7 +512,7 @@ NA_IDEF int32 naExp2i32(int32 x){
   #endif
   return NA_ONE_32 << x;
 }
-NA_IDEF int64 naExp2i64(int64 x){
+NA_IDEF NAInt64 naExp2i64(NAInt64 x){
   #ifndef NDEBUG
     if(naSmallerInt64(x, NA_ZERO_64))
       naError("Exponent negative. Will result in 0.");
@@ -549,8 +547,8 @@ NA_IDEF int32 naExp10i32(int32 x){
   while(x){i *= 10; x--;}
   return i;
 }
-NA_IDEF int64 naExp10i64(int64 x){
-  int64 i;
+NA_IDEF NAInt64 naExp10i64(NAInt64 x){
+  NAInt64 i;
   #ifndef NDEBUG
     if(naGreaterInt64(x, naMakeInt64WithLo(18)))
       naError("Exponent of 10 exceeds integer range.");
@@ -736,7 +734,7 @@ NA_IDEF NABool naInsidei32(int32 a, int32 b, int32 x){
   #endif
   return (!((x < a) || (x > b)));
 }
-NA_IDEF NABool naInsidei64(int64 a, int64 b, int64 x){
+NA_IDEF NABool naInsidei64(NAInt64 a, NAInt64 b, NAInt64 x){
   #ifndef NDEBUG
     if(naGreaterInt64(a, b))
       naError("a is greater b. Will always return FALSE");

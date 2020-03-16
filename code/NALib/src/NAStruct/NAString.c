@@ -741,8 +741,8 @@ NA_DEF int32 naParseStringInt32(const NAString* string){
   naClearBufferIterator(&iter);
   return retvalue;
 }
-NA_DEF int64 naParseStringInt64(const NAString* string){
-  int64 retvalue;
+NA_DEF NAInt64 naParseStringInt64(const NAString* string){
+  NAInt64 retvalue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
   retvalue = naParseBufferInt64(&iter, NA_FALSE);
@@ -775,8 +775,8 @@ NA_DEF uint32 naParseStringUInt32(const NAString* string){
   naClearBufferIterator(&iter);
   return retvalue;
 }
-NA_DEF uint64 naParseStringUInt64(const NAString* string){
-  uint64 retvalue;
+NA_DEF NAUInt64 naParseStringUInt64(const NAString* string){
+  NAUInt64 retvalue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
   retvalue = naParseBufferUInt64(&iter, NA_FALSE);

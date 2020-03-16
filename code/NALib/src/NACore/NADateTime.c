@@ -69,8 +69,8 @@ typedef enum{
 } NALeapSecondCorrectionIndicator;
 
 typedef struct{
-  int64 startgregsec;
-  int64 startsisec;
+  NAInt64 startgregsec;
+  NAInt64 startsisec;
   int16 gregyear;
   NALeapSecondCorrectionIndicator indicator;
 } NATAIPeriod;
@@ -241,16 +241,16 @@ NATAIPeriod naTAIPeriods[NA_TAI_PERIODS_COUNT] = {
 
 
 // Prototypes:
-NAInt naGetTAIPeriodIndexForSISecond(int64 sisecond);
-NAInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond);
+NAInt naGetTAIPeriodIndexForSISecond(NAInt64 sisecond);
+NAInt naGetLatestTAIPeriodIndexForGregorianSecond(NAInt64 gregsecond);
 NADateTime naMakeDateTimeNow(void);
 void naSetGlobalTimeShiftToSystemSettings(void);
-int64 naGetFirstUncertainSecondNumber(void);
+NAInt64 naGetFirstUncertainSecondNumber(void);
 
 
 
 
-NA_DEF NAInt naGetTAIPeriodIndexForSISecond(int64 sisecond){
+NA_DEF NAInt naGetTAIPeriodIndexForSISecond(NAInt64 sisecond){
   NAInt r;
   // First, check the last 3 TAI periods. There is a high probability that a
   // given date is within the last 3 entries. Three entries because the entry
@@ -285,7 +285,7 @@ NA_DEF NAInt naGetTAIPeriodIndexForSISecond(int64 sisecond){
 
 
 
-NA_DEF NAInt naGetLatestTAIPeriodIndexForGregorianSecond(int64 gregsecond){
+NA_DEF NAInt naGetLatestTAIPeriodIndexForGregorianSecond(NAInt64 gregsecond){
   NAInt r;
   // First, check the last 3 TAI periods. There is a high probability that a
   // given date is within the last 3 entries. Three entries because the entry
@@ -400,8 +400,8 @@ NA_DEF NADateTime naMakeDateTimeNow(){
 NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
   NADateTime datetime;
 
-  int64 remainingyears = dts->year;
-  int64 years4;
+  NAInt64 remainingyears = dts->year;
+  NAInt64 years4;
   NABool isleap;
   NACalendarSystem calendarsystem;
 
@@ -417,8 +417,8 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
     calendarsystem = NA_CALENDAR_JULIAN;
   }else{
     // gregorian system
-    int64 years400;
-    int64 years100;
+    NAInt64 years400;
+    NAInt64 years100;
     datetime.sisec = NA_DATETIME_SISEC_GREGORIAN_YEAR_ZERO;
     years400 = naDivInt64(remainingyears, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD);
     datetime.sisec = naAddInt64(datetime.sisec, naMulInt64(years400, NA_SECONDS_IN_400_YEAR_PERIOD));
@@ -794,7 +794,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
 
   NA_DEF NADateTime naMakeDateTimeFromFileTime(const FILETIME* filetime, const NATimeZone* timezn){
     NADateTime datetime;
-    int64 nanosecs = naCastUInt64ToInt64(naMakeUInt64(filetime->dwHighDateTime, filetime->dwLowDateTime));
+    NAInt64 nanosecs = naCastUInt64ToInt64(naMakeUInt64(filetime->dwHighDateTime, filetime->dwLowDateTime));
 
     datetime.errornum = NA_DATETIME_ERROR_NONE;
     datetime.nsec = naCastInt64ToInt32(naMulInt64(naModInt64(nanosecs, naMakeInt64WithLo(10000000)), naMakeInt64WithLo(100)));  // 100-nanosecond intervals.
@@ -864,7 +864,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
 
   NA_DEF NADateTime naMakeDateTimeFromTimeSpec(const struct timespec* timesp, const NATimeZone* timezn){
     NADateTime datetime;
-    int64 datetimesec;
+    NAInt64 datetimesec;
     datetime.errornum = NA_DATETIME_ERROR_NONE;
     #if NA_TYPE_NATIVE_LONG_INT_BITS == 32
       datetimesec = naMakeInt64WithLo((int32)timesp->tv_sec + naCastInt64ToInt32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO));
@@ -911,11 +911,11 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
 NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
                           NADateTimeStruct* dts,
                        NADateTimeAttribute* dta){
-  int64 remainingsecs;
-  int64 years400;
-  int64 years100;
-  int64 years4;
-  int64 remainingyears;
+  NAInt64 remainingsecs;
+  NAInt64 years400;
+  NAInt64 years100;
+  NAInt64 years4;
+  NAInt64 remainingyears;
   int32 dayofyear = 0;
   NABool isleapyear;
   NABool exception100;
@@ -1056,10 +1056,10 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
   if(dta){
     int32 d;
     int32 mon;
-    int64 firstterm;
-    int64 y;
-    int64 K;
-    int64 J;
+    NAInt64 firstterm;
+    NAInt64 y;
+    NAInt64 K;
+    NAInt64 J;
 
     // Fill the NADateTimeAttribute struct with every information we have.
     if(dts->shift < 0){
@@ -1107,7 +1107,7 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
 
 NA_DEF NAString* naNewStringFromSecondDifference(double difference,
                                                  uint8 decimaldigits){
-  int64 allseconds, powten, decimals;
+  NAInt64 allseconds, powten, decimals;
   uint8 seconds, minutes, hours;
   NAString* decimalstring;
   NAString* timestring;
@@ -1163,7 +1163,7 @@ NA_DEF NAString* naNewStringFromSecondDifference(double difference,
 
 
 
-NA_DEF NAInt naGetLeapSecondCorrectionConstant(int64 olduncertainsecondnumber){
+NA_DEF NAInt naGetLeapSecondCorrectionConstant(NAInt64 olduncertainsecondnumber){
   NAInt taiperiod;
   if(naSmallerInt64(olduncertainsecondnumber, NA_ZERO_64)){return NA_DATETIME_INVALID_UNCERTAIN_SECOND_NUMBER;}
   // Note that the last entry of the structure storing all TAI periods always
@@ -1199,7 +1199,7 @@ NA_DEF void naSetGlobalTimeShiftToSystemSettings(){
 
 
 
-NA_DEF int64 naGetFirstUncertainSecondNumber(){
+NA_DEF NAInt64 naGetFirstUncertainSecondNumber(){
   // The first uncertain second number is here defined to be the first second
   // of the last known TAI period.
   return naTAIPeriods[NA_TAI_PERIODS_COUNT-1].startsisec;

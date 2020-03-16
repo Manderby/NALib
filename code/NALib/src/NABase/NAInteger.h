@@ -32,7 +32,7 @@ typedef int NABool;
 // configuring this. Note that the test (_MSC_VER >= 1310) tests for
 // Visual Studio 7.1
 #if (defined NA_C99) || (defined NA_CPP11) || _MSC_VER >= 1310 || NA_TYPE_ASSUME_NATIVE_LONG_LONG
-  #define NA_COMPILE_WITH_LONG_LONG 1
+  #define NA_COMPILE_WITH_LONG_LONG 0
 #else
   #define NA_COMPILE_WITH_LONG_LONG 0
 #endif
@@ -388,8 +388,10 @@ typedef int NABool;
 	#define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
 #endif
 
-// We include the int64 macros after the type int64 has been defined.
+// We include the 64bit and 128bit emulation after the type int64
+// has been defined.
 #include "NAInt64.h"
+#include "NAInt128.h"
 
 // But in case, there was no int64 defined, we have to emulate it now.
 #if !defined NA_TYPE_INT64

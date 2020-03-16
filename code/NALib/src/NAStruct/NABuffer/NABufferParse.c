@@ -232,9 +232,9 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter){
 
 
 
-NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64* retint, NAInt maxdigitcount, uint64 max){
+NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAUInt64* retint, NAInt maxdigitcount, NAUInt64 max){
   NAInt bytesused;
-  uint64 prevval;
+  NAUInt64 prevval;
   NABool found = NA_FALSE;
   NAInt start = naGetBufferLocation(iter);
   NAInt end = start;
@@ -283,11 +283,11 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, uint64*
 
 
 
-NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, int64* retint, NAInt maxdigitcount, int64 min, int64 max){
-  int64 sign = NA_ONE_64;
+NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, NAInt64* retint, NAInt maxdigitcount, NAInt64 min, NAInt64 max){
+  NAInt64 sign = NA_ONE_64;
   NAInt bytesused = 0;
-  int64 limit = max;
-  uint64 intvalue;
+  NAInt64 limit = max;
+  NAUInt64 intvalue;
   const NAByte* curbyte;
 
   *retint = NA_ZERO_64;

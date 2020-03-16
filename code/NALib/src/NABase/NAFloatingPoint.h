@@ -137,12 +137,12 @@ NA_IAPI float  naMakeFloat (int32 signedsignificand, int32 signedexponent);
 NA_IAPI float  naMakeFloatWithExponent (int32 signedexponent);
 NA_IAPI float  naMakeFloatSubnormal (int32 signedsignificand);
 
-NA_IAPI double naMakeDouble(int64 signedsignificand, int32 signedexponent);
+NA_IAPI double naMakeDouble(NAInt64 signedsignificand, int32 signedexponent);
 NA_IAPI double naMakeDoubleWithExponent(int32 signedexponent);
-NA_IAPI double naMakeDoubleSubnormal(int64 signedsignificand);
+NA_IAPI double naMakeDoubleSubnormal(NAInt64 signedsignificand);
 
-NA_IAPI int32 naGetDoubleExponent(double d);
-NA_IAPI int64 naGetDoubleInteger(double d);
+NA_IAPI int32   naGetDoubleExponent(double d);
+NA_IAPI NAInt64 naGetDoubleInteger(double d);
 
 
 

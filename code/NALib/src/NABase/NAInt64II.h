@@ -8,8 +8,8 @@
 
 
 #if defined NA_TYPE_INT64
-  NA_IDEF int64 naMakeInt64WithLo(int32 lo){return (int64)lo;}
-  NA_IDEF int64 naMakeInt64WithDouble(double lo){return (int64)lo;}
+  NA_IDEF NAInt64 naMakeInt64WithLo(int32 lo){return (NAInt64)lo;}
+  NA_IDEF NAInt64 naMakeInt64WithDouble(double lo){return (NAInt64)lo;}
 #else
   #if NA_SIGNED_INTEGER_ENCODING != NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
 

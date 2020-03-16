@@ -10,11 +10,14 @@
 #if defined NA_TYPE_INT64
   // If there is a native int64 type available, use it.
 
+  #define NAInt64 int64
+  #define NAUInt64 uint64
+
   #define naMakeUInt64WithLiteralLo(lo) (lo ## uLL)
 
   // We declare these as inline functions to reduce warnings.
-  NA_IAPI int64 naMakeInt64WithLo       (int32 lo);
-  NA_IAPI int64 naMakeInt64WithDouble   (double lo);
+  NA_IAPI NAInt64 naMakeInt64WithLo       (int32 lo);
+  NA_IAPI NAInt64 naMakeInt64WithDouble   (double lo);
 
   #define naNegInt64(i)                 (-(i))
   #define naIncInt64(i)                 ((i)++)
@@ -41,15 +44,15 @@
   #define naCastInt64ToUInt8(i)         ((uint8)(i))
   #define naCastInt64ToUInt16(i)        ((uint16)(i))
   #define naCastInt64ToUInt32(i)        ((uint32)(i))
-  #define naCastInt64ToUInt64(i)        ((uint64)(i))
+  #define naCastInt64ToUInt64(i)        ((NAUInt64)(i))
   #define naCastInt64ToInt8(i)          ((int8)(i))
   #define naCastInt64ToInt16(i)         ((int16)(i))
   #define naCastInt64ToInt32(i)         ((int32)(i))
   #define naCastInt64ToDouble(i)        ((double)(i))
 
-  #define naMakeUInt64(hi, lo)          ((uint64)(((uint64)(hi) << 32) | (lo)))
-  #define naMakeUInt64WithLo(lo)        ((uint64)(lo))
-  #define naMakeUInt64WithDouble(d)     ((uint64)(d))
+  #define naMakeUInt64(hi, lo)          ((NAUInt64)(((NAUInt64)(hi) << 32) | (lo)))
+  #define naMakeUInt64WithLo(lo)        ((NAUInt64)(lo))
+  #define naMakeUInt64WithDouble(d)     ((NAUInt64)(d))
 
   #define naIncUInt64(i)                ((i)++)
   #define naDecUInt64(i)                ((i)--)
@@ -75,7 +78,7 @@
   #define naCastUInt64ToInt8(i)         ((int8)(i))
   #define naCastUInt64ToInt16(i)        ((int16)(i))
   #define naCastUInt64ToInt32(i)        ((int32)(i))
-  #define naCastUInt64ToInt64(i)        ((int64)(i))
+  #define naCastUInt64ToInt64(i)        ((NAInt64)(i))
   #define naCastUInt64ToUInt8(i)        ((uint8)(i))
   #define naCastUInt64ToUInt16(i)       ((uint16)(i))
   #define naCastUInt64ToUInt32(i)       ((uint32)(i))
