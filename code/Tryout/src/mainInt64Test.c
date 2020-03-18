@@ -125,7 +125,7 @@ void timeMaking(){
 
 
 void testBinary(){
-  int64 i = naMakeInt64WithDouble(-123456789012345.);
+  int64 i = naMakeInt64WithDouble(-123456789012345.); 
   int64 term = naCastUInt64ToInt64(naMakeUInt64(0x55555555, 0x55555555));
   uint64 ui = naMakeUInt64(0x12345678, 0x56473829);
   uint64 uterm = naMakeUInt64(0x55555555, 0x55555555);

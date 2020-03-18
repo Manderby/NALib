@@ -114,10 +114,11 @@
         if(n <= 32){
           retint.lo = a.lo >> n;
           retint.lo |= ((uint32)a.hi << (32 - n));
-          retint.hi = (uint32)a.hi >> n;
+          retint.hi = a.hi >> n;
         }else{
-          retint.lo = ((uint32)a.hi >> (n - 32));
-          retint.hi = (int32)((uint32)a.hi >> 31 >> 1); // Sign preservation!
+          uint32 signum = naGetSignum32(a.hi); // Sign preservation!
+          retint.lo = (int32)a.hi >> (n-32);
+          retint.hi = signum;
           // The splitting in >> 31 and >> 1 and the additional casts area required to silence
           // some compiler warnings.
         }

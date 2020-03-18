@@ -32,7 +32,7 @@ typedef int NABool;
 // configuring this. Note that the test (_MSC_VER >= 1310) tests for
 // Visual Studio 7.1
 #if (defined NA_C99) || (defined NA_CPP11) || _MSC_VER >= 1310 || NA_TYPE_ASSUME_NATIVE_LONG_LONG
-  #define NA_COMPILE_WITH_LONG_LONG 0
+  #define NA_COMPILE_WITH_LONG_LONG 1
 #else
   #define NA_COMPILE_WITH_LONG_LONG 0
 #endif
@@ -388,51 +388,6 @@ typedef int NABool;
 	#define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
 #endif
 
-// We include the 64bit and 128bit emulation after the type int64
-// has been defined.
-#include "NAInt64.h"
-#include "NAInt128.h"
-
-// But in case, there was no int64 defined, we have to emulate it now.
-#if !defined NA_TYPE_INT64
-  #define NA_UINT64_MAX  naMakeUInt64(NA_UINT32_MAX, NA_UINT32_MAX)
-  #define NA_INT64_MAX   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_INT32_MAX, NA_UINT32_MAX))
-  #define NA_INT64_MIN   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_INT32_MIN, 0x0))
-  typedef NAInt64        int64;
-  typedef NAUInt64       uint64;
-  #define NA_ZERO_64     (naMakeInt64WithLo(0))
-  #define NA_ONE_64      (naMakeInt64WithLo(1))
-  #define NA_ZERO_64u    (naMakeUInt64WithLo(0))
-  #define NA_ONE_64u     (naMakeUInt64WithLo(1))
-  #define NA_PRIi64      "d CANTSHOWi64 "
-  #define NA_PRIu64      "u CANTSHOWi64 "
-  #define NA_PRIx64      "x CANTSHOWi64 "
-  #define NA_SCNi64      "d CANTSHOWi64 "
-  #define NA_SCNu64      "u CANTSHOWi64 "
-#endif
-
-#ifndef NA_ZERO_64u
-  #define NA_ZERO_64u NA_ZERO_64
-#endif
-#ifndef NA_ONE_64u
-  #define NA_ONE_64u NA_ONE_64
-#endif
-
-
-// An NAByte is a type definition of a Byte.
-//
-// Defining an NAByte as an uint8 can be very handy. In NALib, the NAByte type
-// is often used when a memory block needs to be accessed byte by byte. You
-// could also use a void-pointer for that but void-pointers are sometimes just
-// a little too cumbersome to work with and do not always have a bytesize
-// defined depending on the standard used. Furthermore, a pointer to an uint8
-// can be displayed by a debugger while a pointer to void can not.
-// Why not using the signed variant? Because there are many implementations
-// using enumerations which go beyound 127 and do not want to use negative
-// numbers.
-typedef uint8 NAByte;
-
-
 // NAInt and NAUInt
 //
 // The NAInt type is the default integer used in NALib. Up until version 20,
@@ -504,6 +459,36 @@ typedef uint8 NAByte;
   #error "NA_PREFERRED_NAINT_BITS has an invalid value"
 #endif
 
+// We include the 64bit and 128bit emulation after the type int64
+// has been defined.
+#include "NAInt64.h"
+#include "NAInt128.h"
+
+// But in case, there was no int64 defined, we have to emulate it now.
+#if !defined NA_TYPE_INT64
+  #define NA_UINT64_MAX  naMakeUInt64(NA_UINT32_MAX, NA_UINT32_MAX)
+  #define NA_INT64_MAX   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_INT32_MAX, NA_UINT32_MAX))
+  #define NA_INT64_MIN   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_INT32_MIN, 0x0))
+  typedef NAInt64        int64;
+  typedef NAUInt64       uint64;
+  #define NA_ZERO_64     (naMakeInt64WithLo(0))
+  #define NA_ONE_64      (naMakeInt64WithLo(1))
+  #define NA_ZERO_64u    (naMakeUInt64WithLo(0))
+  #define NA_ONE_64u     (naMakeUInt64WithLo(1))
+  #define NA_PRIi64      "d CANTSHOWi64 "
+  #define NA_PRIu64      "u CANTSHOWi64 "
+  #define NA_PRIx64      "x CANTSHOWi64 "
+  #define NA_SCNi64      "d CANTSHOWi64 "
+  #define NA_SCNu64      "u CANTSHOWi64 "
+#endif
+
+#ifndef NA_ZERO_64u
+  #define NA_ZERO_64u NA_ZERO_64
+#endif
+#ifndef NA_ONE_64u
+  #define NA_ONE_64u NA_ONE_64
+#endif
+
 
 
 #if NA_TYPE_NAINT_BITS == NA_TYPE64_BITS
@@ -551,6 +536,22 @@ typedef uint8 NAByte;
 #else
   #error "Can not define NAInt. Bit count not supported."
 #endif
+
+
+
+// An NAByte is a type definition of a Byte.
+//
+// Defining an NAByte as an uint8 can be very handy. In NALib, the NAByte type
+// is often used when a memory block needs to be accessed byte by byte. You
+// could also use a void-pointer for that but void-pointers are sometimes just
+// a little too cumbersome to work with and do not always have a bytesize
+// defined depending on the standard used. Furthermore, a pointer to an uint8
+// can be displayed by a debugger while a pointer to void can not.
+// Why not using the signed variant? Because there are many implementations
+// using enumerations which go beyound 127 and do not want to use negative
+// numbers.
+typedef uint8 NAByte;
+
 
 
 // NASizeInt is the type which can hold size_t values. These are used for
