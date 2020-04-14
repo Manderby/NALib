@@ -7,10 +7,23 @@
 // including "NABase.h"
 
 
+// ABOUT THIS FILE (why is this so complicated!!!)
+// Integers are easy, right? Well, if they are standardized yes, otherwise...
+// Unfortunately, there is a plethora of compilers and systems out there and
+// the true definition of integer types can vary at all corners. This file
+// tries to capture all possibilities and in the end provide definitions for
+// very "simple" datatypes like int32 or NABool.
+//
+// Especially critical is the definition of types which are not native on the
+// current system. Like for example, the long long datatype is sometimes not
+// even defined. And an int128 is barely heard of. In NALib, such types are
+// emulated.
+
+
 // NABool
-// Note that in NALib, the definition of NABool is set to an int and not char
-// or unsigned char. This is unusual but most probably the easiest way to use
-// whatever the current processor can use as its fastest integer.
+// In NALib, the definition of NABool is set to an int.
+// Not char or unsigned char. This is unusual but most probably the easiest
+// way to use whatever the current processor can use as its fastest integer.
 //
 // It is in the believe of the author, that in modern computers, speed is more
 // important than space as opposed to earlier times where wasting space was a
@@ -41,7 +54,8 @@ typedef int NABool;
 
 #if defined __STDC__ || defined _MSC_VER
   // We gather basic information about integer types from the standardized
-  // limits.h library (note that stdint.h is only available since C99)
+  // limits.h library (note that limits.h is available in C90 but stdint.h
+  // is only available since C99)
   #include <limits.h>
 #else
   #warning "This is not a standard C compiler. NALib will make assumptions about typesizes."
@@ -137,27 +151,33 @@ typedef int NABool;
 
 
 
-// First, we find out, which bit lengths we have.
-// Agreed, it is very expressive, but this int definition thing always gets in
-// the way and so why not solve it very precisely.
+// First, we find out, which bit lengths we have for the (old) integer types
+// like int, short and long. Agreed, this is very expressive, but we must be
+// very precise in that respect to guarantee universality.
+
+// char
 #if UCHAR_MAX == 0xffu
   #define NA_TYPE_NATIVE_CHAR_BITS NA_TYPE8_BITS
 #elif UCHAR_MAX == 0xffffu
   #define NA_TYPE_NATIVE_CHAR_BITS NA_TYPE16_BITS
 #endif
 #ifndef NA_TYPE_NATIVE_CHAR_BITS
-  #define NA_TYPE_NATIVE_CHAR_BITS NA_TYPE8_BITS // Assumption
+  #warning "NALib will make assumptions about the native size of a char."
+  #define NA_TYPE_NATIVE_CHAR_BITS NA_TYPE8_BITS
 #endif
 
-#if USHORT_MAX == 0xffffu
+// short
+#if USHRT_MAX == 0xffffu
   #define NA_TYPE_NATIVE_SHORT_INT_BITS NA_TYPE16_BITS
-#elif USHORT_MAX == 0xffffffffu
+#elif USHRT_MAX == 0xffffffffu
   #define NA_TYPE_NATIVE_SHORT_INT_BITS NA_TYPE32_BITS
 #endif
 #ifndef NA_TYPE_NATIVE_SHORT_INT_BITS
-  #define NA_TYPE_NATIVE_SHORT_INT_BITS NA_TYPE16_BITS // Assumption
+  #warning "NALib will make assumptions about the native size of a short."
+  #define NA_TYPE_NATIVE_SHORT_INT_BITS NA_TYPE16_BITS
 #endif
 
+// int
 #if UINT_MAX == 0xffffu
   #define NA_TYPE_NATIVE_INT_BITS NA_TYPE16_BITS
 #elif UINT_MAX == 0xffffffffu
@@ -169,9 +189,11 @@ typedef int NABool;
   #endif
 #endif
 #ifndef NA_TYPE_NATIVE_INT_BITS
-  #define NA_TYPE_NATIVE_INT_BITS NA_TYPE32_BITS // Assumption
+  #warning "NALib will make assumptions about the native size of an int."
+  #define NA_TYPE_NATIVE_INT_BITS NA_TYPE32_BITS
 #endif
 
+// long
 #if ULONG_MAX == 0xffffffffu
   #define NA_TYPE_NATIVE_LONG_INT_BITS NA_TYPE32_BITS
 #endif
@@ -181,31 +203,27 @@ typedef int NABool;
   #endif
 #endif
 #ifndef NA_TYPE_NATIVE_LONG_INT_BITS
-  #define NA_TYPE_NATIVE_LONG_INT_BITS NA_TYPE32_BITS // Assumption
+  #warning "NALib will make assumptions about the native size of a long."
+  #define NA_TYPE_NATIVE_LONG_INT_BITS NA_TYPE32_BITS
 #endif
 
+// long long
 #if NA_COMPILE_WITH_LONG_LONG
   #if ULLONG_MAX == 0xffffffffffffffffuLL
     #define NA_TYPE_NATIVE_LONG_LONG_INT_BITS NA_TYPE64_BITS
   #endif
 #endif
 #ifndef NA_TYPE_NATIVE_LONG_LONG_INT_BITS
-  // Here, we define nothing. long long types are not accepted by all compilers.
+  // Here, we do not assume anything. long long types are not accepted
+  // by all compilers.
 #endif
 
 
 
-// Make a mapping towards which bit width corresponds to which native type.
-// The author is perfectly aware that this is a little over the top, but
-// it allows for a preference and helps for later PRI and SCN macros.
-//
-// After the following macro definitions, these macros will either be set
-// to a native type or be undefined:
-//
-// NA_TYPE_INT8
-// NA_TYPE_INT16
-// NA_TYPE_INT32
-// NA_TYPE_INT64
+// Make a reverse mapping towards which bit width corresponds to which.
+// native type. The author is perfectly aware that this is a little
+// over the top, but it allows for a preference and helps for later
+// PRI and SCN macros.
 
 #define NA_TYPE_NATIVE_CHAR           0
 #define NA_TYPE_NATIVE_SHORT_INT      1
@@ -216,6 +234,8 @@ typedef int NABool;
 // 8 Bits: Should be char. Otherwise, we might have a "slight" problem.
 #if NA_TYPE_NATIVE_CHAR_BITS == NA_TYPE8_BITS
   #define NA_TYPE_INT8 NA_TYPE_NATIVE_CHAR
+#else
+  #error "We have a slight problem. Char type is not 8 bits"
 #endif
 
 // 16 Bits: Preference is first short, then int
@@ -249,8 +269,6 @@ typedef int NABool;
 // Note that the following macros are defined using the values provided in
 // the <limits.h> header file. This is usually not the preferred way but
 // in older standards before C99, there was just no other way to do it.
-// In C99, the values are defined in stdint.h, but this implementation
-// covers that.
 #if NA_COMPILE_WITH_LONG_LONG
   #define NA_PRINTF_CHAR_PREFIX "hh"
   #define NA_PRINTF_LONG_LONG_PREFIX "ll"
@@ -380,7 +398,9 @@ typedef int NABool;
 	typedef unsigned long long   uint64;
 	typedef signed long long     int64;
 	#define NA_ZERO_64     (0LL)
+	#define NA_ZERO_64u    (0LL)
 	#define NA_ONE_64      (1LL)
+	#define NA_ONE_64u     (1LL)
 	#define NA_PRIi64      NA_PRINTF_LONG_LONG_PREFIX "d"
 	#define NA_PRIu64      NA_PRINTF_LONG_LONG_PREFIX "u"
 	#define NA_PRIx64      NA_PRINTF_LONG_LONG_PREFIX "x"
@@ -439,32 +459,31 @@ typedef int NABool;
 // arithmetic conversions.
 
 // Define the size of NAInt
-#if NA_PREFERRED_NAINT_BITS == 0
+#if NA_PREFERRED_NAINT_BITS == 0  // Automatic
   #define NA_TYPE_NAINT_BITS NA_SYSTEM_ADDRESS_BITS
   #if NA_TYPE_NAINT_BITS == NA_TYPE64_BITS && !defined NA_TYPE_INT64
     #undef NA_TYPE_NAINT_BITS
     #define NA_TYPE_NAINT_BITS NA_TYPE32_BITS
   #endif
-#elif NA_PREFERRED_NAINT_BITS == 1
+#elif NA_PREFERRED_NAINT_BITS == 1  // int
   #define NA_TYPE_NAINT_BITS NA_SYSTEM_NATIVE_INT_BITS
-#elif NA_PREFERRED_NAINT_BITS == 2
+#elif NA_PREFERRED_NAINT_BITS == 2  // long
   #define NA_TYPE_NAINT_BITS NA_SYSTEM_NATIVE_LONG_INT_BITS
-#elif NA_PREFERRED_NAINT_BITS == 3
+#elif NA_PREFERRED_NAINT_BITS == 3  // address length
   #define NA_TYPE_NAINT_BITS NA_SYSTEM_ADDRESS_BITS
-#elif NA_PREFERRED_NAINT_BITS == 32
+#elif NA_PREFERRED_NAINT_BITS == 32 // 32
   #define NA_TYPE_NAINT_BITS NA_TYPE32_BITS
-#elif NA_PREFERRED_NAINT_BITS == 64
+#elif NA_PREFERRED_NAINT_BITS == 64 // 64
   #define NA_TYPE_NAINT_BITS NA_TYPE64_BITS
 #else
   #error "NA_PREFERRED_NAINT_BITS has an invalid value"
 #endif
 
-// We include the 64bit and 128bit emulation after the type int64
-// has been defined.
+// We include the 64bit and 128bit emulation.
 #include "NAInt64.h"
 #include "NAInt128.h"
 
-// But in case, there was no int64 defined, we have to emulate it now.
+// In case, there was no int64 defined before, we have to emulate it now.
 #if !defined NA_TYPE_INT64
   #define NA_UINT64_MAX  naMakeUInt64(NA_UINT32_MAX, NA_UINT32_MAX)
   #define NA_INT64_MAX   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_INT32_MAX, NA_UINT32_MAX))
@@ -480,13 +499,6 @@ typedef int NABool;
   #define NA_PRIx64      "x CANTSHOWi64 "
   #define NA_SCNi64      "d CANTSHOWi64 "
   #define NA_SCNu64      "u CANTSHOWi64 "
-#endif
-
-#ifndef NA_ZERO_64u
-  #define NA_ZERO_64u NA_ZERO_64
-#endif
-#ifndef NA_ONE_64u
-  #define NA_ONE_64u NA_ONE_64
 #endif
 
 

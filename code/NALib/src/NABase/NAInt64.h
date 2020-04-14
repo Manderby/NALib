@@ -180,8 +180,8 @@
 
 
 #if NA_TYPE_NAINT_BITS == NA_TYPE64_BITS
-  #define naCastUInt64ToUInt(i)   naCastUInt64ToUInt64(i)
-  #define naCastInt64ToInt(i)     naCastInt64ToInt64(i)
+  #define naCastUInt64ToUInt(i)   ((NAUInt64)i)
+  #define naCastInt64ToInt(i)     ((NAInt64)i)
   #define naCastIntToInt64(i)     ((NAInt64)i)
   #define naCastUIntToUInt64(i)   ((NAUInt64)i)
 #elif NA_TYPE_NAINT_BITS == NA_TYPE32_BITS
@@ -195,6 +195,8 @@
   #define naCastIntToInt64(i)     naMakeInt64WithLo(int32(i))
   #define naCastUIntToUInt64(i)   naMakeUInt64WithLo(int32(i))
 #endif
+
+
 
 // Copyright (c) NALib, Tobias Stamm
 //

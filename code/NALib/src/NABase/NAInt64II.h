@@ -60,7 +60,7 @@
       retuint.hi &= ~NA_VALUE32_SIGN_MASK;
       retint = naCastUInt64ToInt64(retuint);
       if(!naEqualInt64(signa, signb)){retint = naNegInt64(retint);}
-      // todo: overflow may lead to different result than built-in int64
+      // todo: overflow may lead to different result than built-in 64 bit integer
       return retint;
     }
     NA_IDEF NAInt64 naDivInt64(NAInt64 a, NAInt64 b){
