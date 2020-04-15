@@ -16,6 +16,7 @@
   #define naMakeUInt128WithLiteralLo(lo) (lo ## uLL)
 
   // We declare these as inline functions to reduce warnings.
+  NA_IAPI NAInt128 naMakeInt128(NAInt64 hi, NAUInt64 lo);
   NA_IAPI NAInt128 naMakeInt128WithLo       (NAInt64 lo);
   NA_IAPI NAInt128 naMakeInt128WithDouble   (double lo);
 
@@ -107,6 +108,7 @@
       struct NAUInt128{ NAUInt64 lo; NAUInt64 hi; };
     #endif
 
+    NA_IAPI NAInt128  naMakeInt128(NAInt64 hi, NAUInt64 lo);
     NA_IAPI NAInt128  naMakeInt128WithLo(NAInt64 lo);
     NA_IAPI NAInt128  naMakeInt128WithDouble(double d);
 

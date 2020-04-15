@@ -16,6 +16,7 @@
   #define naMakeUInt64WithLiteralLo(lo) (lo ## uLL)
 
   // We declare these as inline functions to reduce warnings.
+  NA_IAPI NAInt64 naMakeInt64             (int32 hi, uint32 lo);
   NA_IAPI NAInt64 naMakeInt64WithLo       (int32 lo);
   NA_IAPI NAInt64 naMakeInt64WithDouble   (double lo);
 
@@ -103,6 +104,7 @@
       struct NAUInt64{ uint32 lo; uint32 hi; };
     #endif
 
+    NA_IAPI NAInt64  naMakeInt64(int32 hi, uint32 lo);
     NA_IAPI NAInt64  naMakeInt64WithLo(int32 lo);
     NA_IAPI NAInt64  naMakeInt64WithDouble(double d);
 

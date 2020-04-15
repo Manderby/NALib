@@ -8,6 +8,7 @@
 
 
 #if defined NA_TYPE_INT64
+  NA_IDEF NAInt64 naMakeInt64(int32 hi, uint32 lo){return (hi << 32) | lo;}
   NA_IDEF NAInt64 naMakeInt64WithLo(int32 lo){return (NAInt64)lo;}
   NA_IDEF NAInt64 naMakeInt64WithDouble(double lo){return (NAInt64)lo;}
 #else
@@ -19,6 +20,12 @@
 
 
 
+    NA_IDEF NAInt64 naMakeInt64(int32 hi, uint32 lo){
+      NAInt64 retint;
+      retint.hi = hi;
+      retint.lo = lo;
+      return retint;
+    }
     NA_IDEF NAInt64 naMakeInt64WithLo(int32 lo){
       NAInt64 retint;
       retint.hi = (int32)naGetSignum32(lo);
@@ -110,7 +117,9 @@
       if(n < 0){
         retint = naShlInt64(a, -n);
       }else{
-        if(n <= 32){
+      // Beware, do not use <= as some processors will result
+      // in garbage when the shift is equal to the type size.
+        if(n < 32){
           retint.lo = a.lo >> n;
           retint.lo |= ((uint32)a.hi << (32 - n));
           retint.hi = a.hi >> n;
@@ -177,9 +186,9 @@
 
     #undef naMakeUInt64WithLiteralLo
     #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
-      #define naMakeUInt64WithLiteralLo(lo)  {0,(lo)}
+      #define naMakeUInt64WithLiteralLo(lo)  {0, lo}
     #else
-      #define naMakeUInt64WithLiteralLo(lo)  {(lo),0}
+      #define naMakeUInt64WithLiteralLo(lo)  {lo, 0}
     #endif
 
 
@@ -200,7 +209,7 @@
       NAUInt64 retint;
       // note: this is somewhat cumbersome. Do it with bit manipulation. todo.
       retint.hi = (uint32)(d / naMakeDoubleWithExponent(32));
-      retint.lo = (uint32)(d - ((double)retint.hi * naMakeDoubleWithExponent(32)));
+      retint.lo = (uint32)(d - ((double)((int32)retint.hi) * naMakeDoubleWithExponent(32)));
       return retint;
     }
 
@@ -234,21 +243,27 @@
       uint32 b1 = b.lo >> 16;
       uint32 b2 = b.hi & NA_UINT16_MAX;
       uint32 b3 = b.hi >> 16;
+      uint32 a0b1 = a0 * b1;
+      uint32 a1b0 = a1 * b0;
 
+      // multiply a0 * b and add up
       retint.lo += a0 * b0;
-      retint.lo += (a0 * b1) << 16;
-      retint.hi += (a0 * b1) >> 16;
+      retint.lo += a0b1 << 16;
+      retint.hi += a0b1 >> 16;
       retint.hi += a0 * b2;
       retint.hi += (a0 * b3) << 16;
 
-      retint.lo += (a1 * b0) << 16;
-      retint.hi += (a1 * b0) >> 16;
+      // multiply a1 * b and add up
+      retint.lo += a1b0 << 16;
+      retint.hi += a1b0 >> 16;
       retint.hi += a1 * b1;
       retint.hi += (a1 * b2) << 16;
 
+      // multiply a2 * b and add up
       retint.hi += a2 * b0;
       retint.hi += (a2 * b1) << 16;
 
+      // multiply a3 * b and add up
       retint.hi += (a3 * b0) << 16;
 
       return retint;
@@ -343,7 +358,9 @@
     NA_IDEF NAUInt64 naShlUInt64(NAUInt64 a, int n){
       NAUInt64 retint;
       if(n < 0){return naShrUInt64(a, -n);}
-      if(n <= 32){
+      // Beware, do not use <= as some processors will result
+      // in garbage when the shift is equal to the type size.
+      if(n < 32){
         retint.hi = a.hi << n;
         retint.hi |= a.lo >> (32 - n);
         retint.lo = a.lo << n;
@@ -358,7 +375,9 @@
       if(n < 0){
         retint = naShlUInt64(a, -n);
       }else{
-        if(n <= 32){
+        // Beware, do not use <= as some processors will result
+        // in garbage when the shift is equal to the type size.
+        if(n < 32){
           retint.lo = a.lo >> n;
           retint.lo |= a.hi << (32 - n);
           retint.hi = a.hi >> n;

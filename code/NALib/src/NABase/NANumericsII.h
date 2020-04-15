@@ -18,10 +18,10 @@ NA_IDEF uint32 naGetSignum32(int32 i){
   return (uint32)(i >> (NA_TYPE32_BITS - 1));
 }
 NA_IDEF NAUInt64 naGetSignum64(NAInt64 i){
-  return naShrUInt64(naCastInt64ToUInt64(i), (NA_TYPE64_BITS - 1));
+  return naCastInt64ToUInt64(naShrInt64(i, (NA_TYPE64_BITS - 1)));
 }
 NA_IDEF NAUInt128 naGetSignum128(NAInt128 i){
-  return naShrUInt128(naCastInt128ToUInt128(i), (NA_TYPE128_BITS - 1));
+  return naCastInt128ToUInt128(naShrInt128(i, (NA_TYPE128_BITS - 1)));
 }
 
 
