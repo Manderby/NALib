@@ -20,8 +20,8 @@
   NA_IAPI NAInt64 naMakeInt64WithDouble   (double lo);
 
   #define naNegInt64(i)                 (-(i))
-  #define naIncInt64(i)                 ((i)++)
-  #define naDecInt64(i)                 ((i)--)
+  #define naIncInt64(i)                 (++(i))
+  #define naDecInt64(i)                 (--(i))
   #define naAddInt64(a, b)              ((a) + (b))
   #define naSubInt64(a, b)              ((a) - (b))
   #define naMulInt64(a, b)              ((a) * (b))

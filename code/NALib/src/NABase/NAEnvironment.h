@@ -21,6 +21,7 @@
 #define NA_TYPE16_BITS  (16)
 #define NA_TYPE32_BITS  (32)
 #define NA_TYPE64_BITS  (64)
+#define NA_TYPE128_BITS (128)
 
 #define NA_TYPE8_BYTES   (NA_TYPE8_BITS  / 8)
 #define NA_TYPE16_BYTES  (NA_TYPE16_BITS / 8)

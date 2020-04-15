@@ -20,6 +20,9 @@ NA_IDEF uint32 naGetSignum32(int32 i){
 NA_IDEF NAUInt64 naGetSignum64(NAInt64 i){
   return naShrUInt64(naCastInt64ToUInt64(i), (NA_TYPE64_BITS - 1));
 }
+NA_IDEF NAUInt128 naGetSignum128(NAInt128 i){
+  return naShrUInt128(naCastInt128ToUInt128(i), (NA_TYPE128_BITS - 1));
+}
 
 
 
@@ -52,6 +55,14 @@ NA_IDEF NAInt64 naSigni64(NAInt64 x){
     return (x < 0) ? -NA_ONE_64 : NA_ONE_64;
   #endif
 }
+NA_IDEF NAInt128 naSigni128(NAInt128 x){
+  #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+    NAUInt128 signum = naGetSignum128(x);
+    return naCastUInt128ToInt128(naAddUInt128(naShlUInt128(signum, 1), NA_ONE_128u));
+  #else
+    return (x < 0) ? -NA_ONE_128 : NA_ONE_128;
+  #endif
+}
 
 
 
@@ -67,6 +78,9 @@ NA_IDEF void naSetSignBit32(void* i){
 NA_IDEF void naSetSignBit64(void* i){
   *((NAUInt64*)i) = naOrUInt64(*((NAUInt64*)i), NA_VALUE64_SIGN_MASK);
 }
+NA_IDEF void naSetSignBit128(void* i){
+  *((NAUInt128*)i) = naOrUInt128(*((NAUInt128*)i), NA_VALUE128_SIGN_MASK);
+}
 NA_IDEF void naUnsetSignBit8(void* i){
   *((uint8*)i) &= ~NA_VALUE8_SIGN_MASK;
 }
@@ -78,6 +92,9 @@ NA_IDEF void naUnsetSignBit32(void* i){
 }
 NA_IDEF void naUnsetSignBit64(void* i){
   *((NAUInt64*)i) = naAndUInt64(*((NAUInt64*)i), naNotUInt64(NA_VALUE64_SIGN_MASK));
+}
+NA_IDEF void naUnsetSignBit128(void* i){
+  *((NAUInt128*)i) = naAndUInt128(*((NAUInt128*)i), naNotUInt128(NA_VALUE128_SIGN_MASK));
 }
 
 
@@ -93,6 +110,9 @@ NA_IDEF int32 naAbsi32(int32 x){
 }
 NA_IDEF NAInt64 naAbsi64(NAInt64 x){
   return naMulInt64(naSigni64(x), x);
+}
+NA_IDEF NAInt128 naAbsi128(NAInt128 x){
+  return naMulInt128(naSigni128(x), x);
 }
 
 

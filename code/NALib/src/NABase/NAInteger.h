@@ -45,7 +45,7 @@ typedef int NABool;
 // configuring this. Note that the test (_MSC_VER >= 1310) tests for
 // Visual Studio 7.1
 #if (defined NA_C99) || (defined NA_CPP11) || _MSC_VER >= 1310 || NA_TYPE_ASSUME_NATIVE_LONG_LONG
-  #define NA_COMPILE_WITH_LONG_LONG 1
+  #define NA_COMPILE_WITH_LONG_LONG 0
 #else
   #define NA_COMPILE_WITH_LONG_LONG 0
 #endif
@@ -230,6 +230,16 @@ typedef int NABool;
 #define NA_TYPE_NATIVE_INT            2
 #define NA_TYPE_NATIVE_LONG_INT       3
 #define NA_TYPE_NATIVE_LONG_LONG_INT  4
+#define NA_TYPE_NATIVE_INT_128        5
+
+// The following tests will define the macros
+// NA_TYPE_INT8
+// NA_TYPE_INT16
+// NA_TYPE_INT32
+// NA_TYPE_INT64
+// NA_TYPE_INT128
+// which, when defined, denote one of the upper native types.
+// If undefined, no native representation is possible.
 
 // 8 Bits: Should be char. Otherwise, we might have a "slight" problem.
 #if NA_TYPE_NATIVE_CHAR_BITS == NA_TYPE8_BITS
@@ -264,7 +274,10 @@ typedef int NABool;
   #define NA_TYPE_INT64 NA_TYPE_NATIVE_INT
 #endif
 
-
+// 128 Bits: Dependent on the system/compiler/extension.
+#ifdef __SIZEOF_INT128__
+  #define NA_TYPE_INT128 NA_TYPE_NATIVE_INT_128
+#endif
 
 // Note that the following macros are defined using the values provided in
 // the <limits.h> header file. This is usually not the preferred way but
@@ -286,6 +299,8 @@ typedef int NABool;
   typedef signed char   int8;
   #define NA_ZERO_8     (0)
   #define NA_ONE_8      (1)
+  #define NA_ZERO_8u    (0u)
+  #define NA_ONE_8u     (1u)
   #define NA_PRIi8      NA_PRINTF_CHAR_PREFIX "d"
   #define NA_PRIu8      NA_PRINTF_CHAR_PREFIX "u"
   #define NA_PRIx8      NA_PRINTF_CHAR_PREFIX "x"
@@ -302,6 +317,8 @@ typedef int NABool;
   typedef signed char    int16;
   #define NA_ZERO_16     (0)
   #define NA_ONE_16      (1)
+  #define NA_ZERO_16u    (0u)
+  #define NA_ONE_16u     (1u)
   #define NA_PRIi16      NA_PRINTF_CHAR_PREFIX "d"
   #define NA_PRIu16      NA_PRINTF_CHAR_PREFIX "u"
   #define NA_PRIx16      NA_PRINTF_CHAR_PREFIX "x"
@@ -315,6 +332,8 @@ typedef int NABool;
   typedef signed short   int16;
   #define NA_ZERO_16     (0)
   #define NA_ONE_16      (1)
+  #define NA_ZERO_16u    (0u)
+  #define NA_ONE_16u     (1u)
   #define NA_PRIi16      "hd"
   #define NA_PRIu16      "hu"
   #define NA_PRIx16      "hx"
@@ -331,6 +350,8 @@ typedef int NABool;
   typedef signed short   int32;
   #define NA_ZERO_32     (0)
   #define NA_ONE_32      (1)
+  #define NA_ZERO_32u    (0u)
+  #define NA_ONE_32u     (1u)
   #define NA_PRIi32      "hd"
   #define NA_PRIu32      "hu"
   #define NA_PRIx32      "hx"
@@ -344,6 +365,8 @@ typedef int NABool;
   typedef signed int     int32;
   #define NA_ZERO_32     (0)
   #define NA_ONE_32      (1)
+  #define NA_ZERO_32u    (0u)
+  #define NA_ONE_32u     (1u)
   #define NA_PRIi32      "d"
   #define NA_PRIu32      "u"
   #define NA_PRIx32      "x"
@@ -357,6 +380,8 @@ typedef int NABool;
   typedef signed long    int32;
   #define NA_ZERO_32     (0L)
   #define NA_ONE_32      (1L)
+  #define NA_ZERO_32u    (0uL)
+  #define NA_ONE_32u     (1uL)
   #define NA_PRIi32      "ld"
   #define NA_PRIu32      "lu"
   #define NA_PRIx32      "lx"
@@ -373,6 +398,8 @@ typedef int NABool;
   typedef signed int     int64;
   #define NA_ZERO_64     (0)
   #define NA_ONE_64      (1)
+  #define NA_ZERO_64u    (0u)
+  #define NA_ONE_64u     (1u)
   #define NA_PRIi64      "d"
   #define NA_PRIu64      "u"
   #define NA_PRIx64      "x"
@@ -386,6 +413,8 @@ typedef int NABool;
   typedef signed long    int64;
   #define NA_ZERO_64     (0L)
   #define NA_ONE_64      (1L)
+  #define NA_ZERO_64u    (0uL)
+  #define NA_ONE_64u     (1uL)
   #define NA_PRIi64      "ld"
   #define NA_PRIu64      "lu"
   #define NA_PRIx64      "lx"
@@ -398,14 +427,35 @@ typedef int NABool;
 	typedef unsigned long long   uint64;
 	typedef signed long long     int64;
 	#define NA_ZERO_64     (0LL)
-	#define NA_ZERO_64u    (0LL)
 	#define NA_ONE_64      (1LL)
-	#define NA_ONE_64u     (1LL)
+	#define NA_ZERO_64u    (0uLL)
+	#define NA_ONE_64u     (1uLL)
 	#define NA_PRIi64      NA_PRINTF_LONG_LONG_PREFIX "d"
 	#define NA_PRIu64      NA_PRINTF_LONG_LONG_PREFIX "u"
 	#define NA_PRIx64      NA_PRINTF_LONG_LONG_PREFIX "x"
 	#define NA_SCNi64      NA_PRINTF_LONG_LONG_PREFIX "d"
 	#define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
+#endif
+
+// 128 bits
+#if NA_TYPE_INT128 == NA_TYPE_NATIVE_INT_128
+  // Note: These definitions have not been tested at all.
+  // The author did not have time to install gcc and add
+  // proper values. This will likely not compile.
+  #define NA_UINT128_MAX  UINT128_MAX
+  #define NA_INT128_MAX   INT128_MAX
+  #define NA_INT128_MIN   INT128_MIN
+  typedef unsigned __int128_t   uint128;
+  typedef signed __int128_t     int128;
+  #define NA_ZERO_128     (0LLLLLLELEVEN)
+  #define NA_ONE_128      (1LLLLLLELEVEN)
+  #define NA_ZERO_128u    (0uLLLLLLELEVEN)
+  #define NA_ONE_128u     (1uLLLLLLELEVEN)
+  #define NA_PRIi128      "d CANTSHOWi128 "
+  #define NA_PRIu128      "u CANTSHOWi128 "
+  #define NA_PRIx128      "x CANTSHOWi128 "
+  #define NA_SCNi128      "d CANTSHOWi128 "
+  #define NA_SCNu128      "u CANTSHOWi128 "
 #endif
 
 // NAInt and NAUInt
@@ -487,19 +537,38 @@ typedef int NABool;
 #if !defined NA_TYPE_INT64
   #define NA_UINT64_MAX  naMakeUInt64(NA_UINT32_MAX, NA_UINT32_MAX)
   #define NA_INT64_MAX   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_INT32_MAX, NA_UINT32_MAX))
-  #define NA_INT64_MIN   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_INT32_MIN, 0x0))
+  #define NA_INT64_MIN   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_INT32_MIN, NA_UINT32_MAX))
   typedef NAInt64        int64;
   typedef NAUInt64       uint64;
-  #define NA_ZERO_64     (naMakeInt64WithLo(0))
-  #define NA_ONE_64      (naMakeInt64WithLo(1))
-  #define NA_ZERO_64u    (naMakeUInt64WithLo(0))
-  #define NA_ONE_64u     (naMakeUInt64WithLo(1))
+  #define NA_ZERO_64     (naMakeInt64WithLo(NA_ZERO_32))
+  #define NA_ONE_64      (naMakeInt64WithLo(NA_ONE_32))
+  #define NA_ZERO_64u    (naMakeUInt64WithLo(NA_ZERO_32u))
+  #define NA_ONE_64u     (naMakeUInt64WithLo(NA_ONE_32u))
   #define NA_PRIi64      "d CANTSHOWi64 "
   #define NA_PRIu64      "u CANTSHOWi64 "
   #define NA_PRIx64      "x CANTSHOWi64 "
   #define NA_SCNi64      "d CANTSHOWi64 "
   #define NA_SCNu64      "u CANTSHOWi64 "
 #endif
+
+// In case, there was no int128 defined before, we have to emulate it now.
+#if !defined NA_TYPE_INT128
+  #define NA_UINT128_MAX  naMakeUInt128(NA_UINT64_MAX, NA_UINT64_MAX)
+  #define NA_INT128_MAX   naCastUInt128ToInt128(naMakeUInt128((uint64)NA_INT64_MAX, NA_UINT64_MAX))
+  #define NA_INT128_MIN   naCastUInt128ToInt128(naMakeUInt128((uint64)NA_INT64_MIN, NA_UINT64_MAX))
+  typedef NAInt128        int128;
+  typedef NAUInt128       uint128;
+  #define NA_ZERO_128     (naMakeInt128WithLo(NA_ZERO_64))
+  #define NA_ONE_128      (naMakeInt128WithLo(NA_ONE_64))
+  #define NA_ZERO_128u    (naMakeUInt128WithLo(NA_ZERO_64u))
+  #define NA_ONE_128u     (naMakeUInt128WithLo(NA_ONE_64u))
+  #define NA_PRIi128      "d CANTSHOWi128 "
+  #define NA_PRIu128      "u CANTSHOWi128 "
+  #define NA_PRIx128      "x CANTSHOWi128 "
+  #define NA_SCNi128      "d CANTSHOWi128 "
+  #define NA_SCNu128      "u CANTSHOWi128 "
+#endif
+
 
 
 

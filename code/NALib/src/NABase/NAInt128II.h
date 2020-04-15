@@ -7,417 +7,440 @@
 // including "NABase.h"
 
 
-#if NA_SIGNED_INTEGER_ENCODING != NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-
-  #error "The NAInt128 emulation is not provided for the current signed integer encoding"
-
+#if defined NA_TYPE_INT128
+  NA_IDEF NAInt128 naMakeInt128WithLo(NAInt64 lo){return (NAInt128)lo;}
+  NA_IDEF NAInt128 naMakeInt128WithDouble(double lo){return (NAInt128)lo;}
 #else
+  #if NA_SIGNED_INTEGER_ENCODING != NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
 
+    #error "The NAInt128 emulation is not provided for the current signed integer encoding"
 
-  /*
-
-  NA_IDEF NAInt128 naMakeInt128WithLo(NAInt64 lo){
-    NAInt128 retint;
-    retint.hi = (int32)naGetSignum64(lo);
-    retint.lo = (uint32)lo;
-    return retint;
-  }
-  NA_IDEF NAInt64 naMakeInt64WithDouble(double d){
-    return naGetDoubleInteger(d);
-  }
-
-  #undef naIncInt64
-  #define naIncInt64(i) (i.hi += (i.lo == 0xffffffff), i.lo += 1, i)
-  #undef naDecInt64
-  #define naDecInt64(i) (i.hi -= (i.lo == 0x00000000), i.lo -= 1, i)
-
-
-
-  NA_IDEF NAInt64 naNegInt64(NAInt64 i){
-    NAInt64 retint = naNotInt64(i);
-    naIncInt64(retint);
-    return retint;
-  }
-  NA_IDEF NAInt64 naAddInt64(NAInt64 a, NAInt64 b){
-    return naCastUInt64ToInt64(naAddUInt64(naCastInt64ToUInt64(a), naCastInt64ToUInt64(b)));
-  }
-  NA_IDEF NAInt64 naSubInt64(NAInt64 a, NAInt64 b){
-    return naCastUInt64ToInt64(naSubUInt64(naCastInt64ToUInt64(a), naCastInt64ToUInt64(b)));
-  }
-  NA_IDEF NAInt64 naMulInt64(NAInt64 a, NAInt64 b){
-    NAInt64 retint;
-    NAUInt64 retuint;
-    NAInt64 signa = naSigni64(a);
-    NAInt64 signb = naSigni64(b);
-    if(naSmallerInt64(a, NA_ZERO_64)){a = naNegInt64(a);}
-    if(naSmallerInt64(b, NA_ZERO_64)){b = naNegInt64(b);}
-    retuint = naMulUInt64(naCastInt64ToUInt64(a), naCastInt64ToUInt64(b));
-    retuint.hi &= ~NA_VALUE32_SIGN_MASK;
-    retint = naCastUInt64ToInt64(retuint);
-    if(!naEqualInt64(signa, signb)){retint = naNegInt64(retint);}
-    // todo: overflow may lead to different result than built-in int64
-    return retint;
-  }
-  NA_IDEF NAInt64 naDivInt64(NAInt64 a, NAInt64 b){
-    NAInt64 retint;
-    NAUInt64 retuint;
-    NAInt64 signa = naSigni64(a);
-    NAInt64 signb = naSigni64(b);
-    if(naSmallerInt64(a, NA_ZERO_64)){a = naNegInt64(a);}
-    if(naSmallerInt64(b, NA_ZERO_64)){b = naNegInt64(b);}
-    retuint = naDivUInt64(naCastInt64ToUInt64(a), naCastInt64ToUInt64(b));
-    retuint.hi &= ~NA_VALUE32_SIGN_MASK;
-    retint = naCastUInt64ToInt64(retuint);
-    if(!naEqualInt64(signa, signb)){retint = naNegInt64(retint);}
-    return retint;
-  }
-  NA_IDEF NAInt64 naModInt64(NAInt64 a, NAInt64 b){
-    NAInt64 retint;
-    NAUInt64 retuint;
-    NAInt64 signa = naSigni64(a);
-    if(naSmallerInt64(a, NA_ZERO_64)){a = naNegInt64(a);}
-    if(naSmallerInt64(b, NA_ZERO_64)){b = naNegInt64(b);}
-    retuint = naModUInt64(naCastInt64ToUInt64(a), naCastInt64ToUInt64(b));
-    retuint.hi &= ~NA_VALUE32_SIGN_MASK;
-    retint = naCastUInt64ToInt64(retuint);
-    if(!naEqualInt64(signa, NA_ONE_64)){retint = naNegInt64(retint);}
-    return retint;
-  }
-
-
-
-  NA_IDEF NAInt64 naNotInt64(NAInt64 i){
-    return naCastUInt64ToInt64(naNotUInt64(naCastInt64ToUInt64(i)));
-  }
-  NA_IDEF NAInt64 naOrInt64(NAInt64 a, NAInt64 b){
-    return naCastUInt64ToInt64(naOrUInt64(naCastInt64ToUInt64(a), naCastInt64ToUInt64(b)));
-  }
-  NA_IDEF NAInt64 naAndInt64(NAInt64 a, NAInt64 b){
-    return naCastUInt64ToInt64(naAndUInt64(naCastInt64ToUInt64(a), naCastInt64ToUInt64(b)));
-  }
-  NA_IDEF NAInt64 naXorInt64(NAInt64 a, NAInt64 b){
-    return naCastUInt64ToInt64(naXorUInt64(naCastInt64ToUInt64(a), naCastInt64ToUInt64(b)));
-  }
-  NA_IDEF NAInt64 naShlInt64(NAInt64 a, int n){
-    return naCastUInt64ToInt64(naShlUInt64(naCastInt64ToUInt64(a), n));
-  }
-  NA_IDEF NAInt64 naShrInt64(NAInt64 a, int n){
-    NAInt64 retint;
-    if(n < 0){
-      retint = naShlInt64(a, -n);
-    }else{
-      if(n <= 32){
-        retint.lo = a.lo >> n;
-        retint.lo |= ((uint32)a.hi << (32 - n));
-        retint.hi = (uint32)a.hi >> n;
-      }else{
-        retint.lo = ((uint32)a.hi >> (n - 32));
-        retint.hi = (int32)((uint32)a.hi >> 31 >> 1); // Sign preservation!
-        // The splitting in >> 31 and >> 1 and the additional casts area required to silence
-        // some compiler warnings.
-      }
-    }
-    return retint;
-  }
-
-
-
-  NA_IDEF NABool naEqualInt64(NAInt64 a, NAInt64 b){
-    return naEqualUInt64(naCastInt64ToUInt64(a), naCastInt64ToUInt64(b));
-  }
-  NA_IDEF NABool naGreaterInt64(NAInt64 a, NAInt64 b){
-    return ((a.hi > b.hi) || ((a.hi == b.hi) && ((a.hi < 0) ? (a.lo < b.lo) : (a.lo > b.lo))));
-  }
-  NA_IDEF NABool naGreaterEqualInt64(NAInt64 a, NAInt64 b){
-    return ((a.hi > b.hi) || ((a.hi == b.hi) && ((a.hi < 0) ? (a.lo <= b.lo) : (a.lo >= b.lo))));
-  }
-  NA_IDEF NABool naSmallerInt64(NAInt64 a, NAInt64 b){
-    return ((a.hi < b.hi) || ((a.hi == b.hi) && ((a.hi < 0) ? (a.lo > b.lo) : (a.lo < b.lo))));
-  }
-  NA_IDEF NABool naSmallerEqualInt64(NAInt64 a, NAInt64 b){
-    return ((a.hi < b.hi) || ((a.hi == b.hi) && ((a.hi < 0) ? (a.lo >= b.lo) : (a.lo <= b.lo))));
-  }
-
-
-
-  NA_IDEF uint8 naCastInt64ToUInt8(NAInt64 i){
-    return naCastUInt64ToUInt8(naCastInt64ToUInt64(i));
-  }
-  NA_IDEF uint16 naCastInt64ToUInt16(NAInt64 i){
-    return naCastUInt64ToUInt16(naCastInt64ToUInt64(i));
-  }
-  NA_IDEF uint32 naCastInt64ToUInt32(NAInt64 i){
-    return naCastUInt64ToUInt32(naCastInt64ToUInt64(i));
-  }
-  NA_IDEF NAUInt64 naCastInt64ToUInt64(NAInt64 i){
-    NAUInt64 retint;
-    retint.hi = (uint32)i.hi;
-    retint.lo = i.lo;
-    return retint;
-  }
-  NA_IDEF int8 naCastInt64ToInt8(NAInt64 i){
-    return naCastUInt64ToInt8(naCastInt64ToUInt64(i));
-  }
-  NA_IDEF int16 naCastInt64ToInt16(NAInt64 i){
-    return naCastUInt64ToInt16(naCastInt64ToUInt64(i));
-  }
-  NA_IDEF int32 naCastInt64ToInt32(NAInt64 i){
-    return naCastUInt64ToInt32(naCastInt64ToUInt64(i));
-  }
-  NA_IDEF double naCastInt64ToDouble(NAInt64 i){
-    // warning: this seems to be troublesome in the lower part. Find a
-    // better solution in the future by using bit manipulation. todo
-    return (double)i.hi * naMakeDoubleWithExponent(32) + ((i.hi < 0) ? -(double)i.lo : (double)i.lo);
-  }
-
-
-
-  #undef naMakeUInt64WithLiteralLo
-  #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
-    #define naMakeUInt64WithLiteralLo(lo)  {0,(lo)}
   #else
-    #define naMakeUInt64WithLiteralLo(lo)  {(lo),0}
-  #endif
 
 
 
-  NA_IDEF NAUInt64 naMakeUInt64(uint32 hi, uint32 lo){
-    NAUInt64 retint;
-    retint.hi = hi;
-    retint.lo = lo;
-    return retint;
-  }
-  NA_IDEF NAUInt64 naMakeUInt64WithLo(uint32 lo){
-    NAUInt64 retint;
-    retint.hi = 0x0;
-    retint.lo = lo;
-    return retint;
-  }
-  NA_IDEF NAUInt64 naMakeUInt64WithDouble(double d){
-    NAUInt64 retint;
-    // note: this is somewhat cumbersome. Do it with bit manipulation. todo.
-    retint.hi = (uint32)(d / naMakeDoubleWithExponent(32));
-    retint.lo = (uint32)(d - ((double)retint.hi * naMakeDoubleWithExponent(32)));
-    return retint;
-  }
-
-
-
-  #undef naIncUInt64
-  #define naIncUInt64(i) (i.hi += (i.lo == 0xffffffff), i.lo += 1, i)
-  #undef naDecUInt64
-  #define naDecUInt64(i) (i.hi -= (i.lo == 0x00000000), i.lo -= 1, i)
-
-
-
-  NA_IDEF NAUInt64 naAddUInt64(NAUInt64 a, NAUInt64 b){
-    NAUInt64 retint;
-    retint.lo = a.lo + b.lo;
-    retint.hi = a.hi + b.hi;
-    retint.hi += (retint.lo < a.lo); // add a carry if there was an overflow.
-    return retint;
-  }
-  NA_IDEF NAUInt64 naSubUInt64(NAUInt64 a, NAUInt64 b){
-    return naAddUInt64(a, naCastInt64ToUInt64(naNegInt64(naCastUInt64ToInt64(b))));
-  }
-  NA_IDEF NAUInt64 naMulUInt64(NAUInt64 a, NAUInt64 b){
-    NAUInt64 retint = NA_ZERO_64u;
-
-    uint32 a0 = a.lo & ((1 << 16) - 1);
-    uint32 a1 = a.lo >> 16;
-    uint32 a2 = a.hi & ((1 << 16) - 1);
-    uint32 a3 = a.hi >> 16;
-    uint32 b0 = b.lo & ((1 << 16) - 1);
-    uint32 b1 = b.lo >> 16;
-    uint32 b2 = b.hi & ((1 << 16) - 1);
-    uint32 b3 = b.hi >> 16;
-
-    retint.lo += a0 * b0;
-    retint.lo += (a0 * b1) << 16;
-    retint.hi += (a0 * b1) >> 16;
-    retint.hi += a0 * b2;
-    retint.hi += (a0 * b3) << 16;
-
-    retint.lo += (a1 * b0) << 16;
-    retint.hi += (a1 * b0) >> 16;
-    retint.hi += a1 * b1;
-    retint.hi += (a1 * b2) << 16;
-
-    retint.hi += a2 * b0;
-    retint.hi += (a2 * b1) << 16;
-
-    retint.hi += (a3 * b0) << 16;
-
-    return retint;
-  }
-  NA_HIDEF void naComputeUInt64Division(NAUInt64 a, NAUInt64 b, NAUInt64* div, NAUInt64* rem){
-    NAUInt64 tmpb;
-    NAUInt64 highestbita;
-    NAUInt64 highestbitb;
-    *div = NA_ZERO_64u;
-    *rem = a;
-    if(naEqualUInt64(b, NA_ZERO_64u)){
-      #ifndef NDEBUG
-        naCrash("Integer Division by 0");
-      #endif
-    }else{
-      int shiftcount;
-
-      // search for the highest bit of b.
-      highestbita = naMakeUInt64(NA_VALUE32_SIGN_MASK, 0x0);
-      while(!naEqualUInt64(naAndUInt64(a, highestbita), highestbita)){
-        highestbita = naShrUInt64(highestbita, 1);
-      }
-      highestbitb = naMakeUInt64(NA_VALUE32_SIGN_MASK, 0x0);
-      while(!naEqualUInt64(naAndUInt64(b, highestbitb), highestbitb)){
-        highestbitb = naShrUInt64(highestbitb, 1);
-      }
-
-      tmpb = b;
-      shiftcount = 0;
-      // Make the dividend big enough
-      while(!naEqualUInt64(highestbita, highestbitb)){
-        if(naEqualUInt64(tmpb, NA_ZERO_64u)){
-          // b is larger than a and hence the result is zero.
-          shiftcount = 0;
-          break;
-        }
-        tmpb = naShlUInt64(tmpb, 1);
-        highestbitb = naShlUInt64(highestbitb, 1);
-        shiftcount++;
-      }
-
-      while(shiftcount >= 0){
-        *div = naShlUInt64(*div, 1);
-        if(naGreaterEqualUInt64(*rem, tmpb)){
-          *div = naOrUInt64(*div, NA_ONE_64u);
-          *rem = naSubUInt64(*rem, tmpb);
-        }
-        tmpb = naShrUInt64(tmpb, 1);
-        shiftcount--;
-      }
+    NA_IDEF NAInt128 naMakeInt128WithLo(NAInt64 lo){
+      NAInt128 retint;
+      retint.hi = naCastUInt64ToInt64(naGetSignum64(lo));
+      retint.lo = naCastInt64ToUInt64(lo);
+      return retint;
     }
-  }
-  NA_IDEF NAUInt64 naDivUInt64(NAUInt64 a, NAUInt64 b){
-    NAUInt64 divint;
-    NAUInt64 remint;
-    naComputeUInt64Division(a, b, &divint, &remint);
-    return divint;
-  }
-  NA_IDEF NAUInt64 naModUInt64(NAUInt64 a, NAUInt64 b){
-    NAUInt64 divint;
-    NAUInt64 remint;
-    naComputeUInt64Division(a, b, &divint, &remint);
-    return remint;
-  }
-
-
-
-  NA_IDEF NAUInt64  naNotUInt64(NAUInt64 i){
-    NAUInt64 retint;
-    retint.hi = ~i.hi;
-    retint.lo = ~i.lo;
-    return retint;
-  }
-  NA_IDEF NAUInt64  naOrUInt64 (NAUInt64 a, NAUInt64 b){
-    NAUInt64 retint;
-    retint.hi = a.hi | b.hi;
-    retint.lo = a.lo | b.lo;
-    return retint;
-  }
-  NA_IDEF NAUInt64  naAndUInt64(NAUInt64 a, NAUInt64 b){
-    NAUInt64 retint;
-    retint.hi = a.hi & b.hi;
-    retint.lo = a.lo & b.lo;
-    return retint;
-  }
-  NA_IDEF NAUInt64  naXorUInt64(NAUInt64 a, NAUInt64 b){
-    NAUInt64 retint;
-    retint.hi = a.hi ^ b.hi;
-    retint.lo = a.lo ^ b.lo;
-    return retint;
-  }
-  NA_IDEF NAUInt64 naShlUInt64(NAUInt64 a, int n){
-    NAUInt64 retint;
-    if(n < 0){return naShrUInt64(a, -n);}
-    if(n <= 32){
-      retint.hi = a.hi << n;
-      retint.hi |= a.lo >> (32 - n);
-      retint.lo = a.lo << n;
-    }else{
-      retint.hi = a.lo << (n - 32);
-      retint.lo = 0;
+    NA_IDEF NAInt128 naMakeInt128WithDouble(double d){
+      return naMakeInt128WithLo(naGetDoubleInteger(d));
     }
-    return retint;
-  }
-  NA_IDEF NAUInt64 naShrUInt64(NAUInt64 a, int n){
-    NAUInt64 retint;
-    if(n < 0){
-      retint = naShlUInt64(a, -n);
-    }else{
-      if(n <= 32){
-        retint.lo = a.lo >> n;
-        retint.lo |= a.hi << (32 - n);
-        retint.hi = a.hi >> n;
+
+
+
+    #undef naIncInt128
+    #define naIncInt128(i)\
+      (i.hi = naAddInt64(i.hi, naMakeInt64WithLo(naEqualUInt64(i.lo, NA_UINT64_MAX))),\
+      naIncUInt64(i.lo),\
+      i)
+    #undef naDecInt128
+    #define naDecInt128(i)\
+      (i.hi = naSubInt64(i.hi, naMakeInt64WithLo(naEqualUInt64(i.lo, NA_ZERO_64u))),\
+      naDecUInt64(i.lo),\
+      i)
+
+
+    NA_IDEF NAInt128 naNegInt128(NAInt128 i){
+      NAInt128 retint = naNotInt128(i);
+      naIncInt128(retint);
+      return retint;
+    }
+    NA_IDEF NAInt128 naAddInt128(NAInt128 a, NAInt128 b){
+      return naCastUInt128ToInt128(naAddUInt128(naCastInt128ToUInt128(a), naCastInt128ToUInt128(b)));
+    }
+    NA_IDEF NAInt128 naSubInt128(NAInt128 a, NAInt128 b){
+      return naCastUInt128ToInt128(naSubUInt128(naCastInt128ToUInt128(a), naCastInt128ToUInt128(b)));
+    }
+    NA_IDEF NAInt128 naMulInt128(NAInt128 a, NAInt128 b){
+      NAInt128 retint;
+      NAUInt128 retuint;
+      NAInt128 signa = naSigni128(a);
+      NAInt128 signb = naSigni128(b);
+      if(naSmallerInt128(a, NA_ZERO_128)){a = naNegInt128(a);}
+      if(naSmallerInt128(b, NA_ZERO_128)){b = naNegInt128(b);}
+      retuint = naMulUInt128(naCastInt128ToUInt128(a), naCastInt128ToUInt128(b));
+      retuint.hi = naAndUInt64(retuint.hi, naNotUInt64(NA_VALUE64_SIGN_MASK));
+      retint = naCastUInt128ToInt128(retuint);
+      if(!naEqualInt128(signa, signb)){retint = naNegInt128(retint);}
+      // todo: overflow may lead to different result than built-in 128 bit integer
+      return retint;
+    }
+    NA_IDEF NAInt128 naDivInt128(NAInt128 a, NAInt128 b){
+      NAInt128 retint;
+      NAUInt128 retuint;
+      NAInt128 signa = naSigni128(a);
+      NAInt128 signb = naSigni128(b);
+      if(naSmallerInt128(a, NA_ZERO_128)){a = naNegInt128(a);}
+      if(naSmallerInt128(b, NA_ZERO_128)){b = naNegInt128(b);}
+      retuint = naDivUInt128(naCastInt128ToUInt128(a), naCastInt128ToUInt128(b));
+      retuint.hi = naAndUInt64(retuint.hi, naNotUInt64(NA_VALUE64_SIGN_MASK));
+      retint = naCastUInt128ToInt128(retuint);
+      if(!naEqualInt128(signa, signb)){retint = naNegInt128(retint);}
+      return retint;
+    }
+    NA_IDEF NAInt128 naModInt128(NAInt128 a, NAInt128 b){
+      NAInt128 retint;
+      NAUInt128 retuint;
+      NAInt128 signa = naSigni128(a);
+      if(naSmallerInt128(a, NA_ZERO_128)){a = naNegInt128(a);}
+      if(naSmallerInt128(b, NA_ZERO_128)){b = naNegInt128(b);}
+      retuint = naModUInt128(naCastInt128ToUInt128(a), naCastInt128ToUInt128(b));
+      retuint.hi = naAndUInt64(retuint.hi, naNotUInt64(NA_VALUE64_SIGN_MASK));
+      retint = naCastUInt128ToInt128(retuint);
+      if(!naEqualInt128(signa, NA_ONE_128)){retint = naNegInt128(retint);}
+      return retint;
+    }
+
+
+
+    NA_IDEF NAInt128 naNotInt128(NAInt128 i){
+      return naCastUInt128ToInt128(naNotUInt128(naCastInt128ToUInt128(i)));
+    }
+    NA_IDEF NAInt128 naOrInt128(NAInt128 a, NAInt128 b){
+      return naCastUInt128ToInt128(naOrUInt128(naCastInt128ToUInt128(a), naCastInt128ToUInt128(b)));
+    }
+    NA_IDEF NAInt128 naAndInt128(NAInt128 a, NAInt128 b){
+      return naCastUInt128ToInt128(naAndUInt128(naCastInt128ToUInt128(a), naCastInt128ToUInt128(b)));
+    }
+    NA_IDEF NAInt128 naXorInt128(NAInt128 a, NAInt128 b){
+      return naCastUInt128ToInt128(naXorUInt128(naCastInt128ToUInt128(a), naCastInt128ToUInt128(b)));
+    }
+    NA_IDEF NAInt128 naShlInt128(NAInt128 a, int n){
+      return naCastUInt128ToInt128(naShlUInt128(naCastInt128ToUInt128(a), n));
+    }
+    NA_IDEF NAInt128 naShrInt128(NAInt128 a, int n){
+      NAInt128 retint;
+      if(n < 0){
+        retint = naShlInt128(a, -n);
       }else{
-        retint.lo = a.hi >> (n - 32);
-        retint.hi = 0;
+        if(n <= 64){
+          retint.lo = naShrUInt64(a.lo, n);
+          retint.lo = naOrUInt64(retint.lo, naShlUInt64(naCastInt64ToUInt64(a.hi), (64 - n)));
+          retint.hi = naShrInt64(a.hi, n);
+        }else{
+          NAUInt64 signum = naGetSignum64(a.hi); // Sign preservation!
+          retint.lo = naCastInt64ToUInt64(naShrInt64(a.hi, (n - 64)));
+          retint.hi = naCastUInt64ToInt64(signum);
+        }
+      }
+      return retint;
+    }
+
+
+
+    NA_IDEF NABool naEqualInt128(NAInt128 a, NAInt128 b){
+      return naEqualUInt128(naCastInt128ToUInt128(a), naCastInt128ToUInt128(b));
+    }
+    NA_IDEF NABool naGreaterInt128(NAInt128 a, NAInt128 b){
+      return (naGreaterInt64(a.hi, b.hi)
+        || (naEqualInt64(a.hi, b.hi)
+        && (naSmallerInt64(a.hi, NA_ZERO_64) ? naSmallerUInt64(a.lo, b.lo) : naGreaterUInt64(a.lo, b.lo))));
+    }
+    NA_IDEF NABool naGreaterEqualInt128(NAInt128 a, NAInt128 b){
+      return (naGreaterInt64(a.hi, b.hi)
+        || (naEqualInt64(a.hi, b.hi)
+        && (naSmallerInt64(a.hi, NA_ZERO_64) ? naSmallerEqualUInt64(a.lo, b.lo) : naGreaterUInt64(a.lo, b.lo))));
+    }
+    NA_IDEF NABool naSmallerInt128(NAInt128 a, NAInt128 b){
+      return (naSmallerInt64(a.hi, b.hi)
+        || (naEqualInt64(a.hi, b.hi)
+        && (naSmallerInt64(a.hi, NA_ZERO_64) ? naGreaterUInt64(a.lo, b.lo) : naSmallerUInt64(a.lo, b.lo))));
+    }
+    NA_IDEF NABool naSmallerEqualInt128(NAInt128 a, NAInt128 b){
+      return (naSmallerInt64(a.hi, b.hi)
+        || (naEqualInt64(a.hi, b.hi)
+        && (naSmallerInt64(a.hi, NA_ZERO_64) ? naGreaterUInt64(a.lo, b.lo) : naSmallerEqualUInt64(a.lo, b.lo))));
+    }
+
+
+
+    NA_IDEF uint8 naCastInt128ToUInt8(NAInt128 i){
+      return naCastUInt128ToUInt8(naCastInt128ToUInt128(i));
+    }
+    NA_IDEF uint16 naCastInt128ToUInt16(NAInt128 i){
+      return naCastUInt128ToUInt16(naCastInt128ToUInt128(i));
+    }
+    NA_IDEF uint32 naCastInt128ToUInt32(NAInt128 i){
+      return naCastUInt128ToUInt32(naCastInt128ToUInt128(i));
+    }
+    NA_IDEF NAUInt64 naCastInt128ToUInt64(NAInt128 i){
+      return naCastUInt128ToUInt64(naCastInt128ToUInt128(i));
+    }
+    NA_IDEF NAUInt128 naCastInt128ToUInt128(NAInt128 i){
+      NAUInt128 retint;
+      retint.hi = naCastInt64ToUInt64(i.hi);
+      retint.lo = i.lo;
+      return retint;
+    }
+    NA_IDEF int8 naCastInt128ToInt8(NAInt128 i){
+      return naCastUInt128ToInt8(naCastInt128ToUInt128(i));
+    }
+    NA_IDEF int16 naCastInt128ToInt16(NAInt128 i){
+      return naCastUInt128ToInt16(naCastInt128ToUInt128(i));
+    }
+    NA_IDEF int32 naCastInt128ToInt32(NAInt128 i){
+      return naCastUInt128ToInt32(naCastInt128ToUInt128(i));
+    }
+    NA_IDEF NAInt64 naCastInt128ToInt64(NAInt128 i){
+      return naCastUInt128ToInt64(naCastInt128ToUInt128(i));
+    }
+    NA_IDEF double naCastInt128ToDouble(NAInt128 i){
+      return naCastInt64ToDouble(naCastInt128ToInt64(i));
+    }
+
+
+
+    #undef naMakeUInt128WithLiteralLo
+    #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
+      #define naMakeUInt128WithLiteralLo(lo)  {0,(lo)}
+    #else
+      #define naMakeUInt128WithLiteralLo(lo)  {(lo),0}
+    #endif
+
+
+
+    NA_IDEF NAUInt128 naMakeUInt128(NAUInt64 hi, NAUInt64 lo){
+      NAUInt128 retint;
+      retint.hi = hi;
+      retint.lo = lo;
+      return retint;
+    }
+    NA_IDEF NAUInt128 naMakeUInt128WithLo(NAUInt64 lo){
+      NAUInt128 retint;
+      retint.hi = NA_ZERO_64u;
+      retint.lo = lo;
+      return retint;
+    }
+    NA_IDEF NAUInt128 naMakeUInt128WithDouble(double d){
+      return naMakeUInt128WithLo(naMakeUInt64WithDouble(d));
+    }
+
+
+
+    #undef naIncUInt128
+    #define naIncUInt128(i) (i.hi += (i.lo == NA_UINT64_MAX), i.lo += 1, i)
+    #undef naDecUInt128
+    #define naDecUInt128(i) (i.hi -= (i.lo == NA_ZERO_64u), i.lo -= 1, i)
+
+
+
+    NA_IDEF NAUInt128 naAddUInt128(NAUInt128 a, NAUInt128 b){
+      NAUInt128 retint;
+      retint.lo = naAddUInt64(a.lo, b.lo);
+      retint.hi = naAddUInt64(a.hi, b.hi);
+      retint.hi = naAddUInt64(retint.hi, naMakeUInt64WithLo(naSmallerUInt64(retint.lo, a.lo))); // add a carry if there was an overflow.
+      return retint;
+    }
+    NA_IDEF NAUInt128 naSubUInt128(NAUInt128 a, NAUInt128 b){
+      return naAddUInt128(a, naCastInt128ToUInt128(naNegInt128(naCastUInt128ToInt128(b))));
+    }
+    NA_IDEF NAUInt128 naMulUInt128(NAUInt128 a, NAUInt128 b){
+      NAUInt128 retint = NA_ZERO_128u;
+
+      NAUInt64 a0 = naAndUInt64(a.lo, naMakeUInt64WithLo(NA_UINT32_MAX));
+      NAUInt64 a1 = naShrUInt64(a.lo, 32);
+      NAUInt64 a2 = naAndUInt64(a.hi, naMakeUInt64WithLo(NA_UINT32_MAX));
+      NAUInt64 a3 = naShrUInt64(a.hi, 32);
+      NAUInt64 b0 = naAndUInt64(b.lo, naMakeUInt64WithLo(NA_UINT32_MAX));
+      NAUInt64 b1 = naShrUInt64(b.lo, 32);
+      NAUInt64 b2 = naAndUInt64(b.hi, naMakeUInt64WithLo(NA_UINT32_MAX));
+      NAUInt64 b3 = naShrUInt64(b.hi, 32);
+
+      retint.lo = naAddUInt64(retint.lo, naMulUInt64(a0, b0));
+      retint.lo = naAddUInt64(retint.lo, naShlUInt64(naMulUInt64(a0, b1), 32));
+      retint.hi = naAddUInt64(retint.hi, naShrUInt64(naMulUInt64(a0, b1), 32));
+      retint.hi = naAddUInt64(retint.hi, naMulUInt64(a0, b2));
+      retint.hi = naAddUInt64(retint.hi, naShlUInt64(naMulUInt64(a0, b3), 32));
+
+      retint.lo = naAddUInt64(retint.lo, naShlUInt64(naMulUInt64(a1, b0), 32));
+      retint.hi = naAddUInt64(retint.hi, naShrUInt64(naMulUInt64(a1, b0), 32));
+      retint.hi = naAddUInt64(retint.hi, naMulUInt64(a1, b1));
+      retint.hi = naAddUInt64(retint.hi, naShlUInt64(naMulUInt64(a1, b2), 32));
+
+      retint.hi = naAddUInt64(retint.hi, naMulUInt64(a2, b0));
+      retint.hi = naAddUInt64(retint.hi, naShlUInt64(naMulUInt64(a2, b1), 32));
+
+      retint.hi = naAddUInt64(retint.hi, naShlUInt64(naMulUInt64(a3, b0), 32));
+
+      return retint;
+    }
+    NA_HIDEF void naComputeUInt128Division(NAUInt128 a, NAUInt128 b, NAUInt128* div, NAUInt128* rem){
+      NAUInt128 tmpb;
+      NAUInt128 highestbita;
+      NAUInt128 highestbitb;
+      *div = NA_ZERO_128u;
+      *rem = a;
+      if(naEqualUInt128(b, NA_ZERO_128u)){
+        #ifndef NDEBUG
+          naCrash("Integer Division by 0");
+        #endif
+      }else{
+        int shiftcount;
+
+        // search for the highest bit of b.
+        highestbita = naMakeUInt128(NA_VALUE64_SIGN_MASK, NA_ZERO_64u);
+        while(!naEqualUInt128(naAndUInt128(a, highestbita), highestbita)){
+          highestbita = naShrUInt128(highestbita, 1);
+        }
+        highestbitb = naMakeUInt128(NA_VALUE64_SIGN_MASK, NA_ZERO_64u);
+        while(!naEqualUInt128(naAndUInt128(b, highestbitb), highestbitb)){
+          highestbitb = naShrUInt128(highestbitb, 1);
+        }
+
+        tmpb = b;
+        shiftcount = 0;
+        // Make the dividend big enough
+        while(!naEqualUInt128(highestbita, highestbitb)){
+          if(naEqualUInt128(tmpb, NA_ZERO_128u)){
+            // b is larger than a and hence the result is zero.
+            shiftcount = 0;
+            break;
+          }
+          tmpb = naShlUInt128(tmpb, 1);
+          highestbitb = naShlUInt128(highestbitb, 1);
+          shiftcount++;
+        }
+
+        while(shiftcount >= 0){
+          *div = naShlUInt128(*div, 1);
+          if(naGreaterEqualUInt128(*rem, tmpb)){
+            *div = naOrUInt128(*div, NA_ONE_128u);
+            *rem = naSubUInt128(*rem, tmpb);
+          }
+          tmpb = naShrUInt128(tmpb, 1);
+          shiftcount--;
+        }
       }
     }
-    return retint;
-  }
+    NA_IDEF NAUInt128 naDivUInt128(NAUInt128 a, NAUInt128 b){
+      NAUInt128 divint;
+      NAUInt128 remint;
+      naComputeUInt128Division(a, b, &divint, &remint);
+      return divint;
+    }
+    NA_IDEF NAUInt128 naModUInt128(NAUInt128 a, NAUInt128 b){
+      NAUInt128 divint;
+      NAUInt128 remint;
+      naComputeUInt128Division(a, b, &divint, &remint);
+      return remint;
+    }
 
 
 
-  NA_IDEF NABool naEqualUInt64(NAUInt64 a, NAUInt64 b){
-    return ((a.hi == b.hi) && (a.lo == b.lo));
-  }
-  NA_IDEF NABool naGreaterUInt64(NAUInt64 a, NAUInt64 b){
-    return ((a.hi > b.hi) || ((a.hi == b.hi) && (a.lo > b.lo)));
-  }
-  NA_IDEF NABool naGreaterEqualUInt64(NAUInt64 a, NAUInt64 b){
-    return ((a.hi > b.hi) || ((a.hi == b.hi) && (a.lo >= b.lo)));
-  }
-  NA_IDEF NABool naSmallerUInt64(NAUInt64 a, NAUInt64 b){
-    return ((a.hi < b.hi) || ((a.hi == b.hi) && (a.lo < b.lo)));
-  }
-  NA_IDEF NABool naSmallerEqualUInt64(NAUInt64 a, NAUInt64 b){
-    return ((a.hi < b.hi) || ((a.hi == b.hi) && (a.lo <= b.lo)));
-  }
+    NA_IDEF NAUInt128  naNotUInt128(NAUInt128 i){
+      NAUInt128 retint;
+      retint.hi = naNotUInt64(i.hi);
+      retint.lo = naNotUInt64(i.lo);
+      return retint;
+    }
+    NA_IDEF NAUInt128  naOrUInt128 (NAUInt128 a, NAUInt128 b){
+      NAUInt128 retint;
+      retint.hi = naOrUInt64(a.hi, b.hi);
+      retint.lo = naOrUInt64(a.lo, b.lo);
+      return retint;
+    }
+    NA_IDEF NAUInt128  naAndUInt128(NAUInt128 a, NAUInt128 b){
+      NAUInt128 retint;
+      retint.hi = naAndUInt64(a.hi, b.hi);
+      retint.lo = naAndUInt64(a.lo, b.lo);
+      return retint;
+    }
+    NA_IDEF NAUInt128  naXorUInt128(NAUInt128 a, NAUInt128 b){
+      NAUInt128 retint;
+      retint.hi = naXorUInt64(a.hi, b.hi);
+      retint.lo = naXorUInt64(a.lo, b.lo);
+      return retint;
+    }
+    NA_IDEF NAUInt128 naShlUInt128(NAUInt128 a, int n){
+      NAUInt128 retint;
+      if(n < 0){return naShrUInt128(a, -n);}
+      if(n <= 64){
+        retint.hi = naShlUInt64(a.hi, n);
+        retint.hi = naOrUInt64(retint.hi, naShrUInt64(a.lo, (64 - n)));
+        retint.lo = naShlUInt64(a.lo, n);
+      }else{
+        retint.hi = naShlUInt64(a.lo, (n - 64));
+        retint.lo = NA_ZERO_64u;
+      }
+      return retint;
+    }
+    NA_IDEF NAUInt128 naShrUInt128(NAUInt128 a, int n){
+      NAUInt128 retint;
+      if(n < 0){
+        retint = naShlUInt128(a, -n);
+      }else{
+        if(n <= 64){
+          retint.lo = naShrUInt64(a.lo, n);
+          retint.lo = naOrUInt64(retint.lo, naShlUInt64(a.hi, (64 - n)));
+          retint.hi = naShrUInt64(a.hi, n);
+        }else{
+          retint.lo = naShrUInt64(a.hi, (n - 64));
+          retint.hi = NA_ZERO_64u;
+        }
+      }
+      return retint;
+    }
 
 
 
-  NA_IDEF int8 naCastUInt64ToInt8(NAUInt64 i){
-    return (int8)i.lo;
-  }
-  NA_IDEF int16 naCastUInt64ToInt16(NAUInt64 i){
-    return (int16)i.lo;
-  }
-  NA_IDEF int32 naCastUInt64ToInt32(NAUInt64 i){
-    return (int32)i.lo;
-  }
-  NA_IDEF NAInt64 naCastUInt64ToInt64(NAUInt64 i){
-    NAInt64 retint;
-    retint.hi = (int32)i.hi;
-    retint.lo = i.lo;
-    return retint;
-  }
-  NA_IDEF uint8 naCastUInt64ToUInt8(NAUInt64 i){
-    return (uint8)i.lo;
-  }
-  NA_IDEF uint16 naCastUInt64ToUInt16(NAUInt64 i){
-    return (uint16)i.lo;
-  }
-  NA_IDEF uint32 naCastUInt64ToUInt32(NAUInt64 i){
-    return (uint32)i.lo;
-  }
-  NA_IDEF double naCastUInt64ToDouble(NAUInt64 i){
-    return (double)i.hi * naMakeDoubleWithExponent(32) + (double)i.lo;
-  }
+    NA_IDEF NABool naEqualUInt128(NAUInt128 a, NAUInt128 b){
+      return (naEqualUInt64(a.hi, b.hi) && naEqualUInt64(a.lo, b.lo));
+    }
+    NA_IDEF NABool naGreaterUInt128(NAUInt128 a, NAUInt128 b){
+      return (naGreaterUInt64(a.hi, b.hi) || (naEqualUInt64(a.hi, b.hi) && naGreaterUInt64(a.lo, b.lo)));
+    }
+    NA_IDEF NABool naGreaterEqualUInt128(NAUInt128 a, NAUInt128 b){
+      return (naGreaterUInt64(a.hi, b.hi) || (naEqualUInt64(a.hi, b.hi) && naGreaterEqualUInt64(a.lo, b.lo)));
+    }
+    NA_IDEF NABool naSmallerUInt128(NAUInt128 a, NAUInt128 b){
+      return (naSmallerUInt64(a.hi, b.hi) || (naEqualUInt64(a.hi, b.hi) && naSmallerUInt64(a.lo, b.lo)));
+    }
+    NA_IDEF NABool naSmallerEqualUInt128(NAUInt128 a, NAUInt128 b){
+      return (naSmallerUInt64(a.hi, b.hi) || (naEqualUInt64(a.hi, b.hi) && naSmallerEqualUInt64(a.lo, b.lo)));
+    }
 
-  */
 
-#endif // NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+
+    NA_IDEF int8 naCastUInt128ToInt8(NAUInt128 i){
+      return naCastUInt64ToInt8(i.lo);
+    }
+    NA_IDEF int16 naCastUInt128ToInt16(NAUInt128 i){
+      return naCastUInt64ToInt16(i.lo);
+    }
+    NA_IDEF int32 naCastUInt128ToInt32(NAUInt128 i){
+      return naCastUInt64ToInt32(i.lo);
+    }
+    NA_IDEF NAInt64 naCastUInt128ToInt64(NAUInt128 i){
+      return naCastUInt64ToInt64(i.lo);
+    }
+    NA_IDEF NAInt128 naCastUInt128ToInt128(NAUInt128 i){
+      NAInt128 retint;
+      retint.hi = naCastUInt64ToInt64(i.hi);
+      retint.lo = i.lo;
+      return retint;
+    }
+    NA_IDEF uint8 naCastUInt128ToUInt8(NAUInt128 i){
+      return naCastUInt64ToUInt8(i.lo);
+    }
+    NA_IDEF uint16 naCastUInt128ToUInt16(NAUInt128 i){
+      return naCastUInt64ToUInt16(i.lo);
+    }
+    NA_IDEF uint32 naCastUInt128ToUInt32(NAUInt128 i){
+      return naCastUInt64ToInt32(i.lo);
+    }
+    NA_IDEF NAUInt64 naCastUInt128ToUInt64(NAUInt128 i){
+      return i.lo;
+    }
+    NA_IDEF double naCastUInt128ToDouble(NAUInt128 i){
+      return naCastUInt64ToDouble(i.hi) * naMakeDoubleWithExponent(64) + naCastUInt64ToDouble(i.lo);
+    }
+
+
+  #endif // NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+#endif // defined NA_TYPE_INT128
 
 
 // Copyright (c) NALib, Tobias Stamm
