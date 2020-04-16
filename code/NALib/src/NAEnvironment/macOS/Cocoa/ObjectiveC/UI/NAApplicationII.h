@@ -65,7 +65,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   #endif
 
   NA_UNUSED(app);
-  [NSApp setDelegate:(NA_COCOA_BRIDGE id)naGetUIElementNativeID(app)];
+//  [NSApp setDelegate:(NA_COCOA_BRIDGE id)naGetUIElementNativeID(app)];
   
 //  SEL selector = @selector(doSomethingWithObject:afterDelay:);
 //  IMP newImp = (IMP)swizzledDoSometingWithObjectAfterDelay;

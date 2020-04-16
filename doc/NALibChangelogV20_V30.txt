@@ -11,7 +11,7 @@ This file contains information about changes in the package NALib. These are
 purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
-
+- Added NADateTime as Key
 - Small Changes to the API names
 - Removed NAMoney.h
 

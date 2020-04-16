@@ -404,7 +404,7 @@ NA_IDEF NABool naAddTreeNextMutable(NATreeIterator* iter, void* content, NABool 
 
 NA_IDEF void naRemoveTreeCurLeaf(NATreeIterator* iter){
   NATree* tree = naGetTreeIteratorTreeMutable(iter);
-  NATreeNode* newparent;
+  NATreeNode* newParent;
   NATreeItem* removeItem;
 
   #ifndef NDEBUG
@@ -418,9 +418,9 @@ NA_IDEF void naRemoveTreeCurLeaf(NATreeIterator* iter){
   
   removeItem = iter->item;
   naSetTreeIteratorCurItem(iter, NA_NULL);  // temporarily remove the iterator. // todo: make it advance, rev-advance or not.
-  newparent = tree->config->leafRemover(tree, (NATreeLeaf*)(removeItem));
-  if(newparent){naSetTreeIteratorCurItem(iter, naGetTreeNodeItem(newparent));}
-  naUpdateTreeNodeBubbling(tree, newparent, -1);
+  newParent = tree->config->leafRemover(tree, (NATreeLeaf*)(removeItem));
+  if(newParent){naSetTreeIteratorCurItem(iter, naGetTreeNodeItem(newParent));}
+  naUpdateTreeNodeBubbling(tree, newParent, -1);
 }
 
 
