@@ -43,7 +43,7 @@ void testEqualBool(NABool b, NABool goalb);
 void testMaking(){
   int64 i1 = naMakeInt64WithLo(-0x12345678);
   int64 i2 = naMakeInt64WithDouble(-123456789012345.);
-  uint64 ui1 = naMakeUInt64WithLiteralLo(0x12345678);
+  uint64 ui1 = naMakeUInt64WithLo(0x12345678);
   uint64 ui2 = naMakeUInt64WithLo(0x12345678);
   uint64 ui3 = naMakeUInt64WithDouble(123456789012345.);
   uint64 ui4 = naMakeUInt64(0x12345678, 0x56473829);

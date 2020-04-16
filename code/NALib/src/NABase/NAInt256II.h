@@ -40,12 +40,12 @@
 
     #undef naIncInt256
     #define naIncInt256(i)\
-      (i.hi = naAddInt128(i.hi, naMakeInt128WithLo(naEqualUInt128(i.lo, NA_UINT128_MAX))),\
+      (i.hi = naAddInt128(i.hi, naMakeInt128WithLo(naMakeInt64WithLo(naEqualUInt128(i.lo, NA_UINT128_MAX)))),\
       naIncUInt128(i.lo),\
       i)
     #undef naDecInt256
     #define naDecInt256(i)\
-      (i.hi = naSubInt128(i.hi, naMakeInt128WithLo(naEqualUInt128(i.lo, NA_ZERO_128u))),\
+      (i.hi = naSubInt128(i.hi, naMakeInt128WithLo(naMakeInt64WithLo(naEqualUInt128(i.lo, NA_ZERO_128u)))),\
       naDecUInt128(i.lo),\
       i)
 
@@ -210,9 +210,9 @@
 
     #undef naMakeUInt256WithLiteralLo
     #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
-      #define naMakeUInt256WithLiteralLo(lo)  {NA_ZERO_128u, lo}
+      #define naMakeUInt256WithLiteralLo(lo)  {0, lo}
     #else
-      #define naMakeUInt256WithLiteralLo(lo)  {lo, NA_ZERO_128u}
+      #define naMakeUInt256WithLiteralLo(lo)  {lo, 0}
     #endif
 
 
@@ -237,12 +237,12 @@
 
     #undef naIncUInt256
     #define naIncUInt256(i)\
-      (i.hi = naAddUInt128(i.hi, naMakeUInt128WithLo(naEqualUInt128(i.lo, NA_UINT128_MAX))),\
+      (i.hi = naAddUInt128(i.hi, naMakeUInt128WithLo(naMakeUInt64WithLo(naEqualUInt128(i.lo, NA_UINT128_MAX)))),\
       naIncUInt128(i.lo),\
       i)
     #undef naDecUInt256
     #define naDecUInt256(i)\
-      (i.hi = naSubUInt128(i.hi, naMakeUInt128WithLo(naEqualUInt128(i.lo, NA_ZERO_128u))),\
+      (i.hi = naSubUInt128(i.hi, naMakeUInt128WithLo(naMakeUInt64WithLo(naEqualUInt128(i.lo, NA_ZERO_128u)))),\
       naDecUInt128(i.lo),\
       i)
 
@@ -252,7 +252,7 @@
       NAUInt256 retint;
       retint.lo = naAddUInt128(a.lo, b.lo);
       retint.hi = naAddUInt128(a.hi, b.hi);
-      retint.hi = naAddUInt128(retint.hi, naMakeUInt128WithLo(naSmallerUInt128(retint.lo, a.lo))); // add a carry if there was an overflow.
+      retint.hi = naAddUInt128(retint.hi, naMakeUInt128WithLo(naMakeUInt64WithLo(naSmallerUInt128(retint.lo, a.lo)))); // add a carry if there was an overflow.
       return retint;
     }
     NA_IDEF NAUInt256 naSubUInt256(NAUInt256 a, NAUInt256 b){

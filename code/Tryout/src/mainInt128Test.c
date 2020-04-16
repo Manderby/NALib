@@ -46,7 +46,7 @@ void testEqualBool(NABool b, NABool goalb);
 void testMaking(){
   int128 i1 = naMakeInt128WithLo(naNegInt64(naMakeInt64(0x12345678, 0x12345678)));
   int128 i2 = naMakeInt128WithDouble(-123456789012345.);
-  uint128 ui1 = naMakeUInt128WithLo(naMakeUInt64WithLiteralLo(0x12345678));
+  uint128 ui1 = naMakeUInt128WithLo(naMakeUInt64WithLo(0x12345678));
   uint128 ui2 = naMakeUInt128WithLo(naMakeUInt64(0x12345678, 0x12345678));
   uint128 ui3 = naMakeUInt128WithDouble(123456789012345.);
   uint128 ui4 = MAKEu128(0x12345678, 0x56473829, 0xfabcedae, 0x33333333);

@@ -45,7 +45,7 @@ typedef int NABool;
 // configuring this. Note that the test (_MSC_VER >= 1310) tests for
 // Visual Studio 7.1
 #if (defined NA_C99) || (defined NA_CPP11) || _MSC_VER >= 1310 || NA_TYPE_ASSUME_NATIVE_LONG_LONG
-  #define NA_COMPILE_WITH_LONG_LONG 1
+  #define NA_COMPILE_WITH_LONG_LONG 0
 #else
   #define NA_COMPILE_WITH_LONG_LONG 0
 #endif

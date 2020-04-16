@@ -204,9 +204,9 @@
 
     #undef naMakeUInt128WithLiteralLo
     #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
-      #define naMakeUInt128WithLiteralLo(lo)  {NA_ZERO_64u, lo}
+      #define naMakeUInt128WithLiteralLo(lo)  {0, lo}
     #else
-      #define naMakeUInt128WithLiteralLo(lo)  {lo, NA_ZERO_64u}
+      #define naMakeUInt128WithLiteralLo(lo)  {lo, 0}
     #endif
 
 
