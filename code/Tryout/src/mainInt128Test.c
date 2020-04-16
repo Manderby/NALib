@@ -33,7 +33,7 @@ void testEqualInt128(int128 i, uint32 goalhi, uint32 goallo1, uint32 goallo2, ui
 void testEqualUInt128(uint128 ui, uint32 goalhi, uint32 goallo1, uint32 goallo2, uint32 goallo3);
 void testEqualBool(NABool b, NABool goalb);
 
-#define MAKEi128(a,b,c,d) naMakeInt128(naMakeInt64(a, b), naMakeUInt64(c, d));
+#define MAKEi128(a,b,c,d) naMakeInt128(naMakeInt64((int32)a, b), naMakeUInt64(c, d));
 #define MAKEu128(a,b,c,d) naMakeUInt128(naMakeUInt64(a, b), naMakeUInt64(c, d));
 
 
@@ -46,7 +46,7 @@ void testEqualBool(NABool b, NABool goalb);
 void testMaking(){
   int128 i1 = naMakeInt128WithLo(naNegInt64(naMakeInt64(0x12345678, 0x12345678)));
   int128 i2 = naMakeInt128WithDouble(-123456789012345.);
-  uint128 ui1 = naMakeUInt128WithLiteralLo(naMakeUInt64WithLiteralLo(0x12345678));
+  uint128 ui1 = naMakeUInt128WithLo(naMakeUInt64WithLiteralLo(0x12345678));
   uint128 ui2 = naMakeUInt128WithLo(naMakeUInt64(0x12345678, 0x12345678));
   uint128 ui3 = naMakeUInt128WithDouble(123456789012345.);
   uint128 ui4 = MAKEu128(0x12345678, 0x56473829, 0xfabcedae, 0x33333333);
@@ -87,10 +87,9 @@ void timeMaking(){
 
 
 void testBinary(){
-  int128 i = naMakeInt128(naMakeInt64WithDouble(-123456789012345.), naMakeUInt64WithDouble(-112233445566778.)); 
-  //printInt128(i); printf("\n");
-  int128 term = MAKEi128(0x55555555, 0x55555555, 0x55555555, 0x55555555);
-  uint128 ui = MAKEu128(0x12345678, 0x56473829, 0xfabcedae, 0x33333333);
+  int128 i =      MAKEi128(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
+  int128 term =   MAKEi128(0x55555555, 0x55555555, 0x55555555, 0x55555555);
+  uint128 ui =    MAKEu128(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
   uint128 uterm = MAKEu128(0x55555555, 0x55555555, 0x55555555, 0x55555555);
 
   int128 i1 = naNotInt128(i);
@@ -107,28 +106,28 @@ void testBinary(){
   uint128 ui5 = naShlUInt128(ui, 5);
   uint128 ui6 = naShrUInt128(ui, 5);
 
-  testEqualInt128(i1, 0x00007048, 0x860ddf78, 0x00006612, 0x62a7a939);
-  testEqualInt128(i2, 0xffffdff7, 0x7df775d7, 0xffffddfd, 0xdd5d57d7);
-  testEqualInt128(i3, 0x55550515, 0x51500005, 0x55551145, 0x15505444);
-  testEqualInt128(i4, 0xaaaadae2, 0x2ca775d2, 0xaaaaccb8, 0xc80d0393);
-  testEqualInt128(i5, 0xfff1f6ef, 0x3e4410ff, 0xfff33db3, 0xab0ad8c0);
-  testEqualInt128(i6, 0xfffffc7d, 0xbbcf9104, 0x3ffffccf, 0x6ceac2b6);
+  testEqualInt128(i1, 0x06cd8a23, 0x0fca4953, 0x8365aacf, 0xc043f53e);
+  testEqualInt128(i2, 0xfd7775dd, 0xf575f7fd, 0x7ddf5575, 0x7ffd5fd5);
+  testEqualInt128(i3, 0x51105554, 0x50151404, 0x54105510, 0x15140041);
+  testEqualInt128(i4, 0xac672089, 0xa560e3f9, 0x29cf0065, 0x6ae95f94);
+  testEqualInt128(i5, 0x264ebb9e, 0x06b6d58f, 0x934aa607, 0xf7815820);
+  testEqualInt128(i6, 0xffc993ae, 0xe781adb5, 0x63e4d2a9, 0x81fde056);
 
-  testEqualUInt128(ui1, 0xedcba987, 0xa9b8c7d6, 0x05431251, 0xcccccccc);
-  testEqualUInt128(ui2, 0x5775577d, 0x57577d7d, 0xfffdfdff, 0x77777777);
-  testEqualUInt128(ui3, 0x10145450, 0x54451001, 0x50144504, 0x11111111);
-  testEqualUInt128(ui4, 0x4761032d, 0x03126d7c, 0xafe9b8fb, 0x66666666);
-  testEqualUInt128(ui5, 0x468acf0a, 0xc8e7053f, 0x579db5c6, 0x66666660);
-  testEqualUInt128(ui6, 0x0091a2b3, 0xc2b239c1, 0x4fd5e76d, 0x71999999);
+  testEqualUInt128(ui1, 0x00a045b1, 0xf965d0db, 0xc0054761, 0xa755d642);
+  testEqualUInt128(ui2, 0xff5fff5f, 0x57df7f75, 0x7ffffddf, 0x5dff7dfd);
+  testEqualUInt128(ui3, 0x55551044, 0x04100504, 0x15501014, 0x50000115);
+  testEqualUInt128(ui4, 0xaa0aef1b, 0x53cf7a71, 0x6aafedcb, 0x0dff7ce8);
+  testEqualUInt128(ui5, 0xebf749c0, 0xd345e487, 0xff5713cb, 0x154537a0);
+  testEqualUInt128(ui6, 0x07fafdd2, 0x7034d179, 0x21ffd5c4, 0xf2c5514d);
 }
 
 
 
 void timeBinary(){
-  int128 i128_1 = MAKEi128(0xf93275dc, 0xf035bac, 0x7c9a530, 0x3fbc0c1);
-  int128 i128_2 = MAKEi128(0xff5fba4e, 0x069a2f4, 0x3ffab8e, 0x5aa29bd);
-  uint128 ui128_1 = MAKEu128(0xff5fba4e, 0x069a2f4, 0x3ffab8e, 0x5aa29bd);
-  uint128 ui128_2 = MAKEu128(0xf93275dc, 0xf035bac, 0x7c9a530, 0x3fbc0c1);
+  int128 i128_1 =   MAKEi128(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
+  int128 i128_2 =   MAKEi128(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6);
+  uint128 ui128_1 = MAKEu128(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
+  uint128 ui128_2 = MAKEu128(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1);
   double t;
   int i;
   int128 i128;
@@ -169,10 +168,10 @@ void timeBinary(){
 
 
 void testComparison(){
-  int128 i1 = MAKEi128(0xf93275dc, 0xf035bac, 0x7c9a530, 0x3fbc0c1);
-  int128 i2 = MAKEi128(0xff5fba4e, 0x069a2f4, 0x3ffab8e, 0x5aa29bd);
-  uint128 ui1 = MAKEu128(0xff5fba4e, 0x069a2f4, 0x3ffab8e, 0x5aa29bd);
-  uint128 ui2 = MAKEu128(0xf93275dc, 0xf035bac, 0x7c9a530, 0x3fbc0c1);
+  int128 i1 =   MAKEi128(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
+  int128 i2 =   MAKEi128(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6);
+  uint128 ui1 = MAKEu128(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
+  uint128 ui2 = MAKEu128(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1);
 
   testEqualBool(naEqualInt128(i1, i1), NA_TRUE);
   testEqualBool(naGreaterInt128(i1, i2), NA_FALSE);
@@ -206,10 +205,10 @@ void testComparison(){
 
 
 void timeComparison(){
-  int128 i01 = MAKEi128(0xf93275dc, 0xf035bac, 0x7c9a530, 0x3fbc0c1);
-  int128 i02 = MAKEi128(0xff5fba4e, 0x069a2f4, 0x3ffab8e, 0x5aa29bd);
-  uint128 ui01 = MAKEu128(0xff5fba4e, 0x069a2f4, 0x3ffab8e, 0x5aa29bd);
-  uint128 ui02 = MAKEu128(0xf93275dc, 0xf035bac, 0x7c9a530, 0x3fbc0c1);
+  int128 i01 =   MAKEi128(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
+  int128 i02 =   MAKEi128(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6);
+  uint128 ui01 = MAKEu128(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
+  uint128 ui02 = MAKEu128(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1);
   double t;
   int i;
   NABool testbool = NA_FALSE;
@@ -247,24 +246,24 @@ void timeComparison(){
 
 
 void testArithmetic(){
-  int128 i01 = MAKEi128(0xf93275dc, 0xf035bac, 0x7c9a530, 0x3fbc0c1);
-  int128 i02 = MAKEi128(0x022f068c, 0x6c249d0, 0x165dea5, 0x27c7ff6);
-  int128 i03 = NA_ZERO_128;
-  int128 i04 = naMakeInt128WithDouble(-123.);
+  int128 i01 =   MAKEi128(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
+  int128 i02 =   MAKEi128(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6);
+  int128 i03 =   NA_ZERO_128;
+  int128 i04 =   naMakeInt128WithDouble(-123.);
   int128 i1, i2;
-  uint128 ui01 = MAKEu128(0x4a5fba4e, 0x069a2f4, 0x3ffab8e, 0x5aa29bd);
-  uint128 ui02 = MAKEu128(0x003275dc, 0xf035bac, 0x7c9a530, 0x3fbc0c1);
+  uint128 ui01 = MAKEu128(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
+  uint128 ui02 = MAKEu128(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1);
   uint128 ui03 = NA_ZERO_128u;
   uint128 ui2;
 
   i1 = naNegInt128(i01);
-  testEqualInt128(i1, 0x06cd8a23, 0xf0fca453, 0xf8365acf, 0xfc043f3f);
+  testEqualInt128(i1, 0x06cd8a23, 0x0fca4953, 0x8365aacf, 0xc043f53f);
   i1 = naNegInt128(naNegInt128(i01));
-  testEqualInt128(i1, 0xf93275dc, 0x0f035bac, 0x07c9a530, 0x03fbc0c1);
+  testEqualInt128(i1, 0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
   naIncInt128(i01);
-  testEqualInt128(i01, 0xf93275dc, 0x0f035bac, 0x07c9a530, 0x03fbc0c2);
+  testEqualInt128(i01, 0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac2);
   naDecInt128(i01);
-  testEqualInt128(i01, 0xf93275dc, 0x0f035bac, 0x07c9a530, 0x03fbc0c1);
+  testEqualInt128(i01, 0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
   naIncInt128(i03);
   testEqualInt128(i03, 0x00000000, 0x00000000, 0x00000000, 0x00000001);
   naDecInt128(i03);
@@ -275,26 +274,26 @@ void testArithmetic(){
   testEqualInt128(i03, 0x00000000, 0x00000000, 0x00000000, 0x00000000);
 
   i2 = naAddInt128(i01, i02);
-  testEqualInt128(i2, 0xfb617c68, 0x15c5a57c, 0x092f83d5, 0x067840b7);
+  testEqualInt128(i2, 0xfb617c69, 0x5c5a548c, 0x92f837d5, 0x67836ab7);
   i2 = naSubInt128(i01, i02);
-  testEqualInt128(i2, 0xf7036f50, 0x084111dc, 0x0663c68b, 0x017f40cb);
+  testEqualInt128(i2, 0xf7036f50, 0x841118cc, 0x663c728b, 0x17f4aacb);
   i2 = naMulInt128(i01, i04);
-  testEqualInt128(i2, 0x44c15f44, 0xc962f458, 0x421da1ee, 0x160a6345);
+  testEqualInt128(i2, 0x44c15ed8, 0x96313b20, 0x21d911d1, 0x60a6d545);
   i2 = naMulInt128(i02, i04);
-  testEqualInt128(i2, 0xf367dab8, 0xc0a6890f, 0x540e06b7, 0xce2e84ce);
+  testEqualInt128(i2, 0xf367da88, 0x0a682555, 0x40e41aa5, 0xe334e4ce);
   i2 = naDivInt128(i01, i02);
   testEqualInt128(i2, 0xffffffff, 0xffffffff, 0xffffffff, 0xfffffffd);
   i2 = naDivInt128(i01, i04);
-  testEqualInt128(i2, 0x000e28aa, 0xf578b02a, 0x4f06af91, 0x4cf9ca66);
+  testEqualInt128(i2, 0x000e28aa, 0xf3a3fc6e, 0xfce7d9d8, 0x1021da72);
   i2 = naModInt128(i01, i02);
-  testEqualInt128(i2, 0xffbf8980, 0x234a391c, 0x0bfb411f, 0x0b7140a3);
+  testEqualInt128(i2, 0xffbf8982, 0x34a3904c, 0xbfb3fd1f, 0xb7122aa3);
   i2 = naModInt128(i01, i04);
-  testEqualInt128(i2, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffc3);
+  testEqualInt128(i2, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffff87);
 
   naIncUInt128(ui01);
-  testEqualUInt128(ui01, 0x4a5fba4e, 0x0069a2f4, 0x03ffab8e, 0x05aa29be);
+  testEqualUInt128(ui01, 0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29be);
   naDecUInt128(ui01);
-  testEqualUInt128(ui01, 0x4a5fba4e, 0x0069a2f4, 0x03ffab8e, 0x05aa29bd);
+  testEqualUInt128(ui01, 0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
   naIncUInt128(ui03);
   testEqualUInt128(ui03, 0x00000000, 0x00000000, 0x00000000, 0x00000001);
   naDecUInt128(ui03);
@@ -305,13 +304,13 @@ void testArithmetic(){
   testEqualUInt128(ui03, 0x00000000, 0x00000000, 0x00000000, 0x00000000);
 
   ui2 = naAddUInt128(ui01, ui02);
-  testEqualUInt128(ui2, 0x4a92302a, 0x0f6cfea0, 0x0bc950be, 0x09a5ea7e);
+  testEqualUInt128(ui2, 0xff92302a, 0xf6cf6ad0, 0xbc950ece, 0x9866337e);
   ui2 = naSubUInt128(ui01, ui02);
-  testEqualUInt128(ui2, 0x4a2d4471, 0xf1664747, 0xfc36065e, 0x01ae68fc);
+  testEqualUInt128(ui2, 0xff2d4471, 0x1664f377, 0xc360626e, 0x18ee1ffc);
   ui2 = naDivUInt128(ui01, ui02);
-  testEqualUInt128(ui2, 0x00000000, 0x00000000, 0x00000000, 0x00000179);
+  testEqualUInt128(ui2, 0x00000000, 0x00000000, 0x00000000, 0x0000050f);
   ui2 = naModUInt128(ui01, ui02);
-  testEqualUInt128(ui2, 0x0010293b, 0xe477a29c, 0x8c0b67d8, 0x27eb4d84);
+  testEqualUInt128(ui2, 0x001d81aa, 0xe9515199, 0xef40ba8b, 0xf074d26e);
 
 }
 
@@ -320,10 +319,10 @@ void testArithmetic(){
 void timeArithmetic(){
   double t;
   int i;
-  int128 i128_1 = MAKEi128(0xf93275dc, 0xf035bac, 0x7c9a530, 0x3fbc0c1);
-  int128 i128_2 = MAKEi128(0x022f068c, 0x6c249d0, 0x165dea5, 0x27c7ff6);
-  uint128 ui128_1 = MAKEu128(0x4a5fba4e, 0x069a2f4, 0x3ffab8e, 0x5aa29bd);
-  uint128 ui128_2 = MAKEu128(0x003275dc, 0xf035bac, 0x7c9a530, 0x3fbc0c1);
+  int128 i128_1 =   MAKEi128(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
+  int128 i128_2 =   MAKEi128(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6);
+  uint128 ui128_1 = MAKEu128(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
+  uint128 ui128_2 = MAKEu128(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1);
 
   t = getTime();
   for(i = 0; i < TESTSIZE; i++){i128_1 = naNegInt128(i128_1);}
@@ -402,9 +401,13 @@ void printInt128(int128 i){
 }
 void printUInt128(uint128 ui){
   #if !defined NA_TYPE_INT128
-    printf("%08x %08x %08x %08x", ui.hi.hi, ui.hi.lo, ui.lo.hi, ui.lo.lo);
+    #if !defined NA_TYPE_INT64
+      printf("0x%08x 0x%08x 0x%08x 0x%08x", ui.hi.hi, ui.hi.lo, ui.lo.hi, ui.lo.lo);
+    #else
+      printf("0x%08x 0x%08x 0x%08x 0x%08x", (uint32)(ui.hi >> 32), (uint32)ui.hi, (uint32)(ui.lo >> 32), (uint32)ui.lo);
+    #endif
   #else
-    printf("%032llx", ui);
+    printf("0x%08x 0x%08x 0x%08x 0x%08x", (uint32)(ui >> 96), (uint32)(ui >> 64), (uint32)(ui >> 32), (uint32)ui);
   #endif
 }
 void testEqualInt128(int128 i, uint32 goalhi, uint32 goallo1, uint32 goallo2, uint32 goallo3){
@@ -414,16 +417,16 @@ void testEqualUInt128(uint128 ui, uint32 goalhi, uint32 goallo1, uint32 goallo2,
   #if !defined NA_TYPE_INT128
     if(naEqualUInt64(ui.lo, naMakeUInt64(goallo2, goallo3))
       && naEqualUInt64(ui.hi, naMakeUInt64(goalhi, goallo1))){
-      printf("Pass ");
+      printf("ok   ");
     }else{
       printf("FAIL ");
     }
   #else
     if((ui & NA_UINT32_MAX) == goallo3
-      && (ui >> 32) & NA_UINT32_MAX) == goallo2)
-      && (ui >> 64) & NA_UINT32_MAX) == goallo1)
-      && (ui >> 96) & NA_UINT32_MAX) == goalhi){
-      printf("Pass ");
+      && ((ui >> 32) & NA_UINT32_MAX) == goallo2
+      && ((ui >> 64) & NA_UINT32_MAX) == goallo1
+      && ((ui >> 96) & NA_UINT32_MAX) == goalhi){
+      printf("ok   ");
     }else{
       printf("FAIL ");
     }
@@ -433,7 +436,7 @@ void testEqualUInt128(uint128 ui, uint32 goalhi, uint32 goallo1, uint32 goallo2,
 }
 void testEqualBool(NABool b, NABool goalb){
   if(b == goalb){
-    printf("Pass\n");
+    printf("ok  \n");
   }else{
     printf("FAIL\n");
   }

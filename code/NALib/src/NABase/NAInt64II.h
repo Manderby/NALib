@@ -8,7 +8,7 @@
 
 
 #if defined NA_TYPE_INT64
-  NA_IDEF NAInt64 naMakeInt64(int32 hi, uint32 lo){return (hi << 32) | lo;}
+  NA_IDEF NAInt64 naMakeInt64(int32 hi, uint32 lo){return ((NAInt64)hi << 32) | lo;}
   NA_IDEF NAInt64 naMakeInt64WithLo(int32 lo){return (NAInt64)lo;}
   NA_IDEF NAInt64 naMakeInt64WithDouble(double lo){return (NAInt64)lo;}
 #else
@@ -126,7 +126,7 @@
         }else{
           uint32 signum = naGetSignum32(a.hi); // Sign preservation!
           retint.lo = (uint32)((int32)a.hi >> (n - 32));
-          retint.hi = signum;
+          retint.hi = (int32)signum;
         }
       }
       return retint;

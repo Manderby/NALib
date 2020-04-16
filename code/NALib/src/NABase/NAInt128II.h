@@ -8,7 +8,7 @@
 
 
 #if defined NA_TYPE_INT128
-  NA_IDEF NAInt128 naMakeInt128(int64 hi, uint64 lo){return (hi << 64) | lo;}
+  NA_IDEF NAInt128 naMakeInt128(int64 hi, uint64 lo){return ((NAInt128)hi << 64) | lo;}
   NA_IDEF NAInt128 naMakeInt128WithLo(NAInt64 lo){return (NAInt128)lo;}
   NA_IDEF NAInt128 naMakeInt128WithDouble(double lo){return (NAInt128)lo;}
 #else
@@ -454,7 +454,7 @@
       return naCastUInt64ToUInt16(i.lo);
     }
     NA_IDEF uint32 naCastUInt128ToUInt32(NAUInt128 i){
-      return naCastUInt64ToInt32(i.lo);
+      return naCastUInt64ToUInt32(i.lo);
     }
     NA_IDEF NAUInt64 naCastUInt128ToUInt64(NAUInt128 i){
       return i.lo;

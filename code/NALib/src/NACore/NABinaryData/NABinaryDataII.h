@@ -253,10 +253,7 @@ NA_IDEF NABool naEqual64( void* NA_RESTRICT a, void* NA_RESTRICT b){
   return naEqualUInt64(*((NAUInt64*)a), *((NAUInt64*)b));
 }
 NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b){
-  #ifndef NDEBUG
-    naError("Uncommented during development. Please re-uncomment it.");
-  #endif
-  //return naEqualUInt128(*((NAUInt128*)a), *((NAUInt128*)b));
+  return naEqualUInt128(*((NAUInt128*)a), *((NAUInt128*)b));
 }
 
 

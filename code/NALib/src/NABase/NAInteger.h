@@ -45,7 +45,7 @@ typedef int NABool;
 // configuring this. Note that the test (_MSC_VER >= 1310) tests for
 // Visual Studio 7.1
 #if (defined NA_C99) || (defined NA_CPP11) || _MSC_VER >= 1310 || NA_TYPE_ASSUME_NATIVE_LONG_LONG
-  #define NA_COMPILE_WITH_LONG_LONG 0
+  #define NA_COMPILE_WITH_LONG_LONG 1
 #else
   #define NA_COMPILE_WITH_LONG_LONG 0
 #endif
@@ -445,12 +445,15 @@ typedef int NABool;
   #define NA_UINT128_MAX  UINT128_MAX
   #define NA_INT128_MAX   INT128_MAX
   #define NA_INT128_MIN   INT128_MIN
-  typedef unsigned __int128_t   uint128;
-  typedef signed __int128_t     int128;
-  #define NA_ZERO_128     (0LLLLLLELEVEN)
-  #define NA_ONE_128      (1LLLLLLELEVEN)
-  #define NA_ZERO_128u    (0uLLLLLLELEVEN)
-  #define NA_ONE_128u     (1uLLLLLLELEVEN)
+  typedef unsigned __int128   uint128;
+  typedef signed __int128     int128;
+  // Note that older versions define these types. Maybe add them later.
+  // typedef unsigned __int128_t   uint128;
+  // typedef signed __int128_t     int128;
+  #define NA_ZERO_128     (0)  // There is no suffix LLL, so, just omit it. 
+  #define NA_ONE_128      (1)
+  #define NA_ZERO_128u    (0u)
+  #define NA_ONE_128u     (1u)
   #define NA_PRIi128      "d CANTSHOWi128 "
   #define NA_PRIu128      "u CANTSHOWi128 "
   #define NA_PRIx128      "x CANTSHOWi128 "
