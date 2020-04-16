@@ -32,7 +32,7 @@ a, const void* b){
   return *(const double*)a > *(const double*)b;
 }
 
-
+#include <stdint.h>
 
 NA_IDEF void NA_KEY_OP(Assign, float)(void* dst, const void* src){
   *(float*)dst = *(const float*)src;
@@ -126,31 +126,31 @@ NA_IDEF void NA_KEY_OP(Assign, NADateTime)(void* dst, const void* src){
 NA_IDEF NABool NA_KEY_OP(Lower, NADateTime)(const void* a, const void* b){
   const NADateTime* aDateTime = (const NADateTime*)a; 
   const NADateTime* bDateTime = (const NADateTime*)b; 
-  return (aDateTime->sisec < bDateTime->sisec)
-    || ((aDateTime->sisec == bDateTime->sisec) && (aDateTime->nsec < bDateTime->nsec));
+  return naSmallerInt64(aDateTime->sisec, bDateTime->sisec)
+    || (naEqualInt64(aDateTime->sisec, bDateTime->sisec) && (aDateTime->nsec < bDateTime->nsec));
 }
 NA_IDEF NABool NA_KEY_OP(LowerEqual, NADateTime)(const void* a, const void* b){
   const NADateTime* aDateTime = (const NADateTime*)a; 
   const NADateTime* bDateTime = (const NADateTime*)b; 
-  return (aDateTime->sisec <= bDateTime->sisec)
-    || ((aDateTime->sisec == bDateTime->sisec) && (aDateTime->nsec <= bDateTime->nsec));
+  return naSmallerEqualInt64(aDateTime->sisec, bDateTime->sisec)
+    || (naEqualInt64(aDateTime->sisec, bDateTime->sisec) && (aDateTime->nsec <= bDateTime->nsec));
 }
 NA_IDEF NABool NA_KEY_OP(Equal, NADateTime)(const void* a, const void* b){
   const NADateTime* aDateTime = (const NADateTime*)a; 
   const NADateTime* bDateTime = (const NADateTime*)b; 
-  return (aDateTime->sisec == bDateTime->sisec) && (aDateTime->nsec == bDateTime->nsec);
+  return naEqualInt64(aDateTime->sisec, bDateTime->sisec) && (aDateTime->nsec == bDateTime->nsec);
 }
 NA_IDEF NABool NA_KEY_OP(GreaterEqual, NADateTime)(const void* a, const void* b){
   const NADateTime* aDateTime = (const NADateTime*)a; 
   const NADateTime* bDateTime = (const NADateTime*)b; 
-  return (aDateTime->sisec >= bDateTime->sisec)
-    || ((aDateTime->sisec == bDateTime->sisec) && (aDateTime->nsec >= bDateTime->nsec));
+  return naGreaterEqualInt64(aDateTime->sisec, bDateTime->sisec)
+    || (naEqualInt64(aDateTime->sisec, bDateTime->sisec) && (aDateTime->nsec >= bDateTime->nsec));
 }
 NA_IDEF NABool NA_KEY_OP(Greater, NADateTime)(const void* a, const void* b){
   const NADateTime* aDateTime = (const NADateTime*)a; 
   const NADateTime* bDateTime = (const NADateTime*)b; 
-  return (aDateTime->sisec > bDateTime->sisec)
-    || ((aDateTime->sisec == bDateTime->sisec) && (aDateTime->nsec > bDateTime->nsec));
+  return naGreaterInt64(aDateTime->sisec, bDateTime->sisec)
+    || (naEqualInt64(aDateTime->sisec, bDateTime->sisec) && (aDateTime->nsec > bDateTime->nsec));
 }
 
 

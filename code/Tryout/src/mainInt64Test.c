@@ -23,7 +23,6 @@
   #include <sys/time.h>
 #endif
 
-int64 randInt64();
 uint64 randUInt64();
 double getTime();
 double printAndSwapTime(const char* title, double starttime);
@@ -57,46 +56,6 @@ void testMaking(){
 }
 
 
-//typedef int64(*naInt64_Int64_Int64Func)(int64 a, int64 b);
-//typedef int64(*naInt64_Double)(double b);
-//typedef int32(*naInt32_Double)(double b);
-//
-//void timeInt64_Int64_Int64Func(naInt64_Int64_Int64Func func, double* t){
-//  int64 i64_1 = NA_ZERO_64;
-//  int64 i64_2 = NA_ZERO_64;
-//  int i;
-//  for(i = 0; i < TESTSIZE; i++){func(i64_1, i64_2);}
-//  *t = printAndSwapTime("naMakeInt64WithDouble", *t);
-//}
-//void timeInt64_DoubleFunc(naInt64_Double func){
-//  double t;
-//  double d = 1234567.1234;
-//  int64 r;
-//  int i;
-//  t = getTime();
-//  for(i = 0; i < TESTSIZE; i++){r = naXorInt64(func(d), r);}
-//  printAndSwapTime("naMakeInt64WithDouble", t);
-//
-//  #if ! defined NA_TYPE_INT64
-//    printf("Final Result: %d %d", r.lo, r.hi);
-//  #else
-//    printf("Final Result: %lld", r);
-//  #endif
-//}
-//void timeInt32_DoubleFunc(naInt32_Double func){
-//  double t;
-//  double d = 1234567.1234;
-//  int32 r = 0;
-//  int i;
-//  t = getTime();
-//  for(i = 0; i < TESTSIZE; i++){r ^= func(d);}
-//  printAndSwapTime("naMakeInt64WithDouble", t);
-//
-//  printf("Final Result: %d", r);
-//}
-
-
-
 void timeMaking(){
   double t;
   int i;
@@ -125,7 +84,7 @@ void timeMaking(){
 
 
 void testBinary(){
-  int64 i = naMakeInt64WithDouble(-123456789012345.);
+  int64 i = naMakeInt64WithDouble(-123456789012345.); 
   int64 term = naCastUInt64ToInt64(naMakeUInt64(0x55555555, 0x55555555));
   uint64 ui = naMakeUInt64(0x12345678, 0x56473829);
   uint64 uterm = naMakeUInt64(0x55555555, 0x55555555);
@@ -144,28 +103,28 @@ void testBinary(){
   uint64 ui5 = naShlUInt64(ui, 5);
   uint64 ui6 = naShrUInt64(ui, 5);
 
-  testEqualInt64(i1, 0x00007048 , 0x860ddf78);
-  testEqualInt64(i2, 0xffffdff7 , 0x7df775d7);
-  testEqualInt64(i3, 0x55550515 , 0x51500005);
-  testEqualInt64(i4, 0xaaaadae2 , 0x2ca775d2);
-  testEqualInt64(i5, 0xfff1f6ef , 0x3e4410e0);
-  testEqualInt64(i6, 0xfffffc7d , 0xbbcf9104);
+  testEqualInt64(i1, 0x00007048, 0x860ddf78);
+  testEqualInt64(i2, 0xffffdff7, 0x7df775d7);
+  testEqualInt64(i3, 0x55550515, 0x51500005);
+  testEqualInt64(i4, 0xaaaadae2, 0x2ca775d2);
+  testEqualInt64(i5, 0xfff1f6ef, 0x3e4410e0);
+  testEqualInt64(i6, 0xfffffc7d, 0xbbcf9104);
 
-  testEqualUInt64(ui1, 0xedcba987 , 0xa9b8c7d6);
-  testEqualUInt64(ui2, 0x5775577d , 0x57577d7d);
-  testEqualUInt64(ui3, 0x10145450 , 0x54451001);
-  testEqualUInt64(ui4, 0x4761032d , 0x03126d7c);
-  testEqualUInt64(ui5, 0x468acf0a , 0xc8e70520);
-  testEqualUInt64(ui6, 0x0091a2b3 , 0xc2b239c1);
+  testEqualUInt64(ui1, 0xedcba987, 0xa9b8c7d6);
+  testEqualUInt64(ui2, 0x5775577d, 0x57577d7d);
+  testEqualUInt64(ui3, 0x10145450, 0x54451001);
+  testEqualUInt64(ui4, 0x4761032d, 0x03126d7c);
+  testEqualUInt64(ui5, 0x468acf0a, 0xc8e70520);
+  testEqualUInt64(ui6, 0x0091a2b3, 0xc2b239c1);
 }
 
 
 
 void timeBinary(){
-  int64 i64_1 = naCastUInt64ToInt64(naMakeUInt64WithLo(27253242));
-  int64 i64_2 = naCastUInt64ToInt64(naMakeUInt64WithLo(345275662));
-  uint64 ui64_1 = naMakeUInt64WithLo(123876413);
-  uint64 ui64_2 = naMakeUInt64WithLo(98372154);
+  int64 i64_1 = naMakeInt64(0x693275dc, 0xf035bac);
+  int64 i64_2 = naMakeInt64(0x95fba4e, 0x069a2f4);
+  uint64 ui64_1 = naMakeUInt64(0x693275dc, 0xf035bac);
+  uint64 ui64_2 = naMakeUInt64(0x95fba4e, 0x069a2f4);
   double t;
   int i;
   int64 i64;
@@ -309,8 +268,8 @@ void testArithmetic(){
   naDecInt64(i03);
   testEqualInt64(i03, 0xffffffff, 0xffffffff);
   naIncInt64(i03);
-
   testEqualInt64(i03, 0x00000000, 0x00000000);
+
   i2 = naAddInt64(i01, i02);
   testEqualInt64(i2, 0xffff909d, 0x6ebb17ca);
   i2 = naSubInt64(i01, i02);
@@ -363,7 +322,7 @@ void timeArithmetic(){
   uint64 ui64_2 = naMakeUInt64WithLo(98372154);
 
   t = getTime();
-  for(i = 0; i < TESTSIZE; i++){i64_1 = naNegInt64(randInt64());}
+  for(i = 0; i < TESTSIZE; i++){i64_1 = naNegInt64(naCastUInt64ToInt64(randUInt64()));}
   t = printAndSwapTime("naNegInt64", t);
   for(i = 0; i < TESTSIZE; i++){naIncInt64(i64_1);}
   t = printAndSwapTime("naIncInt64", t);
@@ -404,16 +363,14 @@ void timeArithmetic(){
 
 
 
-int64 randInt64(){
-  return naCastUInt64ToInt64(naMakeUInt64((uint32)rand(), (uint32)rand()));
+uint32 randUInt32(){
+  return (uint32)rand();
 }
-uint64 randUInt64(){
-  static uint32 hi = 0;
-  static uint32 lo = 12345;
-  return naMakeUInt64(hi++, lo++);
-//  return naMakeUInt64((uint32)rand(), (uint32)rand());
+NAUInt64 randUInt64(){
+  return naMakeUInt64(randUInt32(), randUInt32());
 }
 double getTime(){
+  // Note: Reimplemented here because NADateTime uses int64 to compute.
   #if NA_OS == NA_OS_WINDOWS
     NADateTime dt;
     FILETIME filetime;
@@ -431,7 +388,6 @@ double getTime(){
 }
 double printAndSwapTime(const char* title, double starttime){
   double t2 = getTime();
-//  printf("%s took %f s\n", title, t2 - starttime);
   printf("%s\t\t%f s\n", title, t2 - starttime);
   return t2;
 }
@@ -456,7 +412,7 @@ void testEqualUInt64(uint64 ui, uint32 goalhi, uint32 goallo){
       printf("FAIL ");
     }
   #else
-    if((ui & 0xffffffff) == goallo && (ui >> 32) == goalhi){
+    if((ui & NA_UINT32_MAX) == goallo && (ui >> 32) == goalhi){
       printf("Pass ");
     }else{
       printf("FAIL ");
@@ -491,10 +447,6 @@ int main(void){
   timeBinary();
   timeComparison();
   timeArithmetic();
-
-
-
-//  timeInt32_DoubleFunc(naGetDoubleExponent);
 
   #if NA_OS == NA_OS_WINDOWS
     printf("Finished.\n");

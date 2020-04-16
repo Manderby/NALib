@@ -77,14 +77,7 @@ NA_IDEF void naCopy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
     if(dist < 8)
       naError("Restrict pointers overlap.");
   #endif
-  #if defined NA_TYPE_INT64
-    *(uint64*)d = *(uint64*)s;
-  #else
-    *(uint32*)d = *(uint32*)s;
-    d = ((NAByte*)d) + 4;
-    s = ((NAByte*)s) + 4;
-    *(uint32*)d = *(uint32*)s;
-  #endif
+  *(NAUInt64*)d = *(NAUInt64*)s;
 }
 NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
@@ -98,23 +91,10 @@ NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
     if(dist < 16)
       naError("Restrict pointers overlap.");
   #endif
-  #if defined NA_TYPE_INT64
-    *(uint64*)d = *(uint64*)s;
-    d = ((NAByte*)d) + 8;
-    s = ((NAByte*)s) + 8;
-    *(uint64*)d = *(uint64*)s;
-  #else
-    *(uint32*)d = *(uint32*)s;
-    d = ((NAByte*)d) + 4;
-    s = ((NAByte*)s) + 4;
-    *(uint32*)d = *(uint32*)s;
-    d = ((NAByte*)d) + 4;
-    s = ((NAByte*)s) + 4;
-    *(uint32*)d = *(uint32*)s;
-    d = ((NAByte*)d) + 4;
-    s = ((NAByte*)s) + 4;
-    *(uint32*)d = *(uint32*)s;
-  #endif
+  *(NAUInt64*)d = *(NAUInt64*)s;
+  d = ((NAByte*)d) + 8;
+  s = ((NAByte*)s) + 8;
+  *(NAUInt64*)d = *(NAUInt64*)s;
 }
 
 NA_IDEF void naCopyn(void* NA_RESTRICT d, const void* NA_RESTRICT s, NAInt bytesize){
@@ -207,16 +187,9 @@ NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #endif
   // Note: Do not write the following 3 lines as 1 line. The compiler might
   // cache the result of the dereference operators!
-  #if defined NA_TYPE_INT64
-    *(uint64*)a ^= *(uint64*)b;
-    *(uint64*)b ^= *(uint64*)a;
-    *(uint64*)a ^= *(uint64*)b;
-  #else
-    naSwap32(a, b);
-    a = ((NAByte*)a) + 4;
-    b = ((NAByte*)b) + 4;
-    naSwap32(a, b);
-  #endif
+  *(NAUInt64*)a = naXorUInt64(*(NAUInt64*)a, *(NAUInt64*)b);
+  *(NAUInt64*)b = naXorUInt64(*(NAUInt64*)b, *(NAUInt64*)a);
+  *(NAUInt64*)a = naXorUInt64(*(NAUInt64*)a, *(NAUInt64*)b);
 }
 
 NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
@@ -277,26 +250,13 @@ NA_IDEF NABool naEqual32( void* NA_RESTRICT a, void* NA_RESTRICT b){
   return (*((uint32*)a) == *((uint32*)b));
 }
 NA_IDEF NABool naEqual64( void* NA_RESTRICT a, void* NA_RESTRICT b){
-  #if defined NA_TYPE_INT64
-    return (*((uint64*)a) == *((uint64*)b));
-  #else
-    if(*((uint32*)&((((NAByte*)a)[0]))) != *((uint32*)&((((NAByte*)b)[0])))){return NA_FALSE;}
-    if(*((uint32*)&((((NAByte*)a)[4]))) != *((uint32*)&((((NAByte*)b)[4])))){return NA_FALSE;}
-    return NA_TRUE;
-  #endif
+  return naEqualUInt64(*((NAUInt64*)a), *((NAUInt64*)b));
 }
 NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b){
-  #if defined NA_TYPE_INT64
-    if(*((uint64*)&((((NAByte*)a)[0]))) != *((uint64*)&((((NAByte*)b)[0])))){return NA_FALSE;}
-    if(*((uint64*)&((((NAByte*)a)[8]))) != *((uint64*)&((((NAByte*)b)[8])))){return NA_FALSE;}
-    return NA_TRUE;
-  #else
-    if(*((uint32*)&((((NAByte*)a)[ 0]))) != *((uint32*)&((((NAByte*)b)[ 0])))){return NA_FALSE;}
-    if(*((uint32*)&((((NAByte*)a)[ 4]))) != *((uint32*)&((((NAByte*)b)[ 4])))){return NA_FALSE;}
-    if(*((uint32*)&((((NAByte*)a)[ 8]))) != *((uint32*)&((((NAByte*)b)[ 8])))){return NA_FALSE;}
-    if(*((uint32*)&((((NAByte*)a)[12]))) != *((uint32*)&((((NAByte*)b)[12])))){return NA_FALSE;}
-    return NA_TRUE;
+  #ifndef NDEBUG
+    naError("Uncommented during development. Please re-uncomment it.");
   #endif
+  //return naEqualUInt128(*((NAUInt128*)a), *((NAUInt128*)b));
 }
 
 
@@ -315,7 +275,7 @@ NA_IDEF void naZeron32(void* d, int32 bytesize){
   memset(d, 0, (size_t)bytesize);
 }
 
-NA_IDEF void naZeron64(void* d, int64 bytesize){
+NA_IDEF void naZeron64(void* d, NAInt64 bytesize){
   #ifndef NDEBUG
     if(naSmallerInt64(bytesize, NA_ONE_64))
       naError("count should not be < 1");
@@ -352,7 +312,7 @@ NA_IDEF void naSetn32(void* d, int32 bytesize, NAByte value){
   memset(d, value, (size_t)bytesize);
 }
 
-NA_IDEF void naSetn64(void* d, int64 bytesize, NAByte value){
+NA_IDEF void naSetn64(void* d, NAInt64 bytesize, NAByte value){
   #ifndef NDEBUG
     if(naSmallerInt64(bytesize, NA_ONE_64))
       naError("count should not be < 1");

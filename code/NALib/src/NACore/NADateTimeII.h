@@ -61,20 +61,20 @@ extern NABool na_globalsummertime;
 
 
 struct NADateTime{
-  int64  sisec;     // SI-second number starting Jan 1st 1958, 00:00 + 00:00
-  int32  nsec;      // nanosecond number in range [0, 999999999]
-  int16  shift;     // time shift in minutes (positive and negative)
-  uint8  errornum;  // error number in case invalid values were given.
-  uint8  flags;     // Various flags.
+  NAInt64  sisec;     // SI-second number starting Jan 1st 1958, 00:00 + 00:00
+  int32    nsec;      // nanosecond number in range [0, 999999999]
+  int16    shift;     // time shift in minutes (positive and negative)
+  uint8    errornum;  // error number in case invalid values were given.
+  uint8    flags;     // Various flags.
 };
 
 
-NA_IDEF NABool naIsLeapYearJulian(int64 year){
+NA_IDEF NABool naIsLeapYearJulian(NAInt64 year){
   return naEqualInt64(naModInt64(year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD), NA_ZERO_64);
 }
 
 
-NA_IDEF NABool naIsLeapYearGregorian(int64 year){
+NA_IDEF NABool naIsLeapYearGregorian(NAInt64 year){
   if(naEqualInt64(naModInt64(year, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD), NA_ZERO_64)){return NA_TRUE;}
   if(naEqualInt64(naModInt64(year, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD), NA_ZERO_64)){return NA_FALSE;}
   if(naEqualInt64(naModInt64(year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD), NA_ZERO_64)){return NA_TRUE;}
@@ -82,7 +82,7 @@ NA_IDEF NABool naIsLeapYearGregorian(int64 year){
 }
 
 
-NA_IDEF NABool naIsLeapYear(int64 year){
+NA_IDEF NABool naIsLeapYear(NAInt64 year){
   if(naSmallerEqualInt64(year, NA_DATETIME_YEAR_1582)){
     return naIsLeapYearJulian(year);
   }else{
@@ -92,7 +92,7 @@ NA_IDEF NABool naIsLeapYear(int64 year){
 
 
 
-NA_IDEF NADateTime naMakeDateTime(int64 year, int32 mon, int32 day, int32 hour, int32 min, int32 sec){
+NA_IDEF NADateTime naMakeDateTime(NAInt64 year, int32 mon, int32 day, int32 hour, int32 min, int32 sec){
   NADateTimeStruct dts;
   dts.year = year;
   dts.mon = mon - 1;
@@ -109,7 +109,7 @@ NA_IDEF NADateTime naMakeDateTime(int64 year, int32 mon, int32 day, int32 hour, 
 
 
 
-NA_IDEF NADateTime naMakeDateTimeWithNALibSecondNumber(int64 secondnumber){
+NA_IDEF NADateTime naMakeDateTimeWithNALibSecondNumber(NAInt64 secondnumber){
   NADateTime datetime;
   datetime.sisec = secondnumber;
   datetime.nsec = 0;
@@ -174,7 +174,7 @@ NA_DEF double naGetDateTimeDifference(const NADateTime* end, const NADateTime* b
 
 
 NA_IDEF void naAddDateTimeDifference(NADateTime* datetime, double difference){
-  int64 fullsecs = naMakeInt64WithDouble(difference);
+  NAInt64 fullsecs = naMakeInt64WithDouble(difference);
   int32 nanosecs = (int32)((difference - naCastInt64ToDouble(fullsecs)) * 1e9);
   datetime->errornum = NA_DATETIME_ERROR_NONE;
   if(difference < 0){

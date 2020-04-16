@@ -7,6 +7,7 @@ comments.
 The master branch contains the latest developments.
 Older release versions are available as tags.
 
+Follow on Twitter for latest developments: @Manderby52
 
 Installation:
 --------------

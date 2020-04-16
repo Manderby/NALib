@@ -42,23 +42,23 @@ NA_IAPI NABool naToggleFlagu(NAUInt* flags, NAUInt flag);
 
 // Converts an integer denoting an end or max to its counterpart. Also does
 // some checks if the values over- or underflow.
-NA_HIAPI int32  naMakeMaxWithEndi32          (int32 end);
-NA_HIAPI int64  naMakeMaxWithEndi64          (int64 end);
-NA_HIAPI NAInt  naMakeMaxWithEndi            (NAInt end);
-NA_HIAPI int32  naMakeEndWithMaxi32          (int32 max);
-NA_HIAPI int64  naMakeEndWithMaxi64          (int64 max);
-NA_HIAPI NAInt  naMakeEndWithMaxi            (NAInt max);
-NA_HIAPI double naMakeEndWithStartAndLength  (double start, double length);
-NA_HIAPI float  naMakeEndWithStartAndLengthf (float  start, float  length);
-NA_HIAPI NAInt  naMakeEndWithStartAndLengthi (NAInt  start, NAInt  length);
-NA_HIAPI NAInt  naMakeMaxWithMinAndLengthi   (NAInt  min,   NAInt  length);
-NA_HIAPI double naMakeLengthWithStartAndEnd  (double start, double end);
-NA_HIAPI float  naMakeLengthWithStartAndEndf (float  start, float  end);
-NA_HIAPI NAInt  naMakeLengthWithStartAndEndi (NAInt  start, NAInt  end);
-NA_HIAPI NAInt  naMakeLengthWithMinAndMaxi   (NAInt  min,   NAInt  max);
-
-NA_HIAPI NAInt  naMakeIntWithIntegerFloat    (float x);
-NA_HIAPI NAInt  naMakeIntWithIntegerDouble   (double x);
+NA_HIAPI int32   naMakeMaxWithEndi32          (int32 end);
+NA_HIAPI NAInt64 naMakeMaxWithEndi64          (NAInt64 end);
+NA_HIAPI NAInt   naMakeMaxWithEndi            (NAInt end);
+NA_HIAPI int32   naMakeEndWithMaxi32          (int32 max);
+NA_HIAPI NAInt64 naMakeEndWithMaxi64          (NAInt64 max);
+NA_HIAPI NAInt   naMakeEndWithMaxi            (NAInt max);
+NA_HIAPI double  naMakeEndWithStartAndLength  (double start, double length);
+NA_HIAPI float   naMakeEndWithStartAndLengthf (float  start, float  length);
+NA_HIAPI NAInt   naMakeEndWithStartAndLengthi (NAInt  start, NAInt  length);
+NA_HIAPI NAInt   naMakeMaxWithMinAndLengthi   (NAInt  min,   NAInt  length);
+NA_HIAPI double  naMakeLengthWithStartAndEnd  (double start, double end);
+NA_HIAPI float   naMakeLengthWithStartAndEndf (float  start, float  end);
+NA_HIAPI NAInt   naMakeLengthWithStartAndEndi (NAInt  start, NAInt  end);
+NA_HIAPI NAInt   naMakeLengthWithMinAndMaxi   (NAInt  min,   NAInt  max);
+                 
+NA_HIAPI NAInt   naMakeIntWithIntegerFloat    (float x);
+NA_HIAPI NAInt   naMakeIntWithIntegerDouble   (double x);
 
 
 // The following functions are mostly used in other datastructures such as
@@ -176,7 +176,7 @@ NA_HIDEF int32 naMakeMaxWithEndi32(int32 end){
   #endif
   return end - NA_ONE_32;
 }
-NA_HIDEF int64 naMakeMaxWithEndi64(int64 end){
+NA_HIDEF NAInt64 naMakeMaxWithEndi64(NAInt64 end){
   #ifndef NDEBUG
     if(naEqualInt64(end, NA_INT64_MIN))
       naError("Integer underflow");
@@ -197,7 +197,7 @@ NA_HIDEF int32 naMakeEndWithMaxi32(int32 max){
   #endif
   return max + NA_ONE_32;
 }
-NA_HIDEF int64 naMakeEndWithMaxi64(int64 max){
+NA_HIDEF NAInt64 naMakeEndWithMaxi64(NAInt64 max){
   #ifndef NDEBUG
     if(naEqualInt64(max, NA_INT64_MAX))
       naError("Integer overflow");

@@ -326,27 +326,27 @@ NA_IAPI uint8 naGetBufferCurBit(        NABufferIterator* iter);
 // The following functions will get or set single values WITHOUT moving the
 // iterator.
 
-NA_IAPI int8   naGetBufferi8  (NABufferIterator* iter);
-NA_IAPI int16  naGetBufferi16 (NABufferIterator* iter);
-NA_IAPI int32  naGetBufferi32 (NABufferIterator* iter);
-NA_IAPI int64  naGetBufferi64 (NABufferIterator* iter);
-NA_IAPI uint8  naGetBufferu8  (NABufferIterator* iter);
-NA_IAPI uint16 naGetBufferu16 (NABufferIterator* iter);
-NA_IAPI uint32 naGetBufferu32 (NABufferIterator* iter);
-NA_IAPI uint64 naGetBufferu64 (NABufferIterator* iter);
-NA_IAPI float  naGetBufferf   (NABufferIterator* iter);
-NA_IAPI double naGetBufferd   (NABufferIterator* iter);
+NA_IAPI int8     naGetBufferi8  (NABufferIterator* iter);
+NA_IAPI int16    naGetBufferi16 (NABufferIterator* iter);
+NA_IAPI int32    naGetBufferi32 (NABufferIterator* iter);
+NA_IAPI NAInt64  naGetBufferi64 (NABufferIterator* iter);
+NA_IAPI uint8    naGetBufferu8  (NABufferIterator* iter);
+NA_IAPI uint16   naGetBufferu16 (NABufferIterator* iter);
+NA_IAPI uint32   naGetBufferu32 (NABufferIterator* iter);
+NA_IAPI NAUInt64 naGetBufferu64 (NABufferIterator* iter);
+NA_IAPI float    naGetBufferf   (NABufferIterator* iter);
+NA_IAPI double   naGetBufferd   (NABufferIterator* iter);
 
-NA_IAPI void naSetBufferi8  (NABufferIterator* iter, int8   value);
-NA_IAPI void naSetBufferi16 (NABufferIterator* iter, int16  value);
-NA_IAPI void naSetBufferi32 (NABufferIterator* iter, int32  value);
-NA_IAPI void naSetBufferi64 (NABufferIterator* iter, int64  value);
-NA_IAPI void naSetBufferu8  (NABufferIterator* iter, uint8  value);
-NA_IAPI void naSetBufferu16 (NABufferIterator* iter, uint16 value);
-NA_IAPI void naSetBufferu32 (NABufferIterator* iter, uint32 value);
-NA_IAPI void naSetBufferu64 (NABufferIterator* iter, uint64 value);
-NA_IAPI void naSetBufferf   (NABufferIterator* iter, float  value);
-NA_IAPI void naSetBufferd   (NABufferIterator* iter, double value);
+NA_IAPI void naSetBufferi8  (NABufferIterator* iter, int8     value);
+NA_IAPI void naSetBufferi16 (NABufferIterator* iter, int16    value);
+NA_IAPI void naSetBufferi32 (NABufferIterator* iter, int32    value);
+NA_IAPI void naSetBufferi64 (NABufferIterator* iter, NAInt64  value);
+NA_IAPI void naSetBufferu8  (NABufferIterator* iter, uint8    value);
+NA_IAPI void naSetBufferu16 (NABufferIterator* iter, uint16   value);
+NA_IAPI void naSetBufferu32 (NABufferIterator* iter, uint32   value);
+NA_IAPI void naSetBufferu64 (NABufferIterator* iter, NAUInt64 value);
+NA_IAPI void naSetBufferf   (NABufferIterator* iter, float    value);
+NA_IAPI void naSetBufferd   (NABufferIterator* iter, double   value);
 
 
 
@@ -357,27 +357,27 @@ NA_IAPI void naSetBufferd   (NABufferIterator* iter, double value);
 // The following functions will read values. The iterator will move forward
 // by the necessary number of bytes.
 
-NA_IAPI int8   naReadBufferi8  (NABufferIterator* iter);
-NA_IAPI int16  naReadBufferi16 (NABufferIterator* iter);
-NA_IAPI int32  naReadBufferi32 (NABufferIterator* iter);
-NA_IAPI int64  naReadBufferi64 (NABufferIterator* iter);
-NA_IAPI uint8  naReadBufferu8  (NABufferIterator* iter);
-NA_IAPI uint16 naReadBufferu16 (NABufferIterator* iter);
-NA_IAPI uint32 naReadBufferu32 (NABufferIterator* iter);
-NA_IAPI uint64 naReadBufferu64 (NABufferIterator* iter);
-NA_IAPI float  naReadBufferf   (NABufferIterator* iter);
-NA_IAPI double naReadBufferd   (NABufferIterator* iter);
+NA_IAPI int8     naReadBufferi8  (NABufferIterator* iter);
+NA_IAPI int16    naReadBufferi16 (NABufferIterator* iter);
+NA_IAPI int32    naReadBufferi32 (NABufferIterator* iter);
+NA_IAPI NAInt64  naReadBufferi64 (NABufferIterator* iter);
+NA_IAPI uint8    naReadBufferu8  (NABufferIterator* iter);
+NA_IAPI uint16   naReadBufferu16 (NABufferIterator* iter);
+NA_IAPI uint32   naReadBufferu32 (NABufferIterator* iter);
+NA_IAPI NAUInt64 naReadBufferu64 (NABufferIterator* iter);
+NA_IAPI float    naReadBufferf   (NABufferIterator* iter);
+NA_IAPI double   naReadBufferd   (NABufferIterator* iter);
 
-NA_IAPI void naReadBufferi8v (NABufferIterator* iter, int8*   dst, NAInt count);
-NA_IAPI void naReadBufferi16v(NABufferIterator* iter, int16*  dst, NAInt count);
-NA_IAPI void naReadBufferi32v(NABufferIterator* iter, int32*  dst, NAInt count);
-NA_IAPI void naReadBufferi64v(NABufferIterator* iter, int64*  dst, NAInt count);
-NA_IAPI void naReadBufferu8v (NABufferIterator* iter, uint8*  dst, NAInt count);
-NA_IAPI void naReadBufferu16v(NABufferIterator* iter, uint16* dst, NAInt count);
-NA_IAPI void naReadBufferu32v(NABufferIterator* iter, uint32* dst, NAInt count);
-NA_IAPI void naReadBufferu64v(NABufferIterator* iter, uint64* dst, NAInt count);
-NA_IAPI void naReadBufferfv  (NABufferIterator* iter, float*  dst, NAInt count);
-NA_IAPI void naReadBufferdv  (NABufferIterator* iter, double* dst, NAInt count);
+NA_IAPI void naReadBufferi8v (NABufferIterator* iter, int8*     dst, NAInt count);
+NA_IAPI void naReadBufferi16v(NABufferIterator* iter, int16*    dst, NAInt count);
+NA_IAPI void naReadBufferi32v(NABufferIterator* iter, int32*    dst, NAInt count);
+NA_IAPI void naReadBufferi64v(NABufferIterator* iter, NAInt64*  dst, NAInt count);
+NA_IAPI void naReadBufferu8v (NABufferIterator* iter, uint8*    dst, NAInt count);
+NA_IAPI void naReadBufferu16v(NABufferIterator* iter, uint16*   dst, NAInt count);
+NA_IAPI void naReadBufferu32v(NABufferIterator* iter, uint32*   dst, NAInt count);
+NA_IAPI void naReadBufferu64v(NABufferIterator* iter, NAUInt64* dst, NAInt count);
+NA_IAPI void naReadBufferfv  (NABufferIterator* iter, float*    dst, NAInt count);
+NA_IAPI void naReadBufferdv  (NABufferIterator* iter, double*   dst, NAInt count);
 
 // Reads the given number of bytes from the current position of buffer to data.
 NA_IAPI void naReadBufferBytes(       NABufferIterator* iter,
@@ -397,27 +397,27 @@ NA_IAPI NABuffer* naReadBufferBuffer( NABufferIterator* iter,
 // the current position of the iterator and the current position is moved
 // forward the necessary number of bytes.
 
-NA_IAPI void naWriteBufferi8  (NABufferIterator* iter, int8   value);
-NA_IAPI void naWriteBufferi16 (NABufferIterator* iter, int16  value);
-NA_IAPI void naWriteBufferi32 (NABufferIterator* iter, int32  value);
-NA_IAPI void naWriteBufferi64 (NABufferIterator* iter, int64  value);
-NA_IAPI void naWriteBufferu8  (NABufferIterator* iter, uint8  value);
-NA_IAPI void naWriteBufferu16 (NABufferIterator* iter, uint16 value);
-NA_IAPI void naWriteBufferu32 (NABufferIterator* iter, uint32 value);
-NA_IAPI void naWriteBufferu64 (NABufferIterator* iter, uint64 value);
-NA_IAPI void naWriteBufferf   (NABufferIterator* iter, float  value);
-NA_IAPI void naWriteBufferd   (NABufferIterator* iter, double value);
+NA_IAPI void naWriteBufferi8  (NABufferIterator* iter, int8     value);
+NA_IAPI void naWriteBufferi16 (NABufferIterator* iter, int16    value);
+NA_IAPI void naWriteBufferi32 (NABufferIterator* iter, int32    value);
+NA_IAPI void naWriteBufferi64 (NABufferIterator* iter, NAInt64  value);
+NA_IAPI void naWriteBufferu8  (NABufferIterator* iter, uint8    value);
+NA_IAPI void naWriteBufferu16 (NABufferIterator* iter, uint16   value);
+NA_IAPI void naWriteBufferu32 (NABufferIterator* iter, uint32   value);
+NA_IAPI void naWriteBufferu64 (NABufferIterator* iter, NAUInt64 value);
+NA_IAPI void naWriteBufferf   (NABufferIterator* iter, float    value);
+NA_IAPI void naWriteBufferd   (NABufferIterator* iter, double   value);
 
-NA_API  void naWriteBufferi8v (NABufferIterator* iter, const int8*   src, NAInt count);
-NA_API  void naWriteBufferi16v(NABufferIterator* iter, const int16*  src, NAInt count);
-NA_API  void naWriteBufferi32v(NABufferIterator* iter, const int32*  src, NAInt count);
-NA_API  void naWriteBufferi64v(NABufferIterator* iter, const int64*  src, NAInt count);
-NA_API  void naWriteBufferu8v (NABufferIterator* iter, const uint8*  src, NAInt count);
-NA_API  void naWriteBufferu16v(NABufferIterator* iter, const uint16* src, NAInt count);
-NA_API  void naWriteBufferu32v(NABufferIterator* iter, const uint32* src, NAInt count);
-NA_API  void naWriteBufferu64v(NABufferIterator* iter, const uint64* src, NAInt count);
-NA_API  void naWriteBufferfv  (NABufferIterator* iter, const float*  src, NAInt count);
-NA_API  void naWriteBufferdv  (NABufferIterator* iter, const double* src, NAInt count);
+NA_API  void naWriteBufferi8v (NABufferIterator* iter, const int8*     src, NAInt count);
+NA_API  void naWriteBufferi16v(NABufferIterator* iter, const int16*    src, NAInt count);
+NA_API  void naWriteBufferi32v(NABufferIterator* iter, const int32*    src, NAInt count);
+NA_API  void naWriteBufferi64v(NABufferIterator* iter, const NAInt64*  src, NAInt count);
+NA_API  void naWriteBufferu8v (NABufferIterator* iter, const uint8*    src, NAInt count);
+NA_API  void naWriteBufferu16v(NABufferIterator* iter, const uint16*   src, NAInt count);
+NA_API  void naWriteBufferu32v(NABufferIterator* iter, const uint32*   src, NAInt count);
+NA_API  void naWriteBufferu64v(NABufferIterator* iter, const NAUInt64* src, NAInt count);
+NA_API  void naWriteBufferfv  (NABufferIterator* iter, const float*    src, NAInt count);
+NA_API  void naWriteBufferdv  (NABufferIterator* iter, const double*   src, NAInt count);
 
 // Writes the given number of bytes in data to the current position of buffer.
 NA_IAPI void naWriteBufferBytes(  NABufferIterator* iter,
@@ -586,17 +586,17 @@ NA_API NAString* naParseBufferPathComponent(NABufferIterator* iter);
 // emitted when debugging. But note that the returned number of bytes contains
 // all digits considered.
 NA_DEF NAInt naParseBufferDecimalUnsignedInteger(  NABufferIterator* iter,
-                                                     uint64* retint,
+                                                     NAUInt64* retint,
                                                        NAInt maxdigitcount,
-                                                      uint64 max);
+                                                      NAUInt64 max);
 
 // Same as above but parses a signed integer. Note that there is an addidional
 // min parameter.
 NA_DEF NAInt naParseBufferDecimalSignedInteger(  NABufferIterator* iter,
-                                                    int64* retint,
+                                                    NAInt64* retint,
                                                      NAInt maxdigitcount,
-                                                     int64 min,
-                                                     int64 max);
+                                                     NAInt64 min,
+                                                     NAInt64 max);
 
 // Parses the given buffer for an integer value and returns the value in the
 // desired type.
@@ -611,15 +611,15 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(  NABufferIterator* iter,
 //
 // If any of the strings exceeds the type range, the maximal / minimal value
 // of that type is returned. When debugging, a warning is emitted, when the
-// range of an uint64 is insufficient to hold the parsed value.
-NA_IAPI int8   naParseBufferInt8  (NABufferIterator* iter, NABool skipdelimiter);
-NA_IAPI int16  naParseBufferInt16 (NABufferIterator* iter, NABool skipdelimiter);
-NA_IAPI int32  naParseBufferInt32 (NABufferIterator* iter, NABool skipdelimiter);
-NA_IAPI int64  naParseBufferInt64 (NABufferIterator* iter, NABool skipdelimiter);
-NA_IAPI uint8  naParseBufferUInt8 (NABufferIterator* iter, NABool skipdelimiter);
-NA_IAPI uint16 naParseBufferUInt16(NABufferIterator* iter, NABool skipdelimiter);
-NA_IAPI uint32 naParseBufferUInt32(NABufferIterator* iter, NABool skipdelimiter);
-NA_IAPI uint64 naParseBufferUInt64(NABufferIterator* iter, NABool skipdelimiter);
+// range of an NAUInt64 is insufficient to hold the parsed value.
+NA_IAPI int8     naParseBufferInt8  (NABufferIterator* iter, NABool skipdelimiter);
+NA_IAPI int16    naParseBufferInt16 (NABufferIterator* iter, NABool skipdelimiter);
+NA_IAPI int32    naParseBufferInt32 (NABufferIterator* iter, NABool skipdelimiter);
+NA_IAPI NAInt64  naParseBufferInt64 (NABufferIterator* iter, NABool skipdelimiter);
+NA_IAPI uint8    naParseBufferUInt8 (NABufferIterator* iter, NABool skipdelimiter);
+NA_IAPI uint16   naParseBufferUInt16(NABufferIterator* iter, NABool skipdelimiter);
+NA_IAPI uint32   naParseBufferUInt32(NABufferIterator* iter, NABool skipdelimiter);
+NA_IAPI NAUInt64 naParseBufferUInt64(NABufferIterator* iter, NABool skipdelimiter);
 
 
 
