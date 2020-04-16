@@ -41,6 +41,7 @@
 // Now, including implementations of the most basic kind...
 #include "NABase/NAInt64II.h"
 #include "NABase/NAInt128II.h"
+#include "NABase/NAInt256II.h"
 #include "NABase/NAFloatingPointII.h"
 #include "NABase/NANumericsII.h"
 

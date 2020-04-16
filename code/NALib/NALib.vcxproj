@@ -37,6 +37,10 @@
     <ClInclude Include="src\NABase\NAEnvironment.h" />
     <ClInclude Include="src\NABase\NAFloatingPoint.h" />
     <ClInclude Include="src\NABase\NAFloatingPointII.h" />
+    <ClInclude Include="src\NABase\NAInt128.h" />
+    <ClInclude Include="src\NABase\NAInt128II.h" />
+    <ClInclude Include="src\NABase\NAInt256.h" />
+    <ClInclude Include="src\NABase\NAInt256II.h" />
     <ClInclude Include="src\NABase\NAInt64.h" />
     <ClInclude Include="src\NABase\NAInt64II.h" />
     <ClInclude Include="src\NABase\NAInteger.h" />

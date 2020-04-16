@@ -67,6 +67,7 @@ typedef int NABool;
   #ifndef CHAR_BIT
     #define CHAR_BIT      8
   #endif
+
   #ifndef UCHAR_MAX
     #define UCHAR_MAX     (0xffu)
   #endif
@@ -76,6 +77,7 @@ typedef int NABool;
   #ifndef SCHAR_MIN
     #define SCHAR_MIN     (0x81 - 1)
   #endif
+
   #ifndef USHRT_MAX
     #define USHRT_MAX     (0xffffu)
   #endif
@@ -85,6 +87,7 @@ typedef int NABool;
   #ifndef SHRT_MIN
     #define SHRT_MIN      (0x8001 - 1)
   #endif
+
   #ifndef UINT_MAX
     #define UINT_MAX      (0xffffffffu)
   #endif
@@ -94,6 +97,7 @@ typedef int NABool;
   #ifndef INT_MIN
     #define INT_MIN       (0x80000001 - 1)
   #endif
+
   #ifndef ULONG_MAX
     #define ULONG_MAX     (0xffffffffu)
   #endif
@@ -103,6 +107,7 @@ typedef int NABool;
   #ifndef LONG_MIN
     #define LONG_MIN      (0x80000001 - 1)
   #endif
+
   #if NA_COMPILE_WITH_LONG_LONG
     #ifndef ULLONG_MAX
       #define ULLONG_MAX  (0xffffffffffffffffuLL)
@@ -114,6 +119,31 @@ typedef int NABool;
       #define LLONG_MIN   (0x8000000000000001LL - 1LL)
     #endif
   #endif
+
+  #ifdef __SIZEOF_INT128__
+    #ifndef UINT128_MAX
+      #define UINT128_MAX  (0xffffffffffffffffffffffffffffffffu)
+    #endif
+    #ifndef UINT128_MAX
+      #define INT128_MAX   (0x7fffffffffffffffffffffffffffffff)
+    #endif
+    #ifndef UINT128_MAX
+      #define INT128_MIN   (0x80000000000000000000000000000001 - 1)
+    #endif
+  #endif
+
+    #ifdef __SIZEOF_INT256__
+    #ifndef UINT256_MAX
+      #define UINT256_MAX  (0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffu)
+    #endif
+    #ifndef UINT256_MAX
+      #define INT256_MAX   (0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
+    #endif
+    #ifndef UINT256_MAX
+      #define INT256_MIN   (0x8000000000000000000000000000000000000000000000000000000000000001 - 1)
+    #endif
+  #endif
+
 #endif
 
 
@@ -231,6 +261,7 @@ typedef int NABool;
 #define NA_TYPE_NATIVE_LONG_INT       3
 #define NA_TYPE_NATIVE_LONG_LONG_INT  4
 #define NA_TYPE_NATIVE_INT_128        5
+#define NA_TYPE_NATIVE_INT_256        6
 
 // The following tests will define the macros
 // NA_TYPE_INT8
@@ -238,6 +269,7 @@ typedef int NABool;
 // NA_TYPE_INT32
 // NA_TYPE_INT64
 // NA_TYPE_INT128
+// NA_TYPE_INT256
 // which, when defined, denote one of the upper native types.
 // If undefined, no native representation is possible.
 
@@ -277,6 +309,11 @@ typedef int NABool;
 // 128 Bits: Dependent on the system/compiler/extension.
 #ifdef __SIZEOF_INT128__
   #define NA_TYPE_INT128 NA_TYPE_NATIVE_INT_128
+#endif
+
+// 256 Bits: Dependent on the system/compiler/extension.
+#ifdef __SIZEOF_INT256__
+  #define NA_TYPE_INT256 NA_TYPE_NATIVE_INT_256
 #endif
 
 // Note that the following macros are defined using the values provided in
@@ -439,17 +476,14 @@ typedef int NABool;
 
 // 128 bits
 #if NA_TYPE_INT128 == NA_TYPE_NATIVE_INT_128
-  // Note: These definitions have not been tested at all.
-  // The author did not have time to install gcc and add
-  // proper values. This will likely not compile.
   #define NA_UINT128_MAX  UINT128_MAX
   #define NA_INT128_MAX   INT128_MAX
   #define NA_INT128_MIN   INT128_MIN
   typedef unsigned __int128   uint128;
-  typedef signed __int128     int128;
+  typedef signed   __int128   int128;
   // Note that older versions define these types. Maybe add them later.
   // typedef unsigned __int128_t   uint128;
-  // typedef signed __int128_t     int128;
+  // typedef signed   __int128_t   int128;
   #define NA_ZERO_128     (0)  // There is no suffix LLL, so, just omit it. 
   #define NA_ONE_128      (1)
   #define NA_ZERO_128u    (0u)
@@ -459,6 +493,27 @@ typedef int NABool;
   #define NA_PRIx128      "x CANTSHOWi128 "
   #define NA_SCNi128      "d CANTSHOWi128 "
   #define NA_SCNu128      "u CANTSHOWi128 "
+#endif
+
+// 256 bits
+#if NA_TYPE_INT256 == NA_TYPE_NATIVE_INT_256
+  #define NA_UINT256_MAX  UINT256_MAX
+  #define NA_INT256_MAX   INT256_MAX
+  #define NA_INT256_MIN   INT256_MIN
+  typedef unsigned __int256   uint256;
+  typedef signed   __int256   int256;
+  // Note that older versions define these types. Maybe add them later.
+  // typedef unsigned __int256_t   uint256;
+  // typedef signed   __int256_t   int256;
+  #define NA_ZERO_256     (0)  // There is no suffix LLLL, so, just omit it. 
+  #define NA_ONE_256      (1)
+  #define NA_ZERO_256u    (0u)
+  #define NA_ONE_256u     (1u)
+  #define NA_PRIi256      "d CANTSHOWi256 "
+  #define NA_PRIu256      "u CANTSHOWi256 "
+  #define NA_PRIx256      "x CANTSHOWi256 "
+  #define NA_SCNi256      "d CANTSHOWi256 "
+  #define NA_SCNu256      "u CANTSHOWi256 "
 #endif
 
 // NAInt and NAUInt
@@ -532,9 +587,10 @@ typedef int NABool;
   #error "NA_PREFERRED_NAINT_BITS has an invalid value"
 #endif
 
-// We include the 64bit and 128bit emulation.
+// We include the 64bit, 128bit and 256bit emulation.
 #include "NAInt64.h"
 #include "NAInt128.h"
+#include "NAInt256.h"
 
 // In case, there was no int64 defined before, we have to emulate it now.
 #if !defined NA_TYPE_INT64
@@ -557,8 +613,8 @@ typedef int NABool;
 // In case, there was no int128 defined before, we have to emulate it now.
 #if !defined NA_TYPE_INT128
   #define NA_UINT128_MAX  naMakeUInt128(NA_UINT64_MAX, NA_UINT64_MAX)
-  #define NA_INT128_MAX   naCastUInt128ToInt128(naMakeUInt128((uint64)NA_INT64_MAX, NA_UINT64_MAX))
-  #define NA_INT128_MIN   naCastUInt128ToInt128(naMakeUInt128((uint64)NA_INT64_MIN, NA_UINT64_MAX))
+  #define NA_INT128_MAX   naCastUInt128ToInt128(naMakeUInt128(naCastInt64ToUInt64(NA_INT64_MAX), NA_UINT64_MAX))
+  #define NA_INT128_MIN   naCastUInt128ToInt128(naMakeUInt128(naCastInt64ToUInt64(NA_INT64_MIN), NA_UINT64_MAX))
   typedef NAInt128        int128;
   typedef NAUInt128       uint128;
   #define NA_ZERO_128     (naMakeInt128WithLo(NA_ZERO_64))
@@ -570,6 +626,24 @@ typedef int NABool;
   #define NA_PRIx128      "x CANTSHOWi128 "
   #define NA_SCNi128      "d CANTSHOWi128 "
   #define NA_SCNu128      "u CANTSHOWi128 "
+#endif
+
+// In case, there was no int256 defined before, we have to emulate it now.
+#if !defined NA_TYPE_INT256
+  #define NA_UINT256_MAX  naMakeUInt256(NA_UINT128_MAX, NA_UINT128_MAX)
+  #define NA_INT256_MAX   naCastUInt256ToInt256(naMakeUInt256(naCastInt128ToUInt128(NA_INT128_MAX), NA_UINT128_MAX))
+  #define NA_INT256_MIN   naCastUInt256ToInt256(naMakeUInt256(naCastInt128ToUInt128(NA_INT128_MIN), NA_UINT128_MAX))
+  typedef NAInt256        int256;
+  typedef NAUInt256       uint256;
+  #define NA_ZERO_256     (naMakeInt256WithLo(NA_ZERO_128))
+  #define NA_ONE_256      (naMakeInt256WithLo(NA_ONE_128))
+  #define NA_ZERO_256u    (naMakeUInt256WithLo(NA_ZERO_128u))
+  #define NA_ONE_256u     (naMakeUInt256WithLo(NA_ONE_128u))
+  #define NA_PRIi256      "d CANTSHOWi256 "
+  #define NA_PRIu256      "u CANTSHOWi256 "
+  #define NA_PRIx256      "x CANTSHOWi256 "
+  #define NA_SCNi256      "d CANTSHOWi256 "
+  #define NA_SCNu256      "u CANTSHOWi256 "
 #endif
 
 

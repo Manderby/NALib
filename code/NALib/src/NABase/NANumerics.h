@@ -17,6 +17,9 @@
 #define NA_VALUE128_SIGN_MASK_HI  NA_VALUE64_SIGN_MASK
 #define NA_VALUE128_SIGN_MASK_LO  NA_ZERO_64u
 #define NA_VALUE128_SIGN_MASK     naMakeUInt128(NA_VALUE128_SIGN_MASK_HI, NA_VALUE128_SIGN_MASK_LO)
+#define NA_VALUE256_SIGN_MASK_HI  NA_VALUE128_SIGN_MASK
+#define NA_VALUE256_SIGN_MASK_LO  NA_ZERO_128u
+#define NA_VALUE256_SIGN_MASK     naMakeUInt256(NA_VALUE256_SIGN_MASK_HI, NA_VALUE256_SIGN_MASK_LO)
 
 
 
@@ -27,6 +30,7 @@ NA_IAPI uint16    naGetSignum16 (int16 i);
 NA_IAPI uint32    naGetSignum32 (int32 i);
 NA_IAPI NAUInt64  naGetSignum64 (NAInt64 i);
 NA_IAPI NAUInt128 naGetSignum128(NAInt128 i);
+NA_IAPI NAUInt256 naGetSignum256(NAInt256 i);
 
 // Returns either 1 or -1. The value 0 returns 1. Never returns 0.
 NA_IAPI int8     naSigni8  (int8    x);
@@ -34,6 +38,7 @@ NA_IAPI int16    naSigni16 (int16   x);
 NA_IAPI int32    naSigni32 (int32   x);
 NA_IAPI NAInt64  naSigni64 (NAInt64 x);
 NA_IAPI NAInt128 naSigni128(NAInt128 x);
+NA_IAPI NAInt256 naSigni256(NAInt256 x);
 
 // Sets or unsets the sign bit. This is pure bit logic, not performing
 // any complement.
@@ -42,11 +47,13 @@ NA_IAPI void naSetSignBit16   (void* i);
 NA_IAPI void naSetSignBit32   (void* i);
 NA_IAPI void naSetSignBit64   (void* i);
 NA_IAPI void naSetSignBit128  (void* i);
+NA_IAPI void naSetSignBit256  (void* i);
 NA_IAPI void naUnsetSignBit8  (void* i);
 NA_IAPI void naUnsetSignBit16 (void* i);
 NA_IAPI void naUnsetSignBit32 (void* i);
 NA_IAPI void naUnsetSignBit64 (void* i);
 NA_IAPI void naUnsetSignBit128(void* i);
+NA_IAPI void naUnsetSignBit256(void* i);
 
 // Makes the value positive.
 NA_IAPI int8     naAbsi8  (int8     x);
@@ -54,6 +61,7 @@ NA_IAPI int16    naAbsi16 (int16    x);
 NA_IAPI int32    naAbsi32 (int32    x);
 NA_IAPI NAInt64  naAbsi64 (NAInt64  x);
 NA_IAPI NAInt128 naAbsi128(NAInt128 x);
+NA_IAPI NAInt256 naAbsi256(NAInt256 x);
 
 
 

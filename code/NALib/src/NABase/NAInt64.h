@@ -194,8 +194,8 @@
 #elif NA_TYPE_NAINT_BITS == NA_TYPE16_BITS
   #define naCastUInt64ToUInt(i)   naCastUInt64ToUInt16(i)
   #define naCastInt64ToInt(i)     naCastInt64ToInt16(i)
-  #define naCastIntToInt64(i)     naMakeInt64WithLo(int32(i))
-  #define naCastUIntToUInt64(i)   naMakeUInt64WithLo(int32(i))
+  #define naCastIntToInt64(i)     naMakeInt64WithLo((int32)i)
+  #define naCastUIntToUInt64(i)   naMakeUInt64WithLo((uint32)i)
 #endif
 
 

@@ -189,12 +189,7 @@
 #endif
 
 
-#if NA_TYPE_NAINT_BITS == NA_TYPE128_BITS
-  #define naCastUInt128ToUInt(i)   ((NAUInt128)i)
-  #define naCastInt128ToInt(i)     ((NAInt128)i)
-  #define naCastIntToInt128(i)     ((NAInt128)i)
-  #define naCastUIntToUInt128(i)   ((NAUInt128)i)
-#elif NA_TYPE_NAINT_BITS == NA_TYPE64_BITS
+#if NA_TYPE_NAINT_BITS == NA_TYPE64_BITS
   #define naCastUInt128ToUInt(i)   naCastUInt128ToUInt64(i)
   #define naCastInt128ToInt(i)     naCastInt128ToInt64(i)
   #define naCastIntToInt128(i)     naMakeInt128WithLo(i)
@@ -202,8 +197,13 @@
 #elif NA_TYPE_NAINT_BITS == NA_TYPE32_BITS
   #define naCastUInt128ToUInt(i)   naCastUInt128ToUInt32(i)
   #define naCastInt128ToInt(i)     naCastInt128ToInt32(i)
-  #define naCastIntToInt128(i)     naMakeInt128WithLo(NAInt64(i))
-  #define naCastUIntToUInt128(i)   naMakeUInt128WithLo(NAInt64(i))
+  #define naCastIntToInt128(i)     naMakeInt128WithLo(naMakeInt64WithLo(i))
+  #define naCastUIntToUInt128(i)   naMakeUInt128WithLo(naMakeUInt64WithLo(i))
+#elif NA_TYPE_NAINT_BITS == NA_TYPE16_BITS
+  #define naCastUInt128ToUInt(i)   naCastUInt128ToUInt16(i)
+  #define naCastInt128ToInt(i)     naCastInt128ToInt16(i)
+  #define naCastIntToInt128(i)     naMakeInt128WithLo(naMakeInt64WithLo((int32)i))
+  #define naCastUIntToUInt128(i)   naMakeUInt128WithLo(naMakeUInt64WithLo((uint32)i))
 #endif
 
 
