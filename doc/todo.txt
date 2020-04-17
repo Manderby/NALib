@@ -9,7 +9,6 @@ Future
 - malloc uint
 - NAComplexPolar
 - All todos
-- Documentation
 - int uint
 - Iterators store start and end.
 - All Container structs can store pointers.

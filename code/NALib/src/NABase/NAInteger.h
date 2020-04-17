@@ -45,7 +45,7 @@ typedef int NABool;
 // configuring this. Note that the test (_MSC_VER >= 1310) tests for
 // Visual Studio 7.1
 #if (defined NA_C99) || (defined NA_CPP11) || _MSC_VER >= 1310 || NA_TYPE_ASSUME_NATIVE_LONG_LONG
-  #define NA_COMPILE_WITH_LONG_LONG 0
+  #define NA_COMPILE_WITH_LONG_LONG 1
 #else
   #define NA_COMPILE_WITH_LONG_LONG 0
 #endif
@@ -124,10 +124,10 @@ typedef int NABool;
     #ifndef UINT128_MAX
       #define UINT128_MAX  (0xffffffffffffffffffffffffffffffffu)
     #endif
-    #ifndef UINT128_MAX
+    #ifndef INT128_MAX
       #define INT128_MAX   (0x7fffffffffffffffffffffffffffffff)
     #endif
-    #ifndef UINT128_MAX
+    #ifndef INT128_MIN
       #define INT128_MIN   (0x80000000000000000000000000000001 - 1)
     #endif
   #endif
@@ -136,10 +136,10 @@ typedef int NABool;
     #ifndef UINT256_MAX
       #define UINT256_MAX  (0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffu)
     #endif
-    #ifndef UINT256_MAX
+    #ifndef INT256_MAX
       #define INT256_MAX   (0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
     #endif
-    #ifndef UINT256_MAX
+    #ifndef INT256_MIN
       #define INT256_MIN   (0x8000000000000000000000000000000000000000000000000000000000000001 - 1)
     #endif
   #endif
