@@ -304,6 +304,9 @@
         #ifndef NDEBUG
           naCrash("Integer Division by 0");
         #endif
+      }else if(naSmallerUInt256(a, b)){
+        // b is larger than a and hence the result is zero.
+        // Do nothing here and just return with the values set above.
       }else{
         int shiftcount;
 
@@ -323,8 +326,10 @@
         while(!naEqualUInt256(highestbita, highestbitb)){
           if(naEqualUInt256(tmpb, NA_ZERO_256u)){
             // b is larger than a and hence the result is zero.
-            shiftcount = 0;
-            break;
+            #ifndef NDEBUG
+              naError("This should not happen.");
+            #endif
+            return;
           }
           tmpb = naShlUInt256(tmpb, 1);
           highestbitb = naShlUInt256(highestbitb, 1);

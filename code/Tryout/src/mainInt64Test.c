@@ -282,6 +282,8 @@ void testArithmetic(){
   testEqualInt64(i2, 0xffffffff, 0xffffff84);
   i2 = naDivInt64(i01, i04);
   testEqualInt64(i2, 0x000000e9, 0xb2001cdf);
+  i2 = naDivInt64(i04, i01);
+  testEqualInt64(i2, 0x00000000, 0x00000000);
   i2 = naModInt64(i01, i02);
   testEqualInt64(i2, 0xffffff1a, 0x0b49e4fb);
   i2 = naModInt64(i01, i04);

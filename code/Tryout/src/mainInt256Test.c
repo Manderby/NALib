@@ -288,6 +288,8 @@ void testArithmetic(){
   testEqualInt256(i2, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xfffffffd);
   i2 = naDivInt256(i01, i04);
   testEqualInt256(i2, 0x000e28aa, 0xf3a3fc6e, 0xfce7d9d8, 0x1021da72, 0xf9d0de2a, 0x2f125e6f, 0x914b1954, 0xa71e0c99);
+  i2 = naDivInt256(i04, i01);
+  testEqualInt256(i2, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000);
   i2 = naModInt256(i01, i02);
   testEqualInt256(i2, 0xffbf8982, 0x34a3904c, 0xbfb3fd1f, 0xb7122aa6, 0xcf779389, 0x1f29f926, 0x0adf09f4, 0x2b3ad620);
   i2 = naModInt256(i01, i04);

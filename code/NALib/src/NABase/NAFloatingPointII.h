@@ -144,8 +144,12 @@ NA_IAPI NAInt64 naGetDoubleInteger(double d){
   dbits = naAndInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
   dbits = naOrInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_NORM);
   exponent = naGetDoubleExponent(d);
-  dbits = naShrInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_BITS - exponent);
-  if(d < 0){dbits = naNegInt64(dbits);}
+  if(exponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL){
+    dbits = NA_ZERO_64;
+  }else{
+    dbits = naShrInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_BITS - exponent);
+    if(d < 0){dbits = naNegInt64(dbits);}
+  }
   return dbits;
 }
 

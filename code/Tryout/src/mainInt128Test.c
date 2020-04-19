@@ -285,6 +285,8 @@ void testArithmetic(){
   testEqualInt128(i2, 0xffffffff, 0xffffffff, 0xffffffff, 0xfffffffd);
   i2 = naDivInt128(i01, i04);
   testEqualInt128(i2, 0x000e28aa, 0xf3a3fc6e, 0xfce7d9d8, 0x1021da72);
+  i2 = naDivInt128(i04, i01);
+  testEqualInt128(i2, 0x00000000, 0x00000000, 0x00000000, 0x00000000);
   i2 = naModInt128(i01, i02);
   testEqualInt128(i2, 0xffbf8982, 0x34a3904c, 0xbfb3fd1f, 0xb7122aa3);
   i2 = naModInt128(i01, i04);
