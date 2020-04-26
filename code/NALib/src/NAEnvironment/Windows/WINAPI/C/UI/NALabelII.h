@@ -57,7 +57,7 @@ NAWINAPICallbackInfo naLabelWINAPIProc(NAUIElement* uielement, UINT message, WPA
     break;
 
   default:
-    //printf("Uncaught Label message\n");
+    //printf("Uncaught Label message" NA_NL);
     break;
   }
   

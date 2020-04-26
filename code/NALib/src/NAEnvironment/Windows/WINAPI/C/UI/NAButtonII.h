@@ -53,7 +53,7 @@ NAWINAPICallbackInfo naButtonWINAPIProc(NAUIElement* uielement, UINT message, WP
     break;
 
   default:
-    //printf("Uncaught Button message\n");
+    //printf("Uncaught Button message" NA_NL);
     break;
   }
   
@@ -71,7 +71,7 @@ NAWINAPICallbackInfo naButtonWINAPINotify(NAUIElement* uielement, WORD notificat
       info.result = 0;
       break;
     default:
-      //printf("Uncaught Button notification\n");
+      //printf("Uncaught Button notification" NA_NL);
       break;
   }
   return info;

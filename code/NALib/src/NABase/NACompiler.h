@@ -20,7 +20,7 @@
 //
 // NA_C89
 // NA_C90
-// NA_C94
+// NA_C95
 // NA_C99
 // NA_C11
 //
@@ -38,7 +38,7 @@
 
     #if defined __STDC_VERSION__
       #if __STDC_VERSION__ >= 199409L
-        #define NA_C94
+        #define NA_C95
       #endif
       #if __STDC_VERSION__ >= 199901L
         #define NA_C99
@@ -54,7 +54,7 @@
     #define NA_C90
 
     #if _MSC_VER >= 1800  // VS2013 started to support some C99
-      #define NA_C94
+      #define NA_C95
       #define NA_C99
     #endif
     #if _MSC_VER >= 1910  // VS2017 does C11, but not completely.
@@ -76,7 +76,9 @@
   #endif
 #endif
 
-
+#ifndef NA_C99
+  #warning "NALib requires compiler to use at least C99."
+#endif
 
 // Copyright (c) NALib, Tobias Stamm
 //

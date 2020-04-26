@@ -35,6 +35,10 @@
 #include "NABase/NAFloatingPoint.h"
 #include "NABase/NANumerics.h"
 
+// Additional definitions
+#include "NABase/NAChar.h"
+#include "NABase/NATemplate.h"
+
 // Enabling the code to use debugger runtime testing (DRT)
 #include "NABase/NADebug.h"
 
@@ -44,10 +48,6 @@
 #include "NABase/NAInt256II.h"
 #include "NABase/NAFloatingPointII.h"
 #include "NABase/NANumericsII.h"
-
-// Additional definitions
-#include "NABase/NAChar.h"
-#include "NABase/NATemplate.h"
 
 
 

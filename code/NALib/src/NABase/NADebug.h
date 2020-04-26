@@ -85,14 +85,14 @@
   #define naCrash(text)\
     {\
     naPrintError(NA_DEBUG_FUNCTIONSYMBOL, text);\
-    fprintf(stderr, "\nCrashing the application deliberately...\n");\
+    fprintf(stderr, NA_NL "Crashing the application deliberately..." NA_NL);\
     exit(EXIT_FAILURE);\
     }
 
   // This is the helper function which is referenced in the naError and naCrash
   // macro. You can call it directly, but the macros automatically detect the
   // current function name.
-  NA_HAPI void naPrintError(const char* functionsymbol, const char* text);
+  NA_HAPI void naPrintError(const char* functionSymbol, const char* text);
 
 #endif
 

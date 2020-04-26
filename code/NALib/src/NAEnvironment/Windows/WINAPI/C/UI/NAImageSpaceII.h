@@ -39,7 +39,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(NAUIElement* uielement, UINT message
     break;
 
   default:
-    //printf("Uncaught Image Space message\n");
+    //printf("Uncaught Image Space message" NA_NL);
     break;
   }
   

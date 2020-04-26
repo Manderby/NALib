@@ -24,7 +24,7 @@ NAInt trGeneralGroup;
 
 NABool reshapeWindow(NAReaction reaction){
   NA_UNUSED(reaction);
-  printf("Reshape\n");
+  printf("Reshape" NA_NL);
   return NA_TRUE;
 }
 
@@ -36,31 +36,31 @@ NABool cubPressWindowKey(NAReaction reaction){
   keyStatus = naGetKeyboardStatus();
   key = keyStatus.keyCode;
   if(key == NA_KEYCODE_ESC){naStopApplication();}
-  printf("Key Press\n");
+  printf("Key Press" NA_NL);
   return NA_TRUE;
 }
 
 NABool cubReleaseWindowKey(NAReaction reaction){
   NA_UNUSED(reaction);
-  printf("Key Release\n");
+  printf("Key Release" NA_NL);
   return NA_TRUE;
 }
 
 NABool cubMoveWindowMouse(NAReaction reaction){
   NA_UNUSED(reaction);
-  printf("Mouse Move\n");
+  printf("Mouse Move" NA_NL);
   return NA_TRUE;
 }
 
 NABool cubEnterWindowMouse(NAReaction reaction){
   NA_UNUSED(reaction);
-  printf("Mouse Enter\n");
+  printf("Mouse Enter" NA_NL);
   return NA_TRUE;
 }
 
 NABool cubExitWindowMouse(NAReaction reaction){
   NA_UNUSED(reaction);
-  printf("Mouse exit\n");
+  printf("Mouse exit" NA_NL);
   return NA_TRUE;
 }
 
@@ -92,13 +92,13 @@ void poststartup(void* arg){
   naSetTranslatorLanguagePreference(naGetLanguageCode("deu"));
   //naSetTranslatorLanguagePreference(naGetLanguageCode("eng"));
   //naSetTranslatorLanguagePreference(naGetLanguageCode("gsw"));
-  printf ("%s\n", naTranslate(trGeneralGroup, TR_HELLO_WORLD));
-  printf ("%s\n", naTranslate(trGeneralGroup, TR_99_BEER));
-  printf ("%s\n", naTranslate(trGeneralGroup, TR_BREADCRUMBS_BEAVERSPIT));
-  printf ("%s\n", naTranslate(trFinanceGroup, TR_PROFIT));
-  printf ("%s\n", naTranslate(trFinanceGroup, TR_LOSS));
+  printf ("%s" NA_NL, naTranslate(trGeneralGroup, TR_HELLO_WORLD));
+  printf ("%s" NA_NL, naTranslate(trGeneralGroup, TR_99_BEER));
+  printf ("%s" NA_NL, naTranslate(trGeneralGroup, TR_BREADCRUMBS_BEAVERSPIT));
+  printf ("%s" NA_NL, naTranslate(trFinanceGroup, TR_PROFIT));
+  printf ("%s" NA_NL, naTranslate(trFinanceGroup, TR_LOSS));
 
-//  printf("%d\n", (int)naGetLanguageCode("deu"));
+//  printf("%d" NA_NL, (int)naGetLanguageCode("deu"));
 
   windowrect = naMakeRectS(20, 20, 400, 300);
   window = naNewWindow("Wurst", windowrect, NA_TRUE, 0);
@@ -140,14 +140,14 @@ int main(void){
   #else
     printf("(Release ");
   #endif
-  printf("%d Bits Addresses, %d Bits Integers)\n", NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
+  printf("%d Bits Addresses, %d Bits Integers)" NA_NL, NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
   naStartRuntime();
     naStartApplication(prestartup, poststartup, NA_NULL);
   naStopRuntime();
 
   #if NA_OS == NA_OS_WINDOWS
-    printf("Finished.\n");
+    printf("Finished." NA_NL);
     NA_UNUSED(getchar());
   #endif
 

@@ -60,7 +60,7 @@ NAWINAPICallbackInfo naRadioWINAPIProc(NAUIElement* uielement, UINT message, WPA
     break;
 
   default:
-    //printf("Uncaught Radio message\n");
+    //printf("Uncaught Radio message" NA_NL);
     break;
   }
   

@@ -42,7 +42,7 @@ void testQSort(){
   t1 = naMakeDateTimeNow();
   qsort(keys, TESTSIZE, sizeof(keys[0]), compare);
   t2 = naMakeDateTimeNow();
-  printf("QSort: %f\n", naGetDateTimeDifference(&t2, &t1));
+  printf("QSort: %f" NA_NL, naGetDateTimeDifference(&t2, &t1));
 
   naFree(keys);
 }
@@ -62,25 +62,25 @@ void testHeap(){
   for(i = 0; i < TESTSIZE; i++){
     keys[i] = naUniformRandZE();
 //    keys[i] = (double)i / TESTSIZE;
-//    printf("%f\n", key);
+//    printf("%f" NA_NL, key);
     naInsertHeapElementConst(&heap, &(keys[i]), &(keys[i]), NA_NULL);
   }
 //  naClearTreeIterator(&iter);
   t2 = naMakeDateTimeNow();
-  printf("Heap Insert: %f\n", naGetDateTimeDifference(&t2, &t1));
+  printf("Heap Insert: %f" NA_NL, naGetDateTimeDifference(&t2, &t1));
 
 //  double prevkey = -1;
   t1 = naMakeDateTimeNow();
   for(i = 0; i < TESTSIZE; i++){
 //    const double* key = naGetHeapRootKey(&heap);
 //    if(*key < prevkey){
-//      printf("Wrong sorting: %d: %f, %f\n", i, *key, prevkey);
+//      printf("Wrong sorting: %d: %f, %f" NA_NL, i, *key, prevkey);
 //    }
 //    prevkey = *key;
     naRemoveHeapRootConst(&heap);
   }
   t2 = naMakeDateTimeNow();
-  printf("Heap Iterate: %f\n", naGetDateTimeDifference(&t2, &t1));
+  printf("Heap Iterate: %f" NA_NL, naGetDateTimeDifference(&t2, &t1));
 
   naClearHeap(&heap);
   naFree(keys);
@@ -105,12 +105,12 @@ void testTree(){
     double key = naUniformRandZE();
 //    double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
 //    double key = (double)i / TESTSIZE;
-//    printf("%f\n", key);
+//    printf("%f" NA_NL, key);
     naAddTreeKeyConst(&iter, &key, NA_NULL, NA_TRUE);
   }
   naClearTreeIterator(&iter);
   t2 = naMakeDateTimeNow();
-  printf("Tree Insert: %f\n", naGetDateTimeDifference(&t2, &t1));
+  printf("Tree Insert: %f" NA_NL, naGetDateTimeDifference(&t2, &t1));
 
   t1 = naMakeDateTimeNow();
   iter = naMakeTreeAccessor(&tree);
@@ -120,13 +120,13 @@ void testTree(){
     double key = (int)(naUniformRandZE() * SUBTESTSIZE) / SUBTESTSIZE;
 //    double key = (double)i / TESTSIZE;
 //    double key = (i % 10000) / 10000.;
-//    printf("%f\n", key);
+//    printf("%f" NA_NL, key);
 //    naAddTreeKeyConst(&iter, &key, NA_NULL, NA_TRUE);
     naLocateTreeKey(&iter, &key, NA_FALSE);
   }
   naClearTreeIterator(&iter);
   t2 = naMakeDateTimeNow();
-  printf("Tree Locate: %f\n", naGetDateTimeDifference(&t2, &t1));
+  printf("Tree Locate: %f" NA_NL, naGetDateTimeDifference(&t2, &t1));
 
 //  NAInt prevkey = -1.;
   prevkey = -1.;
@@ -138,21 +138,21 @@ void testTree(){
     i++;
 //    const NAInt* key = naGetTreeCurKey(&iter);
 //    if(*key < prevkey){
-//      printf("Wrong sorting: %d: %"NA_PRIi", %"NA_PRIi"\n", i, *key, prevkey);
+//      printf("Wrong sorting: %d: %"NA_PRIi", %"NA_PRIi NA_NL, i, *key, prevkey);
 //    }
 //    prevkey = *key;
-//    if(i < 5){printf("%"NA_PRIi"\n", *key);}
+//    if(i < 5){printf("%"NA_PRIi NA_NL, *key);}
 
     key = naGetTreeCurLeafKey(&iter);
     if(*key < prevkey){
-      printf("Wrong sorting: %d: %f, %f\n", i, *key, prevkey);
+      printf("Wrong sorting: %d: %f, %f" NA_NL, i, *key, prevkey);
     }
     prevkey = *key;
-//    if(i < 5){printf("%f\n", *key);}
+//    if(i < 5){printf("%f" NA_NL, *key);}
   }
   naClearTreeIterator(&iter);
   t2 = naMakeDateTimeNow();
-  printf("Tree Iterate (%d): %f\n", i, naGetDateTimeDifference(&t2, &t1));
+  printf("Tree Iterate (%d): %f" NA_NL, i, naGetDateTimeDifference(&t2, &t1));
 
   // ////////////////
 
@@ -172,7 +172,7 @@ void testTree(){
   }
   naClearTreeIterator(&iter);
   t2 = naMakeDateTimeNow();
-  printf("Tree Insert/Remove: %f\n", naGetDateTimeDifference(&t2, &t1));
+  printf("Tree Insert/Remove: %f" NA_NL, naGetDateTimeDifference(&t2, &t1));
 
   naClearTree(&tree);
   naReleaseTreeConfiguration(config);
@@ -190,7 +190,7 @@ int main(void){
   #else
     printf("(Release ");
   #endif
-  printf("%d Bits Addresses, %d Bits Integers)\n", NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
+  printf("%d Bits Addresses, %d Bits Integers)" NA_NL, NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
   naStartRuntime();
     testTree();
@@ -199,7 +199,7 @@ int main(void){
   naStopRuntime();
 
   #if NA_OS == NA_OS_WINDOWS
-    printf("Finished.\n");
+    printf("Finished." NA_NL);
     NA_UNUSED(getchar());
   #endif
 

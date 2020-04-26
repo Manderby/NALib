@@ -139,7 +139,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
   //  break;
 
   default:
-    //printf("Uncaught Window message: %X\n", (int)message);
+    //printf("Uncaught Window message: %X" NA_NL, (int)message);
     //info.result = 0;
     break;
   }

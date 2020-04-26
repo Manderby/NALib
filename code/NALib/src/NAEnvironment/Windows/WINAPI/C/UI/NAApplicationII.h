@@ -86,7 +86,7 @@ NAWINAPICallbackInfo naApplicationWINAPIProc(NAUIElement* uielement, UINT messag
 
   switch(message){
   default:
-    //printf("Uncaught Application message\n");
+    //printf("Uncaught Application message" NA_NL);
     break;
   }
   
@@ -522,7 +522,7 @@ NA_DEF HICON naGetWINAPIApplicationIcon(void){
 //  _In_ LPARAM        lParam
 //){
 //  int x = 1234;
-//  printf("%s\n", lpelf->elfFullName);
+//  printf("%s"  NA_NL, lpelf->elfFullName);
 //}
 
 

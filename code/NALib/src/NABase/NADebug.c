@@ -12,8 +12,8 @@
   // The error printing method. Errors will be emitted to the stderr output.
   // When NDEBUG is defined, this function is OBSOLETE!
 
-  NA_HDEF void naPrintError(const char* functionsymbol, const char* text){
-    fprintf(stderr, "Error in %s: %s", functionsymbol, text);
+  NA_HDEF void naPrintError(const char* functionSymbol, const char* text){
+    fprintf(stderr, "Error in %s: %s", functionSymbol, text);
 
     // //////////////////////////
     // Set a breakpoint in the following line to debug.

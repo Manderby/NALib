@@ -61,6 +61,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
     if(naIsBufferAtInitial(iter)){break;}
     curbyte = naGetBufferPartDataPointerConst(iter);
     
+    // Note: Do not use NA_NL_XXX macros here. That is semantically wrong.
     while(iter->partoffset < naGetBufferPartByteSize(part)){
       if(checkwindowsend){
         checkwindowsend = NA_FALSE;
@@ -232,7 +233,7 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter){
 
 
 
-NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAUInt64* retint, NAInt maxdigitcount, NAUInt64 max){
+NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAUInt64* retInt, NAInt maxdigitcount, NAUInt64 max){
   NAInt bytesused;
   NAUInt64 prevval;
   NABool found = NA_FALSE;
@@ -240,7 +241,7 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAUInt6
   NAInt end = start;
   NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
 
-  *retint = NA_ZERO_64u;
+  *retInt = NA_ZERO_64u;
   bytesused = 0;
   prevval = NA_ZERO_64u;
   if(maxdigitcount == 0){maxdigitcount = naGetRangeiEnd(buffer->range) - start;}
@@ -260,17 +261,17 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAUInt6
       if(bytesused >= maxdigitcount){break;}
 
       if((*curbyte < '0') || (*curbyte > '9')){found = NA_TRUE; break;}
-      *retint = naAddUInt64(naMulUInt64(*retint, naMakeUInt64WithLo(10)), naMakeUInt64WithLo(*curbyte - '0'));
+      *retInt = naAddUInt64(naMulUInt64(*retInt, naMakeUInt64WithLo(10)), naMakeUInt64WithLo(*curbyte - '0'));
       #ifndef NDEBUG
-        if(naGreaterUInt64(*retint, max))
+        if(naGreaterUInt64(*retInt, max))
           naError("The value overflowed max.");
-        if(naSmallerUInt64(*retint, prevval))
+        if(naSmallerUInt64(*retInt, prevval))
           naError("The value overflowed 64 bit integer space.");
       #endif
-      if(naSmallerUInt64(*retint, prevval) || naGreaterUInt64(*retint, max)){
-        *retint = max;
+      if(naSmallerUInt64(*retInt, prevval) || naGreaterUInt64(*retInt, max)){
+        *retInt = max;
       }
-      prevval = *retint;
+      prevval = *retInt;
       bytesused++;
       curbyte++;
       end++;
@@ -283,14 +284,14 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAUInt6
 
 
 
-NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, NAInt64* retint, NAInt maxdigitcount, NAInt64 min, NAInt64 max){
+NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, NAInt64* retInt, NAInt maxdigitcount, NAInt64 min, NAInt64 max){
   NAInt64 sign = NA_ONE_64;
   NAInt bytesused = 0;
   NAInt64 limit = max;
   NAUInt64 intvalue;
   const NAByte* curbyte;
 
-  *retint = NA_ZERO_64;
+  *retInt = NA_ZERO_64;
 
   naPrepareBuffer(iter, 1);
   if(naIsBufferAtInitial(iter)){return 0;}
@@ -311,7 +312,7 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, NAInt64* 
   if(maxdigitcount == -1){maxdigitcount = 0;}
 
   bytesused += naParseBufferDecimalUnsignedInteger(iter, &intvalue, maxdigitcount, naCastInt64ToUInt64(limit));
-  *retint = naMulInt64(sign, naCastUInt64ToInt64(intvalue));
+  *retInt = naMulInt64(sign, naCastUInt64ToInt64(intvalue));
   return bytesused;
 }
 

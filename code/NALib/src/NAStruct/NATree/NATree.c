@@ -146,9 +146,9 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   }
 
   void naDebugTree(NATree* tree){
-    printf("Tree Debug:\n");
-    printf("\tStructure uses %d bytes.\n", (int)naSizeof(NATree));
-    printf("\t%d iterators running on the tree.\n", (int)tree->itercount);
+    printf("Tree Debug:" NA_NL);
+    printf(NA_TAB "Structure uses %d bytes." NA_NL, (int)naSizeof(NATree));
+    printf(NA_TAB "%d iterators running on the tree." NA_NL, (int)tree->itercount);
     if(tree->root){
       NATreeIterator iter = naMakeTreeAccessor(tree);
       NADebugTreeToken token;
@@ -157,12 +157,12 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
       token.previndx = -1;
       naLocateTreeToken(&iter, &token, debugNode, debugLeaf);
       
-      printf("\tInner node count: %d * %d Bytes = %d bytes\n", (int)token.nodecount, (int)tree->config->sizeofNode, (int)(token.nodecount * tree->config->sizeofNode));
-      printf("\tLeaf count: %d * %d Bytes = %d bytes\n", (int)token.leafcount, (int)tree->config->sizeofLeaf, (int)(token.leafcount * tree->config->sizeofLeaf));
-      printf("\tMax node depth: %d\n", (int)token.maxdepth);
+      printf(NA_TAB "Inner node count: %d * %d Bytes = %d bytes" NA_NL, (int)token.nodecount, (int)tree->config->sizeofNode, (int)(token.nodecount * tree->config->sizeofNode));
+      printf(NA_TAB "Leaf count: %d * %d Bytes = %d bytes" NA_NL, (int)token.leafcount, (int)tree->config->sizeofLeaf, (int)(token.leafcount * tree->config->sizeofLeaf));
+      printf(NA_TAB "Max node depth: %d" NA_NL, (int)token.maxdepth);
       naClearTreeIterator(&iter);
     }else{
-      printf("\tTree has no root.\n");
+      printf(NA_TAB "Tree has no root." NA_NL);
     }
   }
 #endif

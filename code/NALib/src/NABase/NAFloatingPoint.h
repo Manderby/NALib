@@ -133,13 +133,13 @@
 #define NA_IEEE754_DOUBLE_SIGN_MASK              naCastUInt64ToInt64(naMakeUInt64(NA_IEEE754_DOUBLE_SIGN_MASK_HI, NA_IEEE754_DOUBLE_SIGN_MASK_LO))
 
 // Creates floats and doubles out of signed significands and exponents
-NA_IAPI float  naMakeFloat (int32 signedsignificand, int32 signedexponent);
-NA_IAPI float  naMakeFloatWithExponent (int32 signedexponent);
-NA_IAPI float  naMakeFloatSubnormal (int32 signedsignificand);
+NA_IAPI float  naMakeFloat (int32 signedSignificand, int32 signedExponent);
+NA_IAPI float  naMakeFloatWithExponent (int32 signedExponent);
+NA_IAPI float  naMakeFloatSubnormal (int32 signedSignificand);
 
-NA_IAPI double naMakeDouble(NAInt64 signedsignificand, int32 signedexponent);
-NA_IAPI double naMakeDoubleWithExponent(int32 signedexponent);
-NA_IAPI double naMakeDoubleSubnormal(NAInt64 signedsignificand);
+NA_IAPI double naMakeDouble(NAInt64 signedSignificand, int32 signedExponent);
+NA_IAPI double naMakeDoubleWithExponent(int32 signedExponent);
+NA_IAPI double naMakeDoubleSubnormal(NAInt64 signedSignificand);
 
 NA_IAPI int32   naGetDoubleExponent(double d);
 NA_IAPI NAInt64 naGetDoubleInteger(double d);

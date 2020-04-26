@@ -78,7 +78,7 @@
 //    
 //    CGFloat test = defaultLineHeight;
 //
-//    printf("%f\n", baselineOffset);
+//    printf("%f" NA_NL, baselineOffset);
 //
 //    [[NSColor yellowColor] setFill];
 //    boundRect.origin.y = 0;

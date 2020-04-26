@@ -136,7 +136,7 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
   case NA_ALERT_BOX_ERROR:   iconType = MB_ICONERROR; break;
   }
 
-  messageString = naNewStringWithFormat("%s\n%s", titleText, infoText);
+  messageString = naNewStringWithFormat("%s" NA_NL "%s", titleText, infoText);
   systemTitle = naAllocSystemStringWithUTF8String(titleText);
   systemMessage = naAllocSystemStringWithUTF8String(naGetStringUTF8Pointer(messageString));
 
@@ -466,7 +466,7 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
     case NA_UI_LABEL:     info = naLabelWINAPINotify    (uielement, notificationCode); break;
     case NA_UI_TEXTFIELD: info = naTextFieldWINAPINotify(uielement, notificationCode); break;
     default:
-      //printf("Uncaught notification\n");
+      //printf("Uncaught notification" NA_NL);
       break;
     }
   }
@@ -482,7 +482,7 @@ NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam){
     switch(naGetUIElementType(uielement)){
     case NA_UI_BUTTON:     info = naButtonWINAPIDrawItem    (uielement, drawitemstruct); break;
     default:
-      //printf("Uncaught draw item message\n");
+      //printf("Uncaught draw item message" NA_NL);
       break;
     }
   }

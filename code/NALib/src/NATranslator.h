@@ -29,6 +29,12 @@
 // NA_LOC(99_BEER,                "99 Flaschen Bier");
 // NA_LOC(BREADCRUMBS_BEAVERSPIT, "Brotkrumen und Biberspucke");
 //
+// // Swiss German
+// NA_LOC_LANG("gsw");
+// NA_LOC(HELLO_WORLD,            "Sali Welt");
+// NA_LOC(99_BEER,                "99 Fläsche Bier");
+// NA_LOC(BREADCRUMBS_BEAVERSPIT, "Brösmeli und Biberspeuz");
+//
 // You can use // comments and split the content into as many files you like.
 // These textfiles are then simply included into your sourcecode like for
 // example:
@@ -46,8 +52,8 @@
 // called "MyConverterTranslations". Later, you will identify the strings
 // using this NAInt group identifier.
 //
-// In order for the #includes to work, somewhere in your code, integer ids must
-// be provided, defining the identifiers of the translation items.
+// In order for the #includes to work, somewhere in your code, integer ids
+// must be provided, defining the identifiers of the translation items.
 // Most probably, you want to do this using an enum:
 //
 //typedef enum{
@@ -63,7 +69,7 @@
 // Finally, when you want to have a translated string, you call naTranslate
 // with the desired group and string identifier.
 //
-// printf ("%s\n", naTranslate(myTranslatorGroup, BREADCRUMBS_BEAVERSPIT));
+// printf ("%s", naTranslate(myTranslatorGroup, BREADCRUMBS_BEAVERSPIT));
 //
 // To switch the language, you can use naSetTranslatorLanguagePreference but
 // when working with an naApplication, you will not need to switch at all, as

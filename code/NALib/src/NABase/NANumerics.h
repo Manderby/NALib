@@ -25,20 +25,20 @@
 
 // Returns either 0 or -1 in two complement form but stored as an uint
 // depending on whether the parameter is positive or negative.
-NA_IAPI uint8     naGetSignum8  (int8  i);
-NA_IAPI uint16    naGetSignum16 (int16 i);
-NA_IAPI uint32    naGetSignum32 (int32 i);
-NA_IAPI NAUInt64  naGetSignum64 (NAInt64 i);
+NA_IAPI uint8     naGetSignum8  (int8     i);
+NA_IAPI uint16    naGetSignum16 (int16    i);
+NA_IAPI uint32    naGetSignum32 (int32    i);
+NA_IAPI NAUInt64  naGetSignum64 (NAInt64  i);
 NA_IAPI NAUInt128 naGetSignum128(NAInt128 i);
 NA_IAPI NAUInt256 naGetSignum256(NAInt256 i);
 
 // Returns either 1 or -1. The value 0 returns 1. Never returns 0.
-NA_IAPI int8     naSigni8  (int8    x);
-NA_IAPI int16    naSigni16 (int16   x);
-NA_IAPI int32    naSigni32 (int32   x);
-NA_IAPI NAInt64  naSigni64 (NAInt64 x);
-NA_IAPI NAInt128 naSigni128(NAInt128 x);
-NA_IAPI NAInt256 naSigni256(NAInt256 x);
+NA_IAPI int8     naSigni8  (int8     i);
+NA_IAPI int16    naSigni16 (int16    i);
+NA_IAPI int32    naSigni32 (int32    i);
+NA_IAPI NAInt64  naSigni64 (NAInt64  i);
+NA_IAPI NAInt128 naSigni128(NAInt128 i);
+NA_IAPI NAInt256 naSigni256(NAInt256 i);
 
 // Sets or unsets the sign bit. This is pure bit logic, not performing
 // any complement.
@@ -56,12 +56,12 @@ NA_IAPI void naUnsetSignBit128(void* i);
 NA_IAPI void naUnsetSignBit256(void* i);
 
 // Makes the value positive.
-NA_IAPI int8     naAbsi8  (int8     x);
-NA_IAPI int16    naAbsi16 (int16    x);
-NA_IAPI int32    naAbsi32 (int32    x);
-NA_IAPI NAInt64  naAbsi64 (NAInt64  x);
-NA_IAPI NAInt128 naAbsi128(NAInt128 x);
-NA_IAPI NAInt256 naAbsi256(NAInt256 x);
+NA_IAPI int8     naAbsi8  (int8     i);
+NA_IAPI int16    naAbsi16 (int16    i);
+NA_IAPI int32    naAbsi32 (int32    i);
+NA_IAPI NAInt64  naAbsi64 (NAInt64  i);
+NA_IAPI NAInt128 naAbsi128(NAInt128 i);
+NA_IAPI NAInt256 naAbsi256(NAInt256 i);
 
 
 

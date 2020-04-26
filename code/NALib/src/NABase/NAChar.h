@@ -2,12 +2,12 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-
-
 // ////////////////////////
-// Characters and system dependent strings
-// The tabs and newlines used on different systems. The native newline argument
-// NA_NL denotes the native newline of the current system.
+// Characters and system dependent strings.
+
+
+
+// The tabs and newlines used on different systems.
 #if defined NA_C11
   #define NA_NL_UNIX  u8"\n"
   #define NA_NL_MAC9  u8"\r"
@@ -20,6 +20,7 @@
   #define NA_TAB      "\t"
 #endif
 
+// NA_NL denotes the native newline of the current system.
 #if NA_OS == NA_OS_WINDOWS
   #define NA_NL NA_NL_WIN
 #else

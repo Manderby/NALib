@@ -576,24 +576,24 @@ NA_API NAString* naParseBufferPathComponent(NABufferIterator* iter);
 // Parses the given buffer for decimal digits and accumulates them into an
 // unsigned integer. The function will start at the current byte and parse
 // as long as there is a decimal digit. The number of bytes considered is
-// returned. The resulting integer value is returned in retint. If retint is
+// returned. The resulting integer value is returned in retInt. If retInt is
 // a Null-Pointer, the function just returns the number of bytes considered.
 //
 // The function will not parse more than maxdigitcount characters. If that
 // value is 0 it can read any number of characters.
 //
-// If the parsed value exceeds max, retint will be max and a warning will be
+// If the parsed value exceeds max, retInt will be max and a warning will be
 // emitted when debugging. But note that the returned number of bytes contains
 // all digits considered.
 NA_DEF NAInt naParseBufferDecimalUnsignedInteger(  NABufferIterator* iter,
-                                                     NAUInt64* retint,
+                                                     NAUInt64* retInt,
                                                        NAInt maxdigitcount,
                                                       NAUInt64 max);
 
 // Same as above but parses a signed integer. Note that there is an addidional
 // min parameter.
 NA_DEF NAInt naParseBufferDecimalSignedInteger(  NABufferIterator* iter,
-                                                    NAInt64* retint,
+                                                    NAInt64* retInt,
                                                      NAInt maxdigitcount,
                                                      NAInt64 min,
                                                      NAInt64 max);

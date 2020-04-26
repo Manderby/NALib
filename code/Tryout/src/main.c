@@ -25,36 +25,45 @@
 #include <stdio.h>
 
 int main(void){
-  printf("NALib Version: %d ", NA_VERSION);
-  #ifndef NDEBUG
-    printf("(Debug ");
+  printf("NALib Version: %d (", NA_VERSION);
+  #if defined NA_C11
+    printf("C11");
+  #elif defined NA_C99
+    printf("C99");
+  #elif defined NA_C90
+    printf("C90");
   #else
-    printf("(Release ");
+    printf("nonSTDC");
   #endif
-  printf("%d Bits Addresses, %d Bits Integers)\n", NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
+  #ifndef NDEBUG
+    printf(" Debug");
+  #else
+    printf(" Release");
+  #endif
+  printf(" %d Bits Addresses, %d Bits Integers)" NA_NL, NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
   #if NA_OS == NA_OS_WINDOWS
-    printf("Finished.\n");
+    printf("Finished." NA_NL);
     NA_UNUSED(getchar());
   #endif
 
 
-  naTestGroup(testArray);
-  naSpeedTestGroup(speedArray);
-  naMemoryTestGroup(memoryArray);
+  //naTestGroup(testArray);
+  //naSpeedTestGroup(speedArray);
+  //naMemoryTestGroup(memoryArray);
 
 
   return 0;
 }
 
 
-void testArray(){
-  naTestActivate(NA_TRUE);
-  testArrayCreation()
-  testArrayDeletion();
-  naTestActivate(NA_FALSE);
-  testArrayIteration();
-}
+//void testArray(){
+//  naTestActivate(NA_TRUE);
+//  testArrayCreation()
+//  testArrayDeletion();
+//  naTestActivate(NA_FALSE);
+//  testArrayIteration();
+//}
 
 
 // Copyright (c) NALib, Tobias Stamm

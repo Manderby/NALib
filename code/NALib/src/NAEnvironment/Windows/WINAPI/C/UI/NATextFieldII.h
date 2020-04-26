@@ -68,7 +68,7 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(NAUIElement* uielement, UINT message,
   break;
 
   default:
-    //printf("Uncaught TextField message\n");
+    //printf("Uncaught TextField message" NA_NL);
   break;
   }
  

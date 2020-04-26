@@ -30,7 +30,7 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(NAUIElement* uielement, UINT messag
     break;
 
   default:
-    //printf("Uncaught OpenGL Space message\n");
+    //printf("Uncaught OpenGL Space message" NA_NL);
     break;
   }
   

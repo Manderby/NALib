@@ -390,7 +390,7 @@ double getTime(){
 }
 double printAndSwapTime(const char* title, double starttime){
   double t2 = getTime();
-  printf("%s\t\t%f s\n", title, t2 - starttime);
+  printf("%s" NA_TAB NA_TAB "%f s" NA_NL, title, t2 - starttime);
   return t2;
 }
 void printInt64(int64 i){
@@ -421,13 +421,13 @@ void testEqualUInt64(uint64 ui, uint32 goalhi, uint32 goallo){
     }
   #endif
   printUInt64(ui);
-  printf("\n");
+  printf(NA_NL);
 }
 void testEqualBool(NABool b, NABool goalb){
   if(b == goalb){
-    printf("Pass\n");
+    printf("Pass" NA_NL);
   }else{
-    printf("FAIL\n");
+    printf("FAIL" NA_NL);
   }
 }
 
@@ -435,9 +435,9 @@ void testEqualBool(NABool b, NABool goalb){
 
 int main(void){
   #if !defined NA_TYPE_INT64
-    printf("Emulation\n");
+    printf("Emulation" NA_NL);
   #else
-    printf("Native\n");
+    printf("Native" NA_NL);
   #endif
 
   testMaking();
@@ -451,7 +451,7 @@ int main(void){
   timeArithmetic();
 
   #if NA_OS == NA_OS_WINDOWS
-    printf("Finished.\n");
+    printf("Finished." NA_NL);
     NA_UNUSED(getchar());
   #endif
 

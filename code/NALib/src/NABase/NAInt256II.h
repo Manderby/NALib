@@ -21,16 +21,16 @@
 
 
     NA_IDEF NAInt256 naMakeInt256(NAInt128 hi, NAUInt128 lo){
-      NAInt256 retint;
-      retint.hi = hi;
-      retint.lo = lo;
-      return retint;
+      NAInt256 retInt;
+      retInt.hi = hi;
+      retInt.lo = lo;
+      return retInt;
     }
     NA_IDEF NAInt256 naMakeInt256WithLo(NAInt128 lo){
-      NAInt256 retint;
-      retint.hi = naCastUInt128ToInt128(naGetSignum128(lo));
-      retint.lo = naCastInt128ToUInt128(lo);
-      return retint;
+      NAInt256 retInt;
+      retInt.hi = naCastUInt128ToInt128(naGetSignum128(lo));
+      retInt.lo = naCastInt128ToUInt128(lo);
+      return retInt;
     }
     NA_IDEF NAInt256 naMakeInt256WithDouble(double d){
       return naMakeInt256WithLo(naMakeInt128WithLo(naGetDoubleInteger(d)));
@@ -51,9 +51,9 @@
 
 
     NA_IDEF NAInt256 naNegInt256(NAInt256 i){
-      NAInt256 retint = naNotInt256(i);
-      naIncInt256(retint);
-      return retint;
+      NAInt256 retInt = naNotInt256(i);
+      naIncInt256(retInt);
+      return retInt;
     }
     NA_IDEF NAInt256 naAddInt256(NAInt256 a, NAInt256 b){
       return naCastUInt256ToInt256(naAddUInt256(naCastInt256ToUInt256(a), naCastInt256ToUInt256(b)));
@@ -62,43 +62,43 @@
       return naCastUInt256ToInt256(naSubUInt256(naCastInt256ToUInt256(a), naCastInt256ToUInt256(b)));
     }
     NA_IDEF NAInt256 naMulInt256(NAInt256 a, NAInt256 b){
-      NAInt256 retint;
-      NAUInt256 retuint;
-      NAInt256 signa = naSigni256(a);
-      NAInt256 signb = naSigni256(b);
+      NAInt256 retInt;
+      NAUInt256 retUInt;
+      NAInt256 aSign = naSigni256(a);
+      NAInt256 bSign = naSigni256(b);
       if(naSmallerInt256(a, NA_ZERO_256)){a = naNegInt256(a);}
       if(naSmallerInt256(b, NA_ZERO_256)){b = naNegInt256(b);}
-      retuint = naMulUInt256(naCastInt256ToUInt256(a), naCastInt256ToUInt256(b));
-      retuint.hi = naAndUInt128(retuint.hi, naNotUInt128(NA_VALUE128_SIGN_MASK));
-      retint = naCastUInt256ToInt256(retuint);
-      if(!naEqualInt256(signa, signb)){retint = naNegInt256(retint);}
+      retUInt = naMulUInt256(naCastInt256ToUInt256(a), naCastInt256ToUInt256(b));
+      retUInt.hi = naAndUInt128(retUInt.hi, naNotUInt128(NA_VALUE128_SIGN_MASK));
+      retInt = naCastUInt256ToInt256(retUInt);
+      if(!naEqualInt256(aSign, bSign)){retInt = naNegInt256(retInt);}
       // todo: overflow may lead to different result than built-in 256 bit integer
-      return retint;
+      return retInt;
     }
     NA_IDEF NAInt256 naDivInt256(NAInt256 a, NAInt256 b){
-      NAInt256 retint;
-      NAUInt256 retuint;
-      NAInt256 signa = naSigni256(a);
-      NAInt256 signb = naSigni256(b);
+      NAInt256 retInt;
+      NAUInt256 retUInt;
+      NAInt256 aSign = naSigni256(a);
+      NAInt256 bSign = naSigni256(b);
       if(naSmallerInt256(a, NA_ZERO_256)){a = naNegInt256(a);}
       if(naSmallerInt256(b, NA_ZERO_256)){b = naNegInt256(b);}
-      retuint = naDivUInt256(naCastInt256ToUInt256(a), naCastInt256ToUInt256(b));
-      retuint.hi = naAndUInt128(retuint.hi, naNotUInt128(NA_VALUE128_SIGN_MASK));
-      retint = naCastUInt256ToInt256(retuint);
-      if(!naEqualInt256(signa, signb)){retint = naNegInt256(retint);}
-      return retint;
+      retUInt = naDivUInt256(naCastInt256ToUInt256(a), naCastInt256ToUInt256(b));
+      retUInt.hi = naAndUInt128(retUInt.hi, naNotUInt128(NA_VALUE128_SIGN_MASK));
+      retInt = naCastUInt256ToInt256(retUInt);
+      if(!naEqualInt256(aSign, bSign)){retInt = naNegInt256(retInt);}
+      return retInt;
     }
     NA_IDEF NAInt256 naModInt256(NAInt256 a, NAInt256 b){
-      NAInt256 retint;
-      NAUInt256 retuint;
-      NAInt256 signa = naSigni256(a);
+      NAInt256 retInt;
+      NAUInt256 retUInt;
+      NAInt256 aSign = naSigni256(a);
       if(naSmallerInt256(a, NA_ZERO_256)){a = naNegInt256(a);}
       if(naSmallerInt256(b, NA_ZERO_256)){b = naNegInt256(b);}
-      retuint = naModUInt256(naCastInt256ToUInt256(a), naCastInt256ToUInt256(b));
-      retuint.hi = naAndUInt128(retuint.hi, naNotUInt128(NA_VALUE128_SIGN_MASK));
-      retint = naCastUInt256ToInt256(retuint);
-      if(!naEqualInt256(signa, NA_ONE_256)){retint = naNegInt256(retint);}
-      return retint;
+      retUInt = naModUInt256(naCastInt256ToUInt256(a), naCastInt256ToUInt256(b));
+      retUInt.hi = naAndUInt128(retUInt.hi, naNotUInt128(NA_VALUE128_SIGN_MASK));
+      retInt = naCastUInt256ToInt256(retUInt);
+      if(!naEqualInt256(aSign, NA_ONE_256)){retInt = naNegInt256(retInt);}
+      return retInt;
     }
 
 
@@ -119,23 +119,23 @@
       return naCastUInt256ToInt256(naShlUInt256(naCastInt256ToUInt256(a), n));
     }
     NA_IDEF NAInt256 naShrInt256(NAInt256 a, int n){
-      NAInt256 retint;
+      NAInt256 retInt;
       if(n < 0){
-        retint = naShlInt256(a, -n);
+        retInt = naShlInt256(a, -n);
       }else{
         // Beware, do not use <= as some processors will result
         // in garbage when the shift is equal to the type size.
         if(n < 128){
-          retint.lo = naShrUInt128(a.lo, n);
-          retint.lo = naOrUInt128(retint.lo, naShlUInt128(naCastInt128ToUInt128(a.hi), (128 - n)));
-          retint.hi = naShrInt128(a.hi, n);
+          retInt.lo = naShrUInt128(a.lo, n);
+          retInt.lo = naOrUInt128(retInt.lo, naShlUInt128(naCastInt128ToUInt128(a.hi), (128 - n)));
+          retInt.hi = naShrInt128(a.hi, n);
         }else{
           NAUInt128 signum = naGetSignum128(a.hi); // Sign preservation!
-          retint.lo = naCastInt128ToUInt128(naShrInt128(a.hi, (n - 128)));
-          retint.hi = naCastUInt128ToInt128(signum);
+          retInt.lo = naCastInt128ToUInt128(naShrInt128(a.hi, (n - 128)));
+          retInt.hi = naCastUInt128ToInt128(signum);
         }
       }
-      return retint;
+      return retInt;
     }
 
 
@@ -182,10 +182,10 @@
       return naCastUInt256ToUInt128(naCastInt256ToUInt256(i));
     }
     NA_IDEF NAUInt256 naCastInt256ToUInt256(NAInt256 i){
-      NAUInt256 retint;
-      retint.hi = naCastInt128ToUInt128(i.hi);
-      retint.lo = i.lo;
-      return retint;
+      NAUInt256 retInt;
+      retInt.hi = naCastInt128ToUInt128(i.hi);
+      retInt.lo = i.lo;
+      return retInt;
     }
     NA_IDEF int8 naCastInt256ToInt8(NAInt256 i){
       return naCastUInt256ToInt8(naCastInt256ToUInt256(i));
@@ -218,16 +218,16 @@
 
 
     NA_IDEF NAUInt256 naMakeUInt256(NAUInt128 hi, NAUInt128 lo){
-      NAUInt256 retint;
-      retint.hi = hi;
-      retint.lo = lo;
-      return retint;
+      NAUInt256 retInt;
+      retInt.hi = hi;
+      retInt.lo = lo;
+      return retInt;
     }
     NA_IDEF NAUInt256 naMakeUInt256WithLo(NAUInt128 lo){
-      NAUInt256 retint;
-      retint.hi = NA_ZERO_128u;
-      retint.lo = lo;
-      return retint;
+      NAUInt256 retInt;
+      retInt.hi = NA_ZERO_128u;
+      retInt.lo = lo;
+      return retInt;
     }
     NA_IDEF NAUInt256 naMakeUInt256WithDouble(double d){
       return naMakeUInt256WithLo(naMakeUInt128WithDouble(d));
@@ -249,17 +249,17 @@
 
 
     NA_IDEF NAUInt256 naAddUInt256(NAUInt256 a, NAUInt256 b){
-      NAUInt256 retint;
-      retint.lo = naAddUInt128(a.lo, b.lo);
-      retint.hi = naAddUInt128(a.hi, b.hi);
-      retint.hi = naAddUInt128(retint.hi, naMakeUInt128WithLo(naMakeUInt64WithLo(naSmallerUInt128(retint.lo, a.lo)))); // add a carry if there was an overflow.
-      return retint;
+      NAUInt256 retInt;
+      retInt.lo = naAddUInt128(a.lo, b.lo);
+      retInt.hi = naAddUInt128(a.hi, b.hi);
+      retInt.hi = naAddUInt128(retInt.hi, naMakeUInt128WithLo(naMakeUInt64WithLo(naSmallerUInt128(retInt.lo, a.lo)))); // add a carry if there was an overflow.
+      return retInt;
     }
     NA_IDEF NAUInt256 naSubUInt256(NAUInt256 a, NAUInt256 b){
       return naAddUInt256(a, naCastInt256ToUInt256(naNegInt256(naCastUInt256ToInt256(b))));
     }
     NA_IDEF NAUInt256 naMulUInt256(NAUInt256 a, NAUInt256 b){
-      NAUInt256 retint = NA_ZERO_256u;
+      NAUInt256 retInt = NA_ZERO_256u;
 
       NAUInt128 a0 = naAndUInt128(a.lo, naMakeUInt128WithLo(NA_UINT64_MAX));
       NAUInt128 a1 = naShrUInt128(a.lo, 64);
@@ -273,31 +273,31 @@
       NAUInt128 a1b0 = naMulUInt128(a1, b0);
 
       // multiply a0 * b and add up
-      retint.lo = naAddUInt128(retint.lo, naMulUInt128(a0, b0));
-      retint.lo = naAddUInt128(retint.lo, naShlUInt128(a0b1, 64));
-      retint.hi = naAddUInt128(retint.hi, naShrUInt128(a0b1, 64));
-      retint.hi = naAddUInt128(retint.hi, naMulUInt128(a0, b2));
-      retint.hi = naAddUInt128(retint.hi, naShlUInt128(naMulUInt128(a0, b3), 64));
+      retInt.lo = naAddUInt128(retInt.lo, naMulUInt128(a0, b0));
+      retInt.lo = naAddUInt128(retInt.lo, naShlUInt128(a0b1, 64));
+      retInt.hi = naAddUInt128(retInt.hi, naShrUInt128(a0b1, 64));
+      retInt.hi = naAddUInt128(retInt.hi, naMulUInt128(a0, b2));
+      retInt.hi = naAddUInt128(retInt.hi, naShlUInt128(naMulUInt128(a0, b3), 64));
 
       // multiply a1 * b and add up
-      retint.lo = naAddUInt128(retint.lo, naShlUInt128(a1b0, 64));
-      retint.hi = naAddUInt128(retint.hi, naShrUInt128(a1b0, 64));
-      retint.hi = naAddUInt128(retint.hi, naMulUInt128(a1, b1));
-      retint.hi = naAddUInt128(retint.hi, naShlUInt128(naMulUInt128(a1, b2), 64));
+      retInt.lo = naAddUInt128(retInt.lo, naShlUInt128(a1b0, 64));
+      retInt.hi = naAddUInt128(retInt.hi, naShrUInt128(a1b0, 64));
+      retInt.hi = naAddUInt128(retInt.hi, naMulUInt128(a1, b1));
+      retInt.hi = naAddUInt128(retInt.hi, naShlUInt128(naMulUInt128(a1, b2), 64));
 
       // multiply a2 * b and add up
-      retint.hi = naAddUInt128(retint.hi, naMulUInt128(a2, b0));
-      retint.hi = naAddUInt128(retint.hi, naShlUInt128(naMulUInt128(a2, b1), 64));
+      retInt.hi = naAddUInt128(retInt.hi, naMulUInt128(a2, b0));
+      retInt.hi = naAddUInt128(retInt.hi, naShlUInt128(naMulUInt128(a2, b1), 64));
 
       // multiply a3 * b and add up
-      retint.hi = naAddUInt128(retint.hi, naShlUInt128(naMulUInt128(a3, b0), 64));
+      retInt.hi = naAddUInt128(retInt.hi, naShlUInt128(naMulUInt128(a3, b0), 64));
 
-      return retint;
+      return retInt;
     }
     NA_HIDEF void naComputeUInt256Division(NAUInt256 a, NAUInt256 b, NAUInt256* div, NAUInt256* rem){
-      NAUInt256 tmpb;
-      NAUInt256 highestbita;
-      NAUInt256 highestbitb;
+      NAUInt256 bTmp;
+      NAUInt256 aHighestBit;
+      NAUInt256 bHighestBit;
       *div = NA_ZERO_256u;
       *rem = a;
       if(naEqualUInt256(b, NA_ZERO_256u)){
@@ -308,116 +308,120 @@
         // b is larger than a and hence the result is zero.
         // Do nothing here and just return with the values set above.
       }else{
-        int shiftcount;
+        int shiftCount;
 
         // search for the highest bit of b.
-        highestbita = naMakeUInt256(NA_VALUE128_SIGN_MASK, NA_ZERO_128u);
-        while(!naEqualUInt256(naAndUInt256(a, highestbita), highestbita)){
-          highestbita = naShrUInt256(highestbita, 1);
+        aHighestBit = naMakeUInt256(NA_VALUE128_SIGN_MASK, NA_ZERO_128u);
+        while(!naEqualUInt256(naAndUInt256(a, aHighestBit), aHighestBit)){
+          aHighestBit = naShrUInt256(aHighestBit, 1);
         }
-        highestbitb = naMakeUInt256(NA_VALUE128_SIGN_MASK, NA_ZERO_128u);
-        while(!naEqualUInt256(naAndUInt256(b, highestbitb), highestbitb)){
-          highestbitb = naShrUInt256(highestbitb, 1);
+        bHighestBit = naMakeUInt256(NA_VALUE128_SIGN_MASK, NA_ZERO_128u);
+        while(!naEqualUInt256(naAndUInt256(b, bHighestBit), bHighestBit)){
+          bHighestBit = naShrUInt256(bHighestBit, 1);
         }
 
-        tmpb = b;
-        shiftcount = 0;
+        bTmp = b;
+        shiftCount = 0;
         // Make the dividend big enough
-        while(!naEqualUInt256(highestbita, highestbitb)){
-          if(naEqualUInt256(tmpb, NA_ZERO_256u)){
+        while(!naEqualUInt256(aHighestBit, bHighestBit)){
+          if(naEqualUInt256(bTmp, NA_ZERO_256u)){
             // b is larger than a and hence the result is zero.
             #ifndef NDEBUG
               naError("This should not happen.");
             #endif
             return;
           }
-          tmpb = naShlUInt256(tmpb, 1);
-          highestbitb = naShlUInt256(highestbitb, 1);
-          shiftcount++;
+          bTmp = naShlUInt256(bTmp, 1);
+          bHighestBit = naShlUInt256(bHighestBit, 1);
+          shiftCount++;
         }
 
-        while(shiftcount >= 0){
+        while(shiftCount >= 0){
           *div = naShlUInt256(*div, 1);
-          if(naGreaterEqualUInt256(*rem, tmpb)){
+          if(naGreaterEqualUInt256(*rem, bTmp)){
             *div = naOrUInt256(*div, NA_ONE_256u);
-            *rem = naSubUInt256(*rem, tmpb);
+            *rem = naSubUInt256(*rem, bTmp);
           }
-          tmpb = naShrUInt256(tmpb, 1);
-          shiftcount--;
+          bTmp = naShrUInt256(bTmp, 1);
+          shiftCount--;
         }
       }
     }
     NA_IDEF NAUInt256 naDivUInt256(NAUInt256 a, NAUInt256 b){
-      NAUInt256 divint;
-      NAUInt256 remint;
-      naComputeUInt256Division(a, b, &divint, &remint);
-      return divint;
+      NAUInt256 divInt;
+      NAUInt256 remInt;
+      naComputeUInt256Division(a, b, &divInt, &remInt);
+      return divInt;
     }
     NA_IDEF NAUInt256 naModUInt256(NAUInt256 a, NAUInt256 b){
-      NAUInt256 divint;
-      NAUInt256 remint;
-      naComputeUInt256Division(a, b, &divint, &remint);
-      return remint;
+      NAUInt256 divInt;
+      NAUInt256 remInt;
+      naComputeUInt256Division(a, b, &divInt, &remInt);
+      return remInt;
     }
 
 
 
     NA_IDEF NAUInt256  naNotUInt256(NAUInt256 i){
-      NAUInt256 retint;
-      retint.hi = naNotUInt128(i.hi);
-      retint.lo = naNotUInt128(i.lo);
-      return retint;
+      NAUInt256 retInt;
+      retInt.hi = naNotUInt128(i.hi);
+      retInt.lo = naNotUInt128(i.lo);
+      return retInt;
     }
     NA_IDEF NAUInt256  naOrUInt256 (NAUInt256 a, NAUInt256 b){
-      NAUInt256 retint;
-      retint.hi = naOrUInt128(a.hi, b.hi);
-      retint.lo = naOrUInt128(a.lo, b.lo);
-      return retint;
+      NAUInt256 retInt;
+      retInt.hi = naOrUInt128(a.hi, b.hi);
+      retInt.lo = naOrUInt128(a.lo, b.lo);
+      return retInt;
     }
     NA_IDEF NAUInt256  naAndUInt256(NAUInt256 a, NAUInt256 b){
-      NAUInt256 retint;
-      retint.hi = naAndUInt128(a.hi, b.hi);
-      retint.lo = naAndUInt128(a.lo, b.lo);
-      return retint;
+      NAUInt256 retInt;
+      retInt.hi = naAndUInt128(a.hi, b.hi);
+      retInt.lo = naAndUInt128(a.lo, b.lo);
+      return retInt;
     }
     NA_IDEF NAUInt256  naXorUInt256(NAUInt256 a, NAUInt256 b){
-      NAUInt256 retint;
-      retint.hi = naXorUInt128(a.hi, b.hi);
-      retint.lo = naXorUInt128(a.lo, b.lo);
-      return retint;
+      NAUInt256 retInt;
+      retInt.hi = naXorUInt128(a.hi, b.hi);
+      retInt.lo = naXorUInt128(a.lo, b.lo);
+      return retInt;
     }
     NA_IDEF NAUInt256 naShlUInt256(NAUInt256 a, int n){
-      NAUInt256 retint;
-      if(n < 0){return naShrUInt256(a, -n);}
-      // Beware, do not use <= as some processors will result
-      // in garbage when the shift is equal to the type size.
-      if(n < 128){
-        retint.hi = naShlUInt128(a.hi, n);
-        retint.hi = naOrUInt128(retint.hi, naShrUInt128(a.lo, (128 - n)));
-        retint.lo = naShlUInt128(a.lo, n);
-      }else{
-        retint.hi = naShlUInt128(a.lo, (n - 128));
-        retint.lo = NA_ZERO_128u;
-      }
-      return retint;
-    }
-    NA_IDEF NAUInt256 naShrUInt256(NAUInt256 a, int n){
-      NAUInt256 retint;
+      NAUInt256 retInt;
       if(n < 0){
-        retint = naShlUInt256(a, -n);
+        retInt = naShrUInt256(a, -n);
       }else{
-      // Beware, do not use <= as some processors will result
-      // in garbage when the shift is equal to the type size.
+        // Beware, do not use <= as some processors will result
+        // in garbage when the shift is equal to the type size.
         if(n < 128){
-          retint.lo = naShrUInt128(a.lo, n);
-          retint.lo = naOrUInt128(retint.lo, naShlUInt128(a.hi, (128 - n)));
-          retint.hi = naShrUInt128(a.hi, n);
+          retInt.hi = naShlUInt128(a.hi, n);
+          retInt.hi = naOrUInt128(retInt.hi, naShrUInt128(a.lo, (128 - n)));
+          retInt.lo = naShlUInt128(a.lo, n);
         }else{
-          retint.lo = naShrUInt128(a.hi, (n - 128));
-          retint.hi = NA_ZERO_128u;
+          retInt.hi = naShlUInt128(a.lo, (n - 128));
+          retInt.lo = NA_ZERO_128u;
         }
       }
-      return retint;
+      return retInt;
+    }
+    NA_IDEF NAUInt256 naShrUInt256(NAUInt256 a, int n){
+      NAUInt256 retInt;
+      if(n < 0){
+        retInt = naShlUInt256(a, -n);
+      }else{
+      // Beware, do not use <= as some processors will result
+      // in garbage when the shift is equal to the type size.
+
+        if(n < 128){
+          retInt.lo = naShrUInt128(a.lo, n);
+          retInt.lo = naOrUInt128(retInt.lo, naShlUInt128(a.hi, (128 - n)));
+          retInt.hi = naShrUInt128(a.hi, n);
+        }else{
+          retInt.lo = naShrUInt128(a.hi, (n - 128));
+          retInt.hi = NA_ZERO_128u;
+        }
+      }
+      return retInt;
     }
 
 
@@ -456,10 +460,10 @@
       return naCastUInt128ToInt128(i.lo);
     }
     NA_IDEF NAInt256 naCastUInt256ToInt256(NAUInt256 i){
-      NAInt256 retint;
-      retint.hi = naCastUInt128ToInt128(i.hi);
-      retint.lo = i.lo;
-      return retint;
+      NAInt256 retInt;
+      retInt.hi = naCastUInt128ToInt128(i.hi);
+      retInt.lo = i.lo;
+      return retInt;
     }
     NA_IDEF uint8 naCastUInt256ToUInt8(NAUInt256 i){
       return naCastUInt128ToUInt8(i.lo);

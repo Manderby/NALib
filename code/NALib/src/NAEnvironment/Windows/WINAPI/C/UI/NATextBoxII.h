@@ -24,7 +24,7 @@ NAWINAPICallbackInfo naTextBoxWINAPIProc(NAUIElement* uielement, UINT message, W
 
   switch(message){
   default:
-    //printf("Uncaught TextBox message\n");
+    //printf("Uncaught TextBox message" NA_NL);
     break;
   }
   

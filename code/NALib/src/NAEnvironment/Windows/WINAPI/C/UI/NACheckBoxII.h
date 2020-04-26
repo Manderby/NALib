@@ -48,7 +48,7 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc(NAUIElement* uielement, UINT message, 
     break;
 
   default:
-    //printf("Uncaught CheckBox message\n");
+    //printf("Uncaught CheckBox message" NA_NL);
     break;
   }
   

@@ -135,7 +135,7 @@
   #define NA_NANl             (NA_INFINITYl - NA_INFINITYl)
 #else
   #define NA_NANf             ((float)NAN)
-  #define NA_NAN              NAN
+  #define NA_NAN              ((double)NAN)
   #define NA_NANl             ((long double)NAN)
 #endif
 
