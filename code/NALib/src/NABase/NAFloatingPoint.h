@@ -143,6 +143,7 @@ NA_IAPI double naMakeDoubleSubnormal(NAInt64 signedsignificand);
 
 NA_IAPI int32   naGetDoubleExponent(double d);
 NA_IAPI NAInt64 naGetDoubleInteger(double d);
+NA_IAPI NAInt64 naGetDoubleFraction(double d);
 
 
 
