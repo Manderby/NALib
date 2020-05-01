@@ -3,18 +3,20 @@
 // Full license notice at the bottom.
 
 
-// Do not include this file directly! It will automatically be included when
-// including "NABase.h"
-
+#if defined NA_ENVIRONMENT_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
+#ifndef NA_ENVIRONMENT_INCLUDED
+#define NA_ENVIRONMENT_INCLUDED
 
 
 // The various Operating Systems:
 #define NA_OS_UNKNOWN   0
 #define NA_OS_MAC_OS_X  1
 #define NA_OS_WINDOWS   2
-#define NA_OS_COUNT     3
 
-
+// The number of bits in a byte.
+#define NA_BITS_PER_BYTE (8)
 
 // The various native type sizes
 #define NA_TYPE8_BITS   (8)
@@ -24,35 +26,29 @@
 #define NA_TYPE128_BITS (128)
 #define NA_TYPE256_BITS (256)
 
-#define NA_TYPE8_BYTES   (NA_TYPE8_BITS  / 8)
-#define NA_TYPE16_BYTES  (NA_TYPE16_BITS / 8)
-#define NA_TYPE32_BYTES  (NA_TYPE32_BITS / 8)
-#define NA_TYPE64_BYTES  (NA_TYPE64_BITS / 8)
+// The various type sizes in number of bytes instead of bits.
+#define NA_TYPE8_BYTES   (NA_TYPE8_BITS   / NA_BITS_PER_BYTE)
+#define NA_TYPE16_BYTES  (NA_TYPE16_BITS  / NA_BITS_PER_BYTE)
+#define NA_TYPE32_BYTES  (NA_TYPE32_BITS  / NA_BITS_PER_BYTE)
+#define NA_TYPE64_BYTES  (NA_TYPE64_BITS  / NA_BITS_PER_BYTE)
+#define NA_TYPE128_BYTES (NA_TYPE128_BITS / NA_BITS_PER_BYTE)
+#define NA_TYPE256_BYTES (NA_TYPE256_BITS / NA_BITS_PER_BYTE)
 
-
-
-// The various Endianness-Settings:
-#define NA_ENDIANNESS_LITTLE  1
-#define NA_ENDIANNESS_BIG     2
-#define NA_ENDIANNESS_NETWORK 2 // Same as BIG
-#define NA_ENDIANNESS_HOST    // Will be set further below to whatever this
-                              // hosts endianness is.
+// The various endianness types.
+// NA_ENDIANNESS_NETWORK is defined to be the same as NA_ENDIANNESS_BIG.
+// NA_ENDIANNESS_HOST will be set to whatever this host endianness is.
 // Note that when expecting the endianness as an argument, it will have the
 // type NAInt. Unfortunately, these macros can not be defined as enums.
-
-
-
-// The various signed integer encodings:
-#define NA_SIGNED_INTEGER_ENCODING_UNKNOWN          0
-#define NA_SIGNED_INTEGER_ENCODING_SIGN_MAGNITUDE   1
-#define NA_SIGNED_INTEGER_ENCODING_ONES_COMPLEMENT  2
-#define NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT  3
+#define NA_ENDIANNESS_LITTLE  1
+#define NA_ENDIANNESS_BIG     2
+#define NA_ENDIANNESS_NETWORK 2
+// NA_ENDIANNESS_HOST will be defined below.
 
 // Figuring out what system this is. The following macros will be defined:
 //
-// NA_OS                    One of the system macros above
-// NA_ENDIANNESS_HOST       Either big or little, see macros above
-// NA_SYSTEM_ADDRESS_BITS   32 or 64. Denoting the number of bits per address.
+// NA_OS                   One of the system macros above
+// NA_ENDIANNESS_HOST      Either big or little, see macros above
+// NA_ADDRESS_BITS  32 or 64. Denoting the number of bits per address.
 //
 // Currently, there are the following system configurations assumed:
 // - Mac OS X with GCC or Clang
@@ -70,9 +66,9 @@
   #undef  NA_ENDIANNESS_HOST
   #define NA_ENDIANNESS_HOST NA_ENDIANNESS_LITTLE
   #if defined _WIN64
-    #define NA_SYSTEM_ADDRESS_BITS NA_TYPE64_BITS
+    #define NA_ADDRESS_BITS NA_TYPE64_BITS
   #else
-    #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
+    #define NA_ADDRESS_BITS NA_TYPE32_BITS
   #endif
 
 #elif defined __APPLE__ && __MACH__
@@ -85,9 +81,9 @@
     #define NA_ENDIANNESS_HOST NA_ENDIANNESS_BIG
   #endif
   #if defined __LP64__
-    #define NA_SYSTEM_ADDRESS_BITS NA_TYPE64_BITS
+    #define NA_ADDRESS_BITS NA_TYPE64_BITS
   #else
-    #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
+    #define NA_ADDRESS_BITS NA_TYPE32_BITS
   #endif
   #if defined __has_feature
     #define NA_MACOS_USES_ARC __has_feature(objc_arc)
@@ -95,8 +91,9 @@
     #define NA_MACOS_USES_ARC 0
   #endif
   #if NA_MACOS_USES_ARC
-    // Note: Do not use a cast for the release as the compiler not necessarily
-    // is an objective-C compiler and hence does not know the id type.
+    // Note: Do not use a cast for release configurations as the compiler
+    // not necessarily is an objective-C compiler and hence does not know
+    // the id type.
     #define NA_COCOA_BRIDGE __bridge
     #define NA_COCOA_PTR_OBJC_TO_C(obj) (void*)CFBridgingRetain(obj)
     #define NA_COCOA_PTR_C_TO_OBJC(ptr) CFBridgingRelease(ptr)
@@ -111,17 +108,17 @@
   #endif
 
 #else
-  #warning "System not detected. Assuming 32bit addresses, 32bit integer, little endian"
+  #warning "System unknown. Assuming 32bit Addr, 32bit Int, little endian"
   #define NA_OS NA_OS_UNKNOWN
   #define NA_ENDIANNESS_HOST NA_ENDIANNESS_LITTLE
-  #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
+  #define NA_ADDRESS_BITS NA_TYPE32_BITS
   #undef NA_PREFERRED_NAINT_BITS
   #define NA_PREFERRED_NAINT_BITS 32
 #endif
 
-#ifndef NA_SYSTEM_ADDRESS_BITS
+#ifndef NA_ADDRESS_BITS
   #warning "Address bits not detected, trying 32."
-  #define NA_SYSTEM_ADDRESS_BITS NA_TYPE32_BITS
+  #define NA_ADDRESS_BITS NA_TYPE32_BITS
 #endif
 
 #ifndef NA_ENDIANNESS_HOST
@@ -131,11 +128,11 @@
 
 
 // The number of bytes per address
-#define NA_SYSTEM_ADDRESS_BYTES (NA_SYSTEM_ADDRESS_BITS >> 3)
+#define NA_ADDRESS_BYTES (NA_ADDRESS_BITS >> 3)
 
 
 
-
+#endif // NA_ENVIRONMENT_INCLUDED
 
 
 // Copyright (c) NALib, Tobias Stamm

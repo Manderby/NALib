@@ -3,25 +3,21 @@
 // Full license notice at the bottom.
 
 
-// Do not include this file directly! It will automatically be included when
-// including "NABase.h"
+#if defined NA_NUMERICS_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
+#ifndef NA_NUMERICS_INCLUDED
+#define NA_NUMERICS_INCLUDED
 
 
 
+// The masks for the sign bits of different type sizes.
 #define NA_VALUE8_SIGN_MASK       ((uint8) (1u << (NA_TYPE8_BITS   - 1u)))
 #define NA_VALUE16_SIGN_MASK      ((uint16)(1u << (NA_TYPE16_BITS  - 1u)))
 #define NA_VALUE32_SIGN_MASK      ((uint32)(1u << (NA_TYPE32_BITS  - 1u)))
-#define NA_VALUE64_SIGN_MASK_HI   NA_VALUE32_SIGN_MASK
-#define NA_VALUE64_SIGN_MASK_LO   NA_ZERO_32u
-#define NA_VALUE64_SIGN_MASK      naMakeUInt64(NA_VALUE64_SIGN_MASK_HI, NA_VALUE64_SIGN_MASK_LO)
-#define NA_VALUE128_SIGN_MASK_HI  NA_VALUE64_SIGN_MASK
-#define NA_VALUE128_SIGN_MASK_LO  NA_ZERO_64u
-#define NA_VALUE128_SIGN_MASK     naMakeUInt128(NA_VALUE128_SIGN_MASK_HI, NA_VALUE128_SIGN_MASK_LO)
-#define NA_VALUE256_SIGN_MASK_HI  NA_VALUE128_SIGN_MASK
-#define NA_VALUE256_SIGN_MASK_LO  NA_ZERO_128u
-#define NA_VALUE256_SIGN_MASK     naMakeUInt256(NA_VALUE256_SIGN_MASK_HI, NA_VALUE256_SIGN_MASK_LO)
-
-
+#define NA_VALUE64_SIGN_MASK      naMakeUInt64(NA_VALUE32_SIGN_MASK, NA_ZERO_32u)
+#define NA_VALUE128_SIGN_MASK     naMakeUInt128(NA_VALUE64_SIGN_MASK, NA_ZERO_64u)
+#define NA_VALUE256_SIGN_MASK     naMakeUInt256(NA_VALUE128_SIGN_MASK, NA_ZERO_128u)
 
 // Returns either 0 or -1 in two complement form but stored as an uint
 // depending on whether the parameter is positive or negative.
@@ -64,6 +60,8 @@ NA_IAPI NAInt128 naAbsi128(NAInt128 i);
 NA_IAPI NAInt256 naAbsi256(NAInt256 i);
 
 
+
+#endif // NA_NUMERICS_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm
 //

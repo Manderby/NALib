@@ -363,9 +363,9 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, do
 
 
 
-#if (NA_SYSTEM_ADDRESS_BITS == 64)
+#if (NA_ADDRESS_BITS == 64)
   typedef intptr_t NAWINAPIHANDLE;
-#elif (NA_SYSTEM_ADDRESS_BITS == 32)
+#elif (NA_ADDRESS_BITS == 32)
   typedef long NAWINAPIHANDLE;
 #else
   #error "Undefined system address bytesize"

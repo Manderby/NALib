@@ -120,7 +120,7 @@ struct NACoreTypeInfo{
   #endif
 };
 
-#define NA_MALLOC_GARBAGE_POINTER_COUNT (NA_POOLPART_BYTESIZE / NA_SYSTEM_ADDRESS_BYTES - 2)
+#define NA_MALLOC_GARBAGE_POINTER_COUNT (NA_POOLPART_BYTESIZE / NA_ADDRESS_BYTES - 2)
 // The 2 denotes the first two entries in this struct.
 
 struct NAMallocGarbage{
@@ -139,7 +139,7 @@ NARuntime* na_runtime = NA_NULL;
 // Security check: The pool bytesize must be big enough to store one struct
 // of NACorePoolPart. Note that bytesize 0 has the meaning of using the
 // memory page size.
-#if (NA_POOLPART_BYTESIZE != 0) && (NA_POOLPART_BYTESIZE <= 8 * NA_SYSTEM_ADDRESS_BYTES)
+#if (NA_POOLPART_BYTESIZE != 0) && (NA_POOLPART_BYTESIZE <= 8 * NA_ADDRESS_BYTES)
   #error "Core memory pool size is too small"
 #endif
 
@@ -154,7 +154,7 @@ NA_HIDEF void naRegisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
   #ifndef NDEBUG
     if(coretypeinfo->curpart)
       naError("Newly registered type should have NULL as current part.");
-    if(coretypeinfo->typesize < NA_SYSTEM_ADDRESS_BYTES)
+    if(coretypeinfo->typesize < NA_ADDRESS_BYTES)
       naError("Size of type is too small");
     if(coretypeinfo->typesize > (na_runtime->partsize - sizeof(NACorePoolPart)))
       naError("Size of type is too big");
@@ -550,7 +550,7 @@ NA_DEF void naStartRuntime(){
     #ifndef NDEBUG
       if(na_runtime)
         naCrash("Runtime already running");
-      if(sizeof(NACorePoolPart) != (8 * NA_SYSTEM_ADDRESS_BYTES))
+      if(sizeof(NACorePoolPart) != (8 * NA_ADDRESS_BYTES))
         naError("NACorePoolPart struct encoding misaligned");
     #endif
     na_runtime = naAlloc(NARuntime);

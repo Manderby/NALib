@@ -3,8 +3,11 @@
 // Full license notice at the bottom.
 
 
-// Do not include this file directly! It will automatically be included when
-// including "NAInteger.h"
+#if defined NA_INT_128_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
+#ifndef NA_INT_128_INCLUDED
+#define NA_INT_128_INCLUDED
 
 
 #if defined NA_TYPE_INT128
@@ -94,7 +97,7 @@
 
   #if NA_SIGNED_INTEGER_ENCODING != NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
 
-    #error "The NAInt128 emulation is not provided for the current signed integer encoding"
+    #error "NAInt128 is unavailable for the current signed integer encoding"
 
   #else
 
@@ -207,6 +210,7 @@
 #endif
 
 
+#endif // NA_INT_128_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm
 //

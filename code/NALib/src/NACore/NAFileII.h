@@ -14,9 +14,9 @@
 // searching backwards with SEEK_CUR is possible.
 NA_IDEF NAFilesize naLseek(int fd, NAFilesize byteoffset, int origintype){
   #if NA_OS == NA_OS_WINDOWS
-    #if NA_SYSTEM_ADDRESS_BITS == 64
+    #if NA_ADDRESS_BITS == 64
       return _lseeki64(fd, byteoffset, origintype);
-    #elif NA_SYSTEM_ADDRESS_BITS == 32
+    #elif NA_ADDRESS_BITS == 32
       return _lseek(fd, byteoffset, origintype);
     #endif
   #elif NA_OS == NA_OS_MAC_OS_X
@@ -31,9 +31,9 @@ NA_IDEF NAFilesize naLseek(int fd, NAFilesize byteoffset, int origintype){
 // searching backwards with SEEK_CUR is possible.
 NA_IDEF NAFilesize naTell(int fd){
   #if NA_OS == NA_OS_WINDOWS
-    #if NA_SYSTEM_ADDRESS_BITS == 64
+    #if NA_ADDRESS_BITS == 64
       return _lseeki64(fd, 0, SEEK_CUR);
-    #elif NA_SYSTEM_ADDRESS_BITS == 32
+    #elif NA_ADDRESS_BITS == 32
       return _lseek(fd, 0, SEEK_CUR);
     #endif
   #elif NA_OS == NA_OS_MAC_OS_X

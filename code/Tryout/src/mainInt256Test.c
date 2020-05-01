@@ -41,7 +41,7 @@ void testEqualBool(NABool b, NABool goalb);
   naMakeUInt128(naMakeUInt64(e, f), naMakeUInt64(g, h)));
 
 
-#define TESTSIZE 10000
+#define TESTSIZE 1000000
 
 
 

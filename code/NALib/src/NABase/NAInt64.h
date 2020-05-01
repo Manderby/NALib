@@ -3,8 +3,11 @@
 // Full license notice at the bottom.
 
 
-// Do not include this file directly! It will automatically be included when
-// including "NAInteger.h"
+#if defined NA_INT_64_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
+#ifndef NA_INT_64_INCLUDED
+#define NA_INT_64_INCLUDED
 
 
 #if defined NA_TYPE_INT64
@@ -90,7 +93,7 @@
 
   #if NA_SIGNED_INTEGER_ENCODING != NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
 
-    #error "The NAInt64 emulation is not provided for the current signed integer encoding"
+    #error "NAInt64 is unavailable for the current signed integer encoding"
 
   #else
 
@@ -199,6 +202,8 @@
 #endif
 
 
+
+#endif // NA_INT_64_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm
 //

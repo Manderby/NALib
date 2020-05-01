@@ -3,8 +3,11 @@
 // Full license notice at the bottom.
 
 
-// Do not include this file directly! It will automatically be included when
-// including "NABase.h"
+#if defined NA_COMPILER_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
+#ifndef NA_COMPILER_INCLUDED
+#define NA_COMPILER_INCLUDED
 
 
 
@@ -37,7 +40,7 @@
     #define NA_C90
 
     #if defined __STDC_VERSION__
-      #if __STDC_VERSION__ >= 199409L
+      #if __STDC_VERSION__ >= 199409L // Date is 94 but it is known as C95
         #define NA_C95
       #endif
       #if __STDC_VERSION__ >= 199901L
@@ -79,6 +82,8 @@
 #ifndef NA_C99
   #warning "NALib requires compiler to use at least C99."
 #endif
+
+#endif // NA_COMPILER_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm
 //

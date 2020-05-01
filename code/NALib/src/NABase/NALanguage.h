@@ -3,9 +3,11 @@
 // Full license notice at the bottom.
 
 
-// Do not include this file directly! It will automatically be included when
-// including "NABase.h"
-
+#if defined NA_LANGUAGE_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
+#ifndef NA_LANGUAGE_INCLUDED
+#define NA_LANGUAGE_INCLUDED
 
 
 
@@ -232,6 +234,7 @@ typedef void (*NAMutator)  (      void*);
 // - General callback functions
 
 
+#endif // NA_LANGUAGE_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm
 //

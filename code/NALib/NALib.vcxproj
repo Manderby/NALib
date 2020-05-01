@@ -33,8 +33,11 @@
     <ClInclude Include="src\NABase.h" />
     <ClInclude Include="src\NABase\NAChar.h" />
     <ClInclude Include="src\NABase\NACompiler.h" />
+    <ClInclude Include="src\NABase\NACompilerII.h" />
+    <ClInclude Include="src\NABase\NAConfiguration.h" />
     <ClInclude Include="src\NABase\NADebug.h" />
     <ClInclude Include="src\NABase\NAEnvironment.h" />
+    <ClInclude Include="src\NABase\NAEnvironmentII.h" />
     <ClInclude Include="src\NABase\NAFloatingPoint.h" />
     <ClInclude Include="src\NABase\NAFloatingPointII.h" />
     <ClInclude Include="src\NABase\NAInt128.h" />
@@ -45,9 +48,10 @@
     <ClInclude Include="src\NABase\NAInt64II.h" />
     <ClInclude Include="src\NABase\NAInteger.h" />
     <ClInclude Include="src\NABase\NALanguage.h" />
+    <ClInclude Include="src\NABase\NALanguageII.h" />
     <ClInclude Include="src\NABase\NANumerics.h" />
     <ClInclude Include="src\NABase\NANumericsII.h" />
-    <ClInclude Include="src\NABase\NATemplate.h" />
+    <ClInclude Include="src\NABase\NABaseMacros.h" />
     <ClInclude Include="src\NABinaryData.h" />
     <ClInclude Include="src\NABuffer.h" />
     <ClInclude Include="src\NACircularBuffer.h" />
@@ -202,7 +206,6 @@
     <ClCompile Include="src\NAVisual\NAPNG.c" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="cpp.hint" />
     <None Include="src\NABase\cpp.hint" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -66,11 +66,11 @@ typedef struct NAFile NAFile;
   #include <io.h>
   #include <share.h>
   #include <sys/stat.h>
-  #if NA_SYSTEM_ADDRESS_BITS == 64
+  #if NA_ADDRESS_BITS == 64
     typedef __int64 NAFilesize; // Is signed (Important for negative offsets)
     #define NA_FILESIZE_BITS 64
     #define NA_FILESIZE_MAX NA_INT64_MAX
-  #elif NA_SYSTEM_ADDRESS_BITS == 32
+  #elif NA_ADDRESS_BITS == 32
     typedef long NAFilesize;    // Is signed (Important for negative offsets)
   #define NA_FILESIZE_BITS 32
   #define NA_FILESIZE_MAX NA_INT32_MAX

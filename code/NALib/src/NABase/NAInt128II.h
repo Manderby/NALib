@@ -3,8 +3,11 @@
 // Full license notice at the bottom.
 
 
-// Do not include this file directly! It will automatically be included when
-// including "NABase.h"
+#if defined NA_INT_128_II_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
+#ifndef NA_INT_128_II_INCLUDED
+#define NA_INT_128_II_INCLUDED
 
 
 #if defined NA_TYPE_INT128
@@ -474,6 +477,8 @@
   #endif // NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
 #endif // defined NA_TYPE_INT128
 
+
+#endif // NA_INT_128_II_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm
 //

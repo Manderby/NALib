@@ -9,11 +9,6 @@
 #endif
 
 
-// This is the base of the whole NALib implementation. Pretty much all files
-// need this file. It contains the most basic type definitions, functions and
-// preprocessor macros.
-
-
 
 // The version number of this NALib distribution.
 #define NA_VERSION 25
@@ -23,26 +18,36 @@
 // Include the configuration of NALib.
 // Have a look at this file to find out how you can configure NALib by adding
 // preprocessor macros to your compiler.
-#include "NAConfiguration.h"
+#include "NABase/NAConfiguration.h"
+
+
+
+// ///////////////////
+//
+// Following are all basic macros and typedefs available to the user.
+// They are properly defined in the II files included at the bottom.
+//
+// ///////////////////
+
+#include "NABase/NABaseMacros.h"
+
+
 
 // Gather information about where, how and what to compile.
 #include "NABase/NAEnvironment.h"
 #include "NABase/NACompiler.h"
 #include "NABase/NALanguage.h"
 
-// declaring numeric base types and related stuff
+// declaring base types and related stuff
 #include "NABase/NAInteger.h"
 #include "NABase/NAFloatingPoint.h"
-#include "NABase/NANumerics.h"
-
-// Additional definitions
 #include "NABase/NAChar.h"
-#include "NABase/NATemplate.h"
+#include "NABase/NANumerics.h"
 
 // Enabling the code to use debugger runtime testing (DRT)
 #include "NABase/NADebug.h"
 
-// Now, including implementations of the most basic kind...
+// Now, including implementations dependent on the definitions above.
 #include "NABase/NAInt64II.h"
 #include "NABase/NAInt128II.h"
 #include "NABase/NAInt256II.h"

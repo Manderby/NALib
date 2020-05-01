@@ -339,7 +339,7 @@ NA_HDEF NATreeQuadNode* naCreateTreeParentQuad(NATree* tree, NATreeItem* item, N
     #endif
     newRootChildExponent++;
     #ifndef NDEBUG
-      if(newRootChildExponent >= NA_SYSTEM_ADDRESS_BITS)
+      if(newRootChildExponent >= NA_ADDRESS_BITS)
         naCrash("childexponent grown too big.");
       testRootOrigin = newRootOrigin;
     #endif

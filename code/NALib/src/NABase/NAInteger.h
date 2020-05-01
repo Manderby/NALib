@@ -3,9 +3,11 @@
 // Full license notice at the bottom.
 
 
-// Do not include this file directly! It will automatically be included when
-// including "NABase.h"
-
+#if defined NA_INTEGER_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
+#ifndef NA_INTEGER_INCLUDED
+#define NA_INTEGER_INCLUDED
 
 // ABOUT THIS FILE (why is this so complicated!!!)
 // Integers are easy, right? Well, if they are standardized yes, otherwise...
@@ -37,6 +39,14 @@
 typedef int NABool;
 #define NA_TRUE    1
 #define NA_FALSE   0
+
+
+
+// The various signed integer encodings:
+#define NA_SIGNED_INTEGER_ENCODING_UNKNOWN          0
+#define NA_SIGNED_INTEGER_ENCODING_SIGN_MAGNITUDE   1
+#define NA_SIGNED_INTEGER_ENCODING_ONES_COMPLEMENT  2
+#define NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT  3
 
 
 
@@ -568,7 +578,7 @@ typedef int NABool;
 
 // Define the size of NAInt
 #if NA_PREFERRED_NAINT_BITS == 0  // Automatic
-  #define NA_TYPE_NAINT_BITS NA_SYSTEM_ADDRESS_BITS
+  #define NA_TYPE_NAINT_BITS NA_ADDRESS_BITS
   #if NA_TYPE_NAINT_BITS == NA_TYPE64_BITS && !defined NA_TYPE_INT64
     #undef NA_TYPE_NAINT_BITS
     #define NA_TYPE_NAINT_BITS NA_TYPE32_BITS
@@ -578,7 +588,7 @@ typedef int NABool;
 #elif NA_PREFERRED_NAINT_BITS == 2  // long
   #define NA_TYPE_NAINT_BITS NA_SYSTEM_NATIVE_LONG_INT_BITS
 #elif NA_PREFERRED_NAINT_BITS == 3  // address length
-  #define NA_TYPE_NAINT_BITS NA_SYSTEM_ADDRESS_BITS
+  #define NA_TYPE_NAINT_BITS NA_ADDRESS_BITS
 #elif NA_PREFERRED_NAINT_BITS == 32 // 32
   #define NA_TYPE_NAINT_BITS NA_TYPE32_BITS
 #elif NA_PREFERRED_NAINT_BITS == 64 // 64
@@ -586,6 +596,8 @@ typedef int NABool;
 #else
   #error "NA_PREFERRED_NAINT_BITS has an invalid value"
 #endif
+
+
 
 // We include the 64bit, 128bit and 256bit emulation.
 #include "NAInt64.h"
@@ -726,25 +738,28 @@ typedef uint8 NAByte;
 // properly. A warning is emitted and a special macro is defined. If you want
 // to silence the warning, see NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE.
 
-#if NA_SYSTEM_ADDRESS_BITS == NA_TYPE64_BITS && defined NA_TYPE_INT64
+#if NA_ADDRESS_BITS == NA_TYPE64_BITS && defined NA_TYPE_INT64
   typedef int64  NASizeInt;
   typedef uint64 NASizeUInt;
-#elif NA_SYSTEM_ADDRESS_BITS == NA_TYPE32_BITS && defined NA_TYPE_INT32
+#elif NA_ADDRESS_BITS == NA_TYPE32_BITS && defined NA_TYPE_INT32
   typedef int32  NASizeInt;
   typedef uint32 NASizeUInt;
-#elif NA_SYSTEM_ADDRESS_BITS == NA_TYPE16_BITS && defined NA_TYPE_INT16
+#elif NA_ADDRESS_BITS == NA_TYPE16_BITS && defined NA_TYPE_INT16
   typedef int16  NASizeInt;
   typedef uint16 NASizeUInt;
 #else
   typedef NAInt  NASizeInt;
-  typedef NAUInt NASizeUInt;
-  #if NA_TYPE_NAINT_BITS < NA_SYSTEM_ADDRESS_BITS
+  typedef NAUInt NASizeUInt
+  #if NA_TYPE_NAINT_BITS < NA_ADDRESS_BITS
     #if NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE == 1
       #warning "No native integer type available to store an address"
     #endif
     #define NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
   #endif
 #endif
+
+
+#endif // NA_INTEGER_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm
 //

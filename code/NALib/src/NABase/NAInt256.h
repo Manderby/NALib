@@ -3,8 +3,11 @@
 // Full license notice at the bottom.
 
 
-// Do not include this file directly! It will automatically be included when
-// including "NAInteger.h"
+#if defined NA_INT_256_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
+#ifndef NA_INT_256_INCLUDED
+#define NA_INT_256_INCLUDED
 
 
 #if defined NA_TYPE_INT256
@@ -20,85 +23,85 @@
   NA_IAPI NAInt256 naMakeInt256WithLo       (NAInt128 lo);
   NA_IAPI NAInt256 naMakeInt256WithDouble   (double lo);
 
-  #define naNegInt256(i)                 (-(i))
-  #define naIncInt256(i)                 (++(i))
-  #define naDecInt256(i)                 (--(i))
-  #define naAddInt256(a, b)              ((a) + (b))
-  #define naSubInt256(a, b)              ((a) - (b))
-  #define naMulInt256(a, b)              ((a) * (b))
-  #define naDivInt256(a, b)              ((a) / (b))
-  #define naModInt256(a, b)              ((a) % (b))
+  #define naNegInt256(i)              (-(i))
+  #define naIncInt256(i)              (++(i))
+  #define naDecInt256(i)              (--(i))
+  #define naAddInt256(a, b)           ((a) + (b))
+  #define naSubInt256(a, b)           ((a) - (b))
+  #define naMulInt256(a, b)           ((a) * (b))
+  #define naDivInt256(a, b)           ((a) / (b))
+  #define naModInt256(a, b)           ((a) % (b))
 
-  #define naNotInt256(i)                 (~(i))
-  #define naOrInt256(a, b)               ((a) | (b))
-  #define naAndInt256(a, b)              ((a) & (b))
-  #define naXorInt256(a, b)              ((a) ^ (b))
-  #define naShlInt256(a, n)              ((a) << (n))
-  #define naShrInt256(a, n)              ((a) >> (n))
+  #define naNotInt256(i)              (~(i))
+  #define naOrInt256(a, b)            ((a) | (b))
+  #define naAndInt256(a, b)           ((a) & (b))
+  #define naXorInt256(a, b)           ((a) ^ (b))
+  #define naShlInt256(a, n)           ((a) << (n))
+  #define naShrInt256(a, n)           ((a) >> (n))
 
-  #define naEqualInt256(a, b)            ((a) == (b))
-  #define naGreaterInt256(a, b)          ((a) > (b))
-  #define naGreaterEqualInt256(a, b)     ((a) >= (b))
-  #define naSmallerInt256(a, b)          ((a) < (b))
-  #define naSmallerEqualInt256(a, b)     ((a) <= (b))
+  #define naEqualInt256(a, b)         ((a) == (b))
+  #define naGreaterInt256(a, b)       ((a) > (b))
+  #define naGreaterEqualInt256(a, b)  ((a) >= (b))
+  #define naSmallerInt256(a, b)       ((a) < (b))
+  #define naSmallerEqualInt256(a, b)  ((a) <= (b))
 
-  #define naCastInt256ToUInt8(i)         ((uint8)(i))
-  #define naCastInt256ToUInt16(i)        ((uint16)(i))
-  #define naCastInt256ToUInt32(i)        ((uint32)(i))
-  #define naCastInt256ToUInt64(i)        ((NAUInt64)(i))
-  #define naCastInt256ToUInt128(i)       ((NAUInt128)(i))
-  #define naCastInt256ToUInt256(i)       ((NAUInt256)(i))
-  #define naCastInt256ToInt8(i)          ((int8)(i))
-  #define naCastInt256ToInt16(i)         ((int16)(i))
-  #define naCastInt256ToInt32(i)         ((int32)(i))
-  #define naCastInt256ToInt64(i)         ((NAInt64)(i))
-  #define naCastInt256ToInt128(i)        ((NAInt128)(i))
-  #define naCastInt256ToDouble(i)        ((double)(i))
+  #define naCastInt256ToUInt8(i)      ((uint8)(i))
+  #define naCastInt256ToUInt16(i)     ((uint16)(i))
+  #define naCastInt256ToUInt32(i)     ((uint32)(i))
+  #define naCastInt256ToUInt64(i)     ((NAUInt64)(i))
+  #define naCastInt256ToUInt128(i)    ((NAUInt128)(i))
+  #define naCastInt256ToUInt256(i)    ((NAUInt256)(i))
+  #define naCastInt256ToInt8(i)       ((int8)(i))
+  #define naCastInt256ToInt16(i)      ((int16)(i))
+  #define naCastInt256ToInt32(i)      ((int32)(i))
+  #define naCastInt256ToInt64(i)      ((NAInt64)(i))
+  #define naCastInt256ToInt128(i)     ((NAInt128)(i))
+  #define naCastInt256ToDouble(i)     ((double)(i))
 
-  #define naMakeUInt256(hi, lo)          ((NAUInt256)(((NAUInt256)(hi) << 128) | (lo)))
-  #define naMakeUInt256WithLo(lo)        ((NAUInt256)(lo))
-  #define naMakeUInt256WithDouble(d)     ((NAUInt256)(d))
+  #define naMakeUInt256(hi, lo)       ((NAUInt256)(((NAUInt256)(hi) << 128) | (lo)))
+  #define naMakeUInt256WithLo(lo)     ((NAUInt256)(lo))
+  #define naMakeUInt256WithDouble(d)  ((NAUInt256)(d))
 
-  #define naIncUInt256(i)                ((i)++)
-  #define naDecUInt256(i)                ((i)--)
-  #define naAddUInt256(a, b)             ((a) + (b))
-  #define naSubUInt256(a, b)             ((a) - (b))
-  #define naMulUInt256(a, b)             ((a) * (b))
-  #define naDivUInt256(a, b)             ((a) / (b))
-  #define naModUInt256(a, b)             ((a) % (b))
+  #define naIncUInt256(i)             ((i)++)
+  #define naDecUInt256(i)             ((i)--)
+  #define naAddUInt256(a, b)          ((a) + (b))
+  #define naSubUInt256(a, b)          ((a) - (b))
+  #define naMulUInt256(a, b)          ((a) * (b))
+  #define naDivUInt256(a, b)          ((a) / (b))
+  #define naModUInt256(a, b)          ((a) % (b))
 
-  #define naNotUInt256(i)                (~(i))
-  #define naOrUInt256(a, b)              ((a) | (b))
-  #define naAndUInt256(a, b)             ((a) & (b))
-  #define naXorUInt256(a, b)             ((a) ^ (b))
-  #define naShlUInt256(a, n)             ((a) << (n))
-  #define naShrUInt256(a, n)             ((a) >> (n))
+  #define naNotUInt256(i)             (~(i))
+  #define naOrUInt256(a, b)           ((a) | (b))
+  #define naAndUInt256(a, b)          ((a) & (b))
+  #define naXorUInt256(a, b)          ((a) ^ (b))
+  #define naShlUInt256(a, n)          ((a) << (n))
+  #define naShrUInt256(a, n)          ((a) >> (n))
 
-  #define naEqualUInt256(a, b)           ((a) == (b))
-  #define naGreaterUInt256(a, b)         ((a) > (b))
-  #define naGreaterEqualUInt256(a, b)    ((a) >= (b))
-  #define naSmallerUInt256(a, b)         ((a) < (b))
-  #define naSmallerEqualUInt256(a, b)    ((a) <= (b))
+  #define naEqualUInt256(a, b)        ((a) == (b))
+  #define naGreaterUInt256(a, b)      ((a) > (b))
+  #define naGreaterEqualUInt256(a, b) ((a) >= (b))
+  #define naSmallerUInt256(a, b)      ((a) < (b))
+  #define naSmallerEqualUInt256(a, b) ((a) <= (b))
 
-  #define naCastUInt256ToInt8(i)         ((int8)(i))
-  #define naCastUInt256ToInt16(i)        ((int16)(i))
-  #define naCastUInt256ToInt32(i)        ((int32)(i))
-  #define naCastUInt256ToInt64(i)        ((NAInt64)(i))
-  #define naCastUInt256ToInt128(i)       ((NAInt128)(i))
-  #define naCastUInt256ToInt256(i)       ((NAInt256)(i))
-  #define naCastUInt256ToUInt8(i)        ((uint8)(i))
-  #define naCastUInt256ToUInt16(i)       ((uint16)(i))
-  #define naCastUInt256ToUInt32(i)       ((uint32)(i))
-  #define naCastUInt256ToUInt64(i)       ((NAUInt64)(i))
-  #define naCastUInt256ToUInt128(i)      ((NAUInt128)(i))
-  #define naCastUInt256ToDouble(i)       ((double)(i))
+  #define naCastUInt256ToInt8(i)      ((int8)(i))
+  #define naCastUInt256ToInt16(i)     ((int16)(i))
+  #define naCastUInt256ToInt32(i)     ((int32)(i))
+  #define naCastUInt256ToInt64(i)     ((NAInt64)(i))
+  #define naCastUInt256ToInt128(i)    ((NAInt128)(i))
+  #define naCastUInt256ToInt256(i)    ((NAInt256)(i))
+  #define naCastUInt256ToUInt8(i)     ((uint8)(i))
+  #define naCastUInt256ToUInt16(i)    ((uint16)(i))
+  #define naCastUInt256ToUInt32(i)    ((uint32)(i))
+  #define naCastUInt256ToUInt64(i)    ((NAUInt64)(i))
+  #define naCastUInt256ToUInt128(i)   ((NAUInt128)(i))
+  #define naCastUInt256ToDouble(i)    ((double)(i))
 
 #else
   // if no native int256 type is available, we have to emulate it.
 
   #if NA_SIGNED_INTEGER_ENCODING != NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
 
-    #error "The NAInt256 emulation is not provided for the current signed integer encoding"
+    #error "NAInt256 is unavailable for the current signed integer encoding"
 
   #else
 
@@ -215,6 +218,7 @@
 #endif
 
 
+#endif // NA_INT_256_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm
 //

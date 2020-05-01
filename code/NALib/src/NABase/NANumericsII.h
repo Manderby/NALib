@@ -3,8 +3,12 @@
 // Full license notice at the bottom.
 
 
-// Do not include this file directly! It will automatically be included when
-// including "NABase.h"
+#if defined NA_NUMERICS_II_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
+#ifndef NA_NUMERICS_II_INCLUDED
+#define NA_NUMERICS_II_INCLUDED
+
 
 
 // In case you consider moving the cast inside: No. Don't. Nononono.
@@ -136,6 +140,9 @@ NA_IDEF NAInt256 naAbsi256(NAInt256 i){
   return naMulInt256(naSigni256(i), i);
 }
 
+
+
+#endif // NA_NUMERICS_II_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm
 //

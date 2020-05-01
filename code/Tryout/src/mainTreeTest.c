@@ -190,7 +190,7 @@ int main(void){
   #else
     printf("(Release ");
   #endif
-  printf("%d Bits Addresses, %d Bits Integers)" NA_NL, NA_SYSTEM_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
+  printf("%d Bits Addresses, %d Bits Integers)" NA_NL, NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
   naStartRuntime();
     testTree();
