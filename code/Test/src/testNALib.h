@@ -14,8 +14,8 @@
 #include "testHelper.h"
 
 
-void printConfiguration();
-
+void printNAConfiguration();
+void printNAEnvironment();
 
 
 // Copyright (c) NALib, Tobias Stamm

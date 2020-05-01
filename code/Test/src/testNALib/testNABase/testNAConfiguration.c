@@ -11,8 +11,8 @@ const char* na_memalign_enum_strings[] = {
   "Posix"
 };
 
-void printConfiguration(){
-  printf("Configuration.h:" NA_NL);
+void printNAConfiguration(){
+  printf("NAConfiguration.h:" NA_NL);
   printMacroIntSpecial   (NA_PREFERRED_NAINT_BITS, 0, "Automatic");
   printMacroIntYesNo     (NA_CONFIG_COMPILE_OPENGL);
   printMacroIntYesNo     (NA_CONFIG_COMPILE_GUI);

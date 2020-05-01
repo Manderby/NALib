@@ -10,11 +10,6 @@
 #define NA_ENVIRONMENT_INCLUDED
 
 
-// The various Operating Systems:
-#define NA_OS_UNKNOWN   0
-#define NA_OS_MAC_OS_X  1
-#define NA_OS_WINDOWS   2
-
 // The number of bits in a byte.
 #define NA_BITS_PER_BYTE (8)
 
@@ -39,10 +34,16 @@
 // NA_ENDIANNESS_HOST will be set to whatever this host endianness is.
 // Note that when expecting the endianness as an argument, it will have the
 // type NAInt. Unfortunately, these macros can not be defined as enums.
+#define NA_ENDIANNESS_UNKNOWN 0
 #define NA_ENDIANNESS_LITTLE  1
 #define NA_ENDIANNESS_BIG     2
 #define NA_ENDIANNESS_NETWORK 2
 // NA_ENDIANNESS_HOST will be defined below.
+
+// The various Operating Systems:
+#define NA_OS_UNKNOWN   0
+#define NA_OS_MAC_OS_X  1
+#define NA_OS_WINDOWS   2
 
 // Figuring out what system this is. The following macros will be defined:
 //

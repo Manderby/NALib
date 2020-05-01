@@ -8,7 +8,21 @@
 
 
 int main(void){
-  printConfiguration();
+
+  printf("NALib Version: %d (", NA_VERSION);
+  #ifndef NDEBUG
+    printf("Debug");
+  #else
+    printf("Release");
+  #endif
+  printf(", %d Bits Addresses, %d Bits Integers)" NA_NL NA_NL, NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
+
+
+  
+  printNAConfiguration();
+  printNAEnvironment();
+
+
 
   #if NA_OS == NA_OS_WINDOWS
     printf(NA_NL "Finished." NA_NL);
@@ -17,6 +31,7 @@ int main(void){
 
   return 0;
 }
+
 
 
 // Copyright (c) NALib, Tobias Stamm
