@@ -2,7 +2,7 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#include "testNALib.h"
+
 
 #define NA_TEST_MAX_MACRO_LENGTH 40
 
@@ -10,12 +10,12 @@
 {\
   const char* macroStr = macro;\
   printf(macroStr);\
-  for(int c = 0; c < NA_TEST_MAX_MACRO_LENGTH - strlen(macroStr); c++){printf(" ");}\
+  for(unsigned int c = 0; c < (NA_TEST_MAX_MACRO_LENGTH - strlen(macroStr)); c++){printf(" ");}\
 }
 
 #define printMacroInt(macro)\
   printMacroHead(#macro)\
-  printf("%d", macro);\
+  printf("%d", (int32)macro);\
   printf(NA_NL);
 
 #define printMacroIntHex(macro)\
@@ -23,49 +23,45 @@
   printf("0x%x (%d)", macro, macro);\
   printf(NA_NL);
 
-#define printMacroIntYesNo(macro)\
-  printMacroHead(#macro)\
-  if(macro){\
-    printf("%d (Yes)", macro);\
-  }else{\
-    printf("0 (No)");\
-  }\
-  printf(NA_NL);
 
 #define printMacroIntSpecial(macro, specialValue, specialString)\
   printMacroHead(#macro)\
-  if(macro == specialValue){\
-    printf(specialString);\
+  if((int32)macro == (int32)specialValue){\
+    printf("%d (%s)", macro, specialString);\
   }else{\
     printf("%d", macro);\
   }\
   printf(NA_NL);
 
+#define printMacroIntSpecialHex(macro, specialValue, specialString)\
+  printMacroHead(#macro)\
+  if((int32)macro == (int32)specialValue){\
+    printf("0x%x (%s)", macro, specialString);\
+  }else{\
+    printf("0x%x", macro);\
+  }\
+  printf(NA_NL);
+
+#define printMacroEnumCore(macro, strings, maxValue)\
+  if((int32)macro >= (int32)maxValue){\
+    printf("%d Invalid value", macro);\
+  }else{\
+    printf("%d (%s)", macro, strings[macro]);\
+  }\
+
+#define printMacroEnum(macro, strings, maxValue)\
+  printMacroHead(#macro)\
+  printMacroEnumCore(macro, strings, maxValue)\
+  printf(NA_NL);
+
+extern const char* na_yesno_strings[];
+
+#define printMacroIntYesNo(macro)\
+  printMacroHead(#macro)\
+  printMacroEnumCore(macro, na_yesno_strings, 2)\
+  printf(NA_NL);
 
 
-int main(void){
-
-  printf("Configuration.h:" NA_NL);
-  printMacroIntSpecial(NA_PREFERRED_NAINT_BITS, 0, "Automatic");
-  printMacroIntYesNo  (NA_CONFIG_COMPILE_OPENGL);
-  printMacroIntYesNo  (NA_CONFIG_COMPILE_GUI);
-  printMacroIntYesNo  (NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6);
-  //printMacroDefinedInt(NA_MEMORY_ALIGNED_MEM_MAC_OS_X);
-  printMacroIntHex    (NA_POOLPART_BYTESIZE);
-  printMacroIntYesNo  (NA_MEMORY_POOL_AGGRESSIVE_CLEANUP);
-  printMacroInt       (NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT);
-  printMacroIntSpecial(NA_BUFFER_PART_BYTESIZE, 0, "page");
-  printMacroIntYesNo  (NA_STRING_ALWAYS_CACHE);
-  printMacroIntYesNo  (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION);
-  printMacroInt       (NA_NIST_CODATA_YEAR);
-
-  #if NA_OS == NA_OS_WINDOWS
-    printf(NA_NL "Finished." NA_NL);
-    NA_UNUSED(getchar());
-  #endif
-
-  return 0;
-}
 
 
 // Copyright (c) NALib, Tobias Stamm

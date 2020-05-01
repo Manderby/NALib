@@ -77,9 +77,9 @@ NA_IAPI NASizeUInt naGetSystemMemoryPagesizeMask(void);
 // Therefore, a custom implementation is provided which is costly but always
 // works.
 // Use the following macros in the NAConfiguration.h file.
-#define NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_CUSTOM         0
-#define NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_ALIGNED_ALLOC  1
-#define NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_POSIX_MEMALIGN 2
+#define NA_MEMALIGN_USE_CUSTOM         0
+#define NA_MEMALIGN_USE_ALIGNED_ALLOC  1
+#define NA_MEMALIGN_USE_POSIX 2
 
 // //////////////////////////////////////
 // Basic Memory allocation and freeing

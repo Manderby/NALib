@@ -76,6 +76,11 @@ NA_HDEF void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent){
     result = SetParent(coreelement->nativeID, HWND_MESSAGE);
   }else{
     HWND result;
+    #ifndef NDEBUG
+    if(!coreelement)
+      naCrash("coreelement is NULL");
+    #endif
+
     coreelement->parent = parent;
     result = SetParent(coreelement->nativeID, coreparent->nativeID);
   }

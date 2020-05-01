@@ -9,6 +9,12 @@
 #include <string.h>
 
 #include NA_TEST_NALIB_PATH(NABase.h)
+#include NA_TEST_NALIB_PATH(NAMemory.h)
+
+#include "testHelper.h"
+
+
+void printConfiguration();
 
 
 

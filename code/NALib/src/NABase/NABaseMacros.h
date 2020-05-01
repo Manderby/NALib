@@ -12,12 +12,14 @@
 
 
 // Concatenation and evaluation macros. See Template comments below.
+#define NA_CONCAT1(a1 )                 a1
 #define NA_CONCAT2(a1, a2)              a1 ## a2
 #define NA_CONCAT3(a1, a2, a3)          a1 ## a2 ## a3
 #define NA_CONCAT4(a1, a2, a3, a4)      a1 ## a2 ## a3 ## a4
-#define NA_TOKEN_EVAL2(a1, a2)          NA_CONCAT2(a1,a2)
-#define NA_TOKEN_EVAL3(a1, a2, a3)      NA_CONCAT3(a1,a2,a3)
-#define NA_TOKEN_EVAL4(a1, a2, a3, a4)  NA_CONCAT4(a1,a2,a3,a4)
+#define NA_TOKEN_EVAL1(a1)              NA_CONCAT1(a1)
+#define NA_TOKEN_EVAL2(a1, a2)          NA_CONCAT2(a1, a2)
+#define NA_TOKEN_EVAL3(a1, a2, a3)      NA_CONCAT3(a1, a2, a3)
+#define NA_TOKEN_EVAL4(a1, a2, a3, a4)  NA_CONCAT4(a1, a2, a3, a4)
 
 // Template function generator. Use this macro to create a generic name of
 // the function with the specified template arguments.

@@ -15,11 +15,12 @@
 // NAConfiguration.h is included at the beginning of the NABase.h file.
 // Do not include it anywhere else.
 //
-// Note that there is no possibility to platform-independently provide a clean
-// configuration structure without the need to configure either the NALib
-// installation or your compiler in one or another way. The solution with this
-// file allows you to share NALib with a default implementation but which can
-// be altered project-wise by as simple compiler prefix macro definition.
+// Note that there is no possibility to platform-independently provide a
+// clean configuration structure without the need to configure either the
+// NALib, installation or your compiler in one or another way. The solution
+// with this file allows you to share NALib with a default implementation
+// but which can be altered project-wise by as simple compiler prefix macro
+// definition.
 
 
 
@@ -37,8 +38,7 @@
 // 32  NAInt has a 32 bit width.
 // 64  NAInt has a 64 bit width.
 //
-// By default, the automatic setting (0) is used.
-//
+// Default is 0
 
 #ifndef NA_PREFERRED_NAINT_BITS
   #define NA_PREFERRED_NAINT_BITS 0
@@ -49,15 +49,15 @@
 // OpenGL support
 // ////////////////////////////////
 
-// By default, the following macro is defined as 0 and therefore, NALib does
-// not compile with OpenGL support. But if you want to, simply set the this
-// macro to 1.
+// If the following macro is set to 1, NALib compiles with OpenGL support.
 //
-// If done so, you MUST link your program to the appropriate library:
-// Windows: WinAPI (available automatically) and opengl32.lib, see next macro.
+// If so, you MUST link your program to the appropriate library:
+// Windows: WinAPI (always available) and opengl32.lib
 // Macintosh: Cocoa
 //
 // The #include directives can be found on top of the NAUI.h file
+//
+// Default is 0
 
 #ifndef NA_CONFIG_COMPILE_OPENGL
   #define NA_CONFIG_COMPILE_OPENGL 0
@@ -69,13 +69,13 @@
 // GUI application support
 // ////////////////////////////////
 
-// By default, the following macro is defined as 0 and therefore, NALib does
-// not compile with GUI support. But if you want to, simply set the this
-// macro to 1.
+// If the following macro is set to 1, NALib compiles with GUI support.
 //
-// If done so, you MUST link your program to the appropriate library:
-// Windows: WinAPI (available automatically) and ComCtl32.lib, see next macro.
+// If so, you MUST link your program to the appropriate library:
+// Windows: WinAPI (always available) and ComCtl32.lib, see next macro.
 // Macintosh: Cocoa
+//
+// Default is 0
 
 #ifndef NA_CONFIG_COMPILE_GUI
   #define NA_CONFIG_COMPILE_GUI 0
@@ -89,7 +89,10 @@
 // Unfortunately, this requires you to link your binary to ComCtl32.lib.
 // Set this macro to 0 if you want the old look or not link to the library.
 //
-// Default is 1.
+// If your code does not compile for windows or NA_CONFIG_COMPILE_GUI is 0,
+// this macro has no effect.
+//
+// Default is 1
 
 #ifndef NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6
   #define NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6 1
@@ -104,14 +107,15 @@
 // Usually, aligned memory can be created in unix like systems using several
 // methods. See the definitions of the following macros in NAMemory.h file
 // for more information.
-// - NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_CUSTOM
-// - NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_ALIGNED_ALLOC (needs full C11 support)
-// - NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_POSIX_MEMALIGN
-// Default is POSIX.
+//
+// - NA_MEMALIGN_USE_CUSTOM
+// - NA_MEMALIGN_USE_ALIGNED_ALLOC (needs full C11 support)
+// - NA_MEMALIGN_USE_POSIX
+//
+// Default is POSIX
 
-
-#ifndef NA_MEMORY_ALIGNED_MEM_MAC_OS_X
-  #define NA_MEMORY_ALIGNED_MEM_MAC_OS_X NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_POSIX_MEMALIGN
+#ifndef NA_MEMALIGN
+  #define NA_MEMALIGN NA_MEMALIGN_USE_POSIX
 #endif
 
 
@@ -120,16 +124,17 @@
 // Runtime memory pools
 // ////////////////////////////////
 
-// Define the size of a core memory pool part:
+// Define the size of a core memory pool part. This size is used for the
+// NALib runtime system, more precisely allocation with naNew, as well as
+// for garbage collection.
 //
-// With the following macro, you can define, what the byte size of the memory
-// pool parts shall be. This size is used for allocation with naNew, as well
-// as for garbage collection. The default value for the part size is (1 << 16).
-// If you set this macro to 0, the memory page size will be used.
+// If you set this macro to 0, one memory page size will be used.
 //
-// Turns out, on most systems, the pagesize is far too small to result in good
-// speed improvements for naNew. A large enough custom bytesize can result in
-// up to 2 times faster allocation and deallocation.
+// Turns out, on most systems, one pagesize is far too small to result in
+// good speed improvements for naNew. A large enough custom bytesize can
+// result in up to 2 times faster allocation and deallocation.
+//
+// Default is (1 << 16)
 
 #ifndef NA_POOLPART_BYTESIZE
   #define NA_POOLPART_BYTESIZE (1 << 16)
@@ -139,22 +144,24 @@
 //
 // Memory pools do organize themselves by allocating and deallocating large
 // chunks of memory. Upon startup, there is no memory allocated whatsoever.
-// This should of course be the same in the end when the runtime system stops.
-// Nontheless, it might be very helpful to always keep one chunk per type in
-// memory to prevent allocating and deallocating the same (first) chunk over
-// and over again.
+// This should of course be the same in the end when the runtime system
+// stops. Nontheless, it might be very helpful to always keep one chunk per
+// type in memory to prevent allocating and deallocating the same (first)
+// chunk over and over again.
 //
 // With this flag, the programmer defines, if that last chunk shall be freed
-// aggressively, meaning as soon as no more memory is needed for that type. If
-// not, the last chunk stays in memory up until the runtime system stops.
-//
-// Default is 0: The last pool chunk stays in memory.
+// aggressively, meaning as soon as no more memory is needed for that type,
+// all related pools get deallocated. If set to 0, the last chunk stays in
+// memory up until the runtime system stops.
 //
 // This flag is important for systems with very small memory as well as for
 // performance testing: When clenaing up aggressively, the runtime can be
-// considerably slower. Otherwise, one big chunk of memory always stays ready
-// resulting in very high performance, especially for small testing cases. But
-// it might not be what should have been measured by the performance test.
+// considerably slower. Otherwise, one big chunk of memory always stays
+// ready resulting in very high performance, especially for small testing
+// cases. But this might not reveal potential performance losses when using
+// the tested functionality in real life.
+//
+// Default is 0
 
 #ifndef NA_MEMORY_POOL_AGGRESSIVE_CLEANUP
   #define NA_MEMORY_POOL_AGGRESSIVE_CLEANUP 0
@@ -163,28 +170,25 @@
 // Defines when the temp garbage collection starts collecting automatically.
 //
 // With this macro, you can define, if and when the garbage collection should
-// perform an automatic collection of temporarily allocated memory. If you set
-// this value to 0, no automatic collection will be performed ever. You need to
-// call naCollectGarbage manually.
+// perform an automatic collection of temporarily allocated memory. If you
+// set this value to 0, no automatic collection will be performed ever. You
+// need to call naCollectGarbage manually.
 //
-// If it is set to a non-zero value, it will fire during a call to naMallocTmp
-// but only when the sum of all previously temporary allocated bytes had become
-// higher than this number in the previous call to naMallocTmp. If so, the
-// garbage will first be collected and then the new bytes will be allocated
-// and returned.
+// If this macro is set to a non-zero value, it will fire during a call to
+// naMallocTmp but only when the sum of all previously temporary allocated
+// bytes had become higher than this number in the previous call to
+// naMallocTmp. If so, the garbage will first be collected and then the new
+// bytes will be allocated and returned.
 //
 // The default value is 1000000 (1 Million) when no GUI is in use and 0 when
-// a GUI is in use.
-//
-// This macro is set to 0 by default when a GUI is in use, as the event loop
-// of the NAGUI implementation calls naCollectGarbage automatically before
-// executing each and every event.
+// a GUI is in use. When a GUI is in use, the event loop of NAApplication
+// calls naCollectGarbage automatically before executing any event.
 
 #ifndef NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT
   #if NA_CONFIG_COMPILE_GUI == 0
-    #define NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT (1000000)
+    #define NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT 1000000
   #else
-    #define NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT (0)
+    #define NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT 0
   #endif
 #endif
 
@@ -196,15 +200,16 @@
 
 // Define the size of a buffer part used for NABuffer:
 //
-// With the following macro, you can define, what the default byte size of one
-// buffer part shall be. The value 0 denotes that the memory page size will be
-// used. Custom values typically are powers of 2, for example 4096.
+// With the following macro, you can define, what the default byte size of
+// one buffer part shall be. The value 0 denotes that the memory page size
+// will be used. Custom values typically are powers of 2, for example 4096.
 //
-// The default value is 0.
+// The default is 0
 
 #ifndef NA_BUFFER_PART_BYTESIZE
   #define NA_BUFFER_PART_BYTESIZE 0
 #endif
+
 
 
 // String caching
@@ -217,8 +222,8 @@
 // debugging, you may choose to set NA_STRING_ALWAYS_CACHE to 0 even for
 // debugging right here.
 //
-// The default is that strings will always be cached when running in debug mode
-// but will not be cached if NDEBUG is defined.
+// The default is that strings will always be cached when running in debug
+// mode but will not be cached if NDEBUG is defined.
 
 #ifndef NA_STRING_ALWAYS_CACHE
   #ifndef NDEBUG
@@ -239,7 +244,9 @@
 // observed with the "Mutex" implementation.
 //
 // Set this macro to 1 if you want to use the "critical section" or set it to
-// 0 if you want to use "Mutex". Default is 1
+// 0 if you want to use "Mutex".
+//
+// Default is 1
 
 #ifndef NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION
   #define NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION 1
@@ -255,14 +262,15 @@
 // mathematics, all mixed together. These constants are directly from NIST:
 // http://physics.nist.gov/constants
 //
-// With the following macro, you define, what year of the CODATA you would like
-// to use. Possible values are 2006, 2010 and 2014.
+// With the following macro, you define, what year of the CODATA you would
+// like to use. Possible values are 2006, 2010, 2014 and 2018.
 //
 // By default, NALib uses the latest setting.
 
 #ifndef NA_NIST_CODATA_YEAR
   #define NA_NIST_CODATA_YEAR 2018
 #endif
+
 
 
 // Copyright (c) NALib, Tobias Stamm

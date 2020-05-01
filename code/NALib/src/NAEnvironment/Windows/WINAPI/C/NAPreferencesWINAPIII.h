@@ -111,7 +111,7 @@ NA_DEF double naInitPreferencesDouble(const char* key, double value){
   HKEY hKey = naGetNativePreferences();
   LSTATUS errorcode = RegGetValueA(hKey, NULL, key, RRF_RT_ANY, &type, &storedvalue, (LPDWORD)&valuesize);
   if(errorcode != ERROR_SUCCESS){
-    storedvalue = ((value == 0) ? NA_NAN : value);
+    storedvalue = ((value == 0.) ? NA_NAN : value);
     errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
     if(errorcode != ERROR_SUCCESS){
       #ifndef NDEBUG

@@ -13,7 +13,9 @@
 #include "../../../../../NAString.h"
 #include "../../../../../NAURL.h"
 
-#include <commctrl.h>
+#if NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6 == 1
+  #include <commctrl.h>
+#endif
 
 // The following struct stores all relevant data which will then be stored in
 // a list of the running NAWINAPIApplication.

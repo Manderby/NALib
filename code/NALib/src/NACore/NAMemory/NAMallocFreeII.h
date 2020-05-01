@@ -64,7 +64,7 @@ NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
   #if NA_OS == NA_OS_WINDOWS
     retptr = _aligned_malloc(bytesize, align);
   #else
-    #if NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_CUSTOM
+    #if NA_MEMALIGN == NA_MEMALIGN_USE_CUSTOM
       // Allocate a full align and a pointer more than required.
       void* mem = malloc(bytesize + align + sizeof(void*));
       #ifndef NDEBUG
@@ -78,13 +78,13 @@ NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
       // right before the first returned byte.
       ptr[-1] = mem;
       retptr = ptr;
-    #elif NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_ALIGNED_ALLOC
+    #elif NA_MEMALIGN == NA_MEMALIGN_USE_ALIGNED_ALLOC
       retptr = aligned_alloc(align, bytesize);
       #ifndef NDEBUG
       if(!retptr)
         naCrash("naMallocAligned", "Out of aligned memory");
       #endif
-    #elif NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_POSIX_MEMALIGN
+    #elif NA_MEMALIGN == NA_MEMALIGN_USE_POSIX
       int error = posix_memalign(&retptr, align, bytesize);
       #ifndef NDEBUG
       if(error)
@@ -119,11 +119,11 @@ NA_IDEF void naFreeAligned(void* ptr){
   #if NA_OS == NA_OS_WINDOWS
     _aligned_free(ptr);
   #else
-    #if NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_CUSTOM
+    #if NA_MEMALIGN == NA_MEMALIGN_USE_CUSTOM
       free(((void**)ptr)[-1]);
-    #elif NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_ALIGNED_ALLOC
+    #elif NA_MEMALIGN == NA_MEMALIGN_USE_ALIGNED_ALLOC
       free(ptr);
-    #elif NA_MEMORY_ALIGNED_MEM_MAC_OS_X == NA_MEMORY_ALIGNED_MEM_MAC_OS_X_USE_POSIX_MEMALIGN
+    #elif NA_MEMALIGN == NA_MEMALIGN_USE_POSIX
       free(ptr);
     #else
       #error "Invalid aligned alloc method chosen"
