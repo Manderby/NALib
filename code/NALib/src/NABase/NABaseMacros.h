@@ -11,11 +11,6 @@
 
 
 
-// These are macros to provide a nicer looking API. Note that they do not do
-// anything at all. It is just a glorified comment basically.
-#define NA_TYPEDEF(type)
-#define NA_TYPEDEF_FUNCTION(functionPointerType)
-
 // Concatenation and evaluation macros. See Template comments below.
 #define NA_CONCAT2(a1, a2)              a1 ## a2
 #define NA_CONCAT3(a1, a2, a3)          a1 ## a2 ## a3

@@ -2,29 +2,15 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#if defined NA_FLOATING_POINT_INCLUDED || !defined NA_BASE_INCLUDED
-  #warning "Do not include this file directly. Use NABase.h"
-#endif
-#ifndef NA_FLOATING_POINT_INCLUDED
-#define NA_FLOATING_POINT_INCLUDED
+#define NA_TEST_STRINGIFY(A) #A
+#define NA_TEST_NALIB_PATH(file) NA_TEST_STRINGIFY(../../NALib/src/file)
+
+#include <stdio.h>
+#include <string.h>
+
+#include NA_TEST_NALIB_PATH(NABase.h)
 
 
-// Creates floats and doubles out of signed significands and exponents
-NA_IAPI float  naMakeFloat (int32 signedSignificand, int32 signedExponent);
-NA_IAPI float  naMakeFloatWithExponent (int32 signedExponent);
-NA_IAPI float  naMakeFloatSubnormal (int32 signedSignificand);
-
-NA_IAPI double naMakeDouble(NAInt64 signedSignificand, int32 signedExponent);
-NA_IAPI double naMakeDoubleWithExponent(int32 signedExponent);
-NA_IAPI double naMakeDoubleSubnormal(NAInt64 signedSignificand);
-
-
-NA_IAPI int32   naGetDoubleExponent(double d);
-NA_IAPI NAInt64 naGetDoubleInteger(double d);
-NA_IAPI NAInt64 naGetDoubleFraction(double d);
-
-
-#endif // NA_FLOATING_POINT_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm
 //
@@ -46,3 +32,4 @@ NA_IAPI NAInt64 naGetDoubleFraction(double d);
 // CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
 // TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 // SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+

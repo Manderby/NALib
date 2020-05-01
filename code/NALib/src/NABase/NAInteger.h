@@ -50,112 +50,10 @@ typedef int NABool;
 
 
 
-// Defines, if the current system compiles with long long int types.
-// See NA_TYPE_ASSUME_NATIVE_LONG_LONG in the Configuration.h file for manually
-// configuring this. Note that the test (_MSC_VER >= 1310) tests for
-// Visual Studio 7.1
-#if (defined NA_C99) || (defined NA_CPP11) || _MSC_VER >= 1310 || NA_TYPE_ASSUME_NATIVE_LONG_LONG
-  #define NA_COMPILE_WITH_LONG_LONG 1
-#else
-  #define NA_COMPILE_WITH_LONG_LONG 0
-#endif
-
-
-
-#if defined __STDC__ || defined _MSC_VER
-  // We gather basic information about integer types from the standardized
-  // limits.h library (note that limits.h is available in C90 but stdint.h
-  // is only available since C99)
-  #include <limits.h>
-#else
-  #warning "This is not a standard C compiler. NALib will make assumptions about typesizes."
-  // If we are completely out of the standardized C reign, we simply create
-  // the macros which should be in limits.h manually.
-  // Note the -1 for the signed min values: Some compilers have problems with
-  // the lowest value and may output warnings. Also not that these macros
-  // should work for all three negative encodings.
-  #ifndef CHAR_BIT
-    #define CHAR_BIT      8
-  #endif
-
-  #ifndef UCHAR_MAX
-    #define UCHAR_MAX     (0xffu)
-  #endif
-  #ifndef SCHAR_MAX
-    #define SCHAR_MAX     (0x7f)
-  #endif
-  #ifndef SCHAR_MIN
-    #define SCHAR_MIN     (0x81 - 1)
-  #endif
-
-  #ifndef USHRT_MAX
-    #define USHRT_MAX     (0xffffu)
-  #endif
-  #ifndef SHRT_MAX
-    #define SHRT_MAX      (0x7fff)
-  #endif
-  #ifndef SHRT_MIN
-    #define SHRT_MIN      (0x8001 - 1)
-  #endif
-
-  #ifndef UINT_MAX
-    #define UINT_MAX      (0xffffffffu)
-  #endif
-  #ifndef INT_MAX
-    #define INT_MAX       (0x7fffffff)
-  #endif
-  #ifndef INT_MIN
-    #define INT_MIN       (0x80000001 - 1)
-  #endif
-
-  #ifndef ULONG_MAX
-    #define ULONG_MAX     (0xffffffffu)
-  #endif
-  #ifndef LONG_MAX
-    #define LONG_MAX      (0x7fffffff)
-  #endif
-  #ifndef LONG_MIN
-    #define LONG_MIN      (0x80000001 - 1)
-  #endif
-
-  #if NA_COMPILE_WITH_LONG_LONG
-    #ifndef ULLONG_MAX
-      #define ULLONG_MAX  (0xffffffffffffffffuLL)
-    #endif
-    #ifndef LLONG_MAX
-      #define LLONG_MAX   (0x7fffffffffffffffLL)
-    #endif
-    #ifndef LLONG_MIN
-      #define LLONG_MIN   (0x8000000000000001LL - 1LL)
-    #endif
-  #endif
-
-  #ifdef __SIZEOF_INT128__
-    #ifndef UINT128_MAX
-      #define UINT128_MAX  (0xffffffffffffffffffffffffffffffffu)
-    #endif
-    #ifndef INT128_MAX
-      #define INT128_MAX   (0x7fffffffffffffffffffffffffffffff)
-    #endif
-    #ifndef INT128_MIN
-      #define INT128_MIN   (0x80000000000000000000000000000001 - 1)
-    #endif
-  #endif
-
-    #ifdef __SIZEOF_INT256__
-    #ifndef UINT256_MAX
-      #define UINT256_MAX  (0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffu)
-    #endif
-    #ifndef INT256_MAX
-      #define INT256_MAX   (0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
-    #endif
-    #ifndef INT256_MIN
-      #define INT256_MIN   (0x8000000000000000000000000000000000000000000000000000000000000001 - 1)
-    #endif
-  #endif
-
-#endif
-
+// We gather basic information about integer types from the standardized
+// limits.h library
+#include <limits.h>
+#include <stdint.h>
 
 
 // Currently, NALib assumes a Byte to consist of precisely 8 bits. This is
@@ -164,6 +62,31 @@ typedef int NABool;
 // systems which have 8-Bit Bytes.
 #if CHAR_BIT != NA_TYPE8_BITS
   #error "NALib can not work properly with chars unequal 8 bits."
+#endif
+
+
+#ifdef __SIZEOF_INT128__
+  #ifndef UINT128_MAX
+    #define UINT128_MAX  (0xffffffffffffffffffffffffffffffffu)
+  #endif
+  #ifndef INT128_MAX
+    #define INT128_MAX   (0x7fffffffffffffffffffffffffffffff)
+  #endif
+  #ifndef INT128_MIN
+    #define INT128_MIN   (0x80000000000000000000000000000001 - 1)
+  #endif
+#endif
+
+  #ifdef __SIZEOF_INT256__
+  #ifndef UINT256_MAX
+    #define UINT256_MAX  (0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffu)
+  #endif
+  #ifndef INT256_MAX
+    #define INT256_MAX   (0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
+  #endif
+  #ifndef INT256_MIN
+    #define INT256_MIN   (0x8000000000000000000000000000000000000000000000000000000000000001 - 1)
+  #endif
 #endif
 
 
@@ -222,11 +145,8 @@ typedef int NABool;
   #define NA_TYPE_NATIVE_INT_BITS NA_TYPE16_BITS
 #elif UINT_MAX == 0xffffffffu
   #define NA_TYPE_NATIVE_INT_BITS NA_TYPE32_BITS
-#endif
-#if NA_COMPILE_WITH_LONG_LONG
-  #if UINT_MAX == 0xffffffffffffffffuLL
-    #define NA_TYPE_NATIVE_INT_BITS NA_TYPE64_BITS
-  #endif
+#elif UINT_MAX == 0xffffffffffffffffuLL
+  #define NA_TYPE_NATIVE_INT_BITS NA_TYPE64_BITS
 #endif
 #ifndef NA_TYPE_NATIVE_INT_BITS
   #warning "NALib will make assumptions about the native size of an int."
@@ -236,11 +156,8 @@ typedef int NABool;
 // long
 #if ULONG_MAX == 0xffffffffu
   #define NA_TYPE_NATIVE_LONG_INT_BITS NA_TYPE32_BITS
-#endif
-#if NA_COMPILE_WITH_LONG_LONG
-  #if ULONG_MAX == 0xffffffffffffffffuLL
-    #define NA_TYPE_NATIVE_LONG_INT_BITS NA_TYPE64_BITS
-  #endif
+#elif ULONG_MAX == 0xffffffffffffffffuLL
+  #define NA_TYPE_NATIVE_LONG_INT_BITS NA_TYPE64_BITS
 #endif
 #ifndef NA_TYPE_NATIVE_LONG_INT_BITS
   #warning "NALib will make assumptions about the native size of a long."
@@ -248,14 +165,12 @@ typedef int NABool;
 #endif
 
 // long long
-#if NA_COMPILE_WITH_LONG_LONG
-  #if ULLONG_MAX == 0xffffffffffffffffuLL
-    #define NA_TYPE_NATIVE_LONG_LONG_INT_BITS NA_TYPE64_BITS
-  #endif
+#if ULLONG_MAX == 0xffffffffffffffffuLL
+  #define NA_TYPE_NATIVE_LONG_LONG_INT_BITS NA_TYPE64_BITS
 #endif
 #ifndef NA_TYPE_NATIVE_LONG_LONG_INT_BITS
-  // Here, we do not assume anything. long long types are not accepted
-  // by all compilers.
+  #warning "NALib will make assumptions about the native size of a long long."
+  #define NA_TYPE_NATIVE_LONG_LONG_INT_BITS NA_TYPE64_BITS
 #endif
 
 
@@ -326,16 +241,11 @@ typedef int NABool;
   #define NA_TYPE_INT256 NA_TYPE_NATIVE_INT_256
 #endif
 
+#define NA_PRINTF_CHAR_PREFIX "hh"
+#define NA_PRINTF_LONG_LONG_PREFIX "ll"
+
 // Note that the following macros are defined using the values provided in
-// the <limits.h> header file. This is usually not the preferred way but
-// in older standards before C99, there was just no other way to do it.
-#if NA_COMPILE_WITH_LONG_LONG
-  #define NA_PRINTF_CHAR_PREFIX "hh"
-  #define NA_PRINTF_LONG_LONG_PREFIX "ll"
-#else
-  #define NA_PRINTF_CHAR_PREFIX ""
-  #define NA_PRINTF_LONG_LONG_PREFIX ""
-#endif
+// the <limits.h> header file.
 
 // 8 bits
 #if NA_TYPE_INT8 == NA_TYPE_NATIVE_CHAR
@@ -528,48 +438,44 @@ typedef int NABool;
 
 // NAInt and NAUInt
 //
-// The NAInt type is the default integer used in NALib. Up until version 20,
-// it always had the bytesize which is needed for storing an address. This
+// The NAInt type is the default integer used in NALib. Usually, that type
+// corresponds to the bytesize which is needed for storing an address. This
 // means that this type was/is dependent on the system NALib is compiled for.
-// It can for example be 32 Bits on one and 64 Bits on another architecture.
-// After version 20, depending on the system you compile NALib with, the
-// desired typesize might not be available and hence, NALib automatically
-// adapts NAInt to a suitable bytesize. The desired bytesize of an integer
-// can therefore differ from the size of an address and can be configured in
-// the NAConfiguration.h file with the NA_PREFERRED_NAINT_BITS macro.
+// The preferred size of an NAInt can be configured in the NAConfiguration.h
+// file with the NA_PREFERRED_NAINT_BITS macro.
 //
-// If you are still looking for an integer which has the same bytesize as
-// an address, have a look at NASizeInt.
+// If your NAInt is defined to use less bits than an address but you are
+// still in need for an integer which has the same bytesize as an address,
+// have a look at NASizeInt.
 //
 // NAInt will be used as the default integer type in NALib. Many fundamental
-// functions will return NAInt or expect it as an argument. Note that the NAInt
-// type is signed!
+// functions will return NAInt or expect it as an argument. Note that the
+// NAInt type is signed!
 //
-// Starting with NALib Version 9, there also exists NAUInt, the unsigned
-// variant. Many functions have been changed which explicitely require or
-// return an unsigned integer. This helps detecting errors as a compiler can
-// emit warnings on sign differences.
+// There also exists NAUInt, the unsigned variant. Some functions explicitely
+// require or return an unsigned integer. This helps detecting errors as a
+// compiler can emit warnings on sign differences.
 //
-// The signed variant NAInt is also used by memory and array functions. This
-// means that in 32-Bit systems, only about 2 billion entries can be accessed
-// with arrays when using NALib. The author is perfectly aware of the fact
-// that most standard library functions use an unsigned integer for size_t,
-// and that NALib therefore will have some minor limitations regarding memory
-// usage. But the author has been convinced by the simplicity and elegance of
-// just using signed integers during the last couple of years. It makes
-// programming and debugging so much easier. And in 64 Bit systems, the memory
-// limitations will not be a problem for a couple of years coming.
+// The signed variant NAInt is also used for enums as well as by memory and
+// array functions. This means that in 32-Bit systems, only about 2 billion
+// entries can be accessed with arrays when using NALib. The author is aware
+// of the fact that most standard library functions use an unsigned integer
+// for size_t, and that NALib therefore will have some minor limitations
+// regarding memory usage. But NALib is designed for simplicity. Using a
+// signed integer type makes programming and debugging so much easier. And
+// in 64 Bit systems, the memory limitations will not be a problem for a
+// couple of years coming.
 //
-// In addition to the type, there is the definition of a printf-argument macro.
-// Use the macro for example like this:
+// In addition to the type, there is the definition of a printf-argument
+// macro. Use the macro for example like this:
 //
 // printf("The point is at X coordinate %" NA_PRIi, pos.x);
 // printf("The array has %" NA_PRIu " entries.", naGetArrayCount(array));
 //
 // One serious drawback of a system-dependent definition is that NALib might
 // behave differently depending on the system it is compiled for. But it will
-// only behave differently in cases where the behaviour would become difficult
-// anyway. Meaning: You will most likely run into out-of-memory problems first.
+// only behave differently in cases where the behaviour would get difficult
+// anyway. So you will most likely run into out-of-memory problems first.
 //
 // Note that a different solution would be to always go for int64 and convert
 // between the different integer types. But compiling NALib on a non-64-Bit
@@ -578,16 +484,6 @@ typedef int NABool;
 
 // Define the size of NAInt
 #if NA_PREFERRED_NAINT_BITS == 0  // Automatic
-  #define NA_TYPE_NAINT_BITS NA_ADDRESS_BITS
-  #if NA_TYPE_NAINT_BITS == NA_TYPE64_BITS && !defined NA_TYPE_INT64
-    #undef NA_TYPE_NAINT_BITS
-    #define NA_TYPE_NAINT_BITS NA_TYPE32_BITS
-  #endif
-#elif NA_PREFERRED_NAINT_BITS == 1  // int
-  #define NA_TYPE_NAINT_BITS NA_SYSTEM_NATIVE_INT_BITS
-#elif NA_PREFERRED_NAINT_BITS == 2  // long
-  #define NA_TYPE_NAINT_BITS NA_SYSTEM_NATIVE_LONG_INT_BITS
-#elif NA_PREFERRED_NAINT_BITS == 3  // address length
   #define NA_TYPE_NAINT_BITS NA_ADDRESS_BITS
 #elif NA_PREFERRED_NAINT_BITS == 32 // 32
   #define NA_TYPE_NAINT_BITS NA_TYPE32_BITS
@@ -732,11 +628,9 @@ typedef uint8 NAByte;
 // address.
 //
 // NASizeInt is always a native int type, never emulated. If for any reason,
-// there does not exist a native integer type which holds that much bits, the
-// type is defined to be the same as NAInt. If that NAInt holds less than the
-// required bits, some parts NALib, especially NARuntime, might not work
-// properly. A warning is emitted and a special macro is defined. If you want
-// to silence the warning, see NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE.
+// there does not exist a native integer type with as many bits as are
+// required for an address, an error is emitted as NALib will most likely
+// die a horrible death.
 
 #if NA_ADDRESS_BITS == NA_TYPE64_BITS && defined NA_TYPE_INT64
   typedef int64  NASizeInt;
@@ -751,10 +645,7 @@ typedef uint8 NAByte;
   typedef NAInt  NASizeInt;
   typedef NAUInt NASizeUInt
   #if NA_TYPE_NAINT_BITS < NA_ADDRESS_BITS
-    #if NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE == 1
-      #warning "No native integer type available to store an address"
-    #endif
-    #define NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
+    #error "No native integer type available to store an address"
   #endif
 #endif
 

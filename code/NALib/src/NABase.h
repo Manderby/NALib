@@ -20,19 +20,6 @@
 // preprocessor macros to your compiler.
 #include "NABase/NAConfiguration.h"
 
-
-
-// ///////////////////
-//
-// Following are all basic macros and typedefs available to the user.
-// They are properly defined in the II files included at the bottom.
-//
-// ///////////////////
-
-#include "NABase/NABaseMacros.h"
-
-
-
 // Gather information about where, how and what to compile.
 #include "NABase/NAEnvironment.h"
 #include "NABase/NACompiler.h"
@@ -46,6 +33,9 @@
 
 // Enabling the code to use debugger runtime testing (DRT)
 #include "NABase/NADebug.h"
+
+// Some more macros for various purposes
+#include "NABase/NABaseMacros.h"
 
 // Now, including implementations dependent on the definitions above.
 #include "NABase/NAInt64II.h"

@@ -24,78 +24,20 @@
 
 
 // ////////////////////////////////
-// Support for 64 bit integers
-// ////////////////////////////////
-
-// C dialects before C99 and before C++11 do NOT have any standardized notion
-// of the the long long data type and the LL suffix for integers. But often
-// times, it can be accessed through compiler extensions, even for standards
-// before C99 for example in the form of GNU extensions.
-//
-// NALib by default assumes, that the long long type and the integer suffix LL
-// is available only when:
-// - the standards C99 or C++11 or newer are used
-// - Visual Studio 7.1 or newer is used
-// If you are not in any of these scenarios, you can set the following macro
-// to 1 which causes NALib to try to compile itself with long long datatypes
-// and LL suffixes anyway.
-//
-// Beware, although this might work, you maybe will get a lot of warnings.
-// Consider turning them off using -Wno-long-long.
-
-#ifndef NA_TYPE_ASSUME_NATIVE_LONG_LONG
-  #define NA_TYPE_ASSUME_NATIVE_LONG_LONG 1
-#endif
-
-// In case you try to compile on a 64 bit system with a standard before C99
-// and do not want to have long long types, there will hence be no native int
-// type which is big enough to hold an address. NALib will do its best to
-// fulfill its (quad, haha, pun intended!) word nontheless, but there are some
-// core elements which will not work properly. Therefore, a warning is emitted.
-// If you know what you are doing, you can silence that warning by defining the
-// following macro to be 0.
-//
-// Default is 1
-
-#ifndef NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE
-  #define NA_TYPE_WARN_IF_NO_NATIVE_ADDRESS_TYPE 1
-#endif
-
-
-
-
-// ////////////////////////////////
 // NAInt bit width
 // ////////////////////////////////
 
 // Usually, an NAInt has the same bit width as an address in the current
 // configuration, meaning 32 bits on a 32 bit system and 64 bits on a 64 bit
-// system. But there may be instances, where an NAInt shall have a different
+// system. But there may be instances, where an NAInt shall have a specific
 // size.
 //
 // Choose from the following values:
-// 0   Automatic setting. See below.
-// 1   NAInt has the same size as an int.
-// 2   NAInt has the same size as a long int.
-// 3   NAInt has the same size as NS_SYSTEM_ADDRESS_BITS.
+// 0   NAInt has bit width defined by NA_SYSTEM_ADDRESS_BITS
 // 32  NAInt has a 32 bit width.
 // 64  NAInt has a 64 bit width.
 //
-// The automatic setting goes as follows:
-// - The assumed bit width shall be the same size as NS_SYSTEM_ADDRESS_BITS
-// - But in case of 64, when no 64 bit integer type is available, it falls back
-//   to 32 bits. Please refer to NA_TYPE_ASSUME_NATIVE_LONG_LONG for more
-//   information.
-//
-// By default, the automatic setting (0) is used. But you can change this
-// setting for example, when using standards before C99 which are considered
-// to be not aware of the long long integer type. If you use GNU extensions,
-// that type is perfectly available. Hence you can simply set this setting
-// to 64 or even better to NS_SYSTEM_ADDRESS_BITS (setting 3)
-//
-// Note that whenever the final bit width turns out to be 64, long long support
-// is expected from NALib. Therefore, when using 64 bit types on older
-// standards, you may want to turn off the warnings using -Wno-long-long.
+// By default, the automatic setting (0) is used.
 //
 
 #ifndef NA_PREFERRED_NAINT_BITS

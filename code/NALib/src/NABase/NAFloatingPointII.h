@@ -282,6 +282,43 @@ NA_IAPI NAInt64 naGetDoubleInteger(double d){
 }
 
 
+
+NA_IAPI NAInt64 naGetDoubleFraction(double d){
+  int32 exponent;
+  NAInt64 dbits = *((NAInt64*)(void*)&d);
+  dbits = naAndInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
+  dbits = naOrInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_NORM);
+  exponent = naGetDoubleExponent(d);
+  if(exponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL){
+    dbits = NA_ZERO_64;
+  }else{
+    if(exponent < 0){
+      dbits = naShrInt64(dbits, -exponent);
+    }else{
+      dbits = naShlInt64(dbits, exponent);
+    }
+    dbits = naAndInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
+    NAInt128 hyperBits = naMakeInt128(NA_ZERO_64, dbits);
+    NAInt128 hyperTens = naMakeInt128(NA_ZERO_64, 0x71afd498d0000000);  // = 1e15 * 2^13
+    hyperBits = naMulInt128(hyperBits, hyperTens);
+    if(exponent < 0){
+      dbits = naShlInt64(hyperBits.hi, -exponent);
+    }else{
+      dbits = naShrInt64(hyperBits.hi, exponent);
+    }
+    dbits = naIncInt64(dbits);
+    dbits = naShrInt64(dbits, 1);
+    if(exponent < 0){
+      dbits = naShrInt64(dbits, -exponent);
+    }else{
+      dbits = naShlInt64(dbits, exponent);
+    }
+  }
+  return dbits;
+}
+
+
+
 #endif // NA_FLOATING_POINT_II_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm

@@ -50,35 +50,25 @@
   #define NA_LINKER_NO_EXPORT
   #define NA_LINKER_EXPORT      __declspec(dllexport)
 #elif NA_OS == NA_OS_MAC_OS_X
-  #if (defined NA_C99) || (defined NA_CPP98)
-    #define NA_INLINE             inline
-    #ifdef __cplusplus
-      // c++ does not handles restrict consistently. So we just omit it.
-      #define NA_RESTRICT
-    #else
-      #define NA_RESTRICT         restrict
-    #endif
+  #define NA_INLINE             inline
+  #ifdef __cplusplus
+    // c++ does not handles restrict consistently. So we just omit it.
+    #define NA_RESTRICT
   #else
-    #define NA_INLINE
-  #endif
-
-  #if !defined NA_RESTRICT
-    #define NA_RESTRICT         __restrict__
+    #define NA_RESTRICT         restrict
   #endif
   #define NA_LINKER_NO_EXPORT   __attribute__ ((visibility("hidden")))
   #define NA_LINKER_EXPORT      __attribute__ ((visibility("default")))
 #else
-  #if (defined NA_C99) || (defined NA_CPP98)
-    #define NA_INLINE             inline
-    #ifdef __cplusplus
-      // c++ does not handles restrict consistently. So we just omit it.
-      #define NA_RESTRICT
-    #else
-      #define NA_RESTRICT         restrict
-    #endif
+  #define NA_INLINE             inline
+  #ifdef __cplusplus
+    // c++ does not handles restrict consistently. So we just omit it.
+    #define NA_RESTRICT
   #else
-    #define NA_INLINE
+    #define NA_RESTRICT         __restrict__
   #endif
+  #define NA_LINKER_NO_EXPORT
+  #define NA_LINKER_EXPORT
 #endif
 
 
@@ -154,16 +144,12 @@
 // ////////////////////////
 // We always include stdarg as otherwise there might be a problem with va_copy.
 #include <stdarg.h>
+// Just for reference:
 // va_copy is defined since C99. But before, you had to use something like
 // the following if not available.
-#if (!defined NA_C99) && (!defined NA_CPP98)
-  #ifndef va_copy
-    #define va_copy(d,s) {va_start(d, d); memcpy (&d, &s, sizeof (va_list));}
-    // This definition is proposed to a secure fallback solution. But
-    // on many systems, the following definition works as well:
-    // #define va_copy(d,s) ((d) = (s))
-  #endif
-#endif
+// #define va_copy(d,s) ((d) = (s))
+// More "secure" methods were floating around, including memcpy calls and more
+// voodoo. Glad that it is standardized now.
 
 
 

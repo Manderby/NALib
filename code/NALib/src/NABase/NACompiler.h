@@ -80,7 +80,18 @@
 #endif
 
 #ifndef NA_C99
-  #warning "NALib requires compiler to use at least C99."
+  #error "NALib requires compiler to use at least C99."
+
+  // If you reach here. You are using a compiler which is too old for NALib.
+  // The last version working with compilers before C99 is NALib 24.
+  // If you try to compile anyway, the following errors may occur:
+  //
+  // - stdint.h might be undefined.
+  // - NAInt assumes 32 or 64 bits even if there is no type to implement it.
+  // - printf prefixes like ll or hh will not work.
+  // - The long long datatype might not be available.
+  // - va_copy might be undefined.
+
 #endif
 
 #endif // NA_COMPILER_INCLUDED

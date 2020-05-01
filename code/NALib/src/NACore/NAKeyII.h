@@ -32,8 +32,6 @@ a, const void* b){
   return *(const double*)a > *(const double*)b;
 }
 
-#include <stdint.h>
-
 NA_IDEF void NA_KEY_OP(Assign, float)(void* dst, const void* src){
   *(float*)dst = *(const float*)src;
 }
