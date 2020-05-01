@@ -414,7 +414,7 @@ void testEqualUInt64(uint64 ui, uint32 goalhi, uint32 goallo){
       printf("FAIL ");
     }
   #else
-    if((ui & NA_UINT32_MAX) == goallo && (ui >> 32) == goalhi){
+    if((ui & NA_MAX_32u) == goallo && (ui >> 32) == goalhi){
       printf("Pass ");
     }else{
       printf("FAIL ");

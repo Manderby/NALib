@@ -43,7 +43,7 @@
 
     #undef naIncInt256
     #define naIncInt256(i)\
-      (i.hi = naAddInt128(i.hi, naMakeInt128WithLo(naMakeInt64WithLo(naEqualUInt128(i.lo, NA_UINT128_MAX)))),\
+      (i.hi = naAddInt128(i.hi, naMakeInt128WithLo(naMakeInt64WithLo(naEqualUInt128(i.lo, NA_MAX_128u)))),\
       naIncUInt128(i.lo),\
       i)
     #undef naDecInt256
@@ -240,7 +240,7 @@
 
     #undef naIncUInt256
     #define naIncUInt256(i)\
-      (i.hi = naAddUInt128(i.hi, naMakeUInt128WithLo(naMakeUInt64WithLo(naEqualUInt128(i.lo, NA_UINT128_MAX)))),\
+      (i.hi = naAddUInt128(i.hi, naMakeUInt128WithLo(naMakeUInt64WithLo(naEqualUInt128(i.lo, NA_MAX_128u)))),\
       naIncUInt128(i.lo),\
       i)
     #undef naDecUInt256
@@ -264,13 +264,13 @@
     NA_IDEF NAUInt256 naMulUInt256(NAUInt256 a, NAUInt256 b){
       NAUInt256 retInt = NA_ZERO_256u;
 
-      NAUInt128 a0 = naAndUInt128(a.lo, naMakeUInt128WithLo(NA_UINT64_MAX));
+      NAUInt128 a0 = naAndUInt128(a.lo, naMakeUInt128WithLo(NA_MAX_64u));
       NAUInt128 a1 = naShrUInt128(a.lo, 64);
-      NAUInt128 a2 = naAndUInt128(a.hi, naMakeUInt128WithLo(NA_UINT64_MAX));
+      NAUInt128 a2 = naAndUInt128(a.hi, naMakeUInt128WithLo(NA_MAX_64u));
       NAUInt128 a3 = naShrUInt128(a.hi, 64);
-      NAUInt128 b0 = naAndUInt128(b.lo, naMakeUInt128WithLo(NA_UINT64_MAX));
+      NAUInt128 b0 = naAndUInt128(b.lo, naMakeUInt128WithLo(NA_MAX_64u));
       NAUInt128 b1 = naShrUInt128(b.lo, 64);
-      NAUInt128 b2 = naAndUInt128(b.hi, naMakeUInt128WithLo(NA_UINT64_MAX));
+      NAUInt128 b2 = naAndUInt128(b.hi, naMakeUInt128WithLo(NA_MAX_64u));
       NAUInt128 b3 = naShrUInt128(b.hi, 64);
       NAUInt128 a0b1 = naMulUInt128(a0, b1);
       NAUInt128 a1b0 = naMulUInt128(a1, b0);

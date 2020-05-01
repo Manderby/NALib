@@ -72,7 +72,7 @@ NA_DEF NABabyImage* naCreateBabyImage(NASizei size, const NABabyColor color){
   #ifndef NDEBUG
     if(size.width <= 0 || size.height <= 0)
       naError("size must be > 0");
-    if(size.width > NA_INT32_MAX || size.height > NA_INT32_MAX)
+    if(size.width > NA_MAX_32 || size.height > NA_MAX_32)
       naError("size is too big");
     if(color && color[3] == 0.f && (color[0] != 0.f || color[1] != 0.f || color[2] != 0.f))
       naError("insecure color given");

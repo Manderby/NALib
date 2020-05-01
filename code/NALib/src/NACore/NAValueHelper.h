@@ -171,14 +171,14 @@ NA_IDEF NABool naToggleFlagu(NAUInt* flags, NAUInt flag){
 
 NA_HIDEF int32 naMakeMaxWithEndi32(int32 end){
   #ifndef NDEBUG
-    if(end == NA_INT32_MIN)
+    if(end == NA_MIN_32)
       naError("Integer underflow");
   #endif
   return end - NA_ONE_32;
 }
 NA_HIDEF NAInt64 naMakeMaxWithEndi64(NAInt64 end){
   #ifndef NDEBUG
-    if(naEqualInt64(end, NA_INT64_MIN))
+    if(naEqualInt64(end, NA_MIN_64))
       naError("Integer underflow");
   #endif
   return naSubInt64(end, NA_ONE_64);
@@ -192,14 +192,14 @@ NA_HIDEF NAInt naMakeMaxWithEndi(NAInt end){
 }
 NA_HIDEF int32 naMakeEndWithMaxi32(int32 max){
   #ifndef NDEBUG
-    if(max == NA_INT32_MAX)
+    if(max == NA_MAX_32)
       naError("Integer overflow");
   #endif
   return max + NA_ONE_32;
 }
 NA_HIDEF NAInt64 naMakeEndWithMaxi64(NAInt64 max){
   #ifndef NDEBUG
-    if(naEqualInt64(max, NA_INT64_MAX))
+    if(naEqualInt64(max, NA_MAX_64))
       naError("Integer overflow");
   #endif
   return naAddInt64(max, NA_ONE_64);

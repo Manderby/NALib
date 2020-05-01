@@ -424,10 +424,10 @@ void testEqualUInt128(uint128 ui, uint32 goalhi, uint32 goallo1, uint32 goallo2,
       printf("FAIL ");
     }
   #else
-    if((ui & NA_UINT32_MAX) == goallo3
-      && ((ui >> 32) & NA_UINT32_MAX) == goallo2
-      && ((ui >> 64) & NA_UINT32_MAX) == goallo1
-      && ((ui >> 96) & NA_UINT32_MAX) == goalhi){
+    if((ui & NA_MAX_32u) == goallo3
+      && ((ui >> 32) & NA_MAX_32u) == goallo2
+      && ((ui >> 64) & NA_MAX_32u) == goallo1
+      && ((ui >> 96) & NA_MAX_32u) == goalhi){
       printf("ok   ");
     }else{
       printf("FAIL ");

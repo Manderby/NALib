@@ -21,6 +21,7 @@ int main(void){
   
   printNAConfiguration();
   printNAEnvironment();
+  printNACompiler();
 
 
 

@@ -13,6 +13,11 @@
   for(unsigned int c = 0; c < (NA_TEST_MAX_MACRO_LENGTH - strlen(macroStr)); c++){printf(" ");}\
 }
 
+#define printMacroDefined(macro, def)\
+  printMacroHead(#macro)\
+  printf(def ? "Defined" : "Undefined");\
+  printf(NA_NL);
+
 #define printMacroInt(macro)\
   printMacroHead(#macro)\
   printf("%d", (int32)macro);\

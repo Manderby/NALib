@@ -9,17 +9,6 @@
 #ifndef NA_INTEGER_INCLUDED
 #define NA_INTEGER_INCLUDED
 
-// ABOUT THIS FILE (why is this so complicated!!!)
-// Integers are easy, right? Well, if they are standardized yes, otherwise...
-// Unfortunately, there is a plethora of compilers and systems out there and
-// the true definition of integer types can vary at all corners. This file
-// tries to capture all possibilities and in the end provide definitions for
-// very "simple" datatypes like int32 or NABool.
-//
-// Especially critical is the definition of types which are not native on the
-// current system. Like for example, the long long datatype is sometimes not
-// even defined. And an int128 is barely heard of. In NALib, such types are
-// emulated.
 
 
 // NABool
@@ -42,30 +31,46 @@ typedef int NABool;
 
 
 
-// The various signed integer encodings:
-#define NA_SIGNED_INTEGER_ENCODING_UNKNOWN          0
-#define NA_SIGNED_INTEGER_ENCODING_SIGN_MAGNITUDE   1
-#define NA_SIGNED_INTEGER_ENCODING_ONES_COMPLEMENT  2
-#define NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT  3
+typedef uint8_t        uint8;
+typedef uint16_t       uint16;
+typedef uint32_t       uint32;
+typedef uint64_t       uint64;
+typedef int8_t         int8;
+typedef int16_t        int16;
+typedef int32_t        int32;
+typedef int64_t        int64;
 
+#define NA_MAX_8u      UINT8_MAX
+#define NA_MAX_16u     UINT16_MAX
+#define NA_MAX_32u     UINT32_MAX
+#define NA_MAX_64u     UINT64_MAX
+#define NA_MAX_8       INT8_MAX
+#define NA_MAX_16      INT16_MAX
+#define NA_MAX_32      INT32_MAX
+#define NA_MAX_64      INT64_MAX
+#define NA_MIN_8       INT8_MIN
+#define NA_MIN_16      INT16_MIN
+#define NA_MIN_32      INT32_MIN
+#define NA_MIN_64      INT64_MIN
+#define NA_ZERO_8      ((int8)0)
+#define NA_ZERO_16     ((int16)0)
+#define NA_ZERO_32     ((int32)0)
+#define NA_ZERO_64     ((int64)0)
+#define NA_ZERO_8u     ((uint8)0u)
+#define NA_ZERO_16u    ((uint16)0u)
+#define NA_ZERO_32u    ((uint32)0u)
+#define NA_ZERO_64u    ((uint64)0u)
+#define NA_ONE_8       ((int8)1)
+#define NA_ONE_16      ((int16)1)
+#define NA_ONE_32      ((int32)1)
+#define NA_ONE_64      ((int64)1)
+#define NA_ONE_8u      ((uint8)1u)
+#define NA_ONE_16u     ((uint16)1u)
+#define NA_ONE_32u     ((uint32)1u)
+#define NA_ONE_64u     ((uint64)1u)
 
-
-// We gather basic information about integer types from the standardized
-// limits.h library
-#include <limits.h>
-#include <stdint.h>
-
-
-// Currently, NALib assumes a Byte to consist of precisely 8 bits. This is
-// reflected in various enumerations and fundamental types like NAByte and
-// NAUTF8Char. With this macro, we make sure, our code compiles just on the
-// systems which have 8-Bit Bytes.
-#if CHAR_BIT != NA_TYPE8_BITS
-  #error "NALib can not work properly with chars unequal 8 bits."
-#endif
-
-
-#ifdef __SIZEOF_INT128__
+// 128 bits native datatype
+#if defined NA_TYPE_INT128
   #ifndef UINT128_MAX
     #define UINT128_MAX  (0xffffffffffffffffffffffffffffffffu)
   #endif
@@ -75,9 +80,23 @@ typedef int NABool;
   #ifndef INT128_MIN
     #define INT128_MIN   (0x80000000000000000000000000000001 - 1)
   #endif
+
+  #define NA_MAX_128u  UINT128_MAX
+  #define NA_MAX_128   INT128_MAX
+  #define NA_MIN_128   INT128_MIN
+  typedef unsigned __int128   uint128;
+  typedef signed   __int128   int128;
+  // Note that older versions define these types. Maybe add them later.
+  // typedef unsigned __int128_t   uint128;
+  // typedef signed   __int128_t   int128;
+  #define NA_ZERO_128     naMakeInt128WithLo(NA_ZERO_64)
+  #define NA_ONE_128      naMakeInt128WithLo(NA_ONE_64)
+  #define NA_ZERO_128u    naMakeUInt128WithLo(NA_ZERO_64u)
+  #define NA_ONE_128u     naMakeUInt128WithLo(NA_ONE_64u)
 #endif
 
-  #ifdef __SIZEOF_INT256__
+// 256 bits native datatype
+#if defined NA_TYPE_INT256
   #ifndef UINT256_MAX
     #define UINT256_MAX  (0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffu)
   #endif
@@ -87,354 +106,22 @@ typedef int NABool;
   #ifndef INT256_MIN
     #define INT256_MIN   (0x8000000000000000000000000000000000000000000000000000000000000001 - 1)
   #endif
-#endif
 
-
-
-// We test if the current system has a (positive) integer encoding suitable for
-// NALib. Some obscure compilers might handle this differently.
-#if (0x0100 >> 8) != 0x01
-  #error "Unknown integer number encoding. NALib might not compile or run."
-#endif
-
-
-
-// We test what encoding is used for negative integers. With this knowledge,
-// certain tasks can be speeded up a bit.
-#if   (-1 & 3) == 3
-  #define NA_SIGNED_INTEGER_ENCODING NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
-#elif (-1 & 3) == 2
-  #define NA_SIGNED_INTEGER_ENCODING NA_SIGNED_INTEGER_ENCODING_ONES_COMPLEMENT
-#elif (-1 & 3) == 1
-  #define NA_SIGNED_INTEGER_ENCODING NA_SIGNED_INTEGER_ENCODING_SIGN_MAGNITUDE
-#else
-  #define NA_SIGNED_INTEGER_ENCODING NA_SIGNED_INTEGER_ENCODING_UNKNOWN
-  #error "Invalid signed integer encoding. NALib might not work properly."
-#endif
-
-
-
-// First, we find out, which bit lengths we have for the (old) integer types
-// like int, short and long. Agreed, this is very expressive, but we must be
-// very precise in that respect to guarantee universality.
-
-// char
-#if UCHAR_MAX == 0xffu
-  #define NA_TYPE_NATIVE_CHAR_BITS NA_TYPE8_BITS
-#elif UCHAR_MAX == 0xffffu
-  #define NA_TYPE_NATIVE_CHAR_BITS NA_TYPE16_BITS
-#endif
-#ifndef NA_TYPE_NATIVE_CHAR_BITS
-  #warning "NALib will make assumptions about the native size of a char."
-  #define NA_TYPE_NATIVE_CHAR_BITS NA_TYPE8_BITS
-#endif
-
-// short
-#if USHRT_MAX == 0xffffu
-  #define NA_TYPE_NATIVE_SHORT_INT_BITS NA_TYPE16_BITS
-#elif USHRT_MAX == 0xffffffffu
-  #define NA_TYPE_NATIVE_SHORT_INT_BITS NA_TYPE32_BITS
-#endif
-#ifndef NA_TYPE_NATIVE_SHORT_INT_BITS
-  #warning "NALib will make assumptions about the native size of a short."
-  #define NA_TYPE_NATIVE_SHORT_INT_BITS NA_TYPE16_BITS
-#endif
-
-// int
-#if UINT_MAX == 0xffffu
-  #define NA_TYPE_NATIVE_INT_BITS NA_TYPE16_BITS
-#elif UINT_MAX == 0xffffffffu
-  #define NA_TYPE_NATIVE_INT_BITS NA_TYPE32_BITS
-#elif UINT_MAX == 0xffffffffffffffffuLL
-  #define NA_TYPE_NATIVE_INT_BITS NA_TYPE64_BITS
-#endif
-#ifndef NA_TYPE_NATIVE_INT_BITS
-  #warning "NALib will make assumptions about the native size of an int."
-  #define NA_TYPE_NATIVE_INT_BITS NA_TYPE32_BITS
-#endif
-
-// long
-#if ULONG_MAX == 0xffffffffu
-  #define NA_TYPE_NATIVE_LONG_INT_BITS NA_TYPE32_BITS
-#elif ULONG_MAX == 0xffffffffffffffffuLL
-  #define NA_TYPE_NATIVE_LONG_INT_BITS NA_TYPE64_BITS
-#endif
-#ifndef NA_TYPE_NATIVE_LONG_INT_BITS
-  #warning "NALib will make assumptions about the native size of a long."
-  #define NA_TYPE_NATIVE_LONG_INT_BITS NA_TYPE32_BITS
-#endif
-
-// long long
-#if ULLONG_MAX == 0xffffffffffffffffuLL
-  #define NA_TYPE_NATIVE_LONG_LONG_INT_BITS NA_TYPE64_BITS
-#endif
-#ifndef NA_TYPE_NATIVE_LONG_LONG_INT_BITS
-  #warning "NALib will make assumptions about the native size of a long long."
-  #define NA_TYPE_NATIVE_LONG_LONG_INT_BITS NA_TYPE64_BITS
-#endif
-
-
-
-// Make a reverse mapping towards which bit width corresponds to which.
-// native type. The author is perfectly aware that this is a little
-// over the top, but it allows for a preference and helps for later
-// PRI and SCN macros.
-
-#define NA_TYPE_NATIVE_CHAR           0
-#define NA_TYPE_NATIVE_SHORT_INT      1
-#define NA_TYPE_NATIVE_INT            2
-#define NA_TYPE_NATIVE_LONG_INT       3
-#define NA_TYPE_NATIVE_LONG_LONG_INT  4
-#define NA_TYPE_NATIVE_INT_128        5
-#define NA_TYPE_NATIVE_INT_256        6
-
-// The following tests will define the macros
-// NA_TYPE_INT8
-// NA_TYPE_INT16
-// NA_TYPE_INT32
-// NA_TYPE_INT64
-// NA_TYPE_INT128
-// NA_TYPE_INT256
-// which, when defined, denote one of the upper native types.
-// If undefined, no native representation is possible.
-
-// 8 Bits: Should be char. Otherwise, we might have a "slight" problem.
-#if NA_TYPE_NATIVE_CHAR_BITS == NA_TYPE8_BITS
-  #define NA_TYPE_INT8 NA_TYPE_NATIVE_CHAR
-#else
-  #error "We have a slight problem. Char type is not 8 bits"
-#endif
-
-// 16 Bits: Preference is first short, then int
-#if NA_TYPE_NATIVE_SHORT_INT_BITS == NA_TYPE16_BITS
-  #define NA_TYPE_INT16 NA_TYPE_NATIVE_SHORT_INT
-#elif NA_TYPE_NATIVE_INT_BITS == NA_TYPE16_BITS
-  #define NA_TYPE_INT16 NA_TYPE_NATIVE_INT
-#endif
-
-// 32 Bits: Preference is first int, then long, then short
-#if NA_TYPE_NATIVE_INT_BITS == NA_TYPE32_BITS
-  #define NA_TYPE_INT32 NA_TYPE_NATIVE_INT
-#elif NA_TYPE_NATIVE_LONG_INT_BITS == NA_TYPE32_BITS
-  #define NA_TYPE_INT32 NA_TYPE_NATIVE_LONG_INT
-#elif NA_TYPE_NATIVE_SHORT_INT_BITS == NA_TYPE32_BITS
-  #define NA_TYPE_INT32 NA_TYPE_NATIVE_SHORT_INT
-#endif
-
-// 64 Bits: Preference is first long long, then long, then int
-// Special case for MSVC compiler 6.0: Use __int64
-#if NA_TYPE_NATIVE_LONG_LONG_INT_BITS == NA_TYPE64_BITS
-  #define NA_TYPE_INT64 NA_TYPE_NATIVE_LONG_LONG_INT
-#elif NA_TYPE_NATIVE_LONG_INT_BITS == NA_TYPE64_BITS
-  #define NA_TYPE_INT64 NA_TYPE_NATIVE_LONG_INT
-#elif NA_TYPE_NATIVE_INT_BITS == NA_TYPE64_BITS
-  #define NA_TYPE_INT64 NA_TYPE_NATIVE_INT
-#endif
-
-// 128 Bits: Dependent on the system/compiler/extension.
-#ifdef __SIZEOF_INT128__
-  #define NA_TYPE_INT128 NA_TYPE_NATIVE_INT_128
-#endif
-
-// 256 Bits: Dependent on the system/compiler/extension.
-#ifdef __SIZEOF_INT256__
-  #define NA_TYPE_INT256 NA_TYPE_NATIVE_INT_256
-#endif
-
-#define NA_PRINTF_CHAR_PREFIX "hh"
-#define NA_PRINTF_LONG_LONG_PREFIX "ll"
-
-// Note that the following macros are defined using the values provided in
-// the <limits.h> header file.
-
-// 8 bits
-#if NA_TYPE_INT8 == NA_TYPE_NATIVE_CHAR
-  #define NA_UINT8_MAX  UCHAR_MAX
-  #define NA_INT8_MAX   SCHAR_MAX
-  #define NA_INT8_MIN   SCHAR_MIN
-  typedef unsigned char uint8;
-  typedef signed char   int8;
-  #define NA_ZERO_8     (0)
-  #define NA_ONE_8      (1)
-  #define NA_ZERO_8u    (0u)
-  #define NA_ONE_8u     (1u)
-  #define NA_PRIi8      NA_PRINTF_CHAR_PREFIX "d"
-  #define NA_PRIu8      NA_PRINTF_CHAR_PREFIX "u"
-  #define NA_PRIx8      NA_PRINTF_CHAR_PREFIX "x"
-  #define NA_SCNi8      NA_PRINTF_CHAR_PREFIX "d"
-  #define NA_SCNu8      NA_PRINTF_CHAR_PREFIX "u"
-#endif
-
-// 16 bits
-#if NA_TYPE_INT16 == NA_TYPE_NATIVE_CHAR
-  #define NA_UINT16_MAX  UCHAR_MAX
-  #define NA_INT16_MAX   SCHAR_MAX
-  #define NA_INT16_MIN   SCHAR_MIN
-  typedef unsigned char  uint16;
-  typedef signed char    int16;
-  #define NA_ZERO_16     (0)
-  #define NA_ONE_16      (1)
-  #define NA_ZERO_16u    (0u)
-  #define NA_ONE_16u     (1u)
-  #define NA_PRIi16      NA_PRINTF_CHAR_PREFIX "d"
-  #define NA_PRIu16      NA_PRINTF_CHAR_PREFIX "u"
-  #define NA_PRIx16      NA_PRINTF_CHAR_PREFIX "x"
-  #define NA_SCNi16      NA_PRINTF_CHAR_PREFIX "d"
-  #define NA_SCNu16      NA_PRINTF_CHAR_PREFIX "u"
-#elif NA_TYPE_INT16 == NA_TYPE_NATIVE_SHORT_INT
-  #define NA_UINT16_MAX  USHRT_MAX
-  #define NA_INT16_MAX   SHRT_MAX
-  #define NA_INT16_MIN   SHRT_MIN
-  typedef unsigned short uint16;
-  typedef signed short   int16;
-  #define NA_ZERO_16     (0)
-  #define NA_ONE_16      (1)
-  #define NA_ZERO_16u    (0u)
-  #define NA_ONE_16u     (1u)
-  #define NA_PRIi16      "hd"
-  #define NA_PRIu16      "hu"
-  #define NA_PRIx16      "hx"
-  #define NA_SCNi16      "hd"
-  #define NA_SCNu16      "hu"
-#endif
-
-// 32 bits
-#if NA_TYPE_INT32 == NA_TYPE_NATIVE_SHORT_INT
-  #define NA_UINT32_MAX  USHRT_MAX
-  #define NA_INT32_MAX   SHRT_MAX
-  #define NA_INT32_MIN   SHRT_MIN
-  typedef unsigned short uint32;
-  typedef signed short   int32;
-  #define NA_ZERO_32     (0)
-  #define NA_ONE_32      (1)
-  #define NA_ZERO_32u    (0u)
-  #define NA_ONE_32u     (1u)
-  #define NA_PRIi32      "hd"
-  #define NA_PRIu32      "hu"
-  #define NA_PRIx32      "hx"
-  #define NA_SCNi32      "hd"
-  #define NA_SCNu32      "hu"
-#elif NA_TYPE_INT32 == NA_TYPE_NATIVE_INT
-  #define NA_UINT32_MAX  UINT_MAX
-  #define NA_INT32_MAX   INT_MAX
-  #define NA_INT32_MIN   INT_MIN
-  typedef unsigned int   uint32;
-  typedef signed int     int32;
-  #define NA_ZERO_32     (0)
-  #define NA_ONE_32      (1)
-  #define NA_ZERO_32u    (0u)
-  #define NA_ONE_32u     (1u)
-  #define NA_PRIi32      "d"
-  #define NA_PRIu32      "u"
-  #define NA_PRIx32      "x"
-  #define NA_SCNi32      "d"
-  #define NA_SCNu32      "u"
-#elif NA_TYPE_INT32 == NA_TYPE_NATIVE_LONG_INT
-  #define NA_UINT32_MAX  ULONG_MAX
-  #define NA_INT32_MAX   LONG_MAX
-  #define NA_INT32_MIN   LONG_MIN
-  typedef unsigned long  uint32;
-  typedef signed long    int32;
-  #define NA_ZERO_32     (0L)
-  #define NA_ONE_32      (1L)
-  #define NA_ZERO_32u    (0uL)
-  #define NA_ONE_32u     (1uL)
-  #define NA_PRIi32      "ld"
-  #define NA_PRIu32      "lu"
-  #define NA_PRIx32      "lx"
-  #define NA_SCNi32      "ld"
-  #define NA_SCNu32      "lu"
-#endif
-
-// 64 bits
-#if NA_TYPE_INT64 == NA_TYPE_NATIVE_INT
-  #define NA_UINT64_MAX  UINT_MAX
-  #define NA_INT64_MAX   INT_MAX
-  #define NA_INT64_MIN   INT_MIN
-  typedef unsigned int   uint64;
-  typedef signed int     int64;
-  #define NA_ZERO_64     (0)
-  #define NA_ONE_64      (1)
-  #define NA_ZERO_64u    (0u)
-  #define NA_ONE_64u     (1u)
-  #define NA_PRIi64      "d"
-  #define NA_PRIu64      "u"
-  #define NA_PRIx64      "x"
-  #define NA_SCNi64      "d"
-  #define NA_SCNu64      "u"
-#elif NA_TYPE_INT64 == NA_TYPE_NATIVE_LONG_INT
-  #define NA_UINT64_MAX  ULONG_MAX
-  #define NA_INT64_MAX   LONG_MAX
-  #define NA_INT64_MIN   LONG_MIN
-  typedef unsigned long  uint64;
-  typedef signed long    int64;
-  #define NA_ZERO_64     (0L)
-  #define NA_ONE_64      (1L)
-  #define NA_ZERO_64u    (0uL)
-  #define NA_ONE_64u     (1uL)
-  #define NA_PRIi64      "ld"
-  #define NA_PRIu64      "lu"
-  #define NA_PRIx64      "lx"
-  #define NA_SCNi64      "ld"
-  #define NA_SCNu64      "lu"
-#elif NA_TYPE_INT64 == NA_TYPE_NATIVE_LONG_LONG_INT
-	#define NA_UINT64_MAX  ULLONG_MAX
-	#define NA_INT64_MAX   LLONG_MAX
-	#define NA_INT64_MIN   LLONG_MIN
-	typedef unsigned long long   uint64;
-	typedef signed long long     int64;
-	#define NA_ZERO_64     (0LL)
-	#define NA_ONE_64      (1LL)
-	#define NA_ZERO_64u    (0uLL)
-	#define NA_ONE_64u     (1uLL)
-	#define NA_PRIi64      NA_PRINTF_LONG_LONG_PREFIX "d"
-	#define NA_PRIu64      NA_PRINTF_LONG_LONG_PREFIX "u"
-	#define NA_PRIx64      NA_PRINTF_LONG_LONG_PREFIX "x"
-	#define NA_SCNi64      NA_PRINTF_LONG_LONG_PREFIX "d"
-	#define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
-#endif
-
-// 128 bits
-#if NA_TYPE_INT128 == NA_TYPE_NATIVE_INT_128
-  #define NA_UINT128_MAX  UINT128_MAX
-  #define NA_INT128_MAX   INT128_MAX
-  #define NA_INT128_MIN   INT128_MIN
-  typedef unsigned __int128   uint128;
-  typedef signed   __int128   int128;
-  // Note that older versions define these types. Maybe add them later.
-  // typedef unsigned __int128_t   uint128;
-  // typedef signed   __int128_t   int128;
-  #define NA_ZERO_128     (0)  // There is no suffix LLL, so, just omit it. 
-  #define NA_ONE_128      (1)
-  #define NA_ZERO_128u    (0u)
-  #define NA_ONE_128u     (1u)
-  #define NA_PRIi128      "d CANTSHOWi128 "
-  #define NA_PRIu128      "u CANTSHOWi128 "
-  #define NA_PRIx128      "x CANTSHOWi128 "
-  #define NA_SCNi128      "d CANTSHOWi128 "
-  #define NA_SCNu128      "u CANTSHOWi128 "
-#endif
-
-// 256 bits
-#if NA_TYPE_INT256 == NA_TYPE_NATIVE_INT_256
-  #define NA_UINT256_MAX  UINT256_MAX
-  #define NA_INT256_MAX   INT256_MAX
-  #define NA_INT256_MIN   INT256_MIN
+  #define NA_MAX_256u  UINT256_MAX
+  #define NA_MAX_256   INT256_MAX
+  #define NA_256_128   INT256_MIN
   typedef unsigned __int256   uint256;
   typedef signed   __int256   int256;
   // Note that older versions define these types. Maybe add them later.
   // typedef unsigned __int256_t   uint256;
   // typedef signed   __int256_t   int256;
-  #define NA_ZERO_256     (0)  // There is no suffix LLLL, so, just omit it. 
-  #define NA_ONE_256      (1)
-  #define NA_ZERO_256u    (0u)
-  #define NA_ONE_256u     (1u)
-  #define NA_PRIi256      "d CANTSHOWi256 "
-  #define NA_PRIu256      "u CANTSHOWi256 "
-  #define NA_PRIx256      "x CANTSHOWi256 "
-  #define NA_SCNi256      "d CANTSHOWi256 "
-  #define NA_SCNu256      "u CANTSHOWi256 "
+  #define NA_ZERO_256     naMakeInt256WithLo(NA_ZERO_128)
+  #define NA_ONE_256      naMakeInt256WithLo(NA_ONE_128)
+  #define NA_ZERO_256u    naMakeInt256WithLo(NA_ZERO_128u)
+  #define NA_ONE_256u     naMakeInt256WithLo(NA_ONE_128u)
 #endif
+
+
 
 // NAInt and NAUInt
 //
@@ -502,9 +189,9 @@ typedef int NABool;
 
 // In case, there was no int64 defined before, we have to emulate it now.
 #if !defined NA_TYPE_INT64
-  #define NA_UINT64_MAX  naMakeUInt64(NA_UINT32_MAX, NA_UINT32_MAX)
-  #define NA_INT64_MAX   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_INT32_MAX, NA_UINT32_MAX))
-  #define NA_INT64_MIN   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_INT32_MIN, NA_UINT32_MAX))
+  #define NA_MAX_64u  naMakeUInt64(NA_MAX_32u, NA_MAX_32u)
+  #define NA_MAX_64   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_MAX_32, NA_MAX_32u))
+  #define NA_MIN_64   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_MIN_32, NA_MAX_32u))
   typedef NAInt64        int64;
   typedef NAUInt64       uint64;
   #define NA_ZERO_64     (naMakeInt64WithLo(NA_ZERO_32))
@@ -520,9 +207,9 @@ typedef int NABool;
 
 // In case, there was no int128 defined before, we have to emulate it now.
 #if !defined NA_TYPE_INT128
-  #define NA_UINT128_MAX  naMakeUInt128(NA_UINT64_MAX, NA_UINT64_MAX)
-  #define NA_INT128_MAX   naCastUInt128ToInt128(naMakeUInt128(naCastInt64ToUInt64(NA_INT64_MAX), NA_UINT64_MAX))
-  #define NA_INT128_MIN   naCastUInt128ToInt128(naMakeUInt128(naCastInt64ToUInt64(NA_INT64_MIN), NA_UINT64_MAX))
+  #define NA_MAX_128u  naMakeUInt128(NA_MAX_64u, NA_MAX_64u)
+  #define NA_MAX_128   naCastUInt128ToInt128(naMakeUInt128(naCastInt64ToUInt64(NA_MAX_64), NA_MAX_64u))
+  #define NA_MIN_128   naCastUInt128ToInt128(naMakeUInt128(naCastInt64ToUInt64(NA_MIN_64), NA_MAX_64u))
   typedef NAInt128        int128;
   typedef NAUInt128       uint128;
   #define NA_ZERO_128     (naMakeInt128WithLo(NA_ZERO_64))
@@ -538,9 +225,9 @@ typedef int NABool;
 
 // In case, there was no int256 defined before, we have to emulate it now.
 #if !defined NA_TYPE_INT256
-  #define NA_UINT256_MAX  naMakeUInt256(NA_UINT128_MAX, NA_UINT128_MAX)
-  #define NA_INT256_MAX   naCastUInt256ToInt256(naMakeUInt256(naCastInt128ToUInt128(NA_INT128_MAX), NA_UINT128_MAX))
-  #define NA_INT256_MIN   naCastUInt256ToInt256(naMakeUInt256(naCastInt128ToUInt128(NA_INT128_MIN), NA_UINT128_MAX))
+  #define NA_MAX_256u  naMakeUInt256(NA_MAX_128u, NA_MAX_128u)
+  #define NA_MAX_256   naCastUInt256ToInt256(naMakeUInt256(naCastInt128ToUInt128(NA_MAX_128), NA_MAX_128u))
+  #define NA_256_128   naCastUInt256ToInt256(naMakeUInt256(naCastInt128ToUInt128(NA_MIN_128), NA_MAX_128u))
   typedef NAInt256        int256;
   typedef NAUInt256       uint256;
   #define NA_ZERO_256     (naMakeInt256WithLo(NA_ZERO_128))
@@ -568,9 +255,9 @@ typedef int NABool;
   #define NA_PRIx NA_PRIx64
   #define NA_SCNi NA_SCNi64
   #define NA_SCNu NA_SCNu64
-  #define NA_INT_MAX NA_INT64_MAX
-  #define NA_INT_MIN NA_INT64_MIN
-  #define NA_UINT_MAX NA_UINT64_MAX
+  #define NA_INT_MAX NA_MAX_64
+  #define NA_INT_MIN NA_MIN_64
+  #define NA_UINT_MAX NA_MAX_64u
   #define NA_ZERO NA_ZERO_64
   #define NA_ONE  NA_ONE_64
 #elif NA_TYPE_NAINT_BITS == NA_TYPE32_BITS
@@ -581,9 +268,9 @@ typedef int NABool;
   #define NA_PRIx NA_PRIx32
   #define NA_SCNi NA_SCNi32
   #define NA_SCNu NA_SCNu32
-  #define NA_INT_MAX NA_INT32_MAX
-  #define NA_INT_MIN NA_INT32_MIN
-  #define NA_UINT_MAX NA_UINT32_MAX
+  #define NA_INT_MAX NA_MAX_32
+  #define NA_INT_MIN NA_MIN_32
+  #define NA_UINT_MAX NA_MAX_32u
   #define NA_ZERO NA_ZERO_32
   #define NA_ONE  NA_ONE_32
 #elif NA_TYPE_NAINT_BITS == NA_TYPE16_BITS
@@ -594,9 +281,9 @@ typedef int NABool;
   #define NA_PRIx NA_PRIx16
   #define NA_SCNi NA_SCNi16
   #define NA_SCNu NA_SCNu16
-  #define NA_INT_MAX NA_INT16_MAX
-  #define NA_INT_MIN NA_INT16_MIN
-  #define NA_UINT_MAX NA_UINT16_MAX
+  #define NA_INT_MAX NA_MAX_16
+  #define NA_INT_MIN NA_MIN_16
+  #define NA_UINT_MAX NA_MAX_16u
   #define NA_ZERO NA_ZERO_16
   #define NA_ONE  NA_ONE_16
 #else

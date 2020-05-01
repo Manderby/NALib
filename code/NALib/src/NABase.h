@@ -26,9 +26,10 @@
 #include "NABase/NALanguage.h"
 
 // declaring base types and related stuff
+#include "NABase/NAEncoding.h"
+#include "NABase/NAChar.h"
 #include "NABase/NAInteger.h"
 #include "NABase/NAFloatingPoint.h"
-#include "NABase/NAChar.h"
 #include "NABase/NANumerics.h"
 
 // Enabling the code to use debugger runtime testing (DRT)

@@ -42,7 +42,7 @@
 
 
     #undef naIncInt64
-    #define naIncInt64(i) (i.hi += (i.lo == NA_UINT32_MAX), i.lo++, i)
+    #define naIncInt64(i) (i.hi += (i.lo == NA_MAX_32u), i.lo++, i)
     #undef naDecInt64
     #define naDecInt64(i) (i.hi -= (i.lo == NA_ZERO_32u), i.lo--, i)
 
@@ -219,7 +219,7 @@
 
 
     #undef naIncUInt64
-    #define naIncUInt64(i) (i.hi += (i.lo == NA_UINT32_MAX), i.lo += 1, i)
+    #define naIncUInt64(i) (i.hi += (i.lo == NA_MAX_32u), i.lo += 1, i)
     #undef naDecUInt64
     #define naDecUInt64(i) (i.hi -= (i.lo == NA_ZERO_32u), i.lo -= 1, i)
 
@@ -238,13 +238,13 @@
     NA_IDEF NAUInt64 naMulUInt64(NAUInt64 a, NAUInt64 b){
       NAUInt64 retInt = NA_ZERO_64u;
 
-      uint32 a0 = a.lo & NA_UINT16_MAX;
+      uint32 a0 = a.lo & NA_MAX_16u;
       uint32 a1 = a.lo >> 16;
-      uint32 a2 = a.hi & NA_UINT16_MAX;
+      uint32 a2 = a.hi & NA_MAX_16u;
       uint32 a3 = a.hi >> 16;
-      uint32 b0 = b.lo & NA_UINT16_MAX;
+      uint32 b0 = b.lo & NA_MAX_16u;
       uint32 b1 = b.lo >> 16;
-      uint32 b2 = b.hi & NA_UINT16_MAX;
+      uint32 b2 = b.hi & NA_MAX_16u;
       uint32 b3 = b.hi >> 16;
       uint32 a0b1 = a0 * b1;
       uint32 a1b0 = a1 * b0;

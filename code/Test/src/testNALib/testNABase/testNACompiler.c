@@ -4,28 +4,51 @@
 
 #include "../../testNALib.h"
 
+void printNACompiler(){
+  printf("NACompiler.h:" NA_NL);
+  
+  int def = 0;
+  #if defined NA_C90
+    def = 1;
+  #endif
+  printMacroDefined    (NA_C90, def);
 
+  def = 0;
+  #if defined NA_C95
+    def = 1;
+  #endif
+  printMacroDefined    (NA_C95, def);
 
-const char* na_memalign_enum_strings[] = {
-  "Custom",
-  "aligned_alloc",
-  "Posix"
-};
+  def = 0;
+  #if defined NA_C99
+    def = 1;
+  #endif
+  printMacroDefined    (NA_C99, def);
 
-void printNAConfiguration(){
-  printf("NAConfiguration.h:" NA_NL);
-  printMacroIntSpecial   (NA_PREFERRED_NAINT_BITS, 0, "Automatic");
-  printMacroIntYesNo     (NA_CONFIG_COMPILE_OPENGL);
-  printMacroIntYesNo     (NA_CONFIG_COMPILE_GUI);
-  printMacroIntYesNo     (NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6);
-  printMacroEnum         (NA_MEMALIGN, na_memalign_enum_strings, 3);
-  printMacroIntSpecialHex(NA_POOLPART_BYTESIZE, 0, "Memory Page Size");
-  printMacroIntYesNo     (NA_MEMORY_POOL_AGGRESSIVE_CLEANUP);
-  printMacroIntSpecial   (NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT, 0, "No autocollect");
-  printMacroIntSpecial   (NA_BUFFER_PART_BYTESIZE, 0, "Memory Page Size");
-  printMacroIntYesNo     (NA_STRING_ALWAYS_CACHE);
-  printMacroIntYesNo     (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION);
-  printMacroInt          (NA_NIST_CODATA_YEAR);
+  def = 0;
+  #if defined NA_C11
+    def = 1;
+  #endif
+  printMacroDefined    (NA_C11, def);
+
+  def = 0;
+  #if defined NA_CPP98
+    def = 1;
+  #endif
+  printMacroDefined    (NA_CPP98, def);
+
+  def = 0;
+  #if defined NA_CPP11
+    def = 1;
+  #endif
+  printMacroDefined    (NA_CPP11, def);
+
+  def = 0;
+  #if defined NA_CPP14
+    def = 1;
+  #endif
+  printMacroDefined    (NA_CPP14, def);
+
   printf(NA_NL);
 }
 

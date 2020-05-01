@@ -16,6 +16,7 @@
 
 void printNAConfiguration();
 void printNAEnvironment();
+void printNACompiler();
 
 
 // Copyright (c) NALib, Tobias Stamm
