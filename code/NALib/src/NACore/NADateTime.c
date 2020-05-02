@@ -819,7 +819,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
   NA_DEF struct timespec naMakeTimeSpecFromDateTime(const NADateTime* datetime){
     struct timespec timesp;
     NAInt taiperiod = naGetTAIPeriodIndexForSISecond(datetime->sisec);
-    #if NA_TYPE_NATIVE_LONG_INT_BITS == 32
+    #if NA_TYPE_NATIVE_LONG_BITS == 32
       timesp.tv_sec = (__darwin_time_t)naCastInt64ToInt32(naSubInt64(datetime->sisec, naSubInt64(naTAIPeriods[taiperiod].startsisec, naTAIPeriods[taiperiod].startgregsec)));
       timesp.tv_sec -= (__darwin_time_t)naCastInt64ToInt32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
     #else
@@ -866,7 +866,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
     NADateTime datetime;
     NAInt64 datetimesec;
     datetime.errornum = NA_DATETIME_ERROR_NONE;
-    #if NA_TYPE_NATIVE_LONG_INT_BITS == 32
+    #if NA_TYPE_NATIVE_LONG_BITS == 32
       datetimesec = naMakeInt64WithLo((int32)timesp->tv_sec + naCastInt64ToInt32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO));
     #else
       #if !defined NA_TYPE_INT64

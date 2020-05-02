@@ -154,6 +154,7 @@
     <ClCompile Include="src\testNALib.c" />
     <ClCompile Include="src\testNALib\testNABase\testNACompiler.c" />
     <ClCompile Include="src\testNALib\testNABase\testNAConfiguration.c" />
+    <ClCompile Include="src\testNALib\testNABase\testNAEncoding.c" />
     <ClCompile Include="src\testNALib\testNABase\testNAEnvironment.c" />
     <ClCompile Include="src\testNALib\testNABase\testNALanguage.c" />
   </ItemGroup>

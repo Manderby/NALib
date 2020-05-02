@@ -95,7 +95,7 @@
 #else
   // if no native int128 type is available, we have to emulate it.
 
-  #if NA_SIGNED_INTEGER_ENCODING != NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+  #if NA_SIGN_ENCODING != NA_SIGN_ENCODING_TWOS_COMPLEMENT
 
     #error "NAInt128 is unavailable for the current signed integer encoding"
 

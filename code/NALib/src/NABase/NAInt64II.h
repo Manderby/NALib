@@ -15,7 +15,7 @@
   NA_IDEF NAInt64 naMakeInt64WithLo(int32 lo){return (NAInt64)lo;}
   NA_IDEF NAInt64 naMakeInt64WithDouble(double lo){return (NAInt64)lo;}
 #else
-  #if NA_SIGNED_INTEGER_ENCODING != NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+  #if NA_SIGN_ENCODING != NA_SIGN_ENCODING_TWOS_COMPLEMENT
 
     #error "The NAInt64 emulation is not provided for the current signed integer encoding"
 
@@ -448,7 +448,7 @@
     }
 
 
-  #endif // NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+  #endif // NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
 #endif // defined NA_TYPE_INT64
 
 

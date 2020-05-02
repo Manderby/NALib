@@ -11,9 +11,10 @@
 
 
 // We gather basic information about integer types from the standardized
-// limits.h library
+// limits.h and stdint.h libraries.
 #include <limits.h>
 #include <stdint.h>
+
 
 
 // Currently, NALib assumes a Byte to consist of precisely 8 bits. This is
@@ -23,8 +24,8 @@
 #if CHAR_BIT != NA_TYPE8_BITS
   #error "NALib can not work properly with chars unequal 8 bits."
 #endif
-// We test if the current system has a (positive) integer encoding suitable for
-// NALib. Some obscure compilers might handle this differently.
+// We test if the current system has a (positive) integer encoding suitable
+// for NALib. Some obscure compilers might handle this differently.
 #if (0x0100 >> 8) != 0x01
   #error "Unknown integer number encoding. NALib might not compile or run."
 #endif
@@ -32,23 +33,23 @@
 
 
 // The various signed integer encodings:
-#define NA_SIGNED_INTEGER_ENCODING_UNKNOWN          0
-#define NA_SIGNED_INTEGER_ENCODING_SIGN_MAGNITUDE   1
-#define NA_SIGNED_INTEGER_ENCODING_ONES_COMPLEMENT  2
-#define NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT  3
+#define NA_SIGN_ENCODING_UNKNOWN          0
+#define NA_SIGN_ENCODING_SIGN_MAGNITUDE   1
+#define NA_SIGN_ENCODING_ONES_COMPLEMENT  2
+#define NA_SIGN_ENCODING_TWOS_COMPLEMENT  3
 
 
 
 // We test what encoding is used for negative integers. With this knowledge,
 // certain tasks can be speeded up a bit.
 #if   (-1 & 3) == 3
-  #define NA_SIGNED_INTEGER_ENCODING NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+  #define NA_SIGN_ENCODING NA_SIGN_ENCODING_TWOS_COMPLEMENT
 #elif (-1 & 3) == 2
-  #define NA_SIGNED_INTEGER_ENCODING NA_SIGNED_INTEGER_ENCODING_ONES_COMPLEMENT
+  #define NA_SIGN_ENCODING NA_SIGN_ENCODING_ONES_COMPLEMENT
 #elif (-1 & 3) == 1
-  #define NA_SIGNED_INTEGER_ENCODING NA_SIGNED_INTEGER_ENCODING_SIGN_MAGNITUDE
+  #define NA_SIGN_ENCODING NA_SIGN_ENCODING_SIGN_MAGNITUDE
 #else
-  #define NA_SIGNED_INTEGER_ENCODING NA_SIGNED_INTEGER_ENCODING_UNKNOWN
+  #define NA_SIGN_ENCODING NA_SIGN_ENCODING_UNKNOWN
   #error "Invalid signed integer encoding. NALib might not work properly."
 #endif
 
@@ -65,19 +66,19 @@
   #define NA_TYPE_NATIVE_CHAR_BITS NA_TYPE16_BITS
 #endif
 #ifndef NA_TYPE_NATIVE_CHAR_BITS
-  #warning "NALib will make assumptions about the native size of a char."
+  #warning "NALib will make assumptions about the native size of char."
   #define NA_TYPE_NATIVE_CHAR_BITS NA_TYPE8_BITS
 #endif
 
 // short
 #if USHRT_MAX == 0xffffu
-  #define NA_TYPE_NATIVE_SHORT_INT_BITS NA_TYPE16_BITS
+  #define NA_TYPE_NATIVE_SHORT_BITS NA_TYPE16_BITS
 #elif USHRT_MAX == 0xffffffffu
-  #define NA_TYPE_NATIVE_SHORT_INT_BITS NA_TYPE32_BITS
+  #define NA_TYPE_NATIVE_SHORT_BITS NA_TYPE32_BITS
 #endif
-#ifndef NA_TYPE_NATIVE_SHORT_INT_BITS
-  #warning "NALib will make assumptions about the native size of a short."
-  #define NA_TYPE_NATIVE_SHORT_INT_BITS NA_TYPE16_BITS
+#ifndef NA_TYPE_NATIVE_SHORT_BITS
+  #warning "NALib will make assumptions about the native size of short."
+  #define NA_TYPE_NATIVE_SHORT_BITS NA_TYPE16_BITS
 #endif
 
 // int
@@ -89,28 +90,28 @@
   #define NA_TYPE_NATIVE_INT_BITS NA_TYPE64_BITS
 #endif
 #ifndef NA_TYPE_NATIVE_INT_BITS
-  #warning "NALib will make assumptions about the native size of an int."
+  #warning "NALib will make assumptions about the native size of int."
   #define NA_TYPE_NATIVE_INT_BITS NA_TYPE32_BITS
 #endif
 
 // long
 #if ULONG_MAX == 0xffffffffu
-  #define NA_TYPE_NATIVE_LONG_INT_BITS NA_TYPE32_BITS
+  #define NA_TYPE_NATIVE_LONG_BITS NA_TYPE32_BITS
 #elif ULONG_MAX == 0xffffffffffffffffuLL
-  #define NA_TYPE_NATIVE_LONG_INT_BITS NA_TYPE64_BITS
+  #define NA_TYPE_NATIVE_LONG_BITS NA_TYPE64_BITS
 #endif
-#ifndef NA_TYPE_NATIVE_LONG_INT_BITS
-  #warning "NALib will make assumptions about the native size of a long."
-  #define NA_TYPE_NATIVE_LONG_INT_BITS NA_TYPE32_BITS
+#ifndef NA_TYPE_NATIVE_LONG_BITS
+  #warning "NALib will make assumptions about the native size of long."
+  #define NA_TYPE_NATIVE_LONG_BITS NA_TYPE32_BITS
 #endif
 
 // long long
 #if ULLONG_MAX == 0xffffffffffffffffuLL
-  #define NA_TYPE_NATIVE_LONG_LONG_INT_BITS NA_TYPE64_BITS
+  #define NA_TYPE_NATIVE_LONG_LONG_BITS NA_TYPE64_BITS
 #endif
-#ifndef NA_TYPE_NATIVE_LONG_LONG_INT_BITS
-  #warning "NALib will make assumptions about the native size of a long long."
-  #define NA_TYPE_NATIVE_LONG_LONG_INT_BITS NA_TYPE64_BITS
+#ifndef NA_TYPE_NATIVE_LONG_LONG_BITS
+  #warning "NALib will make assumptions about the native size of long long."
+  #define NA_TYPE_NATIVE_LONG_LONG_BITS NA_TYPE64_BITS
 #endif
 
 
@@ -124,10 +125,10 @@
 
 #define NA_TYPE_NATIVE_NONE           0
 #define NA_TYPE_NATIVE_CHAR           1
-#define NA_TYPE_NATIVE_SHORT_INT      2
+#define NA_TYPE_NATIVE_SHORT          2
 #define NA_TYPE_NATIVE_INT            3
-#define NA_TYPE_NATIVE_LONG_INT       4
-#define NA_TYPE_NATIVE_LONG_LONG_INT  5
+#define NA_TYPE_NATIVE_LONG           4
+#define NA_TYPE_NATIVE_LONG_LONG      5
 #define NA_TYPE_NATIVE_INT_128        6
 #define NA_TYPE_NATIVE_INT_256        7
 
@@ -139,8 +140,8 @@
 #endif
 
 // 16 Bits: Preference is first short, then int
-#if NA_TYPE16_BITS == NA_TYPE_NATIVE_SHORT_INT_BITS
-  #define NA_TYPE_INT16_REPRESENTATION NA_TYPE_NATIVE_SHORT_INT
+#if NA_TYPE16_BITS == NA_TYPE_NATIVE_SHORT_BITS
+  #define NA_TYPE_INT16_REPRESENTATION NA_TYPE_NATIVE_SHORT
 #elif NA_TYPE16_BITS == NA_TYPE_NATIVE_INT_BITS
   #define NA_TYPE_INT16_REPRESENTATION NA_TYPE_NATIVE_INT
 #else
@@ -150,20 +151,20 @@
 // 32 Bits: Preference is first int, then long, then short
 #if NA_TYPE32_BITS == NA_TYPE_NATIVE_INT_BITS
   #define NA_TYPE_INT32_REPRESENTATION NA_TYPE_NATIVE_INT
-#elif NA_TYPE32_BITS == NA_TYPE_NATIVE_LONG_INT_BITS
-  #define NA_TYPE_INT32_REPRESENTATION NA_TYPE_NATIVE_LONG_INT
-#elif NA_TYPE32_BITS == NA_TYPE_NATIVE_SHORT_INT_BITS
-  #define NA_TYPE_INT32_REPRESENTATION NA_TYPE_NATIVE_SHORT_INT
+#elif NA_TYPE32_BITS == NA_TYPE_NATIVE_LONG_BITS
+  #define NA_TYPE_INT32_REPRESENTATION NA_TYPE_NATIVE_LONG
+#elif NA_TYPE32_BITS == NA_TYPE_NATIVE_SHORT_BITS
+  #define NA_TYPE_INT32_REPRESENTATION NA_TYPE_NATIVE_SHORT
 #else
   #define NA_TYPE_INT32_REPRESENTATION NA_TYPE_NATIVE_NONE
 #endif
 
 // 64 Bits: Preference is first long long, then long, then int
 // Special case for MSVC compiler 6.0: Use __int64
-#if NA_TYPE64_BITS == NA_TYPE_NATIVE_LONG_LONG_INT_BITS
-  #define NA_TYPE_INT64_REPRESENTATION NA_TYPE_NATIVE_LONG_LONG_INT
-#elif NA_TYPE64_BITS == NA_TYPE_NATIVE_LONG_INT_BITS
-  #define NA_TYPE_INT64_REPRESENTATION NA_TYPE_NATIVE_LONG_INT
+#if NA_TYPE64_BITS == NA_TYPE_NATIVE_LONG_LONG_BITS
+  #define NA_TYPE_INT64_REPRESENTATION NA_TYPE_NATIVE_LONG_LONG
+#elif NA_TYPE64_BITS == NA_TYPE_NATIVE_LONG_BITS
+  #define NA_TYPE_INT64_REPRESENTATION NA_TYPE_NATIVE_LONG
 #elif NA_TYPE64_BITS == NA_TYPE_NATIVE_INT_BITS
   #define NA_TYPE_INT64_REPRESENTATION NA_TYPE_NATIVE_INT
 #else

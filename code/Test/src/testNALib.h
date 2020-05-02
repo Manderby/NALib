@@ -18,6 +18,7 @@ void printNAConfiguration();
 void printNAEnvironment();
 void printNACompiler();
 void printNALanguage();
+void printNAEncoding();
 
 void testNALanguage();
 

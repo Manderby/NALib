@@ -75,7 +75,7 @@ typedef char NAUTF8Char;
   #define NA_PRIx16      NA_PRINTF_CHAR_PREFIX "x"
   #define NA_SCNi16      NA_PRINTF_CHAR_PREFIX "d"
   #define NA_SCNu16      NA_PRINTF_CHAR_PREFIX "u"
-#elif NA_TYPE_INT16_REPRESENTATION == NA_TYPE_NATIVE_SHORT_INT
+#elif NA_TYPE_INT16_REPRESENTATION == NA_TYPE_NATIVE_SHORT
   #define NA_PRIi16      "hd"
   #define NA_PRIu16      "hu"
   #define NA_PRIx16      "hx"
@@ -84,7 +84,7 @@ typedef char NAUTF8Char;
 #endif
 
 // 32 bits
-#if NA_TYPE_INT32_REPRESENTATION == NA_TYPE_NATIVE_SHORT_INT
+#if NA_TYPE_INT32_REPRESENTATION == NA_TYPE_NATIVE_SHORT
   #define NA_PRIi32      "hd"
   #define NA_PRIu32      "hu"
   #define NA_PRIx32      "hx"
@@ -96,7 +96,7 @@ typedef char NAUTF8Char;
   #define NA_PRIx32      "x"
   #define NA_SCNi32      "d"
   #define NA_SCNu32      "u"
-#elif NA_TYPE_INT32_REPRESENTATION == NA_TYPE_NATIVE_LONG_INT
+#elif NA_TYPE_INT32_REPRESENTATION == NA_TYPE_NATIVE_LONG
   #define NA_PRIi32      "ld"
   #define NA_PRIu32      "lu"
   #define NA_PRIx32      "lx"
@@ -111,13 +111,13 @@ typedef char NAUTF8Char;
   #define NA_PRIx64      "x"
   #define NA_SCNi64      "d"
   #define NA_SCNu64      "u"
-#elif NA_TYPE_INT64_REPRESENTATION == NA_TYPE_NATIVE_LONG_INT
+#elif NA_TYPE_INT64_REPRESENTATION == NA_TYPE_NATIVE_LONG
   #define NA_PRIi64      "ld"
   #define NA_PRIu64      "lu"
   #define NA_PRIx64      "lx"
   #define NA_SCNi64      "ld"
   #define NA_SCNu64      "lu"
-#elif NA_TYPE_INT64_REPRESENTATION == NA_TYPE_NATIVE_LONG_LONG_INT
+#elif NA_TYPE_INT64_REPRESENTATION == NA_TYPE_NATIVE_LONG_LONG
 	#define NA_PRIi64      NA_PRINTF_LONG_LONG_PREFIX "d"
 	#define NA_PRIu64      NA_PRINTF_LONG_LONG_PREFIX "u"
 	#define NA_PRIx64      NA_PRINTF_LONG_LONG_PREFIX "x"

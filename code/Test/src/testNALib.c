@@ -23,6 +23,7 @@ int main(void){
   printNAEnvironment();
   printNACompiler();
   printNALanguage();
+  printNAEncoding();
 
   testNALanguage();
 

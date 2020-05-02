@@ -4,13 +4,13 @@
 
 
 
-#define NA_TEST_MAX_MACRO_LENGTH 40
+#define NA_TEST_MAX_MACRO_LENGTH 45
 
 #define printMacroHead(macro)\
 {\
   const char* macroStr = macro;\
   printf(macroStr);\
-  for(unsigned int c = 0; c < (NA_TEST_MAX_MACRO_LENGTH - strlen(macroStr)); c++){printf(" ");}\
+  for(int c = 0; c < (int)(NA_TEST_MAX_MACRO_LENGTH - strlen(macroStr)); c++){printf(" ");}\
 }
 
 #define isMacroDefinedButEmpty(macro)\

@@ -152,8 +152,8 @@
 // va_copy is defined since C99. But before, you had to use something like
 // the following if not available.
 // #define va_copy(d,s) ((d) = (s))
-// More "secure" methods were floating around, including memcpy calls and more
-// voodoo. Glad that it is standardized now.
+// More "secure" methods were floating around, including memcpy calls and
+// more voodoo. Glad that it is standardized now.
 
 #include <stdarg.h>
 
@@ -161,11 +161,12 @@
 
 // ////////////////////////
 // The following macro is used to suppress compiler warnings in functions
-// which do not make any use of a given parameter. This happens when function
-// signatures are chosen to match predefined function pointer types or shall
-// in general have a specific look. By using the given parameter as an
-// expression and casting the result to void makes the compiler think that
-// the parameter is evaluated but has the explicit order to not use the value.
+// which do not make any use of a given parameter. This happens when
+// function signatures are chosen to match predefined function pointer
+// types or shall in general have a specific look. By using the given
+// parameter as an expression and casting the result to void makes the
+// compiler think that the parameter is evaluated but has the explicit
+// order to not use the value.
 //
 // The compiler still may and in certain cases still WILL evaluate the value.
 // Be careful with this when using the volatile keyword!
@@ -188,29 +189,31 @@
 
 
 // ////////////////////////
-// Some container structs like NAArray or NAList provide naForeachXXX functions
-// with an additional parameter: An accessor or mutator callback with the
-// following signatures:
+// Some container structs like NAArray or NAList provide naForeachXXX
+// functions with an additional parameter: An accessor or mutator callback
+// with the following signatures:
 
 typedef void (*NAAccessor) (const void*);
 typedef void (*NAMutator)  (      void*);
 
-// This parameter allows you to provide a function pointer to an accessing or
-// mutation function which will be called for every element in the container.
+// This parameter allows you to provide a function pointer to an accessing
+// or mutation function which will be called for every element in the
+// container.
 //
 // You can use accessors or mutators to simply address all elements in a
-// container struct. But you can also use them to initialize all elements with
-// a call to naInitXXX and to desctruct all elements with a call to naClearXXX.
+// container struct. But you can also use them to initialize all elements
+// with a call to naInitXXX and to desctruct all elements with a call to
+// naClearXXX.
 //
 // IMPORTANT:
-// Beware that your accessor or mutator will always be called with a POINTER to
-// the content. If for example, you have an array of integers, your callback
-// will get values of type "int *". But if your array stores pointers to int,
-// your callback will get values of type "int **".
+// Beware that your accessor and/or mutator will always be called with
+// a POINTER to the content. If for example, you have an array of integers,
+// your callback will get values of type "int *". But if your array stores
+// pointers to int, your callback will get values of type "int **".
 //
 // Note that you can also use any of the functions of NALib as callback
-// functions as long as they accept only one data pointer parameter and return
-// void.
+// functions as long as they accept only one data pointer parameter and
+// return void.
 //
 // You may have to cast callback functions to "NAAccessor" or NAMutator".
 //

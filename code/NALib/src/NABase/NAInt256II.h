@@ -15,7 +15,7 @@
   NA_IDEF NAInt256 naMakeInt256WithLo(NAInt128 lo){return (NAInt256)lo;}
   NA_IDEF NAInt256 naMakeInt256WithDouble(double lo){return (NAInt256)lo;}
 #else
-  #if NA_SIGNED_INTEGER_ENCODING != NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+  #if NA_SIGN_ENCODING != NA_SIGN_ENCODING_TWOS_COMPLEMENT
 
     #error "The NAInt256 emulation is not provided for the current signed integer encoding"
 
@@ -488,7 +488,7 @@
     }
 
 
-  #endif // NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+  #endif // NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
 #endif // defined NA_TYPE_INT256
 
 

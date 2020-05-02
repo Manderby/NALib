@@ -34,28 +34,28 @@ NA_IDEF NAUInt256 naGetSignum256(NAInt256 i){
 
 
 NA_IDEF int8 naSigni8(int8 i){
-  #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+  #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
     return (int8)((naGetSignum8(i) << 1) + 1);
   #else
     return (i < 0) ? -1 : 1;
   #endif
 }
 NA_IDEF int16 naSigni16(int16 i){
-  #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+  #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
     return (int16)((naGetSignum16(i) << 1) + 1);
   #else
     return (i < 0) ? -1 : 1;
   #endif
 }
 NA_IDEF int32 naSigni32(int32 i){
-  #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+  #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
     return (int32)((naGetSignum32(i) << 1) + NA_ONE_32);
   #else
     return (i < 0) ? -NA_ONE_32 : NA_ONE_32;
   #endif
 }
 NA_IDEF NAInt64 naSigni64(NAInt64 i){
-  #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+  #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
     NAUInt64 signum = naGetSignum64(i);
     return naCastUInt64ToInt64(naAddUInt64(naShlUInt64(signum, 1), NA_ONE_64u));
   #else
@@ -63,7 +63,7 @@ NA_IDEF NAInt64 naSigni64(NAInt64 i){
   #endif
 }
 NA_IDEF NAInt128 naSigni128(NAInt128 i){
-  #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+  #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
     NAUInt128 signum = naGetSignum128(i);
     return naCastUInt128ToInt128(naAddUInt128(naShlUInt128(signum, 1), NA_ONE_128u));
   #else
@@ -71,7 +71,7 @@ NA_IDEF NAInt128 naSigni128(NAInt128 i){
   #endif
 }
 NA_IDEF NAInt256 naSigni256(NAInt256 i){
-  #if NA_SIGNED_INTEGER_ENCODING == NA_SIGNED_INTEGER_ENCODING_TWOS_COMPLEMENT
+  #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
     NAUInt256 signum = naGetSignum256(i);
     return naCastUInt256ToInt256(naAddUInt256(naShlUInt256(signum, 1), NA_ONE_256u));
   #else
