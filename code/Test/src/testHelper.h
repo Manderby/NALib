@@ -47,6 +47,10 @@
   printf("0x%x (%d)", macro, macro);\
   printf(NA_NL);
 
+#define printMacroString(macro)\
+  printMacroHead(#macro)\
+  printf("%s", macro);\
+  printf(NA_NL);
 
 #define printMacroIntSpecial(macro, specialValue, specialString)\
   printMacroHead(#macro)\

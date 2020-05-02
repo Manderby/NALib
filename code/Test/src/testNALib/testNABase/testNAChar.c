@@ -2,36 +2,54 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#include "testNALib.h"
+#include "../../testNALib.h"
 
 
 
-
-int main(void){
-
-  printf("NALib Version: %d (", NA_VERSION);
-  #ifndef NDEBUG
-    printf("Debug");
-  #else
-    printf("Release");
-  #endif
-  printf(", %d Bits Addresses, %d Bits Integers)" NA_NL NA_NL, NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
-
-
-  
-  printNAConfiguration();
-  printNAEnvironment();
-  printNACompiler();
-  printNALanguage();
-  printNAEncoding();
-  printNAChar();
-
-  testNALanguage();
-  testNAChar();
-
-  return 0;
+void testNAChar(){
+  // Testing if types can be assigned.
+  printf("Testing typedef NAUTF8Char" NA_NL);
+  NAUTF8Char utf8Char = 'M';
 }
 
+
+
+void printNAChar(){
+  printf("NAChar.h fixed values:" NA_NL);
+
+  printMacroPlain(NA_NL_UNIX);
+  printMacroPlain(NA_NL_MAC9);
+  printMacroPlain(NA_NL_WIN);
+  printMacroPlain(NA_TAB);
+  printMacroPlain(NA_PATH_DELIMITER_UNIX);
+  printMacroPlain(NA_PATH_DELIMITER_WIN);
+  printMacroPlain(NA_SUFFIX_DELIMITER);
+
+  printf(NA_NL "NAChar.h computed values:" NA_NL);
+  printMacroPlain(NA_NL);
+  printMacroString(NA_PRIi8);
+  printMacroString(NA_PRIu8);
+  printMacroString(NA_PRIx8);
+  printMacroString(NA_SCNi8);
+  printMacroString(NA_SCNu8);
+  printMacroString(NA_PRIi16);
+  printMacroString(NA_PRIu16);
+  printMacroString(NA_PRIx16);
+  printMacroString(NA_SCNi16);
+  printMacroString(NA_SCNu16);
+  printMacroString(NA_PRIi32);
+  printMacroString(NA_PRIu32);
+  printMacroString(NA_PRIx32);
+  printMacroString(NA_SCNi32);
+  printMacroString(NA_SCNu32);
+  printMacroString(NA_PRIi64);
+  printMacroString(NA_PRIu64);
+  printMacroString(NA_PRIx64);
+  printMacroString(NA_SCNi64);
+  printMacroString(NA_SCNu64);
+
+  printf(NA_NL);
+}
 
 
 // Copyright (c) NALib, Tobias Stamm

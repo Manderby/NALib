@@ -32,42 +32,49 @@ typedef int NABool;
 
 
 typedef uint8_t        uint8;
-typedef uint16_t       uint16;
-typedef uint32_t       uint32;
-typedef uint64_t       uint64;
 typedef int8_t         int8;
+typedef uint16_t       uint16;
 typedef int16_t        int16;
+typedef uint32_t       uint32;
 typedef int32_t        int32;
-typedef int64_t        int64;
+#if defined NA_TYPE_INT64
+  typedef uint64_t     uint64;
+  typedef int64_t      int64;
+#endif
 
 #define NA_MAX_8u      UINT8_MAX
-#define NA_MAX_16u     UINT16_MAX
-#define NA_MAX_32u     UINT32_MAX
-#define NA_MAX_64u     UINT64_MAX
 #define NA_MAX_8       INT8_MAX
-#define NA_MAX_16      INT16_MAX
-#define NA_MAX_32      INT32_MAX
-#define NA_MAX_64      INT64_MAX
 #define NA_MIN_8       INT8_MIN
-#define NA_MIN_16      INT16_MIN
-#define NA_MIN_32      INT32_MIN
-#define NA_MIN_64      INT64_MIN
-#define NA_ZERO_8      ((int8)0)
-#define NA_ZERO_16     ((int16)0)
-#define NA_ZERO_32     ((int32)0)
-#define NA_ZERO_64     ((int64)0)
 #define NA_ZERO_8u     ((uint8)0u)
-#define NA_ZERO_16u    ((uint16)0u)
-#define NA_ZERO_32u    ((uint32)0u)
-#define NA_ZERO_64u    ((uint64)0u)
-#define NA_ONE_8       ((int8)1)
-#define NA_ONE_16      ((int16)1)
-#define NA_ONE_32      ((int32)1)
-#define NA_ONE_64      ((int64)1)
 #define NA_ONE_8u      ((uint8)1u)
+#define NA_ZERO_8      ((int8)0)
+#define NA_ONE_8       ((int8)1)
+
+#define NA_MAX_16u     UINT16_MAX
+#define NA_MAX_16      INT16_MAX
+#define NA_MIN_16      INT16_MIN
+#define NA_ZERO_16u    ((uint16)0u)
 #define NA_ONE_16u     ((uint16)1u)
+#define NA_ZERO_16     ((int16)0)
+#define NA_ONE_16      ((int16)1)
+
+#define NA_MAX_32u     UINT32_MAX
+#define NA_MAX_32      INT32_MAX
+#define NA_MIN_32      INT32_MIN
+#define NA_ZERO_32u    ((uint32)0u)
 #define NA_ONE_32u     ((uint32)1u)
-#define NA_ONE_64u     ((uint64)1u)
+#define NA_ZERO_32     ((int32)0)
+#define NA_ONE_32      ((int32)1)
+
+#if defined NA_TYPE_INT64
+  #define NA_MAX_64u   UINT64_MAX
+  #define NA_MAX_64    INT64_MAX
+  #define NA_MIN_64    INT64_MIN
+  #define NA_ZERO_64u  ((uint64)0u)
+  #define NA_ONE_64u   ((uint64)1u)
+  #define NA_ZERO_64   ((int64)0)
+  #define NA_ONE_64    ((int64)1)
+#endif
 
 // 128 bits native datatype
 #if defined NA_TYPE_INT128
@@ -198,11 +205,6 @@ typedef int64_t        int64;
   #define NA_ONE_64      (naMakeInt64WithLo(NA_ONE_32))
   #define NA_ZERO_64u    (naMakeUInt64WithLo(NA_ZERO_32u))
   #define NA_ONE_64u     (naMakeUInt64WithLo(NA_ONE_32u))
-  #define NA_PRIi64      "d CANTSHOWi64 "
-  #define NA_PRIu64      "u CANTSHOWi64 "
-  #define NA_PRIx64      "x CANTSHOWi64 "
-  #define NA_SCNi64      "d CANTSHOWi64 "
-  #define NA_SCNu64      "u CANTSHOWi64 "
 #endif
 
 // In case, there was no int128 defined before, we have to emulate it now.
@@ -216,11 +218,6 @@ typedef int64_t        int64;
   #define NA_ONE_128      (naMakeInt128WithLo(NA_ONE_64))
   #define NA_ZERO_128u    (naMakeUInt128WithLo(NA_ZERO_64u))
   #define NA_ONE_128u     (naMakeUInt128WithLo(NA_ONE_64u))
-  #define NA_PRIi128      "d CANTSHOWi128 "
-  #define NA_PRIu128      "u CANTSHOWi128 "
-  #define NA_PRIx128      "x CANTSHOWi128 "
-  #define NA_SCNi128      "d CANTSHOWi128 "
-  #define NA_SCNu128      "u CANTSHOWi128 "
 #endif
 
 // In case, there was no int256 defined before, we have to emulate it now.
@@ -234,11 +231,6 @@ typedef int64_t        int64;
   #define NA_ONE_256      (naMakeInt256WithLo(NA_ONE_128))
   #define NA_ZERO_256u    (naMakeUInt256WithLo(NA_ZERO_128u))
   #define NA_ONE_256u     (naMakeUInt256WithLo(NA_ONE_128u))
-  #define NA_PRIi256      "d CANTSHOWi256 "
-  #define NA_PRIu256      "u CANTSHOWi256 "
-  #define NA_PRIx256      "x CANTSHOWi256 "
-  #define NA_SCNi256      "d CANTSHOWi256 "
-  #define NA_SCNu256      "u CANTSHOWi256 "
 #endif
 
 

@@ -19,8 +19,10 @@ void printNAEnvironment();
 void printNACompiler();
 void printNALanguage();
 void printNAEncoding();
+void printNAChar();
 
 void testNALanguage();
+void testNAChar();
 
 // Copyright (c) NALib, Tobias Stamm
 //

@@ -56,25 +56,22 @@ typedef char NAUTF8Char;
 
 
 
-#define NA_PRINTF_CHAR_PREFIX "hh"
-#define NA_PRINTF_LONG_LONG_PREFIX "ll"
-
 // 8 bits
 #if NA_TYPE_INT8_REPRESENTATION == NA_TYPE_NATIVE_CHAR
-  #define NA_PRIi8      NA_PRINTF_CHAR_PREFIX "d"
-  #define NA_PRIu8      NA_PRINTF_CHAR_PREFIX "u"
-  #define NA_PRIx8      NA_PRINTF_CHAR_PREFIX "x"
-  #define NA_SCNi8      NA_PRINTF_CHAR_PREFIX "d"
-  #define NA_SCNu8      NA_PRINTF_CHAR_PREFIX "u"
+  #define NA_PRIi8      "hhd"
+  #define NA_PRIu8      "hhu"
+  #define NA_PRIx8      "hhx"
+  #define NA_SCNi8      "hhd"
+  #define NA_SCNu8      "hhu"
 #endif
 
 // 16 bits
 #if NA_TYPE_INT16_REPRESENTATION == NA_TYPE_NATIVE_CHAR
-  #define NA_PRIi16      NA_PRINTF_CHAR_PREFIX "d"
-  #define NA_PRIu16      NA_PRINTF_CHAR_PREFIX "u"
-  #define NA_PRIx16      NA_PRINTF_CHAR_PREFIX "x"
-  #define NA_SCNi16      NA_PRINTF_CHAR_PREFIX "d"
-  #define NA_SCNu16      NA_PRINTF_CHAR_PREFIX "u"
+  #define NA_PRIi16      "hhd"
+  #define NA_PRIu16      "hhu"
+  #define NA_PRIx16      "hhx"
+  #define NA_SCNi16      "hhd"
+  #define NA_SCNu16      "hhu"
 #elif NA_TYPE_INT16_REPRESENTATION == NA_TYPE_NATIVE_SHORT
   #define NA_PRIi16      "hd"
   #define NA_PRIu16      "hu"
@@ -105,7 +102,13 @@ typedef char NAUTF8Char;
 #endif
 
 // 64 bits
-#if NA_TYPE_INT64_REPRESENTATION == NA_TYPE_NATIVE_INT
+#if NA_TYPE_INT64_REPRESENTATION == NA_TYPE_NONE
+  #define NA_PRIi64      "d CANTPRINTi64 "
+  #define NA_PRIu64      "u CANTPRINTi64 "
+  #define NA_PRIx64      "x CANTPRINTi64 "
+  #define NA_SCNi64      "d CANTPRINTi64 "
+  #define NA_SCNu64      "u CANTPRINTi64 "
+#elif NA_TYPE_INT64_REPRESENTATION == NA_TYPE_NATIVE_INT
   #define NA_PRIi64      "d"
   #define NA_PRIu64      "u"
   #define NA_PRIx64      "x"
@@ -118,11 +121,11 @@ typedef char NAUTF8Char;
   #define NA_SCNi64      "ld"
   #define NA_SCNu64      "lu"
 #elif NA_TYPE_INT64_REPRESENTATION == NA_TYPE_NATIVE_LONG_LONG
-	#define NA_PRIi64      NA_PRINTF_LONG_LONG_PREFIX "d"
-	#define NA_PRIu64      NA_PRINTF_LONG_LONG_PREFIX "u"
-	#define NA_PRIx64      NA_PRINTF_LONG_LONG_PREFIX "x"
-	#define NA_SCNi64      NA_PRINTF_LONG_LONG_PREFIX "d"
-	#define NA_SCNu64      NA_PRINTF_LONG_LONG_PREFIX "u"
+	#define NA_PRIi64      "lld"
+	#define NA_PRIu64      "llu"
+	#define NA_PRIx64      "llx"
+	#define NA_SCNi64      "lld"
+	#define NA_SCNu64      "llu"
 #endif
 
 
