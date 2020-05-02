@@ -6,10 +6,10 @@
 #define NA_TEST_NALIB_PATH(file) NA_TEST_STRINGIFY(../../NALib/src/file)
 
 #include <stdio.h>
-#include <string.h>
 
 #include NA_TEST_NALIB_PATH(NABase.h)
 #include NA_TEST_NALIB_PATH(NAMemory.h)
+#include NA_TEST_NALIB_PATH(NAString.h)
 
 #include "testHelper.h"
 
@@ -17,7 +17,9 @@
 void printNAConfiguration();
 void printNAEnvironment();
 void printNACompiler();
+void printNALanguage();
 
+void testNALanguage();
 
 // Copyright (c) NALib, Tobias Stamm
 //

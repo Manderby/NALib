@@ -7,47 +7,13 @@
 void printNACompiler(){
   printf("NACompiler.h:" NA_NL);
   
-  int def = 0;
-  #if defined NA_C90
-    def = 1;
-  #endif
-  printMacroDefined    (NA_C90, def);
-
-  def = 0;
-  #if defined NA_C95
-    def = 1;
-  #endif
-  printMacroDefined    (NA_C95, def);
-
-  def = 0;
-  #if defined NA_C99
-    def = 1;
-  #endif
-  printMacroDefined    (NA_C99, def);
-
-  def = 0;
-  #if defined NA_C11
-    def = 1;
-  #endif
-  printMacroDefined    (NA_C11, def);
-
-  def = 0;
-  #if defined NA_CPP98
-    def = 1;
-  #endif
-  printMacroDefined    (NA_CPP98, def);
-
-  def = 0;
-  #if defined NA_CPP11
-    def = 1;
-  #endif
-  printMacroDefined    (NA_CPP11, def);
-
-  def = 0;
-  #if defined NA_CPP14
-    def = 1;
-  #endif
-  printMacroDefined    (NA_CPP14, def);
+  printMacroPlain(NA_C90);
+  printMacroPlain(NA_C95);
+  printMacroPlain(NA_C99);
+  printMacroPlain(NA_C11);
+  printMacroPlain(NA_CPP98);
+  printMacroPlain(NA_CPP11);
+  printMacroPlain(NA_CPP14);
 
   printf(NA_NL);
 }

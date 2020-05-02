@@ -22,13 +22,10 @@ int main(void){
   printNAConfiguration();
   printNAEnvironment();
   printNACompiler();
+  printNALanguage();
 
+  testNALanguage();
 
-
-  #if NA_OS == NA_OS_WINDOWS
-    printf(NA_NL "Finished." NA_NL);
-    NA_UNUSED(getchar());
-  #endif
 
   return 0;
 }

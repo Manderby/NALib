@@ -10,6 +10,17 @@
 
 
 
+// //////////////////////////
+// All NALib functionality is based on this file. All NALib files include
+// this file as their first action.
+//
+// Note that this file only includes the base definitions. If you need more
+// functionality, for example NAArray, you have to explicitely include the
+// appropriate header file yourself.
+// //////////////////////////
+
+
+
 // The version number of this NALib distribution.
 #define NA_VERSION 25
 
@@ -35,7 +46,7 @@
 // Enabling the code to use debugger runtime testing (DRT)
 #include "NABase/NADebug.h"
 
-// Some more macros for various purposes
+// Adding voodoo and fairy dust
 #include "NABase/NABaseMacros.h"
 
 // Now, including implementations dependent on the definitions above.
@@ -44,7 +55,6 @@
 #include "NABase/NAInt256II.h"
 #include "NABase/NAFloatingPointII.h"
 #include "NABase/NANumericsII.h"
-
 
 
 

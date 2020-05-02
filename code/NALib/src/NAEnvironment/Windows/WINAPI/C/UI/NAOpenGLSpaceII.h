@@ -9,7 +9,7 @@
 // Do not include this file anywhere else!
 
 
-#if (NA_CONFIG_COMPILE_OPENGL == 1)
+#if (NA_COMPILE_OPENGL == 1)
 
 
 typedef struct NAWINAPIOpenGLSpace NAWINAPIOpenGLSpace;
@@ -119,7 +119,7 @@ NA_DEF void naDestructOpenGLSpace(NAOpenGLSpace* openglspace){
 
 
   
-#endif  // NA_CONFIG_COMPILE_OPENGL
+#endif  // NA_COMPILE_OPENGL
 
 NA_HDEF NARect naGetOpenGLSpaceAbsoluteInnerRect(NACoreUIElement* openglspace){
   return naGetSpaceAbsoluteInnerRect(openglspace);

@@ -65,7 +65,7 @@ struct NACocoaApplication {
 }
 @end
 
-#if (NA_CONFIG_COMPILE_OPENGL == 1)
+#if (NA_COMPILE_OPENGL == 1)
   @interface NACocoaOpenGLSpace : NSOpenGLView{
     NACoreOpenGLSpace* coreopenglspace;
     NSTrackingArea* trackingarea;

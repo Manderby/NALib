@@ -9,7 +9,7 @@
 // Do not include this file anywhere else!
 
 
-#if (NA_CONFIG_COMPILE_OPENGL == 1)
+#if (NA_COMPILE_OPENGL == 1)
 
   @implementation NACocoaOpenGLSpace
   - (id)initWithCoreOpenGLSpace:(NAOpenGLSpace*)newcoreopenglspace frame:(NSRect)frameRect pixelFormat:(NSOpenGLPixelFormat*)pixelformat initFunc:(NAMutator)newinitFunc initData:(void*)newinitData{
@@ -143,7 +143,7 @@ NA_UNUSED(event);
     [cocoaOpenGLSpace setFrame: frame];
   }
   
-#endif  // NA_CONFIG_COMPILE_OPENGL
+#endif  // NA_COMPILE_OPENGL
 
 NA_HDEF NARect naGetOpenGLSpaceAbsoluteInnerRect(NACoreUIElement* openglspace){
   return naGetSpaceAbsoluteInnerRect(openglspace);

@@ -13,7 +13,7 @@
 #include "../../../../../NAString.h"
 #include "../../../../../NAURL.h"
 
-#if NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6 == 1
+#if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
   #include <commctrl.h>
 #endif
 
@@ -107,7 +107,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   //DPI_AWARENESS awareness = DPI_AWARENESS_SYSTEM_AWARE;
   //SetProcessDpiAwarenessContext(&awareness);
 
-  #if NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6 == 1
+  #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
     InitCommonControls();   // enable visual styles
   #endif
   
@@ -535,7 +535,7 @@ NA_DEF NAFont getFontWithKind(NAFontKind kind){
 
   ////EnumFontFamilies(GetDC(NA_NULL), NA_NULL, enumFonts, NA_NULL);
 
-  #if NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6 == 1
+  #if NA_USE_WINDOWS_COMMON_CONTROLS_6 == 1
 
   const NONCLIENTMETRICS* metrics = naGetApplicationMetrics();
 

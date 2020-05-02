@@ -155,6 +155,7 @@
     <ClCompile Include="src\testNALib\testNABase\testNACompiler.c" />
     <ClCompile Include="src\testNALib\testNABase\testNAConfiguration.c" />
     <ClCompile Include="src\testNALib\testNABase\testNAEnvironment.c" />
+    <ClCompile Include="src\testNALib\testNABase\testNALanguage.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

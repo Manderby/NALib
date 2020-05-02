@@ -147,11 +147,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\mainGUI.c" />
-  </ItemGroup>
-  <ItemGroup>
     <Text Include="res\translationsFinance.txt" />
     <Text Include="res\translationsGeneral.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

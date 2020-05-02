@@ -23,6 +23,9 @@ Smaller Things:
 - Added NADateTime as Key
 - Small Changes to the API names
 - Removed NAMoney.h
+- NAConfiguration now lost some entries due to switch to C99 but gained
+  NA_INLINE_DEFINITION_NON_STANDARD and some others were renamed.
+  
 
 
 Version 24 (released 2020-Jan-09)

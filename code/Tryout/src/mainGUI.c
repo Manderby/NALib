@@ -15,6 +15,7 @@
 // #include GUITRYOUT_NALIB_PATH(NABase.h)
 
 
+#include GUITRYOUT_NALIB_PATH(NABase.h)
 #include GUITRYOUT_NALIB_PATH(NAUI.h)
 #include GUITRYOUT_NALIB_PATH(NATranslator.h)
 #include "translationIDs.h"

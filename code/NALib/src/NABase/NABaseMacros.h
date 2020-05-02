@@ -11,6 +11,10 @@
 
 
 
+// My proudest achievement at 4 o'clock in the morning. Stringifies any macro
+// no matter if they are undefined, empty or defined.
+#define NA_STRINGIFY(...)                #__VA_ARGS__ ## ""
+
 // Concatenation and evaluation macros. See Template comments below.
 #define NA_CONCAT1(a1 )                 a1
 #define NA_CONCAT2(a1, a2)              a1 ## a2

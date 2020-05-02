@@ -59,8 +59,8 @@
 //
 // Default is 0
 
-#ifndef NA_CONFIG_COMPILE_OPENGL
-  #define NA_CONFIG_COMPILE_OPENGL 0
+#ifndef NA_COMPILE_OPENGL
+  #define NA_COMPILE_OPENGL 0
 #endif
 
 
@@ -77,8 +77,8 @@
 //
 // Default is 0
 
-#ifndef NA_CONFIG_COMPILE_GUI
-  #define NA_CONFIG_COMPILE_GUI 0
+#ifndef NA_COMPILE_GUI
+  #define NA_COMPILE_GUI 0
 #endif
 
 
@@ -89,13 +89,31 @@
 // Unfortunately, this requires you to link your binary to ComCtl32.lib.
 // Set this macro to 0 if you want the old look or not link to the library.
 //
-// If your code does not compile for windows or NA_CONFIG_COMPILE_GUI is 0,
+// If your code does not compile for windows or NA_COMPILE_GUI is 0,
 // this macro has no effect.
 //
 // Default is 1
 
-#ifndef NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6
-  #define NA_CONFIG_USE_WINDOWS_COMMON_CONTROLS_6 1
+#ifndef NA_USE_WINDOWS_COMMON_CONTROLS_6
+  #define NA_USE_WINDOWS_COMMON_CONTROLS_6 1
+#endif
+
+
+
+// NALib uses macros like NA_IAPI and NA_IDEF for inlineable functions.
+// According to the standard, such functions should be declared "inline"
+// only in the definition, not the declaration. But compilers tend to
+// be difficult and therefore, there are some compiler versions out there
+// which may emit warnings and errors. Accordingly, all inline macros can
+// be defined "static inline" in NALib. Saves a lot of trouble.
+//
+// This non-standard way may lead to slightly bigger binaries. But so far,
+// the author never had problems with that.
+//
+// Default is 1
+
+#ifndef NA_INLINE_DEFINITION_NON_STANDARD
+  #define NA_INLINE_DEFINITION_NON_STANDARD 1
 #endif
 
 
@@ -185,7 +203,7 @@
 // calls naCollectGarbage automatically before executing any event.
 
 #ifndef NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT
-  #if NA_CONFIG_COMPILE_GUI == 0
+  #if NA_COMPILE_GUI == 0
     #define NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT 1000000
   #else
     #define NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT 0

@@ -22,7 +22,7 @@ struct NATranslator{
   NAInt curlang;
 };
 
-#if NA_CONFIG_COMPILE_GUI == 1
+#if NA_COMPILE_GUI == 1
   #define NA_TRANSLATOR na_app->translator
 #else
   NATranslator* na_translator = NA_NULL;
@@ -66,7 +66,7 @@ NA_HDEF void naDestructGroups(NAPtr leafdata){
 
 NA_DEF void naStartTranslator(void){
   #ifndef NDEBUG
-    #if NA_CONFIG_COMPILE_GUI == 1
+    #if NA_COMPILE_GUI == 1
       if(!na_app)
         naCrash("Translator requires application to run. Please use naStartApplication.");
       if(na_app && NA_TRANSLATOR)
@@ -94,7 +94,7 @@ NA_DEF void naStartTranslator(void){
 
 NA_DEF void naStopTranslator(void){
   #ifndef NDEBUG
-    #if NA_CONFIG_COMPILE_GUI == 1
+    #if NA_COMPILE_GUI == 1
       if(!na_app)
         naCrash("Translator requires application to run. Please use naStartApplication.");
     #else
@@ -117,7 +117,7 @@ NA_DEF void naStopTranslator(void){
 
 NA_DEF NAInt naRegisterTranslatorGroup(void){
   #ifndef NDEBUG
-    #if NA_CONFIG_COMPILE_GUI == 1
+    #if NA_COMPILE_GUI == 1
       if(!na_app)
         naCrash("Translator requires application to run. Please use naStartApplication.");
     #else
@@ -136,7 +136,7 @@ NA_DEF void naSwitchTranslatorInsertionLanguage(NALanguageCode3 code){
   NAListIterator it;
   
   #ifndef NDEBUG
-    #if NA_CONFIG_COMPILE_GUI == 1
+    #if NA_COMPILE_GUI == 1
       if(!na_app)
         naCrash("Translator requires application to run. Please use naStartApplication.");
     #else
@@ -171,7 +171,7 @@ NA_DEF void naInsertTranslatorString(NAInt id, NAUTF8Char* str){
   NATreeIterator stringiter;
   
   #ifndef NDEBUG
-    #if NA_CONFIG_COMPILE_GUI == 1
+    #if NA_COMPILE_GUI == 1
       if(!na_app)
         naCrash("Translator requires application to run. Please use naStartApplication.");
     #else
@@ -205,7 +205,7 @@ NA_DEF void naSetTranslatorLanguagePreference(NALanguageCode3 code){
   NAListIterator it;
   
   #ifndef NDEBUG
-    #if NA_CONFIG_COMPILE_GUI == 1
+    #if NA_COMPILE_GUI == 1
       if(!na_app)
         naCrash("Translator requires application to run. Please use naStartApplication.");
     #else
@@ -239,7 +239,7 @@ NA_DEF const NAUTF8Char* naTranslate(NAInt group, NAInt id){
   NABool groupfound;
   
   #ifndef NDEBUG
-    #if NA_CONFIG_COMPILE_GUI == 1
+    #if NA_COMPILE_GUI == 1
       if(!na_app)
         naCrash("Translator requires application to run. Please use naStartApplication.");
     #else

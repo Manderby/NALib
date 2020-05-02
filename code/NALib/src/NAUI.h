@@ -9,11 +9,11 @@
 #endif
 
 #include "NABase.h"
-#if NA_CONFIG_COMPILE_GUI == 1
+#if NA_COMPILE_GUI == 1
 
 
 // Have a look at NAConfiguration.h to use OpenGL
-#if (NA_CONFIG_COMPILE_OPENGL == 1)
+#if (NA_COMPILE_OPENGL == 1)
   #if NA_OS == NA_OS_WINDOWS
     #include <windows.h>
     #include <GL/GL.h>
@@ -619,7 +619,7 @@ NA_API void naSetSpaceRect(NASpace* space, NARect rect);
 NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size);
 
 // OpenGLSpace
-#if NA_CONFIG_COMPILE_OPENGL == 1
+#if NA_COMPILE_OPENGL == 1
   // the initfunc will be called with initdata as the input parameter as
   // soon as there is an OpenGLContext available. You can put there all
   // initialization necessary like for example uploading of textures to the
@@ -719,7 +719,7 @@ NA_API void naOpenURLInBrowser(const NAUTF8Char* url);
 
 NA_API void naOpenConsoleWindow(void);
 
-#endif // NA_CONFIG_COMPILE_GUI == 1
+#endif // NA_COMPILE_GUI == 1
 
 #ifdef __cplusplus
   } // extern "C"

@@ -274,7 +274,7 @@ NAWINAPICallbackInfo naApplicationWINAPIProc(NAUIElement* uielement, UINT messag
 NAWINAPICallbackInfo naWindowWINAPIProc     (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naSpaceWINAPIProc      (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naImageSpaceWINAPIProc (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-#if (NA_CONFIG_COMPILE_OPENGL == 1)
+#if (NA_COMPILE_OPENGL == 1)
   NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
 #endif
 NAWINAPICallbackInfo naButtonWINAPIProc     (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
@@ -318,7 +318,7 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
     case NA_UI_WINDOW:      info = naWindowWINAPIProc     (uielement, message, wParam, lParam); break;
     case NA_UI_SPACE:       info = naSpaceWINAPIProc      (uielement, message, wParam, lParam); break;
     case NA_UI_IMAGESPACE:  info = naImageSpaceWINAPIProc (uielement, message, wParam, lParam); break;
-    #if (NA_CONFIG_COMPILE_OPENGL == 1)
+    #if (NA_COMPILE_OPENGL == 1)
       case NA_UI_OPENGLSPACE: info = naOpenGLSpaceWINAPIProc(uielement, message, wParam, lParam); break;
     #endif
     case NA_UI_BUTTON:      info = naButtonWINAPIProc     (uielement, message, wParam, lParam); break;

@@ -4,29 +4,47 @@
 
 #include "../../testNALib.h"
 
+void na_accessor_func(const void* param){
+  NA_UNUSED(param);
+}
+void na_mutator_func(void* param){
+  NA_UNUSED(param);
+}
 
 
-const char* na_memalign_enum_strings[] = {
-  "Custom",
-  "aligned_alloc",
-  "Posix"
-};
 
-void printNAConfiguration(){
-  printf("NAConfiguration.h:" NA_NL);
-  printMacroIntSpecial   (NA_PREFERRED_NAINT_BITS, 0, "Automatic");
-  printMacroIntYesNo     (NA_COMPILE_OPENGL);
-  printMacroIntYesNo     (NA_COMPILE_GUI);
-  printMacroIntYesNo     (NA_USE_WINDOWS_COMMON_CONTROLS_6);
-  printMacroIntYesNo     (NA_INLINE_DEFINITION_NON_STANDARD);
-  printMacroEnum         (NA_MEMALIGN, na_memalign_enum_strings, 3);
-  printMacroIntSpecialHex(NA_POOLPART_BYTESIZE, 0, "Memory Page Size");
-  printMacroIntYesNo     (NA_MEMORY_POOL_AGGRESSIVE_CLEANUP);
-  printMacroIntSpecial   (NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT, 0, "No autocollect");
-  printMacroIntSpecial   (NA_BUFFER_PART_BYTESIZE, 0, "Memory Page Size");
-  printMacroIntYesNo     (NA_STRING_ALWAYS_CACHE);
-  printMacroIntYesNo     (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION);
-  printMacroInt          (NA_NIST_CODATA_YEAR);
+void testNALanguage(){
+  // Testing if types can be assigned.
+  printf("Testing typedef NAAccessor" NA_NL);
+  NAAccessor testAccessor = na_accessor_func;
+
+  printf("Testing typedef NAMutator" NA_NL);
+  NAMutator testMutator = na_mutator_func;
+}
+
+
+
+void printNALanguage(){
+  printf("NALanguage.h:" NA_NL);
+  
+  printMacroPlain(NA_RESTRICT);
+  printMacroPlain(NA_INLINE);
+  printMacroPlain(NA_LINKER_NO_EXPORT);
+  printMacroPlain(NA_LINKER_EXPORT);
+
+  printMacroPlain(NA_API);
+  printMacroPlain(NA_DEF);
+  printMacroPlain(NA_IAPI);
+  printMacroPlain(NA_IDEF);
+  printMacroPlain(NA_HAPI);
+  printMacroPlain(NA_HDEF);
+  printMacroPlain(NA_HIAPI);
+  printMacroPlain(NA_HIDEF);
+
+  printMacroPlain(NA_NULL);
+  printMacroPlain(NA_NORETURN);
+  printMacroPlain(NA_UNUSED(parameter));
+
   printf(NA_NL);
 }
 

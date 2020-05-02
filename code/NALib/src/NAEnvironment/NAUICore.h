@@ -16,7 +16,7 @@
 
 #include "../NAUI.h"
 
-#if (NA_CONFIG_COMPILE_GUI == 1)
+#if (NA_COMPILE_GUI == 1)
 
 #include "../NAList.h"
 #include "../NATranslator.h"
@@ -262,7 +262,7 @@ NA_HAPI void naDeallocMouseTracking(void* tracking);
 
 
 
-#endif // (NA_CONFIG_COMPILE_GUI == 1)
+#endif // (NA_COMPILE_GUI == 1)
 
 #ifdef __cplusplus
   } // extern "C"

@@ -13,9 +13,28 @@
   for(unsigned int c = 0; c < (NA_TEST_MAX_MACRO_LENGTH - strlen(macroStr)); c++){printf(" ");}\
 }
 
+#define isMacroDefinedButEmpty(macro)\
+  (strlen(NA_STRINGIFY(macro)) == 0)
+
+#define isMacroDefined(macro)\
+  (strncmp(#macro, NA_STRINGIFY(macro), strlen(#macro)) != 0)
+
 #define printMacroDefined(macro, def)\
   printMacroHead(#macro)\
   printf(def ? "Defined" : "Undefined");\
+  printf(NA_NL);
+
+#define printMacroPlain(macro)\
+  printMacroHead(#macro)\
+  if(strncmp(#macro, NA_STRINGIFY(macro), strlen(#macro)) != 0){\
+    if(strlen(NA_STRINGIFY(macro)) == 0){\
+      printf("(Defined as empty)");\
+    }else{\
+      printf(NA_STRINGIFY(macro));\
+    }\
+  }else{\
+    printf("(Undefined)");\
+  }\
   printf(NA_NL);
 
 #define printMacroInt(macro)\
