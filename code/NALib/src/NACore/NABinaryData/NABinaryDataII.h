@@ -265,7 +265,7 @@ NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b){
 
 NA_IDEF void naZeron32(void* d, int32 bytesize){
   #ifndef NDEBUG
-    if(bytesize < NA_ONE_32)
+    if(bytesize < NA_ONE_i32)
       naError("count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
@@ -274,7 +274,7 @@ NA_IDEF void naZeron32(void* d, int32 bytesize){
 
 NA_IDEF void naZeron64(void* d, NAInt64 bytesize){
   #ifndef NDEBUG
-    if(naSmallerInt64(bytesize, NA_ONE_64))
+    if(naSmallerInt64(bytesize, NA_ONE_i64))
       naError("count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
@@ -302,7 +302,7 @@ NA_IDEF void naZeron(void* d, NAInt bytesize){
 
 NA_IDEF void naSetn32(void* d, int32 bytesize, NAByte value){
   #ifndef NDEBUG
-    if(bytesize < NA_ONE_32)
+    if(bytesize < NA_ONE_i32)
       naError("count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
@@ -311,7 +311,7 @@ NA_IDEF void naSetn32(void* d, int32 bytesize, NAByte value){
 
 NA_IDEF void naSetn64(void* d, NAInt64 bytesize, NAByte value){
   #ifndef NDEBUG
-    if(naSmallerInt64(bytesize, NA_ONE_64))
+    if(naSmallerInt64(bytesize, NA_ONE_i64))
       naError("count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.

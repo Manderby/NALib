@@ -63,8 +63,8 @@ void testMaking(){
 void timeMaking(){
   double t;
   int i;
-  int128 i128 = NA_ZERO_128;
-  uint128 ui128 = NA_ZERO_128u;
+  int128 i128 = NA_ZERO_i128;
+  uint128 ui128 = NA_ZERO_u128;
 
   t = getTime();
   for(i = 0; i < TESTSIZE; i++){i128 = naAddInt128(naMakeInt128WithLo(naNegInt64(naCastUInt64ToInt64(randUInt64()))), i128);}
@@ -248,12 +248,12 @@ void timeComparison(){
 void testArithmetic(){
   int128 i01 =   MAKEi128(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
   int128 i02 =   MAKEi128(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6);
-  int128 i03 =   NA_ZERO_128;
+  int128 i03 =   NA_ZERO_i128;
   int128 i04 =   naMakeInt128WithDouble(-123.);
   int128 i1, i2;
   uint128 ui01 = MAKEu128(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd);
   uint128 ui02 = MAKEu128(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1);
-  uint128 ui03 = NA_ZERO_128u;
+  uint128 ui03 = NA_ZERO_u128;
   uint128 ui2;
 
   i1 = naNegInt128(i01);
@@ -424,10 +424,10 @@ void testEqualUInt128(uint128 ui, uint32 goalhi, uint32 goallo1, uint32 goallo2,
       printf("FAIL ");
     }
   #else
-    if((ui & NA_MAX_32u) == goallo3
-      && ((ui >> 32) & NA_MAX_32u) == goallo2
-      && ((ui >> 64) & NA_MAX_32u) == goallo1
-      && ((ui >> 96) & NA_MAX_32u) == goalhi){
+    if((ui & NA_MAX_u32) == goallo3
+      && ((ui >> 32) & NA_MAX_u32) == goallo2
+      && ((ui >> 64) & NA_MAX_u32) == goallo1
+      && ((ui >> 96) & NA_MAX_u32) == goalhi){
       printf("ok   ");
     }else{
       printf("FAIL ");

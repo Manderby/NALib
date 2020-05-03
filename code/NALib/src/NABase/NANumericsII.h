@@ -3,9 +3,6 @@
 // Full license notice at the bottom.
 
 
-#if defined NA_NUMERICS_II_INCLUDED || !defined NA_BASE_INCLUDED
-  #warning "Do not include this file directly. Use NABase.h"
-#endif
 #ifndef NA_NUMERICS_II_INCLUDED
 #define NA_NUMERICS_II_INCLUDED
 
@@ -49,33 +46,33 @@ NA_IDEF int16 naSigni16(int16 i){
 }
 NA_IDEF int32 naSigni32(int32 i){
   #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
-    return (int32)((naGetSignum32(i) << 1) + NA_ONE_32);
+    return (int32)((naGetSignum32(i) << 1) + NA_ONE_i32);
   #else
-    return (i < 0) ? -NA_ONE_32 : NA_ONE_32;
+    return (i < 0) ? -NA_ONE_i32 : NA_ONE_i32;
   #endif
 }
 NA_IDEF NAInt64 naSigni64(NAInt64 i){
   #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
     NAUInt64 signum = naGetSignum64(i);
-    return naCastUInt64ToInt64(naAddUInt64(naShlUInt64(signum, 1), NA_ONE_64u));
+    return naCastUInt64ToInt64(naAddUInt64(naShlUInt64(signum, 1), NA_ONE_u64));
   #else
-    return (i < 0) ? -NA_ONE_64 : NA_ONE_64;
+    return (i < 0) ? -NA_ONE_i64 : NA_ONE_i64;
   #endif
 }
 NA_IDEF NAInt128 naSigni128(NAInt128 i){
   #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
     NAUInt128 signum = naGetSignum128(i);
-    return naCastUInt128ToInt128(naAddUInt128(naShlUInt128(signum, 1), NA_ONE_128u));
+    return naCastUInt128ToInt128(naAddUInt128(naShlUInt128(signum, 1), NA_ONE_u128));
   #else
-    return (i < 0) ? -NA_ONE_128 : NA_ONE_128;
+    return (i < 0) ? -NA_ONE_i128 : NA_ONE_i128;
   #endif
 }
 NA_IDEF NAInt256 naSigni256(NAInt256 i){
   #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
     NAUInt256 signum = naGetSignum256(i);
-    return naCastUInt256ToInt256(naAddUInt256(naShlUInt256(signum, 1), NA_ONE_256u));
+    return naCastUInt256ToInt256(naAddUInt256(naShlUInt256(signum, 1), NA_ONE_u256));
   #else
-    return (i < 0) ? -NA_ONE_256 : NA_ONE_256;
+    return (i < 0) ? -NA_ONE_i256 : NA_ONE_i256;
   #endif
 }
 

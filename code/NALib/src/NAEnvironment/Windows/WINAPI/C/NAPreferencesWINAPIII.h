@@ -69,7 +69,7 @@ NA_DEF NAInt naInitPreferencesInt(const char* key, NAInt value){
   HKEY hKey = naGetNativePreferences();
   LSTATUS errorcode = RegGetValueA(hKey, NULL, key, RRF_RT_ANY, &type, &storedvalue, (LPDWORD)&valuesize);
   if(errorcode != ERROR_SUCCESS){
-    storedvalue = ((value == 0) ? NA_MIN_64 : naCastIntToInt64(value));
+    storedvalue = ((value == 0) ? NA_MIN_i64 : naCastIntToInt64(value));
     errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
     if(errorcode != ERROR_SUCCESS){
       #ifndef NDEBUG
@@ -77,7 +77,7 @@ NA_DEF NAInt naInitPreferencesInt(const char* key, NAInt value){
       #endif
     }
   }
-  return (NAInt)((naEqualInt64(storedvalue, NA_MIN_64) ? 0 : naCastInt64ToInt(storedvalue)));
+  return (NAInt)((naEqualInt64(storedvalue, NA_MIN_i64) ? 0 : naCastInt64ToInt(storedvalue)));
 }
 NA_DEF NAInt naInitPreferencesEnum(const char* key, NAInt value){
   DWORD valuesize;
@@ -173,7 +173,7 @@ NA_DEF void naSetPreferencesBool(const char* key, NABool value){
 }
 NA_DEF void naSetPreferencesInt(const char* key, NAInt value){
   DWORD valuesize = NA_TYPE64_BYTES;
-  NAInt64 storedvalue = ((value == 0) ? NA_MIN_64 : naCastIntToInt64(value));
+  NAInt64 storedvalue = ((value == 0) ? NA_MIN_i64 : naCastIntToInt64(value));
   HKEY hKey = naGetNativePreferences();
   LSTATUS errorcode = RegSetKeyValueA(hKey, NULL, key, REG_QWORD, &storedvalue, valuesize);
   if(errorcode != ERROR_SUCCESS){
@@ -265,8 +265,8 @@ NA_DEF NAInt naGetPreferencesInt(const char* key){
 
   hKey = naGetNativePreferences();
   errorcode = RegGetValueA(hKey, NULL, key, RRF_RT_ANY, &type, &storedvalue, &valuesize);
-  if(errorcode != ERROR_SUCCESS){storedvalue = NA_MIN_64;}
-  return (NAInt)((naEqualInt64(storedvalue, NA_MIN_64)) ? 0 : naCastInt64ToInt(storedvalue));
+  if(errorcode != ERROR_SUCCESS){storedvalue = NA_MIN_i64;}
+  return (NAInt)((naEqualInt64(storedvalue, NA_MIN_i64)) ? 0 : naCastInt64ToInt(storedvalue));
 }
 NA_DEF NAInt naGetPreferencesEnum(const char* key){
   DWORD valuesize = NA_TYPE64_BYTES;

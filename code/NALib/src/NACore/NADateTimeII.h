@@ -70,14 +70,14 @@ struct NADateTime{
 
 
 NA_IDEF NABool naIsLeapYearJulian(NAInt64 year){
-  return naEqualInt64(naModInt64(year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD), NA_ZERO_64);
+  return naEqualInt64(naModInt64(year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD), NA_ZERO_i64);
 }
 
 
 NA_IDEF NABool naIsLeapYearGregorian(NAInt64 year){
-  if(naEqualInt64(naModInt64(year, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD), NA_ZERO_64)){return NA_TRUE;}
-  if(naEqualInt64(naModInt64(year, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD), NA_ZERO_64)){return NA_FALSE;}
-  if(naEqualInt64(naModInt64(year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD), NA_ZERO_64)){return NA_TRUE;}
+  if(naEqualInt64(naModInt64(year, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD), NA_ZERO_i64)){return NA_TRUE;}
+  if(naEqualInt64(naModInt64(year, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD), NA_ZERO_i64)){return NA_FALSE;}
+  if(naEqualInt64(naModInt64(year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD), NA_ZERO_i64)){return NA_TRUE;}
   return NA_FALSE;
 }
 

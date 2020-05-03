@@ -67,8 +67,8 @@ void testMaking(){
 void timeMaking(){
   double t;
   int i;
-  int256 i256 = NA_ZERO_256;
-  uint256 ui256 = NA_ZERO_256u;
+  int256 i256 = NA_ZERO_i256;
+  uint256 ui256 = NA_ZERO_u256;
 
   t = getTime();
   for(i = 0; i < TESTSIZE; i++){i256 = naAddInt256(naMakeInt256WithLo(naNegInt128(naCastUInt128ToInt128(randUInt128()))), i256);}
@@ -251,12 +251,12 @@ void timeComparison(){
 void testArithmetic(){
   int256 i01 =   MAKEi256(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff251);
   int256 i02 =   MAKEi256(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6, 0xf2461b44, 0x945472ea, 0xf3516735, 0x7ce3a145);
-  int256 i03 =   NA_ZERO_256;
+  int256 i03 =   NA_ZERO_i256;
   int256 i04 =   naMakeInt256WithDouble(-123.);
   int256 i1, i2;
   uint256 ui01 = MAKEu256(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd, 0x873bac24, 0x647a4fe9, 0x296abeff, 0x1648dbcb);
   uint256 ui02 = MAKEu256(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1, 0x893c1216, 0x7145ceaf, 0xaa53c8ef, 0x72baeaa7);
-  uint256 ui03 = NA_ZERO_256u;
+  uint256 ui03 = NA_ZERO_u256;
   uint256 ui2;
 
   i1 = naNegInt256(i01);
@@ -442,10 +442,10 @@ void testEqualUInt256(uint256 ui, uint32 goalhi, uint32 goallo1, uint32 goallo2,
       printf("FAIL ");
     }
   #else
-    if((ui & NA_MAX_32u) == goallo3
-      && ((ui >> 32) & NA_MAX_32u) == goallo2
-      && ((ui >> 128) & NA_MAX_32u) == goallo1
-      && ((ui >> 96) & NA_MAX_32u) == goalhi){
+    if((ui & NA_MAX_u32) == goallo3
+      && ((ui >> 32) & NA_MAX_u32) == goallo2
+      && ((ui >> 128) & NA_MAX_u32) == goallo1
+      && ((ui >> 96) & NA_MAX_u32) == goalhi){
       printf("ok   ");
     }else{
       printf("FAIL ");

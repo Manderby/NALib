@@ -5,9 +5,6 @@
 
 // This file contains inline implementations of floating point calculations.
 
-#if defined NA_FLOATING_POINT_II_INCLUDED || !defined NA_BASE_INCLUDED
-  #warning "Do not include this file directly. Use NABase.h"
-#endif
 #ifndef NA_FLOATING_POINT_II_INCLUDED
 #define NA_FLOATING_POINT_II_INCLUDED
 
@@ -131,7 +128,7 @@
 #define NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_LO    0x0u
 #define NA_IEEE754_DOUBLE_SIGNIFICAND_NORM       naCastUInt64ToInt64(naMakeUInt64(NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_HI, NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_LO))
 #define NA_IEEE754_DOUBLE_SIGNIFICAND_MASK_HI    (NA_IEEE754_DOUBLE_SIGNIFICAND_NORM_HI - 1)
-#define NA_IEEE754_DOUBLE_SIGNIFICAND_MASK_LO    NA_MAX_32u
+#define NA_IEEE754_DOUBLE_SIGNIFICAND_MASK_LO    NA_MAX_u32
 #define NA_IEEE754_DOUBLE_SIGNIFICAND_MASK       naCastUInt64ToInt64(naMakeUInt64(NA_IEEE754_DOUBLE_SIGNIFICAND_MASK_HI, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK_LO))
 #define NA_IEEE754_DOUBLE_EXPONENT_BITS          (NA_IEEE754_DOUBLE_BITS - 1 - NA_IEEE754_DOUBLE_SIGNIFICAND_BITS)
 #define NA_IEEE754_DOUBLE_EXPONENT_BIAS          ((1 << (NA_IEEE754_DOUBLE_EXPONENT_BITS - 1)) - 1)
@@ -173,7 +170,7 @@ NA_IDEF double naMakeDouble(NAInt64 signedSignificand, int32 signedExponent){
   #ifndef NDEBUG
     if(signedExponent < NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL)
       naError("exponent too low for double precision");
-    if(!naEqualInt64(signedSignificand, NA_ZERO_64) && (signedExponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL))
+    if(!naEqualInt64(signedSignificand, NA_ZERO_i64) && (signedExponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL))
       naError("exponent creates subnormal number");
     if(signedExponent > NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
       naError("exponent too high for double precision");
@@ -273,7 +270,7 @@ NA_IAPI NAInt64 naGetDoubleInteger(double d){
   dBits = naOrInt64(dBits, NA_IEEE754_DOUBLE_SIGNIFICAND_NORM);
   int32 exponent = naGetDoubleExponent(d);
   if(exponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL){
-    dBits = NA_ZERO_64;
+    dBits = NA_ZERO_i64;
   }else{
     dBits = naShrInt64(dBits, NA_IEEE754_DOUBLE_SIGNIFICAND_BITS - exponent);
     if(d < 0){dBits = naNegInt64(dBits);}
@@ -290,7 +287,7 @@ NA_IAPI NAInt64 naGetDoubleFraction(double d){
   dbits = naOrInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_NORM);
   exponent = naGetDoubleExponent(d);
   if(exponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL){
-    dbits = NA_ZERO_64;
+    dbits = NA_ZERO_i64;
   }else{
     if(exponent < 0){
       dbits = naShrInt64(dbits, -exponent);
@@ -298,8 +295,8 @@ NA_IAPI NAInt64 naGetDoubleFraction(double d){
       dbits = naShlInt64(dbits, exponent);
     }
     dbits = naAndInt64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
-    NAInt128 hyperBits = naMakeInt128(NA_ZERO_64, dbits);
-    NAInt128 hyperTens = naMakeInt128(NA_ZERO_64, 0x71afd498d0000000);  // = 1e15 * 2^13
+    NAInt128 hyperBits = naMakeInt128(NA_ZERO_i64, dbits);
+    NAInt128 hyperTens = naMakeInt128(NA_ZERO_i64, 0x71afd498d0000000);  // = 1e15 * 2^13
     hyperBits = naMulInt128(hyperBits, hyperTens);
     if(exponent < 0){
       dbits = naShlInt64(hyperBits.hi, -exponent);

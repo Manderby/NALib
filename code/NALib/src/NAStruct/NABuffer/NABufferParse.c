@@ -241,9 +241,9 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAUInt6
   NAInt end = start;
   NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
 
-  *retInt = NA_ZERO_64u;
+  *retInt = NA_ZERO_u64;
   bytesused = 0;
-  prevval = NA_ZERO_64u;
+  prevval = NA_ZERO_u64;
   if(maxdigitcount == 0){maxdigitcount = naGetRangeiEnd(buffer->range) - start;}
 
   while(!found && !naIsBufferAtEnd(iter)){
@@ -285,13 +285,13 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAUInt6
 
 
 NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, NAInt64* retInt, NAInt maxdigitcount, NAInt64 min, NAInt64 max){
-  NAInt64 sign = NA_ONE_64;
+  NAInt64 sign = NA_ONE_i64;
   NAInt bytesused = 0;
   NAInt64 limit = max;
   NAUInt64 intvalue;
   const NAByte* curbyte;
 
-  *retInt = NA_ZERO_64;
+  *retInt = NA_ZERO_i64;
 
   naPrepareBuffer(iter, 1);
   if(naIsBufferAtInitial(iter)){return 0;}
@@ -303,7 +303,7 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, NAInt64* 
     maxdigitcount--;
     iter->partoffset++;
   }else if(*curbyte == '-'){
-    sign = naNegInt64(NA_ONE_64);
+    sign = naNegInt64(NA_ONE_i64);
     limit = naNegInt64(min);
     bytesused = 1;
     maxdigitcount--;

@@ -11,10 +11,6 @@
 
 
 #if defined NA_TYPE_INT64
-  // If there is a native int64 type available, use it.
-
-  #define NAInt64 int64
-  #define NAUInt64 uint64
 
   #define naMakeUInt64WithLiteralLo(lo) (lo ## uLL)
 
@@ -95,91 +91,78 @@
 
     #error "NAInt64 is unavailable for the current signed integer encoding"
 
-  #else
-
-    typedef struct NAInt64  NAInt64;
-    typedef struct NAUInt64 NAUInt64;
-    #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
-      struct NAInt64 { int32 hi;  uint32 lo; };
-      struct NAUInt64{ uint32 hi; uint32 lo; };
-    #else
-      struct NAInt64 { uint32 lo; int32  hi; };
-      struct NAUInt64{ uint32 lo; uint32 hi; };
-    #endif
-
-    NA_IAPI NAInt64  naMakeInt64(int32 hi, uint32 lo);
-    NA_IAPI NAInt64  naMakeInt64WithLo(int32 lo);
-    NA_IAPI NAInt64  naMakeInt64WithDouble(double d);
-
-    NA_IAPI NAInt64  naNegInt64(NAInt64 i);
-    #define          naIncInt64(i)
-    #define          naDecInt64(i)
-    NA_IAPI NAInt64  naAddInt64(NAInt64 a, NAInt64 b);
-    NA_IAPI NAInt64  naSubInt64(NAInt64 a, NAInt64 b);
-    NA_IAPI NAInt64  naMulInt64(NAInt64 a, NAInt64 b);
-    NA_IAPI NAInt64  naDivInt64(NAInt64 a, NAInt64 b);
-    NA_IAPI NAInt64  naModInt64(NAInt64 a, NAInt64 b);
-
-    NA_IAPI NAInt64  naNotInt64(NAInt64 i);
-    NA_IAPI NAInt64  naOrInt64 (NAInt64 a, NAInt64 b);
-    NA_IAPI NAInt64  naAndInt64(NAInt64 a, NAInt64 b);
-    NA_IAPI NAInt64  naXorInt64(NAInt64 a, NAInt64 b);
-    NA_IAPI NAInt64  naShlInt64(NAInt64 a, int n);
-    NA_IAPI NAInt64  naShrInt64(NAInt64 a, int n);
-
-    NA_IAPI NABool naEqualInt64        (NAInt64 a, NAInt64 b);
-    NA_IAPI NABool naGreaterInt64      (NAInt64 a, NAInt64 b);
-    NA_IAPI NABool naGreaterEqualInt64 (NAInt64 a, NAInt64 b);
-    NA_IAPI NABool naSmallerInt64      (NAInt64 a, NAInt64 b);
-    NA_IAPI NABool naSmallerEqualInt64 (NAInt64 a, NAInt64 b);
-
-    NA_IAPI uint8    naCastInt64ToUInt8 (NAInt64 i);
-    NA_IAPI uint16   naCastInt64ToUInt16(NAInt64 i);
-    NA_IAPI uint32   naCastInt64ToUInt32(NAInt64 i);
-    NA_IAPI NAUInt64 naCastInt64ToUInt64(NAInt64 i);
-    NA_IAPI int8     naCastInt64ToInt8  (NAInt64 i);
-    NA_IAPI int16    naCastInt64ToInt16 (NAInt64 i);
-    NA_IAPI int32    naCastInt64ToInt32 (NAInt64 i);
-    NA_IAPI double   naCastInt64ToDouble(NAInt64 i);
-
-    #define naMakeUInt64WithLiteralLo(lo)
-    NA_IAPI NAUInt64 naMakeUInt64(uint32 hi, uint32 lo);
-    NA_IAPI NAUInt64 naMakeUInt64WithLo(uint32 lo);
-    NA_IAPI NAUInt64 naMakeUInt64WithDouble(double d);
-
-    #define          naIncUInt64(i)
-    #define          naDecUInt64(i)
-    NA_IAPI NAUInt64 naAddUInt64(NAUInt64 a, NAUInt64 b);
-    NA_IAPI NAUInt64 naAddUInt64(NAUInt64 a, NAUInt64 b);
-    NA_IAPI NAUInt64 naSubUInt64(NAUInt64 a, NAUInt64 b);
-    NA_IAPI NAUInt64 naMulUInt64(NAUInt64 a, NAUInt64 b);
-    NA_IAPI NAUInt64 naDivUInt64(NAUInt64 a, NAUInt64 b);
-    NA_IAPI NAUInt64 naModUInt64(NAUInt64 a, NAUInt64 b);
-
-    NA_IAPI NAUInt64 naNotUInt64(NAUInt64 i);
-    NA_IAPI NAUInt64 naOrUInt64 (NAUInt64 a, NAUInt64 b);
-    NA_IAPI NAUInt64 naAndUInt64(NAUInt64 a, NAUInt64 b);
-    NA_IAPI NAUInt64 naXorUInt64(NAUInt64 a, NAUInt64 b);
-    NA_IAPI NAUInt64 naShlUInt64(NAUInt64 a, int n);
-    NA_IAPI NAUInt64 naShrUInt64(NAUInt64 a, int n);
-
-    NA_IAPI NABool naEqualUInt64       (NAUInt64 a, NAUInt64 b);
-    NA_IAPI NABool naGreaterUInt64     (NAUInt64 a, NAUInt64 b);
-    NA_IAPI NABool naGreaterEqualUInt64(NAUInt64 a, NAUInt64 b);
-    NA_IAPI NABool naSmallerUInt64     (NAUInt64 a, NAUInt64 b);
-    NA_IAPI NABool naSmallerEqualUInt64(NAUInt64 a, NAUInt64 b);
-
-    NA_IAPI int8    naCastUInt64ToInt8  (NAUInt64 i);
-    NA_IAPI int16   naCastUInt64ToInt16 (NAUInt64 i);
-    NA_IAPI int32   naCastUInt64ToInt32 (NAUInt64 i);
-    NA_IAPI NAInt64 naCastUInt64ToInt64 (NAUInt64 i);
-    NA_IAPI uint8   naCastUInt64ToUInt8 (NAUInt64 i);
-    NA_IAPI uint16  naCastUInt64ToUInt16(NAUInt64 i);
-    NA_IAPI uint32  naCastUInt64ToUInt32(NAUInt64 i);
-    NA_IAPI double  naCastUInt64ToDouble(NAUInt64 i);
-
-
   #endif
+
+  NA_IAPI NAInt64  naMakeInt64(int32 hi, uint32 lo);
+  NA_IAPI NAInt64  naMakeInt64WithLo(int32 lo);
+  NA_IAPI NAInt64  naMakeInt64WithDouble(double d);
+
+  NA_IAPI NAInt64  naNegInt64(NAInt64 i);
+  #define          naIncInt64(i)
+  #define          naDecInt64(i)
+  NA_IAPI NAInt64  naAddInt64(NAInt64 a, NAInt64 b);
+  NA_IAPI NAInt64  naSubInt64(NAInt64 a, NAInt64 b);
+  NA_IAPI NAInt64  naMulInt64(NAInt64 a, NAInt64 b);
+  NA_IAPI NAInt64  naDivInt64(NAInt64 a, NAInt64 b);
+  NA_IAPI NAInt64  naModInt64(NAInt64 a, NAInt64 b);
+
+  NA_IAPI NAInt64  naNotInt64(NAInt64 i);
+  NA_IAPI NAInt64  naOrInt64 (NAInt64 a, NAInt64 b);
+  NA_IAPI NAInt64  naAndInt64(NAInt64 a, NAInt64 b);
+  NA_IAPI NAInt64  naXorInt64(NAInt64 a, NAInt64 b);
+  NA_IAPI NAInt64  naShlInt64(NAInt64 a, int n);
+  NA_IAPI NAInt64  naShrInt64(NAInt64 a, int n);
+
+  NA_IAPI NABool naEqualInt64        (NAInt64 a, NAInt64 b);
+  NA_IAPI NABool naGreaterInt64      (NAInt64 a, NAInt64 b);
+  NA_IAPI NABool naGreaterEqualInt64 (NAInt64 a, NAInt64 b);
+  NA_IAPI NABool naSmallerInt64      (NAInt64 a, NAInt64 b);
+  NA_IAPI NABool naSmallerEqualInt64 (NAInt64 a, NAInt64 b);
+
+  NA_IAPI uint8    naCastInt64ToUInt8 (NAInt64 i);
+  NA_IAPI uint16   naCastInt64ToUInt16(NAInt64 i);
+  NA_IAPI uint32   naCastInt64ToUInt32(NAInt64 i);
+  NA_IAPI NAUInt64 naCastInt64ToUInt64(NAInt64 i);
+  NA_IAPI int8     naCastInt64ToInt8  (NAInt64 i);
+  NA_IAPI int16    naCastInt64ToInt16 (NAInt64 i);
+  NA_IAPI int32    naCastInt64ToInt32 (NAInt64 i);
+  NA_IAPI double   naCastInt64ToDouble(NAInt64 i);
+
+  #define naMakeUInt64WithLiteralLo(lo)
+  NA_IAPI NAUInt64 naMakeUInt64(uint32 hi, uint32 lo);
+  NA_IAPI NAUInt64 naMakeUInt64WithLo(uint32 lo);
+  NA_IAPI NAUInt64 naMakeUInt64WithDouble(double d);
+
+  #define          naIncUInt64(i)
+  #define          naDecUInt64(i)
+  NA_IAPI NAUInt64 naAddUInt64(NAUInt64 a, NAUInt64 b);
+  NA_IAPI NAUInt64 naAddUInt64(NAUInt64 a, NAUInt64 b);
+  NA_IAPI NAUInt64 naSubUInt64(NAUInt64 a, NAUInt64 b);
+  NA_IAPI NAUInt64 naMulUInt64(NAUInt64 a, NAUInt64 b);
+  NA_IAPI NAUInt64 naDivUInt64(NAUInt64 a, NAUInt64 b);
+  NA_IAPI NAUInt64 naModUInt64(NAUInt64 a, NAUInt64 b);
+
+  NA_IAPI NAUInt64 naNotUInt64(NAUInt64 i);
+  NA_IAPI NAUInt64 naOrUInt64 (NAUInt64 a, NAUInt64 b);
+  NA_IAPI NAUInt64 naAndUInt64(NAUInt64 a, NAUInt64 b);
+  NA_IAPI NAUInt64 naXorUInt64(NAUInt64 a, NAUInt64 b);
+  NA_IAPI NAUInt64 naShlUInt64(NAUInt64 a, int n);
+  NA_IAPI NAUInt64 naShrUInt64(NAUInt64 a, int n);
+
+  NA_IAPI NABool naEqualUInt64       (NAUInt64 a, NAUInt64 b);
+  NA_IAPI NABool naGreaterUInt64     (NAUInt64 a, NAUInt64 b);
+  NA_IAPI NABool naGreaterEqualUInt64(NAUInt64 a, NAUInt64 b);
+  NA_IAPI NABool naSmallerUInt64     (NAUInt64 a, NAUInt64 b);
+  NA_IAPI NABool naSmallerEqualUInt64(NAUInt64 a, NAUInt64 b);
+
+  NA_IAPI int8    naCastUInt64ToInt8  (NAUInt64 i);
+  NA_IAPI int16   naCastUInt64ToInt16 (NAUInt64 i);
+  NA_IAPI int32   naCastUInt64ToInt32 (NAUInt64 i);
+  NA_IAPI NAInt64 naCastUInt64ToInt64 (NAUInt64 i);
+  NA_IAPI uint8   naCastUInt64ToUInt8 (NAUInt64 i);
+  NA_IAPI uint16  naCastUInt64ToUInt16(NAUInt64 i);
+  NA_IAPI uint32  naCastUInt64ToUInt32(NAUInt64 i);
+  NA_IAPI double  naCastUInt64ToDouble(NAUInt64 i);
 
 #endif
 

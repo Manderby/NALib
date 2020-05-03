@@ -31,101 +31,191 @@ typedef int NABool;
 
 
 
+// Int 8 bits
 typedef uint8_t        uint8;
 typedef int8_t         int8;
+
+#define NA_MAX_u8      UINT8_MAX
+#define NA_MAX_i8      INT8_MAX
+#define NA_MIN_i8      INT8_MIN
+#define NA_ZERO_u8     ((uint8)0u)
+#define NA_ONE_u8      ((uint8)1u)
+#define NA_ZERO_i8     ((int8)0)
+#define NA_ONE_i8      ((int8)1)
+
+
+
+// Int 16 bits
 typedef uint16_t       uint16;
 typedef int16_t        int16;
+
+#define NA_MAX_u16     UINT16_MAX
+#define NA_MAX_i16     INT16_MAX
+#define NA_MIN_i16     INT16_MIN
+#define NA_ZERO_u16    ((uint16)0u)
+#define NA_ONE_u16     ((uint16)1u)
+#define NA_ZERO_i16    ((int16)0)
+#define NA_ONE_i16     ((int16)1)
+
+
+
+// Int 32 bits
 typedef uint32_t       uint32;
 typedef int32_t        int32;
+
+#define NA_MAX_u32     UINT32_MAX
+#define NA_MAX_i32     INT32_MAX
+#define NA_MIN_i32     INT32_MIN
+#define NA_ZERO_u32    ((uint32)0u)
+#define NA_ONE_u32     ((uint32)1u)
+#define NA_ZERO_i32    ((int32)0)
+#define NA_ONE_i32     ((int32)1)
+
+
+
+// Int 64 bits
 #if defined NA_TYPE_INT64
-  typedef uint64_t     uint64;
-  typedef int64_t      int64;
+  typedef uint64_t       uint64;
+  typedef int64_t        int64;
+  typedef uint64         NAUInt64;
+  typedef int64          NAInt64;
+  #if defined UINT64_MAX
+    #define NA_MAX_u64   UINT64_MAX
+  #else
+    #define NA_MAX_u64   (0xffffffffffffffffu)
+  #endif
+  #if defined INT64_MAX
+    #define NA_MAX_i64   INT64_MAX
+  #else
+    #define NA_MAX_i64   (0x7fffffffffffffff)
+  #endif
+  #if defined INT64_MIN
+    #define NA_MIN_i64   INT64_MIN
+  #else
+    #define NA_MIN_i64   (0x8000000000000001 - 1)
+  #endif
+  #define NA_ZERO_u64    ((uint64)0u)
+  #define NA_ONE_u64     ((uint64)1u)
+  #define NA_ZERO_i64    ((int64)0)
+  #define NA_ONE_i64     ((int64)1)
+#else
+  typedef struct NAUInt64 uint64;
+  typedef struct NAInt64  int64;
+  typedef struct NAUInt64 NAUInt64;
+  typedef struct NAInt64  NAInt64;
+  #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
+    struct NAInt64 { int32 hi;  uint32 lo; };
+    struct NAUInt64{ uint32 hi; uint32 lo; };
+  #else
+    struct NAInt64 { uint32 lo; int32  hi; };
+    struct NAUInt64{ uint32 lo; uint32 hi; };
+  #endif
+
+  #define NA_MAX_u64     naMakeUInt64(NA_MAX_u32, NA_MAX_u32)
+  #define NA_MAX_i64     naMakeInt64(NA_MAX_i32, NA_MAX_u32)
+  #define NA_MIN_i64     naMakeInt64(NA_MIN_i32, NA_ZERO_u32)
+  #define NA_ZERO_u64    naMakeUInt64WithLo(NA_ZERO_u32)
+  #define NA_ONE_u64     naMakeUInt64WithLo(NA_ONE_u32)
+  #define NA_ZERO_i64    naMakeInt64WithLo(NA_ZERO_i32)
+  #define NA_ONE_i64     naMakeInt64WithLo(NA_ONE_i32)
 #endif
 
-#define NA_MAX_8u      UINT8_MAX
-#define NA_MAX_8       INT8_MAX
-#define NA_MIN_8       INT8_MIN
-#define NA_ZERO_8u     ((uint8)0u)
-#define NA_ONE_8u      ((uint8)1u)
-#define NA_ZERO_8      ((int8)0)
-#define NA_ONE_8       ((int8)1)
 
-#define NA_MAX_16u     UINT16_MAX
-#define NA_MAX_16      INT16_MAX
-#define NA_MIN_16      INT16_MIN
-#define NA_ZERO_16u    ((uint16)0u)
-#define NA_ONE_16u     ((uint16)1u)
-#define NA_ZERO_16     ((int16)0)
-#define NA_ONE_16      ((int16)1)
 
-#define NA_MAX_32u     UINT32_MAX
-#define NA_MAX_32      INT32_MAX
-#define NA_MIN_32      INT32_MIN
-#define NA_ZERO_32u    ((uint32)0u)
-#define NA_ONE_32u     ((uint32)1u)
-#define NA_ZERO_32     ((int32)0)
-#define NA_ONE_32      ((int32)1)
-
-#if defined NA_TYPE_INT64
-  #define NA_MAX_64u   UINT64_MAX
-  #define NA_MAX_64    INT64_MAX
-  #define NA_MIN_64    INT64_MIN
-  #define NA_ZERO_64u  ((uint64)0u)
-  #define NA_ONE_64u   ((uint64)1u)
-  #define NA_ZERO_64   ((int64)0)
-  #define NA_ONE_64    ((int64)1)
-#endif
-
-// 128 bits native datatype
+// Int 128 bits
 #if defined NA_TYPE_INT128
-  #ifndef UINT128_MAX
-    #define UINT128_MAX  (0xffffffffffffffffffffffffffffffffu)
-  #endif
-  #ifndef INT128_MAX
-    #define INT128_MAX   (0x7fffffffffffffffffffffffffffffff)
-  #endif
-  #ifndef INT128_MIN
-    #define INT128_MIN   (0x80000000000000000000000000000001 - 1)
-  #endif
-
-  #define NA_MAX_128u  UINT128_MAX
-  #define NA_MAX_128   INT128_MAX
-  #define NA_MIN_128   INT128_MIN
   typedef unsigned __int128   uint128;
   typedef signed   __int128   int128;
-  // Note that older versions define these types. Maybe add them later.
-  // typedef unsigned __int128_t   uint128;
-  // typedef signed   __int128_t   int128;
-  #define NA_ZERO_128     naMakeInt128WithLo(NA_ZERO_64)
-  #define NA_ONE_128      naMakeInt128WithLo(NA_ONE_64)
-  #define NA_ZERO_128u    naMakeUInt128WithLo(NA_ZERO_64u)
-  #define NA_ONE_128u     naMakeUInt128WithLo(NA_ONE_64u)
+  typedef uint128             NAUInt128
+  typedef int128              NAInt128
+  #if defined UINT128_MAX
+    #define NA_MAX_u128  UINT128_MAX
+  #else
+    #define NA_MAX_u128  (0xffffffffffffffffffffffffffffffffu)
+  #endif
+  #if defined INT128_MAX
+    #define NA_MAX_i128  INT128_MAX
+  #else
+    #define NA_MAX_i128  (0x7fffffffffffffffffffffffffffffff)
+  #endif
+  #if defined INT128_MIN
+    #define NA_MIN_i128  INT128_MIN
+  #else
+    #define NA_MIN_i128  (0x80000000000000000000000000000001 - 1)
+  #endif
+  #define NA_ZERO_u128   ((uint128)0u)
+  #define NA_ONE_u128    ((uint128)1u)
+  #define NA_ZERO_i128   ((int128)0)
+  #define NA_ONE_i128    ((int128)1)
+#else
+  typedef struct NAUInt128 uint128;
+  typedef struct NAInt128  int128;
+  typedef struct NAUInt128 NAUInt128;
+  typedef struct NAInt128  NAInt128;
+  #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
+    struct NAInt128 { NAInt64 hi;  NAUInt64 lo; };
+    struct NAUInt128{ NAUInt64 hi; NAUInt64 lo; };
+  #else
+    struct NAInt128 { NAUInt64 lo; NAInt64  hi; };
+    struct NAUInt128{ NAUInt64 lo; NAUInt64 hi; };
+  #endif
+
+  #define NA_MAX_u128    naMakeUInt128(NA_MAX_u64, NA_MAX_u64)
+  #define NA_MAX_i128    naMakeInt128(NA_MAX_i64, NA_MAX_u64)
+  #define NA_MIN_i128    naMakeInt128(NA_MIN_i64, NA_ZERO_u64)
+  #define NA_ZERO_u128   naMakeUInt128WithLo(NA_ZERO_u64)
+  #define NA_ONE_u128    naMakeUInt128WithLo(NA_ONE_u64)
+  #define NA_ZERO_i128   naMakeInt128WithLo(NA_ZERO_i64)
+  #define NA_ONE_i128    naMakeInt128WithLo(NA_ONE_i64)
 #endif
 
-// 256 bits native datatype
-#if defined NA_TYPE_INT256
-  #ifndef UINT256_MAX
-    #define UINT256_MAX  (0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffu)
-  #endif
-  #ifndef INT256_MAX
-    #define INT256_MAX   (0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
-  #endif
-  #ifndef INT256_MIN
-    #define INT256_MIN   (0x8000000000000000000000000000000000000000000000000000000000000001 - 1)
-  #endif
 
-  #define NA_MAX_256u  UINT256_MAX
-  #define NA_MAX_256   INT256_MAX
-  #define NA_256_128   INT256_MIN
+
+// Int 256 bits
+#if defined NA_TYPE_INT256
   typedef unsigned __int256   uint256;
   typedef signed   __int256   int256;
-  // Note that older versions define these types. Maybe add them later.
-  // typedef unsigned __int256_t   uint256;
-  // typedef signed   __int256_t   int256;
-  #define NA_ZERO_256     naMakeInt256WithLo(NA_ZERO_128)
-  #define NA_ONE_256      naMakeInt256WithLo(NA_ONE_128)
-  #define NA_ZERO_256u    naMakeInt256WithLo(NA_ZERO_128u)
-  #define NA_ONE_256u     naMakeInt256WithLo(NA_ONE_128u)
+  typedef uint256            NAUInt256
+  typedef int256             NAInt256
+  #if defined UINT256_MAX
+    #define NA_MAX_u256    UINT256_MAX
+  #else
+    #define NA_MAX_u256  (0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffu)
+  #endif
+  #if defined INT256_MAX
+    #define NA_MAX_i256    INT256_MAX
+  #else
+    #define NA_MAX_i256   (0x7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
+  #endif
+  #if defined INT256_MIN
+    #define NA_MIN_i256    INT256_MIN
+  #else
+    #define NA_MIN_i256   (0x8000000000000000000000000000000000000000000000000000000000000001 - 1)
+  #endif
+  #define NA_ZERO_u256   ((uint256)0u)
+  #define NA_ONE_u256    ((uint256)1u)
+  #define NA_ZERO_i256   ((int256)0)
+  #define NA_ONE_i256    ((int256)1)
+#else
+  typedef struct NAUInt256 uint256;
+  typedef struct NAInt256  int256;
+  typedef struct NAUInt256 NAUInt256;
+  typedef struct NAInt256  NAInt256;
+  #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
+    struct NAInt256 { NAInt128 hi;  NAUInt128 lo; };
+    struct NAUInt256{ NAUInt128 hi; NAUInt128 lo; };
+  #else
+    struct NAInt256 { NAUInt128 lo; NAInt128  hi; };
+    struct NAUInt256{ NAUInt128 lo; NAUInt128 hi; };
+  #endif
+
+  #define NA_MAX_u256    naMakeUInt256(NA_MAX_u128, NA_MAX_u128)
+  #define NA_MAX_i256    naMakeInt256(NA_MAX_i128, NA_MAX_u128)
+  #define NA_MIN_i256    naMakeInt256(NA_MIN_i128, NA_ZERO_u128)
+  #define NA_ZERO_u256   naMakeUInt256WithLo(NA_ZERO_u128)
+  #define NA_ONE_u256    naMakeUInt256WithLo(NA_ONE_u128)
+  #define NA_ZERO_i256   naMakeInt256WithLo(NA_ZERO_i128)
+  #define NA_ONE_i256    naMakeInt256WithLo(NA_ONE_i128)
 #endif
 
 
@@ -189,51 +279,6 @@ typedef int32_t        int32;
 
 
 
-// We include the 64bit, 128bit and 256bit emulation.
-#include "NAInt64.h"
-#include "NAInt128.h"
-#include "NAInt256.h"
-
-// In case, there was no int64 defined before, we have to emulate it now.
-#if !defined NA_TYPE_INT64
-  #define NA_MAX_64u  naMakeUInt64(NA_MAX_32u, NA_MAX_32u)
-  #define NA_MAX_64   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_MAX_32, NA_MAX_32u))
-  #define NA_MIN_64   naCastUInt64ToInt64(naMakeUInt64((uint32)NA_MIN_32, NA_MAX_32u))
-  typedef NAInt64        int64;
-  typedef NAUInt64       uint64;
-  #define NA_ZERO_64     (naMakeInt64WithLo(NA_ZERO_32))
-  #define NA_ONE_64      (naMakeInt64WithLo(NA_ONE_32))
-  #define NA_ZERO_64u    (naMakeUInt64WithLo(NA_ZERO_32u))
-  #define NA_ONE_64u     (naMakeUInt64WithLo(NA_ONE_32u))
-#endif
-
-// In case, there was no int128 defined before, we have to emulate it now.
-#if !defined NA_TYPE_INT128
-  #define NA_MAX_128u  naMakeUInt128(NA_MAX_64u, NA_MAX_64u)
-  #define NA_MAX_128   naCastUInt128ToInt128(naMakeUInt128(naCastInt64ToUInt64(NA_MAX_64), NA_MAX_64u))
-  #define NA_MIN_128   naCastUInt128ToInt128(naMakeUInt128(naCastInt64ToUInt64(NA_MIN_64), NA_MAX_64u))
-  typedef NAInt128        int128;
-  typedef NAUInt128       uint128;
-  #define NA_ZERO_128     (naMakeInt128WithLo(NA_ZERO_64))
-  #define NA_ONE_128      (naMakeInt128WithLo(NA_ONE_64))
-  #define NA_ZERO_128u    (naMakeUInt128WithLo(NA_ZERO_64u))
-  #define NA_ONE_128u     (naMakeUInt128WithLo(NA_ONE_64u))
-#endif
-
-// In case, there was no int256 defined before, we have to emulate it now.
-#if !defined NA_TYPE_INT256
-  #define NA_MAX_256u  naMakeUInt256(NA_MAX_128u, NA_MAX_128u)
-  #define NA_MAX_256   naCastUInt256ToInt256(naMakeUInt256(naCastInt128ToUInt128(NA_MAX_128), NA_MAX_128u))
-  #define NA_256_128   naCastUInt256ToInt256(naMakeUInt256(naCastInt128ToUInt128(NA_MIN_128), NA_MAX_128u))
-  typedef NAInt256        int256;
-  typedef NAUInt256       uint256;
-  #define NA_ZERO_256     (naMakeInt256WithLo(NA_ZERO_128))
-  #define NA_ONE_256      (naMakeInt256WithLo(NA_ONE_128))
-  #define NA_ZERO_256u    (naMakeUInt256WithLo(NA_ZERO_128u))
-  #define NA_ONE_256u     (naMakeUInt256WithLo(NA_ONE_128u))
-#endif
-
-
 
 
 #if NA_TYPE_NAINT_BITS == NA_TYPE64_BITS
@@ -247,11 +292,11 @@ typedef int32_t        int32;
   #define NA_PRIx NA_PRIx64
   #define NA_SCNi NA_SCNi64
   #define NA_SCNu NA_SCNu64
-  #define NA_INT_MAX NA_MAX_64
-  #define NA_INT_MIN NA_MIN_64
-  #define NA_UINT_MAX NA_MAX_64u
-  #define NA_ZERO NA_ZERO_64
-  #define NA_ONE  NA_ONE_64
+  #define NA_MAX_i NA_MAX_i64
+  #define NA_MIN_i NA_MIN_i64
+  #define NA_MAX_u NA_MAX_u64
+  #define NA_ZERO NA_ZERO_i64
+  #define NA_ONE  NA_ONE_i64
 #elif NA_TYPE_NAINT_BITS == NA_TYPE32_BITS
   typedef int32 NAInt;
   typedef uint32 NAUInt;
@@ -260,11 +305,11 @@ typedef int32_t        int32;
   #define NA_PRIx NA_PRIx32
   #define NA_SCNi NA_SCNi32
   #define NA_SCNu NA_SCNu32
-  #define NA_INT_MAX NA_MAX_32
-  #define NA_INT_MIN NA_MIN_32
-  #define NA_UINT_MAX NA_MAX_32u
-  #define NA_ZERO NA_ZERO_32
-  #define NA_ONE  NA_ONE_32
+  #define NA_MAX_i NA_MAX_i32
+  #define NA_MIN_i NA_MIN_i32
+  #define NA_MAX_u NA_MAX_u32
+  #define NA_ZERO NA_ZERO_i32
+  #define NA_ONE  NA_ONE_i32
 #elif NA_TYPE_NAINT_BITS == NA_TYPE16_BITS
   typedef int16 NAInt;
   typedef uint16 NAUInt;
@@ -273,11 +318,11 @@ typedef int32_t        int32;
   #define NA_PRIx NA_PRIx16
   #define NA_SCNi NA_SCNi16
   #define NA_SCNu NA_SCNu16
-  #define NA_INT_MAX NA_MAX_16
-  #define NA_INT_MIN NA_MIN_16
-  #define NA_UINT_MAX NA_MAX_16u
-  #define NA_ZERO NA_ZERO_16
-  #define NA_ONE  NA_ONE_16
+  #define NA_MAX_i NA_MAX_i16
+  #define NA_MIN_i NA_MIN_i16
+  #define NA_MAX_u NA_MAX_u16
+  #define NA_ZERO NA_ZERO_i16
+  #define NA_ONE  NA_ONE_i16
 #else
   #error "Can not define NAInt. Bit count not supported."
 #endif

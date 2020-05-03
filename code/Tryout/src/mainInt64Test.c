@@ -59,8 +59,8 @@ void testMaking(){
 void timeMaking(){
   double t;
   int i;
-  int64 i64 = NA_ZERO_64;
-  uint64 ui64 = NA_ZERO_64u;
+  int64 i64 = NA_ZERO_i64;
+  uint64 ui64 = NA_ZERO_u64;
 
 
   t = getTime();
@@ -245,12 +245,12 @@ void timeComparison(){
 void testArithmetic(){
   int64 i01 = naMakeInt64WithDouble(-123456789012345.);
   int64 i02 = naMakeInt64WithDouble(987654321987.);
-  int64 i03 = NA_ZERO_64;
+  int64 i03 = NA_ZERO_i64;
   int64 i04 = naMakeInt64WithDouble(-123.);
   int64 i1, i2;
   uint64 ui01 = naMakeUInt64WithDouble(123456789012345.);
   uint64 ui02 = naMakeUInt64WithDouble(987654321987.);
-  uint64 ui03 = NA_ZERO_64u;
+  uint64 ui03 = NA_ZERO_u64;
   uint64 ui2;
 
   i1 = naNegInt64(i01);
@@ -414,7 +414,7 @@ void testEqualUInt64(uint64 ui, uint32 goalhi, uint32 goallo){
       printf("FAIL ");
     }
   #else
-    if((ui & NA_MAX_32u) == goallo && (ui >> 32) == goalhi){
+    if((ui & NA_MAX_u32) == goallo && (ui >> 32) == goalhi){
       printf("Pass ");
     }else{
       printf("FAIL ");

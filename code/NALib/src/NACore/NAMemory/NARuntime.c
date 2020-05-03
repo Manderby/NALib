@@ -558,7 +558,7 @@ NA_DEF void naStartRuntime(){
     #if (NA_POOLPART_BYTESIZE == 0)
       na_runtime->partsize = naGetSystemMemoryPagesize();
       na_runtime->partsizemask = naGetSystemMemoryPagesizeMask();
-    #elif (NA_POOLPART_BYTESIZE < NA_MAX_32)
+    #elif (NA_POOLPART_BYTESIZE < NA_MAX_i32)
       na_runtime->partsize = (NASizeUInt)NA_POOLPART_BYTESIZE;
       na_runtime->partsizemask = ~(NASizeUInt)(NA_POOLPART_BYTESIZE - NA_ONE);
     #else

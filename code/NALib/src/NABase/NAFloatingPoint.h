@@ -2,12 +2,11 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#if defined NA_FLOATING_POINT_INCLUDED || !defined NA_BASE_INCLUDED
-  #warning "Do not include this file directly. Use NABase.h"
-#endif
 #ifndef NA_FLOATING_POINT_INCLUDED
 #define NA_FLOATING_POINT_INCLUDED
 
+
+#include "../NABase.h"
 
 // Creates floats and doubles out of signed significands and exponents
 NA_IAPI float  naMakeFloat (int32 signedSignificand, int32 signedExponent);
@@ -22,6 +21,11 @@ NA_IAPI double naMakeDoubleSubnormal(NAInt64 signedSignificand);
 NA_IAPI int32   naGetDoubleExponent(double d);
 NA_IAPI NAInt64 naGetDoubleInteger(double d);
 NA_IAPI NAInt64 naGetDoubleFraction(double d);
+
+
+
+// Inline implementations are in a separate file:
+#include "NAFloatingPointII.h"
 
 
 #endif // NA_FLOATING_POINT_INCLUDED

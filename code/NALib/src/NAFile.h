@@ -69,11 +69,11 @@ typedef struct NAFile NAFile;
   #if NA_ADDRESS_BITS == 64
     typedef __int64 NAFilesize; // Is signed (Important for negative offsets)
     #define NA_FILESIZE_BITS 64
-    #define NA_FILESIZE_MAX NA_MAX_64
+    #define NA_FILESIZE_MAX NA_MAX_i64
   #elif NA_ADDRESS_BITS == 32
     typedef long NAFilesize;    // Is signed (Important for negative offsets)
   #define NA_FILESIZE_BITS 32
-  #define NA_FILESIZE_MAX NA_MAX_32
+  #define NA_FILESIZE_MAX NA_MAX_i32
 #endif
   typedef int NAFileMode;
   #define NA_FILEMODE_DEFAULT (_S_IREAD | _S_IWRITE)
@@ -87,7 +87,7 @@ typedef struct NAFile NAFile;
   #include <copyfile.h>
   typedef off_t NAFilesize;     // Is signed (Important for negative offsets)
   #define NA_FILESIZE_BITS 64
-  #define NA_FILESIZE_MAX NA_MAX_64
+  #define NA_FILESIZE_MAX NA_MAX_i64
   typedef int NAFileMode;
   #define NA_FILEMODE_DEFAULT 0644
   #define NA_DIRMODE_DEFAULT 0755

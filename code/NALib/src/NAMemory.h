@@ -50,7 +50,7 @@ NA_IAPI NASizeUInt naGetSystemMemoryPagesizeMask(void);
 // also in other encodings, the most negative integer is probably never used
 // by any programmer. Any other number than this invalid number might have a
 // valid meaning in NALib.
-#define NA_INVALID_MEMORY_INDEX     NA_INT_MIN
+#define NA_INVALID_MEMORY_INDEX     NA_MIN_i
 
 
 // As all memory functions expect an NAInt, we make it easier to write code

@@ -463,13 +463,13 @@ NA_IDEF int32 naLog2i32(int32 x){
 NA_IDEF NAInt64 naLog2i64(NAInt64 x){
   NAInt64 retvalue;
   #ifndef NDEBUG
-    if(naSmallerInt64(x, NA_ZERO_64))
+    if(naSmallerInt64(x, NA_ZERO_i64))
       naError("Logarithm of negative number.");
   #endif
-  if(naSmallerEqualInt64(x, NA_ZERO_64)){return NA_ZERO_64;}
+  if(naSmallerEqualInt64(x, NA_ZERO_i64)){return NA_ZERO_i64;}
   naDecInt64(x);
-  retvalue = NA_ZERO_64;
-  while(!naEqualInt64(x, NA_ZERO_64)){naIncInt64(retvalue); x = naShrInt64(x, 1);}
+  retvalue = NA_ZERO_i64;
+  while(!naEqualInt64(x, NA_ZERO_i64)){naIncInt64(retvalue); x = naShrInt64(x, 1);}
   return retvalue;
 }
 NA_IDEF NAInt naLog2i(NAInt x){
@@ -510,16 +510,16 @@ NA_IDEF int32 naExp2i32(int32 x){
     if(x >= 32)
       naError("Exponent too big. Will result in 0.");
   #endif
-  return NA_ONE_32 << x;
+  return NA_ONE_i32 << x;
 }
 NA_IDEF NAInt64 naExp2i64(NAInt64 x){
   #ifndef NDEBUG
-    if(naSmallerInt64(x, NA_ZERO_64))
+    if(naSmallerInt64(x, NA_ZERO_i64))
       naError("Exponent negative. Will result in 0.");
     if(naGreaterEqualInt64(x, naMakeInt64WithLo(64)))
       naError("Exponent too big. Will result in 0.");
   #endif
-  return naShlInt64(NA_ONE_64, naCastInt64ToInt32(x));
+  return naShlInt64(NA_ONE_i64, naCastInt64ToInt32(x));
 }
 
 
@@ -553,8 +553,8 @@ NA_IDEF NAInt64 naExp10i64(NAInt64 x){
     if(naGreaterInt64(x, naMakeInt64WithLo(18)))
       naError("Exponent of 10 exceeds integer range.");
   #endif
-  i = NA_ONE_64;
-  while(!naEqualInt64(x, NA_ZERO_64)){i = naMulInt64(i, naMakeInt64WithLo(10)); naDecInt64(x);}
+  i = NA_ONE_i64;
+  while(!naEqualInt64(x, NA_ZERO_i64)){i = naMulInt64(i, naMakeInt64WithLo(10)); naDecInt64(x);}
   return i;
 }
 

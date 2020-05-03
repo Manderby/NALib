@@ -11,10 +11,6 @@
 
 
 #if defined NA_TYPE_INT256
-  // If there is a native int256 type available, use it.
-
-  #define NAInt256 int256
-  #define NAUInt256 uint256
 
   #define naMakeUInt256WithLiteralLo(lo) (lo ## uLL)
 
@@ -103,99 +99,86 @@
 
     #error "NAInt256 is unavailable for the current signed integer encoding"
 
-  #else
-
-    typedef struct NAInt256  NAInt256;
-    typedef struct NAUInt256 NAUInt256;
-    #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
-      struct NAInt256 { NAInt128 hi;  NAUInt128 lo; };
-      struct NAUInt256{ NAUInt128 hi; NAUInt128 lo; };
-    #else
-      struct NAInt256 { NAUInt128 lo; NAInt128  hi; };
-      struct NAUInt256{ NAUInt128 lo; NAUInt128 hi; };
-    #endif
-
-    NA_IAPI NAInt256  naMakeInt256(NAInt128 hi, NAUInt128 lo);
-    NA_IAPI NAInt256  naMakeInt256WithLo(NAInt128 lo);
-    NA_IAPI NAInt256  naMakeInt256WithDouble(double d);
-
-    NA_IAPI NAInt256  naNegInt256(NAInt256 i);
-    #define           naIncInt256(i)
-    #define           naDecInt256(i)
-    NA_IAPI NAInt256  naAddInt256(NAInt256 a, NAInt256 b);
-    NA_IAPI NAInt256  naSubInt256(NAInt256 a, NAInt256 b);
-    NA_IAPI NAInt256  naMulInt256(NAInt256 a, NAInt256 b);
-    NA_IAPI NAInt256  naDivInt256(NAInt256 a, NAInt256 b);
-    NA_IAPI NAInt256  naModInt256(NAInt256 a, NAInt256 b);
-
-    NA_IAPI NAInt256  naNotInt256(NAInt256 i);
-    NA_IAPI NAInt256  naOrInt256 (NAInt256 a, NAInt256 b);
-    NA_IAPI NAInt256  naAndInt256(NAInt256 a, NAInt256 b);
-    NA_IAPI NAInt256  naXorInt256(NAInt256 a, NAInt256 b);
-    NA_IAPI NAInt256  naShlInt256(NAInt256 a, int n);
-    NA_IAPI NAInt256  naShrInt256(NAInt256 a, int n);
-
-    NA_IAPI NABool naEqualInt256        (NAInt256 a, NAInt256 b);
-    NA_IAPI NABool naGreaterInt256      (NAInt256 a, NAInt256 b);
-    NA_IAPI NABool naGreaterEqualInt256 (NAInt256 a, NAInt256 b);
-    NA_IAPI NABool naSmallerInt256      (NAInt256 a, NAInt256 b);
-    NA_IAPI NABool naSmallerEqualInt256 (NAInt256 a, NAInt256 b);
-
-    NA_IAPI uint8     naCastInt256ToUInt8  (NAInt256 i);
-    NA_IAPI uint16    naCastInt256ToUInt16 (NAInt256 i);
-    NA_IAPI uint32    naCastInt256ToUInt32 (NAInt256 i);
-    NA_IAPI NAUInt64  naCastInt256ToUInt64 (NAInt256 i);
-    NA_IAPI NAUInt128 naCastInt256ToUInt128(NAInt256 i);
-    NA_IAPI NAUInt256 naCastInt256ToUInt256(NAInt256 i);
-    NA_IAPI int8      naCastInt256ToInt8   (NAInt256 i);
-    NA_IAPI int16     naCastInt256ToInt16  (NAInt256 i);
-    NA_IAPI int32     naCastInt256ToInt32  (NAInt256 i);
-    NA_IAPI NAInt64   naCastInt256ToInt64  (NAInt256 i);
-    NA_IAPI NAInt128  naCastInt256ToInt128 (NAInt256 i);
-    NA_IAPI double    naCastInt256ToDouble (NAInt256 i);
-
-    #define naMakeUInt256WithLiteralLo(lo)
-    NA_IAPI NAUInt256 naMakeUInt256(NAUInt128 hi, NAUInt128 lo);
-    NA_IAPI NAUInt256 naMakeUInt256WithLo(NAUInt128 lo);
-    NA_IAPI NAUInt256 naMakeUInt256WithDouble(double d);
-
-    #define           naIncUInt256(i)
-    #define           naDecUInt256(i)
-    NA_IAPI NAUInt256 naAddUInt256(NAUInt256 a, NAUInt256 b);
-    NA_IAPI NAUInt256 naAddUInt256(NAUInt256 a, NAUInt256 b);
-    NA_IAPI NAUInt256 naSubUInt256(NAUInt256 a, NAUInt256 b);
-    NA_IAPI NAUInt256 naMulUInt256(NAUInt256 a, NAUInt256 b);
-    NA_IAPI NAUInt256 naDivUInt256(NAUInt256 a, NAUInt256 b);
-    NA_IAPI NAUInt256 naModUInt256(NAUInt256 a, NAUInt256 b);
-
-    NA_IAPI NAUInt256 naNotUInt256(NAUInt256 i);
-    NA_IAPI NAUInt256 naOrUInt256 (NAUInt256 a, NAUInt256 b);
-    NA_IAPI NAUInt256 naAndUInt256(NAUInt256 a, NAUInt256 b);
-    NA_IAPI NAUInt256 naXorUInt256(NAUInt256 a, NAUInt256 b);
-    NA_IAPI NAUInt256 naShlUInt256(NAUInt256 a, int n);
-    NA_IAPI NAUInt256 naShrUInt256(NAUInt256 a, int n);
-
-    NA_IAPI NABool naEqualUInt256       (NAUInt256 a, NAUInt256 b);
-    NA_IAPI NABool naGreaterUInt256     (NAUInt256 a, NAUInt256 b);
-    NA_IAPI NABool naGreaterEqualUInt256(NAUInt256 a, NAUInt256 b);
-    NA_IAPI NABool naSmallerUInt256     (NAUInt256 a, NAUInt256 b);
-    NA_IAPI NABool naSmallerEqualUInt256(NAUInt256 a, NAUInt256 b);
-
-    NA_IAPI int8      naCastUInt256ToInt8    (NAUInt256 i);
-    NA_IAPI int16     naCastUInt256ToInt16   (NAUInt256 i);
-    NA_IAPI int32     naCastUInt256ToInt32   (NAUInt256 i);
-    NA_IAPI NAInt64   naCastUInt256ToInt64   (NAUInt256 i);
-    NA_IAPI NAInt128  naCastUInt256ToInt128  (NAUInt256 i);
-    NA_IAPI NAInt256  naCastUInt256ToInt256  (NAUInt256 i);
-    NA_IAPI uint8     naCastUInt256ToUInt8   (NAUInt256 i);
-    NA_IAPI uint16    naCastUInt256ToUInt16  (NAUInt256 i);
-    NA_IAPI uint32    naCastUInt256ToUInt32  (NAUInt256 i);
-    NA_IAPI NAUInt64  naCastUInt256ToUInt64  (NAUInt256 i);
-    NA_IAPI NAUInt128 naCastUInt256ToUInt128 (NAUInt256 i);
-    NA_IAPI double    naCastUInt256ToDouble  (NAUInt256 i);
-
-
   #endif
+
+  NA_IAPI NAInt256  naMakeInt256(NAInt128 hi, NAUInt128 lo);
+  NA_IAPI NAInt256  naMakeInt256WithLo(NAInt128 lo);
+  NA_IAPI NAInt256  naMakeInt256WithDouble(double d);
+
+  NA_IAPI NAInt256  naNegInt256(NAInt256 i);
+  #define           naIncInt256(i)
+  #define           naDecInt256(i)
+  NA_IAPI NAInt256  naAddInt256(NAInt256 a, NAInt256 b);
+  NA_IAPI NAInt256  naSubInt256(NAInt256 a, NAInt256 b);
+  NA_IAPI NAInt256  naMulInt256(NAInt256 a, NAInt256 b);
+  NA_IAPI NAInt256  naDivInt256(NAInt256 a, NAInt256 b);
+  NA_IAPI NAInt256  naModInt256(NAInt256 a, NAInt256 b);
+
+  NA_IAPI NAInt256  naNotInt256(NAInt256 i);
+  NA_IAPI NAInt256  naOrInt256 (NAInt256 a, NAInt256 b);
+  NA_IAPI NAInt256  naAndInt256(NAInt256 a, NAInt256 b);
+  NA_IAPI NAInt256  naXorInt256(NAInt256 a, NAInt256 b);
+  NA_IAPI NAInt256  naShlInt256(NAInt256 a, int n);
+  NA_IAPI NAInt256  naShrInt256(NAInt256 a, int n);
+
+  NA_IAPI NABool naEqualInt256        (NAInt256 a, NAInt256 b);
+  NA_IAPI NABool naGreaterInt256      (NAInt256 a, NAInt256 b);
+  NA_IAPI NABool naGreaterEqualInt256 (NAInt256 a, NAInt256 b);
+  NA_IAPI NABool naSmallerInt256      (NAInt256 a, NAInt256 b);
+  NA_IAPI NABool naSmallerEqualInt256 (NAInt256 a, NAInt256 b);
+
+  NA_IAPI uint8     naCastInt256ToUInt8  (NAInt256 i);
+  NA_IAPI uint16    naCastInt256ToUInt16 (NAInt256 i);
+  NA_IAPI uint32    naCastInt256ToUInt32 (NAInt256 i);
+  NA_IAPI NAUInt64  naCastInt256ToUInt64 (NAInt256 i);
+  NA_IAPI NAUInt128 naCastInt256ToUInt128(NAInt256 i);
+  NA_IAPI NAUInt256 naCastInt256ToUInt256(NAInt256 i);
+  NA_IAPI int8      naCastInt256ToInt8   (NAInt256 i);
+  NA_IAPI int16     naCastInt256ToInt16  (NAInt256 i);
+  NA_IAPI int32     naCastInt256ToInt32  (NAInt256 i);
+  NA_IAPI NAInt64   naCastInt256ToInt64  (NAInt256 i);
+  NA_IAPI NAInt128  naCastInt256ToInt128 (NAInt256 i);
+  NA_IAPI double    naCastInt256ToDouble (NAInt256 i);
+
+  #define naMakeUInt256WithLiteralLo(lo)
+  NA_IAPI NAUInt256 naMakeUInt256(NAUInt128 hi, NAUInt128 lo);
+  NA_IAPI NAUInt256 naMakeUInt256WithLo(NAUInt128 lo);
+  NA_IAPI NAUInt256 naMakeUInt256WithDouble(double d);
+
+  #define           naIncUInt256(i)
+  #define           naDecUInt256(i)
+  NA_IAPI NAUInt256 naAddUInt256(NAUInt256 a, NAUInt256 b);
+  NA_IAPI NAUInt256 naAddUInt256(NAUInt256 a, NAUInt256 b);
+  NA_IAPI NAUInt256 naSubUInt256(NAUInt256 a, NAUInt256 b);
+  NA_IAPI NAUInt256 naMulUInt256(NAUInt256 a, NAUInt256 b);
+  NA_IAPI NAUInt256 naDivUInt256(NAUInt256 a, NAUInt256 b);
+  NA_IAPI NAUInt256 naModUInt256(NAUInt256 a, NAUInt256 b);
+
+  NA_IAPI NAUInt256 naNotUInt256(NAUInt256 i);
+  NA_IAPI NAUInt256 naOrUInt256 (NAUInt256 a, NAUInt256 b);
+  NA_IAPI NAUInt256 naAndUInt256(NAUInt256 a, NAUInt256 b);
+  NA_IAPI NAUInt256 naXorUInt256(NAUInt256 a, NAUInt256 b);
+  NA_IAPI NAUInt256 naShlUInt256(NAUInt256 a, int n);
+  NA_IAPI NAUInt256 naShrUInt256(NAUInt256 a, int n);
+
+  NA_IAPI NABool naEqualUInt256       (NAUInt256 a, NAUInt256 b);
+  NA_IAPI NABool naGreaterUInt256     (NAUInt256 a, NAUInt256 b);
+  NA_IAPI NABool naGreaterEqualUInt256(NAUInt256 a, NAUInt256 b);
+  NA_IAPI NABool naSmallerUInt256     (NAUInt256 a, NAUInt256 b);
+  NA_IAPI NABool naSmallerEqualUInt256(NAUInt256 a, NAUInt256 b);
+
+  NA_IAPI int8      naCastUInt256ToInt8    (NAUInt256 i);
+  NA_IAPI int16     naCastUInt256ToInt16   (NAUInt256 i);
+  NA_IAPI int32     naCastUInt256ToInt32   (NAUInt256 i);
+  NA_IAPI NAInt64   naCastUInt256ToInt64   (NAUInt256 i);
+  NA_IAPI NAInt128  naCastUInt256ToInt128  (NAUInt256 i);
+  NA_IAPI NAInt256  naCastUInt256ToInt256  (NAUInt256 i);
+  NA_IAPI uint8     naCastUInt256ToUInt8   (NAUInt256 i);
+  NA_IAPI uint16    naCastUInt256ToUInt16  (NAUInt256 i);
+  NA_IAPI uint32    naCastUInt256ToUInt32  (NAUInt256 i);
+  NA_IAPI NAUInt64  naCastUInt256ToUInt64  (NAUInt256 i);
+  NA_IAPI NAUInt128 naCastUInt256ToUInt128 (NAUInt256 i);
+  NA_IAPI double    naCastUInt256ToDouble  (NAUInt256 i);
 
 #endif
 

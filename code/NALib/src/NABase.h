@@ -40,21 +40,25 @@
 #include "NABase/NAEncoding.h"
 #include "NABase/NAChar.h"
 #include "NABase/NAInteger.h"
-#include "NABase/NAFloatingPoint.h"
-#include "NABase/NANumerics.h"
 
-// Enabling the code to use debugger runtime testing (DRT)
+// declaring integer emulation
+#include "NABase/NAInt64.h"
+#include "NABase/NAInt128.h"
+#include "NABase/NAInt256.h"
+
+// Enabling debugging as well as adding some voodoo and fairy dust.
 #include "NABase/NADebug.h"
-
-// Adding voodoo and fairy dust
 #include "NABase/NABaseMacros.h"
 
-// Now, including implementations dependent on the definitions above.
+// Adding some base mathematical implementations
+#include "NABase/NANumerics.h"
+#include "NABase/NAFloatingPoint.h"
+
+// Adding integer emulation implementation
 #include "NABase/NAInt64II.h"
 #include "NABase/NAInt128II.h"
 #include "NABase/NAInt256II.h"
-#include "NABase/NAFloatingPointII.h"
-#include "NABase/NANumericsII.h"
+
 
 
 

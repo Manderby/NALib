@@ -416,7 +416,7 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
     if(!heap)
       naCrash("heap is Null-Pointer");
     // there is always count + 1 elements stored in the array.
-    if(count >= NA_INT_MAX){
+    if(count >= NA_MAX_i){
       naCrash("Heap count is too big.");
       return NA_NULL;
     }
