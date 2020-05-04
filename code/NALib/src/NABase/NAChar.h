@@ -11,7 +11,7 @@
 
 
 // The newlines used on different systems as utf8 strings.
-#if defined NA_C11
+#if defined NA_C11 || defined NA_CPP11
   #define NA_NL_UNIX  u8"\n"
   #define NA_NL_MAC9  u8"\r"
   #define NA_NL_WIN   u8"\r\n"

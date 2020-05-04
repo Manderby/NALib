@@ -3,6 +3,16 @@
 // Full license notice at the bottom.
 
 
+#define NA_TEST_STRINGIFY(A) #A
+#define NA_TEST_NALIB_PATH(file) NA_TEST_STRINGIFY(../../NALib/src/file)
+
+#include <stdio.h>
+
+#include NA_TEST_NALIB_PATH(NABase.h)
+#include NA_TEST_NALIB_PATH(NAMemory.h)
+#include NA_TEST_NALIB_PATH(NAString.h)
+
+
 
 #define NA_TEST_MAX_MACRO_LENGTH 45
 
@@ -42,9 +52,12 @@
   printf("%d", (int32)macro);\
   printf(NA_NL);
 
-#define printMacroIntHex(macro)\
+#define printMacroIntHex(macro, showDec)\
   printMacroHead(#macro)\
-  printf("0x%x (%d)", macro, macro);\
+  if(showDec)\
+    printf("0x%x (%d)", macro, macro);\
+  else\
+    printf("0x%x", macro);\
   printf(NA_NL);
 
 #define printMacroString(macro)\
@@ -89,7 +102,15 @@ extern const char* na_yesno_strings[];
   printMacroEnumCore(macro, na_yesno_strings, 2)\
   printf(NA_NL);
 
+//#define testSuccess(success)\
+  //(success ? NA_NULL : naNewStringWithFormat("%d: FAIL" NA_NL, __LINE__))
 
+#define testSuccess(success)\
+  if(success){\
+    printf("%d: ok" NA_NL, __LINE__);\
+  }else{\
+    printf("%d: FAIL" NA_NL, __LINE__);\
+  }
 
 
 // Copyright (c) NALib, Tobias Stamm

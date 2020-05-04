@@ -323,6 +323,9 @@
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>NA_CONFIG_COMPILE_GUI=1;NA_CONFIG_COMPILE_OPENGL=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>
+      </LanguageStandard>
+      <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ComCtl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -339,6 +342,9 @@
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>NDEBUG;NA_CONFIG_COMPILE_GUI=1;NA_CONFIG_COMPILE_OPENGL=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>
+      </LanguageStandard>
+      <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ComCtl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -353,11 +359,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>
+      </LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>NA_CONFIG_COMPILE_GUI=1;NA_CONFIG_COMPILE_OPENGL=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>
       </AdditionalOptions>
+      <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ComCtl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -372,9 +380,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>
+      </LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>NDEBUG;NA_CONFIG_COMPILE_GUI=1;NA_CONFIG_COMPILE_OPENGL=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Link>
       <AdditionalDependencies>ComCtl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -393,6 +403,9 @@
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>NDEBUG;NA_CONFIG_COMPILE_GUI=1;NA_CONFIG_COMPILE_OPENGL=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>
+      </LanguageStandard>
+      <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -413,6 +426,9 @@
       <ConformanceMode>true</ConformanceMode>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PreprocessorDefinitions>NDEBUG;NA_CONFIG_COMPILE_GUI=1;NA_CONFIG_COMPILE_OPENGL=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>
+      </LanguageStandard>
+      <CompileAs>CompileAsC</CompileAs>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

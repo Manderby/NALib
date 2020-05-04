@@ -158,6 +158,12 @@
     <ClCompile Include="src\testNALib\testNABase\testNAEncoding.c" />
     <ClCompile Include="src\testNALib\testNABase\testNAEnvironment.c" />
     <ClCompile Include="src\testNALib\testNABase\testNALanguage.c" />
+    <ClCompile Include="src\testNALib\testNABase\testNANumerics.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NALib\NALib.vcxproj">
+      <Project>{d03034cf-5ce8-4e68-8fd9-d5820e2745ba}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

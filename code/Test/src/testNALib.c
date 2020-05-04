@@ -25,9 +25,11 @@ int main(void){
   printNALanguage();
   printNAEncoding();
   printNAChar();
+  printNANumerics();
 
   testNALanguage();
   testNAChar();
+  testNANumerics();
 
   return 0;
 }
