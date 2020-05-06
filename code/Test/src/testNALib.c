@@ -2,12 +2,9 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#define NA_TEST_STRINGIFY(A) #A
-#define NA_TEST_NALIB_PATH(file) NA_TEST_STRINGIFY(../../NALib/src/file)
-
 #include "testNALib.h"
 #include "testHelper.h"
-#include NA_TEST_NALIB_PATH(NABase.h)
+#include NA_TEST_NALIB_PATH(./, NABase.h)
 #include <stdio.h>
 
 
@@ -21,19 +18,26 @@ int main(void){
   #endif
   printf(", %d Bits Addresses, %d Bits Integers)" NA_NL NA_NL, NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
+  naStartRuntime();
+  naStartTesting("NALib");
 
-  
-  printNAConfiguration();
-  printNAEnvironment();
-  printNACompiler();
-  printNALanguage();
-  printNAEncoding();
-  printNAChar();
-  printNANumerics();
+  naT(NA_TRUE);
 
-  testNALanguage();
-  testNAChar();
-  testNANumerics();
+
+  //printNAConfiguration();
+  //printNAEnvironment();
+  //printNACompiler();
+  //printNALanguage();
+  //printNAEncoding();
+  //printNAChar();
+  //printNANumerics();
+
+  //testNALanguage();
+  //testNAChar();
+  //testNANumerics();
+
+  naStopTesting();
+  naStopRuntime();
 
   return 0;
 }

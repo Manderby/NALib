@@ -2,11 +2,8 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#define NA_TEST_STRINGIFY(A) #A
-#define NA_TEST_NALIB_PATH(file) NA_TEST_STRINGIFY(../../../../NALib/src/file)
-
 #include "../../testHelper.h"
-#include NA_TEST_NALIB_PATH(NABase.h)
+#include NA_TEST_NALIB_PATH(../../, NABase.h)
 #include <stdio.h>
 
 

@@ -2,25 +2,24 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#define NA_TEST_HELPER_STRINGIFY(A) #A
-#define NA_TEST_HELPER_NALIB_PATH(file) NA_TEST_HELPER_STRINGIFY(../../NALib/src/file)
-
-#include NA_TEST_HELPER_NALIB_PATH(NAString.h)
-#include NA_TEST_HELPER_NALIB_PATH(NAStack.h)
+#define NA_TEST_STRINGIFY(A) #A
+#define NA_TEST_NALIB_PATH(path, file) NA_TEST_STRINGIFY(path ## ../../NALib/src/file)
 
 #include <string.h>
 
+
+
 typedef struct NATestData NATestData;
-struct NATestData{
-  NAString* name;
-  int32 lineNum;
-  NABool thisOk;
-  NAStack childs;
-  int32 childsOkCount;
-  int32 totalChildsOkCount;
-  int32 totalChildsFailCount;
-  NATestData* parent;
-};
+
+void naStartTesting(const char* rootName);
+void naStopTesting(void);
+void naAddSubTest(const char* name, int success, int lineNum);
+#define naT(expr)\
+  {\
+    NABool success = expr;\
+    naAddSubTest(#expr, success, __LINE__);\
+  }
+
 
 
 #define NA_TEST_MAX_MACRO_LENGTH 45
