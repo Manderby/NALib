@@ -2,9 +2,6 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#include "testHelper.h"
-
-
 void printNAConfiguration();
 void printNAEnvironment();
 void printNACompiler();

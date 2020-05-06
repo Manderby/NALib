@@ -2,16 +2,25 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
+#define NA_TEST_HELPER_STRINGIFY(A) #A
+#define NA_TEST_HELPER_NALIB_PATH(file) NA_TEST_HELPER_STRINGIFY(../../NALib/src/file)
 
-#define NA_TEST_STRINGIFY(A) #A
-#define NA_TEST_NALIB_PATH(file) NA_TEST_STRINGIFY(../../NALib/src/file)
+#include NA_TEST_HELPER_NALIB_PATH(NAString.h)
+#include NA_TEST_HELPER_NALIB_PATH(NAStack.h)
 
-#include <stdio.h>
+#include <string.h>
 
-#include NA_TEST_NALIB_PATH(NABase.h)
-#include NA_TEST_NALIB_PATH(NAMemory.h)
-#include NA_TEST_NALIB_PATH(NAString.h)
-
+typedef struct NATestData NATestData;
+struct NATestData{
+  NAString* name;
+  int32 lineNum;
+  NABool thisOk;
+  NAStack childs;
+  int32 childsOkCount;
+  int32 totalChildsOkCount;
+  int32 totalChildsFailCount;
+  NATestData* parent;
+};
 
 
 #define NA_TEST_MAX_MACRO_LENGTH 45
@@ -22,17 +31,6 @@
   printf(macroStr);\
   for(int c = 0; c < (int)(NA_TEST_MAX_MACRO_LENGTH - strlen(macroStr)); c++){printf(" ");}\
 }
-
-#define isMacroDefinedButEmpty(macro)\
-  (strlen(NA_STRINGIFY(macro)) == 0)
-
-#define isMacroDefined(macro)\
-  (strncmp(#macro, NA_STRINGIFY(macro), strlen(#macro)) != 0)
-
-#define printMacroDefined(macro, def)\
-  printMacroHead(#macro)\
-  printf(def ? "Defined" : "Undefined");\
-  printf(NA_NL);
 
 #define printMacroPlain(macro)\
   printMacroHead(#macro)\

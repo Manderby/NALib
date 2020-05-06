@@ -14,11 +14,10 @@ Table of Content:
 2.3    Runtime system memory and struct functions
 2.4    Manual reference counting, smart pointers
 3.   Iteration of container structs
-4.   C90 variable definitions
-5.   Inline Implementations
-6.   Opaque types
-7.   Symbol naming
-8.   Default header and footer
+4.   Inline Implementations
+5.   Opaque types
+6.   Symbol naming
+7.   Standard, Compiler, File header and footer
 
 
 
@@ -294,30 +293,7 @@ ist defined.
 
 
 
-
-4. C90 variable definitions
-----------------------------
-Note that this code has been written to be compatible with ANSI C and C90
-(except for the comments which are // comments, not /**/ comments).
-
-The standard C90 is partially still in use by some compilers. This standard
-states that each variable MUST be declared before it is used. Later standards
-and most modern compilers do not really need this anymore but when you try to
-compile a static or dynamic library on certain compilers, you will most
-probably run into the problem that the declarations must be present.
-
-NALib is prepared for that. So every variable is always declared before
-any use in any implementation.
-
-In more modern compilers, you would declare the variables at the position
-where they are first used or are otherwise meaningfully positioned in an
-appropriate way.
-
-
-
-
-
-5. Inline Implementations
+4. Inline Implementations
 -------------------------
 Unfortunately, inline- and template-functions must be present to the compiler
 during compilation. This means, every declaration must be followed by a
@@ -345,7 +321,7 @@ anyone.
 
 
 
-6. Opaque Types
+5. Opaque Types
 ---------------
 All around NALib you find declarations like these:
 
@@ -392,10 +368,7 @@ header file from the package. It's tricky, but it works.
 
 
 
-
-
-
-7. Symbol naming
+6. Symbol naming
 ----------------
 In NALib, a (more or less) consistent naming scheme is applied. Every symbol
 consists at least of a suffix and an identifier.
@@ -450,8 +423,11 @@ NA_PRIi, NA_TAB, NA_NL_UNIX
 
 
 
-8. Default header and footer
+7. Standard, Compiler, File header and footer
 ----------------------------
+This code has been written to be compatible with C99.
+Earlier standards will most probably not compile.
+
 At the top and at the bottom of each file, a short comment and license notice
 about NALib can be found.
 

@@ -25,6 +25,8 @@ Smaller Things:
 - Removed NAMoney.h
 - NAConfiguration now lost some entries due to switch to C99 but gained
   NA_INLINE_DEFINITION_NON_STANDARD and some others were renamed.
+- Moving to Visual Studio 2019. Project for VisualStudio 10 removed.
+- Adapted documentation.txt
   
 
 

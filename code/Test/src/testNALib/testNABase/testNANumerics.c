@@ -2,7 +2,12 @@
 // This file is part of NALib, a collection of C source code.
 // Full license notice at the bottom.
 
-#include "../../testNALib.h"
+#define NA_TEST_STRINGIFY(A) #A
+#define NA_TEST_NALIB_PATH(file) NA_TEST_STRINGIFY(../../../../NALib/src/file)
+
+#include "../../testHelper.h"
+#include NA_TEST_NALIB_PATH(NABase.h)
+#include <stdio.h>
 
 
 
@@ -22,28 +27,28 @@ void testNANumerics(){
 
   printf("Testing naGetSignum8..." NA_NL);
   testSuccess(naGetSignum8(pos8) == NA_ZERO_u8);
-  testSuccess(naGetSignum8(0) == NA_ZERO_u8);
+  testSuccess(naGetSignum8(NA_ZERO_i8) == NA_ZERO_u8);
   testSuccess(naGetSignum8(neg8) == NA_MAX_u8);
   testSuccess(naGetSignum8(NA_MAX_i8) == NA_ZERO_u8);
   testSuccess(naGetSignum8(NA_MIN_i8) == NA_MAX_u8);
 
   printf("Testing naGetSignum16..." NA_NL);
   testSuccess(naGetSignum16(pos16) == NA_ZERO_u16);
-  testSuccess(naGetSignum16(0) == NA_ZERO_u16);
+  testSuccess(naGetSignum16(NA_ZERO_i16) == NA_ZERO_u16);
   testSuccess(naGetSignum16(neg16) == NA_MAX_u16);
   testSuccess(naGetSignum16(NA_MAX_i16) == NA_ZERO_u16);
   testSuccess(naGetSignum16(NA_MIN_i16) == NA_MAX_u16);
 
   printf("Testing naGetSignum32..." NA_NL);
   testSuccess(naGetSignum32(pos32) == NA_ZERO_u32);
-  testSuccess(naGetSignum32(0) == NA_ZERO_u32);
+  testSuccess(naGetSignum32(NA_ZERO_i32) == NA_ZERO_u32);
   testSuccess(naGetSignum32(neg32) == NA_MAX_u32);
   testSuccess(naGetSignum32(NA_MAX_i32) == NA_ZERO_u32);
   testSuccess(naGetSignum32(NA_MIN_i32) == NA_MAX_u32);
 
   printf("Testing naGetSignum64..." NA_NL);
   testSuccess(naEqualUInt64(naGetSignum64(pos64), NA_ZERO_u64));
-  testSuccess(naEqualUInt64(naGetSignum64(0), NA_ZERO_u64));
+  testSuccess(naEqualUInt64(naGetSignum64(NA_ZERO_i64), NA_ZERO_u64));
   testSuccess(naEqualUInt64(naGetSignum64(neg64), NA_MAX_u64));
   testSuccess(naEqualUInt64(naGetSignum64(NA_MAX_i64), NA_ZERO_u64));
   testSuccess(naEqualUInt64(naGetSignum64(NA_MIN_i64), NA_MAX_u64));

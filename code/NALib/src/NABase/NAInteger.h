@@ -279,8 +279,6 @@ typedef int32_t        int32;
 
 
 
-
-
 #if NA_TYPE_NAINT_BITS == NA_TYPE64_BITS
   #if !defined NA_TYPE_INT64
     #warn "Primary integer type NAInt is emulated."
@@ -294,7 +292,7 @@ typedef int32_t        int32;
   #define NA_SCNu NA_SCNu64
   #define NA_MAX_i NA_MAX_i64
   #define NA_MIN_i NA_MIN_i64
-  #define NA_MAX_u NA_MAX_u64
+  #define NA_Max_U NA_MAX_u64
   #define NA_ZERO NA_ZERO_i64
   #define NA_ONE  NA_ONE_i64
 #elif NA_TYPE_NAINT_BITS == NA_TYPE32_BITS
@@ -307,7 +305,7 @@ typedef int32_t        int32;
   #define NA_SCNu NA_SCNu32
   #define NA_MAX_i NA_MAX_i32
   #define NA_MIN_i NA_MIN_i32
-  #define NA_MAX_u NA_MAX_u32
+  #define NA_Max_U NA_MAX_u32
   #define NA_ZERO NA_ZERO_i32
   #define NA_ONE  NA_ONE_i32
 #elif NA_TYPE_NAINT_BITS == NA_TYPE16_BITS
@@ -320,7 +318,7 @@ typedef int32_t        int32;
   #define NA_SCNu NA_SCNu16
   #define NA_MAX_i NA_MAX_i16
   #define NA_MIN_i NA_MIN_i16
-  #define NA_MAX_u NA_MAX_u16
+  #define NA_Max_U NA_MAX_u16
   #define NA_ZERO NA_ZERO_i16
   #define NA_ONE  NA_ONE_i16
 #else
