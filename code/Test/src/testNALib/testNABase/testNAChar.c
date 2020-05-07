@@ -10,8 +10,9 @@
 
 void testNAChar(){
   // Testing if types can be assigned.
-  printf("Testing typedef NAUTF8Char" NA_NL);
+
   NAUTF8Char utf8Char = 'M';
+  naT(utf8Char == 'M');
 }
 
 

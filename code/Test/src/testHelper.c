@@ -23,14 +23,15 @@ struct NATestData {
   NAStack childs;
   int32 childSuccessCount;
   int32 leafSuccessCount;
-  int32 leafFailCount;
+  int32 totalLeafCount;
   NATestData* parent;
 };
 
 
 
-NATestData* na_testdata = NA_NULL;
-NATestData* na_curtestdata = NA_NULL;
+NATestData* na_testData = NA_NULL;
+NATestData* na_curTestData = NA_NULL;
+int na_printAllTestGroups = 1;
 
 void naInitTestingData(NATestData* testData, const char* name, NATestData* parent, int32 lineNum){
   testData->name = name;
@@ -39,61 +40,125 @@ void naInitTestingData(NATestData* testData, const char* name, NATestData* paren
   naInitStack(&(testData->childs), naSizeof(NATestData), 2);
   testData->childSuccessCount = 0;
   testData->leafSuccessCount = 0;
-  testData->leafFailCount = 0;
+  testData->totalLeafCount = 0;
   testData->parent = parent;
 }
 
 
 
+void naClearTestingData(NATestData* testData){
+  naForeachStackMutable(&(testData->childs), naClearTestingData);
+  naClearStack(&(testData->childs));
+}
+
+
+
+void naPrintTestName(NATestData* testData){
+  if(testData->parent){naPrintTestName(testData->parent);}
+  printf("%s ", testData->name);
+}
+
+
+
+void naPrintTestGroup(NATestData* testData){
+  int leafSuccessCount = testData->leafSuccessCount;
+  int leafTotalCount = testData->totalLeafCount;
+  double leafRatio = (double)leafSuccessCount / (double)leafTotalCount * 100.;
+  int childSuccessCount = testData->childSuccessCount;
+  int childTotalCount = naGetStackCount(&(testData->childs));
+  double childRatio = (double)childSuccessCount / (double)childTotalCount * 100.;
+
+  printf("G ");
+  if(testData->parent){naPrintTestName(testData->parent);}
+  if(leafTotalCount == childTotalCount){
+    printf("%s: %d / %d Tests ok (%.02f%%)" NA_NL, testData->name, leafSuccessCount, leafTotalCount, leafRatio);
+  }else{
+    printf("%s: %d / %d Groups ok (%.02f%%), %d / %d Tests ok (%.02f%%)" NA_NL, testData->name, childSuccessCount, childTotalCount, childRatio, leafSuccessCount, leafTotalCount, leafRatio);
+  }
+}
+
+
 
 void naStartTesting(const char* rootName){
   #ifndef NDEBUG
-    if(na_testdata)
+    if(na_testData)
       naError("Test already running.");
   #endif
-  na_testdata = naAlloc(NATestData);
+  na_testData = naAlloc(NATestData);
 
-  naInitTestingData(na_testdata, rootName, NA_NULL, 0);
+  naInitTestingData(na_testData, rootName, NA_NULL, 0);
 
-  na_curtestdata = na_testdata;
+  na_curTestData = na_testData;
 }
 
 
 
 void naStopTesting(void){
-  printf("Testing %s results:" NA_NL, na_testdata->name);
+  naStopTestGroup();
 
-  naFree(na_testdata);
-  na_testdata = NA_NULL;
-  na_curtestdata = NA_NULL;
+  if(na_testData->success){
+    printf("All test successful." NA_NL);
+    if(!na_printAllTestGroups){
+      naPrintTestGroup(na_testData);
+    }
+  }
+  printf("Testing finished." NA_NL);
+  na_curTestData = NA_NULL;
+  naClearTestingData(na_testData);
+  naFree(na_testData);
+  na_testData = NA_NULL;
 }
 
 
 
-void naUpdateTestParent(NATestData* testData, NABool childSuccess, NABool leafSuccess){
+void naUpdateTestParentLeaf(NATestData* testData, NABool leafSuccess){
+  if(testData->parent){
+    naUpdateTestParentLeaf(testData->parent, leafSuccess);
+  }
+  
+  testData->totalLeafCount++;
   if(leafSuccess){
     testData->leafSuccessCount++;
   }else{
-    testData->leafFailCount++;
-  }
-  if(childSuccess){
-    testData->childSuccessCount++;
-  }else{
+    if(testData->success && testData->parent){
+      testData->parent->childSuccessCount--;
+    }
     testData->success = NA_FALSE;
   }
-  if (testData->parent) {
-    naUpdateTestParent(testData->parent, testData->success, leafSuccess);
+}
+
+
+
+void naAddTest(const char* expr, int success, int lineNum){
+  NATestData* testData = naPushStack(&(na_curTestData->childs));
+  naInitTestingData(testData, expr, na_curTestData, (int32)lineNum);
+  testData->success = (NABool)success;
+  naUpdateTestParentLeaf(na_curTestData, (NABool)success);
+  if(!success){
+    printf("  ");
+    if(testData->parent){naPrintTestName(testData->parent);}
+    printf("Line %d: %s" NA_NL, lineNum, expr);\
   }
 }
 
 
 
-void naAddSubTest(const char* name, int success, int lineNum){
-  NATestData* testData = naPushStack(&(na_curtestdata->childs));
-  naInitTestingData(testData, name, na_curtestdata, (int32)lineNum);
-  testData->success = (NABool)success;
-  naUpdateTestParent(na_curtestdata, (NABool)success, (NABool)success);
+void naStartTestGroup(const char* name, int lineNum){
+  NATestData* testData = naPushStack(&(na_curTestData->childs));
+  naInitTestingData(testData, name, na_curTestData, (int32)lineNum);
+  na_curTestData->childSuccessCount++;
+  na_curTestData = testData;
 }
+
+
+
+void naStopTestGroup(){
+  if(na_printAllTestGroups || !na_curTestData->success){
+    naPrintTestGroup(na_curTestData);
+  }
+  na_curTestData = na_curTestData->parent;
+}
+
 
 
 // Copyright (c) NALib, Tobias Stamm

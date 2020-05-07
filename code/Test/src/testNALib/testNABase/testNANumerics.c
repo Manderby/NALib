@@ -22,47 +22,53 @@ void testNANumerics(){
   int128 neg128 = naNegInt128(pos128);
   int256 neg256 = naNegInt256(pos256);
 
-  printf("Testing naGetSignum8..." NA_NL);
-  testSuccess(naGetSignum8(pos8) == NA_ZERO_u8);
-  testSuccess(naGetSignum8(NA_ZERO_i8) == NA_ZERO_u8);
-  testSuccess(naGetSignum8(neg8) == NA_MAX_u8);
-  testSuccess(naGetSignum8(NA_MAX_i8) == NA_ZERO_u8);
-  testSuccess(naGetSignum8(NA_MIN_i8) == NA_MAX_u8);
+  naG("naGetSignum8"){
+    naT(naGetSignum8(pos8) == NA_ZERO_u8);
+    naT(naGetSignum8(NA_ZERO_i8) == NA_ZERO_u8);
+    naT(naGetSignum8(neg8) == NA_MAX_u8);
+    naT(naGetSignum8(NA_MAX_i8) == NA_ZERO_u8);
+    naT(naGetSignum8(NA_MIN_i8) == NA_MAX_u8);
+  }
 
-  printf("Testing naGetSignum16..." NA_NL);
-  testSuccess(naGetSignum16(pos16) == NA_ZERO_u16);
-  testSuccess(naGetSignum16(NA_ZERO_i16) == NA_ZERO_u16);
-  testSuccess(naGetSignum16(neg16) == NA_MAX_u16);
-  testSuccess(naGetSignum16(NA_MAX_i16) == NA_ZERO_u16);
-  testSuccess(naGetSignum16(NA_MIN_i16) == NA_MAX_u16);
+  naG("naGetSignum16"){
+    naT(naGetSignum16(pos16) == NA_ZERO_u16);
+    naT(naGetSignum16(NA_ZERO_i16) == NA_ZERO_u16);
+    naT(naGetSignum16(neg16) == NA_MAX_u16);
+    naT(naGetSignum16(NA_MAX_i16) == NA_ZERO_u16);
+    naT(naGetSignum16(NA_MIN_i16) == NA_MAX_u16);
+  }
 
-  printf("Testing naGetSignum32..." NA_NL);
-  testSuccess(naGetSignum32(pos32) == NA_ZERO_u32);
-  testSuccess(naGetSignum32(NA_ZERO_i32) == NA_ZERO_u32);
-  testSuccess(naGetSignum32(neg32) == NA_MAX_u32);
-  testSuccess(naGetSignum32(NA_MAX_i32) == NA_ZERO_u32);
-  testSuccess(naGetSignum32(NA_MIN_i32) == NA_MAX_u32);
+  naG("naGetSignum32"){
+    naT(naGetSignum32(pos32) == NA_ZERO_u32);
+    naT(naGetSignum32(NA_ZERO_i32) == NA_ZERO_u32);
+    naT(naGetSignum32(neg32) == NA_MAX_u32);
+    naT(naGetSignum32(NA_MAX_i32) == NA_ZERO_u32);
+    naT(naGetSignum32(NA_MIN_i32) == NA_MAX_u32);
+  }
 
-  printf("Testing naGetSignum64..." NA_NL);
-  testSuccess(naEqualUInt64(naGetSignum64(pos64), NA_ZERO_u64));
-  testSuccess(naEqualUInt64(naGetSignum64(NA_ZERO_i64), NA_ZERO_u64));
-  testSuccess(naEqualUInt64(naGetSignum64(neg64), NA_MAX_u64));
-  testSuccess(naEqualUInt64(naGetSignum64(NA_MAX_i64), NA_ZERO_u64));
-  testSuccess(naEqualUInt64(naGetSignum64(NA_MIN_i64), NA_MAX_u64));
+  naG("naGetSignum64"){
+    naT(naEqualUInt64(naGetSignum64(pos64), NA_ZERO_u64));
+    naT(naEqualUInt64(naGetSignum64(NA_ZERO_i64), NA_ZERO_u64));
+    naT(naEqualUInt64(naGetSignum64(neg64), NA_MAX_u64));
+    naT(naEqualUInt64(naGetSignum64(NA_MAX_i64), NA_ZERO_u64));
+    naT(naEqualUInt64(naGetSignum64(NA_MIN_i64), NA_MAX_u64));
+  }
 
-  printf("Testing naGetSignum128..." NA_NL);
-  testSuccess(naEqualUInt128(naGetSignum128(pos128), NA_ZERO_u128));
-  testSuccess(naEqualUInt128(naGetSignum128(NA_ZERO_i128), NA_ZERO_u128));
-  testSuccess(naEqualUInt128(naGetSignum128(neg128), NA_MAX_u128));
-  testSuccess(naEqualUInt128(naGetSignum128(NA_MAX_i128), NA_ZERO_u128));
-  testSuccess(naEqualUInt128(naGetSignum128(NA_MIN_i128), NA_MAX_u128));
+  naG("naGetSignum128"){
+    naT(naEqualUInt128(naGetSignum128(pos128), NA_ZERO_u128));
+    naT(naEqualUInt128(naGetSignum128(NA_ZERO_i128), NA_ZERO_u128));
+    naT(naEqualUInt128(naGetSignum128(neg128), NA_MAX_u128));
+    naT(naEqualUInt128(naGetSignum128(NA_MAX_i128), NA_ZERO_u128));
+    naT(naEqualUInt128(naGetSignum128(NA_MIN_i128), NA_MAX_u128));
+  }
 
-  printf("Testing naGetSignum256..." NA_NL);
-  testSuccess(naEqualUInt256(naGetSignum256(pos256), NA_ZERO_u256));
-  testSuccess(naEqualUInt256(naGetSignum256(NA_ZERO_i256), NA_ZERO_u256));
-  testSuccess(naEqualUInt256(naGetSignum256(neg256), NA_MAX_u256));
-  testSuccess(naEqualUInt256(naGetSignum256(NA_MAX_i256), NA_ZERO_u256));
-  testSuccess(naEqualUInt256(naGetSignum256(NA_MIN_i256), NA_MAX_u256));
+  naG("naGetSignum256"){
+    naT(naEqualUInt256(naGetSignum256(pos256), NA_ZERO_u256));
+    naT(naEqualUInt256(naGetSignum256(NA_ZERO_i256), NA_ZERO_u256));
+    naT(naEqualUInt256(naGetSignum256(neg256), NA_MAX_u256));
+    naT(naEqualUInt256(naGetSignum256(NA_MAX_i256), NA_ZERO_u256));
+    naT(naEqualUInt256(naGetSignum256(NA_MIN_i256), NA_MAX_u256));
+  }
 }
 
 

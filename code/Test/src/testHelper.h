@@ -13,11 +13,22 @@ typedef struct NATestData NATestData;
 
 void naStartTesting(const char* rootName);
 void naStopTesting(void);
-void naAddSubTest(const char* name, int success, int lineNum);
+void naAddTest(const char* expr, int success, int lineNum);
+void naStartTestGroup(const char* name, int lineNum);
+void naStopTestGroup();
 #define naT(expr)\
   {\
     NABool success = expr;\
-    naAddSubTest(#expr, success, __LINE__);\
+    naAddTest(#expr, success, __LINE__);\
+  }
+#define naG(name)\
+  naStartTestGroup(name, __LINE__);\
+  for(int g = 0; g < 1 ; g++, naStopTestGroup())
+#define naF(name)\
+  {\
+  naStartTestGroup("test" ## #name, __LINE__);\
+  test ## name();\
+  naStopTestGroup();\
   }
 
 

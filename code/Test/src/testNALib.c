@@ -5,6 +5,7 @@
 #include "testNALib.h"
 #include "testHelper.h"
 #include NA_TEST_NALIB_PATH(./, NABase.h)
+#include NA_TEST_NALIB_PATH(./, NAMemory.h)
 #include <stdio.h>
 
 
@@ -21,9 +22,33 @@ int main(void){
   naStartRuntime();
   naStartTesting("NALib");
 
-  naT(NA_TRUE);
+  //naT(NA_TRUE);
+  //naT(NA_TRUE);
+  //naT(NA_FALSE);
+  //naT(NA_TRUE);
 
+  //naG("Groupie"){
+  //  naT(NA_TRUE);
+  //  naT(NA_FALSE);
+  //  naT(NA_FALSE);
+  //  naT(NA_TRUE);
+  //}
 
+  //naG("Blah"){
+  //  naG("Knuss"){
+  //    naT(NA_TRUE);
+  //    naT(NA_FALSE);
+  //    naT(NA_FALSE);
+  //    naT(NA_TRUE);
+  //  }
+  //  naG("Fluss"){
+  //    naT(NA_TRUE);
+  //    naT(NA_FALSE);
+  //    naT(NA_FALSE);
+  //    naT(NA_TRUE);
+  //  }
+  //}
+  
   //printNAConfiguration();
   //printNAEnvironment();
   //printNACompiler();
@@ -32,9 +57,9 @@ int main(void){
   //printNAChar();
   //printNANumerics();
 
-  //testNALanguage();
-  //testNAChar();
-  //testNANumerics();
+  naF(NALanguage);
+  naF(NAChar);
+  naF(NANumerics);
 
   naStopTesting();
   naStopRuntime();

@@ -19,11 +19,12 @@ void na_mutator_func(void* param){
 
 void testNALanguage(){
   // Testing if types can be assigned.
-  printf("Testing typedef NAAccessor" NA_NL);
-  NAAccessor testAccessor = na_accessor_func;
 
-  printf("Testing typedef NAMutator" NA_NL);
+  NAAccessor testAccessor = na_accessor_func;
+  naT(testAccessor == na_accessor_func);
+
   NAMutator testMutator = na_mutator_func;
+  naT(testMutator == na_mutator_func);
 }
 
 
