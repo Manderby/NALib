@@ -21,33 +21,6 @@ int main(void){
 
   naStartRuntime();
   naStartTesting("NALib");
-
-  //naT(NA_TRUE);
-  //naT(NA_TRUE);
-  //naT(NA_FALSE);
-  //naT(NA_TRUE);
-
-  //naG("Groupie"){
-  //  naT(NA_TRUE);
-  //  naT(NA_FALSE);
-  //  naT(NA_FALSE);
-  //  naT(NA_TRUE);
-  //}
-
-  //naG("Blah"){
-  //  naG("Knuss"){
-  //    naT(NA_TRUE);
-  //    naT(NA_FALSE);
-  //    naT(NA_FALSE);
-  //    naT(NA_TRUE);
-  //  }
-  //  naG("Fluss"){
-  //    naT(NA_TRUE);
-  //    naT(NA_FALSE);
-  //    naT(NA_FALSE);
-  //    naT(NA_TRUE);
-  //  }
-  //}
   
   //printNAConfiguration();
   //printNAEnvironment();

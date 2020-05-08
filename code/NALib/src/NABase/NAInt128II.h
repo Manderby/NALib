@@ -72,7 +72,7 @@
       if(naSmallerInt128(a, NA_ZERO_i128)){a = naNegInt128(a);}
       if(naSmallerInt128(b, NA_ZERO_i128)){b = naNegInt128(b);}
       retUInt = naMulUInt128(naCastInt128ToUInt128(a), naCastInt128ToUInt128(b));
-      retUInt.hi = naAndUInt64(retUInt.hi, naNotUInt64(NA_VALUE64_SIGN_MASK));
+      retUInt.hi = naAndUInt64(retUInt.hi, naNotUInt64(NA_SIGN_MASK_64));
       retInt = naCastUInt128ToInt128(retUInt);
       if(!naEqualInt128(aSign, bSign)){retInt = naNegInt128(retInt);}
       // todo: overflow may lead to different result than built-in 128 bit integer
@@ -86,7 +86,7 @@
       if(naSmallerInt128(a, NA_ZERO_i128)){a = naNegInt128(a);}
       if(naSmallerInt128(b, NA_ZERO_i128)){b = naNegInt128(b);}
       retUInt = naDivUInt128(naCastInt128ToUInt128(a), naCastInt128ToUInt128(b));
-      retUInt.hi = naAndUInt64(retUInt.hi, naNotUInt64(NA_VALUE64_SIGN_MASK));
+      retUInt.hi = naAndUInt64(retUInt.hi, naNotUInt64(NA_SIGN_MASK_64));
       retInt = naCastUInt128ToInt128(retUInt);
       if(!naEqualInt128(aSign, bSign)){retInt = naNegInt128(retInt);}
       return retInt;
@@ -98,7 +98,7 @@
       if(naSmallerInt128(a, NA_ZERO_i128)){a = naNegInt128(a);}
       if(naSmallerInt128(b, NA_ZERO_i128)){b = naNegInt128(b);}
       retUInt = naModUInt128(naCastInt128ToUInt128(a), naCastInt128ToUInt128(b));
-      retUInt.hi = naAndUInt64(retUInt.hi, naNotUInt64(NA_VALUE64_SIGN_MASK));
+      retUInt.hi = naAndUInt64(retUInt.hi, naNotUInt64(NA_SIGN_MASK_64));
       retInt = naCastUInt128ToInt128(retUInt);
       if(!naEqualInt128(aSign, NA_ONE_i128)){retInt = naNegInt128(retInt);}
       return retInt;
@@ -308,11 +308,11 @@
         int shiftCount;
 
         // search for the highest bit of b.
-        aHighestBit = naMakeUInt128(NA_VALUE64_SIGN_MASK, NA_ZERO_u64);
+        aHighestBit = naMakeUInt128(NA_SIGN_MASK_64, NA_ZERO_u64);
         while(!naEqualUInt128(naAndUInt128(a, aHighestBit), aHighestBit)){
           aHighestBit = naShrUInt128(aHighestBit, 1);
         }
-        bHighestBit = naMakeUInt128(NA_VALUE64_SIGN_MASK, NA_ZERO_u64);
+        bHighestBit = naMakeUInt128(NA_SIGN_MASK_64, NA_ZERO_u64);
         while(!naEqualUInt128(naAndUInt128(b, bHighestBit), bHighestBit)){
           bHighestBit = naShrUInt128(bHighestBit, 1);
         }

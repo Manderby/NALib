@@ -31,7 +31,9 @@ struct NATestData {
 
 NATestData* na_testData = NA_NULL;
 NATestData* na_curTestData = NA_NULL;
-int na_printAllTestGroups = 1;
+int na_printAllTestGroups = 0;
+
+
 
 void naInitTestingData(NATestData* testData, const char* name, NATestData* parent, int32 lineNum){
   testData->name = name;

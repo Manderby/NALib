@@ -66,7 +66,7 @@
       if(naSmallerInt64(a, NA_ZERO_i64)){a = naNegInt64(a);}
       if(naSmallerInt64(b, NA_ZERO_i64)){b = naNegInt64(b);}
       retUInt = naMulUInt64(naCastInt64ToUInt64(a), naCastInt64ToUInt64(b));
-      retUInt.hi &= ~NA_VALUE32_SIGN_MASK;
+      retUInt.hi &= ~NA_SIGN_MASK_32;
       retInt = naCastUInt64ToInt64(retUInt);
       if(!naEqualInt64(aSign, bSign)){retInt = naNegInt64(retInt);}
       // todo: overflow may lead to different result than built-in 64 bit integer
@@ -80,7 +80,7 @@
       if(naSmallerInt64(a, NA_ZERO_i64)){a = naNegInt64(a);}
       if(naSmallerInt64(b, NA_ZERO_i64)){b = naNegInt64(b);}
       retUInt = naDivUInt64(naCastInt64ToUInt64(a), naCastInt64ToUInt64(b));
-      retUInt.hi &= ~NA_VALUE32_SIGN_MASK;
+      retUInt.hi &= ~NA_SIGN_MASK_32;
       retInt = naCastUInt64ToInt64(retUInt);
       if(!naEqualInt64(aSign, bSign)){retInt = naNegInt64(retInt);}
       return retInt;
@@ -92,7 +92,7 @@
       if(naSmallerInt64(a, NA_ZERO_i64)){a = naNegInt64(a);}
       if(naSmallerInt64(b, NA_ZERO_i64)){b = naNegInt64(b);}
       retUInt = naModUInt64(naCastInt64ToUInt64(a), naCastInt64ToUInt64(b));
-      retUInt.hi &= ~NA_VALUE32_SIGN_MASK;
+      retUInt.hi &= ~NA_SIGN_MASK_32;
       retInt = naCastUInt64ToInt64(retUInt);
       if(!naEqualInt64(aSign, NA_ONE_i64)){retInt = naNegInt64(retInt);}
       return retInt;
@@ -288,11 +288,11 @@
         int shiftCount;
 
         // search for the highest bit of b.
-        aHighestBit = naMakeUInt64(NA_VALUE32_SIGN_MASK, NA_ZERO_u32);
+        aHighestBit = naMakeUInt64(NA_SIGN_MASK_32, NA_ZERO_u32);
         while(!naEqualUInt64(naAndUInt64(a, aHighestBit), aHighestBit)){
           aHighestBit = naShrUInt64(aHighestBit, 1);
         }
-        bHighestBit = naMakeUInt64(NA_VALUE32_SIGN_MASK, NA_ZERO_u32);
+        bHighestBit = naMakeUInt64(NA_SIGN_MASK_32, NA_ZERO_u32);
         while(!naEqualUInt64(naAndUInt64(b, bHighestBit), bHighestBit)){
           bHighestBit = naShrUInt64(bHighestBit, 1);
         }

@@ -79,41 +79,41 @@ NA_IDEF NAInt256 naSigni256(NAInt256 i){
 
 
 NA_IDEF void naSetSignBit8(void* i){
-  *((uint8*)i) |= NA_VALUE8_SIGN_MASK;
+  *((uint8*)i) |= NA_SIGN_MASK_8;
 }
 NA_IDEF void naSetSignBit16(void* i){
-  *((uint16*)i) |= NA_VALUE16_SIGN_MASK;
+  *((uint16*)i) |= NA_SIGN_MASK_16;
 }
 NA_IDEF void naSetSignBit32(void* i){
-  *((uint32*)i) |= NA_VALUE32_SIGN_MASK;
+  *((uint32*)i) |= NA_SIGN_MASK_32;
 }
 NA_IDEF void naSetSignBit64(void* i){
-  *((NAUInt64*)i) = naOrUInt64(*((NAUInt64*)i), NA_VALUE64_SIGN_MASK);
+  *((NAUInt64*)i) = naOrUInt64(*((NAUInt64*)i), NA_SIGN_MASK_64);
 }
 NA_IDEF void naSetSignBit128(void* i){
-  *((NAUInt128*)i) = naOrUInt128(*((NAUInt128*)i), NA_VALUE128_SIGN_MASK);
+  *((NAUInt128*)i) = naOrUInt128(*((NAUInt128*)i), NA_SIGN_MASK_128);
 }
 NA_IDEF void naSetSignBit256(void* i){
-  *((NAUInt256*)i) = naOrUInt256(*((NAUInt256*)i), NA_VALUE256_SIGN_MASK);
+  *((NAUInt256*)i) = naOrUInt256(*((NAUInt256*)i), NA_SIGN_MASK_256);
 }
 
 NA_IDEF void naUnsetSignBit8(void* i){
-  *((uint8*)i) &= ~NA_VALUE8_SIGN_MASK;
+  *((uint8*)i) &= ~NA_SIGN_MASK_8;
 }
 NA_IDEF void naUnsetSignBit16(void* i){
-  *((uint16*)i) &= ~NA_VALUE16_SIGN_MASK;
+  *((uint16*)i) &= ~NA_SIGN_MASK_16;
 }
 NA_IDEF void naUnsetSignBit32(void* i){
-  *((uint32*)i) &= ~NA_VALUE32_SIGN_MASK;
+  *((uint32*)i) &= ~NA_SIGN_MASK_32;
 }
 NA_IDEF void naUnsetSignBit64(void* i){
-  *((NAUInt64*)i) = naAndUInt64(*((NAUInt64*)i), naNotUInt64(NA_VALUE64_SIGN_MASK));
+  *((NAUInt64*)i) = naAndUInt64(*((NAUInt64*)i), naNotUInt64(NA_SIGN_MASK_64));
 }
 NA_IDEF void naUnsetSignBit128(void* i){
-  *((NAUInt128*)i) = naAndUInt128(*((NAUInt128*)i), naNotUInt128(NA_VALUE128_SIGN_MASK));
+  *((NAUInt128*)i) = naAndUInt128(*((NAUInt128*)i), naNotUInt128(NA_SIGN_MASK_128));
 }
 NA_IDEF void naUnsetSignBit256(void* i){
-  *((NAUInt256*)i) = naAndUInt256(*((NAUInt256*)i), naNotUInt256(NA_VALUE256_SIGN_MASK));
+  *((NAUInt256*)i) = naAndUInt256(*((NAUInt256*)i), naNotUInt256(NA_SIGN_MASK_256));
 }
 
 

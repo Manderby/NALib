@@ -34,42 +34,27 @@ typedef int NABool;
 // Int 8 bits
 typedef uint8_t        uint8;
 typedef int8_t         int8;
-
 #define NA_MAX_u8      UINT8_MAX
 #define NA_MAX_i8      INT8_MAX
 #define NA_MIN_i8      INT8_MIN
-#define NA_ZERO_u8     ((uint8)0u)
-#define NA_ONE_u8      ((uint8)1u)
-#define NA_ZERO_i8     ((int8)0)
-#define NA_ONE_i8      ((int8)1)
 
 
 
 // Int 16 bits
 typedef uint16_t       uint16;
 typedef int16_t        int16;
-
 #define NA_MAX_u16     UINT16_MAX
 #define NA_MAX_i16     INT16_MAX
 #define NA_MIN_i16     INT16_MIN
-#define NA_ZERO_u16    ((uint16)0u)
-#define NA_ONE_u16     ((uint16)1u)
-#define NA_ZERO_i16    ((int16)0)
-#define NA_ONE_i16     ((int16)1)
 
 
 
 // Int 32 bits
 typedef uint32_t       uint32;
 typedef int32_t        int32;
-
 #define NA_MAX_u32     UINT32_MAX
 #define NA_MAX_i32     INT32_MAX
 #define NA_MIN_i32     INT32_MIN
-#define NA_ZERO_u32    ((uint32)0u)
-#define NA_ONE_u32     ((uint32)1u)
-#define NA_ZERO_i32    ((int32)0)
-#define NA_ONE_i32     ((int32)1)
 
 
 
@@ -94,10 +79,6 @@ typedef int32_t        int32;
   #else
     #define NA_MIN_i64   (0x8000000000000001 - 1)
   #endif
-  #define NA_ZERO_u64    ((uint64)0u)
-  #define NA_ONE_u64     ((uint64)1u)
-  #define NA_ZERO_i64    ((int64)0)
-  #define NA_ONE_i64     ((int64)1)
 #else
   typedef struct NAUInt64 uint64;
   typedef struct NAInt64  int64;
@@ -114,10 +95,6 @@ typedef int32_t        int32;
   #define NA_MAX_u64     naMakeUInt64(NA_MAX_u32, NA_MAX_u32)
   #define NA_MAX_i64     naMakeInt64(NA_MAX_i32, NA_MAX_u32)
   #define NA_MIN_i64     naMakeInt64(NA_MIN_i32, NA_ZERO_u32)
-  #define NA_ZERO_u64    naMakeUInt64WithLo(NA_ZERO_u32)
-  #define NA_ONE_u64     naMakeUInt64WithLo(NA_ONE_u32)
-  #define NA_ZERO_i64    naMakeInt64WithLo(NA_ZERO_i32)
-  #define NA_ONE_i64     naMakeInt64WithLo(NA_ONE_i32)
 #endif
 
 
@@ -143,10 +120,6 @@ typedef int32_t        int32;
   #else
     #define NA_MIN_i128  (0x80000000000000000000000000000001 - 1)
   #endif
-  #define NA_ZERO_u128   ((uint128)0u)
-  #define NA_ONE_u128    ((uint128)1u)
-  #define NA_ZERO_i128   ((int128)0)
-  #define NA_ONE_i128    ((int128)1)
 #else
   typedef struct NAUInt128 uint128;
   typedef struct NAInt128  int128;
@@ -163,10 +136,6 @@ typedef int32_t        int32;
   #define NA_MAX_u128    naMakeUInt128(NA_MAX_u64, NA_MAX_u64)
   #define NA_MAX_i128    naMakeInt128(NA_MAX_i64, NA_MAX_u64)
   #define NA_MIN_i128    naMakeInt128(NA_MIN_i64, NA_ZERO_u64)
-  #define NA_ZERO_u128   naMakeUInt128WithLo(NA_ZERO_u64)
-  #define NA_ONE_u128    naMakeUInt128WithLo(NA_ONE_u64)
-  #define NA_ZERO_i128   naMakeInt128WithLo(NA_ZERO_i64)
-  #define NA_ONE_i128    naMakeInt128WithLo(NA_ONE_i64)
 #endif
 
 
@@ -192,10 +161,6 @@ typedef int32_t        int32;
   #else
     #define NA_MIN_i256   (0x8000000000000000000000000000000000000000000000000000000000000001 - 1)
   #endif
-  #define NA_ZERO_u256   ((uint256)0u)
-  #define NA_ONE_u256    ((uint256)1u)
-  #define NA_ZERO_i256   ((int256)0)
-  #define NA_ONE_i256    ((int256)1)
 #else
   typedef struct NAUInt256 uint256;
   typedef struct NAInt256  int256;
@@ -212,10 +177,6 @@ typedef int32_t        int32;
   #define NA_MAX_u256    naMakeUInt256(NA_MAX_u128, NA_MAX_u128)
   #define NA_MAX_i256    naMakeInt256(NA_MAX_i128, NA_MAX_u128)
   #define NA_MIN_i256    naMakeInt256(NA_MIN_i128, NA_ZERO_u128)
-  #define NA_ZERO_u256   naMakeUInt256WithLo(NA_ZERO_u128)
-  #define NA_ONE_u256    naMakeUInt256WithLo(NA_ONE_u128)
-  #define NA_ZERO_i256   naMakeInt256WithLo(NA_ZERO_i128)
-  #define NA_ONE_i256    naMakeInt256WithLo(NA_ONE_i128)
 #endif
 
 

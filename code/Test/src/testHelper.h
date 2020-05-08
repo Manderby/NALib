@@ -26,7 +26,7 @@ void naStopTestGroup();
   for(int g = 0; g < 1 ; g++, naStopTestGroup())
 #define naF(name)\
   {\
-  naStartTestGroup("test" ## #name, __LINE__);\
+  naStartTestGroup(#name, __LINE__);\
   test ## name();\
   naStopTestGroup();\
   }
