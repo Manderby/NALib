@@ -58,12 +58,12 @@ NA_IAPI NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b);
 
 // Fills the given buffer with binary zero for the given bytesize
 NA_IAPI void naZeron32  (void* d, int32   bytesize);
-NA_IAPI void naZeron64  (void* d, NAInt64 bytesize);
+NA_IAPI void naZeron64  (void* d, NAi64 bytesize);
 NA_IAPI void naZeron    (void* d, NAInt   bytesize);
 
 // Fills the given buffer with the value for the given bytesize
 NA_IAPI void naSetn32  (void* d, int32   bytesize, NAByte value);
-NA_IAPI void naSetn64  (void* d, NAInt64 bytesize, NAByte value);
+NA_IAPI void naSetn64  (void* d, NAi64 bytesize, NAByte value);
 NA_IAPI void naSetn    (void* d, NAInt   bytesize, NAByte value);
 
 

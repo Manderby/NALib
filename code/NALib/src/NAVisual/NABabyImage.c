@@ -275,60 +275,60 @@ NA_DEF void naReleaseBabyImage(NABabyImage* image){
 
 
 
-NA_DEF void naFillBabyImageWithUInt8(NABabyImage* image, const void* data, NABool toptobottom, NAColorBufferType bufferType){
+NA_DEF void naFillBabyImageWithu8(NABabyImage* image, const void* data, NABool toptobottom, NAColorBufferType bufferType){
   float* imgptr = image->data;
-  const uint8* uint8ptr;
+  const uint8* u8ptr;
 
   if(toptobottom){
     NAInt x, y;
     NASizei size = naGetBabyImageSize(image);
     for(y = 0; y < size.height; y++){
-      uint8ptr = &(((uint8*)data)[(size.height - y - 1) * naGetBabyImageValuesPerLine(image)]);
+      u8ptr = &(((uint8*)data)[(size.height - y - 1) * naGetBabyImageValuesPerLine(image)]);
       for(x = 0; x < size.width; x++){
-        naFillBabyColorWithUInt8(imgptr, uint8ptr, bufferType);
+        naFillBabyColorWithu8(imgptr, u8ptr, bufferType);
         imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
-        uint8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
+        u8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
       }
     }
   }else{
     NAInt pixelCount;
     NAInt i;
-    uint8ptr = data;
+    u8ptr = data;
     pixelCount = naGetBabyImagePixelCount(image);
     for(i = 0; i < pixelCount; i++){
-      naFillBabyColorWithUInt8(imgptr, uint8ptr, bufferType);
+      naFillBabyColorWithu8(imgptr, u8ptr, bufferType);
       imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
-      uint8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
+      u8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
     }
   }
 }
 
 
 
-NA_DEF void naConvertBabyImageToUInt8(const NABabyImage* image, void* data, NABool toptobottom, NAColorBufferType bufferType){
+NA_DEF void naConvertBabyImageTou8(const NABabyImage* image, void* data, NABool toptobottom, NAColorBufferType bufferType){
   const float* imgptr = image->data;
-  uint8* uint8ptr;
+  uint8* u8ptr;
 
   if(toptobottom){
     NAInt x, y;
     NASizei size = naGetBabyImageSize(image);
     for(y = 0; y < size.height; y++){
-      uint8ptr = &(((uint8*)data)[(size.height - y - 1) * naGetBabyImageValuesPerLine(image)]);
+      u8ptr = &(((uint8*)data)[(size.height - y - 1) * naGetBabyImageValuesPerLine(image)]);
       for(x = 0; x < size.width; x++){
-        naFillUInt8WithBabyColor(uint8ptr, imgptr, bufferType);
+        naFillu8WithBabyColor(u8ptr, imgptr, bufferType);
         imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
-        uint8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
+        u8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
       }
     }
   }else{
     NAInt pixelCount;
     NAInt i;
-    uint8ptr = data;
+    u8ptr = data;
     pixelCount = naGetBabyImagePixelCount(image);
     for(i = 0; i < pixelCount; i++){
-      naFillUInt8WithBabyColor(uint8ptr, imgptr, bufferType);
+      naFillu8WithBabyColor(u8ptr, imgptr, bufferType);
       imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
-      uint8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
+      u8ptr += NA_BABY_COLOR_CHANNEL_COUNT;
     }
   }
 }

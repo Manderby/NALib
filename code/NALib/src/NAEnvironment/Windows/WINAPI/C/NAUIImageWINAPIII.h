@@ -40,7 +40,7 @@ NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeimage){
   babyimage = naCreateBabyImage(naMakeSizei(MyBMInfo.bmiHeader.biWidth, MyBMInfo.bmiHeader.biHeight), NA_NULL);
   // Windows does store an alpha component but it is not in use and therefore zero.
   // We therefore ignore it in the following call and receyve a completely opaque image.
-  naFillBabyImageWithUInt8(babyimage, lpPixels, NA_FALSE, NA_COLOR_BUFFER_BGR0);
+  naFillBabyImageWithu8(babyimage, lpPixels, NA_FALSE, NA_COLOR_BUFFER_BGR0);
   naFree(lpPixels);
 
   // clean up: deselect bitmap from device context, close handles, delete buffer
@@ -66,7 +66,7 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
   NAByte* buffer = naMalloc(size.width * size.height * 4);
   float* babyptr = naGetBabyImageData(image);
 
-  naConvertBabyImageToUInt8(image, buffer, NA_TRUE, NA_COLOR_BUFFER_BGRA);
+  naConvertBabyImageTou8(image, buffer, NA_TRUE, NA_COLOR_BUFFER_BGRA);
 
   hNewBitmap = CreateBitmap((int)size.width, (int)size.height, 1, 32, buffer);
   naFree(buffer);

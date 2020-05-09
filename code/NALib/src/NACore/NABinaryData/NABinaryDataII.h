@@ -77,7 +77,7 @@ NA_IDEF void naCopy64 (void* NA_RESTRICT d, const void* NA_RESTRICT s){
     if(dist < 8)
       naError("Restrict pointers overlap.");
   #endif
-  *(NAUInt64*)d = *(NAUInt64*)s;
+  *(NAu64*)d = *(NAu64*)s;
 }
 NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
   #ifndef NDEBUG
@@ -91,10 +91,10 @@ NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
     if(dist < 16)
       naError("Restrict pointers overlap.");
   #endif
-  *(NAUInt64*)d = *(NAUInt64*)s;
+  *(NAu64*)d = *(NAu64*)s;
   d = ((NAByte*)d) + 8;
   s = ((NAByte*)s) + 8;
-  *(NAUInt64*)d = *(NAUInt64*)s;
+  *(NAu64*)d = *(NAu64*)s;
 }
 
 NA_IDEF void naCopyn(void* NA_RESTRICT d, const void* NA_RESTRICT s, NAInt bytesize){
@@ -187,9 +187,9 @@ NA_IDEF void naSwap64(void* NA_RESTRICT a, void* NA_RESTRICT b){
   #endif
   // Note: Do not write the following 3 lines as 1 line. The compiler might
   // cache the result of the dereference operators!
-  *(NAUInt64*)a = naXorUInt64(*(NAUInt64*)a, *(NAUInt64*)b);
-  *(NAUInt64*)b = naXorUInt64(*(NAUInt64*)b, *(NAUInt64*)a);
-  *(NAUInt64*)a = naXorUInt64(*(NAUInt64*)a, *(NAUInt64*)b);
+  *(NAu64*)a = naXoru64(*(NAu64*)a, *(NAu64*)b);
+  *(NAu64*)b = naXoru64(*(NAu64*)b, *(NAu64*)a);
+  *(NAu64*)a = naXoru64(*(NAu64*)a, *(NAu64*)b);
 }
 
 NA_IDEF void naSwap128(void* NA_RESTRICT a, void* NA_RESTRICT b){
@@ -250,10 +250,10 @@ NA_IDEF NABool naEqual32( void* NA_RESTRICT a, void* NA_RESTRICT b){
   return (*((uint32*)a) == *((uint32*)b));
 }
 NA_IDEF NABool naEqual64( void* NA_RESTRICT a, void* NA_RESTRICT b){
-  return naEqualUInt64(*((NAUInt64*)a), *((NAUInt64*)b));
+  return naEqualu64(*((NAu64*)a), *((NAu64*)b));
 }
 NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b){
-  return naEqualUInt128(*((NAUInt128*)a), *((NAUInt128*)b));
+  return naEqualu128(*((NAu128*)a), *((NAu128*)b));
 }
 
 
@@ -272,9 +272,9 @@ NA_IDEF void naZeron32(void* d, int32 bytesize){
   memset(d, 0, (size_t)bytesize);
 }
 
-NA_IDEF void naZeron64(void* d, NAInt64 bytesize){
+NA_IDEF void naZeron64(void* d, NAi64 bytesize){
   #ifndef NDEBUG
-    if(naSmallerInt64(bytesize, NA_ONE_i64))
+    if(naSmalleri64(bytesize, NA_ONE_i64))
       naError("count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
@@ -284,7 +284,7 @@ NA_IDEF void naZeron64(void* d, NAInt64 bytesize){
     #ifndef NDEBUG
       naError("Impossible to convert to a 64 bit size_t type, as no accessible 64 bit integer type exists in this configuration. Falling back to 32 bits.");
     #endif
-    memset(d, 0, (size_t)naCastInt64ToInt32(bytesize));
+    memset(d, 0, (size_t)naCasti64Toi32(bytesize));
   #endif
 }
 
@@ -309,9 +309,9 @@ NA_IDEF void naSetn32(void* d, int32 bytesize, NAByte value){
   memset(d, value, (size_t)bytesize);
 }
 
-NA_IDEF void naSetn64(void* d, NAInt64 bytesize, NAByte value){
+NA_IDEF void naSetn64(void* d, NAi64 bytesize, NAByte value){
   #ifndef NDEBUG
-    if(naSmallerInt64(bytesize, NA_ONE_i64))
+    if(naSmalleri64(bytesize, NA_ONE_i64))
       naError("count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
@@ -321,7 +321,7 @@ NA_IDEF void naSetn64(void* d, NAInt64 bytesize, NAByte value){
     #ifndef NDEBUG
       naError("Impossible to convert to a 64 bit size_t type, as no accessible 64 bit integer type exists in this configuration. Falling back to 32 bits.");
     #endif
-    memset(d, value, (size_t)naCastInt64ToInt32(bytesize));
+    memset(d, value, (size_t)naCasti64Toi32(bytesize));
   #endif
 }
 

@@ -14,12 +14,12 @@ extern NABool na_globalsummertime;
 
 #define NA_DATETIME_FLAG_SUMMERTIME 0x01
 
-#define NA_DATETIME_GREGORIAN_400_YEAR_PERIOD naMakeInt64WithLo(400)
-#define NA_DATETIME_GREGORIAN_100_YEAR_PERIOD naMakeInt64WithLo(100)
-#define NA_DATETIME_GREGORIAN_4_YEAR_PERIOD   naMakeInt64WithLo(4)
+#define NA_DATETIME_GREGORIAN_400_YEAR_PERIOD naMakei64WithLo(400)
+#define NA_DATETIME_GREGORIAN_100_YEAR_PERIOD naMakei64WithLo(100)
+#define NA_DATETIME_GREGORIAN_4_YEAR_PERIOD   naMakei64WithLo(4)
 
-#define NA_DATETIME_YEAR_1582                 naMakeInt64WithLo(1582)
-#define NA_DATETIME_YEAR_1958                 naMakeInt64WithLo(1958)
+#define NA_DATETIME_YEAR_1582                 naMakei64WithLo(1582)
+#define NA_DATETIME_YEAR_1958                 naMakei64WithLo(1958)
 
 
 // The following macros evaluate to the following numbers:
@@ -41,27 +41,27 @@ extern NABool na_globalsummertime;
 #define NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR  (NA_SECONDS_PER_DAY * (31+28+31+30+31+30))
 #define NA_SECONDS_JAN_TO_JUN_IN_LEAP_YEAR    (NA_SECONDS_PER_DAY * (31+29+31+30+31+30))
 #define NA_SECONDS_JUL_TO_DEC            (NA_SECONDS_PER_DAY * (31+31+30+31+30+31))
-#define NA_SECONDS_IN_NORMAL_YEAR        naMakeInt64WithLo(NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR + NA_SECONDS_JUL_TO_DEC)
-#define NA_SECONDS_IN_LEAP_YEAR          naMakeInt64WithLo(NA_SECONDS_JAN_TO_JUN_IN_LEAP_YEAR   + NA_SECONDS_JUL_TO_DEC)
-#define NA_SECONDS_IN_4_YEAR_PERIOD      naMakeInt64WithLo(NA_SECONDS_JAN_TO_JUN_IN_LEAP_YEAR + 3 * NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR + 4 * NA_SECONDS_JUL_TO_DEC)
+#define NA_SECONDS_IN_NORMAL_YEAR        naMakei64WithLo(NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR + NA_SECONDS_JUL_TO_DEC)
+#define NA_SECONDS_IN_LEAP_YEAR          naMakei64WithLo(NA_SECONDS_JAN_TO_JUN_IN_LEAP_YEAR   + NA_SECONDS_JUL_TO_DEC)
+#define NA_SECONDS_IN_4_YEAR_PERIOD      naMakei64WithLo(NA_SECONDS_JAN_TO_JUN_IN_LEAP_YEAR + 3 * NA_SECONDS_JAN_TO_JUN_IN_NORMAL_YEAR + 4 * NA_SECONDS_JUL_TO_DEC)
 
 //#define NA_SECONDS_IN_100_YEAR_PERIOD \
 //  (76LL * NA_SECONDS_IN_NORMAL_YEAR + 24LL * NA_SECONDS_IN_LEAP_YEAR)
 // NA_SECONDS_IN_100_YEAR_PERIOD:        3155673600
 #define NA_SECONDS_IN_100_YEAR_PERIOD_HI  0x0
 #define NA_SECONDS_IN_100_YEAR_PERIOD_LO  0xbc17c200
-#define NA_SECONDS_IN_100_YEAR_PERIOD     naCastUInt64ToInt64(naMakeUInt64(NA_SECONDS_IN_100_YEAR_PERIOD_HI, NA_SECONDS_IN_100_YEAR_PERIOD_LO))
+#define NA_SECONDS_IN_100_YEAR_PERIOD     naCastu64Toi64(naMakeu64(NA_SECONDS_IN_100_YEAR_PERIOD_HI, NA_SECONDS_IN_100_YEAR_PERIOD_LO))
 
 //#define NA_SECONDS_IN_400_YEAR_PERIOD \
 //  (4LL * NA_SECONDS_IN_100_YEAR_PERIOD + NA_SECONDS_PER_DAY)
 // NA_SECONDS_IN_400_YEAR_PERIOD:       12622780800
 #define NA_SECONDS_IN_400_YEAR_PERIOD_HI  0x00000002
 #define NA_SECONDS_IN_400_YEAR_PERIOD_LO  0xf0605980
-#define NA_SECONDS_IN_400_YEAR_PERIOD     naCastUInt64ToInt64(naMakeUInt64(NA_SECONDS_IN_400_YEAR_PERIOD_HI, NA_SECONDS_IN_400_YEAR_PERIOD_LO))
+#define NA_SECONDS_IN_400_YEAR_PERIOD     naCastu64Toi64(naMakeu64(NA_SECONDS_IN_400_YEAR_PERIOD_HI, NA_SECONDS_IN_400_YEAR_PERIOD_LO))
 
 
 struct NADateTime{
-  NAInt64  sisec;     // SI-second number starting Jan 1st 1958, 00:00 + 00:00
+  NAi64  sisec;     // SI-second number starting Jan 1st 1958, 00:00 + 00:00
   int32    nsec;      // nanosecond number in range [0, 999999999]
   int16    shift;     // time shift in minutes (positive and negative)
   uint8    errornum;  // error number in case invalid values were given.
@@ -69,21 +69,21 @@ struct NADateTime{
 };
 
 
-NA_IDEF NABool naIsLeapYearJulian(NAInt64 year){
-  return naEqualInt64(naModInt64(year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD), NA_ZERO_i64);
+NA_IDEF NABool naIsLeapYearJulian(NAi64 year){
+  return naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD), NA_ZERO_i64);
 }
 
 
-NA_IDEF NABool naIsLeapYearGregorian(NAInt64 year){
-  if(naEqualInt64(naModInt64(year, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD), NA_ZERO_i64)){return NA_TRUE;}
-  if(naEqualInt64(naModInt64(year, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD), NA_ZERO_i64)){return NA_FALSE;}
-  if(naEqualInt64(naModInt64(year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD), NA_ZERO_i64)){return NA_TRUE;}
+NA_IDEF NABool naIsLeapYearGregorian(NAi64 year){
+  if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD), NA_ZERO_i64)){return NA_TRUE;}
+  if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD), NA_ZERO_i64)){return NA_FALSE;}
+  if(naEquali64(naModi64(year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD), NA_ZERO_i64)){return NA_TRUE;}
   return NA_FALSE;
 }
 
 
-NA_IDEF NABool naIsLeapYear(NAInt64 year){
-  if(naSmallerEqualInt64(year, NA_DATETIME_YEAR_1582)){
+NA_IDEF NABool naIsLeapYear(NAi64 year){
+  if(naSmallerEquali64(year, NA_DATETIME_YEAR_1582)){
     return naIsLeapYearJulian(year);
   }else{
     return naIsLeapYearGregorian(year);
@@ -92,7 +92,7 @@ NA_IDEF NABool naIsLeapYear(NAInt64 year){
 
 
 
-NA_IDEF NADateTime naMakeDateTime(NAInt64 year, int32 mon, int32 day, int32 hour, int32 min, int32 sec){
+NA_IDEF NADateTime naMakeDateTime(NAi64 year, int32 mon, int32 day, int32 hour, int32 min, int32 sec){
   NADateTimeStruct dts;
   dts.year = year;
   dts.mon = mon - 1;
@@ -109,7 +109,7 @@ NA_IDEF NADateTime naMakeDateTime(NAInt64 year, int32 mon, int32 day, int32 hour
 
 
 
-NA_IDEF NADateTime naMakeDateTimeWithNALibSecondNumber(NAInt64 secondnumber){
+NA_IDEF NADateTime naMakeDateTimeWithNALibSecondNumber(NAi64 secondnumber){
   NADateTime datetime;
   datetime.sisec = secondnumber;
   datetime.nsec = 0;
@@ -150,8 +150,8 @@ NA_IDEF void naCorrectDateTimeZone( NADateTime* datetime,
                                   int16 newshift,
                                  NABool summertime){
   datetime->errornum = NA_DATETIME_ERROR_NONE;
-  datetime->sisec = naSubInt64(datetime->sisec, naMakeInt64WithLo(datetime->shift * (int32)NA_SECONDS_PER_MINUTE));
-  datetime->sisec = naAddInt64(datetime->sisec, naMakeInt64WithLo(newshift * (int32)NA_SECONDS_PER_MINUTE));
+  datetime->sisec = naSubi64(datetime->sisec, naMakei64WithLo(datetime->shift * (int32)NA_SECONDS_PER_MINUTE));
+  datetime->sisec = naAddi64(datetime->sisec, naMakei64WithLo(newshift * (int32)NA_SECONDS_PER_MINUTE));
   naSetDateTimeZone(datetime, newshift, summertime);
 }
 
@@ -161,11 +161,11 @@ NA_DEF double naGetDateTimeDifference(const NADateTime* end, const NADateTime* b
   double sign = 1.;
   double diffsecs;
   double diffnsecs;
-  if(naSmallerInt64(end->sisec, begin->sisec)){
+  if(naSmalleri64(end->sisec, begin->sisec)){
     sign = -1;
-    diffsecs = naCastInt64ToDouble(naSubInt64(begin->sisec, end->sisec));
+    diffsecs = naCasti64ToDouble(naSubi64(begin->sisec, end->sisec));
   }else{
-    diffsecs = naCastInt64ToDouble(naSubInt64(end->sisec, begin->sisec));
+    diffsecs = naCasti64ToDouble(naSubi64(end->sisec, begin->sisec));
   }
   diffnsecs = ((double)end->nsec - (double)begin->nsec) / 1e9;
   return sign * (diffsecs + diffnsecs);
@@ -174,17 +174,17 @@ NA_DEF double naGetDateTimeDifference(const NADateTime* end, const NADateTime* b
 
 
 NA_IDEF void naAddDateTimeDifference(NADateTime* datetime, double difference){
-  NAInt64 fullsecs = naMakeInt64WithDouble(difference);
-  int32 nanosecs = (int32)((difference - naCastInt64ToDouble(fullsecs)) * 1e9);
+  NAi64 fullsecs = naMakei64WithDouble(difference);
+  int32 nanosecs = (int32)((difference - naCasti64ToDouble(fullsecs)) * 1e9);
   datetime->errornum = NA_DATETIME_ERROR_NONE;
   if(difference < 0){
     datetime->nsec += nanosecs;
-    if(datetime->nsec < 0){naDecInt64(fullsecs); datetime->nsec += 1000000000;}
-    datetime->sisec = naAddInt64(datetime->sisec, fullsecs);
+    if(datetime->nsec < 0){naDeci64(fullsecs); datetime->nsec += 1000000000;}
+    datetime->sisec = naAddi64(datetime->sisec, fullsecs);
   }else{
     datetime->nsec += nanosecs;
-    if(datetime->nsec > 999999999){naIncInt64(fullsecs); datetime->nsec -= 1000000000;}
-    datetime->sisec = naAddInt64(datetime->sisec, fullsecs);
+    if(datetime->nsec > 999999999){naInci64(fullsecs); datetime->nsec -= 1000000000;}
+    datetime->sisec = naAddi64(datetime->sisec, fullsecs);
   }
 }
 

@@ -131,7 +131,7 @@ NA_DEF void naDestructApplication(NAApplication* application){
 
 
 NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, double timediff){
-  dispatch_time_t nexttime = dispatch_time(DISPATCH_TIME_NOW, naMakeInt64WithDouble(1000000000. * timediff));
+  dispatch_time_t nexttime = dispatch_time(DISPATCH_TIME_NOW, naMakei64WithDouble(1000000000. * timediff));
   dispatch_queue_t queue = dispatch_get_main_queue();
   dispatch_after_f(nexttime, queue, arg, function);
 }

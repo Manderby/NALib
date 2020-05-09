@@ -23,13 +23,13 @@
   #include <sys/time.h>
 #endif
 
-uint64 randUInt64();
+uint64 randu64();
 double getTime();
 double printAndSwapTime(const char* title, double starttime);
-void printInt64(int64 i);
-void printUInt64(uint64 ui);
-void testEqualInt64(int64 i, uint32 goalhi, uint32 goallo);
-void testEqualUInt64(uint64 ui, uint32 goalhi, uint32 goallo);
+void printi64(int64 i);
+void printu64(uint64 ui);
+void testEquali64(int64 i, uint32 goalhi, uint32 goallo);
+void testEqualu64(uint64 ui, uint32 goalhi, uint32 goallo);
 void testEqualBool(NABool b, NABool goalb);
 
 
@@ -41,18 +41,18 @@ void testEqualBool(NABool b, NABool goalb);
 
 
 void testMaking(){
-  int64 i1 = naMakeInt64WithLo(-0x12345678);
-  int64 i2 = naMakeInt64WithDouble(-123456789012345.);
-  uint64 ui1 = naMakeUInt64WithLo(0x12345678);
-  uint64 ui2 = naMakeUInt64WithLo(0x12345678);
-  uint64 ui3 = naMakeUInt64WithDouble(123456789012345.);
-  uint64 ui4 = naMakeUInt64(0x12345678, 0x56473829);
-  testEqualInt64(i1, 0xffffffff, 0xedcba988);
-  testEqualInt64(i2, 0xffff8fb7, 0x79f22087);
-  testEqualUInt64(ui1, 0x00000000, 0x12345678);
-  testEqualUInt64(ui2, 0x00000000, 0x12345678);
-  testEqualUInt64(ui3, 0x00007048 , 0x860ddf79);
-  testEqualUInt64(ui4, 0x12345678 , 0x56473829);
+  int64 i1 = naMakei64WithLo(-0x12345678);
+  int64 i2 = naMakei64WithDouble(-123456789012345.);
+  uint64 ui1 = naMakeu64WithLo(0x12345678);
+  uint64 ui2 = naMakeu64WithLo(0x12345678);
+  uint64 ui3 = naMakeu64WithDouble(123456789012345.);
+  uint64 ui4 = naMakeu64(0x12345678, 0x56473829);
+  testEquali64(i1, 0xffffffff, 0xedcba988);
+  testEquali64(i2, 0xffff8fb7, 0x79f22087);
+  testEqualu64(ui1, 0x00000000, 0x12345678);
+  testEqualu64(ui2, 0x00000000, 0x12345678);
+  testEqualu64(ui3, 0x00007048 , 0x860ddf79);
+  testEqualu64(ui4, 0x12345678 , 0x56473829);
 }
 
 
@@ -60,178 +60,178 @@ void timeMaking(){
   double t;
   int i;
   int64 i64 = NA_ZERO_i64;
-  uint64 ui64 = NA_ZERO_u64;
+  uint64 u64 = NA_ZERO_u64;
 
 
   t = getTime();
-  for(i = 0; i < TESTSIZE; i++){i64 = naAddInt64(naMakeInt64WithLo(-rand()), i64);}
-  t = printAndSwapTime("naMakeInt64WithLo", t);
-  for(i = 0; i < TESTSIZE; i++){i64 = naAddInt64(naMakeInt64WithDouble(-(double)rand() * (double)rand()), i64);}
-  t = printAndSwapTime("naMakeInt64WithDouble", t);
+  for(i = 0; i < TESTSIZE; i++){i64 = naAddi64(naMakei64WithLo(-rand()), i64);}
+  t = printAndSwapTime("naMakei64WithLo", t);
+  for(i = 0; i < TESTSIZE; i++){i64 = naAddi64(naMakei64WithDouble(-(double)rand() * (double)rand()), i64);}
+  t = printAndSwapTime("naMakei64WithDouble", t);
 
-  for(i = 0; i < TESTSIZE; i++){ui64 = naAddUInt64(naMakeUInt64WithLo((uint32)rand()), ui64);}
-  t = printAndSwapTime("naMakeUInt64WithLo", t);
-  for(i = 0; i < TESTSIZE; i++){ui64 = naAddUInt64(naMakeUInt64WithDouble((double)rand() * (double)rand()), ui64);}
-  t = printAndSwapTime("naMakeUInt64WithDouble", t);
-  for(i = 0; i < TESTSIZE; i++){ui64 = naAddUInt64(naMakeUInt64((uint32)rand(), (uint32)rand()), ui64);}
-  t = printAndSwapTime("naMakeUInt64", t);
+  for(i = 0; i < TESTSIZE; i++){u64 = naAddu64(naMakeu64WithLo((uint32)rand()), u64);}
+  t = printAndSwapTime("naMakeu64WithLo", t);
+  for(i = 0; i < TESTSIZE; i++){u64 = naAddu64(naMakeu64WithDouble((double)rand() * (double)rand()), u64);}
+  t = printAndSwapTime("naMakeu64WithDouble", t);
+  for(i = 0; i < TESTSIZE; i++){u64 = naAddu64(naMakeu64((uint32)rand(), (uint32)rand()), u64);}
+  t = printAndSwapTime("naMakeu64", t);
 
   NA_UNUSED(i64);
-  NA_UNUSED(ui64);
+  NA_UNUSED(u64);
   NA_UNUSED(t);
 }
 
 
 
 void testBinary(){
-  int64 i = naMakeInt64WithDouble(-123456789012345.); 
-  int64 term = naCastUInt64ToInt64(naMakeUInt64(0x55555555, 0x55555555));
-  uint64 ui = naMakeUInt64(0x12345678, 0x56473829);
-  uint64 uterm = naMakeUInt64(0x55555555, 0x55555555);
+  int64 i = naMakei64WithDouble(-123456789012345.); 
+  int64 term = naCastu64Toi64(naMakeu64(0x55555555, 0x55555555));
+  uint64 ui = naMakeu64(0x12345678, 0x56473829);
+  uint64 uterm = naMakeu64(0x55555555, 0x55555555);
 
-  int64 i1 = naNotInt64(i);
-  int64 i2 = naOrInt64(i, term);
-  int64 i3 = naAndInt64(i, term);
-  int64 i4 = naXorInt64(i, term);
-  int64 i5 = naShlInt64(i, 5);
-  int64 i6 = naShrInt64(i, 5);
+  int64 i1 = naNoti64(i);
+  int64 i2 = naOri64(i, term);
+  int64 i3 = naAndi64(i, term);
+  int64 i4 = naXori64(i, term);
+  int64 i5 = naShli64(i, 5);
+  int64 i6 = naShri64(i, 5);
 
-  uint64 ui1 = naNotUInt64(ui);
-  uint64 ui2 = naOrUInt64(ui, uterm);
-  uint64 ui3 = naAndUInt64(ui, uterm);
-  uint64 ui4 = naXorUInt64(ui, uterm);
-  uint64 ui5 = naShlUInt64(ui, 5);
-  uint64 ui6 = naShrUInt64(ui, 5);
+  uint64 ui1 = naNotu64(ui);
+  uint64 ui2 = naOru64(ui, uterm);
+  uint64 ui3 = naAndu64(ui, uterm);
+  uint64 ui4 = naXoru64(ui, uterm);
+  uint64 ui5 = naShlu64(ui, 5);
+  uint64 ui6 = naShru64(ui, 5);
 
-  testEqualInt64(i1, 0x00007048, 0x860ddf78);
-  testEqualInt64(i2, 0xffffdff7, 0x7df775d7);
-  testEqualInt64(i3, 0x55550515, 0x51500005);
-  testEqualInt64(i4, 0xaaaadae2, 0x2ca775d2);
-  testEqualInt64(i5, 0xfff1f6ef, 0x3e4410e0);
-  testEqualInt64(i6, 0xfffffc7d, 0xbbcf9104);
+  testEquali64(i1, 0x00007048, 0x860ddf78);
+  testEquali64(i2, 0xffffdff7, 0x7df775d7);
+  testEquali64(i3, 0x55550515, 0x51500005);
+  testEquali64(i4, 0xaaaadae2, 0x2ca775d2);
+  testEquali64(i5, 0xfff1f6ef, 0x3e4410e0);
+  testEquali64(i6, 0xfffffc7d, 0xbbcf9104);
 
-  testEqualUInt64(ui1, 0xedcba987, 0xa9b8c7d6);
-  testEqualUInt64(ui2, 0x5775577d, 0x57577d7d);
-  testEqualUInt64(ui3, 0x10145450, 0x54451001);
-  testEqualUInt64(ui4, 0x4761032d, 0x03126d7c);
-  testEqualUInt64(ui5, 0x468acf0a, 0xc8e70520);
-  testEqualUInt64(ui6, 0x0091a2b3, 0xc2b239c1);
+  testEqualu64(ui1, 0xedcba987, 0xa9b8c7d6);
+  testEqualu64(ui2, 0x5775577d, 0x57577d7d);
+  testEqualu64(ui3, 0x10145450, 0x54451001);
+  testEqualu64(ui4, 0x4761032d, 0x03126d7c);
+  testEqualu64(ui5, 0x468acf0a, 0xc8e70520);
+  testEqualu64(ui6, 0x0091a2b3, 0xc2b239c1);
 }
 
 
 
 void timeBinary(){
-  int64 i64_1 = naMakeInt64(0x693275dc, 0xf035bac);
-  int64 i64_2 = naMakeInt64(0x95fba4e, 0x069a2f4);
-  uint64 ui64_1 = naMakeUInt64(0x693275dc, 0xf035bac);
-  uint64 ui64_2 = naMakeUInt64(0x95fba4e, 0x069a2f4);
+  int64 i64_1 = naMakei64(0x693275dc, 0xf035bac);
+  int64 i64_2 = naMakei64(0x95fba4e, 0x069a2f4);
+  uint64 u64_1 = naMakeu64(0x693275dc, 0xf035bac);
+  uint64 u64_2 = naMakeu64(0x95fba4e, 0x069a2f4);
   double t;
   int i;
   int64 i64;
-  uint64 ui64;
+  uint64 u64;
 
   t = getTime();
-  for(i = 0; i < TESTSIZE; i++){i64 = naNotInt64(i64_1);}
-  t = printAndSwapTime("naNotInt64", t);
-  for(i = 0; i < TESTSIZE; i++){i64 = naOrInt64(i64_1, i64_2);}
-  t = printAndSwapTime("naOrInt64", t);
-  for(i = 0; i < TESTSIZE; i++){i64 = naAndInt64(i64_1, i64_2);}
-  t = printAndSwapTime("naAndInt64", t);
-  for(i = 0; i < TESTSIZE; i++){i64 = naXorInt64(i64_1, i64_2);}
-  t = printAndSwapTime("naXorInt64", t);
-  for(i = 0; i < TESTSIZE; i++){i64 = naShlInt64(i64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
-  t = printAndSwapTime("naShlInt64", t);
-  for(i = 0; i < TESTSIZE; i++){i64 = naShrInt64(i64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
-  t = printAndSwapTime("naShrInt64", t);
+  for(i = 0; i < TESTSIZE; i++){i64 = naNoti64(i64_1);}
+  t = printAndSwapTime("naNoti64", t);
+  for(i = 0; i < TESTSIZE; i++){i64 = naOri64(i64_1, i64_2);}
+  t = printAndSwapTime("naOri64", t);
+  for(i = 0; i < TESTSIZE; i++){i64 = naAndi64(i64_1, i64_2);}
+  t = printAndSwapTime("naAndi64", t);
+  for(i = 0; i < TESTSIZE; i++){i64 = naXori64(i64_1, i64_2);}
+  t = printAndSwapTime("naXori64", t);
+  for(i = 0; i < TESTSIZE; i++){i64 = naShli64(i64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
+  t = printAndSwapTime("naShli64", t);
+  for(i = 0; i < TESTSIZE; i++){i64 = naShri64(i64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
+  t = printAndSwapTime("naShri64", t);
 
-  for(i = 0; i < TESTSIZE; i++){ui64 = naNotUInt64(ui64_1);}
-  t = printAndSwapTime("naNotUInt64", t);
-  for(i = 0; i < TESTSIZE; i++){ui64 = naOrUInt64(ui64_1, ui64_2);}
-  t = printAndSwapTime("naOrUInt64", t);
-  for(i = 0; i < TESTSIZE; i++){ui64 = naAndUInt64(ui64_1, ui64_2);}
-  t = printAndSwapTime("naAndUInt64", t);
-  for(i = 0; i < TESTSIZE; i++){ui64 = naXorUInt64(ui64_1, ui64_2);}
-  t = printAndSwapTime("naXorUInt64", t);
-  for(i = 0; i < TESTSIZE; i++){ui64 = naShlUInt64(ui64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
-  t = printAndSwapTime("naShlUInt64", t);
-  for(i = 0; i < TESTSIZE; i++){ui64 = naShrUInt64(ui64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
-  t = printAndSwapTime("naShrUInt64", t);
+  for(i = 0; i < TESTSIZE; i++){u64 = naNotu64(u64_1);}
+  t = printAndSwapTime("naNotu64", t);
+  for(i = 0; i < TESTSIZE; i++){u64 = naOru64(u64_1, u64_2);}
+  t = printAndSwapTime("naOru64", t);
+  for(i = 0; i < TESTSIZE; i++){u64 = naAndu64(u64_1, u64_2);}
+  t = printAndSwapTime("naAndu64", t);
+  for(i = 0; i < TESTSIZE; i++){u64 = naXoru64(u64_1, u64_2);}
+  t = printAndSwapTime("naXoru64", t);
+  for(i = 0; i < TESTSIZE; i++){u64 = naShlu64(u64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
+  t = printAndSwapTime("naShlu64", t);
+  for(i = 0; i < TESTSIZE; i++){u64 = naShru64(u64_1, (int)(32. * (double)rand() / (double)RAND_MAX));}
+  t = printAndSwapTime("naShru64", t);
 
   NA_UNUSED(i64);
-  NA_UNUSED(ui64);
+  NA_UNUSED(u64);
   NA_UNUSED(t);
 }
 
 
 
 void testComparison(){
-  int64 i1 = naMakeInt64WithDouble(-123456789012345.);
-  int64 i2 = naMakeInt64WithDouble(-123456.);
-  uint64 ui1 = naMakeUInt64WithDouble(123456789012345.);
-  uint64 ui2 = naMakeUInt64WithDouble(123456.);
+  int64 i1 = naMakei64WithDouble(-123456789012345.);
+  int64 i2 = naMakei64WithDouble(-123456.);
+  uint64 ui1 = naMakeu64WithDouble(123456789012345.);
+  uint64 ui2 = naMakeu64WithDouble(123456.);
 
-  testEqualBool(naEqualInt64(i1, i1), NA_TRUE);
-  testEqualBool(naGreaterInt64(i1, i2), NA_FALSE);
-  testEqualBool(naGreaterInt64(i2, i1), NA_TRUE);
-  testEqualBool(naGreaterInt64(i1, i1), NA_FALSE);
-  testEqualBool(naGreaterEqualInt64(i1, i2), NA_FALSE);
-  testEqualBool(naGreaterEqualInt64(i2, i1), NA_TRUE);
-  testEqualBool(naGreaterEqualInt64(i1, i1), NA_TRUE);
-  testEqualBool(naSmallerInt64(i1, i2), NA_TRUE);
-  testEqualBool(naSmallerInt64(i2, i1), NA_FALSE);
-  testEqualBool(naSmallerInt64(i1, i1), NA_FALSE);
-  testEqualBool(naSmallerEqualInt64(i1, i2), NA_TRUE);
-  testEqualBool(naSmallerEqualInt64(i2, i1), NA_FALSE);
-  testEqualBool(naSmallerEqualInt64(i1, i1), NA_TRUE);
+  testEqualBool(naEquali64(i1, i1), NA_TRUE);
+  testEqualBool(naGreateri64(i1, i2), NA_FALSE);
+  testEqualBool(naGreateri64(i2, i1), NA_TRUE);
+  testEqualBool(naGreateri64(i1, i1), NA_FALSE);
+  testEqualBool(naGreaterEquali64(i1, i2), NA_FALSE);
+  testEqualBool(naGreaterEquali64(i2, i1), NA_TRUE);
+  testEqualBool(naGreaterEquali64(i1, i1), NA_TRUE);
+  testEqualBool(naSmalleri64(i1, i2), NA_TRUE);
+  testEqualBool(naSmalleri64(i2, i1), NA_FALSE);
+  testEqualBool(naSmalleri64(i1, i1), NA_FALSE);
+  testEqualBool(naSmallerEquali64(i1, i2), NA_TRUE);
+  testEqualBool(naSmallerEquali64(i2, i1), NA_FALSE);
+  testEqualBool(naSmallerEquali64(i1, i1), NA_TRUE);
 
-  testEqualBool(naEqualUInt64(ui1, ui1), NA_TRUE);
-  testEqualBool(naGreaterUInt64(ui1, ui2), NA_TRUE);
-  testEqualBool(naGreaterUInt64(ui2, ui1), NA_FALSE);
-  testEqualBool(naGreaterUInt64(ui1, ui1), NA_FALSE);
-  testEqualBool(naGreaterEqualUInt64(ui1, ui2), NA_TRUE);
-  testEqualBool(naGreaterEqualUInt64(ui2, ui1), NA_FALSE);
-  testEqualBool(naGreaterEqualUInt64(ui1, ui1), NA_TRUE);
-  testEqualBool(naSmallerUInt64(ui1, ui2), NA_FALSE);
-  testEqualBool(naSmallerUInt64(ui2, ui1), NA_TRUE);
-  testEqualBool(naSmallerUInt64(ui1, ui1), NA_FALSE);
-  testEqualBool(naSmallerEqualUInt64(ui1, ui2), NA_FALSE);
-  testEqualBool(naSmallerEqualUInt64(ui2, ui1), NA_TRUE);
-  testEqualBool(naSmallerEqualUInt64(ui1, ui1), NA_TRUE);
+  testEqualBool(naEqualu64(ui1, ui1), NA_TRUE);
+  testEqualBool(naGreateru64(ui1, ui2), NA_TRUE);
+  testEqualBool(naGreateru64(ui2, ui1), NA_FALSE);
+  testEqualBool(naGreateru64(ui1, ui1), NA_FALSE);
+  testEqualBool(naGreaterEqualu64(ui1, ui2), NA_TRUE);
+  testEqualBool(naGreaterEqualu64(ui2, ui1), NA_FALSE);
+  testEqualBool(naGreaterEqualu64(ui1, ui1), NA_TRUE);
+  testEqualBool(naSmalleru64(ui1, ui2), NA_FALSE);
+  testEqualBool(naSmalleru64(ui2, ui1), NA_TRUE);
+  testEqualBool(naSmalleru64(ui1, ui1), NA_FALSE);
+  testEqualBool(naSmallerEqualu64(ui1, ui2), NA_FALSE);
+  testEqualBool(naSmallerEqualu64(ui2, ui1), NA_TRUE);
+  testEqualBool(naSmallerEqualu64(ui1, ui1), NA_TRUE);
 }
 
 
 
 void timeComparison(){
-  int64 i01 = naMakeInt64WithDouble(-123456789012345.);
-  int64 i02 = naMakeInt64WithDouble(987654321987.);
-  uint64 ui01 = naMakeUInt64WithDouble(123456789012345.);
-  uint64 ui02 = naMakeUInt64WithDouble(987654321987.);
+  int64 i01 = naMakei64WithDouble(-123456789012345.);
+  int64 i02 = naMakei64WithDouble(987654321987.);
+  uint64 ui01 = naMakeu64WithDouble(123456789012345.);
+  uint64 ui02 = naMakeu64WithDouble(987654321987.);
   double t;
   int i;
   NABool testbool = NA_FALSE;
 
   t = getTime();
-  for(i = 0; i < TESTSIZE; i++){testbool ^= naEqualInt64(i01, i02); naIncInt64(i01); naDecInt64(i02);}
-  t = printAndSwapTime("naEqualInt64", t);
-  for(i = 0; i < TESTSIZE; i++){testbool ^= naGreaterInt64(i01, i02); naIncInt64(i01); naDecInt64(i02);}
-  t = printAndSwapTime("naGreaterInt64", t);
-  for(i = 0; i < TESTSIZE; i++){testbool ^= naGreaterEqualInt64(i01, i02); naIncInt64(i01); naDecInt64(i02);}
-  t = printAndSwapTime("naGreaterEqualInt64", t);
-  for(i = 0; i < TESTSIZE; i++){testbool ^= naSmallerInt64(i01, i02); naIncInt64(i01); naDecInt64(i02);}
-  t = printAndSwapTime("naSmallerInt64", t);
-  for(i = 0; i < TESTSIZE; i++){testbool ^= naSmallerEqualInt64(i01, i02); naIncInt64(i01); naDecInt64(i02);}
-  t = printAndSwapTime("naSmallerEqualInt64", t);
+  for(i = 0; i < TESTSIZE; i++){testbool ^= naEquali64(i01, i02); naInci64(i01); naDeci64(i02);}
+  t = printAndSwapTime("naEquali64", t);
+  for(i = 0; i < TESTSIZE; i++){testbool ^= naGreateri64(i01, i02); naInci64(i01); naDeci64(i02);}
+  t = printAndSwapTime("naGreateri64", t);
+  for(i = 0; i < TESTSIZE; i++){testbool ^= naGreaterEquali64(i01, i02); naInci64(i01); naDeci64(i02);}
+  t = printAndSwapTime("naGreaterEquali64", t);
+  for(i = 0; i < TESTSIZE; i++){testbool ^= naSmalleri64(i01, i02); naInci64(i01); naDeci64(i02);}
+  t = printAndSwapTime("naSmalleri64", t);
+  for(i = 0; i < TESTSIZE; i++){testbool ^= naSmallerEquali64(i01, i02); naInci64(i01); naDeci64(i02);}
+  t = printAndSwapTime("naSmallerEquali64", t);
 
-  for(i = 0; i < TESTSIZE; i++){testbool ^= naEqualUInt64(ui01, ui02); naIncUInt64(ui01); naDecUInt64(ui02);}
-  t = printAndSwapTime("naEqualUInt64", t);
-  for(i = 0; i < TESTSIZE; i++){testbool ^= naGreaterUInt64(ui01, ui02); naIncUInt64(ui01); naDecUInt64(ui02);}
-  t = printAndSwapTime("naGreaterUInt64", t);
-  for(i = 0; i < TESTSIZE; i++){testbool ^= naGreaterEqualUInt64(ui01, ui02); naIncUInt64(ui01); naDecUInt64(ui02);}
-  t = printAndSwapTime("naGreaterEqualUInt64", t);
-  for(i = 0; i < TESTSIZE; i++){testbool ^= naSmallerUInt64(ui01, ui02); naIncUInt64(ui01); naDecUInt64(ui02);}
-  t = printAndSwapTime("naSmallerUInt64", t);
-  for(i = 0; i < TESTSIZE; i++){testbool ^= naSmallerEqualUInt64(ui01, ui02); naIncUInt64(ui01); naDecUInt64(ui02);}
-  t = printAndSwapTime("naSmallerEqualUInt64", t);
+  for(i = 0; i < TESTSIZE; i++){testbool ^= naEqualu64(ui01, ui02); naIncu64(ui01); naDecu64(ui02);}
+  t = printAndSwapTime("naEqualu64", t);
+  for(i = 0; i < TESTSIZE; i++){testbool ^= naGreateru64(ui01, ui02); naIncu64(ui01); naDecu64(ui02);}
+  t = printAndSwapTime("naGreateru64", t);
+  for(i = 0; i < TESTSIZE; i++){testbool ^= naGreaterEqualu64(ui01, ui02); naIncu64(ui01); naDecu64(ui02);}
+  t = printAndSwapTime("naGreaterEqualu64", t);
+  for(i = 0; i < TESTSIZE; i++){testbool ^= naSmalleru64(ui01, ui02); naIncu64(ui01); naDecu64(ui02);}
+  t = printAndSwapTime("naSmalleru64", t);
+  for(i = 0; i < TESTSIZE; i++){testbool ^= naSmallerEqualu64(ui01, ui02); naIncu64(ui01); naDecu64(ui02);}
+  t = printAndSwapTime("naSmallerEqualu64", t);
 
   NA_UNUSED(i01);
   NA_UNUSED(i02);
@@ -243,73 +243,73 @@ void timeComparison(){
 
 
 void testArithmetic(){
-  int64 i01 = naMakeInt64WithDouble(-123456789012345.);
-  int64 i02 = naMakeInt64WithDouble(987654321987.);
+  int64 i01 = naMakei64WithDouble(-123456789012345.);
+  int64 i02 = naMakei64WithDouble(987654321987.);
   int64 i03 = NA_ZERO_i64;
-  int64 i04 = naMakeInt64WithDouble(-123.);
+  int64 i04 = naMakei64WithDouble(-123.);
   int64 i1, i2;
-  uint64 ui01 = naMakeUInt64WithDouble(123456789012345.);
-  uint64 ui02 = naMakeUInt64WithDouble(987654321987.);
+  uint64 ui01 = naMakeu64WithDouble(123456789012345.);
+  uint64 ui02 = naMakeu64WithDouble(987654321987.);
   uint64 ui03 = NA_ZERO_u64;
   uint64 ui2;
 
-  i1 = naNegInt64(i01);
-  testEqualInt64(i1, 0x00007048, 0x860ddf79);
-  i1 = naNegInt64(naNegInt64(i01));
-  testEqualInt64(i1, 0xffff8fb7, 0x79f22087);
-  naIncInt64(i01);
-  testEqualInt64(i01, 0xffff8fb7, 0x79f22088);
-  naDecInt64(i01);
-  testEqualInt64(i01, 0xffff8fb7, 0x79f22087);
-  naIncInt64(i03);
-  testEqualInt64(i03, 0x00000000, 0x00000001);
-  naDecInt64(i03);
-  testEqualInt64(i03, 0x00000000, 0x00000000);
-  naDecInt64(i03);
-  testEqualInt64(i03, 0xffffffff, 0xffffffff);
-  naIncInt64(i03);
-  testEqualInt64(i03, 0x00000000, 0x00000000);
+  i1 = naNegi64(i01);
+  testEquali64(i1, 0x00007048, 0x860ddf79);
+  i1 = naNegi64(naNegi64(i01));
+  testEquali64(i1, 0xffff8fb7, 0x79f22087);
+  naInci64(i01);
+  testEquali64(i01, 0xffff8fb7, 0x79f22088);
+  naDeci64(i01);
+  testEquali64(i01, 0xffff8fb7, 0x79f22087);
+  naInci64(i03);
+  testEquali64(i03, 0x00000000, 0x00000001);
+  naDeci64(i03);
+  testEquali64(i03, 0x00000000, 0x00000000);
+  naDeci64(i03);
+  testEquali64(i03, 0xffffffff, 0xffffffff);
+  naInci64(i03);
+  testEquali64(i03, 0x00000000, 0x00000000);
 
-  i2 = naAddInt64(i01, i02);
-  testEqualInt64(i2, 0xffff909d, 0x6ebb17ca);
-  i2 = naSubInt64(i01, i02);
-  testEqualInt64(i2, 0xffff8ed1, 0x85292944);
-  i2 = naMulInt64(i01, i04);
-  testEqualInt64(i2, 0x0035f2d8, 0x68aa5f23);
-  i2 = naMulInt64(i02, i04);
-  testEqualInt64(i2, 0xffff9183, 0x637132cf);
-  i2 = naDivInt64(i01, i02);
-  testEqualInt64(i2, 0xffffffff, 0xffffff84);
-  i2 = naDivInt64(i01, i04);
-  testEqualInt64(i2, 0x000000e9, 0xb2001cdf);
-  i2 = naDivInt64(i04, i01);
-  testEqualInt64(i2, 0x00000000, 0x00000000);
-  i2 = naModInt64(i01, i02);
-  testEqualInt64(i2, 0xffffff1a, 0x0b49e4fb);
-  i2 = naModInt64(i01, i04);
-  testEqualInt64(i2, 0xffffffff, 0xffffffac);
+  i2 = naAddi64(i01, i02);
+  testEquali64(i2, 0xffff909d, 0x6ebb17ca);
+  i2 = naSubi64(i01, i02);
+  testEquali64(i2, 0xffff8ed1, 0x85292944);
+  i2 = naMuli64(i01, i04);
+  testEquali64(i2, 0x0035f2d8, 0x68aa5f23);
+  i2 = naMuli64(i02, i04);
+  testEquali64(i2, 0xffff9183, 0x637132cf);
+  i2 = naDivi64(i01, i02);
+  testEquali64(i2, 0xffffffff, 0xffffff84);
+  i2 = naDivi64(i01, i04);
+  testEquali64(i2, 0x000000e9, 0xb2001cdf);
+  i2 = naDivi64(i04, i01);
+  testEquali64(i2, 0x00000000, 0x00000000);
+  i2 = naModi64(i01, i02);
+  testEquali64(i2, 0xffffff1a, 0x0b49e4fb);
+  i2 = naModi64(i01, i04);
+  testEquali64(i2, 0xffffffff, 0xffffffac);
 
-  naIncUInt64(ui01);
-  testEqualUInt64(ui01, 0x00007048, 0x860ddf7a);
-  naDecUInt64(ui01);
-  testEqualUInt64(ui01, 0x00007048, 0x860ddf79);
-  naIncUInt64(ui03);
-  testEqualUInt64(ui03, 0x00000000, 0x00000001);
-  naDecUInt64(ui03);
-  testEqualUInt64(ui03, 0x00000000, 0x00000000);
-  naDecUInt64(ui03);
-  testEqualUInt64(ui03, 0xffffffff, 0xffffffff);
-  naIncUInt64(ui03);
-  testEqualUInt64(ui03, 0x00000000, 0x00000000);
+  naIncu64(ui01);
+  testEqualu64(ui01, 0x00007048, 0x860ddf7a);
+  naDecu64(ui01);
+  testEqualu64(ui01, 0x00007048, 0x860ddf79);
+  naIncu64(ui03);
+  testEqualu64(ui03, 0x00000000, 0x00000001);
+  naDecu64(ui03);
+  testEqualu64(ui03, 0x00000000, 0x00000000);
+  naDecu64(ui03);
+  testEqualu64(ui03, 0xffffffff, 0xffffffff);
+  naIncu64(ui03);
+  testEqualu64(ui03, 0x00000000, 0x00000000);
 
-  ui2 = naAddUInt64(ui01, ui02);
-  testEqualUInt64(ui2, 0x0000712e, 0x7ad6d6bc);
-  ui2 = naSubUInt64(ui01, ui02);
-  testEqualUInt64(ui2, 0x00006f62, 0x9144e836);
-  ui2 = naDivUInt64(ui01, ui02);
-  testEqualUInt64(ui2, 0x00000000, 0x0000007c);
-  ui2 = naModUInt64(ui01, ui02);
-  testEqualUInt64(ui2, 0x000000e5, 0xf4b61b05);
+  ui2 = naAddu64(ui01, ui02);
+  testEqualu64(ui2, 0x0000712e, 0x7ad6d6bc);
+  ui2 = naSubu64(ui01, ui02);
+  testEqualu64(ui2, 0x00006f62, 0x9144e836);
+  ui2 = naDivu64(ui01, ui02);
+  testEqualu64(ui2, 0x00000000, 0x0000007c);
+  ui2 = naModu64(ui01, ui02);
+  testEqualu64(ui2, 0x000000e5, 0xf4b61b05);
 
 }
 
@@ -318,58 +318,58 @@ void testArithmetic(){
 void timeArithmetic(){
   double t;
   int i;
-  int64 i64_1 = naCastUInt64ToInt64(naMakeUInt64WithLo(27253242));
-  int64 i64_2 = naCastUInt64ToInt64(naMakeUInt64WithLo(345275662));
-  uint64 ui64_1 = naMakeUInt64WithLo(123876413);
-  uint64 ui64_2 = naMakeUInt64WithLo(98372154);
+  int64 i64_1 = naCastu64Toi64(naMakeu64WithLo(27253242));
+  int64 i64_2 = naCastu64Toi64(naMakeu64WithLo(345275662));
+  uint64 u64_1 = naMakeu64WithLo(123876413);
+  uint64 u64_2 = naMakeu64WithLo(98372154);
 
   t = getTime();
-  for(i = 0; i < TESTSIZE; i++){i64_1 = naNegInt64(naCastUInt64ToInt64(randUInt64()));}
-  t = printAndSwapTime("naNegInt64", t);
-  for(i = 0; i < TESTSIZE; i++){naIncInt64(i64_1);}
-  t = printAndSwapTime("naIncInt64", t);
-  for(i = 0; i < TESTSIZE; i++){naDecInt64(i64_1);}
-  t = printAndSwapTime("naDecInt64", t);
-  for(i = 0; i < TESTSIZE; i++){i64_1 = naAddInt64(i64_1, i64_2);}
-  t = printAndSwapTime("naAddInt64", t);
-  for(i = 0; i < TESTSIZE; i++){i64_2 = naSubInt64(i64_1, i64_2);}
-  t = printAndSwapTime("naSubInt64", t);
-  for(i = 0; i < TESTSIZE; i++){i64_1 = naMulInt64(i64_1, i64_2);}
-  t = printAndSwapTime("naMulInt64", t);
-  for(i = 0; i < TESTSIZE; i++){i64_1 = naDivInt64(i64_1, i64_2);}
-  t = printAndSwapTime("naDivInt64", t);
-  for(i = 0; i < TESTSIZE; i++){i64_1 = naModInt64(i64_1, i64_2);}
-  t = printAndSwapTime("naModInt64", t);
+  for(i = 0; i < TESTSIZE; i++){i64_1 = naNegi64(naCastu64Toi64(randu64()));}
+  t = printAndSwapTime("naNegi64", t);
+  for(i = 0; i < TESTSIZE; i++){naInci64(i64_1);}
+  t = printAndSwapTime("naInci64", t);
+  for(i = 0; i < TESTSIZE; i++){naDeci64(i64_1);}
+  t = printAndSwapTime("naDeci64", t);
+  for(i = 0; i < TESTSIZE; i++){i64_1 = naAddi64(i64_1, i64_2);}
+  t = printAndSwapTime("naAddi64", t);
+  for(i = 0; i < TESTSIZE; i++){i64_2 = naSubi64(i64_1, i64_2);}
+  t = printAndSwapTime("naSubi64", t);
+  for(i = 0; i < TESTSIZE; i++){i64_1 = naMuli64(i64_1, i64_2);}
+  t = printAndSwapTime("naMuli64", t);
+  for(i = 0; i < TESTSIZE; i++){i64_1 = naDivi64(i64_1, i64_2);}
+  t = printAndSwapTime("naDivi64", t);
+  for(i = 0; i < TESTSIZE; i++){i64_1 = naModi64(i64_1, i64_2);}
+  t = printAndSwapTime("naModi64", t);
 
-  for(i = 0; i < TESTSIZE; i++){naIncUInt64(ui64_1);}
-  t = printAndSwapTime("naIncUInt64", t);
-  for(i = 0; i < TESTSIZE; i++){naDecUInt64(ui64_1);}
-  t = printAndSwapTime("naDecUInt64", t);
-  for(i = 0; i < TESTSIZE; i++){ui64_1 = naAddUInt64(ui64_1, ui64_2);}
-  t = printAndSwapTime("naAddUInt64", t);
-  for(i = 0; i < TESTSIZE; i++){ui64_1 = naSubUInt64(ui64_1, ui64_2);}
-  t = printAndSwapTime("naSubUInt64", t);
-  for(i = 0; i < TESTSIZE; i++){ui64_2 = naMulUInt64(ui64_1, ui64_2);}
-  t = printAndSwapTime("naMulUInt64", t);
-  for(i = 0; i < TESTSIZE; i++){ui64_1 = naDivUInt64(ui64_1, ui64_2);}
-  t = printAndSwapTime("naDivUInt64", t);
-  for(i = 0; i < TESTSIZE; i++){ui64_1 = naModUInt64(ui64_1, ui64_2);}
-  t = printAndSwapTime("naModUInt64", t);
+  for(i = 0; i < TESTSIZE; i++){naIncu64(u64_1);}
+  t = printAndSwapTime("naIncu64", t);
+  for(i = 0; i < TESTSIZE; i++){naDecu64(u64_1);}
+  t = printAndSwapTime("naDecu64", t);
+  for(i = 0; i < TESTSIZE; i++){u64_1 = naAddu64(u64_1, u64_2);}
+  t = printAndSwapTime("naAddu64", t);
+  for(i = 0; i < TESTSIZE; i++){u64_1 = naSubu64(u64_1, u64_2);}
+  t = printAndSwapTime("naSubu64", t);
+  for(i = 0; i < TESTSIZE; i++){u64_2 = naMulu64(u64_1, u64_2);}
+  t = printAndSwapTime("naMulu64", t);
+  for(i = 0; i < TESTSIZE; i++){u64_1 = naDivu64(u64_1, u64_2);}
+  t = printAndSwapTime("naDivu64", t);
+  for(i = 0; i < TESTSIZE; i++){u64_1 = naModu64(u64_1, u64_2);}
+  t = printAndSwapTime("naModu64", t);
 
   NA_UNUSED(i64_1);
   NA_UNUSED(i64_2);
-  NA_UNUSED(ui64_1);
-  NA_UNUSED(ui64_2);
+  NA_UNUSED(u64_1);
+  NA_UNUSED(u64_2);
   NA_UNUSED(t);
 }
 
 
 
-uint32 randUInt32(){
+uint32 randu32(){
   return (uint32)rand();
 }
-NAUInt64 randUInt64(){
-  return naMakeUInt64(randUInt32(), randUInt32());
+NAu64 randu64(){
+  return naMakeu64(randu32(), randu32());
 }
 double getTime(){
   // Note: Reimplemented here because NADateTime uses int64 to compute.
@@ -380,7 +380,7 @@ double getTime(){
     GetSystemTimeAsFileTime(&filetime);
     GetTimeZoneInformation(&timezone);
     dt = naMakeDateTimeFromFileTime(&filetime, &timezone);
-    return naCastInt64ToInt32(dt.sisec) + dt.nsec / 1000000000.;
+    return naCasti64Toi32(dt.sisec) + dt.nsec / 1000000000.;
   #else
     struct timeval curtime;
     NATimeZone curtimezone;
@@ -393,20 +393,20 @@ double printAndSwapTime(const char* title, double starttime){
   printf("%s" NA_TAB NA_TAB "%f s" NA_NL, title, t2 - starttime);
   return t2;
 }
-void printInt64(int64 i){
-  printUInt64(naCastInt64ToUInt64(i));
+void printi64(int64 i){
+  printu64(naCasti64Tou64(i));
 }
-void printUInt64(uint64 ui){
+void printu64(uint64 ui){
   #if !defined NA_TYPE_INT64
     printf("%08x %08x", ui.hi, ui.lo);
   #else
     printf("%016llx", ui);
   #endif
 }
-void testEqualInt64(int64 i, uint32 goalhi, uint32 goallo){
-  testEqualUInt64(naCastInt64ToUInt64(i), goalhi, goallo);
+void testEquali64(int64 i, uint32 goalhi, uint32 goallo){
+  testEqualu64(naCasti64Tou64(i), goalhi, goallo);
 }
-void testEqualUInt64(uint64 ui, uint32 goalhi, uint32 goallo){
+void testEqualu64(uint64 ui, uint32 goalhi, uint32 goallo){
   #if !defined NA_TYPE_INT64
     if(ui.lo == goallo && ui.hi == goalhi){
       printf("Pass ");
@@ -420,7 +420,7 @@ void testEqualUInt64(uint64 ui, uint32 goalhi, uint32 goallo){
       printf("FAIL ");
     }
   #endif
-  printUInt64(ui);
+  printu64(ui);
   printf(NA_NL);
 }
 void testEqualBool(NABool b, NABool goalb){

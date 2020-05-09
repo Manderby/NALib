@@ -90,8 +90,8 @@ NA_IDEF void naConvertLittleBig64(void* buffer){
     naSwap8(((NAByte*)buffer)+5, ((NAByte*)buffer)+2);
     naSwap8(((NAByte*)buffer)+4, ((NAByte*)buffer)+3);
 //  #else
-//    hi = &(((NAUInt64*)buffer)->hi);
-//    lo = &(((NAUInt64*)buffer)->lo);
+//    hi = &(((NAu64*)buffer)->hi);
+//    lo = &(((NAu64*)buffer)->lo);
 //    naSwap8(((NAByte*)hi)+3, ((NAByte*)lo)+0);
 //    naSwap8(((NAByte*)hi)+2, ((NAByte*)lo)+1);
 //    naSwap8(((NAByte*)hi)+1, ((NAByte*)lo)+2);

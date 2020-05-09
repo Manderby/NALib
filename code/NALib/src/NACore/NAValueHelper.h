@@ -43,10 +43,10 @@ NA_IAPI NABool naToggleFlagu(NAUInt* flags, NAUInt flag);
 // Converts an integer denoting an end or max to its counterpart. Also does
 // some checks if the values over- or underflow.
 NA_HIAPI int32   naMakeMaxWithEndi32          (int32 end);
-NA_HIAPI NAInt64 naMakeMaxWithEndi64          (NAInt64 end);
+NA_HIAPI NAi64 naMakeMaxWithEndi64          (NAi64 end);
 NA_HIAPI NAInt   naMakeMaxWithEndi            (NAInt end);
 NA_HIAPI int32   naMakeEndWithMaxi32          (int32 max);
-NA_HIAPI NAInt64 naMakeEndWithMaxi64          (NAInt64 max);
+NA_HIAPI NAi64 naMakeEndWithMaxi64          (NAi64 max);
 NA_HIAPI NAInt   naMakeEndWithMaxi            (NAInt max);
 NA_HIAPI double  naMakeEndWithStartAndLength  (double start, double length);
 NA_HIAPI float   naMakeEndWithStartAndLengthf (float  start, float  length);
@@ -176,12 +176,12 @@ NA_HIDEF int32 naMakeMaxWithEndi32(int32 end){
   #endif
   return end - NA_ONE_i32;
 }
-NA_HIDEF NAInt64 naMakeMaxWithEndi64(NAInt64 end){
+NA_HIDEF NAi64 naMakeMaxWithEndi64(NAi64 end){
   #ifndef NDEBUG
-    if(naEqualInt64(end, NA_MIN_i64))
+    if(naEquali64(end, NA_MIN_i64))
       naError("Integer underflow");
   #endif
-  return naSubInt64(end, NA_ONE_i64);
+  return naSubi64(end, NA_ONE_i64);
 }
 NA_HIDEF NAInt naMakeMaxWithEndi(NAInt end){
   #if NA_TYPE_NAINT_BITS == 32
@@ -197,12 +197,12 @@ NA_HIDEF int32 naMakeEndWithMaxi32(int32 max){
   #endif
   return max + NA_ONE_i32;
 }
-NA_HIDEF NAInt64 naMakeEndWithMaxi64(NAInt64 max){
+NA_HIDEF NAi64 naMakeEndWithMaxi64(NAi64 max){
   #ifndef NDEBUG
-    if(naEqualInt64(max, NA_MAX_i64))
+    if(naEquali64(max, NA_MAX_i64))
       naError("Integer overflow");
   #endif
-  return naAddInt64(max, NA_ONE_i64);
+  return naAddi64(max, NA_ONE_i64);
 }
 NA_HIDEF NAInt naMakeEndWithMaxi(NAInt max){
   #if NA_TYPE_NAINT_BITS == 32

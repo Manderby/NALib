@@ -131,7 +131,7 @@ NA_IDEF void naTransposeM33dE( double* D, double* A){
 }
 NA_IDEF void naTransposeM44dE( double* D, double* A){
   #ifndef NDEBUG
-    if((A != D) && naAbsi((NASizeInt)(D-A)) < 16)
+    if((A != D) && naAbsi((NASizeUInt)(D-A)) < 16)
       naError("A overlaps misaligned with D");
   #endif
   D[0] = A[0]; D[4] = A[1]; D[8] = A[2]; D[12] = A[3];

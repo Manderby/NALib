@@ -93,7 +93,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (NAUIElement* uielement){
   // Now we blend manually the foreground to the background.
   blendedImage = naCreateBabyImageWithBlend(backImage, foreImage, NA_BLEND_OVERLAY, 1.f);
   blendedBuffer = naMalloc(size1x.width * size1x.height * 4);
-  naConvertBabyImageToUInt8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
+  naConvertBabyImageTou8(blendedImage, blendedBuffer, NA_TRUE, NA_COLOR_BUFFER_BGR0);
   hBlendedBitmap = CreateBitmap((int)size1x.width, (int)size1x.height, 1, 32, blendedBuffer);
 
   // Finally, we put the blended image onscreen.

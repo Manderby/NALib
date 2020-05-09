@@ -152,8 +152,8 @@ NA_IDEF int16 naMini16(int16 a, int16 b){
 NA_IDEF int32 naMini32(int32 a, int32 b){
   return (a < b) ? a : b;
 }
-NA_IDEF NAInt64 naMini64(NAInt64 a, NAInt64 b){
-  return naSmallerInt64(a, b) ? a : b;
+NA_IDEF NAi64 naMini64(NAi64 a, NAi64 b){
+  return naSmalleri64(a, b) ? a : b;
 }
 
 
@@ -175,8 +175,8 @@ NA_IDEF int16 naMaxi16(int16 a, int16 b){
 NA_IDEF int32 naMaxi32(int32 a, int32 b){
   return (a > b) ? a : b;
 }
-NA_IDEF NAInt64 naMaxi64(NAInt64 a, NAInt64 b){
-  return naGreaterInt64(a, b) ? a : b;
+NA_IDEF NAi64 naMaxi64(NAi64 a, NAi64 b){
+  return naGreateri64(a, b) ? a : b;
 }
 
 
@@ -460,16 +460,16 @@ NA_IDEF int32 naLog2i32(int32 x){
   while(x){retvalue++; x>>=1;}
   return retvalue;
 }
-NA_IDEF NAInt64 naLog2i64(NAInt64 x){
-  NAInt64 retvalue;
+NA_IDEF NAi64 naLog2i64(NAi64 x){
+  NAi64 retvalue;
   #ifndef NDEBUG
-    if(naSmallerInt64(x, NA_ZERO_i64))
+    if(naSmalleri64(x, NA_ZERO_i64))
       naError("Logarithm of negative number.");
   #endif
-  if(naSmallerEqualInt64(x, NA_ZERO_i64)){return NA_ZERO_i64;}
-  naDecInt64(x);
+  if(naSmallerEquali64(x, NA_ZERO_i64)){return NA_ZERO_i64;}
+  naDeci64(x);
   retvalue = NA_ZERO_i64;
-  while(!naEqualInt64(x, NA_ZERO_i64)){naIncInt64(retvalue); x = naShrInt64(x, 1);}
+  while(!naEquali64(x, NA_ZERO_i64)){naInci64(retvalue); x = naShri64(x, 1);}
   return retvalue;
 }
 NA_IDEF NAInt naLog2i(NAInt x){
@@ -512,14 +512,14 @@ NA_IDEF int32 naExp2i32(int32 x){
   #endif
   return NA_ONE_i32 << x;
 }
-NA_IDEF NAInt64 naExp2i64(NAInt64 x){
+NA_IDEF NAi64 naExp2i64(NAi64 x){
   #ifndef NDEBUG
-    if(naSmallerInt64(x, NA_ZERO_i64))
+    if(naSmalleri64(x, NA_ZERO_i64))
       naError("Exponent negative. Will result in 0.");
-    if(naGreaterEqualInt64(x, naMakeInt64WithLo(64)))
+    if(naGreaterEquali64(x, naMakei64WithLo(64)))
       naError("Exponent too big. Will result in 0.");
   #endif
-  return naShlInt64(NA_ONE_i64, naCastInt64ToInt32(x));
+  return naShli64(NA_ONE_i64, naCasti64Toi32(x));
 }
 
 
@@ -547,14 +547,14 @@ NA_IDEF int32 naExp10i32(int32 x){
   while(x){i *= 10; x--;}
   return i;
 }
-NA_IDEF NAInt64 naExp10i64(NAInt64 x){
-  NAInt64 i;
+NA_IDEF NAi64 naExp10i64(NAi64 x){
+  NAi64 i;
   #ifndef NDEBUG
-    if(naGreaterInt64(x, naMakeInt64WithLo(18)))
+    if(naGreateri64(x, naMakei64WithLo(18)))
       naError("Exponent of 10 exceeds integer range.");
   #endif
   i = NA_ONE_i64;
-  while(!naEqualInt64(x, NA_ZERO_i64)){i = naMulInt64(i, naMakeInt64WithLo(10)); naDecInt64(x);}
+  while(!naEquali64(x, NA_ZERO_i64)){i = naMuli64(i, naMakei64WithLo(10)); naDeci64(x);}
   return i;
 }
 
@@ -734,12 +734,12 @@ NA_IDEF NABool naInsidei32(int32 a, int32 b, int32 x){
   #endif
   return (!((x < a) || (x > b)));
 }
-NA_IDEF NABool naInsidei64(NAInt64 a, NAInt64 b, NAInt64 x){
+NA_IDEF NABool naInsidei64(NAi64 a, NAi64 b, NAi64 x){
   #ifndef NDEBUG
-    if(naGreaterInt64(a, b))
+    if(naGreateri64(a, b))
       naError("a is greater b. Will always return FALSE");
   #endif
-  return (!(naSmallerInt64(x, a) || naGreaterInt64(x, b)));
+  return (!(naSmalleri64(x, a) || naGreateri64(x, b)));
 }
 
 

@@ -236,14 +236,14 @@ NA_API NABool naEqualStringToUTF8CString(const NAString* string1,
 // These functions provide basic functionality for parsing numbers from a given
 // string. If you need more advanced parsing, use one of the naGetStringBuffer
 // functions and parse the buffer.
-NA_API int8     naParseStringInt8  (const NAString* string);
-NA_API int16    naParseStringInt16 (const NAString* string);
-NA_API int32    naParseStringInt32 (const NAString* string);
-NA_API NAInt64  naParseStringInt64 (const NAString* string);
-NA_API uint8    naParseStringUInt8 (const NAString* string);
-NA_API uint16   naParseStringUInt16(const NAString* string);
-NA_API uint32   naParseStringUInt32(const NAString* string);
-NA_API NAUInt64 naParseStringUInt64(const NAString* string);
+NA_API int8     naParseStringi8  (const NAString* string);
+NA_API int16    naParseStringi16 (const NAString* string);
+NA_API int32    naParseStringi32 (const NAString* string);
+NA_API NAi64  naParseStringi64 (const NAString* string);
+NA_API uint8    naParseStringu8 (const NAString* string);
+NA_API uint16   naParseStringu16(const NAString* string);
+NA_API uint32   naParseStringu32(const NAString* string);
+NA_API NAu64 naParseStringu64(const NAString* string);
 NA_API float    naParseStringFloat (const NAString* string);
 NA_API double   naParseStringDouble(const NAString* string);
 

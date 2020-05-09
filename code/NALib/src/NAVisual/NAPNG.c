@@ -805,7 +805,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
 
 NA_API NAPNG* naNewPNGWithBabyImage(NABabyImage* babyimage){
   NAPNG* png = naNewPNG(naGetBabyImageSize(babyimage), NA_PNG_COLORTYPE_TRUECOLOR_ALPHA, 8);
-  naConvertBabyImageToUInt8(babyimage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
+  naConvertBabyImageTou8(babyimage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
   return png;
 }
 
@@ -841,14 +841,14 @@ NA_DEF NABabyImage* naCreateBabyImageFromPNG(NAPNG* png){
         inbuf[0] = pngptr[0];
         inbuf[1] = pngptr[1];
         inbuf[2] = pngptr[2];
-        naFillBabyColorWithUInt8(babyptr, inbuf, NA_COLOR_BUFFER_RGB);
+        naFillBabyColorWithu8(babyptr, inbuf, NA_COLOR_BUFFER_RGB);
         babyptr += 4;
         pngptr += 3;
       }
     }
     break;
   case NA_PNG_COLORTYPE_TRUECOLOR_ALPHA:
-    naFillBabyImageWithUInt8(babyimage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
+    naFillBabyImageWithu8(babyimage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
     break;
   default:
     #ifndef NDEBUG

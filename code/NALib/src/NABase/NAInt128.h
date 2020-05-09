@@ -12,184 +12,184 @@
 
 #if defined NA_TYPE_INT128
 
-  #define naMakeUInt128WithLiteralLo(lo) (lo ## uLL)
+  #define naMakeu128WithLiteralLo(lo) (lo ## uLL)
 
   // We declare these as inline functions to reduce warnings.
-  NA_IAPI NAInt128 naMakeInt128(NAInt64 hi, NAUInt64 lo);
-  NA_IAPI NAInt128 naMakeInt128WithLo       (NAInt64 lo);
-  NA_IAPI NAInt128 naMakeInt128WithDouble   (double lo);
+  NA_IAPI NAi128 naMakei128(NAi64 hi, NAu64 lo);
+  NA_IAPI NAi128 naMakei128WithLo       (NAi64 lo);
+  NA_IAPI NAi128 naMakei128WithDouble   (double lo);
 
-  #define naNegInt128(i)                 (-(i))
-  #define naIncInt128(i)                 (++(i))
-  #define naDecInt128(i)                 (--(i))
-  #define naAddInt128(a, b)              ((a) + (b))
-  #define naSubInt128(a, b)              ((a) - (b))
-  #define naMulInt128(a, b)              ((a) * (b))
-  #define naDivInt128(a, b)              ((a) / (b))
-  #define naModInt128(a, b)              ((a) % (b))
+  #define naNegi128(i)                 (-(i))
+  #define naInci128(i)                 (++(i))
+  #define naDeci128(i)                 (--(i))
+  #define naAddi128(a, b)              ((a) + (b))
+  #define naSubi128(a, b)              ((a) - (b))
+  #define naMuli128(a, b)              ((a) * (b))
+  #define naDivi128(a, b)              ((a) / (b))
+  #define naModi128(a, b)              ((a) % (b))
 
-  #define naNotInt128(i)                 (~(i))
-  #define naOrInt128(a, b)               ((a) | (b))
-  #define naAndInt128(a, b)              ((a) & (b))
-  #define naXorInt128(a, b)              ((a) ^ (b))
-  #define naShlInt128(a, n)              ((a) << (n))
-  #define naShrInt128(a, n)              ((a) >> (n))
+  #define naNoti128(i)                 (~(i))
+  #define naOri128(a, b)               ((a) | (b))
+  #define naAndi128(a, b)              ((a) & (b))
+  #define naXori128(a, b)              ((a) ^ (b))
+  #define naShli128(a, n)              ((a) << (n))
+  #define naShri128(a, n)              ((a) >> (n))
 
-  #define naEqualInt128(a, b)            ((a) == (b))
-  #define naGreaterInt128(a, b)          ((a) > (b))
-  #define naGreaterEqualInt128(a, b)     ((a) >= (b))
-  #define naSmallerInt128(a, b)          ((a) < (b))
-  #define naSmallerEqualInt128(a, b)     ((a) <= (b))
+  #define naEquali128(a, b)            ((a) == (b))
+  #define naGreateri128(a, b)          ((a) > (b))
+  #define naGreaterEquali128(a, b)     ((a) >= (b))
+  #define naSmalleri128(a, b)          ((a) < (b))
+  #define naSmallerEquali128(a, b)     ((a) <= (b))
 
-  #define naCastInt128ToUInt8(i)         ((uint8)(i))
-  #define naCastInt128ToUInt16(i)        ((uint16)(i))
-  #define naCastInt128ToUInt32(i)        ((uint32)(i))
-  #define naCastInt128ToUInt64(i)        ((NAUInt64)(i))
-  #define naCastInt128ToUInt128(i)       ((NAUInt128)(i))
-  #define naCastInt128ToInt8(i)          ((int8)(i))
-  #define naCastInt128ToInt16(i)         ((int16)(i))
-  #define naCastInt128ToInt32(i)         ((int32)(i))
-  #define naCastInt128ToInt64(i)         ((NAInt64)(i))
-  #define naCastInt128ToDouble(i)        ((double)(i))
+  #define naCasti128Tou8(i)         ((uint8)(i))
+  #define naCasti128Tou16(i)        ((uint16)(i))
+  #define naCasti128Tou32(i)        ((uint32)(i))
+  #define naCasti128Tou64(i)        ((NAu64)(i))
+  #define naCasti128Tou128(i)       ((NAu128)(i))
+  #define naCasti128Toi8(i)          ((int8)(i))
+  #define naCasti128Toi16(i)         ((int16)(i))
+  #define naCasti128Toi32(i)         ((int32)(i))
+  #define naCasti128Toi64(i)         ((NAi64)(i))
+  #define naCasti128ToDouble(i)        ((double)(i))
 
-  #define naMakeUInt128(hi, lo)          ((NAUInt128)(((NAUInt128)(hi) << 64) | (lo)))
-  #define naMakeUInt128WithLo(lo)        ((NAUInt128)(lo))
-  #define naMakeUInt128WithDouble(d)     ((NAUInt128)(d))
+  #define naMakeu128(hi, lo)          ((NAu128)(((NAu128)(hi) << 64) | (lo)))
+  #define naMakeu128WithLo(lo)        ((NAu128)(lo))
+  #define naMakeu128WithDouble(d)     ((NAu128)(d))
 
-  #define naIncUInt128(i)                ((i)++)
-  #define naDecUInt128(i)                ((i)--)
-  #define naAddUInt128(a, b)             ((a) + (b))
-  #define naSubUInt128(a, b)             ((a) - (b))
-  #define naMulUInt128(a, b)             ((a) * (b))
-  #define naDivUInt128(a, b)             ((a) / (b))
-  #define naModUInt128(a, b)             ((a) % (b))
+  #define naIncu128(i)                ((i)++)
+  #define naDecu128(i)                ((i)--)
+  #define naAddu128(a, b)             ((a) + (b))
+  #define naSubu128(a, b)             ((a) - (b))
+  #define naMulu128(a, b)             ((a) * (b))
+  #define naDivu128(a, b)             ((a) / (b))
+  #define naModu128(a, b)             ((a) % (b))
 
-  #define naNotUInt128(i)                (~(i))
-  #define naOrUInt128(a, b)              ((a) | (b))
-  #define naAndUInt128(a, b)             ((a) & (b))
-  #define naXorUInt128(a, b)             ((a) ^ (b))
-  #define naShlUInt128(a, n)             ((a) << (n))
-  #define naShrUInt128(a, n)             ((a) >> (n))
+  #define naNotu128(i)                (~(i))
+  #define naOru128(a, b)              ((a) | (b))
+  #define naAndu128(a, b)             ((a) & (b))
+  #define naXoru128(a, b)             ((a) ^ (b))
+  #define naShlu128(a, n)             ((a) << (n))
+  #define naShru128(a, n)             ((a) >> (n))
 
-  #define naEqualUInt128(a, b)           ((a) == (b))
-  #define naGreaterUInt128(a, b)         ((a) > (b))
-  #define naGreaterEqualUInt128(a, b)    ((a) >= (b))
-  #define naSmallerUInt128(a, b)         ((a) < (b))
-  #define naSmallerEqualUInt128(a, b)    ((a) <= (b))
+  #define naEqualu128(a, b)           ((a) == (b))
+  #define naGreateru128(a, b)         ((a) > (b))
+  #define naGreaterEqualu128(a, b)    ((a) >= (b))
+  #define naSmalleru128(a, b)         ((a) < (b))
+  #define naSmallerEqualu128(a, b)    ((a) <= (b))
 
-  #define naCastUInt128ToInt8(i)         ((int8)(i))
-  #define naCastUInt128ToInt16(i)        ((int16)(i))
-  #define naCastUInt128ToInt32(i)        ((int32)(i))
-  #define naCastUInt128ToInt64(i)        ((NAInt64)(i))
-  #define naCastUInt128ToInt128(i)       ((NAInt128)(i))
-  #define naCastUInt128ToUInt8(i)        ((uint8)(i))
-  #define naCastUInt128ToUInt16(i)       ((uint16)(i))
-  #define naCastUInt128ToUInt32(i)       ((uint32)(i))
-  #define naCastUInt128ToUInt64(i)       ((NAUInt64)(i))
-  #define naCastUInt128ToDouble(i)       ((double)(i))
+  #define naCastu128Toi8(i)         ((int8)(i))
+  #define naCastu128Toi16(i)        ((int16)(i))
+  #define naCastu128Toi32(i)        ((int32)(i))
+  #define naCastu128Toi64(i)        ((NAi64)(i))
+  #define naCastu128Toi128(i)       ((NAi128)(i))
+  #define naCastu128Tou8(i)        ((uint8)(i))
+  #define naCastu128Tou16(i)       ((uint16)(i))
+  #define naCastu128Tou32(i)       ((uint32)(i))
+  #define naCastu128Tou64(i)       ((NAu64)(i))
+  #define naCastu128ToDouble(i)       ((double)(i))
 
 #else
   // if no native int128 type is available, we have to emulate it.
 
   #if NA_SIGN_ENCODING != NA_SIGN_ENCODING_TWOS_COMPLEMENT
 
-    #error "NAInt128 is unavailable for the current signed integer encoding"
+    #error "NAi128 is unavailable for the current signed integer encoding"
 
   #endif
 
-  NA_IAPI NAInt128  naMakeInt128(NAInt64 hi, NAUInt64 lo);
-  NA_IAPI NAInt128  naMakeInt128WithLo(NAInt64 lo);
-  NA_IAPI NAInt128  naMakeInt128WithDouble(double d);
+  NA_IAPI NAi128  naMakei128(NAi64 hi, NAu64 lo);
+  NA_IAPI NAi128  naMakei128WithLo(NAi64 lo);
+  NA_IAPI NAi128  naMakei128WithDouble(double d);
 
-  NA_IAPI NAInt128  naNegInt128(NAInt128 i);
-  #define           naIncInt128(i)
-  #define           naDecInt128(i)
-  NA_IAPI NAInt128  naAddInt128(NAInt128 a, NAInt128 b);
-  NA_IAPI NAInt128  naSubInt128(NAInt128 a, NAInt128 b);
-  NA_IAPI NAInt128  naMulInt128(NAInt128 a, NAInt128 b);
-  NA_IAPI NAInt128  naDivInt128(NAInt128 a, NAInt128 b);
-  NA_IAPI NAInt128  naModInt128(NAInt128 a, NAInt128 b);
+  NA_IAPI NAi128  naNegi128(NAi128 i);
+  #define           naInci128(i)
+  #define           naDeci128(i)
+  NA_IAPI NAi128  naAddi128(NAi128 a, NAi128 b);
+  NA_IAPI NAi128  naSubi128(NAi128 a, NAi128 b);
+  NA_IAPI NAi128  naMuli128(NAi128 a, NAi128 b);
+  NA_IAPI NAi128  naDivi128(NAi128 a, NAi128 b);
+  NA_IAPI NAi128  naModi128(NAi128 a, NAi128 b);
 
-  NA_IAPI NAInt128  naNotInt128(NAInt128 i);
-  NA_IAPI NAInt128  naOrInt128 (NAInt128 a, NAInt128 b);
-  NA_IAPI NAInt128  naAndInt128(NAInt128 a, NAInt128 b);
-  NA_IAPI NAInt128  naXorInt128(NAInt128 a, NAInt128 b);
-  NA_IAPI NAInt128  naShlInt128(NAInt128 a, int n);
-  NA_IAPI NAInt128  naShrInt128(NAInt128 a, int n);
+  NA_IAPI NAi128  naNoti128(NAi128 i);
+  NA_IAPI NAi128  naOri128 (NAi128 a, NAi128 b);
+  NA_IAPI NAi128  naAndi128(NAi128 a, NAi128 b);
+  NA_IAPI NAi128  naXori128(NAi128 a, NAi128 b);
+  NA_IAPI NAi128  naShli128(NAi128 a, int n);
+  NA_IAPI NAi128  naShri128(NAi128 a, int n);
 
-  NA_IAPI NABool naEqualInt128        (NAInt128 a, NAInt128 b);
-  NA_IAPI NABool naGreaterInt128      (NAInt128 a, NAInt128 b);
-  NA_IAPI NABool naGreaterEqualInt128 (NAInt128 a, NAInt128 b);
-  NA_IAPI NABool naSmallerInt128      (NAInt128 a, NAInt128 b);
-  NA_IAPI NABool naSmallerEqualInt128 (NAInt128 a, NAInt128 b);
+  NA_IAPI NABool naEquali128        (NAi128 a, NAi128 b);
+  NA_IAPI NABool naGreateri128      (NAi128 a, NAi128 b);
+  NA_IAPI NABool naGreaterEquali128 (NAi128 a, NAi128 b);
+  NA_IAPI NABool naSmalleri128      (NAi128 a, NAi128 b);
+  NA_IAPI NABool naSmallerEquali128 (NAi128 a, NAi128 b);
 
-  NA_IAPI uint8     naCastInt128ToUInt8  (NAInt128 i);
-  NA_IAPI uint16    naCastInt128ToUInt16 (NAInt128 i);
-  NA_IAPI uint32    naCastInt128ToUInt32 (NAInt128 i);
-  NA_IAPI NAUInt64  naCastInt128ToUInt64 (NAInt128 i);
-  NA_IAPI NAUInt128 naCastInt128ToUInt128(NAInt128 i);
-  NA_IAPI int8      naCastInt128ToInt8   (NAInt128 i);
-  NA_IAPI int16     naCastInt128ToInt16  (NAInt128 i);
-  NA_IAPI int32     naCastInt128ToInt32  (NAInt128 i);
-  NA_IAPI NAInt64   naCastInt128ToInt64  (NAInt128 i);
-  NA_IAPI double    naCastInt128ToDouble (NAInt128 i);
+  NA_IAPI uint8     naCasti128Tou8  (NAi128 i);
+  NA_IAPI uint16    naCasti128Tou16 (NAi128 i);
+  NA_IAPI uint32    naCasti128Tou32 (NAi128 i);
+  NA_IAPI NAu64  naCasti128Tou64 (NAi128 i);
+  NA_IAPI NAu128 naCasti128Tou128(NAi128 i);
+  NA_IAPI int8      naCasti128Toi8   (NAi128 i);
+  NA_IAPI int16     naCasti128Toi16  (NAi128 i);
+  NA_IAPI int32     naCasti128Toi32  (NAi128 i);
+  NA_IAPI NAi64   naCasti128Toi64  (NAi128 i);
+  NA_IAPI double    naCasti128ToDouble (NAi128 i);
 
-  #define naMakeUInt128WithLiteralLo(lo)
-  NA_IAPI NAUInt128 naMakeUInt128(NAUInt64 hi, NAUInt64 lo);
-  NA_IAPI NAUInt128 naMakeUInt128WithLo(NAUInt64 lo);
-  NA_IAPI NAUInt128 naMakeUInt128WithDouble(double d);
+  #define naMakeu128WithLiteralLo(lo)
+  NA_IAPI NAu128 naMakeu128(NAu64 hi, NAu64 lo);
+  NA_IAPI NAu128 naMakeu128WithLo(NAu64 lo);
+  NA_IAPI NAu128 naMakeu128WithDouble(double d);
 
-  #define           naIncUInt128(i)
-  #define           naDecUInt128(i)
-  NA_IAPI NAUInt128 naAddUInt128(NAUInt128 a, NAUInt128 b);
-  NA_IAPI NAUInt128 naAddUInt128(NAUInt128 a, NAUInt128 b);
-  NA_IAPI NAUInt128 naSubUInt128(NAUInt128 a, NAUInt128 b);
-  NA_IAPI NAUInt128 naMulUInt128(NAUInt128 a, NAUInt128 b);
-  NA_IAPI NAUInt128 naDivUInt128(NAUInt128 a, NAUInt128 b);
-  NA_IAPI NAUInt128 naModUInt128(NAUInt128 a, NAUInt128 b);
+  #define           naIncu128(i)
+  #define           naDecu128(i)
+  NA_IAPI NAu128 naAddu128(NAu128 a, NAu128 b);
+  NA_IAPI NAu128 naAddu128(NAu128 a, NAu128 b);
+  NA_IAPI NAu128 naSubu128(NAu128 a, NAu128 b);
+  NA_IAPI NAu128 naMulu128(NAu128 a, NAu128 b);
+  NA_IAPI NAu128 naDivu128(NAu128 a, NAu128 b);
+  NA_IAPI NAu128 naModu128(NAu128 a, NAu128 b);
 
-  NA_IAPI NAUInt128 naNotUInt128(NAUInt128 i);
-  NA_IAPI NAUInt128 naOrUInt128 (NAUInt128 a, NAUInt128 b);
-  NA_IAPI NAUInt128 naAndUInt128(NAUInt128 a, NAUInt128 b);
-  NA_IAPI NAUInt128 naXorUInt128(NAUInt128 a, NAUInt128 b);
-  NA_IAPI NAUInt128 naShlUInt128(NAUInt128 a, int n);
-  NA_IAPI NAUInt128 naShrUInt128(NAUInt128 a, int n);
+  NA_IAPI NAu128 naNotu128(NAu128 i);
+  NA_IAPI NAu128 naOru128 (NAu128 a, NAu128 b);
+  NA_IAPI NAu128 naAndu128(NAu128 a, NAu128 b);
+  NA_IAPI NAu128 naXoru128(NAu128 a, NAu128 b);
+  NA_IAPI NAu128 naShlu128(NAu128 a, int n);
+  NA_IAPI NAu128 naShru128(NAu128 a, int n);
 
-  NA_IAPI NABool naEqualUInt128       (NAUInt128 a, NAUInt128 b);
-  NA_IAPI NABool naGreaterUInt128     (NAUInt128 a, NAUInt128 b);
-  NA_IAPI NABool naGreaterEqualUInt128(NAUInt128 a, NAUInt128 b);
-  NA_IAPI NABool naSmallerUInt128     (NAUInt128 a, NAUInt128 b);
-  NA_IAPI NABool naSmallerEqualUInt128(NAUInt128 a, NAUInt128 b);
+  NA_IAPI NABool naEqualu128       (NAu128 a, NAu128 b);
+  NA_IAPI NABool naGreateru128     (NAu128 a, NAu128 b);
+  NA_IAPI NABool naGreaterEqualu128(NAu128 a, NAu128 b);
+  NA_IAPI NABool naSmalleru128     (NAu128 a, NAu128 b);
+  NA_IAPI NABool naSmallerEqualu128(NAu128 a, NAu128 b);
 
-  NA_IAPI int8     naCastUInt128ToInt8   (NAUInt128 i);
-  NA_IAPI int16    naCastUInt128ToInt16  (NAUInt128 i);
-  NA_IAPI int32    naCastUInt128ToInt32  (NAUInt128 i);
-  NA_IAPI NAInt64  naCastUInt128ToInt64  (NAUInt128 i);
-  NA_IAPI NAInt128 naCastUInt128ToInt128 (NAUInt128 i);
-  NA_IAPI uint8    naCastUInt128ToUInt8  (NAUInt128 i);
-  NA_IAPI uint16   naCastUInt128ToUInt16 (NAUInt128 i);
-  NA_IAPI uint32   naCastUInt128ToUInt32 (NAUInt128 i);
-  NA_IAPI NAUInt64 naCastUInt128ToUInt64 (NAUInt128 i);
-  NA_IAPI double   naCastUInt128ToDouble (NAUInt128 i);
+  NA_IAPI int8     naCastu128Toi8   (NAu128 i);
+  NA_IAPI int16    naCastu128Toi16  (NAu128 i);
+  NA_IAPI int32    naCastu128Toi32  (NAu128 i);
+  NA_IAPI NAi64  naCastu128Toi64  (NAu128 i);
+  NA_IAPI NAi128 naCastu128Toi128 (NAu128 i);
+  NA_IAPI uint8    naCastu128Tou8  (NAu128 i);
+  NA_IAPI uint16   naCastu128Tou16 (NAu128 i);
+  NA_IAPI uint32   naCastu128Tou32 (NAu128 i);
+  NA_IAPI NAu64 naCastu128Tou64 (NAu128 i);
+  NA_IAPI double   naCastu128ToDouble (NAu128 i);
 
 #endif
 
 
 #if NA_TYPE_NAINT_BITS == NA_TYPE64_BITS
-  #define naCastUInt128ToUInt(i)   naCastUInt128ToUInt64(i)
-  #define naCastInt128ToInt(i)     naCastInt128ToInt64(i)
-  #define naCastIntToInt128(i)     naMakeInt128WithLo(i)
-  #define naCastUIntToUInt128(i)   naMakeUInt128WithLo(i)
+  #define naCastu128ToUInt(i)   naCastu128Tou64(i)
+  #define naCasti128ToInt(i)     naCasti128Toi64(i)
+  #define naCastIntToi128(i)     naMakei128WithLo(i)
+  #define naCastUIntTou128(i)   naMakeu128WithLo(i)
 #elif NA_TYPE_NAINT_BITS == NA_TYPE32_BITS
-  #define naCastUInt128ToUInt(i)   naCastUInt128ToUInt32(i)
-  #define naCastInt128ToInt(i)     naCastInt128ToInt32(i)
-  #define naCastIntToInt128(i)     naMakeInt128WithLo(naMakeInt64WithLo(i))
-  #define naCastUIntToUInt128(i)   naMakeUInt128WithLo(naMakeUInt64WithLo(i))
+  #define naCastu128ToUInt(i)   naCastu128Tou32(i)
+  #define naCasti128ToInt(i)     naCasti128Toi32(i)
+  #define naCastIntToi128(i)     naMakei128WithLo(naMakei64WithLo(i))
+  #define naCastUIntTou128(i)   naMakeu128WithLo(naMakeu64WithLo(i))
 #elif NA_TYPE_NAINT_BITS == NA_TYPE16_BITS
-  #define naCastUInt128ToUInt(i)   naCastUInt128ToUInt16(i)
-  #define naCastInt128ToInt(i)     naCastInt128ToInt16(i)
-  #define naCastIntToInt128(i)     naMakeInt128WithLo(naMakeInt64WithLo((int32)i))
-  #define naCastUIntToUInt128(i)   naMakeUInt128WithLo(naMakeUInt64WithLo((uint32)i))
+  #define naCastu128ToUInt(i)   naCastu128Tou16(i)
+  #define naCasti128ToInt(i)     naCasti128Toi16(i)
+  #define naCastIntToi128(i)     naMakei128WithLo(naMakei64WithLo((int32)i))
+  #define naCastUIntTou128(i)   naMakeu128WithLo(naMakeu64WithLo((uint32)i))
 #endif
 
 

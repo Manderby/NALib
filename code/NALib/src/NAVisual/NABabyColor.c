@@ -21,7 +21,7 @@ NA_HIDEF void naLinearizeRGB(float* outcolor, const float* incolor){
 
 
 
-NA_HIDEF void naLimitColorComponentUInt8(uint8* outvalue, const float invalue){
+NA_HIDEF void naLimitColorComponentu8(uint8* outvalue, const float invalue){
   if(invalue < 0.f){
     *outvalue = 0;
   }else if(invalue > 1.f){
@@ -31,51 +31,51 @@ NA_HIDEF void naLimitColorComponentUInt8(uint8* outvalue, const float invalue){
   }
 }
 
-NA_DEF void naFillUInt8WithBabyColor(uint8* outcolor, const NABabyColor incolor, NAColorBufferType bufferType){
+NA_DEF void naFillu8WithBabyColor(uint8* outcolor, const NABabyColor incolor, NAColorBufferType bufferType){
   float tmpcolor[4];
   naUnlinearizeRGB(tmpcolor, incolor);
 
   switch(bufferType){
   case NA_COLOR_BUFFER_RGBA:
     tmpcolor[3] = incolor[3];
-    naLimitColorComponentUInt8(&outcolor[0], tmpcolor[0]);
-    naLimitColorComponentUInt8(&outcolor[1], tmpcolor[1]);
-    naLimitColorComponentUInt8(&outcolor[2], tmpcolor[2]);
-    naLimitColorComponentUInt8(&outcolor[3], tmpcolor[3]);
+    naLimitColorComponentu8(&outcolor[0], tmpcolor[0]);
+    naLimitColorComponentu8(&outcolor[1], tmpcolor[1]);
+    naLimitColorComponentu8(&outcolor[2], tmpcolor[2]);
+    naLimitColorComponentu8(&outcolor[3], tmpcolor[3]);
     break;
   case NA_COLOR_BUFFER_RGBAPre:
     tmpcolor[3] = incolor[3];
     tmpcolor[0] *= incolor[3];
     tmpcolor[1] *= incolor[3];
     tmpcolor[2] *= incolor[3];
-    naLimitColorComponentUInt8(&outcolor[0], tmpcolor[0]);
-    naLimitColorComponentUInt8(&outcolor[1], tmpcolor[1]);
-    naLimitColorComponentUInt8(&outcolor[2], tmpcolor[2]);
-    naLimitColorComponentUInt8(&outcolor[3], tmpcolor[3]);
+    naLimitColorComponentu8(&outcolor[0], tmpcolor[0]);
+    naLimitColorComponentu8(&outcolor[1], tmpcolor[1]);
+    naLimitColorComponentu8(&outcolor[2], tmpcolor[2]);
+    naLimitColorComponentu8(&outcolor[3], tmpcolor[3]);
     break;
   case NA_COLOR_BUFFER_RGB:
-    naLimitColorComponentUInt8(&outcolor[0], tmpcolor[0]);
-    naLimitColorComponentUInt8(&outcolor[1], tmpcolor[1]);
-    naLimitColorComponentUInt8(&outcolor[2], tmpcolor[2]);
+    naLimitColorComponentu8(&outcolor[0], tmpcolor[0]);
+    naLimitColorComponentu8(&outcolor[1], tmpcolor[1]);
+    naLimitColorComponentu8(&outcolor[2], tmpcolor[2]);
     break;
   case NA_COLOR_BUFFER_BGR0:
-    naLimitColorComponentUInt8(&outcolor[0], tmpcolor[2]);
-    naLimitColorComponentUInt8(&outcolor[1], tmpcolor[1]);
-    naLimitColorComponentUInt8(&outcolor[2], tmpcolor[0]);
-    naLimitColorComponentUInt8(&outcolor[3], 0);
+    naLimitColorComponentu8(&outcolor[0], tmpcolor[2]);
+    naLimitColorComponentu8(&outcolor[1], tmpcolor[1]);
+    naLimitColorComponentu8(&outcolor[2], tmpcolor[0]);
+    naLimitColorComponentu8(&outcolor[3], 0);
   case NA_COLOR_BUFFER_BGRA:
     tmpcolor[3] = incolor[3];
-    naLimitColorComponentUInt8(&outcolor[0], tmpcolor[2]);
-    naLimitColorComponentUInt8(&outcolor[1], tmpcolor[1]);
-    naLimitColorComponentUInt8(&outcolor[2], tmpcolor[0]);
-    naLimitColorComponentUInt8(&outcolor[3], tmpcolor[3]);
+    naLimitColorComponentu8(&outcolor[0], tmpcolor[2]);
+    naLimitColorComponentu8(&outcolor[1], tmpcolor[1]);
+    naLimitColorComponentu8(&outcolor[2], tmpcolor[0]);
+    naLimitColorComponentu8(&outcolor[3], tmpcolor[3]);
     break;
   }
 }
 
 
 
-NA_DEF void naFillBabyColorWithUInt8(NABabyColor outcolor, const uint8* incolor, NAColorBufferType bufferType){
+NA_DEF void naFillBabyColorWithu8(NABabyColor outcolor, const uint8* incolor, NAColorBufferType bufferType){
   float tmpcolor[4];
   float inv = 1.f / 255.f;
 

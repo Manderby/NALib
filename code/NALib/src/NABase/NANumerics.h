@@ -17,17 +17,17 @@
 NA_IAPI uint8     naGetSignum8  (int8     i);
 NA_IAPI uint16    naGetSignum16 (int16    i);
 NA_IAPI uint32    naGetSignum32 (int32    i);
-NA_IAPI NAUInt64  naGetSignum64 (NAInt64  i);
-NA_IAPI NAUInt128 naGetSignum128(NAInt128 i);
-NA_IAPI NAUInt256 naGetSignum256(NAInt256 i);
+NA_IAPI NAu64  naGetSignum64 (NAi64  i);
+NA_IAPI NAu128 naGetSignum128(NAi128 i);
+NA_IAPI NAu256 naGetSignum256(NAi256 i);
 
 // Returns either 1 or -1. The value 0 returns 1. Never returns 0.
 NA_IAPI int8     naSigni8  (int8     i);
 NA_IAPI int16    naSigni16 (int16    i);
 NA_IAPI int32    naSigni32 (int32    i);
-NA_IAPI NAInt64  naSigni64 (NAInt64  i);
-NA_IAPI NAInt128 naSigni128(NAInt128 i);
-NA_IAPI NAInt256 naSigni256(NAInt256 i);
+NA_IAPI NAi64  naSigni64 (NAi64  i);
+NA_IAPI NAi128 naSigni128(NAi128 i);
+NA_IAPI NAi256 naSigni256(NAi256 i);
 
 // Sets or unsets the sign bit. This is pure bit logic, not performing
 // any complement.
@@ -48,9 +48,9 @@ NA_IAPI void naUnsetSignBit256(void* i);
 NA_IAPI int8     naAbsi8  (int8     i);
 NA_IAPI int16    naAbsi16 (int16    i);
 NA_IAPI int32    naAbsi32 (int32    i);
-NA_IAPI NAInt64  naAbsi64 (NAInt64  i);
-NA_IAPI NAInt128 naAbsi128(NAInt128 i);
-NA_IAPI NAInt256 naAbsi256(NAInt256 i);
+NA_IAPI NAi64  naAbsi64 (NAi64  i);
+NA_IAPI NAi128 naAbsi128(NAi128 i);
+NA_IAPI NAi256 naAbsi256(NAi256 i);
 
 
 
@@ -58,9 +58,9 @@ NA_IAPI NAInt256 naAbsi256(NAInt256 i);
 #define NA_SIGN_MASK_8   ((uint8) (1u << (NA_TYPE8_BITS   - 1u)))
 #define NA_SIGN_MASK_16  ((uint16)(1u << (NA_TYPE16_BITS  - 1u)))
 #define NA_SIGN_MASK_32  ((uint32)(1u << (NA_TYPE32_BITS  - 1u)))
-#define NA_SIGN_MASK_64  naMakeUInt64(NA_SIGN_MASK_32, NA_ZERO_u32)
-#define NA_SIGN_MASK_128 naMakeUInt128(NA_SIGN_MASK_64, NA_ZERO_u64)
-#define NA_SIGN_MASK_256 naMakeUInt256(NA_SIGN_MASK_128, NA_ZERO_u128)
+#define NA_SIGN_MASK_64  naMakeu64(NA_SIGN_MASK_32, NA_ZERO_u32)
+#define NA_SIGN_MASK_128 naMakeu128(NA_SIGN_MASK_64, NA_ZERO_u64)
+#define NA_SIGN_MASK_256 naMakeu256(NA_SIGN_MASK_128, NA_ZERO_u128)
 
 
 
@@ -131,17 +131,17 @@ NA_IAPI NAInt256 naAbsi256(NAInt256 i);
     #error "Invalid sign encoding"
   #endif
 #else
-  #define NA_ZERO_u64    naMakeUInt64WithLo(NA_ZERO_u32)
-  #define NA_ONE_u64     naMakeUInt64WithLo(NA_ONE_u32)
-  #define NA_ZERO_i64    naMakeInt64WithLo(NA_ZERO_i32)
-  #define NA_ONE_i64     naMakeInt64WithLo(NA_ONE_i32)
+  #define NA_ZERO_u64    naMakeu64WithLo(NA_ZERO_u32)
+  #define NA_ONE_u64     naMakeu64WithLo(NA_ONE_u32)
+  #define NA_ZERO_i64    naMakei64WithLo(NA_ZERO_i32)
+  #define NA_ONE_i64     naMakei64WithLo(NA_ONE_i32)
 
   #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
-    #define NA_MINUS_ONE_i64 naCastUInt64ToInt64(NA_MAX_u64)
+    #define NA_MINUS_ONE_i64 naCastu64Toi64(NA_MAX_u64)
   #elif NA_SIGN_ENCODING == NA_SIGN_ENCODING_ONES_COMPLEMENT
-    #define NA_MINUS_ONE_i64 naMakeInt64(NA_MINUS_ONE_i32)
+    #define NA_MINUS_ONE_i64 naMakei64(NA_MINUS_ONE_i32)
   #elif NA_SIGN_ENCODING == NA_SIGN_ENCODING_ONES_COMPLEMENT
-    #define NA_MINUS_ONE_i64 naMakeInt64(NA_SIGN_MASK_32, NA_ONE_u32)
+    #define NA_MINUS_ONE_i64 naMakei64(NA_SIGN_MASK_32, NA_ONE_u32)
   #else
     #error "Invalid sign encoding"
   #endif
@@ -166,17 +166,17 @@ NA_IAPI NAInt256 naAbsi256(NAInt256 i);
     #error "Invalid sign encoding"
   #endif
 #else
-  #define NA_ZERO_u128   naMakeUInt128WithLo(NA_ZERO_u64)
-  #define NA_ONE_u128    naMakeUInt128WithLo(NA_ONE_u64)
-  #define NA_ZERO_i128   naMakeInt128WithLo(NA_ZERO_i64)
-  #define NA_ONE_i128    naMakeInt128WithLo(NA_ONE_i64)
+  #define NA_ZERO_u128   naMakeu128WithLo(NA_ZERO_u64)
+  #define NA_ONE_u128    naMakeu128WithLo(NA_ONE_u64)
+  #define NA_ZERO_i128   naMakei128WithLo(NA_ZERO_i64)
+  #define NA_ONE_i128    naMakei128WithLo(NA_ONE_i64)
 
   #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
-    #define NA_MINUS_ONE_i128 naCastUInt128ToInt128(NA_MAX_u128)
+    #define NA_MINUS_ONE_i128 naCastu128Toi128(NA_MAX_u128)
   #elif NA_SIGN_ENCODING == NA_SIGN_ENCODING_ONES_COMPLEMENT
-    #define NA_MINUS_ONE_i128 naMakeInt128(NA_MINUS_ONE_i64)
+    #define NA_MINUS_ONE_i128 naMakei128(NA_MINUS_ONE_i64)
   #elif NA_SIGN_ENCODING == NA_SIGN_ENCODING_ONES_COMPLEMENT
-    #define NA_MINUS_ONE_i128 naMakeInt128(NA_SIGN_MASK_64, NA_ONE_u64)
+    #define NA_MINUS_ONE_i128 naMakei128(NA_SIGN_MASK_64, NA_ONE_u64)
   #else
     #error "Invalid sign encoding"
   #endif
@@ -201,17 +201,17 @@ NA_IAPI NAInt256 naAbsi256(NAInt256 i);
     #error "Invalid sign encoding"
   #endif
 #else
-  #define NA_ZERO_u256   naMakeUInt256WithLo(NA_ZERO_u128)
-  #define NA_ONE_u256    naMakeUInt256WithLo(NA_ONE_u128)
-  #define NA_ZERO_i256   naMakeInt256WithLo(NA_ZERO_i128)
-  #define NA_ONE_i256    naMakeInt256WithLo(NA_ONE_i128)
+  #define NA_ZERO_u256   naMakeu256WithLo(NA_ZERO_u128)
+  #define NA_ONE_u256    naMakeu256WithLo(NA_ONE_u128)
+  #define NA_ZERO_i256   naMakei256WithLo(NA_ZERO_i128)
+  #define NA_ONE_i256    naMakei256WithLo(NA_ONE_i128)
 
   #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
-    #define NA_MINUS_ONE_i256 naCastUInt256ToInt256(NA_MAX_u256)
+    #define NA_MINUS_ONE_i256 naCastu256Toi256(NA_MAX_u256)
   #elif NA_SIGN_ENCODING == NA_SIGN_ENCODING_ONES_COMPLEMENT
-    #define NA_MINUS_ONE_i256 naMakeInt256(NA_MINUS_ONE_i128)
+    #define NA_MINUS_ONE_i256 naMakei256(NA_MINUS_ONE_i128)
   #elif NA_SIGN_ENCODING == NA_SIGN_ENCODING_ONES_COMPLEMENT
-    #define NA_MINUS_ONE_i256 naMakeInt256(NA_SIGN_MASK_128, NA_ONE_u128)
+    #define NA_MINUS_ONE_i256 naMakei256(NA_SIGN_MASK_128, NA_ONE_u128)
   #else
     #error "Invalid sign encoding"
   #endif

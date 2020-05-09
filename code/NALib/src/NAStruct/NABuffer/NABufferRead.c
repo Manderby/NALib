@@ -136,7 +136,7 @@ NA_DEF NABool naReadBufferBit(NABufferIterator* iter){
 
 
 NA_DEF NAUInt naReadBufferBits(NABufferIterator* iter, uint8 count){
-  NAUInt retInt = 0;
+  NAUInt retValuei = 0;
   NAUInt curmask = 1;
   #ifndef NDEBUG
     if(count > NA_TYPE_NAINT_BITS)
@@ -144,11 +144,11 @@ NA_DEF NAUInt naReadBufferBits(NABufferIterator* iter, uint8 count){
   #endif
   while(count){
     NABool curbit = naReadBufferBit(iter);
-    retInt |= curmask * (NAUInt)curbit;
+    retValuei |= curmask * (NAUInt)curbit;
     curmask <<= 1;
     count--;
   }
-  return retInt;
+  return retValuei;
 }
 
 
