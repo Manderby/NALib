@@ -55,12 +55,12 @@ NA_IAPI NAi256 naAbsi256(NAi256 i);
 
 
 // The masks for the sign bits of different type sizes.
-#define NA_SIGN_MASK_8   ((uint8) (1u << (NA_TYPE8_BITS - 1u)))
-#define NA_SIGN_MASK_16  ((uint16)(1u << (NA_TYPE16_BITS - 1u)))
-#define NA_SIGN_MASK_32  ((uint32)(1u << (NA_TYPE32_BITS - 1u)))
-#define NA_SIGN_MASK_64  naMakeu64(NA_SIGN_MASK_32, NA_ZERO_u32)
-#define NA_SIGN_MASK_128 naMakeu128(NA_SIGN_MASK_64, NA_ZERO_u64)
-#define NA_SIGN_MASK_256 naMakeu256(NA_SIGN_MASK_128, NA_ZERO_u128)
+#define NA_SIGN_MASK_8   ((int8) (1 << (NA_TYPE8_BITS - 1)))
+#define NA_SIGN_MASK_16  ((int16)(1 << (NA_TYPE16_BITS - 1)))
+#define NA_SIGN_MASK_32  ((int32)(1 << (NA_TYPE32_BITS - 1)))
+#define NA_SIGN_MASK_64  naMakei64(NA_SIGN_MASK_32, NA_ZERO_u32)
+#define NA_SIGN_MASK_128 naMakei128(NA_SIGN_MASK_64, NA_ZERO_u64)
+#define NA_SIGN_MASK_256 naMakei256(NA_SIGN_MASK_128, NA_ZERO_u128)
 
 
 

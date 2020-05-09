@@ -65,7 +65,7 @@
     if(naSmalleri128(a, NA_ZERO_i128)){a = naNegi128(a);}
     if(naSmalleri128(b, NA_ZERO_i128)){b = naNegi128(b);}
     retValueu = naMulu128(naCasti128Tou128(a), naCasti128Tou128(b));
-    retValueu.hi = naAndu64(retValueu.hi, naNotu64(NA_SIGN_MASK_64));
+    retValueu.hi = naAndu64(retValueu.hi, naNotu64(naCasti64Tou64(NA_SIGN_MASK_64)));
     retValuei = naCastu128Toi128(retValueu);
     if(!naEquali128(aSign, bSign)){retValuei = naNegi128(retValuei);}
     // todo: overflow may lead to different result than built-in 128 bit integer
@@ -79,7 +79,7 @@
     if(naSmalleri128(a, NA_ZERO_i128)){a = naNegi128(a);}
     if(naSmalleri128(b, NA_ZERO_i128)){b = naNegi128(b);}
     retValueu = naDivu128(naCasti128Tou128(a), naCasti128Tou128(b));
-    retValueu.hi = naAndu64(retValueu.hi, naNotu64(NA_SIGN_MASK_64));
+    retValueu.hi = naAndu64(retValueu.hi, naNotu64(naCasti64Tou64(NA_SIGN_MASK_64)));
     retValuei = naCastu128Toi128(retValueu);
     if(!naEquali128(aSign, bSign)){retValuei = naNegi128(retValuei);}
     return retValuei;
@@ -91,7 +91,7 @@
     if(naSmalleri128(a, NA_ZERO_i128)){a = naNegi128(a);}
     if(naSmalleri128(b, NA_ZERO_i128)){b = naNegi128(b);}
     retValueu = naModu128(naCasti128Tou128(a), naCasti128Tou128(b));
-    retValueu.hi = naAndu64(retValueu.hi, naNotu64(NA_SIGN_MASK_64));
+    retValueu.hi = naAndu64(retValueu.hi, naNotu64(naCasti64Tou64(NA_SIGN_MASK_64)));
     retValuei = naCastu128Toi128(retValueu);
     if(!naEquali128(aSign, NA_ONE_i128)){retValuei = naNegi128(retValuei);}
     return retValuei;
@@ -301,11 +301,11 @@
       int shiftCount;
 
       // search for the highest bit of b.
-      aHighestBit = naMakeu128(NA_SIGN_MASK_64, NA_ZERO_u64);
+      aHighestBit = naMakeu128(naCasti64Tou64(NA_SIGN_MASK_64), NA_ZERO_u64);
       while(!naEqualu128(naAndu128(a, aHighestBit), aHighestBit)){
         aHighestBit = naShru128(aHighestBit, 1);
       }
-      bHighestBit = naMakeu128(NA_SIGN_MASK_64, NA_ZERO_u64);
+      bHighestBit = naMakeu128(naCasti64Tou64(NA_SIGN_MASK_64), NA_ZERO_u64);
       while(!naEqualu128(naAndu128(b, bHighestBit), bHighestBit)){
         bHighestBit = naShru128(bHighestBit, 1);
       }
