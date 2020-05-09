@@ -50,7 +50,13 @@
   #define NA_SIGN_ENCODING NA_SIGN_ENCODING_SIGN_MAGNITUDE
 #else
   #define NA_SIGN_ENCODING NA_SIGN_ENCODING_UNKNOWN
-  #error "Invalid signed integer encoding. NALib might not work properly."
+  #error "Invalid signed integer encoding."
+#endif
+
+#if NA_SIGN_ENCODING != NA_SIGN_ENCODING_TWOS_COMPLEMENT
+  #error "NALib has no implementation for the given signed integer encoding."
+  // The last version having some implementation is NALib 24. But it is
+  // incomplete and the author did not bother continue support for it.
 #endif
 
 

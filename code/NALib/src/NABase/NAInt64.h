@@ -87,12 +87,6 @@
 #else
   // if no native int64 type is available, we have to emulate it.
 
-  #if NA_SIGN_ENCODING != NA_SIGN_ENCODING_TWOS_COMPLEMENT
-
-    #error "NAi64 is unavailable for the current signed integer encoding"
-
-  #endif
-
   NA_IAPI NAi64  naMakei64(int32 hi, uint32 lo);
   NA_IAPI NAi64  naMakei64WithLo(int32 lo);
   NA_IAPI NAi64  naMakei64WithDouble(double d);

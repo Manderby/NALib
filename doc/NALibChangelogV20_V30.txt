@@ -28,6 +28,7 @@ Smaller Things:
 - Moving to Visual Studio 2019. Project for VisualStudio 10 removed.
 - Adapted documentation.txt
 - Removed NASizeInt, now using size_t and ptrdiff_t
+- Removed implementations for sign encodings different from twos complement.
   
 
 

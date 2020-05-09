@@ -91,12 +91,6 @@
 #else
   // if no native int128 type is available, we have to emulate it.
 
-  #if NA_SIGN_ENCODING != NA_SIGN_ENCODING_TWOS_COMPLEMENT
-
-    #error "NAi128 is unavailable for the current signed integer encoding"
-
-  #endif
-
   NA_IAPI NAi128  naMakei128(NAi64 hi, NAu64 lo);
   NA_IAPI NAi128  naMakei128WithLo(NAi64 lo);
   NA_IAPI NAi128  naMakei128WithDouble(double d);

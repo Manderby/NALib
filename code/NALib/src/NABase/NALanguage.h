@@ -231,11 +231,10 @@ typedef void (*NAMutator)  (      void*);
 
 
 #ifndef NDEBUG
-  // Returns whether the two arrays overlap with the given amount of
-  // elements in between. Both pointers must be of the same type.
+  // Returns whether the two arrays with the given number of elements overlap
+  // each other. Both pointers must be of the same type.
   #define naElementOverlap(ptrA, ptrB, countA, countB)\
     ((((ptrB) - (ptrA)) < countA) && (((ptrB) - (ptrA)) > -countB))
-
 #endif
 
 

@@ -95,12 +95,6 @@
 #else
   // if no native int256 type is available, we have to emulate it.
 
-  #if NA_SIGN_ENCODING != NA_SIGN_ENCODING_TWOS_COMPLEMENT
-
-    #error "NAi256 is unavailable for the current signed integer encoding"
-
-  #endif
-
   NA_IAPI NAi256  naMakei256(NAi128 hi, NAu128 lo);
   NA_IAPI NAi256  naMakei256WithLo(NAi128 lo);
   NA_IAPI NAi256  naMakei256WithDouble(double d);

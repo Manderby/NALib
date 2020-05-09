@@ -31,49 +31,22 @@ NA_IDEF NAu256 naGetSignum256(NAi256 i){
 
 
 NA_IDEF int8 naSigni8(int8 i){
-  #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
-    return (int8)((naGetSignum8(i) << 1) + 1);
-  #else
-    return (i < 0) ? -1 : 1;
-  #endif
+  return (i >> (NA_TYPE8_BITS - 2)) | NA_ONE_i8;
 }
 NA_IDEF int16 naSigni16(int16 i){
-  #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
-    return (int16)((naGetSignum16(i) << 1) + 1);
-  #else
-    return (i < 0) ? -1 : 1;
-  #endif
+  return (i >> (NA_TYPE16_BITS - 2)) | NA_ONE_i16;
 }
 NA_IDEF int32 naSigni32(int32 i){
-  #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
-    return (int32)((naGetSignum32(i) << 1) + NA_ONE_i32);
-  #else
-    return (i < 0) ? -NA_ONE_i32 : NA_ONE_i32;
-  #endif
+  return (i >> (NA_TYPE32_BITS - 2)) | NA_ONE_i32;
 }
 NA_IDEF NAi64 naSigni64(NAi64 i){
-  #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
-    NAu64 signum = naGetSignum64(i);
-    return naCastu64Toi64(naAddu64(naShlu64(signum, 1), NA_ONE_u64));
-  #else
-    return (i < 0) ? -NA_ONE_i64 : NA_ONE_i64;
-  #endif
+  return naOri64(naShri64(i, NA_TYPE64_BITS - 2), NA_ONE_i64);
 }
 NA_IDEF NAi128 naSigni128(NAi128 i){
-  #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
-    NAu128 signum = naGetSignum128(i);
-    return naCastu128Toi128(naAddu128(naShlu128(signum, 1), NA_ONE_u128));
-  #else
-    return (i < 0) ? -NA_ONE_i128 : NA_ONE_i128;
-  #endif
+  return naOri128(naShri128(i, NA_TYPE128_BITS - 2), NA_ONE_i128);
 }
 NA_IDEF NAi256 naSigni256(NAi256 i){
-  #if NA_SIGN_ENCODING == NA_SIGN_ENCODING_TWOS_COMPLEMENT
-    NAu256 signum = naGetSignum256(i);
-    return naCastu256Toi256(naAddu256(naShlu256(signum, 1), NA_ONE_u256));
-  #else
-    return (i < 0) ? -NA_ONE_i256 : NA_ONE_i256;
-  #endif
+  return naOri256(naShri256(i, NA_TYPE256_BITS - 2), NA_ONE_i256);
 }
 
 
@@ -119,22 +92,28 @@ NA_IDEF void naUnsetSignBit256(void* i){
 
 
 NA_IDEF int8 naAbsi8(int8 i){
-  return naSigni8(i) * i;
+  int8 signum = (int8)naGetSignum8(i);
+  return (signum ^ i) - signum;
 }
 NA_IDEF int16 naAbsi16(int16 i){
-  return naSigni16(i) * i;
+  int16 signum = (int16)naGetSignum16(i);
+  return (signum ^ i) - signum;
 }
 NA_IDEF int32 naAbsi32(int32 i){
-  return naSigni32(i) * i;
+  int32 signum = (int32)naGetSignum32(i);
+  return (signum ^ i) - signum;
 }
 NA_IDEF NAi64 naAbsi64(NAi64 i){
-  return naMuli64(naSigni64(i), i);
+  NAi64 signum = naCastu64Toi64(naGetSignum64(i));
+  return naSubi64(naXori64(signum, i), signum);
 }
 NA_IDEF NAi128 naAbsi128(NAi128 i){
-  return naMuli128(naSigni128(i), i);
+  NAi128 signum = naCastu128Toi128(naGetSignum128(i));
+  return naSubi128(naXori128(signum, i), signum);
 }
 NA_IDEF NAi256 naAbsi256(NAi256 i){
-  return naMuli256(naSigni256(i), i);
+  NAi256 signum = naCastu256Toi256(naGetSignum256(i));
+  return naSubi256(naXori256(signum, i), signum);
 }
 
 
