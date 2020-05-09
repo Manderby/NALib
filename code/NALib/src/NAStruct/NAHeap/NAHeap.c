@@ -115,10 +115,8 @@
 
 
 NA_HDEF void naGrowHeap(NAHeap* heap){
-  NAInt entrysize;
-  void* newdata;
-  entrysize = (NASizeInt)((NAByte*)(heap->root) - (NAByte*)(heap->data));
-  newdata = naMalloc((-heap->maxcount * 2 + 1) * entrysize);
+  ptrdiff_t entrysize = (NAByte*)(heap->root) - (NAByte*)(heap->data);
+  void* newdata = naMalloc((-heap->maxcount * 2 + 1) * entrysize);
   naCopyn(newdata, heap->data, ((heap->count + 1) * entrysize));
   naFree(heap->data);
   heap->data = newdata;
@@ -134,7 +132,7 @@ NA_DEF void naShrinkHeapIfNecessary(NAHeap* heap){
       naError("Heap defined with a fixed count of elements.");
   #endif
   if((NAInt)heap->count < -heap->maxcount / 4){
-    NAInt entrysize = (NASizeInt)((NAByte*)(heap->root) - (NAByte*)(heap->data));
+    ptrdiff_t entrysize = (NAByte*)(heap->root) - (NAByte*)(heap->data);
     void* newdata = naMalloc((-heap->maxcount / 2 + 1) * entrysize);
     naCopyn(newdata, heap->data, ((heap->count + 1) * entrysize));
     naFree(heap->data);
@@ -441,7 +439,6 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
     heap->count = 0;
     heap->data = naMalloc((naAbsi(heap->maxcount) + 1) * entrysize);
     heap->root = &(((NAHeapEntry*)heap->data)[1]);
-    heap->entryByteSize = naSizeof(NAHeapEntry);
 
     heap->insertConst = naInsertHeapElementConstNoBack;
     heap->insertMutable = naInsertHeapElementMutableNoBack;
@@ -504,7 +501,6 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
     heap->count = 0;
     heap->data = naMalloc((naAbsi(heap->maxcount) + 1) * entrysize);
     heap->root = &(((NAHeapBackEntry*)heap->data)[1]);
-    heap->entryByteSize = naSizeof(NAHeapBackEntry);
 
     heap->insertConst = naInsertHeapElementConstBack;
     heap->insertMutable = naInsertHeapElementMutableBack;

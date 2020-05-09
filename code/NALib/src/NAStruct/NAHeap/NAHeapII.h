@@ -16,7 +16,6 @@ struct NAHeap{
   NAInt count;
   void* data;
   void* root; // Pointer to the first byte of the root element
-  NAInt entryByteSize;
   NAInt maxcount; // heap holds max elements. If this value is < 0, the
                   // heap grows automatically.
   void        (*insertConst)      (NAHeap*, const void*, const void*, NAInt*);
@@ -34,7 +33,7 @@ struct NAHeap{
 // stored at array index 1, a pointer to that location is needed as the two
 // structs differ in bytesize whether they do or do not store backpointers.
 
-#include "NAMemory.h"
+#include "../../NAMemory.h"
 
 // The structures internally used to store a single entry. They whould normally
 // be hidden to the user.

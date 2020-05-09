@@ -156,199 +156,199 @@ NA_IDEF float naDistanceV4fE(const float* a, const float* b){
 
 NA_IDEF void naMirrorV1d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 1)
+    if(naElementOverlap(n, d, 1, 1))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV1d(n)))
       naError("Normal is not normalized");
     if(a == d)
       naError("a equals d. Use E or S variant or restrict pointers.");
-    else if(naAbsi((NASizeInt)(a-d)) < 1)
+    else if(naElementOverlap(a, d, 1, 1))
       naError("a overlaps misaligned with d");
   #endif
   naMadV1d(d, a, n, -2. * naDotV1d(a, n));
 }
 NA_IDEF void naMirrorV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 2)
+    if(naElementOverlap(n, d, 2, 2))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV2d(n)))
       naError("Normal is not normalized");
     if(a == d)
       naError("a equals d. Use E or S variant or restrict pointers.");
-    else if(naAbsi((NASizeInt)(a-d)) < 2)
+    else if(naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
   #endif
   naMadV2d(d, a, n, -2. * naDotV2d(a, n));
 }
 NA_IDEF void naMirrorV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 3)
+    if(naElementOverlap(n, d, 3, 3))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV3d(n)))
       naError("Normal is not normalized");
     if(a == d)
       naError("a equals d. Use E or S variant or restrict pointers.");
-    else if(naAbsi((NASizeInt)(a-d)) < 3)
+    else if(naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
   #endif
   naMadV3d(d, a, n, -2. * naDotV3d(a, n));
 }
 NA_IDEF void naMirrorV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a, const double* NA_RESTRICT n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 4)
+    if(naElementOverlap(n, d, 4, 4))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV4d(n)))
       naError("Normal is not normalized");
     if(a == d)
       naError("a equals d. Use E or S variant or restrict pointers.");
-    else if(naAbsi((NASizeInt)(a-d)) < 4)
+    else if(naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
   #endif
   naMadV4d(d, a, n, -2. * naDotV4d(a, n));
 }
 NA_IDEF void naMirrorV1f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 1)
+    if(naElementOverlap(n, d, 1, 1))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV1f(n)))
       naError("Normal is not normalized");
     if(a == d)
       naError("a equals d. Use E or S variant or restrict pointers.");
-    else if(naAbsi((NASizeInt)(a-d)) < 1)
+    else if(naElementOverlap(a, d, 1, 1))
       naError("a overlaps misaligned with d");
   #endif
   naMadV1f(d, a, n, -2.f * naDotV1f(a, n));
 }
 NA_IDEF void naMirrorV2f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 2)
+    if(naElementOverlap(n, d, 2, 2))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV2f(n)))
       naError("Normal is not normalized");
     if(a == d)
       naError("a equals d. Use E or S variant or restrict pointers.");
-    else if(naAbsi((NASizeInt)(a-d)) < 2)
+    else if(naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
   #endif
   naMadV2f(d, a, n, -2.f * naDotV2f(a, n));
 }
 NA_IDEF void naMirrorV3f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 3)
+    if(naElementOverlap(n, d, 3, 3))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV3f(n)))
       naError("Normal is not normalized");
     if(a == d)
       naError("a equals d. Use E or S variant or restrict pointers.");
-    else if(naAbsi((NASizeInt)(a-d)) < 3)
+    else if(naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
   #endif
   naMadV3f(d, a, n, -2.f * naDotV3f(a, n));
 }
 NA_IDEF void naMirrorV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a, const float* NA_RESTRICT n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 4)
+    if(naElementOverlap(n, d, 4, 4))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV4f(n)))
       naError("Normal is not normalized");
     if(a == d)
       naError("a equals d. Use E or S variant or restrict pointers.");
-    else if(naAbsi((NASizeInt)(a-d)) < 4)
+    else if(naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
   #endif
   naMadV4f(d, a, n, -2.f * naDotV4f(a, n));
 }
 NA_IDEF void naMirrorV1dE(double* d, const double* a, const double* n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 1)
+    if(naElementOverlap(n, d, 1, 1))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV1d(n)))
       naError("Normal is not normalized");
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 1)
+    if((a != d) && naElementOverlap(a, d, 1, 1))
       naError("a overlaps misaligned with d");
   #endif
   naMadV1d(d, a, n, -2. * naDotV1d(a, n));
 }
 NA_IDEF void naMirrorV2dE(double* d, const double* a, const double* n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 2)
+    if(naElementOverlap(n, d, 2, 2))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV2d(n)))
       naError("Normal is not normalized");
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 2)
+    if((a != d) && naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
   #endif
   naMadV2d(d, a, n, -2. * naDotV2d(a, n));
 }
 NA_IDEF void naMirrorV3dE(double* d, const double* a, const double* n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 3)
+    if(naElementOverlap(n, d, 3, 3))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV3d(n)))
       naError("Normal is not normalized");
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 3)
+    if((a != d) && naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
   #endif
   naMadV3d(d, a, n, -2. * naDotV3d(a, n));
 }
 NA_IDEF void naMirrorV4dE(double* d, const double* a, const double* n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 4)
+    if(naElementOverlap(n, d, 4, 4))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV4d(n)))
       naError("Normal is not normalized");
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 4)
+    if((a != d) && naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
   #endif
   naMadV4d(d, a, n, -2. * naDotV4d(a, n));
 }
 NA_IDEF void naMirrorV1fE(float* d, const float* a, const float* n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 1)
+    if(naElementOverlap(n, d, 1, 1))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV1f(n)))
       naError("Normal is not normalized");
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 1)
+    if((a != d) && naElementOverlap(a, d, 1, 1))
       naError("a overlaps misaligned with d");
   #endif
   naMadV1f(d, a, n, -2.f * naDotV1f(a, n));
 }
 NA_IDEF void naMirrorV2fE(float* d, const float* a, const float* n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 2)
+    if(naElementOverlap(n, d, 2, 2))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV2f(n)))
       naError("Normal is not normalized");
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 2)
+    if((a != d) && naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
   #endif
   naMadV2f(d, a, n, -2.f * naDotV2f(a, n));
 }
 NA_IDEF void naMirrorV3fE(float* d, const float* a, const float* n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 3)
+    if(naElementOverlap(n, d, 3, 3))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV3f(n)))
       naError("Normal is not normalized");
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 3)
+    if((a != d) && naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
   #endif
   naMadV3f(d, a, n, -2.f * naDotV3f(a, n));
 }
 NA_IDEF void naMirrorV4fE(float* d, const float* a, const float* n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 4)
+    if(naElementOverlap(n, d, 4, 4))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV4f(n)))
       naError("Normal is not normalized");
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 4)
+    if((a != d) && naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
   #endif
   naMadV4f(d, a, n, -2.f * naDotV4f(a, n));
 }
 NA_IDEF void naMirrorV1dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 1)
+    if(naElementOverlap(n, d, 1, 1))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV1d(n)))
       naError("Normal is not normalized");
@@ -357,7 +357,7 @@ NA_IDEF void naMirrorV1dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
 }
 NA_IDEF void naMirrorV2dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 2)
+    if(naElementOverlap(n, d, 2, 2))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV2d(n)))
       naError("Normal is not normalized");
@@ -366,7 +366,7 @@ NA_IDEF void naMirrorV2dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
 }
 NA_IDEF void naMirrorV3dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 3)
+    if(naElementOverlap(n, d, 3, 3))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV3d(n)))
       naError("Normal is not normalized");
@@ -375,7 +375,7 @@ NA_IDEF void naMirrorV3dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
 }
 NA_IDEF void naMirrorV4dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 4)
+    if(naElementOverlap(n, d, 4, 4))
       naError("n overlaps with d");
     if(!naAlmostOne(naLengthV4d(n)))
       naError("Normal is not normalized");
@@ -384,7 +384,7 @@ NA_IDEF void naMirrorV4dS(double* NA_RESTRICT d, const double* NA_RESTRICT n){
 }
 NA_IDEF void naMirrorV1fS(float* NA_RESTRICT d, const float* NA_RESTRICT n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 1)
+    if(naElementOverlap(n, d, 1, 1))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV1f(n)))
       naError("Normal is not normalized");
@@ -393,7 +393,7 @@ NA_IDEF void naMirrorV1fS(float* NA_RESTRICT d, const float* NA_RESTRICT n){
 }
 NA_IDEF void naMirrorV2fS(float* NA_RESTRICT d, const float* NA_RESTRICT n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 2)
+    if(naElementOverlap(n, d, 2, 2))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV2f(n)))
       naError("Normal is not normalized");
@@ -402,7 +402,7 @@ NA_IDEF void naMirrorV2fS(float* NA_RESTRICT d, const float* NA_RESTRICT n){
 }
 NA_IDEF void naMirrorV3fS(float* NA_RESTRICT d, const float* NA_RESTRICT n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 3)
+    if(naElementOverlap(n, d, 3, 3))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV3f(n)))
       naError("Normal is not normalized");
@@ -411,7 +411,7 @@ NA_IDEF void naMirrorV3fS(float* NA_RESTRICT d, const float* NA_RESTRICT n){
 }
 NA_IDEF void naMirrorV4fS(float* NA_RESTRICT d, const float* NA_RESTRICT n){
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(n-d)) < 4)
+    if(naElementOverlap(n, d, 4, 4))
       naError("n overlaps with d");
     if(!naAlmostOnef(naLengthV4f(n)))
       naError("Normal is not normalized");
@@ -431,7 +431,7 @@ NA_IDEF double naNormalizeV1d(double* NA_RESTRICT d, const double* NA_RESTRICT a
   #ifndef NDEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 1)
+    else if(naElementOverlap(a, d, 1, 1))
       naError("a overlaps misaligned with d");
   #endif
   length = naLengthV1d(a);
@@ -443,7 +443,7 @@ NA_IDEF double naNormalizeV2d(double* NA_RESTRICT d, const double* NA_RESTRICT a
   #ifndef NDEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 2)
+    else if(naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
   #endif
   length = naLengthV2d(a);
@@ -455,7 +455,7 @@ NA_IDEF double naNormalizeV3d(double* NA_RESTRICT d, const double* NA_RESTRICT a
   #ifndef NDEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 3)
+    else if(naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
   #endif
   length = naLengthV3d(a);
@@ -467,7 +467,7 @@ NA_IDEF double naNormalizeV4d(double* NA_RESTRICT d, const double* NA_RESTRICT a
   #ifndef NDEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 4)
+    else if(naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
   #endif
   length = naLengthV4d(a);
@@ -479,7 +479,7 @@ NA_IDEF float naNormalizeV1f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
   #ifndef NDEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 1)
+    else if(naElementOverlap(a, d, 1, 1))
       naError("a overlaps misaligned with d");
   #endif
   length = naLengthV1f(a);
@@ -491,7 +491,7 @@ NA_IDEF float naNormalizeV2f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
   #ifndef NDEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 2)
+    else if(naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
   #endif
   length = naLengthV2f(a);
@@ -503,7 +503,7 @@ NA_IDEF float naNormalizeV3f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
   #ifndef NDEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 3)
+    else if(naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
   #endif
   length = naLengthV3f(a);
@@ -515,7 +515,7 @@ NA_IDEF float naNormalizeV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
   #ifndef NDEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 4)
+    else if(naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
   #endif
   length = naLengthV4f(a);
@@ -525,7 +525,7 @@ NA_IDEF float naNormalizeV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a){
 NA_IDEF double naNormalizeV1dE(double* d, const double* a){
   double length;
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 1)
+    if((a != d) && naElementOverlap(a, d, 1, 1))
       naError("a overlaps misaligned with d");
   #endif
   length = naLengthV1d(a);
@@ -535,7 +535,7 @@ NA_IDEF double naNormalizeV1dE(double* d, const double* a){
 NA_IDEF double naNormalizeV2dE(double* d, const double* a){
   double length;
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 2)
+    if((a != d) && naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
   #endif
   length = naLengthV2d(a);
@@ -545,7 +545,7 @@ NA_IDEF double naNormalizeV2dE(double* d, const double* a){
 NA_IDEF double naNormalizeV3dE(double* d, const double* a){
   double length;
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 3)
+    if((a != d) && naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
   #endif
   length = naLengthV3d(a);
@@ -555,7 +555,7 @@ NA_IDEF double naNormalizeV3dE(double* d, const double* a){
 NA_IDEF double naNormalizeV4dE(double* d, const double* a){
   double length;
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 4)
+    if((a != d) && naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
   #endif
   length = naLengthV4d(a);
@@ -565,7 +565,7 @@ NA_IDEF double naNormalizeV4dE(double* d, const double* a){
 NA_IDEF float naNormalizeV1fE(float* d, const float* a){
   float length;
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 1)
+    if((a != d) && naElementOverlap(a, d, 1, 1))
       naError("a overlaps misaligned with d");
   #endif
   length = naLengthV1f(a);
@@ -575,7 +575,7 @@ NA_IDEF float naNormalizeV1fE(float* d, const float* a){
 NA_IDEF float naNormalizeV2fE(float* d, const float* a){
   float length;
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 2)
+    if((a != d) && naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
   #endif
   length = naLengthV2f(a);
@@ -585,7 +585,7 @@ NA_IDEF float naNormalizeV2fE(float* d, const float* a){
 NA_IDEF float naNormalizeV3fE(float* d, const float* a){
   float length;
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 3)
+    if((a != d) && naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
   #endif
   length = naLengthV3f(a);
@@ -595,7 +595,7 @@ NA_IDEF float naNormalizeV3fE(float* d, const float* a){
 NA_IDEF float naNormalizeV4fE(float* d, const float* a){
   float length;
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 4)
+    if((a != d) && naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
   #endif
   length = naLengthV4f(a);
@@ -653,9 +653,9 @@ NA_IDEF void naOrthogonalizeV2d(double* NA_RESTRICT d, const double* NA_RESTRICT
   #ifndef NDEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 2)
+    else if(naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
-    if(naAbsi((NASizeInt)(b-d)) < 2)
+    if(naElementOverlap(b, d, 2, 2))
       naError("b overlaps with d");
     if(naAlmostZero(bnorm))
       naError("b looks like a zero vector.");
@@ -667,9 +667,9 @@ NA_IDEF void naOrthogonalizeV3d(double* NA_RESTRICT d, const double* NA_RESTRICT
   #ifndef NDEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 3)
+    else if(naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
-    if(naAbsi((NASizeInt)(b-d)) < 3)
+    if(naElementOverlap(b, d, 3, 3))
       naError("b overlaps with d");
     if(naAlmostZero(bnorm))
       naError("b looks like a zero vector.");
@@ -681,9 +681,9 @@ NA_IDEF void naOrthogonalizeV4d(double* NA_RESTRICT d, const double* NA_RESTRICT
   #ifndef NDEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 4)
+    else if(naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
-    if(naAbsi((NASizeInt)(b-d)) < 4)
+    if(naElementOverlap(b, d, 4, 4))
       naError("b overlaps with d");
     if(naAlmostZero(bnorm))
       naError("b looks like a zero vector.");
@@ -695,9 +695,9 @@ NA_IDEF void naOrthogonalizeV2f(float* NA_RESTRICT d, const float* NA_RESTRICT a
   #ifndef NDEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 2)
+    else if(naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
-    if(naAbsi((NASizeInt)(b-d)) < 2)
+    if(naElementOverlap(b, d, 2, 2))
       naError("b overlaps with d");
     if(naAlmostZerof(bnorm))
       naError("b looks like a zero vector.");
@@ -709,9 +709,9 @@ NA_IDEF void naOrthogonalizeV3f(float* NA_RESTRICT d, const float* NA_RESTRICT a
   #ifndef NDEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 3)
+    else if(naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
-    if(naAbsi((NASizeInt)(b-d)) < 3)
+    if(naElementOverlap(b, d, 3, 3))
       naError("b overlaps with d");
     if(naAlmostZerof(bnorm))
       naError("b looks like a zero vector.");
@@ -723,9 +723,9 @@ NA_IDEF void naOrthogonalizeV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a
   #ifndef NDEBUG
     if(a == d)
       naError("a is equal to d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 4)
+    else if(naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
-    if(naAbsi((NASizeInt)(b-d)) < 4)
+    if(naElementOverlap(b, d, 4, 4))
       naError("b overlaps with d");
     if(naAlmostZerof(bnorm))
       naError("b looks like a zero vector.");
@@ -735,9 +735,9 @@ NA_IDEF void naOrthogonalizeV4f(float* NA_RESTRICT d, const float* NA_RESTRICT a
 NA_IDEF void naOrthogonalizeV2dE(double* d, const double* a, const double* b){
   double bnorm = naDotV2dS(b);
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 2)
+    if((a != d) && naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
-    if(naAbsi((NASizeInt)(b-d)) < 2)
+    if(naElementOverlap(b, d, 2, 2))
       naError("b overlaps with d");
     if(naAlmostZero(bnorm))
       naError("b looks like a zero vector.");
@@ -747,9 +747,9 @@ NA_IDEF void naOrthogonalizeV2dE(double* d, const double* a, const double* b){
 NA_IDEF void naOrthogonalizeV3dE(double* d, const double* a, const double* b){
   double bnorm = naDotV3dS(b);
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 3)
+    if((a != d) && naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
-    if(naAbsi((NASizeInt)(b-d)) < 3)
+    if(naElementOverlap(b, d, 3, 3))
       naError("b overlaps with d");
     if(naAlmostZero(bnorm))
       naError("b looks like a zero vector.");
@@ -759,9 +759,9 @@ NA_IDEF void naOrthogonalizeV3dE(double* d, const double* a, const double* b){
 NA_IDEF void naOrthogonalizeV4dE(double* d, const double* a, const double* b){
   double bnorm = naDotV4dS(b);
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 4)
+    if((a != d) && naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
-    if(naAbsi((NASizeInt)(b-d)) < 4)
+    if(naElementOverlap(b, d, 4, 4))
       naError("b overlaps with d");
     if(naAlmostZero(bnorm))
       naError("b looks like a zero vector.");
@@ -771,9 +771,9 @@ NA_IDEF void naOrthogonalizeV4dE(double* d, const double* a, const double* b){
 NA_IDEF void naOrthogonalizeV2fE(float* d, const float* a, const float* b){
   float bnorm = naDotV2fS(b);
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 2)
+    if((a != d) && naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
-    if(naAbsi((NASizeInt)(b-d)) < 2)
+    if(naElementOverlap(b, d, 2, 2))
       naError("b overlaps with d");
     if(naAlmostZerof(bnorm))
       naError("b looks like a zero vector.");
@@ -783,9 +783,9 @@ NA_IDEF void naOrthogonalizeV2fE(float* d, const float* a, const float* b){
 NA_IDEF void naOrthogonalizeV3fE(float* d, const float* a, const float* b){
   float bnorm = naDotV3fS(b);
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 3)
+    if((a != d) && naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
-    if(naAbsi((NASizeInt)(b-d)) < 3)
+    if(naElementOverlap(b, d, 3, 3))
       naError("b overlaps with d");
     if(naAlmostZerof(bnorm))
       naError("b looks like a zero vector.");
@@ -795,9 +795,9 @@ NA_IDEF void naOrthogonalizeV3fE(float* d, const float* a, const float* b){
 NA_IDEF void naOrthogonalizeV4fE(float* d, const float* a, const float* b){
   float bnorm = naDotV4fS(b);
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 4)
+    if((a != d) && naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
-    if(naAbsi((NASizeInt)(b-d)) < 4)
+    if(naElementOverlap(b, d, 4, 4))
       naError("b overlaps with d");
     if(naAlmostZerof(bnorm))
       naError("b looks like a zero vector.");
@@ -807,7 +807,7 @@ NA_IDEF void naOrthogonalizeV4fE(float* d, const float* a, const float* b){
 NA_IDEF void naOrthogonalizeV2dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
   double bnorm = naDotV2dS(b);
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(b-d)) < 2)
+    if(naElementOverlap(b, d, 2, 2))
       naError("b overlaps with d");
     if(naAlmostZero(bnorm))
       naError("b looks like a zero vector.");
@@ -817,7 +817,7 @@ NA_IDEF void naOrthogonalizeV2dS(double* NA_RESTRICT d, const double* NA_RESTRIC
 NA_IDEF void naOrthogonalizeV3dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
   double bnorm = naDotV3dS(b);
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(b-d)) < 3)
+    if(naElementOverlap(b, d, 3, 3))
       naError("b overlaps with d");
     if(naAlmostZero(bnorm))
       naError("b looks like a zero vector.");
@@ -827,7 +827,7 @@ NA_IDEF void naOrthogonalizeV3dS(double* NA_RESTRICT d, const double* NA_RESTRIC
 NA_IDEF void naOrthogonalizeV4dS(double* NA_RESTRICT d, const double* NA_RESTRICT b){
   double bnorm = naDotV4dS(b);
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(b-d)) < 4)
+    if(naElementOverlap(b, d, 4, 4))
       naError("b overlaps with d");
     if(naAlmostZero(bnorm))
       naError("b looks like a zero vector.");
@@ -837,7 +837,7 @@ NA_IDEF void naOrthogonalizeV4dS(double* NA_RESTRICT d, const double* NA_RESTRIC
 NA_IDEF void naOrthogonalizeV2fS(float* NA_RESTRICT d, const float* NA_RESTRICT b){
   float bnorm = naDotV2fS(b);
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(b-d)) < 2)
+    if(naElementOverlap(b, d, 2, 2))
       naError("b overlaps with d");
     if(naAlmostZerof(bnorm))
       naError("b looks like a zero vector.");
@@ -847,7 +847,7 @@ NA_IDEF void naOrthogonalizeV2fS(float* NA_RESTRICT d, const float* NA_RESTRICT 
 NA_IDEF void naOrthogonalizeV3fS(float* NA_RESTRICT d, const float* NA_RESTRICT b){
   float bnorm = naDotV3fS(b);
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(b-d)) < 3)
+    if(naElementOverlap(b, d, 3, 3))
       naError("b overlaps with d");
     if(naAlmostZerof(bnorm))
       naError("b looks like a zero vector.");
@@ -857,7 +857,7 @@ NA_IDEF void naOrthogonalizeV3fS(float* NA_RESTRICT d, const float* NA_RESTRICT 
 NA_IDEF void naOrthogonalizeV4fS(float* NA_RESTRICT d, const float* NA_RESTRICT b){
   float bnorm = naDotV4fS(b);
   #ifndef NDEBUG
-    if(naAbsi((NASizeInt)(b-d)) < 4)
+    if(naElementOverlap(b, d, 4, 4))
       naError("b overlaps with d");
     if(naAlmostZerof(bnorm))
       naError("b looks like a zero vector.");
@@ -875,11 +875,11 @@ NA_IDEF void naOrthonormalizeV2d(double* NA_RESTRICT d, const double* NA_RESTRIC
   #ifndef NDEBUG
     if(a == d)
       naError("a equals d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 2)
+    else if(naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
     if(!naAlmostOne(naLengthV4d(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 2)
+    if(naElementOverlap(b, d, 2, 2))
       naError("b overlaps with d");
   #endif
   naMadV2d(d, a, b, - naDotV2d(b, a));
@@ -889,11 +889,11 @@ NA_IDEF void naOrthonormalizeV3d(double* NA_RESTRICT d, const double* NA_RESTRIC
   #ifndef NDEBUG
     if(a == d)
       naError("a equals d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 3)
+    else if(naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
     if(!naAlmostOne(naLengthV3d(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 3)
+    if(naElementOverlap(b, d, 3, 3))
       naError("b overlaps with d");
   #endif
   naMadV3d(d, a, b, - naDotV3d(b, a));
@@ -903,11 +903,11 @@ NA_IDEF void naOrthonormalizeV4d(double* NA_RESTRICT d, const double* NA_RESTRIC
   #ifndef NDEBUG
     if(a == d)
       naError("a equals d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 4)
+    else if(naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
     if(!naAlmostOne(naLengthV4d(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 4)
+    if(naElementOverlap(b, d, 4, 4))
       naError("b overlaps with d");
   #endif
   naMadV4d(d, a, b, - naDotV4d(b, a));
@@ -917,11 +917,11 @@ NA_IDEF void naOrthonormalizeV2f(float* NA_RESTRICT d, const float* NA_RESTRICT 
   #ifndef NDEBUG
     if(a == d)
       naError("a equals d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 2)
+    else if(naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
     if(!naAlmostOnef(naLengthV2f(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 2)
+    if(naElementOverlap(b, d, 2, 2))
       naError("b overlaps with d");
   #endif
   naMadV2f(d, a, b, - naDotV2f(b, a));
@@ -931,11 +931,11 @@ NA_IDEF void naOrthonormalizeV3f(float* NA_RESTRICT d, const float* NA_RESTRICT 
   #ifndef NDEBUG
     if(a == d)
       naError("a equals d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 3)
+    else if(naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
     if(!naAlmostOnef(naLengthV3f(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 3)
+    if(naElementOverlap(b, d, 3, 3))
       naError("b overlaps with d");
   #endif
   naMadV3f(d, a, b, - naDotV3f(b, a));
@@ -945,11 +945,11 @@ NA_IDEF void naOrthonormalizeV4f(float* NA_RESTRICT d, const float* NA_RESTRICT 
   #ifndef NDEBUG
     if(a == d)
       naError("a equals d. Use E or S variant.");
-    else if(naAbsi((NASizeInt)(a-d)) < 4)
+    else if(naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
     if(!naAlmostOnef(naLengthV4f(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 4)
+    if(naElementOverlap(b, d, 4, 4))
       naError("b overlaps with d");
   #endif
   naMadV4f(d, a, b, - naDotV4f(b, a));
@@ -957,11 +957,11 @@ NA_IDEF void naOrthonormalizeV4f(float* NA_RESTRICT d, const float* NA_RESTRICT 
 }
 NA_IDEF void naOrthonormalizeV2dE(double* d, const double* a, const double* b){
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 2)
+    if((a != d) && naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
     if(!naAlmostOne(naLengthV4d(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 2)
+    if(naElementOverlap(b, d, 2, 2))
       naError("b overlaps with d");
   #endif
   naMadV2d(d, a, b, - naDotV2d(b, a));
@@ -969,11 +969,11 @@ NA_IDEF void naOrthonormalizeV2dE(double* d, const double* a, const double* b){
 }
 NA_IDEF void naOrthonormalizeV3dE(double* d, const double* a, const double* b){
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 3)
+    if((a != d) && naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
     if(!naAlmostOne(naLengthV3d(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 3)
+    if(naElementOverlap(b, d, 3, 3))
       naError("b overlaps with d");
   #endif
   naMadV3d(d, a, b, - naDotV3d(b, a));
@@ -981,11 +981,11 @@ NA_IDEF void naOrthonormalizeV3dE(double* d, const double* a, const double* b){
 }
 NA_IDEF void naOrthonormalizeV4dE(double* d, const double* a, const double* b){
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 4)
+    if((a != d) && naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
     if(!naAlmostOne(naLengthV4d(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 4)
+    if(naElementOverlap(b, d, 4, 4))
       naError("b overlaps with d");
   #endif
   naMadV4d(d, a, b, - naDotV4d(b, a));
@@ -993,11 +993,11 @@ NA_IDEF void naOrthonormalizeV4dE(double* d, const double* a, const double* b){
 }
 NA_IDEF void naOrthonormalizeV2fE(float* d, const float* a, const float* b){
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 2)
+    if((a != d) && naElementOverlap(a, d, 2, 2))
       naError("a overlaps misaligned with d");
     if(!naAlmostOnef(naLengthV2f(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 2)
+    if(naElementOverlap(b, d, 2, 2))
       naError("b overlaps with d");
   #endif
   naMadV2f(d, a, b, - naDotV2f(b, a));
@@ -1005,11 +1005,11 @@ NA_IDEF void naOrthonormalizeV2fE(float* d, const float* a, const float* b){
 }
 NA_IDEF void naOrthonormalizeV3fE(float* d, const float* a, const float* b){
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 3)
+    if((a != d) && naElementOverlap(a, d, 3, 3))
       naError("a overlaps misaligned with d");
     if(!naAlmostOnef(naLengthV3f(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 3)
+    if(naElementOverlap(b, d, 3, 3))
       naError("b overlaps with d");
   #endif
   naMadV3f(d, a, b, - naDotV3f(b, a));
@@ -1017,11 +1017,11 @@ NA_IDEF void naOrthonormalizeV3fE(float* d, const float* a, const float* b){
 }
 NA_IDEF void naOrthonormalizeV4fE(float* d, const float* a, const float* b){
   #ifndef NDEBUG
-    if((a != d) && naAbsi((NASizeInt)(a-d)) < 4)
+    if((a != d) && naElementOverlap(a, d, 4, 4))
       naError("a overlaps misaligned with d");
     if(!naAlmostOnef(naLengthV4f(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 4)
+    if(naElementOverlap(b, d, 4, 4))
       naError("b overlaps with d");
   #endif
   naMadV4f(d, a, b, - naDotV4f(b, a));
@@ -1031,7 +1031,7 @@ NA_IDEF void naOrthonormalizeV2dS(double* NA_RESTRICT d, const double* NA_RESTRI
   #ifndef NDEBUG
     if(!naAlmostOne(naLengthV4d(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 2)
+    if(naElementOverlap(b, d, 2, 2))
       naError("b overlaps with d");
   #endif
   naMadV2dS(d, b, - naDotV2d(b, d));
@@ -1041,7 +1041,7 @@ NA_IDEF void naOrthonormalizeV3dS(double* NA_RESTRICT d, const double* NA_RESTRI
   #ifndef NDEBUG
     if(!naAlmostOne(naLengthV3d(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 3)
+    if(naElementOverlap(b, d, 3, 3))
       naError("b overlaps with d");
   #endif
   naMadV3dS(d, b, - naDotV3d(b, d));
@@ -1051,7 +1051,7 @@ NA_IDEF void naOrthonormalizeV4dS(double* NA_RESTRICT d, const double* NA_RESTRI
   #ifndef NDEBUG
     if(!naAlmostOne(naLengthV4d(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 4)
+    if(naElementOverlap(b, d, 4, 4))
       naError("b overlaps with d");
   #endif
   naMadV4dS(d, b, - naDotV4d(b, d));
@@ -1061,7 +1061,7 @@ NA_IDEF void naOrthonormalizeV2fS(float* NA_RESTRICT d, const float* NA_RESTRICT
   #ifndef NDEBUG
     if(!naAlmostOnef(naLengthV2f(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 2)
+    if(naElementOverlap(b, d, 2, 2))
       naError("b overlaps with d");
   #endif
   naMadV2fS(d, b, - naDotV2f(b, d));
@@ -1071,7 +1071,7 @@ NA_IDEF void naOrthonormalizeV3fS(float* NA_RESTRICT d, const float* NA_RESTRICT
   #ifndef NDEBUG
     if(!naAlmostOnef(naLengthV3f(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 3)
+    if(naElementOverlap(b, d, 3, 3))
       naError("b overlaps with d");
   #endif
   naMadV3fS(d, b, - naDotV3f(b, d));
@@ -1081,7 +1081,7 @@ NA_IDEF void naOrthonormalizeV4fS(float* NA_RESTRICT d, const float* NA_RESTRICT
   #ifndef NDEBUG
     if(!naAlmostOnef(naLengthV4f(b)))
       naError("b is not normalized");
-    if(naAbsi((NASizeInt)(b-d)) < 4)
+    if(naElementOverlap(b, d, 4, 4))
       naError("b overlaps with d");
   #endif
   naMadV4fS(d, b, - naDotV4f(b, d));

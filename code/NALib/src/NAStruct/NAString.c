@@ -266,7 +266,7 @@ NA_DEF const NAUTF8Char* naGetStringUTF8Pointer(const NAString* string){
       if(!numchars)
         naError("String is empty");
     #endif
-    newstr = naMallocTmp((NAUInt)(numchars + 1));
+    newstr = naMallocTmp((size_t)(numchars + 1));
     naCacheBufferRange(string->buffer, naGetBufferRange(string->buffer));
     naWriteBufferToData(string->buffer, newstr);
     newstr[numchars] = '\0';

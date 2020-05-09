@@ -64,11 +64,11 @@ typedef struct NARuntime NARuntime;
 
 // The runtime struct stores base informations about the runtime.
 struct NARuntime{
-  NASizeUInt mempagesize;
-  NASizeUInt partsize;
-  NASizeUInt partsizemask;
+  size_t mempagesize;
+  size_t partsize;
+  size_t partsizemask;
   NAMallocGarbage* mallocGarbage;
-  NASizeUInt totalmallocgarbagebytecount;
+  size_t totalmallocgarbagebytecount;
   NAInt typeinfocount;
   NACoreTypeInfo** typeinfos;
 };
@@ -77,7 +77,7 @@ extern NARuntime* na_runtime;
 
 
 
-NA_IDEF NAUInt naGetRuntimeGarbageBytesize(){
+NA_IDEF size_t naGetRuntimeGarbageByteSize(){
   #ifndef NDEBUG
     if(!na_runtime)
       naCrash("Runtime not running. Use naStartRuntime()");
@@ -87,7 +87,7 @@ NA_IDEF NAUInt naGetRuntimeGarbageBytesize(){
 
 
 
-NA_IDEF NAUInt naGetRuntimeMemoryPageSize(){
+NA_IDEF size_t naGetRuntimeMemoryPageSize(){
   #ifndef NDEBUG
     if(!na_runtime)
       naCrash("Runtime not running. Use naStartRuntime()");
@@ -97,7 +97,7 @@ NA_IDEF NAUInt naGetRuntimeMemoryPageSize(){
 
 
 
-NA_IDEF NAUInt naGetRuntimePoolPartSize(){
+NA_IDEF size_t naGetRuntimePoolPartSize(){
   #ifndef NDEBUG
     if(!na_runtime)
       naCrash("Runtime not running. Use naStartRuntime()");

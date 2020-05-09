@@ -17,7 +17,7 @@ NA_IDEF NABool naEqualV1d(const double* NA_RESTRICT a, const double* NA_RESTRICT
   #ifndef NDEBUG
     if(a == b)
       naError("The two pointers are equal. Use E variant or restrict pointers.");
-    else if(naAbsi((NASizeInt)(a-b)) < 1)
+    else if(naElementOverlap(a, b, 1, 1))
       naError("b overlaps misaligned with a");
   #endif
   return ((a[0] == b[0]));
@@ -26,7 +26,7 @@ NA_IDEF NABool naEqualV2d(const double* NA_RESTRICT a, const double* NA_RESTRICT
   #ifndef NDEBUG
     if(a == b)
       naError("The two pointers are equal. Use E variant or restrict pointers.");
-    else if(naAbsi((NASizeInt)(a-b)) < 2)
+    else if(naElementOverlap(a, b, 2, 2))
       naError("b overlaps misaligned with a");
   #endif
   return ((a[0] == b[0]) && (a[1] == b[1]));
@@ -35,7 +35,7 @@ NA_IDEF NABool naEqualV3d(const double* NA_RESTRICT a, const double* NA_RESTRICT
   #ifndef NDEBUG
     if(a == b)
       naError("The two pointers are equal. Use E variant or restrict pointers.");
-    else if(naAbsi((NASizeInt)(a-b)) < 3)
+    else if(naElementOverlap(a, b, 3, 3))
       naError("b overlaps misaligned with a");
   #endif
   return ((a[0] == b[0]) && (a[1] == b[1]) && (a[2] == b[2]));
@@ -44,7 +44,7 @@ NA_IDEF NABool naEqualV4d(const double* NA_RESTRICT a, const double* NA_RESTRICT
   #ifndef NDEBUG
     if(a == b)
       naError("The two pointers are equal. Use E variant or restrict pointers.");
-    else if(naAbsi((NASizeInt)(a-b)) < 4)
+    else if(naElementOverlap(a, b, 4, 4))
       naError("b overlaps misaligned with a");
   #endif
   return ((a[0] == b[0]) && (a[1] == b[1]) && (a[2] == b[2]) && (a[3] == b[3]));
@@ -53,7 +53,7 @@ NA_IDEF NABool naEqualV1f(const float* NA_RESTRICT a, const float* NA_RESTRICT b
   #ifndef NDEBUG
     if(a == b)
       naError("The two pointers are equal. Use E variant or restrict pointers.");
-    else if(naAbsi((NASizeInt)(a-b)) < 1)
+    else if(naElementOverlap(a, b, 1, 1))
       naError("b overlaps misaligned with a");
   #endif
   return ((a[0] == b[0]));
@@ -62,7 +62,7 @@ NA_IDEF NABool naEqualV2f(const float* NA_RESTRICT a, const float* NA_RESTRICT b
   #ifndef NDEBUG
     if(a == b)
       naError("The two pointers are equal. Use E variant or restrict pointers.");
-    else if(naAbsi((NASizeInt)(a-b)) < 2)
+    else if(naElementOverlap(a, b, 2, 2))
       naError("b overlaps misaligned with a");
   #endif
   return ((a[0] == b[0]) && (a[1] == b[1]));
@@ -71,7 +71,7 @@ NA_IDEF NABool naEqualV3f(const float* NA_RESTRICT a, const float* NA_RESTRICT b
   #ifndef NDEBUG
     if(a == b)
       naError("The two pointers are equal. Use E variant or restrict pointers.");
-    else if(naAbsi((NASizeInt)(a-b)) < 3)
+    else if(naElementOverlap(a, b, 3, 3))
       naError("b overlaps misaligned with a");
   #endif
   return ((a[0] == b[0]) && (a[1] == b[1]) && (a[2] == b[2]));
@@ -80,63 +80,63 @@ NA_IDEF NABool naEqualV4f(const float* NA_RESTRICT a, const float* NA_RESTRICT b
   #ifndef NDEBUG
     if(a == b)
       naError("The two pointers are equal. Use E variant or restrict pointers.");
-    else if(naAbsi((NASizeInt)(a-b)) < 4)
+    else if(naElementOverlap(a, b, 4, 4))
       naError("b overlaps misaligned with a");
   #endif
   return ((a[0] == b[0]) && (a[1] == b[1]) && (a[2] == b[2]) && (a[3] == b[3]));
 }
 NA_IDEF NABool naEqualV1dE(const double* a, const double* b){
   #ifndef NDEBUG
-    if((a != b) && (naAbsi((NASizeInt)(a-b)) < 1))
+    if((a != b) && (naElementOverlap(a, b, 1, 1)))
       naError("b overlaps misaligned with a");
   #endif
   return ((a[0] == b[0]));
 }
 NA_IDEF NABool naEqualV2dE(const double* a, const double* b){
   #ifndef NDEBUG
-    if((a != b) && (naAbsi((NASizeInt)(a-b)) < 2))
+    if((a != b) && (naElementOverlap(a, b, 2, 2)))
       naError("b overlaps misaligned with a");
   #endif
   return ((a[0] == b[0]) && (a[1] == b[1]));
 }
 NA_IDEF NABool naEqualV3dE(const double* a, const double* b){
   #ifndef NDEBUG
-    if((a != b) && (naAbsi((NASizeInt)(a-b)) < 3))
+    if((a != b) && (naElementOverlap(a, b, 3, 3)))
       naError("b overlaps misaligned with a");
   #endif
   return ((a[0] == b[0]) && (a[1] == b[1]) && (a[2] == b[2]));
 }
 NA_IDEF NABool naEqualV4dE(const double* a, const double* b){
   #ifndef NDEBUG
-    if((a != b) && (naAbsi((NASizeInt)(a-b)) < 4))
+    if((a != b) && (naElementOverlap(a, b, 4, 4)))
       naError("b overlaps misaligned with a");
   #endif
   return ((a[0] == b[0]) && (a[1] == b[1]) && (a[2] == b[2]) && (a[3] == b[3]));
 }
 NA_IDEF NABool naEqualV1fE(const float* a, const float* b){
   #ifndef NDEBUG
-    if((a != b) && (naAbsi((NASizeInt)(a-b)) < 1))
+    if((a != b) && (naElementOverlap(a, b, 1, 1)))
       naError("b overlaps misaligned with a");
   #endif
   return ((a[0] == b[0]));
 }
 NA_IDEF NABool naEqualV2fE(const float* a, const float* b){
   #ifndef NDEBUG
-    if((a != b) && (naAbsi((NASizeInt)(a-b)) < 2))
+    if((a != b) && (naElementOverlap(a, b, 2, 2)))
       naError("b overlaps misaligned with a");
   #endif
   return ((a[0] == b[0]) && (a[1] == b[1]));
 }
 NA_IDEF NABool naEqualV3fE(const float* a, const float* b){
   #ifndef NDEBUG
-    if((a != b) && (naAbsi((NASizeInt)(a-b)) < 3))
+    if((a != b) && (naElementOverlap(a, b, 3, 3)))
       naError("b overlaps misaligned with a");
   #endif
   return ((a[0] == b[0]) && (a[1] == b[1]) && (a[2] == b[2]));
 }
 NA_IDEF NABool naEqualV4fE(const float* a, const float* b){
   #ifndef NDEBUG
-    if((a != b) && (naAbsi((NASizeInt)(a-b)) < 4))
+    if((a != b) && (naElementOverlap(a, b, 4, 4)))
       naError("b overlaps misaligned with a");
   #endif
   return ((a[0] == b[0]) && (a[1] == b[1]) && (a[2] == b[2]) && (a[3] == b[3]));

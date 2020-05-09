@@ -97,8 +97,8 @@ struct NATreeConfiguration{
   void*                         configdata;
 
   #ifndef NDEBUG
-  NAInt                         sizeofNode;
-  NAInt                         sizeofLeaf;
+    size_t                      sizeofNode;
+    size_t                      sizeofLeaf;
   #endif
 
   NAKeyIndexGetter              keyIndexGetter;

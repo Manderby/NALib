@@ -34,8 +34,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   if(flags & NA_TREE_QUADTREE){
   
     #ifndef NDEBUG
-      config->sizeofNode = naSizeof(NATreeQuadNode);
-      config->sizeofLeaf = naSizeof(NATreeQuadLeaf);
+      config->sizeofNode = sizeof(NATreeQuadNode);
+      config->sizeofLeaf = sizeof(NATreeQuadLeaf);
     #endif
     
     config->childpernode            = 4;
@@ -80,8 +80,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   }else if(flags & NA_TREE_OCTTREE){
   
     #ifndef NDEBUG
-      config->sizeofNode = naSizeof(NATreeOctNode);
-      config->sizeofLeaf = naSizeof(NATreeOctLeaf);
+      config->sizeofNode = sizeof(NATreeOctNode);
+      config->sizeofLeaf = sizeof(NATreeOctLeaf);
     #endif
 
     config->childpernode            = 8;
@@ -126,8 +126,8 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   }else{
 
     #ifndef NDEBUG
-      config->sizeofNode = naSizeof(NATreeBinNode);
-      config->sizeofLeaf = naSizeof(NATreeBinLeaf);
+      config->sizeofNode = sizeof(NATreeBinNode);
+      config->sizeofLeaf = sizeof(NATreeBinLeaf);
     #endif
 
     config->childpernode            = 2;

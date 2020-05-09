@@ -267,7 +267,7 @@ NA_HDEF NABufferPart* naPrepareBufferPartSourceBuffer(NATreeIterator* partiter, 
 NA_HIDEF NAInt naGetBufferPartNormedStart(NAInt start){
   NAInt signshift = (start < 0);   // Note that (start < 0) either results in 0 or 1.
   return (((start + signshift) / NA_INTERNAL_BUFFER_PART_BYTESIZE) - signshift) * NA_INTERNAL_BUFFER_PART_BYTESIZE;
-  // Examples explain best how this behaves (assume default partsize to be 10):
+  // Examples explain best how this behaves (assume default part size to be 10):
   //  11:  (( 11 + 0) / 10) - 0 * 10 =  10
   //  10:  (( 10 + 0) / 10) - 0 * 10 =  10
   //   9:  ((  9 + 0) / 10) - 0 * 10 =   0

@@ -23,20 +23,20 @@
 // //////////////////////////////////////
 
 
-NA_IDEF NASizeUInt naGetSystemMemoryPagesize(){
+NA_IDEF size_t naGetSystemMemoryPagesize(){
   #if NA_OS == NA_OS_WINDOWS
     SYSTEM_INFO info;
     GetSystemInfo(&info);
-    return (NASizeUInt)info.dwPageSize;
+    return (size_t)info.dwPageSize;
   #else
-    return (NASizeUInt)sysconf(_SC_PAGESIZE);
+    return (size_t)sysconf(_SC_PAGESIZE);
   #endif
 }
 
 
 
-NA_IDEF NASizeUInt naGetSystemMemoryPagesizeMask(){
-  return ~(NASizeUInt)(naGetSystemMemoryPagesize() - NA_ONE);
+NA_IDEF size_t naGetSystemMemoryPagesizeMask(){
+  return ~(naGetSystemMemoryPagesize() - 1);
 }
 
 

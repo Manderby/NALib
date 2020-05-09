@@ -110,7 +110,7 @@ NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
 NA_IDEF void* naMallocPageAligned(NAUInt bytesize){
   // Note that due to some strange reason, aligned_alloc and valloc not work
   // with clang. Therefore, a simple call to naMallocAligned is used.
-  return naMallocAligned(bytesize, naGetSystemMemoryPagesize());
+  return naMallocAligned(bytesize, (NAUInt)naGetSystemMemoryPagesize());
 }
 
 

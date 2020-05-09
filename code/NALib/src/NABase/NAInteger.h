@@ -191,7 +191,7 @@ typedef int32_t        int32;
 //
 // If your NAInt is defined to use less bits than an address but you are
 // still in need for an integer which has the same bytesize as an address,
-// have a look at NASizeInt.
+// use size_t or ptrdiff_t.
 //
 // NAInt will be used as the default integer type in NALib. Many fundamental
 // functions will return NAInt or expect it as an argument. Note that the
@@ -301,36 +301,6 @@ typedef int32_t        int32;
 // numbers.
 typedef uint8 NAByte;
 
-
-
-// NASizeInt is the type which can hold size_t values. These are used for
-// example if two pointers are subtracted from each other. More precisely
-// it is the type returned by the sizeof operator.
-//
-// NALib assumes that this is the same as the number of bits used for an
-// address.
-//
-// NASizeInt is always a native int type, never emulated. If for any reason,
-// there does not exist a native integer type with as many bits as are
-// required for an address, an error is emitted as NALib will most likely
-// die a horrible death.
-
-#if NA_ADDRESS_BITS == NA_TYPE64_BITS && defined NA_TYPE_INT64
-  typedef int64  NASizeInt;
-  typedef uint64 NASizeUInt;
-#elif NA_ADDRESS_BITS == NA_TYPE32_BITS && defined NA_TYPE_INT32
-  typedef int32  NASizeInt;
-  typedef uint32 NASizeUInt;
-#elif NA_ADDRESS_BITS == NA_TYPE16_BITS && defined NA_TYPE_INT16
-  typedef int16  NASizeInt;
-  typedef uint16 NASizeUInt;
-#else
-  typedef NAInt  NASizeInt;
-  typedef NAUInt NASizeUInt
-  #if NA_TYPE_NAINT_BITS < NA_ADDRESS_BITS
-    #error "No native integer type available to store an address"
-  #endif
-#endif
 
 
 #endif // NA_INTEGER_INCLUDED

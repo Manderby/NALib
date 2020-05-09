@@ -33,7 +33,7 @@ void naStopTestGroup();
 
 
 
-#define NA_TEST_MAX_MACRO_LENGTH 45
+#define NA_TEST_MAX_MACRO_LENGTH 40
 
 #define printMacroHead(macro)\
 {\

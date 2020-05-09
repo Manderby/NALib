@@ -229,6 +229,17 @@ typedef void (*NAMutator)  (      void*);
 // - General callback functions
 
 
+
+#ifndef NDEBUG
+  // Returns whether the two arrays overlap with the given amount of
+  // elements in between. Both pointers must be of the same type.
+  #define naElementOverlap(ptrA, ptrB, countA, countB)\
+    ((((ptrB) - (ptrA)) < countA) && (((ptrB) - (ptrA)) > -countB))
+
+#endif
+
+
+
 #endif // NA_LANGUAGE_INCLUDED
 
 // Copyright (c) NALib, Tobias Stamm

@@ -27,6 +27,7 @@ Smaller Things:
   NA_INLINE_DEFINITION_NON_STANDARD and some others were renamed.
 - Moving to Visual Studio 2019. Project for VisualStudio 10 removed.
 - Adapted documentation.txt
+- Removed NASizeInt, now using size_t and ptrdiff_t
   
 
 

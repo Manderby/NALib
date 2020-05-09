@@ -537,10 +537,6 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
     NA_UNUSED(zbufferadler);
     NA_UNUSED(adler);
   #endif
-  
-  #ifndef NDEBUG
-//    naDebugTree(&(output->parts));
-  #endif
 }
 
 

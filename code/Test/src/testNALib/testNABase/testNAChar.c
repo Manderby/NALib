@@ -9,10 +9,10 @@
 
 
 void testNAChar(){
-  // Testing if types can be assigned.
-
-  NAUTF8Char utf8Char = 'M';
-  naT(utf8Char == 'M');
+  naG("typedefs"){
+    NAUTF8Char utf8Char = 'M';
+    naT(utf8Char == 'M');
+  }
 }
 
 

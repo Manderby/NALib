@@ -37,8 +37,8 @@
 // Returns the number of bytes used per memory page as well as a mask which
 // you can combine with & (AND) with a pointer to get the page-aligned address
 // of that pointer.
-NA_IAPI NASizeUInt naGetSystemMemoryPagesize(void);
-NA_IAPI NASizeUInt naGetSystemMemoryPagesizeMask(void);
+NA_IAPI size_t naGetSystemMemoryPagesize(void);
+NA_IAPI size_t naGetSystemMemoryPagesizeMask(void);
 
 
 
@@ -143,7 +143,7 @@ NA_IAPI void* naMallocAligned     (NAUInt bytesize, NAUInt align);
 NA_IAPI void* naMallocPageAligned (NAUInt bytesize);
 NA_IAPI void  naFreeAligned       (void* ptr);
 
-NA_API  void* naMallocTmp         (NAUInt bytesize);
+NA_API  void* naMallocTmp         (size_t bytesize);
 #define       naNew               (type)
 NA_API  void  naDelete            (void* pointer);
 
@@ -421,10 +421,10 @@ NA_API  void   naStartRuntime(void);
 NA_API  void   naStopRuntime(void);
 
 NA_API  void   naCollectGarbage(void);
-NA_IAPI NAUInt naGetRuntimeGarbageBytesize(void);
+NA_IAPI size_t naGetRuntimeGarbageByteSize(void);
 
-NA_IAPI NAUInt naGetRuntimeMemoryPageSize(void);
-NA_IAPI NAUInt naGetRuntimePoolPartSize(void);
+NA_IAPI size_t naGetRuntimeMemoryPageSize(void);
+NA_IAPI size_t naGetRuntimePoolPartSize(void);
 
 // In order to work with specific types, each type trying to use the runtime
 // system needs to register itself to the runtime system upon compile time.

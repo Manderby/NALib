@@ -18,13 +18,26 @@ void na_mutator_func(void* param){
 
 
 void testNALanguage(){
-  // Testing if types can be assigned.
+  naG("typedefs"){
+    NAAccessor testAccessor = na_accessor_func;
+    NAMutator testMutator = na_mutator_func;
+    naT(testAccessor == na_accessor_func);
+    naT(testMutator == na_mutator_func);
+  }
 
-  NAAccessor testAccessor = na_accessor_func;
-  naT(testAccessor == na_accessor_func);
-
-  NAMutator testMutator = na_mutator_func;
-  naT(testMutator == na_mutator_func);
+  #ifndef NDEBUG
+    naG("ElementOverlap"){
+      int32 test[3] = {42, 42, 42};
+      naT(naElementOverlap(&test[0], &test[0], 0, 0) == NA_FALSE);
+      naT(naElementOverlap(&test[0], &test[1], 0, 0) == NA_FALSE);
+      naT(naElementOverlap(&test[0], &test[1], 0, 1) == NA_FALSE);
+      naT(naElementOverlap(&test[1], &test[0], 0, 0) == NA_FALSE);
+      naT(naElementOverlap(&test[0], &test[2], 2, 0) == NA_FALSE);
+      naT(naElementOverlap(&test[0], &test[1], 2, 0) == NA_TRUE);
+      naT(naElementOverlap(&test[1], &test[0], 0, 2) == NA_TRUE);
+      naT(naElementOverlap(&test[2], &test[0], 0, 2) == NA_FALSE);
+    }
+  #endif
 }
 
 
