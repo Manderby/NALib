@@ -178,7 +178,7 @@
   #define naCastUIntTou64(i)   naMakeu64WithLo((uint32)i)
 #endif
 
-
+// This comment is just a test to see if submodules work.
 
 #endif // NA_INT_64_INCLUDED
 
