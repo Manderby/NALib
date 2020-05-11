@@ -63,19 +63,19 @@ void naPrintTestName(NATestData* testData){
 
 
 void naPrintTestGroup(NATestData* testData){
-  int leafSuccessCount = testData->leafSuccessCount;
-  int leafTotalCount = testData->totalLeafCount;
+  NAInt leafSuccessCount = (NAInt)testData->leafSuccessCount;
+  NAInt leafTotalCount = (NAInt)testData->totalLeafCount;
   double leafRatio = (double)leafSuccessCount / (double)leafTotalCount * 100.;
-  int childSuccessCount = testData->childSuccessCount;
-  int childTotalCount = naGetStackCount(&(testData->childs));
+  NAInt childSuccessCount = (NAInt)testData->childSuccessCount;
+  NAInt childTotalCount = (NAInt)naGetStackCount(&(testData->childs));
   double childRatio = (double)childSuccessCount / (double)childTotalCount * 100.;
 
   printf("G ");
   if(testData->parent){naPrintTestName(testData->parent);}
   if(leafTotalCount == childTotalCount){
-    printf("%s: %d / %d Tests ok (%.02f%%)" NA_NL, testData->name, leafSuccessCount, leafTotalCount, leafRatio);
+    printf("%s: %" NA_PRIi " / %" NA_PRIi " Tests ok (%.02f%%)" NA_NL, testData->name, leafSuccessCount, leafTotalCount, leafRatio);
   }else{
-    printf("%s: %d / %d Groups ok (%.02f%%), %d / %d Tests ok (%.02f%%)" NA_NL, testData->name, childSuccessCount, childTotalCount, childRatio, leafSuccessCount, leafTotalCount, leafRatio);
+    printf("%s: %" NA_PRIi " / %" NA_PRIi " Groups ok (%.02f%%), %" NA_PRIi " / %" NA_PRIi " Tests ok (%.02f%%)" NA_NL, testData->name, childSuccessCount, childTotalCount, childRatio, leafSuccessCount, leafTotalCount, leafRatio);
   }
 }
 

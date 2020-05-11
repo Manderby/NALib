@@ -12,15 +12,20 @@
 // PREPROCESSOR_MACRO=value
 // Without spaces at the equal sign.
 //
+// For Visual Studio users: When you add NALib as a project to your own .sln
+// file, the NALib project automatically searches for a property sheet named
+// NAConfiguration.props which should be located right next the .sln file.
+// You can configure NALib for you whole solution with that. See an example
+// in the proj folder. By doing so, the preprocessor macros for NALib will
+// inherit from you settings defined in there. If no such file exists, no
+// settings are imported but the ones defined in this file are used.
+//
 // NAConfiguration.h is included at the beginning of the NABase.h file.
 // Do not include it anywhere else.
 //
 // Note that there is no possibility to platform-independently provide a
 // clean configuration structure without the need to configure either the
-// NALib, installation or your compiler in one or another way. The solution
-// with this file allows you to share NALib with a default implementation
-// but which can be altered project-wise by as simple compiler prefix macro
-// definition.
+// NALib, installation, project, or your compiler in one or another way.
 
 
 
