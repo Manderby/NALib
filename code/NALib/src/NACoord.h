@@ -8,7 +8,7 @@
   extern "C"{
 #endif
 
-// comment
+
 
 // Following are definitions for integer and floating-point elements storing
 // positions and lengths on 1-D, 2-D and 3-D coordinate systems. Namely:
