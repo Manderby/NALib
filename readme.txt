@@ -31,11 +31,13 @@ Documentation:
 - Some design principles can be read in the doc/documentation.txt file.
 
 
-Contribute:
------------
+Contribute & License:
+---------------------
 This project has so far not been designed with a community in mind, as it has
 been used as a private engineering code collection. Therefore, be gentle and
 patient.
+
+License: Public Domain
 
 
 History:
