@@ -18,6 +18,8 @@
 
 
 
+// Note that you could add an include path in your project to access the
+// NAXXX.h files. But for the sake of simplicity, we use relative paths here.
 #include "../../NALib/src/NABase.h"
 #include "../../NALib/src/NAUI.h"
 #include "../../NALib/src/NATranslator.h"
@@ -79,13 +81,13 @@ NABool buttonPressed(NAReaction reaction){
 NABool checkBoxPressed(NAReaction reaction){
   NA_UNUSED(reaction);
   NABool state = naGetCheckBoxState(reaction.uielement);
-  printf("Checked. Status now is %d." NA_NL, (int)state);
+  printf("Checked. New status is %d." NA_NL, (int)state);
   return NA_TRUE;
 }
 
 NABool radioPressed(NAReaction reaction){
   NA_UNUSED(reaction);
-  printf("Checked radio 0x%x." NA_NL, (int)reaction.uielement);
+  printf("Checked radio %p." NA_NL, reaction.uielement);
   return NA_TRUE;
 }
 
