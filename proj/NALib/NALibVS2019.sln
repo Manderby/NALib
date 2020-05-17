@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30011.22
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{1DC94220-C406-4BDC-934C-2C701A67BC67}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\doc\documentation.txt = ..\..\doc\documentation.txt
+		..\..\license.txt = ..\..\license.txt
+		..\..\doc\NALibChangelogV0_V10.txt = ..\..\doc\NALibChangelogV0_V10.txt
+		..\..\doc\NALibChangelogV11_V20.txt = ..\..\doc\NALibChangelogV11_V20.txt
+		..\..\doc\NALibChangelogV21_V30.txt = ..\..\doc\NALibChangelogV21_V30.txt
+		..\..\doc\nalibtitle.png = ..\..\doc\nalibtitle.png
+		..\..\readme.txt = ..\..\readme.txt
+		..\..\doc\todo.txt = ..\..\doc\todo.txt
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NALib", "..\..\code\NALib\NALib.vcxproj", "{D03034CF-5CE8-4E68-8FD9-D5820E2745BA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "testNALib", "..\..\code\Test\testNALib.vcxproj", "{CD53F35F-B3FB-43C2-9666-64094DAF4F25}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D03034CF-5CE8-4E68-8FD9-D5820E2745BA}.Debug|x64.ActiveCfg = Debug|x64
+		{D03034CF-5CE8-4E68-8FD9-D5820E2745BA}.Debug|x64.Build.0 = Debug|x64
+		{D03034CF-5CE8-4E68-8FD9-D5820E2745BA}.Debug|x86.ActiveCfg = Debug|Win32
+		{D03034CF-5CE8-4E68-8FD9-D5820E2745BA}.Debug|x86.Build.0 = Debug|Win32
+		{D03034CF-5CE8-4E68-8FD9-D5820E2745BA}.Release|x64.ActiveCfg = Release|x64
+		{D03034CF-5CE8-4E68-8FD9-D5820E2745BA}.Release|x64.Build.0 = Release|x64
+		{D03034CF-5CE8-4E68-8FD9-D5820E2745BA}.Release|x86.ActiveCfg = Release|Win32
+		{D03034CF-5CE8-4E68-8FD9-D5820E2745BA}.Release|x86.Build.0 = Release|Win32
+		{CD53F35F-B3FB-43C2-9666-64094DAF4F25}.Debug|x64.ActiveCfg = Debug|x64
+		{CD53F35F-B3FB-43C2-9666-64094DAF4F25}.Debug|x64.Build.0 = Debug|x64
+		{CD53F35F-B3FB-43C2-9666-64094DAF4F25}.Debug|x86.ActiveCfg = Debug|Win32
+		{CD53F35F-B3FB-43C2-9666-64094DAF4F25}.Debug|x86.Build.0 = Debug|Win32
+		{CD53F35F-B3FB-43C2-9666-64094DAF4F25}.Release|x64.ActiveCfg = Release|x64
+		{CD53F35F-B3FB-43C2-9666-64094DAF4F25}.Release|x64.Build.0 = Release|x64
+		{CD53F35F-B3FB-43C2-9666-64094DAF4F25}.Release|x86.ActiveCfg = Release|Win32
+		{CD53F35F-B3FB-43C2-9666-64094DAF4F25}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6FC5234C-0597-415F-85D4-114CD144B3F7}
+	EndGlobalSection
+EndGlobal
