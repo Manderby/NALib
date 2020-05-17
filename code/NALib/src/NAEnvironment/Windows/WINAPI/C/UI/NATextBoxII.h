@@ -8,7 +8,7 @@
 
 typedef struct NAWINAPITextBox NAWINAPITextBox;
 struct NAWINAPITextBox {
-  NACoreTextBox coretextbox;
+  NACoreTextBox coreTextBox;
   NAUIElement* nextTabStop;
   NAUIElement* prevTabStop;
 };
@@ -30,9 +30,9 @@ NAWINAPICallbackInfo naTextBoxWINAPIProc(NAUIElement* uielement, UINT message, W
 
 
 NABool naHandleTextBoxTabOrder(NAReaction reaction){
-  NAWINAPITextBox* winapitextbox = (NAWINAPITextBox*)reaction.uielement;
-  if(winapitextbox->nextTabStop){
-    SetFocus(naGetUIElementNativeID(winapitextbox->nextTabStop));
+  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)reaction.uielement;
+  if(winapiTextBox->nextTabStop){
+    SetFocus(naGetUIElementNativeID(winapiTextBox->nextTabStop));
     return NA_TRUE;
   }
   return NA_FALSE;
@@ -41,9 +41,9 @@ NABool naHandleTextBoxTabOrder(NAReaction reaction){
 
 
 NABool naHandleTextBoxReverseTabOrder(NAReaction reaction){
-  NAWINAPITextBox* winapitextbox = (NAWINAPITextBox*)reaction.uielement;
-  if(winapitextbox->prevTabStop){
-    SetFocus(naGetUIElementNativeID(winapitextbox->prevTabStop));
+  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)reaction.uielement;
+  if(winapiTextBox->prevTabStop){
+    SetFocus(naGetUIElementNativeID(winapiTextBox->prevTabStop));
     return NA_TRUE;
   }
   return NA_FALSE;
@@ -55,7 +55,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
   HWND hWnd;
   DWORD style;
 
-  NAWINAPITextBox* winapitextbox = naAlloc(NAWINAPITextBox);
+  NAWINAPITextBox* winapiTextBox = naAlloc(NAWINAPITextBox);
 
   style = WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN;
 
@@ -64,72 +64,72 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
-  naInitCoreTextBox(&(winapitextbox->coretextbox), hWnd);
-  winapitextbox->nextTabStop = winapitextbox;
-  winapitextbox->prevTabStop = winapitextbox;
+  naInitCoreTextBox(&(winapiTextBox->coreTextBox), hWnd);
+  winapiTextBox->nextTabStop = winapiTextBox;
+  winapiTextBox->prevTabStop = winapiTextBox;
 
-   naAddUIKeyboardShortcut(winapitextbox, naMakeKeybardStatus(0, NA_KEYCODE_TAB), naHandleTextBoxTabOrder, NA_NULL);
- naAddUIKeyboardShortcut(winapitextbox, naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB), naHandleTextBoxReverseTabOrder, NA_NULL);
+   naAddUIKeyboardShortcut(winapiTextBox, naMakeKeybardStatus(0, NA_KEYCODE_TAB), naHandleTextBoxTabOrder, NA_NULL);
+ naAddUIKeyboardShortcut(winapiTextBox, naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB), naHandleTextBoxReverseTabOrder, NA_NULL);
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
-  return (NATextBox*)winapitextbox;
+  return (NATextBox*)winapiTextBox;
 }
 
 
 
-NA_DEF void naDestructTextBox(NATextBox* textbox){
-  NAWINAPITextBox* winapitextbox = (NAWINAPITextBox*)textbox;
-  naClearCoreTextBox(&(winapitextbox->coretextbox));
+NA_DEF void naDestructTextBox(NATextBox* textBox){
+  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
+  naClearCoreTextBox(&(winapiTextBox->coreTextBox));
 }
 
 
 
-NA_DEF void naSetTextBoxText(NATextBox* textbox, const NAUTF8Char* text){
+NA_DEF void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text){
   TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
-  SendMessage(naGetUIElementNativeID(textbox), WM_SETTEXT, 0, (LPARAM)systemtext);
+  SendMessage(naGetUIElementNativeID(textBox), WM_SETTEXT, 0, (LPARAM)systemtext);
   naFree(systemtext);
 }
 
 
 
-NA_DEF void naSetTextBoxTextAlignment(NATextBox* textbox, NATextAlignment alignment){
-  long style = (long)GetWindowLongPtr(naGetUIElementNativeID(textbox), GWL_STYLE);
+NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment){
+  long style = (long)GetWindowLongPtr(naGetUIElementNativeID(textBox), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | getWINAPITextAlignmentWithAlignment(alignment);
-  SetWindowLongPtr(naGetUIElementNativeID(textbox), GWL_STYLE, style);
+  SetWindowLongPtr(naGetUIElementNativeID(textBox), GWL_STYLE, style);
 }
 
 
 
-NA_DEF void naSetTextBoxFontKind(NATextBox* textbox, NAFontKind kind){
-  NAWINAPITextBox* winapitextbox = (NAWINAPITextBox*)textbox;
-  SendMessage(naGetUIElementNativeID(winapitextbox), WM_SETFONT, (WPARAM)getFontWithKind(kind), MAKELPARAM(TRUE, 0));
+NA_DEF void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind){
+  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
+  SendMessage(naGetUIElementNativeID(winapiTextBox), WM_SETFONT, (WPARAM)getFontWithKind(kind), MAKELPARAM(TRUE, 0));
 }
 
 
 
-NA_DEF void naSetTextBoxEditable(NATextBox* textbox, NABool editable){
-  SendMessage(naGetUIElementNativeID(textbox), EM_SETREADONLY, (WPARAM)!editable, 0);
+NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
+  SendMessage(naGetUIElementNativeID(textBox), EM_SETREADONLY, (WPARAM)!editable, 0);
 }
 
 
 
-NA_HDEF NAUIElement** naGetTextBoxNextTabReference(NATextBox* textbox){
-  NAWINAPITextBox* winapitextbox = (NAWINAPITextBox*)textbox;
-  return &(winapitextbox->nextTabStop);
+NA_HDEF NAUIElement** naGetTextBoxNextTabReference(NATextBox* textBox){
+  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
+  return &(winapiTextBox->nextTabStop);
 }
 
 
 
-NA_HDEF NAUIElement** naGetTextBoxPrevTabReference(NATextBox* textbox){
-  NAWINAPITextBox* winapitextbox = (NAWINAPITextBox*)textbox;
-  return &(winapitextbox->prevTabStop);
+NA_HDEF NAUIElement** naGetTextBoxPrevTabReference(NATextBox* textBox){
+  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
+  return &(winapiTextBox->prevTabStop);
 }
 
 
 
-NA_HDEF NARect naGetTextBoxAbsoluteInnerRect(NACoreUIElement* textbox){
-  NA_UNUSED(textbox);
+NA_HDEF NARect naGetTextBoxAbsoluteInnerRect(NACoreUIElement* textBox){
+  NA_UNUSED(textBox);
   return naMakeRectS(20, 40, 100, 50);
 }
 

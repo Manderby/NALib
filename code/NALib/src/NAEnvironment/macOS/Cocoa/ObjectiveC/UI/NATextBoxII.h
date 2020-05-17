@@ -7,7 +7,7 @@
 
 
 @implementation NACocoaTextBox
-- (id) initWithCoreTextBox:(NACoreTextBox*)newcoretextbox frame:(NSRect)frame{
+- (id) initWithCoreTextBox:(NACoreTextBox*)newcoreTextBox frame:(NSRect)frame{
   NSRect clipRect;
   NSClipView* clipView;
   NSRect documentrect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
@@ -34,7 +34,7 @@
     )
   }
 
-  coretextbox = newcoretextbox;
+  coreTextBox = newcoreTextBox;
   return self;
 }
 - (void) setText:(const NAUTF8Char*)text{
@@ -57,54 +57,54 @@
 
 
 NA_DEF NATextBox* naNewTextBox(NASize size){
-  NACoreTextBox* coretextbox = naAlloc(NACoreTextBox);
+  NACoreTextBox* coreTextBox = naAlloc(NACoreTextBox);
   
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaTextBox* cocoaTextBox = [[NACocoaTextBox alloc] initWithCoreTextBox:coretextbox frame:frameRect];
-  naInitCoreTextBox(coretextbox, NA_COCOA_PTR_OBJC_TO_C(cocoaTextBox));
+  NACocoaTextBox* cocoaTextBox = [[NACocoaTextBox alloc] initWithCoreTextBox:coreTextBox frame:frameRect];
+  naInitCoreTextBox(coreTextBox, NA_COCOA_PTR_OBJC_TO_C(cocoaTextBox));
   
-  return (NATextBox*)coretextbox;
+  return (NATextBox*)coreTextBox;
 }
 
 
 
-NA_DEF void naDestructTextBox(NATextBox* textbox){
-  NACoreTextBox* coretextbox = (NACoreTextBox*)textbox;
-  naClearCoreTextBox(coretextbox);
+NA_DEF void naDestructTextBox(NATextBox* textBox){
+  NACoreTextBox* coreTextBox = (NACoreTextBox*)textBox;
+  naClearCoreTextBox(coreTextBox);
 }
 
 
 
-NA_DEF void naSetTextBoxText(NATextBox* textbox, const NAUTF8Char* text){
-  naDefineCocoaObject(NACocoaTextBox, cocoaTextBox, textbox);
+NA_DEF void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text){
+  naDefineCocoaObject(NACocoaTextBox, cocoaTextBox, textBox);
   [cocoaTextBox setText:text];
 }
 
 
 
-NA_DEF void naSetTextBoxTextAlignment(NATextBox* textbox, NATextAlignment alignment){
-  naDefineCocoaObject(NACocoaTextBox, cocoaTextBox, textbox);
+NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment){
+  naDefineCocoaObject(NACocoaTextBox, cocoaTextBox, textBox);
   [cocoaTextBox setTextAlignment:alignment];
 }
 
 
 
-NA_DEF void naSetTextBoxFontKind(NATextBox* textbox, NAFontKind kind){
-  naDefineCocoaObject(NACocoaTextBox, cocoaTextBox, textbox);
+NA_DEF void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind){
+  naDefineCocoaObject(NACocoaTextBox, cocoaTextBox, textBox);
   [cocoaTextBox setFontKind:kind];
 }
 
 
 
-NA_DEF void naSetTextBoxEditable(NATextBox* textbox, NABool editable){
-  naDefineCocoaObject(NACocoaTextBox, cocoaTextBox, textbox);
+NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
+  naDefineCocoaObject(NACocoaTextBox, cocoaTextBox, textBox);
   [cocoaTextBox setReadOnly:!editable];
 }
 
 
 
-NA_HDEF NARect naGetTextBoxAbsoluteInnerRect(NACoreUIElement* textbox){
-  NA_UNUSED(textbox);
+NA_HDEF NARect naGetTextBoxAbsoluteInnerRect(NACoreUIElement* textBox){
+  NA_UNUSED(textBox);
   return naMakeRectS(20, 40, 100, 50);
 }
 

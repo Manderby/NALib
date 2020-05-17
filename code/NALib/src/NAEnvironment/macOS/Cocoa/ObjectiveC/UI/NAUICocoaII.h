@@ -17,17 +17,17 @@ NA_HAPI NARect naGetApplicationAbsoluteRect(void);
 NA_HAPI NARect naGetScreenAbsoluteRect(NACoreUIElement* screen);
 NA_HAPI NARect naGetWindowAbsoluteOuterRect(NACoreUIElement* window);
 NA_HAPI NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space);
-NA_HDEF NARect naGetImageSpaceAbsoluteInnerRect(NACoreUIElement* imagespace);
+NA_HDEF NARect naGetImageSpaceAbsoluteInnerRect(NACoreUIElement* imageSpace);
 NA_HDEF NARect naGetOpenGLSpaceAbsoluteInnerRect(NACoreUIElement* space);
 NA_HAPI NARect naGetButtonAbsoluteInnerRect(NACoreUIElement* button);
 NA_HAPI NARect naGetRadioAbsoluteInnerRect(NACoreUIElement* radio);
-NA_HAPI NARect naGetCheckBoxAbsoluteInnerRect(NACoreUIElement* checkbox);
+NA_HAPI NARect naGetCheckBoxAbsoluteInnerRect(NACoreUIElement* checkBox);
 NA_HAPI NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* label);
-NA_HDEF NARect naGetTextFieldAbsoluteInnerRect(NACoreUIElement* textfield);
-NA_HDEF NARect naGetTextBoxAbsoluteInnerRect(NACoreUIElement* textbox);
+NA_HDEF NARect naGetTextFieldAbsoluteInnerRect(NACoreUIElement* textField);
+NA_HDEF NARect naGetTextBoxAbsoluteInnerRect(NACoreUIElement* textBox);
 
-NA_HAPI void naRenewWindowMouseTracking(NACoreWindow* corewindow);
-NA_HAPI void naClearWindowMouseTracking(NACoreWindow* corewindow);
+NA_HAPI void naRenewWindowMouseTracking(NACoreWindow* coreWindow);
+NA_HAPI void naClearWindowMouseTracking(NACoreWindow* coreWindow);
 
 
 // Not much of use currently, but consistent with the WINAPI implementation.
@@ -43,7 +43,7 @@ struct NACocoaApplication {
 @end
 
 @interface NACocoaWindow : NSWindow <NSWindowDelegate>{
-  NACoreWindow* corewindow;
+  NACoreWindow* coreWindow;
   NAUInt trackingcount;
   NSTrackingArea* trackingarea;
 }
@@ -56,14 +56,14 @@ struct NACocoaApplication {
 @end
 
 @interface NACocoaImageSpace : NSImageView{
-  NACoreImageSpace* coreimagespace;
+  NACoreImageSpace* coreImageSpace;
   NAUIImage* uiimage;
 }
 @end
 
 #if (NA_COMPILE_OPENGL == 1)
   @interface NACocoaOpenGLSpace : NSOpenGLView{
-    NACoreOpenGLSpace* coreopenglspace;
+    NACoreOpenGLSpace* coreOpenGLspace;
     NSTrackingArea* trackingarea;
     NAMutator initFunc;
     void* initData;
@@ -72,13 +72,13 @@ struct NACocoaApplication {
 #endif
 
 @interface NACocoaButton : NSButton{
-  NACoreButton* corebutton;
+  NACoreButton* coreButton;
 }
 - (void) onPressed:(id)sender;
 @end
 
 @interface NACocoaRadio : NSButton{
-  NACoreRadio* coreradio;
+  NACoreRadio* coreRadio;
   // Core thinks it's smart by doing things automatically. Unfortunately, we
   // have to encapsulate the radio into its own view to get the behaviour
   // we need.
@@ -88,7 +88,7 @@ struct NACocoaApplication {
 @end
 
 @interface NACocoaCheckBox : NSButton{
-  NACoreCheckBox* corecheckbox;
+  NACoreCheckBox* coreCheckBox;
 }
 @end
 
@@ -97,18 +97,18 @@ struct NACocoaApplication {
 @end
 
 @interface NACocoaLabel : NSTextField{
-  NACoreLabel* corelabel;
+  NACoreLabel* coreLabel;
 }
 @end
 
 @interface NACocoaTextField : NSTextField <NSTextFieldDelegate>{
-  NACoreTextField* coretextfield;
+  NACoreTextField* coreTextField;
 }
 - (void) onEdited:(id)sender;
 @end
 
 @interface NACocoaTextBox : NSTextView{
-  NACoreTextBox* coretextbox;
+  NACoreTextBox* coreTextBox;
   NSScrollView* scrollview;
 }
 - (NSView*) getContainingView;

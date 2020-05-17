@@ -51,89 +51,158 @@ NA_IAPI NAi256 naAbsi256(NAi256 i);
 
 
 
-// The masks for the sign bits of different type sizes.
-#define NA_SIGN_MASK_8   ((int8) (1 << (NA_TYPE8_BITS - 1)))
-#define NA_SIGN_MASK_16  ((int16)(1 << (NA_TYPE16_BITS - 1)))
-#define NA_SIGN_MASK_32  ((int32)(1 << (NA_TYPE32_BITS - 1)))
-#define NA_SIGN_MASK_64  naMakei64(NA_SIGN_MASK_32, NA_ZERO_u32)
-#define NA_SIGN_MASK_128 naMakei128(NA_SIGN_MASK_64, NA_ZERO_u64)
-#define NA_SIGN_MASK_256 naMakei256(NA_SIGN_MASK_128, NA_ZERO_u128)
-
-
-
 // 8 bit basic integer constants
-#define NA_ZERO_u8              ((uint8)0u)
-#define NA_ONE_u8               ((uint8)1u)
-#define NA_ZERO_i8              ((int8)0)
-#define NA_ONE_i8               ((int8)1)
-#define NA_MINUS_ONE_i8         ((int8)NA_MAX_u8)
+#define NA_SIGN_MASK_8         ((int8) (1 << (NA_TYPE8_BITS - 1)))
+#define NA_ZERO_u8             ((uint8)0u)
+#define NA_ONE_u8              ((uint8)1u)
+#define NA_ZERO_i8             ((int8)0)
+#define NA_ONE_i8              ((int8)1)
+#define NA_MINUS_ONE_i8        ((int8)NA_MAX_u8)
+
+#define NA_MAX_u8              UINT8_MAX
+#define NA_MAX_i8              INT8_MAX
+#define NA_MIN_i8              INT8_MIN
 
 
 
 // 16 bit basic integer constants
-#define NA_ZERO_u16             ((uint16)0u)
-#define NA_ONE_u16              ((uint16)1u)
-#define NA_ZERO_i16             ((int16)0)
-#define NA_ONE_i16              ((int16)1)
-#define NA_MINUS_ONE_i16        ((int16)NA_MAX_u16)
+#define NA_SIGN_MASK_16        (int16)((uint8)NA_SIGN_MASK_8 << NA_TYPE8_BITS | NA_ZERO_u8)
+#define NA_ZERO_u16            ((uint16)0u)
+#define NA_ONE_u16             ((uint16)1u)
+#define NA_ZERO_i16            ((int16)0)
+#define NA_ONE_i16             ((int16)1)
+#define NA_MINUS_ONE_i16       ((int16)NA_MAX_u16)
+
+#define NA_MAX_u16             UINT16_MAX
+#define NA_MAX_i16             INT16_MAX
+#define NA_MIN_i16             INT16_MIN
 
 
 
 // 32 bit basic integer constants
-#define NA_ZERO_u32             ((uint32)0u)
-#define NA_ONE_u32              ((uint32)1u)
-#define NA_ZERO_i32             ((int32)0)
-#define NA_ONE_i32              ((int32)1)
-#define NA_MINUS_ONE_i32        ((int32)NA_MAX_u32)
+#define NA_SIGN_MASK_32        (int32)((uint16)NA_SIGN_MASK_16 << NA_TYPE16_BITS | NA_ZERO_u16)
+#define NA_ZERO_u32            ((uint32)0u)
+#define NA_ONE_u32             ((uint32)1u)
+#define NA_ZERO_i32            ((int32)0)
+#define NA_ONE_i32             ((int32)1)
+#define NA_MINUS_ONE_i32       ((int32)NA_MAX_u32)
+
+#define NA_MAX_u32             UINT32_MAX
+#define NA_MAX_i32             INT32_MAX
+#define NA_MIN_i32             INT32_MIN
+
 
 
 // 64 bit basic integer constants
+#define NA_SIGN_MASK_64        naMakei64(NA_SIGN_MASK_32, NA_ZERO_u32)
 #if defined NA_TYPE_INT64
-  #define NA_ZERO_u64           ((uint64)0u)
-  #define NA_ONE_u64            ((uint64)1u)
-  #define NA_ZERO_i64           ((int64)0)
-  #define NA_ONE_i64            ((int64)1)
-  #define NA_MINUS_ONE_i64      ((int64)NA_MAX_u64)
+  #define NA_ZERO_u64          ((uint64)0u)
+  #define NA_ONE_u64           ((uint64)1u)
+  #define NA_ZERO_i64          ((int64)0)
+  #define NA_ONE_i64           ((int64)1)
+  #define NA_MINUS_ONE_i64     ((int64)NA_MAX_u64)
+
+  #if defined UINT64_MAX
+    #define NA_MAX_u64         UINT64_MAX
+  #else
+    #define NA_MAX_u64         (~NA_ZERO_u64)
+  #endif
+  #if defined INT64_MAX
+    #define NA_MAX_i64         INT64_MAX
+  #else
+    #define NA_MAX_i64         (~NA_SIGN_MASK_64)
+  #endif
+  #if defined INT64_MIN
+    #define NA_MIN_i64         INT64_MIN
+  #else
+    #define NA_MIN_i64         NA_SIGN_MASK_64
+  #endif
 #else
-  #define NA_ZERO_u64           naMakeu64WithLo(NA_ZERO_u32)
-  #define NA_ONE_u64            naMakeu64WithLo(NA_ONE_u32)
-  #define NA_ZERO_i64           naMakei64WithLo(NA_ZERO_i32)
-  #define NA_ONE_i64            naMakei64WithLo(NA_ONE_i32)
-  #define NA_MINUS_ONE_i64      naCastu64Toi64(NA_MAX_u64)
+  #define NA_ZERO_u64          naMakeu64WithLo(NA_ZERO_u32)
+  #define NA_ONE_u64           naMakeu64WithLo(NA_ONE_u32)
+  #define NA_ZERO_i64          naMakei64WithLo(NA_ZERO_i32)
+  #define NA_ONE_i64           naMakei64WithLo(NA_ONE_i32)
+  #define NA_MINUS_ONE_i64     naCastu64Toi64(NA_MAX_u64)
+
+  #define NA_MAX_u64           naMakeu64(NA_MAX_u32, NA_MAX_u32)
+  #define NA_MAX_i64           naMakei64(NA_MAX_i32, NA_MAX_u32)
+  #define NA_MIN_i64           naMakei64(NA_MIN_i32, NA_ZERO_u32)
 #endif
 
 
 
 // 128 bit basic integer constants
+#define NA_SIGN_MASK_128       naMakei128(NA_SIGN_MASK_64, NA_ZERO_u64)
 #if defined NA_TYPE_INT128
-  #define NA_ZERO_u128          ((uint128)0u)
-  #define NA_ONE_u128           ((uint128)1u)
-  #define NA_ZERO_i128          ((int128)0)
-  #define NA_ONE_i128           ((int128)1)
-  #define NA_MINUS_ONE_i128     ((int128)NA_MAX_u128)
+  #define NA_ZERO_u128         ((uint128)0u)
+  #define NA_ONE_u128          ((uint128)1u)
+  #define NA_ZERO_i128         ((int128)0)
+  #define NA_ONE_i128          ((int128)1)
+  #define NA_MINUS_ONE_i128    ((int128)NA_MAX_u128)
+
+  #if defined UINT128_MAX
+    #define NA_MAX_u128        UINT128_MAX
+  #else
+    #define NA_MAX_u128        (~NA_ZERO_u128)
+  #endif
+  #if defined INT128_MAX
+    #define NA_MAX_i128        INT128_MAX
+  #else
+    #define NA_MAX_i128        (~NA_SIGN_MASK_128)
+  #endif
+  #if defined INT128_MIN
+    #define NA_MIN_i128        INT128_MIN
+  #else
+    #define NA_MIN_i128        NA_SIGN_MASK_128
+  #endif
 #else
-  #define NA_ZERO_u128          naMakeu128WithLo(NA_ZERO_u64)
-  #define NA_ONE_u128           naMakeu128WithLo(NA_ONE_u64)
-  #define NA_ZERO_i128          naMakei128WithLo(NA_ZERO_i64)
-  #define NA_ONE_i128           naMakei128WithLo(NA_ONE_i64)
-  #define NA_MINUS_ONE_i128     naCastu128Toi128(NA_MAX_u128)
+  #define NA_ZERO_u128         naMakeu128WithLo(NA_ZERO_u64)
+  #define NA_ONE_u128          naMakeu128WithLo(NA_ONE_u64)
+  #define NA_ZERO_i128         naMakei128WithLo(NA_ZERO_i64)
+  #define NA_ONE_i128          naMakei128WithLo(NA_ONE_i64)
+  #define NA_MINUS_ONE_i128    naCastu128Toi128(NA_MAX_u128)
+
+  #define NA_MAX_u128          naMakeu128(NA_MAX_u64, NA_MAX_u64)
+  #define NA_MAX_i128          naMakei128(NA_MAX_i64, NA_MAX_u64)
+  #define NA_MIN_i128          naMakei128(NA_MIN_i64, NA_ZERO_u64)
 #endif
 
 
 
 // 256 bit basic integer constants
+#define NA_SIGN_MASK_256        naMakei256(NA_SIGN_MASK_128, NA_ZERO_u128)
 #if defined NA_TYPE_INT256
   #define NA_ZERO_u256          ((uint256)0u)
   #define NA_ONE_u256           ((uint256)1u)
   #define NA_ZERO_i256          ((int256)0)
   #define NA_ONE_i256           ((int256)1)
   #define NA_MINUS_ONE_i256     ((int256)NA_MAX_u256)
+
+  #if defined UINT256_MAX
+    #define NA_MAX_u256         UINT256_MAX
+  #else
+    #define NA_MAX_u256         (~NA_ZERO_u256)
+  #endif
+  #if defined INT256_MAX
+    #define NA_MAX_i256         INT256_MAX
+  #else
+    #define NA_MAX_i256         (~NA_SIGN_MASK_256)
+  #endif
+  #if defined INT256_MIN
+    #define NA_MIN_i256         INT256_MIN
+  #else
+    #define NA_MIN_i256         NA_SIGN_MASK_256
+  #endif
 #else
   #define NA_ZERO_u256          naMakeu256WithLo(NA_ZERO_u128)
   #define NA_ONE_u256           naMakeu256WithLo(NA_ONE_u128)
   #define NA_ZERO_i256          naMakei256WithLo(NA_ZERO_i128)
   #define NA_ONE_i256           naMakei256WithLo(NA_ONE_i128)
   #define NA_MINUS_ONE_i256     naCastu256Toi256(NA_MAX_u256)
+
+  #define NA_MAX_u256           naMakeu256(NA_MAX_u128, NA_MAX_u128)
+  #define NA_MAX_i256           naMakei256(NA_MAX_i128, NA_MAX_u128)
+  #define NA_MIN_i256           naMakei256(NA_MIN_i128, NA_ZERO_u128)
 #endif
 
 

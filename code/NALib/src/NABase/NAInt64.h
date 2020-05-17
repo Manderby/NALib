@@ -15,6 +15,11 @@
   NA_IAPI NAi64 naMakei64WithLo       (int32 lo);
   NA_IAPI NAi64 naMakei64WithDouble   (double lo);
 
+  #define naGeti64Hi(i)            ((int32)((i) >> NA_TYPE32_BITS))
+  #define naGeti64Lo(i)            ((uint32)i)
+  #define naGetu64Hi(u)            ((uint32)((u) >> NA_TYPE32_BITS))
+  #define naGetu64Lo(u)            ((uint32)u)
+
   #define naNegi64(i)                 (-(i))
   #define naInci64(i)                 (++(i))
   #define naDeci64(i)                 (--(i))
@@ -86,6 +91,11 @@
   NA_IAPI NAi64  naMakei64(int32 hi, uint32 lo);
   NA_IAPI NAi64  naMakei64WithLo(int32 lo);
   NA_IAPI NAi64  naMakei64WithDouble(double d);
+
+  #define naGeti64Hi(i)            ((i).hi)
+  #define naGeti64Lo(i)            ((i).lo)
+  #define naGetu64Hi(u)            ((u).hi)
+  #define naGetu64Lo(u)            ((u).lo)
 
   NA_IAPI NAi64  naNegi64(NAi64 i);
   #define          naInci64(i)

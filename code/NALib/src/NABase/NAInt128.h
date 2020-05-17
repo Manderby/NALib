@@ -11,9 +11,14 @@
   #define naMakeu128WithLiteralLo(lo) (lo ## uLL)
 
   // We declare these as inline functions to reduce warnings.
-  NA_IAPI NAi128 naMakei128(NAi64 hi, NAu64 lo);
-  NA_IAPI NAi128 naMakei128WithLo       (NAi64 lo);
-  NA_IAPI NAi128 naMakei128WithDouble   (double lo);
+  NA_IAPI NAi128 naMakei128            (NAi64 hi, NAu64 lo);
+  NA_IAPI NAi128 naMakei128WithLo      (NAi64 lo);
+  NA_IAPI NAi128 naMakei128WithDouble  (double lo);
+
+  #define naGeti128Hi(i)            ((int64)((i) >> NA_TYPE64_BITS))
+  #define naGeti128Lo(i)            ((uint64)i)
+  #define naGetu128Hi(u)            ((uint64)((u) >> NA_TYPE64_BITS))
+  #define naGetu128Lo(u)            ((uint64)u)
 
   #define naNegi128(i)                 (-(i))
   #define naInci128(i)                 (++(i))
@@ -90,6 +95,11 @@
   NA_IAPI NAi128  naMakei128(NAi64 hi, NAu64 lo);
   NA_IAPI NAi128  naMakei128WithLo(NAi64 lo);
   NA_IAPI NAi128  naMakei128WithDouble(double d);
+
+  #define naGeti128Hi(i)            ((i).hi)
+  #define naGeti128Lo(i)            ((i).lo)
+  #define naGetu128Hi(u)            ((u).hi)
+  #define naGetu128Lo(u)            ((u).lo)
 
   NA_IAPI NAi128  naNegi128(NAi128 i);
   #define           naInci128(i)

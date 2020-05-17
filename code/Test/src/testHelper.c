@@ -1,7 +1,7 @@
 
 #include "testHelper.h"
-#include NA_TEST_NALIB_PATH(./, NAString.h)
-#include NA_TEST_NALIB_PATH(./, NAStack.h)
+#include "NAString.h"
+#include "NAStack.h"
 
 
 
@@ -44,7 +44,7 @@ void naInitTestingData(NATestData* testData, const char* name, NATestData* paren
 
 
 void naClearTestingData(NATestData* testData){
-  naForeachStackMutable(&(testData->childs), naClearTestingData);
+  naForeachStackMutable(&(testData->childs), (NAMutator)naClearTestingData);
   naClearStack(&(testData->childs));
 }
 
@@ -57,20 +57,32 @@ void naPrintTestName(NATestData* testData){
 
 
 
+void naPrintRatio(NAInt successCount, NAInt totalCount){
+  if(totalCount){
+    double ratio = (double)successCount / (double)totalCount * 100.;
+    printf (" (%.02f%%)", ratio);
+  }
+}
+
+
 void naPrintTestGroup(NATestData* testData){
   NAInt leafSuccessCount = (NAInt)testData->leafSuccessCount;
   NAInt leafTotalCount = (NAInt)testData->totalLeafCount;
-  double leafRatio = (double)leafSuccessCount / (double)leafTotalCount * 100.;
   NAInt childSuccessCount = (NAInt)testData->childSuccessCount;
   NAInt childTotalCount = (NAInt)naGetStackCount(&(testData->childs));
-  double childRatio = (double)childSuccessCount / (double)childTotalCount * 100.;
 
   printf("G ");
   if(testData->parent){naPrintTestName(testData->parent);}
   if(leafTotalCount == childTotalCount){
-    printf("%s: %" NA_PRIi " / %" NA_PRIi " Tests ok (%.02f%%)" NA_NL, testData->name, leafSuccessCount, leafTotalCount, leafRatio);
+    printf("%s: %" NA_PRIi " / %" NA_PRIi " Tests ok", testData->name, leafSuccessCount, leafTotalCount);
+    naPrintRatio(leafSuccessCount, leafTotalCount);
+    printf(NA_NL);
   }else{
-    printf("%s: %" NA_PRIi " / %" NA_PRIi " Groups ok (%.02f%%), %" NA_PRIi " / %" NA_PRIi " Tests ok (%.02f%%)" NA_NL, testData->name, childSuccessCount, childTotalCount, childRatio, leafSuccessCount, leafTotalCount, leafRatio);
+    printf("%s: %" NA_PRIi " / %" NA_PRIi " Groups ok", testData->name, childSuccessCount, childTotalCount);
+    naPrintRatio(childSuccessCount, childTotalCount);
+    printf(", %" NA_PRIi " / %" NA_PRIi " Tests ok", leafSuccessCount, leafTotalCount);
+    naPrintRatio(leafSuccessCount, leafTotalCount);
+    printf(NA_NL);
   }
 }
 
@@ -99,7 +111,7 @@ void naStopTesting(void){
       naPrintTestGroup(na_testData);
     }
   }
-  printf("Testing finished." NA_NL);
+  printf("Testing finished." NA_NL NA_NL);
   na_curTestData = NA_NULL;
   naClearTestingData(na_testData);
   naFree(na_testData);

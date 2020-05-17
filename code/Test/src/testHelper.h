@@ -1,10 +1,5 @@
 
-#define NA_TEST_STRINGIFY(A) #A
-#define NA_TEST_NALIB_PATH(path, file) NA_TEST_STRINGIFY(path ## ../../NALib/src/file)
-
 #include <string.h>
-
-
 
 typedef struct NATestData NATestData;
 
@@ -12,7 +7,8 @@ void naStartTesting(const char* rootName);
 void naStopTesting(void);
 void naAddTest(const char* expr, int success, int lineNum);
 void naStartTestGroup(const char* name, int lineNum);
-void naStopTestGroup();
+void naStopTestGroup(void);
+
 #define naT(expr)\
   {\
     NABool success = expr;\
@@ -35,7 +31,7 @@ void naStopTestGroup();
 #define printMacroHead(macro)\
 {\
   const char* macroStr = macro;\
-  printf(macroStr);\
+  printf("%s", macroStr);\
   for(int c = 0; c < (int)(NA_TEST_MAX_MACRO_LENGTH - strlen(macroStr)); c++){printf(" ");}\
 }
 
@@ -50,12 +46,12 @@ void naStopTestGroup();
   }else{\
     printf("(Undefined)");\
   }\
-  printf(NA_NL);
+  printf(NA_NL)
 
 #define printMacroInt(macro)\
   printMacroHead(#macro)\
   printf("%d", (int32)macro);\
-  printf(NA_NL);
+  printf(NA_NL)
 
 #define printMacroIntHex(macro, showDec)\
   printMacroHead(#macro)\
@@ -63,12 +59,12 @@ void naStopTestGroup();
     printf("0x%x (%d)", macro, macro);\
   else\
     printf("0x%x", macro);\
-  printf(NA_NL);
+  printf(NA_NL)
 
 #define printMacroString(macro)\
   printMacroHead(#macro)\
   printf("%s", macro);\
-  printf(NA_NL);
+  printf(NA_NL)
 
 #define printMacroIntSpecial(macro, specialValue, specialString)\
   printMacroHead(#macro)\
@@ -77,7 +73,7 @@ void naStopTestGroup();
   }else{\
     printf("%d", macro);\
   }\
-  printf(NA_NL);
+  printf(NA_NL)
 
 #define printMacroIntSpecialHex(macro, specialValue, specialString)\
   printMacroHead(#macro)\
@@ -86,7 +82,7 @@ void naStopTestGroup();
   }else{\
     printf("0x%x", macro);\
   }\
-  printf(NA_NL);
+  printf(NA_NL)
 
 #define printMacroEnumCore(macro, strings, maxValue)\
   if((int32)macro >= (int32)maxValue){\
@@ -98,24 +94,14 @@ void naStopTestGroup();
 #define printMacroEnum(macro, strings, maxValue)\
   printMacroHead(#macro)\
   printMacroEnumCore(macro, strings, maxValue)\
-  printf(NA_NL);
+  printf(NA_NL)
 
 extern const char* na_yesno_strings[];
 
 #define printMacroIntYesNo(macro)\
   printMacroHead(#macro)\
   printMacroEnumCore(macro, na_yesno_strings, 2)\
-  printf(NA_NL);
-
-//#define testSuccess(success)\
-  //(success ? NA_NULL : naNewStringWithFormat("%d: FAIL" NA_NL, __LINE__))
-
-#define testSuccess(success)\
-  if(success){\
-    printf("%d: ok" NA_NL, __LINE__);\
-  }else{\
-    printf("%d: FAIL" NA_NL, __LINE__);\
-  }
+  printf(NA_NL)
 
 
 

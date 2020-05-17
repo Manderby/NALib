@@ -1,22 +1,11 @@
 
 // This is just a small file to get you started using NALib.
 // It should compile and run and print some version notes on the screen.
-//
-// To be able to include header files from NALib, you need to either add the
-// src directory of NALib as an additional project source path, or you can
-// help yourself using the following two lines. Just provide the correct
-// relative path to the root directory of the NALib source:
-
-#define TRYOUT_STRINGIFY(A) #A
-#define TRYOUT_NALIB_PATH(file) TRYOUT_STRINGIFY(../../NALib/src/file)
-
-// This allows you to reference any NALib file using for example this:
-// #include TRYOUT_NALIB_PATH(NABase.h)
 
 
 
-
-#include TRYOUT_NALIB_PATH(NABase.h)
+#include "../../NALib/src/NABase.h"
+#include "../../NALib/src/NAString.h"
 #include <stdio.h>
 
 int main(void){
@@ -42,23 +31,18 @@ int main(void){
     NA_UNUSED(getchar());
   #endif
 
-
-  //naTestGroup(testArray);
-  //naSpeedTestGroup(speedArray);
-  //naMemoryTestGroup(memoryArray);
+  
+  
+  naStartRuntime();
+    NAString* testString = naNewStringWithFormat("This is %s running." NA_NL, "Hello World");
+    printf("%s", naGetStringUTF8Pointer(testString));
+    naDelete(testString);
+  naStopRuntime();
+  
 
 
   return 0;
 }
-
-
-//void testArray(){
-//  naTestActivate(NA_TRUE);
-//  testArrayCreation()
-//  testArrayDeletion();
-//  naTestActivate(NA_FALSE);
-//  testArrayIteration();
-//}
 
 
 

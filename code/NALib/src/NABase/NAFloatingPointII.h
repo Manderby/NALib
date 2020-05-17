@@ -295,11 +295,11 @@ NA_IAPI NAi64 naGetDoubleFraction(double d){
     NAi128 hyperTens = naMakei128(NA_ZERO_i64, 0x71afd498d0000000);  // = 1e15 * 2^13
     hyperBits = naMuli128(hyperBits, hyperTens);
     if(exponent < 0){
-      dbits = naShli64(hyperBits.hi, -exponent);
+      dbits = naShli64(naGeti128Hi(hyperBits), -exponent);
     }else{
-      dbits = naShri64(hyperBits.hi, exponent);
+      dbits = naShri64(naGeti128Hi(hyperBits), exponent);
     }
-    dbits = naInci64(dbits);
+    naInci64(dbits);
     dbits = naShri64(dbits, 1);
     if(exponent < 0){
       dbits = naShri64(dbits, -exponent);

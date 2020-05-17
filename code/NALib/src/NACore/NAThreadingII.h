@@ -417,7 +417,7 @@ NA_IDEF NAAlarm naMakeAlarm(void){
     return (NAAlarm)alarmer;
 #else
     alarmer = dispatch_semaphore_create(0);
-    return (NAAlarm)alarmer;
+    return (NAAlarm)NA_COCOA_PTR_OBJC_TO_C(alarmer);
   #endif
 }
 
@@ -459,10 +459,10 @@ NA_IDEF NABool naAwaitAlarm(NAAlarm alarmer, double maxwaittime){
         naError("maxwaittime should not be negative. Beware of the zero!");
     #endif
     if(maxwaittime == 0){
-      result = dispatch_semaphore_wait(alarmer, DISPATCH_TIME_FOREVER);
+      result = dispatch_semaphore_wait(NA_COCOA_PTR_C_TO_OBJC(alarmer), DISPATCH_TIME_FOREVER);
     }else{
       dispatch_time_t timeout = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1000000000 * maxwaittime));
-      result = dispatch_semaphore_wait(alarmer, timeout);
+      result = dispatch_semaphore_wait(NA_COCOA_PTR_C_TO_OBJC(alarmer), timeout);
     }
     return (result ? NA_FALSE : NA_TRUE);
   #endif
@@ -474,7 +474,7 @@ NA_IDEF void naTriggerAlarm(NAAlarm alarmer){
   #if NA_OS == NA_OS_WINDOWS
     SetEvent(alarmer);
   #else
-    dispatch_semaphore_signal(alarmer);
+    dispatch_semaphore_signal(NA_COCOA_PTR_C_TO_OBJC(alarmer));
   #endif
 }
 

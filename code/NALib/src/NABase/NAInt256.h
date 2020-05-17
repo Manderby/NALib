@@ -11,9 +11,14 @@
   #define naMakeu256WithLiteralLo(lo) (lo ## uLL)
 
   // We declare these as inline functions to reduce warnings.
-  NA_IAPI NAi256 naMakei256(NAi128 hi, NAu128 lo);
+  NA_IAPI NAi256 naMakei256             (NAi128 hi, NAu128 lo);
   NA_IAPI NAi256 naMakei256WithLo       (NAi128 lo);
   NA_IAPI NAi256 naMakei256WithDouble   (double lo);
+
+  #define naGeti256Hi(i)            ((int128)((i) >> NA_TYPE128_BITS))
+  #define naGeti256Lo(i)            ((uint128)i)
+  #define naGetu256Hi(u)            ((uint128)((u) >> NA_TYPE128_BITS))
+  #define naGetu256Lo(u)            ((uint128)u)
 
   #define naNegi256(i)              (-(i))
   #define naInci256(i)              (++(i))
@@ -94,6 +99,11 @@
   NA_IAPI NAi256  naMakei256(NAi128 hi, NAu128 lo);
   NA_IAPI NAi256  naMakei256WithLo(NAi128 lo);
   NA_IAPI NAi256  naMakei256WithDouble(double d);
+
+  #define naGeti256Hi(i)            ((i).hi)
+  #define naGeti256Lo(i)            ((i).lo)
+  #define naGetu256Hi(u)            ((u).hi)
+  #define naGetu256Lo(u)            ((u).lo)
 
   NA_IAPI NAi256  naNegi256(NAi256 i);
   #define           naInci256(i)

@@ -6,9 +6,9 @@
 
 
 @implementation NACocoaImageSpace
-- (id) initWithCoreImageSpace:(NACoreImageSpace*)newcoreimagespace frame:(NSRect)frame{
+- (id) initWithCoreImageSpace:(NACoreImageSpace*)newcoreImageSpace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
-  coreimagespace = newcoreimagespace;
+  coreImageSpace = newcoreImageSpace;
   return self;
 }
 - (void) setUIImage:(NAUIImage*)newuiimage{
@@ -37,15 +37,15 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
 
 
 
-NA_DEF void naDestructImageSpace(NAImageSpace* imagespace){
-  NACoreImageSpace* coreimagespace = (NACoreImageSpace*)imagespace;
-  naClearCoreImageSpace(coreimagespace);
+NA_DEF void naDestructImageSpace(NAImageSpace* imageSpace){
+  NACoreImageSpace* coreImageSpace = (NACoreImageSpace*)imageSpace;
+  naClearCoreImageSpace(coreImageSpace);
 }
 
 
 
-NA_HDEF NARect naGetImageSpaceAbsoluteInnerRect(NACoreUIElement* imagespace){
-  NA_UNUSED(imagespace);
+NA_HDEF NARect naGetImageSpaceAbsoluteInnerRect(NACoreUIElement* imageSpace){
+  NA_UNUSED(imageSpace);
   return naMakeRectS(20, 40, 100, 50);
 }
 

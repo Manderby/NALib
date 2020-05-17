@@ -7,7 +7,7 @@
 
 
 @implementation NACocoaRadio
-- (id) initWithCoreRadio:(NACoreRadio*)newcoreradio frame:(NSRect)frame{
+- (id) initWithCoreRadio:(NACoreRadio*)newcoreRadio frame:(NSRect)frame{
   NSRect newbounds = frame;
   newbounds.origin.x = 0;
   newbounds.origin.y = 0;
@@ -18,7 +18,7 @@
 //  [self setBezelStyle:NSBezelStyleRounded];
 //  [self setBezelStyle:NSBezelStyleShadowlessSquare];
 //  [self setBordered:YES];
-  coreradio = newcoreradio;
+  coreRadio = newcoreRadio;
   [self setTarget:self];
   [self setAction:@selector(onPressed:)];
 
@@ -35,31 +35,34 @@
 }
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  naDispatchUIElementCommand((NACoreUIElement*)coreradio, NA_UI_COMMAND_PRESSED);
+  naDispatchUIElementCommand((NACoreUIElement*)coreRadio, NA_UI_COMMAND_PRESSED);
 }
 - (void) setRadioState:(NABool)state{
   [self setState:state ? NAStateOn : NAStateOff];
+}
+- (NABool) radioState{
+  return ([self state] == NAStateOn) ? NA_TRUE : NA_FALSE;
 }
 @end
 
 
 
 NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
-  NACoreRadio* coreradio = naAlloc(NACoreRadio);
+  NACoreRadio* coreRadio = naAlloc(NACoreRadio);
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaRadio* cocoaRadio = [[NACocoaRadio alloc] initWithCoreRadio:coreradio frame:frameRect];
-  naInitCoreRadio(coreradio, NA_COCOA_PTR_OBJC_TO_C(cocoaRadio));
+  NACocoaRadio* cocoaRadio = [[NACocoaRadio alloc] initWithCoreRadio:coreRadio frame:frameRect];
+  naInitCoreRadio(coreRadio, NA_COCOA_PTR_OBJC_TO_C(cocoaRadio));
   [cocoaRadio setText:text];
   
-  return (NARadio*)coreradio;
+  return (NARadio*)coreRadio;
 }
 
 
 
 NA_DEF void naDestructRadio(NARadio* radio){
-  NACoreRadio* coreradio = (NACoreRadio*)radio;
-  naClearCoreRadio(coreradio);
+  NACoreRadio* coreRadio = (NACoreRadio*)radio;
+  naClearCoreRadio(coreRadio);
 }
 
 
@@ -74,6 +77,13 @@ NA_HDEF NARect naGetRadioAbsoluteInnerRect(NACoreUIElement* radio){
 NA_HDEF void naSetRadioState(NARadio* radio, NABool state){
   naDefineCocoaObject(NACocoaRadio, cocoaRadio, radio);
   [cocoaRadio setRadioState:state];
+}
+
+
+
+NA_HDEF NABool naGetRadioState(NARadio* radio){
+  naDefineCocoaObject(NACocoaRadio, cocoaRadio, radio);
+  return [cocoaRadio radioState];
 }
 
 

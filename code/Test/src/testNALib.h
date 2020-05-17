@@ -1,15 +1,15 @@
 
-void printNAConfiguration();
-void printNAEnvironment();
-void printNACompiler();
-void printNALanguage();
-void printNAEncoding();
-void printNAChar();
-void printNANumerics();
+void printNAConfiguration(void);
+void printNAEnvironment(void);
+void printNACompiler(void);
+void printNALanguage(void);
+void printNAEncoding(void);
+void printNAChar(void);
+void printNANumerics(void);
 
-void testNALanguage();
-void testNAChar();
-void testNANumerics();
+void testNALanguage(void);
+void testNAChar(void);
+void testNANumerics(void);
 
 
 

@@ -10,7 +10,7 @@
 
 typedef struct NAWINAPIOpenGLSpace NAWINAPIOpenGLSpace;
 struct NAWINAPIOpenGLSpace {
-  NACoreOpenGLSpace coreopenglspace;
+  NACoreOpenGLSpace coreOpenGLspace;
   HGLRC hRC;    // The rendering context for OpenGL
 };
 
@@ -46,7 +46,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator 
 	PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
   const char *extensions;
 
-  NAWINAPIOpenGLSpace* winapiopenglspace = naAlloc(NAWINAPIOpenGLSpace);
+  NAWINAPIOpenGLSpace* winapiOpenGLSpace = naAlloc(NAWINAPIOpenGLSpace);
 
   style = WS_CHILD | WS_VISIBLE | ES_READONLY;
 
@@ -73,14 +73,14 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator 
 	SetPixelFormat( hDC, format, &pfd );
 	
 	// make render context with this device context.
-	winapiopenglspace->hRC = wglCreateContext(hDC);
-	wglMakeCurrent(hDC, winapiopenglspace->hRC);
+	winapiOpenGLSpace->hRC = wglCreateContext(hDC);
+	wglMakeCurrent(hDC, winapiOpenGLSpace->hRC);
 
 	extensions = (char*)glGetString(GL_EXTENSIONS);
 	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
 	if (wglSwapIntervalEXT){wglSwapIntervalEXT(1);}
 
-  naInitCoreOpenGLSpace(&(winapiopenglspace->coreopenglspace), hWnd);
+  naInitCoreOpenGLSpace(&(winapiOpenGLSpace->coreOpenGLspace), hWnd);
 
   // Now the OpenGL context is created and current. We can initialize it
   // if necessary.
@@ -89,13 +89,13 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator 
   }
 
 	//glewInit();
-  return (NAOpenGLSpace*)winapiopenglspace;
+  return (NAOpenGLSpace*)winapiOpenGLSpace;
 }
 
 
 NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
-  NAWINAPIOpenGLSpace* winapiopenglspace = (NAWINAPIOpenGLSpace*)openglspace;
-  SwapBuffers(GetDC((HWND)naGetUIElementNativeID(&(winapiopenglspace->coreopenglspace.uielement))));
+  NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)openglspace;
+  SwapBuffers(GetDC((HWND)naGetUIElementNativeID(&(winapiOpenGLSpace->coreOpenGLspace.uielement))));
 }
 
 
@@ -108,8 +108,8 @@ NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){
 
 
 NA_DEF void naDestructOpenGLSpace(NAOpenGLSpace* openglspace){
-  NACoreOpenGLSpace* coreopenglspace = (NACoreOpenGLSpace*)openglspace;
-  naClearCoreOpenGLSpace(coreopenglspace);
+  NACoreOpenGLSpace* coreOpenGLspace = (NACoreOpenGLSpace*)openglspace;
+  naClearCoreOpenGLSpace(coreOpenGLspace);
 }
 
 

@@ -21,21 +21,21 @@ NA_HAPI NARect naGetApplicationAbsoluteRect(void);
 NA_HAPI NARect naGetScreenAbsoluteRect(NACoreUIElement* screen);
 NA_HAPI NARect naGetWindowAbsoluteOuterRect(NACoreUIElement* window);
 NA_HAPI NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space);
-NA_HDEF NARect naGetImageSpaceAbsoluteInnerRect(NACoreUIElement* imagespace);
+NA_HDEF NARect naGetImageSpaceAbsoluteInnerRect(NACoreUIElement* imageSpace);
 NA_HDEF NARect naGetOpenGLSpaceAbsoluteInnerRect(NACoreUIElement* space);
 NA_HAPI NARect naGetButtonAbsoluteInnerRect(NACoreUIElement* button);
 NA_HAPI NARect naGetRadioAbsoluteInnerRect(NACoreUIElement* radio);
-NA_HAPI NARect naGetCheckBoxAbsoluteInnerRect(NACoreUIElement* checkbox);
+NA_HAPI NARect naGetCheckBoxAbsoluteInnerRect(NACoreUIElement* checkBox);
 NA_HAPI NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* label);
-NA_HDEF NARect naGetTextFieldAbsoluteInnerRect(NACoreUIElement* textfield);
-NA_HDEF NARect naGetTextBoxAbsoluteInnerRect(NACoreUIElement* textbox);
+NA_HDEF NARect naGetTextFieldAbsoluteInnerRect(NACoreUIElement* textField);
+NA_HDEF NARect naGetTextBoxAbsoluteInnerRect(NACoreUIElement* textBox);
 
-NA_HAPI NAUIElement** naGetUIElementNextTabReference(NATextField* textfield);
-NA_HAPI NAUIElement** naGetUIElementPrevTabReference(NATextField* textfield);
-NA_HAPI NAUIElement** naGetTextFieldNextTabReference(NATextField* textfield);
-NA_HAPI NAUIElement** naGetTextFieldPrevTabReference(NATextField* textfield);
-NA_HAPI NAUIElement** naGetTextBoxNextTabReference(NATextBox* textbox);
-NA_HAPI NAUIElement** naGetTextBoxPrevTabReference(NATextBox* textbox);
+NA_HAPI NAUIElement** naGetUIElementNextTabReference(NATextField* textField);
+NA_HAPI NAUIElement** naGetUIElementPrevTabReference(NATextField* textField);
+NA_HAPI NAUIElement** naGetTextFieldNextTabReference(NATextField* textField);
+NA_HAPI NAUIElement** naGetTextFieldPrevTabReference(NATextField* textField);
+NA_HAPI NAUIElement** naGetTextBoxNextTabReference(NATextBox* textBox);
+NA_HAPI NAUIElement** naGetTextBoxPrevTabReference(NATextBox* textBox);
 
 HWND naGetApplicationOffscreenWindow(void);
 NACoreUIElement* naGetApplicationMouseHoverElement(void);
@@ -373,12 +373,12 @@ void naWINAPICaptureMouseHover(){
     // Reset the hover element to the current one and track the mouse leaving it.
     naSetApplicationMouseHoverElement(elementUnderMouse);
     if(elementUnderMouse){
-    TRACKMOUSEEVENT winapitracking;
-      winapitracking.cbSize = sizeof(TRACKMOUSEEVENT);
-      winapitracking.dwFlags = TME_LEAVE;
-      winapitracking.hwndTrack = naGetUIElementNativeID(elementUnderMouse);
-      winapitracking.dwHoverTime = HOVER_DEFAULT;
-      TrackMouseEvent(&winapitracking);
+    TRACKMOUSEEVENT winapiTracking;
+      winapiTracking.cbSize = sizeof(TRACKMOUSEEVENT);
+      winapiTracking.dwFlags = TME_LEAVE;
+      winapiTracking.hwndTrack = naGetUIElementNativeID(elementUnderMouse);
+      winapiTracking.dwHoverTime = HOVER_DEFAULT;
+      TrackMouseEvent(&winapiTracking);
     }
 
     // Send the entered message to all elements which are newly hovered.
@@ -665,22 +665,22 @@ NA_DEF NARect naGetUIElementRect(NACoreUIElement* uielement, NAUIElement* relati
 
 NA_HDEF void* naAllocMouseTracking(NANativeID nativeId){
   NABool success;
-  TRACKMOUSEEVENT* winapitracking = naAlloc(TRACKMOUSEEVENT);
-  winapitracking->cbSize = sizeof(TRACKMOUSEEVENT);
-  winapitracking->dwFlags = TME_LEAVE;
-  winapitracking->hwndTrack = nativeId;
-  winapitracking->dwHoverTime = HOVER_DEFAULT;
-  success = TrackMouseEvent(winapitracking);
-  return winapitracking;
+  TRACKMOUSEEVENT* winapiTracking = naAlloc(TRACKMOUSEEVENT);
+  winapiTracking->cbSize = sizeof(TRACKMOUSEEVENT);
+  winapiTracking->dwFlags = TME_LEAVE;
+  winapiTracking->hwndTrack = nativeId;
+  winapiTracking->dwHoverTime = HOVER_DEFAULT;
+  success = TrackMouseEvent(winapiTracking);
+  return winapiTracking;
 }
 
 
 
 NA_HDEF void naDeallocMouseTracking(void* tracking){
-  TRACKMOUSEEVENT* winapitracking = (TRACKMOUSEEVENT*)tracking;
-  winapitracking->dwFlags |= TME_CANCEL;
-  TrackMouseEvent(winapitracking);
-  naFree(winapitracking);
+  TRACKMOUSEEVENT* winapiTracking = (TRACKMOUSEEVENT*)tracking;
+  winapiTracking->dwFlags |= TME_CANCEL;
+  TrackMouseEvent(winapiTracking);
+  naFree(winapiTracking);
 }
 
 
@@ -703,19 +703,19 @@ NA_API NARect naGetMainScreenRect(){
 
 
 long getWINAPITextAlignmentWithAlignment(NATextAlignment alignment){
-  long winapialignment;
+  long winapiAlignment;
   switch(alignment){
-  case NA_TEXT_ALIGNMENT_LEFT: winapialignment = ES_LEFT; break;
-  case NA_TEXT_ALIGNMENT_RIGHT: winapialignment = ES_RIGHT; break;
-  case NA_TEXT_ALIGNMENT_CENTER: winapialignment = ES_CENTER; break;
+  case NA_TEXT_ALIGNMENT_LEFT: winapiAlignment = ES_LEFT; break;
+  case NA_TEXT_ALIGNMENT_RIGHT: winapiAlignment = ES_RIGHT; break;
+  case NA_TEXT_ALIGNMENT_CENTER: winapiAlignment = ES_CENTER; break;
   default:
     #ifndef NDEBUG
       naError("Invalid alignment enumeration");
     #endif
-    winapialignment = ES_LEFT; break;
+    winapiAlignment = ES_LEFT; break;
     break;
   }
-  return winapialignment;
+  return winapiAlignment;
 }
 
 

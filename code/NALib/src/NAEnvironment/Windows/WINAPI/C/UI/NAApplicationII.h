@@ -220,49 +220,49 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 NA_HDEF NAApplication* naNewApplication(void){
 
-  NAWINAPIApplication* winapiapplication = naAlloc(NAWINAPIApplication);
+  NAWINAPIApplication* winapiApplication = naAlloc(NAWINAPIApplication);
 
-  naInitCoreApplication(&(winapiapplication->coreapplication), GetModuleHandle(NULL));
+  naInitCoreApplication(&(winapiApplication->coreapplication), GetModuleHandle(NULL));
 
-  naInitList(&(winapiapplication->timers));
+  naInitList(&(winapiApplication->timers));
 
-	winapiapplication->offscreenWindow = CreateWindow(
+	winapiApplication->offscreenWindow = CreateWindow(
 		TEXT("NAOffscreenWindow"), TEXT("Offscreen window"), WS_OVERLAPPEDWINDOW,
 		0, 0, 0, 0,
 		NULL, NULL, GetModuleHandle(NULL), NULL);
 
-  winapiapplication->nonclientmetrics.cbSize = sizeof(NONCLIENTMETRICS);
-  SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &(winapiapplication->nonclientmetrics), 0);
+  winapiApplication->nonclientmetrics.cbSize = sizeof(NONCLIENTMETRICS);
+  SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &(winapiApplication->nonclientmetrics), 0);
 
-  winapiapplication->appIcon = NA_NULL;
+  winapiApplication->appIcon = NA_NULL;
 
-  winapiapplication->systemFont = NA_NULL;
-  winapiapplication->titleFont = NA_NULL;
-  winapiapplication->monospaceFont = NA_NULL;
-  winapiapplication->paragraphFont = NA_NULL;
-  winapiapplication->mathFont = NA_NULL;
+  winapiApplication->systemFont = NA_NULL;
+  winapiApplication->titleFont = NA_NULL;
+  winapiApplication->monospaceFont = NA_NULL;
+  winapiApplication->paragraphFont = NA_NULL;
+  winapiApplication->mathFont = NA_NULL;
 
-  winapiapplication->mouseHoverElement = NA_NULL;
+  winapiApplication->mouseHoverElement = NA_NULL;
 
-  winapiapplication->oldButtonWindowProc = NA_NULL;
-  winapiapplication->oldRadioWindowProc = NA_NULL;
-  winapiapplication->oldCheckBoxWindowProc = NA_NULL;
-  winapiapplication->oldLabelWindowProc = NA_NULL;
-  winapiapplication->oldTextFieldWindowProc = NA_NULL;
+  winapiApplication->oldButtonWindowProc = NA_NULL;
+  winapiApplication->oldRadioWindowProc = NA_NULL;
+  winapiApplication->oldCheckBoxWindowProc = NA_NULL;
+  winapiApplication->oldLabelWindowProc = NA_NULL;
+  winapiApplication->oldTextFieldWindowProc = NA_NULL;
 
-  winapiapplication->fgColor.color = GetSysColor(COLOR_WINDOWTEXT);
-  winapiapplication->fgColorDisabled.color = GetSysColor(COLOR_GRAYTEXT);
-  winapiapplication->bgColor.color = GetSysColor(COLOR_BTNFACE);
-  winapiapplication->bgColorAlternate.color = RGB(226, 226, 226);
-  winapiapplication->bgColorAlternate2.color = RGB(205, 205, 205);
+  winapiApplication->fgColor.color = GetSysColor(COLOR_WINDOWTEXT);
+  winapiApplication->fgColorDisabled.color = GetSysColor(COLOR_GRAYTEXT);
+  winapiApplication->bgColor.color = GetSysColor(COLOR_BTNFACE);
+  winapiApplication->bgColorAlternate.color = RGB(226, 226, 226);
+  winapiApplication->bgColorAlternate2.color = RGB(205, 205, 205);
 
-  winapiapplication->fgColor.brush = CreateSolidBrush(winapiapplication->fgColor.color);
-  winapiapplication->fgColorDisabled.brush = CreateSolidBrush(winapiapplication->fgColorDisabled.color);
-  winapiapplication->bgColor.brush = CreateSolidBrush(winapiapplication->bgColor.color);
-  winapiapplication->bgColorAlternate.brush = CreateSolidBrush(winapiapplication->bgColorAlternate.color);
-  winapiapplication->bgColorAlternate2.brush = CreateSolidBrush(winapiapplication->bgColorAlternate2.color);
+  winapiApplication->fgColor.brush = CreateSolidBrush(winapiApplication->fgColor.color);
+  winapiApplication->fgColorDisabled.brush = CreateSolidBrush(winapiApplication->fgColorDisabled.color);
+  winapiApplication->bgColor.brush = CreateSolidBrush(winapiApplication->bgColor.color);
+  winapiApplication->bgColorAlternate.brush = CreateSolidBrush(winapiApplication->bgColorAlternate.color);
+  winapiApplication->bgColorAlternate2.brush = CreateSolidBrush(winapiApplication->bgColorAlternate2.color);
 
-  return (NAApplication*)winapiapplication;
+  return (NAApplication*)winapiApplication;
 }
 
 

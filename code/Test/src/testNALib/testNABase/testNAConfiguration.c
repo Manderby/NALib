@@ -1,7 +1,7 @@
 
 #include "../../testHelper.h"
-#include NA_TEST_NALIB_PATH(../../, NABase.h)
-#include NA_TEST_NALIB_PATH(../../, NAMemory.h)
+#include "NABase.h"
+#include "NAMemory.h"
 #include <stdio.h>
 
 

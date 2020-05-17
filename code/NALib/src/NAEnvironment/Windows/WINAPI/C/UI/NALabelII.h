@@ -8,7 +8,7 @@
 
 typedef struct NAWINAPILabel NAWINAPILabel;
 struct NAWINAPILabel {
-  NACoreLabel corelabel;
+  NACoreLabel coreLabel;
   NABool enabled;
   NAString* href;
 };
@@ -63,12 +63,12 @@ NAWINAPICallbackInfo naLabelWINAPIProc(NAUIElement* uielement, UINT message, WPA
 
 
 NAWINAPICallbackInfo naLabelWINAPINotify(NAUIElement* uielement, WORD notificationCode){
-  NAWINAPILabel* winapilabel = (NAWINAPILabel*)uielement;
+  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)uielement;
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   switch(notificationCode){
     case EN_SETFOCUS:
-      if(winapilabel->href){
-        system(naGetStringUTF8Pointer(winapilabel->href));
+      if(winapiLabel->href){
+        system(naGetStringUTF8Pointer(winapiLabel->href));
         info.hasbeenhandeled = NA_TRUE;
         info.result = 0;
       }
@@ -87,7 +87,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
 
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
-  NAWINAPILabel* winapilabel = naAlloc(NAWINAPILabel);
+  NAWINAPILabel* winapiLabel = naAlloc(NAWINAPILabel);
 
   // We need a read only edit control here, otherwise on windows, the user is not able to select text.
   style = WS_CHILD | WS_VISIBLE | ES_LEFT | ES_READONLY | ES_MULTILINE;
@@ -104,21 +104,21 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldLabelWindowProc){app->oldLabelWindowProc = oldproc;}
 
-  naInitCoreLabel(&(winapilabel->corelabel), hWnd);
+  naInitCoreLabel(&(winapiLabel->coreLabel), hWnd);
 
-  winapilabel->enabled = NA_TRUE;
-  winapilabel->href = NA_NULL;
+  winapiLabel->enabled = NA_TRUE;
+  winapiLabel->href = NA_NULL;
   SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
-  return (NALabel*)winapilabel;
+  return (NALabel*)winapiLabel;
 }
 
 
 
 NA_DEF void naDestructLabel(NALabel* label){
-  NAWINAPILabel* winapilabel = (NAWINAPILabel*)label;
-  if(winapilabel->href){naDelete(winapilabel->href);}
-  naClearCoreLabel(&(winapilabel->corelabel));
+  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
+  if(winapiLabel->href){naDelete(winapiLabel->href);}
+  naClearCoreLabel(&(winapiLabel->coreLabel));
 }
 
 
@@ -136,7 +136,7 @@ NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
   HFONT hOriginalFont;
   LOGFONT lf;
 
-  NAWINAPILabel* winapilabel = (NAWINAPILabel*)label;
+  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
   #ifndef NDEBUG
     if(!url || !*url)
       naError("url must be something useful. Deleting a Link is not possible yet.");
@@ -147,22 +147,22 @@ NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
   hFont = CreateFontIndirect(&lf);
   SendMessage(naGetUIElementNativeID(label), WM_SETFONT, (WPARAM)hFont, NA_FALSE);
 
-  if(winapilabel->href){naDelete(winapilabel->href);}
-  winapilabel->href = naNewStringWithFormat("start %s", url);
+  if(winapiLabel->href){naDelete(winapiLabel->href);}
+  winapiLabel->href = naNewStringWithFormat("start %s", url);
 }
 
 
 
 NA_DEF NABool naIsLabelEnabled(NALabel* label){
-  NAWINAPILabel* winapilabel = (NAWINAPILabel*)label;
-  return winapilabel->enabled;
+  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
+  return winapiLabel->enabled;
 }
 
 
 
 NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled){
-  NAWINAPILabel* winapilabel = (NAWINAPILabel*)label;
-  winapilabel->enabled = enabled;
+  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
+  winapiLabel->enabled = enabled;
   naRefreshUIElement(label, 0);
 }
 

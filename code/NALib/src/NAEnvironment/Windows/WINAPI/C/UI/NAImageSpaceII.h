@@ -7,7 +7,7 @@
 
 typedef struct NAWINAPIImageSpace NAWINAPIImageSpace;
 struct NAWINAPIImageSpace {
-  NACoreImageSpace coreimagespace;
+  NACoreImageSpace coreImageSpace;
   NAUIImage* image;
 };
 
@@ -48,7 +48,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (NAUIElement* uielement){
   PAINTSTRUCT paintStruct;
   HBITMAP hOldBitmap;
   HDC hMemDC;
-  NAWINAPIImageSpace* imagespace;
+  NAWINAPIImageSpace* imageSpace;
   NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
   NASizei size1x;
   NASizei spacesize;
@@ -64,11 +64,11 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (NAUIElement* uielement){
   BeginPaint(naGetUIElementNativeID(uielement), &paintStruct);
   hMemDC = CreateCompatibleDC(paintStruct.hdc);
 
-  imagespace = (NAWINAPIImageSpace*)uielement;
+  imageSpace = (NAWINAPIImageSpace*)uielement;
 
   CallWindowProc(naGetApplicationOldButtonWindowProc(), naGetUIElementNativeID(uielement), WM_ERASEBKGND, (WPARAM)paintStruct.hdc, (LPARAM)NA_NULL);
 
-  size1x = naGetUIImage1xSize(imagespace->image);
+  size1x = naGetUIImage1xSize(imageSpace->image);
 
   spacesize = naMakeSizei(
     paintStruct.rcPaint.right - paintStruct.rcPaint.left,
@@ -77,7 +77,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (NAUIElement* uielement){
     (spacesize.width - size1x.width) / 2,
     (spacesize.height - size1x.height) / 2);
 
-  foreImage = naGetUIImageBabyImage(imagespace->image, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_LIGHT);
+  foreImage = naGetUIImageBabyImage(imageSpace->image, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_LIGHT);
 
   // We store the background where the image will be placed.
   backBuffer = naMalloc(size1x.width * size1x.height * 4);
@@ -123,7 +123,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
   DWORD style;
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
-  NAWINAPIImageSpace* winapiimagespace = naAlloc(NAWINAPIImageSpace);
+  NAWINAPIImageSpace* winapiImageSpace = naAlloc(NAWINAPIImageSpace);
 
   exStyle = 0;
   style = WS_CHILD | WS_VISIBLE;
@@ -133,23 +133,23 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
 
-  naInitCoreImageSpace(&(winapiimagespace->coreimagespace), hWnd);
-  winapiimagespace->image = uiimage;
+  naInitCoreImageSpace(&(winapiImageSpace->coreImageSpace), hWnd);
+  winapiImageSpace->image = uiimage;
 
-  return (NAImageSpace*)winapiimagespace;
+  return (NAImageSpace*)winapiImageSpace;
 }
 
 
 
-NA_DEF void naDestructImageSpace(NAImageSpace* imagespace){
-  NAWINAPIImageSpace* winapiimagespace = (NAWINAPIImageSpace*)imagespace;
-  naClearCoreImageSpace(&(winapiimagespace->coreimagespace));
+NA_DEF void naDestructImageSpace(NAImageSpace* imageSpace){
+  NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
+  naClearCoreImageSpace(&(winapiImageSpace->coreImageSpace));
 }
 
 
 
-NA_HDEF NARect naGetImageSpaceAbsoluteInnerRect(NACoreUIElement* imagespace){
-  NA_UNUSED(imagespace);
+NA_HDEF NARect naGetImageSpaceAbsoluteInnerRect(NACoreUIElement* imageSpace){
+  NA_UNUSED(imageSpace);
   return naMakeRectS(20, 40, 100, 50);
 }
 

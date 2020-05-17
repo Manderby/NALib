@@ -175,37 +175,37 @@ NA_HAPI void naClearCoreApplication(NACoreApplication* coreapplication);
 NA_HAPI void naInitCoreScreen(NACoreScreen* corescreen, void* nativeId);
 NA_HAPI void naClearCoreScreen(NACoreScreen* corescreen);
 
-NA_HAPI void naInitCoreWindow(NACoreWindow* corewindow, void* nativeId, NACoreSpace* contentspace, NABool fullscreen, NABool resizeable, NARect windowedframe);
-NA_HAPI void naClearCoreWindow(NACoreWindow* corewindow);
-NA_HAPI void naRememberWindowPosition(NACoreWindow* corewindow);
+NA_HAPI void naInitCoreWindow(NACoreWindow* coreWindow, void* nativeId, NACoreSpace* contentspace, NABool fullscreen, NABool resizeable, NARect windowedframe);
+NA_HAPI void naClearCoreWindow(NACoreWindow* coreWindow);
+NA_HAPI void naRememberWindowPosition(NACoreWindow* coreWindow);
 NA_HDEF NARect naGetWindowAbsoluteInnerRect(NACoreUIElement* window);
 
 NA_HAPI void naInitCoreSpace(NACoreSpace* corespace, void* nativeId);
 NA_HAPI void naClearCoreSpace(NACoreSpace* corecorespace);
 
-NA_HAPI void naInitCoreImageSpace(NACoreImageSpace* coreimagespace, void* nativeId);
-NA_HAPI void naClearCoreImageSpace(NACoreImageSpace* corecoreimagespace);
+NA_HAPI void naInitCoreImageSpace(NACoreImageSpace* coreImageSpace, void* nativeId);
+NA_HAPI void naClearCoreImageSpace(NACoreImageSpace* corecoreImageSpace);
 
-NA_HAPI void naInitCoreOpenGLSpace(NACoreOpenGLSpace* coreopenglspace, void* nativeId);
-NA_HAPI void naClearCoreOpenGLSpace(NACoreOpenGLSpace* corecoreopenglspace);
+NA_HAPI void naInitCoreOpenGLSpace(NACoreOpenGLSpace* coreOpenGLspace, void* nativeId);
+NA_HAPI void naClearCoreOpenGLSpace(NACoreOpenGLSpace* corecoreOpenGLspace);
 
-NA_HAPI void naInitCoreButton(NACoreButton* corebutton, void* nativeId);
-NA_HAPI void naClearCoreButton(NACoreButton* corebutton);
+NA_HAPI void naInitCoreButton(NACoreButton* coreButton, void* nativeId);
+NA_HAPI void naClearCoreButton(NACoreButton* coreButton);
 
-NA_HAPI void naInitCoreRadio(NACoreRadio* coreradio, void* nativeId);
-NA_HAPI void naClearCoreRadio(NACoreRadio* coreradio);
+NA_HAPI void naInitCoreRadio(NACoreRadio* coreRadio, void* nativeId);
+NA_HAPI void naClearCoreRadio(NACoreRadio* coreRadio);
 
-NA_HAPI void naInitCoreCheckBox(NACoreCheckBox* corecheckbox, void* nativeId);
-NA_HAPI void naClearCoreCheckBox(NACoreCheckBox* corecheckbox);
+NA_HAPI void naInitCoreCheckBox(NACoreCheckBox* coreCheckBox, void* nativeId);
+NA_HAPI void naClearCoreCheckBox(NACoreCheckBox* coreCheckBox);
 
-NA_HAPI void naInitCoreLabel(NACoreLabel* corelabel, void* nativeId);
-NA_HAPI void naClearCoreLabel(NACoreLabel* corelabel);
+NA_HAPI void naInitCoreLabel(NACoreLabel* coreLabel, void* nativeId);
+NA_HAPI void naClearCoreLabel(NACoreLabel* coreLabel);
 
-NA_HAPI void naInitCoreTextField(NACoreTextField* coretextfield, void* nativeId);
-NA_HAPI void naClearCoreTextField(NACoreTextField* coretextfield);
+NA_HAPI void naInitCoreTextField(NACoreTextField* coreTextField, void* nativeId);
+NA_HAPI void naClearCoreTextField(NACoreTextField* coreTextField);
 
-NA_HAPI void naInitCoreTextBox(NACoreTextBox* coretextbox, void* nativeId);
-NA_HAPI void naClearCoreTextBox(NACoreTextBox* coretextbox);
+NA_HAPI void naInitCoreTextBox(NACoreTextBox* coreTextBox, void* nativeId);
+NA_HAPI void naClearCoreTextBox(NACoreTextBox* coreTextBox);
 
 
 

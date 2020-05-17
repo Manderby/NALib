@@ -1,8 +1,8 @@
 
 #include "testNALib.h"
 #include "testHelper.h"
-#include NA_TEST_NALIB_PATH(./, NABase.h)
-#include NA_TEST_NALIB_PATH(./, NAMemory.h)
+#include "NABase.h"
+#include "NAMemory.h"
 #include <stdio.h>
 
 
@@ -16,16 +16,22 @@ int main(void){
   #endif
   printf(", %d Bits Addresses, %d Bits Integers)" NA_NL NA_NL, NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
+
+//  uint128 test1 = NA_MAX_u128;
+//  int128 test2 = NA_MAX_i128;
+//  int128 test3 = NA_MIN_i128;
+  
+
   naStartRuntime();
   naStartTesting("NALib");
   
-  //printNAConfiguration();
-  //printNAEnvironment();
-  //printNACompiler();
-  //printNALanguage();
-  //printNAEncoding();
-  //printNAChar();
-  //printNANumerics();
+  printNAConfiguration();
+  printNAEnvironment();
+  printNACompiler();
+  printNALanguage();
+  printNAEncoding();
+  printNAChar();
+  printNANumerics();
 
   naF(NALanguage);
   naF(NAChar);

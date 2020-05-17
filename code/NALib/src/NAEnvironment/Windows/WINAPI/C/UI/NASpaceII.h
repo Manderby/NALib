@@ -14,7 +14,7 @@ struct NAWINAPISpace {
 
 
 
-NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapispace);
+NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapiSpace);
 
 
 
@@ -22,7 +22,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPA
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   RECT spacerect;
   NACoreUIElement* childelement;
-  NAWINAPISpace* winapispace = (NAWINAPISpace*)uielement;
+  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)uielement;
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPIColor* bgColor;
 
@@ -103,9 +103,9 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPA
   case WM_ERASEBKGND: // wParam: Device context, return > 1 if erasing, 0 otherwise
     GetClientRect(naGetUIElementNativeID(uielement), &spacerect);
     bgColor = naGetWINAPISpaceBackgroundColor(uielement);
-    if(bgColor != winapispace->lastBgColor){ // Only draw if changed
+    if(bgColor != winapiSpace->lastBgColor){ // Only draw if changed
       FillRect((HDC)wParam, &spacerect, bgColor->brush);
-      winapispace->lastBgColor = bgColor;
+      winapiSpace->lastBgColor = bgColor;
     }
     info.hasbeenhandeled = NA_TRUE;
     info.result = 1;
@@ -121,11 +121,11 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPA
 
 
 
-NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapispace){
+NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapiSpace){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPIColor* retcolor;
   NAInt alternateLevel = 0;
-  NAUIElement* parent = winapispace;
+  NAUIElement* parent = winapiSpace;
   while(parent){
     if(naGetSpaceAlternateBackground(parent)){alternateLevel++;}
     parent = naGetUIElementParentSpace(parent);
@@ -147,7 +147,7 @@ NA_DEF NASpace* naNewSpace(NASize size){
   DWORD style;
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
 
-  NAWINAPISpace* winapispace = naAlloc(NAWINAPISpace);
+  NAWINAPISpace* winapiSpace = naAlloc(NAWINAPISpace);
 
   style = WS_CHILD | WS_VISIBLE;
 
@@ -156,18 +156,18 @@ NA_DEF NASpace* naNewSpace(NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
 
-  naInitCoreSpace(&(winapispace->corespace), hWnd);
-  winapispace->lastBgColor = &(app->bgColor);
-  winapispace->corespace.alternatebackground = NA_FALSE;
+  naInitCoreSpace(&(winapiSpace->corespace), hWnd);
+  winapiSpace->lastBgColor = &(app->bgColor);
+  winapiSpace->corespace.alternatebackground = NA_FALSE;
 
-  return (NASpace*)winapispace;
+  return (NASpace*)winapiSpace;
 }
 
 
 
 NA_DEF void naDestructSpace(NASpace* space){
-  NAWINAPISpace* winapispace = (NAWINAPISpace*)space;
-  naClearCoreSpace(&(winapispace->corespace));
+  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
+  naClearCoreSpace(&(winapiSpace->corespace));
 }
 
 

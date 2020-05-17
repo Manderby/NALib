@@ -558,7 +558,7 @@ NA_API void naAddUIKeyboardShortcut(NAUIElement* uielement,
 // /////////////////////////////////
 // The actual UI elements
 // 
-// Following is a collection of UI elements like Buttons, Windows, Checkboxes
+// Following is a collection of UI elements like Buttons, Windows, CheckBoxes
 // you can use in NALib. They are mostly undocumented but should be easy to
 // understand.
 
@@ -646,8 +646,8 @@ NA_API void naSetRadioState(NARadio* radio, NABool state);
 
 // CheckBox
 NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size);
-NA_API void naSetCheckBoxState(NACheckBox* checkbox, NABool state);
-NA_API NABool naGetCheckBoxState(NACheckBox* checkbox);
+NA_API void naSetCheckBoxState(NACheckBox* checkBox, NABool state);
+NA_API NABool naGetCheckBoxState(NACheckBox* checkBox);
 
 // Label
 NA_API NALabel* naNewLabel(const NAUTF8Char* text, NASize size);
@@ -661,18 +661,18 @@ NA_API void naSetLabelFontKind(NALabel* label, NAFontKind kind);
 
 // TextField
 NA_API NATextField* naNewTextField(NASize size);
-NA_API void naSetTextFieldText(NATextField* textfield, const NAUTF8Char* text);
-NA_API NAString* naNewStringWithTextFieldText(NATextField* textfield);
-NA_API void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind);
-NA_API void naSetTextFieldTextAlignment(NATextField* textfield, NATextAlignment alignment);
-NA_API void naSetTextFieldFontKind(NATextField* textfield, NAFontKind kind);
+NA_API void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text);
+NA_API NAString* naNewStringWithTextFieldText(NATextField* textField);
+NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind);
+NA_API void naSetTextFieldTextAlignment(NATextField* textField, NATextAlignment alignment);
+NA_API void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind);
 
 // TextBox
 NA_API NATextBox* naNewTextBox(NASize size);
-NA_API void naSetTextBoxText(NATextBox* textbox, const NAUTF8Char* text);
-NA_API void naSetTextBoxTextAlignment(NATextBox* textbox, NATextAlignment alignment);
-NA_API void naSetTextBoxFontKind(NATextBox* textbox, NAFontKind kind);
-NA_API void naSetTextBoxEditable(NATextBox* textbox, NABool editable);
+NA_API void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text);
+NA_API void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment);
+NA_API void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind);
+NA_API void naSetTextBoxEditable(NATextBox* textBox, NABool editable);
 
 
 

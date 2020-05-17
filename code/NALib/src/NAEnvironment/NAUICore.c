@@ -98,41 +98,41 @@ NA_HDEF void naClearCoreScreen(NACoreScreen* corescreen){
 
 
 
-NA_HDEF void naInitCoreWindow(NACoreWindow* corewindow, void* nativeId, NACoreSpace* contentspace, NABool fullscreen, NABool resizeable, NARect windowedframe){
-  naRegisterCoreUIElement(&(corewindow->uielement), NA_UI_WINDOW, nativeId);
-  corewindow->contentspace = contentspace;
-  corewindow->flags = 0;
-  if(fullscreen){corewindow->flags |= NA_CORE_WINDOW_FLAG_FULLSCREEN;}
-  if(resizeable){corewindow->flags |= NA_CORE_WINDOW_FLAG_RESIZEABLE;}
-  corewindow->windowedframe = windowedframe;
+NA_HDEF void naInitCoreWindow(NACoreWindow* coreWindow, void* nativeId, NACoreSpace* contentspace, NABool fullscreen, NABool resizeable, NARect windowedframe){
+  naRegisterCoreUIElement(&(coreWindow->uielement), NA_UI_WINDOW, nativeId);
+  coreWindow->contentspace = contentspace;
+  coreWindow->flags = 0;
+  if(fullscreen){coreWindow->flags |= NA_CORE_WINDOW_FLAG_FULLSCREEN;}
+  if(resizeable){coreWindow->flags |= NA_CORE_WINDOW_FLAG_RESIZEABLE;}
+  coreWindow->windowedframe = windowedframe;
 }
 
-NA_HDEF void naClearCoreWindow(NACoreWindow* corewindow){
-  naUnregisterCoreUIElement(&(corewindow->uielement));
+NA_HDEF void naClearCoreWindow(NACoreWindow* coreWindow){
+  naUnregisterCoreUIElement(&(coreWindow->uielement));
 }
 
 NA_DEF void naPreventWindowFromClosing(NAWindow* window, NABool prevent){
-  NACoreWindow* corewindow = (NACoreWindow*)window;
+  NACoreWindow* coreWindow = (NACoreWindow*)window;
   #ifndef NDEBUG
-    if(!naGetFlagi(corewindow->flags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE))
+    if(!naGetFlagi(coreWindow->flags, NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE))
       naError("This function is only allowed during a \"CLOSES\" event");
   #endif
-  naSetFlagi(&(corewindow->flags), NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, prevent);
+  naSetFlagi(&(coreWindow->flags), NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, prevent);
 }
 
 NA_DEF NABool naIsWindowFullscreen(NAWindow* window){
-  NACoreWindow* corewindow = (NACoreWindow*)window;
-  return naGetFlagi(corewindow->flags, NA_CORE_WINDOW_FLAG_FULLSCREEN);
+  NACoreWindow* coreWindow = (NACoreWindow*)window;
+  return naGetFlagi(coreWindow->flags, NA_CORE_WINDOW_FLAG_FULLSCREEN);
 }
 
 NA_DEF NABool naIsWindowResizeable(NAWindow* window){
-  NACoreWindow* corewindow = (NACoreWindow*)window;
-  return naGetFlagi(corewindow->flags, NA_CORE_WINDOW_FLAG_RESIZEABLE);
+  NACoreWindow* coreWindow = (NACoreWindow*)window;
+  return naGetFlagi(coreWindow->flags, NA_CORE_WINDOW_FLAG_RESIZEABLE);
 }
 
 NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){
-  NACoreWindow* corewindow = (NACoreWindow*)window;
-  return corewindow->contentspace;
+  NACoreWindow* coreWindow = (NACoreWindow*)window;
+  return coreWindow->contentspace;
 }
 
 
@@ -150,74 +150,74 @@ NA_DEF NABool naGetSpaceAlternateBackground(NASpace* space){
 
 
 
-NA_HDEF void naInitCoreImageSpace(NACoreImageSpace* coreimagespace, void* nativeId){
-  naRegisterCoreUIElement(&(coreimagespace->uielement), NA_UI_IMAGESPACE, nativeId);
+NA_HDEF void naInitCoreImageSpace(NACoreImageSpace* coreImageSpace, void* nativeId){
+  naRegisterCoreUIElement(&(coreImageSpace->uielement), NA_UI_IMAGESPACE, nativeId);
 }
-NA_HDEF void naClearCoreImageSpace(NACoreImageSpace* coreimagespace){
-  naUnregisterCoreUIElement(&(coreimagespace->uielement));
-}
-
-
-
-NA_HDEF void naInitCoreOpenGLSpace(NACoreOpenGLSpace* coreopenglspace, void* nativeId){
-  naRegisterCoreUIElement(&(coreopenglspace->uielement), NA_UI_OPENGLSPACE, nativeId);
-}
-NA_HDEF void naClearCoreOpenGLSpace(NACoreOpenGLSpace* coreopenglspace){
-  naUnregisterCoreUIElement(&(coreopenglspace->uielement));
+NA_HDEF void naClearCoreImageSpace(NACoreImageSpace* coreImageSpace){
+  naUnregisterCoreUIElement(&(coreImageSpace->uielement));
 }
 
 
 
-NA_HDEF void naInitCoreButton(NACoreButton* corebutton, void* nativeId){
-  naRegisterCoreUIElement(&(corebutton->uielement), NA_UI_BUTTON, nativeId);
+NA_HDEF void naInitCoreOpenGLSpace(NACoreOpenGLSpace* coreOpenGLspace, void* nativeId){
+  naRegisterCoreUIElement(&(coreOpenGLspace->uielement), NA_UI_OPENGLSPACE, nativeId);
 }
-NA_HDEF void naClearCoreButton(NACoreButton* corebutton){
-  naUnregisterCoreUIElement(&(corebutton->uielement));
-}
-
-
-
-NA_HDEF void naInitCoreRadio(NACoreRadio* coreradio, void* nativeId){
-  naRegisterCoreUIElement(&(coreradio->uielement), NA_UI_RADIO, nativeId);
-}
-NA_HDEF void naClearCoreRadio(NACoreRadio* coreradio){
-  naUnregisterCoreUIElement(&(coreradio->uielement));
+NA_HDEF void naClearCoreOpenGLSpace(NACoreOpenGLSpace* coreOpenGLspace){
+  naUnregisterCoreUIElement(&(coreOpenGLspace->uielement));
 }
 
 
 
-NA_HDEF void naInitCoreCheckBox(NACoreCheckBox* corecheckbox, void* nativeId){
-  naRegisterCoreUIElement(&(corecheckbox->uielement), NA_UI_CHECKBOX, nativeId);
+NA_HDEF void naInitCoreButton(NACoreButton* coreButton, void* nativeId){
+  naRegisterCoreUIElement(&(coreButton->uielement), NA_UI_BUTTON, nativeId);
 }
-NA_HDEF void naClearCoreCheckBox(NACoreCheckBox* corecheckbox){
-  naUnregisterCoreUIElement(&(corecheckbox->uielement));
-}
-
-
-
-NA_HDEF void naInitCoreLabel(NACoreLabel* corelabel, void* nativeId){
-  naRegisterCoreUIElement(&(corelabel->uielement), NA_UI_LABEL, nativeId);
-}
-NA_HDEF void naClearCoreLabel(NACoreLabel* corelabel){
-  naUnregisterCoreUIElement(&(corelabel->uielement));
+NA_HDEF void naClearCoreButton(NACoreButton* coreButton){
+  naUnregisterCoreUIElement(&(coreButton->uielement));
 }
 
 
 
-NA_HDEF void naInitCoreTextField(NACoreTextField* coretextfield, void* nativeId){
-  naRegisterCoreUIElement(&(coretextfield->uielement), NA_UI_TEXTFIELD, nativeId);
+NA_HDEF void naInitCoreRadio(NACoreRadio* coreRadio, void* nativeId){
+  naRegisterCoreUIElement(&(coreRadio->uielement), NA_UI_RADIO, nativeId);
 }
-NA_HDEF void naClearCoreTextField(NACoreTextField* coretextfield){
-  naUnregisterCoreUIElement(&(coretextfield->uielement));
+NA_HDEF void naClearCoreRadio(NACoreRadio* coreRadio){
+  naUnregisterCoreUIElement(&(coreRadio->uielement));
 }
 
 
 
-NA_HDEF void naInitCoreTextBox(NACoreTextBox* coretextbox, void* nativeId){
-  naRegisterCoreUIElement(&(coretextbox->uielement), NA_UI_TEXTBOX, nativeId);
+NA_HDEF void naInitCoreCheckBox(NACoreCheckBox* coreCheckBox, void* nativeId){
+  naRegisterCoreUIElement(&(coreCheckBox->uielement), NA_UI_CHECKBOX, nativeId);
 }
-NA_HDEF void naClearCoreTextBox(NACoreTextBox* coretextbox){
-  naUnregisterCoreUIElement(&(coretextbox->uielement));
+NA_HDEF void naClearCoreCheckBox(NACoreCheckBox* coreCheckBox){
+  naUnregisterCoreUIElement(&(coreCheckBox->uielement));
+}
+
+
+
+NA_HDEF void naInitCoreLabel(NACoreLabel* coreLabel, void* nativeId){
+  naRegisterCoreUIElement(&(coreLabel->uielement), NA_UI_LABEL, nativeId);
+}
+NA_HDEF void naClearCoreLabel(NACoreLabel* coreLabel){
+  naUnregisterCoreUIElement(&(coreLabel->uielement));
+}
+
+
+
+NA_HDEF void naInitCoreTextField(NACoreTextField* coreTextField, void* nativeId){
+  naRegisterCoreUIElement(&(coreTextField->uielement), NA_UI_TEXTFIELD, nativeId);
+}
+NA_HDEF void naClearCoreTextField(NACoreTextField* coreTextField){
+  naUnregisterCoreUIElement(&(coreTextField->uielement));
+}
+
+
+
+NA_HDEF void naInitCoreTextBox(NACoreTextBox* coreTextBox, void* nativeId){
+  naRegisterCoreUIElement(&(coreTextBox->uielement), NA_UI_TEXTBOX, nativeId);
+}
+NA_HDEF void naClearCoreTextBox(NACoreTextBox* coreTextBox){
+  naUnregisterCoreUIElement(&(coreTextBox->uielement));
 }
 
 
@@ -325,14 +325,14 @@ NA_HDEF NABool naIsCoreApplicationRunning(void){
 NA_API void naDestructApplication(NAApplication* application);
 NA_API void naDestructWindow(NAWindow* window);
 NA_API void naDestructSpace(NASpace* space);
-NA_API void naDestructImageSpace(NAImageSpace* imagespace);
+NA_API void naDestructImageSpace(NAImageSpace* imageSpace);
 NA_API void naDestructOpenGLSpace(NAOpenGLSpace* space);
 NA_API void naDestructButton(NAButton* button);
 NA_API void naDestructRadio(NARadio* radio);
-NA_API void naDestructCheckBox(NACheckBox* checkbox);
+NA_API void naDestructCheckBox(NACheckBox* checkBox);
 NA_API void naDestructLabel(NALabel* label);
-NA_API void naDestructTextField(NATextField* textfield);
-NA_API void naDestructTextBox(NATextBox* textbox);
+NA_API void naDestructTextField(NATextField* textField);
+NA_API void naDestructTextBox(NATextBox* textBox);
 
 
 
@@ -393,9 +393,9 @@ NA_DEF void naAddUIReaction(NAUIElement* uielement, NAUICommand command, NAReact
       && (naGetUIElementType(uielement) != NA_UI_BUTTON)
       && (naGetUIElementType(uielement) != NA_UI_RADIO)
       && (naGetUIElementType(uielement) != NA_UI_CHECKBOX))
-      naError("Only buttons, radios and checkboxes can receyve PRESSED commands.");
+      naError("Only buttons, radios and checkBoxes can receyve PRESSED commands.");
     if((command == NA_UI_COMMAND_EDITED) && (naGetUIElementType(uielement) != NA_UI_TEXTFIELD))
-      naError("Only textfields can receyve EDITED commands.");
+      naError("Only textFields can receyve EDITED commands.");
   #endif
   corereaction = naAlloc(NACoreReaction);
   corereaction->controller = controller;
@@ -506,18 +506,18 @@ NA_DEF NAKeyboardStatus naGetKeyboardStatus(){
 
 
 NA_HDEF NARect naSetWindowStorageTag(NAWindow* window, NAInt storageTag, NARect rect, NABool resizeable){
-  NACoreWindow* corewindow = (NACoreWindow*)window;
-  corewindow->storageTag = storageTag;
-  if(corewindow->storageTag){
-    NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, corewindow->storageTag);
-    NAString* prefPosYString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_Y, corewindow->storageTag);
+  NACoreWindow* coreWindow = (NACoreWindow*)window;
+  coreWindow->storageTag = storageTag;
+  if(coreWindow->storageTag){
+    NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, coreWindow->storageTag);
+    NAString* prefPosYString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_Y, coreWindow->storageTag);
     rect.pos.x = naInitPreferencesDouble(naGetStringUTF8Pointer(prefPosXString), rect.pos.x);
     rect.pos.y = naInitPreferencesDouble(naGetStringUTF8Pointer(prefPosYString), rect.pos.y);
     naDelete(prefPosXString);
     naDelete(prefPosYString);
     if(resizeable){
-      NAString* prefSizeWidthString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_WIDTH, corewindow->storageTag);
-      NAString* prefSizeHeightString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_HEIGHT, corewindow->storageTag);
+      NAString* prefSizeWidthString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_WIDTH, coreWindow->storageTag);
+      NAString* prefSizeHeightString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_HEIGHT, coreWindow->storageTag);
       rect.size.width = naInitPreferencesDouble(naGetStringUTF8Pointer(prefSizeWidthString), rect.size.width);
       rect.size.height = naInitPreferencesDouble(naGetStringUTF8Pointer(prefSizeHeightString), rect.size.height);
       naDelete(prefSizeWidthString);
@@ -529,18 +529,18 @@ NA_HDEF NARect naSetWindowStorageTag(NAWindow* window, NAInt storageTag, NARect 
 
 
 
-NA_HDEF void naRememberWindowPosition(NACoreWindow* corewindow){
-  if(corewindow->storageTag){
-    NARect rect = naGetWindowAbsoluteInnerRect(&(corewindow->uielement));
-    NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, corewindow->storageTag);
-    NAString* prefPosYString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_Y, corewindow->storageTag);
+NA_HDEF void naRememberWindowPosition(NACoreWindow* coreWindow){
+  if(coreWindow->storageTag){
+    NARect rect = naGetWindowAbsoluteInnerRect(&(coreWindow->uielement));
+    NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, coreWindow->storageTag);
+    NAString* prefPosYString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_Y, coreWindow->storageTag);
     naSetPreferencesDouble(naGetStringUTF8Pointer(prefPosXString), rect.pos.x);
     naSetPreferencesDouble(naGetStringUTF8Pointer(prefPosYString), rect.pos.y);
     naDelete(prefPosXString);
     naDelete(prefPosYString);
-    if(naIsWindowResizeable(corewindow)){
-      NAString* prefSizeWidthString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_WIDTH, corewindow->storageTag);
-      NAString* prefSizeHeightString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_HEIGHT, corewindow->storageTag);
+    if(naIsWindowResizeable(coreWindow)){
+      NAString* prefSizeWidthString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_WIDTH, coreWindow->storageTag);
+      NAString* prefSizeHeightString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_HEIGHT, coreWindow->storageTag);
       naSetPreferencesDouble(naGetStringUTF8Pointer(prefSizeWidthString), rect.size.width);
       naSetPreferencesDouble(naGetStringUTF8Pointer(prefSizeHeightString), rect.size.height);
       naDelete(prefSizeWidthString);

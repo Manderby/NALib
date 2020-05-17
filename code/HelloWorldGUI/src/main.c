@@ -5,31 +5,22 @@
 // You can define NA_COMPILE_GUI either directly in NAConfiguration.h or add
 // a preprocessor macro in your project settings. But the preferred ways are:
 //
-// XCode: Add a preprocessor macro to your solution settings. Add the Cocoa
-// framework (and in this example the OpenGL framework) to your linked
-// libraries.
+// XCode: Add a preprocessor macro to your solution settings. Add NALib as 
+// a target. Add the Cocoa framework (and in this example the OpenGL framework)
+// to your linked libraries.
 //
 // VisualStudio: Provide a property sheet named NAConfiguration.props right
 // next to the solution (go see the example of this solution). Add the
 // following line using a text editor to your project (go see this project):
 // <Import Project="$(SolutionDir)\NAConfiguration.props" Condition="Exists('$(SolutionDir)\NAConfiguration.props')" />
 // It is proposed to add this line right after the line which imports the
-// property sheet "Microsoft.Cpp.Default.props". The NALib project will
-// include NAConfiguration.props automatically.
+// property sheet "Microsoft.Cpp.Default.props". Add the NALib project.
 
 
 
-// To be able to include header files from NALib, you need to either add the
-// src directory of NALib as an additional project source path, or you can
-// help yourself using the following two lines. Just provide the correct
-// relative path to the root directory of the NALib source:
-
-#define HELLOWORLDGUI_STRINGIFY(A) #A
-#define HELLOWORLDGUI_NALIB_PATH(file) HELLOWORLDGUI_STRINGIFY(../../NALib/src/file)
-
-#include HELLOWORLDGUI_NALIB_PATH(NABase.h)
-#include HELLOWORLDGUI_NALIB_PATH(NAUI.h)
-#include HELLOWORLDGUI_NALIB_PATH(NATranslator.h)
+#include "../../NALib/src/NABase.h"
+#include "../../NALib/src/NAUI.h"
+#include "../../NALib/src/NATranslator.h"
 #include "translationIDs.h"
 
 NAInt trFinanceGroup;
@@ -94,8 +85,7 @@ NABool checkBoxPressed(NAReaction reaction){
 
 NABool radioPressed(NAReaction reaction){
   NA_UNUSED(reaction);
-  NABool state = naGetRadioState(reaction.uielement);
-  printf("Checked. Status of radio 0x%x now is %d." NA_NL, (int)reaction.uielement, (int)state);
+  printf("Checked radio 0x%x." NA_NL, (int)reaction.uielement);
   return NA_TRUE;
 }
 
@@ -117,12 +107,12 @@ void poststartup(void* arg){
   NASpace* contentSpace;
   
   NAButton* button;
-  NACheckBox* checkbox;
+  NACheckBox* checkBox;
   NALabel* label;
   NARadio* radio1;
   NARadio* radio2;
-  NATextBox* textbox;
-  NATextField* textfield;
+  NATextBox* textBox;
+  NATextField* textField;
   NA_UNUSED(arg);
 
   naSetTranslatorLanguagePreference(naGetLanguageCode("deu"));
@@ -156,9 +146,9 @@ void poststartup(void* arg){
   naAddSpaceChild(contentSpace, button, naMakePos(20., 20.));
   naAddUIReaction(button, NA_UI_COMMAND_PRESSED, buttonPressed, NA_NULL);
 
-  checkbox = naNewCheckBox("Checkbox asdf", naMakeSize(200., 20.));
-  naAddSpaceChild(contentSpace, checkbox, naMakePos(20., 40.));
-  naAddUIReaction(checkbox, NA_UI_COMMAND_PRESSED, checkBoxPressed, NA_NULL);
+  checkBox = naNewCheckBox("CheckBox asdf", naMakeSize(200., 20.));
+  naAddSpaceChild(contentSpace, checkBox, naMakePos(20., 40.));
+  naAddUIReaction(checkBox, NA_UI_COMMAND_PRESSED, checkBoxPressed, NA_NULL);
 
   label = naNewLabel("Label asdf", naMakeSize(200., 20.));
   naAddSpaceChild(contentSpace, label, naMakePos(20., 60.));
@@ -170,11 +160,11 @@ void poststartup(void* arg){
   naAddUIReaction(radio1, NA_UI_COMMAND_PRESSED, radioPressed, NA_NULL);
   naAddUIReaction(radio2, NA_UI_COMMAND_PRESSED, radioPressed, NA_NULL);
 
-  textbox = naNewTextBox(naMakeSize(200., 40.));
-  naAddSpaceChild(contentSpace, textbox, naMakePos(20., 100.));
+  textBox = naNewTextBox(naMakeSize(200., 40.));
+  naAddSpaceChild(contentSpace, textBox, naMakePos(20., 100.));
   
-  textfield = naNewTextField(naMakeSize(200., 20.));
-  naAddSpaceChild(contentSpace, textfield, naMakePos(20., 140.));
+  textField = naNewTextField(naMakeSize(200., 20.));
+  naAddSpaceChild(contentSpace, textField, naMakePos(20., 140.));
 
   naShowWindow(window);
 }
