@@ -1,6 +1,7 @@
 .DS_Store
 ._*
 .vs
+*.vcxproj.user
 *xcshareddata*
 *xcuserdata*
 *xcworkspace*
