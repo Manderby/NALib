@@ -291,7 +291,7 @@ NA_IAPI NAi64 naGetDoubleFraction(double d){
       dbits = naShli64(dbits, exponent);
     }
     dbits = naAndi64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
-    NAi128 hyperBits = naMakei128(NA_ZERO_i64, dbits);
+    NAi128 hyperBits = naMakei128(NA_ZERO_i64, naCasti64Tou64(dbits));
     NAi128 hyperTens = naMakei128(NA_ZERO_i64, 0x71afd498d0000000);  // = 1e15 * 2^13
     hyperBits = naMuli128(hyperBits, hyperTens);
     if(exponent < 0){
