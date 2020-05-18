@@ -154,8 +154,8 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
       token.previndx = -1;
       naLocateTreeToken(&iter, &token, debugNode, debugLeaf);
       
-      printf(NA_TAB "Inner node count: %d * %d Bytes = %d bytes" NA_NL, (int)token.nodecount, (int)tree->config->sizeofNode, (int)(token.nodecount * tree->config->sizeofNode));
-      printf(NA_TAB "Leaf count: %d * %d Bytes = %d bytes" NA_NL, (int)token.leafcount, (int)tree->config->sizeofLeaf, (int)(token.leafcount * tree->config->sizeofLeaf));
+      printf(NA_TAB "Inner node count: %d * %d Bytes = %d bytes" NA_NL, (int)token.nodecount, (int)tree->config->sizeofNode, (int)((size_t)token.nodecount * tree->config->sizeofNode));
+      printf(NA_TAB "Leaf count: %d * %d Bytes = %d bytes" NA_NL, (int)token.leafcount, (int)tree->config->sizeofLeaf, (int)((size_t)token.leafcount * tree->config->sizeofLeaf));
       printf(NA_TAB "Max node depth: %d" NA_NL, (int)token.maxdepth);
       naClearTreeIterator(&iter);
     }else{
