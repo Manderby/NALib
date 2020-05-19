@@ -62,7 +62,11 @@
   #define NA_OS NA_OS_WINDOWS
   #undef  NA_ENDIANNESS_HOST
   #define NA_ENDIANNESS_HOST NA_ENDIANNESS_LITTLE
-  #if defined _WIN64
+  #if defined _M_ARM
+    #define NA_ADDRESS_BITS NA_TYPE32_BITS
+  #elif defined _M_ARM64
+    #define NA_ADDRESS_BITS NA_TYPE64_BITS
+  #elif defined _WIN64
     #define NA_ADDRESS_BITS NA_TYPE64_BITS
   #else
     #define NA_ADDRESS_BITS NA_TYPE32_BITS
