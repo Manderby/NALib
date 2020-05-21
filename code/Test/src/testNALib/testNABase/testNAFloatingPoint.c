@@ -66,9 +66,9 @@ void testNAFloatingPoint(){
     naT(naMakeFloat(1, -42) == 0x1.000002p-42f);
     naT(naMakeFloat(-1, -42) == -0x1.000002p-42f);
     naT(naMakeFloat(number, 42) == 0x1.2468acp42f);
-    naT(naMakeFloat(-number, 42) == -0x1.2468acp42f);
+    naT(naMakeFloat(negNumber, 42) == -0x1.2468acp42f);
     naT(naMakeFloat(maxNumber, 42) == 0x1.fffffep42f);
-    naT(naMakeFloat(-maxNumber, 42) == -0x1.fffffep42f);
+    naT(naMakeFloat(negMaxNumber, 42) == -0x1.fffffep42f);
     naT(naMakeFloat(maxNumber, 127) == 0x1.fffffep127f);
     naT(naMakeFloat(0, -126) == 0x1.000000p-126f);
   }

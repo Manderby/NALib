@@ -344,7 +344,7 @@ NA_IDEF NAFilesize naWriteFileBytes(NAFile* file, const void* ptr, NAFilesize by
 
 
 NA_IDEF int naScanDecimal(){
-  NAInt retvalue;
+  int retvalue;
   #if NA_OS == NA_OS_WINDOWS
     scanf_s("%d", &retvalue);
   #elif NA_OS == NA_OS_MAC_OS_X

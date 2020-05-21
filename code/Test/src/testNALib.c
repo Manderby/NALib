@@ -25,7 +25,7 @@ int main(void){
   //printNALanguage();
   //printNAEncoding();
   //printNAChar();
-  //printNANumerics();
+  printNANumerics();
   printNAFloatingPoint();
 
   //naF(NALanguage);

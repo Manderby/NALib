@@ -196,6 +196,7 @@
 		9061401C24713E9C00498AF3 /* mainInt64Test.c in Sources */ = {isa = PBXBuildFile; fileRef = 9061400D24713E9C00498AF3 /* mainInt64Test.c */; };
 		9061401D24713E9C00498AF3 /* mainTreeTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 9061400E24713E9C00498AF3 /* mainTreeTest.c */; };
 		9061401F24713EC000498AF3 /* libNALib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 90613CF22471365300498AF3 /* libNALib.a */; };
+		90A304EF24770CFB000C7B59 /* testNAFloatingPoint.c in Sources */ = {isa = PBXBuildFile; fileRef = 90A304EE24770CFB000C7B59 /* testNAFloatingPoint.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -408,6 +409,7 @@
 		9061400D24713E9C00498AF3 /* mainInt64Test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mainInt64Test.c; sourceTree = "<group>"; };
 		9061400E24713E9C00498AF3 /* mainTreeTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mainTreeTest.c; sourceTree = "<group>"; };
 		9061400F24713E9C00498AF3 /* testNALib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = testNALib.h; sourceTree = "<group>"; };
+		90A304EE24770CFB000C7B59 /* testNAFloatingPoint.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = testNAFloatingPoint.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -845,6 +847,7 @@
 				9061400524713E9C00498AF3 /* testNAEncoding.c */,
 				9061400624713E9C00498AF3 /* testNAConfiguration.c */,
 				9061400724713E9C00498AF3 /* testNALanguage.c */,
+				90A304EE24770CFB000C7B59 /* testNAFloatingPoint.c */,
 				9061400824713E9C00498AF3 /* testNAEnvironment.c */,
 				9061400924713E9C00498AF3 /* testNANumerics.c */,
 			);
@@ -1098,6 +1101,7 @@
 				9061401C24713E9C00498AF3 /* mainInt64Test.c in Sources */,
 				9061401724713E9C00498AF3 /* testNALanguage.c in Sources */,
 				9061401224713E9C00498AF3 /* testHelper.c in Sources */,
+				90A304EF24770CFB000C7B59 /* testNAFloatingPoint.c in Sources */,
 				9061401324713E9C00498AF3 /* testNACompiler.c in Sources */,
 				9061401524713E9C00498AF3 /* testNAEncoding.c in Sources */,
 			);

@@ -69,7 +69,7 @@ void naPrintTestGroup(NATestData* testData){
   int leafSuccessCount = testData->leafSuccessCount;
   int leafTotalCount = testData->totalLeafCount;
   int childSuccessCount = testData->childSuccessCount;
-  int childTotalCount = naGetStackCount(&(testData->childs));
+  int childTotalCount = (int)naGetStackCount(&(testData->childs));
 
   printf("G ");
   if(testData->parent){naPrintTestName(testData->parent);}
