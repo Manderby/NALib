@@ -109,7 +109,7 @@ struct NACorePoolPart{
 
 struct NACoreTypeInfo{
   NACorePoolPart*   curpart;
-  NAUInt            typesize;
+  size_t            typesize;
   NAMutator         destructor;
   NABool            refcounting;
   #ifndef NDEBUG
@@ -213,7 +213,7 @@ NA_HIDEF void naUnregisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
 
 
 
-NA_HDEF NAUInt naGetCoreTypeInfoAllocatedCount(NACoreTypeInfo* coretypeinfo){
+NA_HDEF size_t naGetCoreTypeInfoAllocatedCount(NACoreTypeInfo* coretypeinfo){
   NACorePoolPart* firstpart = coretypeinfo->curpart;
   NACorePoolPart* curpart = firstpart->nextpart;
   size_t totalcount = firstpart->usedCount;
@@ -593,13 +593,13 @@ NA_DEF void naStopRuntime(){
 
     // Go through all registered types and output a leak message if necessary.
     for(i = 0; i < na_runtime->typeinfocount; i++){
-      NAUInt spacecount = naGetCoreTypeInfoAllocatedCount(na_runtime->typeinfos[i]);
+      size_t spacecount = naGetCoreTypeInfoAllocatedCount(na_runtime->typeinfos[i]);
       if(spacecount){
         if(!leakmessageprinted){
           printf(NA_NL "Memory leaks detected in NARuntime:" NA_NL);
           leakmessageprinted = NA_TRUE;
         }
-        printf("%s: %" NA_PRIu " * %" NA_PRIu " = %" NA_PRIu " Bytes" NA_NL, na_runtime->typeinfos[i]->typename, spacecount, na_runtime->typeinfos[i]->typesize, spacecount * na_runtime->typeinfos[i]->typesize);
+        printf("%s: %zu * %zu = %zu Bytes" NA_NL, na_runtime->typeinfos[i]->typename, spacecount, na_runtime->typeinfos[i]->typesize, spacecount * na_runtime->typeinfos[i]->typesize);
       }
     }
   #endif

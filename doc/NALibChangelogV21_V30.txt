@@ -26,6 +26,7 @@ Smaller Things:
 - Adapted documentation.txt
 - Removed NASizeInt, now using size_t and ptrdiff_t
 - Removed implementations for sign encodings different from twos complement.
+- Got rid of all NA_PRI and NA_SCN. Provide naPri functions.
   
 
 

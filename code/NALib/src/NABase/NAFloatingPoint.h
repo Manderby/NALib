@@ -5,6 +5,49 @@
 
 #include "../NABase.h"
 
+// Following are the macros for the most important constants when working
+// with IEEE-754 floating point values. They are properly defined in the
+// NAFloatingPointII.h file.
+//
+//                       | single      | double
+// ----------------------+-------------+--------------------
+// BITS                  | 32          | 64
+// SIGNIFICAND_BITS      | 23          | 52
+// SIGNIFICAND_NORM      | 0x00800000  | 0x0010000000000000
+// SIGNIFICAND_MASK      | 0x007fffff  | 0x000fffffffffffff
+// EXPONENT_BITS         | 8           | 11
+// EXPONENT_BIAS         | 127         | 1023
+// EXPNENT_SUBNORMAL     | -127        | -1023
+// EXPNENT_SPECIAL       | 128         | 1024
+// EXPONENT_MASK         | 0x7f800000  | 0x7ff0000000000000
+// SIGN_MASK             | 0x80000000  | 0x8000000000000000
+
+
+// single precision
+#define NA_IEEE754_SINGLE_BITS
+#define NA_IEEE754_SINGLE_SIGNIFICAND_BITS
+#define NA_IEEE754_SINGLE_SIGNIFICAND_NORM
+#define NA_IEEE754_SINGLE_SIGNIFICAND_MASK
+#define NA_IEEE754_SINGLE_EXPONENT_BITS
+#define NA_IEEE754_SINGLE_EXPONENT_BIAS
+#define NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL
+#define NA_IEEE754_SINGLE_EXPONENT_SPECIAL
+#define NA_IEEE754_SINGLE_EXPONENT_MASK
+#define NA_IEEE754_SINGLE_SIGN_MASK
+
+// double precision
+#define NA_IEEE754_DOUBLE_BITS
+#define NA_IEEE754_DOUBLE_SIGNIFICAND_BITS
+#define NA_IEEE754_DOUBLE_SIGNIFICAND_NORM
+#define NA_IEEE754_DOUBLE_SIGNIFICAND_MASK
+#define NA_IEEE754_DOUBLE_EXPONENT_BITS
+#define NA_IEEE754_DOUBLE_EXPONENT_BIAS
+#define NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL
+#define NA_IEEE754_DOUBLE_EXPONENT_SPECIAL
+#define NA_IEEE754_DOUBLE_EXPONENT_MASK
+#define NA_IEEE754_DOUBLE_SIGN_MASK
+
+
 // Creates floats and doubles out of signed significands and exponents
 NA_IAPI float  naMakeFloat (int32 signedSignificand, int32 signedExponent);
 NA_IAPI float  naMakeFloatWithExponent (int32 signedExponent);

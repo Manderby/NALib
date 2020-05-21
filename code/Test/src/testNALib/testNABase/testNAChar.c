@@ -27,26 +27,6 @@ void printNAChar(){
 
   printf(NA_NL "NAChar.h computed values:" NA_NL);
   printMacroPlain(NA_NL);
-  printMacroString(NA_PRIi8);
-  printMacroString(NA_PRIu8);
-  printMacroString(NA_PRIx8);
-  printMacroString(NA_SCNi8);
-  printMacroString(NA_SCNu8);
-  printMacroString(NA_PRIi16);
-  printMacroString(NA_PRIu16);
-  printMacroString(NA_PRIx16);
-  printMacroString(NA_SCNi16);
-  printMacroString(NA_SCNu16);
-  printMacroString(NA_PRIi32);
-  printMacroString(NA_PRIu32);
-  printMacroString(NA_PRIx32);
-  printMacroString(NA_SCNi32);
-  printMacroString(NA_SCNu32);
-  printMacroString(NA_PRIi64);
-  printMacroString(NA_PRIu64);
-  printMacroString(NA_PRIx64);
-  printMacroString(NA_SCNi64);
-  printMacroString(NA_SCNu64);
 
   printf(NA_NL);
 }

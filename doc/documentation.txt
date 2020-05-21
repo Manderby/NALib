@@ -418,7 +418,7 @@ Variables and printf arguments are rarely used in NALib. They have an
 appropriate description after the prefix like for example
 
 na_monthenglishabbreviationnames, na_runtime
-NA_PRIi, NA_TAB, NA_NL_UNIX
+NA_TAB, NA_NL_UNIX
 
 
 

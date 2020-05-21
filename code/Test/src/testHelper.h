@@ -30,16 +30,18 @@ void naStopTestGroup(void);
 
 #define printMacroHead(macro)\
 {\
-  const char* macroStr = macro;\
-  printf("%s", macroStr);\
-  for(int c = 0; c < (int)(NA_TEST_MAX_MACRO_LENGTH - strlen(macroStr)); c++){printf(" ");}\
+  const char* __macroStr = macro;\
+  printf("%s", __macroStr);\
+  for(int c = 0; c < (int)(NA_TEST_MAX_MACRO_LENGTH - strlen(__macroStr)); c++){\
+    printf(" ");\
+  }\
 }
 
 #define printMacroPlain(macro)\
-  printMacroHead(#macro)\
+  printMacroHead(#macro);\
   if(strncmp(#macro, NA_STRINGIFY(macro), strlen(#macro)) != 0){\
     if(strlen(NA_STRINGIFY(macro)) == 0){\
-      printf("(Defined as empty)");\
+      printf("(Defined)");\
     }else{\
       printf(NA_STRINGIFY(macro));\
     }\
@@ -49,25 +51,111 @@ void naStopTestGroup(void);
   printf(NA_NL)
 
 #define printMacroInt(macro)\
-  printMacroHead(#macro)\
+  printMacroHead(#macro);\
   printf("%d", (int32)macro);\
   printf(NA_NL)
 
-#define printMacroIntHex(macro, showDec)\
-  printMacroHead(#macro)\
-  if(showDec)\
-    printf("0x%x (%d)", macro, macro);\
+
+
+#define printMacroux8(macro, showMacro)\
+  printMacroHead(#macro);\
+  if(showMacro)\
+    printf("0x%s | %s", naPriux8(macro), NA_STRINGIFY(macro));\
   else\
-    printf("0x%x", macro);\
+    printf("0x%s", naPriux8(macro));\
+  printf(NA_NL)
+#define printMacroix8(macro, showMacro)\
+  printMacroHead(#macro);\
+  if(showMacro)\
+    printf("0x%s | %s", naPriix8(macro), NA_STRINGIFY(macro));\
+  else\
+    printf("0x%s", naPriix8(macro));\
   printf(NA_NL)
 
+#define printMacroux16(macro, showMacro)\
+  printMacroHead(#macro);\
+  if(showMacro)\
+    printf("0x%s | %s", naPriux16(macro), NA_STRINGIFY(macro));\
+  else\
+    printf("0x%s", naPriux16(macro));\
+  printf(NA_NL)
+#define printMacroix16(macro, showMacro)\
+  printMacroHead(#macro);\
+  if(showMacro)\
+    printf("0x%s | %s", naPriix16(macro), NA_STRINGIFY(macro));\
+  else\
+    printf("0x%s", naPriix16(macro));\
+  printf(NA_NL)
+
+#define printMacroux32(macro, showMacro)\
+  printMacroHead(#macro);\
+  if(showMacro)\
+    printf("0x%s | %s", naPriux32(macro), NA_STRINGIFY(macro));\
+  else\
+    printf("0x%s", naPriux32(macro));\
+  printf(NA_NL)
+#define printMacroix32(macro, showMacro)\
+  printMacroHead(#macro);\
+  if(showMacro)\
+    printf("0x%s | %s", naPriix32(macro), NA_STRINGIFY(macro));\
+  else\
+    printf("0x%s", naPriix32(macro));\
+  printf(NA_NL)
+
+#define printMacroux64(macro, showMacro)\
+  printMacroHead(#macro);\
+  if(showMacro)\
+    printf("0x%s | %s", naPriux64(macro), NA_STRINGIFY(macro));\
+  else\
+    printf("0x%s", naPriux64(macro));\
+  printf(NA_NL)
+#define printMacroix64(macro, showMacro)\
+  printMacroHead(#macro);\
+  if(showMacro)\
+    printf("0x%s | %s", naPriix64(macro), NA_STRINGIFY(macro));\
+  else\
+    printf("0x%s", naPriix64(macro));\
+  printf(NA_NL)
+
+#define printMacroux128(macro, showMacro)\
+  printMacroHead(#macro);\
+  if(showMacro)\
+    printf("0x%s | %s", naPriux128(macro), NA_STRINGIFY(macro));\
+  else\
+    printf("0x%s", naPriux128(macro));\
+  printf(NA_NL);
+#define printMacroix128(macro, showMacro)\
+  printMacroHead(#macro);\
+  if(showMacro)\
+    printf("0x%s | %s", naPriix128(macro), NA_STRINGIFY(macro));\
+  else\
+    printf("0x%s", naPriix128(macro));\
+  printf(NA_NL);
+
+#define printMacroux256(macro, showMacro)\
+  printMacroHead(#macro);\
+  if(showMacro)\
+    printf("0x%s | %s", naPriux256(macro), NA_STRINGIFY(macro));\
+  else\
+    printf("0x%s", naPriux256(macro));\
+  printf(NA_NL);
+#define printMacroix256(macro, showMacro)\
+  printMacroHead(#macro);\
+  if(showMacro)\
+    printf("0x%s | %s", naPriix256(macro), NA_STRINGIFY(macro));\
+  else\
+    printf("0x%s", naPriix256(macro));\
+  printf(NA_NL);
+
+
+
 #define printMacroString(macro)\
-  printMacroHead(#macro)\
+  printMacroHead(#macro);\
   printf("%s", macro);\
   printf(NA_NL)
 
 #define printMacroIntSpecial(macro, specialValue, specialString)\
-  printMacroHead(#macro)\
+  printMacroHead(#macro);\
   if((int32)macro == (int32)specialValue){\
     printf("%d (%s)", macro, specialString);\
   }else{\
@@ -76,7 +164,7 @@ void naStopTestGroup(void);
   printf(NA_NL)
 
 #define printMacroIntSpecialHex(macro, specialValue, specialString)\
-  printMacroHead(#macro)\
+  printMacroHead(#macro);\
   if((int32)macro == (int32)specialValue){\
     printf("0x%x (%s)", macro, specialString);\
   }else{\
@@ -92,14 +180,14 @@ void naStopTestGroup(void);
   }\
 
 #define printMacroEnum(macro, strings, maxValue)\
-  printMacroHead(#macro)\
+  printMacroHead(#macro);\
   printMacroEnumCore(macro, strings, maxValue)\
   printf(NA_NL)
 
 extern const char* na_yesno_strings[];
 
 #define printMacroIntYesNo(macro)\
-  printMacroHead(#macro)\
+  printMacroHead(#macro);\
   printMacroEnumCore(macro, na_yesno_strings, 2)\
   printf(NA_NL)
 

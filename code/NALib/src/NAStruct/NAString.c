@@ -8,9 +8,7 @@
 
 
 
-
-
-NA_API NABool naEqualUTF8CStringLiterals(const NAUTF8Char* string1, const NAUTF8Char* string2, NAInt length, NABool casesensitive){
+NA_DEF NABool naEqualUTF8CStringLiterals(const NAUTF8Char* string1, const NAUTF8Char* string2, NAInt length, NABool casesensitive){
   if(!length){
     NAInt length1 = naStrlen(string1);
     NAInt length2 = naStrlen(string2);
@@ -35,6 +33,90 @@ NA_API NABool naEqualUTF8CStringLiterals(const NAUTF8Char* string1, const NAUTF8
   return NA_TRUE;
 }
 
+
+
+NA_DEF NAUTF8Char* naAllocSprintf(NABool useTmp, const NAUTF8Char* format, ...){
+  va_list argumentlist;
+  va_list argumentlist2;
+  va_start(argumentlist, format);
+  va_copy(argumentlist2, argumentlist);
+  NAInt stringlen = naVarargStringLength(format, argumentlist);
+
+  NAUTF8Char* stringbuf = (useTmp)
+    ? naMallocTmp((NAInt)stringlen + 1)
+    : naMalloc((NAInt)stringlen + 1);
+  naVsnprintf(stringbuf, (NAUInt)(stringlen + 1), format, argumentlist2);
+  stringbuf[stringlen] = '\0';
+
+  return stringbuf;
+}
+
+
+
+NA_DEF NAUTF8Char* naPriux8(uint8 value){
+  return naAllocSprintf(NA_TRUE, "%02x", (int)(value & NA_MAX_u8));
+}
+NA_DEF NAUTF8Char* naPriix8(int8 value){
+  return naAllocSprintf(NA_TRUE, "%02x", (int)(value & NA_MAX_u8));
+}
+NA_DEF NAUTF8Char* naPriux16(uint16 value){
+  return naAllocSprintf(NA_TRUE, "%04x", (int)(value & NA_MAX_u16));
+}
+NA_DEF NAUTF8Char* naPriix16(int16 value){
+  return naAllocSprintf(NA_TRUE, "%04x", (int)(value & NA_MAX_u16));
+}
+NA_DEF NAUTF8Char* naPriux32(uint32 value){
+  return naAllocSprintf(NA_TRUE, "%08x", (int)value);
+}
+NA_DEF NAUTF8Char* naPriix32(int32 value){
+  return naAllocSprintf(NA_TRUE, "%08x", (int)value);
+}
+NA_DEF NAUTF8Char* naPriux64(NAu64 value){
+  return naAllocSprintf(NA_TRUE, "%08x%08x",
+    naGetu64Hi(value),
+    naGetu64Lo(value));
+}
+NA_DEF NAUTF8Char* naPriix64(NAi64 value){
+  return naAllocSprintf(NA_TRUE, "%08x%08x",
+    naGeti64Hi(value),
+    naGeti64Lo(value));
+}
+NA_DEF NAUTF8Char* naPriux128(NAu128 value){
+  return naAllocSprintf(NA_TRUE, "%08x%08x%08x%08x",
+    naGetu64Hi(naGetu128Hi(value)),
+    naGetu64Lo(naGetu128Hi(value)),
+    naGetu64Hi(naGetu128Lo(value)),
+    naGetu64Lo(naGetu128Lo(value)));
+}
+NA_DEF NAUTF8Char* naPriix128(NAi128 value){
+  return naAllocSprintf(NA_TRUE, "%08x%08x%08x%08x",
+    naGeti64Hi(naGeti128Hi(value)),
+    naGeti64Lo(naGeti128Hi(value)),
+    naGetu64Hi(naGeti128Lo(value)),
+    naGetu64Lo(naGeti128Lo(value)));
+}
+NA_DEF NAUTF8Char* naPriux256(NAu256 value){
+  return naAllocSprintf(NA_TRUE, "%08x%08x%08x%08x%08x%08x%08x%08x",
+    naGetu64Hi(naGetu128Hi(naGetu256Hi(value))),
+    naGetu64Lo(naGetu128Hi(naGetu256Hi(value))),
+    naGetu64Hi(naGetu128Lo(naGetu256Hi(value))),
+    naGetu64Lo(naGetu128Lo(naGetu256Hi(value))),
+    naGetu64Hi(naGetu128Hi(naGetu256Lo(value))),
+    naGetu64Lo(naGetu128Hi(naGetu256Lo(value))),
+    naGetu64Hi(naGetu128Lo(naGetu256Lo(value))),
+    naGetu64Lo(naGetu128Lo(naGetu256Lo(value))));
+}
+NA_DEF NAUTF8Char* naPriix256(NAi256 value){
+  return naAllocSprintf(NA_TRUE, "%08x%08x%08x%08x%08x%08x%08x%08x",
+    naGeti64Hi(naGeti128Hi(naGeti256Hi(value))),
+    naGeti64Lo(naGeti128Hi(naGeti256Hi(value))),
+    naGetu64Hi(naGeti128Lo(naGeti256Hi(value))),
+    naGetu64Lo(naGeti128Lo(naGeti256Hi(value))),
+    naGetu64Hi(naGetu128Hi(naGeti256Lo(value))),
+    naGetu64Lo(naGetu128Hi(naGeti256Lo(value))),
+    naGetu64Hi(naGetu128Lo(naGeti256Lo(value))),
+    naGetu64Lo(naGetu128Lo(naGeti256Lo(value))));
+}
 
 
 

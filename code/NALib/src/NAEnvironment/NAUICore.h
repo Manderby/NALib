@@ -148,10 +148,10 @@ extern NACoreApplication* na_app;
 #define NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE        0x04
 #define NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING  0x08
 
-#define NA_WINDOW_PREF_STRING_POS_X "NAWindow_%" NA_PRIi "_Pos_x"
-#define NA_WINDOW_PREF_STRING_POS_Y "NAWindow_%" NA_PRIi "_Pos_y"
-#define NA_WINDOW_PREF_STRING_SIZE_WIDTH "NAWindow_%" NA_PRIi "_Size_Width"
-#define NA_WINDOW_PREF_STRING_SIZE_HEIGHT "NAWindow_%" NA_PRIi "_Size_Height"
+#define NA_WINDOW_PREF_STRING_POS_X "NAWindow_%d_Pos_x"
+#define NA_WINDOW_PREF_STRING_POS_Y "NAWindow_%d_Pos_y"
+#define NA_WINDOW_PREF_STRING_SIZE_WIDTH "NAWindow_%d_Size_Width"
+#define NA_WINDOW_PREF_STRING_SIZE_HEIGHT "NAWindow_%d_Size_Height"
 
 // //////////////////////////////////////////
 // Hidden API

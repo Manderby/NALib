@@ -89,21 +89,28 @@
 
 
 
-// Following are the macros for the most important constants when working
-// with IEEE-754 floating point values:
-//
-//                       | single      | double
-// ----------------------+-------------+--------------------
-// BITS                  | 32          | 64
-// SIGNIFICAND_BITS      | 23          | 52
-// SIGNIFICAND_NORM      | 0x00800000  | 0x0010000000000000
-// SIGNIFICAND_MASK      | 0x007fffff  | 0x000fffffffffffff
-// EXPONENT_BITS         | 8           | 11
-// EXPONENT_BIAS         | 127         | 1023
-// EXPNENT_SUBNORMAL     | -127        | -1023
-// EXPNENT_SPECIAL       | 128         | 1024
-// EXPONENT_MASK         | 0x7f800000  | 0x7ff0000000000000
-// SIGN_MASK             | 0x80000000  | 0x8000000000000000
+// Undefine the defines of the .h file.
+#undef NA_IEEE754_SINGLE_BITS
+#undef NA_IEEE754_SINGLE_SIGNIFICAND_BITS
+#undef NA_IEEE754_SINGLE_SIGNIFICAND_NORM
+#undef NA_IEEE754_SINGLE_SIGNIFICAND_MASK
+#undef NA_IEEE754_SINGLE_EXPONENT_BITS
+#undef NA_IEEE754_SINGLE_EXPONENT_BIAS
+#undef NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL
+#undef NA_IEEE754_SINGLE_EXPONENT_SPECIAL
+#undef NA_IEEE754_SINGLE_EXPONENT_MASK
+#undef NA_IEEE754_SINGLE_SIGN_MASK
+#undef NA_IEEE754_DOUBLE_BITS
+#undef NA_IEEE754_DOUBLE_SIGNIFICAND_BITS
+#undef NA_IEEE754_DOUBLE_SIGNIFICAND_NORM
+#undef NA_IEEE754_DOUBLE_SIGNIFICAND_MASK
+#undef NA_IEEE754_DOUBLE_EXPONENT_BITS
+#undef NA_IEEE754_DOUBLE_EXPONENT_BIAS
+#undef NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL
+#undef NA_IEEE754_DOUBLE_EXPONENT_SPECIAL
+#undef NA_IEEE754_DOUBLE_EXPONENT_MASK
+#undef NA_IEEE754_DOUBLE_SIGN_MASK
+// Now, redefine them properly.
 
 // single precision
 #define NA_IEEE754_SINGLE_BITS                   NA_TYPE32_BITS

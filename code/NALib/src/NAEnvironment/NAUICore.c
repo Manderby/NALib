@@ -509,15 +509,15 @@ NA_HDEF NARect naSetWindowStorageTag(NAWindow* window, NAInt storageTag, NARect 
   NACoreWindow* coreWindow = (NACoreWindow*)window;
   coreWindow->storageTag = storageTag;
   if(coreWindow->storageTag){
-    NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, coreWindow->storageTag);
-    NAString* prefPosYString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_Y, coreWindow->storageTag);
+    NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, (int)coreWindow->storageTag);
+    NAString* prefPosYString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_Y, (int)coreWindow->storageTag);
     rect.pos.x = naInitPreferencesDouble(naGetStringUTF8Pointer(prefPosXString), rect.pos.x);
     rect.pos.y = naInitPreferencesDouble(naGetStringUTF8Pointer(prefPosYString), rect.pos.y);
     naDelete(prefPosXString);
     naDelete(prefPosYString);
     if(resizeable){
-      NAString* prefSizeWidthString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_WIDTH, coreWindow->storageTag);
-      NAString* prefSizeHeightString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_HEIGHT, coreWindow->storageTag);
+      NAString* prefSizeWidthString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_WIDTH, (int)coreWindow->storageTag);
+      NAString* prefSizeHeightString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_HEIGHT, (int)coreWindow->storageTag);
       rect.size.width = naInitPreferencesDouble(naGetStringUTF8Pointer(prefSizeWidthString), rect.size.width);
       rect.size.height = naInitPreferencesDouble(naGetStringUTF8Pointer(prefSizeHeightString), rect.size.height);
       naDelete(prefSizeWidthString);
@@ -532,15 +532,15 @@ NA_HDEF NARect naSetWindowStorageTag(NAWindow* window, NAInt storageTag, NARect 
 NA_HDEF void naRememberWindowPosition(NACoreWindow* coreWindow){
   if(coreWindow->storageTag){
     NARect rect = naGetWindowAbsoluteInnerRect(&(coreWindow->uielement));
-    NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, coreWindow->storageTag);
-    NAString* prefPosYString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_Y, coreWindow->storageTag);
+    NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, (int)coreWindow->storageTag);
+    NAString* prefPosYString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_Y, (int)coreWindow->storageTag);
     naSetPreferencesDouble(naGetStringUTF8Pointer(prefPosXString), rect.pos.x);
     naSetPreferencesDouble(naGetStringUTF8Pointer(prefPosYString), rect.pos.y);
     naDelete(prefPosXString);
     naDelete(prefPosYString);
     if(naIsWindowResizeable(coreWindow)){
-      NAString* prefSizeWidthString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_WIDTH, coreWindow->storageTag);
-      NAString* prefSizeHeightString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_HEIGHT, coreWindow->storageTag);
+      NAString* prefSizeWidthString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_WIDTH, (int)coreWindow->storageTag);
+      NAString* prefSizeHeightString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_SIZE_HEIGHT, (int)coreWindow->storageTag);
       naSetPreferencesDouble(naGetStringUTF8Pointer(prefSizeWidthString), rect.size.width);
       naSetPreferencesDouble(naGetStringUTF8Pointer(prefSizeHeightString), rect.size.height);
       naDelete(prefSizeWidthString);

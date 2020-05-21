@@ -16,12 +16,6 @@ int main(void){
   #endif
   printf(", %d Bits Addresses, %d Bits Integers)" NA_NL NA_NL, NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
-
-//  uint128 test1 = NA_MAX_u128;
-//  int128 test2 = NA_MAX_i128;
-//  int128 test3 = NA_MIN_i128;
-  
-
   naStartRuntime();
   naStartTesting("NALib");
   
@@ -32,10 +26,11 @@ int main(void){
   printNAEncoding();
   printNAChar();
   printNANumerics();
+  printNAFloatingPoint();
 
-  naF(NALanguage);
-  naF(NAChar);
-  naF(NANumerics);
+  //naF(NALanguage);
+  //naF(NAChar);
+  //naF(NANumerics);
 
   naStopTesting();
   naStopRuntime();

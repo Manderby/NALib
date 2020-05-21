@@ -343,14 +343,14 @@ NA_IDEF NAFilesize naWriteFileBytes(NAFile* file, const void* ptr, NAFilesize by
 
 
 
-NA_IDEF NAInt naScanDecimal(){
+NA_IDEF int naScanDecimal(){
   NAInt retvalue;
   #if NA_OS == NA_OS_WINDOWS
-    scanf_s("%" NA_SCNi, &retvalue);
+    scanf_s("%d", &retvalue);
   #elif NA_OS == NA_OS_MAC_OS_X
-    scanf("%" NA_SCNi, &retvalue);
+    scanf("%d", &retvalue);
   #else
-    scanf("%" NA_SCNi, &retvalue);  // Might not compile on an undetected system.
+    scanf("%d", &retvalue);  // Might not compile on an undetected system.
   #endif
   return retvalue;
 }

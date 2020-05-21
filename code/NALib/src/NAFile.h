@@ -208,8 +208,8 @@ NA_IAPI NAFilesize naWriteFileBytes(  NAFile* file,
 // General input and output methods
 //
 
-// Scans a Decimal of the type NAInt from the console.
-NA_IAPI NAInt naScanDecimal(void);
+// Scans a Decimal of the type int from the console.
+NA_IAPI int naScanDecimal(void);
 
 // Returns a string containing the current working directory
 NA_API NAString* naNewStringWithCurWorkingDirectory(void);

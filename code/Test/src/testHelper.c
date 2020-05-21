@@ -13,12 +13,12 @@ const char* na_yesno_strings[] = {
 
 struct NATestData {
   const char* name;
-  int32 lineNum;
+  int lineNum;
   NABool success;
   NAStack childs;
-  int32 childSuccessCount;
-  int32 leafSuccessCount;
-  int32 totalLeafCount;
+  int childSuccessCount;
+  int leafSuccessCount;
+  int totalLeafCount;
   NATestData* parent;
 };
 
@@ -30,7 +30,7 @@ int na_printAllTestGroups = 0;
 
 
 
-void naInitTestingData(NATestData* testData, const char* name, NATestData* parent, int32 lineNum){
+void naInitTestingData(NATestData* testData, const char* name, NATestData* parent, int lineNum){
   testData->name = name;
   testData->lineNum = lineNum;
   testData->success = NA_TRUE;
@@ -57,7 +57,7 @@ void naPrintTestName(NATestData* testData){
 
 
 
-void naPrintRatio(NAInt successCount, NAInt totalCount){
+void naPrintRatio(int successCount, int totalCount){
   if(totalCount){
     double ratio = (double)successCount / (double)totalCount * 100.;
     printf (" (%.02f%%)", ratio);
@@ -66,21 +66,21 @@ void naPrintRatio(NAInt successCount, NAInt totalCount){
 
 
 void naPrintTestGroup(NATestData* testData){
-  NAInt leafSuccessCount = (NAInt)testData->leafSuccessCount;
-  NAInt leafTotalCount = (NAInt)testData->totalLeafCount;
-  NAInt childSuccessCount = (NAInt)testData->childSuccessCount;
-  NAInt childTotalCount = (NAInt)naGetStackCount(&(testData->childs));
+  int leafSuccessCount = testData->leafSuccessCount;
+  int leafTotalCount = testData->totalLeafCount;
+  int childSuccessCount = testData->childSuccessCount;
+  int childTotalCount = naGetStackCount(&(testData->childs));
 
   printf("G ");
   if(testData->parent){naPrintTestName(testData->parent);}
   if(leafTotalCount == childTotalCount){
-    printf("%s: %" NA_PRIi " / %" NA_PRIi " Tests ok", testData->name, leafSuccessCount, leafTotalCount);
+    printf("%s: %d / %d Tests ok", testData->name, leafSuccessCount, leafTotalCount);
     naPrintRatio(leafSuccessCount, leafTotalCount);
     printf(NA_NL);
   }else{
-    printf("%s: %" NA_PRIi " / %" NA_PRIi " Groups ok", testData->name, childSuccessCount, childTotalCount);
+    printf("%s: %d / %d Groups ok", testData->name, childSuccessCount, childTotalCount);
     naPrintRatio(childSuccessCount, childTotalCount);
-    printf(", %" NA_PRIi " / %" NA_PRIi " Tests ok", leafSuccessCount, leafTotalCount);
+    printf(", %d / %d Tests ok", leafSuccessCount, leafTotalCount);
     naPrintRatio(leafSuccessCount, leafTotalCount);
     printf(NA_NL);
   }
@@ -140,7 +140,7 @@ void naUpdateTestParentLeaf(NATestData* testData, NABool leafSuccess){
 
 void naAddTest(const char* expr, int success, int lineNum){
   NATestData* testData = naPushStack(&(na_curTestData->childs));
-  naInitTestingData(testData, expr, na_curTestData, (int32)lineNum);
+  naInitTestingData(testData, expr, na_curTestData, lineNum);
   testData->success = (NABool)success;
   naUpdateTestParentLeaf(na_curTestData, (NABool)success);
   if(!success){
@@ -154,7 +154,7 @@ void naAddTest(const char* expr, int success, int lineNum){
 
 void naStartTestGroup(const char* name, int lineNum){
   NATestData* testData = naPushStack(&(na_curTestData->childs));
-  naInitTestingData(testData, name, na_curTestData, (int32)lineNum);
+  naInitTestingData(testData, name, na_curTestData, lineNum);
   na_curTestData->childSuccessCount++;
   na_curTestData = testData;
 }

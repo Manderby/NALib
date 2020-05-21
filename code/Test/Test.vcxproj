@@ -291,6 +291,7 @@
     <ClCompile Include="src\testNALib\testNABase\testNAConfiguration.c" />
     <ClCompile Include="src\testNALib\testNABase\testNAEncoding.c" />
     <ClCompile Include="src\testNALib\testNABase\testNAEnvironment.c" />
+    <ClCompile Include="src\testNALib\testNABase\testNAFloatingPoint.c" />
     <ClCompile Include="src\testNALib\testNABase\testNALanguage.c" />
     <ClCompile Include="src\testNALib\testNABase\testNANumerics.c" />
   </ItemGroup>

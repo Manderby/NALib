@@ -36,8 +36,11 @@ NA_IAPI NAInt naVsnprintf(                  NAUTF8Char* buffer,
                                                  NAUInt length,
                                       const NAUTF8Char* newstr,
                                                 va_list argumentlist);
+
+// Returns the number of characters needed to transform the given string and
+// arguments using sprintf.
 NA_IAPI NAInt naVarargStringLength(   const NAUTF8Char* string,
-                                                va_list args);
+  va_list args);
 
 // Compares the string content of the two pointers being equal.
 // if length is 0, the two strings are expected to be zero-terminated and
@@ -47,6 +50,27 @@ NA_API NABool naEqualUTF8CStringLiterals( const NAUTF8Char* string1,
                                           const NAUTF8Char* string2,
                                                       NAInt length,
                                                      NABool casesensitive);
+
+// Allocates and returns memory and formats the given string like printf.
+// When useTmp is true, the returned pointer will be automatically collected
+// by the garbage collector of NARuntime.
+NA_API NAUTF8Char* naAllocSprintf( NABool useTmp,
+                         const NAUTF8Char* format,
+                                           ...);
+
+// Returns a garbage collected pointer to a formatted string of the value.
+NA_API NAUTF8Char* naPriux8(uint8 value);
+NA_API NAUTF8Char* naPriix8(int8 value);
+NA_API NAUTF8Char* naPriux16(uint16 value);
+NA_API NAUTF8Char* naPriix16(int16 value);
+NA_API NAUTF8Char* naPriux32(uint32 value);
+NA_API NAUTF8Char* naPriix32(int32 value);
+NA_API NAUTF8Char* naPriux64(NAu64 value);
+NA_API NAUTF8Char* naPriix64(NAi64 value);
+NA_API NAUTF8Char* naPriux128(NAu128 value);
+NA_API NAUTF8Char* naPriix128(NAi128 value);
+NA_API NAUTF8Char* naPriux256(NAu256 value);
+NA_API NAUTF8Char* naPriix256(NAi256 value);
 
 
 // /////////////////////////////////////////

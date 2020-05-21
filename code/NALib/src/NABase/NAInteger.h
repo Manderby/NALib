@@ -133,12 +133,6 @@ typedef int32_t               int32;
 // in 64 Bit systems, the memory limitations will not be a problem for a
 // couple of years coming.
 //
-// In addition to the type, there is the definition of a printf-argument
-// macro. Use the macro for example like this:
-//
-// printf("The point is at X coordinate %" NA_PRIi, pos.x);
-// printf("The array has %" NA_PRIu " entries.", naGetArrayCount(array));
-//
 // One serious drawback of a system-dependent definition is that NALib might
 // behave differently depending on the system it is compiled for. But it will
 // only behave differently in cases where the behaviour would get difficult
@@ -168,11 +162,6 @@ typedef int32_t               int32;
   #endif
   typedef int64 NAInt;
   typedef uint64 NAUInt;
-  #define NA_PRIi NA_PRIi64
-  #define NA_PRIu NA_PRIu64
-  #define NA_PRIx NA_PRIx64
-  #define NA_SCNi NA_SCNi64
-  #define NA_SCNu NA_SCNu64
   #define NA_MAX_i NA_MAX_i64
   #define NA_MIN_i NA_MIN_i64
   #define NA_Max_U NA_MAX_u64
@@ -181,11 +170,6 @@ typedef int32_t               int32;
 #elif NA_TYPE_NAINT_BITS == NA_TYPE32_BITS
   typedef int32 NAInt;
   typedef uint32 NAUInt;
-  #define NA_PRIi NA_PRIi32
-  #define NA_PRIu NA_PRIu32
-  #define NA_PRIx NA_PRIx32
-  #define NA_SCNi NA_SCNi32
-  #define NA_SCNu NA_SCNu32
   #define NA_MAX_i NA_MAX_i32
   #define NA_MIN_i NA_MIN_i32
   #define NA_Max_U NA_MAX_u32
@@ -194,11 +178,6 @@ typedef int32_t               int32;
 #elif NA_TYPE_NAINT_BITS == NA_TYPE16_BITS
   typedef int16 NAInt;
   typedef uint16 NAUInt;
-  #define NA_PRIi NA_PRIi16
-  #define NA_PRIu NA_PRIu16
-  #define NA_PRIx NA_PRIx16
-  #define NA_SCNi NA_SCNi16
-  #define NA_SCNu NA_SCNu16
   #define NA_MAX_i NA_MAX_i16
   #define NA_MIN_i NA_MIN_i16
   #define NA_Max_U NA_MAX_u16
