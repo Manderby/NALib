@@ -292,6 +292,20 @@
 
 
 
+// ////////////////////////////////
+// Testing
+// ////////////////////////////////
+
+// NALib provides a small testing framework which is used internally but can
+// also be used by others. Set this macro to 1 if you want to use this
+// functionality.
+//
+// The default is 0.
+
+#ifndef NA_TESTING_ENABLED
+  #define NA_TESTING_ENABLED 0
+#endif
+
 // This is free and unencumbered software released into the public domain.
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or

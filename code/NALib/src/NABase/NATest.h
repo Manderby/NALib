@@ -1,9 +1,5 @@
 
-
-
-#include <string.h>
-
-
+#if NA_TESTING_ENABLED == 1
 
 // Starts and stops the testing. Provide the top name of the code you
 // want to test. A final printout will be made upon stopping.
@@ -64,6 +60,7 @@ NA_API void naStopTesting(void);
 #include "NATestII.h"
 
 
+#endif // NA_TESTING_ENABLED == 1
 
 // This is free and unencumbered software released into the public domain.
 

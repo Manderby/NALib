@@ -1,7 +1,7 @@
 
 #include "../NAStack.h"
 
-
+#if NA_TESTING_ENABLED == 1
 
 const char* na_yesno_strings[] = {
   "No",
@@ -168,6 +168,8 @@ NA_HDEF void naStopTestGroup(){
 }
 
 
+
+#endif // NA_TESTING_ENABLED == 1
 
 // This is free and unencumbered software released into the public domain.
 

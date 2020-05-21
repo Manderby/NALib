@@ -1,6 +1,12 @@
 
 // This file contains inline implementations of testing methods.
 
+#if NA_TESTING_ENABLED == 1
+
+#include <string.h>
+
+
+
 // First, undefine all macros defined in the .h file
 #undef naT
 #undef naG
@@ -219,6 +225,9 @@ extern const char* na_yesno_strings[];
   else\
     printf("0x%s", naPriix256(macro));\
   printf(NA_NL);
+
+
+#endif // NA_TESTING_ENABLED == 1
 
 // This is free and unencumbered software released into the public domain.
 
