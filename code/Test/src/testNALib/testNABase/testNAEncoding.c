@@ -1,5 +1,4 @@
 
-#include "../../testHelper.h"
 #include "NABase.h"
 #include <stdio.h>
 
@@ -24,39 +23,39 @@ const char* na_native_types_enum_strings[] = {
 
 void printNAEncoding(){
   printf("NAEncoding.h fixed values:" NA_NL);
-  printMacroInt          (NA_SIGN_ENCODING_UNKNOWN);
-  printMacroInt          (NA_SIGN_ENCODING_SIGN_MAGNITUDE);
-  printMacroInt          (NA_SIGN_ENCODING_ONES_COMPLEMENT);
-  printMacroInt          (NA_SIGN_ENCODING_TWOS_COMPLEMENT);
+  naPrintMacroInt          (NA_SIGN_ENCODING_UNKNOWN);
+  naPrintMacroInt          (NA_SIGN_ENCODING_SIGN_MAGNITUDE);
+  naPrintMacroInt          (NA_SIGN_ENCODING_ONES_COMPLEMENT);
+  naPrintMacroInt          (NA_SIGN_ENCODING_TWOS_COMPLEMENT);
 
-  printMacroInt          (NA_TYPE_NATIVE_NONE);
-  printMacroInt          (NA_TYPE_NATIVE_CHAR);
-  printMacroInt          (NA_TYPE_NATIVE_SHORT);
-  printMacroInt          (NA_TYPE_NATIVE_INT);
-  printMacroInt          (NA_TYPE_NATIVE_LONG);
-  printMacroInt          (NA_TYPE_NATIVE_LONG_LONG);
-  printMacroInt          (NA_TYPE_NATIVE_INT_128);
-  printMacroInt          (NA_TYPE_NATIVE_INT_256);
+  naPrintMacroInt          (NA_TYPE_NATIVE_NONE);
+  naPrintMacroInt          (NA_TYPE_NATIVE_CHAR);
+  naPrintMacroInt          (NA_TYPE_NATIVE_SHORT);
+  naPrintMacroInt          (NA_TYPE_NATIVE_INT);
+  naPrintMacroInt          (NA_TYPE_NATIVE_LONG);
+  naPrintMacroInt          (NA_TYPE_NATIVE_LONG_LONG);
+  naPrintMacroInt          (NA_TYPE_NATIVE_INT_128);
+  naPrintMacroInt          (NA_TYPE_NATIVE_INT_256);
 
   printf(NA_NL "NAEncoding.h computed values:" NA_NL);
-  printMacroEnum         (NA_SIGN_ENCODING, na_signed_integer_encoding_enum_strings, 4);
-  printMacroInt          (NA_TYPE_NATIVE_CHAR_BITS);
-  printMacroInt          (NA_TYPE_NATIVE_SHORT_BITS);
-  printMacroInt          (NA_TYPE_NATIVE_INT_BITS);
-  printMacroInt          (NA_TYPE_NATIVE_LONG_BITS);
-  printMacroInt          (NA_TYPE_NATIVE_LONG_LONG_BITS);
-  printMacroEnum         (NA_TYPE_INT8_REPRESENTATION, na_native_types_enum_strings, 8);
-  printMacroEnum         (NA_TYPE_INT16_REPRESENTATION, na_native_types_enum_strings, 8);
-  printMacroEnum         (NA_TYPE_INT32_REPRESENTATION, na_native_types_enum_strings, 8);
-  printMacroEnum         (NA_TYPE_INT64_REPRESENTATION, na_native_types_enum_strings, 8);
-  printMacroEnum         (NA_TYPE_INT128_REPRESENTATION, na_native_types_enum_strings, 8);
-  printMacroEnum         (NA_TYPE_INT256_REPRESENTATION, na_native_types_enum_strings, 8);
-  printMacroPlain        (NA_TYPE_INT8);
-  printMacroPlain        (NA_TYPE_INT16);
-  printMacroPlain        (NA_TYPE_INT32);
-  printMacroPlain        (NA_TYPE_INT64);
-  printMacroPlain        (NA_TYPE_INT128);
-  printMacroPlain        (NA_TYPE_INT256);
+  naPrintMacroEnum         (NA_SIGN_ENCODING, na_signed_integer_encoding_enum_strings, 4);
+  naPrintMacroInt          (NA_TYPE_NATIVE_CHAR_BITS);
+  naPrintMacroInt          (NA_TYPE_NATIVE_SHORT_BITS);
+  naPrintMacroInt          (NA_TYPE_NATIVE_INT_BITS);
+  naPrintMacroInt          (NA_TYPE_NATIVE_LONG_BITS);
+  naPrintMacroInt          (NA_TYPE_NATIVE_LONG_LONG_BITS);
+  naPrintMacroEnum         (NA_TYPE_INT8_REPRESENTATION, na_native_types_enum_strings, 8);
+  naPrintMacroEnum         (NA_TYPE_INT16_REPRESENTATION, na_native_types_enum_strings, 8);
+  naPrintMacroEnum         (NA_TYPE_INT32_REPRESENTATION, na_native_types_enum_strings, 8);
+  naPrintMacroEnum         (NA_TYPE_INT64_REPRESENTATION, na_native_types_enum_strings, 8);
+  naPrintMacroEnum         (NA_TYPE_INT128_REPRESENTATION, na_native_types_enum_strings, 8);
+  naPrintMacroEnum         (NA_TYPE_INT256_REPRESENTATION, na_native_types_enum_strings, 8);
+  naPrintMacroPlain        (NA_TYPE_INT8);
+  naPrintMacroPlain        (NA_TYPE_INT16);
+  naPrintMacroPlain        (NA_TYPE_INT32);
+  naPrintMacroPlain        (NA_TYPE_INT64);
+  naPrintMacroPlain        (NA_TYPE_INT128);
+  naPrintMacroPlain        (NA_TYPE_INT256);
 
   printf(NA_NL);
 }

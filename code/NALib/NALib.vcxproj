@@ -44,6 +44,7 @@
     <ClInclude Include="src\NABase\NACompilerII.h" />
     <ClInclude Include="src\NABase\NAConfiguration.h" />
     <ClInclude Include="src\NABase\NADebug.h" />
+    <ClInclude Include="src\NABase\NADebugII.h" />
     <ClInclude Include="src\NABase\NAEnvironment.h" />
     <ClInclude Include="src\NABase\NAEnvironmentII.h" />
     <ClInclude Include="src\NABase\NAFloatingPoint.h" />
@@ -61,6 +62,8 @@
     <ClInclude Include="src\NABase\NANumericsII.h" />
     <ClInclude Include="src\NABase\NABaseMacros.h" />
     <ClInclude Include="src\NABase\NAEncoding.h" />
+    <ClInclude Include="src\NABase\NATest.h" />
+    <ClInclude Include="src\NABase\NATestII.h" />
     <ClInclude Include="src\NABinaryData.h" />
     <ClInclude Include="src\NABuffer.h" />
     <ClInclude Include="src\NACircularBuffer.h" />
@@ -178,6 +181,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\NABase\NADebug.c" />
+    <ClCompile Include="src\NABase\NATest.c" />
     <ClCompile Include="src\NACore\NABinaryData\NABinaryData.c" />
     <ClCompile Include="src\NACore\NADateTime.c" />
     <ClCompile Include="src\NACore\NAFile.c" />

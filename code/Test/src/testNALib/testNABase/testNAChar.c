@@ -1,5 +1,4 @@
 
-#include "../../testHelper.h"
 #include "NABase.h"
 #include <stdio.h>
 
@@ -17,16 +16,16 @@ void testNAChar(){
 void printNAChar(){
   printf("NAChar.h fixed values:" NA_NL);
 
-  printMacroPlain(NA_NL_UNIX);
-  printMacroPlain(NA_NL_MAC9);
-  printMacroPlain(NA_NL_WIN);
-  printMacroPlain(NA_TAB);
-  printMacroPlain(NA_PATH_DELIMITER_UNIX);
-  printMacroPlain(NA_PATH_DELIMITER_WIN);
-  printMacroPlain(NA_SUFFIX_DELIMITER);
+  naPrintMacroPlain(NA_NL_UNIX);
+  naPrintMacroPlain(NA_NL_MAC9);
+  naPrintMacroPlain(NA_NL_WIN);
+  naPrintMacroPlain(NA_TAB);
+  naPrintMacroPlain(NA_PATH_DELIMITER_UNIX);
+  naPrintMacroPlain(NA_PATH_DELIMITER_WIN);
+  naPrintMacroPlain(NA_SUFFIX_DELIMITER);
 
   printf(NA_NL "NAChar.h computed values:" NA_NL);
-  printMacroPlain(NA_NL);
+  naPrintMacroPlain(NA_NL);
 
   printf(NA_NL);
 }

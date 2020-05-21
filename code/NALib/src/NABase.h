@@ -44,8 +44,9 @@
 #include "NABase/NAInt256.h"
 
 // Enabling debugging as well as adding some voodoo and fairy dust.
-#include "NABase/NADebug.h"
 #include "NABase/NABaseMacros.h"
+#include "NABase/NATest.h"
+#include "NABase/NADebug.h"
 
 // Adding some base mathematical implementations
 #include "NABase/NANumerics.h"

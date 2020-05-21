@@ -5,6 +5,7 @@
 
 
 #include "../NAMemory.h"
+#include "../NAMathOperators.h"
 
 
 struct NAStack{

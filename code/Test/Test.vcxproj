@@ -280,11 +280,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\testHelper.h" />
-    <ClInclude Include="src\testNALib.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\testHelper.c" />
     <ClCompile Include="src\testNALib.c" />
     <ClCompile Include="src\testNALib\testNABase\testNAChar.c" />
     <ClCompile Include="src\testNALib\testNABase\testNACompiler.c" />

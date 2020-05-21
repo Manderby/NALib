@@ -1,5 +1,4 @@
 
-#include "../../testHelper.h"
 #include "NABase.h"
 #include "NAString.h"
 #include <stdio.h>
@@ -309,65 +308,65 @@ void printNANumerics(){
   printf("NANumerics.h:" NA_NL);
   NABool showMacro = NA_FALSE;
 
-  printMacroix8(NA_SIGN_MASK_8, NA_FALSE);
-  printMacroux8(NA_ZERO_u8, showMacro);
-  printMacroix8(NA_ZERO_i8, showMacro);
-  printMacroux8(NA_ONE_u8, showMacro);
-  printMacroix8(NA_ONE_i8, showMacro);
-  printMacroux8(NA_MAX_u8, showMacro);
-  printMacroix8(NA_MAX_i8, showMacro);
-  printMacroix8(NA_MIN_i8, showMacro);
-  printMacroix8(NA_MINUS_ONE_i8, showMacro);
+  naPrintMacroix8(NA_SIGN_MASK_8, NA_FALSE);
+  naPrintMacroux8(NA_ZERO_u8, showMacro);
+  naPrintMacroix8(NA_ZERO_i8, showMacro);
+  naPrintMacroux8(NA_ONE_u8, showMacro);
+  naPrintMacroix8(NA_ONE_i8, showMacro);
+  naPrintMacroux8(NA_MAX_u8, showMacro);
+  naPrintMacroix8(NA_MAX_i8, showMacro);
+  naPrintMacroix8(NA_MIN_i8, showMacro);
+  naPrintMacroix8(NA_MINUS_ONE_i8, showMacro);
 
-  printMacroix16(NA_SIGN_MASK_16, NA_FALSE);
-  printMacroux16(NA_ZERO_u16, showMacro);
-  printMacroix16(NA_ZERO_i16, showMacro);
-  printMacroux16(NA_ONE_u16, showMacro);
-  printMacroix16(NA_ONE_i16, showMacro);
-  printMacroux16(NA_MAX_u16, showMacro);
-  printMacroix16(NA_MAX_i16, showMacro);
-  printMacroix16(NA_MIN_i16, showMacro);
-  printMacroix16(NA_MINUS_ONE_i16, showMacro);
+  naPrintMacroix16(NA_SIGN_MASK_16, NA_FALSE);
+  naPrintMacroux16(NA_ZERO_u16, showMacro);
+  naPrintMacroix16(NA_ZERO_i16, showMacro);
+  naPrintMacroux16(NA_ONE_u16, showMacro);
+  naPrintMacroix16(NA_ONE_i16, showMacro);
+  naPrintMacroux16(NA_MAX_u16, showMacro);
+  naPrintMacroix16(NA_MAX_i16, showMacro);
+  naPrintMacroix16(NA_MIN_i16, showMacro);
+  naPrintMacroix16(NA_MINUS_ONE_i16, showMacro);
 
-  printMacroix32(NA_SIGN_MASK_32, NA_FALSE);
-  printMacroux32(NA_ZERO_u32, showMacro);
-  printMacroix32(NA_ZERO_i32, showMacro);
-  printMacroux32(NA_ONE_u32, showMacro);
-  printMacroix32(NA_ONE_i32, showMacro);
-  printMacroux32(NA_MAX_u32, showMacro);
-  printMacroix32(NA_MAX_i32, showMacro);
-  printMacroix32(NA_MIN_i32, showMacro);
-  printMacroix32(NA_MINUS_ONE_i32, showMacro);
+  naPrintMacroix32(NA_SIGN_MASK_32, NA_FALSE);
+  naPrintMacroux32(NA_ZERO_u32, showMacro);
+  naPrintMacroix32(NA_ZERO_i32, showMacro);
+  naPrintMacroux32(NA_ONE_u32, showMacro);
+  naPrintMacroix32(NA_ONE_i32, showMacro);
+  naPrintMacroux32(NA_MAX_u32, showMacro);
+  naPrintMacroix32(NA_MAX_i32, showMacro);
+  naPrintMacroix32(NA_MIN_i32, showMacro);
+  naPrintMacroix32(NA_MINUS_ONE_i32, showMacro);
 
-  printMacroix64(NA_SIGN_MASK_64, NA_FALSE);
-  printMacroux64(NA_ZERO_u64, showMacro);
-  printMacroix64(NA_ZERO_i64, showMacro);
-  printMacroux64(NA_ONE_u64, showMacro);
-  printMacroix64(NA_ONE_i64, showMacro);
-  printMacroux64(NA_MAX_u64, showMacro);
-  printMacroix64(NA_MAX_i64, showMacro);
-  printMacroix64(NA_MIN_i64, showMacro);
-  printMacroix64(NA_MINUS_ONE_i64, showMacro);
+  naPrintMacroix64(NA_SIGN_MASK_64, NA_FALSE);
+  naPrintMacroux64(NA_ZERO_u64, showMacro);
+  naPrintMacroix64(NA_ZERO_i64, showMacro);
+  naPrintMacroux64(NA_ONE_u64, showMacro);
+  naPrintMacroix64(NA_ONE_i64, showMacro);
+  naPrintMacroux64(NA_MAX_u64, showMacro);
+  naPrintMacroix64(NA_MAX_i64, showMacro);
+  naPrintMacroix64(NA_MIN_i64, showMacro);
+  naPrintMacroix64(NA_MINUS_ONE_i64, showMacro);
 
-  printMacroix128(NA_SIGN_MASK_128, NA_FALSE);
-  printMacroux128(NA_ZERO_u128, showMacro);
-  printMacroix128(NA_ZERO_i128, showMacro);
-  printMacroux128(NA_ONE_u128, showMacro);
-  printMacroix128(NA_ONE_i128, showMacro);
-  printMacroux128(NA_MAX_u128, showMacro);
-  printMacroix128(NA_MAX_i128, showMacro);
-  printMacroix128(NA_MIN_i128, showMacro);
-  printMacroix128(NA_MINUS_ONE_i128, showMacro);
+  naPrintMacroix128(NA_SIGN_MASK_128, NA_FALSE);
+  naPrintMacroux128(NA_ZERO_u128, showMacro);
+  naPrintMacroix128(NA_ZERO_i128, showMacro);
+  naPrintMacroux128(NA_ONE_u128, showMacro);
+  naPrintMacroix128(NA_ONE_i128, showMacro);
+  naPrintMacroux128(NA_MAX_u128, showMacro);
+  naPrintMacroix128(NA_MAX_i128, showMacro);
+  naPrintMacroix128(NA_MIN_i128, showMacro);
+  naPrintMacroix128(NA_MINUS_ONE_i128, showMacro);
 
-  printMacroix256(NA_SIGN_MASK_256, NA_FALSE);
-  printMacroux256(NA_ZERO_u256, showMacro);
-  printMacroix256(NA_ZERO_i256, showMacro);
-  printMacroux256(NA_ONE_u256, showMacro);
-  printMacroix256(NA_ONE_i256, showMacro);
-  printMacroux256(NA_MAX_u256, showMacro);
-  printMacroix256(NA_MAX_i256, showMacro);
-  printMacroix256(NA_MIN_i256, showMacro);
-  printMacroix256(NA_MINUS_ONE_i256, showMacro);
+  naPrintMacroix256(NA_SIGN_MASK_256, NA_FALSE);
+  naPrintMacroux256(NA_ZERO_u256, showMacro);
+  naPrintMacroix256(NA_ZERO_i256, showMacro);
+  naPrintMacroux256(NA_ONE_u256, showMacro);
+  naPrintMacroix256(NA_ONE_i256, showMacro);
+  naPrintMacroux256(NA_MAX_u256, showMacro);
+  naPrintMacroix256(NA_MAX_i256, showMacro);
+  naPrintMacroix256(NA_MIN_i256, showMacro);
+  naPrintMacroix256(NA_MINUS_ONE_i256, showMacro);
 
   printf(NA_NL);
 }

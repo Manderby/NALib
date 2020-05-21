@@ -1,5 +1,4 @@
 
-#include "../../testHelper.h"
 #include "NABase.h"
 #include <stdio.h>
 
@@ -20,32 +19,32 @@ const char* na_endianness_enum_strings[] = {
 
 void printNAEnvironment(){
   printf("NAEnvironment.h fixed values:" NA_NL);
-  printMacroInt          (NA_BITS_PER_BYTE);
-  printMacroInt          (NA_TYPE8_BITS);
-  printMacroInt          (NA_TYPE16_BITS);
-  printMacroInt          (NA_TYPE32_BITS);
-  printMacroInt          (NA_TYPE64_BITS);
-  printMacroInt          (NA_TYPE128_BITS);
-  printMacroInt          (NA_TYPE256_BITS);
-  printMacroInt          (NA_TYPE8_BYTES);
-  printMacroInt          (NA_TYPE16_BYTES);
-  printMacroInt          (NA_TYPE32_BYTES);
-  printMacroInt          (NA_TYPE64_BYTES);
-  printMacroInt          (NA_TYPE128_BYTES);
-  printMacroInt          (NA_TYPE256_BYTES);
-  printMacroInt          (NA_ENDIANNESS_UNKNOWN);
-  printMacroInt          (NA_ENDIANNESS_LITTLE);
-  printMacroInt          (NA_ENDIANNESS_BIG);
-  printMacroInt          (NA_ENDIANNESS_NETWORK);
-  printMacroInt          (NA_OS_UNKNOWN);
-  printMacroInt          (NA_OS_MAC_OS_X);
-  printMacroInt          (NA_OS_WINDOWS);
+  naPrintMacroInt          (NA_BITS_PER_BYTE);
+  naPrintMacroInt          (NA_TYPE8_BITS);
+  naPrintMacroInt          (NA_TYPE16_BITS);
+  naPrintMacroInt          (NA_TYPE32_BITS);
+  naPrintMacroInt          (NA_TYPE64_BITS);
+  naPrintMacroInt          (NA_TYPE128_BITS);
+  naPrintMacroInt          (NA_TYPE256_BITS);
+  naPrintMacroInt          (NA_TYPE8_BYTES);
+  naPrintMacroInt          (NA_TYPE16_BYTES);
+  naPrintMacroInt          (NA_TYPE32_BYTES);
+  naPrintMacroInt          (NA_TYPE64_BYTES);
+  naPrintMacroInt          (NA_TYPE128_BYTES);
+  naPrintMacroInt          (NA_TYPE256_BYTES);
+  naPrintMacroInt          (NA_ENDIANNESS_UNKNOWN);
+  naPrintMacroInt          (NA_ENDIANNESS_LITTLE);
+  naPrintMacroInt          (NA_ENDIANNESS_BIG);
+  naPrintMacroInt          (NA_ENDIANNESS_NETWORK);
+  naPrintMacroInt          (NA_OS_UNKNOWN);
+  naPrintMacroInt          (NA_OS_MAC_OS_X);
+  naPrintMacroInt          (NA_OS_WINDOWS);
 
   printf(NA_NL "NAEnvironment.h computed values:" NA_NL);
-  printMacroEnum         (NA_OS, na_os_enum_strings, 3);
-  printMacroEnum         (NA_ENDIANNESS_HOST, na_endianness_enum_strings, 4);
-  printMacroInt          (NA_ADDRESS_BITS);
-  printMacroInt          (NA_ADDRESS_BYTES);
+  naPrintMacroEnum         (NA_OS, na_os_enum_strings, 3);
+  naPrintMacroEnum         (NA_ENDIANNESS_HOST, na_endianness_enum_strings, 4);
+  naPrintMacroInt          (NA_ADDRESS_BITS);
+  naPrintMacroInt          (NA_ADDRESS_BYTES);
   printf(NA_NL);
 }
 

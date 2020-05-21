@@ -1,5 +1,4 @@
 
-#include "../../testHelper.h"
 #include "NABase.h"
 #include <stdio.h>
 
@@ -8,13 +7,13 @@
 void printNACompiler(){
   printf("NACompiler.h:" NA_NL);
   
-  printMacroPlain(NA_C90);
-  printMacroPlain(NA_C95);
-  printMacroPlain(NA_C99);
-  printMacroPlain(NA_C11);
-  printMacroPlain(NA_CPP98);
-  printMacroPlain(NA_CPP11);
-  printMacroPlain(NA_CPP14);
+  naPrintMacroPlain(NA_C90);
+  naPrintMacroPlain(NA_C95);
+  naPrintMacroPlain(NA_C99);
+  naPrintMacroPlain(NA_C11);
+  naPrintMacroPlain(NA_CPP98);
+  naPrintMacroPlain(NA_CPP11);
+  naPrintMacroPlain(NA_CPP14);
 
   printf(NA_NL);
 }

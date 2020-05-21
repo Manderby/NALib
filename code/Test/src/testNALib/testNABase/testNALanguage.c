@@ -1,5 +1,4 @@
 
-#include "../../testHelper.h"
 #include "NABase.h"
 #include <stdio.h>
 
@@ -42,23 +41,23 @@ void testNALanguage(){
 void printNALanguage(){
   printf("NALanguage.h:" NA_NL);
   
-  printMacroPlain(NA_RESTRICT);
-  printMacroPlain(NA_INLINE);
-  printMacroPlain(NA_LINKER_NO_EXPORT);
-  printMacroPlain(NA_LINKER_EXPORT);
+  naPrintMacroPlain(NA_RESTRICT);
+  naPrintMacroPlain(NA_INLINE);
+  naPrintMacroPlain(NA_LINKER_NO_EXPORT);
+  naPrintMacroPlain(NA_LINKER_EXPORT);
 
-  printMacroPlain(NA_API);
-  printMacroPlain(NA_DEF);
-  printMacroPlain(NA_IAPI);
-  printMacroPlain(NA_IDEF);
-  printMacroPlain(NA_HAPI);
-  printMacroPlain(NA_HDEF);
-  printMacroPlain(NA_HIAPI);
-  printMacroPlain(NA_HIDEF);
+  naPrintMacroPlain(NA_API);
+  naPrintMacroPlain(NA_DEF);
+  naPrintMacroPlain(NA_IAPI);
+  naPrintMacroPlain(NA_IDEF);
+  naPrintMacroPlain(NA_HAPI);
+  naPrintMacroPlain(NA_HDEF);
+  naPrintMacroPlain(NA_HIAPI);
+  naPrintMacroPlain(NA_HIDEF);
 
-  printMacroPlain(NA_NULL);
-  printMacroPlain(NA_NORETURN);
-  printMacroPlain(NA_UNUSED(parameter));
+  naPrintMacroPlain(NA_NULL);
+  naPrintMacroPlain(NA_NORETURN);
+  naPrintMacroPlain(NA_UNUSED(parameter));
 
   printf(NA_NL);
 }

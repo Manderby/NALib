@@ -45,19 +45,16 @@
   #include <stdio.h>    // for the fprintf function
   #include <stdlib.h>   // for the exit function
 
-  #if NA_OS == NA_OS_WINDOWS
-    #define NA_DEBUG_FUNCTIONSYMBOL __FUNCTION__
-  #else
-    #define NA_DEBUG_FUNCTIONSYMBOL __func__
-  #endif
+  // Evaluates to the current function name. Depending on the system, this
+  // can be including a classname if this is compiled in C++.
+  #define NA_DEBUG_FUNCTIONSYMBOL
 
   // Prints an error. When this function gets called, the ongoing of the
   // application is undefined. Sometimes, the error might affect everything
   // which comes after it, sometimes, the error will just result in a NaN or
   // even be corrected automatically. Nontheless, any error should be
   // considered a potential risk for the application to eventually crash.
-  #define naError(text)\
-    naPrintError(NA_DEBUG_FUNCTIONSYMBOL, text)\
+  #define naError(text)
 
   // Prints a crash message.
   // This macro is used before the application experiences a critical error
@@ -77,19 +74,21 @@
   //
   // With a macro, the exit call is directly copied to the place the error
   // occurs and all code analysis tools are silented.
-  #define naCrash(text)\
-    {\
-    naPrintError(NA_DEBUG_FUNCTIONSYMBOL, text);\
-    fprintf(stderr, NA_NL "Crashing the application deliberately..." NA_NL);\
-    exit(EXIT_FAILURE);\
-    }
+  #define naCrash(text)
 
   // This is the helper function which is referenced in the naError and
   // naCrash macro. You can call it directly, but the macros automatically
   // detect the current function name.
   NA_HAPI void naPrintError(const char* functionSymbol, const char* text);
 
+
+
 #endif
+
+
+  
+// Inline implementations are in a separate file:
+#include "NADebugII.h"
 
 
 

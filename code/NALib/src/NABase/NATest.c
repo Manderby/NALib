@@ -1,7 +1,5 @@
 
-#include "testHelper.h"
-#include "NAString.h"
-#include "NAStack.h"
+#include "../NAStack.h"
 
 
 
@@ -11,6 +9,7 @@ const char* na_yesno_strings[] = {
 };
 
 
+typedef struct NATestData NATestData;
 struct NATestData {
   const char* name;
   int lineNum;
@@ -30,7 +29,7 @@ int na_printAllTestGroups = 1;
 
 
 
-void naInitTestingData(NATestData* testData, const char* name, NATestData* parent, int lineNum){
+NA_HIDEF void naInitTestingData(NATestData* testData, const char* name, NATestData* parent, int lineNum){
   testData->name = name;
   testData->lineNum = lineNum;
   testData->success = NA_TRUE;
@@ -43,21 +42,21 @@ void naInitTestingData(NATestData* testData, const char* name, NATestData* paren
 
 
 
-void naClearTestingData(NATestData* testData){
+NA_HIDEF void naClearTestingData(NATestData* testData){
   naForeachStackMutable(&(testData->childs), (NAMutator)naClearTestingData);
   naClearStack(&(testData->childs));
 }
 
 
 
-void naPrintTestName(NATestData* testData){
+NA_HIDEF void naPrintTestName(NATestData* testData){
   if(testData->parent){naPrintTestName(testData->parent);}
   printf("%s ", testData->name);
 }
 
 
 
-void naPrintRatio(int successCount, int totalCount){
+NA_HIDEF void naPrintRatio(int successCount, int totalCount){
   if(totalCount){
     double ratio = (double)successCount / (double)totalCount * 100.;
     printf (" (%.02f%%)", ratio);
@@ -65,7 +64,7 @@ void naPrintRatio(int successCount, int totalCount){
 }
 
 
-void naPrintTestGroup(NATestData* testData){
+NA_HIDEF void naPrintTestGroup(NATestData* testData){
   int leafSuccessCount = testData->leafSuccessCount;
   int leafTotalCount = testData->totalLeafCount;
   int childSuccessCount = testData->childSuccessCount;
@@ -88,11 +87,11 @@ void naPrintTestGroup(NATestData* testData){
 
 
 
-void naStartTesting(const char* rootName){
-  #ifndef NDEBUG
-    if(na_testData)
-      naError("Test already running.");
-  #endif
+NA_DEF void naStartTesting(const NAUTF8Char* rootName){
+#ifndef NDEBUG
+  if(na_testData)
+    naError("Test already running.");
+#endif
   na_testData = naAlloc(NATestData);
 
   naInitTestingData(na_testData, rootName, NA_NULL, 0);
@@ -102,7 +101,7 @@ void naStartTesting(const char* rootName){
 
 
 
-void naStopTesting(void){
+NA_DEF void naStopTesting(void){
   naStopTestGroup();
 
   if(na_testData->success){
@@ -120,11 +119,11 @@ void naStopTesting(void){
 
 
 
-void naUpdateTestParentLeaf(NATestData* testData, NABool leafSuccess){
+NA_HDEF void naUpdateTestParentLeaf(NATestData* testData, NABool leafSuccess){
   if(testData->parent){
     naUpdateTestParentLeaf(testData->parent, leafSuccess);
   }
-  
+
   testData->totalLeafCount++;
   if(leafSuccess){
     testData->leafSuccessCount++;
@@ -138,7 +137,7 @@ void naUpdateTestParentLeaf(NATestData* testData, NABool leafSuccess){
 
 
 
-void naAddTest(const char* expr, int success, int lineNum){
+NA_HDEF void naAddTest(const char* expr, int success, int lineNum){
   NATestData* testData = naPushStack(&(na_curTestData->childs));
   naInitTestingData(testData, expr, na_curTestData, lineNum);
   testData->success = (NABool)success;
@@ -152,7 +151,7 @@ void naAddTest(const char* expr, int success, int lineNum){
 
 
 
-void naStartTestGroup(const char* name, int lineNum){
+NA_HDEF void naStartTestGroup(const char* name, int lineNum){
   NATestData* testData = naPushStack(&(na_curTestData->childs));
   naInitTestingData(testData, name, na_curTestData, lineNum);
   na_curTestData->childSuccessCount++;
@@ -161,7 +160,7 @@ void naStartTestGroup(const char* name, int lineNum){
 
 
 
-void naStopTestGroup(){
+NA_HDEF void naStopTestGroup(){
   if(na_printAllTestGroups || !na_curTestData->success){
     naPrintTestGroup(na_curTestData);
   }

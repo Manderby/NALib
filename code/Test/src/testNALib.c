@@ -1,9 +1,24 @@
 
-#include "testNALib.h"
-#include "testHelper.h"
 #include "NABase.h"
 #include "NAMemory.h"
 #include <stdio.h>
+
+
+
+void printNAConfiguration(void);
+void printNAEnvironment(void);
+void printNACompiler(void);
+void printNALanguage(void);
+void printNAEncoding(void);
+void printNAChar(void);
+void printNANumerics(void);
+void printNAFloatingPoint(void);
+
+void testNALanguage(void);
+void testNAChar(void);
+void testNANumerics(void);
+void testNAFloatingPoint(void);
+
 
 
 int main(void){

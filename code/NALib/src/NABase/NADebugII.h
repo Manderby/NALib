@@ -1,17 +1,41 @@
 
-void printNAConfiguration(void);
-void printNAEnvironment(void);
-void printNACompiler(void);
-void printNALanguage(void);
-void printNAEncoding(void);
-void printNAChar(void);
-void printNANumerics(void);
-void printNAFloatingPoint(void);
+// This file contains inline implementations of debugging methods.
 
-void testNALanguage(void);
-void testNAChar(void);
-void testNANumerics(void);
-void testNAFloatingPoint(void);
+#ifndef NDEBUG
+
+  #include <stdio.h>    // for the fprintf function
+  #include <stdlib.h>   // for the exit function
+
+
+
+  // First, undefine the macros from the .h file.
+  #undef NA_DEBUG_FUNCTIONSYMBOL
+  #undef naError
+  #undef naCrash
+
+
+
+  #if NA_OS == NA_OS_WINDOWS
+    #define NA_DEBUG_FUNCTIONSYMBOL __FUNCTION__
+  #else
+    #define NA_DEBUG_FUNCTIONSYMBOL __func__
+  #endif
+
+
+
+  #define naError(text)\
+    naPrintError(NA_DEBUG_FUNCTIONSYMBOL, text)\
+
+
+
+  #define naCrash(text)\
+    {\
+      naPrintError(NA_DEBUG_FUNCTIONSYMBOL, text);\
+      fprintf(stderr, NA_NL "Crashing the application deliberately..." NA_NL);\
+      exit(EXIT_FAILURE);\
+    }
+
+#endif
 
 
 

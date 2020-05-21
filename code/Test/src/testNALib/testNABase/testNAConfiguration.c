@@ -1,5 +1,4 @@
 
-#include "../../testHelper.h"
 #include "NABase.h"
 #include "NAMemory.h"
 #include <stdio.h>
@@ -14,19 +13,19 @@ const char* na_memalign_enum_strings[] = {
 
 void printNAConfiguration(){
   printf("NAConfiguration.h:" NA_NL);
-  printMacroIntSpecial   (NA_PREFERRED_NAINT_BITS, 0, "Automatic");
-  printMacroIntYesNo     (NA_COMPILE_OPENGL);
-  printMacroIntYesNo     (NA_COMPILE_GUI);
-  printMacroIntYesNo     (NA_USE_WINDOWS_COMMON_CONTROLS_6);
-  printMacroIntYesNo     (NA_INLINE_DEFINITION_NON_STANDARD);
-  printMacroEnum         (NA_MEMALIGN, na_memalign_enum_strings, 3);
-  printMacroIntSpecialHex(NA_POOLPART_BYTESIZE, 0, "Memory Page Size");
-  printMacroIntYesNo     (NA_MEMORY_POOL_AGGRESSIVE_CLEANUP);
-  printMacroIntSpecial   (NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT, 0, "No autocollect");
-  printMacroIntSpecial   (NA_BUFFER_PART_BYTESIZE, 0, "Memory Page Size");
-  printMacroIntYesNo     (NA_STRING_ALWAYS_CACHE);
-  printMacroIntYesNo     (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION);
-  printMacroInt          (NA_NIST_CODATA_YEAR);
+  naPrintMacroIntSpecial   (NA_PREFERRED_NAINT_BITS, 0, "Automatic");
+  naPrintMacroIntYesNo     (NA_COMPILE_OPENGL);
+  naPrintMacroIntYesNo     (NA_COMPILE_GUI);
+  naPrintMacroIntYesNo     (NA_USE_WINDOWS_COMMON_CONTROLS_6);
+  naPrintMacroIntYesNo     (NA_INLINE_DEFINITION_NON_STANDARD);
+  naPrintMacroEnum         (NA_MEMALIGN, na_memalign_enum_strings, 3);
+  naPrintMacroIntSpecialHex(NA_POOLPART_BYTESIZE, 0, "Memory Page Size");
+  naPrintMacroIntYesNo     (NA_MEMORY_POOL_AGGRESSIVE_CLEANUP);
+  naPrintMacroIntSpecial   (NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT, 0, "No autocollect");
+  naPrintMacroIntSpecial   (NA_BUFFER_PART_BYTESIZE, 0, "Memory Page Size");
+  naPrintMacroIntYesNo     (NA_STRING_ALWAYS_CACHE);
+  naPrintMacroIntYesNo     (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION);
+  naPrintMacroInt          (NA_NIST_CODATA_YEAR);
   printf(NA_NL);
 }
 
