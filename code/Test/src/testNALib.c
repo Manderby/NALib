@@ -19,18 +19,19 @@ int main(void){
   naStartRuntime();
   naStartTesting("NALib");
   
-  printNAConfiguration();
-  printNAEnvironment();
-  printNACompiler();
-  printNALanguage();
-  printNAEncoding();
-  printNAChar();
-  printNANumerics();
+  //printNAConfiguration();
+  //printNAEnvironment();
+  //printNACompiler();
+  //printNALanguage();
+  //printNAEncoding();
+  //printNAChar();
+  //printNANumerics();
   printNAFloatingPoint();
 
   //naF(NALanguage);
   //naF(NAChar);
   //naF(NANumerics);
+  naF(NAFloatingPoint);
 
   naStopTesting();
   naStopRuntime();

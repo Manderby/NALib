@@ -26,7 +26,7 @@ struct NATestData {
 
 NATestData* na_testData = NA_NULL;
 NATestData* na_curTestData = NA_NULL;
-int na_printAllTestGroups = 0;
+int na_printAllTestGroups = 1;
 
 
 

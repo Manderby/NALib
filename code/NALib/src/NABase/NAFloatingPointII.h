@@ -70,7 +70,7 @@
 // second party (IEEE) found ways to diminish the disadvantages, won over and
 // therefore, today, fewer negative exponents were needed as they were
 // somewhat sufficiently being represented by these subnormal numbers and
-// hence the positive exponents gained a whole power of 2 more. The end.
+// hence the positive exponents gained a whole power of 2 more. End of line.
 //
 // Source:
 // https://people.eecs.berkeley.edu/~wkahan/ieee754status/754story.html
@@ -156,7 +156,7 @@ NA_IDEF float naMakeFloat(int32 signedSignificand, int32 signedExponent){
       naError("exponent too high for single precision");
     if(signedExponent == NA_IEEE754_SINGLE_EXPONENT_SPECIAL)
       naError("exponent equals max exponent which is reserved for special values");
-    if((naAbsi32(signedSignificand) > NA_IEEE754_SINGLE_SIGNIFICAND_MASK))
+    if(((uint32)naAbsi32(signedSignificand) > NA_IEEE754_SINGLE_SIGNIFICAND_MASK))
       naError("significand out of range");
   #endif
   int32 dBits = (int32)(
@@ -164,7 +164,7 @@ NA_IDEF float naMakeFloat(int32 signedSignificand, int32 signedExponent){
     | (((uint32)signedExponent + NA_IEEE754_SINGLE_EXPONENT_BIAS) << NA_IEEE754_SINGLE_SIGNIFICAND_BITS)
     | ((uint32)naAbsi32(signedSignificand) & NA_IEEE754_SINGLE_SIGNIFICAND_MASK));
   return *((float*)(void*)&dBits);
-  // Note that the additional void* cast is necessary for static code analizers.
+  // Note that the additional (void*) is necessary for static code analizers.
 }
 
 
@@ -179,7 +179,7 @@ NA_IDEF double naMakeDouble(NAi64 signedSignificand, int32 signedExponent){
       naError("exponent too high for double precision");
     if(signedExponent == NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
       naError("exponent equals max exponent which is reserved for special values");
-    if(naGreateri64(naAbsi64(signedSignificand), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK))
+    if(naGreateru64(naCasti64Tou64(naAbsi64(signedSignificand)), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK))
       naError("significand out of range");
   #endif
     NAi64 dBits =

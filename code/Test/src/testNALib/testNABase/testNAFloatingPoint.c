@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 
-typedef struct NANumericsTestValues NANumericsTestValues;
+//typedef struct NANumericsTestValues NANumericsTestValues;
 //struct NANumericsTestValues{
 //  int8   v8;
 //  int16  v16;
@@ -49,30 +49,37 @@ typedef struct NANumericsTestValues NANumericsTestValues;
 //}
 
 
-
-//void testGetSigni(){
-  //NANumericsTestValues p = naMakePositiveNumericsTestValues();
-  //NANumericsTestValues n = naMakeNegativeNumericsTestValues(&p);
-
-  //naG("naGetSigni8") {
-  //  naT(naSigni8(p.v8) == NA_ONE_i8);
-  //  naT(naSigni8(NA_ZERO_i8) == NA_ONE_i8);
-  //  naT(naSigni8(n.v8) == NA_MINUS_ONE_i8);
-  //  naT(naSigni8(NA_MAX_i8) == NA_ONE_i8);
-  //  naT(naSigni8(NA_MIN_i8) == NA_MINUS_ONE_i8);
-  //}
-//
-//}
-
-
-
-
-
 void testNAFloatingPoint(){
-  //naF(GetSignum);
-  //naF(GetSigni);
-  //naF(SetUnsetSign);
-  //naF(GetAbsi);
+  // Never seen this kind of literal yet? Go look for hex float literals!
+  // It is actually quite useful for testing. One only has to remember that
+  // single precision only use 23 bits for the significant, which is why the
+  // hex digits after the point of the compared value appear to be doubled.
+  naG("naMakeFloat valid cases") {
+    int32 number = 0x123456;
+    int32 maxNumber = 0x7fffff;
+    int32 negNumber = -number;
+    int32 negMaxNumber = -maxNumber;
+    naT(naMakeFloat(0, 0) == 0x1.000000p0f);
+    naT(naMakeFloat(1, 0) == 0x1.000002p0f);
+    naT(naMakeFloat(1, 42) == 0x1.000002p42f);
+    naT(naMakeFloat(-1, 42) == -0x1.000002p42f);
+    naT(naMakeFloat(1, -42) == 0x1.000002p-42f);
+    naT(naMakeFloat(-1, -42) == -0x1.000002p-42f);
+    naT(naMakeFloat(number, 42) == 0x1.2468acp42f);
+    naT(naMakeFloat(-number, 42) == -0x1.2468acp42f);
+    naT(naMakeFloat(maxNumber, 42) == 0x1.fffffep42f);
+    naT(naMakeFloat(-maxNumber, 42) == -0x1.fffffep42f);
+    naT(naMakeFloat(maxNumber, 127) == 0x1.fffffep127f);
+    naT(naMakeFloat(0, -126) == 0x1.000000p-126f);
+  }
+
+  naG("naMakeFloat invalid cases") {
+    //naTError(naMakeFloat(0x800000, 0));
+    //naTError(naMakeFloat(0x0, 1000));
+    //naTError(naMakeFloat(0x0, 128));
+    //naTError(naMakeFloat(0x0, -127));
+    //naTError(naMakeFloat(0x0, -1000));
+  }
 }
 
 

@@ -57,15 +57,15 @@ NA_IAPI double naMakeDouble(NAi64 signedSignificand, int32 signedExponent);
 NA_IAPI double naMakeDoubleWithExponent(int32 signedExponent);
 NA_IAPI double naMakeDoubleSubnormal(NAi64 signedSignificand);
 
-
-NA_IAPI int32   naGetDoubleExponent(double d);
-NA_IAPI NAi64 naGetDoubleInteger(double d);
-NA_IAPI NAi64 naGetDoubleFraction(double d);
+NA_IAPI int32  naGetDoubleExponent(double d);
+NA_IAPI NAi64  naGetDoubleInteger(double d);
+NA_IAPI NAi64  naGetDoubleFraction(double d);
 
 
 
 // Inline implementations are in a separate file:
 #include "NAFloatingPointII.h"
+
 
 
 #endif // NA_FLOATING_POINT_INCLUDED
