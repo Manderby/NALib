@@ -22,8 +22,8 @@
 extern NABool na_test_case_running;
 extern int na_error_count;
 
-NA_HAPI void naStartTestCase();
-NA_HAPI void naStopTestCase();
+NA_HAPI void naStartTestCase(void);
+NA_HAPI void naStopTestCase(void);
 
 NA_HAPI void naAddTest(const char* expr, int success, int lineNum);
 NA_HAPI void naAddTestError(const char* expr, int lineNum);
@@ -71,7 +71,7 @@ NA_HAPI void naStopTestGroup(void);
   NA_UNUSED(expr)
 #define naG(string)\
   NA_UNUSED(string);\
-  while(0)
+  for(int g = 0; g < 1 ; g++)
 #define naF(identifier)
 
 #endif // NA_TESTING_ENABLED == 1

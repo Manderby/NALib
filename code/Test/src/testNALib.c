@@ -32,7 +32,7 @@ int main(void){
   printf(", %d Bits Addresses, %d Bits Integers)" NA_NL NA_NL, NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
   naStartRuntime();
-  naStartTesting("NALib");
+  naStartTesting("NALib", NA_FALSE);
   
   #if NA_PRINTOUT_ENABLED == 1
     printNAConfiguration();

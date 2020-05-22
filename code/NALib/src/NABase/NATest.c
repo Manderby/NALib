@@ -23,7 +23,7 @@ struct NATestData {
 
 NATestData* na_testData = NA_NULL;
 NATestData* na_curTestData = NA_NULL;
-int na_printAllTestGroups = 1;
+int na_printAllTestGroups = 0;
 NABool na_test_case_running = NA_FALSE;
 int na_error_count = 0;
 
@@ -87,7 +87,7 @@ NA_HIDEF void naPrintTestGroup(NATestData* testData){
 
 
 
-NA_DEF void naStartTesting(const NAUTF8Char* rootName){
+NA_DEF void naStartTesting(const NAUTF8Char* rootName, NABool printAllGroups){
 #ifndef NDEBUG
   if(na_testData)
     naError("Test already running.");
@@ -97,6 +97,7 @@ NA_DEF void naStartTesting(const NAUTF8Char* rootName){
 
   naInitTestingData(na_testData, rootName, NA_NULL, 0);
 
+  na_printAllTestGroups = printAllGroups;
   na_curTestData = na_testData;
   na_test_case_running = NA_FALSE;
   na_error_count = 0;
@@ -211,7 +212,7 @@ NA_HDEF void naStopTestGroup(){
 
 #else // NA_TESTING_ENABLED == 1
 
-NA_DEF void naStartTesting(const NAUTF8Char* rootName){
+NA_DEF void naStartTesting(const NAUTF8Char* rootName, NABool printAllGroups){
   #ifndef NDEBUG
     naError("Testing is not enabled. Go look for NA_TESTING_ENABLED");
   #endif

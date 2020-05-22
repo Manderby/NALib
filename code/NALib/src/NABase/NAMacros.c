@@ -41,7 +41,7 @@ void naPrintMacroPlainCore(const NAUTF8Char* macroString, const NAUTF8Char* macr
     if(strlen(macroStringified) == 0){
       printf("(Defined)");
     }else{
-      printf(macroStringified);
+      printf("%s", macroStringified);
     }
   }else{
     printf("(Undefined)");
@@ -203,7 +203,7 @@ void naPrintMacroix256Core(const NAUTF8Char* macroString, int256 value, const NA
 
 
 
-#endif NA_PRINTOUT_ENABLED == 1
+#endif // NA_PRINTOUT_ENABLED == 1
 
 
 

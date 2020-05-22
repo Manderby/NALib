@@ -8,8 +8,9 @@
 
 
 // Starts and stops the testing. Provide the top name of the code you
-// want to test. A final printout will be made upon stopping.
-NA_API void naStartTesting(const NAUTF8Char* rootName);
+// want to test. If printAllGroups is false, only the groups which have
+// errors will be printed. A final printout will be made upon stopping.
+NA_API void naStartTesting(const NAUTF8Char* rootName, NABool printAllGroups);
 NA_API void naStopTesting(void);
 
 // The testing calls.
