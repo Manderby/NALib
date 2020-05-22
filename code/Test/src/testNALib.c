@@ -34,16 +34,16 @@ int main(void){
   naStartRuntime();
   naStartTesting("NALib", NA_FALSE);
   
-  #if NA_PRINTOUT_ENABLED == 1
-    printNAConfiguration();
-    printNAEnvironment();
-    printNACompiler();
-    printNALanguage();
-    printNAEncoding();
-    printNAChar();
-    printNANumerics();
-    printNAFloatingPoint();
-  #endif
+  //#if NA_PRINTOUT_ENABLED == 1
+  //  printNAConfiguration();
+  //  printNAEnvironment();
+  //  printNACompiler();
+  //  printNALanguage();
+  //  printNAEncoding();
+  //  printNAChar();
+  //  printNANumerics();
+  //  printNAFloatingPoint();
+  //#endif
 
   naF(NALanguage);
   naF(NAChar);

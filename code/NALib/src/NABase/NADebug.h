@@ -28,7 +28,7 @@
 // manually to the build options.
 //
 // Note that in NALib, all tests performed by code encapsulated by
-// #ifndef NDEBUG will emit errors on sterr in the following format:
+// #ifndef NDEBUG will emit errors on stderr in the following format:
 // Function_name: Errormessage NEWLINE
 // Therefore, a programmer can simply set a breakpoint in the implemented
 // function and start debugging.

@@ -37,6 +37,47 @@ void testNAFloatingPoint(){
     naE(naMakeFloat(0x1, -127));
     naE(naMakeFloat(0x1, -1000));
   }
+
+
+  naG("naMakeFloatWithExponent valid cases") {
+    naT(naMakeFloatWithExponent(0) == 1.f);
+    naT(naMakeFloatWithExponent(1) == 2.f);
+    naT(naMakeFloatWithExponent(8) == 256.f);
+    naT(naMakeFloatWithExponent(42) == 0x1.000000p42f);
+    naT(naMakeFloatWithExponent(127) == 0x1.000000p127f);
+    naT(naMakeFloatWithExponent(-1) == 0.5f);
+    naT(naMakeFloatWithExponent(-42) == 0x1.000000p-42f);
+    naT(naMakeFloatWithExponent(-126) == 0x1.000000p-126f);
+  }
+
+  naG("naMakeFloat invalid cases") {
+    naE(naMakeFloatWithExponent(128));
+    naE(naMakeFloatWithExponent(1000));
+    naE(naMakeFloatWithExponent(-127));
+    naE(naMakeFloatWithExponent(-1000));
+  }
+
+  naG("naMakeFloatSubnormal valid cases") {
+    int32 number = 0x123456;
+    int32 maxNumber = 0x7fffff;
+    int32 negNumber = -number;
+    int32 negMaxNumber = -maxNumber;
+    naT(naMakeFloatSubnormal(1) > 0.f);
+    naT(naMakeFloatSubnormal(number) > 0.f);
+    naT(naMakeFloatSubnormal(maxNumber) > 0.f);
+    naT(naMakeFloatSubnormal(negNumber) < 0.f);
+    naT(naMakeFloatSubnormal(negMaxNumber) < 0.f);
+    naT(naMakeFloatSubnormal(1) < 0x1.000000p-126f);
+    naT(naMakeFloatSubnormal(number) < 0x1.000000p-126f);
+    naT(naMakeFloatSubnormal(maxNumber) < 0x1.000000p-126f);
+    naT(naMakeFloatSubnormal(negNumber) > -0x1.000000p-126f);
+    naT(naMakeFloatSubnormal(negMaxNumber) > -0x1.000000p-126f);
+  }
+
+  naG("naMakeFloatSubnormal invalid cases") {
+    naE(naMakeFloatSubnormal(0x800000));
+    naE(naMakeFloatSubnormal(-0x800000));
+  }
 }
 
 

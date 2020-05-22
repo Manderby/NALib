@@ -174,30 +174,6 @@ NA_IDEF float naMakeFloat(int32 signedSignificand, int32 signedExponent){
 
 
 
-NA_IDEF double naMakeDouble(NAi64 signedSignificand, int32 signedExponent){
-  #ifndef NDEBUG
-    if(signedExponent < NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL)
-      naError("exponent too low for double precision");
-    if(!naEquali64(signedSignificand, NA_ZERO_i64) && (signedExponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL))
-      naError("exponent creates subnormal number");
-    if(signedExponent > NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
-      naError("exponent too high for double precision");
-    if(signedExponent == NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
-      naError("exponent equals max exponent which is reserved for special values");
-    if(naGreateru64(naCasti64Tou64(naAbsi64(signedSignificand)), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK))
-      naError("significand out of range");
-  #endif
-    NAi64 dBits =
-      naOri64(naOri64(
-      naAndi64(signedSignificand, NA_IEEE754_DOUBLE_SIGN_MASK),
-      naShli64(naMakei64WithLo(signedExponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BITS)),
-      naAndi64(naAbsi64(signedSignificand), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK));
-  return *((double*)(void*)&dBits);
-  // Note that the additional void* cast is necessary for static code analizers.
-}
-
-
-
 NA_IDEF float naMakeFloatWithExponent(int32 signedExponent){
   #ifndef NDEBUG
     if(signedExponent < NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL)
@@ -216,6 +192,44 @@ NA_IDEF float naMakeFloatWithExponent(int32 signedExponent){
 
 
 
+NA_IDEF float naMakeFloatSubnormal(int32 signedSignificand) {
+  #ifndef NDEBUG
+  if ((naAbsi32(signedSignificand) > NA_IEEE754_SINGLE_SIGNIFICAND_MASK))
+    naError("significand out of range");
+  #endif
+  int32 dBits = (int32)(
+    ((uint32)signedSignificand & NA_IEEE754_SINGLE_SIGN_MASK)
+    | ((uint32)naAbsi32(signedSignificand) & NA_IEEE754_SINGLE_SIGNIFICAND_MASK));
+  return *((float*)(void*)&dBits);
+  // Note that the additional void* cast is necessary for static code analizers.
+}
+
+
+
+NA_IDEF double naMakeDouble(NAi64 signedSignificand, int32 signedExponent) {
+  #ifndef NDEBUG
+  if (signedExponent < NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL)
+    naError("exponent too low for double precision");
+  if (!naEquali64(signedSignificand, NA_ZERO_i64) && (signedExponent == NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL))
+    naError("exponent creates subnormal number");
+  if (signedExponent > NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
+    naError("exponent too high for double precision");
+  if (signedExponent == NA_IEEE754_DOUBLE_EXPONENT_SPECIAL)
+    naError("exponent equals max exponent which is reserved for special values");
+  if (naGreateru64(naCasti64Tou64(naAbsi64(signedSignificand)), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK))
+    naError("significand out of range");
+  #endif
+  NAi64 dBits =
+    naOri64(naOri64(
+      naAndi64(signedSignificand, NA_IEEE754_DOUBLE_SIGN_MASK),
+      naShli64(naMakei64WithLo(signedExponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BITS)),
+      naAndi64(naAbsi64(signedSignificand), NA_IEEE754_DOUBLE_SIGNIFICAND_MASK));
+  return *((double*)(void*)&dBits);
+  // Note that the additional void* cast is necessary for static code analizers.
+}
+
+
+
 NA_IDEF double naMakeDoubleWithExponent(int32 signedExponent){
   #ifndef NDEBUG
     if(signedExponent < NA_IEEE754_DOUBLE_EXPONENT_SUBNORMAL)
@@ -229,20 +243,6 @@ NA_IDEF double naMakeDoubleWithExponent(int32 signedExponent){
   #endif
   NAi64 dBits = naShli64(naMakei64WithLo(signedExponent + NA_IEEE754_DOUBLE_EXPONENT_BIAS), NA_IEEE754_DOUBLE_SIGNIFICAND_BITS);
   return *((double*)(void*)&dBits);
-  // Note that the additional void* cast is necessary for static code analizers.
-}
-
-
-
-NA_IDEF float naMakeFloatSubnormal(int32 signedSignificand){
-  #ifndef NDEBUG
-    if((naAbsi32(signedSignificand) > NA_IEEE754_SINGLE_SIGNIFICAND_MASK))
-      naError("significand out of range");
-  #endif
-  int32 dBits = (int32)(
-      ((uint32)signedSignificand & NA_IEEE754_SINGLE_SIGN_MASK)
-    | ((uint32)naAbsi32(signedSignificand) & NA_IEEE754_SINGLE_SIGNIFICAND_MASK));
-  return *((float*)(void*)&dBits);
   // Note that the additional void* cast is necessary for static code analizers.
 }
 
