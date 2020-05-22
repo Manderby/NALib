@@ -1,4 +1,12 @@
 
+#if defined NA_TEST_II_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
+#ifndef NA_TEST_II_INCLUDED
+#define NA_TEST_II_INCLUDED
+
+
+
 // This file contains inline implementations of testing methods.
 
 // First, undefine all macros defined in the .h file
@@ -69,6 +77,10 @@ NA_HAPI void naStopTestGroup(void);
 #define naF(identifier)
 
 #endif // NA_TESTING_ENABLED == 1
+
+
+
+#endif // NA_TEST_II_INCLUDED
 
 
 

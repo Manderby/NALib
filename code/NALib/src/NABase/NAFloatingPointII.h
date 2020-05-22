@@ -1,8 +1,13 @@
 
-// This file contains inline implementations of floating point calculations.
-
+#if defined NA_FLOATING_POINT_II_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
 #ifndef NA_FLOATING_POINT_II_INCLUDED
 #define NA_FLOATING_POINT_II_INCLUDED
+
+
+
+// This file contains inline implementations of floating point calculations.
 
 
 

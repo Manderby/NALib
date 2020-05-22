@@ -1,4 +1,7 @@
 
+#if defined NA_NUMERICS_II_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
 #ifndef NA_NUMERICS_II_INCLUDED
 #define NA_NUMERICS_II_INCLUDED
 

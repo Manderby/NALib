@@ -6,6 +6,7 @@
 #define NA_INT_64_II_INCLUDED
 
 
+
 #if defined NA_TYPE_INT64
   NA_IDEF NAi64 naMakei64(int32 hi, uint32 lo){return ((NAi64)hi << 32) | lo;}
   NA_IDEF NAi64 naMakei64WithLo(int32 lo){return (NAi64)lo;}

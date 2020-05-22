@@ -6,6 +6,7 @@
 #define NA_INT_128_II_INCLUDED
 
 
+
 #if defined NA_TYPE_INT128
   NA_IDEF NAi128 naMakei128(int64 hi, uint64 lo){return ((NAi128)hi << 64) | lo;}
   NA_IDEF NAi128 naMakei128WithLo(NAi64 lo){return (NAi128)lo;}

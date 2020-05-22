@@ -1,4 +1,12 @@
 
+#if defined NA_DEBUGGING_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
+#ifndef NA_DEBUGGING_INCLUDED
+#define NA_DEBUGGING_INCLUDED
+
+
+
 // /////////////////////////////////
 // Debugging:
 //
@@ -76,14 +84,16 @@
   // occurs and all code analysis tools are silented.
   #define naCrash(text)
 
-
-
-#endif
+#endif // NDEBUG
 
 
 
 // Inline implementations are in a separate file:
 #include "NADebugII.h"
+
+
+
+#endif //NA_DEBUGGING_INCLUDED
 
 
 

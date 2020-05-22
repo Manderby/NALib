@@ -1,4 +1,7 @@
 
+#if defined NA_FLOATING_POINT_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
 #ifndef NA_FLOATING_POINT_INCLUDED
 #define NA_FLOATING_POINT_INCLUDED
 

@@ -1,4 +1,12 @@
 
+#if defined NA_TEST_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
+#ifndef NA_TEST_INCLUDED
+#define NA_TEST_INCLUDED
+
+
+
 // Starts and stops the testing. Provide the top name of the code you
 // want to test. A final printout will be made upon stopping.
 NA_API void naStartTesting(const NAUTF8Char* rootName);
@@ -20,6 +28,10 @@ NA_API void naStopTesting(void);
 
 // Inline implementations are in a separate file:
 #include "NATestII.h"
+
+
+
+#endif // NA_TEST_INCLUDED
 
 
 

@@ -6,6 +6,7 @@
 #define NA_INT_256_II_INCLUDED
 
 
+
 #if defined NA_TYPE_INT256
   NA_IDEF NAi256 naMakei256(int128 hi, uint128 lo){return ((NAi256)hi << 128) | lo;}
   NA_IDEF NAi256 naMakei256WithLo(NAi128 lo){return (NAi256)lo;}

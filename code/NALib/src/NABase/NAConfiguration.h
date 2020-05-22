@@ -1,4 +1,12 @@
 
+#if defined NA_CONFIGURATION_INCLUDED || !defined NA_BASE_INCLUDED
+  #warning "Do not include this file directly. Use NABase.h"
+#endif
+#ifndef NA_CONFIGURATION_INCLUDED
+#define NA_CONFIGURATION_INCLUDED
+
+
+
 // This file contains configurations of your installation of NALib. There are
 // some few options you can compile NALib with. These options are implemented
 // as preprocessor macros such that you can define them with prefix headers
@@ -322,6 +330,10 @@
 #ifndef NA_TESTING_ENABLED
 #define NA_TESTING_ENABLED 0
 #endif
+
+
+
+#endif // NA_CONFIGURATION_INCLUDED
 
 
 

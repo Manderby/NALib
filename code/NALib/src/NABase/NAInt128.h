@@ -6,6 +6,7 @@
 #define NA_INT_128_INCLUDED
 
 
+
 #if defined NA_TYPE_INT128
 
   #define naMakeu128WithLiteralLo(lo) (lo ## uLL)

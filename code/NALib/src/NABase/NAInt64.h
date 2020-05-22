@@ -6,6 +6,7 @@
 #define NA_INT_64_INCLUDED
 
 
+
 #if defined NA_TYPE_INT64
 
   #define naMakeu64WithLiteralLo(lo) (lo ## uLL)
