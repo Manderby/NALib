@@ -1,5 +1,6 @@
 
 #include "../NAStack.h"
+#include <stdio.h>
 
 #if NA_TESTING_ENABLED == 1
 
@@ -26,6 +27,8 @@ struct NATestData {
 NATestData* na_testData = NA_NULL;
 NATestData* na_curTestData = NA_NULL;
 int na_printAllTestGroups = 1;
+NABool na_test_case_running = NA_FALSE;
+int na_error_count = 0;
 
 
 
@@ -92,16 +95,19 @@ NA_DEF void naStartTesting(const NAUTF8Char* rootName){
   if(na_testData)
     naError("Test already running.");
 #endif
+
   na_testData = naAlloc(NATestData);
 
   naInitTestingData(na_testData, rootName, NA_NULL, 0);
 
   na_curTestData = na_testData;
+  na_test_case_running = NA_FALSE;
+  na_error_count = 0;
 }
 
 
 
-NA_DEF void naStopTesting(void){
+NA_DEF void naStopTesting(){
   naStopTestGroup();
 
   if(na_testData->success){
@@ -137,15 +143,53 @@ NA_HDEF void naUpdateTestParentLeaf(NATestData* testData, NABool leafSuccess){
 
 
 
+NA_HDEF void naStartTestCase(){
+  #ifndef NDEBUG
+    if(na_test_case_running)
+      naError("A test case is already running. This might lead to bad test results.");
+    #endif
+
+    na_test_case_running = NA_TRUE;
+    na_error_count = 0;
+}
+
+NA_HDEF void naStopTestCase(){
+  na_test_case_running = NA_FALSE;
+}
+
+
+
 NA_HDEF void naAddTest(const char* expr, int success, int lineNum){
   NATestData* testData = naPushStack(&(na_curTestData->childs));
   naInitTestingData(testData, expr, na_curTestData, lineNum);
-  testData->success = (NABool)success;
-  naUpdateTestParentLeaf(na_curTestData, (NABool)success);
-  if(!success){
+  if(na_error_count > 0){
+    testData->success = NA_FALSE;
+    naUpdateTestParentLeaf(na_curTestData, (NABool)success);
     printf("  ");
     if(testData->parent){naPrintTestName(testData->parent);}
-    printf("Line %d: %s" NA_NL, lineNum, expr);\
+    printf("Line %d: %d errors occured in %s" NA_NL, lineNum, na_error_count, expr);\
+  }else{
+    testData->success = (NABool)success;
+    naUpdateTestParentLeaf(na_curTestData, (NABool)success);
+    if(!success){
+      printf("  ");
+      if(testData->parent){naPrintTestName(testData->parent);}
+      printf("Line %d: %s" NA_NL, lineNum, expr);\
+    }
+  }
+}
+
+
+
+NA_HDEF void naAddTestError(const char* expr, int lineNum){
+  NATestData* testData = naPushStack(&(na_curTestData->childs));
+  naInitTestingData(testData, expr, na_curTestData, lineNum);
+  testData->success = na_error_count != 0;
+  naUpdateTestParentLeaf(na_curTestData, (NABool)testData->success);
+  if(!testData->success){
+    printf("  ");
+    if(testData->parent){naPrintTestName(testData->parent);}
+    printf("Line %d: No Error raised in %s" NA_NL, lineNum, expr);\
   }
 }
 
@@ -168,8 +212,25 @@ NA_HDEF void naStopTestGroup(){
 }
 
 
+#else // NA_TESTING_ENABLED == 1
+
+NA_DEF void naStartTesting(const NAUTF8Char* rootName){
+  #ifndef NDEBUG
+    naError("Testing is not enabled. Go look for NA_TESTING_ENABLED");
+  #endif
+}
+
+
+
+NA_DEF void naStopTesting(){
+  #ifndef NDEBUG
+    naError("Testing is not enabled. Go look for NA_TESTING_ENABLED");
+  #endif
+}
 
 #endif // NA_TESTING_ENABLED == 1
+
+
 
 // This is free and unencumbered software released into the public domain.
 

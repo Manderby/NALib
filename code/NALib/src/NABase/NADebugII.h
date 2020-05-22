@@ -13,8 +13,6 @@
   #undef naError
   #undef naCrash
 
-
-
   #if NA_OS == NA_OS_WINDOWS
     #define NA_DEBUG_FUNCTIONSYMBOL __FUNCTION__
   #else
@@ -22,18 +20,16 @@
   #endif
 
 
+  NA_HAPI void naCaptureError(const char* functionSymbol, const char* text);
+  NA_HAPI void naCaptureCrash(const char* functionSymbol, const char* text);
 
   #define naError(text)\
-    naPrintError(NA_DEBUG_FUNCTIONSYMBOL, text)\
+    naCaptureError(NA_DEBUG_FUNCTIONSYMBOL, text)
 
 
 
   #define naCrash(text)\
-    {\
-      naPrintError(NA_DEBUG_FUNCTIONSYMBOL, text);\
-      fprintf(stderr, NA_NL "Crashing the application deliberately..." NA_NL);\
-      exit(EXIT_FAILURE);\
-    }
+    naCaptureCrash(NA_DEBUG_FUNCTIONSYMBOL, text)
 
 #endif
 

@@ -10,16 +10,34 @@
   // When NDEBUG is defined, this function is OBSOLETE!
 
   NA_HDEF void naPrintError(const char* functionSymbol, const char* text){
-    fprintf(stderr, "Error in %s: %s", functionSymbol, text);
+    if(!na_test_case_running){
+      fprintf(stderr, "Error in %s: %s", functionSymbol, text);
 
-    // //////////////////////////
-    // Set a breakpoint in the following line to debug.
-    // //////////////////////////
+      // //////////////////////////
+      // Set a breakpoint in the following line to debug.
+      // //////////////////////////
 
-    fprintf(stderr, NA_NL);
+      fprintf(stderr, NA_NL);
 
-    // //////////////////////////
+      // //////////////////////////
+    }
   }
+
+
+
+  NA_HDEF void naCaptureError(const char* functionSymbol, const char* text){
+    na_error_count++;
+    naPrintError(NA_DEBUG_FUNCTIONSYMBOL, text);
+  }
+  
+  
+  
+  NA_HDEF void naCaptureCrash(const char* functionSymbol, const char* text){
+    naPrintError(NA_DEBUG_FUNCTIONSYMBOL, text);
+    fprintf(stderr, NA_NL "Crashing the application deliberately..." NA_NL);
+    exit(EXIT_FAILURE);
+  }
+
 
 
 #endif

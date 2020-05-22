@@ -48,7 +48,8 @@
 #define NA_IEEE754_DOUBLE_SIGN_MASK
 
 
-// Creates floats and doubles out of signed significands and exponents
+// Creates floats and doubles out of signed significands and exponents.
+// Note that naMakeFloat will emit errors for subnormal numbers except 0.
 NA_IAPI float  naMakeFloat (int32 signedSignificand, int32 signedExponent);
 NA_IAPI float  naMakeFloatWithExponent (int32 signedExponent);
 NA_IAPI float  naMakeFloatSubnormal (int32 signedSignificand);

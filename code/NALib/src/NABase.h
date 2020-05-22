@@ -43,8 +43,8 @@
 #include "NABase/NAInt128.h"
 #include "NABase/NAInt256.h"
 
-// Enabling debugging as well as adding some voodoo and fairy dust.
-#include "NABase/NABaseMacros.h"
+// Printout, testing, debugging, voodoo and fairy dust
+#include "NABase/NAMacros.h"
 #include "NABase/NATest.h"
 #include "NABase/NADebug.h"
 

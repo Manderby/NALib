@@ -293,6 +293,23 @@
 
 
 // ////////////////////////////////
+// Printouts
+// ////////////////////////////////
+
+// NALib provides a few functions to print out the contents of macros. They
+// can be a handy tool but they require stdio.h and string.h to be included.
+//
+// If this macro is set to 0, the printout API will just do nothing.
+//
+// The default is 1.
+
+#ifndef NA_PRINTOUTS_ENABLED
+#define NA_PRINTOUTS_ENABLED 1
+#endif
+
+
+
+// ////////////////////////////////
 // Testing
 // ////////////////////////////////
 
@@ -303,8 +320,10 @@
 // The default is 0.
 
 #ifndef NA_TESTING_ENABLED
-  #define NA_TESTING_ENABLED 0
+#define NA_TESTING_ENABLED 0
 #endif
+
+
 
 // This is free and unencumbered software released into the public domain.
 

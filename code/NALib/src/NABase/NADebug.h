@@ -76,17 +76,12 @@
   // occurs and all code analysis tools are silented.
   #define naCrash(text)
 
-  // This is the helper function which is referenced in the naError and
-  // naCrash macro. You can call it directly, but the macros automatically
-  // detect the current function name.
-  NA_HAPI void naPrintError(const char* functionSymbol, const char* text);
-
 
 
 #endif
 
 
-  
+
 // Inline implementations are in a separate file:
 #include "NADebugII.h"
 

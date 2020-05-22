@@ -11,8 +11,8 @@
 
 // Note that the smaller- or greater-operator often is faster than the
 // smallerequal- or greaterequal-operator.
-// (a<=b) will always be written as !(a>b)
-// (a>=b) will always be written as !(a<b)
+// (a <= b) will always be written as !(a > b)
+// (a >= b) will always be written as !(a < b)
 
 
 NA_IDEF NAInt naSigni(NAInt x){

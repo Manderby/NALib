@@ -27,14 +27,15 @@ void testNAFloatingPoint(){
     naT(naMakeFloat(negMaxNumber, 42) == -0x1.fffffep42f);
     naT(naMakeFloat(maxNumber, 127) == 0x1.fffffep127f);
     naT(naMakeFloat(0, -126) == 0x1.000000p-126f);
+    naT(naMakeFloat(0x0, -127) == 0.f);
   }
 
   naG("naMakeFloat invalid cases") {
-    //naTError(naMakeFloat(0x800000, 0));
-    //naTError(naMakeFloat(0x0, 1000));
-    //naTError(naMakeFloat(0x0, 128));
-    //naTError(naMakeFloat(0x0, -127));
-    //naTError(naMakeFloat(0x0, -1000));
+    naE(naMakeFloat(0x800000, 0));
+    naE(naMakeFloat(0x1, 1000));
+    naE(naMakeFloat(0x1, 128));
+    naE(naMakeFloat(0x1, -127));
+    naE(naMakeFloat(0x1, -1000));
   }
 }
 
