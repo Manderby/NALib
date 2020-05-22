@@ -2,6 +2,10 @@
 #include "../../NAMemory.h"
 #include "../../NABinaryData.h"
 
+#ifndef NDEBUG
+  #include "stdio.h"
+#endif
+
 // //////////////////////////////////////
 // Implementation notes from the author about the Memory Pools.
 //
@@ -594,13 +598,15 @@ NA_DEF void naStopRuntime(){
     // Go through all registered types and output a leak message if necessary.
     for(i = 0; i < na_runtime->typeinfocount; i++){
       size_t spacecount = naGetCoreTypeInfoAllocatedCount(na_runtime->typeinfos[i]);
-      if(spacecount){
-        if(!leakmessageprinted){
-          printf(NA_NL "Memory leaks detected in NARuntime:" NA_NL);
-          leakmessageprinted = NA_TRUE;
+      #ifndef NDEBUG
+        if(spacecount){
+          if(!leakmessageprinted){
+            printf(NA_NL "Memory leaks detected in NARuntime:" NA_NL);
+            leakmessageprinted = NA_TRUE;
+          }
+          printf("%s: %zu * %zu = %zu Bytes" NA_NL, na_runtime->typeinfos[i]->typename, spacecount, na_runtime->typeinfos[i]->typesize, spacecount * na_runtime->typeinfos[i]->typesize);
         }
-        printf("%s: %zu * %zu = %zu Bytes" NA_NL, na_runtime->typeinfos[i]->typename, spacecount, na_runtime->typeinfos[i]->typesize, spacecount * na_runtime->typeinfos[i]->typesize);
-      }
+      #endif
     }
   #endif
 

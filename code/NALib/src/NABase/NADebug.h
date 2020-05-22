@@ -1,9 +1,9 @@
 
-#if defined NA_DEBUGGING_INCLUDED || !defined NA_BASE_INCLUDED
+#if defined NA_DEBUG_INCLUDED || !defined NA_BASE_INCLUDED
   #warning "Do not include this file directly. Use NABase.h"
 #endif
-#ifndef NA_DEBUGGING_INCLUDED
-#define NA_DEBUGGING_INCLUDED
+#ifndef NA_DEBUG_INCLUDED
+#define NA_DEBUG_INCLUDED
 
 
 
@@ -50,9 +50,6 @@
 
 #ifndef NDEBUG
 
-  #include <stdio.h>    // for the fprintf function
-  #include <stdlib.h>   // for the exit function
-
   // Evaluates to the current function name. Depending on the system, this
   // can be including a classname if this is compiled in C++.
   #define NA_DEBUG_FUNCTIONSYMBOL
@@ -93,7 +90,7 @@
 
 
 
-#endif //NA_DEBUGGING_INCLUDED
+#endif // NA_DEBUG_INCLUDED
 
 
 

@@ -311,8 +311,8 @@
 //
 // The default is 1.
 
-#ifndef NA_PRINTOUTS_ENABLED
-#define NA_PRINTOUTS_ENABLED 1
+#ifndef NA_PRINTOUT_ENABLED
+  #define NA_PRINTOUT_ENABLED 1
 #endif
 
 
@@ -328,7 +328,7 @@
 // The default is 0.
 
 #ifndef NA_TESTING_ENABLED
-#define NA_TESTING_ENABLED 0
+  #define NA_TESTING_ENABLED 0
 #endif
 
 

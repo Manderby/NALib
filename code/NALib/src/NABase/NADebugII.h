@@ -1,20 +1,15 @@
 
-#if defined NA_DEBUGGING_II_INCLUDED || !defined NA_BASE_INCLUDED
+#if defined NA_DEBUG_II_INCLUDED || !defined NA_BASE_INCLUDED
   #warning "Do not include this file directly. Use NABase.h"
 #endif
-#ifndef NA_DEBUGGING_II_INCLUDED
-#define NA_DEBUGGING_II_INCLUDED
+#ifndef NA_DEBUG_II_INCLUDED
+#define NA_DEBUG_II_INCLUDED
 
 
 
 // This file contains inline implementations of debugging methods.
 
 #ifndef NDEBUG
-
-  #include <stdio.h>    // for the fprintf function
-  #include <stdlib.h>   // for the exit function
-
-
 
   // First, undefine the macros from the .h file.
   #undef NA_DEBUG_FUNCTIONSYMBOL
@@ -27,23 +22,20 @@
     #define NA_DEBUG_FUNCTIONSYMBOL __func__
   #endif
 
-
   NA_HAPI void naCaptureError(const char* functionSymbol, const char* text);
   NA_HAPI void naCaptureCrash(const char* functionSymbol, const char* text);
 
   #define naError(text)\
     naCaptureError(NA_DEBUG_FUNCTIONSYMBOL, text)
 
-
-
   #define naCrash(text)\
     naCaptureCrash(NA_DEBUG_FUNCTIONSYMBOL, text)
 
-#endif
+#endif // NDEBUG
 
 
 
-#endif // NA_DEBUGGING_II_INCLUDED
+#endif // NA_DEBUG_II_INCLUDED
 
 
 

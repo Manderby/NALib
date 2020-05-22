@@ -19,8 +19,6 @@
 
 #if NA_TESTING_ENABLED == 1
 
-#include <string.h>
-
 extern NABool na_test_case_running;
 extern int na_error_count;
 

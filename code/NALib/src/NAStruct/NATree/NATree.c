@@ -105,63 +105,63 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
 
 #ifndef NDEBUG
 
-  typedef struct NADebugTreeToken NADebugTreeToken;
-  struct NADebugTreeToken{
-    NATree* tree;
-    NAInt nodecount;
-    NAInt leafcount;
-    NAInt curdepth;
-    NAInt maxdepth;
-    NAInt previndx;
-  };
-  
-  NAInt debugNode(void* token, NAPtr data){
-    NADebugTreeToken* debugtoken;
-    NA_UNUSED(data);
-    debugtoken = (NADebugTreeToken*)token;
-    debugtoken->nodecount++;
-    debugtoken->curdepth++;
-    if(debugtoken->curdepth > debugtoken->maxdepth){debugtoken->maxdepth = debugtoken->curdepth;}
-
-    debugtoken->previndx++;
-//    if(debugtoken->previndx == tree->config->childcound){
-//      // last child just has been visited. Go up to the parent.
-//      if()
+//  typedef struct NADebugTreeToken NADebugTreeToken;
+//  struct NADebugTreeToken{
+//    NATree* tree;
+//    NAInt nodecount;
+//    NAInt leafcount;
+//    NAInt curdepth;
+//    NAInt maxdepth;
+//    NAInt previndx;
+//  };
+//  
+//  NAInt debugNode(void* token, NAPtr data){
+//    NADebugTreeToken* debugtoken;
+//    NA_UNUSED(data);
+//    debugtoken = (NADebugTreeToken*)token;
+//    debugtoken->nodecount++;
+//    debugtoken->curdepth++;
+//    if(debugtoken->curdepth > debugtoken->maxdepth){debugtoken->maxdepth = debugtoken->curdepth;}
+//
+//    debugtoken->previndx++;
+////    if(debugtoken->previndx == tree->config->childcound){
+////      // last child just has been visited. Go up to the parent.
+////      if()
+////    }else{
+////    
+////    }
+//    debugtoken->curdepth--;
+//    return NA_TREE_SEARCH_PARENT;
+//  }
+//
+//  NAInt debugLeaf(void* token, NAPtr data){
+//    NADebugTreeToken* debugtoken;
+//    NA_UNUSED(data);
+//    debugtoken = (NADebugTreeToken*)token;
+//    debugtoken->leafcount++;
+//    return NA_TREE_SEARCH_PARENT;
+//  }
+//
+//  void naDebugTree(NATree* tree){
+//    printf("Tree Debug:" NA_NL);
+//    printf(NA_TAB "Structure uses %d bytes." NA_NL, (int)naSizeof(NATree));
+//    printf(NA_TAB "%d iterators running on the tree." NA_NL, (int)tree->itercount);
+//    if(tree->root){
+//      NATreeIterator iter = naMakeTreeAccessor(tree);
+//      NADebugTreeToken token;
+//      naZeron(&token, naSizeof(NADebugTreeToken));
+//      token.tree = tree;
+//      token.previndx = -1;
+//      naLocateTreeToken(&iter, &token, debugNode, debugLeaf);
+//      
+//      printf(NA_TAB "Inner node count: %d * %d Bytes = %d bytes" NA_NL, (int)token.nodecount, (int)tree->config->sizeofNode, (int)((size_t)token.nodecount * tree->config->sizeofNode));
+//      printf(NA_TAB "Leaf count: %d * %d Bytes = %d bytes" NA_NL, (int)token.leafcount, (int)tree->config->sizeofLeaf, (int)((size_t)token.leafcount * tree->config->sizeofLeaf));
+//      printf(NA_TAB "Max node depth: %d" NA_NL, (int)token.maxdepth);
+//      naClearTreeIterator(&iter);
 //    }else{
-//    
+//      printf(NA_TAB "Tree has no root." NA_NL);
 //    }
-    debugtoken->curdepth--;
-    return NA_TREE_SEARCH_PARENT;
-  }
-
-  NAInt debugLeaf(void* token, NAPtr data){
-    NADebugTreeToken* debugtoken;
-    NA_UNUSED(data);
-    debugtoken = (NADebugTreeToken*)token;
-    debugtoken->leafcount++;
-    return NA_TREE_SEARCH_PARENT;
-  }
-
-  void naDebugTree(NATree* tree){
-    printf("Tree Debug:" NA_NL);
-    printf(NA_TAB "Structure uses %d bytes." NA_NL, (int)naSizeof(NATree));
-    printf(NA_TAB "%d iterators running on the tree." NA_NL, (int)tree->itercount);
-    if(tree->root){
-      NATreeIterator iter = naMakeTreeAccessor(tree);
-      NADebugTreeToken token;
-      naZeron(&token, naSizeof(NADebugTreeToken));
-      token.tree = tree;
-      token.previndx = -1;
-      naLocateTreeToken(&iter, &token, debugNode, debugLeaf);
-      
-      printf(NA_TAB "Inner node count: %d * %d Bytes = %d bytes" NA_NL, (int)token.nodecount, (int)tree->config->sizeofNode, (int)((size_t)token.nodecount * tree->config->sizeofNode));
-      printf(NA_TAB "Leaf count: %d * %d Bytes = %d bytes" NA_NL, (int)token.leafcount, (int)tree->config->sizeofLeaf, (int)((size_t)token.leafcount * tree->config->sizeofLeaf));
-      printf(NA_TAB "Max node depth: %d" NA_NL, (int)token.maxdepth);
-      naClearTreeIterator(&iter);
-    }else{
-      printf(NA_TAB "Tree has no root." NA_NL);
-    }
-  }
+//  }
 #endif
 
 

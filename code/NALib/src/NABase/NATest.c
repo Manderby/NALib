@@ -1,13 +1,10 @@
 
 #include "../NAStack.h"
-#include <stdio.h>
 
 #if NA_TESTING_ENABLED == 1
 
-const char* na_yesno_strings[] = {
-  "No",
-  "Yes",
-};
+#include <stdio.h>
+
 
 
 typedef struct NATestData NATestData;
