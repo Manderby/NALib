@@ -29,8 +29,8 @@
 // // Swiss German
 // NA_LOC_LANG("gsw");
 // NA_LOC(HELLO_WORLD,            "Sali Welt");
-// NA_LOC(99_BEER,                "99 Fläsche Bier");
-// NA_LOC(BREADCRUMBS_BEAVERSPIT, "Brösmeli und Biberspeuz");
+// NA_LOC(99_BEER,                "99 FlÃ¤sche Bier");
+// NA_LOC(BREADCRUMBS_BEAVERSPIT, "BrÃ¶smeli und Biberspeuz");
 //
 // You can use // comments and split the content into as many files you like.
 // These textfiles are then simply included into your sourcecode like for
