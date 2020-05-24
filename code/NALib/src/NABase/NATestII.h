@@ -22,19 +22,36 @@
 extern NABool na_test_case_running;
 extern int na_error_count;
 
-NA_HAPI void naStartTestCase(void);
-NA_HAPI void naStopTestCase(void);
-
 NA_HAPI void naAddTest(const char* expr, int success, int lineNum);
 NA_HAPI void naAddTestError(const char* expr, int lineNum);
 NA_HAPI void naStartTestGroup(const char* name, int lineNum);
 NA_HAPI void naStopTestGroup(void);
 
+
+
+#ifndef NDEBUG
+  #define NA_START_TEST_CASE\
+    if(na_test_case_running)\
+      naError("A test case is already running. This might lead to bad test results.");\
+    na_test_case_running = NA_TRUE;\
+    na_error_count = 0;
+#else
+  #define NA_START_TEST_CASE\
+    na_test_case_running = NA_TRUE;\
+    na_error_count = 0;
+#endif
+
+
+#define NA_STOP_TEST_CASE\
+  na_test_case_running = NA_FALSE;
+
+
+
 #define naT(expr)\
   {\
-    naStartTestCase();\
+    NA_START_TEST_CASE\
     NABool success = expr;\
-    naStopTestCase();\
+    NA_STOP_TEST_CASE\
     naAddTest(#expr, success, __LINE__);\
   }
 
@@ -42,9 +59,9 @@ NA_HAPI void naStopTestGroup(void);
 #ifndef NDEBUG
   #define naE(expr)\
     {\
-      naStartTestCase();\
+      NA_START_TEST_CASE\
       { expr; }\
-      naStopTestCase();\
+      NA_STOP_TEST_CASE\
       naAddTestError(#expr, __LINE__);\
     }
 #else

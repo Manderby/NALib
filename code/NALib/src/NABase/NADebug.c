@@ -43,6 +43,9 @@
   
   
   NA_HDEF void naCaptureCrash(const char* functionSymbol, const char* text){
+    #if NA_TESTING_ENABLED == 1
+      na_test_case_running = NA_FALSE;
+    #endif
     naPrintError(functionSymbol, text);
     fprintf(stderr, NA_NL "Crashing the application deliberately..." NA_NL);
     exit(EXIT_FAILURE);

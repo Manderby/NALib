@@ -63,7 +63,26 @@ NA_IAPI double naMakeDoubleSubnormal(NAi64 signedSignificand);
 
 NA_IAPI int32  naGetDoubleExponent(double d);
 NA_IAPI NAi64  naGetDoubleInteger(double d);
+
+// Returns the decimal fraction of the given number as an integer with 15
+// decimal places. For example .1234 returns 123400000000000
+// E:     No Errors raised.
+// Slow:  Works with any number but is slower. Decimally accurate.
+// SlowE: Same as slow but raises no error if rounding up to 1e16.
+//
+// When decimal accuracy is key, use the Slow variant!
+//
+// Note that this is highly delicate code. The normal variant can result in
+// rounding errors when there are less then 15 digits after the decimal point
+// which basically means, there shall be no digits before the decimal point.
+// An error is raised if there are. The E variant inhibits that error.
+//
+// All computations might sometimes return 1e16. The normal and slow variant
+// will emit a warning if so. Use the E variant to inhibit that warning.
 NA_IAPI NAi64  naGetDoubleFraction(double d);
+NA_IAPI NAi64  naGetDoubleFractionE(double d);
+NA_IAPI NAi64  naGetDoubleFractionSlow(double d);
+NA_IAPI NAi64  naGetDoubleFractionSlowE(double d);
 
 
 

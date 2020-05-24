@@ -5,13 +5,13 @@
 
 
 
-void testNAFloatingPoint(){
+void testMakeFloat(){
   // Never seen this kind of literal yet? Go look for hex float literals!
   // It is actually quite useful for testing. One only has to remember that
   // single precision only use 23 bits for the significant, which is why the
   // hex digits after the point of the compared value appear to be doubled.
-  naG("naMakeFloat valid cases") {
-    int32 number = 0x123456;
+  naG("naMakeFloat valid cases"){
+    int32 number = 0x712345;
     int32 maxNumber = 0x7fffff;
     int32 negNumber = -number;
     int32 negMaxNumber = -maxNumber;
@@ -21,8 +21,8 @@ void testNAFloatingPoint(){
     naT(naMakeFloat(-1, 42) == -0x1.000002p42f);
     naT(naMakeFloat(1, -42) == 0x1.000002p-42f);
     naT(naMakeFloat(-1, -42) == -0x1.000002p-42f);
-    naT(naMakeFloat(number, 42) == 0x1.2468acp42f);
-    naT(naMakeFloat(negNumber, 42) == -0x1.2468acp42f);
+    naT(naMakeFloat(number, 42) == 0x1.e2468ap42f);
+    naT(naMakeFloat(negNumber, 42) == -0x1.e2468ap42f);
     naT(naMakeFloat(maxNumber, 42) == 0x1.fffffep42f);
     naT(naMakeFloat(negMaxNumber, 42) == -0x1.fffffep42f);
     naT(naMakeFloat(maxNumber, 127) == 0x1.fffffep127f);
@@ -30,7 +30,7 @@ void testNAFloatingPoint(){
     naT(naMakeFloat(0, -127) == 0.f);
   }
 
-  naG("naMakeFloat invalid cases") {
+  naG("naMakeFloat invalid cases"){
     naE(naMakeFloat(0x800000, 0));
     naE(naMakeFloat(0x1, 1000));
     naE(naMakeFloat(0x1, 128));
@@ -39,7 +39,7 @@ void testNAFloatingPoint(){
   }
 
 
-  naG("naMakeFloatWithExponent valid cases") {
+  naG("naMakeFloatWithExponent valid cases"){
     naT(naMakeFloatWithExponent(0) == 1.f);
     naT(naMakeFloatWithExponent(1) == 2.f);
     naT(naMakeFloatWithExponent(8) == 256.f);
@@ -50,15 +50,15 @@ void testNAFloatingPoint(){
     naT(naMakeFloatWithExponent(-126) == 0x1.000000p-126f);
   }
 
-  naG("naMakeFloatWithExponent invalid cases") {
+  naG("naMakeFloatWithExponent invalid cases"){
     naE(naMakeFloatWithExponent(128));
     naE(naMakeFloatWithExponent(1000));
     naE(naMakeFloatWithExponent(-127));
     naE(naMakeFloatWithExponent(-1000));
   }
 
-  naG("naMakeFloatSubnormal valid cases") {
-    int32 number = 0x123456;
+  naG("naMakeFloatSubnormal valid cases"){
+    int32 number = 0x712345;
     int32 maxNumber = 0x7fffff;
     int32 negNumber = -number;
     int32 negMaxNumber = -maxNumber;
@@ -74,10 +74,182 @@ void testNAFloatingPoint(){
     naT(naMakeFloatSubnormal(negMaxNumber) > -0x1.000000p-126f);
   }
 
-  naG("naMakeFloatSubnormal invalid cases") {
+  naG("naMakeFloatSubnormal invalid cases"){
     naE(naMakeFloatSubnormal(0x800000));
     naE(naMakeFloatSubnormal(-0x800000));
   }
+}
+
+
+
+void testMakeDouble(){
+  // Never seen this kind of literal yet? Go look for hex float literals!
+  // It is actually quite useful for testing..
+  naG("naMakeDouble valid cases"){
+    int64 number = 0xf123456789abc;
+    int64 maxNumber = 0xfffffffffffff;
+    int64 negNumber = -number;
+    int64 negMaxNumber = -maxNumber;
+    naT(naMakeDouble(0, 0) == 0x1.0000000000000p0);
+    naT(naMakeDouble(1, 0) == 0x1.0000000000001p0);
+    naT(naMakeDouble(1, 42) == 0x1.0000000000001p42);
+    naT(naMakeDouble(-1, 42) == -0x1.0000000000001p42);
+    naT(naMakeDouble(1, -42) == 0x1.0000000000001p-42);
+    naT(naMakeDouble(-1, -42) == -0x1.0000000000001p-42);
+    naT(naMakeDouble(number, 42) == 0x1.f123456789abcp42);
+    naT(naMakeDouble(negNumber, 42) == -0x1.f123456789abcp42);
+    naT(naMakeDouble(maxNumber, 42) == 0x1.fffffffffffffp42);
+    naT(naMakeDouble(negMaxNumber, 42) == -0x1.fffffffffffffp42);
+    naT(naMakeDouble(maxNumber, 1023) == 0x1.fffffffffffffp1023);
+    naT(naMakeDouble(0, -1022) == 0x1.0000000000000p-1022);
+    naT(naMakeDouble(0, -1023) == 0.f);
+  }
+
+  naG("naMakeDouble invalid cases"){
+    naE(naMakeDouble(0x10000000000000, 0));
+    naE(naMakeDouble(0x1, 10000));
+    naE(naMakeDouble(0x1, 1024));
+    naE(naMakeDouble(0x1, -1023));
+    naE(naMakeDouble(0x1, -10000));
+  }
+
+  naG("naMakeDoubleWithExponent valid cases"){
+    naT(naMakeDoubleWithExponent(0) == 1.f);
+    naT(naMakeDoubleWithExponent(1) == 2.f);
+    naT(naMakeDoubleWithExponent(8) == 256.f);
+    naT(naMakeDoubleWithExponent(42) == 0x1.000000p42);
+    naT(naMakeDoubleWithExponent(1023) == 0x1.000000p1023);
+    naT(naMakeDoubleWithExponent(-1) == 0.5f);
+    naT(naMakeDoubleWithExponent(-42) == 0x1.000000p-42);
+    naT(naMakeDoubleWithExponent(-1022) == 0x1.000000p-1022);
+  }
+
+  naG("naMakeDoubleWithExponent invalid cases"){
+    naE(naMakeDoubleWithExponent(1024));
+    naE(naMakeDoubleWithExponent(10000));
+    naE(naMakeDoubleWithExponent(-1023));
+    naE(naMakeDoubleWithExponent(-10000));
+  }
+
+  naG("naMakeDoubleSubnormal valid cases"){
+    int64 number = 0xf123456789abc;
+    int64 maxNumber = 0xfffffffffffff;
+    int64 negNumber = -number;
+    int64 negMaxNumber = -maxNumber;
+    naT(naMakeDoubleSubnormal(1) > 0.);
+    naT(naMakeDoubleSubnormal(number) > 0.);
+    naT(naMakeDoubleSubnormal(maxNumber) > 0.);
+    naT(naMakeDoubleSubnormal(negNumber) < 0.);
+    naT(naMakeDoubleSubnormal(negMaxNumber) < 0.);
+    naT(naMakeDoubleSubnormal(1) < 0x1.000000p-1022);
+    naT(naMakeDoubleSubnormal(number) < 0x1.000000p-1022);
+    naT(naMakeDoubleSubnormal(maxNumber) < 0x1.000000p-1022);
+    naT(naMakeDoubleSubnormal(negNumber) > -0x1.000000p-1022);
+    naT(naMakeDoubleSubnormal(negMaxNumber) > -0x1.000000p-1022);
+  }
+
+  naG("naMakeDoubleSubnormal invalid cases"){
+    naE(naMakeDoubleSubnormal(0x10000000000000));
+    naE(naMakeDoubleSubnormal(-0x10000000000000));
+  }
+}
+
+
+
+void testGetDouble(){
+  naG("naGetDoubleExponent valid cases"){
+    naT(naGetDoubleExponent(1.) == 0);
+    naT(naGetDoubleExponent(0x1.000000p42) == 42);
+    naT(naGetDoubleExponent(0x1.000000p-42) == -42);
+    naT(naGetDoubleExponent(0x1.000000p1023) == 1023);
+    naT(naGetDoubleExponent(0x1.000000p-1022) == -1022);
+  }
+
+  naG("naGetDoubleExponent invalid cases"){
+    naE(naGetDoubleExponent(0x1.000000p-1023)); // subnormal
+    naE(naGetDoubleExponent(0x1.000000p-1074)); // subnormal -1022-52
+    naE(naGetDoubleExponent(0.));
+    naE(naGetDoubleExponent(NA_INFINITY));
+  }
+ 
+  naG("naGetDoubleInteger valid cases"){
+    naT(naGetDoubleInteger(0.) == 0);
+    naT(naGetDoubleInteger(0.00001234) == 0);
+    naT(naGetDoubleInteger(0x0.fffffffffffffp0) == 0);
+    naT(naGetDoubleInteger(0.99999999999999999) == 1);
+    naT(naGetDoubleInteger(42.) == 42);
+    naT(naGetDoubleInteger(-42.) == -42);
+    naT(naGetDoubleInteger(0x1.fffffffffffffp52) == 0x1fffffffffffff);
+    naT(naGetDoubleInteger(-0x1.fffffffffffffp52) == -0x1fffffffffffff);
+  }
+
+  naG("naGetDoubleInteger invalid cases"){
+    naE(naGetDoubleInteger(NA_INFINITY));
+    naE(naGetDoubleInteger(0x1.fffffffffffffp53));
+  }
+
+  naG("naGetDoubleFraction valid cases"){
+    naT(naGetDoubleFraction(0.0) == 0);
+    naT(naGetDoubleFraction(0.5) == 500000000000000);
+    naT(naGetDoubleFraction(0.00001234) == 12340000000);
+    naT(naGetDoubleFraction(0.123456) == 123456000000000);
+    naT(naGetDoubleFraction(0.000000000000001) == 000000000000001);
+    naT(naGetDoubleFraction(0.999999999999999) == 999999999999999);
+  }
+
+  naG("naGetDoubleFraction invalid cases"){
+    naE(naGetDoubleFraction(1.0));
+    naE(naGetDoubleFraction(1111.0));
+    naE(naGetDoubleFraction(1234.5678));
+    naE(naGetDoubleFraction(123456789.12345));
+    naE(naGetDoubleFraction(123456789.12345678));
+    naE(naGetDoubleFraction(0.99999999999999999)); // compiler rounding up
+    naE(naGetDoubleFraction(0x0.fffffffffffffp0));  // function rounding up
+  }
+
+  naG("naGetDoubleFractionE"){
+    naT(naGetDoubleFractionE(1.0) == 0);
+    naT(naGetDoubleFractionE(1111.0) == 0);
+    naT(naGetDoubleFractionE(1234.5678) >= 567700000000000);
+    naT(naGetDoubleFractionE(1234.5678) <= 567900000000000);
+    naT(naGetDoubleFractionE(123456789.12345) >= 123440000000000);
+    naT(naGetDoubleFractionE(123456789.12345) <= 123460000000000);
+    naT(naGetDoubleFractionE(123456789.12345678) >= 123455000000000);
+    naT(naGetDoubleFractionE(123456789.12345678) <= 123457000000000);
+    naT(naGetDoubleFractionE(0.99999999999999999) == 0); // compiler rounding up
+    naT(naGetDoubleFractionE(0x0.fffffffffffffp0) == 1000000000000000);  // function rounding up
+  }
+
+  naG("naGetDoubleFractionSlow valid cases"){
+    naT(naGetDoubleFractionSlow(0.0) == 0);
+    naT(naGetDoubleFractionSlow(1.0) == 0);
+    naT(naGetDoubleFractionSlow(1111.0) == 0);
+    naT(naGetDoubleFractionSlow(0.5) == 500000000000000);
+    naT(naGetDoubleFractionSlow(0.00001234) == 12340000000);
+    naT(naGetDoubleFractionSlow(1234.5678) == 567800000000000);
+    naT(naGetDoubleFractionSlow(0.123456) == 123456000000000);
+    naT(naGetDoubleFractionSlow(123456789.12345) == 123450000000000);
+    naT(naGetDoubleFractionSlow(123456789.12345678) == 123457000000000);
+    naT(naGetDoubleFractionSlow(0.000000000000001) == 000000000000001);
+    naT(naGetDoubleFractionSlow(0.999999999999999) == 999999999999999);
+    naT(naGetDoubleFractionSlow(0.99999999999999999) == 0); // compiler rounds up to 1
+  }
+
+  naG("naGetDoubleFractionSlow invalid cases"){
+    naE(naGetDoubleFractionSlow(0x0.fffffffffffffp0));  // rounding up
+  }
+
+  naG("naGetDoubleFractionSlowE valid cases"){
+    naT(naGetDoubleFractionSlowE(0x0.fffffffffffffp0) == 1000000000000000);  // rounding up
+  }
+}
+
+
+
+void testNAFloatingPoint(){
+  naF(MakeFloat);
+  naF(MakeDouble);
+  naF(GetDouble);
 }
 
 

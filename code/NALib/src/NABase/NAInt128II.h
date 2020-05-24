@@ -261,13 +261,17 @@
 
     // multiply a0 * b and add up
     retValuei.lo = naAddu64(retValuei.lo, naMulu64(a0, b0));
-    retValuei.lo = naAddu64(retValuei.lo, naShlu64(a0b1, 32));
+    NAu64 shla0b1 = naShlu64(a0b1, 32);
+    retValuei.lo = naAddu64(retValuei.lo, shla0b1);
+    retValuei.hi = naAddu64(retValuei.hi, naSmalleru64(retValuei.lo, shla0b1));
     retValuei.hi = naAddu64(retValuei.hi, naShru64(a0b1, 32));
     retValuei.hi = naAddu64(retValuei.hi, naMulu64(a0, b2));
     retValuei.hi = naAddu64(retValuei.hi, naShlu64(naMulu64(a0, b3), 32));
 
     // multiply a1 * b and add up
-    retValuei.lo = naAddu64(retValuei.lo, naShlu64(a1b0, 32));
+    NAu64 shla1b0 = naShlu64(a1b0, 32);
+    retValuei.lo = naAddu64(retValuei.lo, shla1b0);
+    retValuei.hi = naAddu64(retValuei.hi, naSmalleru64(retValuei.lo, shla1b0));
     retValuei.hi = naAddu64(retValuei.hi, naShru64(a1b0, 32));
     retValuei.hi = naAddu64(retValuei.hi, naMulu64(a1, b1));
     retValuei.hi = naAddu64(retValuei.hi, naShlu64(naMulu64(a1, b2), 32));

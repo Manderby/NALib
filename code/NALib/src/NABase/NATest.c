@@ -141,28 +141,12 @@ NA_HDEF void naUpdateTestParentLeaf(NATestData* testData, NABool leafSuccess){
 
 
 
-NA_HDEF void naStartTestCase(){
-  #ifndef NDEBUG
-    if(na_test_case_running)
-      naError("A test case is already running. This might lead to bad test results.");
-    #endif
-
-    na_test_case_running = NA_TRUE;
-    na_error_count = 0;
-}
-
-NA_HDEF void naStopTestCase(){
-  na_test_case_running = NA_FALSE;
-}
-
-
-
 NA_HDEF void naAddTest(const char* expr, int success, int lineNum){
   NATestData* testData = naPushStack(&(na_curTestData->childs));
   naInitTestingData(testData, expr, na_curTestData, lineNum);
   if(na_error_count > 0){
     testData->success = NA_FALSE;
-    naUpdateTestParentLeaf(na_curTestData, (NABool)success);
+    naUpdateTestParentLeaf(na_curTestData, NA_FALSE);
     printf("  ");
     if(testData->parent){naPrintTestName(testData->parent);}
     printf("Line %d: %d errors occured in %s" NA_NL, lineNum, na_error_count, expr);\

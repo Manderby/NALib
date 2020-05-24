@@ -241,13 +241,17 @@
 
     // multiply a0 * b and add up
     retValuei.lo += a0 * b0;
-    retValuei.lo += a0b1 << 16;
+    uint32 shla0b1 = a0b1 << 16;
+    retValuei.lo += shla0b1;
+    retValuei.hi += retValuei.lo < shla0b1;
     retValuei.hi += a0b1 >> 16;
     retValuei.hi += a0 * b2;
     retValuei.hi += (a0 * b3) << 16;
 
     // multiply a1 * b and add up
-    retValuei.lo += a1b0 << 16;
+    uint32 shla1b0 = a1b0 << 16;
+    retValuei.lo += shla1b0;
+    retValuei.hi += retValuei.lo < shla1b0;
     retValuei.hi += a1b0 >> 16;
     retValuei.hi += a1 * b1;
     retValuei.hi += (a1 * b2) << 16;

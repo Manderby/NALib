@@ -42,7 +42,7 @@ int main(void){
   //  printNAEncoding();
   //  printNAChar();
   //  printNANumerics();
-  //  printNAFloatingPoint();
+    printNAFloatingPoint();
   //#endif
 
   naF(NALanguage);
