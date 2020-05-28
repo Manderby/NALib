@@ -83,7 +83,7 @@
 
 #include "float.h"
 #ifndef NDEBUG
-  #include "NAMathConstants.h"
+  #include "../NAMathConstants.h"
 #endif
 
 #ifndef FLT_RADIX
@@ -266,6 +266,49 @@ NA_IDEF double naMakeDoubleSubnormal(NAi64 signedSignificand){
 
 
 
+NA_IAPI int32 naGetFloatExponent(float f){
+  #ifndef NDEBUG
+    if(f == 0.)
+      naError("Given number is 0. Result will be subnormal exponent");
+    if(f == NA_INFINITYf || f == -NA_INFINITYf)
+      naError("Given number is +-Infinity. Result will be max+1 exponent");
+  #endif
+  int32 fBits = *((int32*)(void*)&f);
+  fBits = fBits & NA_IEEE754_SINGLE_EXPONENT_MASK;
+  fBits = fBits >> NA_IEEE754_SINGLE_SIGNIFICAND_BITS;
+  #ifndef NDEBUG
+    if(f != 0. && fBits == 0)
+      naError("Given number is subnormal. Result will always be subnormal exponent");
+  #endif
+  return fBits - NA_IEEE754_SINGLE_EXPONENT_BIAS;
+}
+
+
+
+NA_IAPI int32 naGetFloatInteger(float f){
+  #ifndef NDEBUG
+    if(f == NA_INFINITYf || f == -NA_INFINITYf)
+      naError("Given number is +-Infinity. Result will be undefined");
+    if(fabsf(f) > 0x1.fffffep23)
+      naError("Given numbers absolute value is too large. Result will be undefined");
+  #endif
+  int32 fBits = *((int32*)(void*)&f);
+  if(f != 0.){
+    fBits = fBits & NA_IEEE754_SINGLE_SIGNIFICAND_MASK;
+    fBits = fBits | NA_IEEE754_SINGLE_SIGNIFICAND_NORM;
+    int32 exponent = naGetFloatExponent(f);
+    if(exponent == NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL || exponent < 0){
+      fBits = NA_ZERO_i32;
+    }else{
+      fBits = fBits >> (NA_IEEE754_SINGLE_SIGNIFICAND_BITS - exponent);
+      if(f < 0){fBits = -fBits;}
+    }
+  }
+  return fBits;
+}
+
+
+
 NA_IAPI int32 naGetDoubleExponent(double d){
   #ifndef NDEBUG
     if(d == 0.)
@@ -309,6 +352,107 @@ NA_IAPI NAi64 naGetDoubleInteger(double d){
 
 
 
+NA_IAPI int32 naGetFloatFraction(float f){
+  #ifndef NDEBUG
+    if(naGetFloatInteger(f))
+      naError("Less than 6 decimal digits available for accuracy. Result may contain rounding errors. Use E or Slow variant.");
+  #endif
+  int32 result = naGetFloatFractionE(f);
+  #ifndef NDEBUG
+    if(result == 1000000)
+      naError("Fraction rounded up to 1e7. Take care of this case in your code and then use the E method to inhibit this error.");
+  #endif
+  return result;
+}
+
+
+
+NA_IAPI int32 naGetFloatFractionE(float f){
+  int32 exponent;
+  int32 fbits = *((int32*)(void*)&f);
+  if(f == 0.){
+    fbits = NA_ZERO_i32;
+  }else{
+    exponent = naGetFloatExponent(f);
+    if(exponent < 0){
+      fbits = fbits & NA_IEEE754_SINGLE_SIGNIFICAND_MASK;
+      fbits = fbits | NA_IEEE754_SINGLE_SIGNIFICAND_NORM;
+      fbits = fbits >> (-exponent - 1);
+      fbits++;
+      fbits = fbits >> 1;
+    }else{
+      fbits = fbits << exponent;
+      fbits = fbits & NA_IEEE754_SINGLE_SIGNIFICAND_MASK;
+    }
+
+    NAi64 hyperTens = naMakei64(NA_ZERO_i32, 0x3d090000);  // = 1e6 * 2^(32-23+1)
+    NAi64 hyperBits = naMakei64(NA_ZERO_i32, (uint32)fbits);
+    hyperBits = naMuli64(hyperBits, hyperTens);
+    fbits = naGeti64Hi(hyperBits);
+
+    if(exponent > 0){
+      fbits = fbits >> exponent;
+    }
+    fbits++;
+    fbits = fbits >> 1;
+    if(exponent > 0){
+      fbits = fbits << exponent;
+    }
+  }
+  return fbits;
+}
+
+
+
+NA_IAPI int32 naGetFloatFractionSlow(float f){
+  int32 result = naGetFloatFractionSlowE(f);
+  #ifndef NDEBUG
+  if(result == 1000000)
+    naError("Fraction rounded up to 1e7. Take care of this case in your code and then use the SlowE method to inhibit this error.");
+  #endif
+  return result;
+}
+
+
+
+NA_IAPI int32 naGetFloatFractionSlowE(float f){
+  int32 exponent;
+  int32 fbits = *((int32*)(void*)&f);
+  if(f == 0.){
+    fbits = NA_ZERO_i32;
+  }else{
+    NAi64 hyperTens;
+    uint32 mul = 1;
+    exponent = naGetFloatExponent(f);
+    if(exponent < 0){
+      fbits = fbits & NA_IEEE754_SINGLE_SIGNIFICAND_MASK;
+      fbits = fbits | NA_IEEE754_SINGLE_SIGNIFICAND_NORM;
+      fbits = fbits >> (-exponent - 1);
+      fbits++;
+      fbits = fbits >> 1;
+      hyperTens = naMakei64(NA_ZERO_i32, 1000000);  // 1e6
+    }else{
+      fbits = fbits << exponent;
+      fbits = fbits & NA_IEEE754_SINGLE_SIGNIFICAND_MASK;
+      int32 i = naGetFloatInteger(f);
+      while(i){i /= 10; mul *= 10;}
+      hyperTens = naMakei64(NA_ZERO_i32, 1000000 / mul);
+    }
+
+    NAi64 hyperBits = naMakei64(NA_ZERO_i32, (uint32)fbits);
+    hyperBits = naMuli64(hyperBits, hyperTens);
+    hyperBits = naShli64(hyperBits, 10); // (32-23+1)
+
+    fbits = naGeti64Hi(hyperBits);
+    fbits++;
+    fbits = fbits >> 1;
+    fbits = fbits * mul;
+  }
+  return fbits;
+}
+
+
+
 NA_IAPI NAi64 naGetDoubleFraction(double d){
   #ifndef NDEBUG
   if(naGetDoubleInteger(d))
@@ -342,7 +486,7 @@ NA_IAPI NAi64 naGetDoubleFractionE(double d){
       dbits = naAndi64(dbits, NA_IEEE754_DOUBLE_SIGNIFICAND_MASK);
     }
 
-    NAi128 hyperTens = naMakei128(NA_ZERO_i64, 0x71afd498d0000000);  // = 1e15 * 2^13
+    NAi128 hyperTens = naMakei128(NA_ZERO_i64, 0x71afd498d0000000);  // = 1e15 * 2^(64-52+1)
     NAi128 hyperBits = naMakei128(NA_ZERO_i64, naCasti64Tou64(dbits));
     hyperBits = naMuli128(hyperBits, hyperTens);
     dbits = naGeti128Hi(hyperBits);
@@ -398,7 +542,7 @@ NA_IAPI NAi64 naGetDoubleFractionSlowE(double d){
 
     NAi128 hyperBits = naMakei128(NA_ZERO_i64, naCasti64Tou64(dbits));
     hyperBits = naMuli128(hyperBits, hyperTens);
-    hyperBits = naShli128(hyperBits, 13);
+    hyperBits = naShli128(hyperBits, 13); // (64-52+1)
 
     dbits = naGeti128Hi(hyperBits);
     naInci64(dbits);

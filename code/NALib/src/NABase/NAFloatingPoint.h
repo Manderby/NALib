@@ -52,7 +52,8 @@
 
 
 // Creates floats and doubles out of signed significands and exponents.
-// Note that naMakeFloat will emit errors for subnormal numbers except 0.
+// Note that naMakeFloat and naMakeDouble will emit errors for subnormal
+// numbers except 0.
 NA_IAPI float  naMakeFloat(int32 signedSignificand, int32 signedExponent);
 NA_IAPI float  naMakeFloatWithExponent(int32 signedExponent);
 NA_IAPI float  naMakeFloatSubnormal(int32 signedSignificand);
@@ -61,24 +62,39 @@ NA_IAPI double naMakeDouble(NAi64 signedSignificand, int32 signedExponent);
 NA_IAPI double naMakeDoubleWithExponent(int32 signedExponent);
 NA_IAPI double naMakeDoubleSubnormal(NAi64 signedSignificand);
 
-NA_IAPI int32  naGetDoubleExponent(double d);
-NA_IAPI NAi64  naGetDoubleInteger(double d);
+// Returns the exponent and integer part of a float or double.
+NA_IAPI int32  naGetFloatExponent (float  f);
+NA_IAPI int32  naGetFloatInteger  (float  f);
 
-// Returns the decimal fraction of the given number as an integer with 15
-// decimal places. For example .1234 returns 123400000000000
-// E:     No Errors raised.
-// Slow:  Works with any number but is slower. Decimally accurate.
-// SlowE: Same as slow but raises no error if rounding up to 1e16.
+NA_IAPI int32  naGetDoubleExponent(double d);
+NA_IAPI NAi64  naGetDoubleInteger (double d);
+
+// Returns the decimal fraction of the given float or double as an integer
+// with 6 or 15 decimal places respectively.
+// For example .1234 returns 123400 for float and 123400000000000 for double.
+// Normal: Quick computation which might lead to some rounding errors in the
+//         least significant digits.
+// E:      Same as normal but no errors raised.
+// Slow:   Works decimally accurate with values greater 1 or smaller -1, but
+//         is slightly slower.
+// SlowE:  Same as slow but raises no error if rounding up to 1e16.
 //
 // When decimal accuracy is key, use the Slow variant!
 //
 // Note that this is highly delicate code. The normal variant can result in
-// rounding errors when there are less then 15 digits after the decimal point
-// which basically means, there shall be no digits before the decimal point.
-// An error is raised if there are. The E variant inhibits that error.
+// rounding errors when there are less then 6 or 15 digits after the decimal
+// point, which basically means: There shall be no digits before the decimal
+// point or you might get rounding errors in the least significant bits.
+// An error is raised if that is the case. The E variant inhibits that error.
 //
-// All computations might sometimes return 1e16. The normal and slow variant
-// will emit a warning if so. Use the E variant to inhibit that warning.
+// All computations might sometimes return 1e7 or 1e16 respectively. The
+// normal and slow variant will emit a warning if so. Use the E variant to
+// inhibit that warning.
+NA_IAPI int32  naGetFloatFraction(float f);
+NA_IAPI int32  naGetFloatFractionE(float f);
+NA_IAPI int32  naGetFloatFractionSlow(float f);
+NA_IAPI int32  naGetFloatFractionSlowE(float f);
+
 NA_IAPI NAi64  naGetDoubleFraction(double d);
 NA_IAPI NAi64  naGetDoubleFractionE(double d);
 NA_IAPI NAi64  naGetDoubleFractionSlow(double d);

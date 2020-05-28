@@ -38,7 +38,6 @@ void testMakeFloat(){
     naE(naMakeFloat(0x1, -1000));
   }
 
-
   naG("naMakeFloatWithExponent valid cases"){
     naT(naMakeFloatWithExponent(0) == 1.f);
     naT(naMakeFloatWithExponent(1) == 2.f);
@@ -156,18 +155,108 @@ void testMakeDouble(){
 
 
 
+void testGetFloat(){
+  naG("naGetFloatExponent valid cases"){
+    naT(naGetFloatExponent(1.f) == 0);
+    naT(naGetFloatExponent(0x1.0p42f) == 42);
+    naT(naGetFloatExponent(0x1.0p-42f) == -42);
+    naT(naGetFloatExponent(0x1.0p127f) == 127);
+    naT(naGetFloatExponent(0x1.0p-126f) == -126);
+  }
+
+  naG("naGetFloatExponent invalid cases"){
+    naE(naGetFloatExponent(0x1.0p-127)); // subnormal
+    naE(naGetFloatExponent(0x1.0p-149)); // subnormal -126-23
+    naE(naGetFloatExponent(0.f));
+    naE(naGetFloatExponent(NA_INFINITYf));
+  }
+
+  naG("naGetFloatInteger valid cases"){
+    naT(naGetFloatInteger(0.f) == 0);
+    naT(naGetFloatInteger(0.001234f) == 0);
+    naT(naGetFloatInteger(0x0.fffffep0f) == 0);
+    naT(naGetFloatInteger(0.999999999f) == 1);
+    naT(naGetFloatInteger(42.f) == 42);
+    naT(naGetFloatInteger(-42.f) == -42);
+    naT(naGetFloatInteger(0x1.fffffep23f) == 0xffffff);
+    naT(naGetFloatInteger(-0x1.fffffep23f) == -0xffffff);
+  }
+
+  naG("naGetFloatInteger invalid cases"){
+    naE(naGetFloatInteger(NA_INFINITYf));
+    naE(naGetFloatInteger(0x1.fffffep24f));
+  }
+
+  naG("naGetFloatFraction valid cases"){
+    naT(naGetFloatFraction(0.0f) == 0);
+    naT(naGetFloatFraction(0.5f) == 500000);
+    naT(naGetFloatFraction(0.001234f) == 1234);
+    naT(naGetFloatFraction(0.123456f) == 123456);
+    naT(naGetFloatFraction(0.000001f) == 000001);
+    naT(naGetFloatFraction(0.999999f) == 999999);
+  }
+
+  naG("naGetFloatFraction invalid cases"){
+    naE(naGetFloatFraction(1.0f));
+    naE(naGetFloatFraction(1111.0f));
+    naE(naGetFloatFraction(1.56f));
+    naE(naGetFloatFraction(123.56f));
+    naE(naGetFloatFraction(1234.12f));
+    naE(naGetFloatFraction(0.999999999f)); // compiler rounding up
+    naE(naGetFloatFraction(0x0.fffffep0f));  // function rounding up
+  }
+
+  naG("naGetFloatFractionE"){
+    naT(naGetFloatFractionE(1.0f) == 0);
+    naT(naGetFloatFractionE(1111.0f) == 0);
+    naT(naGetFloatFractionE(1.56f) >= 550000);
+    naT(naGetFloatFractionE(1.56f) <= 570000);
+    naT(naGetFloatFractionE(123.56f) >= 550000);
+    naT(naGetFloatFractionE(123.56f) <= 570000);
+    naT(naGetFloatFractionE(1234.12f) >= 110000);
+    naT(naGetFloatFractionE(1234.12f) <= 130000);
+    naT(naGetFloatFractionE(0.999999999f) == 0); // compiler rounding up
+    naT(naGetFloatFractionE(0x0.fffffep0f) == 1000000);  // function rounding up
+  }
+
+  naG("naGetFloatFractionSlow valid cases"){
+    naT(naGetFloatFractionSlow(0.0f) == 0);
+    naT(naGetFloatFractionSlow(1.0f) == 0);
+    naT(naGetFloatFractionSlow(1111.0f) == 0);
+    naT(naGetFloatFractionSlow(0.5f) == 500000);
+    naT(naGetFloatFractionSlow(0.001234f) == 1234);
+    naT(naGetFloatFractionSlow(0.123456f) == 123456);
+    naT(naGetFloatFractionSlow(1.56f) == 560000);
+    naT(naGetFloatFractionSlow(123.56f) == 560000);
+    naT(naGetFloatFractionSlow(1234.12f) == 120000);
+    naT(naGetFloatFractionSlow(0.000001f) == 000001);
+    naT(naGetFloatFractionSlow(0.999999f) == 999999);
+    naT(naGetFloatFractionSlow(0.999999999f) == 0); // compiler rounds up to 1
+  }
+
+  naG("naGetFloatFractionSlow invalid cases"){
+    naE(naGetFloatFractionSlow(0x0.fffffep0f));  // rounding up
+  }
+
+  naG("naGetFloatFractionSlowE valid cases"){
+    naT(naGetFloatFractionSlowE(0x0.fffffep0f) == 1000000);  // rounding up
+  }
+}
+
+
+
 void testGetDouble(){
   naG("naGetDoubleExponent valid cases"){
     naT(naGetDoubleExponent(1.) == 0);
-    naT(naGetDoubleExponent(0x1.000000p42) == 42);
-    naT(naGetDoubleExponent(0x1.000000p-42) == -42);
-    naT(naGetDoubleExponent(0x1.000000p1023) == 1023);
-    naT(naGetDoubleExponent(0x1.000000p-1022) == -1022);
+    naT(naGetDoubleExponent(0x1.0p42) == 42);
+    naT(naGetDoubleExponent(0x1.0p-42) == -42);
+    naT(naGetDoubleExponent(0x1.0p1023) == 1023);
+    naT(naGetDoubleExponent(0x1.0p-1022) == -1022);
   }
 
   naG("naGetDoubleExponent invalid cases"){
-    naE(naGetDoubleExponent(0x1.000000p-1023)); // subnormal
-    naE(naGetDoubleExponent(0x1.000000p-1074)); // subnormal -1022-52
+    naE(naGetDoubleExponent(0x1.0p-1023)); // subnormal
+    naE(naGetDoubleExponent(0x1.0p-1074)); // subnormal -1022-52
     naE(naGetDoubleExponent(0.));
     naE(naGetDoubleExponent(NA_INFINITY));
   }
@@ -249,6 +338,7 @@ void testGetDouble(){
 void testNAFloatingPoint(){
   naF(MakeFloat);
   naF(MakeDouble);
+  naF(GetFloat);
   naF(GetDouble);
 }
 
