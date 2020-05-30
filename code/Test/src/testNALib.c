@@ -11,6 +11,7 @@ void printNACompiler(void);
 void printNALanguage(void);
 void printNAEncoding(void);
 void printNAChar(void);
+void printNAMacros(void);
 void printNANumerics(void);
 void printNAFloatingPoint(void);
 
@@ -34,16 +35,17 @@ int main(void){
   naStartRuntime();
   naStartTesting("NALib", NA_FALSE);
   
-  //#if NA_PRINTOUT_ENABLED == 1
-  //  printNAConfiguration();
+  #if NA_PRINTOUT_ENABLED == 1
+    printNAConfiguration();
   //  printNAEnvironment();
   //  printNACompiler();
   //  printNALanguage();
   //  printNAEncoding();
   //  printNAChar();
+    printNAMacros();
   //  printNANumerics();
   //  printNAFloatingPoint();
-  //#endif
+  #endif
 
   naF(NALanguage);
   naF(NAChar);

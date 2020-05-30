@@ -10,24 +10,18 @@
 // Stringifies any macro no matter if they are undefined, empty or defined.
 #define NA_STRINGIFY(...)
 
-// Concatenation and evaluation macros. See Template comments below.
-#define NA_CONCAT1(a1)
+// Concatenates the given parameters.
 #define NA_CONCAT2(a1, a2)
 #define NA_CONCAT3(a1, a2, a3)
 #define NA_CONCAT4(a1, a2, a3, a4)
-#define NA_TOKEN_EVAL1(a1)
-#define NA_TOKEN_EVAL2(a1, a2)
-#define NA_TOKEN_EVAL3(a1, a2, a3)
-#define NA_TOKEN_EVAL4(a1, a2, a3, a4)
+
+// Concatenates the given parameters by first evaluating them.
+#define NA_CONCAT_EVAL2(a1, a2)
+#define NA_CONCAT_EVAL3(a1, a2, a3)
+#define NA_CONCAT_EVAL4(a1, a2, a3, a4)
 
 // Template function generator. Use this macro to create a generic name of
 // the function with the specified template arguments.
-//
-// To create such name mangling, a little preprocessor trick needs to be
-// applied: The double indirection macro concatenation is a trick implied by
-// the standard. The problem is that the ## directive will not evaluate
-// macros therefore, one has to create a forwarding macro which evaluates it,
-// then the evaluated macros get concatenated in a second macro. 
 #define NA_T1(name, arg1)
 #define NA_T2(name, arg1, arg2)
 #define NA_T3(name, arg1, arg2, arg3)
@@ -37,7 +31,9 @@
 // //////////////////////////////////
 // Printout macros.
 // The following macros can be used to output some information to stdout.
-// Note that they require NA_ENABLE_PRINTOUTS to be 1
+// Note that they require NA_ENABLE_PRINTOUTS to be 1, otherwise they just
+// do noting. And note that these macros call functions which will need the
+// NAString implementation and include the stdio.h header.
 
 // Prints information about the given macro.
 // If undefined:            (Undefined)
@@ -62,18 +58,18 @@
 #define naPrintMacroEnum(macro, strings, maxValue)
 
 // Prints the given macro as a hex number, interpreted with the given type.
-#define naPrintMacroux8(macro, showMacro)
-#define naPrintMacroix8(macro, showMacro)
-#define naPrintMacroux16(macro, showMacro)
-#define naPrintMacroix16(macro, showMacro)
-#define naPrintMacroux32(macro, showMacro)
-#define naPrintMacroix32(macro, showMacro)
-#define naPrintMacroux64(macro, showMacro)
-#define naPrintMacroix64(macro, showMacro)
-#define naPrintMacroux128(macro, showMacro)
-#define naPrintMacroix128(macro, showMacro)
-#define naPrintMacroux256(macro, showMacro)
-#define naPrintMacroix256(macro, showMacro)
+#define naPrintMacroux8(macro)
+#define naPrintMacroix8(macro)
+#define naPrintMacroux16(macro)
+#define naPrintMacroix16(macro)
+#define naPrintMacroux32(macro)
+#define naPrintMacroix32(macro)
+#define naPrintMacroux64(macro)
+#define naPrintMacroix64(macro)
+#define naPrintMacroux128(macro)
+#define naPrintMacroix128(macro)
+#define naPrintMacroux256(macro)
+#define naPrintMacroix256(macro)
 
 
 
