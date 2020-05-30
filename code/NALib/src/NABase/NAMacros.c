@@ -36,13 +36,16 @@ NA_HDEF void naPrintMacroEnumBase(int macroValue, const NAUTF8Char** strings, in
 
 
 
-NA_HDEF void naPrintMacroPlainCore(const NAUTF8Char* macroString, const NAUTF8Char* macroStringified){
+NA_HDEF void naPrintMacroPlainCore(const NAUTF8Char* macroString, const NAUTF8Char* macroStringified, NABool printContent){
   naPrintMacroHead(macroString);
   if(strncmp(macroString, macroStringified, strlen(macroString)) != 0){
     if(strlen(macroStringified) == 0){
       printf("(Defined)");
     }else{
-      printf("%s", macroStringified);
+      if(printContent)
+        printf("%s", macroStringified);
+      else
+        printf("(Defined with content)");
     }
   }else{
     printf("(Undefined)");

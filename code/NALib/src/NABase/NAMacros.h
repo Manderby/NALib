@@ -35,11 +35,21 @@
 // do noting. And note that these macros call functions which will need the
 // NAString implementation and include the stdio.h header.
 
-// Prints information about the given macro.
+// Prints the definition of the macro.
 // If undefined:            (Undefined)
 // If defined but empty:    (Defined)
 // If defined with content: The actual content
-#define naPrintMacroPlain(macro)
+#define naPrintMacro(macro)
+
+// Same naPrintMacro but will emit (Defined with content) instead of the
+// actual content.
+#define naPrintMacroDefined(macro)
+
+
+
+// All functions below expect a macro which is defined and having content.
+
+
 
 // Prints the value of the macro as as simple decimal int.
 #define naPrintMacroInt(macro)

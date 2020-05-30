@@ -14,16 +14,16 @@ void printNAMacros(){
   #define M4 D
   #define MNAME Name
 
-  naPrintMacroPlain(NA_STRINGIFY(macro));
-  naPrintMacroPlain(NA_CONCAT2(M1, M2));
-  naPrintMacroPlain(NA_CONCAT3(M1, M2, M3));
-  naPrintMacroPlain(NA_CONCAT4(M1, M2, M3, M4));
-  naPrintMacroPlain(NA_CONCAT_EVAL2(M1, M2));
-  naPrintMacroPlain(NA_CONCAT_EVAL3(M1, M2, M3));
-  naPrintMacroPlain(NA_CONCAT_EVAL4(M1, M2, M3, M4));
-  naPrintMacroPlain(NA_T1(MNAME, M1));
-  naPrintMacroPlain(NA_T2(MNAME, M1, M2));
-  naPrintMacroPlain(NA_T3(MNAME, M1, M2, M3));
+  naPrintMacro(NA_STRINGIFY(macro));
+  naPrintMacro(NA_CONCAT2(M1, M2));
+  naPrintMacro(NA_CONCAT3(M1, M2, M3));
+  naPrintMacro(NA_CONCAT4(M1, M2, M3, M4));
+  naPrintMacro(NA_CONCAT_EVAL2(M1, M2));
+  naPrintMacro(NA_CONCAT_EVAL3(M1, M2, M3));
+  naPrintMacro(NA_CONCAT_EVAL4(M1, M2, M3, M4));
+  naPrintMacro(NA_T1(MNAME, M1));
+  naPrintMacro(NA_T2(MNAME, M1, M2));
+  naPrintMacro(NA_T3(MNAME, M1, M2, M3));
 
   #undef M1
   #undef M2
@@ -31,25 +31,25 @@ void printNAMacros(){
   #undef M4
   #undef MNAME
 
-  naPrintMacroPlain(naPrintMacroPlain(macro));
-  naPrintMacroPlain(naPrintMacroInt(macro));
-  naPrintMacroPlain(naPrintMacroIntSpecial(macro, v, s));
-  naPrintMacroPlain(naPrintMacroIntSpecialHex(macro, v, s));
-  naPrintMacroPlain(naPrintMacroIntYesNo(macro));
-  naPrintMacroPlain(naPrintMacroEnum(macro, s, m));
+  naPrintMacro(naPrintMacro(macro));
+  naPrintMacro(naPrintMacroInt(macro));
+  naPrintMacro(naPrintMacroIntSpecial(macro, v, s));
+  naPrintMacro(naPrintMacroIntSpecialHex(macro, v, s));
+  naPrintMacro(naPrintMacroIntYesNo(macro));
+  naPrintMacro(naPrintMacroEnum(macro, s, m));
 
-  naPrintMacroPlain(naPrintMacroux8(macro));
-  naPrintMacroPlain(naPrintMacroix8(macro));
-  naPrintMacroPlain(naPrintMacroux16(macro));
-  naPrintMacroPlain(naPrintMacroix16(macro));
-  naPrintMacroPlain(naPrintMacroux32(macro));
-  naPrintMacroPlain(naPrintMacroix32(macro));
-  naPrintMacroPlain(naPrintMacroux64(macro));
-  naPrintMacroPlain(naPrintMacroix64(macro));
-  naPrintMacroPlain(naPrintMacroux128(macro));
-  naPrintMacroPlain(naPrintMacroix128(macro));
-  naPrintMacroPlain(naPrintMacroux256(macro));
-  naPrintMacroPlain(naPrintMacroix256(macro));
+  naPrintMacro(naPrintMacroux8(macro));
+  naPrintMacro(naPrintMacroix8(macro));
+  naPrintMacro(naPrintMacroux16(macro));
+  naPrintMacro(naPrintMacroix16(macro));
+  naPrintMacro(naPrintMacroux32(macro));
+  naPrintMacro(naPrintMacroix32(macro));
+  naPrintMacro(naPrintMacroux64(macro));
+  naPrintMacro(naPrintMacroix64(macro));
+  naPrintMacro(naPrintMacroux128(macro));
+  naPrintMacro(naPrintMacroix128(macro));
+  naPrintMacro(naPrintMacroux256(macro));
+  naPrintMacro(naPrintMacroix256(macro));
 
   printf(NA_NL);
 }

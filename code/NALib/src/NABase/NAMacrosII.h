@@ -19,7 +19,8 @@
 #undef NA_T2
 #undef NA_T3
 
-#undef naPrintMacroPlain
+#undef naPrintMacro
+#undef naPrintMacroDefined
 #undef naPrintMacroInt
 #undef naPrintMacroIntSpecial
 #undef naPrintMacroIntSpecialHex
@@ -70,7 +71,7 @@
 #if NA_PRINTOUT_ENABLED == 1
 
   // Prototypes of helper functions which should be invisible to the user.
-  NA_HAPI void naPrintMacroPlainCore(const NAUTF8Char* macroString, const NAUTF8Char* macroStringified);
+  NA_HAPI void naPrintMacroPlainCore(const NAUTF8Char* macroString, const NAUTF8Char* macroStringified, NABool printContent);
   NA_HAPI void naPrintMacroIntCore(const NAUTF8Char* macroString, int value);
   NA_HAPI void naPrintMacroIntSpecialCore(const NAUTF8Char* macroString, int value, int specialValue, const NAUTF8Char* specialString);
   NA_HAPI void naPrintMacroIntSpecialHexCore(const NAUTF8Char* macroString, int value, int specialValue, const NAUTF8Char* specialString);
@@ -90,8 +91,10 @@
   NA_HAPI void naPrintMacroux256Core(const NAUTF8Char* macroString, uint256 value, const NAUTF8Char* macroStringify);
   NA_HAPI void naPrintMacroix256Core(const NAUTF8Char* macroString, int256 value, const NAUTF8Char* macroStringify);
 
-  #define naPrintMacroPlain(macro)\
-    naPrintMacroPlainCore(#macro, NA_STRINGIFY(macro))
+  #define naPrintMacro(macro)\
+    naPrintMacroPlainCore(#macro, NA_STRINGIFY(macro), NA_TRUE)
+  #define naPrintMacroDefined(macro)\
+    naPrintMacroPlainCore(#macro, NA_STRINGIFY(macro), NA_FALSE)
   #define naPrintMacroInt(macro)\
     naPrintMacroIntCore(#macro, (int)macro)
   #define naPrintMacroIntSpecial(macro, specialValue, specialString)\
@@ -130,7 +133,8 @@
 
 #else // NA_PRINTOUT_ENABLED == 1
 
-  #define naPrintMacroPlain(macro)
+  #define naPrintMacro(macro)
+  #define naPrintMacroDefined(macro)
   #define naPrintMacroInt(macro)
   #define naPrintMacroIntSpecial(macro, specialValue, specialString)
   #define naPrintMacroIntSpecialHex(macro, specialValue, specialString)

@@ -16,16 +16,16 @@ void testNAChar(){
 void printNAChar(){
   printf("NAChar.h fixed values:" NA_NL);
 
-  naPrintMacroPlain(NA_NL_UNIX);
-  naPrintMacroPlain(NA_NL_MAC9);
-  naPrintMacroPlain(NA_NL_WIN);
-  naPrintMacroPlain(NA_TAB);
-  naPrintMacroPlain(NA_PATH_DELIMITER_UNIX);
-  naPrintMacroPlain(NA_PATH_DELIMITER_WIN);
-  naPrintMacroPlain(NA_SUFFIX_DELIMITER);
+  naPrintMacro(NA_NL_UNIX);
+  naPrintMacro(NA_NL_MAC9);
+  naPrintMacro(NA_NL_WIN);
+  naPrintMacro(NA_TAB);
+  naPrintMacro(NA_PATH_DELIMITER_UNIX);
+  naPrintMacro(NA_PATH_DELIMITER_WIN);
+  naPrintMacro(NA_SUFFIX_DELIMITER);
 
   printf(NA_NL "NAChar.h computed values:" NA_NL);
-  naPrintMacroPlain(NA_NL);
+  naPrintMacro(NA_NL);
 
   printf(NA_NL);
 }

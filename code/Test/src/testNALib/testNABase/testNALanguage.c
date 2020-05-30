@@ -41,23 +41,23 @@ void testNALanguage(){
 void printNALanguage(){
   printf("NALanguage.h:" NA_NL);
   
-  naPrintMacroPlain(NA_RESTRICT);
-  naPrintMacroPlain(NA_INLINE);
-  naPrintMacroPlain(NA_LINKER_NO_EXPORT);
-  naPrintMacroPlain(NA_LINKER_EXPORT);
+  naPrintMacro(NA_RESTRICT);
+  naPrintMacro(NA_INLINE);
+  naPrintMacro(NA_LINKER_NO_EXPORT);
+  naPrintMacro(NA_LINKER_EXPORT);
 
-  naPrintMacroPlain(NA_API);
-  naPrintMacroPlain(NA_DEF);
-  naPrintMacroPlain(NA_IAPI);
-  naPrintMacroPlain(NA_IDEF);
-  naPrintMacroPlain(NA_HAPI);
-  naPrintMacroPlain(NA_HDEF);
-  naPrintMacroPlain(NA_HIAPI);
-  naPrintMacroPlain(NA_HIDEF);
+  naPrintMacro(NA_API);
+  naPrintMacro(NA_DEF);
+  naPrintMacro(NA_IAPI);
+  naPrintMacro(NA_IDEF);
+  naPrintMacro(NA_HAPI);
+  naPrintMacro(NA_HDEF);
+  naPrintMacro(NA_HIAPI);
+  naPrintMacro(NA_HIDEF);
 
-  naPrintMacroPlain(NA_NULL);
-  naPrintMacroPlain(NA_NORETURN);
-  naPrintMacroPlain(NA_UNUSED(parameter));
+  naPrintMacro(NA_NULL);
+  naPrintMacro(NA_NORETURN);
+  naPrintMacro(NA_UNUSED(parameter));
 
   printf(NA_NL);
 }

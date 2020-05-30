@@ -7,13 +7,13 @@
 void printNACompiler(){
   printf("NACompiler.h:" NA_NL);
   
-  naPrintMacroPlain(NA_C90);
-  naPrintMacroPlain(NA_C95);
-  naPrintMacroPlain(NA_C99);
-  naPrintMacroPlain(NA_C11);
-  naPrintMacroPlain(NA_CPP98);
-  naPrintMacroPlain(NA_CPP11);
-  naPrintMacroPlain(NA_CPP14);
+  naPrintMacro(NA_C90);
+  naPrintMacro(NA_C95);
+  naPrintMacro(NA_C99);
+  naPrintMacro(NA_C11);
+  naPrintMacro(NA_CPP98);
+  naPrintMacro(NA_CPP11);
+  naPrintMacro(NA_CPP14);
 
   printf(NA_NL);
 }

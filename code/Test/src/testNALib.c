@@ -11,15 +11,16 @@ void printNACompiler(void);
 void printNALanguage(void);
 void printNAEncoding(void);
 void printNAChar(void);
-void printNATesting(void);
 void printNAMacros(void);
 void printNATesting(void);
+void printNADebugging(void);
 void printNANumerics(void);
 void printNAFloatingPoint(void);
 
 void testNALanguage(void);
 void testNAChar(void);
 void testNATesting(void);
+void testNADebugging(void);
 void testNANumerics(void);
 void testNAFloatingPoint(void);
 
@@ -40,24 +41,26 @@ int main(void){
   
   #if NA_PRINTOUT_ENABLED == 1
     //printNAConfiguration();
-  //  printNAEnvironment();
-  //  printNACompiler();
-  //  printNALanguage();
-  //  printNAEncoding();
-  //  printNAChar();
+    //printNAEnvironment();
+    //printNACompiler();
+    //printNALanguage();
+    //printNAEncoding();
+    //printNAChar();
     //printNAMacros();
-    printNATesting();
-    //  printNANumerics();
-  //  printNAFloatingPoint();
+    //printNATesting();
+    //printNADebugging();
+    //printNANumerics();
+    //printNAFloatingPoint();
   #endif
 
   naTestGroupFunction(NALanguage);
   naTestGroupFunction(NAChar);
   naTestGroupFunction(NATesting);
+  naTestGroupFunction(NADebugging);
   naTestGroupFunction(NANumerics);
   naTestGroupFunction(NAFloatingPoint);
 
-  naPrintUntested();
+  //naPrintUntested();
 
   naStopTesting();
   naStopRuntime();

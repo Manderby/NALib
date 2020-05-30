@@ -4,21 +4,19 @@
 
 
 
-void testNATesting(){
-  naUntested(naStartTesting: Can not test during testing);
-  naUntested(naStopTesting: Can not test during testing);
-  naUntested(naUntested: Can not test during testing);
+void testNADebugging(){
+  #ifndef NDEBUG
+    naTestError(naError(""));
+    naUntested(naCrash: Testing this would lead to a crash. Obviously.);
+  #endif
 }
 
   
   
-void printNATesting(){
-  printf("NATesting.h:" NA_NL);
+void printNADebugging(){
+  printf("NADebugging.h:" NA_NL);
 
-  naPrintMacroDefined(naTest(expr));
-  naPrintMacroDefined(naTestError(expr));
-  naPrintMacroDefined(naTestGroup(string));
-  naPrintMacroDefined(naTestGroupFunction(identifier));
+  naPrintMacroDefined(NA_DEBUG);
 
   printf(NA_NL);
 }

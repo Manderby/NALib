@@ -50,12 +50,12 @@ void printNAEncoding(){
   naPrintMacroEnum         (NA_TYPE_INT64_REPRESENTATION, na_native_types_enum_strings, 8);
   naPrintMacroEnum         (NA_TYPE_INT128_REPRESENTATION, na_native_types_enum_strings, 8);
   naPrintMacroEnum         (NA_TYPE_INT256_REPRESENTATION, na_native_types_enum_strings, 8);
-  naPrintMacroPlain        (NA_TYPE_INT8);
-  naPrintMacroPlain        (NA_TYPE_INT16);
-  naPrintMacroPlain        (NA_TYPE_INT32);
-  naPrintMacroPlain        (NA_TYPE_INT64);
-  naPrintMacroPlain        (NA_TYPE_INT128);
-  naPrintMacroPlain        (NA_TYPE_INT256);
+  naPrintMacro        (NA_TYPE_INT8);
+  naPrintMacro        (NA_TYPE_INT16);
+  naPrintMacro        (NA_TYPE_INT32);
+  naPrintMacro        (NA_TYPE_INT64);
+  naPrintMacro        (NA_TYPE_INT128);
+  naPrintMacro        (NA_TYPE_INT256);
 
   printf(NA_NL);
 }
