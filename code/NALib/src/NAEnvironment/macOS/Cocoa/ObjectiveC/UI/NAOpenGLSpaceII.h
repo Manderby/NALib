@@ -22,6 +22,9 @@
     initData = newinitData;
     return self;
   }
+  - (void)dealloc{
+    int asdf = 2345;
+  }
   - (BOOL)acceptsFirstResponder{
     return YES; // This is required to get keyboard input.
   }
@@ -74,13 +77,13 @@ NA_UNUSED(event);
 //    let isLeftShift = event.modifierFlags.rawValue & UInt(NX_DEVICELSHIFTKEYMASK) != 0
 //    let isRightShift = event.modifierFlags.rawValue & UInt(NX_DEVICERSHIFTKEYMASK) != 0
 
-    keyCode = NA_KEYCODE_LEFT_SHIFT;
+//    keyCode = NA_KEYCODE_LEFT_SHIFT;
     naDispatchUIElementCommand((NACoreUIElement*)coreOpenGLspace, (shift?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP));
-    keyCode = NA_KEYCODE_LEFT_OPTION;
+//    keyCode = NA_KEYCODE_LEFT_OPTION;
     naDispatchUIElementCommand((NACoreUIElement*)coreOpenGLspace, (alt?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP));
-    keyCode = NA_KEYCODE_CONTROL;
+//    keyCode = NA_KEYCODE_CONTROL;
     naDispatchUIElementCommand((NACoreUIElement*)coreOpenGLspace, (control?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP));
-    keyCode = NA_KEYCODE_LEFT_COMMAND;
+//    keyCode = NA_KEYCODE_LEFT_COMMAND;
     naDispatchUIElementCommand((NACoreUIElement*)coreOpenGLspace, (command?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP));
   }
   @end
@@ -103,6 +106,7 @@ NA_UNUSED(event);
     
     NSRect frameRect = NSMakeRect(0.f, 0.f, (CGFloat)size.width, (CGFloat)size.height);
     NACocoaOpenGLSpace* cocoaSpace = [[NACocoaOpenGLSpace alloc] initWithCoreOpenGLSpace:coreOpenGLspace frame:frameRect pixelFormat:pixelformat initFunc:initfunc initData:initdata];
+//    [cocoaSpace retain];
 
     if([cocoaSpace respondsToSelector:@selector(setWantsBestResolutionOpenGLSurface:)]){
       NA_MACOS_AVAILABILITY_GUARD_10_7(
@@ -125,7 +129,7 @@ NA_UNUSED(event);
 
   NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
     NACoreOpenGLSpace* coreOpenGLspace = (NACoreOpenGLSpace*)openglspace;
-    [[(NACocoaOpenGLSpace*)NA_COCOA_PTR_C_TO_OBJC(coreOpenGLspace->uielement.nativeID) openGLContext] flushBuffer];
+    [[(NA_COCOA_BRIDGE NACocoaOpenGLSpace*)(coreOpenGLspace->uielement.nativeID) openGLContext] flushBuffer];
   }
 
 

@@ -58,7 +58,7 @@
 }
 - (void)clearMouseTracking{
   [[self contentView] removeTrackingArea:trackingarea];
-  NA_COCOA_DISPOSE(trackingarea);
+  NA_COCOA_RELEASE(trackingarea);
   trackingarea = nil;
 }
 - (void)retainMouseTracking{

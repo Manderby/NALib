@@ -121,7 +121,7 @@ struct NACocoaApplication {
 
 
 NA_HDEF void naClearUINativeId(NANativeID nativeId){
-  NA_COCOA_DISPOSE(nativeId);
+  NA_COCOA_RELEASE(nativeId);
 }
 
 

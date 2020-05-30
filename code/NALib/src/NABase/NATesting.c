@@ -291,6 +291,8 @@ NA_HDEF void naStopTestGroup(){
 
 NA_DEF void naStartTesting(const NAUTF8Char* rootName, NABool printAllGroups){
   #ifndef NDEBUG
+    NA_UNUSED(rootName);
+    NA_UNUSED(printAllGroups);
     naError("Testing is not enabled. Go look for NA_TESTING_ENABLED");
   #endif
 }

@@ -46,7 +46,7 @@ NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
   CGImageRef nativeimage = [nsimage CGImageForProposedRect:NA_NULL context:NA_NULL hints:NA_NULL];
   image = naCreateBabyImageFromNativeImage(nativeimage);
 
-  NA_COCOA_DISPOSE(nsimage);
+  NA_COCOA_RELEASE(nsimage);
   // Important: Do not use CGImageRelease on nativeimage. It is part of nsimage.
 
   return image;

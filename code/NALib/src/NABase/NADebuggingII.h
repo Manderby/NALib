@@ -11,6 +11,8 @@
 
 #ifndef NDEBUG
 
+  #include <stdlib.h>   // for the exit function
+
   // First, undefine the macros from the .h file.
   #undef NA_DEBUG_FUNCTIONSYMBOL
   #undef naError
@@ -28,8 +30,13 @@
   #define naError(text)\
     naCaptureError(NA_DEBUG_FUNCTIONSYMBOL, text)
 
+  // Note for the future: The exit call must be in the macro and must not be
+  // moved to the capture function!
   #define naCrash(text)\
-    naCaptureCrash(NA_DEBUG_FUNCTIONSYMBOL, text)
+    {\
+      naCaptureCrash(NA_DEBUG_FUNCTIONSYMBOL, text);\
+      exit(EXIT_FAILURE);\
+    }
 
 #endif // NDEBUG
 

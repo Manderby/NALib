@@ -4,14 +4,13 @@
 #ifndef NDEBUG
 
   #include <stdio.h>    // for the fprintf function
-  #include <stdlib.h>   // for the exit function
 
 
 
   // The error printing method. Errors will be emitted to the stderr output.
   // When NDEBUG is defined, this function is OBSOLETE!
 
-  NA_HDEF void naPrintError(const char* functionSymbol, const char* text){
+  NA_HDEF void naCaptureError(const char* functionSymbol, const char* text){
     NABool doPrintOut = NA_TRUE;
     #if NA_TESTING_ENABLED == 1
       doPrintOut = !naGetTestCaseRunning();
@@ -30,27 +29,17 @@
     }
   }
 
-
-
-  NA_HDEF void naCaptureError(const char* functionSymbol, const char* text){
-    #if NA_TESTING_ENABLED == 1
-      naIncErrorCount();
-    #endif
-
-    naPrintError(functionSymbol, text);
-  }
-  
   
   
   NA_HDEF void naCaptureCrash(const char* functionSymbol, const char* text){
     #if NA_TESTING_ENABLED == 1
-      // We turn off testing, otherwise, the error will not be emitted.
       naSetTestCaseRunning(NA_FALSE);
     #endif
-    naPrintError(functionSymbol, text);
+    naCaptureError(functionSymbol, text);
     fprintf(stderr, NA_NL "Crashing the application deliberately..." NA_NL);
-    exit(EXIT_FAILURE);
   }
+
+
 
 #endif // NDEBUG
 
