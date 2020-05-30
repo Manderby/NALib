@@ -14,6 +14,7 @@
     NABool doPrintOut = NA_TRUE;
     #if NA_TESTING_ENABLED == 1
       doPrintOut = !naGetTestCaseRunning();
+      naIncErrorCount();
     #endif
 
     if(doPrintOut){

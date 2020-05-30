@@ -60,7 +60,7 @@ int main(void){
   naTestGroupFunction(NANumerics);
   naTestGroupFunction(NAFloatingPoint);
 
-  naPrintUntested();
+  //naPrintUntested();
 
   naStopTesting();
   naStopRuntime();
