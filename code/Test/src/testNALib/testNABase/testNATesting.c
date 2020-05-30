@@ -1,5 +1,5 @@
 
-#include "NABase.h"
+#include "NATesting.h"
 #include <stdio.h>
 
 
@@ -19,6 +19,7 @@ void printNATesting(){
   naPrintMacroDefined(naTestError(expr));
   naPrintMacroDefined(naTestGroup(string));
   naPrintMacroDefined(naTestGroupFunction(identifier));
+  naPrintMacroDefined(naUntested(text));
 
   printf(NA_NL);
 }

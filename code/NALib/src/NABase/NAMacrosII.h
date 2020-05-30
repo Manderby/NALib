@@ -131,7 +131,7 @@
   #define naPrintMacroix256(macro)\
     naPrintMacroix256Core(#macro, macro)
 
-#else // NA_PRINTOUT_ENABLED == 1
+#else
 
   #define naPrintMacro(macro)
   #define naPrintMacroDefined(macro)

@@ -4,6 +4,7 @@
 #ifndef NDEBUG
 
   #include <stdio.h>    // for the fprintf function
+  #include "../NATesting.h"
 
 
 

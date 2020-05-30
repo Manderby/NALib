@@ -47,8 +47,6 @@
     <ClInclude Include="src\NABase\NANumericsII.h" />
     <ClInclude Include="src\NABase\NAMacros.h" />
     <ClInclude Include="src\NABase\NAEncoding.h" />
-    <ClInclude Include="src\NABase\NATesting.h" />
-    <ClInclude Include="src\NABase\NATestingII.h" />
     <ClInclude Include="src\NABinaryData.h" />
     <ClInclude Include="src\NABuffer.h" />
     <ClInclude Include="src\NACircularBuffer.h" />
@@ -67,6 +65,7 @@
     <ClInclude Include="src\NACore\NAMemory\NARefCountII.h" />
     <ClInclude Include="src\NACore\NAMemory\NARuntimeII.h" />
     <ClInclude Include="src\NACore\NAMemory\NASmartPtrII.h" />
+    <ClInclude Include="src\NACore\NATesting\NATestingII.h" />
     <ClInclude Include="src\NACore\NAThreadingII.h" />
     <ClInclude Include="src\NACore\NAURLII.h" />
     <ClInclude Include="src\NACore\NAValueHelper.h" />
@@ -157,6 +156,7 @@
     <ClInclude Include="src\NAStruct\NATree\NATreeOct.h" />
     <ClInclude Include="src\NAStruct\NATree\NATreeQuad.h" />
     <ClInclude Include="src\NAStruct\NATree\NATreeUtilitiesII.h" />
+    <ClInclude Include="src\NATesting.h" />
     <ClInclude Include="src\NAThreading.h" />
     <ClInclude Include="src\NATranslator.h" />
     <ClInclude Include="src\NATree.h" />
@@ -167,11 +167,11 @@
   <ItemGroup>
     <ClCompile Include="src\NABase\NADebugging.c" />
     <ClCompile Include="src\NABase\NAMacros.c" />
-    <ClCompile Include="src\NABase\NATesting.c" />
     <ClCompile Include="src\NACore\NABinaryData\NABinaryData.c" />
     <ClCompile Include="src\NACore\NADateTime.c" />
     <ClCompile Include="src\NACore\NAFile.c" />
     <ClCompile Include="src\NACore\NAMemory\NARuntime.c" />
+    <ClCompile Include="src\NACore\NATesting\NATesting.c" />
     <ClCompile Include="src\NACore\NAURL.c" />
     <ClCompile Include="src\NAEnvironment\NATranslator.c" />
     <ClCompile Include="src\NAEnvironment\NAUICore.c" />

@@ -1,7 +1,4 @@
 
-#if defined NA_TESTING_II_INCLUDED || !defined NA_BASE_INCLUDED
-  #warning "Do not include this file directly. Use NABase.h"
-#endif
 #ifndef NA_TESTING_II_INCLUDED
 #define NA_TESTING_II_INCLUDED
 
@@ -87,7 +84,7 @@ NA_HAPI int    naGetErrorCount(void);
   naRegisterUntested(#text);
 
 
-#else // NA_TESTING_ENABLED == 1
+#else
 
 #define naTest(expr)\
   NA_UNUSED(expr)
@@ -97,6 +94,7 @@ NA_HAPI int    naGetErrorCount(void);
   NA_UNUSED(string);\
   for(int g = 0; g < 1 ; g++)
 #define naTestGroupFunction(identifier)
+#define naUntested(text)
 
 #endif // NA_TESTING_ENABLED == 1
 

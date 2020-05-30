@@ -1,5 +1,5 @@
 
-#include "NABase.h"
+#include "NATesting.h"
 #include <stdio.h>
 
 
@@ -7,7 +7,7 @@
 void testNADebugging(){
   #ifndef NDEBUG
     naTestError(naError(""));
-    naUntested(naCrash: Testing this would lead to a crash. Obviously.);
+    naUntested(naCrash: Can not test as it would lead to a crash. Duh.);
   #endif
 }
 

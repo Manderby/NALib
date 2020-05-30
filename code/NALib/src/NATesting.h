@@ -1,11 +1,8 @@
 
-#if defined NA_TESTING_INCLUDED || !defined NA_BASE_INCLUDED
-  #warning "Do not include this file directly. Use NABase.h"
-#endif
 #ifndef NA_TESTING_INCLUDED
 #define NA_TESTING_INCLUDED
 
-
+#include "NABase.h"
 
 // Starts and stops the testing. Provide the top name of the code you
 // want to test. If printAllGroups is false, only the groups which have
@@ -36,8 +33,10 @@ NA_API void naPrintUntested(void);
 // Use this to mark things untested but not forgotten.
 #define naUntested(text)
 
+
+
 // Inline implementations are in a separate file:
-#include "NATestingII.h"
+#include "NACore/NATesting/NATestingII.h"
 
 
 

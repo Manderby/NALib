@@ -1,10 +1,11 @@
 
-#include "../NAStack.h"
+#include "../../NATesting.h"
 
 #if NA_TESTING_ENABLED == 1
 
 #include <stdio.h>
-#include "../NAString.h"
+#include "../../NAStack.h"
+#include "../../NAString.h"
 
 
 
