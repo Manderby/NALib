@@ -24,7 +24,7 @@
 
 
 #include "NABase.h"
-
+#include <stddef.h>
 
 
 // //////////////////////////////////////

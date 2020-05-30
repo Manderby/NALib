@@ -25,7 +25,7 @@ NA_HAPI void   naAddTestError(const char* expr, int lineNum);
 NA_HAPI void   naStartTestGroup(const char* name, int lineNum);
 NA_HAPI void   naStopTestGroup(void);
 NA_HAPI void   naRegisterUntested(const char* text);
-NA_HAPI NABool naGetTestCaseRunning();
+NA_HAPI NABool naGetTestCaseRunning(void);
 NA_HAPI void   naSetTestCaseRunning(NABool running);
 NA_HAPI void   naIncErrorCount(void);
 NA_HAPI void   naResetErrorCount(void);
