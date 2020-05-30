@@ -155,7 +155,6 @@ NA_DEF void naPrintUntested(void){
     }
     naClearStackIterator(&iter);
   }
-  printf(NA_NL);
 }
 
 

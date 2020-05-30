@@ -1,7 +1,42 @@
 
 #include "NATesting.h"
 #include <stdio.h>
+#include <NAString.h>
 
+
+
+void testNAMacros(){
+  naTest(strcmp(NA_STRINGIFY(AsDf), "AsDf") == 0);
+
+  int AB = 12;
+  int ABC = 123;
+  int ABCD = 1234;
+  int NameA = 56;
+  int NameAB = 567;
+  int NameABC = 5678;
+
+  #define M1 A
+  #define M2 B
+  #define M3 C
+  #define M4 D
+  #define MNAME Name
+
+  naTest(NA_CONCAT2(A, B) == 12);
+  naTest(NA_CONCAT3(A, B, C) == 123);
+  naTest(NA_CONCAT4(A, B, C, D) == 1234);
+  naTest(NA_CONCAT_EVAL2(M1, M2) == 12);
+  naTest(NA_CONCAT_EVAL3(M1, M2, M3) == 123);
+  naTest(NA_CONCAT_EVAL4(M1, M2, M3, M4) == 1234);
+  naTest(NA_T1(MNAME, M1) == 56);
+  naTest(NA_T2(MNAME, M1, M2) == 567);
+  naTest(NA_T3(MNAME, M1, M2, M3) == 5678);
+
+  #undef M1
+  #undef M2
+  #undef M
+  #undef M4
+  #undef MNAME
+}
 
 
 

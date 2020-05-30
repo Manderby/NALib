@@ -5,6 +5,9 @@
 
 
 
+// Prototypes
+
+// NABase
 void printNAConfiguration(void);
 void printNAEnvironment(void);
 void printNACompiler(void);
@@ -12,17 +15,55 @@ void printNALanguage(void);
 void printNAEncoding(void);
 void printNAChar(void);
 void printNAMacros(void);
-void printNATesting(void);
 void printNADebugging(void);
 void printNANumerics(void);
 void printNAFloatingPoint(void);
 
 void testNALanguage(void);
 void testNAChar(void);
-void testNATesting(void);
+void testNAMacros(void);
 void testNADebugging(void);
 void testNANumerics(void);
 void testNAFloatingPoint(void);
+
+// NACore
+void printNATesting(void);
+
+void testNATesting(void);
+
+
+
+void printNABase(){
+  printNAConfiguration();
+  printNAEnvironment();
+  printNACompiler();
+  printNALanguage();
+  printNAEncoding();
+  printNAChar();
+  printNAMacros();
+  printNADebugging();
+  printNANumerics();
+  printNAFloatingPoint();
+}
+
+void testNABase(){
+  naTestGroupFunction(NALanguage);
+  naTestGroupFunction(NAChar);
+  naTestGroupFunction(NAMacros);
+  naTestGroupFunction(NADebugging);
+  naTestGroupFunction(NANumerics);
+  naTestGroupFunction(NAFloatingPoint);
+}
+
+
+
+void printNACore(){
+  printNATesting();
+}
+
+void testNACore(){
+  naTestGroupFunction(NATesting);
+}
 
 
 
@@ -37,34 +78,32 @@ int main(void){
   printf(", %d Bits Addresses, %d Bits Integers)" NA_NL NA_NL, NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
   naStartRuntime();
+
+
+
+  //// Print macro information
+  //#if NA_PRINTOUT_ENABLED == 1
+  //  printNABase();
+  //  printNACore();
+  //#endif
+
+
+
+  // Now, start testing
   naStartTesting("NALib", NA_FALSE);
   
-  #if NA_PRINTOUT_ENABLED == 1
-    //printNAConfiguration();
-    //printNAEnvironment();
-    //printNACompiler();
-    //printNALanguage();
-    //printNAEncoding();
-    //printNAChar();
-    //printNAMacros();
-    //printNATesting();
-    //printNADebugging();
-    //printNANumerics();
-    //printNAFloatingPoint();
-  #endif
+  naTestGroupFunction(NABase);
+  naTestGroupFunction(NACore);
 
-  naTestGroupFunction(NALanguage);
-  naTestGroupFunction(NAChar);
-  naTestGroupFunction(NATesting);
-  naTestGroupFunction(NADebugging);
-  naTestGroupFunction(NANumerics);
-  naTestGroupFunction(NAFloatingPoint);
-
+  //printf(NA_NL);
   //naPrintUntested();
 
+  printf(NA_NL);
   naStopTesting();
-  naStopRuntime();
 
+
+
+  naStopRuntime();
   return 0;
 }
 
