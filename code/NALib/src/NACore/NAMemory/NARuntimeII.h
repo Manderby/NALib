@@ -9,7 +9,7 @@
 // accessible to the compiler at all times.
 struct NATypeInfo{
   void*             curpoolpart;    // The actual type of this entry is hidden.
-  NAUInt            typesize;
+  NAUInt            typeSize;
   NAMutator         destructor;
   NABool            refcounting;
   #ifndef NDEBUG

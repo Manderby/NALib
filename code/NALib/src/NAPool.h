@@ -31,8 +31,8 @@ typedef struct NAPool NAPool;
 // and can be filled with whatever drops you like.
 NA_IAPI NAPool* naInitPoolEmpty(NAPool* pool, NAUInt count);
 
-// Creates a new pool pre-filled with count elements with the given typesize.
-NA_IAPI NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, NAUInt typesize);
+// Creates a new pool pre-filled with count elements with the given typeSize.
+NA_IAPI NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, NAUInt typeSize);
 
 // Clears the pool. Depending whether you created the pool empty or filled,
 // your pool should be in the same state now.

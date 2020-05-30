@@ -145,7 +145,7 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
 //  void naDebugTree(NATree* tree){
 //    printf("Tree Debug:" NA_NL);
 //    printf(NA_TAB "Structure uses %d bytes." NA_NL, (int)naSizeof(NATree));
-//    printf(NA_TAB "%d iterators running on the tree." NA_NL, (int)tree->itercount);
+//    printf(NA_TAB "%d iterators running on the tree." NA_NL, (int)tree->iterCount);
 //    if(tree->root){
 //      NATreeIterator iter = naMakeTreeAccessor(tree);
 //      NADebugTreeToken token;

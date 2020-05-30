@@ -163,7 +163,7 @@ NA_API const NABuffer* naGetStringBufferConst(const NAString* string);
 NA_API NABuffer* naGetStringBufferMutable(NAString* string);
 
 // Returns the char at the given index.
-NA_API NAUTF8Char naGetStringChar(NAString* string, NAInt indx);
+NA_API NAUTF8Char naGetStringChar(NAString* string, NAInt index);
 
 
 // The following two functions allow you to get either the basename or the

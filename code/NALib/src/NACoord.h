@@ -72,7 +72,7 @@
 //          using some kind of space to be existent. In NALib correspondingly,
 //          a size describes the amount of bytes used in RAM. But to avoid
 //          confusion, such a size is always denoted as a one-word like
-//          "Bytesize", "Typesize", "Filesize" or "Pagesize" but never as
+//          "Bytesize", "typeSize", "Filesize" or "Pagesize" but never as
 //          a plain "Size".
 //          "NASize" on the other hand is a struct which stores two-dimensional
 //          coordinate data (width, height) and in the corresponding situations

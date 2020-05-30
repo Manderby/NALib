@@ -33,7 +33,7 @@ NA_IDEF NATreeIterator naMakeTreeAccessor(const NATree* tree){
   NATreeIterator iter;
   #ifndef NDEBUG
     NATree* mutabletree = (NATree*)tree;
-    mutabletree->itercount++;
+    mutabletree->iterCount++;
     iter.flags = 0;
   #endif
   iter.tree = naMakePtrWithDataConst(tree);
@@ -46,7 +46,7 @@ NA_IDEF NATreeIterator naMakeTreeAccessor(const NATree* tree){
 NA_IDEF NATreeIterator naMakeTreeMutator(NATree* tree){
   NATreeIterator iter;
   #ifndef NDEBUG
-    tree->itercount++;
+    tree->iterCount++;
     iter.flags = 0;
   #endif
   iter.tree = naMakePtrWithDataMutable(tree);
@@ -60,7 +60,7 @@ NA_IDEF NATreeIterator naMakeTreeMutator(NATree* tree){
 NA_IDEF NATreeIterator naMakeTreeModifier(NATree* tree){
   NATreeIterator iter;
   #ifndef NDEBUG
-    tree->itercount++;
+    tree->iterCount++;
     iter.flags = NA_TREE_ITERATOR_MODIFIER;
   #endif
   iter.tree = naMakePtrWithDataMutable(tree);
@@ -77,14 +77,14 @@ NA_HIDEF void naSetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newitem
     if(!naIsTreeAtInitial(iter)){
       if(!iter->item)
         naCrash("No item stored in the current iterator");
-      if(iter->item->itercount == 0)
+      if(iter->item->iterCount == 0)
         naError("The current item has zero iterators already");
-      iter->item->itercount--;
+      iter->item->iterCount--;
     }
   #endif
   iter->item = newitem;
   #ifndef NDEBUG
-    if(!naIsTreeAtInitial(iter)){iter->item->itercount++;}
+    if(!naIsTreeAtInitial(iter)){iter->item->iterCount++;}
   #endif
 }
 
@@ -115,7 +115,7 @@ NA_HIDEF NATree* naGetTreeIteratorTreeMutable(NATreeIterator* iter){
 NA_IDEF void naClearTreeIterator(NATreeIterator* iter){
   #ifndef NDEBUG
     NATree* mutabletree = naGetTreeIteratorTreeMutable(iter);
-    mutabletree->itercount--;
+    mutabletree->iterCount--;
     if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
       naError("This iterator has already been cleared.");
 

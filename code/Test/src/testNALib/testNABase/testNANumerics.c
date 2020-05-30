@@ -51,52 +51,52 @@ void testGetSignum(){
   NANumericsTestValues p = naMakePositiveNumericsTestValues();
   NANumericsTestValues n = naMakeNegativeNumericsTestValues(&p);
 
-  naG("naGetSignum8") {
-    naT(naGetSignum8(p.v8) == NA_ZERO_u8);
-    naT(naGetSignum8(NA_ZERO_i8) == NA_ZERO_u8);
-    naT(naGetSignum8(n.v8) == NA_MAX_u8);
-    naT(naGetSignum8(NA_MAX_i8) == NA_ZERO_u8);
-    naT(naGetSignum8(NA_MIN_i8) == NA_MAX_u8);
+  naTestGroup("naGetSignum8") {
+    naTest(naGetSignum8(p.v8) == NA_ZERO_u8);
+    naTest(naGetSignum8(NA_ZERO_i8) == NA_ZERO_u8);
+    naTest(naGetSignum8(n.v8) == NA_MAX_u8);
+    naTest(naGetSignum8(NA_MAX_i8) == NA_ZERO_u8);
+    naTest(naGetSignum8(NA_MIN_i8) == NA_MAX_u8);
   }
 
-  naG("naGetSignum16") {
-    naT(naGetSignum16(p.v16) == NA_ZERO_u16);
-    naT(naGetSignum16(NA_ZERO_i16) == NA_ZERO_u16);
-    naT(naGetSignum16(n.v16) == NA_MAX_u16);
-    naT(naGetSignum16(NA_MAX_i16) == NA_ZERO_u16);
-    naT(naGetSignum16(NA_MIN_i16) == NA_MAX_u16);
+  naTestGroup("naGetSignum16") {
+    naTest(naGetSignum16(p.v16) == NA_ZERO_u16);
+    naTest(naGetSignum16(NA_ZERO_i16) == NA_ZERO_u16);
+    naTest(naGetSignum16(n.v16) == NA_MAX_u16);
+    naTest(naGetSignum16(NA_MAX_i16) == NA_ZERO_u16);
+    naTest(naGetSignum16(NA_MIN_i16) == NA_MAX_u16);
   }
 
-  naG("naGetSignum32") {
-    naT(naGetSignum32(p.v32) == NA_ZERO_u32);
-    naT(naGetSignum32(NA_ZERO_i32) == NA_ZERO_u32);
-    naT(naGetSignum32(n.v32) == NA_MAX_u32);
-    naT(naGetSignum32(NA_MAX_i32) == NA_ZERO_u32);
-    naT(naGetSignum32(NA_MIN_i32) == NA_MAX_u32);
+  naTestGroup("naGetSignum32") {
+    naTest(naGetSignum32(p.v32) == NA_ZERO_u32);
+    naTest(naGetSignum32(NA_ZERO_i32) == NA_ZERO_u32);
+    naTest(naGetSignum32(n.v32) == NA_MAX_u32);
+    naTest(naGetSignum32(NA_MAX_i32) == NA_ZERO_u32);
+    naTest(naGetSignum32(NA_MIN_i32) == NA_MAX_u32);
   }
 
-  naG("naGetSignum64") {
-    naT(naEqualu64(naGetSignum64(p.v64), NA_ZERO_u64));
-    naT(naEqualu64(naGetSignum64(NA_ZERO_i64), NA_ZERO_u64));
-    naT(naEqualu64(naGetSignum64(n.v64), NA_MAX_u64));
-    naT(naEqualu64(naGetSignum64(NA_MAX_i64), NA_ZERO_u64));
-    naT(naEqualu64(naGetSignum64(NA_MIN_i64), NA_MAX_u64));
+  naTestGroup("naGetSignum64") {
+    naTest(naEqualu64(naGetSignum64(p.v64), NA_ZERO_u64));
+    naTest(naEqualu64(naGetSignum64(NA_ZERO_i64), NA_ZERO_u64));
+    naTest(naEqualu64(naGetSignum64(n.v64), NA_MAX_u64));
+    naTest(naEqualu64(naGetSignum64(NA_MAX_i64), NA_ZERO_u64));
+    naTest(naEqualu64(naGetSignum64(NA_MIN_i64), NA_MAX_u64));
   }
 
-  naG("naGetSignum128") {
-    naT(naEqualu128(naGetSignum128(p.v128), NA_ZERO_u128));
-    naT(naEqualu128(naGetSignum128(NA_ZERO_i128), NA_ZERO_u128));
-    naT(naEqualu128(naGetSignum128(n.v128), NA_MAX_u128));
-    naT(naEqualu128(naGetSignum128(NA_MAX_i128), NA_ZERO_u128));
-    naT(naEqualu128(naGetSignum128(NA_MIN_i128), NA_MAX_u128));
+  naTestGroup("naGetSignum128") {
+    naTest(naEqualu128(naGetSignum128(p.v128), NA_ZERO_u128));
+    naTest(naEqualu128(naGetSignum128(NA_ZERO_i128), NA_ZERO_u128));
+    naTest(naEqualu128(naGetSignum128(n.v128), NA_MAX_u128));
+    naTest(naEqualu128(naGetSignum128(NA_MAX_i128), NA_ZERO_u128));
+    naTest(naEqualu128(naGetSignum128(NA_MIN_i128), NA_MAX_u128));
   }
 
-  naG("naGetSignum256") {
-    naT(naEqualu256(naGetSignum256(p.v256), NA_ZERO_u256));
-    naT(naEqualu256(naGetSignum256(NA_ZERO_i256), NA_ZERO_u256));
-    naT(naEqualu256(naGetSignum256(n.v256), NA_MAX_u256));
-    naT(naEqualu256(naGetSignum256(NA_MAX_i256), NA_ZERO_u256));
-    naT(naEqualu256(naGetSignum256(NA_MIN_i256), NA_MAX_u256));
+  naTestGroup("naGetSignum256") {
+    naTest(naEqualu256(naGetSignum256(p.v256), NA_ZERO_u256));
+    naTest(naEqualu256(naGetSignum256(NA_ZERO_i256), NA_ZERO_u256));
+    naTest(naEqualu256(naGetSignum256(n.v256), NA_MAX_u256));
+    naTest(naEqualu256(naGetSignum256(NA_MAX_i256), NA_ZERO_u256));
+    naTest(naEqualu256(naGetSignum256(NA_MIN_i256), NA_MAX_u256));
   }
 }
 
@@ -106,52 +106,52 @@ void testGetSigni(){
   NANumericsTestValues p = naMakePositiveNumericsTestValues();
   NANumericsTestValues n = naMakeNegativeNumericsTestValues(&p);
 
-  naG("naGetSigni8") {
-    naT(naSigni8(p.v8) == NA_ONE_i8);
-    naT(naSigni8(NA_ZERO_i8) == NA_ONE_i8);
-    naT(naSigni8(n.v8) == NA_MINUS_ONE_i8);
-    naT(naSigni8(NA_MAX_i8) == NA_ONE_i8);
-    naT(naSigni8(NA_MIN_i8) == NA_MINUS_ONE_i8);
+  naTestGroup("naGetSigni8") {
+    naTest(naSigni8(p.v8) == NA_ONE_i8);
+    naTest(naSigni8(NA_ZERO_i8) == NA_ONE_i8);
+    naTest(naSigni8(n.v8) == NA_MINUS_ONE_i8);
+    naTest(naSigni8(NA_MAX_i8) == NA_ONE_i8);
+    naTest(naSigni8(NA_MIN_i8) == NA_MINUS_ONE_i8);
   }
 
-  naG("naGetSigni16") {
-    naT(naSigni16(p.v16) == NA_ONE_i16);
-    naT(naSigni16(NA_ZERO_i16) == NA_ONE_i16);
-    naT(naSigni16(n.v16) == NA_MINUS_ONE_i16);
-    naT(naSigni16(NA_MAX_i16) == NA_ONE_i16);
-    naT(naSigni16(NA_MIN_i16) == NA_MINUS_ONE_i16);
+  naTestGroup("naGetSigni16") {
+    naTest(naSigni16(p.v16) == NA_ONE_i16);
+    naTest(naSigni16(NA_ZERO_i16) == NA_ONE_i16);
+    naTest(naSigni16(n.v16) == NA_MINUS_ONE_i16);
+    naTest(naSigni16(NA_MAX_i16) == NA_ONE_i16);
+    naTest(naSigni16(NA_MIN_i16) == NA_MINUS_ONE_i16);
   }
 
-  naG("naGetSigni32") {
-    naT(naSigni32(p.v32) == NA_ONE_i32);
-    naT(naSigni32(NA_ZERO_i32) == NA_ONE_i32);
-    naT(naSigni32(n.v32) == NA_MINUS_ONE_i32);
-    naT(naSigni32(NA_MAX_i32) == NA_ONE_i32);
-    naT(naSigni32(NA_MIN_i32) == NA_MINUS_ONE_i32);
+  naTestGroup("naGetSigni32") {
+    naTest(naSigni32(p.v32) == NA_ONE_i32);
+    naTest(naSigni32(NA_ZERO_i32) == NA_ONE_i32);
+    naTest(naSigni32(n.v32) == NA_MINUS_ONE_i32);
+    naTest(naSigni32(NA_MAX_i32) == NA_ONE_i32);
+    naTest(naSigni32(NA_MIN_i32) == NA_MINUS_ONE_i32);
   }
 
-  naG("naGetSigni64") {
-    naT(naEquali64(naSigni64(p.v64), NA_ONE_i64));
-    naT(naEquali64(naSigni64(NA_ZERO_i64), NA_ONE_i64));
-    naT(naEquali64(naSigni64(n.v64), NA_MINUS_ONE_i64));
-    naT(naEquali64(naSigni64(NA_MAX_i64), NA_ONE_i64));
-    naT(naEquali64(naSigni64(NA_MIN_i64), NA_MINUS_ONE_i64));
+  naTestGroup("naGetSigni64") {
+    naTest(naEquali64(naSigni64(p.v64), NA_ONE_i64));
+    naTest(naEquali64(naSigni64(NA_ZERO_i64), NA_ONE_i64));
+    naTest(naEquali64(naSigni64(n.v64), NA_MINUS_ONE_i64));
+    naTest(naEquali64(naSigni64(NA_MAX_i64), NA_ONE_i64));
+    naTest(naEquali64(naSigni64(NA_MIN_i64), NA_MINUS_ONE_i64));
   }
 
-  naG("naGetSigni128") {
-    naT(naEquali128(naSigni128(p.v128), NA_ONE_i128));
-    naT(naEquali128(naSigni128(NA_ZERO_i128), NA_ONE_i128));
-    naT(naEquali128(naSigni128(n.v128), NA_MINUS_ONE_i128));
-    naT(naEquali128(naSigni128(NA_MAX_i128), NA_ONE_i128));
-    naT(naEquali128(naSigni128(NA_MIN_i128), NA_MINUS_ONE_i128));
+  naTestGroup("naGetSigni128") {
+    naTest(naEquali128(naSigni128(p.v128), NA_ONE_i128));
+    naTest(naEquali128(naSigni128(NA_ZERO_i128), NA_ONE_i128));
+    naTest(naEquali128(naSigni128(n.v128), NA_MINUS_ONE_i128));
+    naTest(naEquali128(naSigni128(NA_MAX_i128), NA_ONE_i128));
+    naTest(naEquali128(naSigni128(NA_MIN_i128), NA_MINUS_ONE_i128));
   }
 
-  naG("naGetSigni256") {
-    naT(naEquali256(naSigni256(p.v256), NA_ONE_i256));
-    naT(naEquali256(naSigni256(NA_ZERO_i256), NA_ONE_i256));
-    naT(naEquali256(naSigni256(n.v256), NA_MINUS_ONE_i256));
-    naT(naEquali256(naSigni256(NA_MAX_i256), NA_ONE_i256));
-    naT(naEquali256(naSigni256(NA_MIN_i256), NA_MINUS_ONE_i256));
+  naTestGroup("naGetSigni256") {
+    naTest(naEquali256(naSigni256(p.v256), NA_ONE_i256));
+    naTest(naEquali256(naSigni256(NA_ZERO_i256), NA_ONE_i256));
+    naTest(naEquali256(naSigni256(n.v256), NA_MINUS_ONE_i256));
+    naTest(naEquali256(naSigni256(NA_MAX_i256), NA_ONE_i256));
+    naTest(naEquali256(naSigni256(NA_MIN_i256), NA_MINUS_ONE_i256));
   }
 }
 
@@ -161,82 +161,82 @@ void testSetUnsetSign(){
   NANumericsTestValues p = naMakePositiveNumericsTestValues();
   NANumericsTestValues s = naMakeSignFlippedNumericsTestValues(&p);
 
-  naG("naSetUnset8") {
+  naTestGroup("naSetUnset8") {
     int8 tmp8 = p.v8;
     naSetSignBit8(&tmp8);
-    naT(tmp8 == s.v8);
+    naTest(tmp8 == s.v8);
     naUnsetSignBit8(&tmp8);
-    naT(tmp8 == p.v8);
+    naTest(tmp8 == p.v8);
     tmp8 = s.v8;
     naUnsetSignBit8(&tmp8);
-    naT(tmp8 == p.v8);
+    naTest(tmp8 == p.v8);
     naSetSignBit8(&tmp8);
-    naT(tmp8 == s.v8);
+    naTest(tmp8 == s.v8);
   }
 
-  naG("naSetUnset16") {
+  naTestGroup("naSetUnset16") {
     int16 tmp16 = p.v16;
     naSetSignBit16(&tmp16);
-    naT(tmp16 == s.v16);
+    naTest(tmp16 == s.v16);
     naUnsetSignBit16(&tmp16);
-    naT(tmp16 == p.v16);
+    naTest(tmp16 == p.v16);
     tmp16 = s.v16;
     naUnsetSignBit16(&tmp16);
-    naT(tmp16 == p.v16);
+    naTest(tmp16 == p.v16);
     naSetSignBit16(&tmp16);
-    naT(tmp16 == s.v16);
+    naTest(tmp16 == s.v16);
   }
 
-  naG("naSetUnset32") {
+  naTestGroup("naSetUnset32") {
     int32 tmp32 = p.v32;
     naSetSignBit32(&tmp32);
-    naT(tmp32 == s.v32);
+    naTest(tmp32 == s.v32);
     naUnsetSignBit32(&tmp32);
-    naT(tmp32 == p.v32);
+    naTest(tmp32 == p.v32);
     tmp32 = s.v32;
     naUnsetSignBit32(&tmp32);
-    naT(tmp32 == p.v32);
+    naTest(tmp32 == p.v32);
     naSetSignBit32(&tmp32);
-    naT(tmp32 == s.v32);
+    naTest(tmp32 == s.v32);
   }
 
-  naG("naSetUnset64") {
+  naTestGroup("naSetUnset64") {
     int64 tmp64 = p.v64;
     naSetSignBit64(&tmp64);
-    naT(naEquali64(tmp64, s.v64));
+    naTest(naEquali64(tmp64, s.v64));
     naUnsetSignBit64(&tmp64);
-    naT(naEquali64(tmp64, p.v64));
+    naTest(naEquali64(tmp64, p.v64));
     tmp64 = s.v64;
     naUnsetSignBit64(&tmp64);
-    naT(naEquali64(tmp64, p.v64));
+    naTest(naEquali64(tmp64, p.v64));
     naSetSignBit64(&tmp64);
-    naT(naEquali64(tmp64, s.v64));
+    naTest(naEquali64(tmp64, s.v64));
   }
 
-  naG("naSetUnset128") {
+  naTestGroup("naSetUnset128") {
     int128 tmp128 = p.v128;
     naSetSignBit128(&tmp128);
-    naT(naEquali128(tmp128, s.v128));
+    naTest(naEquali128(tmp128, s.v128));
     naUnsetSignBit128(&tmp128);
-    naT(naEquali128(tmp128, p.v128));
+    naTest(naEquali128(tmp128, p.v128));
     tmp128 = s.v128;
     naUnsetSignBit128(&tmp128);
-    naT(naEquali128(tmp128, p.v128));
+    naTest(naEquali128(tmp128, p.v128));
     naSetSignBit128(&tmp128);
-    naT(naEquali128(tmp128, s.v128));
+    naTest(naEquali128(tmp128, s.v128));
   }
 
-  naG("naSetUnset256") {
+  naTestGroup("naSetUnset256") {
     int256 tmp256 = p.v256;
     naSetSignBit256(&tmp256);
-    naT(naEquali256(tmp256, s.v256));
+    naTest(naEquali256(tmp256, s.v256));
     naUnsetSignBit256(&tmp256);
-    naT(naEquali256(tmp256, p.v256));
+    naTest(naEquali256(tmp256, p.v256));
     tmp256 = s.v256;
     naUnsetSignBit256(&tmp256);
-    naT(naEquali256(tmp256, p.v256));
+    naTest(naEquali256(tmp256, p.v256));
     naSetSignBit256(&tmp256);
-    naT(naEquali256(tmp256, s.v256));
+    naTest(naEquali256(tmp256, s.v256));
   }
 }
 
@@ -245,61 +245,61 @@ void testGetAbsi(){
   NANumericsTestValues p = naMakePositiveNumericsTestValues();
   NANumericsTestValues n = naMakeNegativeNumericsTestValues(&p);
 
-  naG("naAbsi8") {
-    naT(naAbsi8(p.v8) == p.v8);
-    naT(naAbsi8(NA_ZERO_i8) == NA_ZERO_i8);
-    naT(naAbsi8(n.v8) == p.v8);
-    naT(naAbsi8(NA_MAX_i8) == NA_MAX_i8);
-    naT(naAbsi8(NA_MIN_i8) == NA_MIN_i8);
+  naTestGroup("naAbsi8") {
+    naTest(naAbsi8(p.v8) == p.v8);
+    naTest(naAbsi8(NA_ZERO_i8) == NA_ZERO_i8);
+    naTest(naAbsi8(n.v8) == p.v8);
+    naTest(naAbsi8(NA_MAX_i8) == NA_MAX_i8);
+    naTest(naAbsi8(NA_MIN_i8) == NA_MIN_i8);
   }
 
-  naG("naAbsi16") {
-    naT(naAbsi16(p.v16) == p.v16);
-    naT(naAbsi16(NA_ZERO_i16) == NA_ZERO_i16);
-    naT(naAbsi16(n.v16) == p.v16);
-    naT(naAbsi16(NA_MAX_i16) == NA_MAX_i16);
-    naT(naAbsi16(NA_MIN_i16) == NA_MIN_i16);
+  naTestGroup("naAbsi16") {
+    naTest(naAbsi16(p.v16) == p.v16);
+    naTest(naAbsi16(NA_ZERO_i16) == NA_ZERO_i16);
+    naTest(naAbsi16(n.v16) == p.v16);
+    naTest(naAbsi16(NA_MAX_i16) == NA_MAX_i16);
+    naTest(naAbsi16(NA_MIN_i16) == NA_MIN_i16);
   }
 
-  naG("naAbsi32") {
-    naT(naAbsi32(p.v32) == p.v32);
-    naT(naAbsi32(NA_ZERO_i32) == NA_ZERO_i32);
-    naT(naAbsi32(n.v32) == p.v32);
-    naT(naAbsi32(NA_MAX_i32) == NA_MAX_i32);
-    naT(naAbsi32(NA_MIN_i32) == NA_MIN_i32);
+  naTestGroup("naAbsi32") {
+    naTest(naAbsi32(p.v32) == p.v32);
+    naTest(naAbsi32(NA_ZERO_i32) == NA_ZERO_i32);
+    naTest(naAbsi32(n.v32) == p.v32);
+    naTest(naAbsi32(NA_MAX_i32) == NA_MAX_i32);
+    naTest(naAbsi32(NA_MIN_i32) == NA_MIN_i32);
   }
 
-  naG("naAbsi64") {
-    naT(naEquali64(naAbsi64(p.v64), p.v64));
-    naT(naEquali64(naAbsi64(NA_ZERO_i64), NA_ZERO_i64));
-    naT(naEquali64(naAbsi64(n.v64), p.v64));
-    naT(naEquali64(naAbsi64(NA_MAX_i64), NA_MAX_i64));
-    naT(naEquali64(naAbsi64(NA_MIN_i64), NA_MIN_i64));
+  naTestGroup("naAbsi64") {
+    naTest(naEquali64(naAbsi64(p.v64), p.v64));
+    naTest(naEquali64(naAbsi64(NA_ZERO_i64), NA_ZERO_i64));
+    naTest(naEquali64(naAbsi64(n.v64), p.v64));
+    naTest(naEquali64(naAbsi64(NA_MAX_i64), NA_MAX_i64));
+    naTest(naEquali64(naAbsi64(NA_MIN_i64), NA_MIN_i64));
   }
 
-  naG("naAbsi128") {
-    naT(naEquali128(naAbsi128(p.v128), p.v128));
-    naT(naEquali128(naAbsi128(NA_ZERO_i128), NA_ZERO_i128));
-    naT(naEquali128(naAbsi128(n.v128), p.v128));
-    naT(naEquali128(naAbsi128(NA_MAX_i128), NA_MAX_i128));
-    naT(naEquali128(naAbsi128(NA_MIN_i128), NA_MIN_i128));
+  naTestGroup("naAbsi128") {
+    naTest(naEquali128(naAbsi128(p.v128), p.v128));
+    naTest(naEquali128(naAbsi128(NA_ZERO_i128), NA_ZERO_i128));
+    naTest(naEquali128(naAbsi128(n.v128), p.v128));
+    naTest(naEquali128(naAbsi128(NA_MAX_i128), NA_MAX_i128));
+    naTest(naEquali128(naAbsi128(NA_MIN_i128), NA_MIN_i128));
   }
 
-  naG("naAbsi256") {
-    naT(naEquali256(naAbsi256(p.v256), p.v256));
-    naT(naEquali256(naAbsi256(NA_ZERO_i256), NA_ZERO_i256));
-    naT(naEquali256(naAbsi256(n.v256), p.v256));
-    naT(naEquali256(naAbsi256(NA_MAX_i256), NA_MAX_i256));
-    naT(naEquali256(naAbsi256(NA_MIN_i256), NA_MIN_i256));
+  naTestGroup("naAbsi256") {
+    naTest(naEquali256(naAbsi256(p.v256), p.v256));
+    naTest(naEquali256(naAbsi256(NA_ZERO_i256), NA_ZERO_i256));
+    naTest(naEquali256(naAbsi256(n.v256), p.v256));
+    naTest(naEquali256(naAbsi256(NA_MAX_i256), NA_MAX_i256));
+    naTest(naEquali256(naAbsi256(NA_MIN_i256), NA_MIN_i256));
   }
 }
 
 
 void testNANumerics(){
-  naF(GetSignum);
-  naF(GetSigni);
-  naF(SetUnsetSign);
-  naF(GetAbsi);
+  naTestGroupFunction(GetSignum);
+  naTestGroupFunction(GetSigni);
+  naTestGroupFunction(SetUnsetSign);
+  naTestGroupFunction(GetAbsi);
 }
 
 

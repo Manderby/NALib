@@ -169,6 +169,7 @@
     <ClCompile Include="src\testNALib\testNABase\testNALanguage.c" />
     <ClCompile Include="src\testNALib\testNABase\testNAMacros.c" />
     <ClCompile Include="src\testNALib\testNABase\testNANumerics.c" />
+    <ClCompile Include="src\testNALib\testNABase\testNATesting.c" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NALib\NALib.vcxproj">

@@ -16,7 +16,7 @@ NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
   tree->root = NA_NULL;
   tree->flags = 0;
   #ifndef NDEBUG
-    tree->itercount = 0;
+    tree->iterCount = 0;
   #endif
 
   return tree;
@@ -26,7 +26,7 @@ NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
 
 NA_IDEF void naEmptyTree(NATree* tree){
   #ifndef NDEBUG
-    if(tree->itercount != 0)
+    if(tree->iterCount != 0)
       naError("There are still iterators running on this tree. Did you miss a naClearTreeIterator call?");
   #endif
   if(tree->root){

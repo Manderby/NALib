@@ -1,9 +1,9 @@
 
-#if defined NA_TEST_INCLUDED || !defined NA_BASE_INCLUDED
+#if defined NA_TESTING_INCLUDED || !defined NA_BASE_INCLUDED
   #warning "Do not include this file directly. Use NABase.h"
 #endif
-#ifndef NA_TEST_INCLUDED
-#define NA_TEST_INCLUDED
+#ifndef NA_TESTING_INCLUDED
+#define NA_TESTING_INCLUDED
 
 
 
@@ -13,26 +13,35 @@
 NA_API void naStartTesting(const NAUTF8Char* rootName, NABool printAllGroups);
 NA_API void naStopTesting(void);
 
-// The testing calls.
-// naT: Tests successfully if the given expression evaluates to true.
-// naE: Tests successfully if one or more naError calls happen.
-// naG: Groups together tests. Use it like naG("Multiple Tests"){ ... }
-// naF: Calls a function with type void(*)(void) with the prefix "test" and
-//      uses the given name as a group name.
-//      For example naF(Algo) calls void testAlgo().
-#define naT(expr)
-#define naE(expr)
-#define naG(string)
-#define naF(identifier)
+// Prints a list of all strings added by calling naUntested.
+NA_API void naPrintUntested(void);
 
+// Tests successfully if the given expression evaluates to true.
+#define naTest(expr)
 
+// Tests successfully if one or more naError calls happen.
+#define naTestError(expr)
+
+// Groups together tests. Use it like naTestGroup("Multiple Tests"){ ... }
+#define naTestGroup(string)
+
+// Groups together tests by calling a function named the same as the given
+// identifier, but prefixed with "test".
+// For example naTestGroupFunction(Algo) calls void testAlgo().
+#define naTestGroupFunction(identifier)
+
+// Stores an arbitrary text which denotes something to be untested. Use it
+// together with naPrintUntested to get a complete list of all untested
+// functionality before calling naStopTesting.
+// Use this to mark things untested but not forgotten.
+#define naUntested(text)
 
 // Inline implementations are in a separate file:
-#include "NATestII.h"
+#include "NATestingII.h"
 
 
 
-#endif // NA_TEST_INCLUDED
+#endif // NA_TESTING_INCLUDED
 
 
 

@@ -6,7 +6,7 @@
 NA_HIDEF void naInitTreeItem(NATreeItem* item){
   // We do not initialize the parent. Code must use naSetTreeItemParent.
   #ifndef NDEBUG
-    item->itercount = 0;
+    item->iterCount = 0;
   #else
     NA_UNUSED(item);
   #endif
@@ -16,7 +16,7 @@ NA_HIDEF void naInitTreeItem(NATreeItem* item){
 
 NA_HIDEF void naClearTreeItem(NATreeItem* item){
   #ifndef NDEBUG
-    if(item->itercount)
+    if(item->iterCount)
       naError("There are still iterators running on this item. Did you forget a call to naClearTreeIterator?");
   #else
     NA_UNUSED(item);

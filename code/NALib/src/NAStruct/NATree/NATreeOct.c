@@ -119,7 +119,7 @@ NA_HDEF NAInt naGetKeyIndexOctDouble(const void* basekey, const void* testkey, c
   NAInt childexponent = *((NAInt*)data);
   NAVertex* baseVertex = (NAVertex*)basekey;
   NAVertex* testVertex = (NAVertex*)testkey;
-  NAInt indx = 0;
+  NAInt index = 0;
   double childwidth;
 
   #ifndef NDEBUG
@@ -128,10 +128,10 @@ NA_HDEF NAInt naGetKeyIndexOctDouble(const void* basekey, const void* testkey, c
   #endif
 
   childwidth = naMakeDoubleWithExponent((int32)childexponent);
-  if(testVertex->x >= baseVertex->x + childwidth){indx |= 1;}
-  if(testVertex->y >= baseVertex->y + childwidth){indx |= 2;}
-  if(testVertex->z >= baseVertex->z + childwidth){indx |= 4;}
-  return indx;
+  if(testVertex->x >= baseVertex->x + childwidth){index |= 1;}
+  if(testVertex->y >= baseVertex->y + childwidth){index |= 2;}
+  if(testVertex->z >= baseVertex->z + childwidth){index |= 4;}
+  return index;
 }
 NA_HDEF NABool naTestKeyOctDouble(const void* lowerlimit, const void* upperlimit, const void* key){
   return NA_KEY_OP(LowerEqual, NAVertex)(lowerlimit, key) && NA_KEY_OP(Lower, NAVertex)(key, upperlimit);

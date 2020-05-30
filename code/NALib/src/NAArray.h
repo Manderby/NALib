@@ -41,11 +41,11 @@ typedef struct NAArrayIterator NAArrayIterator;
 // Initializes an NAArray denoting an EMPTY array.
 NA_IAPI NAArray* naInitArray(NAArray* array);
 
-// Initializes an NAArray with enough space for the given typesize and count.
-// Typesize denoes the number of bytes per element and count denotes the number
+// Initializes an NAArray with enough space for the given typeSize and count.
+// typeSize denoes the number of bytes per element and count denotes the number
 // of elements.
 NA_IAPI NAArray* naInitArrayWithCount(       NAArray* array,
-                                                NAInt typesize,
+                                                NAInt typeSize,
                                                 NAInt count);
 
 // Creates an NAArray which stores the given data WITHOUT copying.
@@ -53,7 +53,7 @@ NA_IAPI NAArray* naInitArrayWithCount(       NAArray* array,
 // Use these functions to encapsulate your own raw buffers into an NAArray.
 // There are two creation functions, one for const data and one for non-const.
 //
-// Typesize denoes the number of bytes per element and count denotes the number
+// typeSize denoes the number of bytes per element and count denotes the number
 // of elements. The programmer is responsible for the total number of bytes
 // not overflowing the data range.
 //
@@ -64,11 +64,11 @@ NA_IAPI NAArray* naInitArrayWithCount(       NAArray* array,
 // you can use naForeachArray.
 NA_IAPI  NAArray* naInitArrayWithDataConst(   NAArray* array,
                                            const void* data,
-                                                 NAInt typesize,
+                                                 NAInt typeSize,
                                                  NAInt count);
 NA_IAPI  NAArray* naInitArrayWithDataMutable( NAArray* array,
                                                  void* data,
-                                                 NAInt typesize,
+                                                 NAInt typeSize,
                                                  NAInt count,
                                              NAMutator destructor);
 
@@ -89,7 +89,7 @@ NA_IAPI void naForeachArraypMutable(NAArray* array, NAMutator  mutator);
 NA_IAPI const void* naGetArrayPointerConst  (const NAArray* array);
 NA_IAPI       void* naGetArrayPointerMutable(      NAArray* array);
 
-// Returns a pointer to the element at the given index. If indx is negative, it
+// Returns a pointer to the element at the given index. If index is negative, it
 // is searched from the end of the array. For example -1 denotes the last
 // element.
 //
@@ -99,15 +99,15 @@ NA_IAPI       void* naGetArrayPointerMutable(      NAArray* array);
 // Note that calling this function too often might not be a good idea with
 // respect to speed. Try getting a pointer using naGetArrayPointer or this
 // function and use pointer arithmetic afterwards.
-NA_IAPI const void* naGetArrayElementConst   (const NAArray* array, NAInt indx);
-NA_IAPI       void* naGetArrayElementMutable (      NAArray* array, NAInt indx);
-NA_IAPI const void* naGetArrayElementpConst  (const NAArray* array, NAInt indx);
-NA_IAPI       void* naGetArrayElementpMutable(      NAArray* array, NAInt indx);
+NA_IAPI const void* naGetArrayElementConst   (const NAArray* array, NAInt index);
+NA_IAPI       void* naGetArrayElementMutable (      NAArray* array, NAInt index);
+NA_IAPI const void* naGetArrayElementpConst  (const NAArray* array, NAInt index);
+NA_IAPI       void* naGetArrayElementpMutable(      NAArray* array, NAInt index);
 
 // Returns information about of nuber of elements in this array.
 NA_IAPI NAInt  naGetArrayCount    (const NAArray* array);
 NA_IAPI NAInt  naGetArrayMaxIndex (const NAArray* array);
-NA_IAPI NAInt  naGetArrayTypesize (const NAArray* array);
+NA_IAPI NAInt  naGetArraytypeSize (const NAArray* array);
 NA_IAPI NABool naIsArrayEmpty     (const NAArray* array);
 
 
@@ -183,7 +183,7 @@ NA_IAPI void naClearArrayIterator(NAArrayIterator* iterator);
 NA_IAPI NABool naLocateArrayFirst(NAArrayIterator* iterator);
 NA_IAPI NABool naLocateArrayLast (NAArrayIterator* iterator);
 NA_IAPI NABool naLocateArrayData (NAArrayIterator* iterator, const void* data);
-NA_IAPI NABool naLocateArrayIndex(NAArrayIterator* iterator, NAInt indx);
+NA_IAPI NABool naLocateArrayIndex(NAArrayIterator* iterator, NAInt index);
 
 
 // /////////////////////////////////
@@ -212,11 +212,11 @@ NA_IAPI       void* naGetArrayNextMutable(      NAArrayIterator* iterator);
 
 // /////////////////////////////////////////////
 // Getting position informations around the current position.
-// Note that indx can be negative, denoting the number of elements from the
+// Note that index can be negative, denoting the number of elements from the
 // end of the array, whereas -1 denotes the last element.
 NA_IAPI NABool naIsArrayAtFirst  (const NAArrayIterator* iterator);
 NA_IAPI NABool naIsArrayAtLast   (const NAArrayIterator* iterator);
-NA_IAPI NABool naIsArrayAtIndex  (const NAArrayIterator* iterator, NAInt indx);
+NA_IAPI NABool naIsArrayAtIndex  (const NAArrayIterator* iterator, NAInt index);
 NA_IAPI NABool naIsArrayAtInitial(const NAArrayIterator* iterator);
 
 NA_IAPI NAInt  naGetArrayCurIndex(const NAArrayIterator* iterator);

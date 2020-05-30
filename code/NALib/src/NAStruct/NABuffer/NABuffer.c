@@ -73,7 +73,7 @@ NA_HDEF void naInitBufferStruct(NABuffer* buffer){
   naSetTreeConfigurationNodeCallbacks(config, naConstructBufferTreeNode, naDestructBufferTreeNode, naUpdateBufferTreeNode);
   naInitTree(&(buffer->parts), config);
   #ifndef NDEBUG
-    buffer->itercount = 0;
+    buffer->iterCount = 0;
   #endif
   naReleaseTreeConfiguration(config);
 }
@@ -325,7 +325,7 @@ NA_DEF NABuffer* naNewBufferWithCustomSource(NABufferSource* source, NAInt sourc
 
 NA_HDEF void naDeallocBuffer(NABuffer* buffer){
   #ifndef NDEBUG
-    if(buffer->itercount)
+    if(buffer->iterCount)
       naError("There are still iterators running. Did you forgot naClearBufferIterator?");
   #endif
   if(buffer->source){naRelease(buffer->source);}

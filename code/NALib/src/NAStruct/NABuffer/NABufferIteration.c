@@ -17,7 +17,7 @@ NA_DEF NABufferIterator naMakeBufferAccessor(const NABuffer* buffer){
   iter.curbit = 0;
   iter.linenum = 0;
   #ifndef NDEBUG
-    mutablebuffer->itercount++;
+    mutablebuffer->iterCount++;
   #endif
   return iter;
 }
@@ -38,7 +38,7 @@ NA_DEF NABufferIterator naMakeBufferMutator(NABuffer* buffer){
   iter.curbit = 0;
   iter.linenum = 0;
   #ifndef NDEBUG
-    mutablebuffer->itercount++;
+    mutablebuffer->iterCount++;
   #endif
   return iter;
 }
@@ -59,7 +59,7 @@ NA_DEF NABufferIterator naMakeBufferModifier(NABuffer* buffer){
   iter.curbit = 0;
   iter.linenum = 0;
   #ifndef NDEBUG
-    mutablebuffer->itercount++;
+    mutablebuffer->iterCount++;
   #endif
   return iter;
 }
@@ -70,12 +70,12 @@ NA_DEF void naClearBufferIterator(NABufferIterator* iter){
   #ifndef NDEBUG
     NABuffer* mutablebuffer;
     mutablebuffer = (NABuffer*)naGetBufferIteratorBufferConst(iter);
-    if(mutablebuffer->itercount == 0)
+    if(mutablebuffer->iterCount == 0)
       naError("Too many clears: Buffer has no iterators to clear.");
   #endif
   naClearTreeIterator(&(iter->partiter));
   #ifndef NDEBUG
-    mutablebuffer->itercount--;
+    mutablebuffer->iterCount--;
   #endif
 }
 

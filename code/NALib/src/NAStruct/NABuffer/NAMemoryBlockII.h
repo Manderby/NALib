@@ -54,14 +54,14 @@ NA_HIDEF NAMemoryBlock* naNewMemoryBlockWithData(NAPtr data, NAInt bytesize, NAM
 
 
 
-NA_HIDEF const void* naGetMemoryBlockDataPointerConst(NAMemoryBlock* block, NAInt indx){
-  return (const void*)&(((const NAByte*)naGetPtrConst(block->data))[indx]);
+NA_HIDEF const void* naGetMemoryBlockDataPointerConst(NAMemoryBlock* block, NAInt index){
+  return (const void*)&(((const NAByte*)naGetPtrConst(block->data))[index]);
 }
 
 
 
-NA_HIDEF void* naGetMemoryBlockDataPointerMutable(NAMemoryBlock* block, NAInt indx){
-  return (void*)&(((const NAByte*)naGetPtrMutable(block->data))[indx]);
+NA_HIDEF void* naGetMemoryBlockDataPointerMutable(NAMemoryBlock* block, NAInt index){
+  return (void*)&(((const NAByte*)naGetPtrMutable(block->data))[index]);
 }
 
 

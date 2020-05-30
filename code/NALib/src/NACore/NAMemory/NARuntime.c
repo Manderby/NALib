@@ -50,7 +50,7 @@
 // Initially, there will only be garbage values. NALib keeps track of that by
 // counting how many spaces have ever been used inside the part. If the new
 // space has never been used, the next available pointer will simply be one
-// typesize ahead. Note from the author: This little trick made the current
+// typeSize ahead. Note from the author: This little trick made the current
 // implementation really fast!
 //
 // Otherwise, when that space has already been used once and has been deleted
@@ -113,7 +113,7 @@ struct NACorePoolPart{
 
 struct NACoreTypeInfo{
   NACorePoolPart*   curpart;
-  size_t            typesize;
+  size_t            typeSize;
   NAMutator         destructor;
   NABool            refcounting;
   #ifndef NDEBUG
@@ -155,15 +155,15 @@ NA_HIDEF void naRegisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
   #ifndef NDEBUG
     if(coretypeinfo->curpart)
       naError("Newly registered type should have NULL as current part.");
-    if(coretypeinfo->typesize < NA_ADDRESS_BYTES)
+    if(coretypeinfo->typeSize < NA_ADDRESS_BYTES)
       naError("Size of type is too small");
-    if(coretypeinfo->typesize > (na_runtime->partsize - sizeof(NACorePoolPart)))
+    if(coretypeinfo->typeSize > (na_runtime->partsize - sizeof(NACorePoolPart)))
       naError("Size of type is too big");
   #endif
 
   // As this is the first time, the runtime type gets used, we correct the
-  // typesize to incorporate reference counting, if any.
-  if(coretypeinfo->refcounting){coretypeinfo->typesize += sizeof(NARefCount);}
+  // typeSize to incorporate reference counting, if any.
+  if(coretypeinfo->refcounting){coretypeinfo->typeSize += sizeof(NARefCount);}
 
   // We enlarge the na_runtime info array by one. Yes, this is very bad
   // performance, but this code is usually called rather seldomly. If you
@@ -210,9 +210,9 @@ NA_HIDEF void naUnregisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
   naFree(na_runtime->typeinfos);
   na_runtime->typeinfos = newinfos;
 
-  // We restore the original typesize in case NA_MEMORY_POOL_AGGRESSIVE_CLEANUP
+  // We restore the original typeSize in case NA_MEMORY_POOL_AGGRESSIVE_CLEANUP
   // is set to 1 which means, the type might get re-registered.
-  if(coretypeinfo->refcounting){coretypeinfo->typesize -= sizeof(NARefCount);}
+  if(coretypeinfo->refcounting){coretypeinfo->typeSize -= sizeof(NARefCount);}
 }
 
 
@@ -262,7 +262,7 @@ NA_HIDEF void naEnhanceCorePool(NACoreTypeInfo* coretypeinfo){
 
   // We initialize the basic fields of part.
   part->coretypeinfo = coretypeinfo;
-  part->maxCount = ((na_runtime->partsize - sizeof(NACorePoolPart)) / coretypeinfo->typesize);
+  part->maxCount = ((na_runtime->partsize - sizeof(NACorePoolPart)) / coretypeinfo->typeSize);
   part->usedCount = 0;
   part->everUsedCount = 0;
 
@@ -306,7 +306,7 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
       naCrash("Runtime not running. Use naStartRuntime()");
     if(!typeinfo)
       naCrash("Given type identifier is Null-Pointer. Do not call naNewStruct directly. Use the naNew macro.");
-    if(typeinfo->typesize == 0)
+    if(typeinfo->typeSize == 0)
       naError("Type size is zero. Is the type void?");
   #endif
 
@@ -345,8 +345,8 @@ NA_DEF void* naNewStruct(NATypeInfo* typeinfo){
   // We find out which will be the next pointer to return.
   if(coretypeinfo->curpart->usedCount == coretypeinfo->curpart->everUsedCount){
     // The current space has not been used ever. Use the next address one
-    // typesize ahead.
-    coretypeinfo->curpart->firstunused = (NAByte*)(coretypeinfo->curpart->firstunused) + coretypeinfo->typesize;
+    // typeSize ahead.
+    coretypeinfo->curpart->firstunused = (NAByte*)(coretypeinfo->curpart->firstunused) + coretypeinfo->typeSize;
     // Increase the number of ever used spaces in this part.
     coretypeinfo->curpart->everUsedCount++;
   }else{
@@ -604,7 +604,7 @@ NA_DEF void naStopRuntime(){
             printf(NA_NL "Memory leaks detected in NARuntime:" NA_NL);
             leakmessageprinted = NA_TRUE;
           }
-          printf("%s: %zu * %zu = %zu Bytes" NA_NL, na_runtime->typeinfos[i]->typename, spacecount, na_runtime->typeinfos[i]->typesize, spacecount * na_runtime->typeinfos[i]->typesize);
+          printf("%s: %zu * %zu = %zu Bytes" NA_NL, na_runtime->typeinfos[i]->typename, spacecount, na_runtime->typeinfos[i]->typeSize, spacecount * na_runtime->typeinfos[i]->typeSize);
         }
       #endif
     }

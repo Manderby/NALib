@@ -10,7 +10,7 @@ struct NAPool{
   NAUInt cur;           // The current position in the drops array.
   void* storagearray;   // The storage of elements, if pool is created filled.
   #ifndef NDEBUG
-    NAUInt typesize;    // The typesize is just for debugging.
+    NAUInt typeSize;    // The typeSize is just for debugging.
   #endif
 };
 
@@ -32,7 +32,7 @@ NA_IDEF NAPool* naInitPoolEmpty(NAPool* pool, NAUInt count){
 
 
 
-NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, NAUInt typesize){
+NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, NAUInt typeSize){
   NAByte** dropptr;
   NAByte* storageptr;
   NAUInt i;
@@ -42,15 +42,15 @@ NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, NAUInt typesize){
       naCrash("pool is Null-Pointer");
     if(count == 0)
       naError("count is 0");
-    if(typesize == 0)
-      naError("typesize is 0");
+    if(typeSize == 0)
+      naError("typeSize is 0");
   #endif
   pool->drops = naMalloc(count * sizeof(void*));
   pool->count = count;
   pool->cur = count;
-  pool->storagearray = naMalloc(count * typesize);
+  pool->storagearray = naMalloc(count * typeSize);
   #ifndef NDEBUG
-    pool->typesize = typesize;
+    pool->typeSize = typeSize;
   #endif
 
   // Insert all elements to the drop array.
@@ -59,7 +59,7 @@ NA_IDEF NAPool* naInitPoolFilled(NAPool* pool, NAUInt count, NAUInt typesize){
   for(i = 0; i < pool->count; i++){
     *dropptr = storageptr;
     dropptr++;
-    storageptr += typesize;
+    storageptr += typeSize;
   }
   return pool;
 }
@@ -99,7 +99,7 @@ NA_IDEF void naSpitPool(NAPool* pool, void* drop){
   #ifndef NDEBUG
     if(pool->cur == pool->count)
       naError("Pool is full");
-    if(pool->storagearray && (!naInsidei((NAByte*)drop - (NAByte*)pool->storagearray, 0, pool->typesize * pool->count)))
+    if(pool->storagearray && (!naInsidei((NAByte*)drop - (NAByte*)pool->storagearray, 0, pool->typeSize * pool->count)))
       naError("Pool was created filled. This drop does not seem to be a drop of this pool.");
   #endif
   pool->drops[pool->cur] = drop;

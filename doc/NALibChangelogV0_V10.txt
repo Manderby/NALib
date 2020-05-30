@@ -243,7 +243,7 @@ Other things:
 - made naGetArrayCount const.
 - Added a copying option to naCreateArrayOutOfGrowingSpace
 - Implemented naGetArrayConstPointer and naGetArrayMutablePointer
-- Added naGetArrayTypeSize and naDecoupleArray
+- Added naGetArraytypeSize and naDecoupleArray
 - Added NA_INVALID_MEMORY_INDEX to NAByteArray.h
 - Added ConstContent and MutableContent to NAList.
 - Added naGetGrowingSpaceConstPointer, naGetGrowingSpaceMutablePointer,

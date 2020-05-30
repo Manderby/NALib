@@ -115,7 +115,7 @@ NA_HDEF NAInt naGetKeyIndexQuadDouble(const void* basekey, const void* testkey, 
   NAInt childexponent = *((NAInt*)data);
   NAPos* basePos = (NAPos*)basekey;
   NAPos* testPos = (NAPos*)testkey;
-  NAInt indx = 0;
+  NAInt index = 0;
   double childwidth;
 
   #ifndef NDEBUG
@@ -124,9 +124,9 @@ NA_HDEF NAInt naGetKeyIndexQuadDouble(const void* basekey, const void* testkey, 
   #endif
 
   childwidth = naMakeDoubleWithExponent((int32)childexponent);
-  if(testPos->x >= basePos->x + childwidth){indx |= 1;}
-  if(testPos->y >= basePos->y + childwidth){indx |= 2;}
-  return indx;
+  if(testPos->x >= basePos->x + childwidth){index |= 1;}
+  if(testPos->y >= basePos->y + childwidth){index |= 2;}
+  return index;
 }
 NA_HDEF NABool naTestKeyQuadDouble(const void* lowerlimit, const void* upperlimit, const void* key){
   return NA_KEY_OP(LowerEqual, NAPos)(lowerlimit, key) && NA_KEY_OP(Lower, NAPos)(key, upperlimit);

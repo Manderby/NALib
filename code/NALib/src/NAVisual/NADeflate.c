@@ -9,7 +9,7 @@ struct NAHuffmanCodeTree{
   uint16* codes;
   uint16* codelengths;
   int32* indextree;
-  int32 curindex;
+  int32 curIndex;
 };
 
 
@@ -38,7 +38,7 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
   uint16 nextcodes[17] = {0};
   uint16 a;
   uint16 code;
-  int32  curindex;
+  int32  curIndex;
   uint16 newtreeindex;
   uint16 curmask;
   #ifndef NDEBUG
@@ -99,15 +99,15 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
     len = tree->codelengths[a];
     if(!len){continue;}
     curmask = (uint16)(1 << (len - 1));
-    curindex = 0;
+    curIndex = 0;
     while(curmask){
       // If there is no entry in the tree, create two branches.
-      if(tree->indextree[curindex] == 0){
+      if(tree->indextree[curIndex] == 0){
         #ifndef NDEBUG
           if(newtreeindex >= (2 * tree->alphabetcount - 1))
             naError("tree index suddenly overflows");
         #endif
-        tree->indextree[curindex] = newtreeindex;
+        tree->indextree[curIndex] = newtreeindex;
         tree->indextree[newtreeindex] = 0;
         tree->indextree[newtreeindex+1] = 0;
         newtreeindex += 2;
@@ -116,21 +116,21 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
         #endif
       }
 
-      curindex = tree->indextree[curindex];
+      curIndex = tree->indextree[curIndex];
 
-      if(code & curmask){curindex++;}
+      if(code & curmask){curIndex++;}
 
       curmask >>= 1;
     }
     #ifndef NDEBUG
-      if(curindex >= (2 * tree->alphabetcount - 1))
+      if(curIndex >= (2 * tree->alphabetcount - 1))
         naError("tree index overflow");
     #endif
-    // reaching here, curindex denotes the position of where the alphabet must
+    // reaching here, curIndex denotes the position of where the alphabet must
     // be stored. We store the alphabet as negative value.
-    tree->indextree[curindex] = -1 - (int32)a;
+    tree->indextree[curIndex] = -1 - (int32)a;
     #ifndef NDEBUG
-      if(tree->indextree[curindex] >= 0)
+      if(tree->indextree[curIndex] >= 0)
         naError("code can not be stored as a negative number");
     #endif
 
@@ -157,16 +157,16 @@ void naBuildHuffmanCodeTree(NAHuffmanCodeTree* tree){
 
 
 void naResetHuffmanCodeTree(NAHuffmanCodeTree* tree){
-  tree->curindex = 0;
+  tree->curIndex = 0;
 }
 
 
 
 NABool naTraverseHuffmanCodeTree(NAHuffmanCodeTree* tree, NABool bit, uint16* alphabet){
-  tree->curindex = tree->indextree[tree->curindex];
-  if(bit){tree->curindex++;}
-  *alphabet = (uint16)(-(tree->indextree[tree->curindex] + 1));
-  return (tree->indextree[tree->curindex] >= 0);
+  tree->curIndex = tree->indextree[tree->curIndex];
+  if(bit){tree->curIndex++;}
+  *alphabet = (uint16)(-(tree->indextree[tree->curIndex] + 1));
+  return (tree->indextree[tree->curIndex] >= 0);
 }
 
 

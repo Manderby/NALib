@@ -1,9 +1,9 @@
 
-#if defined NA_DEBUG_INCLUDED || !defined NA_BASE_INCLUDED
+#if defined NA_DEBUGGING_INCLUDED || !defined NA_BASE_INCLUDED
   #warning "Do not include this file directly. Use NABase.h"
 #endif
-#ifndef NA_DEBUG_INCLUDED
-#define NA_DEBUG_INCLUDED
+#ifndef NA_DEBUGGING_INCLUDED
+#define NA_DEBUGGING_INCLUDED
 
 
 
@@ -86,11 +86,11 @@
 
 
 // Inline implementations are in a separate file:
-#include "NADebugII.h"
+#include "NADebuggingII.h"
 
 
 
-#endif // NA_DEBUG_INCLUDED
+#endif // NA_DEBUGGING_INCLUDED
 
 
 

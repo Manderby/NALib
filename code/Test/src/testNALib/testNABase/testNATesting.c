@@ -1,57 +1,27 @@
 
-#include "../NABase.h"
-
-#ifndef NDEBUG
-
-  #include <stdio.h>    // for the fprintf function
-  #include <stdlib.h>   // for the exit function
+#include "NABase.h"
+#include <stdio.h>
 
 
 
-  // The error printing method. Errors will be emitted to the stderr output.
-  // When NDEBUG is defined, this function is OBSOLETE!
+void testNATesting(){
+  naUntested(naStartTesting: Can not test during testing);
+  naUntested(naStopTesting: Can not test during testing);
+  naUntested(naUntested: Can not test during testing);
+}
 
-  NA_HDEF void naPrintError(const char* functionSymbol, const char* text){
-    NABool doPrintOut = NA_TRUE;
-    #if NA_TESTING_ENABLED == 1
-      doPrintOut = !na_test_case_running;
-    #endif
-
-    if(doPrintOut){
-      fprintf(stderr, "Error in %s: %s", functionSymbol, text);
-
-      // //////////////////////////
-      // Set a breakpoint in the following line to debug.
-      // //////////////////////////
-
-      fprintf(stderr, NA_NL);
-
-      // //////////////////////////
-    }
-  }
-
-
-
-  NA_HDEF void naCaptureError(const char* functionSymbol, const char* text){
-    #if NA_TESTING_ENABLED == 1
-      na_error_count++;
-    #endif
-
-    naPrintError(functionSymbol, text);
-  }
   
   
-  
-  NA_HDEF void naCaptureCrash(const char* functionSymbol, const char* text){
-    #if NA_TESTING_ENABLED == 1
-      na_test_case_running = NA_FALSE;
-    #endif
-    naPrintError(functionSymbol, text);
-    fprintf(stderr, NA_NL "Crashing the application deliberately..." NA_NL);
-    exit(EXIT_FAILURE);
-  }
+void printNATesting(){
+  printf("NATesting.h:" NA_NL);
 
-#endif // NDEBUG
+  naPrintMacroPlain(naTest(expr));
+  naPrintMacroPlain(naTestError(expr));
+  naPrintMacroPlain(naTestGroup(string));
+  naPrintMacroPlain(naTestGroupFunction(identifier));
+
+  printf(NA_NL);
+}
 
 
 

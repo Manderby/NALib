@@ -1,53 +1,57 @@
 
-#if defined NA_TEST_II_INCLUDED || !defined NA_BASE_INCLUDED
+#if defined NA_TESTING_II_INCLUDED || !defined NA_BASE_INCLUDED
   #warning "Do not include this file directly. Use NABase.h"
 #endif
-#ifndef NA_TEST_II_INCLUDED
-#define NA_TEST_II_INCLUDED
+#ifndef NA_TESTING_II_INCLUDED
+#define NA_TESTING_II_INCLUDED
 
 
 
 // This file contains inline implementations of testing methods.
 
 // First, undefine all macros defined in the .h file
-#undef naT
-#undef naE
-#undef naG
-#undef naF
+#undef naTest
+#undef naTestError
+#undef naTestGroup
+#undef naTestGroupFunction
+#undef naUntested
 
 
 
 #if NA_TESTING_ENABLED == 1
 
-extern NABool na_test_case_running;
-extern int na_error_count;
-
-NA_HAPI void naAddTest(const char* expr, int success, int lineNum);
-NA_HAPI void naAddTestError(const char* expr, int lineNum);
-NA_HAPI void naStartTestGroup(const char* name, int lineNum);
-NA_HAPI void naStopTestGroup(void);
+NA_HAPI void   naAddTest(const char* expr, int success, int lineNum);
+NA_HAPI void   naAddTestError(const char* expr, int lineNum);
+NA_HAPI void   naStartTestGroup(const char* name, int lineNum);
+NA_HAPI void   naStopTestGroup(void);
+NA_HAPI void   naRegisterUntested(const char* text);
+NA_HAPI NABool naGetTestCaseRunning();
+NA_HAPI void   naSetTestCaseRunning(NABool running);
+NA_HAPI void   naIncErrorCount(void);
+NA_HAPI void   naResetErrorCount(void);
+NA_HAPI int    naGetErrorCount(void);
 
 
 
 #ifndef NDEBUG
   #define NA_START_TEST_CASE\
-    if(na_test_case_running)\
+    if(naGetTestCaseRunning())\
       naError("A test case is already running. This might lead to bad test results.");\
-    na_test_case_running = NA_TRUE;\
-    na_error_count = 0;
+    naSetTestCaseRunning(NA_TRUE);\
+    naResetErrorCount();
 #else
   #define NA_START_TEST_CASE\
-    na_test_case_running = NA_TRUE;\
-    na_error_count = 0;
+    naSetTestCaseRunning(NA_TRUE);\
+    naResetErrorCount();
 #endif
 
 
 #define NA_STOP_TEST_CASE\
-  na_test_case_running = NA_FALSE;
+  naSetTestCaseRunning(NA_FALSE);
 
 
 
-#define naT(expr)\
+#define naTest(expr)\
   {\
     NA_START_TEST_CASE\
     NABool success = expr;\
@@ -57,7 +61,7 @@ NA_HAPI void naStopTestGroup(void);
 
 // Testing for errors is only useful when NDEBUG is undefined.
 #ifndef NDEBUG
-  #define naE(expr)\
+  #define naTestError(expr)\
     {\
       NA_START_TEST_CASE\
       { expr; }\
@@ -65,37 +69,40 @@ NA_HAPI void naStopTestGroup(void);
       naAddTestError(#expr, __LINE__);\
     }
 #else
-  #define naE(expr)
+  #define naTestError(expr)
 #endif
 
-#define naG(string)\
+#define naTestGroup(string)\
   naStartTestGroup(string, __LINE__);\
   for(int g = 0; g < 1 ; g++, naStopTestGroup())
 
-#define naF(identifier)\
+#define naTestGroupFunction(identifier)\
   {\
   naStartTestGroup(#identifier, __LINE__);\
   test ## identifier();\
   naStopTestGroup();\
   }
 
+#define naUntested(text)\
+  naRegisterUntested(#text);
+
 
 #else // NA_TESTING_ENABLED == 1
 
-#define naT(expr)\
+#define naTest(expr)\
   NA_UNUSED(expr)
-#define naE(expr)\
+#define naTestError(expr)\
   NA_UNUSED(expr)
-#define naG(string)\
+#define naTestGroup(string)\
   NA_UNUSED(string);\
   for(int g = 0; g < 1 ; g++)
-#define naF(identifier)
+#define naTestGroupFunction(identifier)
 
 #endif // NA_TESTING_ENABLED == 1
 
 
 
-#endif // NA_TEST_II_INCLUDED
+#endif // NA_TESTING_II_INCLUDED
 
 
 

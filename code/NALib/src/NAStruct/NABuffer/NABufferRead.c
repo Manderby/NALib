@@ -80,7 +80,7 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
 
 
 
-NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, NAInt indx){
+NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, NAInt index){
   NAByte retbyte;
   NABufferIterator iter;
   NABool found;
@@ -91,7 +91,7 @@ NA_DEF NAByte naGetBufferByteAtIndex(NABuffer* buffer, NAInt indx){
   #endif
 
   iter = naMakeBufferAccessor(buffer);  
-  found = naLocateBufferAbsolute(&iter, indx);
+  found = naLocateBufferAbsolute(&iter, index);
   if(found){
     retbyte = naGetBufferu8(&iter);
   }else{

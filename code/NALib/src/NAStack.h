@@ -48,13 +48,13 @@ typedef struct NAStackIterator NAStackIterator;
 
 
 // Creates a new NAStack with the desired type size. The memory will grow
-// exponentially over time. With the minimalcount parameter, you can define,
+// exponentially over time. With the minimalCount parameter, you can define,
 // where the exponential growth shall start. NAStack will always have at least
 // that amount of memory prepared. The values 0 and 1 are reserved for future
-// use, you have to use at least a minimalcount of 2.
+// use, you have to use at least a minimalCount of 2.
 NA_IAPI NAStack* naInitStack( NAStack* stack,
-                                NAInt typesize,
-                                NAInt minimalcount);
+                                NAInt typeSize,
+                                NAInt minimalCount);
 
 // Clears the given stack.
 NA_IAPI void naClearStack  (NAStack* stack);

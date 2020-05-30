@@ -5,9 +5,9 @@
 
 
 void testNAChar(){
-  naG("typedefs"){
+  naTestGroup("typedefs"){
     NAUTF8Char utf8Char = 'M';
-    naT(utf8Char == 'M');
+    naTest(utf8Char == 'M');
   }
 }
 

@@ -358,7 +358,7 @@ Version 12 (first published 2015-August-30):
   introduced: NACArray, NAMemoryBlock and NAPtr. The NAPtr is the same as
   NALValue before, NALValue is now something different. In total, there are
   now four structs which corresponds to four combinations of having a bytesize
-  and typesize available per pointer or not. The NAPointer struct distinguishes
+  and typeSize available per pointer or not. The NAPointer struct distinguishes
   between all of them. NAPointer now much bigger and stores flags separate from
   refcount.
 - NAGrowingSpace now grows exponentially. Slight changes to API. Simplified

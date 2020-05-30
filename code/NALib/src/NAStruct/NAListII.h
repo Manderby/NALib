@@ -19,7 +19,7 @@ struct NAListElement{
   NAListElement* prev;  // A pointer to the previous element
   #ifndef NDEBUG
     NAList* list;       // A list pointer just for debugging.
-    NAUInt itercount;   // debugging iterator count.
+    NAUInt iterCount;   // debugging iterator count.
   #endif
 };
 NA_EXTERN_RUNTIME_TYPE(NAListElement);
@@ -30,7 +30,7 @@ struct NAList{
                           // Stores the first and last element of the list
                           // as next and prev pointer. The content is NA_NULL.
   #ifndef NDEBUG
-    NAUInt itercount;     // debugging iterator count
+    NAUInt iterCount;     // debugging iterator count
   #endif
 };
 
@@ -51,7 +51,7 @@ NA_IDEF NAListElement* naNewListElement(NAListElement* prev, NAListElement* next
   elem->prev = prev;
   elem->next = next;
   #ifndef NDEBUG
-    elem->itercount = 0;
+    elem->iterCount = 0;
   #endif
   return elem;
 }
@@ -68,8 +68,8 @@ NA_IDEF NAList* naInitList(NAList* list){
   list->sentinel.prev = &(list->sentinel);
   #ifndef NDEBUG
     list->sentinel.list = list;
-    list->sentinel.itercount = 0;
-    list->itercount = 0;
+    list->sentinel.iterCount = 0;
+    list->iterCount = 0;
   #endif
   return list;
 }
@@ -102,7 +102,7 @@ NA_IDEF void naClearList(NAList* list){
   #ifndef NDEBUG
     if(!list)
       naCrash("list is Null-Pointer.");
-    if(list->itercount)
+    if(list->iterCount)
       naError("Iterators still running on the list. Did you use naClearListIterator?");
   #endif
   naEmptyList(list);
@@ -120,7 +120,7 @@ NA_IDEF void naEmptyList(NAList* list){
   cur = list->sentinel.next;
   while(cur != &(list->sentinel)){
     #ifndef NDEBUG
-      if(cur->itercount)
+      if(cur->iterCount)
         naError("Iterators still running on a list element. Did you use naClearListIterator?");
     #endif
     next = cur->next;
@@ -155,7 +155,7 @@ NA_HIDEF void naInjectListElement(NAList* list, NAListElement* element){
   element->prev->next = element;
   #ifndef NDEBUG
     element->list = list;
-    if(element->itercount)
+    if(element->iterCount)
       naError("Iterators are still using this element. Undefined behaviour.");
   #endif
   list->count++;
@@ -206,7 +206,7 @@ NA_HIDEF void naEjectList(NAList* list, NAListElement* element, NABool deleteele
   element->next->prev = element->prev;
   #ifndef NDEBUG
     element->list = NA_NULL;  // This will capture some errors.
-    if(element->itercount)
+    if(element->iterCount)
       naError("Iterators still running on a list element. Did you use naClearListIterator?");
   #endif
   list->count--;
@@ -399,7 +399,7 @@ NA_HIDEF void naInjectExistingListElement(NAList* list, NAListElement* element){
   element->prev->next = element;
   #ifndef NDEBUG
     element->list = list;
-    if(element->itercount)
+    if(element->iterCount)
       naError("Iterators are still using this element. Undefined behaviour.");
   #endif
   list->count++;
@@ -421,7 +421,7 @@ NA_IDEF void naMoveListToLast(NAList* src, NAList* dst){
   NAListElement* lastelement;
 
   #ifndef NDEBUG
-    if(src->itercount)
+    if(src->iterCount)
       naError("Src list still has iterators operating upon the elements.");
   #endif
 
@@ -449,7 +449,7 @@ NA_IDEF void naMoveListFirstToLast(NAList* src, NAList* dst){
   #ifndef NDEBUG
     if(naIsListEmpty(src))
       naError("Src List has no first element because it is empty.");
-    if(src->sentinel.next->itercount)
+    if(src->sentinel.next->iterCount)
       naError("First element still has iterators running.");
   #endif
   element = src->sentinel.next;
@@ -495,8 +495,8 @@ NA_IDEF NAListIterator naMakeListAccessor(const NAList* list){
     if(!list)
       naCrash("list is null pointer");
     iter.mutator = NA_FALSE;
-    iter.cur->itercount++;
-    ((NAList*)list)->itercount++;
+    iter.cur->iterCount++;
+    ((NAList*)list)->iterCount++;
   #endif
   return iter;
 }
@@ -509,8 +509,8 @@ NA_IDEF NAListIterator naMakeListMutator(const NAList* list){
   iter.cur = (NAListElement*)(&(list->sentinel));
   #ifndef NDEBUG
     iter.mutator = NA_TRUE;
-    iter.cur->itercount++;
-    ((NAList*)list)->itercount++;
+    iter.cur->iterCount++;
+    ((NAList*)list)->iterCount++;
   #endif
   return iter;
 }
@@ -523,8 +523,8 @@ NA_IDEF NAListIterator naMakeListModifier(NAList* list){
   iter.cur = (NAListElement*)(&(list->sentinel));
   #ifndef NDEBUG
     iter.mutator = NA_TRUE;
-    iter.cur->itercount++;
-    list->itercount++;
+    iter.cur->iterCount++;
+    list->iterCount++;
   #endif
   return iter;
 }
@@ -534,11 +534,11 @@ NA_IDEF NAListIterator naMakeListModifier(NAList* list){
 NA_IDEF void naResetListIterator(NAListIterator* iter){
   const NAList* list = (NAList*)naGetPtrConst(iter->listptr);
   #ifndef NDEBUG
-    iter->cur->itercount--;
+    iter->cur->iterCount--;
   #endif
   iter->cur = (NAListElement*)(&(list->sentinel));
   #ifndef NDEBUG
-    iter->cur->itercount++;
+    iter->cur->iterCount++;
   #endif
 }
 
@@ -547,11 +547,11 @@ NA_IDEF void naResetListIterator(NAListIterator* iter){
 NA_IDEF void naClearListIterator(NAListIterator* iter){
   #ifndef NDEBUG
     const NAList* list;
-    if(iter->cur->itercount == 0)
+    if(iter->cur->iterCount == 0)
       naError("No Iterator at this element. Did you do a double clear?");
-    iter->cur->itercount--;
+    iter->cur->iterCount--;
     list = (const NAList*)naGetPtrConst(iter->listptr);
-    ((NAList*)list)->itercount--;
+    ((NAList*)list)->iterCount--;
   #else
     NA_UNUSED(iter);
   #endif
@@ -564,11 +564,11 @@ NA_IDEF NABool naLocateListFirst(NAListIterator* iter){
   #ifndef NDEBUG
     if(naIsListEmpty(list))
       naError("List is empty");
-    iter->cur->itercount--;
+    iter->cur->iterCount--;
   #endif
   iter->cur = list->sentinel.next;
   #ifndef NDEBUG
-    iter->cur->itercount++;
+    iter->cur->iterCount++;
   #endif
   return NA_TRUE;
 }
@@ -580,11 +580,11 @@ NA_IDEF NABool naLocateListLast(NAListIterator* iter){
   #ifndef NDEBUG
     if(naIsListEmpty(list))
       naError("List is empty");
-    iter->cur->itercount--;
+    iter->cur->iterCount--;
   #endif
   iter->cur = list->sentinel.prev;
   #ifndef NDEBUG
-    iter->cur->itercount++;
+    iter->cur->iterCount++;
   #endif
   return NA_TRUE;
 }
@@ -595,11 +595,11 @@ NA_IAPI void naLocateListIterator(NAListIterator* dstiter, NAListIterator* srcit
   #ifndef NDEBUG
     if(naGetPtrConst(dstiter->listptr) != naGetPtrConst(srciter->listptr))
       naError("Iterators do not share the same list");
-    dstiter->cur->itercount--;
+    dstiter->cur->iterCount--;
   #endif
   dstiter->cur = srciter->cur;
   #ifndef NDEBUG
-    dstiter->cur->itercount++;
+    dstiter->cur->iterCount++;
   #endif
 }
 
@@ -610,13 +610,13 @@ NA_IAPI void naLocateListIterator(NAListIterator* dstiter, NAListIterator* srcit
 
 NA_IDEF NABool naIterateList(NAListIterator* iter){
   #ifndef NDEBUG
-    if(iter->cur->itercount == 0)
+    if(iter->cur->iterCount == 0)
       naError("No Iterator at this element. Did you do a double clear?");
-    iter->cur->itercount--;
+    iter->cur->iterCount--;
   #endif
   iter->cur = iter->cur->next;
   #ifndef NDEBUG
-    iter->cur->itercount++;
+    iter->cur->iterCount++;
   #endif
 
   return (iter->cur != &(((NAList*)naGetPtrConst(iter->listptr))->sentinel));
@@ -626,13 +626,13 @@ NA_IDEF NABool naIterateList(NAListIterator* iter){
 
 NA_IDEF NABool naIterateListBack(NAListIterator* iter){
   #ifndef NDEBUG
-    if(iter->cur->itercount == 0)
+    if(iter->cur->iterCount == 0)
       naError("No Iterator at this element. Did you do a double clear?");
-    iter->cur->itercount--;
+    iter->cur->iterCount--;
   #endif
   iter->cur = iter->cur->prev;
   #ifndef NDEBUG
-    iter->cur->itercount++;
+    iter->cur->iterCount++;
   #endif
 
   return (iter->cur != &(((NAList*)naGetPtrConst(iter->listptr))->sentinel));
@@ -651,14 +651,14 @@ NA_IDEF NABool naIterateListStep(NAListIterator* iter, NAInt step){
   #endif
   while(step > NA_ZERO){
     #ifndef NDEBUG
-      if(iter->cur->itercount == 0)
+      if(iter->cur->iterCount == 0)
         naError("No Iterator at this element. Did you do a double clear?");
-      iter->cur->itercount--;
+      iter->cur->iterCount--;
     #endif
     iter->cur = iter->cur->next;
     step--;
     #ifndef NDEBUG
-      iter->cur->itercount++;
+      iter->cur->iterCount++;
       if((iter->cur == &(((NAList*)naGetPtrConst(iter->listptr))->sentinel)) && (step != NA_ZERO)){
         naError("The iteration overflows the number of elements.");
       }
@@ -666,14 +666,14 @@ NA_IDEF NABool naIterateListStep(NAListIterator* iter, NAInt step){
   }
   while(step < NA_ZERO){
     #ifndef NDEBUG
-      if(iter->cur->itercount == 0)
+      if(iter->cur->iterCount == 0)
         naError("No Iterator at this element. Did you do a double clear?");
-      iter->cur->itercount--;
+      iter->cur->iterCount--;
     #endif
     iter->cur = iter->cur->prev;
     step++;
     #ifndef NDEBUG
-      iter->cur->itercount++;
+      iter->cur->iterCount++;
       if((iter->cur == &(((NAList*)naGetPtrConst(iter->listptr))->sentinel)) && (step != NA_ZERO)){
         naError("The iteration underflows the number of elements.");
       }
@@ -859,12 +859,12 @@ NA_IDEF void naRemoveListCurConst(NAListIterator* iter, NABool advance){
   #endif
   newelem = advance ? iter->cur->next : iter->cur->prev;
   #ifndef NDEBUG
-    iter->cur->itercount--;
+    iter->cur->iterCount--;
   #endif
   naEjectListConst(list, iter->cur, NA_TRUE);
   iter->cur = newelem;
   #ifndef NDEBUG
-    iter->cur->itercount++;
+    iter->cur->iterCount++;
   #endif
 }
 
@@ -885,17 +885,17 @@ NA_IDEF void* naRemoveListCurMutable(NAListIterator* iter, NABool advance){
       naError("List is empty");
     if(iter->cur == &(list->sentinel))
       naError("No current internal pointer is set. Major memory corruption expected...");
-    if(iter->cur->itercount == 0)
+    if(iter->cur->iterCount == 0)
       naError("Internal error. No iterators registered at element which iterator is located at now");
   #endif
   newelem = advance ? iter->cur->next : iter->cur->prev;
   #ifndef NDEBUG
-    iter->cur->itercount--;
+    iter->cur->iterCount--;
   #endif
   returncontent = naEjectListMutable(list, iter->cur, NA_TRUE);
   iter->cur = newelem;
   #ifndef NDEBUG
-    iter->cur->itercount++;
+    iter->cur->iterCount++;
   #endif
   return returncontent;
 }
@@ -992,8 +992,8 @@ NA_IDEF void naMoveListCurToFirst(NAListIterator* srciter, NABool advance, NALis
 
   newelem = advance ? srciter->cur->next : srciter->cur->prev;
   #ifndef NDEBUG
-    srciter->cur->itercount--;
-    if(srciter->cur->itercount)
+    srciter->cur->iterCount--;
+    if(srciter->cur->iterCount)
       naError("element has other iterators running.");
   #endif
   naEjectListConst(src, srciter->cur, NA_FALSE);
@@ -1002,7 +1002,7 @@ NA_IDEF void naMoveListCurToFirst(NAListIterator* srciter, NABool advance, NALis
   naInjectExistingListElement(dst, srciter->cur);
   srciter->cur = newelem;
   #ifndef NDEBUG
-    srciter->cur->itercount++;
+    srciter->cur->iterCount++;
   #endif
 
 }
@@ -1026,8 +1026,8 @@ NA_IDEF void naMoveListCurToLast(NAListIterator* srciter, NABool advance, NAList
 
   newelem = advance ? srciter->cur->next : srciter->cur->prev;
   #ifndef NDEBUG
-    srciter->cur->itercount--;
-    if(srciter->cur->itercount)
+    srciter->cur->iterCount--;
+    if(srciter->cur->iterCount)
       naError("element has other iterators running.");
   #endif
   naEjectListConst(src, srciter->cur, NA_FALSE);
@@ -1036,7 +1036,7 @@ NA_IDEF void naMoveListCurToLast(NAListIterator* srciter, NABool advance, NAList
   naInjectExistingListElement(dst, srciter->cur);
   srciter->cur = newelem;
   #ifndef NDEBUG
-    srciter->cur->itercount++;
+    srciter->cur->iterCount++;
   #endif
 
 }
@@ -1059,7 +1059,7 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* srciter, NAList* dst){
     NAInt movecount = 1;
 
     #ifndef NDEBUG
-      srciter->cur->itercount--;
+      srciter->cur->iterCount--;
     #endif
 
     // Move to the first element if the list is rewinded.
@@ -1072,7 +1072,7 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* srciter, NAList* dst){
       // Test all remaining elements for iterators
       testelem = srciter->cur;
       while(testelem != &(src->sentinel)){
-        if(testelem->itercount)
+        if(testelem->iterCount)
           naError("Element still has an iterator");
         testelem = testelem->next;
       }
@@ -1106,7 +1106,7 @@ NA_IDEF void naMoveListRemainingToLast(NAListIterator* srciter, NAList* dst){
     dst->count += movecount;
 
     #ifndef NDEBUG
-      srciter->cur->itercount++;
+      srciter->cur->iterCount++;
     #endif
   }
 }
@@ -1128,12 +1128,12 @@ NA_IDEF void naMoveListThisToFirst(NAListIterator* srciter, NAList* dst){
   #endif
 
   #ifndef NDEBUG
-    if(!srciter->cur->itercount)
+    if(!srciter->cur->iterCount)
       naError("Count is already 0");
-    if(!src->itercount)
+    if(!src->iterCount)
       naError("Count is already 0");
-    srciter->cur->itercount--;
-    src->itercount--;
+    srciter->cur->iterCount--;
+    src->iterCount--;
   #endif
   naEjectListConst(src, srciter->cur, NA_FALSE);
   srciter->cur->next = dst->sentinel.next;
@@ -1142,8 +1142,8 @@ NA_IDEF void naMoveListThisToFirst(NAListIterator* srciter, NAList* dst){
   naCleanupPtr(&(srciter->listptr), NA_NULL);
   srciter->listptr = naMakePtrWithDataMutable(dst);
   #ifndef NDEBUG
-    srciter->cur->itercount++;
-    dst->itercount++;
+    srciter->cur->iterCount++;
+    dst->iterCount++;
   #endif
 }
 
@@ -1164,12 +1164,12 @@ NA_IDEF void naMoveListThisToLast(NAListIterator* srciter, NAList* dst){
   #endif
 
   #ifndef NDEBUG
-    if(!srciter->cur->itercount)
+    if(!srciter->cur->iterCount)
       naError("Count is already 0");
-    if(!src->itercount)
+    if(!src->iterCount)
       naError("Count is already 0");
-    srciter->cur->itercount--;
-    src->itercount--;
+    srciter->cur->iterCount--;
+    src->iterCount--;
   #endif
   naEjectListConst(src, srciter->cur, NA_FALSE);
   srciter->cur->next = &(dst->sentinel);
@@ -1178,8 +1178,8 @@ NA_IDEF void naMoveListThisToLast(NAListIterator* srciter, NAList* dst){
   naCleanupPtr(&(srciter->listptr), NA_NULL);
   srciter->listptr = naMakePtrWithDataMutable(dst);
   #ifndef NDEBUG
-    srciter->cur->itercount++;
-    dst->itercount++;
+    srciter->cur->iterCount++;
+    dst->iterCount++;
   #endif
 }
 

@@ -245,8 +245,8 @@ NA_HDEF const void* naRemoveHeapRootConstNoBack(NAHeap* heap){
   returnvalue = naGetPtrConst(thedata[1].ptr);
   heap->count--;
   if(heap->count){
-    NAInt curindex = heap->moveup(heap, thedata[heap->count + 1].key, 1);
-    thedata[curindex] = thedata[heap->count + 1];
+    NAInt curIndex = heap->moveup(heap, thedata[heap->count + 1].key, 1);
+    thedata[curIndex] = thedata[heap->count + 1];
   }
   return returnvalue;
 }
@@ -264,9 +264,9 @@ NA_HDEF const void* naRemoveHeapRootConstBack(NAHeap* heap){
   *(thedata[1].backpointer) = 0;
   heap->count--;
   if(heap->count){
-    NAInt curindex = heap->moveup(heap, thedata[heap->count + 1].key, 1);
-    thedata[curindex] = thedata[heap->count + 1];
-    *(thedata[curindex].backpointer) = curindex;
+    NAInt curIndex = heap->moveup(heap, thedata[heap->count + 1].key, 1);
+    thedata[curIndex] = thedata[heap->count + 1];
+    *(thedata[curIndex].backpointer) = curIndex;
   }
   return returnvalue;
 }
@@ -283,8 +283,8 @@ NA_HDEF void* naRemoveHeapRootMutableNoBack(NAHeap* heap){
   returnvalue = naGetPtrMutable(thedata[1].ptr);
   heap->count--;
   if(heap->count){
-    NAInt curindex = heap->moveup(heap, thedata[heap->count + 1].key, 1);
-    thedata[curindex] = thedata[heap->count + 1];
+    NAInt curIndex = heap->moveup(heap, thedata[heap->count + 1].key, 1);
+    thedata[curIndex] = thedata[heap->count + 1];
   }
   return returnvalue;
 }
@@ -301,9 +301,9 @@ NA_HDEF void* naRemoveHeapRootMutableBack(NAHeap* heap){
   *(thedata[1].backpointer) = 0;
   heap->count--;
   if(heap->count){
-    NAInt curindex = heap->moveup(heap, thedata[heap->count + 1].key, 1);
-    thedata[curindex] = thedata[heap->count + 1];
-    *(thedata[curindex].backpointer) = curindex;
+    NAInt curIndex = heap->moveup(heap, thedata[heap->count + 1].key, 1);
+    thedata[curIndex] = thedata[heap->count + 1];
+    *(thedata[curIndex].backpointer) = curIndex;
   }
   return returnvalue;
 }
@@ -334,9 +334,9 @@ NA_HDEF const void* naRemoveHeapPosConstBack(NAHeap* heap, NAInt backpointer){
   *(thedata[backpointer].backpointer) = 0;
   heap->count--;
   if(heap->count){
-    NAInt curindex = heap->moveup(heap, thedata[heap->count + 1].key, backpointer);
-    thedata[curindex] = thedata[heap->count + 1];
-    *(thedata[curindex].backpointer) = curindex;
+    NAInt curIndex = heap->moveup(heap, thedata[heap->count + 1].key, backpointer);
+    thedata[curIndex] = thedata[heap->count + 1];
+    *(thedata[curIndex].backpointer) = curIndex;
   }
   return returnvalue;
 }
@@ -366,9 +366,9 @@ NA_HDEF void* naRemoveHeapPosMutableBack(NAHeap* heap, NAInt backpointer){
   *(thedata[backpointer].backpointer) = 0;
   heap->count--;
   if(heap->count){
-    NAInt curindex = heap->moveup(heap, thedata[heap->count + 1].key, backpointer);
-    thedata[curindex] = thedata[heap->count + 1];
-    *(thedata[curindex].backpointer) = curindex;
+    NAInt curIndex = heap->moveup(heap, thedata[heap->count + 1].key, backpointer);
+    thedata[curIndex] = thedata[heap->count + 1];
+    *(thedata[curIndex].backpointer) = curIndex;
   }
   return returnvalue;
 }
@@ -387,7 +387,7 @@ NA_HDEF void naUpdateHeapElementNoBack(NAHeap* heap, NAInt backpointer){
 NA_HDEF void naUpdateHeapElementBack(NAHeap* heap, NAInt backpointer){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   NAHeapBackEntry tmp;
-  NAInt curindex;
+  NAInt curIndex;
   #ifndef NDEBUG
     if(backpointer > heap->count)
       naError("backpointer makes no sense.");
@@ -395,10 +395,10 @@ NA_HDEF void naUpdateHeapElementBack(NAHeap* heap, NAInt backpointer){
       naError("backpointer says that element is not part of the heap.");
   #endif
   tmp = thedata[backpointer];
-  curindex = heap->moveup(heap, tmp.key, backpointer);
-  curindex = heap->movedown(heap, tmp.key, curindex);
-  thedata[curindex] = tmp;
-  *(thedata[curindex].backpointer) = curindex;
+  curIndex = heap->moveup(heap, tmp.key, backpointer);
+  curIndex = heap->movedown(heap, tmp.key, curIndex);
+  thedata[curIndex] = tmp;
+  *(thedata[curIndex].backpointer) = curIndex;
 }
 
 

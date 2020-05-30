@@ -45,8 +45,8 @@
 
 // Printout, testing, debugging, voodoo and fairy dust
 #include "NABase/NAMacros.h"
-#include "NABase/NATest.h"
-#include "NABase/NADebug.h"
+#include "NABase/NATesting.h"
+#include "NABase/NADebugging.h"
 
 // Adding some base mathematical implementations
 #include "NABase/NANumerics.h"

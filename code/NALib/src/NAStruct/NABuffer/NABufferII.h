@@ -175,7 +175,7 @@ struct NABuffer{
   NATree parts;             // Tree with all parts in this buffer
 
   #ifndef NDEBUG
-    NAInt itercount;
+    NAInt iterCount;
   #endif
 };
 
@@ -246,8 +246,8 @@ NA_HAPI void naStoreBufferBytes(NABufferIterator* iter, const void* data, NAInt 
 // NAMemoryBlock
 NA_HIAPI NAMemoryBlock* naNewMemoryBlock(NAInt bytesize);
 NA_HIAPI NAMemoryBlock* naNewMemoryBlockWithData(NAPtr data, NAInt bytesize, NAMutator destructor);
-NA_HIAPI const void* naGetMemoryBlockDataPointerConst(NAMemoryBlock* block, NAInt indx);
-NA_HIAPI void* naGetMemoryBlockDataPointerMutable(NAMemoryBlock* block, NAInt indx);
+NA_HIAPI const void* naGetMemoryBlockDataPointerConst(NAMemoryBlock* block, NAInt index);
+NA_HIAPI void* naGetMemoryBlockDataPointerMutable(NAMemoryBlock* block, NAInt index);
 
 
 #include "NABufferHelperII.h"

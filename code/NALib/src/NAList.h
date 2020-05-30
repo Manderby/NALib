@@ -141,7 +141,7 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 // from a list. It gives the programmer way more flexibility to move freely
 // within a list.
 //
-// To keep the API clean, the function names do not use "ListIterator" but
+// To keep the API clean, the function names do not use "listIterator" but
 // instead simply use "List" as if the iterators would denote the list per se.
 //
 // Having a separate iterator has several advantages. It may need a little bit
@@ -227,7 +227,7 @@ NA_IAPI void naClearListIterator(NAListIterator* iter);
 NA_IAPI NABool naLocateListFirst    (NAListIterator* iter);
 NA_IAPI NABool naLocateListLast     (NAListIterator* iter);
 NA_API  NABool naLocateListData     (NAListIterator* iter, const void* data);
-NA_API  NABool naLocateListIndex    (NAListIterator* iter, NAInt indx);
+NA_API  NABool naLocateListIndex    (NAListIterator* iter, NAInt index);
 
 // Positions dstiter at the same element as srciter.
 NA_IAPI void   naLocateListIterator (NAListIterator* dstiter,

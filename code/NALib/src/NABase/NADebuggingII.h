@@ -1,9 +1,9 @@
 
-#if defined NA_DEBUG_II_INCLUDED || !defined NA_BASE_INCLUDED
+#if defined NA_DEBUGGING_II_INCLUDED || !defined NA_BASE_INCLUDED
   #warning "Do not include this file directly. Use NABase.h"
 #endif
-#ifndef NA_DEBUG_II_INCLUDED
-#define NA_DEBUG_II_INCLUDED
+#ifndef NA_DEBUGGING_II_INCLUDED
+#define NA_DEBUGGING_II_INCLUDED
 
 
 
@@ -35,7 +35,7 @@
 
 
 
-#endif // NA_DEBUG_II_INCLUDED
+#endif // NA_DEBUGGING_II_INCLUDED
 
 
 

@@ -128,7 +128,7 @@ struct NATreeConfiguration{
 struct NATreeItem{
   NATreeNode* parent;
   #ifndef NDEBUG
-    NAInt itercount;
+    NAInt iterCount;
   #endif
 };
 
@@ -154,7 +154,7 @@ struct NATree{
   NATreeItem* root;
   NAInt flags;
   #ifndef NDEBUG
-    NAInt itercount;
+    NAInt iterCount;
   #endif
 };
 
@@ -216,7 +216,7 @@ NA_HIAPI void naSetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newitem
 NA_HIAPI const NATree* naGetTreeIteratorTreeConst(const NATreeIterator* iter);
 NA_HIAPI NATree* naGetTreeIteratorTreeMutable(NATreeIterator* iter);
 NA_HIAPI NABool naAddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafInsertOrder insertOrder, NABool movetonew);
-NA_HAPI void naIterateTreeCapture(NATreeIterator* iter, NAInt indx, NATreeIterationInfo* info);
+NA_HAPI void naIterateTreeCapture(NATreeIterator* iter, NAInt index, NATreeIterationInfo* info);
 NA_HAPI void naIterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info);
 NA_HAPI  NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info);
 NA_HAPI  NABool naLocateTreeKeyCore(NATreeIterator* iter, const void* key, NABool usebubble);

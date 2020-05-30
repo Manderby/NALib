@@ -222,7 +222,7 @@ NA_IAPI void   naSetBufferEndianness(NABuffer* buffer, NAInt endianness);
 
 // Returns the byte at the given index. Warning: This function is costly. You
 // might want to use one of the Reading or Parsing functions instead.
-NA_API NAByte naGetBufferByteAtIndex(NABuffer* buffer, NAInt indx);
+NA_API NAByte naGetBufferByteAtIndex(NABuffer* buffer, NAInt index);
 
 // Searches for the given byte starting at (and including) startoffset, either
 // forward or backwards.

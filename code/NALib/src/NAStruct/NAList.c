@@ -25,18 +25,18 @@ NA_DEF NABool naLocateListData(NAListIterator* iter, const void* data){
 
 
 
-NA_DEF NABool naLocateListIndex(NAListIterator* iter, NAInt indx){
+NA_DEF NABool naLocateListIndex(NAListIterator* iter, NAInt index){
   NAList* mutablelist = (NAList*)naGetPtrConst(iter->listptr);
 
-  if(indx < 0){indx += mutablelist->count;}
-  if(indx < 0){
+  if(index < 0){index += mutablelist->count;}
+  if(index < 0){
     #ifndef NDEBUG
       naError("Negative index underflows the range of the list");
     #endif
     iter->cur = &(mutablelist->sentinel);
     return NA_FALSE;
   }
-  if(indx >= (NAInt)mutablelist->count){
+  if(index >= (NAInt)mutablelist->count){
     #ifndef NDEBUG
       naError("Index overflows the range of the list");
     #endif
@@ -44,20 +44,20 @@ NA_DEF NABool naLocateListIndex(NAListIterator* iter, NAInt indx){
     return NA_FALSE;
   }
 
-  if(indx < ((NAInt)mutablelist->count / 2)){
+  if(index < ((NAInt)mutablelist->count / 2)){
     // Go forward from start to end
     iter->cur = mutablelist->sentinel.next;
-    while(indx){
+    while(index){
       iter->cur = iter->cur->next;
-      indx--;
+      index--;
     }
   }else{
     // Go backward from end to start
     iter->cur = mutablelist->sentinel.prev;
-    indx = indx - mutablelist->count + 1;
-    while(indx){
+    index = index - mutablelist->count + 1;
+    while(index){
       iter->cur = iter->cur->prev;
-      indx++;
+      index++;
     }
   }
 

@@ -6,26 +6,26 @@
 // Locates the iterator on the "next" leaf from the current node given an
 // index of the child to first look at. If if no more child is available, the
 // iterator is set to the initial position.
-NA_HDEF void naIterateTreeCapture(NATreeIterator* iter, NAInt indx, NATreeIterationInfo* info){
+NA_HDEF void naIterateTreeCapture(NATreeIterator* iter, NAInt index, NATreeIterationInfo* info){
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
   NATreeNode* parentNode;
 
   #ifndef NDEBUG
     if(naIsTreeItemLeaf(tree, iter->item))
       naError("Iter is not placed at a node");
-    if(indx == info->breakindx)
+    if(index == info->breakindx)
       naError("Index is aready at breakindex. Function will not work properly.");
   #endif
   
   parentNode = (NATreeNode*)iter->item;
 
   // Note: It is safe to assume that this loop is executed at least once.
-  while(indx != info->breakindx){
+  while(index != info->breakindx){
     // We set the iterator to whatever is stored in the desired child.
-    naSetTreeIteratorCurItem(iter, naGetTreeNodeChild(tree->config, parentNode, indx));
+    naSetTreeIteratorCurItem(iter, naGetTreeNodeChild(tree->config, parentNode, index));
 
     if(iter->item){
-      if(naIsNodeChildLeaf(parentNode, indx)){
+      if(naIsNodeChildLeaf(parentNode, index)){
         // The child is a leaf.
         const void* key = naGetTreeLeafKey(tree->config, (NATreeLeaf*)iter->item);
         if(  (!info->lowerlimit || tree->config->keyLowerEqualComparer(info->lowerlimit, key))
@@ -42,14 +42,14 @@ NA_HDEF void naIterateTreeCapture(NATreeIterator* iter, NAInt indx, NATreeIterat
         {
           // we have to go deeper.
           parentNode = (NATreeNode*)iter->item;
-          indx = info->startindx;
+          index = info->startindx;
           continue;
         }
       }
       naSetTreeIteratorCurItem(iter, NA_NULL);
     }
     // In any other case, just try the next child.
-    indx += info->step;
+    index += info->step;
   }
 }
 
