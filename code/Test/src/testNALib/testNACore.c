@@ -1,56 +1,22 @@
 
 #include "NATesting.h"
-#include "NAMemory.h"
 #include <stdio.h>
 
 
 
 // Prototypes
-void printNABase(void);
-void printNACore(void);
+void printNATesting(void);
 
-void testNABase(void);
-void testNACore(void);
+void testNATesting(void);
 
 
 
-int main(void){
+void printNACore(){
+  printNATesting();
+}
 
-  printf("NALib Version: %d (", NA_VERSION);
-  #ifndef NDEBUG
-    printf("Debug");
-  #else
-    printf("Release");
-  #endif
-  printf(", %d Bits Addresses, %d Bits Integers)" NA_NL NA_NL, NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
-
-  naStartRuntime();
-
-
-
-  // Print macro information
-  #if NA_PRINTOUT_ENABLED == 1
-    //printNABase();
-    //printNACore();
-  #endif
-
-
-
-  // Now, start testing
-  naStartTesting("NALib", NA_FALSE);
-    naTestGroupFunction(NABase);
-    //naTestGroupFunction(NACore);
-
-    //printf(NA_NL);
-    //naPrintUntested();
-
-    printf(NA_NL);
-  naStopTesting();
-
-
-
-  naStopRuntime();
-  return 0;
+void testNACore(){
+  naTestGroupFunction(NATesting);
 }
 
 

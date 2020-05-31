@@ -1,56 +1,54 @@
 
 #include "NATesting.h"
-#include "NAMemory.h"
 #include <stdio.h>
 
 
 
 // Prototypes
-void printNABase(void);
-void printNACore(void);
+void printNAConfiguration(void);
+void printNAEnvironment(void);
+void printNACompiler(void);
+void printNALanguage(void);
+void printNAEncoding(void);
+void printNAChar(void);
+void printNAInteger(void);
+void printNAMacros(void);
+void printNADebugging(void);
+void printNANumerics(void);
+void printNAFloatingPoint(void);
 
-void testNABase(void);
-void testNACore(void);
-
-
-
-int main(void){
-
-  printf("NALib Version: %d (", NA_VERSION);
-  #ifndef NDEBUG
-    printf("Debug");
-  #else
-    printf("Release");
-  #endif
-  printf(", %d Bits Addresses, %d Bits Integers)" NA_NL NA_NL, NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
-
-  naStartRuntime();
-
-
-
-  // Print macro information
-  #if NA_PRINTOUT_ENABLED == 1
-    //printNABase();
-    //printNACore();
-  #endif
+void testNALanguage(void);
+void testNAChar(void);
+void testNAInteger(void);
+void testNAMacros(void);
+void testNADebugging(void);
+void testNANumerics(void);
+void testNAFloatingPoint(void);
 
 
 
-  // Now, start testing
-  naStartTesting("NALib", NA_FALSE);
-    naTestGroupFunction(NABase);
-    //naTestGroupFunction(NACore);
+void printNABase(){
+  printNAConfiguration();
+  printNAEnvironment();
+  printNACompiler();
+  printNALanguage();
+  printNAEncoding();
+  printNAChar();
+  printNAInteger();
+  printNAMacros();
+  printNADebugging();
+  printNANumerics();
+  printNAFloatingPoint();
+}
 
-    //printf(NA_NL);
-    //naPrintUntested();
-
-    printf(NA_NL);
-  naStopTesting();
-
-
-
-  naStopRuntime();
-  return 0;
+void testNABase(){
+  //naTestGroupFunction(NALanguage);
+  //naTestGroupFunction(NAChar);
+  naTestGroupFunction(NAInteger);
+  //naTestGroupFunction(NAMacros);
+  //naTestGroupFunction(NADebugging);
+  //naTestGroupFunction(NANumerics);
+  //naTestGroupFunction(NAFloatingPoint);
 }
 
 
