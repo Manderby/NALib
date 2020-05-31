@@ -484,6 +484,7 @@
 #endif // defined NA_TYPE_INT256
 
 
+
 #endif // NA_INT_256_II_INCLUDED
 
 

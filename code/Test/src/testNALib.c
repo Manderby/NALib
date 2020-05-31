@@ -14,6 +14,7 @@ void printNACompiler(void);
 void printNALanguage(void);
 void printNAEncoding(void);
 void printNAChar(void);
+void printNAInteger(void);
 void printNAMacros(void);
 void printNADebugging(void);
 void printNANumerics(void);
@@ -21,6 +22,7 @@ void printNAFloatingPoint(void);
 
 void testNALanguage(void);
 void testNAChar(void);
+void testNAInteger(void);
 void testNAMacros(void);
 void testNADebugging(void);
 void testNANumerics(void);
@@ -34,21 +36,23 @@ void testNATesting(void);
 
 
 void printNABase(){
-  printNAConfiguration();
-  printNAEnvironment();
-  printNACompiler();
-  printNALanguage();
-  printNAEncoding();
-  printNAChar();
-  printNAMacros();
-  printNADebugging();
-  printNANumerics();
-  printNAFloatingPoint();
+  //printNAConfiguration();
+  //printNAEnvironment();
+  //printNACompiler();
+  //printNALanguage();
+  //printNAEncoding();
+  //printNAChar();
+  printNAInteger();
+  //printNAMacros();
+  //printNADebugging();
+  //printNANumerics();
+  //printNAFloatingPoint();
 }
 
 void testNABase(){
   naTestGroupFunction(NALanguage);
   naTestGroupFunction(NAChar);
+  naTestGroupFunction(NAInteger);
   naTestGroupFunction(NAMacros);
   naTestGroupFunction(NADebugging);
   naTestGroupFunction(NANumerics);
@@ -81,11 +85,11 @@ int main(void){
 
 
 
-  //// Print macro information
-  //#if NA_PRINTOUT_ENABLED == 1
-  //  printNABase();
-  //  printNACore();
-  //#endif
+  // Print macro information
+  #if NA_PRINTOUT_ENABLED == 1
+    printNABase();
+    //printNACore();
+  #endif
 
 
 

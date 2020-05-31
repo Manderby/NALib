@@ -470,6 +470,7 @@
 #endif // defined NA_TYPE_INT128
 
 
+
 #endif // NA_INT_128_II_INCLUDED
 
 

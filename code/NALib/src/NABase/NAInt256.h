@@ -95,6 +95,7 @@
   #define naCastu256ToDouble(i)    ((double)(i))
 
 #else
+
   // if no native int256 type is available, we have to emulate it.
 
   NA_IAPI NAi256  naMakei256(NAi128 hi, NAu128 lo);
@@ -200,6 +201,7 @@
   #define naCastIntToi256(i)     naMakei256WithLo(naMakei128WithLo(naMakei64WithLo((int32)i)))
   #define naCastUIntTou256(i)   naMakei256WithLo(naMakeu128WithLo(naMakeu64WithLo((uint32)i)))
 #endif
+
 
 
 #endif // NA_INT_256_INCLUDED

@@ -91,6 +91,7 @@
   #define naCastu128ToDouble(i)       ((double)(i))
 
 #else
+
   // if no native int128 type is available, we have to emulate it.
 
   NA_IAPI NAi128  naMakei128(NAi64 hi, NAu64 lo);
@@ -192,6 +193,7 @@
   #define naCastIntToi128(i)     naMakei128WithLo(naMakei64WithLo((int32)i))
   #define naCastUIntTou128(i)   naMakeu128WithLo(naMakeu64WithLo((uint32)i))
 #endif
+
 
 
 #endif // NA_INT_128_INCLUDED

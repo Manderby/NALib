@@ -87,6 +87,7 @@
   #define naCastu64ToDouble(i)       ((double)(i))
 
 #else
+
   // if no native int64 type is available, we have to emulate it.
 
   NA_IAPI NAi64  naMakei64(int32 hi, uint32 lo);
@@ -123,7 +124,7 @@
   NA_IAPI uint8    naCasti64Tou8 (NAi64 i);
   NA_IAPI uint16   naCasti64Tou16(NAi64 i);
   NA_IAPI uint32   naCasti64Tou32(NAi64 i);
-  NA_IAPI NAu64 naCasti64Tou64(NAi64 i);
+  NA_IAPI NAu64    naCasti64Tou64(NAi64 i);
   NA_IAPI int8     naCasti64Toi8  (NAi64 i);
   NA_IAPI int16    naCasti64Toi16 (NAi64 i);
   NA_IAPI int32    naCasti64Toi32 (NAi64 i);
