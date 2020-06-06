@@ -101,26 +101,26 @@ typedef enum{
   NA_UI_TEXTBOX
 } NAUIElementType;
 
-NA_API NAUIElementType naGetUIElementType(NAUIElement* uielement);
+NA_API NAUIElementType naGetUIElementType(NAUIElement* uiElement);
 
-NA_API void naReleaseUIElement(NAUIElement* uielement);
+NA_API void naReleaseUIElement(NAUIElement* uiElement);
 
 // Any ui element has a strict hierarchical ordering: Application - Screen -
 // Window - Space - Subspace - Subsubspace ... You can get the parent element
 // with this function. The parent of the Application will be NA_NULL.
-NA_API NAUIElement* naGetUIElementParent  (NAUIElement* uielement);
+NA_API NAUIElement* naGetUIElementParent  (NAUIElement* uiElement);
 
 // You can get the window of any ui element except for application and screen
 // elements. An application or screen element will return NA_NULL. A window
 // element will return itself and any other ui element will return the window
 // it is contained in.
-NA_API NAWindow*  naGetUIElementWindow  (NAUIElement* uielement);
+NA_API NAWindow*  naGetUIElementWindow  (NAUIElement* uiElement);
 
 // You can get the parent space of any ui element. Note that when the
 // given element is itself a space, the parental space will be returned.
 // If there is no parental space, NA_NULL will be returned. Applications,
 // screens and windows will always return NA_NULL.
-NA_API NASpace* naGetUIElementParentSpace(NAUIElement* uielement);
+NA_API NASpace* naGetUIElementParentSpace(NAUIElement* uiElement);
 
 // In NALib, all coordinates of the UI are described in a mathematical, right-
 // handed coordinate system. The origin of the global coordinate system is
@@ -135,8 +135,8 @@ NA_API NASpace* naGetUIElementParentSpace(NAUIElement* uielement);
 // Note that the includeborder argument only works for windows for now. It
 // returns either the content rectangle (client rectangle) or the window
 // outer frame.
-NA_API NARect naGetUIElementRect(   NAUIElement* uielement,
-                                    NAUIElement* relativeuielement,
+NA_API NARect naGetUIElementRect(   NAUIElement* uiElement,
+                                    NAUIElement* relativeuiElement,
                                     NABool includeborder);
 
 // You can ask any ui element to refresh its contents. This will cause the
@@ -145,7 +145,7 @@ NA_API NARect naGetUIElementRect(   NAUIElement* uielement,
 // method will not execute immediately but put a message to the default message
 // queue of the application. Therefore, this function will always immediately
 // return.
-NA_API void naRefreshUIElement    (NAUIElement* uielement, double timediff);
+NA_API void naRefreshUIElement    (NAUIElement* uiElement, double timediff);
 
 // When navigating with the tab key, this method defines, which will be the
 // next ui element to have the focus. You start the tab order with a call to
@@ -500,7 +500,7 @@ NAKeyboardStatus naMakeKeybardStatus(NAInt modifiers, NAUIKeyCode keyCode);
 typedef struct NAMouseStatus NAMouseStatus;
 struct NAMouseStatus{
   NAPos pos;
-  NAPos prevpos;
+  NAPos prevPos;
 };
 
 // A programmer reacts to commands by calling naAddUIReaction. When a specific
@@ -509,19 +509,19 @@ struct NAMouseStatus{
 
 typedef struct NAReaction NAReaction;
 struct NAReaction{
-  NAUIElement* uielement;
+  NAUIElement* uiElement;
   NAUICommand command;
   void* controller;
 };
 
 typedef NABool (*NAReactionHandler)(NAReaction reaction);
 
-NA_API void naAddUIReaction(        NAUIElement* uielement,
+NA_API void naAddUIReaction(        NAUIElement* uiElement,
                                      NAUICommand command,
                                NAReactionHandler handler,
                                            void* controller);
 
-NA_API void naAddUIKeyboardShortcut(NAUIElement* uielement,
+NA_API void naAddUIKeyboardShortcut(NAUIElement* uiElement,
                                 NAKeyboardStatus shortcut,
                                NAReactionHandler handler,
                                            void* controller);
@@ -530,7 +530,7 @@ NA_API void naAddUIKeyboardShortcut(NAUIElement* uielement,
 // work in pairs. The controller given to naAddUIReaction is an arbitrary
 // void pointer which simply will be set as the first parameter of the
 // reaction handler. You probably will use either NA_NULL or some kind of
-// controller pointer for that, hence the name controller. The uielement
+// controller pointer for that, hence the name controller. The uiElement
 // is the NAUIElement where the command occurs and the command sent is the
 // command observed or the shortcut is the shortcut pressed respectively.
 //
@@ -596,7 +596,7 @@ NA_API NAUIElement* naGetWindowFirstTabElement(NAWindow* window);
 NA_API void naShowWindow(NAWindow* window);
 NA_API void naCloseWindow(NAWindow* window);
 NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
-NA_API void naSetWindowContentSpace(NAWindow* window, NAUIElement* uielement);
+NA_API void naSetWindowContentSpace(NAWindow* window, NAUIElement* uiElement);
 NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullscreen);
 NA_API NABool naIsWindowFullscreen(NAWindow* window);
 NA_API NABool naIsWindowResizeable(NAWindow* window);
@@ -680,7 +680,7 @@ NA_API void naSetTextBoxEditable(NATextBox* textBox, NABool editable);
 NA_API const NAMouseStatus* naGetMouseStatus(void);
 NA_API NAPos naGetMousePos(const NAMouseStatus* mousestatus);
 NA_API NASize naGetMouseDelta(const NAMouseStatus* mousestatus);
-NA_API void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage);
+NA_API void naCenterMouse(void* uiElement, NABool includebounds, NABool sendmovemessage);
 NA_API void naShowMouse(void);
 NA_API void naHideMouse(void);
 

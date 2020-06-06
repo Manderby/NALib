@@ -17,7 +17,7 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
   NATreeConfiguration* config = naAlloc(NATreeConfiguration);
   naZeron(config, sizeof(NATreeConfiguration));
   config->flags = flags;
-  naInitRefCount(&(config->refcount));
+  naInitRefCount(&(config->refCount));
 
   #ifndef NDEBUG
     // Just some security measures in case the programmer sees no purpos in

@@ -40,7 +40,7 @@
           skin = naGetSkinForCurrentAppearance();
         }
 
-        resolution = naGetWindowUIResolution(naGetUIElementWindow(&(self->coreButton->uielement)));
+        resolution = naGetWindowUIResolution(naGetUIElementWindow(&(self->coreButton->uiElement)));
         context = naGetCGContextRef([NSGraphicsContext currentContext]);
 
         cocoaimage = naGetUIImageNativeImage(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);

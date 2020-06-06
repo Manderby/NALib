@@ -32,10 +32,10 @@ struct NAWINAPIColor {
 // not be done.
 typedef struct NAWINAPIApplication NAWINAPIApplication;
 struct NAWINAPIApplication {
-  NACoreApplication coreapplication;
+  NACoreApplication coreApplication;
   NAList timers;
   HWND offscreenWindow;
-  NONCLIENTMETRICS nonclientmetrics;
+  NONCLIENTMETRICS nonClientMetrics;
   HICON appIcon;
 
   HFONT systemFont;
@@ -79,7 +79,7 @@ WNDPROC naGetApplicationOldTextFieldWindowProc(){
 
 
 
-NAWINAPICallbackInfo naApplicationWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naApplicationWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
@@ -222,7 +222,7 @@ NA_HDEF NAApplication* naNewApplication(void){
 
   NAWINAPIApplication* winapiApplication = naAlloc(NAWINAPIApplication);
 
-  naInitCoreApplication(&(winapiApplication->coreapplication), GetModuleHandle(NULL));
+  naInitCoreApplication(&(winapiApplication->coreApplication), GetModuleHandle(NULL));
 
   naInitList(&(winapiApplication->timers));
 
@@ -231,8 +231,8 @@ NA_HDEF NAApplication* naNewApplication(void){
 		0, 0, 0, 0,
 		NULL, NULL, GetModuleHandle(NULL), NULL);
 
-  winapiApplication->nonclientmetrics.cbSize = sizeof(NONCLIENTMETRICS);
-  SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &(winapiApplication->nonclientmetrics), 0);
+  winapiApplication->nonClientMetrics.cbSize = sizeof(NONCLIENTMETRICS);
+  SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &(winapiApplication->nonClientMetrics), 0);
 
   winapiApplication->appIcon = NA_NULL;
 
@@ -286,7 +286,7 @@ NA_DEF void naDestructApplication(NAApplication* application){
 
   DestroyIcon(app->appIcon);
 
-  naClearCoreApplication(&(app->coreapplication));  
+  naClearCoreApplication(&(app->coreApplication));  
 
   // Now that all windows are destroyed, all dependent timers are deleted. We can
   // safely release the timer structs. todo: Make killing the timers a sport.
@@ -313,7 +313,7 @@ void naSetApplicationMouseHoverElement(NACoreUIElement* element){
 
 const NONCLIENTMETRICS* naGetApplicationMetrics(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  return &(app->nonclientmetrics);
+  return &(app->nonClientMetrics);
 }
 
 
@@ -393,23 +393,23 @@ NA_DEF void naOpenConsoleWindow(void){
 
 NA_DEF void naSetApplicationName(NAUTF8Char* name){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->coreapplication.name = name;
+  app->coreApplication.name = name;
 }
 NA_DEF void naSetApplicationCompanyName(NAUTF8Char* name){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->coreapplication.companyName = name;
+  app->coreApplication.companyName = name;
 }
 NA_DEF void naSetApplicationVersionString(NAUTF8Char* string){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->coreapplication.versionString = string;
+  app->coreApplication.versionString = string;
 }
 NA_DEF void naSetApplicationBuildString(NAUTF8Char* string){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->coreapplication.buildString = string;
+  app->coreApplication.buildString = string;
 }
 NA_DEF void naSetApplicationIconPath(NAUTF8Char* path){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->coreapplication.iconPath = path;
+  app->coreApplication.iconPath = path;
 
   if(path){
     NABabyImage* iconBabyImage = naCreateBabyImageFromFilePath(path);
@@ -432,8 +432,8 @@ NA_DEF void naSetApplicationIconPath(NAUTF8Char* path){
 
 NA_DEF NAString* naNewApplicationName(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->coreapplication.name){
-    return naNewStringWithFormat("%s", app->coreapplication.name);
+  if(app->coreApplication.name){
+    return naNewStringWithFormat("%s", app->coreApplication.name);
   }else{
     TCHAR modulepath[MAX_PATH];
     NAString* utf8modulepath;
@@ -459,8 +459,8 @@ NA_DEF NAString* naNewApplicationName(void){
 
 NA_DEF NAString* naNewApplicationCompanyName(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->coreapplication.companyName){
-    return naNewStringWithFormat("%s", app->coreapplication.companyName);
+  if(app->coreApplication.companyName){
+    return naNewStringWithFormat("%s", app->coreApplication.companyName);
   }else{
     return NA_NULL;
   }
@@ -468,8 +468,8 @@ NA_DEF NAString* naNewApplicationCompanyName(void){
 
 NA_DEF NAString* naNewApplicationVersionString(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->coreapplication.versionString){
-    return naNewStringWithFormat("%s", app->coreapplication.versionString);
+  if(app->coreApplication.versionString){
+    return naNewStringWithFormat("%s", app->coreApplication.versionString);
   }else{
     return NA_NULL;
   }
@@ -477,8 +477,8 @@ NA_DEF NAString* naNewApplicationVersionString(void){
 
 NA_DEF NAString* naNewApplicationBuildString(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->coreapplication.buildString){
-    return naNewStringWithFormat("%s", app->coreapplication.buildString);
+  if(app->coreApplication.buildString){
+    return naNewStringWithFormat("%s", app->coreApplication.buildString);
   }else{
     return NA_NULL;
   }
@@ -486,8 +486,8 @@ NA_DEF NAString* naNewApplicationBuildString(void){
 
 NA_DEF NAString* naNewApplicationIconPath(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->coreapplication.iconPath){
-    return naNewStringWithFormat("%s", app->coreapplication.iconPath);
+  if(app->coreApplication.iconPath){
+    return naNewStringWithFormat("%s", app->coreApplication.iconPath);
   }else{
     return NA_NULL;
   }
@@ -649,11 +649,11 @@ NA_DEF NAFont getFontWithKind(NAFontKind kind){
 }
 
 
-NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage){
+NA_DEF void naCenterMouse(void* uiElement, NABool includebounds, NABool sendmovemessage){
   NARect spacerect;
   NARect screenframe;
   NAPos centerpos;
-  spacerect = naGetUIElementRect(uielement, naGetApplication(), includebounds);
+  spacerect = naGetUIElementRect(uiElement, naGetApplication(), includebounds);
   // todo: screen not defined
   screenframe = naGetMainScreenRect();
   centerpos.x = spacerect.pos.x + spacerect.size.width * .5f;

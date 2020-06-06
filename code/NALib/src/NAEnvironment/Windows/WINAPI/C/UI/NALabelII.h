@@ -14,7 +14,7 @@ struct NAWINAPILabel {
 };
 
 
-NAWINAPICallbackInfo naLabelWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naLabelWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
@@ -62,8 +62,8 @@ NAWINAPICallbackInfo naLabelWINAPIProc(NAUIElement* uielement, UINT message, WPA
 
 
 
-NAWINAPICallbackInfo naLabelWINAPINotify(NAUIElement* uielement, WORD notificationCode){
-  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)uielement;
+NAWINAPICallbackInfo naLabelWINAPINotify(NAUIElement* uiElement, WORD notificationCode){
+  NAWINAPILabel* winapiLabel = (NAWINAPILabel*)uiElement;
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   switch(notificationCode){
     case EN_SETFOCUS:

@@ -17,14 +17,16 @@
 #endif
 
 
+// todo: global variables
+
 // The global timezone setting.
-int16  na_globaltimeshift = 0;
-NABool na_globalsummertime = NA_FALSE;
+int16  na_GlobalTimeShift = 0;
+NABool na_GlobalSummerTime = NA_FALSE;
 
-const char* na_monthenglishnames[12] = {"January", "February", "March", "April", "Mai", "June", "July", "August", "September", "October", "November", "December"};
-const char* na_monthenglishabbreviationnames[12] = {"Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+const char* na_MonthEnglishNames[12] = {"January", "February", "March", "April", "Mai", "June", "July", "August", "September", "October", "November", "December"};
+const char* na_MonthEnglishAbbreviationNames[12] = {"Jan", "Feb", "Mar", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
 
-const char* na_datetime_errorstrings[NA_DATETIME_ERROR_COUNT] = {
+const char* na_DateTimeErrorStrings[NA_DATETIME_ERROR_COUNT] = {
   "No Error",
   "Date lies between Julian and Gregorian calendar.",
   "Invalid month number (0 is January).",
@@ -38,7 +40,7 @@ const char* na_datetime_errorstrings[NA_DATETIME_ERROR_COUNT] = {
 
 // stores the day index of the first day of each month both for a normal and
 // a leap year. This structure speeds up the implementation quite a bit
-int32 na_cumulativemonthstartdays[2 * 13] = { 0,  0,
+int32 na_CumulativeMonthStartDays[2 * 13] = { 0,  0,
                                               31, 31,
                                               59, 60,
                                               90, 91,
@@ -321,7 +323,7 @@ NA_DEF int32 naGetMonthNumberWithEnglishAbbreviation(const NAString* str){
   int32 i;
   int32 monthindex = -1;
   for(i = 0; i < NA_MONTHS_PER_YEAR; i++){
-    if(naEqualStringToUTF8CString(str, na_monthenglishabbreviationnames[i], NA_TRUE)){
+    if(naEqualStringToUTF8CString(str, na_MonthEnglishAbbreviationNames[i], NA_TRUE)){
       monthindex = i;
       break;
     }
@@ -339,14 +341,14 @@ NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
   if(naStrlen(str)){
     int32 i;
     for(i = 0; i<NA_MONTHS_PER_YEAR; i++){
-      if(naEqualUTF8CStringLiterals(str, na_monthenglishnames[i], 0, NA_FALSE)){
+      if(naEqualUTF8CStringLiterals(str, na_MonthEnglishNames[i], 0, NA_FALSE)){
         monthindex = i;
         break;
       }
     }
     if(monthindex == -1){
       for(i = 0; i<NA_MONTHS_PER_YEAR; i++){
-        if(naEqualUTF8CStringLiterals(str, na_monthenglishabbreviationnames[i], 0, NA_FALSE)){
+        if(naEqualUTF8CStringLiterals(str, na_MonthEnglishAbbreviationNames[i], 0, NA_FALSE)){
           monthindex = i;
           break;
         }
@@ -439,8 +441,8 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
     datetime.sisec = naAddi64(datetime.sisec, naMuli64(remainingyears, NA_SECONDS_IN_NORMAL_YEAR));
   }
   if((dts->mon < 0) || (dts->mon > 11)){datetime.errornum = NA_DATETIME_ERROR_INVALID_MONTH_NUMBER;}
-  datetime.sisec = naAddi64(datetime.sisec, naMakei64WithLo(na_cumulativemonthstartdays[2 * dts->mon + (int32)isleap] * (int32)NA_SECONDS_PER_DAY));
-  if((dts->day < 0) || ((na_cumulativemonthstartdays[2 * dts->mon + (int32)isleap] + dts->day) >= na_cumulativemonthstartdays[2 * (dts->mon + 1) + (int32)isleap])){datetime.errornum = NA_DATETIME_ERROR_INVALID_DAY_NUMBER;}
+  datetime.sisec = naAddi64(datetime.sisec, naMakei64WithLo(na_CumulativeMonthStartDays[2 * dts->mon + (int32)isleap] * (int32)NA_SECONDS_PER_DAY));
+  if((dts->day < 0) || ((na_CumulativeMonthStartDays[2 * dts->mon + (int32)isleap] + dts->day) >= na_CumulativeMonthStartDays[2 * (dts->mon + 1) + (int32)isleap])){datetime.errornum = NA_DATETIME_ERROR_INVALID_DAY_NUMBER;}
   datetime.sisec = naAddi64(datetime.sisec, naMakei64WithLo(dts->day * (int32)NA_SECONDS_PER_DAY));
   if((dts->hour < 0) || (dts->hour > 23)){datetime.errornum = NA_DATETIME_ERROR_INVALID_HOUR_NUMBER;}
   datetime.sisec = naAddi64(datetime.sisec, naMakei64WithLo(dts->hour * (int32)NA_SECONDS_PER_HOUR));
@@ -616,7 +618,7 @@ NA_DEF const char* naGetDateTimeErrorString(uint8 errornum){
     #endif
     return NA_NULL;
   }
-  return na_datetime_errorstrings[errornum];
+  return na_DateTimeErrorStrings[errornum];
 }
 
 
@@ -683,7 +685,7 @@ NA_DEF NAString* naNewStringWithDateTime(const NADateTime* datetime,
   case NA_DATETIME_FORMAT_APACHE:
     string = naNewStringWithFormat("%02d/%s/%lld:%02d:%02d:%02d %c%02d%02d",
                 dts.day + 1,
-                na_monthenglishabbreviationnames[dts.mon],
+                na_MonthEnglishAbbreviationNames[dts.mon],
                 dts.year,
                 dts.hour,
                 dts.min,
@@ -805,8 +807,8 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
       datetime.shift = naMakeShiftFromTimeZone(timezn);
       datetime.flags = ((timezn->DaylightBias) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
     }else{
-      datetime.shift = na_globaltimeshift;
-      datetime.flags = ((na_globalsummertime) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
+      datetime.shift = na_GlobalTimeShift;
+      datetime.flags = ((na_GlobalSummerTime) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
     }
     return datetime;
   }
@@ -885,8 +887,8 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
       datetime.shift = naMakeShiftFromTimeZone(timezn);
       datetime.flags = ((timezn->tz_dsttime) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
     }else{
-      datetime.shift = na_globaltimeshift;
-      datetime.flags = ((na_globalsummertime) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
+      datetime.shift = na_GlobalTimeShift;
+      datetime.flags = ((na_GlobalSummerTime) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
     }
     return datetime;
   }
@@ -1044,11 +1046,11 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
   r = 11;
   while(l != r){  // binary search
     NAInt m = (l+r)/2;
-    if(na_cumulativemonthstartdays[2 * (m+1) + (NAInt)isleapyear] <= dayofyear){l = m + 1;}else{r = m;}
+    if(na_CumulativeMonthStartDays[2 * (m+1) + (NAInt)isleapyear] <= dayofyear){l = m + 1;}else{r = m;}
   }
   // r now defines the index of the month
   dts->mon = (int32)r;
-  dts->day = dayofyear - na_cumulativemonthstartdays[2 * r + (NAInt)isleapyear];
+  dts->day = dayofyear - na_CumulativeMonthStartDays[2 * r + (NAInt)isleapyear];
 
   if(dta){
     int32 d;
@@ -1071,7 +1073,7 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
 
     dta->dayofyear = dayofyear;
     dta->isleapyear = (int32)isleapyear;
-    dta->daysinmonth = na_cumulativemonthstartdays[2 * (r + 1) + dta->isleapyear] - na_cumulativemonthstartdays[2 * r + dta->isleapyear];
+    dta->daysinmonth = na_CumulativeMonthStartDays[2 * (r + 1) + dta->isleapyear] - na_CumulativeMonthStartDays[2 * r + dta->isleapyear];
     dta->yearsign = naSmalleri64(dts->year, NA_ZERO_i64)?-1:+1;
 
     // Weekday computation
@@ -1184,13 +1186,13 @@ NA_DEF void naSetGlobalTimeShiftToSystemSettings(){
   #if NA_OS == NA_OS_WINDOWS
     NATimeZone curtimezone;
     GetTimeZoneInformation(&curtimezone);
-    na_globaltimeshift = naMakeShiftFromTimeZone(&curtimezone);
-    na_globalsummertime = ((curtimezone.DaylightBias) ? NA_TRUE : NA_FALSE);
+    na_GlobalTimeShift = naMakeShiftFromTimeZone(&curtimezone);
+    na_GlobalSummerTime = ((curtimezone.DaylightBias) ? NA_TRUE : NA_FALSE);
   #elif NA_OS == NA_OS_MAC_OS_X
     NATimeZone curtimezone;
     gettimeofday(NULL, &curtimezone);
-    na_globaltimeshift = naMakeShiftFromTimeZone(&curtimezone);
-    na_globalsummertime = ((curtimezone.tz_dsttime) ? NA_TRUE : NA_FALSE);
+    na_GlobalTimeShift = naMakeShiftFromTimeZone(&curtimezone);
+    na_GlobalSummerTime = ((curtimezone.tz_dsttime) ? NA_TRUE : NA_FALSE);
   #endif
 }
 

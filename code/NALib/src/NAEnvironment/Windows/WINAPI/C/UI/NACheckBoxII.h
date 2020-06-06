@@ -12,7 +12,7 @@ struct NAWINAPICheckBox {
 
 
 
-NAWINAPICallbackInfo naCheckBoxWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naCheckBoxWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
@@ -53,16 +53,16 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc(NAUIElement* uielement, UINT message, 
 
 
 
-NAWINAPICallbackInfo naCheckBoxWINAPINotify(NAUIElement* uielement, WORD notificationCode){
+NAWINAPICallbackInfo naCheckBoxWINAPINotify(NAUIElement* uiElement, WORD notificationCode){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NABool check;
 
   switch(notificationCode){
     case BN_CLICKED:
       ReleaseCapture();
-      check = naGetCheckBoxState(uielement);
-      naSetCheckBoxState(uielement, !check);
-      naDispatchUIElementCommand(uielement, NA_UI_COMMAND_PRESSED);
+      check = naGetCheckBoxState(uiElement);
+      naSetCheckBoxState(uiElement, !check);
+      naDispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
       info.hasbeenhandeled = NA_TRUE;
       info.result = 0;
       break;

@@ -14,7 +14,7 @@ struct NAWINAPIButton {
 
 
 
-NAWINAPICallbackInfo naButtonWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naButtonWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
@@ -58,11 +58,11 @@ NAWINAPICallbackInfo naButtonWINAPIProc(NAUIElement* uielement, UINT message, WP
 
 
 
-NAWINAPICallbackInfo naButtonWINAPINotify(NAUIElement* uielement, WORD notificationCode){
+NAWINAPICallbackInfo naButtonWINAPINotify(NAUIElement* uiElement, WORD notificationCode){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   switch(notificationCode){
     case BN_CLICKED:
-      naDispatchUIElementCommand(uielement, NA_UI_COMMAND_PRESSED);
+      naDispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
       info.hasbeenhandeled = NA_TRUE;
       info.result = 0;
       break;
@@ -75,7 +75,7 @@ NAWINAPICallbackInfo naButtonWINAPINotify(NAUIElement* uielement, WORD notificat
 
 
 
-NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTRUCT* drawitemstruct){
+NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uiElement, DRAWITEMSTRUCT* drawitemstruct){
   HBITMAP hOldBitmap;
   NASizei size1x;
   NASizei buttonsize;
@@ -90,20 +90,20 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTR
 
   HDC hMemDC = CreateCompatibleDC(drawitemstruct->hDC);
 
-  NAWINAPIButton* button = (NAWINAPIButton*)uielement;
+  NAWINAPIButton* button = (NAWINAPIButton*)uiElement;
   NAWINAPICallbackInfo info = {NA_TRUE, TRUE};
 
-  CallWindowProc(naGetApplicationOldButtonWindowProc(), naGetUIElementNativeID(uielement), WM_ERASEBKGND, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
+  CallWindowProc(naGetApplicationOldButtonWindowProc(), naGetUIElementNativeID(uiElement), WM_ERASEBKGND, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
 
   if(!button->transparent){
-    long oldstyle = (long)GetWindowLongPtr(naGetUIElementNativeID(uielement), GWL_STYLE);
+    long oldstyle = (long)GetWindowLongPtr(naGetUIElementNativeID(uiElement), GWL_STYLE);
     long newstyle = (oldstyle & ~BS_OWNERDRAW) | BS_TEXT | BS_CENTER | BS_VCENTER;
-    SetWindowLongPtr(naGetUIElementNativeID(uielement), GWL_STYLE, (LONG_PTR)newstyle);
+    SetWindowLongPtr(naGetUIElementNativeID(uiElement), GWL_STYLE, (LONG_PTR)newstyle);
     // Oh boi. That is one hell of a hidden feature. Usually, the WM_PAINT message does not
     // use wParam and lParam at all. But there are some common controls (and buttons seems to
     // be one of them) which in fact only work if you send the device context in wParam.
-    CallWindowProc(naGetApplicationOldButtonWindowProc(), naGetUIElementNativeID(uielement), WM_PAINT, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
-    SetWindowLongPtr(naGetUIElementNativeID(uielement), GWL_STYLE, (LONG_PTR)oldstyle);
+    CallWindowProc(naGetApplicationOldButtonWindowProc(), naGetUIElementNativeID(uiElement), WM_PAINT, (WPARAM)drawitemstruct->hDC, (LPARAM)NA_NULL);
+    SetWindowLongPtr(naGetUIElementNativeID(uiElement), GWL_STYLE, (LONG_PTR)oldstyle);
   }
 
   size1x = naGetUIImage1xSize(button->image);

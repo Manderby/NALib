@@ -194,7 +194,7 @@ deleted all at once. Use it with the following two functions:
 To use the runtime system for your own custom structs, the desired type must
 be declared with the NA_RUNTIME_TYPE macro as follows:
 
-NA_RUNTIME_TYPE(typename, destructor, refcounting);
+NA_RUNTIME_TYPE(typeName, destructor, refCounting);
 
 This declaration can be made opaque by putting it into an implementation file
 and using NA_EXTERN_RUNTIME_TYPE in the .h file. For more information, see
@@ -375,9 +375,9 @@ consists at least of a suffix and an identifier.
 
 Suffix:
 - types always have the prefix      NA    and are MixedCase
-- macros always have the prefix     NA_   and are UPPERCASE
+- macros always have the prefix     NA_   and are UPPER_CASE
 - functions always have the prefix  na    and are MixedCase
-- variables always have the prefix  na_   and are lowercase
+- private variables and functions   na_   and are MixedCase
 
 Further more, symbols are declared with the following prefixes:
 
@@ -414,12 +414,11 @@ memory block with 32 bits. After that, a more concrete description of what the
 function does or expects as parameters is given. Like for example WithLength,
 FromFilename.
 
-Variables and printf arguments are rarely used in NALib. They have an
-appropriate description after the prefix like for example
-
-na_monthenglishabbreviationnames, na_runtime
-NA_TAB, NA_NL_UNIX
-
+There are no public global variables in NALib. Very few private ones exist
+and they are prefixed with na_ (for example na_Runtime). If availably by
+including a header file, a programmer must never use these variables directly!
+Same goes for private functions which are prefixed by na_ as well. All private
+functions are declared as helper functions.
 
 
 

@@ -17,7 +17,7 @@ struct NAWINAPIWindow {
 
 
 
-NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NACoreWindow* coreWindow;
   NABool shouldClose;
@@ -33,9 +33,9 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
     // wParam: Unused
     // lParam: (int)(short)LOWORD: x coordinate, (int)(short)HIWORD: y coordinate
     // result: 0 when handeled.
-    coreWindow = (NACoreWindow*)naGetUIElementWindow(uielement);
-    info.hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE);
-    if (info.hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW); }
+    coreWindow = (NACoreWindow*)naGetUIElementWindow(uiElement);
+    info.hasbeenhandeled = naDispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
+    if (info.hasbeenhandeled) { naDispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
     naRememberWindowPosition(coreWindow);
     info.result = 0;
     break;
@@ -44,16 +44,16 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
     // wParam: Type of resizing (maximize, minimize, ...)
     // lParam: LOWORD: width, HIWORD: height
     // result: 0 when handeled.
-    coreWindow = (NACoreWindow*)naGetUIElementWindow(uielement);
-    info.hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_RESHAPE);
-    if (info.hasbeenhandeled) { naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW); }
+    coreWindow = (NACoreWindow*)naGetUIElementWindow(uiElement);
+    info.hasbeenhandeled = naDispatchUIElementCommand(uiElement, NA_UI_COMMAND_RESHAPE);
+    if (info.hasbeenhandeled) { naDispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW); }
     naRememberWindowPosition(coreWindow);
     info.result = 0;
     break;
 
   case WM_CLOSE:
-    coreWindow = (NACoreWindow*)naGetUIElementWindow(uielement);
-    naDispatchUIElementCommand(uielement, NA_UI_COMMAND_CLOSES);
+    coreWindow = (NACoreWindow*)naGetUIElementWindow(uiElement);
+    naDispatchUIElementCommand(uiElement, NA_UI_COMMAND_CLOSES);
     shouldClose = !naGetFlagi(coreWindow->flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
     naSetFlagi(&(coreWindow->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);
     if(shouldClose){naCloseWindow(coreWindow);}
@@ -146,7 +146,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(NAUIElement* uielement, UINT message, WP
 
 
 NABool naHandleWindowTabOrder(NAReaction reaction){
-  NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)reaction.uielement;
+  NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)reaction.uiElement;
   if(winapiWindow->firstResponder){
     SetFocus(naGetUIElementNativeID(winapiWindow->firstResponder));
     return NA_TRUE;
@@ -243,7 +243,7 @@ NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop){
 
 NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
   NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
-  NARect currect = naGetUIElementRect(&(winapiWindow->coreWindow.uielement), NA_NULL, NA_FALSE);
+  NARect currect = naGetUIElementRect(&(winapiWindow->coreWindow.uiElement), NA_NULL, NA_FALSE);
   if(!naEqualRect(currect, rect)){
     POINT testpoint = {0, 0};
     RECT clientrect;
@@ -373,10 +373,10 @@ NA_DEF void naCloseWindow(NAWindow* window){
 
 
 
-NA_DEF void naSetWindowContentSpace(NAWindow* window, NAUIElement* uielement){
+NA_DEF void naSetWindowContentSpace(NAWindow* window, NAUIElement* uiElement){
   NACoreWindow* coreWindow = (NACoreWindow*)window;
-  coreWindow->contentspace = (NACoreSpace*)uielement;
-  naSetUIElementParent(uielement, window);
+  coreWindow->contentspace = (NACoreSpace*)uiElement;
+  naSetUIElementParent(uiElement, window);
 }
 
 

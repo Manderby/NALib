@@ -90,7 +90,7 @@ typedef enum{
 } NAChunkType;
 
 
-NAByte na_png_chunk_type_names[NA_PNG_CHUNK_TYPE_COUNT][4] = {
+NAByte na_PngChunkTypeNames[NA_PNG_CHUNK_TYPE_COUNT][4] = {
   {'I', 'H', 'D', 'R'},       // NA_PNG_CHUNK_TYPE_IHDR
   {'P', 'L', 'T', 'E'},       // NA_PNG_CHUNK_TYPE_PLTE
   {'I', 'D', 'A', 'T'},       // NA_PNG_CHUNK_TYPE_IDAT
@@ -115,7 +115,7 @@ NAByte na_png_chunk_type_names[NA_PNG_CHUNK_TYPE_COUNT][4] = {
 };
 
 
-uint8 na_png_magic[8] = {137, 80, 78, 71, 13, 10, 26, 10};
+uint8 na_PngMagic[8] = {137, 80, 78, 71, 13, 10, 26, 10};
 
 
 typedef struct NAPNGChunk NAPNGChunk;
@@ -123,7 +123,7 @@ struct NAPNGChunk{
   NABuffer* data;      // All data without the preceding chunk type
   NAChunkType type;   // The type as an enum.
   NAInt length;
-  uint8 typename[4];  // The type as 4 uint8
+  uint8 typeName[4];  // The type as 4 uint8
   uint32 crc;
 };
 
@@ -151,7 +151,7 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABufferIterator* iter){
       naError("length should not exceed 2^31-1.");
   #endif
 
-  naReadBufferBytes(iter, chunk->typename, 4);
+  naReadBufferBytes(iter, chunk->typeName, 4);
   if(chunk->length){
     chunk->data = naReadBufferBuffer(iter, chunk->length);
   }else{
@@ -160,7 +160,7 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABufferIterator* iter){
 
   chunk->type = NA_PNG_CHUNK_TYPE_UNKNOWN;
   for(i = 0; i < NA_PNG_CHUNK_TYPE_COUNT; i++){
-    if(naEqual32(na_png_chunk_type_names[i], chunk->typename)){
+    if(naEqual32(na_PngChunkTypeNames[i], chunk->typeName)){
       chunk->type = (NAChunkType)i;
       break;
     }
@@ -177,7 +177,7 @@ NA_HDEF NAPNGChunk* naAllocPNGChunkFromBuffer(NABufferIterator* iter){
   }
 
   naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
-  naAccumulateChecksum(&checksum, chunk->typename, 4);
+  naAccumulateChecksum(&checksum, chunk->typeName, 4);
   naAccumulateChecksumBuffer(&checksum, chunk->data);
   crc = naGetChecksumResult(&checksum);
   naClearChecksum(&checksum);
@@ -737,7 +737,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
 
   // Read the magic numbers. If they do not match, this is no png file.
   naReadBufferBytes(&bufiter, magic, 8);
-  if(!naEqual64(magic, na_png_magic)){
+  if(!naEqual64(magic, na_PngMagic)){
     #ifndef NDEBUG
       naError("File is not a PNG file.");
     #endif
@@ -891,7 +891,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
   iterout = naMakeBufferMutator(outbuffer);
   naSetBufferEndianness(outbuffer, NA_ENDIANNESS_NETWORK);
 
-  naWriteBufferBytes(&iterout, na_png_magic, 8);
+  naWriteBufferBytes(&iterout, na_PngMagic, 8);
 
   naBeginListMutatorIteration(NAPNGChunk* chunk, &(png->chunks), iter);
     naFixBufferRange(chunk->data);
@@ -899,15 +899,15 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
     chunk->length = naGetBufferRange(chunk->data).length;
     naWriteBufferu32(&iterout, (uint32)chunk->length);
 
-    naCopy32(chunk->typename, na_png_chunk_type_names[chunk->type]);
-    naWriteBufferBytes(&iterout, chunk->typename, 4);
+    naCopy32(chunk->typeName, na_PngChunkTypeNames[chunk->type]);
+    naWriteBufferBytes(&iterout, chunk->typeName, 4);
 
     if(!naIsBufferEmpty(chunk->data)){
       naWriteBufferBuffer(&iterout, chunk->data, naGetBufferRange(chunk->data));
     }
 
     naInitChecksum(&checksum, NA_CHECKSUM_TYPE_CRC_PNG);
-    naAccumulateChecksum(&checksum, chunk->typename, 4);
+    naAccumulateChecksum(&checksum, chunk->typeName, 4);
     if(chunk->length){
       naAccumulateChecksumBuffer(&checksum, chunk->data);
     }

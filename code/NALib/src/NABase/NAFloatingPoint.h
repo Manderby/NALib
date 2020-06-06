@@ -102,8 +102,8 @@ NA_IAPI NAi64  naGetDoubleFractionSlowE(double d);
 
 
 
-// Inline implementations are in a separate file:
-#include "NAFloatingPointII.h"
+// Inline implementations are in a separate file and will be included later
+// in in the NABase.h file.
 
 
 

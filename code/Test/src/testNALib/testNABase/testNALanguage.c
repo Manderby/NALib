@@ -4,10 +4,10 @@
 
 
 
-void na_accessor_func(const void* param){
+void na_AccessorFunc(const void* param){
   NA_UNUSED(param);
 }
-void na_mutator_func(void* param){
+void na_MutatorFunc(void* param){
   NA_UNUSED(param);
 }
 
@@ -15,10 +15,10 @@ void na_mutator_func(void* param){
 
 void testNALanguage(){
   naTestGroup("typedefs"){
-    NAAccessor testAccessor = na_accessor_func;
-    NAMutator testMutator = na_mutator_func;
-    naTest(testAccessor == na_accessor_func);
-    naTest(testMutator == na_mutator_func);
+    NAAccessor testAccessor = na_AccessorFunc;
+    NAMutator testMutator = na_MutatorFunc;
+    naTest(testAccessor == na_AccessorFunc);
+    naTest(testMutator == na_MutatorFunc);
   }
 
   #ifndef NDEBUG

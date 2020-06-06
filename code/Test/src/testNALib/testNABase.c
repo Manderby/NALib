@@ -20,6 +20,8 @@ void printNAFloatingPoint(void);
 void testNALanguage(void);
 void testNAChar(void);
 void testNAInteger(void);
+void testNAInt64(void);
+void testNAInt128(void);
 void testNAMacros(void);
 void testNADebugging(void);
 void testNANumerics(void);
@@ -44,7 +46,9 @@ void printNABase(){
 void testNABase(){
   //naTestGroupFunction(NALanguage);
   //naTestGroupFunction(NAChar);
-  naTestGroupFunction(NAInteger);
+  //naTestGroupFunction(NAInteger);
+  naTestGroupFunction(NAInt64);
+  naTestGroupFunction(NAInt128);
   //naTestGroupFunction(NAMacros);
   //naTestGroupFunction(NADebugging);
   //naTestGroupFunction(NANumerics);

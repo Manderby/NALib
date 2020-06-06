@@ -3,14 +3,14 @@
 #include <stdio.h>
 
 
-const char* na_signed_integer_encoding_enum_strings[] = {
+const char* na_SignedIntegerEncodingEnumStrings[] = {
   "Unknown",
   "Sign & Magnitude",
   "Ones complement",
   "Twos complement"
 };
 
-const char* na_native_types_enum_strings[] = {
+const char* na_NativeTypesEnumStrings[] = {
   "No native type",
   "native char type",
   "native short type",
@@ -38,18 +38,18 @@ void printNAEncoding(){
   naPrintMacroInt          (NA_TYPE_NATIVE_INT_256);
 
   printf(NA_NL "NAEncoding.h computed values:" NA_NL);
-  naPrintMacroEnum         (NA_SIGN_ENCODING, na_signed_integer_encoding_enum_strings, 4);
+  naPrintMacroEnum         (NA_SIGN_ENCODING, na_SignedIntegerEncodingEnumStrings, 4);
   naPrintMacroInt          (NA_TYPE_NATIVE_CHAR_BITS);
   naPrintMacroInt          (NA_TYPE_NATIVE_SHORT_BITS);
   naPrintMacroInt          (NA_TYPE_NATIVE_INT_BITS);
   naPrintMacroInt          (NA_TYPE_NATIVE_LONG_BITS);
   naPrintMacroInt          (NA_TYPE_NATIVE_LONG_LONG_BITS);
-  naPrintMacroEnum         (NA_TYPE_INT8_REPRESENTATION, na_native_types_enum_strings, 8);
-  naPrintMacroEnum         (NA_TYPE_INT16_REPRESENTATION, na_native_types_enum_strings, 8);
-  naPrintMacroEnum         (NA_TYPE_INT32_REPRESENTATION, na_native_types_enum_strings, 8);
-  naPrintMacroEnum         (NA_TYPE_INT64_REPRESENTATION, na_native_types_enum_strings, 8);
-  naPrintMacroEnum         (NA_TYPE_INT128_REPRESENTATION, na_native_types_enum_strings, 8);
-  naPrintMacroEnum         (NA_TYPE_INT256_REPRESENTATION, na_native_types_enum_strings, 8);
+  naPrintMacroEnum         (NA_TYPE_INT8_REPRESENTATION, na_NativeTypesEnumStrings, 8);
+  naPrintMacroEnum         (NA_TYPE_INT16_REPRESENTATION, na_NativeTypesEnumStrings, 8);
+  naPrintMacroEnum         (NA_TYPE_INT32_REPRESENTATION, na_NativeTypesEnumStrings, 8);
+  naPrintMacroEnum         (NA_TYPE_INT64_REPRESENTATION, na_NativeTypesEnumStrings, 8);
+  naPrintMacroEnum         (NA_TYPE_INT128_REPRESENTATION, na_NativeTypesEnumStrings, 8);
+  naPrintMacroEnum         (NA_TYPE_INT256_REPRESENTATION, na_NativeTypesEnumStrings, 8);
   naPrintMacro        (NA_TYPE_INT8);
   naPrintMacro        (NA_TYPE_INT16);
   naPrintMacro        (NA_TYPE_INT32);

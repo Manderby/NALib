@@ -20,7 +20,7 @@ struct NAPointer{
 
 NA_IDEF NAPointer* naInitPointerConst(NAPointer* pointer, const void* data){
   // As sptr is the first entry of pointer, we can trick sptr to delete the
-  // object when refcount becomes zero and delete the whole NAPointer object
+  // object when refCount becomes zero and delete the whole NAPointer object
   // in the end.
   naInitSmartPtrConst(&(pointer->sptr), data);
   pointer->destructor = NA_NULL;
@@ -31,7 +31,7 @@ NA_IDEF NAPointer* naInitPointerConst(NAPointer* pointer, const void* data){
 
 NA_IDEF NAPointer* naInitPointerMutable(NAPointer* pointer, void* data, NAMutator destructor){
   // As sptr is the first entry of pointer, we can trick sptr to delete the
-  // object when refcount becomes zero and delete the whole NAPointer object
+  // object when refCount becomes zero and delete the whole NAPointer object
   // in the end.
   naInitSmartPtrMutable(&(pointer->sptr), data);
   pointer->destructor = destructor;

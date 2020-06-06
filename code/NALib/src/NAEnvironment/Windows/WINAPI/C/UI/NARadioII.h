@@ -13,7 +13,7 @@ struct NAWINAPIRadio {
 
 
 
-NAWINAPICallbackInfo naRadioWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naRadioWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NABool check;
 
@@ -48,9 +48,9 @@ NAWINAPICallbackInfo naRadioWINAPIProc(NAUIElement* uielement, UINT message, WPA
 
   case WM_LBUTTONUP:
     ReleaseCapture();
-    check = naGetRadioState(uielement);
-    naSetRadioState(uielement, !check);
-    naDispatchUIElementCommand(uielement, NA_UI_COMMAND_PRESSED);
+    check = naGetRadioState(uiElement);
+    naSetRadioState(uiElement, !check);
+    naDispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
     info.hasbeenhandeled = NA_TRUE;
     info.result = 0;
     break;

@@ -264,16 +264,16 @@ NA_DEF void naCloseWindow(NAWindow* window){
 
 
 
-NA_DEF void naSetWindowContentSpace(NAWindow* window, NAUIElement* uielement){
+NA_DEF void naSetWindowContentSpace(NAWindow* window, NAUIElement* uiElement){
   NACoreWindow* coreWindow = (NACoreWindow*)window;
   naDefineCocoaObject(NACocoaWindow, cocoawindow, window);
-  naDefineCocoaObject(NSView, cocoaelem, uielement);
+  naDefineCocoaObject(NSView, cocoaelem, uiElement);
   if([cocoawindow trackingarea]){naClearWindowMouseTracking(coreWindow);}
   [cocoawindow setContentView:cocoaelem];
   [cocoawindow setInitialFirstResponder:[cocoawindow contentView]];
   
-  coreWindow->contentspace = (NACoreSpace*)uielement;
-  naSetUIElementParent(uielement, window);
+  coreWindow->contentspace = (NACoreSpace*)uiElement;
+  naSetUIElementParent(uiElement, window);
   
   if([cocoawindow trackingcount]){naRenewWindowMouseTracking(coreWindow);}
 }

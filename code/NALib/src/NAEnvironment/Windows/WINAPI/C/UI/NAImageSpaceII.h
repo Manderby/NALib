@@ -12,11 +12,11 @@ struct NAWINAPIImageSpace {
 };
 
 
-NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (NAUIElement* uielement);
+NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (NAUIElement* uiElement);
 
 
 
-NAWINAPICallbackInfo naImageSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naImageSpaceWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
@@ -30,7 +30,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(NAUIElement* uielement, UINT message
     break;
 
   case WM_PAINT:
-    naImageSpaceWINAPIDrawItem(uielement);
+    naImageSpaceWINAPIDrawItem(uiElement);
     info.hasbeenhandeled = NA_TRUE;
     break;
 
@@ -44,7 +44,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(NAUIElement* uielement, UINT message
 
 
 
-NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (NAUIElement* uielement){
+NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (NAUIElement* uiElement){
   PAINTSTRUCT paintStruct;
   HBITMAP hOldBitmap;
   HDC hMemDC;
@@ -61,12 +61,12 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (NAUIElement* uielement){
   NAByte* blendedBuffer;
   HBITMAP hBlendedBitmap;
 
-  BeginPaint(naGetUIElementNativeID(uielement), &paintStruct);
+  BeginPaint(naGetUIElementNativeID(uiElement), &paintStruct);
   hMemDC = CreateCompatibleDC(paintStruct.hdc);
 
-  imageSpace = (NAWINAPIImageSpace*)uielement;
+  imageSpace = (NAWINAPIImageSpace*)uiElement;
 
-  CallWindowProc(naGetApplicationOldButtonWindowProc(), naGetUIElementNativeID(uielement), WM_ERASEBKGND, (WPARAM)paintStruct.hdc, (LPARAM)NA_NULL);
+  CallWindowProc(naGetApplicationOldButtonWindowProc(), naGetUIElementNativeID(uiElement), WM_ERASEBKGND, (WPARAM)paintStruct.hdc, (LPARAM)NA_NULL);
 
   size1x = naGetUIImage1xSize(imageSpace->image);
 
@@ -109,8 +109,8 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (NAUIElement* uielement){
 
   // Deleting device contexts
   DeleteDC(hMemDC);
-  ReleaseDC(naGetUIElementNativeID(uielement), paintStruct.hdc);
-  EndPaint(naGetUIElementNativeID(uielement), &paintStruct);
+  ReleaseDC(naGetUIElementNativeID(uiElement), paintStruct.hdc);
+  EndPaint(naGetUIElementNativeID(uiElement), &paintStruct);
 
   return info;
 }

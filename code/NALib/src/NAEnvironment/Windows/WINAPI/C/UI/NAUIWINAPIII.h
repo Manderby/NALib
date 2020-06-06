@@ -49,19 +49,19 @@ NA_HDEF void naClearUINativeId(NANativeID nativeId){
 }
 
 
-NA_HDEF void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent){
+NA_HDEF void naSetUIElementParent(NAUIElement* uiElement, NAUIElement* parent){
   NACoreUIElement* coreelement;
   NACoreUIElement* coreparent;
   NACoreWindow* window;
 
   #ifndef NDEBUG
-    if(!uielement)
-      naError("uielement is NULL");
+    if(!uiElement)
+      naError("uiElement is NULL");
   #endif
-  coreelement = (NACoreUIElement*)uielement;
+  coreelement = (NACoreUIElement*)uiElement;
   coreparent = (NACoreUIElement*)parent;
 
-  window = naGetUIElementWindow(uielement);
+  window = naGetUIElementWindow(uiElement);
   if(window && naGetWindowFirstTabElement(window) == coreelement){
     naSetWindowFirstTabElement(window, NA_NULL);
   }
@@ -102,24 +102,24 @@ NA_HDEF NACoreUIElement* naGetUIElementCommonParent(NACoreUIElement* elem1, NACo
 
 NA_HAPI void naBlockUIElementNotifications(NACoreUIElement* elem){
   #ifndef NDEBUG
-    if(elem->allownotifications == NA_FALSE)
+    if(elem->allowNotifications == NA_FALSE)
       naError("Element already blocks notifications");
   #endif
-  elem->allownotifications = NA_FALSE;
+  elem->allowNotifications = NA_FALSE;
 }
 
 
 NA_HAPI void naAllowUIElementNotifications(NACoreUIElement* elem){
   #ifndef NDEBUG
-    if(elem->allownotifications == NA_TRUE)
+    if(elem->allowNotifications == NA_TRUE)
       naError("Element already allows notifications");
   #endif
-  elem->allownotifications = NA_TRUE;
+  elem->allowNotifications = NA_TRUE;
 }
 
 
 NA_HAPI NABool naAreUIElementNotificationsAllowed(NACoreUIElement* elem){
-  return elem->allownotifications;
+  return elem->allowNotifications;
 }
 
 
@@ -156,14 +156,14 @@ NA_HDEF void naCaptureKeyboardStatus(MSG* message){
   NABool rControl;
   NABool lOption;
   NABool rOption;
-  NABool hasShift   = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_SHIFT);
-  NABool hasControl = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_CONTROL);
-  NABool hasOption  = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_OPTION);
-  NABool hasCommand = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_COMMAND);
+  NABool hasShift   = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_SHIFT);
+  NABool hasControl = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_CONTROL);
+  NABool hasOption  = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_OPTION);
+  NABool hasCommand = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_COMMAND);
   NABool isExtendedKey = (message->lParam >> 24) & 0x01;  // Extended keys usually are the ones on the right.
 
-  NAUIKeyCode scancode = (NAUIKeyCode)MapVirtualKey((UINT)message->wParam, MAPVK_VK_TO_VSC);
-  na_app->keyboardStatus.keyCode = scancode;
+  NAUIKeyCode scanCode = (NAUIKeyCode)MapVirtualKey((UINT)message->wParam, MAPVK_VK_TO_VSC);
+  na_App->keyboardStatus.keyCode = scanCode;
   lShift = (GetKeyState(VK_LSHIFT) & 0x8000) >> 15;
   rShift = (GetKeyState(VK_RSHIFT) & 0x8000) >> 15;
   // Note: Due to the right shift key not properly being detected by the extended key flag
@@ -176,16 +176,16 @@ NA_HDEF void naCaptureKeyboardStatus(MSG* message){
   rOption = (GetKeyState(VK_RMENU) & 0x8000) >> 15;
   // Note: AltGr actually sends first an rControl and then an rOption. Don't know why.
   hasOption = lOption | rOption;
-  hasCommand = scancode == NA_KEYCODE_LEFT_COMMAND || scancode == NA_KEYCODE_RIGHT_COMMAND;
+  hasCommand = scanCode == NA_KEYCODE_LEFT_COMMAND || scanCode == NA_KEYCODE_RIGHT_COMMAND;
 
   // Note, this implementation is far from finished. It does strange things, but that
   // just seems to be a thing with windows key mappings. :(
 
-  na_app->keyboardStatus.modifiers = 0;
-  na_app->keyboardStatus.modifiers |= hasShift * NA_MODIFIER_FLAG_SHIFT;
-  na_app->keyboardStatus.modifiers |= hasControl * NA_MODIFIER_FLAG_CONTROL;
-  na_app->keyboardStatus.modifiers |= hasOption * NA_MODIFIER_FLAG_OPTION;
-  na_app->keyboardStatus.modifiers |= hasCommand * NA_MODIFIER_FLAG_COMMAND;
+  na_App->keyboardStatus.modifiers = 0;
+  na_App->keyboardStatus.modifiers |= hasShift * NA_MODIFIER_FLAG_SHIFT;
+  na_App->keyboardStatus.modifiers |= hasControl * NA_MODIFIER_FLAG_CONTROL;
+  na_App->keyboardStatus.modifiers |= hasOption * NA_MODIFIER_FLAG_OPTION;
+  na_App->keyboardStatus.modifiers |= hasCommand * NA_MODIFIER_FLAG_COMMAND;
 }
 
 
@@ -214,25 +214,25 @@ NA_HDEF NABool naInterceptKeyboardShortcut(MSG* message){
     while(!retvalue && elem){
       NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
       while(!retvalue && naIterateList(&iter)){
-        const NACoreKeyboardShortcutReaction* corereaction = naGetListCurConst(&iter);
-        if(corereaction->shortcut.keyCode == na_app->keyboardStatus.keyCode){
-          NABool needsShift   = naGetFlagi(corereaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool needsControl = naGetFlagi(corereaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool needsOption  = naGetFlagi(corereaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool needsCommand = naGetFlagi(corereaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
-          NABool hasShift   = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool hasControl = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool hasOption  = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool hasCommand = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_COMMAND);
+        const NACoreKeyboardShortcutReaction* coreReaction = naGetListCurConst(&iter);
+        if(coreReaction->shortcut.keyCode == na_App->keyboardStatus.keyCode){
+          NABool needsShift   = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool needsControl = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool needsOption  = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool needsCommand = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
+          NABool hasShift   = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool hasControl = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool hasOption  = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool hasCommand = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_COMMAND);
           if(needsShift   == hasShift
           && needsControl == hasControl
           && needsOption  == hasOption
           && needsCommand == hasCommand){
             NAReaction reaction;
-            reaction.uielement = elem;
+            reaction.uiElement = elem;
             reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
-            reaction.controller = corereaction->controller;
-            retvalue = corereaction->handler(reaction);
+            reaction.controller = coreReaction->controller;
+            retvalue = coreReaction->handler(reaction);
           }
         }
       }
@@ -262,30 +262,30 @@ WNDPROC naGetApplicationOldLabelWindowProc();
 WNDPROC naGetApplicationOldTextFieldWindowProc();
 
 // Prototypes of the WindowProc handlers
-NAWINAPICallbackInfo naUIElementWINAPIProc  (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naUIElementWINAPIProc  (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam);
 
-NAWINAPICallbackInfo naApplicationWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naWindowWINAPIProc     (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naSpaceWINAPIProc      (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naImageSpaceWINAPIProc (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naApplicationWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naWindowWINAPIProc     (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naSpaceWINAPIProc      (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naImageSpaceWINAPIProc (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 #if (NA_COMPILE_OPENGL == 1)
-  NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
+  NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 #endif
-NAWINAPICallbackInfo naButtonWINAPIProc     (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naRadioWINAPIProc      (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naCheckBoxWINAPIProc   (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naLabelWINAPIProc      (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naTextFieldWINAPIProc  (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naTextBoxWINAPIProc    (NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naButtonWINAPIProc     (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naRadioWINAPIProc      (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naCheckBoxWINAPIProc   (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naLabelWINAPIProc      (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naTextFieldWINAPIProc  (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naTextBoxWINAPIProc    (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 
-NAWINAPICallbackInfo naButtonWINAPINotify   (NAUIElement* uielement, WORD notificationCode);
-NAWINAPICallbackInfo naCheckBoxWINAPINotify (NAUIElement* uielement, WORD notificationCode);
-NAWINAPICallbackInfo naLabelWINAPINotify    (NAUIElement* uielement, WORD notificationCode);
-NAWINAPICallbackInfo naTextFieldWINAPINotify(NAUIElement* uielement, WORD notificationCode);
+NAWINAPICallbackInfo naButtonWINAPINotify   (NAUIElement* uiElement, WORD notificationCode);
+NAWINAPICallbackInfo naCheckBoxWINAPINotify (NAUIElement* uiElement, WORD notificationCode);
+NAWINAPICallbackInfo naLabelWINAPINotify    (NAUIElement* uiElement, WORD notificationCode);
+NAWINAPICallbackInfo naTextFieldWINAPINotify(NAUIElement* uiElement, WORD notificationCode);
 
-NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTRUCT* drawitemstruct);
+NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uiElement, DRAWITEMSTRUCT* drawitemstruct);
 
 
 
@@ -293,8 +293,8 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uielement, DRAWITEMSTR
 // pimp of the century function handling all and everything in WINAPI.
 
 LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-  NACoreUIElement* uielement = (NACoreUIElement*)naGetUINALibEquivalent(hWnd);
-  NAUIElementType firsttype = uielement ? naGetUIElementType(uielement) : NA_UI_APPLICATION;
+  NACoreUIElement* uiElement = (NACoreUIElement*)naGetUINALibEquivalent(hWnd);
+  NAUIElementType firsttype = uiElement ? naGetUIElementType(uiElement) : NA_UI_APPLICATION;
 
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
@@ -305,27 +305,27 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
     info = naWINAPIDrawItemProc(wParam, lParam);
   }
 
-  while(uielement && !info.hasbeenhandeled){
-    info = naUIElementWINAPIProc(uielement, message, wParam, lParam);
+  while(uiElement && !info.hasbeenhandeled){
+    info = naUIElementWINAPIProc(uiElement, message, wParam, lParam);
     if(info.hasbeenhandeled){break;}
 
-    switch(naGetUIElementType(uielement)){
-    case NA_UI_APPLICATION: info = naApplicationWINAPIProc(uielement, message, wParam, lParam); break;
-    case NA_UI_WINDOW:      info = naWindowWINAPIProc     (uielement, message, wParam, lParam); break;
-    case NA_UI_SPACE:       info = naSpaceWINAPIProc      (uielement, message, wParam, lParam); break;
-    case NA_UI_IMAGESPACE:  info = naImageSpaceWINAPIProc (uielement, message, wParam, lParam); break;
+    switch(naGetUIElementType(uiElement)){
+    case NA_UI_APPLICATION: info = naApplicationWINAPIProc(uiElement, message, wParam, lParam); break;
+    case NA_UI_WINDOW:      info = naWindowWINAPIProc     (uiElement, message, wParam, lParam); break;
+    case NA_UI_SPACE:       info = naSpaceWINAPIProc      (uiElement, message, wParam, lParam); break;
+    case NA_UI_IMAGESPACE:  info = naImageSpaceWINAPIProc (uiElement, message, wParam, lParam); break;
     #if (NA_COMPILE_OPENGL == 1)
-      case NA_UI_OPENGLSPACE: info = naOpenGLSpaceWINAPIProc(uielement, message, wParam, lParam); break;
+      case NA_UI_OPENGLSPACE: info = naOpenGLSpaceWINAPIProc(uiElement, message, wParam, lParam); break;
     #endif
-    case NA_UI_BUTTON:      info = naButtonWINAPIProc     (uielement, message, wParam, lParam); break;
-    case NA_UI_RADIO:       info = naRadioWINAPIProc      (uielement, message, wParam, lParam); break;
-    case NA_UI_CHECKBOX:    info = naCheckBoxWINAPIProc   (uielement, message, wParam, lParam); break;
-    case NA_UI_LABEL:       info = naLabelWINAPIProc      (uielement, message, wParam, lParam); break;
-    case NA_UI_TEXTFIELD:   info = naTextFieldWINAPIProc  (uielement, message, wParam, lParam); break;
-    case NA_UI_TEXTBOX:     info = naTextBoxWINAPIProc    (uielement, message, wParam, lParam); break;
+    case NA_UI_BUTTON:      info = naButtonWINAPIProc     (uiElement, message, wParam, lParam); break;
+    case NA_UI_RADIO:       info = naRadioWINAPIProc      (uiElement, message, wParam, lParam); break;
+    case NA_UI_CHECKBOX:    info = naCheckBoxWINAPIProc   (uiElement, message, wParam, lParam); break;
+    case NA_UI_LABEL:       info = naLabelWINAPIProc      (uiElement, message, wParam, lParam); break;
+    case NA_UI_TEXTFIELD:   info = naTextFieldWINAPIProc  (uiElement, message, wParam, lParam); break;
+    case NA_UI_TEXTBOX:     info = naTextBoxWINAPIProc    (uiElement, message, wParam, lParam); break;
     default: break;
     }
-    uielement = naGetUIElementParent(uielement);
+    uiElement = naGetUIElementParent(uiElement);
   }
 
   // If the event has not been handeled, hand it over to the default procedure.
@@ -365,7 +365,7 @@ void naWINAPICaptureMouseHover(){
 
     // Send a leave reaction to all elements which are not hovered anymore.
     while(curElement && curElement != commonParent){
-      curElement->mouseinside = NA_FALSE;
+      curElement->mouseInside = NA_FALSE;
       naDispatchUIElementCommand(curElement, NA_UI_COMMAND_MOUSE_EXITED);
       curElement = naGetUIElementParent(curElement);
     }
@@ -383,7 +383,7 @@ void naWINAPICaptureMouseHover(){
 
     // Send the entered message to all elements which are newly hovered.
     while(elementUnderMouse && elementUnderMouse != commonParent){
-      elementUnderMouse->mouseinside = NA_TRUE;
+      elementUnderMouse->mouseInside = NA_TRUE;
       naDispatchUIElementCommand(elementUnderMouse, NA_UI_COMMAND_MOUSE_ENTERED);
       elementUnderMouse = naGetUIElementParent(elementUnderMouse);
     }
@@ -391,9 +391,9 @@ void naWINAPICaptureMouseHover(){
 }
 
 
-NAWINAPICallbackInfo naUIElementWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naUIElementWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
-  NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
+  NACoreUIElement* coreelement = (NACoreUIElement*)uiElement;
   NABool handeled;
   NAPos pos;
   NASize size;
@@ -412,7 +412,7 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(NAUIElement* uielement, UINT message,
 
     size.width = GET_X_LPARAM(lParam);
     size.height = GET_Y_LPARAM(lParam);
-    rect = naGetUIElementRect(uielement, naGetApplication(), NA_FALSE);
+    rect = naGetUIElementRect(uiElement, naGetApplication(), NA_FALSE);
     size.width += rect.pos.x;
     size.height = rect.pos.y + rect.size.height - size.height;
     mouseStatus = naGetMouseStatus();
@@ -458,14 +458,14 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
   WORD notificationCode = HIWORD(wParam);
   WORD controlIdentifier = LOWORD(wParam);
   HWND controlWnd = (HWND)lParam;
-  NACoreUIElement* uielement = (NACoreUIElement*)naGetUINALibEquivalent(controlWnd);
+  NACoreUIElement* uiElement = (NACoreUIElement*)naGetUINALibEquivalent(controlWnd);
 
-  if(uielement && naAreUIElementNotificationsAllowed(uielement)){
-    switch(naGetUIElementType(uielement)){
-    case NA_UI_BUTTON:    info = naButtonWINAPINotify   (uielement, notificationCode); break;
-    case NA_UI_CHECKBOX:  info = naCheckBoxWINAPINotify (uielement, notificationCode); break;
-    case NA_UI_LABEL:     info = naLabelWINAPINotify    (uielement, notificationCode); break;
-    case NA_UI_TEXTFIELD: info = naTextFieldWINAPINotify(uielement, notificationCode); break;
+  if(uiElement && naAreUIElementNotificationsAllowed(uiElement)){
+    switch(naGetUIElementType(uiElement)){
+    case NA_UI_BUTTON:    info = naButtonWINAPINotify   (uiElement, notificationCode); break;
+    case NA_UI_CHECKBOX:  info = naCheckBoxWINAPINotify (uiElement, notificationCode); break;
+    case NA_UI_LABEL:     info = naLabelWINAPINotify    (uiElement, notificationCode); break;
+    case NA_UI_TEXTFIELD: info = naTextFieldWINAPINotify(uiElement, notificationCode); break;
     default:
       //printf("Uncaught notification" NA_NL);
       break;
@@ -477,11 +477,11 @@ NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam){
 NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   DRAWITEMSTRUCT* drawitemstruct = (DRAWITEMSTRUCT*)lParam;
-  NACoreUIElement* uielement = (NACoreUIElement*)naGetUINALibEquivalent(drawitemstruct->hwndItem);
+  NACoreUIElement* uiElement = (NACoreUIElement*)naGetUINALibEquivalent(drawitemstruct->hwndItem);
 
-  if(uielement){
-    switch(naGetUIElementType(uielement)){
-    case NA_UI_BUTTON:     info = naButtonWINAPIDrawItem    (uielement, drawitemstruct); break;
+  if(uiElement){
+    switch(naGetUIElementType(uiElement)){
+    case NA_UI_BUTTON:     info = naButtonWINAPIDrawItem    (uiElement, drawitemstruct); break;
     default:
       //printf("Uncaught draw item message" NA_NL);
       break;
@@ -496,16 +496,16 @@ NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam){
 // UI ELEMENT
 // ///////////////////////////////////
 
-NA_HDEF void naRefreshUIElementNow(NAUIElement* uielement){
-  RedrawWindow(naGetUIElementNativeID(uielement), NA_NULL, NA_NULL, RDW_INVALIDATE | RDW_ERASE);
+NA_HDEF void naRefreshUIElementNow(NAUIElement* uiElement){
+  RedrawWindow(naGetUIElementNativeID(uiElement), NA_NULL, NA_NULL, RDW_INVALIDATE | RDW_ERASE);
 }
 
 
 
-NA_HDEF NAUIElement** naGetUIElementNextTabReference(NAUIElement* uielement){
-  switch(naGetUIElementType(uielement)){
-  case NA_UI_TEXTFIELD: return naGetTextFieldNextTabReference(uielement); break;
-  case NA_UI_TEXTBOX:   return naGetTextBoxNextTabReference(uielement); break;
+NA_HDEF NAUIElement** naGetUIElementNextTabReference(NAUIElement* uiElement){
+  switch(naGetUIElementType(uiElement)){
+  case NA_UI_TEXTFIELD: return naGetTextFieldNextTabReference(uiElement); break;
+  case NA_UI_TEXTBOX:   return naGetTextBoxNextTabReference(uiElement); break;
   default:
     #ifndef NDEBUG
       naError("Invalid type");
@@ -516,10 +516,10 @@ NA_HDEF NAUIElement** naGetUIElementNextTabReference(NAUIElement* uielement){
 
 
 
-NA_HDEF NAUIElement** naGetUIElementPrevTabReference(NAUIElement* uielement){
-  switch(naGetUIElementType(uielement)){
-  case NA_UI_TEXTFIELD: return naGetTextFieldPrevTabReference(uielement); break;
-  case NA_UI_TEXTBOX:   return naGetTextBoxPrevTabReference(uielement); break;
+NA_HDEF NAUIElement** naGetUIElementPrevTabReference(NAUIElement* uiElement){
+  switch(naGetUIElementType(uiElement)){
+  case NA_UI_TEXTFIELD: return naGetTextFieldPrevTabReference(uiElement); break;
+  case NA_UI_TEXTBOX:   return naGetTextBoxPrevTabReference(uiElement); break;
   default:
     #ifndef NDEBUG
       naError("Invalid type");
@@ -596,14 +596,14 @@ NA_HDEF NARect naGetScreenAbsoluteRect(NACoreUIElement* screen){
 
 
 
-NA_DEF NARect naGetUIElementRect(NACoreUIElement* uielement, NAUIElement* relativeelement, NABool includebounds){
+NA_DEF NARect naGetUIElementRect(NACoreUIElement* uiElement, NAUIElement* relativeelement, NABool includebounds){
   NARect rect;
   NARect relrect;
   NACoreUIElement* coreelement;
   NACoreUIElement* corerelelement;
   NAApplication* app;
 
-  coreelement = (NACoreUIElement*)uielement;
+  coreelement = (NACoreUIElement*)uiElement;
   corerelelement = (NACoreUIElement*)relativeelement;
   app = naGetApplication();
 
@@ -611,7 +611,7 @@ NA_DEF NARect naGetUIElementRect(NACoreUIElement* uielement, NAUIElement* relati
   if(coreelement == (NACoreUIElement*)app){
     #ifndef NDEBUG
       if(relativeelement && (relativeelement != app))
-        naError("The relative element is invalid for the given uielement, which seems to be the application.");
+        naError("The relative element is invalid for the given uiElement, which seems to be the application.");
     #endif
     return naGetApplicationAbsoluteRect();
   }
@@ -619,7 +619,7 @@ NA_DEF NARect naGetUIElementRect(NACoreUIElement* uielement, NAUIElement* relati
   // Now, we find the appropriate relative element.
   if(!corerelelement){corerelelement = naGetUIElementParent(coreelement);}
 
-  switch(coreelement->elementtype){
+  switch(coreelement->elementType){
   case NA_UI_APPLICATION: rect = naGetApplicationAbsoluteRect(); break;
   case NA_UI_SCREEN:      rect = naGetScreenAbsoluteRect(coreelement); break;
   case NA_UI_WINDOW:
@@ -639,7 +639,7 @@ NA_DEF NARect naGetUIElementRect(NACoreUIElement* uielement, NAUIElement* relati
   }
 
   if(corerelelement){
-    switch(corerelelement->elementtype){
+    switch(corerelelement->elementType){
     case NA_UI_APPLICATION: relrect = naGetApplicationAbsoluteRect(); break;
     case NA_UI_SCREEN:      relrect = naGetScreenAbsoluteRect(corerelelement); break;
     case NA_UI_WINDOW:      relrect = naGetWindowAbsoluteInnerRect(corerelelement); break;

@@ -33,7 +33,7 @@ NA_HAPI void naClearWindowMouseTracking(NACoreWindow* coreWindow);
 // Not much of use currently, but consistent with the WINAPI implementation.
 typedef struct NACocoaApplication NACocoaApplication;
 struct NACocoaApplication {
-  NACoreApplication coreapplication;
+  NACoreApplication coreApplication;
 };
 
 
@@ -116,8 +116,8 @@ struct NACocoaApplication {
 
 
 
-#define naDefineCocoaObject(cocoatype, var, uielement)\
-  cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativeID((NAUIElement*)uielement))
+#define naDefineCocoaObject(cocoatype, var, uiElement)\
+  cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativeID((NAUIElement*)uiElement))
 
 
 NA_HDEF void naClearUINativeId(NANativeID nativeId){
@@ -125,8 +125,8 @@ NA_HDEF void naClearUINativeId(NANativeID nativeId){
 }
 
 
-NA_HDEF void naSetUIElementParent(NAUIElement* uielement, NAUIElement* parent){
-  NACoreUIElement* coreelement = (NACoreUIElement*)uielement;
+NA_HDEF void naSetUIElementParent(NAUIElement* uiElement, NAUIElement* parent){
+  NACoreUIElement* coreelement = (NACoreUIElement*)uiElement;
   // todo: remove from old parent
   coreelement->parent = parent;
 }
@@ -140,18 +140,18 @@ NA_HDEF void naCaptureKeyboardStatus(NSEvent* event){
   NABool hasOption;
   NABool hasCommand;
   NAUIKeyCode keyCode = [event keyCode];
-  na_app->keyboardStatus.keyCode = keyCode;
+  na_App->keyboardStatus.keyCode = keyCode;
   [event modifierFlags];
   flags = (NSUInteger)[event modifierFlags];
   hasShift     = (flags & NAEventModifierFlagShift)   != 0;
   hasControl   = (flags & NAEventModifierFlagControl) != 0;
   hasOption    = (flags & NAEventModifierFlagOption)  != 0;
   hasCommand   = (flags & NAEventModifierFlagCommand) != 0;
-  na_app->keyboardStatus.modifiers = 0;
-  na_app->keyboardStatus.modifiers |= hasShift * NA_MODIFIER_FLAG_SHIFT;
-  na_app->keyboardStatus.modifiers |= hasControl * NA_MODIFIER_FLAG_CONTROL;
-  na_app->keyboardStatus.modifiers |= hasOption * NA_MODIFIER_FLAG_OPTION;
-  na_app->keyboardStatus.modifiers |= hasCommand * NA_MODIFIER_FLAG_COMMAND;
+  na_App->keyboardStatus.modifiers = 0;
+  na_App->keyboardStatus.modifiers |= hasShift * NA_MODIFIER_FLAG_SHIFT;
+  na_App->keyboardStatus.modifiers |= hasControl * NA_MODIFIER_FLAG_CONTROL;
+  na_App->keyboardStatus.modifiers |= hasOption * NA_MODIFIER_FLAG_OPTION;
+  na_App->keyboardStatus.modifiers |= hasCommand * NA_MODIFIER_FLAG_COMMAND;
 }
 
 
@@ -190,25 +190,25 @@ NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
     while(!retvalue && elem){
       NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
       while(!retvalue && naIterateList(&iter)){
-        const NACoreKeyboardShortcutReaction* corereaction = naGetListCurConst(&iter);
-        if(corereaction->shortcut.keyCode == na_app->keyboardStatus.keyCode){
-          NABool needsShift   = naGetFlagi(corereaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool needsControl = naGetFlagi(corereaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool needsOption  = naGetFlagi(corereaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool needsCommand = naGetFlagi(corereaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
-          NABool hasShift   = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool hasControl = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool hasOption  = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool hasCommand = naGetFlagi(na_app->keyboardStatus.modifiers, NA_MODIFIER_FLAG_COMMAND);
+        const NACoreKeyboardShortcutReaction* coreReaction = naGetListCurConst(&iter);
+        if(coreReaction->shortcut.keyCode == na_App->keyboardStatus.keyCode){
+          NABool needsShift   = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool needsControl = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool needsOption  = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool needsCommand = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
+          NABool hasShift   = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool hasControl = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool hasOption  = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool hasCommand = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_COMMAND);
           if(needsShift   == hasShift
           && needsControl == hasControl
           && needsOption  == hasOption
           && needsCommand == hasCommand){
             NAReaction reaction;
-            reaction.uielement = na_app;
+            reaction.uiElement = na_App;
             reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
-            reaction.controller = corereaction->controller;
-            retvalue = corereaction->handler(reaction);
+            reaction.controller = coreReaction->controller;
+            retvalue = coreReaction->handler(reaction);
           }
         }
       }
@@ -225,8 +225,8 @@ NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
 // ///////////////////////////////////
 
 
-NA_DEF void naRefreshUIElementNow(NAUIElement* uielement){
-  naDefineCocoaObject(NSView, cocoaview, uielement);
+NA_DEF void naRefreshUIElementNow(NAUIElement* uiElement){
+  naDefineCocoaObject(NSView, cocoaview, uiElement);
   [cocoaview setNeedsDisplay:YES];
 }
 
@@ -377,12 +377,12 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 
 
 
-NA_DEF void naCenterMouse(void* uielement, NABool includebounds, NABool sendmovemessage){
+NA_DEF void naCenterMouse(void* uiElement, NABool includebounds, NABool sendmovemessage){
   NARect spacerect;
   NSRect screenframe;
   CGPoint centerpos;
   NA_UNUSED(sendmovemessage);
-  spacerect = naGetUIElementRect(uielement, (NAUIElement*)naGetApplication(), includebounds);
+  spacerect = naGetUIElementRect(uiElement, (NAUIElement*)naGetApplication(), includebounds);
   screenframe = [[NSScreen mainScreen] frame];
   centerpos.x = (CGFloat)spacerect.pos.x + (CGFloat)spacerect.size.width * .5f;
   centerpos.y = (CGFloat)screenframe.size.height - (CGFloat)(spacerect.pos.y + spacerect.size.height * .5f);
@@ -412,27 +412,27 @@ NA_DEF void naHideMouse(){
 
 
 
-NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeuielement, NABool includeborder){
+NA_DEF NARect naGetUIElementRect(NAUIElement* uiElement, NAUIElement* relativeuiElement, NABool includeborder){
   NARect rect;
   NARect relrect;
   NACoreUIElement* element;
   NACoreUIElement* relelement;
   NAApplication* app;
 
-  element = (NACoreUIElement*)uielement;
-  relelement = (NACoreUIElement*)relativeuielement;
+  element = (NACoreUIElement*)uiElement;
+  relelement = (NACoreUIElement*)relativeuiElement;
   app = naGetApplication();
 
   // First, let's handle the root case: Returning the application rect.
   if(element == (NACoreUIElement*)app){
     #ifndef NDEBUG
       if(relelement && (relelement != (NACoreUIElement*)app))
-        naError("The relative element is invalid for the given uielement, which seems to be the application.");
+        naError("The relative element is invalid for the given uiElement, which seems to be the application.");
     #endif
     return naGetApplicationAbsoluteRect();
   }
 
-  switch(element->elementtype){
+  switch(element->elementType){
   case NA_UI_APPLICATION: rect = naGetApplicationAbsoluteRect(); break;
   case NA_UI_SCREEN:      rect = naGetScreenAbsoluteRect(element); break;
   case NA_UI_WINDOW:
@@ -457,7 +457,7 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uielement, NAUIElement* relativeui
   if(!relelement){relelement = (NACoreUIElement*)naGetUIElementParent((NAUIElement*)element);}
 
   if(relelement){
-    switch(relelement->elementtype){
+    switch(relelement->elementType){
     case NA_UI_APPLICATION: relrect = naGetApplicationAbsoluteRect(); break;
     case NA_UI_SCREEN:      relrect = naGetScreenAbsoluteRect(relelement); break;
     case NA_UI_WINDOW:      relrect = naGetWindowAbsoluteInnerRect(relelement); break;

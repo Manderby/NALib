@@ -4,8 +4,8 @@
 // including "NABinaryData.h"
 
 
-extern int16  na_globaltimeshift;
-extern NABool na_globalsummertime;
+extern int16  na_GlobalTimeShift;
+extern NABool na_GlobalSummerTime;
 
 
 #define NA_DATETIME_FLAG_SUMMERTIME 0x01
@@ -97,9 +97,9 @@ NA_IDEF NADateTime naMakeDateTime(NAi64 year, int32 mon, int32 day, int32 hour, 
   dts.min = min;
   dts.sec = sec;
   dts.nsec = 0;
-  dts.shift = na_globaltimeshift;
+  dts.shift = na_GlobalTimeShift;
   dts.errornum = NA_DATETIME_ERROR_NONE;
-  dts.flags = (uint8)na_globalsummertime;
+  dts.flags = (uint8)na_GlobalSummerTime;
   return naMakeDateTimeWithDateTimeStruct(&dts);
 }
 
@@ -210,8 +210,8 @@ NA_IDEF void naSetDateTimeSummertime(NADateTime* datetime, NABool summertime){
 
 
 NA_IDEF void naSetGlobalTimeShift(int16 shiftminutes, NABool summertime){
-  na_globaltimeshift = shiftminutes;
-  na_globalsummertime = summertime;
+  na_GlobalTimeShift = shiftminutes;
+  na_GlobalSummerTime = summertime;
 }
 
 

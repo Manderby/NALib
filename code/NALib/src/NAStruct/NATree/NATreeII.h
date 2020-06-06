@@ -83,7 +83,7 @@ typedef NATreeNode*     (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
 struct NATreeConfiguration{
   
   // Core settings
-  NARefCount                    refcount;
+  NARefCount                    refCount;
   NAInt                         flags;
 
   NAInt                         childpernode;

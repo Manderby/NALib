@@ -6,7 +6,7 @@
 
 
 struct NASmartPtr{
-  NARefCount refcount;
+  NARefCount refCount;
   NAPtr ptr;
 };
 
@@ -16,7 +16,7 @@ struct NASmartPtr{
 
 NA_IDEF NASmartPtr* naInitSmartPtrConst(NASmartPtr* sptr, const void* data){
   sptr->ptr = naMakePtrWithDataConst(data);
-  naInitRefCount(&(sptr->refcount));
+  naInitRefCount(&(sptr->refCount));
   return sptr;
 }
 
@@ -24,14 +24,14 @@ NA_IDEF NASmartPtr* naInitSmartPtrConst(NASmartPtr* sptr, const void* data){
 
 NA_IDEF NASmartPtr* naInitSmartPtrMutable(NASmartPtr* sptr, void* data){
   sptr->ptr = naMakePtrWithDataMutable(data);
-  naInitRefCount(&(sptr->refcount));
+  naInitRefCount(&(sptr->refCount));
   return sptr;
 }
 
 
 
 NA_IDEF NASmartPtr* naRetainSmartPtr(NASmartPtr* sptr){
-  return (NASmartPtr*)naRetainRefCount(&(sptr->refcount));
+  return (NASmartPtr*)naRetainRefCount(&(sptr->refCount));
 }
 
 
@@ -42,9 +42,9 @@ NA_IDEF void naReleaseSmartPtr(NASmartPtr* sptr, NAMutator destructor, NABool on
       naCrash("sptr is Null-Pointer.");
   #endif
   if(onlydata){
-    naReleaseRefCount(&sptr->refcount, naGetPtrMutable(sptr->ptr), destructor);
+    naReleaseRefCount(&sptr->refCount, naGetPtrMutable(sptr->ptr), destructor);
   }else{
-    naReleaseRefCount(&sptr->refcount, sptr, destructor);
+    naReleaseRefCount(&sptr->refCount, sptr, destructor);
   }
 }
 

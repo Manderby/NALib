@@ -15,7 +15,7 @@ struct NAWINAPITextField {
 
 
 
-NAWINAPICallbackInfo naTextFieldWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naTextFieldWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
@@ -73,11 +73,11 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(NAUIElement* uielement, UINT message,
 
 
 
-NAWINAPICallbackInfo naTextFieldWINAPINotify(NAUIElement* uielement, WORD notificationCode){
+NAWINAPICallbackInfo naTextFieldWINAPINotify(NAUIElement* uiElement, WORD notificationCode){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   switch(notificationCode){
   case EN_CHANGE:
-    naDispatchUIElementCommand(uielement, NA_UI_COMMAND_EDITED);
+    naDispatchUIElementCommand(uiElement, NA_UI_COMMAND_EDITED);
     info.hasbeenhandeled = NA_TRUE;
     info.result = 0;
     break;
@@ -88,7 +88,7 @@ NAWINAPICallbackInfo naTextFieldWINAPINotify(NAUIElement* uielement, WORD notifi
 
 
 NABool naHandleTextFieldTabOrder(NAReaction reaction){
-  NAWINAPITextField* winapiTextField = (NAWINAPITextField*)reaction.uielement;
+  NAWINAPITextField* winapiTextField = (NAWINAPITextField*)reaction.uiElement;
   if(winapiTextField->nextTabStop){
     SetFocus(naGetUIElementNativeID(winapiTextField->nextTabStop));
     return NA_TRUE;
@@ -99,7 +99,7 @@ NABool naHandleTextFieldTabOrder(NAReaction reaction){
 
 
 NABool naHandleTextFieldReverseTabOrder(NAReaction reaction){
-  NAWINAPITextField* winapiTextField = (NAWINAPITextField*)reaction.uielement;
+  NAWINAPITextField* winapiTextField = (NAWINAPITextField*)reaction.uiElement;
   if(winapiTextField->prevTabStop){
     SetFocus(naGetUIElementNativeID(winapiTextField->prevTabStop));
     return NA_TRUE;
@@ -154,9 +154,9 @@ NA_DEF void naDestructTextField(NATextField* textField){
 NA_DEF void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text){
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
   TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
-  naBlockUIElementNotifications(&(winapiTextField->coreTextField.uielement));
+  naBlockUIElementNotifications(&(winapiTextField->coreTextField.uiElement));
   SendMessage(naGetUIElementNativeID(textField), WM_SETTEXT, 0, (LPARAM)systemtext);
-  naAllowUIElementNotifications(&(winapiTextField->coreTextField.uielement));
+  naAllowUIElementNotifications(&(winapiTextField->coreTextField.uiElement));
   naFree(systemtext);
 }
 

@@ -15,6 +15,8 @@
   NA_IAPI NAi128 naMakei128            (NAi64 hi, NAu64 lo);
   NA_IAPI NAi128 naMakei128WithLo      (NAi64 lo);
   NA_IAPI NAi128 naMakei128WithDouble  (double lo);
+  NA_IAPI NAi128 naMakei128WithBinary(
+    uint32 b3, uint32 b2, uint32 b1, uint32 b0);
 
   #define naGeti128Hi(i)            ((int64)((i) >> NA_TYPE64_BITS))
   #define naGeti128Lo(i)            ((uint64)i)
@@ -57,6 +59,8 @@
   #define naMakeu128(hi, lo)          ((NAu128)(((NAu128)(hi) << 64) | (lo)))
   #define naMakeu128WithLo(lo)        ((NAu128)(lo))
   #define naMakeu128WithDouble(d)     ((NAu128)(d))
+  #define naMakeu128WithBinary(
+    uint32 b3, uint32 b2, uint32 b1, uint32 b0);
 
   #define naIncu128(i)                ((i)++)
   #define naDecu128(i)                ((i)--)
@@ -94,9 +98,11 @@
 
   // if no native int128 type is available, we have to emulate it.
 
-  NA_IAPI NAi128  naMakei128(NAi64 hi, NAu64 lo);
-  NA_IAPI NAi128  naMakei128WithLo(NAi64 lo);
-  NA_IAPI NAi128  naMakei128WithDouble(double d);
+  NA_IAPI NAi128 naMakei128(NAi64 hi, NAu64 lo);
+  NA_IAPI NAi128 naMakei128WithLo(NAi64 lo);
+  NA_IAPI NAi128 naMakei128WithDouble(double d);
+  NA_IAPI NAi128 naMakei128WithBinary(
+    uint32 b3, uint32 b2, uint32 b1, uint32 b0);
 
   #define naGeti128Hi(i)            ((i).hi)
   #define naGeti128Lo(i)            ((i).lo)
@@ -140,6 +146,8 @@
   NA_IAPI NAu128 naMakeu128(NAu64 hi, NAu64 lo);
   NA_IAPI NAu128 naMakeu128WithLo(NAu64 lo);
   NA_IAPI NAu128 naMakeu128WithDouble(double d);
+  NA_IAPI NAu128 naMakeu128WithBinary(
+    uint32 b3, uint32 b2, uint32 b1, uint32 b0);
 
   #define           naIncu128(i)
   #define           naDecu128(i)

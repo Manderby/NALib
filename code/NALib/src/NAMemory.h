@@ -172,7 +172,7 @@ NA_API  void  naRelease           (void* pointer);
 typedef struct NARefCount NARefCount;
 
 // Initializes an NARefCount.
-NA_IAPI NARefCount* naInitRefCount(     NARefCount* refcount);
+NA_IAPI NARefCount* naInitRefCount(     NARefCount* refCount);
 
 // Retain and Release.
 // You can send a destructor to Release which will be called when the reference
@@ -183,8 +183,8 @@ NA_IAPI NARefCount* naInitRefCount(     NARefCount* refcount);
 // destructor will get NA_NULL.
 //
 // When destructor is NA_NULL itself, nothing will be called.
-NA_IAPI NARefCount* naRetainRefCount( NARefCount* refcount);
-NA_IAPI void        naReleaseRefCount(NARefCount* refcount,
+NA_IAPI NARefCount* naRetainRefCount( NARefCount* refCount);
+NA_IAPI void        naReleaseRefCount(NARefCount* refCount,
                                             void* data,
                                         NAMutator destructor);
 
@@ -316,7 +316,7 @@ NA_IAPI NASmartPtr* naInitSmartPtrMutable(  NASmartPtr* sptr,
 // count reaches 0. Either the destructor will be called with the struct itself
 // or only with the data pointer if onlydata is set to NA_TRUE.
 //
-// When refcount reaches zero, first, the destructor is called with a pointer
+// When refCount reaches zero, first, the destructor is called with a pointer
 // to data, then the data is cleaned up and finally, the struct is cleaned up.
 NA_IAPI NASmartPtr* naRetainSmartPtr (NASmartPtr* sptr);
 NA_IAPI void        naReleaseSmartPtr(NASmartPtr* sptr,
@@ -376,7 +376,7 @@ NA_IAPI NAPointer* naInitPointerMutable(  NAPointer* pointer,
                                                void* data,
                                            NAMutator destructor);
 
-// Retains and releases the given NAPointer. If the refcount reaches 0 when
+// Retains and releases the given NAPointer. If the refCount reaches 0 when
 // releasing, this NAPointer is no longer needed. The data will be freed
 // automatically according to the destructor and cleanup enumeration given
 // upon creation. The NAPointer struct itself will be deleted by the runtime
@@ -426,10 +426,10 @@ NA_IAPI size_t naGetRuntimePoolPartSize(void);
 // In order to work with specific types, each type trying to use the runtime
 // system needs to register itself to the runtime system upon compile time.
 // This is achieved by defining a very specific variable of type NATypeInfo.
-// You can do so using the macro NA_RUNTIME_TYPE. Just write the typename
+// You can do so using the macro NA_RUNTIME_TYPE. Just write the typeName
 // and the function to use for destructing the type.
 
-#define NA_RUNTIME_TYPE(typename, destructor, refcounting)
+#define NA_RUNTIME_TYPE(typeName, destructor, refCounting)
 
 // But note that this macro results in a variable definition and hence must be
 // written in an implementation file (.c). Also, the type must not be opaque
@@ -439,7 +439,7 @@ NA_IAPI size_t naGetRuntimePoolPartSize(void);
 // use naNew, you can use the NA_EXTERN_RUNTIME_TYPE macro to declare the
 // variable beforehand:
 
-#define NA_EXTERN_RUNTIME_TYPE(typename)
+#define NA_EXTERN_RUNTIME_TYPE(typeName)
 
 // For a deeper understanding on how that macro does what it does, please refer
 // to the definition of these macros in NAMemoryII.h and the implementation of

@@ -11,7 +11,7 @@ NA_HIDEF void naDeallocConfiguration(NATreeConfiguration* config){
 
 
 NA_IDEF void naReleaseTreeConfiguration(NATreeConfiguration* config){
-  naReleaseRefCount(&config->refcount, config, (NAMutator)naDeallocConfiguration);
+  naReleaseRefCount(&config->refCount, config, (NAMutator)naDeallocConfiguration);
 }
 
 
@@ -20,7 +20,7 @@ NA_HIDEF NATreeConfiguration* naRetainTreeConfiguration(NATreeConfiguration* con
   #ifndef NDEBUG
     config->flags |= NA_TREE_CONFIG_DEBUG_FLAG_IMMUTABLE;
   #endif
-  return (NATreeConfiguration*)naRetainRefCount(&(config->refcount));
+  return (NATreeConfiguration*)naRetainRefCount(&(config->refCount));
 }
 
 

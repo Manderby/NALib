@@ -129,7 +129,7 @@ NA_UNUSED(event);
 
   NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
     NACoreOpenGLSpace* coreOpenGLspace = (NACoreOpenGLSpace*)openglspace;
-    [[(NA_COCOA_BRIDGE NACocoaOpenGLSpace*)(coreOpenGLspace->uielement.nativeID) openGLContext] flushBuffer];
+    [[(NA_COCOA_BRIDGE NACocoaOpenGLSpace*)(coreOpenGLspace->uiElement.nativeID) openGLContext] flushBuffer];
   }
 
 

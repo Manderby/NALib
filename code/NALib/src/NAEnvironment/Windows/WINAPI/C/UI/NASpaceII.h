@@ -18,11 +18,11 @@ NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapiSpace);
 
 
 
-NAWINAPICallbackInfo naSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naSpaceWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   RECT spacerect;
   NACoreUIElement* childelement;
-  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)uielement;
+  NAWINAPISpace* winapiSpace = (NAWINAPISpace*)uiElement;
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPIColor* bgColor;
 
@@ -85,14 +85,14 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPA
     // lParam HWND handle to actual control
     // return: background color brush
     childelement = (NACoreUIElement*)naGetUINALibEquivalent((HWND)lParam);
-    switch(childelement->elementtype){
+    switch(childelement->elementType){
     case NA_UI_LABEL:
       if(naIsLabelEnabled(childelement)){
         SetTextColor((HDC)wParam, app->fgColor.color);
       }else{
         SetTextColor((HDC)wParam, app->fgColorDisabled.color);
       }
-      bgColor = naGetWINAPISpaceBackgroundColor(uielement);
+      bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
       SetBkColor((HDC)wParam, bgColor->color);
       info.result = (LRESULT)bgColor->brush;
       info.hasbeenhandeled = NA_TRUE;
@@ -101,8 +101,8 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPA
     break;
 
   case WM_ERASEBKGND: // wParam: Device context, return > 1 if erasing, 0 otherwise
-    GetClientRect(naGetUIElementNativeID(uielement), &spacerect);
-    bgColor = naGetWINAPISpaceBackgroundColor(uielement);
+    GetClientRect(naGetUIElementNativeID(uiElement), &spacerect);
+    bgColor = naGetWINAPISpaceBackgroundColor(uiElement);
     if(bgColor != winapiSpace->lastBgColor){ // Only draw if changed
       FillRect((HDC)wParam, &spacerect, bgColor->brush);
       winapiSpace->lastBgColor = bgColor;

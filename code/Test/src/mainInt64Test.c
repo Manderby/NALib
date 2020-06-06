@@ -22,24 +22,6 @@
 //
 //
 //
-//
-//
-//void testMaking(){
-//  int64 i1 = naMakei64WithLo(-0x12345678);
-//  int64 i2 = naMakei64WithDouble(-123456789012345.);
-//  uint64 ui1 = naMakeu64WithLo(0x12345678);
-//  uint64 ui2 = naMakeu64WithLo(0x12345678);
-//  uint64 ui3 = naMakeu64WithDouble(123456789012345.);
-//  uint64 ui4 = naMakeu64(0x12345678, 0x56473829);
-//  testEquali64(i1, 0xffffffff, 0xedcba988);
-//  testEquali64(i2, 0xffff8fb7, 0x79f22087);
-//  testEqualu64(ui1, 0x00000000, 0x12345678);
-//  testEqualu64(ui2, 0x00000000, 0x12345678);
-//  testEqualu64(ui3, 0x00007048 , 0x860ddf79);
-//  testEqualu64(ui4, 0x12345678 , 0x56473829);
-//}
-//
-//
 //void timeMaking(){
 //  double t;
 //  int i;
@@ -63,43 +45,6 @@
 //  NA_UNUSED(i64);
 //  NA_UNUSED(u64);
 //  NA_UNUSED(t);
-//}
-//
-//
-//
-//void testBinary(){
-//  int64 i = naMakei64WithDouble(-123456789012345.); 
-//  int64 term = naCastu64Toi64(naMakeu64(0x55555555, 0x55555555));
-//  uint64 ui = naMakeu64(0x12345678, 0x56473829);
-//  uint64 uterm = naMakeu64(0x55555555, 0x55555555);
-//
-//  int64 i1 = naNoti64(i);
-//  int64 i2 = naOri64(i, term);
-//  int64 i3 = naAndi64(i, term);
-//  int64 i4 = naXori64(i, term);
-//  int64 i5 = naShli64(i, 5);
-//  int64 i6 = naShri64(i, 5);
-//
-//  uint64 ui1 = naNotu64(ui);
-//  uint64 ui2 = naOru64(ui, uterm);
-//  uint64 ui3 = naAndu64(ui, uterm);
-//  uint64 ui4 = naXoru64(ui, uterm);
-//  uint64 ui5 = naShlu64(ui, 5);
-//  uint64 ui6 = naShru64(ui, 5);
-//
-//  testEquali64(i1, 0x00007048, 0x860ddf78);
-//  testEquali64(i2, 0xffffdff7, 0x7df775d7);
-//  testEquali64(i3, 0x55550515, 0x51500005);
-//  testEquali64(i4, 0xaaaadae2, 0x2ca775d2);
-//  testEquali64(i5, 0xfff1f6ef, 0x3e4410e0);
-//  testEquali64(i6, 0xfffffc7d, 0xbbcf9104);
-//
-//  testEqualu64(ui1, 0xedcba987, 0xa9b8c7d6);
-//  testEqualu64(ui2, 0x5775577d, 0x57577d7d);
-//  testEqualu64(ui3, 0x10145450, 0x54451001);
-//  testEqualu64(ui4, 0x4761032d, 0x03126d7c);
-//  testEqualu64(ui5, 0x468acf0a, 0xc8e70520);
-//  testEqualu64(ui6, 0x0091a2b3, 0xc2b239c1);
 //}
 //
 //
@@ -148,43 +93,6 @@
 //
 //
 //
-//void testComparison(){
-//  int64 i1 = naMakei64WithDouble(-123456789012345.);
-//  int64 i2 = naMakei64WithDouble(-123456.);
-//  uint64 ui1 = naMakeu64WithDouble(123456789012345.);
-//  uint64 ui2 = naMakeu64WithDouble(123456.);
-//
-//  testEqualBool(naEquali64(i1, i1), NA_TRUE);
-//  testEqualBool(naGreateri64(i1, i2), NA_FALSE);
-//  testEqualBool(naGreateri64(i2, i1), NA_TRUE);
-//  testEqualBool(naGreateri64(i1, i1), NA_FALSE);
-//  testEqualBool(naGreaterEquali64(i1, i2), NA_FALSE);
-//  testEqualBool(naGreaterEquali64(i2, i1), NA_TRUE);
-//  testEqualBool(naGreaterEquali64(i1, i1), NA_TRUE);
-//  testEqualBool(naSmalleri64(i1, i2), NA_TRUE);
-//  testEqualBool(naSmalleri64(i2, i1), NA_FALSE);
-//  testEqualBool(naSmalleri64(i1, i1), NA_FALSE);
-//  testEqualBool(naSmallerEquali64(i1, i2), NA_TRUE);
-//  testEqualBool(naSmallerEquali64(i2, i1), NA_FALSE);
-//  testEqualBool(naSmallerEquali64(i1, i1), NA_TRUE);
-//
-//  testEqualBool(naEqualu64(ui1, ui1), NA_TRUE);
-//  testEqualBool(naGreateru64(ui1, ui2), NA_TRUE);
-//  testEqualBool(naGreateru64(ui2, ui1), NA_FALSE);
-//  testEqualBool(naGreateru64(ui1, ui1), NA_FALSE);
-//  testEqualBool(naGreaterEqualu64(ui1, ui2), NA_TRUE);
-//  testEqualBool(naGreaterEqualu64(ui2, ui1), NA_FALSE);
-//  testEqualBool(naGreaterEqualu64(ui1, ui1), NA_TRUE);
-//  testEqualBool(naSmalleru64(ui1, ui2), NA_FALSE);
-//  testEqualBool(naSmalleru64(ui2, ui1), NA_TRUE);
-//  testEqualBool(naSmalleru64(ui1, ui1), NA_FALSE);
-//  testEqualBool(naSmallerEqualu64(ui1, ui2), NA_FALSE);
-//  testEqualBool(naSmallerEqualu64(ui2, ui1), NA_TRUE);
-//  testEqualBool(naSmallerEqualu64(ui1, ui1), NA_TRUE);
-//}
-//
-//
-//
 //void timeComparison(){
 //  int64 i01 = naMakei64WithDouble(-123456789012345.);
 //  int64 i02 = naMakei64WithDouble(987654321987.);
@@ -222,79 +130,6 @@
 //  NA_UNUSED(ui01);
 //  NA_UNUSED(ui02);
 //  NA_UNUSED(t);
-//}
-//
-//
-//
-//void testArithmetic(){
-//  int64 i01 = naMakei64WithDouble(-123456789012345.);
-//  int64 i02 = naMakei64WithDouble(987654321987.);
-//  int64 i03 = NA_ZERO_i64;
-//  int64 i04 = naMakei64WithDouble(-123.);
-//  int64 i1, i2;
-//  uint64 ui01 = naMakeu64WithDouble(123456789012345.);
-//  uint64 ui02 = naMakeu64WithDouble(987654321987.);
-//  uint64 ui03 = NA_ZERO_u64;
-//  uint64 ui2;
-//
-//  i1 = naNegi64(i01);
-//  testEquali64(i1, 0x00007048, 0x860ddf79);
-//  i1 = naNegi64(naNegi64(i01));
-//  testEquali64(i1, 0xffff8fb7, 0x79f22087);
-//  naInci64(i01);
-//  testEquali64(i01, 0xffff8fb7, 0x79f22088);
-//  naDeci64(i01);
-//  testEquali64(i01, 0xffff8fb7, 0x79f22087);
-//  naInci64(i03);
-//  testEquali64(i03, 0x00000000, 0x00000001);
-//  naDeci64(i03);
-//  testEquali64(i03, 0x00000000, 0x00000000);
-//  naDeci64(i03);
-//  testEquali64(i03, 0xffffffff, 0xffffffff);
-//  naInci64(i03);
-//  testEquali64(i03, 0x00000000, 0x00000000);
-//
-//  i2 = naAddi64(i01, i02);
-//  testEquali64(i2, 0xffff909d, 0x6ebb17ca);
-//  i2 = naSubi64(i01, i02);
-//  testEquali64(i2, 0xffff8ed1, 0x85292944);
-//  i2 = naMuli64(i01, i04);
-//  testEquali64(i2, 0x0035f2d8, 0x68aa5f23);
-//  i2 = naMuli64(i02, i04);
-//  testEquali64(i2, 0xffff9183, 0x637132cf);
-//  i2 = naDivi64(i01, i02);
-//  testEquali64(i2, 0xffffffff, 0xffffff84);
-//  i2 = naDivi64(i01, i04);
-//  testEquali64(i2, 0x000000e9, 0xb2001cdf);
-//  i2 = naDivi64(i04, i01);
-//  testEquali64(i2, 0x00000000, 0x00000000);
-//  i2 = naModi64(i01, i02);
-//  testEquali64(i2, 0xffffff1a, 0x0b49e4fb);
-//  i2 = naModi64(i01, i04);
-//  testEquali64(i2, 0xffffffff, 0xffffffac);
-//
-//  naIncu64(ui01);
-//  testEqualu64(ui01, 0x00007048, 0x860ddf7a);
-//  naDecu64(ui01);
-//  testEqualu64(ui01, 0x00007048, 0x860ddf79);
-//  naIncu64(ui03);
-//  testEqualu64(ui03, 0x00000000, 0x00000001);
-//  naDecu64(ui03);
-//  testEqualu64(ui03, 0x00000000, 0x00000000);
-//  naDecu64(ui03);
-//  testEqualu64(ui03, 0xffffffff, 0xffffffff);
-//  naIncu64(ui03);
-//  testEqualu64(ui03, 0x00000000, 0x00000000);
-//
-//  ui2 = naAddu64(ui01, ui02);
-//  testEqualu64(ui2, 0x0000712e, 0x7ad6d6bc);
-//  ui2 = naSubu64(ui01, ui02);
-//  testEqualu64(ui2, 0x00006f62, 0x9144e836);
-//  ui2 = naDivu64(ui01, ui02);
-//  testEqualu64(ui2, 0x00000000, 0x0000007c);
-//  ui2 = naModu64(ui01, ui02);
-//  testEqualu64(ui2, 0x000000e5, 0xf4b61b05);
-//
 //}
 //
 //
@@ -386,26 +221,6 @@
 //  #else
 //    printf("%016llx", ui);
 //  #endif
-//}
-//void testEquali64(int64 i, uint32 goalhi, uint32 goallo){
-//  testEqualu64(naCasti64Tou64(i), goalhi, goallo);
-//}
-//void testEqualu64(uint64 ui, uint32 goalhi, uint32 goallo){
-//  #if !defined NA_TYPE_INT64
-//    if(ui.lo == goallo && ui.hi == goalhi){
-//      printf("Pass ");
-//    }else{
-//      printf("FAIL ");
-//    }
-//  #else
-//    if((ui & NA_MAX_u32) == goallo && (ui >> 32) == goalhi){
-//      printf("Pass ");
-//    }else{
-//      printf("FAIL ");
-//    }
-//  #endif
-//  printu64(ui);
-//  printf(NA_NL);
 //}
 //void testEqualBool(NABool b, NABool goalb){
 //  if(b == goalb){

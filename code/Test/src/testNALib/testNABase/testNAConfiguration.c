@@ -5,7 +5,7 @@
 
 
 
-const char* na_memalign_enum_strings[] = {
+const char* na_MemAlignEnumStrings[] = {
   "Custom",
   "aligned_alloc",
   "Posix"
@@ -18,7 +18,7 @@ void printNAConfiguration(){
   naPrintMacroIntYesNo     (NA_COMPILE_GUI);
   naPrintMacroIntYesNo     (NA_USE_WINDOWS_COMMON_CONTROLS_6);
   naPrintMacroIntYesNo     (NA_INLINE_DEFINITION_NON_STANDARD);
-  naPrintMacroEnum         (NA_MEMALIGN, na_memalign_enum_strings, 3);
+  naPrintMacroEnum         (NA_MEMALIGN, na_MemAlignEnumStrings, 3);
   naPrintMacroIntSpecialHex(NA_POOLPART_BYTESIZE, 0, "Memory Page Size");
   naPrintMacroIntYesNo     (NA_MEMORY_POOL_AGGRESSIVE_CLEANUP);
   naPrintMacroIntSpecial   (NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT, 0, "No autocollect");

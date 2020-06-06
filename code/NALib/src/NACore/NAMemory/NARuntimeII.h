@@ -11,42 +11,42 @@ struct NATypeInfo{
   void*             curpoolpart;    // The actual type of this entry is hidden.
   NAUInt            typeSize;
   NAMutator         destructor;
-  NABool            refcounting;
+  NABool            refCounting;
   #ifndef NDEBUG
-    const char*     typename;
+    const char*     typeName;
   #endif
 };
 
 
 
 #undef NA_EXTERN_RUNTIME_TYPE
-#define NA_EXTERN_RUNTIME_TYPE(typename)\
-  extern NATypeInfo na_ ## typename ## _typeinfo
+#define NA_EXTERN_RUNTIME_TYPE(typeName)\
+  extern NATypeInfo na_ ## typeName ## TypeInfo
 
 
 
 #undef NA_RUNTIME_TYPE
 #ifndef NDEBUG
-  #define NA_RUNTIME_TYPE(typename, destructor, refcounting)\
-    NATypeInfo na_ ## typename ## _typeinfo =\
+  #define NA_RUNTIME_TYPE(typeName, destructor, refCounting)\
+    NATypeInfo na_ ## typeName ## TypeInfo =\
     {NA_NULL,\
-    naSizeof(typename),\
+    naSizeof(typeName),\
     (NAMutator)destructor,\
-    refcounting,\
-    #typename}
+    refCounting,\
+    #typeName}
 #else
-  #define NA_RUNTIME_TYPE(typename, destructor, refcounting)\
-    NATypeInfo na_ ## typename ## _typeinfo =\
+  #define NA_RUNTIME_TYPE(typeName, destructor, refCounting)\
+    NATypeInfo na_ ## typeName ## TypeInfo =\
     {NA_NULL,\
-    naSizeof(typename),\
+    naSizeof(typeName),\
     (NAMutator)destructor,\
-    refcounting}
+    refCounting}
 #endif
 
 
 
 #undef naNew
-#define naNew(typename) (typename*)naNewStruct(&na_ ## typename ## _typeinfo)
+#define naNew(typeName) (typeName*)naNewStruct(&na_ ## typeName ## TypeInfo)
 // If you experience an error here with naNew: Have you marked your type with
 // NA_RUNTIME_TYPE? See NA_RUNTIME_TYPE below.
 
@@ -60,45 +60,45 @@ typedef struct NARuntime NARuntime;
 
 // The runtime struct stores base informations about the runtime.
 struct NARuntime{
-  size_t mempagesize;
-  size_t partsize;
-  size_t partsizemask;
+  size_t memPageSize;
+  size_t partSize;
+  size_t partSizeMask;
   NAMallocGarbage* mallocGarbage;
-  size_t totalmallocgarbagebytecount;
-  NAInt typeinfocount;
-  NACoreTypeInfo** typeinfos;
+  size_t totalMallocGarbageByteCount;
+  NAInt typeInfoCount;
+  NACoreTypeInfo** typeInfos;
 };
 
-extern NARuntime* na_runtime;
+extern NARuntime* na_Runtime;
 
 
 
 NA_IDEF size_t naGetRuntimeGarbageByteSize(){
   #ifndef NDEBUG
-    if(!na_runtime)
+    if(!na_Runtime)
       naCrash("Runtime not running. Use naStartRuntime()");
   #endif
-  return na_runtime->totalmallocgarbagebytecount;
+  return na_Runtime->totalMallocGarbageByteCount;
 }
 
 
 
 NA_IDEF size_t naGetRuntimeMemoryPageSize(){
   #ifndef NDEBUG
-    if(!na_runtime)
+    if(!na_Runtime)
       naCrash("Runtime not running. Use naStartRuntime()");
   #endif
-  return na_runtime->mempagesize;
+  return na_Runtime->memPageSize;
 }
 
 
 
 NA_IDEF size_t naGetRuntimePoolPartSize(){
   #ifndef NDEBUG
-    if(!na_runtime)
+    if(!na_Runtime)
       naCrash("Runtime not running. Use naStartRuntime()");
   #endif
-  return na_runtime->partsize;
+  return na_Runtime->partSize;
 }
 
 

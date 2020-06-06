@@ -15,7 +15,7 @@ struct NAWINAPITextBox {
 
 
 
-NAWINAPICallbackInfo naTextBoxWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naTextBoxWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
@@ -30,7 +30,7 @@ NAWINAPICallbackInfo naTextBoxWINAPIProc(NAUIElement* uielement, UINT message, W
 
 
 NABool naHandleTextBoxTabOrder(NAReaction reaction){
-  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)reaction.uielement;
+  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)reaction.uiElement;
   if(winapiTextBox->nextTabStop){
     SetFocus(naGetUIElementNativeID(winapiTextBox->nextTabStop));
     return NA_TRUE;
@@ -41,7 +41,7 @@ NABool naHandleTextBoxTabOrder(NAReaction reaction){
 
 
 NABool naHandleTextBoxReverseTabOrder(NAReaction reaction){
-  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)reaction.uielement;
+  NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)reaction.uiElement;
   if(winapiTextBox->prevTabStop){
     SetFocus(naGetUIElementNativeID(winapiTextBox->prevTabStop));
     return NA_TRUE;

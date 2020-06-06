@@ -111,7 +111,7 @@ NA_HDEF NAApplication* naNewApplication(void){
 
   NACocoaApplicationDelegate* cocoaappdelegate = [[NACocoaApplicationDelegate alloc] initWithCocoaApplication:cocoaapplication];
 
-  naInitCoreApplication(&(cocoaapplication->coreapplication), NA_COCOA_PTR_OBJC_TO_C(cocoaappdelegate));
+  naInitCoreApplication(&(cocoaapplication->coreApplication), NA_COCOA_PTR_OBJC_TO_C(cocoaappdelegate));
 
   return (NAApplication*)cocoaapplication;
 }
@@ -121,7 +121,7 @@ NA_HDEF NAApplication* naNewApplication(void){
 NA_DEF void naDestructApplication(NAApplication* application){
   NACocoaApplication* cocoaapplication = (NACocoaApplication*)application;
   // Do not clear the core application. It will only call this method again.
-  naClearCoreApplication(&(cocoaapplication->coreapplication));
+  naClearCoreApplication(&(cocoaapplication->coreApplication));
 }
 
 
@@ -147,8 +147,8 @@ NA_DEF void naOpenConsoleWindow(void){
 
 NA_DEF NAString* naNewApplicationName(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->coreapplication.name){
-    return naNewStringWithFormat("%s", app->coreapplication.name);
+  if(app->coreApplication.name){
+    return naNewStringWithFormat("%s", app->coreApplication.name);
   }else{
     NSString* applicationname = [[NSBundle mainBundle] localizedStringForKey:NA_COCOA_BUNDLE_APPLICATION_NAME value:nil table:NA_COCOA_BUNDLE_PLIST];
     if(!applicationname){
@@ -160,8 +160,8 @@ NA_DEF NAString* naNewApplicationName(void){
 
 NA_DEF NAString* naNewApplicationCompanyName(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->coreapplication.companyName){
-    return naNewStringWithFormat("%s", app->coreapplication.companyName);
+  if(app->coreApplication.companyName){
+    return naNewStringWithFormat("%s", app->coreApplication.companyName);
   }else{
     return NA_NULL;
   }
@@ -169,8 +169,8 @@ NA_DEF NAString* naNewApplicationCompanyName(void){
 
 NA_DEF NAString* naNewApplicationVersionString(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->coreapplication.versionString){
-    return naNewStringWithFormat("%s", app->coreapplication.versionString);
+  if(app->coreApplication.versionString){
+    return naNewStringWithFormat("%s", app->coreApplication.versionString);
   }else{
     NSString* versionstring = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_SHORT_KEY];
     return naNewStringWithFormat("%s", [versionstring UTF8String]);
@@ -179,8 +179,8 @@ NA_DEF NAString* naNewApplicationVersionString(void){
 
 NA_DEF NAString* naNewApplicationBuildString(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->coreapplication.buildString){
-    return naNewStringWithFormat("%s", app->coreapplication.buildString);
+  if(app->coreApplication.buildString){
+    return naNewStringWithFormat("%s", app->coreApplication.buildString);
   }else{
     NSString* buildstring = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_KEY];
     return naNewStringWithFormat("%s", [buildstring UTF8String]);
@@ -189,8 +189,8 @@ NA_DEF NAString* naNewApplicationBuildString(void){
 
 NA_DEF NAString* naNewApplicationIconPath(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->coreapplication.iconPath){
-    return naNewStringWithFormat("%s", app->coreapplication.iconPath);
+  if(app->coreApplication.iconPath){
+    return naNewStringWithFormat("%s", app->coreApplication.iconPath);
   }else{
     NSString* iconfilename = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_ICON_FILE_KEY];
     NSString* iconbasename = [iconfilename stringByDeletingPathExtension];

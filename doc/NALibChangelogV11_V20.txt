@@ -202,7 +202,7 @@ Other things:
 - Revisited the UI. Better but far from fully functional.
 - NAPointer now uses the NAPtr struct as its base. Removed naNewPointerConst,
   renamed naNewPointerMutable to naNewPointer.
-- Corrected an awkward error in naPointer. The refcount mask was inverted.
+- Corrected an awkward error in naPointer. The refCount mask was inverted.
 - Added NANewNullPointer. Renamed naMakePtr to naMakeNullPtr.
 - Added NA_NULLFUNC
 - Moved Pointer cleanup to NAMemory.h. Renamed NA_POINTER_CLEANUP_XXX to
@@ -360,7 +360,7 @@ Version 12 (first published 2015-August-30):
   now four structs which corresponds to four combinations of having a bytesize
   and typeSize available per pointer or not. The NAPointer struct distinguishes
   between all of them. NAPointer now much bigger and stores flags separate from
-  refcount.
+  refCount.
 - NAGrowingSpace now grows exponentially. Slight changes to API. Simplified
   whole implementation and made it inline again. NAGrowingSpace.c is removed.
 - Greatly enhanced NAVectorAlgebra.h to have many more checks, E and S variants

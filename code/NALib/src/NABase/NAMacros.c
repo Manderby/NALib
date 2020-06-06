@@ -7,7 +7,7 @@
 
 #include <stdio.h>  // for the printf function
 
-const char* na_yesno_strings[] = {
+const char* na_YesNoStrings[] = {
   "No",
   "Yes",
 };
@@ -89,7 +89,7 @@ NA_HDEF void naPrintMacroIntSpecialHexCore(const NAUTF8Char* macroString, int va
 
 NA_HDEF void naPrintMacroIntYesNoCore(const NAUTF8Char* macroString, int value){
   naPrintMacroHead(macroString);
-  naPrintMacroEnumBase(value, na_yesno_strings, 2);
+  naPrintMacroEnumBase(value, na_YesNoStrings, 2);
   printf(NA_NL);
 }
 

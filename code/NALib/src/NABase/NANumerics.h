@@ -208,8 +208,8 @@ NA_IAPI NAi256 naAbsi256(NAi256 i);
 
 
 
-// Inline implementations are in a separate file:
-#include "NANumericsII.h"
+// Inline implementations are in a separate file and will be included later
+// on in the NABase.h file.
 
 
 

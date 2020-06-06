@@ -9,82 +9,82 @@
 
 #if defined NA_TYPE_INT64
 
-  #define naMakeu64WithLiteralLo(lo) (lo ## uLL)
+  #define naMakei64(hi, lo)
+  #define naMakei64WithLo(lo)
+  #define naMakei64WithBinary(b1, b0)
+  #define naMakei64WithDouble(lo)
+  #define naMakeu64WithLiteralLo(lo)
 
-  // We declare these as inline functions to reduce warnings.
-  NA_IAPI NAi64 naMakei64             (int32 hi, uint32 lo);
-  NA_IAPI NAi64 naMakei64WithLo       (int32 lo);
-  NA_IAPI NAi64 naMakei64WithDouble   (double lo);
+  #define naGeti64Hi(i)
+  #define naGeti64Lo(i)
+  #define naGetu64Hi(u)
+  #define naGetu64Lo(u)
 
-  #define naGeti64Hi(i)            ((int32)((i) >> NA_TYPE32_BITS))
-  #define naGeti64Lo(i)            ((uint32)i)
-  #define naGetu64Hi(u)            ((uint32)((u) >> NA_TYPE32_BITS))
-  #define naGetu64Lo(u)            ((uint32)u)
+  #define naNegi64(i)
+  #define naInci64(i)
+  #define naDeci64(i)
+  #define naAddi64(a, b)
+  #define naSubi64(a, b)
+  #define naMuli64(a, b)
+  #define naDivi64(a, b)
+  #define naModi64(a, b)
 
-  #define naNegi64(i)                 (-(i))
-  #define naInci64(i)                 (++(i))
-  #define naDeci64(i)                 (--(i))
-  #define naAddi64(a, b)              ((a) + (b))
-  #define naSubi64(a, b)              ((a) - (b))
-  #define naMuli64(a, b)              ((a) * (b))
-  #define naDivi64(a, b)              ((a) / (b))
-  #define naModi64(a, b)              ((a) % (b))
+  #define naNoti64(i)
+  #define naOri64(a, b)
+  #define naAndi64(a, b)
+  #define naXori64(a, b)
+  #define naShli64(a, n)
+  #define naShri64(a, n)
 
-  #define naNoti64(i)                 (~(i))
-  #define naOri64(a, b)               ((a) | (b))
-  #define naAndi64(a, b)              ((a) & (b))
-  #define naXori64(a, b)              ((a) ^ (b))
-  #define naShli64(a, n)              ((a) << (n))
-  #define naShri64(a, n)              ((a) >> (n))
+  #define naEquali64(a, b)
+  #define naGreateri64(a, b)
+  #define naGreaterEquali64(a, b)
+  #define naSmalleri64(a, b)
+  #define naSmallerEquali64(a, b)
 
-  #define naEquali64(a, b)            ((a) == (b))
-  #define naGreateri64(a, b)          ((a) > (b))
-  #define naGreaterEquali64(a, b)     ((a) >= (b))
-  #define naSmalleri64(a, b)          ((a) < (b))
-  #define naSmallerEquali64(a, b)     ((a) <= (b))
+  #define naCasti64Tou8(i)
+  #define naCasti64Tou16(i)
+  #define naCasti64Tou32(i)
+  #define naCasti64Tou64(i)
+  #define naCasti64Toi8(i)
+  #define naCasti64Toi16(i)
+  #define naCasti64Toi32(i)
+  #define naCasti64ToDouble(i)
 
-  #define naCasti64Tou8(i)         ((uint8)(i))
-  #define naCasti64Tou16(i)        ((uint16)(i))
-  #define naCasti64Tou32(i)        ((uint32)(i))
-  #define naCasti64Tou64(i)        ((NAu64)(i))
-  #define naCasti64Toi8(i)          ((int8)(i))
-  #define naCasti64Toi16(i)         ((int16)(i))
-  #define naCasti64Toi32(i)         ((int32)(i))
-  #define naCasti64ToDouble(i)        ((double)(i))
+  #define naMakeu64(hi, lo)
+  #define naMakeu64WithLo(lo)
+  #define naMakeu64WithBinary(b1, b0)
+  #define naMakeu64WithDouble(d)
 
-  #define naMakeu64(hi, lo)          ((NAu64)(((NAu64)(hi) << 32) | (lo)))
-  #define naMakeu64WithLo(lo)        ((NAu64)(lo))
-  #define naMakeu64WithDouble(d)     ((NAu64)(d))
+  #define naIncu64(i)
+  #define naDecu64(i)
+  #define naAddu64(a, b)
+  #define naSubu64(a, b)
+  #define naMulu64(a, b)
+  #define naDivu64(a, b)
+  #define naModu64(a, b)
 
-  #define naIncu64(i)                ((i)++)
-  #define naDecu64(i)                ((i)--)
-  #define naAddu64(a, b)             ((a) + (b))
-  #define naSubu64(a, b)             ((a) - (b))
-  #define naMulu64(a, b)             ((a) * (b))
-  #define naDivu64(a, b)             ((a) / (b))
-  #define naModu64(a, b)             ((a) % (b))
+  #define naNotu64(i)
+  #define naOru64(a, b)
+  #define naAndu64(a, b)
+  #define naXoru64(a, b)
+  #define naShlu64(a, n)
+  #define naShru64(a, n)
 
-  #define naNotu64(i)                (~(i))
-  #define naOru64(a, b)              ((a) | (b))
-  #define naAndu64(a, b)             ((a) & (b))
-  #define naXoru64(a, b)             ((a) ^ (b))
-  #define naShlu64(a, n)             ((a) << (n))
-  #define naShru64(a, n)             ((a) >> (n))
+  #define naEqualu64(a, b)
+  #define naGreateru64(a, b)
+  #define naGreaterEqualu64(a, b)
+  #define naSmalleru64(a, b)
+  #define naSmallerEqualu64(a, b)
 
-  #define naEqualu64(a, b)           ((a) == (b))
-  #define naGreateru64(a, b)         ((a) > (b))
-  #define naGreaterEqualu64(a, b)    ((a) >= (b))
-  #define naSmalleru64(a, b)         ((a) < (b))
-  #define naSmallerEqualu64(a, b)    ((a) <= (b))
-
-  #define naCastu64Toi8(i)         ((int8)(i))
-  #define naCastu64Toi16(i)        ((int16)(i))
-  #define naCastu64Toi32(i)        ((int32)(i))
-  #define naCastu64Toi64(i)        ((NAi64)(i))
-  #define naCastu64Tou8(i)        ((uint8)(i))
-  #define naCastu64Tou16(i)       ((uint16)(i))
-  #define naCastu64Tou32(i)       ((uint32)(i))
-  #define naCastu64ToDouble(i)       ((double)(i))
+  #define naCastu64Toi8(i)
+  #define naCastu64Toi16(i)
+  #define naCastu64Toi32(i)
+  #define naCastu64Toi64(i)
+  #define naCastu64Tou8(i)
+  #define naCastu64Tou16(i)
+  #define naCastu64Tou32(i)
+  #define naCastu64ToDouble(i)
 
 #else
 
@@ -92,6 +92,7 @@
 
   NA_IAPI NAi64  naMakei64(int32 hi, uint32 lo);
   NA_IAPI NAi64  naMakei64WithLo(int32 lo);
+  NA_IAPI NAi64  naMakei64WithBinary(uint32 b1, uint32 b0);
   NA_IAPI NAi64  naMakei64WithDouble(double d);
 
   #define naGeti64Hi(i)            ((i).hi)
@@ -133,6 +134,7 @@
   #define naMakeu64WithLiteralLo(lo)
   NA_IAPI NAu64 naMakeu64(uint32 hi, uint32 lo);
   NA_IAPI NAu64 naMakeu64WithLo(uint32 lo);
+  NA_IAPI NAu64 naMakeu64WithBinary(uint32 hi, uint32 lo);
   NA_IAPI NAu64 naMakeu64WithDouble(double d);
 
   #define          naIncu64(i)

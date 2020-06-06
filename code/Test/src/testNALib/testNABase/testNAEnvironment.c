@@ -4,13 +4,13 @@
 
 
 
-const char* na_os_enum_strings[] = {
+const char* na_OsEnumStrings[] = {
   "Unknown",
   "macOS",
   "Windows"
 };
 
-const char* na_endianness_enum_strings[] = {
+const char* na_EndiannessEnumStrings[] = {
   "Unknown",
   "Little",
   "Big",
@@ -41,8 +41,8 @@ void printNAEnvironment(){
   naPrintMacroInt          (NA_OS_WINDOWS);
 
   printf(NA_NL "NAEnvironment.h computed values:" NA_NL);
-  naPrintMacroEnum         (NA_OS, na_os_enum_strings, 3);
-  naPrintMacroEnum         (NA_ENDIANNESS_HOST, na_endianness_enum_strings, 4);
+  naPrintMacroEnum         (NA_OS, na_OsEnumStrings, 3);
+  naPrintMacroEnum         (NA_ENDIANNESS_HOST, na_EndiannessEnumStrings, 4);
   naPrintMacroInt          (NA_ADDRESS_BITS);
   naPrintMacroInt          (NA_ADDRESS_BYTES);
   printf(NA_NL);

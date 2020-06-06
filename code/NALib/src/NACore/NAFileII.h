@@ -173,7 +173,7 @@ NA_IDEF NAUTF8Char* naGetCwd(NAUTF8Char* buf, NAInt bufsize){
 
 
 struct NAFile{
-  NARefCount refcount;
+  NARefCount refCount;
   int desc;   // The descriptor
 };
 
@@ -182,7 +182,7 @@ struct NAFile{
 
 NA_IDEF NAFile* naCreateFileReadingFilename(const char* filename){
   NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refcount));
+  naInitRefCount(&(file->refCount));
   file->desc = naOpen(filename, NA_FILE_OPEN_FLAGS_READ, NA_FILEMODE_DEFAULT);
   #ifndef NDEBUG
     if(file->desc < 0)
@@ -195,7 +195,7 @@ NA_IDEF NAFile* naCreateFileReadingFilename(const char* filename){
 
 NA_IDEF NAFile* naCreateFileWritingFilename(const char* filename, NAFileMode mode){
   NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refcount));
+  naInitRefCount(&(file->refCount));
   file->desc = naOpen(filename, NA_FILE_OPEN_FLAGS_WRITE, mode);
   #ifndef NDEBUG
     if(file->desc < 0)
@@ -208,7 +208,7 @@ NA_IDEF NAFile* naCreateFileWritingFilename(const char* filename, NAFileMode mod
 
 NA_IDEF NAFile* naCreateFileAppendingFilename(const char* filename, NAFileMode mode){
   NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refcount));
+  naInitRefCount(&(file->refCount));
   file->desc = naOpen(filename, NA_FILE_OPEN_FLAGS_APPEND, mode);
   #ifndef NDEBUG
     if(file->desc < 0)
@@ -221,7 +221,7 @@ NA_IDEF NAFile* naCreateFileAppendingFilename(const char* filename, NAFileMode m
 
 NA_IDEF NAFile* naCreateFileReadingStdin(){
   NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refcount));
+  naInitRefCount(&(file->refCount));
   file->desc = 0;
   return file;
 }
@@ -230,7 +230,7 @@ NA_IDEF NAFile* naCreateFileReadingStdin(){
 
 NA_IDEF NAFile* naCreateFileWritingStdout(){
   NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refcount));
+  naInitRefCount(&(file->refCount));
   file->desc = 1;
   return file;
 }
@@ -239,7 +239,7 @@ NA_IDEF NAFile* naCreateFileWritingStdout(){
 
 NA_IDEF NAFile* naCreateFileWritingStderr(){
   NAFile* file = naAlloc(NAFile);
-  naInitRefCount(&(file->refcount));
+  naInitRefCount(&(file->refCount));
   file->desc = 2;
   return file;
 }
@@ -251,7 +251,7 @@ NA_HAPI void naDeallocFile(NAFile* file);
 
 
 NA_IDEF void naReleaseFile(NAFile* file){
-  naReleaseRefCount(&file->refcount, file, (NAMutator)naDeallocFile);
+  naReleaseRefCount(&file->refCount, file, (NAMutator)naDeallocFile);
 }
 
 

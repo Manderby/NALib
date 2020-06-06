@@ -16,12 +16,12 @@ struct NAWINAPIOpenGLSpace {
 
 
 
-NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(NAUIElement* uielement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
   case WM_PAINT:
-    info.hasbeenhandeled = naDispatchUIElementCommand(uielement, NA_UI_COMMAND_REDRAW);
+    info.hasbeenhandeled = naDispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
     info.result = 0;
     break;
 
@@ -95,7 +95,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator 
 
 NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)openglspace;
-  SwapBuffers(GetDC((HWND)naGetUIElementNativeID(&(winapiOpenGLSpace->coreOpenGLspace.uielement))));
+  SwapBuffers(GetDC((HWND)naGetUIElementNativeID(&(winapiOpenGLSpace->coreOpenGLspace.uiElement))));
 }
 
 

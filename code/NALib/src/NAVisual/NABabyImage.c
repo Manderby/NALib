@@ -4,7 +4,7 @@
 
 
 struct NABabyImage{
-  NARefCount refcount;
+  NARefCount refCount;
   int32 width;
   int32 height;
   float* data;
@@ -74,7 +74,7 @@ NA_DEF NABabyImage* naCreateBabyImage(NASizei size, const NABabyColor color){
       naError("insecure color given");
   #endif
   image = naAlloc(NABabyImage);
-  naInitRefCount(&image->refcount);
+  naInitRefCount(&image->refCount);
   image->width = (int32)size.width;
   image->height = (int32)size.height;
   image->data = naMalloc(naGetBabyImageDataSize(image));
@@ -262,11 +262,11 @@ NA_HDEF void naDestroyBabyImage(NABabyImage* image){
 }
 
 NA_API NABabyImage* naRetainBabyImage(NABabyImage* image){
-  return (NABabyImage*)naRetainRefCount(&image->refcount);
+  return (NABabyImage*)naRetainRefCount(&image->refCount);
 }
 
 NA_DEF void naReleaseBabyImage(NABabyImage* image){
-  naReleaseRefCount(&image->refcount, image, (NAMutator)naDestroyBabyImage);
+  naReleaseRefCount(&image->refCount, image, (NAMutator)naDestroyBabyImage);
 }
 
 
