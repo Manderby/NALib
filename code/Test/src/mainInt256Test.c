@@ -29,25 +29,6 @@
 //
 //
 //
-//
-//
-//void testMaking(){
-//  int256 i1 = naMakei256WithLo(naMakei128WithLo(naNegi64(naMakei64(0x12345678, 0x12345678))));
-//  int256 i2 = naMakei256WithDouble(-123456789012345.);
-//  uint256 ui1 = naMakeu256WithLo(naMakeu128WithLo(naMakeu64WithLo(0x12345678)));
-//  uint256 ui2 = naMakeu256WithLo(naMakeu128WithLo(naMakeu64(0x12345678, 0x12345678)));
-//  uint256 ui3 = naMakeu256WithLo(naMakeu128WithDouble(123456789012345.));
-//  uint256 ui4 = MAKEu256(0x12345678, 0x56473829, 0xfabcedae, 0x33333333, 0xfedcba98, 0xabcabcde, 0x54345676, 0x11224488);
-//  testEquali256(i1, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xedcba987, 0xedcba988);
-//  testEquali256(i2, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffff8fb7, 0x79f22087);
-//  testEqualu256(ui1, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x12345678);
-//  testEqualu256(ui2, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x12345678, 0x12345678);
-//  testEqualu256(ui3, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00007048 , 0x860ddf79);
-//  testEqualu256(ui4, 0x12345678 , 0x56473829, 0xfabcedae, 0x33333333, 0xfedcba98, 0xabcabcde, 0x54345676, 0x11224488);
-//}
-//
-//
-//
 //void timeMaking(){
 //  double t;
 //  int i;
@@ -70,42 +51,6 @@
 //  NA_UNUSED(i256);
 //  NA_UNUSED(u256);
 //  NA_UNUSED(t);
-//}
-//
-//
-//
-//void testBinary(){
-//  int256 i =      MAKEi256(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff251);
-//  int256 term =   MAKEi256(0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555);
-//  uint256 ui =    MAKEu256(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd, 0x873bac24, 0x647a4fe9, 0x296abeff, 0x1648dbcb);
-//  uint256 uterm = MAKEu256(0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555, 0x55555555);
-//
-//  int256 i1 = naNoti256(i);
-//  int256 i2 = naOri256(i, term);
-//  int256 i3 = naAndi256(i, term);
-//  int256 i4 = naXori256(i, term);
-//  int256 i5 = naShli256(i, 5);
-//  int256 i6 = naShri256(i, 5);
-//
-//  uint256 ui1 = naNotu256(ui);
-//  uint256 ui2 = naOru256(ui, uterm);
-//  uint256 ui3 = naAndu256(ui, uterm);
-//  uint256 ui4 = naXoru256(ui, uterm);
-//  uint256 ui5 = naShlu256(ui, 5);
-//  uint256 ui6 = naShru256(ui, 5);
-//
-//  testEquali256(i1, 0x06cd8a23, 0x0fca4953, 0x8365aacf, 0xc043f53e, 0x075abe44, 0x9dd35f9a, 0xcf152bac, 0x4b700dae);
-//  testEquali256(i2, 0xfd7775dd, 0xf575f7fd, 0x7ddf5575, 0x7ffd5fd5, 0xfdf555ff, 0x777df575, 0x75ffd557, 0xf5dff755);
-//  testEquali256(i3, 0x51105554, 0x50151404, 0x54105510, 0x15140041, 0x50054111, 0x40040045, 0x10405451, 0x14055051);
-//  testEquali256(i4, 0xac672089, 0xa560e3f9, 0x29cf0065, 0x6ae95f94, 0xadf014ee, 0x3779f530, 0x65bf8106, 0xe1daa704);
-//  testEquali256(i5, 0x264ebb9e, 0x06b6d58f, 0x934aa607, 0xf781583f, 0x14a8376c, 0x45940ca6, 0x1d5a8a76, 0x91fe4a20);
-//  testEquali256(i6, 0xffc993ae, 0xe781adb5, 0x63e4d2a9, 0x81fde056, 0x0fc52a0d, 0xdb116503, 0x298756a2, 0x9da47f92);
-//  testEqualu256(ui1, 0x00a045b1, 0xf965d0db, 0xc0054761, 0xa755d642, 0x78c453db, 0x9b85b016, 0xd6954100, 0xe9b72434);
-//  testEqualu256(ui2, 0xff5fff5f, 0x57df7f75, 0x7ffffddf, 0x5dff7dfd, 0xd77ffd75, 0x757f5ffd, 0x7d7fffff, 0x575ddfdf);
-//  testEqualu256(ui3, 0x55551044, 0x04100504, 0x15501014, 0x50000115, 0x05110404, 0x44504541, 0x01401455, 0x14405141);
-//  testEqualu256(ui4, 0xaa0aef1b, 0x53cf7a71, 0x6aafedcb, 0x0dff7ce8, 0xd26ef971, 0x312f1abc, 0x7c3febaa, 0x431d8e9e);
-//  testEqualu256(ui5, 0xebf749c0, 0xd345e487, 0xff5713cb, 0x154537b0, 0xe775848c, 0x8f49fd25, 0x2d57dfe2, 0xc91b7960);
-//  testEqualu256(ui6, 0x07fafdd2, 0x7034d179, 0x21ffd5c4, 0xf2c5514d, 0xec39dd61, 0x2323d27f, 0x494b55f7, 0xf8b246de);
 //}
 //
 //
@@ -154,43 +99,6 @@
 //
 //
 //
-//void testComparison(){
-//  int256 i1 =   MAKEi256(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff251);
-//  int256 i2 =   MAKEi256(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6, 0xf2461b44, 0x945472ea, 0xf3516735, 0x7ce3a145);
-//  uint256 ui1 = MAKEu256(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd, 0x873bac24, 0x647a4fe9, 0x296abeff, 0x1648dbcb);
-//  uint256 ui2 = MAKEu256(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1, 0x893c1216, 0x7145ceaf, 0xaa53c8ef, 0x72baeaa7);
-//
-//  testEqualBool(naEquali256(i1, i1), NA_TRUE);
-//  testEqualBool(naGreateri256(i1, i2), NA_FALSE);
-//  testEqualBool(naGreateri256(i2, i1), NA_TRUE);
-//  testEqualBool(naGreateri256(i1, i1), NA_FALSE);
-//  testEqualBool(naGreaterEquali256(i1, i2), NA_FALSE);
-//  testEqualBool(naGreaterEquali256(i2, i1), NA_TRUE);
-//  testEqualBool(naGreaterEquali256(i1, i1), NA_TRUE);
-//  testEqualBool(naSmalleri256(i1, i2), NA_TRUE);
-//  testEqualBool(naSmalleri256(i2, i1), NA_FALSE);
-//  testEqualBool(naSmalleri256(i1, i1), NA_FALSE);
-//  testEqualBool(naSmallerEquali256(i1, i2), NA_TRUE);
-//  testEqualBool(naSmallerEquali256(i2, i1), NA_FALSE);
-//  testEqualBool(naSmallerEquali256(i1, i1), NA_TRUE);
-//
-//  testEqualBool(naEqualu256(ui1, ui1), NA_TRUE);
-//  testEqualBool(naGreateru256(ui1, ui2), NA_TRUE);
-//  testEqualBool(naGreateru256(ui2, ui1), NA_FALSE);
-//  testEqualBool(naGreateru256(ui1, ui1), NA_FALSE);
-//  testEqualBool(naGreaterEqualu256(ui1, ui2), NA_TRUE);
-//  testEqualBool(naGreaterEqualu256(ui2, ui1), NA_FALSE);
-//  testEqualBool(naGreaterEqualu256(ui1, ui1), NA_TRUE);
-//  testEqualBool(naSmalleru256(ui1, ui2), NA_FALSE);
-//  testEqualBool(naSmalleru256(ui2, ui1), NA_TRUE);
-//  testEqualBool(naSmalleru256(ui1, ui1), NA_FALSE);
-//  testEqualBool(naSmallerEqualu256(ui1, ui2), NA_FALSE);
-//  testEqualBool(naSmallerEqualu256(ui2, ui1), NA_TRUE);
-//  testEqualBool(naSmallerEqualu256(ui1, ui1), NA_TRUE);
-//}
-//
-//
-//
 //void timeComparison(){
 //  int256 i01 =   MAKEi256(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff251);
 //  int256 i02 =   MAKEi256(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6, 0xf2461b44, 0x945472ea, 0xf3516735, 0x7ce3a145);
@@ -228,79 +136,6 @@
 //  NA_UNUSED(ui01);
 //  NA_UNUSED(ui02);
 //  NA_UNUSED(t);
-//}
-//
-//
-//
-//void testArithmetic(){
-//  int256 i01 =   MAKEi256(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff251);
-//  int256 i02 =   MAKEi256(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6, 0xf2461b44, 0x945472ea, 0xf3516735, 0x7ce3a145);
-//  int256 i03 =   NA_ZERO_i256;
-//  int256 i04 =   naMakei256WithDouble(-123.);
-//  int256 i1, i2;
-//  uint256 ui01 = MAKEu256(0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd, 0x873bac24, 0x647a4fe9, 0x296abeff, 0x1648dbcb);
-//  uint256 ui02 = MAKEu256(0x003275dc, 0xf0353bac, 0x7c9a5630, 0x3fbc09c1, 0x893c1216, 0x7145ceaf, 0xaa53c8ef, 0x72baeaa7);
-//  uint256 ui03 = NA_ZERO_u256;
-//  uint256 ui2;
-//
-//  i1 = naNegi256(i01);
-//  testEquali256(i1, 0x06cd8a23, 0x0fca4953, 0x8365aacf, 0xc043f53e, 0x075abe44, 0x9dd35f9a, 0xcf152bac, 0x4b700daf);
-//  i1 = naNegi256(naNegi256(i01));
-//  testEquali256(i1, 0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff251);
-//  naInci256(i01);
-//  testEquali256(i01, 0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff252);
-//  naDeci256(i01);
-//  testEquali256(i01, 0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1, 0xf8a541bb, 0x622ca065, 0x30ead453, 0xb48ff251);
-//  naInci256(i03);
-//  testEquali256(i03, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000001);
-//  naDeci256(i03);
-//  testEquali256(i03, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000);
-//  naDeci256(i03);
-//  testEquali256(i03, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff);
-//  naInci256(i03);
-//  testEquali256(i03, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000);
-//
-//  i2 = naAddi256(i01, i02);
-//  testEquali256(i2, 0xfb617c69, 0x5c5a548c, 0x92f837d5, 0x67836ab8, 0xeaeb5cff, 0xf6811350, 0x243c3b89, 0x31739396);
-//  i2 = naSubi256(i01, i02);
-//  testEquali256(i2, 0xf7036f50, 0x841118cc, 0x663c728b, 0x17f4aacb, 0x065f2676, 0xcdd82d7a, 0x3d996d1e, 0x37ac510c);
-//  i2 = naMuli256(i01, i04);
-//  testEquali256(i2, 0x44c15ed8, 0x96313b20, 0x21d911d1, 0x60a6d4cd, 0x88996af7, 0xd48eef61, 0x7f2bfbc8, 0x3ed69315);
-//  i2 = naMuli256(i02, i04);
-//  testEquali256(i2, 0xf367da88, 0x0a682555, 0x40e41aa5, 0xe334e459, 0x9850e60c, 0xbb6cc91d, 0x17e3694c, 0xfea183d9);
-//  i2 = naDivi256(i01, i02);
-//  testEquali256(i2, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xfffffffd);
-//  i2 = naDivi256(i01, i04);
-//  testEquali256(i2, 0x000e28aa, 0xf3a3fc6e, 0xfce7d9d8, 0x1021da72, 0xf9d0de2a, 0x2f125e6f, 0x914b1954, 0xa71e0c99);
-//  i2 = naDivi256(i04, i01);
-//  testEquali256(i2, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000);
-//  i2 = naModi256(i01, i02);
-//  testEquali256(i2, 0xffbf8982, 0x34a3904c, 0xbfb3fd1f, 0xb7122aa6, 0xcf779389, 0x1f29f926, 0x0adf09f4, 0x2b3ad620);
-//  i2 = naModi256(i01, i04);
-//  testEquali256(i2, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffd4);
-//
-//  naIncu256(ui01);
-//  testEqualu256(ui01, 0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd, 0x873bac24, 0x647a4fe9, 0x296abeff, 0x1648dbcc);
-//  naDecu256(ui01);
-//  testEqualu256(ui01, 0xff5fba4e, 0x069a2f24, 0x3ffab89e, 0x58aa29bd, 0x873bac24, 0x647a4fe9, 0x296abeff, 0x1648dbcb);
-//  naIncu256(ui03);
-//  testEqualu256(ui03, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000001);
-//  naDecu256(ui03);
-//  testEqualu256(ui03, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000);
-//  naDecu256(ui03);
-//  testEqualu256(ui03, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff, 0xffffffff);
-//  naIncu256(ui03);
-//  testEqualu256(ui03, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000);
-//
-//  ui2 = naAddu256(ui01, ui02);
-//  testEqualu256(ui2, 0xff92302a, 0xf6cf6ad0, 0xbc950ece, 0x9866337f, 0x1077be3a, 0xd5c01e98, 0xd3be87ee, 0x8903c672);
-//  ui2 = naSubu256(ui01, ui02);
-//  testEqualu256(ui2, 0xff2d4471, 0x1664f377, 0xc360626e, 0x18ee1ffb, 0xfdff9a0d, 0xf3348139, 0x7f16f60f, 0xa38df124);
-//  ui2 = naDivu256(ui01, ui02);
-//  testEqualu256(ui2, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x0000050f);
-//  ui2 = naModu256(ui01, ui02);
-//  testEqualu256(ui2, 0x001d81aa, 0xe9515199, 0xef40ba8b, 0xf074cfb8, 0x505c2c9d, 0x6459c54a, 0x8b954bb9, 0xb6bfd902);
-//
 //}
 //
 //

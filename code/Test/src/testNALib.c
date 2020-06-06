@@ -39,9 +39,9 @@ int main(void){
   // Now, start testing
   naStartTesting("NALib", NA_FALSE);
     naTestGroupFunction(NABase);
-    //naTestGroupFunction(NACore);
+    naTestGroupFunction(NACore);
 
-    //printf(NA_NL);
+    printf(NA_NL);
     //naPrintUntested();
 
     printf(NA_NL);

@@ -10,9 +10,8 @@
 // first, undefine all things which were defined in the .h file.
 #undef naMakei64
 #undef naMakei64WithLo
-#undef naMakei64WithBinary
 #undef naMakei64WithDouble
-#undef naMakeu64WithLiteralLo
+#undef naMakei64WithBinary
 #undef naGeti64Hi
 #undef naGeti64Lo
 #undef naGetu64Hi
@@ -46,8 +45,9 @@
 #undef naCasti64ToDouble
 #undef naMakeu64
 #undef naMakeu64WithLo
-#undef naMakeu64WithBinary
 #undef naMakeu64WithDouble
+#undef naMakeu64WithLiteralLo
+#undef naMakeu64WithBinary
 #undef naIncu64
 #undef naDecu64
 #undef naAddu64
@@ -87,19 +87,18 @@
   NA_IDEF NAi64 na_Makei64WithLo(int32 lo){
     return (NAi64)lo;
   }
-  NA_IDEF NAi64 na_Makei64WithBinary(uint32 b1, uint32 b0){
-    return ((NAi64)b1 << 32) | b0;
-  }
   NA_IDEF NAi64 na_Makei64WithDouble(double lo){
     return (NAi64)lo;
+  }
+  NA_IDEF NAi64 na_Makei64WithBinary(uint32 b1, uint32 b0){
+    return ((NAi64)b1 << 32) | b0;
   }
 
   // We declare these as inline functions to reduce warnings.
   #define naMakei64(hi, lo)           na_Makei64(hi, lo)
   #define naMakei64WithLo(lo)         na_Makei64WithLo(lo)
-  #define naMakei64WithBinary(b1, b0) na_Makei64WithBinary(b1, b0)
   #define naMakei64WithDouble(lo)     na_Makei64WithDouble(lo)
-  #define naMakeu64WithLiteralLo(lo)  (lo ## uLL)
+  #define naMakei64WithBinary(b1, b0) na_Makei64WithBinary(b1, b0)
 
   #define naGeti64Hi(i)               ((int32)((i) >> NA_TYPE32_BITS))
   #define naGeti64Lo(i)               ((uint32)i)
@@ -139,8 +138,9 @@
 
   #define naMakeu64(hi, lo)           ((NAu64)(((NAu64)(hi) << 32) | (lo)))
   #define naMakeu64WithLo(lo)         ((NAu64)(lo))
-  #define naMakeu64WithBinary(b1, b0) ((NAu64)(((NAu64)(b1) << 32) | (b0)))
   #define naMakeu64WithDouble(d)      ((NAu64)(d))
+  #define naMakeu64WithLiteralLo(lo)  (lo ## uLL)
+  #define naMakeu64WithBinary(b1, b0) ((NAu64)(((NAu64)(b1) << 32) | (b0)))
 
   #define naIncu64(i)                 ((i)++)
   #define naDecu64(i)                 ((i)--)
@@ -188,14 +188,14 @@
     retValuei.lo = (uint32)lo;
     return retValuei;
   }
+  NA_IDEF NAi64 naMakei64WithDouble(double d){
+    return naGetDoubleInteger(d);
+  }
   NA_IDEF NAi64 naMakei64WithBinary(uint32 b1, uint32 b0){
     NAi64 retValuei;
     retValuei.hi = (int32)b1;
     retValuei.lo = b0;
     return retValuei;
-  }
-  NA_IDEF NAi64 naMakei64WithDouble(double d){
-    return naGetDoubleInteger(d);
   }
 
 
@@ -346,15 +346,6 @@
 
 
 
-  #undef naMakeu64WithLiteralLo
-  #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
-    #define naMakeu64WithLiteralLo(lo)  {0, lo}
-  #else
-    #define naMakeu64WithLiteralLo(lo)  {lo, 0}
-  #endif
-
-
-
   NA_IDEF NAu64 naMakeu64(uint32 hi, uint32 lo){
     NAu64 retValuei;
     retValuei.hi = hi;
@@ -367,17 +358,25 @@
     retValuei.lo = lo;
     return retValuei;
   }
-  NA_IDEF NAu64 naMakeu64WithBinary(uint32 b1, uint32 b0){
-    NAu64 retValuei;
-    retValuei.hi = b1;
-    retValuei.lo = b0;
-    return retValuei;
-  }
   NA_IDEF NAu64 naMakeu64WithDouble(double d){
     NAu64 retValuei;
     // note: this is somewhat cumbersome. Do it with bit manipulation. todo.
     retValuei.hi = (uint32)(d / naMakeDoubleWithExponent(32));
     retValuei.lo = (uint32)(d - ((double)((int32)retValuei.hi) * naMakeDoubleWithExponent(32)));
+    return retValuei;
+  }
+
+  #undef naMakeu64WithLiteralLo
+  #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
+    #define naMakeu64WithLiteralLo(lo)  {0, lo}
+  #else
+    #define naMakeu64WithLiteralLo(lo)  {lo, 0}
+  #endif
+
+  NA_IDEF NAu64 naMakeu64WithBinary(uint32 b1, uint32 b0){
+    NAu64 retValuei;
+    retValuei.hi = b1;
+    retValuei.lo = b0;
     return retValuei;
   }
 

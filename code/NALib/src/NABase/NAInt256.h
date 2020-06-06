@@ -9,12 +9,12 @@
 
 #if defined NA_TYPE_INT256
 
-  #define naMakeu256WithLiteralLo(lo) (lo ## uLL)
-
   // We declare these as inline functions to reduce warnings.
   NA_IAPI NAi256 naMakei256             (NAi128 hi, NAu128 lo);
   NA_IAPI NAi256 naMakei256WithLo       (NAi128 lo);
   NA_IAPI NAi256 naMakei256WithDouble   (double lo);
+  NA_IAPI NAi128 naMakei256WithBinary(
+    uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0);
 
   #define naGeti256Hi(i)            ((int128)((i) >> NA_TYPE128_BITS))
   #define naGeti256Lo(i)            ((uint128)i)
@@ -56,9 +56,12 @@
   #define naCasti256Toi128(i)     ((NAi128)(i))
   #define naCasti256ToDouble(i)     ((double)(i))
 
-  #define naMakeu256(hi, lo)       ((NAu256)(((NAu256)(hi) << 128) | (lo)))
-  #define naMakeu256WithLo(lo)     ((NAu256)(lo))
-  #define naMakeu256WithDouble(d)  ((NAu256)(d))
+  #define naMakeu256(hi, lo)          ((NAu256)(((NAu256)(hi) << 128) | (lo)))
+  #define naMakeu256WithLo(lo)        ((NAu256)(lo))
+  #define naMakeu256WithDouble(d)     ((NAu256)(d))
+  #define naMakeu256WithLiteralLo(lo) (lo ## uLL)
+  #define naMakeu256WithBinary(
+  uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0);
 
   #define naIncu256(i)             ((i)++)
   #define naDecu256(i)             ((i)--)
@@ -101,6 +104,8 @@
   NA_IAPI NAi256  naMakei256(NAi128 hi, NAu128 lo);
   NA_IAPI NAi256  naMakei256WithLo(NAi128 lo);
   NA_IAPI NAi256  naMakei256WithDouble(double d);
+  NA_IAPI NAi256 naMakei256WithBinary(
+    uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0);
 
   #define naGeti256Hi(i)            ((i).hi)
   #define naGeti256Lo(i)            ((i).lo)
@@ -142,10 +147,12 @@
   NA_IAPI NAi128  naCasti256Toi128 (NAi256 i);
   NA_IAPI double    naCasti256ToDouble (NAi256 i);
 
-  #define naMakeu256WithLiteralLo(lo)
   NA_IAPI NAu256 naMakeu256(NAu128 hi, NAu128 lo);
   NA_IAPI NAu256 naMakeu256WithLo(NAu128 lo);
   NA_IAPI NAu256 naMakeu256WithDouble(double d);
+  #define naMakeu256WithLiteralLo(lo)
+  NA_IAPI NAu256 naMakeu256WithBinary(
+    uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0);
 
   #define           naIncu256(i)
   #define           naDecu256(i)

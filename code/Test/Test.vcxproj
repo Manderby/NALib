@@ -169,6 +169,7 @@
     <ClCompile Include="src\testNALib\testNABase\testNAEnvironment.c" />
     <ClCompile Include="src\testNALib\testNABase\testNAFloatingPoint.c" />
     <ClCompile Include="src\testNALib\testNABase\testNAInt128.c" />
+    <ClCompile Include="src\testNALib\testNABase\testNAInt256.c" />
     <ClCompile Include="src\testNALib\testNABase\testNAInt64.c" />
     <ClCompile Include="src\testNALib\testNABase\testNAInteger.c" />
     <ClCompile Include="src\testNALib\testNABase\testNALanguage.c" />

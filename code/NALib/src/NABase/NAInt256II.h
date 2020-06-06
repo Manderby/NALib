@@ -11,6 +11,7 @@
   NA_IDEF NAi256 naMakei256(int128 hi, uint128 lo){return ((NAi256)hi << 128) | lo;}
   NA_IDEF NAi256 naMakei256WithLo(NAi128 lo){return (NAi256)lo;}
   NA_IDEF NAi256 naMakei256WithDouble(double lo){return (NAi256)lo;}
+  NA_IDEF NAi256 naMakei256WithBinary(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0){return ((NAi256)b3 << 224) | (NAi256)b3 << 192) | (NAi256)b3 << 160) | (NAi256)b3 << 128) | (NAi256)b3 << 96) | ((NAi256)b2 << 64) | ((NAi256)b1 << 32) | b0;}
 #else
 
   NA_IDEF NAi256 naMakei256(NAi128 hi, NAu128 lo){
@@ -27,6 +28,12 @@
   }
   NA_IDEF NAi256 naMakei256WithDouble(double d){
     return naMakei256WithLo(naMakei128WithLo(naGetDoubleInteger(d)));
+  }
+  NA_IDEF NAi256 naMakei256WithBinary(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0){
+    NAi256 retValuei;
+    retValuei.hi = naMakei128WithBinary(b7, b6, b5, b4);
+    retValuei.lo = naMakeu128WithBinary(b3, b2, b1, b0);
+    return retValuei;
   }
 
 
@@ -201,15 +208,6 @@
 
 
 
-  #undef naMakeu256WithLiteralLo
-  #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
-    #define naMakeu256WithLiteralLo(lo)  {0, lo}
-  #else
-    #define naMakeu256WithLiteralLo(lo)  {lo, 0}
-  #endif
-
-
-
   NA_IDEF NAu256 naMakeu256(NAu128 hi, NAu128 lo){
     NAu256 retValuei;
     retValuei.hi = hi;
@@ -224,6 +222,20 @@
   }
   NA_IDEF NAu256 naMakeu256WithDouble(double d){
     return naMakeu256WithLo(naMakeu128WithDouble(d));
+  }
+
+  #undef naMakeu256WithLiteralLo
+  #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
+    #define naMakeu256WithLiteralLo(lo)  {0, lo}
+  #else
+    #define naMakeu256WithLiteralLo(lo)  {lo, 0}
+  #endif
+
+  NA_IDEF NAu256 naMakeu256WithBinary(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0){
+    NAu256 retValueu;
+    retValueu.hi = naMakeu128WithBinary(b7, b6, b5, b4);
+    retValueu.lo = naMakeu128WithBinary(b3, b2, b1, b0);
+    return retValueu;
   }
 
 

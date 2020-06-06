@@ -11,9 +11,8 @@
 
   #define naMakei64(hi, lo)
   #define naMakei64WithLo(lo)
-  #define naMakei64WithBinary(b1, b0)
   #define naMakei64WithDouble(lo)
-  #define naMakeu64WithLiteralLo(lo)
+  #define naMakei64WithBinary(b1, b0)
 
   #define naGeti64Hi(i)
   #define naGeti64Lo(i)
@@ -53,8 +52,9 @@
 
   #define naMakeu64(hi, lo)
   #define naMakeu64WithLo(lo)
-  #define naMakeu64WithBinary(b1, b0)
   #define naMakeu64WithDouble(d)
+  #define naMakeu64WithLiteralLo(lo)
+  #define naMakeu64WithBinary(b1, b0)
 
   #define naIncu64(i)
   #define naDecu64(i)
@@ -90,10 +90,10 @@
 
   // if no native int64 type is available, we have to emulate it.
 
-  NA_IAPI NAi64  naMakei64(int32 hi, uint32 lo);
-  NA_IAPI NAi64  naMakei64WithLo(int32 lo);
-  NA_IAPI NAi64  naMakei64WithBinary(uint32 b1, uint32 b0);
-  NA_IAPI NAi64  naMakei64WithDouble(double d);
+  NA_IAPI NAi64 naMakei64(int32 hi, uint32 lo);
+  NA_IAPI NAi64 naMakei64WithLo(int32 lo);
+  NA_IAPI NAi64 naMakei64WithDouble(double d);
+  NA_IAPI NAi64 naMakei64WithBinary(uint32 b1, uint32 b0);
 
   #define naGeti64Hi(i)            ((i).hi)
   #define naGeti64Lo(i)            ((i).lo)
@@ -131,11 +131,11 @@
   NA_IAPI int32    naCasti64Toi32 (NAi64 i);
   NA_IAPI double   naCasti64ToDouble(NAi64 i);
 
-  #define naMakeu64WithLiteralLo(lo)
   NA_IAPI NAu64 naMakeu64(uint32 hi, uint32 lo);
   NA_IAPI NAu64 naMakeu64WithLo(uint32 lo);
-  NA_IAPI NAu64 naMakeu64WithBinary(uint32 hi, uint32 lo);
   NA_IAPI NAu64 naMakeu64WithDouble(double d);
+  #define naMakeu64WithLiteralLo(lo)
+  NA_IAPI NAu64 naMakeu64WithBinary(uint32 hi, uint32 lo);
 
   #define          naIncu64(i)
   #define          naDecu64(i)

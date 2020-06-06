@@ -154,7 +154,7 @@ Highlights:
 - Rewrote the NABuffer struct. Much cleaner now. Future proof.
 - Rewrote NAList to not include an iterator. There is a new NAListIterator
   struct which can be attached to a list.
-- Rewrote NAGrowingSpace to have an external iterator as well.
+- Rewrote NAGrowingSpace to have a separated iterator as well.
 - Iterators can now be Accessors, Mutators and Modifiers.
 
 Other things:

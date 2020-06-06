@@ -23,8 +23,8 @@ void testNAInt64Make(){
   NAu64 u1 = naMakeu64(0x98765432, 0x12345678);
   NAu64 u2 = naMakeu64WithLo(0x12345678);
   NAu64 u3 = naMakeu64WithDouble(123456789012345.);
-  NAu64 u4 = naMakeu64WithBinary(0x98765432, 0x12345678);
-  NAu64 u5 = naMakeu64WithLiteralLo(0x12345678);
+  NAu64 u4 = naMakeu64WithLiteralLo(0x12345678);
+  NAu64 u5 = naMakeu64WithBinary(0x98765432, 0x12345678);
 
   naTest(equali64(i1, 0xedcba988, 0x98765432));
   naTest(equali64(i2, 0xffffffff, 0xedcba988));
@@ -33,8 +33,8 @@ void testNAInt64Make(){
   naTest(equalu64(u1, 0x98765432, 0x12345678));
   naTest(equalu64(u2, 0x00000000, 0x12345678));
   naTest(equalu64(u3, 0x00007048 ,0x860ddf79));
-  naTest(equalu64(u4, 0x98765432, 0x12345678));
-  naTest(equalu64(u5, 0x00000000, 0x12345678));
+  naTest(equalu64(u4, 0x00000000, 0x12345678));
+  naTest(equalu64(u5, 0x98765432, 0x12345678));
 }
 
 

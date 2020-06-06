@@ -10,9 +10,9 @@
 #if defined NA_TYPE_INT128
   NA_IDEF NAi128 naMakei128(int64 hi, uint64 lo){return ((NAi128)hi << 64) | lo;}
   NA_IDEF NAi128 naMakei128WithLo(NAi64 lo){return (NAi128)lo;}
-  NA_IDEF NAi128 naMakei128WithBinary(uint32 b3, uint32 b2, uint32 b1, uint32 b0){return ((NAi128)b3 << 96) | ((NAi128)b2 << 64) | ((NAi128)b1 << 32) | b0;}
   NA_IDEF NAi128 naMakei128WithDouble(double lo){return (NAi128)lo;}
-#else
+  NA_IDEF NAi128 naMakei128WithBinary(uint32 b3, uint32 b2, uint32 b1, uint32 b0){return ((NAi128)b3 << 96) | ((NAi128)b2 << 64) | ((NAi128)b1 << 32) | b0;}
+  #else
 
   NA_IDEF NAi128 naMakei128(NAi64 hi, NAu64 lo){
     NAi128 retValuei;
@@ -26,14 +26,14 @@
     retValuei.lo = naCasti64Tou64(lo);
     return retValuei;
   }
+  NA_IDEF NAi128 naMakei128WithDouble(double d){
+    return naMakei128WithLo(naGetDoubleInteger(d));
+  }
   NA_IDEF NAi128 naMakei128WithBinary(uint32 b3, uint32 b2, uint32 b1, uint32 b0){
     NAi128 retValuei;
     retValuei.hi = naMakei64WithBinary(b3, b2);
     retValuei.lo = naMakeu64WithBinary(b1, b0);
     return retValuei;
-  }
-  NA_IDEF NAi128 naMakei128WithDouble(double d){
-    return naMakei128WithLo(naGetDoubleInteger(d));
   }
 
 
@@ -202,15 +202,6 @@
 
 
 
-  #undef naMakeu128WithLiteralLo
-  #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
-    #define naMakeu128WithLiteralLo(lo)  {0, lo}
-  #else
-    #define naMakeu128WithLiteralLo(lo)  {lo, 0}
-  #endif
-
-
-
   NA_IDEF NAu128 naMakeu128(NAu64 hi, NAu64 lo){
     NAu128 retValuei;
     retValuei.hi = hi;
@@ -223,14 +214,22 @@
     retValuei.lo = lo;
     return retValuei;
   }
+  NA_IDEF NAu128 naMakeu128WithDouble(double d){
+    return naMakeu128WithLo(naMakeu64WithDouble(d));
+  }
+
+  #undef naMakeu128WithLiteralLo
+  #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
+    #define naMakeu128WithLiteralLo(lo)  {0, lo}
+  #else
+    #define naMakeu128WithLiteralLo(lo)  {lo, 0}
+  #endif
+  
   NA_IDEF NAu128 naMakeu128WithBinary(uint32 b3, uint32 b2, uint32 b1, uint32 b0){
     NAu128 retValueu;
     retValueu.hi = naMakeu64WithBinary(b3, b2);
     retValueu.lo = naMakeu64WithBinary(b1, b0);
     return retValueu;
-  }
-  NA_IDEF NAu128 naMakeu128WithDouble(double d){
-    return naMakeu128WithLo(naMakeu64WithDouble(d));
   }
 
 

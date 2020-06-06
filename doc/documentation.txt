@@ -374,10 +374,11 @@ In NALib, a (more or less) consistent naming scheme is applied. Every symbol
 consists at least of a suffix and an identifier.
 
 Suffix:
-- types always have the prefix      NA    and are MixedCase
-- macros always have the prefix     NA_   and are UPPER_CASE
-- functions always have the prefix  na    and are MixedCase
-- private variables and functions   na_   and are MixedCase
+- types always have the prefix             NA         and are MixedCase
+- macros always have the prefix            NA_        and are UPPER_CASE
+- functions always have the prefix         na         and are MixedCase
+- private variables, functions             na_        and are MixedCase
+- private types                            NACore     and are MixedCase
 
 Further more, symbols are declared with the following prefixes:
 

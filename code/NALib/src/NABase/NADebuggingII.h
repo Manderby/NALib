@@ -24,17 +24,17 @@
     #define NA_DEBUG_FUNCTIONSYMBOL __func__
   #endif
 
-  NA_HAPI void naCaptureError(const char* functionSymbol, const char* text);
-  NA_HAPI void naCaptureCrash(const char* functionSymbol, const char* text);
+  NA_HAPI void na_Error(const char* functionSymbol, const char* text);
+  NA_HAPI void na_Crash(const char* functionSymbol, const char* text);
 
   #define naError(text)\
-    naCaptureError(NA_DEBUG_FUNCTIONSYMBOL, text)
+    na_Error(NA_DEBUG_FUNCTIONSYMBOL, text)
 
   // Note for the future: The exit call must be in the macro and must not be
   // moved to the capture function!
   #define naCrash(text)\
     {\
-      naCaptureCrash(NA_DEBUG_FUNCTIONSYMBOL, text);\
+      na_Crash(NA_DEBUG_FUNCTIONSYMBOL, text);\
       exit(EXIT_FAILURE);\
     }
 

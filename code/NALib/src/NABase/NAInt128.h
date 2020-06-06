@@ -9,8 +9,6 @@
 
 #if defined NA_TYPE_INT128
 
-  #define naMakeu128WithLiteralLo(lo) (lo ## uLL)
-
   // We declare these as inline functions to reduce warnings.
   NA_IAPI NAi128 naMakei128            (NAi64 hi, NAu64 lo);
   NA_IAPI NAi128 naMakei128WithLo      (NAi64 lo);
@@ -59,6 +57,7 @@
   #define naMakeu128(hi, lo)          ((NAu128)(((NAu128)(hi) << 64) | (lo)))
   #define naMakeu128WithLo(lo)        ((NAu128)(lo))
   #define naMakeu128WithDouble(d)     ((NAu128)(d))
+  #define naMakeu128WithLiteralLo(lo) (lo ## uLL)
   #define naMakeu128WithBinary(
     uint32 b3, uint32 b2, uint32 b1, uint32 b0);
 
@@ -142,10 +141,10 @@
   NA_IAPI NAi64   naCasti128Toi64  (NAi128 i);
   NA_IAPI double    naCasti128ToDouble (NAi128 i);
 
-  #define naMakeu128WithLiteralLo(lo)
   NA_IAPI NAu128 naMakeu128(NAu64 hi, NAu64 lo);
   NA_IAPI NAu128 naMakeu128WithLo(NAu64 lo);
   NA_IAPI NAu128 naMakeu128WithDouble(double d);
+  #define naMakeu128WithLiteralLo(lo)
   NA_IAPI NAu128 naMakeu128WithBinary(
     uint32 b3, uint32 b2, uint32 b1, uint32 b0);
 

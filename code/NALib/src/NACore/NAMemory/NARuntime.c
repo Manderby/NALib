@@ -188,6 +188,7 @@ NA_HIDEF void naRegisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
 
 
 NA_HIDEF void naUnregisterCoreTypeInfo(NACoreTypeInfo* coretypeinfo){
+  NARuntime* runtime = na_Runtime;
   NACoreTypeInfo** newinfos = NA_NULL;
   if(na_Runtime->typeInfoCount > 1){
     NAInt i;
