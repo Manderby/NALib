@@ -151,7 +151,7 @@
 // Runtime memory pools
 // ////////////////////////////////
 
-// Define the size of a core memory pool part. This size is used for the
+// Define the size of a memory pool part. This size is used for the
 // NALib runtime system, more precisely allocation with naNew, as well as
 // for garbage collection.
 //

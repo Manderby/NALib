@@ -5,9 +5,9 @@
 
 
 
-// At the core, an NAPtr stores a C-Pointer and the information whether it
-// is const or mutable. It also stores information about the bytesize of the
-// memory being pointed at and how it is null terminated. Even more, it stores,
+// An NAPtr stores a C-Pointer and the information whether it is const or
+// mutable. It also stores information about the bytesize of the memory
+// being pointed at and how it is null terminated. Even more, it stores,
 // how the pointer had originally been allocated. All this information is just
 // for debugging and can be omitted if necessary. When compiling with NDEBUG,
 // no information is stored at all.

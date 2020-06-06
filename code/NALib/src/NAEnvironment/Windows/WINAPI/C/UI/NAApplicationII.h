@@ -32,7 +32,7 @@ struct NAWINAPIColor {
 // not be done.
 typedef struct NAWINAPIApplication NAWINAPIApplication;
 struct NAWINAPIApplication {
-  NACoreApplication coreApplication;
+  NA_Application coreApplication;
   NAList timers;
   HWND offscreenWindow;
   NONCLIENTMETRICS nonClientMetrics;
@@ -44,7 +44,7 @@ struct NAWINAPIApplication {
   HFONT paragraphFont;
   HFONT mathFont;
 
-  NACoreUIElement* mouseHoverElement;
+  NA_UIElement* mouseHoverElement;
 
   WNDPROC oldButtonWindowProc;
   WNDPROC oldRadioWindowProc;
@@ -93,7 +93,7 @@ NAWINAPICallbackInfo naApplicationWINAPIProc(NAUIElement* uiElement, UINT messag
 
 
 
-NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void* arg){
+NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void* arg){
   NAWINAPIApplication* app;
   WNDCLASS wndclass;
   MSG message;
@@ -109,7 +109,7 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   
   // First, register the window classes. This is required as the
   // offscreen window class must be present upon the call to
-  // naNewApplication.
+  // na_NewApplication.
 
   // Register the window class
   naZeron(&wndclass, sizeof(WNDCLASS));
@@ -154,19 +154,19 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 	RegisterClass(&wndclass);
 
     // Start the WINAPI application and set the native ID of the application.
-  app = naNewApplication();
+  app = na_NewApplication();
 
-  // Call prestartup if desired.
-  if(prestartup){prestartup(arg);}
+  // Call preStartup if desired.
+  if(preStartup){preStartup(arg);}
 
   // Set the language of the translator
   naResetApplicationPreferredTranslatorLanguages();
 
-  // Call poststartup if desired.
-  if(poststartup){poststartup(arg);}
+  // Call postStartup if desired.
+  if(postStartup){postStartup(arg);}
 
   // Start the event loop.
-  while(naIsCoreApplicationRunning()){
+  while(na_IsCoreApplicationRunning()){
     BOOL response = GetMessage(&message, 0, 0, 0);
     naCollectGarbage();
     if(response == 0){break;}
@@ -218,11 +218,11 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 
 
-NA_HDEF NAApplication* naNewApplication(void){
+NA_HDEF NAApplication* na_NewApplication(void){
 
   NAWINAPIApplication* winapiApplication = naAlloc(NAWINAPIApplication);
 
-  naInitCoreApplication(&(winapiApplication->coreApplication), GetModuleHandle(NULL));
+  na_InitCoreApplication(&(winapiApplication->coreApplication), GetModuleHandle(NULL));
 
   naInitList(&(winapiApplication->timers));
 
@@ -286,7 +286,7 @@ NA_DEF void naDestructApplication(NAApplication* application){
 
   DestroyIcon(app->appIcon);
 
-  naClearCoreApplication(&(app->coreApplication));  
+  na_ClearCoreApplication(&(app->coreApplication));  
 
   // Now that all windows are destroyed, all dependent timers are deleted. We can
   // safely release the timer structs. todo: Make killing the timers a sport.
@@ -301,12 +301,12 @@ HWND naGetApplicationOffscreenWindow(void){
   return app->offscreenWindow;
 }
 
-NACoreUIElement* naGetApplicationMouseHoverElement(void){
+NA_UIElement* naGetApplicationMouseHoverElement(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   return app->mouseHoverElement;
 }
 
-void naSetApplicationMouseHoverElement(NACoreUIElement* element){
+void naSetApplicationMouseHoverElement(NA_UIElement* element){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   app->mouseHoverElement = element;
 }
@@ -430,7 +430,7 @@ NA_DEF void naSetApplicationIconPath(NAUTF8Char* path){
 
 
 
-NA_DEF NAString* naNewApplicationName(void){
+NA_DEF NAString* na_NewApplicationName(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   if(app->coreApplication.name){
     return naNewStringWithFormat("%s", app->coreApplication.name);
@@ -438,7 +438,7 @@ NA_DEF NAString* naNewApplicationName(void){
     TCHAR modulepath[MAX_PATH];
     NAString* utf8modulepath;
     NAURL url;
-    NAString* applicationname;
+    NAString* applicationName;
     NAString* applicationbasename;
 
     GetModuleFileName(NULL, modulepath, MAX_PATH);
@@ -446,10 +446,10 @@ NA_DEF NAString* naNewApplicationName(void){
 
     naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8modulepath));
     naDelete(utf8modulepath);
-    applicationname = naNewStringWithURLFilename(&url);
-    applicationbasename = naNewStringWithBasenameOfFilename(applicationname);
+    applicationName = naNewStringWithURLFilename(&url);
+    applicationbasename = naNewStringWithBasenameOfFilename(applicationName);
     naClearURL(&url);
-    naDelete(applicationname);
+    naDelete(applicationName);
 
     return applicationbasename;
   }
@@ -457,7 +457,7 @@ NA_DEF NAString* naNewApplicationName(void){
 
 
 
-NA_DEF NAString* naNewApplicationCompanyName(void){
+NA_DEF NAString* na_NewApplicationCompanyName(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   if(app->coreApplication.companyName){
     return naNewStringWithFormat("%s", app->coreApplication.companyName);
@@ -466,7 +466,7 @@ NA_DEF NAString* naNewApplicationCompanyName(void){
   }
 }
 
-NA_DEF NAString* naNewApplicationVersionString(void){
+NA_DEF NAString* na_NewApplicationVersionString(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   if(app->coreApplication.versionString){
     return naNewStringWithFormat("%s", app->coreApplication.versionString);
@@ -475,7 +475,7 @@ NA_DEF NAString* naNewApplicationVersionString(void){
   }
 }
 
-NA_DEF NAString* naNewApplicationBuildString(void){
+NA_DEF NAString* na_NewApplicationBuildString(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   if(app->coreApplication.buildString){
     return naNewStringWithFormat("%s", app->coreApplication.buildString);
@@ -484,7 +484,7 @@ NA_DEF NAString* naNewApplicationBuildString(void){
   }
 }
 
-NA_DEF NAString* naNewApplicationIconPath(void){
+NA_DEF NAString* na_NewApplicationIconPath(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   if(app->coreApplication.iconPath){
     return naNewStringWithFormat("%s", app->coreApplication.iconPath);
@@ -493,14 +493,14 @@ NA_DEF NAString* naNewApplicationIconPath(void){
   }
 }
 
-NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
-  NAString* retstring;
+NA_DEF NAString* na_NewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
+  NAString* retString;
   if(dir){
-    retstring = naNewStringWithFormat("%s/%s.%s", dir, basename, suffix);
+    retString = naNewStringWithFormat("%s/%s.%s", dir, basename, suffix);
   }else{
-    retstring = naNewStringWithFormat("%s.%s", basename, suffix);
+    retString = naNewStringWithFormat("%s.%s", basename, suffix);
   }
-  return retstring;
+  return retString;
 }
 
 
@@ -525,7 +525,7 @@ NA_DEF HICON naGetWINAPIApplicationIcon(void){
 
 
 
-NA_DEF NAFont getFontWithKind(NAFontKind kind){
+NA_HDEF NAFont na_GetFontWithKind(NAFontKind kind){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   HFONT retfont = NA_NULL;
 
@@ -659,14 +659,14 @@ NA_DEF void naCenterMouse(void* uiElement, NABool includebounds, NABool sendmove
   centerpos.x = spacerect.pos.x + spacerect.size.width * .5f;
   centerpos.y = spacerect.pos.y + spacerect.size.height * .5f;
 
-  naSetMouseWarpedTo(centerpos);
+  na_SetMouseWarpedTo(centerpos);
   SetCursorPos((int)centerpos.x, (int)screenframe.size.height - (int)centerpos.y);
 }
 
 
 
 NA_DEF void naShowMouse(){
-  NACoreApplication* coreapp = (NACoreApplication*)naGetApplication();
+  NA_Application* coreapp = (NA_Application*)naGetApplication();
   if(!(coreapp->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE)){
     ShowCursor(1);
     coreapp->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
@@ -675,7 +675,7 @@ NA_DEF void naShowMouse(){
 
 
 NA_DEF void naHideMouse(){
-  NACoreApplication* coreapp = (NACoreApplication*)naGetApplication();
+  NA_Application* coreapp = (NA_Application*)naGetApplication();
   if(coreapp->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE){
     ShowCursor(0);
     coreapp->flags &= ~NA_APPLICATION_FLAG_MOUSE_VISIBLE;

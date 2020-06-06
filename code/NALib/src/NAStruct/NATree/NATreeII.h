@@ -216,11 +216,11 @@ NA_HIAPI void naSetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newitem
 NA_HIAPI const NATree* naGetTreeIteratorTreeConst(const NATreeIterator* iter);
 NA_HIAPI NATree* naGetTreeIteratorTreeMutable(NATreeIterator* iter);
 NA_HIAPI NABool naAddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafInsertOrder insertOrder, NABool movetonew);
-NA_HAPI void naIterateTreeCapture(NATreeIterator* iter, NAInt index, NATreeIterationInfo* info);
-NA_HAPI void naIterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info);
-NA_HAPI  NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info);
-NA_HAPI  NABool naLocateTreeKeyCore(NATreeIterator* iter, const void* key, NABool usebubble);
-NA_HAPI  NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace);
+NA_HHAPI void na_IterateTreeCapture(NATreeIterator* iter, NAInt index, NATreeIterationInfo* info);
+NA_HHAPI void na_IterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info);
+NA_HHAPI  NABool na_IterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info);
+NA_HHAPI  NABool na_LocateTreeKeyCore(NATreeIterator* iter, const void* key, NABool usebubble);
+NA_HHAPI  NABool na_AddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace);
 
 // Utilities
 NA_HIAPI void naSetTreeRoot(NATree* tree, NATreeItem* newroot, NABool isLeaf);
@@ -228,9 +228,9 @@ NA_HIAPI void naClearTreeRoot(NATree* tree);
 NA_HIAPI NABool naIsTreeRootLeaf(const NATree* tree);
 NA_HIAPI void naMarkTreeRootLeaf(NATree* tree, NABool isleaf);
 NA_HIAPI NABool naIsTreeItemLeaf(const NATree* tree, NATreeItem* item);
-NA_HAPI  NATreeLeaf* naAddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
-NA_HAPI  void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childindx);
-NA_HAPI  NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node);
+NA_HHAPI  NATreeLeaf* na_AddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
+NA_HHAPI  void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childindx);
+NA_HHAPI  NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node);
 
 #include "../../NACore/NAValueHelper.h"
 #include "NATreeConfigurationII.h"

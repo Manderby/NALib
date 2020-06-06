@@ -40,7 +40,7 @@ NA_IDEF void naExtendBufferRange(NABuffer* buffer, NAInt bytesatstart, NAInt byt
     if(bytesatend < 0)
       naError("bytesatend should not be negative");
   #endif
-  naEnsureBufferRange(buffer, buffer->range.origin - bytesatstart, naGetRangeiEnd(buffer->range) + bytesatend);
+  na_EnsureBufferRange(buffer, buffer->range.origin - bytesatstart, naGetRangeiEnd(buffer->range) + bytesatend);
 }
 
 

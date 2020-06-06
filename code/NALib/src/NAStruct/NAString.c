@@ -127,8 +127,8 @@ struct NAString{
   #endif
 };
 
-NA_HAPI void naDestructString(NAString* string);
-NA_RUNTIME_TYPE(NAString, naDestructString, NA_FALSE);
+NA_HHAPI void na_DestructString(NAString* string);
+NA_RUNTIME_TYPE(NAString, na_DestructString, NA_FALSE);
 
 
 
@@ -315,7 +315,7 @@ NA_API NAString* naNewStringWithNewlineSanitization( NAString* string, NANewline
 
 
 
-NA_HDEF void naDestructString(NAString* string){
+NA_HDEF void na_DestructString(NAString* string){
   naRelease(string->buffer);
 }
 
@@ -428,7 +428,7 @@ NA_DEF NAString* naNewStringCEscaped(const NAString* inputstring){
     return naNewString();
   }
   iter = naMakeBufferAccessor(inputstring->buffer);
-  naLocateBufferStart(&iter);
+  na_LocateBufferStart(&iter);
   buffer = naNewBuffer(NA_FALSE);
   outiter = naMakeBufferModifier(buffer);
   while(!naIsBufferAtInitial(&iter)){
@@ -468,7 +468,7 @@ NA_DEF NAString* naNewStringCUnescaped(const NAString* inputstring){
   }
   buffer = naNewBuffer(NA_FALSE);
   iter = naMakeBufferAccessor(inputstring->buffer);
-  naLocateBufferStart(&iter);
+  na_LocateBufferStart(&iter);
   outiter = naMakeBufferModifier(buffer);
   while(!naIsBufferAtInitial(&iter)){
     NAUTF8Char curchar = naReadBufferi8(&iter);

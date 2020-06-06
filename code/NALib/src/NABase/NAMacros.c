@@ -36,7 +36,7 @@ NA_HDEF void naPrintMacroEnumBase(int macroValue, const NAUTF8Char** strings, in
 
 
 
-NA_HDEF void na_PrintMacroPlain(const NAUTF8Char* macroString, const NAUTF8Char* macroStringified, NABool printContent){
+NA_HHDEF void na_PrintMacroPlain(const NAUTF8Char* macroString, const NAUTF8Char* macroStringified, NABool printContent){
   naPrintMacroHead(macroString);
   if(strncmp(macroString, macroStringified, strlen(macroString)) != 0){
     if(strlen(macroStringified) == 0){
@@ -55,7 +55,7 @@ NA_HDEF void na_PrintMacroPlain(const NAUTF8Char* macroString, const NAUTF8Char*
 
 
 
-NA_HDEF void na_PrintMacroInt(const NAUTF8Char* macroString, int value){
+NA_HHDEF void na_PrintMacroInt(const NAUTF8Char* macroString, int value){
   naPrintMacroHead(macroString);
   printf("%d", value);
   printf(NA_NL);
@@ -63,7 +63,7 @@ NA_HDEF void na_PrintMacroInt(const NAUTF8Char* macroString, int value){
 
 
 
-NA_HDEF void na_PrintMacroIntSpecial(const NAUTF8Char* macroString, int value, int specialValue, const NAUTF8Char* specialString){
+NA_HHDEF void na_PrintMacroIntSpecial(const NAUTF8Char* macroString, int value, int specialValue, const NAUTF8Char* specialString){
   naPrintMacroHead(macroString);
   if(value == specialValue){
     printf("%d (%s)", value, specialString);
@@ -75,7 +75,7 @@ NA_HDEF void na_PrintMacroIntSpecial(const NAUTF8Char* macroString, int value, i
 
 
 
-NA_HDEF void na_PrintMacroIntSpecialHex(const NAUTF8Char* macroString, int value, int specialValue, const NAUTF8Char* specialString){
+NA_HHDEF void na_PrintMacroIntSpecialHex(const NAUTF8Char* macroString, int value, int specialValue, const NAUTF8Char* specialString){
   naPrintMacroHead(macroString);
   if(value == specialValue){
     printf("0x%x (%s)", value, specialString);
@@ -87,7 +87,7 @@ NA_HDEF void na_PrintMacroIntSpecialHex(const NAUTF8Char* macroString, int value
 
 
 
-NA_HDEF void na_PrintMacroIntYesNo(const NAUTF8Char* macroString, int value){
+NA_HHDEF void na_PrintMacroIntYesNo(const NAUTF8Char* macroString, int value){
   naPrintMacroHead(macroString);
   naPrintMacroEnumBase(value, na_YesNoStrings, 2);
   printf(NA_NL);
@@ -95,7 +95,7 @@ NA_HDEF void na_PrintMacroIntYesNo(const NAUTF8Char* macroString, int value){
 
 
 
-NA_HDEF void na_PrintMacroEnum(const NAUTF8Char* macroString, int value, const NAUTF8Char** strings, int enumCount){
+NA_HHDEF void na_PrintMacroEnum(const NAUTF8Char* macroString, int value, const NAUTF8Char** strings, int enumCount){
   naPrintMacroHead(macroString);
   naPrintMacroEnumBase(value, strings, enumCount);
   printf(NA_NL);
@@ -103,67 +103,67 @@ NA_HDEF void na_PrintMacroEnum(const NAUTF8Char* macroString, int value, const N
 
 
 
-NA_HDEF void na_PrintMacroux8(const NAUTF8Char* macroString, uint8 value){
+NA_HHDEF void na_PrintMacroux8(const NAUTF8Char* macroString, uint8 value){
   naPrintMacroHead(macroString);
   printf("0x%s", naPriux8(value));
   printf(NA_NL);
 }
-NA_HDEF void na_PrintMacroix8(const NAUTF8Char* macroString, int8 value){
+NA_HHDEF void na_PrintMacroix8(const NAUTF8Char* macroString, int8 value){
   naPrintMacroHead(macroString);
   printf("0x%s", naPriix8(value));
   printf(NA_NL);
 }
 
-NA_HDEF void na_PrintMacroux16(const NAUTF8Char* macroString, uint16 value){
+NA_HHDEF void na_PrintMacroux16(const NAUTF8Char* macroString, uint16 value){
   naPrintMacroHead(macroString);
   printf("0x%s", naPriux16(value));
   printf(NA_NL);
 }
-NA_HDEF void na_PrintMacroix16(const NAUTF8Char* macroString, int16 value){
+NA_HHDEF void na_PrintMacroix16(const NAUTF8Char* macroString, int16 value){
   naPrintMacroHead(macroString);
   printf("0x%s", naPriix16(value));
   printf(NA_NL);
 }
 
-NA_HDEF void na_PrintMacroux32(const NAUTF8Char* macroString, uint32 value){
+NA_HHDEF void na_PrintMacroux32(const NAUTF8Char* macroString, uint32 value){
   naPrintMacroHead(macroString);
   printf("0x%s", naPriux32(value));
   printf(NA_NL);
 }
-NA_HDEF void na_PrintMacroix32(const NAUTF8Char* macroString, int32 value){
+NA_HHDEF void na_PrintMacroix32(const NAUTF8Char* macroString, int32 value){
   naPrintMacroHead(macroString);
   printf("0x%s", naPriix32(value));
   printf(NA_NL);
 }
 
-NA_HDEF void na_PrintMacroux64(const NAUTF8Char* macroString, uint64 value){
+NA_HHDEF void na_PrintMacroux64(const NAUTF8Char* macroString, uint64 value){
   naPrintMacroHead(macroString);
   printf("0x%s", naPriux64(value));
   printf(NA_NL);
 }
-NA_HDEF void na_PrintMacroix64(const NAUTF8Char* macroString, int64 value){
+NA_HHDEF void na_PrintMacroix64(const NAUTF8Char* macroString, int64 value){
   naPrintMacroHead(macroString);
   printf("0x%s", naPriix64(value));
   printf(NA_NL);
 }
 
-NA_HDEF void na_PrintMacroux128(const NAUTF8Char* macroString, uint128 value){
+NA_HHDEF void na_PrintMacroux128(const NAUTF8Char* macroString, uint128 value){
   naPrintMacroHead(macroString);
   printf("0x%s", naPriux128(value));
   printf(NA_NL);
 }
-NA_HDEF void na_PrintMacroix128(const NAUTF8Char* macroString, int128 value){
+NA_HHDEF void na_PrintMacroix128(const NAUTF8Char* macroString, int128 value){
   naPrintMacroHead(macroString);
   printf("0x%s", naPriix128(value));
   printf(NA_NL);
 }
 
-NA_HDEF void na_PrintMacroux256(const NAUTF8Char* macroString, uint256 value){
+NA_HHDEF void na_PrintMacroux256(const NAUTF8Char* macroString, uint256 value){
   naPrintMacroHead(macroString);
   printf("0x%s", naPriux256(value));
   printf(NA_NL);
 }
-NA_HDEF void na_PrintMacroix256(const NAUTF8Char* macroString, int256 value){
+NA_HHDEF void na_PrintMacroix256(const NAUTF8Char* macroString, int256 value){
   naPrintMacroHead(macroString);
   printf("0x%s", naPriix256(value));
   printf(NA_NL);

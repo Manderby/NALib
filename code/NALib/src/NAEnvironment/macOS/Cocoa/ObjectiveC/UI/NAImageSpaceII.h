@@ -6,7 +6,7 @@
 
 
 @implementation NACocoaImageSpace
-- (id) initWithCoreImageSpace:(NACoreImageSpace*)newcoreImageSpace frame:(NSRect)frame{
+- (id) initWithCoreImageSpace:(NA_ImageSpace*)newcoreImageSpace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
   coreImageSpace = newcoreImageSpace;
   return self;
@@ -24,11 +24,11 @@
 
 
 NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
-  NACoreImageSpace* coreImageSpace = naAlloc(NACoreImageSpace);
+  NA_ImageSpace* coreImageSpace = naAlloc(NA_ImageSpace);
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaImageSpace* cocoaImageSpace = [[NACocoaImageSpace alloc] initWithCoreImageSpace:coreImageSpace frame:frameRect];  
-  naInitCoreImageSpace(coreImageSpace, NA_COCOA_PTR_OBJC_TO_C(cocoaImageSpace));
+  na_InitCoreImageSpace(coreImageSpace, NA_COCOA_PTR_OBJC_TO_C(cocoaImageSpace));
   
   [cocoaImageSpace setUIImage: uiimage];
   
@@ -38,13 +38,13 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
 
 
 NA_DEF void naDestructImageSpace(NAImageSpace* imageSpace){
-  NACoreImageSpace* coreImageSpace = (NACoreImageSpace*)imageSpace;
-  naClearCoreImageSpace(coreImageSpace);
+  NA_ImageSpace* coreImageSpace = (NA_ImageSpace*)imageSpace;
+  na_ClearCoreImageSpace(coreImageSpace);
 }
 
 
 
-NA_HDEF NARect naGetImageSpaceAbsoluteInnerRect(NACoreUIElement* imageSpace){
+NA_HHDEF NARect na_GetImageSpaceAbsoluteInnerRect(NA_UIElement* imageSpace){
   NA_UNUSED(imageSpace);
   return naMakeRectS(20, 40, 100, 50);
 }

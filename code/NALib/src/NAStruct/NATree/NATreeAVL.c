@@ -4,7 +4,7 @@
 
 
 
-NA_HDEF void naInitNodeAVL(NATreeBinNode* binnode){
+NA_HDEF void na_InitNodeAVL(NATreeBinNode* binnode){
   naGetBinNodeNode(binnode)->flags |= NA_TREE_NODE_AVL_EQUAL;
 }
 
@@ -48,7 +48,7 @@ NA_HIDEF void naRotateLeftBin(NATree* tree, NATreeBinNode* parent, NATreeBinNode
   naMarkNodeChildLeaf(naGetBinNodeNode(rightchild), 0, NA_FALSE);
   naSetTreeItemParent(naGetBinNodeItem(rightchild), grandparent);
 
-  naUpdateTreeNodeBubbling(tree, naGetBinNodeNode(parent), -1);
+  na_UpdateTreeNodeBubbling(tree, naGetBinNodeNode(parent), -1);
 }
 
 
@@ -78,7 +78,7 @@ NA_HIDEF void naRotateRightBin(NATree* tree, NATreeBinNode* leftchild, NATreeBin
   naMarkNodeChildLeaf(naGetBinNodeNode(leftchild), 1, NA_FALSE);
   naSetTreeItemParent(naGetBinNodeItem(leftchild), grandparent);
 
-  naUpdateTreeNodeBubbling(tree, naGetBinNodeNode(parent), -1);
+  na_UpdateTreeNodeBubbling(tree, naGetBinNodeNode(parent), -1);
 }
 
 
@@ -86,7 +86,7 @@ NA_HIDEF void naRotateRightBin(NATree* tree, NATreeBinNode* leftchild, NATreeBin
 NA_HIDEF void naPropagateAVLGrow(NATree* tree, NATreeBinNode* binnode){
   if(!naIsTreeItemRoot(naGetBinNodeItem(binnode))){
     NATreeNode* parent = naGetTreeItemParent(naGetBinNodeItem(binnode));
-    naGrowAVL(tree, (NATreeBinNode*)parent, naGetTreeNodeChildIndex(tree->config, parent, naGetBinNodeItem(binnode)));
+    na_GrowAVL(tree, (NATreeBinNode*)parent, naGetTreeNodeChildIndex(tree->config, parent, naGetBinNodeItem(binnode)));
   }
 }
 
@@ -95,13 +95,13 @@ NA_HIDEF void naPropagateAVLGrow(NATree* tree, NATreeBinNode* binnode){
 NA_HIDEF void naPropagateAVLShrink(NATree* tree, NATreeBinNode* binnode){
   if(!naIsTreeItemRoot(naGetBinNodeItem(binnode))){
     NATreeNode* parent = naGetTreeItemParent(naGetBinNodeItem(binnode));
-    naShrinkAVL(tree, (NATreeBinNode*)parent, naGetTreeNodeChildIndex(tree->config, parent, naGetBinNodeItem(binnode)));
+    na_ShrinkAVL(tree, (NATreeBinNode*)parent, naGetTreeNodeChildIndex(tree->config, parent, naGetBinNodeItem(binnode)));
   }
 }
 
 
 
-NA_HDEF void naGrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx){
+NA_HDEF void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx){
   NAInt nodebalance = naGetNodeAVL(binnode);
   nodebalance += (childindx * 2) - 1;
   if(nodebalance == 0){
@@ -190,7 +190,7 @@ NA_HDEF void naGrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx){
 
 
 
-NA_HDEF void naShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx){
+NA_HDEF void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx){
   NAInt nodebalance = naGetNodeAVL(binnode);
   nodebalance -= (childindx * 2) - 1;
   if(nodebalance == 0){

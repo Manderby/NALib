@@ -47,7 +47,7 @@ NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
 
 
 // The implementation of this function is in the NARuntime.c file.
-NA_HAPI void naDestructPointer(NAPointer* pointer);
+NA_HHAPI void na_DestructPointer(NAPointer* pointer);
 
 
 
@@ -56,7 +56,7 @@ NA_IDEF void naReleasePointer(NAPointer* pointer){
     if(!pointer)
       naCrash("pointer is Null-Pointer.");
   #endif
-  naReleaseSmartPtr(&(pointer->sptr), (NAMutator)naDestructPointer, NA_FALSE);
+  naReleaseSmartPtr(&(pointer->sptr), (NAMutator)na_DestructPointer, NA_FALSE);
 }
 
 

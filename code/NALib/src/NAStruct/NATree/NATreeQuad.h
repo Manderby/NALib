@@ -27,20 +27,18 @@ NA_EXTERN_RUNTIME_TYPE(NATreeQuadLeaf);
 #define LEAF_USERDATA_OFFSET_QUAD   offsetof(NATreeQuadLeaf, userdata)
 #define NODE_USERDATA_OFFSET_QUAD   offsetof(NATreeQuadNode, userdata)
 
-NA_HAPI  NAInt naGetChildIndexQuadDouble(NATreeNode* parentnode, const void* childkey);
-NA_HAPI  NAInt naGetKeyIndexQuadDouble(const void* basekey, const void* testkey, const void* data);
-NA_HAPI  NABool naTestKeyQuadDouble(const void* lowerlimit, const void* upperlimit, const void* key);
-NA_HAPI  NABool naTestKeyNodeContainQuadDouble(NATreeNode* parentnode, const void* key);
-NA_HAPI  NABool naTestKeyLeafContainQuadDouble(NATreeLeaf* leaf, const void* key);
+NA_HHAPI  NAInt na_GetChildIndexQuadDouble(NATreeNode* parentnode, const void* childkey);
+NA_HHAPI  NAInt na_GetKeyIndexQuadDouble(const void* basekey, const void* testkey, const void* data);
+NA_HHAPI  NABool na_TestKeyQuadDouble(const void* lowerlimit, const void* upperlimit, const void* key);
+NA_HHAPI  NABool na_TestKeyNodeContainQuadDouble(NATreeNode* parentnode, const void* key);
+NA_HHAPI  NABool na_TestKeyLeafContainQuadDouble(NATreeLeaf* leaf, const void* key);
 
-NA_HAPI  void naDestructTreeNodeQuad(NATreeNode* node);
-NA_HAPI  void naDestructTreeLeafQuad(NATreeLeaf* leaf);
+NA_HHAPI  void na_DestructTreeNodeQuad(NATreeNode* node);
+NA_HHAPI  void na_DestructTreeLeafQuad(NATreeLeaf* leaf);
 
-NA_HAPI  NATreeNode* naLocateBubbleQuad(const NATree* tree, NATreeItem* item, const void* key);
-NA_HAPI  NATreeNode* naRemoveLeafQuad(NATree* tree, NATreeLeaf* leaf);
-NA_HAPI  NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
-
-//NA_HIAPI NATreeItem* naGetQuadNodeItem(NATreeQuadNode* quadnode);
+NA_HHAPI  NATreeNode* na_LocateBubbleQuad(const NATree* tree, NATreeItem* item, const void* key);
+NA_HHAPI  NATreeNode* na_RemoveLeafQuad(NATree* tree, NATreeLeaf* leaf);
+NA_HHAPI  NATreeLeaf* na_InsertLeafQuad(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 
 
 

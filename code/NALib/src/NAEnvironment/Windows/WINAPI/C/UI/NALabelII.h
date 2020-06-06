@@ -8,7 +8,7 @@
 
 typedef struct NAWINAPILabel NAWINAPILabel;
 struct NAWINAPILabel {
-  NACoreLabel coreLabel;
+  NA_Label coreLabel;
   NABool enabled;
   NAString* href;
 };
@@ -104,11 +104,11 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldLabelWindowProc){app->oldLabelWindowProc = oldproc;}
 
-  naInitCoreLabel(&(winapiLabel->coreLabel), hWnd);
+  na_InitCoreLabel(&(winapiLabel->coreLabel), hWnd);
 
   winapiLabel->enabled = NA_TRUE;
   winapiLabel->href = NA_NULL;
-  SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NALabel*)winapiLabel;
 }
@@ -118,7 +118,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
 NA_DEF void naDestructLabel(NALabel* label){
   NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
   if(winapiLabel->href){naDelete(winapiLabel->href);}
-  naClearCoreLabel(&(winapiLabel->coreLabel));
+  na_ClearCoreLabel(&(winapiLabel->coreLabel));
 }
 
 
@@ -177,12 +177,12 @@ NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
 
 
 NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind){
-  SendMessage(naGetUIElementNativeID(label), WM_SETFONT, (WPARAM)getFontWithKind(kind), MAKELPARAM(TRUE, 0));
+  SendMessage(naGetUIElementNativeID(label), WM_SETFONT, (WPARAM)na_GetFontWithKind(kind), MAKELPARAM(TRUE, 0));
 }
 
 
 
-NA_HDEF NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* label){
+NA_HDEF NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label){
   NA_UNUSED(label);
   return naMakeRectS(20, 40, 100, 50);
 }

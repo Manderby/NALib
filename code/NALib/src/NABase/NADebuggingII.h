@@ -24,8 +24,8 @@
     #define NA_DEBUG_FUNCTIONSYMBOL __func__
   #endif
 
-  NA_HAPI void na_Error(const char* functionSymbol, const char* text);
-  NA_HAPI void na_Crash(const char* functionSymbol, const char* text);
+  NA_HHAPI void na_Error(const char* functionSymbol, const char* text);
+  NA_HHAPI void na_Crash(const char* functionSymbol, const char* text);
 
   #define naError(text)\
     na_Error(NA_DEBUG_FUNCTIONSYMBOL, text)

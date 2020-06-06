@@ -110,12 +110,12 @@ NA_HDEF NATreeLeaf* naConstructTreeLeafOct(const NATreeConfiguration* config, co
 // ////////////////////////////
 
 
-NA_HDEF NAInt naGetChildIndexOctDouble(NATreeNode* parentnode, const void* childkey){
+NA_HDEF NAInt na_GetChildIndexOctDouble(NATreeNode* parentnode, const void* childkey){
   NATreeOctNode* octNode = (NATreeOctNode*)(parentnode);
-  return naGetKeyIndexOctDouble(naGetOctNodeKey(octNode), childkey, &(octNode->childexponent));
+  return na_GetKeyIndexOctDouble(naGetOctNodeKey(octNode), childkey, &(octNode->childexponent));
 }
 // The data parameter contains the leaf exponent of the children.
-NA_HDEF NAInt naGetKeyIndexOctDouble(const void* basekey, const void* testkey, const void* data){
+NA_HDEF NAInt na_GetKeyIndexOctDouble(const void* basekey, const void* testkey, const void* data){
   NAInt childexponent = *((NAInt*)data);
   NAVertex* baseVertex = (NAVertex*)basekey;
   NAVertex* testVertex = (NAVertex*)testkey;
@@ -133,16 +133,16 @@ NA_HDEF NAInt naGetKeyIndexOctDouble(const void* basekey, const void* testkey, c
   if(testVertex->z >= baseVertex->z + childwidth){index |= 4;}
   return index;
 }
-NA_HDEF NABool naTestKeyOctDouble(const void* lowerlimit, const void* upperlimit, const void* key){
+NA_HDEF NABool na_TestKeyOctDouble(const void* lowerlimit, const void* upperlimit, const void* key){
   return NA_KEY_OP(LowerEqual, NAVertex)(lowerlimit, key) && NA_KEY_OP(Lower, NAVertex)(key, upperlimit);
 }
-NA_HDEF NABool naTestKeyNodeContainOctDouble(NATreeNode* parentnode, const void* key){
+NA_HDEF NABool na_TestKeyNodeContainOctDouble(NATreeNode* parentnode, const void* key){
   NATreeOctNode* octNode = (NATreeOctNode*)(parentnode);
   double childwidth = naMakeDoubleWithExponent((int32)octNode->childexponent);
   NAVertex upperlimit = naMakeVertex(octNode->origin.x + 2 * childwidth, octNode->origin.y + 2 * childwidth, octNode->origin.z + 2 * childwidth);
   return NA_KEY_OP(LowerEqual, NAVertex)(&(octNode->origin), key) && NA_KEY_OP(Lower, NAVertex)(key, &upperlimit);
 }
-NA_HDEF NABool naTestKeyLeafContainOctDouble(NATreeLeaf* leaf, const void* key){
+NA_HDEF NABool na_TestKeyLeafContainOctDouble(NATreeLeaf* leaf, const void* key){
   NATreeOctLeaf* octLeaf = (NATreeOctLeaf*)(leaf);
   double leafwidth = naMakeDoubleWithExponent((int32)octLeaf->leafexponent);
   NAVertex upperlimit = naMakeVertex(octLeaf->origin.x + leafwidth, octLeaf->origin.y + leafwidth, octLeaf->origin.z + leafwidth);
@@ -152,20 +152,20 @@ NA_HDEF NABool naTestKeyLeafContainOctDouble(NATreeLeaf* leaf, const void* key){
 
 
 // Callback. Do not call directly.
-NA_HDEF void naDestructTreeNodeOct(NATreeNode* node){
+NA_HDEF void na_DestructTreeNodeOct(NATreeNode* node){
   naDelete(node);
 }
 
 
 
 // Callback. Do not call directly.
-NA_HDEF void naDestructTreeLeafOct(NATreeLeaf* leaf){
+NA_HDEF void na_DestructTreeLeafOct(NATreeLeaf* leaf){
   naDelete(leaf);
 }
 
 
 
-NA_HDEF NATreeNode* naLocateBubbleOctWithLimits(const NATree* tree, NATreeNode* node, const void* origin, const void* lowerlimit, const void* upperlimit, NATreeItem* previtem){
+NA_HDEF NATreeNode* na_LocateBubbleOctWithLimits(const NATree* tree, NATreeNode* node, const void* origin, const void* lowerlimit, const void* upperlimit, NATreeItem* previtem){
   NATreeOctNode* octNode;
   NATreeItem* item;
   
@@ -194,7 +194,7 @@ NA_HDEF NATreeNode* naLocateBubbleOctWithLimits(const NATree* tree, NATreeNode* 
   // Otherwise, go up if possible.
   item = naGetTreeNodeItem(node);
   if(!naIsTreeItemRoot(item)){
-    return naLocateBubbleOctWithLimits(tree, naGetTreeItemParent(item), origin, lowerlimit, upperlimit, item);
+    return na_LocateBubbleOctWithLimits(tree, naGetTreeItemParent(item), origin, lowerlimit, upperlimit, item);
   }else{
     // We reached the root. No need to break a sweat. Simply return null.
     return NA_NULL;
@@ -203,13 +203,13 @@ NA_HDEF NATreeNode* naLocateBubbleOctWithLimits(const NATree* tree, NATreeNode* 
 
 
 
-NA_HDEF NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeItem* item, const void* key){
-  return naLocateBubbleOctWithLimits(tree, naGetTreeItemParent(item), key, NA_NULL, NA_NULL, item);
+NA_HDEF NATreeNode* na_LocateBubbleOct(const NATree* tree, NATreeItem* item, const void* key){
+  return na_LocateBubbleOctWithLimits(tree, naGetTreeItemParent(item), key, NA_NULL, NA_NULL, item);
 }
 
 
 
-NA_HDEF NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
+NA_HDEF NATreeNode* na_RemoveLeafOct(NATree* tree, NATreeLeaf* leaf){
   NATreeItem* leafItem = naGetTreeLeafItem(leaf);
   NATreeNode* parent = naGetTreeItemParent(leafItem);
   if(naIsTreeItemRoot(leafItem)){
@@ -394,7 +394,7 @@ NA_HDEF void naEnlargeTreeRootOct(NATree* tree, const void* containedKey){
 
 
 // Oomph. That code is mighty confusing!
-NA_HDEF NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
+NA_HDEF NATreeLeaf* na_InsertLeafOct(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
   NATreeLeaf* newLeaf;
   NA_UNUSED(insertOrder);
   

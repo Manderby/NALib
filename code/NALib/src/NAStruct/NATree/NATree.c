@@ -5,12 +5,12 @@
 
 
 // Every Add resulting in a change in the tree must go through this function.
-NA_HDEF NATreeLeaf* naAddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
+NA_HDEF NATreeLeaf* na_AddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
   // We need to create a node holding both the old leaf and the new one.
   NATreeLeaf* contentleaf = tree->config->leafInserter(tree, item, key, content, insertOrder);
   NATreeNode* parent = naGetTreeItemParent(&(contentleaf->item));
   if(parent){
-    naUpdateTreeNodeBubbling(tree, parent, naGetTreeNodeChildIndex(tree->config, parent, &(contentleaf->item)));
+    na_UpdateTreeNodeBubbling(tree, parent, naGetTreeNodeChildIndex(tree->config, parent, &(contentleaf->item)));
   }
   return contentleaf;
 }
@@ -36,7 +36,7 @@ NA_HDEF void naFillTreeNodeChildData(const NATreeConfiguration* config, NAPtr ch
 // Expects the parent node of a child which has changed. The segment indicates
 // which segment caused the trouble. If -1 is given, there is no particular
 // node.
-NA_HDEF void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childindx){
+NA_HDEF void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childindx){
   NABool bubble = NA_TRUE;
 
   while(bubble && parent){
@@ -68,7 +68,7 @@ NA_HDEF void naUpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt ch
 // upwards again so that every node in the path receives a childchanged
 // message which again can define if the message shall be bubbled even
 // further.
-NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
+NA_HDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   NABool bubble;
   NAInt i;
   #ifndef NDEBUG
@@ -85,7 +85,7 @@ NA_HDEF NABool naUpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
         bubble |= NA_TRUE;
       }else{
         // this node stores subnodes
-        bubble |= naUpdateTreeNodeCapturing(tree, subnode);
+        bubble |= na_UpdateTreeNodeCapturing(tree, subnode);
       }
     }
   }

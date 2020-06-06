@@ -3,7 +3,7 @@
 
 
 
-NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance){
+NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance){
   const NABuffer* buffer;
   NAInt firstpartoffset;
   NAByte* dst = data;
@@ -20,7 +20,7 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
 
   // We prepare the buffer for the whole range. There might be no parts or
   // sparse parts.
-  naPrepareBuffer(iter, bytesize);
+  na_PrepareBuffer(iter, bytesize);
   // After this function, all relevant parts should be present and filled with
   // memory. The iterator should point to the buffer part containing offset.
   
@@ -37,7 +37,7 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
     const void* src;
 
     #ifndef NDEBUG
-      if(naIsBufferIteratorSparse(iter))
+      if(na_IsBufferIteratorSparse(iter))
         naError("Cur part is sparse");
     #endif
 
@@ -48,9 +48,9 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
     // is filled with memory.
 
     // We get the data pointer where we can read bytes.
-    src = naGetBufferPartDataPointerConst(iter);
+    src = na_GetBufferPartDataPointerConst(iter);
     // We detect, how many bytes actually can be read from the current part.
-    possiblelength = naGetBufferPartByteSize(part) - iter->partoffset;
+    possiblelength = na_GetBufferPartByteSize(part) - iter->partoffset;
 
     #ifndef NDEBUG
       if(possiblelength <= 0)
@@ -64,7 +64,7 @@ NA_HDEF void naRetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byt
       iter->partoffset += bytesize;
     }else{
       // We copy as many bytes as possible and advance to the next part.
-      naLocateBufferNextPart(iter);
+      na_LocateBufferNextPart(iter);
     }
     naCopyn(dst, src, possiblelength);
     dst += possiblelength;
@@ -115,10 +115,10 @@ NA_DEF NABool naReadBufferBit(NABufferIterator* iter){
   NA_UNUSED(iter);
 
   if(iter->curbit == 0){
-    naPrepareBuffer(iter, 1);
+    na_PrepareBuffer(iter, 1);
   }
 
-  src = naGetBufferPartDataPointerConst(iter);
+  src = na_GetBufferPartDataPointerConst(iter);
   bit = (*src >> iter->curbit) & 0x01;
   iter->curbit++;
 

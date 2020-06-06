@@ -14,7 +14,7 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool app
   NABufferIterator dstiter;
   NAByte      srctriple[3];
   NAUTF8Char  dsttriple[4];
-  NAString* retstring;
+  NAString* retString;
   #ifndef NDEBUG
     if(!naHasBufferFixedRange(buffer))
       naError("Buffer has no determined range. Use naFixBufferRange");
@@ -73,9 +73,9 @@ NA_DEF NAString* naNewStringWithBufferBase64Encoded(NABuffer* buffer, NABool app
   }
 
   naClearBufferIterator(&dstiter);
-  retstring = naNewStringWithBufferExtraction(dstbuffer, dstbuffer->range);
+  retString = naNewStringWithBufferExtraction(dstbuffer, dstbuffer->range);
   naRelease(dstbuffer);
-  return retstring;
+  return retString;
 }
 
 
@@ -164,22 +164,22 @@ NA_DEF NABuffer* naNewBufferWithStringBase64Decoded(NAString* string){
 NA_DEF void naAccumulateChecksumBuffer(NAChecksum* checksum, NABuffer* buffer){
   NAInt bytesize = buffer->range.length;
   NABufferIterator iter = naMakeBufferModifier(buffer);
-  naLocateBufferStart(&iter);
+  na_LocateBufferStart(&iter);
 
   while(bytesize){
     NAInt remainingbytes;
     const void* src;
     #ifndef NDEBUG
-      if(naIsBufferIteratorSparse(&iter))
+      if(na_IsBufferIteratorSparse(&iter))
         naError("Buffer contains sparse parts. Can not compute checksum. Use naCacheBuffer.");
     #endif
 
-    remainingbytes = naGetBufferPartByteSize(naGetBufferPart(&iter));
-    src = naGetBufferPartDataPointerConst(&iter);
+    remainingbytes = na_GetBufferPartByteSize(naGetBufferPart(&iter));
+    src = na_GetBufferPartDataPointerConst(&iter);
 
     if(bytesize > remainingbytes){
       naAccumulateChecksum(checksum, src, remainingbytes);
-      naIterateBufferPart(&iter);
+      na_IterateBufferPart(&iter);
       bytesize -= remainingbytes;
     }else{
       naAccumulateChecksum(checksum, src, bytesize);
@@ -205,7 +205,7 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
   bytesize = buffer->range.length;
   if(bytesize){
     iter = naMakeBufferAccessor(buffer);
-    naLocateBufferStart(&iter);
+    na_LocateBufferStart(&iter);
 
     while(bytesize){
       NABufferPart* part;
@@ -213,16 +213,16 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
       const NAByte* src;
 
       part = naGetBufferPart(&iter);
-      remainingbytes = naGetBufferPartByteSize(part);
-      src = naGetBufferPartDataPointerConst(&iter);
+      remainingbytes = na_GetBufferPartByteSize(part);
+      src = na_GetBufferPartDataPointerConst(&iter);
 
       #ifndef NDEBUG
-        if(naIsBufferPartSparse(part))
+        if(na_IsBufferPartSparse(part))
           naError("Buffer contains sparse parts.");
       #endif
 
       naWriteFileBytes(file, src, remainingbytes);
-      naLocateBufferNextPart(&iter);
+      na_LocateBufferNextPart(&iter);
       bytesize -= remainingbytes;
     }
 
@@ -236,11 +236,11 @@ NA_DEF void naWriteBufferToFile(NABuffer* buffer, NAFile* file){
 NA_DEF void naWriteBufferToData(NABuffer* buffer, void* data){
   NABufferIterator iter = naMakeBufferModifier(buffer);
 
-  while(naIterateBufferPart(&iter)){
-    NAInt bytesize = naGetBufferPartByteSize(naGetBufferPart(&iter));
-    const void* src = naGetBufferPartDataPointerConst(&iter);
+  while(na_IterateBufferPart(&iter)){
+    NAInt bytesize = na_GetBufferPartByteSize(naGetBufferPart(&iter));
+    const void* src = na_GetBufferPartDataPointerConst(&iter);
     #ifndef NDEBUG
-      if(naIsBufferIteratorSparse(&iter))
+      if(na_IsBufferIteratorSparse(&iter))
         naError("Buffer contains sparse parts. Use naCacheBuffer.");
     #endif
     naCopyn(data, src, bytesize);

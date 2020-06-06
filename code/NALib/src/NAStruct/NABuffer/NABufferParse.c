@@ -10,12 +10,12 @@ NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
     const NAByte* curbyte;
     const NABufferPart* part;
     
-    naPrepareBuffer(iter, 1);
+    na_PrepareBuffer(iter, 1);
     part = naGetBufferPart(iter);
     if(naIsBufferAtInitial(iter)){break;}
-    curbyte = naGetBufferPartDataPointerConst(iter);
+    curbyte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partoffset < naGetBufferPartByteSize(part)){
+    while(iter->partoffset < na_GetBufferPartByteSize(part)){
       if(*curbyte > ' '){
         found = NA_TRUE;
         break;
@@ -30,7 +30,7 @@ NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
 
 NA_DEF void naSkipBufferDelimiter(NABufferIterator* iter){
   if(!naIsBufferAtEnd(iter)){
-    const NAByte* curbyte = (const NAByte*)naGetBufferPartDataPointerConst(iter);
+    const NAByte* curbyte = (const NAByte*)na_GetBufferPartDataPointerConst(iter);
     if(*curbyte <= ' '){
       naSkipBufferWhitespaces(iter);
     }else{
@@ -53,13 +53,13 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
     const NAByte* curbyte;
     const NABufferPart* part;
 
-    naPrepareBuffer(iter, 1);
+    na_PrepareBuffer(iter, 1);
     part = naGetBufferPart(iter);
     if(naIsBufferAtInitial(iter)){break;}
-    curbyte = naGetBufferPartDataPointerConst(iter);
+    curbyte = na_GetBufferPartDataPointerConst(iter);
     
     // Note: Do not use NA_NL_XXX macros here. That is semantically wrong.
-    while(iter->partoffset < naGetBufferPartByteSize(part)){
+    while(iter->partoffset < na_GetBufferPartByteSize(part)){
       if(checkwindowsend){
         checkwindowsend = NA_FALSE;
         if(*curbyte == '\n'){iter->partoffset++; break;}
@@ -119,12 +119,12 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
     const NAByte* curbyte;
     const NABufferPart* part;
     
-    naPrepareBuffer(iter, 1);
+    na_PrepareBuffer(iter, 1);
     part = naGetBufferPart(iter);
     if(naIsBufferAtInitial(iter)){break;}
-    curbyte = naGetBufferPartDataPointerConst(iter);
+    curbyte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partoffset < naGetBufferPartByteSize(part)){
+    while(iter->partoffset < na_GetBufferPartByteSize(part)){
       if(*curbyte <= ' '){
         found = NA_TRUE;
         break;
@@ -163,11 +163,11 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8C
 //    NABool found = NA_FALSE;
 //
 //    part = naGetListCurConst(&(iter->partiter));
-//    if(naIsBufferPartSparse(part)){
+//    if(na_IsBufferPartSparse(part)){
 //      naGetBufferu8(iter);
 //      part = naGetListCurConst(&(iter->partiter));
 //    }
-//    curbyte = (NAUTF8Char*)naGetBufferPartDataPointerConst(part, iter->curoffset);
+//    curbyte = (NAUTF8Char*)na_GetBufferPartDataPointerConst(part, iter->curoffset);
 //    endoffset = naGetBufferPartEnd(part);
 //    while(iter->curoffset < endoffset){
 //      if(*curbyte == delimiter){found = NA_TRUE; break;}
@@ -199,12 +199,12 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter){
     const NAByte* curbyte;
     const NABufferPart* part;
     
-    naPrepareBuffer(iter, 1);
+    na_PrepareBuffer(iter, 1);
     part = naGetBufferPart(iter);
     if(naIsBufferAtInitial(iter)){break;}
-    curbyte = naGetBufferPartDataPointerConst(iter);
+    curbyte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partoffset < naGetBufferPartByteSize(part)){
+    while(iter->partoffset < na_GetBufferPartByteSize(part)){
       if(*curbyte == '/' || *curbyte == '\\'){
         found = NA_TRUE;
         break;
@@ -249,12 +249,12 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* 
     
     naIsBufferAtEnd(iter);
     
-    naPrepareBuffer(iter, 1);
+    na_PrepareBuffer(iter, 1);
     part = naGetBufferPart(iter);
     if(naIsBufferAtInitial(iter)){break;}
-    curbyte = naGetBufferPartDataPointerConst(iter);
+    curbyte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partoffset < naGetBufferPartByteSize(part)){
+    while(iter->partoffset < na_GetBufferPartByteSize(part)){
       if(bytesused >= maxdigitcount){break;}
 
       if((*curbyte < '0') || (*curbyte > '9')){found = NA_TRUE; break;}
@@ -290,9 +290,9 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, NAi64* re
 
   *retValuei = NA_ZERO_i64;
 
-  naPrepareBuffer(iter, 1);
+  na_PrepareBuffer(iter, 1);
   if(naIsBufferAtInitial(iter)){return 0;}
-  curbyte = naGetBufferPartDataPointerConst(iter);
+  curbyte = na_GetBufferPartDataPointerConst(iter);
 
   // Check for a potential sign at the first character
   if(*curbyte == '+'){

@@ -378,7 +378,7 @@ Suffix:
 - macros always have the prefix            NA_        and are UPPER_CASE
 - functions always have the prefix         na         and are MixedCase
 - private variables, functions             na_        and are MixedCase
-- private types                            NACore     and are MixedCase
+- private types                            NA_        and are MixedCase
 
 Further more, symbols are declared with the following prefixes:
 
@@ -393,7 +393,7 @@ NA_HAPI     | NA_HDEF    | Helper function. Default calling convention. Belongs
             |            | to internal code of NALib. Would normally not be
             |            | visible to the programmer but in NALib, you can
             |            | look it up. API is not exported when linking.
-NA_HIAPI    | NA_HIDEF   | Inline helper function. Same thing but inlined.
+NA_HIAPI    | NA_HIDEF   | Same thing but inlined.
 
 Types are always typedef'd, meaning you won't have to write the struct keyword
 all the time when declaring variables. Also enums are typedef'd with a clear

@@ -10,7 +10,7 @@
 
 typedef struct NAWINAPIOpenGLSpace NAWINAPIOpenGLSpace;
 struct NAWINAPIOpenGLSpace {
-  NACoreOpenGLSpace coreOpenGLspace;
+  NA_OpenGLSpace coreOpenGLspace;
   HGLRC hRC;    // The rendering context for OpenGL
 };
 
@@ -21,7 +21,7 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(NAUIElement* uiElement, UINT messag
 
   switch(message){
   case WM_PAINT:
-    info.hasbeenhandeled = naDispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
+    info.hasbeenhandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
     info.result = 0;
     break;
 
@@ -80,7 +80,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator 
 	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
 	if (wglSwapIntervalEXT){wglSwapIntervalEXT(1);}
 
-  naInitCoreOpenGLSpace(&(winapiOpenGLSpace->coreOpenGLspace), hWnd);
+  na_InitCoreOpenGLSpace(&(winapiOpenGLSpace->coreOpenGLspace), hWnd);
 
   // Now the OpenGL context is created and current. We can initialize it
   // if necessary.
@@ -108,8 +108,8 @@ NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){
 
 
 NA_DEF void naDestructOpenGLSpace(NAOpenGLSpace* openglspace){
-  NACoreOpenGLSpace* coreOpenGLspace = (NACoreOpenGLSpace*)openglspace;
-  naClearCoreOpenGLSpace(coreOpenGLspace);
+  NA_OpenGLSpace* coreOpenGLspace = (NA_OpenGLSpace*)openglspace;
+  na_ClearCoreOpenGLSpace(coreOpenGLspace);
 }
 
 
@@ -117,8 +117,8 @@ NA_DEF void naDestructOpenGLSpace(NAOpenGLSpace* openglspace){
   
 #endif  // NA_COMPILE_OPENGL
 
-NA_HDEF NARect naGetOpenGLSpaceAbsoluteInnerRect(NACoreUIElement* openglspace){
-  return naGetSpaceAbsoluteInnerRect(openglspace);
+NA_HDEF NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* openglspace){
+  return na_GetSpaceAbsoluteInnerRect(openglspace);
 }
 
 

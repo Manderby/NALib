@@ -38,15 +38,15 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->childpernode            = 4;
     switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
     case NA_TREE_KEY_DOUBLE:
-      config->childIndexGetter      = naGetChildIndexQuadDouble;
-      config->keyIndexGetter        = naGetKeyIndexQuadDouble;
+      config->childIndexGetter      = na_GetChildIndexQuadDouble;
+      config->keyIndexGetter        = na_GetKeyIndexQuadDouble;
       config->keyEqualComparer      = NA_KEY_OP(Equal, NAPos);
       config->keyLowerComparer      = NA_KEY_OP(Lower, NAPos);
       config->keyLowerEqualComparer = NA_KEY_OP(LowerEqual, NAPos);
       config->keyAssigner           = NA_KEY_OP(Assign, NAPos);
-      config->keyTester             = naTestKeyQuadDouble;
-      config->keyNodeContainTester  = naTestKeyNodeContainQuadDouble;
-      config->keyLeafContainTester  = naTestKeyLeafContainQuadDouble;
+      config->keyTester             = na_TestKeyQuadDouble;
+      config->keyNodeContainTester  = na_TestKeyNodeContainQuadDouble;
+      config->keyLeafContainTester  = na_TestKeyLeafContainQuadDouble;
       break;
     default:
       #ifndef NDEBUG
@@ -59,12 +59,12 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
         naError("Quadtree can not have AVL balance.");
       #endif
     }
-    config->nodeDestructor          = naDestructTreeNodeQuad;
-    config->leafDestructor          = naDestructTreeLeafQuad;
+    config->nodeDestructor          = na_DestructTreeNodeQuad;
+    config->leafDestructor          = na_DestructTreeLeafQuad;
 
-    config->bubbleLocator           = naLocateBubbleQuad;
-    config->leafRemover             = naRemoveLeafQuad;
-    config->leafInserter            = naInsertLeafQuad;
+    config->bubbleLocator           = na_LocateBubbleQuad;
+    config->leafRemover             = na_RemoveLeafQuad;
+    config->leafInserter            = na_InsertLeafQuad;
 
     #ifndef NDEBUG
       nodeChildsOffset                = NODE_CHILDS_OFFSET_QUAD;
@@ -84,15 +84,15 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
     config->childpernode            = 8;
     switch(flags & NA_TREE_CONFIG_KEY_TYPE_MASK){
     case NA_TREE_KEY_DOUBLE:
-      config->childIndexGetter      = naGetChildIndexOctDouble;
-      config->keyIndexGetter        = naGetKeyIndexOctDouble;
+      config->childIndexGetter      = na_GetChildIndexOctDouble;
+      config->keyIndexGetter        = na_GetKeyIndexOctDouble;
       config->keyEqualComparer      = NA_KEY_OP(Equal, NAVertex);
       config->keyLowerComparer      = NA_KEY_OP(Lower, NAVertex);
       config->keyLowerEqualComparer = NA_KEY_OP(LowerEqual, NAVertex);
       config->keyAssigner           = NA_KEY_OP(Assign, NAVertex);
-      config->keyTester             = naTestKeyOctDouble;
-      config->keyNodeContainTester  = naTestKeyNodeContainOctDouble;
-      config->keyLeafContainTester  = naTestKeyLeafContainOctDouble;
+      config->keyTester             = na_TestKeyOctDouble;
+      config->keyNodeContainTester  = na_TestKeyNodeContainOctDouble;
+      config->keyLeafContainTester  = na_TestKeyLeafContainOctDouble;
       break;
     default:
       #ifndef NDEBUG
@@ -105,12 +105,12 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
         naError("Octtree can not have AVL balance.");
       #endif
     }
-    config->nodeDestructor          = naDestructTreeNodeOct;
-    config->leafDestructor          = naDestructTreeLeafOct;
+    config->nodeDestructor          = na_DestructTreeNodeOct;
+    config->leafDestructor          = na_DestructTreeLeafOct;
     
-    config->bubbleLocator           = naLocateBubbleOct;
-    config->leafRemover             = naRemoveLeafOct;
-    config->leafInserter            = naInsertLeafOct;
+    config->bubbleLocator           = na_LocateBubbleOct;
+    config->leafRemover             = na_RemoveLeafOct;
+    config->leafInserter            = na_InsertLeafOct;
 
     #ifndef NDEBUG
       nodeChildsOffset                = NODE_CHILDS_OFFSET_OCT;
@@ -140,26 +140,26 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       config->keyLeafContainTester  = NA_NULL;
       break;
     case NA_TREE_KEY_DOUBLE:
-      config->childIndexGetter      = naGetChildIndexBinDouble;
-      config->keyIndexGetter        = naGetKeyIndexBinDouble;
+      config->childIndexGetter      = na_GetChildIndexBinDouble;
+      config->keyIndexGetter        = na_GetKeyIndexBinDouble;
       config->keyEqualComparer      = NA_KEY_OP(Equal, double);
       config->keyLowerComparer      = NA_KEY_OP(Lower, double);
       config->keyLowerEqualComparer = NA_KEY_OP(LowerEqual, double);
       config->keyAssigner           = NA_KEY_OP(Assign, double);
-      config->keyTester             = naTestKeyBinDouble;
+      config->keyTester             = na_TestKeyBinDouble;
       config->keyNodeContainTester  = NA_NULL;
-      config->keyLeafContainTester  = naTestKeyLeafContainBinDouble;
+      config->keyLeafContainTester  = na_TestKeyLeafContainBinDouble;
       break;
     case NA_TREE_KEY_NAINT:
-      config->childIndexGetter      = naGetChildIndexBinNAInt;
-      config->keyIndexGetter        = naGetKeyIndexBinNAInt;
+      config->childIndexGetter      = na_GetChildIndexBinNAInt;
+      config->keyIndexGetter        = na_GetKeyIndexBinNAInt;
       config->keyEqualComparer      = NA_KEY_OP(Equal, NAInt);
       config->keyLowerComparer      = NA_KEY_OP(Lower, NAInt);
       config->keyLowerEqualComparer = NA_KEY_OP(LowerEqual, NAInt);
       config->keyAssigner           = NA_KEY_OP(Assign, NAInt);
-      config->keyTester             = naTestKeyBinNAInt;
+      config->keyTester             = na_TestKeyBinNAInt;
       config->keyNodeContainTester  = NA_NULL;
-      config->keyLeafContainTester  = naTestKeyLeafContainBinNAInt;
+      config->keyLeafContainTester  = na_TestKeyLeafContainBinNAInt;
       break;
     default:
       #ifndef NDEBUG
@@ -168,12 +168,12 @@ NA_DEF NATreeConfiguration* naCreateTreeConfiguration(NAInt flags){
       break;
     }
 
-    config->nodeDestructor          = naDestructTreeNodeBin;
-    config->leafDestructor          = naDestructTreeLeafBin;
+    config->nodeDestructor          = na_DestructTreeNodeBin;
+    config->leafDestructor          = na_DestructTreeLeafBin;
 
-    config->bubbleLocator           = naLocateBubbleBin;
-    config->leafRemover             = naRemoveLeafBin;
-    config->leafInserter            = naInsertLeafBin;
+    config->bubbleLocator           = na_LocateBubbleBin;
+    config->leafRemover             = na_RemoveLeafBin;
+    config->leafInserter            = na_InsertLeafBin;
     
     #ifndef NDEBUG
       nodeChildsOffset                = NODE_CHILDS_OFFSET_BIN;

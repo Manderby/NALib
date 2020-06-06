@@ -109,7 +109,7 @@
 @end
 
 @implementation NACocoaLabel
-- (id) initWithCoreLabel:(NACoreLabel*)newcoreLabel frame:(NSRect)frame{
+- (id) initWithCoreLabel:(NA_Label*)newcoreLabel frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 //  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Wurst"]];
   [self setSelectable:YES];
@@ -157,18 +157,18 @@
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
 }
 - (void) setFontKind:(NAFontKind)kind{
-  [self setFont:NA_COCOA_PTR_C_TO_OBJC(getFontWithKind(kind))];
+  [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKind(kind))];
 }
 @end
 
 
 
 NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
-  NACoreLabel* coreLabel = naAlloc(NACoreLabel);
+  NA_Label* coreLabel = naAlloc(NA_Label);
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaLabel* cocoaLabel = [[NACocoaLabel alloc] initWithCoreLabel:coreLabel frame:frameRect];
-  naInitCoreLabel(coreLabel, NA_COCOA_PTR_OBJC_TO_C(cocoaLabel));
+  na_InitCoreLabel(coreLabel, NA_COCOA_PTR_OBJC_TO_C(cocoaLabel));
   naSetLabelText(coreLabel, text);
   
   return (NALabel*)coreLabel;
@@ -177,8 +177,8 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
 
 
 NA_DEF void naDestructLabel(NALabel* label){
-  NACoreLabel* coreLabel = (NACoreLabel*)label;
-  naClearCoreLabel(coreLabel);
+  NA_Label* coreLabel = (NA_Label*)label;
+  na_ClearCoreLabel(coreLabel);
 }
 
 
@@ -218,7 +218,7 @@ NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind){
 
 
 
-NA_HDEF NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* label){
+NA_HHDEF NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label){
   NA_UNUSED(label);
   return naMakeRectS(20, 40, 100, 50);
 }

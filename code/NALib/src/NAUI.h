@@ -187,8 +187,8 @@ NA_API NANativeID naGetUIElementNativeID(NAUIElement* element);
 // needs handling. To get to that message loop, you start the application with
 // the following function:
 
-NA_API void naStartApplication(  NAMutator prestartup,
-                                 NAMutator poststartup,
+NA_API void naStartApplication(  NAMutator preStartup,
+                                 NAMutator postStartup,
                                      void* arg);
 
 // All arguments can be NA_NULL but you can ask NALib to call the given two
@@ -199,12 +199,12 @@ NA_API void naStartApplication(  NAMutator prestartup,
 //      - NALib allocates some structures in the background to run the UI
 //        including the application internal translator.
 //      - NALib creates an NSAutoreleasePool (only when ARC is turned off)
-//        * NALib calls prestartup with arg.
+//        * NALib calls preStartup with arg.
 //        * NALib calls naResetApplicationPreferredTranslatorLanguages().
 //        * NALib calls [NSApp finishLaunching] which in turn will post an
 //          NSApplicationWillFinishLaunchingNotification to whatever
 //          application delegate you might have set.
-//        * NALib calls poststartup with arg.
+//        * NALib calls postStartup with arg.
 //      - NALib drains the autorelease pool. (only when ARC is turned off)
 //      - NALib sets its own internal application object as the apps delegate.
 //      - NALib will start a message loop. When ARC is turned off, a new
@@ -216,24 +216,24 @@ NA_API void naStartApplication(  NAMutator prestartup,
 // Win: - NALib registers its window classes
 //      - NALib allocates some structures in the background to run the UI
 //        including the application internal translator.
-//      - NALib calls prestartup with arg.
+//      - NALib calls preStartup with arg.
 //      - NALib calls naResetApplicationPreferredTranslatorLanguages().
-//      - NALib calls poststartup with arg.
+//      - NALib calls postStartup with arg.
 //      - NALib will start a message loop.
 //
-// prestartup:
-// The prestartup function is here for initialization of global variables
+// preStartup:
+// The preStartup function is here for initialization of global variables
 // and structures before any of the UI specific functions gets called.
 // This function is intended to execute mainly C code but you of course are
 // free to use other languages like Objective-C alongside with it.
 //
-// Note that the prestartup function is the perfect place to load your
+// Note that the preStartup function is the perfect place to load your
 // localizations (strings which are translated into different human languages).
 // After this function, the preferred languages of the user are set in the
 // translator.
 //
-// poststartup:
-// In the poststartup function, you usually start building the UI with the
+// postStartup:
+// In the postStartup function, you usually start building the UI with the
 // ui elements explained below. And you add reactions to those elements which
 // you would like to control. You are of course free to do this in the
 // didFinishLaunching method of your NSApplication delegate on a Mac, if you
@@ -245,7 +245,7 @@ NA_API void naStartApplication(  NAMutator prestartup,
 // If you require a mix of both environments, here is a very simple scheme you
 // can use in your main.m file:
 // 
-// void poststartup(void* arg){
+// void postStartup(void* arg){
 //   [NSBundle loadNibNamed:@"MainMenu" owner:NSApp];
 //   // Now, do UI stuff with NALib. 
 // }
@@ -253,14 +253,14 @@ NA_API void naStartApplication(  NAMutator prestartup,
 // int main(int argc, char *argv[]){
 //   naStartRuntime();
 //   [MyExistingApplication sharedApplication];
-//   naStartApplication(NA_NULL, poststartup, NA_NULL);
+//   naStartApplication(NA_NULL, postStartup, NA_NULL);
 //   return 0;
 // }
 //
 // Notes:
 // - Make sure to use the correct type for MyExistingApplication!
 // - NAApplication will forward all uncaptured events unaltered.
-// - You can of course add a prestartup function with translations for example.
+// - You can of course add a preStartup function with translations for example.
 // - Also note that the loading of nib files must sometimes be done in the
 //   willFinishLaunching method of the application delegate already.
 // - In order to react to willFinishLaunching and didFinishLaunching, your
@@ -268,7 +268,7 @@ NA_API void naStartApplication(  NAMutator prestartup,
 //
 // //////// End intermission
 
-// Note that both in the prestartup as well as the poststartup function, the
+// Note that both in the preStartup as well as the postStartup function, the
 // global NAApplication struct of NALib is ready to be used. You can get this
 // struct using the following call:
 
@@ -313,17 +313,17 @@ NA_API void naSetApplicationBuildString(NAUTF8Char* string);
 NA_API void naSetApplicationIconPath(NAUTF8Char* path);
 
 // Retrieve the informations. All functions might return NA_NULL.
-NA_API NAString* naNewApplicationName(void);
-NA_API NAString* naNewApplicationCompanyName(void);
-NA_API NAString* naNewApplicationVersionString(void);
-NA_API NAString* naNewApplicationBuildString(void);
-NA_API NAString* naNewApplicationIconPath(void);
+NA_API NAString* na_NewApplicationName(void);
+NA_API NAString* na_NewApplicationCompanyName(void);
+NA_API NAString* na_NewApplicationVersionString(void);
+NA_API NAString* na_NewApplicationBuildString(void);
+NA_API NAString* na_NewApplicationIconPath(void);
 
 // The application binary usually resides in some kind of base package folder
 // and resources are located relative to that location. Using the following
 // function, you can retrieve various informations. dir can be Null to search
 // in the base package folder.
-NA_API NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix);
+NA_API NAString* na_NewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix);
 
 
 

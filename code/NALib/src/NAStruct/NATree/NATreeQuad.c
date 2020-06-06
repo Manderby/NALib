@@ -106,12 +106,12 @@ NA_HDEF NATreeLeaf* naConstructTreeLeafQuad(const NATreeConfiguration* config, c
 // ////////////////////////////
 
 
-NA_HDEF NAInt naGetChildIndexQuadDouble(NATreeNode* parentnode, const void* childkey){
+NA_HDEF NAInt na_GetChildIndexQuadDouble(NATreeNode* parentnode, const void* childkey){
   NATreeQuadNode* quadNode = (NATreeQuadNode*)(parentnode);
-  return naGetKeyIndexQuadDouble(naGetQuadNodeKey(quadNode), childkey, &(quadNode->childexponent));
+  return na_GetKeyIndexQuadDouble(naGetQuadNodeKey(quadNode), childkey, &(quadNode->childexponent));
 }
 // The data parameter contains the leaf exponent of the children.
-NA_HDEF NAInt naGetKeyIndexQuadDouble(const void* basekey, const void* testkey, const void* data){
+NA_HDEF NAInt na_GetKeyIndexQuadDouble(const void* basekey, const void* testkey, const void* data){
   NAInt childexponent = *((NAInt*)data);
   NAPos* basePos = (NAPos*)basekey;
   NAPos* testPos = (NAPos*)testkey;
@@ -128,16 +128,16 @@ NA_HDEF NAInt naGetKeyIndexQuadDouble(const void* basekey, const void* testkey, 
   if(testPos->y >= basePos->y + childwidth){index |= 2;}
   return index;
 }
-NA_HDEF NABool naTestKeyQuadDouble(const void* lowerlimit, const void* upperlimit, const void* key){
+NA_HDEF NABool na_TestKeyQuadDouble(const void* lowerlimit, const void* upperlimit, const void* key){
   return NA_KEY_OP(LowerEqual, NAPos)(lowerlimit, key) && NA_KEY_OP(Lower, NAPos)(key, upperlimit);
 }
-NA_HDEF NABool naTestKeyNodeContainQuadDouble(NATreeNode* parentnode, const void* key){
+NA_HDEF NABool na_TestKeyNodeContainQuadDouble(NATreeNode* parentnode, const void* key){
   NATreeQuadNode* quadNode = (NATreeQuadNode*)(parentnode);
   double childwidth = naMakeDoubleWithExponent((int32)quadNode->childexponent);
   NAPos upperlimit = naMakePos(quadNode->origin.x + 2 * childwidth, quadNode->origin.y + 2 * childwidth);
   return NA_KEY_OP(LowerEqual, NAPos)(&(quadNode->origin), key) && NA_KEY_OP(Lower, NAPos)(key, &upperlimit);
 }
-NA_HDEF NABool naTestKeyLeafContainQuadDouble(NATreeLeaf* leaf, const void* key){
+NA_HDEF NABool na_TestKeyLeafContainQuadDouble(NATreeLeaf* leaf, const void* key){
   NATreeQuadLeaf* quadLeaf = (NATreeQuadLeaf*)(leaf);
   double leafwidth = naMakeDoubleWithExponent((int32)quadLeaf->leafexponent);
   NAPos upperlimit = naMakePos(quadLeaf->origin.x + leafwidth, quadLeaf->origin.y + leafwidth);
@@ -147,20 +147,20 @@ NA_HDEF NABool naTestKeyLeafContainQuadDouble(NATreeLeaf* leaf, const void* key)
 
 
 // Callback. Do not call directly.
-NA_HDEF void naDestructTreeNodeQuad(NATreeNode* node){
+NA_HDEF void na_DestructTreeNodeQuad(NATreeNode* node){
   naDelete(node);
 }
 
 
 
 // Callback. Do not call directly.
-NA_HDEF void naDestructTreeLeafQuad(NATreeLeaf* leaf){
+NA_HDEF void na_DestructTreeLeafQuad(NATreeLeaf* leaf){
   naDelete(leaf);
 }
 
 
 
-NA_HDEF NATreeNode* naLocateBubbleQuadWithLimits(const NATree* tree, NATreeNode* node, const void* origin, const void* lowerlimit, const void* upperlimit, NATreeItem* previtem){
+NA_HDEF NATreeNode* na_LocateBubbleQuadWithLimits(const NATree* tree, NATreeNode* node, const void* origin, const void* lowerlimit, const void* upperlimit, NATreeItem* previtem){
   NATreeQuadNode* quadNode;
   NATreeItem* item;
   #ifndef NDEBUG
@@ -188,7 +188,7 @@ NA_HDEF NATreeNode* naLocateBubbleQuadWithLimits(const NATree* tree, NATreeNode*
   // Otherwise, go up if possible.
   item = naGetTreeNodeItem(node);
   if(!naIsTreeItemRoot(item)){
-    return naLocateBubbleQuadWithLimits(tree, naGetTreeItemParent(item), origin, lowerlimit, upperlimit, item);
+    return na_LocateBubbleQuadWithLimits(tree, naGetTreeItemParent(item), origin, lowerlimit, upperlimit, item);
   }else{
     // We reached the root. No need to break a sweat. Simply return null.
     return NA_NULL;
@@ -197,13 +197,13 @@ NA_HDEF NATreeNode* naLocateBubbleQuadWithLimits(const NATree* tree, NATreeNode*
 
 
 
-NA_HDEF NATreeNode* naLocateBubbleQuad(const NATree* tree, NATreeItem* item, const void* key){
-  return naLocateBubbleQuadWithLimits(tree, naGetTreeItemParent(item), key, NA_NULL, NA_NULL, item);
+NA_HDEF NATreeNode* na_LocateBubbleQuad(const NATree* tree, NATreeItem* item, const void* key){
+  return na_LocateBubbleQuadWithLimits(tree, naGetTreeItemParent(item), key, NA_NULL, NA_NULL, item);
 }
 
 
 
-NA_HDEF NATreeNode* naRemoveLeafQuad(NATree* tree, NATreeLeaf* leaf){
+NA_HDEF NATreeNode* na_RemoveLeafQuad(NATree* tree, NATreeLeaf* leaf){
   NATreeItem* leafItem = naGetTreeLeafItem(leaf);
   NATreeNode* parent = naGetTreeItemParent(leafItem);
   if(naIsTreeItemRoot(leafItem)){
@@ -384,7 +384,7 @@ NA_HDEF void naEnlargeTreeRootQuad(NATree* tree, const void* containedKey){
 
 
 // Oomph. That code is mighty confusing!
-NA_HDEF NATreeLeaf* naInsertLeafQuad(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
+NA_HDEF NATreeLeaf* na_InsertLeafQuad(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
   NATreeLeaf* newLeaf;
   NA_UNUSED(insertOrder);
   

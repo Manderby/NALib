@@ -8,7 +8,7 @@
 
 typedef struct NAWINAPITextBox NAWINAPITextBox;
 struct NAWINAPITextBox {
-  NACoreTextBox coreTextBox;
+  NA_TextBox coreTextBox;
   NAUIElement* nextTabStop;
   NAUIElement* prevTabStop;
 };
@@ -64,14 +64,14 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
-  naInitCoreTextBox(&(winapiTextBox->coreTextBox), hWnd);
+  na_InitCoreTextBox(&(winapiTextBox->coreTextBox), hWnd);
   winapiTextBox->nextTabStop = winapiTextBox;
   winapiTextBox->prevTabStop = winapiTextBox;
 
    naAddUIKeyboardShortcut(winapiTextBox, naMakeKeybardStatus(0, NA_KEYCODE_TAB), naHandleTextBoxTabOrder, NA_NULL);
  naAddUIKeyboardShortcut(winapiTextBox, naMakeKeybardStatus(NA_MODIFIER_FLAG_SHIFT, NA_KEYCODE_TAB), naHandleTextBoxReverseTabOrder, NA_NULL);
 
-  SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NATextBox*)winapiTextBox;
 }
@@ -80,7 +80,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
 
 NA_DEF void naDestructTextBox(NATextBox* textBox){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
-  naClearCoreTextBox(&(winapiTextBox->coreTextBox));
+  na_ClearCoreTextBox(&(winapiTextBox->coreTextBox));
 }
 
 
@@ -103,7 +103,7 @@ NA_DEF void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignm
 
 NA_DEF void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
-  SendMessage(naGetUIElementNativeID(winapiTextBox), WM_SETFONT, (WPARAM)getFontWithKind(kind), MAKELPARAM(TRUE, 0));
+  SendMessage(naGetUIElementNativeID(winapiTextBox), WM_SETFONT, (WPARAM)na_GetFontWithKind(kind), MAKELPARAM(TRUE, 0));
 }
 
 
@@ -128,7 +128,7 @@ NA_HDEF NAUIElement** naGetTextBoxPrevTabReference(NATextBox* textBox){
 
 
 
-NA_HDEF NARect naGetTextBoxAbsoluteInnerRect(NACoreUIElement* textBox){
+NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox){
   NA_UNUSED(textBox);
   return naMakeRectS(20, 40, 100, 50);
 }

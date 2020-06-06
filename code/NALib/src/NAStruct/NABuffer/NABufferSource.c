@@ -3,8 +3,8 @@
 
 
 
-NA_HAPI void naDestructBufferSource(NABufferSource* source);
-NA_RUNTIME_TYPE(NABufferSource, naDestructBufferSource, NA_TRUE);
+NA_HHAPI void na_DestructBufferSource(NABufferSource* source);
+NA_RUNTIME_TYPE(NABufferSource, na_DestructBufferSource, NA_TRUE);
 
 
 
@@ -23,7 +23,7 @@ NA_DEF NABufferSource* naNewBufferSource(NABufferFiller filler, NABuffer* buffer
 
 
 
-NA_HDEF void naDestructBufferSource(NABufferSource* source){
+NA_HDEF void na_DestructBufferSource(NABufferSource* source){
   if(source->datadestructor){source->datadestructor(source->data);}
   if(source->buffer){naRelease(source->buffer);}
 }

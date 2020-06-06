@@ -47,22 +47,22 @@ NA_DEF void naSetBufferSourceLimit(NABufferSource* source, NARangei limit){
 
 
 
-NA_HDEF NABuffer* naGetBufferSourceUnderlyingBuffer(NABufferSource* source){
+NA_HDEF NABuffer* na_GetBufferSourceUnderlyingBuffer(NABufferSource* source){
   return source->buffer;
 }
 
 
 
 // Returns NA_TRUE if the range is a valid limiting range.
-NA_HDEF NABool naIsBufferSourceLimited(const NABufferSource* source){
+NA_HDEF NABool na_IsBufferSourceLimited(const NABufferSource* source){
   return (NABool)(source->flags & NA_BUFFER_SOURCE_RANGE_LIMITED);
 }
 
 
 
-NA_HDEF NARangei naGetBufferSourceLimit(const NABufferSource* source){
+NA_HDEF NARangei na_GetBufferSourceLimit(const NABufferSource* source){
   #ifndef NDEBUG
-    if(!naIsBufferSourceLimited(source))
+    if(!na_IsBufferSourceLimited(source))
       naError("source is not limited");
   #endif
   return source->limit;
@@ -70,7 +70,7 @@ NA_HDEF NARangei naGetBufferSourceLimit(const NABufferSource* source){
 
 
 
-NA_HDEF void naFillSourceBuffer(const NABufferSource* source, void* dst, NARangei range){
+NA_HDEF void na_FillSourceBuffer(const NABufferSource* source, void* dst, NARangei range){
   if(source && source->buffiller){
     source->buffiller(dst, range, source->data);
   }

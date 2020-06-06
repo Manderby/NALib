@@ -80,14 +80,14 @@ NABool buttonPressed(NAReaction reaction){
 
 NABool checkBoxPressed(NAReaction reaction){
   NA_UNUSED(reaction);
-  NABool state = naGetCheckBoxState(reaction.uielement);
+  NABool state = naGetCheckBoxState(reaction.uiElement);
   printf("Checked. New status is %d." NA_NL, (int)state);
   return NA_TRUE;
 }
 
 NABool radioPressed(NAReaction reaction){
   NA_UNUSED(reaction);
-  printf("Checked radio %p." NA_NL, reaction.uielement);
+  printf("Checked radio %p." NA_NL, reaction.uiElement);
   return NA_TRUE;
 }
 

@@ -115,6 +115,9 @@
   #define NA_HIDEF   NA_INLINE
 #endif
 
+#define NA_HHAPI   NA_LINKER_NO_EXPORT
+#define NA_HHDEF   NA_LINKER_NO_EXPORT
+
 // Authors comment: Note that all symbols are declared and defined very
 // restrictive. Meaning: No function or variable of NALib will show up in a
 // library or software which is built with NALib.

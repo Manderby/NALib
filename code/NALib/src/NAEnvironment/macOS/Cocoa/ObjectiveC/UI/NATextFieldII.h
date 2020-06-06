@@ -7,7 +7,7 @@
 
 
 @implementation NACocoaTextField
-- (id) initWithCoreTextField:(NACoreTextField*)newcoreTextField frame:(NSRect)frame{
+- (id) initWithCoreTextField:(NA_TextField*)newcoreTextField frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 //  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Wurst"]];
   [self setSelectable:YES];
@@ -29,11 +29,11 @@
 }
 - (void) onEdited:(id)sender{
   NA_UNUSED(sender);
-  naDispatchUIElementCommand((NACoreUIElement*)coreTextField, NA_UI_COMMAND_EDITED);
+  na_DispatchUIElementCommand((NA_UIElement*)coreTextField, NA_UI_COMMAND_EDITED);
 }
 - (void)controlTextDidChange:(NSNotification *)notification{
   NA_UNUSED(notification);
-  naDispatchUIElementCommand((NACoreUIElement*)coreTextField, NA_UI_COMMAND_EDITED);
+  na_DispatchUIElementCommand((NA_UIElement*)coreTextField, NA_UI_COMMAND_EDITED);
 }
 - (void) setText:(const NAUTF8Char*)text{
   [self setStringValue:[NSString stringWithUTF8String:text]];
@@ -48,18 +48,18 @@
   [self setAlignment:getNSTextAlignmentWithAlignment(alignment)];
 }
 - (void) setFontKind:(NAFontKind)kind{
-   [self setFont:NA_COCOA_PTR_C_TO_OBJC(getFontWithKind(kind))];
+   [self setFont:NA_COCOA_PTR_C_TO_OBJC(na_GetFontWithKind(kind))];
 }
 @end
 
 
 
 NA_DEF NATextField* naNewTextField(NASize size){
-  NACoreTextField* coreTextField = naAlloc(NACoreTextField);
+  NA_TextField* coreTextField = naAlloc(NA_TextField);
   
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaTextField* cocoaTextField = [[NACocoaTextField alloc] initWithCoreTextField:coreTextField frame:frameRect];
-  naInitCoreTextField(coreTextField, NA_COCOA_PTR_OBJC_TO_C(cocoaTextField));
+  na_InitCoreTextField(coreTextField, NA_COCOA_PTR_OBJC_TO_C(cocoaTextField));
   
   return (NATextField*)coreTextField;
 }
@@ -67,8 +67,8 @@ NA_DEF NATextField* naNewTextField(NASize size){
 
 
 NA_DEF void naDestructTextField(NATextField* textField){
-  NACoreTextField* coreTextField = (NACoreTextField*)textField;
-  naClearCoreTextField(coreTextField);
+  NA_TextField* coreTextField = (NA_TextField*)textField;
+  na_ClearCoreTextField(coreTextField);
 }
 
 
@@ -101,7 +101,7 @@ NA_DEF void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind){
 
 
 
-NA_HDEF NARect naGetTextFieldAbsoluteInnerRect(NACoreUIElement* textField){
+NA_HHDEF NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField){
   NA_UNUSED(textField);
   return naMakeRectS(20, 40, 100, 50);
 }

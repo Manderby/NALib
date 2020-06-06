@@ -6,7 +6,7 @@
 
 
 @implementation NACocoaCheckBox
-- (id) initWithCoreCheckBox:(NACoreCheckBox*)newcoreCheckBox frame:(NSRect)frame{
+- (id) initWithCoreCheckBox:(NA_CheckBox*)newcoreCheckBox frame:(NSRect)frame{
   self = [super initWithFrame:frame];
   
   [self setButtonType:NAButtonTypeSwitch];
@@ -21,7 +21,7 @@
 }
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  naDispatchUIElementCommand((NACoreUIElement*)coreCheckBox, NA_UI_COMMAND_PRESSED);
+  na_DispatchUIElementCommand((NA_UIElement*)coreCheckBox, NA_UI_COMMAND_PRESSED);
 }
 - (void) setCheckBoxState:(NABool)state{
   [self setState:state ? NAStateOn : NAStateOff];
@@ -35,14 +35,14 @@
 
 NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
   NACocoaCheckBox* cocoaCheckBox;
-  NACoreCheckBox* coreCheckBox = naAlloc(NACoreCheckBox);
+  NA_CheckBox* coreCheckBox = naAlloc(NA_CheckBox);
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NSRect boundrect = frameRect;
   boundrect.origin.x = 0;
   boundrect.origin.y = 0;
 
   cocoaCheckBox = [[NACocoaCheckBox alloc] initWithCoreCheckBox:coreCheckBox frame:frameRect];
-  naInitCoreCheckBox(coreCheckBox, NA_COCOA_PTR_OBJC_TO_C(cocoaCheckBox));
+  na_InitCoreCheckBox(coreCheckBox, NA_COCOA_PTR_OBJC_TO_C(cocoaCheckBox));
   [cocoaCheckBox setText:text];
   
   return (NACheckBox*)coreCheckBox;
@@ -51,13 +51,13 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
 
 
 NA_DEF void naDestructCheckBox(NACheckBox* checkBox){
-  NACoreCheckBox* coreCheckBox = (NACoreCheckBox*)checkBox;
-  naClearCoreCheckBox(coreCheckBox);
+  NA_CheckBox* coreCheckBox = (NA_CheckBox*)checkBox;
+  na_ClearCoreCheckBox(coreCheckBox);
 }
 
 
 
-NA_HDEF NARect naGetCheckBoxAbsoluteInnerRect(NACoreUIElement* checkBox){
+NA_HHDEF NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox){
   NA_UNUSED(checkBox);
   return naMakeRectS(20, 40, 100, 50);
 }

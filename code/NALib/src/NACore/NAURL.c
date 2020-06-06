@@ -19,7 +19,7 @@ NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* stri
   }
 
   iter = naMakeBufferAccessor(naGetStringBufferMutable(inputstring));
-  naLocateBufferStart(&iter);
+  na_LocateBufferStart(&iter);
 
   while(!naIsBufferAtInitial(&iter)){
     // Test for erroneous duplicate or ending delimiters

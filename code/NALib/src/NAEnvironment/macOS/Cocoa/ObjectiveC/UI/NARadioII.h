@@ -7,7 +7,7 @@
 
 
 @implementation NACocoaRadio
-- (id) initWithCoreRadio:(NACoreRadio*)newcoreRadio frame:(NSRect)frame{
+- (id) initWithCoreRadio:(NA_Radio*)newcoreRadio frame:(NSRect)frame{
   NSRect newbounds = frame;
   newbounds.origin.x = 0;
   newbounds.origin.y = 0;
@@ -35,7 +35,7 @@
 }
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
-  naDispatchUIElementCommand((NACoreUIElement*)coreRadio, NA_UI_COMMAND_PRESSED);
+  na_DispatchUIElementCommand((NA_UIElement*)coreRadio, NA_UI_COMMAND_PRESSED);
 }
 - (void) setRadioState:(NABool)state{
   [self setState:state ? NAStateOn : NAStateOff];
@@ -48,11 +48,11 @@
 
 
 NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
-  NACoreRadio* coreRadio = naAlloc(NACoreRadio);
+  NA_Radio* coreRadio = naAlloc(NA_Radio);
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaRadio* cocoaRadio = [[NACocoaRadio alloc] initWithCoreRadio:coreRadio frame:frameRect];
-  naInitCoreRadio(coreRadio, NA_COCOA_PTR_OBJC_TO_C(cocoaRadio));
+  na_InitCoreRadio(coreRadio, NA_COCOA_PTR_OBJC_TO_C(cocoaRadio));
   [cocoaRadio setText:text];
   
   return (NARadio*)coreRadio;
@@ -61,13 +61,13 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
 
 
 NA_DEF void naDestructRadio(NARadio* radio){
-  NACoreRadio* coreRadio = (NACoreRadio*)radio;
-  naClearCoreRadio(coreRadio);
+  NA_Radio* coreRadio = (NA_Radio*)radio;
+  na_ClearCoreRadio(coreRadio);
 }
 
 
 
-NA_HDEF NARect naGetRadioAbsoluteInnerRect(NACoreUIElement* radio){
+NA_HHDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
   NA_UNUSED(radio);
   return naMakeRectS(20, 40, 100, 50);
 }

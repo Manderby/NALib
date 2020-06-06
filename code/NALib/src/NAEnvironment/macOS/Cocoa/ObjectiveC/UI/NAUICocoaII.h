@@ -13,57 +13,57 @@
 
 
 
-NA_HAPI NARect naGetApplicationAbsoluteRect(void);
-NA_HAPI NARect naGetScreenAbsoluteRect(NACoreUIElement* screen);
-NA_HAPI NARect naGetWindowAbsoluteOuterRect(NACoreUIElement* window);
-NA_HAPI NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space);
-NA_HDEF NARect naGetImageSpaceAbsoluteInnerRect(NACoreUIElement* imageSpace);
-NA_HDEF NARect naGetOpenGLSpaceAbsoluteInnerRect(NACoreUIElement* space);
-NA_HAPI NARect naGetButtonAbsoluteInnerRect(NACoreUIElement* button);
-NA_HAPI NARect naGetRadioAbsoluteInnerRect(NACoreUIElement* radio);
-NA_HAPI NARect naGetCheckBoxAbsoluteInnerRect(NACoreUIElement* checkBox);
-NA_HAPI NARect naGetLabelAbsoluteInnerRect(NACoreUIElement* label);
-NA_HDEF NARect naGetTextFieldAbsoluteInnerRect(NACoreUIElement* textField);
-NA_HDEF NARect naGetTextBoxAbsoluteInnerRect(NACoreUIElement* textBox);
+NA_HHAPI NARect na_GetApplicationAbsoluteRect(void);
+NA_HHAPI NARect na_GetScreenAbsoluteRect(NA_UIElement* screen);
+NA_HHAPI NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window);
+NA_HHAPI NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space);
+NA_HHAPI NARect na_GetImageSpaceAbsoluteInnerRect(NA_UIElement* imageSpace);
+NA_HHAPI NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* space);
+NA_HHAPI NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button);
+NA_HHAPI NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio);
+NA_HHAPI NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox);
+NA_HHAPI NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label);
+NA_HHAPI NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField);
+NA_HHAPI NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox);
 
-NA_HAPI void naRenewWindowMouseTracking(NACoreWindow* coreWindow);
-NA_HAPI void naClearWindowMouseTracking(NACoreWindow* coreWindow);
+NA_HHAPI void na_RenewWindowMouseTracking(NA_Window* coreWindow);
+NA_HHAPI void na_ClearWindowMouseTracking(NA_Window* coreWindow);
 
 
 // Not much of use currently, but consistent with the WINAPI implementation.
 typedef struct NACocoaApplication NACocoaApplication;
 struct NACocoaApplication {
-  NACoreApplication coreApplication;
+  NA_Application coreApplication;
 };
 
 
 @interface NACocoaApplicationDelegate : NSObject <NSApplicationDelegate>{
-  NACocoaApplication* cocoaapplication;
+  NACocoaApplication* cocoaApplication;
 }
 @end
 
 @interface NACocoaWindow : NSWindow <NSWindowDelegate>{
-  NACoreWindow* coreWindow;
+  NA_Window* coreWindow;
   NAUInt trackingcount;
   NSTrackingArea* trackingarea;
 }
 @end
 
 @interface NACocoaSpace : NSView{
-  NACoreSpace* corespace;
+  NA_Space* corespace;
   NSTrackingArea* trackingarea;
 }
 @end
 
 @interface NACocoaImageSpace : NSImageView{
-  NACoreImageSpace* coreImageSpace;
+  NA_ImageSpace* coreImageSpace;
   NAUIImage* uiimage;
 }
 @end
 
 #if (NA_COMPILE_OPENGL == 1)
   @interface NACocoaOpenGLSpace : NSOpenGLView{
-    NACoreOpenGLSpace* coreOpenGLspace;
+    NA_OpenGLSpace* coreOpenGLspace;
     NSTrackingArea* trackingarea;
     NAMutator initFunc;
     void* initData;
@@ -72,13 +72,13 @@ struct NACocoaApplication {
 #endif
 
 @interface NACocoaButton : NSButton{
-  NACoreButton* coreButton;
+  NA_Button* coreButton;
 }
 - (void) onPressed:(id)sender;
 @end
 
 @interface NACocoaRadio : NSButton{
-  NACoreRadio* coreRadio;
+  NA_Radio* coreRadio;
   // Core thinks it's smart by doing things automatically. Unfortunately, we
   // have to encapsulate the radio into its own view to get the behaviour
   // we need.
@@ -88,7 +88,7 @@ struct NACocoaApplication {
 @end
 
 @interface NACocoaCheckBox : NSButton{
-  NACoreCheckBox* coreCheckBox;
+  NA_CheckBox* coreCheckBox;
 }
 @end
 
@@ -97,18 +97,18 @@ struct NACocoaApplication {
 @end
 
 @interface NACocoaLabel : NSTextField{
-  NACoreLabel* coreLabel;
+  NA_Label* coreLabel;
 }
 @end
 
 @interface NACocoaTextField : NSTextField <NSTextFieldDelegate>{
-  NACoreTextField* coreTextField;
+  NA_TextField* coreTextField;
 }
 - (void) onEdited:(id)sender;
 @end
 
 @interface NACocoaTextBox : NSTextView{
-  NACoreTextBox* coreTextBox;
+  NA_TextBox* coreTextBox;
   NSScrollView* scrollview;
 }
 - (NSView*) getContainingView;
@@ -120,13 +120,13 @@ struct NACocoaApplication {
   cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativeID((NAUIElement*)uiElement))
 
 
-NA_HDEF void naClearUINativeId(NANativeID nativeId){
+NA_HDEF void na_ClearUINativeId(NANativeID nativeId){
   NA_COCOA_RELEASE(nativeId);
 }
 
 
-NA_HDEF void naSetUIElementParent(NAUIElement* uiElement, NAUIElement* parent){
-  NACoreUIElement* coreelement = (NACoreUIElement*)uiElement;
+NA_HDEF void na_SetUIElementParent(NAUIElement* uiElement, NAUIElement* parent){
+  NA_UIElement* coreelement = (NA_UIElement*)uiElement;
   // todo: remove from old parent
   coreelement->parent = parent;
 }
@@ -159,7 +159,7 @@ NA_HDEF void naCaptureKeyboardStatus(NSEvent* event){
 NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
   NABool retvalue = NA_FALSE;
   if([event type] == NAEventTypeKeyDown || [event type] == NSEventTypeFlagsChanged){
-    NACoreUIElement* elem;
+    NA_UIElement* elem;
     NSWindow* focusWindow;
     naCaptureKeyboardStatus(event);
     
@@ -170,7 +170,7 @@ NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
       NSResponder* firstResponder = [focusWindow firstResponder];
       if(firstResponder){
         while(!elem && firstResponder){
-          elem = naGetUINALibEquivalent((NA_COCOA_BRIDGE NANativeID)(firstResponder));
+          elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativeID)(firstResponder));
           if(!elem){
             if(firstResponder == focusWindow){
               elem = naGetApplication();
@@ -180,7 +180,7 @@ NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
           }
         }
       }else{
-        elem = naGetUINALibEquivalent((NA_COCOA_BRIDGE NANativeID)(focusWindow));
+        elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativeID)(focusWindow));
       }
     }else{
       elem = naGetApplication();
@@ -190,7 +190,7 @@ NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
     while(!retvalue && elem){
       NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
       while(!retvalue && naIterateList(&iter)){
-        const NACoreKeyboardShortcutReaction* coreReaction = naGetListCurConst(&iter);
+        const NA_KeyboardShortcutReaction* coreReaction = naGetListCurConst(&iter);
         if(coreReaction->shortcut.keyCode == na_App->keyboardStatus.keyCode){
           NABool needsShift   = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
           NABool needsControl = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
@@ -225,7 +225,7 @@ NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
 // ///////////////////////////////////
 
 
-NA_DEF void naRefreshUIElementNow(NAUIElement* uiElement){
+NA_DEF void na_RefreshUIElementNow(NAUIElement* uiElement){
   naDefineCocoaObject(NSView, cocoaview, uiElement);
   [cocoaview setNeedsDisplay:YES];
 }
@@ -261,7 +261,7 @@ NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextTab
 
 
 
-NAFont getFontWithKind(NAFontKind kind){
+NAFont na_GetFontWithKind(NAFontKind kind){
   NSFont* font;
   CGFloat systemSize = [NSFont systemFontSize];
   NSFontDescriptor* descriptor;
@@ -325,7 +325,7 @@ NSTextAlignment getNSTextAlignmentWithAlignment(NATextAlignment alignment){
 
 
 
-NA_HDEF NARect naGetApplicationAbsoluteRect(void){
+NA_HHDEF NARect na_GetApplicationAbsoluteRect(void){
   NARect rect;
   rect.pos.x = 0;
   rect.pos.y = 0;
@@ -336,7 +336,7 @@ NA_HDEF NARect naGetApplicationAbsoluteRect(void){
 
 
 
-NA_HDEF NARect naGetScreenAbsoluteRect(NACoreUIElement* screen){
+NA_HDEF NARect na_GetScreenAbsoluteRect(NA_UIElement* screen){
   NARect rect;
   NSRect frame;
   NSRect mainframe;
@@ -393,7 +393,7 @@ NA_DEF void naCenterMouse(void* uiElement, NABool includebounds, NABool sendmove
 
 
 NA_DEF void naShowMouse(){
-  NACoreApplication* coreapp = (NACoreApplication*)naGetApplication();
+  NA_Application* coreapp = (NA_Application*)naGetApplication();
   if(!(coreapp->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE)){
     CGDisplayShowCursor(kCGDirectMainDisplay);
     coreapp->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
@@ -402,7 +402,7 @@ NA_DEF void naShowMouse(){
 
 
 NA_DEF void naHideMouse(){
-  NACoreApplication* coreapp = (NACoreApplication*)naGetApplication();
+  NA_Application* coreapp = (NA_Application*)naGetApplication();
   if(coreapp->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE){
     CGDisplayHideCursor(kCGDirectMainDisplay);
     coreapp->flags &= ~NA_APPLICATION_FLAG_MOUSE_VISIBLE;
@@ -415,61 +415,61 @@ NA_DEF void naHideMouse(){
 NA_DEF NARect naGetUIElementRect(NAUIElement* uiElement, NAUIElement* relativeuiElement, NABool includeborder){
   NARect rect;
   NARect relrect;
-  NACoreUIElement* element;
-  NACoreUIElement* relelement;
+  NA_UIElement* element;
+  NA_UIElement* relelement;
   NAApplication* app;
 
-  element = (NACoreUIElement*)uiElement;
-  relelement = (NACoreUIElement*)relativeuiElement;
+  element = (NA_UIElement*)uiElement;
+  relelement = (NA_UIElement*)relativeuiElement;
   app = naGetApplication();
 
   // First, let's handle the root case: Returning the application rect.
-  if(element == (NACoreUIElement*)app){
+  if(element == (NA_UIElement*)app){
     #ifndef NDEBUG
-      if(relelement && (relelement != (NACoreUIElement*)app))
+      if(relelement && (relelement != (NA_UIElement*)app))
         naError("The relative element is invalid for the given uiElement, which seems to be the application.");
     #endif
-    return naGetApplicationAbsoluteRect();
+    return na_GetApplicationAbsoluteRect();
   }
 
   switch(element->elementType){
-  case NA_UI_APPLICATION: rect = naGetApplicationAbsoluteRect(); break;
-  case NA_UI_SCREEN:      rect = naGetScreenAbsoluteRect(element); break;
+  case NA_UI_APPLICATION: rect = na_GetApplicationAbsoluteRect(); break;
+  case NA_UI_SCREEN:      rect = na_GetScreenAbsoluteRect(element); break;
   case NA_UI_WINDOW:
     if(includeborder){
-      rect = naGetWindowAbsoluteOuterRect(element);
+      rect = na_GetWindowAbsoluteOuterRect(element);
     }else{
-      rect = naGetWindowAbsoluteInnerRect(element);
+      rect = na_GetWindowAbsoluteInnerRect(element);
     }
     break;
-  case NA_UI_SPACE:       rect = naGetSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_IMAGESPACE:  rect = naGetImageSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_OPENGLSPACE: rect = naGetOpenGLSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_BUTTON:      rect = naGetButtonAbsoluteInnerRect(element); break;
-  case NA_UI_RADIO:       rect = naGetRadioAbsoluteInnerRect(element); break;
-  case NA_UI_CHECKBOX:    rect = naGetCheckBoxAbsoluteInnerRect(element); break;
-  case NA_UI_LABEL:       rect = naGetLabelAbsoluteInnerRect(element); break;
-  case NA_UI_TEXTFIELD:   rect = naGetTextFieldAbsoluteInnerRect(element); break;
-  case NA_UI_TEXTBOX:     rect = naGetTextBoxAbsoluteInnerRect(element); break;
+  case NA_UI_SPACE:       rect = na_GetSpaceAbsoluteInnerRect(element); break;
+  case NA_UI_IMAGESPACE:  rect = na_GetImageSpaceAbsoluteInnerRect(element); break;
+  case NA_UI_OPENGLSPACE: rect = na_GetOpenGLSpaceAbsoluteInnerRect(element); break;
+  case NA_UI_BUTTON:      rect = na_GetButtonAbsoluteInnerRect(element); break;
+  case NA_UI_RADIO:       rect = na_GetRadioAbsoluteInnerRect(element); break;
+  case NA_UI_CHECKBOX:    rect = na_GetCheckBoxAbsoluteInnerRect(element); break;
+  case NA_UI_LABEL:       rect = na_GetLabelAbsoluteInnerRect(element); break;
+  case NA_UI_TEXTFIELD:   rect = na_GetTextFieldAbsoluteInnerRect(element); break;
+  case NA_UI_TEXTBOX:     rect = na_GetTextBoxAbsoluteInnerRect(element); break;
   }
 
   // Now, we find the appropriate relative element.
-  if(!relelement){relelement = (NACoreUIElement*)naGetUIElementParent((NAUIElement*)element);}
+  if(!relelement){relelement = (NA_UIElement*)naGetUIElementParent((NAUIElement*)element);}
 
   if(relelement){
     switch(relelement->elementType){
-    case NA_UI_APPLICATION: relrect = naGetApplicationAbsoluteRect(); break;
-    case NA_UI_SCREEN:      relrect = naGetScreenAbsoluteRect(relelement); break;
-    case NA_UI_WINDOW:      relrect = naGetWindowAbsoluteInnerRect(relelement); break;
-    case NA_UI_SPACE:       relrect = naGetSpaceAbsoluteInnerRect(relelement); break;
-    case NA_UI_IMAGESPACE:  relrect = naGetImageSpaceAbsoluteInnerRect(relelement); break;
-    case NA_UI_OPENGLSPACE: relrect = naGetOpenGLSpaceAbsoluteInnerRect(relelement); break;
-    case NA_UI_BUTTON:      relrect = naGetButtonAbsoluteInnerRect(relelement); break;
-    case NA_UI_RADIO:       relrect = naGetRadioAbsoluteInnerRect(relelement); break;
-    case NA_UI_CHECKBOX:    relrect = naGetCheckBoxAbsoluteInnerRect(relelement); break;
-    case NA_UI_LABEL:       relrect = naGetLabelAbsoluteInnerRect(relelement); break;
-    case NA_UI_TEXTFIELD:   relrect = naGetTextFieldAbsoluteInnerRect(relelement); break;
-    case NA_UI_TEXTBOX:     relrect = naGetTextBoxAbsoluteInnerRect(relelement); break;
+    case NA_UI_APPLICATION: relrect = na_GetApplicationAbsoluteRect(); break;
+    case NA_UI_SCREEN:      relrect = na_GetScreenAbsoluteRect(relelement); break;
+    case NA_UI_WINDOW:      relrect = na_GetWindowAbsoluteInnerRect(relelement); break;
+    case NA_UI_SPACE:       relrect = na_GetSpaceAbsoluteInnerRect(relelement); break;
+    case NA_UI_IMAGESPACE:  relrect = na_GetImageSpaceAbsoluteInnerRect(relelement); break;
+    case NA_UI_OPENGLSPACE: relrect = na_GetOpenGLSpaceAbsoluteInnerRect(relelement); break;
+    case NA_UI_BUTTON:      relrect = na_GetButtonAbsoluteInnerRect(relelement); break;
+    case NA_UI_RADIO:       relrect = na_GetRadioAbsoluteInnerRect(relelement); break;
+    case NA_UI_CHECKBOX:    relrect = na_GetCheckBoxAbsoluteInnerRect(relelement); break;
+    case NA_UI_LABEL:       relrect = na_GetLabelAbsoluteInnerRect(relelement); break;
+    case NA_UI_TEXTFIELD:   relrect = na_GetTextFieldAbsoluteInnerRect(relelement); break;
+    case NA_UI_TEXTBOX:     relrect = na_GetTextBoxAbsoluteInnerRect(relelement); break;
     }
 
     rect.pos.x = rect.pos.x - relrect.pos.x;

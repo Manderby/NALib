@@ -246,12 +246,12 @@ NA_IDEF NAFile* naCreateFileWritingStderr(){
 
 
 
-NA_HAPI void naDeallocFile(NAFile* file);
+NA_HHAPI void na_DeallocFile(NAFile* file);
 
 
 
 NA_IDEF void naReleaseFile(NAFile* file){
-  naReleaseRefCount(&file->refCount, file, (NAMutator)naDeallocFile);
+  naReleaseRefCount(&file->refCount, file, (NAMutator)na_DeallocFile);
 }
 
 

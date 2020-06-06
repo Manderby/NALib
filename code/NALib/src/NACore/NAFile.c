@@ -48,7 +48,7 @@ NA_DEF NABool naIsHidden(const char* path){
 
 
 
-NA_HDEF void naDeallocFile(NAFile* file){
+NA_HHDEF void na_DeallocFile(NAFile* file){
   if(file->desc > 2){
     naClose(file->desc);
   }

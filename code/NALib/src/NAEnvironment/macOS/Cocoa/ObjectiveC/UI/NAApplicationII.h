@@ -6,9 +6,9 @@
 
 
 @implementation NACocoaApplicationDelegate
-- (id) initWithCocoaApplication:(NACocoaApplication*)newcocoaapplication{
+- (id) initWithCocoaApplication:(NACocoaApplication*)newCocoaApplication{
   self = [super init];
-  cocoaapplication = newcocoaapplication;
+  cocoaApplication = newCocoaApplication;
   return self;
 }
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender{
@@ -25,13 +25,13 @@
 
 
 
-NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void* arg){
+NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void* arg){
   // The ((id (*)(id, SEL)) part is a cast of the objc_msgSend function which
   // is requires since a later version of Objective-C
 //  ( (id (*)(id, SEL)) objc_msgSend)(objc_getClass("NSApplication"), sel_registerName("sharedApplication"));
 
   NAApplication* app;
-  NSDate* distantfuture;
+  NSDate* distantFuture;
   #if !NA_MACOS_USES_ARC
     NSAutoreleasePool* pool;
   #endif
@@ -39,14 +39,14 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
   // Start the Core application if not started already and set the native ID
   // of the application.
   [NSApplication sharedApplication];
-  app = naNewApplication();
+  app = na_NewApplication();
 
   // Put an autorelease pool in place for the startup sequence.
   #if !NA_MACOS_USES_ARC
     pool = [[NSAutoreleasePool alloc] init];
   #endif
-    // Call prestartup if desired.
-    if(prestartup){prestartup(arg);}
+    // Call preStartup if desired.
+    if(preStartup){preStartup(arg);}
 
     // Set the preferred translator languages.
     naResetApplicationPreferredTranslatorLanguages();
@@ -54,8 +54,8 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
     // Let the Macintosh System know that the app is ready to run.
     [NSApp finishLaunching];
     
-    // Call poststartup if desired.
-    if(poststartup){poststartup(arg);}
+    // Call postStartup if desired.
+    if(postStartup){postStartup(arg);}
   #if !NA_MACOS_USES_ARC
     [pool drain];
   #endif
@@ -70,17 +70,17 @@ NA_DEF void naStartApplication(NAMutator prestartup, NAMutator poststartup, void
 //  class_replaceMethod([MyClass class], selector, newIMP, encoding);
 
   // Start the event loop.
-  distantfuture = [NSDate distantFuture];
-  while(naIsCoreApplicationRunning()){
-    NSEvent* curevent;
+  distantFuture = [NSDate distantFuture];
+  while(na_IsCoreApplicationRunning()){
+    NSEvent* curEvent;
     #if !NA_MACOS_USES_ARC
       pool = [[NSAutoreleasePool alloc] init];
     #endif
-      curevent = [NSApp nextEventMatchingMask:NAEventMaskAny untilDate:distantfuture inMode:NSDefaultRunLoopMode dequeue:YES];
-//      if([curevent type] == NSEventType)
+      curEvent = [NSApp nextEventMatchingMask:NAEventMaskAny untilDate:distantFuture inMode:NSDefaultRunLoopMode dequeue:YES];
+//      if([curEvent type] == NSEventType)
       naCollectGarbage();
-      if(!naInterceptKeyboardShortcut(curevent)){
-        if(curevent){[NSApp sendEvent:curevent];}
+      if(!naInterceptKeyboardShortcut(curEvent)){
+        if(curEvent){[NSApp sendEvent:curEvent];}
       }
     #if !NA_MACOS_USES_ARC
       [pool drain];
@@ -98,38 +98,38 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
   NAInt lang = (NAInt)[[NSLocale preferredLanguages] count] - 1;
   while(lang >= 0){
     NSString* language = [[NSLocale preferredLanguages] objectAtIndex:(NSUInteger)lang];
-    NALanguageCode3 langcode = naGetLanguageCode([language UTF8String]);
-    naSetTranslatorLanguagePreference(langcode);
+    NALanguageCode3 langCode = naGetLanguageCode([language UTF8String]);
+    naSetTranslatorLanguagePreference(langCode);
     lang--;
   }
 }
 
 
 
-NA_HDEF NAApplication* naNewApplication(void){
-  NACocoaApplication* cocoaapplication = naAlloc(NACocoaApplication);
+NA_HDEF NAApplication* na_NewApplication(void){
+  NACocoaApplication* cocoaApplication = naAlloc(NACocoaApplication);
 
-  NACocoaApplicationDelegate* cocoaappdelegate = [[NACocoaApplicationDelegate alloc] initWithCocoaApplication:cocoaapplication];
+  NACocoaApplicationDelegate* cocoaAppDelegate = [[NACocoaApplicationDelegate alloc] initWithCocoaApplication:cocoaApplication];
 
-  naInitCoreApplication(&(cocoaapplication->coreApplication), NA_COCOA_PTR_OBJC_TO_C(cocoaappdelegate));
+  na_InitCoreApplication(&(cocoaApplication->coreApplication), NA_COCOA_PTR_OBJC_TO_C(cocoaAppDelegate));
 
-  return (NAApplication*)cocoaapplication;
+  return (NAApplication*)cocoaApplication;
 }
 
 
 
 NA_DEF void naDestructApplication(NAApplication* application){
-  NACocoaApplication* cocoaapplication = (NACocoaApplication*)application;
+  NACocoaApplication* cocoaApplication = (NACocoaApplication*)application;
   // Do not clear the core application. It will only call this method again.
-  naClearCoreApplication(&(cocoaapplication->coreApplication));
+  na_ClearCoreApplication(&(cocoaApplication->coreApplication));
 }
 
 
 
 NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, double timediff){
-  dispatch_time_t nexttime = dispatch_time(DISPATCH_TIME_NOW, naMakei64WithDouble(1000000000. * timediff));
+  dispatch_time_t nextTime = dispatch_time(DISPATCH_TIME_NOW, naMakei64WithDouble(1000000000. * timediff));
   dispatch_queue_t queue = dispatch_get_main_queue();
-  dispatch_after_f(nexttime, queue, arg, function);
+  dispatch_after_f(nextTime, queue, arg, function);
 }
 
 
@@ -145,20 +145,20 @@ NA_DEF void naOpenConsoleWindow(void){
 #define NA_COCOA_BUNDLE_VERSION_KEY @"CFBundleVersion"
 #define NA_COCOA_BUNDLE_ICON_FILE_KEY @"CFBundleIconFile"
 
-NA_DEF NAString* naNewApplicationName(void){
+NA_DEF NAString* na_NewApplicationName(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
   if(app->coreApplication.name){
     return naNewStringWithFormat("%s", app->coreApplication.name);
   }else{
-    NSString* applicationname = [[NSBundle mainBundle] localizedStringForKey:NA_COCOA_BUNDLE_APPLICATION_NAME value:nil table:NA_COCOA_BUNDLE_PLIST];
-    if(!applicationname){
-      applicationname = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_APPLICATION_NAME];
+    NSString* applicationName = [[NSBundle mainBundle] localizedStringForKey:NA_COCOA_BUNDLE_APPLICATION_NAME value:nil table:NA_COCOA_BUNDLE_PLIST];
+    if(!applicationName){
+      applicationName = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_APPLICATION_NAME];
     }
-    return naNewStringWithFormat("%s", [applicationname UTF8String]);
+    return naNewStringWithFormat("%s", [applicationName UTF8String]);
   }
 }
 
-NA_DEF NAString* naNewApplicationCompanyName(void){
+NA_DEF NAString* na_NewApplicationCompanyName(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
   if(app->coreApplication.companyName){
     return naNewStringWithFormat("%s", app->coreApplication.companyName);
@@ -167,48 +167,48 @@ NA_DEF NAString* naNewApplicationCompanyName(void){
   }
 }
 
-NA_DEF NAString* naNewApplicationVersionString(void){
+NA_DEF NAString* na_NewApplicationVersionString(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
   if(app->coreApplication.versionString){
     return naNewStringWithFormat("%s", app->coreApplication.versionString);
   }else{
-    NSString* versionstring = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_SHORT_KEY];
-    return naNewStringWithFormat("%s", [versionstring UTF8String]);
+    NSString* versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_SHORT_KEY];
+    return naNewStringWithFormat("%s", [versionString UTF8String]);
   }
 }
 
-NA_DEF NAString* naNewApplicationBuildString(void){
+NA_DEF NAString* na_NewApplicationBuildString(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
   if(app->coreApplication.buildString){
     return naNewStringWithFormat("%s", app->coreApplication.buildString);
   }else{
-    NSString* buildstring = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_KEY];
-    return naNewStringWithFormat("%s", [buildstring UTF8String]);
+    NSString* buildString = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_KEY];
+    return naNewStringWithFormat("%s", [buildString UTF8String]);
   }
 }
 
-NA_DEF NAString* naNewApplicationIconPath(void){
+NA_DEF NAString* na_NewApplicationIconPath(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
   if(app->coreApplication.iconPath){
     return naNewStringWithFormat("%s", app->coreApplication.iconPath);
   }else{
-    NSString* iconfilename = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_ICON_FILE_KEY];
-    NSString* iconbasename = [iconfilename stringByDeletingPathExtension];
-    NSURL* url = [[NSBundle mainBundle] URLForResource:iconbasename withExtension:@"icns"];
+    NSString* iconFilename = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_ICON_FILE_KEY];
+    NSString* iconBasename = [iconFilename stringByDeletingPathExtension];
+    NSURL* url = [[NSBundle mainBundle] URLForResource:iconBasename withExtension:@"icns"];
     return naNewStringWithFormat("%s", [[url path] UTF8String]);
   }
 }
 
-NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
+NA_DEF NAString* na_NewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
   NSURL* url;
-  NAString* retstring;
+  NAString* retString;
   if(dir){
     url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix] subdirectory:[NSString stringWithUTF8String:dir]];
   }else{
     url = [[NSBundle mainBundle] URLForResource:[NSString stringWithUTF8String:basename] withExtension:[NSString stringWithUTF8String:suffix]];
   }
-  retstring = naNewStringWithFormat("%s", [[url path] UTF8String]);
-  return retstring;
+  retString = naNewStringWithFormat("%s", [[url path] UTF8String]);
+  return retString;
 }
 
 

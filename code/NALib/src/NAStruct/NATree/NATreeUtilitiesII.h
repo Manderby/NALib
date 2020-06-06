@@ -164,7 +164,7 @@ NA_IDEF void naUpdateTree(NATree* tree){
       naError("tree is configured without nodeUpdater callback");
   #endif
   if(tree->root && !naIsTreeRootLeaf(tree)){
-    naUpdateTreeNodeCapturing(tree, (NATreeNode*)tree->root);
+    na_UpdateTreeNodeCapturing(tree, (NATreeNode*)tree->root);
   }
 }
 

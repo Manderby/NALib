@@ -3,12 +3,12 @@
 
 
 
-NA_HAPI void naDestructMemoryBlock(NAMemoryBlock* block);
-NA_RUNTIME_TYPE(NAMemoryBlock, naDestructMemoryBlock, NA_TRUE);
+NA_HHAPI void na_DestructMemoryBlock(NAMemoryBlock* block);
+NA_RUNTIME_TYPE(NAMemoryBlock, na_DestructMemoryBlock, NA_TRUE);
 
 
 
-NA_HDEF void naDestructMemoryBlock(NAMemoryBlock* block){
+NA_HDEF void na_DestructMemoryBlock(NAMemoryBlock* block){
   if(block->destructor){
     block->destructor(naGetPtrMutable(block->data));
   }

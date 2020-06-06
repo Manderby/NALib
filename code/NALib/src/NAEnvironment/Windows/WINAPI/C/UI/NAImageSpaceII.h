@@ -7,7 +7,7 @@
 
 typedef struct NAWINAPIImageSpace NAWINAPIImageSpace;
 struct NAWINAPIImageSpace {
-  NACoreImageSpace coreImageSpace;
+  NA_ImageSpace coreImageSpace;
   NAUIImage* image;
 };
 
@@ -77,7 +77,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (NAUIElement* uiElement){
     (spacesize.width - size1x.width) / 2,
     (spacesize.height - size1x.height) / 2);
 
-  foreImage = naGetUIImageBabyImage(imageSpace->image, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_LIGHT);
+  foreImage = na_GetUIImageBabyImage(imageSpace->image, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_LIGHT);
 
   // We store the background where the image will be placed.
   backBuffer = naMalloc(size1x.width * size1x.height * 4);
@@ -133,7 +133,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
 
-  naInitCoreImageSpace(&(winapiImageSpace->coreImageSpace), hWnd);
+  na_InitCoreImageSpace(&(winapiImageSpace->coreImageSpace), hWnd);
   winapiImageSpace->image = uiimage;
 
   return (NAImageSpace*)winapiImageSpace;
@@ -143,12 +143,12 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
 
 NA_DEF void naDestructImageSpace(NAImageSpace* imageSpace){
   NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
-  naClearCoreImageSpace(&(winapiImageSpace->coreImageSpace));
+  na_ClearCoreImageSpace(&(winapiImageSpace->coreImageSpace));
 }
 
 
 
-NA_HDEF NARect naGetImageSpaceAbsoluteInnerRect(NACoreUIElement* imageSpace){
+NA_HDEF NARect na_GetImageSpaceAbsoluteInnerRect(NA_UIElement* imageSpace){
   NA_UNUSED(imageSpace);
   return naMakeRectS(20, 40, 100, 50);
 }

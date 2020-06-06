@@ -11,12 +11,12 @@
 
 
 
-NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeimage){
+NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
   BYTE* lpPixels;
   NABabyImage* babyimage;
 
   HDC hdcSource = GetDC(NA_NULL); // the source device context
-  HBITMAP hSource = (HBITMAP)nativeimage; // the bitmap selected into the device context
+  HBITMAP hSource = (HBITMAP)nativeImage; // the bitmap selected into the device context
 
   BITMAPINFO MyBMInfo = {0};
   MyBMInfo.bmiHeader.biSize = sizeof(MyBMInfo.bmiHeader);
@@ -73,8 +73,8 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
 
 
 
-void naDeallocNativeImage(void* nativeimage){
-  DeleteObject(nativeimage);
+void naDeallocNativeImage(void* nativeImage){
+  DeleteObject(nativeImage);
 } 
 
 

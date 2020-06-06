@@ -51,8 +51,8 @@ struct NAPNG{
 };
 
 
-NA_HAPI void naDestructPNG(NAPNG* png);
-NA_RUNTIME_TYPE(NAPNG, naDestructPNG, NA_FALSE);
+NA_HHAPI void na_DestructPNG(NAPNG* png);
+NA_RUNTIME_TYPE(NAPNG, na_DestructPNG, NA_FALSE);
 
 
 typedef enum{
@@ -929,7 +929,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
 
 // This is the destructor for a PNG. It is marked as a helper as it should
 // only be called by the runtime system
-NA_HDEF void naDestructPNG(NAPNG* png){
+NA_HDEF void na_DestructPNG(NAPNG* png){
   naForeachListMutable(&(png->chunks), (NAMutator)naDeallocPNGChunk);
   naClearList(&(png->chunks));
   if(png->pixeldata){naFree(png->pixeldata);}

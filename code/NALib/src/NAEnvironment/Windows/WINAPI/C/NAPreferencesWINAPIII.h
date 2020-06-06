@@ -20,8 +20,8 @@ NA_HIDEF HKEY naGetNativePreferences(){
     if(!naGetApplication())
       naError("No application running. Use naStartApplication.");
   #endif
-  appname = naNewApplicationName();
-  companyname = naNewApplicationCompanyName();
+  appname = na_NewApplicationName();
+  companyname = na_NewApplicationCompanyName();
   fullkeyname;
   if(companyname){
     fullkeyname = naNewStringWithFormat("Software\\%s\\%s", naGetStringUTF8Pointer(companyname), naGetStringUTF8Pointer(appname));

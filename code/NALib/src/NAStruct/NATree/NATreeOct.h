@@ -27,20 +27,18 @@ NA_EXTERN_RUNTIME_TYPE(NATreeOctLeaf);
 #define LEAF_USERDATA_OFFSET_OCT   offsetof(NATreeOctLeaf, userdata)
 #define NODE_USERDATA_OFFSET_OCT   offsetof(NATreeOctNode, userdata)
 
-NA_HAPI  NAInt naGetChildIndexOctDouble(NATreeNode* parentnode, const void* childkey);
-NA_HAPI  NAInt naGetKeyIndexOctDouble(const void* basekey, const void* testkey, const void* data);
-NA_HAPI  NABool naTestKeyOctDouble(const void* lowerlimit, const void* upperlimit, const void* key);
-NA_HAPI  NABool naTestKeyNodeContainOctDouble(NATreeNode* parentnode, const void* key);
-NA_HAPI  NABool naTestKeyLeafContainOctDouble(NATreeLeaf* leaf, const void* key);
+NA_HHAPI  NAInt na_GetChildIndexOctDouble(NATreeNode* parentnode, const void* childkey);
+NA_HHAPI  NAInt na_GetKeyIndexOctDouble(const void* basekey, const void* testkey, const void* data);
+NA_HHAPI  NABool na_TestKeyOctDouble(const void* lowerlimit, const void* upperlimit, const void* key);
+NA_HHAPI  NABool na_TestKeyNodeContainOctDouble(NATreeNode* parentnode, const void* key);
+NA_HHAPI  NABool na_TestKeyLeafContainOctDouble(NATreeLeaf* leaf, const void* key);
 
-NA_HAPI  void naDestructTreeNodeOct(NATreeNode* node);
-NA_HAPI  void naDestructTreeLeafOct(NATreeLeaf* leaf);
+NA_HHAPI  void na_DestructTreeNodeOct(NATreeNode* node);
+NA_HHAPI  void na_DestructTreeLeafOct(NATreeLeaf* leaf);
 
-NA_HAPI  NATreeNode* naLocateBubbleOct(const NATree* tree, NATreeItem* item, const void* key);
-NA_HAPI  NATreeNode* naRemoveLeafOct(NATree* tree, NATreeLeaf* leaf);
-NA_HAPI  NATreeLeaf* naInsertLeafOct(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
-
-//NA_HIAPI NATreeItem* naGetOctNodeItem(NATreeOctNode* octnode);
+NA_HHAPI  NATreeNode* na_LocateBubbleOct(const NATree* tree, NATreeItem* item, const void* key);
+NA_HHAPI  NATreeNode* na_RemoveLeafOct(NATree* tree, NATreeLeaf* leaf);
+NA_HHAPI  NATreeLeaf* na_InsertLeafOct(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 
 
 

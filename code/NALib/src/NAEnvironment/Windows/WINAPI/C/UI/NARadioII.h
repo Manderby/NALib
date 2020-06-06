@@ -8,7 +8,7 @@
 
 typedef struct NAWINAPIRadio NAWINAPIRadio;
 struct NAWINAPIRadio {
-  NACoreRadio coreRadio;
+  NA_Radio coreRadio;
 };
 
 
@@ -50,7 +50,7 @@ NAWINAPICallbackInfo naRadioWINAPIProc(NAUIElement* uiElement, UINT message, WPA
     ReleaseCapture();
     check = naGetRadioState(uiElement);
     naSetRadioState(uiElement, !check);
-    naDispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
+    na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_PRESSED);
     info.hasbeenhandeled = NA_TRUE;
     info.result = 0;
     break;
@@ -89,9 +89,9 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
   oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldRadioWindowProc){app->oldRadioWindowProc = oldproc;}
 
-  naInitCoreRadio(&(winapiRadio->coreRadio), hWnd);
+  na_InitCoreRadio(&(winapiRadio->coreRadio), hWnd);
 
-  SendMessage(hWnd, WM_SETFONT, (WPARAM)getFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
+  SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
   return (NARadio*)winapiRadio;
 }
@@ -100,12 +100,12 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
 
 NA_DEF void naDestructRadio(NARadio* radio){
   NAWINAPIRadio* winapiRadio = (NAWINAPIRadio*)radio;
-  naClearCoreRadio(&(winapiRadio->coreRadio));
+  na_ClearCoreRadio(&(winapiRadio->coreRadio));
 }
 
 
 
-NA_HDEF NARect naGetRadioAbsoluteInnerRect(NACoreUIElement* radio){
+NA_HDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
   NA_UNUSED(radio);
   return naMakeRectS(20, 40, 100, 50);
 }

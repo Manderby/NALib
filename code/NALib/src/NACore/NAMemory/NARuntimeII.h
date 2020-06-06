@@ -54,7 +54,7 @@ NA_API void* naNewStruct(NATypeInfo* typeinfo);
 
 
 
-typedef struct NACoreTypeInfo NACoreTypeInfo;
+typedef struct NA_TypeInfo NA_TypeInfo;
 typedef struct NAMallocGarbage NAMallocGarbage;
 typedef struct NARuntime NARuntime;
 
@@ -66,7 +66,7 @@ struct NARuntime{
   NAMallocGarbage* mallocGarbage;
   size_t totalMallocGarbageByteCount;
   NAInt typeInfoCount;
-  NACoreTypeInfo** typeInfos;
+  NA_TypeInfo** typeInfos;
 };
 
 extern NARuntime* na_Runtime;

@@ -17,34 +17,34 @@
 
 #if NA_TESTING_ENABLED == 1
 
-NA_HAPI void   naAddTest(const char* expr, int success, int lineNum);
-NA_HAPI void   naAddTestError(const char* expr, int lineNum);
-NA_HAPI void   naStartTestGroup(const char* name, int lineNum);
-NA_HAPI void   naStopTestGroup(void);
-NA_HAPI void   naRegisterUntested(const char* text);
-NA_HAPI NABool naGetTestCaseRunning(void);
-NA_HAPI void   naSetTestCaseRunning(NABool running);
-NA_HAPI void   naIncErrorCount(void);
-NA_HAPI void   naResetErrorCount(void);
-NA_HAPI int    naGetErrorCount(void);
+NA_HHAPI void   na_AddTest(const char* expr, int success, int lineNum);
+NA_HHAPI void   na_AddTestError(const char* expr, int lineNum);
+NA_HHAPI void   na_StartTestGroup(const char* name, int lineNum);
+NA_HHAPI void   na_StopTestGroup(void);
+NA_HHAPI void   na_RegisterUntested(const char* text);
+NA_HHAPI NABool na_GetTestCaseRunning(void);
+NA_HHAPI void   na_SetTestCaseRunning(NABool running);
+NA_HHAPI void   na_IncErrorCount(void);
+NA_HHAPI void   na_ResetErrorCount(void);
+NA_HHAPI int    na_GetErrorCount(void);
 
 
 
 #ifndef NDEBUG
   #define NA_START_TEST_CASE\
-    if(naGetTestCaseRunning())\
+    if(na_GetTestCaseRunning())\
       naError("A test case is already running. This might lead to bad test results.");\
-    naSetTestCaseRunning(NA_TRUE);\
-    naResetErrorCount();
+    na_SetTestCaseRunning(NA_TRUE);\
+    na_ResetErrorCount();
 #else
   #define NA_START_TEST_CASE\
-    naSetTestCaseRunning(NA_TRUE);\
-    naResetErrorCount();
+    na_SetTestCaseRunning(NA_TRUE);\
+    na_ResetErrorCount();
 #endif
 
 
 #define NA_STOP_TEST_CASE\
-  naSetTestCaseRunning(NA_FALSE);
+  na_SetTestCaseRunning(NA_FALSE);
 
 
 
@@ -53,7 +53,7 @@ NA_HAPI int    naGetErrorCount(void);
     NA_START_TEST_CASE\
     NABool success = expr;\
     NA_STOP_TEST_CASE\
-    naAddTest(#expr, success, __LINE__);\
+    na_AddTest(#expr, success, __LINE__);\
   }
 
 // Testing for errors is only useful when NDEBUG is undefined.
@@ -63,25 +63,25 @@ NA_HAPI int    naGetErrorCount(void);
       NA_START_TEST_CASE\
       { expr; }\
       NA_STOP_TEST_CASE\
-      naAddTestError(#expr, __LINE__);\
+      na_AddTestError(#expr, __LINE__);\
     }
 #else
   #define naTestError(expr)
 #endif
 
 #define naTestGroup(string)\
-  naStartTestGroup(string, __LINE__);\
-  for(int g = 0; g < 1 ; g++, naStopTestGroup())
+  na_StartTestGroup(string, __LINE__);\
+  for(int g = 0; g < 1 ; g++, na_StopTestGroup())
 
 #define naTestGroupFunction(identifier)\
   {\
-  naStartTestGroup(#identifier, __LINE__);\
+  na_StartTestGroup(#identifier, __LINE__);\
   test ## identifier();\
-  naStopTestGroup();\
+  na_StopTestGroup();\
   }
 
 #define naUntested(text)\
-  naRegisterUntested(#text);
+  na_RegisterUntested(#text);
 
 
 #else

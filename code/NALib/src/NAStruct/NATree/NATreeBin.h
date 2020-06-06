@@ -29,26 +29,26 @@ NA_EXTERN_RUNTIME_TYPE(NATreeBinLeaf);
 #define LEAF_USERDATA_OFFSET_BIN   offsetof(NATreeBinLeaf, userdata)
 #define NODE_USERDATA_OFFSET_BIN   offsetof(NATreeBinNode, userdata)
 
-NA_HAPI  NAInt naGetChildIndexBinDouble(NATreeNode* parentnode, const void* childkey);
-NA_HAPI  NAInt naGetKeyIndexBinDouble(const void* basekey, const void* testkey, const void* data);
-NA_HAPI  NABool naTestKeyBinDouble(const void* lowerlimit, const void* upperlimit, const void* key);
-NA_HAPI NABool naTestKeyLeafContainBinDouble(NATreeLeaf* leaf, const void* key);
+NA_HHAPI  NAInt na_GetChildIndexBinDouble(NATreeNode* parentnode, const void* childkey);
+NA_HHAPI  NAInt na_GetKeyIndexBinDouble(const void* basekey, const void* testkey, const void* data);
+NA_HHAPI  NABool na_TestKeyBinDouble(const void* lowerlimit, const void* upperlimit, const void* key);
+NA_HHAPI NABool na_TestKeyLeafContainBinDouble(NATreeLeaf* leaf, const void* key);
 
-NA_HAPI  NAInt naGetChildIndexBinNAInt(NATreeNode* parentnode, const void* childkey);
-NA_HAPI  NAInt naGetKeyIndexBinNAInt(const void* basekey, const void* key, const void* data);
-NA_HAPI  NABool naTestKeyBinNAInt(const void* lowerlimit, const void* upperlimit, const void* key);
-NA_HAPI NABool naTestKeyLeafContainBinNAInt(NATreeLeaf* leaf, const void* key);
+NA_HHAPI  NAInt na_GetChildIndexBinNAInt(NATreeNode* parentnode, const void* childkey);
+NA_HHAPI  NAInt na_GetKeyIndexBinNAInt(const void* basekey, const void* key, const void* data);
+NA_HHAPI  NABool na_TestKeyBinNAInt(const void* lowerlimit, const void* upperlimit, const void* key);
+NA_HHAPI NABool na_TestKeyLeafContainBinNAInt(NATreeLeaf* leaf, const void* key);
 
-NA_HAPI  void naDestructTreeNodeBin(NATreeNode* node);
-NA_HAPI  void naDestructTreeLeafBin(NATreeLeaf* leaf);
+NA_HHAPI  void na_DestructTreeNodeBin(NATreeNode* node);
+NA_HHAPI  void na_DestructTreeLeafBin(NATreeLeaf* leaf);
 
-NA_HAPI  NATreeNode* naLocateBubbleBin(const NATree* tree, NATreeItem* item, const void* key);
-NA_HAPI  NATreeNode* naRemoveLeafBin(NATree* tree, NATreeLeaf* leaf);
-NA_HAPI  NATreeLeaf* naInsertLeafBin(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
+NA_HHAPI  NATreeNode* na_LocateBubbleBin(const NATree* tree, NATreeItem* item, const void* key);
+NA_HHAPI  NATreeNode* na_RemoveLeafBin(NATree* tree, NATreeLeaf* leaf);
+NA_HHAPI  NATreeLeaf* na_InsertLeafBin(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 
-NA_HAPI  void naInitNodeAVL(NATreeBinNode* binnode);
-NA_HAPI  void naGrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx);
-NA_HAPI  void naShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx);
+NA_HHAPI  void na_InitNodeAVL(NATreeBinNode* binnode);
+NA_HHAPI  void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx);
+NA_HHAPI  void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx);
 
 NA_HIAPI NATreeItem* naGetBinNodeItem(NATreeBinNode* binnode);
 

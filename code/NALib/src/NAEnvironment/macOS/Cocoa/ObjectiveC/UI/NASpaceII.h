@@ -7,7 +7,7 @@
 
 
 @implementation NACocoaSpace
-- (id) initWithCoreSpace:(NACoreSpace*)newcorespace frame:(NSRect)frame{
+- (id) initWithCoreSpace:(NA_Space*)newcorespace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
   // todo: make this dependent on whether tracking is needed or not.
@@ -29,15 +29,15 @@
 }
 - (void)mouseMoved:(NSEvent*)event{
   NA_UNUSED(event);
-  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_MOUSE_MOVED);
+  na_DispatchUIElementCommand((NA_UIElement*)corespace, NA_UI_COMMAND_MOUSE_MOVED);
 }
 - (void)mouseEntered:(NSEvent*)event{
   NA_UNUSED(event);
-  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_MOUSE_ENTERED);
+  na_DispatchUIElementCommand((NA_UIElement*)corespace, NA_UI_COMMAND_MOUSE_ENTERED);
 }
 - (void)mouseExited:(NSEvent*)event{
   NA_UNUSED(event);
-  naDispatchUIElementCommand((NACoreUIElement*)corespace, NA_UI_COMMAND_MOUSE_EXITED);
+  na_DispatchUIElementCommand((NA_UIElement*)corespace, NA_UI_COMMAND_MOUSE_EXITED);
 }
 @end
 
@@ -46,12 +46,12 @@
 NA_DEF NASpace* naNewSpace(NASize size){
   NSRect contentRect;
   NACocoaSpace* cocoaSpace;
-  NACoreSpace* corespace = naAlloc(NACoreSpace);
+  NA_Space* corespace = naAlloc(NA_Space);
   corespace->alternatebackground = NA_FALSE;
 
   contentRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   cocoaSpace = [[NACocoaSpace alloc] initWithCoreSpace:corespace frame:contentRect];  
-  naInitCoreSpace(corespace, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
+  na_InitCoreSpace(corespace, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
   
   return (NASpace*)corespace;
 }
@@ -59,8 +59,8 @@ NA_DEF NASpace* naNewSpace(NASize size){
 
 
 NA_DEF void naDestructSpace(NASpace* space){
-  NACoreSpace* corespace = (NACoreSpace*)space;
-  naClearCoreSpace(corespace);
+  NA_Space* corespace = (NA_Space*)space;
+  na_ClearCoreSpace(corespace);
 }
 
 
@@ -99,19 +99,19 @@ NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos){
   frame = [subview frame];
   frame.origin = NSMakePoint((CGFloat)pos.x, (CGFloat)pos.y);
   [subview setFrame: frame];
-  naSetUIElementParent(child, space);
+  na_SetUIElementParent(child, space);
 }
 
 
 
-NA_HDEF NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space){
+NA_HHDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
   NARect rect;
   NSRect contentrect;
   NARect windowrect;
   naDefineCocoaObject(NACocoaSpace, cocoaSpace, space);
   // Warning: does not work when frame unequal bounds.
   contentrect = [cocoaSpace frame];
-  windowrect = naGetWindowAbsoluteInnerRect((NACoreUIElement*)naGetUIElementWindow((NAUIElement*)space));
+  windowrect = na_GetWindowAbsoluteInnerRect((NA_UIElement*)naGetUIElementWindow((NAUIElement*)space));
   rect.pos.x = windowrect.pos.x + contentrect.origin.x;
   rect.pos.y = windowrect.pos.y + contentrect.origin.y;
   rect.size.width = contentrect.size.width;
@@ -123,7 +123,7 @@ NA_HDEF NARect naGetSpaceAbsoluteInnerRect(NACoreUIElement* space){
 
 NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
   naDefineCocoaObject(NACocoaSpace, cocoaSpace, space);
-  NACoreSpace* corespace = (NACoreSpace*)space;
+  NA_Space* corespace = (NA_Space*)space;
   corespace->alternatebackground = alternate;
   [cocoaSpace setNeedsDisplay:YES];
 }

@@ -16,7 +16,7 @@ NA_EXTERN_RUNTIME_TYPE(NAMemoryBlock);
 
 
 
-NA_HIDEF NAMemoryBlock* naNewMemoryBlock(NAInt bytesize){
+NA_HIDEF NAMemoryBlock* na_NewMemoryBlock(NAInt bytesize){
   NAMemoryBlock* block;
   #ifndef NDEBUG
     if(bytesize <= 0)
@@ -33,7 +33,7 @@ NA_HIDEF NAMemoryBlock* naNewMemoryBlock(NAInt bytesize){
 
 
 
-NA_HIDEF NAMemoryBlock* naNewMemoryBlockWithData(NAPtr data, NAInt bytesize, NAMutator destructor){
+NA_HIDEF NAMemoryBlock* na_NewMemoryBlockWithData(NAPtr data, NAInt bytesize, NAMutator destructor){
   NAMemoryBlock* block;
   #ifndef NDEBUG
     if(bytesize <= 0)
@@ -54,13 +54,13 @@ NA_HIDEF NAMemoryBlock* naNewMemoryBlockWithData(NAPtr data, NAInt bytesize, NAM
 
 
 
-NA_HIDEF const void* naGetMemoryBlockDataPointerConst(NAMemoryBlock* block, NAInt index){
+NA_HIDEF const void* na_GetMemoryBlockDataPointerConst(NAMemoryBlock* block, NAInt index){
   return (const void*)&(((const NAByte*)naGetPtrConst(block->data))[index]);
 }
 
 
 
-NA_HIDEF void* naGetMemoryBlockDataPointerMutable(NAMemoryBlock* block, NAInt index){
+NA_HIDEF void* na_GetMemoryBlockDataPointerMutable(NAMemoryBlock* block, NAInt index){
   return (void*)&(((const NAByte*)naGetPtrMutable(block->data))[index]);
 }
 

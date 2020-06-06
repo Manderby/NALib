@@ -9,11 +9,11 @@
 #include "../../../../NAPNG.h"
 
 
-NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeimage){
+NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
   NABabyImage* image;
   
-  CFDataRef rawData = CGDataProviderCopyData(CGImageGetDataProvider((CGImageRef)nativeimage));
-  image = naCreateBabyImage(naMakeSizei((NAInt)CGImageGetWidth((CGImageRef)nativeimage), (NAInt)CGImageGetHeight((CGImageRef)nativeimage)), NA_NULL);
+  CFDataRef rawData = CGDataProviderCopyData(CGImageGetDataProvider((CGImageRef)nativeImage));
+  image = naCreateBabyImage(naMakeSizei((NAInt)CGImageGetWidth((CGImageRef)nativeImage), (NAInt)CGImageGetHeight((CGImageRef)nativeImage)), NA_NULL);
   // Note that reading PNG files directly does not premultiply alpha!
   naFillBabyImageWithu8(image, CFDataGetBytePtr(rawData), NA_TRUE, NA_COLOR_BUFFER_RGBAPre);
   CFRelease(rawData);
@@ -34,20 +34,20 @@ NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
 //  CGDataProviderRef dataprovider = CGDataProviderCreateWithFilename(pathStr);
 //  if(dataprovider){
 //  
-//    CGImageRef nativeimage = CGImageCreateWithPNGDataProvider(dataprovider, NULL, NA_FALSE, kCGRenderingIntentAbsoluteColorimetric);
-//    image = naCreateBabyImageFromNativeImage(nativeimage);
+//    CGImageRef nativeImage = CGImageCreateWithPNGDataProvider(dataprovider, NULL, NA_FALSE, kCGRenderingIntentAbsoluteColorimetric);
+//    image = naCreateBabyImageFromNativeImage(nativeImage);
 //    
-//    CGImageRelease(nativeimage);
+//    CGImageRelease(nativeImage);
 //    CGDataProviderRelease(dataprovider);
 //  }
 
   NSURL* url = [NSURL fileURLWithPath:[NSString stringWithUTF8String:pathStr]];
-  NSImage* nsimage = [[NSImage alloc] initWithContentsOfURL:url];
-  CGImageRef nativeimage = [nsimage CGImageForProposedRect:NA_NULL context:NA_NULL hints:NA_NULL];
-  image = naCreateBabyImageFromNativeImage(nativeimage);
+  NSImage* nsImage = [[NSImage alloc] initWithContentsOfURL:url];
+  CGImageRef nativeImage = [nsImage CGImageForProposedRect:NA_NULL context:NA_NULL hints:NA_NULL];
+  image = naCreateBabyImageFromNativeImage(nativeImage);
 
-  NA_COCOA_RELEASE(nsimage);
-  // Important: Do not use CGImageRelease on nativeimage. It is part of nsimage.
+  NA_COCOA_RELEASE(nsImage);
+  // Important: Do not use CGImageRelease on nativeImage. It is part of nsImage.
 
   return image;
 }
@@ -55,29 +55,29 @@ NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
 
 
 NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
-  CGImageRef nativeimage;
+  CGImageRef nativeImage;
   CGColorSpaceRef colorSpace = CGColorSpaceCreateWithName(kCGColorSpaceSRGB);
   NASizei imageSize = naGetBabyImageSize(image);
-  CGContextRef cgcontext = CGBitmapContextCreateWithData(NULL, (size_t)imageSize.width, (size_t)imageSize.height, 8, (size_t)naGetBabyImageValuesPerLine(image), colorSpace, kCGImageAlphaPremultipliedLast, NULL, NULL);
+  CGContextRef cgContext = CGBitmapContextCreateWithData(NULL, (size_t)imageSize.width, (size_t)imageSize.height, 8, (size_t)naGetBabyImageValuesPerLine(image), colorSpace, kCGImageAlphaPremultipliedLast, NULL, NULL);
 
-  uint8* imgdata = CGBitmapContextGetData(cgcontext);
-  naConvertBabyImageTou8(image, imgdata, NA_TRUE, NA_COLOR_BUFFER_RGBAPre);
+  uint8* imgData = CGBitmapContextGetData(cgContext);
+  naConvertBabyImageTou8(image, imgData, NA_TRUE, NA_COLOR_BUFFER_RGBAPre);
   
-  nativeimage = CGBitmapContextCreateImage(cgcontext);
-  CGContextRelease(cgcontext);
+  nativeImage = CGBitmapContextCreateImage(cgContext);
+  CGContextRelease(cgContext);
   CGColorSpaceRelease(colorSpace);
-  return nativeimage;
+  return nativeImage;
 }
 
 
 
 
 void* naAllocNativeImageWithUIImage(NAUIImage* uiimage, NAUIImageKind kind, NAUIImageSkin skin){
-  NASizei imagesize = naGetUIImage1xSize(uiimage);
-  NSImage* image = [[NSImage alloc] initWithSize:NSMakeSize(imagesize.width, imagesize.height)];
+  NASizei imageSize = naGetUIImage1xSize(uiimage);
+  NSImage* image = [[NSImage alloc] initWithSize:NSMakeSize(imageSize.width, imageSize.height)];
 
-  CGImageRef img1x = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
-  CGImageRef img2x = naGetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
+  CGImageRef img1x = na_GetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
+  CGImageRef img2x = na_GetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
   if(img1x){
     NSBitmapImageRep* rep = NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img1x]);
     [image addRepresentation:rep];
@@ -92,8 +92,8 @@ void* naAllocNativeImageWithUIImage(NAUIImage* uiimage, NAUIImageKind kind, NAUI
 
 
 
-void naDeallocNativeImage(void* nativeimage){
-  CGImageRelease(nativeimage);
+void naDeallocNativeImage(void* nativeImage){
+  CGImageRelease(nativeImage);
 } 
 
 

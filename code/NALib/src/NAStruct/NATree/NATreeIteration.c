@@ -6,7 +6,7 @@
 // Locates the iterator on the "next" leaf from the current node given an
 // index of the child to first look at. If if no more child is available, the
 // iterator is set to the initial position.
-NA_HDEF void naIterateTreeCapture(NATreeIterator* iter, NAInt index, NATreeIterationInfo* info){
+NA_HDEF void na_IterateTreeCapture(NATreeIterator* iter, NAInt index, NATreeIterationInfo* info){
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
   NATreeNode* parentNode;
 
@@ -57,7 +57,7 @@ NA_HDEF void naIterateTreeCapture(NATreeIterator* iter, NAInt index, NATreeItera
 
 // Expects the current item pointed to by the iterator to be exhausted and
 // searches for the the "next" item by bubbling to the parent.
-NA_HDEF void naIterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info){
+NA_HDEF void na_IterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info){
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
   NATreeItem* item;
   
@@ -79,7 +79,7 @@ NA_HDEF void naIterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info
       // capture function. But with this if structure, we save one
       // unnecessary function call.
       naSetTreeIteratorCurItem(iter, &(parent->item));
-      naIterateTreeCapture(iter, nextindx, info);
+      na_IterateTreeCapture(iter, nextindx, info);
       // If we found a leaf, break.
       if(!naIsTreeAtInitial(iter) && naIsTreeItemLeaf(tree, iter->item)){break;}
       naSetTreeIteratorCurItem(iter, NA_NULL);
@@ -90,7 +90,7 @@ NA_HDEF void naIterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info
 
 
 
-NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info){
+NA_HDEF NABool na_IterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info){
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
   #ifndef NDEBUG
     if(naGetFlagi(iter->flags, NA_TREE_ITERATOR_CLEARED))
@@ -112,13 +112,13 @@ NA_HDEF NABool naIterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* 
     // If the iterator is at initial position, we use the root and capture.
     naSetTreeIteratorCurItem(iter, tree->root);
     if(!naIsTreeRootLeaf(tree)){
-      naIterateTreeCapture(iter, info->startindx, info);
+      na_IterateTreeCapture(iter, info->startindx, info);
     }
   }else{
     // Otherwise, we use the current leaf and bubble to the next one.
     // Note that if iter is not at a leaf, this might lead to overjumping a
     // few leafes.
-    naIterateTreeBubble(iter, info);
+    na_IterateTreeBubble(iter, info);
   }
   
   // Return false, if no more leaf is available.
@@ -171,7 +171,7 @@ NA_HDEF NATreeItem* naLocateTreeKeyCapture(const NATree* tree, NATreeNode* node,
 
 
 
-NA_HDEF NABool naLocateTreeKeyCore(NATreeIterator* iter, const void* key, NABool usebubble){
+NA_HDEF NABool na_LocateTreeKeyCore(NATreeIterator* iter, const void* key, NABool usebubble){
   const NATree* tree = naGetTreeIteratorTreeConst(iter);
   NATreeNode* node;
   NATreeItem* founditem;
@@ -268,7 +268,7 @@ NA_HDEF NABool naLocateTreeToken(NATreeIterator* iter, void* token, NATreeNodeTo
 
 
 
-NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace){
+NA_HDEF NABool na_AddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace){
   NABool found;
   NATree* tree = naGetTreeIteratorTreeMutable(iter);;
   #ifndef NDEBUG
@@ -278,7 +278,7 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
   // We do not use bubbling when inserting as there is almost never a benefit
   // from it. Even more so, it performs mostly worse.
 
-  found = naLocateTreeKeyCore(iter, key, NA_FALSE);
+  found = na_LocateTreeKeyCore(iter, key, NA_FALSE);
 
   if(!found || replace){
     if(found){
@@ -287,7 +287,7 @@ NA_HDEF NABool naAddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conten
       naSetTreeLeafData(tree->config, (NATreeLeaf*)(iter->item), naConstructLeafData(tree->config, key, content));
     }else{
       // Add the new data and set the iterator to that newly created position.
-      NATreeLeaf* contentleaf = naAddTreeContentInPlace(tree, iter->item, key, content, NA_TREE_LEAF_INSERT_ORDER_KEY);
+      NATreeLeaf* contentleaf = na_AddTreeContentInPlace(tree, iter->item, key, content, NA_TREE_LEAF_INSERT_ORDER_KEY);
       naSetTreeIteratorCurItem(iter, &(contentleaf->item));
     }
   }

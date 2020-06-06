@@ -137,7 +137,7 @@ NA_IDEF NABool naLocateTreeKey(NATreeIterator* iter, const void* key, NABool ass
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("tree is configured with no key");
   #endif
-  return naLocateTreeKeyCore(iter, key, assumeclose);
+  return na_LocateTreeKeyCore(iter, key, assumeclose);
 }
 
 
@@ -296,7 +296,7 @@ NA_IDEF NABool naIterateTree(NATreeIterator* iter, const void* lowerlimit, const
   info.breakindx = tree->config->childpernode;
   info.lowerlimit = lowerlimit;
   info.upperlimit = upperlimit;
-  return naIterateTreeWithInfo(iter, &info);
+  return na_IterateTreeWithInfo(iter, &info);
 }
 
 
@@ -317,7 +317,7 @@ NA_IDEF NABool naIterateTreeBack(NATreeIterator* iter, const void* lowerlimit, c
   info.breakindx = -1;
   info.lowerlimit = lowerlimit;
   info.upperlimit = upperlimit;
-  return naIterateTreeWithInfo(iter, &info);
+  return na_IterateTreeWithInfo(iter, &info);
 }
 
 
@@ -328,7 +328,7 @@ NA_IDEF NABool naAddTreeKeyConst(NATreeIterator* iter, const void* key, const vo
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("This function should not be called on trees without keys");
   #endif
-  return naAddTreeLeaf(iter, key, naMakePtrWithDataConst(content), replace);
+  return na_AddTreeLeaf(iter, key, naMakePtrWithDataConst(content), replace);
 }
 
 
@@ -339,7 +339,7 @@ NA_IDEF NABool naAddTreeKeyMutable(NATreeIterator* iter, const void* key, void* 
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("This function should not be called on trees without keys");
   #endif
-  return naAddTreeLeaf(iter, key, naMakePtrWithDataMutable(content), replace);
+  return na_AddTreeLeaf(iter, key, naMakePtrWithDataMutable(content), replace);
 }
 
 
@@ -378,7 +378,7 @@ NA_HIDEF NABool naAddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeaf
       break;
     }
   }
-  contentleaf = naAddTreeContentInPlace(tree, iter->item, NA_NULL, content, insertOrder);
+  contentleaf = na_AddTreeContentInPlace(tree, iter->item, NA_NULL, content, insertOrder);
   if(movetonew){naSetTreeIteratorCurItem(iter, &(contentleaf->item));}
   return NA_TRUE;
 }
@@ -415,7 +415,7 @@ NA_IDEF void naRemoveTreeCurLeaf(NATreeIterator* iter){
   naSetTreeIteratorCurItem(iter, NA_NULL);  // temporarily remove the iterator. // todo: make it advance, rev-advance or not.
   newParent = tree->config->leafRemover(tree, (NATreeLeaf*)(removeItem));
   if(newParent){naSetTreeIteratorCurItem(iter, naGetTreeNodeItem(newParent));}
-  naUpdateTreeNodeBubbling(tree, newParent, -1);
+  na_UpdateTreeNodeBubbling(tree, newParent, -1);
 }
 
 
@@ -431,7 +431,7 @@ NA_IDEF void naUpdateTreeLeaf(NATreeIterator* iter){
   tree = naGetTreeIteratorTreeMutable(iter);
   parent = naGetTreeItemParent(iter->item);
   if(!naIsTreeItemRoot(iter->item)){
-    naUpdateTreeNodeBubbling(tree, parent, naGetTreeNodeChildIndex(tree->config, parent, iter->item));
+    na_UpdateTreeNodeBubbling(tree, parent, naGetTreeNodeChildIndex(tree->config, parent, iter->item));
   }
 }
 

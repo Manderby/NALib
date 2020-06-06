@@ -11,11 +11,11 @@
   // The error printing method. Errors will be emitted to the stderr output.
   // When NDEBUG is defined, this function is OBSOLETE!
 
-  NA_HDEF void na_Error(const char* functionSymbol, const char* text){
+  NA_HHDEF void na_Error(const char* functionSymbol, const char* text){
     NABool doPrintOut = NA_TRUE;
     #if NA_TESTING_ENABLED == 1
-      doPrintOut = !naGetTestCaseRunning();
-      naIncErrorCount();
+      doPrintOut = !na_GetTestCaseRunning();
+      na_IncErrorCount();
     #endif
 
     if(doPrintOut){
@@ -33,9 +33,9 @@
 
   
   
-  NA_HDEF void na_Crash(const char* functionSymbol, const char* text){
+  NA_HHDEF void na_Crash(const char* functionSymbol, const char* text){
     #if NA_TESTING_ENABLED == 1
-      naSetTestCaseRunning(NA_FALSE);
+      na_SetTestCaseRunning(NA_FALSE);
     #endif
     na_Error(functionSymbol, text);
     fprintf(stderr, NA_NL "Crashing the application deliberately..." NA_NL);

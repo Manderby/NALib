@@ -106,8 +106,8 @@ NA_DEF void naStartTesting(const NAUTF8Char* rootName, NABool printAllGroups){
 
   na_Testing->curTestData = na_Testing->testData;
   na_Testing->printAllTestGroups = printAllGroups;
-  naSetTestCaseRunning(NA_FALSE);
-  naResetErrorCount();
+  na_SetTestCaseRunning(NA_FALSE);
+  na_ResetErrorCount();
 
   naInitStack(&(na_Testing->untestedStrings), naSizeof(NAString*), 2);
 
@@ -121,7 +121,7 @@ NA_DEF void naStopTesting(){
     naError("Testing not running. Use naStartTesting.");
   #endif
 
-  naStopTestGroup();
+  na_StopTestGroup();
 
   if(na_Testing->testData->success){
     printf("All test successful." NA_NL);
@@ -177,7 +177,7 @@ NA_HDEF void naUpdateTestParentLeaf(NATestData* testData, NABool leafSuccess){
 
 
 
-NA_HDEF void naAddTest(const char* expr, int success, int lineNum){
+NA_HHDEF void na_AddTest(const char* expr, int success, int lineNum){
   #ifndef NDEBUG
   if(!na_Testing)
     naError("Testing not running. Use naStartTesting.");
@@ -185,12 +185,12 @@ NA_HDEF void naAddTest(const char* expr, int success, int lineNum){
 
   NATestData* testData = naPushStack(&(na_Testing->curTestData->childs));
   naInitTestingData(testData, expr, na_Testing->curTestData, lineNum);
-  if(naGetErrorCount() > 0){
+  if(na_GetErrorCount() > 0){
     testData->success = NA_FALSE;
     naUpdateTestParentLeaf(na_Testing->curTestData, NA_FALSE);
     printf("  ");
     if(testData->parent){naPrintTestName(testData->parent);}
-    printf("Line %d: %d errors occured in %s" NA_NL, lineNum, naGetErrorCount(), expr);\
+    printf("Line %d: %d errors occured in %s" NA_NL, lineNum, na_GetErrorCount(), expr);\
   }else{
     testData->success = (NABool)success;
     naUpdateTestParentLeaf(na_Testing->curTestData, (NABool)success);
@@ -204,7 +204,7 @@ NA_HDEF void naAddTest(const char* expr, int success, int lineNum){
 
 
 
-NA_HDEF void naAddTestError(const char* expr, int lineNum){
+NA_HHDEF void na_AddTestError(const char* expr, int lineNum){
   #ifndef NDEBUG
   if(!na_Testing)
     naError("Testing not running. Use naStartTesting.");
@@ -212,7 +212,7 @@ NA_HDEF void naAddTestError(const char* expr, int lineNum){
 
   NATestData* testData = naPushStack(&(na_Testing->curTestData->childs));
   naInitTestingData(testData, expr, na_Testing->curTestData, lineNum);
-  testData->success = naGetErrorCount() != 0;
+  testData->success = na_GetErrorCount() != 0;
   naUpdateTestParentLeaf(na_Testing->curTestData, (NABool)testData->success);
   if(!testData->success){
     printf("  ");
@@ -223,44 +223,44 @@ NA_HDEF void naAddTestError(const char* expr, int lineNum){
 
 
 
-NA_HDEF void naRegisterUntested(const char* text){
+NA_HHDEF void na_RegisterUntested(const char* text){
   NAString** string = naPushStack(&(na_Testing->untestedStrings));
   *string = naNewStringWithUTF8CStringLiteral(text);
 }
 
 
 
-NA_HDEF NABool naGetTestCaseRunning(){
+NA_HHDEF NABool na_GetTestCaseRunning(){
   return na_Testing->testCaseRunning;
 }
 
 
 
-NA_HDEF void naSetTestCaseRunning(NABool running){
+NA_HHDEF void na_SetTestCaseRunning(NABool running){
   na_Testing->testCaseRunning = running;
 }
 
 
 
-NA_HDEF void naIncErrorCount(void){
+NA_HHDEF void na_IncErrorCount(void){
   na_Testing->errorCount++;
 }
 
 
 
-NA_HDEF void naResetErrorCount(void){
+NA_HHDEF void na_ResetErrorCount(void){
   na_Testing->errorCount = 0;
 }
 
 
 
-NA_HDEF int naGetErrorCount(void){
+NA_HHDEF int na_GetErrorCount(void){
   return na_Testing->errorCount;
 }
 
 
 
-NA_HDEF void naStartTestGroup(const char* name, int lineNum){
+NA_HHDEF void na_StartTestGroup(const char* name, int lineNum){
   #ifndef NDEBUG
   if(!na_Testing)
     naError("Testing not running. Use naStartTesting.");
@@ -274,7 +274,7 @@ NA_HDEF void naStartTestGroup(const char* name, int lineNum){
 
 
 
-NA_HDEF void naStopTestGroup(){
+NA_HHDEF void na_StopTestGroup(){
   #ifndef NDEBUG
   if(!na_Testing)
     naError("Testing not running. Use naStartTesting.");
