@@ -192,41 +192,41 @@ struct NABufferTreeNodeData{
 
 
 // NABufferHelper
-NA_HHAPI void na_EnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end);
+NA_HAPI void na_EnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end);
 
 // NABufferIteration
-NA_HIAPI const NABuffer* naGetBufferIteratorBufferConst(const NABufferIterator* iter);
-NA_HIAPI NABuffer* naGetBufferIteratorBufferMutable(NABufferIterator* iter);
+NA_HIAPI const NABuffer* na_GetBufferIteratorBufferConst(const NABufferIterator* iter);
+NA_HIAPI NABuffer* na_GetBufferIteratorBufferMutable(NABufferIterator* iter);
 
-NA_HHAPI NABool na_LocateBufferStart(NABufferIterator* iter);
-NA_HHAPI NABool na_LocateBufferLastPart(NABufferIterator* iter);
-NA_HHAPI NABool na_LocateBufferNextPart(NABufferIterator* iter);
-NA_HHAPI NABool na_LocateBufferPrevPartMax(NABufferIterator* iter);
-NA_HHAPI NABool na_LocateBufferMax(NABufferIterator* iter);
-NA_HHAPI NABool na_LocateBufferEnd(NABufferIterator* iter);
-NA_HHAPI NABool na_IterateBufferPart(NABufferIterator* iter);
+NA_HAPI NABool na_LocateBufferStart(NABufferIterator* iter);
+NA_HAPI NABool na_LocateBufferLastPart(NABufferIterator* iter);
+NA_HAPI NABool na_LocateBufferNextPart(NABufferIterator* iter);
+NA_HAPI NABool na_LocateBufferPrevPartMax(NABufferIterator* iter);
+NA_HAPI NABool na_LocateBufferMax(NABufferIterator* iter);
+NA_HAPI NABool na_LocateBufferEnd(NABufferIterator* iter);
+NA_HAPI NABool na_IterateBufferPart(NABufferIterator* iter);
 
-NA_HHAPI NABuffer* na_GetBufferIteratorSourceBuffer(NABufferIterator* iter);
-NA_HIAPI NAInt naGetBufferIteratorPartOffset(NABufferIterator* iter);
-NA_HHAPI NABool na_IsBufferIteratorSparse(NABufferIterator* iter);
-NA_HIAPI NABufferPart* naGetBufferPart(NABufferIterator* iter);
-NA_HHAPI void na_PrepareBuffer(NABufferIterator* iter, NAInt bytecount);
+NA_HAPI NABuffer* na_GetBufferIteratorSourceBuffer(NABufferIterator* iter);
+NA_HIAPI NAInt na_GetBufferIteratorPartOffset(NABufferIterator* iter);
+NA_HAPI NABool na_IsBufferIteratorSparse(NABufferIterator* iter);
+NA_HIAPI NABufferPart* na_GetBufferPart(NABufferIterator* iter);
+NA_HAPI void na_PrepareBuffer(NABufferIterator* iter, NAInt bytecount);
 
 // NABufferPart
-NA_HHAPI NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei sourcerange);
-NA_HHAPI NABufferPart* na_NewBufferPartWithConstData(const void* data, NAInt bytesize);
-NA_HHAPI NABufferPart* na_NewBufferPartWithMutableData(void* data, NAInt bytesize, NAMutator destructor);
-NA_HHAPI void na_SeparateBufferPart(NABufferPart* part);
+NA_HAPI NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei sourcerange);
+NA_HAPI NABufferPart* na_NewBufferPartWithConstData(const void* data, NAInt bytesize);
+NA_HAPI NABufferPart* na_NewBufferPartWithMutableData(void* data, NAInt bytesize, NAMutator destructor);
+NA_HAPI void na_SeparateBufferPart(NABufferPart* part);
 
 NA_HIAPI NABufferSource* na_GetBufferPartSource(const NABufferPart* part);
 NA_HIAPI NAInt na_GetBufferPartByteSize(const NABufferPart* part);
 NA_HIAPI NAMemoryBlock* na_GetBufferPartMemoryBlock(const NABufferPart* part);
 NA_HIAPI NABool na_IsBufferPartSparse(const NABufferPart* part);
 
-NA_HHAPI NABufferPart* na_SplitBufferPart(NATreeIterator* partiter, NAInt start, NAInt end);
-NA_HHAPI NABufferPart* na_PrepareBufferPartSourceBuffer(NATreeIterator* partiter, NARangei partrange);
-NA_HHAPI NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partiter, NARangei partrange);
-NA_HHAPI NAInt na_PrepareBufferPart(NABufferIterator* iter, NAInt bytecount);
+NA_HAPI NABufferPart* na_SplitBufferPart(NATreeIterator* partiter, NAInt start, NAInt end);
+NA_HAPI NABufferPart* na_PrepareBufferPartSourceBuffer(NATreeIterator* partiter, NARangei partrange);
+NA_HAPI NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partiter, NARangei partrange);
+NA_HAPI NAInt na_PrepareBufferPart(NABufferIterator* iter, NAInt bytecount);
 
 NA_HIAPI void na_EnlargeBufferPart(NABufferPart* part, NAInt bytesatstart, NAInt bytesatend);
 NA_HIAPI NAInt na_GetBufferPartRemainingBytes(NABufferIterator* iter);
@@ -240,8 +240,8 @@ NA_HIAPI NARangei na_GetBufferSourceLimit(const NABufferSource* source);
 NA_HIAPI void na_FillSourceBuffer(const NABufferSource* source, void* dst, NARangei range);
 
 // NABufferRead and NABufferWrite
-NA_HHAPI void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance);
-NA_HHAPI void na_StoreBufferBytes(NABufferIterator* iter, const void* data, NAInt bytesize, NABool prepare, NABool advance);
+NA_HAPI void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance);
+NA_HAPI void na_StoreBufferBytes(NABufferIterator* iter, const void* data, NAInt bytesize, NABool prepare, NABool advance);
 
 // NAMemoryBlock
 NA_HIAPI NAMemoryBlock* na_NewMemoryBlock(NAInt bytesize);

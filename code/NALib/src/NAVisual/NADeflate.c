@@ -317,7 +317,7 @@ uint16 naDecodeDistance(NABufferIterator* iter, uint16 code){
 
 
 
-NA_HHDEF void na_ReadDymanicHuffmanCodes(NABufferIterator* iter, NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman){
+NA_HDEF void na_ReadDymanicHuffmanCodes(NABufferIterator* iter, NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman){
   uint8 codeorder[19] = {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
   int c;
 
@@ -342,7 +342,7 @@ NA_HHDEF void na_ReadDymanicHuffmanCodes(NABufferIterator* iter, NAHuffmanCodeTr
 
 
 
-NA_HHDEF void na_AllocFixedHuffmanCodes(NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman){
+NA_HDEF void na_AllocFixedHuffmanCodes(NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman){
   uint16 i;
 
   *literalhuffman = naAllocHuffmanCodeTree(288);

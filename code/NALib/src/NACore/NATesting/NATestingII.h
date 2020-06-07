@@ -17,16 +17,16 @@
 
 #if NA_TESTING_ENABLED == 1
 
-NA_HHAPI void   na_AddTest(const char* expr, int success, int lineNum);
-NA_HHAPI void   na_AddTestError(const char* expr, int lineNum);
-NA_HHAPI void   na_StartTestGroup(const char* name, int lineNum);
-NA_HHAPI void   na_StopTestGroup(void);
-NA_HHAPI void   na_RegisterUntested(const char* text);
-NA_HHAPI NABool na_GetTestCaseRunning(void);
-NA_HHAPI void   na_SetTestCaseRunning(NABool running);
-NA_HHAPI void   na_IncErrorCount(void);
-NA_HHAPI void   na_ResetErrorCount(void);
-NA_HHAPI int    na_GetErrorCount(void);
+NA_HAPI void   na_AddTest(const char* expr, int success, int lineNum);
+NA_HAPI void   na_AddTestError(const char* expr, int lineNum);
+NA_HAPI void   na_StartTestGroup(const char* name, int lineNum);
+NA_HAPI void   na_StopTestGroup(void);
+NA_HAPI void   na_RegisterUntested(const char* text);
+NA_HAPI NABool na_GetTestCaseRunning(void);
+NA_HAPI void   na_SetTestCaseRunning(NABool running);
+NA_HAPI void   na_IncErrorCount(void);
+NA_HAPI void   na_ResetErrorCount(void);
+NA_HAPI int    na_GetErrorCount(void);
 
 
 

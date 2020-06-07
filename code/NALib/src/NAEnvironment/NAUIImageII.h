@@ -12,13 +12,13 @@ struct NAUIImage {
 };
 
 
-NA_HHAPI NABabyImage* na_GetUIImageBabyImage(
+NA_HAPI NABabyImage* na_GetUIImageBabyImage(
   NAUIImage* uiimage,
   NAUIImageResolution resolution,
   NAUIImageKind kind,
   NAUIImageSkin skin);
 
-NA_HHAPI void* na_GetUIImageNativeImage(
+NA_HAPI void* na_GetUIImageNativeImage(
   NAUIImage* uiimage,
   NAUIImageResolution resolution,
   NAUIImageKind kind,

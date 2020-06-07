@@ -5,13 +5,13 @@
 
 
 
-NA_HIDEF const NABuffer* naGetBufferIteratorBufferConst(const NABufferIterator* iter){
+NA_HIDEF const NABuffer* na_GetBufferIteratorBufferConst(const NABufferIterator* iter){
   return naGetPtrConst(iter->bufferptr);
 }
 
 
 
-NA_HIDEF NABuffer* naGetBufferIteratorBufferMutable(NABufferIterator* iter){
+NA_HIDEF NABuffer* na_GetBufferIteratorBufferMutable(NABufferIterator* iter){
   return naGetPtrMutable(iter->bufferptr);
 }
 
@@ -25,26 +25,26 @@ NA_IDEF NABool naLocateBufferRelative(NABufferIterator* iter, NAInt offset){
 
 
 NA_IDEF NABool naLocateBufferFromStart(NABufferIterator* iter, NAInt offset){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+  const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   return naLocateBufferAbsolute(iter, buffer->range.origin + offset);
 }
 
 
 
 NA_IDEF NABool naLocateBufferFromEnd(NABufferIterator* iter, NAInt offset){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+  const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   return naLocateBufferAbsolute(iter, naGetRangeiEnd(buffer->range) - offset);
 }
 
 
 
-NA_HIDEF NAInt naGetBufferIteratorPartOffset(NABufferIterator* iter){
+NA_HIDEF NAInt na_GetBufferIteratorPartOffset(NABufferIterator* iter){
   return iter->partoffset;
 }
 
 
 
-NA_HIDEF NABufferPart* naGetBufferPart(NABufferIterator* iter){
+NA_HIDEF NABufferPart* na_GetBufferPart(NABufferIterator* iter){
   return naGetTreeCurLeafMutable(&(iter->partiter));
 }
 
@@ -57,9 +57,9 @@ NA_IDEF NABool naIsBufferAtInitial(NABufferIterator* iter){
 
 
 NA_IDEF NABool naIsBufferAtEnd(NABufferIterator* iter){
-  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
+  NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
   if(!naIsBufferAtInitial(iter)){
-    NABufferPart* part = naGetBufferPart(iter);
+    NABufferPart* part = na_GetBufferPart(iter);
     if(iter->partoffset < 0 || iter->partoffset >= na_GetBufferPartByteSize(part)){
       NABool found = naLocateBufferAbsolute(iter, naGetBufferLocation(iter));
       if(!found){

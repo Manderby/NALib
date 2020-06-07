@@ -27,18 +27,18 @@ NA_EXTERN_RUNTIME_TYPE(NATreeQuadLeaf);
 #define LEAF_USERDATA_OFFSET_QUAD   offsetof(NATreeQuadLeaf, userdata)
 #define NODE_USERDATA_OFFSET_QUAD   offsetof(NATreeQuadNode, userdata)
 
-NA_HHAPI  NAInt na_GetChildIndexQuadDouble(NATreeNode* parentnode, const void* childkey);
-NA_HHAPI  NAInt na_GetKeyIndexQuadDouble(const void* basekey, const void* testkey, const void* data);
-NA_HHAPI  NABool na_TestKeyQuadDouble(const void* lowerlimit, const void* upperlimit, const void* key);
-NA_HHAPI  NABool na_TestKeyNodeContainQuadDouble(NATreeNode* parentnode, const void* key);
-NA_HHAPI  NABool na_TestKeyLeafContainQuadDouble(NATreeLeaf* leaf, const void* key);
+NA_HAPI  NAInt na_GetChildIndexQuadDouble(NATreeNode* parentnode, const void* childkey);
+NA_HAPI  NAInt na_GetKeyIndexQuadDouble(const void* basekey, const void* testkey, const void* data);
+NA_HAPI  NABool na_TestKeyQuadDouble(const void* lowerlimit, const void* upperlimit, const void* key);
+NA_HAPI  NABool na_TestKeyNodeContainQuadDouble(NATreeNode* parentnode, const void* key);
+NA_HAPI  NABool na_TestKeyLeafContainQuadDouble(NATreeLeaf* leaf, const void* key);
 
-NA_HHAPI  void na_DestructTreeNodeQuad(NATreeNode* node);
-NA_HHAPI  void na_DestructTreeLeafQuad(NATreeLeaf* leaf);
+NA_HAPI  void na_DestructTreeNodeQuad(NATreeNode* node);
+NA_HAPI  void na_DestructTreeLeafQuad(NATreeLeaf* leaf);
 
-NA_HHAPI  NATreeNode* na_LocateBubbleQuad(const NATree* tree, NATreeItem* item, const void* key);
-NA_HHAPI  NATreeNode* na_RemoveLeafQuad(NATree* tree, NATreeLeaf* leaf);
-NA_HHAPI  NATreeLeaf* na_InsertLeafQuad(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
+NA_HAPI  NATreeNode* na_LocateBubbleQuad(const NATree* tree, NATreeItem* item, const void* key);
+NA_HAPI  NATreeNode* na_RemoveLeafQuad(NATree* tree, NATreeLeaf* leaf);
+NA_HAPI  NATreeLeaf* na_InsertLeafQuad(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 
 
 

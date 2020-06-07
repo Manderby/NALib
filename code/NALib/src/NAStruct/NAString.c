@@ -127,7 +127,7 @@ struct NAString{
   #endif
 };
 
-NA_HHAPI void na_DestructString(NAString* string);
+NA_HAPI void na_DestructString(NAString* string);
 NA_RUNTIME_TYPE(NAString, na_DestructString, NA_FALSE);
 
 
@@ -315,7 +315,7 @@ NA_API NAString* naNewStringWithNewlineSanitization( NAString* string, NANewline
 
 
 
-NA_HHDEF void na_DestructString(NAString* string){
+NA_HDEF void na_DestructString(NAString* string){
   naRelease(string->buffer);
 }
 

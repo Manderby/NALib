@@ -114,21 +114,21 @@ NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
 
 
 
-NA_HHDEF NAUIElement** na_GetTextBoxNextTabReference(NATextBox* textBox){
+NA_HDEF NAUIElement** na_GetTextBoxNextTabReference(NATextBox* textBox){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
   return &(winapiTextBox->nextTabStop);
 }
 
 
 
-NA_HHDEF NAUIElement** na_GetTextBoxPrevTabReference(NATextBox* textBox){
+NA_HDEF NAUIElement** na_GetTextBoxPrevTabReference(NATextBox* textBox){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
   return &(winapiTextBox->prevTabStop);
 }
 
 
 
-NA_HHDEF NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox){
+NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox){
   NA_UNUSED(textBox);
   return naMakeRectS(20, 40, 100, 50);
 }

@@ -218,7 +218,7 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 
 
-NA_HHDEF NAApplication* na_NewApplication(void){
+NA_HDEF NAApplication* na_NewApplication(void){
 
   NAWINAPIApplication* winapiApplication = naAlloc(NAWINAPIApplication);
 
@@ -327,7 +327,7 @@ const NONCLIENTMETRICS* naGetApplicationMetrics(void){
 // stored in that struct with the stored argument.
 //
 // Definitely not the fastest and best method. But as for now, it's ok. todo.
-NA_HHDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
+NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
   //todo something is wrong here with the type.
   NAWINAPIApplication* app;
   NAListIterator iter;

@@ -9,7 +9,7 @@
 // return value is the index in which the key can safely be inserted. The
 // curIndex points at the starting position and the element at curIndex is
 // assumed to be empty (or contain no useful information).
-NA_HHDEF NAInt NA_T3(na_HeapMoveDown, NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE, NA_T_USE_BACKPOINTERS)(NAHeap* heap, const void* key, NAInt curIndex){
+NA_HDEF NAInt NA_T3(na_HeapMoveDown, NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE, NA_T_USE_BACKPOINTERS)(NAHeap* heap, const void* key, NAInt curIndex){
   #if NA_T_USE_BACKPOINTERS
     NAHeapBackEntry* entries = heap->data;
   #else
@@ -36,7 +36,7 @@ NA_HHDEF NAInt NA_T3(na_HeapMoveDown, NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE,
 // Assumes the given index to point at an element which is empty (or contains
 // no useful information). Performs a reordering of the heap such that the
 // given key can be inserted at a suitable index and returns this index.
-NA_HHDEF NAInt NA_T3(na_HeapMoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T_USE_BACKPOINTERS)(NAHeap* heap, const void* key, NAInt curIndex){
+NA_HDEF NAInt NA_T3(na_HeapMoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T_USE_BACKPOINTERS)(NAHeap* heap, const void* key, NAInt curIndex){
   #if NA_T_USE_BACKPOINTERS
     NAHeapBackEntry* entries = heap->data;
   #else

@@ -106,7 +106,7 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 
 
-NA_HHDEF NAApplication* na_NewApplication(void){
+NA_HDEF NAApplication* na_NewApplication(void){
   NACocoaApplication* cocoaApplication = naAlloc(NACocoaApplication);
 
   NACocoaApplicationDelegate* cocoaAppDelegate = [[NACocoaApplicationDelegate alloc] initWithCocoaApplication:cocoaApplication];

@@ -218,7 +218,7 @@ NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind){
 
 
 
-NA_HHDEF NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label){
+NA_HDEF NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label){
   NA_UNUSED(label);
   return naMakeRectS(20, 40, 100, 50);
 }

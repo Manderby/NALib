@@ -51,7 +51,7 @@ struct NAPNG{
 };
 
 
-NA_HHAPI void na_DestructPNG(NAPNG* png);
+NA_HAPI void na_DestructPNG(NAPNG* png);
 NA_RUNTIME_TYPE(NAPNG, na_DestructPNG, NA_FALSE);
 
 
@@ -128,7 +128,7 @@ struct NAPNGChunk{
 };
 
 
-NA_HHDEF void na_SetPNGsRGBColorimetry(NAPNG* png){
+NA_HDEF void na_SetPNGsRGBColorimetry(NAPNG* png){
   // This corresponds to the sRGB space.
   png->gamma = 45455.f / 100000.f;
   naFillV2f(png->whitepoint,    31270.f / 100000.f, 32900.f / 100000.f);
@@ -138,7 +138,7 @@ NA_HHDEF void na_SetPNGsRGBColorimetry(NAPNG* png){
 }
 
 
-NA_HHDEF NAPNGChunk* na_AllocPNGChunkFromBuffer(NABufferIterator* iter){
+NA_HDEF NAPNGChunk* na_AllocPNGChunkFromBuffer(NABufferIterator* iter){
   NAInt i;
   NAChecksum checksum;
   uint32 crc;
@@ -196,7 +196,7 @@ NA_HHDEF NAPNGChunk* na_AllocPNGChunkFromBuffer(NABufferIterator* iter){
 
 
 
-NA_HHDEF void na_DeallocPNGChunk(NAPNGChunk* chunk){
+NA_HDEF void na_DeallocPNGChunk(NAPNGChunk* chunk){
   naRelease(chunk->data);
   naFree(chunk);
 }
@@ -366,7 +366,7 @@ NA_DEF void naFilterData(NAPNG* png){
 
 
 
-NA_HHDEF void na_ReadPNGIHDRChunk(NAPNG* png, NAPNGChunk* ihdr){
+NA_HDEF void na_ReadPNGIHDRChunk(NAPNG* png, NAPNGChunk* ihdr){
 
   NABufferIterator iter;
 
@@ -410,7 +410,7 @@ NA_HHDEF void na_ReadPNGIHDRChunk(NAPNG* png, NAPNGChunk* ihdr){
 
 
 
-NA_HHDEF NAPNGChunk* na_AllocPNGIHDRChunk(NAPNG* png){
+NA_HDEF NAPNGChunk* na_AllocPNGIHDRChunk(NAPNG* png){
   NABufferIterator iter;
 
   NAPNGChunk* ihdr = naAlloc(NAPNGChunk);
@@ -435,7 +435,7 @@ NA_HHDEF NAPNGChunk* na_AllocPNGIHDRChunk(NAPNG* png){
 
 
 
-NA_HHDEF void na_ReadPNGPLTEChunk(NAPNG* png, NAPNGChunk* plte){
+NA_HDEF void na_ReadPNGPLTEChunk(NAPNG* png, NAPNGChunk* plte){
   // todo
 //  printf("plte");
   NA_UNUSED(png);
@@ -444,13 +444,13 @@ NA_HHDEF void na_ReadPNGPLTEChunk(NAPNG* png, NAPNGChunk* plte){
 
 
 
-NA_HHDEF void na_ReadPNGIDATChunk(NAPNG* png, NAPNGChunk* idat){
+NA_HDEF void na_ReadPNGIDATChunk(NAPNG* png, NAPNGChunk* idat){
   naAppendBufferToBuffer(png->compresseddata, idat->data);
 }
 
 
 
-NA_HHDEF NAPNGChunk* na_AllocPNGIDATChunk(NAPNG* png){
+NA_HDEF NAPNGChunk* na_AllocPNGIDATChunk(NAPNG* png){
   NAPNGChunk* idat = naAlloc(NAPNGChunk);
   idat->data = naNewBuffer(NA_FALSE);
   naSetBufferEndianness(idat->data, NA_ENDIANNESS_NETWORK);
@@ -465,7 +465,7 @@ NA_HHDEF NAPNGChunk* na_AllocPNGIDATChunk(NAPNG* png){
 
 
 
-NA_HHDEF void na_ReadPNGIENDChunk(NAPNG* png, NAPNGChunk* iend){
+NA_HDEF void na_ReadPNGIENDChunk(NAPNG* png, NAPNGChunk* iend){
   NA_UNUSED(png);
   NA_UNUSED(iend);
   // nothing to do. This chunk is empty and marks the end of the png stream.
@@ -473,7 +473,7 @@ NA_HHDEF void na_ReadPNGIENDChunk(NAPNG* png, NAPNGChunk* iend){
 
 
 
-NA_HHDEF NAPNGChunk* na_AllocPNGIENDChunk(NAPNG* png){
+NA_HDEF NAPNGChunk* na_AllocPNGIENDChunk(NAPNG* png){
   NAPNGChunk* iend;
   NA_UNUSED(png);
 
@@ -487,7 +487,7 @@ NA_HHDEF NAPNGChunk* na_AllocPNGIENDChunk(NAPNG* png){
 
 
 
-NA_HHDEF void na_ReadPNGcHRMChunk(NAPNG* png, NAPNGChunk* chrm){
+NA_HDEF void na_ReadPNGcHRMChunk(NAPNG* png, NAPNGChunk* chrm){
   if(png->flags & NA_PNG_FLAGS_sRGB_AVAILABLE){
     // Ignoring when sRGB is available
   }else{
@@ -508,7 +508,7 @@ NA_HHDEF void na_ReadPNGcHRMChunk(NAPNG* png, NAPNGChunk* chrm){
 
 
 
-NA_HHDEF void na_ReadPNGgAMAChunk(NAPNG* png, NAPNGChunk* gama){
+NA_HDEF void na_ReadPNGgAMAChunk(NAPNG* png, NAPNGChunk* gama){
   if(png->flags & NA_PNG_FLAGS_sRGB_AVAILABLE){
     // Ignoring when sRGB is available
   }else{
@@ -520,7 +520,7 @@ NA_HHDEF void na_ReadPNGgAMAChunk(NAPNG* png, NAPNGChunk* gama){
 
 
 
-NA_HHDEF void na_ReadPNGiCCPChunk(NAPNG* png, NAPNGChunk* iccp){
+NA_HDEF void na_ReadPNGiCCPChunk(NAPNG* png, NAPNGChunk* iccp){
   // todo
 //  printf("iccp");
   NA_UNUSED(png);
@@ -529,7 +529,7 @@ NA_HHDEF void na_ReadPNGiCCPChunk(NAPNG* png, NAPNGChunk* iccp){
 
 
 
-NA_HHDEF void na_ReadPNGsBITChunk(NAPNG* png, NAPNGChunk* sbit){
+NA_HDEF void na_ReadPNGsBITChunk(NAPNG* png, NAPNGChunk* sbit){
   NABufferIterator iter = naMakeBufferAccessor(sbit->data);
   switch(png->colortype){
   case NA_PNG_COLORTYPE_GREYSCALE:
@@ -557,7 +557,7 @@ NA_HHDEF void na_ReadPNGsBITChunk(NAPNG* png, NAPNGChunk* sbit){
 
 
 
-NA_HHDEF void na_ReadPNGsRGBChunk(NAPNG* png, NAPNGChunk* srgb){
+NA_HDEF void na_ReadPNGsRGBChunk(NAPNG* png, NAPNGChunk* srgb){
   NABufferIterator iter = naMakeBufferAccessor(srgb->data);
   uint8 intent = naReadBufferu8(&iter);
   naClearBufferIterator(&iter);
@@ -571,7 +571,7 @@ NA_HHDEF void na_ReadPNGsRGBChunk(NAPNG* png, NAPNGChunk* srgb){
 
 
 
-NA_HHDEF void na_ReadPNGbKGDChunk(NAPNG* png, NAPNGChunk* bkgd){
+NA_HDEF void na_ReadPNGbKGDChunk(NAPNG* png, NAPNGChunk* bkgd){
   // todo
 //  printf("bkgd");
   NA_UNUSED(png);
@@ -580,7 +580,7 @@ NA_HHDEF void na_ReadPNGbKGDChunk(NAPNG* png, NAPNGChunk* bkgd){
 
 
 
-NA_HHDEF void na_ReadPNGhISTChunk(NAPNG* png, NAPNGChunk* hist){
+NA_HDEF void na_ReadPNGhISTChunk(NAPNG* png, NAPNGChunk* hist){
   // todo
 //  printf("hist");
   NA_UNUSED(png);
@@ -589,7 +589,7 @@ NA_HHDEF void na_ReadPNGhISTChunk(NAPNG* png, NAPNGChunk* hist){
 
 
 
-NA_HHDEF void na_ReadPNGtRNSChunk(NAPNG* png, NAPNGChunk* trns){
+NA_HDEF void na_ReadPNGtRNSChunk(NAPNG* png, NAPNGChunk* trns){
   // todo
 //  printf("trns");
   NA_UNUSED(png);
@@ -598,7 +598,7 @@ NA_HHDEF void na_ReadPNGtRNSChunk(NAPNG* png, NAPNGChunk* trns){
 
 
 
-NA_HHDEF void na_ReadPNGpHYsChunk(NAPNG* png, NAPNGChunk* phys){
+NA_HDEF void na_ReadPNGpHYsChunk(NAPNG* png, NAPNGChunk* phys){
   uint8 unit;
   NABufferIterator iter = naMakeBufferAccessor(phys->data);
 
@@ -625,7 +625,7 @@ NA_HHDEF void na_ReadPNGpHYsChunk(NAPNG* png, NAPNGChunk* phys){
 
 
 
-NA_HHDEF void na_ReadPNGsPLTChunk(NAPNG* png, NAPNGChunk* splt){
+NA_HDEF void na_ReadPNGsPLTChunk(NAPNG* png, NAPNGChunk* splt){
   // todo
 //  printf("splt");
   NA_UNUSED(png);
@@ -634,13 +634,13 @@ NA_HHDEF void na_ReadPNGsPLTChunk(NAPNG* png, NAPNGChunk* splt){
 
 
 
-NA_HHDEF void na_ReadPNGtIMEChunk(NAPNG* png, NAPNGChunk* time){
+NA_HDEF void na_ReadPNGtIMEChunk(NAPNG* png, NAPNGChunk* time){
   png->modificationdate = naMakeDateTimeFromBuffer(time->data, NA_DATETIME_FORMAT_PNG);
 }
 
 
 
-NA_HHDEF void na_ReadPNGiTXtChunk(NAPNG* png, NAPNGChunk* itxt){
+NA_HDEF void na_ReadPNGiTXtChunk(NAPNG* png, NAPNGChunk* itxt){
   // todo
 //  printf("itxt");
   NA_UNUSED(png);
@@ -649,7 +649,7 @@ NA_HHDEF void na_ReadPNGiTXtChunk(NAPNG* png, NAPNGChunk* itxt){
 
 
 
-NA_HHDEF void na_ReadPNGtEXtChunk(NAPNG* png, NAPNGChunk* text){
+NA_HDEF void na_ReadPNGtEXtChunk(NAPNG* png, NAPNGChunk* text){
   // todo
 //  printf("text");
   NA_UNUSED(png);
@@ -658,7 +658,7 @@ NA_HHDEF void na_ReadPNGtEXtChunk(NAPNG* png, NAPNGChunk* text){
 
 
 
-NA_HHDEF void na_ReadPNGzTXtChunk(NAPNG* png, NAPNGChunk* ztxt){
+NA_HDEF void na_ReadPNGzTXtChunk(NAPNG* png, NAPNGChunk* ztxt){
   // todo
 //  printf("ztxt");
   NA_UNUSED(png);
@@ -929,7 +929,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
 
 // This is the destructor for a PNG. It is marked as a helper as it should
 // only be called by the runtime system
-NA_HHDEF void na_DestructPNG(NAPNG* png){
+NA_HDEF void na_DestructPNG(NAPNG* png){
   naForeachListMutable(&(png->chunks), (NAMutator)na_DeallocPNGChunk);
   naClearList(&(png->chunks));
   if(png->pixeldata){naFree(png->pixeldata);}

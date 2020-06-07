@@ -1,6 +1,6 @@
 
 NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
-  tree->config = naRetainTreeConfiguration(config);
+  tree->config = na_RetainTreeConfiguration(config);
 
   #ifndef NDEBUG
     if(((tree->config->flags & NA_TREE_QUADTREE) || (tree->config->flags & NA_TREE_OCTTREE)) && !tree->config->configdata)
@@ -30,10 +30,10 @@ NA_IDEF void naEmptyTree(NATree* tree){
       naError("There are still iterators running on this tree. Did you miss a naClearTreeIterator call?");
   #endif
   if(tree->root){
-    if(naIsTreeRootLeaf(tree)){
-      naDestructTreeLeaf(tree->config, (NATreeLeaf*)tree->root);
+    if(na_IsTreeRootLeaf(tree)){
+      na_DestructTreeLeaf(tree->config, (NATreeLeaf*)tree->root);
     }else{
-      naDestructTreeNode(tree->config, (NATreeNode*)tree->root, NA_TRUE);
+      na_DestructTreeNode(tree->config, (NATreeNode*)tree->root, NA_TRUE);
     }
   }
   tree->root = NA_NULL;
@@ -163,7 +163,7 @@ NA_IDEF void naUpdateTree(NATree* tree){
     if(!tree->config->nodeUpdater)
       naError("tree is configured without nodeUpdater callback");
   #endif
-  if(tree->root && !naIsTreeRootLeaf(tree)){
+  if(tree->root && !na_IsTreeRootLeaf(tree)){
     na_UpdateTreeNodeCapturing(tree, (NATreeNode*)tree->root);
   }
 }
@@ -175,10 +175,10 @@ NA_IDEF NAPtr naGetRootNodeContent(NATree* tree)
   NAPtr retdata;
   if(tree->root){
     #ifndef NDEBUG
-      if(naIsTreeRootLeaf(tree))
+      if(na_IsTreeRootLeaf(tree))
         naError("Root of the tree is not a node");
     #endif
-    retdata = naGetTreeNodeData(tree->config, (NATreeNode*)(tree->root));
+    retdata = na_GetTreeNodeData(tree->config, (NATreeNode*)(tree->root));
   }else{
     retdata = naMakePtrNull();
   }
@@ -187,45 +187,45 @@ NA_IDEF NAPtr naGetRootNodeContent(NATree* tree)
 
 
 
-NA_HIDEF void naSetTreeRoot(NATree* tree, NATreeItem* newroot, NABool isLeaf){
+NA_HIDEF void na_SetTreeRoot(NATree* tree, NATreeItem* newroot, NABool isLeaf){
   #ifndef NDEBUG
     if(!newroot)
-      naCrash("Do not send null as new root. Use naClearTreeRoot for that.");
+      naCrash("Do not send null as new root. Use na_ClearTreeRoot for that.");
   #endif
   tree->root = newroot;
-  naMarkTreeRootLeaf(tree, isLeaf);
+  na_MarkTreeRootLeaf(tree, isLeaf);
   newroot->parent = NA_NULL;
 }
 
 
 
-NA_HIDEF void naClearTreeRoot(NATree* tree){
+NA_HIDEF void na_ClearTreeRoot(NATree* tree){
   tree->root = NA_NULL;
 }
 
 
 
-NA_HIDEF NABool naIsTreeRootLeaf(const NATree* tree){
+NA_HIDEF NABool na_IsTreeRootLeaf(const NATree* tree){
   return (NABool)((tree->flags & NA_TREE_FLAG_ROOT_IS_LEAF) == NA_TREE_FLAG_ROOT_IS_LEAF);
 }
 
 
 
-NA_HIDEF void naMarkTreeRootLeaf(NATree* tree, NABool isleaf){
+NA_HIDEF void na_MarkTreeRootLeaf(NATree* tree, NABool isleaf){
   tree->flags &= ~NA_TREE_FLAG_ROOT_IS_LEAF;
   tree->flags |= (isleaf * NA_TREE_FLAG_ROOT_IS_LEAF);
 }
 
 
 // todo: If this shows up in performance, adding rootparent again? Or adding childIndex as flag in every item?
-NA_HIDEF NABool naIsTreeItemLeaf(const NATree* tree, NATreeItem* item){
+NA_HIDEF NABool na_IsTreeItemLeaf(const NATree* tree, NATreeItem* item){
   NABool retvalue;
-  if(naIsTreeItemRoot(item)){
-    retvalue = naIsTreeRootLeaf(tree);
+  if(na_IsTreeItemRoot(item)){
+    retvalue = na_IsTreeRootLeaf(tree);
   }else{
-    NATreeNode* parent = naGetTreeItemParent(item);
+    NATreeNode* parent = na_GetTreeItemParent(item);
     NAInt childIndex = na_GetTreeNodeChildIndex(tree->config, parent, item);
-    retvalue = naIsNodeChildLeaf(parent, childIndex);
+    retvalue = na_IsNodeChildLeaf(parent, childIndex);
   }
   return retvalue;
 }

@@ -38,7 +38,7 @@ struct NARefCount{
 
 
 
-NA_HIDEF NAUInt naGetRefCountCount(const NARefCount* refCount){
+NA_HIDEF NAUInt na_GetRefCountCount(const NARefCount* refCount){
   return refCount->count;
 }
 

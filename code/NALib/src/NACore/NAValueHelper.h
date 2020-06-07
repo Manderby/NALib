@@ -39,23 +39,23 @@ NA_IAPI NABool naToggleFlagu(NAUInt* flags, NAUInt flag);
 
 // Converts an integer denoting an end or max to its counterpart. Also does
 // some checks if the values over- or underflow.
-NA_HIAPI int32   naMakeMaxWithEndi32          (int32 end);
-NA_HIAPI NAi64 naMakeMaxWithEndi64          (NAi64 end);
-NA_HIAPI NAInt   naMakeMaxWithEndi            (NAInt end);
-NA_HIAPI int32   naMakeEndWithMaxi32          (int32 max);
-NA_HIAPI NAi64 naMakeEndWithMaxi64          (NAi64 max);
-NA_HIAPI NAInt   naMakeEndWithMaxi            (NAInt max);
-NA_HIAPI double  naMakeEndWithStartAndLength  (double start, double length);
-NA_HIAPI float   naMakeEndWithStartAndLengthf (float  start, float  length);
-NA_HIAPI NAInt   naMakeEndWithStartAndLengthi (NAInt  start, NAInt  length);
-NA_HIAPI NAInt   naMakeMaxWithMinAndLengthi   (NAInt  min,   NAInt  length);
-NA_HIAPI double  naMakeLengthWithStartAndEnd  (double start, double end);
-NA_HIAPI float   naMakeLengthWithStartAndEndf (float  start, float  end);
-NA_HIAPI NAInt   naMakeLengthWithStartAndEndi (NAInt  start, NAInt  end);
-NA_HIAPI NAInt   naMakeLengthWithMinAndMaxi   (NAInt  min,   NAInt  max);
-                 
-NA_HIAPI NAInt   naMakeIntWithIntegerFloat    (float x);
-NA_HIAPI NAInt   naMakeIntWithIntegerDouble   (double x);
+NA_IAPI int32  naMakeMaxWithEndi32          (int32 end);
+NA_IAPI NAi64  naMakeMaxWithEndi64          (NAi64 end);
+NA_IAPI NAInt  naMakeMaxWithEndi            (NAInt end);
+NA_IAPI int32  naMakeEndWithMaxi32          (int32 max);
+NA_IAPI NAi64  naMakeEndWithMaxi64          (NAi64 max);
+NA_IAPI NAInt  naMakeEndWithMaxi            (NAInt max);
+NA_IAPI double naMakeEndWithStartAndLength  (double start, double length);
+NA_IAPI float  naMakeEndWithStartAndLengthf (float  start, float  length);
+NA_IAPI NAInt  naMakeEndWithStartAndLengthi (NAInt  start, NAInt  length);
+NA_IAPI NAInt  naMakeMaxWithMinAndLengthi   (NAInt  min,   NAInt  length);
+NA_IAPI double naMakeLengthWithStartAndEnd  (double start, double end);
+NA_IAPI float  naMakeLengthWithStartAndEndf (float  start, float  end);
+NA_IAPI NAInt  naMakeLengthWithStartAndEndi (NAInt  start, NAInt  end);
+NA_IAPI NAInt  naMakeLengthWithMinAndMaxi   (NAInt  min,   NAInt  max);
+
+NA_IAPI NAInt  naMakeIntWithIntegerFloat    (float x);
+NA_IAPI NAInt  naMakeIntWithIntegerDouble   (double x);
 
 
 // The following functions are mostly used in other datastructures such as
@@ -64,20 +64,20 @@ NA_HIAPI NAInt   naMakeIntWithIntegerDouble   (double x);
 // not useful when negative.
 
 // VALID means: Anything but NaN. Integer values therefore are always valid.
-NA_HIAPI NABool naIsOffsetValueValid  (double a);
-NA_HIAPI NABool naIsOffsetValueValidf (float  a);
-NA_HIAPI NABool naIsOffsetValueValidi (NAInt  a);
-NA_HIAPI NABool naIsOffsetValueValidu (NAUInt a);
-NA_HIAPI NABool naIsLengthValueValid  (double a);
-NA_HIAPI NABool naIsLengthValueValidf (float  a);
-NA_HIAPI NABool naIsLengthValueValidi (NAInt  a);
-NA_HIAPI NABool naIsLengthValueValidu (NAUInt a);
+NA_IAPI NABool naIsOffsetValueValid  (double a);
+NA_IAPI NABool naIsOffsetValueValidf (float  a);
+NA_IAPI NABool naIsOffsetValueValidi (NAInt  a);
+NA_IAPI NABool naIsOffsetValueValidu (NAUInt a);
+NA_IAPI NABool naIsLengthValueValid  (double a);
+NA_IAPI NABool naIsLengthValueValidf (float  a);
+NA_IAPI NABool naIsLengthValueValidi (NAInt  a);
+NA_IAPI NABool naIsLengthValueValidu (NAUInt a);
 
 // EMPTY means: Precisely Zero.
-NA_HIAPI NABool naIsLengthValueEmpty  (double a);
-NA_HIAPI NABool naIsLengthValueEmptyf (float  a);
-NA_HIAPI NABool naIsLengthValueEmptyi (NAInt  a);
-NA_HIAPI NABool naIsLengthValueEmptyu (NAUInt a);
+NA_IAPI NABool naIsLengthValueEmpty  (double a);
+NA_IAPI NABool naIsLengthValueEmptyf (float  a);
+NA_IAPI NABool naIsLengthValueEmptyi (NAInt  a);
+NA_IAPI NABool naIsLengthValueEmptyu (NAUInt a);
 
 // NEGATIVE means: Smaller than Zero.
 //
@@ -89,27 +89,27 @@ NA_HIAPI NABool naIsLengthValueEmptyu (NAUInt a);
 // Or the "End of file" marker EOF for example. But such situations are rare.
 // Try to use positive words whenever possible! For example, test for "Inside"
 // rather than "Outside".
-NA_HIAPI NABool naIsLengthValueNegative  (double a);
-NA_HIAPI NABool naIsLengthValueNegativef (float  a);
-NA_HIAPI NABool naIsLengthValueNegativei (NAInt  a);
-NA_HIAPI NABool naIsLengthValueNegativeu (NAUInt a);
+NA_IAPI NABool naIsLengthValueNegative  (double a);
+NA_IAPI NABool naIsLengthValueNegativef (float  a);
+NA_IAPI NABool naIsLengthValueNegativei (NAInt  a);
+NA_IAPI NABool naIsLengthValueNegativeu (NAUInt a);
 
 // USEFUL means: Positions must be valid. Lengths must be valid, not empty and
 // not negative.
-NA_HIAPI NABool naIsOffsetValueUseful  (double a);
-NA_HIAPI NABool naIsOffsetValueUsefulf (float  a);
-NA_HIAPI NABool naIsOffsetValueUsefuli (NAInt  a);
-NA_HIAPI NABool naIsOffsetValueUsefulu (NAUInt a);
-NA_HIAPI NABool naIsLengthValueUseful  (double a);
-NA_HIAPI NABool naIsLengthValueUsefulf (float  a);
-NA_HIAPI NABool naIsLengthValueUsefuli (NAInt  a);
-NA_HIAPI NABool naIsLengthValueUsefulu (NAUInt a);
+NA_IAPI NABool naIsOffsetValueUseful  (double a);
+NA_IAPI NABool naIsOffsetValueUsefulf (float  a);
+NA_IAPI NABool naIsOffsetValueUsefuli (NAInt  a);
+NA_IAPI NABool naIsOffsetValueUsefulu (NAUInt a);
+NA_IAPI NABool naIsLengthValueUseful  (double a);
+NA_IAPI NABool naIsLengthValueUsefulf (float  a);
+NA_IAPI NABool naIsLengthValueUsefuli (NAInt  a);
+NA_IAPI NABool naIsLengthValueUsefulu (NAUInt a);
 
 
 // Returns a value which is the given x floored to a multiple of
 // alignlength with an offset. Also works for negative values.
-NA_HIAPI NAInt naAlignValuei(NAInt x, NAInt offset, NAInt alignlength);
-NA_HIAPI double naAlignValued(double x, double offset, double alignlength);
+NA_IAPI NAInt naAlignValuei(NAInt x, NAInt offset, NAInt alignlength);
+NA_IAPI double naAlignValued(double x, double offset, double alignlength);
 
 
 
@@ -166,42 +166,42 @@ NA_IDEF NABool naToggleFlagu(NAUInt* flags, NAUInt flag){
 
 
 
-NA_HIDEF int32 naMakeMaxWithEndi32(int32 end){
+NA_IDEF int32 naMakeMaxWithEndi32(int32 end){
   #ifndef NDEBUG
     if(end == NA_MIN_i32)
       naError("Integer underflow");
   #endif
   return end - NA_ONE_i32;
 }
-NA_HIDEF NAi64 naMakeMaxWithEndi64(NAi64 end){
+NA_IDEF NAi64 naMakeMaxWithEndi64(NAi64 end){
   #ifndef NDEBUG
     if(naEquali64(end, NA_MIN_i64))
       naError("Integer underflow");
   #endif
   return naSubi64(end, NA_ONE_i64);
 }
-NA_HIDEF NAInt naMakeMaxWithEndi(NAInt end){
+NA_IDEF NAInt naMakeMaxWithEndi(NAInt end){
   #if NA_TYPE_NAINT_BITS == 32
     return naMakeMaxWithEndi32(end);
   #elif NA_TYPE_NAINT_BITS == 64
     return naMakeMaxWithEndi64(end);
   #endif
 }
-NA_HIDEF int32 naMakeEndWithMaxi32(int32 max){
+NA_IDEF int32 naMakeEndWithMaxi32(int32 max){
   #ifndef NDEBUG
     if(max == NA_MAX_i32)
       naError("Integer overflow");
   #endif
   return max + NA_ONE_i32;
 }
-NA_HIDEF NAi64 naMakeEndWithMaxi64(NAi64 max){
+NA_IDEF NAi64 naMakeEndWithMaxi64(NAi64 max){
   #ifndef NDEBUG
     if(naEquali64(max, NA_MAX_i64))
       naError("Integer overflow");
   #endif
   return naAddi64(max, NA_ONE_i64);
 }
-NA_HIDEF NAInt naMakeEndWithMaxi(NAInt max){
+NA_IDEF NAInt naMakeEndWithMaxi(NAInt max){
   #if NA_TYPE_NAINT_BITS == 32
     return naMakeEndWithMaxi32(max);
   #elif NA_TYPE_NAINT_BITS == 64
@@ -211,7 +211,7 @@ NA_HIDEF NAInt naMakeEndWithMaxi(NAInt max){
 
 
 
-NA_HIDEF double naMakeEndWithStartAndLength(double start, double length){
+NA_IDEF double naMakeEndWithStartAndLength(double start, double length){
   double result = start + length;
   #ifndef NDEBUG
     if(!naIsOffsetValueValid(result)){
@@ -220,7 +220,7 @@ NA_HIDEF double naMakeEndWithStartAndLength(double start, double length){
   #endif
   return result;
 }
-NA_HIDEF float naMakeEndWithStartAndLengthf(float start, float length){
+NA_IDEF float naMakeEndWithStartAndLengthf(float start, float length){
   float result = start + length;
   #ifndef NDEBUG
     if(!naIsOffsetValueValidf(result)){
@@ -229,7 +229,7 @@ NA_HIDEF float naMakeEndWithStartAndLengthf(float start, float length){
   #endif
   return result;
 }
-NA_HIDEF NAInt naMakeEndWithStartAndLengthi(NAInt start, NAInt length){
+NA_IDEF NAInt naMakeEndWithStartAndLengthi(NAInt start, NAInt length){
   NAInt result = start + length;
   #ifndef NDEBUG
     if(length > 0){
@@ -242,7 +242,7 @@ NA_HIDEF NAInt naMakeEndWithStartAndLengthi(NAInt start, NAInt length){
   #endif
   return result;
 }
-NA_HIDEF NAInt naMakeMaxWithMinAndLengthi(NAInt min, NAInt length){
+NA_IDEF NAInt naMakeMaxWithMinAndLengthi(NAInt min, NAInt length){
   NAInt result = naMakeMaxWithEndi(min + length);
   #ifndef NDEBUG
     if(length > 0){
@@ -257,16 +257,16 @@ NA_HIDEF NAInt naMakeMaxWithMinAndLengthi(NAInt min, NAInt length){
 }
 
 
-NA_HIDEF double naMakeLengthWithStartAndEnd(double start, double end){
+NA_IDEF double naMakeLengthWithStartAndEnd(double start, double end){
   return end - start;
 }
-NA_HIDEF float naMakeLengthWithStartAndEndf(float start, float end){
+NA_IDEF float naMakeLengthWithStartAndEndf(float start, float end){
   return end - start;
 }
-NA_HIDEF NAInt naMakeLengthWithStartAndEndi(NAInt start, NAInt end){
+NA_IDEF NAInt naMakeLengthWithStartAndEndi(NAInt start, NAInt end){
   return end - start;
 }
-NA_HIDEF NAInt naMakeLengthWithMinAndMaxi(NAInt min, NAInt max){
+NA_IDEF NAInt naMakeLengthWithMinAndMaxi(NAInt min, NAInt max){
   return naMakeEndWithMaxi(max) - min;
 }
 
@@ -274,14 +274,14 @@ NA_HIDEF NAInt naMakeLengthWithMinAndMaxi(NAInt min, NAInt max){
 
 #include "../NAMathOperators.h"
 
-NA_HIDEF NAInt naMakeIntWithIntegerFloat(float x){
+NA_IDEF NAInt naMakeIntWithIntegerFloat(float x){
   #ifndef NDEBUG
     if(naRoundf(x) != x)
       naError("Given float is not an integer number");
   #endif
   return (NAInt)x;
 }
-NA_HIDEF NAInt naMakeIntWithIntegerDouble(double x){
+NA_IDEF NAInt naMakeIntWithIntegerDouble(double x){
   #ifndef NDEBUG
     if(naRound(x) != x)
       naError("Given double is not an integer number");
@@ -291,17 +291,17 @@ NA_HIDEF NAInt naMakeIntWithIntegerDouble(double x){
 
 
 
-NA_HIDEF NABool naIsOffsetValueValid(double a){
+NA_IDEF NABool naIsOffsetValueValid(double a){
   return !naIsNaN(a);
 }
-NA_HIDEF NABool naIsOffsetValueValidf(float a){
+NA_IDEF NABool naIsOffsetValueValidf(float a){
   return !naIsNaNf(a);
 }
-NA_HIDEF NABool naIsOffsetValueValidi(NAInt a){
+NA_IDEF NABool naIsOffsetValueValidi(NAInt a){
   NA_UNUSED(a);
   return NA_TRUE;
 }
-NA_HIDEF NABool naIsOffsetValueValidu(NAUInt a){
+NA_IDEF NABool naIsOffsetValueValidu(NAUInt a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
@@ -311,17 +311,17 @@ NA_HIDEF NABool naIsOffsetValueValidu(NAUInt a){
   return NA_TRUE;
 }
 
-NA_HIDEF NABool naIsLengthValueValid(double a){
+NA_IDEF NABool naIsLengthValueValid(double a){
   return !naIsNaN(a);
 }
-NA_HIDEF NABool naIsLengthValueValidf(float a){
+NA_IDEF NABool naIsLengthValueValidf(float a){
   return !naIsNaNf(a);
 }
-NA_HIDEF NABool naIsLengthValueValidi(NAInt a){
+NA_IDEF NABool naIsLengthValueValidi(NAInt a){
   NA_UNUSED(a);
   return NA_TRUE;
 }
-NA_HIDEF NABool naIsLengthValueValidu(NAUInt a){
+NA_IDEF NABool naIsLengthValueValidu(NAUInt a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
@@ -331,16 +331,16 @@ NA_HIDEF NABool naIsLengthValueValidu(NAUInt a){
   return NA_TRUE;
 }
 
-NA_HIDEF NABool naIsLengthValueEmpty(double a){
+NA_IDEF NABool naIsLengthValueEmpty(double a){
   return (a == 0.);
 }
-NA_HIDEF NABool naIsLengthValueEmptyf(float a){
+NA_IDEF NABool naIsLengthValueEmptyf(float a){
   return (a == 0.f);
 }
-NA_HIDEF NABool naIsLengthValueEmptyi(NAInt a){
+NA_IDEF NABool naIsLengthValueEmptyi(NAInt a){
   return (a == 0);
 }
-NA_HIDEF NABool naIsLengthValueEmptyu(NAUInt a){
+NA_IDEF NABool naIsLengthValueEmptyu(NAUInt a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
@@ -349,16 +349,16 @@ NA_HIDEF NABool naIsLengthValueEmptyu(NAUInt a){
 }
 
 
-NA_HIDEF NABool naIsLengthValueNegative(double a){
+NA_IDEF NABool naIsLengthValueNegative(double a){
   return (a < 0.);
 }
-NA_HIDEF NABool naIsLengthValueNegativef(float a){
+NA_IDEF NABool naIsLengthValueNegativef(float a){
   return (a < 0.f);
 }
-NA_HIDEF NABool naIsLengthValueNegativei(NAInt a){
+NA_IDEF NABool naIsLengthValueNegativei(NAInt a){
   return (a < 0);
 }
-NA_HIDEF NABool naIsLengthValueNegativeu(NAUInt a){
+NA_IDEF NABool naIsLengthValueNegativeu(NAUInt a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
@@ -369,17 +369,17 @@ NA_HIDEF NABool naIsLengthValueNegativeu(NAUInt a){
 }
 
 
-NA_HIDEF NABool naIsOffsetValueUseful(double a){
+NA_IDEF NABool naIsOffsetValueUseful(double a){
   return !naIsNaN(a);
 }
-NA_HIDEF NABool naIsOffsetValueUsefulf(float a){
+NA_IDEF NABool naIsOffsetValueUsefulf(float a){
   return !naIsNaNf(a);
 }
-NA_HIDEF NABool naIsOffsetValueUsefuli(NAInt a){
+NA_IDEF NABool naIsOffsetValueUsefuli(NAInt a){
   NA_UNUSED(a);
   return NA_TRUE;
 }
-NA_HIDEF NABool naIsOffsetValueUsefulu(NAUInt a){
+NA_IDEF NABool naIsOffsetValueUsefulu(NAUInt a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
@@ -390,18 +390,18 @@ NA_HIDEF NABool naIsOffsetValueUsefulu(NAUInt a){
 }
 
 
-NA_HIDEF NABool naIsLengthValueUseful(double a){
+NA_IDEF NABool naIsLengthValueUseful(double a){
   // Note that this test will return NA_FALSE if a is NaN.
   return (a > 0.);
 }
-NA_HIDEF NABool naIsLengthValueUsefulf(float a){
+NA_IDEF NABool naIsLengthValueUsefulf(float a){
   // Note that this test will return NA_FALSE if a is NaN.
   return (a > 0.);
 }
-NA_HIDEF NABool naIsLengthValueUsefuli(NAInt a){
+NA_IDEF NABool naIsLengthValueUsefuli(NAInt a){
   return (a > 0);
 }
-NA_HIDEF NABool naIsLengthValueUsefulu(NAUInt a){
+NA_IDEF NABool naIsLengthValueUsefulu(NAUInt a){
   #ifndef NDEBUG
     if((NAInt)a < 0)
       naError("Unsigned integer looks like a negative number");
@@ -411,7 +411,7 @@ NA_HIDEF NABool naIsLengthValueUsefulu(NAUInt a){
 
 
 
-NA_HIDEF NAInt naAlignValuei(NAInt x, NAInt offset, NAInt alignlength){
+NA_IDEF NAInt naAlignValuei(NAInt x, NAInt offset, NAInt alignlength){
   NAInt shiftx;
   #ifndef NDEBUG
     if(!naIsLengthValueUsefuli(alignlength))
@@ -424,7 +424,7 @@ NA_HIDEF NAInt naAlignValuei(NAInt x, NAInt offset, NAInt alignlength){
     return (((NAInt)((shiftx + 0) / alignlength) - 0) * alignlength) + offset;
   }
 }
-NA_HIDEF double naAlignValued(double x, double offset, double alignlength){
+NA_IDEF double naAlignValued(double x, double offset, double alignlength){
   double shiftx;
   #ifndef NDEBUG
     if(!naIsLengthValueUseful(alignlength))

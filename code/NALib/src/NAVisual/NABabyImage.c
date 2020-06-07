@@ -23,7 +23,7 @@ NA_DEF NAInt naGetBabyImageValuesPerLine(const NABabyImage* image){
 
 
 
-NA_HIDEF NAInt naGetBabyImagePixelCount(const NABabyImage* image){
+NA_HIDEF NAInt na_GetBabyImagePixelCount(const NABabyImage* image){
   #ifndef NDEBUG
     if(!image)
       naCrash("Given image is a Null-Pointer");
@@ -33,7 +33,7 @@ NA_HIDEF NAInt naGetBabyImagePixelCount(const NABabyImage* image){
 
 
 
-NA_HIDEF NAInt naGetBabyImageDataSize(const NABabyImage* image){
+NA_HIDEF NAInt na_GetBabyImageDataSize(const NABabyImage* image){
   #ifndef NDEBUG
     if(!image)
       naCrash("Given image is a Null-Pointer");
@@ -77,10 +77,10 @@ NA_DEF NABabyImage* naCreateBabyImage(NASizei size, const NABabyColor color){
   naInitRefCount(&image->refCount);
   image->width = (int32)size.width;
   image->height = (int32)size.height;
-  image->data = naMalloc(naGetBabyImageDataSize(image));
+  image->data = naMalloc(na_GetBabyImageDataSize(image));
   if(color){
     NAInt i;
-    NAInt pixelCount = naGetBabyImagePixelCount(image);
+    NAInt pixelCount = na_GetBabyImagePixelCount(image);
     float* ptr = image->data;
     for(i = 0; i < pixelCount; i++){
       naCopyV4f(ptr, color);
@@ -92,7 +92,7 @@ NA_DEF NABabyImage* naCreateBabyImage(NASizei size, const NABabyColor color){
 
 
 
-NA_HHDEF void na_BlendBabyImage(NAInt pixelCount, float* ret, const float* base, const float* top, NABlendMode mode, float blend, NABool baseIsImage, NABool topIsImage){
+NA_HDEF void na_BlendBabyImage(NAInt pixelCount, float* ret, const float* base, const float* top, NABlendMode mode, float blend, NABool baseIsImage, NABool topIsImage){
   NAInt i;
   blend = naLinearizeColorValue(blend);
   for(i = 0; i < pixelCount; i++){
@@ -167,7 +167,7 @@ NA_DEF NABabyImage* naCreateBabyImageWithTint(const NABabyImage* base, const NAB
   #endif
   
   retimage = naCreateBabyImage(naGetBabyImageSize(base), NA_NULL);
-  pixelCount = naGetBabyImagePixelCount(base);
+  pixelCount = na_GetBabyImagePixelCount(base);
   
   baseptr = base->data;
   na_BlendBabyImage(pixelCount, retimage->data, baseptr, tint, mode, blend, NA_TRUE, NA_FALSE);
@@ -189,7 +189,7 @@ NA_DEF NABabyImage* naCreateBabyImageWithBlend(const NABabyImage* base, const NA
   #endif
   
   retimage = naCreateBabyImage(naGetBabyImageSize(top), NA_NULL);
-  pixelCount = naGetBabyImagePixelCount(top);
+  pixelCount = na_GetBabyImagePixelCount(top);
     
   if(base){
     const float* baseptr = base->data;
@@ -256,7 +256,7 @@ NA_DEF NABabyImage* naCreateBabyImageWithHalfSize(const NABabyImage* image){
 
 
 
-NA_HHDEF void na_DestroyBabyImage(NABabyImage* image){
+NA_HDEF void na_DestroyBabyImage(NABabyImage* image){
   naFree(image->data);
   naFree(image);
 }
@@ -290,7 +290,7 @@ NA_DEF void naFillBabyImageWithu8(NABabyImage* image, const void* data, NABool t
     NAInt pixelCount;
     NAInt i;
     u8ptr = data;
-    pixelCount = naGetBabyImagePixelCount(image);
+    pixelCount = na_GetBabyImagePixelCount(image);
     for(i = 0; i < pixelCount; i++){
       naFillBabyColorWithu8(imgptr, u8ptr, bufferType);
       imgptr += NA_BABY_COLOR_CHANNEL_COUNT;
@@ -320,7 +320,7 @@ NA_DEF void naConvertBabyImageTou8(const NABabyImage* image, void* data, NABool 
     NAInt pixelCount;
     NAInt i;
     u8ptr = data;
-    pixelCount = naGetBabyImagePixelCount(image);
+    pixelCount = na_GetBabyImagePixelCount(image);
     for(i = 0; i < pixelCount; i++){
       naFillu8WithBabyColor(u8ptr, imgptr, bufferType);
       imgptr += NA_BABY_COLOR_CHANNEL_COUNT;

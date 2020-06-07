@@ -439,7 +439,7 @@
 
     return retValuei;
   }
-  NA_HIDEF void naComputeu64Division(NAu64 a, NAu64 b, NAu64* div, NAu64* rem){
+  NA_HIDEF void na_Computeu64Division(NAu64 a, NAu64 b, NAu64* div, NAu64* rem){
     NAu64 bTmp;
     NAu64 aHighestBit;
     NAu64 bHighestBit;
@@ -494,13 +494,13 @@
   NA_IDEF NAu64 naDivu64(NAu64 a, NAu64 b){
     NAu64 divInt;
     NAu64 remInt;
-    naComputeu64Division(a, b, &divInt, &remInt);
+    na_Computeu64Division(a, b, &divInt, &remInt);
     return divInt;
   }
   NA_IDEF NAu64 naModu64(NAu64 a, NAu64 b){
     NAu64 divInt;
     NAu64 remInt;
-    naComputeu64Division(a, b, &divInt, &remInt);
+    na_Computeu64Division(a, b, &divInt, &remInt);
     return remInt;
   }
 

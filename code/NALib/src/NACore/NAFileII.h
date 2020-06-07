@@ -246,7 +246,7 @@ NA_IDEF NAFile* naCreateFileWritingStderr(){
 
 
 
-NA_HHAPI void na_DeallocFile(NAFile* file);
+NA_HAPI void na_DeallocFile(NAFile* file);
 
 
 

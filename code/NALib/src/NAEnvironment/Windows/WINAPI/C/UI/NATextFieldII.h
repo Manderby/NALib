@@ -190,21 +190,21 @@ NA_DEF void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind){
 
 
 
-NA_HHDEF NAUIElement** na_GetTextFieldNextTabReference(NATextField* textField){
+NA_HDEF NAUIElement** na_GetTextFieldNextTabReference(NATextField* textField){
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
   return &(winapiTextField->nextTabStop);
 }
 
 
 
-NA_HHDEF NAUIElement** na_GetTextFieldPrevTabReference(NATextField* textField){
+NA_HDEF NAUIElement** na_GetTextFieldPrevTabReference(NATextField* textField){
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
   return &(winapiTextField->prevTabStop);
 }
 
 
 
-NA_HHDEF NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField){
+NA_HDEF NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField){
  NA_UNUSED(textField);
  return naMakeRectS(20, 40, 100, 50);
 }

@@ -5,10 +5,10 @@
 
 
 // Every Add resulting in a change in the tree must go through this function.
-NA_HHDEF NATreeLeaf* na_AddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
+NA_HDEF NATreeLeaf* na_AddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder){
   // We need to create a node holding both the old leaf and the new one.
   NATreeLeaf* contentleaf = tree->config->leafInserter(tree, item, key, content, insertOrder);
-  NATreeNode* parent = naGetTreeItemParent(&(contentleaf->item));
+  NATreeNode* parent = na_GetTreeItemParent(&(contentleaf->item));
   if(parent){
     na_UpdateTreeNodeBubbling(tree, parent, na_GetTreeNodeChildIndex(tree->config, parent, &(contentleaf->item)));
   }
@@ -17,16 +17,16 @@ NA_HHDEF NATreeLeaf* na_AddTreeContentInPlace(NATree* tree, NATreeItem* item, co
 
 
 
-NA_HHDEF void na_FillTreeNodeChildData(const NATreeConfiguration* config, NAPtr childdata[NA_TREE_NODE_MAX_CHILDS], NATreeNode* node){
+NA_HDEF void na_FillTreeNodeChildData(const NATreeConfiguration* config, NAPtr childdata[NA_TREE_NODE_MAX_CHILDS], NATreeNode* node){
   NAInt i;
   for(i = 0; i < config->childpernode; i++){
-    NATreeItem* child = naGetTreeNodeChild(config, node, i);
+    NATreeItem* child = na_GetTreeNodeChild(config, node, i);
     if(!child){
       childdata[i] = naMakePtrNull();
-    }else if(naIsNodeChildLeaf(node, i)){
-      childdata[i] = naGetTreeLeafData(config, (NATreeLeaf*)child);
+    }else if(na_IsNodeChildLeaf(node, i)){
+      childdata[i] = na_GetTreeLeafData(config, (NATreeLeaf*)child);
     }else{
-      childdata[i] = naGetTreeNodeData(config, (NATreeNode*)child);
+      childdata[i] = na_GetTreeNodeData(config, (NATreeNode*)child);
     }
   }
 }
@@ -36,7 +36,7 @@ NA_HHDEF void na_FillTreeNodeChildData(const NATreeConfiguration* config, NAPtr 
 // Expects the parent node of a child which has changed. The segment indicates
 // which segment caused the trouble. If -1 is given, there is no particular
 // node.
-NA_HHDEF void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childIndex){
+NA_HDEF void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childIndex){
   NABool bubble = NA_TRUE;
 
   while(bubble && parent){
@@ -44,12 +44,12 @@ NA_HHDEF void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt 
     if(tree->config->nodeUpdater){
       NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
       na_FillTreeNodeChildData(tree->config, childdata, parent);
-      bubble = tree->config->nodeUpdater(naGetTreeNodeData(tree->config, parent), childdata, childIndex, parent->flags & NA_TREE_NODE_CHILDS_MASK);
+      bubble = tree->config->nodeUpdater(na_GetTreeNodeData(tree->config, parent), childdata, childIndex, parent->flags & NA_TREE_NODE_CHILDS_MASK);
     }
 
     // Then we propagate the message towards the root if requested.
-    if(bubble && !naIsTreeItemRoot(&(parent->item))){
-      NATreeNode* grandparent = naGetTreeItemParent(&(parent->item));
+    if(bubble && !na_IsTreeItemRoot(&(parent->item))){
+      NATreeNode* grandparent = na_GetTreeItemParent(&(parent->item));
       childIndex = na_GetTreeNodeChildIndex(tree->config, grandparent, &(parent->item));
       parent = grandparent;
     }else{
@@ -68,7 +68,7 @@ NA_HHDEF void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt 
 // upwards again so that every node in the path receives a childchanged
 // message which again can define if the message shall be bubbled even
 // further.
-NA_HHDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
+NA_HDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   NABool bubble;
   NAInt i;
   #ifndef NDEBUG
@@ -79,9 +79,9 @@ NA_HHDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
 
   // Go through all childs and call the capturing message recursively.
   for(i = 0; i < tree->config->childpernode; i++){
-    NATreeNode* subnode = (NATreeNode*)naGetTreeNodeChild(tree->config, node, i);
+    NATreeNode* subnode = (NATreeNode*)na_GetTreeNodeChild(tree->config, node, i);
     if(subnode){
-      if(naIsNodeChildLeaf(node, i)){
+      if(na_IsNodeChildLeaf(node, i)){
         bubble |= NA_TRUE;
       }else{
         // this node stores subnodes
@@ -95,7 +95,7 @@ NA_HHDEF NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node){
   if(bubble){
     NAPtr childdata[NA_TREE_NODE_MAX_CHILDS];
     na_FillTreeNodeChildData(tree->config, childdata, node);
-    bubble = tree->config->nodeUpdater(naGetTreeNodeData(tree->config, node), childdata, -1, node->flags & NA_TREE_NODE_CHILDS_MASK);
+    bubble = tree->config->nodeUpdater(na_GetTreeNodeData(tree->config, node), childdata, -1, node->flags & NA_TREE_NODE_CHILDS_MASK);
   }
 
   return bubble;

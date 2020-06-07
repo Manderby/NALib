@@ -161,51 +161,51 @@ extern NA_Application* na_App;
 // gathered here. You are free to use them but note that these are supposed to
 // be helper functions.
 
-NA_HHAPI void na_UnregisterUIElement(NA_UIElement* coreUiElement);
-NA_HHAPI void na_SetUIElementParent(NAUIElement* uiElement, NAUIElement* parent);
-NA_HHAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
-NA_HHAPI void na_BlockUIElementNotifications(NA_UIElement* elem);
-NA_HHAPI void na_AllowUIElementNotifications(NA_UIElement* elem);
-NA_HHAPI NABool na_AreUIElementNotificationsAllowed(NA_UIElement* elem);
+NA_HAPI void na_UnregisterUIElement(NA_UIElement* coreUiElement);
+NA_HAPI void na_SetUIElementParent(NAUIElement* uiElement, NAUIElement* parent);
+NA_HAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
+NA_HAPI void na_BlockUIElementNotifications(NA_UIElement* elem);
+NA_HAPI void na_AllowUIElementNotifications(NA_UIElement* elem);
+NA_HAPI NABool na_AreUIElementNotificationsAllowed(NA_UIElement* elem);
 
-NA_HHAPI NAApplication* na_NewApplication(void);
-NA_HHAPI void na_InitApplication(NA_Application* coreApplication, NANativeID nativeId);
-NA_HHAPI void na_ClearApplication(NA_Application* coreApplication);
+NA_HAPI NAApplication* na_NewApplication(void);
+NA_HAPI void na_InitApplication(NA_Application* coreApplication, NANativeID nativeId);
+NA_HAPI void na_ClearApplication(NA_Application* coreApplication);
 
-NA_HHAPI void na_InitScreen(NA_Screen* corescreen, void* nativeId);
-NA_HHAPI void na_ClearScreen(NA_Screen* corescreen);
+NA_HAPI void na_InitScreen(NA_Screen* corescreen, void* nativeId);
+NA_HAPI void na_ClearScreen(NA_Screen* corescreen);
 
-NA_HHAPI void na_InitWindow(NA_Window* coreWindow, void* nativeId, NA_Space* contentspace, NABool fullscreen, NABool resizeable, NARect windowedFrame);
-NA_HHAPI void na_ClearWindow(NA_Window* coreWindow);
-NA_HHAPI void na_RememberWindowPosition(NA_Window* coreWindow);
-NA_HHAPI NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window);
+NA_HAPI void na_InitWindow(NA_Window* coreWindow, void* nativeId, NA_Space* contentspace, NABool fullscreen, NABool resizeable, NARect windowedFrame);
+NA_HAPI void na_ClearWindow(NA_Window* coreWindow);
+NA_HAPI void na_RememberWindowPosition(NA_Window* coreWindow);
+NA_HAPI NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window);
 
-NA_HHAPI void na_InitSpace(NA_Space* corespace, void* nativeId);
-NA_HHAPI void na_ClearSpace(NA_Space* corecorespace);
+NA_HAPI void na_InitSpace(NA_Space* corespace, void* nativeId);
+NA_HAPI void na_ClearSpace(NA_Space* corecorespace);
 
-NA_HHAPI void na_InitImageSpace(NA_ImageSpace* coreImageSpace, void* nativeId);
-NA_HHAPI void na_ClearImageSpace(NA_ImageSpace* corecoreImageSpace);
+NA_HAPI void na_InitImageSpace(NA_ImageSpace* coreImageSpace, void* nativeId);
+NA_HAPI void na_ClearImageSpace(NA_ImageSpace* corecoreImageSpace);
 
-NA_HHAPI void na_InitOpenGLSpace(NA_OpenGLSpace* coreOpenGLspace, void* nativeId);
-NA_HHAPI void na_ClearOpenGLSpace(NA_OpenGLSpace* corecoreOpenGLspace);
+NA_HAPI void na_InitOpenGLSpace(NA_OpenGLSpace* coreOpenGLspace, void* nativeId);
+NA_HAPI void na_ClearOpenGLSpace(NA_OpenGLSpace* corecoreOpenGLspace);
 
-NA_HHAPI void na_InitButton(NA_Button* coreButton, void* nativeId);
-NA_HHAPI void na_ClearButton(NA_Button* coreButton);
+NA_HAPI void na_InitButton(NA_Button* coreButton, void* nativeId);
+NA_HAPI void na_ClearButton(NA_Button* coreButton);
 
-NA_HHAPI void na_InitRadio(NA_Radio* coreRadio, void* nativeId);
-NA_HHAPI void na_ClearRadio(NA_Radio* coreRadio);
+NA_HAPI void na_InitRadio(NA_Radio* coreRadio, void* nativeId);
+NA_HAPI void na_ClearRadio(NA_Radio* coreRadio);
 
-NA_HHAPI void na_InitCheckBox(NA_CheckBox* coreCheckBox, void* nativeId);
-NA_HHAPI void na_ClearCheckBox(NA_CheckBox* coreCheckBox);
+NA_HAPI void na_InitCheckBox(NA_CheckBox* coreCheckBox, void* nativeId);
+NA_HAPI void na_ClearCheckBox(NA_CheckBox* coreCheckBox);
 
-NA_HHAPI void na_InitLabel(NA_Label* coreLabel, void* nativeId);
-NA_HHAPI void na_ClearLabel(NA_Label* coreLabel);
+NA_HAPI void na_InitLabel(NA_Label* coreLabel, void* nativeId);
+NA_HAPI void na_ClearLabel(NA_Label* coreLabel);
 
-NA_HHAPI void na_InitTextField(NA_TextField* coreTextField, void* nativeId);
-NA_HHAPI void na_ClearTextField(NA_TextField* coreTextField);
+NA_HAPI void na_InitTextField(NA_TextField* coreTextField, void* nativeId);
+NA_HAPI void na_ClearTextField(NA_TextField* coreTextField);
 
-NA_HHAPI void na_InitTextBox(NA_TextBox* coreTextBox, void* nativeId);
-NA_HHAPI void na_ClearTextBox(NA_TextBox* coreTextBox);
+NA_HAPI void na_InitTextBox(NA_TextBox* coreTextBox, void* nativeId);
+NA_HAPI void na_ClearTextBox(NA_TextBox* coreTextBox);
 
 
 
@@ -214,12 +214,12 @@ NA_HHAPI void na_ClearTextBox(NA_TextBox* coreTextBox);
 // dependent on the system running. When handling events, a native ID is sent
 // but this native ID can in general not be mapped directly to a corresponding
 // NALib struct. This function solves that. Slow, but does the job.
-NA_HHAPI void* na_GetUINALibEquivalent(void* nativeID);
+NA_HAPI void* na_GetUINALibEquivalent(void* nativeID);
 
 
-NA_HHAPI NABool na_IsCoreApplicationRunning(void);
+NA_HAPI NABool na_IsCoreApplicationRunning(void);
 
-NA_HHAPI NAFont na_GetFontWithKind(NAFontKind kind);
+NA_HAPI NAFont na_GetFontWithKind(NAFontKind kind);
 
 // Dispatches a command with the given uiElement.
 // As long as the command has not been finished using NA_TRUE as a return value
@@ -235,25 +235,25 @@ NA_HHAPI NAFont na_GetFontWithKind(NAFontKind kind);
 // processed by the calling function. This is especially important on Windows
 // where non-handling of certain events might interrupt the whole messaging
 // chain.
-NA_HHAPI NABool na_DispatchUIElementCommand(  NA_UIElement* element, NAUICommand command);
+NA_HAPI NABool na_DispatchUIElementCommand(  NA_UIElement* element, NAUICommand command);
 
 // Mouse related functions
-NA_HHAPI void na_SetMouseWarpedTo(NAPos newpos);
-NA_HHAPI void na_SetMouseMovedByDiff(double deltaX, double deltaY);
-NA_HHAPI void na_SetMouseEnteredAtPos(NAPos newpos);
-NA_HHAPI void na_SetMouseExitedAtPos(NAPos newpos);
+NA_HAPI void na_SetMouseWarpedTo(NAPos newpos);
+NA_HAPI void na_SetMouseMovedByDiff(double deltaX, double deltaY);
+NA_HAPI void na_SetMouseEnteredAtPos(NAPos newpos);
+NA_HAPI void na_SetMouseExitedAtPos(NAPos newpos);
 
 
 
 // To be implemented in the system dependent files:
 
-NA_HHAPI void na_RefreshUIElementNow(NAUIElement* uiElement);
+NA_HAPI void na_RefreshUIElementNow(NAUIElement* uiElement);
 
 // Calls the system specific method to clear/deallocate the given native id.
-NA_HHAPI void na_ClearUINativeId(NANativeID nativeId);
+NA_HAPI void na_ClearUINativeId(NANativeID nativeId);
 
-NA_HHAPI void* na_AllocMouseTracking(NANativeID nativeId);
-NA_HHAPI void na_DeallocMouseTracking(void* tracking);
+NA_HAPI void* na_AllocMouseTracking(NANativeID nativeId);
+NA_HAPI void na_DeallocMouseTracking(void* tracking);
 
 
 

@@ -101,7 +101,7 @@ NA_DEF void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind){
 
 
 
-NA_HHDEF NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField){
+NA_HDEF NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField){
   NA_UNUSED(textField);
   return naMakeRectS(20, 40, 100, 50);
 }

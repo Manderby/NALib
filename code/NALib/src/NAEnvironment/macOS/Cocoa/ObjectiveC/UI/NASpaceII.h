@@ -104,7 +104,7 @@ NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos){
 
 
 
-NA_HHDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
+NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
   NARect rect;
   NSRect contentrect;
   NARect windowrect;

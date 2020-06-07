@@ -69,7 +69,7 @@ NA_DEF NABufferIterator naMakeBufferModifier(NABuffer* buffer){
 NA_DEF void naClearBufferIterator(NABufferIterator* iter){
   #ifndef NDEBUG
     NABuffer* mutablebuffer;
-    mutablebuffer = (NABuffer*)naGetBufferIteratorBufferConst(iter);
+    mutablebuffer = (NABuffer*)na_GetBufferIteratorBufferConst(iter);
     if(mutablebuffer->iterCount == 0)
       naError("Too many clears: Buffer has no iterators to clear.");
   #endif
@@ -81,7 +81,7 @@ NA_DEF void naClearBufferIterator(NABufferIterator* iter){
 
 
 
-NA_HHDEF NABool na_AccumulateBufferLocation(void* token, NAPtr nodedata, NAInt childIndex){
+NA_HDEF NABool na_AccumulateBufferLocation(void* token, NAPtr nodedata, NAInt childIndex){
   NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
   NABufferTreeNodeData* buffernodedata = (NABufferTreeNodeData*)naGetPtrConst(nodedata);
   if(childIndex == 1){
@@ -100,7 +100,7 @@ NA_DEF NAInt naGetBufferLocation(const NABufferIterator* iter){
   if(naIsTreeAtInitial(&(iter->partiter))){
     return iter->partoffset;
   }else{
-    const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+    const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
     NABufferSearchToken token;
     token.searchoffset = 0;
     token.curoffset = 0;
@@ -114,7 +114,7 @@ NA_DEF NAInt naGetBufferLocation(const NABufferIterator* iter){
 
 
 // Callback for naLocateBufferAbsolute
-NA_HHDEF NAInt na_SearchBufferNode(void* token, NAPtr data){
+NA_HDEF NAInt na_SearchBufferNode(void* token, NAPtr data){
   NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
   NABufferTreeNodeData* nodedata = (NABufferTreeNodeData*)naGetPtrMutable(data);
   NAInt nextIndex;
@@ -135,7 +135,7 @@ NA_HHDEF NAInt na_SearchBufferNode(void* token, NAPtr data){
 
 
 // Callback for naLocateBufferAbsolute
-NA_HHDEF NAInt na_SearchBufferLeaf(void* token, NAPtr data){
+NA_HDEF NAInt na_SearchBufferLeaf(void* token, NAPtr data){
   NABufferSearchToken* searchtoken = (NABufferSearchToken*)token;
   NABufferPart* part = (NABufferPart*)naGetPtrMutable(data);
   NAInt nextIndex;
@@ -150,7 +150,7 @@ NA_HHDEF NAInt na_SearchBufferLeaf(void* token, NAPtr data){
 
 
 
-NA_HHDEF NABool na_LocateBufferStart(NABufferIterator* iter){
+NA_HDEF NABool na_LocateBufferStart(NABufferIterator* iter){
   #ifndef NDEBUG
     if(iter->curbit != 0)
       naError("Buffer bitcount is not null.");
@@ -159,7 +159,7 @@ NA_HHDEF NABool na_LocateBufferStart(NABufferIterator* iter){
   iter->linenum = 0;
   naLocateTreeFirst(&(iter->partiter));
   if(naIsTreeAtInitial(&(iter->partiter))){
-    const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+    const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
     iter->partoffset = buffer->range.origin;
     return NA_FALSE;
   }else{
@@ -170,7 +170,7 @@ NA_HHDEF NABool na_LocateBufferStart(NABufferIterator* iter){
 
 
 
-NA_HHDEF NABool na_LocateBufferLastPart(NABufferIterator* iter){
+NA_HDEF NABool na_LocateBufferLastPart(NABufferIterator* iter){
   #ifndef NDEBUG
     if(iter->curbit != 0)
       naError("Buffer bitcount is not null.");
@@ -179,7 +179,7 @@ NA_HHDEF NABool na_LocateBufferLastPart(NABufferIterator* iter){
   iter->linenum = 0;
   naLocateTreeLast(&(iter->partiter));
   if(naIsTreeAtInitial(&(iter->partiter))){
-    const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+    const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
     iter->partoffset = naGetRangeiEnd(buffer->range);
     return NA_FALSE;
   }else{
@@ -190,7 +190,7 @@ NA_HHDEF NABool na_LocateBufferLastPart(NABufferIterator* iter){
 
 
 
-NA_HHDEF NABool na_LocateBufferNextPart(NABufferIterator* iter){
+NA_HDEF NABool na_LocateBufferNextPart(NABufferIterator* iter){
   #ifndef NDEBUG
     if(iter->curbit != 0)
       naError("Buffer bitcount is not null.");
@@ -199,7 +199,7 @@ NA_HHDEF NABool na_LocateBufferNextPart(NABufferIterator* iter){
   iter->linenum = 0;
   naIterateTree(&(iter->partiter), NA_NULL, NA_NULL);
   if(naIsTreeAtInitial(&(iter->partiter))){
-    const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+    const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
     iter->partoffset = naGetRangeiEnd(buffer->range);
     return NA_FALSE;
   }else{
@@ -210,7 +210,7 @@ NA_HHDEF NABool na_LocateBufferNextPart(NABufferIterator* iter){
 
 
 
-NA_HHDEF NABool na_LocateBufferPrevPartMax(NABufferIterator* iter){
+NA_HDEF NABool na_LocateBufferPrevPartMax(NABufferIterator* iter){
   #ifndef NDEBUG
     if(iter->curbit != 0)
       naError("Buffer bitcount is not null.");
@@ -219,42 +219,42 @@ NA_HHDEF NABool na_LocateBufferPrevPartMax(NABufferIterator* iter){
   iter->linenum = 0;
   naIterateTreeBack(&(iter->partiter), NA_NULL, NA_NULL);
   if(naIsTreeAtInitial(&(iter->partiter))){
-    const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+    const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
     iter->partoffset = buffer->range.origin;
     return NA_FALSE;
   }else{
-    iter->partoffset = na_GetBufferPartByteSize(naGetBufferPart(iter)) - 1;
+    iter->partoffset = na_GetBufferPartByteSize(na_GetBufferPart(iter)) - 1;
     return NA_TRUE;
   }
 }
 
 
 
-NA_HHDEF NABool na_LocateBufferMax(NABufferIterator* iter){
+NA_HDEF NABool na_LocateBufferMax(NABufferIterator* iter){
   #ifndef NDEBUG
     if(iter->curbit != 0)
       naError("Buffer bitcount is not null.");
   #endif
   naLocateTreeLast(&(iter->partiter));
   if(naIsTreeAtInitial(&(iter->partiter))){
-    const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+    const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
     iter->partoffset = naGetRangeiEnd(buffer->range);
     return NA_FALSE;
   }else{
-    iter->partoffset = na_GetBufferPartByteSize(naGetBufferPart(iter)) - 1;
+    iter->partoffset = na_GetBufferPartByteSize(na_GetBufferPart(iter)) - 1;
     return NA_TRUE;
   }
 }
 
 
 
-NA_HHDEF NABool na_LocateBufferEnd(NABufferIterator* iter){
+NA_HDEF NABool na_LocateBufferEnd(NABufferIterator* iter){
   const NABuffer* buffer;
   #ifndef NDEBUG
     if(iter->curbit != 0)
       naError("Buffer bitcount is not null.");
   #endif
-  buffer = naGetBufferIteratorBufferConst(iter);
+  buffer = na_GetBufferIteratorBufferConst(iter);
   if(buffer->range.length){
     iter->partoffset = naGetRangeiEnd(buffer->range);
   }else{
@@ -265,7 +265,7 @@ NA_HHDEF NABool na_LocateBufferEnd(NABufferIterator* iter){
 
 
 
-NA_HHDEF NABool na_IterateBufferPart(NABufferIterator* iter){
+NA_HDEF NABool na_IterateBufferPart(NABufferIterator* iter){
   NABool success;
   #ifndef NDEBUG
     if(iter->curbit != 0)
@@ -275,7 +275,7 @@ NA_HHDEF NABool na_IterateBufferPart(NABufferIterator* iter){
   #endif
   success = naIterateTree(&(iter->partiter), NA_NULL, NA_NULL);
   if(!success){
-    const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+    const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
     iter->partoffset = naGetRangeiEnd(buffer->range);
   }
   return success;
@@ -284,7 +284,7 @@ NA_HHDEF NABool na_IterateBufferPart(NABufferIterator* iter){
 
 
 NA_DEF NABool naLocateBufferAbsolute(NABufferIterator* iter, NAInt offset){
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+  const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   NABufferSearchToken token;
   NABool found;
   
@@ -302,13 +302,13 @@ NA_DEF NABool naLocateBufferAbsolute(NABufferIterator* iter, NAInt offset){
 
 
 
-NA_HHDEF NABuffer* na_GetBufferIteratorSourceBuffer(NABufferIterator* iter){
+NA_HDEF NABuffer* na_GetBufferIteratorSourceBuffer(NABufferIterator* iter){
   NABufferSource* source;
   if(naIsTreeAtInitial(&(iter->partiter))){
-    NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
+    NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
     source = buffer->source;
   }else{
-    NABufferPart* part = naGetBufferPart(iter);
+    NABufferPart* part = na_GetBufferPart(iter);
     source = na_GetBufferPartSource(part);
   }
   if(source){
@@ -322,7 +322,7 @@ NA_HHDEF NABuffer* na_GetBufferIteratorSourceBuffer(NABufferIterator* iter){
 
 NA_DEF NABool naIterateBuffer(NABufferIterator* iter, NAInt step){
   const NABufferPart* part;
-  const NABuffer* buffer = naGetBufferIteratorBufferConst(iter);
+  const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
   #ifndef NDEBUG
     if(!step)
       naError("step is zero");
@@ -372,7 +372,7 @@ NA_DEF NABool naIterateBuffer(NABufferIterator* iter, NAInt step){
 
 // Returns NA_TRUE if the current part does not store memory. Repositions
 // the iterator if there was a change in position since the last time.
-NA_HHDEF NABool na_IsBufferIteratorSparse(NABufferIterator* iter){
+NA_HDEF NABool na_IsBufferIteratorSparse(NABufferIterator* iter){
   const NABufferPart* part;
   #ifndef NDEBUG
     if(naIsTreeAtInitial(&(iter->partiter)))
@@ -400,8 +400,8 @@ NA_HHDEF NABool na_IsBufferIteratorSparse(NABufferIterator* iter){
 
 
 
-NA_HHDEF void na_EnsureBufferRangeAndLocate(NABufferIterator* iter, NAInt abspos, NAInt bytecount){
-  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
+NA_HDEF void na_EnsureBufferRangeAndLocate(NABufferIterator* iter, NAInt abspos, NAInt bytecount){
+  NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
   if(naIsRangeiEmpty(buffer->range) || !naContainsRangeiOffset(buffer->range, abspos)){
     // If the desired absolute offset was not inside the buffers range, we
     // enlarge the range.
@@ -415,7 +415,7 @@ NA_HHDEF void na_EnsureBufferRangeAndLocate(NABufferIterator* iter, NAInt abspos
 // This function prepares the given number of bytes in the given buffer. This
 // means that after this function, it is guaranteed that all bytes are present
 // in memory.
-NA_HHDEF void na_PrepareBuffer(NABufferIterator* iter, NAInt bytecount){
+NA_HDEF void na_PrepareBuffer(NABufferIterator* iter, NAInt bytecount){
   NATreeIterator firstbufiterator;
   NAInt firstbufoffset;
   #ifndef NDEBUG
@@ -425,7 +425,7 @@ NA_HHDEF void na_PrepareBuffer(NABufferIterator* iter, NAInt bytecount){
       naError("bytecount should be >= 1");
   #endif
 
-  firstbufiterator = naMakeTreeAccessor(&(naGetBufferIteratorBufferConst(iter)->parts));
+  firstbufiterator = naMakeTreeAccessor(&(na_GetBufferIteratorBufferConst(iter)->parts));
   firstbufoffset = 0;
 
   // We perform the preparation as long as there are still bytes left. As we
@@ -442,7 +442,7 @@ NA_HHDEF void na_PrepareBuffer(NABufferIterator* iter, NAInt bytecount){
       // range yet or the iterator simply was not located at its desired
       // position yet. The desired buffer offset is defined by iter->partoffset.
       na_EnsureBufferRangeAndLocate(iter, iter->partoffset, bytecount);
-    }else if(iter->partoffset >= na_GetBufferPartByteSize(naGetBufferPart(iter))){
+    }else if(iter->partoffset >= na_GetBufferPartByteSize(na_GetBufferPart(iter))){
       // If the range is overflown, some other iterator changed this part in
       // the meantime. Maybe it even became a non-sparse part. Therefore
       // we have to search for the correct part again.

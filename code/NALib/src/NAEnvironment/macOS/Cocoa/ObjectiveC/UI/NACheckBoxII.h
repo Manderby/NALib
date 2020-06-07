@@ -57,7 +57,7 @@ NA_DEF void na_DestructCheckBox(NACheckBox* checkBox){
 
 
 
-NA_HHDEF NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox){
+NA_HDEF NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox){
   NA_UNUSED(checkBox);
   return naMakeRectS(20, 40, 100, 50);
 }

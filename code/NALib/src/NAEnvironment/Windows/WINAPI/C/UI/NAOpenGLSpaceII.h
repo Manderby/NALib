@@ -117,7 +117,7 @@ NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openglspace){
   
 #endif  // NA_COMPILE_OPENGL
 
-NA_HHDEF NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* openglspace){
+NA_HDEF NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* openglspace){
   return na_GetSpaceAbsoluteInnerRect(openglspace);
 }
 

@@ -111,7 +111,7 @@
 
 
 
-NA_HHDEF void na_GrowHeap(NAHeap* heap){
+NA_HDEF void na_GrowHeap(NAHeap* heap){
   ptrdiff_t entrysize = (NAByte*)(heap->root) - (NAByte*)(heap->data);
   void* newdata = naMalloc((-heap->maxcount * 2 + 1) * entrysize);
   naCopyn(newdata, heap->data, ((heap->count + 1) * entrysize));
@@ -141,7 +141,7 @@ NA_DEF void naShrinkHeapIfNecessary(NAHeap* heap){
 
 
 
-NA_HHDEF void na_InsertHeapElementConstNoBack(NAHeap* heap, const void* data, const void* key, NAInt* backpointer){
+NA_HDEF void na_InsertHeapElementConstNoBack(NAHeap* heap, const void* data, const void* key, NAInt* backpointer){
   NAInt newindex;
   NAHeapEntry* thedata;
   NA_UNUSED(backpointer);
@@ -161,7 +161,7 @@ NA_HHDEF void na_InsertHeapElementConstNoBack(NAHeap* heap, const void* data, co
 
 
 
-NA_HHDEF void na_InsertHeapElementConstBack(NAHeap* heap, const void* data, const void* key, NAInt* backpointer){
+NA_HDEF void na_InsertHeapElementConstBack(NAHeap* heap, const void* data, const void* key, NAInt* backpointer){
   NAInt newindex;
   NAHeapBackEntry* thedata;
   #ifndef NDEBUG
@@ -188,7 +188,7 @@ NA_HHDEF void na_InsertHeapElementConstBack(NAHeap* heap, const void* data, cons
 
 
 
-NA_HHDEF void na_InsertHeapElementMutableNoBack(NAHeap* heap, void* data, const void* key, NAInt* backpointer){
+NA_HDEF void na_InsertHeapElementMutableNoBack(NAHeap* heap, void* data, const void* key, NAInt* backpointer){
   NAInt newindex;
   NAHeapEntry* thedata;
   NA_UNUSED(backpointer);
@@ -208,7 +208,7 @@ NA_HHDEF void na_InsertHeapElementMutableNoBack(NAHeap* heap, void* data, const 
 
 
 
-NA_HHDEF void na_InsertHeapElementMutableBack(NAHeap* heap, void* data, const void* key, NAInt* backpointer){
+NA_HDEF void na_InsertHeapElementMutableBack(NAHeap* heap, void* data, const void* key, NAInt* backpointer){
   NAInt newindex;
   NAHeapBackEntry* thedata;
   #ifndef NDEBUG
@@ -235,7 +235,7 @@ NA_HHDEF void na_InsertHeapElementMutableBack(NAHeap* heap, void* data, const vo
 
 
 
-NA_HHDEF const void* na_RemoveHeapRootConstNoBack(NAHeap* heap){
+NA_HDEF const void* na_RemoveHeapRootConstNoBack(NAHeap* heap){
   NAHeapEntry* thedata = (NAHeapEntry*)(heap->data);
   const void* returnvalue;
   #ifndef NDEBUG
@@ -253,7 +253,7 @@ NA_HHDEF const void* na_RemoveHeapRootConstNoBack(NAHeap* heap){
 
 
 
-NA_HHDEF const void* na_RemoveHeapRootConstBack(NAHeap* heap){
+NA_HDEF const void* na_RemoveHeapRootConstBack(NAHeap* heap){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   const void* returnvalue;
   #ifndef NDEBUG
@@ -273,7 +273,7 @@ NA_HHDEF const void* na_RemoveHeapRootConstBack(NAHeap* heap){
 
 
 
-NA_HHDEF void* na_RemoveHeapRootMutableNoBack(NAHeap* heap){
+NA_HDEF void* na_RemoveHeapRootMutableNoBack(NAHeap* heap){
   NAHeapEntry* thedata = (NAHeapEntry*)(heap->data);
   void* returnvalue;
   #ifndef NDEBUG
@@ -290,7 +290,7 @@ NA_HHDEF void* na_RemoveHeapRootMutableNoBack(NAHeap* heap){
 }
 
 
-NA_HHDEF void* na_RemoveHeapRootMutableBack(NAHeap* heap){
+NA_HDEF void* na_RemoveHeapRootMutableBack(NAHeap* heap){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   void* returnvalue;
   #ifndef NDEBUG
@@ -310,7 +310,7 @@ NA_HHDEF void* na_RemoveHeapRootMutableBack(NAHeap* heap){
 
 
 
-NA_HHDEF const void* na_RemoveHeapPosConstNoBack(NAHeap* heap, NAInt backpointer){
+NA_HDEF const void* na_RemoveHeapPosConstNoBack(NAHeap* heap, NAInt backpointer){
   NA_UNUSED(heap);
   NA_UNUSED(backpointer);
   #ifndef NDEBUG
@@ -321,7 +321,7 @@ NA_HHDEF const void* na_RemoveHeapPosConstNoBack(NAHeap* heap, NAInt backpointer
 
 
 
-NA_HHDEF const void* na_RemoveHeapPosConstBack(NAHeap* heap, NAInt backpointer){
+NA_HDEF const void* na_RemoveHeapPosConstBack(NAHeap* heap, NAInt backpointer){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   const void* returnvalue;
   #ifndef NDEBUG
@@ -343,7 +343,7 @@ NA_HHDEF const void* na_RemoveHeapPosConstBack(NAHeap* heap, NAInt backpointer){
 
 
 
-NA_HHDEF void* na_RemoveHeapPosMutableNoBack(NAHeap* heap, NAInt backpointer){
+NA_HDEF void* na_RemoveHeapPosMutableNoBack(NAHeap* heap, NAInt backpointer){
   NA_UNUSED(heap);
   NA_UNUSED(backpointer);
   #ifndef NDEBUG
@@ -353,7 +353,7 @@ NA_HHDEF void* na_RemoveHeapPosMutableNoBack(NAHeap* heap, NAInt backpointer){
 }
 
 
-NA_HHDEF void* na_RemoveHeapPosMutableBack(NAHeap* heap, NAInt backpointer){
+NA_HDEF void* na_RemoveHeapPosMutableBack(NAHeap* heap, NAInt backpointer){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   void* returnvalue;
   #ifndef NDEBUG
@@ -374,7 +374,7 @@ NA_HHDEF void* na_RemoveHeapPosMutableBack(NAHeap* heap, NAInt backpointer){
 }
 
 
-NA_HHDEF void na_UpdateHeapElementNoBack(NAHeap* heap, NAInt backpointer){
+NA_HDEF void na_UpdateHeapElementNoBack(NAHeap* heap, NAInt backpointer){
   NA_UNUSED(heap);
   NA_UNUSED(backpointer);
   #ifndef NDEBUG
@@ -384,7 +384,7 @@ NA_HHDEF void na_UpdateHeapElementNoBack(NAHeap* heap, NAInt backpointer){
 
 
 
-NA_HHDEF void na_UpdateHeapElementBack(NAHeap* heap, NAInt backpointer){
+NA_HDEF void na_UpdateHeapElementBack(NAHeap* heap, NAInt backpointer){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   NAHeapBackEntry tmp;
   NAInt curIndex;

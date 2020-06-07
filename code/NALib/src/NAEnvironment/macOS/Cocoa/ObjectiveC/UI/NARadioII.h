@@ -67,7 +67,7 @@ NA_DEF void na_DestructRadio(NARadio* radio){
 
 
 
-NA_HHDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
+NA_HDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
   NA_UNUSED(radio);
   return naMakeRectS(20, 40, 100, 50);
 }

@@ -27,7 +27,7 @@ struct NATranslator{
 #endif
 
 
-NA_HHDEF NAPtr na_ConstructLanguages(const void* key, NAPtr content){
+NA_HDEF NAPtr na_ConstructLanguages(const void* key, NAPtr content){
   NATree* strings;
   NA_UNUSED(key);
   NA_UNUSED(content);
@@ -36,7 +36,7 @@ NA_HHDEF NAPtr na_ConstructLanguages(const void* key, NAPtr content){
   return naMakePtrWithDataMutable(strings);
 }
 
-NA_HHDEF void na_DestructLanguages(NAPtr leafdata){
+NA_HDEF void na_DestructLanguages(NAPtr leafdata){
   NATree* strings = naGetPtrMutable(leafdata);
   naClearTree(strings);
   naFree(strings);
@@ -44,7 +44,7 @@ NA_HHDEF void na_DestructLanguages(NAPtr leafdata){
 
 
 
-NA_HHDEF NAPtr na_ConstructGroups(const void* key, NAPtr content){
+NA_HDEF NAPtr na_ConstructGroups(const void* key, NAPtr content){
   NATree* languages;
   NA_UNUSED(key);
   NA_UNUSED(content);
@@ -53,7 +53,7 @@ NA_HHDEF NAPtr na_ConstructGroups(const void* key, NAPtr content){
   return naMakePtrWithDataMutable(languages);
 }
 
-NA_HHDEF void na_DestructGroups(NAPtr leafdata){
+NA_HDEF void na_DestructGroups(NAPtr leafdata){
   NATree* languages = naGetPtrMutable(leafdata);
   naClearTree(languages);
   naFree(languages);

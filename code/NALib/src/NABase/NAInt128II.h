@@ -297,7 +297,7 @@
 
     return retValuei;
   }
-  NA_HIDEF void naComputeu128Division(NAu128 a, NAu128 b, NAu128* div, NAu128* rem){
+  NA_HIDEF void na_Computeu128Division(NAu128 a, NAu128 b, NAu128* div, NAu128* rem){
     NAu128 bTmp;
     NAu128 aHighestBit;
     NAu128 bHighestBit;
@@ -352,13 +352,13 @@
   NA_IDEF NAu128 naDivu128(NAu128 a, NAu128 b){
     NAu128 divInt;
     NAu128 remInt;
-    naComputeu128Division(a, b, &divInt, &remInt);
+    na_Computeu128Division(a, b, &divInt, &remInt);
     return divInt;
   }
   NA_IDEF NAu128 naModu128(NAu128 a, NAu128 b){
     NAu128 divInt;
     NAu128 remInt;
-    naComputeu128Division(a, b, &divInt, &remInt);
+    na_Computeu128Division(a, b, &divInt, &remInt);
     return remInt;
   }
 

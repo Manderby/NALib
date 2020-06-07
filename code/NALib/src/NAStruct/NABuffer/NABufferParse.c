@@ -11,7 +11,7 @@ NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
     const NABufferPart* part;
     
     na_PrepareBuffer(iter, 1);
-    part = naGetBufferPart(iter);
+    part = na_GetBufferPart(iter);
     if(naIsBufferAtInitial(iter)){break;}
     curbyte = na_GetBufferPartDataPointerConst(iter);
 
@@ -47,14 +47,14 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
   NABool checkwindowsend = NA_FALSE;
   NAInt start = naGetBufferLocation(iter);
   NAInt end = start + 1;
-  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
+  NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
 
   while((!found || checkwindowsend) && !naIsBufferAtEnd(iter)){
     const NAByte* curbyte;
     const NABufferPart* part;
 
     na_PrepareBuffer(iter, 1);
-    part = naGetBufferPart(iter);
+    part = na_GetBufferPart(iter);
     if(naIsBufferAtInitial(iter)){break;}
     curbyte = na_GetBufferPartDataPointerConst(iter);
     
@@ -100,7 +100,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
 
 
 NA_DEF NAString* naParseBufferRemainder(NABufferIterator* iter){
-  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
+  NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
   NAInt abspos = naGetBufferLocation(iter);
   return naNewStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(abspos, naGetRangeiEnd(buffer->range)));
 }
@@ -113,14 +113,14 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
   NABool found = NA_FALSE;
   NAInt start = naGetBufferLocation(iter);
   NAInt end = start;
-  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
+  NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
 
   while(!found && !naIsBufferAtEnd(iter)){
     const NAByte* curbyte;
     const NABufferPart* part;
     
     na_PrepareBuffer(iter, 1);
-    part = naGetBufferPart(iter);
+    part = na_GetBufferPart(iter);
     if(naIsBufferAtInitial(iter)){break;}
     curbyte = na_GetBufferPartDataPointerConst(iter);
 
@@ -168,7 +168,7 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8C
 //      part = naGetListCurConst(&(iter->partiter));
 //    }
 //    curbyte = (NAUTF8Char*)na_GetBufferPartDataPointerConst(part, iter->curoffset);
-//    endoffset = naGetBufferPartEnd(part);
+//    endoffset = na_GetBufferPartEnd(part);
 //    while(iter->curoffset < endoffset){
 //      if(*curbyte == delimiter){found = NA_TRUE; break;}
 //      curbyte++;
@@ -178,7 +178,7 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8C
 //    if(found){break;}
 //  }
 //
-//  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
+//  NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
 //  string = naNewStringWithBufferExtraction(buffer naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
 //  naLocateBufferRelative(iter, 1);
 //  return string;
@@ -193,14 +193,14 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter){
   NABool found = NA_FALSE;
   NAInt start = naGetBufferLocation(iter);
   NAInt end = start;
-  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
+  NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
 
   while(!found && !naIsBufferAtEnd(iter)){
     const NAByte* curbyte;
     const NABufferPart* part;
     
     na_PrepareBuffer(iter, 1);
-    part = naGetBufferPart(iter);
+    part = na_GetBufferPart(iter);
     if(naIsBufferAtInitial(iter)){break;}
     curbyte = na_GetBufferPartDataPointerConst(iter);
 
@@ -236,7 +236,7 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* 
   NABool found = NA_FALSE;
   NAInt start = naGetBufferLocation(iter);
   NAInt end = start;
-  NABuffer* buffer = naGetBufferIteratorBufferMutable(iter);
+  NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
 
   *retValuei = NA_ZERO_u64;
   bytesused = 0;
@@ -250,7 +250,7 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* 
     naIsBufferAtEnd(iter);
     
     na_PrepareBuffer(iter, 1);
-    part = naGetBufferPart(iter);
+    part = na_GetBufferPart(iter);
     if(naIsBufferAtInitial(iter)){break;}
     curbyte = na_GetBufferPartDataPointerConst(iter);
 

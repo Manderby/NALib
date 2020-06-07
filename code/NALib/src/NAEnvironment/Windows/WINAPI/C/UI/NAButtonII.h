@@ -290,7 +290,7 @@ NA_DEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, NAUIEl
 
 
 
-NA_HHDEF NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button){
+NA_HDEF NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button){
   NA_UNUSED(button);
   return naMakeRectS(20, 40, 100, 50);
 }

@@ -103,7 +103,7 @@ NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
 
 
 
-NA_HHDEF NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox){
+NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox){
   NA_UNUSED(textBox);
   return naMakeRectS(20, 40, 100, 50);
 }

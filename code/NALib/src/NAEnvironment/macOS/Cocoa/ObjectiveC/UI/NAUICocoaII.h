@@ -13,21 +13,21 @@
 
 
 
-NA_HHAPI NARect na_GetApplicationAbsoluteRect(void);
-NA_HHAPI NARect na_GetScreenAbsoluteRect(NA_UIElement* screen);
-NA_HHAPI NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window);
-NA_HHAPI NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space);
-NA_HHAPI NARect na_GetImageSpaceAbsoluteInnerRect(NA_UIElement* imageSpace);
-NA_HHAPI NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* space);
-NA_HHAPI NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button);
-NA_HHAPI NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio);
-NA_HHAPI NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox);
-NA_HHAPI NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label);
-NA_HHAPI NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField);
-NA_HHAPI NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox);
+NA_HAPI NARect na_GetApplicationAbsoluteRect(void);
+NA_HAPI NARect na_GetScreenAbsoluteRect(NA_UIElement* screen);
+NA_HAPI NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window);
+NA_HAPI NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space);
+NA_HAPI NARect na_GetImageSpaceAbsoluteInnerRect(NA_UIElement* imageSpace);
+NA_HAPI NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* space);
+NA_HAPI NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button);
+NA_HAPI NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio);
+NA_HAPI NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox);
+NA_HAPI NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label);
+NA_HAPI NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField);
+NA_HAPI NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox);
 
-NA_HHAPI void na_RenewWindowMouseTracking(NA_Window* coreWindow);
-NA_HHAPI void na_ClearWindowMouseTracking(NA_Window* coreWindow);
+NA_HAPI void na_RenewWindowMouseTracking(NA_Window* coreWindow);
+NA_HAPI void na_ClearWindowMouseTracking(NA_Window* coreWindow);
 
 
 // Not much of use currently, but consistent with the WINAPI implementation.
@@ -120,12 +120,12 @@ struct NACocoaApplication {
   cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativeID((NAUIElement*)uiElement))
 
 
-NA_HHDEF void na_ClearUINativeId(NANativeID nativeId){
+NA_HDEF void na_ClearUINativeId(NANativeID nativeId){
   NA_COCOA_RELEASE(nativeId);
 }
 
 
-NA_HHDEF void na_SetUIElementParent(NAUIElement* uiElement, NAUIElement* parent){
+NA_HDEF void na_SetUIElementParent(NAUIElement* uiElement, NAUIElement* parent){
   NA_UIElement* coreelement = (NA_UIElement*)uiElement;
   // todo: remove from old parent
   coreelement->parent = parent;
@@ -133,7 +133,7 @@ NA_HHDEF void na_SetUIElementParent(NAUIElement* uiElement, NAUIElement* parent)
 
 
 
-NA_HHDEF void na_CaptureKeyboardStatus(NSEvent* event){
+NA_HDEF void na_CaptureKeyboardStatus(NSEvent* event){
   NSUInteger flags;
   NABool hasShift;
   NABool hasControl;
@@ -156,7 +156,7 @@ NA_HHDEF void na_CaptureKeyboardStatus(NSEvent* event){
 
 
 
-NA_HHDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
+NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
   NABool retvalue = NA_FALSE;
   if([event type] == NAEventTypeKeyDown || [event type] == NSEventTypeFlagsChanged){
     NA_UIElement* elem;
@@ -325,7 +325,7 @@ NSTextAlignment getNSTextAlignmentWithAlignment(NATextAlignment alignment){
 
 
 
-NA_HHDEF NARect na_GetApplicationAbsoluteRect(void){
+NA_HDEF NARect na_GetApplicationAbsoluteRect(void){
   NARect rect;
   rect.pos.x = 0;
   rect.pos.y = 0;
@@ -336,7 +336,7 @@ NA_HHDEF NARect na_GetApplicationAbsoluteRect(void){
 
 
 
-NA_HHDEF NARect na_GetScreenAbsoluteRect(NA_UIElement* screen){
+NA_HDEF NARect na_GetScreenAbsoluteRect(NA_UIElement* screen){
   NARect rect;
   NSRect frame;
   NSRect mainframe;

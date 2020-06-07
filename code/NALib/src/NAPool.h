@@ -46,7 +46,7 @@ NA_IAPI void  naSpitPool(NAPool* pool, void* drop);
 NA_IAPI NAUInt naGetPoolCount(NAPool* pool);
 NA_IAPI NAUInt naGetPoolRemainingCount(NAPool* pool);
 NA_IAPI NABool naIsPoolEmpty(NAPool* pool);
-NA_IAPI NABool naIsPoolPartFull(NAPool* pool);
+NA_IAPI NABool na_IsPoolPartFull(NAPool* pool);
 
 // Calls the mutator-function for each element inside the pool.
 NA_IAPI void naForeachPool(const NAPool* pool, NAMutator mutator);

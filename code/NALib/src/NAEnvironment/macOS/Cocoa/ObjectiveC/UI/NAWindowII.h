@@ -186,7 +186,7 @@ NA_DEF void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstTabEl
 
 
 
-NA_HHDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
+NA_HDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
   NARect rect;
   NSRect contentrect;
   NSRect windowframe;
@@ -202,7 +202,7 @@ NA_HHDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
 
 
 
-NA_HHDEF NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window){
+NA_HDEF NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window){
   NARect rect;
   NSRect windowframe;
   naDefineCocoaObject(NACocoaWindow, cocoawindow, window);
@@ -216,28 +216,28 @@ NA_HHDEF NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window){
 
 
 
-NA_HHDEF void na_RenewWindowMouseTracking(NA_Window* coreWindow){
+NA_HDEF void na_RenewWindowMouseTracking(NA_Window* coreWindow){
   naDefineCocoaObject(NACocoaWindow, cocoawindow, coreWindow);
   [cocoawindow renewMouseTracking];
 }
 
 
 
-NA_HHDEF void na_ClearWindowMouseTracking(NA_Window* coreWindow){
+NA_HDEF void na_ClearWindowMouseTracking(NA_Window* coreWindow){
   naDefineCocoaObject(NACocoaWindow, cocoawindow, coreWindow);
   [cocoawindow clearMouseTracking];
 }
 
 
 
-//NA_HHDEF void* na_AllocMouseTracking(NAWindow* window){
+//NA_HDEF void* na_AllocMouseTracking(NAWindow* window){
 //  naDefineCocoaObject(NACocoaWindow, cocoawindow, window);
 //  [cocoawindow retainMouseTracking];
 //}
 //
 //
 //
-//NA_HHDEF void na_DeallocMouseTracking(NA_Window* coreWindow){
+//NA_HDEF void na_DeallocMouseTracking(NA_Window* coreWindow){
 //  naDefineCocoaObject(NACocoaWindow, cocoawindow, coreWindow);
 //  [cocoawindow releaseMouseTracking];
 //}

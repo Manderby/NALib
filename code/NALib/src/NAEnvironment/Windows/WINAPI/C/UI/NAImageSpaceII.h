@@ -148,7 +148,7 @@ NA_DEF void na_DestructImageSpace(NAImageSpace* imageSpace){
 
 
 
-NA_HHDEF NARect na_GetImageSpaceAbsoluteInnerRect(NA_UIElement* imageSpace){
+NA_HDEF NARect na_GetImageSpaceAbsoluteInnerRect(NA_UIElement* imageSpace){
   NA_UNUSED(imageSpace);
   return naMakeRectS(20, 40, 100, 50);
 }

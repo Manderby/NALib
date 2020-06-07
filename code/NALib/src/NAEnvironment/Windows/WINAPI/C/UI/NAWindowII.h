@@ -308,7 +308,7 @@ NA_DEF NAUIElement* naGetWindowFirstTabElement(NAWindow* window){
 
 
 
-NA_HHDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
+NA_HDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
   NARect rect;
   NARect screenrect;
   RECT clientrect;
@@ -333,7 +333,7 @@ NA_HHDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
 
 
 
-NA_HHDEF NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window){
+NA_HDEF NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window){
   NARect rect;
   NARect screenrect;
   RECT windowrect;

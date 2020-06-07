@@ -47,7 +47,7 @@ NA_IDEF NAPointer* naRetainPointer(NAPointer* pointer){
 
 
 // The implementation of this function is in the NARuntime.c file.
-NA_HHAPI void na_DestructPointer(NAPointer* pointer);
+NA_HAPI void na_DestructPointer(NAPointer* pointer);
 
 
 

@@ -303,7 +303,7 @@
 
     return retValuei;
   }
-  NA_HIDEF void naComputeu256Division(NAu256 a, NAu256 b, NAu256* div, NAu256* rem){
+  NA_HIDEF void na_Computeu256Division(NAu256 a, NAu256 b, NAu256* div, NAu256* rem){
     NAu256 bTmp;
     NAu256 aHighestBit;
     NAu256 bHighestBit;
@@ -359,13 +359,13 @@
   NA_IDEF NAu256 naDivu256(NAu256 a, NAu256 b){
     NAu256 divInt;
     NAu256 remInt;
-    naComputeu256Division(a, b, &divInt, &remInt);
+    na_Computeu256Division(a, b, &divInt, &remInt);
     return divInt;
   }
   NA_IDEF NAu256 naModu256(NAu256 a, NAu256 b){
     NAu256 divInt;
     NAu256 remInt;
-    naComputeu256Division(a, b, &divInt, &remInt);
+    na_Computeu256Division(a, b, &divInt, &remInt);
     return remInt;
   }
 

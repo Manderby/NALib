@@ -3,7 +3,7 @@
 
 
 
-NA_HHDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance){
+NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance){
   const NABuffer* buffer;
   NAInt firstpartoffset;
   NAByte* dst = data;
@@ -16,7 +16,7 @@ NA_HHDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt b
       naError("Bit offset not 0.");
   #endif
 
-  buffer = naGetBufferIteratorBufferConst(iter);
+  buffer = na_GetBufferIteratorBufferConst(iter);
 
   // We prepare the buffer for the whole range. There might be no parts or
   // sparse parts.
@@ -42,7 +42,7 @@ NA_HHDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt b
     #endif
 
     // The part pointed to by the iterator should be the one containing offset.
-    part = naGetBufferPart(iter);
+    part = na_GetBufferPart(iter);
 
     // Reaching this point, we are sure, the current part contains offset and
     // is filled with memory.

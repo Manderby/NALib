@@ -392,7 +392,8 @@ NA_IAPI     | NA_IDEF    | Public inline functions. Code will likely be inlined.
 NA_HAPI     | NA_HDEF    | Helper function. Default calling convention. Belongs
             |            | to internal code of NALib. Would normally not be
             |            | visible to the programmer but in NALib, you can
-            |            | look it up. API is not exported when linking.
+            |            | look it up. API is not exported when linking. Uses
+            |            | the na_ prefix.
 NA_HIAPI    | NA_HIDEF   | Same thing but inlined.
 
 Types are always typedef'd, meaning you won't have to write the struct keyword
