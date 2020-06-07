@@ -6,15 +6,15 @@
 
 
 typedef struct NAWINAPIButton NAWINAPIButton;
-struct NAWINAPIButton {
-  NA_Button coreButton;
+struct NAWINAPIButton{
+  NAButton button;
   NAUIImage* image;
   NABool transparent;
 };
 
 
 
-NAWINAPICallbackInfo naButtonWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naButtonWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
@@ -58,7 +58,7 @@ NAWINAPICallbackInfo naButtonWINAPIProc(NAUIElement* uiElement, UINT message, WP
 
 
 
-NAWINAPICallbackInfo naButtonWINAPINotify(NAUIElement* uiElement, WORD notificationCode){
+NAWINAPICallbackInfo naButtonWINAPINotify(void* uiElement, WORD notificationCode){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   switch(notificationCode){
     case BN_CLICKED:
@@ -75,7 +75,7 @@ NAWINAPICallbackInfo naButtonWINAPINotify(NAUIElement* uiElement, WORD notificat
 
 
 
-NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uiElement, DRAWITEMSTRUCT* drawitemstruct){
+NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* drawitemstruct){
   HBITMAP hOldBitmap;
   NASizei size1x;
   NASizei buttonsize;
@@ -178,7 +178,7 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
   oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
-  na_InitButton(&(winapiButton->coreButton), hWnd);
+  na_InitButton(&(winapiButton->button), hWnd);
   winapiButton->image = NA_NULL;
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
@@ -206,7 +206,7 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
   
   naFree(systemtext);
 
-  na_InitButton(&(winapiButton->coreButton), hWnd);
+  na_InitButton(&(winapiButton->button), hWnd);
   winapiButton->image = NA_NULL;
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
@@ -229,7 +229,7 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
-  na_InitButton(&(winapiButton->coreButton), hWnd);
+  na_InitButton(&(winapiButton->button), hWnd);
   winapiButton->image = uiimage;
   winapiButton->transparent = NA_FALSE;
 
@@ -251,7 +251,7 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
-  na_InitButton(&(winapiButton->coreButton), hWnd);
+  na_InitButton(&(winapiButton->button), hWnd);
   winapiButton->image = uiimage;
   winapiButton->transparent = NA_TRUE;
 
@@ -262,7 +262,7 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
 
 NA_DEF void na_DestructButton(NAButton* button){
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
-  na_ClearButton(&(winapiButton->coreButton));
+  na_ClearButton(&(winapiButton->button));
 }
 
 
@@ -274,7 +274,7 @@ NA_DEF void naSetButtonState(NAButton* button, NABool state){
 
 
 
-NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, NAUIElement* controller){
+NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void* controller){
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
   long style = (long)GetWindowLongPtr(naGetUIElementNativeID(winapiButton), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | BS_DEFPUSHBUTTON;
@@ -284,7 +284,7 @@ NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, NAUIE
 
 
 
-NA_DEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, NAUIElement* controller){
+NA_DEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* controller){
   naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC), handler, controller);
 }
 

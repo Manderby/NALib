@@ -370,17 +370,17 @@ header file from the package. It's tricky, but it works.
 
 6. Symbol naming
 ----------------
-In NALib, a (more or less) consistent naming scheme is applied. Every symbol
+In NALib, a (mostly) consistent naming scheme is applied. Every symbol
 consists at least of a suffix and an identifier.
 
 Suffix:
-- types always have the prefix             NA         and are MixedCase
-- macros always have the prefix            NA_        and are UPPER_CASE
-- functions always have the prefix         na         and are MixedCase
-- private variables, functions             na_        and are MixedCase
-- private types                            NA_        and are MixedCase
+- macros                         NA_ and are UPPER_CASE
+- public types                   NA  and are MixedCase
+- public functions               na  and are MixedCase
+- private types                  NA_ and are MixedCase
+- private functions & variables  na_ and are MixedCase
 
-Further more, symbols are declared with the following prefixes:
+Further more, symbols are declared with the following attribute macros:
 
 Declaration | Definition | Explanation
 ------------+------------+------------------------
@@ -389,6 +389,7 @@ NA_API      | NA_DEF     | Public normal functions. Default calling convention.
 NA_IAPI     | NA_IDEF    | Public inline functions. Code will likely be inlined.
             |            | Declared static to prevent duplicate definitions and
             |            | to not export API when linking.
+------------+------------+------------------------
 NA_HAPI     | NA_HDEF    | Helper function. Default calling convention. Belongs
             |            | to internal code of NALib. Would normally not be
             |            | visible to the programmer but in NALib, you can
@@ -417,7 +418,7 @@ function does or expects as parameters is given. Like for example WithLength,
 FromFilename.
 
 There are no public global variables in NALib. Very few private ones exist
-and they are prefixed with na_ (for example na_Runtime). If availably by
+and they are prefixed with na_ (for example na_Runtime). If available by
 including a header file, a programmer must never use these variables directly!
 Same goes for private functions which are prefixed by na_ as well. All private
 functions are declared as helper functions.

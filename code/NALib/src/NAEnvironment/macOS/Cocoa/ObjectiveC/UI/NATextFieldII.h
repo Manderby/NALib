@@ -7,7 +7,7 @@
 
 
 @implementation NACocoaTextField
-- (id) initWithCoreTextField:(NA_TextField*)newcoreTextField frame:(NSRect)frame{
+- (id) initWithTextField:(NATextField*)newTextField frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 //  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Wurst"]];
   [self setSelectable:YES];
@@ -24,16 +24,16 @@
   [self setAction:@selector(onEdited:)];
   [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
   [self setDelegate:self];
-  coreTextField = newcoreTextField;
+  textField = newTextField;
   return self;
 }
 - (void) onEdited:(id)sender{
   NA_UNUSED(sender);
-  na_DispatchUIElementCommand((NA_UIElement*)coreTextField, NA_UI_COMMAND_EDITED);
+  na_DispatchUIElementCommand((NA_UIElement*)textField, NA_UI_COMMAND_EDITED);
 }
 - (void)controlTextDidChange:(NSNotification *)notification{
   NA_UNUSED(notification);
-  na_DispatchUIElementCommand((NA_UIElement*)coreTextField, NA_UI_COMMAND_EDITED);
+  na_DispatchUIElementCommand((NA_UIElement*)textField, NA_UI_COMMAND_EDITED);
 }
 - (void) setText:(const NAUTF8Char*)text{
   [self setStringValue:[NSString stringWithUTF8String:text]];
@@ -55,20 +55,19 @@
 
 
 NA_DEF NATextField* naNewTextField(NASize size){
-  NA_TextField* coreTextField = naAlloc(NA_TextField);
+  NATextField* textField = naAlloc(NATextField);
   
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaTextField* cocoaTextField = [[NACocoaTextField alloc] initWithCoreTextField:coreTextField frame:frameRect];
-  na_InitTextField(coreTextField, NA_COCOA_PTR_OBJC_TO_C(cocoaTextField));
+  NACocoaTextField* cocoaTextField = [[NACocoaTextField alloc] initWithCoreTextField:textField frame:frameRect];
+  na_InitTextField(textField, NA_COCOA_PTR_OBJC_TO_C(cocoaTextField));
   
-  return (NATextField*)coreTextField;
+  return (textField;
 }
 
 
 
 NA_DEF void na_DestructTextField(NATextField* textField){
-  NA_TextField* coreTextField = (NA_TextField*)textField;
-  na_ClearTextField(coreTextField);
+  na_ClearTextField(textField);
 }
 
 

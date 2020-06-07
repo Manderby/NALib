@@ -8,13 +8,13 @@
 
 typedef struct NAWINAPILabel NAWINAPILabel;
 struct NAWINAPILabel {
-  NA_Label coreLabel;
+  NALabel label;
   NABool enabled;
   NAString* href;
 };
 
 
-NAWINAPICallbackInfo naLabelWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naLabelWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
@@ -62,7 +62,7 @@ NAWINAPICallbackInfo naLabelWINAPIProc(NAUIElement* uiElement, UINT message, WPA
 
 
 
-NAWINAPICallbackInfo naLabelWINAPINotify(NAUIElement* uiElement, WORD notificationCode){
+NAWINAPICallbackInfo naLabelWINAPINotify(void* uiElement, WORD notificationCode){
   NAWINAPILabel* winapiLabel = (NAWINAPILabel*)uiElement;
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   switch(notificationCode){
@@ -104,7 +104,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldLabelWindowProc){app->oldLabelWindowProc = oldproc;}
 
-  na_InitLabel(&(winapiLabel->coreLabel), hWnd);
+  na_InitLabel(&(winapiLabel->label), hWnd);
 
   winapiLabel->enabled = NA_TRUE;
   winapiLabel->href = NA_NULL;
@@ -118,7 +118,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
 NA_DEF void na_DestructLabel(NALabel* label){
   NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
   if(winapiLabel->href){naDelete(winapiLabel->href);}
-  na_ClearLabel(&(winapiLabel->coreLabel));
+  na_ClearLabel(&(winapiLabel->label));
 }
 
 

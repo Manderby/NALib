@@ -8,14 +8,14 @@
 
 typedef struct NAWINAPITextField NAWINAPITextField;
 struct NAWINAPITextField {
-  NA_TextField coreTextField;
-  NAUIElement* nextTabStop;
-  NAUIElement* prevTabStop;
+  NATextField textField;
+  void* nextTabStop;
+  void* prevTabStop;
 };
 
 
 
-NAWINAPICallbackInfo naTextFieldWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naTextFieldWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
@@ -73,7 +73,7 @@ NAWINAPICallbackInfo naTextFieldWINAPIProc(NAUIElement* uiElement, UINT message,
 
 
 
-NAWINAPICallbackInfo naTextFieldWINAPINotify(NAUIElement* uiElement, WORD notificationCode){
+NAWINAPICallbackInfo naTextFieldWINAPINotify(void* uiElement, WORD notificationCode){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   switch(notificationCode){
   case EN_CHANGE:
@@ -130,7 +130,7 @@ NA_DEF NATextField* naNewTextField(NASize size){
   oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldTextFieldWindowProc){app->oldTextFieldWindowProc = oldproc;}
 
-  na_InitTextField(&(winapiTextField->coreTextField), hWnd);
+  na_InitTextField(&(winapiTextField->textField), hWnd);
   winapiTextField->nextTabStop = winapiTextField;
   winapiTextField->prevTabStop = winapiTextField;
 
@@ -146,7 +146,7 @@ NA_DEF NATextField* naNewTextField(NASize size){
 
 NA_DEF void na_DestructTextField(NATextField* textField){
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
-  na_ClearTextField(&(winapiTextField->coreTextField));
+  na_ClearTextField(&(winapiTextField->textField));
 }
 
 
@@ -154,9 +154,9 @@ NA_DEF void na_DestructTextField(NATextField* textField){
 NA_DEF void naSetTextFieldText(NATextField* textField, const NAUTF8Char* text){
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
   TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
-  na_BlockUIElementNotifications(&(winapiTextField->coreTextField.uiElement));
+  na_BlockUIElementNotifications(&(winapiTextField->textField.uiElement));
   SendMessage(naGetUIElementNativeID(textField), WM_SETTEXT, 0, (LPARAM)systemtext);
-  na_AllowUIElementNotifications(&(winapiTextField->coreTextField.uiElement));
+  na_AllowUIElementNotifications(&(winapiTextField->textField.uiElement));
   naFree(systemtext);
 }
 
@@ -190,14 +190,14 @@ NA_DEF void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind){
 
 
 
-NA_HDEF NAUIElement** na_GetTextFieldNextTabReference(NATextField* textField){
+NA_HDEF void** na_GetTextFieldNextTabReference(NATextField* textField){
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
   return &(winapiTextField->nextTabStop);
 }
 
 
 
-NA_HDEF NAUIElement** na_GetTextFieldPrevTabReference(NATextField* textField){
+NA_HDEF void** na_GetTextFieldPrevTabReference(NATextField* textField){
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
   return &(winapiTextField->prevTabStop);
 }

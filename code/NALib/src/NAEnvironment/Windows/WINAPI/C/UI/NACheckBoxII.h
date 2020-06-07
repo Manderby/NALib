@@ -7,12 +7,12 @@
 
 typedef struct NAWINAPICheckBox NAWINAPICheckBox;
 struct NAWINAPICheckBox {
-  NA_CheckBox coreCheckBox;
+  NACheckBox checkBox;
 };
 
 
 
-NAWINAPICallbackInfo naCheckBoxWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naCheckBoxWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
@@ -53,7 +53,7 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc(NAUIElement* uiElement, UINT message, 
 
 
 
-NAWINAPICallbackInfo naCheckBoxWINAPINotify(NAUIElement* uiElement, WORD notificationCode){
+NAWINAPICallbackInfo naCheckBoxWINAPINotify(void* uiElement, WORD notificationCode){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NABool check;
 
@@ -97,7 +97,7 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
   oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldCheckBoxWindowProc){app->oldCheckBoxWindowProc = oldproc;}
 
-  na_InitCheckBox(&(winapiCheckBox->coreCheckBox), hWnd);
+  na_InitCheckBox(&(winapiCheckBox->checkBox), hWnd);
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
@@ -108,7 +108,7 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
 
 NA_DEF void na_DestructCheckBox(NACheckBox* checkBox){
   NAWINAPICheckBox* winapiCheckBox = (NAWINAPICheckBox*)checkBox;
-  na_ClearCheckBox(&(winapiCheckBox->coreCheckBox));
+  na_ClearCheckBox(&(winapiCheckBox->checkBox));
 }
 
 

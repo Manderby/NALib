@@ -10,13 +10,13 @@
 
 typedef struct NAWINAPIOpenGLSpace NAWINAPIOpenGLSpace;
 struct NAWINAPIOpenGLSpace {
-  NA_OpenGLSpace coreOpenGLspace;
+  NAOpenGLSpace openGLSpace;
   HGLRC hRC;    // The rendering context for OpenGL
 };
 
 
 
-NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
@@ -108,8 +108,7 @@ NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){
 
 
 NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openglspace){
-  NA_OpenGLSpace* coreOpenGLspace = (NA_OpenGLSpace*)openglspace;
-  na_ClearOpenGLSpace(coreOpenGLspace);
+  na_ClearOpenGLSpace(openGLSpace`);
 }
 
 

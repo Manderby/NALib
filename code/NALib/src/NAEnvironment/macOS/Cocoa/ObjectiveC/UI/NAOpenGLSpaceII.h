@@ -92,7 +92,7 @@ NA_UNUSED(event);
 
   NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
     NA_UNUSED(window);
-    NA_OpenGLSpace* coreOpenGLspace = naAlloc(NA_OpenGLSpace);
+    NAOpenGLSpace* openGLSpace = naAlloc(NAOpenGLSpace);
 
     // Configure the OpenGL Context and initialize this object.
     NSOpenGLPixelFormatAttribute attr[] = {
@@ -121,15 +121,13 @@ NA_UNUSED(event);
 
 
   NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openglspace){
-    NA_OpenGLSpace* coreOpenGLspace = (NA_OpenGLSpace*)openglspace;
-    na_ClearOpenGLSpace(coreOpenGLspace);
+    na_ClearOpenGLSpace(openGLSpace);
   }
 
 
 
   NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
-    NA_OpenGLSpace* coreOpenGLspace = (NA_OpenGLSpace*)openglspace;
-    [[(NA_COCOA_BRIDGE NACocoaOpenGLSpace*)(coreOpenGLspace->uiElement.nativeID) openGLContext] flushBuffer];
+    [[(NA_COCOA_BRIDGE NACocoaOpenGLSpace*)(openGLSpace->uiElement.nativeID) openGLContext] flushBuffer];
   }
 
 

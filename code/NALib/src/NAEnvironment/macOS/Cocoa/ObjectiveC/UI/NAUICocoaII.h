@@ -26,14 +26,14 @@ NA_HAPI NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label);
 NA_HAPI NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField);
 NA_HAPI NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox);
 
-NA_HAPI void na_RenewWindowMouseTracking(NA_Window* coreWindow);
-NA_HAPI void na_ClearWindowMouseTracking(NA_Window* coreWindow);
+NA_HAPI void na_RenewWindowMouseTracking(NAWindow* window);
+NA_HAPI void na_ClearWindowMouseTracking(NAWindow* window);
 
 
 // Not much of use currently, but consistent with the WINAPI implementation.
 typedef struct NACocoaApplication NACocoaApplication;
 struct NACocoaApplication {
-  NA_Application coreApplication;
+  NAApplication application;
 };
 
 
@@ -43,27 +43,27 @@ struct NACocoaApplication {
 @end
 
 @interface NACocoaWindow : NSWindow <NSWindowDelegate>{
-  NA_Window* coreWindow;
+  NAWindow* window;
   NAUInt trackingcount;
   NSTrackingArea* trackingarea;
 }
 @end
 
 @interface NACocoaSpace : NSView{
-  NA_Space* corespace;
+  NASpace* space;
   NSTrackingArea* trackingarea;
 }
 @end
 
 @interface NACocoaImageSpace : NSImageView{
-  NA_ImageSpace* coreImageSpace;
+  NAImageSpace* imageSpace;
   NAUIImage* uiimage;
 }
 @end
 
 #if (NA_COMPILE_OPENGL == 1)
   @interface NACocoaOpenGLSpace : NSOpenGLView{
-    NA_OpenGLSpace* coreOpenGLspace;
+    NAOpenGLSpace* openGLSpace;
     NSTrackingArea* trackingarea;
     NAMutator initFunc;
     void* initData;
@@ -72,14 +72,14 @@ struct NACocoaApplication {
 #endif
 
 @interface NACocoaButton : NSButton{
-  NA_Button* coreButton;
+  NAButton* button;
 }
 - (void) onPressed:(id)sender;
 @end
 
 @interface NACocoaRadio : NSButton{
-  NA_Radio* coreRadio;
-  // Core thinks it's smart by doing things automatically. Unfortunately, we
+  NARadio* cradio;
+  // Cocoa thinks it's smart by doing things automatically. Unfortunately, we
   // have to encapsulate the radio into its own view to get the behaviour
   // we need.
   NSView* containingview;
@@ -88,7 +88,7 @@ struct NACocoaApplication {
 @end
 
 @interface NACocoaCheckBox : NSButton{
-  NA_CheckBox* coreCheckBox;
+  NACheckBox* checkBox;
 }
 @end
 
@@ -97,19 +97,19 @@ struct NACocoaApplication {
 @end
 
 @interface NACocoaLabel : NSTextField{
-  NA_Label* coreLabel;
+  NALabel* label;
 }
 @end
 
 @interface NACocoaTextField : NSTextField <NSTextFieldDelegate>{
-  NA_TextField* coreTextField;
+  NATextField* textField;
 }
 - (void) onEdited:(id)sender;
 @end
 
 @interface NACocoaTextBox : NSTextView{
-  NA_TextBox* coreTextBox;
-  NSScrollView* scrollview;
+  NATextBox* textBox;
+  NSScrollView* scrollView;
 }
 - (NSView*) getContainingView;
 @end
@@ -117,7 +117,7 @@ struct NACocoaApplication {
 
 
 #define naDefineCocoaObject(cocoatype, var, uiElement)\
-  cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativeID((NAUIElement*)uiElement))
+  cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativeID(uiElement))
 
 
 NA_HDEF void na_ClearUINativeId(NANativeID nativeId){
@@ -125,7 +125,7 @@ NA_HDEF void na_ClearUINativeId(NANativeID nativeId){
 }
 
 
-NA_HDEF void na_SetUIElementParent(NAUIElement* uiElement, NAUIElement* parent){
+NA_HDEF void na_SetUIElementParent(void* uiElement, void* parent){
   NA_UIElement* coreelement = (NA_UIElement*)uiElement;
   // todo: remove from old parent
   coreelement->parent = parent;
@@ -225,7 +225,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
 // ///////////////////////////////////
 
 
-NA_DEF void na_RefreshUIElementNow(NAUIElement* uiElement){
+NA_DEF void na_RefreshUIElementNow(void* uiElement){
   naDefineCocoaObject(NSView, cocoaview, uiElement);
   [cocoaview setNeedsDisplay:YES];
 }
@@ -233,7 +233,7 @@ NA_DEF void na_RefreshUIElementNow(NAUIElement* uiElement){
 
 
 
-NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextTabElem){
+NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
   if(  naGetUIElementType(elem) != NA_UI_TEXTFIELD
     && naGetUIElementType(elem) != NA_UI_TEXTBOX){
     #ifndef NDEBUG
@@ -382,7 +382,7 @@ NA_DEF void naCenterMouse(void* uiElement, NABool includebounds, NABool sendmove
   NSRect screenframe;
   CGPoint centerpos;
   NA_UNUSED(sendmovemessage);
-  spacerect = naGetUIElementRect(uiElement, (NAUIElement*)naGetApplication(), includebounds);
+  spacerect = naGetUIElementRect(uiElement, naGetApplication(), includebounds);
   screenframe = [[NSScreen mainScreen] frame];
   centerpos.x = (CGFloat)spacerect.pos.x + (CGFloat)spacerect.size.width * .5f;
   centerpos.y = (CGFloat)screenframe.size.height - (CGFloat)(spacerect.pos.y + spacerect.size.height * .5f);
@@ -393,26 +393,26 @@ NA_DEF void naCenterMouse(void* uiElement, NABool includebounds, NABool sendmove
 
 
 NA_DEF void naShowMouse(){
-  NA_Application* coreapp = (NA_Application*)naGetApplication();
-  if(!(coreapp->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE)){
+  NAApplication* app = naGetApplication();
+  if(!(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE)){
     CGDisplayShowCursor(kCGDirectMainDisplay);
-    coreapp->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
+    app->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
   }
 }
 
 
 NA_DEF void naHideMouse(){
-  NA_Application* coreapp = (NA_Application*)naGetApplication();
-  if(coreapp->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE){
+  NAApplication* app = naGetApplication();
+  if(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE){
     CGDisplayHideCursor(kCGDirectMainDisplay);
-    coreapp->flags &= ~NA_APPLICATION_FLAG_MOUSE_VISIBLE;
+    app->flags &= ~NA_APPLICATION_FLAG_MOUSE_VISIBLE;
   }
 }
 
 
 
 
-NA_DEF NARect naGetUIElementRect(NAUIElement* uiElement, NAUIElement* relativeuiElement, NABool includeborder){
+NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABool includeborder){
   NARect rect;
   NARect relrect;
   NA_UIElement* element;
@@ -454,7 +454,7 @@ NA_DEF NARect naGetUIElementRect(NAUIElement* uiElement, NAUIElement* relativeui
   }
 
   // Now, we find the appropriate relative element.
-  if(!relelement){relelement = (NA_UIElement*)naGetUIElementParent((NAUIElement*)element);}
+  if(!relelement){relelement = (NA_UIElement*)naGetUIElementParent(element);}
 
   if(relelement){
     switch(relelement->elementType){

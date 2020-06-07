@@ -36,7 +36,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
     NSAutoreleasePool* pool;
   #endif
   
-  // Start the Core application if not started already and set the native ID
+  // Start the shared application if not started already and set the native ID
   // of the application.
   [NSApplication sharedApplication];
   app = na_NewApplication();
@@ -111,7 +111,7 @@ NA_HDEF NAApplication* na_NewApplication(void){
 
   NACocoaApplicationDelegate* cocoaAppDelegate = [[NACocoaApplicationDelegate alloc] initWithCocoaApplication:cocoaApplication];
 
-  na_InitApplication(&(cocoaApplication->coreApplication), NA_COCOA_PTR_OBJC_TO_C(cocoaAppDelegate));
+  na_InitApplication(&(cocoaApplication->application), NA_COCOA_PTR_OBJC_TO_C(cocoaAppDelegate));
 
   return (NAApplication*)cocoaApplication;
 }
@@ -121,7 +121,7 @@ NA_HDEF NAApplication* na_NewApplication(void){
 NA_DEF void na_DestructApplication(NAApplication* application){
   NACocoaApplication* cocoaApplication = (NACocoaApplication*)application;
   // Do not clear the core application. It will only call this method again.
-  na_ClearApplication(&(cocoaApplication->coreApplication));
+  na_ClearApplication(&(cocoaApplication->application));
 }
 
 
@@ -147,8 +147,8 @@ NA_DEF void naOpenConsoleWindow(void){
 
 NA_DEF NAString* na_NewApplicationName(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->coreApplication.name){
-    return naNewStringWithFormat("%s", app->coreApplication.name);
+  if(app->application.name){
+    return naNewStringWithFormat("%s", app->application.name);
   }else{
     NSString* applicationName = [[NSBundle mainBundle] localizedStringForKey:NA_COCOA_BUNDLE_APPLICATION_NAME value:nil table:NA_COCOA_BUNDLE_PLIST];
     if(!applicationName){
@@ -160,8 +160,8 @@ NA_DEF NAString* na_NewApplicationName(void){
 
 NA_DEF NAString* na_NewApplicationCompanyName(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->coreApplication.companyName){
-    return naNewStringWithFormat("%s", app->coreApplication.companyName);
+  if(app->application.companyName){
+    return naNewStringWithFormat("%s", app->application.companyName);
   }else{
     return NA_NULL;
   }
@@ -169,8 +169,8 @@ NA_DEF NAString* na_NewApplicationCompanyName(void){
 
 NA_DEF NAString* na_NewApplicationVersionString(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->coreApplication.versionString){
-    return naNewStringWithFormat("%s", app->coreApplication.versionString);
+  if(app->application.versionString){
+    return naNewStringWithFormat("%s", app->application.versionString);
   }else{
     NSString* versionString = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_SHORT_KEY];
     return naNewStringWithFormat("%s", [versionString UTF8String]);
@@ -179,8 +179,8 @@ NA_DEF NAString* na_NewApplicationVersionString(void){
 
 NA_DEF NAString* na_NewApplicationBuildString(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->coreApplication.buildString){
-    return naNewStringWithFormat("%s", app->coreApplication.buildString);
+  if(app->application.buildString){
+    return naNewStringWithFormat("%s", app->application.buildString);
   }else{
     NSString* buildString = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_VERSION_KEY];
     return naNewStringWithFormat("%s", [buildString UTF8String]);
@@ -189,8 +189,8 @@ NA_DEF NAString* na_NewApplicationBuildString(void){
 
 NA_DEF NAString* na_NewApplicationIconPath(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
-  if(app->coreApplication.iconPath){
-    return naNewStringWithFormat("%s", app->coreApplication.iconPath);
+  if(app->application.iconPath){
+    return naNewStringWithFormat("%s", app->application.iconPath);
   }else{
     NSString* iconFilename = [[NSBundle mainBundle] objectForInfoDictionaryKey:NA_COCOA_BUNDLE_ICON_FILE_KEY];
     NSString* iconBasename = [iconFilename stringByDeletingPathExtension];

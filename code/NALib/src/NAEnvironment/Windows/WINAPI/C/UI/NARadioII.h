@@ -8,12 +8,12 @@
 
 typedef struct NAWINAPIRadio NAWINAPIRadio;
 struct NAWINAPIRadio {
-  NA_Radio coreRadio;
+  NARadio radio;
 };
 
 
 
-NAWINAPICallbackInfo naRadioWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naRadioWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NABool check;
 
@@ -89,7 +89,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
   oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldRadioWindowProc){app->oldRadioWindowProc = oldproc;}
 
-  na_InitRadio(&(winapiRadio->coreRadio), hWnd);
+  na_InitRadio(&(winapiRadio->radio), hWnd);
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
@@ -100,7 +100,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
 
 NA_DEF void na_DestructRadio(NARadio* radio){
   NAWINAPIRadio* winapiRadio = (NAWINAPIRadio*)radio;
-  na_ClearRadio(&(winapiRadio->coreRadio));
+  na_ClearRadio(&(winapiRadio->radio));
 }
 
 

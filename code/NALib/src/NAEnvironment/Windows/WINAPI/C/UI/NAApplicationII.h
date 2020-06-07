@@ -32,7 +32,7 @@ struct NAWINAPIColor {
 // not be done.
 typedef struct NAWINAPIApplication NAWINAPIApplication;
 struct NAWINAPIApplication {
-  NA_Application coreApplication;
+  NAApplication application;
   NAList timers;
   HWND offscreenWindow;
   NONCLIENTMETRICS nonClientMetrics;
@@ -79,7 +79,7 @@ WNDPROC naGetApplicationOldTextFieldWindowProc(){
 
 
 
-NAWINAPICallbackInfo naApplicationWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naApplicationWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
@@ -154,7 +154,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
 	RegisterClass(&wndclass);
 
     // Start the WINAPI application and set the native ID of the application.
-  app = na_NewApplication();
+  app = (NAWINAPIApplication*)na_NewApplication();
 
   // Call preStartup if desired.
   if(preStartup){preStartup(arg);}
@@ -222,7 +222,7 @@ NA_HDEF NAApplication* na_NewApplication(void){
 
   NAWINAPIApplication* winapiApplication = naAlloc(NAWINAPIApplication);
 
-  na_InitApplication(&(winapiApplication->coreApplication), GetModuleHandle(NULL));
+  na_InitApplication(&(winapiApplication->application), GetModuleHandle(NULL));
 
   naInitList(&(winapiApplication->timers));
 
@@ -286,7 +286,7 @@ NA_DEF void na_DestructApplication(NAApplication* application){
 
   DestroyIcon(app->appIcon);
 
-  na_ClearApplication(&(app->coreApplication));  
+  na_ClearApplication(&(app->application));  
 
   // Now that all windows are destroyed, all dependent timers are deleted. We can
   // safely release the timer structs. todo: Make killing the timers a sport.
@@ -393,23 +393,23 @@ NA_DEF void naOpenConsoleWindow(void){
 
 NA_DEF void naSetApplicationName(NAUTF8Char* name){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->coreApplication.name = name;
+  app->application.name = name;
 }
 NA_DEF void naSetApplicationCompanyName(NAUTF8Char* name){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->coreApplication.companyName = name;
+  app->application.companyName = name;
 }
 NA_DEF void naSetApplicationVersionString(NAUTF8Char* string){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->coreApplication.versionString = string;
+  app->application.versionString = string;
 }
 NA_DEF void naSetApplicationBuildString(NAUTF8Char* string){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->coreApplication.buildString = string;
+  app->application.buildString = string;
 }
 NA_DEF void naSetApplicationIconPath(NAUTF8Char* path){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  app->coreApplication.iconPath = path;
+  app->application.iconPath = path;
 
   if(path){
     NABabyImage* iconBabyImage = naCreateBabyImageFromFilePath(path);
@@ -432,8 +432,8 @@ NA_DEF void naSetApplicationIconPath(NAUTF8Char* path){
 
 NA_DEF NAString* na_NewApplicationName(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->coreApplication.name){
-    return naNewStringWithFormat("%s", app->coreApplication.name);
+  if(app->application.name){
+    return naNewStringWithFormat("%s", app->application.name);
   }else{
     TCHAR modulepath[MAX_PATH];
     NAString* utf8modulepath;
@@ -459,8 +459,8 @@ NA_DEF NAString* na_NewApplicationName(void){
 
 NA_DEF NAString* na_NewApplicationCompanyName(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->coreApplication.companyName){
-    return naNewStringWithFormat("%s", app->coreApplication.companyName);
+  if(app->application.companyName){
+    return naNewStringWithFormat("%s", app->application.companyName);
   }else{
     return NA_NULL;
   }
@@ -468,8 +468,8 @@ NA_DEF NAString* na_NewApplicationCompanyName(void){
 
 NA_DEF NAString* na_NewApplicationVersionString(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->coreApplication.versionString){
-    return naNewStringWithFormat("%s", app->coreApplication.versionString);
+  if(app->application.versionString){
+    return naNewStringWithFormat("%s", app->application.versionString);
   }else{
     return NA_NULL;
   }
@@ -477,8 +477,8 @@ NA_DEF NAString* na_NewApplicationVersionString(void){
 
 NA_DEF NAString* na_NewApplicationBuildString(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->coreApplication.buildString){
-    return naNewStringWithFormat("%s", app->coreApplication.buildString);
+  if(app->application.buildString){
+    return naNewStringWithFormat("%s", app->application.buildString);
   }else{
     return NA_NULL;
   }
@@ -486,8 +486,8 @@ NA_DEF NAString* na_NewApplicationBuildString(void){
 
 NA_DEF NAString* na_NewApplicationIconPath(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
-  if(app->coreApplication.iconPath){
-    return naNewStringWithFormat("%s", app->coreApplication.iconPath);
+  if(app->application.iconPath){
+    return naNewStringWithFormat("%s", app->application.iconPath);
   }else{
     return NA_NULL;
   }
@@ -666,19 +666,19 @@ NA_DEF void naCenterMouse(void* uiElement, NABool includebounds, NABool sendmove
 
 
 NA_DEF void naShowMouse(){
-  NA_Application* coreapp = (NA_Application*)naGetApplication();
-  if(!(coreapp->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE)){
+  NAApplication* app = naGetApplication();
+  if(!(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE)){
     ShowCursor(1);
-    coreapp->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
+    app->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
   }
 }
 
 
 NA_DEF void naHideMouse(){
-  NA_Application* coreapp = (NA_Application*)naGetApplication();
-  if(coreapp->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE){
+  NAApplication* app = naGetApplication();
+  if(app->flags & NA_APPLICATION_FLAG_MOUSE_VISIBLE){
     ShowCursor(0);
-    coreapp->flags &= ~NA_APPLICATION_FLAG_MOUSE_VISIBLE;
+    app->flags &= ~NA_APPLICATION_FLAG_MOUSE_VISIBLE;
   }
 }
 

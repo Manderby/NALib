@@ -7,34 +7,34 @@
 
 
 @implementation NACocoaTextBox
-- (id) initWithCoreTextBox:(NA_TextBox*)newcoreTextBox frame:(NSRect)frame{
+- (id) initWithCoreTextBox:(NATextBox*)newTextBox frame:(NSRect)frame{
   NSRect clipRect;
   NSClipView* clipView;
   NSRect documentrect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
   self = [super initWithFrame:documentrect];
 
-  scrollview = [[NSScrollView alloc] initWithFrame:frame];
-  [scrollview setHasHorizontalScroller:NO];
-  [scrollview setHasVerticalScroller:YES];
-  [scrollview setAutohidesScrollers:YES];
+  scrollView = [[NSScrollView alloc] initWithFrame:frame];
+  [scrollView setHasHorizontalScroller:NO];
+  [scrollView setHasVerticalScroller:YES];
+  [scrollView setAutohidesScrollers:YES];
 
   clipRect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
   clipView = [[NSClipView alloc] initWithFrame:clipRect];
-  [scrollview setContentView:clipView];
-  [scrollview setDocumentView:self];
+  [scrollView setContentView:clipView];
+  [scrollView setDocumentView:self];
 
-  if([scrollview respondsToSelector:@selector(setAutomaticallyAdjustsContentInsets:)]){
+  if([scrollView respondsToSelector:@selector(setAutomaticallyAdjustsContentInsets:)]){
     NA_MACOS_AVAILABILITY_GUARD_10_10(
-      [scrollview setAutomaticallyAdjustsContentInsets:YES];
+      [scrollView setAutomaticallyAdjustsContentInsets:YES];
     )
   }
-  if([[scrollview contentView] respondsToSelector:@selector(setAutomaticallyAdjustsContentInsets:)]){
+  if([[scrollView contentView] respondsToSelector:@selector(setAutomaticallyAdjustsContentInsets:)]){
     NA_MACOS_AVAILABILITY_GUARD_10_10(
-      [[scrollview contentView] setAutomaticallyAdjustsContentInsets:YES];
+      [[scrollView contentView] setAutomaticallyAdjustsContentInsets:YES];
     )
   }
 
-  coreTextBox = newcoreTextBox;
+  textBox = newTextBox;
   return self;
 }
 - (void) setText:(const NAUTF8Char*)text{
@@ -50,27 +50,26 @@
   [self setEditable:!readonly];
 }
 - (NSView*) getContainingView{
-  return scrollview;
+  return scrollView;
 }
 @end
 
 
 
 NA_DEF NATextBox* naNewTextBox(NASize size){
-  NA_TextBox* coreTextBox = naAlloc(NA_TextBox);
+  NATextBox* textBox = naAlloc(NATextBox);
   
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaTextBox* cocoaTextBox = [[NACocoaTextBox alloc] initWithCoreTextBox:coreTextBox frame:frameRect];
-  na_InitTextBox(coreTextBox, NA_COCOA_PTR_OBJC_TO_C(cocoaTextBox));
+  NACocoaTextBox* cocoaTextBox = [[NACocoaTextBox alloc] initWithCoreTextBox:textBox frame:frameRect];
+  na_InitTextBox(textBox, NA_COCOA_PTR_OBJC_TO_C(cocoaTextBox));
   
-  return (NATextBox*)coreTextBox;
+  return (NATextBox*)textBox;
 }
 
 
 
 NA_DEF void na_DestructTextBox(NATextBox* textBox){
-  NA_TextBox* coreTextBox = (NA_TextBox*)textBox;
-  na_ClearTextBox(coreTextBox);
+  na_ClearTextBox(textBox);
 }
 
 

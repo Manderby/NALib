@@ -30,12 +30,12 @@ NA_HAPI NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label);
 NA_HAPI NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField);
 NA_HAPI NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox);
 
-NA_HAPI NAUIElement** na_GetUIElementNextTabReference(NATextField* textField);
-NA_HAPI NAUIElement** na_GetUIElementPrevTabReference(NATextField* textField);
-NA_HAPI NAUIElement** na_GetTextFieldNextTabReference(NATextField* textField);
-NA_HAPI NAUIElement** na_GetTextFieldPrevTabReference(NATextField* textField);
-NA_HAPI NAUIElement** na_GetTextBoxNextTabReference(NATextBox* textBox);
-NA_HAPI NAUIElement** na_GetTextBoxPrevTabReference(NATextBox* textBox);
+NA_HAPI void** na_GetUIElementNextTabReference(void* textField);
+NA_HAPI void** na_GetUIElementPrevTabReference(void* textField);
+NA_HAPI void** na_GetTextFieldNextTabReference(NATextField* textField);
+NA_HAPI void** na_GetTextFieldPrevTabReference(NATextField* textField);
+NA_HAPI void** na_GetTextBoxNextTabReference(NATextBox* textBox);
+NA_HAPI void** na_GetTextBoxPrevTabReference(NATextBox* textBox);
 
 HWND naGetApplicationOffscreenWindow(void);
 NA_UIElement* naGetApplicationMouseHoverElement(void);
@@ -49,10 +49,10 @@ NA_HDEF void na_ClearUINativeId(NANativeID nativeId){
 }
 
 
-NA_HDEF void na_SetUIElementParent(NAUIElement* uiElement, NAUIElement* parent){
+NA_HDEF void na_SetUIElementParent(void* uiElement, void* parent){
   NA_UIElement* coreelement;
   NA_UIElement* coreparent;
-  NA_Window* window;
+  NAWindow* window;
 
   #ifndef NDEBUG
     if(!uiElement)
@@ -207,7 +207,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
       keyWindow = GetParent(keyWindow);
     }
     if(!elem){
-      elem = naGetApplication();
+      elem = &(naGetApplication()->uiElement);
     }
 
     // Search for a matching keyboard shortcut by bubbling.
@@ -262,30 +262,30 @@ WNDPROC naGetApplicationOldLabelWindowProc();
 WNDPROC naGetApplicationOldTextFieldWindowProc();
 
 // Prototypes of the WindowProc handlers
-NAWINAPICallbackInfo naUIElementWINAPIProc  (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naUIElementWINAPIProc  (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naWINAPINotificationProc(WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam);
 
-NAWINAPICallbackInfo naApplicationWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naWindowWINAPIProc     (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naSpaceWINAPIProc      (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naImageSpaceWINAPIProc (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naApplicationWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naWindowWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naSpaceWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naImageSpaceWINAPIProc (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 #if (NA_COMPILE_OPENGL == 1)
-  NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+  NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 #endif
-NAWINAPICallbackInfo naButtonWINAPIProc     (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naRadioWINAPIProc      (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naCheckBoxWINAPIProc   (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naLabelWINAPIProc      (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naTextFieldWINAPIProc  (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
-NAWINAPICallbackInfo naTextBoxWINAPIProc    (NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naButtonWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naRadioWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naCheckBoxWINAPIProc   (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naLabelWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naTextFieldWINAPIProc  (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naTextBoxWINAPIProc    (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 
-NAWINAPICallbackInfo naButtonWINAPINotify   (NAUIElement* uiElement, WORD notificationCode);
-NAWINAPICallbackInfo naCheckBoxWINAPINotify (NAUIElement* uiElement, WORD notificationCode);
-NAWINAPICallbackInfo naLabelWINAPINotify    (NAUIElement* uiElement, WORD notificationCode);
-NAWINAPICallbackInfo naTextFieldWINAPINotify(NAUIElement* uiElement, WORD notificationCode);
+NAWINAPICallbackInfo naButtonWINAPINotify   (void* uiElement, WORD notificationCode);
+NAWINAPICallbackInfo naCheckBoxWINAPINotify (void* uiElement, WORD notificationCode);
+NAWINAPICallbackInfo naLabelWINAPINotify    (void* uiElement, WORD notificationCode);
+NAWINAPICallbackInfo naTextFieldWINAPINotify(void* uiElement, WORD notificationCode);
 
-NAWINAPICallbackInfo naButtonWINAPIDrawItem (NAUIElement* uiElement, DRAWITEMSTRUCT* drawitemstruct);
+NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* drawitemstruct);
 
 
 
@@ -391,7 +391,7 @@ void naWINAPICaptureMouseHover(){
 }
 
 
-NAWINAPICallbackInfo naUIElementWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   NA_UIElement* coreelement = (NA_UIElement*)uiElement;
   NABool handeled;
@@ -496,13 +496,13 @@ NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam){
 // UI ELEMENT
 // ///////////////////////////////////
 
-NA_HDEF void na_RefreshUIElementNow(NAUIElement* uiElement){
+NA_HDEF void na_RefreshUIElementNow(void* uiElement){
   RedrawWindow(naGetUIElementNativeID(uiElement), NA_NULL, NA_NULL, RDW_INVALIDATE | RDW_ERASE);
 }
 
 
 
-NA_HDEF NAUIElement** na_GetUIElementNextTabReference(NAUIElement* uiElement){
+NA_HDEF void** na_GetUIElementNextTabReference(void* uiElement){
   switch(naGetUIElementType(uiElement)){
   case NA_UI_TEXTFIELD: return na_GetTextFieldNextTabReference(uiElement); break;
   case NA_UI_TEXTBOX:   return na_GetTextBoxNextTabReference(uiElement); break;
@@ -516,7 +516,7 @@ NA_HDEF NAUIElement** na_GetUIElementNextTabReference(NAUIElement* uiElement){
 
 
 
-NA_HDEF NAUIElement** na_GetUIElementPrevTabReference(NAUIElement* uiElement){
+NA_HDEF void** na_GetUIElementPrevTabReference(void* uiElement){
   switch(naGetUIElementType(uiElement)){
   case NA_UI_TEXTFIELD: return na_GetTextFieldPrevTabReference(uiElement); break;
   case NA_UI_TEXTBOX:   return na_GetTextBoxPrevTabReference(uiElement); break;
@@ -530,11 +530,11 @@ NA_HDEF NAUIElement** na_GetUIElementPrevTabReference(NAUIElement* uiElement){
 
 
 
-NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextTabElem){
-  NAUIElement** elemNextRef;
-  NAUIElement** nextPrevRef;
-  NAUIElement** elemNextPrevRef;
-  NAUIElement** nextPrevNextRef;
+NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
+  void** elemNextRef;
+  void** nextPrevRef;
+  void** elemNextPrevRef;
+  void** nextPrevNextRef;
 
   #ifndef NDEBUG
     if(naGetUIElementWindow(elem) != naGetUIElementWindow(nextTabElem))
@@ -596,7 +596,7 @@ NA_HDEF NARect na_GetScreenAbsoluteRect(NA_UIElement* screen){
 
 
 
-NA_DEF NARect naGetUIElementRect(NA_UIElement* uiElement, NAUIElement* relativeelement, NABool includebounds){
+NA_DEF NARect naGetUIElementRect(NA_UIElement* uiElement, void* relativeelement, NABool includebounds){
   NARect rect;
   NARect relrect;
   NA_UIElement* coreelement;

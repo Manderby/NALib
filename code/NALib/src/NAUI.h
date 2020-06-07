@@ -60,25 +60,23 @@
 // - Elements like Buttons, Sliders, ...
 //
 // In NALib, the implementation of the corresponding structs is hidden in
-// system dependent files but all structs are typedef'd as void here. You will
-// interact with the NALib GUI by providing pointers to these void types. This
-// makes it easy to use any ui element with any ui function where a NAUIElement
-// is expected.
+// system dependent files but all structs share the same base fields. Some
+// functions further below will expect a uiElement which is basically just
+// a void pointer to one of those structs. This makes it easy to use any
+// ui element with any ui function where a ui element is expected.
 
-typedef void  NAUIElement;
-
-typedef void  NAApplication;
-typedef void  NAScreen;
-typedef void  NAWindow;
-typedef void  NASpace;
-typedef void  NAImageSpace;
-typedef void  NAOpenGLSpace;
-typedef void  NAButton;
-typedef void  NARadio;
-typedef void  NACheckBox;
-typedef void  NALabel;
-typedef void  NATextField;
-typedef void  NATextBox;
+typedef struct NAApplication    NAApplication;
+typedef struct NAScreen         NAScreen;
+typedef struct NAWindow         NAWindow;
+typedef struct NASpace          NASpace;
+typedef struct NAImageSpace     NAImageSpace;
+typedef struct NAOpenGLSpace    NAOpenGLSpace;
+typedef struct NAButton         NAButton;
+typedef struct NARadio          NARadio;
+typedef struct NACheckBox       NACheckBox;
+typedef struct NALabel          NALabel;
+typedef struct NATextField      NATextField;
+typedef struct NATextBox        NATextBox;
 
 
 
@@ -101,26 +99,26 @@ typedef enum{
   NA_UI_TEXTBOX
 } NAUIElementType;
 
-NA_API NAUIElementType naGetUIElementType(NAUIElement* uiElement);
+NA_API NAUIElementType naGetUIElementType(void* uiElement);
 
-NA_API void naReleaseUIElement(NAUIElement* uiElement);
+NA_API void naReleaseUIElement(void* uiElement);
 
 // Any ui element has a strict hierarchical ordering: Application - Screen -
 // Window - Space - Subspace - Subsubspace ... You can get the parent element
 // with this function. The parent of the Application will be NA_NULL.
-NA_API NAUIElement* naGetUIElementParent  (NAUIElement* uiElement);
+NA_API void* naGetUIElementParent(void* uiElement);
 
 // You can get the window of any ui element except for application and screen
 // elements. An application or screen element will return NA_NULL. A window
 // element will return itself and any other ui element will return the window
 // it is contained in.
-NA_API NAWindow*  naGetUIElementWindow  (NAUIElement* uiElement);
+NA_API NAWindow*  naGetUIElementWindow(void* uiElement);
 
 // You can get the parent space of any ui element. Note that when the
 // given element is itself a space, the parental space will be returned.
 // If there is no parental space, NA_NULL will be returned. Applications,
 // screens and windows will always return NA_NULL.
-NA_API NASpace* naGetUIElementParentSpace(NAUIElement* uiElement);
+NA_API NASpace* naGetUIElementParentSpace(void* uiElement);
 
 // In NALib, all coordinates of the UI are described in a mathematical, right-
 // handed coordinate system. The origin of the global coordinate system is
@@ -135,9 +133,10 @@ NA_API NASpace* naGetUIElementParentSpace(NAUIElement* uiElement);
 // Note that the includeborder argument only works for windows for now. It
 // returns either the content rectangle (client rectangle) or the window
 // outer frame.
-NA_API NARect naGetUIElementRect(   NAUIElement* uiElement,
-                                    NAUIElement* relativeuiElement,
-                                    NABool includeborder);
+NA_API NARect naGetUIElementRect(
+  void* uiElement,
+  void* relativeuiElement,
+  NABool includeborder);
 
 // You can ask any ui element to refresh its contents. This will cause the
 // element to be displayed anew. The time difference defines when the refresh
@@ -145,12 +144,12 @@ NA_API NARect naGetUIElementRect(   NAUIElement* uiElement,
 // method will not execute immediately but put a message to the default message
 // queue of the application. Therefore, this function will always immediately
 // return.
-NA_API void naRefreshUIElement    (NAUIElement* uiElement, double timediff);
+NA_API void naRefreshUIElement(void* uiElement, double timediff);
 
 // When navigating with the tab key, this method defines, which will be the
 // next ui element to have the focus. You start the tab order with a call to
 // naSetWindowFirstTabElement.
-NA_API void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextTabElem);
+NA_API void naSetUIElementNextTabElement(void* elem, void* nextTabElem);
 
 // Native IDs
 //
@@ -174,7 +173,7 @@ NA_API void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextTab
 
 typedef void* NANativeID;
 
-NA_API NANativeID naGetUIElementNativeID(NAUIElement* element);
+NA_API NANativeID naGetUIElementNativeID(void* element);
 
 
 
@@ -509,19 +508,19 @@ struct NAMouseStatus{
 
 typedef struct NAReaction NAReaction;
 struct NAReaction{
-  NAUIElement* uiElement;
+  void* uiElement;
   NAUICommand command;
   void* controller;
 };
 
 typedef NABool (*NAReactionHandler)(NAReaction reaction);
 
-NA_API void naAddUIReaction(        NAUIElement* uiElement,
+NA_API void naAddUIReaction(        void* uiElement,
                                      NAUICommand command,
                                NAReactionHandler handler,
                                            void* controller);
 
-NA_API void naAddUIKeyboardShortcut(NAUIElement* uiElement,
+NA_API void naAddUIKeyboardShortcut(void* uiElement,
                                 NAKeyboardStatus shortcut,
                                NAReactionHandler handler,
                                            void* controller);
@@ -531,7 +530,7 @@ NA_API void naAddUIKeyboardShortcut(NAUIElement* uiElement,
 // void pointer which simply will be set as the first parameter of the
 // reaction handler. You probably will use either NA_NULL or some kind of
 // controller pointer for that, hence the name controller. The uiElement
-// is the NAUIElement where the command occurs and the command sent is the
+// is the ui element where the command occurs and the command sent is the
 // command observed or the shortcut is the shortcut pressed respectively.
 //
 // The INIT method will be called once per element.
@@ -591,13 +590,13 @@ NA_API void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title);
 NA_API void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop);
 NA_API void naSetWindowRect(NAWindow* window, NARect rect);
 NA_API NAUIImageResolution naGetWindowUIResolution(NAWindow* window);
-NA_API void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstTabElem);
-NA_API NAUIElement* naGetWindowFirstTabElement(NAWindow* window);
+NA_API void naSetWindowFirstTabElement(NAWindow* window, void* firstTabElem);
+NA_API void* naGetWindowFirstTabElement(NAWindow* window);
 NA_API void naShowWindow(NAWindow* window);
 NA_API void naCloseWindow(NAWindow* window);
 NA_API NASpace* naGetWindowContentSpace(NAWindow* window);
-NA_API void naSetWindowContentSpace(NAWindow* window, NAUIElement* uiElement);
-NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullscreen);
+NA_API void naSetWindowContentSpace(NAWindow* window, void* uiElement);
+NA_API void naSetWindowFullscreen(NAWindow* window, NABool fullScreen);
 NA_API NABool naIsWindowFullscreen(NAWindow* window);
 NA_API NABool naIsWindowResizeable(NAWindow* window);
 NA_API void naPreventWindowFromClosing(NAWindow* window, NABool prevent);
@@ -607,7 +606,7 @@ NA_API NARect naSetWindowStorageTag(NAWindow* window, NAInt storageTag, NARect r
 // Beware that adding a child to a space which formerly was the first responder
 // of a window, that windows first responder will be reset to NULL.
 NA_API NASpace* naNewSpace(NASize size);
-NA_API void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos);
+NA_API void naAddSpaceChild(NASpace* space, void* child, NAPos pos);
 NA_API void naSetSpaceAlternateBackground(NASpace* space, NABool alternate);
 NA_API NABool naGetSpaceAlternateBackground(NASpace* space);
 NA_API void naSetSpaceRect(NASpace* space, NARect rect);
@@ -636,8 +635,8 @@ NA_API NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size);
 NA_API NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size);
 NA_API NAButton* naNewImageButton(NAUIImage* uiimage, NASize size);
 NA_API void naSetButtonState(NAButton* button, NABool state);
-NA_API void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, NAUIElement* controller);
-NA_API void naSetButtonAbort(NAButton* button, NAReactionHandler handler, NAUIElement* controller);
+NA_API void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void* controller);
+NA_API void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* controller);
 
 // Radio
 NA_API NARadio* naNewRadio(const NAUTF8Char* text, NASize size);

@@ -8,7 +8,7 @@
 
 typedef struct NAWINAPISpace NAWINAPISpace;
 struct NAWINAPISpace {
-  NA_Space corespace;
+  NASpace space;
   NAWINAPIColor* lastBgColor;
 };
 
@@ -18,7 +18,7 @@ NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapiSpace);
 
 
 
-NAWINAPICallbackInfo naSpaceWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
   RECT spacerect;
   NA_UIElement* childelement;
@@ -87,7 +87,7 @@ NAWINAPICallbackInfo naSpaceWINAPIProc(NAUIElement* uiElement, UINT message, WPA
     childelement = (NA_UIElement*)na_GetUINALibEquivalent((HWND)lParam);
     switch(childelement->elementType){
     case NA_UI_LABEL:
-      if(naIsLabelEnabled(childelement)){
+      if(naIsLabelEnabled((NALabel*)childelement)){
         SetTextColor((HDC)wParam, app->fgColor.color);
       }else{
         SetTextColor((HDC)wParam, app->fgColorDisabled.color);
@@ -125,7 +125,7 @@ NAWINAPIColor* naGetWINAPISpaceBackgroundColor(NAWINAPISpace* winapiSpace){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   NAWINAPIColor* retcolor;
   NAInt alternateLevel = 0;
-  NAUIElement* parent = winapiSpace;
+  void* parent = winapiSpace;
   while(parent){
     if(naGetSpaceAlternateBackground(parent)){alternateLevel++;}
     parent = naGetUIElementParentSpace(parent);
@@ -156,9 +156,9 @@ NA_DEF NASpace* naNewSpace(NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
 
-  na_InitSpace(&(winapiSpace->corespace), hWnd);
+  na_InitSpace(&(winapiSpace->space), hWnd);
   winapiSpace->lastBgColor = &(app->bgColor);
-  winapiSpace->corespace.alternatebackground = NA_FALSE;
+  winapiSpace->space.alternatebackground = NA_FALSE;
 
   return (NASpace*)winapiSpace;
 }
@@ -167,7 +167,7 @@ NA_DEF NASpace* naNewSpace(NASize size){
 
 NA_DEF void na_DestructSpace(NASpace* space){
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
-  na_ClearSpace(&(winapiSpace->corespace));
+  na_ClearSpace(&(winapiSpace->space));
 }
 
 
@@ -178,7 +178,7 @@ NA_DEF void naSetSpaceRect(NASpace* space, NARect rect){
 
 
 
-NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos){
+NA_DEF void naAddSpaceChild(NASpace* space, void* child, NAPos pos){
   RECT spacerect;
   RECT childrect;
   int spaceheight;
@@ -199,12 +199,9 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
   NARect screenrect;
   RECT contentrect;
   POINT testpoint = {0, 0};
-  NA_UIElement* corespace;
 
-  corespace = (NA_UIElement*)space;
-
-  GetClientRect(corespace->nativeID, &contentrect);
-  ClientToScreen(corespace->nativeID, &testpoint);
+  GetClientRect(space->nativeID, &contentrect);
+  ClientToScreen(space->nativeID, &testpoint);
   screenrect = naGetMainScreenRect();
 
   rect.pos.x = testpoint.x;
@@ -217,8 +214,7 @@ NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
 
 
 NA_DEF void naSetSpaceAlternateBackground(NASpace* space, NABool alternate){
-  NA_Space* corespace = (NA_Space*)space;
-  corespace->alternatebackground = alternate;
+  space->alternatebackground = alternate;
   naRefreshUIElement(space, 0.);
 }
 

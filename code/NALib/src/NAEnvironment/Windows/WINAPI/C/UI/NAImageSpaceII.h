@@ -7,16 +7,16 @@
 
 typedef struct NAWINAPIImageSpace NAWINAPIImageSpace;
 struct NAWINAPIImageSpace {
-  NA_ImageSpace coreImageSpace;
+  NAImageSpace imageSpace;
   NAUIImage* image;
 };
 
 
-NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (NAUIElement* uiElement);
+NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement);
 
 
 
-NAWINAPICallbackInfo naImageSpaceWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naImageSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
@@ -44,7 +44,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIProc(NAUIElement* uiElement, UINT message
 
 
 
-NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (NAUIElement* uiElement){
+NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
   PAINTSTRUCT paintStruct;
   HBITMAP hOldBitmap;
   HDC hMemDC;
@@ -133,7 +133,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
 
-  na_InitImageSpace(&(winapiImageSpace->coreImageSpace), hWnd);
+  na_InitImageSpace(&(winapiImageSpace->imageSpace), hWnd);
   winapiImageSpace->image = uiimage;
 
   return (NAImageSpace*)winapiImageSpace;
@@ -143,7 +143,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
 
 NA_DEF void na_DestructImageSpace(NAImageSpace* imageSpace){
   NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
-  na_ClearImageSpace(&(winapiImageSpace->coreImageSpace));
+  na_ClearImageSpace(&(winapiImageSpace->imageSpace));
 }
 
 

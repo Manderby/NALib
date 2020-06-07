@@ -8,14 +8,14 @@
 
 typedef struct NAWINAPITextBox NAWINAPITextBox;
 struct NAWINAPITextBox {
-  NA_TextBox coreTextBox;
-  NAUIElement* nextTabStop;
-  NAUIElement* prevTabStop;
+  NATextBox textBox;
+  void* nextTabStop;
+  void* prevTabStop;
 };
 
 
 
-NAWINAPICallbackInfo naTextBoxWINAPIProc(NAUIElement* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
+NAWINAPICallbackInfo naTextBoxWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
 
   switch(message){
@@ -64,7 +64,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
-  na_InitTextBox(&(winapiTextBox->coreTextBox), hWnd);
+  na_InitTextBox(&(winapiTextBox->textBox), hWnd);
   winapiTextBox->nextTabStop = winapiTextBox;
   winapiTextBox->prevTabStop = winapiTextBox;
 
@@ -80,7 +80,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
 
 NA_DEF void na_DestructTextBox(NATextBox* textBox){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
-  na_ClearTextBox(&(winapiTextBox->coreTextBox));
+  na_ClearTextBox(&(winapiTextBox->textBox));
 }
 
 
@@ -114,14 +114,14 @@ NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
 
 
 
-NA_HDEF NAUIElement** na_GetTextBoxNextTabReference(NATextBox* textBox){
+NA_HDEF void** na_GetTextBoxNextTabReference(NATextBox* textBox){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
   return &(winapiTextBox->nextTabStop);
 }
 
 
 
-NA_HDEF NAUIElement** na_GetTextBoxPrevTabReference(NATextBox* textBox){
+NA_HDEF void** na_GetTextBoxPrevTabReference(NATextBox* textBox){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
   return &(winapiTextBox->prevTabStop);
 }
