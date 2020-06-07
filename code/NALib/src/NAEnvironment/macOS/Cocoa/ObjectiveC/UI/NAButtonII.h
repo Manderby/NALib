@@ -85,7 +85,7 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaButton* cocoaButton = [[NACocoaButton alloc] initWithCoreButton:coreButton bezelStyle:NABezelStyleRounded frame:frameRect];
-  na_InitCoreButton(coreButton, NA_COCOA_PTR_OBJC_TO_C(cocoaButton));
+  na_InitButton(coreButton, NA_COCOA_PTR_OBJC_TO_C(cocoaButton));
   [cocoaButton setButtonText:text];
   
   return (NAButton*)coreButton;
@@ -98,7 +98,7 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaButton* cocoaButton = [[NACocoaButton alloc] initWithCoreButton:coreButton bezelStyle:NABezelStyleShadowlessSquare frame:frameRect];
-  na_InitCoreButton(coreButton, NA_COCOA_PTR_OBJC_TO_C(cocoaButton));
+  na_InitButton(coreButton, NA_COCOA_PTR_OBJC_TO_C(cocoaButton));
   [cocoaButton setButtonText:text];
   
   return (NAButton*)coreButton;
@@ -111,7 +111,7 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size){
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaButton* cocoaButton = [[NACocoaButton alloc] initWithCoreButton:coreButton bezelStyle:NABezelStyleShadowlessSquare frame:frameRect];
-  na_InitCoreButton(coreButton, NA_COCOA_PTR_OBJC_TO_C(cocoaButton));
+  na_InitButton(coreButton, NA_COCOA_PTR_OBJC_TO_C(cocoaButton));
   [cocoaButton setButtonImage:uiimage];
   
   return (NAButton*)coreButton;
@@ -124,7 +124,7 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaButton* cocoaButton = [[NACocoaButton alloc] initWithCoreButton:coreButton bezelStyle:0 frame:frameRect];
-  na_InitCoreButton(coreButton, NA_COCOA_PTR_OBJC_TO_C(cocoaButton));
+  na_InitButton(coreButton, NA_COCOA_PTR_OBJC_TO_C(cocoaButton));
   [cocoaButton setButtonImage:uiimage];
   
   return (NAButton*)coreButton;
@@ -132,21 +132,21 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
 
 
 
-NA_DEF void naDestructButton(NAButton* button){
+NA_DEF void na_DestructButton(NAButton* button){
   NA_Button* coreButton = (NA_Button*)button;
-  na_ClearCoreButton(coreButton);
+  na_ClearButton(coreButton);
 }
 
 
 
-NA_HDEF void naSetButtonState(NAButton* button, NABool state){
+NA_DEF void naSetButtonState(NAButton* button, NABool state){
   naDefineCocoaObject(NACocoaButton, cocoaButton, button);
   [cocoaButton setButtonState:state];
 }
 
 
 
-NA_HDEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, NAUIElement* controller){
+NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, NAUIElement* controller){
   naDefineCocoaObject(NACocoaButton, cocoaButton, button);
   [cocoaButton setDefaultButton:NA_TRUE];
   naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ENTER), handler, controller);
@@ -154,7 +154,7 @@ NA_HDEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, NAUI
 
 
 
-NA_HDEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, NAUIElement* controller){
+NA_DEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, NAUIElement* controller){
   naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC), handler, controller);
   naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_COMMAND, NA_KEYCODE_PERIOD), handler, controller);
 }

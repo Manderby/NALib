@@ -92,7 +92,7 @@ NA_DEF NABabyImage* naCreateBabyImage(NASizei size, const NABabyColor color){
 
 
 
-NA_HDEF void naBlendBabyImage(NAInt pixelCount, float* ret, const float* base, const float* top, NABlendMode mode, float blend, NABool baseIsImage, NABool topIsImage){
+NA_HHDEF void na_BlendBabyImage(NAInt pixelCount, float* ret, const float* base, const float* top, NABlendMode mode, float blend, NABool baseIsImage, NABool topIsImage){
   NAInt i;
   blend = naLinearizeColorValue(blend);
   for(i = 0; i < pixelCount; i++){
@@ -170,7 +170,7 @@ NA_DEF NABabyImage* naCreateBabyImageWithTint(const NABabyImage* base, const NAB
   pixelCount = naGetBabyImagePixelCount(base);
   
   baseptr = base->data;
-  naBlendBabyImage(pixelCount, retimage->data, baseptr, tint, mode, blend, NA_TRUE, NA_FALSE);
+  na_BlendBabyImage(pixelCount, retimage->data, baseptr, tint, mode, blend, NA_TRUE, NA_FALSE);
 
   return retimage;
 }
@@ -193,10 +193,10 @@ NA_DEF NABabyImage* naCreateBabyImageWithBlend(const NABabyImage* base, const NA
     
   if(base){
     const float* baseptr = base->data;
-    naBlendBabyImage(pixelCount, retimage->data, baseptr, top->data, mode, blend, NA_TRUE, NA_TRUE);
+    na_BlendBabyImage(pixelCount, retimage->data, baseptr, top->data, mode, blend, NA_TRUE, NA_TRUE);
   }else{
     NABabyColor transparent = {0.f, 0.f, 0.f, 0.f};
-    naBlendBabyImage(pixelCount, retimage->data, transparent, top->data, mode, blend, NA_FALSE, NA_TRUE);
+    na_BlendBabyImage(pixelCount, retimage->data, transparent, top->data, mode, blend, NA_FALSE, NA_TRUE);
   }
 
   return retimage;
@@ -256,7 +256,7 @@ NA_DEF NABabyImage* naCreateBabyImageWithHalfSize(const NABabyImage* image){
 
 
 
-NA_HDEF void naDestroyBabyImage(NABabyImage* image){
+NA_HHDEF void na_DestroyBabyImage(NABabyImage* image){
   naFree(image->data);
   naFree(image);
 }
@@ -266,7 +266,7 @@ NA_API NABabyImage* naRetainBabyImage(NABabyImage* image){
 }
 
 NA_DEF void naReleaseBabyImage(NABabyImage* image){
-  naReleaseRefCount(&image->refCount, image, (NAMutator)naDestroyBabyImage);
+  naReleaseRefCount(&image->refCount, image, (NAMutator)na_DestroyBabyImage);
 }
 
 

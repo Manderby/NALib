@@ -4,7 +4,7 @@
 
 // This is the internal function actually preparing and storing the bytes
 // delivered in the parameters.
-NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, NAInt bytesize, NABool prepare, NABool advance){
+NA_HHDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, NAInt bytesize, NABool prepare, NABool advance){
   const NABuffer* buffer;
   NAInt firstpartoffset;
   NATreeIterator firstbufiter;

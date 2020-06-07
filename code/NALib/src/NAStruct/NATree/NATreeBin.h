@@ -47,8 +47,8 @@ NA_HHAPI  NATreeNode* na_RemoveLeafBin(NATree* tree, NATreeLeaf* leaf);
 NA_HHAPI  NATreeLeaf* na_InsertLeafBin(NATree* tree, NATreeItem* existingItem, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
 
 NA_HHAPI  void na_InitNodeAVL(NATreeBinNode* binnode);
-NA_HHAPI  void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx);
-NA_HHAPI  void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childindx);
+NA_HHAPI  void na_GrowAVL(NATree* tree, NATreeBinNode* binnode, NAInt childIndex);
+NA_HHAPI  void na_ShrinkAVL(NATree* tree, NATreeBinNode* binnode, NAInt childIndex);
 
 NA_HIAPI NATreeItem* naGetBinNodeItem(NATreeBinNode* binnode);
 

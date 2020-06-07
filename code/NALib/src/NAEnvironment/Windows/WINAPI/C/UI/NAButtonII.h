@@ -178,7 +178,7 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
   oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
-  na_InitCoreButton(&(winapiButton->coreButton), hWnd);
+  na_InitButton(&(winapiButton->coreButton), hWnd);
   winapiButton->image = NA_NULL;
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
@@ -206,7 +206,7 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
   
   naFree(systemtext);
 
-  na_InitCoreButton(&(winapiButton->coreButton), hWnd);
+  na_InitButton(&(winapiButton->coreButton), hWnd);
   winapiButton->image = NA_NULL;
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
@@ -229,7 +229,7 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
-  na_InitCoreButton(&(winapiButton->coreButton), hWnd);
+  na_InitButton(&(winapiButton->coreButton), hWnd);
   winapiButton->image = uiimage;
   winapiButton->transparent = NA_FALSE;
 
@@ -251,7 +251,7 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
-  na_InitCoreButton(&(winapiButton->coreButton), hWnd);
+  na_InitButton(&(winapiButton->coreButton), hWnd);
   winapiButton->image = uiimage;
   winapiButton->transparent = NA_TRUE;
 
@@ -260,21 +260,21 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
 
 
 
-NA_DEF void naDestructButton(NAButton* button){
+NA_DEF void na_DestructButton(NAButton* button){
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
-  na_ClearCoreButton(&(winapiButton->coreButton));
+  na_ClearButton(&(winapiButton->coreButton));
 }
 
 
 
-NA_HDEF void naSetButtonState(NAButton* button, NABool state){
+NA_DEF void naSetButtonState(NAButton* button, NABool state){
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
   SendMessage(naGetUIElementNativeID(winapiButton), BM_SETSTATE, (WPARAM)state, (LPARAM)NA_NULL);
 }
 
 
 
-NA_HDEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, NAUIElement* controller){
+NA_DEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, NAUIElement* controller){
   NAWINAPIButton* winapiButton = (NAWINAPIButton*)button;
   long style = (long)GetWindowLongPtr(naGetUIElementNativeID(winapiButton), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | BS_DEFPUSHBUTTON;
@@ -284,13 +284,13 @@ NA_HDEF void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, NAUI
 
 
 
-NA_HDEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, NAUIElement* controller){
+NA_DEF void naSetButtonAbort(NAButton* button, NAReactionHandler handler, NAUIElement* controller){
   naAddUIKeyboardShortcut(naGetUIElementWindow(button), naMakeKeybardStatus(NA_MODIFIER_FLAG_NONE, NA_KEYCODE_ESC), handler, controller);
 }
 
 
 
-NA_HDEF NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button){
+NA_HHDEF NARect na_GetButtonAbsoluteInnerRect(NA_UIElement* button){
   NA_UNUSED(button);
   return naMakeRectS(20, 40, 100, 50);
 }

@@ -89,7 +89,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
   oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldRadioWindowProc){app->oldRadioWindowProc = oldproc;}
 
-  na_InitCoreRadio(&(winapiRadio->coreRadio), hWnd);
+  na_InitRadio(&(winapiRadio->coreRadio), hWnd);
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));
 
@@ -98,14 +98,14 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
 
 
 
-NA_DEF void naDestructRadio(NARadio* radio){
+NA_DEF void na_DestructRadio(NARadio* radio){
   NAWINAPIRadio* winapiRadio = (NAWINAPIRadio*)radio;
-  na_ClearCoreRadio(&(winapiRadio->coreRadio));
+  na_ClearRadio(&(winapiRadio->coreRadio));
 }
 
 
 
-NA_HDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
+NA_HHDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
   NA_UNUSED(radio);
   return naMakeRectS(20, 40, 100, 50);
 }
@@ -119,7 +119,7 @@ NA_DEF NABool naGetRadioState(NARadio* radio){
 
 
 
-NA_HDEF void naSetRadioState(NARadio* radio, NABool state){
+NA_DEF void naSetRadioState(NARadio* radio, NABool state){
   LPARAM lParam = state ? BST_CHECKED : BST_UNCHECKED;
   SendMessage(naGetUIElementNativeID(radio), BM_SETCHECK, lParam, 0);
 }

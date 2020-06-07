@@ -159,9 +159,9 @@ NA_DEF void naPrintUntested(void){
 
 
 
-NA_HDEF void naUpdateTestParentLeaf(NATestData* testData, NABool leafSuccess){
+NA_HHDEF void na_UpdateTestParentLeaf(NATestData* testData, NABool leafSuccess){
   if(testData->parent){
-    naUpdateTestParentLeaf(testData->parent, leafSuccess);
+    na_UpdateTestParentLeaf(testData->parent, leafSuccess);
   }
 
   testData->totalLeafCount++;
@@ -187,13 +187,13 @@ NA_HHDEF void na_AddTest(const char* expr, int success, int lineNum){
   naInitTestingData(testData, expr, na_Testing->curTestData, lineNum);
   if(na_GetErrorCount() > 0){
     testData->success = NA_FALSE;
-    naUpdateTestParentLeaf(na_Testing->curTestData, NA_FALSE);
+    na_UpdateTestParentLeaf(na_Testing->curTestData, NA_FALSE);
     printf("  ");
     if(testData->parent){naPrintTestName(testData->parent);}
     printf("Line %d: %d errors occured in %s" NA_NL, lineNum, na_GetErrorCount(), expr);\
   }else{
     testData->success = (NABool)success;
-    naUpdateTestParentLeaf(na_Testing->curTestData, (NABool)success);
+    na_UpdateTestParentLeaf(na_Testing->curTestData, (NABool)success);
     if(!success){
       printf("  ");
       if(testData->parent){naPrintTestName(testData->parent);}
@@ -213,7 +213,7 @@ NA_HHDEF void na_AddTestError(const char* expr, int lineNum){
   NATestData* testData = naPushStack(&(na_Testing->curTestData->childs));
   naInitTestingData(testData, expr, na_Testing->curTestData, lineNum);
   testData->success = na_GetErrorCount() != 0;
-  naUpdateTestParentLeaf(na_Testing->curTestData, (NABool)testData->success);
+  na_UpdateTestParentLeaf(na_Testing->curTestData, (NABool)testData->success);
   if(!testData->success){
     printf("  ");
     if(testData->parent){naPrintTestName(testData->parent);}

@@ -3,7 +3,7 @@
 
 
 
-NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance){
+NA_HHDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance){
   const NABuffer* buffer;
   NAInt firstpartoffset;
   NAByte* dst = data;

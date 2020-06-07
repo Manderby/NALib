@@ -51,16 +51,16 @@ NA_DEF NASpace* naNewSpace(NASize size){
 
   contentRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   cocoaSpace = [[NACocoaSpace alloc] initWithCoreSpace:corespace frame:contentRect];  
-  na_InitCoreSpace(corespace, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
+  na_InitSpace(corespace, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
   
   return (NASpace*)corespace;
 }
 
 
 
-NA_DEF void naDestructSpace(NASpace* space){
+NA_DEF void na_DestructSpace(NASpace* space){
   NA_Space* corespace = (NA_Space*)space;
-  na_ClearCoreSpace(corespace);
+  na_ClearSpace(corespace);
 }
 
 

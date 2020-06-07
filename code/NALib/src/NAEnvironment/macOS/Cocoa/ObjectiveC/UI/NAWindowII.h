@@ -123,7 +123,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
   [cocoawindow setDelegate:cocoawindow];
   [cocoawindow setTitle:[NSString stringWithUTF8String:title]];
   [cocoawindow setInitialFirstResponder:[cocoawindow contentView]];
-  na_InitCoreWindow(coreWindow, NA_COCOA_PTR_OBJC_TO_C(cocoawindow), NA_NULL, NA_FALSE, resizeable, rect);
+  na_InitWindow(coreWindow, NA_COCOA_PTR_OBJC_TO_C(cocoawindow), NA_NULL, NA_FALSE, resizeable, rect);
 
   space = naNewSpace(rect.size);
   naSetWindowContentSpace(coreWindow, space);
@@ -135,12 +135,12 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
 
 
 
-NA_DEF void naDestructWindow(NAWindow* window){
+NA_DEF void na_DestructWindow(NAWindow* window){
   NA_Window* coreWindow = (NA_Window*)window;
   naDefineCocoaObject(NACocoaWindow, cocoawindow, window);
   [cocoawindow close];
   naReleaseUIElement(coreWindow->contentspace);
-  na_ClearCoreWindow(coreWindow);
+  na_ClearWindow(coreWindow);
 }
 
 
@@ -178,7 +178,7 @@ NA_DEF NAUIImageResolution naGetWindowUIResolution(NAWindow* window){
 
 
 
-NA_HDEF void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstTabElem){
+NA_DEF void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstTabElem){
   naDefineCocoaObject(NACocoaWindow, cocoawindow, window);
   naDefineCocoaObject(NSView, cocoaFirstTab, firstTabElem);
   [cocoawindow setInitialFirstResponder:cocoaFirstTab];
@@ -186,7 +186,7 @@ NA_HDEF void naSetWindowFirstTabElement(NAWindow* window, NAUIElement* firstTabE
 
 
 
-NA_HDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
+NA_HHDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
   NARect rect;
   NSRect contentrect;
   NSRect windowframe;
@@ -216,28 +216,28 @@ NA_HHDEF NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window){
 
 
 
-NA_HDEF void na_RenewWindowMouseTracking(NA_Window* coreWindow){
+NA_HHDEF void na_RenewWindowMouseTracking(NA_Window* coreWindow){
   naDefineCocoaObject(NACocoaWindow, cocoawindow, coreWindow);
   [cocoawindow renewMouseTracking];
 }
 
 
 
-NA_HDEF void na_ClearWindowMouseTracking(NA_Window* coreWindow){
+NA_HHDEF void na_ClearWindowMouseTracking(NA_Window* coreWindow){
   naDefineCocoaObject(NACocoaWindow, cocoawindow, coreWindow);
   [cocoawindow clearMouseTracking];
 }
 
 
 
-//NA_HDEF void* na_AllocMouseTracking(NAWindow* window){
+//NA_HHDEF void* na_AllocMouseTracking(NAWindow* window){
 //  naDefineCocoaObject(NACocoaWindow, cocoawindow, window);
 //  [cocoawindow retainMouseTracking];
 //}
 //
 //
 //
-//NA_HDEF void na_DeallocMouseTracking(NA_Window* coreWindow){
+//NA_HHDEF void na_DeallocMouseTracking(NA_Window* coreWindow){
 //  naDefineCocoaObject(NACocoaWindow, cocoawindow, coreWindow);
 //  [cocoawindow releaseMouseTracking];
 //}
@@ -285,13 +285,13 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullscreen){
   naDefineCocoaObject(NACocoaWindow, cocoawindow, window);
   if(fullscreen != naIsWindowFullscreen(window)){
     if(fullscreen){
-      coreWindow->windowedframe = naMakeRectWithNSRect([cocoawindow frame]);
+      coreWindow->windowedFrame = naMakeRectWithNSRect([cocoawindow frame]);
       [cocoawindow setStyleMask:NAWindowStyleMaskBorderless];
       [cocoawindow setFrame:[[NSScreen mainScreen] frame] display:YES];
       [cocoawindow setLevel:kCGScreenSaverWindowLevel];
     }else{
       [cocoawindow setStyleMask:NAWindowStyleMaskTitled | NAWindowStyleMaskClosable | NAWindowStyleMaskMiniaturizable | NAWindowStyleMaskResizable];
-      [cocoawindow setFrame:naMakeNSRectWithRect(coreWindow->windowedframe) display:YES];
+      [cocoawindow setFrame:naMakeNSRectWithRect(coreWindow->windowedFrame) display:YES];
       [cocoawindow setLevel:NSNormalWindowLevel];
     }
     naSetFlagi(&(coreWindow->flags), NA_CORE_WINDOW_FLAG_FULLSCREEN, fullscreen);

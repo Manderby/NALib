@@ -38,7 +38,7 @@ NA_HIDEF NAInt naGetUIImageSubImageIndex(NAUIImageResolution resolution, NAUIIma
   return ((NAInt)resolution * (NAInt)NA_UIIMAGE_KIND_COUNT + (NAInt)kind) * (NAInt)NA_UIIMAGE_SKIN_COUNT + (NAInt)skin;
 }
 
-NA_HDEF NABabyImage* na_GetUIImageBabyImage(NAUIImage* uiimage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
+NA_HHDEF NABabyImage* na_GetUIImageBabyImage(NAUIImage* uiimage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
   NAInt subIndex = naGetUIImageSubImageIndex(resolution, kind, skin);
   NABabyImage* retimg = uiimage->babyimages[subIndex];
   if(!retimg && skin != NA_UIIMAGE_SKIN_PLAIN){
@@ -58,7 +58,7 @@ NA_HDEF NABabyImage* na_GetUIImageBabyImage(NAUIImage* uiimage, NAUIImageResolut
 }
 
 
-NA_HDEF void* na_GetUIImageNativeImage(NAUIImage* uiimage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
+NA_HHDEF void* na_GetUIImageNativeImage(NAUIImage* uiimage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
   NAInt subIndex;
   // Let the following function do the hard work.
   na_GetUIImageBabyImage(uiimage, resolution, kind, skin);

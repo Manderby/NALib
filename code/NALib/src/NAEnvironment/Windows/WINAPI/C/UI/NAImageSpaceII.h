@@ -133,7 +133,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
 
-  na_InitCoreImageSpace(&(winapiImageSpace->coreImageSpace), hWnd);
+  na_InitImageSpace(&(winapiImageSpace->coreImageSpace), hWnd);
   winapiImageSpace->image = uiimage;
 
   return (NAImageSpace*)winapiImageSpace;
@@ -141,14 +141,14 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
 
 
 
-NA_DEF void naDestructImageSpace(NAImageSpace* imageSpace){
+NA_DEF void na_DestructImageSpace(NAImageSpace* imageSpace){
   NAWINAPIImageSpace* winapiImageSpace = (NAWINAPIImageSpace*)imageSpace;
-  na_ClearCoreImageSpace(&(winapiImageSpace->coreImageSpace));
+  na_ClearImageSpace(&(winapiImageSpace->coreImageSpace));
 }
 
 
 
-NA_HDEF NARect na_GetImageSpaceAbsoluteInnerRect(NA_UIElement* imageSpace){
+NA_HHDEF NARect na_GetImageSpaceAbsoluteInnerRect(NA_UIElement* imageSpace){
   NA_UNUSED(imageSpace);
   return naMakeRectS(20, 40, 100, 50);
 }

@@ -84,7 +84,7 @@ struct NA_Window{
   NAInt storageTag;
   NA_Space* contentspace;
   NAInt flags;
-  NARect windowedframe;
+  NARect windowedFrame;
 };
 
 struct NA_Space{
@@ -161,7 +161,7 @@ extern NA_Application* na_App;
 // gathered here. You are free to use them but note that these are supposed to
 // be helper functions.
 
-NA_HHAPI void na_UnregisterCoreUIElement(NA_UIElement* coreUiElement);
+NA_HHAPI void na_UnregisterUIElement(NA_UIElement* coreUiElement);
 NA_HHAPI void na_SetUIElementParent(NAUIElement* uiElement, NAUIElement* parent);
 NA_HHAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
 NA_HHAPI void na_BlockUIElementNotifications(NA_UIElement* elem);
@@ -169,43 +169,43 @@ NA_HHAPI void na_AllowUIElementNotifications(NA_UIElement* elem);
 NA_HHAPI NABool na_AreUIElementNotificationsAllowed(NA_UIElement* elem);
 
 NA_HHAPI NAApplication* na_NewApplication(void);
-NA_HHAPI void na_InitCoreApplication(NA_Application* coreApplication, NANativeID nativeId);
-NA_HHAPI void na_ClearCoreApplication(NA_Application* coreApplication);
+NA_HHAPI void na_InitApplication(NA_Application* coreApplication, NANativeID nativeId);
+NA_HHAPI void na_ClearApplication(NA_Application* coreApplication);
 
-NA_HHAPI void na_InitCoreScreen(NA_Screen* corescreen, void* nativeId);
-NA_HHAPI void na_ClearCoreScreen(NA_Screen* corescreen);
+NA_HHAPI void na_InitScreen(NA_Screen* corescreen, void* nativeId);
+NA_HHAPI void na_ClearScreen(NA_Screen* corescreen);
 
-NA_HHAPI void na_InitCoreWindow(NA_Window* coreWindow, void* nativeId, NA_Space* contentspace, NABool fullscreen, NABool resizeable, NARect windowedframe);
-NA_HHAPI void na_ClearCoreWindow(NA_Window* coreWindow);
+NA_HHAPI void na_InitWindow(NA_Window* coreWindow, void* nativeId, NA_Space* contentspace, NABool fullscreen, NABool resizeable, NARect windowedFrame);
+NA_HHAPI void na_ClearWindow(NA_Window* coreWindow);
 NA_HHAPI void na_RememberWindowPosition(NA_Window* coreWindow);
 NA_HHAPI NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window);
 
-NA_HHAPI void na_InitCoreSpace(NA_Space* corespace, void* nativeId);
-NA_HHAPI void na_ClearCoreSpace(NA_Space* corecorespace);
+NA_HHAPI void na_InitSpace(NA_Space* corespace, void* nativeId);
+NA_HHAPI void na_ClearSpace(NA_Space* corecorespace);
 
-NA_HHAPI void na_InitCoreImageSpace(NA_ImageSpace* coreImageSpace, void* nativeId);
-NA_HHAPI void na_ClearCoreImageSpace(NA_ImageSpace* corecoreImageSpace);
+NA_HHAPI void na_InitImageSpace(NA_ImageSpace* coreImageSpace, void* nativeId);
+NA_HHAPI void na_ClearImageSpace(NA_ImageSpace* corecoreImageSpace);
 
-NA_HHAPI void na_InitCoreOpenGLSpace(NA_OpenGLSpace* coreOpenGLspace, void* nativeId);
-NA_HHAPI void na_ClearCoreOpenGLSpace(NA_OpenGLSpace* corecoreOpenGLspace);
+NA_HHAPI void na_InitOpenGLSpace(NA_OpenGLSpace* coreOpenGLspace, void* nativeId);
+NA_HHAPI void na_ClearOpenGLSpace(NA_OpenGLSpace* corecoreOpenGLspace);
 
-NA_HHAPI void na_InitCoreButton(NA_Button* coreButton, void* nativeId);
-NA_HHAPI void na_ClearCoreButton(NA_Button* coreButton);
+NA_HHAPI void na_InitButton(NA_Button* coreButton, void* nativeId);
+NA_HHAPI void na_ClearButton(NA_Button* coreButton);
 
-NA_HHAPI void na_InitCoreRadio(NA_Radio* coreRadio, void* nativeId);
-NA_HHAPI void na_ClearCoreRadio(NA_Radio* coreRadio);
+NA_HHAPI void na_InitRadio(NA_Radio* coreRadio, void* nativeId);
+NA_HHAPI void na_ClearRadio(NA_Radio* coreRadio);
 
-NA_HHAPI void na_InitCoreCheckBox(NA_CheckBox* coreCheckBox, void* nativeId);
-NA_HHAPI void na_ClearCoreCheckBox(NA_CheckBox* coreCheckBox);
+NA_HHAPI void na_InitCheckBox(NA_CheckBox* coreCheckBox, void* nativeId);
+NA_HHAPI void na_ClearCheckBox(NA_CheckBox* coreCheckBox);
 
-NA_HHAPI void na_InitCoreLabel(NA_Label* coreLabel, void* nativeId);
-NA_HHAPI void na_ClearCoreLabel(NA_Label* coreLabel);
+NA_HHAPI void na_InitLabel(NA_Label* coreLabel, void* nativeId);
+NA_HHAPI void na_ClearLabel(NA_Label* coreLabel);
 
-NA_HHAPI void na_InitCoreTextField(NA_TextField* coreTextField, void* nativeId);
-NA_HHAPI void na_ClearCoreTextField(NA_TextField* coreTextField);
+NA_HHAPI void na_InitTextField(NA_TextField* coreTextField, void* nativeId);
+NA_HHAPI void na_ClearTextField(NA_TextField* coreTextField);
 
-NA_HHAPI void na_InitCoreTextBox(NA_TextBox* coreTextBox, void* nativeId);
-NA_HHAPI void na_ClearCoreTextBox(NA_TextBox* coreTextBox);
+NA_HHAPI void na_InitTextBox(NA_TextBox* coreTextBox, void* nativeId);
+NA_HHAPI void na_ClearTextBox(NA_TextBox* coreTextBox);
 
 
 

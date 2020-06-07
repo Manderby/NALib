@@ -120,12 +120,12 @@ struct NACocoaApplication {
   cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativeID((NAUIElement*)uiElement))
 
 
-NA_HDEF void na_ClearUINativeId(NANativeID nativeId){
+NA_HHDEF void na_ClearUINativeId(NANativeID nativeId){
   NA_COCOA_RELEASE(nativeId);
 }
 
 
-NA_HDEF void na_SetUIElementParent(NAUIElement* uiElement, NAUIElement* parent){
+NA_HHDEF void na_SetUIElementParent(NAUIElement* uiElement, NAUIElement* parent){
   NA_UIElement* coreelement = (NA_UIElement*)uiElement;
   // todo: remove from old parent
   coreelement->parent = parent;
@@ -133,7 +133,7 @@ NA_HDEF void na_SetUIElementParent(NAUIElement* uiElement, NAUIElement* parent){
 
 
 
-NA_HDEF void naCaptureKeyboardStatus(NSEvent* event){
+NA_HHDEF void na_CaptureKeyboardStatus(NSEvent* event){
   NSUInteger flags;
   NABool hasShift;
   NABool hasControl;
@@ -156,12 +156,12 @@ NA_HDEF void naCaptureKeyboardStatus(NSEvent* event){
 
 
 
-NA_HDEF NABool naInterceptKeyboardShortcut(NSEvent* event){
+NA_HHDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
   NABool retvalue = NA_FALSE;
   if([event type] == NAEventTypeKeyDown || [event type] == NSEventTypeFlagsChanged){
     NA_UIElement* elem;
     NSWindow* focusWindow;
-    naCaptureKeyboardStatus(event);
+    na_CaptureKeyboardStatus(event);
     
     // Search for the first responder which is represented in NALib.
     elem = NA_NULL;
@@ -336,7 +336,7 @@ NA_HHDEF NARect na_GetApplicationAbsoluteRect(void){
 
 
 
-NA_HDEF NARect na_GetScreenAbsoluteRect(NA_UIElement* screen){
+NA_HHDEF NARect na_GetScreenAbsoluteRect(NA_UIElement* screen){
   NARect rect;
   NSRect frame;
   NSRect mainframe;

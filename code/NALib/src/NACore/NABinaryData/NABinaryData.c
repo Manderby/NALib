@@ -79,7 +79,7 @@ NA_HIDEF void naAccumulateAdler(NAChecksumAdler* checksumadler, const NAByte* bu
 // /////////////////////////////
 // General NAChecksum implementation
 
-NA_HDEF NAChecksum* naInitChecksum(NAChecksum* checksum, NAChecksumType type){
+NA_DEF NAChecksum* naInitChecksum(NAChecksum* checksum, NAChecksumType type){
   checksum->type = type;
   switch(type){
   case NA_CHECKSUM_TYPE_CRC_PNG:
@@ -102,13 +102,13 @@ NA_HDEF NAChecksum* naInitChecksum(NAChecksum* checksum, NAChecksumType type){
 
 
 
-NA_HDEF void naClearChecksum(NAChecksum* checksum){
+NA_DEF void naClearChecksum(NAChecksum* checksum){
   naFree(checksum->data);
 }
 
 
 
-NA_HDEF void naResetChecksum(NAChecksum* checksum){
+NA_DEF void naResetChecksum(NAChecksum* checksum){
   switch(checksum->type){
   case NA_CHECKSUM_TYPE_CRC_PNG:
     ((NAChecksumCRC*)(checksum->data))->value = 0xffffffff;
@@ -127,7 +127,7 @@ NA_HDEF void naResetChecksum(NAChecksum* checksum){
 
 
 
-NA_HDEF void naAccumulateChecksum(NAChecksum* checksum, const NAByte* buf, NAInt bytesize){
+NA_DEF void naAccumulateChecksum(NAChecksum* checksum, const NAByte* buf, NAInt bytesize){
   switch(checksum->type){
   case NA_CHECKSUM_TYPE_CRC_PNG:
     naAccumulateCRCPNG(((NAChecksumCRC*)(checksum->data)), buf, bytesize);
@@ -145,7 +145,7 @@ NA_HDEF void naAccumulateChecksum(NAChecksum* checksum, const NAByte* buf, NAInt
 
 
 
-NA_HDEF uint32 naGetChecksumResult(NAChecksum* checksum){
+NA_DEF uint32 naGetChecksumResult(NAChecksum* checksum){
   uint32 retvalue;
   switch(checksum->type){
   case NA_CHECKSUM_TYPE_CRC_PNG:

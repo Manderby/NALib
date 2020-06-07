@@ -14,59 +14,59 @@ NA_Application* na_App = NA_NULL;
 
 
 
-NA_HDEF void naRegisterCoreUIElement(NA_UIElement* coreUiElement, NAUIElementType elementType, NANativeID nativeID){
-  naInitRefCount(&(coreUiElement->refCount));
-  coreUiElement->parent = NA_NULL;
-  coreUiElement->elementType = elementType;
-  coreUiElement->nativeID = nativeID;
-  naInitList(&(coreUiElement->reactions));
-  naInitList(&(coreUiElement->shortcuts));
-  coreUiElement->mouseInside = NA_FALSE;
-  coreUiElement->allowNotifications = NA_TRUE;
+NA_HHDEF void na_RegisterUIElement(NA_UIElement* uiElement, NAUIElementType elementType, NANativeID nativeID){
+  naInitRefCount(&(uiElement->refCount));
+  uiElement->parent = NA_NULL;
+  uiElement->elementType = elementType;
+  uiElement->nativeID = nativeID;
+  naInitList(&(uiElement->reactions));
+  naInitList(&(uiElement->shortcuts));
+  uiElement->mouseInside = NA_FALSE;
+  uiElement->allowNotifications = NA_TRUE;
 
-  naAddListLastMutable(&(na_App->uiElements), coreUiElement);
+  naAddListLastMutable(&(na_App->uiElements), uiElement);
 }
 
 
 
-NA_HDEF void na_UnregisterCoreUIElement(NA_UIElement* coreUiElement){
-  naRemoveListData(&(na_App->uiElements), coreUiElement);
-  na_ClearUINativeId(coreUiElement->nativeID);
+NA_HHDEF void na_UnregisterUIElement(NA_UIElement* uiElement){
+  naRemoveListData(&(na_App->uiElements), uiElement);
+  na_ClearUINativeId(uiElement->nativeID);
 }
 
 
 
-NA_HDEF void na_InitCoreApplication(NA_Application* coreApplication, NANativeID nativeId){
-  na_App = coreApplication;
+NA_HHDEF void na_InitApplication(NA_Application* application, NANativeID nativeId){
+  na_App = application;
 
-  naInitList(&(coreApplication->uiElements));
+  naInitList(&(application->uiElements));
 
-  coreApplication->translator = NA_NULL;
+  application->translator = NA_NULL;
   naStartTranslator();
   
-  coreApplication->mouseStatus.pos = naMakePos(0, 0);
-  coreApplication->mouseStatus.prevPos = naMakePos(0, 0);
+  application->mouseStatus.pos = naMakePos(0, 0);
+  application->mouseStatus.prevPos = naMakePos(0, 0);
   
-  coreApplication->keyboardStatus.keyCode = NA_KEYCODE_ESC;
-  coreApplication->keyboardStatus.modifiers = 0;
+  application->keyboardStatus.keyCode = NA_KEYCODE_ESC;
+  application->keyboardStatus.modifiers = 0;
   
-  coreApplication->flags = 0;
-  coreApplication->flags |= NA_APPLICATION_FLAG_RUNNING;
-  coreApplication->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
+  application->flags = 0;
+  application->flags |= NA_APPLICATION_FLAG_RUNNING;
+  application->flags |= NA_APPLICATION_FLAG_MOUSE_VISIBLE;
 
-  coreApplication->name = NA_NULL;
-  coreApplication->companyName = NA_NULL;
-  coreApplication->versionString = NA_NULL;
-  coreApplication->buildString = NA_NULL;
-  coreApplication->iconPath = NA_NULL;
+  application->name = NA_NULL;
+  application->companyName = NA_NULL;
+  application->versionString = NA_NULL;
+  application->buildString = NA_NULL;
+  application->iconPath = NA_NULL;
 
-  naRegisterCoreUIElement(&(coreApplication->uiElement), NA_UI_APPLICATION, nativeId);
+  na_RegisterUIElement(&(application->uiElement), NA_UI_APPLICATION, nativeId);
 }
 
 
 
-NA_HDEF void na_ClearCoreApplication(NA_Application* coreApplication){
-  NA_UNUSED(coreApplication);
+NA_HHDEF void na_ClearApplication(NA_Application* application){
+  NA_UNUSED(application);
 //  NAListIterator iter;
   #ifndef NDEBUG
     if(!na_App)
@@ -83,32 +83,32 @@ NA_HDEF void na_ClearCoreApplication(NA_Application* coreApplication){
     naReleaseUIElement(uiElement);
   }
   naStopTranslator();
-  na_UnregisterCoreUIElement(&(coreApplication->uiElement));
+  na_UnregisterUIElement(&(application->uiElement));
   naClearList(&(na_App->uiElements));
 }
 
 
 
-NA_HDEF void na_InitCoreScreen(NA_Screen* corescreen, void* nativeId){
-  naRegisterCoreUIElement(&(corescreen->uiElement), NA_UI_SCREEN, nativeId);
+NA_HHDEF void na_InitScreen(NA_Screen* screen, void* nativeId){
+  na_RegisterUIElement(&(screen->uiElement), NA_UI_SCREEN, nativeId);
 }
-NA_HDEF void na_ClearCoreScreen(NA_Screen* corescreen){
-  na_UnregisterCoreUIElement(&(corescreen->uiElement));
-}
-
-
-
-NA_HDEF void na_InitCoreWindow(NA_Window* coreWindow, void* nativeId, NA_Space* contentspace, NABool fullscreen, NABool resizeable, NARect windowedframe){
-  naRegisterCoreUIElement(&(coreWindow->uiElement), NA_UI_WINDOW, nativeId);
-  coreWindow->contentspace = contentspace;
-  coreWindow->flags = 0;
-  if(fullscreen){coreWindow->flags |= NA_CORE_WINDOW_FLAG_FULLSCREEN;}
-  if(resizeable){coreWindow->flags |= NA_CORE_WINDOW_FLAG_RESIZEABLE;}
-  coreWindow->windowedframe = windowedframe;
+NA_HHDEF void na_ClearScreen(NA_Screen* screen){
+  na_UnregisterUIElement(&(screen->uiElement));
 }
 
-NA_HDEF void na_ClearCoreWindow(NA_Window* coreWindow){
-  na_UnregisterCoreUIElement(&(coreWindow->uiElement));
+
+
+NA_HHDEF void na_InitWindow(NA_Window* window, void* nativeId, NA_Space* contentspace, NABool fullscreen, NABool resizeable, NARect windowedFrame){
+  na_RegisterUIElement(&(window->uiElement), NA_UI_WINDOW, nativeId);
+  window->contentspace = contentspace;
+  window->flags = 0;
+  if(fullscreen){window->flags |= NA_CORE_WINDOW_FLAG_FULLSCREEN;}
+  if(resizeable){window->flags |= NA_CORE_WINDOW_FLAG_RESIZEABLE;}
+  window->windowedFrame = windowedFrame;
+}
+
+NA_HHDEF void na_ClearWindow(NA_Window* window){
+  na_UnregisterUIElement(&(window->uiElement));
 }
 
 NA_DEF void naPreventWindowFromClosing(NAWindow* window, NABool prevent){
@@ -137,11 +137,11 @@ NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){
 
 
 
-NA_HDEF void na_InitCoreSpace(NA_Space* coreespace, void* nativeId){
-  naRegisterCoreUIElement(&(coreespace->uiElement), NA_UI_SPACE, nativeId);
+NA_HHDEF void na_InitSpace(NA_Space* space, void* nativeId){
+  na_RegisterUIElement(&(space->uiElement), NA_UI_SPACE, nativeId);
 }
-NA_HDEF void na_ClearCoreSpace(NA_Space* coreespace){
-  na_UnregisterCoreUIElement(&(coreespace->uiElement));
+NA_HHDEF void na_ClearSpace(NA_Space* space){
+  na_UnregisterUIElement(&(space->uiElement));
 }
 NA_DEF NABool naGetSpaceAlternateBackground(NASpace* space){
   NA_Space* corespace = (NA_Space*)space;
@@ -150,80 +150,80 @@ NA_DEF NABool naGetSpaceAlternateBackground(NASpace* space){
 
 
 
-NA_HDEF void na_InitCoreImageSpace(NA_ImageSpace* coreImageSpace, void* nativeId){
-  naRegisterCoreUIElement(&(coreImageSpace->uiElement), NA_UI_IMAGESPACE, nativeId);
+NA_HHDEF void na_InitImageSpace(NA_ImageSpace* imageSpace, void* nativeId){
+  na_RegisterUIElement(&(imageSpace->uiElement), NA_UI_IMAGESPACE, nativeId);
 }
-NA_HDEF void na_ClearCoreImageSpace(NA_ImageSpace* coreImageSpace){
-  na_UnregisterCoreUIElement(&(coreImageSpace->uiElement));
-}
-
-
-
-NA_HDEF void na_InitCoreOpenGLSpace(NA_OpenGLSpace* coreOpenGLspace, void* nativeId){
-  naRegisterCoreUIElement(&(coreOpenGLspace->uiElement), NA_UI_OPENGLSPACE, nativeId);
-}
-NA_HDEF void na_ClearCoreOpenGLSpace(NA_OpenGLSpace* coreOpenGLspace){
-  na_UnregisterCoreUIElement(&(coreOpenGLspace->uiElement));
+NA_HHDEF void na_ClearImageSpace(NA_ImageSpace* imageSpace){
+  na_UnregisterUIElement(&(imageSpace->uiElement));
 }
 
 
 
-NA_HDEF void na_InitCoreButton(NA_Button* coreButton, void* nativeId){
-  naRegisterCoreUIElement(&(coreButton->uiElement), NA_UI_BUTTON, nativeId);
+NA_HHDEF void na_InitOpenGLSpace(NA_OpenGLSpace* openGLSpace, void* nativeId){
+  na_RegisterUIElement(&(openGLSpace->uiElement), NA_UI_OPENGLSPACE, nativeId);
 }
-NA_HDEF void na_ClearCoreButton(NA_Button* coreButton){
-  na_UnregisterCoreUIElement(&(coreButton->uiElement));
-}
-
-
-
-NA_HDEF void na_InitCoreRadio(NA_Radio* coreRadio, void* nativeId){
-  naRegisterCoreUIElement(&(coreRadio->uiElement), NA_UI_RADIO, nativeId);
-}
-NA_HDEF void na_ClearCoreRadio(NA_Radio* coreRadio){
-  na_UnregisterCoreUIElement(&(coreRadio->uiElement));
+NA_HHDEF void na_ClearOpenGLSpace(NA_OpenGLSpace* openGLSpace){
+  na_UnregisterUIElement(&(openGLSpace->uiElement));
 }
 
 
 
-NA_HDEF void na_InitCoreCheckBox(NA_CheckBox* coreCheckBox, void* nativeId){
-  naRegisterCoreUIElement(&(coreCheckBox->uiElement), NA_UI_CHECKBOX, nativeId);
+NA_HHDEF void na_InitButton(NA_Button* button, void* nativeId){
+  na_RegisterUIElement(&(button->uiElement), NA_UI_BUTTON, nativeId);
 }
-NA_HDEF void na_ClearCoreCheckBox(NA_CheckBox* coreCheckBox){
-  na_UnregisterCoreUIElement(&(coreCheckBox->uiElement));
-}
-
-
-
-NA_HDEF void na_InitCoreLabel(NA_Label* coreLabel, void* nativeId){
-  naRegisterCoreUIElement(&(coreLabel->uiElement), NA_UI_LABEL, nativeId);
-}
-NA_HDEF void na_ClearCoreLabel(NA_Label* coreLabel){
-  na_UnregisterCoreUIElement(&(coreLabel->uiElement));
+NA_HHDEF void na_ClearButton(NA_Button* button){
+  na_UnregisterUIElement(&(button->uiElement));
 }
 
 
 
-NA_HDEF void na_InitCoreTextField(NA_TextField* coreTextField, void* nativeId){
-  naRegisterCoreUIElement(&(coreTextField->uiElement), NA_UI_TEXTFIELD, nativeId);
+NA_HHDEF void na_InitRadio(NA_Radio* radio, void* nativeId){
+  na_RegisterUIElement(&(radio->uiElement), NA_UI_RADIO, nativeId);
 }
-NA_HDEF void na_ClearCoreTextField(NA_TextField* coreTextField){
-  na_UnregisterCoreUIElement(&(coreTextField->uiElement));
+NA_HHDEF void na_ClearRadio(NA_Radio* radio){
+  na_UnregisterUIElement(&(radio->uiElement));
 }
 
 
 
-NA_HDEF void na_InitCoreTextBox(NA_TextBox* coreTextBox, void* nativeId){
-  naRegisterCoreUIElement(&(coreTextBox->uiElement), NA_UI_TEXTBOX, nativeId);
+NA_HHDEF void na_InitCheckBox(NA_CheckBox* checkBox, void* nativeId){
+  na_RegisterUIElement(&(checkBox->uiElement), NA_UI_CHECKBOX, nativeId);
 }
-NA_HDEF void na_ClearCoreTextBox(NA_TextBox* coreTextBox){
-  na_UnregisterCoreUIElement(&(coreTextBox->uiElement));
+NA_HHDEF void na_ClearCheckBox(NA_CheckBox* checkBox){
+  na_UnregisterUIElement(&(checkBox->uiElement));
+}
+
+
+
+NA_HHDEF void na_InitLabel(NA_Label* label, void* nativeId){
+  na_RegisterUIElement(&(label->uiElement), NA_UI_LABEL, nativeId);
+}
+NA_HHDEF void na_ClearLabel(NA_Label* label){
+  na_UnregisterUIElement(&(label->uiElement));
+}
+
+
+
+NA_HHDEF void na_InitTextField(NA_TextField* textField, void* nativeId){
+  na_RegisterUIElement(&(textField->uiElement), NA_UI_TEXTFIELD, nativeId);
+}
+NA_HHDEF void na_ClearTextField(NA_TextField* textField){
+  na_UnregisterUIElement(&(textField->uiElement));
+}
+
+
+
+NA_HHDEF void na_InitTextBox(NA_TextBox* textBox, void* nativeId){
+  na_RegisterUIElement(&(textBox->uiElement), NA_UI_TEXTBOX, nativeId);
+}
+NA_HHDEF void na_ClearTextBox(NA_TextBox* textBox){
+  na_UnregisterUIElement(&(textBox->uiElement));
 }
 
 
 
 // todo: find a faster way. Hash perhaps or something else.
-NA_HDEF void* na_GetUINALibEquivalent(NANativeID nativeID){
+NA_HHDEF void* na_GetUINALibEquivalent(NANativeID nativeID){
   NAListIterator iter;
   NA_UIElement* retelem = NA_NULL;
   naBeginListMutatorIteration(NA_UIElement* elem, &(na_App->uiElements), iter);
@@ -234,7 +234,7 @@ NA_HDEF void* na_GetUINALibEquivalent(NANativeID nativeID){
 
 
 
-NA_HDEF NABool na_DispatchUIElementCommand(NA_UIElement* element, NAUICommand command){
+NA_HHDEF NABool na_DispatchUIElementCommand(NA_UIElement* element, NAUICommand command){
   NABool finished = NA_FALSE;
   NAListIterator iter;
 
@@ -261,55 +261,55 @@ NA_HDEF NABool na_DispatchUIElementCommand(NA_UIElement* element, NAUICommand co
 
 
 
-NA_HDEF void na_SetMouseWarpedTo(NAPos newpos){
+NA_HHDEF void na_SetMouseWarpedTo(NAPos newpos){
   na_App->mouseStatus.prevPos = newpos;
   na_App->mouseStatus.pos = newpos;
 }
 
 
-NA_HDEF void na_SetMouseMovedByDiff(double deltaX, double deltaY){
+NA_HHDEF void na_SetMouseMovedByDiff(double deltaX, double deltaY){
   na_App->mouseStatus.prevPos = na_App->mouseStatus.pos;
   na_App->mouseStatus.pos.x += deltaX;
   na_App->mouseStatus.pos.y += deltaY;
 }
 
 
-NA_HDEF void na_SetMouseEnteredAtPos(NAPos newpos){
+NA_HHDEF void na_SetMouseEnteredAtPos(NAPos newpos){
   na_App->mouseStatus.prevPos = newpos;
   na_App->mouseStatus.pos = newpos;
 }
 
 
-NA_HDEF void na_SetMouseExitedAtPos(NAPos newpos){
+NA_HHDEF void na_SetMouseExitedAtPos(NAPos newpos){
   na_App->mouseStatus.prevPos = na_App->mouseStatus.pos;
   na_App->mouseStatus.pos = newpos;
 }
 
 
 
-NA_HDEF NAUIElementType naGetUIElementType(NAUIElement* coreUiElement){
-  return ((NA_UIElement*)coreUiElement)->elementType;
+NA_DEF NAUIElementType naGetUIElementType(NAUIElement* uiElement){
+  return ((NA_UIElement*)uiElement)->elementType;
 }
 
 
 
-NA_HDEF NANativeID naGetUIElementNativeID(NAUIElement* coreUiElement){
-  return ((NA_UIElement*)coreUiElement)->nativeID;
+NA_DEF NANativeID naGetUIElementNativeID(NAUIElement* uiElement){
+  return ((NA_UIElement*)uiElement)->nativeID;
 }
 
 
 
-NA_HDEF void naRefreshUIElement(NAUIElement* coreUiElement, double timediff){
+NA_DEF void naRefreshUIElement(NAUIElement* uiElement, double timediff){
   //if(timediff == 0.){
-  //  na_RefreshUIElementNow(coreUiElement);
+  //  na_RefreshUIElementNow(uiElement);
   //}else{
-    naCallApplicationFunctionInSeconds(na_RefreshUIElementNow, (NA_UIElement*)coreUiElement, timediff);
+    naCallApplicationFunctionInSeconds(na_RefreshUIElementNow, (NA_UIElement*)uiElement, timediff);
   //}
 }
 
 
 
-NA_HDEF NABool na_IsCoreApplicationRunning(void){
+NA_HHDEF NABool na_IsCoreApplicationRunning(void){
   return (NABool)(na_App->flags & NA_APPLICATION_FLAG_RUNNING);
 }
 
@@ -322,17 +322,17 @@ NA_HDEF NABool na_IsCoreApplicationRunning(void){
 
 
 // Prototypes for the naReleaseUIElement frunction.
-NA_API void naDestructApplication(NAApplication* application);
-NA_API void naDestructWindow(NAWindow* window);
-NA_API void naDestructSpace(NASpace* space);
-NA_API void naDestructImageSpace(NAImageSpace* imageSpace);
-NA_API void naDestructOpenGLSpace(NAOpenGLSpace* space);
-NA_API void naDestructButton(NAButton* button);
-NA_API void naDestructRadio(NARadio* radio);
-NA_API void naDestructCheckBox(NACheckBox* checkBox);
-NA_API void naDestructLabel(NALabel* label);
-NA_API void naDestructTextField(NATextField* textField);
-NA_API void naDestructTextBox(NATextBox* textBox);
+NA_HHAPI void na_DestructApplication(NAApplication* application);
+NA_HHAPI void na_DestructWindow(NAWindow* window);
+NA_HHAPI void na_DestructSpace(NASpace* space);
+NA_HHAPI void na_DestructImageSpace(NAImageSpace* imageSpace);
+NA_HHAPI void na_DestructOpenGLSpace(NAOpenGLSpace* space);
+NA_HHAPI void na_DestructButton(NAButton* button);
+NA_HHAPI void na_DestructRadio(NARadio* radio);
+NA_HHAPI void na_DestructCheckBox(NACheckBox* checkBox);
+NA_HHAPI void na_DestructLabel(NALabel* label);
+NA_HHAPI void na_DestructTextField(NATextField* textField);
+NA_HHAPI void na_DestructTextBox(NATextBox* textBox);
 
 
 
@@ -347,20 +347,20 @@ NA_DEF void naReleaseUIElement(NAUIElement* uiElement){
 
   switch(naGetUIElementType(element))
   {
-  case NA_UI_APPLICATION: naReleaseRefCount(&element->refCount, uiElement, naDestructApplication); break;
+  case NA_UI_APPLICATION: naReleaseRefCount(&element->refCount, uiElement, na_DestructApplication); break;
 //  case NA_UI_SCREEN:      naDeleteScreen(uiElement);
-  case NA_UI_WINDOW:      naReleaseRefCount(&element->refCount, uiElement, naDestructWindow); break;
-  case NA_UI_SPACE:       naReleaseRefCount(&element->refCount, uiElement, naDestructSpace); break;
-  case NA_UI_IMAGESPACE:  naReleaseRefCount(&element->refCount, uiElement, naDestructImageSpace); break;
+  case NA_UI_WINDOW:      naReleaseRefCount(&element->refCount, uiElement, na_DestructWindow); break;
+  case NA_UI_SPACE:       naReleaseRefCount(&element->refCount, uiElement, na_DestructSpace); break;
+  case NA_UI_IMAGESPACE:  naReleaseRefCount(&element->refCount, uiElement, na_DestructImageSpace); break;
   #if NA_COMPILE_OPENGL == 1
-    case NA_UI_OPENGLSPACE: naReleaseRefCount(&(element->refCount), uiElement, naDestructOpenGLSpace); break;
+    case NA_UI_OPENGLSPACE: naReleaseRefCount(&(element->refCount), uiElement, na_DestructOpenGLSpace); break;
   #endif
-  case NA_UI_BUTTON:      naReleaseRefCount(&element->refCount, uiElement, naDestructButton); break;
-  case NA_UI_RADIO:       naReleaseRefCount(&element->refCount, uiElement, naDestructRadio); break;
-  case NA_UI_CHECKBOX:    naReleaseRefCount(&element->refCount, uiElement, naDestructCheckBox); break;
-  case NA_UI_LABEL:       naReleaseRefCount(&element->refCount, uiElement, naDestructLabel); break;
-  case NA_UI_TEXTFIELD:   naReleaseRefCount(&element->refCount, uiElement, naDestructTextField); break;
-  case NA_UI_TEXTBOX:     naReleaseRefCount(&element->refCount, uiElement, naDestructTextBox); break;
+  case NA_UI_BUTTON:      naReleaseRefCount(&element->refCount, uiElement, na_DestructButton); break;
+  case NA_UI_RADIO:       naReleaseRefCount(&element->refCount, uiElement, na_DestructRadio); break;
+  case NA_UI_CHECKBOX:    naReleaseRefCount(&element->refCount, uiElement, na_DestructCheckBox); break;
+  case NA_UI_LABEL:       naReleaseRefCount(&element->refCount, uiElement, na_DestructLabel); break;
+  case NA_UI_TEXTFIELD:   naReleaseRefCount(&element->refCount, uiElement, na_DestructTextField); break;
+  case NA_UI_TEXTBOX:     naReleaseRefCount(&element->refCount, uiElement, na_DestructTextBox); break;
   default:
     #ifndef NDEBUG
       naError("Invalid element type");
@@ -438,13 +438,13 @@ NA_DEF void naAddUIKeyboardShortcut(NAUIElement* uiElement, NAKeyboardStatus sho
 
 
 
-NA_HDEF void naStopApplication(void){
+NA_DEF void naStopApplication(void){
   na_App->flags &= ~NA_APPLICATION_FLAG_RUNNING;
 }
 
 
 
-NA_HDEF NAApplication* naGetApplication(void){
+NA_DEF NAApplication* naGetApplication(void){
   #ifndef NDEBUG
     if(naGetListFirstMutable(&(na_App->uiElements)) != na_App)
       naError("Internal error: application is not in ui elements list");
@@ -454,13 +454,13 @@ NA_HDEF NAApplication* naGetApplication(void){
 
 
 
-NA_HDEF NAUIElement* naGetUIElementParent(NAUIElement* uiElement){
+NA_DEF NAUIElement* naGetUIElementParent(NAUIElement* uiElement){
   return ((NA_UIElement*)uiElement)->parent;
 }
 
 
 
-NA_HDEF NAWindow* naGetUIElementWindow(NAUIElement* uiElement){
+NA_DEF NAWindow* naGetUIElementWindow(NAUIElement* uiElement){
   NAUIElement* curelement = uiElement;
   while(curelement && naGetUIElementType(curelement) != NA_UI_WINDOW){
     curelement = naGetUIElementParent(curelement);
@@ -470,7 +470,7 @@ NA_HDEF NAWindow* naGetUIElementWindow(NAUIElement* uiElement){
 
 
 
-NA_HDEF NASpace* naGetUIElementParentSpace(NAUIElement* uiElement){
+NA_DEF NASpace* naGetUIElementParentSpace(NAUIElement* uiElement){
   NA_Space* parent = naGetUIElementParent(uiElement);
   while(parent && naGetUIElementType(parent) != NA_UI_SPACE){
     parent = naGetUIElementParent(parent);
@@ -505,7 +505,7 @@ NA_DEF NAKeyboardStatus naGetKeyboardStatus(){
 
 
 
-NA_HDEF NARect naSetWindowStorageTag(NAWindow* window, NAInt storageTag, NARect rect, NABool resizeable){
+NA_DEF NARect naSetWindowStorageTag(NAWindow* window, NAInt storageTag, NARect rect, NABool resizeable){
   NA_Window* coreWindow = (NA_Window*)window;
   coreWindow->storageTag = storageTag;
   if(coreWindow->storageTag){
@@ -529,7 +529,7 @@ NA_HDEF NARect naSetWindowStorageTag(NAWindow* window, NAInt storageTag, NARect 
 
 
 
-NA_HDEF void na_RememberWindowPosition(NA_Window* coreWindow){
+NA_HHDEF void na_RememberWindowPosition(NA_Window* coreWindow){
   if(coreWindow->storageTag){
     NARect rect = na_GetWindowAbsoluteInnerRect(&(coreWindow->uiElement));
     NAString* prefPosXString = naNewStringWithFormat(NA_WINDOW_PREF_STRING_POS_X, (int)coreWindow->storageTag);

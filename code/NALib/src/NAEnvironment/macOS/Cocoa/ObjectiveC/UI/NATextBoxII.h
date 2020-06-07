@@ -61,16 +61,16 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
   
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaTextBox* cocoaTextBox = [[NACocoaTextBox alloc] initWithCoreTextBox:coreTextBox frame:frameRect];
-  na_InitCoreTextBox(coreTextBox, NA_COCOA_PTR_OBJC_TO_C(cocoaTextBox));
+  na_InitTextBox(coreTextBox, NA_COCOA_PTR_OBJC_TO_C(cocoaTextBox));
   
   return (NATextBox*)coreTextBox;
 }
 
 
 
-NA_DEF void naDestructTextBox(NATextBox* textBox){
+NA_DEF void na_DestructTextBox(NATextBox* textBox){
   NA_TextBox* coreTextBox = (NA_TextBox*)textBox;
-  na_ClearCoreTextBox(coreTextBox);
+  na_ClearTextBox(coreTextBox);
 }
 
 

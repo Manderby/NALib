@@ -114,15 +114,15 @@ NA_UNUSED(event);
       )
     }
 
-    na_InitCoreOpenGLSpace(coreOpenGLspace, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
+    na_InitOpenGLSpace(coreOpenGLspace, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
     return coreOpenGLspace;
   }
 
 
 
-  NA_DEF void naDestructOpenGLSpace(NAOpenGLSpace* openglspace){
+  NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openglspace){
     NA_OpenGLSpace* coreOpenGLspace = (NA_OpenGLSpace*)openglspace;
-    na_ClearCoreOpenGLSpace(coreOpenGLspace);
+    na_ClearOpenGLSpace(coreOpenGLspace);
   }
 
 

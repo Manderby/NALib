@@ -27,7 +27,7 @@ struct NATranslator{
 #endif
 
 
-NA_HDEF NAPtr naConstructLanguages(const void* key, NAPtr content){
+NA_HHDEF NAPtr na_ConstructLanguages(const void* key, NAPtr content){
   NATree* strings;
   NA_UNUSED(key);
   NA_UNUSED(content);
@@ -36,7 +36,7 @@ NA_HDEF NAPtr naConstructLanguages(const void* key, NAPtr content){
   return naMakePtrWithDataMutable(strings);
 }
 
-NA_HDEF void naDestructLanguages(NAPtr leafdata){
+NA_HHDEF void na_DestructLanguages(NAPtr leafdata){
   NATree* strings = naGetPtrMutable(leafdata);
   naClearTree(strings);
   naFree(strings);
@@ -44,7 +44,7 @@ NA_HDEF void naDestructLanguages(NAPtr leafdata){
 
 
 
-NA_HDEF NAPtr naConstructGroups(const void* key, NAPtr content){
+NA_HHDEF NAPtr na_ConstructGroups(const void* key, NAPtr content){
   NATree* languages;
   NA_UNUSED(key);
   NA_UNUSED(content);
@@ -53,7 +53,7 @@ NA_HDEF NAPtr naConstructGroups(const void* key, NAPtr content){
   return naMakePtrWithDataMutable(languages);
 }
 
-NA_HDEF void naDestructGroups(NAPtr leafdata){
+NA_HHDEF void na_DestructGroups(NAPtr leafdata){
   NATree* languages = naGetPtrMutable(leafdata);
   naClearTree(languages);
   naFree(languages);
@@ -76,9 +76,9 @@ NA_DEF void naStartTranslator(void){
   NA_TRANSLATOR = naAlloc(NATranslator);
 
   NA_TRANSLATOR->groupsconfig = naCreateTreeConfiguration(NA_TREE_KEY_NAINT | NA_TREE_BALANCE_AVL);
-  naSetTreeConfigurationLeafCallbacks(NA_TRANSLATOR->groupsconfig, naConstructGroups, naDestructGroups);
+  naSetTreeConfigurationLeafCallbacks(NA_TRANSLATOR->groupsconfig, na_ConstructGroups, na_DestructGroups);
   NA_TRANSLATOR->languagesconfig = naCreateTreeConfiguration(NA_TREE_KEY_NAINT | NA_TREE_BALANCE_AVL);
-  naSetTreeConfigurationLeafCallbacks(NA_TRANSLATOR->languagesconfig, naConstructLanguages, naDestructLanguages);
+  naSetTreeConfigurationLeafCallbacks(NA_TRANSLATOR->languagesconfig, na_ConstructLanguages, na_DestructLanguages);
   NA_TRANSLATOR->stringsconfig = naCreateTreeConfiguration(NA_TREE_KEY_NAINT | NA_TREE_BALANCE_AVL);
 
   naInitTree(&(NA_TRANSLATOR->groups), NA_TRANSLATOR->groupsconfig);

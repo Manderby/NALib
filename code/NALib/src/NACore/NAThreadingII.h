@@ -127,7 +127,7 @@ NA_IDEF void naClearThread(NAThread thread){
 #if NA_OS == NA_OS_WINDOWS
   // Windows has a different callback type. We need to call this function first
   // in order to call our true callback function.
-  NA_HDEF static DWORD __stdcall naRunWindowsThread(LPVOID arg){
+  NA_HHDEF static DWORD __stdcall na_RunWindowsThread(LPVOID arg){
     NAThreadStruct* thread = (NAThreadStruct*)arg;
     thread->function(thread->arg);
     return 0;
@@ -139,7 +139,7 @@ NA_IDEF void naClearThread(NAThread thread){
 NA_IDEF void naRunThread(NAThread thread){
   NAThreadStruct* threadstruct = (NAThreadStruct*)thread;
   #if NA_OS == NA_OS_WINDOWS
-    threadstruct->nativeThread = CreateThread(NULL, 0, naRunWindowsThread, threadstruct, 0, 0);
+    threadstruct->nativeThread = CreateThread(NULL, 0, na_RunWindowsThread, threadstruct, 0, 0);
   #else
     dispatch_async_f(threadstruct->nativeThread, threadstruct->arg, threadstruct->function);
   #endif

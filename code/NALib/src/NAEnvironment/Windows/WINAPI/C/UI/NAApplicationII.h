@@ -181,8 +181,8 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
       // Capture any keyboard shortcuts overwritten by the NALib user
       // Note: Usually, the IsDialogMessage function is responsible for
       // capturing TAB events but it has proven to be difficult to handle
-      // and therefore, everything is captured in naInterceptKeyboardShortcut.
-      if(!naInterceptKeyboardShortcut(&message)){
+      // and therefore, everything is captured in na_InterceptKeyboardShortcut.
+      if(!na_InterceptKeyboardShortcut(&message)){
         // Do the normal message dispatch.
         TranslateMessage(&message);
         DispatchMessage(&message);
@@ -218,11 +218,11 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 
 
-NA_HDEF NAApplication* na_NewApplication(void){
+NA_HHDEF NAApplication* na_NewApplication(void){
 
   NAWINAPIApplication* winapiApplication = naAlloc(NAWINAPIApplication);
 
-  na_InitCoreApplication(&(winapiApplication->coreApplication), GetModuleHandle(NULL));
+  na_InitApplication(&(winapiApplication->coreApplication), GetModuleHandle(NULL));
 
   naInitList(&(winapiApplication->timers));
 
@@ -267,7 +267,7 @@ NA_HDEF NAApplication* na_NewApplication(void){
 
 
 
-NA_DEF void naDestructApplication(NAApplication* application){
+NA_DEF void na_DestructApplication(NAApplication* application){
   NAWINAPIApplication* app = (NAWINAPIApplication*)application;
 
   DestroyWindow(app->offscreenWindow);
@@ -286,7 +286,7 @@ NA_DEF void naDestructApplication(NAApplication* application){
 
   DestroyIcon(app->appIcon);
 
-  na_ClearCoreApplication(&(app->coreApplication));  
+  na_ClearApplication(&(app->coreApplication));  
 
   // Now that all windows are destroyed, all dependent timers are deleted. We can
   // safely release the timer structs. todo: Make killing the timers a sport.
@@ -327,7 +327,7 @@ const NONCLIENTMETRICS* naGetApplicationMetrics(void){
 // stored in that struct with the stored argument.
 //
 // Definitely not the fastest and best method. But as for now, it's ok. todo.
-NA_HDEF static VOID CALLBACK naTimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
+NA_HHDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime) {
   //todo something is wrong here with the type.
   NAWINAPIApplication* app;
   NAListIterator iter;
@@ -354,7 +354,7 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, do
   timerstruct->func = function;
   timerstruct->arg = arg;
   // todo: Check type
-  timerstruct->key = (UINT)SetTimer((HWND)NA_NULL, (UINT_PTR)NA_NULL, (UINT)(1000 * timediff), naTimerCallbackFunction);
+  timerstruct->key = (UINT)SetTimer((HWND)NA_NULL, (UINT_PTR)NA_NULL, (UINT)(1000 * timediff), na_TimerCallbackFunction);
   app = (NAWINAPIApplication*)naGetApplication();
   naAddListLastMutable(&(app->timers), timerstruct);
 }
@@ -525,7 +525,7 @@ NA_DEF HICON naGetWINAPIApplicationIcon(void){
 
 
 
-NA_HDEF NAFont na_GetFontWithKind(NAFontKind kind){
+NA_DEF NAFont na_GetFontWithKind(NAFontKind kind){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   HFONT retfont = NA_NULL;
 

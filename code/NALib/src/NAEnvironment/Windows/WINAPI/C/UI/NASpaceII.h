@@ -156,7 +156,7 @@ NA_DEF NASpace* naNewSpace(NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
 
-  na_InitCoreSpace(&(winapiSpace->corespace), hWnd);
+  na_InitSpace(&(winapiSpace->corespace), hWnd);
   winapiSpace->lastBgColor = &(app->bgColor);
   winapiSpace->corespace.alternatebackground = NA_FALSE;
 
@@ -165,9 +165,9 @@ NA_DEF NASpace* naNewSpace(NASize size){
 
 
 
-NA_DEF void naDestructSpace(NASpace* space){
+NA_DEF void na_DestructSpace(NASpace* space){
   NAWINAPISpace* winapiSpace = (NAWINAPISpace*)space;
-  na_ClearCoreSpace(&(winapiSpace->corespace));
+  na_ClearSpace(&(winapiSpace->corespace));
 }
 
 
@@ -194,7 +194,7 @@ NA_DEF void naAddSpaceChild(NASpace* space, NAUIElement* child, NAPos pos){
 
 
 
-NA_HDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
+NA_HHDEF NARect na_GetSpaceAbsoluteInnerRect(NA_UIElement* space){
   NARect rect;
   NARect screenrect;
   RECT contentrect;

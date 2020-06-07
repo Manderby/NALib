@@ -107,7 +107,7 @@ typedef void  (*NATreeNodeDataDestructor) (NAPtr nodedata);
 // NATreeNodeUpdater 
 // Gets called whenever childs of a parent node change. The parent data is the
 // data stored in the parent node. The childdatas parameter contains an
-// array of the datas stored in all children. The childindx parameter denotes
+// array of the datas stored in all children. The childIndex parameter denotes
 // which child caused the call or is -1 if no particular child caused the
 // update. The childmask parameter is a bitfield denoting 1 for the child
 // being a leaf and 0 for being an inner node.
@@ -116,7 +116,7 @@ typedef void  (*NATreeNodeDataDestructor) (NAPtr nodedata);
 // returning NA_FALSE, propagation stops.
 typedef NABool (*NATreeNodeUpdater)       (NAPtr parentdata,
                                           NAPtr* childdatas,
-                                           NAInt childindx,
+                                           NAInt childIndex,
                                            NAInt childmask);
 
 
@@ -354,7 +354,7 @@ NA_IAPI void naUpdateTreeLeaf(NATreeIterator* iter);
 // the index of the child from which the bubbling comes from.
 typedef NABool (*NATreeNodeTokenCallback)(     void* token,
                                                NAPtr data,
-                                               NAInt nextindx);
+                                               NAInt nextIndex);
 NA_IAPI void naBubbleTreeToken(const NATreeIterator* iter,
                                                void* token,
                              NATreeNodeTokenCallback nodeTokenCallback);

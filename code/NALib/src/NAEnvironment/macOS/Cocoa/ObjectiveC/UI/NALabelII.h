@@ -168,7 +168,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaLabel* cocoaLabel = [[NACocoaLabel alloc] initWithCoreLabel:coreLabel frame:frameRect];
-  na_InitCoreLabel(coreLabel, NA_COCOA_PTR_OBJC_TO_C(cocoaLabel));
+  na_InitLabel(coreLabel, NA_COCOA_PTR_OBJC_TO_C(cocoaLabel));
   naSetLabelText(coreLabel, text);
   
   return (NALabel*)coreLabel;
@@ -176,9 +176,9 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
 
 
 
-NA_DEF void naDestructLabel(NALabel* label){
+NA_DEF void na_DestructLabel(NALabel* label){
   NA_Label* coreLabel = (NA_Label*)label;
-  na_ClearCoreLabel(coreLabel);
+  na_ClearLabel(coreLabel);
 }
 
 

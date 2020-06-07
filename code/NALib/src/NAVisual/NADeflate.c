@@ -317,7 +317,7 @@ uint16 naDecodeDistance(NABufferIterator* iter, uint16 code){
 
 
 
-NA_HDEF void naReadDymanicHuffmanCodes(NABufferIterator* iter, NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman){
+NA_HHDEF void na_ReadDymanicHuffmanCodes(NABufferIterator* iter, NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman){
   uint8 codeorder[19] = {16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
   int c;
 
@@ -342,7 +342,7 @@ NA_HDEF void naReadDymanicHuffmanCodes(NABufferIterator* iter, NAHuffmanCodeTree
 
 
 
-NA_HDEF void naAllocFixedHuffmanCodes(NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman){
+NA_HHDEF void na_AllocFixedHuffmanCodes(NAHuffmanCodeTree** literalhuffman, NAHuffmanCodeTree** distancehuffman){
   uint16 i;
 
   *literalhuffman = naAllocHuffmanCodeTree(288);
@@ -485,9 +485,9 @@ NA_DEF void naFillBufferWithZLIBDecompression(NABuffer* output, NABuffer* input)
       NAHuffmanCodeTree* literalhuffman;
       NAHuffmanCodeTree* distancehuffman;
       if(blocktype == 0x02){
-        naReadDymanicHuffmanCodes(&iterz, &literalhuffman, &distancehuffman);
+        na_ReadDymanicHuffmanCodes(&iterz, &literalhuffman, &distancehuffman);
       }else{
-        naAllocFixedHuffmanCodes(&literalhuffman, &distancehuffman);
+        na_AllocFixedHuffmanCodes(&literalhuffman, &distancehuffman);
       }
       // Now, we have the literal and distance codes. Start reading until we
       // find the value 256.

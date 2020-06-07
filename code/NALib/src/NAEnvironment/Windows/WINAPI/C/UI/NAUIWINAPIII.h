@@ -30,12 +30,12 @@ NA_HHAPI NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label);
 NA_HHAPI NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField);
 NA_HHAPI NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox);
 
-NA_HHAPI NAUIElement** naGetUIElementNextTabReference(NATextField* textField);
-NA_HHAPI NAUIElement** naGetUIElementPrevTabReference(NATextField* textField);
-NA_HHAPI NAUIElement** naGetTextFieldNextTabReference(NATextField* textField);
-NA_HHAPI NAUIElement** naGetTextFieldPrevTabReference(NATextField* textField);
-NA_HHAPI NAUIElement** naGetTextBoxNextTabReference(NATextBox* textBox);
-NA_HHAPI NAUIElement** naGetTextBoxPrevTabReference(NATextBox* textBox);
+NA_HHAPI NAUIElement** na_GetUIElementNextTabReference(NATextField* textField);
+NA_HHAPI NAUIElement** na_GetUIElementPrevTabReference(NATextField* textField);
+NA_HHAPI NAUIElement** na_GetTextFieldNextTabReference(NATextField* textField);
+NA_HHAPI NAUIElement** na_GetTextFieldPrevTabReference(NATextField* textField);
+NA_HHAPI NAUIElement** na_GetTextBoxNextTabReference(NATextBox* textBox);
+NA_HHAPI NAUIElement** na_GetTextBoxPrevTabReference(NATextBox* textBox);
 
 HWND naGetApplicationOffscreenWindow(void);
 NA_UIElement* naGetApplicationMouseHoverElement(void);
@@ -44,12 +44,12 @@ const NONCLIENTMETRICS* naGetApplicationMetrics(void);
 
 
 
-NA_HDEF void na_ClearUINativeId(NANativeID nativeId){
+NA_HHDEF void na_ClearUINativeId(NANativeID nativeId){
     DestroyWindow(nativeId);
 }
 
 
-NA_HDEF void na_SetUIElementParent(NAUIElement* uiElement, NAUIElement* parent){
+NA_HHDEF void na_SetUIElementParent(NAUIElement* uiElement, NAUIElement* parent){
   NA_UIElement* coreelement;
   NA_UIElement* coreparent;
   NA_Window* window;
@@ -83,7 +83,7 @@ NA_HDEF void na_SetUIElementParent(NAUIElement* uiElement, NAUIElement* parent){
 }
 
 
-NA_HDEF NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2){
+NA_HHDEF NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2){
   NA_UIElement* commonParent = NA_NULL;
   NA_UIElement* tmpelem2;
   while(elem1){
@@ -149,7 +149,7 @@ NA_DEF void naPresentAlertBox(NAAlertBoxType alertBoxType, const NAUTF8Char* tit
 }
 
 
-NA_HDEF void naCaptureKeyboardStatus(MSG* message){  
+NA_HHDEF void na_CaptureKeyboardStatus(MSG* message){  
   NABool lShift;
   NABool rShift;
   NABool lControl;
@@ -190,14 +190,14 @@ NA_HDEF void naCaptureKeyboardStatus(MSG* message){
 
 
 
-NA_HDEF NABool naInterceptKeyboardShortcut(MSG* message){
+NA_HHDEF NABool na_InterceptKeyboardShortcut(MSG* message){
   NABool retvalue = NA_FALSE;
   if(message->message == WM_KEYUP || message->message == WM_SYSKEYDOWN || message->message == WM_SYSKEYUP){
-    naCaptureKeyboardStatus(message);
+    na_CaptureKeyboardStatus(message);
   }else if(message->message == WM_KEYDOWN){
     NA_UIElement* elem;
     HWND keyWindow;
-    naCaptureKeyboardStatus(message);
+    na_CaptureKeyboardStatus(message);
     
     // Search for the native first responder which is represented in NALib.
     elem = NA_NULL;
@@ -496,16 +496,16 @@ NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam){
 // UI ELEMENT
 // ///////////////////////////////////
 
-NA_HDEF void na_RefreshUIElementNow(NAUIElement* uiElement){
+NA_HHDEF void na_RefreshUIElementNow(NAUIElement* uiElement){
   RedrawWindow(naGetUIElementNativeID(uiElement), NA_NULL, NA_NULL, RDW_INVALIDATE | RDW_ERASE);
 }
 
 
 
-NA_HDEF NAUIElement** naGetUIElementNextTabReference(NAUIElement* uiElement){
+NA_HHDEF NAUIElement** na_GetUIElementNextTabReference(NAUIElement* uiElement){
   switch(naGetUIElementType(uiElement)){
-  case NA_UI_TEXTFIELD: return naGetTextFieldNextTabReference(uiElement); break;
-  case NA_UI_TEXTBOX:   return naGetTextBoxNextTabReference(uiElement); break;
+  case NA_UI_TEXTFIELD: return na_GetTextFieldNextTabReference(uiElement); break;
+  case NA_UI_TEXTBOX:   return na_GetTextBoxNextTabReference(uiElement); break;
   default:
     #ifndef NDEBUG
       naError("Invalid type");
@@ -516,10 +516,10 @@ NA_HDEF NAUIElement** naGetUIElementNextTabReference(NAUIElement* uiElement){
 
 
 
-NA_HDEF NAUIElement** naGetUIElementPrevTabReference(NAUIElement* uiElement){
+NA_HHDEF NAUIElement** na_GetUIElementPrevTabReference(NAUIElement* uiElement){
   switch(naGetUIElementType(uiElement)){
-  case NA_UI_TEXTFIELD: return naGetTextFieldPrevTabReference(uiElement); break;
-  case NA_UI_TEXTBOX:   return naGetTextBoxPrevTabReference(uiElement); break;
+  case NA_UI_TEXTFIELD: return na_GetTextFieldPrevTabReference(uiElement); break;
+  case NA_UI_TEXTBOX:   return na_GetTextBoxPrevTabReference(uiElement); break;
   default:
     #ifndef NDEBUG
       naError("Invalid type");
@@ -557,10 +557,10 @@ NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextTab
     return;
   }
 
-  elemNextRef = naGetUIElementNextTabReference(elem);
-  nextPrevRef = naGetUIElementPrevTabReference(nextTabElem);
-  elemNextPrevRef = naGetUIElementPrevTabReference(*elemNextRef);
-  nextPrevNextRef = naGetUIElementNextTabReference(*nextPrevRef);
+  elemNextRef = na_GetUIElementNextTabReference(elem);
+  nextPrevRef = na_GetUIElementPrevTabReference(nextTabElem);
+  elemNextPrevRef = na_GetUIElementPrevTabReference(*elemNextRef);
+  nextPrevNextRef = na_GetUIElementNextTabReference(*nextPrevRef);
 
   *nextPrevNextRef = *elemNextRef;
   *elemNextPrevRef = *nextPrevRef;
@@ -574,7 +574,7 @@ NA_DEF void naSetUIElementNextTabElement(NAUIElement* elem, NAUIElement* nextTab
 
 
 
-NA_HDEF NARect na_GetApplicationAbsoluteRect(){
+NA_HHDEF NARect na_GetApplicationAbsoluteRect(){
   NARect rect;
   rect.pos.x = 0;
   rect.pos.y = 0;
@@ -585,7 +585,7 @@ NA_HDEF NARect na_GetApplicationAbsoluteRect(){
 
 
 
-NA_HDEF NARect na_GetScreenAbsoluteRect(NA_UIElement* screen){
+NA_HHDEF NARect na_GetScreenAbsoluteRect(NA_UIElement* screen){
   NARect rect;
   rect.pos.x = 0;
   rect.pos.y = 0;
@@ -663,7 +663,7 @@ NA_DEF NARect naGetUIElementRect(NA_UIElement* uiElement, NAUIElement* relativee
 
 
 
-NA_HDEF void* na_AllocMouseTracking(NANativeID nativeId){
+NA_HHDEF void* na_AllocMouseTracking(NANativeID nativeId){
   NABool success;
   TRACKMOUSEEVENT* winapiTracking = naAlloc(TRACKMOUSEEVENT);
   winapiTracking->cbSize = sizeof(TRACKMOUSEEVENT);
@@ -676,7 +676,7 @@ NA_HDEF void* na_AllocMouseTracking(NANativeID nativeId){
 
 
 
-NA_HDEF void na_DeallocMouseTracking(void* tracking){
+NA_HHDEF void na_DeallocMouseTracking(void* tracking){
   TRACKMOUSEEVENT* winapiTracking = (TRACKMOUSEEVENT*)tracking;
   winapiTracking->dwFlags |= TME_CANCEL;
   TrackMouseEvent(winapiTracking);

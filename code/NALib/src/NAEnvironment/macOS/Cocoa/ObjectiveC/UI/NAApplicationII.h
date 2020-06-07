@@ -79,7 +79,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
       curEvent = [NSApp nextEventMatchingMask:NAEventMaskAny untilDate:distantFuture inMode:NSDefaultRunLoopMode dequeue:YES];
 //      if([curEvent type] == NSEventType)
       naCollectGarbage();
-      if(!naInterceptKeyboardShortcut(curEvent)){
+      if(!na_InterceptKeyboardShortcut(curEvent)){
         if(curEvent){[NSApp sendEvent:curEvent];}
       }
     #if !NA_MACOS_USES_ARC
@@ -106,22 +106,22 @@ NA_DEF void naResetApplicationPreferredTranslatorLanguages(void){
 
 
 
-NA_HDEF NAApplication* na_NewApplication(void){
+NA_HHDEF NAApplication* na_NewApplication(void){
   NACocoaApplication* cocoaApplication = naAlloc(NACocoaApplication);
 
   NACocoaApplicationDelegate* cocoaAppDelegate = [[NACocoaApplicationDelegate alloc] initWithCocoaApplication:cocoaApplication];
 
-  na_InitCoreApplication(&(cocoaApplication->coreApplication), NA_COCOA_PTR_OBJC_TO_C(cocoaAppDelegate));
+  na_InitApplication(&(cocoaApplication->coreApplication), NA_COCOA_PTR_OBJC_TO_C(cocoaAppDelegate));
 
   return (NAApplication*)cocoaApplication;
 }
 
 
 
-NA_DEF void naDestructApplication(NAApplication* application){
+NA_DEF void na_DestructApplication(NAApplication* application){
   NACocoaApplication* cocoaApplication = (NACocoaApplication*)application;
   // Do not clear the core application. It will only call this method again.
-  na_ClearCoreApplication(&(cocoaApplication->coreApplication));
+  na_ClearApplication(&(cocoaApplication->coreApplication));
 }
 
 

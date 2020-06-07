@@ -119,7 +119,7 @@ NA_DEF NATextField* naNewTextField(NASize size){
   NAWINAPITextField* winapiTextField = naAlloc(NAWINAPITextField);
 
   // WS_TABSTOP and WS_GROUP seem not to work... strange. I solved it using the
-  // naInterceptKeyboardShortcut function. 
+  // na_InterceptKeyboardShortcut function. 
   style = WS_CHILD | WS_VISIBLE | ES_AUTOHSCROLL;
 
   hWnd = CreateWindow(
@@ -130,7 +130,7 @@ NA_DEF NATextField* naNewTextField(NASize size){
   oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldTextFieldWindowProc){app->oldTextFieldWindowProc = oldproc;}
 
-  na_InitCoreTextField(&(winapiTextField->coreTextField), hWnd);
+  na_InitTextField(&(winapiTextField->coreTextField), hWnd);
   winapiTextField->nextTabStop = winapiTextField;
   winapiTextField->prevTabStop = winapiTextField;
 
@@ -144,9 +144,9 @@ NA_DEF NATextField* naNewTextField(NASize size){
 
 
 
-NA_DEF void naDestructTextField(NATextField* textField){
+NA_DEF void na_DestructTextField(NATextField* textField){
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
-  na_ClearCoreTextField(&(winapiTextField->coreTextField));
+  na_ClearTextField(&(winapiTextField->coreTextField));
 }
 
 
@@ -190,21 +190,21 @@ NA_DEF void naSetTextFieldFontKind(NATextField* textField, NAFontKind kind){
 
 
 
-NA_HDEF NAUIElement** naGetTextFieldNextTabReference(NATextField* textField){
+NA_HHDEF NAUIElement** na_GetTextFieldNextTabReference(NATextField* textField){
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
   return &(winapiTextField->nextTabStop);
 }
 
 
 
-NA_HDEF NAUIElement** naGetTextFieldPrevTabReference(NATextField* textField){
+NA_HHDEF NAUIElement** na_GetTextFieldPrevTabReference(NATextField* textField){
   NAWINAPITextField* winapiTextField = (NAWINAPITextField*)textField;
   return &(winapiTextField->prevTabStop);
 }
 
 
 
-NA_HDEF NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField){
+NA_HHDEF NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField){
  NA_UNUSED(textField);
  return naMakeRectS(20, 40, 100, 50);
 }

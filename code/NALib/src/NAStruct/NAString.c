@@ -315,7 +315,7 @@ NA_API NAString* naNewStringWithNewlineSanitization( NAString* string, NANewline
 
 
 
-NA_HDEF void na_DestructString(NAString* string){
+NA_HHDEF void na_DestructString(NAString* string){
   naRelease(string->buffer);
 }
 

@@ -111,7 +111,7 @@
 
 
 
-NA_HDEF void naGrowHeap(NAHeap* heap){
+NA_HHDEF void na_GrowHeap(NAHeap* heap){
   ptrdiff_t entrysize = (NAByte*)(heap->root) - (NAByte*)(heap->data);
   void* newdata = naMalloc((-heap->maxcount * 2 + 1) * entrysize);
   naCopyn(newdata, heap->data, ((heap->count + 1) * entrysize));
@@ -141,7 +141,7 @@ NA_DEF void naShrinkHeapIfNecessary(NAHeap* heap){
 
 
 
-NA_HDEF void naInsertHeapElementConstNoBack(NAHeap* heap, const void* data, const void* key, NAInt* backpointer){
+NA_HHDEF void na_InsertHeapElementConstNoBack(NAHeap* heap, const void* data, const void* key, NAInt* backpointer){
   NAInt newindex;
   NAHeapEntry* thedata;
   NA_UNUSED(backpointer);
@@ -151,7 +151,7 @@ NA_HDEF void naInsertHeapElementConstNoBack(NAHeap* heap, const void* data, cons
     if(backpointer)
       naError("Heap dos not store backpointers. packpointer should be null. Ignored.");
   #endif
-  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
+  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){na_GrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapEntry*)(heap->data);
   thedata[newindex].ptr = naMakePtrWithDataConst(data);
@@ -161,14 +161,14 @@ NA_HDEF void naInsertHeapElementConstNoBack(NAHeap* heap, const void* data, cons
 
 
 
-NA_HDEF void naInsertHeapElementConstBack(NAHeap* heap, const void* data, const void* key, NAInt* backpointer){
+NA_HHDEF void na_InsertHeapElementConstBack(NAHeap* heap, const void* data, const void* key, NAInt* backpointer){
   NAInt newindex;
   NAHeapBackEntry* thedata;
   #ifndef NDEBUG
     if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
       naError("Heap overflow.");
   #endif
-  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
+  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){na_GrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapBackEntry*)(heap->data);
   thedata[newindex].ptr = naMakePtrWithDataConst(data);
@@ -188,7 +188,7 @@ NA_HDEF void naInsertHeapElementConstBack(NAHeap* heap, const void* data, const 
 
 
 
-NA_HDEF void naInsertHeapElementMutableNoBack(NAHeap* heap, void* data, const void* key, NAInt* backpointer){
+NA_HHDEF void na_InsertHeapElementMutableNoBack(NAHeap* heap, void* data, const void* key, NAInt* backpointer){
   NAInt newindex;
   NAHeapEntry* thedata;
   NA_UNUSED(backpointer);
@@ -198,7 +198,7 @@ NA_HDEF void naInsertHeapElementMutableNoBack(NAHeap* heap, void* data, const vo
     if(backpointer)
       naError("Heap dos not store backpointers. packpointer should be null. Ignored.");
   #endif
-  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
+  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){na_GrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapEntry*)(heap->data);
   thedata[newindex].ptr = naMakePtrWithDataMutable(data);
@@ -208,14 +208,14 @@ NA_HDEF void naInsertHeapElementMutableNoBack(NAHeap* heap, void* data, const vo
 
 
 
-NA_HDEF void naInsertHeapElementMutableBack(NAHeap* heap, void* data, const void* key, NAInt* backpointer){
+NA_HHDEF void na_InsertHeapElementMutableBack(NAHeap* heap, void* data, const void* key, NAInt* backpointer){
   NAInt newindex;
   NAHeapBackEntry* thedata;
   #ifndef NDEBUG
     if((heap->maxcount > 0) && ((NAInt)heap->count == heap->maxcount))
       naError("Heap overflow.");
   #endif
-  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){naGrowHeap(heap);}
+  if(heap->maxcount < 0 && ((NAInt)heap->count == -heap->maxcount)){na_GrowHeap(heap);}
   newindex = heap->movedown(heap, key, heap->count + 1);
   thedata = (NAHeapBackEntry*)(heap->data);
   thedata[newindex].ptr = naMakePtrWithDataMutable(data);
@@ -235,7 +235,7 @@ NA_HDEF void naInsertHeapElementMutableBack(NAHeap* heap, void* data, const void
 
 
 
-NA_HDEF const void* naRemoveHeapRootConstNoBack(NAHeap* heap){
+NA_HHDEF const void* na_RemoveHeapRootConstNoBack(NAHeap* heap){
   NAHeapEntry* thedata = (NAHeapEntry*)(heap->data);
   const void* returnvalue;
   #ifndef NDEBUG
@@ -253,7 +253,7 @@ NA_HDEF const void* naRemoveHeapRootConstNoBack(NAHeap* heap){
 
 
 
-NA_HDEF const void* naRemoveHeapRootConstBack(NAHeap* heap){
+NA_HHDEF const void* na_RemoveHeapRootConstBack(NAHeap* heap){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   const void* returnvalue;
   #ifndef NDEBUG
@@ -273,7 +273,7 @@ NA_HDEF const void* naRemoveHeapRootConstBack(NAHeap* heap){
 
 
 
-NA_HDEF void* naRemoveHeapRootMutableNoBack(NAHeap* heap){
+NA_HHDEF void* na_RemoveHeapRootMutableNoBack(NAHeap* heap){
   NAHeapEntry* thedata = (NAHeapEntry*)(heap->data);
   void* returnvalue;
   #ifndef NDEBUG
@@ -290,7 +290,7 @@ NA_HDEF void* naRemoveHeapRootMutableNoBack(NAHeap* heap){
 }
 
 
-NA_HDEF void* naRemoveHeapRootMutableBack(NAHeap* heap){
+NA_HHDEF void* na_RemoveHeapRootMutableBack(NAHeap* heap){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   void* returnvalue;
   #ifndef NDEBUG
@@ -310,7 +310,7 @@ NA_HDEF void* naRemoveHeapRootMutableBack(NAHeap* heap){
 
 
 
-NA_HDEF const void* naRemoveHeapPosConstNoBack(NAHeap* heap, NAInt backpointer){
+NA_HHDEF const void* na_RemoveHeapPosConstNoBack(NAHeap* heap, NAInt backpointer){
   NA_UNUSED(heap);
   NA_UNUSED(backpointer);
   #ifndef NDEBUG
@@ -321,7 +321,7 @@ NA_HDEF const void* naRemoveHeapPosConstNoBack(NAHeap* heap, NAInt backpointer){
 
 
 
-NA_HDEF const void* naRemoveHeapPosConstBack(NAHeap* heap, NAInt backpointer){
+NA_HHDEF const void* na_RemoveHeapPosConstBack(NAHeap* heap, NAInt backpointer){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   const void* returnvalue;
   #ifndef NDEBUG
@@ -343,7 +343,7 @@ NA_HDEF const void* naRemoveHeapPosConstBack(NAHeap* heap, NAInt backpointer){
 
 
 
-NA_HDEF void* naRemoveHeapPosMutableNoBack(NAHeap* heap, NAInt backpointer){
+NA_HHDEF void* na_RemoveHeapPosMutableNoBack(NAHeap* heap, NAInt backpointer){
   NA_UNUSED(heap);
   NA_UNUSED(backpointer);
   #ifndef NDEBUG
@@ -353,7 +353,7 @@ NA_HDEF void* naRemoveHeapPosMutableNoBack(NAHeap* heap, NAInt backpointer){
 }
 
 
-NA_HDEF void* naRemoveHeapPosMutableBack(NAHeap* heap, NAInt backpointer){
+NA_HHDEF void* na_RemoveHeapPosMutableBack(NAHeap* heap, NAInt backpointer){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   void* returnvalue;
   #ifndef NDEBUG
@@ -374,7 +374,7 @@ NA_HDEF void* naRemoveHeapPosMutableBack(NAHeap* heap, NAInt backpointer){
 }
 
 
-NA_HDEF void naUpdateHeapElementNoBack(NAHeap* heap, NAInt backpointer){
+NA_HHDEF void na_UpdateHeapElementNoBack(NAHeap* heap, NAInt backpointer){
   NA_UNUSED(heap);
   NA_UNUSED(backpointer);
   #ifndef NDEBUG
@@ -384,7 +384,7 @@ NA_HDEF void naUpdateHeapElementNoBack(NAHeap* heap, NAInt backpointer){
 
 
 
-NA_HDEF void naUpdateHeapElementBack(NAHeap* heap, NAInt backpointer){
+NA_HHDEF void na_UpdateHeapElementBack(NAHeap* heap, NAInt backpointer){
   NAHeapBackEntry* thedata = (NAHeapBackEntry*)(heap->data);
   NAHeapBackEntry tmp;
   NAInt curIndex;
@@ -437,49 +437,49 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
     heap->data = naMalloc((naAbsi(heap->maxcount) + 1) * entrysize);
     heap->root = &(((NAHeapEntry*)heap->data)[1]);
 
-    heap->insertConst = naInsertHeapElementConstNoBack;
-    heap->insertMutable = naInsertHeapElementMutableNoBack;
-    heap->removeConst = naRemoveHeapRootConstNoBack;
-    heap->removeMutable = naRemoveHeapRootMutableNoBack;
-    heap->removePosConst = naRemoveHeapPosConstNoBack;
-    heap->removePosMutable = naRemoveHeapPosMutableNoBack;
-    heap->updateBack = naUpdateHeapElementNoBack;
+    heap->insertConst = na_InsertHeapElementConstNoBack;
+    heap->insertMutable = na_InsertHeapElementMutableNoBack;
+    heap->removeConst = na_RemoveHeapRootConstNoBack;
+    heap->removeMutable = na_RemoveHeapRootMutableNoBack;
+    heap->removePosConst = na_RemoveHeapPosConstNoBack;
+    heap->removePosMutable = na_RemoveHeapPosMutableNoBack;
+    heap->updateBack = na_UpdateHeapElementNoBack;
 
     switch(flags & NA_HEAP_DATATYPE_MASK){
     case NA_HEAP_USES_DOUBLE_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = NA_T3(naHeapMoveDown, Lower,   double, 0);
-        heap->moveup   = NA_T3(naHeapMoveUp,   Greater, double, 0);
+        heap->movedown = NA_T3(na_HeapMoveDown, Lower,   double, 0);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Greater, double, 0);
       }else{
-        heap->movedown = NA_T3(naHeapMoveDown, Greater, double, 0);
-        heap->moveup   = NA_T3(naHeapMoveUp,   Lower,   double, 0);
+        heap->movedown = NA_T3(na_HeapMoveDown, Greater, double, 0);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Lower,   double, 0);
       }
       break;
     case NA_HEAP_USES_FLOAT_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = NA_T3(naHeapMoveDown, Lower,   float, 0);
-        heap->moveup   = NA_T3(naHeapMoveUp,   Greater, float, 0);
+        heap->movedown = NA_T3(na_HeapMoveDown, Lower,   float, 0);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Greater, float, 0);
       }else{
-        heap->movedown = NA_T3(naHeapMoveDown, Greater, float, 0);
-        heap->moveup   = NA_T3(naHeapMoveUp,   Lower,   float, 0);
+        heap->movedown = NA_T3(na_HeapMoveDown, Greater, float, 0);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Lower,   float, 0);
       }
       break;
     case NA_HEAP_USES_NAINT_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = NA_T3(naHeapMoveDown, Lower,   NAInt, 0);
-        heap->moveup   = NA_T3(naHeapMoveUp,   Greater, NAInt, 0);
+        heap->movedown = NA_T3(na_HeapMoveDown, Lower,   NAInt, 0);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Greater, NAInt, 0);
       }else{
-        heap->movedown = NA_T3(naHeapMoveDown, Greater, NAInt, 0);
-        heap->moveup   = NA_T3(naHeapMoveUp,   Lower,   NAInt, 0);
+        heap->movedown = NA_T3(na_HeapMoveDown, Greater, NAInt, 0);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Lower,   NAInt, 0);
       }
       break;
     case NA_HEAP_USES_DATETIME_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = NA_T3(naHeapMoveDown, Lower,   NADateTime, 0);
-        heap->moveup   = NA_T3(naHeapMoveUp,   Greater, NADateTime, 0);
+        heap->movedown = NA_T3(na_HeapMoveDown, Lower,   NADateTime, 0);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Greater, NADateTime, 0);
       }else{
-        heap->movedown = NA_T3(naHeapMoveDown, Greater, NADateTime, 0);
-        heap->moveup   = NA_T3(naHeapMoveUp,   Lower,   NADateTime, 0);
+        heap->movedown = NA_T3(na_HeapMoveDown, Greater, NADateTime, 0);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Lower,   NADateTime, 0);
       }
       break;
     default:
@@ -499,49 +499,49 @@ NA_DEF NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags){
     heap->data = naMalloc((naAbsi(heap->maxcount) + 1) * entrysize);
     heap->root = &(((NAHeapBackEntry*)heap->data)[1]);
 
-    heap->insertConst = naInsertHeapElementConstBack;
-    heap->insertMutable = naInsertHeapElementMutableBack;
-    heap->removeConst = naRemoveHeapRootConstBack;
-    heap->removeMutable = naRemoveHeapRootMutableBack;
-    heap->removePosConst = naRemoveHeapPosConstBack;
-    heap->removePosMutable = naRemoveHeapPosMutableBack;
-    heap->updateBack = naUpdateHeapElementBack;
+    heap->insertConst = na_InsertHeapElementConstBack;
+    heap->insertMutable = na_InsertHeapElementMutableBack;
+    heap->removeConst = na_RemoveHeapRootConstBack;
+    heap->removeMutable = na_RemoveHeapRootMutableBack;
+    heap->removePosConst = na_RemoveHeapPosConstBack;
+    heap->removePosMutable = na_RemoveHeapPosMutableBack;
+    heap->updateBack = na_UpdateHeapElementBack;
 
     switch(flags & NA_HEAP_DATATYPE_MASK){
     case NA_HEAP_USES_DOUBLE_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = NA_T3(naHeapMoveDown, Lower,   double, 1);
-        heap->moveup   = NA_T3(naHeapMoveUp,   Greater, double, 1);
+        heap->movedown = NA_T3(na_HeapMoveDown, Lower,   double, 1);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Greater, double, 1);
       }else{
-        heap->movedown = NA_T3(naHeapMoveDown, Greater, double, 1);
-        heap->moveup   = NA_T3(naHeapMoveUp,   Lower,   double, 1);
+        heap->movedown = NA_T3(na_HeapMoveDown, Greater, double, 1);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Lower,   double, 1);
       }
       break;
     case NA_HEAP_USES_FLOAT_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = NA_T3(naHeapMoveDown, Lower,   float, 1);
-        heap->moveup   = NA_T3(naHeapMoveUp,   Greater, float, 1);
+        heap->movedown = NA_T3(na_HeapMoveDown, Lower,   float, 1);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Greater, float, 1);
       }else{
-        heap->movedown = NA_T3(naHeapMoveDown, Greater, float, 1);
-        heap->moveup   = NA_T3(naHeapMoveUp,   Lower,   float, 1);
+        heap->movedown = NA_T3(na_HeapMoveDown, Greater, float, 1);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Lower,   float, 1);
       }
       break;
     case NA_HEAP_USES_NAINT_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = NA_T3(naHeapMoveDown, Lower,   NAInt, 1);
-        heap->moveup   = NA_T3(naHeapMoveUp,   Greater, NAInt, 1);
+        heap->movedown = NA_T3(na_HeapMoveDown, Lower,   NAInt, 1);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Greater, NAInt, 1);
       }else{
-        heap->movedown = NA_T3(naHeapMoveDown, Greater, NAInt, 1);
-        heap->moveup   = NA_T3(naHeapMoveUp,   Lower,   NAInt, 1);
+        heap->movedown = NA_T3(na_HeapMoveDown, Greater, NAInt, 1);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Lower,   NAInt, 1);
       }
       break;
     case NA_HEAP_USES_DATETIME_KEY:
       if(flags & NA_HEAP_IS_MAX_HEAP){
-        heap->movedown = NA_T3(naHeapMoveDown, Lower,   NADateTime, 1);
-        heap->moveup   = NA_T3(naHeapMoveUp,   Greater, NADateTime, 1);
+        heap->movedown = NA_T3(na_HeapMoveDown, Lower,   NADateTime, 1);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Greater, NADateTime, 1);
       }else{
-        heap->movedown = NA_T3(naHeapMoveDown, Greater, NADateTime, 1);
-        heap->moveup   = NA_T3(naHeapMoveUp,   Lower,   NADateTime, 1);
+        heap->movedown = NA_T3(na_HeapMoveDown, Greater, NADateTime, 1);
+        heap->moveup   = NA_T3(na_HeapMoveUp,   Lower,   NADateTime, 1);
       }
       break;
     default:

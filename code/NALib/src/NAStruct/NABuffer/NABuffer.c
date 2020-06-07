@@ -32,11 +32,11 @@ void naDestructBufferTreeNode(NAPtr nodedata){
 
 
 
-NABool naUpdateBufferTreeNode(NAPtr parentdata, NAPtr* childdatas, NAInt childindx, NAInt childmask){
+NABool naUpdateBufferTreeNode(NAPtr parentdata, NAPtr* childdatas, NAInt childIndex, NAInt childmask){
   NABufferTreeNodeData* parentnodedata;
   NAInt prevlen1;
   NAInt prevlen2;
-  NA_UNUSED(childindx);
+  NA_UNUSED(childIndex);
   
   parentnodedata = (NABufferTreeNodeData*)naGetPtrMutable(parentdata);
 
@@ -64,7 +64,7 @@ NABool naUpdateBufferTreeNode(NAPtr parentdata, NAPtr* childdatas, NAInt childin
 
 
 
-NA_HDEF void naInitBufferStruct(NABuffer* buffer){
+NA_HHDEF void na_InitBufferStruct(NABuffer* buffer){
   NATreeConfiguration* config;
   buffer->flags = 0;
   buffer->range = naMakeRangeiWithStartAndEnd(0, 0);
@@ -82,7 +82,7 @@ NA_HDEF void naInitBufferStruct(NABuffer* buffer){
 
 // This is the fill callback for a secure memory buffer. It simply fills all
 // of the dst memory with binarz zero.
-NA_HDEF void naFillBufferSecureMemory(void* dst, NARangei sourcerange, void* sourcedata){
+NA_HHDEF void na_FillBufferSecureMemory(void* dst, NARangei sourcerange, void* sourcedata){
   NA_UNUSED(sourcedata);
   naZeron(dst, sourcerange.length);
 }
@@ -91,12 +91,12 @@ NA_HDEF void naFillBufferSecureMemory(void* dst, NARangei sourcerange, void* sou
 
 NA_DEF NABuffer* naNewBuffer(NABool securememory){
   NABuffer* buffer = naNew(NABuffer);
-  naInitBufferStruct(buffer);
+  na_InitBufferStruct(buffer);
 
   // When requiring secure memory, we create a source which fills all allocated
   // memory with binary zero.
   if(securememory){
-    buffer->source = naNewBufferSource(naFillBufferSecureMemory, NA_NULL);
+    buffer->source = naNewBufferSource(na_FillBufferSecureMemory, NA_NULL);
   }else{
     buffer->source = NA_NULL;
   }
@@ -139,7 +139,7 @@ NA_DEF NABuffer* naNewBufferExtraction(NABuffer* srcbuffer, NAInt offset, NAInt 
   NABufferPart* part;
   
   NABuffer* buffer = naNew(NABuffer);
-  naInitBufferStruct(buffer);
+  na_InitBufferStruct(buffer);
 
   absoluterange = naMakeRangeiAbsolute(offset, length, srcbuffer->range);
 
@@ -191,7 +191,7 @@ NA_DEF NABuffer* naNewBufferCopy(const NABuffer* srcbuffer, NARangei range, NABo
 NA_DEF NABuffer* naNewBufferWithSameSource(NABuffer* srcbuffer){
   NA_UNUSED(srcbuffer);
 //  NABuffer* buffer = naNew(NABuffer);
-//  naInitBufferStruct(buffer);
+//  na_InitBufferStruct(buffer);
 //
 //  buffer->source = naRetain(srcbuffer->source);
 //  buffer->srcoffset = srcbuffer->srcoffset;
@@ -209,7 +209,7 @@ NA_DEF NABuffer* naNewBufferWithSameSource(NABuffer* srcbuffer){
 
 
 // This is the filler method of the file input source descriptor
-NA_HDEF void naFillBufferPartFile(void* dst, NARangei sourcerange, void* data){
+NA_HHDEF void na_FillBufferPartFile(void* dst, NARangei sourcerange, void* data){
   // todo: position at range.origin.
   naReadFileBytes(data, dst, sourcerange.length);
 }
@@ -224,13 +224,13 @@ NA_DEF NABuffer* naNewBufferWithInputFile(const char* filename){
   NABufferSource* bufsource;
 
   NABuffer* buffer = naNew(NABuffer);
-  naInitBufferStruct(buffer);
+  na_InitBufferStruct(buffer);
 
   file = naCreateFileReadingFilename(filename);
   range = naMakeRangei(0, (NAInt)naComputeFileBytesize(file));
 
   filebuffer = naNewBuffer(NA_FALSE);
-  readsource = naNewBufferSource(naFillBufferPartFile, NA_NULL);
+  readsource = naNewBufferSource(na_FillBufferPartFile, NA_NULL);
     naSetBufferSourceData(readsource, file, (NAMutator)naReleaseFile);
     naSetBufferSourceLimit(readsource, range);
     filebuffer->source = naRetain(readsource);
@@ -259,7 +259,7 @@ NA_DEF NABuffer* naNewBufferWithConstData(const void* data, NAInt bytesize){
   NARangei range;
 
   NABuffer* buffer = naNew(NABuffer);
-  naInitBufferStruct(buffer);
+  na_InitBufferStruct(buffer);
 
   range = naMakeRangeiWithStartAndEnd(0, (NAInt)bytesize);
 
@@ -286,7 +286,7 @@ NA_DEF NABuffer* naNewBufferWithMutableData(void* data, NAInt bytesize, NAMutato
   NARangei range;
 
   NABuffer* buffer = naNew(NABuffer);
-  naInitBufferStruct(buffer);
+  na_InitBufferStruct(buffer);
 
   range = naMakeRangeiWithStartAndEnd(0, (NAInt)bytesize);
 
@@ -310,7 +310,7 @@ NA_DEF NABuffer* naNewBufferWithMutableData(void* data, NAInt bytesize, NAMutato
 
 NA_DEF NABuffer* naNewBufferWithCustomSource(NABufferSource* source, NAInt sourceoffset){
   NABuffer* buffer = naNew(NABuffer);
-  naInitBufferStruct(buffer);
+  na_InitBufferStruct(buffer);
 
   buffer->source = source;
   buffer->sourceoffset = sourceoffset;
@@ -323,7 +323,7 @@ NA_DEF NABuffer* naNewBufferWithCustomSource(NABufferSource* source, NAInt sourc
 
 
 
-NA_HDEF void na_DeallocBuffer(NABuffer* buffer){
+NA_HHDEF void na_DeallocBuffer(NABuffer* buffer){
   #ifndef NDEBUG
     if(buffer->iterCount)
       naError("There are still iterators running. Did you forgot naClearBufferIterator?");
@@ -337,7 +337,7 @@ NA_HDEF void na_DeallocBuffer(NABuffer* buffer){
 // This function ensures that the full given range is available as parts in
 // this buffer. If not available, the buffer is extended with sparse parts
 // at the beginning and the end.
-NA_HDEF void na_EnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
+NA_HHDEF void na_EnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
   NAInt length = end - start;
 
   #ifndef NDEBUG
@@ -404,7 +404,7 @@ NA_HDEF void na_EnsureBufferRange(NABuffer* buffer, NAInt start, NAInt end){
 // This function makes the bytes declared in range unavailable by replacing
 // that range with a sparse part. As a consequence, certain buffer parts may
 // not be used anymore and will be automatically deallocated.
-NA_HDEF void naUnlinkBufferRange(NABuffer* buffer, NARangei range){
+NA_HHDEF void na_UnlinkBufferRange(NABuffer* buffer, NARangei range){
   NA_UNUSED(buffer);
   NA_UNUSED(range);
 //  NAInt rangepos;
@@ -413,9 +413,9 @@ NA_HDEF void naUnlinkBufferRange(NABuffer* buffer, NARangei range){
 //
 //  #ifndef NDEBUG
 //    if(naIsBufferEmpty(buffer))
-//      naError("naUnlinkBufferRange", "Buffer ist empty");
+//      naError("na_UnlinkBufferRange", "Buffer ist empty");
 //    if(!naContainsRangeiRange(buffer->range, range))
-//      naError("naUnlinkBufferRange", "Range of is not within buffer range");
+//      naError("na_UnlinkBufferRange", "Range of is not within buffer range");
 //  #endif
 //
 //  iter = naMakeListModifier(&(buffer->parts));
@@ -663,7 +663,7 @@ NA_DEF void naCacheBufferRange(NABuffer* buffer, NARangei range){
 
 
 NA_DEF void naDismissBufferRange(NABuffer* buffer, NARangei range){
-  naUnlinkBufferRange(buffer, range);
+  na_UnlinkBufferRange(buffer, range);
 }
 
 

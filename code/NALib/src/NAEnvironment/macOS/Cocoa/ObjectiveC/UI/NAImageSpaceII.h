@@ -28,7 +28,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaImageSpace* cocoaImageSpace = [[NACocoaImageSpace alloc] initWithCoreImageSpace:coreImageSpace frame:frameRect];  
-  na_InitCoreImageSpace(coreImageSpace, NA_COCOA_PTR_OBJC_TO_C(cocoaImageSpace));
+  na_InitImageSpace(coreImageSpace, NA_COCOA_PTR_OBJC_TO_C(cocoaImageSpace));
   
   [cocoaImageSpace setUIImage: uiimage];
   
@@ -37,9 +37,9 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
 
 
 
-NA_DEF void naDestructImageSpace(NAImageSpace* imageSpace){
+NA_DEF void na_DestructImageSpace(NAImageSpace* imageSpace){
   NA_ImageSpace* coreImageSpace = (NA_ImageSpace*)imageSpace;
-  na_ClearCoreImageSpace(coreImageSpace);
+  na_ClearImageSpace(coreImageSpace);
 }
 
 

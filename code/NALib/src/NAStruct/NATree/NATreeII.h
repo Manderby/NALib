@@ -49,7 +49,7 @@ typedef enum{
 // NATreeLeafAdder           Sets the given child with the given type to the
 //                           parent at the given index.
 // NATreeLeafRemover         Removes the given leaf from the tree.
-// NATreeLeafInserter        Expects the child ad childindx of grandparent to
+// NATreeLeafInserter        Expects the child ad childIndex of grandparent to
 //                           be a leaf which will be split to a node containing
 //                           both that leaf and the new sibling.
 typedef NAInt           (*NAKeyIndexGetter)(const void* basekey, const void* testkey, const void* data);
@@ -160,8 +160,8 @@ struct NATree{
 
 struct NATreeIterationInfo{
   NAInt step;
-  NAInt startindx;
-  NAInt breakindx;
+  NAInt startIndex;
+  NAInt breakIndex;
   const void* lowerlimit;
   const void* upperlimit;
 };
@@ -189,16 +189,16 @@ NA_HIAPI void naInitTreeNode(const NATreeConfiguration* config, NATreeNode* node
 NA_HIAPI void naClearTreeNode(NATreeNode* node);
 NA_HIAPI void naDestructNodeData(const NATreeConfiguration* config, NAPtr data);
 NA_HIAPI void naDestructTreeNode(const NATreeConfiguration* config, NATreeNode* node, NABool recursive);
-NA_HIAPI NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childindx);
-NA_HIAPI void naMarkNodeChildLeaf(NATreeNode* node, NAInt childindx, NABool isleaf);
+NA_HIAPI NABool naIsNodeChildLeaf(NATreeNode* node, NAInt childIndex);
+NA_HIAPI void naMarkNodeChildLeaf(NATreeNode* node, NAInt childIndex, NABool isleaf);
 NA_HIAPI void* naGetTreeNodeKey(const NATreeConfiguration* config, NATreeNode* node);
 NA_HIAPI NAPtr naGetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node);
 NA_HIAPI void naSetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node, NAPtr newdata);
 NA_HIAPI NATreeItem** naGetTreeNodeChildStorage(NATreeNode* parent);
-NA_HIAPI NATreeItem* naGetTreeNodeChild(const NATreeConfiguration* config, NATreeNode* parent, NAInt childindx);
-NA_HIAPI void naSetTreeNodeChildEmpty(NATreeNode* parent, NAInt childindx);
-NA_HIAPI void naSetTreeNodeChild(NATreeNode* parent, NATreeItem* child, NAInt childindx, NABool isChildLeaf);
-NA_HIAPI NAInt naGetTreeNodeChildIndex(const NATreeConfiguration* config, NATreeNode* parent, NATreeItem* child);
+NA_HIAPI NATreeItem* naGetTreeNodeChild(const NATreeConfiguration* config, NATreeNode* parent, NAInt childIndex);
+NA_HIAPI void naSetTreeNodeChildEmpty(NATreeNode* parent, NAInt childIndex);
+NA_HIAPI void naSetTreeNodeChild(NATreeNode* parent, NATreeItem* child, NAInt childIndex, NABool isChildLeaf);
+NA_HIAPI NAInt na_GetTreeNodeChildIndex(const NATreeConfiguration* config, NATreeNode* parent, NATreeItem* child);
 
 // Leaf
 NA_HIAPI NATreeItem* naGetTreeLeafItem(NATreeLeaf* leaf);
@@ -229,7 +229,7 @@ NA_HIAPI NABool naIsTreeRootLeaf(const NATree* tree);
 NA_HIAPI void naMarkTreeRootLeaf(NATree* tree, NABool isleaf);
 NA_HIAPI NABool naIsTreeItemLeaf(const NATree* tree, NATreeItem* item);
 NA_HHAPI  NATreeLeaf* na_AddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
-NA_HHAPI  void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childindx);
+NA_HHAPI  void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childIndex);
 NA_HHAPI  NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node);
 
 #include "../../NACore/NAValueHelper.h"

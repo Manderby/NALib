@@ -217,15 +217,15 @@ NA_HIDEF void naMarkTreeRootLeaf(NATree* tree, NABool isleaf){
 }
 
 
-// todo: If this shows up in performance, adding rootparent again? Or adding childindx as flag in every item?
+// todo: If this shows up in performance, adding rootparent again? Or adding childIndex as flag in every item?
 NA_HIDEF NABool naIsTreeItemLeaf(const NATree* tree, NATreeItem* item){
   NABool retvalue;
   if(naIsTreeItemRoot(item)){
     retvalue = naIsTreeRootLeaf(tree);
   }else{
     NATreeNode* parent = naGetTreeItemParent(item);
-    NAInt childindx = naGetTreeNodeChildIndex(tree->config, parent, item);
-    retvalue = naIsNodeChildLeaf(parent, childindx);
+    NAInt childIndex = na_GetTreeNodeChildIndex(tree->config, parent, item);
+    retvalue = naIsNodeChildLeaf(parent, childIndex);
   }
   return retvalue;
 }

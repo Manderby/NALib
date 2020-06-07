@@ -218,7 +218,7 @@ NA_HIDEF void naUnregisterTypeInfo(NA_TypeInfo* typeInfo){
 
 
 
-NA_HDEF size_t naGetTypeInfoAllocatedCount(NA_TypeInfo* typeInfo){
+NA_HHDEF size_t na_GetTypeInfoAllocatedCount(NA_TypeInfo* typeInfo){
   NA_PoolPart* firstpart = typeInfo->curpart;
   NA_PoolPart* curpart = firstpart->nextpart;
   size_t totalcount = firstpart->usedCount;
@@ -598,7 +598,7 @@ NA_DEF void naStopRuntime(){
 
     // Go through all registered types and output a leak message if necessary.
     for(i = 0; i < na_Runtime->typeInfoCount; i++){
-      size_t spacecount = naGetTypeInfoAllocatedCount(na_Runtime->typeInfos[i]);
+      size_t spacecount = na_GetTypeInfoAllocatedCount(na_Runtime->typeInfos[i]);
       #ifndef NDEBUG
         if(spacecount){
           if(!leakmessageprinted){

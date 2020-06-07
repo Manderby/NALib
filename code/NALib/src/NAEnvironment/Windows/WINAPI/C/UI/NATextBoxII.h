@@ -64,7 +64,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
 		0, 0, (int)size.width, (int)size.height,
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
-  na_InitCoreTextBox(&(winapiTextBox->coreTextBox), hWnd);
+  na_InitTextBox(&(winapiTextBox->coreTextBox), hWnd);
   winapiTextBox->nextTabStop = winapiTextBox;
   winapiTextBox->prevTabStop = winapiTextBox;
 
@@ -78,9 +78,9 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
 
 
 
-NA_DEF void naDestructTextBox(NATextBox* textBox){
+NA_DEF void na_DestructTextBox(NATextBox* textBox){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
-  na_ClearCoreTextBox(&(winapiTextBox->coreTextBox));
+  na_ClearTextBox(&(winapiTextBox->coreTextBox));
 }
 
 
@@ -114,21 +114,21 @@ NA_DEF void naSetTextBoxEditable(NATextBox* textBox, NABool editable){
 
 
 
-NA_HDEF NAUIElement** naGetTextBoxNextTabReference(NATextBox* textBox){
+NA_HHDEF NAUIElement** na_GetTextBoxNextTabReference(NATextBox* textBox){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
   return &(winapiTextBox->nextTabStop);
 }
 
 
 
-NA_HDEF NAUIElement** naGetTextBoxPrevTabReference(NATextBox* textBox){
+NA_HHDEF NAUIElement** na_GetTextBoxPrevTabReference(NATextBox* textBox){
   NAWINAPITextBox* winapiTextBox = (NAWINAPITextBox*)textBox;
   return &(winapiTextBox->prevTabStop);
 }
 
 
 
-NA_HDEF NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox){
+NA_HHDEF NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox){
   NA_UNUSED(textBox);
   return naMakeRectS(20, 40, 100, 50);
 }

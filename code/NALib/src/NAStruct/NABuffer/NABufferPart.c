@@ -11,7 +11,7 @@ NA_RUNTIME_TYPE(NABufferPart, na_DestructBufferPart, NA_FALSE);
 // Creates a memory block with sparse memory.
 // A sparse buffer is initialized with a byteoffset of 0. This will possibly
 // change when calling naReferenceBufferPart or naFillBufferPart.
-NA_HDEF NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei sourcerange){
+NA_HHDEF NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei sourcerange){
   NABufferPart* part;
   #ifndef NDEBUG
     if(!naIsLengthValueUsefuli(sourcerange.length))
@@ -41,7 +41,7 @@ NA_HDEF NABufferPart* na_NewBufferPartSparse(NABufferSource* source, NARangei so
 
 
 // Creates a memory block with constant data
-NA_HDEF NABufferPart* na_NewBufferPartWithConstData(const void* data, NAInt bytesize){
+NA_HHDEF NABufferPart* na_NewBufferPartWithConstData(const void* data, NAInt bytesize){
   NABufferPart* part;
   #ifndef NDEBUG
     if(!naIsLengthValueUsefuli(bytesize))
@@ -59,7 +59,7 @@ NA_HDEF NABufferPart* na_NewBufferPartWithConstData(const void* data, NAInt byte
 
 
 // Creates a memory block with mutable data
-NA_HDEF NABufferPart* na_NewBufferPartWithMutableData(void* data, NAInt bytesize, NAMutator destructor){
+NA_HHDEF NABufferPart* na_NewBufferPartWithMutableData(void* data, NAInt bytesize, NAMutator destructor){
   NABufferPart* part;
   #ifndef NDEBUG
     if(!naIsLengthValueUsefuli(bytesize))
@@ -76,7 +76,7 @@ NA_HDEF NABufferPart* na_NewBufferPartWithMutableData(void* data, NAInt bytesize
 
 
 
-NA_HDEF void na_SeparateBufferPart(NABufferPart* part){
+NA_HHDEF void na_SeparateBufferPart(NABufferPart* part){
   NAMemoryBlock* newblock = na_NewMemoryBlock(part->bytesize);
   naCopyn(na_GetMemoryBlockDataPointerMutable(newblock, 0), na_GetMemoryBlockDataPointerConst(part->memblock, part->blockoffset), part->bytesize);
   naRelease(part->memblock);
@@ -86,7 +86,7 @@ NA_HDEF void na_SeparateBufferPart(NABufferPart* part){
 
 
 // The destructor method which will automatically be called by naRelease.
-NA_HDEF void na_DestructBufferPart(NABufferPart* part){
+NA_HHDEF void na_DestructBufferPart(NABufferPart* part){
   if(part->source){naRelease(part->source);}
   if(part->memblock){naRelease(part->memblock);}
 }
@@ -99,7 +99,7 @@ NA_HDEF void na_DestructBufferPart(NABufferPart* part){
 // points to that very part.
 // The start and end parameters must be positive definite.
 // Moves the iterator to the desired part and returns that part.
-NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partiter, NAInt start, NAInt end){
+NA_HHDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partiter, NAInt start, NAInt end){
   NABufferPart* part = naGetTreeCurLeafMutable(partiter);
   NABufferPart* newpart;
   NAInt prevbytesize;
@@ -160,7 +160,7 @@ NA_HDEF NABufferPart* na_SplitBufferPart(NATreeIterator* partiter, NAInt start, 
 // This function recursively prepares the source of the current part. If the
 // current part has no source, memory is prepared. In the end, the current part
 // will become a non-sparse part.
-NA_HDEF NABufferPart* na_PrepareBufferPartSourceBuffer(NATreeIterator* partiter, NARangei partrange){
+NA_HHDEF NABufferPart* na_PrepareBufferPartSourceBuffer(NATreeIterator* partiter, NARangei partrange){
   NABufferIterator iter;
   NABool found;
   NABufferPart* sourcepart;
@@ -286,7 +286,7 @@ NA_HIDEF NAInt naGetBufferPartNormedEnd(NAInt end){
 
 // This function expects a sparse buffer part, splits it such that a suitable
 // range can be made non-sparse and that range is filled with memory.
-NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partiter, NARangei partrange){
+NA_HHDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partiter, NARangei partrange){
   NAInt normedstart;
   NAInt normedend;
   void* dst;
@@ -330,7 +330,7 @@ NA_HDEF NABufferPart* na_PrepareBufferPartMemory(NATreeIterator* partiter, NARan
 // the current part but always results in iterator pointing to a part being
 // completely prepared and the number of available bytes after the current byte
 // is returned.
-NA_HDEF NAInt na_PrepareBufferPart(NABufferIterator* iter, NAInt bytecount){
+NA_HHDEF NAInt na_PrepareBufferPart(NABufferIterator* iter, NAInt bytecount){
   NAInt preparedbytecount;
   NABufferPart* part = naGetBufferPart(iter);
   if(na_IsBufferPartSparse(part)){

@@ -104,7 +104,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   oldproc = (WNDPROC)SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)naWINAPIWindowCallback);
   if(!app->oldLabelWindowProc){app->oldLabelWindowProc = oldproc;}
 
-  na_InitCoreLabel(&(winapiLabel->coreLabel), hWnd);
+  na_InitLabel(&(winapiLabel->coreLabel), hWnd);
 
   winapiLabel->enabled = NA_TRUE;
   winapiLabel->href = NA_NULL;
@@ -115,10 +115,10 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
 
 
 
-NA_DEF void naDestructLabel(NALabel* label){
+NA_DEF void na_DestructLabel(NALabel* label){
   NAWINAPILabel* winapiLabel = (NAWINAPILabel*)label;
   if(winapiLabel->href){naDelete(winapiLabel->href);}
-  na_ClearCoreLabel(&(winapiLabel->coreLabel));
+  na_ClearLabel(&(winapiLabel->coreLabel));
 }
 
 
@@ -182,7 +182,7 @@ NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind){
 
 
 
-NA_HDEF NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label){
+NA_HHDEF NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label){
   NA_UNUSED(label);
   return naMakeRectS(20, 40, 100, 50);
 }
