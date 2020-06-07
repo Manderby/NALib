@@ -224,13 +224,6 @@
     return naMakeu256WithLo(naMakeu128WithDouble(d));
   }
 
-  #undef naMakeu256WithLiteralLo
-  #if NA_ENDIANNESS_HOST == NA_ENDIANNESS_BIG
-    #define naMakeu256WithLiteralLo(lo)  {0, lo}
-  #else
-    #define naMakeu256WithLiteralLo(lo)  {lo, 0}
-  #endif
-
   NA_IDEF NAu256 naMakeu256WithBinary(uint32 b7, uint32 b6, uint32 b5, uint32 b4, uint32 b3, uint32 b2, uint32 b1, uint32 b0){
     NAu256 retValueu;
     retValueu.hi = naMakeu128WithBinary(b7, b6, b5, b4);

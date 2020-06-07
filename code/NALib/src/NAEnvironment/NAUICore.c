@@ -340,20 +340,20 @@ NA_DEF void naReleaseUIElement(void* uiElement){
 
   switch(naGetUIElementType(element))
   {
-  case NA_UI_APPLICATION: naReleaseRefCount(&element->refCount, uiElement, na_DestructApplication); break;
+  case NA_UI_APPLICATION: naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructApplication); break;
 //  case NA_UI_SCREEN:      naDeleteScreen(uiElement);
-  case NA_UI_WINDOW:      naReleaseRefCount(&element->refCount, uiElement, na_DestructWindow); break;
-  case NA_UI_SPACE:       naReleaseRefCount(&element->refCount, uiElement, na_DestructSpace); break;
-  case NA_UI_IMAGESPACE:  naReleaseRefCount(&element->refCount, uiElement, na_DestructImageSpace); break;
+  case NA_UI_WINDOW:      naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructWindow); break;
+  case NA_UI_SPACE:       naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructSpace); break;
+  case NA_UI_IMAGESPACE:  naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructImageSpace); break;
   #if NA_COMPILE_OPENGL == 1
-    case NA_UI_OPENGLSPACE: naReleaseRefCount(&(element->refCount), uiElement, na_DestructOpenGLSpace); break;
+    case NA_UI_OPENGLSPACE: naReleaseRefCount(&(element->refCount), uiElement, (NAMutator)na_DestructOpenGLSpace); break;
   #endif
-  case NA_UI_BUTTON:      naReleaseRefCount(&element->refCount, uiElement, na_DestructButton); break;
-  case NA_UI_RADIO:       naReleaseRefCount(&element->refCount, uiElement, na_DestructRadio); break;
-  case NA_UI_CHECKBOX:    naReleaseRefCount(&element->refCount, uiElement, na_DestructCheckBox); break;
-  case NA_UI_LABEL:       naReleaseRefCount(&element->refCount, uiElement, na_DestructLabel); break;
-  case NA_UI_TEXTFIELD:   naReleaseRefCount(&element->refCount, uiElement, na_DestructTextField); break;
-  case NA_UI_TEXTBOX:     naReleaseRefCount(&element->refCount, uiElement, na_DestructTextBox); break;
+  case NA_UI_BUTTON:      naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructButton); break;
+  case NA_UI_RADIO:       naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructRadio); break;
+  case NA_UI_CHECKBOX:    naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructCheckBox); break;
+  case NA_UI_LABEL:       naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructLabel); break;
+  case NA_UI_TEXTFIELD:   naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructTextField); break;
+  case NA_UI_TEXTBOX:     naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructTextBox); break;
   default:
     #ifndef NDEBUG
       naError("Invalid element type");

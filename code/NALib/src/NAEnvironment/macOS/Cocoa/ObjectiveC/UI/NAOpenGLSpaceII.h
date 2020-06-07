@@ -22,9 +22,6 @@
     initData = newinitData;
     return self;
   }
-  - (void)dealloc{
-    int asdf = 2345;
-  }
   - (BOOL)acceptsFirstResponder{
     return YES; // This is required to get keyboard input.
   }
@@ -67,7 +64,7 @@ NA_UNUSED(event);
     na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, NA_UI_COMMAND_KEYUP);
   }
   - (void)flagsChanged:(NSEvent*)event{
-    NAUIKeyCode keyCode;
+//    NAUIKeyCode keyCode;
     NABool shift   = ([event modifierFlags] & NAEventModifierFlagShift)    ?NA_TRUE:NA_FALSE;
     NABool alt     = ([event modifierFlags] & NAEventModifierFlagOption)   ?NA_TRUE:NA_FALSE;
     NABool control = ([event modifierFlags] & NAEventModifierFlagControl)  ?NA_TRUE:NA_FALSE;
@@ -115,18 +112,18 @@ NA_UNUSED(event);
     }
 
     na_InitOpenGLSpace(openGLSpace, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
-    return openGLspace;
+    return openGLSpace;
   }
 
 
 
-  NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openglspace){
+  NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openGLSpace){
     na_ClearOpenGLSpace(openGLSpace);
   }
 
 
 
-  NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
+  NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace){
     [[(NA_COCOA_BRIDGE NACocoaOpenGLSpace*)(openGLSpace->uiElement.nativeID) openGLContext] flushBuffer];
   }
 

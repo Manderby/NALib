@@ -61,7 +61,7 @@ NA_DEF NATextField* naNewTextField(NASize size){
   NACocoaTextField* cocoaTextField = [[NACocoaTextField alloc] initWithTextField:textField frame:frameRect];
   na_InitTextField(textField, NA_COCOA_PTR_OBJC_TO_C(cocoaTextField));
   
-  return (textField;
+  return textField;
 }
 
 

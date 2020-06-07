@@ -78,7 +78,7 @@ struct NACocoaApplication {
 @end
 
 @interface NACocoaRadio : NSButton{
-  NARadio* cradio;
+  NARadio* radio;
   // Cocoa thinks it's smart by doing things automatically. Unfortunately, we
   // have to encapsulate the radio into its own view to get the behaviour
   // we need.
@@ -173,7 +173,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
           elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativeID)(firstResponder));
           if(!elem){
             if(firstResponder == focusWindow){
-              elem = naGetApplication();
+              elem = &(naGetApplication()->uiElement);
             }else{
               firstResponder = [(NSView*)firstResponder superview];
             }
@@ -183,7 +183,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
         elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativeID)(focusWindow));
       }
     }else{
-      elem = naGetApplication();
+      elem = &(naGetApplication()->uiElement);
     }
     
     // Search for a matching keyboard shortcut by bubbling.

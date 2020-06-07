@@ -29,7 +29,6 @@ void testNAInt256Make(){
   NAu256 u1 = naMakeu256(naMakeu128(naMakeu64(0x11223344, 0xffeeddcc), naMakeu64(0x98765432, 0x12345678)), naMakeu128(naMakei64(0xfedcba98, 0xabcabcde), naMakeu64(0x54345676, 0x11224488)));
   NAu256 u2 = naMakeu256WithLo(naMakeu128WithLo(naMakeu64(0x12345678, 0x12345678)));
   NAu256 u3 = naMakeu256WithDouble(123456789012345.);
-  NAu256 u4 = naMakeu256WithLiteralLo(naMakeu128WithBinary(0xfedcba98, 0xabcabcde, 0x54345676, 0x11224488));
   NAu256 u5 = naMakeu256WithBinary(0x12345678, 0x56473829, 0xfabcedae, 0x33333333, 0xfedcba98, 0xabcabcde, 0x54345676, 0x11224488);
 
   naTest(equali256(i1, 0xeeddccbc, 0xffeeddcc, 0x98765432, 0x12345678, 0xfedcba98, 0xabcabcde, 0x54345676, 0x11224488));
@@ -39,7 +38,6 @@ void testNAInt256Make(){
   naTest(equalu256(u1, 0x11223344, 0xffeeddcc, 0x98765432, 0x12345678, 0xfedcba98, 0xabcabcde, 0x54345676, 0x11224488));
   naTest(equalu256(u2, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x12345678, 0x12345678));
   naTest(equalu256(u3, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00007048 , 0x860ddf79));
-  naTest(equalu256(u4, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0xfedcba98, 0xabcabcde, 0x54345676, 0x11224488));
   naTest(equalu256(u5, 0x12345678 , 0x56473829, 0xfabcedae, 0x33333333, 0xfedcba98, 0xabcabcde, 0x54345676, 0x11224488));
 }
 
