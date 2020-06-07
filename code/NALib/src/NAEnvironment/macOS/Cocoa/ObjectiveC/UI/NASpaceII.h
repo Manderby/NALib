@@ -7,7 +7,7 @@
 
 
 @implementation NACocoaSpace
-- (id) initWithCoreSpace:(NASpace*)newSpace frame:(NSRect)frame{
+- (id) initWithSpace:(NASpace*)newSpace frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 
   // todo: make this dependent on whether tracking is needed or not.
@@ -50,7 +50,7 @@ NA_DEF NASpace* naNewSpace(NASize size){
   space->alternatebackground = NA_FALSE;
 
   contentRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  cocoaSpace = [[NACocoaSpace alloc] initWithCoreSpace:space frame:contentRect];  
+  cocoaSpace = [[NACocoaSpace alloc] initWithSpace:space frame:contentRect];  
   na_InitSpace(space, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
   
   return space;

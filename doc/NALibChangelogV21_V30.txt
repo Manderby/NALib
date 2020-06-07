@@ -56,7 +56,7 @@ Highlights:
 - Integrated NAQuadTree and NAOctTree into NATree. One tree to rule them all.
 - Added template architecture. Very crude at the moment. Let's see where that
   takes us.
-- Added NAKey. Core component for key values. Very crude at the moment.
+- Added NAKey. Main component for key values. Very crude at the moment.
 - Reprogrammed NAHeap with a new template architecture.
 
 Other things:

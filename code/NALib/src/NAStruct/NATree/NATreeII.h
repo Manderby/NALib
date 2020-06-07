@@ -63,8 +63,8 @@ typedef NABool          (*NAKeyTester)(const void* lowerlimit, const void* upper
 typedef NABool          (*NAKeyNodeContainTester)(NATreeNode* parentnode, const void* key);
 typedef NABool          (*NAKeyLeafContainTester)(NATreeLeaf* leaf, const void* key);
 
-typedef void            (*NATreeNodeCoreDestructor)(NATreeNode* node);
-typedef void            (*NATreeLeafCoreDestructor)(NATreeLeaf* leaf);
+typedef void            (*NA_TreeNodeDestructor)(NATreeNode* node);
+typedef void            (*NA_TreeLeafDestructor)(NATreeLeaf* leaf);
 
 // This function shall return the uppermost node which contains the given key.
 // It must start searching for the key at the given item and bubble upwards.
@@ -82,7 +82,7 @@ typedef NATreeNode*     (*NATreeLeafRemover)(NATree* tree, NATreeLeaf* leaf);
 
 struct NATreeConfiguration{
   
-  // Core settings
+  // Main settings
   NARefCount                    refCount;
   NAInt                         flags;
 
@@ -108,8 +108,8 @@ struct NATreeConfiguration{
   NAKeyNodeContainTester        keyNodeContainTester;
   NAKeyLeafContainTester        keyLeafContainTester;
 
-  NATreeNodeCoreDestructor      nodeDestructor;
-  NATreeLeafCoreDestructor      leafDestructor;
+  NA_TreeNodeDestructor      nodeDestructor;
+  NA_TreeLeafDestructor      leafDestructor;
   NATreeBubbleLocator           bubbleLocator;
   NATreeLeafRemover             leafRemover;
   NATreeLeafInserter            leafInserter;
@@ -219,7 +219,7 @@ NA_HIAPI NABool na_AddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLea
 NA_HAPI void na_IterateTreeCapture(NATreeIterator* iter, NAInt index, NATreeIterationInfo* info);
 NA_HAPI void na_IterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info);
 NA_HAPI  NABool na_IterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info);
-NA_HAPI  NABool na_LocateTreeKeyCore(NATreeIterator* iter, const void* key, NABool usebubble);
+NA_HAPI  NABool na_LocateTreeKey(NATreeIterator* iter, const void* key, NABool usebubble);
 NA_HAPI  NABool na_AddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr content, NABool replace);
 
 // Utilities

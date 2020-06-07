@@ -46,7 +46,7 @@ typedef enum{
 } NADateTimeError;
 
 
-// This is the core time struct of NALib. It uses precisely 128 Bits and stores
+// This is the fundamental time struct of NALib. It uses precisely 128 Bits and stores
 // both date, time and a nanosecond timer.
 //
 // Note that NADateTime is a pure pod and does not require a call to naClearXXX.

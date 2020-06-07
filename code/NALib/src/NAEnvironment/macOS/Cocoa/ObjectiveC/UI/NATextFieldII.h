@@ -58,7 +58,7 @@ NA_DEF NATextField* naNewTextField(NASize size){
   NATextField* textField = naAlloc(NATextField);
   
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaTextField* cocoaTextField = [[NACocoaTextField alloc] initWithCoreTextField:textField frame:frameRect];
+  NACocoaTextField* cocoaTextField = [[NACocoaTextField alloc] initWithTextField:textField frame:frameRect];
   na_InitTextField(textField, NA_COCOA_PTR_OBJC_TO_C(cocoaTextField));
   
   return (textField;

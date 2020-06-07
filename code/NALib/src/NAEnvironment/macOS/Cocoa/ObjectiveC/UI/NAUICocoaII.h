@@ -126,9 +126,9 @@ NA_HDEF void na_ClearUINativeId(NANativeID nativeId){
 
 
 NA_HDEF void na_SetUIElementParent(void* uiElement, void* parent){
-  NA_UIElement* coreelement = (NA_UIElement*)uiElement;
+  NA_UIElement* elem = (NA_UIElement*)uiElement;
   // todo: remove from old parent
-  coreelement->parent = parent;
+  elem->parent = parent;
 }
 
 
@@ -190,12 +190,12 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
     while(!retvalue && elem){
       NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
       while(!retvalue && naIterateList(&iter)){
-        const NA_KeyboardShortcutReaction* coreReaction = naGetListCurConst(&iter);
-        if(coreReaction->shortcut.keyCode == na_App->keyboardStatus.keyCode){
-          NABool needsShift   = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool needsControl = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool needsOption  = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool needsCommand = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
+        const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
+        if(keyReaction->shortcut.keyCode == na_App->keyboardStatus.keyCode){
+          NABool needsShift   = naGetFlagi(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool needsControl = naGetFlagi(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool needsOption  = naGetFlagi(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool needsCommand = naGetFlagi(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
           NABool hasShift   = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_SHIFT);
           NABool hasControl = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_CONTROL);
           NABool hasOption  = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_OPTION);
@@ -207,8 +207,8 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
             NAReaction reaction;
             reaction.uiElement = na_App;
             reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
-            reaction.controller = coreReaction->controller;
-            retvalue = coreReaction->handler(reaction);
+            reaction.controller = keyReaction->controller;
+            retvalue = keyReaction->handler(reaction);
           }
         }
       }

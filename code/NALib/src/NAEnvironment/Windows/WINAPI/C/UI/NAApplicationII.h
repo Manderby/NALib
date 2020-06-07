@@ -166,7 +166,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
   if(postStartup){postStartup(arg);}
 
   // Start the event loop.
-  while(na_IsCoreApplicationRunning()){
+  while(na_IsApplicationRunning()){
     BOOL response = GetMessage(&message, 0, 0, 0);
     naCollectGarbage();
     if(response == 0){break;}

@@ -171,7 +171,7 @@ NA_HDEF NATreeItem* na_LocateTreeKeyCapture(const NATree* tree, NATreeNode* node
 
 
 
-NA_HDEF NABool na_LocateTreeKeyCore(NATreeIterator* iter, const void* key, NABool usebubble){
+NA_HDEF NABool na_LocateTreeKey(NATreeIterator* iter, const void* key, NABool usebubble){
   const NATree* tree = na_GetTreeIteratorTreeConst(iter);
   NATreeNode* node;
   NATreeItem* founditem;
@@ -278,7 +278,7 @@ NA_HDEF NABool na_AddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr conte
   // We do not use bubbling when inserting as there is almost never a benefit
   // from it. Even more so, it performs mostly worse.
 
-  found = na_LocateTreeKeyCore(iter, key, NA_FALSE);
+  found = na_LocateTreeKey(iter, key, NA_FALSE);
 
   if(!found || replace){
     if(found){

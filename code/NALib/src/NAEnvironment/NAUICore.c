@@ -9,7 +9,7 @@
 #include "../NAPreferences.h"
 
 
-// The core element storing the app if any.
+// The pointer storing the app if any.
 NAApplication* na_App = NA_NULL;
 
 
@@ -234,10 +234,10 @@ NA_HDEF NABool na_DispatchUIElementCommand(NA_UIElement* element, NAUICommand co
   NAReaction reaction;
   reaction.uiElement = element;
   reaction.command = command;
-  naBeginListMutatorIteration(NA_Reaction* coreReaction, &(element->reactions), iter);
-    if(coreReaction->command == command){
-      reaction.controller = coreReaction->controller;
-      finished = coreReaction->handler(reaction);
+  naBeginListMutatorIteration(NAEventReaction* eventReaction, &(element->reactions), iter);
+    if(eventReaction->command == command){
+      reaction.controller = eventReaction->controller;
+      finished = eventReaction->handler(reaction);
       // If the handler tells us to stop handling the command, we do so.
       if(finished){break;}
     }
@@ -302,7 +302,7 @@ NA_DEF void naRefreshUIElement(void* uiElement, double timediff){
 
 
 
-NA_HDEF NABool na_IsCoreApplicationRunning(void){
+NA_HDEF NABool na_IsApplicationRunning(void){
   return (NABool)(na_App->flags & NA_APPLICATION_FLAG_RUNNING);
 }
 
@@ -365,7 +365,7 @@ NA_DEF void naReleaseUIElement(void* uiElement){
 
 
 NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHandler handler, void* controller){
-  NA_Reaction* coreReaction;
+  NAEventReaction* eventReaction;
   NA_UIElement* element = (NA_UIElement*)uiElement;
   #ifndef NDEBUG
     if((command == NA_UI_COMMAND_RESHAPE) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
@@ -390,10 +390,10 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
     if((command == NA_UI_COMMAND_EDITED) && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD))
       naError("Only textFields can receyve EDITED commands.");
   #endif
-  coreReaction = naAlloc(NA_Reaction);
-  coreReaction->controller = controller;
-  coreReaction->command = command;
-  coreReaction->handler = handler;
+  eventReaction = naAlloc(NAEventReaction);
+  eventReaction->controller = controller;
+  eventReaction->command = command;
+  eventReaction->handler = handler;
   // todo: this needs some attention on macOS
   //if(command == NA_UI_COMMAND_MOUSE_MOVED || command == NA_UI_COMMAND_MOUSE_ENTERED || command == NA_UI_COMMAND_MOUSE_EXITED){
   //  element->moustrackingcount++;
@@ -401,7 +401,7 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
   //    element->mousetracking = na_AllocMouseTracking(naGetUIElementNativeID(element));
   //  }
   //}
-  naAddListLastMutable(&((element)->reactions), coreReaction);
+  naAddListLastMutable(&((element)->reactions), eventReaction);
 }
 
 
@@ -416,17 +416,17 @@ NA_DEF NAKeyboardStatus naMakeKeybardStatus(NAInt modifiers, NAUIKeyCode keyCode
 
 
 NA_DEF void naAddUIKeyboardShortcut(void* uiElement, NAKeyboardStatus shortcut, NAReactionHandler handler, void* controller){
-  NA_KeyboardShortcutReaction* corekeyreaction;
+  NAKeyboardShortcutReaction* keyReaction;
   NA_UIElement* element = (NA_UIElement*)uiElement;
   //#ifndef NDEBUG
   //  if((naGetUIElementType(uiElement) != NA_UI_APPLICATION) && (naGetUIElementType(uiElement) != NA_UI_WINDOW))
   //    naError("Currently, only applications and windows are allowed as uiElement. Use naGetApplication() for the app.");
   //#endif
-  corekeyreaction = naAlloc(NA_KeyboardShortcutReaction);
-  corekeyreaction->controller = controller;
-  corekeyreaction->shortcut = shortcut;
-  corekeyreaction->handler = handler;
-  naAddListLastMutable(&((element)->shortcuts), corekeyreaction);
+  keyReaction = naAlloc(NAKeyboardShortcutReaction);
+  keyReaction->controller = controller;
+  keyReaction->shortcut = shortcut;
+  keyReaction->handler = handler;
+  naAddListLastMutable(&((element)->shortcuts), keyReaction);
 }
 
 

@@ -71,7 +71,7 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
 
   // Start the event loop.
   distantFuture = [NSDate distantFuture];
-  while(na_IsCoreApplicationRunning()){
+  while(na_IsApplicationRunning()){
     NSEvent* curEvent;
     #if !NA_MACOS_USES_ARC
       pool = [[NSAutoreleasePool alloc] init];
@@ -120,7 +120,6 @@ NA_HDEF NAApplication* na_NewApplication(void){
 
 NA_DEF void na_DestructApplication(NAApplication* application){
   NACocoaApplication* cocoaApplication = (NACocoaApplication*)application;
-  // Do not clear the core application. It will only call this method again.
   na_ClearApplication(&(cocoaApplication->application));
 }
 

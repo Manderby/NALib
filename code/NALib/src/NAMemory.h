@@ -11,7 +11,7 @@
 // are multiple levels on which you can operate.
 // The following things can be found here:
 //
-// - Accessing core informations about the memory system
+// - Accessing fundamental informations about the memory system
 // - Basic Memory allocation and freeing.
 // - NARefCount, NAPtr, NASmartPtr, NAPointer: Handling of pointers with or
 //   without reference counting with const and mutable distinction and
@@ -28,7 +28,7 @@
 
 
 // //////////////////////////////////////
-// Accessing core information about the memory system
+// Accessing fundamental information about the memory system
 // //////////////////////////////////////
 
 // Returns the number of bytes used per memory page as well as a mask which

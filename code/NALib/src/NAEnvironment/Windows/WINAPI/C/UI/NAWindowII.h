@@ -241,7 +241,7 @@ NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop){
 
 NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
   NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)window;
-  NARect currect = naGetUIElementRect(&(winapiWindow->window.uiElement), NA_NULL, NA_FALSE);
+  NARect currect = naGetUIElementRect(&(winapiWindow->window), NA_NULL, NA_FALSE);
   if(!naEqualRect(currect, rect)){
     POINT testpoint = {0, 0};
     RECT clientrect;
@@ -381,7 +381,7 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
     screenrect = naGetMainScreenRect();
     if(fullScreen){
       DEVMODE screenSettings;
-      window->windowedFrame = naGetUIElementRect(&(window->uiElement), naGetApplication(), NA_TRUE);
+      window->windowedFrame = naGetUIElementRect(window, naGetApplication(), NA_TRUE);
 
       newrect = naGetMainScreenRect();
 

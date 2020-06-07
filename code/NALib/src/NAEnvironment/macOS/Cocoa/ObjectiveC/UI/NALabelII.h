@@ -109,7 +109,7 @@
 @end
 
 @implementation NACocoaLabel
-- (id) initWithCoreLabel:(NALabel*)newLabel frame:(NSRect)frame{
+- (id) initWithLabel:(NALabel*)newLabel frame:(NSRect)frame{
   self = [super initWithFrame:frame];
 //  [self setCell:[[MDVerticallyCenteredTextFieldCell alloc] initTextCell:@"Wurst"]];
   [self setSelectable:YES];

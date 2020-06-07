@@ -7,7 +7,7 @@
 
 
 @implementation NACocoaTextBox
-- (id) initWithCoreTextBox:(NATextBox*)newTextBox frame:(NSRect)frame{
+- (id) initWithTextBox:(NATextBox*)newTextBox frame:(NSRect)frame{
   NSRect clipRect;
   NSClipView* clipView;
   NSRect documentrect = NSMakeRect(0, 0, frame.size.width, frame.size.height);
@@ -60,7 +60,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
   NATextBox* textBox = naAlloc(NATextBox);
   
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
-  NACocoaTextBox* cocoaTextBox = [[NACocoaTextBox alloc] initWithCoreTextBox:textBox frame:frameRect];
+  NACocoaTextBox* cocoaTextBox = [[NACocoaTextBox alloc] initWithTextBox:textBox frame:frameRect];
   na_InitTextBox(textBox, NA_COCOA_PTR_OBJC_TO_C(cocoaTextBox));
   
   return (NATextBox*)textBox;

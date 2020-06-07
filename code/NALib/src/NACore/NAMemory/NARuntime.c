@@ -506,7 +506,7 @@ NA_DEF void naRelease(void* pointer){
       naCrash("pointer is null");
   #endif
 
-  // Find the corepool entry at the beginning of the part by AND'ing the
+  // Find the pool entry at the beginning of the part by AND'ing the
   // address with the partSizeMask
   #if defined NA_SYSTEM_SIZEINT_NOT_ADDRESS_SIZE
     NA_UNUSED(part);

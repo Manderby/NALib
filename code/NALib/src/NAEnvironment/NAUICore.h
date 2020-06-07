@@ -26,8 +26,8 @@
 
 typedef struct NA_UIElement      NA_UIElement;
 
-typedef struct NA_Reaction       NA_Reaction;
-typedef struct NA_KeyboardShortcutReaction NA_KeyboardShortcutReaction;
+typedef struct NAEventReaction       NAEventReaction;
+typedef struct NAKeyboardShortcutReaction NAKeyboardShortcutReaction;
 
 typedef void*  NAFont;
 
@@ -111,13 +111,13 @@ struct NATextBox{
   NA_UIElement uiElement;
 };
 
-struct NA_Reaction{
+struct NAEventReaction{
   void* controller;
   NAUICommand command;
   NAReactionHandler handler;
 };
 
-struct NA_KeyboardShortcutReaction{
+struct NAKeyboardShortcutReaction{
   void* controller;
   NAKeyboardStatus shortcut;
   NAReactionHandler handler;
@@ -148,7 +148,7 @@ extern NAApplication* na_App;
 // gathered here. You are free to use them but note that these are supposed to
 // be helper functions.
 
-NA_HAPI void na_UnregisterUIElement(NA_UIElement* coreUiElement);
+NA_HAPI void na_UnregisterUIElement(NA_UIElement* uiElement);
 NA_HAPI void na_SetUIElementParent(void* uiElement, void* parent);
 NA_HAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
 NA_HAPI void na_BlockUIElementNotifications(NA_UIElement* elem);
@@ -204,7 +204,7 @@ NA_HAPI void na_ClearTextBox(NATextBox* textBox);
 NA_HAPI void* na_GetUINALibEquivalent(void* nativeID);
 
 
-NA_HAPI NABool na_IsCoreApplicationRunning(void);
+NA_HAPI NABool na_IsApplicationRunning(void);
 
 NA_HAPI NAFont na_GetFontWithKind(NAFontKind kind);
 

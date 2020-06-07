@@ -80,7 +80,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator 
 	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
 	if (wglSwapIntervalEXT){wglSwapIntervalEXT(1);}
 
-  na_InitOpenGLSpace(&(winapiOpenGLSpace->coreOpenGLspace), hWnd);
+  na_InitOpenGLSpace(&(winapiOpenGLSpace->openGLspace), hWnd);
 
   // Now the OpenGL context is created and current. We can initialize it
   // if necessary.
@@ -95,7 +95,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator 
 
 NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)openglspace;
-  SwapBuffers(GetDC((HWND)naGetUIElementNativeID(&(winapiOpenGLSpace->coreOpenGLspace.uiElement))));
+  SwapBuffers(GetDC((HWND)naGetUIElementNativeID(&(winapiOpenGLSpace->openGLspace.uiElement))));
 }
 
 

@@ -50,35 +50,35 @@ NA_HDEF void na_ClearUINativeId(NANativeID nativeId){
 
 
 NA_HDEF void na_SetUIElementParent(void* uiElement, void* parent){
-  NA_UIElement* coreelement;
-  NA_UIElement* coreparent;
+  NA_UIElement* elem;
+  NA_UIElement* parentElem;
   NAWindow* window;
 
   #ifndef NDEBUG
     if(!uiElement)
       naError("uiElement is NULL");
   #endif
-  coreelement = (NA_UIElement*)uiElement;
-  coreparent = (NA_UIElement*)parent;
+    elem = (NA_UIElement*)uiElement;
+    parentElem = (NA_UIElement*)parent;
 
   window = naGetUIElementWindow(uiElement);
-  if(window && naGetWindowFirstTabElement(window) == coreelement){
+  if(window && naGetWindowFirstTabElement(window) == elem){
     naSetWindowFirstTabElement(window, NA_NULL);
   }
 
-  if(!coreparent){
+  if(!parentElem){
     HWND result;
-    coreelement->parent = NA_NULL;
-    result = SetParent(coreelement->nativeID, HWND_MESSAGE);
+    elem->parent = NA_NULL;
+    result = SetParent(elem->nativeID, HWND_MESSAGE);
   }else{
     HWND result;
     #ifndef NDEBUG
-    if(!coreelement)
-      naCrash("coreelement is NULL");
+    if(!elem)
+      naCrash("elem is NULL");
     #endif
 
-    coreelement->parent = parent;
-    result = SetParent(coreelement->nativeID, coreparent->nativeID);
+    elem->parent = parent;
+    result = SetParent(elem->nativeID, parentElem->nativeID);
   }
 }
 
@@ -214,12 +214,12 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
     while(!retvalue && elem){
       NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
       while(!retvalue && naIterateList(&iter)){
-        const NA_KeyboardShortcutReaction* coreReaction = naGetListCurConst(&iter);
-        if(coreReaction->shortcut.keyCode == na_App->keyboardStatus.keyCode){
-          NABool needsShift   = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
-          NABool needsControl = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
-          NABool needsOption  = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
-          NABool needsCommand = naGetFlagi(coreReaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
+        const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
+        if(keyReaction->shortcut.keyCode == na_App->keyboardStatus.keyCode){
+          NABool needsShift   = naGetFlagi(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
+          NABool needsControl = naGetFlagi(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_CONTROL);
+          NABool needsOption  = naGetFlagi(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_OPTION);
+          NABool needsCommand = naGetFlagi(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_COMMAND);
           NABool hasShift   = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_SHIFT);
           NABool hasControl = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_CONTROL);
           NABool hasOption  = naGetFlagi(na_App->keyboardStatus.modifiers, NA_MODIFIER_FLAG_OPTION);
@@ -231,8 +231,8 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
             NAReaction reaction;
             reaction.uiElement = elem;
             reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
-            reaction.controller = coreReaction->controller;
-            retvalue = coreReaction->handler(reaction);
+            reaction.controller = keyReaction->controller;
+            retvalue = keyReaction->handler(reaction);
           }
         }
       }
@@ -393,7 +393,7 @@ void naWINAPICaptureMouseHover(){
 
 NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
-  NA_UIElement* coreelement = (NA_UIElement*)uiElement;
+  NA_UIElement* elem = (NA_UIElement*)uiElement;
   NABool handeled;
   NAPos pos;
   NASize size;
@@ -419,7 +419,7 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
     pos = naGetMousePos(mouseStatus);
     na_SetMouseMovedByDiff(size.width - pos.x, size.height - pos.y);
 
-    handeled = na_DispatchUIElementCommand(coreelement, NA_UI_COMMAND_MOUSE_MOVED);
+    handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_MOUSE_MOVED);
     if(handeled){
       info.hasbeenhandeled = NA_TRUE;
       info.result = 0;
@@ -431,7 +431,7 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
     break;
 
   case WM_KEYDOWN:
-    handeled = na_DispatchUIElementCommand(coreelement, NA_UI_COMMAND_KEYDOWN);
+    handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEYDOWN);
     if(handeled){
       info.hasbeenhandeled = NA_TRUE;
       info.result = 0;
@@ -439,7 +439,7 @@ NAWINAPICallbackInfo naUIElementWINAPIProc(void* uiElement, UINT message, WPARAM
     break;
 
   case WM_KEYUP:
-    handeled = na_DispatchUIElementCommand(coreelement, NA_UI_COMMAND_KEYUP);
+    handeled = na_DispatchUIElementCommand(elem, NA_UI_COMMAND_KEYUP);
     if(handeled){
       info.hasbeenhandeled = NA_TRUE;
       info.result = 0;
@@ -596,19 +596,19 @@ NA_HDEF NARect na_GetScreenAbsoluteRect(NA_UIElement* screen){
 
 
 
-NA_DEF NARect naGetUIElementRect(NA_UIElement* uiElement, void* relativeelement, NABool includebounds){
+NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool includebounds){
   NARect rect;
   NARect relrect;
-  NA_UIElement* coreelement;
-  NA_UIElement* corerelelement;
+  NA_UIElement* elem;
+  NA_UIElement* relElem;
   NAApplication* app;
 
-  coreelement = (NA_UIElement*)uiElement;
-  corerelelement = (NA_UIElement*)relativeelement;
+  elem = (NA_UIElement*)uiElement;
+  relElem = (NA_UIElement*)relativeelement;
   app = naGetApplication();
 
   // First, let's handle the root case: Returning the application rect.
-  if(coreelement == (NA_UIElement*)app){
+  if(elem == (NA_UIElement*)app){
     #ifndef NDEBUG
       if(relativeelement && (relativeelement != app))
         naError("The relative element is invalid for the given uiElement, which seems to be the application.");
@@ -617,19 +617,19 @@ NA_DEF NARect naGetUIElementRect(NA_UIElement* uiElement, void* relativeelement,
   }
 
   // Now, we find the appropriate relative element.
-  if(!corerelelement){corerelelement = naGetUIElementParent(coreelement);}
+  if(!relElem){relElem = naGetUIElementParent(elem);}
 
-  switch(coreelement->elementType){
+  switch(elem->elementType){
   case NA_UI_APPLICATION: rect = na_GetApplicationAbsoluteRect(); break;
-  case NA_UI_SCREEN:      rect = na_GetScreenAbsoluteRect(coreelement); break;
+  case NA_UI_SCREEN:      rect = na_GetScreenAbsoluteRect(elem); break;
   case NA_UI_WINDOW:
     if(includebounds){
-      rect = na_GetWindowAbsoluteOuterRect(coreelement);
+      rect = na_GetWindowAbsoluteOuterRect(elem);
     }else{
-      rect = na_GetWindowAbsoluteInnerRect(coreelement);
+      rect = na_GetWindowAbsoluteInnerRect(elem);
     }
     break;
-  case NA_UI_OPENGLSPACE:  rect = na_GetSpaceAbsoluteInnerRect(coreelement); break;
+  case NA_UI_OPENGLSPACE:  rect = na_GetSpaceAbsoluteInnerRect(elem); break;
   default:
     //#ifndef NDEBUG
     //  naError("Invalid UI type");
@@ -638,12 +638,12 @@ NA_DEF NARect naGetUIElementRect(NA_UIElement* uiElement, void* relativeelement,
     break;
   }
 
-  if(corerelelement){
-    switch(corerelelement->elementType){
+  if(relElem){
+    switch(relElem->elementType){
     case NA_UI_APPLICATION: relrect = na_GetApplicationAbsoluteRect(); break;
-    case NA_UI_SCREEN:      relrect = na_GetScreenAbsoluteRect(corerelelement); break;
-    case NA_UI_WINDOW:      relrect = na_GetWindowAbsoluteInnerRect(corerelelement); break;
-    case NA_UI_OPENGLSPACE:  relrect = na_GetSpaceAbsoluteInnerRect(corerelelement); break;
+    case NA_UI_SCREEN:      relrect = na_GetScreenAbsoluteRect(relElem); break;
+    case NA_UI_WINDOW:      relrect = na_GetWindowAbsoluteInnerRect(relElem); break;
+    case NA_UI_OPENGLSPACE:  relrect = na_GetSpaceAbsoluteInnerRect(relElem); break;
     default:
       #ifndef NDEBUG
         naError("Invalid UI type");

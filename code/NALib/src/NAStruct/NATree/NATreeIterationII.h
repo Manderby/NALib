@@ -137,7 +137,7 @@ NA_IDEF NABool naLocateTreeKey(NATreeIterator* iter, const void* key, NABool ass
     if((tree->config->flags & NA_TREE_CONFIG_KEY_TYPE_MASK) == NA_TREE_KEY_NOKEY)
       naError("tree is configured with no key");
   #endif
-  return na_LocateTreeKeyCore(iter, key, assumeclose);
+  return na_LocateTreeKey(iter, key, assumeclose);
 }
 
 
