@@ -32,9 +32,98 @@ void testNAInt64Make(){
   naTest(equali64(i4, 0x12345678, 0x98765432));
   naTest(equalu64(u1, 0x98765432, 0x12345678));
   naTest(equalu64(u2, 0x00000000, 0x12345678));
-  naTest(equalu64(u3, 0x00007048 ,0x860ddf79));
+  naTest(equalu64(u3, 0x00007048, 0x860ddf79));
   naTest(equalu64(u4, 0x00000000, 0x12345678));
   naTest(equalu64(u5, 0x98765432, 0x12345678));
+}
+
+
+
+#include <stdlib.h>
+#include <time.h>
+#if NA_OS != NA_OS_WINDOWS
+  #include <sys/time.h>
+#endif
+
+#define NA_TIME_PER_TEST .02
+
+
+#define NA_TEST_INDEX_COUNT 0x10000
+#define NA_TEST_INDEX_MASK (NA_TEST_INDEX_COUNT - 1)
+int curTestIndex = 0;
+uint32 na_test_in[NA_TEST_INDEX_COUNT];
+void* na_test_out[NA_TEST_INDEX_COUNT];
+
+naPrepareTestIn(){
+  for(curTestIndex = 0; curTestIndex < NA_TEST_INDEX_COUNT; curTestIndex++){
+    na_test_in[curTestIndex] = ((uint32)rand() << 20) ^ ((uint32)rand() << 10) ^ ((uint32)rand());
+  }
+}
+
+#define naTestIn\
+  (curTestIndex = (curTestIndex + 1) & NA_TEST_INDEX_MASK, na_test_in[curTestIndex])
+
+double naBenchmarkTime(){
+  // Note: Reimplemented here because NADateTime uses int64 to compute.
+  #if NA_OS == NA_OS_WINDOWS
+    FILETIME filetime;
+    GetSystemTimeAsFileTime(&filetime);
+    filetime.dwLowDateTime;
+    return filetime.dwLowDateTime / 10000000.;
+  #else
+    struct timeval curtime;
+    NATimeZone curtimezone;
+    gettimeofday(&curtime, &curtimezone);
+    return curtime.tv_sec + curtime.tv_usec / 1000000.;
+  #endif
+}
+
+#define naBenchmark(expr)\
+{\
+  int testSize = 1;\
+  double timeDiff;\
+  int pow;\
+  for(pow = 0; pow < 30; pow++){\
+    double startT = naBenchmarkTime();\
+    for(int testRun = 0; testRun < testSize; testRun++){\
+      na_test_out[curTestIndex] = (void*)(char)(expr);\
+    }\
+    double endT = naBenchmarkTime();\
+    timeDiff = endT - startT;\
+    if(timeDiff > (NA_TIME_PER_TEST / 2.)){break;}\
+    testSize <<= 1;\
+  }\
+  if(timeDiff < (NA_TIME_PER_TEST / 2.))\
+    printf("Line %d: Immeasurable   : %s" NA_NL, __LINE__, #expr);\
+  else\
+    printf("Line %d: %15.2f : %s" NA_NL, __LINE__, (2 * testSize) / timeDiff, #expr);\
+}
+
+#define naBenchmarkVoid(expr)\
+{\
+  NADateTime startT = naMakeDateTimeNow();\
+  for(int i=0; i<NA_TEST_SIZE; i++){\
+    expr;\
+  }\
+  NADateTime endT = naMakeDateTimeNow();\
+  printf("Difference %f\n", naGetDateTimeDifference(&endT, &startT));\
+}
+
+
+void testFunc(){
+}
+
+
+
+void benchmarkNAInt64Make(){
+  naBenchmark(naMakei64(-(int32)naTestIn, naTestIn));
+  naBenchmark(naMakei64WithLo(-(int32)naTestIn));
+  naBenchmark(naMakei64WithDouble(-((int32)naTestIn / NA_MAX_i32)));
+  naBenchmark(naMakei64WithBinary(naTestIn, naTestIn));
+  naBenchmark(naMakeu64(naTestIn, naTestIn));
+  naBenchmark(naMakeu64WithLo(naTestIn));
+  naBenchmark(naMakeu64WithDouble((naTestIn / NA_MAX_u32)));
+  naBenchmark(naMakeu64WithBinary(naTestIn, naTestIn));
 }
 
 
@@ -76,6 +165,27 @@ void testNAInt64Binary(){
 
 
 
+#define randi64 naMakei64WithBinary(naTestIn, naTestIn)
+#define randu64 naMakeu64WithBinary(naTestIn, naTestIn)
+
+void benchmarkNAInt64Binary(){
+  naBenchmark(naNoti64(randi64));
+  naBenchmark(naOri64(randi64, randi64));
+  naBenchmark(naAndi64(randi64, randi64));
+  naBenchmark(naXori64(randi64, randi64));
+  naBenchmark(naShli64(randi64, naTestIn % 63));
+  naBenchmark(naShri64(randi64, naTestIn % 63));
+
+  naBenchmark(naNotu64(randu64));
+  naBenchmark(naOru64(randu64, randu64));
+  naBenchmark(naAndu64(randu64, randu64));
+  naBenchmark(naXoru64(randu64, randu64));
+  naBenchmark(naShlu64(randu64, naTestIn % 63));
+  naBenchmark(naShru64(randu64, naTestIn % 63));
+}
+
+
+
 void testNAInt64Comparison(){
   NAi64 i1 = naMakei64WithDouble(-123456789012345.);
   NAi64 i2 = naMakei64WithDouble(-123456.);
@@ -109,6 +219,22 @@ void testNAInt64Comparison(){
   naTest(!naSmallerEqualu64(u1, u2));
   naTest(naSmallerEqualu64(u2, u1));
   naTest(naSmallerEqualu64(u1, u1));
+}
+
+
+
+void benchmarkNAInt64Comparison(){
+  naBenchmark(naEquali64(randi64, randi64));
+  naBenchmark(naGreateri64(randi64, randi64));
+  naBenchmark(naGreaterEquali64(randi64, randi64));
+  naBenchmark(naSmalleri64(randi64, randi64));
+  naBenchmark(naSmallerEquali64(randi64, randi64));
+
+  naBenchmark(naEqualu64(randu64, randu64));
+  naBenchmark(naGreateru64(randu64, randu64));
+  naBenchmark(naGreaterEqualu64(randu64, randu64));
+  naBenchmark(naSmalleru64(randu64, randu64));
+  naBenchmark(naSmallerEqualu64(randu64, randu64));
 }
 
 
@@ -185,6 +311,32 @@ void testNAInt64Arithmetic(){
 
 
 
+void benchmarkNAInt64Arithmetic(){
+  NAi64 i;
+  NAu64 u;
+
+  naBenchmark(naNegi64(randi64));
+  naBenchmark((i = randi64, naInci64(i), i));
+  naBenchmark((i = randi64, naDeci64(i), i));
+
+  naBenchmark(naAddi64(randi64, randi64));
+  naBenchmark(naSubi64(randi64, randi64));
+  naBenchmark(naMuli64(randi64, randi64));
+  naBenchmark(naDivi64(randi64, randi64));
+  naBenchmark(naModi64(randi64, randi64));
+
+  naBenchmark((u = randu64, naIncu64(u), u));
+  naBenchmark((u = randu64, naDecu64(u), u));
+
+  naBenchmark(naAddu64(randu64, randu64));
+  naBenchmark(naSubu64(randu64, randu64));
+  naBenchmark(naMulu64(randu64, randu64));
+  naBenchmark(naDivu64(randu64, randu64));
+  naBenchmark(naModu64(randu64, randu64));
+}
+
+
+
 void testNAInt64(){
   naTestGroupFunction(NAInt64Make);
   naTestGroupFunction(NAInt64Binary);
@@ -192,6 +344,15 @@ void testNAInt64(){
   naTestGroupFunction(NAInt64Arithmetic);
 }
 
+
+
+void benchmarkNAInt64(){
+  naPrepareTestIn();
+  benchmarkNAInt64Make();
+  benchmarkNAInt64Binary();
+  benchmarkNAInt64Comparison();
+  benchmarkNAInt64Arithmetic();
+}
 
 
 

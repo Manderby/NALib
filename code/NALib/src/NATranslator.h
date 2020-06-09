@@ -9,7 +9,7 @@
 // NATranslator is a very basic way of adding multilingual support to an
 // application. It links arbitrary defined enum ids with strings defined in
 // external files. These files get included into the source code directly,
-// therefore, no external tools or preprocessors are needed.
+// therefore, no additional tools or preprocessors are needed.
 //
 // A translator file is a simple UTF-8 encoded text file with contents like
 // the following:

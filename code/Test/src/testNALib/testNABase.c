@@ -28,6 +28,8 @@ void testNADebugging(void);
 void testNANumerics(void);
 void testNAFloatingPoint(void);
 
+void benchmarkNAInt64(void);
+
 
 
 void printNABase(){
@@ -55,6 +57,10 @@ void testNABase(){
   naTestGroupFunction(NADebugging);
   naTestGroupFunction(NANumerics);
   naTestGroupFunction(NAFloatingPoint);
+}
+
+void benchmarkNABase(){
+  benchmarkNAInt64();
 }
 
 

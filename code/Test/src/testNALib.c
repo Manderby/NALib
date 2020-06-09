@@ -12,6 +12,8 @@ void printNACore(void);
 void testNABase(void);
 void testNACore(void);
 
+void benchmarkNABase(void);
+
 
 
 int main(void){
@@ -30,8 +32,8 @@ int main(void){
 
   // Print macro information
   #if NA_PRINTOUT_ENABLED == 1
-    //printNABase();
-    //printNACore();
+    printNABase();
+    printNACore();
   #endif
 
 
@@ -39,13 +41,20 @@ int main(void){
   // Now, start testing
   naStartTesting("NALib", NA_FALSE);
     naTestGroupFunction(NABase);
-    naTestGroupFunction(NACore);
+    //naTestGroupFunction(NACore);
 
     printf(NA_NL);
     //naPrintUntested();
 
+    printf(NA_NL "Benchmarking:" NA_NL);
+    benchmarkNABase();
+    
     printf(NA_NL);
+    
   naStopTesting();
+
+
+
 
 
 
