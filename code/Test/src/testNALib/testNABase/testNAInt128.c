@@ -39,6 +39,24 @@ void testNAInt128Make(){
 
 
 
+#define randi64 naMakei64WithBinary(naTestIn, naTestIn)
+#define randu64 naMakeu64WithBinary(naTestIn, naTestIn)
+#define randi128 naMakei128WithBinary(naTestIn, naTestIn, naTestIn, naTestIn)
+#define randu128 naMakeu128WithBinary(naTestIn, naTestIn, naTestIn, naTestIn)
+
+void benchmarkNAInt128Make(){
+  naBenchmark(naMakei128(-randi64, randu64));
+  naBenchmark(naMakei128WithLo(-randi64));
+  naBenchmark(naMakei128WithDouble(-((int32)naTestIn / NA_MAX_i32)));
+  naBenchmark(naMakei128WithBinary(naTestIn, naTestIn, naTestIn, naTestIn));
+  naBenchmark(naMakeu128(randu64, randu64));
+  naBenchmark(naMakeu128WithLo(randu64));
+  naBenchmark(naMakeu128WithDouble((naTestIn / NA_MAX_u32)));
+  naBenchmark(naMakeu128WithBinary(naTestIn, naTestIn, naTestIn, naTestIn));
+}
+
+
+
 void testNAInt128Binary(){
   NAi128 i =      naMakei128WithBinary(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
   NAi128 term =   naMakei128WithBinary(0x55555555, 0x55555555, 0x55555555, 0x55555555);
@@ -76,6 +94,24 @@ void testNAInt128Binary(){
 
 
 
+void benchmarkNAInt128Binary(){
+  naBenchmark(naNoti128(randi128));
+  naBenchmark(naOri128(randi128, randi128));
+  naBenchmark(naAndi128(randi128, randi128));
+  naBenchmark(naXori128(randi128, randi128));
+  naBenchmark(naShli128(randi128, naTestIn % 127));
+  naBenchmark(naShri128(randi128, naTestIn % 127));
+
+  naBenchmark(naNotu128(randu128));
+  naBenchmark(naOru128(randu128, randu128));
+  naBenchmark(naAndu128(randu128, randu128));
+  naBenchmark(naXoru128(randu128, randu128));
+  naBenchmark(naShlu128(randu128, naTestIn % 127));
+  naBenchmark(naShru128(randu128, naTestIn % 127));
+}
+
+
+
 void testNAInt128Comparison(){
   NAi128 i1 =   naMakei128WithBinary(0xf93275dc, 0xf035b6ac, 0x7c9a5530, 0x3fbc0ac1);
   NAi128 i2 =   naMakei128WithBinary(0x022f068c, 0x6c249de0, 0x165de2a5, 0x27c75ff6);
@@ -109,6 +145,22 @@ void testNAInt128Comparison(){
   naTest(!naSmallerEqualu128(u1, u2));
   naTest(naSmallerEqualu128(u2, u1));
   naTest(naSmallerEqualu128(u1, u1));
+}
+
+
+
+void benchmarkNAInt128Comparison(){
+  naBenchmark(naEquali128(randi128, randi128));
+  naBenchmark(naGreateri128(randi128, randi128));
+  naBenchmark(naGreaterEquali128(randi128, randi128));
+  naBenchmark(naSmalleri128(randi128, randi128));
+  naBenchmark(naSmallerEquali128(randi128, randi128));
+
+  naBenchmark(naEqualu128(randu128, randu128));
+  naBenchmark(naGreateru128(randu128, randu128));
+  naBenchmark(naGreaterEqualu128(randu128, randu128));
+  naBenchmark(naSmalleru128(randu128, randu128));
+  naBenchmark(naSmallerEqualu128(randu128, randu128));
 }
 
 
@@ -185,6 +237,32 @@ void testNAInt128Arithmetic(){
 
 
 
+void benchmarkNAInt128Arithmetic(){
+  NAi128 i;
+  NAu128 u;
+
+  naBenchmark(naNegi128(randi128));
+  naBenchmark((i = randi128, naInci128(i), i));
+  naBenchmark((i = randi128, naDeci128(i), i));
+
+  naBenchmark(naAddi128(randi128, randi128));
+  naBenchmark(naSubi128(randi128, randi128));
+  naBenchmark(naMuli128(randi128, randi128));
+  naBenchmark(naDivi128(randi128, randi128));
+  naBenchmark(naModi128(randi128, randi128));
+
+  naBenchmark((u = randu128, naIncu128(u), u));
+  naBenchmark((u = randu128, naDecu128(u), u));
+
+  naBenchmark(naAddu128(randu128, randu128));
+  naBenchmark(naSubu128(randu128, randu128));
+  naBenchmark(naMulu128(randu128, randu128));
+  naBenchmark(naDivu128(randu128, randu128));
+  naBenchmark(naModu128(randu128, randu128));
+}
+
+
+
 void testNAInt128(){
   naTestGroupFunction(NAInt128Make);
   naTestGroupFunction(NAInt128Binary);
@@ -193,6 +271,14 @@ void testNAInt128(){
 }
 
 
+
+void benchmarkNAInt128(){
+  printf(NA_NL "NAInt128:" NA_NL);
+  benchmarkNAInt128Make();
+  benchmarkNAInt128Binary();
+  benchmarkNAInt128Comparison();
+  benchmarkNAInt128Arithmetic();
+}
 
 
 

@@ -29,6 +29,8 @@ void testNANumerics(void);
 void testNAFloatingPoint(void);
 
 void benchmarkNAInt64(void);
+void benchmarkNAInt128(void);
+void benchmarkNAInt256(void);
 
 
 
@@ -61,6 +63,8 @@ void testNABase(){
 
 void benchmarkNABase(){
   benchmarkNAInt64();
+  benchmarkNAInt128();
+  benchmarkNAInt256();
 }
 
 

@@ -1,4 +1,9 @@
 
+// This is an example showing how to create a GUI application with NALib which
+// converts temperatures from Degree Celsius to Degree Fahrenheit.
+
+
+
 // To use the GUI implementation of NALib, you need to configure it. You can
 // do this by defining the preprocessor macro NA_COMPILE_GUI to be 1.
 //
@@ -20,177 +25,188 @@
 
 // Note that you could add an include path in your project to access the
 // NAXXX.h files. But for the sake of simplicity, we use relative paths here.
-#include "../../NALib/src/NABase.h"
 #include "../../NALib/src/NAUI.h"
-#include "../../NALib/src/NATranslator.h"
-#include "translationIDs.h"
+#include "../../NALib/src/NAStack.h"
 
-NAInt trFinanceGroup;
-NAInt trGeneralGroup;
 
-NABool reshapeWindow(NAReaction reaction){
-  NA_UNUSED(reaction);
-  // commented out as this just fills the console with the same line.
-  //printf("Reshape" NA_NL);
+
+// Put GUI elements belonging together into a controller struct.
+typedef struct ConverterApplication ConverterApplication;
+struct ConverterApplication{
+  NAStack controllers;
+  int nextWindowX;
+  int nextWindowY;
+};
+
+// The variable storing the app. For simplicity, here defined as global.
+ConverterApplication* app;
+
+
+
+// Put GUI elements belonging together into a controller struct.
+typedef struct ConverterController ConverterController;
+struct ConverterController{
+  NAWindow* window;
+  NAButton* button;
+  NATextField* textField;
+  NALabel* label;
+  NAButton* newButton;
+  NAButton* quitButton;
+};
+
+
+
+// Will be called when the calculate Button or Enter is pressed.
+NABool pressButton(NAReaction reaction){
+  // The reaction parameter contains - amongst other things - the controller
+  // provided with naAddUIReaction.
+  ConverterController* con = reaction.controller;
+
+  // Read out the textField
+  NAString* celsiusString = naNewStringWithTextFieldText(con->textField);
+  double celsius = atof(naGetStringUTF8Pointer(celsiusString));
+  naDelete(celsiusString);
+
+  // Compute the model
+  double fahrenheit = celsius * 1.8 + 32.;
+
+  // Write the output to the label
+  NAString* fahrenheitString = naNewStringWithFormat("%f", fahrenheit);
+  naSetLabelText(con->label, naGetStringUTF8Pointer(fahrenheitString));
+  naDelete(fahrenheitString);
+
+  // By returning true, NALib knows that this event has been completely
+  // handeled and it should stop propagating to other potential handlers.
   return NA_TRUE;
 }
 
-NABool keyPressed(NAReaction reaction){
-  NAKeyboardStatus keyStatus;
-  NAUIKeyCode key;
 
-  NA_UNUSED(reaction);
-  keyStatus = naGetKeyboardStatus();
-  key = keyStatus.keyCode;
-  if(key == NA_KEYCODE_ESC){naStopApplication();}
-  printf("Key Press" NA_NL);
+
+// Prototype
+void createController();
+
+// Will be called when the + Button is pressed.
+NABool newController(NAReaction reaction){
+  createController();
   return NA_TRUE;
 }
 
-NABool keyReleased(NAReaction reaction){
-  NA_UNUSED(reaction);
-  printf("Key Release" NA_NL);
+
+
+// Will be called when the Quit Button is pressed.
+NABool quitApplication(NAReaction reaction){
+  naStopApplication();
   return NA_TRUE;
 }
 
-NABool mouseMoved(NAReaction reaction){
-  NA_UNUSED(reaction);
-  // commented out as this just fills the console with the same line.
-  //printf("Mouse Move" NA_NL);
-  return NA_TRUE;
+
+
+void createController(){
+  // Note for the sake of simplicity, the memory allocated here will leak.
+  // You should store this con pointer somewhere in the application and
+  // clean up properly upon application stop.
+
+  ConverterController* con = naPushStack(&(app->controllers));
+
+  // Create a new window
+  NARect windowrect = naMakeRectS(app->nextWindowX, app->nextWindowY, 400, 200);
+  con->window = naNewWindow("Temperature Converter", windowrect, NA_FALSE, 0);
+
+  // Update the window coordinates for the next window.
+  app->nextWindowX += 20;
+  app->nextWindowY -= 20;
+
+  // Every window has a space which defines its contents.
+  NASpace* windowSpace = naGetWindowContentSpace(con->window);
+
+  // Create the main button, assign a press command and make it the default
+  // button.
+  con->button = naNewPushButton("Compute", naMakeSize(100, 30));
+  naAddSpaceChild(windowSpace, con->button, naMakePos(150, 20));
+  naAddUIReaction(con->button, NA_UI_COMMAND_PRESSED, pressButton, con);
+  naSetButtonSubmit(con->button, pressButton, con);
+
+  // Create the textField.
+  con->textField = naNewTextField(naMakeSize(80, 20));
+  naSetTextFieldTextAlignment(con->textField, NA_TEXT_ALIGNMENT_CENTER);
+  naAddSpaceChild(windowSpace, con->textField, naMakePos(160, 100));
+
+  // Create the label containing the results.
+  con->label = naNewLabel("Result", naMakeSize(80, 20));
+  naSetLabelTextAlignment(con->label, NA_TEXT_ALIGNMENT_CENTER);
+  naAddSpaceChild(windowSpace, con->label, naMakePos(160, 70));
+
+  // Create a + button for opening a new window.
+  con->newButton = naNewPushButton("+", naMakeSize(30, 30));
+  naAddSpaceChild(windowSpace, con->newButton, naMakePos(20, 20));
+  naAddUIReaction(con->newButton, NA_UI_COMMAND_PRESSED, newController, con);
+
+  // Create a Quit button for terminating the whole application.
+  con->quitButton = naNewPushButton("Quit", naMakeSize(60, 30));
+  naAddSpaceChild(windowSpace, con->quitButton, naMakePos(320, 20));
+  naAddUIReaction(con->quitButton, NA_UI_COMMAND_PRESSED, quitApplication, con);
+
+  // Show the current window.
+  naShowWindow(con->window);
 }
 
-NABool mouseEntered(NAReaction reaction){
-  NA_UNUSED(reaction);
-  printf("Mouse Enter" NA_NL);
-  return NA_TRUE;
+
+
+// Clear all allocated elements.
+void clearController(ConverterController* con){
+  naFree(con->window);
+  naFree(con->button);
+  naFree(con->textField);
+  naFree(con->label);
+  naFree(con->newButton);
+  naFree(con->quitButton);
 }
 
-NABool mouseExited(NAReaction reaction){
-  NA_UNUSED(reaction);
-  printf("Mouse exit" NA_NL);
-  return NA_TRUE;
-}
 
-NABool buttonPressed(NAReaction reaction){
-  NA_UNUSED(reaction);
-  printf("Oh, do it again." NA_NL);
-  return NA_TRUE;
-}
 
-NABool checkBoxPressed(NAReaction reaction){
-  NA_UNUSED(reaction);
-  NABool state = naGetCheckBoxState(reaction.uiElement);
-  printf("Checked. New status is %d." NA_NL, (int)state);
-  return NA_TRUE;
-}
-
-NABool radioPressed(NAReaction reaction){
-  NA_UNUSED(reaction);
-  printf("Checked radio %p." NA_NL, reaction.uiElement);
-  return NA_TRUE;
-}
-
+// prestartup is called before most system specific initialization takes place.
+// Initialize all global and general values here.
+// See naStartApplication for a detailed explanation.
 void prestartup(void* arg){
   NA_UNUSED(arg);
-  trFinanceGroup = naRegisterTranslatorGroup();
-  #include "../res/translationsFinance.txt"
-  trGeneralGroup = naRegisterTranslatorGroup();
-  #include "../res/translationsGeneral.txt"
+  app = naAlloc(ConverterApplication);
+  naInitStack(&(app->controllers), sizeof(ConverterController), 2);
+  app->nextWindowX = 200;
+  app->nextWindowY = 400;
 }
 
-void initOpenGLSpace(void* initData){
-  NA_UNUSED(initData);
+
+
+// Delete all controllers and finally, delete this application
+void clearApplication(void){
+  naForeachStackMutable(&(app->controllers), clearController);
+  naClearStack(&(app->controllers));
+  naFree(app);
 }
 
+
+
+// poststartup is called after base application stuff has been initialized.
+// Build-up your GUI here.
+// See naStartApplication for a detailed explanation.
 void poststartup(void* arg){
-  NARect windowrect;
-  NAWindow* window;
-  NASpace* contentSpace;
-  
-  NAButton* button;
-  NACheckBox* checkBox;
-  NALabel* label;
-  NARadio* radio1;
-  NARadio* radio2;
-  NATextBox* textBox;
-  NATextField* textField;
   NA_UNUSED(arg);
-
-  naSetTranslatorLanguagePreference(naGetLanguageCode("deu"));
-  //naSetTranslatorLanguagePreference(naGetLanguageCode("eng"));
-  //naSetTranslatorLanguagePreference(naGetLanguageCode("gsw"));
-  printf ("%s" NA_NL, naTranslate(trGeneralGroup, TR_HELLO_WORLD));
-  printf ("%s" NA_NL, naTranslate(trGeneralGroup, TR_99_BEER));
-  printf ("%s" NA_NL, naTranslate(trGeneralGroup, TR_BREADCRUMBS_BEAVERSPIT));
-  printf ("%s" NA_NL, naTranslate(trFinanceGroup, TR_PROFIT));
-  printf ("%s" NA_NL, naTranslate(trFinanceGroup, TR_LOSS));
-
-//  printf("%d" NA_NL, (int)naGetLanguageCode("deu"));
-
-  printf(NA_NL "===========" NA_NL);
-
-  windowrect = naMakeRectS(120, 20, 400, 300);
-  window = naNewWindow("Wurst", windowrect, NA_TRUE, 0);
-  naAddUIReaction(window, NA_UI_COMMAND_RESHAPE,       reshapeWindow, NA_NULL);
-  naAddUIReaction(window, NA_UI_COMMAND_KEYDOWN,       keyPressed, NA_NULL);
-  naAddUIReaction(window, NA_UI_COMMAND_KEYUP,         keyReleased, NA_NULL);
-  naAddUIReaction(window, NA_UI_COMMAND_MOUSE_MOVED,   mouseMoved, NA_NULL);
-  naAddUIReaction(window, NA_UI_COMMAND_MOUSE_ENTERED, mouseEntered, NA_NULL);
-  naAddUIReaction(window, NA_UI_COMMAND_MOUSE_EXITED,  mouseExited, NA_NULL);
-
-//  NAOpenGLSpace* openglspace = naNewOpenGLSpace(window, windowrect.size, initOpenGLSpace, window);
-//  naSetWindowContentSpace(window, openglspace);
-
-  contentSpace = naGetWindowContentSpace(window);
-
-  button = naNewPushButton("PushButton asdf", naMakeSize(200., 20.));
-  naAddSpaceChild(contentSpace, button, naMakePos(20., 20.));
-  naAddUIReaction(button, NA_UI_COMMAND_PRESSED, buttonPressed, NA_NULL);
-
-  checkBox = naNewCheckBox("CheckBox asdf", naMakeSize(200., 20.));
-  naAddSpaceChild(contentSpace, checkBox, naMakePos(20., 40.));
-  naAddUIReaction(checkBox, NA_UI_COMMAND_PRESSED, checkBoxPressed, NA_NULL);
-
-  label = naNewLabel("Label asdf", naMakeSize(200., 20.));
-  naAddSpaceChild(contentSpace, label, naMakePos(20., 60.));
-  
-  radio1 = naNewRadio("Radio 1", naMakeSize(200., 20.));
-  radio2 = naNewRadio("Radio 2", naMakeSize(200., 20.));
-  naAddSpaceChild(contentSpace, radio1, naMakePos(20., 80.));
-  naAddSpaceChild(contentSpace, radio2, naMakePos(220., 80.));
-  naAddUIReaction(radio1, NA_UI_COMMAND_PRESSED, radioPressed, NA_NULL);
-  naAddUIReaction(radio2, NA_UI_COMMAND_PRESSED, radioPressed, NA_NULL);
-
-  textBox = naNewTextBox(naMakeSize(200., 40.));
-  naAddSpaceChild(contentSpace, textBox, naMakePos(20., 100.));
-  
-  textField = naNewTextField(naMakeSize(200., 20.));
-  naAddSpaceChild(contentSpace, textField, naMakePos(20., 140.));
-
-  naShowWindow(window);
+  createController();
 }
 
 
-#include <stdio.h>
 
-int main(void){
-  printf("NALib Version: %d ", NA_VERSION);
-  #ifndef NDEBUG
-    printf("(Debug ");
-  #else
-    printf("(Release ");
-  #endif
-  printf("%d Bits Addresses, %d Bits Integers)" NA_NL, NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
+
+int main(){
 
   naStartRuntime();
     naStartApplication(prestartup, poststartup, NA_NULL);
-  naStopRuntime();
 
-  #if NA_OS == NA_OS_WINDOWS
-    printf("Finished." NA_NL);
-    NA_UNUSED(getchar());
-  #endif
+    // When returning from naStartApplication, the GUI has already been
+    // released. But we need to free the memory allocated in the app and
+    // the controllers.
+    clearApplication();
+  naStopRuntime();
 
   return 0;
 }

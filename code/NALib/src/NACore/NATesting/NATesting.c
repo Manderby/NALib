@@ -4,10 +4,19 @@
 #if NA_TESTING_ENABLED == 1
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#if NA_OS != NA_OS_WINDOWS
+#include <sys/time.h>
+#endif
+
 #include "../../NAStack.h"
 #include "../../NAString.h"
 
 
+
+#define NA_TEST_INDEX_COUNT 0x10000
+#define NA_TEST_INDEX_MASK (NA_TEST_INDEX_COUNT - 1)
 
 typedef struct NATestData NATestData;
 struct NATestData {
@@ -25,10 +34,14 @@ typedef struct NATesting NATesting;
 struct NATesting {
   NATestData* testData;
   NATestData* curTestData;
+  double timePerBenchmark;
   int printAllTestGroups;
   NABool testCaseRunning;
   int errorCount;
   NAStack untestedStrings;
+  int curInIndex;
+  uint32 in[NA_TEST_INDEX_COUNT];
+  char out[NA_TEST_INDEX_COUNT];
 };
 
 NATesting* na_Testing = NA_NULL;
@@ -93,7 +106,7 @@ NA_HIDEF void na_PrintTestGroup(NATestData* testData){
 
 
 
-NA_DEF void naStartTesting(const NAUTF8Char* rootName, NABool printAllGroups){
+NA_DEF void naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, NABool printAllGroups){
 #ifndef NDEBUG
   if(na_Testing)
     naError("Testing already running.");
@@ -105,9 +118,14 @@ NA_DEF void naStartTesting(const NAUTF8Char* rootName, NABool printAllGroups){
   na_InitTestingData(na_Testing->testData, rootName, NA_NULL, 0);
 
   na_Testing->curTestData = na_Testing->testData;
+  na_Testing->timePerBenchmark = timePerBenchmark;
   na_Testing->printAllTestGroups = printAllGroups;
   na_SetTestCaseRunning(NA_FALSE);
   na_ResetErrorCount();
+
+  for(na_Testing->curInIndex = 0; na_Testing->curInIndex < NA_TEST_INDEX_COUNT; na_Testing->curInIndex++){
+    na_Testing->in[na_Testing->curInIndex] = ((uint32)rand() << 20) ^ ((uint32)rand() << 10) ^ ((uint32)rand());
+  }
 
   naInitStack(&(na_Testing->untestedStrings), naSizeof(NAString*), 2);
 
@@ -287,11 +305,74 @@ NA_HDEF void na_StopTestGroup(){
 }
 
 
+
+NA_HDEF uint32 na_getBenchmarkIn(){
+  na_Testing->curInIndex = (na_Testing->curInIndex + 1) & NA_TEST_INDEX_MASK;
+  return na_Testing->in[na_Testing->curInIndex];
+}
+
+
+
+NA_HDEF double na_BenchmarkTime(){
+  // Note: Reimplemented here because NADateTime uses int64 to compute.
+  #if NA_OS == NA_OS_WINDOWS
+    FILETIME filetime;
+    GetSystemTimeAsFileTime(&filetime);
+    filetime.dwLowDateTime;
+    return filetime.dwLowDateTime / 10000000.;  // see definition of dwLowDateDime
+  #else
+    struct timeval curtime;
+    NATimeZone curtimezone;
+    gettimeofday(&curtime, &curtimezone);
+    return curtime.tv_sec + curtime.tv_usec / 1000000.;
+  #endif
+}
+
+
+
+NA_HDEF double na_GetBenchmarkLimit(){
+  return na_Testing->timePerBenchmark;
+}
+
+
+
+NA_HDEF int na_GetBenchmarkTestSizeLimit(){
+  return 30;
+}
+
+
+
+NA_HDEF void na_PrintBenchmark(double timeDiff, int testSize, const char* exprString, int lineNum){
+  if(timeDiff < na_GetBenchmarkLimit() || testSize >= 1 << na_GetBenchmarkTestSizeLimit()){
+      printf("Line %d: Immeasurable   : %s" NA_NL, lineNum, exprString);
+  }else{
+    double execsPerSec = testSize / timeDiff;
+    if(execsPerSec > 1000000000.)
+      printf("Line %d: %6.2f G : %s" NA_NL, lineNum, execsPerSec * .000000001, exprString);
+    else if(execsPerSec > 1000000.)
+      printf("Line %d: %6.2f M : %s" NA_NL, lineNum, execsPerSec * .000001, exprString);
+    else if(execsPerSec < 1000000.)
+      printf("Line %d: %6.2f k : %s" NA_NL, lineNum, execsPerSec * .001, exprString);
+    else
+      printf("Line %d: %6.2f   : %s" NA_NL, lineNum, execsPerSec, exprString);
+  }
+}
+
+
+
+NA_HDEF void na_StoreBenchmarkResult(char data){
+  // yes, we are using the inIndex. It doesn't matter.
+  na_Testing->out[na_Testing->curInIndex] ^= data;\
+}
+
+
+
 #else
 
-NA_DEF void naStartTesting(const NAUTF8Char* rootName, NABool printAllGroups){
+NA_DEF void naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, NABool printAllGroups){
   #ifndef NDEBUG
     NA_UNUSED(rootName);
+    NA_UNUSED(timePerBenchmark);
     NA_UNUSED(printAllGroups);
     naError("Testing is not enabled. Go look for NA_TESTING_ENABLED");
   #endif

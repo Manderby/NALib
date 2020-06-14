@@ -53,6 +53,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
 
   case WM_CLOSE:
     window = naGetUIElementWindow(uiElement);
+    naSetFlagi(&(window->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE, NA_TRUE);
     na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_CLOSES);
     shouldClose = !naGetFlagi(window->flags, NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING);
     naSetFlagi(&(window->flags), NA_CORE_WINDOW_FLAG_TRIES_TO_CLOSE | NA_CORE_WINDOW_FLAG_PREVENT_FROM_CLOSING, NA_FALSE);

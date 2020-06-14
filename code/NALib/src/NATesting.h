@@ -5,9 +5,16 @@
 #include "NABase.h"
 
 // Starts and stops the testing. Provide the top name of the code you
-// want to test. If printAllGroups is false, only the groups which have
+// want to test. The timePerBenchmark denotes the time spent per benchmark
+// case. Usual values are around .01 seconds. Lower values are quicker but
+// less sound. If printAllGroups is false, only the groups which have
 // errors will be printed. A final printout will be made upon stopping.
-NA_API void naStartTesting(const NAUTF8Char* rootName, NABool printAllGroups);
+NA_API void naStartTesting(
+  const NAUTF8Char* rootName,
+  double timePerBenchmark,
+  NABool printAllGroups);
+
+// Stops the testing and prints some final results.
 NA_API void naStopTesting(void);
 
 // Prints a list of all strings added by calling naUntested.
@@ -32,6 +39,14 @@ NA_API void naPrintUntested(void);
 // functionality before calling naStopTesting.
 // Use this to mark things untested but not forgotten.
 #define naUntested(text)
+
+// Runs a benchmark of expr as long until the time defined in naStartTesting
+// is reached. Outputs the number of executions per second.
+#define naBenchmark(expr)
+
+// Evaluates to a pseudo random number. Use this for test inputs to your
+// benchmark expression.
+#define naTestIn
 
 
 

@@ -12,6 +12,8 @@
 #undef naTestGroup
 #undef naTestGroupFunction
 #undef naUntested
+#undef naBenchmark
+#undef naTestIn
 
 
 
@@ -27,6 +29,13 @@ NA_HAPI void   na_SetTestCaseRunning(NABool running);
 NA_HAPI void   na_IncErrorCount(void);
 NA_HAPI void   na_ResetErrorCount(void);
 NA_HAPI int    na_GetErrorCount(void);
+
+NA_HAPI uint32 na_getBenchmarkIn(void);
+NA_HAPI double na_BenchmarkTime(void);
+NA_HAPI double na_GetBenchmarkLimit(void);
+NA_HAPI int    na_GetBenchmarkTestSizeLimit(void);
+NA_HAPI void   na_PrintBenchmark(double timeDiff, int testSize, const char* exprString, int lineNum);
+NA_HAPI void   na_StoreBenchmarkResult(char);
 
 
 
@@ -83,6 +92,31 @@ NA_HAPI int    na_GetErrorCount(void);
 #define naUntested(text)\
   na_RegisterUntested(#text);
 
+#define naBenchmark(expr)\
+{\
+  int testSize = 1;\
+  double timeDiff;\
+  int pow;\
+  double startT = na_BenchmarkTime();\
+  double endT;\
+  for(pow = 0; pow < na_GetBenchmarkTestSizeLimit(); pow++){\
+    for(int testRun = 0; testRun < testSize; testRun++){\
+      /*na_StoreBenchmarkResult((char)(expr));*/\
+      expr;\
+    }\
+    endT = na_BenchmarkTime();\
+    timeDiff = endT - startT;\
+    if(timeDiff < 0.){timeDiff = 0; break;}\
+    if(timeDiff > na_GetBenchmarkLimit()){break;}\
+    testSize <<= 1;\
+  }\
+  na_PrintBenchmark(timeDiff, testSize * 2, #expr, __LINE__);\
+}
+
+#define naTestIn\
+  na_getBenchmarkIn()
+
+
 
 #else
 
@@ -95,6 +129,8 @@ NA_HAPI int    na_GetErrorCount(void);
   for(int g = 0; g < 1 ; g++)
 #define naTestGroupFunction(identifier)
 #define naUntested(text)
+#define naBenchmark(expr)
+#define naTestIn 0
 
 #endif // NA_TESTING_ENABLED == 1
 

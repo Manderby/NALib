@@ -39,7 +39,7 @@ int main(void){
 
 
   // Now, start testing
-  naStartTesting("NALib", NA_FALSE);
+  naStartTesting("NALib", .01, NA_FALSE);
     naTestGroupFunction(NABase);
     //naTestGroupFunction(NACore);
 

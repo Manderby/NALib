@@ -39,82 +39,6 @@ void testNAInt64Make(){
 
 
 
-#include <stdlib.h>
-#include <time.h>
-#if NA_OS != NA_OS_WINDOWS
-  #include <sys/time.h>
-#endif
-
-#define NA_TIME_PER_TEST .02
-
-
-#define NA_TEST_INDEX_COUNT 0x10000
-#define NA_TEST_INDEX_MASK (NA_TEST_INDEX_COUNT - 1)
-int curTestIndex = 0;
-uint32 na_test_in[NA_TEST_INDEX_COUNT];
-void* na_test_out[NA_TEST_INDEX_COUNT];
-
-naPrepareTestIn(){
-  for(curTestIndex = 0; curTestIndex < NA_TEST_INDEX_COUNT; curTestIndex++){
-    na_test_in[curTestIndex] = ((uint32)rand() << 20) ^ ((uint32)rand() << 10) ^ ((uint32)rand());
-  }
-}
-
-#define naTestIn\
-  (curTestIndex = (curTestIndex + 1) & NA_TEST_INDEX_MASK, na_test_in[curTestIndex])
-
-double naBenchmarkTime(){
-  // Note: Reimplemented here because NADateTime uses int64 to compute.
-  #if NA_OS == NA_OS_WINDOWS
-    FILETIME filetime;
-    GetSystemTimeAsFileTime(&filetime);
-    filetime.dwLowDateTime;
-    return filetime.dwLowDateTime / 10000000.;
-  #else
-    struct timeval curtime;
-    NATimeZone curtimezone;
-    gettimeofday(&curtime, &curtimezone);
-    return curtime.tv_sec + curtime.tv_usec / 1000000.;
-  #endif
-}
-
-#define naBenchmark(expr)\
-{\
-  int testSize = 1;\
-  double timeDiff;\
-  int pow;\
-  for(pow = 0; pow < 30; pow++){\
-    double startT = naBenchmarkTime();\
-    for(int testRun = 0; testRun < testSize; testRun++){\
-      na_test_out[curTestIndex] = (void*)(char)(expr);\
-    }\
-    double endT = naBenchmarkTime();\
-    timeDiff = endT - startT;\
-    if(timeDiff > (NA_TIME_PER_TEST / 2.)){break;}\
-    testSize <<= 1;\
-  }\
-  if(timeDiff < (NA_TIME_PER_TEST / 2.))\
-    printf("Line %d: Immeasurable   : %s" NA_NL, __LINE__, #expr);\
-  else\
-    printf("Line %d: %15.2f : %s" NA_NL, __LINE__, (2 * testSize) / timeDiff, #expr);\
-}
-
-#define naBenchmarkVoid(expr)\
-{\
-  NADateTime startT = naMakeDateTimeNow();\
-  for(int i=0; i<NA_TEST_SIZE; i++){\
-    expr;\
-  }\
-  NADateTime endT = naMakeDateTimeNow();\
-  printf("Difference %f\n", naGetDateTimeDifference(&endT, &startT));\
-}
-
-
-void testFunc(){
-}
-
-
-
 void benchmarkNAInt64Make(){
   naBenchmark(naMakei64(-(int32)naTestIn, naTestIn));
   naBenchmark(naMakei64WithLo(-(int32)naTestIn));
@@ -347,7 +271,7 @@ void testNAInt64(){
 
 
 void benchmarkNAInt64(){
-  naPrepareTestIn();
+  printf(NA_NL "NAInt64:" NA_NL);
   benchmarkNAInt64Make();
   benchmarkNAInt64Binary();
   benchmarkNAInt64Comparison();
