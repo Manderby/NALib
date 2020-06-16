@@ -15,13 +15,13 @@ NA_DEF void naSkipBufferWhitespaces(NABufferIterator* iter){
     if(naIsBufferAtInitial(iter)){break;}
     curbyte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partoffset < na_GetBufferPartByteSize(part)){
+    while(iter->partOffset < na_GetBufferPartByteSize(part)){
       if(*curbyte > ' '){
         found = NA_TRUE;
         break;
       }
       curbyte++;
-      iter->partoffset++;
+      iter->partOffset++;
     }
   }
 }
@@ -34,14 +34,14 @@ NA_DEF void naSkipBufferDelimiter(NABufferIterator* iter){
     if(*curbyte <= ' '){
       naSkipBufferWhitespaces(iter);
     }else{
-      iter->partoffset++;
+      iter->partOffset++;
     }
   }
 }
 
 
 
-NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
+NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty){
   NAString* string = NA_NULL;
   NABool found = NA_FALSE;
   NABool checkwindowsend = NA_FALSE;
@@ -59,14 +59,14 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
     curbyte = na_GetBufferPartDataPointerConst(iter);
     
     // Note: Do not use NA_NL_XXX macros here. That is semantically wrong.
-    while(iter->partoffset < na_GetBufferPartByteSize(part)){
+    while(iter->partOffset < na_GetBufferPartByteSize(part)){
       if(checkwindowsend){
         checkwindowsend = NA_FALSE;
-        if(*curbyte == '\n'){iter->partoffset++; break;}
+        if(*curbyte == '\n'){iter->partOffset++; break;}
       }
       if(found){break;}
       if((*curbyte == '\r') || (*curbyte == '\n')){
-        if(skipempty && ((iter->partoffset - start) == 0)){
+        if(skipEmpty && ((iter->partOffset - start) == 0)){
           start++;
         }else{
           found = NA_TRUE;
@@ -76,7 +76,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipempty){
       }
       curbyte++;
       end++;
-      iter->partoffset++;
+      iter->partOffset++;
     }
   }
 
@@ -124,14 +124,14 @@ NA_DEF NAString* naParseBufferToken(NABufferIterator* iter){
     if(naIsBufferAtInitial(iter)){break;}
     curbyte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partoffset < na_GetBufferPartByteSize(part)){
+    while(iter->partOffset < na_GetBufferPartByteSize(part)){
       if(*curbyte <= ' '){
         found = NA_TRUE;
         break;
       }
       curbyte++;
       end++;
-      iter->partoffset++;
+      iter->partOffset++;
     }
   }
 
@@ -154,7 +154,7 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8C
   NA_UNUSED(iter);
   NA_UNUSED(delimiter);
 //  NAString* string;
-//  NAInt tokenstart = iter->curoffset;
+//  NAInt tokenstart = iter->curOffset;
 //  const NABufferPart* part;
 //
 //  while(!naIsBufferAtInitial(iter)){
@@ -162,24 +162,24 @@ NA_DEF NAString* naParseBufferTokenWithDelimiter(NABufferIterator* iter, NAUTF8C
 //    NAInt endoffset;
 //    NABool found = NA_FALSE;
 //
-//    part = naGetListCurConst(&(iter->partiter));
+//    part = naGetListCurConst(&(iter->partIter));
 //    if(na_IsBufferPartSparse(part)){
 //      naGetBufferu8(iter);
-//      part = naGetListCurConst(&(iter->partiter));
+//      part = naGetListCurConst(&(iter->partIter));
 //    }
-//    curbyte = (NAUTF8Char*)na_GetBufferPartDataPointerConst(part, iter->curoffset);
+//    curbyte = (NAUTF8Char*)na_GetBufferPartDataPointerConst(part, iter->curOffset);
 //    endoffset = na_GetBufferPartEnd(part);
-//    while(iter->curoffset < endoffset){
+//    while(iter->curOffset < endoffset){
 //      if(*curbyte == delimiter){found = NA_TRUE; break;}
 //      curbyte++;
-//      iter->curoffset++;
+//      iter->curOffset++;
 //    }
-//    if(!naContainsBufferPartOffset(part, iter->curoffset)){naIterateList(&(iter->partiter));}
+//    if(!naContainsBufferPartOffset(part, iter->curOffset)){naIterateList(&(iter->partIter));}
 //    if(found){break;}
 //  }
 //
 //  NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
-//  string = naNewStringWithBufferExtraction(buffer naMakeRangeiWithStartAndEnd(tokenstart, iter->curoffset));
+//  string = naNewStringWithBufferExtraction(buffer naMakeRangeiWithStartAndEnd(tokenstart, iter->curOffset));
 //  naLocateBufferRelative(iter, 1);
 //  return string;
   return NA_NULL;
@@ -204,14 +204,14 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter){
     if(naIsBufferAtInitial(iter)){break;}
     curbyte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partoffset < na_GetBufferPartByteSize(part)){
+    while(iter->partOffset < na_GetBufferPartByteSize(part)){
       if(*curbyte == '/' || *curbyte == '\\'){
         found = NA_TRUE;
         break;
       }
       curbyte++;
       end++;
-      iter->partoffset++;
+      iter->partOffset++;
     }
   }
 
@@ -230,7 +230,7 @@ NA_DEF NAString* naParseBufferPathComponent(NABufferIterator* iter){
 
 
 
-NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* retValuei, NAInt maxdigitcount, NAu64 max){
+NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* retValuei, NAInt maxDigitCount, NAu64 max){
   NAInt bytesused;
   NAu64 prevval;
   NABool found = NA_FALSE;
@@ -241,7 +241,7 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* 
   *retValuei = NA_ZERO_u64;
   bytesused = 0;
   prevval = NA_ZERO_u64;
-  if(maxdigitcount == 0){maxdigitcount = naGetRangeiEnd(buffer->range) - start;}
+  if(maxDigitCount == 0){maxDigitCount = naGetRangeiEnd(buffer->range) - start;}
 
   while(!found && !naIsBufferAtEnd(iter)){
     const NAByte* curbyte;
@@ -254,8 +254,8 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* 
     if(naIsBufferAtInitial(iter)){break;}
     curbyte = na_GetBufferPartDataPointerConst(iter);
 
-    while(iter->partoffset < na_GetBufferPartByteSize(part)){
-      if(bytesused >= maxdigitcount){break;}
+    while(iter->partOffset < na_GetBufferPartByteSize(part)){
+      if(bytesused >= maxDigitCount){break;}
 
       if((*curbyte < '0') || (*curbyte > '9')){found = NA_TRUE; break;}
       *retValuei = naAddu64(naMulu64(*retValuei, naMakeu64WithLo(10)), naMakeu64WithLo(*curbyte - '0'));
@@ -272,7 +272,7 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* 
       bytesused++;
       curbyte++;
       end++;
-      iter->partoffset++;
+      iter->partOffset++;
     }
   }
 
@@ -281,7 +281,7 @@ NA_DEF NAInt naParseBufferDecimalUnsignedInteger(NABufferIterator* iter, NAu64* 
 
 
 
-NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, NAi64* retValuei, NAInt maxdigitcount, NAi64 min, NAi64 max){
+NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, NAi64* retValuei, NAInt maxDigitCount, NAi64 min, NAi64 max){
   NAi64 sign = NA_ONE_i64;
   NAInt bytesused = 0;
   NAi64 limit = max;
@@ -297,18 +297,18 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(NABufferIterator* iter, NAi64* re
   // Check for a potential sign at the first character
   if(*curbyte == '+'){
     bytesused = 1;
-    maxdigitcount--;
-    iter->partoffset++;
+    maxDigitCount--;
+    iter->partOffset++;
   }else if(*curbyte == '-'){
     sign = naNegi64(NA_ONE_i64);
     limit = naNegi64(min);
     bytesused = 1;
-    maxdigitcount--;
-    iter->partoffset++;
+    maxDigitCount--;
+    iter->partOffset++;
   }
-  if(maxdigitcount == -1){maxdigitcount = 0;}
+  if(maxDigitCount == -1){maxDigitCount = 0;}
 
-  bytesused += naParseBufferDecimalUnsignedInteger(iter, &intvalue, maxdigitcount, naCasti64Tou64(limit));
+  bytesused += naParseBufferDecimalUnsignedInteger(iter, &intvalue, maxDigitCount, naCasti64Tou64(limit));
   *retValuei = naMuli64(sign, naCastu64Toi64(intvalue));
   return bytesused;
 }

@@ -17,11 +17,11 @@ NA_IDEF NAInt naStrlen(const NAUTF8Char* str){
 
 
 
-NA_IDEF NAInt naVsnprintf(NAUTF8Char* buffer, NAUInt length, const NAUTF8Char* newstr, va_list argumentlist){
+NA_IDEF NAInt naVsnprintf(NAUTF8Char* buffer, size_t length, const NAUTF8Char* newstr, va_list argumentList){
   #if NA_OS == NA_OS_WINDOWS
-    return (NAInt)_vsnprintf_s(buffer, (size_t)length, (size_t)length, newstr, argumentlist);
+    return (NAInt)_vsnprintf_s(buffer, (size_t)length, (size_t)length, newstr, argumentList);
   #elif NA_OS == NA_OS_MAC_OS_X
-    return (NAInt)vsnprintf((char*)buffer, (size_t)length, (const char*)newstr, argumentlist);
+    return (NAInt)vsnprintf((char*)buffer, (size_t)length, (const char*)newstr, argumentList);
   #endif
 }
 

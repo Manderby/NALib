@@ -30,8 +30,8 @@ struct NAPNG{
   NASizei size;
   NAList chunks;
   uint32 flags;
-  int8 bitdepth;
-  NAPNGColorType colortype;
+  int8 bitDepth;
+  NAPNGColorType colorType;
   int8 compressionmethod;
   int8 filtermethod;
   float gamma;
@@ -204,9 +204,9 @@ NA_HDEF void na_DeallocPNGChunk(NAPNGChunk* chunk){
 
 
 
-NA_API NAInt naGetPNGBytesPerPixel(NAPNGColorType colortype){
+NA_API NAInt naGetPNGBytesPerPixel(NAPNGColorType colorType){
   NAInt retvalue;
-  switch(colortype){
+  switch(colorType){
   case NA_PNG_COLORTYPE_GREYSCALE:
     retvalue = 1;
     break;
@@ -224,7 +224,7 @@ NA_API NAInt naGetPNGBytesPerPixel(NAPNGColorType colortype){
     break;
   default:
     #ifndef NDEBUG
-      naError("Invalid colortype given");
+      naError("Invalid colorType given");
     #endif
     retvalue = 0;
     break;
@@ -255,7 +255,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
   NAInt x, y;
   NABufferIterator iterfilter;
 
-  NAInt bpp = naGetPNGBytesPerPixel(png->colortype);
+  NAInt bpp = naGetPNGBytesPerPixel(png->colorType);
   NAInt bytesperline = png->size.width * bpp;
 
   png->pixeldata = naMalloc(naSizeof(NAByte) * png->size.width * png->size.height * bpp);
@@ -328,7 +328,7 @@ NA_DEF void naReconstructFilterData(NAPNG* png){
     upbufptr = curbyte - bytesperline;
   }
 
-//  outfile = naCreateFileWritingFilename("test.raw", NA_FILEMODE_DEFAULT);
+//  outfile = naCreateFileWritingPath("test.raw", NA_FILEMODE_DEFAULT);
 //  naWriteFileBytes(outfile, png->pixeldata, png->size.width * png->size.height * bpp);
 //  naReleaseFile(outfile);
 
@@ -348,7 +348,7 @@ NA_DEF void naFilterData(NAPNG* png){
   png->filtereddata = naNewBuffer(NA_FALSE);
   naSetBufferEndianness(png->filtereddata, NA_ENDIANNESS_NETWORK);
 
-  bpp = naGetPNGBytesPerPixel(png->colortype);
+  bpp = naGetPNGBytesPerPixel(png->colorType);
   pixeldata = naGetPNGPixelData(png);
 
   iter = naMakeBufferModifier(png->filtereddata);
@@ -379,8 +379,8 @@ NA_HDEF void na_ReadPNGIHDRChunk(NAPNG* png, NAPNGChunk* ihdr){
 
   png->size.width = (NAInt)naReadBufferu32(&iter);
   png->size.height = (NAInt)naReadBufferu32(&iter);
-  png->bitdepth = naReadBufferi8(&iter);
-  png->colortype = (NAPNGColorType)naReadBufferi8(&iter);
+  png->bitDepth = naReadBufferi8(&iter);
+  png->colorType = (NAPNGColorType)naReadBufferi8(&iter);
   png->compressionmethod = naReadBufferi8(&iter);
   #ifndef NDEBUG
     if(png->compressionmethod != 0)
@@ -399,10 +399,10 @@ NA_HDEF void na_ReadPNGIHDRChunk(NAPNG* png, NAPNGChunk* ihdr){
 
   naClearBufferIterator(&iter);
 
-  png->significantbits[0] = (uint8)png->bitdepth;
-  png->significantbits[1] = (uint8)png->bitdepth;
-  png->significantbits[2] = (uint8)png->bitdepth;
-  png->significantbits[3] = (uint8)png->bitdepth;
+  png->significantbits[0] = (uint8)png->bitDepth;
+  png->significantbits[1] = (uint8)png->bitDepth;
+  png->significantbits[2] = (uint8)png->bitDepth;
+  png->significantbits[3] = (uint8)png->bitDepth;
 
   png->flags &= NA_PNG_FLAGS_IHDR_AVAILABLE;
 
@@ -422,8 +422,8 @@ NA_HDEF NAPNGChunk* na_AllocPNGIHDRChunk(NAPNG* png){
 
   naWriteBufferu32(&iter, (uint32)png->size.width);
   naWriteBufferu32(&iter, (uint32)png->size.height);
-  naWriteBufferi8(&iter, (int8)png->bitdepth);
-  naWriteBufferi8(&iter, (int8)png->colortype);
+  naWriteBufferi8(&iter, (int8)png->bitDepth);
+  naWriteBufferi8(&iter, (int8)png->colorType);
   naWriteBufferi8(&iter, (int8)png->compressionmethod);
   naWriteBufferi8(&iter, (int8)png->filtermethod);
   naWriteBufferi8(&iter, (int8)png->interlacemethod);
@@ -531,7 +531,7 @@ NA_HDEF void na_ReadPNGiCCPChunk(NAPNG* png, NAPNGChunk* iccp){
 
 NA_HDEF void na_ReadPNGsBITChunk(NAPNG* png, NAPNGChunk* sbit){
   NABufferIterator iter = naMakeBufferAccessor(sbit->data);
-  switch(png->colortype){
+  switch(png->colorType){
   case NA_PNG_COLORTYPE_GREYSCALE:
     png->significantbits[1] = naReadBufferu8(&iter);
     break;
@@ -675,19 +675,19 @@ NA_HDEF void na_ReadPNGzTXtChunk(NAPNG* png, NAPNGChunk* ztxt){
 
 
 
-NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colortype, NAUInt bitdepth){
+NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colorType, NAUInt bitDepth){
   NAInt bpp;
   NAPNG* png = naNew(NAPNG);
 
   #ifndef NDEBUG
-    if(bitdepth != 8)
-      naError("Sorry, bitdepth must be 8 for now. Everything else will be implemented later.");
-    if((colortype != NA_PNG_COLORTYPE_TRUECOLOR) && (colortype != NA_PNG_COLORTYPE_TRUECOLOR_ALPHA))
-      naError("Sorry, colortype must be truecolor with or without alpha. Everything else will be implemented later.");
+    if(bitDepth != 8)
+      naError("Sorry, bitDepth must be 8 for now. Everything else will be implemented later.");
+    if((colorType != NA_PNG_COLORTYPE_TRUECOLOR) && (colorType != NA_PNG_COLORTYPE_TRUECOLOR_ALPHA))
+      naError("Sorry, colorType must be truecolor with or without alpha. Everything else will be implemented later.");
   #endif
   naInitList(&(png->chunks));
   png->flags = 0;
-  png->bitdepth = (int8)bitdepth;
+  png->bitDepth = (int8)bitDepth;
   png->compressionmethod = 0;
   png->interlacemethod = NA_PNG_INTERLACE_NONE;
   png->filtermethod = 0;
@@ -696,9 +696,9 @@ NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colortype, NAUInt bitdepth){
   png->pixeldimensions[1] = 1.f;
   png->pixelunit = NA_PIXEL_UNIT_RATIO;
   png->size = size;
-  png->colortype = colortype;
+  png->colorType = colorType;
 
-  bpp = naGetPNGBytesPerPixel(colortype);
+  bpp = naGetPNGBytesPerPixel(colorType);
   png->pixeldata = naMalloc(size.width * size.height * bpp);
   png->filtereddata = NA_NULL;
 
@@ -707,7 +707,7 @@ NA_DEF NAPNG* naNewPNG(NASizei size, NAPNGColorType colortype, NAUInt bitdepth){
 
 
 
-NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
+NA_DEF NAPNG* naNewPNGWithPath(const char* filePath){
   NABuffer* buffer;
   NAByte magic[8];
   NAListIterator iter;
@@ -724,7 +724,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
   png->pixelunit = NA_PIXEL_UNIT_RATIO;
   png->filtereddata = NA_NULL;
 
-  buffer = naNewBufferWithInputFile(filename);
+  buffer = naNewBufferWithInputPath(filePath);
   bufiter = naMakeBufferModifier(buffer);
 
   // If the buffer is empty, there is no png to read.
@@ -783,7 +783,7 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
     }
   naEndListIteration(iter);
 
-//  NAFile* outfile = naCreateFileWritingFilename("test.raw", NA_FILEMODE_DEFAULT);
+//  NAFile* outfile = naCreateFileWritingPath("test.raw", NA_FILEMODE_DEFAULT);
 //  naWriteBufferToFile(png->compresseddata, outfile);
 //  naReleaseFile(outfile);
 
@@ -799,9 +799,9 @@ NA_DEF NAPNG* naNewPNGWithFile(const char* filename){
 
 
 
-NA_API NAPNG* naNewPNGWithBabyImage(NABabyImage* babyimage){
-  NAPNG* png = naNewPNG(naGetBabyImageSize(babyimage), NA_PNG_COLORTYPE_TRUECOLOR_ALPHA, 8);
-  naConvertBabyImageTou8(babyimage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
+NA_API NAPNG* naNewPNGWithBabyImage(NABabyImage* babyImage){
+  NAPNG* png = naNewPNG(naGetBabyImageSize(babyImage), NA_PNG_COLORTYPE_TRUECOLOR_ALPHA, 8);
+  naConvertBabyImageTou8(babyImage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
   return png;
 }
 
@@ -814,25 +814,25 @@ NA_DEF void* naGetPNGPixelData(NAPNG* png){
 
 
 NA_DEF NAInt naGetPNGPixelDataBytesize(NAPNG* png){
-  NAInt bpp = naGetPNGBytesPerPixel(png->colortype);
+  NAInt bpp = naGetPNGBytesPerPixel(png->colorType);
   return png->size.width * png->size.height * bpp;
 }
 
 
 
 NA_DEF NABabyImage* naCreateBabyImageFromPNG(NAPNG* png){
-  NABabyImage* babyimage = naCreateBabyImage(png->size, NA_NULL);
+  NABabyImage* babyImage = naCreateBabyImage(png->size, NA_NULL);
   NAByte* pngptr;
   float* babyptr;
   uint8 inbuf[4];
   NAInt x, y;
 
-  switch(png->colortype){
+  switch(png->colorType){
   case NA_PNG_COLORTYPE_TRUECOLOR:
     pngptr = png->pixeldata;
     inbuf[3] = 255;
     for(y = 0; y < png->size.height; y++){
-      babyptr = &(naGetBabyImageData(babyimage)[(png->size.height - y - 1) * naGetBabyImageValuesPerLine(babyimage)]);
+      babyptr = &(naGetBabyImageData(babyImage)[(png->size.height - y - 1) * naGetBabyImageValuesPerLine(babyImage)]);
       for(x = 0; x < png->size.width; x++){
         inbuf[0] = pngptr[0];
         inbuf[1] = pngptr[1];
@@ -844,7 +844,7 @@ NA_DEF NABabyImage* naCreateBabyImageFromPNG(NAPNG* png){
     }
     break;
   case NA_PNG_COLORTYPE_TRUECOLOR_ALPHA:
-    naFillBabyImageWithu8(babyimage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
+    naFillBabyImageWithu8(babyImage, png->pixeldata, NA_TRUE, NA_COLOR_BUFFER_RGBA);
     break;
   default:
     #ifndef NDEBUG
@@ -852,7 +852,7 @@ NA_DEF NABabyImage* naCreateBabyImageFromPNG(NAPNG* png){
     #endif
     break;
   }
-  return babyimage;
+  return babyImage;
 }
 
 
@@ -864,18 +864,18 @@ NA_DEF NASizei naGetPNGSize(NAPNG* png){
 
 
 NA_DEF NAPNGColorType naGetPNGColorType(NAPNG* png){
-  return png->colortype;
+  return png->colorType;
 }
 
 
 
 NA_DEF NAInt naGetPNGBitDepth(NAPNG* png){
-  return (NAInt)png->bitdepth;
+  return (NAInt)png->bitDepth;
 }
 
 
 
-NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
+NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath){
 
   NABuffer* outbuffer;
   NAChecksum checksum;
@@ -918,7 +918,7 @@ NA_DEF void naWritePNGToFile(NAPNG* png, const char* filename){
 
   naClearBufferIterator(&iterout);
 
-  outfile = naCreateFileWritingFilename(filename, NA_FILEMODE_DEFAULT);
+  outfile = naCreateFileWritingPath(filePath, NA_FILEMODE_DEFAULT);
   naFixBufferRange(outbuffer);
   naWriteBufferToFile(outbuffer, outfile);
   naReleaseFile(outfile);

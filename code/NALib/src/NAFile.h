@@ -39,7 +39,7 @@ typedef struct NAFile NAFile;
 //                      that it may differ from NAInt which can be 32 or 64
 //                      bits too depending on the system.
 // NA_FILESIZE_BITS and NA_FILESIZE_MAX     Two additional macros
-//                      storing the bits needed for a file byteoffset.
+//                      storing the bits needed for a file byteOffset.
 // NAFileMode:          The filesystem permission mode. On Windows corresponds
 //                      to a flag combination like _S_IREAD, and on Unix
 //                      corresponds to the octal permission flags like 0644.
@@ -99,25 +99,25 @@ typedef struct NAFile NAFile;
 // on the system are mapped to NALib types. All other types are corresponding
 // to the standards.
 
-NA_IAPI NAFilesize  naLseek   (int fd, NAFilesize byteoffset, int origintype);
+NA_IAPI NAFilesize  naLseek   (int fd, NAFilesize byteOffset, int originType);
 NA_IAPI NAFilesize  naTell(int fd);
 NA_IAPI int         naOpen    (const char* path, int flags, int mode);
 NA_IAPI int         naClose   (int fd);
-NA_IAPI NAFilesize  naRead    (int fd, void* buf, NAFilesize bytesize);
-NA_IAPI NAFilesize  naWrite   (int fd, const void* buf, NAFilesize bytesize);
+NA_IAPI NAFilesize  naRead    (int fd, void* buf, NAFilesize byteSize);
+NA_IAPI NAFilesize  naWrite   (int fd, const void* buf, NAFilesize byteSize);
 NA_IAPI int         naMkDir   (const char* path, int mode);
 NA_IAPI int         naChDir   (const char* path);
 NA_IAPI NABool      naExists  (const char* path);
 NA_API  NABool      naIsDir   (const char* path);
 NA_API  NABool      naIsHidden(const char* path);
 NA_IAPI int         naRemove  (const char* path);
-NA_IAPI NABool      naCopyFile(const char* dstpath, const char* srcpath);
+NA_IAPI NABool      naCopyFile(const char* dstPath, const char* srcPath);
 NA_IAPI NABool      naAccess  (const char* path,
                                     NABool doesExists,
                                     NABool canRead,
                                     NABool canWrite,
                                     NABool canExecute);
-NA_IAPI NAUTF8Char* naGetCwd  (NAUTF8Char* buf, NAInt bufsize);
+NA_IAPI NAUTF8Char* naGetCwd  (NAUTF8Char* buf, NAInt bufSize);
 
 
 
@@ -146,10 +146,10 @@ NA_IAPI NAUTF8Char* naGetCwd  (NAUTF8Char* buf, NAInt bufsize);
 //
 // If you don't know, what the mode argument means, use NA_FILEMODE_DEFAULT.
 
-NA_IAPI NAFile* naCreateFileReadingFilename(   const char* filename);
-NA_IAPI NAFile* naCreateFileWritingFilename(   const char* filename,
+NA_IAPI NAFile* naCreateFileReadingPath(   const char* filePath);
+NA_IAPI NAFile* naCreateFileWritingPath(   const char* filePath,
                                                 NAFileMode mode);
-NA_IAPI NAFile* naCreateFileAppendingFilename( const char* filename,
+NA_IAPI NAFile* naCreateFileAppendingPath( const char* filePath,
                                                 NAFileMode mode);
 
 // Makes an NAFile struct wrapped around the standard channels.
@@ -178,8 +178,8 @@ NA_IAPI NAFilesize naComputeFileBytesize(const NAFile* file);
 NA_IAPI NABool naIsFileOpen(const NAFile* file);
 
 // Re-adjusts the internal file pointer to the given offset.
-NA_IAPI void naSeekFileAbsolute(NAFile* file, NAFilesize byteoffset);
-NA_IAPI void naSeekFileRelative(NAFile* file, NAFilesize byteoffset);
+NA_IAPI void naSeekFileAbsolute(NAFile* file, NAFilesize byteOffset);
+NA_IAPI void naSeekFileRelative(NAFile* file, NAFilesize byteOffset);
 
 // Reads the given number of bytes and stores it without further manipulation
 // in buf. The buffer must be big enough, no overflow check is made. This is
@@ -190,7 +190,7 @@ NA_IAPI void naSeekFileRelative(NAFile* file, NAFilesize byteoffset);
 // Returns the number of bytes read.
 NA_IAPI NAFilesize naReadFileBytes( NAFile* file,
                                       void* buf,
-                                 NAFilesize bytesize);
+                                 NAFilesize byteSize);
 
 // Writes the given number of bytes from ptr to the file without further
 // manipulation. The buffer must be big enough, no overflow check is made.
@@ -201,7 +201,7 @@ NA_IAPI NAFilesize naReadFileBytes( NAFile* file,
 // Returns the number of bytes written.
 NA_IAPI NAFilesize naWriteFileBytes(  NAFile* file,
                                   const void* ptr,
-                                   NAFilesize bytesize);
+                                   NAFilesize byteSize);
 
 
 // //////////////////////////

@@ -25,9 +25,9 @@ struct NAHeap{
   NAInt       (*movedown)         (NAHeap*, const void*, NAInt);
 };
 // The root field is needed because the inline functions below have no idea
-// whether the heap stores backpointers or not. But as the root element is
+// whether the heap stores backPointers or not. But as the root element is
 // stored at array index 1, a pointer to that location is needed as the two
-// structs differ in bytesize whether they do or do not store backpointers.
+// structs differ in byteSize whether they do or do not store backPointers.
 
 #include "../../NAMemory.h"
 
@@ -35,7 +35,7 @@ struct NAHeap{
 // be hidden to the user.
 //
 // There are two different structures. The second is used only when the
-// backpointer-flag is set when calling naInitHeap. Note that the distinction
+// backPointer-flag is set when calling naInitHeap. Note that the distinction
 // of the two structs is made using function pointers and a pointer to the root
 // element which makes the implementation rather complicated to read. But it
 // is blazingly fast.
@@ -54,7 +54,7 @@ struct NAHeapBackEntry{
   const void*       key;
   NAPtr             ptr;
 //  NABool            importantindex;
-  NAInt*            backpointer;
+  NAInt*            backPointer;
 };
 
 
@@ -94,14 +94,14 @@ NA_IDEF NAInt naGetHeapMaxCount(const NAHeap* heap){
 NA_IDEF void naInsertHeapElementConst(  NAHeap* heap,
                                     const void* ptr,
                                     const void* key,
-                                         NAInt* backpointer){
-  heap->insertConst(heap, ptr, key, backpointer);
+                                         NAInt* backPointer){
+  heap->insertConst(heap, ptr, key, backPointer);
 }
 NA_IDEF void naInsertHeapElementMutable( NAHeap* heap,
                                           void* ptr,
                                     const void* key,
-                                         NAInt* backpointer){
-  heap->insertMutable(heap, ptr, key, backpointer);
+                                         NAInt* backPointer){
+  heap->insertMutable(heap, ptr, key, backPointer);
 }
 
 
@@ -152,20 +152,20 @@ NA_IDEF const void* naGetHeapRootKey(const NAHeap* heap){
 }
 
 
-NA_IDEF void naUpdateHeapElement(NAHeap* heap, NAInt backpointer){
-  heap->updateBack(heap, backpointer);
+NA_IDEF void naUpdateHeapElement(NAHeap* heap, NAInt backPointer){
+  heap->updateBack(heap, backPointer);
 }
 
 
 
-NA_IDEF const void* naRemoveHeapPosConst(NAHeap* heap, NAInt backpointer){
-  return heap->removePosConst(heap, backpointer);
+NA_IDEF const void* naRemoveHeapPosConst(NAHeap* heap, NAInt backPointer){
+  return heap->removePosConst(heap, backPointer);
 }
 
 
 
-NA_IDEF void* naRemoveHeapPosMutable(NAHeap* heap, NAInt backpointer){
-  return heap->removePosMutable(heap, backpointer);
+NA_IDEF void* naRemoveHeapPosMutable(NAHeap* heap, NAInt backPointer){
+  return heap->removePosMutable(heap, backPointer);
 }
 
 

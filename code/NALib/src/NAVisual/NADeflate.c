@@ -543,10 +543,10 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, N
 
   uint8 cmf;
   uint8 flg;
-  NAInt bytesize;
+  NAInt byteSize;
   NAChecksum checksum;
   uint32 adler;
-  NAInt curoffset;
+  NAInt curOffset;
   NABufferIterator iterout;
 
   #ifndef NDEBUG
@@ -568,25 +568,25 @@ NA_DEF void naFillBufferWithZLIBCompression(NABuffer* output, NABuffer* input, N
   naSetBufferEndianness(output, NA_ENDIANNESS_LITTLE);
   // todo: this should be in a separate buffer.
 
-  bytesize = naGetBufferRange(input).length;
+  byteSize = naGetBufferRange(input).length;
 //  naLocateBufferAbsolute(input, 0);
 
-  curoffset = 0;
-  while(bytesize > 0){
-    uint16 curbytesize;
+  curOffset = 0;
+  while(byteSize > 0){
+    uint16 curbyteSize;
     NAByte headbyte = (0 << 1);
-    if(bytesize >= (1 << 15)){
-      curbytesize = (1 << 15) - 1;
+    if(byteSize >= (1 << 15)){
+      curbyteSize = (1 << 15) - 1;
     }else{
-      curbytesize = (uint16)bytesize;
+      curbyteSize = (uint16)byteSize;
       headbyte |= 1;
     }
     naWriteBufferu8(&iterout, headbyte);
-    naWriteBufferu16(&iterout, curbytesize);
-    naWriteBufferu16(&iterout, ~curbytesize);
-    naWriteBufferBuffer(&iterout, input, naMakeRangei(curoffset, curbytesize));
-    bytesize -= curbytesize;
-    curoffset += curbytesize;
+    naWriteBufferu16(&iterout, curbyteSize);
+    naWriteBufferu16(&iterout, ~curbyteSize);
+    naWriteBufferBuffer(&iterout, input, naMakeRangei(curOffset, curbyteSize));
+    byteSize -= curbyteSize;
+    curOffset += curbyteSize;
   }
 
   // We write the adler number. Note that this must be in network byte order

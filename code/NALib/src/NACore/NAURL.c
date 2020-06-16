@@ -4,21 +4,21 @@
 
 NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* string){
   NAUTF8Char curchar;
-  NAString* inputstring;
+  NAString* inputString;
   NAString* pathcomponent;
   NABufferIterator iter;
 
   url = naInitURL(url);
   if(!string){return url;}
-  inputstring = naNewStringWithUTF8CStringLiteral(string);
+  inputString = naNewStringWithUTF8CStringLiteral(string);
 
-  curchar = *naGetStringUTF8Pointer(inputstring);
+  curchar = *naGetStringUTF8Pointer(inputString);
   if((curchar == NA_PATH_DELIMITER_UNIX) || (curchar == NA_PATH_DELIMITER_WIN)){
     url->status |= NA_URL_PATH_ABSOLUTE;
-    inputstring = naNewStringExtraction(inputstring, 1, -1);
+    inputString = naNewStringExtraction(inputString, 1, -1);
   }
 
-  iter = naMakeBufferAccessor(naGetStringBufferMutable(inputstring));
+  iter = naMakeBufferAccessor(naGetStringBufferMutable(inputString));
   na_LocateBufferStart(&iter);
 
   while(!naIsBufferAtInitial(&iter)){

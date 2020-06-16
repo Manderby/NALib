@@ -6,7 +6,7 @@
 
 
 // An NAPtr stores a C-Pointer and the information whether it is const or
-// mutable. It also stores information about the bytesize of the memory
+// mutable. It also stores information about the byteSize of the memory
 // being pointed at and how it is null terminated. Even more, it stores,
 // how the pointer had originally been allocated. All this information is just
 // for debugging and can be omitted if necessary. When compiling with NDEBUG,
@@ -77,16 +77,16 @@ NA_IDEF NAPtr naMakePtrNull(){
 
 
 
-// Note: bytesize 0 ist not allowed. Allowing it would introduce an if statement
+// Note: byteSize 0 ist not allowed. Allowing it would introduce an if statement
 // which should not exist at this low level function. A debug error will fire
 // and you have to deal with zero sizes in higher level functions.
-NA_IDEF NAPtr naMakePtrWithBytesize(NAInt bytesize){
+NA_IDEF NAPtr naMakePtrWithBytesize(NAInt byteSize){
   NAPtr ptr;
   #ifndef NDEBUG
-    if(bytesize == NA_ZERO)
-      naError("bytesize is zero.");
+    if(byteSize == NA_ZERO)
+      naError("byteSize is zero.");
   #endif
-  ptr.data.d = naMalloc(bytesize);
+  ptr.data.d = naMalloc(byteSize);
   #ifndef NDEBUG
     ptr.flags = NA_ZERO;
   #endif

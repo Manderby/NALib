@@ -133,20 +133,20 @@ NA_HDEF NAInt na_GetKeyIndexOctDouble(const void* basekey, const void* testkey, 
   if(testVertex->z >= baseVertex->z + childwidth){index |= 4;}
   return index;
 }
-NA_HDEF NABool na_TestKeyOctDouble(const void* lowerlimit, const void* upperlimit, const void* key){
-  return NA_KEY_OP(LowerEqual, NAVertex)(lowerlimit, key) && NA_KEY_OP(Lower, NAVertex)(key, upperlimit);
+NA_HDEF NABool na_TestKeyOctDouble(const void* lowerLimit, const void* upperLimit, const void* key){
+  return NA_KEY_OP(LowerEqual, NAVertex)(lowerLimit, key) && NA_KEY_OP(Lower, NAVertex)(key, upperLimit);
 }
 NA_HDEF NABool na_TestKeyNodeContainOctDouble(NATreeNode* parentnode, const void* key){
   NATreeOctNode* octNode = (NATreeOctNode*)(parentnode);
   double childwidth = naMakeDoubleWithExponent((int32)octNode->childexponent);
-  NAVertex upperlimit = naMakeVertex(octNode->origin.x + 2 * childwidth, octNode->origin.y + 2 * childwidth, octNode->origin.z + 2 * childwidth);
-  return NA_KEY_OP(LowerEqual, NAVertex)(&(octNode->origin), key) && NA_KEY_OP(Lower, NAVertex)(key, &upperlimit);
+  NAVertex upperLimit = naMakeVertex(octNode->origin.x + 2 * childwidth, octNode->origin.y + 2 * childwidth, octNode->origin.z + 2 * childwidth);
+  return NA_KEY_OP(LowerEqual, NAVertex)(&(octNode->origin), key) && NA_KEY_OP(Lower, NAVertex)(key, &upperLimit);
 }
 NA_HDEF NABool na_TestKeyLeafContainOctDouble(NATreeLeaf* leaf, const void* key){
   NATreeOctLeaf* octLeaf = (NATreeOctLeaf*)(leaf);
   double leafwidth = naMakeDoubleWithExponent((int32)octLeaf->leafexponent);
-  NAVertex upperlimit = naMakeVertex(octLeaf->origin.x + leafwidth, octLeaf->origin.y + leafwidth, octLeaf->origin.z + leafwidth);
-  return NA_KEY_OP(LowerEqual, NAVertex)(&(octLeaf->origin), key) && NA_KEY_OP(Lower, NAVertex)(key, &upperlimit);
+  NAVertex upperLimit = naMakeVertex(octLeaf->origin.x + leafwidth, octLeaf->origin.y + leafwidth, octLeaf->origin.z + leafwidth);
+  return NA_KEY_OP(LowerEqual, NAVertex)(&(octLeaf->origin), key) && NA_KEY_OP(Lower, NAVertex)(key, &upperLimit);
 }
 
 
@@ -165,7 +165,7 @@ NA_HDEF void na_DestructTreeLeafOct(NATreeLeaf* leaf){
 
 
 
-NA_HDEF NATreeNode* na_LocateBubbleOctWithLimits(const NATree* tree, NATreeNode* node, const void* origin, const void* lowerlimit, const void* upperlimit, NATreeItem* previtem){
+NA_HDEF NATreeNode* na_LocateBubbleOctWithLimits(const NATree* tree, NATreeNode* node, const void* origin, const void* lowerLimit, const void* upperLimit, NATreeItem* previtem){
   NATreeOctNode* octNode;
   NATreeItem* item;
   
@@ -183,18 +183,18 @@ NA_HDEF NATreeNode* na_LocateBubbleOctWithLimits(const NATree* tree, NATreeNode*
 //  if(tree->config->keyEqualComparer(origin, na_GetOctNodeKey(octNode))){return node;}  // Wrong! todo
   // Otherwise, we set the limits dependent on the previous node.
   if(na_GetTreeNodeChildIndex(tree->config, node, previtem) == 1){ // for octtrees, that is of course wrong.
-    lowerlimit = na_GetOctNodeKey(octNode);
+    lowerLimit = na_GetOctNodeKey(octNode);
   }else{
-    upperlimit = na_GetOctNodeKey(octNode);
+    upperLimit = na_GetOctNodeKey(octNode);
   }
   // If we know both limits and the key is contained within, return.
-  if(lowerlimit && upperlimit && tree->config->keyTester(lowerlimit, upperlimit, origin)){
+  if(lowerLimit && upperLimit && tree->config->keyTester(lowerLimit, upperLimit, origin)){
     return node;
   }
   // Otherwise, go up if possible.
   item = na_GetTreeNodeItem(node);
   if(!na_IsTreeItemRoot(item)){
-    return na_LocateBubbleOctWithLimits(tree, na_GetTreeItemParent(item), origin, lowerlimit, upperlimit, item);
+    return na_LocateBubbleOctWithLimits(tree, na_GetTreeItemParent(item), origin, lowerLimit, upperLimit, item);
   }else{
     // We reached the root. No need to break a sweat. Simply return null.
     return NA_NULL;

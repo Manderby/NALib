@@ -33,26 +33,26 @@ NA_IDEF void naFixBufferRange(NABuffer* buffer){
 
 
 
-NA_IDEF void naExtendBufferRange(NABuffer* buffer, NAInt bytesatstart, NAInt bytesatend){
+NA_IDEF void naExtendBufferRange(NABuffer* buffer, NAInt bytesAtStart, NAInt bytesAtEnd){
   #ifndef NDEBUG
-    if(bytesatstart < 0)
-      naError("bytesatstart should not be negative");
-    if(bytesatend < 0)
-      naError("bytesatend should not be negative");
+    if(bytesAtStart < 0)
+      naError("bytesAtStart should not be negative");
+    if(bytesAtEnd < 0)
+      naError("bytesAtEnd should not be negative");
   #endif
-  na_EnsureBufferRange(buffer, buffer->range.origin - bytesatstart, naGetRangeiEnd(buffer->range) + bytesatend);
+  na_EnsureBufferRange(buffer, buffer->range.origin - bytesAtStart, naGetRangeiEnd(buffer->range) + bytesAtEnd);
 }
 
 
 
 NA_IDEF NANewlineEncoding naGetBufferNewlineEncoding(NABuffer* buffer){
-  return buffer->newlineencoding;
+  return buffer->newlineEncoding;
 }
 
 
 
-NA_IDEF void naSetBufferNewlineEncoding(NABuffer* buffer, NANewlineEncoding newlineencoding){
-  buffer->newlineencoding = newlineencoding;
+NA_IDEF void naSetBufferNewlineEncoding(NABuffer* buffer, NANewlineEncoding newlineEncoding){
+  buffer->newlineEncoding = newlineEncoding;
 }
 
 
@@ -70,7 +70,7 @@ NA_IDEF void naSetBufferEndianness(NABuffer* buffer, NAInt endianness){
 
 
 NA_IDEF NAUInt naGetBufferLineNumber(NABufferIterator* iter){
-  return iter->linenum;
+  return iter->lineNum;
 }
 
 

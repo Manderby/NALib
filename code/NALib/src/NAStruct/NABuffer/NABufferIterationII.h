@@ -6,13 +6,13 @@
 
 
 NA_HIDEF const NABuffer* na_GetBufferIteratorBufferConst(const NABufferIterator* iter){
-  return naGetPtrConst(iter->bufferptr);
+  return naGetPtrConst(iter->bufferPtr);
 }
 
 
 
 NA_HIDEF NABuffer* na_GetBufferIteratorBufferMutable(NABufferIterator* iter){
-  return naGetPtrMutable(iter->bufferptr);
+  return naGetPtrMutable(iter->bufferPtr);
 }
 
 
@@ -39,19 +39,19 @@ NA_IDEF NABool naLocateBufferFromEnd(NABufferIterator* iter, NAInt offset){
 
 
 NA_HIDEF NAInt na_GetBufferIteratorPartOffset(NABufferIterator* iter){
-  return iter->partoffset;
+  return iter->partOffset;
 }
 
 
 
 NA_HIDEF NABufferPart* na_GetBufferPart(NABufferIterator* iter){
-  return naGetTreeCurLeafMutable(&(iter->partiter));
+  return naGetTreeCurLeafMutable(&(iter->partIter));
 }
 
 
 
 NA_IDEF NABool naIsBufferAtInitial(NABufferIterator* iter){
-  return naIsTreeAtInitial(&(iter->partiter));
+  return naIsTreeAtInitial(&(iter->partIter));
 }
 
 
@@ -60,21 +60,21 @@ NA_IDEF NABool naIsBufferAtEnd(NABufferIterator* iter){
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
   if(!naIsBufferAtInitial(iter)){
     NABufferPart* part = na_GetBufferPart(iter);
-    if(iter->partoffset < 0 || iter->partoffset >= na_GetBufferPartByteSize(part)){
+    if(iter->partOffset < 0 || iter->partOffset >= na_GetBufferPartByteSize(part)){
       NABool found = naLocateBufferAbsolute(iter, naGetBufferLocation(iter));
       if(!found){
-        naResetTreeIterator(&(iter->partiter));
-        iter->partoffset = naGetRangeiEnd(buffer->range);
+        naResetTreeIterator(&(iter->partIter));
+        iter->partOffset = naGetRangeiEnd(buffer->range);
       }
     }
   }
-  return (naIsBufferAtInitial(iter) && (iter->partoffset == naGetRangeiEnd(buffer->range)));
+  return (naIsBufferAtInitial(iter) && (iter->partOffset == naGetRangeiEnd(buffer->range)));
 }
 
 
 
 NA_IDEF uint8 naGetBufferCurBit(NABufferIterator* iter){
-  return iter->curbit;
+  return iter->curBit;
 }
 
 

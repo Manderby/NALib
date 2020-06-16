@@ -33,9 +33,9 @@ typedef enum{
 // Remapping of some starndard functions.
 NA_IAPI NAInt naStrlen(               const NAUTF8Char* str);
 NA_IAPI NAInt naVsnprintf(                  NAUTF8Char* buffer,
-                                                 NAUInt length,
+                                                 size_t length,
                                       const NAUTF8Char* newstr,
-                                                va_list argumentlist);
+                                                va_list argumentList);
 
 // Returns the number of characters needed to transform the given string and
 // arguments using sprintf.
@@ -45,11 +45,11 @@ NA_IAPI NAInt naVarargStringLength(   const NAUTF8Char* string,
 // Compares the string content of the two pointers being equal.
 // if length is 0, the two strings are expected to be zero-terminated and
 // the length of the two strings is computed automatically.
-// If casesensitive is NA_TRUE, an exact match is tested.
+// If caseSensitive is NA_TRUE, an exact match is tested.
 NA_API NABool naEqualUTF8CStringLiterals( const NAUTF8Char* string1,
                                           const NAUTF8Char* string2,
                                                       NAInt length,
-                                                     NABool casesensitive);
+                                                     NABool caseSensitive);
 
 // Allocates and returns memory and formats the given string like printf.
 // When useTmp is true, the returned pointer will be automatically collected
@@ -104,17 +104,17 @@ NA_API NAString* naNewStringWithMutableUTF8Buffer(  NAUTF8Char* buffer,
 // Creates an NAString just like sprintf.
 NA_API NAString* naNewStringWithFormat(const NAUTF8Char* format,
                                                           ...);
-// Does the same thing but with an existing va_list argument. The argumentlist
+// Does the same thing but with an existing va_list argument. The argumentList
 // argument will not be altered by this function.
 NA_API NAString* naNewStringWithArguments(const NAUTF8Char* format,
-                                                    va_list argumentlist);
+                                                    va_list argumentList);
 
 
-// Fills deststring with a desired part of srcstring.
+// Fills deststring with a desired part of srcString.
 //
 // - if charoffset is negative, it denotes the number of chars from the end.
-//   Note that the end has index [bytesize], meaning -1 denotes the index
-//   [bytesize-1] which is the last char.
+//   Note that the end has index [byteSize], meaning -1 denotes the index
+//   [byteSize-1] which is the last char.
 // - if length is negative, it denotes the size up and including to the given
 //   number of chars from the end, meaning -1 denotes the last char.
 // - if the charoffset and length combination somehow leads to a length of
@@ -131,10 +131,10 @@ NA_API NAString* naNewStringWithArguments(const NAUTF8Char* format,
 // - ( 0, -3)   -> ABCD   (truncate end from right)
 // - (-3, -2)   ->    DE  (mix it as you desire)
 // - ( 0, -1)   -> ABCDEF (exact duplicate)
-// - ( 1,  0)   ->        (empty string because of desired bytesize == 0)
-// - ( 2, -5)   ->        (empty string because of resulting bytesize == 0)
+// - ( 1,  0)   ->        (empty string because of desired byteSize == 0)
+// - ( 2, -5)   ->        (empty string because of resulting byteSize == 0)
 // - (-9,  9)   ->        (empty string with warning when debugging)
-NA_API NAString* naNewStringExtraction(const NAString* srcstring,
+NA_API NAString* naNewStringExtraction(const NAString* srcString,
                                                  NAInt offset,
                                                  NAInt length);
 
@@ -167,16 +167,16 @@ NA_API NAUTF8Char naGetStringChar(NAString* string, NAInt index);
 
 
 // The following two functions allow you to get either the basename or the
-// suffix of a filename. For example, the file "folder/document.txt" returns
+// suffix of a path. For example, the file "folder/document.txt" returns
 // the basename "folder/document" and the suffix "txt".
 // The suffix is detected by the first dot '.' from the right. If no such
 // dot is found, suffix is empty.
-NA_API NAString* naNewStringWithBasenameOfFilename(const NAString* filename);
-NA_API NAString* naNewStringWithSuffixOfFilename  (const NAString* filename);
+NA_API NAString* naNewStringWithBasenameOfPath(const NAString* filePath);
+NA_API NAString* naNewStringWithSuffixOfPath  (const NAString* filePath);
 
 
 
-// Creates a new string by encoding or decoding the characters of inputstring.
+// Creates a new string by encoding or decoding the characters of inputString.
 //         | Encoding example  | Decoding example |  Notes
 // --------+-------------------+------------------+----------------------
 // CEscape | " becomes \"      | \" becomes "     |
@@ -187,12 +187,12 @@ NA_API NAString* naNewStringWithSuffixOfFilename  (const NAString* filename);
 // Therefore, the two parameters MUST not be the same!
 // Warning: XML-Decoding does not support numeric entities yet.
 //
-NA_API NAString* naNewStringCEscaped  (const NAString* inputstring);
-NA_API NAString* naNewStringCUnescaped(const NAString* inputstring);
-NA_API NAString* naNewStringXMLEncoded(const NAString* inputstring);
-NA_API NAString* naNewStringXMLDecoded(const NAString* inputstring);
-NA_API NAString* naNewStringEPSEncoded(const NAString* inputstring);
-NA_API NAString* naNewStringEPSDecoded(const NAString* inputstring);
+NA_API NAString* naNewStringCEscaped  (const NAString* inputString);
+NA_API NAString* naNewStringCUnescaped(const NAString* inputString);
+NA_API NAString* naNewStringXMLEncoded(const NAString* inputString);
+NA_API NAString* naNewStringXMLDecoded(const NAString* inputString);
+NA_API NAString* naNewStringEPSEncoded(const NAString* inputString);
+NA_API NAString* naNewStringEPSDecoded(const NAString* inputString);
 
 
 #if NA_OS == NA_OS_WINDOWS
@@ -200,45 +200,45 @@ NA_API NAString* naNewStringEPSDecoded(const NAString* inputstring);
   // Basic conversion between UTF8 and either UTF16 or Ansi
   // Returns a newly mallocated memory block containing the encoded
   // string. The resulting string must be freed manually. COPIES ALWAYS!
-  NA_API wchar_t* naAllocWideCharStringWithUTF8String(const NAUTF8Char* utf8string);
-  NA_API char* naAllocAnsiStringWithUTF8String(const NAUTF8Char* utf8string);
+  NA_API wchar_t* naAllocWideCharStringWithUTF8String(const NAUTF8Char* utf8String);
+  NA_API char* naAllocAnsiStringWithUTF8String(const NAUTF8Char* utf8String);
 
   // Creates a new NAString from an encoded string. COPIES ALWAYS!
-  NA_API NAString* naNewStringFromWideCharString(wchar_t* wcharstring);
-  NA_API NAString* naNewStringFromAnsiString(char* ansistring);
+  NA_API NAString* naNewStringFromWideCharString(wchar_t* wcharString);
+  NA_API NAString* naNewStringFromAnsiString(char* ansiString);
 
   // Conversions based on the application setting.
   // (See project properties, character set)
-  NA_API TCHAR* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8string);
-  NA_API NAString* naNewStringFromSystemString(TCHAR* systemstring);
+  NA_API TCHAR* naAllocSystemStringWithUTF8String(const NAUTF8Char* utf8String);
+  NA_API NAString* naNewStringFromSystemString(TCHAR* systemString);
 
 #endif
 
 
-// Appending functions: Appends something at the end of originalstring.
-// The storage of originalstring will be detached and deleted if necessary.
+// Appending functions: Appends something at the end of originalString.
+// The storage of originalString will be detached and deleted if necessary.
 // Before that, all content will be COPIED. The resulting string will be
 // NULL-terminated.
 
 // Appends another NAString
-NA_API void naAppendStringString(       NAString* originalstring,
+NA_API void naAppendStringString(       NAString* originalString,
                                   const NAString* string2);
 // Appends an UTF-8 character
 NA_API void naAppendStringChar(
-                                        NAString* originalstring,
-                                       NAUTF8Char newchar);
+                                        NAString* originalString,
+                                       NAUTF8Char newChar);
 // Appends an UTF-8 C-String formatted just like sprintf. You can use this
 // function to append C-Strings without arguments as well.
 NA_API void naAppendStringFormat(
-                                         NAString* originalstring,
+                                         NAString* originalString,
                                  const NAUTF8Char* format,
                                                    ...);
-// Does the same thing but with an existing va_list argument. The argumentlist
+// Does the same thing but with an existing va_list argument. The argumentList
 // argument will not be altered by this function.
 NA_API void naAppendStringArguments(
-                                         NAString* originalstring,
+                                         NAString* originalString,
                                  const NAUTF8Char* format,
-                                           va_list argumentlist);
+                                           va_list argumentList);
 
 
 
@@ -246,12 +246,12 @@ NA_API void naAppendStringArguments(
 // Compares two strings and returns NA_TRUE if they are equal.
 NA_API NABool naEqualStringToString(            const NAString* string1,
                                                 const NAString* string2,
-                                                         NABool casesensitive);
+                                                         NABool caseSensitive);
 // Compares a string with a C string literal and returns NA_TRUE if they are
 // equal.
 NA_API NABool naEqualStringToUTF8CString(const NAString* string1,
                                               const NAUTF8Char* string2,
-                                                         NABool casesensitive);
+                                                         NABool caseSensitive);
 
 
 // These functions provide basic functionality for parsing numbers from a given

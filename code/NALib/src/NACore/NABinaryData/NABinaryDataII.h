@@ -92,16 +92,16 @@ NA_IDEF void naCopy128(void* NA_RESTRICT d, const void* NA_RESTRICT s){
   *(NAu64*)d = *(NAu64*)s;
 }
 
-NA_IDEF void naCopyn(void* NA_RESTRICT d, const void* NA_RESTRICT s, NAInt bytesize){
+NA_IDEF void naCopyn(void* NA_RESTRICT d, const void* NA_RESTRICT s, NAInt byteSize){
   #ifndef NDEBUG
     if(!d)
       naCrash("Pointer d is Null-Pointer.");
     if(!s)
       naCrash("Pointer s is Null-Pointer.");
-    if(bytesize < 1)
+    if(byteSize < 1)
       naCrash("count is smaller than 1.");
   #endif
-  memcpy(d, s, (size_t)bytesize);
+  memcpy(d, s, (size_t)byteSize);
 }
 
 
@@ -258,75 +258,75 @@ NA_IDEF NABool naEqual128(void* NA_RESTRICT a, void* NA_RESTRICT b){
 // Fills all bytes with zero values
 // ///////////////////////////////////////////////////////////
 
-NA_IDEF void naZeron32(void* d, int32 bytesize){
+NA_IDEF void naZeron32(void* d, int32 byteSize){
   #ifndef NDEBUG
-    if(bytesize < NA_ONE_i32)
+    if(byteSize < NA_ONE_i32)
       naError("count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
-  memset(d, 0, (size_t)bytesize);
+  memset(d, 0, (size_t)byteSize);
 }
 
-NA_IDEF void naZeron64(void* d, NAi64 bytesize){
+NA_IDEF void naZeron64(void* d, NAi64 byteSize){
   #ifndef NDEBUG
-    if(naSmalleri64(bytesize, NA_ONE_i64))
-      naError("count should not be < 1");
-  #endif
-  // Note that the bzero function does the same but is deprecated.
-  #if defined NA_TYPE_INT64
-    memset(d, 0, (size_t)bytesize);
-  #else
-    #ifndef NDEBUG
-      naError("Impossible to convert to a 64 bit size_t type, as no accessible 64 bit integer type exists in this configuration. Falling back to 32 bits.");
-    #endif
-    memset(d, 0, (size_t)naCasti64Toi32(bytesize));
-  #endif
-}
-
-NA_IDEF void naZeron(void* d, NAInt bytesize){
-  #if NA_TYPE_NAINT_BITS == 32
-    naZeron32(d, bytesize);
-  #elif NA_TYPE_NAINT_BITS == 64
-    naZeron64(d, bytesize);
-  #else
-    #error "Integer bytesize unknown"
-  #endif
-}
-
-
-
-NA_IDEF void naSetn32(void* d, int32 bytesize, NAByte value){
-  #ifndef NDEBUG
-    if(bytesize < NA_ONE_i32)
-      naError("count should not be < 1");
-  #endif
-  // Note that the bzero function does the same but is deprecated.
-  memset(d, value, (size_t)bytesize);
-}
-
-NA_IDEF void naSetn64(void* d, NAi64 bytesize, NAByte value){
-  #ifndef NDEBUG
-    if(naSmalleri64(bytesize, NA_ONE_i64))
+    if(naSmalleri64(byteSize, NA_ONE_i64))
       naError("count should not be < 1");
   #endif
   // Note that the bzero function does the same but is deprecated.
   #if defined NA_TYPE_INT64
-    memset(d, value, (size_t)bytesize);
+    memset(d, 0, (size_t)byteSize);
   #else
     #ifndef NDEBUG
       naError("Impossible to convert to a 64 bit size_t type, as no accessible 64 bit integer type exists in this configuration. Falling back to 32 bits.");
     #endif
-    memset(d, value, (size_t)naCasti64Toi32(bytesize));
+    memset(d, 0, (size_t)naCasti64Toi32(byteSize));
   #endif
 }
 
-NA_IDEF void naSetn(void* d, NAInt bytesize, NAByte value){
+NA_IDEF void naZeron(void* d, NAInt byteSize){
   #if NA_TYPE_NAINT_BITS == 32
-    naSetn32(d, bytesize, value);
+    naZeron32(d, byteSize);
   #elif NA_TYPE_NAINT_BITS == 64
-    naSetn64(d, bytesize, value);
+    naZeron64(d, byteSize);
   #else
-    #error "Integer bytesize unknown"
+    #error "Integer byteSize unknown"
+  #endif
+}
+
+
+
+NA_IDEF void naSetn32(void* d, int32 byteSize, NAByte value){
+  #ifndef NDEBUG
+    if(byteSize < NA_ONE_i32)
+      naError("count should not be < 1");
+  #endif
+  // Note that the bzero function does the same but is deprecated.
+  memset(d, value, (size_t)byteSize);
+}
+
+NA_IDEF void naSetn64(void* d, NAi64 byteSize, NAByte value){
+  #ifndef NDEBUG
+    if(naSmalleri64(byteSize, NA_ONE_i64))
+      naError("count should not be < 1");
+  #endif
+  // Note that the bzero function does the same but is deprecated.
+  #if defined NA_TYPE_INT64
+    memset(d, value, (size_t)byteSize);
+  #else
+    #ifndef NDEBUG
+      naError("Impossible to convert to a 64 bit size_t type, as no accessible 64 bit integer type exists in this configuration. Falling back to 32 bits.");
+    #endif
+    memset(d, value, (size_t)naCasti64Toi32(byteSize));
+  #endif
+}
+
+NA_IDEF void naSetn(void* d, NAInt byteSize, NAByte value){
+  #if NA_TYPE_NAINT_BITS == 32
+    naSetn32(d, byteSize, value);
+  #elif NA_TYPE_NAINT_BITS == 64
+    naSetn64(d, byteSize, value);
+  #else
+    #error "Integer byteSize unknown"
   #endif
 }
 

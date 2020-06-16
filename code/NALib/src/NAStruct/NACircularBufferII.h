@@ -39,8 +39,8 @@ void* naPullCircularBuffer(NACircularBuffer* buffer){
 }
 
 
-void naPushCircularBuffer(NACircularBuffer* buffer, void* newdata){
-  buffer->data[buffer->last] = newdata;
+void naPushCircularBuffer(NACircularBuffer* buffer, void* newData){
+  buffer->data[buffer->last] = newData;
   buffer->last = buffer->last % buffer->space;
   #ifndef NDEBUG
     if(buffer->last == buffer->cur)

@@ -13,7 +13,7 @@
 
 NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
   BYTE* lpPixels;
-  NABabyImage* babyimage;
+  NABabyImage* babyImage;
 
   HDC hdcSource = GetDC(NA_NULL); // the source device context
   HBITMAP hSource = (HBITMAP)nativeImage; // the bitmap selected into the device context
@@ -34,21 +34,21 @@ NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage){
   // bitmap data (the "pixels") in the buffer lpPixels
   GetDIBits(hdcSource, hSource, 0, MyBMInfo.bmiHeader.biHeight, lpPixels, &MyBMInfo, DIB_RGB_COLORS);
 
-  babyimage = naCreateBabyImage(naMakeSizei(MyBMInfo.bmiHeader.biWidth, MyBMInfo.bmiHeader.biHeight), NA_NULL);
+  babyImage = naCreateBabyImage(naMakeSizei(MyBMInfo.bmiHeader.biWidth, MyBMInfo.bmiHeader.biHeight), NA_NULL);
   // Windows does store an alpha component but it is not in use and therefore zero.
   // We therefore ignore it in the following call and receyve a completely opaque image.
-  naFillBabyImageWithu8(babyimage, lpPixels, NA_FALSE, NA_COLOR_BUFFER_BGR0);
+  naFillBabyImageWithu8(babyImage, lpPixels, NA_FALSE, NA_COLOR_BUFFER_BGR0);
   naFree(lpPixels);
 
   // clean up: deselect bitmap from device context, close handles, delete buffer
-  return babyimage;
+  return babyImage;
 }
 
 
 
 NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
   // Currently, only png is possible
-  NAPNG* png = naNewPNGWithFile(pathStr);
+  NAPNG* png = naNewPNGWithPath(pathStr);
   NABabyImage* babyImage = naCreateBabyImageFromPNG(png);
   naDelete(png);
   return babyImage;

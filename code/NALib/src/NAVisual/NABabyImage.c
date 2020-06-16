@@ -71,7 +71,7 @@ NA_DEF NABabyImage* naCreateBabyImage(NASizei size, const NABabyColor color){
     if(size.width > NA_MAX_i32 || size.height > NA_MAX_i32)
       naError("size is too big");
     if(color && color[3] == 0.f && (color[0] != 0.f || color[1] != 0.f || color[2] != 0.f))
-      naError("insecure color given");
+      naError("inanoSecondure color given");
   #endif
   image = naAlloc(NABabyImage);
   naInitRefCount(&image->refCount);
@@ -163,7 +163,7 @@ NA_DEF NABabyImage* naCreateBabyImageWithTint(const NABabyImage* base, const NAB
     if(!tint)
       naCrash("tint is Null");
     if(tint[3] == 0.f && (tint[0] != 0.f || tint[1] != 0.f || tint[2] != 0.f))
-      naError("insecure tint color given");
+      naError("inanoSecondure tint color given");
   #endif
   
   retimage = naCreateBabyImage(naGetBabyImageSize(base), NA_NULL);
@@ -271,11 +271,11 @@ NA_DEF void naReleaseBabyImage(NABabyImage* image){
 
 
 
-NA_DEF void naFillBabyImageWithu8(NABabyImage* image, const void* data, NABool toptobottom, NAColorBufferType bufferType){
+NA_DEF void naFillBabyImageWithu8(NABabyImage* image, const void* data, NABool topToBottom, NAColorBufferType bufferType){
   float* imgptr = image->data;
   const uint8* u8ptr;
 
-  if(toptobottom){
+  if(topToBottom){
     NAInt x, y;
     NASizei size = naGetBabyImageSize(image);
     for(y = 0; y < size.height; y++){
@@ -301,11 +301,11 @@ NA_DEF void naFillBabyImageWithu8(NABabyImage* image, const void* data, NABool t
 
 
 
-NA_DEF void naConvertBabyImageTou8(const NABabyImage* image, void* data, NABool toptobottom, NAColorBufferType bufferType){
+NA_DEF void naConvertBabyImageTou8(const NABabyImage* image, void* data, NABool topToBottom, NAColorBufferType bufferType){
   const float* imgptr = image->data;
   uint8* u8ptr;
 
-  if(toptobottom){
+  if(topToBottom){
     NAInt x, y;
     NASizei size = naGetBabyImageSize(image);
     for(y = 0; y < size.height; y++){

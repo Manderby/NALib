@@ -106,13 +106,13 @@ typedef int32_t               int32;
 // NAInt and NAUInt
 //
 // The NAInt type is the default integer used in NALib. Usually, that type
-// corresponds to the bytesize which is needed for storing an address. This
+// corresponds to the byteSize which is needed for storing an address. This
 // means that this type was/is dependent on the system NALib is compiled for.
 // The preferred size of an NAInt can be configured in the NAConfiguration.h
 // file with the NA_PREFERRED_NAINT_BITS macro.
 //
 // If your NAInt is defined to use less bits than an address but you are
-// still in need for an integer which has the same bytesize as an address,
+// still in need for an integer which has the same byteSize as an address,
 // use size_t or ptrdiff_t.
 //
 // NAInt will be used as the default integer type in NALib. Many fundamental
@@ -194,7 +194,7 @@ typedef int32_t               int32;
 // Defining an NAByte as an uint8 can be very handy. In NALib, the NAByte type
 // is often used when a memory block needs to be accessed byte by byte. You
 // could also use a void-pointer for that but void-pointers are sometimes just
-// a little too cumbersome to work with and do not always have a bytesize
+// a little too cumbersome to work with and do not always have a byteSize
 // defined depending on the standard used. Furthermore, a pointer to an uint8
 // can be displayed by a debugger while a pointer to void can not.
 // Why not using the signed variant? Because there are many implementations

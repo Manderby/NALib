@@ -158,8 +158,8 @@ NA_IDEF void naWriteBufferd(NABufferIterator* iter, double value){
 // BLOCK WRITING
 // ////////////////////////////////////
 
-NA_IDEF void naWriteBufferBytes(NABufferIterator* iter, const void* data, NAInt bytesize){
-  na_StoreBufferBytes(iter, data, bytesize, NA_TRUE, NA_TRUE);
+NA_IDEF void naWriteBufferBytes(NABufferIterator* iter, const void* data, NAInt byteSize){
+  na_StoreBufferBytes(iter, data, byteSize, NA_TRUE, NA_TRUE);
 }
 
 

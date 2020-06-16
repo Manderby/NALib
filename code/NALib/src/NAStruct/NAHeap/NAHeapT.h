@@ -21,7 +21,7 @@ NA_HDEF NAInt NA_T3(na_HeapMoveDown, NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE, 
   while((nextindex > 0) && NA_KEY_OP(NA_T_DONT_MOVE_DOWN_COMPARATOR, NA_T_TYPE)(entries[nextindex].key, key)){
     entries[curIndex] = entries[nextindex];
     #if NA_T_USE_BACKPOINTERS
-      *(entries[curIndex].backpointer) = curIndex;
+      *(entries[curIndex].backPointer) = curIndex;
     #endif
     curIndex = nextindex;
     nextindex /= 2;
@@ -56,7 +56,7 @@ NA_HDEF NAInt NA_T3(na_HeapMoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T
         if(NA_KEY_OP(NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE)(entries[indexl].key, key)){
           entries[curIndex] = entries[indexl];
           #if NA_T_USE_BACKPOINTERS
-            *(entries[curIndex].backpointer) = curIndex;
+            *(entries[curIndex].backPointer) = curIndex;
           #endif
           curIndex = indexl;
         }
@@ -71,7 +71,7 @@ NA_HDEF NAInt NA_T3(na_HeapMoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T
         // the left is more important than the key 
         entries[curIndex] = entries[indexl];
         #if NA_T_USE_BACKPOINTERS
-          *(entries[curIndex].backpointer) = curIndex;
+          *(entries[curIndex].backPointer) = curIndex;
         #endif
         curIndex = indexl;
       }else{
@@ -84,7 +84,7 @@ NA_HDEF NAInt NA_T3(na_HeapMoveUp, NA_T_DONT_MOVE_UP_COMPARATOR, NA_T_TYPE, NA_T
         // the right is more important than the key 
         entries[curIndex] = entries[indexr];
         #if NA_T_USE_BACKPOINTERS
-          *(entries[curIndex].backpointer) = curIndex;
+          *(entries[curIndex].backPointer) = curIndex;
         #endif
         curIndex = indexr;
       }else{

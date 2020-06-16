@@ -159,13 +159,13 @@ NA_HIDEF NAPtr na_GetTreeNodeData(const NATreeConfiguration* config, NATreeNode*
 
 
 
-NA_HIDEF void na_SetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node, NAPtr newdata){
+NA_HIDEF void na_SetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node, NAPtr newData){
   #ifndef NDEBUG
     if(!node)
       naCrash("Node is Null Pointer.");
   #endif
   // We thank the power of pointer arithmetic!
-  *(NAPtr*)(((char*)node) + config->nodeUserDataOffset) = newdata; 
+  *(NAPtr*)(((char*)node) + config->nodeUserDataOffset) = newData; 
 }
 
 

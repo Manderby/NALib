@@ -36,8 +36,8 @@ NA_HDEF NAPtr na_ConstructLanguages(const void* key, NAPtr content){
   return naMakePtrWithDataMutable(strings);
 }
 
-NA_HDEF void na_DestructLanguages(NAPtr leafdata){
-  NATree* strings = naGetPtrMutable(leafdata);
+NA_HDEF void na_DestructLanguages(NAPtr leafData){
+  NATree* strings = naGetPtrMutable(leafData);
   naClearTree(strings);
   naFree(strings);
 }
@@ -53,8 +53,8 @@ NA_HDEF NAPtr na_ConstructGroups(const void* key, NAPtr content){
   return naMakePtrWithDataMutable(languages);
 }
 
-NA_HDEF void na_DestructGroups(NAPtr leafdata){
-  NATree* languages = naGetPtrMutable(leafdata);
+NA_HDEF void na_DestructGroups(NAPtr leafData){
+  NATree* languages = naGetPtrMutable(leafData);
   naClearTree(languages);
   naFree(languages);
 }

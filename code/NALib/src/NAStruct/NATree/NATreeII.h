@@ -59,7 +59,7 @@ typedef NABool          (*NAKeyLowerComparer)(const void* key1, const void* key2
 typedef NABool          (*NAKeyLowerEqualComparer)(const void* key1, const void* key2);
 typedef void            (*NAKeyAssigner)(void* dst, const void* src);
 typedef void            (*NAKeyAdder)(void* dst, const void* src1, const void* src2);
-typedef NABool          (*NAKeyTester)(const void* lowerlimit, const void* upperlimit, const void* key);
+typedef NABool          (*NAKeyTester)(const void* lowerLimit, const void* upperLimit, const void* key);
 typedef NABool          (*NAKeyNodeContainTester)(NATreeNode* parentnode, const void* key);
 typedef NABool          (*NAKeyLeafContainTester)(NATreeLeaf* leaf, const void* key);
 
@@ -122,7 +122,7 @@ struct NATreeConfiguration{
   NATreeNodeDataConstructor     nodeDataConstructor;
   NATreeNodeDataDestructor      nodeDataDestructor;
   NATreeNodeUpdater             nodeUpdater;
-  NAPtr                         userdata;
+  NAPtr                         userData;
 };
 
 struct NATreeItem{
@@ -162,8 +162,8 @@ struct NATreeIterationInfo{
   NAInt step;
   NAInt startIndex;
   NAInt breakIndex;
-  const void* lowerlimit;
-  const void* upperlimit;
+  const void* lowerLimit;
+  const void* upperLimit;
 };
 
 
@@ -193,7 +193,7 @@ NA_HIAPI NABool na_IsNodeChildLeaf(NATreeNode* node, NAInt childIndex);
 NA_HIAPI void na_MarkNodeChildLeaf(NATreeNode* node, NAInt childIndex, NABool isleaf);
 NA_HIAPI void* na_GetTreeNodeKey(const NATreeConfiguration* config, NATreeNode* node);
 NA_HIAPI NAPtr na_GetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node);
-NA_HIAPI void na_SetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node, NAPtr newdata);
+NA_HIAPI void na_SetTreeNodeData(const NATreeConfiguration* config, NATreeNode* node, NAPtr newData);
 NA_HIAPI NATreeItem** na_GetTreeNodeChildStorage(NATreeNode* parent);
 NA_HIAPI NATreeItem* na_GetTreeNodeChild(const NATreeConfiguration* config, NATreeNode* parent, NAInt childIndex);
 NA_HIAPI void na_SetTreeNodeChildEmpty(NATreeNode* parent, NAInt childIndex);
@@ -215,7 +215,7 @@ NA_HIAPI void na_SetTreeLeafData(const NATreeConfiguration* config, NATreeLeaf* 
 NA_HIAPI void na_SetTreeIteratorCurItem(NATreeIterator* iter, NATreeItem* newitem);
 NA_HIAPI const NATree* na_GetTreeIteratorTreeConst(const NATreeIterator* iter);
 NA_HIAPI NATree* na_GetTreeIteratorTreeMutable(NATreeIterator* iter);
-NA_HIAPI NABool na_AddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafInsertOrder insertOrder, NABool movetonew);
+NA_HIAPI NABool na_AddTreeContent(NATreeIterator* iter, NAPtr content, NATreeLeafInsertOrder insertOrder, NABool moveToNew);
 NA_HAPI void na_IterateTreeCapture(NATreeIterator* iter, NAInt index, NATreeIterationInfo* info);
 NA_HAPI void na_IterateTreeBubble(NATreeIterator* iter, NATreeIterationInfo* info);
 NA_HAPI  NABool na_IterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo* info);

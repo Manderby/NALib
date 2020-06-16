@@ -69,7 +69,7 @@ typedef enum{
 
 typedef struct{
   NAi64 startgregsec;
-  NAi64 startsisec;
+  NAi64 startsiSecond;
   int16 gregyear;
   NALeapSecondCorrectionIndicator indicator;
 } NATAIPeriod;
@@ -193,8 +193,8 @@ NATAIPeriod naTAIPeriods[NA_TAI_PERIODS_COUNT] = {
 };
 
 
-// NA_DATETIME_SISEC_START_GREGORIAN_PERIOD denotes the sisec relative to the
-// start of the TAI period (sisec == 0) denoting the start of the gregorian
+// NA_DATETIME_SISEC_START_GREGORIAN_PERIOD denotes the siSecond relative to the
+// start of the TAI period (siSecond == 0) denoting the start of the gregorian
 // time period.
 // TAI period starts at January 1st 1958
 // Gregorian time period starts on Friday, October 15th 1582
@@ -205,8 +205,8 @@ NATAIPeriod naTAIPeriods[NA_TAI_PERIODS_COUNT] = {
 #define NA_DATETIME_SISEC_START_GREGORIAN_PERIOD_LO 0x3e3ec200
 #define NA_DATETIME_SISEC_START_GREGORIAN_PERIOD    naCastu64Toi64(naMakeu64(NA_DATETIME_SISEC_START_GREGORIAN_PERIOD_HI, NA_DATETIME_SISEC_START_GREGORIAN_PERIOD_LO))
 
-// NA_DATETIME_SISEC_JULIAN_YEAR_ZERO denotes the sisec relative to the start of the
-// TAI period (sisec == 0) denoting the beginning of the julian year 0 when
+// NA_DATETIME_SISEC_JULIAN_YEAR_ZERO denotes the siSecond relative to the start of the
+// TAI period (siSecond == 0) denoting the beginning of the julian year 0 when
 // using astronomical year numbering.
 // After julian Oct 4th 1582 directly comes gregorian Oct 15th 1582.
 // The year zero in astronomic year numbering equals year 1 BC.
@@ -217,8 +217,8 @@ NATAIPeriod naTAIPeriods[NA_TAI_PERIODS_COUNT] = {
 #define NA_DATETIME_SISEC_YEAR_ZERO_LO              0x9d1b3f80
 #define NA_DATETIME_SISEC_JULIAN_YEAR_ZERO          naCastu64Toi64(naMakeu64(NA_DATETIME_SISEC_YEAR_ZERO_HI, NA_DATETIME_SISEC_YEAR_ZERO_LO))
 
-// NA_DATETIME_SISEC_GREGORIAN_YEAR_ZERO denotes the sisec relative to the start of the
-// TAI period (sisec == 0) denoting the beginning of the gregorian year 0 when
+// NA_DATETIME_SISEC_GREGORIAN_YEAR_ZERO denotes the siSecond relative to the start of the
+// TAI period (siSecond == 0) denoting the beginning of the gregorian year 0 when
 // using astronomical year numbering.
 // After julian Oct 4th 1582 directly comes gregorian Oct 15th 1582.
 // The year zero in astronomic year numbering equals year 1 BC.
@@ -231,7 +231,7 @@ NATAIPeriod naTAIPeriods[NA_TAI_PERIODS_COUNT] = {
 // the UNIX system time has no leap seconds and is nulled in 1970
 #define NA_DATETIME_SISEC_UNIX_YEAR_ZERO          naMuli64(NA_SECONDS_IN_4_YEAR_PERIOD, naMakei64WithLo(3))
 
-// the Windows filetime has no leap seconds and is nulled in 1601
+// the Windows fileTime has no leap seconds and is nulled in 1601
 //#define NA_DATETIME_SISEC_FILETIME_YEAR_ZERO      (-NA_SECONDS_IN_NORMAL_YEAR - NA_SECONDS_IN_LEAP_YEAR - 13LL * NA_SECONDS_IN_4_YEAR_PERIOD - 4LL * NA_SECONDS_IN_NORMAL_YEAR - 2LL * NA_SECONDS_IN_100_YEAR_PERIOD - 24LL * NA_SECONDS_IN_4_YEAR_PERIOD - 3LL * NA_SECONDS_IN_NORMAL_YEAR)
 //#define NA_DATETIME_SISEC_FILETIME_YEAR_ZERO      -11265782400
 #define NA_DATETIME_SISEC_FILETIME_YEAR_ZERO_HI   0xfffffffd
@@ -240,7 +240,7 @@ NATAIPeriod naTAIPeriods[NA_TAI_PERIODS_COUNT] = {
 
 
 // Prototypes:
-NAInt naGetTAIPeriodIndexForSISecond(NAi64 sisecond);
+NAInt naGetTAIPeriodIndexForSISecond(NAi64 siSecondond);
 NAInt naGetLatestTAIPeriodIndexForGregorianSecond(NAi64 gregsecond);
 NADateTime naMakeDateTimeNow(void);
 void naSetGlobalTimeShiftToSystemSettings(void);
@@ -249,15 +249,15 @@ NAi64 naGetFirstUncertainSecondNumber(void);
 
 
 
-NA_DEF NAInt naGetTAIPeriodIndexForSISecond(NAi64 sisecond){
+NA_DEF NAInt naGetTAIPeriodIndexForSISecond(NAi64 siSecondond){
   NAInt r;
   // First, check the last 3 TAI periods. There is a high probability that a
   // given date is within the last 3 entries. Three entries because the entry
   // of one leap second always contains the leap second itself plus the two
   // surrounding "normal" periods.
-  if(naSmallerEquali64(naTAIPeriods[NA_TAI_PERIODS_COUNT - 3].startsisec, sisecond)){
-    if(naSmallerEquali64(naTAIPeriods[NA_TAI_PERIODS_COUNT - 2].startsisec, sisecond)){
-      if(naSmallerEquali64(naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsisec, sisecond)){
+  if(naSmallerEquali64(naTAIPeriods[NA_TAI_PERIODS_COUNT - 3].startsiSecond, siSecondond)){
+    if(naSmallerEquali64(naTAIPeriods[NA_TAI_PERIODS_COUNT - 2].startsiSecond, siSecondond)){
+      if(naSmallerEquali64(naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsiSecond, siSecondond)){
         // Note that the last TAI period is explicitely returned, even if the
         // desired date is far in the future.
         return NA_TAI_PERIODS_COUNT - 1;
@@ -267,7 +267,7 @@ NA_DEF NAInt naGetTAIPeriodIndexForSISecond(NAi64 sisecond){
     return NA_TAI_PERIODS_COUNT - 3;
   }
   // Just in case the given date is not in leap second age at all...
-  if(naSmalleri64(sisecond, NA_ZERO_i64)){
+  if(naSmalleri64(siSecondond, NA_ZERO_i64)){
     r = -1;
   }else{
     // In all other cases, perform a binary search in all TAI periods.
@@ -275,7 +275,7 @@ NA_DEF NAInt naGetTAIPeriodIndexForSISecond(NAi64 sisecond){
     r = NA_TAI_PERIODS_COUNT - 4;
     while(l != r){  // binary search
       NAInt m = (l+r)/2;
-      if(naSmallerEquali64(naTAIPeriods[m + 1].startsisec, sisecond)){l = m + 1;}else{r = m;}
+      if(naSmallerEquali64(naTAIPeriods[m + 1].startsiSecond, siSecondond)){l = m + 1;}else{r = m;}
     }
     // l or r now define the index of the latest NATAIPeriod.
   }
@@ -379,11 +379,11 @@ NA_DEF int32 naGetMonthNumberFromUTF8CStringLiteral(const NAUTF8Char* str){
 
 NA_DEF NADateTime naMakeDateTimeNow(){
   #if NA_OS == NA_OS_WINDOWS
-    FILETIME filetime;
+    FILETIME fileTime;
     NATimeZone timezone;
-    GetSystemTimeAsFileTime(&filetime);
+    GetSystemTimeAsFileTime(&fileTime);
     GetTimeZoneInformation(&timezone);
-    return naMakeDateTimeFromFileTime(&filetime, &timezone);
+    return naMakeDateTimeFromFileTime(&fileTime, &timezone);
   #elif NA_OS == NA_OS_MAC_OS_X
     struct timeval curtime;
     NATimeZone curtimezone;
@@ -397,34 +397,34 @@ NA_DEF NADateTime naMakeDateTimeNow(){
 
 
 NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
-  NADateTime datetime;
+  NADateTime dateTime;
 
-  NAi64 remainingyears = dts->year;
+  NAi64 remainingYears = dts->year;
   NAi64 years4;
   NABool isleap;
   NACalendarSystem calendarsystem;
 
-  datetime.errornum = NA_DATETIME_ERROR_NONE;
+  dateTime.errorNum = NA_DATETIME_ERROR_NONE;
 
   if((naEquali64(dts->year, NA_DATETIME_YEAR_1582)) && (dts->mon == 9) && (dts->day > 3) && (dts->day < 14)){
-    datetime.errornum = NA_DATETIME_ERROR_JULIAN_GREGORIAN_CHASM;
+    dateTime.errorNum = NA_DATETIME_ERROR_JULIAN_GREGORIAN_CHASM;
   }
   if((naSmalleri64(dts->year, NA_DATETIME_YEAR_1582)) || ((naEquali64(dts->year, NA_DATETIME_YEAR_1582)) && ((dts->mon < 9) || ((dts->mon == 9) && (dts->day < 14))))){
     // julian system
-    datetime.sisec = NA_DATETIME_SISEC_JULIAN_YEAR_ZERO;
+    dateTime.siSecond = NA_DATETIME_SISEC_JULIAN_YEAR_ZERO;
     isleap = naIsLeapYearJulian(dts->year);
     calendarsystem = NA_CALENDAR_JULIAN;
   }else{
     // gregorian system
     NAi64 years400;
     NAi64 years100;
-    datetime.sisec = NA_DATETIME_SISEC_GREGORIAN_YEAR_ZERO;
-    years400 = naDivi64(remainingyears, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD);
-    datetime.sisec = naAddi64(datetime.sisec, naMuli64(years400, NA_SECONDS_IN_400_YEAR_PERIOD));
-    remainingyears = naSubi64(remainingyears, naMuli64(years400, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD));
-    years100 = naDivi64(remainingyears, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD);
-    datetime.sisec = naAddi64(datetime.sisec, naMuli64(years100, NA_SECONDS_IN_100_YEAR_PERIOD));
-    remainingyears = naSubi64(remainingyears, naMuli64(years100, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD));
+    dateTime.siSecond = NA_DATETIME_SISEC_GREGORIAN_YEAR_ZERO;
+    years400 = naDivi64(remainingYears, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD);
+    dateTime.siSecond = naAddi64(dateTime.siSecond, naMuli64(years400, NA_SECONDS_IN_400_YEAR_PERIOD));
+    remainingYears = naSubi64(remainingYears, naMuli64(years400, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD));
+    years100 = naDivi64(remainingYears, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD);
+    dateTime.siSecond = naAddi64(dateTime.siSecond, naMuli64(years100, NA_SECONDS_IN_100_YEAR_PERIOD));
+    remainingYears = naSubi64(remainingYears, naMuli64(years100, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD));
     isleap = naIsLeapYearGregorian(dts->year);
     if(naSmalleri64(dts->year, NA_DATETIME_YEAR_1958)){
       calendarsystem = NA_CALENDAR_GREGORIAN;
@@ -432,57 +432,57 @@ NA_DEF NADateTime naMakeDateTimeWithDateTimeStruct(const NADateTimeStruct* dts){
       calendarsystem = NA_CALENDAR_GREGORIAN_WITH_LEAP_SECONDS;
     }
   }
-  years4 = naDivi64(remainingyears, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD);
-  if(naSmalleri64(remainingyears, NA_ZERO_i64)){naDeci64(years4);}
-  datetime.sisec = naAddi64(datetime.sisec, naMuli64(years4, NA_SECONDS_IN_4_YEAR_PERIOD));
-  remainingyears = naSubi64(remainingyears, naMuli64(years4, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD));
-  if(!naEquali64(remainingyears, NA_ZERO_i64)){
-    datetime.sisec = naAddi64(datetime.sisec, NA_SECONDS_IN_LEAP_YEAR); naDeci64(remainingyears);
-    datetime.sisec = naAddi64(datetime.sisec, naMuli64(remainingyears, NA_SECONDS_IN_NORMAL_YEAR));
+  years4 = naDivi64(remainingYears, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD);
+  if(naSmalleri64(remainingYears, NA_ZERO_i64)){naDeci64(years4);}
+  dateTime.siSecond = naAddi64(dateTime.siSecond, naMuli64(years4, NA_SECONDS_IN_4_YEAR_PERIOD));
+  remainingYears = naSubi64(remainingYears, naMuli64(years4, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD));
+  if(!naEquali64(remainingYears, NA_ZERO_i64)){
+    dateTime.siSecond = naAddi64(dateTime.siSecond, NA_SECONDS_IN_LEAP_YEAR); naDeci64(remainingYears);
+    dateTime.siSecond = naAddi64(dateTime.siSecond, naMuli64(remainingYears, NA_SECONDS_IN_NORMAL_YEAR));
   }
-  if((dts->mon < 0) || (dts->mon > 11)){datetime.errornum = NA_DATETIME_ERROR_INVALID_MONTH_NUMBER;}
-  datetime.sisec = naAddi64(datetime.sisec, naMakei64WithLo(na_CumulativeMonthStartDays[2 * dts->mon + (int32)isleap] * (int32)NA_SECONDS_PER_DAY));
-  if((dts->day < 0) || ((na_CumulativeMonthStartDays[2 * dts->mon + (int32)isleap] + dts->day) >= na_CumulativeMonthStartDays[2 * (dts->mon + 1) + (int32)isleap])){datetime.errornum = NA_DATETIME_ERROR_INVALID_DAY_NUMBER;}
-  datetime.sisec = naAddi64(datetime.sisec, naMakei64WithLo(dts->day * (int32)NA_SECONDS_PER_DAY));
-  if((dts->hour < 0) || (dts->hour > 23)){datetime.errornum = NA_DATETIME_ERROR_INVALID_HOUR_NUMBER;}
-  datetime.sisec = naAddi64(datetime.sisec, naMakei64WithLo(dts->hour * (int32)NA_SECONDS_PER_HOUR));
-  if((dts->min < 0) || (dts->min > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_MINUTE_NUMBER;}
-  datetime.sisec = naAddi64(datetime.sisec, naMakei64WithLo(dts->min * (int32)NA_SECONDS_PER_MINUTE));
+  if((dts->mon < 0) || (dts->mon > 11)){dateTime.errorNum = NA_DATETIME_ERROR_INVALID_MONTH_NUMBER;}
+  dateTime.siSecond = naAddi64(dateTime.siSecond, naMakei64WithLo(na_CumulativeMonthStartDays[2 * dts->mon + (int32)isleap] * (int32)NA_SECONDS_PER_DAY));
+  if((dts->day < 0) || ((na_CumulativeMonthStartDays[2 * dts->mon + (int32)isleap] + dts->day) >= na_CumulativeMonthStartDays[2 * (dts->mon + 1) + (int32)isleap])){dateTime.errorNum = NA_DATETIME_ERROR_INVALID_DAY_NUMBER;}
+  dateTime.siSecond = naAddi64(dateTime.siSecond, naMakei64WithLo(dts->day * (int32)NA_SECONDS_PER_DAY));
+  if((dts->hour < 0) || (dts->hour > 23)){dateTime.errorNum = NA_DATETIME_ERROR_INVALID_HOUR_NUMBER;}
+  dateTime.siSecond = naAddi64(dateTime.siSecond, naMakei64WithLo(dts->hour * (int32)NA_SECONDS_PER_HOUR));
+  if((dts->min < 0) || (dts->min > 59)){dateTime.errorNum = NA_DATETIME_ERROR_INVALID_MINUTE_NUMBER;}
+  dateTime.siSecond = naAddi64(dateTime.siSecond, naMakei64WithLo(dts->min * (int32)NA_SECONDS_PER_MINUTE));
   if(calendarsystem == NA_CALENDAR_GREGORIAN_WITH_LEAP_SECONDS){
-    if(naGreaterEquali64(datetime.sisec, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsisec)){
-      if((dts->sec < 0) || (dts->sec > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
-      datetime.sisec = naAddi64(datetime.sisec, naSubi64(naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsisec, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startgregsec));
+    if(naGreaterEquali64(dateTime.siSecond, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsiSecond)){
+      if((dts->sec < 0) || (dts->sec > 59)){dateTime.errorNum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
+      dateTime.siSecond = naAddi64(dateTime.siSecond, naSubi64(naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsiSecond, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startgregsec));
     }else{
-      NAInt r = naGetLatestTAIPeriodIndexForGregorianSecond(datetime.sisec);
+      NAInt r = naGetLatestTAIPeriodIndexForGregorianSecond(dateTime.siSecond);
       // r now defines the index of the NATAIPeriod
-      datetime.sisec = naAddi64(datetime.sisec, naSubi64(naTAIPeriods[r].startsisec, naTAIPeriods[r].startgregsec));
-      datetime.sisec = naAddi64(datetime.sisec, naMakei64WithLo(dts->sec));
-      if((r+1 < NA_TAI_PERIODS_COUNT) && naGreaterEquali64(datetime.sisec, naTAIPeriods[r+1].startsisec)){
+      dateTime.siSecond = naAddi64(dateTime.siSecond, naSubi64(naTAIPeriods[r].startsiSecond, naTAIPeriods[r].startgregsec));
+      dateTime.siSecond = naAddi64(dateTime.siSecond, naMakei64WithLo(dts->sec));
+      if((r+1 < NA_TAI_PERIODS_COUNT) && naGreaterEquali64(dateTime.siSecond, naTAIPeriods[r+1].startsiSecond)){
         if((naTAIPeriods[r+1].indicator == NA_POSITIVE_LEAP_SECONDS_JUNE) || (naTAIPeriods[r+1].indicator == NA_POSITIVE_LEAP_SECONDS_DECEMBER)){
           NAInt rPlus2 = r+2; // We need to add this because of static code analysis.
-          if(rPlus2 < NA_TAI_PERIODS_COUNT && naGreaterEquali64(datetime.sisec, naTAIPeriods[rPlus2].startsisec)){
+          if(rPlus2 < NA_TAI_PERIODS_COUNT && naGreaterEquali64(dateTime.siSecond, naTAIPeriods[rPlus2].startsiSecond)){
             // The leap seconds are overflown
-            datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;
+            dateTime.errorNum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;
           }
         }else{
           // The period overflown has no leap seconds
-          datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;
+          dateTime.errorNum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;
         }
       }else{
-        if((dts->sec < 0) || (dts->sec > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
+        if((dts->sec < 0) || (dts->sec > 59)){dateTime.errorNum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
       }
-      datetime.sisec = naSubi64(datetime.sisec, naMakei64WithLo(dts->sec));
+      dateTime.siSecond = naSubi64(dateTime.siSecond, naMakei64WithLo(dts->sec));
     }
   }else{
-    if((dts->sec < 0) || (dts->sec > 59)){datetime.errornum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
+    if((dts->sec < 0) || (dts->sec > 59)){dateTime.errorNum = NA_DATETIME_ERROR_INVALID_SECOND_NUMBER;}
   }
-  datetime.sisec = naAddi64(datetime.sisec, naMakei64WithLo(dts->sec));
-  datetime.sisec = naSubi64(datetime.sisec, naMakei64WithLo(dts->shift * (int32)NA_SECONDS_PER_MINUTE));
-  datetime.nsec  = dts->nsec;
-  datetime.shift = dts->shift;
-  datetime.flags = dts->flags;
+  dateTime.siSecond = naAddi64(dateTime.siSecond, naMakei64WithLo(dts->sec));
+  dateTime.siSecond = naSubi64(dateTime.siSecond, naMakei64WithLo(dts->shift * (int32)NA_SECONDS_PER_MINUTE));
+  dateTime.nanoSecond  = dts->nanoSecond;
+  dateTime.shift = dts->shift;
+  dateTime.flags = dts->flags;
 
-  return datetime;
+  return dateTime;
 }
 
 
@@ -497,7 +497,7 @@ NA_DEF NADateTime naMakeDateTimeFromString(const NAString* string, NAAscDateTime
   int16 int16value;
   NABufferIterator iter;
 
-  dts.nsec = 0;
+  dts.nanoSecond = 0;
 
   str = naNewStringExtraction(string, 0, -1);
   iter = naMakeBufferAccessor(naGetStringBufferMutable(str));
@@ -578,7 +578,7 @@ NA_DEF NADateTime naMakeDateTimeFromBuffer(NABuffer* buffer, NABinDateTimeFormat
   NADateTimeStruct dts;
   NABufferIterator iter = naMakeBufferAccessor(buffer);
 
-  dts.nsec = 0;
+  dts.nanoSecond = 0;
 
   switch(format){
   case NA_DATETIME_FORMAT_ICC_PROFILE:
@@ -611,24 +611,24 @@ NA_DEF NADateTime naMakeDateTimeFromBuffer(NABuffer* buffer, NABinDateTimeFormat
 
 
 
-NA_DEF const char* naGetDateTimeErrorString(uint8 errornum){
-  if(errornum >= NA_DATETIME_ERROR_COUNT){
+NA_DEF const char* naGetDateTimeErrorString(uint8 errorNum){
+  if(errorNum >= NA_DATETIME_ERROR_COUNT){
     #ifndef NDEBUG
       naError("Error number invalid");
     #endif
     return NA_NULL;
   }
-  return na_DateTimeErrorStrings[errornum];
+  return na_DateTimeErrorStrings[errorNum];
 }
 
 
 
-//NA_DEF NAByteArray* naInitByteArrayFromDateTime( NAByteArray* bytearray, const NADateTime* datetime, NABinDateTimeFormat format){
+//NA_DEF NAByteArray* naInitByteArrayFromDateTime( NAByteArray* bytearray, const NADateTime* dateTime, NABinDateTimeFormat format){
 //  uint16 valueu16;
 //  NAByte* ptr;
 //  NADateTimeStruct dts;
 //  NADateTimeAttribute dta;
-//  naExtractDateTimeInformation(datetime, &dts, &dta);
+//  naExtractDateTimeInformation(dateTime, &dts, &dta);
 //
 //  switch(format){
 //  case NA_DATETIME_FORMAT_ICC_PROFILE:
@@ -674,12 +674,12 @@ NA_DEF const char* naGetDateTimeErrorString(uint8 errornum){
 
 
 
-NA_DEF NAString* naNewStringWithDateTime(const NADateTime* datetime,
+NA_DEF NAString* naNewStringWithDateTime(const NADateTime* dateTime,
                            NAAscDateTimeFormat format){
   NAString* string;
   NADateTimeStruct dts;
   NADateTimeAttribute dta;
-  naExtractDateTimeInformation(datetime, &dts, &dta);
+  naExtractDateTimeInformation(dateTime, &dts, &dta);
 
   switch(format){
   case NA_DATETIME_FORMAT_APACHE:
@@ -738,11 +738,11 @@ NA_DEF NAString* naNewStringWithDateTime(const NADateTime* datetime,
 
 
 
-NA_DEF struct tm naMakeTMfromDateTime(const NADateTime* datetime){
+NA_DEF struct tm naMakeTMfromDateTime(const NADateTime* dateTime){
   struct tm systemtimestruct;
   NADateTimeStruct dts;
   NADateTimeAttribute dta;
-  naExtractDateTimeInformation(datetime, &dts, &dta);
+  naExtractDateTimeInformation(dateTime, &dts, &dta);
   systemtimestruct.tm_sec = dts.sec;
   systemtimestruct.tm_min = dts.min;
   systemtimestruct.tm_hour = dts.hour;
@@ -750,11 +750,11 @@ NA_DEF struct tm naMakeTMfromDateTime(const NADateTime* datetime){
   systemtimestruct.tm_mon = dts.mon;
   systemtimestruct.tm_year = naCasti64Toi32(dts.year) - 1900;
   systemtimestruct.tm_wday = (dta.weekday + 1) % 7;
-  systemtimestruct.tm_yday = dta.dayofyear;
-  systemtimestruct.tm_isdst = naHasDateTimeSummerTime(datetime)?1:0;
+  systemtimestruct.tm_yday = dta.dayOfYear;
+  systemtimestruct.tm_isdst = naHasDateTimeSummerTime(dateTime)?1:0;
   #if NA_OS == NA_OS_MAC_OS_X
     systemtimestruct.tm_gmtoff = (long)(dts.shift * NA_SECONDS_PER_MINUTE);
-    if(naHasDateTimeSummerTime(datetime)){
+    if(naHasDateTimeSummerTime(dateTime)){
       systemtimestruct.tm_zone = tzname[1];
     }else{
       systemtimestruct.tm_zone = tzname[0];
@@ -765,18 +765,18 @@ NA_DEF struct tm naMakeTMfromDateTime(const NADateTime* datetime){
 
 
 
-NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
+NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone){
   int16 shift;
   #if NA_OS == NA_OS_WINDOWS
-    shift = - (int16)timezn->Bias;
-    if(timezn->DaylightBias){
+    shift = - (int16)timeZone->Bias;
+    if(timeZone->DaylightBias){
       shift += NA_MINUTES_PER_HOUR;
     }
   #elif NA_OS == NA_OS_MAC_OS_X
-    shift = (int16)-timezn->tz_minuteswest; // yes, its inverted.
-    if(timezn->tz_dsttime){
+    shift = (int16)-timeZone->tz_minuteswest; // yes, its inverted.
+    if(timeZone->tz_dsttime){
       // In contrast to tm_gmtoff, the timezone struct does not automatically
-      // contain the summertime shift and must be added manually.
+      // contain the summerTime shift and must be added manually.
       shift += NA_MINUTES_PER_HOUR;
     }
   #endif
@@ -791,114 +791,114 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
 
 #if NA_OS == NA_OS_WINDOWS
 
-  NA_DEF NADateTime naMakeDateTimeFromFileTime(const FILETIME* filetime, const NATimeZone* timezn){
-    NADateTime datetime;
-    NAi64 nanosecs = naCastu64Toi64(naMakeu64(filetime->dwHighDateTime, filetime->dwLowDateTime));
+  NA_DEF NADateTime naMakeDateTimeFromFileTime(const FILETIME* fileTime, const NATimeZone* timeZone){
+    NADateTime dateTime;
+    NAi64 nanoSeconds = naCastu64Toi64(naMakeu64(fileTime->dwHighDateTime, fileTime->dwLowDateTime));
 
-    datetime.errornum = NA_DATETIME_ERROR_NONE;
-    datetime.nsec = naCasti64Toi32(naMuli64(naModi64(nanosecs, naMakei64WithLo(10000000)), naMakei64WithLo(100)));  // 100-nanosecond intervals.
-    datetime.sisec = naAddi64(naDivi64(nanosecs, naMakei64WithLo(10000000)), NA_DATETIME_SISEC_FILETIME_YEAR_ZERO);
-    if(naGreaterEquali64(datetime.sisec, NA_ZERO_i64)){
-      NAInt taiperiod = naGetLatestTAIPeriodIndexForGregorianSecond(datetime.sisec);
-      datetime.sisec = naAddi64(datetime.sisec, naSubi64(naTAIPeriods[taiperiod].startsisec, naTAIPeriods[taiperiod].startgregsec));
+    dateTime.errorNum = NA_DATETIME_ERROR_NONE;
+    dateTime.nanoSecond = naCasti64Toi32(naMuli64(naModi64(nanoSeconds, naMakei64WithLo(10000000)), naMakei64WithLo(100)));  // 100-nanosecond intervals.
+    dateTime.siSecond = naAddi64(naDivi64(nanoSeconds, naMakei64WithLo(10000000)), NA_DATETIME_SISEC_FILETIME_YEAR_ZERO);
+    if(naGreaterEquali64(dateTime.siSecond, NA_ZERO_i64)){
+      NAInt taiperiod = naGetLatestTAIPeriodIndexForGregorianSecond(dateTime.siSecond);
+      dateTime.siSecond = naAddi64(dateTime.siSecond, naSubi64(naTAIPeriods[taiperiod].startsiSecond, naTAIPeriods[taiperiod].startgregsec));
     }
 
-    if(timezn){
-      datetime.shift = naMakeShiftFromTimeZone(timezn);
-      datetime.flags = ((timezn->DaylightBias) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
+    if(timeZone){
+      dateTime.shift = naMakeShiftFromTimeZone(timeZone);
+      dateTime.flags = ((timeZone->DaylightBias) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
     }else{
-      datetime.shift = na_GlobalTimeShift;
-      datetime.flags = ((na_GlobalSummerTime) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
+      dateTime.shift = na_GlobalTimeShift;
+      dateTime.flags = ((na_GlobalSummerTime) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
     }
-    return datetime;
+    return dateTime;
   }
 
 #elif NA_OS == NA_OS_MAC_OS_X
 
-  NA_DEF struct timespec naMakeTimeSpecFromDateTime(const NADateTime* datetime){
-    struct timespec timesp;
-    NAInt taiperiod = naGetTAIPeriodIndexForSISecond(datetime->sisec);
+  NA_DEF struct timespec naMakeTimeSpecFromDateTime(const NADateTime* dateTime){
+    struct timespec timeSpec;
+    NAInt taiperiod = naGetTAIPeriodIndexForSISecond(dateTime->siSecond);
     #if NA_TYPE_NATIVE_LONG_BITS == 32
-      timesp.tv_sec = (__darwin_time_t)naCasti64Toi32(naSubi64(datetime->sisec, naSubi64(naTAIPeriods[taiperiod].startsisec, naTAIPeriods[taiperiod].startgregsec)));
-      timesp.tv_sec -= (__darwin_time_t)naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
+      timeSpec.tv_sec = (__darwin_time_t)naCasti64Toi32(naSubi64(dateTime->siSecond, naSubi64(naTAIPeriods[taiperiod].startsiSecond, naTAIPeriods[taiperiod].startgregsec)));
+      timeSpec.tv_sec -= (__darwin_time_t)naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
     #else
       #if !defined NA_TYPE_INT64
         // We fall back to 32 bits as there simply is no solution to this problem.
         #error "impossible to convert 64 bit integer. Falling back to 32 bits"
-        timesp.tv_sec = (__darwin_time_t)naCasti64Toi32(naSubi64(datetime->sisec, naSubi64(naTAIPeriods[taiperiod].startsisec, naTAIPeriods[taiperiod].startgregsec)));
-        timesp.tv_sec -= (__darwin_time_t)naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
+        timeSpec.tv_sec = (__darwin_time_t)naCasti64Toi32(naSubi64(dateTime->siSecond, naSubi64(naTAIPeriods[taiperiod].startsiSecond, naTAIPeriods[taiperiod].startgregsec)));
+        timeSpec.tv_sec -= (__darwin_time_t)naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
       #else
-        timesp.tv_sec = (__darwin_time_t)(naSubi64(datetime->sisec, naSubi64(naTAIPeriods[taiperiod].startsisec, naTAIPeriods[taiperiod].startgregsec)));
-        timesp.tv_sec -= (__darwin_time_t)NA_DATETIME_SISEC_UNIX_YEAR_ZERO;
+        timeSpec.tv_sec = (__darwin_time_t)(naSubi64(dateTime->siSecond, naSubi64(naTAIPeriods[taiperiod].startsiSecond, naTAIPeriods[taiperiod].startgregsec)));
+        timeSpec.tv_sec -= (__darwin_time_t)NA_DATETIME_SISEC_UNIX_YEAR_ZERO;
       #endif
     #endif
-    timesp.tv_nsec = datetime->nsec;
-    return timesp;
+    timeSpec.tv_nanoSecond = dateTime->nanoSecond;
+    return timeSpec;
   }
 
 
-  NA_DEF struct timeval naMakeTimeValFromDateTime(const NADateTime* datetime){
-    struct timeval timevl;
-    struct timespec timesp = naMakeTimeSpecFromDateTime(datetime);
-    timevl.tv_sec = timesp.tv_sec;
-    timevl.tv_usec = (int)(timesp.tv_nsec / 1000);
-    return timevl;
+  NA_DEF struct timeval naMakeTimeValFromDateTime(const NADateTime* dateTime){
+    struct timeval timeVal;
+    struct timespec timeSpec = naMakeTimeSpecFromDateTime(dateTime);
+    timeVal.tv_sec = timeSpec.tv_sec;
+    timeVal.tv_usec = (int)(timeSpec.tv_nanoSecond / 1000);
+    return timeVal;
   }
 
 
-  NA_DEF NATimeZone naMakeTimeZoneFromDateTime(const NADateTime* datetime){
-    NATimeZone timezn;
-    timezn.tz_minuteswest = -datetime->shift; // yes, its inverted.
-    if(naHasDateTimeSummerTime(datetime)){
+  NA_DEF NATimeZone naMakeTimeZoneFromDateTime(const NADateTime* dateTime){
+    NATimeZone timeZone;
+    timeZone.tz_minuteswest = -dateTime->shift; // yes, its inverted.
+    if(naHasDateTimeSummerTime(dateTime)){
       // In contrast to tm_gmtoff, the timezone struct does not automatically
-      // contain the summertime shift and must be subtracted manually.
-      timezn.tz_dsttime = 1;
-      timezn.tz_minuteswest -= (int)NA_MINUTES_PER_HOUR;
+      // contain the summerTime shift and must be subtracted manually.
+      timeZone.tz_dsttime = 1;
+      timeZone.tz_minuteswest -= (int)NA_MINUTES_PER_HOUR;
     }else{
-      timezn.tz_dsttime = 0;
+      timeZone.tz_dsttime = 0;
     }
-    return timezn;
+    return timeZone;
   }
 
 
-  NA_DEF NADateTime naMakeDateTimeFromTimeSpec(const struct timespec* timesp, const NATimeZone* timezn){
-    NADateTime datetime;
-    NAi64 datetimesec;
-    datetime.errornum = NA_DATETIME_ERROR_NONE;
+  NA_DEF NADateTime naMakeDateTimeFromTimeSpec(const struct timespec* timeSpec, const NATimeZone* timeZone){
+    NADateTime dateTime;
+    NAi64 dateTimesec;
+    dateTime.errorNum = NA_DATETIME_ERROR_NONE;
     #if NA_TYPE_NATIVE_LONG_BITS == 32
-      datetimesec = naMakei64WithLo((int32)timesp->tv_sec + naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO));
+      dateTimesec = naMakei64WithLo((int32)timeSpec->tv_sec + naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO));
     #else
       #if !defined NA_TYPE_INT64
         // We fall back to 32 bits as there simply is no solution to this problem.
         #error "impossible to convert 64 bit integer. Falling back to 32 bits"
-        datetimesec = naMakei64WithLo(timesp->tv_sec + naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO));
+        dateTimesec = naMakei64WithLo(timeSpec->tv_sec + naCasti64Toi32(NA_DATETIME_SISEC_UNIX_YEAR_ZERO));
       #else
-        datetimesec = naAddi64(timesp->tv_sec, NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
+        dateTimesec = naAddi64(timeSpec->tv_sec, NA_DATETIME_SISEC_UNIX_YEAR_ZERO);
       #endif
     #endif
-    if(naGreateri64(datetimesec, NA_ZERO_i64)){
-      NAInt taiperiod = naGetLatestTAIPeriodIndexForGregorianSecond(datetimesec);
-      datetime.sisec = naAddi64(datetimesec, naSubi64(naTAIPeriods[taiperiod].startsisec, naTAIPeriods[taiperiod].startgregsec));
+    if(naGreateri64(dateTimesec, NA_ZERO_i64)){
+      NAInt taiperiod = naGetLatestTAIPeriodIndexForGregorianSecond(dateTimesec);
+      dateTime.siSecond = naAddi64(dateTimesec, naSubi64(naTAIPeriods[taiperiod].startsiSecond, naTAIPeriods[taiperiod].startgregsec));
     }else{
-      datetime.sisec = NA_ZERO_i64; // todo
+      dateTime.siSecond = NA_ZERO_i64; // todo
     }
-    datetime.nsec = (int32)timesp->tv_nsec;
-    if(timezn){
-      datetime.shift = naMakeShiftFromTimeZone(timezn);
-      datetime.flags = ((timezn->tz_dsttime) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
+    dateTime.nanoSecond = (int32)timeSpec->tv_nanoSecond;
+    if(timeZone){
+      dateTime.shift = naMakeShiftFromTimeZone(timeZone);
+      dateTime.flags = ((timeZone->tz_dsttime) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
     }else{
-      datetime.shift = na_GlobalTimeShift;
-      datetime.flags = ((na_GlobalSummerTime) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
+      dateTime.shift = na_GlobalTimeShift;
+      dateTime.flags = ((na_GlobalSummerTime) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
     }
-    return datetime;
+    return dateTime;
   }
 
 
-  NA_DEF NADateTime naMakeDateTimeFromTimeVal(const struct timeval* timevl, const NATimeZone* timezn){
-    struct timespec timesp;
-    timesp.tv_sec  = timevl->tv_sec;
-    timesp.tv_nsec = timevl->tv_usec * 1000;
-    return naMakeDateTimeFromTimeSpec(&timesp, timezn);
+  NA_DEF NADateTime naMakeDateTimeFromTimeVal(const struct timeval* timeVal, const NATimeZone* timeZone){
+    struct timespec timeSpec;
+    timeSpec.tv_sec  = timeVal->tv_sec;
+    timeSpec.tv_nanoSecond = timeVal->tv_usec * 1000;
+    return naMakeDateTimeFromTimeSpec(&timeSpec, timeZone);
   }
 
 
@@ -907,16 +907,16 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timezn){
 
 
 
-NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
+NA_DEF void naExtractDateTimeInformation(const NADateTime* dateTime,
                           NADateTimeStruct* dts,
                        NADateTimeAttribute* dta){
-  NAi64 remainingsecs;
+  NAi64 remainingSeconds;
   NAi64 years400;
   NAi64 years100;
   NAi64 years4;
-  NAi64 remainingyears;
-  int32 dayofyear = 0;
-  NABool isleapyear;
+  NAi64 remainingYears;
+  int32 dayOfYear = 0;
+  NABool isLeapYear;
   NABool exception100;
   NAInt l, r;
 
@@ -926,105 +926,105 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
   dts->hour = 0;
   dts->min = 0;
   dts->sec = 0;
-  dts->nsec = datetime->nsec;
-  dts->shift = datetime->shift;
-  dts->errornum = datetime->errornum;
-  dts->flags = datetime->flags;
-  remainingsecs = naAddi64(datetime->sisec, naMakei64WithLo(dts->shift * (int32)NA_SECONDS_PER_MINUTE));
+  dts->nanoSecond = dateTime->nanoSecond;
+  dts->shift = dateTime->shift;
+  dts->errorNum = dateTime->errorNum;
+  dts->flags = dateTime->flags;
+  remainingSeconds = naAddi64(dateTime->siSecond, naMakei64WithLo(dts->shift * (int32)NA_SECONDS_PER_MINUTE));
 
-  if(naSmalleri64(remainingsecs, NA_DATETIME_SISEC_START_GREGORIAN_PERIOD)){
+  if(naSmalleri64(remainingSeconds, NA_DATETIME_SISEC_START_GREGORIAN_PERIOD)){
     // julian system with astronomic year numbering
-    remainingsecs = naSubi64(remainingsecs, NA_DATETIME_SISEC_JULIAN_YEAR_ZERO);
+    remainingSeconds = naSubi64(remainingSeconds, NA_DATETIME_SISEC_JULIAN_YEAR_ZERO);
 
-    years4 = naDivi64(remainingsecs, NA_SECONDS_IN_4_YEAR_PERIOD);
-    if(naSmalleri64(remainingsecs, NA_ZERO_i64)){naDeci64(years4);}
+    years4 = naDivi64(remainingSeconds, NA_SECONDS_IN_4_YEAR_PERIOD);
+    if(naSmalleri64(remainingSeconds, NA_ZERO_i64)){naDeci64(years4);}
     dts->year = naAddi64(dts->year, naMuli64(years4, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD));
-    remainingsecs = naSubi64(remainingsecs, naMuli64(years4, NA_SECONDS_IN_4_YEAR_PERIOD));
-    if(naGreaterEquali64(remainingsecs, NA_SECONDS_IN_LEAP_YEAR)){
+    remainingSeconds = naSubi64(remainingSeconds, naMuli64(years4, NA_SECONDS_IN_4_YEAR_PERIOD));
+    if(naGreaterEquali64(remainingSeconds, NA_SECONDS_IN_LEAP_YEAR)){
       naInci64(dts->year);
-      remainingsecs = naSubi64(remainingsecs, NA_SECONDS_IN_LEAP_YEAR);
+      remainingSeconds = naSubi64(remainingSeconds, NA_SECONDS_IN_LEAP_YEAR);
 
-      remainingyears = naDivi64(remainingsecs, NA_SECONDS_IN_NORMAL_YEAR);
-      dts->year = naAddi64(dts->year, remainingyears);
-      remainingsecs = naSubi64(remainingsecs, naMuli64(remainingyears, NA_SECONDS_IN_NORMAL_YEAR));
+      remainingYears = naDivi64(remainingSeconds, NA_SECONDS_IN_NORMAL_YEAR);
+      dts->year = naAddi64(dts->year, remainingYears);
+      remainingSeconds = naSubi64(remainingSeconds, naMuli64(remainingYears, NA_SECONDS_IN_NORMAL_YEAR));
     }
-    isleapyear = naIsLeapYearJulian(dts->year);
-  }else if(naSmalleri64(remainingsecs, NA_ZERO_i64) || naGreaterEquali64(remainingsecs, naTAIPeriods[NA_TAI_PERIODS_COUNT-1].startsisec)){
+    isLeapYear = naIsLeapYearJulian(dts->year);
+  }else if(naSmalleri64(remainingSeconds, NA_ZERO_i64) || naGreaterEquali64(remainingSeconds, naTAIPeriods[NA_TAI_PERIODS_COUNT-1].startsiSecond)){
     // gregorian system
-    if(naGreaterEquali64(remainingsecs, naTAIPeriods[NA_TAI_PERIODS_COUNT-1].startsisec)){
-      remainingsecs = naSubi64(remainingsecs, naSubi64(naTAIPeriods[NA_TAI_PERIODS_COUNT-1].startsisec, naTAIPeriods[NA_TAI_PERIODS_COUNT-1].startgregsec));
+    if(naGreaterEquali64(remainingSeconds, naTAIPeriods[NA_TAI_PERIODS_COUNT-1].startsiSecond)){
+      remainingSeconds = naSubi64(remainingSeconds, naSubi64(naTAIPeriods[NA_TAI_PERIODS_COUNT-1].startsiSecond, naTAIPeriods[NA_TAI_PERIODS_COUNT-1].startgregsec));
     }
-    remainingsecs = naSubi64(remainingsecs, NA_DATETIME_SISEC_GREGORIAN_YEAR_ZERO);
+    remainingSeconds = naSubi64(remainingSeconds, NA_DATETIME_SISEC_GREGORIAN_YEAR_ZERO);
 
-    years400 = naDivi64(remainingsecs, NA_SECONDS_IN_400_YEAR_PERIOD);
+    years400 = naDivi64(remainingSeconds, NA_SECONDS_IN_400_YEAR_PERIOD);
     dts->year = naAddi64(dts->year, naMuli64(years400, NA_DATETIME_GREGORIAN_400_YEAR_PERIOD));
-    remainingsecs = naSubi64(remainingsecs, naMuli64(years400, NA_SECONDS_IN_400_YEAR_PERIOD));
+    remainingSeconds = naSubi64(remainingSeconds, naMuli64(years400, NA_SECONDS_IN_400_YEAR_PERIOD));
 
     exception100 = NA_FALSE;
     // The first 100-year period of a 400-year period has a leap day
-    if(naGreaterEquali64(remainingsecs, naAddi64(NA_SECONDS_IN_100_YEAR_PERIOD, naMakei64WithLo(NA_SECONDS_PER_DAY)))){
+    if(naGreaterEquali64(remainingSeconds, naAddi64(NA_SECONDS_IN_100_YEAR_PERIOD, naMakei64WithLo(NA_SECONDS_PER_DAY)))){
       exception100 = NA_TRUE;
       dts->year = naAddi64(dts->year, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD);
-      remainingsecs = naSubi64(remainingsecs, naAddi64(NA_SECONDS_IN_100_YEAR_PERIOD, naMakei64WithLo(NA_SECONDS_PER_DAY)));
+      remainingSeconds = naSubi64(remainingSeconds, naAddi64(NA_SECONDS_IN_100_YEAR_PERIOD, naMakei64WithLo(NA_SECONDS_PER_DAY)));
 
-      years100 = naDivi64(remainingsecs, NA_SECONDS_IN_100_YEAR_PERIOD);
+      years100 = naDivi64(remainingSeconds, NA_SECONDS_IN_100_YEAR_PERIOD);
       if(!naEquali64(years100, NA_ZERO_i64)){
         dts->year = naAddi64(dts->year, naMuli64(years100, NA_DATETIME_GREGORIAN_100_YEAR_PERIOD));
-        remainingsecs = naSubi64(remainingsecs, naMuli64(years100, NA_SECONDS_IN_100_YEAR_PERIOD));
+        remainingSeconds = naSubi64(remainingSeconds, naMuli64(years100, NA_SECONDS_IN_100_YEAR_PERIOD));
       }
     }
 
     if(exception100){
-      if(naGreaterEquali64(remainingsecs, naMuli64(NA_DATETIME_GREGORIAN_4_YEAR_PERIOD, NA_SECONDS_IN_NORMAL_YEAR))){
+      if(naGreaterEquali64(remainingSeconds, naMuli64(NA_DATETIME_GREGORIAN_4_YEAR_PERIOD, NA_SECONDS_IN_NORMAL_YEAR))){
         dts->year = naAddi64(dts->year, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD);
-        remainingsecs = naSubi64(remainingsecs, naMuli64(NA_DATETIME_GREGORIAN_4_YEAR_PERIOD, NA_SECONDS_IN_NORMAL_YEAR));
-      }else if(naGreaterEquali64(remainingsecs, NA_SECONDS_IN_NORMAL_YEAR)){
+        remainingSeconds = naSubi64(remainingSeconds, naMuli64(NA_DATETIME_GREGORIAN_4_YEAR_PERIOD, NA_SECONDS_IN_NORMAL_YEAR));
+      }else if(naGreaterEquali64(remainingSeconds, NA_SECONDS_IN_NORMAL_YEAR)){
         naInci64(dts->year);
-        remainingsecs = naSubi64(remainingsecs, NA_SECONDS_IN_NORMAL_YEAR);
+        remainingSeconds = naSubi64(remainingSeconds, NA_SECONDS_IN_NORMAL_YEAR);
 
-        remainingyears = naDivi64(remainingsecs, NA_SECONDS_IN_NORMAL_YEAR);
-        dts->year = naAddi64(dts->year, remainingyears);
-        remainingsecs = naSubi64(remainingsecs, naMuli64(remainingyears, NA_SECONDS_IN_NORMAL_YEAR));
+        remainingYears = naDivi64(remainingSeconds, NA_SECONDS_IN_NORMAL_YEAR);
+        dts->year = naAddi64(dts->year, remainingYears);
+        remainingSeconds = naSubi64(remainingSeconds, naMuli64(remainingYears, NA_SECONDS_IN_NORMAL_YEAR));
       }
     }
 
-    years4 = naDivi64(remainingsecs, NA_SECONDS_IN_4_YEAR_PERIOD);
+    years4 = naDivi64(remainingSeconds, NA_SECONDS_IN_4_YEAR_PERIOD);
     dts->year = naAddi64(dts->year, naMuli64(years4, NA_DATETIME_GREGORIAN_4_YEAR_PERIOD));
-    remainingsecs = naSubi64(remainingsecs, naMuli64(years4, NA_SECONDS_IN_4_YEAR_PERIOD));
+    remainingSeconds = naSubi64(remainingSeconds, naMuli64(years4, NA_SECONDS_IN_4_YEAR_PERIOD));
 
-    if(naGreaterEquali64(remainingsecs, NA_SECONDS_IN_LEAP_YEAR)){
+    if(naGreaterEquali64(remainingSeconds, NA_SECONDS_IN_LEAP_YEAR)){
       naInci64(dts->year);
-      remainingsecs = naSubi64(remainingsecs, NA_SECONDS_IN_LEAP_YEAR);
+      remainingSeconds = naSubi64(remainingSeconds, NA_SECONDS_IN_LEAP_YEAR);
 
-      remainingyears = naDivi64(remainingsecs, NA_SECONDS_IN_NORMAL_YEAR);
-      dts->year = naAddi64(dts->year, remainingyears);
-      remainingsecs = naSubi64(remainingsecs, naMuli64(remainingyears, NA_SECONDS_IN_NORMAL_YEAR));
+      remainingYears = naDivi64(remainingSeconds, NA_SECONDS_IN_NORMAL_YEAR);
+      dts->year = naAddi64(dts->year, remainingYears);
+      remainingSeconds = naSubi64(remainingSeconds, naMuli64(remainingYears, NA_SECONDS_IN_NORMAL_YEAR));
     }
 
-    isleapyear = naIsLeapYearGregorian(dts->year);
+    isLeapYear = naIsLeapYearGregorian(dts->year);
   }else{
     // gregorian system with leap second information
-    r = naGetTAIPeriodIndexForSISecond(remainingsecs);
+    r = naGetTAIPeriodIndexForSISecond(remainingSeconds);
     dts->year = naMakei64WithLo(naTAIPeriods[r].gregyear);
-    remainingsecs = naSubi64(remainingsecs, naTAIPeriods[r].startsisec);
+    remainingSeconds = naSubi64(remainingSeconds, naTAIPeriods[r].startsiSecond);
 
-    isleapyear = naIsLeapYearGregorian(dts->year);
+    isLeapYear = naIsLeapYearGregorian(dts->year);
 
     switch(naTAIPeriods[r].indicator){
     case NA_START_JANUARY_FIRST:              dts->mon = 0 ;
-                                              dayofyear = 0;
+                                              dayOfYear = 0;
                                               break;
     case NA_START_JULY_FIRST:                 dts->mon = 6 ;
-                                              dayofyear = (isleapyear ? 182 : 181);
+                                              dayOfYear = (isLeapYear ? 182 : 181);
                                               break;
     case NA_POSITIVE_LEAP_SECONDS_JUNE:       dts->mon = 5 ;
-                                              dayofyear = (isleapyear ? 181 : 180);
+                                              dayOfYear = (isLeapYear ? 181 : 180);
                                               dts->hour = 23;
                                               dts->min = 59;
                                               dts->sec = 60;
                                               break;
     case NA_POSITIVE_LEAP_SECONDS_DECEMBER:   dts->mon = 11;
-                                              dayofyear = (isleapyear ? 365 : 364);
+                                              dayOfYear = (isLeapYear ? 365 : 364);
                                               dts->hour = 23;
                                               dts->min = 59;
                                               dts->sec = 60;
@@ -1033,24 +1033,24 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
   }
 
   // reaching here, a base date is set as well as the remaining seconds.
-  dayofyear += naCasti64Toi32(naDivi64(remainingsecs, naMakei64WithLo(NA_SECONDS_PER_DAY)));
-  remainingsecs = naModi64(remainingsecs, naMakei64WithLo(NA_SECONDS_PER_DAY));
-  dts->hour += naCasti64Toi32(naDivi64(remainingsecs, naMakei64WithLo(NA_SECONDS_PER_HOUR)));
-  remainingsecs = naModi64(remainingsecs, naMakei64WithLo(NA_SECONDS_PER_HOUR));
-  dts->min += naCasti64Toi32(naDivi64(remainingsecs, naMakei64WithLo(NA_SECONDS_PER_MINUTE)));
-  remainingsecs = naModi64(remainingsecs, naMakei64WithLo(NA_SECONDS_PER_MINUTE));
-  dts->sec += naCasti64Toi32(remainingsecs);
+  dayOfYear += naCasti64Toi32(naDivi64(remainingSeconds, naMakei64WithLo(NA_SECONDS_PER_DAY)));
+  remainingSeconds = naModi64(remainingSeconds, naMakei64WithLo(NA_SECONDS_PER_DAY));
+  dts->hour += naCasti64Toi32(naDivi64(remainingSeconds, naMakei64WithLo(NA_SECONDS_PER_HOUR)));
+  remainingSeconds = naModi64(remainingSeconds, naMakei64WithLo(NA_SECONDS_PER_HOUR));
+  dts->min += naCasti64Toi32(naDivi64(remainingSeconds, naMakei64WithLo(NA_SECONDS_PER_MINUTE)));
+  remainingSeconds = naModi64(remainingSeconds, naMakei64WithLo(NA_SECONDS_PER_MINUTE));
+  dts->sec += naCasti64Toi32(remainingSeconds);
 
   // get the correct date.
   l = 0;
   r = 11;
   while(l != r){  // binary search
     NAInt m = (l+r)/2;
-    if(na_CumulativeMonthStartDays[2 * (m+1) + (NAInt)isleapyear] <= dayofyear){l = m + 1;}else{r = m;}
+    if(na_CumulativeMonthStartDays[2 * (m+1) + (NAInt)isLeapYear] <= dayOfYear){l = m + 1;}else{r = m;}
   }
   // r now defines the index of the month
   dts->mon = (int32)r;
-  dts->day = dayofyear - na_CumulativeMonthStartDays[2 * r + (NAInt)isleapyear];
+  dts->day = dayOfYear - na_CumulativeMonthStartDays[2 * r + (NAInt)isLeapYear];
 
   if(dta){
     int32 d;
@@ -1071,9 +1071,9 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
       dta->shiftmin  = dts->shift % (int32)NA_MINUTES_PER_HOUR;
     }
 
-    dta->dayofyear = dayofyear;
-    dta->isleapyear = (int32)isleapyear;
-    dta->daysinmonth = na_CumulativeMonthStartDays[2 * (r + 1) + dta->isleapyear] - na_CumulativeMonthStartDays[2 * r + dta->isleapyear];
+    dta->dayOfYear = dayOfYear;
+    dta->isLeapYear = (int32)isLeapYear;
+    dta->daysinmonth = na_CumulativeMonthStartDays[2 * (r + 1) + dta->isLeapYear] - na_CumulativeMonthStartDays[2 * r + dta->isLeapYear];
     dta->yearsign = naSmalleri64(dts->year, NA_ZERO_i64)?-1:+1;
 
     // Weekday computation
@@ -1089,7 +1089,7 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
     }
     if(naSmalleri64(y, NA_ZERO_i64)){naDeci64(J);}
     firstterm = naAddi64(naAddi64(naMakei64WithLo(d + ((mon + (int32)1) * (int32)26) / (int32)10), K), naDivi64(K, naMakei64WithLo(4)));
-    if(naSmalleri64(naAddi64(datetime->sisec, naMakei64WithLo(dts->shift * (int32)NA_SECONDS_PER_MINUTE)), NA_DATETIME_SISEC_START_GREGORIAN_PERIOD)){
+    if(naSmalleri64(naAddi64(dateTime->siSecond, naMakei64WithLo(dts->shift * (int32)NA_SECONDS_PER_MINUTE)), NA_DATETIME_SISEC_START_GREGORIAN_PERIOD)){
       // Julian weedkday computation
       dta->weekday = naCasti64Toi32(naModi64((naAddi64((naModi64((naAddi64(naAddi64(firstterm, naMakei64WithLo(5)), naMuli64(naMakei64WithLo(6), J))), naMakei64WithLo(7))), naMakei64WithLo(12))), naMakei64WithLo(7)));
     }else{
@@ -1105,7 +1105,7 @@ NA_DEF void naExtractDateTimeInformation(const NADateTime* datetime,
 
 
 NA_DEF NAString* naNewStringFromSecondDifference(double difference,
-                                                 uint8 decimaldigits){
+                                                 uint8 decimalDigits){
   NAi64 allseconds, powten, decimals;
   uint8 seconds, minutes, hours;
   NAString* decimalstring;
@@ -1116,7 +1116,7 @@ NA_DEF NAString* naNewStringFromSecondDifference(double difference,
 
   NABool needsign = NA_FALSE;
   if(difference < 0){needsign = NA_TRUE; difference = -difference;}
-  powten = naExp10i64(naMakei64WithLo(decimaldigits));
+  powten = naExp10i64(naMakei64WithLo(decimalDigits));
   allseconds = naMakei64WithDouble(difference * naCasti64ToDouble(powten));
   decimals = naModi64(allseconds, powten);
   allseconds = naDivi64(allseconds, powten);
@@ -1127,9 +1127,9 @@ NA_DEF NAString* naNewStringFromSecondDifference(double difference,
   hours = naCasti64Tou8(naModi64(allseconds, naMakei64WithLo(NA_HOURS_PER_DAY)));
   allseconds = naDivi64(allseconds, naMakei64WithLo(NA_HOURS_PER_DAY));
 
-  if(decimaldigits){
+  if(decimalDigits){
     NAString* decimalformatstring;
-    decimalformatstring = naNewStringWithFormat(".%%0%dlld", decimaldigits);
+    decimalformatstring = naNewStringWithFormat(".%%0%dlld", decimalDigits);
     decimalstring = naNewStringWithFormat(naGetStringUTF8Pointer(decimalformatstring), decimals);
     naDelete(decimalformatstring);
   }else{
@@ -1162,14 +1162,14 @@ NA_DEF NAString* naNewStringFromSecondDifference(double difference,
 
 
 
-NA_DEF NAInt naGetLeapSecondCorrectionConstant(NAi64 olduncertainsecondnumber){
+NA_DEF NAInt naGetLeapSecondCorrectionConstant(NAi64 oldUncertainSecondNumber){
   NAInt taiperiod;
-  if(naSmalleri64(olduncertainsecondnumber, NA_ZERO_i64)){return NA_DATETIME_INVALID_UNCERTAIN_SECOND_NUMBER;}
+  if(naSmalleri64(oldUncertainSecondNumber, NA_ZERO_i64)){return NA_DATETIME_INVALID_UNCERTAIN_SECOND_NUMBER;}
   // Note that the last entry of the structure storing all TAI periods always
   // is a non-leap-second-entry.
-  if(naEquali64(olduncertainsecondnumber, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsisec)){return NA_DATETIME_NO_CORRECTION_NEEDED;}
-  if(naGreateri64(olduncertainsecondnumber, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsisec)){return NA_DATETIME_NEW_LIBRARY_IS_OLDER_THAN_BEFORE;}
-  taiperiod = naGetTAIPeriodIndexForSISecond(olduncertainsecondnumber);
+  if(naEquali64(oldUncertainSecondNumber, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsiSecond)){return NA_DATETIME_NO_CORRECTION_NEEDED;}
+  if(naGreateri64(oldUncertainSecondNumber, naTAIPeriods[NA_TAI_PERIODS_COUNT - 1].startsiSecond)){return NA_DATETIME_NEW_LIBRARY_IS_OLDER_THAN_BEFORE;}
+  taiperiod = naGetTAIPeriodIndexForSISecond(oldUncertainSecondNumber);
   // Find the earliest second which needs correction.
   while(taiperiod < NA_TAI_PERIODS_COUNT){
     if(naTAIPeriods[taiperiod].indicator == NA_POSITIVE_LEAP_SECONDS_JUNE){return taiperiod;}
@@ -1201,26 +1201,26 @@ NA_DEF void naSetGlobalTimeShiftToSystemSettings(){
 NA_DEF NAi64 naGetFirstUncertainSecondNumber(){
   // The first uncertain second number is here defined to be the first second
   // of the last known TAI period.
-  return naTAIPeriods[NA_TAI_PERIODS_COUNT-1].startsisec;
+  return naTAIPeriods[NA_TAI_PERIODS_COUNT-1].startsiSecond;
 }
 
 
 
-NA_DEF void naCorrectDateTimeForLeapSeconds(NADateTime* datetime, NAInt leapsecondcorrectionconstant){
-  datetime->errornum = NA_DATETIME_ERROR_NONE;
-  if((leapsecondcorrectionconstant > 0) && naGreaterEquali64(datetime->sisec, naTAIPeriods[leapsecondcorrectionconstant].startsisec)){
+NA_DEF void naCorrectDateTimeForLeapSeconds(NADateTime* dateTime, NAInt leapSecondCorrectionConstant){
+  dateTime->errorNum = NA_DATETIME_ERROR_NONE;
+  if((leapSecondCorrectionConstant > 0) && naGreaterEquali64(dateTime->siSecond, naTAIPeriods[leapSecondCorrectionConstant].startsiSecond)){
     NAInt taiperiod;
-    // Correcting a date for leap seconds means that the siseconds stored are
+    // Correcting a date for leap seconds means that the siSecondonds stored are
     // greaterequal to an entry in the TAI periods structure which introduces
     // a leap second. When storing such a date with an earlier version of NALib,
     // no leap second introduction is assumed. Therefore, now as the leap second
     // is known, it must be added to the date.
     //
     // To do so, we subtract all previously known leap seconds...
-    datetime->sisec = naSubi64(datetime->sisec, naSubi64(naTAIPeriods[leapsecondcorrectionconstant-1].startsisec, naTAIPeriods[leapsecondcorrectionconstant-1].startgregsec));
+    dateTime->siSecond = naSubi64(dateTime->siSecond, naSubi64(naTAIPeriods[leapSecondCorrectionConstant-1].startsiSecond, naTAIPeriods[leapSecondCorrectionConstant-1].startgregsec));
     // And add the correct number of leap seconds anew:
-    taiperiod = naGetLatestTAIPeriodIndexForGregorianSecond(datetime->sisec);
-    datetime->sisec = naAddi64(datetime->sisec, naSubi64(naTAIPeriods[taiperiod].startsisec, naTAIPeriods[taiperiod].startgregsec));
+    taiperiod = naGetLatestTAIPeriodIndexForGregorianSecond(dateTime->siSecond);
+    dateTime->siSecond = naAddi64(dateTime->siSecond, naSubi64(naTAIPeriods[taiperiod].startsiSecond, naTAIPeriods[taiperiod].startgregsec));
   }
 }
 

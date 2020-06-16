@@ -18,7 +18,7 @@
 // During the last 10 years, there were barely any of 'em.
 //
 // Nontheless, you can use the following typedefs to easily create vectors and
-// matrices of prefedined type and bytesize:
+// matrices of prefedined type and byteSize:
 
 typedef double NAVec1d[1];
 typedef double NAVec2d[2];
@@ -112,7 +112,7 @@ typedef float  NAMat44f[16];
 // Implementation note:
 // The check if two arrays are misaligned is done using pointer arithmetic.
 // It is so far unknown how these checks work out when the pointers are not
-// aligned to the bytesize of their element type like float or double. But most
+// aligned to the byteSize of their element type like float or double. But most
 // likely, such misalignments will show very quickly elsewhere.
 //
 // Until this day, misalignments have never been a real issue as they usually

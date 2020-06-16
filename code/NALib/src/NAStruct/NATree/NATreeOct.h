@@ -6,7 +6,7 @@ struct NATreeOctNode{
   NATreeNode node;
   NATreeItem* childs[8];
   NAVertex origin;
-  NAPtr userdata;
+  NAPtr userData;
   NAInt childexponent;
 };
 NA_EXTERN_RUNTIME_TYPE(NATreeOctNode);
@@ -15,7 +15,7 @@ typedef struct NATreeOctLeaf NATreeOctLeaf;
 struct NATreeOctLeaf{
   NATreeLeaf leaf;
   NAVertex origin;  // todo remove this maybe?
-  NAPtr userdata;
+  NAPtr userData;
   NAInt leafexponent; // todo remove this maybe?
 };
 NA_EXTERN_RUNTIME_TYPE(NATreeOctLeaf);
@@ -24,12 +24,12 @@ NA_EXTERN_RUNTIME_TYPE(NATreeOctLeaf);
 #define NODE_CHILDS_OFFSET_OCT     offsetof(NATreeOctNode, childs)
 #define LEAF_KEY_OFFSET_OCT        offsetof(NATreeOctLeaf, origin)
 #define NODE_KEY_OFFSET_OCT        offsetof(NATreeOctNode, origin)
-#define LEAF_USERDATA_OFFSET_OCT   offsetof(NATreeOctLeaf, userdata)
-#define NODE_USERDATA_OFFSET_OCT   offsetof(NATreeOctNode, userdata)
+#define LEAF_USERDATA_OFFSET_OCT   offsetof(NATreeOctLeaf, userData)
+#define NODE_USERDATA_OFFSET_OCT   offsetof(NATreeOctNode, userData)
 
 NA_HAPI  NAInt na_GetChildIndexOctDouble(NATreeNode* parentnode, const void* childkey);
 NA_HAPI  NAInt na_GetKeyIndexOctDouble(const void* basekey, const void* testkey, const void* data);
-NA_HAPI  NABool na_TestKeyOctDouble(const void* lowerlimit, const void* upperlimit, const void* key);
+NA_HAPI  NABool na_TestKeyOctDouble(const void* lowerLimit, const void* upperLimit, const void* key);
 NA_HAPI  NABool na_TestKeyNodeContainOctDouble(NATreeNode* parentnode, const void* key);
 NA_HAPI  NABool na_TestKeyLeafContainOctDouble(NATreeLeaf* leaf, const void* key);
 

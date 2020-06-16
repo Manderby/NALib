@@ -4,9 +4,9 @@
 
 // This is the internal function actually preparing and storing the bytes
 // delivered in the parameters.
-NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, NAInt bytesize, NABool prepare, NABool advance){
+NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, NAInt byteSize, NABool prepare, NABool advance){
   const NABuffer* buffer;
-  NAInt firstpartoffset;
+  NAInt firstpartOffset;
   NATreeIterator firstbufiter;
   const NAByte* src = data;
 
@@ -22,19 +22,19 @@ NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, NAInt
   // We prepare the buffer for the whole range. There might be no parts or
   // sparse parts.
   if(prepare){
-    na_PrepareBuffer(iter, bytesize);
+    na_PrepareBuffer(iter, byteSize);
   }
   // After this function, all relevant parts should be present and filled with
   // memory. The iterator should point to the buffer part containing offset.
 
   // We store the current iterator to move back to it later on if necessary.
-  firstpartoffset = iter->partoffset;
+  firstpartOffset = iter->partOffset;
   firstbufiter = naMakeTreeAccessor(&(buffer->parts));
-  naLocateTreeIterator(&firstbufiter, &(iter->partiter));
+  naLocateTreeIterator(&firstbufiter, &(iter->partIter));
 
-  // do as long as there is a bytesize remaining. Remember that the data may
+  // do as long as there is a byteSize remaining. Remember that the data may
   // be split into different buffer parts.
-  while(bytesize){
+  while(byteSize){
     NABufferPart* part;
     NAInt possiblelength;
     void* dst;
@@ -53,30 +53,30 @@ NA_HDEF void na_StoreBufferBytes(NABufferIterator* iter, const void* data, NAInt
     // We get the data pointer where we can write bytes.
     dst = na_GetBufferPartDataPointerMutable(iter);
     // We detect, how many bytes actually can be put into the current part.
-    possiblelength = na_GetBufferPartByteSize(part) - iter->partoffset;
+    possiblelength = na_GetBufferPartByteSize(part) - iter->partOffset;
 
     #ifndef NDEBUG
       if(possiblelength <= 0)
         naError("possible length invalid");
     #endif
 
-    if(possiblelength > bytesize){
+    if(possiblelength > byteSize){
       // If we can put in more bytes than needed, we copy all remaining bytes
       // and stay on this part.
-      possiblelength = bytesize;
-      iter->partoffset += bytesize;
+      possiblelength = byteSize;
+      iter->partOffset += byteSize;
     }else{
       // We copy as many bytes as possible and advance to the next part.
       na_LocateBufferNextPart(iter);
     }
     naCopyn(dst, src, possiblelength);
     src += possiblelength;
-    bytesize -= possiblelength;
+    byteSize -= possiblelength;
   }
   
   if(!advance){
-    iter->partoffset = firstpartoffset;
-    naLocateTreeIterator(&(iter->partiter), &firstbufiter);
+    iter->partOffset = firstpartOffset;
+    naLocateTreeIterator(&(iter->partIter), &firstbufiter);
   }
   naClearTreeIterator(&firstbufiter);  
 }
@@ -220,35 +220,35 @@ NA_DEF void naWriteBufferdv(NABufferIterator* iter, const double* src, NAInt cou
 // BLOCK WRITING
 // ////////////////////////////////////
 
-NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcbuffer, NARangei srcrange){
-  if(!naIsRangeiEmpty(srcrange)){
+NA_DEF void naWriteBufferBuffer(NABufferIterator* iter, const NABuffer* srcBuffer, NARangei srcRange){
+  if(!naIsRangeiEmpty(srcRange)){
     NABuffer* dstbuffer;
     NABufferSource* tmpsource;
-    NAInt tmpsourceoffset;
-    NABuffer* mutablesrcbuffer;
+    NAInt tmpsourceOffset;
+    NABuffer* mutablesrcBuffer;
     NAInt curPos;
 
     dstbuffer = na_GetBufferIteratorBufferMutable(iter);
     curPos = naGetBufferLocation(iter);
-    mutablesrcbuffer = (NABuffer*)srcbuffer;
+    mutablesrcBuffer = (NABuffer*)srcBuffer;
 
     tmpsource = dstbuffer->source;
-    tmpsourceoffset = dstbuffer->sourceoffset;
-    dstbuffer->source = naNewBufferSource(NA_NULL, mutablesrcbuffer);
-    dstbuffer->sourceoffset = srcrange.origin - curPos;
+    tmpsourceOffset = dstbuffer->sourceOffset;
+    dstbuffer->source = naNewBufferSource(NA_NULL, mutablesrcBuffer);
+    dstbuffer->sourceOffset = srcRange.origin - curPos;
 
-    naCacheBufferRange(dstbuffer, naMakeRangei(curPos, srcrange.length));
-    naLocateBufferAbsolute(iter, curPos + srcrange.length);
+    naCacheBufferRange(dstbuffer, naMakeRangei(curPos, srcRange.length));
+    naLocateBufferAbsolute(iter, curPos + srcRange.length);
 
     naRelease(dstbuffer->source);
     dstbuffer->source = tmpsource;
-    dstbuffer->sourceoffset = tmpsourceoffset;
+    dstbuffer->sourceOffset = tmpsourceOffset;
   }
 }
 
 
 
-NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt bytesize, NABool useCopy){
+NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt byteSize, NABool useCopy){
   NABufferIterator readiter;
   NABuffer* buffer;
   NAByte* bufptr;
@@ -260,29 +260,29 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt by
   naLocateBufferAbsolute(&readiter, writeoffset - distance);
 
   if(useCopy){
-    NAInt remainingbytesize;
+    NAInt remainingbyteSize;
     NABuffer* tmpbuffer;
     
-    NAByte* buf = naMalloc(bytesize);
+    NAByte* buf = naMalloc(byteSize);
     
-    NAInt segmentsize = naMini(distance, bytesize);
+    NAInt segmentsize = naMini(distance, byteSize);
     naReadBufferBytes(&readiter, buf, segmentsize);
-    remainingbytesize = bytesize - segmentsize;
+    remainingbyteSize = byteSize - segmentsize;
     
     bufptr = &(buf[segmentsize]);
-    while(remainingbytesize){
+    while(remainingbyteSize){
       *bufptr = bufptr[-segmentsize]; //todo
-      remainingbytesize--;
+      remainingbyteSize--;
       bufptr++;
     }
 
-    tmpbuffer = naNewBufferWithMutableData(buf, bytesize, naFree);
-    naWriteBufferBuffer(iter, tmpbuffer, naMakeRangei(0, bytesize));
+    tmpbuffer = naNewBufferWithMutableData(buf, byteSize, naFree);
+    naWriteBufferBuffer(iter, tmpbuffer, naMakeRangei(0, byteSize));
     naRelease(tmpbuffer);
 
   }else{
     // Now start copying the buffers.
-    while(bytesize){
+    while(byteSize){
       NAInt remainingwrite;
       NAInt remainingread;
       NABufferPart* writepart;
@@ -291,27 +291,27 @@ NA_DEF void naRepeatBufferBytes(NABufferIterator* iter, NAInt distance, NAInt by
       void* dst;
 
       // Prepare the two iterators
-      na_PrepareBuffer(iter, bytesize);
-      na_PrepareBuffer(&readiter, bytesize);
+      na_PrepareBuffer(iter, byteSize);
+      na_PrepareBuffer(&readiter, byteSize);
 
       readpart = na_GetBufferPart(&readiter);
       writepart = na_GetBufferPart(iter);
 
-      remainingread = na_GetBufferPartByteSize(readpart) - readiter.partoffset;
-      remainingwrite = na_GetBufferPartByteSize(writepart) - iter->partoffset;
+      remainingread = na_GetBufferPartByteSize(readpart) - readiter.partOffset;
+      remainingwrite = na_GetBufferPartByteSize(writepart) - iter->partOffset;
 
       // We reduce the remainingread such that it does not overflow either the
-      // distance, the remainingwrite or the bytesize.
+      // distance, the remainingwrite or the byteSize.
       remainingread = naMini(remainingread, distance);
       remainingread = naMini(remainingread, remainingwrite);
-      remainingread = naMini(remainingread, bytesize);
+      remainingread = naMini(remainingread, byteSize);
 
       src = na_GetBufferPartDataPointerConst(&readiter);
       dst = na_GetBufferPartDataPointerMutable(iter);
       naCopyn(dst, src, remainingread);
-      bytesize -= remainingread;
-      iter->partoffset += remainingread;
-      readiter.partoffset += remainingread;
+      byteSize -= remainingread;
+      iter->partOffset += remainingread;
+      readiter.partOffset += remainingread;
     }
 
   }
@@ -335,7 +335,7 @@ NA_DEF void naWriteBufferTab(NABufferIterator* iter){
 
 NA_DEF void naWriteBufferNewLine(NABufferIterator* iter){
   const NABuffer* buffer = na_GetBufferIteratorBufferConst(iter);
-  switch(buffer->newlineencoding){
+  switch(buffer->newlineEncoding){
   case NA_NEWLINE_UNIX:
     na_StoreBufferBytes(iter, NA_NL_UNIX, 1, NA_TRUE, NA_TRUE);
     break;
@@ -364,28 +364,28 @@ NA_DEF void naWriteBufferLine(NABufferIterator* iter, const NAString* string){
 
 
 NA_DEF void naWriteBufferStringWithFormat(NABufferIterator* iter, const NAUTF8Char* format, ...){
-  va_list argumentlist;
-  va_start(argumentlist, format);
-  naWriteBufferStringWithArguments(iter, format, argumentlist);
-  va_end(argumentlist);
+  va_list argumentList;
+  va_start(argumentList, format);
+  naWriteBufferStringWithArguments(iter, format, argumentList);
+  va_end(argumentList);
 }
 NA_DEF void naWriteBufferLineWithFormat(NABufferIterator* iter, const NAUTF8Char* format, ...){
-  va_list argumentlist;
-  va_start(argumentlist, format);
-  naWriteBufferLineWithArguments(iter, format, argumentlist);
-  va_end(argumentlist);
+  va_list argumentList;
+  va_start(argumentList, format);
+  naWriteBufferLineWithArguments(iter, format, argumentList);
+  va_end(argumentList);
 }
 
 
 
-NA_DEF void naWriteBufferStringWithArguments(NABufferIterator* iter, const NAUTF8Char* format, va_list argumentlist){
+NA_DEF void naWriteBufferStringWithArguments(NABufferIterator* iter, const NAUTF8Char* format, va_list argumentList){
   NAString* string;
-  string = naNewStringWithArguments(format, argumentlist);
+  string = naNewStringWithArguments(format, argumentList);
   naWriteBufferString(iter, string);
   naDelete(string);
 }
-NA_DEF void naWriteBufferLineWithArguments(NABufferIterator* iter, const NAUTF8Char* format, va_list argumentlist){
-  naWriteBufferStringWithArguments(iter, format, argumentlist);
+NA_DEF void naWriteBufferLineWithArguments(NABufferIterator* iter, const NAUTF8Char* format, va_list argumentList){
+  naWriteBufferStringWithArguments(iter, format, argumentList);
   naWriteBufferNewLine(iter);
 }
 

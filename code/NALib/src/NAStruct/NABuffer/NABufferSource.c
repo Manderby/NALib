@@ -14,7 +14,7 @@ NA_DEF NABufferSource* naNewBufferSource(NABufferFiller filler, NABuffer* buffer
   source->buffiller = filler;
   source->buffer = buffer ? naRetain(buffer) : NA_NULL;
   source->data = NA_NULL;
-  source->datadestructor = NA_NULL;
+  source->dataDestructor = NA_NULL;
   source->flags = 0;
   source->limit = naMakeRangeiWithStartAndEnd(0, 0);
 
@@ -24,7 +24,7 @@ NA_DEF NABufferSource* naNewBufferSource(NABufferFiller filler, NABuffer* buffer
 
 
 NA_HDEF void na_DestructBufferSource(NABufferSource* source){
-  if(source->datadestructor){source->datadestructor(source->data);}
+  if(source->dataDestructor){source->dataDestructor(source->data);}
   if(source->buffer){naRelease(source->buffer);}
 }
 

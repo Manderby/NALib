@@ -27,7 +27,7 @@ NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr){
   NABabyImage* image = NA_NULL;
 
 //  // Currently, only png is possible
-//  NAPNG* png = naNewPNGWithFile(pathStr);
+//  NAPNG* png = naNewPNGWithPath(pathStr);
 //  NABabyImage* babyImage = naCreateBabyImageFromPNG(png);
 //  return babyImage;
 

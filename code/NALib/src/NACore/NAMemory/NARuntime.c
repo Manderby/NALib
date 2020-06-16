@@ -18,7 +18,7 @@
 // bytes or the destructor to be called upon deletion.
 //
 // Most importantly, NA_TypeInfo stores a pointer "curpart". This
-// pointer points to an allocated memory block with a bytesize defined in
+// pointer points to an allocated memory block with a byteSize defined in
 // NAConfiguration.h with NA_POOLPART_BYTESIZE. That size and a corresponding
 // address mask is stored in the global NARuntime struct na_Runtime.
 //
@@ -137,8 +137,8 @@ NARuntime* na_Runtime = NA_NULL;
 
 
 
-// Security check: The pool bytesize must be big enough to store one struct
-// of NA_PoolPart. Note that bytesize 0 has the meaning of using the
+// Security check: The pool byteSize must be big enough to store one struct
+// of NA_PoolPart. Note that byteSize 0 has the meaning of using the
 // memory page size.
 #if (NA_POOLPART_BYTESIZE != 0) && (NA_POOLPART_BYTESIZE <= 8 * NA_ADDRESS_BYTES)
   #error "Memory pool size is too small"
@@ -563,7 +563,7 @@ NA_DEF void naStartRuntime(){
       na_Runtime->partSize = (size_t)NA_POOLPART_BYTESIZE;
       na_Runtime->partSizeMask = ~(size_t)(NA_POOLPART_BYTESIZE - NA_ONE);
     #else
-      #error "Pool part bytesize is too large"
+      #error "Pool part byteSize is too large"
     #endif
     na_Runtime->mallocGarbage = NA_NULL;
     na_Runtime->totalMallocGarbageByteCount = 0;
@@ -651,7 +651,7 @@ NA_HIDEF void na_EnhanceMallocGarbage(){
 
 
 
-NA_DEF void* naMallocTmp(size_t bytesize){
+NA_DEF void* naMallocTmp(size_t byteSize){
   void* newPtr;
   NAMallocGarbage* garbage;
   #ifndef NDEBUG
@@ -661,8 +661,8 @@ NA_DEF void* naMallocTmp(size_t bytesize){
   #if NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT != 0
     if(na_Runtime->totalMallocGarbageByteCount > (size_t)NA_GARBAGE_TMP_AUTOCOLLECT_LIMIT){naCollectGarbage();}
   #endif
-  na_Runtime->totalMallocGarbageByteCount += bytesize;
-  newPtr = naMalloc((NAInt)bytesize);
+  na_Runtime->totalMallocGarbageByteCount += byteSize;
+  newPtr = naMalloc((NAInt)byteSize);
   if(!na_Runtime->mallocGarbage || (na_Runtime->mallocGarbage->cur >= NA_MALLOC_GARBAGE_POINTER_COUNT)){
     na_EnhanceMallocGarbage();
   }

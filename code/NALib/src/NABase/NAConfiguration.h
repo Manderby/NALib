@@ -158,7 +158,7 @@
 // If you set this macro to 0, one memory page size will be used.
 //
 // Turns out, on most systems, one pagesize is far too small to result in
-// good speed improvements for naNew. A large enough custom bytesize can
+// good speed improvements for naNew. A large enough custom byteSize can
 // result in up to 2 times faster allocation and deallocation.
 //
 // Default is (1 << 16)

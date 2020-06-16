@@ -65,8 +65,8 @@ NA_HDEF NAInt na_GetKeyIndexBinDouble(const void* basekey, const void* testkey, 
   NA_UNUSED(data);
   return !(*(const double*)testkey < *(const double*)basekey); // results in 0 or 1
 }
-NA_HDEF NABool na_TestKeyBinDouble(const void* lowerlimit, const void* upperlimit, const void* key){
-  return ((*(const double*)lowerlimit <= *(const double*)key) && (*(const double*)key) < *(const double*)upperlimit);
+NA_HDEF NABool na_TestKeyBinDouble(const void* lowerLimit, const void* upperLimit, const void* key){
+  return ((*(const double*)lowerLimit <= *(const double*)key) && (*(const double*)key) < *(const double*)upperLimit);
 }
 NA_HDEF NABool na_TestKeyLeafContainBinDouble(NATreeLeaf* leaf, const void* key){
   double* key1 = (double*)na_GetBinLeafKey((NATreeBinLeaf*)leaf);
@@ -84,8 +84,8 @@ NA_HDEF NAInt na_GetKeyIndexBinNAInt(const void* basekey, const void* key, const
   // if key is equal to basekey, the return value must be 1.
   return !(*(const NAInt*)key < *(const NAInt*)basekey); // results in 0 or 1
 }
-NA_HDEF NABool na_TestKeyBinNAInt(const void* lowerlimit, const void* upperlimit, const void* key){
-  return ((*(const NAInt*)lowerlimit <= *(const NAInt*)key) && (*(const NAInt*)key <= *(const NAInt*)upperlimit));
+NA_HDEF NABool na_TestKeyBinNAInt(const void* lowerLimit, const void* upperLimit, const void* key){
+  return ((*(const NAInt*)lowerLimit <= *(const NAInt*)key) && (*(const NAInt*)key <= *(const NAInt*)upperLimit));
 }
 NA_HDEF NABool na_TestKeyLeafContainBinNAInt(NATreeLeaf* leaf, const void* key){
   NAInt* key1 = (NAInt*)na_GetBinLeafKey((NATreeBinLeaf*)leaf);
@@ -107,7 +107,7 @@ NA_HDEF void na_DestructTreeLeafBin(NATreeLeaf* leaf){
 
 
 
-NA_HDEF NATreeNode* na_LocateBubbleBinWithLimits(const NATree* tree, NATreeNode* node, const void* key, const void* lowerlimit, const void* upperlimit, NATreeItem* previtem){
+NA_HDEF NATreeNode* na_LocateBubbleBinWithLimits(const NATree* tree, NATreeNode* node, const void* key, const void* lowerLimit, const void* upperLimit, NATreeItem* previtem){
   NATreeBinNode* binnode;
   NATreeItem* item;
   
@@ -124,18 +124,18 @@ NA_HDEF NATreeNode* na_LocateBubbleBinWithLimits(const NATree* tree, NATreeNode*
   if(tree->config->keyEqualComparer(key, na_GetBinNodeKey(binnode))){return node;}
   // Otherwise, we set the limits dependent on the previous node.
   if(na_GetTreeNodeChildIndex(tree->config, node, previtem) == 1){
-    lowerlimit = na_GetBinNodeKey(binnode);
+    lowerLimit = na_GetBinNodeKey(binnode);
   }else{
-    upperlimit = na_GetBinNodeKey(binnode);
+    upperLimit = na_GetBinNodeKey(binnode);
   }
   // If we know both limits and the key is contained within, return.
-  if(lowerlimit && upperlimit && tree->config->keyTester(lowerlimit, upperlimit, key)){
+  if(lowerLimit && upperLimit && tree->config->keyTester(lowerLimit, upperLimit, key)){
     return node;
   }
   // Otherwise, go up if possible.
   item = na_GetTreeNodeItem(node);
   if(!na_IsTreeItemRoot(item)){
-    return na_LocateBubbleBinWithLimits(tree, na_GetTreeItemParent(item), key, lowerlimit, upperlimit, item);
+    return na_LocateBubbleBinWithLimits(tree, na_GetTreeItemParent(item), key, lowerLimit, upperLimit, item);
   }else{
     // We reached the root. No need to break a sweat. Simply return null.
     return NA_NULL;

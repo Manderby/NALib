@@ -88,22 +88,22 @@ NA_API float* naGetBabyImageData(const NABabyImage* image);
 
 // Fills the image with the given data. The data is expected to contain as
 // many RGBA values stored as uint8 necessary for the whole image with no
-// padding. Depending on the toptobottom flag, the data is expected as such.
+// padding. Depending on the topToBottom flag, the data is expected as such.
 // Note that a BabyImage internally always stores images bottom to top.
 NA_API void naFillBabyImageWithu8(
   NABabyImage* image,
   const void* data,
-  NABool toptobottom,
+  NABool topToBottom,
   NAColorBufferType bufferType);
 
 // Writes the contents of the image into a buffer. The output data will be
 // RGBA values stored as uint8 with no padding. The data buffer must be big
-// enough. Depending on the toptobottom flag, the data is expected as such.
+// enough. Depending on the topToBottom flag, the data is expected as such.
 // Note that a BabyImage internally always stores images bottom to top.
 NA_API void naConvertBabyImageTou8(
   const NABabyImage* image,
   void* data,
-  NABool toptobottom,
+  NABool topToBottom,
   NAColorBufferType bufferType);
 
 

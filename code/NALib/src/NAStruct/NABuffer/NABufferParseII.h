@@ -5,55 +5,55 @@
 
 
 
-NA_IDEF int8 naParseBufferi8(NABufferIterator* iter, NABool skipdelimiter){
+NA_IDEF int8 naParseBufferi8(NABufferIterator* iter, NABool skipDelimiter){
   NAi64 intvalue;
   naParseBufferDecimalSignedInteger(iter, &intvalue, 0, naMakei64WithLo(NA_MIN_i8), naMakei64WithLo(NA_MAX_i8));
-  if(skipdelimiter){naSkipBufferDelimiter(iter);}
+  if(skipDelimiter){naSkipBufferDelimiter(iter);}
   return naCasti64Toi8(intvalue);
 }
-NA_IDEF int16 naParseBufferi16(NABufferIterator* iter, NABool skipdelimiter){
+NA_IDEF int16 naParseBufferi16(NABufferIterator* iter, NABool skipDelimiter){
   NAi64 intvalue;
   naParseBufferDecimalSignedInteger(iter, &intvalue, 0, naMakei64WithLo(NA_MIN_i16), naMakei64WithLo(NA_MAX_i16));
-  if(skipdelimiter){naSkipBufferDelimiter(iter);}
+  if(skipDelimiter){naSkipBufferDelimiter(iter);}
   return naCasti64Toi16(intvalue);
 }
-NA_IDEF int32 naParseBufferi32(NABufferIterator* iter, NABool skipdelimiter){
+NA_IDEF int32 naParseBufferi32(NABufferIterator* iter, NABool skipDelimiter){
   NAi64 intvalue;
   naParseBufferDecimalSignedInteger(iter, &intvalue, 0, naMakei64WithLo(NA_MIN_i32), naMakei64WithLo(NA_MAX_i32));
-  if(skipdelimiter){naSkipBufferDelimiter(iter);}
+  if(skipDelimiter){naSkipBufferDelimiter(iter);}
   return naCasti64Toi32(intvalue);
 }
-NA_IDEF NAi64 naParseBufferi64(NABufferIterator* iter, NABool skipdelimiter){
+NA_IDEF NAi64 naParseBufferi64(NABufferIterator* iter, NABool skipDelimiter){
   NAi64 intvalue;
   naParseBufferDecimalSignedInteger(iter, &intvalue, 0, NA_MIN_i64, NA_MAX_i64);
-  if(skipdelimiter){naSkipBufferDelimiter(iter);}
+  if(skipDelimiter){naSkipBufferDelimiter(iter);}
   return intvalue;
 }
 
 
 
-NA_IDEF uint8 naParseBufferu8(NABufferIterator* iter, NABool skipdelimiter){
+NA_IDEF uint8 naParseBufferu8(NABufferIterator* iter, NABool skipDelimiter){
   NAu64 uintvalue;
   naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, naMakeu64WithLo(NA_MAX_u8));
-  if(skipdelimiter){naSkipBufferDelimiter(iter);}
+  if(skipDelimiter){naSkipBufferDelimiter(iter);}
   return naCastu64Tou8(uintvalue);
 }
-NA_IDEF uint16 naParseBufferu16(NABufferIterator* iter, NABool skipdelimiter){
+NA_IDEF uint16 naParseBufferu16(NABufferIterator* iter, NABool skipDelimiter){
   NAu64 uintvalue;
   naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, naMakeu64WithLo(NA_MAX_u16));
-  if(skipdelimiter){naSkipBufferDelimiter(iter);}
+  if(skipDelimiter){naSkipBufferDelimiter(iter);}
   return naCastu64Tou16(uintvalue);
 }
-NA_IDEF uint32 naParseBufferu32(NABufferIterator* iter, NABool skipdelimiter){
+NA_IDEF uint32 naParseBufferu32(NABufferIterator* iter, NABool skipDelimiter){
   NAu64 uintvalue;
   naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, naMakeu64WithLo(NA_MAX_u32));
-  if(skipdelimiter){naSkipBufferDelimiter(iter);}
+  if(skipDelimiter){naSkipBufferDelimiter(iter);}
   return naCastu64Tou32(uintvalue);
 }
-NA_IDEF NAu64 naParseBufferu64(NABufferIterator* iter, NABool skipdelimiter){
+NA_IDEF NAu64 naParseBufferu64(NABufferIterator* iter, NABool skipDelimiter){
   NAu64 uintvalue;
   naParseBufferDecimalUnsignedInteger(iter, &uintvalue, 0, NA_MAX_u64);
-  if(skipdelimiter){naSkipBufferDelimiter(iter);}
+  if(skipDelimiter){naSkipBufferDelimiter(iter);}
   return uintvalue;
 }
 

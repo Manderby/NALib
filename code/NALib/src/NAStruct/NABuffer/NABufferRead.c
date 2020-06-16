@@ -3,9 +3,9 @@
 
 
 
-NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize, NABool advance){
+NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt byteSize, NABool advance){
   const NABuffer* buffer;
-  NAInt firstpartoffset;
+  NAInt firstpartOffset;
   NAByte* dst = data;
   NATreeIterator firstbufiter;
 
@@ -20,18 +20,18 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt by
 
   // We prepare the buffer for the whole range. There might be no parts or
   // sparse parts.
-  na_PrepareBuffer(iter, bytesize);
+  na_PrepareBuffer(iter, byteSize);
   // After this function, all relevant parts should be present and filled with
   // memory. The iterator should point to the buffer part containing offset.
   
   // We store the current iterator to move back to it later on if necessary.
-  firstpartoffset = iter->partoffset;
+  firstpartOffset = iter->partOffset;
   firstbufiter = naMakeTreeAccessor(&(buffer->parts));
-  naLocateTreeIterator(&firstbufiter, &(iter->partiter));
+  naLocateTreeIterator(&firstbufiter, &(iter->partIter));
 
-  // do as long as there is a bytesize remaining. Remember that the data may
+  // do as long as there is a byteSize remaining. Remember that the data may
   // be split into different buffer parts.
-  while(bytesize){
+  while(byteSize){
     NABufferPart* part;
     NAInt possiblelength;
     const void* src;
@@ -50,30 +50,30 @@ NA_HDEF void na_RetrieveBufferBytes(NABufferIterator* iter, void* data, NAInt by
     // We get the data pointer where we can read bytes.
     src = na_GetBufferPartDataPointerConst(iter);
     // We detect, how many bytes actually can be read from the current part.
-    possiblelength = na_GetBufferPartByteSize(part) - iter->partoffset;
+    possiblelength = na_GetBufferPartByteSize(part) - iter->partOffset;
 
     #ifndef NDEBUG
       if(possiblelength <= 0)
         naError("possible length invalid");
     #endif
 
-    if(possiblelength > bytesize){
+    if(possiblelength > byteSize){
       // If we can get out more bytes than needed, we copy all remaining bytes
       // and stay on this part.
-      possiblelength = bytesize;
-      iter->partoffset += bytesize;
+      possiblelength = byteSize;
+      iter->partOffset += byteSize;
     }else{
       // We copy as many bytes as possible and advance to the next part.
       na_LocateBufferNextPart(iter);
     }
     naCopyn(dst, src, possiblelength);
     dst += possiblelength;
-    bytesize -= possiblelength;
+    byteSize -= possiblelength;
   }
   
   if(!advance){
-    iter->partoffset = firstpartoffset;
-    naLocateTreeIterator(&(iter->partiter), &firstbufiter);
+    iter->partOffset = firstpartOffset;
+    naLocateTreeIterator(&(iter->partIter), &firstbufiter);
   }
   naClearTreeIterator(&firstbufiter);  
 }
@@ -114,17 +114,17 @@ NA_DEF NABool naReadBufferBit(NABufferIterator* iter){
   NABool bit;
   NA_UNUSED(iter);
 
-  if(iter->curbit == 0){
+  if(iter->curBit == 0){
     na_PrepareBuffer(iter, 1);
   }
 
   src = na_GetBufferPartDataPointerConst(iter);
-  bit = (*src >> iter->curbit) & 0x01;
-  iter->curbit++;
+  bit = (*src >> iter->curBit) & 0x01;
+  iter->curBit++;
 
-  if(iter->curbit == 8){
-    iter->curbit = 0;
-    iter->partoffset++;
+  if(iter->curBit == 8){
+    iter->curBit = 0;
+    iter->partOffset++;
   }
 
   return bit;
@@ -140,8 +140,8 @@ NA_DEF NAUInt naReadBufferBits(NABufferIterator* iter, uint8 count){
       naError("Max bit readable per function call exceeded.");
   #endif
   while(count){
-    NABool curbit = naReadBufferBit(iter);
-    retValuei |= curmask * (NAUInt)curbit;
+    NABool curBit = naReadBufferBit(iter);
+    retValuei |= curmask * (NAUInt)curBit;
     curmask <<= 1;
     count--;
   }
@@ -151,9 +151,9 @@ NA_DEF NAUInt naReadBufferBits(NABufferIterator* iter, uint8 count){
 
 
 NA_DEF void naPadBufferBits(NABufferIterator* iter){
-  if(iter->curbit != 0){
-    iter->curbit = 0;
-    iter->partoffset++;
+  if(iter->curBit != 0){
+    iter->curBit = 0;
+    iter->partOffset++;
   }
 }
 

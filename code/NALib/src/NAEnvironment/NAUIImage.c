@@ -3,25 +3,25 @@
 
 #if (NA_COMPILE_GUI == 1)
 
-// Will retain the babyimage.
-NA_HIAPI void na_SetUIImageBabyImage(NAUIImage* uiimage, NABabyImage* babyimage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin);
+// Will retain the babyImage.
+NA_HIAPI void na_SetUIImageBabyImage(NAUIImage* uiimage, NABabyImage* babyImage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin);
 
 
 
 void naFillBabyColorWithSkin(NABabyColor color, NAUIImageSkin skin){
-  uint8 skincolor[4];
+  uint8 skinColor[4];
   switch(skin){
   case NA_UIIMAGE_SKIN_LIGHT:
-    skincolor[0] = 16;
-    skincolor[1] = 16;
-    skincolor[2] = 16;
-    skincolor[3] = 255;
+    skinColor[0] = 16;
+    skinColor[1] = 16;
+    skinColor[2] = 16;
+    skinColor[3] = 255;
     break;
   case NA_UIIMAGE_SKIN_DARK:
-    skincolor[0] = 240;
-    skincolor[1] = 240;
-    skincolor[2] = 240;
-    skincolor[3] = 255;
+    skinColor[0] = 240;
+    skinColor[1] = 240;
+    skinColor[2] = 240;
+    skinColor[3] = 255;
     break;
   default:
     #ifndef NDEBUG
@@ -29,7 +29,7 @@ void naFillBabyColorWithSkin(NABabyColor color, NAUIImageSkin skin){
     #endif
     break;
   }
-  naFillBabyColorWithu8(color, skincolor, NA_COLOR_BUFFER_RGBA);
+  naFillBabyColorWithu8(color, skinColor, NA_COLOR_BUFFER_RGBA);
 }
 
 
@@ -40,18 +40,18 @@ NA_HIDEF NAInt na_GetUIImageSubImageIndex(NAUIImageResolution resolution, NAUIIm
 
 NA_HDEF NABabyImage* na_GetUIImageBabyImage(NAUIImage* uiimage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
   NAInt subIndex = na_GetUIImageSubImageIndex(resolution, kind, skin);
-  NABabyImage* retimg = uiimage->babyimages[subIndex];
+  NABabyImage* retimg = uiimage->babyImages[subIndex];
   if(!retimg && skin != NA_UIIMAGE_SKIN_PLAIN){
     NAInt plainIndex = na_GetUIImageSubImageIndex(resolution, kind, NA_UIIMAGE_SKIN_PLAIN);
-    NABabyImage* plainimg = uiimage->babyimages[plainIndex];
+    NABabyImage* plainimg = uiimage->babyImages[plainIndex];
     if(plainimg){
-      NABabyColor skincolor;
+      NABabyColor skinColor;
       NABabyImage* skinnedImage;
-      naFillBabyColorWithSkin(skincolor, skin);
-      skinnedImage = naCreateBabyImageWithTint(plainimg, skincolor, uiimage->tintMode, 1.f);
+      naFillBabyColorWithSkin(skinColor, skin);
+      skinnedImage = naCreateBabyImageWithTint(plainimg, skinColor, uiimage->tintMode, 1.f);
       na_SetUIImageBabyImage(uiimage, skinnedImage, resolution, kind, skin);
       naReleaseBabyImage(skinnedImage);
-      retimg = uiimage->babyimages[subIndex];
+      retimg = uiimage->babyImages[subIndex];
     }
   }
   return retimg;
@@ -69,10 +69,10 @@ NA_HDEF void* na_GetUIImageNativeImage(NAUIImage* uiimage, NAUIImageResolution r
 
 
 
-NA_HIDEF void na_SetUIImageBabyImage(NAUIImage* uiimage, NABabyImage* babyimage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
+NA_HIDEF void na_SetUIImageBabyImage(NAUIImage* uiimage, NABabyImage* babyImage, NAUIImageResolution resolution, NAUIImageKind kind, NAUIImageSkin skin){
   NAInt subIndex = na_GetUIImageSubImageIndex(resolution, kind, skin);
-  uiimage->babyimages[subIndex] = naRetainBabyImage(babyimage);
-  uiimage->nativeImages[subIndex] = naAllocNativeImageWithBabyImage(babyimage);
+  uiimage->babyImages[subIndex] = naRetainBabyImage(babyImage);
+  uiimage->nativeImages[subIndex] = naAllocNativeImageWithBabyImage(babyImage);
 }
 
 
@@ -95,7 +95,7 @@ NA_DEF NAUIImage* naAllocUIImage(NABabyImage* main, NABabyImage* alt, NAUIImageR
   
   uiImage->size1x = naGetBabyImageSize(main);
   uiImage->tintMode = tintMode;
-  naZeron(uiImage->babyimages, NA_UIIMAGE_SUBIMAGES_COUNT * naSizeof(NABabyImage*));
+  naZeron(uiImage->babyImages, NA_UIIMAGE_SUBIMAGES_COUNT * naSizeof(NABabyImage*));
   #if NA_OS == NA_OS_WINDOWS
     naZeron(uiImage->nativeImages, NA_UIIMAGE_SUBIMAGES_COUNT * naSizeof(HBITMAP));
   #else
@@ -144,7 +144,7 @@ NA_API void naDeallocUIImage(NAUIImage* uiimage){
   NAInt i;
   for(i = 0; i < NA_UIIMAGE_SUBIMAGES_COUNT; i++){
     if(uiimage->nativeImages[i]){naDeallocNativeImage(uiimage->nativeImages[i]);}
-    if(uiimage->babyimages[i]){naReleaseBabyImage(uiimage->babyimages[i]);}
+    if(uiimage->babyImages[i]){naReleaseBabyImage(uiimage->babyImages[i]);}
   }
   naFree(uiimage);
 }

@@ -37,7 +37,7 @@ void* naPullCircularBuffer(NACircularBuffer* buffer);
 
 // Puts one element at the tail of the buffer. Does not copy any content, only
 // stores the pointer!
-void naPushCircularBuffer(NACircularBuffer* buffer, void* newdata);
+void naPushCircularBuffer(NACircularBuffer* buffer, void* newData);
 
 
 

@@ -316,10 +316,10 @@ NA_HDEF uint32 na_getBenchmarkIn(){
 NA_HDEF double na_BenchmarkTime(){
   // Note: Reimplemented here because NADateTime uses int64 to compute.
   #if NA_OS == NA_OS_WINDOWS
-    FILETIME filetime;
-    GetSystemTimeAsFileTime(&filetime);
-    filetime.dwLowDateTime;
-    return filetime.dwLowDateTime / 10000000.;  // see definition of dwLowDateDime
+    FILETIME fileTime;
+    GetSystemTimeAsFileTime(&fileTime);
+    fileTime.dwLowDateTime;
+    return fileTime.dwLowDateTime / 10000000.;  // see definition of dwLowDateDime
   #else
     struct timeval curtime;
     NATimeZone curtimezone;

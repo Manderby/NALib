@@ -16,17 +16,17 @@
 
 
 
-NA_IDEF void* naMalloc(NAInt bytesize){
+NA_IDEF void* naMalloc(NAInt byteSize){
   void* ptr;
 
   #ifndef NDEBUG
-    if(bytesize == NA_ZERO)
+    if(byteSize == NA_ZERO)
       naCrash("size is zero.");
-    if(bytesize < NA_ZERO)
+    if(byteSize < NA_ZERO)
       naCrash("size is negative.");
   #endif
 
-  ptr = malloc((size_t)bytesize);
+  ptr = malloc((size_t)byteSize);
 
   #ifndef NDEBUG
   if(!ptr)
@@ -54,15 +54,15 @@ NA_IDEF void naFree(void* ptr){
 
 
 
-NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
+NA_IDEF void* naMallocAligned(NAUInt byteSize, NAUInt align){
   void* retptr;
 
   #if NA_OS == NA_OS_WINDOWS
-    retptr = _aligned_malloc(bytesize, align);
+    retptr = _aligned_malloc(byteSize, align);
   #else
     #if NA_MEMALIGN == NA_MEMALIGN_USE_CUSTOM
       // Allocate a full align and a pointer more than required.
-      void* mem = malloc(bytesize + align + sizeof(void*));
+      void* mem = malloc(byteSize + align + sizeof(void*));
       #ifndef NDEBUG
       if(!mem)
         naCrash("naMallocAligned", "Out of memory");
@@ -75,13 +75,13 @@ NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
       ptr[-1] = mem;
       retptr = ptr;
     #elif NA_MEMALIGN == NA_MEMALIGN_USE_ALIGNED_ALLOC
-      retptr = aligned_alloc(align, bytesize);
+      retptr = aligned_alloc(align, byteSize);
       #ifndef NDEBUG
       if(!retptr)
         naCrash("naMallocAligned", "Out of aligned memory");
       #endif
     #elif NA_MEMALIGN == NA_MEMALIGN_USE_POSIX
-      int error = posix_memalign(&retptr, align, bytesize);
+      int error = posix_memalign(&retptr, align, byteSize);
       #ifndef NDEBUG
       if(error)
         naCrash("Memory alignment failed");
@@ -103,10 +103,10 @@ NA_IDEF void* naMallocAligned(NAUInt bytesize, NAUInt align){
 
 
 
-NA_IDEF void* naMallocPageAligned(NAUInt bytesize){
+NA_IDEF void* naMallocPageAligned(NAUInt byteSize){
   // Note that due to some strange reason, aligned_alloc and valloc not work
   // with clang. Therefore, a simple call to naMallocAligned is used.
-  return naMallocAligned(bytesize, (NAUInt)naGetSystemMemoryPagesize());
+  return naMallocAligned(byteSize, (NAUInt)naGetSystemMemoryPagesize());
 }
 
 

@@ -15,7 +15,7 @@ struct NABufferSource{
   NABufferFiller    buffiller;      // Fill function filling memory.
   NABuffer*         buffer;         // The underlying buffer, if any.
   void*             data;           // data sent to filler and destructor.
-  NAMutator         datadestructor; // Data destructor.
+  NAMutator         dataDestructor; // Data destructor.
   NAUInt            flags;          // Flags for the source
   NARangei          limit;          // Source limit (used if flag set)
 };
@@ -23,13 +23,13 @@ NA_EXTERN_RUNTIME_TYPE(NABufferSource);
 
 
 
-NA_DEF void naSetBufferSourceData(NABufferSource* source, void* data, NAMutator datadestructor){
+NA_DEF void naSetBufferSourceData(NABufferSource* source, void* data, NAMutator dataDestructor){
   #ifndef NDEBUG
     if(source->flags & NA_BUFFER_SOURCE_DEBUG_FLAG_IMMUTABLE)
       naError("Source already used in a buffer. Mayor problems may occur in the future");
   #endif
   source->data = data;
-  source->datadestructor = datadestructor;
+  source->dataDestructor = dataDestructor;
 }
 
 

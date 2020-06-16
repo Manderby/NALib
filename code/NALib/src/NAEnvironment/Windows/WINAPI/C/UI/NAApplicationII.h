@@ -366,7 +366,7 @@ NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, do
 #elif (NA_ADDRESS_BITS == 32)
   typedef long NAWINAPIHANDLE;
 #else
-  #error "Undefined system address bytesize"
+  #error "Undefined system address byteSize"
 #endif
 
 
@@ -447,7 +447,7 @@ NA_DEF NAString* na_NewApplicationName(void){
     naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8modulepath));
     naDelete(utf8modulepath);
     applicationName = naNewStringWithURLFilename(&url);
-    applicationbasename = naNewStringWithBasenameOfFilename(applicationName);
+    applicationbasename = naNewStringWithBasenameOfPath(applicationName);
     naClearURL(&url);
     naDelete(applicationName);
 

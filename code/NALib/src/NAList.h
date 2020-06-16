@@ -36,12 +36,12 @@ typedef struct NAListIterator NAListIterator;
 // Creates an empty list.
 NA_IAPI NAList* naInitList    (NAList* list);
 
-// Creates an exact copy of originallist by replicating all elements in the
+// Creates an exact copy of originalList by replicating all elements in the
 // same order. Note that the contents are again only referenced by a pointer
 // and will still be marked as const or mutable. The two parameters must
-// not be the same. If you are using NAListIterator's  on the originallist,
+// not be the same. If you are using NAListIterator's  on the originalList,
 // these iterators will keep the location of the original list.
-NA_IAPI NAList* naCopyList    (NAList* list, NAList* originallist);
+NA_IAPI NAList* naCopyList    (NAList* list, NAList* originalList);
 
 // Clears or empties the given list. Note: This will free all list elements
 // but not the contents they store! Use naForeachList or iteration for that.
@@ -173,9 +173,9 @@ NA_IAPI void naMoveListFirstToLast(NAList* src, NAList* dst);
 //   doStuffWithElem(elem);
 // naEndListIteration(iteratorname);
 
-#define naBeginListAccessorIteration(typedelem, list, iter)
-#define naBeginListMutatorIteration (typedelem, list, iter)
-#define naBeginListModifierIteration(typedelem, list, iter)
+#define naBeginListAccessorIteration(typedElem, list, iter)
+#define naBeginListMutatorIteration (typedElem, list, iter)
+#define naBeginListModifierIteration(typedElem, list, iter)
 #define naEndListIteration(iter)
 
 
@@ -229,9 +229,9 @@ NA_IAPI NABool naLocateListLast     (NAListIterator* iter);
 NA_API  NABool naLocateListData     (NAListIterator* iter, const void* data);
 NA_API  NABool naLocateListIndex    (NAListIterator* iter, NAInt index);
 
-// Positions dstiter at the same element as srciter.
-NA_IAPI void   naLocateListIterator (NAListIterator* dstiter,
-                                     NAListIterator* srciter);
+// Positions dstIter at the same element as srcIter.
+NA_IAPI void   naLocateListIterator (NAListIterator* dstIter,
+                                     NAListIterator* srcIter);
 
 
 // /////////////////////////////////
@@ -313,7 +313,7 @@ NA_IAPI NABool    naIsListAtInitial         (const NAListIterator* iter);
 // Reordering functions
 //
 // The move functions remove the specified element from the list pointed to by
-// srciter and move them to the dst list at the position indicated by the
+// srcIter and move them to the dst list at the position indicated by the
 // function name. These functions are VERY FAST! Way faster than locating a
 // specific element, removing it and re-adding it. Additionally, there is no
 // memory allocation or deallocation used in the process.
@@ -335,17 +335,17 @@ NA_IAPI NABool    naIsListAtInitial         (const NAListIterator* iter);
 // The advance parameter behaves the same as with the remove functions.
 //
 // The dstlist can be the same as srclist.
-NA_IAPI void naMoveListCurToFirst (     NAListIterator* srciter,
+NA_IAPI void naMoveListCurToFirst (     NAListIterator* srcIter,
                                                  NABool advance,
                                                 NAList* dst);
-NA_IAPI void naMoveListCurToLast  (     NAListIterator* srciter,
+NA_IAPI void naMoveListCurToLast  (     NAListIterator* srcIter,
                                                  NABool advance,
                                                 NAList* dst);
-NA_IAPI void naMoveListRemainingToLast( NAListIterator* srciter,
+NA_IAPI void naMoveListRemainingToLast( NAListIterator* srcIter,
                                                 NAList* dst);
-NA_IAPI void naMoveListThisToFirst (    NAListIterator* srciter,
+NA_IAPI void naMoveListThisToFirst (    NAListIterator* srcIter,
                                                 NAList* dst);
-NA_IAPI void naMoveListThisToLast (     NAListIterator* srciter,
+NA_IAPI void naMoveListThisToLast (     NAListIterator* srcIter,
                                                 NAList* dst);
 
 // The exchange function splits the list into two parts right BEFORE the

@@ -68,7 +68,7 @@ Other things:
 - Implemented Newline setting to NABuffer. Added NA_NL_NATIVE to NASystem
 - Added several API functions to NAString.
 - Made Append functions of NAString work.
-- Added a bytesize to naEqualBufferToData.
+- Added a byteSize to naEqualBufferToData.
 - Replaced all occurences of head/tail, lead/trail, front/back with
   start/end and forward/backward. Easier to understand.
 - Added simple string parsing functions. Corrected Buffer parsing at some
@@ -124,7 +124,7 @@ Highlights:
 Other things:
 - Renamed several functions with base types to u, i, f and d and Arrays to v.
 - NABufInt has been replaced with NAInt.
-- Changed the isleapyear of NADateTimeAttribute to an uint32.
+- Changed the isLeapYear of NADateTimeAttribute to an uint32.
 - Renamed naGetDateTimeDiff to naGetDateTimeDifference.
 - Made some .h Files 80 characters wide again.
 - Added signed integer macros to NASystem to ensure consistency.
@@ -357,7 +357,7 @@ Version 12 (first published 2015-August-30):
 - Complete reorganization of base memory structs: Three new structs are
   introduced: NACArray, NAMemoryBlock and NAPtr. The NAPtr is the same as
   NALValue before, NALValue is now something different. In total, there are
-  now four structs which corresponds to four combinations of having a bytesize
+  now four structs which corresponds to four combinations of having a byteSize
   and typeSize available per pointer or not. The NAPointer struct distinguishes
   between all of them. NAPointer now much bigger and stores flags separate from
   refCount.
@@ -371,7 +371,7 @@ Version 12 (first published 2015-August-30):
 - NAHeap now shrinks and grows automatically, if desired.
 - Fully implemented NAPool.
 
-- QuadTree and OctTree Allocators and Deallocators now have a userdata param.
+- QuadTree and OctTree Allocators and Deallocators now have a userData param.
   Warning: Not located at the last parameter!
 - NAList now uses the runtime with NAListElement
 - Added naGetHeapMaxCount

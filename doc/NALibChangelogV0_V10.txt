@@ -75,7 +75,7 @@ Highlights:
 - NABitArray has been removed from this package. Was way too specific to be
   in a code collection
 - NAHeap now stores const or mutable data. A new flag defines if the heap
-  stores backpointers or not. Even faster than before!
+  stores backPointers or not. Even faster than before!
 
 Other things:
 - Made NA_API and NA_DEF hidden

@@ -9,7 +9,7 @@ NA_IDEF NATree* naInitTree(NATree* tree, NATreeConfiguration* config){
 
   // If the config has a callback for constructing a tree, call it.
   if(tree->config->treeConstructor){
-    tree->config->treeConstructor(tree->config->userdata);
+    tree->config->treeConstructor(tree->config->userData);
   }
 
   // Init the tree root.
@@ -45,7 +45,7 @@ NA_IDEF void naClearTree(NATree* tree){
   naEmptyTree(tree);
   // If the config has a callback function for deleting a tree, call it.
   if(tree->config->treeDestructor){
-    tree->config->treeDestructor(tree->config->userdata);
+    tree->config->treeDestructor(tree->config->userData);
   }
   naReleaseTreeConfiguration(tree->config);
 }

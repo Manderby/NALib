@@ -3,16 +3,16 @@
 #include "../NAMathOperators.h"
 
 
-NA_HIDEF void na_UnlinearizeRGB(float* outcolor, const float* incolor){
-  outcolor[0] = naUnlinearizeColorValue(incolor[0]);
-  outcolor[1] = naUnlinearizeColorValue(incolor[1]);
-  outcolor[2] = naUnlinearizeColorValue(incolor[2]);
+NA_HIDEF void na_UnlinearizeRGB(float* outColor, const float* inColor){
+  outColor[0] = naUnlinearizeColorValue(inColor[0]);
+  outColor[1] = naUnlinearizeColorValue(inColor[1]);
+  outColor[2] = naUnlinearizeColorValue(inColor[2]);
 }
 
-NA_HIDEF void na_LinearizeRGB(float* outcolor, const float* incolor){
-  outcolor[0] = naLinearizeColorValue(incolor[0]);
-  outcolor[1] = naLinearizeColorValue(incolor[1]);
-  outcolor[2] = naLinearizeColorValue(incolor[2]);
+NA_HIDEF void na_LinearizeRGB(float* outColor, const float* inColor){
+  outColor[0] = naLinearizeColorValue(inColor[0]);
+  outColor[1] = naLinearizeColorValue(inColor[1]);
+  outColor[2] = naLinearizeColorValue(inColor[2]);
 }
 
 
@@ -27,81 +27,81 @@ NA_HIDEF void na_LimitColorComponentu8(uint8* outvalue, const float invalue){
   }
 }
 
-NA_DEF void naFillu8WithBabyColor(uint8* outcolor, const NABabyColor incolor, NAColorBufferType bufferType){
+NA_DEF void naFillu8WithBabyColor(uint8* outColor, const NABabyColor inColor, NAColorBufferType bufferType){
   float tmpcolor[4];
-  na_UnlinearizeRGB(tmpcolor, incolor);
+  na_UnlinearizeRGB(tmpcolor, inColor);
 
   switch(bufferType){
   case NA_COLOR_BUFFER_RGBA:
-    tmpcolor[3] = incolor[3];
-    na_LimitColorComponentu8(&outcolor[0], tmpcolor[0]);
-    na_LimitColorComponentu8(&outcolor[1], tmpcolor[1]);
-    na_LimitColorComponentu8(&outcolor[2], tmpcolor[2]);
-    na_LimitColorComponentu8(&outcolor[3], tmpcolor[3]);
+    tmpcolor[3] = inColor[3];
+    na_LimitColorComponentu8(&outColor[0], tmpcolor[0]);
+    na_LimitColorComponentu8(&outColor[1], tmpcolor[1]);
+    na_LimitColorComponentu8(&outColor[2], tmpcolor[2]);
+    na_LimitColorComponentu8(&outColor[3], tmpcolor[3]);
     break;
   case NA_COLOR_BUFFER_RGBAPre:
-    tmpcolor[3] = incolor[3];
-    tmpcolor[0] *= incolor[3];
-    tmpcolor[1] *= incolor[3];
-    tmpcolor[2] *= incolor[3];
-    na_LimitColorComponentu8(&outcolor[0], tmpcolor[0]);
-    na_LimitColorComponentu8(&outcolor[1], tmpcolor[1]);
-    na_LimitColorComponentu8(&outcolor[2], tmpcolor[2]);
-    na_LimitColorComponentu8(&outcolor[3], tmpcolor[3]);
+    tmpcolor[3] = inColor[3];
+    tmpcolor[0] *= inColor[3];
+    tmpcolor[1] *= inColor[3];
+    tmpcolor[2] *= inColor[3];
+    na_LimitColorComponentu8(&outColor[0], tmpcolor[0]);
+    na_LimitColorComponentu8(&outColor[1], tmpcolor[1]);
+    na_LimitColorComponentu8(&outColor[2], tmpcolor[2]);
+    na_LimitColorComponentu8(&outColor[3], tmpcolor[3]);
     break;
   case NA_COLOR_BUFFER_RGB:
-    na_LimitColorComponentu8(&outcolor[0], tmpcolor[0]);
-    na_LimitColorComponentu8(&outcolor[1], tmpcolor[1]);
-    na_LimitColorComponentu8(&outcolor[2], tmpcolor[2]);
+    na_LimitColorComponentu8(&outColor[0], tmpcolor[0]);
+    na_LimitColorComponentu8(&outColor[1], tmpcolor[1]);
+    na_LimitColorComponentu8(&outColor[2], tmpcolor[2]);
     break;
   case NA_COLOR_BUFFER_BGR0:
-    na_LimitColorComponentu8(&outcolor[0], tmpcolor[2]);
-    na_LimitColorComponentu8(&outcolor[1], tmpcolor[1]);
-    na_LimitColorComponentu8(&outcolor[2], tmpcolor[0]);
-    na_LimitColorComponentu8(&outcolor[3], 0);
+    na_LimitColorComponentu8(&outColor[0], tmpcolor[2]);
+    na_LimitColorComponentu8(&outColor[1], tmpcolor[1]);
+    na_LimitColorComponentu8(&outColor[2], tmpcolor[0]);
+    na_LimitColorComponentu8(&outColor[3], 0);
   case NA_COLOR_BUFFER_BGRA:
-    tmpcolor[3] = incolor[3];
-    na_LimitColorComponentu8(&outcolor[0], tmpcolor[2]);
-    na_LimitColorComponentu8(&outcolor[1], tmpcolor[1]);
-    na_LimitColorComponentu8(&outcolor[2], tmpcolor[0]);
-    na_LimitColorComponentu8(&outcolor[3], tmpcolor[3]);
+    tmpcolor[3] = inColor[3];
+    na_LimitColorComponentu8(&outColor[0], tmpcolor[2]);
+    na_LimitColorComponentu8(&outColor[1], tmpcolor[1]);
+    na_LimitColorComponentu8(&outColor[2], tmpcolor[0]);
+    na_LimitColorComponentu8(&outColor[3], tmpcolor[3]);
     break;
   }
 }
 
 
 
-NA_DEF void naFillBabyColorWithu8(NABabyColor outcolor, const uint8* incolor, NAColorBufferType bufferType){
+NA_DEF void naFillBabyColorWithu8(NABabyColor outColor, const uint8* inColor, NAColorBufferType bufferType){
   float tmpcolor[4];
   float inv = 1.f / 255.f;
 
-  if(!incolor[3] && (bufferType != NA_COLOR_BUFFER_RGB) && bufferType != NA_COLOR_BUFFER_BGR0){
-    outcolor[0] = 0.f;
-    outcolor[1] = 0.f;
-    outcolor[2] = 0.f;
-    outcolor[3] = 0.f;
+  if(!inColor[3] && (bufferType != NA_COLOR_BUFFER_RGB) && bufferType != NA_COLOR_BUFFER_BGR0){
+    outColor[0] = 0.f;
+    outColor[1] = 0.f;
+    outColor[2] = 0.f;
+    outColor[3] = 0.f;
   }else{
     switch(bufferType){
     case NA_COLOR_BUFFER_RGBA:
-      outcolor[3] = (float)incolor[3] * inv;
+      outColor[3] = (float)inColor[3] * inv;
       break;
     case NA_COLOR_BUFFER_RGBAPre:
-      outcolor[3] = (float)incolor[3] * inv;
-      inv = naInvf((float)incolor[3]);
+      outColor[3] = (float)inColor[3] * inv;
+      inv = naInvf((float)inColor[3]);
       break;
     case NA_COLOR_BUFFER_RGB:
       break;
     case NA_COLOR_BUFFER_BGR0:
-      outcolor[3] = 1.f;
+      outColor[3] = 1.f;
       break;
     case NA_COLOR_BUFFER_BGRA:
-      outcolor[3] = (float)incolor[3] * inv;
+      outColor[3] = (float)inColor[3] * inv;
       break;
     }
-    tmpcolor[0] = (float)incolor[0] * inv;
-    tmpcolor[1] = (float)incolor[1] * inv;
-    tmpcolor[2] = (float)incolor[2] * inv;
-    na_LinearizeRGB(outcolor, tmpcolor);
+    tmpcolor[0] = (float)inColor[0] * inv;
+    tmpcolor[1] = (float)inColor[1] * inv;
+    tmpcolor[2] = (float)inColor[2] * inv;
+    na_LinearizeRGB(outColor, tmpcolor);
   }
 }
 

@@ -28,19 +28,19 @@
 // be accessed as mutable elements. Otherwise, a warning is emitted when NDEBUG
 // is undefined.
 //
-// The implementation in NALib also allows you to store an optional backpointer
-// for each element. The backpointer is a pointer to an (mutable!) NAInt where
+// The implementation in NALib also allows you to store an optional backPointer
+// for each element. The backPointer is a pointer to an (mutable!) NAInt where
 // the heap will store an implementation-defined value. Using this value, a
 // heap can update the internal ordering when the key of an already inserted
 // element has changed. You can do this with a call to naUpdateHeapElement.
 //
-// You are free to use the backpointer on none, all or only certain elements.
+// You are free to use the backPointer on none, all or only certain elements.
 // You provide it with a call to naInsertHeapElement. If your heap was created
-// without the BACKPOINTER flag, the backpointer is simply ignored. You should
+// without the BACKPOINTER flag, the backPointer is simply ignored. You should
 // send NA_NULL nontheless as NALib will emit a warning otherwise if NDEBUG is
 // undefined.
 //
-// You can always use NA_NULL for the backpointer to not store this value for
+// You can always use NA_NULL for the backPointer to not store this value for
 // a particular element. If you do store the value, you should probably provide
 // a pointer to an NAInt which is stored somewhere within the element itself.
 // But you may choose otherwise, for example if you yourself have no mutable
@@ -51,7 +51,7 @@
 // A typical application of a heap is to insert a bunch of unsorted elements
 // into the heap and removing them out of the heap one by one to get a sorted
 // series. A heap is often times used in simulations with timestamps when an
-// action is about to occur. The backpointer implementation is needed for
+// action is about to occur. The backPointer implementation is needed for
 // example if you store several heaps containing the same elements.
 //
 // Note that heaps are a very fast datastructure!
@@ -73,7 +73,7 @@ typedef struct NAHeap NAHeap;
 // If this flag is 0 or not present, the heap will be a min-heap.
 #define NA_HEAP_IS_MIN_HEAP           0x0000
 #define NA_HEAP_IS_MAX_HEAP           0x0004
-// Set this flag if you want your heap elements to store backpointers.
+// Set this flag if you want your heap elements to store backPointers.
 #define NA_HEAP_STORES_BACKPOINTERS   0x0008
 
 // Creates a new heap. The count parameter denotes the number of elements which
@@ -110,11 +110,11 @@ NA_API void naShrinkHeapIfNecessary(NAHeap* heap);
 NA_IAPI void naInsertHeapElementConst(    NAHeap* heap,
                                       const void* ptr,
                                       const void* key,
-                                           NAInt* backpointer);
+                                           NAInt* backPointer);
 NA_IAPI void naInsertHeapElementMutable(  NAHeap* heap,
                                             void* ptr,
                                       const void* key,
-                                           NAInt* backpointer);
+                                           NAInt* backPointer);
 
 // Returns the root element of the heap.
 // The Remove-Function will additionally remove that element such that the
@@ -127,20 +127,20 @@ NA_IAPI void*       naRemoveHeapRootMutable(      NAHeap* heap);
 // Returns the key of the root element.
 NA_IAPI const void* naGetHeapRootKey(const NAHeap* heap);
 
-// The following function can only be used when a backpointer is stored:
+// The following function can only be used when a backPointer is stored:
 //
 // Use this function if the key of an element inside the heap has changed.
 // The heap will re-order the element correctly. To identify the element, you
-// need to provide the backpointer of the element which you have stored when
+// need to provide the backPointer of the element which you have stored when
 // inserting the element into the heap with naInsertHeapElement.
 //
-// If the stored backpointer is 0, the element is considered to not be in the
+// If the stored backPointer is 0, the element is considered to not be in the
 // heap.
-NA_IAPI void naUpdateHeapElement(           NAHeap* heap, NAInt backpointer);
+NA_IAPI void naUpdateHeapElement(           NAHeap* heap, NAInt backPointer);
 
-// If you have such a backpointer, you can also remove an element.
-NA_IAPI const void* naRemoveHeapPosConst(   NAHeap* heap, NAInt backpointer);
-NA_IAPI void*       naRemoveHeapPosMutable( NAHeap* heap, NAInt backpointer);
+// If you have such a backPointer, you can also remove an element.
+NA_IAPI const void* naRemoveHeapPosConst(   NAHeap* heap, NAInt backPointer);
+NA_IAPI void*       naRemoveHeapPosMutable( NAHeap* heap, NAInt backPointer);
 
 
 

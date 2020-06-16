@@ -86,42 +86,42 @@ typedef struct NABufferIterator NABufferIterator;
 // ////////////////////////////////////////
 
 // Allocates an empty buffer. Can for example be extended using naWriteBuffer
-// calls. When securememory is set to NA_TRUE, each byte will be set to binary
+// calls. When secureMemory is set to NA_TRUE, each byte will be set to binary
 // zero before it can be used.
-NA_API NABuffer* naNewBuffer(NABool securememory);
+NA_API NABuffer* naNewBuffer(NABool secureMemory);
 
 // Creates a buffer referencing a subrange of another buffer. The origin of
 // the new buffer will be at zero and its range is fixed. Does NOT copy any
 // content, only references it.
-NA_API NABuffer* naNewBufferExtraction( NABuffer* srcbuffer,
+NA_API NABuffer* naNewBufferExtraction( NABuffer* srcBuffer,
                                             NAInt offset,
                                             NAInt length);
 
-// Creates a buffer having an exact copy of the bytes in srcbuffer within the
+// Creates a buffer having an exact copy of the bytes in srcBuffer within the
 // given range. The new content will be COPIED to a new memory buffer which can
 // be chosen to be either secure or not. The origin of the new buffer will be
 // at zero.
 // All content will be loaded in the new buffer. If there are sparse parts
 // in the src buffer, they will be filled with the current source.
-NA_API NABuffer* naNewBufferCopy(const NABuffer* srcbuffer,
+NA_API NABuffer* naNewBufferCopy(const NABuffer* srcBuffer,
                                         NARangei range,
-                                          NABool securememory);
+                                          NABool secureMemory);
 
 // Creates a buffer sharing the same source as the given buffer. Also uses
 // the same settings like endianness or newlines.
-NA_API NABuffer* naNewBufferWithSameSource(  NABuffer* srcbuffer);
+NA_API NABuffer* naNewBufferWithSameSource(  NABuffer* srcBuffer);
 
 // Creates a buffer inputting contents from a file. Its origin is always at
 // zero and its range is fixed to the filesize.
-NA_API NABuffer* naNewBufferWithInputFile(const char* filename);
+NA_API NABuffer* naNewBufferWithInputPath(const char* filePath);
 
 // Creates a buffer accessing already existing const or mutable data. If the
 // data is mutable, you can give a destructor if you want to delete the
 // memory of the data pointer when no longer needed.
 NA_API NABuffer* naNewBufferWithConstData( const void* data,
-                                                 NAInt bytesize);
+                                                 NAInt byteSize);
 NA_API NABuffer* naNewBufferWithMutableData(     void* data,
-                                                 NAInt bytesize,
+                                                 NAInt byteSize,
                                              NAMutator destructor);
 
 
@@ -137,9 +137,9 @@ NA_API NABuffer* naNewBufferWithMutableData(     void* data,
 // Prototype for the filler function.
 // The function has to perform the task to fill dst with the content of the
 // custom source. The range denotes both the source origin of the first byte
-// of dst as well as the length in bytes the dst buffer holds. The sourcedata
+// of dst as well as the length in bytes the dst buffer holds. The sourceData
 // parameter will be the data pointer given to naSetBufferSourceData.
-typedef void (*NABufferFiller)(void* dst, NARangei sourcerange, void* sourcedata);
+typedef void (*NABufferFiller)(void* dst, NARangei sourceRange, void* sourceData);
 
 // Create custom sources.
 // You can provide a filler function as well as an underlying buffer. Both
@@ -156,11 +156,11 @@ NA_API NABufferSource* naNewBufferSource(      NABufferFiller filler,
                                                     NABuffer* buffer);
 
 // Add data to your source which will be available when the filler function
-// is called. Add a datadestructor to automatically clean up that deta when
+// is called. Add a dataDestructor to automatically clean up that deta when
 // the source is no longer needed.
 NA_IAPI void naSetBufferSourceData(           NABufferSource* source,
                                                         void* data,
-                                                    NAMutator datadestructor);
+                                                    NAMutator dataDestructor);
 
 // Limits the source to a specific range of bytes. This is for example used
 // when reading a file, where the source is limited to the file size.
@@ -169,19 +169,19 @@ NA_IAPI void naSetBufferSourceLimit(          NABufferSource* source,
 
 // Creates a buffer with a custom source. Note that the NABuffer will retain
 // the source, meaning you can safely release the source after this function.
-// The sourceoffset denotes how many bytes the source is shifted away from the
+// The sourceOffset denotes how many bytes the source is shifted away from the
 // bnew uffer. For example if source denotes a string like "Hello World",
-// ranging from 0 to 10 and you define an sourceoffset of -6, filling the new
+// ranging from 0 to 10 and you define an sourceOffset of -6, filling the new
 // buffer at index 0 results in "World", containing the source indices 6 to 10
 // of the source buffer.
 // Note that usually, offset is 0 but you may choose otherwise. Beware that
 // this can get rather confusing when the source itself has a range which
 // contains negative indices. For example, if the string "Hello World" ranges
-// from -2 to 8 instead and using a sourceoffset of -6, filling the new buffer
+// from -2 to 8 instead and using a sourceOffset of -6, filling the new buffer
 // at index 0 results in "rld", containing the source indices 6 to 8 of the
 // source buffer.
 NA_API NABuffer* naNewBufferWithCustomSource( NABufferSource* source,
-                                                        NAInt sourceoffset);
+                                                        NAInt sourceOffset);
 
 
 
@@ -195,7 +195,7 @@ NA_API NABuffer* naNewBufferWithCustomSource( NABufferSource* source,
 // or non-fixed (for example for growing memory buffers). If you call the fix
 // function, the current range of the buffer will be used as the fixed range.
 // A buffer with a fixed range can no longer change.
-// The extend function extends the buffers range by the desired bytesize on
+// The extend function extends the buffers range by the desired byteSize on
 // both ends.
 // Note that extending does not automatically allocates memory. It just
 // changes the range the buffer is allowed to address.
@@ -204,8 +204,8 @@ NA_IAPI NARangei naGetBufferRange           (const NABuffer* buffer);
 NA_IAPI NABool   naHasBufferFixedRange      (const NABuffer* buffer);
 NA_IAPI void     naFixBufferRange           (NABuffer*       buffer);
 NA_IAPI void     naExtendBufferRange        (NABuffer*       buffer,
-                                                       NAInt bytesatstart,
-                                                       NAInt bytesatend);
+                                                       NAInt bytesAtStart,
+                                                       NAInt bytesAtEnd);
 
 // Get or set the newline encoding of this buffer. The newline encoding of a
 // new buffer is either NA_NEWLINE_NATIVE or the same encoding as the buffer
@@ -213,7 +213,7 @@ NA_IAPI void     naExtendBufferRange        (NABuffer*       buffer,
 // to the buffer.
 NA_IAPI NANewlineEncoding naGetBufferNewlineEncoding(NABuffer* buffer);
 NA_IAPI void naSetBufferNewlineEncoding(             NABuffer* buffer,
-                                             NANewlineEncoding newlineencoding);
+                                             NANewlineEncoding newlineEncoding);
 
 // Get or set the endianness setting of this buffer. If not stated otherwise,
 // the endianness of a new buffer is NA_ENDIANNESS_HOST.
@@ -224,11 +224,11 @@ NA_IAPI void   naSetBufferEndianness(NABuffer* buffer, NAInt endianness);
 // might want to use one of the Reading or Parsing functions instead.
 NA_API NAByte naGetBufferByteAtIndex(NABuffer* buffer, NAInt index);
 
-// Searches for the given byte starting at (and including) startoffset, either
+// Searches for the given byte starting at (and including) startOffset, either
 // forward or backwards.
 NA_API NAInt naSearchBufferByteOffset(        NABuffer* buffer,
                                                  NAByte byte,
-                                                  NAInt startoffset,
+                                                  NAInt startOffset,
                                                  NABool forward);
 
 // Cache:   Allocates all memory of the desired range and fills it according
@@ -245,27 +245,27 @@ NA_API void naDismissBufferRange( NABuffer* buffer,
 // WHOLE BUFFER FUNCTIONS
 // ////////////////////////////////
 
-// Compares two buffers. If casesensitive is NA_TRUE, an exact match is tested.
+// Compares two buffers. If caseSensitive is NA_TRUE, an exact match is tested.
 NA_API NABool naEqualBufferToBuffer(  const NABuffer* buffer1,
                                       const NABuffer* buffer2,
-                                               NABool casesensitive);
+                                               NABool caseSensitive);
 
 // Assumes data to contain an equal amount of bytes as buffer and compares all
-// bytes for equality. If casesensitive is NA_TRUE, an exact match is tested.
+// bytes for equality. If caseSensitive is NA_TRUE, an exact match is tested.
 NA_API NABool naEqualBufferToData(      NABuffer* buffer,
                                           const void* data,
-                                                NAInt databytesize,
-                                               NABool casesensitive);
+                                                NAInt dataByteSize,
+                                               NABool caseSensitive);
 
-// Appends the whole content of srcbuffer to the end of dstbuffer.
+// Appends the whole content of srcBuffer to the end of dstbuffer.
 NA_API void naAppendBufferToBuffer(         NABuffer* dstbuffer,
-                                      const NABuffer* srcbuffer);
+                                      const NABuffer* srcBuffer);
 
 // Converts the bytes of the given buffer to a string encoded in Base64.
-// When appendendsign is NA_TRUE, equal signs = will be appended if needed.
+// When appendEndSign is NA_TRUE, equal signs = will be appended if needed.
 NA_API NAString* naNewStringWithBufferBase64Encoded(
                                             NABuffer* buffer,
-                                               NABool appendendsign);
+                                               NABool appendEndSign);
 
 // Extracts the bytes from string encoded in Base64.
 NA_API NABuffer* naNewBufferWithStringBase64Decoded(
@@ -379,11 +379,11 @@ NA_IAPI void naReadBufferdv  (NABufferIterator* iter, double*   dst, NAInt count
 // Reads the given number of bytes from the current position of buffer to data.
 NA_IAPI void naReadBufferBytes(       NABufferIterator* iter,
                                                   void* data,
-                                                  NAInt bytesize);
+                                                  NAInt byteSize);
 
 // Reads the given number of bytes from the current position of buffer to data.
 NA_IAPI NABuffer* naReadBufferBuffer( NABufferIterator* iter,
-                                                  NAInt bytesize);
+                                                  NAInt byteSize);
 
 
 // ////////////////////////////////
@@ -419,17 +419,17 @@ NA_API  void naWriteBufferdv  (NABufferIterator* iter, const double*   src, NAIn
 // Writes the given number of bytes in data to the current position of buffer.
 NA_IAPI void naWriteBufferBytes(  NABufferIterator* iter,
                                         const void* data,
-                                              NAInt bytesize);
+                                              NAInt byteSize);
 
 // Writes the content in the specified range of the source buffer into the
 // buffer indicated by iter at the current position.
 NA_API void naWriteBufferBuffer(  NABufferIterator* iter,
-                                    const NABuffer* srcbuffer,
-                                           NARangei srcrange);
+                                    const NABuffer* srcBuffer,
+                                           NARangei srcRange);
 
 // Repeats all bytes at the current position which have the given distance
 // to the current position (towards the start). Examples:
-// Existing Buffer   distance   bytesize   Result
+// Existing Buffer   distance   byteSize   Result
 // ABCDEF            6          6          ABCDEFABCDEF
 // ABCDEF            6          3          ABCDEFABC
 // ABCDEF            5          2          ABCDEFBC
@@ -440,7 +440,7 @@ NA_API void naWriteBufferBuffer(  NABufferIterator* iter,
 // there.
 NA_API void naRepeatBufferBytes(  NABufferIterator* iter,
                                               NAInt distance,
-                                              NAInt bytesize,
+                                              NAInt byteSize,
                                              NABool useCopy);
 
 
@@ -475,13 +475,13 @@ NA_API void naWriteBufferLineWithFormat(   NABufferIterator* iter,
                                                               ...);
 
 // Same as WithFormat but with an existing va_list argument.
-// The argumentlist argument will not be altered by this function.
+// The argumentList argument will not be altered by this function.
 NA_API void naWriteBufferStringWithArguments( NABufferIterator* iter,
                                                const NAUTF8Char* format,
-                                                         va_list argumentlist);
+                                                         va_list argumentList);
 NA_API void naWriteBufferLineWithArguments(   NABufferIterator* iter,
                                                const NAUTF8Char* format,
-                                                         va_list argumentlist);
+                                                         va_list argumentList);
 
 
 
@@ -532,13 +532,13 @@ NA_API void naSkipBufferDelimiter(NABufferIterator* iter);
 
 // Returns the next line delimited by CR, LF or CR-LF. The returned line will
 // not contain any line-ending characters but all other whitespaces (ord <= 32)
-// are still there. When skipempty is NA_TRUE, lines containing nothing but
+// are still there. When skipEmpty is NA_TRUE, lines containing nothing but
 // whitespaces will be skipped.
 // The line number of iter will increase according to the number of lines read.
 // Use naGetBufferLineNumber to get that number. Warning: Experimental feature,
 // not fully implemented!
 NA_API NAString* naParseBufferLine( NABufferIterator* iter,
-                                               NABool skipempty);
+                                               NABool skipEmpty);
 
 // Returns the current line number (starting with 1). This is an experimental
 // feature which currently only works reliably if naParseBufferLine is used.
@@ -576,7 +576,7 @@ NA_API NAString* naParseBufferPathComponent(NABufferIterator* iter);
 // returned. The resulting integer value is returned in retValuei. If retValuei is
 // a Null-Pointer, the function just returns the number of bytes considered.
 //
-// The function will not parse more than maxdigitcount characters. If that
+// The function will not parse more than maxDigitCount characters. If that
 // value is 0 it can read any number of characters.
 //
 // If the parsed value exceeds max, retValuei will be max and a warning will be
@@ -584,21 +584,21 @@ NA_API NAString* naParseBufferPathComponent(NABufferIterator* iter);
 // all digits considered.
 NA_DEF NAInt naParseBufferDecimalUnsignedInteger(  NABufferIterator* iter,
                                                      NAu64* retValuei,
-                                                       NAInt maxdigitcount,
+                                                       NAInt maxDigitCount,
                                                       NAu64 max);
 
 // Same as above but parses a signed integer. Note that there is an addidional
 // min parameter.
 NA_DEF NAInt naParseBufferDecimalSignedInteger(  NABufferIterator* iter,
                                                     NAi64* retValuei,
-                                                     NAInt maxdigitcount,
+                                                     NAInt maxDigitCount,
                                                      NAi64 min,
                                                      NAi64 max);
 
 // Parses the given buffer for an integer value and returns the value in the
 // desired type.
 //
-// Whe skipdelimiter is true, the limiting character is skipped and the string
+// Whe skipDelimiter is true, the limiting character is skipped and the string
 // points to the character right after the delimiter. If that delimiter is a
 // whitespace, all whitespaces till the next non-whitespace are skipped.
 //
@@ -609,14 +609,14 @@ NA_DEF NAInt naParseBufferDecimalSignedInteger(  NABufferIterator* iter,
 // If any of the strings exceeds the type range, the maximal / minimal value
 // of that type is returned. When debugging, a warning is emitted, when the
 // range of an NAu64 is insufficient to hold the parsed value.
-NA_IAPI int8     naParseBufferi8  (NABufferIterator* iter, NABool skipdelimiter);
-NA_IAPI int16    naParseBufferi16 (NABufferIterator* iter, NABool skipdelimiter);
-NA_IAPI int32    naParseBufferi32 (NABufferIterator* iter, NABool skipdelimiter);
-NA_IAPI NAi64  naParseBufferi64 (NABufferIterator* iter, NABool skipdelimiter);
-NA_IAPI uint8    naParseBufferu8 (NABufferIterator* iter, NABool skipdelimiter);
-NA_IAPI uint16   naParseBufferu16(NABufferIterator* iter, NABool skipdelimiter);
-NA_IAPI uint32   naParseBufferu32(NABufferIterator* iter, NABool skipdelimiter);
-NA_IAPI NAu64 naParseBufferu64(NABufferIterator* iter, NABool skipdelimiter);
+NA_IAPI int8     naParseBufferi8  (NABufferIterator* iter, NABool skipDelimiter);
+NA_IAPI int16    naParseBufferi16 (NABufferIterator* iter, NABool skipDelimiter);
+NA_IAPI int32    naParseBufferi32 (NABufferIterator* iter, NABool skipDelimiter);
+NA_IAPI NAi64  naParseBufferi64 (NABufferIterator* iter, NABool skipDelimiter);
+NA_IAPI uint8    naParseBufferu8 (NABufferIterator* iter, NABool skipDelimiter);
+NA_IAPI uint16   naParseBufferu16(NABufferIterator* iter, NABool skipDelimiter);
+NA_IAPI uint32   naParseBufferu32(NABufferIterator* iter, NABool skipDelimiter);
+NA_IAPI NAu64 naParseBufferu64(NABufferIterator* iter, NABool skipDelimiter);
 
 
 

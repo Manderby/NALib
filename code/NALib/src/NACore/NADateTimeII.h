@@ -57,10 +57,10 @@ extern NABool na_GlobalSummerTime;
 
 
 struct NADateTime{
-  NAi64  sisec;     // SI-second number starting Jan 1st 1958, 00:00 + 00:00
-  int32    nsec;      // nanosecond number in range [0, 999999999]
+  NAi64  siSecond;     // SI-second number starting Jan 1st 1958, 00:00 + 00:00
+  int32    nanoSecond;      // nanosecond number in range [0, 999999999]
   int16    shift;     // time shift in minutes (positive and negative)
-  uint8    errornum;  // error number in case invalid values were given.
+  uint8    errorNum;  // error number in case invalid values were given.
   uint8    flags;     // Various flags.
 };
 
@@ -96,122 +96,122 @@ NA_IDEF NADateTime naMakeDateTime(NAi64 year, int32 mon, int32 day, int32 hour, 
   dts.hour = hour;
   dts.min = min;
   dts.sec = sec;
-  dts.nsec = 0;
+  dts.nanoSecond = 0;
   dts.shift = na_GlobalTimeShift;
-  dts.errornum = NA_DATETIME_ERROR_NONE;
+  dts.errorNum = NA_DATETIME_ERROR_NONE;
   dts.flags = (uint8)na_GlobalSummerTime;
   return naMakeDateTimeWithDateTimeStruct(&dts);
 }
 
 
 
-NA_IDEF NADateTime naMakeDateTimeWithNALibSecondNumber(NAi64 secondnumber){
-  NADateTime datetime;
-  datetime.sisec = secondnumber;
-  datetime.nsec = 0;
-  datetime.shift = 0;
-  datetime.errornum = NA_DATETIME_ERROR_NONE;
-  datetime.flags = 0;
-  return datetime;
+NA_IDEF NADateTime naMakeDateTimeWithNALibSecondNumber(NAi64 secondNumber){
+  NADateTime dateTime;
+  dateTime.siSecond = secondNumber;
+  dateTime.nanoSecond = 0;
+  dateTime.shift = 0;
+  dateTime.errorNum = NA_DATETIME_ERROR_NONE;
+  dateTime.flags = 0;
+  return dateTime;
 }
 
 
 
 
-NA_IDEF void naExtractDateTimeUTCInformation(const NADateTime* datetime,
+NA_IDEF void naExtractDateTimeUTCInformation(const NADateTime* dateTime,
                              NADateTimeStruct* dts,
                           NADateTimeAttribute* dta){
-  NADateTime utcdatetime = *datetime;
-  naSetDateTimeZone(&utcdatetime, 0, NA_FALSE);
-  naExtractDateTimeInformation(&utcdatetime, dts, dta);
+  NADateTime utcdateTime = *dateTime;
+  naSetDateTimeZone(&utcdateTime, 0, NA_FALSE);
+  naExtractDateTimeInformation(&utcdateTime, dts, dta);
 }
 
 
 
-NA_IDEF void naSetDateTimeZone( NADateTime* datetime,
-                              int16 newshift,
-                             NABool summertime){
-  datetime->errornum = NA_DATETIME_ERROR_NONE;
-  datetime->shift = newshift;
-  if(summertime){
-    datetime->flags |= NA_DATETIME_FLAG_SUMMERTIME;
+NA_IDEF void naSetDateTimeZone( NADateTime* dateTime,
+                              int16 newShift,
+                             NABool summerTime){
+  dateTime->errorNum = NA_DATETIME_ERROR_NONE;
+  dateTime->shift = newShift;
+  if(summerTime){
+    dateTime->flags |= NA_DATETIME_FLAG_SUMMERTIME;
   }else{
-    datetime->flags &= ~NA_DATETIME_FLAG_SUMMERTIME;
+    dateTime->flags &= ~NA_DATETIME_FLAG_SUMMERTIME;
   }
 }
 
 
 
-NA_IDEF void naCorrectDateTimeZone( NADateTime* datetime,
-                                  int16 newshift,
-                                 NABool summertime){
-  datetime->errornum = NA_DATETIME_ERROR_NONE;
-  datetime->sisec = naSubi64(datetime->sisec, naMakei64WithLo(datetime->shift * (int32)NA_SECONDS_PER_MINUTE));
-  datetime->sisec = naAddi64(datetime->sisec, naMakei64WithLo(newshift * (int32)NA_SECONDS_PER_MINUTE));
-  naSetDateTimeZone(datetime, newshift, summertime);
+NA_IDEF void naCorrectDateTimeZone( NADateTime* dateTime,
+                                  int16 newShift,
+                                 NABool summerTime){
+  dateTime->errorNum = NA_DATETIME_ERROR_NONE;
+  dateTime->siSecond = naSubi64(dateTime->siSecond, naMakei64WithLo(dateTime->shift * (int32)NA_SECONDS_PER_MINUTE));
+  dateTime->siSecond = naAddi64(dateTime->siSecond, naMakei64WithLo(newShift * (int32)NA_SECONDS_PER_MINUTE));
+  naSetDateTimeZone(dateTime, newShift, summerTime);
 }
 
 
 
 NA_DEF double naGetDateTimeDifference(const NADateTime* end, const NADateTime* begin){
   double sign = 1.;
-  double diffsecs;
-  double diffnsecs;
-  if(naSmalleri64(end->sisec, begin->sisec)){
+  double diffSeconds;
+  double diffNanoSeconds;
+  if(naSmalleri64(end->siSecond, begin->siSecond)){
     sign = -1;
-    diffsecs = naCasti64ToDouble(naSubi64(begin->sisec, end->sisec));
+    diffSeconds = naCasti64ToDouble(naSubi64(begin->siSecond, end->siSecond));
   }else{
-    diffsecs = naCasti64ToDouble(naSubi64(end->sisec, begin->sisec));
+    diffSeconds = naCasti64ToDouble(naSubi64(end->siSecond, begin->siSecond));
   }
-  diffnsecs = ((double)end->nsec - (double)begin->nsec) / 1e9;
-  return sign * (diffsecs + diffnsecs);
+  diffNanoSeconds = ((double)end->nanoSecond - (double)begin->nanoSecond) / 1e9;
+  return sign * (diffSeconds + diffNanoSeconds);
 }
 
 
 
-NA_IDEF void naAddDateTimeDifference(NADateTime* datetime, double difference){
-  NAi64 fullsecs = naMakei64WithDouble(difference);
-  int32 nanosecs = (int32)((difference - naCasti64ToDouble(fullsecs)) * 1e9);
-  datetime->errornum = NA_DATETIME_ERROR_NONE;
+NA_IDEF void naAddDateTimeDifference(NADateTime* dateTime, double difference){
+  NAi64 fullSeconds = naMakei64WithDouble(difference);
+  int32 nanoSeconds = (int32)((difference - naCasti64ToDouble(fullSeconds)) * 1e9);
+  dateTime->errorNum = NA_DATETIME_ERROR_NONE;
   if(difference < 0){
-    datetime->nsec += nanosecs;
-    if(datetime->nsec < 0){naDeci64(fullsecs); datetime->nsec += 1000000000;}
-    datetime->sisec = naAddi64(datetime->sisec, fullsecs);
+    dateTime->nanoSecond += nanoSeconds;
+    if(dateTime->nanoSecond < 0){naDeci64(fullSeconds); dateTime->nanoSecond += 1000000000;}
+    dateTime->siSecond = naAddi64(dateTime->siSecond, fullSeconds);
   }else{
-    datetime->nsec += nanosecs;
-    if(datetime->nsec > 999999999){naInci64(fullsecs); datetime->nsec -= 1000000000;}
-    datetime->sisec = naAddi64(datetime->sisec, fullsecs);
+    dateTime->nanoSecond += nanoSeconds;
+    if(dateTime->nanoSecond > 999999999){naInci64(fullSeconds); dateTime->nanoSecond -= 1000000000;}
+    dateTime->siSecond = naAddi64(dateTime->siSecond, fullSeconds);
   }
 }
 
 
 
-NA_IDEF NABool naHasDateTimeSummerTime(const NADateTime* datetime){
-  return (datetime->flags & NA_DATETIME_FLAG_SUMMERTIME) ? NA_TRUE : NA_FALSE;
+NA_IDEF NABool naHasDateTimeSummerTime(const NADateTime* dateTime){
+  return (dateTime->flags & NA_DATETIME_FLAG_SUMMERTIME) ? NA_TRUE : NA_FALSE;
 }
 
 
 
-NA_IDEF void naSetDateTimeSummertime(NADateTime* datetime, NABool summertime){
-  datetime->errornum = NA_DATETIME_ERROR_NONE;
-  if(summertime){
-    if((datetime->flags & NA_DATETIME_FLAG_SUMMERTIME) == 0){
-      datetime->flags |= NA_DATETIME_FLAG_SUMMERTIME;
-      datetime->shift += NA_MINUTES_PER_HOUR;
+NA_IDEF void naSetDateTimeSummertime(NADateTime* dateTime, NABool summerTime){
+  dateTime->errorNum = NA_DATETIME_ERROR_NONE;
+  if(summerTime){
+    if((dateTime->flags & NA_DATETIME_FLAG_SUMMERTIME) == 0){
+      dateTime->flags |= NA_DATETIME_FLAG_SUMMERTIME;
+      dateTime->shift += NA_MINUTES_PER_HOUR;
     }
   }else{
-    if((datetime->flags & NA_DATETIME_FLAG_SUMMERTIME) != 0){
-      datetime->flags &= ~NA_DATETIME_FLAG_SUMMERTIME;
-      datetime->shift -= NA_MINUTES_PER_HOUR;
+    if((dateTime->flags & NA_DATETIME_FLAG_SUMMERTIME) != 0){
+      dateTime->flags &= ~NA_DATETIME_FLAG_SUMMERTIME;
+      dateTime->shift -= NA_MINUTES_PER_HOUR;
     }
   }
 }
 
 
 
-NA_IDEF void naSetGlobalTimeShift(int16 shiftminutes, NABool summertime){
-  na_GlobalTimeShift = shiftminutes;
-  na_GlobalSummerTime = summertime;
+NA_IDEF void naSetGlobalTimeShift(int16 shiftMinutes, NABool summerTime){
+  na_GlobalTimeShift = shiftMinutes;
+  na_GlobalSummerTime = summerTime;
 }
 
 

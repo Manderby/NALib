@@ -34,10 +34,10 @@ typedef void* NAAlarm;
 // The return value behaves the same as the usleep function on Mac OS X, where
 // a value of 0 denotes success. On Windows, the return value is always 0.
 // Note that the S variant uses a double value.
-NA_IAPI int naSleepN(NAUInt nsecs);
-NA_IAPI int naSleepU(NAUInt usecs);
-NA_IAPI int naSleepM(NAUInt msecs);
-NA_IAPI int naSleepS(double secs);
+NA_IAPI int naSleepN(NAUInt nanoSeconds);
+NA_IAPI int naSleepU(NAUInt microSeconds);
+NA_IAPI int naSleepM(NAUInt milliSeconds);
+NA_IAPI int naSleepS(double seconds);
 
 
 
@@ -50,13 +50,13 @@ NA_IAPI int naSleepS(double secs);
 
 // Creates a new thread with a start function and an argument.
 // You can give a thread a name which will  be used on some systems when
-// debugging later on. Note that both threadname and arg will NOT be owned by
+// debugging later on. Note that both threadName and arg will NOT be owned by
 // the thread.
-NA_IAPI NAThread naMakeThread( const char* threadname,
+NA_IAPI NAThread naMakeThread( const char* threadName,
                                    NAMutator function,
                                     void* arg);
 // Clears all memory structures concerning the given thread. Will not clear
-// the arg or threadname given to naMakeThread. If the thread is still running,
+// the arg or threadName given to naMakeThread. If the thread is still running,
 // behaviour is undefined.
 NA_IAPI void naClearThread(NAThread thread);
 // Calling this function will execute the thread once.
@@ -82,12 +82,12 @@ NA_IAPI void naClearMutex(NAMutex mutex);
 
 // Locks and unlocks a mutex. Waiting threads wait forever.
 #if (NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-_When_(NA_TRUE, _Acquires_lock_(windowsmutex->mutex))
+_When_(NA_TRUE, _Acquires_lock_(windowsMutex->mutex))
 #endif
 NA_IAPI void naLockMutex(NAMutex mutex);
 
 #if (NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-_When_(NA_TRUE, _Releases_lock_(windowsmutex->mutex))
+_When_(NA_TRUE, _Releases_lock_(windowsMutex->mutex))
 #endif
 NA_IAPI void naUnlockMutex(NAMutex mutex);
 
@@ -98,7 +98,7 @@ NA_IAPI void naUnlockMutex(NAMutex mutex);
 // is a difference to the behaviour of Mutexes in WINAPI but is now solved
 // consistently along all systems.
 #if (NA_OS == NA_OS_WINDOWS) && (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-_When_(return == NA_TRUE, _Acquires_lock_(windowsmutex->mutex))
+_When_(return == NA_TRUE, _Acquires_lock_(windowsMutex->mutex))
 #endif
 NA_IAPI NABool naTryMutex(NAMutex mutex);
 
@@ -135,10 +135,10 @@ NA_IAPI NAAlarm naMakeAlarm(void);
 NA_IAPI void naClearAlarm(NAAlarm alarm);
 // Locks the current thread until some other thread calls naTriggerAlarm or
 // until the timeout occurs. Returns NA_TRUE, if the alarm was triggered or
-// NA_FALSE if the timeout occured. If maxwaittime is exactly 0, the function
-// waits indefinitely. If maxwaittime is negative, an error is emitted when
+// NA_FALSE if the timeout occured. If maxWaitTime is exactly 0, the function
+// waits indefinitely. If maxWaitTime is negative, an error is emitted when
 // debugging. Make sure no accidental zero value is given!
-NA_IAPI NABool naAwaitAlarm(NAAlarm alarm, double maxwaittime);
+NA_IAPI NABool naAwaitAlarm(NAAlarm alarm, double maxWaitTime);
 // Sends a signal to anyone waiting on that NAAlarm structure.
 NA_IAPI void naTriggerAlarm(NAAlarm alarm);
 

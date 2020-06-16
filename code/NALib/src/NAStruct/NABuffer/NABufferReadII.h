@@ -238,17 +238,17 @@ NA_IDEF void naReadBufferdv(NABufferIterator* iter, double* dst, NAInt count){
 // BLOCK READING
 // /////////////////////////////////
 
-NA_IDEF void naReadBufferBytes(NABufferIterator* iter, void* data, NAInt bytesize){
-  na_RetrieveBufferBytes(iter, data, bytesize, NA_TRUE);
+NA_IDEF void naReadBufferBytes(NABufferIterator* iter, void* data, NAInt byteSize){
+  na_RetrieveBufferBytes(iter, data, byteSize, NA_TRUE);
 }
 
 
 
-NA_IDEF NABuffer* naReadBufferBuffer(NABufferIterator* iter, NAInt bytesize){
+NA_IDEF NABuffer* naReadBufferBuffer(NABufferIterator* iter, NAInt byteSize){
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
   NAInt abspos = naGetBufferLocation(iter);
-  NABuffer* newbuffer = naNewBufferExtraction(buffer, abspos, bytesize);
-  naLocateBufferAbsolute(iter, abspos + bytesize);
+  NABuffer* newbuffer = naNewBufferExtraction(buffer, abspos, byteSize);
+  naLocateBufferAbsolute(iter, abspos + byteSize);
   return newbuffer;
 }
 

@@ -49,7 +49,7 @@
 //          within a structure like a tree.
 // offset   An "offset" denotes a position relative to a base like zero, an
 //          origin or some other kind of starting point. An offset sometimes
-//          is denoted with a one-word like "byteoffset" or "charoffset".
+//          is denoted with a one-word like "byteOffset" or "charoffset".
 //
 // start    A "start" is the first value of a range. It does not matter if
 //          the range is of floating point or integer type. Semantically, it
@@ -266,10 +266,10 @@ NA_IAPI NSRect    naMakeNSRectWithRect  (NARect  narect);
 
 // Creates a new origin which is the given origin floored to a multiple of
 // the given alignment. Also works for negative input offsets.
-NA_IAPI NAPosi    naMakePosiWithAlignment    (NAPosi    origin, NARecti alignrect);
-NA_IAPI NAPos     naMakePosWithAlignment    (NAPos     origin, NARect  alignrect);
-NA_IAPI NAVertexi naMakeVertexiWithAlignment (NAVertexi origin, NABoxi  alignbox);
-NA_IAPI NAVertex  naMakeVertexWithAlignment (NAVertex  origin, NABox   alignbox);
+NA_IAPI NAPosi    naMakePosiWithAlignment    (NAPosi    origin, NARecti alignRect);
+NA_IAPI NAPos     naMakePosWithAlignment    (NAPos     origin, NARect  alignRect);
+NA_IAPI NAVertexi naMakeVertexiWithAlignment (NAVertexi origin, NABoxi  alignBox);
+NA_IAPI NAVertex  naMakeVertexWithAlignment (NAVertex  origin, NABox   alignBox);
 
 // Create the bounding box of two elements. The range, size or volume of the
 // resulting struct will never be negative. Note that the integer variant of
@@ -365,19 +365,19 @@ NA_IAPI NAPos     naGetRectCenteredSizeOffset  (NARect rect, NASize   size);
 NA_IAPI NAVertex  naGetBoxCeneteredVolumeOffset(NABox  box,  NAVolume volume);
 
 // Clamping functions. Returns the new range.
-NA_IAPI NARangei  naClampRangeiToRange(NARangei range, NARangei clamprange);
+NA_IAPI NARangei  naClampRangeiToRange(NARangei range, NARangei clampRange);
 NA_IAPI NARangei  naClampRangeiToMin  (NARangei range, NAInt    min);
 NA_IAPI NARangei  naClampRangeiToEnd  (NARangei range, NAInt    end);
 
-NA_IAPI NAPos     naClampPosToRect  (NAPos   pos,  NARect  clamprect);
-NA_IAPI NAPosi    naClampPosiToRect (NAPosi  pos,  NARecti clamprect);
-NA_IAPI NARect    naClampRectToRect (NARect  rect, NARect  clamprect);
-NA_IAPI NARecti   naClampRectiToRect(NARecti rect, NARecti clamprect);
+NA_IAPI NAPos     naClampPosToRect  (NAPos   pos,  NARect  clampRect);
+NA_IAPI NAPosi    naClampPosiToRect (NAPosi  pos,  NARecti clampRect);
+NA_IAPI NARect    naClampRectToRect (NARect  rect, NARect  clampRect);
+NA_IAPI NARecti   naClampRectiToRect(NARecti rect, NARecti clampRect);
 
-NA_IAPI NAVertex  naClampVertexToBox (NAVertex  vertex, NABox  clampbox);
-NA_IAPI NAVertexi naClampVertexiToBox(NAVertexi vertex, NABoxi clampbox);
-NA_IAPI NABox     naClampBoxToBox    (NABox     box,    NABox  clampbox);
-NA_IAPI NABoxi    naClampBoxiToBox   (NABoxi    box,    NABoxi clampbox);
+NA_IAPI NAVertex  naClampVertexToBox (NAVertex  vertex, NABox  clampBox);
+NA_IAPI NAVertexi naClampVertexiToBox(NAVertexi vertex, NABoxi clampBox);
+NA_IAPI NABox     naClampBoxToBox    (NABox     box,    NABox  clampBox);
+NA_IAPI NABoxi    naClampBoxiToBox   (NABoxi    box,    NABoxi clampBox);
 
 // Use the following functions to make equality tests (==) between elements.
 NA_IAPI NABool    naEqualRangei(NARangei range1, NARangei range2);
@@ -428,30 +428,30 @@ NA_IAPI NAVolumei naSubVertexiVertex(NAVertexi  vertex1,  NAVertexi vertex2);
 // Containing functions. Test if an element is within another.
 // The E variant for the double types denotes an exclusive rangecheck [...)
 // instead of an includsive [...]
-NA_IAPI NABool    naContainsRangeOffset (NARange  outerrange, double   offset);
-NA_IAPI NABool    naContainsRangefOffset(NARangef outerrange, float    offset);
-NA_IAPI NABool    naContainsRangeiOffset(NARangei outerrange, NAInt    offset);
-NA_IAPI NABool    naContainsRangeiRange (NARangei outerrange, NARangei range);
+NA_IAPI NABool    naContainsRangeOffset (NARange  outerRange, double   offset);
+NA_IAPI NABool    naContainsRangefOffset(NARangef outerRange, float    offset);
+NA_IAPI NABool    naContainsRangeiOffset(NARangei outerRange, NAInt    offset);
+NA_IAPI NABool    naContainsRangeiRange (NARangei outerRange, NARangei range);
 
-NA_IAPI NABool    naContainsSizePos  (NASize  outersize, NAPos   pos);
-NA_IAPI NABool    naContainsSizeiPos (NASizei outersize, NAPosi  pos);
-NA_IAPI NABool    naContainsRectPos  (NARect  outerrect, NAPos   pos);
-NA_IAPI NABool    naContainsRectPosE (NARect  outerrect, NAPos   pos);
-NA_IAPI NABool    naContainsRectiPos (NARecti outerrect, NAPosi  pos);
-NA_IAPI NABool    naContainsSizeSize (NASize  outersize, NASize  size);
-NA_IAPI NABool    naContainsSizeiSize(NASizei outersize, NASizei size);
-NA_IAPI NABool    naContainsRectRect (NARect  outerrect, NARect  rect);
-NA_IAPI NABool    naContainsRectiRect(NARecti outerrect, NARecti rect);
+NA_IAPI NABool    naContainsSizePos  (NASize  outerSize, NAPos   pos);
+NA_IAPI NABool    naContainsSizeiPos (NASizei outerSize, NAPosi  pos);
+NA_IAPI NABool    naContainsRectPos  (NARect  outerRect, NAPos   pos);
+NA_IAPI NABool    naContainsRectPosE (NARect  outerRect, NAPos   pos);
+NA_IAPI NABool    naContainsRectiPos (NARecti outerRect, NAPosi  pos);
+NA_IAPI NABool    naContainsSizeSize (NASize  outerSize, NASize  size);
+NA_IAPI NABool    naContainsSizeiSize(NASizei outerSize, NASizei size);
+NA_IAPI NABool    naContainsRectRect (NARect  outerRect, NARect  rect);
+NA_IAPI NABool    naContainsRectiRect(NARecti outerRect, NARecti rect);
 
-NA_IAPI NABool    naContainsVolumeVertex (NAVolume  outervolume, NAVertex  vertex);
-NA_IAPI NABool    naContainsVolumeiVertex(NAVolumei outervolume, NAVertexi vertex);
-NA_IAPI NABool    naContainsBoxVertex    (NABox     outerbox,    NAVertex  vertex);
-NA_IAPI NABool    naContainsBoxVertexE   (NABox     outerbox,    NAVertex  vertex);
-NA_IAPI NABool    naContainsBoxiVertex   (NABoxi    outerbox,    NAVertexi vertex);
-NA_IAPI NABool    naContainsVolumeVolume (NAVolume  outervolume, NAVolume  volume);
-NA_IAPI NABool    naContainsVolumeiVolume(NAVolumei outervolume, NAVolumei volume);
-NA_IAPI NABool    naContainsBoxBox       (NABox     outerbox,    NABox     box);
-NA_IAPI NABool    naContainsBoxiBox      (NABoxi    outerbox,    NABoxi    box);
+NA_IAPI NABool    naContainsVolumeVertex (NAVolume  outerVolume, NAVertex  vertex);
+NA_IAPI NABool    naContainsVolumeiVertex(NAVolumei outerVolume, NAVertexi vertex);
+NA_IAPI NABool    naContainsBoxVertex    (NABox     outerBox,    NAVertex  vertex);
+NA_IAPI NABool    naContainsBoxVertexE   (NABox     outerBox,    NAVertex  vertex);
+NA_IAPI NABool    naContainsBoxiVertex   (NABoxi    outerBox,    NAVertexi vertex);
+NA_IAPI NABool    naContainsVolumeVolume (NAVolume  outerVolume, NAVolume  volume);
+NA_IAPI NABool    naContainsVolumeiVolume(NAVolumei outerVolume, NAVolumei volume);
+NA_IAPI NABool    naContainsBoxBox       (NABox     outerBox,    NABox     box);
+NA_IAPI NABool    naContainsBoxiBox      (NABoxi    outerBox,    NABoxi    box);
 
 // Get the End-Point of a rect. Is the same as origin + size.
 // The E variants allow the given struct to be empty.

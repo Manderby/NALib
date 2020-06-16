@@ -88,7 +88,7 @@ NA_IAPI size_t naGetSystemMemoryPagesizeMask(void);
 // in NALib use these functions when allocating memory on the heap.
 //
 // naMalloc             Allocates the given size of bytes on the heap using
-//                      malloc. If bytesize is negative, zero-filled bytes are
+//                      malloc. If byteSize is negative, zero-filled bytes are
 //                      appended at the end. See explanation below.
 // naAlloc              This is a macro which expands to naMalloc but can be
 //                      used to allocate enough space for a struct type. For
@@ -97,10 +97,10 @@ NA_IAPI size_t naGetSystemMemoryPagesizeMask(void);
 //                      the above functions or the default C memory allocation
 //                      functions like malloc.
 //
-// naMallocAligned      The given bytesize is allocated and the returned pointer
+// naMallocAligned      The given byteSize is allocated and the returned pointer
 //                      is guaranteed to be aligned on the given bound. Such
 //                      a pointer must be freed with naFreeAligned. Beware
-//                      that bytesize here can NOT be negative!
+//                      that byteSize here can NOT be negative!
 // naMallocPageAligned  Same thing but the bound is the memory-page boundary.
 //                      Does NOT require NARuntimeSystem!
 // naFreeAligned        Deallocates any aligned pointer previously allocated
@@ -132,15 +132,15 @@ NA_IAPI size_t naGetSystemMemoryPagesizeMask(void);
 //
 // Note that the actual definitions of the macros are in NAMemoryII.h
 
-NA_IAPI void* naMalloc            (NAInt bytesize);
+NA_IAPI void* naMalloc            (NAInt byteSize);
 #define       naAlloc             (type)
 NA_IAPI void  naFree              (void* ptr);
 
-NA_IAPI void* naMallocAligned     (NAUInt bytesize, NAUInt align);
-NA_IAPI void* naMallocPageAligned (NAUInt bytesize);
+NA_IAPI void* naMallocAligned     (NAUInt byteSize, NAUInt align);
+NA_IAPI void* naMallocPageAligned (NAUInt byteSize);
 NA_IAPI void  naFreeAligned       (void* ptr);
 
-NA_API  void* naMallocTmp         (size_t bytesize);
+NA_API  void* naMallocTmp         (size_t byteSize);
 #define       naNew               (type)
 NA_API  void  naDelete            (void* pointer);
 
@@ -237,10 +237,10 @@ typedef struct NAPtr NAPtr;
 // Creates a NULL pointer
 NA_IAPI NAPtr naMakePtrNull(void);
 
-// Makes an NAPtr with a newly allocated memory block of the given bytesize.
-// The bytesize parameter can be negative. See naMalloc function for more
+// Makes an NAPtr with a newly allocated memory block of the given byteSize.
+// The byteSize parameter can be negative. See naMalloc function for more
 // information.
-NA_IAPI NAPtr naMakePtrWithBytesize(NAInt bytesize);
+NA_IAPI NAPtr naMakePtrWithBytesize(NAInt byteSize);
 
 // Fills the given NAPtr struct with either a const or a non-const pointer
 // without copying any bytes.
@@ -314,14 +314,14 @@ NA_IAPI NASmartPtr* naInitSmartPtrMutable(  NASmartPtr* sptr,
 // Retaining and releasing an NASmartPtr.
 // You can send a destructor to Release which will be called if the reference
 // count reaches 0. Either the destructor will be called with the struct itself
-// or only with the data pointer if onlydata is set to NA_TRUE.
+// or only with the data pointer if onlyData is set to NA_TRUE.
 //
 // When refCount reaches zero, first, the destructor is called with a pointer
 // to data, then the data is cleaned up and finally, the struct is cleaned up.
 NA_IAPI NASmartPtr* naRetainSmartPtr (NASmartPtr* sptr);
 NA_IAPI void        naReleaseSmartPtr(NASmartPtr* sptr,
                                         NAMutator destructor,
-                                           NABool onlydata);
+                                           NABool onlyData);
 
 // Returns either a const or a mutable pointer to the data stored.
 NA_IAPI const void* naGetSmartPtrConst  (const  NASmartPtr* sptr);
