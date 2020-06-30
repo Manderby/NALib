@@ -174,6 +174,9 @@ typedef struct NARefCount NARefCount;
 // Initializes an NARefCount.
 NA_IAPI NARefCount* naInitRefCount(     NARefCount* refCount);
 
+// Returns true if the NATRefCount has reached zero.
+NA_IAPI NABool naIsRefCountZero(        NARefCount* refCount);
+
 // Retain and Release.
 // You can send a destructor to Release which will be called when the reference
 // count reaches 0.
