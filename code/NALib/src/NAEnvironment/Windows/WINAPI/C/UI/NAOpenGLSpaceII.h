@@ -80,7 +80,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator 
 	wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress("wglSwapIntervalEXT");
 	if (wglSwapIntervalEXT){wglSwapIntervalEXT(1);}
 
-  na_InitOpenGLSpace(&(winapiOpenGLSpace->openGLspace), hWnd);
+  na_InitOpenGLSpace(&(winapiOpenGLSpace->openGLSpace), hWnd);
 
   // Now the OpenGL context is created and current. We can initialize it
   // if necessary.
@@ -93,22 +93,22 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator 
 }
 
 
-NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace){
-  NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)openglspace;
-  SwapBuffers(GetDC((HWND)naGetUIElementNativeID(&(winapiOpenGLSpace->openGLspace.uiElement))));
+NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace){
+  NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)openGLSpace;
+  SwapBuffers(GetDC((HWND)naGetUIElementNativeID(&(winapiOpenGLSpace->openGLSpace.uiElement))));
 }
 
 
 
-NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds){
-  SetWindowPos((HWND)naGetUIElementNativeID(openglspace), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
+NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
+  SetWindowPos((HWND)naGetUIElementNativeID(openGLSpace), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
 }
 
 
 
 
-NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openglspace){
-  na_ClearOpenGLSpace(openGLSpace`);
+NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openGLSpace){
+  na_ClearOpenGLSpace(openGLSpace);
 }
 
 
@@ -116,8 +116,8 @@ NA_DEF void na_DestructOpenGLSpace(NAOpenGLSpace* openglspace){
   
 #endif  // NA_COMPILE_OPENGL
 
-NA_HDEF NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* openglspace){
-  return na_GetSpaceAbsoluteInnerRect(openglspace);
+NA_HDEF NARect na_GetOpenGLSpaceAbsoluteInnerRect(NA_UIElement* openGLSpace){
+  return na_GetSpaceAbsoluteInnerRect(openGLSpace);
 }
 
 

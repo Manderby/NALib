@@ -625,8 +625,8 @@ NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size);
   // Mac: when prepareOpenGL is called (which may be as late as when the
   //      space comes onsceen)
   NA_API NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator initfunc, void* initdata);
-  NA_API void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace);
-  NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds);
+  NA_API void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace);
+  NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds);
 #endif
 
 // Button
