@@ -97,6 +97,82 @@
 
 
 
+// The infinity definition can be done with the HUGE_VAL macros defined
+// in <math.h> or <cmath> but it is unclear whether they correspond to infinity
+// or just to a very large value. So far, the author never had problems with
+// them. The definitions which are commented out work as well but will
+// produce warnings on some compilers.
+#ifndef INFINITY
+  //#define NA_INFINITYf       (FLT_MAX + FLT_MAX)
+  //#define NA_INFINITY        (DBL_MAX + DBL_MAX)
+  //#define NA_INFINITYl       (LDBL_MAX + LDBL_MAX)
+  //#define NA_INFINITYf       (1.f/0.f)
+  //#define NA_INFINITY        (1. /0. )
+  //#define NA_INFINITYl       (1.L/0.L)
+  #ifndef HUGE_VALF
+    #define NA_INFINITYf       ((float)HUGE_VAL)
+    #define NA_INFINITY        HUGE_VAL
+    #define NA_INFINITYl       ((long double)HUGE_VAL)
+  #else
+    #define NA_INFINITYf       HUGE_VALF
+    #define NA_INFINITY        HUGE_VAL
+    #define NA_INFINITYl       HUGE_VALL
+  #endif
+#else
+  #define NA_INFINITYf       ((float)INFINITY)
+  #define NA_INFINITY        INFINITY
+  #define NA_INFINITYl       ((long double)INFINITY)
+#endif
+
+#ifndef NAN
+  //  #define NA_NANf             (0.f/0.f)
+  //  #define NA_NAN              (0. /0. )
+  //  #define NA_NANl             (0.L/0.L)
+  #define NA_NANf             (NA_INFINITYf - NA_INFINITYf)
+  #define NA_NAN              (NA_INFINITY  - NA_INFINITY)
+  #define NA_NANl             (NA_INFINITYl - NA_INFINITYl)
+#else
+  #define NA_NANf             ((float)NAN)
+  #define NA_NAN              ((double)NAN)
+  #define NA_NANl             ((long double)NAN)
+#endif
+
+// NA_SINGULARITY is a very small number which corresponds to 10 times the
+// smallest decimal digit accurately distinguishable by the corresponding
+// floating-point-type. This is different than the machine-epsilon, found in
+// the <float.h> or <cfloat> header files and has been useful to the author
+// many times already.
+// The sub- and sup-norm macros correspond to 1 minus or 1 plus NA_SINGULARITY.
+#if (FLT_DIG < 6) || (DBL_DIG < 15)
+  #warning "FLT and DBL digits for NA_SINGULARITY not achieved on this system"
+#endif
+
+#define NA_SINGULARITYf    1e-5f
+#define NA_SUB_NORMf       0.99999f
+#define NA_SUP_NORMf       1.00001f
+
+#define NA_SINGULARITY     1e-14
+#define NA_SUB_NORM        0.99999999999999
+#define NA_SUP_NORM        1.00000000000001
+
+#if (LDBL_DIG < 18)
+  #if(LDBL_DIG == DBL_DIG)
+    // On some systems, long doubles are supported but only have the
+    // accuracy of doubles.
+    #define NA_SINGULARITYl    NA_SINGULARITY
+    #define NA_SUB_NORMl       NA_SUB_NORM
+    #define NA_SUP_NORMl       NA_SUP_NORM
+  #else
+    #error "LDBL digits for NA_SINGULARITY not achieved on this system"
+  #endif
+#else
+  #define NA_SINGULARITYl    1e-17L
+  #define NA_SUB_NORMl       0.99999999999999999L
+  #define NA_SUP_NORMl       1.00000000000000001L
+#endif
+
+
+
 // Undefine the defines of the .h file.
 #undef NA_IEEE754_SINGLE_BITS
 #undef NA_IEEE754_SINGLE_SIGNIFICAND_BITS
