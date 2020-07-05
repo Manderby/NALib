@@ -43,7 +43,7 @@ NA_DEF NAUTF8Char* naAllocSprintf(NABool useTmp, const NAUTF8Char* format, ...){
   NAInt stringlen = naVarargStringLength(format, argumentlist);
 
   NAUTF8Char* stringbuf = (useTmp)
-    ? naMallocTmp((NAInt)stringlen + 1)
+    ? naMallocTmp((size_t)stringlen + 1)
     : naMalloc((NAInt)stringlen + 1);
   naVsnprintf(stringbuf, (NAUInt)(stringlen + 1), format, argumentlist2);
   stringbuf[stringlen] = '\0';

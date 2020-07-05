@@ -205,7 +205,7 @@
 #define NA_IEEE754_SINGLE_EXPONENT_BIAS          ((1 << (NA_IEEE754_SINGLE_EXPONENT_BITS - 1)) - 1)
 #define NA_IEEE754_SINGLE_EXPONENT_SUBNORMAL     (-NA_IEEE754_SINGLE_EXPONENT_BIAS)
 #define NA_IEEE754_SINGLE_EXPONENT_SPECIAL       ((1 << NA_IEEE754_SINGLE_EXPONENT_BITS) - NA_IEEE754_SINGLE_EXPONENT_BIAS - 1)
-#define NA_IEEE754_SINGLE_EXPONENT_MASK          (((1u << (NA_IEEE754_SINGLE_BITS - 1)) - 1) & ~NA_IEEE754_SINGLE_SIGNIFICAND_MASK)
+#define NA_IEEE754_SINGLE_EXPONENT_MASK          (((1u << (NA_IEEE754_SINGLE_BITS - 1)) - 1u) & ~(uint32)NA_IEEE754_SINGLE_SIGNIFICAND_MASK)
 #define NA_IEEE754_SINGLE_SIGN_MASK              (1u << (NA_IEEE754_SINGLE_BITS  - 1))
 
 // double precision
@@ -350,7 +350,7 @@ NA_IAPI int32 naGetFloatExponent(float f){
       naError("Given number is +-Infinity. Result will be max+1 exponent");
   #endif
   int32 fBits = *((int32*)(void*)&f);
-  fBits = fBits & NA_IEEE754_SINGLE_EXPONENT_MASK;
+  fBits = fBits & (int32)NA_IEEE754_SINGLE_EXPONENT_MASK;
   fBits = fBits >> NA_IEEE754_SINGLE_SIGNIFICAND_BITS;
   #ifndef NDEBUG
     if(f != 0. && fBits == 0)
@@ -522,7 +522,7 @@ NA_IAPI int32 naGetFloatFractionSlowE(float f){
     fbits = naGeti64Hi(hyperBits);
     fbits++;
     fbits = fbits >> 1;
-    fbits = fbits * mul;
+    fbits = fbits * (int32)mul;
   }
   return fbits;
 }
@@ -623,7 +623,7 @@ NA_IAPI NAi64 naGetDoubleFractionSlowE(double d){
     dbits = naGeti128Hi(hyperBits);
     naInci64(dbits);
     dbits = naShri64(dbits, 1);
-    dbits = naMuli64(dbits, mul);
+    dbits = naMuli64(dbits, naCastu64Toi64(mul));
   }
   return dbits;
 }

@@ -1,7 +1,7 @@
 
 #include "NATesting.h"
 #include <stdio.h>
-#include <NAString.h>
+#include "NAString.h"
 
 
 
