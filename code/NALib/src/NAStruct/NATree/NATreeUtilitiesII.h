@@ -30,7 +30,7 @@ NA_IDEF void naEmptyTree(NATree* tree){
       naError("There are still iterators running on this tree. Did you miss a naClearTreeIterator call?");
   #endif
   if(tree->root){
-    if(na_IsTreeRootLeaf(tree)){
+    if(naIsTreeRootLeaf(tree)){
       na_DestructTreeLeaf(tree->config, (NATreeLeaf*)tree->root);
     }else{
       na_DestructTreeNode(tree->config, (NATreeNode*)tree->root, NA_TRUE);
@@ -163,7 +163,7 @@ NA_IDEF void naUpdateTree(NATree* tree){
     if(!tree->config->nodeUpdater)
       naError("tree is configured without nodeUpdater callback");
   #endif
-  if(tree->root && !na_IsTreeRootLeaf(tree)){
+  if(tree->root && !naIsTreeRootLeaf(tree)){
     na_UpdateTreeNodeCapturing(tree, (NATreeNode*)tree->root);
   }
 }
@@ -175,7 +175,7 @@ NA_IDEF NAPtr naGetRootNodeContent(NATree* tree)
   NAPtr retdata;
   if(tree->root){
     #ifndef NDEBUG
-      if(na_IsTreeRootLeaf(tree))
+      if(naIsTreeRootLeaf(tree))
         naError("Root of the tree is not a node");
     #endif
     retdata = na_GetTreeNodeData(tree->config, (NATreeNode*)(tree->root));
@@ -183,6 +183,12 @@ NA_IDEF NAPtr naGetRootNodeContent(NATree* tree)
     retdata = naMakePtrNull();
   }
   return retdata;
+}
+
+
+
+NA_IDEF NABool naIsTreeRootLeaf(const NATree* tree){
+  return (NABool)((tree->flags & NA_TREE_FLAG_ROOT_IS_LEAF) == NA_TREE_FLAG_ROOT_IS_LEAF);
 }
 
 
@@ -205,12 +211,6 @@ NA_HIDEF void na_ClearTreeRoot(NATree* tree){
 
 
 
-NA_HIDEF NABool na_IsTreeRootLeaf(const NATree* tree){
-  return (NABool)((tree->flags & NA_TREE_FLAG_ROOT_IS_LEAF) == NA_TREE_FLAG_ROOT_IS_LEAF);
-}
-
-
-
 NA_HIDEF void na_MarkTreeRootLeaf(NATree* tree, NABool isleaf){
   tree->flags &= ~NA_TREE_FLAG_ROOT_IS_LEAF;
   tree->flags |= (isleaf * NA_TREE_FLAG_ROOT_IS_LEAF);
@@ -221,7 +221,7 @@ NA_HIDEF void na_MarkTreeRootLeaf(NATree* tree, NABool isleaf){
 NA_HIDEF NABool na_IsTreeItemLeaf(const NATree* tree, NATreeItem* item){
   NABool retvalue;
   if(na_IsTreeItemRoot(item)){
-    retvalue = na_IsTreeRootLeaf(tree);
+    retvalue = naIsTreeRootLeaf(tree);
   }else{
     NATreeNode* parent = na_GetTreeItemParent(item);
     NAInt childIndex = na_GetTreeNodeChildIndex(tree->config, parent, item);

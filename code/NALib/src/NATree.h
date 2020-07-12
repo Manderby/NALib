@@ -226,6 +226,9 @@ NA_IAPI void naUpdateTree(NATree* tree);
 // Returns the content stored in the root node, if any.
 NA_IAPI NAPtr naGetRootNodeContent(NATree* tree);
 
+// Returns true if the root node is a leaf
+NA_IAPI NABool naIsTreeRootLeaf(const NATree* tree);
+
 // ////////////////////////////////////
 // Iterators
 //

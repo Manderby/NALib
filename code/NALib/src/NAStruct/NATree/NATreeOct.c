@@ -371,21 +371,21 @@ NA_HDEF void na_EnlargeTreeRootOct(NATree* tree, const void* containedKey){
   NAInt newRootChildExponent;
   NAInt prevRootIndex;
   
-  if(na_IsTreeRootLeaf(tree)){
+  if(naIsTreeRootLeaf(tree)){
     prevRootOrigin = na_GetOctLeafKey((NATreeOctLeaf*)tree->root);
   }else{
     prevRootOrigin = na_GetOctNodeKey((NATreeOctNode*)tree->root);
   }
 
   // First, we create a new root above the existing one
-  newRoot = na_CreateTreeParentOct(tree, tree->root, na_IsTreeRootLeaf(tree), containedKey);
+  newRoot = na_CreateTreeParentOct(tree, tree->root, naIsTreeRootLeaf(tree), containedKey);
   newRootOrigin = na_GetOctNodeKey(newRoot);
   newRootChildExponent = newRoot->childexponent;
 
   // Now, we attach the previous root to the new root at the appropriate
   // child index.
   prevRootIndex = tree->config->keyIndexGetter(newRootOrigin, prevRootOrigin, &newRootChildExponent);
-  na_SetTreeNodeChild(na_GetOctNodeNode(newRoot), tree->root, prevRootIndex, na_IsTreeRootLeaf(tree));
+  na_SetTreeNodeChild(na_GetOctNodeNode(newRoot), tree->root, prevRootIndex, naIsTreeRootLeaf(tree));
 
   // Finally, we set the newRoot to be the root of the tree and mark
   // it to be a node.

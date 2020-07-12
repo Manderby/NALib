@@ -225,7 +225,6 @@ NA_HAPI  NABool na_AddTreeLeaf(NATreeIterator* iter, const void* key, NAPtr cont
 // Utilities
 NA_HIAPI void na_SetTreeRoot(NATree* tree, NATreeItem* newroot, NABool isLeaf);
 NA_HIAPI void na_ClearTreeRoot(NATree* tree);
-NA_HIAPI NABool na_IsTreeRootLeaf(const NATree* tree);
 NA_HIAPI void na_MarkTreeRootLeaf(NATree* tree, NABool isleaf);
 NA_HIAPI NABool na_IsTreeItemLeaf(const NATree* tree, NATreeItem* item);
 NA_HAPI  NATreeLeaf* na_AddTreeContentInPlace(NATree* tree, NATreeItem* item, const void* key, NAPtr content, NATreeLeafInsertOrder insertOrder);
