@@ -41,10 +41,10 @@ int main(void){
   // Now, start testing
   naStartTesting("NALib", .01, NA_FALSE);
     naTestGroupFunction(NABase);
-    //naTestGroupFunction(NACore);
+    naTestGroupFunction(NACore);
 
     printf(NA_NL);
-    //naPrintUntested();
+    naPrintUntested();
 
     printf(NA_NL "Benchmarking:" NA_NL);
     benchmarkNABase();

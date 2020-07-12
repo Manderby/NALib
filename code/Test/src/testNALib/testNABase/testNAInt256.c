@@ -247,8 +247,8 @@ void benchmarkNAInt256Arithmetic(){
   NAu256 u;
 
   naBenchmark(naNegi256(randi256));
-  naBenchmark((i = randi256, naInci256(i), i));
-  naBenchmark((i = randi256, naDeci256(i), i));
+  naBenchmark((i = randi256, (void)naInci256(i), i));
+  naBenchmark((i = randi256, (void)naDeci256(i), i));
 
   naBenchmark(naAddi256(randi256, randi256));
   naBenchmark(naSubi256(randi256, randi256));
@@ -256,8 +256,8 @@ void benchmarkNAInt256Arithmetic(){
   naBenchmark(naDivi256(randi256, randi256));
   naBenchmark(naModi256(randi256, randi256));
 
-  naBenchmark((u = randu256, naIncu256(u), u));
-  naBenchmark((u = randu256, naDecu256(u), u));
+  naBenchmark((u = randu256, (void)naIncu256(u), u));
+  naBenchmark((u = randu256, (void)naDecu256(u), u));
 
   naBenchmark(naAddu256(randu256, randu256));
   naBenchmark(naSubu256(randu256, randu256));

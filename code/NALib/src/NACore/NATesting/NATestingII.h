@@ -95,14 +95,14 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
 #define naBenchmark(expr)\
 {\
   int testSize = 1;\
-  double timeDiff;\
+  double timeDiff = 0;\
   int pow;\
   double startT = na_BenchmarkTime();\
   double endT;\
   for(pow = 0; pow < na_GetBenchmarkTestSizeLimit(); pow++){\
     for(int testRun = 0; testRun < testSize; testRun++){\
       /*na_StoreBenchmarkResult((char)(expr));*/\
-      expr;\
+      (void)expr;\
     }\
     endT = na_BenchmarkTime();\
     timeDiff = endT - startT;\

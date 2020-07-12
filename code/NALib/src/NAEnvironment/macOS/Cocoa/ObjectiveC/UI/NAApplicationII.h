@@ -144,7 +144,7 @@ NA_DEF void naOpenConsoleWindow(void){
 #define NA_COCOA_BUNDLE_VERSION_KEY @"CFBundleVersion"
 #define NA_COCOA_BUNDLE_ICON_FILE_KEY @"CFBundleIconFile"
 
-NA_DEF NAString* na_NewApplicationName(void){
+NA_DEF NAString* naNewApplicationName(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
   if(app->application.name){
     return naNewStringWithFormat("%s", app->application.name);
@@ -157,7 +157,7 @@ NA_DEF NAString* na_NewApplicationName(void){
   }
 }
 
-NA_DEF NAString* na_NewApplicationCompanyName(void){
+NA_DEF NAString* naNewApplicationCompanyName(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
   if(app->application.companyName){
     return naNewStringWithFormat("%s", app->application.companyName);
@@ -166,7 +166,7 @@ NA_DEF NAString* na_NewApplicationCompanyName(void){
   }
 }
 
-NA_DEF NAString* na_NewApplicationVersionString(void){
+NA_DEF NAString* naNewApplicationVersionString(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
   if(app->application.versionString){
     return naNewStringWithFormat("%s", app->application.versionString);
@@ -176,7 +176,7 @@ NA_DEF NAString* na_NewApplicationVersionString(void){
   }
 }
 
-NA_DEF NAString* na_NewApplicationBuildString(void){
+NA_DEF NAString* naNewApplicationBuildString(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
   if(app->application.buildString){
     return naNewStringWithFormat("%s", app->application.buildString);
@@ -186,7 +186,7 @@ NA_DEF NAString* na_NewApplicationBuildString(void){
   }
 }
 
-NA_DEF NAString* na_NewApplicationIconPath(void){
+NA_DEF NAString* naNewApplicationIconPath(void){
   NACocoaApplication* app = (NACocoaApplication*)naGetApplication();
   if(app->application.iconPath){
     return naNewStringWithFormat("%s", app->application.iconPath);

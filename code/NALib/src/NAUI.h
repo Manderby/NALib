@@ -312,11 +312,11 @@ NA_API void naSetApplicationBuildString(NAUTF8Char* string);
 NA_API void naSetApplicationIconPath(NAUTF8Char* path);
 
 // Retrieve the informations. All functions might return NA_NULL.
-NA_API NAString* na_NewApplicationName(void);
-NA_API NAString* na_NewApplicationCompanyName(void);
-NA_API NAString* na_NewApplicationVersionString(void);
-NA_API NAString* na_NewApplicationBuildString(void);
-NA_API NAString* na_NewApplicationIconPath(void);
+NA_API NAString* naNewApplicationName(void);
+NA_API NAString* naNewApplicationCompanyName(void);
+NA_API NAString* naNewApplicationVersionString(void);
+NA_API NAString* naNewApplicationBuildString(void);
+NA_API NAString* naNewApplicationIconPath(void);
 
 // The application binary usually resides in some kind of base package folder
 // and resources are located relative to that location. Using the following
