@@ -111,7 +111,7 @@ NA_HDEF NABool na_IterateTreeWithInfo(NATreeIterator* iter, NATreeIterationInfo*
   if(naIsTreeAtInitial(iter)){
     // If the iterator is at initial position, we use the root and capture.
     na_SetTreeIteratorCurItem(iter, tree->root);
-    if(!na_IsTreeRootLeaf(tree)){
+    if(!naIsTreeRootLeaf(tree)){
       na_IterateTreeCapture(iter, info->startIndex, info);
     }
   }else{
@@ -138,7 +138,7 @@ NA_HDEF NATreeItem* na_LocateTreeKeyCapture(const NATree* tree, NATreeNode* node
   *matchfound = NA_FALSE;
 
   if(!node){
-    if(na_IsTreeRootLeaf(tree)){
+    if(naIsTreeRootLeaf(tree)){
       *matchfound = tree->config->keyLeafContainTester((NATreeLeaf*)tree->root, key);
       return tree->root;
     }else{

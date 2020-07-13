@@ -20,7 +20,7 @@ NA_HDEF void na_DestructMemoryBlock(NAMemoryBlock* block){
 
 // Anyone is free to copy, modify, publish, use, compile, sell, or
 // distribute this software, either in source code form or as a compiled
-// binary, for any purpose, commercial or non-commercial, and by any
+// binary, for any purpose, commercial or non-comme3rcial, and by any
 // means.
 
 // In jurisdictions that recognize copyright laws, the author or authors

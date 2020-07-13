@@ -28,7 +28,8 @@ Smaller Things:
 - Removed implementations for sign encodings different from twos complement.
 - Got rid of all NA_PRI and NA_SCN. Provide naPri functions.
 - Huge renaming of all helper symbols now with the na_ or NA_ prefix.
-  
+- Adding Leap second information according bulletin C 60
+
 
 
 Version 24 (released 2020-Jan-09)

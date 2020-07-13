@@ -54,6 +54,16 @@ NA_IDEF NARefCount* naInitRefCount(NARefCount* refCount){
 
 
 
+NA_IDEF NABool naIsRefCountZero(NARefCount* refCount){
+  #ifndef NDEBUG
+    if(refCount->count < 0)
+      naError("Refcount has a count smaller than zero.");
+  #endif
+    return refCount->count == 0;
+}
+
+
+
 NA_IDEF NARefCount* naRetainRefCount(NARefCount* refCount){
   #ifndef NDEBUG
     if(!refCount){

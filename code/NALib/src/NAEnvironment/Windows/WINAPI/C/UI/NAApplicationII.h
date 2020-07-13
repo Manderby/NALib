@@ -430,7 +430,7 @@ NA_DEF void naSetApplicationIconPath(NAUTF8Char* path){
 
 
 
-NA_DEF NAString* na_NewApplicationName(void){
+NA_DEF NAString* naNewApplicationName(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   if(app->application.name){
     return naNewStringWithFormat("%s", app->application.name);
@@ -457,7 +457,7 @@ NA_DEF NAString* na_NewApplicationName(void){
 
 
 
-NA_DEF NAString* na_NewApplicationCompanyName(void){
+NA_DEF NAString* naNewApplicationCompanyName(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   if(app->application.companyName){
     return naNewStringWithFormat("%s", app->application.companyName);
@@ -466,7 +466,7 @@ NA_DEF NAString* na_NewApplicationCompanyName(void){
   }
 }
 
-NA_DEF NAString* na_NewApplicationVersionString(void){
+NA_DEF NAString* naNewApplicationVersionString(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   if(app->application.versionString){
     return naNewStringWithFormat("%s", app->application.versionString);
@@ -475,7 +475,7 @@ NA_DEF NAString* na_NewApplicationVersionString(void){
   }
 }
 
-NA_DEF NAString* na_NewApplicationBuildString(void){
+NA_DEF NAString* naNewApplicationBuildString(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   if(app->application.buildString){
     return naNewStringWithFormat("%s", app->application.buildString);
@@ -484,7 +484,7 @@ NA_DEF NAString* na_NewApplicationBuildString(void){
   }
 }
 
-NA_DEF NAString* na_NewApplicationIconPath(void){
+NA_DEF NAString* naNewApplicationIconPath(void){
   NAWINAPIApplication* app = (NAWINAPIApplication*)naGetApplication();
   if(app->application.iconPath){
     return naNewStringWithFormat("%s", app->application.iconPath);
@@ -493,7 +493,7 @@ NA_DEF NAString* na_NewApplicationIconPath(void){
   }
 }
 
-NA_DEF NAString* na_NewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
+NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
   NAString* retString;
   if(dir){
     retString = naNewStringWithFormat("%s/%s.%s", dir, basename, suffix);

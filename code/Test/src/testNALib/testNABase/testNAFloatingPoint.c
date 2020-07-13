@@ -347,6 +347,24 @@ void testNAFloatingPoint(){
 void printNAFloatingPoint(){
   printf("NAFloatingPoint.h:" NA_NL);
 
+  printf("Fundamental values:" NA_NL);
+  naPrintMacro(NA_INFINITYf);
+  naPrintMacro(NA_INFINITY);
+  naPrintMacro(NA_INFINITYl);
+  naPrintMacro(NA_NANf);
+  naPrintMacro(NA_NAN);
+  naPrintMacro(NA_NANl);
+  naPrintMacro(NA_SINGULARITYf);
+  naPrintMacro(NA_SUB_NORMf);
+  naPrintMacro(NA_SUP_NORMf);
+  naPrintMacro(NA_SINGULARITY);
+  naPrintMacro(NA_SUB_NORM);
+  naPrintMacro(NA_SUP_NORM);
+  naPrintMacro(NA_SINGULARITYl);
+  naPrintMacro(NA_SUB_NORMl);
+  naPrintMacro(NA_SUP_NORMl);
+
+  printf("Single precision:" NA_NL);
   naPrintMacroInt(NA_IEEE754_SINGLE_BITS);
   naPrintMacroInt(NA_IEEE754_SINGLE_SIGNIFICAND_BITS);
   naPrintMacroux32(NA_IEEE754_SINGLE_SIGNIFICAND_NORM);
@@ -358,6 +376,7 @@ void printNAFloatingPoint(){
   naPrintMacroux32(NA_IEEE754_SINGLE_EXPONENT_MASK);
   naPrintMacroux32(NA_IEEE754_SINGLE_SIGN_MASK);
 
+  printf("Double precision:" NA_NL);
   naPrintMacroInt(NA_IEEE754_DOUBLE_BITS);
   naPrintMacroInt(NA_IEEE754_DOUBLE_SIGNIFICAND_BITS);
   naPrintMacroux64(NA_IEEE754_DOUBLE_SIGNIFICAND_NORM);

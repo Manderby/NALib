@@ -312,17 +312,17 @@ NA_API void naSetApplicationBuildString(NAUTF8Char* string);
 NA_API void naSetApplicationIconPath(NAUTF8Char* path);
 
 // Retrieve the informations. All functions might return NA_NULL.
-NA_API NAString* na_NewApplicationName(void);
-NA_API NAString* na_NewApplicationCompanyName(void);
-NA_API NAString* na_NewApplicationVersionString(void);
-NA_API NAString* na_NewApplicationBuildString(void);
-NA_API NAString* na_NewApplicationIconPath(void);
+NA_API NAString* naNewApplicationName(void);
+NA_API NAString* naNewApplicationCompanyName(void);
+NA_API NAString* naNewApplicationVersionString(void);
+NA_API NAString* naNewApplicationBuildString(void);
+NA_API NAString* naNewApplicationIconPath(void);
 
 // The application binary usually resides in some kind of base package folder
 // and resources are located relative to that location. Using the following
 // function, you can retrieve various informations. dir can be Null to search
 // in the base package folder.
-NA_API NAString* na_NewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix);
+NA_API NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix);
 
 
 
@@ -625,8 +625,8 @@ NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size);
   // Mac: when prepareOpenGL is called (which may be as late as when the
   //      space comes onsceen)
   NA_API NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator initfunc, void* initdata);
-  NA_API void naSwapOpenGLBuffer(NAOpenGLSpace* openglspace);
-  NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openglspace, NARect bounds);
+  NA_API void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace);
+  NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds);
 #endif
 
 // Button
