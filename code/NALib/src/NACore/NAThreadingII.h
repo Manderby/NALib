@@ -24,13 +24,13 @@
 // SLEEPING
 // ////////////////////////////
 
-NA_IDEF int naSleepN(NAUInt nanoSeconds){
+NA_IDEF int naSleepN(size_t nanoSeconds){
   return naSleepU(nanoSeconds / 1000);
 }
 
 
 
-NA_IDEF int naSleepU(NAUInt microSeconds){
+NA_IDEF int naSleepU(size_t microSeconds){
   #if NA_OS == NA_OS_WINDOWS
     Sleep((DWORD)(microSeconds / 1000));
     return 0;
@@ -41,7 +41,7 @@ NA_IDEF int naSleepU(NAUInt microSeconds){
 
 
 
-NA_IDEF int naSleepM(NAUInt milliSeconds){
+NA_IDEF int naSleepM(size_t milliSeconds){
   #if NA_OS == NA_OS_WINDOWS
     Sleep((DWORD)(milliSeconds));
     return 0;

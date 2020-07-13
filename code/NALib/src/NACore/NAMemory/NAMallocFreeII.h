@@ -54,7 +54,7 @@ NA_IDEF void naFree(void* ptr){
 
 
 
-NA_IDEF void* naMallocAligned(NAUInt byteSize, NAUInt align){
+NA_IDEF void* naMallocAligned(size_t byteSize, size_t align){
   void* retptr;
 
   #if NA_OS == NA_OS_WINDOWS
@@ -94,7 +94,7 @@ NA_IDEF void* naMallocAligned(NAUInt byteSize, NAUInt align){
   #endif
 
   #ifndef NDEBUG
-    if(((NAUInt)retptr & (NAUInt)(align - NA_ONE)) != NA_ZERO)
+    if(((size_t)retptr & (size_t)(align - NA_ONE)) != NA_ZERO)
       naError("pointer misaligned.");
   #endif
 
@@ -103,10 +103,10 @@ NA_IDEF void* naMallocAligned(NAUInt byteSize, NAUInt align){
 
 
 
-NA_IDEF void* naMallocPageAligned(NAUInt byteSize){
+NA_IDEF void* naMallocPageAligned(size_t byteSize){
   // Note that due to some strange reason, aligned_alloc and valloc not work
   // with clang. Therefore, a simple call to naMallocAligned is used.
-  return naMallocAligned(byteSize, (NAUInt)naGetSystemMemoryPagesize());
+  return naMallocAligned(byteSize, naGetSystemMemoryPagesize());
 }
 
 

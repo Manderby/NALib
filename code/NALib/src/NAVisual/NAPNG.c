@@ -122,7 +122,7 @@ typedef struct NAPNGChunk NAPNGChunk;
 struct NAPNGChunk{
   NABuffer* data;      // All data without the preceding chunk type
   NAChunkType type;   // The type as an enum.
-  NAInt length;
+  uint32 length;
   uint8 typeName[4];  // The type as 4 uint8
   uint32 crc;
 };
@@ -145,9 +145,9 @@ NA_HDEF NAPNGChunk* na_AllocPNGChunkFromBuffer(NABufferIterator* iter){
 
   NAPNGChunk* chunk = naAlloc(NAPNGChunk);
 
-  chunk->length = (NAInt)naReadBufferu32(iter);
+  chunk->length = naReadBufferu32(iter);
   #ifndef NDEBUG
-    if((NAUInt)chunk->length > (1U<<31)-1U)
+    if(chunk->length > (1U<<31)-1U)
       naError("length should not exceed 2^31-1.");
   #endif
 
@@ -896,8 +896,8 @@ NA_DEF void naWritePNGToPath(NAPNG* png, const char* filePath){
   naBeginListMutatorIteration(NAPNGChunk* chunk, &(png->chunks), iter);
     naFixBufferRange(chunk->data);
 
-    chunk->length = naGetBufferRange(chunk->data).length;
-    naWriteBufferu32(&iterout, (uint32)chunk->length);
+    chunk->length = (uint32)naGetBufferRange(chunk->data).length;
+    naWriteBufferu32(&iterout, chunk->length);
 
     naCopy32(chunk->typeName, na_PngChunkTypeNames[chunk->type]);
     naWriteBufferBytes(&iterout, chunk->typeName, 4);

@@ -34,9 +34,9 @@ typedef void* NAAlarm;
 // The return value behaves the same as the usleep function on Mac OS X, where
 // a value of 0 denotes success. On Windows, the return value is always 0.
 // Note that the S variant uses a double value.
-NA_IAPI int naSleepN(NAUInt nanoSeconds);
-NA_IAPI int naSleepU(NAUInt microSeconds);
-NA_IAPI int naSleepM(NAUInt milliSeconds);
+NA_IAPI int naSleepN(size_t nanoSeconds);
+NA_IAPI int naSleepU(size_t microSeconds);
+NA_IAPI int naSleepM(size_t milliSeconds);
 NA_IAPI int naSleepS(double seconds);
 
 

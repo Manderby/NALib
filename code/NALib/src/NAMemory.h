@@ -136,8 +136,8 @@ NA_IAPI void* naMalloc            (NAInt byteSize);
 #define       naAlloc             (type)
 NA_IAPI void  naFree              (void* ptr);
 
-NA_IAPI void* naMallocAligned     (NAUInt byteSize, NAUInt align);
-NA_IAPI void* naMallocPageAligned (NAUInt byteSize);
+NA_IAPI void* naMallocAligned     (size_t byteSize, size_t align);
+NA_IAPI void* naMallocPageAligned (size_t byteSize);
 NA_IAPI void  naFreeAligned       (void* ptr);
 
 NA_API  void* naMallocTmp         (size_t byteSize);
