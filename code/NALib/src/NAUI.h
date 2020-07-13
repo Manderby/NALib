@@ -322,7 +322,7 @@ NA_API NAString* naNewApplicationIconPath(void);
 // and resources are located relative to that location. Using the following
 // function, you can retrieve various informations. dir can be Null to search
 // in the base package folder.
-NA_API NAString* na_NewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix);
+NA_API NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix);
 
 
 

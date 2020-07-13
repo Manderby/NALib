@@ -643,7 +643,7 @@ NA_DEF NABool naEqualBufferToData(NABuffer* buffer, const void* data, NAInt data
 
 NA_DEF void naAppendBufferToBuffer(NABuffer* dstbuffer, const NABuffer* srcbuffer){
   NABufferIterator iter = naMakeBufferModifier(dstbuffer);
-  na_LocateBufferEnd(&iter);
+  naLocateBufferFromEnd(&iter, 0);
   naWriteBufferBuffer(&iter, srcbuffer, naGetBufferRange(srcbuffer));
   naClearBufferIterator(&iter);
   return;

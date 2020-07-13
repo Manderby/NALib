@@ -493,7 +493,7 @@ NA_DEF NAString* naNewApplicationIconPath(void){
   }
 }
 
-NA_DEF NAString* na_NewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
+NA_DEF NAString* naNewApplicationResourcePath(const NAUTF8Char* dir, const NAUTF8Char* basename, const NAUTF8Char* suffix){
   NAString* retString;
   if(dir){
     retString = naNewStringWithFormat("%s/%s.%s", dir, basename, suffix);
