@@ -73,7 +73,6 @@ all projects.
 Now, after some more years, the code collection did grow by quite a fair
 amount of code and functionality. Unfortunately, I had to close down my
 company in 2019, but still to this day, I am using NALib for my private
-projects and try to advance it even more. It is still compatible back
-to ANSI-C (except for the // comments) but at the same time is using
-a very modern coding style which - as I hope - helps people value the C
-programming language as I do.
+projects and try to advance it whenever time fits. It currently uses C99
+as well as some elements of C11 combined with a modern coding style which
+- hopefully - helps people value the C programming language as much as I do.
