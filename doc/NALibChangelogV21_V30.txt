@@ -7,13 +7,18 @@ This file contains information about changes in the package NALib. These are
 purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
-Version 25 The grand cleanup (unreleased)
+
+
+Version 25 (released 13. July 2020)
 ==========
 
 Big changes:
 - NALib is now published under Public Domain
 - Starting from now, C99 is the minimum requirement for NALib to compile.
   Of course uses C11 whenever available.
+- Lots of renaming of parameters to newer code style
+- Added testing and benchmark
+- NABase is fully tested
 - Added int128 and int256
 
 Smaller Things:
