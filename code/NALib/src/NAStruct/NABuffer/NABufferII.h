@@ -203,6 +203,7 @@ NA_HAPI NABool na_LocateBufferLastPart(NABufferIterator* iter);
 NA_HAPI NABool na_LocateBufferNextPart(NABufferIterator* iter);
 NA_HAPI NABool na_LocateBufferPrevPartMax(NABufferIterator* iter);
 NA_HAPI NABool na_LocateBufferMax(NABufferIterator* iter);
+NA_HAPI NABool na_LocateBufferEnd(NABufferIterator* iter);
 NA_HAPI NABool na_IterateBufferPart(NABufferIterator* iter);
 
 NA_HAPI NABuffer* na_GetBufferIteratorSourceBuffer(NABufferIterator* iter);

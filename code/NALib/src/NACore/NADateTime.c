@@ -832,7 +832,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone){
         timeSpec.tv_sec -= (__darwin_time_t)NA_DATETIME_SISEC_UNIX_YEAR_ZERO;
       #endif
     #endif
-    timeSpec.tv_nanoSecond = dateTime->nanoSecond;
+    timeSpec.tv_nsec = dateTime->nanoSecond;
     return timeSpec;
   }
 
@@ -841,7 +841,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone){
     struct timeval timeVal;
     struct timespec timeSpec = naMakeTimeSpecFromDateTime(dateTime);
     timeVal.tv_sec = timeSpec.tv_sec;
-    timeVal.tv_usec = (int)(timeSpec.tv_nanoSecond / 1000);
+    timeVal.tv_usec = (int)(timeSpec.tv_nsec / 1000);
     return timeVal;
   }
 
@@ -882,7 +882,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone){
     }else{
       dateTime.siSecond = NA_ZERO_i64; // todo
     }
-    dateTime.nanoSecond = (int32)timeSpec->tv_nanoSecond;
+    dateTime.nanoSecond = (int32)timeSpec->tv_nsec;
     if(timeZone){
       dateTime.shift = naMakeShiftFromTimeZone(timeZone);
       dateTime.flags = ((timeZone->tz_dsttime) ? NA_DATETIME_FLAG_SUMMERTIME : 0);
@@ -897,7 +897,7 @@ NA_DEF int16 naMakeShiftFromTimeZone(const NATimeZone* timeZone){
   NA_DEF NADateTime naMakeDateTimeFromTimeVal(const struct timeval* timeVal, const NATimeZone* timeZone){
     struct timespec timeSpec;
     timeSpec.tv_sec  = timeVal->tv_sec;
-    timeSpec.tv_nanoSecond = timeVal->tv_usec * 1000;
+    timeSpec.tv_nsec = timeVal->tv_usec * 1000;
     return naMakeDateTimeFromTimeSpec(&timeSpec, timeZone);
   }
 
