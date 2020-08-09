@@ -6,7 +6,7 @@
 
 
 
-NSImage* naCreateResolutionIndependentNSImage(NSWindow* window, const NAUIImage* uiImage, NAUIImageKind imageKind){
+NSImage* naCreateResolutionIndependentNSImage(NSView* viewOnScreen, const NAUIImage* uiImage, NAUIImageKind imageKind){
   NSImage* image = nil; // todo: this must be implemented before macOS 10.8
 
   if([NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]){
@@ -22,7 +22,8 @@ NSImage* naCreateResolutionIndependentNSImage(NSWindow* window, const NAUIImage*
         }
 
         context = naGetCGContextRef([NSGraphicsContext currentContext]);
-        NAUIImageResolution resolution = naGetWindowBackingScaleFactor(window) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x;
+        NAUIImageResolution resolution = naGetWindowBackingScaleFactor([viewOnScreen window]) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x;
+        printf("%d, %f, %f, %f, %f, %f\n", (int)resolution, dstRect.origin.x, dstRect.origin.y, dstRect.size.width, dstRect.size.height, (double)[[viewOnScreen window] backingScaleFactor]);
 
         cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, imageKind, skin);
         if(!cocoaimage){
@@ -40,10 +41,10 @@ NSImage* naCreateResolutionIndependentNSImage(NSWindow* window, const NAUIImage*
 
 
 void naTellNSButtonSetUIImage(void* nsButton, const NAUIImage* uiImage){
-  NSButton* button = (NSButton*)nsButton;
+  NSButton* button = (NA_COCOA_BRIDGE NSButton*)(nsButton);
 
-  [button setImage:naCreateResolutionIndependentNSImage([button window], uiImage, NA_UIIMAGE_KIND_MAIN)];
-  [button setAlternateImage:naCreateResolutionIndependentNSImage([button window], uiImage, NA_UIIMAGE_KIND_ALT)];
+  [button setImage:naCreateResolutionIndependentNSImage(button, uiImage, NA_UIIMAGE_KIND_MAIN)];
+  [button setAlternateImage:naCreateResolutionIndependentNSImage(button, uiImage, NA_UIIMAGE_KIND_ALT)];
   [[button cell] setImageScaling:NSImageScaleProportionallyUpOrDown];
   // OptionButton: NSBezelStyleShadowlessSquare
   // NSBezelStyleRegularSquare : 5 5 5 5
@@ -73,7 +74,7 @@ void naTellNSButtonSetUIImage(void* nsButton, const NAUIImage* uiImage){
   [self setTitle:[NSString stringWithUTF8String:text]];
 }
 - (void) setUIImage:(NAUIImage*)uiImage{
-  naTellNSButtonSetUIImage(self, uiImage);
+  naTellNSButtonSetUIImage((NA_COCOA_BRIDGE void*)self, uiImage);
 }
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
