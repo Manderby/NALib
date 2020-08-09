@@ -23,7 +23,6 @@ NSImage* naCreateResolutionIndependentNSImage(NSView* viewOnScreen, const NAUIIm
 
         context = naGetCGContextRef([NSGraphicsContext currentContext]);
         NAUIImageResolution resolution = naGetWindowBackingScaleFactor([viewOnScreen window]) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x;
-        printf("%d, %f, %f, %f, %f, %f\n", (int)resolution, dstRect.origin.x, dstRect.origin.y, dstRect.size.width, dstRect.size.height, (double)[[viewOnScreen window] backingScaleFactor]);
 
         cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, imageKind, skin);
         if(!cocoaimage){
