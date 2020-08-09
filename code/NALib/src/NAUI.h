@@ -612,12 +612,12 @@ NA_API NABool naGetSpaceAlternateBackground(NASpace* space);
 NA_API void naSetSpaceRect(NASpace* space, NARect rect);
 
 // ImageSpace
-NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size);
+NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size);
 
 // OpenGLSpace
 #if NA_COMPILE_OPENGL == 1
   // the initfunc will be called with initdata as the input parameter as
-  // soon as there is an OpenGLContext available. You can put there all
+  // soon as there is an KaroOpenGLContext available. You can put there all
   // initialization necessary like for example uploading of textures to the
   // GPU.
   // Note that the initFunc will be called...
@@ -630,10 +630,12 @@ NA_API NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size);
 #endif
 
 // Button
+void naTellNSButtonSetUIImage(void* nsButton, const NAUIImage* uiImage);
+
 NA_API NAButton* naNewPushButton(const NAUTF8Char* text, NASize size);
 NA_API NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size);
-NA_API NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size);
-NA_API NAButton* naNewImageButton(NAUIImage* uiimage, NASize size);
+NA_API NAButton* naNewImageOptionButton(NAUIImage* uiImage, NASize size);
+NA_API NAButton* naNewImageButton(NAUIImage* uiImage, NASize size);
 NA_API void naSetButtonState(NAButton* button, NABool state);
 NA_API void naSetButtonSubmit(NAButton* button, NAReactionHandler handler, void* controller);
 NA_API void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* controller);

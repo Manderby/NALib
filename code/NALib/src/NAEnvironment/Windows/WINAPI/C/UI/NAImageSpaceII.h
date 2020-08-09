@@ -117,7 +117,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
 
 
 
-NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
+NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
   HWND hWnd;
   DWORD exStyle;
   DWORD style;
@@ -134,7 +134,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiimage, NASize size){
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
 
   na_InitImageSpace(&(winapiImageSpace->imageSpace), hWnd);
-  winapiImageSpace->image = uiimage;
+  winapiImageSpace->image = uiImage;
 
   return (NAImageSpace*)winapiImageSpace;
 }

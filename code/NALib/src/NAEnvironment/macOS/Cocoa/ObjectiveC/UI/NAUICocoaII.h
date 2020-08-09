@@ -57,7 +57,7 @@ struct NACocoaApplication {
 
 @interface NACocoaImageSpace : NSImageView{
   NAImageSpace* imageSpace;
-  NAUIImage* uiimage;
+  NAUIImage* uiImage;
 }
 @end
 

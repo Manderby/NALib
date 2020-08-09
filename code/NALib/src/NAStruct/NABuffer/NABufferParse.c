@@ -46,7 +46,7 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty){
   NABool found = NA_FALSE;
   NABool checkwindowsend = NA_FALSE;
   NAInt start = naGetBufferLocation(iter);
-  NAInt end = start + 1;
+  NAInt cur = start;
   NABuffer* buffer = na_GetBufferIteratorBufferMutable(iter);
 
   while((!found || checkwindowsend) && !naIsBufferAtEnd(iter)){
@@ -66,16 +66,16 @@ NA_DEF NAString* naParseBufferLine(NABufferIterator* iter, NABool skipEmpty){
       }
       if(found){break;}
       if((*curbyte == '\r') || (*curbyte == '\n')){
-        if(skipEmpty && ((iter->partOffset - start) == 0)){
+        if(skipEmpty && ((cur - start) == 0)){
           start++;
         }else{
           found = NA_TRUE;
-          string = naNewStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(start, end));
+          string = naNewStringWithBufferExtraction(buffer, naMakeRangeiWithStartAndEnd(start, cur));
         }
         checkwindowsend = (*curbyte == '\r');
       }
       curbyte++;
-      end++;
+      cur++;
       iter->partOffset++;
     }
   }

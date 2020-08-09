@@ -44,19 +44,19 @@ typedef struct NAUIImage NAUIImage;
 // NA_BLEND_BLACK_GREEN  tints black pixels (measures by the green channel)
 // NA_BLEND_WHITE_GREEN  tints white pixels (measures by the green channel)
 // The other tint modes are applicable but will likely produce unuseful images.
-NA_API NAUIImage* naAllocUIImage(NABabyImage* main, NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode);
+NA_API NAUIImage* naAllocUIImage(const NABabyImage* main, NABabyImage* alt, NAUIImageResolution resolution, NABlendMode tintMode);
 
-// Deallocates the uiimage
-NA_API void naDeallocUIImage(NAUIImage* uiimage);
+// Deallocates the uiImage
+NA_API void naDeallocUIImage(NAUIImage* uiImage);
 
-NA_IAPI NASizei naGetUIImage1xSize(const NAUIImage* uiimage);
+NA_IAPI NASizei naGetUIImage1xSize(const NAUIImage* uiImage);
 
 void naFillBabyColorWithSkin(NABabyColor color, NAUIImageSkin skin);
 
 NABabyImage* naCreateBabyImageFromNativeImage(const void* nativeImage);
 NABabyImage* naCreateBabyImageFromFilePath(const NAUTF8Char* pathStr);
 NA_API void* naAllocNativeImageWithBabyImage(const NABabyImage* image);
-NA_API void* naAllocNativeImageWithUIImage(NAUIImage* uiimage, NAUIImageKind kind, NAUIImageSkin skin);
+NA_API void* naAllocNativeImageWithUIImage(const NAUIImage* uiImage, NAUIImageKind kind, NAUIImageSkin skin);
 NA_API void naDeallocNativeImage(void* nativeImage);
 
 

@@ -74,8 +74,8 @@ NA_DEF NABabyImage* naCreateBabyImageWithBlend(
 NA_API NABabyImage* naCreateBabyImageWithHalfSize(const NABabyImage* image);
 
 // Retains and Releases an image.
-NA_API NABabyImage* naRetainBabyImage(NABabyImage* image);
-NA_API void naReleaseBabyImage(NABabyImage* image);
+NA_API const NABabyImage* naRetainBabyImage(const NABabyImage* image);
+NA_API void naReleaseBabyImage(const NABabyImage* image);
 
 // Returns the number of float values per horizontal line.
 NA_API NAInt naGetBabyImageValuesPerLine(const NABabyImage* image);

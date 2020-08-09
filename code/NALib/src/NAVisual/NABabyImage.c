@@ -261,12 +261,14 @@ NA_HDEF void na_DestroyBabyImage(NABabyImage* image){
   naFree(image);
 }
 
-NA_API NABabyImage* naRetainBabyImage(NABabyImage* image){
-  return (NABabyImage*)naRetainRefCount(&image->refCount);
+NA_API const NABabyImage* naRetainBabyImage(const NABabyImage* image){
+  NABabyImage* mutableImage = (NABabyImage*)image; 
+  return (const NABabyImage*)naRetainRefCount(&mutableImage->refCount);
 }
 
-NA_DEF void naReleaseBabyImage(NABabyImage* image){
-  naReleaseRefCount(&image->refCount, image, (NAMutator)na_DestroyBabyImage);
+NA_DEF void naReleaseBabyImage(const NABabyImage* image){
+  NABabyImage* mutableImage = (NABabyImage*)image; 
+  naReleaseRefCount(&mutableImage->refCount, mutableImage, (NAMutator)na_DestroyBabyImage);
 }
 
 

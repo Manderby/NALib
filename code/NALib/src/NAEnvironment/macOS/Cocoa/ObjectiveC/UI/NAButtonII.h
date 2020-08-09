@@ -5,6 +5,54 @@
 // Do not include this file anywhere else!
 
 
+
+NSImage* naCreateResolutionIndependentNSImage(NSWindow* window, const NAUIImage* uiImage, NAUIImageKind imageKind){
+  NSImage* image = nil; // todo: this must be implemented before macOS 10.8
+
+  if([NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]){
+    NA_MACOS_AVAILABILITY_GUARD_10_8(
+      NSSize imageSize = NSMakeSize(naGetUIImage1xSize(uiImage).width, naGetUIImage1xSize(uiImage).height);
+      image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
+        CGContextRef context = NA_NULL;
+        CGImageRef cocoaimage;
+        
+        NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
+        if(uiImage->tintMode != NA_BLEND_ZERO){
+          skin = naGetSkinForCurrentAppearance();
+        }
+
+        context = naGetCGContextRef([NSGraphicsContext currentContext]);
+        NAUIImageResolution resolution = naGetWindowBackingScaleFactor(window) == 2. ? NA_UIIMAGE_RESOLUTION_2x : NA_UIIMAGE_RESOLUTION_1x;
+
+        cocoaimage = na_GetUIImageNativeImage(uiImage, resolution, imageKind, skin);
+        if(!cocoaimage){
+          cocoaimage = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, imageKind, skin);
+        }
+        CGContextDrawImage(context, dstRect, cocoaimage);
+        return YES;
+      }];
+    ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
+  }else{
+    image = NA_COCOA_PTR_C_TO_OBJC(naAllocNativeImageWithUIImage(uiImage, imageKind, NA_UIIMAGE_SKIN_LIGHT));
+  }
+  return image;
+}
+
+
+void naTellNSButtonSetUIImage(void* nsButton, const NAUIImage* uiImage){
+  NSButton* button = (NSButton*)nsButton;
+
+  [button setImage:naCreateResolutionIndependentNSImage([button window], uiImage, NA_UIIMAGE_KIND_MAIN)];
+  [button setAlternateImage:naCreateResolutionIndependentNSImage([button window], uiImage, NA_UIIMAGE_KIND_ALT)];
+  [[button cell] setImageScaling:NSImageScaleProportionallyUpOrDown];
+  // OptionButton: NSBezelStyleShadowlessSquare
+  // NSBezelStyleRegularSquare : 5 5 5 5
+  // NSBezelStyleShadowlessSquare : 3 3 3 3
+  // NSBezelStyleSmallSquare : 2 1 2 1
+}
+
+
+
 // Push (Text only) (24px height fixed)
 // Option (Text / Image) (3px padding on all sides)
 // Borderless (Image only) (0px padding on all sides)
@@ -24,43 +72,8 @@
 - (void) setButtonText:(const NAUTF8Char*)text{
   [self setTitle:[NSString stringWithUTF8String:text]];
 }
-- (void) setButtonImage:(NAUIImage*)uiimage{
-  NSImage* image = nil; // todo: this must be implemented before macOS 10.8
-
-  if([NSImage respondsToSelector:@selector(imageWithSize:flipped:drawingHandler:)]){
-    NA_MACOS_AVAILABILITY_GUARD_10_8(
-      NSSize imageSize = NSMakeSize(naGetUIImage1xSize(uiimage).width, naGetUIImage1xSize(uiimage).height);
-      image = [NSImage imageWithSize:imageSize flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
-        NAUIImageResolution resolution;
-        CGContextRef context = NA_NULL;
-        CGImageRef cocoaimage;
-        
-        NAUIImageSkin skin = NA_UIIMAGE_SKIN_PLAIN;
-        if(uiimage->tintMode != NA_BLEND_ZERO){
-          skin = naGetSkinForCurrentAppearance();
-        }
-
-        resolution = naGetWindowUIResolution(naGetUIElementWindow(&(self->button->uiElement)));
-        context = naGetCGContextRef([NSGraphicsContext currentContext]);
-
-        cocoaimage = na_GetUIImageNativeImage(uiimage, resolution, NA_UIIMAGE_KIND_MAIN, skin);
-        if(!cocoaimage){
-          cocoaimage = na_GetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_1x, NA_UIIMAGE_KIND_MAIN, skin);
-        }
-        CGContextDrawImage(context, dstRect, cocoaimage);
-        return YES;
-      }];
-    ) // end NA_MACOS_AVAILABILITY_GUARD_10_8
-  }else{
-    image = NA_COCOA_PTR_C_TO_OBJC(naAllocNativeImageWithUIImage(uiimage, NA_UIIMAGE_KIND_MAIN, NA_UIIMAGE_SKIN_LIGHT));
-  }
-
-  [self setImage:image];
-  [[self cell] setImageScaling:NSImageScaleProportionallyUpOrDown];
-  // OptionButton: NSBezelStyleShadowlessSquare
-  // NSBezelStyleRegularSquare : 5 5 5 5
-  // NSBezelStyleShadowlessSquare : 3 3 3 3
-  // NSBezelStyleSmallSquare : 2 1 2 1
+- (void) setUIImage:(NAUIImage*)uiImage{
+  naTellNSButtonSetUIImage(self, uiImage);
 }
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
@@ -106,26 +119,26 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
 
 
 
-NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size){
+NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiImage, NASize size){
   NAButton* button = naAlloc(NAButton);
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaButton* cocoaButton = [[NACocoaButton alloc] initWithButton:button bezelStyle:NABezelStyleShadowlessSquare frame:frameRect];
   na_InitButton(button, NA_COCOA_PTR_OBJC_TO_C(cocoaButton));
-  [cocoaButton setButtonImage:uiimage];
+  [cocoaButton setUIImage:uiImage];
   
   return button;
 }
 
 
 
-NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
+NA_DEF NAButton* naNewImageButton(NAUIImage* uiImage, NASize size){
   NAButton* button = naAlloc(NAButton);
 
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaButton* cocoaButton = [[NACocoaButton alloc] initWithButton:button bezelStyle:0 frame:frameRect];
   na_InitButton(button, NA_COCOA_PTR_OBJC_TO_C(cocoaButton));
-  [cocoaButton setButtonImage:uiimage];
+  [cocoaButton setUIImage:uiImage];
   
   return button;
 }

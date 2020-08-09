@@ -216,7 +216,7 @@ NA_DEF NAButton* naNewTextOptionButton(const NAUTF8Char* text, NASize size){
 
 
 
-NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size){
+NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiImage, NASize size){
   HWND hWnd;
   DWORD style;
 
@@ -230,7 +230,7 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size){
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
   na_InitButton(&(winapiButton->button), hWnd);
-  winapiButton->image = uiimage;
+  winapiButton->image = uiImage;
   winapiButton->transparent = NA_FALSE;
 
   return (NAButton*)winapiButton;
@@ -238,7 +238,7 @@ NA_DEF NAButton* naNewImageOptionButton(NAUIImage* uiimage, NASize size){
 
 
 
-NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
+NA_DEF NAButton* naNewImageButton(NAUIImage* uiImage, NASize size){
   HWND hWnd;
   DWORD style;
 
@@ -252,7 +252,7 @@ NA_DEF NAButton* naNewImageButton(NAUIImage* uiimage, NASize size){
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
   
   na_InitButton(&(winapiButton->button), hWnd);
-  winapiButton->image = uiimage;
+  winapiButton->image = uiImage;
   winapiButton->transparent = NA_TRUE;
 
   return (NAButton*)winapiButton;

@@ -72,12 +72,12 @@ NA_DEF void* naAllocNativeImageWithBabyImage(const NABabyImage* image){
 
 
 
-void* naAllocNativeImageWithUIImage(NAUIImage* uiimage, NAUIImageKind kind, NAUIImageSkin skin){
-  NASizei imageSize = naGetUIImage1xSize(uiimage);
+void* naAllocNativeImageWithUIImage(const NAUIImage* uiImage, NAUIImageKind kind, NAUIImageSkin skin){
+  NASizei imageSize = naGetUIImage1xSize(uiImage);
   NSImage* image = [[NSImage alloc] initWithSize:NSMakeSize(imageSize.width, imageSize.height)];
 
-  CGImageRef img1x = na_GetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
-  CGImageRef img2x = na_GetUIImageNativeImage(uiimage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
+  CGImageRef img1x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_1x, kind, skin);
+  CGImageRef img2x = na_GetUIImageNativeImage(uiImage, NA_UIIMAGE_RESOLUTION_2x, kind, skin);
   if(img1x){
     NSBitmapImageRep* rep = NA_COCOA_AUTORELEASE([[NSBitmapImageRep alloc] initWithCGImage:img1x]);
     [image addRepresentation:rep];
