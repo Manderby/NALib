@@ -9,7 +9,7 @@
 // Homogeneous Coordinates
 // ///////////////////////////////
 
-NA_IDEF void naScaleM33dS(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2){
+NA_IDEF void naScaleM33d(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2){
   D[0] = A[0] * s1;
   D[1] = A[1] * s1;
   D[2] = A[2] * s1;
@@ -20,10 +20,104 @@ NA_IDEF void naScaleM33dS(double* NA_RESTRICT D, const double* NA_RESTRICT A, do
   D[7] = A[7];
   D[8] = A[8];
 }
+NA_IDEF void naScaleM44d(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2, double s3){
+  D[ 0] = A[ 0] * s1;
+  D[ 1] = A[ 1] * s1;
+  D[ 2] = A[ 2] * s1;
+  D[ 3] = A[ 3] * s1;
+  D[ 4] = A[ 4] * s2;
+  D[ 5] = A[ 5] * s2;
+  D[ 6] = A[ 6] * s2;
+  D[ 7] = A[ 7] * s2;
+  D[ 8] = A[ 8] * s3;
+  D[ 9] = A[ 9] * s3;
+  D[10] = A[10] * s3;
+  D[11] = A[11] * s3;
+  D[12] = A[12];
+  D[13] = A[13];
+  D[14] = A[14];
+  D[15] = A[15];
+}
+NA_IDEF void naScaleM33f(float* NA_RESTRICT D, const float* NA_RESTRICT A, float s1, float s2){
+  D[0] = A[0] * s1;
+  D[1] = A[1] * s1;
+  D[2] = A[2] * s1;
+  D[3] = A[3] * s2;
+  D[4] = A[4] * s2;
+  D[5] = A[5] * s2;
+  D[6] = A[6];
+  D[7] = A[7];
+  D[8] = A[8];
+}
+NA_IDEF void naScaleM44f(float* NA_RESTRICT D, const float* NA_RESTRICT A, float s1, float s2, float s3){
+  D[ 0] = A[ 0] * s1;
+  D[ 1] = A[ 1] * s1;
+  D[ 2] = A[ 2] * s1;
+  D[ 3] = A[ 3] * s1;
+  D[ 4] = A[ 4] * s2;
+  D[ 5] = A[ 5] * s2;
+  D[ 6] = A[ 6] * s2;
+  D[ 7] = A[ 7] * s2;
+  D[ 8] = A[ 8] * s3;
+  D[ 9] = A[ 9] * s3;
+  D[10] = A[10] * s3;
+  D[11] = A[11] * s3;
+  D[12] = A[12];
+  D[13] = A[13];
+  D[14] = A[14];
+  D[15] = A[15];
+}
 
 
 
-NA_IDEF void naTranslateM33dS(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2){
+NA_IDEF void naScaleM33dS(double* D, double s1, double s2){
+  D[0] *= s1;
+  D[1] *= s1;
+  D[2] *= s1;
+  D[3] *= s2;
+  D[4] *= s2;
+  D[5] *= s2;
+}
+NA_IDEF void naScaleM44dS(double* D, double s1, double s2, double s3){
+  D[ 0] *= s1;
+  D[ 1] *= s1;
+  D[ 2] *= s1;
+  D[ 3] *= s1;
+  D[ 4] *= s2;
+  D[ 5] *= s2;
+  D[ 6] *= s2;
+  D[ 7] *= s2;
+  D[ 8] *= s3;
+  D[ 9] *= s3;
+  D[10] *= s3;
+  D[11] *= s3;
+}
+NA_IDEF void naScaleM33fS(float* D, float s1, float s2){
+  D[0] *= s1;
+  D[1] *= s1;
+  D[2] *= s1;
+  D[3] *= s2;
+  D[4] *= s2;
+  D[5] *= s2;
+}
+NA_IDEF void naScaleM44fS(float* D, float s1, float s2, float s3){
+  D[ 0] *= s1;
+  D[ 1] *= s1;
+  D[ 2] *= s1;
+  D[ 3] *= s1;
+  D[ 4] *= s2;
+  D[ 5] *= s2;
+  D[ 6] *= s2;
+  D[ 7] *= s2;
+  D[ 8] *= s3;
+  D[ 9] *= s3;
+  D[10] *= s3;
+  D[11] *= s3;
+}
+
+
+
+NA_IDEF void naTranslateM33d(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2){
   D[0] = A[0];
   D[1] = A[1];
   D[2] = A[2];
@@ -33,15 +127,78 @@ NA_IDEF void naTranslateM33dS(double* NA_RESTRICT D, const double* NA_RESTRICT A
   D[6] = A[0] * s1 + A[3] * s2 + A[6];
   D[7] = A[1] * s1 + A[4] * s2 + A[7];
   D[8] = A[2] * s1 + A[5] * s2 + A[8];
-//  D[0] = A[0] + A[2] * s1;
-//  D[1] = A[1] + A[2] * s2;
-//  D[2] = A[2] ;
-//  D[3] = A[3] + A[5] * s1;
-//  D[4] = A[4] + A[5] * s2;
-//  D[5] = A[5] ;
-//  D[6] = A[6] + A[8] * s1;
-//  D[7] = A[7] + A[8] * s2;
-//  D[8] = A[8] ;
+}
+NA_IDEF void naTranslateM44d(double* NA_RESTRICT D, const double* NA_RESTRICT A, double s1, double s2, double s3){
+  D[ 0] = A[0];
+  D[ 1] = A[1];
+  D[ 2] = A[2];
+  D[ 3] = A[3];
+  D[ 4] = A[4];
+  D[ 5] = A[5];
+  D[ 6] = A[6];
+  D[ 7] = A[7];
+  D[ 8] = A[8];
+  D[ 9] = A[9];
+  D[10] = A[0];
+  D[11] = A[1];
+  D[12] = A[0] * s1 + A[4] * s2 + A[ 8] * s3 + A[12];
+  D[13] = A[1] * s1 + A[5] * s2 + A[ 9] * s3 + A[13];
+  D[14] = A[2] * s1 + A[6] * s2 + A[10] * s3 + A[14];
+  D[15] = A[3] * s1 + A[7] * s2 + A[11] * s3 + A[15];
+}
+NA_IDEF void naTranslateM33f(float* NA_RESTRICT D, const float* NA_RESTRICT A, float s1, float s2){
+  D[0] = A[0];
+  D[1] = A[1];
+  D[2] = A[2];
+  D[3] = A[3];
+  D[4] = A[4];
+  D[5] = A[5];
+  D[6] = A[0] * s1 + A[3] * s2 + A[6];
+  D[7] = A[1] * s1 + A[4] * s2 + A[7];
+  D[8] = A[2] * s1 + A[5] * s2 + A[8];
+}
+NA_IDEF void naTranslateM44f(float* NA_RESTRICT D, const float* NA_RESTRICT A, float s1, float s2, float s3){
+  D[ 0] = A[0];
+  D[ 1] = A[1];
+  D[ 2] = A[2];
+  D[ 3] = A[3];
+  D[ 4] = A[4];
+  D[ 5] = A[5];
+  D[ 6] = A[6];
+  D[ 7] = A[7];
+  D[ 8] = A[8];
+  D[ 9] = A[9];
+  D[10] = A[0];
+  D[11] = A[1];
+  D[12] = A[0] * s1 + A[4] * s2 + A[ 8] * s3 + A[12];
+  D[13] = A[1] * s1 + A[5] * s2 + A[ 9] * s3 + A[13];
+  D[14] = A[2] * s1 + A[6] * s2 + A[10] * s3 + A[14];
+  D[15] = A[3] * s1 + A[7] * s2 + A[11] * s3 + A[15];
+}
+
+
+
+NA_IDEF void naTranslateM33dS(double* D, double s1, double s2){
+  D[6] += D[0] * s1 + D[3] * s2;
+  D[7] += D[1] * s1 + D[4] * s2;
+  D[8] += D[2] * s1 + D[5] * s2;
+}
+NA_IDEF void naTranslateM44dS(double* D, double s1, double s2, double s3){
+  D[12] += D[0] * s1 + D[4] * s2 + D[ 8] * s3;
+  D[13] += D[1] * s1 + D[5] * s2 + D[ 9] * s3;
+  D[14] += D[2] * s1 + D[6] * s2 + D[10] * s3;
+  D[15] += D[3] * s1 + D[7] * s2 + D[11] * s3;
+}
+NA_IDEF void naTranslateM33fS(float* D, float s1, float s2){
+  D[6] += D[0] * s1 + D[3] * s2;
+  D[7] += D[1] * s1 + D[4] * s2;
+  D[8] += D[2] * s1 + D[5] * s2;
+}
+NA_IDEF void naTranslateM44fS(float* D, float s1, float s2, float s3){
+  D[12] += D[0] * s1 + D[4] * s2 + D[ 8] * s3;
+  D[13] += D[1] * s1 + D[5] * s2 + D[ 9] * s3;
+  D[14] += D[2] * s1 + D[6] * s2 + D[10] * s3;
+  D[15] += D[3] * s1 + D[7] * s2 + D[11] * s3;
 }
 
 
