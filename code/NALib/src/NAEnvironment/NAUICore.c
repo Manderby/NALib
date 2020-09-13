@@ -82,6 +82,10 @@ NA_HDEF void na_ClearApplication(NAApplication* application){
   }
   naStopTranslator();
   na_UnregisterUIElement(&(application->uiElement));
+  #ifndef NDEBUG
+    if(naGetListCount(&(na_App->uiElements)))
+      naError("Dangling UI pointers");
+  #endif
   naClearList(&(na_App->uiElements));
 }
 

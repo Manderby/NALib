@@ -4,6 +4,8 @@
 // including "NABinaryDataII.h"
 
 
+#include <stddef.h>
+
 
 NA_IDEF  void naConvertEndianness8(NAInt endianness, void* buffer){
   if(endianness != NA_ENDIANNESS_HOST){naConvertLittleBig8(buffer);}
