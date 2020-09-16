@@ -90,7 +90,7 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
 	hWnd = CreateWindow(
 		TEXT("BUTTON"), systemtext, style,
 		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
 
   naFree(systemtext);
 
@@ -121,7 +121,7 @@ NA_HDEF NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox){
 
 
 NA_DEF NABool naGetCheckBoxState(NACheckBox* checkBox){
-  LPARAM state = SendMessage(naGetUIElementNativeID(checkBox), BM_GETSTATE, 0, 0);
+  LPARAM state = SendMessage(naGetUIElementNativeId(checkBox), BM_GETSTATE, 0, 0);
   return (state & BST_CHECKED) == BST_CHECKED;
 }
 
@@ -129,7 +129,7 @@ NA_DEF NABool naGetCheckBoxState(NACheckBox* checkBox){
 
 NA_DEF void naSetCheckBoxState(NACheckBox* checkBox, NABool state){
   LPARAM lParam = state ? BST_CHECKED : BST_UNCHECKED;
-  SendMessage(naGetUIElementNativeID(checkBox), BM_SETCHECK, lParam, 0);
+  SendMessage(naGetUIElementNativeId(checkBox), BM_SETCHECK, lParam, 0);
 }
 
 

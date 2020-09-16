@@ -155,25 +155,25 @@ NA_API void naSetUIElementNextTabElement(void* elem, void* nextTabElem);
 //
 // NALib always acts as a layer on top of the native UI implementation of a
 // system. No matter if it is Macintosh or Windows, you can get the native
-// structures used in the corresponding UI systems with naGetUIElementNativeID.
+// structures used in the corresponding UI systems with naGetUIElementNativeId.
 // This allows you to do with the user interface elements whatever you need to
 // do.
 //
-// Windows: The native framework used is WINAPI and the nativeID you get is a
+// Windows: The native framework used is WINAPI and the nativeId you get is a
 // HWND handle. If the user interface element is the application itself, you
 // get a HINSTANCE handle.
 //
 // Macintosh: NALib is using the Cocoa framework as the native UI. This means
 // that in the background, NALib implements certain Objective-C methods to
-// provide a UI most closely possible to a native experience. The nativeID
+// provide a UI most closely possible to a native experience. The nativeId
 // corresponds to NSResponder*. Note that also NSApplication inherits from
 // NSResponder.
 //
 // Use the following function to retrieve the native ID for any ui element:
 
-typedef void* NANativeID;
+typedef void* NANativeId;
 
-NA_API NANativeID naGetUIElementNativeID(void* element);
+NA_API NANativeId naGetUIElementNativeId(void* element);
 
 
 
@@ -274,7 +274,7 @@ NA_API void naStartApplication(  NAMutator preStartup,
 NA_API NAApplication* naGetApplication(void);
 
 // If you need to get the native app pointer HINSTANCE (on Windows) or NSApp
-// (on a Macintosh), use naGetUIElementNativeID.
+// (on a Macintosh), use naGetUIElementNativeId.
 
 // The message loop will run indefinitely until the application is terminated
 // by a signal or it recieves a stop message using the following function: This

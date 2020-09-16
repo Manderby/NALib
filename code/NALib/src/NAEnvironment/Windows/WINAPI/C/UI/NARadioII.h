@@ -82,7 +82,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
 	hWnd = CreateWindow(
 		TEXT("BUTTON"), systemtext, style,
 		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
   
   naFree(systemtext);
 
@@ -113,7 +113,7 @@ NA_HDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
 
 
 NA_DEF NABool naGetRadioState(NARadio* radio){
-  LPARAM state = SendMessage(naGetUIElementNativeID(radio), BM_GETSTATE, 0, 0);
+  LPARAM state = SendMessage(naGetUIElementNativeId(radio), BM_GETSTATE, 0, 0);
   return (state & BST_CHECKED) == BST_CHECKED;
 }
 
@@ -121,7 +121,7 @@ NA_DEF NABool naGetRadioState(NARadio* radio){
 
 NA_DEF void naSetRadioState(NARadio* radio, NABool state){
   LPARAM lParam = state ? BST_CHECKED : BST_UNCHECKED;
-  SendMessage(naGetUIElementNativeID(radio), BM_SETCHECK, lParam, 0);
+  SendMessage(naGetUIElementNativeId(radio), BM_SETCHECK, lParam, 0);
 }
 
 

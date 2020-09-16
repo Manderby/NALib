@@ -97,7 +97,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
 	hWnd = CreateWindow(
 		TEXT("EDIT"), systemtext, style,
 		0, 0, (int)size.width, (int)size.height,
-		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
   
   naFree(systemtext);
 
@@ -125,7 +125,7 @@ NA_DEF void na_DestructLabel(NALabel* label){
 
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
   TCHAR* systemtext = naAllocSystemStringWithUTF8String(text);
-  SendMessage(naGetUIElementNativeID(label), WM_SETTEXT, 0, (LPARAM)systemtext);
+  SendMessage(naGetUIElementNativeId(label), WM_SETTEXT, 0, (LPARAM)systemtext);
   naFree(systemtext);
 }
 
@@ -141,11 +141,11 @@ NA_DEF void naSetLabelLink(NALabel* label, const NAUTF8Char* url){
     if(!url || !*url)
       naError("url must be something useful. Deleting a Link is not possible yet.");
   #endif
-  hOriginalFont = (HFONT)SendMessage(naGetUIElementNativeID(label), WM_GETFONT, 0, 0);
+  hOriginalFont = (HFONT)SendMessage(naGetUIElementNativeId(label), WM_GETFONT, 0, 0);
   GetObject(hOriginalFont, sizeof(LOGFONT), &lf);
   lf.lfUnderline = NA_TRUE;
   hFont = CreateFontIndirect(&lf);
-  SendMessage(naGetUIElementNativeID(label), WM_SETFONT, (WPARAM)hFont, NA_FALSE);
+  SendMessage(naGetUIElementNativeId(label), WM_SETFONT, (WPARAM)hFont, NA_FALSE);
 
   if(winapiLabel->href){naDelete(winapiLabel->href);}
   winapiLabel->href = naNewStringWithFormat("start %s", url);
@@ -169,15 +169,15 @@ NA_DEF void naSetLabelEnabled(NALabel* label, NABool enabled){
 
 
 NA_DEF void naSetLabelTextAlignment(NALabel* label, NATextAlignment alignment){
-  long style = (long)GetWindowLongPtr(naGetUIElementNativeID(label), GWL_STYLE);
+  long style = (long)GetWindowLongPtr(naGetUIElementNativeId(label), GWL_STYLE);
   style = (style & ~SS_TYPEMASK) | getWINAPITextAlignmentWithAlignment(alignment);
-  SetWindowLongPtr(naGetUIElementNativeID(label), GWL_STYLE, style);
+  SetWindowLongPtr(naGetUIElementNativeId(label), GWL_STYLE, style);
 }
 
 
 
 NA_DEF void naSetLabelFontKind(NALabel* label, NAFontKind kind){
-  SendMessage(naGetUIElementNativeID(label), WM_SETFONT, (WPARAM)na_GetFontWithKind(kind), MAKELPARAM(TRUE, 0));
+  SendMessage(naGetUIElementNativeId(label), WM_SETFONT, (WPARAM)na_GetFontWithKind(kind), MAKELPARAM(TRUE, 0));
 }
 
 

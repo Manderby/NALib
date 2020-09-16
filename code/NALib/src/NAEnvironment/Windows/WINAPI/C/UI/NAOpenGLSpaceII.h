@@ -53,7 +53,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator 
 	hWnd = CreateWindow(
 		TEXT("NASpace"), TEXT(""), style,
 		0, 0, (int)size.width, (int)size.height,
-		(HWND)naGetUIElementNativeID(window), NULL, (HINSTANCE)naGetUIElementNativeID(naGetApplication()), NULL );
+		(HWND)naGetUIElementNativeId(window), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
     
   hDC = GetDC(hWnd);
 
@@ -95,13 +95,13 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator 
 
 NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace){
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)openGLSpace;
-  SwapBuffers(GetDC((HWND)naGetUIElementNativeID(&(winapiOpenGLSpace->openGLSpace.uiElement))));
+  SwapBuffers(GetDC((HWND)naGetUIElementNativeId(&(winapiOpenGLSpace->openGLSpace.uiElement))));
 }
 
 
 
 NA_API void naSetOpenGLInnerRect(NAOpenGLSpace* openGLSpace, NARect bounds){
-  SetWindowPos((HWND)naGetUIElementNativeID(openGLSpace), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
+  SetWindowPos((HWND)naGetUIElementNativeId(openGLSpace), HWND_TOP, 0, 0, (int)bounds.size.width, (int)bounds.size.height, SWP_NOREDRAW);
 }
 
 

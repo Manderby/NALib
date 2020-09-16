@@ -117,10 +117,10 @@ struct NACocoaApplication {
 
 
 #define naDefineCocoaObject(cocoatype, var, uiElement)\
-  cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativeID(uiElement))
+  cocoatype* var = (NA_COCOA_BRIDGE cocoatype*)(naGetUIElementNativeId(uiElement))
 
 
-NA_HDEF void na_ClearUINativeId(NANativeID nativeId){
+NA_HDEF void na_ClearUINativeId(NANativeId nativeId){
   NA_COCOA_RELEASE(nativeId);
 }
 
@@ -170,7 +170,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
       NSResponder* firstResponder = [focusWindow firstResponder];
       if(firstResponder){
         while(!elem && firstResponder){
-          elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativeID)(firstResponder));
+          elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativeId)(firstResponder));
           if(!elem){
             if(firstResponder == focusWindow){
               elem = &(naGetApplication()->uiElement);
@@ -180,7 +180,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
           }
         }
       }else{
-        elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativeID)(focusWindow));
+        elem = na_GetUINALibEquivalent((NA_COCOA_BRIDGE NANativeId)(focusWindow));
       }
     }else{
       elem = &(naGetApplication()->uiElement);

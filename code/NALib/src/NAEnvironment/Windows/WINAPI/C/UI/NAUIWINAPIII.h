@@ -44,7 +44,7 @@ const NONCLIENTMETRICS* naGetApplicationMetrics(void);
 
 
 
-NA_HDEF void na_ClearUINativeId(NANativeID nativeId){
+NA_HDEF void na_ClearUINativeId(NANativeId nativeId){
     DestroyWindow(nativeId);
 }
 
@@ -69,7 +69,7 @@ NA_HDEF void na_SetUIElementParent(void* uiElement, void* parent){
   if(!parentElem){
     HWND result;
     elem->parent = NA_NULL;
-    result = SetParent(elem->nativeID, HWND_MESSAGE);
+    result = SetParent(elem->nativeId, HWND_MESSAGE);
   }else{
     HWND result;
     #ifndef NDEBUG
@@ -78,7 +78,7 @@ NA_HDEF void na_SetUIElementParent(void* uiElement, void* parent){
     #endif
 
     elem->parent = parent;
-    result = SetParent(elem->nativeID, parentElem->nativeID);
+    result = SetParent(elem->nativeId, parentElem->nativeId);
   }
 }
 
@@ -376,7 +376,7 @@ void naWINAPICaptureMouseHover(){
     TRACKMOUSEEVENT winapiTracking;
       winapiTracking.cbSize = sizeof(TRACKMOUSEEVENT);
       winapiTracking.dwFlags = TME_LEAVE;
-      winapiTracking.hwndTrack = naGetUIElementNativeID(elementUnderMouse);
+      winapiTracking.hwndTrack = naGetUIElementNativeId(elementUnderMouse);
       winapiTracking.dwHoverTime = HOVER_DEFAULT;
       TrackMouseEvent(&winapiTracking);
     }
@@ -497,7 +497,7 @@ NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam){
 // ///////////////////////////////////
 
 NA_HDEF void na_RefreshUIElementNow(void* uiElement){
-  RedrawWindow(naGetUIElementNativeID(uiElement), NA_NULL, NA_NULL, RDW_INVALIDATE | RDW_ERASE);
+  RedrawWindow(naGetUIElementNativeId(uiElement), NA_NULL, NA_NULL, RDW_INVALIDATE | RDW_ERASE);
 }
 
 
@@ -568,7 +568,7 @@ NA_DEF void naSetUIElementNextTabElement(void* elem, void* nextTabElem){
   *elemNextRef = nextTabElem;
 
   // This is how it is supposed to work on windows, but it doesn't.
-  //SetWindowPos(((NA_UIElement*)nextTabElem)->nativeID, ((NA_UIElement*)elem)->nativeID, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE); 
+  //SetWindowPos(((NA_UIElement*)nextTabElem)->nativeId, ((NA_UIElement*)elem)->nativeId, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE); 
 }
 
 
@@ -663,7 +663,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeelement, NABool 
 
 
 
-NA_HDEF void* na_AllocMouseTracking(NANativeID nativeId){
+NA_HDEF void* na_AllocMouseTracking(NANativeId nativeId){
   NABool success;
   TRACKMOUSEEVENT* winapiTracking = naAlloc(TRACKMOUSEEVENT);
   winapiTracking->cbSize = sizeof(TRACKMOUSEEVENT);

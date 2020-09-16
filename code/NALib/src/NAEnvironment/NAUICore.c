@@ -14,11 +14,11 @@ NAApplication* na_App = NA_NULL;
 
 
 
-NA_HDEF void na_RegisterUIElement(NA_UIElement* uiElement, NAUIElementType elementType, NANativeID nativeID){
+NA_HDEF void na_RegisterUIElement(NA_UIElement* uiElement, NAUIElementType elementType, NANativeId nativeId){
   naInitRefCount(&(uiElement->refCount));
   uiElement->parent = NA_NULL;
   uiElement->elementType = elementType;
-  uiElement->nativeID = nativeID;
+  uiElement->nativeId = nativeId;
   naInitList(&(uiElement->reactions));
   naInitList(&(uiElement->shortcuts));
   uiElement->mouseInside = NA_FALSE;
@@ -31,12 +31,12 @@ NA_HDEF void na_RegisterUIElement(NA_UIElement* uiElement, NAUIElementType eleme
 
 NA_HDEF void na_UnregisterUIElement(NA_UIElement* uiElement){
   naRemoveListData(&(na_App->uiElements), uiElement);
-  na_ClearUINativeId(uiElement->nativeID);
+  na_ClearUINativeId(uiElement->nativeId);
 }
 
 
 
-NA_HDEF void na_InitApplication(NAApplication* application, NANativeID nativeId){
+NA_HDEF void na_InitApplication(NAApplication* application, NANativeId nativeId){
   na_App = application;
 
   naInitList(&(application->uiElements));
@@ -220,11 +220,11 @@ NA_HDEF void na_ClearTextBox(NATextBox* textBox){
 
 
 // todo: find a faster way. Hash perhaps or something else.
-NA_HDEF void* na_GetUINALibEquivalent(NANativeID nativeID){
+NA_HDEF void* na_GetUINALibEquivalent(NANativeId nativeId){
   NAListIterator iter;
   NA_UIElement* retelem = NA_NULL;
   naBeginListMutatorIteration(NA_UIElement* elem, &(na_App->uiElements), iter);
-    if(elem->nativeID == nativeID){retelem = elem; break;}
+    if(elem->nativeId == nativeId){retelem = elem; break;}
   naEndListIteration(iter);
   return retelem;
 }
@@ -290,8 +290,8 @@ NA_DEF NAUIElementType naGetUIElementType(void* uiElement){
 
 
 
-NA_DEF NANativeID naGetUIElementNativeID(void* uiElement){
-  return ((NA_UIElement*)uiElement)->nativeID;
+NA_DEF NANativeId naGetUIElementNativeId(void* uiElement){
+  return ((NA_UIElement*)uiElement)->nativeId;
 }
 
 
@@ -402,7 +402,7 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
   //if(command == NA_UI_COMMAND_MOUSE_MOVED || command == NA_UI_COMMAND_MOUSE_ENTERED || command == NA_UI_COMMAND_MOUSE_EXITED){
   //  element->moustrackingcount++;
   //  if(element->moustrackingcount == 1){
-  //    element->mousetracking = na_AllocMouseTracking(naGetUIElementNativeID(element));
+  //    element->mousetracking = na_AllocMouseTracking(naGetUIElementNativeId(element));
   //  }
   //}
   naAddListLastMutable(&((element)->reactions), eventReaction);

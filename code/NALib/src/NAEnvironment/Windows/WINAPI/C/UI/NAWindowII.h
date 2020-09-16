@@ -149,7 +149,7 @@ NAWINAPICallbackInfo naWindowWINAPIProc(void* uiElement, UINT message, WPARAM wP
 NABool naHandleWindowTabOrder(NAReaction reaction){
   NAWINAPIWindow* winapiWindow = (NAWINAPIWindow*)reaction.uiElement;
   if(winapiWindow->firstResponder){
-    SetFocus(naGetUIElementNativeID(winapiWindow->firstResponder));
+    SetFocus(naGetUIElementNativeId(winapiWindow->firstResponder));
     return NA_TRUE;
   }
   return NA_FALSE;
@@ -188,7 +188,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
 	hWnd = CreateWindow(
 		TEXT("NAWindow"), systemtitle, style,
 		windowrect.left, windowrect.top, windowrect.right - windowrect.left, windowrect.bottom - windowrect.top,
-		NULL, NULL, naGetUIElementNativeID(naGetApplication()), NULL);
+		NULL, NULL, naGetUIElementNativeId(naGetApplication()), NULL);
 
   hIcon = naGetWINAPIApplicationIcon();
   if(hIcon){   
@@ -215,7 +215,7 @@ NA_DEF NAWindow* naNewWindow(const NAUTF8Char* title, NARect rect, NABool resize
 
 
 NA_DEF void na_DestructWindow(NAWindow* window){
-  DestroyWindow(naGetUIElementNativeID(window));
+  DestroyWindow(naGetUIElementNativeId(window));
   naReleaseUIElement(window->contentSpace);
   na_ClearWindow(window);
 }
@@ -224,7 +224,7 @@ NA_DEF void na_DestructWindow(NAWindow* window){
 
 NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title){
   TCHAR* systemtitle = naAllocSystemStringWithUTF8String(title);
-  SetWindowText(naGetUIElementNativeID(window), systemtitle);
+  SetWindowText(naGetUIElementNativeId(window), systemtitle);
   naFree(systemtitle);
 }
 
@@ -232,9 +232,9 @@ NA_DEF void naSetWindowTitle(NAWindow* window, const NAUTF8Char* title){
 
 NA_DEF void naKeepWindowOnTop(NAWindow* window, NABool keepOnTop){
   if(keepOnTop){
-    SetWindowPos(naGetUIElementNativeID(window), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+    SetWindowPos(naGetUIElementNativeId(window), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
   }else{
-    SetWindowPos(naGetUIElementNativeID(window), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+    SetWindowPos(naGetUIElementNativeId(window), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
   }
 }
 
@@ -253,9 +253,9 @@ NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
     LONG bottomdiff;
 
     NARect screenrect = naGetMainScreenRect();
-    GetClientRect(naGetUIElementNativeID(window), &clientrect);
-    GetWindowRect(naGetUIElementNativeID(window), &windowrect);
-    ClientToScreen(naGetUIElementNativeID(window), &testpoint);
+    GetClientRect(naGetUIElementNativeId(window), &clientrect);
+    GetWindowRect(naGetUIElementNativeId(window), &windowrect);
+    ClientToScreen(naGetUIElementNativeId(window), &testpoint);
 
     leftdiff = (testpoint.x - windowrect.left);
     topdiff =  (testpoint.y - windowrect.top);
@@ -269,7 +269,7 @@ NA_DEF void naSetWindowRect(NAWindow* window, NARect rect){
     rect.size.height += topdiff;
 
     MoveWindow(
-      naGetUIElementNativeID(winapiWindow),
+      naGetUIElementNativeId(winapiWindow),
       (LONG)rect.pos.x,
       (LONG)(screenrect.size.height - rect.pos.y - rect.size.height),
       (LONG)rect.size.width,
@@ -314,9 +314,9 @@ NA_HDEF NARect na_GetWindowAbsoluteInnerRect(NA_UIElement* window){
   RECT windowrect;
   POINT testpoint = {0, 0};
 
-  GetClientRect(window->nativeID, &clientrect);
-  GetWindowRect(window->nativeID, &windowrect);
-  ClientToScreen(window->nativeID, &testpoint);
+  GetClientRect(window->nativeId, &clientrect);
+  GetWindowRect(window->nativeId, &windowrect);
+  ClientToScreen(window->nativeId, &testpoint);
 
   screenrect = naGetMainScreenRect();
 
@@ -334,7 +334,7 @@ NA_HDEF NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window){
   NARect screenrect;
   RECT windowrect;
 
-  GetWindowRect(window->nativeID, &windowrect);
+  GetWindowRect(window->nativeId, &windowrect);
   screenrect = naGetMainScreenRect();
 
   rect.pos.x = windowrect.left;
@@ -348,20 +348,20 @@ NA_HDEF NARect na_GetWindowAbsoluteOuterRect(NA_UIElement* window){
 
 
 NA_DEF void naClearWindow(NAWindow* window){
-	DestroyWindow(naGetUIElementNativeID(window));
+	DestroyWindow(naGetUIElementNativeId(window));
 }
 
 
 
 NA_DEF void naShowWindow(NAWindow* window){
-  ShowWindow(naGetUIElementNativeID(window), SW_SHOW);
-  BringWindowToTop(naGetUIElementNativeID(window));
+  ShowWindow(naGetUIElementNativeId(window), SW_SHOW);
+  BringWindowToTop(naGetUIElementNativeId(window));
 }
 
 
 
 NA_DEF void naCloseWindow(NAWindow* window){
-  ShowWindow(naGetUIElementNativeID(window), SW_HIDE);
+  ShowWindow(naGetUIElementNativeId(window), SW_HIDE);
 }
 
 
@@ -394,17 +394,17 @@ NA_DEF void naSetWindowFullscreen(NAWindow* window, NABool fullScreen){
       screenSettings.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT;
 
       style = WS_POPUP;
-      SetWindowLongPtr(naGetUIElementNativeID(window), GWL_STYLE, style);
-      SetWindowPos(naGetUIElementNativeID(window), HWND_TOPMOST, (int)screenrect.pos.x, (int)(screenrect.pos.y - screenrect.pos.y), (int)screenrect.size.width, (int)screenrect.size.height, SWP_SHOWWINDOW);
+      SetWindowLongPtr(naGetUIElementNativeId(window), GWL_STYLE, style);
+      SetWindowPos(naGetUIElementNativeId(window), HWND_TOPMOST, (int)screenrect.pos.x, (int)(screenrect.pos.y - screenrect.pos.y), (int)screenrect.size.width, (int)screenrect.size.height, SWP_SHOWWINDOW);
       // Commented out for future use. Note: Incorporate resolution depencence zoom.
       //ChangeDisplaySettings(NULL, 0);
       //ChangeDisplaySettings(&screenSettings, CDS_FULLSCREEN);
     }else{
       newrect = window->windowedFrame;
       style = WS_OVERLAPPEDWINDOW;
-      SetWindowLongPtr(naGetUIElementNativeID(window), GWL_STYLE, style);
+      SetWindowLongPtr(naGetUIElementNativeId(window), GWL_STYLE, style);
       SetWindowPos(
-        naGetUIElementNativeID(window),
+        naGetUIElementNativeId(window),
         HWND_NOTOPMOST,
         (int)window->windowedFrame.pos.x,
         (int)(screenrect.size.height - window->windowedFrame.pos.y - window->windowedFrame.size.height),

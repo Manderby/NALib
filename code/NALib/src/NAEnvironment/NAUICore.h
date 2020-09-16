@@ -44,7 +44,7 @@ struct NA_UIElement{
   NAList shortcuts;
   NABool mouseInside;
   NABool allowNotifications;
-  void* nativeID;               // The native object
+  void* nativeId;               // The native object
 };
 
 struct NAApplication{
@@ -156,7 +156,7 @@ NA_HAPI void na_AllowUIElementNotifications(NA_UIElement* elem);
 NA_HAPI NABool na_AreUIElementNotificationsAllowed(NA_UIElement* elem);
 
 NA_HAPI NAApplication* na_NewApplication(void);
-NA_HAPI void na_InitApplication(NAApplication* application, NANativeID nativeId);
+NA_HAPI void na_InitApplication(NAApplication* application, NANativeId nativeId);
 NA_HAPI void na_ClearApplication(NAApplication* application);
 
 NA_HAPI void na_InitScreen(NAScreen* screen, void* nativeId);
@@ -201,7 +201,7 @@ NA_HAPI void na_ClearTextBox(NATextBox* textBox);
 // dependent on the system running. When handling events, a native ID is sent
 // but this native ID can in general not be mapped directly to a corresponding
 // NALib struct. This function solves that. Slow, but does the job.
-NA_HAPI void* na_GetUINALibEquivalent(void* nativeID);
+NA_HAPI void* na_GetUINALibEquivalent(void* nativeId);
 
 
 NA_HAPI NABool na_IsApplicationRunning(void);
@@ -237,9 +237,9 @@ NA_HAPI void na_SetMouseExitedAtPos(NAPos newpos);
 NA_HAPI void na_RefreshUIElementNow(void* uiElement);
 
 // Calls the system specific method to clear/deallocate the given native id.
-NA_HAPI void na_ClearUINativeId(NANativeID nativeId);
+NA_HAPI void na_ClearUINativeId(NANativeId nativeId);
 
-NA_HAPI void* na_AllocMouseTracking(NANativeID nativeId);
+NA_HAPI void* na_AllocMouseTracking(NANativeId nativeId);
 NA_HAPI void na_DeallocMouseTracking(void* tracking);
 
 
