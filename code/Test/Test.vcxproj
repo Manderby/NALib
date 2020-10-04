@@ -99,6 +99,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)../../code/NALib/src/</AdditionalIncludeDirectories>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -115,6 +116,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)../../code/NALib/src/</AdditionalIncludeDirectories>
       <WholeProgramOptimization>true</WholeProgramOptimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,6 +134,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)../../code/NALib/src/</AdditionalIncludeDirectories>
       <WholeProgramOptimization>true</WholeProgramOptimization>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -150,6 +153,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)../../code/NALib/src/</AdditionalIncludeDirectories>
       <WholeProgramOptimization>true</WholeProgramOptimization>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -177,6 +181,7 @@
     <ClCompile Include="src\testNALib\testNABase\testNANumerics.c" />
     <ClCompile Include="src\testNALib\testNACore.c" />
     <ClCompile Include="src\testNALib\testNACore\testNATesting.c" />
+    <ClCompile Include="src\testNALib\testNACore\testNAValueHelper.c" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NALib\NALib.vcxproj">

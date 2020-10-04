@@ -32,22 +32,22 @@ int main(void){
 
   // Print macro information
   #if NA_PRINTOUT_ENABLED == 1
-    printNABase();
-    printNACore();
+    //printNABase();
+    //printNACore();
   #endif
 
 
 
   // Now, start testing
   naStartTesting("NALib", .01, NA_FALSE);
-    naTestGroupFunction(NABase);
+    //naTestGroupFunction(NABase);
     naTestGroupFunction(NACore);
 
     printf(NA_NL);
-    naPrintUntested();
+    //naPrintUntested();
 
-    printf(NA_NL "Benchmarking:" NA_NL);
-    benchmarkNABase();
+    //printf(NA_NL "Benchmarking:" NA_NL);
+    //benchmarkNABase();
     
     printf(NA_NL);
     
