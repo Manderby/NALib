@@ -323,6 +323,7 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
     case NA_UI_LABEL:       info = naLabelWINAPIProc      (uiElement, message, wParam, lParam); break;
     case NA_UI_TEXTFIELD:   info = naTextFieldWINAPIProc  (uiElement, message, wParam, lParam); break;
     case NA_UI_TEXTBOX:     info = naTextBoxWINAPIProc    (uiElement, message, wParam, lParam); break;
+    case NA_UI_SLIDER:      info = naSliderWINAPIProc     (uiElement, message, wParam, lParam); break;
     default: break;
     }
     uiElement = naGetUIElementParent(uiElement);

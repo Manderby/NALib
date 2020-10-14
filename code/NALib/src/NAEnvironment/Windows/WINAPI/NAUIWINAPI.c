@@ -44,6 +44,7 @@
 #include "C/UI/NALabelII.h"
 #include "C/UI/NATextFieldII.h"
 #include "C/UI/NATextBoxII.h"
+#include "C/UI/NASliderII.h"
 
 #endif // (NA_COMPILE_GUI == 1)
 #endif // NA_OS == NA_OS_WINDOWS
