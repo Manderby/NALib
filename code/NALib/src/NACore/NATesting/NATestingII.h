@@ -9,6 +9,7 @@
 // First, undefine all macros defined in the .h file
 #undef naTest
 #undef naTestError
+#undef naTestCrash
 #undef naTestGroup
 #undef naTestGroupFunction
 #undef naUntested
@@ -65,9 +66,17 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
     na_AddTest(#expr, success, __LINE__);\
   }
 
-// Testing for errors is only useful when NDEBUG is undefined.
+// Testing for errors and crashes is only useful when NDEBUG is undefined.
 #ifndef NDEBUG
-  #define naTestError(expr)\
+#define naTestError(expr)\
+    {\
+      NA_START_TEST_CASE\
+      { expr; }\
+      NA_STOP_TEST_CASE\
+      na_AddTestError(#expr, __LINE__);\
+    }
+
+#define naTestCrash(expr)\
     {\
       NA_START_TEST_CASE\
       { expr; }\
@@ -76,6 +85,7 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
     }
 #else
   #define naTestError(expr)
+  #define naTestCrash(expr)
 #endif
 
 #define naTestGroup(string)\
@@ -123,6 +133,8 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
 #define naTest(expr)\
   NA_UNUSED(expr)
 #define naTestError(expr)\
+  NA_UNUSED(expr)
+#define naTestCrash(expr)\
   NA_UNUSED(expr)
 #define naTestGroup(string)\
   NA_UNUSED(string);\

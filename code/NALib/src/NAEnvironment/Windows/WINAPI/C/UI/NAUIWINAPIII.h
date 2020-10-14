@@ -6,7 +6,7 @@
 
 
 #include "../../../../NAUICore.h"
-#include "../../../../../NACore/NAValueHelper.h"
+#include "../../../../../NAValueHelper.h"
 
 
 

@@ -68,7 +68,7 @@
     <ClInclude Include="src\NACore\NATesting\NATestingII.h" />
     <ClInclude Include="src\NACore\NAThreadingII.h" />
     <ClInclude Include="src\NACore\NAURLII.h" />
-    <ClInclude Include="src\NACore\NAValueHelper.h" />
+    <ClInclude Include="src\NACore\NAValueHelperII.h" />
     <ClInclude Include="src\NADateTime.h" />
     <ClInclude Include="src\NADeflate.h" />
     <ClInclude Include="src\NAEnvironment\NAUICore.h" />
@@ -162,6 +162,7 @@
     <ClInclude Include="src\NATree.h" />
     <ClInclude Include="src\NAUI.h" />
     <ClInclude Include="src\NAURL.h" />
+    <ClInclude Include="src\NAValueHelper.h" />
     <ClInclude Include="src\NAVectorAlgebra.h" />
   </ItemGroup>
   <ItemGroup>

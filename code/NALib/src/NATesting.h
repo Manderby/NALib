@@ -26,6 +26,9 @@ NA_API void naPrintUntested(void);
 // Tests successfully if one or more naError calls happen.
 #define naTestError(expr)
 
+// Tests successfully if the expression would crash the application.
+#define naTestCrash(expr)
+
 // Groups together tests. Use it like naTestGroup("Multiple Tests"){ ... }
 #define naTestGroup(string)
 

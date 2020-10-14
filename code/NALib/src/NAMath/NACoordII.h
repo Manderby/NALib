@@ -17,7 +17,7 @@
 
 
 #include "../NAMathOperators.h"
-#include "../NACore/NAValueHelper.h"
+#include "../NAValueHelper.h"
 
 
 NA_IDEF NARange naMakeRange(double origin, double length){
