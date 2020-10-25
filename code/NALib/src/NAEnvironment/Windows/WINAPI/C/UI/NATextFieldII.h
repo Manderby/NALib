@@ -131,7 +131,7 @@ NA_DEF NATextField* naNewTextField(NASize size){
   if(!app->oldTextFieldWindowProc){app->oldTextFieldWindowProc = oldproc;}
 
   na_InitTextField(&(winapiTextField->textField), hWnd);
-  SetWindowLongPtrA(hWnd, GWLP_USERDATA, &(winapiTextField->textField));
+  SetWindowLongPtrA(hWnd, GWLP_USERDATA, (LONG_PTR)&(winapiTextField->textField));
   winapiTextField->nextTabStop = winapiTextField;
   winapiTextField->prevTabStop = winapiTextField;
 

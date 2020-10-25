@@ -279,6 +279,7 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc   (void* uiElement, UINT message, WPAR
 NAWINAPICallbackInfo naLabelWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naTextFieldWINAPIProc  (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naTextBoxWINAPIProc    (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naSliderWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 
 NAWINAPICallbackInfo naButtonWINAPINotify   (void* uiElement, WORD notificationCode);
 NAWINAPICallbackInfo naCheckBoxWINAPINotify (void* uiElement, WORD notificationCode);
@@ -690,10 +691,10 @@ NA_HDEF void* na_GetUINALibEquivalent(NANativeId nativeId){
   // In WINAPI, the NALib equivalent is usually stored in the userdata of the
   // HWND structure. The antiveId is always a HWND except if it is the
   // application itels. We simply check for that and otherwise use the HWND.
-  if(nativeId == na_App->nativeID){
-    return na_app
+  if(nativeId == na_App->uiElement.nativeId){
+    return naGetApplication();
   }else{
-    return GetWindowLongPtrA(nativeId, GWLP_USERDATA);
+    return (void*)GetWindowLongPtrA(nativeId, GWLP_USERDATA);
   }
 }
 

@@ -53,7 +53,7 @@ NAWINAPICallbackInfo naImageSpaceWINAPIDrawItem (void* uiElement){
   NASizei size1x;
   NASizei spacesize;
   NAPosi offset;
-  NABabyImage* foreImage;
+  const NABabyImage* foreImage;
   NAByte* backBuffer;
   HBITMAP hBackBitmap;
   NABabyImage* backImage;
@@ -134,7 +134,7 @@ NA_DEF NAImageSpace* naNewImageSpace(NAUIImage* uiImage, NASize size){
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
 
   na_InitImageSpace(&(winapiImageSpace->imageSpace), hWnd);
-  SetWindowLongPtrA(hWnd, GWLP_USERDATA, &(winapiImageSpace->imageSpace));
+  SetWindowLongPtrA(hWnd, GWLP_USERDATA, (LONG_PTR)&(winapiImageSpace->imageSpace));
   winapiImageSpace->image = uiImage;
 
   return (NAImageSpace*)winapiImageSpace;
