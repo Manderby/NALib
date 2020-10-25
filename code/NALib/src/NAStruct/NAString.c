@@ -148,41 +148,11 @@ NA_DEF NAString* naNewString(void){
 
 
 
-
-NA_DEF NAString* naNewStringWithUTF8CStringLiteral(const NAUTF8Char* ptr){
-  NAString* string;
-  NAInt length;
-
-  #ifndef NDEBUG
-    if(!ptr)
-      naCrash("ptr is Null-Pointer");
-  #endif
-
-  length = (NAInt)naStrlen(ptr);
-  if(length){
-    // C-Strings are always expected to be Null-terminated, meaning: The Byte
-    // with index [size] must be binary zero. As we are not copying but just
-    // referencing the pointer, we can safely use the array without this byte
-    // and still be able to say: We are null-terminated!
-    string = naNew(NAString);
-    string->buffer = naNewBufferWithConstData(ptr, length);
-    #ifndef NDEBUG
-      string->cachedstr = NA_NULL;
-    #endif
-
-  }else{
-    string = naNewString();
-  }
-
-  #if NA_STRING_ALWAYS_CACHE == 1
-    naGetStringUTF8Pointer(string);
-  #endif
-  return string;
-}
-
-
-
 NA_DEF NAString* naNewStringWithMutableUTF8Buffer(NAUTF8Char* buffer, NAInt length, NAMutator destructor){
+  #ifndef NDEBUG
+    if(!destructor)
+      naError("You must specify a destructor, as this string becomes the owner of the provided buffer.");
+  #endif
   NAString* string = naNew(NAString);
   string->buffer = naNewBufferWithMutableData(buffer, length, destructor);
   #ifndef NDEBUG
@@ -653,7 +623,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
     wchar_t* outstr;
     NAUInt length;
     NAUInt widelength;
-    NAString* string = naNewStringWithUTF8CStringLiteral(utf8String);
+    NAString* string = naNewStringWithFormat("%s", utf8String);
     NAString* newlinestring = naNewStringWithNewlineSanitization(string, NA_NEWLINE_WIN);
     length = naGetStringBytesize(newlinestring);
     naDelete(string);
@@ -671,7 +641,7 @@ NA_DEF NAString* naNewStringEPSDecoded(const NAString* inputString){
     NAUInt widelength;
     wchar_t* wstr;
     NAUInt ansilength;
-    NAString* string = naNewStringWithUTF8CStringLiteral(utf8String);
+    NAString* string = naNewStringWithFormat("%s", utf8String);
     NAString* newlinestring = naNewStringWithNewlineSanitization(string, NA_NEWLINE_WIN);
     length = naGetStringBytesize(newlinestring);
     naDelete(string);

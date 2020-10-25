@@ -1,6 +1,7 @@
 
 #include "NATesting.h"
 #include "NAMemory.h"
+#include "NAString.h"
 #include <stdio.h>
 
 
@@ -14,9 +15,11 @@ void testNACore(void);
 
 void benchmarkNABase(void);
 
+extern int myTestingVariable;
 
 
-int main(void){
+
+int main(int argc, const char** argv){
 
   printf("NALib Version: %d (", NA_VERSION);
   #ifndef NDEBUG
@@ -26,9 +29,13 @@ int main(void){
   #endif
   printf(", %d Bits Addresses, %d Bits Integers)" NA_NL NA_NL, NA_ADDRESS_BITS, NA_TYPE_NAINT_BITS);
 
+  if(argc > 1)
+  {
+    myTestingVariable = atoi(argv[1]);
+    printf("Argument found: %s" NA_NL NA_NL, argv[1]);
+  }
+
   naStartRuntime();
-
-
 
   // Print macro information
   #if NA_PRINTOUT_ENABLED == 1
@@ -39,7 +46,8 @@ int main(void){
 
 
   // Now, start testing
-  naStartTesting("NALib", .01, NA_FALSE);
+  naStartTesting("NALib", .01, NA_TRUE, argc, argv);
+
     //naTestGroupFunction(NABase);
     naTestGroupFunction(NACore);
 
@@ -52,9 +60,6 @@ int main(void){
     printf(NA_NL);
     
   naStopTesting();
-
-
-
 
 
 
