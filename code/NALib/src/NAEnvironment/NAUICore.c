@@ -15,7 +15,6 @@ NAApplication* na_App = NA_NULL;
 
 
 NA_HDEF void na_RegisterUIElement(NA_UIElement* uiElement, NAUIElementType elementType, NANativeId nativeId){
-  naInitRefCount(&(uiElement->refCount));
   uiElement->parent = NA_NULL;
   uiElement->elementType = elementType;
   uiElement->nativeId = nativeId;
@@ -23,15 +22,21 @@ NA_HDEF void na_RegisterUIElement(NA_UIElement* uiElement, NAUIElementType eleme
   naInitList(&(uiElement->shortcuts));
   uiElement->mouseInside = NA_FALSE;
   uiElement->allowNotifications = NA_TRUE;
-
-  naAddListLastMutable(&(na_App->uiElements), uiElement);
 }
 
 
 
 NA_HDEF void na_UnregisterUIElement(NA_UIElement* uiElement){
-  naRemoveListData(&(na_App->uiElements), uiElement);
   na_ClearUINativeId(uiElement->nativeId);
+}
+NA_HDEF void na_AddApplicationWindow(NAWindow* window){
+  naAddListLastMutable(&(na_App->windows), window);
+}
+
+
+
+NA_HDEF void na_RemoveApplicationWindow(NAWindow* window){
+  naRemoveListData(&(na_App->windows), window);
 }
 
 
@@ -39,7 +44,7 @@ NA_HDEF void na_UnregisterUIElement(NA_UIElement* uiElement){
 NA_HDEF void na_InitApplication(NAApplication* application, NANativeId nativeId){
   na_App = application;
 
-  naInitList(&(application->uiElements));
+  naInitList(&(application->windows));
 
   application->translator = NA_NULL;
   naStartTranslator();
@@ -71,22 +76,11 @@ NA_HDEF void na_ClearApplication(NAApplication* application){
       naCrash("No Application running");
   #endif
 
-  while(naGetListCount(&(na_App->uiElements)) > 1){
-    void* uiElement;
-    NAListIterator iter = naMakeListModifier(&(na_App->uiElements));
-    naLocateListFirst(&iter);
-    naIterateList(&iter);
-    uiElement = naGetListCurMutable(&iter);
-    naClearListIterator(&iter);
-    naReleaseUIElement(uiElement);
-  }
+  naForeachListMutable(&(na_App->windows), naReleaseUIElement);
+  naClearList(&(na_App->windows));
+
   naStopTranslator();
   na_UnregisterUIElement(&(application->uiElement));
-  #ifndef NDEBUG
-    if(naGetListCount(&(na_App->uiElements)))
-      naError("Dangling UI pointers");
-  #endif
-  naClearList(&(na_App->uiElements));
 }
 
 
@@ -101,6 +95,7 @@ NA_HDEF void na_ClearScreen(NAScreen* screen){
 
 
 NA_HDEF void na_InitWindow(NAWindow* window, void* nativeId, NASpace* contentSpace, NABool fullScreen, NABool resizeable, NARect windowedFrame){
+  na_AddApplicationWindow(window);
   na_RegisterUIElement(&(window->uiElement), NA_UI_WINDOW, nativeId);
   window->contentSpace = contentSpace;
   window->flags = 0;
@@ -228,18 +223,6 @@ NA_HDEF void na_ClearSlider(NASlider* slider){
 
 
 
-// todo: find a faster way. Hash perhaps or something else.
-NA_HDEF void* na_GetUINALibEquivalent(NANativeId nativeId){
-  NAListIterator iter;
-  NA_UIElement* retelem = NA_NULL;
-  naBeginListMutatorIteration(NA_UIElement* elem, &(na_App->uiElements), iter);
-    if(elem->nativeId == nativeId){retelem = elem; break;}
-  naEndListIteration(iter);
-  return retelem;
-}
-
-
-
 NA_HDEF NABool na_DispatchUIElementCommand(NA_UIElement* element, NAUICommand command){
   NABool finished = NA_FALSE;
   NAListIterator iter;
@@ -354,21 +337,21 @@ NA_DEF void naReleaseUIElement(void* uiElement){
 
   switch(naGetUIElementType(element))
   {
-  case NA_UI_APPLICATION: naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructApplication); break;
+  case NA_UI_APPLICATION: na_DestructApplication(uiElement); break;
 //  case NA_UI_SCREEN:      naDeleteScreen(uiElement);
-  case NA_UI_WINDOW:      naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructWindow); break;
-  case NA_UI_SPACE:       naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructSpace); break;
-  case NA_UI_IMAGESPACE:  naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructImageSpace); break;
+  case NA_UI_WINDOW:      na_DestructWindow(uiElement); break;
+  case NA_UI_SPACE:       na_DestructSpace(uiElement); break;
+  case NA_UI_IMAGESPACE:  na_DestructImageSpace(uiElement); break;
   #if NA_COMPILE_OPENGL == 1
-    case NA_UI_OPENGLSPACE: naReleaseRefCount(&(element->refCount), uiElement, (NAMutator)na_DestructOpenGLSpace); break;
+    case NA_UI_OPENGLSPACE: na_DestructOpenGLSpace(uiElement); break;
   #endif
-  case NA_UI_BUTTON:      naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructButton); break;
-  case NA_UI_RADIO:       naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructRadio); break;
-  case NA_UI_CHECKBOX:    naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructCheckBox); break;
-  case NA_UI_LABEL:       naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructLabel); break;
-  case NA_UI_TEXTFIELD:   naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructTextField); break;
-  case NA_UI_TEXTBOX:     naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructTextBox); break;
-  case NA_UI_SLIDER:      naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructSlider); break;
+  case NA_UI_BUTTON:      na_DestructButton(uiElement); break;
+  case NA_UI_RADIO:       na_DestructRadio(uiElement); break;
+  case NA_UI_CHECKBOX:    na_DestructCheckBox(uiElement); break;
+  case NA_UI_LABEL:       na_DestructLabel(uiElement); break;
+  case NA_UI_TEXTFIELD:   na_DestructTextField(uiElement); break;
+  case NA_UI_TEXTBOX:     na_DestructTextBox(uiElement); break;
+  case NA_UI_SLIDER:      na_DestructSlider(uiElement); break;
   default:
     #ifndef NDEBUG
       naError("Invalid element type");
@@ -402,8 +385,8 @@ NA_DEF void naAddUIReaction(void* uiElement, NAUICommand command, NAReactionHand
       && (naGetUIElementType(uiElement) != NA_UI_RADIO)
       && (naGetUIElementType(uiElement) != NA_UI_CHECKBOX))
       naError("Only buttons, radios and checkBoxes can receyve PRESSED commands.");
-    if((command == NA_UI_COMMAND_EDITED) && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD))
-      naError("Only textFields can receyve EDITED commands.");
+    if((command == NA_UI_COMMAND_EDITED) && (naGetUIElementType(uiElement) != NA_UI_TEXTFIELD) && (naGetUIElementType(uiElement) != NA_UI_SLIDER))
+      naError("Only textFields or Sliders can receyve EDITED commands.");
   #endif
   eventReaction = naAlloc(NAEventReaction);
   eventReaction->controller = controller;
@@ -454,7 +437,7 @@ NA_DEF void naStopApplication(void){
 
 NA_DEF NAApplication* naGetApplication(void){
   #ifndef NDEBUG
-    if(naGetListFirstMutable(&(na_App->uiElements)) != na_App)
+    if(!na_App)
       naError("Internal error: application is not in ui elements list");
   #endif
   return na_App;

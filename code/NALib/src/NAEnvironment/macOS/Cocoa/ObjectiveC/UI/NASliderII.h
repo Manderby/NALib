@@ -39,7 +39,8 @@ NA_DEF NASlider* naNewSlider(NASize size){
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaSlider* cocoaSlider = [[NACocoaSlider alloc] initWithSlider:slider frame:frameRect];
   na_InitSlider(slider, NA_COCOA_PTR_OBJC_TO_C(cocoaSlider));
-  
+  [cocoaSlider setTag: (NSInteger)slider];
+
   return (NASlider*)slider;
 }
 

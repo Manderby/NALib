@@ -45,6 +45,7 @@ struct NAListIterator{
   #endif
 };
 
+#include "stdio.h"
 
 NA_IDEF NAListElement* naNewListElement(NAListElement* prev, NAListElement* next){
   NAListElement* elem = naNew(NAListElement);

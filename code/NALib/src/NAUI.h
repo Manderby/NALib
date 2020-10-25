@@ -647,6 +647,7 @@ NA_API NARadio* naNewRadio(const NAUTF8Char* text, NASize size);
 NA_API void naSetRadioTextColor(NARadio* radio, const NABabyColor* color);
 NA_API NABool naGetRadioState(NARadio* radio);
 NA_API void naSetRadioState(NARadio* radio, NABool state);
+NA_API void naSetRadioEnabled(NARadio* radio, NABool enabled);
 
 // CheckBox
 NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size);

@@ -46,14 +46,15 @@ struct NACocoaApplication {
 @interface NACocoaWindow : NSWindow <NSWindowDelegate>{
   NAWindow* window;
   NAUInt trackingcount;
-  NSTrackingArea* trackingarea;
+  NSTrackingArea* trackingArea;
 }
 @end
 
 @interface NACocoaSpace : NSView{
   NASpace* space;
-  NSTrackingArea* trackingarea;
+  NSTrackingArea* trackingArea;
 }
+- (void)setTag:(NSInteger)newTag;
 @end
 
 @interface NACocoaImageSpace : NSImageView{
@@ -65,7 +66,7 @@ struct NACocoaApplication {
 #if (NA_COMPILE_OPENGL == 1)
   @interface NACocoaOpenGLSpace : NSOpenGLView{
     NAOpenGLSpace* openGLSpace;
-    NSTrackingArea* trackingarea;
+    NSTrackingArea* trackingArea;
     NAMutator initFunc;
     void* initData;
   }
@@ -113,6 +114,7 @@ struct NACocoaApplication {
   NSScrollView* scrollView;
 }
 - (NSView*) getContainingView;
+- (void)setTag:(NSInteger)newTag;
 @end
 
 @interface NACocoaSlider : NSSlider{
@@ -128,6 +130,23 @@ struct NACocoaApplication {
 
 NA_HDEF void na_ClearUINativeId(NANativeId nativeId){
   NA_COCOA_RELEASE(nativeId);
+}
+
+
+// todo: find a faster way. Hash perhaps or something else.
+NA_HDEF void* na_GetUINALibEquivalent(NANativeId nativeId){
+  NA_UIElement* retElem = NA_NULL;
+  if([(NA_COCOA_BRIDGE id)nativeId isKindOfClass:[NSView class]]){
+    retElem = (NA_UIElement*)[(NA_COCOA_BRIDGE NSView*)nativeId tag];
+  }else if([(NA_COCOA_BRIDGE id)nativeId isKindOfClass:[NSApplication class]]){
+    retElem = &(na_App->uiElement);
+  }else{
+    NAListIterator iter;
+    naBeginListMutatorIteration(NA_UIElement* elem, &(na_App->windows), iter);
+      if(elem->nativeId == nativeId){retElem = elem; break;}
+    naEndListIteration(iter);
+  }
+  return retElem;
 }
 
 
@@ -496,6 +515,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
 NA_API void naOpenURLInBrowser(const NAUTF8Char* url){
   [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:[NSString stringWithUTF8String:url]]];
 }
+
 
 
 

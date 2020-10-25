@@ -37,7 +37,6 @@ typedef void*  NAFont;
 // definitions have an NA_UIElement as the first entry:
 
 struct NA_UIElement{
-  NARefCount refCount;
   NAUIElementType elementType;
   void* parent;
   NAList reactions;
@@ -49,7 +48,7 @@ struct NA_UIElement{
 
 struct NAApplication{
   NA_UIElement      uiElement;
-  NAList            uiElements;      // A list of all ui elements.
+  NAList            windows;      // A list of all windows.
   NATranslator*     translator;
   NAMouseStatus     mouseStatus;     // The mouse cursor status
   NAKeyboardStatus  keyboardStatus;  // The keyboard status
@@ -152,7 +151,6 @@ extern NAApplication* na_App;
 // gathered here. You are free to use them but note that these are supposed to
 // be helper functions.
 
-NA_HAPI void na_UnregisterUIElement(NA_UIElement* uiElement);
 NA_HAPI void na_SetUIElementParent(void* uiElement, void* parent);
 NA_HAPI NA_UIElement* na_GetUIElementCommonParent(NA_UIElement* elem1, NA_UIElement* elem2);
 NA_HAPI void na_BlockUIElementNotifications(NA_UIElement* elem);
@@ -203,14 +201,6 @@ NA_HAPI void na_ClearSlider(NASlider* slider);
 
 
 
-// Returns a pointer to the ui element which uses the given native ID.
-// Every gui element which is handeled by NALib uses a native struct which is
-// dependent on the system running. When handling events, a native ID is sent
-// but this native ID can in general not be mapped directly to a corresponding
-// NALib struct. This function solves that. Slow, but does the job.
-NA_HAPI void* na_GetUINALibEquivalent(void* nativeId);
-
-
 NA_HAPI NABool na_IsApplicationRunning(void);
 
 NA_HAPI NAFont na_GetFontWithKind(NAFontKind kind);
@@ -249,7 +239,12 @@ NA_HAPI void na_ClearUINativeId(NANativeId nativeId);
 NA_HAPI void* na_AllocMouseTracking(NANativeId nativeId);
 NA_HAPI void na_DeallocMouseTracking(void* tracking);
 
-
+// Returns a pointer to the ui element which uses the given native ID.
+// Every gui element which is handeled by NALib uses a native struct which is
+// dependent on the system running. When handling events, a native ID is sent
+// but this native ID can in general not be mapped directly to a corresponding
+// NALib struct. This function solves that. Slow, but does the job.
+NA_HAPI void* na_GetUINALibEquivalent(void* nativeId);
 
 
 

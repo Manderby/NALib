@@ -74,6 +74,7 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaRadio* cocoaRadio = [[NACocoaRadio alloc] initWithRadio:radio frame:frameRect];
   na_InitRadio(radio, NA_COCOA_PTR_OBJC_TO_C(cocoaRadio));
+  [cocoaRadio setTag: (NSInteger)radio];
   [cocoaRadio setText:text];
   
   return radio;
@@ -104,6 +105,13 @@ NA_HDEF NARect na_GetRadioAbsoluteInnerRect(NA_UIElement* radio){
 NA_DEF void naSetRadioState(NARadio* radio, NABool state){
   naDefineCocoaObject(NACocoaRadio, cocoaRadio, radio);
   [cocoaRadio setRadioState:state];
+}
+
+
+
+NA_DEF void naSetRadioEnabled(NARadio* radio, NABool enabled){
+  naDefineCocoaObject(NACocoaRadio, cocoaRadio, radio);
+  [cocoaRadio setEnabled:enabled];
 }
 
 

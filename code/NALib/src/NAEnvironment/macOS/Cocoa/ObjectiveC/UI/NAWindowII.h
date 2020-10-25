@@ -13,15 +13,15 @@
   self = [super initWithContentRect:contentRect styleMask:aStyle backing:bufferingType defer:flag screen:screen];
   window = newWindow;
   trackingcount = 0;
-  trackingarea = nil;
+  trackingArea = nil;
   [self setReleasedWhenClosed:NO];
   return self;
 }
 - (NAWindow*) window{
   return window;
 }
-- (NSTrackingArea*) trackingarea{
-  return trackingarea;
+- (NSTrackingArea*) trackingArea{
+  return trackingArea;
 }
 - (NAUInt) trackingcount{
   return trackingcount;
@@ -51,15 +51,15 @@
   }
 }
 - (void)renewMouseTracking{
-  trackingarea = [[NSTrackingArea alloc] initWithRect:[[self contentView] bounds]
+  trackingArea = [[NSTrackingArea alloc] initWithRect:[[self contentView] bounds]
       options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveWhenFirstResponder
       owner:self userInfo:nil];
-  [[self contentView] addTrackingArea:trackingarea];
+  [[self contentView] addTrackingArea:trackingArea];
 }
 - (void)clearMouseTracking{
-  [[self contentView] removeTrackingArea:trackingarea];
-  NA_COCOA_RELEASE(trackingarea);
-  trackingarea = nil;
+  [[self contentView] removeTrackingArea:trackingArea];
+  NA_COCOA_RELEASE(trackingArea);
+  trackingArea = nil;
 }
 - (void)retainMouseTracking{
   trackingcount++;
@@ -266,7 +266,7 @@ NA_DEF void naCloseWindow(NAWindow* window){
 NA_DEF void naSetWindowContentSpace(NAWindow* window, void* uiElement){
   naDefineCocoaObject(NACocoaWindow, cocoawindow, window);
   naDefineCocoaObject(NSView, cocoaelem, uiElement);
-  if([cocoawindow trackingarea]){na_ClearWindowMouseTracking(window);}
+  if([cocoawindow trackingArea]){na_ClearWindowMouseTracking(window);}
   [cocoawindow setContentView:cocoaelem];
   [cocoawindow setInitialFirstResponder:[cocoawindow contentView]];
   

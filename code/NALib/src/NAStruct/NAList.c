@@ -3,8 +3,11 @@
 
 
 
+void testDestructListElement(NAListElement* elem){
+  NA_UNUSED(elem);
+}
 
-NA_RUNTIME_TYPE(NAListElement, NA_NULL, NA_FALSE);
+NA_RUNTIME_TYPE(NAListElement, testDestructListElement, NA_FALSE);
 
 
 

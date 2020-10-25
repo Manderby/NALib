@@ -179,6 +179,7 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
   na_InitButton(&(winapiButton->button), hWnd);
+  SetWindowLongPtrA(hWnd, GWLP_USERDATA, &(winapiButton->button));
   winapiButton->image = NA_NULL;
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));

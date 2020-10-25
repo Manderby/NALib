@@ -686,6 +686,19 @@ NA_HDEF void na_DeallocMouseTracking(void* tracking){
 
 
 
+NA_HDEF void* na_GetUINALibEquivalent(NANativeId nativeId){
+  // In WINAPI, the NALib equivalent is usually stored in the userdata of the
+  // HWND structure. The antiveId is always a HWND except if it is the
+  // application itels. We simply check for that and otherwise use the HWND.
+  if(nativeId == na_App->nativeID){
+    return na_app
+  }else{
+    return GetWindowLongPtrA(nativeId, GWLP_USERDATA);
+  }
+}
+
+
+
 NA_API NARect naGetMainScreenRect(){
   HMONITOR screen;
   MONITORINFO screeninfo;

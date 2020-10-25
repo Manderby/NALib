@@ -64,6 +64,7 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
 
   cocoaCheckBox = [[NACocoaCheckBox alloc] initWithCheckBox:checkBox frame:frameRect];
   na_InitCheckBox(checkBox, NA_COCOA_PTR_OBJC_TO_C(cocoaCheckBox));
+  [cocoaCheckBox setTag: (NSInteger)checkBox];
   [cocoaCheckBox setText:text];
   
   return (NACheckBox*)checkBox;

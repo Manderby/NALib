@@ -179,6 +179,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaLabel* cocoaLabel = [[NACocoaLabel alloc] initWithLabel:label frame:frameRect];
   na_InitLabel(label, NA_COCOA_PTR_OBJC_TO_C(cocoaLabel));
+  [cocoaLabel setTag: (NSInteger)label];
   naSetLabelText(label, text);
   
   return (NALabel*)label;
