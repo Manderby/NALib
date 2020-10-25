@@ -77,6 +77,7 @@ typedef struct NACheckBox       NACheckBox;
 typedef struct NALabel          NALabel;
 typedef struct NATextField      NATextField;
 typedef struct NATextBox        NATextBox;
+typedef struct NASlider         NASlider;
 
 
 
@@ -96,7 +97,8 @@ typedef enum{
   NA_UI_CHECKBOX,
   NA_UI_LABEL,
   NA_UI_TEXTFIELD,
-  NA_UI_TEXTBOX
+  NA_UI_TEXTBOX,
+  NA_UI_SLIDER
 } NAUIElementType;
 
 NA_API NAUIElementType naGetUIElementType(void* uiElement);
@@ -642,17 +644,20 @@ NA_API void naSetButtonAbort(NAButton* button, NAReactionHandler handler, void* 
 
 // Radio
 NA_API NARadio* naNewRadio(const NAUTF8Char* text, NASize size);
+NA_API void naSetRadioTextColor(NARadio* radio, const NABabyColor* color);
 NA_API NABool naGetRadioState(NARadio* radio);
 NA_API void naSetRadioState(NARadio* radio, NABool state);
 
 // CheckBox
 NA_API NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size);
+NA_API void naSetCheckBoxTextColor(NACheckBox* checkBox, const NABabyColor* color);
 NA_API void naSetCheckBoxState(NACheckBox* checkBox, NABool state);
 NA_API NABool naGetCheckBoxState(NACheckBox* checkBox);
 
 // Label
 NA_API NALabel* naNewLabel(const NAUTF8Char* text, NASize size);
 NA_API void naSetLabelText(NALabel* label, const NAUTF8Char* text);
+NA_API void naSetLabelTextColor(NALabel* label, const NABabyColor* color);
 // Note that text alignment must be set before calling this method.
 NA_API void naSetLabelLink(NALabel* label, const NAUTF8Char* url);
 NA_API NABool naIsLabelEnabled(NALabel* label);
@@ -674,6 +679,12 @@ NA_API void naSetTextBoxText(NATextBox* textBox, const NAUTF8Char* text);
 NA_API void naSetTextBoxTextAlignment(NATextBox* textBox, NATextAlignment alignment);
 NA_API void naSetTextBoxFontKind(NATextBox* textBox, NAFontKind kind);
 NA_API void naSetTextBoxEditable(NATextBox* textBox, NABool editable);
+
+// Slider
+NA_API NASlider* naNewSlider(NASize size);
+NA_API void naSetSliderTickCount(NASlider* slider, NAInt tickCount);
+NA_API double naGetSliderValue(NASlider* slider);
+NA_API void naSetSliderValue(NASlider* slider, double value);
 
 
 

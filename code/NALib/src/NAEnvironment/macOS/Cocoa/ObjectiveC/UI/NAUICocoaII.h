@@ -25,6 +25,7 @@ NA_HAPI NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox);
 NA_HAPI NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label);
 NA_HAPI NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField);
 NA_HAPI NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox);
+NA_HAPI NARect na_GetSliderAbsoluteInnerRect(NA_UIElement* slider);
 
 NA_HAPI void na_RenewWindowMouseTracking(NAWindow* window);
 NA_HAPI void na_ClearWindowMouseTracking(NAWindow* window);
@@ -114,6 +115,11 @@ struct NACocoaApplication {
 - (NSView*) getContainingView;
 @end
 
+@interface NACocoaSlider : NSSlider{
+  NASlider* slider;
+}
+- (void) onValueChanged:(id)sender;
+@end
 
 
 #define naDefineCocoaObject(cocoatype, var, uiElement)\
@@ -451,6 +457,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
   case NA_UI_LABEL:       rect = na_GetLabelAbsoluteInnerRect(element); break;
   case NA_UI_TEXTFIELD:   rect = na_GetTextFieldAbsoluteInnerRect(element); break;
   case NA_UI_TEXTBOX:     rect = na_GetTextBoxAbsoluteInnerRect(element); break;
+  case NA_UI_SLIDER:      rect = na_GetSliderAbsoluteInnerRect(element); break;
   }
 
   // Now, we find the appropriate relative element.
@@ -470,6 +477,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
     case NA_UI_LABEL:       relrect = na_GetLabelAbsoluteInnerRect(relelement); break;
     case NA_UI_TEXTFIELD:   relrect = na_GetTextFieldAbsoluteInnerRect(relelement); break;
     case NA_UI_TEXTBOX:     relrect = na_GetTextBoxAbsoluteInnerRect(relelement); break;
+    case NA_UI_SLIDER:      relrect = na_GetSliderAbsoluteInnerRect(relelement); break;
     }
 
     rect.pos.x = rect.pos.x - relrect.pos.x;

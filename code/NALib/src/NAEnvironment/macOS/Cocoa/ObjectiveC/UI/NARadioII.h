@@ -33,6 +33,27 @@
 - (void) setText:(const NAUTF8Char*)text{
   [self setTitle:[NSString stringWithUTF8String:text]];
 }
+- (void) setColor:(const NABabyColor*)color{
+  NSColor* nsColor;
+  if(color){
+    uint8 buf[4];
+    naFillu8WithBabyColor(buf, *color, NA_COLOR_BUFFER_RGBA);
+    nsColor = [NSColor colorWithCalibratedRed:buf[0] / 255. green:buf[1] / 255. blue:buf[2] / 255. alpha:buf[3] / 255.];
+  }else{
+    nsColor = [NSColor labelColor];
+  }
+  NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] initWithAttributedString:[self attributedTitle]];
+  NSRange range = NSMakeRange(0, [attrString length]);
+
+  [attrString beginEditing];
+  NSMutableParagraphStyle* paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+  [paragraphStyle setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
+  paragraphStyle.alignment = [self alignment];
+  [attrString addAttribute:NSForegroundColorAttributeName value:nsColor range:range];
+  [attrString endEditing];
+  
+  [self setAttributedTitle: attrString];
+}
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
   na_DispatchUIElementCommand((NA_UIElement*)radio, NA_UI_COMMAND_PRESSED);
@@ -62,6 +83,13 @@ NA_DEF NARadio* naNewRadio(const NAUTF8Char* text, NASize size){
 
 NA_DEF void na_DestructRadio(NARadio* radio){
   na_ClearRadio(radio);
+}
+
+
+
+NA_DEF void naSetRadioTextColor(NARadio* radio, const NABabyColor* color){
+  naDefineCocoaObject(NACocoaRadio, cocoaRadio, radio);
+  [cocoaRadio setColor:color];
 }
 
 

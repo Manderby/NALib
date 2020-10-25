@@ -111,6 +111,10 @@ struct NATextBox{
   NA_UIElement uiElement;
 };
 
+struct NASlider{
+  NA_UIElement uiElement;
+};
+
 struct NAEventReaction{
   void* controller;
   NAUICommand command;
@@ -193,6 +197,9 @@ NA_HAPI void na_ClearTextField(NATextField* textField);
 
 NA_HAPI void na_InitTextBox(NATextBox* textBox, void* nativeId);
 NA_HAPI void na_ClearTextBox(NATextBox* textBox);
+
+NA_HAPI void na_InitSlider(NASlider* slider, void* nativeId);
+NA_HAPI void na_ClearSlider(NASlider* slider);
 
 
 

@@ -219,6 +219,15 @@ NA_HDEF void na_ClearTextBox(NATextBox* textBox){
 
 
 
+NA_HDEF void na_InitSlider(NASlider* slider, void* nativeId){
+  na_RegisterUIElement(&(slider->uiElement), NA_UI_SLIDER, nativeId);
+}
+NA_HDEF void na_ClearSlider(NASlider* slider){
+  na_UnregisterUIElement(&(slider->uiElement));
+}
+
+
+
 // todo: find a faster way. Hash perhaps or something else.
 NA_HDEF void* na_GetUINALibEquivalent(NANativeId nativeId){
   NAListIterator iter;
@@ -330,6 +339,7 @@ NA_HAPI void na_DestructCheckBox(NACheckBox* checkBox);
 NA_HAPI void na_DestructLabel(NALabel* label);
 NA_HAPI void na_DestructTextField(NATextField* textField);
 NA_HAPI void na_DestructTextBox(NATextBox* textBox);
+NA_HAPI void na_DestructSlider(NASlider* slider);
 
 
 
@@ -358,6 +368,7 @@ NA_DEF void naReleaseUIElement(void* uiElement){
   case NA_UI_LABEL:       naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructLabel); break;
   case NA_UI_TEXTFIELD:   naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructTextField); break;
   case NA_UI_TEXTBOX:     naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructTextBox); break;
+  case NA_UI_SLIDER:      naReleaseRefCount(&element->refCount, uiElement, (NAMutator)na_DestructSlider); break;
   default:
     #ifndef NDEBUG
       naError("Invalid element type");
