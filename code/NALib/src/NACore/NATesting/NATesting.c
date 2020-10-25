@@ -6,12 +6,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#if NA_OS != NA_OS_WINDOWS
+#if NA_OS == NA_OS_WINDOWS
+#include <windows.h>
+#include <Tlhelp32.h>
+#else
 #include <sys/time.h>
 #endif
 
 #include "../../NAStack.h"
 #include "../../NAString.h"
+#include "../../NAURL.h"
 
 
 
@@ -39,12 +43,68 @@ struct NATesting {
   NABool testCaseRunning;
   int errorCount;
   NAStack untestedStrings;
+  NAStack testRestriction;
   int curInIndex;
   uint32 in[NA_TEST_INDEX_COUNT];
   char out[NA_TEST_INDEX_COUNT];
 };
 
 NATesting* na_Testing = NA_NULL;
+
+
+
+NA_HDEF NAString* na_NewTestApplicationName(void){
+
+  TCHAR modulepath[MAX_PATH];
+  NAURL url;
+  GetModuleFileName(NULL, modulepath, MAX_PATH);
+  NAString* utf8modulepath = naNewStringFromSystemString(modulepath);
+  naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8modulepath));
+  NAString* appName = naNewStringWithURLFilename(&url);
+  naDelete(utf8modulepath);
+  return appName;
+}
+
+
+
+NA_HDEF void na_FailSafeCrasher()
+{
+  // Crash with SUCCESS if there are more than a specific number of processes
+  // of this very one running. This detects an accidental recursive bomb.
+  NAString* thisExeName = na_NewTestApplicationName();
+  NAInt exeCount = 0;
+
+  // take a snapshot of processes
+  DWORD dwFlags = TH32CS_SNAPPROCESS;
+  HANDLE hSnapshot = CreateToolhelp32Snapshot(dwFlags, 0);
+  if (INVALID_HANDLE_VALUE == hSnapshot)
+  {
+    exit(EXIT_SUCCESS);
+  }
+
+  PROCESSENTRY32 processEntry = {0};
+  processEntry.dwSize = sizeof(PROCESSENTRY32);
+
+  // Iterate through all processes
+  if (Process32First(hSnapshot, &processEntry))
+  {
+    do
+    {
+      NAString* exeName = naNewStringFromSystemString(processEntry.szExeFile);
+      if(naEqualStringToString(exeName, thisExeName, NA_TRUE))
+      {
+        exeCount++;
+        if(exeCount > 42)
+        {
+          // Security exit: Too many recursions assumed.
+          exit(EXIT_SUCCESS);
+        }
+      }
+    } while (Process32Next(hSnapshot, &processEntry));
+  }
+
+  CloseHandle(hSnapshot);
+}
 
 
 
@@ -106,11 +166,13 @@ NA_HIDEF void na_PrintTestGroup(NATestData* testData){
 
 
 
-NA_DEF void naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, NABool printAllGroups){
+NA_DEF void naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, NABool printAllGroups, int argc, const char** argv){
 #ifndef NDEBUG
   if(na_Testing)
     naError("Testing already running.");
 #endif
+
+  na_FailSafeCrasher();
 
   na_Testing = naAlloc(NATesting);
 
@@ -128,7 +190,13 @@ NA_DEF void naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, 
   }
 
   naInitStack(&(na_Testing->untestedStrings), naSizeof(NAString*), 2);
+  naInitStack(&(na_Testing->testRestriction), naSizeof(NAString*), 2);
 
+  for(int i = 1; i < argc; i++)
+  {
+    NAString** restrictionString = naPushStack(&(na_Testing->testRestriction));
+    *restrictionString = naNewStringWithFormat("%s", argv[i]);
+  }
 }
 
 
@@ -153,6 +221,8 @@ NA_DEF void naStopTesting(){
   naFree(na_Testing->testData);
   naForeachStackpMutable(&(na_Testing->untestedStrings), (NAMutator)naDelete);
   naClearStack(&(na_Testing->untestedStrings));
+  naForeachStackpMutable(&(na_Testing->testRestriction), (NAMutator)naDelete);
+  naClearStack(&(na_Testing->testRestriction));
 
   naFree(na_Testing);
   na_Testing = NA_NULL;
@@ -243,7 +313,7 @@ NA_HDEF void na_AddTestError(const char* expr, int lineNum){
 
 NA_HDEF void na_RegisterUntested(const char* text){
   NAString** string = naPushStack(&(na_Testing->untestedStrings));
-  *string = naNewStringWithUTF8CStringLiteral(text);
+  *string = naNewStringWithFormat("%s", text);
 }
 
 
@@ -369,7 +439,7 @@ NA_HDEF void na_StoreBenchmarkResult(char data){
 
 #else
 
-NA_DEF void naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, NABool printAllGroups){
+NA_DEF void naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, NABool printAllGroups, int argc, const char** argv){
   NA_UNUSED(rootName);
   NA_UNUSED(timePerBenchmark);
   NA_UNUSED(printAllGroups);

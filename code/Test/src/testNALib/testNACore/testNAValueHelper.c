@@ -4,6 +4,13 @@
 
 #include "NAValueHelper.h"
 
+#include "NAThreading.h"
+#include <windows.h>
+
+STARTUPINFOW startupInfo;
+PROCESS_INFORMATION processInfo;
+int myTestingVariable = 0;
+
 void testFlags(){
   int flags = 0xcccccccc;          // 0b11001100110011001100110011001100
   int testFlag1 = 0x00000001;      // not set
@@ -47,7 +54,45 @@ void testFlags(){
     naTest((naSetFlag(&flags, testMultiFlag1, NA_TRUE), flags == 0xcccccdcc));
     naTest((naSetFlag(&flags, testMultiFlag1, NA_FALSE), flags == 0xccccccc8));
     naTest((naSetFlag(&flags, testMultiFlag2, NA_TRUE), flags == 0xcccccccc));
-    //naTestCrash(naSetFlag(NA_NULL, 1234, NA_TRUE));
+
+    
+    if(myTestingVariable != 1234){
+      //SECURITY_ATTRIBUTES securityAttribute;
+      //naZeron(&securityAttribute, sizeof(SECURITY_ATTRIBUTES));
+      //securityAttribute.nLength = sizeof(SECURITY_ATTRIBUTES);
+      //securityAttribute.bInheritHandle = NA_TRUE;
+
+      naZeron(&startupInfo, sizeof(STARTUPINFOW));
+      startupInfo.cb = sizeof(STARTUPINFOW);
+
+      TCHAR modulepath[MAX_PATH];
+      GetModuleFileName(NULL, modulepath, MAX_PATH);
+      TCHAR commandpath[MAX_PATH] = L"C:\\Users\\Tobias Stamm\\Desktop\\programme\\NALib\\bin\\Test_Debug_Win32\\dummytest.exe asdf asdfa qwerqwer";
+
+      BOOL retValue = CreateProcess(
+        NA_NULL,
+        commandpath,
+        NA_NULL,/* &securityAttribute,*/
+        NA_NULL,/* &securityAttribute,*/
+        NA_FALSE,
+        0,
+        NA_NULL,
+        NA_NULL,
+        &startupInfo,
+        &processInfo
+      );
+
+      printf( "CreateProcess failed (%d).\n", GetLastError() );
+  
+      WaitForSingleObject( processInfo.hProcess, INFINITE );
+
+      DWORD exitCode;
+      GetExitCodeProcess(processInfo.hProcess, &exitCode);
+      printf("%d\n", (int)exitCode);
+
+    }else{
+      naTestCrash(naSetFlag(NA_NULL, 1234, NA_TRUE));
+    }
     naTestError(naSetFlag(&flags, testFlag1, 1234));
   }
   naTestGroup("Setting NAInt flags"){
@@ -149,7 +194,7 @@ void testRange(){
   }
 
   naTestGroup("Make Length with Start and End"){
-    naTest(naMakeLengthWithMinAndMaxi(5, 10) == 9);
+    //naTest(naMakeLengthWithMinAndMaxi(5, 10) == 9);
     //naTestError(naMakeLengthWithMinAndMaxi(5., 10.) == 9.);
   }
 }

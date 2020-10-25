@@ -12,7 +12,9 @@
 NA_API void naStartTesting(
   const NAUTF8Char* rootName,
   double timePerBenchmark,
-  NABool printAllGroups);
+  NABool printAllGroups,
+  int argc,
+  const char** argv);
 
 // Stops the testing and prints some final results.
 NA_API void naStopTesting(void);

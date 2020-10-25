@@ -6,7 +6,7 @@
 
 
 
-// /////////////////////////////////////
+// /////////////////////////////////////|
 // Warning: This is one huge file!
 //
 // Coordinate functions are not especially difficult to understand or implement
