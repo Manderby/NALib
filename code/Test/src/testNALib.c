@@ -48,7 +48,7 @@ int main(int argc, const char** argv){
   // Now, start testing
   naStartTesting("NALib", .01, NA_TRUE, argc, argv);
 
-    //naTestGroupFunction(NABase);
+    naTestGroupFunction(NABase);
     naTestGroupFunction(NACore);
 
     printf(NA_NL);

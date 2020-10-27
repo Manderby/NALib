@@ -10,6 +10,7 @@ NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* stri
 
   url = naInitURL(url);
   if(!string){return url;}
+
   inputString = naNewStringWithFormat("%s", string);
 
   curchar = *naGetStringUTF8Pointer(inputString);
@@ -34,6 +35,7 @@ NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* stri
   }
 
   naClearBufferIterator(&iter);
+  naDelete(inputString);
 
   return url;
 }

@@ -28,7 +28,7 @@
 #include "../../NALib/src/NAUI.h"
 #include "../../NALib/src/NAStack.h"
 
-#include "HelloWorld.h"
+#include "HelloWorldGUI.h"
 
 
 // Put GUI elements belonging together into a controller struct.

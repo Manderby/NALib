@@ -22,7 +22,7 @@
 
 NA_HAPI void   na_AddTest(const char* expr, int success, int lineNum);
 NA_HAPI void   na_AddTestError(const char* expr, int lineNum);
-NA_HAPI void   na_StartTestGroup(const char* name, int lineNum);
+NA_HAPI NABool na_StartTestGroup(const char* name, int lineNum);
 NA_HAPI void   na_StopTestGroup(void);
 NA_HAPI void   na_RegisterUntested(const char* text);
 NA_HAPI NABool na_GetTestCaseRunning(void);
@@ -30,6 +30,7 @@ NA_HAPI void   na_SetTestCaseRunning(NABool running);
 NA_HAPI void   na_IncErrorCount(void);
 NA_HAPI void   na_ResetErrorCount(void);
 NA_HAPI int    na_GetErrorCount(void);
+NA_HAPI NABool na_ShallExecuteGroup(const char* name);
 
 NA_HAPI uint32 na_getBenchmarkIn(void);
 NA_HAPI double na_BenchmarkTime(void);
@@ -59,7 +60,7 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
 
 
 #define naTest(expr)\
-  {\
+  if(na_ShallExecuteGroup(#expr)){\
     NA_START_TEST_CASE\
     NABool success = expr;\
     NA_STOP_TEST_CASE\
@@ -69,7 +70,7 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
 // Testing for errors and crashes is only useful when NDEBUG is undefined.
 #ifndef NDEBUG
 #define naTestError(expr)\
-    {\
+    if(na_ShallExecuteGroup(#expr)){\
       NA_START_TEST_CASE\
       { expr; }\
       NA_STOP_TEST_CASE\
@@ -77,7 +78,7 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
     }
 
 #define naTestCrash(expr)\
-    {\
+    if(na_ShallExecuteGroup(#expr)){\
       NA_START_TEST_CASE\
       { expr; }\
       NA_STOP_TEST_CASE\
@@ -89,14 +90,14 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
 #endif
 
 #define naTestGroup(string)\
-  na_StartTestGroup(string, __LINE__);\
-  for(int g = 0; g < 1 ; g++, na_StopTestGroup())
+  for(int g = 1 - na_StartTestGroup(string, __LINE__); g < 1 ; g++, na_StopTestGroup())
 
 #define naTestGroupFunction(identifier)\
   {\
-  na_StartTestGroup(#identifier, __LINE__);\
-  test ## identifier();\
-  na_StopTestGroup();\
+  if(na_StartTestGroup(#identifier, __LINE__)){\
+    test ## identifier();\
+    na_StopTestGroup();\
+  }\
   }
 
 #define naUntested(text)\

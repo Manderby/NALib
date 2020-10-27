@@ -5,7 +5,7 @@
 
 
 #include "../../NALib/src/NAUI.h"
-#include "HelloWorld.h"
+#include "HelloWorldGUI.h"
 
 
 
@@ -43,9 +43,9 @@ ExperimentController* createExperimentController(){
   naAddSpaceChild(con->contentSpace, con->pushButton, naMakePos(0, windowHeight - 40));
   naAddUIReaction(con->pushButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
 
-  //  con->textOptionButton = naNewTextOptionButton("Text 1", naMakeSize(150, 40));
-  //naAddSpaceChild(con->contentSpace, con->textOptionButton, naMakePos(200, windowHeight - 40));
-  //naAddUIReaction(con->pushButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+  con->textOptionButton = naNewTextOptionButton("Text 1", naMakeSize(150, 40));
+  naAddSpaceChild(con->contentSpace, con->textOptionButton, naMakePos(200, windowHeight - 40));
+  naAddUIReaction(con->textOptionButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
 
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",
