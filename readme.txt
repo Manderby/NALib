@@ -8,6 +8,7 @@ The master branch contains the latest developments.
 Older release versions are available as tags.
 
 Follow on Twitter for latest developments: @Manderby52
+Email: nalib@manderc.com
 
 Installation:
 --------------
@@ -33,9 +34,9 @@ Documentation:
 
 Contribute & License:
 ---------------------
-This project has so far not been designed with a community in mind, as it has
-been used as a private engineering code collection. Therefore, be gentle and
-patient.
+This project has till now not been designed with a community in mind, as it
+has been used as a private engineering code collection. But input is always
+welcome. Write Issues on GitHub or write Emails to nalib@manderc.com.
 
 License: Public Domain
 
