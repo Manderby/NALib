@@ -37,7 +37,7 @@ struct NATestData {
 
 typedef struct NATesting NATesting;
 struct NATesting {
-  NATestData* testData;
+  NATestData* rootTestData;
   NATestData* curTestData;
   double timePerBenchmark;
   NABool printAllTestGroups;
@@ -49,21 +49,30 @@ struct NATesting {
   int curInIndex;
   uint32 in[NA_TEST_INDEX_COUNT];
   char out[NA_TEST_INDEX_COUNT];
+  #if NA_OS == NA_OS_WINDOWS
+    HANDLE logFile;
+  #endif
 };
 
 NATesting* na_Testing = NA_NULL;
 
 
 
+NA_HDEF NAString* na_NewTestApplicationPath(void){
+  TCHAR modulePath[MAX_PATH];
+  GetModuleFileName(NULL, modulePath, MAX_PATH);
+  return naNewStringFromSystemString(modulePath);
+}
+
+
+
 NA_HDEF NAString* na_NewTestApplicationName(void){
-  TCHAR modulepath[MAX_PATH];
   NAURL url;
-  GetModuleFileName(NULL, modulepath, MAX_PATH);
-  NAString* utf8modulepath = naNewStringFromSystemString(modulepath);
-  naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8modulepath));
+  NAString* modulePath = na_NewTestApplicationPath();
+  naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(modulePath));
   NAString* appName = naNewStringWithURLFilename(&url);
   naClearURL(&url);
-  naDelete(utf8modulepath);
+  naDelete(modulePath);
   return appName;
 }
 
@@ -137,9 +146,32 @@ NA_HIDEF void na_ClearTestingData(NATestData* testData){
 
 
 
+NA_HDEF NAString* na_NewTestPath(NATestData* testData, NABool escape){
+  NAString* str = naNewStringWithFormat("%s", testData->name);
+  if(escape)
+  {
+    NAString* escapeName = naNewStringCEscaped(str);
+    naDelete(str);
+    str = naNewStringWithFormat("\"%s\"", naGetStringUTF8Pointer(escapeName));
+    naDelete(escapeName);
+  }
+
+  if(testData->parent){
+    NAString* parentName = na_NewTestPath(testData->parent, escape);
+    NAString* combinedName = naNewStringWithFormat("%s %s", naGetStringUTF8Pointer(parentName), naGetStringUTF8Pointer(str));
+    naDelete(parentName);
+    naDelete(str);
+    str = combinedName;
+  }
+  return str;
+}
+
+
+
 NA_HIDEF void na_PrintTestName(NATestData* testData){
-  if(testData->parent){na_PrintTestName(testData->parent);}
-  printf("%s ", testData->name);
+  NAString* testPath = na_NewTestPath(testData, NA_FALSE);
+  printf("%s", naGetStringUTF8Pointer(testPath));
+  naDelete(testPath);
 }
 
 
@@ -160,13 +192,13 @@ NA_HIDEF void na_PrintTestGroup(NATestData* testData){
   if(leafTotalCount == 0){return;}
 
   printf("G ");
-  if(testData->parent){na_PrintTestName(testData->parent);}
+  if(testData->parent){na_PrintTestName(testData);}
   if(leafTotalCount == childTotalCount){
-    printf("%s: %d / %d Tests ok", testData->name, leafSuccessCount, leafTotalCount);
+    printf(": %d / %d Tests ok", leafSuccessCount, leafTotalCount);
     na_PrintRatio(leafSuccessCount, leafTotalCount);
     printf(NA_NL);
   }else{
-    printf("%s: %d / %d Groups ok", testData->name, childSuccessCount, childTotalCount);
+    printf(": %d / %d Groups ok", childSuccessCount, childTotalCount);
     na_PrintRatio(childSuccessCount, childTotalCount);
     printf(", %d / %d Tests ok", leafSuccessCount, leafTotalCount);
     na_PrintRatio(leafSuccessCount, leafTotalCount);
@@ -186,10 +218,10 @@ NA_DEF void naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, 
 
   na_Testing = naAlloc(NATesting);
 
-  na_Testing->testData = naAlloc(NATestData);
-  na_InitTestingData(na_Testing->testData, rootName, NA_NULL, 0);
+  na_Testing->rootTestData = naAlloc(NATestData);
+  na_InitTestingData(na_Testing->rootTestData, rootName, NA_NULL, 0);
 
-  na_Testing->curTestData = na_Testing->testData;
+  na_Testing->curTestData = na_Testing->rootTestData;
   na_Testing->timePerBenchmark = timePerBenchmark;
   na_Testing->printAllTestGroups = printAllGroups;
   na_SetTestCaseRunning(NA_FALSE);
@@ -202,7 +234,6 @@ NA_DEF void naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, 
   naInitStack(&(na_Testing->untestedStrings), naSizeof(NAString*), 2);
   naInitList(&(na_Testing->testRestriction));
 
-  naAddListLastMutable(&(na_Testing->testRestriction), naNewStringWithFormat("%s", rootName));
   if(argc > 1){
     for(int i = 1; i < argc; i++)
     {
@@ -212,7 +243,36 @@ NA_DEF void naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, 
     naAddListLastMutable(&(na_Testing->testRestriction), naNewStringWithFormat("*"));
   }
   na_Testing->restrictionIt = naMakeListAccessor(&(na_Testing->testRestriction));
-  naIterateListStep(&(na_Testing->restrictionIt), 2);
+  naIterateList(&(na_Testing->restrictionIt));
+
+  SECURITY_ATTRIBUTES securityAttributes;
+    securityAttributes.nLength = sizeof(securityAttributes);
+    securityAttributes.lpSecurityDescriptor = NULL;
+    securityAttributes.bInheritHandle = TRUE;
+  NAString* modulePath = na_NewTestApplicationPath();
+  NAString* runPath = naNewStringWithBasenameOfPath(modulePath);
+  NAString* crashLogPath = naNewStringWithFormat("%s_latestCrash.log", naGetStringUTF8Pointer(runPath));
+  TCHAR* systemCrashLogPath = naAllocSystemStringWithUTF8String(naGetStringUTF8Pointer(crashLogPath));
+  na_Testing->logFile = CreateFile(systemCrashLogPath,
+        FILE_APPEND_DATA,
+        FILE_SHARE_WRITE | FILE_SHARE_READ,
+        &securityAttributes,
+        CREATE_ALWAYS,
+        FILE_ATTRIBUTE_NORMAL,
+        NULL );
+  naFree(systemCrashLogPath);
+  naDelete(crashLogPath);
+  naDelete(runPath);
+  naDelete(modulePath);
+
+  NABool success = na_ShallExecuteGroup(rootName, NA_FALSE);
+  if(!success)
+  {
+    #ifndef NDEBUG
+      naError("Could not start Testing");
+    #endif
+    exit(EXIT_FAILURE);
+  }
 }
 
 
@@ -225,22 +285,24 @@ NA_DEF void naStopTesting(){
 
   na_StopTestGroup();
 
-  if(na_Testing->testData->success){
+  if(na_Testing->rootTestData->success){
     printf("All test successful." NA_NL);
     if(!na_Testing->printAllTestGroups){
-      na_PrintTestGroup(na_Testing->testData);
+      na_PrintTestGroup(na_Testing->rootTestData);
     }
   }
   printf("Testing finished." NA_NL NA_NL);
 
-  na_ClearTestingData(na_Testing->testData);
-  naFree(na_Testing->testData);
+  na_ClearTestingData(na_Testing->rootTestData);
+  naFree(na_Testing->rootTestData);
   naForeachStackpMutable(&(na_Testing->untestedStrings), (NAMutator)naDelete);
   naClearStack(&(na_Testing->untestedStrings));
 
   naClearListIterator(&(na_Testing->restrictionIt));
   naForeachListMutable(&(na_Testing->testRestriction), (NAMutator)naDelete);
   naClearList(&(na_Testing->testRestriction));
+
+  CloseHandle(na_Testing->logFile);
 
   naFree(na_Testing);
   na_Testing = NA_NULL;
@@ -296,18 +358,18 @@ NA_HDEF void na_AddTest(const char* expr, int success, int lineNum){
     na_UpdateTestParentLeaf(na_Testing->curTestData, NA_FALSE);
     printf("  ");
     if(testData->parent){na_PrintTestName(testData->parent);}
-    printf("Line %d: %d errors occured in %s" NA_NL, lineNum, na_GetErrorCount(), expr);\
+    printf(" Line %d: %d errors occured in %s" NA_NL, lineNum, na_GetErrorCount(), expr);
   }else{
     testData->success = (NABool)success;
     na_UpdateTestParentLeaf(na_Testing->curTestData, (NABool)success);
     if(!success){
       printf("  ");
       if(testData->parent){na_PrintTestName(testData->parent);}
-      printf("Line %d: %s" NA_NL, lineNum, expr);\
+      printf(" Line %d: %s" NA_NL, lineNum, expr);
     }
   }
 
-  naIterateListBack(&(na_Testing->restrictionIt));\
+  naIterateListBack(&(na_Testing->restrictionIt));
 }
 
 
@@ -325,10 +387,87 @@ NA_HDEF void na_AddTestError(const char* expr, int lineNum){
   if(!testData->success){
     printf("  ");
     if(testData->parent){na_PrintTestName(testData->parent);}
-    printf("Line %d: No Error raised in %s" NA_NL, lineNum, expr);\
+    printf(" Line %d: No Error raised in %s" NA_NL, lineNum, expr);
   }
 
-  naIterateListBack(&(na_Testing->restrictionIt));\
+  naIterateListBack(&(na_Testing->restrictionIt));
+}
+
+
+
+NA_HDEF void na_AddTestCrash(const char* expr, int lineNum){
+  #ifndef NDEBUG
+  if(!na_Testing)
+    naError("Testing not running. Use naStartTesting.");
+  #endif
+
+  naIterateListBack(&(na_Testing->restrictionIt));
+}
+
+
+
+NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
+  #ifndef NDEBUG
+  if(!na_Testing)
+    naError("Testing not running. Use naStartTesting.");
+  #endif
+
+  NATestData* testData = naPushStack(&(na_Testing->curTestData->childs));
+  na_InitTestingData(testData, expr, na_Testing->curTestData, lineNum);
+
+  STARTUPINFOW startupInfo;
+  PROCESS_INFORMATION processInfo;
+
+  naZeron(&startupInfo, sizeof(STARTUPINFOW));
+  startupInfo.cb = sizeof(STARTUPINFOW);
+  startupInfo.dwFlags = STARTF_USESTDHANDLES;
+  startupInfo.hStdOutput = na_Testing->logFile;
+  startupInfo.hStdError = na_Testing->logFile;
+
+  NAString* modulePath = na_NewTestApplicationPath();
+  NAString* testPath = na_NewTestPath(testData, NA_TRUE);
+  NAString* commandPath = naNewStringWithFormat("%s %s", naGetStringUTF8Pointer(modulePath), naGetStringUTF8Pointer(testPath));
+  TCHAR* systemCommandPath = naAllocSystemStringWithUTF8String(naGetStringUTF8Pointer(commandPath));
+
+  BOOL success = CreateProcess(
+    NA_NULL,
+    systemCommandPath,
+    NA_NULL,
+    NA_NULL,
+    NA_TRUE, /* bInheritHandles */
+    0,
+    NA_NULL,
+    NA_NULL,
+    &startupInfo,
+    &processInfo
+  );
+
+  if(success){
+    WaitForSingleObject( processInfo.hProcess, INFINITE );
+
+    DWORD exitCode;
+    GetExitCodeProcess(processInfo.hProcess, &exitCode);
+    testData->success = exitCode != EXIT_SUCCESS;
+    na_UpdateTestParentLeaf(na_Testing->curTestData, (NABool)testData->success);
+
+    if(!testData->success){
+      printf("  ");
+      if(testData->parent){na_PrintTestName(testData->parent);}
+      printf(" Line %d: No Crash happened in %s" NA_NL, lineNum, expr);
+    }
+
+  }else{
+    printf("  ");
+    if(testData->parent){na_PrintTestName(testData->parent);}
+    printf(" Line %d: No Error raised in %s" NA_NL, lineNum, expr);
+    printf(" Line %d: CreateProcess failed in %s (Windows error code %d)." NA_NL, lineNum, expr, GetLastError());
+  }
+  
+  naFree(systemCommandPath);
+  naDelete(modulePath);
+  naDelete(testPath);
+  naDelete(commandPath);
+
 }
 
 
@@ -370,10 +509,10 @@ NA_HDEF int na_GetErrorCount(void){
 
 
 
-NA_HDEF NABool na_ShallExecuteGroup(const char* name){
+NA_HDEF NABool na_ShallExecuteGroup(const char* name, NABool explicit){
   const NAString* allowedGroup = naGetListCurConst(&(na_Testing->restrictionIt));
   NABool shallExecute =
-    naEqualStringToUTF8CString(allowedGroup, "*", NA_TRUE) ||
+    (!explicit && naEqualStringToUTF8CString(allowedGroup, "*", NA_TRUE)) ||
     naEqualStringToUTF8CString(allowedGroup, name, NA_TRUE);
   if(shallExecute){
     naIterateList(&(na_Testing->restrictionIt));
@@ -395,7 +534,7 @@ NA_HDEF NABool na_StartTestGroup(const char* name, int lineNum){
     naError("Testing not running. Use naStartTesting.");
   #endif
 
-  NABool shallExecute = na_ShallExecuteGroup(name);
+  NABool shallExecute = na_ShallExecuteGroup(name, NA_FALSE);
   if(shallExecute)
   {
     NATestData* testData = naPushStack(&(na_Testing->curTestData->childs));
@@ -419,10 +558,6 @@ NA_HDEF void na_StopTestGroup(){
   }
   na_Testing->curTestData = na_Testing->curTestData->parent;
   naIterateListBack(&(na_Testing->restrictionIt));
-  #ifndef NDEBUG
-    if(naIsListAtInitial(&(na_Testing->restrictionIt)))
-      naError("Internal error: Restriction list underflowed.");
-  #endif
 }
 
 
@@ -472,7 +607,7 @@ NA_HDEF void na_PrintBenchmark(double timeDiff, int testSize, const char* exprSt
       printf("Line %d: %6.2f G : %s" NA_NL, lineNum, execsPerSec * .000000001, exprString);
     else if(execsPerSec > 1000000.)
       printf("Line %d: %6.2f M : %s" NA_NL, lineNum, execsPerSec * .000001, exprString);
-    else if(execsPerSec < 1000000.)
+    else if(execsPerSec > 1000.)
       printf("Line %d: %6.2f k : %s" NA_NL, lineNum, execsPerSec * .001, exprString);
     else
       printf("Line %d: %6.2f   : %s" NA_NL, lineNum, execsPerSec, exprString);
@@ -483,7 +618,7 @@ NA_HDEF void na_PrintBenchmark(double timeDiff, int testSize, const char* exprSt
 
 NA_HDEF void na_StoreBenchmarkResult(char data){
   // yes, we are using the inIndex. It doesn't matter.
-  na_Testing->out[na_Testing->curInIndex] ^= data;\
+  na_Testing->out[na_Testing->curInIndex] ^= data;
 }
 
 

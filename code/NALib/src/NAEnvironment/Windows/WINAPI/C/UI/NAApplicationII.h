@@ -435,17 +435,17 @@ NA_DEF NAString* naNewApplicationName(void){
   if(app->application.name){
     return naNewStringWithFormat("%s", app->application.name);
   }else{
-    TCHAR modulepath[MAX_PATH];
-    NAString* utf8modulepath;
+    TCHAR modulePath[MAX_PATH];
+    NAString* utf8ModulePath;
     NAURL url;
     NAString* applicationName;
     NAString* applicationbasename;
 
-    GetModuleFileName(NULL, modulepath, MAX_PATH);
-    utf8modulepath = naNewStringFromSystemString(modulepath);
+    GetModuleFileName(NULL, modulePath, MAX_PATH);
+    utf8ModulePath = naNewStringFromSystemString(modulePath);
 
-    naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8modulepath));
-    naDelete(utf8modulepath);
+    naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8ModulePath));
+    naDelete(utf8ModulePath);
     applicationName = naNewStringWithURLFilename(&url);
     applicationbasename = naNewStringWithBasenameOfPath(applicationName);
     naClearURL(&url);

@@ -134,7 +134,7 @@ NA_RUNTIME_TYPE(NAString, na_DestructString, NA_FALSE);
 
 
 // We especially inline this definition as it is used many times in this file.
-NA_DEF NAString* naNewString(void){
+NA_DEF NAString* naNewString(){
   NAString* string = naNew(NAString);
   string->buffer = naNewBuffer(NA_FALSE);
   #ifndef NDEBUG
@@ -358,6 +358,7 @@ NA_DEF NAUTF8Char naGetStringChar(NAString* string, NAInt index){
 
 NA_DEF NAString* naNewStringWithBasenameOfPath(const NAString* filePath){
   NAString* string;
+  naCacheBufferRange(filePath->buffer, filePath->buffer->range);
   NAInt dotoffset = naSearchBufferByteOffset(filePath->buffer, NA_SUFFIX_DELIMITER, naGetRangeiMax(naGetBufferRange(filePath->buffer)), NA_FALSE);
   // If dotpos is invalid, return the full string.
   if(dotoffset == NA_INVALID_MEMORY_INDEX){

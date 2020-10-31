@@ -5,11 +5,8 @@
 #include "NAValueHelper.h"
 
 #include "NAThreading.h"
+#include "NAString.h"
 #include <windows.h>
-
-STARTUPINFOW startupInfo;
-PROCESS_INFORMATION processInfo;
-int myTestingVariable = 0;
 
 void testFlags(){
   int flags = 0xcccccccc;          // 0b11001100110011001100110011001100
@@ -54,45 +51,7 @@ void testFlags(){
     naTest((naSetFlag(&flags, testMultiFlag1, NA_TRUE), flags == 0xcccccdcc));
     naTest((naSetFlag(&flags, testMultiFlag1, NA_FALSE), flags == 0xccccccc8));
     naTest((naSetFlag(&flags, testMultiFlag2, NA_TRUE), flags == 0xcccccccc));
-
-    
-    if(myTestingVariable != 1234){
-      //SECURITY_ATTRIBUTES securityAttribute;
-      //naZeron(&securityAttribute, sizeof(SECURITY_ATTRIBUTES));
-      //securityAttribute.nLength = sizeof(SECURITY_ATTRIBUTES);
-      //securityAttribute.bInheritHandle = NA_TRUE;
-
-      naZeron(&startupInfo, sizeof(STARTUPINFOW));
-      startupInfo.cb = sizeof(STARTUPINFOW);
-
-      TCHAR modulepath[MAX_PATH];
-      GetModuleFileName(NULL, modulepath, MAX_PATH);
-      TCHAR commandpath[MAX_PATH] = L"C:\\Users\\Tobias Stamm\\Desktop\\programme\\NALib\\bin\\Test_Debug_Win32\\dummytest.exe asdf asdfa qwerqwer";
-
-      BOOL retValue = CreateProcess(
-        NA_NULL,
-        commandpath,
-        NA_NULL,/* &securityAttribute,*/
-        NA_NULL,/* &securityAttribute,*/
-        NA_FALSE,
-        0,
-        NA_NULL,
-        NA_NULL,
-        &startupInfo,
-        &processInfo
-      );
-
-      printf( "CreateProcess failed (%d).\n", GetLastError() );
-  
-      WaitForSingleObject( processInfo.hProcess, INFINITE );
-
-      DWORD exitCode;
-      GetExitCodeProcess(processInfo.hProcess, &exitCode);
-      printf("%d\n", (int)exitCode);
-
-    }else{
-      naTestCrash(naSetFlag(NA_NULL, 1234, NA_TRUE));
-    }
+    naTestCrash(naSetFlag(NA_NULL, 1234, NA_TRUE));
     naTestError(naSetFlag(&flags, testFlag1, 1234));
   }
   naTestGroup("Setting NAInt flags"){
@@ -102,7 +61,7 @@ void testFlags(){
     naTest((naSetFlagi(&flagsi, testMultiFlagi1, NA_TRUE), flagsi == 0xcccccdcc));
     naTest((naSetFlagi(&flagsi, testMultiFlagi1, NA_FALSE), flagsi == 0xccccccc8));
     naTest((naSetFlagi(&flagsi, testMultiFlagi2, NA_TRUE), flagsi == 0xcccccccc));
-    //naTestCrash(naSetFlagi(NA_NULL, 1234, NA_TRUE));
+    naTestCrash(naSetFlagi(NA_NULL, 1234, NA_TRUE));
     naTestError(naSetFlagi(&flagsi, testFlagi1, 1234));
   }
   naTestGroup("Setting NAUInt flags"){
@@ -112,7 +71,7 @@ void testFlags(){
     naTest((naSetFlagu(&flagsu, testMultiFlagu1, NA_TRUE), flagsu == 0xcccccdcc));
     naTest((naSetFlagu(&flagsu, testMultiFlagu1, NA_FALSE), flagsu == 0xccccccc8));
     naTest((naSetFlagu(&flagsu, testMultiFlagu2, NA_TRUE), flagsu == 0xcccccccc));
-    //naTestCrash(naSetFlagu(NA_NULL, 1234, NA_TRUE));
+    naTestCrash(naSetFlagu(NA_NULL, 1234, NA_TRUE));
     naTestError(naSetFlagu(&flagsu, testFlagu1, 1234));
   }
 
@@ -125,7 +84,7 @@ void testFlags(){
     naTest(!naToggleFlag(&flags, testMultiFlag1));
     naTest(!naToggleFlag(&flags, testMultiFlag2));
     naTest( naToggleFlag(&flags, testMultiFlag2));
-    //naTestCrash(naToggleFlag(NA_NULL, testFlag1, NA_TRUE));
+    naTestCrash(naToggleFlag(NA_NULL, testFlag1, NA_TRUE));
   }
   naTestGroup("Toggling NAInt flags"){
     naTest( naToggleFlagi(&flagsi, testFlagi1));
@@ -136,7 +95,7 @@ void testFlags(){
     naTest(!naToggleFlagi(&flagsi, testMultiFlagi1));
     naTest(!naToggleFlagi(&flagsi, testMultiFlagi2));
     naTest( naToggleFlagi(&flagsi, testMultiFlagi2));
-    //naTestCrash(naToggleFlagi(NA_NULL, testFlagi1, NA_TRUE));
+    naTestCrash(naToggleFlagi(NA_NULL, testFlagi1, NA_TRUE));
   }
   naTestGroup("Toggling NAUInt flags"){
     naTest( naToggleFlagu(&flagsu, testFlagu1));
@@ -147,7 +106,7 @@ void testFlags(){
     naTest(!naToggleFlagu(&flagsu, testMultiFlagu1));
     naTest(!naToggleFlagu(&flagsu, testMultiFlagu2));
     naTest( naToggleFlagu(&flagsu, testMultiFlagu2));
-    //naTestCrash(naToggleFlagu(NA_NULL, testFlagu1, NA_TRUE));
+    naTestCrash(naToggleFlagu(NA_NULL, testFlagu1, NA_TRUE));
   }
 }
 
@@ -160,6 +119,7 @@ void testRange(){
     naTest(naMakeMaxWithEndi(1234) == 1233);
     naTestError(naMakeMaxWithEndi32(NA_MIN_i32));
     naTestError(naMakeMaxWithEndi64(NA_MIN_i64));
+
     naTest(naMakeEndWithMaxi32(1234) == 1235);
     naTest(naMakeEndWithMaxi64(1234) == 1235);
     naTest(naMakeEndWithMaxi(1234) == 1235);

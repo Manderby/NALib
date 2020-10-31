@@ -18,7 +18,7 @@ struct NAPtr{
     void*       d;              // ... non-const (mutable) data.
   } data;
   #ifndef NDEBUG
-    NAUInt flags;              // This field stores some flags.
+    NAUInt debugFlags;          // This field stores some flags.
   #endif
 };
 // Note that this is one of the very, very rare situations, where a union type
@@ -69,8 +69,8 @@ NA_IDEF NAPtr naMakePtrNull(){
   NAPtr ptr;
   ptr.data.d = NA_NULL;
   #ifndef NDEBUG
-    ptr.flags = NA_ZERO; // Do not mark a null pointer as const. Otherwise many
-                         // more errors will spawn.
+    ptr.debugFlags = NA_ZERO; // Do not mark a null pointer as const.
+                              // Otherwise many more errors will spawn.
   #endif
   return ptr;
 }
@@ -88,7 +88,7 @@ NA_IDEF NAPtr naMakePtrWithBytesize(NAInt byteSize){
   #endif
   ptr.data.d = naMalloc(byteSize);
   #ifndef NDEBUG
-    ptr.flags = NA_ZERO;
+    ptr.debugFlags = NA_ZERO;
   #endif
   return ptr;
 }
@@ -97,14 +97,14 @@ NA_IDEF NAPtr naMakePtrWithBytesize(NAInt byteSize){
 
 NA_IDEF void naCleanupPtr(NAPtr* ptr, NAMutator destructor){
   #ifndef NDEBUG
-    if(ptr->flags & NA_PTR_CLEANED)
+    if(ptr->debugFlags & NA_PTR_CLEANED)
       naError("NAPtr has already been cleaned once.");
-    if(destructor && ptr->flags & NA_PTR_CONST_DATA)
+    if(destructor && ptr->debugFlags & NA_PTR_CONST_DATA)
       naError("Calling a destructor on const data. This smells fishy.");
   #endif
   if(destructor){destructor(ptr->data.d);}
   #ifndef NDEBUG
-    ptr->flags |= NA_PTR_CLEANED;
+    ptr->debugFlags |= NA_PTR_CLEANED;
   #endif
 }
 
@@ -114,7 +114,7 @@ NA_IDEF NAPtr naMakePtrWithDataConst(const void* data){
   NAPtr ptr;
   ptr.data.constd = data;
   #ifndef NDEBUG
-    ptr.flags = NA_PTR_CONST_DATA;
+    ptr.debugFlags = NA_PTR_CONST_DATA;
   #endif
   return ptr;
 }
@@ -125,7 +125,7 @@ NA_IDEF NAPtr naMakePtrWithDataMutable(void* data){
   NAPtr ptr;
   ptr.data.d = data;
   #ifndef NDEBUG
-    ptr.flags = NA_ZERO;
+    ptr.debugFlags = NA_ZERO;
   #endif
   return ptr;
 }
@@ -152,7 +152,7 @@ NA_IDEF NABool naIsPtrValid(NAPtr ptr){
 
 NA_IDEF NABool naIsPtrConst(NAPtr ptr){
   #ifndef NDEBUG
-    return (NABool)(ptr.flags & NA_PTR_CONST_DATA);
+    return (NABool)(ptr.debugFlags & NA_PTR_CONST_DATA);
   #else
     NA_UNUSED(ptr);
     return NA_FALSE;
