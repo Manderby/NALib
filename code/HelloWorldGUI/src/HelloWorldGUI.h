@@ -1,50 +1,13 @@
 
-#if defined NA_DEBUGGING_II_INCLUDED || !defined NA_BASE_INCLUDED
-  #warning "Do not include this file directly. Use NABase.h"
-#endif
-#ifndef NA_DEBUGGING_II_INCLUDED
-#define NA_DEBUGGING_II_INCLUDED
-
-
-// This file contains inline implementations of debugging methods.
-
-#ifndef NDEBUG
-
-  #include <stdlib.h>   // for the exit function
-
-  // First, undefine the macros from the .h file.
-  #undef NA_DEBUG_FUNCTIONSYMBOL
-  #undef naError
-  #undef naCrash
-
-  #if NA_OS == NA_OS_WINDOWS
-    #define NA_DEBUG_FUNCTIONSYMBOL __FUNCTION__
-  #else
-    #define NA_DEBUG_FUNCTIONSYMBOL __func__
-  #endif
-
-  NA_HAPI void na_Error(const char* functionSymbol, const char* text);
-  NA_HAPI void na_Crash(const char* functionSymbol, const char* text);
-
-  #define naError(text)\
-    na_Error(NA_DEBUG_FUNCTIONSYMBOL, text)
-
-  // Note for the future: The exit call must be in the macro and must not be
-  // moved to the capture function!
-
-  #define naCrash(text)\
-  {\
-    na_Crash(NA_DEBUG_FUNCTIONSYMBOL, text);\
-    exit(EXIT_FAILURE);\
-  }
-
-
-#endif // NDEBUG
+// This is an example showing how to create a GUI application with NALib which
+// converts temperatures from Degree Celsius to Degree Fahrenheit.
 
 
 
-#endif // NA_DEBUGGING_II_INCLUDED
+typedef struct ExperimentController ExperimentController;
 
+ExperimentController* createExperimentController(void);
+void clearExperimentController(ExperimentController* con);
 
 
 // This is free and unencumbered software released into the public domain.

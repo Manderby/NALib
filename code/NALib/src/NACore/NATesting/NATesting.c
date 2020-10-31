@@ -6,12 +6,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#if NA_OS != NA_OS_WINDOWS
+#if NA_OS == NA_OS_WINDOWS
+#include <windows.h>
+#include <Tlhelp32.h>
+#else
 #include <sys/time.h>
 #endif
 
 #include "../../NAStack.h"
+#include "../../NAList.h"
 #include "../../NAString.h"
+#include "../../NAURL.h"
 
 
 
@@ -35,16 +40,80 @@ struct NATesting {
   NATestData* testData;
   NATestData* curTestData;
   double timePerBenchmark;
-  int printAllTestGroups;
+  NABool printAllTestGroups;
   NABool testCaseRunning;
   int errorCount;
   NAStack untestedStrings;
+  NAList testRestriction;
+  NAListIterator restrictionIt;
   int curInIndex;
   uint32 in[NA_TEST_INDEX_COUNT];
   char out[NA_TEST_INDEX_COUNT];
 };
 
 NATesting* na_Testing = NA_NULL;
+
+
+
+NA_HDEF NAString* na_NewTestApplicationName(void){
+  TCHAR modulepath[MAX_PATH];
+  NAURL url;
+  GetModuleFileName(NULL, modulepath, MAX_PATH);
+  NAString* utf8modulepath = naNewStringFromSystemString(modulepath);
+  naInitURLWithUTF8CStringLiteral(&url, naGetStringUTF8Pointer(utf8modulepath));
+  NAString* appName = naNewStringWithURLFilename(&url);
+  naClearURL(&url);
+  naDelete(utf8modulepath);
+  return appName;
+}
+
+
+
+NA_HDEF void na_FailSafeCrasher()
+{
+  // Crash with SUCCESS if there are more than a specific number of processes
+  // of this very one running. This detects an accidental recursive bomb.
+  NAString* thisExeName = na_NewTestApplicationName();
+  NAInt exeCount = 0;
+  NABool wantsSuccessExit = NA_FALSE;
+
+  // take a snapshot of processes
+  DWORD dwFlags = TH32CS_SNAPPROCESS;
+  HANDLE hSnapshot = CreateToolhelp32Snapshot(dwFlags, 0);
+  if(hSnapshot == INVALID_HANDLE_VALUE)
+  {
+    wantsSuccessExit = NA_TRUE;
+  }else{
+    PROCESSENTRY32 processEntry = {0};
+    processEntry.dwSize = sizeof(PROCESSENTRY32);
+
+    // Iterate through all processes
+    if(Process32First(hSnapshot, &processEntry))
+    {
+      while(!wantsSuccessExit && Process32Next(hSnapshot, &processEntry))
+      {
+        NAString* exeName = naNewStringFromSystemString(processEntry.szExeFile);
+        if(naEqualStringToString(exeName, thisExeName, NA_TRUE))
+        {
+          exeCount++;
+          if(exeCount > 42)
+          {
+            // Security exit: Too many recursions assumed.
+            wantsSuccessExit = NA_TRUE;
+          }
+        }
+        naDelete(exeName);
+      }
+    }
+    CloseHandle(hSnapshot);
+  }
+
+  naDelete(thisExeName);
+
+  if(wantsSuccessExit){
+    exit(EXIT_SUCCESS);
+  }
+}
 
 
 
@@ -88,6 +157,7 @@ NA_HIDEF void na_PrintTestGroup(NATestData* testData){
   int leafTotalCount = testData->totalLeafCount;
   int childSuccessCount = testData->childSuccessCount;
   int childTotalCount = (int)naGetStackCount(&(testData->childs));
+  if(leafTotalCount == 0){return;}
 
   printf("G ");
   if(testData->parent){na_PrintTestName(testData->parent);}
@@ -106,11 +176,13 @@ NA_HIDEF void na_PrintTestGroup(NATestData* testData){
 
 
 
-NA_DEF void naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, NABool printAllGroups){
+NA_DEF void naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, NABool printAllGroups, int argc, const char** argv){
 #ifndef NDEBUG
   if(na_Testing)
     naError("Testing already running.");
 #endif
+
+  na_FailSafeCrasher();
 
   na_Testing = naAlloc(NATesting);
 
@@ -128,7 +200,19 @@ NA_DEF void naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, 
   }
 
   naInitStack(&(na_Testing->untestedStrings), naSizeof(NAString*), 2);
+  naInitList(&(na_Testing->testRestriction));
 
+  naAddListLastMutable(&(na_Testing->testRestriction), naNewStringWithFormat("%s", rootName));
+  if(argc > 1){
+    for(int i = 1; i < argc; i++)
+    {
+      naAddListLastMutable(&(na_Testing->testRestriction), naNewStringWithFormat("%s", argv[i]));
+    }
+  }else{
+    naAddListLastMutable(&(na_Testing->testRestriction), naNewStringWithFormat("*"));
+  }
+  na_Testing->restrictionIt = naMakeListAccessor(&(na_Testing->testRestriction));
+  naIterateListStep(&(na_Testing->restrictionIt), 2);
 }
 
 
@@ -153,6 +237,10 @@ NA_DEF void naStopTesting(){
   naFree(na_Testing->testData);
   naForeachStackpMutable(&(na_Testing->untestedStrings), (NAMutator)naDelete);
   naClearStack(&(na_Testing->untestedStrings));
+
+  naClearListIterator(&(na_Testing->restrictionIt));
+  naForeachListMutable(&(na_Testing->testRestriction), (NAMutator)naDelete);
+  naClearList(&(na_Testing->testRestriction));
 
   naFree(na_Testing);
   na_Testing = NA_NULL;
@@ -218,6 +306,8 @@ NA_HDEF void na_AddTest(const char* expr, int success, int lineNum){
       printf("Line %d: %s" NA_NL, lineNum, expr);\
     }
   }
+
+  naIterateListBack(&(na_Testing->restrictionIt));\
 }
 
 
@@ -237,13 +327,15 @@ NA_HDEF void na_AddTestError(const char* expr, int lineNum){
     if(testData->parent){na_PrintTestName(testData->parent);}
     printf("Line %d: No Error raised in %s" NA_NL, lineNum, expr);\
   }
+
+  naIterateListBack(&(na_Testing->restrictionIt));\
 }
 
 
 
 NA_HDEF void na_RegisterUntested(const char* text){
   NAString** string = naPushStack(&(na_Testing->untestedStrings));
-  *string = naNewStringWithUTF8CStringLiteral(text);
+  *string = naNewStringWithFormat("%s", text);
 }
 
 
@@ -278,16 +370,40 @@ NA_HDEF int na_GetErrorCount(void){
 
 
 
-NA_HDEF void na_StartTestGroup(const char* name, int lineNum){
+NA_HDEF NABool na_ShallExecuteGroup(const char* name){
+  const NAString* allowedGroup = naGetListCurConst(&(na_Testing->restrictionIt));
+  NABool shallExecute =
+    naEqualStringToUTF8CString(allowedGroup, "*", NA_TRUE) ||
+    naEqualStringToUTF8CString(allowedGroup, name, NA_TRUE);
+  if(shallExecute){
+    naIterateList(&(na_Testing->restrictionIt));
+    if(naIsListAtInitial(&(na_Testing->restrictionIt))){
+      // We arrived at the end of the list. Artificially add an asterix and
+      // let the iterator point to this new, last entry.
+      naAddListLastConst(&(na_Testing->testRestriction), naNewStringWithFormat("*"));
+      naIterateListBack(&(na_Testing->restrictionIt));
+    }
+  }
+  return shallExecute;
+}
+
+
+
+NA_HDEF NABool na_StartTestGroup(const char* name, int lineNum){
   #ifndef NDEBUG
   if(!na_Testing)
     naError("Testing not running. Use naStartTesting.");
   #endif
 
-  NATestData* testData = naPushStack(&(na_Testing->curTestData->childs));
-  na_InitTestingData(testData, name, na_Testing->curTestData, lineNum);
-  na_Testing->curTestData->childSuccessCount++;
-  na_Testing->curTestData = testData;
+  NABool shallExecute = na_ShallExecuteGroup(name);
+  if(shallExecute)
+  {
+    NATestData* testData = naPushStack(&(na_Testing->curTestData->childs));
+    na_InitTestingData(testData, name, na_Testing->curTestData, lineNum);
+    na_Testing->curTestData->childSuccessCount++;
+    na_Testing->curTestData = testData;
+  }
+  return shallExecute;
 }
 
 
@@ -302,6 +418,11 @@ NA_HDEF void na_StopTestGroup(){
     na_PrintTestGroup(na_Testing->curTestData);
   }
   na_Testing->curTestData = na_Testing->curTestData->parent;
+  naIterateListBack(&(na_Testing->restrictionIt));
+  #ifndef NDEBUG
+    if(naIsListAtInitial(&(na_Testing->restrictionIt)))
+      naError("Internal error: Restriction list underflowed.");
+  #endif
 }
 
 
@@ -369,7 +490,7 @@ NA_HDEF void na_StoreBenchmarkResult(char data){
 
 #else
 
-NA_DEF void naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, NABool printAllGroups){
+NA_DEF void naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, NABool printAllGroups, int argc, const char** argv){
   NA_UNUSED(rootName);
   NA_UNUSED(timePerBenchmark);
   NA_UNUSED(printAllGroups);

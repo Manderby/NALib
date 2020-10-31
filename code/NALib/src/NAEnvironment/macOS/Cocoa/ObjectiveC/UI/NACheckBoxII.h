@@ -19,6 +19,27 @@
 - (void) setText:(const NAUTF8Char*)text{
   [self setTitle:[NSString stringWithUTF8String:text]];
 }
+- (void) setColor:(const NABabyColor*)color{
+  NSColor* nsColor;
+  if(color){
+    uint8 buf[4];
+    naFillu8WithBabyColor(buf, *color, NA_COLOR_BUFFER_RGBA);
+    nsColor = [NSColor colorWithCalibratedRed:buf[0] / 255. green:buf[1] / 255. blue:buf[2] / 255. alpha:buf[3] / 255.];
+  }else{
+    nsColor = [NSColor labelColor];
+  }
+  NSMutableAttributedString* attrString = [[NSMutableAttributedString alloc] initWithAttributedString:[self attributedTitle]];
+  NSRange range = NSMakeRange(0, [attrString length]);
+
+  [attrString beginEditing];
+  NSMutableParagraphStyle* paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+  [paragraphStyle setParagraphStyle:[NSParagraphStyle defaultParagraphStyle]];
+  paragraphStyle.alignment = [self alignment];
+  [attrString addAttribute:NSForegroundColorAttributeName value:nsColor range:range];
+  [attrString endEditing];
+  
+  [self setAttributedTitle: attrString];
+}
 - (void) onPressed:(id)sender{
   NA_UNUSED(sender);
   na_DispatchUIElementCommand((NA_UIElement*)checkBox, NA_UI_COMMAND_PRESSED);
@@ -43,6 +64,7 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
 
   cocoaCheckBox = [[NACocoaCheckBox alloc] initWithCheckBox:checkBox frame:frameRect];
   na_InitCheckBox(checkBox, NA_COCOA_PTR_OBJC_TO_C(cocoaCheckBox));
+  [cocoaCheckBox setTag: (NSInteger)checkBox];
   [cocoaCheckBox setText:text];
   
   return (NACheckBox*)checkBox;
@@ -52,6 +74,13 @@ NA_DEF NACheckBox* naNewCheckBox(const NAUTF8Char* text, NASize size){
 
 NA_DEF void na_DestructCheckBox(NACheckBox* checkBox){
   na_ClearCheckBox(checkBox);
+}
+
+
+
+NA_DEF void naSetCheckBoxTextColor(NACheckBox* checkBox, const NABabyColor* color){
+  naDefineCocoaObject(NACocoaCheckBox, cocoaCheckBox, checkBox);
+  [cocoaCheckBox setColor:color];
 }
 
 

@@ -10,7 +10,8 @@ NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* stri
 
   url = naInitURL(url);
   if(!string){return url;}
-  inputString = naNewStringWithUTF8CStringLiteral(string);
+
+  inputString = naNewStringWithFormat("%s", string);
 
   curchar = *naGetStringUTF8Pointer(inputString);
   if((curchar == NA_PATH_DELIMITER_UNIX) || (curchar == NA_PATH_DELIMITER_WIN)){
@@ -34,6 +35,7 @@ NA_DEF NAURL* naInitURLWithUTF8CStringLiteral(NAURL* url, const NAUTF8Char* stri
   }
 
   naClearBufferIterator(&iter);
+  naDelete(inputString);
 
   return url;
 }

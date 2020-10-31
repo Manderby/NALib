@@ -25,6 +25,7 @@ NA_HAPI NARect na_GetCheckBoxAbsoluteInnerRect(NA_UIElement* checkBox);
 NA_HAPI NARect na_GetLabelAbsoluteInnerRect(NA_UIElement* label);
 NA_HAPI NARect na_GetTextFieldAbsoluteInnerRect(NA_UIElement* textField);
 NA_HAPI NARect na_GetTextBoxAbsoluteInnerRect(NA_UIElement* textBox);
+NA_HAPI NARect na_GetSliderAbsoluteInnerRect(NA_UIElement* slider);
 
 NA_HAPI void na_RenewWindowMouseTracking(NAWindow* window);
 NA_HAPI void na_ClearWindowMouseTracking(NAWindow* window);
@@ -45,14 +46,15 @@ struct NACocoaApplication {
 @interface NACocoaWindow : NSWindow <NSWindowDelegate>{
   NAWindow* window;
   NAUInt trackingcount;
-  NSTrackingArea* trackingarea;
+  NSTrackingArea* trackingArea;
 }
 @end
 
 @interface NACocoaSpace : NSView{
   NASpace* space;
-  NSTrackingArea* trackingarea;
+  NSTrackingArea* trackingArea;
 }
+- (void)setTag:(NSInteger)newTag;
 @end
 
 @interface NACocoaImageSpace : NSImageView{
@@ -64,7 +66,7 @@ struct NACocoaApplication {
 #if (NA_COMPILE_OPENGL == 1)
   @interface NACocoaOpenGLSpace : NSOpenGLView{
     NAOpenGLSpace* openGLSpace;
-    NSTrackingArea* trackingarea;
+    NSTrackingArea* trackingArea;
     NAMutator initFunc;
     void* initData;
   }
@@ -112,8 +114,14 @@ struct NACocoaApplication {
   NSScrollView* scrollView;
 }
 - (NSView*) getContainingView;
+- (void)setTag:(NSInteger)newTag;
 @end
 
+@interface NACocoaSlider : NSSlider{
+  NASlider* slider;
+}
+- (void) onValueChanged:(id)sender;
+@end
 
 
 #define naDefineCocoaObject(cocoatype, var, uiElement)\
@@ -122,6 +130,23 @@ struct NACocoaApplication {
 
 NA_HDEF void na_ClearUINativeId(NANativeId nativeId){
   NA_COCOA_RELEASE(nativeId);
+}
+
+
+// todo: find a faster way. Hash perhaps or something else.
+NA_HDEF void* na_GetUINALibEquivalent(NANativeId nativeId){
+  NA_UIElement* retElem = NA_NULL;
+  if([(NA_COCOA_BRIDGE id)nativeId isKindOfClass:[NSView class]]){
+    retElem = (NA_UIElement*)[(NA_COCOA_BRIDGE NSView*)nativeId tag];
+  }else if([(NA_COCOA_BRIDGE id)nativeId isKindOfClass:[NSApplication class]]){
+    retElem = &(na_App->uiElement);
+  }else{
+    NAListIterator iter;
+    naBeginListMutatorIteration(NA_UIElement* elem, &(na_App->windows), iter);
+      if(elem->nativeId == nativeId){retElem = elem; break;}
+    naEndListIteration(iter);
+  }
+  return retElem;
 }
 
 
@@ -451,6 +476,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
   case NA_UI_LABEL:       rect = na_GetLabelAbsoluteInnerRect(element); break;
   case NA_UI_TEXTFIELD:   rect = na_GetTextFieldAbsoluteInnerRect(element); break;
   case NA_UI_TEXTBOX:     rect = na_GetTextBoxAbsoluteInnerRect(element); break;
+  case NA_UI_SLIDER:      rect = na_GetSliderAbsoluteInnerRect(element); break;
   }
 
   // Now, we find the appropriate relative element.
@@ -470,6 +496,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
     case NA_UI_LABEL:       relrect = na_GetLabelAbsoluteInnerRect(relelement); break;
     case NA_UI_TEXTFIELD:   relrect = na_GetTextFieldAbsoluteInnerRect(relelement); break;
     case NA_UI_TEXTBOX:     relrect = na_GetTextBoxAbsoluteInnerRect(relelement); break;
+    case NA_UI_SLIDER:      relrect = na_GetSliderAbsoluteInnerRect(relelement); break;
     }
 
     rect.pos.x = rect.pos.x - relrect.pos.x;
@@ -488,6 +515,7 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
 NA_API void naOpenURLInBrowser(const NAUTF8Char* url){
   [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:[NSString stringWithUTF8String:url]]];
 }
+
 
 
 

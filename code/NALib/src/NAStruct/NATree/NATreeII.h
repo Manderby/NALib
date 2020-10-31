@@ -231,7 +231,7 @@ NA_HAPI  NATreeLeaf* na_AddTreeContentInPlace(NATree* tree, NATreeItem* item, co
 NA_HAPI  void na_UpdateTreeNodeBubbling(NATree* tree, NATreeNode* parent, NAInt childIndex);
 NA_HAPI  NABool na_UpdateTreeNodeCapturing(NATree* tree, NATreeNode* node);
 
-#include "../../NACore/NAValueHelper.h"
+#include "../../NAValueHelper.h"
 #include "NATreeConfigurationII.h"
 #include "NATreeItemII.h"
 #include "NATreeIterationII.h"

@@ -28,6 +28,7 @@
 #include "../../NALib/src/NAUI.h"
 #include "../../NALib/src/NAStack.h"
 
+#include "HelloWorldGUI.h"
 
 
 // Put GUI elements belonging together into a controller struct.
@@ -36,6 +37,7 @@ struct ConverterApplication{
   NAStack controllers;
   int nextWindowX;
   int nextWindowY;
+  ExperimentController* experimentController;
 };
 
 // The variable storing the app. For simplicity, here defined as global.
@@ -154,12 +156,12 @@ void createController(){
 
 // Clear all allocated elements.
 void clearController(ConverterController* con){
-  naFree(con->window);
-  naFree(con->button);
-  naFree(con->textField);
-  naFree(con->label);
-  naFree(con->newButton);
-  naFree(con->quitButton);
+  naReleaseUIElement(con->window);
+  //naReleaseUIElement(con->button);
+  //naReleaseUIElement(con->textField);
+  //naReleaseUIElement(con->label);
+  //naReleaseUIElement(con->newButton);
+  //naReleaseUIElement(con->quitButton);
 }
 
 
@@ -181,6 +183,7 @@ void prestartup(void* arg){
 void clearApplication(void){
   naForeachStackMutable(&(app->controllers), clearController);
   naClearStack(&(app->controllers));
+  clearExperimentController(app->experimentController);
   naFree(app);
 }
 
@@ -192,6 +195,7 @@ void clearApplication(void){
 void poststartup(void* arg){
   NA_UNUSED(arg);
   createController();
+  app->experimentController = createExperimentController();
 }
 
 

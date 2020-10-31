@@ -52,6 +52,10 @@
 - (NSView*) getContainingView{
   return scrollView;
 }
+@synthesize tag = _tag;
+- (void)setTag:(NSInteger)newTag{
+  _tag = newTag;
+}
 @end
 
 
@@ -62,7 +66,8 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaTextBox* cocoaTextBox = [[NACocoaTextBox alloc] initWithTextBox:textBox frame:frameRect];
   na_InitTextBox(textBox, NA_COCOA_PTR_OBJC_TO_C(cocoaTextBox));
-  
+  [cocoaTextBox setTag: (NSInteger)textBox];
+
   return (NATextBox*)textBox;
 }
 

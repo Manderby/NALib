@@ -50,6 +50,7 @@
 #include "ObjectiveC/UI/NALabelII.h"
 #include "ObjectiveC/UI/NATextFieldII.h"
 #include "ObjectiveC/UI/NATextBoxII.h"
+#include "ObjectiveC/UI/NASliderII.h"
 
 #endif // (NA_COMPILE_GUI == 1)
 #endif // defined __OBJC__

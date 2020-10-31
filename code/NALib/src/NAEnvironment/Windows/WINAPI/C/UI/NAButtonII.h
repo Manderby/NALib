@@ -80,7 +80,7 @@ NAWINAPICallbackInfo naButtonWINAPIDrawItem (void* uiElement, DRAWITEMSTRUCT* dr
   NASizei size1x;
   NASizei buttonsize;
   NAPosi offset;
-  NABabyImage* foreImage;
+  const NABabyImage* foreImage;
   NAByte* backBuffer;
   HBITMAP hBackBitmap;
   NABabyImage* backImage;
@@ -179,6 +179,7 @@ NA_DEF NAButton* naNewPushButton(const NAUTF8Char* text, NASize size){
   if(!app->oldButtonWindowProc){app->oldButtonWindowProc = oldproc;}
 
   na_InitButton(&(winapiButton->button), hWnd);
+  SetWindowLongPtrA(hWnd, GWLP_USERDATA, (LONG_PTR)&(winapiButton->button));
   winapiButton->image = NA_NULL;
 
   SendMessage(hWnd, WM_SETFONT, (WPARAM)na_GetFontWithKind(NA_FONT_KIND_SYSTEM), MAKELPARAM(TRUE, 0));

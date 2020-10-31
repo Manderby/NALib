@@ -8,6 +8,8 @@ purely informational and any information found here is not guaranteed to be
 correct, complete or final.
 
 
+- Removed naNewStringWithUTF8CStringLiteral. Use naNewStringWithFormat.
+
 
 Version 25 (released 13. July 2020)
 ==========

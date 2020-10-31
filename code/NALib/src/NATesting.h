@@ -12,7 +12,9 @@
 NA_API void naStartTesting(
   const NAUTF8Char* rootName,
   double timePerBenchmark,
-  NABool printAllGroups);
+  NABool printAllGroups,
+  int argc,
+  const char** argv);
 
 // Stops the testing and prints some final results.
 NA_API void naStopTesting(void);
@@ -25,6 +27,9 @@ NA_API void naPrintUntested(void);
 
 // Tests successfully if one or more naError calls happen.
 #define naTestError(expr)
+
+// Tests successfully if the expression would crash the application.
+#define naTestCrash(expr)
 
 // Groups together tests. Use it like naTestGroup("Multiple Tests"){ ... }
 #define naTestGroup(string)

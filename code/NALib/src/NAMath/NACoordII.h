@@ -6,7 +6,7 @@
 
 
 
-// /////////////////////////////////////
+// /////////////////////////////////////|
 // Warning: This is one huge file!
 //
 // Coordinate functions are not especially difficult to understand or implement
@@ -17,7 +17,7 @@
 
 
 #include "../NAMathOperators.h"
-#include "../NACore/NAValueHelper.h"
+#include "../NAValueHelper.h"
 
 
 NA_IDEF NARange naMakeRange(double origin, double length){

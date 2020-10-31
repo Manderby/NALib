@@ -65,6 +65,7 @@ NA_DEF NATextBox* naNewTextBox(NASize size){
 		naGetApplicationOffscreenWindow(), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
   
   na_InitTextBox(&(winapiTextBox->textBox), hWnd);
+  SetWindowLongPtrA(hWnd, GWLP_USERDATA, (LONG_PTR)&(winapiTextBox->textBox));
   winapiTextBox->nextTabStop = winapiTextBox;
   winapiTextBox->prevTabStop = winapiTextBox;
 

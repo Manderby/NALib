@@ -6,7 +6,7 @@
 
 
 #include "../../../../NAUICore.h"
-#include "../../../../../NACore/NAValueHelper.h"
+#include "../../../../../NAValueHelper.h"
 
 
 
@@ -279,6 +279,7 @@ NAWINAPICallbackInfo naCheckBoxWINAPIProc   (void* uiElement, UINT message, WPAR
 NAWINAPICallbackInfo naLabelWINAPIProc      (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naTextFieldWINAPIProc  (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 NAWINAPICallbackInfo naTextBoxWINAPIProc    (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
+NAWINAPICallbackInfo naSliderWINAPIProc     (void* uiElement, UINT message, WPARAM wParam, LPARAM lParam);
 
 NAWINAPICallbackInfo naButtonWINAPINotify   (void* uiElement, WORD notificationCode);
 NAWINAPICallbackInfo naCheckBoxWINAPINotify (void* uiElement, WORD notificationCode);
@@ -323,6 +324,7 @@ LRESULT CALLBACK naWINAPIWindowCallback(HWND hWnd, UINT message, WPARAM wParam, 
     case NA_UI_LABEL:       info = naLabelWINAPIProc      (uiElement, message, wParam, lParam); break;
     case NA_UI_TEXTFIELD:   info = naTextFieldWINAPIProc  (uiElement, message, wParam, lParam); break;
     case NA_UI_TEXTBOX:     info = naTextBoxWINAPIProc    (uiElement, message, wParam, lParam); break;
+    case NA_UI_SLIDER:      info = naSliderWINAPIProc     (uiElement, message, wParam, lParam); break;
     default: break;
     }
     uiElement = naGetUIElementParent(uiElement);
@@ -681,6 +683,19 @@ NA_HDEF void na_DeallocMouseTracking(void* tracking){
   winapiTracking->dwFlags |= TME_CANCEL;
   TrackMouseEvent(winapiTracking);
   naFree(winapiTracking);
+}
+
+
+
+NA_HDEF void* na_GetUINALibEquivalent(NANativeId nativeId){
+  // In WINAPI, the NALib equivalent is usually stored in the userdata of the
+  // HWND structure. The antiveId is always a HWND except if it is the
+  // application itels. We simply check for that and otherwise use the HWND.
+  if(nativeId == na_App->uiElement.nativeId){
+    return naGetApplication();
+  }else{
+    return (void*)GetWindowLongPtrA(nativeId, GWLP_USERDATA);
+  }
 }
 
 

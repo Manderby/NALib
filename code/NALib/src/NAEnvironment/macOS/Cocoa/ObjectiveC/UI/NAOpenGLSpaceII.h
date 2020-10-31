@@ -12,10 +12,10 @@
     self = [super initWithFrame:frameRect pixelFormat:pixelformat];
 
     // todo: make this dependent on whether tracking is needed or not.
-    trackingarea = [[NSTrackingArea alloc] initWithRect:[self bounds]
+    trackingArea = [[NSTrackingArea alloc] initWithRect:[self bounds]
         options:NSTrackingMouseMoved | NSTrackingMouseEnteredAndExited | NSTrackingActiveInKeyWindow
         owner:self userInfo:nil];
-    [self addTrackingArea:trackingarea];
+    [self addTrackingArea:trackingArea];
 
     openGLSpace = newOpenGLSpace;
     initFunc = newinitFunc;
@@ -112,6 +112,7 @@ NA_UNUSED(event);
     }
 
     na_InitOpenGLSpace(openGLSpace, NA_COCOA_PTR_OBJC_TO_C(cocoaSpace));
+    [cocoaSpace setTag: (NSInteger)openGLSpace];
     return openGLSpace;
   }
 

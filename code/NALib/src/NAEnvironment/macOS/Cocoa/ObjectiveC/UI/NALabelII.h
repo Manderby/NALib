@@ -115,8 +115,9 @@
   [self setSelectable:YES];
   [self setEditable:NO];
   [self setBordered:NO];
-  [self setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)0. green:(CGFloat)0. blue:(CGFloat)1. alpha:(CGFloat).1]];
+//  [self setBackgroundColor:[NSColor colorWithCalibratedRed:(CGFloat)0. green:(CGFloat)0. blue:(CGFloat)1. alpha:(CGFloat).1]];
   [self setDrawsBackground:NO];
+  [self setTextColor:[NSColor labelColor]];
   [[self cell] setLineBreakMode:NSLineBreakByWordWrapping];
   [self setFont:[NSFont labelFontOfSize:[NSFont systemFontSize]]];
   label = newLabel;
@@ -124,6 +125,15 @@
 }
 - (void) setText:(const NAUTF8Char*)text{
   [self setStringValue:[NSString stringWithUTF8String:text]];
+}
+- (void) setColor:(const NABabyColor*)color{
+  if(color){
+    uint8 buf[4];
+    naFillu8WithBabyColor(buf, *color, NA_COLOR_BUFFER_RGBA);
+    [self setTextColor:[NSColor colorWithCalibratedRed:buf[0] / 255. green:buf[1] / 255. blue:buf[2] / 255. alpha:buf[3] / 255.]];
+  }else{
+    [self setTextColor:[NSColor labelColor]];
+  }
 }
 - (void) setLink:(const NAUTF8Char*)url{
   NSMutableAttributedString* attrString;
@@ -145,7 +155,7 @@
   paragraphStyle.alignment = [self alignment];
   [attrString addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:range];
   [attrString addAttribute:NSUnderlineStyleAttributeName value:[NSNumber numberWithInt:NSUnderlineStyleSingle] range:range];
-  [attrString addAttribute:NSForegroundColorAttributeName value:[NSColor blueColor] range:range];
+  [attrString addAttribute:NSForegroundColorAttributeName value:[NSColor linkColor] range:range];
   [attrString endEditing];
   
   [self setAttributedStringValue: attrString];
@@ -169,6 +179,7 @@ NA_DEF NALabel* naNewLabel(const NAUTF8Char* text, NASize size){
   NSRect frameRect = NSMakeRect((CGFloat)0., (CGFloat)0., (CGFloat)size.width, (CGFloat)size.height);
   NACocoaLabel* cocoaLabel = [[NACocoaLabel alloc] initWithLabel:label frame:frameRect];
   na_InitLabel(label, NA_COCOA_PTR_OBJC_TO_C(cocoaLabel));
+  [cocoaLabel setTag: (NSInteger)label];
   naSetLabelText(label, text);
   
   return (NALabel*)label;
@@ -185,6 +196,13 @@ NA_DEF void na_DestructLabel(NALabel* label){
 NA_DEF void naSetLabelText(NALabel* label, const NAUTF8Char* text){
   naDefineCocoaObject(NACocoaLabel, cocoaLabel, label);
   [cocoaLabel setText:text];
+}
+
+
+
+NA_DEF void naSetLabelTextColor(NALabel* label, const NABabyColor* color){
+  naDefineCocoaObject(NACocoaLabel, cocoaLabel, label);
+  [cocoaLabel setColor:color];
 }
 
 
