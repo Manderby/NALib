@@ -13,13 +13,31 @@ struct ExperimentController{
   NAWindow* experimentWindow;
   NASpace* contentSpace;
   NAButton* pushButton;
-  NAButton* textOptionButton;
+  NAButton* textOptionButton1;
+  NAButton* textOptionButton2;
+  NAButton* textOptionButton3;
+  int textOption;
   NALabel* outputLabel;
 };
 
 NABool buttonPressed(NAReaction reaction){
   ExperimentController* con = reaction.controller;
-  naSetLabelText(con->outputLabel, "Juhuu");
+  naSetLabelText(con->outputLabel, "Push Button Pressed");
+
+  return NA_TRUE;
+}
+
+NABool optionButtonPressed(NAReaction reaction){
+  ExperimentController* con = reaction.controller;
+  if     (reaction.uiElement == con->textOptionButton1){con->textOption = 1;}
+  else if(reaction.uiElement == con->textOptionButton2){con->textOption = 2;}
+  else if(reaction.uiElement == con->textOptionButton3){con->textOption = 3;}
+
+  naSetButtonState(con->textOptionButton1, con->textOption == 1);
+  naSetButtonState(con->textOptionButton2, con->textOption == 2);
+  naSetButtonState(con->textOptionButton3, con->textOption == 3);
+
+  naSetLabelText(con->outputLabel, "Option Button Pressed");
 
   return NA_TRUE;
 }
@@ -43,14 +61,22 @@ ExperimentController* createExperimentController(){
   naAddSpaceChild(con->contentSpace, con->pushButton, naMakePos(0, windowHeight - 40));
   naAddUIReaction(con->pushButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
 
-  con->textOptionButton = naNewTextOptionButton("Text 1", naMakeSize(150, 40));
-  naAddSpaceChild(con->contentSpace, con->textOptionButton, naMakePos(200, windowHeight - 40));
-  naAddUIReaction(con->textOptionButton, NA_UI_COMMAND_PRESSED, buttonPressed, con);
+  con->textOptionButton1 = naNewTextOptionButton("Text 1", naMakeSize(50, 40));
+  naAddSpaceChild(con->contentSpace, con->textOptionButton1, naMakePos(200, windowHeight - 40));
+  naAddUIReaction(con->textOptionButton1, NA_UI_COMMAND_PRESSED, optionButtonPressed, con);
+  con->textOptionButton2 = naNewTextOptionButton("Text 2", naMakeSize(50, 40));
+  naAddSpaceChild(con->contentSpace, con->textOptionButton2, naMakePos(250, windowHeight - 40));
+  naAddUIReaction(con->textOptionButton2, NA_UI_COMMAND_PRESSED, optionButtonPressed, con);
+  con->textOptionButton3 = naNewTextOptionButton("Text 3", naMakeSize(50, 40));
+  naAddSpaceChild(con->contentSpace, con->textOptionButton3, naMakePos(300, windowHeight - 40));
+  naAddUIReaction(con->textOptionButton3, NA_UI_COMMAND_PRESSED, optionButtonPressed, con);
 
   con->outputLabel = naNewLabel(
     "Here will be the output of any operation.",
     naMakeSize(windowWidth - 20, 44));
   naAddSpaceChild(con->contentSpace, con->outputLabel, naMakePos(10, 10));
+
+  con->textOption = 0;
 
   naShowWindow(con->experimentWindow);
 
