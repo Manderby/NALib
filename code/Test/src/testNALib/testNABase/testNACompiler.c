@@ -11,9 +11,12 @@ void printNACompiler(){
   naPrintMacro(NA_C95);
   naPrintMacro(NA_C99);
   naPrintMacro(NA_C11);
+  naPrintMacro(NA_C17);
   naPrintMacro(NA_CPP98);
   naPrintMacro(NA_CPP11);
   naPrintMacro(NA_CPP14);
+  naPrintMacro(NA_CPP17);
+  naPrintMacro(NA_CPP20);
 
   printf(NA_NL);
 }

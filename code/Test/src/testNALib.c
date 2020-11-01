@@ -37,7 +37,7 @@ int main(int argc, const char** argv){
 
   // Print macro information
   #if NA_PRINTOUT_ENABLED == 1
-    //printNABase();
+    printNABase();
     //printNACore();
   #endif
 
