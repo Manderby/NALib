@@ -91,7 +91,7 @@ NA_UNUSED(event);
 
 
 
-  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
+  NA_DEF NAOpenGLSpace* naNewOpenGLSpace(void* parent, NASize size, NAMutator initfunc, void* initdata){
     NA_UNUSED(window);
     NAOpenGLSpace* openGLSpace = naAlloc(NAOpenGLSpace);
 

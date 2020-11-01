@@ -22,6 +22,9 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
   switch(message){
   case WM_PAINT:
     info.hasbeenhandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
+    RECT updateRegion;
+    GetUpdateRect(naGetUIElementNativeId(uiElement), &updateRegion, NA_FALSE);
+    ValidateRect(naGetUIElementNativeId(uiElement), &updateRegion);
     info.result = 0;
     break;
 
@@ -36,7 +39,7 @@ NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPAR
 
 typedef BOOL(APIENTRY *PFNWGLSWAPINTERVALPROC)(int);
 
-NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator initfunc, void* initdata){
+NA_DEF NAOpenGLSpace* naNewOpenGLSpace(void* parent, NASize size, NAMutator initfunc, void* initdata){
 	
   HWND hWnd;
   HDC hDC;
@@ -53,7 +56,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator 
 	hWnd = CreateWindow(
 		TEXT("NASpace"), TEXT(""), style,
 		0, 0, (int)size.width, (int)size.height,
-		(HWND)naGetUIElementNativeId(window), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
+		(HWND)naGetUIElementNativeId(parent), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
     
   hDC = GetDC(hWnd);
 
@@ -81,7 +84,7 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(NAWindow* window, NASize size, NAMutator 
 	if (wglSwapIntervalEXT){wglSwapIntervalEXT(1);}
 
   na_InitOpenGLSpace(&(winapiOpenGLSpace->openGLSpace), hWnd);
-  SetWindowLongPtrA(hWnd, GWLP_USERDATA, &(winapiOpenGLSpace->openGLSpace));
+  SetWindowLongPtrA(hWnd, GWLP_USERDATA, (LONG_PTR)&(winapiOpenGLSpace->openGLSpace));
 
   // Now the OpenGL context is created and current. We can initialize it
   // if necessary.

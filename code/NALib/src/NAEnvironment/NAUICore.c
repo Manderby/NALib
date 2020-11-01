@@ -68,8 +68,6 @@ NA_HDEF void na_InitApplication(NAApplication* application, NANativeId nativeId)
   na_RegisterUIElement(&(application->uiElement), NA_UI_APPLICATION, nativeId);
 }
 
-
-
 NA_HDEF void na_ClearApplication(NAApplication* application){
   #ifndef NDEBUG
     if(!na_App)
@@ -85,11 +83,104 @@ NA_HDEF void na_ClearApplication(NAApplication* application){
 
 
 
+NA_HDEF void na_InitButton(NAButton* button, void* nativeId){
+  na_RegisterUIElement(&(button->uiElement), NA_UI_BUTTON, nativeId);
+}
+NA_HDEF void na_ClearButton(NAButton* button){
+  na_UnregisterUIElement(&(button->uiElement));
+}
+
+
+
+NA_HDEF void na_InitCheckBox(NACheckBox* checkBox, void* nativeId){
+  na_RegisterUIElement(&(checkBox->uiElement), NA_UI_CHECKBOX, nativeId);
+}
+NA_HDEF void na_ClearCheckBox(NACheckBox* checkBox){
+  na_UnregisterUIElement(&(checkBox->uiElement));
+}
+
+
+
+NA_HDEF void na_InitImageSpace(NAImageSpace* imageSpace, void* nativeId){
+  na_RegisterUIElement(&(imageSpace->uiElement), NA_UI_IMAGESPACE, nativeId);
+}
+NA_HDEF void na_ClearImageSpace(NAImageSpace* imageSpace){
+  na_UnregisterUIElement(&(imageSpace->uiElement));
+}
+
+
+
+NA_HDEF void na_InitLabel(NALabel* label, void* nativeId){
+  na_RegisterUIElement(&(label->uiElement), NA_UI_LABEL, nativeId);
+}
+NA_HDEF void na_ClearLabel(NALabel* label){
+  na_UnregisterUIElement(&(label->uiElement));
+}
+
+
+
+NA_HDEF void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativeId){
+  na_RegisterUIElement(&(openGLSpace->uiElement), NA_UI_OPENGLSPACE, nativeId);
+}
+NA_HDEF void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace){
+  na_UnregisterUIElement(&(openGLSpace->uiElement));
+}
+
+
+
+NA_HDEF void na_InitRadio(NARadio* radio, void* nativeId){
+  na_RegisterUIElement(&(radio->uiElement), NA_UI_RADIO, nativeId);
+}
+NA_HDEF void na_ClearRadio(NARadio* radio){
+  na_UnregisterUIElement(&(radio->uiElement));
+}
+
+
+
 NA_HDEF void na_InitScreen(NAScreen* screen, void* nativeId){
   na_RegisterUIElement(&(screen->uiElement), NA_UI_SCREEN, nativeId);
 }
 NA_HDEF void na_ClearScreen(NAScreen* screen){
   na_UnregisterUIElement(&(screen->uiElement));
+}
+
+
+
+NA_HDEF void na_InitSpace(NASpace* space, void* nativeId){
+  na_RegisterUIElement(&(space->uiElement), NA_UI_SPACE, nativeId);
+}
+NA_HDEF void na_ClearSpace(NASpace* space){
+  na_UnregisterUIElement(&(space->uiElement));
+}
+NA_DEF NABool naGetSpaceAlternateBackground(NASpace* space){
+  return space->alternatebackground;
+}
+
+
+
+NA_HDEF void na_InitSlider(NASlider* slider, void* nativeId){
+  na_RegisterUIElement(&(slider->uiElement), NA_UI_SLIDER, nativeId);
+}
+NA_HDEF void na_ClearSlider(NASlider* slider){
+  na_UnregisterUIElement(&(slider->uiElement));
+}
+
+
+
+NA_HDEF void na_InitTextBox(NATextBox* textBox, void* nativeId){
+  na_RegisterUIElement(&(textBox->uiElement), NA_UI_TEXTBOX, nativeId);
+}
+NA_HDEF void na_ClearTextBox(NATextBox* textBox){
+  na_UnregisterUIElement(&(textBox->uiElement));
+}
+
+
+
+NA_HDEF void na_InitTextField(NATextField* textField, void* nativeId){
+  na_RegisterUIElement(&(textField->uiElement), NA_UI_TEXTFIELD, nativeId);
+}
+NA_HDEF void na_ClearTextField(NATextField* textField){
+  na_UnregisterUIElement(&(textField->uiElement));
 }
 
 
@@ -126,99 +217,6 @@ NA_DEF NABool naIsWindowResizeable(NAWindow* window){
 
 NA_DEF NASpace* naGetWindowContentSpace(NAWindow* window){
   return window->contentSpace;
-}
-
-
-
-NA_HDEF void na_InitSpace(NASpace* space, void* nativeId){
-  na_RegisterUIElement(&(space->uiElement), NA_UI_SPACE, nativeId);
-}
-NA_HDEF void na_ClearSpace(NASpace* space){
-  na_UnregisterUIElement(&(space->uiElement));
-}
-NA_DEF NABool naGetSpaceAlternateBackground(NASpace* space){
-  return space->alternatebackground;
-}
-
-
-
-NA_HDEF void na_InitImageSpace(NAImageSpace* imageSpace, void* nativeId){
-  na_RegisterUIElement(&(imageSpace->uiElement), NA_UI_IMAGESPACE, nativeId);
-}
-NA_HDEF void na_ClearImageSpace(NAImageSpace* imageSpace){
-  na_UnregisterUIElement(&(imageSpace->uiElement));
-}
-
-
-
-NA_HDEF void na_InitOpenGLSpace(NAOpenGLSpace* openGLSpace, void* nativeId){
-  na_RegisterUIElement(&(openGLSpace->uiElement), NA_UI_OPENGLSPACE, nativeId);
-}
-NA_HDEF void na_ClearOpenGLSpace(NAOpenGLSpace* openGLSpace){
-  na_UnregisterUIElement(&(openGLSpace->uiElement));
-}
-
-
-
-NA_HDEF void na_InitButton(NAButton* button, void* nativeId){
-  na_RegisterUIElement(&(button->uiElement), NA_UI_BUTTON, nativeId);
-}
-NA_HDEF void na_ClearButton(NAButton* button){
-  na_UnregisterUIElement(&(button->uiElement));
-}
-
-
-
-NA_HDEF void na_InitRadio(NARadio* radio, void* nativeId){
-  na_RegisterUIElement(&(radio->uiElement), NA_UI_RADIO, nativeId);
-}
-NA_HDEF void na_ClearRadio(NARadio* radio){
-  na_UnregisterUIElement(&(radio->uiElement));
-}
-
-
-
-NA_HDEF void na_InitCheckBox(NACheckBox* checkBox, void* nativeId){
-  na_RegisterUIElement(&(checkBox->uiElement), NA_UI_CHECKBOX, nativeId);
-}
-NA_HDEF void na_ClearCheckBox(NACheckBox* checkBox){
-  na_UnregisterUIElement(&(checkBox->uiElement));
-}
-
-
-
-NA_HDEF void na_InitLabel(NALabel* label, void* nativeId){
-  na_RegisterUIElement(&(label->uiElement), NA_UI_LABEL, nativeId);
-}
-NA_HDEF void na_ClearLabel(NALabel* label){
-  na_UnregisterUIElement(&(label->uiElement));
-}
-
-
-
-NA_HDEF void na_InitTextField(NATextField* textField, void* nativeId){
-  na_RegisterUIElement(&(textField->uiElement), NA_UI_TEXTFIELD, nativeId);
-}
-NA_HDEF void na_ClearTextField(NATextField* textField){
-  na_UnregisterUIElement(&(textField->uiElement));
-}
-
-
-
-NA_HDEF void na_InitTextBox(NATextBox* textBox, void* nativeId){
-  na_RegisterUIElement(&(textBox->uiElement), NA_UI_TEXTBOX, nativeId);
-}
-NA_HDEF void na_ClearTextBox(NATextBox* textBox){
-  na_UnregisterUIElement(&(textBox->uiElement));
-}
-
-
-
-NA_HDEF void na_InitSlider(NASlider* slider, void* nativeId){
-  na_RegisterUIElement(&(slider->uiElement), NA_UI_SLIDER, nativeId);
-}
-NA_HDEF void na_ClearSlider(NASlider* slider){
-  na_UnregisterUIElement(&(slider->uiElement));
 }
 
 
@@ -338,20 +336,20 @@ NA_DEF void naReleaseUIElement(void* uiElement){
   switch(naGetUIElementType(element))
   {
   case NA_UI_APPLICATION: na_DestructApplication(uiElement); break;
-//  case NA_UI_SCREEN:      naDeleteScreen(uiElement);
-  case NA_UI_WINDOW:      na_DestructWindow(uiElement); break;
-  case NA_UI_SPACE:       na_DestructSpace(uiElement); break;
+  case NA_UI_BUTTON:      na_DestructButton(uiElement); break;
+  case NA_UI_CHECKBOX:    na_DestructCheckBox(uiElement); break;
   case NA_UI_IMAGESPACE:  na_DestructImageSpace(uiElement); break;
+  case NA_UI_LABEL:       na_DestructLabel(uiElement); break;
   #if NA_COMPILE_OPENGL == 1
     case NA_UI_OPENGLSPACE: na_DestructOpenGLSpace(uiElement); break;
   #endif
-  case NA_UI_BUTTON:      na_DestructButton(uiElement); break;
   case NA_UI_RADIO:       na_DestructRadio(uiElement); break;
-  case NA_UI_CHECKBOX:    na_DestructCheckBox(uiElement); break;
-  case NA_UI_LABEL:       na_DestructLabel(uiElement); break;
-  case NA_UI_TEXTFIELD:   na_DestructTextField(uiElement); break;
-  case NA_UI_TEXTBOX:     na_DestructTextBox(uiElement); break;
+//  case NA_UI_SCREEN:      naDeleteScreen(uiElement);
   case NA_UI_SLIDER:      na_DestructSlider(uiElement); break;
+  case NA_UI_SPACE:       na_DestructSpace(uiElement); break;
+  case NA_UI_TEXTBOX:     na_DestructTextBox(uiElement); break;
+  case NA_UI_TEXTFIELD:   na_DestructTextField(uiElement); break;
+  case NA_UI_WINDOW:      na_DestructWindow(uiElement); break;
   default:
     #ifndef NDEBUG
       naError("Invalid element type");

@@ -458,7 +458,17 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
 
   switch(element->elementType){
   case NA_UI_APPLICATION: rect = na_GetApplicationAbsoluteRect(); break;
+  case NA_UI_BUTTON:      rect = na_GetButtonAbsoluteInnerRect(element); break;
+  case NA_UI_CHECKBOX:    rect = na_GetCheckBoxAbsoluteInnerRect(element); break;
+  case NA_UI_IMAGESPACE:  rect = na_GetImageSpaceAbsoluteInnerRect(element); break;
+  case NA_UI_LABEL:       rect = na_GetLabelAbsoluteInnerRect(element); break;
+  case NA_UI_OPENGLSPACE: rect = na_GetOpenGLSpaceAbsoluteInnerRect(element); break;
+  case NA_UI_RADIO:       rect = na_GetRadioAbsoluteInnerRect(element); break;
   case NA_UI_SCREEN:      rect = na_GetScreenAbsoluteRect(element); break;
+  case NA_UI_SLIDER:      rect = na_GetSliderAbsoluteInnerRect(element); break;
+  case NA_UI_SPACE:       rect = na_GetSpaceAbsoluteInnerRect(element); break;
+  case NA_UI_TEXTBOX:     rect = na_GetTextBoxAbsoluteInnerRect(element); break;
+  case NA_UI_TEXTFIELD:   rect = na_GetTextFieldAbsoluteInnerRect(element); break;
   case NA_UI_WINDOW:
     if(includeborder){
       rect = na_GetWindowAbsoluteOuterRect(element);
@@ -466,16 +476,6 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
       rect = na_GetWindowAbsoluteInnerRect(element);
     }
     break;
-  case NA_UI_SPACE:       rect = na_GetSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_IMAGESPACE:  rect = na_GetImageSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_OPENGLSPACE: rect = na_GetOpenGLSpaceAbsoluteInnerRect(element); break;
-  case NA_UI_BUTTON:      rect = na_GetButtonAbsoluteInnerRect(element); break;
-  case NA_UI_RADIO:       rect = na_GetRadioAbsoluteInnerRect(element); break;
-  case NA_UI_CHECKBOX:    rect = na_GetCheckBoxAbsoluteInnerRect(element); break;
-  case NA_UI_LABEL:       rect = na_GetLabelAbsoluteInnerRect(element); break;
-  case NA_UI_TEXTFIELD:   rect = na_GetTextFieldAbsoluteInnerRect(element); break;
-  case NA_UI_TEXTBOX:     rect = na_GetTextBoxAbsoluteInnerRect(element); break;
-  case NA_UI_SLIDER:      rect = na_GetSliderAbsoluteInnerRect(element); break;
   }
 
   // Now, we find the appropriate relative element.
@@ -484,18 +484,18 @@ NA_DEF NARect naGetUIElementRect(void* uiElement, void* relativeuiElement, NABoo
   if(relelement){
     switch(relelement->elementType){
     case NA_UI_APPLICATION: relrect = na_GetApplicationAbsoluteRect(); break;
-    case NA_UI_SCREEN:      relrect = na_GetScreenAbsoluteRect(relelement); break;
-    case NA_UI_WINDOW:      relrect = na_GetWindowAbsoluteInnerRect(relelement); break;
-    case NA_UI_SPACE:       relrect = na_GetSpaceAbsoluteInnerRect(relelement); break;
-    case NA_UI_IMAGESPACE:  relrect = na_GetImageSpaceAbsoluteInnerRect(relelement); break;
-    case NA_UI_OPENGLSPACE: relrect = na_GetOpenGLSpaceAbsoluteInnerRect(relelement); break;
     case NA_UI_BUTTON:      relrect = na_GetButtonAbsoluteInnerRect(relelement); break;
-    case NA_UI_RADIO:       relrect = na_GetRadioAbsoluteInnerRect(relelement); break;
     case NA_UI_CHECKBOX:    relrect = na_GetCheckBoxAbsoluteInnerRect(relelement); break;
+    case NA_UI_IMAGESPACE:  relrect = na_GetImageSpaceAbsoluteInnerRect(relelement); break;
     case NA_UI_LABEL:       relrect = na_GetLabelAbsoluteInnerRect(relelement); break;
-    case NA_UI_TEXTFIELD:   relrect = na_GetTextFieldAbsoluteInnerRect(relelement); break;
-    case NA_UI_TEXTBOX:     relrect = na_GetTextBoxAbsoluteInnerRect(relelement); break;
+    case NA_UI_OPENGLSPACE: relrect = na_GetOpenGLSpaceAbsoluteInnerRect(relelement); break;
+    case NA_UI_RADIO:       relrect = na_GetRadioAbsoluteInnerRect(relelement); break;
+    case NA_UI_SCREEN:      relrect = na_GetScreenAbsoluteRect(relelement); break;
     case NA_UI_SLIDER:      relrect = na_GetSliderAbsoluteInnerRect(relelement); break;
+    case NA_UI_SPACE:       relrect = na_GetSpaceAbsoluteInnerRect(relelement); break;
+    case NA_UI_TEXTBOX:     relrect = na_GetTextBoxAbsoluteInnerRect(relelement); break;
+    case NA_UI_TEXTFIELD:   relrect = na_GetTextFieldAbsoluteInnerRect(relelement); break;
+    case NA_UI_WINDOW:      relrect = na_GetWindowAbsoluteInnerRect(relelement); break;
     }
 
     rect.pos.x = rect.pos.x - relrect.pos.x;

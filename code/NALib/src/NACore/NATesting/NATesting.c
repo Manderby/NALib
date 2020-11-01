@@ -67,7 +67,7 @@ NATesting* na_Testing = NA_NULL;
 
 NA_HDEF NAString* na_NewTestApplicationPath(void){
   NAString* exePath;
-  #if NA_OS == NA_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     TCHAR modulePath[MAX_PATH];
     GetModuleFileName(NULL, modulePath, MAX_PATH);
     exePath = naNewStringFromSystemString(modulePath);
@@ -108,7 +108,7 @@ NA_HDEF void na_FailSafeCrasher()
   NAInt exeCount = 0;
   NABool wantsSuccessExit = NA_FALSE;
 
-  #if NA_OS == NA_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     // Crash with SUCCESS if there are more than a specific number of processes
     // of this very one running. This detects an accidental recursive bomb.
     NAString* thisExeName = na_NewTestApplicationName();
@@ -146,7 +146,7 @@ NA_HDEF void na_FailSafeCrasher()
 
     naDelete(thisExeName);
 
-  #else
+  #elif NA_OS == NA_OS_MAC_OS_X
   
     int err;
     size_t procCount;
@@ -336,7 +336,7 @@ NA_DEF NABool naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark
   NAString* runPath = naNewStringWithBasenameOfPath(modulePath);
   NAString* crashLogPath = naNewStringWithFormat("%s_latestCrash.log", naGetStringUTF8Pointer(runPath));
 
-  #if NA_OS == NA_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     SECURITY_ATTRIBUTES securityAttributes;
       securityAttributes.nLength = sizeof(securityAttributes);
       securityAttributes.lpSecurityDescriptor = NULL;
@@ -391,7 +391,7 @@ NA_DEF void naStopTesting(){
   naForeachListMutable(&(na_Testing->testRestriction), (NAMutator)naDelete);
   naClearList(&(na_Testing->testRestriction));
 
-  #if NA_OS == NA_WINDOWS
+  #if NA_OS == NA_OS_WINDOWS
     CloseHandle(na_Testing->logFile);
   #elif NA_OS == NA_OS_MAC_OS_X
     naReleaseFile(na_Testing->logFile);
@@ -522,6 +522,7 @@ NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
 
     NAString* modulePath = na_NewTestApplicationPath();
     NAString* testPath = na_NewTestPath(testData, NA_TRUE);
+    
     // DO NOT TURN -C OPTION OFF!!!
     NAString* commandPath = naNewStringWithFormat("%s -C %s", naGetStringUTF8Pointer(modulePath), naGetStringUTF8Pointer(testPath));
     TCHAR* systemCommandPath = naAllocSystemStringWithUTF8String(naGetStringUTF8Pointer(commandPath));
@@ -563,8 +564,9 @@ NA_HDEF void na_ExecuteCrashProcess(const char* expr, int lineNum){
     naDelete(modulePath);
     naDelete(testPath);
     naDelete(commandPath);
-  #else
   
+  #elif NA_OS == NA_OS_MAC_OS_X
+
     int oldStdOut = dup(1);
     close(1); //Close stdout
     dup(na_Testing->logFile->desc);
