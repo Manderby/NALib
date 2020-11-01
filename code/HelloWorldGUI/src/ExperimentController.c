@@ -43,14 +43,14 @@ NABool optionButtonPressed(NAReaction reaction){
 }
 
 ExperimentController* createExperimentController(){
-  double windowWidth = 700;
-  double windowHeight = 1000;
+  double windowWidth = 500;
+  double windowHeight = 600;
 
   ExperimentController* con = naAlloc(ExperimentController);
 
   con->experimentWindow = naNewWindow(
     "Experiment",
-    naMakeRectS(250, 350, windowWidth, windowHeight),
+    naMakeRectS(150, 150, windowWidth, windowHeight),
     NA_TRUE,
     0);
 

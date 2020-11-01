@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		9024BF6624732B3F00258690 /* libNALib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9024BDED24732B2000258690 /* libNALib.a */; };
+		9058BB37254F07F200B4960D /* ExperimentController.c in Sources */ = {isa = PBXBuildFile; fileRef = 9058BB36254F07F200B4960D /* ExperimentController.c */; };
 		90AF1134248DA5D300D223EB /* NAMathConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 90AF106B248DA5D300D223EB /* NAMathConstants.h */; };
 		90AF1135248DA5D300D223EB /* NAMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 90AF106C248DA5D300D223EB /* NAMemory.h */; };
 		90AF1136248DA5D300D223EB /* NAComplex.h in Headers */ = {isa = PBXBuildFile; fileRef = 90AF106D248DA5D300D223EB /* NAComplex.h */; };
@@ -205,6 +206,8 @@
 
 /* Begin PBXFileReference section */
 		9024BDED24732B2000258690 /* libNALib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNALib.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		9058BB35254F07F100B4960D /* HelloWorldGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelloWorldGUI.h; sourceTree = "<group>"; };
+		9058BB36254F07F200B4960D /* ExperimentController.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ExperimentController.c; sourceTree = "<group>"; };
 		9061402B247163A100498AF3 /* HelloWorldGUI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = HelloWorldGUI; sourceTree = BUILT_PRODUCTS_DIR; };
 		90AF1069248DA5D300D223EB /* NALib.vcxproj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = NALib.vcxproj; sourceTree = "<group>"; };
 		90AF106B248DA5D300D223EB /* NAMathConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NAMathConstants.h; sourceTree = "<group>"; };
@@ -827,6 +830,8 @@
 		90AF11ED248DA5E200D223EB /* src */ = {
 			isa = PBXGroup;
 			children = (
+				9058BB36254F07F200B4960D /* ExperimentController.c */,
+				9058BB35254F07F100B4960D /* HelloWorldGUI.h */,
 				90AF11EE248DA5E200D223EB /* translationIDs.h */,
 				90AF11EF248DA5E200D223EB /* main.c */,
 			);
@@ -1107,6 +1112,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9058BB37254F07F200B4960D /* ExperimentController.c in Sources */,
 				90AF11F0248DA5E200D223EB /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1238,6 +1244,7 @@
 					"NA_COMPILE_GUI=1",
 					"NA_COMPILE_OPENGL=1",
 				);
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGL;
 			};
 			name = Debug;
 		};
@@ -1248,6 +1255,7 @@
 					"NA_COMPILE_GUI=1",
 					"NA_COMPILE_OPENGL=1",
 				);
+				VALIDATE_WORKSPACE_SKIPPED_SDK_FRAMEWORKS = OpenGL;
 			};
 			name = Release;
 		};

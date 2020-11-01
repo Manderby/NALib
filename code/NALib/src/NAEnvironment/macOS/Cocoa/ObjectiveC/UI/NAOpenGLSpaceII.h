@@ -83,6 +83,10 @@ NA_UNUSED(event);
 //    keyCode = NA_KEYCODE_LEFT_COMMAND;
     na_DispatchUIElementCommand((NA_UIElement*)openGLSpace, (command?NA_UI_COMMAND_KEYDOWN:NA_UI_COMMAND_KEYUP));
   }
+  @synthesize tag = _tag;
+  - (void)setTag:(NSInteger)newTag{
+    _tag = newTag;
+  }
   @end
 
 

@@ -822,13 +822,14 @@ NA_HDEF void na_StoreBenchmarkResult(char data){
 
 #else
 
-NA_DEF void naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, NABool printAllGroups, int argc, const char** argv){
+NA_DEF NABool naStartTesting(const NAUTF8Char* rootName, double timePerBenchmark, NABool printAllGroups, int argc, const char** argv){
   NA_UNUSED(rootName);
   NA_UNUSED(timePerBenchmark);
   NA_UNUSED(printAllGroups);
   #ifndef NDEBUG
     naError("Testing is not enabled. Go look for NA_TESTING_ENABLED");
   #endif
+  return NA_FALSE;
 }
 
 
