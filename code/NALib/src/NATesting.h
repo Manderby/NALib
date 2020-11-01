@@ -9,7 +9,11 @@
 // case. Usual values are around .01 seconds. Lower values are quicker but
 // less sound. If printAllGroups is false, only the groups which have
 // errors will be printed. A final printout will be made upon stopping.
-NA_API void naStartTesting(
+//
+// Returns true if the testing did start sucessfully, false otherwise.
+// A common reason for an unsuccessful start is to forget the rootName in
+// the command line arguments.
+NA_API NABool naStartTesting(
   const NAUTF8Char* rootName,
   double timePerBenchmark,
   NABool printAllGroups,

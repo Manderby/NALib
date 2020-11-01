@@ -32,7 +32,8 @@ NA_HAPI void   na_SetTestCaseRunning(NABool running);
 NA_HAPI void   na_IncErrorCount(void);
 NA_HAPI void   na_ResetErrorCount(void);
 NA_HAPI int    na_GetErrorCount(void);
-NA_HAPI NABool na_ShallExecuteGroup(const char* name, NABool explicit);
+NA_HDEF NABool na_LetCrashTestCrash(void);
+NA_HAPI NABool na_ShallExecuteGroup(const char* name);
 
 NA_HAPI uint32 na_getBenchmarkIn(void);
 NA_HAPI double na_BenchmarkTime(void);
@@ -62,7 +63,7 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
 
 
 #define naTest(expr)\
-  if(na_ShallExecuteGroup(#expr, NA_FALSE)){\
+  if(na_ShallExecuteGroup(#expr)){\
     NA_START_TEST_CASE\
     NABool success = expr;\
     NA_STOP_TEST_CASE\
@@ -72,7 +73,7 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
 // Testing for errors and crashes is only useful when NDEBUG is undefined.
 #ifndef NDEBUG
 #define naTestError(expr)\
-    if(na_ShallExecuteGroup(#expr, NA_FALSE)){\
+    if(na_ShallExecuteGroup(#expr)){\
       NA_START_TEST_CASE\
       { expr; }\
       NA_STOP_TEST_CASE\
@@ -80,13 +81,15 @@ NA_HAPI void   na_StoreBenchmarkResult(char);
     }
 
 #define naTestCrash(expr)\
-    if(na_ShallExecuteGroup(#expr, NA_TRUE)){\
-      NA_START_TEST_CASE\
-      { expr; }\
-      NA_STOP_TEST_CASE\
-      na_AddTestCrash(#expr, __LINE__);\
-    }else{\
-      na_ExecuteCrashProcess(#expr, __LINE__);\
+    if(na_ShallExecuteGroup(#expr)){\
+      if(na_LetCrashTestCrash()){\
+        NA_START_TEST_CASE\
+        { expr; }\
+        NA_STOP_TEST_CASE\
+        na_AddTestCrash(#expr, __LINE__);\
+      }else{\
+        na_ExecuteCrashProcess(#expr, __LINE__);\
+      }\
     }
 #else
   #define naTestError(expr)
