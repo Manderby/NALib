@@ -24,7 +24,7 @@ typedef struct NABufferIterator NABufferIterator;
 // An NABuffer is capable of storing any kind of linear data, potentially
 // broken into multiple parts. It uses sparse memory, meaning as long as a
 // part is not explicitely needed, no memory at that position is allocated.
-// This means for example that you can open a file which has a total filesize
+// This means for example that you can open a file which has a total fileSize
 // of 1GB but you only access a few bytes resulting in only needing a few
 // bytes in memory. Even if these bytes are scattered around multiple
 // positions in the file, only those parts of the file are read which
@@ -112,7 +112,7 @@ NA_API NABuffer* naNewBufferCopy(const NABuffer* srcBuffer,
 NA_API NABuffer* naNewBufferWithSameSource(  NABuffer* srcBuffer);
 
 // Creates a buffer inputting contents from a file. Its origin is always at
-// zero and its range is fixed to the filesize.
+// zero and its range is fixed to the fileSize.
 NA_API NABuffer* naNewBufferWithInputPath(const char* filePath);
 
 // Creates a buffer accessing already existing const or mutable data. If the

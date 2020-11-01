@@ -351,8 +351,8 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
   #if NA_OS == NA_OS_WINDOWS
     NAWindowsMutex* windowsMutex = (NAWindowsMutex*)mutex;
     #if (NA_WINDOWS_MUTEX_USE_CRITICAL_SECTION == 1)
-      BOOL retvalue = TryEnterCriticalSection(&(windowsMutex->mutex));
-      if(retvalue == 0){
+      BOOL retValue = TryEnterCriticalSection(&(windowsMutex->mutex));
+      if(retValue == 0){
         return NA_FALSE;
       }else{
         if(windowsMutex->islockedbythisthread){
@@ -364,8 +364,8 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
         }
       }
     #else
-      DWORD retvalue = WaitForSingleObject(windowsMutex->mutex, 0);
-      if(retvalue == WAIT_OBJECT_0){
+      DWORD retValue = WaitForSingleObject(windowsMutex->mutex, 0);
+      if(retValue == WAIT_OBJECT_0){
         return NA_FALSE;
       }else{
         // somehow, this does not work yet. use Critical section.
@@ -381,16 +381,16 @@ NA_IDEF NABool naTryMutex(NAMutex mutex){
   #else
     #ifndef NDEBUG
       NAMacintoshMutex* macintoshmutex = (NAMacintoshMutex*)mutex;
-      long retvalue = dispatch_semaphore_wait(macintoshmutex->mutex, DISPATCH_TIME_NOW);
-      if(retvalue){
+      long retValue = dispatch_semaphore_wait(macintoshmutex->mutex, DISPATCH_TIME_NOW);
+      if(retValue){
         return NA_FALSE;
       }else{
         return NA_TRUE;
         macintoshmutex->seemslocked = NA_TRUE;
       }
     #else
-      long retvalue = dispatch_semaphore_wait(NA_COCOA_PTR_C_TO_OBJC(mutex), DISPATCH_TIME_NOW);
-      return (retvalue ? NA_FALSE : NA_TRUE);
+      long retValue = dispatch_semaphore_wait(NA_COCOA_PTR_C_TO_OBJC(mutex), DISPATCH_TIME_NOW);
+      return (retValue ? NA_FALSE : NA_TRUE);
     #endif
   #endif
 }

@@ -231,7 +231,7 @@ NA_DEF void naSetTranslatorLanguagePreference(NALanguageCode3 code){
 
 
 NA_DEF const NAUTF8Char* naTranslate(NAInt group, NAInt id){
-  const NAUTF8Char* retvalue = "String not found";
+  const NAUTF8Char* retValue = "String not found";
   NATreeIterator groupiter;
   NABool groupfound;
   
@@ -267,7 +267,7 @@ NA_DEF const NAUTF8Char* naTranslate(NAInt group, NAInt id){
         NATreeIterator stringiter = naMakeTreeModifier(languagepack);
         found = naLocateTreeKey(&stringiter, &id, NA_FALSE);
         if(found){
-          retvalue = naGetTreeCurLeafConst(&stringiter);
+          retValue = naGetTreeCurLeafConst(&stringiter);
         }
         naClearTreeIterator(&stringiter);
       }
@@ -277,7 +277,7 @@ NA_DEF const NAUTF8Char* naTranslate(NAInt group, NAInt id){
   }
   naClearTreeIterator(&groupiter);
 
-  return retvalue;
+  return retValue;
 }
 
 

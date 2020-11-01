@@ -80,7 +80,7 @@ NA_DEF double naInitPreferencesDouble(const char* key, double value){
   }
   return (double)(naIsNaN(curValue) ? 0. : curValue);
 }
-NA_DEF NAString* naInitPreferencesString(const char* key, NAString* value){
+NA_DEF NAString* naInitPreferencesString(const char* key, const NAString* value){
   NSUserDefaults* userDefaults = na_GetNativePreferences();
   NSString* nsKey = [NSString stringWithUTF8String:key];
   if([userDefaults objectForKey:nsKey] == nil){
@@ -132,7 +132,7 @@ NA_DEF void naSetPreferencesDouble(const char* key, double value){
   nsKey = [NSString stringWithUTF8String:key];
   [userDefaults setDouble:((value == 0.) ? NA_NAN : value) forKey:nsKey];
 }
-NA_DEF void naSetPreferencesString(const char* key, NAString* value){
+NA_DEF void naSetPreferencesString(const char* key, const NAString* value){
   NSUserDefaults* userDefaults;
   NSString* nsKey;
   NSString* valueObj;

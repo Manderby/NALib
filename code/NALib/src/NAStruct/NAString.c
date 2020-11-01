@@ -768,76 +768,76 @@ NA_DEF NABool naEqualStringToUTF8CString(const NAString* string1, const NAUTF8Ch
 
 
 NA_DEF int8 naParseStringi8(const NAString* string){
-  int8 retvalue;
+  int8 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
-  retvalue = naParseBufferi8(&iter, NA_FALSE);
+  retValue = naParseBufferi8(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
-  return retvalue;
+  return retValue;
 }
 NA_DEF int16 naParseStringi16(const NAString* string){
-  int16 retvalue;
+  int16 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
-  retvalue = naParseBufferi16(&iter, NA_FALSE);
+  retValue = naParseBufferi16(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
-  return retvalue;
+  return retValue;
 }
 NA_DEF int32 naParseStringi32(const NAString* string){
-  int32 retvalue;
+  int32 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
-  retvalue = naParseBufferi32(&iter, NA_FALSE);
+  retValue = naParseBufferi32(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
-  return retvalue;
+  return retValue;
 }
 NA_DEF NAi64 naParseStringi64(const NAString* string){
-  NAi64 retvalue;
+  NAi64 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
-  retvalue = naParseBufferi64(&iter, NA_FALSE);
+  retValue = naParseBufferi64(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
-  return retvalue;
+  return retValue;
 }
 
 
 NA_DEF uint8 naParseStringu8(const NAString* string){
-  uint8 retvalue;
+  uint8 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
-  retvalue = naParseBufferu8(&iter, NA_FALSE);
+  retValue = naParseBufferu8(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
-  return retvalue;
+  return retValue;
 }
 NA_DEF uint16 naParseStringu16(const NAString* string){
-  uint16 retvalue;
+  uint16 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
-  retvalue = naParseBufferu16(&iter, NA_FALSE);
+  retValue = naParseBufferu16(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
-  return retvalue;
+  return retValue;
 }
 NA_DEF uint32 naParseStringu32(const NAString* string){
-  uint32 retvalue;
+  uint32 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
-  retvalue = naParseBufferu32(&iter, NA_FALSE);
+  retValue = naParseBufferu32(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
-  return retvalue;
+  return retValue;
 }
 NA_DEF NAu64 naParseStringu64(const NAString* string){
-  NAu64 retvalue;
+  NAu64 retValue;
   NABufferIterator iter = naMakeBufferAccessor(string->buffer);
   naLocateBufferFromStart(&iter, 0);
-  retvalue = naParseBufferu64(&iter, NA_FALSE);
+  retValue = naParseBufferu64(&iter, NA_FALSE);
   naClearBufferIterator(&iter);
-  return retvalue;
+  return retValue;
 }
 
 NA_DEF float naParseStringFloat(const NAString* string){
   NAUTF8Char* buf;
   NABufferIterator bufiter;
-  float retvalue;
+  float retValue;
   NAInt len = naGetStringBytesize(string);
   if(len > 20){
     len = 20;
@@ -850,14 +850,14 @@ NA_DEF float naParseStringFloat(const NAString* string){
   naLocateBufferFromStart(&bufiter, 0);
   naReadBufferBytes(&bufiter, buf, len);
   naClearBufferIterator(&bufiter);
-  retvalue = (float)atof(buf);
+  retValue = (float)atof(buf);
   naFree(buf);
-  return retvalue;
+  return retValue;
 }
 NA_DEF double naParseStringDouble(const NAString* string){
   NAUTF8Char* buf;
   NABufferIterator bufiter;
-  double retvalue;
+  double retValue;
   NAInt len = naGetStringBytesize(string);
   if(len > 20){
     len = 20;
@@ -870,9 +870,9 @@ NA_DEF double naParseStringDouble(const NAString* string){
   naLocateBufferFromStart(&bufiter, 0);
   naReadBufferBytes(&bufiter, buf, len);
   naClearBufferIterator(&bufiter);
-  retvalue = atof(buf);
+  retValue = atof(buf);
   naFree(buf);
-  return retvalue;
+  return retValue;
 }
 
 

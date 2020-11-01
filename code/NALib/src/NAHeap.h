@@ -87,16 +87,16 @@ typedef struct NAHeap NAHeap;
 //
 // Beware in multithreaded environments that growing and shrinking requires
 // memory allocation and deallocation.
-NA_API NAHeap* naInitHeap   (NAHeap* heap, NAInt count, NAInt flags);
+NA_API NAHeap* naInitHeap(NAHeap* heap, NAInt count, NAInt flags);
 
 // Clears the given heap.
-NA_IAPI void   naClearHeap    (NAHeap* heap);
+NA_IAPI void naClearHeap(NAHeap* heap);
 
 // Empties the heap without deallocating the memory
-NA_IAPI void   naEmptyHeap    (NAHeap* heap);
+NA_IAPI void naEmptyHeap(NAHeap* heap);
 
 // Returns the number of elements stored
-NA_IAPI NAInt naGetHeapCount (const NAHeap* heap);
+NA_IAPI NAInt naGetHeapCount(const NAHeap* heap);
 
 // Returns the maximum number of elements that can be stored. Result is
 // negative when a negative count was given to naInitHeap.
@@ -107,14 +107,16 @@ NA_IAPI NAInt  naGetHeapMaxCount(const NAHeap* heap);
 NA_API void naShrinkHeapIfNecessary(NAHeap* heap);
 
 // Adds a new element to the heap. See text above for more information.
-NA_IAPI void naInsertHeapElementConst(    NAHeap* heap,
-                                      const void* ptr,
-                                      const void* key,
-                                           NAInt* backPointer);
-NA_IAPI void naInsertHeapElementMutable(  NAHeap* heap,
-                                            void* ptr,
-                                      const void* key,
-                                           NAInt* backPointer);
+NA_IAPI void naInsertHeapElementConst(
+  NAHeap*     heap,
+  const void* ptr,
+  const void* key,
+  NAInt*      backPointer);
+NA_IAPI void naInsertHeapElementMutable(
+  NAHeap*     heap,
+  void*       ptr,
+  const void* key,
+  NAInt*      backPointer);
 
 // Returns the root element of the heap.
 // The Remove-Function will additionally remove that element such that the

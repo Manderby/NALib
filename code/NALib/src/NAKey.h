@@ -114,7 +114,9 @@ NA_IAPI NABool NA_KEY_OP(Lower,        NADateTime)(const void* a, const void* b)
 NA_IAPI NABool NA_KEY_OP(LowerEqual,   NADateTime)(const void* a, const void* b);
 
 
+
 #include "NACore/NAKeyII.h"
+
 
 
 #ifdef __cplusplus

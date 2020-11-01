@@ -40,7 +40,7 @@ typedef enum{
 // and set them in naCreateTreeConfiguration.
 //
 // NAKeyIndexGetter          Returns the childindex where key would be stored
-//                           on a node with the given basekey. The data can
+//                           on a node with the given baseKey. The data can
 //                           be any data required by the datastructure
 // NAKeyEqualComparer        Returns true if the two keys map to the same equal key.
 // NAKeyAssigner             Assigns the src key to dst.
@@ -52,15 +52,15 @@ typedef enum{
 // NATreeLeafInserter        Expects the child ad childIndex of grandparent to
 //                           be a leaf which will be split to a node containing
 //                           both that leaf and the new sibling.
-typedef NAInt           (*NAKeyIndexGetter)(const void* basekey, const void* testkey, const void* data);
-typedef NAInt           (*NAChildIndexGetter)(NATreeNode* parentnode, const void* childkey);
+typedef NAInt           (*NAKeyIndexGetter)(const void* baseKey, const void* testKey, const void* data);
+typedef NAInt           (*NAChildIndexGetter)(NATreeNode* parentNode, const void* childKey);
 typedef NABool          (*NAKeyEqualComparer)(const void* key1, const void* key2);
 typedef NABool          (*NAKeyLowerComparer)(const void* key1, const void* key2);
 typedef NABool          (*NAKeyLowerEqualComparer)(const void* key1, const void* key2);
 typedef void            (*NAKeyAssigner)(void* dst, const void* src);
 typedef void            (*NAKeyAdder)(void* dst, const void* src1, const void* src2);
 typedef NABool          (*NAKeyTester)(const void* lowerLimit, const void* upperLimit, const void* key);
-typedef NABool          (*NAKeyNodeContainTester)(NATreeNode* parentnode, const void* key);
+typedef NABool          (*NAKeyNodeContainTester)(NATreeNode* parentNode, const void* key);
 typedef NABool          (*NAKeyLeafContainTester)(NATreeLeaf* leaf, const void* key);
 
 typedef void            (*NA_TreeNodeDestructor)(NATreeNode* node);

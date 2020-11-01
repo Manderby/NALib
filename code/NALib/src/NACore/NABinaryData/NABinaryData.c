@@ -146,22 +146,22 @@ NA_DEF void naAccumulateChecksum(NAChecksum* checksum, const NAByte* buf, NAInt 
 
 
 NA_DEF uint32 naGetChecksumResult(NAChecksum* checksum){
-  uint32 retvalue;
+  uint32 retValue;
   switch(checksum->type){
   case NA_CHECKSUM_TYPE_CRC_PNG:
-    retvalue = ((NAChecksumCRC*)(checksum->data))->value ^ 0xffffffff;
+    retValue = ((NAChecksumCRC*)(checksum->data))->value ^ 0xffffffff;
     break;
   case NA_CHECKSUM_TYPE_ADLER_32:
-    retvalue = (((NAChecksumAdler*)(checksum->data))->s2 << 16) + ((NAChecksumAdler*)(checksum->data))->s1;
+    retValue = (((NAChecksumAdler*)(checksum->data))->s2 << 16) + ((NAChecksumAdler*)(checksum->data))->s1;
     break;
   default:
     #ifndef NDEBUG
       naError("Checksum type invalid");
     #endif
-    retvalue = 0;
+    retValue = 0;
     break;
   }
-  return retvalue;
+  return retValue;
 }
 
 

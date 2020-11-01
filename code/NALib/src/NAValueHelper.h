@@ -23,10 +23,12 @@
 NA_IAPI NABool naGetFlag(int flags, int flag);
 NA_IAPI NABool naGetFlagi(NAInt flags, NAInt flag);
 NA_IAPI NABool naGetFlagu(NAUInt flags, NAUInt flag);
+
 // Sets the given flag in the bit mask according to the boolean parameter set.
 NA_IAPI void   naSetFlag(int* flags, int flag, NABool set);
 NA_IAPI void   naSetFlagi(NAInt* flags, NAInt flag, NABool set);
 NA_IAPI void   naSetFlagu(NAUInt* flags, NAUInt flag, NABool set);
+
 // Toggles the specified flag in the bit mask and returns the resulting boolean
 // value of that flag.
 NA_IAPI NABool naToggleFlag(int* flags, int flag);
@@ -114,7 +116,6 @@ NA_IAPI NABool naIsLengthValueUseful  (double a);
 NA_IAPI NABool naIsLengthValueUsefulf (float  a);
 NA_IAPI NABool naIsLengthValueUsefuli (NAInt  a);
 NA_IAPI NABool naIsLengthValueUsefulu (NAUInt a);
-
 
 
 

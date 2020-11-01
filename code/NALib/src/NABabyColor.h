@@ -61,12 +61,12 @@ NA_IAPI float naUnlinearizeColorValue(float value);
 // When premultiplied is set to NA_TRUE, the uint8 variant is assumed to be
 // premultiplied with the alpha values.
 NA_API void naFillu8WithBabyColor(
-  uint8* outColor,
+  uint8*            outColor,
   const NABabyColor inColor,
   NAColorBufferType bufferType);
 NA_API void naFillBabyColorWithu8(
-  NABabyColor outColor,
-  const uint8* inColor,
+  NABabyColor       outColor,
+  const uint8*      inColor,
   NAColorBufferType bufferType);
 
 

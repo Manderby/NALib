@@ -34,7 +34,7 @@ typedef struct NAFile NAFile;
 // everything to one definition.
 //
 // New types and macros introduced:
-// NAFilesize:          The file size integer. Guaranteed to be signed. May be
+// NAFileSize:          The file size integer. Guaranteed to be signed. May be
 //                      32 or 64 bits depending on system compiled for. Note
 //                      that it may differ from NAInt which can be 32 or 64
 //                      bits too depending on the system.
@@ -64,11 +64,11 @@ typedef struct NAFile NAFile;
   #include <share.h>
   #include <sys/stat.h>
   #if NA_ADDRESS_BITS == 64
-    typedef __int64 NAFilesize; // Is signed (Important for negative offsets)
+    typedef __int64 NAFileSize; // Is signed (Important for negative offsets)
     #define NA_FILESIZE_BITS 64
     #define NA_FILESIZE_MAX NA_MAX_i64
   #elif NA_ADDRESS_BITS == 32
-    typedef long NAFilesize;    // Is signed (Important for negative offsets)
+    typedef long NAFileSize;    // Is signed (Important for negative offsets)
   #define NA_FILESIZE_BITS 32
   #define NA_FILESIZE_MAX NA_MAX_i32
 #endif
@@ -82,7 +82,7 @@ typedef struct NAFile NAFile;
   #include <unistd.h>
   #include <dirent.h>
   #include <copyfile.h>
-  typedef off_t NAFilesize;     // Is signed (Important for negative offsets)
+  typedef off_t NAFileSize;     // Is signed (Important for negative offsets)
   #define NA_FILESIZE_BITS 64
   #define NA_FILESIZE_MAX NA_MAX_i64
   typedef int NAFileMode;
@@ -99,12 +99,12 @@ typedef struct NAFile NAFile;
 // on the system are mapped to NALib types. All other types are corresponding
 // to the standards.
 
-NA_IAPI NAFilesize  naLseek   (int fd, NAFilesize byteOffset, int originType);
-NA_IAPI NAFilesize  naTell(int fd);
+NA_IAPI NAFileSize  naLseek   (int fd, NAFileSize byteOffset, int originType);
+NA_IAPI NAFileSize  naTell(int fd);
 NA_IAPI int         naOpen    (const char* path, int flags, int mode);
 NA_IAPI int         naClose   (int fd);
-NA_IAPI NAFilesize  naRead    (int fd, void* buf, NAFilesize byteSize);
-NA_IAPI NAFilesize  naWrite   (int fd, const void* buf, NAFilesize byteSize);
+NA_IAPI NAFileSize  naRead    (int fd, void* buf, NAFileSize byteSize);
+NA_IAPI NAFileSize  naWrite   (int fd, const void* buf, NAFileSize byteSize);
 NA_IAPI int         naMkDir   (const char* path, int mode);
 NA_IAPI int         naChDir   (const char* path);
 NA_IAPI NABool      naExists  (const char* path);
@@ -171,15 +171,15 @@ NA_IAPI NAFile* naCreateFileWritingStderr(void);
 // naClose(0), naClose(1) or naClose(2) for that.
 NA_IAPI void    naReleaseFile(NAFile* file);
 
-// Computes the filesize (from first to last byte).
-NA_IAPI NAFilesize naComputeFileBytesize(const NAFile* file);
+// Computes the fileSize (from first to last byte).
+NA_IAPI NAFileSize naComputeFileBytesize(const NAFile* file);
 
 // Tests if a file has been opened.
 NA_IAPI NABool naIsFileOpen(const NAFile* file);
 
 // Re-adjusts the internal file pointer to the given offset.
-NA_IAPI void naSeekFileAbsolute(NAFile* file, NAFilesize byteOffset);
-NA_IAPI void naSeekFileRelative(NAFile* file, NAFilesize byteOffset);
+NA_IAPI void naSeekFileAbsolute(NAFile* file, NAFileSize byteOffset);
+NA_IAPI void naSeekFileRelative(NAFile* file, NAFileSize byteOffset);
 
 // Reads the given number of bytes and stores it without further manipulation
 // in buf. The buffer must be big enough, no overflow check is made. This is
@@ -188,9 +188,9 @@ NA_IAPI void naSeekFileRelative(NAFile* file, NAFilesize byteOffset);
 // files or with any kind of buffers.
 //
 // Returns the number of bytes read.
-NA_IAPI NAFilesize naReadFileBytes( NAFile* file,
+NA_IAPI NAFileSize naReadFileBytes( NAFile* file,
                                       void* buf,
-                                 NAFilesize byteSize);
+                                 NAFileSize byteSize);
 
 // Writes the given number of bytes from ptr to the file without further
 // manipulation. The buffer must be big enough, no overflow check is made.
@@ -199,9 +199,9 @@ NA_IAPI NAFilesize naReadFileBytes( NAFile* file,
 // writing files with any kind of buffers.
 //
 // Returns the number of bytes written.
-NA_IAPI NAFilesize naWriteFileBytes(  NAFile* file,
+NA_IAPI NAFileSize naWriteFileBytes(  NAFile* file,
                                   const void* ptr,
-                                   NAFilesize byteSize);
+                                   NAFileSize byteSize);
 
 
 // //////////////////////////

@@ -20,11 +20,11 @@ NA_DEF NAString* naNewStringWithCurWorkingDirectory(){
 NA_DEF NABool naIsDir(const char* path){
   #if NA_OS == NA_OS_WINDOWS
     TCHAR* sysstring;
-    NABool retvalue;
+    NABool retValue;
     sysstring = naAllocSystemStringWithUTF8String(path);
-    retvalue = (GetFileAttributes(sysstring)  & FILE_ATTRIBUTE_DIRECTORY) ? NA_TRUE : NA_FALSE;
+    retValue = (GetFileAttributes(sysstring)  & FILE_ATTRIBUTE_DIRECTORY) ? NA_TRUE : NA_FALSE;
     free(sysstring);
-    return retvalue;
+    return retValue;
   #elif NA_OS == NA_OS_MAC_OS_X
     struct stat stat_struct;
     stat(path, &stat_struct);
@@ -36,11 +36,11 @@ NA_DEF NABool naIsDir(const char* path){
 NA_DEF NABool naIsHidden(const char* path){
   #if NA_OS == NA_OS_WINDOWS
     TCHAR* sysstring;
-    NABool retvalue;
+    NABool retValue;
     sysstring = naAllocSystemStringWithUTF8String(path);
-    retvalue = (GetFileAttributes(sysstring) & FILE_ATTRIBUTE_HIDDEN) ? NA_TRUE : NA_FALSE;
+    retValue = (GetFileAttributes(sysstring) & FILE_ATTRIBUTE_HIDDEN) ? NA_TRUE : NA_FALSE;
     free(sysstring);
-    return retvalue;
+    return retValue;
   #elif NA_OS == NA_OS_MAC_OS_X
     return (path[0] == '.');
   #endif

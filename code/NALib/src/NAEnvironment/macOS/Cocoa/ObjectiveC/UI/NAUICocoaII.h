@@ -133,7 +133,6 @@ NA_HDEF void na_ClearUINativeId(NANativeId nativeId){
 }
 
 
-// todo: find a faster way. Hash perhaps or something else.
 NA_HDEF void* na_GetUINALibEquivalent(NANativeId nativeId){
   NA_UIElement* retElem = NA_NULL;
   if([(NA_COCOA_BRIDGE id)nativeId isKindOfClass:[NSView class]]){
@@ -182,7 +181,7 @@ NA_HDEF void na_CaptureKeyboardStatus(NSEvent* event){
 
 
 NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
-  NABool retvalue = NA_FALSE;
+  NABool retValue = NA_FALSE;
   if([event type] == NAEventTypeKeyDown || [event type] == NSEventTypeFlagsChanged){
     NA_UIElement* elem;
     NSWindow* focusWindow;
@@ -212,9 +211,9 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
     }
     
     // Search for a matching keyboard shortcut by bubbling.
-    while(!retvalue && elem){
+    while(!retValue && elem){
       NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
-      while(!retvalue && naIterateList(&iter)){
+      while(!retValue && naIterateList(&iter)){
         const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
         if(keyReaction->shortcut.keyCode == na_App->keyboardStatus.keyCode){
           NABool needsShift   = naGetFlagi(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
@@ -233,7 +232,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
             reaction.uiElement = na_App;
             reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
             reaction.controller = keyReaction->controller;
-            retvalue = keyReaction->handler(reaction);
+            retValue = keyReaction->handler(reaction);
           }
         }
       }
@@ -241,7 +240,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(NSEvent* event){
       elem = naGetUIElementParent(elem);
     }
   }
-  return retvalue;
+  return retValue;
 }
 
 

@@ -191,7 +191,7 @@ NA_HDEF void na_CaptureKeyboardStatus(MSG* message){
 
 
 NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
-  NABool retvalue = NA_FALSE;
+  NABool retValue = NA_FALSE;
   if(message->message == WM_KEYUP || message->message == WM_SYSKEYDOWN || message->message == WM_SYSKEYUP){
     na_CaptureKeyboardStatus(message);
   }else if(message->message == WM_KEYDOWN){
@@ -211,9 +211,9 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
     }
 
     // Search for a matching keyboard shortcut by bubbling.
-    while(!retvalue && elem){
+    while(!retValue && elem){
       NAListIterator iter = naMakeListAccessor(&(elem->shortcuts));
-      while(!retvalue && naIterateList(&iter)){
+      while(!retValue && naIterateList(&iter)){
         const NAKeyboardShortcutReaction* keyReaction = naGetListCurConst(&iter);
         if(keyReaction->shortcut.keyCode == na_App->keyboardStatus.keyCode){
           NABool needsShift   = naGetFlagi(keyReaction->shortcut.modifiers, NA_MODIFIER_FLAG_SHIFT);
@@ -232,7 +232,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
             reaction.uiElement = elem;
             reaction.command = NA_UI_COMMAND_KEYBOARD_SHORTCUT;
             reaction.controller = keyReaction->controller;
-            retvalue = keyReaction->handler(reaction);
+            retValue = keyReaction->handler(reaction);
           }
         }
       }
@@ -240,7 +240,7 @@ NA_HDEF NABool na_InterceptKeyboardShortcut(MSG* message){
       elem = naGetUIElementParent(elem);
     }
   }
-  return retvalue;
+  return retValue;
 }
 
 
