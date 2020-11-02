@@ -7,6 +7,7 @@
 
 #if (NA_COMPILE_OPENGL == 1)
 
+#include "../../../../../NADateTime.h"
 
 typedef struct NAWINAPIOpenGLSpace NAWINAPIOpenGLSpace;
 struct NAWINAPIOpenGLSpace {
@@ -18,13 +19,18 @@ struct NAWINAPIOpenGLSpace {
 
 NAWINAPICallbackInfo naOpenGLSpaceWINAPIProc(void* uiElement, UINT message, WPARAM wParam, LPARAM lParam){
   NAWINAPICallbackInfo info = {NA_FALSE, 0};
+  PAINTSTRUCT paintStruct;
 
   switch(message){
   case WM_PAINT:
+
     info.hasbeenhandeled = na_DispatchUIElementCommand(uiElement, NA_UI_COMMAND_REDRAW);
     RECT updateRegion;
     GetUpdateRect(naGetUIElementNativeId(uiElement), &updateRegion, NA_FALSE);
     ValidateRect(naGetUIElementNativeId(uiElement), &updateRegion);
+
+    BeginPaint(naGetUIElementNativeId(uiElement), &paintStruct);   
+    EndPaint(naGetUIElementNativeId(uiElement), &paintStruct);
     info.result = 0;
     break;
 
@@ -51,10 +57,10 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(void* parent, NASize size, NAMutator init
 
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = naAlloc(NAWINAPIOpenGLSpace);
 
-  style = WS_CHILD | WS_VISIBLE | ES_READONLY;
+  style = WS_CHILD | WS_VISIBLE | ES_READONLY | CS_OWNDC;
 
 	hWnd = CreateWindow(
-		TEXT("NASpace"), TEXT(""), style,
+		TEXT("NAOpenGLSpace"), TEXT(""), style,
 		0, 0, (int)size.width, (int)size.height,
 		(HWND)naGetUIElementNativeId(parent), NULL, (HINSTANCE)naGetUIElementNativeId(naGetApplication()), NULL );
     
@@ -99,7 +105,13 @@ NA_DEF NAOpenGLSpace* naNewOpenGLSpace(void* parent, NASize size, NAMutator init
 
 NA_DEF void naSwapOpenGLBuffer(NAOpenGLSpace* openGLSpace){
   NAWINAPIOpenGLSpace* winapiOpenGLSpace = (NAWINAPIOpenGLSpace*)openGLSpace;
-  SwapBuffers(GetDC((HWND)naGetUIElementNativeId(&(winapiOpenGLSpace->openGLSpace.uiElement))));
+  //NADateTime time1 = naMakeDateTimeNow();
+  /*NABool success = */SwapBuffers(GetDC((HWND)naGetUIElementNativeId(&(winapiOpenGLSpace->openGLSpace.uiElement))));
+  //NADateTime time2 = naMakeDateTimeNow();
+  //printf("%f\n", naGetDateTimeDifference(&time2, &time1));
+  //if(!success){
+  //  printf("SpawBuffers failed with error code %d" NA_NL, GetLastError());
+  //}
 }
 
 

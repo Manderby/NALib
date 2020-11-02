@@ -499,7 +499,7 @@ NAWINAPICallbackInfo naWINAPIDrawItemProc(WPARAM wParam, LPARAM lParam){
 // ///////////////////////////////////
 
 NA_HDEF void na_RefreshUIElementNow(void* uiElement){
-  RedrawWindow(naGetUIElementNativeId(uiElement), NA_NULL, NA_NULL, RDW_INVALIDATE | RDW_ERASE);
+  RedrawWindow(naGetUIElementNativeId(uiElement), NA_NULL, NA_NULL, RDW_INVALIDATE | RDW_ERASE | RDW_UPDATENOW);
 }
 
 

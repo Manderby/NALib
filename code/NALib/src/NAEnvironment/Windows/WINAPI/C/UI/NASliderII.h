@@ -34,6 +34,8 @@ NAWINAPICallbackInfo naSliderWINAPIProc(void* uiElement, UINT message, WPARAM wP
   case WM_LBUTTONUP:
   case WM_KILLFOCUS:
   case WM_IME_SETCONTEXT:
+  case WM_DESTROY:
+  case WM_NCDESTROY:
     break;
 
   default:

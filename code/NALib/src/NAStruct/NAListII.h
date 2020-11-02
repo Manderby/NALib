@@ -173,24 +173,32 @@ NA_HIDEF void na_InjectMutableListElement(NAList* list, NAListElement* element, 
 
 
 NA_IDEF void naAddListFirstConst(NAList* list, const void* content){
+  if(list->count > 100){
+    printf("asdf");}
   NAListElement* newelement = naNewListElement(&(list->sentinel), list->sentinel.next);
   na_InjectConstListElement(list, newelement, content);
 }
 
 
 NA_IDEF void naAddListFirstMutable(NAList* list, void* content){
+  if(list->count > 100){
+    printf("asdf");}
   NAListElement* newelement = naNewListElement(&(list->sentinel), list->sentinel.next);
   na_InjectMutableListElement(list, newelement, content);
 }
 
 
 NA_IDEF void naAddListLastConst(NAList* list, const void* content){
+  if(list->count > 100){
+    printf("asdf");}
   NAListElement* newelement = naNewListElement(list->sentinel.prev, &(list->sentinel));
   na_InjectConstListElement(list, newelement, content);
 }
 
 
 NA_IDEF void naAddListLastMutable(NAList* list, void* content){
+  if(list->count > 100){
+    printf("asdf");}
   NAListElement* newelement = naNewListElement(list->sentinel.prev, &(list->sentinel));
   na_InjectMutableListElement(list, newelement, content);
 }
@@ -752,6 +760,8 @@ NA_IDEF void* naGetListNextMutable(NAListIterator* iter){
 
 
 NA_IDEF void naAddListBeforeConst(NAListIterator* iter, const void* content){
+  if(((const NAList*)naGetPtrConst(iter->listptr))->count > 100){
+    printf("asdf");}
   NAListElement* newelement;
   #ifndef NDEBUG
     if(!iter->mutator)
@@ -765,6 +775,8 @@ NA_IDEF void naAddListBeforeConst(NAListIterator* iter, const void* content){
 
 
 NA_IDEF void naAddListBeforeMutable(NAListIterator* iter, void* content){
+  if(((const NAList*)naGetPtrConst(iter->listptr))->count > 100){
+    printf("asdf");}
   NAListElement* newelement;
   #ifndef NDEBUG
     if(!iter->mutator)
@@ -778,6 +790,8 @@ NA_IDEF void naAddListBeforeMutable(NAListIterator* iter, void* content){
 
 
 NA_IDEF void naAddListAfterConst(NAListIterator* iter, const void* content){
+  if(((const NAList*)naGetPtrConst(iter->listptr))->count > 100){
+    printf("asdf");}
   NAListElement* newelement;
   #ifndef NDEBUG
     if(!iter->mutator)
@@ -791,6 +805,8 @@ NA_IDEF void naAddListAfterConst(NAListIterator* iter, const void* content){
 
 
 NA_IDEF void naAddListAfterMutable(NAListIterator* iter, void* content){
+  if(((const NAList*)naGetPtrConst(iter->listptr))->count > 100){
+    printf("asdf");}
   NAListElement* newelement;
   #ifndef NDEBUG
     if(!iter->mutator)

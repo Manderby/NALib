@@ -153,6 +153,20 @@ NA_DEF void naStartApplication(NAMutator preStartup, NAMutator postStartup, void
 	wndclass.lpszClassName = TEXT("NASpace");
 	RegisterClass(&wndclass);
 
+    // Register the OpenGL space class
+  naZeron(&wndclass, sizeof(WNDCLASS));
+	wndclass.style = CS_OWNDC;
+	wndclass.lpfnWndProc = naWINAPIWindowCallback;
+	wndclass.cbClsExtra = 0;
+	wndclass.cbWndExtra = 0;
+	wndclass.hInstance = GetModuleHandle(NULL);
+	wndclass.hIcon = LoadIcon( NULL, IDI_APPLICATION );
+	wndclass.hCursor = LoadCursor( NULL, IDC_ARROW );
+	wndclass.hbrBackground = (HBRUSH)(COLOR_BTNFACE + 1);
+	wndclass.lpszMenuName = NULL;
+	wndclass.lpszClassName = TEXT("NAOpenGLSpace");
+	RegisterClass(&wndclass);
+
     // Start the WINAPI application and set the native ID of the application.
   app = (NAWINAPIApplication*)na_NewApplication();
 
@@ -335,12 +349,12 @@ NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT
   UINT timerkey = (UINT)idEvent;
   app = (NAWINAPIApplication*)naGetApplication();
 
-  naBeginListModifierIteration(NAWINAPITimerStruct* timerstruct, &(app->timers), iter);
-    if(timerstruct->key == timerkey) {
+  naBeginListModifierIteration(NAWINAPITimerStruct* timerStruct, &(app->timers), iter);
+    if(timerStruct->key == timerkey) {
       naRemoveListCurMutable(&iter, NA_FALSE);
       KillTimer(hwnd, idEvent);
-      timerstruct->func(timerstruct->arg);
-      naFree(timerstruct);
+      timerStruct->func(timerStruct->arg);
+      naFree(timerStruct);
       break;
     }
   naEndListIteration(iter);
@@ -350,13 +364,13 @@ NA_HDEF static VOID CALLBACK na_TimerCallbackFunction(HWND hwnd, UINT uMsg, UINT
 
 NA_DEF void naCallApplicationFunctionInSeconds(NAMutator function, void* arg, double timediff){
   NAWINAPIApplication* app;
-  NAWINAPITimerStruct* timerstruct = naAlloc(NAWINAPITimerStruct);
-  timerstruct->func = function;
-  timerstruct->arg = arg;
+  NAWINAPITimerStruct* timerStruct = naAlloc(NAWINAPITimerStruct);
+  timerStruct->func = function;
+  timerStruct->arg = arg;
   // todo: Check type
-  timerstruct->key = (UINT)SetTimer((HWND)NA_NULL, (UINT_PTR)NA_NULL, (UINT)(1000 * timediff), na_TimerCallbackFunction);
+  timerStruct->key = (UINT)SetTimer((HWND)NA_NULL, (UINT_PTR)NA_NULL, (UINT)(1000 * timediff), na_TimerCallbackFunction);
   app = (NAWINAPIApplication*)naGetApplication();
-  naAddListLastMutable(&(app->timers), timerstruct);
+  naAddListLastMutable(&(app->timers), timerStruct);
 }
 
 
